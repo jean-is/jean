@@ -1,0 +1,51 @@
+# Jean at work, on one computer (D415): the organisation's sign-in (Dex), its AI gateway (LiteLLM) with a
+# brain and an MCP server, and Jean, which its policy pins to both. See README.md beside this file.
+#   cp .env.example .env      then name the brain behind the gateway in it
+#   docker compose up -d --build
+# Then open http://localhost:8080 and sign in as ana@example.com, with the password "password".
+name: jean-enterprise
+services:
+  jean:
+    build:
+      context: ../..
+      dockerfile: deploy/docker/Dockerfile
+    image: jean
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      # What the browser lets Jean reach, whatever Jean's own policy allows: its own address, the sign-in, the gateway.
+      CONTENT_SECURITY_POLICY: "connect-src 'self' http://localhost:5556 http://localhost:4000"
+    volumes:
+      - ./policy.json:/srv/policy.json:ro
+    restart: unless-stopped
+
+  dex:
+    image: ghcr.io/dexidp/dex:v2.46.1-distroless
+    command: ["dex", "serve", "/etc/dex/config.yaml"]
+    ports:
+      - "127.0.0.1:5556:5556"
+    volumes:
+      - ./dex.yaml:/etc/dex/config.yaml:ro
+    restart: unless-stopped
+
+  litellm:
+    image: ghcr.io/berriai/litellm:v1.106.6
+    command: ["--config", "/app/config/litellm.yaml", "--port", "4000"]
+    ports:
+      - "127.0.0.1:4000:4000"
+    environment:
+      # The sign-in as browsers reach it, which its tokens name, and its keys as this network reaches them.
+      OIDC_ISSUER: http://localhost:5556/dex
+      OIDC_JWKS_URI: http://dex:5556/dex/keys
+      OIDC_AUDIENCE: jean
+      # The gateway's own administrator's key, which Jean never holds.
+      LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY:?set it in .env, as .env.example shows}
+      UPSTREAM_MODEL: ${UPSTREAM_MODEL:?name the brain behind the gateway in .env, as .env.example shows}
+      UPSTREAM_API_BASE: ${UPSTREAM_API_BASE:-}
+      UPSTREAM_API_KEY: ${UPSTREAM_API_KEY:-}
+    volumes:
+      - ./litellm.yaml:/app/config/litellm.yaml:ro
+      - ./oidc_auth.py:/app/config/oidc_auth.py:ro
+    depends_on:
+      - dex
+    restart: unless-stopped

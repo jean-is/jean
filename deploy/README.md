@@ -22,6 +22,14 @@ Or take a release Warehouse SAS signed, which needs no Node.js: check its signat
 
 Then open `policy.html` at the new address. It says whether the server sends what follows, and what the site's `policy.json` holds: what Jean doesn't read, what isn't the right shape, the addresses the site's own headers refuse, and, on a click, whether each address answers.
 
+Before that, an editor checks the policy as you type when it names its schema, which every copy of Jean serves at `/schemas/`, and the gateway's `GATEWAY_CONFIG` has one too:
+
+```json
+{ "$schema": "https://jean.is/schemas/policy.schema.json" }
+```
+
+[examples/enterprise/](../examples/enterprise/README.md) runs the whole of it on one computer: Jean, a sign-in, and an AI gateway with a brain and an MCP server, each taking the person's token.
+
 ## The header set
 
 Every file goes out with:

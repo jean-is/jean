@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jean.is/schemas/gateway.schema.json",
+  "title": "GATEWAY_CONFIG",
+  "description": "The JSON object in the GATEWAY_CONFIG variable of Jean's gateway (gateway/gateway.js, D191), which relays to the services a browser can't reach. It holds the apps' secrets: keep it in the environment, never in a file Jean's folder serves.",
+  "type": "object",
+  "properties": {
+    "$schema": { "type": "string", "description": "This schema's address, for an editor; the gateway doesn't read it" },
+    "origins": {
+      "description": "The addresses Jean is served from, as origins: the only pages the gateway answers with CORS",
+      "type": "array",
+      "items": { "type": "string", "pattern": "^https?://[^/?#]+$" },
+      "examples": [["https://jean.corp.example"]]
+    },
+    "hosts": {
+      "description": "The hosts it relays to, over HTTPS (or HTTP on this computer); a name covers its subdomains. An origin over plain HTTP, named whole, is relayed to as well, such as an authority's OCSP responder. Left out: those of every service Jean knows that a browser can't reach, their sign-ins included",
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[A-Za-z0-9.-]+$|^\\[[0-9A-Fa-f:]+\\]$|^https?://[^/?#]+$" },
+      "examples": [["googleapis.com", "accounts.google.com", "http://ocsp.corp.example"]]
+    },
+    "clients": {
+      "description": "Apps registered with sign-in servers that take only apps they know: Jean signs in with the client id, and the gateway adds the secret where the code is traded for tokens, so the secret never reaches a browser",
+      "type": "array",
+      "items": { "$ref": "#/$defs/client" }
+    },
+    "timestamps": {
+      "description": "RFC 3161 services that date Jean's certificates and that a browser can't reach, such as a qualified one (D276): relayed to and announced",
+      "type": "array",
+      "items": { "$ref": "#/$defs/address" }
+    },
+    "logs": {
+      "description": "Public logs, such as Sigstore's Rekor, certificates may be recorded in (D276): relayed to and announced",
+      "type": "array",
+      "items": { "$ref": "#/$defs/address" }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "address": { "type": "string", "pattern": "^https?://" },
+    "client": {
+      "type": "object",
+      "properties": {
+        "issuer": { "$ref": "#/$defs/address", "description": "The sign-in server's issuer, as its metadata names it" },
+        "tokenEndpoint": { "$ref": "#/$defs/address", "description": "Where the code is traded for tokens: the only address the secret goes to" },
+        "clientId": { "type": "string", "description": "The app's client id, which Jean signs in with" },
+        "clientSecret": { "type": "string", "description": "The app's secret" },
+        "auth": { "enum": ["post", "basic"], "default": "post", "description": "How the secret goes: in the form (client_secret_post) or as HTTP Basic (client_secret_basic)" }
+      },
+      "required": ["issuer", "tokenEndpoint", "clientId", "clientSecret"],
+      "additionalProperties": false,
+      "examples": [{ "issuer": "https://accounts.google.com", "tokenEndpoint": "https://oauth2.googleapis.com/token", "clientId": "…", "clientSecret": "…", "auth": "post" }]
+    }
+  }
+}

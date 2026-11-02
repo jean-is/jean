@@ -1,0 +1,37 @@
+# The organisation's sign-in: Dex, with Jean as a public app (PKCE, no secret, as a page in a browser
+# is) and one person in its own list. Dex can put the directory you already have behind it with a
+# connector (LDAP, SAML, Entra ID, Google), or Jean signs in to that one directly.
+issuer: http://localhost:5556/dex
+
+storage:
+  type: memory
+
+web:
+  http: 0.0.0.0:5556
+  # Jean signs in from the browser: discovery, the token endpoint and the keys answer its address.
+  allowedOrigins: ["http://localhost:8080"]
+
+oauth2:
+  skipApprovalScreen: true
+  pkce:
+    enforce: true
+    codeChallengeMethodsSupported: ["S256"]
+
+expiry:
+  # The access token Jean sends the gateway, renewed with its refresh token before it ends.
+  idTokens: 1h
+
+staticClients:
+  - id: jean
+    name: Jean
+    public: true
+    # Jean's address, which it comes back to from signing in.
+    redirectURIs: ["http://localhost:8080/"]
+
+enablePasswordDB: true
+staticPasswords:
+  # A test person: ana@example.com, password "password" (Dex's own example hash).
+  - email: ana@example.com
+    hash: "$2a$10$2b2cU8CPhOTaGrs1HRQuAueS7JTT5ZHsHSzYiFPm1leZck7Mc8T4W"
+    username: Ana
+    userID: 0a4c3c44-6a1f-4f5e-9d2a-0b8f3b1d6e51

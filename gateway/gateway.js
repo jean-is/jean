@@ -8,7 +8,8 @@
 //   GET <gateway>                  what it serves: { format: 1, hosts, clients: { <issuer>: <client id> }, timestamps?, logs? }
 //   GET, HEAD, POST or DELETE <gateway>?url=<address>    the request, relayed to that address
 //
-// Its configuration, a JSON object in GATEWAY_CONFIG (never a file beside it: Jean's folder is served as it is):
+// Its configuration, a JSON object in GATEWAY_CONFIG (never a file beside it: Jean's folder is served as it is),
+// whose schema is app/schemas/gateway.schema.json:
 //   origins  the addresses Jean is served from, e.g. ["https://jean.example"]
 //   hosts    the hosts it relays to; a name covers its subdomains ("googleapis.com"). Left out: those
 //            of every service Jean knows that a browser can't reach, their sign-ins included (D214).

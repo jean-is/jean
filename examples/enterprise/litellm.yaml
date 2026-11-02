@@ -1,0 +1,21 @@
+# The organisation's AI gateway: LiteLLM, with a brain and an MCP server, for whoever the organisation's
+# sign-in vouches for (oidc_auth.py). Jean's policy.json names both, each sent the person's token.
+model_list:
+  - model_name: company-ai
+    litellm_params:
+      model: os.environ/UPSTREAM_MODEL
+      api_base: os.environ/UPSTREAM_API_BASE
+      api_key: os.environ/UPSTREAM_API_KEY
+
+# Every server at /mcp/, and each one at /<name>/mcp: a connection each in policy.json keeps each one's
+# rules apart in Jean, and names its server in the audit.
+mcp_servers:
+  deepwiki:
+    url: https://mcp.deepwiki.com/mcp
+    transport: http
+    description: The documentation of public GitHub repositories
+    # For everyone the sign-in vouches for, as no LiteLLM key or team gives it to anyone.
+    allow_all_keys: true
+
+general_settings:
+  custom_auth: oidc_auth.user_api_key_auth

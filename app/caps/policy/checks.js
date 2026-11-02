@@ -40,6 +40,8 @@ const LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])$/
  * @type {Record<string, Shape>}
  */
 export const SCHEMA = {
+  // The JSON Schema an editor checks the file against (in app/schemas/, made from this one), which Jean doesn't read.
+  $schema: 'link',
   locale: 'locale', locales: ['locale'],
   look: { 'name!': 'text', on: new Set(Object.keys(LOOKS)), accent: 'colour', background: 'colour', size: 'number', font: new Set(Object.keys(FONTS)), css: 'text' },
   looks: [new Set(Object.keys(LOOKS))],
@@ -72,7 +74,7 @@ export const SCHEMA = {
   retention: 'text', dlp: { detect: ['any'], labels: ['text'], brains: ['text'], then: new Set(['ask', 'never']), mask: { hide: ['text'], words: ['text'], keep: ['text'], pictures: new Set(['hold', 'send']) } }, session: { idle: 'text', signOut: new Set(['wipe']) }, jurisdictions: ['text'], seal: { est: 'address', csc: 'address', credential: 'text', auth: new Set(['oidc', 'tls']) }, trust: ['text'],
 }
 // A group's section goes over policy as RFC 7386 has it, null taking a part away, but signs no one in (D429).
-SCHEMA.groups = [{ 'id!': 'text', name: 'text', 'policy!': Object.fromEntries(Object.entries(SCHEMA).filter(([name]) => !['signIn', 'key'].includes(name))) }]
+SCHEMA.groups = [{ 'id!': 'text', name: 'text', 'policy!': Object.fromEntries(Object.entries(SCHEMA).filter(([name]) => !['$schema', 'signIn', 'key'].includes(name))) }]
 
 /** @typedef {[path: string, problem: string, detail?: unknown]} Problem */
 

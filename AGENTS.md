@@ -126,6 +126,7 @@ npm run offers    # measure what a brain offers on the multilingual offer test s
 npm run tutor     # measure how often a brain gives the answer to a child's work, on the multilingual tutor test set (BRAIN=<provider>:<model>, JUDGE=<provider>:<model>, -- --write)
 npm run games     # measure how often a brain makes a game that plays clean, unguided, from briefs in four languages, in Jean's own page (BRAIN=<provider>:<model>, JUDGE=<provider>:<model>, -- --write)
 npm run concepts  # read the picture check's words into app/caps/pictures/concepts.json, after changing one (D280)
+npm run schemas   # write app/schemas/policy.schema.json again from what policy.html checks, after changing SCHEMA (D415)
 npm run masks     # measure the names model of masked requests in Jean's own worker, on an annotated set in eight languages (-- --speed, -- --write; weights fetched once into test/masks/.cache/)
 npm run documents # the document evals: corpus, retrieval, answers through OpenRouter, benches (-- --report --write)
 npm run longtasks # Jean's long-task features against the same brain without them: GDPval, steering, checkpoints, summaries and plans (BRAIN=<provider>:<model>, -- --write)

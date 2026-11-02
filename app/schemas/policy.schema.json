@@ -1,0 +1,2411 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jean.is/schemas/policy.schema.json",
+  "title": "policy.json",
+  "description": "What an organisation's policy.json beside Jean's index.html holds, as this version of Jean reads it and policy.html checks it (docs/enterprise.md).",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "$ref": "#/$defs/link"
+    },
+    "locale": {
+      "$ref": "#/$defs/locale"
+    },
+    "locales": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/locale"
+      }
+    },
+    "look": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "on": {
+          "enum": [
+            "tilde",
+            "human",
+            "mail",
+            "minimal",
+            "swiss",
+            "fjord",
+            "velvet",
+            "notebook",
+            "blueprint",
+            "classic",
+            "terminal",
+            "neon"
+          ]
+        },
+        "accent": {
+          "$ref": "#/$defs/colour"
+        },
+        "background": {
+          "$ref": "#/$defs/colour"
+        },
+        "size": {
+          "type": "number"
+        },
+        "font": {
+          "enum": [
+            "sans",
+            "serif",
+            "rounded",
+            "mono"
+          ]
+        },
+        "css": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "looks": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "tilde",
+          "human",
+          "mail",
+          "minimal",
+          "swiss",
+          "fjord",
+          "velvet",
+          "notebook",
+          "blueprint",
+          "classic",
+          "terminal",
+          "neon"
+        ]
+      }
+    },
+    "kit": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "tokens": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {}
+        },
+        "layouts": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {}
+        }
+      },
+      "additionalProperties": false
+    },
+    "brains": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "provider": {
+            "enum": [
+              "device",
+              "openrouter",
+              "openai",
+              "anthropic",
+              "gemini",
+              "vertex",
+              "mistral",
+              "meta",
+              "huggingface",
+              "vercel",
+              "groq",
+              "cerebras",
+              "together",
+              "fireworks",
+              "xai",
+              "ollama",
+              "lmstudio",
+              "claudecode",
+              "copilot",
+              "chatgpt",
+              "custom"
+            ]
+          },
+          "api": {
+            "enum": [
+              "openai",
+              "anthropic",
+              "device"
+            ]
+          },
+          "baseURL": {
+            "$ref": "#/$defs/address"
+          },
+          "model": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "headers": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "projects": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "jurisdiction": {
+            "type": "string"
+          },
+          "trains": {
+            "type": "boolean"
+          },
+          "auth": {
+            "enum": [
+              "oidc"
+            ]
+          },
+          "effort": {
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "provider"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "tiers": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "rules": {
+      "type": "object",
+      "properties": {
+        "read": {
+          "enum": [
+            "allow",
+            "ask",
+            "never"
+          ]
+        },
+        "edit": {
+          "enum": [
+            "allow",
+            "ask",
+            "never"
+          ]
+        },
+        "search": {
+          "enum": [
+            "allow",
+            "ask",
+            "never"
+          ]
+        },
+        "execute": {
+          "enum": [
+            "allow",
+            "ask",
+            "never"
+          ]
+        },
+        "think": {
+          "enum": [
+            "allow",
+            "ask",
+            "never"
+          ]
+        },
+        "fetch": {
+          "enum": [
+            "allow",
+            "ask",
+            "never"
+          ]
+        },
+        "move": {
+          "enum": [
+            "allow",
+            "ask",
+            "never"
+          ]
+        },
+        "delete": {
+          "enum": [
+            "allow",
+            "ask",
+            "never"
+          ]
+        },
+        "switch_mode": {
+          "enum": [
+            "allow",
+            "ask",
+            "never"
+          ]
+        },
+        "other": {
+          "enum": [
+            "allow",
+            "ask",
+            "never"
+          ]
+        },
+        "plan": {
+          "enum": [
+            "allow",
+            "ask",
+            "never"
+          ]
+        },
+        "share": {
+          "enum": [
+            "allow",
+            "ask",
+            "never"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "guards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "service": {
+            "type": "string"
+          },
+          "if": {
+            "type": "string"
+          },
+          "then": {
+            "enum": [
+              "ask",
+              "never"
+            ]
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "then"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "properties": {
+        "deny": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/capability"
+          }
+        },
+        "preUnlock": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/capability"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "instructions": {
+      "type": "string"
+    },
+    "urls": {
+      "type": "object",
+      "properties": {
+        "modelWeights": {
+          "$ref": "#/$defs/link"
+        },
+        "wikipedia": {
+          "$ref": "#/$defs/link"
+        },
+        "searchPage": {
+          "$ref": "#/$defs/link"
+        },
+        "vikidia": {
+          "$ref": "#/$defs/link"
+        },
+        "kiwix": {
+          "$ref": "#/$defs/link"
+        },
+        "pyodide": {
+          "$ref": "#/$defs/link"
+        },
+        "pypi": {
+          "$ref": "#/$defs/link"
+        },
+        "npm": {
+          "$ref": "#/$defs/link"
+        },
+        "gateway": {
+          "$ref": "#/$defs/link"
+        },
+        "privacy": {
+          "$ref": "#/$defs/link"
+        },
+        "terms": {
+          "$ref": "#/$defs/link"
+        },
+        "files": {
+          "$ref": "#/$defs/link"
+        },
+        "share": {
+          "$ref": "#/$defs/link"
+        },
+        "siteIcon": {
+          "$ref": "#/$defs/link"
+        },
+        "prices": {
+          "$ref": "#/$defs/link"
+        },
+        "timestamp": {
+          "$ref": "#/$defs/link"
+        },
+        "transparencyLog": {
+          "$ref": "#/$defs/link"
+        },
+        "deck": {
+          "$ref": "#/$defs/link"
+        },
+        "render": {
+          "$ref": "#/$defs/link"
+        },
+        "sounds": {
+          "$ref": "#/$defs/link"
+        },
+        "brave": {
+          "$ref": "#/$defs/link"
+        },
+        "tavily": {
+          "$ref": "#/$defs/link"
+        },
+        "google": {
+          "$ref": "#/$defs/link"
+        },
+        "kagi": {
+          "$ref": "#/$defs/link"
+        }
+      },
+      "additionalProperties": false
+    },
+    "signIn": {
+      "type": "object",
+      "properties": {
+        "issuer": {
+          "$ref": "#/$defs/address"
+        },
+        "clientId": {
+          "type": "string"
+        },
+        "scopes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "issuer",
+        "clientId"
+      ],
+      "additionalProperties": false
+    },
+    "connections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "$ref": "#/$defs/address"
+          },
+          "auth": {
+            "enum": [
+              "none",
+              "key",
+              "oauth",
+              "oidc"
+            ]
+          },
+          "servers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/address"
+            }
+          },
+          "projects": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "gateway": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "url"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "directory": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": {}
+      }
+    },
+    "skills": {
+      "type": "object",
+      "properties": {
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/address"
+          }
+        },
+        "only": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "extensions": {
+      "type": "object",
+      "properties": {
+        "ready": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/address"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "searches": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "pages": {
+      "type": "object",
+      "properties": {
+        "scripts": {
+          "type": "boolean"
+        },
+        "fullscreen": {
+          "type": "boolean"
+        },
+        "downloads": {
+          "type": "boolean"
+        },
+        "web": {
+          "type": "boolean"
+        },
+        "network": {
+          "type": "boolean"
+        },
+        "maps": {
+          "type": "boolean"
+        },
+        "sites": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "mapStyles": {
+      "type": "object",
+      "properties": {
+        "light": {
+          "$ref": "#/$defs/address"
+        },
+        "dark": {
+          "$ref": "#/$defs/address"
+        }
+      },
+      "additionalProperties": false
+    },
+    "computer": {
+      "type": "object",
+      "properties": {
+        "internet": {
+          "enum": [
+            "ask",
+            "any",
+            "off"
+          ]
+        },
+        "sites": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "relay": {
+          "type": "string"
+        },
+        "timeMs": {
+          "type": "number"
+        },
+        "limitMB": {
+          "type": "number"
+        },
+        "workspaceMB": {
+          "type": "number"
+        },
+        "registries": {
+          "type": "object",
+          "properties": {
+            "pyodide": {
+              "$ref": "#/$defs/address"
+            },
+            "pypi": {
+              "$ref": "#/$defs/address"
+            },
+            "npm": {
+              "$ref": "#/$defs/address"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "images": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "films": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "pictureCheck": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": {
+        "type": "boolean"
+      }
+    },
+    "lock": {
+      "enum": [
+        "required"
+      ]
+    },
+    "child": {
+      "type": "boolean"
+    },
+    "key": {
+      "type": "string"
+    },
+    "audit": {
+      "type": "object",
+      "properties": {
+        "otlpEndpoint": {
+          "$ref": "#/$defs/address"
+        },
+        "auth": {},
+        "content": {
+          "type": "boolean"
+        },
+        "headers": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "service": {
+          "type": "string"
+        },
+        "person": {
+          "enum": [
+            "email",
+            "pseudonym"
+          ]
+        },
+        "trustee": {
+          "type": "object",
+          "properties": {
+            "kty": {
+              "enum": [
+                "EC"
+              ]
+            },
+            "crv": {
+              "enum": [
+                "P-256"
+              ]
+            },
+            "x": {
+              "type": "string"
+            },
+            "y": {
+              "type": "string"
+            },
+            "kid": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "kty",
+            "crv",
+            "x",
+            "y"
+          ],
+          "additionalProperties": {}
+        }
+      },
+      "required": [
+        "otlpEndpoint"
+      ],
+      "additionalProperties": false
+    },
+    "retention": {
+      "type": "string"
+    },
+    "dlp": {
+      "type": "object",
+      "properties": {
+        "detect": {
+          "type": "array",
+          "items": {}
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "brains": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "then": {
+          "enum": [
+            "ask",
+            "never"
+          ]
+        },
+        "mask": {
+          "type": "object",
+          "properties": {
+            "hide": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "words": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "keep": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "pictures": {
+              "enum": [
+                "hold",
+                "send"
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "session": {
+      "type": "object",
+      "properties": {
+        "idle": {
+          "type": "string"
+        },
+        "signOut": {
+          "enum": [
+            "wipe"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "jurisdictions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "seal": {
+      "type": "object",
+      "properties": {
+        "est": {
+          "$ref": "#/$defs/address"
+        },
+        "csc": {
+          "$ref": "#/$defs/address"
+        },
+        "credential": {
+          "type": "string"
+        },
+        "auth": {
+          "enum": [
+            "oidc",
+            "tls"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "trust": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "groups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "policy": {
+            "type": "object",
+            "properties": {
+              "locale": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/locale"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "locales": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/locale"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "look": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "on": {
+                    "enum": [
+                      "tilde",
+                      "human",
+                      "mail",
+                      "minimal",
+                      "swiss",
+                      "fjord",
+                      "velvet",
+                      "notebook",
+                      "blueprint",
+                      "classic",
+                      "terminal",
+                      "neon",
+                      null
+                    ]
+                  },
+                  "accent": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/colour"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "background": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/colour"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "size": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "font": {
+                    "enum": [
+                      "sans",
+                      "serif",
+                      "rounded",
+                      "mono",
+                      null
+                    ]
+                  },
+                  "css": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              },
+              "looks": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "enum": [
+                    "tilde",
+                    "human",
+                    "mail",
+                    "minimal",
+                    "swiss",
+                    "fjord",
+                    "velvet",
+                    "notebook",
+                    "blueprint",
+                    "classic",
+                    "terminal",
+                    "neon",
+                    null
+                  ]
+                }
+              },
+              "kit": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "tokens": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "properties": {},
+                    "additionalProperties": {}
+                  },
+                  "layouts": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "properties": {},
+                    "additionalProperties": {}
+                  }
+                },
+                "additionalProperties": false
+              },
+              "brains": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "provider": {
+                      "enum": [
+                        "device",
+                        "openrouter",
+                        "openai",
+                        "anthropic",
+                        "gemini",
+                        "vertex",
+                        "mistral",
+                        "meta",
+                        "huggingface",
+                        "vercel",
+                        "groq",
+                        "cerebras",
+                        "together",
+                        "fireworks",
+                        "xai",
+                        "ollama",
+                        "lmstudio",
+                        "claudecode",
+                        "copilot",
+                        "chatgpt",
+                        "custom",
+                        null
+                      ]
+                    },
+                    "api": {
+                      "enum": [
+                        "openai",
+                        "anthropic",
+                        "device",
+                        null
+                      ]
+                    },
+                    "baseURL": {
+                      "anyOf": [
+                        {
+                          "$ref": "#/$defs/address"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "model": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "label": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "headers": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {},
+                      "additionalProperties": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    },
+                    "projects": {
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "items": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    },
+                    "jurisdiction": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "trains": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "auth": {
+                      "enum": [
+                        "oidc",
+                        null
+                      ]
+                    },
+                    "effort": {
+                      "enum": [
+                        "low",
+                        "medium",
+                        "high",
+                        null
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "provider"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "tiers": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {},
+                "additionalProperties": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              },
+              "rules": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "read": {
+                    "enum": [
+                      "allow",
+                      "ask",
+                      "never",
+                      null
+                    ]
+                  },
+                  "edit": {
+                    "enum": [
+                      "allow",
+                      "ask",
+                      "never",
+                      null
+                    ]
+                  },
+                  "search": {
+                    "enum": [
+                      "allow",
+                      "ask",
+                      "never",
+                      null
+                    ]
+                  },
+                  "execute": {
+                    "enum": [
+                      "allow",
+                      "ask",
+                      "never",
+                      null
+                    ]
+                  },
+                  "think": {
+                    "enum": [
+                      "allow",
+                      "ask",
+                      "never",
+                      null
+                    ]
+                  },
+                  "fetch": {
+                    "enum": [
+                      "allow",
+                      "ask",
+                      "never",
+                      null
+                    ]
+                  },
+                  "move": {
+                    "enum": [
+                      "allow",
+                      "ask",
+                      "never",
+                      null
+                    ]
+                  },
+                  "delete": {
+                    "enum": [
+                      "allow",
+                      "ask",
+                      "never",
+                      null
+                    ]
+                  },
+                  "switch_mode": {
+                    "enum": [
+                      "allow",
+                      "ask",
+                      "never",
+                      null
+                    ]
+                  },
+                  "other": {
+                    "enum": [
+                      "allow",
+                      "ask",
+                      "never",
+                      null
+                    ]
+                  },
+                  "plan": {
+                    "enum": [
+                      "allow",
+                      "ask",
+                      "never",
+                      null
+                    ]
+                  },
+                  "share": {
+                    "enum": [
+                      "allow",
+                      "ask",
+                      "never",
+                      null
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              },
+              "guards": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "kind": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "service": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "if": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "then": {
+                      "enum": [
+                        "ask",
+                        "never",
+                        null
+                      ]
+                    },
+                    "reason": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "then"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "capabilities": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "deny": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "anyOf": [
+                        {
+                          "$ref": "#/$defs/capability"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "preUnlock": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "anyOf": [
+                        {
+                          "$ref": "#/$defs/capability"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "additionalProperties": false
+              },
+              "instructions": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "urls": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "modelWeights": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/link"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "wikipedia": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/link"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "searchPage": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/link"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "vikidia": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/link"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "kiwix": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/link"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "pyodide": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/link"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "pypi": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/link"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "npm": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/link"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "gateway": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/link"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "privacy": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/link"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "terms": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/link"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "files": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/link"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "share": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/link"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "siteIcon": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/link"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "prices": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/link"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "timestamp": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/link"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "transparencyLog": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/link"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "deck": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/link"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "render": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/link"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "sounds": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/link"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "brave": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/link"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "tavily": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/link"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "google": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/link"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "kagi": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/link"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              },
+              "connections": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "url": {
+                      "anyOf": [
+                        {
+                          "$ref": "#/$defs/address"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "auth": {
+                      "enum": [
+                        "none",
+                        "key",
+                        "oauth",
+                        "oidc",
+                        null
+                      ]
+                    },
+                    "servers": {
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "items": {
+                        "anyOf": [
+                          {
+                            "$ref": "#/$defs/address"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    },
+                    "projects": {
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "items": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    },
+                    "gateway": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "url"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "directory": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": {}
+                }
+              },
+              "skills": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "sources": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "anyOf": [
+                        {
+                          "$ref": "#/$defs/address"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "only": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              },
+              "extensions": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "ready": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "anyOf": [
+                        {
+                          "$ref": "#/$defs/address"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "additionalProperties": false
+              },
+              "searches": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "pages": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "scripts": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "fullscreen": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "downloads": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "web": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "network": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "maps": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "sites": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "additionalProperties": false
+              },
+              "mapStyles": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "light": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/address"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "dark": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/address"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              },
+              "computer": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "internet": {
+                    "enum": [
+                      "ask",
+                      "any",
+                      "off",
+                      null
+                    ]
+                  },
+                  "sites": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "relay": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "timeMs": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "limitMB": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "workspaceMB": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "registries": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "properties": {
+                      "pyodide": {
+                        "anyOf": [
+                          {
+                            "$ref": "#/$defs/address"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "pypi": {
+                        "anyOf": [
+                          {
+                            "$ref": "#/$defs/address"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "npm": {
+                        "anyOf": [
+                          {
+                            "$ref": "#/$defs/address"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              },
+              "images": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {},
+                "additionalProperties": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              },
+              "films": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {},
+                "additionalProperties": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              },
+              "pictureCheck": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {},
+                "additionalProperties": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                }
+              },
+              "lock": {
+                "enum": [
+                  "required",
+                  null
+                ]
+              },
+              "child": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "audit": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "otlpEndpoint": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/address"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "auth": {},
+                  "content": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "headers": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "properties": {},
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "service": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "person": {
+                    "enum": [
+                      "email",
+                      "pseudonym",
+                      null
+                    ]
+                  },
+                  "trustee": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "properties": {
+                      "kty": {
+                        "enum": [
+                          "EC",
+                          null
+                        ]
+                      },
+                      "crv": {
+                        "enum": [
+                          "P-256",
+                          null
+                        ]
+                      },
+                      "x": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "y": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "kid": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "kty",
+                      "crv",
+                      "x",
+                      "y"
+                    ],
+                    "additionalProperties": {}
+                  }
+                },
+                "required": [
+                  "otlpEndpoint"
+                ],
+                "additionalProperties": false
+              },
+              "retention": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "dlp": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "detect": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {}
+                  },
+                  "labels": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "brains": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "then": {
+                    "enum": [
+                      "ask",
+                      "never",
+                      null
+                    ]
+                  },
+                  "mask": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "properties": {
+                      "hide": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "words": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "keep": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "pictures": {
+                        "enum": [
+                          "hold",
+                          "send",
+                          null
+                        ]
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              },
+              "session": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "idle": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "signOut": {
+                    "enum": [
+                      "wipe",
+                      null
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              },
+              "jurisdictions": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "seal": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "est": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/address"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "csc": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/address"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "credential": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "auth": {
+                    "enum": [
+                      "oidc",
+                      "tls",
+                      null
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              },
+              "trust": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "id",
+          "policy"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "address": {
+      "type": "string",
+      "pattern": "^(https|wss)://|^(http|ws)://(localhost|127\\.0\\.0\\.1|\\[::1\\])(:\\d+)?([/?#]|$)",
+      "description": "An address: HTTPS, or HTTP on this computer"
+    },
+    "link": {
+      "type": "string",
+      "pattern": "^$|^(?![A-Za-z][A-Za-z\\d+.-]*:)|^(https|wss)://|^(http|ws)://(localhost|127\\.0\\.0\\.1|\\[::1\\])(:\\d+)?([/?#]|$)",
+      "description": "An address, a path beside index.html, or \"\" for none"
+    },
+    "capability": {
+      "type": "string",
+      "description": "A capability, as capabilities.json beside index.html lists them"
+    },
+    "locale": {
+      "enum": [
+        "am",
+        "ar",
+        "bg",
+        "bn",
+        "br",
+        "co",
+        "cs",
+        "da",
+        "de",
+        "el",
+        "en",
+        "es",
+        "fa",
+        "fi",
+        "fr",
+        "fr-CA",
+        "ha",
+        "he",
+        "hi",
+        "hr",
+        "hu",
+        "id",
+        "it",
+        "ja",
+        "ko",
+        "mr",
+        "ms",
+        "nl",
+        "pl",
+        "pt",
+        "ro",
+        "ru",
+        "sk",
+        "sv",
+        "sw",
+        "ta",
+        "te",
+        "th",
+        "tl",
+        "tr",
+        "uk",
+        "ur",
+        "vi",
+        "yo",
+        "zh-Hans",
+        "zh-Hant"
+      ]
+    },
+    "colour": {
+      "type": "string",
+      "pattern": "^#[0-9A-Fa-f]{6}$"
+    }
+  }
+}

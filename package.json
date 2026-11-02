@@ -49,6 +49,7 @@
     "tutor": "npm run build && node scripts/tutor.js",
     "games": "npm run build && node scripts/games.js",
     "concepts": "node scripts/concepts.js",
+    "schemas": "node scripts/schemas.js",
     "documents": "node scripts/documents.js",
     "longtasks": "node scripts/longtasks.js",
     "directory": "node scripts/directory.js",

@@ -49,7 +49,7 @@ docker run -d -p 8080:8080 jean
 
 Settings go in the shell's environment or in a `.env` file beside `compose.yaml`.
 
-**Policy.** Write a `policy.json` beside `compose.yaml` and uncomment the `volumes` lines under `jean`, so it is served at `/srv/policy.json` in place of the image's empty one. It can pin the brain to your AI gateway, deny capabilities, lock rules, replace every outside address, and more ([enterprise.md](../../docs/enterprise.md#policy-model-sketch)). With the empty one, Jean runs as the open version does.
+**Policy.** Write a `policy.json` beside `compose.yaml` and uncomment the `volumes` lines under `jean`, so it is served at `/srv/policy.json` in place of the image's empty one. It can pin the brain to your AI gateway, deny capabilities, lock rules, replace every outside address, and more ([enterprise.md](../../docs/enterprise.md#policy-model-sketch)). With the empty one, Jean runs as the open version does. [examples/enterprise/](../../examples/enterprise/README.md) adds a sign-in and an AI gateway beside this image, and a policy pinning Jean to both.
 
 **Your privacy policy and terms.** The welcome links to `privacy.html` and `terms.html`, which are jean.is's, published by Warehouse SAS. Name your own in the policy, or none with `""`:
 
@@ -65,7 +65,7 @@ CONTENT_SECURITY_POLICY="connect-src 'self' https://ai.corp.example"
 
 List every other address Jean must still reach, such as the mirrors named in `urls` in the policy.
 
-**The gateway.** `GATEWAY_CONFIG` names the addresses Jean is served from, and optionally the hosts it relays to and the apps you registered with their secrets ([gateway.js](../../gateway/gateway.js)). Its secrets stay in this variable, never in a file:
+**The gateway.** `GATEWAY_CONFIG` names the addresses Jean is served from, and optionally the hosts it relays to and the apps you registered with their secrets ([gateway.js](../../gateway/gateway.js), [its schema](../../app/schemas/gateway.schema.json)). Its secrets stay in this variable, never in a file:
 
 ```bash
 GATEWAY_CONFIG='{"origins":["https://jean.corp.example"]}'
