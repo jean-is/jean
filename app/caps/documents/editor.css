@@ -22,8 +22,8 @@
 .doc { flex: 1; min-block-size: 50dvh; padding-block-end: max(5rem, 15dvh); }
 /* Where a block dragged goes, in the look's colour, which keeps its contrast in a dark page and a light one, as tables' (D491). */
 :is(.prosemirror-dropcursor-block, .prosemirror-dropcursor-inline) { background: var(--flame); }
-/* The caret is the document's focus, as in any editor, with a line along the text's start, where the look's ring would frame the whole of it. */
-.doc-wrap > .doc { margin-inline-start: calc(-0.6rem - 2px); padding-inline-start: 0.6rem; border-inline-start: 2px solid transparent; } :root .doc:focus-visible { outline: none; border-radius: 0; border-inline-start-color: var(--ink-faint); }
+/* The caret is the document's focus, as in any editor, and its pane's head says it has the keyboard (dock.css), where the look's ring would frame the whole of it. */
+:root .doc:focus-visible { outline: none; }
 .doc :is(h1, h2) { font-family: var(--display); line-height: 1.2; }
 /* A web bookmark (bookmark.js): a line that is only a web link, as a card, its title over its site; the line asking for an address says so while it is empty,
    and so does the title. */
@@ -123,5 +123,5 @@
 .doc .suggest-row button:hover, .doc .suggest-row button[aria-expanded="true"] { border-color: var(--line-strong); background: var(--room); text-decoration: none; }
 @media (pointer: coarse) { .doc .suggest-row button { min-block-size: 2.75rem; } }
 @media (max-width: 40rem) { .suggest-why { flex-basis: 100%; } }
-@media (forced-colors: active) { .doc { border-inline-start-color: Canvas; } :root .doc:focus-visible { border-inline-start-color: Highlight; } .doc .suggest { border-inline-start-color: Highlight; } .doc .suggest-new { background: Mark; color: MarkText; } .slash-option[aria-selected="true"] { outline-color: Highlight; } .bubble button[aria-pressed="true"] { border-color: Highlight; } .doc .block-selected { outline: 2px solid Highlight; } :is(.prosemirror-dropcursor-block, .prosemirror-dropcursor-inline) { forced-color-adjust: none; background: Highlight; } }
-@media (prefers-contrast: more) { .doc .block-selected { outline: 2px solid var(--flame); } :root .doc:focus-visible { outline: 1px solid var(--ink-faint); outline-offset: 0.5rem; border-radius: 0.25rem; } .doc .suggest-new { text-decoration: underline; } }
+@media (forced-colors: active) { .doc .suggest { border-inline-start-color: Highlight; } .doc .suggest-new { background: Mark; color: MarkText; } .slash-option[aria-selected="true"] { outline-color: Highlight; } .bubble button[aria-pressed="true"] { border-color: Highlight; } .doc .block-selected { outline: 2px solid Highlight; } :is(.prosemirror-dropcursor-block, .prosemirror-dropcursor-inline) { forced-color-adjust: none; background: Highlight; } }
+@media (prefers-contrast: more) { .doc .block-selected { outline: 2px solid var(--flame); } .doc .suggest-new { text-decoration: underline; } }

@@ -4,9 +4,10 @@
 // conversation. A pane's head moves it, a file's as a task's. A click opens a file for a look, in a pane the next click gives the next
 // until it is kept, which goes and comes back with its task. A collection's or a document's pane is its editor, the brain hearing of
 // each one on screen, and opening it again brings its pane forward; a design's is while it is the one on show, one at a time. Without
-// dragging, a task's menu opens it beside, at the line's end: on the left in Arabic, on the right in Japanese.
+// dragging, a task's menu opens it beside, at the line's end: on the left in Arabic, on the right in Japanese. The pane that has the
+// keyboard says so by its head's line alone, whatever it shows.
 import { test, expect } from '@playwright/test'
-import { start, openTasks, addProject, enterProject } from './helpers.js'
+import { start, openTasks, addProject, enterProject, BRAIN_URL } from './helpers.js'
 
 /** Tasks, each a request and its answer under its title, the first opened, a pinned document and a pinned collection, the drawer open. @param {import('@playwright/test').Page} page */
 async function seed(page) {
@@ -268,6 +269,39 @@ test('a pane\'s head moves it, a document\'s as a task\'s: under the conversatio
   const talk = await box(page.locator('.here'))
   await page.mouse.move(talk.x + talk.width / 2, talk.y + 8)
   expect(await page.evaluate(([x, y, uri]) => import('/ui/dock.js').then(({ aim }) => aim(Number(x), Number(y), String(uri))), [talk.x + talk.width / 2, talk.y + talk.height / 2, doc])).toBeNull()
+})
+
+test('the pane that has the keyboard says so by its head\'s line alone, a document\'s as the browser\'s, and none while the box has it', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 })
+  await start(page)
+  const { doc } = await seed(page)
+  await page.evaluate((uri) => import('/ui/preview.js').then(({ preview }) => preview({ uri, name: 'Garden plan.md', title: 'Garden plan', mimeType: 'text/markdown' })), doc)
+  await page.evaluate(() => import('/ui/caps.js').then(({ unlock }) => unlock('browser')))
+  await page.keyboard.press('ControlOrMeta+Shift+KeyB')
+  const written = page.locator('app-preview .pane'), browser = page.locator('app-browser .browser'), words = written.getByRole('textbox')
+  await expect(words).toContainText('North bed: beans.')
+  await expect(browser).toBeVisible()
+  /** Which panes' heads draw their line thicker, and how the document's text shows the keyboard: no ring, no line of its own. */
+  const marks = () => page.evaluate(() => ({
+    heads: [...document.querySelectorAll('.pane')].filter((pane) => getComputedStyle(/** @type {Element} */ (pane.querySelector(':scope > .pane-head'))).boxShadow !== 'none').map((pane) => pane.ariaLabel),
+    text: ((style) => [style.outlineStyle, style.borderInlineStartStyle])(getComputedStyle(/** @type {Element} */ (document.querySelector('.doc')))),
+  }))
+  await words.getByText('North bed: beans.').click()
+  await expect.poll(marks).toEqual({ heads: ['Garden plan'], text: ['none', 'none'] })
+  // In the browser, its address, then the page it frames, which :focus-within never counts.
+  const address = browser.locator('.browser-bar input')
+  await address.fill(BRAIN_URL.replace(/\/v1$/, '/site/bakery.html'))
+  await address.press('Enter')
+  await expect(page.frameLocator('.browser-host').frameLocator('iframe').locator('h1')).toHaveText('The bakery')
+  await address.focus()
+  await expect.poll(marks).toEqual({ heads: ['Browser'], text: ['none', 'none'] })
+  await words.getByText('North bed: beans.').click()
+  await expect.poll(marks).toEqual({ heads: ['Garden plan'], text: ['none', 'none'] })
+  const framed = await box(browser.locator('.browser-host'))
+  await page.mouse.click(framed.x + framed.width / 2, framed.y + framed.height / 2)
+  await expect.poll(marks).toEqual({ heads: ['Browser'], text: ['none', 'none'] })
+  await page.locator('#prompt').focus()
+  await expect.poll(marks).toEqual({ heads: [], text: ['none', 'none'] })
 })
 
 test('a click opens a pane for a look, which the next click gives the next, until it is kept; one already on screen comes forward', async ({ page }) => {

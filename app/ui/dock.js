@@ -116,6 +116,10 @@ export function leave(element) {
   place(element, false)
   panes.delete(names.get(element) ?? '')
 }
+// The pane that has the keyboard, which its head's line says (dock.css), a page framed in it too: :focus-within never counts a
+// frame's, but the window's blur comes with the frame as the element active.
+const keyed = () => { for (const element of panes.values()) element.toggleAttribute('data-keys', element.contains(document.activeElement)) }
+document.addEventListener('focusin', keyed), document.addEventListener('focusout', () => setTimeout(keyed)), addEventListener('blur', keyed)
 
 /**
  * A pane opens, where it was if the screen has a place for it, else where opening puts it; or closes, giving its room back and focus

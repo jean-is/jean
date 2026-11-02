@@ -748,9 +748,9 @@ test('the terminal: the user’s commands run on the conversation’s computer, 
   await settings.getByRole('button', { name: /^Terminal/ }).click()
   await expect(terminal).toBeVisible()
   await expect(terminal.locator('.terminal-entry')).toHaveCount(5)
-  // The whole pane is ringed while it has the keyboard, not the line; clear clears it, as Ctrl+L does.
+  // Its head's line says it has the keyboard, as every pane's does, nothing ringed, the line no more than the pane; clear clears it, as Ctrl+L does.
   await expect(line).toBeFocused()
-  expect(await terminal.evaluate((pane) => [getComputedStyle(pane).outlineStyle, getComputedStyle(pane.querySelector('textarea') ?? pane).outlineStyle])).toEqual(['solid', 'none'])
+  expect(await terminal.evaluate((pane) => [getComputedStyle(pane).outlineStyle, getComputedStyle(pane.querySelector('textarea') ?? pane).outlineStyle, getComputedStyle(pane.querySelector('.pane-head') ?? pane).boxShadow !== 'none'])).toEqual(['none', 'none', true])
   await line.fill('clear')
   await line.press('Enter')
   await expect(terminal.locator('.terminal-entry')).toHaveCount(0)
