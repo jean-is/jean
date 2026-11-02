@@ -388,7 +388,7 @@ export function create(box, { name, path, markdown: text, pictures, write, keep,
   /** The change the bar's arrows went to last. @type {number | null} */
   let current = null
 
-  /** Jean's changes decided all at once, which Undo or ⌘Z gives back while the document stays as that left it. @type {{ kind: string, was: import('./suggest.js').Change[], doc: PMNode, had: typeof tally } | null} */
+  /** Jean's changes decided all at once, which Undo or ⌘Z gives back until the document changes. @type {{ kind: string, was: import('./suggest.js').Change[], doc: PMNode, had: typeof tally } | null} */
   let last = null
   const back = () => {
     if (last?.doc !== view.state.doc) return false

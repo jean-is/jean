@@ -377,7 +377,7 @@ export function blocks({ label, announce, kinds, adds, mac }) {
           button.addEventListener('click', act(run))
           return el('li', { role: 'none' }, button)
         }
-        /** Some of the menu's items, a list, under their name if they have one, if there are any. @param {string} name @param {HTMLElement[]} items */
+        /** Some of the menu's items as a list, under their name if any. @param {string} name @param {HTMLElement[]} items */
         const group = (name, items) => (items.length ? [el('ul', { role: 'group', ...(name && { 'aria-label': label(name) }) }, ...(name ? [el('li', { class: 'block-menu-head', 'aria-hidden': 'true' }, label(name))] : []), ...items)] : [])
         menu.setAttribute('aria-label', label('blockMenu'))
         menu.replaceChildren(

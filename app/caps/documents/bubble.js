@@ -137,7 +137,7 @@ export function bubble({ formats, link, href, label, mac, tabbable, wrong }) {
 
       bar.addEventListener('keydown', (event) => {
         if (event.isComposing) return
-        // Shift+Tab from its first stop goes back to the document, which opened it, not to what the document holds last.
+        // Shift+Tab from its first stop goes back to the document that opened it.
         if (event.key === 'Tab' && event.shiftKey && (event.target === address || !box.contains(/** @type {Node} */ (event.target)))) return event.preventDefault(), editor.focus()
         if (event.target === address) {
           if (event.key !== 'Enter' && event.key !== 'Escape') return

@@ -15,7 +15,7 @@ export function langOf(text) {
   return one !== page && new Set(LOCALES.map((hint) => languageOf(text, hint))).size < 3 ? one : ''
 }
 
-/** A box over a document, shown or not: next after it in the order of focus, after its pane's view, drawn in the top layer, whatever the pane's look. @param {HTMLElement} box @param {HTMLElement} doc @param {boolean} on */
+/** A box over a document, shown or not: next after its pane's view in the order of focus, in the top layer. @param {HTMLElement} box @param {HTMLElement} doc @param {boolean} on */
 export function pop(box, doc, on, view = doc.closest('.view')) {
   if (on && view && box.parentElement !== view.parentElement) view.after(box)
   box.hidden = !on

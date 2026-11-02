@@ -146,7 +146,7 @@ export const inPlace = new Plugin({
         if (node.isText && parent?.type !== schema.nodes.title && !node.marks.some((mark) => mark.type.spec.code || mark.type === schema.marks.link)) {
           for (const tag of /** @type {string} */ (node.text).matchAll(TAG)) list.push(Decoration.inline(pos + (tag.index ?? 0), pos + (tag.index ?? 0) + tag[0].length, { class: 'tag', 'data-tag': tag[0] }))
         }
-        // A cell of a column an answer lines up at its end, its amounts', which the table doesn't line up itself; heads where its first column names its rows.
+        // A cell of a column an answer lines up at its end, its amounts', which the table doesn't line up itself; row heads by namesRows().
         const $cell = parent?.type === schema.nodes.table_row ? state.doc.resolve(pos) : null, row = $cell?.index(-1), token = $cell && tokenOf($cell.node(-1))
         if (token && !node.attrs.align && aligned(token)[i] === 'right') list.push(Decoration.node(pos, pos + node.nodeSize, { 'data-align': 'right' }))
         if (token && (!row || !i) && (token.heads ??= namesRows(token.header[0]?.text ?? '', token.rows.map((/** @type {any[]} */ cells) => cells[0]?.text.trim() ?? '')))) list.push(Decoration.node(pos, pos + node.nodeSize, row ? { role: 'rowheader' } : { scope: 'col' }))
