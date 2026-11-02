@@ -182,7 +182,7 @@ class Page extends Element {
     }
     return html`<h1 class="conversation-title">${t('creations.title')}</h1>
     <div class="creations-bar">
-      ${here.length > 4 || words.value ? html`<label class="creations-find" for="creations-find">${icons.search}<input id="creations-find" type="search" dir="auto" placeholder=${t('creations.find')} title=${t('creations.find')} .value=${words.value} @input=${(/** @type {InputEvent} */ e) => { words.value = /** @type {HTMLInputElement} */ (e.target).value }}></label>` : nothing}
+      ${here.length > 4 || words.value ? html`<label class="creations-find" for="creations-find">${icons.search}<input id="creations-find" type="search" dir="auto" placeholder=${t('creations.find')} aria-label=${t('creations.find')} title=${t('creations.find')} .value=${words.value} @input=${(/** @type {InputEvent} */ e) => { words.value = /** @type {HTMLInputElement} */ (e.target).value }}></label>` : nothing}
       ${here.length > 1 && kinds.length > 1 ? choice('creations-kinds', SHOW, t('creations.showing', { what: t(picked ? `creations.kind.${picked.id}` : 'creations.all') }), [['', t('creations.all'), count.format(here.length)],
         ...kinds.map((one) => [one.id, t(`creations.kind.${one.id}`), count.format(here.filter((item) => item.kind === one).length)])], picked?.id ?? '', (one) => { kind.value = one }) : nothing}
       ${here.length > 1 ? choice('creations-order', SORT, t('creations.sorted', { how: t(ORDERS[order.value]) }), Object.entries(ORDERS).map(([one, label]) => [one, t(label)]), order.value, (one) => { order.value = one }) : nothing}
