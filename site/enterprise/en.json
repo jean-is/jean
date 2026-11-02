@@ -237,7 +237,7 @@
     ],
     [
       "Is it accessible?",
-      "Partly. Our own audit against RGAA 4.1.2 met 68.2% of its criteria, and the statement lists what falls short.",
+      "Partly. Our own audit against RGAA 4.1.2 met 80.7% of its criteria, and the statement lists what falls short.",
       "not"
     ],
     [
@@ -368,7 +368,7 @@
     ],
     [
       "Accessibility statement",
-      "Partially conformant with RGAA 4.1.2 by our own audit: 68.2% of criteria met, and what isn’t accessible yet"
+      "Partially conformant with RGAA 4.1.2 by our own audit: 80.7% of criteria met, and what isn’t accessible yet"
     ],
     [
       "Penetration test brief",

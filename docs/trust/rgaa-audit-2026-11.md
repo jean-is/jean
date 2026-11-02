@@ -1,12 +1,12 @@
 # RGAA 4.1.2 audit of jean.is
 
-Internal audit by Warehouse SAS, 1 and 2 November 2026. An AI, Claude by Anthropic, made the tests and the first judgments. Separate AI readers, given none of those judgments and told of no fix, then judged the criteria again in five rounds on frozen copies, and the owner adopted their verdicts. No person has checked the judgments or tested with a screen reader. Tested last: main at a262502b, frozen to a copy with every result removed.
+Internal audit by Warehouse SAS, 1 and 2 November 2026. An AI, Claude by Anthropic, made the tests and the first judgments. Separate AI readers, given none of those judgments and told of no fix, then judged the criteria again in six rounds on frozen copies, and the owner adopted their verdicts. No person has checked the judgments or tested with a screen reader. Tested last: main at 81c43b9b, frozen to a copy with every result removed.
 
 ## Result
 
-**60 of 88 applicable criteria met: 68.2%, which is partially conformant.** 25 not met, 3 not verified and counted as not met, 18 not applicable, out of 106.
+**71 of 88 applicable criteria met: 80.7%, which is partially conformant.** 14 not met, 3 not verified and counted as not met, 18 not applicable, out of 106.
 
-Of the 60 met, 19 rest on the second read, 12 on the third, 18 on the fourth, 8 on the fifth and 3 on the sixth. If 17 of the met were wrong, the rate would fall under 50% and the status would be “not conformant”. The grid is [rgaa-audit-2026-11.xlsx](rgaa-audit-2026-11.xlsx).
+Of the 71 met, 19 rest on the second read, 12 on the third, 18 on the fourth, 8 on the fifth, 3 on the sixth and 11 on the seventh. If 28 of the met were wrong, the rate would fall under 50% and the status would be “not conformant”. The grid is [rgaa-audit-2026-11.xlsx](rgaa-audit-2026-11.xlsx).
 
 ## How it was counted
 
@@ -20,10 +20,11 @@ For each criterion, the last verdict counts.
 | Fourth read | The 34 that fixes claimed to close, three AI readers told of no fix | a41d8634 | 18 stood, 16 failed: 49 of 88 |
 | Fifth read | The 19 that the next fixes claimed to close, three AI readers told of no fix | 7cb64458 | 10 stood, 9 failed: 59 of 88 |
 | Sixth read | The 11 that the fixes after those claimed to close, three AI readers told of no fix | a262502b | 3 stood, 8 failed: 60 of 88 |
+| Seventh read | The 24 that a batch of fixes claimed to close, four AI readers told of no fix | 81c43b9b | 11 stood, 13 failed: 71 of 88 |
 
 Readers differ, so a “met” isn’t final: the sixth read failed 8.10, which the fifth had passed, on code unchanged between them, and failed 9.1 partly on card titles that had been there at the fifth. Part of what moves between reads is the reading, not the code, so this share has a margin no single read shows.
 
-Criteria met on an earlier read weren’t read again after later fixes, so one could have regressed. Not met without a reader’s verdict: 7.3, 9.2, 10.12, 12.1, 13.10 on the first reading, and 10.7, judged on the current tree by the session that ran the second read. A flowchart, a map and an answer with sources were added to the sample as gaps the readers judged, and marked NW on the criteria they weren’t walked for. No reader’s “not met” went back to met without a later reader’s verdict.
+Criteria met on an earlier read weren’t read again after later fixes, so one could have regressed. Every criterion not met rests on a reader’s verdict. A flowchart, a map and an answer with sources were added to the sample as gaps the readers judged, and marked NW on the criteria they weren’t walked for. No reader’s “not met” went back to met without a later reader’s verdict.
 
 | Theme | Met | Not met | Not verified | Not applicable |
 |---|---|---|---|---|
@@ -31,97 +32,17 @@ Criteria met on an earlier read weren’t read again after later fixes, so one c
 | 2. Frames | 2 | 0 | 0 | 0 |
 | 3. Colours | 0 | 3 | 0 | 0 |
 | 4. Multimedia | 5 | 0 | 1 | 7 |
-| 5. Tables | 3 | 1 | 0 | 4 |
+| 5. Tables | 4 | 0 | 0 | 4 |
 | 6. Links | 2 | 0 | 0 | 0 |
 | 7. Scripts | 2 | 2 | 1 | 0 |
-| 8. Mandatory elements | 7 | 3 | 0 | 0 |
-| 9. Structure | 1 | 3 | 0 | 0 |
-| 10. Presentation | 9 | 5 | 0 | 0 |
-| 11. Forms | 9 | 4 | 0 | 0 |
-| 12. Navigation | 8 | 3 | 0 | 0 |
+| 8. Mandatory elements | 8 | 2 | 0 | 0 |
+| 9. Structure | 2 | 2 | 0 | 0 |
+| 10. Presentation | 12 | 2 | 0 | 0 |
+| 11. Forms | 11 | 2 | 0 | 0 |
+| 12. Navigation | 11 | 0 | 0 | 0 |
 | 13. Consultation | 7 | 1 | 1 | 3 |
 
 ## Non-conformities
-
-### N14. The homepage’s content is outside <main>
-
-Under the first screen, about 7,100 characters of the homepage sit outside <main>, which holds about 250. On the app’s first screen the legal links aren’t in a <footer>.
-
-**Fix:** Make the page under the first screen the main content while it shows. A <footer> around the legal links, with the rules that lean on their <p>.
-
-**Criteria:** 9.2. **Code:** `site/home/page.js:243`, `app/ui/composer.js:149`.
-
-### N21. A design’s words overlap with more text spacing
-
-With RGAA’s text spacing, a design’s lines run over one another on its page.
-
-**Fix:** Let a part grow with its words, or keep the page’s words in a list beside it.
-
-**Criteria:** 10.12. **Code:** `app/caps/designs/`.
-
-### N24. One way around the app until search is found
-
-The site’s pages have their menu and a site map. In the app, the tasks in the drawer are the only way around until search is found, after ten tasks.
-
-**Fix:** Search that is always there.
-
-**Criteria:** 12.1. **Code:** `app/ui/discovery.js`.
-
-### N25. Dragging only, to move panes and columns
-
-A pane’s head moves it and a column’s head reorders it by dragging alone, with no key and no single press. A pane’s width has keys but needs a drag with the pointer.
-
-**Fix:** “Move” in the pane’s and the column’s menus (left, right, below), and width steps a press can reach.
-
-**Criteria:** 7.3, 13.10. **Code:** `app/ui/dock.js:217`, `app/ui/dock.js:301`, `app/caps/tables/view.js:322`.
-
-### N34. States shown by colour alone
-
-A collection’s Filter, Sort and Settings buttons say a rule is on only by turning gold, at 1.27:1, with the same name and no pressed state. Search’s matched words are a background alone. Which cell of a row Jean changed was a tint alone when read, and now has a mark in its corner; the rest stands.
-
-**Fix:** aria-pressed and a mark on the tools. Bold or an underline on the words found.
-
-**Criteria:** 3.1. **Code:** `app/caps/tables/tables.css:5`, `app/caps/tables/view.js:170`, `app/caps/find/find.css`.
-
-### N39. Row heads in tables aren’t headers
-
-A table written in Markdown has <th> on its first row only, so its first column is <td> whatever it holds: in answers and documents. A collection’s rows are <td>, its name column included. Comparisons are right.
-
-**Fix:** <th scope="row"> where the first column names its rows, and on a collection’s name column.
-
-**Criteria:** 5.6. **Code:** `app/ui/markdown.js:113`, `app/caps/tables/view.js:417`.
-
-### N44. A document’s other languages aren’t marked
-
-In a document, English, Arabic and Japanese passages carry no lang, so all are declared the page’s language, though Jean can tell them apart as it does for answers.
-
-**Fix:** lang on each block from the language Jean detects.
-
-**Criteria:** 8.7. **Code:** `app/caps/documents/editor.js`, `app/ui/language.js:71`.
-
-### N47. Menus not marked as lists
-
-Settings’ sections, the homepage’s strip and the site’s language links are lists of links or buttons with no list markup, and so are a collection’s menus and Create’s. A board’s cards give label and value in spans, not a description list.
-
-**Fix:** <ul> in each menu, or a menu role where it is one, and <dl> on a card.
-
-**Criteria:** 9.3. **Code:** `app/ui/dialogs.js`, `site/home/page.js`, `site/site.js:320`, `app/caps/tables/view.js`.
-
-### N51. A document’s focus is weak
-
-A document’s text has its outline removed and shows focus by its caret and a hairline under its pane’s head. The reader passed the stronger frame this replaced; judged not met on the current tree after the readers finished, by the session that ran them.
-
-**Fix:** A visible focus style on the text itself, in a form the owner accepts.
-
-**Criteria:** 10.7. **Code:** `app/caps/documents/editor.css`.
-
-### N57. Fields labelled in ways RGAA’s test doesn’t list
-
-Wrapping labels with no for: the key form, the first brain’s forms, the lock’s setting, a design’s fields, a collection’s settings, most of Appearance’s radios. Named by aria-label alone with no visible words: a filter rule’s fields, the bubble’s address. A screen reader gets a name for every field: this fails the test’s words and voice control more than it silences anyone.
-
-**Fix:** for and id on each label, and a title or visible words on the others.
-
-**Criteria:** 11.1. **Code:** `site/enterprise-key/page.js`, `app/ui/brain-pages.js:266`, `app/caps/tables/view.js:162`.
 
 ### N59. Grouped lists built with a listbox
 
@@ -131,109 +52,109 @@ Search’s results and the box’s / menu group options with role="group" inside
 
 **Criteria:** 11.8. **Code:** `app/caps/find/find.js:283`, `app/ui/complete.js:398`.
 
-### N62. Wrong values get no help
+### N90. A document’s changed words are a tint alone
 
-A wrong value in a collection’s mail, link or phone column empties the cell and shows a short toast, with no format and no example, the keyboard already on the next cell. A wrong recovery code doesn’t say what form it takes.
+Inside a line of a document with Jean’s changes, the words Jean added or altered are marked by a pale tint alone, 1.3:1 against the page; the underline shows only when more contrast is asked for. The gold bar and the row of buttons say a block changed, not which words.
 
-**Fix:** Keep the value, mark it invalid, and say the form expected beside it.
+**Fix:** An underline on the changed words at all times, kept calm.
 
-**Criteria:** 11.11. **Code:** `app/caps/tables/view.js:123`, `app/caps/lock/lock.js`.
+**Criteria:** 3.1. **Code:** `app/caps/documents/editor.css:114`, `app/caps/documents/suggest.js:204`.
 
-### N63. Deleting acts at once
+### N91. Two small words a shade under AA
 
-Deleting a creation has a five-second Undo that doesn’t say how long it lasts, and focus falls to the page. Deleting a column or a row has no message, though ⌘Z brings a column back. Reject all has no confirmation, and ⌘Z didn’t restore it. Those are menus, not forms: a strict reading would pass them.
+On the families page, the drawn box’s “Jean est une IA et peut se tromper” sits on its own drop shadow at 4.31:1 to 4.51:1. In an answer, while a comparison’s head is stuck under the toolbar’s fade, the top of its “Recommandé” tag falls to 3.9:1 to 4.1:1. Both rest on measuring the darkest pixel behind the letters.
 
-**Fix:** Say how long Undo lasts and keep it while it has focus. A message and an Undo on columns and rows, and on Reject all.
+**Fix:** The family box’s line off its shadow or in the softer ink, and the toolbar’s fade kept off a stuck table head.
 
-**Criteria:** 11.12. **Code:** `app/ui/creations-page.js:72`, `app/caps/tables/view.js`.
+**Criteria:** 3.2. **Code:** `site/family/family.css`, `app/caps/layouts/layouts.css`.
 
-### N73. A design’s words shrink under zoom
+### N92. The message box’s focus in two looks
 
-A design’s words are sized to a sheet fitted to the window, so zooming the browser makes them smaller on screen: 22.7 pixels at 100%, 14.1 at 200%. The same words can be read in its fields.
+In the Mondrian look the box shows the keys only by a pale yellow halo, 1.44:1 against the page, its black border the same in both states; in the Terminal look, focus only darkens a 1px border, a change of 1.65:1.
 
-**Fix:** Under zoom the sheet keeps its size and scrolls in its stage.
+**Fix:** A ring of at least 3:1 on the box in every look.
 
-**Criteria:** 10.4. **Code:** `app/caps/designs/page.js:52`, `app/caps/designs/designs.css:46`.
+**Criteria:** 3.3, 10.7. **Code:** `app/ui/looks/mondrian.css:65`, `app/ui/looks/terminal.css:79`, `app/ui/style.css:539`.
 
-### N80. Search and the legal links have no landmark
+### N93. Cards that take the keys out of sight
 
-Search’s button has no role="search", and the app’s legal line no contentinfo, title or link to it.
+In Creations beside a pane, with an offer showing, a card that takes the keys can stay hidden under the sticky offer and the message box: nothing scrolls it into view.
 
-**Fix:** A search landmark, and the legal line in a <footer>.
+**Fix:** Scroll padding for the sticky box and offer in Creations, as in a task.
 
-**Criteria:** 12.6. **Code:** `app/ui/shell.js:72`, `app/ui/composer.js:149`.
+**Criteria:** 10.7. **Code:** `app/ui/creations.css`, `app/ui/style.css:71`.
 
-### N81. Tab lands where nothing shows
+### N94. Pointing at a slide’s part takes a click
 
-On a new profile the homepage stays in the Tab order under a document’s or a collection’s pane: 64 presses to reach the pane, 43 of them hidden. The tour on the Excel page is non-modal, so Tab goes on to the page behind it. In a long answer an offer’s buttons can land behind the message box. A design’s part menu and a document’s bubble sit away from what opens them.
+A click on a slide’s words points Jean at that part, a ring and a note to the brain; from the keyboard nothing points a part, and no other control does it.
 
-**Fix:** The homepage inert while covered, the tour a modal dialog, a margin clear of the box, and those menus next in order.
+**Fix:** A slide’s parts reachable by the keyboard, Enter pointing one, or a command that does.
 
-**Criteria:** 12.8. **Code:** `site/demo.js:61`, `app/ui/home.js`, `app/ui/style.css:71`, `app/caps/documents/bubble.js:90`.
+**Criteria:** 7.3. **Code:** `app/caps/slides/slides.js:162`, `app/caps/slides/slides.js:259`.
 
-### N82. What Jean would remove fades out, and a hovered menu row’s hint falls short
+### N95. The demonstrations don’t say what they replay
 
-A block Jean proposes to remove starts at 4.67:1 and fades to nothing, and a long one is cut at 4.5em, so its end can’t be read before accepting or rejecting: 1.81:1 falling to 1.01:1 by day, 2.24:1 falling to 1.01:1 by night. In a menu, a hovered row’s shortcut or value is 4.31:1 by day.
+On the help article and the Excel page, pressing the demonstration’s button replays a task whose “Réflexion…” and “Répondu par…” sit in a frame with no live region, and the button hides itself, focus falling to the page.
 
-**Fix:** No fade and no cut on a removed block, keeping its strike and dashed bar, and the softer ink on a hovered menu row’s shortcut and value.
+**Fix:** The app’s status region in the demonstration’s frame, and the button kept with the keys.
 
-**Criteria:** 3.2. **Code:** `app/caps/documents/editor.css:115`, `app/ui/style.css:607`, `app/ui/style.css:698`.
+**Criteria:** 7.5. **Code:** `app/ui/demo.js:118`, `app/demo.html`.
 
-### N83. The ring on a design’s part can match its page
+### N96. English in French pages unmarked
 
-A part of a design shows focus and selection in the look’s ring or the accent, whatever the page’s colour: by night on a pale page 1.01:1 to 1.61:1, by day on a dark one 1.19:1 to 2.42:1. By night on a pale page, the common case, a keyboard user can’t see which part has focus.
+An answer takes one language for the whole of it, so its English first line reads as French; search’s English extracts, the titles of English decks, designs and tasks, and a document’s short English heading carry no lang.
 
-**Fix:** A ring of two tones on a design’s part, so that one always contrasts with the page.
+**Fix:** lang per block of an answer, and on the snippets and names whose language Jean knows or detects surely.
 
-**Criteria:** 3.3. **Code:** `app/caps/designs/designs.css:66`, `app/ui/looks/human.css:82`.
+**Criteria:** 8.7. **Code:** `app/caps/made/made.js:256`, `app/caps/find/find.js:272`, `app/ui/preview.js:158`, `app/ui/inbox.js:77`.
 
-### N84. Messages still silent or under the wrong role
+### N97. dir="auto" by the letter
 
-A search that finds nothing in Creations or a collection says so with no live role, unlike the app’s own search. So do a design’s check that a weekday doesn’t fit its date, and a score’s percent while its sounds load. A chart or a score that can’t be drawn says so in a status, where the test asks for an alert.
+The app sets dir="auto" on the box, requests, answers, titles and search’s options; RGAA’s glossary knows only ltr and rtl. In the sample it always resolves to the direction around it, so nobody loses anything.
 
-**Fix:** role="status" in place before the words on a search’s and a score’s, role="alert" on the design’s check and a failed drawing.
+**Fix:** The resolved direction written, from the text’s first strong letter.
 
-**Criteria:** 7.5. **Code:** `app/ui/creations-page.js:195`, `app/caps/tables/view.js:421`, `app/caps/designs/view.js:241`, `app/caps/scores/scores.js:134`, `app/caps/charts/charts.js:148`.
+**Criteria:** 8.10. **Code:** `app/ui/composer.js:116`, `app/ui/chat.js`, `app/ui/inbox.js:77`, `app/caps/find/find.js:272`.
 
-### N85. Jean’s own words under a design’s or a deck’s language
+### N98. The drawer isn’t navigation
 
-Inside a design in English, Jean’s French names for its parts (“Titre, …”, “À regarder : Quand”) fall under the design’s lang="en", and so does a slide diagram’s alternative in a deck. The reader calls that code not pertinent; another might file this under 8.7 and pass 8.8.
+The drawer that lists the tasks, New task and Creations, the app’s way between its views, is a complementary region, not a nav, while Settings’ column of sections is a nav.
 
-**Fix:** The interface’s lang on a design’s controls and on a deck diagram’s alternative.
+**Fix:** The drawer’s tasks and places in a nav named Tasks.
 
-**Criteria:** 8.8. **Code:** `app/caps/designs/view.js:324`, `app/caps/designs/page.js:57`, `app/caps/slides/slides.js:73`.
+**Criteria:** 9.2. **Code:** `app/ui/shell.js:44`.
 
-### N86. Words with no direction of their own
+### N99. A drawn profile card’s pairs
 
-On a left-to-right page, the profile menu’s names of right-to-left languages have no dir. On the homepage in Arabic, a few Latin words (ChatGPT, Claude, Copilot, PDF, PowerPoint) and gateway.ai have none. All read correctly under Unicode’s algorithm: this fails by the letter. The fifth read passed this criterion on the same code.
+On the families page, the profile card gives each label and its value in spans in a paragraph, where the rest of the site uses a description list.
 
-**Fix:** dir on the profile menu’s language buttons, and on those words.
+**Fix:** A dl, a dt and a dd per row.
 
-**Criteria:** 8.10. **Code:** `app/ui/inbox.js:240`, `site/home/ar.json:70`, `site/home/page.js:210`, `site/home/page.js:123`.
+**Criteria:** 9.3. **Code:** `site/family/page.js:124`.
 
-### N87. Card titles that aren’t headings
+### N100. One look’s box over the note, at 320 pixels
 
-On the comparisons’ page five cards, and on the page for IT nine, are titled by a <b> inside a link, in the headings’ face, with no heading under their section’s. Cards beside them that look the same use <h3>. A reader may call these the link’s first words: this rests on one reading.
+In the Mondrian look at 320 and 375 pixels wide, the box’s 6px border covers half of “Jean est une IA et peut se tromper” under it, at every scroll position.
 
-**Fix:** <h3> on each card’s title.
+**Fix:** The note clear of the box in that look’s narrow layout.
 
-**Criteria:** 9.1. **Code:** `site/compare/page.js:65`, `site/enterprise/page.js:153`.
+**Criteria:** 10.11. **Code:** `app/ui/looks/mondrian.css:64`, `site/home/home.css`.
 
-### N88. Words gone or pushed aside at 320 pixels
+### N101. Two fields without a name RGAA lists
 
-At 320 wide, “Jean is AI and can make mistakes” and the legal links under the box aren’t shown, in every task as jean.is serves it. The comparisons’ page hides its table’s heads, with the products each kind stands for. Creations hides what each kind is for once one exists. A design’s versions run in a sideways strip, four of ten showing whole, and a file’s card cuts its name and size with no way to read them.
+Appearance’s text size readout, an output, has no label of any kind; a design’s layout choices are radios named by aria-label alone, with no title and no visible name. A page a brain wrote has a wrapping label, which is the brain’s.
 
-**Fix:** Hide those lines on the first screen alone, show each kind’s products and words at narrow widths, and let a design’s versions and a file’s card wrap.
+**Fix:** aria-labelledby on the readout, and a title on each layout choice.
 
-**Criteria:** 10.11. **Code:** `site/home/home.css:283`, `site/compare/compare.css:132`, `app/ui/creations.css:64`, `app/caps/designs/designs.css:57`, `app/caps/made/made.css:15`.
+**Criteria:** 11.1. **Code:** `app/ui/look-page.js:80`, `app/caps/designs/view.js:300`.
 
-### N89. A source’s tip on the comparisons’ page ignores Escape
+### N102. A map turns and tilts with two fingers
 
-On the comparisons’ page, a source number’s tip covers the words around it, and Escape does nothing: it goes only when the pointer or focus moves. Product pages have this right. One reading would also count the homepage’s tiles, whose panel changes as a pointer crosses them, with no Escape.
+A map keeps its two-finger rotate and tilt and its right-drag rotate, and its compass is hidden, so there is no one-tap way to turn it or set it straight. Zoom has buttons.
 
-**Fix:** The product pages’ Escape script on this page too, and a press rather than a pointer’s passing on the tiles.
+**Fix:** Turning and tilting off, or the compass shown.
 
-**Criteria:** 10.13. **Code:** `site/compare/page.js`, `site/compare/product.js:136`, `app/ui/tiles.js:9`.
+**Criteria:** 13.10. **Code:** `app/caps/interactive/map.js:110`.
 
 ## Found and fixed in this audit
 
@@ -325,6 +246,32 @@ What the reads found, and fixed since. A later read may fail the same criterion 
 | New | A deck’s bar and a creation’s name could run out of a narrow window | They wrap. |
 | New | The primary button fell short of AA under the pointer | It keeps its contrast. |
 | New | Latin words on the homepage in Arabic ran in the page’s direction, and an answer mixing scripts took one direction | Most Latin runs carry their direction, N86 naming the rest, and each block of an answer its own. |
+| N14 | The homepage’s content is outside <main> | Under the first screen, the homepage is the one main landmark while it shows; the app’s legal links are a footer. |
+| N21 | A design’s words overlap with more text spacing | A design’s words are fitted again, on screen, when a reader’s text spacing makes them overflow. |
+| N24 | One way around the app until search is found | Search is there from the first task, in the bar and by ⌘K. |
+| N25 | Dragging only, to move panes and columns | A pane’s head has a menu that moves it before, after or under the task and sizes it; a column’s and a row’s menus move them. |
+| N34 | States shown by colour alone | A collection’s Filter and Settings say how many rules are on, in ink, with a pressed state; search’s found words are bold too. A document’s changed words: N90. |
+| N39 | Row heads in tables aren’t headers | Tables in answers and documents give row heads where the first column names its rows, and a collection’s name column is one. |
+| N44 | A document’s other languages aren’t marked | A document’s block carries its language when Jean is sure of it, never in the file. English elsewhere: N96. |
+| N47 | Menus not marked as lists | Menus, Settings’ sections, the homepage’s strip and the site’s languages are lists, and a board’s card a description list. The families page’s card: N99. |
+| N51 | A document’s focus is weak | A document shows it has the keys with a line along its text’s edge. |
+| N57 | Fields labelled in ways RGAA’s test doesn’t list | Every label has for, and a field named by aria-label alone has a title. Two left: N101. |
+| N62 | Wrong values get no help | A value a collection’s column refuses stays, marked invalid, with an example; a recovery code’s form is said beside it. |
+| N63 | Deleting acts at once | Undo says how long it lasts and holds while the keyboard is on it; a deleted row or column and Accept all or Reject all have one. |
+| N73 | A design’s words shrink under zoom | Under a browser’s zoom, a design keeps its size and scrolls in its stage. |
+| N80 | Search and the legal links have no landmark | Search is a landmark, and the legal links a footer. |
+| N81 | Tab lands where nothing shows | The homepage is out of the keys’ way under a pane, the Excel page’s tour is a modal dialog, an offer scrolls clear of the box, and a menu follows what opens it. |
+| N82 | What Jean would remove fades out, and a hovered menu row’s hint falls short | What Jean would remove keeps its words whole, at AA, struck through; a hovered menu row’s hint is in the softer ink. |
+| N83 | The ring on a design’s part can match its page | A design’s part has a two-tone ring that stands out on any page. |
+| N84 | Messages still silent or under the wrong role | Searches that find nothing, a score’s sounds loading and a design’s check are said in the right roles. |
+| N85 | Jean’s own words under a design’s or a deck’s language | Jean’s controls in a design and a deck diagram’s description carry the interface’s language. |
+| N86 | Words with no direction of their own | The profile menu’s languages and the Arabic homepage’s Latin words carry their direction. dir="auto" elsewhere: N97. |
+| N87 | Card titles that aren’t headings | Card titles on the comparisons’ page, the page for IT and the public sector’s are headings. |
+| N88 | Words gone or pushed aside at 320 pixels | At 320 pixels the comparisons’ heads, Creations’ words, a design’s versions and a file’s card all show. One look’s box over the note: N100. |
+| N89 | A source’s tip on the comparisons’ page ignores Escape | The comparisons’ page hides a source’s tip with Escape, and the homepage’s tiles change on a press. |
+| New | There was no way to ask for more contrast in Jean itself, only through the system | Settings › Appearance has Contrast: Auto, Usual or More, which turns the rules for more contrast on. |
+| New | Room’s red for danger was 2.7:1 by day | It has a day red, 5.6:1. |
+| New | A saved Word or Excel file had no title | Each carries its name as its title. |
 
 ## Not verified
 
@@ -343,9 +290,9 @@ Noted by the readers, and not counted unless a page above names them. For a crit
 - **1.9:** If P06's drawing were counted as a captioned image, it would fail 1.9.1: figure has neither role nor aria-label. I don't count it: the test names image tags.
 - **2.1:** When the computer capability runs code it adds <iframe sandbox='allow-scripts' src='sandbox.html' hidden> with no title (app/ui/sandbox.js:62-65; seen live on 'savings over 10 years', reader-d/out/X-savings.json). Extensions do the same (app/caps/extensions/extensions.js:109-112). These are display:none, so assistive technology cannot reach them, the same effect that note 2 of the glossary's 'Titre de cadre' gives aria-hidden, though that note names only aria-hidden; I would not fail them, but a strict reader of 2.1.1 could, and the fix is one word. Frames in the browser, a saved page and a game have titles by their code (app/caps/browser/browser.js:239,315,529; app/ui/view.js:208; app/caps/games/frame.js:112). The share viewer's frame has title='' (app/caps/share/view.js:37), which has the attribute but says nothing (2.2).
 - **2.2:** Outside the sample: a small app in an answer is always titled 'Page interactive' and a map 'Carte', accurate as to kind, the same for every one (out/X-diagram.json, out/X-map.json). Weak but I wouldn't fail it.
-- **3.1:** Gap, multi-series chart: series differ by colour alone, in lines and legend (shots/X-multiline.png; patterns only under prefers-contrast). I accepted the table under 'Voir les données' as the 'other method', since the glossary asks for a visible text and this one is a click away; a stricter reader would fail 3.1.3 there too. Passing: P35's changes (underline, 'Nouveau', 'Jean retire ce passage'), P07's callouts and best cells (bold), errors in words.
-- **3.2:** The hover failure comes from Tilde light's tokens, so it holds in any `.menu` row with a shortcut or a value on any page. A long removed paragraph is cut at 4.5em with only Accept and Reject beside it, so its end cannot be read at all before deciding.
-- **3.3:** Switches: in dark Tilde an ON input.switch is 241,240,236 with a white knob, 1.13:1 (dialogs.css:213-216, tilde.css:58; seen at À propos de vous › Retenir), and OFF about 2.8:1 by tokens. The same switch appears on skill and search pages. `.menu [role=switch]` in the brain menu, shown only with a cloud brain, has a white knob on --flame. None appeared on a sample page as walked, but P11's 'one capability' would reach one if that capability were Search or a skill.
+- **3.1:** A failed activity step is shown by a red dot (app/ui/style.css:484), with 'failed' only in visually hidden text (app/ui/chat.js:358). That would fail 3.1 wherever it appears. None appeared in the sample.
+- **3.2:** Text that scrolls under the toolbar fade, the sticky composer or offers fades for a moment (not counted). The design 'takes' thumbnails hold tiny low-contrast miniature text (treated as pictures of options).
+- **3.3:** The looks outside the sample (Human, Mail, Neon and others) were not walked.
 - **4.1:** Outside the sample: a film a brain makes is a video with controls, an aria-label holding the request, and no track, transcript or description beside it (out/X-film.json). It would fail 4.1.2 and 4.7.1. Films aren't among the outputs the homepage lists.
 - **4.7:** See 4.1 on films: 'Here is your film.' doesn't identify one.
 - **4.8:** Maps in pages with forms (their 'pick' event) and caps/flows' canvas, games and the camera were not in the sample. They could hold media whose alternative is not checked here.
@@ -355,37 +302,38 @@ Noted by the readers, and not counted unless a page above names them. For a crit
 - **4.12:** A chart whose brain asks for dataZoom keeps a canvas-only slider with no keyboard way (option.js does not strip it; tried: 0 focusable, shots/P17-datazoom.png). An app page listening to a map's 'pick' would offer a choice the keyboard cannot make. Either would fail this criterion if sampled.
 - **5.4:** The document editor does not do what answers do: a table directly under a heading or a colon line has no name in a document (tried with "Le budget :": no aria-label, aria-labelledby or caption). A document like that would fail. In D1 and D2 the same lead-in has no w:tblCaption in the Word file.
 - **5.5:** Those untitled tables are for criterion 5.4, which isn't mine. Whether the aria-label is announced wasn't tested with a screen reader.
-- **5.6:** D1 and D2 mark the first row as a header (w:tblHeader) and not the first column; D3 freezes its first row. Empty th at the corner of P07's and P18's tables isn't a failure of this test.
+- **5.6:** Answer and document tables only get row headers when every first-column cell has a letter and no digit (app/ui/markdown.js:113 namesRows): a brain's table whose rows are named '2024', 'T1 2025' or 'Semaine 1' would leave those row labels as <td> and fail 5.6.2. D1/D2 (Word) mark the header row (w:tblHeader); D3 (Excel) only styles and freezes row 1; these files fall under 13.3, not 5.6.
 - **6.1:** Links in answers are a brain's words: nothing stops 'cliquez ici'.
 - **7.2:** An answer's receipt button shows a shield for a private answer and an info mark otherwise, under one fixed name, 'À propos de cette réponse' (app/caps/receipt/receipt.js:330-332). It is drawn per answer rather than updated, so I do not count it, but the shield's meaning reaches only those who open the card. A map's aria-label stays 'Map' as its contents change; I treat that under 1.1, though a reader could raise it under 7.2.2.
+- **7.3:** tables/view.js:142 blurs a cell after a storage-refused edit, and knows.js:133 blurs the 'what Jean knows' field on Enter: focus is dropped to body, not in the sample. Double-clicking the splitter resets it to the default width; the keyboard only has step-by-step arrows. A brain-written chart with dataZoom (sliders and drag) is not stripped by charts/option.js. The sample has none.
 - **7.4:** Restoring a backup reloads the page 1.2 s later (caps/backup/backup.js:38), after a toast; not walked.
-- **7.5:** Same silent 'nothing found' in Settings › Compétences and Connexions (caps/skills/page.js:279, caps/connections/page.js:194). A file that cannot be read says so inside role=status (ui/composer.js:109-111). P23's browser pane puts a suggestion in role=status (caps/browser/browser.js:537), where test 2 asks alert.
+- **7.5:** Help articles and pages that frame other demos (D457) share demo.html and would fail the same way.
 - **8.1:** An answer's own html page is not in the sample. It goes through the same relay as P40's frame, which writes the doctype first (preview.html:45); not read live.
 - **8.2:** A strict reader may treat select > button as invalid where a validator predates customizable select. Browsers without it drop the button.
 - **8.6:** A task with no title of its own (list shows 'Nouvelle tâche') keeps the homepage's 'Jean · Créez avec l’IA de votre choix, gardez tout'. The first-brain steps P24-P26 keep the same title; they are states of that page.
-- **8.7:** A mixed answer gets one lang for the whole answer, by the code. Collection cells (P14, P36, P37) carry no lang. On P16 the inline deck's English slides sit in div lang=fr, which is a wrong indication (8.8's matter).
-- **8.8:** The answer's language is guessed once per answer (ui/language.js, caps/made/made.js:256) and misfires on ordinary text: a French answer with a code block gets lang=en on its French sentences, Dutch gets en, Italian gets fr, a French note with an English quotation gets en, and a French, English, Arabic and Japanese answer gets one en (reader-n/f6.txt). These would fail 8.8 outright; no sample state shows them. D1 and D2 carry w:lang=fr on the whole document whatever its language.
-- **8.10:** A person writing Arabic on a French page gets rtl through dir=auto alone on their message, the task's h1 and its name in the list (reader-n/f6.txt, reader-n/shots/f6-arabic-task.png): it displays correctly, but fails 8.10.2's 'rtl ou ltr' on any reading.
-- **9.1:** In answers, # and ## both become h3, so a section and its parent get one level (ui/markdown.js:90-94). In documents ##### and ###### become aria-level 7 and 8, past RGAA's six levels (reader-n/ax.mjs).
+- **8.7:** Any answer that quotes another language inside a mostly French one gets the same treatment, because detection is per answer. aria-hidden creation previews (P12) show the document's Arabic and Japanese lines without lang, but they are hidden from assistive technology and cropped.
+- **8.10:** A chat message or task title in Arabic in a French interface would rely on dir='auto' alone: right in rendering, but 'auto' again. Creation previews on P12 hold the document's Arabic paragraph under a dir='auto' container that resolves to ltr, without a dir of its own. It is aria-hidden and cropped out of view in the sample, but would show for a document that starts in Arabic.
+- **9.1:** Conversation titles come from the brain; a seeded task without one shows h1 'Nouvelle tâche'.
+- **9.2:** Also arguable, not counted: the composer (the core function) sits outside <main> on every app page and the homepage's first screen (h1 + composer) sits above its <main> on P01/P31 (the glossary allows leeway on homepages); the open document or collection is an <aside> (complementary) even when it fills the screen at 320 px; the lock screen's 'Plan du site · Centre d'aide' row is a <p> inside <main>, not a <footer>.
 - **9.4:** A brain quoting someone inline writes plain quote marks: Jean's Markdown has no path to <q>, so such an answer would fail 9.4.1. Not in the sample's answers.
 - **10.1:** A math answer's MathML (temml) may carry width on mspace; no sample page holds math, so not read.
-- **10.4:** Pinch-zoom on a trackpad would enlarge the sheet, as it would any page; I did not count it as the test's browser zoom. A deck in the answer with the pane closed goes from 19.1 to 31.2 px, 163%, and by calculation at most about 174% in full screen; the sample's P16 is the pane.
+- **10.4:** For a returning person, the new-task screen at 200% shows an offer (for example 'Laisser Jean choisir le cerveau…'). The welcome question and its pitch then stay under the sticky offer at every scroll position until 'Non merci' (reader-p/shots/z35-0.png to z35-140.png). If that screen were in the sample, 10.4 would fail.
 - **10.6:** Looks other than Terminal, Mondrian and the default were not measured; a look that removed underlines would change this. Dark themes not walked.
-- **10.7:** At 320×256 the fixed box covers focused links on the homepage (P01). After 'Tout accepter' on P14, or Escape closing a pane, focus falls to body, so nothing shows until the next Tab.
+- **10.7:** The conversation keeps focus clear of the composer (scroll-margin, app/ui/style.css:71) but Créations does not. In P26's error state, 'Retour' sits under the toolbar fade with only the bottom of its ring showing.
 - **10.9:** A brain writes its own words: the fake brain's 'Look at the dot on the date' (P15) relies on a shape and on the design's dot; a real answer could say 'the button on the right'. Jean's own strings do not.
 - **10.10:** The ABC text is a pertinent equivalent only for someone who can read ABC notation or letter names; a long tune would be heavy going. The map's words list names, not where places lie, which is enough for the sample's two stops and less for a route that matters by geography.
-- **10.11:** RGAA's test names only the width, so I did not fail on height. At 320x256, what 400% zoom gives on a 1280x1024 screen, the top bar and the fixed box leave about 70 px to read through, and the box is see-through, so words behind it mix with its own (shots/P07-plans-short.png, shots/P23-short.png). The box's '/' list ends details with an ellipsis at 320 ('Des présentations prêtes à proje…', shots/w11-box-slash.png).
-- **10.13:** A pointer over the page's tip while the keys are inside a framed page (P40's map frame, an app in a frame): Escape goes to the frame, so the outer tip would not hide. Not tested, read from the code: the handler is on the outer window.
-- **11.1:** Editing a request in a task (main use, not listed in the sample): app-edit textarea aria-label only, no title (app/ui/edit.js:44), shot reader-c/shots/P07-edit-request.png.
+- **10.11:** The same overlap appears on phones about 375 px wide in the Mondrian look.
+- **10.13:** With long task titles, hovering a row brings 'Plus d'options' into the row and would cut more of the title, with no way to hide it but moving away (10.13.1). Creations' start cards fan out on hover once many kinds are unlocked (app/ui/creations.css:58) and may push neighbours out of the clipped row; P12 shows three cards and no fan.
+- **11.1:** The first brain step adds a checkbox 'first-also' only where this device can run the local brain (not in headless Chromium). It has label[for]. Any page a brain writes (P39 kind) can hold fields labelled however the model wrote them.
 - **11.2:** Settings › Cerveaux (not sampled): the select of brains is named 'Toujours le même' (ui, .brain-same), which does not say it picks a brain; it would be a borderline failure of 11.2.3 if that page were in the sample.
 - **11.7:** P30's look gallery (input[name=look]) has no legend, which is 11.5, not this reader's.
 - **11.8:** The '/' menu in the box isn't in the sample, but appears in any task.
 - **11.10:** Wrong-password lines ('Cela ne l'ouvre pas.') have role=alert with no link to the field; that is not an empty-field or format message, so 11.10 does not reach them. Other forms in the code were not walked: the share dialog, routines, connections, projects, profiles, skills, search keys.
-- **11.12:** P28's #sent says nothing of how to correct a request; I don't count it, since the commitment is the separately signed quote.
+- **11.11:** At P27, after a password mismatch is corrected, the alert 'Les deux mots de passe diffèrent.' stays on screen through the recovery-code step (reader-s/app-e2.out, lock.js:322). That is a stale error (criterion 11.10), not a missing suggestion. On P28 a refused request reloads the page empty, so everything typed is lost (11.10/11.12 territory, not this criterion).
+- **11.12:** If an auditor reads P28's subscription request as having financial consequences (the privacy line says Warehouse SAS will invoice a subscription), the form itself has no checkbox, no review step and no stated way to cancel, and the verdict would rest on the signed quote counting as the extra step. Deleting a profile ('Repartir de zéro', lock.js) uses a native confirm, and is not in the sample.
 - **11.13:** The 'Ajouter un profil' dialog, one press from P05 and the profile menu, has a name field for the person with autocomplete=off (tree/app/caps/profiles/dialog.js:55): it would fail if that dialog were sampled. Settings › À propos de vous has given-name, correct.
 - **12.3:** With a French browser /site-map's 'Homepage' opens the French home, by language detection, not a wrong link.
 - **12.4:** A copy an organisation hosts has no site map: the page does not ship (site/site-map/page.js:12) and sitePage() returns null without the homepage (app/ui/state.js:272-276), so none of this appears there; the criterion would not apply to such a copy but 12.1 might.
-- **12.8:** (b) needs a person with no task yet, or who has deleted their last one, on the homepage's address. (c) needs the offer, which came after a person's second task here.
 - **12.10:** Not run: a deck saved as its own web page, where the root may be the page. Games use WASD inside their frame. A workbook's cell starts editing on any character, inside its frame.
 - **12.11:** A loaded map's click on a place (P40) could not be tried: tiles were not available offline. It tells the page rather than opening controls (tree/app/caps/interactive/map.js:114).
 - **13.1:** 13.1.4 would fail where an organisation's policy sets session.idle (e.g. PT15M, app/ee/session.js): the person can't remove or extend it, under 20 hours, no warning (app/ee/idle.js, not run). Policy-only.
@@ -393,16 +341,16 @@ Noted by the readers, and not counted unless a page above names them. For a crit
 - **13.7:** Games and pages a brain writes could flash; they aren't in the sample.
 - **13.8:** The look Pièce adds a moving light behind the page while Jean works (tree/app/ui/style.css:106-108); the same setting stops it. The blinking cursor in tree/app/ui/dialogs.css:163 shows only on a machine's card that is waking or working, not in the sample.
 - **13.9:** Phone emulation in Chromium, not a real rotating device.
+- **13.10:** Any page a brain makes with <app-map> (D291) has the same map.
 
 ## How each criterion was judged
 
-- **Sixth read: an AI reader given no earlier verdict, told of no fix:** 1.6, 3.2, 3.3, 4.8, 7.5, 8.8, 8.10, 9.1, 10.9, 10.11, 10.13
+- **Seventh read: an AI reader given no earlier verdict, told of no fix:** 3.1, 3.2, 3.3, 5.6, 7.3, 7.5, 8.7, 8.8, 8.10, 9.1, 9.2, 9.3, 10.4, 10.7, 10.11, 10.12, 10.13, 11.1, 11.11, 11.12, 12.1, 12.6, 12.8, 13.10
+- **Sixth read: an AI reader given no earlier verdict, told of no fix:** 1.6, 4.8, 10.9
 - **Fifth read: an AI reader given no earlier verdict, told of no fix:** 1.1, 1.3, 5.4, 7.4, 10.8, 10.10, 11.10, 12.4
 - **Fourth read: an AI reader given no earlier verdict, told of no fix:** 1.2, 4.11, 4.12, 6.1, 6.2, 8.2, 9.4, 10.2, 10.3, 10.6, 10.14, 11.2, 11.5, 11.9, 11.13, 12.7, 12.9, 13.9
-- **Third read: an AI reader given no earlier verdict:** 2.1, 5.7, 7.2, 8.1, 8.3, 8.4, 8.5, 10.1, 10.4, 11.6, 12.6, 12.8, 12.11, 13.2, 13.8
-- **Second read: an AI reader given no earlier verdict:** 1.4, 1.5, 1.7, 1.8, 1.9, 2.2, 3.1, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.9, 4.10, 5.1, 5.2, 5.3, 5.5, 5.6, 5.8, 8.6, 8.7, 8.9, 9.3, 10.5, 10.7, 11.1, 11.3, 11.4, 11.7, 11.8, 11.11, 11.12, 12.2, 12.3, 12.5, 12.10, 13.1, 13.4, 13.5, 13.6, 13.7, 13.11, 13.12
-- **First reading: a tool, then by hand:** 7.3, 9.2, 10.12
-- **First reading: by hand alone:** 12.1, 13.10
+- **Third read: an AI reader given no earlier verdict:** 2.1, 5.7, 7.2, 8.1, 8.3, 8.4, 8.5, 10.1, 11.6, 12.11, 13.2, 13.8
+- **Second read: an AI reader given no earlier verdict:** 1.4, 1.5, 1.7, 1.8, 1.9, 2.2, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.9, 4.10, 5.1, 5.2, 5.3, 5.5, 5.8, 8.6, 8.9, 10.5, 11.3, 11.4, 11.7, 11.8, 12.2, 12.3, 12.5, 12.10, 13.1, 13.4, 13.5, 13.6, 13.7, 13.11, 13.12
 - **Needs assistive technology or Word: not run:** 4.13, 7.1, 13.3
 
 ## Sample
@@ -463,4 +411,4 @@ No separate contact page exists. The five random pages come from the 46 others b
 
 ## Tools and environment
 
-Chromium 156 (Playwright 1.64) on macOS 27, keyboard and pointer; no assistive technology. axe-core 4.14, html-validate 9.7 in place of the W3C validator, Jean’s pixel measures from `test/contrast.spec.js` and `test/nontext.spec.js` extended to every state of the sample, `test/site.spec.js`, `test/reflow.spec.js`, `test/targets.spec.js` and `test/motion.spec.js`: 224 passed, 0 failed, 69 skipped in WebKit by design. The third to sixth reads walked the same sample in the same browser, keyboard and pointer, with everything beyond this computer blocked from the fourth on. No online checker was used in them.
+Chromium 156 (Playwright 1.64) on macOS 27, keyboard and pointer; no assistive technology. axe-core 4.14, html-validate 9.7 in place of the W3C validator, Jean’s pixel measures from `test/contrast.spec.js` and `test/nontext.spec.js` extended to every state of the sample, `test/site.spec.js`, `test/reflow.spec.js`, `test/targets.spec.js` and `test/motion.spec.js`: 224 passed, 0 failed, 69 skipped in WebKit by design. The third to seventh reads walked the same sample in the same browser, keyboard and pointer, with everything beyond this computer blocked from the fourth on. No online checker was used in them.
