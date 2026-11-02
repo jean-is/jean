@@ -11,7 +11,7 @@ import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { LOCALES, dir } from '../app/core/i18n.js'
-import { FIRST_REQUEST } from '../app/ui/caps.js'
+import { FIRST_REQUEST, AT_START } from '../app/ui/caps.js'
 import { extractStaticImports, moduleGraph, parseImportMap, resolveSpecifier } from './graph.js'
 import { ENTRY as READER, renderListing } from './render.js'
 
@@ -181,8 +181,8 @@ export async function collectFiles (root) {
     const files = (await Promise.all(dirs.map((dir) => walk(root, dir)))).flat().filter((path) => isShipped(path) && !ON_DEMAND.test(path)).sort()
     capabilities[entry.name] = { files: [...new Set([...files, ...await borrowed(root, entry.name, files)])].sort() }
   }
-  // What a first request loads comes with the shell (D667), and so is no capability's to cache again.
-  const precached = new Set([...shell, ...FIRST_REQUEST.flatMap((id) => capabilities[id]?.files ?? []), ...(capabilities.skills?.files.filter((path) => path === VISUAL) ?? [])])
+  // What a first request loads, and what starts with the app, come with the shell (D667), and so are no capability's to cache again.
+  const precached = new Set([...shell, ...[...AT_START, ...FIRST_REQUEST].flatMap((id) => capabilities[id]?.files ?? []), ...(capabilities.skills?.files.filter((path) => path === VISUAL) ?? [])])
   for (const capability of Object.values(capabilities)) capability.files = capability.files.filter((path) => !precached.has(path))
   return { shell: [...precached].sort(), locales, capabilities: Object.fromEntries(Object.entries(capabilities).sort(([a], [b]) => (a < b ? -1 : 1))) }
 }

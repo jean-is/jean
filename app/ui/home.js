@@ -31,7 +31,7 @@ const sizes = new ResizeObserver(([entry]) => document.body.style.setProperty('-
  */
 const lift = new ResizeObserver(() => requestAnimationFrame(() => {
   const composer = document.querySelector('app-composer')
-  const lowest = Math.max(...[...composer?.children ?? []].filter((child) => child.localName !== 'p').map((child) => child.getBoundingClientRect().bottom))
+  const lowest = Math.max(...[...composer?.children ?? []].filter((child) => child.localName !== 'p' && child.localName !== 'footer').map((child) => child.getBoundingClientRect().bottom))
   const room = document.documentElement.hasAttribute('data-centred') && composer ? composer.getBoundingClientRect().bottom - lowest - 32 : 0
   document.body.style.setProperty('--home-lift', `${Math.round(Math.max(0, Math.min(room, 208)))}px`)
 }))

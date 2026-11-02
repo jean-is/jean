@@ -2,7 +2,7 @@
 // never its words: a comparison, steps, a note, a timeline, key figures, a checklist, or none.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { lex, parser } from '../app/ui/markdown.js'
+import { lex, parser, namesRows } from '../app/ui/markdown.js'
 import { Marked } from 'marked'
 import { aligned, compared, marked, roomy, stepped, titled, sequenced, noted, timed, figured, ticked, columns, cjk } from '../app/caps/layouts/shapes.js'
 
@@ -208,4 +208,18 @@ test('emphasis beside the punctuation of Chinese, Japanese and Korean opens and 
     assert.equal(emphasis(source), before(source), source)
   }
   assert.equal(emphasis('snake_case, 2*3*4 and un**believ**able'), 'snake_case, 2<em>3</em>4 and un<strong>believ</strong>able')
+})
+
+test('a table\'s first column names its rows when its head is empty, or each of its cells is words with no digit and no two are alike (RGAA 5.6)', () => {
+  assert.equal(namesRows('Day', ['Monday', 'Tuesday']), true)
+  assert.equal(namesRows('', ['3', '4']), true)
+  assert.equal(namesRows('Jour', ['Lundi', 'Mardi', 'Mercredi']), true)
+  assert.equal(namesRows('日', ['月曜日', '火曜日']), true)
+  assert.equal(namesRows('Year', ['2024', '2025']), false)
+  assert.equal(namesRows('Date', ['Oct 1, 2026', 'Oct 2, 2026']), false)
+  assert.equal(namesRows('日付', ['2026年10月1日', '2026年10月2日']), false)
+  assert.equal(namesRows('Amount', ['١٢٠', '٣٤٠']), false)
+  assert.equal(namesRows('Team', ['Ana', 'Ana']), false)
+  assert.equal(namesRows('Name', ['Ana']), false)
+  assert.equal(namesRows('Name', ['Ana', '']), false)
 })

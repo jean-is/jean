@@ -137,7 +137,7 @@ test('the Vous menu’s Homepage shows the page in place, the box where it is wi
   await expect(page.locator('html')).toHaveAttribute('data-centred', '')
   await expect.poll(where).toEqual(alone)
   await expect(page.locator('.home-promise')).toBeInViewport()
-  await expect(page.locator('app-composer > p')).toBeHidden()
+  await expect(page.locator('app-composer > footer')).toBeHidden()
   await page.locator('.home-tile [data-try="quiz"]').click()
   await expect(page.locator('#prompt')).toHaveValue('A quiz on the planets for my son, ten questions.')
   // The first request there hides it and takes ?index=1 from the address, so a new task doesn't bring it back.

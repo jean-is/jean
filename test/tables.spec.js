@@ -1100,7 +1100,7 @@ test('a page shows a collection the project keeps as it is: its figures, chart a
   await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
   const parts = page.locator('.msg-jean .prose app-parts').last(), figures = parts.locator('ul.figures > li strong'), rows = parts.locator('.part-card.wide tbody tr')
   await expect(figures).toHaveText(['2', '840'])
-  await expect(rows.first().locator('td')).toHaveText(['Oct 1, 2026', '40', 'Food'])
+  await expect(rows.first().locator(':is(th, td)')).toHaveText(['Oct 1, 2026', '40', 'Food'])
   await expect(rows).toHaveCount(2)
   await expect(parts.locator('app-chart .chart canvas').first()).toBeVisible()
 
@@ -1111,13 +1111,13 @@ test('a page shows a collection the project keeps as it is: its figures, chart a
   }, /** @type {const} */ ([folder, set]))
   await change({ amount: 60 })
   await expect(figures).toHaveText(['2', '860'])
-  await expect(rows.first().locator('td').nth(1)).toHaveText('60')
+  await expect(rows.first().locator(':is(th, td)').nth(1)).toHaveText('60')
 
   // In Japanese, its dates as Japanese writes them.
   const settings = await openSettings(page)
   await chooseLanguage(settings, 'ja')
   await closeSettings(page)
-  await expect(rows.first().locator('td').first()).toHaveText(new Intl.DateTimeFormat('ja', { dateStyle: 'medium' }).format(new Date('2026-10-01T00:00')))
+  await expect(rows.first().locator(':is(th, td)').first()).toHaveText(new Intl.DateTimeFormat('ja', { dateStyle: 'medium' }).format(new Date('2026-10-01T00:00')))
   const english = await openSettings(page)
   await chooseLanguage(english, 'en')
   await closeSettings(page)

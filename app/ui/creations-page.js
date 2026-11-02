@@ -77,7 +77,7 @@ function drop(item, keyed = false) {
     waiting.delete(item.path)
     import('./preview.js').then(({ unshow }) => unshow(item.link.uri)).then(() => (item.kind.remove ?? item.kind.hide)(item)).catch(console.warn).finally(() => reread().then(back))
   }
-  // Kept while the toast has the pointer or the keyboard, which goes to its Undo rather than falling to the page when it pressed Delete.
+  // Kept while the toast has the keyboard, which goes to its Undo rather than falling to the page when it pressed Delete.
   const later = () => { timer = setTimeout(held() ? later : now, held() ? 1000 : 0) }
   let timer = setTimeout(later, 5000)
   gone.value = new Set(gone.value).add(item.path)

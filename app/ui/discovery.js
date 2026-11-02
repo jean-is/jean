@@ -7,7 +7,7 @@
 // reflexes, and the brain's own offer tool, never keywords (D6). Also find_tools, so tools
 // that arrive mid-conversation can be reached (D47).
 import { effect, signal } from '@preact/signals-core'
-import { register, unlock, isDenied, loaded, contributions, WEIGHTS } from './caps.js'
+import { register, unlock, isDenied, loaded, contributions, WEIGHTS, AT_START } from './caps.js'
 import { app, effective, answerOffer, notify, send, updateSettings, conversationOf, CITED } from './state.js'
 import { findTools, reach } from '../core/deferred.js'
 import { REFLEXES, CAPABILITIES, OFFERED, FOLLOW_UPS, YES, likeliest, exchange, dangerOf } from './questions.js'
@@ -253,7 +253,7 @@ effect(() => {
 })
 if (app.policy.lock === 'required') unlock('lock')
 // Search is there from the start, the way around the app besides the drawer (RGAA 12.1, D5).
-unlock('find')
+AT_START.forEach(unlock)
 effect(() => {
   // Someone who dictates often may rather talk.
   if ((effective.value.settings.dictated ?? 0) >= 3) offerOnce('live')

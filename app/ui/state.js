@@ -134,7 +134,7 @@ export function setPresence(presence) { app.presence.value = presence }
 
 /**
  * @param {string} message @param {{ label: string, run: () => void, undo?: true } | { alert: true } | { quiet: true }} [action] e.g. Undo, which
- * says how long it lasts; alert: what went wrong; quiet: unseen @param {number} [ms] how long it shows, and longer while the pointer or the keyboard is on it
+ * says how long it lasts; alert: what went wrong; quiet: unseen @param {number} [ms] how long it shows, and longer while the keyboard is in it
  */
 export function notify(message, action, ms = Math.max(action ? 6000 : 2600, message.length * 80)) {
   if (action && 'quiet' in action) return void (app.said.value = message, setTimeout(() => { app.said.value = '' }, ms))
@@ -142,8 +142,8 @@ export function notify(message, action, ms = Math.max(action ? 6000 : 2600, mess
   const end = () => { if (app.toast.value === toast) held() ? setTimeout(end, 1000) : (app.toast.value = null) }
   setTimeout(end, ms)
 }
-/** Whether a toast has the pointer or the keyboard on it, which keeps it, and what it would undo (RGAA 11.12). */
-export const held = () => Boolean(document.querySelector('.toast:is(:hover, :focus-within)'))
+/** Whether a toast has the keyboard in it, which keeps it, and what it would undo (RGAA 11.12); a pointer resting where one shows would keep it for ever. */
+export const held = () => Boolean(document.querySelector('.toast:focus-within'))
 
 // ─── Language and rules ──────────────────────────────────────────────────────
 

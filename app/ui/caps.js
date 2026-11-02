@@ -84,8 +84,8 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
 /** Widgets (D196), loaded when an answer holds one, never at the start. */
 const ON_SIGHT = ['charts', 'scores', 'slides']
 
-/** What a first request loads, which the shell precaches (D667). */
-export const FIRST_REQUEST = ['made', 'ask', 'you', 'own-skills', 'receipt', 'interactive', 'layouts']
+/** What a first request loads, which the shell precaches (D667), as it does what starts with the app: search (D5). */
+export const FIRST_REQUEST = ['made', 'ask', 'you', 'own-skills', 'receipt', 'interactive', 'layouts'], AT_START = ['find']
 
 /** What turning a capability on downloads, in bytes, shown when it is offered. */
 export const SIZES = /** @type {Record<string, number>} */ ({ reflexes: 345e6, live: 82e6, meaning: 175e6, reader: 108e6 })

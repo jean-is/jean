@@ -310,7 +310,7 @@ main { flex: 1; display: flex; flex-direction: column; inline-size: var(--column
 .prose th, .prose td { padding: 0.5rem 0.8rem; border-block-end: 1px solid var(--line); text-align: start; }
 .prose :is(th, td):first-child { padding-inline-start: 0; }
 .prose :is(th, td):last-child { padding-inline-end: 0; }
-.prose thead th { font-weight: 600; border-block-end-color: var(--line-strong); } .prose tbody th { font-weight: inherit; }
+.prose th { font-weight: 600; border-block-end-color: var(--line-strong); } .prose tbody th { font-weight: inherit; border-block-end-color: var(--line); }
 .prose tbody tr:last-child td { border-block-end: 0; }
 .prose .align-right { text-align: end; }
 .prose .align-center { text-align: center; }

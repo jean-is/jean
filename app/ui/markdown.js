@@ -107,9 +107,10 @@ function listItem(item) {
 
 /**
  * Whether a table's first column names its rows, so that its cells are the rows' heads (RGAA 5.6): its head is empty, or each of its
- * cells holds words, a letter at least, that no other cell repeats. @param {string} head @param {string[]} cells
+ * cells holds words, a letter at least and no digit, so that no date or amount does, in any language, that no other cell repeats.
+ * @param {string} head @param {string[]} cells
  */
-export const namesRows = (head, cells) => !head.trim() || (cells.length > 1 && cells.every((cell) => /\p{L}/u.test(cell)) && new Set(cells).size === cells.length)
+export const namesRows = (head, cells) => !head.trim() || (cells.length > 1 && cells.every((cell) => /\p{L}/u.test(cell) && !/\p{N}/u.test(cell)) && new Set(cells).size === cells.length)
 
 /** @param {any} token */
 function table(token) {

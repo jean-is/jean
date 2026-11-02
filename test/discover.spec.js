@@ -45,8 +45,8 @@ test('Jean starts offline from a fresh install, with no capability found, and a 
   const { context, page } = await installedOffline(browser, baseURL)
   const failed = /** @type {string[]} */ ([])
   page.on('requestfailed', (request) => failed.push(request.url()))
-  // Precached, what a first request loads is only in a cache until then: nothing of it shows before it is found (D281).
-  expect(await page.evaluate(async () => [...(await import('/ui/caps.js')).loaded.value.keys()])).toEqual(['discovery'])
+  // Precached, what a first request loads is only in a cache until then: nothing of it shows before it is found (D281); search starts with the app (D5).
+  await expect.poll(() => page.evaluate(async () => [...(await import('/ui/caps.js')).loaded.value.keys()])).toEqual(['discovery', 'find'])
   await expect(page.locator('app-made, app-receipt')).toHaveCount(0)
   // A brain on this computer, which answers with the network gone. Answered in the page, since in WebKit a request under a service worker
   // passes Playwright's routes; set after the reload, since WebKit's window is private, and not through the first step, which needs the network.

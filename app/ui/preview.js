@@ -160,7 +160,7 @@ class Pane extends Element {
           @change=${(/** @type {Event} */ event) => { this.file.value = { ...all[Number(/** @type {HTMLSelectElement} */ (event.target).value)], title: file.title } }}>
           ${all.map((each, i) => html`<option value=${i} ?selected=${i === at}>${t('made.version', { n: each.version })}</option>`)}</select>` : nothing}
         ${slots('head').map((part) => part.draw(file))}
-        ${outButton(file, ways)}${dock.moves(this)}
+        ${dock.moves(this)}${outButton(file, ways)}
         <button class="icon-button" aria-label=${t('action.close')} @click=${this.#close}>${icons.close}</button>
       </header>
       <div class="view" @scroll=${{ handleEvent: this.#scrolled, capture: true }} @pointerdown=${this.#stay} @keydown=${this.#stay} @wheel=${{ handleEvent: this.#stay, passive: true }}
