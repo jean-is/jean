@@ -173,8 +173,8 @@ class FileMade extends Element {
     const kind = /^designs\//.test(uri) ? 'design' : /^games\//.test(uri) ? 'game' : KINDS[ext]
     const game = kind === 'game' ? creations.value.find((one) => one.path === uri) : undefined, title = game?.name ?? (kind === 'game' ? name.replace(/\.game\.html$/i, '') : name)
     const label = t('made.save', { name })
-    // Its version, once the conversation has more than one of the file (D164).
-    const versions = versionsOf(filesMade(callsIn(app.current.value?.records ?? [], app.live.value?.turn.steps)), name)
+    // Its version, once its task, another's in its pane (caps/split), has more than one of the file (D164).
+    const versions = versionsOf(filesMade(callsIn((/** @type {{ task?: typeof app.current.value }} */ (this.closest('app-conversation'))?.task ?? app.current.value)?.records ?? [], app.live.value?.turn.steps)), name)
     const version = Number(this.getAttribute('version')) || 0
     const open = async () => (kind === 'page' && loaded.peek().has('browser')
       ? (await import('../browser/browser.js')).showMade({ uri, name })

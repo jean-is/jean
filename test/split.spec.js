@@ -1,6 +1,6 @@
-// Panes of the dock (D635, D640): a task or a pinned creation dragged from the drawer onto the screen takes a pane's place or half of a
-// part, a box showing where, and the address keeps the layout; a click in another task's pane makes it the one the box is for, where it
-// is, the edge between two moves with the keys, a reload and Back lay them out again, and a narrow window has them over the
+// Panes of the dock (D635, D640, D684): a task or a pinned creation dragged from the drawer onto the screen takes a pane's place or half
+// of a part, a box showing where, and the address keeps the layout; another task's pane shows it whole, its box still, and a click or
+// the keyboard in it makes it the one the box is for, where it is, each read where it was, the edge between two moves with the keys, a reload and Back lay them out again, and a narrow window has them over the
 // conversation. A pane's head moves it, a file's as a task's. A click opens a file for a look, in a pane the next click gives the next
 // until it is kept, which goes and comes back with its task. A collection's or a document's pane is its editor, the brain hearing of
 // each one on screen, and opening it again brings its pane forward; a design's is while it is the one on show, one at a time. Without
@@ -370,5 +370,61 @@ for (const [lang, label] of [['ar', 'فتح جنبًا إلى جنب'], ['ja', '
     // Right to left, the line ends on the left.
     expect(lang === 'ar' ? beside.x < here.x : beside.x > here.x).toBe(true)
     await expect(tile.getByRole('button', { name: lang === 'ar' ? 'إغلاق' : '閉じる' })).toBeVisible()
+    // Whole, in its words, its box still at its foot, as the one the box is for has it.
+    await expect(tile.locator('.msg-actions.is-request')).toHaveCount(1)
+    await expect(tile.locator('app-composer[for] textarea')).toHaveAttribute('placeholder', /** @type {string} */ (await page.locator('#prompt').getAttribute('placeholder')))
+    await expect(tile.locator('app-composer[for] .ai-note')).toHaveText(await page.locator('#ai-note').innerText())
   })
 }
+
+test('another task\'s pane shows it whole, its box still; a click or the keyboard in it makes it the one the box is for, there, each read where it was', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 })
+  await start(page)
+  const { ids: [a, b] } = await seed(page)
+  // The second task's answer, long enough to be read from its top.
+  await page.evaluate(async (id) => {
+    const [{ app, refreshConversations }, { appendRecords }, { userRecords, envelope }] = await Promise.all([import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js')])
+    const text = Array.from({ length: 60 }, (_, i) => `Bed ${i + 1}: beans.`).join('\n\n')
+    await appendRecords(app.fs, app.conversations.value.find((task) => task.id === id)?.path ?? '', [...userRecords('List every bed', [], 'test'), envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text } }, 0)])
+    await refreshConversations()
+  }, b)
+  await page.locator('#prompt').fill('A note on the beds')
+  await page.evaluate((tree) => import('/ui/dock.js').then(({ layout }) => import('/ui/tree.js').then(({ parse }) => { layout.value = parse(tree) })), `row(here,${b})`)
+  const tile = page.locator('app-tile'), here = page.locator('.here'), prompt = page.locator('#prompt'), still = tile.locator('app-composer[for] textarea')
+  /** How far a part is from its end. @param {import('@playwright/test').Locator} part */
+  const left = (part) => part.evaluate((box) => box.scrollHeight - box.clientHeight - box.scrollTop)
+
+  // As the task the box is for shows: each request with what it can do, each answer, read from its end, and its box, still: one box has the keys.
+  await expect(tile.locator('.msg-user')).toHaveText(['Compare two seed suppliers', 'List every bed'])
+  await expect(tile.locator('.msg-actions.is-request')).toHaveCount(2)
+  await expect(tile.locator('.prose').last()).toContainText('Bed 60: beans.')
+  await expect.poll(() => left(tile.locator('.view'))).toBeLessThan(2)
+  await expect(tile.locator('app-composer[for] form')).toHaveAttribute('inert', '')
+  await expect(page.locator('textarea#prompt')).toHaveCount(1)
+
+  // Read from its top, then clicked: the one the box is for, where it is, read where it was; the box, with its words, has the keys.
+  await tile.locator('.view').hover()
+  await page.mouse.wheel(0, -50_000)
+  await expect.poll(() => tile.locator('.view').evaluate((view) => view.scrollTop)).toBe(0)
+  const was = await box(tile)
+  await tile.locator('.prose').first().click()
+  await expect(page).toHaveURL(new RegExp(`#/c/${b}\\?split=row\\(${a},here\\)$`))
+  await expect(here.locator('.msg-user')).toHaveText(['Compare two seed suppliers', 'List every bed'])
+  expect((await box(here)).x).toBe(was.x)
+  expect(await left(here)).toBeGreaterThan(400)
+  await expect(prompt).toBeFocused()
+  await expect(prompt).toHaveValue('')
+  await expect(still).toHaveValue('A note on the beds')
+  await page.keyboard.type('Which bed first?')
+  await expect(prompt).toHaveValue('Which bed first?')
+  await expect(still).toHaveValue('A note on the beds')
+
+  // The keyboard coming into the other one does so too, and goes on from there; the one it leaves keeps where it was read.
+  await tile.locator('.tile-name').focus()
+  for (let i = 0; i < 4 && !(await page.evaluate(() => Boolean(document.activeElement?.closest('.here')))); i++) await page.keyboard.press('Tab')
+  await expect(here.locator('.msg-user')).toBeFocused()
+  await expect(page).toHaveURL(new RegExp(`#/c/${a}\\?split=row\\(here,${b}\\)$`))
+  await expect(prompt).toHaveValue('A note on the beds')
+  await expect(still).toHaveValue('Which bed first?')
+  expect(await left(tile.locator('.view'))).toBeGreaterThan(400)
+})

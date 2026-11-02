@@ -323,7 +323,8 @@ class Receipt extends Element {
   render() {
     const { turn, text = '' } = /** @type {{ turn?: Turn, text?: string }} */ (/** @type {unknown} */ (this))
     if (!turn) return nothing
-    const facts = factsOf(turn, reachedIn(app.current.value?.records ?? []))
+    // Its task's, another's in its pane (caps/split), or the one the box is for.
+    const facts = factsOf(turn, reachedIn((/** @type {{ task?: typeof app.current.value }} */ (this.closest('app-conversation'))?.task ?? app.current.value)?.records ?? []))
     const id = `receipt-${turn.at.replace(/\D/g, '')}`
     const glimpse = (/** @type {Event} */ event) => this.#glimpse(event)
     // Named in words it doesn't show, so that its card is its only tip (D233).

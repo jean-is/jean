@@ -147,6 +147,8 @@ class Composer extends Element {
   }
 
   connectedCallback() {
+    // Another task's is its pane's (caps/split).
+    if (this.hasAttribute('for')) return
     super.connectedCallback()
     addEventListener('dragover', onDragOver)
     addEventListener('dragleave', onDragLeave)

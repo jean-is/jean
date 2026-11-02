@@ -3,25 +3,27 @@
 // creation's pane, it takes its place; a quarter from an edge of any part, half of it, a box showing where as it goes; a task dropped
 // in the middle of the conversation opens there. A task's or a pinned creation's menu opens it beside the task, without dragging. A
 // creation is a pane as anything opened is (ui/preview.js); another task's is a pane of its own here, as the others are, its head
-// naming it, dragging it and closing it, that reads it as it is kept, and a click makes it the one the box is for where it is, the one
-// before taking its place. The dock keeps them in the address with the other panes (`?split=row(here,col(01J…,documents/01J…))`). Never
-// offered: found with a second task or pinned creation in the drawer of a wide window, whose rows it lets drag.
+// naming it, dragging it and closing it, under which the task shows whole, as the one the box is for does, its answer as it comes and
+// its box at its foot, still. A click in it or the keyboard coming into it makes it the one the box is for where it is, the one before
+// taking its place, each read where it was: one box at a time has the keys. The dock keeps them in the address with the other panes
+// (`?split=row(here,col(01J…,documents/01J…))`). Never offered: found with a second task or pinned creation in the drawer of a wide
+// window, whose rows it lets drag.
 import { html, nothing, svg } from 'lit-html'
 import { effect, signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { register } from '../../ui/caps.js'
-import { app, openConversation, openFile, turnPage } from '../../ui/state.js'
-import { asked } from '../../ui/chat.js'
-import { markdown } from '../../ui/markdown.js'
+import { app, assistantName, openConversation, runs, showRun, stirred, turnPage } from '../../ui/state.js'
+import { spotOf, spots } from '../../ui/chat.js'
+import { drafts, hashFor } from '../../ui/router.js'
 import { icon, icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import * as dock from '../../ui/dock.js'
 import { loadConversation } from '../../core/conversations.js'
-import { filesMade, foldTurns, splitSuggestions } from '../../core/events.js'
 import { t } from '../../core/i18n.js'
 import { MOST, leaves, put, rename, swap, without } from '../../ui/tree.js'
 
 /** @import { Tree } from '../../ui/tree.js' */
+/** @import { Envelope } from '../../core/types.js' */
 
 await Promise.all([styleSheet(new URL('../../ui/view.css', import.meta.url)), styleSheet(new URL('split.css', import.meta.url))])
 
@@ -101,26 +103,57 @@ const offered = (leaf) => dock.wide.value && leaf !== app.current.value?.id && (
 
 // ─── Another task's pane ─────────────────────────────────────────────────────
 
-/** A task as it is kept, to read: each request, and each answer's words with the files it was given or made, as a saved copy shows it (ui/reader.js). @param {import('../../core/types.js').Envelope[]} records */
-const turns = (records) => html`<ol class="turns">${foldTurns(records).map((turn) => {
-  const { text } = splitSuggestions(turn.steps.map((step) => step.text).filter(Boolean).join('\n\n'))
-  const files = [...new Map([...(turn.user?.files ?? []), ...filesMade(turn.steps.flatMap((step) => step.tools))].map((link) => [link.uri, link])).values()]
-  return html`<li class="turn">
-    ${turn.user?.text ? html`<p class="msg msg-user" dir="auto">${asked.value(turn.user.text)}</p>` : nothing}
-    ${text ? html`<article class="msg msg-jean"><div class="prose" dir="auto">${markdown(text)}</div></article>` : nothing}
-    ${files.length ? html`<ul class="msg-files">${files.map((link) => html`<li><button class="file-chip" @click=${() => openFile({ type: 'resource_link', ...link })}>${icons.file}<span dir="auto">${link.name}</span></button></li>`)}</ul>` : nothing}
-  </li>`
-})}</ol>`
+/**
+ * A task as its view shows it, as the room has the one the box is for: what its run kept so far shows as its answer, live (D147).
+ * @param {string} path @param {Envelope[]} records
+ */
+function asShown(path, records) {
+  const run = runs.get(path), kept = new Set(run?.settled.map((record) => JSON.stringify(record)))
+  return { records: records.filter((record) => !kept.has(JSON.stringify(record))), live: run && !run.held ? { turn: run.turn, steers: run.steers } : null }
+}
+/**
+ * Its box, as it was left, its words kept, and still: the keys go to one box, the one of the task the room is for (ui/composer.js), the
+ * AI line under it as under that one (D273). @param {string} id
+ */
+const still = (id) => html`<form class="composer" inert><textarea rows="1" dir="auto" placeholder=${t('composer.placeholder')} .value=${drafts()[hashFor(app.project.value, id)] ?? ''}></textarea>
+  <div class="composer-row"></div></form><p class="ai-note">${t('composer.ai', { name: assistantName() })}</p>`
+/** What each task's pane last showed, by its id: the one the box leaves shows at once in its pane, as it was. */
+const seeded = /** @type {Map<string, Envelope[]>} */ (new Map())
+/** Where an element is in a conversation, child by child, to find its like once the conversation is drawn elsewhere. @param {Node} root @param {globalThis.Element} node */
+const stepsTo = (root, node) => { const steps = []; for (let at = node; at !== root && at.parentElement; at = at.parentElement) steps.unshift([...at.parentElement.children].indexOf(at)); return steps }
 
-/** Another task's pane, as the dock's are: its head naming it, a light while it is answered, and Close; its turns under it, read as kept. */
+/**
+ * A task in a pane becomes the one the box is for, there and at once, so that what was clicked in it acts on it: the one before takes
+ * its pane, each read where it was, and the keyboard goes on from the same place, else in the box. @param {HTMLElement} tile @param {Envelope[]} records
+ */
+function talk(tile, records) {
+  const id = tile.getAttribute('leaf') ?? '', path = pathOf(id), was = app.current.peek(), view = tile.querySelector('app-conversation'), focused = document.activeElement
+  if (!path) return
+  const steps = view && focused && view.contains(focused) ? stepsTo(view, focused) : null, inside = !focused || focused === document.body || tile.contains(focused)
+  for (const [task, shown] of /** @type {[string | undefined, globalThis.Element | null][]} */ ([[id, view], [was?.id, document.querySelector('.here app-conversation')]])) {
+    const at = task && shown && spotOf(shown)
+    if (task) at ? spots.set(task, at) : spots.delete(task)
+  }
+  if (was) seeded.set(was.id, was.records)
+  app.error.value = null
+  app.current.value = { id, path, records: asShown(path, records).records }
+  showRun()
+  const here = document.querySelector('.here app-conversation'), like = steps && here && steps.reduce((/** @type {globalThis.Element | undefined} */ at, i) => at?.children[i], here)
+  if (inside) /** @type {HTMLElement | null} */ (like ?? document.getElementById('prompt'))?.focus({ preventScroll: true })
+  turnPage(() => openConversation(path))
+}
+
+/** Another task's pane, as the dock's are: its head naming it, a light while it is answered, and Close; the task under it, whole, with its box. */
 class Tile extends Element {
-  #records = signal(/** @type {import('../../core/types.js').Envelope[] | null} */ (null))
+  #records = signal(/** @type {Envelope[] | null} */ (null))
   #reading = /** @type {(() => void) | undefined} */ (undefined)
   #timer = 0
 
   get leaf() { return this.getAttribute('leaf') ?? '' }
 
   connectedCallback() {
+    this.#records.value = seeded.get(this.leaf) ?? null
+    seeded.delete(this.leaf)
     super.connectedCallback()
     // Read again as it may have changed, after each record kept, at once the first time.
     this.#reading = effect(() => {
@@ -141,19 +174,23 @@ class Tile extends Element {
   }
 
   /** The task becomes the one the box is for, where it is. */
-  #talk = () => { const path = pathOf(this.leaf); if (path) turnPage(() => openConversation(path)) }
-  /** A click in its view, not on what does something of its own or ending a selection, does so too. @param {MouseEvent} event */
-  #clicked = (event) => { if (getSelection()?.isCollapsed !== false && !/** @type {Element} */ (event.target).closest('a, button, summary, input, select, textarea, [tabindex]:not(.tile)')) this.#talk() }
+  #talk = () => { const records = this.#records.peek(); if (records) talk(this, records) }
+  /** A click in it does so first, unless it ends a selection or opens a summary or a link, which act in the pane as they are. */
+  #clicked = { capture: true, handleEvent: (/** @type {MouseEvent} */ event) => { if (getSelection()?.isCollapsed !== false && !/** @type {Element} */ (event.target).closest('summary, a[href]')) this.#talk() } }
+  /** So does the keyboard coming into it. @param {FocusEvent} event */
+  #keys = (event) => { if (/** @type {Element} */ (event.target).matches(':focus-visible')) this.#talk() }
 
   render() {
     const leaf = this.leaf, task = app.conversations.value.find((item) => item.id === leaf), records = this.#records.value, name = task?.title || t('conversation.untitled')
+    void stirred.value
     return html`<aside class="pane tile" tabindex="-1" aria-label=${name}>
       <header class="pane-head">
         ${task && app.running.value.includes(task.path) ? html`<span class="ember" role="img" aria-label=${t('activity.working')}></span>` : nothing}
         <h2><button class="tile-name" @click=${this.#talk}><span dir="auto">${name}</span></button></h2>
         ${dock.moves(this)}<button class="icon-button" aria-label=${t('action.close')} @click=${() => { layout.value = without(layout.peek(), leaf) ?? 'here' }}>${icons.close}</button>
       </header>
-      <div class="view" @click=${this.#clicked}>${records ? turns(records) : nothing}</div>
+      <div class="view" @click=${this.#clicked} @focusin=${this.#keys}>${records && task ? html`<app-conversation .task=${{ id: leaf, path: task.path, ...asShown(task.path, records) }}></app-conversation>
+        <app-composer for=${leaf}>${still(leaf)}</app-composer>` : nothing}</div>
     </aside>`
   }
 

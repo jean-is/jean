@@ -20,7 +20,7 @@ import { unlock, contributions, slots, FIRST_REQUEST } from './caps.js'
 import {
   app, effective, activeBrain, brainsHere, brainLabel, assistantName, cloudAllowed, currentFiles, conversationOf, readBody, loadModels,
   notify, setPresence, setRule, showError, updateSettings, refreshConversations, sidebarOpen, openConversation, turnPage, beginRun, endRun, stop, CITED, keepRecords,
-  newTasks, showRun,
+  newTasks, showRun, stirred,
 } from './state.js'
 
 /** @import { BrainConfig, Envelope, ToolCallInfo, ResourceLink } from '../core/types.js' */
@@ -523,6 +523,7 @@ async function runAgent(conversation, brain, meta, call, after, held) {
     frame ||= requestAnimationFrame(() => {
       frame = 0
       if (shown() && !run.held) app.live.value = { turn: run.turn, steers: run.steers }
+      else stirred.value++
     })
   }
   let written = Promise.resolve()

@@ -17,15 +17,14 @@ import { speaking, toggleSpeech, canSpeak } from './speech.js'
 /** @import { ToolCallInfo, ResourceLink } from '../core/types.js' */
 
 /**
- * Where the reader was when the page went (a reload), in this tab only: the conversation, the turn
- * at the top of the window and how far into it, so answers that draw later don't move the line.
- * Nothing when at the end. Read once, by the page that comes next.
+ * Where the reader was when the page went (a reload), in this tab only, or a task left for a pane: the turn at the top
+ * of its box and how far into it, so answers that draw later don't move the line. Nothing when at the end.
  */
 const SPOT = 'app.spot'
-/** @type {{ id: string, turn: number, offset: number } | null} */
-let spot = null
+export const spots = /** @type {Map<string, { turn: number, offset: number }>} */ (new Map())
 try {
-  spot = JSON.parse(sessionStorage.getItem(mine(SPOT)) ?? 'null')
+  const spot = JSON.parse(sessionStorage.getItem(mine(SPOT)) ?? 'null')
+  if (spot) spots.set(spot.id, spot)
   sessionStorage.removeItem(mine(SPOT))
 } catch {}
 
@@ -37,7 +36,16 @@ setInterval(() => { now.value = Date.now() }, 60_000)
 export const scroller = () => /** @type {HTMLElement} */ (document.querySelector('[data-split] .here') ?? document.documentElement)
 export const atEnd = (slack = 120, box = scroller()) => box.clientHeight + box.scrollTop >= box.scrollHeight - slack
 export const toEnd = (box = scroller()) => box.scrollTo({ top: box.scrollHeight, behavior: 'instant' })
-const top = () => Math.max(0, scroller().getBoundingClientRect().top)
+const top = (/** @type {HTMLElement} */ box) => Math.max(0, box.getBoundingClientRect().top)
+/** What a conversation scrolls in; where it is read. @param {globalThis.Element} view */
+const boxOf = (view) => /** @type {HTMLElement | null} */ (view.closest('.view')) ?? scroller()
+/** @param {globalThis.Element} view */
+export function spotOf(view) {
+  const box = boxOf(view), edge = top(box), turns = [...view.querySelectorAll('.turns > .turn')]
+  const index = Math.max(0, turns.findLastIndex((turn) => turn.getBoundingClientRect().top <= edge))
+  return atEnd(1, box) || !turns[index] ? null : { turn: index, offset: edge - turns[index].getBoundingClientRect().top }
+}
+let drawing = { path: '', busy: false }
 
 /** The request in a box, by its time (D312): ui/edit.js. */
 export const editing = signal('')
@@ -45,6 +53,11 @@ export const editing = signal('')
 export const asked = signal(/** @type {(text: string) => unknown} */ ((text) => (/(?:^|\s)[/#]\S/.test(text) && import('./marks.js'), withFormulas(text))))
 
 class Conversation extends Element {
+  /** Another task, in its pane, and its answer so far. */
+  #task = signal(/** @type {(NonNullable<typeof app.current.value> & { live: typeof app.live.value }) | null} */ (null))
+  get task() { return this.#task.value }
+  set task(task) { this.#task.value = task }
+  #box = () => boxOf(this)
   #follow = true
   /** @type {string | undefined} */
   #shown
@@ -55,21 +68,19 @@ class Conversation extends Element {
   #at = 0
   #grown = new ResizeObserver(() => {
     if (this.#opening) this.#go(null)
-    else if (this.#back && scroller().scrollTop === this.#at) {
+    else if (this.#back && this.#box().scrollTop === this.#at) {
       this.#go(this.#back)
-      this.#at = scroller().scrollTop
+      this.#at = this.#box().scrollTop
     }
   })
   #onScroll = () => {
-    if (!this.#opening) this.#follow = atEnd()
+    if (!this.#opening) this.#follow = atEnd(120, this.#box())
   }
   #keep = () => {
-    const turns = [...this.querySelectorAll('.turns > .turn')]
-    const index = Math.max(0, turns.findLastIndex((turn) => turn.getBoundingClientRect().top <= top()))
-    const end = atEnd(1)
+    const at = this.#task.peek() || spotOf(this)
     try {
-      if (end || !turns[index]) sessionStorage.removeItem(mine(SPOT))
-      else sessionStorage.setItem(mine(SPOT), JSON.stringify({ id: app.current.peek()?.id, turn: index, offset: top() - turns[index].getBoundingClientRect().top }))
+      if (!at) sessionStorage.removeItem(mine(SPOT))
+      else if ('turn' in at) sessionStorage.setItem(mine(SPOT), JSON.stringify({ id: app.current.peek()?.id, ...at }))
     } catch {}
   }
 
@@ -80,16 +91,14 @@ class Conversation extends Element {
     this.#grown.observe(this)
     // Back where the reader was, or at the end: once the box below is drawn too, and again once the
     // capabilities are back, unless the reader has moved since.
-    const back = spot?.id === app.current.peek()?.id ? spot : null
-    spot = null
-    this.#back = back
+    const back = this.#back
     // Until then, scroll anchoring would move the page as what comes later draws.
     document.documentElement.style.overflowAnchor = 'none'
     queueMicrotask(async () => {
       this.#go(back)
-      this.#at = scroller().scrollTop
+      this.#at = this.#box().scrollTop
       await app.ready.catch(() => {})
-      if (this.isConnected && (back ? scroller().scrollTop === this.#at : this.#follow)) this.#go(back)
+      if (this.isConnected && (back ? this.#box().scrollTop === this.#at : this.#follow)) this.#go(back)
       this.#back = null
       document.documentElement.style.overflowAnchor = ''
     })
@@ -106,18 +115,19 @@ class Conversation extends Element {
   #go(back) {
     const turn = back && this.querySelectorAll('.turns > .turn')[back.turn]
     if (turn) this.#opening = false
-    const box = scroller()
-    box.scrollTo({ top: turn ? turn.getBoundingClientRect().top - top() + box.scrollTop + back.offset : box.scrollHeight, behavior: 'instant' })
+    const box = this.#box()
+    box.scrollTo({ top: turn ? turn.getBoundingClientRect().top - top(box) + box.scrollTop + back.offset : box.scrollHeight, behavior: 'instant' })
     this.#onScroll()
   }
 
   render() {
-    const current = app.current.value
+    const task = this.#task.value, current = task ?? app.current.value
     if (!current) return nothing
     const turns = foldTurns(current.records)
     const files = linkedFiles(current.records)
-    const live = app.live.value
-    const error = app.error.value
+    const live = task ? task.live : app.live.value
+    const error = task ? null : app.error.value
+    drawing = { path: current.path, busy: task ? app.running.value.includes(current.path) : app.busy.value }
     const sources = citable(files, live ? [...turns, live.turn] : turns)
     return html`
       <h1 class="conversation-title" dir="auto">${titleOf(current.records) || t('conversation.untitled')}</h1>
@@ -136,12 +146,14 @@ class Conversation extends Element {
   updated() {
     // Another conversation opens at its end, wherever the one before was read; until the reader does
     // anything, the scrolling is Jean's, and what draws late (a picture, a card) keeps the end in view.
-    const id = app.current.peek()?.id
+    const id = (this.#task.peek() ?? app.current.peek())?.id
     if (id !== this.#shown) {
-      [this.#shown, this.#follow, this.#opening] = [id, true, true]
+      [this.#shown, this.#follow, this.#opening, this.#back] = [id, true, true, spots.get(String(id)) ?? null]
+      spots.delete(String(id))
       for (const type of ['pointerdown', 'keydown', 'wheel']) addEventListener(type, this.#opened, { capture: true, passive: true, once: true })
+      if (this.#back) return void (this.#go(this.#back), (this.#at = this.#box().scrollTop))
     }
-    if (this.#follow) toEnd()
+    if (this.#follow) toEnd(this.#box())
   }
 }
 
@@ -210,9 +222,9 @@ function turnView(turn, live, files, upTo, last, sources, steered) {
       ${isPicture(link) ? shared(link) : html`<button class="file-chip" @click=${() => openFile(link)} title=${t('files.open')}>${icons.file}<span dir="auto">${link.name}</span></button>`}
     </li>`)}</ul>` : nothing}
     ${turn.user?.text ? editing.value === turn.at ? html`<app-edit class="msg-user" .request=${turn.user}></app-edit>`
-      : html`<p class="msg msg-user" dir="auto" tabindex=${last && app.busy.value ? nothing : 0} aria-keyshortcuts="Enter" @dblclick=${edit}
+      : html`<p class="msg msg-user" dir="auto" tabindex=${last && drawing.busy ? nothing : 0} aria-keyshortcuts="Enter" @dblclick=${edit}
         @keydown=${(/** @type {KeyboardEvent} */ event) => event.key === 'Enter' && edit(event)}>${asked.value(turn.user.text)}</p>` : nothing}
-    ${turn.user ? requestActions(turn.user, !(last && app.busy.value)) : nothing}
+    ${turn.user ? requestActions(turn.user, !(last && drawing.busy)) : nothing}
     ${summed ? html`<app-compaction .record=${summed}></app-compaction>` : nothing}
     ${streaming || text || entries.length ? html`
       <article class="msg msg-jean ${streaming ? 'is-streaming' : ''}" aria-busy=${streaming ? 'true' : 'false'}>
@@ -228,7 +240,7 @@ function turnView(turn, live, files, upTo, last, sources, steered) {
         ${!streaming && text ? html`<app-check at=${turn.at}></app-check>` : nothing}
         ${!streaming && text ? actions(turn, text) : nothing}
       </article>` : nothing}
-    ${last && !streaming && !app.busy.value ? followUps(turn.at, suggestions, entries.findLast((entry) => entry.kind === 'think' && !entry.name && !entry._meta?.parent)) : nothing}
+    ${last && !streaming && !drawing.busy ? followUps(turn.at, suggestions, entries.findLast((entry) => entry.kind === 'think' && !entry.name && !entry._meta?.parent)) : nothing}
   </li>`
 }
 
@@ -316,9 +328,9 @@ function activity(steps, text, streaming, files, doing, steered) {
   // A task paused at its limit didn't fail (D364).
   const status = streaming ? (working ? 'working' : 'thinking') : failed || (unfinished && !aborted && !last?._meta?.stopped) ? 'failed' : 'completed'
   // The offer made here, not in a conversation out of sight (D147).
-  const offering = app.offering.value?.conversation === app.current.value?.path ? app.offering.value : null
+  const offering = app.offering.value?.conversation === drawing.path ? app.offering.value : null
   // A request that failed is asked again after a moment.
-  const waiting = streaming ? decisionsHere().length + (offering ? 1 : 0) : 0
+  const waiting = streaming ? decisionsHere(drawing.path).length + (offering ? 1 : 0) : 0
   const summary = waiting ? t('inbox.waiting', { count: waiting }) : streaming
     ? doing && !last?._meta?.retrying && (working || !text) ? doing : t(last?._meta?.retrying ? 'activity.retrying' : working ? 'activity.working' : text ? 'activity.writing' : 'activity.thinking')
     : failed ? t('activity.failed') : unfinished ? t('activity.unfinished') : last ? t('activity.answeredWith', { brain: brainName(last) })
@@ -433,7 +445,7 @@ function shown(value) {
  * @param {ToolCallInfo[]} entries @param {ResourceLink[]} files
  */
 function inbox(entries, files) {
-  const waiting = decisionsHere().filter((decision) => 'toolCall' in decision)
+  const waiting = decisionsHere(drawing.path).filter((decision) => 'toolCall' in decision)
   if (!waiting.length) return nothing
   // Which helper is asking: the one whose call the request sits under.
   const from = (/** @type {string} */ id) => entries.find((entry) => entry.name === 'helper' && id.startsWith(`${entry.toolCallId}/`))?.rawInput?.title

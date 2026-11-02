@@ -98,7 +98,7 @@ function write(followed = false) {
 }
 
 /** @returns {Record<string, string>} */
-function drafts() {
+export function drafts() {
   try {
     return JSON.parse(sessionStorage.getItem(mine(DRAFTS)) ?? '{}')
   } catch {

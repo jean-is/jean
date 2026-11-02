@@ -1,7 +1,16 @@
 /* Tiles (D635, ./split.js): another task's pane, as the dock's are (ui/dock.css), its name the button that makes it the one the box
-   is for. Logical properties only. */
+   is for; under it, the task as the room shows it, in its column, its title in the head, its box at its foot, still, the size of the
+   box that has the keys. A part of the screen as the task beside it is, on the same paper, never a panel over it, whatever the look
+   makes of other panes. Logical properties only. */
 
 .tile-name { display: block; inline-size: 100%; padding: 0.25rem 0.4rem; margin-inline-start: -0.4rem; border: 0; border-radius: var(--radius); background: none; color: inherit; font: inherit; text-align: inherit; }
 .tile-name:hover { background: var(--line); }
 .tile-name span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .tile:focus { outline: 0; }
+:root[data-dock='beside'] .dock > app-tile { padding: 0; }
+:root .tile.pane { border: 0; border-radius: 0; background: var(--room); backdrop-filter: none; box-shadow: none; }
+.tile > .view { gap: 0; padding: 1rem 0 0; overscroll-behavior: contain; }
+.tile app-conversation { flex: 1; inline-size: var(--column); margin-inline: auto; padding-block-end: 2rem; }
+.tile .conversation-title { display: none; }
+app-composer[for] { view-transition-name: none; cursor: text; }
+app-composer[for] .composer-row { min-block-size: 2.5rem; }

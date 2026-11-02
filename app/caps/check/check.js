@@ -104,7 +104,8 @@ class Check extends Element {
   render() {
     const at = this.getAttribute('at') ?? ''
     if (checking.value.includes(at)) return html`<p class="check is-running" role="status">${icons['double-check']}<span>${t('check.running')}</span></p>`
-    const records = app.current.value?.records ?? []
+    // Its task's: another's, in its pane (caps/split), or the one the box is for.
+    const records = (/** @type {{ task?: typeof app.current.value }} */ (this.closest('app-conversation'))?.task ?? app.current.value)?.records ?? []
     /** @type {Checked[] | undefined} */
     const claims = records.findLast((record) => record.meta?.check?.at === at)?.meta?.check.claims
     const ok = claims?.filter((claim) => claim.verdict === 'supported') ?? []

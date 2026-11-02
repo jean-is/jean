@@ -374,8 +374,8 @@ export async function keepRecords(path, records, shown = false) {
  * @typedef {{ id: string, path: string, records: Envelope[], brain: BrainConfig, turn: Turn, settled: Envelope[], controller: AbortController, steers?: string[], held?: Envelope[] }} Run
  *   held: a look's, until it says something (D645)
  */
-/** @type {Map<string, Run>} by path */
-const runs = new Map()
+/** @type {Map<string, Run>} by path, which a task's pane reads (caps/split) as it writes */
+export const runs = new Map(), stirred = signal(0)
 
 /**
  * The conversation a call works for, by its run's signal (D147); without one, the one on screen.
@@ -402,7 +402,7 @@ function decline(path) {
 }
 
 /** The decisions waiting in the conversation on screen. */
-export const decisionsHere = () => app.decisions.value.filter((decision) => decision.conversation === app.current.value?.path)
+export const decisionsHere = (path = app.current.value?.path) => app.decisions.value.filter((decision) => decision.conversation === path)
 
 /** The box, the live answer and the presence follow the conversation on screen: its run's, if any. It has the box until it ends. */
 export function showRun() {
