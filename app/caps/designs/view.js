@@ -21,7 +21,7 @@ import { paperFor } from '../made/formats.js'
 import { book, shown, picked, write, suggested, makeWay } from './designs.js'
 import { laid, takesOf, resized, marksOf, voicesFor, unitOf, colourOf, contrastOf, leadOf, weightOf, spot, added, stacked, formOf, pathsOf, onOf } from './layout.js'
 import { FORMS, ART } from './tool.js'
-import { pageOf, vars, ART as drawn } from './page.js'
+import { pageOf, vars, laidOut, ART as drawn } from './page.js'
 import { handles, drag, keyed, nudge } from './move.js'
 
 /** @import { Design, Part } from './layout.js' */
@@ -358,9 +358,10 @@ function editor(design, part) {
 export function view(holds) {
   const box = Object.assign(document.createElement('div'), { className: 'design' })
   undos = []; redos = []; last = ''; deals.value = Math.max(3, (shown.peek()?.design.deal ?? 0) + 2); dealt = { ...dealt, key: '' }
-  // Words that run out of their part, as text spacing of the reader's own makes them, fitted again as a save does, but while a change waits to be written or a part is held.
+  // Words that run out of their part, as text spacing of the reader's own makes them, fitted again as a save does, on screen alone, the file left as it is
+  // until the person changes it; not while a change waits to be written or a part is held.
   let fitted = /** @type {Kept | null} */ (null); const out = (/** @type {Element} */ part) => { const words = /** @type {HTMLElement} */ (part.firstElementChild); return words.scrollWidth > words.clientWidth + 1 || words.offsetHeight > part.clientHeight + 1 }
-  const fits = new ResizeObserver(() => { const one = shown.peek(); if (one && one !== fitted && !timer && !box.querySelector('.design-over :active') && [...box.querySelectorAll('.design-sheet .design-part.design-words')].some(out)) { fitted = one; write(one).then((done) => { fitted = done }, console.warn) } })
+  const fits = new ResizeObserver(() => { const one = shown.peek(); if (one && one !== fitted && !timer && !box.querySelector('.design-over :active') && [...box.querySelectorAll('.design-sheet .design-part.design-words')].some(out)) { fitted = one; laidOut(one.design, book).then(({ design }) => { if (shown.peek() === one) shown.value = fitted = { ...one, design } }, console.warn) } })
   holds.push(effect(() => {
     const one = shown.value
     render(one ? draw(one) : nothing, box)
