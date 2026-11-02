@@ -11,6 +11,7 @@
   "lock.unlock": "Buɗe kulle",
   "lock.passwordLabel": "Kalmar sirri",
   "lock.codeLabel": "Lambar maidowa",
+  "lock.codeForm": "Rukuni takwas na haruffa huɗu-huɗu, daga 0 zuwa 9 da daga A zuwa F, da ɗan layi a tsakanin rukunoni.",
   "lock.useCode": "Yi amfani da lambar maidowa",
   "lock.wrong": "Wannan ba ya buɗe shi.",
   "lock.noPasskey": "Babu maɓallin shiga da ya iya kulle shi a nan. Yi amfani da kalmar sirri maimakon haka.",

@@ -117,7 +117,7 @@ function sandboxPage() {
 
 /** Off, Ask first or Any site, one checked, those not to be had disabled. @param {string} current @param {string[]} out */
 const choice = (current, out) => html`<span class="segmented" role="radiogroup" aria-labelledby="computer-internet">
-  ${['off', 'ask', 'any'].map((option) => html`<label><input type="radio" name="internet" .checked=${current === option} ?disabled=${out.includes(option)}
+  ${['off', 'ask', 'any'].map((option) => html`<label for=${`internet-${option}`}><input id=${`internet-${option}`} type="radio" name="internet" .checked=${current === option} ?disabled=${out.includes(option)}
     @change=${() => setComputer({ internet: /** @type {any} */ (option) })}><span>${t(`computer.internet.${option}`)}</span></label>`)}
 </span>`
 
@@ -145,10 +145,10 @@ function limitsPage() {
     </ul>
     <section><h3>${t('computer.registries')}</h3><p class="muted">${t('computer.registries.text')}</p>
       ${REGISTRIES.map((kind) => html`<div class="stack">
-        <label>${t(`computer.registry.${kind}`)}<input dir="ltr" type="url" spellcheck="false" .value=${app.settings.value.computer?.registries?.[kind] ?? ''}
+        <label for=${`registry-${kind}`}>${t(`computer.registry.${kind}`)}<input id=${`registry-${kind}`} dir="ltr" type="url" spellcheck="false" .value=${app.settings.value.computer?.registries?.[kind] ?? ''}
           placeholder=${serviceURL(kind, app.settings.value, app.policy)} ?disabled=${locked.has(`registries.${kind}`)}
           @change=${(/** @type {Event} */ e) => setComputer({ registries: { ...app.settings.value.computer?.registries, [kind]: /** @type {HTMLInputElement} */ (e.target).value.trim() } })}></label>
-        <label>${t('computer.registry.key')}<input type="password" autocomplete="off" spellcheck="false" dir="ltr" placeholder="••••"
+        <label for=${`registry-${kind}-key`}>${t('computer.registry.key')}<input id=${`registry-${kind}-key`} type="password" autocomplete="off" spellcheck="false" dir="ltr" placeholder="••••"
           @change=${async (/** @type {Event} */ e) => { const value = /** @type {HTMLInputElement} */ (e.target).value.trim(); await (value ? setSecret(app.fs, `computer-${kind}`, value) : deleteSecret(app.fs, `computer-${kind}`)) }}></label>
       </div>`)}</section>`
 }

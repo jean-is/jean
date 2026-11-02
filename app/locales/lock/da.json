@@ -11,6 +11,7 @@
   "lock.unlock": "Lås op",
   "lock.passwordLabel": "Adgangskode",
   "lock.codeLabel": "Gendannelseskode",
+  "lock.codeForm": "Otte grupper med fire tegn, 0 til 9 og A til F, med en bindestreg mellem grupperne.",
   "lock.useCode": "Brug gendannelseskoden",
   "lock.wrong": "Det åbner den ikke.",
   "lock.noPasskey": "Ingen adgangsnøgle kunne låse den her. Brug en adgangskode i stedet.",

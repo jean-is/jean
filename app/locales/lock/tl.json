@@ -11,6 +11,7 @@
   "lock.unlock": "I-unlock",
   "lock.passwordLabel": "Password",
   "lock.codeLabel": "Recovery code",
+  "lock.codeForm": "Walong grupo ng tig-apat na character, 0 hanggang 9 at A hanggang F, may gitling sa pagitan ng mga grupo.",
   "lock.useCode": "Gamitin ang recovery code",
   "lock.wrong": "Hindi iyon nakapagbubukas.",
   "lock.noPasskey": "Walang passkey na nakapag-lock dito. Gumamit na lang ng password.",

@@ -120,7 +120,7 @@ const near = new IntersectionObserver((all) => { for (const { target, isIntersec
 define('app-later', Later)
 
 /** One of a menu's rows, which closes it. @param {string} menu @param {unknown} icon @param {string} label @param {() => unknown} act */
-const action = (menu, icon, label, act) => html`<button type="button" popovertarget=${menu} popovertargetaction="hide" @click=${act}>${icon}${label}</button>`
+const action = (menu, icon, label, act) => html`<li><button type="button" popovertarget=${menu} popovertargetaction="hide" @click=${act}>${icon}${label}</button></li>`
 /**
  * Show or Sort: a button of its glyph alone, its tip saying what is chosen, marked once that isn't the first, and its menu, the
  * one chosen checked, each with its count if it has one. @param {string} id @param {unknown} glyph @param {string} tip
@@ -156,7 +156,7 @@ function card(items, i) {
   return html`<li class="creation ${opened.value && menuOf.value?.path === item.path ? 'is-open' : ''}" data-path=${item.path} aria-posinset=${i + 1} aria-setsize=${items.length} @contextmenu=${context}
     draggable=${renaming.value === item.path ? nothing : 'true'} @dragstart=${(/** @type {DragEvent} */ e) => e.dataTransfer?.setData(item.kind.held ? 'text/x-creation-block' : 'text/x-creation', held)}>
     <app-later class="creation-preview" aria-hidden="true" inert .draw=${() => item.kind.preview?.(item) ?? item.kind.draw()}></app-later>
-    ${renaming.value === item.path ? html`<div class="creation-naming">${item.kind.draw()}<input class="creation-rename" dir="auto" aria-label=${t('action.rename')} .value=${item.name}
+    ${renaming.value === item.path ? html`<div class="creation-naming">${item.kind.draw()}<input class="creation-rename" dir="auto" title=${t('action.rename')} .value=${item.name}
       @keydown=${(/** @type {KeyboardEvent} */ e) => named(e, item)} @blur=${(/** @type {FocusEvent} */ e) => named(e, item)}></div>`
       : html`<button class="creation-open" aria-label=${`${t(`creations.one.${item.kind.id}`)}: ${item.name}`} @click=${show(item)} @dblclick=${() => rename(item.path)}>${item.kind.draw()}<span dir="auto">${item.name}</span></button>`}
     <button class="icon-button subtle creation-more" popovertarget="creation-menu" aria-label=${t('action.more')} @click=${() => { menuOf.value = item }}>${icons.more}</button>
@@ -185,13 +185,13 @@ class Page extends Element {
     }
     return html`<h1 class="conversation-title">${t('creations.title')}</h1>
     <div class="creations-bar">
-      ${here.length > 4 || words.value ? html`<label class="creations-find">${icons.search}<input type="search" dir="auto" placeholder=${t('creations.find')} aria-label=${t('creations.find')} .value=${words.value} @input=${(/** @type {InputEvent} */ e) => { words.value = /** @type {HTMLInputElement} */ (e.target).value }}></label>` : nothing}
+      ${here.length > 4 || words.value ? html`<label class="creations-find" for="creations-find">${icons.search}<input id="creations-find" type="search" dir="auto" placeholder=${t('creations.find')} aria-label=${t('creations.find')} title=${t('creations.find')} .value=${words.value} @input=${(/** @type {InputEvent} */ e) => { words.value = /** @type {HTMLInputElement} */ (e.target).value }}></label>` : nothing}
       ${here.length > 1 && kinds.length > 1 ? choice('creations-kinds', SHOW, t('creations.showing', { what: t(picked ? `creations.kind.${picked.id}` : 'creations.all') }), [['', t('creations.all'), count.format(here.length)],
         ...kinds.map((one) => [one.id, t(`creations.kind.${one.id}`), count.format(here.filter((item) => item.kind === one).length)])], picked?.id ?? '', (one) => { kind.value = one }) : nothing}
       ${here.length > 1 ? choice('creations-order', SORT, t('creations.sorted', { how: t(ORDERS[order.value]) }), Object.entries(ORDERS).map(([one, label]) => [one, t(label)]), order.value, (one) => { order.value = one }) : nothing}
       ${!makes.length ? nothing : makes.length === 1 ? html`<button class="button primary" title=${t(`creations.one.${makes[0].id}`)} @click=${make(makes[0])}>${icons.plus}${t('creations.create')}</button>`
       : html`<button class="button primary" popovertarget="creations-new">${icons.plus}${t('creations.create')}${icons.chevron}</button>
-        <div id="creations-new" class="menu creations-menu" popover>${makes.map((one) => action('creations-new', one.draw(), t(`creations.one.${one.id}`), make(one)))}</div>`}
+        <div id="creations-new" class="menu creations-menu" popover><ul>${makes.map((one) => action('creations-new', one.draw(), t(`creations.one.${one.id}`), make(one)))}</ul></div>`}
     </div>
     ${starts.length ? html`<ul class=${here.length ? 'creations-start' : 'creations-start is-empty'} aria-label=${t('creations.create')}>${starts.map((one) => html`<li><button class="creation-start" data-kind=${one.id} @click=${make(one)}>
       <span>${one.draw()}</span><span><b>${t(`creations.one.${one.id}`)}</b> <small>${t(`creations.start.${one.id}`)}</small></span>${icons.plus}<span class="creation-blank"></span></button></li>`)}</ul>` : nothing}
@@ -199,7 +199,7 @@ class Page extends Element {
     ${groups.map(([name, items], at) => { const words = html`${name}<span>${count.format(items.length)}</span>`; return !items.length ? nothing : html`${name ? html`<h2 class="creations-group">${at ? words : folding('creations', words)}</h2>` : nothing}
       ${!at && app.folded.value.has('creations') ? nothing : html`<ul class="creations-cards">${virtual({ count: items.length, key: (i) => items[i].path,
       at: items.findIndex((item) => item.path === renaming.value), draw: (i) => card(items, i) })}</ul>`}` })}
-    <div id="creation-menu" class="menu task-menu" popover @toggle=${(/** @type {ToggleEvent} */ e) => { opened.value = e.newState === 'open' }}>${menuOf.value ? menu(menuOf.value) : nothing}</div>`
+    <div id="creation-menu" class="menu task-menu" popover @toggle=${(/** @type {ToggleEvent} */ e) => { opened.value = e.newState === 'open' }}>${menuOf.value ? html`<ul>${menu(menuOf.value)}</ul>` : nothing}</div>`
   }
 }
 

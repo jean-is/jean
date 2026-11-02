@@ -11,6 +11,7 @@
   "lock.unlock": "ይክፈቱ",
   "lock.passwordLabel": "የይለፍ ቃል",
   "lock.codeLabel": "የመልሶ ማግኛ ኮድ",
+  "lock.codeForm": "ስምንት የአራት ቁምፊዎች ቡድኖች፣ ከ0 እስከ 9 እና ከA እስከ F፣ በቡድኖቹ መካከል ሰረዝ ያለው።",
   "lock.useCode": "የመልሶ ማግኛ ኮዱን ይጠቀሙ",
   "lock.wrong": "ያ አይከፍተውም።",
   "lock.noPasskey": "እዚህ በምንም የይለፍ ቁልፍ መቆለፍ አልተቻለም። በምትኩ የይለፍ ቃል ይጠቀሙ።",

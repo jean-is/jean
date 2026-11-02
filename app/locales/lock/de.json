@@ -11,6 +11,7 @@
   "lock.unlock": "Entsperren",
   "lock.passwordLabel": "Passwort",
   "lock.codeLabel": "Wiederherstellungscode",
+  "lock.codeForm": "Acht Vierergruppen aus 0 bis 9 und A bis F, mit einem Bindestrich zwischen den Gruppen.",
   "lock.useCode": "Wiederherstellungscode verwenden",
   "lock.wrong": "Damit lässt es sich nicht öffnen.",
   "lock.noPasskey": "Kein Passkey konnte es hier sperren. Nimm stattdessen ein Passwort.",

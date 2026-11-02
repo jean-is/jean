@@ -11,6 +11,7 @@
   "lock.unlock": "Déverrouiller",
   "lock.passwordLabel": "Mot de passe",
   "lock.codeLabel": "Code de récupération",
+  "lock.codeForm": "Huit groupes de quatre caractères, de 0 à 9 et de A à F, séparés par un tiret.",
   "lock.useCode": "Utiliser le code de récupération",
   "lock.wrong": "Cela ne l’ouvre pas.",
   "lock.noPasskey": "Aucune clé d’accès n’a pu le verrouiller ici. Utilisez plutôt un mot de passe.",

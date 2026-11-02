@@ -11,6 +11,7 @@
   "lock.unlock": "Desbloquear",
   "lock.passwordLabel": "Palavra-passe",
   "lock.codeLabel": "Código de recuperação",
+  "lock.codeForm": "Oito grupos de quatro caracteres, de 0 a 9 e de A a F, separados por um hífen.",
   "lock.useCode": "Usar o código de recuperação",
   "lock.wrong": "Isso não o abre.",
   "lock.noPasskey": "Nenhuma chave de acesso conseguiu bloqueá-lo aqui. Usa antes uma palavra-passe.",

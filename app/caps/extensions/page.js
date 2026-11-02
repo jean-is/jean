@@ -155,7 +155,7 @@ function row(manifest) {
   return html`<li><button class="item" data-extension=${manifest.name} @click=${() => go(manifest.name)}>${mark(manifest, title)}
       <span class="item-text"><strong dir="auto">${title}</strong><small dir="auto" class=${failed ? 'is-error' : ''}>${failed ? t('extensions.failing') : description}</small></span>
       ${strongest(manifest)}${icons.chevron}</button>
-    ${safe.value ? html`<span class="data-state">${t('extensions.paused')}</span>` : html`<input type="checkbox" class="switch" role="switch" aria-label=${title} .checked=${on === true}
+    ${safe.value ? html`<span class="data-state">${t('extensions.paused')}</span>` : html`<input type="checkbox" class="switch" role="switch" title=${title} .checked=${on === true}
       @change=${(/** @type {Event} */ e) => turn(manifest, /** @type {HTMLInputElement} */ (e.target).checked)}>`}</li>`
 }
 
@@ -163,7 +163,7 @@ function row(manifest) {
 const rights = (manifest, added) => html`<section><h3>${t(added ? 'extensions.may' : 'extensions.asks', { name })}</h3>${manifest.rights.length
   ? html`<ul class="rules extensions-rights">${manifest.rights.map((right) => html`<li class="setting ${right === 'loosen' ? 'is-loose' : ''}"><div>
     <span class="rule-kind">${t(`extensions.right.${right}`)}</span>${right === 'loosen' ? html`<span class="data-state is-wait">${t('extensions.skips')}</span>` : nothing}${right === 'watch' || right === 'loosen' ? html`<p class="muted small">${t(`extensions.rightText.${right}`)}</p>` : nothing}</div>
-    ${added ? html`<input type="checkbox" class="switch" role="switch" aria-label=${t(`extensions.right.${right}`)} .checked=${granted(manifest, right)}
+    ${added ? html`<input type="checkbox" class="switch" role="switch" title=${t(`extensions.right.${right}`)} .checked=${granted(manifest, right)}
       @change=${(/** @type {Event} */ e) => take(manifest, right, !(/** @type {HTMLInputElement} */ (e.target).checked))}>` : nothing}</li>`)}</ul>`
   : html`<p class="muted small">${t('extensions.nothing')}</p>`}</section>
   <section><h3>${t('extensions.cant')}</h3><ul class="extensions-cant">${CANT.map((what) => html`<li>${icons.close}${t(`extensions.cant.${what}`)}</li>`)}</ul></section>`
@@ -175,7 +175,7 @@ function page(manifest) {
   const host = running.value.get(manifest.name)
   return html`${back('')}
     <header class="data-head">${mark(manifest, title)}<div><h2 dir="auto" tabindex="-1">${title}</h2><p class="lede" dir="auto">${about(manifest, from)}</p></div>
-      ${safe.value ? html`<span class="data-state">${t('extensions.paused')}</span>` : html`<input type="checkbox" class="switch" role="switch" aria-label=${title} .checked=${on === true}
+      ${safe.value ? html`<span class="data-state">${t('extensions.paused')}</span>` : html`<input type="checkbox" class="switch" role="switch" title=${title} .checked=${on === true}
         @change=${(/** @type {Event} */ e) => turn(manifest, /** @type {HTMLInputElement} */ (e.target).checked)}>`}</header>
     <p class="extensions-words" dir="auto">${description}</p>
     ${host?.slots.includes('settings') ? html`<section class="extensions-own" aria-label=${t('extensions.shownBy', { title })}><p class="extensions-label">${t('extensions.shownBy', { title })}</p>${drawn(host, 'settings', {})}</section>` : nothing}

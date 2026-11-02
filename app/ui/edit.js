@@ -41,7 +41,7 @@ class Edit extends Element {
   }
 
   render() {
-    return html`<textarea dir="auto" enterkeyhint="send" required aria-label=${t('composer.label')} .value=${this.request?.text ?? ''} @keydown=${this.#keydown}></textarea>
+    return html`<textarea dir="auto" enterkeyhint="send" required title=${t('composer.label')} .value=${this.request?.text ?? ''} @keydown=${this.#keydown}></textarea>
       <div><button class="icon-button subtle" aria-label=${t('action.close')} @click=${this.#close}>${icons.close}</button><button class="icon-button subtle" aria-label=${t('action.send')} @click=${this.#send}>${icons.send}</button></div>`
   }
 

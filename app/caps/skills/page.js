@@ -211,11 +211,11 @@ function page(skill) {
   const [own, steps, beside] = [ownOf(skill), skill.body.replace(/^#\s[^\n]*\n+/, ''), known.value?.beside ?? []]
   return html`${back('')}
     <header class="skill-head"><span class="item-icon">${glyphOf(skill)}</span><div><h2 dir="auto" tabindex="-1">${title}</h2><p class="lede" dir="auto">${said(skill)}</p></div>
-      <input type="checkbox" class="switch" role="switch" aria-label=${title} .checked=${!isOff(skill)} @change=${turn(skill)}></header>
+      <input type="checkbox" class="switch" role="switch" title=${title} .checked=${!isOff(skill)} @change=${turn(skill)}></header>
     ${own ? html`<div class="ready-body">${body({ entry: own, unpacked: { body: skill.body, files: [] } })}</div>` : editing.value === skill.name ? html`
       <form class="skill-edit" @submit=${(/** @type {SubmitEvent} */ e) => change(e, skill)}>
-        <label>${t('skills.when', { name: BRAND.name })}<textarea name="description" rows="2" dir="auto" required .value=${skill.description}></textarea></label>
-        <label>${t('skills.steps')}<textarea name="steps" rows="10" dir="auto" required .value=${steps}></textarea></label>
+        <label for="skill-when">${t('skills.when', { name: BRAND.name })}<textarea id="skill-when" name="description" rows="2" dir="auto" required .value=${skill.description}></textarea></label>
+        <label for="skill-steps">${t('skills.steps')}<textarea id="skill-steps" name="steps" rows="10" dir="auto" required .value=${steps}></textarea></label>
         <p class="hint">${t('skills.stepsHint')}</p>
         <div class="row"><button class="button primary">${t('skills.keep')}</button><button type="button" class="button subtle" @click=${() => { editing.value = '' }}>${t('skills.cancel')}</button></div>
       </form>` : html`
@@ -241,8 +241,8 @@ function adding({ skills, own }) {
   return html`<ul class="services skill-ways">
       <li><button class="service" @click=${() => ask(t('skills.makeAsk'))}><span class="monogram">${icons.brain}</span>
         <span><strong>${t('skills.make', { name: BRAND.name })}</strong><small>${t('skills.makeText', { name: BRAND.name })}</small></span></button></li>
-      <li><label class="service"><span class="monogram">${icons.upload}</span><span><strong>${t('skills.file')}</strong><small>${t('skills.fileText')}</small></span>
-        <input type="file" accept=".md,text/markdown" class="visually-hidden" @change=${fromFile}></label></li>
+      <li><label class="service" for="skill-file"><span class="monogram">${icons.upload}</span><span><strong>${t('skills.file')}</strong><small>${t('skills.fileText')}</small></span>
+        <input id="skill-file" type="file" accept=".md,text/markdown" class="visually-hidden" @change=${fromFile}></label></li>
       <li><button class="service" @click=${() => go('sites')}><span class="monogram">${icons.globe}</span>
         <span><strong>${t('skills.site')}</strong><small>${t('skills.siteText')}</small></span></button></li>
     </ul>
@@ -275,7 +275,7 @@ function sites({ skills }) {
     <section class="sources">
       ${!offers ? html`<button class="button" @click=${(/** @type {Event} */ e) => { /** @type {HTMLButtonElement} */ (e.currentTarget).disabled = true; browse() }}>${icons.globe} ${t('skills.browse')}</button>` : html`
         ${elsewhere.value?.some((index) => index.skills.length > 6) ? html`<input type="search" class="sources-search" dir="auto" .value=${query.value}
-          placeholder=${t('skills.search')} aria-label=${t('skills.search')} @input=${(/** @type {Event} */ e) => { query.value = /** @type {HTMLInputElement} */ (e.target).value }}>` : nothing}
+          placeholder=${t('skills.search')} title=${t('skills.search')} @input=${(/** @type {Event} */ e) => { query.value = /** @type {HTMLInputElement} */ (e.target).value }}>` : nothing}
         ${words && !offers.some(({ entries }) => entries.length) ? html`<p class="muted small">${t('find.none', { query: query.value.trim() })}</p>` : nothing}
         ${offers.filter(({ index, entries }) => entries.length || index.error || !words).map(({ index, entries }) => html`<div class="source">
           <h4>${icons.globe} <span dir="ltr">${siteOf(index.url)}</span>${locked().includes(index.url) ? html` <span class="muted small">${lockedBy()}</span>`
@@ -284,7 +284,7 @@ function sites({ skills }) {
           <ul class="cards">${entries.map((entry) => html`<li><button class="card" @click=${() => go(`add/${entry.name}`)}><strong dir="ltr">${entry.name}</strong><small dir="auto">${entry.description}</small></button></li>`)}</ul>
         </div>`)}
         ${app.policy.skills?.only ? nothing : html`<form class="row" @submit=${addSource}>
-          <input name="address" required dir="ltr" inputmode="url" autocomplete="off" spellcheck="false" placeholder="example.com" aria-label=${t('skills.source')}>
+          <input name="address" required dir="ltr" inputmode="url" autocomplete="off" spellcheck="false" placeholder="example.com" title=${t('skills.source')}>
           <button class="button">${t('skills.sourceAdd')}</button>
         </form>`}`}
     </section>`

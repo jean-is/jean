@@ -269,7 +269,7 @@ function sourceRow(id, locked) {
   const text = isKiwix(address) ? t('search.fromLibrary', { languages: languagesAt(address, id) }) : id === 'wikipedia' ? t('search.wikipedia.text')
     : t(yours ? 'search.vikidia.text' : 'search.vikidia.not', { count: VIKIDIA.length - (yours ? 1 : 0) })
   return html`<li>${mark(name, logoAt(`${id}.svg`))}<span class="item-text"><strong><bdi>${name}</bdi></strong><small>${text}</small></span>
-    <input type="checkbox" class="switch" role="switch" aria-label=${name} .checked=${on.value.includes(id)} ?disabled=${locked}
+    <input type="checkbox" class="switch" role="switch" title=${name} .checked=${on.value.includes(id)} ?disabled=${locked}
       @change=${(/** @type {Event} */ e) => turn(id, /** @type {HTMLInputElement} */ (e.target).checked)}></li>`
 }
 
@@ -356,8 +356,8 @@ function keyedPage(id) {
     ${!reached(id) ? html`<p class="hint">${t('search.noGateway', { service: name, connections: t('cap.connections.name') })}</p>
         <div class="row"><button class="button" @click=${async () => { if (await unlock('connections')) app.section.value = 'connections/later' }}>${t('cap.connections.name')}</button></div>`
       : html`<form class="stack" @submit=${(/** @type {SubmitEvent} */ e) => tryKey(e, id)}>
-      <label>${t('search.key')}<input name="key" type="password" required autocomplete="off" spellcheck="false" dir="ltr" placeholder=${has ? '••••••••' : ''}></label>
-      ${engine ? html`<label>${t('search.engine')}<input name="engine" required autocomplete="off" spellcheck="false" dir="ltr"></label>` : nothing}
+      <label for="search-key">${t('search.key')}<input id="search-key" name="key" type="password" required autocomplete="off" spellcheck="false" dir="ltr" placeholder=${has ? '••••••••' : ''}></label>
+      ${engine ? html`<label for="search-engine">${t('search.engine')}<input id="search-engine" name="engine" required autocomplete="off" spellcheck="false" dir="ltr"></label>` : nothing}
       <div class="row"><button class="button primary" ?disabled=${trying.value}>${t('search.connect')}</button>${has ? html`<button type="button" class="button subtle" @click=${() => forgetKey(id)}>${t('action.remove')}</button>` : nothing}</div>
     </form>
     ${failure.value ? html`<p class="status is-error" role="alert">${t(`search.${failure.value}`, { service: name })}</p>` : nothing}
@@ -379,7 +379,7 @@ function libraryPage() {
       <input type="checkbox" class="switch" role="switch" aria-labelledby="source-title" .checked=${on.value.includes('kiwix')} ?disabled=${app.policy.searches !== undefined}
         @change=${switched((value) => turn('kiwix', value))}></header>
     <form class="stack" @submit=${connect}>
-      <label>${t('search.address')}<input name="address" type="url" required dir="ltr" placeholder="http://localhost:8080" autocomplete="off" spellcheck="false" .value=${saved} ?disabled=${fixed}></label>
+      <label for="search-address">${t('search.address')}<input id="search-address" name="address" type="url" required dir="ltr" placeholder="http://localhost:8080" autocomplete="off" spellcheck="false" .value=${saved} ?disabled=${fixed}></label>
       ${fixed ? lockedBy() : html`<div class="row"><button class="button primary" ?disabled=${trying.value}>${t('search.connect')}</button>${saved
         ? html`<button type="button" class="button subtle" @click=${forget}>${t('action.remove')}</button>` : nothing}</div>`}
     </form>
@@ -387,6 +387,6 @@ function libraryPage() {
       : shelf?.books ? html`<p class="library" role="status"><span class="dot"></span>${t('search.answering')}</p>` : html`<p class="hint">${t('search.insecure')}</p>`}
     ${shelf?.books ? html`<section><h3>${t('search.books', { count: shelf.books.length })}</h3><ul class="list">${shelf.books.map(bookRow)}</ul></section>` : nothing}
     ${shelf?.books?.some((book) => book.category === 'wikipedia') ? html`<ul class="list general"><li>${mark(t('search.wikipedia'), logoAt('wikipedia.svg'))}<span class="item-text"><strong>${t('search.readHere')}</strong>
-      <small>${t('search.readHere.text', { languages: languagesAt(saved, 'wikipedia') })}</small></span><input type="checkbox" class="switch" role="switch" aria-label=${t('search.readHere')}
+      <small>${t('search.readHere.text', { languages: languagesAt(saved, 'wikipedia') })}</small></span><input type="checkbox" class="switch" role="switch" title=${t('search.readHere')}
         .checked=${wiki} ?disabled=${app.policy.urls?.wikipedia !== undefined} @change=${switched((value) => setAddresses({ wikipedia: value ? saved : '' }))}></li></ul>` : nothing}`
 }

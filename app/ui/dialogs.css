@@ -58,7 +58,7 @@ dialog[open]::backdrop { @starting-style { opacity: 0; } }
 .settings-nav button:hover, .settings-nav [aria-current='page'] { background: var(--line); color: var(--ink); }
 .settings-nav [aria-current='page'] { font-weight: 600; box-shadow: inset 0 0 0 1px var(--ink-faint); }
 /* The menu's three groups (D134): Jean itself; what it knows and can do; what it may do and keeps. */
-.settings-nav hr { flex: none; margin: 0.45rem 0.85rem; border: 0; border-block-start: 1px solid var(--line); }
+.settings-nav hr { flex: none; margin: 0.45rem 0.85rem; border: 0; border-block-start: 1px solid var(--line); } .settings-nav :is(ul, li) { display: contents; }
 /* Its scroll bar's gutter is kept on both sides, so one that takes room (with a mouse) never pushes the
    settings off centre or comes and goes between sections. */
 .settings-panel { position: relative; grid-area: 1 / 2 / 3; overflow: auto; padding-block: 1.6rem 1.5rem; padding-inline: 0.75rem 1.5rem; scrollbar-gutter: stable both-edges; }
@@ -243,7 +243,7 @@ input.switch:disabled { cursor: not-allowed; opacity: 0.6; }
 .dialog-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 0.5rem; padding: 0.875rem 1.5rem 1.25rem; border-block-start: 1px solid var(--line); } .dialog-foot .danger { margin-inline-end: auto; }
 .swatches { display: flex; flex-wrap: wrap; gap: 0.2rem; margin: 0; padding: 0; border: 0; }
 .swatch { position: relative; display: grid; place-items: center; inline-size: 2.3rem; block-size: 2.3rem; border: 1px solid transparent; border-radius: 50%; cursor: pointer; }
-.swatch input { position: absolute; opacity: 0; }
+.swatch input { position: absolute; z-index: 1; inset: 0; inline-size: 100%; block-size: 100%; margin: 0; opacity: 0; cursor: pointer; }
 .swatch app-persona { --persona-size: 1.55rem; }
 .swatch:has(input:checked) { border-color: var(--flame-deep); background: var(--line); }
 .swatch:has(input:focus-visible) { outline: 2px solid var(--flame); outline-offset: 2px; }

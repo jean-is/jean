@@ -11,6 +11,7 @@
   "lock.unlock": "Kilidi aç",
   "lock.passwordLabel": "Şifre",
   "lock.codeLabel": "Kurtarma kodu",
+  "lock.codeForm": "Dörder karakterlik sekiz grup, 0–9 ve A–F, gruplar arasında kısa çizgi.",
   "lock.useCode": "Kurtarma kodunu kullan",
   "lock.wrong": "Bununla açılmıyor.",
   "lock.noPasskey": "Hiçbir geçiş anahtarı burada kilitleyemedi. Onun yerine bir şifre kullan.",

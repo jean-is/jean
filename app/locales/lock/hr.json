@@ -11,6 +11,7 @@
   "lock.unlock": "Otključaj",
   "lock.passwordLabel": "Lozinka",
   "lock.codeLabel": "Kod za oporavak",
+  "lock.codeForm": "Osam skupina od po četiri znaka, od 0 do 9 i od A do F, s crticom između skupina.",
   "lock.useCode": "Upotrijebi kod za oporavak",
   "lock.wrong": "To ga ne otvara.",
   "lock.noPasskey": "Ovdje ga nijedan pristupni ključ nije mogao zaključati. Umjesto toga upotrijebite lozinku.",

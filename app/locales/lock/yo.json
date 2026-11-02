@@ -11,6 +11,7 @@
   "lock.unlock": "Ṣí i",
   "lock.passwordLabel": "Ọ̀rọ̀ aṣínà",
   "lock.codeLabel": "Kóòdù ìmúpadàbọ̀sípò",
+  "lock.codeForm": "Ẹgbẹ́ mẹ́jọ tí ọ̀kọ̀ọ̀kan ní àmì mẹ́rin, láti 0 sí 9 àti láti A sí F, pẹ̀lú àmì ìlà kúkúrú láàrin àwọn ẹgbẹ́.",
   "lock.useCode": "Lo kóòdù ìmúpadàbọ̀sípò",
   "lock.wrong": "Ìyẹn kò ṣí i.",
   "lock.noPasskey": "Kò sí passkey tí ó lè tì í níbí. Ẹ lo ọ̀rọ̀ aṣínà dípò rẹ̀.",

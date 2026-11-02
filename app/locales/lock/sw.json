@@ -11,6 +11,7 @@
   "lock.unlock": "Fungua",
   "lock.passwordLabel": "Nenosiri",
   "lock.codeLabel": "Msimbo wa urejeshaji",
+  "lock.codeForm": "Makundi manane ya herufi nne, 0 hadi 9 na A hadi F, yenye kistari kati ya makundi.",
   "lock.useCode": "Tumia msimbo wa urejeshaji",
   "lock.wrong": "Hicho hakifungui.",
   "lock.noPasskey": "Hakuna ufunguo wa siri ulioweza kufunga hapa. Tumia nenosiri badala yake.",

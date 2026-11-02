@@ -58,7 +58,7 @@ const keys = (shortcut) => html`<kbd aria-hidden="true"><bdi dir="ltr">${keyName
  * @param {{ shortcut?: string, label?: (id: string, words: string) => unknown }} [more]
  */
 const segmented = (name, said, options, picked, pick, { shortcut, label } = {}) => html`<span class="segmented" role="radiogroup" aria-label=${said} aria-keyshortcuts=${shortcut ?? nothing}>
-  ${options.map(([id, words]) => html`<label title=${label ? words : nothing}><input type="radio" name=${name} aria-label=${label ? words : nothing} .checked=${id === picked}
+  ${options.map(([id, words]) => html`<label for=${`${name}-${id}`} title=${label ? words : nothing}><input id=${`${name}-${id}`} type="radio" name=${name} aria-label=${label ? words : nothing} title=${label ? words : nothing} .checked=${id === picked}
     @change=${() => pick(id)}>${label ? label(id, words) : html`<span>${words}</span>`}</label>`)}</span>`
 
 /** A setting a row: what it is, and how it stands when it follows something else, then how it is set. @param {unknown} label @param {string} line @param {unknown} control */
@@ -101,8 +101,8 @@ function gallery() {
   return html`<section><header class="look-group"><h3 id="look-themes">${t('look.title')}</h3>${one ? html`<span class="muted small">${lockedBy()}</span>`
       : html`<span class="muted small">${t('keyboard.look')}</span>${keys(SHORTCUTS.look)}`}</header>
     <fieldset class="looks" aria-labelledby="look-themes" ?disabled=${one} aria-keyshortcuts=${one ? nothing : `${SHORTCUTS.look} ${backwards(SHORTCUTS.look)}`}>
-      ${ids.map((id) => html`<label class="choice-option look">
-        <input type="radio" name="look" .checked=${id === chosenLook.value} @change=${() => setLook({ id })}>
+      ${ids.map((id) => html`<label class="choice-option look" for=${`look-${id}`}>
+        <input id=${`look-${id}`} type="radio" name="look" .checked=${id === chosenLook.value} @change=${() => setLook({ id })}>
         <span class="look-thumb" aria-hidden="true">${picture(id)}${other ? picture(id, other) : nothing}</span>
         <span>${lookName(id)}</span>
       </label>`)}
@@ -110,7 +110,7 @@ function gallery() {
 }
 
 /** A colour to pick, drawn as Jean will show it by day or by night (ui/touches.js). @param {string} name @param {string} colour @param {boolean} on @param {() => void} pick @param {string} [kind] */
-const swatch = (name, colour, on, pick, kind = '') => html`<label class="swatch ${kind}" title=${name}><input type="radio" name="accent" .checked=${live(on)} @change=${pick}>
+const swatch = (name, colour, on, pick, kind = '') => html`<label class="swatch ${kind}" for=${`accent-${kind || colour}`}><input id=${`accent-${kind || colour}`} title=${name} type="radio" name="accent" .checked=${live(on)} @change=${pick}>
   <span class="look-dot" ${ref((dot) => /** @type {HTMLElement | undefined} */ (dot)?.style.setProperty('--swatch', colour))}></span><span class="visually-hidden">${name}</span></label>`
 
 /** Make it yours: the accent, then the user's own CSS's page. @param {Look} look */
@@ -123,7 +123,7 @@ function yours(look) {
       <legend class="visually-hidden">${t('look.accent')}</legend>
       ${swatch(t('look.own'), own, look.accent === undefined, () => setLook({ accent: undefined }), 'is-own')}
       ${COLOURS.map(([name, colour]) => swatch(t(`colour.${name}`), colour, colour === look.accent, () => setLook({ accent: colour })))}
-      <label class="swatch is-any" title=${t('look.another')}><input type="color" .value=${live(other ? String(look.accent) : own)}
+      <label class="swatch is-any" for="accent-any"><input id="accent-any" title=${t('look.another')} type="color" .value=${live(other ? String(look.accent) : own)}
         @input=${(/** @type {Event} */ e) => setLook({ accent: valueOf(e) }, { later: true })}><span class="look-dot ${other ? 'is-on' : ''}"></span><span class="visually-hidden">${t('look.another')}</span></label>
     </fieldset>`)}
     <li><button class="item" data-page="css" @click=${() => go('css')}><span class="item-text"><strong>${t('look.css')}</strong></span>${icons.chevron}</button></li>

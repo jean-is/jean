@@ -11,6 +11,7 @@
   "lock.unlock": "Mở khóa",
   "lock.passwordLabel": "Mật khẩu",
   "lock.codeLabel": "Mã khôi phục",
+  "lock.codeForm": "Tám nhóm, mỗi nhóm bốn ký tự từ 0 đến 9 và từ A đến F, nối nhau bằng dấu gạch ngang.",
   "lock.useCode": "Dùng mã khôi phục",
   "lock.wrong": "Cái đó không mở được.",
   "lock.noPasskey": "Không khóa truy cập nào khóa được ở đây. Hãy dùng mật khẩu thay thế.",

@@ -86,16 +86,16 @@ class Ask extends Element {
       ${repeat([step], (i) => i, () => html`<div class="ask-field" role="group" aria-labelledby="ask-question">
         <p class="ask-question" id="ask-question" dir="auto">${question.question}</p>
         ${question.options.length ? html`<ul class="ask-options">
-          ${question.options.map((option, i) => html`<li><label class="choice-option">
-            <input type=${input} name="answer" .checked=${live(answer.chosen.includes(i))} @change=${() => pick(i)}>
+          ${question.options.map((option, i) => html`<li><label class="choice-option" for=${`ask-${i}`}>
+            <input id=${`ask-${i}`} type=${input} name="answer" .checked=${live(answer.chosen.includes(i))} @change=${() => pick(i)}>
             <span><span dir="auto">${option.label}</span>${option.description ? html`<small dir="auto">${option.description}</small>` : nothing}</span>
             ${option.recommended ? html`<em class="ask-recommended">${t('ask.recommended')}</em>` : nothing}
           </label></li>`)}
           <li class="choice-option ask-own">
-            <input type=${input} name="answer" aria-label=${t('ask.own')} .checked=${live(answer.writing)} @change=${write}>
-            <input class="ask-own-text" dir="auto" autocomplete="off" placeholder=${t('ask.own')} aria-label=${t('ask.own')} .value=${live(answer.own)} @input=${typed}>
+            <input type=${input} name="answer" title=${t('ask.own')} .checked=${live(answer.writing)} @change=${write}>
+            <input class="ask-own-text" dir="auto" autocomplete="off" placeholder=${t('ask.own')} title=${t('ask.own')} .value=${live(answer.own)} @input=${typed}>
           </li>
-        </ul>` : html`<input class="ask-own-text" name="answer" dir="auto" autocomplete="off" aria-label=${t('inbox.answer')} .value=${live(answer.own)} @input=${typed}>`}
+        </ul>` : html`<input class="ask-own-text" name="answer" dir="auto" autocomplete="off" title=${t('inbox.answer')} .value=${live(answer.own)} @input=${typed}>`}
       </div>`)}
       <div class="ask-actions">
         ${questions.length > 1 ? html`<p class="ask-progress">

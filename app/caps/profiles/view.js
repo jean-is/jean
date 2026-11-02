@@ -51,14 +51,14 @@ export function week(days) {
 export function editor(now, set, catalogue, offered) {
   const year = new Date().getFullYear()
   /** A checkbox among others, for one of a list's items. @param {string[]} list @param {string} id @param {unknown} label @param {(next: string[]) => void} change */
-  const checkbox = (list, id, label, change) => html`<label class="check"><input type="checkbox" .checked=${list.includes(id)}
+  const checkbox = (list, id, label, change) => html`<label class="check" for=${`check-${id}`}><input id=${`check-${id}`} type="checkbox" .checked=${list.includes(id)}
     @change=${(/** @type {Event} */ e) => change(/** @type {HTMLInputElement} */ (e.target).checked ? [...list, id] : list.filter((each) => each !== id))}>${label}</label>`
   return html`<div class="stack profile-editor">
-    <label class="profile-born">${t('profiles.born')}<select @change=${(/** @type {Event} */ e) => set({ born: Number(/** @type {HTMLSelectElement} */ (e.target).value) })}>
+    <label class="profile-born" for="born-edit">${t('profiles.born')}<select id="born-edit" @change=${(/** @type {Event} */ e) => set({ born: Number(/** @type {HTMLSelectElement} */ (e.target).value) })}>
       ${Array.from({ length: 16 }, (_, i) => year - 3 - i).map((born) => html`<option ?selected=${born === now.born}>${born}</option>`)}</select><small>${years(now.born)}</small></label>
     <table class="profile-grid"><thead><tr><th scope="col">${t('profiles.topics')}</th>${CHOICES.map((choice) => html`<th scope="col">${t(`profiles.choice.${choice}`)}</th>`)}</tr></thead>
       <tbody>${topics.map((id) => html`<tr><th scope="row">${t(`profiles.topic.${id}`)}</th>${CHOICES.map((choice) => html`<td><input type="radio" name="topic-${id}"
-        aria-label=${t(`profiles.choice.${choice}`)} .checked=${now.topics[id] === choice} @change=${() => set({ topics: { ...now.topics, [id]: choice } })}></td>`)}</tr>`)}</tbody></table>
+        aria-label=${t(`profiles.choice.${choice}`)} title=${t(`profiles.choice.${choice}`)} .checked=${now.topics[id] === choice} @change=${() => set({ topics: { ...now.topics, [id]: choice } })}></td>`)}</tr>`)}</tbody></table>
     <fieldset><legend>${t('profiles.sources')}</legend>${['vikidia', 'wikipedia'].map((id) => checkbox(now.searches, id, t(`profiles.source.${id}`), (searches) => set({ searches })))}</fieldset>
     ${offered ? html`<fieldset><legend>${t('profiles.brain')}</legend>${offered.length ? offered.map((brain) => checkbox((now.brains ?? []).map(({ id }) => id), brain.id, html`<bdi>${brainLabel(brain)}</bdi>`,
       (ids) => set({ brains: offered.filter(({ id }) => ids.includes(id)) }))) : html`<p class="muted">${t('profiles.none')}</p>`}</fieldset>` : nothing}

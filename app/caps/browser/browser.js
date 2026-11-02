@@ -516,7 +516,7 @@ class Browser extends Element {
         ${button(t('browser.reload'), icons.retry, reload, !shown)}
         <form @submit=${submit}>
           <input name="address" type="text" inputmode="url" enterkeyhint="go" autocomplete="off" autocapitalize="off" spellcheck="false" dir="auto"
-            class=${shown && !shown.own && trail.moved ? 'is-moved' : ''} aria-label=${t('browser.address')} placeholder=${t('browser.placeholder')}
+            class=${shown && !shown.own && trail.moved ? 'is-moved' : ''} title=${t('browser.address')} placeholder=${t('browser.placeholder')}
             .value=${live(typed.value ?? address)} @input=${(/** @type {InputEvent} */ event) => { typed.value = /** @type {HTMLInputElement} */ (event.target).value }}
             @focus=${(/** @type {FocusEvent} */ event) => /** @type {HTMLInputElement} */ (event.target).select()}
             @keydown=${(/** @type {KeyboardEvent} */ event) => { if (event.key === 'Escape' && !event.isComposing && typed.value !== null) { typed.value = null; event.preventDefault() } }}

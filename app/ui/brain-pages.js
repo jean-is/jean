@@ -257,17 +257,17 @@ function waysOf(all) {
     { id: 'key', group: 'keyed', icon: icons.key, title: t('brain.key.title'), needs: providers(KEYED), body: html`
       <p>${t('brain.key.text')}</p>
       <form class="stack" @submit=${connectKey}><p class="muted small" id="brain-key-required">${t('brain.required')}</p>
-        <label>${t('brain.key.provider')}
-          <select name="provider" class="key-provider" @change=${(/** @type {Event} */ e) => { keyProvider.value = valueOf(e) }}><button><selectedcontent></selectedcontent></button>
+        <label for="brain-provider">${t('brain.key.provider')}
+          <select id="brain-provider" name="provider" class="key-provider" @change=${(/** @type {Event} */ e) => { keyProvider.value = valueOf(e) }}><button><selectedcontent></selectedcontent></button>
             ${KEYED.map((id) => html`<option value=${id} ?selected=${id === keyProvider.value}>${logo(id)}${t(`provider.${id}`)}</option>`)}
           </select>
         </label>
         ${keySteps(keyProvider.value)}
-        <label>${t('brain.key.label')}<input name="key" type="password" autocomplete="off" spellcheck="false" required dir="ltr" aria-describedby="brain-key-required"
+        <label for="brain-key">${t('brain.key.label')}<input id="brain-key" name="key" type="password" autocomplete="off" spellcheck="false" required dir="ltr" aria-describedby="brain-key-required"
           @input=${(/** @type {Event} */ e) => { const { form, value } = /** @type {HTMLInputElement} */ (e.target); if (form) fillProject(form, value) }}></label>
         ${keyProvider.value === 'vertex' ? html`
-          <div class="row"><label class="button">${t('brain.key.file')}<input type="file" accept=".json,application/json" class="visually-hidden" @change=${chooseAccount}></label></div>
-          <label>${t('brain.key.project')}<input name="project" required autocomplete="off" spellcheck="false" dir="ltr" aria-describedby="brain-key-required"></label>` : nothing}
+          <div class="row"><label class="button" for="brain-file">${t('brain.key.file')}<input id="brain-file" type="file" accept=".json,application/json" class="visually-hidden" @change=${chooseAccount}></label></div>
+          <label for="brain-project">${t('brain.key.project')}<input id="brain-project" name="project" required autocomplete="off" spellcheck="false" dir="ltr" aria-describedby="brain-key-required"></label>` : nothing}
         <div class="row"><button class="button primary" ?disabled=${busy}>${t('brain.connect')}</button></div>
       </form>` },
     ...(device && progress ? [{ id: 'device', group: 'free', icon: icons['brain-device'], title: t('brain.device.title'), needs: t('brain.device.private'), body: html`
@@ -281,15 +281,15 @@ function waysOf(all) {
     { id: 'local', group: 'free', icon: icons['brain-device'], title: t('brain.local.title'), needs: providers(['ollama', 'lmstudio']), body: html`
       <p>${t('brain.local.text')}</p>
       <form class="stack" @submit=${connectLocal}><p class="muted small" id="brain-local-required">${t('brain.required')}</p>
-        <label>${t('brain.local.app')}
-          <select @change=${(/** @type {Event} */ e) => {
+        <label for="brain-app">${t('brain.local.app')}
+          <select id="brain-app" @change=${(/** @type {Event} */ e) => {
             localProvider.value = /** @type {any} */ (valueOf(e))
             localAddress.value = PROVIDERS[localProvider.value].baseURL
           }}>
             ${['ollama', 'lmstudio', 'custom'].map((id) => html`<option value=${id} ?selected=${id === localProvider.value}>${t(`provider.${id}`)}</option>`)}
           </select>
         </label>
-        <label>${t('brain.local.address')}<input name="baseURL" type="url" required dir="ltr" aria-describedby="brain-local-required" placeholder="http://localhost:11434/v1"
+        <label for="brain-address">${t('brain.local.address')}<input id="brain-address" name="baseURL" type="url" required dir="ltr" aria-describedby="brain-local-required" placeholder="http://localhost:11434/v1"
           .value=${live(localAddress.value)} @input=${(/** @type {Event} */ e) => { localAddress.value = valueOf(e) }}></label>
         <p class="hint">${t('brain.local.hint', { origin: location.origin })}</p>
         <div class="row"><button class="button primary" ?disabled=${busy}>${t('brain.connect')}</button></div>
@@ -349,8 +349,8 @@ function autoLine() {
  * project kept on this device only Keep on this device can be chosen (D307). @param {string} id @param {string} mode
  * @param {unknown} icon @param {string} name @param {unknown} text @param {() => unknown} choose @param {unknown} [end] @param {boolean} [closed]
  */
-const choice = (id, mode, icon, name, text, choose, end = nothing, closed = false) => html`<div class=${mode === id ? 'is-selected' : ''}><label class="item">
-  <input type="radio" name="answers" .checked=${live(mode === id)} ?disabled=${closed || (app.project.value.data.cloud === false && id !== 'device')} @change=${choose}>
+const choice = (id, mode, icon, name, text, choose, end = nothing, closed = false) => html`<div class=${mode === id ? 'is-selected' : ''}><label class="item" for=${`answers-${id}`}>
+  <input id=${`answers-${id}`} type="radio" name="answers" .checked=${live(mode === id)} ?disabled=${closed || (app.project.value.data.cloud === false && id !== 'device')} @change=${choose}>
   <span class="item-icon">${icon}</span><span class="item-text"><strong>${name}</strong><small>${text}</small></span></label>${end}</div>`
 
 /** The brain Always the same answers with: the picker's choices, each its tier, its plan or where it answers from, and its model ("Fast · Claude · haiku", "LM Studio · flint"), the one picked by hand selected, at a version the picker no longer offers too. */
@@ -359,7 +359,7 @@ function same() {
   const named = (/** @type {BrainConfig} */ brain, /** @type {string} */ model, tier = '') => [tier, PLANS[brain.provider] ?? describe(brain).name, model.split('/').at(-1)].filter(Boolean).join(' · ')
   const at = offered.findIndex(({ brain, model }) => brain.id === active?.id && model === active.model)
   if (!offered.length && !active) return nothing
-  return html`<select class="brain-same" aria-label=${t('brain.same')} ?disabled=${app.project.value.data.cloud === false}
+  return html`<select class="brain-same" title=${t('brain.same')} ?disabled=${app.project.value.data.cloud === false}
     @change=${(/** @type {Event} */ e) => { const { brain, model } = offered[Number(valueOf(e))]; updateSettings({ auto: false, cloud: true }).then(() => useBrain(brain.id, model)) }}>
     ${offered.map(({ label, tier, brain, model }, i) => html`<option value=${i} ?selected=${i === at}>${named(brain, model, tier ? label : '')}</option>`)}
     ${active && at < 0 ? html`<option selected>${named(active, active.model)}</option>` : nothing}
@@ -417,7 +417,7 @@ function auto() {
   const here = (/** @type {unknown} */ icon, /** @type {string} */ kind) => html`<li><span class="item-icon">${icon}</span><span class="item-text"><strong>${t(`auto.${kind}`)}</strong>
     <small><bdi dir="ltr">${describe(/** @type {BrainConfig} */ (near)).name}</bdi></small></span><span class="brain-price">${t('brain.free')}</span></li>`
   return html`${head(t('auto.name'), autoLine())}
-    ${cloud.length > 1 ? html`<label class="brain-lean">${t('auto.uses')}<select @change=${(/** @type {Event} */ e) => updateSettings({ activeBrain: valueOf(e) })}>
+    ${cloud.length > 1 ? html`<label class="brain-lean" for="brain-lean">${t('auto.uses')}<select id="brain-lean" @change=${(/** @type {Event} */ e) => updateSettings({ activeBrain: valueOf(e) })}>
       ${cloud.map((brain) => html`<option value=${brain.id} ?selected=${brain === remote}>${describe(brain).name}</option>`)}</select></label>` : nothing}
     <ul class="list auto-steps">
       ${remote ? (sensed ? [step(icons.bolt, 'quick', 0), step(icons.lamp, 'everyday', 1), step(icons.star, 'demanding', 2)] : step(icons.lamp, 'all', 1)) : nothing}
@@ -452,7 +452,7 @@ function page(brain, closed) {
   const tiers = (/** @type {Record<string, string[]>} */ (app.policy.tiers ?? TIERS)[brain.provider] ?? []).filter((model) => models.some((info) => info.id === model))
   const version = (/** @type {string} */ model, level = tiers.indexOf(model)) => {
     const info = models.find((one) => one.id === model)
-    return html`<div class=${brain.model === model ? 'is-selected' : ''}><label class="item"><input type="radio" name="version" .checked=${live(brain.model === model)} @change=${() => setVersion(brain.id, model)}>
+    return html`<div class=${brain.model === model ? 'is-selected' : ''}><label class="item" for=${`version-${level}`}><input id=${`version-${level}`} type="radio" name="version" .checked=${live(brain.model === model)} @change=${() => setVersion(brain.id, model)}>
       <span class="item-text"><strong><bdi dir="ltr">${info?.name ?? model.split('/').at(-1)}</bdi></strong><small>${level < 0 ? '' : `${t(LEVELS[level])} · `}${price(brain, model, info?.pricing)}</small></span></label></div>`
   }
   return html`${head(name, line(brain))}
@@ -460,14 +460,14 @@ function page(brain, closed) {
     ${brain.api === 'device' ? nothing : html`<section><h3 id="brain-version">${t('brain.model')}</h3>
       ${tiers.length ? html`<p class="muted small">${t('brain.versionHint', { brain: name })}</p>
         <div class="list brains" role="radiogroup" aria-labelledby="brain-version">${tiers.map((model) => version(model))}${tiers.includes(brain.model) ? nothing : version(brain.model)}</div>` : nothing}
-      <input class="model-input" aria-labelledby="brain-version" list=${`models-${brain.id}`} .value=${live(brain.model)} dir="ltr" @change=${(/** @type {Event} */ e) => setVersion(brain.id, valueOf(e).trim())}>
+      <input class="model-input" aria-labelledby="brain-version" title=${t('brain.model')} list=${`models-${brain.id}`} .value=${live(brain.model)} dir="ltr" @change=${(/** @type {Event} */ e) => setVersion(brain.id, valueOf(e).trim())}>
       <datalist id=${`models-${brain.id}`}>${models.map((model) => html`<option value=${model.id}>${model.name ?? ''}</option>`)}</datalist>
-      ${!closed && !/^c(laudecode|opilot)$/.test(brain.provider) && (effective.value.settings.hurried || brain.effort) ? html`<label>${t('brain.thinking')}<select @change=${(/** @type {Event} */ e) => setEffort(brain.id, valueOf(e)).catch(showError)}>
+      ${!closed && !/^c(laudecode|opilot)$/.test(brain.provider) && (effective.value.settings.hurried || brain.effort) ? html`<label for="brain-effort">${t('brain.thinking')}<select id="brain-effort" @change=${(/** @type {Event} */ e) => setEffort(brain.id, valueOf(e)).catch(showError)}>
         ${['', 'low', 'medium', 'high'].map((effort) => html`<option value=${effort} ?selected=${(brain.effort ?? '') === effort}>${t(effort ? `brain.thinking.${effort}` : 'auto.name')}</option>`)}</select></label>` : nothing}
     </section>`}
     ${closed || !placeable(brain) ? nothing : html`<section>${where(brain, (projects) => keepBrain(brain.id, projects).catch(showError))}</section>`}
     ${closed || !KEYED.includes(brain.provider) ? nothing : html`<section><h3>${t('brain.key.label')}</h3><p class="muted small">${t('brain.key.text')}</p>${rekeying.value === brain.id
-      ? html`<form class="stack" @submit=${(/** @type {SubmitEvent} */ e) => rekey(e, brain).catch(showError)}><label>${t('brain.key.label')}<input name="key" type="password" autocomplete="off" spellcheck="false" required dir="ltr"></label>
+      ? html`<form class="stack" @submit=${(/** @type {SubmitEvent} */ e) => rekey(e, brain).catch(showError)}><label for="brain-rekey">${t('brain.key.label')}<input id="brain-rekey" name="key" type="password" autocomplete="off" spellcheck="false" required dir="ltr"></label>
         <div class="row"><button class="button primary">${t('brain.connect')}</button></div></form>`
       : html`<div class="row"><button class="button" @click=${() => { rekeying.value = brain.id }}>${t('brain.key.change')}</button></div>`}</section>`}
     ${closed ? nothing : html`<div class="row"><button class="button subtle danger" @click=${() => confirm(t('brain.confirmRemove')) && removeBrain(brain.id).then(() => go(''), showError)}>${icons.trash} ${t('action.remove')}</button></div>`}`

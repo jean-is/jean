@@ -54,6 +54,8 @@ export async function snapshot(text) {
   return (holds.forEach((hold) => hold()), fills)
 }
 
+/** Forms drawn, which names each one's fields apart. */
+let forms = 0
 customElements.define('app-parts', class extends HTMLElement {
   /** `open` while its block's closing fence isn't written yet. */
   static observedAttributes = ['source', 'open']
@@ -181,7 +183,7 @@ customElements.define('app-parts', class extends HTMLElement {
    * @param {Shown} part @param {Part[]} tables the page's @param {ReturnType<typeof shared>} state
    */
   form(part, tables, state) {
-    const fields = form(part), { ask = '', to = '' } = part.attrs, label = ask || t('action.send'), button = ask || to || !state.live
+    const fields = form(part), { ask = '', to = '' } = part.attrs, label = ask || t('action.send'), button = ask || to || !state.live, at = ++forms
     /** A field the user changed: all that reads it follows. @param {any} event */
     const changes = ({ target }) => { this.given.set(target.name, target.type === 'checkbox' ? target.checked : target.value); this.changed() }
     /** @param {SubmitEvent} event */
@@ -195,12 +197,12 @@ customElements.define('app-parts', class extends HTMLElement {
       if (!app.busy.peek()) void send([label, ...fields.map((field, i) => `${field.label}: ${values[i]}`)].join('\n'))
     }
     /** @param {ReturnType<typeof form>[number]} field */
-    const input = (field) => (field.kind === 'choice' ? html`<select name=${field.label}>${field.choices?.map((choice) => html`<option ?selected=${choice === field.start}>${choice}</option>`)}</select>`
-      : field.kind === 'long' ? html`<textarea name=${field.label} rows="3" .value=${field.start}></textarea>`
-      : field.kind === 'yes' || field.kind === 'no' ? html`<input type="checkbox" name=${field.label} ?checked=${field.start ? /^(yes|on|true|✓)$/i.test(field.start) : field.kind === 'yes'}>`
-      : field.kind === 'range' ? ((now) => html`<input type="range" name=${field.label} min=${field.min ?? nothing} max=${field.max ?? nothing} step=${field.step ?? nothing} .value=${now}><input type="number" name=${field.label} aria-label=${field.label} step=${field.step ?? nothing} .value=${now}>`)(String(this.given.get(field.label) ?? field.start))
-      : html`<input type=${field.kind === 'text' ? 'text' : field.kind} name=${field.label} step=${field.kind === 'number' ? 'any' : nothing} value=${field.start}>`)
-    return html`<form class="part-form" @submit=${submit} @input=${state.live && !to ? changes : nothing}>${fields.map((field) => html`<label class=${field.kind === 'yes' || field.kind === 'no' ? 'tick' : field.kind === 'range' ? 'slides' : ''}><span dir="auto">${field.label}</span>${input(field)}</label>`)}
+    const input = (field, /** @type {string} */ id) => (field.kind === 'choice' ? html`<select id=${id} name=${field.label}>${field.choices?.map((choice) => html`<option ?selected=${choice === field.start}>${choice}</option>`)}</select>`
+      : field.kind === 'long' ? html`<textarea id=${id} name=${field.label} rows="3" .value=${field.start}></textarea>`
+      : field.kind === 'yes' || field.kind === 'no' ? html`<input id=${id} type="checkbox" name=${field.label} ?checked=${field.start ? /^(yes|on|true|✓)$/i.test(field.start) : field.kind === 'yes'}>`
+      : field.kind === 'range' ? ((now) => html`<input id=${id} type="range" name=${field.label} min=${field.min ?? nothing} max=${field.max ?? nothing} step=${field.step ?? nothing} .value=${now}><input type="number" name=${field.label} title=${field.label} step=${field.step ?? nothing} .value=${now}>`)(String(this.given.get(field.label) ?? field.start))
+      : html`<input id=${id} type=${field.kind === 'text' ? 'text' : field.kind} name=${field.label} step=${field.kind === 'number' ? 'any' : nothing} value=${field.start}>`)
+    return html`<form class="part-form" @submit=${submit} @input=${state.live && !to ? changes : nothing}>${fields.map((field, i) => html`<label class=${field.kind === 'yes' || field.kind === 'no' ? 'tick' : field.kind === 'range' ? 'slides' : ''} for=${`part-${at}-${i}`}><span dir="auto">${field.label}</span>${input(field, `part-${at}-${i}`)}</label>`)}
       ${button ? html`<button type="submit" class="button primary">${label}</button>` : nothing}</form>`
   }
 })

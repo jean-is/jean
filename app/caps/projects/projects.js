@@ -47,18 +47,18 @@ class Projects extends Element {
         <app-persona></app-persona><span dir="auto">${nameOf(here)}</span>${icons.chevron}
       </button>
       <div id="project-menu" class="menu project-menu" popover>
-        <button type="button" popovertarget="project-menu" popovertargetaction="hide" aria-keyshortcuts=${SHORTCUTS.new}
-          @click=${() => turnPage(newConversation)}>${icons.compose}${t('action.new')}</button>
+        <ul><li><button type="button" popovertarget="project-menu" popovertargetaction="hide" aria-keyshortcuts=${SHORTCUTS.new}
+          @click=${() => turnPage(newConversation)}>${icons.compose}${t('action.new')}</button></li></ul>
         <hr>
-        ${app.projects.value.map((project) => html`<button type="button" class="project" popovertarget="project-menu" popovertargetaction="hide"
+        <ul>${app.projects.value.map((project) => html`<li><button type="button" class="project" popovertarget="project-menu" popovertargetaction="hide"
           aria-current=${project.dir === here.dir ? 'true' : 'false'} @click=${() => enterProject(project)}>
           <app-persona data-tint=${typeof project.data.colour === 'string' ? project.data.colour : COLOURS[0][1]}></app-persona>
           <span dir="auto">${nameOf(project)}</span>
-        </button>`)}
+        </button></li>`)}</ul>
         <hr>
-        <button type="button" popovertarget="project-menu" popovertargetaction="hide" @click=${() => editProject()}>${icons.layers}${t('projects.new')}</button>
-        ${here.data.default !== true ? html`<button type="button" popovertarget="project-menu" popovertargetaction="hide"
-          @click=${() => editProject(here)}>${icons.gear}${t('projects.edit')}</button>` : nothing}
+        <ul><li><button type="button" popovertarget="project-menu" popovertargetaction="hide" @click=${() => editProject()}>${icons.layers}${t('projects.new')}</button></li>
+        ${here.data.default !== true ? html`<li><button type="button" popovertarget="project-menu" popovertargetaction="hide"
+          @click=${() => editProject(here)}>${icons.gear}${t('projects.edit')}</button></li>` : nothing}</ul>
       </div>`
   }
 
@@ -121,27 +121,27 @@ class ProjectDialog extends Element {
         ${project ? nothing : html`<p class="lede">${t('cap.projects.text', { name: BRAND.name })}</p>`}
         <div class="project-identity">
           <app-persona class="project-light" data-tint=${current}></app-persona>
-          <label>${t('projects.name')}
-            <input name="name" required maxlength="80" dir="auto" autocomplete="off" autofocus .value=${live(project ? String(project.data.name) : '')}>
+          <label for="project-name">${t('projects.name')}
+            <input id="project-name" name="name" required maxlength="80" dir="auto" autocomplete="off" autofocus .value=${live(project ? String(project.data.name) : '')}>
           </label>
           <fieldset class="swatches" @change=${(/** @type {Event} */ e) => /** @type {HTMLElement} */ (this.querySelector('.project-light')).style.setProperty('--tint', /** @type {HTMLInputElement} */ (e.target).value)}>
             <legend class="visually-hidden">${t('projects.colour')}</legend>
-            ${COLOURS.map(([name, value]) => html`<label class="swatch" title=${t(`colour.${name}`)}>
-              <input type="radio" name="colour" value=${value} .checked=${live(value === current)}>
+            ${COLOURS.map(([name, value]) => html`<label class="swatch" for=${`project-${name}`}>
+              <input id=${`project-${name}`} title=${t(`colour.${name}`)} type="radio" name="colour" value=${value} .checked=${live(value === current)}>
               <app-persona data-tint=${value}></app-persona><span class="visually-hidden">${t(`colour.${name}`)}</span>
             </label>`)}
           </fieldset>
         </div>
         ${loaded.value.has('names') ? html`<section class="stack">
-          <label>${t('projects.assistant')}
-            <input name="assistant" maxlength="40" dir="auto" autocomplete="off" placeholder=${BRAND.name} .value=${live(String(project?.data.assistantName ?? ''))}>
+          <label for="project-assistant">${t('projects.assistant')}
+            <input id="project-assistant" name="assistant" maxlength="40" dir="auto" autocomplete="off" placeholder=${BRAND.name} .value=${live(String(project?.data.assistantName ?? ''))}>
           </label>
-          <label>${t('projects.persona')}
-            <textarea name="persona" rows="2" maxlength="300" dir="auto" placeholder=${t('projects.personaHint')} .value=${live(project?.body.trim() ?? '')}></textarea>
+          <label for="project-persona">${t('projects.persona')}
+            <textarea id="project-persona" name="persona" rows="2" maxlength="300" dir="auto" placeholder=${t('projects.personaHint')} .value=${live(project?.body.trim() ?? '')}></textarea>
           </label>
         </section>` : nothing}
         <section class="stack">
-          <label class="setting">${t('projects.local')}<input type="checkbox" class="switch" role="switch" name="local" .checked=${live(project?.data.cloud === false)}></label>
+          <label class="setting" for="project-local">${t('projects.local')}<input id="project-local" type="checkbox" class="switch" role="switch" name="local" .checked=${live(project?.data.cloud === false)}></label>
           ${project && loaded.value.has('folders') ? html`<app-folder-field .project=${project}></app-folder-field>` : nothing}
           ${project?.dir === app.projectDir && slots('look').length ? html`<button type="button" class="button subtle" @click=${() => openSettings('appearance/kit-project')}>${icons.palette} ${t('projects.kit')}</button>` : nothing}
         </section>

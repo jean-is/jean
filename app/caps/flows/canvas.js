@@ -347,16 +347,16 @@ function board(one, { steps, wires, states, results }) {
   const running = steps.filter((node) => states.get(node.id) === 'running').map((node) => (one ? node.name : nameOf(node)))
   const calls = steps.filter((node) => node.kind === 'call').length
   return html`${one ? html`<div class="flows-tools">
-      <input class="flows-name" dir="auto" aria-label=${t('flows.name')} .value=${live(one.name)} @change=${(/** @type {Event} */ event) => {
+      <input class="flows-name" dir="auto" title=${t('flows.name')} .value=${live(one.name)} @change=${(/** @type {Event} */ event) => {
         const name = /** @type {HTMLInputElement} */ (event.target).value.trim()
         if (name) put({ ...one, name })
       }}>
       <details class="flows-add">
         <summary class="button">${icons.plus} ${t('flows.add')}</summary>
-        <div class="flows-menu">${(/** @type {const} */ (['text', 'file', 'ask', 'tool'])).map((kind) => html`<button class="button subtle" @click=${(/** @type {Event} */ event) => {
+        <ul class="flows-menu">${(/** @type {const} */ (['text', 'file', 'ask', 'tool'])).map((kind) => html`<li><button class="button subtle" @click=${(/** @type {Event} */ event) => {
           /** @type {HTMLDetailsElement} */ (/** @type {globalThis.Element} */ (event.target).closest('details')).open = false
           addStep(one, kind)
-        }}>${KINDS[kind]} ${t(`flows.kind.${kind}`)}</button>`)}</div>
+        }}>${KINDS[kind]} ${t(`flows.kind.${kind}`)}</button></li>`)}</ul>
       </details>
     </div>` : nothing}
     <div class="flows-stage">
@@ -407,7 +407,7 @@ export class Flows extends Element {
     const choices = related.value
     return html`<aside class="pane flows ${full.value ? 'is-full' : ''}" aria-label=${t('cap.flows.name')}>
       <header class="pane-head flows-bar">
-        ${choices.length ? html`<select class="flows-pick" aria-label=${t('flows.pick')} @change=${(/** @type {Event} */ event) => {
+        ${choices.length ? html`<select class="flows-pick" title=${t('flows.pick')} @change=${(/** @type {Event} */ event) => {
           selected.value = null
           show(/** @type {HTMLSelectElement} */ (event.target).value)
         }}>
@@ -437,7 +437,7 @@ export class FlowMain extends Element {
     const one = mainFlow.value
     return html`<section class="flows flows-main" aria-label=${t('cap.flows.name')}>
       <header class="flows-bar">
-        ${flows.value.length ? html`<select class="flows-pick" aria-label=${t('flows.pick')} @change=${(/** @type {Event} */ event) => {
+        ${flows.value.length ? html`<select class="flows-pick" title=${t('flows.pick')} @change=${(/** @type {Event} */ event) => {
           const value = /** @type {HTMLSelectElement} */ (event.target).value
           selected.value = null
           if (value === 'new') startFlow()
@@ -517,16 +517,16 @@ const valueOf = (event) => /** @type {HTMLInputElement} */ (event.target).value
 function argument(one, step, name, schema, required) {
   const value = step.args?.[name]
   const set = (/** @type {unknown} */ next) => changeStep(one, step.id, { args: { ...step.args, [name]: next } })
-  const title = `${name.replace(/_/g, ' ')}${required ? ' *' : ''}`
-  if (Array.isArray(schema?.enum)) return html`<label>${title}<select @change=${(/** @type {Event} */ event) => set(valueOf(event))}>
+  const title = `${name.replace(/_/g, ' ')}${required ? ' *' : ''}`, id = `flow-${step.id}-arg-${name}`
+  if (Array.isArray(schema?.enum)) return html`<label for=${id}>${title}<select id=${id} @change=${(/** @type {Event} */ event) => set(valueOf(event))}>
     <option value="" ?selected=${value === undefined}></option>${schema.enum.map((/** @type {string} */ option) => html`<option ?selected=${option === value}>${option}</option>`)}</select></label>`
-  if (schema?.type === 'boolean') return html`<label class="flows-check"><input type="checkbox" .checked=${Boolean(value)} @change=${(/** @type {Event} */ event) => set(/** @type {HTMLInputElement} */ (event.target).checked)}>${title}</label>`
-  if (schema?.type === 'number' || schema?.type === 'integer') return html`<label>${title}<input type="number" .value=${live(value === undefined ? '' : String(value))}
+  if (schema?.type === 'boolean') return html`<label class="flows-check" for=${id}><input id=${id} type="checkbox" .checked=${Boolean(value)} @change=${(/** @type {Event} */ event) => set(/** @type {HTMLInputElement} */ (event.target).checked)}>${title}</label>`
+  if (schema?.type === 'number' || schema?.type === 'integer') return html`<label for=${id}>${title}<input id=${id} type="number" .value=${live(value === undefined ? '' : String(value))}
     @change=${(/** @type {Event} */ event) => set(valueOf(event) === '' ? undefined : Number(valueOf(event)))}></label>`
   if (schema?.type === 'string' || schema?.type === undefined) return LONG.test(name) || String(value ?? '').length > 60
-    ? html`<label>${title}<textarea rows="4" dir="auto" .value=${live(String(value ?? ''))} @focus=${remember} @change=${(/** @type {Event} */ event) => set(valueOf(event))}></textarea></label>`
-    : html`<label>${title}<input dir="auto" .value=${live(String(value ?? ''))} @focus=${remember} @change=${(/** @type {Event} */ event) => set(valueOf(event))}></label>`
-  return html`<label>${title}<textarea rows="3" dir="ltr" class="flows-json" .value=${live(value === undefined ? '' : JSON.stringify(value, null, 2))} @focus=${remember}
+    ? html`<label for=${id}>${title}<textarea id=${id} rows="4" dir="auto" .value=${live(String(value ?? ''))} @focus=${remember} @change=${(/** @type {Event} */ event) => set(valueOf(event))}></textarea></label>`
+    : html`<label for=${id}>${title}<input id=${id} dir="auto" .value=${live(String(value ?? ''))} @focus=${remember} @change=${(/** @type {Event} */ event) => set(valueOf(event))}></label>`
+  return html`<label for=${id}>${title}<textarea id=${id} rows="3" dir="ltr" class="flows-json" .value=${live(value === undefined ? '' : JSON.stringify(value, null, 2))} @focus=${remember}
     @change=${(/** @type {Event} */ event) => {
       const box = /** @type {HTMLTextAreaElement} */ (event.target)
       try {
@@ -563,21 +563,21 @@ function form(one, step, result) {
   const taken = inputsOf(one, step.id)
   const names = taken.map((id) => one.steps.find((other) => other.id === id)?.name).filter(Boolean)
   const tool = kind === 'tool' ? usable().find((candidate) => candidate.spec.name === step.tool) : undefined
-  const schema = /** @type {any} */ (tool?.spec.parameters ?? {})
+  const schema = /** @type {any} */ (tool?.spec.parameters ?? {}), id = (/** @type {string} */ part) => `flow-${step.id}-${part}`
   return html`<form class="flows-form" aria-label=${step.name} @submit=${(/** @type {Event} */ event) => event.preventDefault()}>
-    <label>${t('flows.stepName')}<input dir="auto" .value=${live(step.name)} @change=${(/** @type {Event} */ event) => {
+    <label for=${id('name')}>${t('flows.stepName')}<input id=${id('name')} dir="auto" .value=${live(step.name)} @change=${(/** @type {Event} */ event) => {
       const name = valueOf(event).trim()
       if (name && !one.steps.some((other) => other !== step && other.name.trim().toLocaleLowerCase() === name.toLocaleLowerCase())) set({ name })
     }}></label>
-    ${kind === 'text' ? html`<label>${t('flows.kind.text')}<textarea rows="4" dir="auto" .value=${live(step.text ?? '')} @focus=${remember} @change=${(/** @type {Event} */ event) => set({ text: valueOf(event) })}></textarea></label>`
-    : kind === 'file' ? html`<label>${t('flows.kind.file')}<select @change=${(/** @type {Event} */ event) => set({ file: valueOf(event) })}>
+    ${kind === 'text' ? html`<label for=${id('text')}>${t('flows.kind.text')}<textarea id=${id('text')} rows="4" dir="auto" .value=${live(step.text ?? '')} @focus=${remember} @change=${(/** @type {Event} */ event) => set({ text: valueOf(event) })}></textarea></label>`
+    : kind === 'file' ? html`<label for=${id('file')}>${t('flows.kind.file')}<select id=${id('file')} @change=${(/** @type {Event} */ event) => set({ file: valueOf(event) })}>
         <option value="" ?selected=${!step.file}></option>
         ${[...new Set([...(step.file ? [step.file] : []), ...room.value.files])].map((name) => html`<option ?selected=${name === step.file}>${name}</option>`)}</select></label>`
-    : kind === 'ask' ? html`<label>${t('flows.instructions')}<textarea rows="5" dir="auto" .value=${live(step.ask ?? '')} @focus=${remember} @change=${(/** @type {Event} */ event) => set({ ask: valueOf(event) })}></textarea></label>
-      ${room.value.skills.length || step.skill ? html`<label>${t('flows.skill')}<select @change=${(/** @type {Event} */ event) => set({ skill: valueOf(event) || undefined })}>
+    : kind === 'ask' ? html`<label for=${id('ask')}>${t('flows.instructions')}<textarea id=${id('ask')} rows="5" dir="auto" .value=${live(step.ask ?? '')} @focus=${remember} @change=${(/** @type {Event} */ event) => set({ ask: valueOf(event) })}></textarea></label>
+      ${room.value.skills.length || step.skill ? html`<label for=${id('skill')}>${t('flows.skill')}<select id=${id('skill')} @change=${(/** @type {Event} */ event) => set({ skill: valueOf(event) || undefined })}>
         <option value="" ?selected=${!step.skill}>${t('flows.noSkill')}</option>
         ${[...new Set([...(step.skill ? [step.skill] : []), ...room.value.skills])].map((name) => html`<option ?selected=${name === step.skill}>${name}</option>`)}</select></label>` : nothing}`
-    : html`<label>${t('flows.kind.tool')}<select @change=${(/** @type {Event} */ event) => set({ tool: valueOf(event), args: {} })}>
+    : html`<label for=${id('tool')}>${t('flows.kind.tool')}<select id=${id('tool')} @change=${(/** @type {Event} */ event) => set({ tool: valueOf(event), args: {} })}>
         <option value="" ?selected=${!step.tool}>${t('flows.chooseTool')}</option>
         ${step.tool && !tool ? html`<option selected value=${step.tool}>${step.tool}</option>` : nothing}
         ${[...toolChoices()].map(([group, list]) => html`<optgroup label=${group}>${list.map((name) => html`<option value=${name} ?selected=${name === step.tool}>${name.replace(/_/g, ' ')}</option>`)}</optgroup>`)}
@@ -585,10 +585,10 @@ function form(one, step, result) {
       ${Object.entries(schema.properties ?? {}).map(([name, field]) => argument(one, step, name, field, (schema.required ?? []).includes(name)))}`}
     ${names.length ? html`<p class="flows-names">${t('flows.insert')} ${names.map((name) => html`<button type="button" class="flows-chip" dir="auto" @click=${() => insert(String(name))}>${name}</button>`)}</p>` : nothing}
     ${one.steps.length > 1 ? html`<fieldset><legend>${t('flows.after')}</legend>
-      ${one.steps.filter((other) => other !== step).map((other) => html`<label class="flows-check"><input type="checkbox" .checked=${taken.includes(other.id)}
+      ${one.steps.filter((other) => other !== step).map((other) => html`<label class="flows-check" for=${id(`after-${other.id}`)}><input id=${id(`after-${other.id}`)} type="checkbox" .checked=${taken.includes(other.id)}
         ?disabled=${!taken.includes(other.id) && loops(one, other.id, step.id)} @change=${() => wire(one, other.id, step.id)}><span dir="auto">${other.name}</span></label>`)}
     </fieldset>` : nothing}
-    <label class="flows-check"><input type="checkbox" .checked=${Boolean(step.each)} @change=${(/** @type {Event} */ event) => set({ each: /** @type {HTMLInputElement} */ (event.target).checked || undefined })}>${t('flows.each')}</label>
+    <label class="flows-check" for=${id('each')}><input id=${id('each')} type="checkbox" .checked=${Boolean(step.each)} @change=${(/** @type {Event} */ event) => set({ each: /** @type {HTMLInputElement} */ (event.target).checked || undefined })}>${t('flows.each')}</label>
     ${result !== undefined ? html`<details class="flows-result"><summary>${t('flows.result')}</summary><pre tabindex="0" dir="auto">${result}</pre></details>` : nothing}
     <div class="row"><button type="button" class="button subtle danger" @click=${() => removeStep(one, step)}>${icons.trash} ${t('flows.remove')}</button></div>
   </form>`

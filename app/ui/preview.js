@@ -156,7 +156,7 @@ class Pane extends Element {
     return html`<aside class="pane preview" aria-label=${file.title} @keydown=${(/** @type {KeyboardEvent} */ event) => { if (event.key === 'Escape' && !event.defaultPrevented && !this.querySelector(':popover-open')) this.#close(); else printKey(event, file, ways) }}>
       <header class="pane-head" @dblclick=${this.#keep}>
         <h2><span dir="auto">${file.title}</span></h2>
-        ${all.length > 1 && at >= 0 ? html`<select class="versions" aria-label=${t('preview.versions')} .value=${String(at)}
+        ${all.length > 1 && at >= 0 ? html`<select class="versions" title=${t('preview.versions')} .value=${String(at)}
           @change=${(/** @type {Event} */ event) => { this.file.value = { ...all[Number(/** @type {HTMLSelectElement} */ (event.target).value)], title: file.title } }}>
           ${all.map((each, i) => html`<option value=${i} ?selected=${i === at}>${t('made.version', { n: each.version })}</option>`)}</select>` : nothing}
         ${slots('head').map((part) => part.draw(file))}

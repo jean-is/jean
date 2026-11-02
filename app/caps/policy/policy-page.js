@@ -138,7 +138,7 @@ function policyPart(given) {
     ${given.policy === undefined ? nothing : problems.length
       ? html`<ul class="site-list">${problems.map((problem) => html`<li><code dir="ltr">${problem[0] || '{ }'}</code> <span class=${problem[1] === 'unread' ? 'site-warn' : 'site-bad'}>${said(problem)}</span></li>`)}</ul>`
       : html`<p class="site-ok">${t('site.fine')}</p>`}
-    <label class="button">${t('site.choose')}<input type="file" accept=".json,application/json" class="visually-hidden"
+    <label class="button" for="policy-file">${t('site.choose')}<input id="policy-file" type="file" accept=".json,application/json" class="visually-hidden"
       @change=${(/** @type {Event} */ event) => { const file = /** @type {HTMLInputElement} */ (event.target).files?.[0]; file?.text().then((text) => take(text, { file: file.name, chosen: true })) }}></label>
   </section>
   ${given.policy === undefined ? nothing : html`<section>

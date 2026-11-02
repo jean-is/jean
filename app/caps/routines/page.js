@@ -167,7 +167,7 @@ function listed(all) {
         <button class="item" data-routine=${id} @click=${() => go(id)}>
           <span class="item-icon">${'when' in routine ? icons.file : icons.alarm}</span><span class="item-text"><strong dir="auto">${routine.title}</strong><small>${line(routine)}</small></span>
           ${routine.active ? pill(outcome(last), last?.createdAt) : pill('paused')}</button>
-        <input type="checkbox" class="switch" role="switch" aria-label=${routine.title} .checked=${routine.active} @change=${turn(routine)}>${icons.chevron}</li>`
+        <input type="checkbox" class="switch" role="switch" title=${routine.title} .checked=${routine.active} @change=${turn(routine)}>${icons.chevron}</li>`
     })}</ul></section>` : html`<p class="muted small">${t('routines.none')}</p>`}
     <section><h3>${t('routines.starters')}</h3><ul class=${all.length ? 'routine-starts' : 'routine-starts is-empty'}>${STARTERS.map(([id, glyph, plan]) => html`<li><button class="routine-start"
       @click=${() => { draft.value = { title: t(`routines.starter.${id}`), request: t(`routines.starter.${id}.request`), ...plan }; go('new') }}><span class="item-icon">${icons[glyph]}</span>
@@ -186,10 +186,10 @@ function page(routine) {
   // Run now and its switch beside its title (D430): a routine a file sets off runs only when one comes.
   return html`${head(routine.title, line(routine), html`<span class="routine-acts">${'when' in routine ? nothing
     : html`<button class="button" ?disabled=${app.busy.value} @click=${() => runNow(routine.path)}>${icons.play} ${t('routines.run')}</button>`}
-    <input type="checkbox" class="switch" role="switch" aria-label=${routine.title} .checked=${routine.active} @change=${turn(routine)}></span>`)}
+    <input type="checkbox" class="switch" role="switch" title=${routine.title} .checked=${routine.active} @change=${turn(routine)}></span>`)}
     <section class="routine-form">
       ${routine.flow ? html`<p><button class="link-button" title=${t('cap.flows.name')} @click=${() => { app.dialog.value = null; import('../flows/flows.js').then((flows) => flows.edit(/** @type {string} */ (routine.flow))) }}>${icons.flow}
-        <span dir="auto">${routine.request}</span></button></p>` : html`<label>${t('routines.request')}<textarea rows="3" dir="auto" .value=${routine.request}
+        <span dir="auto">${routine.request}</span></button></p>` : html`<label for="routine-request">${t('routines.request')}<textarea id="routine-request" rows="3" dir="auto" .value=${routine.request}
         @change=${(/** @type {Event} */ e) => change(routine, { request: value(e) })}></textarea></label>`}
       ${planned(routine, (patch) => change(routine, patch))}
       ${brainChoice(routine)}
@@ -211,8 +211,8 @@ function made() {
   const input = (/** @type {'title' | 'request'} */ key) => (/** @type {Event} */ e) => set({ [key]: /** @type {HTMLInputElement} */ (e.target).value })
   return html`${head(t('routines.new'), t('routines.text'))}
     <section><form class="routine-form" @submit=${make}>
-      <label>${t('routines.name')}<input required dir="auto" maxlength="80" .value=${draft.value.title} @input=${input('title')}></label>
-      <label>${t('routines.request')}<textarea required rows="3" dir="auto" .value=${draft.value.request} @input=${input('request')}></textarea></label>
+      <label for="routine-name">${t('routines.name')}<input id="routine-name" required dir="auto" maxlength="80" .value=${draft.value.title} @input=${input('title')}></label>
+      <label for="routine-request">${t('routines.request')}<textarea id="routine-request" required rows="3" dir="auto" .value=${draft.value.request} @input=${input('request')}></textarea></label>
       ${planned(draft.value, (patch) => { const { title, request } = draft.value; draft.value = { title, request, ...replan(draft.value, patch) } })}
       <div class="row"><button class="button primary">${t('routines.make')}</button></div>
     </form></section>`
@@ -229,20 +229,20 @@ function planned(routine, set) {
   const [minute, two] = [Number(timed?.at?.slice(3) ?? 0), new Intl.NumberFormat(intlLocales(), { minimumIntegerDigits: 2 })]
   const minutes = [...new Set([0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, minute])].sort((a, b) => a - b)
   return html`<div class="routine-when">
-    <label>${t('routines.every')}<select @change=${(/** @type {Event} */ e) => set(WHEN.includes(/** @type {any} */ (value(e))) ? { when: value(e) } : { every: value(e), when: undefined })}>
+    <label for="routine-every">${t('routines.every')}<select id="routine-every" @change=${(/** @type {Event} */ e) => set(WHEN.includes(/** @type {any} */ (value(e))) ? { when: value(e) } : { every: value(e), when: undefined })}>
       ${EVERY.map((every) => html`<option value=${every} ?selected=${every === timed?.every}>${t(`routines.every.${every}`)}</option>`)}
       ${WHEN.map((when) => html`<option value=${when} ?selected=${when === routine.when}>${t(`routines.when.${when}`)}</option>`)}
     </select></label>
-    ${timed?.every === 'week' ? html`<label>${t('routines.on')}<select @change=${(/** @type {Event} */ e) => set({ on: Number(value(e)) })}>
+    ${timed?.every === 'week' ? html`<label for="routine-on">${t('routines.on')}<select id="routine-on" @change=${(/** @type {Event} */ e) => set({ on: Number(value(e)) })}>
       ${[0, 1, 2, 3, 4, 5, 6].map((i) => (first + i) % 7).map((day) => html`<option value=${day} ?selected=${day === timed.on}>${days.format(new Date(2026, 0, 4 + day))}</option>`)}
-    </select></label>` : timed?.every === 'month' ? html`<label>${t('routines.on')}<input type="number" min="1" max="31" .value=${live(String(timed.on ?? 1))}
-      @change=${(/** @type {Event} */ e) => set({ on: Number(value(e)) })}></label>` : timed?.every === 'once' ? html`<label>${t('routines.on')}<input type="date" .value=${live(String(timed.on))}
+    </select></label>` : timed?.every === 'month' ? html`<label for="routine-on">${t('routines.on')}<input id="routine-on" type="number" min="1" max="31" .value=${live(String(timed.on ?? 1))}
+      @change=${(/** @type {Event} */ e) => set({ on: Number(value(e)) })}></label>` : timed?.every === 'once' ? html`<label for="routine-on">${t('routines.on')}<input id="routine-on" type="date" .value=${live(String(timed.on))}
       @change=${(/** @type {Event} */ e) => set({ on: value(e) })}></label>` : nothing}
-    ${!timed ? nothing : timed.every === 'hour' ? html`<label>${t('routines.at')}<select @change=${(/** @type {Event} */ e) => set({ at: `${String(timed.at).slice(0, 3)}${value(e).padStart(2, '0')}` })}>
+    ${!timed ? nothing : timed.every === 'hour' ? html`<label for="routine-at">${t('routines.at')}<select id="routine-at" @change=${(/** @type {Event} */ e) => set({ at: `${String(timed.at).slice(0, 3)}${value(e).padStart(2, '0')}` })}>
       ${minutes.map((each) => html`<option value=${each} ?selected=${each === minute}>${t('routines.minute', { minute: two.format(each) })}</option>`)}
-    </select></label>` : html`<label>${t('routines.at')}<input type="time" .value=${live(String(timed.at))} @change=${(/** @type {Event} */ e) => set({ at: value(e) })}></label>`}
+    </select></label>` : html`<label for="routine-at">${t('routines.at')}<input id="routine-at" type="time" .value=${live(String(timed.at))} @change=${(/** @type {Event} */ e) => set({ at: value(e) })}></label>`}
   </div>
-  ${routine.when ? html`<label>${t('routines.if')}<input type="text" dir="auto" .value=${routine.if ?? ''} @change=${(/** @type {Event} */ e) => set({ if: value(e) })}></label>` : nothing}`
+  ${routine.when ? html`<label for="routine-if">${t('routines.if')}<input id="routine-if" type="text" dir="auto" .value=${routine.if ?? ''} @change=${(/** @type {Event} */ e) => set({ if: value(e) })}></label>` : nothing}`
 }
 
 /**
@@ -256,7 +256,7 @@ function brainChoice(routine) {
   const listed = offered.some(({ brain, model }) => brain.id === routine.brain && model === routine.model)
   const pick = (/** @type {Event} */ e, picked = value(e), choice = /^\d+$/.test(picked) ? offered[Number(picked)] : undefined) =>
     change(routine, choice ? { brain: choice.brain.id, model: choice.model } : { brain: picked === 'auto' ? picked : undefined, model: undefined })
-  return html`<label>${t('routines.brain')}<select @change=${pick}>
+  return html`<label for="routine-brain">${t('routines.brain')}<select id="routine-brain" @change=${pick}>
     <option value="" ?selected=${!routine.brain || (routine.brain !== 'auto' && !own)}>${t('routines.brain.yours')}</option>
     <option value="auto" ?selected=${routine.brain === 'auto'}>${t('auto.name')}</option>
     ${offered.map(({ label, behind, brain, model }, i) => html`<option value=${i} title=${behind} ?selected=${brain.id === routine.brain && model === routine.model}>${label}</option>`)}

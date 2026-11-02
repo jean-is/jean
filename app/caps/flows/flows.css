@@ -17,8 +17,8 @@
 .flows-add { position: relative; flex: none; }
 .flows-add > summary { display: inline-flex; align-items: center; gap: 0.35rem; list-style: none; cursor: pointer; }
 .flows-add > summary::-webkit-details-marker { display: none; }
-.flows-menu { position: absolute; z-index: 3; inset-block-start: calc(100% + 0.3rem); inset-inline-end: 0; display: grid; min-inline-size: 11rem; padding: 0.3rem; border: 1px solid var(--line-strong); border-radius: 0.9rem; background: var(--room); box-shadow: 0 0.6rem 1.6rem oklch(0 0 0 / 0.18); }
-.flows-menu .button { justify-content: flex-start; border-radius: 0.6rem; }
+.flows-menu { position: absolute; z-index: 3; inset-block-start: calc(100% + 0.3rem); inset-inline-end: 0; display: grid; min-inline-size: 11rem; margin: 0; list-style: none; padding: 0.3rem; border: 1px solid var(--line-strong); border-radius: 0.9rem; background: var(--room); box-shadow: 0 0.6rem 1.6rem oklch(0 0 0 / 0.18); }
+.flows-menu .button { justify-content: flex-start; border-radius: 0.6rem; } .flows-menu li { display: grid; }
 
 /* The stage scrolls; the plane is as large as the drawing, on a grid of dots. */
 .flows-stage { position: relative; flex: 1; min-block-size: 9rem; overflow: auto; background: radial-gradient(circle, var(--line-strong) 1px, transparent 1.2px) 0 0 / 1.5rem 1.5rem; }

@@ -85,11 +85,10 @@ function escape(event) {
 
 /** @param {Id} id @param {Item[]} list */
 const view = (id, list) => html`<div id="add-sub" class="menu add-sub" popover @keydown=${escape} @toggle=${(/** @type {ToggleEvent} */ e) => e.newState === 'closed' && close()}>
-  ${list.map(({ icon, label, word }) => html`<button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${() => put(word, label)}>
-    ${icon}<span class="complete-label" dir="auto">${label}</span></button>`)}
-  ${list.length ? html`<hr>` : nothing}
-  <button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${() => openSettings(id === 'skills' ? 'skills/add' : id)}>
-    ${icons.plus}${t(id === 'skills' ? 'skills.addOne' : 'cap.connections.yes')}</button>
+  ${list.length ? html`<ul>${list.map(({ icon, label, word }) => html`<li><button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${() => put(word, label)}>
+    ${icon}<span class="complete-label" dir="auto">${label}</span></button></li>`)}</ul><hr>` : nothing}
+  <ul><li><button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${() => openSettings(id === 'skills' ? 'skills/add' : id)}>
+    ${icons.plus}${t(id === 'skills' ? 'skills.addOne' : 'cap.connections.yes')}</button></li></ul>
 </div>`
 
 /**

@@ -145,9 +145,9 @@ function colour(kit, key, night) {
   const value = (night ? kit.tokens.dark ?? {} : kit.tokens)[key], own = /** @type {Record<string, any>} */ (jeanKit().tokens), under = night ? own.dark?.[key] ?? (key === 'primary' ? kit.tokens.primary ?? own.primary : undefined) : own[key]
   const field = `${night ? 'dark.' : ''}${key}`, shown = hexOf(value ?? under ?? '#888888')
   return row(t(`slides.kit.${key}`), value ? nothing : t('slides.kit.auto'), html`<span class="kit-colour"><input class="kit-code" dir="ltr" spellcheck="false" autocomplete="off"
-    aria-label=${t('slides.kit.code', { colour: t(`slides.kit.${key}`) })} aria-invalid=${field in typed.value ? 'true' : 'false'} placeholder=${`rgb(${rgbOf(shown)?.join(', ')})`}
+    title=${t('slides.kit.code', { colour: t(`slides.kit.${key}`) })} aria-invalid=${field in typed.value ? 'true' : 'false'} placeholder=${`rgb(${rgbOf(shown)?.join(', ')})`}
     .value=${live(typed.value[field] ?? value ?? '')} @change=${(/** @type {Event} */ e) => written(key, /** @type {HTMLInputElement} */ (e.target).value, night)}>
-    <input type="color" aria-label=${t(`slides.kit.${key}`)} .value=${live(shown)}
+    <input type="color" title=${t(`slides.kit.${key}`)} .value=${live(shown)}
     @change=${(/** @type {Event} */ e) => written(key, /** @type {HTMLInputElement} */ (e.target).value, night)}>
     ${value ? html`<button type="button" class="icon-button subtle" aria-label=${t('slides.kit.auto')} @click=${() => written(key, '', night)}>${icons.close}</button>` : nothing}</span>`)
 }
@@ -172,18 +172,18 @@ function layoutForm(kit, key) {
     making.value = ''
   }
   return html`<form class="kit-layout" @submit=${keep}>
-    <label class="kit-field">${t('slides.kit.name')}<input name="name" required maxlength="40" dir="auto" .value=${given ? labelOf(/** @type {any} */ (given), key, locale.peek()) : ''}></label>
-    <label class="kit-field">${t('slides.kit.grid')}<textarea name="areas" rows="3" dir="ltr" spellcheck="false" required aria-describedby="kit-grid-hint" .value=${given ? given.areas.map((/** @type {string[]} */ line) => line.join(' ')).join('\n') : 'default default\nleft right'}></textarea></label>
+    <label class="kit-field" for="layout-name">${t('slides.kit.name')}<input id="layout-name" name="name" required maxlength="40" dir="auto" .value=${given ? labelOf(/** @type {any} */ (given), key, locale.peek()) : ''}></label>
+    <label class="kit-field" for="layout-grid">${t('slides.kit.grid')}<textarea id="layout-grid" name="areas" rows="3" dir="ltr" spellcheck="false" required aria-describedby="kit-grid-hint" .value=${given ? given.areas.map((/** @type {string[]} */ line) => line.join(' ')).join('\n') : 'default default\nleft right'}></textarea></label>
     <p class="hint" id="kit-grid-hint">${t('slides.kit.gridHint')}</p>
-    <label class="kit-field">${t('slides.kit.columns')}<input name="columns" dir="ltr" placeholder="1fr 1fr" .value=${given ? given.columns.join(' ') : ''}></label>
-    <label class="kit-field">${t('slides.kit.rows')}<input name="rows" dir="ltr" placeholder="auto 1fr" .value=${given ? given.rows.join(' ') : ''}></label>
-    <label class="kit-field">${t('slides.kit.background')}<select name="paper">
+    <label class="kit-field" for="layout-columns">${t('slides.kit.columns')}<input id="layout-columns" name="columns" dir="ltr" placeholder="1fr 1fr" .value=${given ? given.columns.join(' ') : ''}></label>
+    <label class="kit-field" for="layout-rows">${t('slides.kit.rows')}<input id="layout-rows" name="rows" dir="ltr" placeholder="auto 1fr" .value=${given ? given.rows.join(' ') : ''}></label>
+    <label class="kit-field" for="layout-paper">${t('slides.kit.background')}<select id="layout-paper" name="paper">
       ${['paper', 'fill', 'ink', 'soft'].map((one) => html`<option value=${one} ?selected=${one === (given?.paper ?? 'paper')}>${t(`slides.kit.${one === 'fill' ? 'primary' : one}`)}</option>`)}</select></label>
-    ${[['align', 'slides.kit.across'], ['justify', 'slides.kit.down']].map(([field, label]) => html`<label class="kit-field">${t(label)}<select name=${field}>
+    ${[['align', 'slides.kit.across'], ['justify', 'slides.kit.down']].map(([field, label]) => html`<label class="kit-field" for=${`layout-${field}`}>${t(label)}<select id=${`layout-${field}`} name=${field}>
       ${AT.map((one) => html`<option value=${one} ?selected=${one === (given?.[field] ?? 'start')}>${t(`slides.kit.${one}`)}</option>`)}</select></label>`)}
-    <label class="kit-field">${t('slides.kit.heading')}<select name="title">${['normal', 'large', 'huge'].map((one) => html`<option value=${one} ?selected=${one === (given?.title ?? 'normal')}>${t(`slides.kit.${one}`)}</option>`)}</select></label>
-    <label class="kit-field">${t('slides.kit.logo')}<select name="logo">${['small', 'big', 'none'].map((one) => html`<option value=${one} ?selected=${one === (given?.logo ?? 'small')}>${t(`slides.kit.${one === 'big' ? 'large' : one}`)}</option>`)}</select></label>
-    <label class="kit-check"><input type="checkbox" name="numbered" ?checked=${given?.numbered ?? true}>${t('slides.kit.numbered')}</label>
+    <label class="kit-field" for="layout-title">${t('slides.kit.heading')}<select id="layout-title" name="title">${['normal', 'large', 'huge'].map((one) => html`<option value=${one} ?selected=${one === (given?.title ?? 'normal')}>${t(`slides.kit.${one}`)}</option>`)}</select></label>
+    <label class="kit-field" for="layout-logo">${t('slides.kit.logo')}<select id="layout-logo" name="logo">${['small', 'big', 'none'].map((one) => html`<option value=${one} ?selected=${one === (given?.logo ?? 'small')}>${t(`slides.kit.${one === 'big' ? 'large' : one}`)}</option>`)}</select></label>
+    <label class="kit-check" for="layout-numbered"><input id="layout-numbered" type="checkbox" name="numbered" ?checked=${given?.numbered ?? true}>${t('slides.kit.numbered')}</label>
     <div class="row"><button class="button primary">${t('slides.kit.keep')}</button><button type="button" class="button subtle" @click=${() => { making.value = '' }}>${t('slides.kit.cancel')}</button></div>
   </form>`
 }
@@ -197,7 +197,7 @@ function layouts(kit) {
     ${[...standard, ...mine].map((key) => row(labelOf(all[key] ?? /** @type {any} */ (jeanKit().layouts[key]), key, locale.peek()), nothing, html`<span class="row">
       ${mine.includes(key) ? html`<button type="button" class="button subtle" @click=${() => { making.value = key }}>${t('slides.kit.change')}</button>
         <button type="button" class="button subtle danger" @click=${() => change((next) => { delete next.layouts[key] })}>${t('slides.kit.delete')}</button>`
-      : html`<input type="checkbox" class="switch" role="switch" aria-label=${labelOf(/** @type {any} */ (jeanKit().layouts[key]), key, locale.peek())} .checked=${live(kit.layouts[key] !== false)} ?disabled=${key === 'default'} @change=${() => turn(key)}>`}</span>`))}
+      : html`<input type="checkbox" class="switch" role="switch" title=${labelOf(/** @type {any} */ (jeanKit().layouts[key]), key, locale.peek())} .checked=${live(kit.layouts[key] !== false)} ?disabled=${key === 'default'} @change=${() => turn(key)}>`}</span>`))}
     </ul>${making.value ? layoutForm(kit, making.value) : html`<button type="button" class="button" @click=${() => { making.value = '+' }}>${icons.plus} ${t('slides.kit.newLayout')}</button>`}</section>`
 }
 
@@ -206,13 +206,13 @@ export function page() {
   const kit = read(), project = app.project.value
   if (!kit) return nothing
   const tokens = kit.tokens, night = tokens.dark ?? {}, fonts = tokens.fonts
-  const file = (/** @type {string} */ label, /** @type {string} */ accept, /** @type {(event: Event) => void} */ picked) => html`<label class="button kit-file">${label}<input type="file" class="visually-hidden" accept=${accept} @change=${picked}></label>`
+  const file = (/** @type {string} */ id, /** @type {string} */ label, /** @type {string} */ accept, /** @type {(event: Event) => void} */ picked) => html`<label class="button kit-file" for=${id}>${label}<input id=${id} type="file" class="visually-hidden" accept=${accept} @change=${picked}></label>`
   return html`<header class="look-head"><h2 tabindex="-1">${t('slides.kit.title')}</h2>${Object.keys(tokens).length || Object.keys(kit.layouts).length
       ? html`<button class="button subtle" @click=${() => change((next) => { next.tokens = {}; next.layouts = {}; delete next.name; typed.value = {} })}>${t('slides.kit.startOver')}</button>` : nothing}</header>
     <p class="lede">${t('slides.kit.text')}</p>
     ${project.data.default === true ? nothing : html`<span class="segmented" role="radiogroup" aria-label=${t('slides.kit.title')}>
-      ${[['kit', t('slides.kit.everywhere')], ['kit-project', t('slides.kit.project', { project: String(project.data.name ?? '') })]].map(([page, label]) => html`<label>
-        <input type="radio" name="kit-whose" .checked=${live(pageOpen() === page)} @change=${() => pageOpen(page)}><span>${label}</span></label>`)}</span>`}
+      ${[['kit', t('slides.kit.everywhere')], ['kit-project', t('slides.kit.project', { project: String(project.data.name ?? '') })]].map(([page, label]) => html`<label for=${`whose-${page}`}>
+        <input id=${`whose-${page}`} type="radio" name="kit-whose" .checked=${live(pageOpen() === page)} @change=${() => pageOpen(page)}><span>${label}</span></label>`)}</span>`}
     <div class="kit-previews"><div class="kit-preview" ${ref((box) => void preview(box, kit))}></div>
       <figure><div class="kit-sheet" aria-hidden="true" ${ref((box) => void sheet(box, kit))}><img hidden alt=""><b>${t('slides.kit.title')}</b><p>${t('slides.kit.sample')}</p><blockquote>${t('slides.kit.sample')}</blockquote><table><tr><th>${t('slides.kit.name')}</th><th>${t('slides.kit.words')}</th></tr></table></div>
         <figcaption class="hint">${t('slides.kit.onPaper')}</figcaption></figure></div>
@@ -220,26 +220,26 @@ export function page() {
     <section><h3>${t('slides.kit.colours')}</h3><ul class="list">${COLOURS.map((key) => colour(kit, key, false))}</ul><p class="hint">${t('slides.kit.paperHint')}</p>
       <h3>${t('slides.kit.night')}</h3><ul class="list">${COLOURS.slice(0, 3).map((key) => colour(kit, key, true))}</ul></section>
     <section><h3>${t('slides.kit.type')}</h3><ul class="list">
-      ${row(nothing, nothing, html`<span class="segmented" role="radiogroup" aria-label=${t('slides.kit.type')}>${VOICES.map((voice) => html`<label>
-        <input type="radio" name="kit-voice" .checked=${live(!fonts && (tokens.voice ?? 'calm') === voice)} @change=${() => change((next) => { next.tokens.voice = voice; delete next.tokens.fonts })}><span>${t(`slides.kit.voice.${voice}`)}</span></label>`)}</span>`)}
-      ${row(t('slides.kit.fonts'), nothing, html`<span class="row">${['heading', 'body'].map((part) => html`<input class="kit-face" dir="ltr" aria-label=${t(part === 'heading' ? 'slides.kit.headings' : 'slides.kit.words')}
+      ${row(nothing, nothing, html`<span class="segmented" role="radiogroup" aria-label=${t('slides.kit.type')}>${VOICES.map((voice) => html`<label for=${`voice-${voice}`}>
+        <input id=${`voice-${voice}`} type="radio" name="kit-voice" .checked=${live(!fonts && (tokens.voice ?? 'calm') === voice)} @change=${() => change((next) => { next.tokens.voice = voice; delete next.tokens.fonts })}><span>${t(`slides.kit.voice.${voice}`)}</span></label>`)}</span>`)}
+      ${row(t('slides.kit.fonts'), nothing, html`<span class="row">${['heading', 'body'].map((part) => html`<input class="kit-face" dir="ltr" title=${t(part === 'heading' ? 'slides.kit.headings' : 'slides.kit.words')}
         placeholder=${t(part === 'heading' ? 'slides.kit.headings' : 'slides.kit.words')} .value=${live(fonts?.[part]?.join(', ') ?? '')} @change=${(/** @type {Event} */ e) => change((next) => {
           const faces = /** @type {HTMLInputElement} */ (e.target).value.split(',').map((one) => one.trim()).filter(Boolean), own = { heading: fonts?.heading ?? [], body: fonts?.body ?? [], [part]: faces }
           if (own.heading.length || own.body.length) next.tokens.fonts = { heading: own.heading.length ? own.heading : own.body, body: own.body.length ? own.body : own.heading }
           else delete next.tokens.fonts
         })}>`)}</span>`)}
-      ${row(t('slides.kit.corners'), t('slides.kit.slidesOnly'), html`<input type="range" min="0" max="24" step="1" aria-label=${t('slides.kit.corners')} .value=${live(String(tokens.radius ?? 10))}
+      ${row(t('slides.kit.corners'), t('slides.kit.slidesOnly'), html`<input type="range" min="0" max="24" step="1" title=${t('slides.kit.corners')} .value=${live(String(tokens.radius ?? 10))}
         @change=${(/** @type {Event} */ e) => token('radius', Number(/** @type {HTMLInputElement} */ (e.target).value))}>`)}
     </ul></section>
     <section><h3>${t('slides.kit.logo')}</h3><ul class="list">
       ${[[false, tokens.logo, ''], [true, night.logo, 'slides.kit.logoDark']].map(([dark, url, label]) => row(label ? t(String(label)) : nothing, nothing, html`<span class="row kit-logo ${dark ? 'is-dark' : ''}">
-        ${url ? html`<img src=${String(url)} alt="">` : nothing}${file(t('slides.kit.logoAdd'), 'image/png,image/jpeg,image/gif,image/webp,image/svg+xml', (e) => void logo(e, Boolean(dark)))}
+        ${url ? html`<img src=${String(url)} alt="">` : nothing}${file(`kit-logo-${dark}`, t('slides.kit.logoAdd'), 'image/png,image/jpeg,image/gif,image/webp,image/svg+xml', (e) => void logo(e, Boolean(dark)))}
         ${url ? html`<button type="button" class="button subtle" @click=${() => token('logo', undefined, Boolean(dark))}>${t('slides.kit.remove')}</button>` : nothing}</span>`))}
-      ${tokens.logo ? row(t('slides.kit.corner'), nothing, html`<select aria-label=${t('slides.kit.corner')} @change=${(/** @type {Event} */ e) => token('logoAt', /** @type {HTMLSelectElement} */ (e.target).value)}>
+      ${tokens.logo ? row(t('slides.kit.corner'), nothing, html`<select title=${t('slides.kit.corner')} @change=${(/** @type {Event} */ e) => token('logoAt', /** @type {HTMLSelectElement} */ (e.target).value)}>
         ${CORNERS.map((corner) => html`<option value=${corner} ?selected=${corner === (tokens.logoAt ?? CORNERS[0])}>${cornerName(corner)}</option>`)}</select>`) : nothing}
     </ul></section>
     ${layouts(kit)}
-    <section class="row kit-files">${file(t('slides.kit.bring'), '.json,.potx,.pptx,.thmx,application/json', (e) => void bring(e))}
+    <section class="row kit-files">${file('kit-bring', t('slides.kit.bring'), '.json,.potx,.pptx,.thmx,application/json', (e) => void bring(e))}
       <button type="button" class="button subtle" @click=${() => keepAs(false)}>${icons.download} ${t('slides.kit.saveFile')}</button>
       <button type="button" class="button subtle" @click=${() => keepAs(true)}>${icons.download} ${t('slides.kit.saveTokens')}</button></section>`
 }

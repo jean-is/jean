@@ -11,6 +11,7 @@
   "lock.unlock": "Odblokuj",
   "lock.passwordLabel": "Hasło",
   "lock.codeLabel": "Kod odzyskiwania",
+  "lock.codeForm": "Osiem grup po cztery znaki, od 0 do 9 i od A do F, rozdzielonych łącznikiem.",
   "lock.useCode": "Użyj kodu odzyskiwania",
   "lock.wrong": "To tego nie otwiera.",
   "lock.noPasskey": "Żaden klucz dostępu nie mógł tego tu zablokować. Użyj zamiast tego hasła.",

@@ -11,6 +11,7 @@
   "lock.unlock": "Odemknout",
   "lock.passwordLabel": "Heslo",
   "lock.codeLabel": "Kód pro obnovení",
+  "lock.codeForm": "Osm skupin po čtyřech znacích, 0 až 9 a A až F, mezi skupinami pomlčka.",
   "lock.useCode": "Použít kód pro obnovení",
   "lock.wrong": "Tím se to neotevře.",
   "lock.noPasskey": "Přístupovým klíčem to tu zamknout nešlo. Použijte místo toho heslo.",

@@ -11,6 +11,7 @@
   "lock.unlock": "Avaa lukitus",
   "lock.passwordLabel": "Salasana",
   "lock.codeLabel": "Palautuskoodi",
+  "lock.codeForm": "Kahdeksan neljän merkin ryhmää, 0–9 ja A–F, ryhmien välissä yhdysmerkki.",
   "lock.useCode": "Käytä palautuskoodia",
   "lock.wrong": "Tämä ei avaa sitä.",
   "lock.noPasskey": "Mikään pääsyavain ei voinut lukita sitä täällä. Käytä sen sijaan salasanaa.",

@@ -11,6 +11,7 @@
   "lock.unlock": "Buka kunci",
   "lock.passwordLabel": "Kata sandi",
   "lock.codeLabel": "Kode pemulihan",
+  "lock.codeForm": "Delapan kelompok berisi empat karakter, 0 sampai 9 dan A sampai F, dengan tanda hubung di antara kelompok.",
   "lock.useCode": "Pakai kode pemulihan",
   "lock.wrong": "Itu tidak membukanya.",
   "lock.noPasskey": "Tidak ada kunci sandi yang bisa menguncinya di sini. Pakai kata sandi saja.",

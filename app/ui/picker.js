@@ -73,8 +73,8 @@ export function choices(priced = false, records = []) {
  * One choice: its icon and its name, what is behind it on hover; the one answering is ticked.
  * @param {unknown} icon @param {string} label @param {string} behind @param {boolean} selected @param {() => unknown} choose
  */
-const option = (icon, label, behind, selected, choose) => html`<button type="button" popovertarget="brain-menu" popovertargetaction="hide"
-  title=${behind || nothing} aria-current=${selected ? 'true' : 'false'} @click=${choose}>${icon}<span><bdi>${label}</bdi></span>${selected ? icons.check : nothing}</button>`
+const option = (icon, label, behind, selected, choose) => html`<li><button type="button" popovertarget="brain-menu" popovertargetaction="hide"
+  title=${behind || nothing} aria-current=${selected ? 'true' : 'false'} @click=${choose}>${icon}<span><bdi>${label}</bdi></span>${selected ? icons.check : nothing}</button></li>`
 
 class Picker extends Element {
   /** Prices are read once the menu opens, never before. */
@@ -88,12 +88,12 @@ class Picker extends Element {
     const kept = app.project.value.data.cloud === false
     return html`<div id="brain-menu" class="menu brain-menu" popover
       @toggle=${(/** @type {ToggleEvent} */ e) => (this.#open.value = e.newState === 'open') && brains.forEach((brain) => isLocal(brain) || loadModels(brain))}>
-      ${option(icons.brain, t('auto.name'), t('auto.text'), settings.auto, () => updateSettings({ auto: true }))}
-      ${choices(this.#open.value, app.current.value?.records).map(({ icon, label, behind, brain, model }) => option(icon, label, behind, manual(brain, model), () => pick(brain, model)))}
+      <ul>${option(icons.brain, t('auto.name'), t('auto.text'), settings.auto, () => updateSettings({ auto: true }))}
+      ${choices(this.#open.value, app.current.value?.records).map(({ icon, label, behind, brain, model }) => option(icon, label, behind, manual(brain, model), () => pick(brain, model)))}</ul>
       <hr>
-      ${[active, ...brains].some((brain) => brain && !isLocal(brain)) ? html`<button type="button" role="switch" aria-checked=${kept || !settings.cloud ? 'true' : 'false'}
-        ?disabled=${kept} title=${kept ? t('picker.projectKept') : nothing} @click=${() => keepOnDevice(settings.cloud)}>${icons.shield}<span>${t('picker.keepOnDevice')}</span></button>` : nothing}
-      <button type="button" popovertarget="brain-menu" popovertargetaction="hide" @click=${() => openSettings('brains')}>${icons.gear}<span>${t('picker.all')}</span></button>
+      <ul>${[active, ...brains].some((brain) => brain && !isLocal(brain)) ? html`<li><button type="button" role="switch" aria-checked=${kept || !settings.cloud ? 'true' : 'false'}
+        ?disabled=${kept} title=${kept ? t('picker.projectKept') : nothing} @click=${() => keepOnDevice(settings.cloud)}>${icons.shield}<span>${t('picker.keepOnDevice')}</span></button></li>` : nothing}
+      <li><button type="button" popovertarget="brain-menu" popovertargetaction="hide" @click=${() => openSettings('brains')}>${icons.gear}<span>${t('picker.all')}</span></button></li></ul>
     </div>`
   }
 }

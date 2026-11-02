@@ -57,7 +57,7 @@ function start() {
   return html`${head(t('first.title'))}<p class="lede">${t('first.text', { name: BRAND.name })}</p>
     <button class="button primary first-free" @click=${() => { if (also.value) sessionStorage.setItem('app.private', '1'); signUp() }}>${t('first.free')} ${icons.external}</button>
     <p class="hint first-where">${t('first.freeText')}</p>
-    ${device ? html`<label class="first-also"><input type="checkbox" .checked=${also.value} @change=${(/** @type {Event} */ e) => { also.value = /** @type {HTMLInputElement} */ (e.target).checked }}>
+    ${device ? html`<label class="first-also" for="first-also"><input id="first-also" type="checkbox" .checked=${also.value} @change=${(/** @type {Event} */ e) => { also.value = /** @type {HTMLInputElement} */ (e.target).checked }}>
       <span class="item-text"><strong>${t('first.also')}</strong><small>${t('first.alsoText', { size: formatBytes(device.GEMMA.bytes) })}</small></span></label>` : nothing}
     <ul class="list first-doors">${door('plans')}${door('choose')}</ul>
     <p class="hint">${t('first.neutral', { name: BRAND.name })}</p>`
@@ -68,8 +68,8 @@ function choose() {
   const device = fit(), size = device ? formatBytes(device.GEMMA.bytes) : ''
   const act = () => (choice.value === 'private' ? useDevice() : choice.value === 'now' ? signUp() : go('plans')())
   return html`${back()}${head(t('first.matters'))}
-    <div class="list brains" role="radiogroup" aria-label=${t('first.matters')}>${(/** @type {const} */ (['private', 'now', 'best'])).map((id) => html`<div class=${choice.value === id ? 'is-selected' : ''}><label class="item">
-      <input type="radio" name="first" .checked=${choice.value === id} ?disabled=${id === 'private' && !device} @change=${() => { choice.value = id }}>
+    <div class="list brains" role="radiogroup" aria-label=${t('first.matters')}>${(/** @type {const} */ (['private', 'now', 'best'])).map((id) => html`<div class=${choice.value === id ? 'is-selected' : ''}><label class="item" for=${`first-${id}`}>
+      <input id=${`first-${id}`} type="radio" name="first" .checked=${choice.value === id} ?disabled=${id === 'private' && !device} @change=${() => { choice.value = id }}>
       <span class="item-text"><strong>${t(`first.${id}`)}</strong><small>${id === 'private' && !device ? t('first.privateNo') : t(`first.${id}Text`, { size })}</small></span></label></div>`)}</div>
     ${device?.download.value.state === 'failed' ? html`<p class="status is-error" role="alert">${t('brain.device.failed')}</p>` : nothing}
     ${(choice.value === 'private' && device && progressOf(device)) || html`<div class="row"><button class="button primary" @click=${act}>

@@ -118,13 +118,13 @@ effect(() => {
       @drop=${(/** @type {DragEvent} */ event) => { event.preventDefault(); take(event.dataTransfer?.files ?? []) }}>
     <h1>${t('certificates.title')}</h1>
     <p class="receipt-note">${t('certificates.text')}</p>
-    <label class="button">${t('certificates.choose')}<input type="file" multiple class="visually-hidden"
+    <label class="button" for="certificates-file">${t('certificates.choose')}<input id="certificates-file" type="file" multiple class="visually-hidden"
       @change=${(/** @type {Event} */ event) => take(/** @type {HTMLInputElement} */ (event.target).files ?? [])}></label>
     ${checked.value === undefined || (!checked.value && credentials.value.length) ? nothing : card(checked.value)}
     ${waiting('log')}
     ${credentials.value.map(credentialsCard)}
     ${waiting('watermark')}
-    <label class="certificates-words">${t('certificates.words')}<textarea dir="auto" rows="4" @input=${pasted}></textarea></label>
+    <label class="certificates-words" for="certificates-words">${t('certificates.words')}<textarea id="certificates-words" dir="auto" rows="4" @input=${pasted}></textarea></label>
     ${waiting('words')}
     ${words.value ? wordsCard(words.value) : nothing}
   </main>`, document.body)
