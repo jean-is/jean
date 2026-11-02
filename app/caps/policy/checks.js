@@ -6,7 +6,7 @@ import { DEFAULT_RULES } from '../../core/rules.js'
 import { PROVIDERS } from '../../core/llm.js'
 import { LOCALES } from '../../core/i18n.js'
 import { LOOKS } from '../../ui/looks.js'
-import { FONTS } from '../../ui/touches.js'
+import { FONTS, PICTURE } from '../../ui/touches.js'
 
 /**
  * The headers every file goes out with, a pattern each must match, and the value the recipes send. `max-age=0` has a
@@ -43,7 +43,7 @@ export const SCHEMA = {
   // The JSON Schema an editor checks the file against (in app/schemas/, made from this one), which Jean doesn't read.
   $schema: 'link',
   locale: 'locale', locales: ['locale'],
-  look: { 'name!': 'text', on: new Set(Object.keys(LOOKS)), accent: 'colour', background: 'colour', size: 'number', font: new Set(Object.keys(FONTS)), css: 'text' },
+  look: { 'name!': 'text', on: new Set(Object.keys(LOOKS)), accent: 'colour', background: 'colour', size: 'number', font: new Set(Object.keys(FONTS)), css: 'text', logo: 'picture' },
   looks: [new Set(Object.keys(LOOKS))],
   // The organisation's kit for decks (D594): its tokens and layouts, which deck checks against its grammar as it draws.
   kit: { name: 'text', tokens: { '*': 'any' }, layouts: { '*': 'any' } },
@@ -94,7 +94,7 @@ function nearest(name, names) {
 }
 
 /** The type each kind of value has in JSON. */
-const KINDS = { text: 'string', flag: 'boolean', number: 'number', address: 'string', link: 'string', capability: 'string', locale: 'string', colour: 'string' }
+const KINDS = { text: 'string', flag: 'boolean', number: 'number', address: 'string', link: 'string', capability: 'string', locale: 'string', colour: 'string', picture: 'string' }
 /** An address, its {placeholders} filled, or null. @param {string} address */
 const parse = (address) => { try { return new URL(address.replace(/\{\w+\}/g, 'x')) } catch { return null } }
 
@@ -127,6 +127,7 @@ export function checkPolicy(policy, capabilities) {
     if (typeof value !== KINDS[/** @type {keyof typeof KINDS} */ (shape)]) return void problems.push([path, shape === 'flag' || shape === 'number' ? shape : 'text'])
     if (shape === 'locale' && !LOCALES.includes(/** @type {string} */ (value))) problems.push([path, 'oneOf', LOCALES])
     if (shape === 'colour' && !/^#[\da-f]{6}$/i.test(/** @type {string} */ (value))) problems.push([path, 'colour'])
+    if (shape === 'picture' && !PICTURE.test(/** @type {string} */ (value))) problems.push([path, 'picture'])
     if (shape === 'capability' && capabilities && !capabilities.includes(/** @type {string} */ (value))) problems.push([path, 'capability'])
     if (shape === 'address' || (shape === 'link' && /^[a-z][a-z\d+.-]*:/i.test(/** @type {string} */ (value)))) {
       const url = parse(/** @type {string} */ (value))

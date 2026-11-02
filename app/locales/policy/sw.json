@@ -18,6 +18,7 @@
   "site.flag": "Inapaswa kuwa true au false.",
   "site.number": "Inapaswa kuwa nambari.",
   "site.colour": "Inapaswa kuwa rangi kama #rrggbb.",
+  "site.picture": "Inapaswa kuwa picha kama data:image/…;base64,…",
   "site.oneOf": "Inapaswa kuwa {values}.",
   "site.address": "Si anwani ya wavuti.",
   "site.https": "Si anwani ya https: vivinjari hukataa http ya kawaida, isipokuwa kwa kompyuta hii.",

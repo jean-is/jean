@@ -18,6 +18,7 @@
   "site.flag": "Трябва да е true или false.",
   "site.number": "Трябва да е число.",
   "site.colour": "Трябва да е цвят, като #rrggbb.",
+  "site.picture": "Трябва да е изображение, като data:image/…;base64,…",
   "site.oneOf": "Трябва да е {values}.",
   "site.address": "Не е уеб адрес.",
   "site.https": "Не е https адрес: браузърите отказват обикновен http, освен към този компютър.",

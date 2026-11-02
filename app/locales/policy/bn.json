@@ -18,6 +18,7 @@
   "site.flag": "true বা false হওয়া উচিত।",
   "site.number": "একটি সংখ্যা হওয়া উচিত।",
   "site.colour": "#rrggbb ধরনের একটি রং হওয়া উচিত।",
+  "site.picture": "data:image/…;base64,… ধরনের একটি ছবি হওয়া উচিত।",
   "site.oneOf": "{values} হওয়া উচিত।",
   "site.address": "এটি ওয়েব ঠিকানা নয়।",
   "site.https": "এটি https ঠিকানা নয়: এই কম্পিউটার ছাড়া ব্রাউজার সাধারণ http প্রত্যাখ্যান করে।",

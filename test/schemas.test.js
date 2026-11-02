@@ -34,6 +34,8 @@ test('a policy the schema takes is one policy.html finds nothing in, and the oth
     { signIn: { issuer: 'http://login.corp.example/', clientId: 'jean' } },
     { signIn: { issuer: 'http://localhost:5556/dex' } },
     { look: { name: 'Acme', accent: 'red' } },
+    { look: { name: 'Acme', logo: 'data:image/svg+xml;base64,PHN2Zy8+' } },
+    { look: { name: 'Acme', logo: 'https://cdn.corp.example/logo.svg' } },
     { brain: [], capabilities: { deny: 'computer' } },
     { groups: [{ id: 'legal', policy: null }] },
     { groups: [{ id: 'legal', policy: { signIn: { issuer: 'https://login.corp.example', clientId: 'jean' } } }] },

@@ -19,6 +19,7 @@ const DEFS = {
   capability: { type: 'string', description: 'A capability, as capabilities.json beside index.html lists them' },
   locale: { enum: LOCALES },
   colour: { type: 'string', pattern: '^#[0-9A-Fa-f]{6}$' },
+  picture: { type: 'string', pattern: '^data:image/(png|jpeg|gif|webp|svg\\+xml);base64,[A-Za-z0-9+/]+=*$', description: 'A picture inside the policy, as data:image/…;base64,…: Jean takes none from the web' },
 }
 /** The others, by their type alone. */
 const KINDS = { text: 'string', flag: 'boolean', number: 'number' }

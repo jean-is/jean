@@ -18,6 +18,7 @@
   "site.flag": "Ar trebui să fie true sau false.",
   "site.number": "Ar trebui să fie un număr.",
   "site.colour": "Ar trebui să fie o culoare, ca #rrggbb.",
+  "site.picture": "Ar trebui să fie o imagine, ca data:image/…;base64,…",
   "site.oneOf": "Ar trebui să fie {values}.",
   "site.address": "Nu este o adresă web.",
   "site.https": "Nu este o adresă https: browserele refuză http simplu, cu excepția acestui computer.",

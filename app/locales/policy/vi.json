@@ -18,6 +18,7 @@
   "site.flag": "Phải là true hoặc false.",
   "site.number": "Phải là một số.",
   "site.colour": "Phải là một màu dạng #rrggbb.",
+  "site.picture": "Phải là một hình ảnh dạng data:image/…;base64,…",
   "site.oneOf": "Phải là {values}.",
   "site.address": "Không phải địa chỉ web.",
   "site.https": "Không phải địa chỉ https: trình duyệt từ chối http thường, trừ khi đến máy tính này.",

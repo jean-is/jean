@@ -3,6 +3,28 @@
 
 /** @typedef {import('../core/settings.js').Look} Look */
 
+/** A picture inside policy or a kit, the only kind either can bring: nothing that could reach the web or leave a style sheet's quotes. */
+export const PICTURE = /^data:image\/(png|jpeg|gif|webp|svg\+xml);base64,[a-z0-9+/]+=*$/i
+
+/**
+ * The organisation's logo beside Jean's name, whichever look is on, on a light plate by night as paper's is (D685).
+ * @param {unknown} logo policy's `look.logo` @returns {string}
+ */
+export const logoCSS = (logo) => (typeof logo === 'string' && PICTURE.test(logo)
+  ? `.bar .wordmark::after { content: ''; flex: none; inline-size: 2.4rem; block-size: 1.5rem; border-radius: 0.3rem; background: oklch(0.97 0 0) url("${logo}") center / 80% no-repeat; }
+:root[data-theme='light'] .bar .wordmark::after { background-color: transparent; background-size: contain; }`
+  : '')
+
+/**
+ * The organisation's logo whichever look is on (D685): the tab's icon, and the rules that put it beside Jean's name,
+ * over the touches. @param {{ logo?: unknown } | undefined} look policy's @returns {string}
+ */
+export function logoed(look) {
+  const [logo, link] = [look?.logo, /** @type {HTMLLinkElement | null} */ (document.querySelector('link[rel="icon"]'))]
+  if (link && typeof logo === 'string' && PICTURE.test(logo)) Object.assign(link, { href: logo, type: logo.slice(5, logo.indexOf(';')) })
+  return logoCSS(logo) && `${logoCSS(logo)}\n`
+}
+
 /** Typefaces for the text; headings keep the look's. Generic names last, so every script finds its own. */
 export const FONTS = Object.freeze({
   sans: "system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic UI', 'Helvetica Neue', sans-serif",

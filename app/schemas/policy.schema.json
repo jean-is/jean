@@ -58,6 +58,9 @@
         },
         "css": {
           "type": "string"
+        },
+        "logo": {
+          "$ref": "#/$defs/picture"
         }
       },
       "required": [
@@ -945,6 +948,16 @@
                     "type": [
                       "string",
                       "null"
+                    ]
+                  },
+                  "logo": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/picture"
+                      },
+                      {
+                        "type": "null"
+                      }
                     ]
                   }
                 },
@@ -2406,6 +2419,11 @@
     "colour": {
       "type": "string",
       "pattern": "^#[0-9A-Fa-f]{6}$"
+    },
+    "picture": {
+      "type": "string",
+      "pattern": "^data:image/(png|jpeg|gif|webp|svg\\+xml);base64,[A-Za-z0-9+/]+=*$",
+      "description": "A picture inside the policy, as data:image/…;base64,…: Jean takes none from the web"
     }
   }
 }

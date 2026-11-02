@@ -18,6 +18,7 @@
   "site.flag": "Ó yẹ kí ó jẹ́ true tàbí false.",
   "site.number": "Ó yẹ kí ó jẹ́ nọ́ńbà.",
   "site.colour": "Ó yẹ kí ó jẹ́ àwọ̀ bíi #rrggbb.",
+  "site.picture": "Ó yẹ kí ó jẹ́ àwòrán bíi data:image/…;base64,…",
   "site.oneOf": "Ó yẹ kí ó jẹ́ {values}.",
   "site.address": "Kì í ṣe àdírẹ́sì wẹ́ẹ̀bù.",
   "site.https": "Kì í ṣe àdírẹ́sì https: àwọn aṣàwákiri kọ http lásán, àyàfi sí kọ̀ǹpútà yìí.",

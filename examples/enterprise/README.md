@@ -35,7 +35,7 @@ The first build takes a few minutes. Then open http://localhost:8080 and sign in
 3. `oidc_auth.py` checks the token at the gateway: its signature against Dex's keys, its issuer, its audience (`jean`) and its expiry. It then names Ana in LiteLLM's logs. A request without a valid token gets a 401.
 4. Connections are on for everyone (`capabilities.preUnlock`). The gateway's MCP server is the organisation's connection (`connections`, `"auth": "oidc"`), sent the same token. It is in Settings › Connections, where people can't remove it.
 5. The `Content-Security-Policy` header keeps Jean to its own address, the sign-in and the gateway, whatever its own policy allows. The policy turns off what would download from elsewhere unasked: the model that picks a brain for each request (`capabilities.deny`), which a mirror in `urls.modelWeights` would bring back.
-6. Jean wears Reefknot's theme (`look`), first in Settings › Appearance, and what people make, Word files, prints and decks, wears its colours and logo (`kit`). Its brain is Reefknot AI, and the house rule in `instructions` goes with every request: the people Reefknot covers are members, never customers.
+6. Jean wears Reefknot's theme (`look`), first in Settings › Appearance, with its knot beside Jean's name and on the tab whatever theme people pick (`look.logo`), and what people make, Word files, prints and decks, wears its colours and logo (`kit`). Its brain is Reefknot AI, and the house rule in `instructions` goes with every request: the people Reefknot covers are members, never customers.
 
 ## The files
 
@@ -48,7 +48,7 @@ The first build takes a few minutes. Then open http://localhost:8080 and sign in
 
 ## Make it yours
 
-- **Your name and colours.** Replace `brand/` with your own logo and colours, `frontend` in `dex.yaml` with your name, and `look`, `kit` and the brain's `label` in the policy. A `kit`'s logo is a `data:` address: Jean takes no picture from the web.
+- **Your name and colours.** Replace `brand/` with your own logo and colours, `frontend` in `dex.yaml` with your name, and `look`, `kit` and the brain's `label` in the policy. Their logos are `data:` addresses: Jean takes no picture from the web.
 - **Addresses.** Give each service an HTTPS address of its own, such as `jean.corp.example`, `login.corp.example` and `ai.corp.example`. Then change them everywhere they appear: `issuer`, `redirectURIs` and `allowedOrigins` in `dex.yaml`, `OIDC_ISSUER` and `CONTENT_SECURITY_POLICY` in `compose.yaml`, and the policy. Browsers run Jean only on `localhost` or over HTTPS.
 - **Your identity provider.** To sign in with Entra ID or any other OpenID Connect provider directly, put its issuer, Jean's app and the gateway's scope in `signIn`, as [Signing in at work](../../docs/enterprise.md#signing-in-at-work) shows. Then set `OIDC_ISSUER`, `OIDC_JWKS_URI` and `OIDC_AUDIENCE` to its issuer, its keys and the gateway's app. Or keep Dex in front of your directory with a [connector](https://dexidp.io/docs/connectors/), and give it a lasting `storage`: in memory, people sign in again after each restart.
 - **The gateway's check.** `oidc_auth.py` is LiteLLM's custom auth. LiteLLM Enterprise's JWT auth does the same from its configuration, and can map the token's groups to teams and to the brains each may use.

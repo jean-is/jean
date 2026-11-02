@@ -18,6 +18,7 @@
   "site.flag": "Seharusnya true atau false.",
   "site.number": "Seharusnya angka.",
   "site.colour": "Seharusnya warna seperti #rrggbb.",
+  "site.picture": "Seharusnya gambar seperti data:image/…;base64,…",
   "site.oneOf": "Seharusnya {values}.",
   "site.address": "Bukan alamat web.",
   "site.https": "Bukan alamat https: browser menolak http biasa, kecuali ke komputer ini.",

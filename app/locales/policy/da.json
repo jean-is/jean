@@ -18,6 +18,7 @@
   "site.flag": "Skal være true eller false.",
   "site.number": "Skal være et tal.",
   "site.colour": "Skal være en farve, som #rrggbb.",
+  "site.picture": "Skal være et billede, som data:image/…;base64,…",
   "site.oneOf": "Skal være {values}.",
   "site.address": "Ikke en webadresse.",
   "site.https": "Ikke en https-adresse: browsere afviser almindelig http, undtagen til denne computer.",

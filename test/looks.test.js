@@ -4,7 +4,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFile, readdir } from 'node:fs/promises'
 import { LOOKS, LOOK_KEY, OWN, lookId, baseOf, offeredLooks, touched } from '../app/ui/looks.js'
-import { customCSS, FONTS, COLOURS } from '../app/ui/touches.js'
+import { customCSS, logoCSS, FONTS, COLOURS } from '../app/ui/touches.js'
 
 const html = await readFile(new URL('../app/index.html', import.meta.url), 'utf8')
 
@@ -182,6 +182,13 @@ test('the user’s own CSS comes last, as they wrote it', () => {
 // While a model works on this device's GPU, every frame waits behind its work: loops, which draw a
 // frame each time, pause then, as ui/model.js sets --loops (D285). An entrance plays, or a picture's
 // glimpses would stay hidden. A list of animations is checked one by one.
+test('the organisation’s logo goes beside Jean’s name only as a picture inside policy, on a plate by night (D685)', () => {
+  const logo = 'data:image/svg+xml;base64,PHN2Zy8+'
+  assert.match(logoCSS(logo), /\.bar \.wordmark::after \{[^}]*url\("data:image\/svg\+xml;base64,PHN2Zy8\+"\)/)
+  assert.match(logoCSS(logo), /:root\[data-theme='light'\] \.bar \.wordmark::after \{ background-color: transparent;/)
+  for (const other of ['https://cdn.example/logo.svg', 'data:image/svg+xml,<svg/>', 'data:text/html;base64,PGI+', `${logo}") } body { display: none`, 42, undefined]) assert.equal(logoCSS(other), '', String(other))
+})
+
 test('every loop in Jean’s style sheets pauses while a model works on this device', async () => {
   const app = new URL('../app/', import.meta.url)
   const sheets = (await readdir(app, { recursive: true })).filter((path) => path.endsWith('.css') && !path.startsWith('vendor'))

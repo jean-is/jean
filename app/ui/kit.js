@@ -5,7 +5,7 @@
 // Appearance › Design system writes them (caps/slides/kit-page.js).
 import { signal } from '@preact/signals-core'
 import { app, theme } from './state.js'
-import { COLOURS } from './touches.js'
+import { COLOURS, PICTURE } from './touches.js'
 import { contrast, mix, readable } from './colour.js'
 
 /**
@@ -54,9 +54,6 @@ const tokensHere = async (dir) => ({ ...(await kitFile(null))?.tokens, ...app.po
 /** The look here, its flat tokens (`primary`, `paper`, `ink`, `voice`…), or none. @param {string} [dir] */
 export const lookHere = async (dir) => ((tokens) => (tokens.primary || tokens.voice ? tokens : null))(await tokensHere(dir))
 
-/** A logo inside the kit, the only kind a kit can bring: nothing that could reach the web or leave a style sheet's quotes. */
-const LOGO = /^data:image\/(png|jpeg|gif|webp|svg\+xml);base64,[a-z0-9+/]+=*$/i
-
 /**
  * A look on a ground (D601, D663, D664): its colours for words deepened until they read there, its pale fill where its words read on
  * that, its voice or its own fonts, and its logo, a picture inside the kit alone, in its corner.
@@ -65,7 +62,7 @@ const LOGO = /^data:image\/(png|jpeg|gif|webp|svg\+xml);base64,[a-z0-9+/]+=*$/i
 function lookOn(ground, own, { primary, voice, fonts, logoAt }) {
   const on = (/** @type {unknown} */ colour) => (colour && typeof colour === 'string' ? readable(hexOf(colour), ground) : undefined), words = on(own.ink), fill = own.soft && typeof own.soft === 'string' ? hexOf(own.soft) : ''
   return { colour: on(own.primary ?? primary), ink: words, muted: on(own.muted), soft: fill && contrast(words ?? readable('#111111', ground), fill) >= 4.5 ? fill : undefined, voice: /** @type {string | undefined} */ (voice),
-    fonts: Array.isArray(fonts?.heading) && Array.isArray(fonts?.body) ? /** @type {{ heading: string[], body: string[] }} */ (fonts) : undefined, logo: LOGO.test(own.logo) ? /** @type {string} */ (own.logo) : undefined, logoAt: /** @type {string | undefined} */ (logoAt) }
+    fonts: Array.isArray(fonts?.heading) && Array.isArray(fonts?.body) ? /** @type {{ heading: string[], body: string[] }} */ (fonts) : undefined, logo: PICTURE.test(own.logo) ? /** @type {string} */ (own.logo) : undefined, logoAt: /** @type {string | undefined} */ (logoAt) }
 }
 
 /** Given tokens on white paper, as a Word file or a print wears them. @param {Record<string, any>} tokens */

@@ -7,7 +7,7 @@
 import { readFile } from 'node:fs/promises'
 import { pathToFileURL } from 'node:url'
 import { test, expect } from '@playwright/test'
-import { start, openSettings, closeSettings, openTasks, connectFakeBrain, ask, nameOf } from './helpers.js'
+import { start, openSettings, closeSettings, openTasks, connectFakeBrain, ask, nameOf, withPolicy } from './helpers.js'
 import { LOOKS } from '../app/ui/looks.js'
 
 test.use({ viewport: { width: 1280, height: 800 } })
@@ -262,6 +262,36 @@ test('the drawer opens beside the conversation or is put away, as the user left 
   await expect(drawer).toHaveCount(0)
   await expect(page.locator('#prompt')).toBeFocused()
 })
+
+// The organisation's logo (D685): beside Jean's name whichever theme is on, on a plate by night, and the tab's icon.
+const LOGO = `data:image/svg+xml;base64,${Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 10"><path d="M1 5h14" stroke="#23a26d" stroke-width="3"/></svg>').toString('base64')}`
+/** What the logo beside Jean's name draws. @param {import('@playwright/test').Page} page */
+const logoOf = (page) => page.locator('.bar .wordmark').evaluate((mark) => {
+  const { backgroundImage, backgroundColor, inlineSize } = getComputedStyle(mark, '::after')
+  return { image: backgroundImage, plate: backgroundColor, width: parseFloat(inlineSize) }
+})
+for (const lang of ['en', 'ar', 'ja']) {
+  test(`the organisation’s logo stands beside Jean’s name whichever theme is on, on a plate by night, and is the tab’s icon (${lang})`, async ({ page }) => {
+    await withPolicy(page, { look: { name: 'Reefknot', accent: '#23a26d', logo: LOGO } })
+    await page.emulateMedia({ colorScheme: 'dark' })
+    await start(page, lang)
+    await expect.poll(() => logoOf(page)).toMatchObject({ image: `url("${LOGO}")`, plate: 'oklch(0.97 0 0)' })
+    expect((await logoOf(page)).width).toBeGreaterThan(20)
+    await expect(page.locator('link[rel="icon"]')).toHaveAttribute('href', LOGO)
+    await page.emulateMedia({ colorScheme: 'light' })
+    await expect.poll(() => logoOf(page)).toMatchObject({ image: `url("${LOGO}")`, plate: 'rgba(0, 0, 0, 0)' })
+    // Another theme keeps it: it is the organisation's, not its theme's.
+    await page.evaluate(() => import('/ui/dialogs.js').then(({ openSettings }) => openSettings('appearance')))
+    const settings = page.locator('app-settings dialog[open]')
+    await settings.locator('.look', { has: page.locator("[data-look-preview='mail']") }).click()
+    await expect(page.locator('html')).toHaveAttribute('data-look', 'mail')
+    await closeSettings(page)
+    await expect.poll(() => logoOf(page)).toMatchObject({ image: `url("${LOGO}")` })
+    // At 320 px the bar still holds it whole.
+    await page.setViewportSize({ width: 320, height: 640 })
+    expect(await page.locator('.bar').evaluate((bar) => bar.scrollWidth <= bar.clientWidth)).toBe(true)
+  })
+}
 
 test('every theme is in the gallery with its thumbnail, and dresses the page when picked', async ({ page }) => {
   await start(page)

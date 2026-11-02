@@ -18,6 +18,7 @@
   "site.flag": "يجب أن يكون true أو false.",
   "site.number": "يجب أن يكون رقمًا.",
   "site.colour": "يجب أن يكون لونًا بصيغة ‎#rrggbb.",
+  "site.picture": "يجب أن تكون صورة بصيغة ‎data:image/…;base64,…",
   "site.oneOf": "يجب أن يكون {values}.",
   "site.address": "ليس عنوان ويب.",
   "site.https": "ليس عنوان https: ترفض المتصفحات http العادي، إلا إلى هذا الحاسوب.",

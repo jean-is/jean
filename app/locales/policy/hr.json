@@ -18,6 +18,7 @@
   "site.flag": "Treba biti true ili false.",
   "site.number": "Treba biti broj.",
   "site.colour": "Treba biti boja, kao #rrggbb.",
+  "site.picture": "Treba biti slika, kao data:image/…;base64,…",
   "site.oneOf": "Treba biti {values}.",
   "site.address": "Nije web-adresa.",
   "site.https": "Nije adresa https: preglednici odbijaju obični http, osim prema ovom računalu.",

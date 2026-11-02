@@ -18,6 +18,7 @@
   "site.flag": "Should be true or false.",
   "site.number": "Should be a number.",
   "site.colour": "Should be a colour, as #rrggbb.",
+  "site.picture": "Should be a picture, as data:image/…;base64,…",
   "site.oneOf": "Should be {values}.",
   "site.address": "Not a web address.",
   "site.https": "Not an https address: browsers refuse plain http, except to this computer.",

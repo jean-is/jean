@@ -18,6 +18,7 @@
   "site.flag": "Pitäisi olla true tai false.",
   "site.number": "Pitäisi olla luku.",
   "site.colour": "Pitäisi olla väri, muodossa #rrggbb.",
+  "site.picture": "Pitäisi olla kuva, muodossa data:image/…;base64,…",
   "site.oneOf": "Pitäisi olla jokin näistä: {values}.",
   "site.address": "Ei ole verkko-osoite.",
   "site.https": "Ei ole https-osoite: selaimet hylkäävät pelkän http:n, paitsi tälle tietokoneelle.",

@@ -18,6 +18,7 @@
   "site.flag": "باید true یا false باشد.",
   "site.number": "باید عدد باشد.",
   "site.colour": "باید رنگی به شکل ‎#rrggbb باشد.",
+  "site.picture": "باید تصویری به شکل ‎data:image/…;base64,… باشد.",
   "site.oneOf": "باید {values} باشد.",
   "site.address": "نشانی وب نیست.",
   "site.https": "نشانی https نیست: مرورگرها http ساده را رد می‌کنند، مگر به این رایانه.",

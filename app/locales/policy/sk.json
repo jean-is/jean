@@ -18,6 +18,7 @@
   "site.flag": "Má byť true alebo false.",
   "site.number": "Má byť číslo.",
   "site.colour": "Má byť farba, ako #rrggbb.",
+  "site.picture": "Má byť obrázok, ako data:image/…;base64,…",
   "site.oneOf": "Má byť {values}.",
   "site.address": "Nie je webová adresa.",
   "site.https": "Nie je adresa https: prehliadače odmietajú obyčajné http, okrem tohto počítača.",

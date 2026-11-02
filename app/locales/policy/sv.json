@@ -18,6 +18,7 @@
   "site.flag": "Ska vara true eller false.",
   "site.number": "Ska vara ett tal.",
   "site.colour": "Ska vara en färg, som #rrggbb.",
+  "site.picture": "Ska vara en bild, som data:image/…;base64,…",
   "site.oneOf": "Ska vara {values}.",
   "site.address": "Inte en webbadress.",
   "site.https": "Inte en https-adress: webbläsare vägrar vanlig http, utom till den här datorn.",

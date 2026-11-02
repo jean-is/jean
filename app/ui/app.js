@@ -113,11 +113,11 @@ async function start() {
   let touching = Promise.resolve()
   effect(() => {
     const own = chosenLook.value === OWN ? app.policy.look : undefined
-    if (!own && !touched(effective.value.settings.look)) {
+    if (!own && !app.policy.look?.logo && !touched(effective.value.settings.look)) {
       touches.replaceSync('')
       return
     }
-    touching = import('./touches.js').then(({ customCSS }) => touches.replaceSync(`${customCSS(own)}\n${customCSS(effective.peek().settings.look)}`))
+    touching = import('./touches.js').then(({ customCSS, logoed }) => touches.replaceSync(logoed(app.policy.look) + `${customCSS(own)}\n${customCSS(effective.peek().settings.look)}`))
   })
   await Promise.all([dressing, touching])
 

@@ -18,6 +18,7 @@
   "site.flag": "true vagy false értéknek kell lennie.",
   "site.number": "Számnak kell lennie.",
   "site.colour": "Színnek kell lennie, #rrggbb formában.",
+  "site.picture": "Képnek kell lennie, data:image/…;base64,… formában.",
   "site.oneOf": "Ezek egyikének kell lennie: {values}.",
   "site.address": "Nem webcím.",
   "site.https": "Nem https-cím: a böngészők elutasítják a sima http-t, kivéve erre a számítógépre.",
