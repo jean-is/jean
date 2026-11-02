@@ -148,6 +148,7 @@ export const covering = () => !wide.peek()
  */
 function arrange() {
   const open = opened.peek(), beside = wide.peek() && open.length > 0, { tiles, splits } = laid.peek()
+  app.docked.value = open.length > 0
   if (open.length) root.dataset.dock = beside ? 'beside' : 'over'
   else delete root.dataset.dock
   const shell = /** @type {HTMLElement | null} */ (document.querySelector('app-shell'))

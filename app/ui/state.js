@@ -76,6 +76,8 @@ export const app = {
   /** @type {import('@preact/signals-core').Signal<{ message: string, action?: { label: string, run: () => void, undo?: true } | { alert: true }, seconds: number } | null>} */
   toast: signal(null),
   said: signal(''),
+  /** Whether a pane is open (ui/dock.js), which takes the homepage's place as the main content. */
+  docked: signal(false),
   models: signal(/** @type {Record<string, ModelInfo[]>} */ ({})),
   attachments: signal(/** @type {Attachment[]} */ ([])),
   /** A capability offered above the box (progressive discovery), with its download's progress. */
