@@ -2,6 +2,8 @@
 
 Where Jean comes from, and the field it enters, as measured on 2026-10-01 (DEVS v0.8.2, commit `bf66fc8`; star counts from the GitHub API that day). This space moves monthly: check again before quoting anything here.
 
+Jean revisits the ideas behind [DEVS](https://github.com/codename-co/devs) from scratch. It started inside the DEVS repository and moved out on 2026-10-02 with its history (D50).
+
 ## DEVS, honestly
 
 | | |

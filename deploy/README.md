@@ -6,13 +6,13 @@ Jean is static files: no server of its own, no database. A deploy is `app/` as `
 npm ci && npm run build:web
 ```
 
-`POLICY="$(cat policy.json)" npm run build:web` adds the organisation's `policy.json` and has `index.html` name it ([enterprise.md](../docs/enterprise.md#policy-model-sketch)).
+`POLICY="$(cat policy.json)" npm run build:web` adds the organisation's `policy.json` and has `index.html` name it ([enterprise.md](../docs/enterprise.md#policy-model-sketch)). `ADDRESS=https://…/` gives the build the address it will keep: browsers then offer Jean as a search engine, and search engines and shared links read its title, cards and sitemap ([architecture.md](../docs/architecture.md#deploying)).
 
 Or take a release Warehouse SAS signed, which needs no Node.js: check its signature and sums, then unzip it and add the `policy.json` and its `<meta>` by hand ([docs/trust/releases.md](../docs/trust/releases.md)).
 
 | Where | How |
 |---|---|
-| A server reached over SSH | `DEPLOY_TO=host:/path npm run deploy` ([README](../README.md)) |
+| A server reached over SSH | `DEPLOY_TO=host:/path npm run deploy`: a commit in git (`HEAD` unless you name one after `--`) as a new release beside the last five, `/path/current` switched to it at once ([architecture.md](../docs/architecture.md#deploying)) |
 | Bunny CDN, as jean.is | `DEPLOY_TO=bunny:<storage zone> npm run deploy` ([bunny/](bunny/README.md)) |
 | Containers | [docker/](docker/README.md) |
 | IIS | [iis/](iis/README.md) |
