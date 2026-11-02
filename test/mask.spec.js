@@ -113,6 +113,8 @@ test('on every road, a shared file, memory, a call and its result, a title and a
   }, { person: PERSON })
   await page.locator('.composer input[type="file"]').setInputFiles({ name: `${PERSON}.txt`, mimeType: 'text/plain', buffer: Buffer.from(`${EMAIL} pays with ${CARD}.`) })
   await expect(page.locator('.composer')).toContainText('Marie')
+  // Read, too: the box keeps a message until its files are.
+  await expect(page.locator('.attachment[data-status="ready"]')).toHaveCount(1)
   await ask(page, `Write to ${PERSON} about ${SECRET}`)
   await expect(page.locator('.msg-jean .prose').last()).toContainText(`Written for ${PERSON}.`)
   await quiet(page)

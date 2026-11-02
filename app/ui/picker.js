@@ -34,7 +34,7 @@ export const openPicker = () => (brainsHere.value.length ? document.getElementBy
 const short = (model) => model.slice(model.lastIndexOf('/') + 1)
 
 /** @param {BrainConfig} brain @param {string} model */
-const pick = (brain, model) => updateSettings({ auto: false }).then(() => useBrain(brain.id, model))
+const pick = (brain, model) => useBrain(brain.id, model).then(() => updateSettings({ auto: false }))
 
 /** "about $0.003 per answer", from the provider's own prices, or models.dev's. @param {import('../core/types.js').ModelInfo['pricing']} pricing */
 export function cost(pricing) {

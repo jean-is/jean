@@ -81,8 +81,9 @@ export async function fakeGateway(page, issuer) {
     const authorization = (await request.allHeaders()).authorization
     seen.push(authorization)
     if (!issuer.current || authorization !== `Bearer ${issuer.current}`) return route.fulfill({ status: 401, headers: CORS, json: { error: { message: 'Unauthorized' } } })
-    const response = await route.fetch({ url: request.url().replace(GATEWAY, BRAIN_URL) })
-    return route.fulfill({ response, headers: { ...response.headers(), ...CORS } })
+    // A reply can come after the test has moved on.
+    const response = await route.fetch({ url: request.url().replace(GATEWAY, BRAIN_URL) }).catch(() => null)
+    return response && route.fulfill({ response, headers: { ...response.headers(), ...CORS } }).catch(() => {})
   })
   return seen
 }

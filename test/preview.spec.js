@@ -5,7 +5,7 @@
 // frame of the same kind (D183), and a file follows its new version; a PDF shows its drawn pages.
 // On a phone it covers the conversation; right to left, it sits on the left.
 import { test, expect } from '@playwright/test'
-import { downloadFile, start, connectFakeBrain, ask, holdAnswers, openApprovals, SALES, pdf, inkOf } from './helpers.js'
+import { downloadFile, start, connectFakeBrain, ask, holdAnswers, openApprovals, SALES, pdf, inkOf, nameOf } from './helpers.js'
 import { writeZip } from '../app/core/zip.js'
 import { makeFile } from '../app/caps/made/formats.js'
 import { extractPages } from '../app/caps/files/extract.js'
@@ -160,7 +160,7 @@ test('a Word document as Word draws it, following its new version, saved from th
     page.waitForEvent('download'),
     downloadFile(page.locator('.preview'), 'Bakery plan.docx'),
   ])
-  expect(download.suggestedFilename()).toBe('Bakery plan.docx')
+  expect(nameOf(download)).toBe('Bakery plan.docx')
 })
 
 test('shared files open beside the task: a table as a workbook, a PDF drawn, a deck as its slides', async ({ page }) => {
@@ -312,7 +312,10 @@ test('right to left, the preview opens on the left of the conversation', async (
   await page.locator('.composer input[type="file"]').setInputFiles({ name: 'sales.csv', mimeType: 'text/csv', buffer: Buffer.from(SALES) })
   await expect(page.locator('.attachment[data-status="ready"]')).toHaveCount(1)
   await ask(page, 'Here is my table')
+  // Once its answer is there, a decision waiting: a click while it comes can find no chip by the time it lands.
+  await expect(page.locator('.msg-jean')).toBeVisible()
   await page.locator('.msg-files .file-chip').click()
+  await expect(page.locator('app-preview .preview')).toBeVisible()
   const box = await page.locator('app-preview .preview').boundingBox()
   expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual((await page.locator('main').boundingBox())?.x ?? 0)
 })

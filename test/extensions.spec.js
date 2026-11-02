@@ -2,7 +2,7 @@
 // elements and hooking Jean's events, but only within the rights the user granted and hasn't taken back.
 import { test, expect } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
-import { start, connectFakeBrain, ask, turnOn, openSettings, closeSettings, withPolicy } from './helpers.js'
+import { start, connectFakeBrain, ask, noted, turnOn, openSettings, closeSettings, withPolicy } from './helpers.js'
 
 const FIXTURE = new URL('./fixtures/extensions/word-count/', import.meta.url)
 
@@ -180,6 +180,8 @@ test('with ?safe no extension runs until the user leaves safe mode, one that kee
   await ask(page, 'Hello there')
   await expect(page.locator('.toast')).toContainText('Word count kept failing, so it is turned off.')
   await expect(frames).toHaveCount(0)
+  // The answer's last records kept first: turned on before them, it would fail on them and go off again.
+  await noted(page)
   await extensions(page)
   const row = settings.locator('.list.extensions > li')
   await expect(row).toContainText('It kept failing, so it was turned off.')

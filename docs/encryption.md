@@ -90,7 +90,7 @@ record   …
 
 ## Starting
 
-The worker opens the vault at the first `ping` and answers with one of three states:
+The worker opens the vault at the first `ping` and answers with one of three states. Tabs choose their profile and make that ping one at a time, under a Web Lock, so that tabs starting together on a new device share one vault, and none finds it half made.
 
 1. **`open`:**
    - on a first run (no `vault.json`, nothing in OPFS but `.cache/`), after making VK, the device slot and `vault.json`;

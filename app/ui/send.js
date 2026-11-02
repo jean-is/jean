@@ -446,10 +446,10 @@ const working = new Map()
 /** Shows a run's waiting steers under its live answer, when it is on screen. @param {Run} run */
 const showSteers = (run) => app.current.peek()?.path === run.path && (app.live.value = { turn: run.turn, steers: run.steers })
 
-/** What the user sends while the task on screen works steers it: its brain reads it before the next step; until then it waits under the live answer. Sent before the run begins, it stays in the box. @param {string} text */
+/** What the user sends while the task on screen works steers it: its brain reads it before the next step; until then it waits under the live answer. Sent before the run begins, it stays in the box; after it ends, it is the next request. @param {string} text */
 export function steer(text) {
   const run = working.get(app.current.peek()?.path ?? '')
-  if (!run) return void (app.draft.value = text)
+  if (!run) return void (app.busy.peek() ? (app.draft.value = text) : send(text))
   run.steers = [...run.steers ?? [], text]
   showSteers(run)
 }

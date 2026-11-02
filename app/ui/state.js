@@ -186,7 +186,7 @@ export function switchTheme() {
 // user left it; until then, to the look: Tilde, Mail and Human keep it open once the room has a task (D369), the others put it away.
 export const SIDEBAR_KEY = 'app.sidebar'
 
-/** Whether the drawer is open beside the conversation now: a wide window, and the user's choice or the look's. */
+/** Whether the drawer is open beside the conversation now, on a wide window. */
 export const sidebarOpen = computed(() => app.wide.value && (app.sidebar.value ?? (LOOKS[app.look.value].list === true && app.conversations.value.length > 0)))
 
 /** The drawer open beside the conversation, or put away, from now on on this device. @param {boolean} open */
@@ -206,10 +206,12 @@ export function fold(name) {
   localStorage.setItem(mine(FOLDED_KEY), [...next].join(' '))
 }
 
-/** The header's button and ⌘B: on a wide window it puts the drawer away or opens it beside the conversation, on a narrow one it slides it over or away. */
+/** The header's button and ⌘B: the drawer beside the conversation on a wide window, over it on a narrow one. */
 export function toggleSidebar() {
-  if (!app.wide.value) app.dialog.value = app.dialog.value === 'history' ? null : 'history'
-  else if (!document.startViewTransition) setSidebar(!sidebarOpen.value)
+  if (!app.wide.value) return void (app.dialog.value = app.dialog.value === 'history' ? null : 'history')
+  // Held: a first task arriving meanwhile would open it, and the press put it away.
+  app.sidebar.value = sidebarOpen.value
+  if (!document.startViewTransition) setSidebar(!sidebarOpen.value)
   // Beside the conversation, it slides (D234).
   else import('./slide.js').then(({ slide }) => slide())
 }

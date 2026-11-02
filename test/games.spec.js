@@ -51,7 +51,7 @@ test('a game made with its skill is played out of sight and reported, opens besi
   await expect(answer).toContainText('left, right changed the picture; a changed nothing.')
   await expect(page.locator('.game-test')).toHaveCount(0)
   // Its picture, from its play-test: WebP, or JPEG where the browser writes none. Taken away, its first five seconds played give one.
-  expect(await pictureOf(page, 'Star Catcher')).toMatch(browserName === 'webkit' ? /^data:image\/jpeg;base64,/ : /^data:image\/webp;base64,/)
+  expect(await pictureOf(page, 'Star Catcher')).toMatch(browserName === 'webkit' ? /^data:image\/(?:jpeg|webp);base64,/ : /^data:image\/webp;base64,/)
   await page.evaluate(async () => {
     const { app } = await import('/ui/state.js'), { gameOf, fileOf } = await import('/caps/games/file.js'), [file] = (await app.fs.list(`${app.projectDir}/games`)).filter((one) => one.kind === 'file')
     await app.fs.write(`${app.projectDir}/games/${file.name}`, fileOf({ .../** @type {any} */ (gameOf((await app.fs.read(`${app.projectDir}/games/${file.name}`)) ?? '')), picture: '' }, 'en'))

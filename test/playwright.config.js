@@ -32,10 +32,12 @@ export default defineConfig({
   // them, spreading this one with `testIgnore: []`.
   testIgnore: '**/.cache/**',
   timeout: 60_000,
+  // Longer than Playwright's 5 s: what these wait for is never a matter of time, and on a busy runner a page's slower steps take that long.
+  expect: { timeout: 10_000 },
   fullyParallel: true,
-  // The tests mostly wait, on the fake brain and on timers, so more of them than the default half
-  // of the cores run at once; past this, they compete for the processor and flake.
-  workers: '85%',
+  // Half of the cores, Playwright's own default, said here because each worker's browser takes several: at 85% a run took
+  // hardly less time, the processor well over-committed, and tests that wait on timers failed by the handful.
+  workers: '50%',
   reporter: 'list',
   // Without motion: Jean's light and face move for as long as a page is open, and with a few
   // pages at once that alone kept the processor busy. A test that needs it turns it back on for its page.

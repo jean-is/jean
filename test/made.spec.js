@@ -4,7 +4,7 @@
 // changed in place, and a spreadsheet written from a script.
 import { test, expect } from '@playwright/test'
 import { readZip } from '../app/core/zip.js'
-import { start, connectFakeBrain, ask, turnOn, SALES } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, SALES, nameOf } from './helpers.js'
 import { extractPages } from '../app/caps/files/extract.js'
 
 test.beforeEach(async ({ page }) => {
@@ -221,7 +221,7 @@ test('an answer printed with the design system\'s logo has it in place of Jean\'
  */
 async function saved(page, answer, button) {
   const [download] = await Promise.all([page.waitForEvent('download'), answer.getByRole('button', { name: button }).click()])
-  const name = download.suggestedFilename()
+  const name = nameOf(download)
   const bytes = await streamBytes(download)
   return { name, bytes, text: (await extractPages(name, new Uint8Array(bytes)) ?? []).join('\n') }
 }

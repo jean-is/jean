@@ -512,6 +512,8 @@ test('Settings › Computer: the sandbox and its page (D176, D249), the internet
   await expect.poll(() => page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.computer?.internet)).toBe('any')
   await expect(panel.locator('[data-page="sites"]')).toContainText('None yet: each new site is asked about first.')
   await panel.locator('[data-page="sites"]').click()
+  // The page's title takes the keyboard a frame after it opens, and with it words typed sooner.
+  await expect(panel.getByRole('heading', { name: 'Sites it may always reach' })).toBeFocused()
   const sites = panel.getByRole('textbox', { name: 'Add a site' })
   await sites.fill('example.com')
   await sites.press('Enter')

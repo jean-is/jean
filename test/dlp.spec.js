@@ -32,7 +32,11 @@ test('a task holding what is sensitive reaches only the brains the organisation 
   await ask(page, 'My card is 4111 1111 1111 1111')
   await expect(page.locator('.toast')).toContainText('This task holds bank or card details, which your organization lets only Vault AI read.')
   expect(asked.filter((body) => body.includes('4111'))).toEqual([])
+  await expect(page.locator('#brain-menu')).toBeVisible()
   await page.keyboard.press('Escape')
+  await expect(page.locator('#brain-menu')).toBeHidden()
+  // Its run is over too: until then, words sent would steer it, and come back to the box with it.
+  await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()
   // To the one it allows, it goes.
   await page.evaluate(async () => { await (await import('/ui/state.js')).updateSettings({ activeBrain: 'vault' }) })
   await ask(page, 'Now read it back')

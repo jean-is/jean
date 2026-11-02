@@ -21,9 +21,10 @@ async function seed(page) {
       tasks.push({ id: header.id, path })
     }
     await Promise.all([unlock('documents'), unlock('tables')])
-    const at = new Date().toISOString(), doc = `documents/${ulid()}-plan.md`, folder = 'collections/01K85Z1T00000000000000000S-seeds'
+    // A second apart: the same time would leave the drawer's two pinned rows free to swap as each kind comes in, under a drag.
+    const at = new Date().toISOString(), later = new Date(Date.now() + 1000).toISOString(), doc = `documents/${ulid()}-plan.md`, folder = 'collections/01K85Z1T00000000000000000S-seeds'
     await app.fs.write(`${app.projectDir}/${doc}`, `---\nformat: 1\nname: Garden plan\nauthor: user\ncreated: ${at}\nchanged: ${at}\npinned: true\n---\n# Garden plan\n\nNorth bed: beans.\n`)
-    await app.fs.write(`${app.projectDir}/${folder}/collection.json`, JSON.stringify({ format: 1, id: '01K85Z1T00000000000000000S', name: 'Seeds', author: 'user', created: at, changed: at, pinned: true,
+    await app.fs.write(`${app.projectDir}/${folder}/collection.json`, JSON.stringify({ format: 1, id: '01K85Z1T00000000000000000S', name: 'Seeds', author: 'user', created: at, changed: later, pinned: true,
       properties: [{ id: 'name', name: 'Name', type: 'text' }, { id: 'packets', name: 'Packets', type: 'number' }], views: [{ id: 'table', type: 'table' }] }))
     await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, ['Beans', 'Tomatoes'].map((name, i) => `${JSON.stringify({ row: `01K8000000000000000000000${i}`, set: { name, packets: i + 2 }, at, by: 'user' })}\n`).join(''))
     await refreshConversations()
@@ -152,8 +153,9 @@ test('a pinned collection dropped beside the task is its editor there, and opene
   await drawer.getByRole('button', { name: 'Seeds' }).click()
   await expect(tile).toHaveAttribute('data-called', '')
   await expect(page.locator('app-preview')).toHaveCount(1)
-  const notes = await page.evaluate(async () => (await import('/ui/caps.js')).slots('modes').flatMap((mode) => mode.notes?.([], {}) ?? []).map((note) => note.update.text))
-  expect(notes).toContainEqual(expect.stringContaining('The table Seeds'))
+  // Once its editor is drawn again, as a change of the user's has it.
+  const notes = () => page.evaluate(async () => (await import('/ui/caps.js')).slots('modes').flatMap((mode) => mode.notes?.([], {}) ?? []).map((note) => note.update.text))
+  await expect.poll(notes).toContainEqual(expect.stringContaining('The table Seeds'))
 })
 
 test('a document dropped beside the task is changed there, alone, and the brain hears of it; a design is, while it is the one on show', async ({ page }) => {

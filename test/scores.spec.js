@@ -5,7 +5,7 @@
 // answers hold are among the creations, where Create's Score asks for one with Music score (D542).
 import { test, expect } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
-import { start, connectFakeBrain, ask, turnOn, openSettings, openTasks, nextCopy, SHARE_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, openSettings, openTasks, nextCopy, SHARE_URL, nameOf } from './helpers.js'
 
 test('a tune is drawn as a score once its skill is added, and plays, each note lit as it sounds', async ({ page }) => {
   await start(page)
@@ -250,6 +250,8 @@ test('beside the task, the pane’s button sends a tune to an app here, saves it
   await place.click()
   await page.locator('app-creations .creation-start[data-kind="music"]').click()
   await expect(page.locator('#prompt')).toHaveValue('Compose a short lullaby for the piano, as sheet music I can play.')
+  // The words are there a moment before the keyboard: until then, keys press the card.
+  await expect(page.locator('#prompt')).toBeFocused()
   await page.keyboard.type('a jig')
   await page.keyboard.press('Enter')
   await expect(page.locator('.msg-jean app-score .score-sheet svg')).toHaveCount(1)
@@ -262,11 +264,11 @@ test('beside the task, the pane’s button sends a tune to an app here, saves it
   await expect(menu.locator('button')).toHaveText(['Send to an app…', 'Copy', 'MIDI file', 'ABC file', 'Print or save as PDF'])
   // Its ABC as written, and a MIDI file of it.
   const [abc] = await Promise.all([page.waitForEvent('download'), menu.getByRole('button', { name: /ABC file/ }).click()])
-  expect(abc.suggestedFilename()).toBe('The Legacy Jig.abc')
+  expect(nameOf(abc)).toBe('The Legacy Jig.abc')
   expect((await readFile(await abc.path())).toString()).toMatch(/^X:1\nT:The Legacy Jig\n/)
   await save.click()
   const [midi] = await Promise.all([page.waitForEvent('download'), menu.getByRole('button', { name: /MIDI file/ }).click()])
-  expect(midi.suggestedFilename()).toBe('The Legacy Jig.mid')
+  expect(nameOf(midi)).toBe('The Legacy Jig.mid')
   expect((await readFile(await midi.path())).subarray(0, 4).toString()).toBe('MThd')
   // Printed alone, drawn again for the paper, then gone.
   await save.click()

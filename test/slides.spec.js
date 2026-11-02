@@ -4,7 +4,7 @@
 // D505), laid out again from its kit's Slide layout menu, and saved as PowerPoint, as a PDF, as its file and as a link; a chart is
 // Charts' own and a diagram Pele's (D592). In Arabic and Japanese too. Its decks are among the creations (D558).
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, turnOn, openSettings, closeSettings, openTasks, chooseLanguage } from './helpers.js'
+import { start, connectFakeBrain, ask, answered, turnOn, openSettings, closeSettings, openTasks, chooseLanguage, nameOf } from './helpers.js'
 import { writeZip } from '../app/core/zip.js'
 
 /** Jean's own Slides skill, added as the user adds it, by its name in the user's language. @param {import('@playwright/test').Page} page @param {string} [name] @param {string} [add] */
@@ -138,14 +138,14 @@ test('a deck asked for is drawn as it comes, kept as a file, opened beside, page
   await page.evaluate(() => scrollTo(0, 0))
   await page.locator('app-preview .pane-head > [popovertarget^="out-"]').click()
   const [pptx] = await Promise.all([page.waitForEvent('download'), page.locator('.out-menu').getByRole('button', { name: /^PowerPoint/ }).click()])
-  expect(pptx.suggestedFilename()).toBe('A second oven.pptx')
+  expect(nameOf(pptx)).toBe('A second oven.pptx')
   const zip = (await import('node:fs')).readFileSync(String(await pptx.path())).toString('latin1')
   expect(zip.startsWith('PK')).toBe(true)
   for (const part of ['ppt/slides/slide4.xml', 'ppt/charts/chart', 'ppt/notesSlides/notesSlide']) expect(zip).toContain(part)
   // Its file, a page any browser presents, its renderer linked, none of Jean's facts.
   await page.locator('app-preview .pane-head > [popovertarget^="out-"]').click()
   const [file] = await Promise.all([page.waitForEvent('download'), page.locator('.out-menu').getByRole('button', { name: /^Web page/ }).click()])
-  expect(file.suggestedFilename()).toBe('A second oven.deck.html')
+  expect(nameOf(file)).toBe('A second oven.deck.html')
   const html = (await import('node:fs')).readFileSync(String(await file.path()), 'utf8')
   expect(html).toContain('# A new oven')
   expect(html).not.toContain('<meta name="author"')

@@ -197,9 +197,10 @@ test('a folder of a repository on GitHub is a source: its skills, each file chec
   await expect(knows).toContainText('With these files: reference/forms.md')
   await knows.getByRole('button', { name: 'Add this skill' }).click()
   await expect(knows.locator('.skill-head .lede')).toContainText('From github.com/anthropics/knowledge-work-plugins')
-  const steps = await page.evaluate(async () => (await import('/ui/state.js')).app.fs.read('skills/brief/SKILL.md'))
-  expect(steps).toContain('source: "https://raw.githubusercontent.com/anthropics/knowledge-work-plugins/main/legal/skills/brief/SKILL.md"')
-  expect(steps).toContain(`digest: "git:${'b'.repeat(40)}"`)
+  // Written a moment after the page shows it.
+  const steps = () => page.evaluate(async () => (await import('/ui/state.js')).app.fs.read('skills/brief/SKILL.md'))
+  await expect.poll(steps).toContain('source: "https://raw.githubusercontent.com/anthropics/knowledge-work-plugins/main/legal/skills/brief/SKILL.md"')
+  expect(await steps()).toContain(`digest: "git:${'b'.repeat(40)}"`)
 })
 
 test('the third request of a kind finds a ready-made skill before offering to make one', async ({ page }) => {

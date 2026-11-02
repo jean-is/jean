@@ -5,7 +5,7 @@
 // the one before (D130, D238, D253, D584); ⌘B opens the drawer or puts it away (D234); ⌘/ shows the shortcuts (D257);
 // ⌘S saves a copy of the open task, and no key deletes one (D313); Escape stops an answer (D315).
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, openSettings, closeSettings } from './helpers.js'
+import { start, connectFakeBrain, ask, openSettings, closeSettings, nameOf } from './helpers.js'
 
 test('⌘, opens Settings, and ⌘⇧O starts a new conversation from anywhere', async ({ page }) => {
   await start(page)
@@ -287,7 +287,7 @@ test('⌘S saves a copy of the open task, as its ⋮ menu shows, and no key dele
   await row('Plan the week').locator('.history-item').click()
   await expect(page.locator('.msg-user')).toHaveText('Plan the week')
   const [download] = await Promise.all([page.waitForEvent('download'), page.keyboard.press('ControlOrMeta+KeyS')])
-  expect(download.suggestedFilename()).toBe('Plan the week.html')
+  expect(nameOf(download)).toBe('Plan the week.html')
 
   // The open task's menu says the keys, the others' don't, since they act on the open one.
   for (const [name, keys] of /** @type {const} */ ([['Plan the week', /^(⌘S|Ctrl\+S)$/], ['Book a table', null]])) {

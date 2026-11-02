@@ -140,7 +140,7 @@ async function blank() {
   requestAnimationFrame(() => one.editor.view.focus())
 }
 
-// From the Creations page: pinned, renamed with its title line, copied or deleted, the one on show through its editor.
+// From the Creations page: pinned, renamed with its title line, copied or deleted, the one on show through its editor, saved at once, so that it isn't dated after what comes next.
 /** @typedef {{ path: string }} Kept @param {string} body @param {string} name */
 const titled = (body, name) => (/^# /.test(body) ? body.replace(/^.*/, () => `# ${name}`) : `# ${name}\n\n${body}`)
 /** @param {string} path */
@@ -150,7 +150,7 @@ async function amend({ path }, pinned, name) {
   const read = await current(path), { pinned: was, ...data } = read.data
   const head = { ...data, ...(name && data.name !== undefined && { name }), ...(name && { changed: new Date().toISOString() }), ...((pinned ?? was) && { pinned: true }) }
   const one = open.get(path)
-  if (one) { one.head = head; if (name) one.editor.retitle(name) }
+  if (one) { one.head = head; if (name) { one.editor.retitle(name); one.editor.flush() } }
   await app.fs.write(`${app.projectDir}/${path}`, stringifyFrontMatter(head, name ? titled(read.body, name) : read.body))
 }
 /** @param {Kept} item @param {string} name */

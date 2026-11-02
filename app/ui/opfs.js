@@ -1,5 +1,5 @@
 // FS backed by the origin private file system. All I/O runs in ui/storage-worker.js,
-// which can use synchronous access handles; this module is a thin RPC client. The same worker
+// with synchronous access handles; this is its RPC client. The same worker
 // works in a folder of the user's, on its handle (D141). The FS is rooted in a profile's folder (D228).
 
 import { normalizeDir, normalizePath, rootedFS } from '../core/fs.js'
@@ -9,7 +9,6 @@ import { scriptURL } from './trusted.js'
 
 /** @typedef {import('../core/types.js').FS} FS */
 
-const PROBE_TIMEOUT_MS = 3000
 // This tab's profile, by its folder, for its reloads; in localStorage, the last opened, for a new tab.
 export const PROFILE = 'app.profile'
 /** The profile this page opened, whichever the tab goes on to as the page leaves. @type {string | null} */
@@ -28,9 +27,7 @@ export let left = null
  * @returns {Promise<FS & { root: string, whole: FS } | null>} null when OPFS is unusable here (unsupported, private window, worker failure)
  */
 export async function opfsFS({ workerURL = new URL('./storage-worker.js', import.meta.url) } = {}) {
-  if (typeof navigator === 'undefined' || !navigator.storage?.getDirectory || typeof Worker === 'undefined') {
-    return null
-  }
+  if (!navigator.storage?.getDirectory) return null
   /** @type {Worker} */
   let worker
   try {
@@ -40,8 +37,10 @@ export async function opfsFS({ workerURL = new URL('./storage-worker.js', import
   }
   const from = crypto.randomUUID()
   const call = rpc(worker, from)
-  const root = await quickly(profile(call))
-  if (!root || !(await probe(call, from, root))) {
+  // One tab at a time: two starting on a device with nothing yet would find each other's profile half made.
+  const first = () => quickly(profile(call).then(async (root) => ({ root, state: await call('ping', root) })))
+  const { root = '', state = '' } = await (navigator.locks?.request('app-start', first) ?? first()) || {}
+  if (!root || !(await probe(call, from, root, state))) {
     worker.terminate()
     return null
   }
@@ -150,15 +149,14 @@ export function rpc(worker, from) {
 
 /**
  * Opens the vault, through the lock when it has one (docs/encryption.md), then round-trips a small
- * file. Fails (rather than hangs) in Firefox private windows and the like. The probe path is per
- * tab so two tabs starting together don't remove each other's probe.
+ * file, at a path per tab. Fails (rather than hangs) in Firefox private windows and the like.
  * @param {Call} call
  * @param {string} from
  * @param {string} root the profile's folder
+ * @param {string} state what its vault's first ping found
  */
-async function probe(call, from, root) {
+async function probe(call, from, root, state) {
   const path = `${root}/.cache/probe-${from}`
-  const state = await quickly(call('ping', root))
   if (state === 'locked' || state === 'sealed') await (await import('../caps/lock/lock.js')).locked(call, state, root)
   else if (state !== 'open') return false
   return quickly((async () => {
@@ -170,15 +168,4 @@ async function probe(call, from, root) {
 }
 
 /** What a step of the start gives, or false when it fails or hangs. @template T @param {Promise<T>} promise */
-async function quickly(promise) {
-  /** @type {ReturnType<typeof setTimeout> | undefined} */
-  let timer
-  const timeout = new Promise((resolve) => (timer = setTimeout(resolve, PROBE_TIMEOUT_MS, false)))
-  try {
-    return await Promise.race([promise, timeout])
-  } catch {
-    return false
-  } finally {
-    clearTimeout(timer)
-  }
-}
+const quickly = (promise) => Promise.race([promise, new Promise((resolve) => setTimeout(resolve, 3000, false))]).catch(() => false)

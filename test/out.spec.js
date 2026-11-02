@@ -97,7 +97,8 @@ test('a document and a collection leave the same way, in the same order, the but
   await table.locator(BUTTON).click()
   await rows.getByRole('button', { name: /^Copy/ }).click()
   await expect(page.locator('.toast').last()).toContainText('Copied')
-  expect((await copied(page)).rich).toMatch(/<table[^]*Seeds/)
+  // The toast may still be the document's, with the same words.
+  await expect.poll(async () => (await copied(page)).rich).toMatch(/<table[^]*Seeds/)
   // Its file to the sheet, its rows on paper, as it does for any kind.
   await table.locator(BUTTON).click()
   await rows.getByRole('button', { name: /^Send to an app/ }).click()

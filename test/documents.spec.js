@@ -694,7 +694,7 @@ test.describe('found and used by the brain', () => {
     await page.evaluate(async (all) => {
       const [{ app }, { ulid }, { unlock }] = await Promise.all([import('/ui/state.js'), import('/core/ulid.js'), import('/ui/caps.js')])
       for (const [i, name] of all.entries()) {
-        const at = new Date(Date.now() - (all.length - i) * 60000).toISOString()
+        const at = new Date(Date.now() - (all.length - i) * 1000).toISOString()
         await app.fs.write(`${app.projectDir}/documents/${ulid()}-${name.toLowerCase()}.md`, `---\nformat: 1\nauthor: user\ncreated: ${at}\nchanged: ${at}\n---\n# ${name}\n\nAbout the ${name.toLowerCase()}.\n`)
       }
       await unlock('documents')
@@ -1446,6 +1446,8 @@ test.describe('the bubble over a selection', () => {
     await expect(bubble).toBeVisible()
     await page.keyboard.press('Escape')
     await expect(bubble).toBeHidden()
+    // ProseMirror puts its selection back on the page 20 ms after it takes the focus, over a key that just moved it.
+    await page.evaluate(() => new Promise((done) => setTimeout(done, 30)))
     await page.keyboard.press('Shift+ArrowLeft')
     await expect(bubble).toBeVisible()
   })
@@ -1482,7 +1484,10 @@ test.describe('the bubble over a selection', () => {
 test.describe('blocks', () => {
   const DOC = '# Plan\n\nFirst paragraph.\n\nSecond paragraph.\n\n- one\n- two\n\nLast paragraph.\n'
   /** @param {import('@playwright/test').Locator} locator */
-  const boxOf = async (locator) => /** @type {{ x: number, y: number, width: number, height: number }} */ (await locator.boundingBox())
+  const boxOf = async (locator) => {
+    await expect(locator).toBeVisible()
+    return /** @type {{ x: number, y: number, width: number, height: number }} */ (await locator.boundingBox())
+  }
   /** Hovers a block and gives its grip, once it shows. @param {import('@playwright/test').Page} page @param {import('@playwright/test').Locator} block */
   const gripOf = async (page, block) => {
     const at = await boxOf(block)

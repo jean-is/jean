@@ -99,6 +99,15 @@ export async function connectFakeBrain(page) {
   await page.mouse.move(0, 0)
 }
 
+/** The name Jean gave a download: WebKit on Linux writes its spaces as underscores. @param {import('@playwright/test').Download} download */
+export const nameOf = (download) => download.suggestedFilename().replaceAll('_', ' ').normalize()
+
+/** What the task's answer reached is noted, a second after it (D252): a record like any other, for whatever hears of those or takes one for the person's. @param {import('@playwright/test').Page} page */
+export const noted = (page) => expect.poll(() => page.evaluate(async () => {
+  const { app } = await import('/ui/state.js')
+  return (await app.fs.read(String(app.current.value?.path)))?.includes('"reached"')
+})).toBe(true)
+
 /** @param {import('@playwright/test').Page} page @param {string} text */
 export async function ask(page, text) {
   await page.locator('#prompt').fill(text)
@@ -140,11 +149,16 @@ export async function callTool(page, name, args, approval) {
  * @param {import('@playwright/test').Page} page
  */
 export async function openTasks(page) {
-  const toggle = page.locator('.sidebar-toggle')
-  const drawer = page.locator('app-history dialog[open]')
-  // The button says whether the drawer is open beside the conversation, before its module has drawn it.
-  if ((await toggle.getAttribute('aria-expanded')) !== 'true' && !(await drawer.isVisible())) await toggle.click()
-  const tasks = page.locator('app-inbox:has(.profile)').or(drawer)
+  // Pressed in the moment it is found put away, before its module has drawn it too: the look opens it by itself as
+  // a room's first task arrives, and a press found it closed a moment before would put it away again. Once the header
+  // is drawn, and again should the page go elsewhere meanwhile.
+  await expect(page.locator('.sidebar-toggle')).toBeAttached()
+  await expect(() => page.evaluate(async () => {
+    const { app, sidebarOpen } = await import('/ui/state.js'), toggle = /** @type {HTMLElement | null} */ (document.querySelector('.sidebar-toggle'))
+    if (!toggle) throw new Error('No header')
+    if (!sidebarOpen.peek() && app.dialog.peek() !== 'history') toggle.click()
+  })).toPass()
+  const tasks = page.locator('app-inbox:has(.profile)').or(page.locator('app-history dialog[open]'))
   await expect(tasks).toBeVisible()
   return tasks
 }
@@ -246,6 +260,14 @@ export async function closeSettings(page) {
 
 /** Turns a capability on from Settings' Capabilities: its row, then Turn on, or its download, on its page. @param {import('@playwright/test').Page} page @param {string} name */
 export async function turnOn(page, name) {
+  // Sync and Folders begin with a folder to choose: the page's picker, which the specs play, opens at once after the click, or from
+  // a toast's button once that click is too long gone by for the browser, as on a busy computer (ui/discovery.js). Either way, it opens.
+  const picks = (name === 'Sync' || name === 'Folders') && await page.evaluate(async () => {
+    const pick = /** @type {any} */ (window).showDirectoryPicker
+    if (!pick || await (await import('/ui/host.js')).host) return false
+    Object.assign(window, { picked: false, showDirectoryPicker: (/** @type {any[]} */ ...args) => (Object.assign(window, { picked: true }), pick(...args)) })
+    return true
+  })
   const settings = await openSettings(page, 'Capabilities')
   // A row's name, exactly: "Computer" is not "This computer" (D198), "Search" not "Search by meaning".
   await settings.locator('.case > li').filter({ has: page.locator('.item-text > strong').getByText(name, { exact: true }) }).locator('button.item').click()
@@ -255,6 +277,11 @@ export async function turnOn(page, name) {
   // leads somewhere at once, Settings is on its section (D134), or Settings closed for what it begins (the browser, a folder).
   await expect(page.locator('app-settings .case-head .lede').filter({ hasNotText: 'Not found yet' })
     .or(page.locator('app-settings .settings-nav [aria-current="page"]', { hasText: name })).or(page.locator('app-settings dialog:not([open])')).first()).toBeAttached()
+  const ask = page.locator('.toast').getByRole('button', { name: 'Choose a folder' })
+  if (picks) await expect(async () => {
+    if (await ask.isVisible()) await ask.click()
+    expect(await page.evaluate(() => /** @type {any} */ (window).picked)).toBe(true)
+  }).toPass()
 }
 
 /** What a capability's page leads to, once it is on: its section, or a page of one. @param {import('@playwright/test').Page} page */

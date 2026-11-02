@@ -7,7 +7,7 @@
 import { readFile } from 'node:fs/promises'
 import { pathToFileURL } from 'node:url'
 import { test, expect } from '@playwright/test'
-import { start, openSettings, closeSettings, openTasks, connectFakeBrain, ask } from './helpers.js'
+import { start, openSettings, closeSettings, openTasks, connectFakeBrain, ask, nameOf } from './helpers.js'
 import { LOOKS } from '../app/ui/looks.js'
 
 test.use({ viewport: { width: 1280, height: 800 } })
@@ -95,6 +95,25 @@ test('a first visit has the window to itself, and Tilde, Human and Mail open the
   await expect(tasks).toHaveCount(0)
   await look(page, 'mail')
   await expect(tasks).toHaveCount(0)
+})
+
+test('a press that opens the drawer holds, though the room’s first task arrives while it slides', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 })
+  await start(page)
+  await connectFakeBrain(page)
+  const toggle = page.locator('.sidebar-toggle')
+  await expect(toggle).toHaveAttribute('aria-expanded', 'false')
+  // The slide's module held back: the press is on its way as the task arrives, which opens the drawer in Tilde by itself.
+  let go = () => {}
+  const held = new Promise((resolve) => { go = () => resolve(null) })
+  await page.route('**/ui/slide.js*', async (route) => { await held; await route.fallback() })
+  await toggle.click()
+  await ask(page, 'Hello')
+  await expect.poll(() => page.evaluate(async () => (await import('/ui/state.js')).app.conversations.value.length)).toBe(1)
+  go()
+  await expect(page.locator('app-inbox .history-item')).toHaveCount(1)
+  await expect.poll(() => page.evaluate(() => localStorage.getItem(`app.sidebar:${sessionStorage.getItem('app.profile') ?? ''}`))).toBe('open')
+  await expect(toggle).toHaveAttribute('aria-expanded', 'true')
 })
 
 test('the drawer opens beside the conversation or is put away, as the user left it', async ({ page }) => {
@@ -213,7 +232,7 @@ test('the drawer opens beside the conversation or is put away, as the user left 
   await expect(light).toHaveCount(0)
 
   const [download] = await Promise.all([page.waitForEvent('download'), pick(row, 'Save a copy')])
-  expect(download.suggestedFilename()).toBe('Plan the month.html')
+  expect(nameOf(download)).toBe('Plan the month.html')
   // Kept by its name: Playwright keeps a download without its extension, which browsers then show as text.
   const file = test.info().outputPath(download.suggestedFilename())
   await download.saveAs(file)

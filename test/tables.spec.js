@@ -8,7 +8,7 @@
 // or another, each of its cells a row there picked by its name, which a brain makes too. A brain on this computer, which
 // doesn't make tables right, makes and changes none, but reads them, and finds their rows and documents' words with search_files. In Arabic and Japanese, the view reads as its language does.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, turnOn, openSettings, closeSettings, openTasks, BRAIN_URL, chooseLanguage } from './helpers.js'
+import { start, connectFakeBrain, ask, answered, turnOn, openSettings, closeSettings, openTasks, BRAIN_URL, chooseLanguage, nameOf } from './helpers.js'
 import { readZip } from '../app/core/zip.js'
 
 /** A plan's brain, Claude Code through the bridge, which the fake brain answers for: not on this computer, so it passes. @param {import('@playwright/test').Page} page */
@@ -80,7 +80,7 @@ test('a table Jean keeps: offered, made from a request and filled, its changes a
   // The pane's Download gives the table as a workbook, named so.
   await page.locator('app-preview .pane-head > [popovertarget^="out-"]').click()
   const [download] = await Promise.all([page.waitForEvent('download'), page.locator('app-preview .out-menu').getByRole('button', { name: /^Excel/ }).click()])
-  expect(download.suggestedFilename()).toBe('Job applications.xlsx')
+  expect(nameOf(download)).toBe('Job applications.xlsx')
 
   // From another task, @ offers the project's tables by name, and one picked opens beside the conversation.
   await page.locator('.wordmark').click()
@@ -202,13 +202,16 @@ test('a brain on this computer reads a collection all the same, opening nothing,
   await ask(page, 'What do the files say about Tandem?')
   await answered(page, 2)
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Nom: Robert Doisneau; Structure: Tandem')
-  await page.locator('.msg-jean .prose').last().locator('.cite').click()
-  await expect(page.locator('.table-grid tbody tr')).toHaveCount(2)
+  /** Its number pressed until its source shows: the end of an answer scrolls the task, which can move the number from under a press. @param {() => Promise<void>} shown */
+  const opens = (shown) => expect(async () => {
+    await page.locator('.msg-jean .prose').last().locator('.cite').click()
+    await shown()
+  }).toPass()
+  await opens(() => expect(page.locator('.table-grid tbody tr')).toHaveCount(2, { timeout: 2000 }))
   await ask(page, 'What do the files say about Lisbon?')
   await answered(page, 3)
   await expect(page.locator('.msg-jean .prose').last()).toContainText('The offsite is in Lisbon, with Robert Doisneau.')
-  await page.locator('.msg-jean .prose').last().locator('.cite').click()
-  await expect(page.locator('.document .ProseMirror')).toContainText('The offsite is in Lisbon')
+  await opens(() => expect(page.locator('.document .ProseMirror')).toContainText('The offsite is in Lisbon', { timeout: 2000 }))
 })
 
 for (const [lang, table, board, review] of [['ar', 'جدول', 'لوحة', 'تغيير واحد للمراجعة'], ['ja', '表', 'ボード', '確認する変更：1 件']]) {
@@ -698,11 +701,13 @@ for (const [lang, width, height] of /** @type {const} */ ([['en', 1100, 700], ['
     })
     const heads = page.locator('.table-grid .table-head'), box = /** @type {{ x: number, width: number }} */ (await page.locator('.table-scroll').boundingBox())
     await expect(heads).toHaveCount(9)
-    // The head the table's box cuts, at the window's side, clicked where it shows.
-    const edge = lang === 'ar' ? box.x + 6 : box.x + box.width - 6, boxes = await Promise.all(Array.from({ length: 9 }, (_, i) => heads.nth(i).boundingBox()))
-    const cut = boxes.find((one) => one && one.x < edge && one.x + one.width > edge && (one.x < 0 || one.x + one.width > width))
-    expect(cut).toBeTruthy()
-    await page.mouse.click(edge, (cut?.y ?? 0) + (cut?.height ?? 0) / 2)
+    // A head the table's box cuts at the window's side, scrolled there, whatever the fonts make of the columns' widths; clicked where it shows.
+    const edge = lang === 'ar' ? box.x + 6 : box.x + box.width - 6, head = heads.nth(6)
+    const at = /** @type {{ x: number, width: number }} */ (await head.boundingBox())
+    await page.locator('.table-scroll').evaluate((scroll, by) => { scroll.scrollLeft += by }, at.x - (lang === 'ar' ? edge + 20 - at.width : edge - 20))
+    const cut = /** @type {{ x: number, y: number, width: number, height: number }} */ (await head.boundingBox())
+    expect(cut.x < edge && cut.x + cut.width > edge && (cut.x < 0 || cut.x + cut.width > width)).toBe(true)
+    await page.mouse.click(edge, cut.y + cut.height / 2)
     const menu = page.locator('.table-menu:popover-open')
     await expect(menu.getByRole('button').first()).toBeVisible()
     // Inside the window, whatever its height: no taller than the room under or over its head, scrolling.
@@ -920,6 +925,8 @@ test('a relation is to this collection or another, picked from the last head’s
   await page.keyboard.press('Enter')
   await expect(heads).toHaveText(['Name', 'Employer', 'Company'])
   await expect.poll(async () => (await file())?.columns.at(-1)).toBe(`companies relation ${companies}`)
+  // Its head has the keyboard back, which it would take from the cell.
+  await expect(heads.last()).toBeFocused()
   // Its cell lists nothing but the row it has, none yet, until the keyboard reaches it: then it picks a row of Companies by its name, and holds the row's id, and goes back to that row as the keyboard leaves.
   const company = rows.nth(0).getByTitle('Company')
   await expect(company.locator('option')).toHaveText(['—'])

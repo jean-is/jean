@@ -46,7 +46,8 @@ export const kept = signal(null)
 /** What Jean watches for, while it does. @type {import('@preact/signals-core').Signal<string | null>} */
 export const watching = signal(null)
 
-export const video = Object.assign(document.createElement('video'), { muted: true, playsInline: true, autoplay: true })
+// Not muted, the stream having no sound: WebKit on Linux never plays a muted video out of view.
+export const video = Object.assign(document.createElement('video'), { playsInline: true, autoplay: true })
 const touch = matchMedia('(pointer: coarse)')
 
 /** @type {MediaStream | null} */

@@ -5,7 +5,7 @@
 // words, arranged and duplicated; offered for an invitation written as a web page. In Arabic its words run right to left in Jean's own
 // face; in Japanese the weekday in brackets is marked.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered } from './helpers.js'
+import { start, connectFakeBrain, ask, answered, nameOf } from './helpers.js'
 
 /** The design on show, as the pane holds it. @param {import('@playwright/test').Page} page */
 const shown = (page) => page.evaluate(async () => (await import('/caps/designs/designs.js')).shown.value?.design)
@@ -82,8 +82,8 @@ test('a design: offered, laid out three ways, its weekday fixed, finished by han
   const top = (await stage.boundingBox())?.y
   await page.locator('[data-hit="title"]').click()
   await expect(page.locator('.design-part-bar')).toBeVisible()
-  expect((await stage.boundingBox())?.y).toBe(top)
   await expect(takes).toBeHidden()
+  await expect.poll(async () => (await stage.boundingBox())?.y).toBe(top)
   await page.locator('.design-part-bar').getByRole('button', { name: 'Ask Jean' }).click()
   await expect(page.locator('#prompt')).toBeFocused()
   await page.locator('#prompt').fill('Make it say Léa turns seven!')
@@ -103,7 +103,7 @@ test('a design: offered, laid out three ways, its weekday fixed, finished by han
   await save.click()
   await expect(page.locator('.out-menu')).toContainText(/things? to look at first/)
   const [file] = await Promise.all([page.waitForEvent('download'), page.locator('.out-menu').getByRole('button', { name: /^Design file/ }).click()])
-  expect(file.suggestedFilename().normalize()).toBe("Léa's invitation.svg")
+  expect(nameOf(file)).toBe("Léa's invitation.svg")
   const svg = await (await import('node:fs/promises')).readFile(/** @type {string} */ (await file.path()), 'utf8')
   expect(svg).toContain('<design xmlns="urn:design-file:1">')
   expect(svg).toMatch(/@font-face\{font-family:"\w+";src:url\(data:font\/woff2;base64,/)
@@ -112,7 +112,7 @@ test('a design: offered, laid out three ways, its weekday fixed, finished by han
   // And as a picture, which carries the design, so a picture sent back opens editable.
   await save.click()
   const [picture] = await Promise.all([page.waitForEvent('download'), page.locator('.out-menu').getByRole('button', { name: 'Picture', exact: true }).click()])
-  expect(picture.suggestedFilename().normalize()).toBe("Léa's invitation.png")
+  expect(nameOf(picture)).toBe("Léa's invitation.png")
   const png = await (await import('node:fs/promises')).readFile(/** @type {string} */ (await picture.path()))
   expect(png.includes(Buffer.from('iTXtdesign\0'))).toBe(true)
 })

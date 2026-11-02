@@ -2,7 +2,7 @@
 // (here, a fresh browser context) without deleting anything that was already there.
 import { test, expect } from '@playwright/test'
 import { readZip, writeZip } from '../app/core/zip.js'
-import { start, connectFakeBrain, ask, openSettings, closeSettings, openTasks } from './helpers.js'
+import { start, connectFakeBrain, ask, openSettings, closeSettings, openTasks, nameOf } from './helpers.js'
 
 test('a backup holds the conversations but no key, and restores on a fresh device', async ({ page, browser }) => {
   await start(page)
@@ -17,7 +17,7 @@ test('a backup holds the conversations but no key, and restores on a fresh devic
     page.waitForEvent('download'),
     settings.getByRole('button', { name: 'Download a backup' }).click(),
   ])
-  expect(download.suggestedFilename()).toMatch(/^Backup \d{4}-\d{2}-\d{2}\.zip$/)
+  expect(nameOf(download)).toMatch(/^Backup \d{4}-\d{2}-\d{2}\.zip$/)
   await expect(page.locator('.toast')).toContainText('Backup ready')
   const path = await download.path()
   const { readFile } = await import('node:fs/promises')

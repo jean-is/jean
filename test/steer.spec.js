@@ -3,7 +3,7 @@
 // The fake brain counts slowly to five, a second a step, and stops when told to.
 import { test, expect } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
-import { start, connectFakeBrain, ask } from './helpers.js'
+import { start, connectFakeBrain, ask, answered, holdAnswers } from './helpers.js'
 
 /** @param {string} lang @returns {Promise<Record<string, string>>} */
 const strings = async (lang) => JSON.parse(await readFile(new URL(`../app/locales/${lang}.json`, import.meta.url), 'utf8'))
@@ -11,12 +11,25 @@ const strings = async (lang) => JSON.parse(await readFile(new URL(`../app/locale
 const SLOW = { en: 'Count slowly to five', ar: 'عدّ ببطء إلى خمسة', ja: 'ゆっくり五まで数えて' }
 const STOP = { en: 'Stop now', ar: 'توقف الآن', ja: '止めてください' }
 
+/**
+ * Asks for the slow count and holds its first step until the function this gives is called. Sent before the run begins, a steer
+ * stays in the box; sent while a step is answered, it waits only for that step, a second on a good day.
+ * @param {import('@playwright/test').Page} page @param {string} text
+ */
+async function counting(page, text) {
+  const go = await holdAnswers(page)
+  const step = page.waitForRequest((request) => request.url().endsWith('/chat/completions') && Boolean(request.postDataJSON()?.tools?.length))
+  await ask(page, text)
+  await step
+  return go
+}
+
 for (const lang of /** @type {const} */ (['en', 'ar', 'ja'])) {
   test(`what the user sends while a task works is read at its next step, and the work goes on under it (${lang})`, async ({ page }) => {
     const room = await strings(lang)
     await start(page, lang)
     await connectFakeBrain(page)
-    await ask(page, SLOW[lang])
+    const go = await counting(page, SLOW[lang])
     const stop = page.locator('.composer .send.is-stop')
     await expect(stop).toBeVisible()
     // Words in the box make its button send: Enter steers, and the box is empty again, with Stop.
@@ -29,6 +42,7 @@ for (const lang of /** @type {const} */ (['en', 'ar', 'ja'])) {
     await expect(waiting.locator('.msg-time')).toHaveText(room['steer.waiting'])
     await expect(page.locator('#prompt')).toHaveValue('')
     await expect(stop).toBeVisible()
+    go()
 
     // Read before the next step: the request keeps the work done so far, and the answer comes under the steer.
     await expect(page.locator('.msg-jean .prose').last()).toContainText('Stopping here, as you asked.')
@@ -45,10 +59,21 @@ for (const lang of /** @type {const} */ (['en', 'ar', 'ja'])) {
   })
 }
 
+test('a steer that arrives as its run ends is the next request, not words left in the box (D365)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await ask(page, 'Hello')
+  await answered(page)
+  await page.evaluate(async () => (await import('/ui/send.js')).steer('Stop now'))
+  await expect(page.locator('.msg-user').last()).toHaveText('Stop now')
+  await answered(page, 2)
+  await expect(page.locator('#prompt')).toHaveValue('')
+})
+
 test('a steer taken back goes back to the box, and the task goes on without it (D365)', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
-  await ask(page, SLOW.en)
+  const go = await counting(page, SLOW.en)
   await expect(page.locator('.composer .send.is-stop')).toBeVisible()
   await ask(page, STOP.en)
   const waiting = page.locator('.turns > .turn').last()
@@ -56,6 +81,7 @@ test('a steer taken back goes back to the box, and the task goes on without it (
   await waiting.getByRole('button', { name: 'Take it back' }).click()
   await expect(page.locator('#prompt')).toHaveValue(STOP.en)
   await expect(page.locator('.msg-time', { hasText: 'Read at the next step' })).toHaveCount(0)
+  go()
   await expect(page.locator('.msg-jean .prose').last()).toContainText('I counted to five, slowly.', { timeout: 15_000 })
   await expect(page.locator('.msg-user')).toHaveCount(1)
 })

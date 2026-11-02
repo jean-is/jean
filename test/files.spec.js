@@ -21,6 +21,8 @@ test('search_files finds what a file shared in another task of the project says'
   await expect(page.locator('.hero-question')).toBeVisible()
   await ask(page, 'What do the files say about revenue?')
   await expect(answer(page)).toContainText('Revenue grew 12% in Q3')
+  // Written to its end, so nothing moves its number under the click.
+  await answered(page)
   await expect(answer(page).locator('.cite')).toHaveCount(1)
   // Its number, quoting it, opens the file it found there, though it wasn't shared in this task (D481).
   await answer(page).locator('button.cite').click()

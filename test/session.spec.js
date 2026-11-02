@@ -11,6 +11,15 @@ const held = (page) => page.evaluate(async () => {
   return { here: here(), profiles: (await app.whole.list('profiles')).map((/** @type {{ name: string }} */ entry) => entry.name), stored: Object.keys(localStorage).filter((key) => key.includes(':profiles/')) }
 })
 
+test('tabs that start together on a device with nothing yet share one new profile, none of them finding it half made', async ({ context }) => {
+  const pages = await Promise.all([0, 1, 2].map(() => context.newPage()))
+  await Promise.all(pages.map((page) => page.goto('/')))
+  for (const page of pages) await expect(page.locator('#prompt')).toBeVisible()
+  const [{ profiles }, ...others] = await Promise.all(pages.map(held))
+  expect(profiles).toHaveLength(1)
+  for (const other of others) expect(other.profiles).toEqual(profiles)
+})
+
 test('signing out on a shared computer erases this profile once the person confirms, and the next one starts afresh, in every tab', async ({ page, context }) => {
   const policy = { ...POLICY, session: { signOut: 'wipe' } }
   const issuer = await fakeIssuer(page)

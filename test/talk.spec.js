@@ -612,8 +612,10 @@ test('Settings opens over the conversation, in the address: Back closes it, a re
   await expect(page.locator('.msg-user')).toHaveText('Explain photosynthesis in simple words')
   await page.goForward()
   await expect(settings.locator('[aria-current="page"]')).toHaveText('Appearance')
-  // Closed, it leaves no entry behind: Back goes to where the conversation started.
+  // Closed, it leaves no entry behind: Back goes to where the conversation started, once Jean's own step back is done.
+  await page.evaluate(() => { /** @type {any} */ (window).back = new Promise((resolve) => addEventListener('hashchange', () => setTimeout(resolve), { once: true })) })
   await page.keyboard.press('Escape')
+  await page.evaluate(() => /** @type {any} */ (window).back)
   await expect(page).toHaveURL(`./${place}`)
   await page.goBack()
   await expect(page.locator('.hero-question')).toBeVisible()

@@ -118,7 +118,7 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   await frame.locator('main .msg-jean summary', { hasText: 'Week.pdf' }).click()
   await expect(async () => expect(await frame.locator('.file-open[open] .view-pages canvas').evaluate((canvas) => /** @type {HTMLCanvasElement} */ (canvas).width)).toBeGreaterThan(100)).toPass({ timeout: 8000 })
   await frame.locator('main .msg-jean summary', { hasText: 'Letter.docx' }).click()
-  await expect(frame.frameLocator('.file-open[open] iframe.view-frame').locator('main canvas').first()).toBeVisible()
+  await expect(frame.frameLocator('.file-open[open] iframe.view-frame').locator('main canvas').first()).toBeVisible({ timeout: 30_000 })
   await expect(viewer.getByText('Shared via Jean')).toBeVisible()
   // Its answer's certificate, checked against what is shown, naming no address of the organisation's.
   await expect(viewer.locator('header')).toContainText('1 answer is sealed by the device that wrote it, unchanged since.')

@@ -3,7 +3,7 @@
 // its private file system (as in folders.spec.js), and the drive by the test, which copies one
 // computer's folder over the other's. Chromium only: elsewhere a page can't open a folder in place.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, openFromCase, openSettings, openTasks, withPolicy } from './helpers.js'
+import { start, connectFakeBrain, ask, noted, turnOn, openFromCase, openSettings, openTasks, withPolicy } from './helpers.js'
 
 /** The system's folder picker, played by `.picked/<e2e.pick>` in the private file system, where Jean’s own files (sealed, D371) never are. @param {import('@playwright/test').Page} page */
 const picker = (page) => page.addInitScript(() => {
@@ -16,7 +16,7 @@ const picker = (page) => page.addInitScript(() => {
 /** Every file of a picked folder, by path. @param {import('@playwright/test').Page} page @param {string} name @returns {Promise<Record<string, string>>} */
 const folder = (page, name) => page.evaluate(async (name) => {
   /** @type {Record<string, string>} */
-  const files = {}
+  let files = {}
   /** @param {FileSystemDirectoryHandle} dir @param {string} at */
   const walk = async (dir, at) => {
     for await (const [entry, handle] of /** @type {any} */ (dir).entries()) {
@@ -24,7 +24,12 @@ const folder = (page, name) => page.evaluate(async (name) => {
       else files[`${at}${entry}`] = await (await handle.getFile()).text()
     }
   }
-  await walk(await (await (await navigator.storage.getDirectory()).getDirectoryHandle('.picked', { create: true })).getDirectoryHandle(name, { create: true }), '')
+  const top = await (await (await navigator.storage.getDirectory()).getDirectoryHandle('.picked', { create: true })).getDirectoryHandle(name, { create: true })
+  // A round may take a file away as this reads it: read again, for the folder as it is.
+  for (let tries = 5; tries; tries--) {
+    files = {}
+    try { await walk(top, ''); break } catch (error) { if (/** @type {Error} */ (error).name !== 'NotFoundError' || tries === 1) throw error }
+  }
   return files
 }, name)
 
@@ -49,6 +54,8 @@ async function answered(page, text) {
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Anything else?')
   // Its run is over too: a round leaves a conversation being answered for the next.
   await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()
+  // And what it reached is noted: a change the next round would take for one of the user's, which a deletion from the folder gives way to.
+  await noted(page)
 }
 
 test.skip(({ browserName }) => browserName !== 'chromium', 'Chromium opens a folder in place')
@@ -127,10 +134,19 @@ test('with retention, a task deleted from the folder is kept first, then goes fr
   await turnOn(page, 'Sync')
   await page.keyboard.press('Escape')
   const inFolder = () => folder(page, 'Jean')
-  await expect.poll(async () => Object.keys(await inFolder()).some((path) => path.endsWith('.jsonl'))).toBe(true)
-  const { [String(Object.keys(await inFolder()).find((path) => path.endsWith('.jsonl')))]: _, ...rest } = await inFolder()
-  await drive(page, 'Jean', rest)
-  await (await syncPage(page)).getByRole('button', { name: 'Sync now' }).click()
+  // The first round, which seals and writes everything there is, takes longest.
+  await expect.poll(async () => Object.keys(await inFolder()).some((path) => path.endsWith('.jsonl')), { timeout: 30_000 }).toBe(true)
+  // The round that took it there is over, having noted it as in step: gone from the folder before that, it looks new here and goes back.
+  const now = (await syncPage(page)).getByRole('button', { name: 'Sync now' })
+  await expect(now).toBeEnabled()
+  // The drive takes that one file away, as a drive does: a round that comes while `drive` empties the folder takes it for a new one.
+  await page.evaluate(async (path) => {
+    let dir = await (await (await navigator.storage.getDirectory()).getDirectoryHandle('.picked')).getDirectoryHandle('Jean')
+    const parts = path.split('/')
+    for (const part of parts.slice(0, -1)) dir = await dir.getDirectoryHandle(part)
+    await dir.removeEntry(String(parts.at(-1)))
+  }, String(Object.keys(await inFolder()).find((path) => path.endsWith('.jsonl'))))
+  await now.click()
   const left = () => page.evaluate(async () => {
     const { app } = await import('/ui/state.js')
     const { walk } = await import('/core/fs.js')
@@ -171,6 +187,11 @@ test('two computers change a collection apart, and both keep every change, each 
   await drive(other, 'Jean', await folder(page, 'Jean'))
   await turnOn(other, 'Sync')
   await other.keyboard.press('Escape')
+  // Its first round has brought the collection, which nothing can show until then.
+  await expect.poll(() => other.evaluate(async (place) => {
+    const { app } = await import('/ui/state.js')
+    return Boolean(await app.fs.read(`${app.projectDir}/${place}/collection.json`))
+  }, place)).toBe(true)
 
   /** A computer's user changes these rows of it, on show, by hand; a row with no id is a new one. @param {import('@playwright/test').Page} on @param {{ row?: string, set: object }[]} edits */
   const changed = (on, edits) => on.evaluate(async ({ place, edits }) => {
