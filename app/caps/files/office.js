@@ -36,7 +36,7 @@ const open = (typed) => {
   back = document.activeElement
   was = known?.formula ? '=' + known.formula.replace(/^=/, '') : String(known?.value ?? '')
   box.value = typed ?? was
-  box.setAttribute('aria-label', ref(active))
+  box.title = ref(active)
   Object.assign(box.style, { display: 'block', left: grid.left + rect.x + 'px', top: grid.top + rect.y + 'px', width: rect.width + 'px', height: rect.height + 'px' })
   box.focus()
 }

@@ -11,6 +11,7 @@
   "lock.unlock": "Buka kunci",
   "lock.passwordLabel": "Kata laluan",
   "lock.codeLabel": "Kod pemulihan",
+  "lock.codeForm": "Lapan kumpulan empat aksara, 0 hingga 9 dan A hingga F, dengan sempang antara kumpulan.",
   "lock.useCode": "Guna kod pemulihan",
   "lock.wrong": "Itu tidak membukanya.",
   "lock.noPasskey": "Tiada kunci laluan dapat menguncinya di sini. Guna kata laluan sahaja.",

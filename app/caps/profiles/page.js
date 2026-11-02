@@ -70,9 +70,9 @@ function own(profile) {
   const held = needing()
   return html`${head(profile, t('profiles.this'))}
     <section class="stack">
-      <label>${t('profiles.yours')}<input .value=${profile.name} maxlength="40" dir="auto" @change=${(/** @type {Event} */ e) => keep({ name: /** @type {HTMLInputElement} */ (e.target).value.trim() })}></label>
-      <fieldset class="swatches"><legend>${t('profiles.colour')}</legend>${COLOURS.map(([name, value]) => html`<label class="swatch" title=${t(`colour.${name}`)}>
-        <input type="radio" name="profile-colour" value=${value} .checked=${value === (profile.colour ?? COLOURS[0][1])} @change=${() => keep({ colour: value })}>
+      <label for="profile-yours">${t('profiles.yours')}<input id="profile-yours" .value=${profile.name} maxlength="40" dir="auto" @change=${(/** @type {Event} */ e) => keep({ name: /** @type {HTMLInputElement} */ (e.target).value.trim() })}></label>
+      <fieldset class="swatches"><legend>${t('profiles.colour')}</legend>${COLOURS.map(([name, value]) => html`<label class="swatch" for=${`colour-${name}`}>
+        <input id=${`colour-${name}`} title=${t(`colour.${name}`)} type="radio" name="profile-colour" value=${value} .checked=${value === (profile.colour ?? COLOURS[0][1])} @change=${() => keep({ colour: value })}>
         <span class="avatar" aria-hidden="true" ${tinted(value)}>${initial(profile)}</span><span class="visually-hidden">${t(`colour.${name}`)}</span></label>`)}</fieldset>
       <ul class="list profiles"><li><button class="item" @click=${() => openSettings('data/lock')}><span class="item-icon">${icons.lock}</span>
         <span class="item-text"><strong>${t(profile.locked ? 'profiles.locked' : 'profiles.unlocked')}</strong><small>${t('settings.storage')}</small></span>${icons.chevron}</button></li>

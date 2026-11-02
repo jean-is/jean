@@ -12,7 +12,7 @@ import { serviceURL } from '../core/settings.js'
 import { loaded, slots, unlock, isDenied } from './caps.js'
 import { act } from './acts.js'
 import { BRAND } from '../brand.js'
-import { t, locale, intlLocales, languageName, preferredLocales } from '../core/i18n.js'
+import { t, locale, intlLocales, languageName, preferredLocales, dir } from '../core/i18n.js'
 import { icons } from './menu-icons.js'
 import { focusComposer } from './composer.js'
 import { place, all as creations, show, reread } from './creations.js'
@@ -67,7 +67,7 @@ function taskList(where, list) {
     const asks = running.includes(item.path) ? waiting.filter((path) => path === item.path).length : -1
     const menu = `task-${where}-${item.id}`
     const name = run ? when.format(new Date(item.createdAt)) : item.title || t('conversation.untitled')
-    if (naming === menu) return html`<li><input dir="auto" aria-label=${t('action.rename')} placeholder=${t('conversation.untitled')} .value=${item.title}
+    if (naming === menu) return html`<li><input dir="auto" title=${t('action.rename')} placeholder=${t('conversation.untitled')} .value=${item.title}
       @keydown=${(/** @type {KeyboardEvent} */ e) => named(e, item, menu)} @blur=${(/** @type {FocusEvent} */ e) => named(e, item, menu)}></li>`
     return html`<li class="${item.id === currentId ? 'is-current' : ''} ${run ? 'is-run' : ''}" aria-posinset=${i + 1} aria-setsize=${rows.length}>
       <button class="history-item" aria-current=${item.id === currentId ? 'true' : 'false'} draggable=${tiles()} data-tile=${item.id}
@@ -79,13 +79,13 @@ function taskList(where, list) {
       ${earlier.length ? html`<button class="runs-toggle" tabindex="-1" aria-expanded=${open} aria-label=${t('history.runs', { count: earlier.length })}
         @click=${() => fold(item.routine ?? '', open)}>${count.format(earlier.length)}${icons.chevron}</button>` : nothing}
       <button class="icon-button subtle" tabindex="-1" popovertarget=${menu} aria-label=${t('action.more')} @click=${() => { menuOf.value = menu }}>${icons.more}</button>
-      <div id=${menu} class="menu task-menu" popover>${opened !== menu ? nothing : html`${item.routine ? nothing : [
+      <div id=${menu} class="menu task-menu" popover>${opened !== menu ? nothing : html`<ul>${item.routine ? nothing : [
         action(menu, icons.pin, t(item.pinned ? 'action.unpin' : 'action.pin'), () => mark(item.path, { pinned: !item.pinned })),
         action(menu, icons.compose, t('action.rename'), () => rename(menu))]}
         ${action(menu, item.unread ? icons.check : icons.dot, t(item.unread ? 'history.markRead' : 'history.markUnread'), () => mark(item.path, { unread: !item.unread }))}
         ${action(menu, icons.download, t('history.save'), () => saveCopy(item), item.id === currentId ? SHORTCUTS.save : undefined)}
         ${slots('task').map((part) => part.draw(item, (/** @type {unknown} */ icon, /** @type {string} */ label, /** @type {(event: Event) => unknown} */ act, /** @type {string} */ shortcut) => action(menu, icon, label, act, item.id === currentId ? shortcut : undefined)))}
-        ${action(menu, icons.trash, t('action.delete'), () => deleteTask(item.path))}`}</div>
+        ${action(menu, icons.trash, t('action.delete'), () => deleteTask(item.path))}</ul>`}</div>
     </li>`
   }
   return html`<ol class="history-list" @keydown=${move}>${virtual({ count: rows.length, key: (i) => rows[i].item.id, draw: (i) => draw(rows[i], i) })}</ol>`
@@ -95,14 +95,16 @@ function taskList(where, list) {
 const keptList = (where, list) => html`<ol class="history-list" @keydown=${move}>${list.map((item) => { const menu = `kept-${where}-${item.path}`; return html`<li>
   <button class="history-item" draggable=${tiles()} data-tile=${item.path} @click=${show(item)}>${item.kind.draw()}<span class="history-title" dir="auto">${item.name}</span></button>
   <button class="icon-button subtle" tabindex="-1" popovertarget=${menu} aria-label=${t('action.more')}>${icons.more}</button>
-  <div id=${menu} class="menu task-menu" popover>${action(menu, icons.pin, t('action.unpin'), () => item.kind.pin(item, false).then(reread))}
-    ${slots('kept').map((part) => part.draw(item, (/** @type {unknown} */ icon, /** @type {string} */ label, /** @type {(event: Event) => unknown} */ act) => action(menu, icon, label, act)))}</div></li>` })}</ol>`
+  <div id=${menu} class="menu task-menu" popover><ul>${action(menu, icons.pin, t('action.unpin'), () => item.kind.pin(item, false).then(reread))}
+    ${slots('kept').map((part) => part.draw(item, (/** @type {unknown} */ icon, /** @type {string} */ label, /** @type {(event: Event) => unknown} */ act) => action(menu, icon, label, act)))}</ul></div></li>` })}</ol>`
 /** Whether the rows drag onto the screen, once its tiles are found (D635). */
 const tiles = () => (loaded.value.has('split') ? 'true' : nothing)
 
 /** One of a task's actions, which closes its menu, with its keys on the open task's. @param {string} menu @param {unknown} icon @param {string} label @param {(event: Event) => unknown} act @param {string} [shortcut] */
-const action = (menu, icon, label, act, shortcut) => html`<button type="button" popovertarget=${menu} popovertargetaction="hide" aria-keyshortcuts=${shortcut ?? nothing}
-  @click=${act}>${icon}${label}${shortcut ? keys(shortcut) : nothing}</button>`
+const action = (menu, icon, label, act, shortcut) => html`<li><button type="button" popovertarget=${menu} popovertargetaction="hide" aria-keyshortcuts=${shortcut ?? nothing}
+  @click=${act}>${icon}${label}${shortcut ? keys(shortcut) : nothing}</button></li>`
+/** A menu's rows, each a list's item, those drawn as nothing left out. @param {unknown[]} rows */
+export const listed = (rows) => rows.filter((row) => row !== nothing).map((row) => html`<li>${row}</li>`)
 
 /** Saves a copy of a task as a web page (D305), from its menu or ⌘S; sharing it by link is found then, where a host is named (D361). @param {{ path: string, title: string }} task */
 export const saveCopy = async (task) => {
@@ -217,35 +219,34 @@ export const lookName = (id) => (id === OWN ? app.policy.look.name : t(`look.${i
 function actions(id) {
   const fixed = effective.value.locked.has('locale')
   const adding = !loaded.value.has('profiles') && !app.ephemeral.value && !isDenied('profiles')
-  return html`${loaded.value.has('profiles') ? slots('profiles').map((part) => part.draw(id)) : adding
-      ? html`<button type="button" popovertarget=${id} popovertargetaction="hide" @click=${() => import('../caps/profiles/profiles.js').then((module) => module.add())}>${icons.plus}${t('profiles.add')}</button>` : nothing}
-    ${slots('profile').map((part) => part.draw(id))}${adding || loaded.value.has('profiles') ? html`<hr>` : nothing}
-    <button type="button" popovertarget=${id} popovertargetaction="hide" aria-keyshortcuts=${SHORTCUTS.settings}
-      @click=${toSettings('general')}>${icons.gear}${t('settings.title')}${keys(SHORTCUTS.settings)}</button>
-    <button type="button" class="submenu" data-page="languages" ?disabled=${fixed} @click=${(/** @type {Event} */ e) => turn(e, 'languages')}>
-      ${icons.language}${t('settings.language')}<span class="menu-value" lang=${locale.value}>${languageName(locale.value)}</span>${icons.chevron}</button>
-    ${links().map(([icon, key, url, here], i) => html`${i ? nothing : html`<hr>`}<button type="button" class=${here ? nothing : 'outside'} popovertarget=${id} popovertargetaction="hide"
-      @click=${() => (here ? import('./home.js').then((module) => module.again()) : open(url))}>${icons[icon]}${t(key)}${here ? nothing : icons.external}</button>`)}`
+  const top = listed([...loaded.value.has('profiles') ? slots('profiles').map((part) => part.draw(id)) : [adding
+      ? html`<button type="button" popovertarget=${id} popovertargetaction="hide" @click=${() => import('../caps/profiles/profiles.js').then((module) => module.add())}>${icons.plus}${t('profiles.add')}</button>` : nothing],
+    ...slots('profile').map((part) => part.draw(id))])
+  return html`${top.length ? html`<ul>${top}</ul>` : nothing}${adding || loaded.value.has('profiles') ? html`<hr>` : nothing}
+    <ul><li><button type="button" popovertarget=${id} popovertargetaction="hide" aria-keyshortcuts=${SHORTCUTS.settings}
+      @click=${toSettings('general')}>${icons.gear}${t('settings.title')}${keys(SHORTCUTS.settings)}</button></li>
+    <li><button type="button" class="submenu" data-page="languages" ?disabled=${fixed} @click=${(/** @type {Event} */ e) => turn(e, 'languages')}>
+      ${icons.language}${t('settings.language')}<span class="menu-value" lang=${locale.value}>${languageName(locale.value)}</span>${icons.chevron}</button></li></ul>
+    ${links().length ? html`<hr><ul>${links().map(([icon, key, url, here]) => html`<li><button type="button" class=${here ? nothing : 'outside'} popovertarget=${id} popovertargetaction="hide"
+      @click=${() => (here ? import('./home.js').then((module) => module.again()) : open(url))}>${icons[icon]}${t(key)}${here ? nothing : icons.external}</button></li>`)}</ul>` : nothing}`
 }
 
 /** The homepage, in place where it is under the app (D397), and Help; from the desktop app, the site's. */
 const links = () => /** @type {Array<['globe' | 'help' | 'file', string, string, boolean?]>} */ ([['globe', 'learn.home', sitePage('home') && `${sitePage('home')}?index=1`, !!document.querySelector('body > .home')], ['help', 'learn.help', sitePage('help')], ['file', 'learn.map', sitePage('site-map')]].filter(([, , url]) => url))
 
-/** A page of choices: its title, which goes back, then each choice, the one in use marked. @param {string} title @param {unknown} list */
-export const choices = (title, list) => html`<button type="button" class="back" @click=${(/** @type {Event} */ e) => turn(e, 'actions')}>${icons.back}${title}</button>
-  <hr>
-  ${list}`
+/** A page of choices: its title, which goes back, then each group of choices, a list, the one in use marked. @param {string} title @param {unknown[][]} groups */
+export const choices = (title, ...groups) => html`<button type="button" class="back" @click=${(/** @type {Event} */ e) => turn(e, 'actions')}>${icons.back}${title}</button>
+  ${groups.filter((rows) => rows.length).map((rows) => html`<hr><ul>${rows}</ul>`)}`
 
 /** One choice: picked, it applies at once and the menu stays on its page (D153). @param {boolean} current @param {() => unknown} pick @param {unknown} label @param {string} [lang] */
-const choice = (current, pick, label, lang) => html`<button type="button" lang=${lang ?? nothing} aria-current=${current ? 'true' : 'false'}
-  @click=${pick}>${label}${current ? icons.check : nothing}</button>`
+const choice = (current, pick, label, lang) => html`<li><button type="button" lang=${lang ?? nothing} aria-current=${current ? 'true' : 'false'}
+  @click=${pick}>${lang ? html`<span dir=${dir(lang)}>${label}</span>` : label}${current ? icons.check : nothing}</button></li>`
 
 /** The languages offered, the browser's first, each in its own words. */
 function languages() {
   const yours = preferredLocales(offeredLocales(), navigator.languages)
   const option = (/** @type {string} */ code) => choice(code === locale.value, () => setLocale(code), languageName(code), code)
-  return choices(t('settings.language'), html`${yours.length ? html`${yours.map(option)}<hr>` : nothing}
-    ${offeredLocales().filter((code) => !yours.includes(code)).map(option)}`)
+  return choices(t('settings.language'), yours.map(option), offeredLocales().filter((code) => !yours.includes(code)).map(option))
 }
 
 /** The next look, in the gallery's order, the first again after the last, or the one before, its name shown, unless policy offers one (⌘⇧E, ⌘⌥⇧E, D238, D584). @param {boolean} back */

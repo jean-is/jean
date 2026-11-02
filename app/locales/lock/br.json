@@ -11,6 +11,7 @@
   "lock.unlock": "Dibrennañ",
   "lock.passwordLabel": "Ger-tremen",
   "lock.codeLabel": "Kod adtapout",
+  "lock.codeForm": "Eizh strollad a bevar arouezenn, eus 0 da 9 hag eus A da F, gant ur varrennig etre ar strolladoù.",
   "lock.useCode": "Implijout ar c’hod adtapout",
   "lock.wrong": "Ne zigor ket an dra-se.",
   "lock.noPasskey": "Alc’hwez-tremen ebet n’en deus gallet prennañ amañ. Implijit ur ger-tremen e-lec’h.",

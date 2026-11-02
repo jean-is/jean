@@ -140,8 +140,8 @@ function may(connection) {
   /** @param {'fetch' | 'other'} kind @param {string} label */
   const line = (kind, label) => {
     const [them, set] = [tools.filter((tool) => Boolean(tool.annotations?.readOnlyHint) === (kind === 'fetch')).map((tool) => labelOf(tool).replace(/[.。]$/u, '')), app.policy.rules?.[kind]]
-    return tools.length && !them.length ? nothing : html`<li><div class="setting"><span class="rule-kind">${t(label)}</span><span class="segmented" role="radiogroup" aria-label=${t(label)}>${CHOICES.map((choice) => html`<label>
-        <input type="radio" name=${`may-${kind}`} .checked=${rule(connection, kind) === choice} ?disabled=${Boolean(set) && STRICT[choice] < STRICT[/** @type {RuleValue} */ (set)]}
+    return tools.length && !them.length ? nothing : html`<li><div class="setting"><span class="rule-kind">${t(label)}</span><span class="segmented" role="radiogroup" aria-label=${t(label)}>${CHOICES.map((choice) => html`<label for=${`may-${kind}-${choice}`}>
+        <input id=${`may-${kind}-${choice}`} type="radio" name=${`may-${kind}`} .checked=${rule(connection, kind) === choice} ?disabled=${Boolean(set) && STRICT[choice] < STRICT[/** @type {RuleValue} */ (set)]}
           @change=${() => choose(connection.id, kind, choice === usual(kind) ? undefined : choice)}><span>${t(`rules.${choice}`)}</span></label>`)}</span></div>${them.length <= 6 ? (them.length ? html`<p class="muted small">${joined(them)}</p>` : nothing)
       : html`<details class="read-list connection-actions"><summary><span>${listOf([...them.slice(0, 3), t('connections.more', { count: them.length - 3 })])}</span><span>${t('connections.count', { count: them.length })}</span>${icons.chevron}</summary><ul>${byName(them, String, locale.value).map((one) => html`<li><bdi>${one}</bdi></li>`)}</ul></details>`}</li>`
   }
@@ -189,7 +189,7 @@ function finder() {
   const words = query.value.trim().toLocaleLowerCase(locale.value)
   const [known, later] = [services().filter((entry) => entry.via), services().filter((entry) => !entry.via)]
   const found = words ? services().filter((entry) => [entry.name, ...entry.includes ?? []].some((one) => one.toLocaleLowerCase(locale.value).includes(words))) : null
-  return html`<input type="search" class="connection-find" dir="auto" .value=${query.value} placeholder=${t('connections.find')} aria-label=${t('connections.find')}
+  return html`<input type="search" class="connection-find" dir="auto" .value=${query.value} placeholder=${t('connections.find')} title=${t('connections.find')}
       @input=${(/** @type {Event} */ e) => { query.value = /** @type {HTMLInputElement} */ (e.target).value }}>
     ${found ? html`<section><h3>${t('connections.found', { count: found.length })}</h3>${found.length ? tiles(found) : html`<p class="muted small">${t('find.none', { query: query.value.trim() })}</p>`}</section>`
       : GROUPS.map((group) => [group, known.filter((entry) => groupOf(entry) === group)]).filter(([, entries]) => entries.length).map(([group, entries]) => html`<section>
@@ -219,7 +219,7 @@ function later() {
   const set = app.policy.urls?.gateway !== undefined
   const soon = services().filter((entry) => !entry.via)
   return html`${back('add', t('cap.connections.yes'))}${head(t(soon.length ? 'connections.later' : 'gateway.title'), t('gateway.text', { name }))}
-    <label class="connection-gateway">${t('gateway.title')}<input dir="ltr" type="url" spellcheck="false" autocomplete="off" placeholder="https://…" .value=${gatewayAt.value} ?disabled=${set}
+    <label class="connection-gateway" for="gateway">${t('gateway.title')}<input id="gateway" dir="ltr" type="url" spellcheck="false" autocomplete="off" placeholder="https://…" .value=${gatewayAt.value} ?disabled=${set}
       @change=${(/** @type {Event} */ e) => {
         const { gateway: _, ...urls } = app.settings.value.urls ?? {}
         const address = /** @type {HTMLInputElement} */ (e.target).value.trim()
@@ -240,9 +240,9 @@ async function add(event) {
 /** Any other service, by its address, with a key if it gave one. */
 const address = () => html`${back('add', t('cap.connections.yes'))}${head(t('connections.other'), t('connections.otherText', { name }))}
   <form id="connection-add" class="stack" @submit=${add}>
-    <label>${t('connections.address')}<input name="url" type="url" required dir="ltr" placeholder="https://…" autocomplete="off"></label>
-    <label>${t('projects.name')}<input name="name" maxlength="40" dir="auto" autocomplete="off"></label>
-    <label>${t('brain.key.label')}<input name="key" type="password" autocomplete="off" spellcheck="false" dir="ltr"></label>
+    <label for="connection-url">${t('connections.address')}<input id="connection-url" name="url" type="url" required dir="ltr" placeholder="https://…" autocomplete="off"></label>
+    <label for="connection-named">${t('projects.name')}<input id="connection-named" name="name" maxlength="40" dir="auto" autocomplete="off"></label>
+    <label for="connection-key">${t('brain.key.label')}<input id="connection-key" name="key" type="password" autocomplete="off" spellcheck="false" dir="ltr"></label>
     <p class="hint">${t('connections.keyHint')}</p>
     ${said()}
     <div class="row"><button class="button primary" ?disabled=${message.value?.kind === 'busy'}>${t('brain.connect')}</button></div>

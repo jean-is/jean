@@ -60,15 +60,15 @@ export function outButton(file, ways) {
   if (!ways) return nothing
   const { send, share, first, copy, files, print, kit } = ways, menu = `out-${file.uri}`, linked = share && loaded.value.has('share')
   const sends = send && navigator.canShare?.(send.file ? { files: [new File([''], send.file, { type: send.type })] } : { text: 'a' })
-  const row = (/** @type {Way} */ way) => html`<button type="button" popovertarget=${menu} popovertargetaction="hide" @click=${(/** @type {Event} */ event) => take(file, way, event.currentTarget)}>${way.glyph}<span dir="auto">${way.label}</span></button>`
+  const row = (/** @type {Way} */ way) => html`<li><button type="button" popovertarget=${menu} popovertargetaction="hide" @click=${(/** @type {Event} */ event) => take(file, way, event.currentTarget)}>${way.glyph}<span dir="auto">${way.label}</span></button></li>`
   const to = /** @type {Way[]} */ ([...(linked ? [{ id: '', glyph: icons.share, label: t('out.share'), run: async (/** @type {EventTarget | null} */ from) => (await import('../caps/share/share.js')).openShare({ path: app.current.peek()?.path ?? `${app.projectDir}/conversations/`, title: file.title, item: /** @type {any} */ (await share()) }, from) }] : []),
     ...(sends ? [{ id: 'share', glyph: icons.send, label: t('out.send'), run: async () => navigator.share(await (ready ?? send.make())) }] : []), ...(copy ? [{ glyph: icons.copy, label: t('action.copy'), ...copy }] : [])])
   const paper = print ? [{ glyph: icons.print, label: t('out.print'), ...print }] : [], every = [...to, ...files, ...paper]
   if (every.length === 1 && !first && !kit) return html`<button class="icon-button" aria-label=${t('out.name', { name: file.name })} @click=${() => take(file, every[0])}>${icons.download}</button>`
   return html`<button class="icon-button" popovertarget=${menu} aria-label=${t(linked || sends ? (print ? 'out.menu' : 'out.menuNoPrint') : 'out.menuNoShare')}>${linked || sends ? icons.share : icons.download}</button>
     <div id=${menu} class="menu out-menu" popover @toggle=${(/** @type {ToggleEvent} */ event) => { ready = sends && event.newState === 'open' ? send.make() : null; ready?.catch(() => {}) }}>
-      ${first ? html`${row(first)}<hr>` : nothing}${to.length ? html`${to.map(row)}<hr>` : nothing}
-      <div role="group" aria-label=${t('out.download')}><p class="out-heading" aria-hidden="true">${t('out.download')}</p>${files.map(row)}</div>
-      ${paper.length ? html`<hr>${paper.map(row)}` : nothing}${kit ? html`<hr>${row({ id: '', glyph: icons.palette, label: t('out.kit'), run: toKit })}` : nothing}
+      ${first ? html`<ul>${row(first)}</ul><hr>` : nothing}${to.length ? html`<ul>${to.map(row)}</ul><hr>` : nothing}
+      <div role="group" aria-label=${t('out.download')}><p class="out-heading" aria-hidden="true">${t('out.download')}</p><ul>${files.map(row)}</ul></div>
+      ${paper.length ? html`<hr><ul>${paper.map(row)}</ul>` : nothing}${kit ? html`<hr><ul>${row({ id: '', glyph: icons.palette, label: t('out.kit'), run: toKit })}</ul>` : nothing}
     </div>`
 }

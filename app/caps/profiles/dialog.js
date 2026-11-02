@@ -52,13 +52,13 @@ class ProfileDialog extends Element {
     return html`<dialog class="sheet profile-dialog" aria-label=${t('profiles.add')} @close=${closed('profile')} @click=${backdrop}>
       ${head(t('profiles.add'))}${steps}
       ${step === 'who' ? html`<p class="lede">${t('profiles.what')}</p><form class="stack" @submit=${next}>
-        ${self.value?.name ? nothing : html`<label>${t('profiles.yours')}<input required maxlength="40" dir="auto" autocomplete="off" .value=${mine} @input=${(/** @type {Event} */ e) => set({ mine: value(e) })}></label>`}
-        <label>${t('profiles.name')}<input required maxlength="40" dir="auto" autocomplete="off" .value=${name} @input=${(/** @type {Event} */ e) => set({ name: value(e) })}></label>
-        <fieldset class="profile-for"><legend>${t('profiles.for')}</legend>${[false, true].map((kid) => html`<label class="choice"><input type="radio" name="for" .checked=${child === kid} @change=${() => set({ child: kid })}>
+        ${self.value?.name ? nothing : html`<label for="profile-mine">${t('profiles.yours')}<input id="profile-mine" required maxlength="40" dir="auto" autocomplete="off" .value=${mine} @input=${(/** @type {Event} */ e) => set({ mine: value(e) })}></label>`}
+        <label for="profile-name">${t('profiles.name')}<input id="profile-name" required maxlength="40" dir="auto" autocomplete="off" .value=${name} @input=${(/** @type {Event} */ e) => set({ name: value(e) })}></label>
+        <fieldset class="profile-for"><legend>${t('profiles.for')}</legend>${[false, true].map((kid) => html`<label class="choice" for=${`for-${kid}`}><input id=${`for-${kid}`} type="radio" name="for" .checked=${child === kid} @change=${() => set({ child: kid })}>
           <span class="item-text"><strong>${t(kid ? 'profiles.forChild' : 'profiles.forAdult')}</strong><small>${t(kid ? 'profiles.forChildText' : 'profiles.forAdultText')}</small></span></label>`)}</fieldset>
         <div class="row"><button class="button primary">${t(child ? 'profiles.next' : 'profiles.make')}</button></div></form>`
       : step === 'set' ? html`<form class="stack" @submit=${next}>
-        <label class="profile-born">${t('profiles.born')}<select @change=${(/** @type {Event} */ e) => set({ born: Number(value(e)) })}>
+        <label class="profile-born" for="born-new">${t('profiles.born')}<select id="born-new" @change=${(/** @type {Event} */ e) => set({ born: Number(value(e)) })}>
           ${Array.from({ length: 16 }, (_, i) => year - 3 - i).map((each) => html`<option ?selected=${each === born}>${each}</option>`)}</select><small>${years(born)}</small></label>
         ${baskets(tierFor(born))}${facts({ ...tierFor(born), brains: forChild() })}<p class="hint">${t('profiles.childText')}</p>
         <div class="row">${back}<button class="button primary">${t('profiles.next')}</button></div></form>`

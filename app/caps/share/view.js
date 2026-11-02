@@ -138,7 +138,7 @@ function draw() {
     ${reporting === 'writing' ? html`<form @submit=${report}>
       <label for="words">${t('share.reportWhat')}</label>
       <textarea id="words" name="words" rows="4" required maxlength="5000" dir="auto"></textarea>
-      <label><input type="checkbox" name="link" checked> ${t('share.reportLink')}</label>
+      <label for="link"><input id="link" type="checkbox" name="link" checked> ${t('share.reportLink')}</label>
       <button class="primary">${t('share.reportSend')}</button>
     </form>` : reporting === 'sent' ? html`<p class="said" role="status">${t('share.reportSent')}</p>` : nothing}
     ${step.at === 'password' ? html`<form @submit=${(/** @type {SubmitEvent} */ event) => { event.preventDefault(); show({ at: 'opening' }); open(String(new FormData(/** @type {HTMLFormElement} */ (event.target)).get('password'))) }}>

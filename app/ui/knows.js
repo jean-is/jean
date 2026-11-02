@@ -121,7 +121,7 @@ const row = (id, icon, title, text, open) => html`<li><button class="item" data-
   <span class="item-text"><strong dir="auto">${title}</strong>${text ? html`<small dir="auto">${text}</small>` : nothing}</span>${icons.chevron}</button></li>`
 
 /** One of a line's actions, which closes its menu. @param {string} menu @param {unknown} icon @param {string} label @param {() => unknown} act */
-const action = (menu, icon, label, act) => html`<button type="button" popovertarget=${menu} popovertargetaction="hide" @click=${act}>${icon}${label}</button>`
+const action = (menu, icon, label, act) => html`<li><button type="button" popovertarget=${menu} popovertargetaction="hide" @click=${act}>${icon}${label}</button></li>`
 
 /**
  * A line Jean noticed: its words, when and the task it came from, and its menu; a field while it is edited, saved as
@@ -129,18 +129,18 @@ const action = (menu, icon, label, act) => html`<button type="button" popovertar
  */
 function line(file, entry, old, id) {
   const task = app.conversations.value.find((one) => one.path === entry.conversation)?.title
-  if (editing.value === id) return html`<li><input class="you-edit" dir="auto" aria-label=${t('knows.edit')} .value=${entry.text}
+  if (editing.value === id) return html`<li><input class="you-edit" dir="auto" title=${t('knows.edit')} .value=${entry.text}
     @keydown=${(/** @type {KeyboardEvent} */ e) => { if (e.key === 'Enter' && !e.isComposing) /** @type {HTMLInputElement} */ (e.target).blur(); if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); editing.value = '' } }}
     @blur=${(/** @type {FocusEvent} */ e) => { if (editing.value === id) { editing.value = ''; edit(file.path, entry, /** @type {HTMLInputElement} */ (e.target).value) } }}></li>`
   return html`<li class=${old.has(entry) ? 'is-old' : ''}>
     <span class="item-text"><span dir="auto">${entry.text}</span><small>${entry.at ? relativeTime(entry.at) : nothing}${task ? html` · <bdi>${task}</bdi>` : nothing}</small></span>
     <button class="icon-button subtle" popovertarget=${id} aria-label=${t('you.more')}>${icons.more}</button>
-    <div id=${id} class="menu task-menu" popover>
+    <div id=${id} class="menu task-menu" popover><ul>
       ${action(id, icons.compose, t('you.edit'), () => { editing.value = id; requestAnimationFrame(() => focusEnd(document.querySelector('.you-edit'))) })}
       ${action(id, icons.pin, t('knows.promote'), () => promote(file.path, entry))}
       ${entry.conversation ? action(id, icons.external, t('knows.from'), () => openFrom(/** @type {string} */ (entry.conversation))) : nothing}
       ${action(id, icons.trash, t('action.delete'), () => forget(file.path, entry))}
-    </div>
+    </ul></div>
   </li>`
 }
 
@@ -148,12 +148,12 @@ function line(file, entry, old, id) {
  * Starters, which add their words on a line of their own to the box open, or open it with them after what is written.
  * @param {string} dir
  */
-const starters = (dir) => html`<div class="you-starts">${['work', 'language', 'length'].map((id) => html`<button type="button" class="starter" @click=${(/** @type {Event} */ e) => {
+const starters = (dir) => html`<ul class="you-starts">${['work', 'language', 'length'].map((id) => html`<li><button type="button" class="starter" @click=${(/** @type {Event} */ e) => {
   const [box, words] = [/** @type {HTMLTextAreaElement | undefined} */ (/** @type {HTMLElement} */ (e.currentTarget).closest('form')?.elements.namedItem('text')), t(`you.start.${id}Text`)]
   if (!box) return write(dir, words)
   box.value = box.value.trim() ? `${box.value.trimEnd()}\n${words}` : words
   focusEnd(box)
-}}>${icons.plus} ${t(`you.start.${id}`)}</button>`)}</div>`
+}}>${icons.plus} ${t(`you.start.${id}`)}</button></li>`)}</ul>`
 
 /** Opens the box on a folder's instructions, with words of a starter's after them. @param {string} dir @param {string} [words] */
 function write(dir, words = '') {
@@ -167,7 +167,7 @@ function instructions(dir) {
   return html`<section>
     <div class="you-group"><h3>${icons.pin} ${t('knows.instructions')}</h3>${open ? nothing : html`<button class="button subtle" @click=${() => write(dir)}>${icons.compose} ${t('you.edit')}</button>`}</div>
     ${open ? html`<form class="you-write" @submit=${(/** @type {SubmitEvent} */ e) => { e.preventDefault(); writing.value = null; writeInstructions(dir, String(new FormData(/** @type {HTMLFormElement} */ (e.target)).get('text') ?? '')) }}>
-      <textarea name="text" rows="5" dir="auto" aria-label=${t('knows.instructions')} placeholder=${t('knows.instructionsPlaceholder')} .value=${writing.value?.text ?? ''}></textarea>
+      <textarea name="text" rows="5" dir="auto" title=${t('knows.instructions')} placeholder=${t('knows.instructionsPlaceholder')} .value=${writing.value?.text ?? ''}></textarea>
       ${starters(dir)}
       <div class="you-acts"><button class="button primary">${t('projects.save')}</button><button type="button" class="button subtle" @click=${() => { writing.value = null }}>${t('you.cancel')}</button></div>
     </form>` : text ? html`<p class="you-text" dir="auto">${text}</p>` : html`<p class="muted">${t('you.empty', { name: BRAND.name })}</p>${starters(dir)}`}
@@ -182,7 +182,7 @@ function noticed(state, old) {
   const [own, all] = [state.memory[0], total(state)]
   const lines = newest(own).slice(0, 3).map((entry, i) => line(own, entry, old, `you-line-${i}`))
   return html`<section>
-    <div class="you-group"><h3>${head}</h3><label class="you-switch">${t('you.remember')}<input type="checkbox" class="switch" role="switch" .checked=${effective.value.settings.memory !== false}
+    <div class="you-group"><h3>${head}</h3><label class="you-switch" for="you-remember">${t('you.remember')}<input id="you-remember" type="checkbox" class="switch" role="switch" .checked=${effective.value.settings.memory !== false}
       @change=${(/** @type {Event} */ e) => updateSettings({ memory: /** @type {HTMLInputElement} */ (e.target).checked })}></label></div>
     ${all ? html`<ul class="list noticed">${lines}${all > lines.length ? row('noticed', icons.list, t('you.all', { count: all }), '', () => go('noticed')) : nothing}</ul>` : html`<p class="muted small">${t('knows.nothing')}</p>`}
   </section>`
@@ -195,7 +195,7 @@ const head = (title, said) => html`<button class="back button subtle" @click=${(
 /** Every line Jean noticed, by whose, searched, those a task no longer reads under a line of their own. @param {Page} state @param {Set<Entry>} old */
 const lines = (state, old) => html`${head(t('knows.noticed', { name: BRAND.name }), t('you.lines', { count: total(state) }))}
   ${old.size ? html`<p class="you-wait">${t('you.cut', { count: old.size })}</p>` : nothing}
-  <input type="search" class="you-search" dir="auto" placeholder=${t('you.search', { name: BRAND.name })} aria-label=${t('you.search', { name: BRAND.name })}
+  <input type="search" class="you-search" dir="auto" placeholder=${t('you.search', { name: BRAND.name })} title=${t('you.search', { name: BRAND.name })}
     @input=${(/** @type {Event} */ e) => { query.value = /** @type {HTMLInputElement} */ (e.target).value }}>
   ${state.memory.map((file, f) => {
     const shown = newest(file).filter((entry) => entry.text.toLocaleLowerCase().includes(query.value.toLocaleLowerCase()))
@@ -224,7 +224,7 @@ export function you() {
   // Emptied, the name stays empty: Jean notes one only while the user has never set one.
   return html`<header class="you-head"><h2>${t('settings.you')}</h2></header><p class="lede">${said(state, old)}</p>
     ${setting(t('you.name'), t('you.nameText', { name: BRAND.name }), html`<input class="you-name" autocomplete="given-name" dir="auto" maxlength="40" spellcheck="false"
-      aria-label=${t('you.name')} .value=${live(effective.value.settings.name ?? '')} @change=${(/** @type {Event} */ e) => updateSettings({ name: oneLine(/** @type {HTMLInputElement} */ (e.target).value) })}>`)}
+      title=${t('you.name')} .value=${live(effective.value.settings.name ?? '')} @change=${(/** @type {Event} */ e) => updateSettings({ name: oneLine(/** @type {HTMLInputElement} */ (e.target).value) })}>`)}
     ${above.length ? html`<ul class="list you-rows">${above}</ul>` : nothing}
     ${instructions('')}${noticed(state, old)}
     ${own.length ? html`<section><ul class="list you-rows">${own.map((one) => row(one.id, icons.folder, String(one.data.name),

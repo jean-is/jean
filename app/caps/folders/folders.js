@@ -674,17 +674,17 @@ class FolderName extends Element {
     const shut = folder.handle && !allowed.value.has(folder.handle)
     const changed = folder.copy?.changed() ?? []
     const onProject = projectFolder()?.name === folder.name
-    const item = (/** @type {unknown} */ icon, /** @type {string} */ label, /** @type {() => unknown} */ run) => html`<button type="button" popovertarget="folder-menu" popovertargetaction="hide" @click=${run}>${icon}<span>${label}</span></button>`
+    const item = (/** @type {unknown} */ icon, /** @type {string} */ label, /** @type {() => unknown} */ run) => html`<li><button type="button" popovertarget="folder-menu" popovertargetaction="hide" @click=${run}>${icon}<span>${label}</span></button></li>`
     return html`<button class="folder-name ${missing || shut ? 'is-shut' : ''}" popovertarget="folder-menu" title=${t('folders.in', { folder: folder.name })}>
         ${icons.folder}<span dir="auto">${folder.name}</span></button>
       <div id="folder-menu" class="menu folder-menu" popover>
         ${folder.copy ? html`<p class="folder-note">${t('folders.copy', { name: assistantName() })}</p>` : nothing}
-        ${missing ? item(LINK, t('folders.again'), () => choose(!app.current.peek() && pending.peek() === undefined ? project : undefined)) : nothing}
+        <ul>${missing ? item(LINK, t('folders.again'), () => choose(!app.current.peek() && pending.peek() === undefined ? project : undefined)) : nothing}
         ${shut ? item(icons.shield, t('folders.allow'), () => permit(folder)) : nothing}
         ${changed.length ? item(icons.download, t('folders.save'), async () => save(new Blob([/** @type {BlobPart} */ (await folder.copy?.zip())], { type: 'application/zip' }), `${folder.name}.zip`)) : nothing}
         ${item(icons.folder, t('folders.another'), () => choose())}
         ${!onProject ? item(icons.layers, home ? t('folders.keep') : t('folders.keepIn', { project: String(project.data.name) }), () => setProjectFolder(project, folder)) : nothing}
-        ${item(UNLINK, t('folders.none'), () => use(null))}
+        ${item(UNLINK, t('folders.none'), () => use(null))}</ul>
       </div>`
   }
 

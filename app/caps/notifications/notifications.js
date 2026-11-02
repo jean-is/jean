@@ -58,7 +58,7 @@ const draw = () => html`<li><span class="item-icon">${icons.bell}</span><span cl
   <small>${t(allowed.value === 'denied' ? 'notifications.blocked' : 'notifications.text')}</small></span>
   ${allowed.value === 'denied' ? html`<span class="data-state is-wait">${t('notifications.denied')}</span>`
     : on() ? html`<button type="button" class="button subtle" @click=${() => tell('', t('notifications.tested'))}>${t('notifications.test')}</button>` : nothing}
-  <input type="checkbox" class="switch" role="switch" aria-label=${t('cap.notifications.name')} .checked=${live(on())} ?disabled=${allowed.value === 'denied'}
+  <input type="checkbox" class="switch" role="switch" title=${t('cap.notifications.name')} .checked=${live(on())} ?disabled=${allowed.value === 'denied'}
     @change=${(/** @type {Event} */ e) => switched(/** @type {HTMLInputElement} */ (e.target).checked)}></li>`
 
 /** On, the browser asks first if it hasn't yet, in the click's own time. @param {boolean} checked */

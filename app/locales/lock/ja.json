@@ -11,6 +11,7 @@
   "lock.unlock": "ロックを解除",
   "lock.passwordLabel": "パスワード",
   "lock.codeLabel": "回復コード",
+  "lock.codeForm": "4文字ずつ8組、0〜9とA〜F、組の間にハイフン。",
   "lock.useCode": "回復コードを使う",
   "lock.wrong": "それでは開きません。",
   "lock.noPasskey": "ここではパスキーでロックできませんでした。代わりにパスワードを使ってください。",

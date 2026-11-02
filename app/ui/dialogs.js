@@ -122,10 +122,10 @@ export function where(item, keep) {
   const ticked = (event) => /** @type {HTMLInputElement} */ (event.target).checked
   return html`<fieldset class="where">
     <legend>${t('projects.where')}</legend>
-    <label><input type="checkbox" .checked=${live(!only)} @change=${(/** @type {Event} */ e) => keep(ticked(e) ? undefined : [app.project.value.id])}>${t('projects.everywhere')}</label>
+    <label for="where-all"><input id="where-all" type="checkbox" .checked=${live(!only)} @change=${(/** @type {Event} */ e) => keep(ticked(e) ? undefined : [app.project.value.id])}>${t('projects.everywhere')}</label>
     ${only ? app.projects.value.map((project) => {
       const on = kept.includes(project)
-      return html`<label><input type="checkbox" .checked=${live(on)} ?disabled=${on && kept.length === 1}
+      return html`<label for=${`where-${project.id}`}><input id=${`where-${project.id}`} type="checkbox" .checked=${live(on)} ?disabled=${on && kept.length === 1}
         @change=${(/** @type {Event} */ e) => keep(ticked(e) ? [...only, project.id] : only.filter((id) => id !== project.id))}><bdi>${projectName(project)}</bdi></label>`
     }) : nothing}
   </fieldset>`
@@ -257,7 +257,7 @@ export function siteList({ sites, fixed, set, any = false }) {
       <ul aria-label=${t('pages.sites')}>${(sites.length || !any ? sites : ['*']).map((entry) => html`<li><bdi dir="ltr">${entry}</bdi>${sites.length && !fixed
         ? html`<button class="icon-button subtle" aria-label=${t('pages.siteRemove', { site: entry })}
           @click=${(/** @type {Event} */ e) => remove(e, entry)}>${icons.close}</button>` : nothing}</li>`)}</ul>
-      ${fixed ? nothing : html`<input dir="ltr" enterkeyhint="done" autocapitalize="off" spellcheck="false" aria-label=${t('pages.siteAdd')} aria-describedby="sites-hint"
+      ${fixed ? nothing : html`<input dir="ltr" enterkeyhint="done" autocapitalize="off" spellcheck="false" title=${t('pages.siteAdd')} aria-describedby="sites-hint"
         @keydown=${add} @input=${(/** @type {Event} */ e) => /** @type {HTMLInputElement} */ (e.target).removeAttribute('aria-invalid')}>`}
     </div>
     <p class="muted small" id="sites-hint">${fixed ? lockedBy() : t('pages.sitesText')}</p>
@@ -344,8 +344,8 @@ class Settings extends Element {
       <button class="icon-button settings-close" @click=${close} aria-label=${t('action.close')}>${icons.close}</button>
       <a class="skip" href="#settings-panel" @click=${(/** @type {Event} */ e) => { e.preventDefault(); document.getElementById('settings-panel')?.focus() }}>${t('a11y.main')}</a>
       <nav class="settings-nav" aria-label=${t('settings.title')}>
-        ${shown.map(([id, { group, icon, label }]) => html`${group ? html`<hr>` : nothing}<button aria-current=${id === open ? 'page' : 'false'}
-          aria-keyshortcuts=${id === 'keyboard' ? KEYBOARD_KEYS : nothing} @click=${() => { app.section.value = id }}>${icon}${t(label)}</button>`)}
+        ${shown.reduce((groups, row) => (row[1].group || !groups.length ? groups.push([row]) : groups[groups.length - 1].push(row), groups), /** @type {typeof shown[]} */ ([])).map((rows, i) => html`${i ? html`<hr>` : nothing}<ul>${rows.map(([id, { icon, label }]) => html`<li><button aria-current=${id === open ? 'page' : 'false'}
+          aria-keyshortcuts=${id === 'keyboard' ? KEYBOARD_KEYS : nothing} @click=${() => { app.section.value = id }}>${icon}${t(label)}</button></li>`)}</ul>`)}
       </nav>
       <div id="settings-panel" class="settings-panel" tabindex=${open === 'keyboard' ? 0 : -1}>${place.show()}</div>
     </dialog>`

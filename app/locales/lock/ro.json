@@ -11,6 +11,7 @@
   "lock.unlock": "Deblocați",
   "lock.passwordLabel": "Parolă",
   "lock.codeLabel": "Cod de recuperare",
+  "lock.codeForm": "Opt grupuri de câte patru caractere, de la 0 la 9 și de la A la F, despărțite de cratimă.",
   "lock.useCode": "Folosiți codul de recuperare",
   "lock.wrong": "Nu se deschide cu asta.",
   "lock.noPasskey": "Nicio cheie de acces nu a putut bloca aici. Folosiți în schimb o parolă.",

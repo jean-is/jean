@@ -110,7 +110,7 @@ class Terminal extends Element {
         <div role="log">${terminal.entries.map(entry)}</div>
         <form class="terminal-line" @submit=${(/** @type {Event} */ event) => event.preventDefault()}>
           <span aria-hidden="true">${promptOf(terminal)}</span>
-          <textarea rows="1" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="go" aria-label=${t('computer.terminal.command')} @keydown=${typing}></textarea>
+          <textarea rows="1" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="go" title=${t('computer.terminal.command')} @keydown=${typing}></textarea>
         </form>
         <p class="terminal-choices" role="status">${choices.map((name) => html`<span>${name}</span>`)}</p>
       </div>

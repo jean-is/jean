@@ -106,8 +106,8 @@ const guardList = (list) => html`<ul class="rules">${list.map(([guard, theirs]) 
 /** A kind's page: its choices, the usual marked; then what was allowed for it, and the guards on it. @param {string} kind */
 function kindPage(kind) {
   const [items, careful] = [allowed().filter((item) => KEPT[item.what][0] === kind), guards().filter(([guard]) => guard.kind === kind)]
-  return html`<ul class="list approval-choices" role="radiogroup" aria-label=${t(`kind.${kind}.label`)}>${CHOICES.map((choice) => html`<li><label>
-      <input type="radio" name="approval-choice" .checked=${rule(kind) === choice} ?disabled=${locked(kind)} @change=${() => setRule(kind, choice)}>
+  return html`<ul class="list approval-choices" role="radiogroup" aria-label=${t(`kind.${kind}.label`)}>${CHOICES.map((choice) => html`<li><label for=${`choice-${choice}`}>
+      <input id=${`choice-${choice}`} type="radio" name="approval-choice" .checked=${rule(kind) === choice} ?disabled=${locked(kind)} @change=${() => setRule(kind, choice)}>
       <span class="item-text"><strong>${t(`rules.${choice}`)}${choice === resolveRule(kind) ? html` <span class="data-state">${t('approvals.theUsual')}</span>` : nothing}</strong>
       <small>${t(`approvals.${choice}Text`, { name })}</small></span></label></li>`)}</ul>
     ${locked(kind) ? html`<p class="hint">${lockedBy()}</p>` : nothing}${kind === 'edit' && loaded.value.has('folders') ? html`<p class="hint">${t('approvals.folders', { name })}</p>` : nothing}
@@ -132,12 +132,12 @@ function add(event) {
 
 /** Be more careful: for what, then what, and only when, if the user likes. */
 const careful = () => html`<form class="approval-form" @submit=${add}>
-  <label>${t('guards.for')}<select name="for">
+  <label for="guard-for">${t('guards.for')}<select id="guard-for" name="for">
     <optgroup label=${t('approvals.kinds')}>${RULE_KINDS.map((kind) => html`<option value=${`kind:${kind}`} ?selected=${preset.value === `kind:${kind}`}>${t(`kind.${kind}.label`)}</option>`)}</optgroup>
     ${services().length ? html`<optgroup label=${t('approvals.services')}>${services().map((one) => html`<option value=${`service:${one.id}`}>${one.name}</option>`)}</optgroup>` : nothing}</select></label>
-  <span class="segmented" role="radiogroup" aria-label=${t('guards.then')}>${(/** @type {const} */ (['ask', 'never'])).map((then) => html`<label>
-    <input type="radio" name="then" value=${then} ?checked=${then === 'ask'}><span>${t(`rules.${then}`)}</span></label>`)}</span>
-  <label>${t('guards.if')}<input name="if" dir="auto" placeholder=${t('approvals.example')} aria-describedby="approval-if"></label>
+  <span class="segmented" role="radiogroup" aria-label=${t('guards.then')}>${(/** @type {const} */ (['ask', 'never'])).map((then) => html`<label for=${`guard-${then}`}>
+    <input id=${`guard-${then}`} type="radio" name="then" value=${then} ?checked=${then === 'ask'}><span>${t(`rules.${then}`)}</span></label>`)}</span>
+  <label for="guard-if">${t('guards.if')}<input id="guard-if" name="if" dir="auto" placeholder=${t('approvals.example')} aria-describedby="approval-if"></label>
   <p class="hint" id="approval-if">${t('approvals.ifText', { name })}</p>
   <div class="row"><button class="button primary">${t('guards.add')}</button></div>
 </form>`
@@ -152,7 +152,7 @@ function webPages() {
   /** @param {import('./csp.js').PageRight} right */
   const one = (right) => html`<li class="setting">
     <div><span class="rule-kind">${t(`pages.${right}`)}</span><p class="muted small">${fixed.has(right) ? lockedBy() : t(`pages.${right}Text`)}</p></div>
-    <input type="checkbox" class="switch" role="switch" aria-label=${t(`pages.${right}`)} .checked=${allows[right]} ?disabled=${fixed.has(right) || (right === 'network' && !allows.scripts)}
+    <input type="checkbox" class="switch" role="switch" title=${t(`pages.${right}`)} .checked=${allows[right]} ?disabled=${fixed.has(right) || (right === 'network' && !allows.scripts)}
       @change=${(/** @type {Event} */ e) => setPages({ [right]: /** @type {HTMLInputElement} */ (e.target).checked })}>
     ${right === 'network' && allows.scripts && allows.network ? siteList({ sites: rights.sites, fixed: fixed.has('sites'), set: (sites) => setPages({ sites }), any: true }) : nothing}
   </li>`

@@ -72,6 +72,8 @@ function told(item, draw) {
 /** A list's own name, from what it holds, for the ticks kept for it. @param {any} token */
 const named = (token) => token.items.map((/** @type {any} */ item) => item.text).join('\n')
 
+/** Checklists drawn, which names each one's boxes apart. */
+let checklists = 0
 /**
  * A checklist: each thing to do ticked, struck through, and how many are done, with a bar. What is
  * ticked is kept in the conversation, a meta record for the list (its items' words), the latest winning.
@@ -83,7 +85,7 @@ function checklist(token) {
   const doneIn = (records) => new Set(/** @type {number[]} */ (records.findLast((record) => record.meta?.ticks?.list === list)?.meta?.ticks.done
     ?? token.items.flatMap((/** @type {any} */ item, /** @type {number} */ i) => (item.checked ? [i] : []))))
   const done = doneIn(app.current.value?.records ?? [])
-  const count = new Intl.NumberFormat(intlLocales())
+  const count = new Intl.NumberFormat(intlLocales()), at = ++checklists
   // Shown at once, from the ticks of the moment, then kept, in the order they were made.
   /** @param {number} i @param {boolean} on */
   const tick = (i, on) => {
@@ -95,8 +97,8 @@ function checklist(token) {
   }
   return html`<div class="checklist">
     <p class="checklist-count"><span role="status" lang=${locale.value} dir=${dir()}>${t('layouts.ticked', { done: count.format(done.size), total: count.format(token.items.length) })}</span><progress aria-hidden="true" max=${token.items.length} .value=${done.size}></progress></p>
-    <ul>${token.items.map((/** @type {any} */ item, /** @type {number} */ i) => html`<li class=${done.has(i) ? 'is-done' : ''}><label>
-      <input type="checkbox" .checked=${done.has(i)} @change=${(/** @type {Event} */ e) => tick(i, /** @type {HTMLInputElement} */ (e.target).checked)}>
+    <ul>${token.items.map((/** @type {any} */ item, /** @type {number} */ i) => html`<li class=${done.has(i) ? 'is-done' : ''}><label for=${`tick-${at}-${i}`}>
+      <input id=${`tick-${at}-${i}`} type="checkbox" .checked=${done.has(i)} @change=${(/** @type {Event} */ e) => tick(i, /** @type {HTMLInputElement} */ (e.target).checked)}>
       <span>${item.tokens.map((/** @type {any} */ part) => (part.type === 'checkbox' ? nothing : part.type === 'text' ? inline(part.tokens ?? [part]) : blocks([part])))}</span>
     </label></li>`)}</ul>
   </div>`

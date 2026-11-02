@@ -11,6 +11,7 @@
   "lock.unlock": "Unlock",
   "lock.passwordLabel": "Password",
   "lock.codeLabel": "Recovery code",
+  "lock.codeForm": "Eight groups of four characters, 0 to 9 and A to F, with a dash between groups.",
   "lock.useCode": "Use the recovery code",
   "lock.wrong": "That doesn’t open it.",
   "lock.noPasskey": "No passkey could lock it here. Use a password instead.",

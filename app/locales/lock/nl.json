@@ -11,6 +11,7 @@
   "lock.unlock": "Ontgrendelen",
   "lock.passwordLabel": "Wachtwoord",
   "lock.codeLabel": "Herstelcode",
+  "lock.codeForm": "Acht groepen van vier tekens, 0 tot en met 9 en A tot en met F, met een streepje ertussen.",
   "lock.useCode": "De herstelcode gebruiken",
   "lock.wrong": "Daarmee gaat het niet open.",
   "lock.noPasskey": "Geen toegangssleutel kon het hier op slot doen. Gebruik liever een wachtwoord.",

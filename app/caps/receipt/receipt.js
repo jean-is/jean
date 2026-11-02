@@ -159,8 +159,8 @@ function card(facts, turn, text, id, chosen) {
       ${saving(`${id}-proof`, 'receipt.proof', () => keepCertificate(facts, turn, text, true))}
       <details class="receipt-more" ?open=${chosen}>
         <summary>${t('action.more')}${icons.chevron}</summary>
-        ${vouchers.value.timestamps.length ? choice('date', t('receipt.date', { hosts: new Intl.ListFormat(intlLocales()).format(vouchers.value.timestamps.map(hostIn)) })) : nothing}
-        ${vouchers.value.log ? choice('log', t('receipt.log', { host: hostIn(vouchers.value.log) })) : nothing}
+        ${vouchers.value.timestamps.length ? choice('date', t('receipt.date', { hosts: new Intl.ListFormat(intlLocales()).format(vouchers.value.timestamps.map(hostIn)) }), `${id}-date`) : nothing}
+        ${vouchers.value.log ? choice('log', t('receipt.log', { host: hostIn(vouchers.value.log) }), `${id}-log`) : nothing}
         <p class="receipt-note">${tParts('receipt.check', { checker: html`<a href=${CHECK} target="_blank" rel="noopener">${t('receipt.checker')}</a>` })}</p>
       </details>
     </details>`
@@ -188,8 +188,8 @@ async function witnesses() {
 export const vouchers = signal({ timestamps: /** @type {string[]} */ ([]), log: '' })
 effect(() => { if (app.settings.value) witnesses().then((found) => { vouchers.value = found }) })
 
-/** A choice the user makes once, where the card says what goes where: nothing is sent out unasked. @param {'date' | 'log'} key @param {string} label */
-const choice = (key, label) => html`<label class="receipt-choice"><input type="checkbox" .checked=${Boolean(app.settings.value.certificates?.[key])}
+/** A choice the user makes once, where the card says what goes where: nothing is sent out unasked. @param {'date' | 'log'} key @param {string} label @param {string} id */
+const choice = (key, label, id) => html`<label class="receipt-choice" for=${id}><input id=${id} type="checkbox" .checked=${Boolean(app.settings.value.certificates?.[key])}
   @change=${(/** @type {Event} */ event) => updateSettings({ certificates: { ...app.settings.value.certificates, [key]: /** @type {HTMLInputElement} */ (event.target).checked } })}><span>${label}</span></label>`
 
 /** Sends to a witness or the log: from the browser, else through the gateway, which reaches those that don't answer browsers. @param {string} address @param {RequestInit} init */
@@ -233,11 +233,11 @@ function witnessing({ lockedBy }) {
   // Written again only when what is kept changes: another setting saved meanwhile leaves what is being typed.
   /** @param {'timestamp' | 'transparencyLog'} name @param {string} label */
   const address = (name, label, set = app.policy.urls?.[name] !== undefined) => html`<li class="setting"><span class="rule-kind">${t(label)}${set ? html` <span class="muted small">${lockedBy()}</span>` : nothing}</span>
-    <input class="address" dir="ltr" spellcheck="false" autocomplete="off" aria-label=${t(label)} placeholder=${DEFAULT_URLS[name]} ?disabled=${set} .value=${String(app.policy.urls?.[name] ?? settings.urls?.[name] ?? '')} @change=${(/** @type {Event} */ e) => setAddress(name, /** @type {HTMLInputElement} */ (e.target))}></li>`
+    <input class="address" dir="ltr" spellcheck="false" autocomplete="off" title=${t(label)} placeholder=${DEFAULT_URLS[name]} ?disabled=${set} .value=${String(app.policy.urls?.[name] ?? settings.urls?.[name] ?? '')} @change=${(/** @type {Event} */ e) => setAddress(name, /** @type {HTMLInputElement} */ (e.target))}></li>`
   const clouds = settings.brains.filter((brain) => !isLocal(brain))
   return html`<section><h3>${t('receipt.witnesses')}</h3><p class="muted">${t('receipt.witnesses.text')}</p><ul class="rules">${address('timestamp', 'receipt.witnesses.dates')}${address('transparencyLog', 'receipt.witnesses.log')}</ul></section>
   ${clouds.length ? html`<section><h3>${t('receipt.places')}</h3><p class="muted">${locked.has('brains') ? lockedBy() : t('receipt.places.text')}</p><ul class="rules">${clouds.map((brain) => html`<li class="setting">
-    <span class="rule-kind"><bdi>${brainLabel(brain)}</bdi></span><select aria-label=${brainLabel(brain)} ?disabled=${locked.has('brains')} @change=${(/** @type {Event} */ e) => updateSettings({ brains: app.settings.value.brains
+    <span class="rule-kind"><bdi>${brainLabel(brain)}</bdi></span><select title=${brainLabel(brain)} ?disabled=${locked.has('brains')} @change=${(/** @type {Event} */ e) => updateSettings({ brains: app.settings.value.brains
       .map((one) => (one.id === brain.id ? { ...one, jurisdiction: /** @type {HTMLSelectElement} */ (e.target).value || undefined } : one)) })}><option value="">${t('receipt.places.unsaid')}</option>${regions.map((code) => html`<option value=${code} ?selected=${brain.jurisdiction === code}>${country.of(code)}</option>`)}</select></li>`)}</ul></section>` : nothing}`
 }
 

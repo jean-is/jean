@@ -123,8 +123,8 @@ class Composer extends Element {
             ${files ? html`<button type="button" class="icon-button add" aria-label=${add}
               popovertarget=${menu ? 'add-menu' : nothing} @click=${menu ? undefined : this.#files}>${icons.plus}</button>` : nothing}
             ${files && menu ? html`<div id="add-menu" class="menu" popover>
-              <button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${this.#files}>${icons.attach}${t('files.attach')}</button>
-              ${more}${sub.value?.view()}
+              <ul><li><button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${this.#files}>${icons.attach}${t('files.attach')}</button></li>
+              ${more.map((row) => html`<li>${row}</li>`)}</ul>${sub.value?.view()}
             </div>` : nothing}
             ${voice.state === 'unavailable' ? nothing : html`<button type="button"
               class="icon-button ${listening ? 'is-active is-listening' : working ? 'is-active is-working' : ''}" aria-pressed=${listening ? 'true' : 'false'} ?disabled=${working}

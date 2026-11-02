@@ -138,7 +138,7 @@ function under({ at }) {
       <dl class="mask-values">${map.map(([mark, value]) => html`<div><dt dir="auto">${value}</dt><dd class="receipt-host"><bdi dir="ltr">⟦${mark}⟧</bdi></dd></div>`)}</dl>
       ${read ? html`<details class="mask-read"><summary dir="auto">${t('dlp.mask.read')}</summary><p class="receipt-note receipt-read" dir="auto">${read}</p></details>` : nothing}
       <form class="mask-add" @submit=${addWord}>
-        <label dir="auto">${t('dlp.mask.hide')}<input name="word" autocomplete="off" dir="auto"
+        <label dir="auto" for=${`${id}-word`}>${t('dlp.mask.hide')}<input id=${`${id}-word`} name="word" autocomplete="off" dir="auto"
           @keydown=${(/** @type {KeyboardEvent} */ event) => { if (event.key === 'Enter' && event.isComposing) event.preventDefault() }}></label>
         <button class="link-button">${t('dlp.mask.hideButton')}</button>
       </form>

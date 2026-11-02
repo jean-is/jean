@@ -98,10 +98,13 @@ async function rawFrom(kind, given, of) {
   return unseal(slot, await slotKey(slot, output))
 }
 
-/** A form of fields, each [name, label, attributes], and its button. @param {(form: FormData) => unknown} submit @param {[string, string, string?][]} fields @param {unknown} button */
+/** What a recovery code looks like, said under its field (RGAA 11.11). @param {string} [kind] */
+const shape = (kind = 'hint') => html`<p class=${kind} id="code-form">${t('lock.codeForm')}</p>`
+
+/** A form of fields, each [name, label, attributes], and its button; the recovery code's, its shape under it. @param {(form: FormData) => unknown} submit @param {[string, string, string?][]} fields @param {unknown} button */
 const form = (submit, fields, button) => html`<form class="stack lock-way" @submit=${(/** @type {SubmitEvent} */ e) => { e.preventDefault(); submit(new FormData(/** @type {HTMLFormElement} */ (e.target))) }}>
-  ${fields.length > 1 ? html`<p class="hint" id="lock-required">${t('lock.required')}</p>` : nothing}${fields.map(([name, label, type = 'text']) => html`<label>${t(label)}<input name=${name} type=${type === 'text' ? 'text' : 'password'} autocomplete=${type === 'text' ? 'off' : type}
-    spellcheck="false" dir="ltr" aria-describedby=${fields.length > 1 ? 'lock-required' : nothing} required></label>`)}
+  ${fields.length > 1 ? html`<p class="hint" id="lock-required">${t('lock.required')}</p>` : nothing}${fields.map(([name, label, type = 'text']) => html`<label for=${`lock-${name}`}>${t(label)}<input id=${`lock-${name}`} name=${name} type=${type === 'text' ? 'text' : 'password'} autocomplete=${type === 'text' ? 'off' : type}
+    spellcheck="false" dir="ltr" aria-describedby=${fields.length > 1 ? 'lock-required' : label === 'lock.codeLabel' ? 'code-form' : nothing} required></label>${label === 'lock.codeLabel' ? shape() : nothing}`)}
   <div class="row"><button class="button primary">${button}</button></div></form>`
 
 /** Tries a way into a vault: its key goes to `then`, and what went wrong is said. @param {(raw: Uint8Array) => unknown} then @param {Vault | null} of */
@@ -143,9 +146,9 @@ const field = (go, kind, label, autocomplete) => html`<form class="lock-box" @su
   if (!said.peek()) return
   input.select()
   if (!still()) box.animate({ translate: ['0', '-6px', '5px', '-3px', '1px', '0'] }, 260)
-}}><label>${t(label)}<input name="secret" type=${kind === 'password' ? 'password' : 'text'} autocomplete=${autocomplete} spellcheck="false" required
-    @input=${() => { said.value = '' }} @keydown=${(/** @type {KeyboardEvent} */ e) => { if (e.isComposing && e.key === 'Enter') e.preventDefault() }}></label>
-  <button class="lock-go" aria-label=${t('lock.unlock')}>${icons.send}</button></form>`
+}}><label for=${`lock-${kind}`}>${t(label)}<input id=${`lock-${kind}`} name="secret" type=${kind === 'password' ? 'password' : 'text'} autocomplete=${autocomplete} spellcheck="false" required
+    aria-describedby=${kind === 'recovery' ? 'code-form' : nothing} @input=${() => { said.value = '' }} @keydown=${(/** @type {KeyboardEvent} */ e) => { if (e.isComposing && e.key === 'Enter') e.preventDefault() }}></label>
+  <button class="lock-go" aria-label=${t('lock.unlock')}>${icons.send}</button></form>${kind === 'recovery' ? shape('muted') : nothing}`
 
 /**
  * Before anything Jean keeps is read (ui/opfs.js): the key from another tab, else the lock screen,

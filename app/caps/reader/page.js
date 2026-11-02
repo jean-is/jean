@@ -42,7 +42,7 @@ export function page() {
     : html`<button class="button" ?disabled=${Boolean(getting.value)} @click=${() => prepare(lang).catch(() => notify(t('cap.reader.failed'), { alert: true }))}>${icons.download} ${t('cap.reader.yes', { size: formatBytes(here.value.size ? EACH : FIRST) })}</button>`
   return html`<button class="back button subtle" @click=${() => go('')}>${icons.back} ${t('settings.general')}</button>
     <header class="general-head"><div><h2 tabindex="-1">${t('cap.reader.name')}</h2><p class="lede">${t('cap.reader.text', { size: formatBytes(EACH) })}</p></div>
-      <input type="checkbox" class="switch" role="switch" aria-label=${t('cap.reader.name')} .checked=${on()}
+      <input type="checkbox" class="switch" role="switch" title=${t('cap.reader.name')} .checked=${on()}
         @change=${(/** @type {Event} */ e) => updateSettings(/** @type {any} */ ({ naturalVoice: /** @type {HTMLInputElement} */ (e.target).checked }))}></header>
     <ul class="list general">${langs.map((lang) => html`<li><span class="item-text"><strong>${named(lang)}</strong>
       <small><bdi>${SPEAKERS[lang]}</bdi>${here.value.has(lang) ? ` · ${t('reader.here', { size: formatBytes(EACH) })}` : ''}</small></span>${end(lang)}</li>`)}</ul>

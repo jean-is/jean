@@ -11,6 +11,7 @@
   "lock.unlock": "Lås upp",
   "lock.passwordLabel": "Lösenord",
   "lock.codeLabel": "Återställningskod",
+  "lock.codeForm": "Åtta grupper om fyra tecken, 0 till 9 och A till F, med bindestreck mellan grupperna.",
   "lock.useCode": "Använd återställningskoden",
   "lock.wrong": "Det öppnar den inte.",
   "lock.noPasskey": "Ingen lösennyckel kunde låsa den här. Använd ett lösenord i stället.",

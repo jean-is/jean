@@ -11,6 +11,7 @@
   "lock.unlock": "Feloldás",
   "lock.passwordLabel": "Jelszó",
   "lock.codeLabel": "Helyreállítási kód",
+  "lock.codeForm": "Nyolc négykarakteres csoport, 0–9 és A–F, a csoportok között kötőjellel.",
   "lock.useCode": "A helyreállítási kód használata",
   "lock.wrong": "Ez nem nyitja meg.",
   "lock.noPasskey": "Azonosítókulccsal itt nem sikerült zárolni. Használj inkább jelszót.",

@@ -11,6 +11,7 @@
   "lock.unlock": "잠금 해제",
   "lock.passwordLabel": "비밀번호",
   "lock.codeLabel": "복구 코드",
+  "lock.codeForm": "네 글자씩 여덟 묶음, 0~9와 A~F, 묶음 사이에 하이픈.",
   "lock.useCode": "복구 코드 사용",
   "lock.wrong": "그걸로는 열리지 않아요.",
   "lock.noPasskey": "여기서는 패스키로 잠글 수 없었어요. 대신 비밀번호를 사용하세요.",

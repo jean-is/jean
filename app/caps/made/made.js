@@ -267,18 +267,17 @@ class Made extends Element {
      * One of the menu's items, which closes it, and once done tells what it did, if it says (D421).
      * @param {unknown} icon @param {string} label @param {(event: Event) => unknown} run @param {string} [type] @param {string} [format]
      */
-    const item = (icon, label, run, type, format) => html`<button type="button" popovertarget=${id} popovertargetaction="hide"
-      @click=${async (/** @type {Event} */ event) => { await run(event); if (type) act(type, { task, format }) }}>${icon}${label}</button>`
+    const item = (icon, label, run, type, format) => html`<li><button type="button" popovertarget=${id} popovertargetaction="hide"
+      @click=${async (/** @type {Event} */ event) => { await run(event); if (type) act(type, { task, format }) }}>${icon}${label}</button></li>`
     return html`<button class="icon-button subtle" popovertarget=${id} aria-label=${t('action.more')}>${icons.more}</button>
       <div id=${id} class="menu answer-menu" popover>
-        ${linked.length ? linked.map((part) => part.draw({ text: source, files: /** @type {any} */ (this).files }, item)) : sharing ? item(icons.share, t('made.share'),
-          () => navigator.share({ title, text: source }).then(() => act('answer.share', { task }), (/** @type {Error} */ error) => error.name === 'AbortError' || console.warn('Share', error))) : nothing}
-        ${sharing ? html`<hr>` : nothing}
-        ${item(icons.globe, t('made.htmlTitle'), () => import('../../ui/export.js').then((module) => module.saveAnswer(source, name)), 'answer.save', 'html')}
+        ${sharing ? html`<ul>${linked.length ? linked.map((part) => part.draw({ text: source, files: /** @type {any} */ (this).files }, item)) : item(icons.share, t('made.share'),
+          () => navigator.share({ title, text: source }).then(() => act('answer.share', { task }), (/** @type {Error} */ error) => error.name === 'AbortError' || console.warn('Share', error)))}</ul><hr>` : nothing}
+        <ul>${item(icons.globe, t('made.htmlTitle'), () => import('../../ui/export.js').then((module) => module.saveAnswer(source, name)), 'answer.save', 'html')}
         ${item(icons.file, t('made.docxTitle'), () => downloadWord(source, name), 'answer.save', 'docx')}
-        ${tables.map((table, i) => item(icons.table, tables.length > 1 ? t('made.csvNumbered', { count: i + 1 }) : t('made.csvTitle'), () => downloadCSV(table, i + 1), 'answer.save', 'csv'))}
+        ${tables.map((table, i) => item(icons.table, tables.length > 1 ? t('made.csvNumbered', { count: i + 1 }) : t('made.csvTitle'), () => downloadCSV(table, i + 1), 'answer.save', 'csv'))}</ul>
         <hr>
-        ${item(icons.print, t('made.print'), () => dress().then(() => printAlone(this.closest('.msg-jean'))), 'answer.print')}
+        <ul>${item(icons.print, t('made.print'), () => dress().then(() => printAlone(this.closest('.msg-jean'))), 'answer.print')}</ul>
       </div>`
   }
 }

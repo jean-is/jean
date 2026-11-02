@@ -129,8 +129,8 @@ async function restore(event) {
 }
 
 /** A button that picks a backup or an export. @param {string} label */
-const picker = (label) => html`<label class="button">${icons.upload} ${t(label)}
-  <input type="file" accept=".zip,.tgz,.json,application/zip,application/gzip" multiple class="visually-hidden" @change=${restore}></label>`
+const picker = (label) => html`<label class="button" for=${label}>${icons.upload} ${t(label)}
+  <input id=${label} type="file" accept=".zip,.tgz,.json,application/zip,application/gzip" multiple class="visually-hidden" @change=${restore}></label>`
 
 /** Bring in (D340, D341): how to ask each assistant for an export, then the file, into the project open. @type {Part} */
 const BRING = { id: 'import', at: 0, group: 'others', icon: icons.upload, label: 'data.import', text: () => t('data.importText'),

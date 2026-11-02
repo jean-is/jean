@@ -21,7 +21,7 @@ import { slug } from '../../core/settings.js'
 import { ulid } from '../../core/ulid.js'
 import { t, useStrings, locale, intlLocales } from '../../core/i18n.js'
 import { icons, icon } from '../../ui/menu-icons.js'
-import { turn, choices } from '../../ui/inbox.js'
+import { turn, choices, listed } from '../../ui/inbox.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { TIER, DANGERS, age, tierFor } from './tier.js'
 import { inbox, pair, openFrom, sealFor } from './family.js'
@@ -226,13 +226,13 @@ const menu = (id) => (all.value.length > 1 && self.value ? html`<button type="bu
   <span class="avatar" aria-hidden="true">${initial(self.value)}</span><span dir="auto">${nameOf(self.value)}</span>${carets}</button>` : adding(id))
 
 /** That page: the others to go to, a row asking first while an answer is being written, then Add a profile. @param {string} id the menu's @param {boolean} [asks] */
-const others = (id, asks = working()) => choices(t('profiles.title'), html`${all.value.filter(({ dir }) => dir !== here()).map((profile) => html`<button type="button" class="profile-switch" aria-expanded=${asks ? String(leaving.value === profile.dir) : nothing} popovertarget=${asks ? nothing : id} popovertargetaction=${asks ? nothing : 'hide'}
+const others = (id, asks = working()) => choices(t('profiles.title'), listed([...all.value.filter(({ dir }) => dir !== here()).map((profile) => html`<button type="button" class="profile-switch" aria-expanded=${asks ? String(leaving.value === profile.dir) : nothing} popovertarget=${asks ? nothing : id} popovertargetaction=${asks ? nothing : 'hide'}
     @click=${(/** @type {Event} */ e) => { if (asks) leaving.value = profile.dir; else switchTo(profile.dir, whoIs(profile), /** @type {Element} */ (e.currentTarget).querySelector('.avatar')) }}>
     <span class="avatar" aria-hidden="true" ${tinted(profile.colour)}>${initial(profile)}</span><span dir="auto">${nameOf(profile)}</span>${profile.locked ? icons.lock : nothing}</button>
     ${asks && leaving.value === profile.dir ? html`<div class="profile-leaving"><p>${t('profiles.busy')}</p><div class="row">
       <button type="button" class="button subtle" @click=${() => { leaving.value = '' }}>${t('profiles.stay')}</button>
       <button type="button" class="button primary" @click=${() => switchTo(profile.dir, whoIs(profile))}>${t('profiles.goAnyway')}</button></div></div>` : nothing}`
-)}${adding(id)}`)
+), adding(id)]))
 
 /** Settings › Profiles, from ./page.js, loaded the first time it shows. */
 const page = lazyPage(() => import('./page.js'))
