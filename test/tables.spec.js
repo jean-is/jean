@@ -37,31 +37,31 @@ test('a table Jean keeps: offered, made from a request and filled, its changes a
   const rows = page.locator('.table-grid tbody tr')
   await expect(rows).toHaveCount(3)
   await expect(page.locator('.table-grid .table-head')).toHaveText(['Company', 'Role', 'Status', 'Applied on'])
-  await expect(rows.nth(0).getByLabel('Company')).toHaveValue('Atelier Lune')
-  await expect(rows.nth(2).getByLabel('Status')).toHaveValue('To apply')
-  await expect(rows.nth(0).getByLabel('Applied on')).toHaveValue('2026-10-18')
+  await expect(rows.nth(0).getByTitle('Company')).toHaveValue('Atelier Lune')
+  await expect(rows.nth(2).getByTitle('Status')).toHaveValue('To apply')
+  await expect(rows.nth(0).getByTitle('Applied on')).toHaveValue('2026-10-18')
   const review = page.getByRole('region', { name: 'Suggested changes' })
   await expect(review).toContainText('11 changes to review')
-  await expect(page.locator('.table-grid td.is-jean')).toHaveCount(11)
+  await expect(page.locator('.table-grid :is(td, th).is-jean')).toHaveCount(11)
   await review.getByRole('button', { name: 'Accept all' }).click()
   await expect(review).toHaveCount(0)
   await expect(page.locator('.table-grid .is-jean')).toHaveCount(0)
 
   // A cell changed by hand is the user's change, after Jean's.
-  await rows.nth(1).getByLabel('Role').fill('UX lead, remote')
-  await rows.nth(1).getByLabel('Role').press('Tab')
+  await rows.nth(1).getByTitle('Role').fill('UX lead, remote')
+  await rows.nth(1).getByTitle('Role').press('Tab')
   await expect.poll(async () => (await changes(page)).at(-1)).toMatchObject({ by: 'user', set: { role: 'UX lead, remote' } })
 
   // Told of an interview, the brain reads the rows and moves that one on: marked, then undone.
   await page.locator('#prompt').fill('Atelier Lune invited me to an interview')
   await page.locator('#prompt').press('Enter')
   await answered(page, 2)
-  await expect(rows.nth(0).getByLabel('Status')).toHaveValue('Interview')
+  await expect(rows.nth(0).getByTitle('Status')).toHaveValue('Interview')
   await expect(review).toContainText('1 change to review')
-  await expect(page.locator('.table-grid td.is-jean')).toHaveCount(1)
+  await expect(page.locator('.table-grid :is(td, th).is-jean')).toHaveCount(1)
   expect((await changes(page)).at(-1)).toMatchObject({ by: 'jean', set: { status: 'Interview' }, why: 'the email of 23 October' })
   await review.getByRole('button', { name: 'Reject all' }).click()
-  await expect(rows.nth(0).getByLabel('Status')).toHaveValue('Applied')
+  await expect(rows.nth(0).getByTitle('Status')).toHaveValue('Applied')
   await expect(review).toHaveCount(0)
 
   // The board, from Settings: a lane for each step, in order, each card moved by its own step.
@@ -73,7 +73,7 @@ test('a table Jean keeps: offered, made from a request and filled, its changes a
   const lanes = page.locator('.table-lane')
   await expect(lanes.locator('h3 > span[dir]')).toHaveText(['To apply', 'Applied', 'Interview', 'Offer'])
   await expect(lanes.nth(1).locator('.table-card')).toHaveCount(2)
-  await lanes.nth(0).locator('.table-card').getByLabel('Status').selectOption('Applied')
+  await lanes.nth(0).locator('.table-card').getByTitle('Status').selectOption('Applied')
   await expect(lanes.nth(1).locator('.table-card')).toHaveCount(3)
   await expect(lanes.nth(0).locator('.table-card')).toHaveCount(0)
 
@@ -113,7 +113,7 @@ test('Jean’s changes to three rows are each accepted or rejected, on the table
   await expect(said).toHaveText('0 changes to review')
   await expect(tools).toBeFocused()
   const rows = page.locator('.table-grid tbody tr')
-  await expect(rows.nth(1).getByLabel('Status')).toHaveValue('Applied')
+  await expect(rows.nth(1).getByTitle('Status')).toHaveValue('Applied')
   /** Jean moves each row on, from an email. @param {string[]} steps */
   const moved = (steps) => page.evaluate(async (status) => {
     const { shown, change } = await import('/caps/tables/tables.js')
@@ -122,30 +122,30 @@ test('Jean’s changes to three rows are each accepted or rejected, on the table
   }, steps)
   await moved(['Interview', 'Offer', 'Applied'])
   await expect(review).toContainText('3 changes to review')
-  await expect(page.locator('.table-grid td.is-jean')).toHaveCount(3)
+  await expect(page.locator('.table-grid :is(td, th).is-jean')).toHaveCount(3)
 
   // Accepted, a row is the user's own, and the keyboard goes on to the next row's.
   await rows.nth(0).getByRole('button', { name: 'Accept' }).click()
   await expect(review).toContainText('2 changes to review')
   await expect(said).toHaveText('2 changes to review')
-  await expect(rows.nth(0).getByLabel('Status')).toHaveValue('Interview')
-  await expect(rows.nth(0).locator('td.is-jean')).toHaveCount(0)
+  await expect(rows.nth(0).getByTitle('Status')).toHaveValue('Interview')
+  await expect(rows.nth(0).locator(':is(td, th).is-jean')).toHaveCount(0)
   await expect(rows.nth(0).getByRole('button', { name: 'Accept' })).toHaveCount(0)
   await expect(rows.nth(1).getByRole('button', { name: 'Accept' })).toBeFocused()
   // Rejected, it is as it was.
   await rows.nth(1).getByRole('button', { name: 'Reject' }).click()
   await expect(review).toContainText('1 change to review')
   await expect(said).toHaveText('1 change to review')
-  await expect(rows.nth(1).getByLabel('Status')).toHaveValue('Applied')
-  await expect(rows.nth(1).locator('td.is-jean')).toHaveCount(0)
+  await expect(rows.nth(1).getByTitle('Status')).toHaveValue('Applied')
+  await expect(rows.nth(1).locator(':is(td, th).is-jean')).toHaveCount(0)
   // Reject all takes back what is left, not what the user accepted.
   await review.getByRole('button', { name: 'Reject all' }).click()
   await expect(review).toHaveCount(0)
   await expect(said).toHaveText('0 changes to review')
   await expect(tools).toBeFocused()
-  await expect(rows.nth(0).getByLabel('Status')).toHaveValue('Interview')
-  await expect(rows.nth(1).getByLabel('Status')).toHaveValue('Applied')
-  await expect(rows.nth(2).getByLabel('Status')).toHaveValue('To apply')
+  await expect(rows.nth(0).getByTitle('Status')).toHaveValue('Interview')
+  await expect(rows.nth(1).getByTitle('Status')).toHaveValue('Applied')
+  await expect(rows.nth(2).getByTitle('Status')).toHaveValue('To apply')
   expect((await changes(page)).slice(-3).map((line) => [line.by, line.set?.status])).toEqual([['user', 'Interview'], ['user', 'Applied'], ['user', 'To apply']])
 
   // On the board, a card Jean moved has its own too. By now the page has scrolled, and WebKit places a menu as if it hadn't: back to the top.
@@ -230,12 +230,12 @@ for (const [lang, table, board, review] of [['ar', 'جدول', 'لوحة', 'تغ
     })
     await expect(page.locator('html')).toHaveAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr')
     await page.locator('.table-tools > button').last().click()
-    await expect(page.locator('.table-panel:popover-open > button[aria-current]')).toHaveText([table, board])
+    await expect(page.locator('.table-panel:popover-open button[aria-current]')).toHaveText([table, board])
     await page.keyboard.press('Escape')
     await expect(page.locator('.table-total').first()).toHaveText(lang === 'ar' ? 'حساب' : '計算')
     await expect(page.locator('.table-view .review')).toContainText(review)
     await expect(page.locator('.table-view > [role="status"]')).toHaveText(review)
-    await expect(page.locator('.table-grid tbody tr').first().getByLabel('الحالة')).toHaveValue('مقابلة')
+    await expect(page.locator('.table-grid tbody tr').first().getByTitle('الحالة')).toHaveValue('مقابلة')
     await expect(page.locator('.table-decide button').first()).toHaveAttribute('aria-label', lang === 'ar' ? 'قبول' : '承認')
     // The table starts at the pane's start edge, the right one in Arabic.
     const [view, grid] = await Promise.all(['.table-view', '.table-grid'].map((selector) => page.locator(selector).boundingBox()))
@@ -246,12 +246,16 @@ for (const [lang, table, board, review] of [['ar', 'جدول', 'لوحة', 'تغ
     expect(lang === 'ar' ? (tools?.x ?? 0) < (name?.x ?? 0) : (tools?.x ?? 0) > (name?.x ?? 0)).toBe(true)
     expect(await page.locator('.table-grid tbody td:nth-child(3)').first().evaluate((td) => getComputedStyle(td)[document.dir === 'rtl' ? 'borderRightWidth' : 'borderLeftWidth'])).toBe('1px')
     // The arrows select the cell they point at, the next one on the left in Arabic, and a row's handle opens its menu in the language's words.
-    const cells = page.locator('.table-grid tbody tr').first().locator('td[tabindex]')
+    const cells = page.locator('.table-grid tbody tr').first().locator(':is(td, th)[tabindex]')
     await cells.first().focus()
     await page.keyboard.press(lang === 'ar' ? 'ArrowLeft' : 'ArrowRight')
     await expect(cells.nth(1)).toBeFocused()
     await page.locator('.table-grip button').first().click()
-    await expect(page.locator('.table-menu:popover-open button')).toHaveText(lang === 'ar' ? ['إدراج أسفل', 'تكرار', 'حذف'] : ['下に挿入', '複製', '削除'])
+    await expect(page.locator('.table-menu:popover-open button')).toHaveText(lang === 'ar' ? ['إدراج أسفل', 'تكرار', 'نقل إلى الأعلى', 'نقل إلى الأسفل', 'حذف'] : ['下に挿入', '複製', '上へ移動', '下へ移動', '削除'])
+    // A column's menu moves it to the language's start or end: right first in Arabic.
+    await page.keyboard.press('Escape')
+    await page.locator('.table-grid .table-head').first().click()
+    await expect(page.locator('.table-menu:popover-open').getByRole('button', { name: lang === 'ar' ? 'نقل إلى اليمين' : '左へ移動' })).toBeDisabled()
   })
 }
 
@@ -363,14 +367,14 @@ test('a collection’s heads stay on top, show their kind and open a menu to ren
   await (await menu('Stage')).getByRole('button', { name: /^Type/ }).click()
   await page.locator('.table-menu:popover-open').getByRole('button', { name: 'Text' }).click()
   await expect.poll(async () => (await file())?.board).toBe(false)
-  await expect(page.locator('.table-panel > button[aria-current]')).toHaveCount(0)
+  await expect(page.locator('.table-panel button[aria-current]')).toHaveCount(0)
 
   // Sorted from Z to A, then from A to Z: the rows keep that order.
   await (await menu('Nights booked')).getByRole('button', { name: 'Sort Z → A' }).click()
-  await expect(rows.first().getByLabel('Nights booked')).toHaveValue('24')
-  await expect(rows.last().getByLabel('Nights booked')).toHaveValue('1')
+  await expect(rows.first().getByTitle('Nights booked')).toHaveValue('24')
+  await expect(rows.last().getByTitle('Nights booked')).toHaveValue('1')
   await (await menu('Nights booked')).getByRole('button', { name: 'Sort A → Z' }).click()
-  await expect(rows.first().getByLabel('Nights booked')).toHaveValue('1')
+  await expect(rows.first().getByTitle('Nights booked')).toHaveValue('1')
   await expect.poll(async () => (await file())?.nights.slice(0, 4)).toEqual([1, 2, 3, 4])
 
   // Insert left adds a text column before it, its name to type at once; Delete takes it away.
@@ -382,6 +386,12 @@ test('a collection’s heads stay on top, show their kind and open a menu to ren
   await (await menu('Nights booked')).getByRole('button', { name: 'Insert right' }).click()
   await expect(box).toBeFocused()
   await page.keyboard.press('Escape')
+  await expect(heads).toHaveText(['Name', 'Country', 'Nights booked', 'Text', 'Stage'])
+  await (await menu('Country')).getByRole('button', { name: 'Delete' }).click()
+  await expect(heads).toHaveText(['Name', 'Nights booked', 'Text', 'Stage'])
+  // Said, with an Undo that brings it back where it was, the keyboard on the head in its place.
+  await expect(heads.nth(1)).toBeFocused()
+  await page.locator('.toast', { hasText: 'Column “Country” deleted.' }).getByRole('button', { name: 'Undo' }).click()
   await expect(heads).toHaveText(['Name', 'Country', 'Nights booked', 'Text', 'Stage'])
   await (await menu('Country')).getByRole('button', { name: 'Delete' }).click()
   await expect(heads).toHaveText(['Name', 'Nights booked', 'Text', 'Stage'])
@@ -400,19 +410,28 @@ test('a collection’s heads stay on top, show their kind and open a menu to ren
   await expect(heads).toHaveText(['Name', 'Text', 'Nights booked', 'Stage'])
   await expect(page.locator('.table-grid th[data-drop]')).toHaveCount(0)
   await expect.poll(ids).toEqual(['name', 'text-2', 'nights', 'stage'])
-  await expect((await menu('Name')).getByRole('button', { name: 'Move left' })).toHaveCount(0)
+  // Move left and Move right in its menu do it by a press, as far as the line goes, the keyboard staying on its head.
+  await expect((await menu('Name')).getByRole('button', { name: 'Move left' })).toBeDisabled()
+  await page.keyboard.press('Escape')
+  await (await menu('Text')).getByRole('button', { name: 'Move right' }).click()
+  await expect(heads).toHaveText(['Name', 'Nights booked', 'Text', 'Stage'])
+  await expect(heads.nth(2)).toBeFocused()
+  await expect.poll(ids).toEqual(['name', 'nights', 'text-2', 'stage'])
 
-  // Hide takes a column out of the table as Settings' columns shown does, which then has it unticked and is lit; the name column has none.
-  await expect(page.locator('.table-menu:popover-open').getByRole('button', { name: 'Hide' })).toBeDisabled()
+  // Hide takes a column out of the table as Settings' columns shown does, which then has it unticked and is pressed, saying how many; the name column has none.
+  await expect((await menu('Name')).getByRole('button', { name: 'Hide' })).toBeDisabled()
   await page.keyboard.press('Escape')
   await (await menu('Text')).getByRole('button', { name: 'Hide' }).click()
   await expect(heads).toHaveText(['Name', 'Nights booked', 'Stage'])
-  const settings = page.locator('.table-tools').getByRole('button', { name: 'Settings', exact: true })
-  await expect(settings).toHaveAttribute('data-on')
+  const settings = page.locator('.table-tools > [popovertarget$="-settings"]')
+  await expect(settings).toHaveAttribute('aria-pressed', 'true')
+  await expect(settings).toHaveAccessibleName('Settings: 1 column hidden')
+  await expect(settings).toHaveText('1')
   await settings.click()
   await expect(page.locator('.table-panel:popover-open').getByRole('checkbox', { name: 'Text' })).not.toBeChecked()
   await page.locator('.table-panel:popover-open').getByRole('checkbox', { name: 'Text' }).check()
-  await expect(heads).toHaveText(['Name', 'Text', 'Nights booked', 'Stage'])
+  await expect(heads).toHaveText(['Name', 'Nights booked', 'Text', 'Stage'])
+  await expect(settings).toHaveAttribute('aria-pressed', 'false')
   await page.keyboard.press('Escape')
 
   // A row's handle shows with the pointer on its row, or the keyboard, which Tab brings to it from the row before; dragged over
@@ -420,7 +439,7 @@ test('a collection’s heads stay on top, show their kind and open a menu to ren
   const handle = (/** @type {number} */ n) => rows.nth(n).getByRole('button', { name: 'Move row' })
   await page.mouse.move(0, 0)
   await expect(handle(2)).toHaveCSS('opacity', '0')
-  await rows.nth(1).getByLabel('Stage', { exact: true }).focus()
+  await rows.nth(1).getByTitle('Stage', { exact: true }).focus()
   // WebKit, as Safari, tabs to buttons with Alt.
   await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab')
   await expect(handle(2)).toBeFocused()
@@ -429,14 +448,23 @@ test('a collection’s heads stay on top, show their kind and open a menu to ren
   await rows.nth(2).hover()
   await expect(handle(2)).toHaveCSS('opacity', '1')
   await handle(2).dragTo(rows.nth(0), { targetPosition: { x: 60, y: 4 } })
-  await expect(rows.first().getByLabel('Nights booked')).toHaveValue('3')
+  await expect(rows.first().getByTitle('Nights booked')).toHaveValue('3')
   await expect.poll(async () => (await file())?.nights.slice(0, 4)).toEqual([3, 1, 2, 4])
   // The arrows move it by one, the keyboard staying on its handle.
   await handle(0).focus()
   await page.keyboard.press('ArrowDown')
-  await expect(rows.nth(1).getByLabel('Nights booked')).toHaveValue('3')
+  await expect(rows.nth(1).getByTitle('Nights booked')).toHaveValue('3')
   await expect(handle(1)).toBeFocused()
   await expect.poll(async () => (await file())?.nights.slice(0, 4)).toEqual([1, 3, 2, 4])
+  // Or by Move up and Move down in its menu, the first row's Move up greyed.
+  await handle(1).click()
+  await page.locator('.table-menu:popover-open').getByRole('button', { name: 'Move up' }).click()
+  await expect(rows.first().getByTitle('Nights booked')).toHaveValue('3')
+  await expect(handle(0)).toBeFocused()
+  await handle(0).click()
+  await expect(page.locator('.table-menu:popover-open').getByRole('button', { name: 'Move up' })).toBeDisabled()
+  await page.keyboard.press('Escape')
+  await expect.poll(async () => (await file())?.nights.slice(0, 4)).toEqual([3, 1, 2, 4])
   expect(JSON.parse((await file())?.text ?? '{}').order).toHaveLength(24)
 })
 
@@ -451,8 +479,8 @@ test('a collection’s cell is changed by a click or Enter, kept by Enter, which
     await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, ['Lyon', 'Porto', 'Kyoto'].map((name, i) => `${JSON.stringify({ row: `01K8000000000000000000000${i}`, set: { name, days: i + 2 }, at: `2026-10-26T09:0${i + 1}:00.000Z`, by: 'user' })}\n`).join(''))
     ;(await import('/caps/tables/tables.js')).metaOf(folder).then((meta) => import('/ui/preview.js').then(({ preview }) => preview({ uri: folder, name: meta?.name ?? '', title: meta?.title ?? '' })))
   })
-  const rows = page.locator('.table-grid tbody tr'), names = rows.getByLabel('Name'), values = () => names.evaluateAll((all) => all.map((field) => /** @type {HTMLInputElement} */ (field).value))
-  const cell = (/** @type {number} */ row, /** @type {number} */ column) => rows.nth(row).locator('td[tabindex]').nth(column)
+  const rows = page.locator('.table-grid tbody tr'), names = rows.getByTitle('Name'), values = () => names.evaluateAll((all) => all.map((field) => /** @type {HTMLInputElement} */ (field).value))
+  const cell = (/** @type {number} */ row, /** @type {number} */ column) => rows.nth(row).locator(':is(td, th)[tabindex]').nth(column)
   // The pane names it by its name alone, not as the workbook it downloads as.
   await expect(page.locator('app-preview .pane-head h2')).toHaveText('Trips')
   await expect.poll(values).toEqual(['Lyon', 'Porto', 'Kyoto'])
@@ -503,14 +531,17 @@ test('a collection’s cell is changed by a click or Enter, kept by Enter, which
   const handle = (/** @type {number} */ n) => rows.nth(n).getByRole('button', { name: 'Move row' }), menu = page.locator('.table-menu:popover-open')
   await rows.nth(1).hover()
   await handle(1).click()
-  await expect(menu.getByRole('button')).toHaveText(['Insert below', 'Duplicate', 'Delete'])
+  await expect(menu.getByRole('listitem')).toHaveText(['Insert below', 'Duplicate', 'Move up', 'Move down', 'Delete'])
   await menu.getByRole('button', { name: 'Duplicate' }).click()
   await expect.poll(values).toEqual(['Lyon and Annecy', 'Porto', 'Porto', 'Kyoto'])
-  await expect(rows.nth(2).getByLabel('Days')).toHaveValue('3')
+  await expect(rows.nth(2).getByTitle('Days')).toHaveValue('3')
   await rows.nth(0).hover()
   await handle(0).click({ button: 'right' })
   await menu.getByRole('button', { name: 'Delete' }).click()
   await expect.poll(values).toEqual(['Porto', 'Porto', 'Kyoto'])
+  // Said, with an Undo, the keyboard on the handle of the row in its place.
+  await expect(page.locator('.toast', { hasText: 'Row “Lyon and Annecy” deleted.' }).getByRole('button', { name: 'Undo' })).toBeVisible()
+  await expect(handle(0)).toBeFocused()
   await cell(0, 1).focus()
   await page.keyboard.press('ControlOrMeta+z')
   await expect.poll(values).toEqual(['Lyon and Annecy', 'Porto', 'Porto', 'Kyoto'])
@@ -545,6 +576,49 @@ test('a collection’s cell is changed by a click or Enter, kept by Enter, which
   await expect(page.locator('.table-grid .table-head')).toHaveText(['Name', 'Nights', 'Done'])
 })
 
+test('a value its column refuses stays, marked, its form said beside it, the keyboard on it; a row deleted comes back by its Undo', async ({ page }) => {
+  await start(page)
+  await page.evaluate(async () => {
+    const [{ unlock }, { app }] = await Promise.all([import('/ui/caps.js'), import('/ui/state.js')])
+    await unlock('tables')
+    const folder = 'collections/01K85Z1T00000000000000000M-people', at = '2026-11-02T09:00:00.000Z'
+    await app.fs.write(`${app.projectDir}/${folder}/collection.json`, JSON.stringify({ format: 1, id: '01K85Z1T00000000000000000M', name: 'People', author: 'user', created: at, changed: at,
+      properties: [{ id: 'name', name: 'Name', type: 'text' }, { id: 'mail', name: 'Email', type: 'email' }], views: [{ id: 'table', type: 'table' }] }))
+    await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, ['Ada', 'Grace'].map((name, i) => `${JSON.stringify({ row: `01K8000000000000000000000${i}`, set: { name }, at: `2026-11-02T09:0${i + 1}:00.000Z`, by: 'user' })}\n`).join(''))
+    ;(await import('/ui/preview.js')).preview({ uri: folder, name: 'People', title: 'People' })
+  })
+  const rows = page.locator('.table-grid tbody tr'), mail = rows.nth(0).getByTitle('Email')
+  // Each row is headed by its name.
+  await expect(page.getByRole('rowheader')).toHaveCount(2)
+  await mail.fill('ada at home')
+  await mail.press('Enter')
+  await expect(mail).toBeFocused()
+  await expect(mail).toHaveValue('ada at home')
+  await expect(mail).toHaveAttribute('aria-invalid', 'true')
+  await expect(mail).toHaveAccessibleDescription('Write an email address, such as name@example.com.')
+  await expect(rows.nth(0).getByRole('alert')).toHaveText('Write an email address, such as name@example.com.')
+  expect((await changes(page)).some((line) => line.set?.mail)).toBe(false)
+  // Put right, it is kept, and Enter goes on to the cell under it.
+  await mail.fill('ada@example.com')
+  await mail.press('Enter')
+  await expect(mail).not.toHaveAttribute('aria-invalid')
+  await expect(rows.nth(1).locator('td[tabindex]')).toBeFocused()
+  await expect.poll(async () => (await changes(page)).at(-1)).toMatchObject({ by: 'user', set: { mail: 'ada@example.com' } })
+  // Escape leaves a wrong one as the cell was.
+  await mail.fill('nope')
+  await mail.press('Enter')
+  await mail.press('Escape')
+  await expect(mail).toHaveValue('ada@example.com')
+  await expect(mail).not.toHaveAttribute('aria-invalid')
+
+  await rows.nth(1).getByRole('button', { name: 'Move row' }).click()
+  await page.locator('.table-menu:popover-open').getByRole('button', { name: 'Delete' }).click()
+  await expect(rows).toHaveCount(1)
+  await page.locator('.toast', { hasText: 'Row “Grace” deleted.' }).getByRole('button', { name: 'Undo' }).click()
+  await expect(rows).toHaveCount(2)
+  await expect(rows.nth(1).getByTitle('Name')).toHaveValue('Grace')
+})
+
 test('a Formula column’s cells are worked out from each row’s others, and a click or Enter on one opens a dialog to write the column’s formula, with Math’s functions by their names alone', async ({ page }) => {
   await start(page)
   await page.evaluate(async () => {
@@ -576,7 +650,7 @@ test('a Formula column’s cells are worked out from each row’s others, and a 
   await expect(dialog).toHaveCount(0)
   await expect(totals).toHaveText(['253.441', '124.443'])
   // Escape leaves the formula as it was and the pane open; Enter on the cell selected opens the dialog too.
-  await expect(rows.nth(0).locator('td[tabindex]').nth(3)).toBeFocused()
+  await expect(rows.nth(0).locator(':is(td, th)[tabindex]').nth(3)).toBeFocused()
   await page.keyboard.press('ArrowDown')
   await page.keyboard.press('Enter')
   await expect(words).toBeFocused()
@@ -596,7 +670,7 @@ test('a Formula column’s cells are worked out from each row’s others, and a 
   await expect(words).toHaveValue('round(Price * Stays) + max(1, sqrt(Stays)) * PI')
   await expect(words).toBeFocused()
   await page.keyboard.press('Escape')
-  await rows.nth(0).locator('td[tabindex]').first().focus()
+  await rows.nth(0).locator(':is(td, th)[tabindex]').first().focus()
   await page.keyboard.press('ControlOrMeta+z')
   await page.keyboard.press('ControlOrMeta+z')
   await expect(totals).toHaveText(['247.5', '120'])
@@ -649,7 +723,7 @@ test('a collection’s bar finds rows with Search, as Creations does, keeps thos
     await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, rows.map(([item, amount, stage, receipt], i) => `${JSON.stringify({ row: `01K8000000000000000000000${i}`, set: { item, amount, stage, receipt }, at: `2026-10-24T09:0${i + 1}:00.000Z`, by: 'user' })}\n`).join(''))
     ;(await import('/ui/preview.js')).preview({ uri: folder, name: 'Expenses.xlsx', title: 'Expenses' })
   })
-  const rows = page.locator('.table-grid tbody tr'), items = rows.getByLabel('Item'), tools = page.locator('.table-tools'), panel = page.locator('.table-panel:popover-open')
+  const rows = page.locator('.table-grid tbody tr'), items = rows.getByTitle('Item'), tools = page.locator('.table-tools'), panel = page.locator('.table-panel:popover-open')
   const values = () => items.evaluateAll((fields) => fields.map((field) => /** @type {HTMLInputElement} */ (field).value))
   await expect.poll(values).toEqual(['Train to Lyon', 'Hotel', 'Dinner', 'Conférence', 'Taxi'])
   /** The table view as its file holds it. */
@@ -660,7 +734,7 @@ test('a collection’s bar finds rows with Search, as Creations does, keeps thos
   // No line around the table or beside its handles; one under its heads and under each row, from the first column, and between two data cells.
   const borders = (/** @type {string} */ selector) => page.locator(selector).first().evaluate((cell) => ((style) => [style.borderTopWidth, style.borderLeftWidth, style.borderRightWidth, style.borderBottomWidth])(getComputedStyle(cell)))
   for (const selector of ['.table-scroll', '.table-grid thead td.table-grip', '.table-grid tbody tr:nth-child(2) td:first-child']) expect(await borders(selector)).toEqual(['0px', '0px', '0px', '0px'])
-  for (const selector of ['.table-grid thead th', '.table-grid tbody tr:first-child td:nth-child(2)', '.table-grid tbody tr:last-child td:nth-child(2)', '.table-grid tbody tr:nth-child(2) td:last-child']) expect(await borders(selector)).toEqual(['0px', '0px', '0px', '1px'])
+  for (const selector of ['.table-grid thead th', '.table-grid tbody tr:first-child > :nth-child(2)', '.table-grid tbody tr:last-child > :nth-child(2)', '.table-grid tbody tr:nth-child(2) td:last-child']) expect(await borders(selector)).toEqual(['0px', '0px', '0px', '1px'])
   expect(await borders('.table-grid tbody tr:nth-child(2) td:nth-child(3)')).toEqual(['0px', '1px', '0px', '1px'])
   // The last head's + is no field: no box, no fill.
   expect(await page.locator('.table-add-column').evaluate((add) => ((style) => [style.borderTopWidth, style.backgroundColor])(getComputedStyle(add)))).toEqual(['0px', 'rgba(0, 0, 0, 0)'])
@@ -691,8 +765,11 @@ test('a collection’s bar finds rows with Search, as Creations does, keeps thos
   await expect.poll(values).toEqual(['Conférence'])
   await search.fill('240')
   await expect.poll(values).toEqual(['Hotel'])
+  // Nothing found is said in a status that was there, empty, before.
+  const said = page.locator('.table-view .table-none [role="status"]')
+  await expect(said).toHaveText('')
   await search.fill('passport')
-  await expect(page.locator('.table-view .creations-none')).toContainText('No row matches “passport”.')
+  await expect(said).toHaveText('No row matches “passport”.')
   await page.locator('.table-view').getByRole('button', { name: 'Clear' }).click()
   await expect(items).toHaveCount(5)
   await expect(search).toBeFocused()
@@ -711,8 +788,18 @@ test('a collection’s bar finds rows with Search, as Creations does, keeps thos
   await panel.getByRole('spinbutton', { name: 'Amount' }).fill('80')
   await panel.getByRole('spinbutton', { name: 'Amount' }).press('Enter')
   await expect.poll(values).toEqual(['Train to Lyon', 'Hotel', 'Conférence'])
-  await expect(tools.getByRole('button', { name: 'Filter', exact: true })).toHaveAttribute('data-on')
+  const filter = tools.locator('[popovertarget$="-filter"]')
+  await expect(filter).toHaveAttribute('aria-pressed', 'true')
+  await expect(filter).toHaveAccessibleName('Filter: 1 rule on')
+  await expect(filter).toHaveText('1')
   await expect.poll(async () => (await kept())?.filter).toEqual({ and: [{ property: 'amount', op: 'greater-than', value: 80 }] })
+  // One that keeps no row says so.
+  await panel.getByRole('spinbutton', { name: 'Amount' }).fill('9000')
+  await panel.getByRole('spinbutton', { name: 'Amount' }).press('Enter')
+  await expect(said).toHaveText('No row meets the filter.')
+  await panel.getByRole('spinbutton', { name: 'Amount' }).fill('80')
+  await panel.getByRole('spinbutton', { name: 'Amount' }).press('Enter')
+  await expect(said).toHaveText('')
   await page.keyboard.press('Escape')
   await expect(panel).toHaveCount(0)
 
@@ -727,7 +814,7 @@ test('a collection’s bar finds rows with Search, as Creations does, keeps thos
   await expect(panel.getByRole('checkbox', { name: 'Item' })).toBeDisabled()
   await panel.getByRole('checkbox', { name: 'Receipt' }).uncheck()
   await expect(page.locator('.table-grid .table-head')).toHaveText(['Item', 'Amount', 'Stage'])
-  await expect(tools.getByRole('button', { name: 'Settings', exact: true })).toHaveAttribute('data-on')
+  await expect(tools.locator('[popovertarget$="-settings"]')).toHaveAttribute('aria-pressed', 'true')
   await panel.getByRole('button', { name: 'Board' }).click()
   await expect(page.locator('.table-lane .table-card')).toHaveCount(3)
   await panel.getByRole('button', { name: 'Table' }).click()
@@ -819,7 +906,7 @@ test('a relation is to this collection or another, picked from the last head’s
   }, contacts)
   const heads = page.locator('.table-grid .table-head'), rows = page.locator('.table-grid tbody tr'), menu = page.locator('.table-menu:popover-open')
   /** The name of the row a cell shows. @param {number} n @param {string} column */
-  const shows = (n, column) => rows.nth(n).getByLabel(column).evaluate((/** @type {HTMLSelectElement} */ select) => select.selectedOptions[0]?.text)
+  const shows = (n, column) => rows.nth(n).getByTitle(column).evaluate((/** @type {HTMLSelectElement} */ select) => select.selectedOptions[0]?.text)
   await expect(heads).toHaveText(['Name', 'Employer'])
 
   // The last head's list has a relation to this collection and to each other one; Companies' is named after it, its name to change at once.
@@ -834,7 +921,7 @@ test('a relation is to this collection or another, picked from the last head’s
   await expect(heads).toHaveText(['Name', 'Employer', 'Company'])
   await expect.poll(async () => (await file())?.columns.at(-1)).toBe(`companies relation ${companies}`)
   // Its cell lists nothing but the row it has, none yet, until the keyboard reaches it: then it picks a row of Companies by its name, and holds the row's id, and goes back to that row as the keyboard leaves.
-  const company = rows.nth(0).getByLabel('Company')
+  const company = rows.nth(0).getByTitle('Company')
   await expect(company.locator('option')).toHaveText(['—'])
   await company.focus()
   await expect(company.locator('option')).toHaveText(['—', 'Acme', 'Globex'])
@@ -909,9 +996,9 @@ test('a relation is to this collection or another, picked from the last head’s
   await menu.getByRole('button', { name: /^Relation/ }).click()
   await menu.getByRole('button', { name: 'This collection' }).click()
   await expect.poll(async () => (await file())?.columns.at(-1)).toBe(`companies relation ${contacts}`)
-  await rows.nth(1).getByLabel('Company').focus()
-  await expect(rows.nth(1).getByLabel('Company').locator('option')).toHaveText(['—', 'Ana', 'Bo'])
-  await rows.nth(1).getByLabel('Company').selectOption({ label: 'Ana' })
+  await rows.nth(1).getByTitle('Company').focus()
+  await expect(rows.nth(1).getByTitle('Company').locator('option')).toHaveText(['—', 'Ana', 'Bo'])
+  await rows.nth(1).getByTitle('Company').selectOption({ label: 'Ana' })
   await expect.poll(async () => (await file())?.cells[1].companies).toBe(id('E', 1))
   // Duplicated, its copy's relation to itself is to the copy.
   expect(await page.evaluate(async (folder) => {
@@ -933,7 +1020,7 @@ test('a field in every row holds what it lists only in use: a select’s the lis
     await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, [[ana, { name: 'Ana', stage: 'Idea' }], [other, { name: far, near: ana }]].map(([row, set]) => `${JSON.stringify({ row, set, at, by: 'user' })}\n`).join(''))
     ;(await import('/ui/preview.js')).preview({ uri: folder, name: 'Visits', title: 'Visits' })
   }, { folder, far, ana, other })
-  const rows = page.locator('.table-grid tbody tr'), stage = rows.nth(0).getByLabel('Stage'), listed = page.locator('.table-grid input[list]'), lists = page.locator('.table-view datalist')
+  const rows = page.locator('.table-grid tbody tr'), stage = rows.nth(0).getByTitle('Stage'), listed = page.locator('.table-grid input[list]'), lists = page.locator('.table-view datalist')
   await expect(rows).toHaveCount(2)
 
   // One list a column, which no field holds at rest; one holds it with the pointer on it.
@@ -956,10 +1043,10 @@ test('a field in every row holds what it lists only in use: a select’s the lis
   await expect(listed).toHaveCount(0)
 
   // A relation's field lists the row it has; pressed, every row there as its menu opens, its width as it was.
-  const near = rows.nth(0).getByLabel('Near')
+  const near = rows.nth(0).getByTitle('Near')
   await expect(near.locator('option')).toHaveText(['—'])
-  await expect(rows.nth(1).getByLabel('Near').locator('option')).toHaveText(['—', 'Ana'])
-  await expect(rows.nth(1).getByLabel('Near')).toHaveValue(ana)
+  await expect(rows.nth(1).getByTitle('Near').locator('option')).toHaveText(['—', 'Ana'])
+  await expect(rows.nth(1).getByTitle('Near')).toHaveValue(ana)
   const width = (await near.boundingBox())?.width
   await near.dispatchEvent('mousedown')
   await expect(near.locator('option')).toHaveText(['—', 'Ana', far])
@@ -989,7 +1076,7 @@ test('a brain makes a relation too, to a collection the project keeps or to the 
   })
   expect(made?.collections).toEqual([null, companies, made?.folder])
   expect(made?.cells).toEqual([{ name: 'Ana', company: globex }])
-  await expect(page.locator('.table-grid tbody tr').first().getByLabel('Company')).toHaveValue(globex)
+  await expect(page.locator('.table-grid tbody tr').first().getByTitle('Company')).toHaveValue(globex)
 })
 
 test('a page shows a collection the project keeps as it is: its figures, chart and table follow a change, in the user’s language, and its form adds a row as the user’s own; a copy keeps what it showed, which a task brought in from a share shows in place of this project’s own (D633)', async ({ page }) => {

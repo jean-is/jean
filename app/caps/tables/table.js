@@ -247,13 +247,13 @@ export function grown(table, values, at) {
 }
 
 /**
- * The table renamed, or a column added (at the end or `at` a place among them all), renamed, made another kind, moved before or after another or taken away, or its
+ * The table renamed, or a column added (at the end or `at` a place among them all), renamed, made another kind, moved before or after another, taken away or brought back, or its
  * rows put in an order, as the user changes it in its view, or what its table view filters, hides and works out, given or made from it, or a Formula's
  * formula, each formula naming a column renamed written with its new name: a name
  * another column has gets a number, an empty one changes nothing, the last column stays, a board goes with its column's choices, and a
  * select added or made groups one when there is none.
  * @param {Table} table
- * @param {{ name?: string, add?: { name: string, type: string, at?: number, collection?: string }, rename?: { id: string, name: string }, retype?: { id: string, type: string, collection?: string }, move?: { id: string, to: string, after: boolean }, remove?: string, order?: string[], formula?: { id: string, text: string }, view?: Partial<View> | ((view: View) => Partial<View>) }} edit
+ * @param {{ name?: string, add?: { name: string, type: string, at?: number, collection?: string }, rename?: { id: string, name: string }, retype?: { id: string, type: string, collection?: string }, move?: { id: string, to: string, after: boolean }, remove?: string, restore?: string, order?: string[], formula?: { id: string, text: string }, view?: Partial<View> | ((view: View) => Partial<View>) }} edit
  * @param {string} at @returns {Table}
  */
 export function reshape(table, edit, at) {
@@ -285,6 +285,8 @@ export function reshape(table, edit, at) {
     if (moved && i >= 0) properties = [...rest.slice(0, i + (after ? 1 : 0)), moved, ...rest.slice(i + (after ? 1 : 0))]
   }
   if (edit.remove && live.length > 1) properties = properties.map((property) => (property.id === edit.remove ? { ...property, deleted: at } : property))
+  // Brought back where it was, numbered if another has its name by then.
+  if (edit.restore) properties = properties.map((property) => (property.id === edit.restore && property.deleted ? (({ deleted, ...back }) => ({ ...back, name: free(back.name, back.id) }))(property) : property))
   views = views.filter((view) => view.type !== 'board' || properties.some((property) => property.id === view.group && (property.type === 'select' || property.type === 'status')))
   if (made?.type === 'select' && !views.some((view) => view.type === 'board')) views = [...views, { id: 'board', type: 'board', group: made.id }]
   if (edit.view) views = views.map((view) => (view.type === 'table' ? { ...view, ...(typeof edit.view === 'function' ? edit.view(view) : edit.view) } : view))

@@ -142,6 +142,10 @@ test('reshape: the user renames a table, adds a column of a kind, renames one an
   assert.deepEqual(tableProblems(next), [])
   const one = reshape(table, { remove: 'nom' }, T(10))
   assert.equal(one.properties[0].deleted, undefined)
+  // Brought back where it was, numbered as another has its name by then.
+  const back = reshape(next, { restore: 'date' }, T(10))
+  assert.deepEqual(back.properties.filter((p) => !p.deleted).map((p) => [p.id, p.name]), [['nom', 'Date 2'], ['date', 'Date 3'], ['date-2', 'Retour'], ['choix', 'Choix'], ['date-3', 'Date']])
+  assert.deepEqual(reshape(next, { restore: 'nom' }, T(10)).properties, next.properties)
   assert.throws(() => reshape(table, { add: { name: 'X', type: 'colour' } }, T(11)), /isn't a kind of column/)
 })
 
