@@ -27,7 +27,9 @@ async function files() {
  * @param {string} text
  */
 export function* tags(text) {
+  let line = 1, counted = 0
   for (const match of text.matchAll(/<([a-z][a-z0-9-]*)(?=[\s>/])/g)) {
+    for (; counted < match.index; counted++) if (text.charCodeAt(counted) === 10) line++
     let depth = 0, quote = '', end = -1
     for (let i = match.index + match[0].length; i < text.length && i < match.index + 4000; i++) {
       const c = text[i]
@@ -37,7 +39,7 @@ export function* tags(text) {
       else if (c === '>') { end = i; break } else if (c === '<' || c === '`') break
     }
     if (end < 0) continue
-    yield { name: match[1], attributes: text.slice(match.index + match[0].length, end), line: text.slice(0, match.index).split('\n').length }
+    yield { name: match[1], attributes: text.slice(match.index + match[0].length, end), line }
   }
 }
 
