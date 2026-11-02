@@ -143,7 +143,7 @@ test('a pinned collection dropped beside the task is its editor there, and opene
   // Its editor, never the workbook a file of it would be.
   await expect(tile.locator('.table-view')).toBeVisible()
   await expect(tile.locator('iframe')).toHaveCount(0)
-  const name = tile.locator('.table-grid tbody tr').first().getByLabel('Name')
+  const name = tile.locator('.table-grid tbody tr').first().getByTitle('Name')
   await expect(name).toHaveValue('Beans')
   await name.fill('Runner beans')
   await name.press('Tab')

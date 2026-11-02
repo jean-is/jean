@@ -120,8 +120,8 @@ if (button) {
     button.hidden = false
   })
 }
-// Framed in a page's popover (a tour), Esc here closes it, as it would from the page.
-addEventListener('keydown', (event) => event.key === 'Escape' && /** @type {HTMLElement | null | undefined} */ (frameElement?.closest('[popover]'))?.hidePopover())
+// Framed in a page's dialog (a tour), Esc here closes it, as it would from the page.
+addEventListener('keydown', (event) => event.key === 'Escape' && /** @type {HTMLDialogElement | null | undefined} */ (frameElement?.closest('dialog'))?.close())
 while (!params.has('still')) {
   await play()
   if (!params.has('loop')) break

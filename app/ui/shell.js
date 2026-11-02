@@ -43,7 +43,7 @@ class Shell extends Element {
       </header>
       ${open ? html`<app-inbox role="complementary" aria-label=${t('history.title')}></app-inbox>${views}` : nothing}
       ${app.ephemeral.value ? html`<p class="notice" role="alert">${t('storage.ephemeral')}</p>` : nothing}
-      <p class="print-mark"><app-persona still></app-persona><span>${BRAND.name}<small dir="auto">${BRAND.domain}</small></span></p>
+      <p class="print-mark"><app-persona still></app-persona><span dir=${/[\u0590-\u08FF]/.test(BRAND.name) ? 'rtl' : 'ltr'}>${BRAND.name}<small dir="ltr">${BRAND.domain}</small></span></p>
       <div class="board"><div class="here">${under && !current?.records.length && !instead && (homepage.value || firstVisit()) ? html`<div class="main">${welcome()}</div>` : html`<main id="main">${current?.records.length ? html`<app-conversation></app-conversation>` : instead ?? welcome()}</main>`}
       ${current?.records.length ? offerAside() : nothing}
       ${slots('above').map((above) => above.draw())}

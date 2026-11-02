@@ -212,5 +212,5 @@ test('once Documents and Tables are found, it finds their creations, a document 
   await expect(table).toContainText('Reading list')
   await table.click()
   await expect(page.locator('app-preview .pane-head h2')).toHaveText('Reading list')
-  await expect(page.locator('.table-grid tbody tr').first().getByLabel('Author')).toHaveValue('Toni Morrison')
+  await expect(page.locator('.table-grid tbody tr').first().getByTitle('Author')).toHaveValue('Toni Morrison')
 })

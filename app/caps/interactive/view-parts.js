@@ -12,7 +12,7 @@ import { html, nothing, render } from 'lit-html'
 import { effect, signal } from '@preact/signals-core'
 import { app, notify, send } from '../../ui/state.js'
 import { drawnActions, loaded, unlock } from '../../ui/caps.js'
-import { drawn } from '../../ui/markdown.js'
+import { drawn, namesRows } from '../../ui/markdown.js'
 import { icons } from '../../ui/icons.js'
 import { t, locale, intlLocales } from '../../core/i18n.js'
 import { foldTurns } from '../../core/events.js'
@@ -153,15 +153,16 @@ customElements.define('app-parts', class extends HTMLElement {
    * direction, as a date the user's language writes, filled in a page in another. @param {Part} part @param {number} n its place among the page's tables
    */
   table(part, n) {
-    const { heads, rows } = table(part), lang = locale.peek(), sort = this.sorted.get(n)
+    const { heads, rows } = table(part), lang = locale.peek(), sort = this.sorted.get(n), named = namesRows(heads[0] ?? '', rows.map((row) => String(row[0] ?? '').trim()))
     const align = aligned({ align: heads.map(() => null), rows: rows.map((row) => row.map((text) => ({ text }))) }).map((side) => side && `align-${side}`), collator = new Intl.Collator(intlLocales(lang), { numeric: true })
     /** An amount by its value, one with none after the others; any other cell as the language sorts words. @param {string} a @param {string} b */
     const compare = (a, b) => (sort && align[sort.column] ? ((x, y) => (Number.isNaN(x) ? 1 : Number.isNaN(y) ? -1 : x - y))(number(a, lang), number(b, lang)) : collator.compare(a, b))
     const shown = sort ? [...rows].sort((a, b) => compare(a[sort.column], b[sort.column]) * (sort.down ? -1 : 1)) : rows
     const by = (/** @type {number} */ column) => () => { this.sorted.set(n, { column, down: sort?.column === column && !sort.down }); this.tick.value++ }
     return html`<div class="table" tabindex="0"><table>
-      <thead><tr>${heads.map((head, i) => html`<th class=${align[i] || ''} aria-sort=${sort?.column === i ? (sort.down ? 'descending' : 'ascending') : nothing}>${head ? html`<button type="button" class="sorts" @click=${by(i)}>${head}</button>` : nothing}</th>`)}</tr></thead>
-      <tbody>${shown.map((row) => html`<tr>${row.map((cell, i) => html`<td class=${align[i] || ''}><bdi>${cell}</bdi></td>`)}</tr>`)}</tbody>
+      <thead><tr>${heads.map((head, i) => html`<th scope="col" class=${align[i] || ''} aria-sort=${sort?.column === i ? (sort.down ? 'descending' : 'ascending') : nothing}>${head ? html`<button type="button" class="sorts" @click=${by(i)}>${head}</button>` : nothing}</th>`)}</tr></thead>
+      <tbody>${shown.map((row) => html`<tr>${row.map((cell, i) => (i || !named ? html`<td class=${align[i] || ''}><bdi>${cell}</bdi></td>`
+        : html`<th scope="row" class=${align[i] || ''}><bdi>${cell}</bdi></th>`))}</tr>`)}</tbody>
     </table></div>`
   }
 
