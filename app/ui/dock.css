@@ -61,10 +61,10 @@
 :root[data-resizing='move'], :root[data-resizing='move'] * { cursor: grabbing; }
 .dock-drop { position: fixed; z-index: 20; border-radius: var(--radius); background: oklch(from var(--flame) l c h / 0.14); outline: 2px solid var(--flame); outline-offset: -2px; pointer-events: none;
   transition: inset-inline-start 0.12s var(--ease), inset-block-start 0.12s var(--ease), inline-size 0.12s var(--ease), block-size 0.12s var(--ease); }
-/* A pane that covers the window (a page that can't go full screen) is all the dock shows. */
-:root[data-dock] .dock:has(.is-full) { inset: 0 !important; inline-size: auto !important; block-size: auto !important; padding: 0; border: 0; }
-.dock:has(.is-full) > :has(.is-full) { inset: 0 !important; padding: 0; }
-.dock:has(.is-full) > :not(:has(.is-full)) { display: none; }
+/* A pane its Full screen fills the window with (dock.js) is all the dock shows. */
+:root[data-dock] .dock:has(> [data-full]) { inset: 0 !important; inline-size: auto !important; block-size: auto !important; padding: 0; border: 0; background: var(--room-2); }
+:root[data-dock] .dock > [data-full] { inset: 0 !important; padding: 0; }
+.dock:has(> [data-full]) > :not([data-full]) { display: none; }
 
 /* A pane: its head (a name or an address, and its buttons), then what it shows. */
 .pane { flex: 1; min-block-size: 0; display: flex; flex-direction: column; background: var(--room-2); color: var(--ink); animation: pane-in 0.35s var(--ease); }

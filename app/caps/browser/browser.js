@@ -78,7 +78,6 @@ await Promise.all([useStrings('browser'), styleSheet(new URL('browser.css', impo
 const open = signal(false)
 const page = signal(/** @type {{ url: string, own: boolean } | null} */ (null))
 const loading = signal(false)
-const full = signal(false)
 /** A page from a site not seen showing yet: the way out stays under it until the site shows it does. */
 const unsure = signal(false)
 /** What is typed in the address field, until it is sent or left. */
@@ -161,8 +160,6 @@ function lastMade() {
 
 export function close() {
   open.value = false
-  if (document.fullscreenElement) document.exitFullscreen().catch(() => {})
-  full.value = false
   host = frame = null
   local.value = null
   loading.value = false
@@ -461,15 +458,6 @@ function reload() {
   frameTo(trail.reload(), true)
 }
 
-async function fullscreen() {
-  const pane = /** @type {HTMLElement | null} */ (document.querySelector('.browser'))
-  if (document.fullscreenElement) await document.exitFullscreen().catch(() => {})
-  else if (document.fullscreenEnabled && pane?.requestFullscreen) await pane.requestFullscreen().catch(() => { full.value = !full.peek() })
-  // Where a page can't go full screen (an iPhone), the pane covers the window instead.
-  else full.value = !full.peek()
-}
-document.addEventListener('fullscreenchange', () => { full.value = Boolean(document.fullscreenElement?.matches('.browser')) })
-
 /** Whatever was typed in the address field: an address, a site or words. @param {SubmitEvent} event */
 function submit(event) {
   event.preventDefault()
@@ -509,7 +497,8 @@ class Browser extends Element {
     const folder = folders?.folderOf(app.current.value)
     const button = (/** @type {string} */ label, /** @type {unknown} */ icon, /** @type {() => unknown} */ run, disabled = false) => html`<button class="icon-button"
       aria-label=${label} ?disabled=${disabled} @click=${run}>${icon}</button>`
-    return html`<aside class="pane browser ${full.value ? 'is-full' : ''}" aria-label=${t('cap.browser.name')}>
+    const full = dock.full.value === this
+    return html`<aside class="pane browser" aria-label=${t('cap.browser.name')}>
       <header class="pane-head browser-bar">
         ${button(t('browser.back'), icons.back, () => walk('back'), !trail.canBack)}
         ${button(t('browser.forward'), icons.arrow, () => walk('forward'), !trail.canForward)}
@@ -523,7 +512,7 @@ class Browser extends Element {
             @blur=${() => { typed.value = null }}>
         </form>
         ${button(t('browser.tab'), icons.external, () => openTab(address), !shown || isLocal(shown.url))}
-        ${button(full.value ? t('browser.exitFullscreen') : t('browser.fullscreen'), full.value ? icons['exit-fullscreen'] : icons.fullscreen, fullscreen)}
+        ${button(full ? t('browser.exitFullscreen') : t('browser.fullscreen'), full ? icons['exit-fullscreen'] : icons.fullscreen, () => dock.fill(this))}
         ${dock.moves(this)}${button(t('action.close'), icons.close, close)}
       </header>
       <div class="browser-body">

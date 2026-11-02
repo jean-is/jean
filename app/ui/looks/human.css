@@ -180,7 +180,7 @@
 :root:is([data-look='human'], [data-look='tilde'])[data-dock='beside'] .dock { border: 0; background: none; }
 :root:is([data-look='human'], [data-look='tilde']) :is(.dock-edge, .dock-divider)::before { display: none; }
 :root:is([data-look='human'], [data-look='tilde']) .pane { overflow: hidden; border: 1px solid var(--line); border-radius: 1.25rem; background: var(--panel); backdrop-filter: blur(40px) saturate(1.8); box-shadow: var(--float); animation: human-panel 0.4s var(--spring) both; }
-:root:is([data-look='human'], [data-look='tilde']) .pane:is(:fullscreen, .is-full) { border: 0; border-radius: 0; }
+:root:is([data-look='human'], [data-look='tilde']) [data-full] > .pane { border: 0; border-radius: 0; box-shadow: none; }
 @keyframes human-panel { from { opacity: 0; scale: 0.94; } }
 :root:is([data-look='human'], [data-look='tilde']) .pane-head { padding-inline: 1rem 0.625rem; }
 :root:is([data-look='human'], [data-look='tilde']) .pane-head h2 { font-size: 0.9375rem; text-align: center; }

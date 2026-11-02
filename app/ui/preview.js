@@ -153,13 +153,13 @@ class Pane extends Element {
     const file = this.file.value, all = this.#versions.value, at = this.#at.value
     if (!file) return nothing
     const ways = waysOf(file, this, () => fileWays(file, this.copy() || file.uri))
-    return html`<aside class="pane preview" aria-label=${file.title} @keydown=${(/** @type {KeyboardEvent} */ event) => { if (event.key === 'Escape' && !event.defaultPrevented && !this.querySelector(':popover-open')) this.#close(); else printKey(event, file, ways) }}>
+    return html`<aside class="pane preview" aria-label=${file.title} @keydown=${(/** @type {KeyboardEvent} */ event) => { if (event.key === 'Escape' && !event.defaultPrevented && !this.querySelector(':popover-open')) dock.full.peek() === this ? dock.fill(this) : this.#close(); else printKey(event, file, ways) }}>
       <header class="pane-head" @dblclick=${this.#keep}>
         <h2><span dir="auto">${file.title}</span></h2>
         ${all.length > 1 && at >= 0 ? html`<select class="versions" title=${t('preview.versions')} .value=${String(at)}
           @change=${(/** @type {Event} */ event) => { this.file.value = { ...all[Number(/** @type {HTMLSelectElement} */ (event.target).value)], title: file.title } }}>
           ${all.map((each, i) => html`<option value=${i} ?selected=${i === at}>${t('made.version', { n: each.version })}</option>`)}</select>` : nothing}
-        ${slots('head').map((part) => part.draw(file))}
+        ${slots('head').map((part) => part.draw(file, { full: dock.full.value === this, fill: () => dock.fill(this) }))}
         ${dock.moves(this)}${outButton(file, ways)}
         <button class="icon-button" aria-label=${t('action.close')} @click=${this.#close}>${icons.close}</button>
       </header>

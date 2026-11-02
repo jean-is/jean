@@ -2010,20 +2010,25 @@ test.describe('the title and the pane', () => {
     expect(await page.evaluate(async () => (await import('/caps/share/share.js')).sharing.value?.item)).toEqual({ text: '# Notes\n\nFirst. Second.\n' })
   })
 
-  test('full screen: the pane alone, and what floats over the document with it', async ({ page }) => {
+  test('full screen: the pane fills the window, never the screen, what floats over the document over it', async ({ page }) => {
     await start(page, { markdown: 'First.\n' })
-    const head = page.locator('app-preview .pane-head')
+    const head = page.locator('app-preview .pane-head'), full = page.locator('app-preview[data-full]')
     await head.getByRole('button', { name: 'Full screen' }).click()
-    await expect.poll(() => page.evaluate(() => document.fullscreenElement?.matches('.preview') ?? false)).toBe(true)
+    await expect(full).toHaveCount(1)
+    expect(await page.evaluate(() => document.fullscreenElement)).toBeNull()
+    // Escape gives the window back, the document still open.
+    await page.keyboard.press('Escape')
+    await expect(full).toHaveCount(0)
+    await head.getByRole('button', { name: 'Full screen' }).click()
     await caretAt(page, 'First.', 6)
     await page.keyboard.press('Enter')
     await page.keyboard.type('/')
-    await expect(page.locator('app-preview .preview #slash-menu')).toBeVisible()
-    // Escape would leave full screen, as browsers have it there: the slash taken back closes the menu.
+    const menu = page.locator('#slash-menu')
+    await expect(menu).toBeVisible()
+    expect(await menu.evaluate((one) => { const { x, y, width, height } = one.getBoundingClientRect(); return one.contains(document.elementFromPoint(x + width / 2, y + height / 2)) })).toBe(true)
     await page.keyboard.press('Backspace')
     await head.getByRole('button', { name: 'Exit full screen' }).click()
-    await expect.poll(() => page.evaluate(() => Boolean(document.fullscreenElement))).toBe(false)
-    await expect(page.locator('body > #slash-menu')).toHaveCount(1)
+    await expect(full).toHaveCount(0)
   })
 })
 

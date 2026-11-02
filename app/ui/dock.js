@@ -135,6 +135,7 @@ export function place(element, shown) {
     if (!shown && leaves(layout.peek()).includes(part)) layout.value = without(layout.peek(), part) ?? 'here'
     opened.value = shown ? [...open, part] : open.filter((one) => one !== part)
   })
+  if (!shown && full.peek() === element) fill(element)
   // At once, not once the pane's own drawing is done, for it to take the keys.
   arrange()
   // One an address names, there before the room shows, is there as it shows, with no way in (D582).
@@ -156,7 +157,7 @@ function arrange() {
   if (open.length) root.dataset.dock = beside ? 'beside' : 'over'
   else delete root.dataset.dock
   const shell = /** @type {HTMLElement | null} */ (document.querySelector('app-shell'))
-  if (shell) shell.inert = root.dataset.dock === 'over'
+  if (shell) shell.inert = root.dataset.dock === 'over' || Boolean(full.peek())
   if (beside !== root.hasAttribute('data-split')) {
     const [end, at] = [atEnd(), scroller().scrollTop]
     root.toggleAttribute('data-split', beside)
@@ -184,6 +185,24 @@ let watched = /** @type {Element | null} */ (null), queued = 0
 /** Once the window, the board or the room has changed, out of the observer's turn, so that what moves isn't measured again in it; a timer, which runs in a tab out of sight too. */
 const soon = () => { queued ||= setTimeout(() => { queued = 0; arrange() }) }
 const boards = new ResizeObserver(soon)
+
+// ─── Full screen ─────────────────────────────────────────────────────────────
+
+/** The pane its Full screen fills the window with, all the dock shows then (dock.css): the window, never the screen, which on a Mac is a space of its own the page goes to. */
+export const full = signal(/** @type {HTMLElement | null} */ (null))
+/** Full screen pressed on a pane, or pressed again. @param {HTMLElement} element */
+export function fill(element) {
+  full.value = full.peek() === element ? null : element
+  for (const one of panes.values()) one.toggleAttribute('data-full', one === full.peek())
+  arrange()
+}
+// Escape gives the window back, unless something in the pane takes it, or a dialog or a menu over it.
+document.addEventListener('keydown', (event) => {
+  const one = full.peek()
+  if (!one || event.key !== 'Escape' || event.isComposing || event.defaultPrevented || document.querySelector('dialog:modal') || one.querySelector(':popover-open')) return
+  event.preventDefault()
+  fill(one)
+})
 
 // ─── The edges ───────────────────────────────────────────────────────────────
 

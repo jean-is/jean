@@ -91,10 +91,12 @@ test('the user browses beside the conversation: back, forward, reload, full scre
   await pane.getByRole('button', { name: 'Back' }).click()
   await expect(site(page).locator('h1')).toHaveText('The bakery')
   expect(await page.evaluate(() => /** @type {any} */ (window).stayed)).toBe(true)
-  // Full screen, or the whole window where a page can't go full screen.
+  // Full screen fills the window, never the screen, the conversation out of reach under it; Escape gives the window back.
   await pane.getByRole('button', { name: 'Full screen' }).click()
   await expect(pane.getByRole('button', { name: 'Exit full screen' })).toBeVisible()
-  await pane.getByRole('button', { name: 'Exit full screen' }).click()
+  expect(await pane.evaluate((element) => [document.fullscreenElement, element.getBoundingClientRect().width === document.documentElement.clientWidth, document.querySelector('app-shell')?.inert]))
+    .toEqual([null, true, true])
+  await page.keyboard.press('Escape')
   await expect(pane.getByRole('button', { name: 'Full screen' })).toBeVisible()
   // Beside the conversation, the box still takes a message.
   await expect(page.locator('#prompt')).toBeEditable()

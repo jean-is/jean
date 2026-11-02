@@ -9,8 +9,8 @@
 }
 .view > .document { flex: 1; display: flex; flex-direction: column; margin: -1.25rem; }
 /* Full screen, the pane's own colour, its lines no longer than a page's. */
-.preview:fullscreen { background: var(--room-2); }
-.preview:fullscreen .doc-wrap { max-inline-size: 60rem; margin-inline: auto; }
+[data-full] > .preview { background: var(--room-2); }
+[data-full] > .preview .doc-wrap { max-inline-size: 60rem; margin-inline: auto; }
 /* The bar over Jean's changes (ui/review.js) stays at the top of the pane as the document scrolls, at its foot on a phone, in reach of a thumb. */
 .document > .review-slot { position: sticky; inset-block-start: 0; z-index: 2; } @media (max-height: 30rem) { .document > .review-slot { position: static; } }
 @media (max-width: 40rem) { .document > .review-slot { order: 1; inset-block: auto 0; } .document > .review-slot .review { border-block: 1px solid var(--line-strong) 0; } }

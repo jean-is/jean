@@ -44,7 +44,6 @@ const MARKS = /** @type {Partial<Record<State, unknown>>} */ ({ done: icons.chec
 const selected = signal(/** @type {string | null} */ (null))
 const drag = signal(/** @type {{ id: string, x: number, y: number } | null} */ (null))
 const link = signal(/** @type {{ from: string, x: number, y: number } | null} */ (null))
-const full = signal(false)
 /** What the room holds for a step's form: its files and its skills; and when each flow's routine runs next. */
 const room = signal(/** @type {{ files: string[], skills: string[], next: Map<string, Date> }} */ ({ files: [], skills: [], next: new Map() }))
 
@@ -270,14 +269,6 @@ function reveal(node) {
   line.querySelector('summary')?.focus({ preventScroll: true })
 }
 
-async function fullscreen() {
-  const pane = /** @type {HTMLElement | null} */ (document.querySelector('aside.flows'))
-  if (document.fullscreenElement) await document.exitFullscreen().catch(() => {})
-  else if (document.fullscreenEnabled && pane?.requestFullscreen) await pane.requestFullscreen().catch(() => { full.value = !full.peek() })
-  else full.value = !full.peek()
-}
-document.addEventListener('fullscreenchange', () => { full.value = Boolean(document.fullscreenElement?.matches('aside.flows')) })
-
 /** A new flow, empty, shown in flow mode. */
 async function startFlow() {
   selected.value = null
@@ -404,8 +395,8 @@ export class Flows extends Element {
     // It belongs to a task: on a new task, flow mode has the main area, and the pane waits for one.
     if (!open.value || !app.current.value?.records.length) return nothing
     const one = paneFlow.value
-    const choices = related.value
-    return html`<aside class="pane flows ${full.value ? 'is-full' : ''}" aria-label=${t('cap.flows.name')}>
+    const choices = related.value, full = dock.full.value === this
+    return html`<aside class="pane flows" aria-label=${t('cap.flows.name')}>
       <header class="pane-head flows-bar">
         ${choices.length ? html`<select class="flows-pick" title=${t('flows.pick')} @change=${(/** @type {Event} */ event) => {
           selected.value = null
@@ -415,7 +406,7 @@ export class Flows extends Element {
           ${choices.map((other) => html`<option value=${other.id} ?selected=${other.id === one?.id}>${other.name}</option>`)}
         </select><span class="flows-gap"></span>` : html`<h2>${t('flows.task')}</h2>`}
         ${one ? actions(one) : nothing}
-        ${iconButton(full.value ? t('flows.exitFullscreen') : t('flows.fullscreen'), full.value ? icons['exit-fullscreen'] : icons.fullscreen, fullscreen)}
+        ${iconButton(full ? t('flows.exitFullscreen') : t('flows.fullscreen'), full ? icons['exit-fullscreen'] : icons.fullscreen, () => dock.fill(this))}
         ${dock.moves(this)}${iconButton(t('action.close'), icons.close, close)}
       </header>
       ${board(one, drawingOf(one))}

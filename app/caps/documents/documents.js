@@ -9,7 +9,6 @@
 // section; one it changes unseen opens first, unchanged, its text the brain's to read. One the user makes from
 // Creations has no name: it goes by its title.
 import { html, nothing } from 'lit-html'
-import { signal } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
 import { app, conversationOf } from '../../ui/state.js'
 import { icons } from '../../ui/menu-icons.js'
@@ -99,20 +98,13 @@ async function show(path) {
   return one
 }
 
-/** Whether a document's pane is full screen, with what floats over the document inside it, since nothing else shows there. */
-const full = signal(false)
-document.addEventListener('fullscreenchange', () => {
-  full.value = Boolean(document.fullscreenElement?.matches('.preview'))
-  for (const one of document.querySelectorAll('.slash, .block-handle, .marquee')) (document.fullscreenElement ?? document.body).append(one)
-})
-
 /**
- * At the top of the pane of the document on show (ui/preview.js): Full screen, where the browser has it. @param {{ uri: string, name: string, title: string }} file
+ * At the top of the pane of the document on show (ui/preview.js): Full screen, which fills the window with it (ui/dock.js).
+ * @param {{ uri: string, name: string, title: string }} file @param {{ full: boolean, fill: () => void }} pane
  */
-function head(file) {
+function head(file, { full, fill }) {
   if (!open.get(file.uri)) return nothing
-  return html`${document.fullscreenEnabled ? html`<button class="icon-button" aria-label=${t(full.value ? 'documents.exitFullscreen' : 'documents.fullscreen')}
-    @click=${(/** @type {Event} */ event) => (document.fullscreenElement ? document.exitFullscreen() : /** @type {HTMLElement} */ (event.currentTarget).closest('.pane')?.requestFullscreen())?.catch(() => {})}>${icons[full.value ? 'exit-fullscreen' : 'fullscreen']}</button>` : nothing}`
+  return html`<button class="icon-button" aria-label=${t(full ? 'documents.exitFullscreen' : 'documents.fullscreen')} @click=${fill}>${icons[full ? 'exit-fullscreen' : 'fullscreen']}</button>`
 }
 
 /** What an address names: a document by its name, none when there is no such document. @param {string} path */
