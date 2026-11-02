@@ -1,7 +1,7 @@
 // A pane that frames Jean's own demo of a page's task, where the page's pane draws a conversation the demo
 // can play: the task written beside the page as a conversation's file (D457), from the page's words as text, and the
 // frame that shows it as it ended, with a button that plays it, its words the page's (pane.title, pane.play). Where the
-// page has a guided tour over its task, that button is the page's and plays it full size, in a popover.
+// page has a guided tour over its task, that button is the page's and plays it full size, in a modal dialog.
 import { ICONS, xml } from './site.js'
 
 /** When a demo's records say they were written: the demo shows each as of when it shows it. */
@@ -45,11 +45,27 @@ export function demoFiles (kit, { file, asked, brain, code, output, call, answer
 }
 
 /**
+ * What a page with a tour runs, the same in every language (no "<", which a page's scripts can't hold): a click beside
+ * the tour or Esc in its frame closes it, and its buttons open and close it where a browser doesn't yet by their command.
+ */
+export const TOUR = `for (const dialog of document.querySelectorAll('dialog.site-tour')) {
+  const frame = dialog.querySelector('iframe')
+  dialog.addEventListener('click', (event) => { if (event.target === dialog) dialog.close() })
+  frame.addEventListener('load', () => frame.contentWindow.addEventListener('keydown', (event) => { if (event.key === 'Escape') dialog.close() }))
+}
+if (!('command' in HTMLButtonElement.prototype)) for (const button of document.querySelectorAll('[commandfor]')) button.addEventListener('click', () => {
+  const dialog = document.getElementById(button.getAttribute('commandfor'))
+  if (button.getAttribute('command') === 'close') dialog.close()
+  else dialog.showModal()
+})`
+
+/**
  * The frame that plays it in the page's pane, loaded once it is near, shown as the task ended, with a button that plays
- * it. With a tour, the button is the page's, over the frame's foot, and opens a popover that frames the task again, full
- * size and whole, loaded only then: the tour plays once it is open, and then a button with pane.again plays it again.
- * Nothing on the page runs: the popover opens and closes by its buttons, Esc and a click beside it. Another page's
- * task (a help article's figure) is framed with words of the page that frames it: its title and Play.
+ * it. With a tour, the button is the page's, over the frame's foot, and opens a modal dialog that frames the task again,
+ * full size and whole, loaded only then, the page behind it out of the keys' reach: the tour plays once it is open, and
+ * then a button with pane.again plays it again. The dialog opens and closes by its buttons' commands, Esc and a click
+ * beside it (TOUR, the page's script). Another page's task (a help article's figure) is framed with words of the page
+ * that frames it: its title and Play.
  * @param {import('./site.js').Kit} kit @param {boolean} [tour]
  * @param {{ page?: string, title?: string, play?: string }} [task]  whose task, the frame's title and Play's words, as text
  */
@@ -57,9 +73,9 @@ export function demoFrame (kit, tour = false, { page = kit.name, title = kit.tex
   const at = (/** @type {Record<string, string>} */ more, flags = '') => xml(`${kit.site('demo.html')}#${new URLSearchParams({ src: pathOf(kit, page), lang: kit.lang, ...more })}${flags}`)
   const pane = /* html */ `<iframe class="site-demo" src="${at(tour ? {} : { play }, '&still&bare')}" title="${xml(title)}" loading="lazy"></iframe>`
   return tour ? /* html */ `${pane}
-    <button class="button primary site-demo-play" type="button" popovertarget="site-tour">${ICONS.play}<span>${kit.say('pane.play')}</span></button>
-    <div id="site-tour" class="site-tour" popover>
-      <button class="icon-button site-tour-close" type="button" popovertarget="site-tour" popovertargetaction="hide" aria-label="${kit.say('pane.close')}">${ICONS.close}</button>
+    <button class="button primary site-demo-play" type="button" commandfor="site-tour" command="show-modal">${ICONS.play}<span>${kit.say('pane.play')}</span></button>
+    <dialog id="site-tour" class="site-tour" aria-label="${kit.say('pane.tour')}" closedby="any">
+      <button class="icon-button site-tour-close" type="button" commandfor="site-tour" command="close" aria-label="${kit.say('pane.close')}">${ICONS.close}</button>
       <iframe class="site-tour-frame" src="${at({ tour: tourOf(kit), play: kit.text('pane.again') })}" title="${kit.say('pane.tour')}" loading="lazy"></iframe>
-    </div>` : pane
+    </dialog>` : pane
 }

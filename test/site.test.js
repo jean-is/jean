@@ -254,8 +254,8 @@ test('a page whose pane draws a conversation Jean can play frames Jean’s demo 
     const tour = file.replace(/\.jsonl$/, '.tour.json')
     const toured = tour in site.files
     assert.deepEqual([params.get('src'), params.get('lang'), params.get('play'), params.has('still'), params.has('bare')], [file, page.lang, toured ? null : words['pane.play'], true, true], page.path)
-    // With a tour, Play is the page's, and opens a popover that frames the task with it, whole, then plays it again with pane.again.
-    const popover = /<button class="button primary site-demo-play" type="button" popovertarget="site-tour">.*?<\/button>\s*<div id="site-tour" class="site-tour" popover>\s*<button class="icon-button site-tour-close" type="button" popovertarget="site-tour" popovertargetaction="hide" aria-label="[^"]+">.*?<\/button>\s*<iframe class="site-tour-frame" src="([^"]+)" title="[^"]+" loading="lazy"><\/iframe>/.exec(html)
+    // With a tour, Play is the page's, and opens a modal dialog that frames the task with it, whole, then plays it again with pane.again.
+    const popover = /<button class="button primary site-demo-play" type="button" commandfor="site-tour" command="show-modal">.*?<\/button>\s*<dialog id="site-tour" class="site-tour" aria-label="[^"]+" closedby="any">\s*<button class="icon-button site-tour-close" type="button" commandfor="site-tour" command="close" aria-label="[^"]+">.*?<\/button>\s*<iframe class="site-tour-frame" src="([^"]+)" title="[^"]+" loading="lazy"><\/iframe>/.exec(html)
     assert.equal(Boolean(popover), toured, page.path)
     if (popover) {
       const played = new URLSearchParams(popover[1].replaceAll('&amp;', '&').split('#')[1])

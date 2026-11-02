@@ -143,7 +143,7 @@ export const WAVE = '<app-persona data-presence="idle" aria-hidden="true"><svg c
 
 /** Questions that open one at a time, the first open. @param {string} name  their group @param {string[][]} items  each a question and its answer, as HTML */
 export const questions = (name, items) => /* html */ `<div class="site-questions">${items.map(([question, answer], i) => /* html */ `
-    <details name="${name}"${i ? '' : ' open'}><summary>${question}${ICONS.closed}${ICONS.open}</summary><p>${answer}</p></details>`).join('')}
+    <details name="${name}"${i ? '' : ' open'}><summary><span>${question}</span>${ICONS.closed}${ICONS.open}</summary><p>${answer}</p></details>`).join('')}
   </div>`
 
 /** Items each with a tick. @param {string[]} items  HTML */
@@ -325,12 +325,12 @@ ${page.script ? /* html */ `<script>${page.script}</script>\n` : ''}</body>
 /** The top: a way past it, the name, whom the page is for, its languages, and the way into the app. @param {Kit} kit @param {Page} page */
 function top (kit, page) {
   const languages = kit.languages.map((code) => code === kit.lang
-    ? /* html */ `<span lang="${code}" aria-current="page">${xml(languageName(code))}</span>`
-    : /* html */ `<a href="${kit.site(page.addresses[code])}" hreflang="${code}" lang="${code}">${xml(languageName(code))}</a>`)
+    ? /* html */ `<span lang="${code}" dir="${dir(code)}" aria-current="page">${xml(languageName(code))}</span>`
+    : /* html */ `<a href="${kit.site(page.addresses[code])}" hreflang="${code}" lang="${code}" dir="${dir(code)}">${xml(languageName(code))}</a>`)
   return /* html */ `<a class="site-skip" href="#main">${kit.say('skip')}</a>
 <header class="site-top">
   <a class="wordmark" href="${kit.start}">${WAVE}<span dir="ltr">${xml(kit.brand.name)}</span></a>${kit.has('for') ? /* html */ `<span class="site-for">${kit.say('for')}</span>` : ''}
-  <nav class="site-langs" aria-label="${kit.say('languages')}">${ICONS.globe}${languages.join('')}</nav>
+  <nav class="site-langs" aria-label="${kit.say('languages')}">${ICONS.globe}<ul>${languages.map((language) => /* html */ `<li>${language}</li>`).join('')}</ul></nav>
   <a class="button" href="${kit.start}">${kit.say('open')}</a>
 </header>`
 }

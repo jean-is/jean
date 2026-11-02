@@ -55,7 +55,7 @@ export default {
     const tone = () => (turn++ % 2 ? ' is-side' : '')
     const job = (/** @type {typeof JOBS[number]} */ { key, icon, sample }) => /* html */ `
     <li>${icon}<h3 id="asso-job-${key}">${say(`job.${key}`)}</h3>
-      <p class="asso-ask" dir="auto">${sample ? say(`job.${key}.ask`) : /* html */ `<q>${kit.text(`job.${key}.ask`)}</q>`}</p>
+      <p class="asso-ask" dir="${kit.dir}">${sample ? say(`job.${key}.ask`) : /* html */ `<q>${kit.text(`job.${key}.ask`)}</q>`}</p>
       <p class="asso-get"><span>${say('jobs.get')}</span>${say(`job.${key}.get`)}</p>
       <a class="button" href="${sample ? `${jean}?sample` : ask(key)}" aria-describedby="asso-job-${key}">${sample ? say('job.accounts.try') : home.say('tile.try')}</a></li>`
     return /* html */ `<section class="site-hero asso-hero" aria-labelledby="asso-title">
@@ -67,8 +67,8 @@ export default {
     <ul class="site-facts is-felt">${list('facts').map((fact, i) => /* html */ `<li>${FELT.tick(i)}${fact}</li>`).join('')}</ul>
   </div>
   <div class="asso-pane" aria-hidden="true">
-    <p class="asso-asked" dir="auto">${say('pane.ask')}</p>
-    <p class="asso-answer" dir="auto">${say('pane.answer')}</p>
+    <p class="asso-asked" dir="${kit.dir}">${say('pane.ask')}</p>
+    <p class="asso-answer" dir="${kit.dir}">${say('pane.answer')}</p>
     <p class="asso-file">${ICONS.file}<span><b>${say('pane.file', { year: String(now.getFullYear()) })}</b><small>${say('pane.kind')}</small></span></p>
     <p class="asso-box">${kit.app('composer.placeholder')}</p>
     <p class="asso-ai">${kit.app('composer.ai')}</p>

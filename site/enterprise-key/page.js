@@ -88,7 +88,7 @@ export default {
     const slots = (/** @type {string} */ key) => kit.say(key, params).replace(/\{(\w+)\}/g, (_, name) => /* html */ `<span data-fill="${name}"></span>`)
     // Choices the script makes needed once their key is chosen, as a form can't say itself.
     const radios = (/** @type {string} */ name, /** @type {string[]} */ values, /** @type {string[]} */ labels) => values.map((value, i) => /* html */ `
-        <label class="key-choice"><input type="radio" name="${name}" value="${value}" data-required> <span>${labels[i]}</span></label>`).join('')
+        <label class="key-choice" for="key-${name}-${value}"><input type="radio" id="key-${name}-${value}" name="${name}" value="${value}" data-required> <span>${labels[i]}</span></label>`).join('')
     const kinds = kit.table('kinds', 2, params)
     const enterprise = kit.link('enterprise')
     const privacy = kit.link('privacy')
@@ -112,26 +112,26 @@ export default {
     <input type="hidden" name="quote" value="">
     <fieldset class="key-kinds">
       <legend>${say('kind.legend')}</legend>${kinds.map(([name, text], i) => /* html */ `
-      <label class="key-kind"><input type="radio" id="${KINDS[i]}" name="kind" value="${KINDS[i]}" required> <b>${name}</b><small>${text}</small></label>`).join('')}
+      <label class="key-kind" for="${KINDS[i]}"><input type="radio" id="${KINDS[i]}" name="kind" value="${KINDS[i]}" required> <b>${name}</b><small>${text}</small></label>`).join('')}
     </fieldset>
     <p class="key-hint">${say('required')}</p>
     <div class="key-fields">
-      <label>${say('organisation')}<input name="organisation" required maxlength="200" autocomplete="organization"></label>
-      <label>${say('origins')}<input name="origins" required maxlength="1000" pattern="(?!.*[Hh][Tt][Tt][Pp]:).+" title="${say('origins.pattern')}" placeholder="https://assistant.example.org" dir="ltr" aria-describedby="key-origins" autocomplete="url"></label>
+      <label for="key-organisation">${say('organisation')}<input id="key-organisation" name="organisation" required maxlength="200" autocomplete="organization"></label>
+      <label for="key-origins-field">${say('origins')}<input id="key-origins-field" name="origins" required maxlength="1000" pattern="(?!.*[Hh][Tt][Tt][Pp]:).+" title="${say('origins.pattern')}" placeholder="https://assistant.example.org" dir="ltr" aria-describedby="key-origins" autocomplete="url"></label>
       <p id="key-origins" class="key-hint">${say('origins.hint')}</p>
-      <label>${say('people')}<input type="number" name="people" required min="1" step="1" inputmode="numeric"></label>
+      <label for="key-people">${say('people')}<input type="number" id="key-people" name="people" required min="1" step="1" inputmode="numeric"></label>
       <div role="alert"><p class="key-note" id="key-small" data-when="small" hidden>${say('quote.small')}</p></div>
-      <label>${say('name')}<input name="name" required maxlength="200" autocomplete="name"></label>
-      <label>${say('email')}<input type="email" name="email" required maxlength="254" autocomplete="email" dir="ltr"></label>
+      <label for="key-name">${say('name')}<input id="key-name" name="name" required maxlength="200" autocomplete="name"></label>
+      <label for="key-email">${say('email')}<input type="email" id="key-email" name="email" required maxlength="254" autocomplete="email" dir="ltr"></label>
     </div>
     <fieldset class="key-more" data-kind="subscription">
       <legend>${say('billing.legend')}</legend>
       <fieldset class="key-choices">
         <legend>${say('country')}</legend>${radios('country', PLACES, kit.list('countries'))}
       </fieldset>
-      <label>${say('vat')}<input name="vat" maxlength="20" pattern="[\\w .\\-]*" title="${say('vat.pattern')}" autocomplete="off" dir="ltr"></label>
-      <label>${say('address')}<textarea name="address" rows="3" maxlength="500" autocomplete="street-address"></textarea></label>
-      <label class="key-choice"><input type="checkbox" name="trial" checked> <span>${say('trial')}</span></label>
+      <label for="key-vat">${say('vat')}<input id="key-vat" name="vat" maxlength="20" pattern="[\\w .\\-]*" title="${say('vat.pattern')}" autocomplete="off" dir="ltr"></label>
+      <label for="key-address">${say('address')}<textarea id="key-address" name="address" rows="3" maxlength="500" autocomplete="street-address"></textarea></label>
+      <label class="key-choice" for="key-trial"><input type="checkbox" id="key-trial" name="trial" checked> <span>${say('trial')}</span></label>
       <article class="key-quote" data-when="quote" hidden aria-labelledby="key-quote">
         <h3 id="key-quote">${slots('quote.title')}</h3>
         <p>${slots('quote.dated')}</p>
@@ -154,8 +154,8 @@ export default {
         <p><button class="button key-print" type="button">${say('quote.print')}</button></p>
       </article>
     </fieldset>
-    <label>${say('message')}<textarea name="message" rows="3" maxlength="2000"></textarea></label>
-    <div hidden><label>${say('trap')}<input name="website" tabindex="-1" autocomplete="off"></label></div>
+    <label for="key-message">${say('message')}<textarea id="key-message" name="message" rows="3" maxlength="2000"></textarea></label>
+    <div hidden><label for="key-website">${say('trap')}<input id="key-website" name="website" tabindex="-1" autocomplete="off"></label></div>
     <p class="key-send"><button class="button primary" type="submit">${say('send')}</button></p>
     <p class="site-source">${say('privacy')}${privacy ? /* html */ ` <a href="${privacy}">${say('privacy.link')}</a>` : ''}</p>
   </form>

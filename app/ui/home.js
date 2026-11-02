@@ -6,7 +6,10 @@
 // tune's, a quiz's or a deck's with Jean's skill for it. One tile is the active one (ui/tiles.js). The page rises into
 // the first screen as far as the room leaves free under its ideas, which stay where they are without it (D653).
 // Shown, the page is at its own address; hidden, a language's address gives way to the site's, as every other one
-// is, its language kept, and ?index=1 goes; the Vous menu's Homepage shows it again on a new task.
+// is, its language kept, and ?index=1 goes; the Vous menu's Homepage shows it again on a new task. Shown, it is the
+// main content, its <main> the skip link's #main, the app's first screen above it in a <div> (ui/shell.js); where
+// something takes that screen's place (Creations), the room is the <main> again and the page goes, and while a
+// pane covers it (D635) it is out of the keys' way.
 import { app, effective, newConversation, setLocale, turnPage, updateSettings, LOCALES } from './state.js'
 import { homepage } from './shell.js'
 import { locale, pickLocale } from '../core/i18n.js'
@@ -33,9 +36,25 @@ const lift = new ResizeObserver(() => requestAnimationFrame(() => {
   document.body.style.setProperty('--home-lift', `${Math.round(Math.max(0, Math.min(room, 208)))}px`)
 }))
 
+/**
+ * The page where it goes: shown while it is to be and the room holds the first screen, then the main content; inert under a pane.
+ * @param {HTMLElement} home
+ */
+function place(home) {
+  const out = !showing || document.querySelector('app-shell .here > main') !== null, main = home.querySelector(':scope > main')
+  Object.assign(home, { hidden: out, inert: document.documentElement.hasAttribute('data-dock') })
+  main?.toggleAttribute('hidden', out)
+  out ? main?.removeAttribute('id') : main?.setAttribute('id', 'main')
+}
+const placing = new MutationObserver(() => bound && place(/** @type {HTMLElement} */ (bound)))
+
 /** The page, made to work. @param {HTMLElement} home */
 function bind(home) {
-  if (!bound) lift.observe(document.querySelector('app-composer') ?? home)
+  if (!bound) {
+    lift.observe(document.querySelector('app-composer') ?? home)
+    placing.observe(document.querySelector('app-shell .here') ?? home, { childList: true })
+    placing.observe(document.documentElement, { attributeFilter: ['data-dock'] })
+  }
   bound = home
   home.addEventListener('click', (event) => {
     const button = event.target instanceof Element ? event.target.closest('[data-try]') : null
@@ -138,7 +157,8 @@ export async function follow(home, shown, lang) {
   if (menu instanceof HTMLElement) menu.hidden = effective.value.locked.has('locale')
   if (now) Object.assign(/** @type {HTMLElement} */ (menu?.querySelector('summary [lang]')), { lang, dir: now.dir, textContent: now.textContent })
   for (const link of menu?.querySelectorAll('[data-language]') ?? []) link === now ? link.setAttribute('aria-current', 'true') : link.removeAttribute('aria-current')
-  home.hidden = !shown
+  showing = shown
+  place(home)
   // Over a change of language, the same place, held while the page settles: the fonts set the lines, and a style
   // sheet landing late (tips.css) has WebKit pull the window up. Until the reader moves, for a moment at most.
   if (kept) {
@@ -151,7 +171,6 @@ export async function follow(home, shown, lang) {
     document.fonts.ready.then(hold)
     if (kept.menu) /** @type {HTMLElement | null | undefined} */ (menu?.querySelector('summary'))?.focus({ preventScroll: true })
   }
-  showing = shown
   const query = new URLSearchParams(location.search)
   // Shown, the page is at its own address, asked for there once the Vous menu's Homepage showed it; hidden, at the site's.
   const own = document.querySelector(`link[rel="alternate"][hreflang="${home.lang}"]`)

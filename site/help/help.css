@@ -36,6 +36,7 @@
 .help-drawn { display: flex; flex-direction: column; justify-content: center; min-block-size: 11rem; }
 .help-drawn :is(.button, .icon-button, .brain-chip, .send) { pointer-events: none; }
 .help-box .composer { inline-size: 100%; max-inline-size: 34rem; margin-inline: auto; cursor: default; }
+.help-box .brain-chip { flex: none; }
 .help-box-words { min-block-size: 1.7em; color: var(--ink-faint); font-size: 1.06rem; line-height: 1.55; }
 .help-box-note { margin-block-start: 0.6rem; color: var(--ink-soft); font-size: 0.75rem; text-align: center; }
 .help-sheet { align-items: stretch; }
@@ -110,14 +111,15 @@
 
 /* The article before and after it in its moment, after a line: where it is in it, then a card each, the next one at
    the end; one above the other on a phone */
-.help-pager { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; margin-block-start: 1.25rem; padding-block-start: 1.5rem; border-block-start: 1px solid var(--line); }
-.help-pager > p { grid-column: 1 / -1; }
-.site .help-pager a { display: flex; flex-direction: column; gap: 0.3rem; padding: 0.9rem 1.1rem 1rem; border: 1px solid var(--line); border-radius: 0.9rem; color: var(--ink); text-decoration: none; }
+.help-pager { display: flex; flex-direction: column; gap: 0.75rem; margin-block-start: 1.25rem; padding-block-start: 1.5rem; border-block-start: 1px solid var(--line); }
+.help-pager ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; }
+.site .help-pager a { display: flex; flex-direction: column; gap: 0.3rem; block-size: 100%; padding: 0.9rem 1.1rem 1rem; border: 1px solid var(--line); border-radius: 0.9rem; color: var(--ink); text-decoration: none; }
 .site .help-pager a:hover { border-color: var(--ink-faint); background: var(--site-side); }
 .help-pager a span { display: inline-flex; align-items: center; gap: 0.35rem; color: var(--ink-soft); font-size: 0.8125rem; }
 .help-pager a .icon { inline-size: 1rem; block-size: 1rem; }
 .help-pager b { font-weight: 650; line-height: 1.35; text-wrap: balance; }
-.help-pager-next { grid-column: 2; align-items: flex-end; text-align: end; }
+.help-pager-next { grid-column: 2; }
+.site .help-pager-next a { align-items: flex-end; text-align: end; }
 
 /* The home, one column: its title, something wrong as a row of chips, Start here as a row of tiles in order, then a
    card for each moment listing its articles */
@@ -144,7 +146,7 @@
 @media (max-width: 36rem) {
   .help-terms > div { grid-template-columns: minmax(0, 1fr); }
   .help-kept { grid-template-columns: minmax(0, 1fr); }
-  .help-pager { grid-template-columns: minmax(0, 1fr); }
+  .help-pager ul { grid-template-columns: minmax(0, 1fr); }
   .help-pager-next { grid-column: auto; }
   .help-kept-way { flex-direction: row; justify-content: center; gap: 2rem; }
   .help-kept-way i { rotate: 90deg; }

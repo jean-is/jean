@@ -2,7 +2,7 @@
 // in French, which the homepage's Your AI door leads to. Kinds rather than brands in its table, since products
 // change every month; then the ways to use the AI one already has, a card for each product's own page, the catch,
 // questions and a last Try. Its words say what every comparison page says alike (product.js); its look compare.css.
-import { DRAWN, PRODUCTS, helpers } from './product.js'
+import { CITES, DRAWN, PRODUCTS, helpers } from './product.js'
 import { FELT, WAVE, underline } from '../site.js'
 
 /** The makers' pages the table's cells are read from, and the day each was read. */
@@ -24,6 +24,7 @@ const SOURCES = {
 /** @type {import('../site.js').Page} */
 export default {
   addresses: { en: 'compare', fr: 'fr/comparer', ko: 'ko/compare' },
+  script: CITES,
   main (kit) {
     const { status, cited, footnotes, buttons, caught, asked, sideBySide } = helpers(kit, SOURCES)
     const say = kit.say
@@ -62,7 +63,7 @@ export default {
 <section class="site-section${tone()}" aria-labelledby="cmp-one">
   <h2 id="cmp-one">${say('one.title')}</h2>
   <ul class="cmp-products">${PRODUCTS.map((name, i) => /* html */ `
-    <li><a href="${kit.link(name)}"><b>${kit.from(name).say('product')}</b><span>${cards[i]}</span><span class="cmp-go">${kit.from(name).say('eyebrow')} <span class="flip-rtl" aria-hidden="true">→</span></span></a></li>`).join('')}
+    <li><a href="${kit.link(name)}"><h3>${kit.from(name).say('product')}</h3><span>${cards[i]}</span><span class="cmp-go">${kit.from(name).say('eyebrow')} <span class="flip-rtl" aria-hidden="true">→</span></span></a></li>`).join('')}
   </ul>
 </section>
 

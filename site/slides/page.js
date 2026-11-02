@@ -40,7 +40,7 @@ export default job({
     // The deck it wrote, a card a slide, each with its title.
     const titles = list('replay.slides')
     if (titles.length !== 6) throw new Error(`site/slides/${kit.lang}.json: replay.slides is the deck's six titles`)
-    const got = /* html */ `<ol class="job-deck">${titles.map((title, i) => /* html */ `<li${i ? '' : ' class="is-lead"'} dir="auto">${title}</li>`).join('')}</ol>`
+    const got = /* html */ `<ol class="job-deck">${titles.map((title, i) => /* html */ `<li${i ? '' : ' class="is-lead"'} dir="${kit.dir}">${title}</li>`).join('')}</ol>`
     return { pane: PANE, got }
   },
   demo (kit, { text, texts }) {

@@ -89,7 +89,7 @@
 /* The trust pack */
 .ent-docs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
 .ent-docs a { display: flex; flex-direction: column; gap: 0.3rem; padding: 1.1rem 1.2rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); color: var(--ink); text-decoration: none; }
-.ent-docs b { font-weight: 600; }
+.ent-docs h3 { font-size: inherit; font-weight: 600; }
 .ent-docs span { color: var(--ink-soft); font-size: 0.875rem; }
 .ent-verify { display: flex; flex-direction: column; gap: 0.6rem; }
 

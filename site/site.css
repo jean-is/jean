@@ -32,16 +32,17 @@
 .site :is(code, pre) { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.8125rem; }
 .site pre { margin: 0; padding: 0.75rem 0.9rem; border-radius: 0.75rem; background: var(--room-2); white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.5; direction: ltr; text-align: start; }
 
-/* A way past the top, for the keyboard: shown once it has the focus */
+/* A way past the top, for the keyboard: shown once it has the focus, above the top, so it covers nothing */
 .site a.site-skip { position: absolute; z-index: 3; inset-inline-start: 1rem; inset-block-start: -10rem; padding: 0.5rem 1rem; border-radius: 0.75rem; background: var(--site-fill); color: var(--site-on-fill); text-decoration: none; }
-.site a.site-skip:focus { inset-block-start: 0.75rem; }
+.site a.site-skip:focus { position: static; display: block; inline-size: max-content; max-inline-size: calc(100% - 2rem); margin: 0.5rem 1rem; }
 
 /* The top: the name, whom the page is for, the languages, and the way into the app */
 .site-top { position: sticky; inset-block-start: 0; z-index: 2; display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem var(--site-edge); background: oklch(from var(--room) l c h / 0.86); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); border-block-end: 1px solid var(--line); }
 .site-top .wordmark { color: var(--ink); text-decoration: none; font-size: 1.1875rem; }
 .site-top app-persona { --persona-size: 1.5rem; }
 .site-for { color: var(--ink-soft); font-size: 0.9375rem; }
-.site-langs { display: flex; align-items: center; gap: 0.6rem; margin-inline-start: auto; font-size: 0.875rem; color: var(--ink-soft); }
+.site-langs, .site-langs ul { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; }
+.site-langs { margin-inline-start: auto; font-size: 0.875rem; color: var(--ink-soft); }
 .site-langs .icon { inline-size: 1rem; block-size: 1rem; }
 .site-langs [aria-current] { color: var(--ink); font-weight: 600; }
 html:has(> body.site) { scroll-padding-block-start: 4.5rem; }
@@ -65,14 +66,14 @@ html:has(> body.site) { scroll-padding-block-start: 4.5rem; }
 /* A pane's demo (site/demo.js): Jean's own conversation in the pane's frame; a page sets how tall, by what its task shows. */
 .site-demo { display: block; inline-size: 100%; block-size: var(--demo, 32rem); border: 0; }
 /* With a tour: Play is the page's, at the frame's foot as the frame's own is, and opens the task again full size,
-   in a popover over the page, which holds still behind it. */
+   in a modal dialog over the page, which holds still behind it. */
 :has(> .site-demo-play) { position: relative; }
 .site-demo-play { position: absolute; inset-block-end: 1.9rem; inset-inline: 0; inline-size: max-content; margin-inline: auto; box-shadow: 0 1rem 2rem -1rem oklch(0 0 0 / 0.6); }
 .site-tour { inline-size: min(64rem, 100vw - 2rem); block-size: min(48rem, 100dvh - 2rem); padding: 0; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); color: var(--ink); box-shadow: var(--site-float); overflow: hidden; }
 .site-tour::backdrop { background: oklch(0 0 0 / 0.6); }
 .site-tour-frame { display: block; inline-size: 100%; block-size: 100%; border: 0; }
 .site-tour-close { position: absolute; inset-block-start: 0.6rem; inset-inline-end: 0.6rem; }
-html:has(.site-tour:popover-open) { overflow: hidden; }
+html:has(.site-tour[open]) { overflow: hidden; }
 .site-hero-text { display: flex; flex-direction: column; gap: 1.35rem; min-inline-size: 0; max-inline-size: 46rem; }
 .site-eyebrow { color: var(--ink-soft); font-weight: 600; font-size: 0.9rem; }
 .site-lede { color: var(--ink-soft); font-size: 1.15rem; max-inline-size: 40rem; text-wrap: pretty; }
@@ -163,13 +164,16 @@ svg.felt-tick { inline-size: 1.05em; block-size: 1.05em; margin-inline-end: 0.5r
 .site-foot .site-mark { color: var(--ink); font: 700 1.1875rem/1.2 var(--display); }
 .site .site-foot .site-foot-head { margin: 0; color: var(--ink-soft); font: 600 0.8125rem/1.4 var(--body, inherit); letter-spacing: normal; }
 
-/* A phone, or any narrow window: one column */
+/* A phone, or any narrow window: one column, the top on two lines or more, all of it still there */
 @media (max-width: 52rem) {
   .site-two, .site-stats, .site-limits, .site-questions, .site-foot { grid-template-columns: minmax(0, 1fr); }
-  .site-for { display: none; }
+  .site-top { flex-wrap: wrap; row-gap: 0.4rem; }
   .site-foot { gap: 1.25rem; }
 }
 @media (max-width: 30rem) {
-  .site-langs .icon, .site-top > .button { display: none; }
+  .site-langs .icon { display: none; }
+  /* Its lines kept with the page rather than over it, where the window has little room */
+  .site-top { position: static; }
+  html:has(> body.site) { scroll-padding-block-start: 0.5rem; }
 }
 @media print { .site-top { position: static; } .site-skip, .site-anchor { display: none; } }

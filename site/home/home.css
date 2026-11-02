@@ -29,6 +29,18 @@ body:has(> .home:not([hidden])) app-composer > :is(p, footer) { visibility: hidd
   :root[data-sidebar] body:has(> .home:not([hidden])) > app-shell > :is(.views, app-composer) { position: relative; }
 }
 
+/* While the page shows, it is the main content, its own <main> (ui/home.js), and the app's room holds the first screen in a
+   <div class="main"> (ui/shell.js), drawn as the app draws its <main>, in every look; the page's <main> is never drawn so. */
+:root body > .home[lang] > main { display: block; inline-size: auto; margin: 0; padding: 0; border: 0; background: none; box-shadow: none; view-transition-name: none; }
+:where(.here) > .main { flex: 1; display: flex; flex-direction: column; inline-size: var(--column); margin-inline: auto; padding-block-end: 2rem; }
+:where(:root[data-sidebar] .here) > .main { padding-block-start: 1.5rem; }
+:where(:root[data-sidebar] app-shell:has(> .views button) .here, :root:is([data-look='human'], [data-look='tilde'])[data-sidebar] .here) > .main { padding-block-start: 0; }
+:where(:root[data-look='classic'] .here) > .main { margin-block: 0.75rem; padding: 2.4rem 1.25rem 1.25rem; background: var(--title) 3px 3px / calc(100% - 6px) 1.6rem no-repeat, var(--room); box-shadow: var(--raised); }
+:where(:root[data-look='mondrian'] .here) > .main { padding-inline: 1.5rem; border-inline: var(--stroke) solid var(--rule); background: var(--room-2); }
+:where(:root[data-look='notebook'][data-theme='light'] .here) > .main { padding-inline-start: 1rem; border-inline-start: 2px solid var(--margin); }
+:where(:root[data-split] .here) > .main { padding-block-start: 1rem; }
+:where(:root[data-sliding] .here) > .main { view-transition-name: page; }
+
 .home {
   --home-side: var(--side, var(--room-2));
   --home-fill: var(--fill, var(--ink));
@@ -68,7 +80,8 @@ body:has(> .home:not([hidden])) app-composer > :is(p, footer) { visibility: hidd
   :is(.home-promise, .home-promise-sub, .home-strip) { animation: home-rise 0.7s var(--ease) 0.3s backwards; }
 }
 @keyframes home-rise { from { translate: 0 2rem; opacity: 0; } }
-.home-strip { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem; padding: 1rem var(--home-gutter); border-block: 1px solid var(--line); background: var(--home-side); }
+.home-strip, .home-strip ul { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem; }
+.home-strip { padding: 1rem var(--home-gutter); border-block: 1px solid var(--line); background: var(--home-side); }
 /* The line under it says how: any AI, and what is kept where; a language without its words yet goes straight to the strip. */
 .home-promise-sub { margin: 0; padding: 0.75rem max(var(--home-gutter), calc((100% - 44rem) / 2)) 0; background: var(--home-side); color: var(--ink-soft); font-size: 1.1rem; text-align: center; }
 :is(.home-promise, .home-promise-sub) + .home-strip { padding-block-end: 1.75rem; border-block-start: 0; }
@@ -120,6 +133,7 @@ body:has(> .home:not([hidden])) app-composer > :is(p, footer) { visibility: hidd
 .home-row.is-turning .home-turn:not(:disabled) { display: grid; }
 .home-turn:hover { background: var(--room-2); }
 .home-tile { transition: border-color 0.25s var(--ease), box-shadow 0.25s var(--ease); }
+.home-tile:not(.is-active) { cursor: pointer; }
 .home-tile.is-active { border-color: oklch(from var(--home-fill) l c h / 0.6); box-shadow: 0 0 0 3px oklch(from var(--home-fill) l c h / 0.12); }
 .home-where, .home-step, .home-door-name { color: var(--ink-soft); font-size: 0.8125rem; font-weight: 600; line-height: 1.4; }
 .home-ask { font-size: 0.95rem; font-weight: 500; line-height: 1.45; }
@@ -200,7 +214,7 @@ body:has(> .home:not([hidden])) app-composer > :is(p, footer) { visibility: hidd
 .home-door-title { color: var(--ink); font: 700 1.4rem/1.2 var(--display); }
 .home-door.is-featured .home-door-title { font-size: 1.75rem; }
 .home-door-go { display: flex; flex-direction: column; gap: 0.2rem; margin-block-start: auto; font-size: 0.875rem; font-weight: 500; }
-.home-door-go a { align-self: flex-start; }
+.home-door-go > * { align-self: flex-start; }
 .home-door details { margin-block-start: auto; font-size: 0.875rem; }
 .home-door summary { display: inline-flex; align-items: center; gap: 0.3rem; color: var(--ink); font-weight: 500; cursor: pointer; list-style: none; }
 .home-door summary::-webkit-details-marker { display: none; }
@@ -224,8 +238,7 @@ body:has(> .home:not([hidden])) app-composer > :is(p, footer) { visibility: hidd
 .home-personal tbody td:nth-of-type(2) { border: 1.5px solid var(--home-fill); }
 #home-personal .home-door-go { flex-direction: row; flex-wrap: wrap; gap: 0.4rem 1.5rem; }
 .home-sealed { display: flex; align-items: center; gap: 0.5rem; padding: 0.55rem 0.7rem 0.55rem 0.9rem; border: 1.5px solid var(--flame); border-radius: 1.375rem; background: var(--glass); font-size: 0.8125rem; }
-.home-sealed > span:first-child { flex: 1; min-inline-size: 0; overflow: hidden; color: var(--ink-faint); text-overflow: ellipsis; white-space: nowrap; }
-@media (max-width: 30rem) { .home-sealed > span:first-child { white-space: normal; } }
+.home-sealed > span:first-child { flex: 1; min-inline-size: 0; color: var(--ink-faint); }
 .home-sealed > span:last-child { display: inline-flex; align-items: center; gap: 0.3rem; color: var(--flame); font-weight: 500; white-space: nowrap; }
 .home-sealed .icon, .home-rows .icon { inline-size: 1rem; block-size: 1rem; color: var(--flame); }
 .home-rows li, .home-people li { display: flex; align-items: center; gap: 0.6rem; padding-block: 0.4rem; border-block-end: 1px solid var(--line); font-size: 0.875rem; }
@@ -238,7 +251,7 @@ body:has(> .home:not([hidden])) app-composer > :is(p, footer) { visibility: hidd
 .home-offer > span { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .home-offer .button, .home-link .button { padding: 0.2rem 0.75rem; font-size: 0.8125rem; }
 .home-link { display: flex; align-items: center; gap: 0.4rem; padding: 0.35rem 0.35rem 0.35rem 0.7rem; border: 1px solid var(--line-strong); border-radius: 0.5rem; color: var(--ink-soft); font: 0.78rem/1.5 var(--mono); }
-.home-link > span:first-child { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.home-link > span:first-child { flex: 1; min-inline-size: 0; overflow-wrap: anywhere; }
 .home-dots li { display: flex; gap: 0.45rem; font-size: 0.875rem; line-height: 1.45; }
 .home-dots li::before { content: '·' / ''; color: var(--flame); font-weight: 700; }
 
@@ -271,7 +284,7 @@ body:has(> .home:not([hidden])) app-composer > :is(p, footer) { visibility: hidd
 }
 
 /* On a phone, the box stays docked at the foot while the page scrolls under it, the ideas leaving with
-   the first screen; the tries scroll sideways, and every door but the first is its promise. */
+   the first screen; the tries scroll sideways (a column at 24rem or less), and every door's promise comes first. */
 @media not (min-width: 48rem) {
   .home-personal, .home-personal :is(tbody, tr, th, td) { display: block; inline-size: auto; margin: 0; }
   .home-personal thead { display: none; }
@@ -281,11 +294,14 @@ body:has(> .home:not([hidden])) app-composer > :is(p, footer) { visibility: hidd
   body:has(> .home) app-composer { padding-block-end: 9rem; }
   body:has(> .home) app-composer > form.composer { position: fixed; inset-inline: 0; inset-block-end: max(0.75rem, env(safe-area-inset-bottom)); z-index: 4; margin-inline: auto; }
   body:has(> .home:not([hidden])) app-composer > :is(p, footer) { display: none; }
+  /* What the keys reach scrolls into view above the docked box and the fade over it, never under them. */
+  html:has(> body > .home:not([hidden])) { scroll-padding-block-end: 9rem; }
   body > .home::after { content: ''; position: fixed; inset-inline: 0; inset-block-end: 0; z-index: 1; block-size: 7rem; background: linear-gradient(oklch(from var(--room) l c h / 0), var(--room) 55%); pointer-events: none; }
   .home { --home-sheet: 1.25rem; }
-  .home-strip { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; padding-inline: 1rem; scrollbar-width: none; }
-  @media (max-width: 24rem) { .home-strip { flex-wrap: wrap; overflow-x: visible; } .home-tiles { flex-direction: column; margin-inline-end: 0; padding-inline-end: 0.3rem; overflow-x: visible; scroll-snap-type: none; } .home-tile { inline-size: auto; min-block-size: 0; } }
-  .home-strip .button { flex: none; }
+  .home-strip, .home-strip ul { flex-wrap: nowrap; justify-content: flex-start; }
+  .home-strip { overflow-x: auto; padding-inline: 1rem; scrollbar-width: none; }
+  .home-strip .button, .home-strip > ul { flex: none; }
+  @media (max-width: 24rem) { .home-strip, .home-strip ul { flex-wrap: wrap; overflow-x: visible; } .home-strip > ul { flex: 1 1 auto; } .home-tiles { flex-direction: column; margin-inline-end: 0; padding-inline-end: 0.3rem; overflow-x: visible; scroll-snap-type: none; } .home-tile { inline-size: auto; min-block-size: 0; } }
   .home-section { gap: 1.1rem; padding-block: 2.5rem; }
   .home-head.is-centred { align-self: stretch; align-items: flex-start; text-align: start; }
   .home-why, .home-sub, .home-promise-sub { font-size: 0.95rem; }
@@ -306,7 +322,6 @@ body:has(> .home:not([hidden])) app-composer > :is(p, footer) { visibility: hidd
   .home-door.is-featured .home-door-title { font-size: 1.4rem; }
   .home-door:not(.is-featured) .home-door-title { order: -1; }
   .home-door:not(.is-featured) .home-door-name { order: -2; }
-  .home-door:not(.is-featured) > :is(.home-offer, .home-link) { display: none; }
   .home .site-foot { gap: 1.25rem; padding: 2rem 1.25rem 9rem; }
 }
 @media (forced-colors: active) {

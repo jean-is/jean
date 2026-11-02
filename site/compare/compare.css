@@ -19,7 +19,8 @@
 @media (max-width: 64rem) {
   .cmp-hero:not(:has(.cmp-setting)) { grid-template-columns: minmax(0, 1fr); }
 }
-.cmp-crumbs { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5rem; color: var(--ink-soft); font-size: 0.875rem; }
+.cmp-crumbs { color: var(--ink-soft); font-size: 0.875rem; }
+.cmp-crumbs :is(ol, li) { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5rem; }
 .cmp-crumbs [aria-current] { color: var(--ink); }
 .cmp-setting { display: flex; flex-direction: column; gap: 0.7rem; padding: 1.25rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--site-side); min-inline-size: 0; }
 .site .cmp-setting-head { margin: 0; font: inherit; font-weight: 600; }
@@ -109,7 +110,7 @@
 .cmp-products { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(12rem, 100%), 1fr)); gap: 1rem; }
 .site .cmp-products a { display: flex; flex-direction: column; gap: 0.6rem; block-size: 100%; padding: 1.25rem; border: 1px solid var(--line-strong); border-radius: var(--site-pane); background: var(--room); color: var(--ink); text-decoration: none; }
 .cmp-products a:hover { border-color: var(--ink); }
-.cmp-products b { font: 700 1.35rem/1.2 var(--display); }
+.cmp-products h3 { font: 700 1.35rem/1.2 var(--display); }
 .cmp-products span { color: var(--ink-soft); font-size: 0.95rem; }
 .cmp-products .cmp-go { margin-block-start: auto; color: var(--ink); font-weight: 600; }
 
@@ -125,11 +126,13 @@
   .cmp-hero, .cmp-fences, .cmp-cards, .cmp-cards.is-four { grid-template-columns: minmax(0, 1fr); }
   .cmp-table thead td, .cmp-table.is-kinds thead td { inline-size: 8rem; }
 }
-/* A phone: a row at a time, each side saying whose it is */
+/* A phone: the heads first, each kind with the products it stands for, then a row at a time, each side saying whose it is */
 @media (max-width: 40rem) {
   .cmp-scroll { overflow: visible; border: 0; background: none; }
-  .cmp-table, .cmp-table.is-kinds, .cmp-table :is(tbody, tr, th, td) { display: block; min-inline-size: 0; }
-  .cmp-table thead { display: none; }
+  .cmp-table, .cmp-table.is-kinds, .cmp-table :is(thead, tbody, tr, th, td) { display: block; min-inline-size: 0; }
+  .cmp-table thead { margin-block-end: 1rem; }
+  .cmp-table thead td { display: none; }
+  .cmp-table thead th + th { border-block-start: 1px solid var(--line); }
   .cmp-table tr + tr { margin-block-start: 1rem; }
   .cmp-table tr { border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); overflow: hidden; }
   .cmp-table tbody th { border-block-start: 0; background: var(--site-side); font-size: 1rem; }

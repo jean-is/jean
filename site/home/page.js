@@ -104,7 +104,7 @@ export function homeOf (kit, { sample = SAMPLE, saved = savingsAnswer() } = {}) 
     { key: 'picture', group: 'home', chip: 'picture', ...asking(say('tile.picture')), art: /* html */ `<div class="home-art is-map">${STREET}</div>` },
     { key: 'plan', group: 'work', chip: 'file', ...asking(say('tile.plan')), art: /* html */ `<div class="home-art">${PLAN}</div>` },
   ]
-  // One tile is the active one at all times, the first until the pointer, a tap or the keyboard picks another, its Try the
+  // One tile is the active one at all times, the first until a click, a tap or the keyboard picks another, its Try the
   // primary one and its replay the one shown (ui/home.js).
   const tile = (/** @type {typeof uses[number]} */ use, /** @type {number} */ i) => /* html */ `
     <li class="home-tile${i ? '' : ' is-active'}" data-for="${use.group}"${i ? '' : ' aria-current="true"'}>
@@ -117,13 +117,13 @@ export function homeOf (kit, { sample = SAMPLE, saved = savingsAnswer() } = {}) 
     const [first, second, third, got, chip] = replayOf(use.key)
     return /* html */ `
       <ol class="home-replay" data-replay="${use.key}" aria-label="${say('replay.how')}"${i ? ' inert' : ''}>
-        <li><span class="home-step">${say('replay.ask')}</span><p class="home-asked" dir="auto">${use.said}</p></li>
-        <li><span class="home-step">${say('replay.work')}</span><ul class="home-ticks">${[first, second, third].map((step) => /* html */ `<li>${step}</li>`).join('')}</ul></li>
-        <li><span class="home-step">${say('replay.get')}</span><p>${got}</p><span class="home-file" dir="auto">${ICONS[/** @type {keyof typeof ICONS} */ (use.chip)]}${chip}</span></li>
-        <li><span class="home-step">${say('replay.where')}</span><p class="home-receipt"><b>${ICONS.brain}${appSays('receipt.inCloud')}</b><span>${say('replay.sent', { host: '\u0000' }).replace('\u0000', '<bdi>gateway.ai</bdi>')}</span><span>${appSays('receipt.certificate')} ✓</span></p></li>
+        <li><span class="home-step">${say('replay.ask')}</span><p class="home-asked" dir="${dir}">${use.said}</p></li>
+        <li><span class="home-step">${say('replay.work')}</span><ul class="home-ticks">${[first, second, third].map((step) => /* html */ `<li><span>${step}</span></li>`).join('')}</ul></li>
+        <li><span class="home-step">${say('replay.get')}</span><p>${got}</p><span class="home-file" dir="${dir}">${ICONS[/** @type {keyof typeof ICONS} */ (use.chip)]}<span>${chip}</span></span></li>
+        <li><span class="home-step">${say('replay.where')}</span><p class="home-receipt"><b>${ICONS.brain}<span>${appSays('receipt.inCloud')}</span></b><span>${say('replay.sent', { host: '\u0000' }).replace('\u0000', '<bdi dir="ltr">gateway.ai</bdi>')}</span><span>${appSays('receipt.certificate')} ✓</span></p></li>
       </ol>`
   }
-  const more = (/** @type {string} */ label, /** @type {string[]} */ items, dots = false) => /* html */ `<details><summary>${label}${ICONS.down}</summary><ul${dots ? ' class="home-dots"' : ''}>${items.map((item) => /* html */ `<li>${item}</li>`).join('')}</ul></details>`
+  const more = (/** @type {string} */ label, /** @type {string[]} */ items, dots = false) => /* html */ `<details><summary><span>${label}</span>${ICONS.down}</summary><ul${dots ? ' class="home-dots"' : ''}>${items.map((item) => /* html */ `<li><span>${item}</span></li>`).join('')}</ul></details>`
   const door = (/** @type {string} */ id, /** @type {string} */ key, /** @type {string} */ body, featured = false) => /* html */ `
       <article id="home-${id}" class="home-door${featured ? ' is-featured' : ''}" aria-labelledby="home-${id}-title">
         <p class="home-door-name">${say(`${key}.name`)}</p>
@@ -131,7 +131,11 @@ export function homeOf (kit, { sample = SAMPLE, saved = savingsAnswer() } = {}) 
         <h3 id="home-${id}-title" class="home-door-title">${say(`${key}.title`)}</h3>
         ${body}
       </article>`
-  const go = (/** @type {Array<[string, string]>} */ links) => /* html */ `<p class="home-door-go">${links.map(([href, label]) => /* html */ `<a href="${href}">${label} ${ARROW}</a>`).join('')}</p>`
+  // A way on, or a list of them.
+  const go = (/** @type {Array<[string, string]>} */ links) => {
+    const ways = links.map(([href, label]) => /* html */ `<a href="${href}">${label} ${ARROW}</a>`)
+    return ways.length > 1 ? /* html */ `<ul class="home-door-go">${ways.map((way) => /* html */ `<li>${way}</li>`).join('')}</ul>` : /* html */ `<p class="home-door-go">${ways[0]}</p>`
+  }
   // Two columns that lay out on their own, so a question opened in one never moves the other; one open at a time (name).
   const columns = (/** @type {string[]} */ items) => [items.slice(0, Math.ceil(items.length / 2)), items.slice(Math.ceil(items.length / 2))].map((half) => /* html */ `<div>${half.join('')}</div>`).join('')
   const person = (/** @type {string} */ who, /** @type {string} */ how) => /* html */ `<li><i aria-hidden="true">${xml([...kit.text(who, params)][0] ?? '')}</i><span><b>${say(who)}</b><small>${say(how)}</small></span></li>`
@@ -143,12 +147,14 @@ export function homeOf (kit, { sample = SAMPLE, saved = savingsAnswer() } = {}) 
   // Under the promise, how it is kept: the rest of the description, which search results show after the title.
   const described = kit.text('description')
   const rest = described.slice(described.split(/(?<=[.!?؟])\s+|(?<=[。！？])/u)[0].length).trim()
-  return /* html */ `<div class="home" lang="${lang}" dir="${dir}">
+  // The page's own main content while it shows, the app's first screen above it (ui/home.js), then the site's foot.
+  return /* html */ `<div class="home" lang="${lang}" dir="${dir}"><main>
   <h1 class="home-title home-promise">${say('promise')}</h1>${rest ? /* html */ `
   <p class="home-promise-sub">${xml(rest)}</p>` : ''}
   <nav class="home-strip" aria-labelledby="home-for">
     <span id="home-for" class="home-strip-label">${say('strip.label')}</span>
-    <a class="button" href="#home-range">${say('strip.home')}</a><a class="button" href="#home-family">${say('strip.family')}</a><a class="button" href="${kit.link('work') ?? '#home-range'}">${say('strip.work')}</a><a class="button" href="#home-open">${say('strip.it')}</a><a class="button" href="#home-open">${say('strip.developer')}</a>
+    <ul>${[['#home-range', 'strip.home'], ['#home-family', 'strip.family'], [kit.link('work') ?? '#home-range', 'strip.work'], ['#home-open', 'strip.it'], ['#home-open', 'strip.developer']]
+      .map(([href, key]) => /* html */ `<li><a class="button" href="${href}">${say(key)}</a></li>`).join('')}</ul>
   </nav>
   <section id="home-range" class="home-section" aria-labelledby="home-range-title">
     <header class="home-head is-centred">
@@ -204,22 +210,22 @@ export function homeOf (kit, { sample = SAMPLE, saved = savingsAnswer() } = {}) 
     </header>
     <div class="home-doors">${[
       door('confidential', 'confidential', /* html */ `<dl class="home-versus"><div><dt>${say('confidential.mostLabel')}</dt><dd>${say('confidential.most')}</dd></div><div><dt>${say('confidential.oursLabel')}</dt><dd>${say('confidential.ours')}</dd></div></dl>
-        <p class="home-sealed" aria-hidden="true"><span>${appSays('composer.placeholder')}</span><span>${ICONS.shield}${say('confidential.sealed')}</span></p>
+        <p class="home-sealed" aria-hidden="true"><span>${appSays('composer.placeholder')}</span><span>${ICONS.shield}<span>${say('confidential.sealed')}</span></span></p>
         <p class="home-note">${say('confidential.offline')}</p>
         ${go([[kit.link('files') ?? 'files', appSays('welcome.files')]])}`, true),
-      door('ai', 'ai', /* html */ `<ul class="home-rows">${list('ai.ways').map((way) => /* html */ `<li>${ICONS.brain}${way}</li>`).join('')}</ul>
+      door('ai', 'ai', /* html */ `<ul class="home-rows">${list('ai.ways').map((way) => /* html */ `<li>${ICONS.brain}<span>${way}</span></li>`).join('')}</ul>
         ${go([[kit.link('compare') ?? 'compare', say('ai.go')]])}`),
       door('family', 'family', /* html */ `<ul class="home-people">${person('family.younger', 'family.withYou')}${person('family.older', 'family.alone')}</ul>
         <p class="home-source">${say('family.source')}</p>
         ${go([[kit.link('family') ?? 'family', say('family.go')]])}`),
       door('simple', 'simple', /* html */ `<div class="home-offer" aria-hidden="true"><p>${appSays('cap.memory.offer')}</p><span><span class="button primary">${appSays('cap.memory.yes')}</span><span class="button subtle">${appSays('offer.no')}</span></span></div>
         ${more(say('door.more'), list('simple.more'))}`),
-      door('shareable', 'share', /* html */ `<p class="home-link" dir="ltr" aria-hidden="true"><span>https://hst.ing/…</span><span class="button">${appSays('action.copy')}</span></p>
+      door('shareable', 'share', /* html */ `<p class="home-link" dir="ltr" aria-hidden="true"><span>https://hst.ing/…</span><span class="button" dir="${dir}">${appSays('action.copy')}</span></p>
         <p class="home-note">${say('share.limits')}</p>
         ${more(say('door.more'), list('share.more'))}`),
       door('open', 'open', /* html */ `<p>${say('open.text')}</p>
         ${go([[REPOSITORY, say('open.source')], [kit.link('enterprise') ?? 'enterprise', say('open.it')]])}`),
-      door('catch', 'catch', /* html */ `<ul class="home-dots">${list('catch.items').map((item) => /* html */ `<li>${item}</li>`).join('')}</ul>
+      door('catch', 'catch', /* html */ `<ul class="home-dots">${list('catch.items').map((item) => /* html */ `<li><span>${item}</span></li>`).join('')}</ul>
         ${more(say('catch.more'), list('catch.rest'), true)}`),
     ].join('')}
     </div>
@@ -227,9 +233,10 @@ export function homeOf (kit, { sample = SAMPLE, saved = savingsAnswer() } = {}) 
   <section id="home-questions" class="home-section" aria-labelledby="home-questions-title">
     <h2 id="home-questions-title" class="home-title is-small">${say('faq.title')}</h2>
     <div class="home-questions">${columns(kit.table('faq.items', 2, params).map(([question, answer], i) => /* html */ `
-      <details name="home-questions"${i ? '' : ' open'}><summary>${question}${ICONS.closed}${ICONS.open}</summary><p>${answer}</p></details>`))}
+      <details name="home-questions"${i ? '' : ' open'}><summary><span>${question}</span>${ICONS.closed}${ICONS.open}</summary><p>${answer}</p></details>`))}
     </div>
   </section>
+  </main>
   ${foot(kit, menu)}
 </div>`
 }
@@ -255,10 +262,11 @@ export function withHome (html, page, { lang, dir, own, languages, noscript }) {
 }
 
 /**
- * A page written right to left, each run of Latin words in its text saying its own direction, as RGAA 8.10 asks. @param {string} page
+ * A page written right to left, each run of Latin words in its text saying its own direction, as RGAA 8.10 asks: the
+ * text after a drawing too, and a word joined to the Arabic before it (وPDF). @param {string} page
  */
-export const latinSaid = (page) => page.replace(/<(script|style|svg|bdi|code|pre)\b[\s\S]*?<\/\1>|>([^<]+)(?=<)/g, (whole, _, text) =>
-  (text === undefined ? whole : `>${text.replace(/(?<![&#\p{L}\p{N}])\p{Script=Latin}[\p{Script=Latin}\p{N}.+@/’'-]*(?: \p{Script=Latin}[\p{Script=Latin}\p{N}.+@/’'-]*)*/gu, '<span dir="ltr">$&</span>')}`))
+export const latinSaid = (page) => page.replace(/<(script|style|svg|bdi|code|pre)\b[\s\S]*?<\/\1>|(?<=>)([^<]+)(?=<)/g, (whole, _, text) =>
+  (text === undefined ? whole : text.replace(/(?<![&#\p{Script=Latin}\p{N}])\p{Script=Latin}[\p{Script=Latin}\p{N}.+@/’'-]*(?: \p{Script=Latin}[\p{Script=Latin}\p{N}.+@/’'-]*)*/gu, '<span dir="ltr">$&</span>')))
 
 /**
  * index.html in another language, for its own address: its description, which the title and the cards
