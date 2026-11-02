@@ -278,7 +278,7 @@ body:has(> .home:not([hidden])) app-composer > :is(p, footer) { visibility: hidd
   .home-personal tr { display: grid; gap: 0.4rem; margin-block-end: 1rem; }
   .home-personal tbody th { inline-size: auto; padding: 0; }
   .home-personal td::before { content: attr(data-label); display: block; color: var(--ink); font-size: 0.75rem; font-weight: 600; }
-  body:has(> .home) app-composer { padding-block-end: 8rem; }
+  body:has(> .home) app-composer { padding-block-end: 9rem; }
   body:has(> .home) app-composer > form.composer { position: fixed; inset-inline: 0; inset-block-end: max(0.75rem, env(safe-area-inset-bottom)); z-index: 4; margin-inline: auto; }
   body:has(> .home:not([hidden])) app-composer > :is(p, footer) { display: none; }
   body > .home::after { content: ''; position: fixed; inset-inline: 0; inset-block-end: 0; z-index: 1; block-size: 7rem; background: linear-gradient(oklch(from var(--room) l c h / 0), var(--room) 55%); pointer-events: none; }

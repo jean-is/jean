@@ -39,7 +39,7 @@ class Shell extends Element {
           aria-label=${t(open ? 'sidebar.close' : 'sidebar.open')}>${icons.sidebar}</button>
         ${loaded.value.has('projects') ? html`<app-projects></app-projects>`
           : html`<button class="wordmark" @click=${() => turnPage(newConversation)} title=${t('action.new')} aria-keyshortcuts=${SHORTCUTS.new}><app-persona></app-persona><span dir=${/[\u0590-\u08FF]/.test(assistantName()) ? 'rtl' : 'ltr'}>${assistantName()}</span></button>`}
-        ${open ? findButton() : views}
+        ${findButton()}${open ? nothing : views}
       </header>
       ${open ? html`<app-inbox role="complementary" aria-label=${t('history.title')}></app-inbox>${views}` : nothing}
       ${app.ephemeral.value ? html`<p class="notice" role="alert">${t('storage.ephemeral')}</p>` : nothing}
@@ -65,7 +65,7 @@ effect(() => {
   if (sidebarOpen.value) import('./inbox.js')
 })
 
-/** Search, once it is found, at the top of the drawer, as in Manus (D165). */
+/** Search, there from the start (D5), in the bar, at the top of the drawer while it is open, as in Manus (D165). */
 export const findButton = () => (loaded.value.has('find') ? html`<search><button class="icon-button" aria-keyshortcuts=${SHORTCUTS.find}
   aria-label=${t('cap.find.name')} @click=${() => { app.dialog.value = 'find' }}>${icons.search}</button></search>` : nothing)
 

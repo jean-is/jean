@@ -458,9 +458,7 @@ async function xlsx(sheets, date, look = {}, title = '') {
     }
     return `<c r="${ref}" t="s"${header ? ' s="1"' : ''}><v>${shared(value)}</v></c>`
   }
-  // A sheet whose head row names each column once is a table, for Excel and what reads it to say which head a cell is under (RGAA 13.3).
-  const tables = sheets.map(({ rows }) => rows.length > 1 && rows[0].every((name) => name.trim()) && new Set(rows[0].map((name) => name.toLowerCase())).size === rows[0].length)
-  const worksheets = sheets.map(({ rows }, i) => {
+  const worksheets = sheets.map(({ rows }) => {
     const header = rows.length > 1
     /** @type {Map<string, [number, number]>} */
     const numbers = new Map()
@@ -475,14 +473,11 @@ async function xlsx(sheets, date, look = {}, title = '') {
     const frozen = header ? '<pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/>' : ''
     const direction = rightToLeft(rows.flat().join(' ')) ? ' rightToLeft="1"' : ''
     const data = rows.map((row, r) => `<row r="${r + 1}">${row.map((value, c) => cell(value, `${column(c)}${r + 1}`, r === 0 && header, numbers)).join('')}</row>`).join('')
-    return `${HEAD}<worksheet xmlns="${SHEET}" xmlns:r="${OFFICE}"><sheetViews><sheetView workbookViewId="0"${direction}>${frozen}</sheetView></sheetViews>${cols ? `<cols>${cols}</cols>` : ''}<sheetData>${data}</sheetData>${tables[i] ? '<tableParts count="1"><tablePart r:id="rId1"/></tableParts>' : ''}</worksheet>`
+    return `${HEAD}<worksheet xmlns="${SHEET}"><sheetViews><sheetView workbookViewId="0"${direction}>${frozen}</sheetView></sheetViews>${cols ? `<cols>${cols}</cols>` : ''}<sheetData>${data}</sheetData></worksheet>`
   })
-  const table = (/** @type {string[][]} */ rows, /** @type {number} */ i) => `${HEAD}<table xmlns="${SHEET}" id="${i + 1}" name="Table${i + 1}" displayName="Table${i + 1}" ref="A1:${column(rows[0].length - 1)}${rows.length}" totalsRowShown="0">`
-    + `<tableColumns count="${rows[0].length}">${rows[0].map((name, c) => `<tableColumn id="${c + 1}" name="${xml(name)}"/>`).join('')}</tableColumns></table>`
   const n = sheets.length
   return zip({
     '[Content_Types].xml': contentTypes([['xl/workbook.xml', 'spreadsheetml.sheet.main'], ...sheets.map((_, i) => /** @type {[string, string]} */ ([`xl/worksheets/sheet${i + 1}.xml`, 'spreadsheetml.worksheet'])),
-      ...sheets.flatMap((_, i) => (tables[i] ? [/** @type {[string, string]} */ ([`xl/tables/table${i + 1}.xml`, 'spreadsheetml.table'])] : [])),
       ['xl/styles.xml', 'spreadsheetml.styles'], ['xl/sharedStrings.xml', 'spreadsheetml.sharedStrings'], ['docProps/custom.xml', 'custom-properties'], ['docProps/core.xml', 'core']]),
     '_rels/.rels': relationships([['rId1', 'officeDocument', 'xl/workbook.xml'], ['rId2', 'custom-properties', 'docProps/custom.xml'], ['rId3', 'core', 'docProps/core.xml']]),
     'docProps/custom.xml': CUSTOM, 'docProps/core.xml': core(title),
@@ -491,7 +486,6 @@ async function xlsx(sheets, date, look = {}, title = '') {
     // Formulas have no saved results: they are worked out when the file opens.
     'xl/workbook.xml': `${HEAD}<workbook xmlns="${SHEET}" xmlns:r="${OFFICE}"><sheets>${sheets.map(({ name }, i) => `<sheet name="${xml(name)}" sheetId="${i + 1}" r:id="rId${i + 1}"/>`).join('')}</sheets><calcPr fullCalcOnLoad="1"/></workbook>`,
     ...Object.fromEntries(worksheets.map((sheet, i) => [`xl/worksheets/sheet${i + 1}.xml`, sheet])),
-    ...Object.fromEntries(sheets.flatMap(({ rows }, i) => (tables[i] ? [[`xl/worksheets/_rels/sheet${i + 1}.xml.rels`, relationships([['rId1', 'table', `../tables/table${i + 1}.xml`]])], [`xl/tables/table${i + 1}.xml`, table(rows, i)]] : []))),
     'xl/styles.xml': sheetStyles(look),
     'xl/sharedStrings.xml': `${HEAD}<sst xmlns="${SHEET}" count="${strings.size}" uniqueCount="${strings.size}">${[...strings.keys()].map((text) => `<si><t xml:space="preserve">${xml(text)}</t></si>`).join('')}</sst>`,
   }, date)

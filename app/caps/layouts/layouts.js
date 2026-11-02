@@ -5,7 +5,7 @@
 // offered; until then, and for the others, ui/markdown.js shows them as they are. The same Markdown copies as it was.
 import { html, nothing } from 'lit-html'
 import { ref } from 'lit-html/directives/ref.js'
-import { shapes, blocks, inline, lex, cited, parser } from '../../ui/markdown.js'
+import { shapes, blocks, inline, lex, cited, parser, namesRows } from '../../ui/markdown.js'
 import { app, keepRecords } from '../../ui/state.js'
 import { metaRecord } from '../../core/events.js'
 import { styleSheet } from '../../ui/sheet.js'
@@ -38,10 +38,11 @@ function fits(box) {
 function table(token) {
   const shape = compared(token)
   if (!shape) {
-    const align = aligned(token).map((side) => side && `align-${side}`)
+    const align = aligned(token).map((side) => side && `align-${side}`), heads = namesRows(token.header[0]?.text ?? '', token.rows.map((/** @type {any[]} */ row) => row[0]?.text.trim() ?? ''))
     return html`<div class="table" tabindex="0" ${ref(fits)}><table aria-label=${token.title ?? nothing}>
-      <thead><tr>${token.header.map((/** @type {any} */ cell, /** @type {number} */ i) => html`<th class=${align[i]}>${inline(cell.tokens)}</th>`)}</tr></thead>
-      <tbody>${token.rows.map((/** @type {any[]} */ row) => html`<tr>${row.map((cell, i) => html`<td class=${align[i]}>${inline(cell.tokens)}</td>`)}</tr>`)}</tbody>
+      <thead><tr>${token.header.map((/** @type {any} */ cell, /** @type {number} */ i) => html`<th scope="col" class=${align[i]}>${inline(cell.tokens)}</th>`)}</tr></thead>
+      <tbody>${token.rows.map((/** @type {any[]} */ row) => html`<tr>${row.map((cell, i) => (i || !heads ? html`<td class=${align[i]}>${inline(cell.tokens)}</td>`
+        : html`<th scope="row" class=${align[i]}>${inline(cell.tokens)}</th>`))}</tr>`)}</tbody>
     </table></div>`
   }
   // The criteria, often in bold, are no option's best.

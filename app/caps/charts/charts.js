@@ -19,7 +19,7 @@ import { readOption, localize, titleOf, namesIn, sideOf } from './option.js'
 
 const [echarts] = await Promise.all([import(new URL('../../vendor/echarts/echarts.mjs', import.meta.url).href), useStrings('charts'), styleSheet(new URL('charts.css', import.meta.url))])
 
-const contrast = matchMedia('(prefers-contrast: more), (forced-colors: active)')
+const [contrast, forced] = [matchMedia('(prefers-contrast: more)'), matchMedia('(forced-colors: active)')]
 let charts = 0
 // Escape hides a tip.
 addEventListener('keydown', (event) => { if (event.key === 'Escape') for (const one of document.querySelectorAll('app-chart')) /** @type {any} */ (one).chart?.dispatchAction({ type: 'hideTip' }) })
@@ -34,7 +34,7 @@ function dressed(option, font) {
     ...localize(option, new Intl.NumberFormat(intlLocales(locale.peek())).format),
     textStyle: { fontFamily: font, ...option.textStyle },
     ...(still() && { animation: false }),
-    ...(contrast.matches && { aria: { enabled: true, decal: { show: true } } }),
+    ...((forced.matches || ({ more: true, usual: false }[document.documentElement.dataset.contrast ?? ''] ?? contrast.matches)) && { aria: { enabled: true, decal: { show: true } } }),
   }
 }
 

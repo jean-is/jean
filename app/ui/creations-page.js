@@ -82,7 +82,7 @@ function drop(item) {
   let timer = setTimeout(later, 5000)
   gone.value = new Set(gone.value).add(item.path)
   waiting.set(item.path, now)
-  notify(t(item.kind.remove ? 'creations.deleted' : 'creations.removed', { name: item.name }), { label: t('memory.undo'), run: () => { clearTimeout(timer); waiting.delete(item.path); back() }, undo: true }, 5000)
+  notify(t(item.kind.remove ? 'creations.deleted' : 'creations.removed', { name: item.name }), { label: t('memory.undo'), run: () => { clearTimeout(timer); waiting.delete(item.path); back(); requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector(`.creation[data-path="${CSS.escape(item.path)}"] .creation-open`))?.focus()) }, undo: true }, 5000)
   requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector('app-toasts .toast .button'))?.focus())
 }
 

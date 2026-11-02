@@ -18,7 +18,7 @@ import { slots } from './caps.js'
 import { backwards, keyNames, lookName } from './inbox.js'
 import { t, intlLocales, useStrings } from '../core/i18n.js'
 import { icons } from './menu-icons.js'
-import { styleSheet } from './sheet.js'
+import { contrast, styleSheet } from './sheet.js'
 
 /** @typedef {import('../core/settings.js').Look} Look */
 
@@ -35,17 +35,18 @@ function go(to) {
 }
 
 /**
- * Motion on this device: less or full as the user asked, or Auto, null, what the device asks. Kept beside light or
- * dark, which index.html applies with it before the first paint; the style sheet stops what moves (ui/style.css).
+ * Motion and contrast on this device: less or full, usual or more, as the user asked, or Auto, null, what the device asks. Motion is kept
+ * beside light or dark, which index.html applies with it before the first paint, and the style sheet stops what moves (ui/style.css);
+ * contrast turns the sheets' rules for more contrast on or off (ui/sheet.js), as the app starts.
  */
-const MOTION_KEY = 'app.motion'
-const motion = signal(localStorage.getItem(mine(MOTION_KEY)))
-/** @param {string} next */
-function setMotion(next) {
-  motion.value = next === 'auto' ? null : next
-  if (motion.value) localStorage.setItem(mine(MOTION_KEY), motion.value)
-  else localStorage.removeItem(mine(MOTION_KEY))
-  document.documentElement.dataset.motion = motion.value ?? ''
+const motion = signal(localStorage.getItem(mine('app.motion'))), contrasted = signal(localStorage.getItem(mine('app.contrast')))
+/** @param {typeof motion} kept @param {'motion' | 'contrast'} name @param {string} next */
+function setComfort(kept, name, next) {
+  kept.value = next === 'auto' ? null : next
+  if (kept.value) localStorage.setItem(mine(`app.${name}`), kept.value)
+  else localStorage.removeItem(mine(`app.${name}`))
+  document.documentElement.dataset[name] = kept.value ?? ''
+  if (name === 'contrast') contrast()
 }
 
 /** A shortcut where it works, left to right in any language. @param {string} shortcut */
@@ -63,7 +64,7 @@ const segmented = (name, said, options, picked, pick, { shortcut, label } = {}) 
 /** A setting a row: what it is, and how it stands when it follows something else, then how it is set. @param {unknown} label @param {string} line @param {unknown} control */
 const row = (label, line, control) => html`<li><span class="item-text"><strong>${label}</strong>${line ? html`<small>${line}</small>` : nothing}</span>${control}</li>`
 
-/** Easy on the user: light or dark, text size, typeface, motion. @param {Look} look */
+/** Easy on the user: light or dark, text size, typeface, motion, contrast. @param {Look} look */
 function comfort(look) {
   const mode = app.chosenTheme.value ?? 'auto'
   const size = look.size ?? 1
@@ -80,7 +81,9 @@ function comfort(look) {
     ${row(t('look.font'), faces.find(([id]) => id === (look.font ?? ''))?.[1] ?? '', segmented('font', t('look.font'), faces, look.font ?? '', (id) => setLook({ font: id || undefined }),
       { label: (id) => html`<span ${ref((face) => /** @type {HTMLElement | undefined} */ (face)?.style.setProperty('font-family', FONTS[/** @type {keyof typeof FONTS} */ (id)] ?? 'inherit'))}>${sample}</span>` }))}
     ${row(t('look.motion'), motion.value ? '' : t(still ? 'look.followsLess' : 'look.followsFull'), segmented('motion', t('look.motion'),
-      [['auto', t('theme.auto')], ['less', t('look.less')], ['full', t('look.full')]], motion.value ?? 'auto', setMotion))}
+      [['auto', t('theme.auto')], ['less', t('look.less')], ['full', t('look.full')]], motion.value ?? 'auto', (id) => setComfort(motion, 'motion', id)))}
+    ${row(t('look.contrast'), contrasted.value ? '' : t(matchMedia('(prefers-contrast: more)').matches ? 'look.followsMore' : 'look.followsUsual'), segmented('contrast', t('look.contrast'),
+      [['auto', t('theme.auto')], ['usual', t('look.usual')], ['more', t('look.more')]], contrasted.value ?? 'auto', (id) => setComfort(contrasted, 'contrast', id)))}
   </ul></section>`
 }
 
