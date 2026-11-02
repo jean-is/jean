@@ -390,8 +390,6 @@
   "cap.names.offer": "Mau memberi nama untuk asisten proyek ini?",
   "cap.names.yes": "Beri nama",
   "cap.find.name": "Pencarian",
-  "cap.find.offer": "Sekarang sudah banyak yang bisa dilihat kembali. Cari di semua tugas dan file Anda dari satu tempat?",
-  "cap.find.yes": "Aktifkan pencarian",
   "tool.delegate": "Membagi pekerjaan ke pembantu tugas",
   "tool.meet": "Rapat dengan {names}",
   "tool.ask_user": {

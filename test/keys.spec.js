@@ -5,7 +5,7 @@
 // the one before (D130, D238, D253, D584); ⌘B opens the drawer or puts it away (D234); ⌘/ shows the shortcuts (D257);
 // ⌘S saves a copy of the open task, and no key deletes one (D313); Escape stops an answer (D315).
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, openSettings, closeSettings, turnOn } from './helpers.js'
+import { start, connectFakeBrain, ask, openSettings, closeSettings } from './helpers.js'
 
 test('⌘, opens Settings, and ⌘⇧O starts a new conversation from anywhere', async ({ page }) => {
   await start(page)
@@ -239,17 +239,16 @@ test('Settings lists the shortcuts to read, a capability\'s once it is found (D2
   // In groups, the most used first, each under a name the user already knows, the tasks' in their ⋮ menu's words (D313).
   const groups = settings.locator('.settings-panel section')
   await expect(groups.locator('h3')).toHaveText(['Tasks', 'Your message', 'General', 'Appearance'])
-  await expect(groups.first().locator('dt')).toHaveText(['New task', 'Save a copy'])
   await expect(groups.nth(2).locator('dt')).toHaveText(['Show or hide the sidebar', 'Settings', 'Keyboard shortcuts', 'Next language', 'Previous language', 'Close'])
   await expect(row('Talk hands-free')).toHaveCount(0)
-  await expect(row('Search')).toHaveCount(0)
-  await closeSettings(page)
-  // Turned on, Search opens: ⌘, comes back to Settings over it.
-  await turnOn(page, 'Search')
-  await page.keyboard.press('ControlOrMeta+Comma')
-  await settings.locator('.settings-nav button', { hasText: 'Keyboard shortcuts' }).click()
+  // Search's from the start (D5); over it, ⌘, comes back to Settings.
   await expect(row('Search').locator('kbd')).toHaveText(/^(⌘K|Ctrl\+K)$/)
   await expect(groups.first().locator('dt')).toHaveText(['New task', 'Search', 'Save a copy'])
+  await closeSettings(page)
+  await page.keyboard.press('ControlOrMeta+KeyK')
+  await expect(page.locator('app-find dialog[open]')).toBeVisible()
+  await page.keyboard.press('ControlOrMeta+Comma')
+  await expect(settings).toBeVisible()
 })
 
 test('⌘/ opens Settings on its keyboard shortcuts, from anywhere, Settings too (D257)', async ({ page }) => {

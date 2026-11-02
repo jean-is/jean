@@ -819,6 +819,8 @@ test.describe('found and used by the brain', () => {
     await expect(names).toHaveCount(5)
     await (await menu('Letter to Anna')).getByRole('button', { name: 'Delete' }).click()
     await expect(names).toHaveCount(4)
+    // Its toast says how long Undo lasts.
+    await expect(page.locator('.toast')).toContainText('You can undo it for 5 seconds.')
     expect(Object.keys(await files())).toContain('Letter to Anna')
     await expect.poll(async () => Object.keys(await files()), { timeout: 8000 }).not.toContain('Letter to Anna')
     await expect(creations.locator('.creations-find')).toHaveCount(0)
@@ -1229,7 +1231,7 @@ test.describe('the slash menu', () => {
     })
     // It starts with one empty row, its first field taking the keyboard, to write in at once.
     await expect(table.locator('tbody tr')).toHaveCount(1)
-    await expect(table.locator('tbody').getByLabel('Name', { exact: true })).toBeFocused()
+    await expect(table.locator('tbody').getByTitle('Name', { exact: true })).toBeFocused()
     await page.keyboard.type('Lisbon')
     await page.keyboard.press('Tab')
     await expect.poll(async () => (await kept()).rows).toEqual([{ name: 'Lisbon' }])
@@ -1241,8 +1243,8 @@ test.describe('the slash menu', () => {
     await expect(table.locator('thead input')).toBeFocused()
     await page.keyboard.type('Arrival')
     await page.keyboard.press('Tab')
-    await table.locator('tbody').getByLabel('Arrival', { exact: true }).fill('2026-11-03')
-    await table.locator('tbody').getByLabel('Arrival', { exact: true }).press('Tab')
+    await table.locator('tbody').getByTitle('Arrival', { exact: true }).fill('2026-11-03')
+    await table.locator('tbody').getByTitle('Arrival', { exact: true }).press('Tab')
     await expect.poll(kept).toEqual({ name: 'Stays', columns: ['Name (text)', 'Arrival (date)'], rows: [{ name: 'Lisbon', date: '2026-11-03' }] })
     // Still drawn: what was done in it never took the caret into its text.
     await expect(table.locator('.table-grid')).toBeVisible()
@@ -1276,7 +1278,7 @@ test.describe('the slash menu', () => {
     await page.keyboard.press('Enter')
     const table = doc.locator('.drawn-form app-table')
     await expect(table.getByTitle('Collection name')).toHaveValue('Job applications')
-    await expect(table.locator('tbody tr').first().getByLabel('Name', { exact: true })).toHaveValue('Atelier Lune')
+    await expect(table.locator('tbody tr').first().getByTitle('Name', { exact: true })).toHaveValue('Atelier Lune')
     await expect.poll(() => markdownOf(page)).toBe(`Trip.\n\n\`\`\`table\n${jobs}\n\`\`\`\n`)
     // "Collection" offers a new one, then those the project keeps, the latest made first.
     await page.keyboard.type('/collection')

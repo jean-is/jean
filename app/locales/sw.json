@@ -395,8 +395,6 @@
   "cap.names.offer": "Ungependa kumpa jina msaidizi wa mradi huu?",
   "cap.names.yes": "Mpe jina",
   "cap.find.name": "Utafutaji",
-  "cap.find.offer": "Sasa kuna mengi ya kurejea. Utafute kazi na faili zako zote mahali pamoja?",
-  "cap.find.yes": "Washa utafutaji",
   "tool.delegate": "Gawa kazi kwa wasaidizi",
   "tool.meet": "Mkutano na {names}",
   "tool.ask_user": {

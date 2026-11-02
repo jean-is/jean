@@ -395,8 +395,6 @@
   "cap.names.offer": "Adnál nevet ennek a projektnek az asszisztensének?",
   "cap.names.yes": "Elnevezés",
   "cap.find.name": "Keresés",
-  "cap.find.offer": "Már sok mindenre lehet visszatekinteni. Keresnél az összes feladatodban és fájlodban egy helyen?",
-  "cap.find.yes": "Keresés bekapcsolása",
   "tool.delegate": "Felosztotta a munkát a segítők között",
   "tool.meet": "Megbeszélés: {names}",
   "tool.ask_user": {

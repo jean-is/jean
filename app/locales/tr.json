@@ -395,8 +395,6 @@
   "cap.names.offer": "Bu projenin asistanına bir ad vermek ister misin?",
   "cap.names.yes": "Ad ver",
   "cap.find.name": "Arama",
-  "cap.find.offer": "Artık dönüp bakacak çok şey var. Tüm görevlerinde ve dosyalarında tek yerden arama yapılsın mı?",
-  "cap.find.yes": "Aramayı aç",
   "tool.delegate": "İşi yardımcılara bölüştür",
   "tool.meet": "{names} ile toplantı",
   "tool.ask_user": {

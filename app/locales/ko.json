@@ -390,8 +390,6 @@
   "cap.names.offer": "이 프로젝트의 어시스턴트에게 이름을 붙여 줄까요?",
   "cap.names.yes": "이름 붙이기",
   "cap.find.name": "검색",
-  "cap.find.offer": "이제 돌아볼 것이 많아졌어요. 모든 작업과 파일을 한곳에서 검색할까요?",
-  "cap.find.yes": "검색 켜기",
   "tool.delegate": "작업을 도우미들에게 나누기",
   "tool.meet": "회의 참석: {names}",
   "tool.ask_user": {

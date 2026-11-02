@@ -69,21 +69,21 @@ async function like(item) {
   box.focus(); box.setSelectionRange(box.value.length, box.value.length)
 }
 
-/** Taken off at once, then deleted, or a score taken off the page, five seconds later unless Undo is pressed. @param {Item} item */
-function drop(item) {
+/** Taken off at once, then deleted, or a score taken off the page, five seconds later unless Undo is pressed. @param {Item} item @param {boolean} [keyed] pressed from the keyboard */
+function drop(item, keyed = false) {
   const back = () => { gone.value = new Set([...gone.value].filter((path) => path !== item.path)) }
   const now = () => {
     clearTimeout(timer)
     waiting.delete(item.path)
     import('./preview.js').then(({ unshow }) => unshow(item.link.uri)).then(() => (item.kind.remove ?? item.kind.hide)(item)).catch(console.warn).finally(() => reread().then(back))
   }
-  // Kept while the toast has the pointer or the keyboard, which goes to its Undo rather than falling to the page.
+  // Kept while the toast has the pointer or the keyboard, which goes to its Undo rather than falling to the page when it pressed Delete.
   const later = () => { timer = setTimeout(held() ? later : now, held() ? 1000 : 0) }
   let timer = setTimeout(later, 5000)
   gone.value = new Set(gone.value).add(item.path)
   waiting.set(item.path, now)
   notify(t(item.kind.remove ? 'creations.deleted' : 'creations.removed', { name: item.name }), { label: t('memory.undo'), run: () => { clearTimeout(timer); waiting.delete(item.path); back(); requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector(`.creation[data-path="${CSS.escape(item.path)}"] .creation-open`))?.focus()) }, undo: true }, 5000)
-  requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector('app-toasts .toast .button'))?.focus())
+  if (keyed) requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector('app-toasts .toast .button'))?.focus())
 }
 
 /**
@@ -119,7 +119,7 @@ class Later extends Element {
 const near = new IntersectionObserver((all) => { for (const { target, isIntersecting } of all) if (isIntersecting) (near.unobserve(target), (/** @type {Later} */ (target)).seen.value = true) }, { rootMargin: '50%' })
 define('app-later', Later)
 
-/** One of a menu's rows, which closes it. @param {string} menu @param {unknown} icon @param {string} label @param {() => unknown} act */
+/** One of a menu's rows, which closes it. @param {string} menu @param {unknown} icon @param {string} label @param {(event: MouseEvent) => unknown} act */
 const action = (menu, icon, label, act) => html`<li><button type="button" popovertarget=${menu} popovertargetaction="hide" @click=${act}>${icon}${label}</button></li>`
 /**
  * Show or Sort: a button of its glyph alone, its tip saying what is chosen, marked once that isn't the first, and its menu, the
@@ -144,7 +144,7 @@ const menu = (item) => [
   action('creation-menu', icons.pin, t(item.pinned ? 'action.unpin' : 'action.pin'), () => change(item, { pinned: !item.pinned }, () => item.kind.pin(item, !item.pinned))),
   action('creation-menu', icons.compose, t('action.rename'), () => rename(item.path)),
   item.kind.copy ? action('creation-menu', icons.copy, t('creations.duplicate'), () => copy(item)) : item.kind.like ? action('creation-menu', icons.fork, t('creations.like'), () => like(item)) : nothing,
-  action('creation-menu', icons.trash, t(item.kind.remove ? 'action.delete' : 'creations.remove'), () => drop(item))]
+  action('creation-menu', icons.trash, t(item.kind.remove ? 'action.delete' : 'creations.remove'), (/** @type {MouseEvent} */ e) => drop(item, e.detail === 0))]
 
 /**
  * A card: what it holds, its name, which opens it from anywhere on the card, its menu's button, and when it changed; dragged, what a

@@ -410,8 +410,6 @@
   "cap.names.offer": "C’hoant ho peus da reiñ un anv da skoazeller ar raktres-mañ ?",
   "cap.names.yes": "Reiñ un anv",
   "cap.find.name": "Klask",
-  "cap.find.offer": "Kalz a draoù a zo da adkavout bremañ. Klask en holl drevelloù hag en holl restroù en ul lec’h hepken ?",
-  "cap.find.yes": "Gweredekaat ar c’hlask",
   "tool.delegate": "Rannet al labour etre skoazellerien",
   "tool.meet": "Un emvod gant {names}",
   "tool.ask_user": {

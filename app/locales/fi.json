@@ -395,8 +395,6 @@
   "cap.names.offer": "Haluatko antaa tämän projektin avustajalle nimen?",
   "cap.names.yes": "Anna nimi",
   "cap.find.name": "Haku",
-  "cap.find.offer": "Taaksepäin katsottavaa on nyt paljon. Haetaanko kaikista tehtävistäsi ja tiedostoistasi yhdessä paikassa?",
-  "cap.find.yes": "Ota haku käyttöön",
   "tool.delegate": "Jakoi työn apureille",
   "tool.meet": "Tapaaminen: {names}",
   "tool.ask_user": {

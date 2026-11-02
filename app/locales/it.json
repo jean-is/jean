@@ -400,8 +400,6 @@
   "cap.names.offer": "Vuoi dare un nome all’assistente di questo progetto?",
   "cap.names.yes": "Dagli un nome",
   "cap.find.name": "Ricerca",
-  "cap.find.offer": "Ora c’è molto a cui tornare. Cercare in tutte le tue attività e i tuoi file da un unico posto?",
-  "cap.find.yes": "Attiva la ricerca",
   "tool.delegate": "Dividere il lavoro tra aiutanti",
   "tool.meet": "Una riunione con {names}",
   "tool.ask_user": {

@@ -400,8 +400,6 @@
   "cap.names.offer": "Vreți să dați un nume asistentului acestui proiect?",
   "cap.names.yes": "Dați-i un nume",
   "cap.find.name": "Căutare",
-  "cap.find.offer": "Acum sunt multe de revăzut. Căutați în toate sarcinile și fișierele dvs. într-un singur loc?",
-  "cap.find.yes": "Activați căutarea",
   "tool.delegate": "A împărțit munca între ajutoare",
   "tool.meet": "O întâlnire cu {names}",
   "tool.ask_user": {

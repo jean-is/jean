@@ -400,8 +400,6 @@
   "cap.names.offer": "Voulez-vous donner un nom à l’assistant de ce projet?",
   "cap.names.yes": "Lui donner un nom",
   "cap.find.name": "Recherche",
-  "cap.find.offer": "Il y a maintenant beaucoup à retrouver. Chercher dans toutes vos tâches et vos fichiers au même endroit?",
-  "cap.find.yes": "Activer la recherche",
   "tool.delegate": "Répartir le travail entre assistants d’appoint",
   "tool.meet": "Une réunion avec {names}",
   "tool.ask_user": {

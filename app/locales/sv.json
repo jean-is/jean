@@ -395,8 +395,6 @@
   "cap.names.offer": "Vill du ge det här projektets assistent ett namn?",
   "cap.names.yes": "Ge den ett namn",
   "cap.find.name": "Sök",
-  "cap.find.offer": "Det finns mycket att se tillbaka på nu. Söka i alla dina uppgifter och filer på ett ställe?",
-  "cap.find.yes": "Slå på sökning",
   "tool.delegate": "Delade upp arbetet mellan medhjälpare",
   "tool.meet": "Ett möte med {names}",
   "tool.ask_user": {

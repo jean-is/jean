@@ -395,8 +395,6 @@
   "cap.names.offer": "Gusto mo bang bigyan ng pangalan ang assistant ng proyektong ito?",
   "cap.names.yes": "Bigyan ng pangalan",
   "cap.find.name": "Paghahanap",
-  "cap.find.offer": "Marami ka nang mababalikan. Hanapin ang lahat ng gawain at file mo sa iisang lugar?",
-  "cap.find.yes": "I-on ang paghahanap",
   "tool.delegate": "Hatiin ang trabaho sa mga katuwang",
   "tool.meet": "Pulong kasama ang {names}",
   "tool.ask_user": {

@@ -24,23 +24,14 @@ async function seed(page, count, file) {
   }, { count, file })
 }
 
-test('offered after ten conversations, it finds a conversation, a file and a setting as you type', async ({ page }) => {
+test('there from the start, in its landmark in the bar, it finds a conversation, a file and a setting as you type (D5)', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Explain photosynthesis in simple words')
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Anything else?')
-  // Not found yet: ⌘K is the browser's, and the drawer has no Search.
-  await page.keyboard.press('ControlOrMeta+KeyK')
-  await expect(page.locator('app-find dialog')).toHaveCount(0)
-
   await seed(page, 9, 'Invoice from Müller GmbH, paid in March.')
-  // Offers due before it (Intuition, Backup) go first: once they are answered, Search is offered.
-  const offer = page.locator('.offer')
-  await expect(async () => {
-    if (!(await offer.textContent())?.includes('look back on')) await offer.getByRole('button', { name: 'No thanks' }).click({ timeout: 1000 })
-    await expect(offer).toContainText('a lot to look back on', { timeout: 1000 })
-  }).toPass()
-  await offer.getByRole('button', { name: 'Turn on search' }).click()
+  // A way around besides the drawer from the first task (RGAA 12.1), its button in a search landmark (12.6).
+  await page.getByRole('search').getByRole('button', { name: 'Search' }).click()
   const dialog = page.locator('app-find dialog[open]')
   await expect(dialog).toBeVisible()
   await expect(dialog.locator('input')).toBeFocused()

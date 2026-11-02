@@ -405,8 +405,6 @@
   "cap.names.offer": "Chcete dať asistentovi tohto projektu meno?",
   "cap.names.yes": "Pomenovať",
   "cap.find.name": "Hľadanie",
-  "cap.find.offer": "Je toho už veľa, k čomu sa vracať. Prehľadávať všetky úlohy a súbory na jednom mieste?",
-  "cap.find.yes": "Zapnúť hľadanie",
   "tool.delegate": "Práca rozdelená medzi pomocníkov",
   "tool.meet": "Stretnutie: {names}",
   "tool.ask_user": {

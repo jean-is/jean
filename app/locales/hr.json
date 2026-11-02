@@ -400,8 +400,6 @@
   "cap.names.offer": "Želite li dati ime asistentu ovog projekta?",
   "cap.names.yes": "Daj ime",
   "cap.find.name": "Pretraživanje",
-  "cap.find.offer": "Sada ima puno toga za pregledati. Pretraživati sve zadatke i datoteke na jednom mjestu?",
-  "cap.find.yes": "Uključi pretraživanje",
   "tool.delegate": "Posao podijeljen među pomoćnicima",
   "tool.meet": "Sastanak: {names}",
   "tool.ask_user": {
