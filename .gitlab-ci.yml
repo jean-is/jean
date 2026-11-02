@@ -1,5 +1,5 @@
-# Jean's CI: budgets, types and tests (npm run check), the smoke tests in Chromium and WebKit
-# against the fake brain (npm run e2e), and the packages' audit. The jobs run side by side; going
+# Jean's CI: budgets, types and tests (npm run check) and the packages' audit. The smoke tests
+# (npm run e2e) run on GitHub's CI, the job below kept for later. The jobs run side by side; going
 # over a budget fails the pipeline (AGENTS.md), and so does a known high or critical advisory.
 # The image's browsers match the pinned @playwright/test: change both together.
 

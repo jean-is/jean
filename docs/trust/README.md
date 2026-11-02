@@ -19,15 +19,17 @@ What an organisation's IT, security, privacy and purchasing teams ask for before
 | [Architecture: security](../architecture.md#security) | Security | Each page's policy, the sandbox, the preview, the browser pane |
 | [Encryption at rest](../encryption.md) | Security | How files are sealed on the device, the lock and recovery |
 
-## Checked by every pipeline
+## Checked on each change
 
-[GitHub Actions](../../.github/workflows/ci.yml) run on each change, as [`.gitlab-ci.yml`](../../.gitlab-ci.yml) does on GitLab:
+[GitHub Actions](../../.github/workflows/ci.yml) run on each change:
 
 - types, the unit tests and the budgets (`npm run check`), and a smoke test of each capability in Chromium and WebKit (`npm run e2e`), the policies of every page among them, by the browsers' own reports (D326);
 - every package's registry signature (`npm audit signatures`), no known high or critical advisory (`npm audit --audit-level=high`), and the bill of materials of what ships, CycloneDX, kept with the pipeline;
 - contrast in pixels at every stage of the light, and nothing moving with reduced motion (D325).
 
 Once they pass, a push to main is deployed from that commit, by the pipeline alone (D659): jean.is, the render package that saved pages and shares draw themselves with, published to npm with the pipeline's identity as its provenance, and the services on Jean's server, through a key that may run nothing but their update.
+
+[`.gitlab-ci.yml`](../../.gitlab-ci.yml) runs the same on GitLab without the tests in browsers, and deploys nothing.
 
 ## Reporting a weakness
 
