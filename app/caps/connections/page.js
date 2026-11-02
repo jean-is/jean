@@ -26,6 +26,8 @@ import { all, status, message, called, labelOf, logoOf, limited, chosen, choose,
 /** @import { RuleValue } from '../../core/types.js' */
 
 await Promise.all([styleSheet(new URL('../../ui/data-pages.css', import.meta.url)), styleSheet(new URL('connections.css', import.meta.url))])
+/** The organisation's sign-in, where policy names one, already loaded before the room showed (D385). */
+const signin = app.policy.signIn ? await import('../signin/signin.js') : null
 
 const CHOICES = /** @type {const} */ (['allow', 'ask', 'never'])
 const name = BRAND.name
@@ -35,6 +37,9 @@ const used = signal(/** @type {Map<string, string>} */ (new Map()))
 const query = signal('')
 /** Whether Disconnect is being asked, on the page open. */
 const asking = signal(false)
+
+/** Who a connection is signed in as: its own account, or the organisation's for one that takes its sign-in's token. @param {Connection} connection */
+const accountOf = (connection) => connection.account ?? (connection.auth === 'oidc' ? signin?.account.value ?? undefined : undefined)
 
 /** The page open: '' for the list, add, add/<id>, later, address, or a connection's id. */
 const pageOpen = () => app.section.value.split('/').slice(1).join('/')
@@ -110,7 +115,7 @@ function row(connection) {
   const { tools, error } = status.value[connection.id] ?? {}
   const kept = placeable(connection) && connection.projects ? app.projects.value.filter((project) => connection.projects?.includes(project.id)).map(projectName) : []
   const last = used.value.get(connection.id)
-  const facts = joined([connection.account ?? (logoOf(connection) ? '' : new URL(connection.url).host), kept.length ? products(kept) : '', last && t('connections.used', { when: relativeTime(last) })])
+  const facts = joined([accountOf(connection) ?? (logoOf(connection) ? '' : new URL(connection.url).host), kept.length ? products(kept) : '', last && t('connections.used', { when: relativeTime(last) })])
   const word = error ? html`<span class="data-state is-wait">${t(`connections.state.${error}`)}</span>` : differs(connection)
   return html`<li><button class="item" data-page=${connection.id} @click=${() => go(connection.id)}>${logo(connection)}
     <span class="item-text"><strong><bdi>${called(connection)}</bdi></strong><small>${facts.length ? facts : tools ? t('connections.count', { count: tools.length }) : error ? new URL(connection.url).host : '…'}</small></span>
@@ -156,11 +161,11 @@ function may(connection) {
 function page(connection) {
   const [last, tools, own] = [used.value.get(connection.id), status.value[connection.id]?.tools, mine(connection)]
   return html`${back('', t('cap.connections.name'))}
-    ${head(called(connection), joined([connection.account, tools && t('connections.count', { count: tools.length }), last && t('connections.used', { when: relativeTime(last) })]), nothing, logo(connection))}
+    ${head(called(connection), joined([accountOf(connection), tools && t('connections.count', { count: tools.length }), last && t('connections.used', { when: relativeTime(last) })]), nothing, logo(connection))}
     ${status.value[connection.id]?.error ? waiting(connection) : nothing}${said()}
     ${may(connection)}
     <section><h3>${t('connections.this')}</h3><ul class="rules">
-      <li class="setting"><div><span class="rule-kind">${t('connections.account')}</span><p class="muted small">${joined([connection.account ?? (!since(connection) && new URL(connection.url).host), since(connection) && t('connections.since', { date: since(connection) })])}</p></div>
+      <li class="setting"><div><span class="rule-kind">${t('connections.account')}</span><p class="muted small">${joined([accountOf(connection) ?? (!since(connection) && new URL(connection.url).host), since(connection) && t('connections.since', { date: since(connection) })])}</p></div>
         ${connection.auth === 'oauth' ? html`<button class="button subtle" @click=${() => signIn(connection)}>${t('connections.signInAgain')}</button>` : nothing}</li>
       ${own ? html`<li class="setting"><label class="rule-kind" for="connection-name">${t('projects.name')}</label><input id="connection-name" dir="auto" maxlength="40" autocomplete="off" .value=${connection.name}
         @change=${(/** @type {Event} */ e) => {

@@ -188,6 +188,8 @@ test('a connection of the organisation’s can take the same token, as its gatew
   const settings = await openSettings(page, 'Connections')
   await settings.locator('.data-rows button', { hasText: 'Acme tools' }).click()
   await expect(settings.locator('.connection-kinds')).toContainText('Find a customer')
+  // Its account is the person's, as the organisation's sign-in says.
+  await expect(settings.locator('li.setting', { hasText: 'Account' })).toContainText('ana@acme.example')
   expect(new Set(seen)).toEqual(new Set(['Bearer access-1']))
   // The gateway no longer takes the token Jean holds.
   issuer.current = 'revoked'

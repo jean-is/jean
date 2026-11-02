@@ -46,7 +46,11 @@ export async function discover(server, { challenge, fetch = globalThis.fetch, is
   for (const each of issuers) {
     const { origin, pathname } = new URL(each)
     const tenant = pathname.replace(/\/$/, '')
-    const candidates = [`${origin}/.well-known/oauth-authorization-server${tenant}`, `${origin}/.well-known/openid-configuration${tenant}`, ...(tenant ? [`${origin}${tenant}/.well-known/openid-configuration`] : [])]
+    // RFC 8414's place under the origin first, as MCP asks of a server a service names. One Jean was told of is an OpenID
+    // provider's, whose document is under its own path first (OpenID Connect Discovery, 4), as Entra's, Dex's and Keycloak's are.
+    const inserted = [`${origin}/.well-known/oauth-authorization-server${tenant}`, `${origin}/.well-known/openid-configuration${tenant}`]
+    const appended = tenant ? [`${origin}${tenant}/.well-known/openid-configuration`] : []
+    const candidates = known && !named ? [...appended, ...inserted] : [...inserted, ...appended]
     for (const url of candidates) {
       const metadata = await getJSON(fetch, url)
       // A document only counts for the issuer it was asked about (RFC 8414, section 3.3), as an

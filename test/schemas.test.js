@@ -21,8 +21,12 @@ test('policy.json’s schema is the one checks.js makes: npm run schemas writes 
 test('a policy the schema takes is one policy.html finds nothing in, and the other way round', () => {
   const example = read('../examples/enterprise/policy.json')
   assert.deepEqual(checkPolicy(example).problems, [], 'examples/enterprise/policy.json')
+  // The one docs/enterprise.md gives, which people copy.
+  const sketch = JSON.parse(/```json\n([\s\S]*?)\n```/.exec(readFileSync(new URL('../docs/enterprise.md', import.meta.url), 'utf8').split('## Policy model')[1])?.[1] ?? 'null')
+  assert.deepEqual(checkPolicy(sketch).problems, [], 'docs/enterprise.md’s policy')
   const policies = [
     example,
+    sketch,
     { $schema: 'https://jean.is/schemas/policy.schema.json', locale: 'fr', urls: { privacy: '', terms: 'terms', gateway: 'https://gateway.corp.example/' } },
     // A group's section takes a part away with null (D429).
     { groups: [{ id: 'legal', name: 'Legal', policy: { rules: { share: null }, brains: null, connections: [{ id: 'crm', name: 'CRM', url: 'https://crm.corp.example/mcp', auth: null }] } }] },

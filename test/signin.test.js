@@ -43,6 +43,8 @@ test('the issuer policy names is where Jean signs in, with no app to register an
   assert.equal(found.token_endpoint, metadata.token_endpoint)
   assert.equal(found.resource, undefined)
   assert.ok(!asked.some(({ url }) => url.includes('oauth-protected-resource')), 'no protected resource metadata asked for')
+  // Its own discovery, under its path, before any address it doesn't serve, each a refusal in the console.
+  assert.deepEqual(asked.map(({ url }) => url), [`${ISSUER}/.well-known/openid-configuration`])
   const { url, pending } = await authorization(found, { clientId: CLIENT, redirectURI: JEAN, scopes: [SCOPE] })
   const sent = new URL(url)
   assert.equal(sent.origin + sent.pathname, metadata.authorization_endpoint)

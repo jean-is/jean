@@ -83,12 +83,11 @@ Settings resolve as **defaults ← user ← policy**. Policy wins, and locked fi
 
 ```json
 {
-  "brand": { "name": "Acme Assistant" },
+  "$schema": "https://jean.is/schemas/policy.schema.json",
   "signIn": { "issuer": "https://login.microsoftonline.com/<tenant-id>/v2.0", "clientId": "<Jean's app>", "scopes": ["api://<gateway-app>/chat"] },
   "brains": [{ "id": "corp", "provider": "custom", "api": "openai", "baseURL": "https://ai.corp.example/v1", "model": "gpt-5", "label": "Acme AI", "auth": "oidc", "jurisdiction": "FR" }],
-  "reflexes": { "backend": "local" },
   "capabilities": { "deny": ["connections", "computer"], "preUnlock": ["files", "memory", "projects"] },
-  "rules": { "send": "ask", "share": "never" },
+  "rules": { "other": "ask", "share": "never" },
   "guards": [{ "id": "no-mail-out", "service": "mail", "then": "never", "reason": "Mail is read-only here." }, { "id": "clients", "kind": "fetch", "if": "Does it send client data outside the company?", "then": "ask" }],
   "pages": { "scripts": true, "downloads": false, "web": false, "network": true, "sites": ["api.corp.example", "*.corp.example"], "maps": true },
   "mapStyles": { "light": "https://maps.corp.example/styles/light", "dark": "https://maps.corp.example/styles/dark" },
@@ -97,11 +96,10 @@ Settings resolve as **defaults ← user ← policy**. Policy wins, and locked fi
   "look": { "name": "Acme", "on": "swiss", "accent": "#e30613", "background": "#fafafa", "font": "sans", "css": ".composer { border-radius: 0 !important; }" },
   "kit": { "name": "Acme", "tokens": { "primary": "#e30613", "voice": "bold", "radius": 0 } },
   "looks": [],
-  "urls": { "modelWeights": "https://mirror.corp.example/hf/", "wikipedia": "https://wiki.corp.example/{lang}/w/api.php", "npm": "https://artifactory.corp.example/api/npm/npm/", "collaboration": "wss://relay.corp.example", "share": "https://share.corp.example/", "gateway": "https://gateway.corp.example/", "privacy": "https://intranet.corp.example/jean/privacy", "terms": "" },
+  "urls": { "modelWeights": "https://mirror.corp.example/hf/", "wikipedia": "https://wiki.corp.example/{lang}/w/api.php", "npm": "https://artifactory.corp.example/api/npm/npm/", "share": "https://share.corp.example/", "gateway": "https://gateway.corp.example/", "privacy": "https://intranet.corp.example/jean/privacy", "terms": "" },
   "connections": [{ "id": "crm", "name": "CRM", "url": "https://mcp.crm.corp.example/mcp", "auth": "oauth" }, { "id": "wiki", "name": "Wiki", "url": "https://ai.corp.example/wiki/mcp", "auth": "oidc" }],
   "skills": { "sources": ["https://skills.corp.example"], "only": true },
   "extensions": { "ready": ["https://extensions.corp.example/expenses/"] },
-  "sync": { "provider": "dropbox", "appKey": "…" },
   "directory": [{ "id": "microsoft-365", "clientId": "4f1c…" }, { "id": "servicenow", "url": "https://acme.service-now.com/sncapps/mcp-server/mcp/sn_mcp_server_default", "clientId": "9b2e…" }, { "id": "figma", "hidden": true }],
   "images": { "openai": ["gpt-image-1"] },
   "films": { "openai": ["sora-2-pro"] },
