@@ -6,7 +6,7 @@ import { readFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { test, expect } from '@playwright/test'
 import { readZip } from '../app/core/zip.js'
-import { start, ask, withPolicy, openData } from './helpers.js'
+import { start, ask, fadeOut, withPolicy, openData } from './helpers.js'
 
 const FAR = 'https://ai.corp.example/v1'
 const CORS = { 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': '*' }
@@ -43,7 +43,7 @@ async function farBrain(page, answer = () => undefined) {
 const useCorp = (/** @type {import('@playwright/test').Page} */ page) => page.evaluate(async () => { await (await import('/ui/state.js')).updateSettings({ activeBrain: 'corp' }) })
 const quiet = (/** @type {import('@playwright/test').Page} */ page) => expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
 
-test('a brain in the cloud reads marks, and the person the real thing', async ({ page }) => {
+test('a brain in the cloud reads marks, and the person the real thing', async ({ page, browserName }) => {
   const asked = await farBrain(page)
   await withPolicy(page, POLICY)
   await start(page)
@@ -82,7 +82,10 @@ test('a brain in the cloud reads marks, and the person the real thing', async ({
   await card.locator('input[name="word"]').fill('Mélusine')
   await card.getByRole('button', { name: 'Hide it' }).click()
   await expect(page.locator('.toast')).toContainText('Hidden from the next request on')
-  await page.keyboard.press('Escape')
+  // Closing, it fades where it was, beside its own button; WebKit hides it at once, with no fade.
+  const fade = await fadeOut(page, card, page.getByRole('button', { name: 'What the brain didn’t see' }).last())
+  if (browserName === 'chromium') expect(fade.frames).toBeGreaterThan(3)
+  expect(fade.off).toBeLessThan(1)
   asked.length = 0
   await ask(page, 'And to Mélusine too')
   await expect.poll(() => asked.length).toBeGreaterThan(0)

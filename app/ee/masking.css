@@ -1,9 +1,11 @@
 /* SPDX-FileCopyrightText: 2026 Warehouse SAS */
 /* SPDX-License-Identifier: Elastic-2.0 */
 
-/* What the brain didn't see (D681): the receipt's card, anchored on its own button, centred above the box where anchors
-   aren't known, as the receipt's is. Logical properties only. */
-.mask-button:has(+ .receipt:popover-open) { anchor-name: --receipt; opacity: 1; }
+/* What the brain didn't see (D681): the receipt's card, anchored on its own button, open or fading out, centred above the
+   box where anchors aren't known, as the receipt's is. Logical properties only. */
+.msg-actions { anchor-scope: --mask; }
+.mask-button { anchor-name: --mask; } .mask-button + .receipt { position-anchor: --mask; }
+.mask-button:has(+ .receipt:popover-open) { opacity: 1; }
 .receipt .mask-values { display: block; max-block-size: 11rem; margin: 0.85rem 0 0.5rem; overflow-y: auto; }
 .mask-values > div { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0 0.75rem; padding-block: 0.2rem; }
 .mask-values dt { color: var(--ink); font-size: 0.85rem; overflow-wrap: anywhere; }

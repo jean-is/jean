@@ -333,10 +333,16 @@ class Receipt extends Element {
         ${facts.verdict === 'local' ? icons.shield : INFO}<span class="visually-hidden">${t('receipt.about')}</span></button>
       <div id=${id} class="receipt" popover @click=${this.#pin} @pointerenter=${glimpse} @pointerleave=${glimpse} @focusout=${glimpse}
         @toggle=${(/** @type {ToggleEvent} */ event) => {
-          const { date, log } = app.settings.peek().certificates ?? {}
-          this.#chosen = Boolean(date || log)
-          this.#open.value = event.newState === 'open'
-          if (!this.#open.value) this.#glance = ''
+          const receipt = /** @type {HTMLElement} */ (event.currentTarget)
+          if (event.newState === 'open') {
+            const { date, log } = app.settings.peek().certificates ?? {}
+            this.#chosen = Boolean(date || log)
+            this.#open.value = true
+            return
+          }
+          this.#glance = ''
+          // What it says stays until it has faded, or it would shrink as it goes.
+          Promise.allSettled(receipt.getAnimations().map((fade) => fade.finished)).then(() => { if (!receipt.matches(':popover-open')) this.#open.value = false })
         }}>
         ${this.#open.value ? card(facts, turn, text, id, this.#chosen) : nothing}
       </div>`

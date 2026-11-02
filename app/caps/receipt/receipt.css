@@ -1,11 +1,12 @@
 /* About this answer (caps/receipt/receipt.js, D252), loaded with it, after ui/style.css: its button
    among the answer's, a shield when the answer was done on this device, and the card it opens above
    it, centred above the box where anchors aren't known. Logical properties only. */
-app-receipt { display: contents; }
+/* Each button named for its own card alone, open or fading out: named only while open, a card closing lost its place. */
+app-receipt { display: contents; anchor-scope: --receipt; }
 /* Its name, in words it doesn't show, kept within it: out of it, it made the page scroll as the answers above it grew. */
-.receipt-button { position: relative; }
+.receipt-button { position: relative; anchor-name: --receipt; }
 .receipt-button.is-local .icon { color: var(--flame-deep); }
-app-receipt:has(.receipt:popover-open) .receipt-button { anchor-name: --receipt; opacity: 1; }
+app-receipt:has(.receipt:popover-open) .receipt-button { opacity: 1; }
 .receipt { position-anchor: --receipt; position-area: block-start span-inline-end; position-try-fallbacks: flip-block; inset: auto; inline-size: min(21rem, 100vw - 2rem); margin: 0.35rem 0; padding: 0.9rem 0.9rem 0.5rem;
   border: 1px solid var(--line-strong); border-radius: 1rem; background: var(--room-2); color: var(--ink); box-shadow: 0 1rem 2rem -1rem oklch(0 0 0 / 0.6); font-size: 0.85rem; line-height: 1.4;
   transition: opacity 0.2s, display 0.2s allow-discrete, overlay 0.2s allow-discrete; }

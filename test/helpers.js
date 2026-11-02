@@ -108,6 +108,35 @@ export const noted = (page) => expect.poll(() => page.evaluate(async () => {
   return (await app.fs.read(String(app.current.value?.path)))?.includes('"reached"')
 })).toBe(true)
 
+/**
+ * A card closed by Escape with motion on: over how many frames it faded, and how much further than the button it opened from
+ * it moved meanwhile, its size included, in pixels; a page scrolling under it moves both.
+ * @param {import('@playwright/test').Page} page @param {import('@playwright/test').Locator} card @param {import('@playwright/test').Locator} button
+ */
+export async function fadeOut(page, card, button) {
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  // Watched from before Escape, which would otherwise come first at times.
+  const watch = await card.evaluateHandle((shown, from) => ({ fade: (async () => {
+    const boxes = () => [shown, from].map((element) => element.getBoundingClientRect())
+    const [was, wasAt] = boxes()
+    let [frames, off] = [0, 0]
+    while (shown.matches(':popover-open') || getComputedStyle(shown).display !== 'none') {
+      if (!shown.matches(':popover-open')) {
+        const [box, at] = boxes()
+        frames += 1
+        off = Math.max(off, Math.abs(box.x - was.x) - Math.abs(at.x - wasAt.x), Math.abs(box.y - was.y) - Math.abs(at.y - wasAt.y),
+          Math.abs(box.width - was.width), Math.abs(box.height - was.height))
+      }
+      await new Promise(requestAnimationFrame)
+    }
+    return { frames, off }
+  })() }), await button.elementHandle())
+  await page.keyboard.press('Escape')
+  const fade = await watch.evaluate(({ fade }) => fade)
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  return fade
+}
+
 /** @param {import('@playwright/test').Page} page @param {string} text */
 export async function ask(page, text) {
   await page.locator('#prompt').fill(text)

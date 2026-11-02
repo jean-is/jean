@@ -5,14 +5,14 @@
 // this device says so, and where.
 import { readFile } from 'node:fs/promises'
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, openApprovals, closeSettings, withPolicy, MAIL_URL, BRAIN_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, fadeOut, turnOn, openApprovals, closeSettings, withPolicy, MAIL_URL, BRAIN_URL } from './helpers.js'
 
 for (const [lang, about, local, free, save, prove] of [
   ['en', 'About this answer', 'Kept private', 'Free', 'Save the certificate', 'Save the proof'],
   ['ar', 'عن هذه الإجابة', 'خصوصيتك محفوظة', 'مجانًا', 'حفظ الشهادة', 'حفظ الإثبات'],
   ['ja', 'この回答について', 'プライバシーは守られました', '無料', '証明書を保存', '証拠を保存'],
 ]) {
-  test(`an answer done on this device says so, and ${lang === 'en' ? 'saves' : 'offers'} a sealed certificate (${lang})`, async ({ page }) => {
+  test(`an answer done on this device says so, and ${lang === 'en' ? 'saves' : 'offers'} a sealed certificate (${lang})`, async ({ page, browserName }) => {
     await start(page, lang)
     // The fake brain is on this computer, as Ollama would be.
     await connectFakeBrain(page)
@@ -66,7 +66,10 @@ for (const [lang, about, local, free, save, prove] of [
       return [(await check({ certificate })).intact, await check({ certificate: changed }).then(({ intact }) => intact, () => false), proven.proven, proven.words.request]
     }, [saved, shown])
     expect(checked).toEqual([true, false, true, 'Hello'])
-    await page.keyboard.press('Escape')
+    // Closing, it fades where it was, whole, every frame until it's gone; WebKit hides it at once, with no fade.
+    const fade = await fadeOut(page, card, button)
+    if (browserName === 'chromium') expect(fade.frames).toBeGreaterThan(3)
+    expect(fade.off).toBeLessThan(1)
     await expect(card).toBeHidden()
     // From the keyboard, at once, as a tip comes (WebKit's Tab skips buttons, as Safari's does by default).
     await page.locator('#prompt').focus()
