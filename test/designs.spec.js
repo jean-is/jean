@@ -43,6 +43,7 @@ test('a design: offered, laid out three ways, its weekday fixed, finished by han
 
   // The parts as fields: the title changed there, on the page at once.
   await page.locator('.design-bar').getByRole('button', { name: /^Parts/ }).click()
+  await expect(page.locator('.design-fields').getByRole('alert')).toContainText('A picture still to put in.')
   await page.locator('.design-fields').getByLabel('Title').fill('Léa turns 7!')
   await expect(stage.locator('[data-part="title"] p')).toHaveText('Léa turns 7!')
 
@@ -55,12 +56,12 @@ test('a design: offered, laid out three ways, its weekday fixed, finished by han
   await page.locator('.design-bar').getByRole('button', { name: 'Undo' }).click()
   await expect.poll(async () => (await shown(page))?.parts.find((part) => part.id === 'where')?.box).toEqual(before)
 
-  // Let go with a click beside the page, the part gives the takes row back; scrolled to its end, it deals more, with no brain,
-  // drawing only those in view (D627), and one picked there keeps its deal, the words kept; the arrow picks the next.
+  // Let go with a click beside the page, the part gives the takes row back; the takes wrap, and scrolled down to their end, they deal
+  // more, with no brain, drawing only those in view (D627), and one picked there keeps its deal, the words kept; the arrow picks the next.
   await page.locator('.design-stage').click({ position: { x: 4, y: 4 } })
   await expect(page.locator('.design-part-bar')).toHaveCount(0)
   const last = async () => Number(await takes.getByRole('radio').last().getAttribute('aria-posinset'))
-  const end = () => takes.evaluate((row) => row.scrollBy({ left: row.scrollWidth * (getComputedStyle(row).direction === 'rtl' ? -1 : 1) }))
+  const end = () => takes.evaluate((row) => row.scrollBy({ top: row.scrollHeight }))
   const dealt = await last()
   await end()
   await expect.poll(last).toBeGreaterThan(dealt)
@@ -145,6 +146,12 @@ test('Add puts a shape, an ornament and a QR code behind the words, Arrange brin
   await title.click({ button: 'right' })
   await expect(context).toBeVisible()
   expect(await context.getByRole('menuitem').allTextContents()).toEqual(['Ask Jean', 'Bigger', 'Smaller', 'Higher', 'Lower', 'Colour', 'Align', 'Duplicate', 'To the front', 'To the back', 'Delete'])
+  // Next after its part in the keys' order, as ⇧F10 opens it, its first row focused.
+  expect(await title.evaluate((hit) => hit.nextElementSibling?.id)).toBe('design-context')
+  await page.keyboard.press('Escape')
+  await title.focus()
+  await page.keyboard.press('Shift+F10')
+  await expect(context.getByRole('menuitem').first()).toBeFocused()
   const before = await width()
   await context.getByRole('menuitem', { name: 'Bigger' }).click()
   await expect(context).toBeHidden()

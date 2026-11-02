@@ -10,7 +10,7 @@
 import { html, nothing, render, svg } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { signal, effect } from '@preact/signals-core'
-import { t, intlLocales, dir } from '../../core/i18n.js'
+import { t, intlLocales, dir, locale } from '../../core/i18n.js'
 import { app, notify, assistantName } from '../../ui/state.js'
 import { reviewBar } from '../../ui/review.js'
 import { icons, icon } from '../../ui/menu-icons.js'
@@ -32,8 +32,8 @@ const undoIcon = icon(svg`<path d="M9 14 4.5 9.5 9 5"/><path d="M4.5 9.5H15a4.5 
 const zoomOut = icon(svg`<circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5M7.5 10.5h6"/>`), zoomIn = icon(svg`<circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5M7.5 10.5h6M10.5 7.5v6"/>`), higher = icon(svg`<path d="M12 19V5M6 11l6-6 6 6"/>`), lower = icon(svg`<path d="M12 5v14M6 13l6 6 6-6"/>`)
 const glyphs = /** @type {Record<string, unknown>} */ ({ rectangle: icon(svg`<rect x="4" y="6" width="16" height="12" fill="currentColor"/>`), rounded: icon(svg`<rect x="4" y="6" width="16" height="12" rx="4" fill="currentColor"/>`),
   circle: icon(svg`<circle cx="12" cy="12" r="7.5" fill="currentColor"/>`), frame: icon(svg`<rect x="4" y="6" width="16" height="12" rx="2"/>`), line: icon(svg`<path d="M4 12h16"/>`) })
-/** The part whose words are being changed in place, whether the parts show as fields, the mark whose fix shows, a part shown as it was before Jean's change, what was last said. */
-const editing = signal(''), fields = signal(false), fixing = signal(''), before = signal(''), said = signal('')
+/** The part whose words are being changed in place, whether the parts show as fields, the mark whose fix shows, a part shown as it was before Jean's change, what was last said, and a mark said as it comes. */
+const editing = signal(''), fields = signal(false), fixing = signal(''), before = signal(''), said = signal(''), warned = signal('')
 /** How many deals of three the takes row holds, and each take drawn with its page and what they were drawn from, so that neither a drag nor a scroll lays out a take again. */
 const deals = signal(3); let dealt = { key: '', palettes: /** @type {unknown} */ (null), takes: /** @type {Map<number, { take: Design['take'], page: unknown }>} */ (new Map()) }
 /** The designs before each change in this visit, and those undone. @type {Design[]} */
@@ -69,8 +69,8 @@ function undo(way) {
 export const changePart = (id, patch, kind) => change((design) => ({ ...design, parts: design.parts.map((part) => (part.id === id ? { ...part, ...patch, by: 'user', at: new Date().toISOString() } : part)) }), kind)
 /** A part taken away. @param {string} id */
 const remove = (id) => { change((design) => ({ ...design, parts: design.parts.filter((part) => part.id !== id) })); picked.value = ''; say(t('designs.removed')) }
-/** Said to a screen reader. @param {string} words */
-export const say = (words) => { said.value = ''; requestAnimationFrame(() => { said.value = words }) }
+/** Said to a screen reader, as a status, or as an alert. @param {string} words */
+export const say = (words, to = said) => { to.value = ''; requestAnimationFrame(() => { to.value = words }) }
 /** What a part is, as Add names it: a fact's role, words, a picture, a QR code, a shape's form or an ornament. @param {Part} part */
 const kindOf = (part) => part.art ?? (part.role !== 'shape' ? part.role : part.line ? 'frame' : part.form ?? (part.radius ? 'rounded' : 'rectangle'))
 /** A part's name, in the user's language. @param {Part} part */
@@ -127,22 +127,23 @@ function edit(part) {
   else if (part.role === 'qr') { fixing.value = part.id; requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector('.design-pop input'))?.focus()) }
 }
 
-/** What a mark says, and its fixes. @param {Design} design @param {import('./checks.js').Mark} mark */
-function fixOf(design, mark) {
-  const part = design.parts.find((one) => one.id === mark.part), quiet = () => change((now) => ({ ...now, quiet: [...(now.quiet ?? []), `${mark.kind}:${mark.part}`] }))
-  const keep = html`<button type="button" class="button" @click=${() => { quiet(); fixing.value = '' }}>${t('designs.fix.keep')}</button>`
+/** What a mark says, and its fixes, beside its field or over the page; fixed, the keys go back to the field or the part. @param {Design} design @param {import('./checks.js').Mark} mark @param {string} where field or pop */
+function fixOf(design, mark, where) {
+  const part = design.parts.find((one) => one.id === mark.part), quiet = () => change((now) => ({ ...now, quiet: [...(now.quiet ?? []), `${mark.kind}:${mark.part}`] })), id = `design-${where}-${mark.part}`
+  const done = () => { fixing.value = ''; requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector(where === 'pop' ? `[data-hit="${mark.part}"]` : `#design-field-${mark.part}`))?.focus()) }
+  const keep = html`<button type="button" class="button" @click=${() => { quiet(); done() }}>${t('designs.fix.keep')}</button>`
   if (!part) return nothing
-  const fix = (/** @type {string} */ label, /** @type {() => void} */ act) => html`<button type="button" class="button primary" @click=${() => { act(); fixing.value = '' }}>${label}</button>`
+  const fix = (/** @type {string} */ label, /** @type {() => void} */ act) => html`<button type="button" class="button primary" @click=${() => { act(); done() }}>${label}</button>`
   if (part.role === 'qr') {
     const set = (/** @type {Event} */ e) => changePart(part.id, { link: /** @type {HTMLInputElement} */ (e.target).value.trim() }, `link:${part.id}`)
-    return html`<label>${t('designs.mark.qr')}<input dir="auto" .value=${part.link ?? ''} @change=${set}
-      @keydown=${(/** @type {KeyboardEvent} */ e) => { if (e.key === 'Enter' && !e.isComposing) { set(e); fixing.value = '' } }}></label><div>${fix(t('designs.fix.remove'), () => remove(part.id))}</div>`
+    return html`<label for=${id}>${t('designs.mark.qr')}<input id=${id} dir="auto" .value=${part.link ?? ''} @change=${set}
+      @keydown=${(/** @type {KeyboardEvent} */ e) => { if (e.key === 'Enter' && !e.isComposing) { set(e); done() } }}></label><div>${fix(t('designs.fix.remove'), () => remove(part.id))}</div>`
   }
   if (mark.kind === 'gap' && part.role === 'picture') return html`<p>${t('designs.mark.picture')}</p><div>${fix(t('designs.photo'), () => pick(part.id))}${fix(t('designs.fix.remove'), () => remove(part.id))}</div>`
   if (mark.kind === 'gap') {
     const fill = (/** @type {string} */ words) => changePart(part.id, { text: (part.text ?? '').replace(mark.gap ?? '', words).replace(/[ \t]{2,}/g, ' ').trim() })
-    return html`<label>${t('designs.mark.gap')}<input dir="auto" placeholder=${(mark.gap ?? '').slice(1, -1)} @keydown=${(/** @type {KeyboardEvent} */ e) => {
-      if (e.key === 'Enter' && !e.isComposing && /** @type {HTMLInputElement} */ (e.target).value.trim()) { fill(/** @type {HTMLInputElement} */ (e.target).value.trim()); fixing.value = '' } }}></label>
+    return html`<label for=${id}>${t('designs.mark.gap')}<input id=${id} dir="auto" placeholder=${(mark.gap ?? '').slice(1, -1)} @keydown=${(/** @type {KeyboardEvent} */ e) => {
+      if (e.key === 'Enter' && !e.isComposing && /** @type {HTMLInputElement} */ (e.target).value.trim()) { fill(/** @type {HTMLInputElement} */ (e.target).value.trim()); done() } }}></label>
       <div>${fix(t('designs.fix.remove'), () => fill(''))}</div>`
   }
   if (mark.kind === 'weekday') return html`<p>${t('designs.mark.weekday')}</p><div>${fix(t('designs.fix.use', { words: mark.fix ?? '' }), () => changePart(part.id, { text: mark.fix }))}${keep}</div>`
@@ -171,32 +172,32 @@ function actionsOf(part) {
     duplicate: act('designs.duplicate', icons.copy, () => duplicate(part)), front: act('designs.front', nothing, () => restack(part, 'front')), back: act('designs.back', nothing, () => restack(part, 'back')), remove: act('action.delete', icons.trash, () => remove(part.id)) })
 }
 
-/** The part's bar, one row of buttons named by their tips: Ask Jean, held to talk, zoom out and in, its colour, alignment and form, a picture replaced, Arrange, Delete; or Jean's change. @param {Kept} one @param {Part} part */
+/** The part's bar, one row of buttons named by their tips, each menu next after its button: Ask Jean, held to talk, zoom out and in, its colour, alignment and form, a picture replaced, Arrange, Delete; or Jean's change. @param {Kept} one @param {Part} part */
 function partBar(one, part) {
   const jean = one.side?.parts[part.id] !== undefined, words = part.text !== undefined, design = suggested(one), menu = `design-colour-${part.id}`, all = actionsOf(part), button = (/** @type {string} */ key) => { const it = all[key]; return it ? html`<button type="button" class="icon-button" aria-label=${it.label} popovertarget=${it.menu || nothing} @click=${it.run}>${it.glyph}</button>` : nothing }
+  const menus = /** @type {Record<string, unknown>} */ ({ colour: (words || part.role === 'shape') && html`<div id=${menu} class="menu design-menu" role="menu" popover>${['ink', 'accent', 'accent2', 'ground'].map((name) => row(menu, (words ? part.color : part.fill) === name, html`<i class="design-swatch" ${vars({ '--swatch': colourOf(design, name) })}></i>${t(`designs.colours.${name}`)}`, () => changePart(part.id, words ? { color: name } : { fill: name })))}</div>`,
+    align: words && html`<div id="design-align" class="menu design-menu" role="menu" popover>${['start', 'center', 'end'].map((align) => row('design-align', (part.align ?? 'center') === align, t(`designs.align.${align}`), () => changePart(part.id, { align })))}</div>`,
+    form: all.form && html`<div id="design-form" class="menu design-menu" role="menu" popover>${['rectangle', 'rounded', 'circle'].map((kind) => row('design-form', kind === (part.form === 'circle' ? 'circle' : part.radius ? 'rounded' : 'rectangle'), t(`designs.shape.${kind}`), () => changePart(part.id, formOf(kind, unitOf(design.page)))))}</div>`,
+    arrange: html`<div id="design-arrange" class="menu design-menu" role="menu" popover>${['duplicate', 'front', 'back'].map((key) => { const it = /** @type {{ label: string, run: () => void }} */ (all[key]); return html`<button type="button" role="menuitem" popovertarget="design-arrange" popovertargetaction="hide" @click=${it.run}>${it.label}</button>` })}</div>` })
   return html`<div class="design-part-bar" role="group" aria-label=${nameOf(part)}>
     ${jean ? html`<p class="design-note" dir="auto">${one.side?.notes[part.id] ?? t('designs.jean', { name: assistantName() })}</p>
       <button type="button" class="button" aria-pressed=${String(before.value === part.id)} @click=${() => { before.value = before.peek() === part.id ? '' : part.id }}>${t('designs.before')}</button>
       <button type="button" class="button" @click=${() => decide(one, [part.id], false)}>${t('designs.reject')}</button>
       <button type="button" class="button primary" @click=${() => decide(one, [part.id], true)}>${t('designs.accept')}</button>`
     : html`<button type="button" class="icon-button design-ask" aria-label=${t('designs.askJean', { name: assistantName() })} aria-describedby="design-hold" @click=${() => ask(part)} @pointerdown=${() => hold(part)} @contextmenu=${(/** @type {Event} */ e) => e.preventDefault()}>${icons.mic}<span id="design-hold" hidden>${t('designs.hold')}</span></button>
-      <span class="design-zoom">${button('smaller')}${button('bigger')}</span>${['colour', 'align', 'form', 'replace', 'arrange'].map(button)}<span class="design-gap" aria-hidden="true"></span>${button('remove')}
-      ${words || part.role === 'shape' ? html`<div id=${menu} class="menu design-menu" role="menu" popover>${['ink', 'accent', 'accent2', 'ground'].map((name) => row(menu, (words ? part.color : part.fill) === name, html`<i class="design-swatch" ${vars({ '--swatch': colourOf(design, name) })}></i>${t(`designs.colours.${name}`)}`, () => changePart(part.id, words ? { color: name } : { fill: name })))}</div>` : nothing}
-      ${words ? html`<div id="design-align" class="menu design-menu" role="menu" popover>${['start', 'center', 'end'].map((align) => row('design-align', (part.align ?? 'center') === align, t(`designs.align.${align}`), () => changePart(part.id, { align })))}</div>` : nothing}
-      ${all.form ? html`<div id="design-form" class="menu design-menu" role="menu" popover>${['rectangle', 'rounded', 'circle'].map((kind) => row('design-form', kind === (part.form === 'circle' ? 'circle' : part.radius ? 'rounded' : 'rectangle'), t(`designs.shape.${kind}`), () => changePart(part.id, formOf(kind, unitOf(design.page)))))}</div>` : nothing}
-      <div id="design-arrange" class="menu design-menu" role="menu" popover>${['duplicate', 'front', 'back'].map((key) => { const it = /** @type {{ label: string, run: () => void }} */ (all[key]); return html`<button type="button" role="menuitem" popovertarget="design-arrange" popovertargetaction="hide" @click=${it.run}>${it.label}</button>` })}</div>`}
+      <span class="design-zoom">${button('smaller')}${button('bigger')}</span>${['colour', 'align', 'form', 'replace', 'arrange'].map((key) => html`${button(key)}${menus[key] || nothing}`)}<span class="design-gap" aria-hidden="true"></span>${button('remove')}`}
   </div>`
 }
-/** A part's menu on a right click, at the pointer, or at the part from the keyboard, its first row focused, once a held button is up (which would close it). @param {MouseEvent} event @param {Part} part */
+/** A part's menu on a right click, at the pointer, or at the part from the keyboard (no button), its first row focused, once a held button is up (which would close it); next after the part in the keys' order. @param {MouseEvent} event @param {Part} part */
 function context(event, part) {
-  event.preventDefault(); picked.value = part.id; const hit = /** @type {HTMLElement} */ (event.currentTarget), stage = /** @type {HTMLElement} */ (hit.closest('.design-stage')), at = stage.getBoundingClientRect(), keys = !event.clientX && !event.clientY, box = hit.getBoundingClientRect()
+  event.preventDefault(); picked.value = part.id; const hit = /** @type {HTMLElement} */ (event.currentTarget), stage = /** @type {HTMLElement} */ (hit.closest('.design-stage')), at = stage.getBoundingClientRect(), keys = event.button < 0 || (!event.clientX && !event.clientY), box = hit.getBoundingClientRect()
   const [x, y] = keys ? [box.left + box.width / 2, box.top + box.height / 2] : [event.clientX, event.clientY], spot = /** @type {HTMLElement} */ (stage.querySelector('.design-spot')), menu = /** @type {HTMLElement} */ (stage.querySelector('#design-context'))
-  spot.style.setProperty('--x', `${getComputedStyle(stage).direction === 'rtl' ? at.right - x : x - at.left}px`); spot.style.setProperty('--y', `${y - at.top}px`); const open = () => { menu.showPopover(); if (keys) /** @type {HTMLElement | null} */ (menu.querySelector('button'))?.focus() }; if (event.buttons) addEventListener('pointerup', open, { once: true }); else open()
+  spot.style.setProperty('--x', `${getComputedStyle(stage).direction === 'rtl' ? at.right - x : x - at.left}px`); spot.style.setProperty('--y', `${y - at.top + stage.scrollTop}px`); const open = () => { menu.showPopover(); if (keys) /** @type {HTMLElement | null} */ (menu.querySelector('button'))?.focus() }; if (event.buttons) addEventListener('pointerup', open, { once: true }); else open()
 }
 /** The part's menu: what its bar does in groups, and Higher and Lower, so that nothing needs a drag; or Jean's change. @param {Kept} one @param {Part} part */
 function contextOf(one, part) {
   const all = actionsOf(part), jean = one.side?.parts[part.id] !== undefined, rows = jean ? [] : ['ask', '', 'bigger', 'smaller', 'up', 'down', '', 'colour', 'align', 'form', 'replace', '', 'duplicate', 'front', 'back', '', 'remove']
-  return html`<div id="design-context" class="menu design-menu design-context" role="menu" popover>${jean ? [['designs.before', () => { before.value = before.peek() === part.id ? '' : part.id }], ['designs.reject', () => decide(one, [part.id], false)], ['designs.accept', () => decide(one, [part.id], true)]] .map(([label, run]) => html`<button type="button" role="menuitem" popovertarget="design-context" popovertargetaction="hide" @click=${run}>${t(/** @type {string} */ (label))}</button>`)
+  return html`<div id="design-context" class="menu design-menu design-context" role="menu" dir=${dir()} popover>${jean ? [['designs.before', () => { before.value = before.peek() === part.id ? '' : part.id }], ['designs.reject', () => decide(one, [part.id], false)], ['designs.accept', () => decide(one, [part.id], true)]] .map(([label, run]) => html`<button type="button" role="menuitem" popovertarget="design-context" popovertargetaction="hide" @click=${run}>${t(/** @type {string} */ (label))}</button>`)
     : rows.map((key) => { const it = all[key]; return key ? it ? html`<button type="button" role="menuitem" popovertarget=${it.menu || 'design-context'} popovertargetaction=${it.menu ? 'show' : 'hide'} @click=${it.run}>${it.glyph}${it.label}</button>` : nothing : html`<hr>` })}</div>`
 }
 
@@ -226,19 +227,20 @@ function decide(one, ids, yes) {
   show({ ...one, design, side: all ? null : { ...one.side, parts, notes } })
 }
 
-/** A part's words as typed, one ⌘Z step while typing in it, and once an IME's composition ends, never during it. @param {Part} part */
-const typed = (part) => (/** @type {InputEvent | CompositionEvent} */ e) => (e instanceof InputEvent && e.isComposing) || changePart(part.id, { text: /** @type {HTMLTextAreaElement} */ (e.target).value }, `type:${part.id}`)
+/** A part's words as typed, one ⌘Z step while typing in it, and once an IME's composition ends, never during it; a mark they bring said as an alert, where no field shows its fix. @param {Part} part */
+const typed = (part) => (/** @type {InputEvent | CompositionEvent} */ e) => { const marked = () => marksHere(suggested(/** @type {Kept} */ (shown.peek()))).find((mark) => mark.part === part.id), was = marked()
+  if (!(e instanceof InputEvent && e.isComposing)) { changePart(part.id, { text: /** @type {HTMLTextAreaElement} */ (e.target).value }, `type:${part.id}`); const now = !fields.peek() && !was && marked(); if (now) say(t(`designs.mark.${now.kind}`), warned) } }
 
 /** Parts: its fields shown, or slid away before they go, staying if pressed again as they go. @param {Event} event */
 const toggleFields = (event) => { const box = /** @type {HTMLElement} */ (event.currentTarget).closest('.design')?.querySelector('.design-fields'), gone = () => { if (box?.classList.contains('is-leaving')) fields.value = false }; if (!box) fields.value = true; else if (box.classList.toggle('is-leaving')) Promise.allSettled(box.getAnimations().map((run) => run.finished)).then(gone) }
 /** The fields, a part each in reading order: its words to change, a picture's to replace, and its mark. @param {Design} design @param {import('./checks.js').Mark[]} marks */
 const fieldsOf = (design, marks) => html`<section class="design-fields" aria-label=${t('designs.parts')}>${design.parts.filter((part) => part.role !== 'shape').map((part) => {
-  const mark = marks.find((one) => one.part === part.id)
+  const mark = marks.find((one) => one.part === part.id), id = `design-field-${part.id}`
   return html`<div class="design-field ${mark ? 'is-marked' : ''}">
-    ${part.text !== undefined ? html`<label><span>${nameOf(part)}${mark ? html` <span class="design-dot" aria-hidden="true"></span>` : nothing}</span>
-      <textarea dir="auto" rows="1" .value=${live(part.text)} @focus=${() => { picked.value = part.id }} @input=${typed(part)} @compositionend=${typed(part)}></textarea></label>`
+    ${part.text !== undefined ? html`<label for=${id}><span>${nameOf(part)}${mark ? html` <span class="design-dot" aria-hidden="true"></span>` : nothing}</span>
+      <textarea id=${id} dir="auto" rows="1" .value=${live(part.text)} @focus=${() => { picked.value = part.id }} @input=${typed(part)} @compositionend=${typed(part)}></textarea></label>`
     : html`<span>${nameOf(part)}</span><span dir="auto" class="design-about">${part.words ?? part.link ?? ''}</span>${mark ? nothing : html`<button type="button" class="button" @click=${() => edit(part)}>${t(part.file || part.link ? 'designs.replace' : 'designs.photo')}</button>`}`}
-    ${mark ? html`<div class="design-fix">${fixOf(design, mark)}</div>` : nothing}
+    ${mark ? html`<div class="design-fix" role="alert">${fixOf(design, mark, 'field')}</div>` : nothing}
   </div>`
 })}</section>`
 
@@ -260,12 +262,12 @@ function bar(design, marked) {
     <button type="button" class="icon-button is-wide" aria-pressed=${String(fields.value)} aria-label=${marked ? `${t('designs.parts')} ${new Intl.NumberFormat(intlLocales()).format(marked)}` : t('designs.parts')} aria-describedby=${marked ? 'design-look' : nothing} @click=${toggleFields}>${icons.list}${marked
       ? html`<span class="design-count">${new Intl.NumberFormat(intlLocales()).format(marked)}</span><span id="design-look" hidden>${t('designs.look', { count: marked })}</span>` : nothing}</button>
     <button type="button" class="icon-button" popovertarget="design-add" aria-label=${t('designs.add')}>${icons.plus}</button>
-    <div id="design-add" class="menu design-menu design-adds" popover>${[['designs.role.text', () => add('text')], ['designs.role.picture', () => pick()], ['designs.role.qr', () => add('qr')]]
-      .map(([label, act]) => html`<button type="button" popovertarget="design-add" popovertargetaction="hide" @click=${act}>${t(/** @type {string} */ (label))}</button>`)}
-      ${[['designs.shapes', FORMS], ['designs.ornaments', ART]].map(([label, kinds]) => html`<p aria-hidden="true">${t(/** @type {string} */ (label))}</p><div class="design-glyphs" role="group" aria-label=${t(/** @type {string} */ (label))}>
-        ${/** @type {string[]} */ (kinds).map((kind) => html`<button type="button" class="icon-button" popovertarget="design-add" popovertargetaction="hide" aria-label=${t(FORMS.includes(kind) ? `designs.shape.${kind}` : `designs.art.${kind}`)}
+    <div id="design-add" class="menu design-menu design-adds" popover><ul>${[['designs.role.text', () => add('text')], ['designs.role.picture', () => pick()], ['designs.role.qr', () => add('qr')]]
+      .map(([label, act]) => html`<li><button type="button" popovertarget="design-add" popovertargetaction="hide" @click=${act}>${t(/** @type {string} */ (label))}</button></li>`)}</ul>
+      ${[['designs.shapes', FORMS], ['designs.ornaments', ART]].map(([label, kinds]) => html`<p id="design-${label.slice(8)}">${t(/** @type {string} */ (label))}</p><ul class="design-glyphs" aria-labelledby="design-${label.slice(8)}">
+        ${/** @type {string[]} */ (kinds).map((kind) => html`<li><button type="button" class="icon-button" popovertarget="design-add" popovertargetaction="hide" aria-label=${t(FORMS.includes(kind) ? `designs.shape.${kind}` : `designs.art.${kind}`)}
           @click=${() => add(kind)}>${glyphs[kind] ?? html`<svg class="design-glyph" viewBox="0 0 100 100" aria-hidden="true">${pathsOf(design, { id: '', role: 'shape', box: [], fill: 'accent', art: kind }, drawn).map(({ d, fill, stroke, width }) => svg`<path
-            d=${d} fill=${fill} stroke=${stroke} stroke-width=${width} stroke-linecap="round" stroke-linejoin="round"/>`)}</svg>`}</button>`)}</div>`)}</div>
+            d=${d} fill=${fill} stroke=${stroke} stroke-width=${width} stroke-linecap="round" stroke-linejoin="round"/>`)}</svg>`}</button></li>`)}</ul>`)}</div>
     <button type="button" class="icon-button" aria-label=${t('designs.undo')} aria-disabled=${String(!undos.length)} @click=${() => undo(-1)}>${undoIcon}</button>
   </div>`
 }
@@ -285,19 +287,19 @@ function arrows(event) {
 }
 
 /**
- * The takes, deal after deal as the row is scrolled, those in view drawn (D627), each laid out once; the one like the design's
- * checked and tabbable, else the first drawn; one picked keeps its deal, which the row reaches again. @param {Design} design
+ * The takes, wrapping, deal after deal as the row is scrolled down, those in view drawn (D627), each laid out once; the one like the
+ * design's checked and tabbable, else the first drawn; one picked keeps its deal, which the row reaches again. @param {Design} design
  */
 function takesRow(design) {
   const key = JSON.stringify([design.take, design.size, design.lang, design.parts.map((part) => (part.added ? part : { ...part, box: 0, moved: 0, size: 0, color: 0 }))])
   if (dealt.key !== key || dealt.palettes !== book.palettes) dealt = { key, palettes: book.palettes, takes: new Map() }
   const at = takesOf(book, design, design.deal).findIndex((take) => take.join() === design.take.join()), on = at < 0 ? -1 : design.deal * 3 + at
   const takeAt = (/** @type {number} */ i) => { const take = takesOf(book, design, Math.floor(i / 3))[i % 3], one = { take, page: pageOf(laid(book, { ...design, take })) }; dealt.takes.set(i, one); return one }
-  return virtual({ count: deals.value * 3, x: true, at: on, more: () => { deals.value++ }, draw: (i, from, to) => {
+  return virtual({ count: deals.value * 3, at: on, more: () => { deals.value++ }, draw: (i, from, to) => {
     const { take, page } = dealt.takes.get(i) ?? takeAt(i)
-    return html`<div class="design-take" role="radio" aria-posinset=${i + 1} aria-setsize="-1" aria-checked=${String(i === on)} tabindex=${i === (on >= from && on < to ? on : from) ? 0 : -1} aria-label=${t(`designs.layout.${take[0]}`)}
+    return html`<li class="design-take" role="radio" aria-posinset=${i + 1} aria-setsize="-1" aria-checked=${String(i === on)} tabindex=${i === (on >= from && on < to ? on : from) ? 0 : -1} aria-label=${t(`designs.layout.${take[0]}`)}
       @click=${() => { change((now) => laid(book, { ...now, take, deal: Math.floor(i / 3) })); say(t('designs.picked', { take: t(`designs.layout.${take[0]}`) })) }}
-      @keydown=${(/** @type {KeyboardEvent} */ e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); /** @type {HTMLElement} */ (e.currentTarget).click() } }}>${page}</div>`
+      @keydown=${(/** @type {KeyboardEvent} */ e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); /** @type {HTMLElement} */ (e.currentTarget).click() } }}>${page}</li>`
   } })
 }
 
@@ -311,9 +313,11 @@ function draw(one) {
   // A mark's dot halfway down its part's end, its words' end, so that it sits by the part's own words and not between two parts.
   const dot = (/** @type {Part} */ each) => ({ '--x': `${((dir(design.lang) === 'rtl' ? each.box[0] : each.box[0] + each.box[2]) / w) * 100}%`, '--y': `${((each.box[1] + each.box[3] / 2) / h) * 100}%` })
   const place = (/** @type {Part} */ each) => ({ '--x': `${(each.box[0] / w) * 100}%`, '--y': `${(each.box[1] / h) * 100}%`, '--w': `${(each.box[2] / w) * 100}%`, '--h': `${(each.box[3] / h) * 100}%` })
+  // A part's ring of two tones, its outer one black or white, whichever stands further from the design's ground, so that one always shows.
+  const [ring, halo] = contrastOf(design, '#111111') >= contrastOf(design, '#ffffff') ? ['#111111', '#ffffff'] : ['#ffffff', '#111111']
   return html`${count ? reviewBar({ label: t('designs.review'), count: t('designs.changed', { count }), previous: '', next: '', acceptAll: t('designs.acceptAll'), rejectAll: t('designs.rejectAll'),
       accept: () => decide(one, Object.keys(one.side?.parts ?? {}), true), reject: () => decide(one, Object.keys(one.side?.parts ?? {}), false) }) : nothing}
-    <div class="design-top"><div class="design-takes" role="radiogroup" aria-label=${t('designs.takes')} @keydown=${arrows}>${takesRow(design)}</div>
+    <div class="design-top"><ul class="design-takes" role="radiogroup" aria-label=${t('designs.takes')} @keydown=${arrows} ${vars({ '--r': String(w / h) })}>${takesRow(design)}</ul>
     ${part ? partBar(one, part) : nothing}</div>
     <div class="design-stage" @pointerdown=${(/** @type {PointerEvent} */ e) => /** @type {Element} */ (e.target).matches('.design-stage, .design-sheet, .design-over') && (picked.value = '', editing.value = '')}
       @dragover=${(/** @type {DragEvent} */ e) => e.preventDefault()} @drop=${(/** @type {DragEvent} */ e) => {
@@ -321,28 +325,28 @@ function draw(one) {
       const on = /** @type {HTMLElement | null} */ (document.elementFromPoint(e.clientX, e.clientY)?.closest('[data-hit]'))
       photo(e.dataTransfer?.files[0], on && design.parts.find((each) => each.id === on.dataset.hit)?.role === 'picture' ? on.dataset.hit : undefined)
     }}>
-      <div class="design-sheet">${pageOf(editing.value ? { ...drawn, parts: drawn.parts.map((each) => (each.id === editing.value ? { ...each, text: '' } : each)) } : drawn, html`<div class="design-over">
+      <div class="design-sheet">${pageOf(editing.value ? { ...drawn, parts: drawn.parts.map((each) => (each.id === editing.value ? { ...each, text: '' } : each)) } : drawn, html`<div class="design-over" lang=${locale.value} ${vars({ '--ring': ring, '--halo': halo })}>
         ${design.parts.map((each) => html`<button type="button" class="design-hit ${one.side?.parts[each.id] ? 'is-jean' : ''}" data-hit=${each.id} ${vars(place(each))} aria-pressed=${String(each.id === picked.value)}
           @pointerdown=${(/** @type {PointerEvent} */ e) => drag(e, each)} @dblclick=${() => edit(each)} @contextmenu=${(/** @type {MouseEvent} */ e) => context(e, each)}
           @keydown=${(/** @type {KeyboardEvent} */ e) => keyed(e, each, () => edit(each))} @focus=${() => { picked.value = each.id }}>
-          <span class="visually-hidden">${each.text ? `${nameOf(each)}, ${each.text}` : nameOf(each)}</span></button>`)}
+          <span class="visually-hidden">${nameOf(each)}${each.text ? html`, <span class="visually-hidden" lang=${design.lang}>${each.text}</span>` : nothing}</span></button>${each === part ? contextOf(one, part) : nothing}`)}
         ${editing.value && design.parts.find((each) => each.id === editing.value)?.text !== undefined ? editor(design, /** @type {Part} */ (design.parts.find((each) => each.id === editing.value))) : nothing}
         ${part ? handles(design, part) : nothing}
-        ${marks.map((mark, i) => (marks.findIndex((each) => each.part === mark.part) === i ? html`<button type="button" class="design-dot" ${vars(dot(/** @type {Part} */ (design.parts.find((each) => each.id === mark.part))))}
-          aria-label=${t('designs.marked', { part: nameOf(/** @type {Part} */ (design.parts.find((each) => each.id === mark.part))) })} @click=${() => { picked.value = mark.part; fixing.value = fixing.peek() === mark.part ? '' : mark.part }}></button>` : nothing))}
+        ${marks.map((mark, i) => (marks.findIndex((each) => each.part === mark.part) === i ? html`<button type="button" class="design-dot" data-mark=${mark.part} ${vars(dot(/** @type {Part} */ (design.parts.find((each) => each.id === mark.part))))}
+          aria-label=${t('designs.marked', { part: nameOf(/** @type {Part} */ (design.parts.find((each) => each.id === mark.part))) })} @click=${() => { picked.value = mark.part; fixing.value = fixing.peek() === mark.part ? '' : mark.part; requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector('.design-pop :is(input, button)'))?.focus()) }}></button>` : nothing))}
         <div class="design-guides"></div></div>`)}</div>
-      <div class="design-spot"></div>${part ? contextOf(one, part) : nothing}
-      ${fix ? html`<div class="design-fix design-pop" role="dialog" aria-label=${nameOf(/** @type {Part} */ (design.parts.find((each) => each.id === fix.part)))}>${fixOf(design, fix)}</div>` : nothing}
+      <div class="design-spot"></div>
+      ${fix ? html`<div class="design-fix design-pop" role="dialog" aria-label=${nameOf(/** @type {Part} */ (design.parts.find((each) => each.id === fix.part)))}>${fixOf(design, fix, 'pop')}</div>` : nothing}
     </div>
     ${fields.value ? fieldsOf(design, marks) : nothing}
     ${bar(design, new Set(marks.map((mark) => mark.part)).size)}
-    <p class="visually-hidden" role="status">${said.value}</p>`
+    <p class="visually-hidden" role="status">${said.value}</p><p class="visually-hidden" role="alert">${warned.value}</p>`
 }
 
 /** A part's words changed in place: a box over it in its own type, which Escape or leaving puts away. @param {Design} design @param {Part} part */
 function editor(design, part) {
   const { w, h } = design.page
-  return html`<textarea class="design-edit design-words v-${part.voice ?? design.voice}" data-align=${part.align ?? 'center'} dir="auto" aria-label=${nameOf(part)} .value=${live(part.text ?? '')}
+  return html`<textarea class="design-edit design-words v-${part.voice ?? design.voice}" data-align=${part.align ?? 'center'} dir="auto" title=${nameOf(part)} .value=${live(part.text ?? '')}
     ${vars({ '--x': `${(part.box[0] / w) * 100}%`, '--y': `${(part.box[1] / h) * 100}%`, '--w': `${(part.box[2] / w) * 100}%`, '--h': `${(part.box[3] / h) * 100}%`,
       '--size': `${((part.size ?? 0) / w) * 100}cqi`, '--lead': String(leadOf(design, part)), '--weight': String(weightOf(design, part)), '--pen': colourOf(design, part.color) })}
     @input=${typed(part)} @compositionend=${typed(part)}
@@ -354,16 +358,20 @@ function editor(design, part) {
 export function view(holds) {
   const box = Object.assign(document.createElement('div'), { className: 'design' })
   undos = []; redos = []; last = ''; deals.value = Math.max(3, (shown.peek()?.design.deal ?? 0) + 2); dealt = { ...dealt, key: '' }
+  // Words that run out of their part, as text spacing of the reader's own makes them, fitted again as a save does, but while a change waits to be written or a part is held.
+  let fitted = /** @type {Kept | null} */ (null); const out = (/** @type {Element} */ part) => { const words = /** @type {HTMLElement} */ (part.firstElementChild); return words.scrollWidth > words.clientWidth + 1 || words.offsetHeight > part.clientHeight + 1 }
+  const fits = new ResizeObserver(() => { const one = shown.peek(); if (one && one !== fitted && !timer && !box.querySelector('.design-over :active') && [...box.querySelectorAll('.design-sheet .design-part.design-words')].some(out)) { fitted = one; write(one).then((done) => { fitted = done }, console.warn) } })
   holds.push(effect(() => {
     const one = shown.value
     render(one ? draw(one) : nothing, box)
+    for (const words of box.querySelectorAll('.design-sheet .design-part.design-words > p')) fits.observe(words)
     if (editing.value) /** @type {HTMLTextAreaElement | null} */ (box.querySelector('.design-edit:not(:focus)'))?.focus()
   }))
-  holds.push(() => { const now = shown.peek(); if (now && timer) write(now).catch(console.warn); clearTimeout(timer); timer = 0; editing.value = ''; fixing.value = ''; fields.value = false })
+  holds.push(() => { const now = shown.peek(); if (now && timer) write(now).catch(console.warn); clearTimeout(timer); timer = 0; editing.value = ''; fixing.value = ''; fields.value = false; fits.disconnect() })
   box.addEventListener('keydown', (event) => {
-    // Escape picks none, closes a menu alone or puts the words away, never the pane while something is picked.
-    if (event.key === 'Escape' && (box.querySelector(':popover-open') || picked.peek() || fixing.peek())) { event.stopPropagation(); if (!box.querySelector(':popover-open')) { fixing.value = ''; picked.value = '' } }
-    const target = /** @type {HTMLElement} */ (event.target)
+    const target = /** @type {HTMLElement} */ (event.target), from = fixing.peek()
+    // Escape picks none, closes a menu alone or puts the words away, never the pane while something is picked; from a mark's fix, back to its dot.
+    if (event.key === 'Escape' && (box.querySelector(':popover-open') || picked.peek() || from)) { event.stopPropagation(); if (!box.querySelector(':popover-open')) { fixing.value = ''; picked.value = ''; if (target.closest('.design-pop')) /** @type {HTMLElement | null} */ (box.querySelector(`.design-dot[data-mark="${from}"]`))?.focus() } }
     if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'z' && !target.matches('textarea, input')) { event.preventDefault(); undo(event.shiftKey ? 1 : -1) }
     if (['Delete', 'Backspace'].includes(event.key) && target.matches('[data-hit]') && picked.peek()) { event.preventDefault(); remove(picked.peek()) }
     // ⌘D duplicates the part picked.
