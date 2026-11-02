@@ -47,6 +47,7 @@
   "documents.linkAddress": "Chomlec’h al liamm",
   "documents.applyLink": "Arloañ",
   "documents.removeLink": "Lemel al liamm",
+  "documents.badLink": "N’eo ket ur chomlec’h web pe ur chomlec’h postel",
   "documents.review": "Kemmoù kinniget",
   "documents.accept": "Asantiñ",
   "documents.reject": "Nac’hañ",
@@ -57,6 +58,8 @@
   "documents.gone": "{name} a lam an dra-se",
   "documents.accepted": "Kemm asantet",
   "documents.rejected": "Kemm nac’het",
+  "documents.acceptedAll": "An holl gemmoù asantet",
+  "documents.rejectedAll": "An holl gemmoù nac’het",
   "documents.suggests": {
     "one": "{n} c’hemm kinniget gant {name}",
     "two": "{n} gemm kinniget gant {name}",

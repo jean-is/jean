@@ -47,6 +47,7 @@
   "documents.linkAddress": "Linkadres",
   "documents.applyLink": "Toepassen",
   "documents.removeLink": "Link verwijderen",
+  "documents.badLink": "Dit is geen web- of e-mailadres",
   "documents.review": "Voorgestelde wijzigingen",
   "documents.accept": "Accepteren",
   "documents.reject": "Weigeren",
@@ -57,6 +58,8 @@
   "documents.gone": "{name} haalt dit weg",
   "documents.accepted": "Wijziging geaccepteerd",
   "documents.rejected": "Wijziging geweigerd",
+  "documents.acceptedAll": "Alle wijzigingen geaccepteerd",
+  "documents.rejectedAll": "Alle wijzigingen geweigerd",
   "documents.suggests": {
     "one": "{name} stelt een wijziging voor",
     "other": "{name} stelt {n} wijzigingen voor"

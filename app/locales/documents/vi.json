@@ -47,6 +47,7 @@
   "documents.linkAddress": "Địa chỉ liên kết",
   "documents.applyLink": "Áp dụng",
   "documents.removeLink": "Gỡ liên kết",
+  "documents.badLink": "Đây không phải địa chỉ web hay email",
   "documents.review": "Thay đổi được đề xuất",
   "documents.accept": "Chấp nhận",
   "documents.reject": "Từ chối",
@@ -57,6 +58,8 @@
   "documents.gone": "{name} bỏ phần này",
   "documents.accepted": "Đã chấp nhận thay đổi",
   "documents.rejected": "Đã từ chối thay đổi",
+  "documents.acceptedAll": "Đã chấp nhận tất cả thay đổi",
+  "documents.rejectedAll": "Đã từ chối tất cả thay đổi",
   "documents.suggests": {
     "other": "{n} thay đổi do {name} đề xuất"
   },

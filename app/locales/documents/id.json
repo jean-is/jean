@@ -47,6 +47,7 @@
   "documents.linkAddress": "Alamat tautan",
   "documents.applyLink": "Terapkan",
   "documents.removeLink": "Hapus tautan",
+  "documents.badLink": "Ini bukan alamat web atau email",
   "documents.review": "Perubahan yang disarankan",
   "documents.accept": "Terima",
   "documents.reject": "Tolak",
@@ -57,6 +58,8 @@
   "documents.gone": "{name} menghapus bagian ini",
   "documents.accepted": "Perubahan diterima",
   "documents.rejected": "Perubahan ditolak",
+  "documents.acceptedAll": "Semua perubahan diterima",
+  "documents.rejectedAll": "Semua perubahan ditolak",
   "documents.suggests": {
     "other": "{n} perubahan disarankan oleh {name}"
   },

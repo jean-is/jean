@@ -47,6 +47,7 @@
   "documents.linkAddress": "Linkadresse",
   "documents.applyLink": "Anvend",
   "documents.removeLink": "Fjern link",
+  "documents.badLink": "Det er ikke en web- eller mailadresse",
   "documents.review": "Foreslåede ændringer",
   "documents.accept": "Godkend",
   "documents.reject": "Afvis",
@@ -57,6 +58,8 @@
   "documents.gone": "{name} fjerner dette",
   "documents.accepted": "Ændringen er godkendt",
   "documents.rejected": "Ændringen er afvist",
+  "documents.acceptedAll": "Alle ændringer er godkendt",
+  "documents.rejectedAll": "Alle ændringer er afvist",
   "documents.suggests": {
     "one": "En ændring foreslået af {name}",
     "other": "{n} ændringer foreslået af {name}"

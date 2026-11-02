@@ -47,6 +47,7 @@
   "documents.linkAddress": "ที่อยู่ลิงก์",
   "documents.applyLink": "ใช้",
   "documents.removeLink": "เอาลิงก์ออก",
+  "documents.badLink": "นี่ไม่ใช่ที่อยู่เว็บหรืออีเมล",
   "documents.review": "การแก้ไขที่แนะนำ",
   "documents.accept": "ยอมรับ",
   "documents.reject": "ปฏิเสธ",
@@ -57,6 +58,8 @@
   "documents.gone": "{name} นำส่วนนี้ออก",
   "documents.accepted": "ยอมรับการแก้ไขแล้ว",
   "documents.rejected": "ปฏิเสธการแก้ไขแล้ว",
+  "documents.acceptedAll": "ยอมรับการแก้ไขทั้งหมดแล้ว",
+  "documents.rejectedAll": "ปฏิเสธการแก้ไขทั้งหมดแล้ว",
   "documents.suggests": {
     "other": "{name} แนะนำการแก้ไข {n} รายการ"
   },

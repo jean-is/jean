@@ -47,6 +47,7 @@
   "documents.linkAddress": "Adresa poveznice",
   "documents.applyLink": "Primijeni",
   "documents.removeLink": "Ukloni poveznicu",
+  "documents.badLink": "Ovo nije ni web ni e-mail adresa",
   "documents.review": "Predložene promjene",
   "documents.accept": "Prihvati",
   "documents.reject": "Odbaci",
@@ -57,6 +58,8 @@
   "documents.gone": "{name} ovo uklanja",
   "documents.accepted": "Promjena prihvaćena",
   "documents.rejected": "Promjena odbačena",
+  "documents.acceptedAll": "Sve promjene prihvaćene",
+  "documents.rejectedAll": "Sve promjene odbačene",
   "documents.suggests": {
     "one": "{n} promjena koju predlaže {name}",
     "few": "{n} promjene koje predlaže {name}",

@@ -47,6 +47,7 @@
   "documents.linkAddress": "リンク先",
   "documents.applyLink": "適用",
   "documents.removeLink": "リンクを解除",
+  "documents.badLink": "ウェブやメールのアドレスではありません",
   "documents.review": "提案された変更",
   "documents.accept": "承認",
   "documents.reject": "却下",
@@ -57,6 +58,8 @@
   "documents.gone": "{name}による削除の提案",
   "documents.accepted": "変更を承認しました",
   "documents.rejected": "変更を却下しました",
+  "documents.acceptedAll": "すべての変更を承認しました",
+  "documents.rejectedAll": "すべての変更を却下しました",
   "documents.suggests": {
     "other": "{name}からの変更の提案（{n}件）"
   },

@@ -47,6 +47,7 @@
   "documents.linkAddress": "Adresa odkazu",
   "documents.applyLink": "Použít",
   "documents.removeLink": "Odebrat odkaz",
+  "documents.badLink": "Toto není webová ani e-mailová adresa",
   "documents.review": "Navrhované změny",
   "documents.accept": "Přijmout",
   "documents.reject": "Odmítnout",
@@ -57,6 +58,8 @@
   "documents.gone": "{name} toto odebírá",
   "documents.accepted": "Změna přijata",
   "documents.rejected": "Změna odmítnuta",
+  "documents.acceptedAll": "Všechny změny přijaty",
+  "documents.rejectedAll": "Všechny změny odmítnuty",
   "documents.suggests": {
     "one": "Změna navržená aplikací {name}",
     "few": "{n} změny navržené aplikací {name}",

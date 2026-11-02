@@ -47,6 +47,7 @@
   "documents.linkAddress": "የአገናኙ አድራሻ",
   "documents.applyLink": "ተግብር",
   "documents.removeLink": "አገናኙን አስወግድ",
+  "documents.badLink": "ይህ የድር ወይም የኢሜይል አድራሻ አይደለም",
   "documents.review": "የቀረቡ ለውጦች",
   "documents.accept": "ተቀበል",
   "documents.reject": "ውድቅ አድርግ",
@@ -57,6 +58,8 @@
   "documents.gone": "የማስወገድ ሐሳብ",
   "documents.accepted": "ለውጡ ተቀባይነት አግኝቷል",
   "documents.rejected": "ለውጡ ውድቅ ተደርጓል",
+  "documents.acceptedAll": "ሁሉም ለውጦች ተቀባይነት አግኝተዋል",
+  "documents.rejectedAll": "ሁሉም ለውጦች ውድቅ ተደርገዋል",
   "documents.suggests": {
     "one": "በ{name} የቀረበ ለውጥ",
     "other": "በ{name} የቀረቡ {n} ለውጦች"

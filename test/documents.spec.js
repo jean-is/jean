@@ -1431,9 +1431,13 @@ test.describe('the bubble over a selection', () => {
     await page.keyboard.press('Escape')
     await expect.poll(() => page.evaluate(() => document.activeElement?.id)).toBe('doc')
     expect(await page.evaluate(() => { const { from, to } = /** @type {any} */ (globalThis).editor.view.state.selection; return to - from })).toBe(3)
-    // Tab goes back to where the arrows were.
+    // Tab goes back to where the arrows were, the bubble next after the document in the order of focus, and Shift+Tab back to it.
     await page.keyboard.press('Tab')
     await expect(bubble.getByRole('button', { name: 'Italic' })).toBeFocused()
+    expect(await bubble.evaluate((bar) => bar.previousElementSibling?.matches('.view:has(#doc)'))).toBe(true)
+    await page.keyboard.press('Shift+Tab')
+    await expect.poll(() => page.evaluate(() => document.activeElement?.id)).toBe('doc')
+    await page.keyboard.press('Tab')
     await page.keyboard.press('Escape')
     // Escape in the document, once the bubble is back over the selection, hides it, until the selection changes.
     await expect.poll(() => page.evaluate(() => document.activeElement?.id)).toBe('doc')
@@ -1636,7 +1640,7 @@ test.describe('blocks', () => {
     await page.keyboard.press('Backspace')
     await (await gripOf(page, page.locator('#doc > p').nth(0))).click()
     const add = menu.getByRole('group', { name: 'Add below' })
-    expect(await names(menu.locator('[role="group"] [role="menuitem"]'))).toEqual(offered.filter((name) => name !== 'Text'))
+    expect(await names(menu.locator('[role="group"][aria-label] [role="menuitem"]'))).toEqual(offered.filter((name) => name !== 'Text'))
     await expect(menu.locator('.block-menu-head')).toHaveText(['Turn into', 'Add below'])
     // Below a paragraph, a divider, the caret on the line after it; ⌘Z takes it all back at once.
     await add.getByRole('menuitem', { name: 'Divider' }).click()
@@ -2501,6 +2505,24 @@ test.describe('accessibility', () => {
     await expect(editor.getByRole('columnheader')).toHaveCount(3)
     await expect(editor.getByRole('list')).toHaveCount(4)
     await expect(editor.getByRole('checkbox')).toHaveCount(3)
+  })
+
+  test('a line in another language says so, never in the file; a first column that names its rows heads them; Reject all and Accept all say so with an Undo, as ⌘Z', async ({ page }) => {
+    const text = '# Plan\n\nProgramme de la semaine\n\nÀ faire avant de partir\n\nThe team met in Lyon.\n\nذهب الفريق إلى المدينة وعاد في المساء.\n\nチームは朝早く出発しました。\n\n| | Budget |\n|---|---|\n| Lundi | 1 240 € |\n| Mardi | 860 € |\n'
+    const { doc } = await start(page, { lang: 'fr', markdown: text })
+    expect(await doc.locator(':scope > p').evaluateAll((lines) => lines.map((line) => line.getAttribute('lang')))).toEqual([null, null, 'en', 'ar', 'ja'])
+    await expect(doc.getByRole('rowheader')).toHaveText(['Lundi', 'Mardi'])
+    await expect(doc.locator('th[scope="col"]')).toHaveCount(2)
+    await suggest(page, text.replace('| Lundi', '| Lundi matin').replace('The team', 'Our team'))
+    await page.getByRole('button', { name: 'Tout refuser' }).click()
+    await expect(doc.locator('.suggest')).toHaveCount(0)
+    await page.locator('.toast', { hasText: 'Toutes les modifications refusées' }).getByRole('button', { name: 'Annuler' }).click()
+    await expect(doc.locator('.suggest')).toHaveCount(2)
+    await page.getByRole('button', { name: 'Tout accepter' }).click()
+    await expect(page.locator('.toast', { hasText: 'Toutes les modifications acceptées' })).toBeVisible()
+    await page.keyboard.press('ControlOrMeta+z')
+    await expect(doc.locator('.suggest')).toHaveCount(2)
+    expect(await markdownOf(page)).toBe(text)
   })
 
   test('Chromium\'s own accessibility tree holds the document, in the page\'s', async ({ page, browserName }) => {

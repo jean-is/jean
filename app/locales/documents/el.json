@@ -47,6 +47,7 @@
   "documents.linkAddress": "Διεύθυνση συνδέσμου",
   "documents.applyLink": "Εφαρμογή",
   "documents.removeLink": "Αφαίρεση συνδέσμου",
+  "documents.badLink": "Αυτή δεν είναι διεύθυνση ιστού ή email",
   "documents.review": "Προτεινόμενες αλλαγές",
   "documents.accept": "Αποδοχή",
   "documents.reject": "Απόρριψη",
@@ -57,6 +58,8 @@
   "documents.gone": "{name} το αφαιρεί αυτό",
   "documents.accepted": "Η αλλαγή έγινε δεκτή",
   "documents.rejected": "Η αλλαγή απορρίφθηκε",
+  "documents.acceptedAll": "Όλες οι αλλαγές έγιναν δεκτές",
+  "documents.rejectedAll": "Όλες οι αλλαγές απορρίφθηκαν",
   "documents.suggests": {
     "one": "Μια αλλαγή που προτείνει η εφαρμογή {name}",
     "other": "{n} αλλαγές που προτείνει η εφαρμογή {name}"

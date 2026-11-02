@@ -47,6 +47,7 @@
   "documents.linkAddress": "লিংকের ঠিকানা",
   "documents.applyLink": "প্রয়োগ করুন",
   "documents.removeLink": "লিংক সরান",
+  "documents.badLink": "এটি কোনো ওয়েব বা ইমেল ঠিকানা নয়",
   "documents.review": "প্রস্তাবিত পরিবর্তন",
   "documents.accept": "গ্রহণ করুন",
   "documents.reject": "বাতিল করুন",
@@ -57,6 +58,8 @@
   "documents.gone": "{name} এটি সরাচ্ছে",
   "documents.accepted": "পরিবর্তন গ্রহণ করা হয়েছে",
   "documents.rejected": "পরিবর্তন বাতিল করা হয়েছে",
+  "documents.acceptedAll": "সব পরিবর্তন গ্রহণ করা হয়েছে",
+  "documents.rejectedAll": "সব পরিবর্তন বাতিল করা হয়েছে",
   "documents.suggests": {
     "one": "{name}-এর প্রস্তাবিত পরিবর্তন: {n}টি",
     "other": "{name}-এর প্রস্তাবিত পরিবর্তন: {n}টি"

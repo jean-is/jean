@@ -103,7 +103,7 @@ async function show(path) {
 const full = signal(false)
 document.addEventListener('fullscreenchange', () => {
   full.value = Boolean(document.fullscreenElement?.matches('.preview'))
-  for (const one of document.querySelectorAll('.slash, .bubble, .block-handle, .block-menu, .marquee')) (document.fullscreenElement ?? document.body).append(one)
+  for (const one of document.querySelectorAll('.slash, .block-handle, .marquee')) (document.fullscreenElement ?? document.body).append(one)
 })
 
 /**

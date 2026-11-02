@@ -17,16 +17,16 @@ import {
 import { effect } from '@preact/signals-core'
 import { render, nothing } from 'lit-html'
 import { t as translate } from '../../core/i18n.js'
-import { assistantName, openFile } from '../../ui/state.js'
+import { app, assistantName, openFile, notify } from '../../ui/state.js'
 import { reviewBar } from '../../ui/review.js'
 import { PAGE_SANDBOX, pagePolicy } from '../../ui/csp.js'
 import { encode } from '../../ui/seal.js'
 import { unlock, loaded } from '../../ui/caps.js'
 import { declared, PAGES } from '../../ui/markdown.js'
 import { schema, parse, titled, serialize, sliceMarkdown, safeHref, words, brought } from './markdown.js'
-import { el, RTL, free } from './ui.js'
+import { el, RTL, free, langOf } from './ui.js'
 import { fromTree } from './clipboard.js'
-import { suggestions, suggest, accept, reject, pending, proposal } from './suggest.js'
+import { suggestions, suggest, accept, reject, pending, proposal, suggestionKey } from './suggest.js'
 import { slashMenu, slashKey } from './slash.js'
 import { bookmarks, askKey } from './bookmark.js'
 import { bubble } from './bubble.js'
@@ -324,11 +324,14 @@ const RULES = inputRules({ rules: [
 // would make it left to right: in Arabic, a new line starts on the right. Every line gets its dir
 // here, as ProseMirror drops an attribute a decoration had set rather than give back toDOM's. A list or a
 // quote takes its first letter's, its bullets and boxes on that side: dir="auto" passes over lines with a dir.
-// A note's own mark ([!TIP]) is no letter of its text.
+// A note's own mark ([!TIP]) is no letter of its text. A line takes its language where Jean is sure of it (ui.js), never in the file, read
+// once for as long as the line and the page's language stay.
+let langs = new WeakMap(), langsIn = ''
 const direction = new Plugin({
   props: {
     decorations(state) {
       const dir = document.documentElement.dir || 'ltr'
+      if (langsIn !== (langsIn = document.documentElement.lang)) langs = new WeakMap()
       // The empty line the caret is on, at the top or in a column and not asking for an address, says what "/" adds there.
       const { $from, empty } = state.selection
       const hint = empty && $from.parent.type === N.paragraph && !$from.parent.content.size && ($from.depth === 1 || $from.node(-1).type === N.column) && askKey.getState(state) !== $from.before() ? $from.before() : -1
@@ -338,8 +341,9 @@ const direction = new Plugin({
         const letter = /\p{L}/u.exec(node.textContent.replace(/^\[!\w+\]/, ''))?.[0]
         if (/^(bullet_list|ordered_list|blockquote|table)$/.test(node.type.name)) list.push(Decoration.node(pos, pos + node.nodeSize, { dir: letter ? (RTL.test(letter) ? 'rtl' : 'ltr') : dir }))
         if (!node.isTextblock) return true
+        const lang = letter && !node.type.spec.code && (langs.get(node) ?? langs.set(node, langOf(node.textContent)).get(node))
         // The title, empty, says what it is for.
-        if (!node.type.spec.code) list.push(Decoration.node(pos, pos + node.nodeSize, { dir: letter ? (RTL.test(letter) ? 'rtl' : 'ltr') : dir, ...(letter && { 'data-typed': '' }), ...(node.type === N.title ? { 'data-placeholder': t('untitled'), 'aria-level': '3', ...(!node.textContent && { 'aria-label': t('untitled') }) } : pos === hint && { 'data-placeholder': t('hint') }), ...(node.type === N.heading && { 'aria-level': String(node.attrs.level + 2) }) }))
+        if (!node.type.spec.code) list.push(Decoration.node(pos, pos + node.nodeSize, { dir: letter ? (RTL.test(letter) ? 'rtl' : 'ltr') : dir, ...(letter && { 'data-typed': '' }), ...(lang && { lang }), ...(node.type === N.title ? { 'data-placeholder': t('untitled'), 'aria-level': '3', ...(!node.textContent && { 'aria-label': t('untitled') }) } : pos === hint && { 'data-placeholder': t('hint') }), ...(node.type === N.heading && { 'aria-level': String(node.attrs.level + 2) }) }))
         return false
       })
       return DecorationSet.create(state.doc, list)
@@ -384,21 +388,38 @@ export function create(box, { name, path, markdown: text, pictures, write, keep,
   /** The change the bar's arrows went to last. @type {number | null} */
   let current = null
 
-  /** @param {'accept' | 'reject'} kind @param {number[]} ids */
-  function act(kind, ids) {
-    const from = pending(view.state).find((change) => ids.includes(change.id))?.from ?? 0
+  /** Jean's changes decided all at once, which Undo or ⌘Z gives back while the document stays as that left it. @type {{ kind: string, was: import('./suggest.js').Change[], doc: PMNode, had: typeof tally } | null} */
+  let last = null
+  const back = () => {
+    if (last?.doc !== view.state.doc) return false
+    const { kind, was, had } = /** @type {NonNullable<typeof last>} */ (last)
+    if (kind === 'accept') undo(view.state, view.dispatch)
+    view.dispatch(view.state.tr.setMeta(suggestionKey, { set: was }).setMeta('addToHistory', false))
+    tally = had
+    last = null
+    tell('')
+    view.focus()
+    return true
+  }
+
+  /** @param {'accept' | 'reject'} kind @param {number[]} ids @param {boolean} [all] the bar's, said with an Undo */
+  function act(kind, ids, all) {
+    const was = pending(view.state), had = { ...tally }
+    const from = was.find((change) => ids.includes(change.id))?.from ?? 0
     const onIt = ids.includes(Number(document.activeElement?.closest('.suggest')?.getAttribute('data-change')))
     ;(kind === 'accept' ? accept : reject)(view, ids)
     // Accepted, a block an answer draws shows as it now is: the caret before it rather than in its text.
     const at = view.state.selection.$head.depth ? view.state.selection.$head.before(1) : -1
     if (at >= 0 && /** @type {HTMLElement | null} */ (view.nodeDOM(at))?.matches('.drawn.is-drawn')) view.dispatch(view.state.tr.setSelection(Selection.near(view.state.doc.resolve(at), -1)))
     tally[kind === 'accept' ? 'accepted' : 'rejected'] += ids.length
-    announce(t(kind === 'accept' ? 'accepted' : 'rejected'))
+    if (all) notify(t(kind === 'accept' ? 'acceptedAll' : 'rejectedAll'), { label: translate('memory.undo'), run: back, undo: true })
+    else announce(t(kind === 'accept' ? 'accepted' : 'rejected'))
     const left = pending(view.state)
     // The keyboard goes on to the next change from the one decided.
     if (left.length && onIt) reach(left.find((change) => change.from >= from) ?? left[0])
     else if (!left.length || !box.contains(document.activeElement)) view.focus()
     if (!left.length) tell(`Of the changes suggested to ${name}, the user accepted ${tally.accepted} and rejected ${tally.rejected}.`)
+    last = all ? { kind, was, doc: view.state.doc, had } : null
   }
 
   // The project's collections, which "/" offers by name, read again a moment apart, the menu drawn again with them.
@@ -431,11 +452,11 @@ export function create(box, { name, path, markdown: text, pictures, write, keep,
     slashMenu({ items: () => [...widgets(), ...collections()], label: t, announce }),
     slashMenu({ items: creations, label: t, announce, key: refKey, trigger: /[[［]{2}([^\]］\n]{0,32})$/, id: 'refs', name: () => translate('creations.title') }),
     bookmarks({ href: linkHref, label: t, announce }),
-    bubble({ formats: FORMATS, link: M.link, href: linkHref, label: t, mac: MAC, tabbable: (state) => !itemDepth(state.selection) && !isInTable(state) }),
+    bubble({ formats: FORMATS, link: M.link, href: linkHref, label: t, mac: MAC, tabbable: (state) => !itemDepth(state.selection) && !isInTable(state), wrong: (said) => notify(said, { alert: true }) }),
     blocks({ label: t, announce, mac: MAC, kinds: TURNS, adds: () => widgets().filter((item) => !TURNS.includes(item)) }),
     inPlace,
     RULES,
-    keymap({ ...KEYS, 'Mod-s': () => (flush(), true) }),
+    keymap({ ...KEYS, 'Mod-s': () => (flush(), true), 'Mod-z': (state, dispatch) => back() || undo(state, dispatch) }),
     keymap(baseKeymap),
     keymap({ Backspace: edge(-1), Delete: edge(1) }),
     history(),
@@ -464,6 +485,8 @@ export function create(box, { name, path, markdown: text, pictures, write, keep,
     dispatchTransaction(tr) {
       view.updateState(view.state.apply(tr))
       if (tr.docChanged) later(save, 300)
+      // Changed since: the changes decided all at once stay so, and their Undo goes.
+      if (tr.docChanged && last) { if (/** @type {any} */ (app.toast.peek()?.action)?.run === back) app.toast.value = null; last = null }
       if (tr.selectionSet || tr.docChanged) later(select, 250)
     },
     handleDOMEvents: {
@@ -554,7 +577,7 @@ export function create(box, { name, path, markdown: text, pictures, write, keep,
     if (changes.length && !review.firstElementChild) announce(t('suggests', { n: changes.length }))
     render(changes.length ? reviewBar({
       label: t('review'), count: t('suggests', { n: changes.length }), at: at >= 0 ? t('change', { i: at + 1, n: changes.length }) : '', go: changes.length > 1 ? go : null,
-      previous: t('previous'), next: t('next'), accept: () => act('accept', all), reject: () => act('reject', all), acceptAll: t('acceptAll'), rejectAll: t('rejectAll'),
+      previous: t('previous'), next: t('next'), accept: () => act('accept', all, true), reject: () => act('reject', all, true), acceptAll: t('acceptAll'), rejectAll: t('rejectAll'),
     }) : nothing, review)
   }
 
@@ -580,7 +603,7 @@ export function create(box, { name, path, markdown: text, pictures, write, keep,
   // ⌘Z and ⌘⇧Z from the bar or a change's row undo and redo in the document.
   box.addEventListener('keydown', (event) => {
     if (!(MAC ? event.metaKey : event.ctrlKey) || event.key.toLowerCase() !== 'z' || event.isComposing || !/** @type {Element} */ (event.target).closest('.review-slot, .suggest-row')) return
-    ;(event.shiftKey ? redo : undo)(view.state, view.dispatch)
+    if (event.shiftKey || !back()) (event.shiftKey ? redo : undo)(view.state, view.dispatch)
     event.preventDefault()
   })
 

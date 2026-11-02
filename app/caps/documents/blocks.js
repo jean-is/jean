@@ -15,7 +15,7 @@
 // goes back to the text. A selection of blocks hides the text's highlight and draws its own; copying,
 // cutting and ⌘Z work on it as on any selection, and Jean is told what it holds, as of any selection.
 import { Plugin, PluginKey, Selection, TextSelection, Fragment, Decoration, DecorationSet } from '#prosemirror'
-import { el, icon, float } from './ui.js'
+import { el, icon, float, pop } from './ui.js'
 
 /** @typedef {import('prosemirror-model').Node} PMNode */
 /** @typedef {import('prosemirror-state').EditorState} EditorState */
@@ -201,7 +201,7 @@ export function blocks({ label, announce, kinds, adds, mac }) {
       const scroller = () => /** @type {HTMLElement} */ (editor.dom.closest('.view') ?? doc.scrollingElement)
       // Six dots, a grip, as Notion's.
       const handle = /** @type {HTMLButtonElement} */ (el('button', { type: 'button', class: 'block-handle', draggable: 'true', hidden: '', tabindex: '-1', 'aria-haspopup': 'menu' }, icon('M9 5h.01M15 5h.01M9 12h.01M15 12h.01M9 19h.01M15 19h.01', 3.5)))
-      const menu = el('div', { class: 'block-menu', role: 'menu', hidden: '' })
+      const menu = el('div', { class: 'block-menu', role: 'menu', hidden: '', popover: 'manual' })
       const marquee = el('div', { class: 'marquee', hidden: '' })
       doc.body.append(handle, menu, marquee)
       // What it listens to, let go at once with the view.
@@ -340,7 +340,7 @@ export function blocks({ label, announce, kinds, adds, mac }) {
       /** @param {boolean} back whether the document takes the keyboard again */
       function close(back) {
         if (menu.hidden) return
-        menu.hidden = true
+        pop(menu, editor.dom, false)
         handle.setAttribute('aria-expanded', 'false')
         if (back) editor.focus()
       }
@@ -375,19 +375,18 @@ export function blocks({ label, announce, kinds, adds, mac }) {
           const button = /** @type {HTMLButtonElement} */ (el('button', { type: 'button', tabindex: '-1', role: 'menuitem' }, el('span', { class: 'block-menu-glyph', 'aria-hidden': 'true' }, glyph), label(name)))
           button.disabled = off
           button.addEventListener('click', act(run))
-          return button
+          return el('li', { role: 'none' }, button)
         }
-        /** Some of the menu's items under their name, if there are any. @param {string} name @param {HTMLElement[]} buttons */
-        const group = (name, buttons) => (buttons.length ? [el('div', { role: 'group', 'aria-label': label(name) }, el('div', { class: 'block-menu-head', 'aria-hidden': 'true' }, label(name)), ...buttons)] : [])
+        /** Some of the menu's items, a list, under their name if they have one, if there are any. @param {string} name @param {HTMLElement[]} items */
+        const group = (name, items) => (items.length ? [el('ul', { role: 'group', ...(name && { 'aria-label': label(name) }) }, ...(name ? [el('li', { class: 'block-menu-head', 'aria-hidden': 'true' }, label(name))] : []), ...items)] : [])
         menu.setAttribute('aria-label', label('blockMenu'))
         menu.replaceChildren(
-          item('moveUp', () => moveBlocks(-1)(editor.state, editor.dispatch), '↑', !moveBlocks(-1)(state)),
-          item('moveDown', () => moveBlocks(1)(editor.state, editor.dispatch), '↓', !moveBlocks(1)(state)),
+          ...group('', [item('moveUp', () => moveBlocks(-1)(editor.state, editor.dispatch), '↑', !moveBlocks(-1)(state)), item('moveDown', () => moveBlocks(1)(editor.state, editor.dispatch), '↓', !moveBlocks(1)(state))]),
           ...group('blocks', kinds.filter((kind) => kind.run(probe)).map((kind) => item(kind.key, () => turn(kind), kind.glyph))),
           ...group('add', adds().filter((kind) => kind.run(under)).map((kind) => item(kind.key, () => { editor.dispatch(below(editor.state)); kind.run(editor.state, editor.dispatch, editor) }, kind.glyph))),
-          item('remove', () => editor.dispatch(editor.state.tr.deleteSelection().scrollIntoView()), '⌫'),
+          ...group('', [item('remove', () => editor.dispatch(editor.state.tr.deleteSelection().scrollIntoView()), '⌫')]),
         )
-        menu.hidden = false
+        pop(menu, editor.dom, true)
         handle.setAttribute('aria-expanded', 'true')
         // Under the grip, or from the keyboard under the first block selected.
         const first = blockRange(state).chosen[0]

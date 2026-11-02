@@ -47,6 +47,7 @@
   "documents.linkAddress": "Adireshin hanyar haɗi",
   "documents.applyLink": "Yi amfani",
   "documents.removeLink": "Cire hanyar haɗi",
+  "documents.badLink": "Wannan ba adireshin yanar gizo ko imel ba ne",
   "documents.review": "Shawarwarin canje-canje",
   "documents.accept": "Karɓa",
   "documents.reject": "Ƙi",
@@ -57,6 +58,8 @@
   "documents.gone": "Shawarar cirewa",
   "documents.accepted": "An karɓi canjin",
   "documents.rejected": "An ƙi canjin",
+  "documents.acceptedAll": "An karɓi dukkan canje-canje",
+  "documents.rejectedAll": "An ƙi dukkan canje-canje",
   "documents.suggests": {
     "one": "Shawarar canji {n} daga {name}",
     "other": "Shawarar canje-canje {n} daga {name}"

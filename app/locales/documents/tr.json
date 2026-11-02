@@ -47,6 +47,7 @@
   "documents.linkAddress": "Bağlantı adresi",
   "documents.applyLink": "Uygula",
   "documents.removeLink": "Bağlantıyı kaldır",
+  "documents.badLink": "Bu bir web ya da e-posta adresi değil",
   "documents.review": "Önerilen değişiklikler",
   "documents.accept": "Kabul et",
   "documents.reject": "Reddet",
@@ -57,6 +58,8 @@
   "documents.gone": "{name} bunu kaldırıyor",
   "documents.accepted": "Değişiklik kabul edildi",
   "documents.rejected": "Değişiklik reddedildi",
+  "documents.acceptedAll": "Tüm değişiklikler kabul edildi",
+  "documents.rejectedAll": "Tüm değişiklikler reddedildi",
   "documents.suggests": {
     "one": "{name} tarafından önerilen bir değişiklik",
     "other": "{name} tarafından önerilen {n} değişiklik"

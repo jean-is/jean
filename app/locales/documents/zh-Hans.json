@@ -47,6 +47,7 @@
   "documents.linkAddress": "链接地址",
   "documents.applyLink": "应用",
   "documents.removeLink": "移除链接",
+  "documents.badLink": "这不是网址或电子邮件地址",
   "documents.review": "建议的修改",
   "documents.accept": "接受",
   "documents.reject": "拒绝",
@@ -57,6 +58,8 @@
   "documents.gone": "{name} 建议删除此处",
   "documents.accepted": "已接受修改",
   "documents.rejected": "已拒绝修改",
+  "documents.acceptedAll": "已接受全部修改",
+  "documents.rejectedAll": "已拒绝全部修改",
   "documents.suggests": {
     "other": "{name} 建议了 {n} 处修改"
   },

@@ -47,6 +47,7 @@
   "documents.linkAddress": "링크 주소",
   "documents.applyLink": "적용",
   "documents.removeLink": "링크 제거",
+  "documents.badLink": "웹 주소나 이메일 주소가 아닙니다",
   "documents.review": "제안된 변경",
   "documents.accept": "수락",
   "documents.reject": "거부",
@@ -57,6 +58,8 @@
   "documents.gone": "{name} 제안: 삭제",
   "documents.accepted": "변경을 수락함",
   "documents.rejected": "변경을 거부함",
+  "documents.acceptedAll": "모든 변경을 수락함",
+  "documents.rejectedAll": "모든 변경을 거부함",
   "documents.suggests": {
     "other": "{name}의 변경 제안 {n}개"
   },

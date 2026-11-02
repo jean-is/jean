@@ -47,6 +47,7 @@
   "documents.linkAddress": "Anwani ya kiungo",
   "documents.applyLink": "Tumia",
   "documents.removeLink": "Ondoa kiungo",
+  "documents.badLink": "Hii si anwani ya wavuti wala ya barua pepe",
   "documents.review": "Mabadiliko yaliyopendekezwa",
   "documents.accept": "Kubali",
   "documents.reject": "Kataa",
@@ -57,6 +58,8 @@
   "documents.gone": "Pendekezo la kuondoa",
   "documents.accepted": "Badiliko limekubaliwa",
   "documents.rejected": "Badiliko limekataliwa",
+  "documents.acceptedAll": "Mabadiliko yote yamekubaliwa",
+  "documents.rejectedAll": "Mabadiliko yote yamekataliwa",
   "documents.suggests": {
     "one": "Badiliko {n} lililopendekezwa na {name}",
     "other": "Mabadiliko {n} yaliyopendekezwa na {name}"

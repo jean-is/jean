@@ -47,6 +47,7 @@
   "documents.linkAddress": "లింక్ చిరునామా",
   "documents.applyLink": "వర్తింపజేయి",
   "documents.removeLink": "లింక్ తీసివేయి",
+  "documents.badLink": "ఇది వెబ్ లేదా ఈమెయిల్ చిరునామా కాదు",
   "documents.review": "సూచించిన మార్పులు",
   "documents.accept": "ఆమోదించు",
   "documents.reject": "తిరస్కరించు",
@@ -57,6 +58,8 @@
   "documents.gone": "తొలగించమని సూచన",
   "documents.accepted": "మార్పు ఆమోదించబడింది",
   "documents.rejected": "మార్పు తిరస్కరించబడింది",
+  "documents.acceptedAll": "అన్ని మార్పులు ఆమోదించబడ్డాయి",
+  "documents.rejectedAll": "అన్ని మార్పులు తిరస్కరించబడ్డాయి",
   "documents.suggests": {
     "one": "{name} సూచించిన ఒక మార్పు",
     "other": "{name} సూచించిన {n} మార్పులు"

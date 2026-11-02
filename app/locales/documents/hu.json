@@ -47,6 +47,7 @@
   "documents.linkAddress": "Link címe",
   "documents.applyLink": "Alkalmaz",
   "documents.removeLink": "Link eltávolítása",
+  "documents.badLink": "Ez nem webcím és nem e-mail-cím",
   "documents.review": "Javasolt módosítások",
   "documents.accept": "Elfogadás",
   "documents.reject": "Elutasítás",
@@ -57,6 +58,8 @@
   "documents.gone": "{name} ezt eltávolítja",
   "documents.accepted": "Módosítás elfogadva",
   "documents.rejected": "Módosítás elutasítva",
+  "documents.acceptedAll": "Minden módosítás elfogadva",
+  "documents.rejectedAll": "Minden módosítás elutasítva",
   "documents.suggests": {
     "one": "Egy módosítás, javasolta: {name}",
     "other": "{n} módosítás, javasolta: {name}"

@@ -47,6 +47,7 @@
   "documents.linkAddress": "عنوان الرابط",
   "documents.applyLink": "تطبيق",
   "documents.removeLink": "إزالة الرابط",
+  "documents.badLink": "هذا ليس عنوان ويب ولا عنوان بريد إلكتروني",
   "documents.review": "التغييرات المقترحة",
   "documents.accept": "قبول",
   "documents.reject": "رفض",
@@ -57,6 +58,8 @@
   "documents.gone": "حذف مقترح",
   "documents.accepted": "تم قبول التغيير",
   "documents.rejected": "تم رفض التغيير",
+  "documents.acceptedAll": "تم قبول كل التغييرات",
+  "documents.rejectedAll": "تم رفض كل التغييرات",
   "documents.suggests": {
     "zero": "لا تغييرات مقترحة من {name}",
     "one": "تغيير واحد مقترح من {name}",

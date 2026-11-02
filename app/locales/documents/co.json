@@ -47,6 +47,7 @@
   "documents.linkAddress": "Indirizzu di u ligame",
   "documents.applyLink": "Applicà",
   "documents.removeLink": "Caccià u ligame",
+  "documents.badLink": "Questu ùn hè nè un indirizzu web nè un indirizzu e-mail",
   "documents.review": "Cambiamenti suggeriti",
   "documents.accept": "Accettà",
   "documents.reject": "Ricusà",
@@ -57,6 +58,8 @@
   "documents.gone": "{name} caccia stu passu",
   "documents.accepted": "Cambiamentu accettatu",
   "documents.rejected": "Cambiamentu ricusatu",
+  "documents.acceptedAll": "Tutti i cambiamenti accettati",
+  "documents.rejectedAll": "Tutti i cambiamenti ricusati",
   "documents.suggests": {
     "one": "Un cambiamentu suggeritu da {name}",
     "many": "{n} di cambiamenti suggeriti da {name}",

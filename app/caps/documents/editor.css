@@ -22,8 +22,8 @@
 .doc { flex: 1; min-block-size: 50dvh; padding-block-end: max(5rem, 15dvh); }
 /* Where a block dragged goes, in the look's colour, which keeps its contrast in a dark page and a light one, as tables' (D491). */
 :is(.prosemirror-dropcursor-block, .prosemirror-dropcursor-inline) { background: var(--flame); }
-/* The caret is the document's focus, as in any editor; the look's ring would frame the whole of it. */
-:root .doc:focus-visible { outline: none; } .preview:has(.doc:focus-visible) .pane-head { border-block-end-color: var(--ink-faint); }
+/* The caret is the document's focus, as in any editor, with a line along the text's start, where the look's ring would frame the whole of it. */
+.doc-wrap > .doc { margin-inline-start: calc(-0.6rem - 2px); padding-inline-start: 0.6rem; border-inline-start: 2px solid transparent; } :root .doc:focus-visible { outline: none; border-radius: 0; border-inline-start-color: var(--ink-faint); }
 .doc :is(h1, h2) { font-family: var(--display); line-height: 1.2; }
 /* A web bookmark (bookmark.js): a line that is only a web link, as a card, its title over its site; the line asking for an address says so while it is empty,
    and so does the title. */
@@ -70,8 +70,9 @@
 .slash-none { padding: 0.4rem 0.6rem; color: var(--ink-soft); }
 @media (pointer: coarse) { .slash-option { min-block-size: 2.75rem; } }
 /* The bubble over a selection. */
-.bubble { position: fixed; z-index: 6; display: flex; align-items: center; gap: 0.15rem; padding: 0.25rem; border: 1px solid var(--line-strong); border-radius: 0.5rem; background: var(--room-2); color: var(--ink); box-shadow: var(--doc-shadow); }
-.bubble[hidden], .bubble-box[hidden], .bubble-unlink[hidden], .bubble.linking .bubble-tool { display: none; }
+.bubble { position: fixed; inset: auto; margin: 0; overflow: visible; z-index: 6; display: flex; align-items: center; gap: 0.15rem; padding: 0.25rem; border: 1px solid var(--line-strong); border-radius: 0.5rem; background: var(--room-2); color: var(--ink); box-shadow: var(--doc-shadow); }
+.bubble[hidden], .bubble-box[hidden], .bubble-unlink[hidden], .bubble.linking ul { display: none; }
+.bubble ul, .block-menu ul { display: flex; gap: 0.15rem; margin: 0; padding: 0; list-style: none; }
 .bubble button { display: inline-grid; place-items: center; min-inline-size: 2.25rem; min-block-size: 2.25rem; padding: 0 0.4rem; font: 600 1rem var(--sans); border: 1px solid transparent; border-radius: 0.35rem; background: transparent; color: inherit; cursor: pointer; }
 .bubble button[aria-pressed="true"] { background: var(--doc-shade); border-color: var(--ink-soft); color: var(--ink); }
 .bubble-italic span { font-style: italic; font-family: Georgia, serif; }
@@ -84,11 +85,11 @@
 .block-handle { position: fixed; z-index: 5; display: grid; place-items: center; inline-size: 1.25rem; block-size: 1.5rem; padding: 0; border: none; background: transparent; color: var(--ink-soft); border-radius: 0.3rem; cursor: grab; user-select: none; -webkit-user-select: none; }
 .block-handle:hover, .block-handle[aria-expanded="true"] { background: var(--doc-shade); color: var(--ink); }
 .block-handle[hidden], .block-menu[hidden], .marquee[hidden] { display: none; }
-.block-menu { position: fixed; z-index: 6; display: flex; flex-direction: column; min-inline-size: 12rem; max-inline-size: calc(100vw - 16px); overflow-y: auto; padding: 0.3rem; border: 1px solid var(--line-strong); border-radius: 0.5rem; background: var(--room-2); color: var(--ink); box-shadow: var(--doc-shadow); }
-.block-menu [role="group"] { display: flex; flex-direction: column; margin-block: 0.25rem; padding-block: 0.25rem; border-block: 1px solid var(--line-strong); }
-.block-menu [role="group"] + [role="group"] { margin-block-start: -0.25rem; border-block-start: none; }
+.block-menu { position: fixed; inset: auto; margin: 0; z-index: 6; display: flex; flex-direction: column; min-inline-size: 12rem; max-inline-size: calc(100vw - 16px); overflow-y: auto; padding: 0.3rem; border: 1px solid var(--line-strong); border-radius: 0.5rem; background: var(--room-2); color: var(--ink); box-shadow: var(--doc-shadow); }
+.block-menu ul { flex-direction: column; gap: 0; } .block-menu ul[aria-label] { margin-block: 0.25rem; padding-block: 0.25rem; border-block: 1px solid var(--line-strong); }
+.block-menu ul[aria-label] + ul[aria-label] { margin-block-start: -0.25rem; border-block-start: none; }
 .block-menu-head { padding: 0.3rem 0.6rem 0.15rem; font-size: 0.8rem; color: var(--ink-soft); }
-.block-menu button { display: flex; align-items: center; gap: 0.6rem; min-block-size: 2.25rem; padding: 0.2rem 0.6rem; font: inherit; text-align: start; border: none; border-radius: 0.35rem; background: transparent; color: inherit; cursor: pointer; }
+.block-menu button { display: flex; align-items: center; gap: 0.6rem; inline-size: 100%; min-block-size: 2.25rem; padding: 0.2rem 0.6rem; font: inherit; text-align: start; border: none; border-radius: 0.35rem; background: transparent; color: inherit; cursor: pointer; }
 .block-menu button:is(:hover, :focus-visible) { background: var(--doc-shade); }
 .block-menu button:disabled { color: var(--ink-soft); cursor: default; }
 .block-menu-glyph { inline-size: 1.75rem; text-align: center; font: 600 0.85rem var(--sans); color: var(--ink-soft); }
@@ -112,7 +113,7 @@
 .doc .suggest > :not(.suggest-row, .suggest-was) { margin-block-end: 0.25rem; }
 .doc .suggest-new { border-radius: 0.2rem; background: oklch(from var(--flame) l c h / 0.2); }
 .doc .suggest.is-gone { border-inline-start-style: dashed; }
-.doc .suggest.is-gone > :not(.suggest-row) { max-block-size: 4.5em; overflow: hidden; opacity: 0.6; filter: grayscale(1); text-decoration: line-through; mask-image: linear-gradient(to bottom, #000 55%, transparent); }
+.doc .suggest.is-gone > :not(.suggest-row) { filter: grayscale(1); text-decoration: line-through; }
 .doc .suggest-was { margin-block-start: 0.4rem; padding: 0.5rem 0.75rem; border-radius: 0.5rem; background: var(--room); color: var(--ink-soft); font-size: 0.94em; }
 .doc .suggest-was > :last-child { margin-block-end: 0; }
 .suggest-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.1rem 0.15rem; font: 0.875rem/1.4 var(--sans); user-select: none; }
@@ -122,5 +123,5 @@
 .doc .suggest-row button:hover, .doc .suggest-row button[aria-expanded="true"] { border-color: var(--line-strong); background: var(--room); text-decoration: none; }
 @media (pointer: coarse) { .doc .suggest-row button { min-block-size: 2.75rem; } }
 @media (max-width: 40rem) { .suggest-why { flex-basis: 100%; } }
-@media (forced-colors: active) { .doc .suggest { border-inline-start-color: Highlight; } .doc .suggest-new { background: Mark; color: MarkText; } .slash-option[aria-selected="true"] { outline-color: Highlight; } .bubble button[aria-pressed="true"] { border-color: Highlight; } .doc .block-selected { outline: 2px solid Highlight; } :is(.prosemirror-dropcursor-block, .prosemirror-dropcursor-inline) { forced-color-adjust: none; background: Highlight; } }
+@media (forced-colors: active) { .doc { border-inline-start-color: Canvas; } :root .doc:focus-visible { border-inline-start-color: Highlight; } .doc .suggest { border-inline-start-color: Highlight; } .doc .suggest-new { background: Mark; color: MarkText; } .slash-option[aria-selected="true"] { outline-color: Highlight; } .bubble button[aria-pressed="true"] { border-color: Highlight; } .doc .block-selected { outline: 2px solid Highlight; } :is(.prosemirror-dropcursor-block, .prosemirror-dropcursor-inline) { forced-color-adjust: none; background: Highlight; } }
 @media (prefers-contrast: more) { .doc .block-selected { outline: 2px solid var(--flame); } :root .doc:focus-visible { outline: 1px solid var(--ink-faint); outline-offset: 0.5rem; border-radius: 0.25rem; } .doc .suggest-new { text-decoration: underline; } }

@@ -47,6 +47,7 @@
   "documents.linkAddress": "Address ng link",
   "documents.applyLink": "Ilapat",
   "documents.removeLink": "Alisin ang link",
+  "documents.badLink": "Hindi ito address ng web o ng email",
   "documents.review": "Mga iminungkahing pagbabago",
   "documents.accept": "Tanggapin",
   "documents.reject": "Tanggihan",
@@ -57,6 +58,8 @@
   "documents.gone": "Inaalis ito ni {name}",
   "documents.accepted": "Tinanggap ang pagbabago",
   "documents.rejected": "Tinanggihan ang pagbabago",
+  "documents.acceptedAll": "Tinanggap ang lahat ng pagbabago",
+  "documents.rejectedAll": "Tinanggihan ang lahat ng pagbabago",
   "documents.suggests": {
     "one": "Mga pagbabagong mungkahi ni {name}: {n}",
     "other": "Mga pagbabagong mungkahi ni {name}: {n}"
