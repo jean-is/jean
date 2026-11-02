@@ -172,7 +172,7 @@ class Pane extends Element {
     // One an address or a drop names leaves the keys alone too (D582).
     const file = this.file.peek(), take = this.take
     dock.place(this, Boolean(file) && take !== 'wait')
-    if (file && take === 'button') (this.take = ''), /** @type {HTMLElement | null} */ (this.querySelector('.pane-head > button:not(.pane-moves)'))?.focus()
+    if (file && take === 'button') (this.take = ''), /** @type {HTMLElement | null} */ (this.querySelector('button:not(.pane-moves, .pane-menu button)'))?.focus()
     const box = this.querySelector('.view')
     if (box && this.#shown !== (this.#shown = this.#view.peek())) {
       const these = (this.#still = { ...places[this.#place()] })

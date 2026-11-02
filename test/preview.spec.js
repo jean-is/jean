@@ -242,7 +242,7 @@ test('a deck Jean opens beside the task leaves the keys in the box, where letter
   await pane.getByRole('button', { name: 'Close' }).click()
   await expect(pane).toHaveCount(0)
   await page.locator('.msg-jean').last().getByRole('button', { name: 'Open beside the conversation' }).click()
-  await expect(pane.locator('.pane-head > button:not(.pane-moves)').first()).toBeFocused()
+  await expect(pane.locator('.pane-head button:not(.pane-moves, .pane-menu button)').first()).toBeFocused()
 })
 
 test('on a phone, a deck Jean opens waits to be opened, and says so with a way to open it; the task stays as it was (D582)', async ({ page }) => {
@@ -268,7 +268,7 @@ test('on a phone, a deck Jean opens waits to be opened, and says so with a way t
   await open.focus()
   await page.keyboard.press('Enter')
   await expect(pane).toBeVisible()
-  await expect(pane.locator('.pane-head > button:not(.pane-moves)').first()).toBeFocused()
+  await expect(pane.locator('.pane-head button:not(.pane-moves, .pane-menu button)').first()).toBeFocused()
   await page.keyboard.press('Escape')
   await expect(pane).toHaveCount(0)
   await expect(open).toBeFocused()
@@ -286,7 +286,7 @@ test('on a phone, a deck Jean opens waits to be opened, and says so with a way t
   await expect(box).toBeFocused()
   await told.getByRole('button', { name: 'Open the file' }).click()
   await expect(pane).toBeVisible()
-  await expect(pane.locator('.pane-head > button:not(.pane-moves)').first()).toBeFocused()
+  await expect(pane.locator('.pane-head button:not(.pane-moves, .pane-menu button)').first()).toBeFocused()
   await page.keyboard.press('Escape')
   await expect(pane).toHaveCount(0)
   await expect(box).toBeFocused()
