@@ -110,9 +110,9 @@ export default {
     </div>
     <div class="ent-pane" aria-hidden="true">
       <p class="ent-pane-head">${say('people.brand')}</p>
-      <p class="ent-file" dir="auto">${ICONS.file}${say('people.file')}</p>
-      <p class="ent-asked" dir="auto">${say('people.ask')}</p>
-      <p class="ent-answer" dir="auto">${say('people.answer')}</p>
+      <p class="ent-file" dir="${kit.dir}">${ICONS.file}${say('people.file')}</p>
+      <p class="ent-asked" dir="${kit.dir}">${say('people.ask')}</p>
+      <p class="ent-answer" dir="${kit.dir}">${say('people.answer')}</p>
       <p class="ent-box">${kit.app('composer.placeholder')}</p>
       <p class="ent-ai">${kit.app('composer.ai')}</p>
     </div>
@@ -150,7 +150,7 @@ export default {
 
 <section id="ent-trust" class="site-section is-side" aria-labelledby="ent-trust-title">
   <h2 id="ent-trust-title">${say('trust.title')}</h2>
-  <ul class="ent-docs">${docs.map(([name, text], i) => /* html */ `<li><a href="${doc(DOCS[i])}"><b>${name}</b><span>${text}</span></a></li>`).join('')}</ul>
+  <ul class="ent-docs">${docs.map(([name, text], i) => /* html */ `<li><a href="${doc(DOCS[i])}"><h3>${name}</h3><span>${text}</span></a></li>`).join('')}</ul>
   <div class="ent-verify"><p>${say('trust.verify')}</p><pre>${xml(VERIFY)}</pre><p class="site-source">${say('trust.ci')}</p></div>
 </section>
 

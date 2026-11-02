@@ -38,9 +38,18 @@ function turning(home) {
   return () => { row.scrollTo({ left: 0 }); ends() }
 }
 
-/** The tiles of a page, made to work: the pointer, a tap or the keyboard picks the active one, and the filter starts over. @param {Element} home */
+/**
+ * The tiles of a page, made to work: a click or a tap picks the active one, never a pointer passing over; the keys
+ * reaching a tile's Try show its replay, and Escape there brings back the one shown before they came; the filter starts over.
+ * @param {Element} home
+ */
 export function tiles(home) {
-  for (const type of ['pointerover', 'focusin']) home.addEventListener(type, (event) => event.target instanceof Element && event.target.closest('.home-tile') && activate(home, event.target.closest('.home-tile')))
+  /** The tile active before the keys moved along the row. @type {Element | null} */
+  let before = null
+  const tileOf = (/** @type {Event} */ event) => (event.target instanceof Element ? event.target.closest('.home-tile') : null)
+  home.addEventListener('click', (event) => { const tile = tileOf(event); if (tile) { before = null; activate(home, tile) } })
+  home.addEventListener('focusin', (event) => { const tile = tileOf(event); if (tile && !tile.matches('.is-active')) { before ??= home.querySelector('.home-tile.is-active'); activate(home, tile) } })
+  home.addEventListener('keydown', (event) => { if (event instanceof KeyboardEvent && event.key === 'Escape' && before && tileOf(event)) { activate(home, before); before = null } })
   const back = turning(home)
-  home.querySelector('.home-filter')?.addEventListener('change', () => { activate(home, null); back() })
+  home.querySelector('.home-filter')?.addEventListener('change', () => { before = null; activate(home, null); back() })
 }

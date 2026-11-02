@@ -118,7 +118,7 @@ export default {
 
 <section class="site-section" aria-labelledby="ps-trust">
   <h2 id="ps-trust">${say('trust.title')}</h2>
-  <ul class="ps-docs">${docs.map(([name, text], i) => /* html */ `<li><a href="${doc(DOCS[i])}"><b>${name}</b><span>${text}</span></a></li>`).join('')}</ul>
+  <ul class="ps-docs">${docs.map(([name, text], i) => /* html */ `<li><a href="${doc(DOCS[i])}"><h3>${name}</h3><span>${text}</span></a></li>`).join('')}</ul>
   ${enterprise ? /* html */ `<p><a href="${enterprise}#ent-trust">${say('trust.more')}</a></p>` : ''}
 </section>
 

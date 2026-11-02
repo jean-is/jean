@@ -87,7 +87,7 @@ export default {
     <figure class="wrk-mail">
       <figcaption>${say('kit.label')}</figcaption>
       <p class="wrk-subject"><span>${say('kit.subject')}</span> ${say('mail.subject')}</p>
-      <p class="wrk-letter" dir="auto">${say('mail.body', { page: employers[0]?.[1] ?? '' })}</p>
+      <p class="wrk-letter" dir="${kit.dir}">${say('mail.body', { page: employers[0]?.[1] ?? '' })}</p>
     </figure>
     <div class="wrk-send">
       <ol class="wrk-steps">${list('kit.steps').map((step) => /* html */ `<li>${step}</li>`).join('')}</ol>

@@ -4,6 +4,7 @@
 // computer works them out: each product's last month against its first. Its pane plays that task: the program
 // that works them out, what it gave back, and the answer with its chart; a guided tour over it is written beside it.
 import { readFile } from 'node:fs/promises'
+import { TOUR } from '../demo.js'
 import { felt, xml } from '../site.js'
 import { job } from './job.js'
 
@@ -42,7 +43,8 @@ function chart () {
   return /* html */ `<svg class="job-chart" viewBox="0 0 200 110" aria-hidden="true"><path class="is-axis" d="M8 ${zero.toFixed(1)}H192"/>${bars}</svg>`
 }
 
-export default job({
+/** @type {import('../site.js').Page} */
+export default { ...job({
   addresses: { en: 'excel', fr: 'fr/excel', ko: 'ko/excel' },
   into: 'sample',
   filled (kit) {
@@ -57,13 +59,13 @@ export default job({
     const number = new Intl.NumberFormat(kit.lang)
     const percent = new Intl.NumberFormat(kit.lang, { style: 'percent', signDisplay: 'exceptZero' })
     const [product, growth] = list('replay.columns')
-    // What the computer worked out, each product's row, the best growth circled.
-    const work = /* html */ `<table class="job-table">
+    // What the computer worked out, each product's row, the best growth circled; on a narrow window, in a box of its own that scrolls.
+    const work = /* html */ `<div class="job-scroll"><table class="job-table">
       <thead><tr><th scope="col">${product}</th><th scope="col">${xml(month(kit.lang, MONTHS[0], true))}</th><th scope="col">${xml(month(kit.lang, /** @type {string} */ (MONTHS.at(-1)), true))}</th><th scope="col">${growth}</th></tr></thead>
       <tbody>${GROWTH.map((row) => /* html */ `
         <tr><th scope="row"><bdi lang="en">${xml(row.product)}</bdi></th><td>${number.format(row.first)}</td><td>${number.format(row.last)}</td><td>${row === BEST ? felt(percent.format(row.growth), 'circle') : percent.format(row.growth)}</td></tr>`).join('')}
       </tbody>
-    </table>`
+    </table></div>`
     return { pane: chart(), work, got: chart() }
   },
   demo (kit, { text }) {
@@ -95,4 +97,4 @@ export default job({
       ],
     }
   },
-})
+}), script: TOUR }

@@ -26,6 +26,9 @@ test('on jean.is, the page is under the first screen, its tries fill the box, an
   expect(await page.evaluate(() => document.body.firstElementChild?.localName)).toBe('app-shell')
   await expect(page.locator('html')).toHaveAttribute('data-centred', '')
   expect(await page.evaluate(() => document.documentElement.scrollHeight > 3 * innerHeight)).toBe(true)
+  // While it shows, it is the main content, the skip link's #main: the first screen above it holds no <main> of its own.
+  await expect(page.locator('main:visible')).toHaveCount(1)
+  await expect(page.locator('body > .home > main#main')).toBeVisible()
 
   // A try puts its request in the box, back up at the top; the sample's comes with its file.
   await home.locator('.home-tile [data-try="music"]').click()
@@ -57,6 +60,8 @@ test('on jean.is, the page is under the first screen, its tries fill the box, an
   await connectFakeBrain(page)
   await ask(page, 'Hello')
   await expect(home).toBeHidden()
+  await expect(page.locator('main:visible')).toHaveCount(1)
+  await expect(page.locator('app-shell main#main')).toBeVisible()
   if (browserName !== 'webkit') {
     await page.reload()
     await expect(page.locator('html')).toHaveClass(/is-ready/)
@@ -158,8 +163,10 @@ test('one tile is active at all times, the filter’s mark slides to its choice,
     const current = home.locator('.home-tile[aria-current="true"]')
     await expect(current).toHaveCount(1)
     await expect(tiles.first()).toHaveAttribute('aria-current', 'true')
-    // The pointer picks one, and so does the keyboard; one stays active when the pointer leaves.
-    await tiles.nth(2).hover()
+    // A click picks one, and so does the keyboard; one stays active when the pointer leaves, and a pointer passing over changes nothing.
+    await tiles.nth(2).click({ position: { x: 8, y: 8 } })
+    await expect(tiles.nth(2)).toHaveAttribute('aria-current', 'true')
+    await tiles.nth(1).hover()
     await expect(tiles.nth(2)).toHaveAttribute('aria-current', 'true')
     // Its replay is the one shown, heard politely, with no Try of its own; the tile's Try puts its request in the box.
     await expect(home.locator('.home-replays')).toHaveAttribute('role', 'status')
@@ -169,16 +176,21 @@ test('one tile is active at all times, the filter’s mark slides to its choice,
     await expect(home.locator('.home-replay [data-try]')).toHaveCount(0)
     await tiles.nth(2).locator('[data-try]').click()
     await expect(page.locator('#prompt')).toHaveValue(lang === 'en' ? 'A quiz on the planets for my son, ten questions.' : /./)
-    await tiles.nth(2).hover()
     // Only the active tile's Try is the primary one.
     await expect(tiles.nth(2).locator('[data-try]')).toHaveClass(/primary/)
     await expect(tiles.first().locator('[data-try]')).not.toHaveClass(/primary/)
     await expect(home.locator('.home-tile [data-try].primary')).toHaveCount(1)
     await page.mouse.move(0, 0)
     await expect(current).toHaveCount(1)
+    // The keys reaching a tile's Try show its replay, and Escape there brings back the one shown before they came.
     await tiles.nth(3).locator('[data-try]').focus()
     await expect(tiles.nth(3)).toHaveAttribute('aria-current', 'true')
     await expect(tiles.nth(3)).toHaveClass(/is-active/)
+    await page.keyboard.press('Escape')
+    await expect(tiles.nth(2)).toHaveAttribute('aria-current', 'true')
+    await expect(home.locator('.home-replay[data-replay="quiz"]')).toBeVisible()
+    await tiles.nth(3).click({ position: { x: 8, y: 8 } })
+    await expect(tiles.nth(3)).toHaveAttribute('aria-current', 'true')
     // One row: four in view, the next four a turn away, whichever way the page reads; Back once turned.
     const [back, next] = [home.locator('.home-turn.is-back'), home.locator('.home-turn.is-next')]
     await expect(back).toBeHidden()

@@ -41,7 +41,7 @@ export default {
     ${FELT.across}
     <div class="imp-pane">
       <p class="imp-pane-head">${say('pane.head')}</p>
-      <ul class="imp-list">${kit.table('pane.rows', 2).map(([name, from]) => /* html */ `<li dir="auto"><span>${name}</span><small>${from}</small></li>`).join('')}</ul>
+      <ul class="imp-list">${kit.table('pane.rows', 2).map(([name, from]) => /* html */ `<li dir="${kit.dir}"><span>${name}</span><small>${from}</small></li>`).join('')}</ul>
       <p class="imp-done">${ICONS.plus}${say('pane.done')}</p>
     </div>
   </div>

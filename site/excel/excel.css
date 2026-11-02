@@ -55,6 +55,8 @@
 .job-ticks { display: flex; flex-direction: column; gap: 0.3rem; }
 .job-ticks li { display: flex; gap: 0.5rem; align-items: baseline; }
 .job-ticks li::before { content: '✓' / ''; color: var(--flame); font-weight: 600; }
+/* Its own box, which scrolls only where the window is too narrow, with room at its end for the circle round the best growth */
+.job-scroll { max-inline-size: calc(100% + 0.75rem); margin-inline-end: -0.75rem; padding-inline-end: 0.75rem; overflow-x: auto; }
 .job-table { margin-block-start: 0.35rem; border-collapse: separate; border-spacing: 0; border: 1px solid var(--line); border-radius: 0.75rem; background: var(--room); font-size: 0.875rem; font-variant-numeric: tabular-nums; }
 .job-table :is(th, td) { padding: 0.4rem 0.8rem; text-align: end; border-block-start: 1px solid var(--line); }
 .job-table thead :is(th, td) { border-block-start: 0; color: var(--ink-soft); font-weight: 600; }
@@ -71,11 +73,12 @@
 /* What goes in, what comes out */
 .job-io { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
 .job-io > div { display: flex; flex-direction: column; gap: 0.4rem; padding: 1.3rem 1.4rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); }
-.job-io h3 { color: var(--ink-soft); font-size: 0.875rem; }
-.job-io li { display: flex; gap: 0.75rem; align-items: flex-start; padding-block: 0.75rem; border-block-start: 1px solid var(--line); }
-.job-io li:first-child { border-block-start: 0; }
-.job-io li > span { display: flex; flex-direction: column; gap: 0.1rem; min-inline-size: 0; }
-.job-io li > span > span { color: var(--ink-soft); }
+/* Each part's title over its kinds, each kind's name and what it is */
+.job-io h3 { font-size: 1.05rem; }
+.job-io dl > div { display: flex; flex-direction: column; gap: 0.1rem; padding-block: 0.75rem; border-block-start: 1px solid var(--line); }
+.job-io dl > div:first-child { border-block-start: 0; }
+.job-io dt { display: flex; gap: 0.75rem; align-items: flex-start; font-weight: 500; }
+.job-io dd { margin: 0; padding-inline-start: 2rem; color: var(--ink-soft); }
 .job-io .icon { margin-block-start: 0.15rem; color: var(--flame); }
 
 /* Numbers worked out, and where a file goes */
@@ -107,6 +110,9 @@
   .job-steps > li { padding-inline-start: 1.6rem; }
   .job-table { font-size: 0.8125rem; }
   .job-table :is(th, td) { padding: 0.35rem 0.5rem; }
+}
+@media (max-width: 24rem) {
+  .job-table :is(th, td), .job-table :is(th, td):last-child { padding-inline: 0.3rem; }
 }
 @media (forced-colors: active) {
   .job-steps > li::before, .job-steps > li:not(:last-child)::after { background: CanvasText; }

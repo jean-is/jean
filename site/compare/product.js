@@ -132,8 +132,9 @@ const BOTH = { history: ICONS.clock, plan: ICONS.computer, private: ICONS.lock, 
  * A product's page, as its page.js names it.
  * @param {Product} product @returns {import('../site.js').Page}
  */
-// Escape hides the tip of the number under the pointer or the keys, until they leave it (no "<", which a page's scripts can't hold).
-const CITES = `addEventListener('keydown', (event) => {
+// Escape hides the tip of the number under the pointer or the keys, until they leave it (no "<", which a page's scripts can't
+// hold), on the hub and every product's page.
+export const CITES = `addEventListener('keydown', (event) => {
   if (event.key !== 'Escape') return
   for (const cite of document.querySelectorAll('.cmp-cite:hover, .cmp-cite:focus-visible')) {
     const back = () => cite.classList.remove('is-quiet')
@@ -165,7 +166,7 @@ export function product ({ addresses, sources, actions }) {
       const tone = () => (n++ % 2 ? '' : ' is-side')
       return /* html */ `<section class="site-hero cmp-hero" aria-labelledby="cmp-title">
   <div class="site-hero-text">
-    <nav class="cmp-crumbs" aria-label="${hub.say('crumbs')}"><a href="${kit.link('compare')}">${hub.say('crumbs.hub')}</a><span class="flip-rtl" aria-hidden="true">›</span><span aria-current="page">${name}</span></nav>
+    <nav class="cmp-crumbs" aria-label="${hub.say('crumbs')}"><ol><li><a href="${kit.link('compare')}">${hub.say('crumbs.hub')}</a></li><li><span class="flip-rtl" aria-hidden="true">›</span><span aria-current="page">${name}</span></li></ol></nav>
     <p class="site-eyebrow">${say('eyebrow')}</p>
     <h1 id="cmp-title">${underline(say('h1'), say('h1.mark'))}</h1>
     <p class="site-lede">${say('lede')}</p>

@@ -95,12 +95,12 @@ export function job ({ addresses, into, filled = () => ({}), drawn, demo, tasks,
       // What the replay's task asks: the app's own question for its sample, the request a Try sends, or the page's.
       const asked = into === 'sample' ? kit.app('starter.sample.prompt') : into === 'ask' ? say('try.ask') : say('replay.ask')
       const art = drawn(kit, { say, list })
-      const file = kit.has('replay.file') ? /* html */ `<span class="job-file" dir="auto">${ICONS.file}${say('replay.file')}</span>` : ''
-      const chip = (/** @type {string} */ icon, /** @type {string} */ key) => /* html */ `<span class="job-file" dir="auto">${KINDS[/** @type {keyof typeof KINDS} */ (icon)] ?? ICONS.file}${say(key)}</span>`
+      const file = kit.has('replay.file') ? /* html */ `<span class="job-file" dir="${kit.dir}">${ICONS.file}<span>${say('replay.file')}</span></span>` : ''
+      const chip = (/** @type {string} */ icon, /** @type {string} */ key) => /* html */ `<span class="job-file" dir="${kit.dir}">${KINDS[/** @type {keyof typeof KINDS} */ (icon)] ?? ICONS.file}<span>${say(key)}</span></span>`
       const ticks = (/** @type {string} */ key) => /* html */ `<ul class="job-ticks">${list(key).map((item) => /* html */ `<li>${item}</li>`).join('')}</ul>`
       const io = (/** @type {string} */ key) => table(key, 3).map(([icon, name, text]) => {
         if (!(icon in KINDS)) throw new Error(`site/${kit.name}/${lang}.json: ${key} names the icon ${icon}, not one of ${Object.keys(KINDS).join(', ')}`)
-        return /* html */ `<li>${KINDS[/** @type {keyof typeof KINDS} */ (icon)]}<span><b>${name}</b><span>${text}</span></span></li>`
+        return /* html */ `<div><dt>${KINDS[/** @type {keyof typeof KINDS} */ (icon)]}${name}</dt><dd>${text}</dd></div>`
       }).join('')
       const cards = (/** @type {string} */ key, /** @type {string[]} */ icons) => {
         const rows = table(key, 2)
@@ -122,8 +122,8 @@ export function job ({ addresses, into, filled = () => ({}), drawn, demo, tasks,
   </div>
   <div class="job-pane${tall ? ' is-tall' : ''}"${demo ? '' : ' aria-hidden="true"'}>
     <p class="job-pane-head"${demo ? ' aria-hidden="true"' : ''}><span>${xml(kit.brand.name)}</span><span class="job-chip">${ICONS.brain}${say('pane.brain')}</span></p>
-    ${demo ? demoFrame(kit, Boolean(task(kit, into, own, demo).tour)) : /* html */ `<p class="job-sent" dir="auto">${file}<span>${kit.has('pane.ask') ? say('pane.ask') : asked}</span></p>
-    <div class="job-said"><p dir="auto">${say('pane.answer')}</p>${art.pane}${chip(kit.text('pane.icon'), 'pane.chip')}</div>
+    ${demo ? demoFrame(kit, Boolean(task(kit, into, own, demo).tour)) : /* html */ `<p class="job-sent" dir="${kit.dir}">${file}<span>${kit.has('pane.ask') ? say('pane.ask') : asked}</span></p>
+    <div class="job-said"><p dir="${kit.dir}">${say('pane.answer')}</p>${art.pane}${chip(kit.text('pane.icon'), 'pane.chip')}</div>
     <p class="job-box">${kit.app('composer.placeholder')}</p>
     <p class="job-ai">${kit.app('composer.ai')}</p>`}
   </div>
@@ -133,16 +133,16 @@ ${shows ? shows(kit, { say, text: asText(kit).text }) : ''}
   <header><h2 id="job-replay-title">${say('replay.title')}</h2><p class="site-why">${say('replay.why')}</p></header>
   <div class="job-replay">
   <ol class="job-steps">
-    <li><span class="job-step">${home.say('replay.ask')}</span><p class="job-asked" dir="auto">${file}<span>${asked}</span></p></li>
+    <li><span class="job-step">${home.say('replay.ask')}</span><p class="job-asked" dir="${kit.dir}">${file}<span>${asked}</span></p></li>
     <li><span class="job-step">${say('step.read')}</span>${ticks('replay.reads')}</li>
     <li><span class="job-step">${home.say('replay.work')}</span>${ticks('replay.works')}${art.work ?? ''}</li>
     <li><span class="job-step">${home.say('replay.get')}</span><p>${say('replay.got')}</p>${art.got ?? ''}${chip(kit.text('replay.icon'), 'replay.chip')}</li>
-    <li><span class="job-step">${say('step.again')}</span><p class="job-asked" dir="auto"><span>${say('replay.again')}</span></p></li>
+    <li><span class="job-step">${say('step.again')}</span><p class="job-asked" dir="${kit.dir}"><span>${say('replay.again')}</span></p></li>
     <li><span class="job-step">${say('step.made')}</span><p>${say('replay.made')}</p>${chip(kit.text('replay.madeIcon'), 'replay.madeChip')}</li>
   </ol>
   <div class="job-more">
     <h3>${say('asks.title')}</h3>
-    <ul class="job-asks">${list('asks.items').map((item) => /* html */ `<li dir="auto">${item}</li>`).join('')}</ul>
+    <ul class="job-asks">${list('asks.items').map((item) => /* html */ `<li dir="${kit.dir}">${item}</li>`).join('')}</ul>
   </div>
   </div>
 </section>
@@ -150,8 +150,8 @@ ${shows ? shows(kit, { say, text: asText(kit).text }) : ''}
 <section class="site-section" aria-labelledby="job-io">
   <header><h2 id="job-io">${say('io.title')}</h2><p class="site-why">${say('io.why')}</p></header>
   <div class="job-io">
-    <div><h3>${say('io.in')}</h3><ul>${io('io.ins')}</ul></div>
-    <div><h3>${say('io.out')}</h3><ul>${io('io.outs')}</ul></div>
+    <div><h3>${say('io.in')}</h3><dl>${io('io.ins')}</dl></div>
+    <div><h3>${say('io.out')}</h3><dl>${io('io.outs')}</dl></div>
   </div>
 </section>
 

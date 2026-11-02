@@ -154,8 +154,8 @@ export default {
   <div class="site-two">
     <div class="fam-pane fam-child">
       <p class="fam-child-top"><span class="fam-face">${initial('lea.name')}</span><b>${say('lea.name')}</b><span class="fam-lock">${ICONS.lock}${app('profiles.tier')}</span></p>
-      <p class="fam-asked" dir="auto">${say('sees.ask')}</p>
-      <p class="fam-answer" dir="auto">${say('sees.answer')}</p>
+      <p class="fam-asked" dir="${kit.dir}">${say('sees.ask')}</p>
+      <p class="fam-answer" dir="${kit.dir}">${say('sees.answer')}</p>
       <div class="fam-shared"><p>${app('profiles.shared')}</p><span class="button">${app('profiles.understood')}</span></div>
       <p class="fam-box"><span>${app('composer.placeholder')}</span><span class="fam-chip">${ICONS.brain}${say('decide.brainValue')}</span></p>
       <p class="fam-ai">${app('composer.ai')}</p>

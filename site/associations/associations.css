@@ -12,7 +12,7 @@
 .asso-file span { display: flex; flex-direction: column; flex: 1; min-inline-size: 0; line-height: 1.35; }
 .asso-file b { font-size: 0.9rem; font-weight: 600; overflow-wrap: anywhere; }
 .asso-file small { color: var(--ink-soft); font-size: 0.8125rem; }
-.asso-box { margin-inline: 1rem; padding: 0.8rem 1rem; border: 1px solid var(--line); border-radius: 1.375rem; box-shadow: var(--site-float); color: var(--ink-faint); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.asso-box { margin-inline: 1rem; padding: 0.8rem 1rem; border: 1px solid var(--line); border-radius: 1.375rem; box-shadow: var(--site-float); color: var(--ink-faint); }
 .asso-ai { color: var(--ink-faint); font-size: 0.75rem; text-align: center; }
 
 /* How associations are run, and Jean's terms */
