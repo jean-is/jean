@@ -9,7 +9,6 @@ import { opfsFS, mine } from './opfs.js'
 import { app, effective, activeBrain, theme, sidebarOpen, chosenLook, offeredLocales, THEME_KEY, SIDEBAR_KEY, FOLDED_KEY, SEEN_KEY, AWAY_MS, refreshConversations, refreshProjects, rememberUnlocked, send } from './state.js'
 import { LOOKS, LOOK_KEY, OWN, lookId, baseOf, touched } from './looks.js'
 import { configureCapabilities, unlock, loaded } from './caps.js'
-import { contrast } from './sheet.js'
 import './shell.js'
 import { focusComposer } from './composer.js'
 import { startRouter } from './router.js'
@@ -79,7 +78,7 @@ async function start() {
   daylight.addEventListener('change', follow)
   follow()
   const chosen = localStorage.getItem(mine(THEME_KEY))
-  if ((root.dataset.contrast = localStorage.getItem(mine('app.contrast')) ?? '')) contrast()
+  if ((root.dataset.contrast = localStorage.getItem(mine('app.contrast')) ?? '')) import('./sheet.js').then(({ contrast }) => contrast())
   app.chosenTheme.value = chosen === 'light' || chosen === 'dark' ? chosen : null
   const browserBar = document.querySelector('meta[name="theme-color"]')
   app.look.value = baseOf(lookId(root.dataset.look ?? 'room'))
