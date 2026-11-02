@@ -4,10 +4,17 @@
 // for what a secret looks like. CodeQL (.github/workflows/codeql.yml) looks further, at what flows where.
 import { execFileSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { join, resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
+
+/**
+ * What git lists in this checkout, taking it as safe whoever owns it: running this script trusts it already, and in CI's
+ * container it belongs to another user than the one running git. Only this checkout, so git still refuses a parent's.
+ * @param {string[]} paths @returns {string[]}
+ */
+const listed = (...paths) => execFileSync('git', ['-c', `safe.directory=${resolve(ROOT)}`, 'ls-files', '--cached', '--others', '--exclude-standard', ...paths], { cwd: ROOT, encoding: 'utf8', maxBuffer: 1 << 26 }).split('\n')
 
 /**
  * Each rule's allowed places, a path relative to the repository's root and why. A rule is its name; a place that stops
@@ -130,7 +137,7 @@ export function scan(path, text) {
 
 /** Modules that are code of Jean's, its services' or its build's, not third party's. @returns {string[]} */
 export function modules() {
-  return execFileSync('git', ['ls-files', '--cached', '--others', '--exclude-standard', '*.js', '*.mjs'], { cwd: ROOT, encoding: 'utf8', maxBuffer: 1 << 26 }).split('\n')
+  return listed('*.js', '*.mjs')
     .filter((path) => path && /^(app|gateway|host|requests|cli|scripts|deploy)\//.test(path) && !/^app\/vendor\//.test(path))
 }
 
@@ -148,7 +155,7 @@ export const NOT_SECRETS = /** @type {Record<string, string>} */ ({
 })
 
 /** Files a secret could be in: every tracked text file but third-party ones and built data. @returns {string[]} */
-const tracked = () => execFileSync('git', ['ls-files', '--cached', '--others', '--exclude-standard'], { cwd: ROOT, encoding: 'utf8', maxBuffer: 1 << 26 }).split('\n')
+const tracked = () => listed()
   .filter((path) => path && !/^(app\/vendor|spikes|dist)\/|\.(png|jpe?g|webp|woff2?|ttf|wasm|xlsx|zip|ico|icns|onnx|bin|sf3|pdf|docx|pptx|mp3|mp4|wav)$|package-lock\.json$/i.test(path))
 
 /** A workflow's actions as anything but a commit, which is all that can't move under a run. @param {string} path @param {string} text @returns {Finding[]} */
