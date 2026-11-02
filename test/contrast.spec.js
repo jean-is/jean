@@ -1,8 +1,8 @@
 // Contrast (D325, WCAG 2.2 AA, 1.4.3): every word on screen against what is actually drawn behind it, in
-// every look, by night and by day; in the room's own look at every step of its warmth, with the
-// light at its brightest for each of Jean's moods and in each project's colour (D78). Pixels, not
-// tokens: the light is a gradient under the text, and a look's panels are glass over it. The words
-// are hidden, the page is photographed, and each one's colour is laid over the pixels it covered.
+// every look, by night and by day, with the light at its brightest for each of Jean's moods and in
+// each project's colour (D78). Pixels, not tokens: the light is a gradient under the text, and a
+// look's panels are glass over it. The words are hidden, the page is photographed, and each one's
+// colour is laid over the pixels it covered.
 // Chromium only: what is measured is the style sheets, the same in every engine.
 import { readFileSync } from 'node:fs'
 import { test, expect } from '@playwright/test'
@@ -159,18 +159,17 @@ async function audit(page, label, failures) {
   }
 }
 
-/** The room's light held at a mood's brightest, its warmth and its colour set as ui/app.js sets them (CSSOM). */
-async function light(page, { mood = 'idle', warmth = null, tint = null } = {}) {
-  await page.evaluate(({ mood, brightest, warmth, tint }) => {
+/** The room's light held at a mood's brightest, and its colour set as ui/app.js sets it (CSSOM). */
+async function light(page, { mood = 'idle', tint = null } = {}) {
+  await page.evaluate(({ mood, brightest, tint }) => {
     const root = document.documentElement
     /** @type {any} */ const held = (window.held ??= new CSSStyleSheet())
     if (!document.adoptedStyleSheets.includes(held)) document.adoptedStyleSheets = [...document.adoptedStyleSheets, held]
     held.replaceSync(`.room { animation: none !important; --light: ${brightest} !important; }`)
     root.dataset.presence = mood
-    if (warmth !== null) root.style.setProperty('--warmth', String(warmth))
     if (tint) root.style.setProperty('--tint', tint)
     else root.style.removeProperty('--tint')
-  }, { mood, brightest: MOODS[mood], warmth, tint })
+  }, { mood, brightest: MOODS[mood], tint })
 }
 
 /** Whether this look shows the room's light at all. @param {import('@playwright/test').Page} page */
@@ -182,23 +181,18 @@ async function daylight(page, scheme) {
   await expect(page.locator('html')).toHaveAttribute('data-theme', scheme)
 }
 
-/**
- * Every mood, by night and by day, in this look; the room's warmth and the projects' colours where they show.
- * @param {number[]} warmths the room's steps: every one, or its first and last, between which its paper moves in a line
- */
-async function everyStage(page, look, screen, failures, warmths = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]) {
+/** Every mood, by night and by day, in this look, and the projects' colours where they show. */
+async function everyStage(page, look, screen, failures) {
   for (const scheme of /** @type {const} */ (['dark', 'light'])) {
     await daylight(page, scheme)
     const shows = await lit(page)
-    for (const warmth of look === 'room' ? warmths : [null]) {
-      for (const mood of shows ? Object.keys(MOODS) : ['idle']) {
-        await light(page, { mood, warmth })
-        await audit(page, `${look} ${scheme} ${screen} ${mood}${warmth === null ? '' : ` warmth ${warmth}`}`, failures)
-      }
+    for (const mood of shows ? Object.keys(MOODS) : ['idle']) {
+      await light(page, { mood })
+      await audit(page, `${look} ${scheme} ${screen} ${mood}`, failures)
     }
     if (shows) {
       for (const tint of TINTS) {
-        await light(page, { mood: 'answering', warmth: 9, tint })
+        await light(page, { mood: 'answering', tint })
         await audit(page, `${look} ${scheme} ${screen} answering in ${tint}`, failures)
       }
     }
@@ -209,28 +203,26 @@ async function everyStage(page, look, screen, failures, warmths = [0, 1, 2, 3, 4
 /** The comparison the fake brain answers with a table, in the languages it knows it in. */
 const PLANS = { en: 'Compare the phone plans', ar: 'قارن باقات الهاتف', ja: '携帯プランを比べて' }
 // Every look in English, a language changing the words but not their colours; Tilde, where Jean starts, right to left, whose
-// lines the light reaches from the other side; and the room with more contrast asked for (prefers-contrast: more).
-const RUNS = [...Object.keys(LOOKS).map((look) => [look, 'en']), ['tilde', 'ar'], ['room', 'en', 'more']]
+// lines the light reaches from the other side, and with more contrast asked for (prefers-contrast: more).
+const RUNS = [...Object.keys(LOOKS).map((look) => [look, 'en']), ['tilde', 'ar'], ['tilde', 'en', 'more']]
 
 for (const [look, lang, contrast = 'no-preference'] of RUNS) {
   test(`every word reads at AA in ${look} (${lang}${contrast === 'more' ? ', more contrast' : ''}), by night and by day, at every stage of the light`, async ({ page }) => {
-    test.setTimeout(look === 'room' ? 480_000 : 180_000)
+    test.setTimeout(180_000)
     const failures = new Map()
-    const warmths = lang === 'en' && contrast !== 'more' ? undefined : [0, 9]
     await page.emulateMedia({ contrast: /** @type {'more' | 'no-preference'} */ (contrast) })
     await start(page, lang)
     await page.evaluate(async (id) => (await import('/ui/state.js')).setLook({ id }), look)
-    if (look === 'room') await expect(page.locator('html')).not.toHaveAttribute('data-look')
-    else await expect(page.locator('html')).toHaveAttribute('data-look', look)
+    await expect(page.locator('html')).toHaveAttribute('data-look', look)
     // The first visit: the welcome, no brain yet.
-    await everyStage(page, look, 'welcome', failures, warmths)
+    await everyStage(page, look, 'welcome', failures)
     expect(await page.evaluate(() => matchMedia('(prefers-contrast: more)').matches)).toBe(contrast === 'more')
     // A conversation: a request, an answer with a table, its buttons and the line under the box.
     await connectFakeBrain(page)
     await ask(page, PLANS[lang])
     await expect(page.locator('.msg-jean:not(.is-streaming) .prose .table.is-compare')).toBeVisible()
     await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
-    await everyStage(page, look, 'conversation', failures, warmths)
+    await everyStage(page, look, 'conversation', failures)
     // Settings, and the tasks in the drawer.
     const dialogs = JSON.parse(readFileSync(new URL(`../app/locales/dialogs/${lang}.json`, import.meta.url), 'utf8'))
     for (const section of ['settings.general', 'settings.capabilities'].map((key) => dialogs[key])) {

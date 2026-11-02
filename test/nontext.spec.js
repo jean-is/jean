@@ -255,7 +255,7 @@ for (const [look, lang] of RUNS) {
     const failures = new Map()
     await start(page, lang)
     await page.evaluate(async (id) => (await import('/ui/state.js')).setLook({ id }), look)
-    await page.waitForFunction((look) => look === 'room' || [...document.styleSheets].some((sheet) => sheet.href?.endsWith(`ui/looks/${look}.css`)), look)
+    await page.waitForFunction((look) => [...document.styleSheets].some((sheet) => sheet.href?.endsWith(`ui/looks/${look}.css`)), look)
     await screen(page, `${look} welcome`, failures)
     await connectFakeBrain(page)
     await ask(page, PLANS[/** @type {keyof typeof PLANS} */ (lang)])

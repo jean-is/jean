@@ -28,7 +28,7 @@ export const app = {
   current: signal(/** @type {{ id: string, path: string, records: import('../core/types.js').Envelope[] } | null} */ (null)),
   /** The answer a demo is writing. */
   live: signal(/** @type {{ turn: import('../core/events.js').Turn, steers: string[] } | null} */ (null)),
-  look: signal(String(saved.look ?? 'room')),
+  look: signal(String(saved.look ?? 'tilde')),
   busy: signal(false),
   error: signal(null),
   offering: signal(null),

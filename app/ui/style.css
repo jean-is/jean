@@ -12,6 +12,7 @@
 
 :root {
   color-scheme: dark;
+  --room: oklch(0.15 0.014 52);
   --room-2: oklch(0.19 0.02 52);
   --ink: oklch(0.93 0.018 80);
   --ink-soft: oklch(0.93 0.018 80 / 0.68);
@@ -41,6 +42,7 @@
 /* By day: the device's light mode, or the user's choice (data-theme, set before the first paint by index.html). */
 [data-theme='light'] {
   color-scheme: light;
+  --room: oklch(0.975 0.012 82);
   --room-2: oklch(0.94 0.02 80);
   --ink: oklch(0.24 0.02 50);
   --ink-soft: oklch(0.24 0.02 50 / 0.72);
@@ -62,10 +64,6 @@
   :root { --glow: oklch(from var(--tint) 0.78 0.16 calc(h + 11)); }
   [data-theme='light'] { --glow: oklch(from var(--tint) 0.86 0.12 calc(h + 21)); }
 }
-
-/* The room warms a step with each discovery: --warmth counts them (ui/app.js). */
-:root { --room: oklch(calc(0.15 + min(var(--warmth, 0), 9) * 0.0045) calc(0.014 + min(var(--warmth, 0), 9) * 0.0012) 52); }
-[data-theme='light'] { --room: oklch(calc(0.975 - min(var(--warmth, 0), 9) * 0.0015) calc(0.012 + min(var(--warmth, 0), 9) * 0.0016) 82); }
 
 *, *::before, *::after { box-sizing: border-box; scrollbar-width: thin; }
 :is(app-conversation, .offer) :focus { scroll-margin-block: 6rem 10rem; }

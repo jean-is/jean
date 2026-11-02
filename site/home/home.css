@@ -36,7 +36,6 @@ body:has(> .home:not([hidden])) app-composer > :is(p, footer) { visibility: hidd
 :where(:root[data-sidebar] .here) > .main { padding-block-start: 1.5rem; }
 :where(:root[data-sidebar] app-shell:has(> .views button) .here, :root:is([data-look='human'], [data-look='tilde'])[data-sidebar] .here) > .main { padding-block-start: 0; }
 :where(:root[data-look='classic'] .here) > .main { margin-block: 0.75rem; padding: 2.4rem 1.25rem 1.25rem; background: var(--title) 3px 3px / calc(100% - 6px) 1.6rem no-repeat, var(--room); box-shadow: var(--raised); }
-:where(:root[data-look='mondrian'] .here) > .main { padding-inline: 1.5rem; border-inline: var(--stroke) solid var(--rule); background: var(--room-2); }
 :where(:root[data-look='notebook'][data-theme='light'] .here) > .main { padding-inline-start: 1rem; border-inline-start: 2px solid var(--margin); }
 :where(:root[data-split] .here) > .main { padding-block-start: 1rem; }
 :where(:root[data-sliding] .here) > .main { view-transition-name: page; }

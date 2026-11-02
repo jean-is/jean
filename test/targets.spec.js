@@ -54,7 +54,7 @@ async function audit(page, label, failures) {
 const PLANS = { en: 'Compare the phone plans', ar: 'قارن باقات الهاتف', ja: '携帯プランを比べて' }
 const SIZES = { laptop: { width: 1280, height: 800 }, phone: { width: 390, height: 844 } }
 // The looks that size their own controls, in English on a laptop; Tilde, where Jean starts, on a phone, right to left and in Japanese.
-const RUNS = [...['tilde', 'minimal', 'classic', 'mondrian', 'terminal'].map((look) => [look, 'en', 'laptop']), ...['en', 'ar', 'ja'].map((lang) => ['tilde', lang, 'phone'])]
+const RUNS = [...['tilde', 'minimal', 'classic', 'terminal'].map((look) => [look, 'en', 'laptop']), ...['en', 'ar', 'ja'].map((lang) => ['tilde', lang, 'phone'])]
 
 for (const [look, lang, size] of RUNS) {
   test(`every target is 24 pixels or spaced in ${look} (${lang}) on a ${size}`, async ({ page }) => {

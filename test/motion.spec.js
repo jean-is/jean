@@ -11,7 +11,7 @@ import { readFileSync } from 'node:fs'
 import { LOOKS } from '../app/ui/looks.js'
 
 // What moves is the room's style sheet, the same under every look: Tilde checks it, with each look whose own sheet adds motion.
-const MOVING = Object.keys(LOOKS).filter((look) => look === 'tilde' || (look !== 'room' && /animation|transition/.test(readFileSync(new URL(`../app/ui/looks/${look}.css`, import.meta.url), 'utf8'))))
+const MOVING = Object.keys(LOOKS).filter((look) => look === 'tilde' || /animation|transition/.test(readFileSync(new URL(`../app/ui/looks/${look}.css`, import.meta.url), 'utf8')))
 
 test.skip(({ browserName }) => browserName !== 'chromium', 'the same style sheets in every engine')
 test.use({ reducedMotion: 'reduce', viewport: { width: 1280, height: 800 } })

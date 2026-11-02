@@ -166,8 +166,6 @@ test('Capabilities groups the capabilities by what each is for, a page each, and
   await expect(row('Collections')).toContainText('Collections beside the conversation')
   await expect(row('Collections').locator('button.item')).toBeFocused()
   await expect(lede).toContainText(`${found + 1} of`)
-  const warmth = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--warmth'))
-  expect(Number(warmth)).toBeGreaterThan(0)
   // Turned on all at once, what still waits for the user says so, rather than On: a download, a lock to set.
   await settings.getByRole('button', { name: 'Turn on everything' }).click()
   await expect(settings.locator('.case > li.is-todo')).toHaveCount(0)

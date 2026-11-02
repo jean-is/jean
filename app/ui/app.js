@@ -6,9 +6,9 @@ import { loadSettings, ensureHome, listProjects } from '../core/settings.js'
 import { setLoader, useLocale, pickLocale, locale, dir } from '../core/i18n.js'
 import { ulid } from '../core/ulid.js'
 import { opfsFS, mine } from './opfs.js'
-import { app, effective, activeBrain, theme, sidebarOpen, chosenLook, offeredLocales, THEME_KEY, SIDEBAR_KEY, FOLDED_KEY, SEEN_KEY, AWAY_MS, refreshConversations, refreshProjects, rememberUnlocked, send } from './state.js'
+import { app, effective, theme, sidebarOpen, chosenLook, offeredLocales, THEME_KEY, SIDEBAR_KEY, FOLDED_KEY, SEEN_KEY, AWAY_MS, refreshConversations, refreshProjects, rememberUnlocked, send } from './state.js'
 import { LOOKS, LOOK_KEY, OWN, lookId, baseOf, touched } from './looks.js'
-import { configureCapabilities, unlock, loaded } from './caps.js'
+import { configureCapabilities, unlock } from './caps.js'
 import './shell.js'
 import { focusComposer } from './composer.js'
 import { startRouter } from './router.js'
@@ -81,12 +81,11 @@ async function start() {
   if ((root.dataset.contrast = localStorage.getItem(mine('app.contrast')) ?? '')) import('./sheet.js').then(({ contrast }) => contrast())
   app.chosenTheme.value = chosen === 'light' || chosen === 'dark' ? chosen : null
   const browserBar = document.querySelector('meta[name="theme-color"]')
-  app.look.value = baseOf(lookId(root.dataset.look ?? 'room'))
+  app.look.value = baseOf(lookId(root.dataset.look))
   effect(() => {
     root.style.transition = 'none'
     root.dataset.theme = theme.value
-    if (app.look.value === 'room') delete root.dataset.look
-    else root.dataset.look = app.look.value
+    root.dataset.look = app.look.value
     void getComputedStyle(root).backgroundColor // switched, before the fade comes back
     root.style.removeProperty('transition')
     browserBar?.setAttribute('content', LOOKS[app.look.value].bar[theme.value === 'light' ? 1 : 0])
@@ -100,7 +99,7 @@ async function start() {
   app.sidebar.value = side === 'open' ? true : side === 'closed' ? false : null
   app.folded.value = new Set(localStorage.getItem(mine(FOLDED_KEY))?.split(' '))
   effect(() => { root.toggleAttribute('data-sidebar', sidebarOpen.value) })
-  // A look (D111) switches once its sheet is in. Its id, the room's too, stays for index.html,
+  // A look (D111) switches once its sheet is in. Its id stays for index.html,
   // since a device without one starts in Tilde (D373); the user's touches go over it, and over the
   // organisation's look's, in a sheet of their own (CSSOM), their code loaded once there are some.
   let dressing = Promise.resolve()
@@ -121,12 +120,6 @@ async function start() {
     touching = import('./touches.js').then(({ customCSS }) => touches.replaceSync(`${customCSS(own)}\n${customCSS(effective.peek().settings.look)}`))
   })
   await Promise.all([dressing, touching])
-  // The room warms a step with each discovery (docs/design.md): a brain, a first
-  // conversation, then every capability, but not what is always there (CSSOM, as above).
-  effect(() => {
-    const discovered = [...loaded.value.keys()].filter((id) => !['discovery', 'voice', 'ask', 'you', 'signin', 'audit', 'groups', 'authority', 'residency'].includes(id)).length
-    root.style.setProperty('--warmth', String((activeBrain.value ? 1 : 0) + (app.conversations.value.length ? 1 : 0) + discovered))
-  })
 
   const home = await ensureHome(app.fs, { by: app.deviceId })
   app.projects.value = await listProjects(app.fs)
@@ -174,7 +167,7 @@ async function start() {
  */
 function lookSheet(id) {
   const href = `ui/looks/${id}.css`
-  if (id === 'room' || [...document.styleSheets].some((sheet) => sheet.href?.endsWith(href))) return Promise.resolve()
+  if ([...document.styleSheets].some((sheet) => sheet.href?.endsWith(href))) return Promise.resolve()
   const link = Object.assign(document.createElement('link'), { rel: 'stylesheet', href })
   const loaded = new Promise((resolve) => {
     link.addEventListener('load', resolve, { once: true })

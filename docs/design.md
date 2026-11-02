@@ -44,16 +44,14 @@ Jean's presence is the tilde of its mark, set moving. It is one inline SVG in `u
 
 ## Looks
 
-Tilde is Jean's own look and the one it starts in (D373). Settings › Appearance, five to a row, each on Auto with its other palette folded into its corner, offers fifteen, each with a light and a dark palette, shown as small pictures of themselves, Tilde first, then Human, then from the calmest to the most playful (D111, D120, D154, D174). Each keeps the wave:
+Tilde is Jean's own look and the one it starts in (D373). Settings › Appearance, five to a row, each on Auto with its other palette folded into its corner, offers twelve, each with a light and a dark palette, shown as small pictures of themselves, Tilde first, then Human, then from the calmest to the most playful (D111, D120, D154, D174). Each keeps the wave:
 
 - **Tilde:** Jean's own. Human's frame in ink and paper, Gentium for the name and the big question, the wave in sunflower. Its sheet brings in Human's, whose rules apply to both.
 - **Human:** after today's desktop: frosted panes that float, the system's blue and typeface (D132).
 - **Mail:** after the devs.new task inbox: the tasks in a list beside the one open, as in an email client; neutral greys, one blue accent, flat surfaces.
 - **Minimal** (one grey scale) and **Swiss** (a strict grid, black and white with one red).
-- **Paper:** ink on paper, a serif for everything, the user's words set as a quotation in the margin's red, no glow.
-- **Room:** a dark, warm room lit amber from where the wave sits, the display face, and the room warming a step with each discovery; each project's room glows in its own colour.
 - **Fjord** (polar blues under a faint aurora) and **Velvet** (plum and gold, a Didone).
-- **Notebook** (squared paper and sticky notes; a blackboard by night), **Blueprint** (white lines on Prussian blue), **Classic** (a Nineties desktop) and **Mondrian** (thick lines and primaries).
+- **Notebook** (squared paper and sticky notes; a blackboard by night), **Blueprint** (white lines on Prussian blue) and **Classic** (a Nineties desktop).
 - **Terminal** (green phosphor; green-bar paper by day) and **Neon** (an Eighties sun behind a grid).
 
 Tilde, Human and Mail open the drawer beside the conversation once there is a task (D165, D369). Names that are trademarks stay out of the UI, and `test/looks.test.js` checks every theme's text at AA by day and by night. A checkbox is drawn in the look's own lines, not the system's: its faint ink, its pen and a quarter of its corner, filled with its accent once ticked, Human's and Tilde's fill, a sunken field in Classic; a switch is drawn apart.
@@ -107,7 +105,7 @@ The app is drawn with one pen; jean.is's pages (`site/`) are drawn on by hand as
 ## Techniques (pure CSS)
 
 - **Colour:** oklch colours with `color-mix()` and relative colours (`oklch(from …)`)
-- **Light:** `@property`-animated custom properties for the Room theme's light (gradients, warmth, intensity)
+- **Light:** `@property`-animated custom properties for the room's light (gradients, intensity)
 - **Transitions:**
   - View Transitions for unlocks and project switches
   - `@starting-style` for entry animations
@@ -120,7 +118,7 @@ The app is drawn with one pen; jean.is's pages (`site/`) are drawn on by hand as
 
 ## Accessibility
 
-- **WCAG AA contrast at every stage**, measured in pixels in every look, mood, warmth and project colour (D325). "Dark" applies to ambient surfaces only; text is always high-contrast.
+- **WCAG AA contrast at every stage**, measured in pixels in every look, mood and project colour (D325). "Dark" applies to ambient surfaces only; text is always high-contrast.
 - **`prefers-reduced-motion`:** nothing moves (D325), unless the user asked for Full in Settings › Appearance › Motion; and where they asked for Less, nothing moves whatever the device asks. The wave keeps its poses (small, tall, a smile, a frown), so each state still reads.
 - **Scrolling glides** (`scroll-behavior: smooth` on the page) wherever a link, focus or Jean takes it, except while reduced motion is preferred and while Jean thinks or answers. Then the page follows the answer's end in jumps, and a reader who goes up (focus moving to an earlier message, say) jumps too, so the next jump to the end never cancels their glide halfway. Opening a conversation at its end jumps as well.
 - **Zoom and large text:** at 320 pixels wide or with text at 200%, nothing is cut or hidden and the page never scrolls sideways; under 20rem tall the box stays in the page's flow rather than at the window's foot (D420).

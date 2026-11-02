@@ -36,7 +36,7 @@ app.current.value = { id: String(header?.id ?? ''), path: '', records }
 declared.value = new Set([...declared.peek(), ...(saved.kinds ?? [])])
 effect(() => { root.dataset.theme = theme.value })
 const look = app.look.peek()
-if (look !== 'room' && /^[a-z]+$/.test(look)) root.dataset.look = look
+if (/^[a-z]+$/.test(look)) root.dataset.look = look
 await Promise.all([styleSheet(new URL('style.css', import.meta.url)), styleSheet(new URL('view.css', import.meta.url)), ...(root.dataset.look ? [styleSheet(new URL(`looks/${look}.css`, import.meta.url))] : [])])
 
 /**

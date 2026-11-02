@@ -98,11 +98,11 @@ const PLANS = { en: 'Compare the phone plans', ar: 'قارن باقات الها
 const LONG = 'https://www.service-public.gouv.fr/particuliers/vosdroits/F1234567/demarches-en-ligne-et-formulaires/R12345?utm_source=newsletter&utm_medium=email&campaign=automne2026'
 // 1280 by 1024 at 400%; and with the text at 200%, on a laptop's window and in the same window zoomed to 200%.
 const SIZES = { reflow: { width: 320, height: 256, text: 1 }, text: { width: 1280, height: 800, text: 2 }, zoom: { width: 640, height: 400, text: 1 } }
-// Every look in English at 320 px; large text in Tilde, where Jean starts, Mondrian, whose thick lines take the most room,
-// and Terminal, whose letters do; Tilde right to left and in Japanese, and zoomed.
+// Every look in English at 320 px; large text in Tilde, where Jean starts, and Terminal, whose letters take the most room;
+// Tilde right to left and in Japanese, and zoomed.
 const RUNS = [
   ...Object.keys(LOOKS).map((look) => [look, 'en', 'reflow']),
-  ...['tilde', 'mondrian', 'terminal'].map((look) => [look, 'en', 'text']),
+  ...['tilde', 'terminal'].map((look) => [look, 'en', 'text']),
   ...['ar', 'ja'].flatMap((lang) => [['tilde', lang, 'reflow'], ['tilde', lang, 'text']]),
   ['tilde', 'en', 'zoom'],
 ]

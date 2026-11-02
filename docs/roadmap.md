@@ -136,7 +136,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] On a real phone and with a screen reader: a pane Jean opens over the task (read by its name, or waiting while the box holds words), the line saying a decision waits or a request is asked again, an error toast as an alert, a collection's count as changes are accepted (N41, N42, D582)
 - [ ] A screen reader on the inbox (cards arriving while another has focus), between the dock's panes and the box, between tiles (D635), through search's results, through the box's / and @ menu (the option Enter picks)
 - [ ] Tiles dragged from the drawer, and panes by their heads, by hand in Safari, Firefox and Edge, and with a trackpad (D635: Playwright drags in Chromium and WebKit), and on a change's diff
-- [ ] A project's light at every stage of the room's warmth, by day and by night, with `prefers-contrast: more`
+- [ ] A project's light by day and by night, with `prefers-contrast: more`
 - [x] What the accessibility statement listed as unchecked (D419), measured in every look and held in CI: reflow at 320 pixels and text at 200%, target sizes, contrast of controls and graphics, and nothing moving for long at rest (D420)
 - [ ] A person through RGAA's tests of what is announced, with VoiceOver and NVDA, and Word's and Excel's checkers on what is saved; then the audit again, its share and status on jean.is/accessibility (D672)
 - [ ] An outside audit against WCAG 2.2 AA

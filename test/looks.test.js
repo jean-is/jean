@@ -26,7 +26,7 @@ const users = (id) => [id, ...Object.entries(LOOKS).filter(([, look]) => 'on' in
 /** What a look's rules start with: its own id, or :is() of its users'. @param {string} id */
 const prefix = (id) => (users(id).length > 1 ? `:root:is(${users(id).map((user) => `[data-look='${user}']`).join(', ')})` : `:root[data-look='${id}']`)
 
-for (const id of Object.keys(LOOKS).filter((id) => id !== 'room')) {
+for (const id of Object.keys(LOOKS)) {
   test(`every rule of ui/looks/${id}.css starts with ${prefix(id)}, and its keyframes with ${id}-`, async () => {
     const css = (await readFile(new URL(`../app/ui/looks/${id}.css`, import.meta.url), 'utf8')).replace(/\/\*[\s\S]*?\*\//g, '')
       .replace(/@keyframes\s+([\w-]+)\s*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}/g, (_, name) => (assert.ok(name.startsWith(`${id}-`), `@keyframes ${name}`), ''))
@@ -62,7 +62,7 @@ const contrast = (a, b) => { const [x, y] = [luminance(a), luminance(b)].sort((p
 /** The custom properties a rule sets. @param {string} css @param {string} selector */
 const tokensOf = (css, selector) => Object.fromEntries([...(css.split(`${selector} {`)[1]?.split('}')[0] ?? '').matchAll(/--([\w-]+):\s*([^;]+);/g)].map((m) => [m[1], m[2]]))
 
-for (const id of Object.keys(LOOKS).filter((id) => id !== 'room')) {
+for (const id of Object.keys(LOOKS)) {
   test(`ui/looks/${id}.css reads at AA contrast in light and dark`, async () => {
     const sheet = async (/** @type {string} */ look) => (await readFile(new URL(`../app/ui/looks/${look}.css`, import.meta.url), 'utf8')).replace(/\/\*[\s\S]*?\*\//g, '')
     const css = await sheet(id)
@@ -118,7 +118,7 @@ test('a look is applied before the first paint, with the key ui/looks.js uses, T
 
 test('an unknown look is Tilde (D373)', () => {
   assert.equal(lookId('mail'), 'mail')
-  assert.equal(lookId('room'), 'room')
+  assert.equal(lookId('room'), 'tilde')
   assert.equal(lookId('../style'), 'tilde')
   assert.equal(lookId('toString'), 'tilde')
   assert.equal(lookId(undefined), 'tilde')
@@ -128,11 +128,11 @@ test('policy keeps to its looks, its own first, and what it doesn’t offer is t
   const look = { name: 'Acme', on: 'swiss', accent: '#e30613', css: '.composer { border-radius: 0 !important; }' }
   assert.deepEqual(offeredLooks(), Object.keys(LOOKS))
   assert.deepEqual(offeredLooks({ look }), [OWN, ...Object.keys(LOOKS)])
-  assert.deepEqual(offeredLooks({ look, looks: ['mail', 'pixel', 'paper'] }), [OWN, 'mail', 'paper'])
+  assert.deepEqual(offeredLooks({ look, looks: ['mail', 'pixel', 'swiss'] }), [OWN, 'mail', 'swiss'])
   assert.deepEqual(offeredLooks({ look, looks: [] }), [OWN])
   assert.deepEqual(offeredLooks({ looks: ['toString'] }), ['tilde'])
-  assert.equal(lookId('mail', { looks: ['paper', 'mail'] }), 'mail')
-  assert.equal(lookId('tilde', { looks: ['paper', 'mail'] }), 'paper')
+  assert.equal(lookId('mail', { looks: ['swiss', 'mail'] }), 'mail')
+  assert.equal(lookId('tilde', { looks: ['swiss', 'mail'] }), 'swiss')
   assert.equal(lookId(undefined, { look, looks: ['mail'] }), OWN)
   // The organisation's look is drawn with the look of Jean's it builds on, Tilde unless it names one.
   assert.equal(baseOf(OWN, { look }), 'swiss')
@@ -146,8 +146,8 @@ test('policy keeps to its looks, its own first, and what it doesn’t offer is t
 test('no touches, no CSS', () => {
   assert.equal(customCSS(), '')
   assert.equal(customCSS({ id: 'mail' }), '')
-  assert.equal(touched({ id: 'paper' }), false)
-  assert.equal(touched({ id: 'paper', size: 1.1 }), true)
+  assert.equal(touched({ id: 'swiss' }), false)
+  assert.equal(touched({ id: 'swiss', size: 1.1 }), true)
 })
 
 test('colours keep their hue at readable lightnesses, by night and by day', () => {

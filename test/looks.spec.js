@@ -82,10 +82,10 @@ test('a first visit has the window to itself, and Tilde, Human and Mail open the
   await tasks.locator('.place', { hasText: 'New task' }).click()
   await expect(question).toBeVisible()
   await expect(tasks).toBeVisible()
-  // Mail's too; the room's is the box alone. Nothing was chosen meanwhile.
+  // Mail's too; Minimal's is the box alone. Nothing was chosen meanwhile.
   await look(page, 'mail')
   await expect(tasks).toBeVisible()
-  await look(page, 'room')
+  await look(page, 'minimal')
   await expect(tasks).toHaveCount(0)
   await look(page, 'human')
   await expect(tasks).toBeVisible()
@@ -121,9 +121,8 @@ test('the drawer opens beside the conversation or is put away, as the user left 
   await expect(page.locator('.hero-question')).toBeVisible()
   const toggle = page.locator('.sidebar-toggle')
   const tasks = page.locator('app-inbox')
-  // The room's is the box alone, and Mail's too while there is no task.
-  await look(page, 'room')
-  await expect(page.locator('html')).not.toHaveAttribute('data-look')
+  // Minimal's is the box alone, and Mail's too while there is no task.
+  await look(page, 'minimal')
   await expect(tasks).toHaveCount(0)
   await expect(toggle).toHaveAttribute('aria-expanded', 'false')
   await look(page, 'mail')
@@ -132,7 +131,7 @@ test('the drawer opens beside the conversation or is put away, as the user left 
   await expect(tasks).toBeVisible()
   await toggle.click()
   await expect(tasks).toHaveCount(0)
-  await look(page, 'room')
+  await look(page, 'minimal')
   await expect(tasks).toHaveCount(0)
 
   // Opened: a new task, the tasks under their heading; Routines found has its row, and Skills its creations, but Skills
@@ -272,8 +271,7 @@ test('every theme is in the gallery with its thumbnail, and dresses the page whe
     const card = settings.locator('.look', { has: page.locator(`[data-look-preview='${id}']`) })
     expect((await card.locator('.look-preview').first().boundingBox())?.height).toBeGreaterThan(40)
     await card.click()
-    if (id === 'room') await expect(page.locator('html')).not.toHaveAttribute('data-look')
-    else await expect(page.locator('html')).toHaveAttribute('data-look', id)
+    await expect(page.locator('html')).toHaveAttribute('data-look', id)
     await expect(card.locator('input')).toBeChecked()
   }
   await expect.poll(() => savedLook(page)).toMatchObject({ id: 'tilde' })
@@ -285,7 +283,7 @@ test('a segmented control’s fill is one mark that slides to the choice, whiche
   for (const [lang, section] of [['ar', 'المظهر'], ['en', 'Appearance']]) {
     await start(page, lang)
     const mode = (await openSettings(page, section)).locator('.segmented[aria-keyshortcuts]')
-    for (const id of lang === 'en' ? ['tilde', 'minimal', 'swiss', 'paper', 'blueprint', 'mondrian', 'terminal'] : ['tilde']) {
+    for (const id of lang === 'en' ? ['tilde', 'minimal', 'swiss', 'blueprint', 'terminal'] : ['tilde']) {
       await look(page, id)
       await expect.poll(() => mode.evaluate(lies)).toEqual({ under: true, filled: true, own: 'rgba(0, 0, 0, 0)' })
       // At rest, it moves for the next choice.

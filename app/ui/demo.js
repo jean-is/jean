@@ -32,7 +32,7 @@ await import('./chat.js')
 const chosen = root.dataset.theme
 if (chosen === 'light' || chosen === 'dark') theme.value = chosen
 effect(() => { root.dataset.theme = theme.value })
-app.look.value = root.dataset.look ?? 'room'
+app.look.value = root.dataset.look ?? 'tilde'
 
 const speed = Math.max(Number(params.get('speed')) || 1, 0.1)
 const response = await fetch(new URL(params.get('src') ?? '', location.href))
