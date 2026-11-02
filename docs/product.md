@@ -43,7 +43,7 @@ The UI never says "agent", "model", "MCP" or "token".
 | Sub-agent | Helper |
 | Reflexes (the small decision model) | Intuition |
 | Approval rule | Do it / Ask me first / Never |
-| Look (`ui/looks/`, D111, D120) | Theme (fifteen in a gallery, Tilde, Jean's own, first and to start); light or dark and motion are separate |
+| Look (`ui/looks/`, D111, D120) | Theme (fifteen in a gallery, Tilde, Jean's own, first and to start); light or dark, motion and contrast are separate |
 | Add-on, mod, plugin | Extension (D296, D552) |
 | A page or small tool Jean wrote in an answer | App, under Creations (D553) |
 | Account, user | Profile (D228); a child's is "set by a parent" (D389), never an account |
@@ -310,7 +310,7 @@ Once it is found (D140), pages open in a pane beside the conversation, or over i
 
 - **General:** the language, reading aloud (a voice picked reads its language even where the natural voice could), notifications once found, and at its foot which version of Jean this is and when it was made.
 - **Brains** says first who answers, one choice: Auto, Always the same, or Keep on this device. The pictures this device makes are a row and a page of their own (D331).
-- **Appearance:** Light or dark and Motion are kept on the device and applied before the first paint.
+- **Appearance:** Light or dark and Motion are kept on the device and applied before the first paint; Contrast too, as the app starts. Contrast, Auto, Usual or More, turns the style sheets' rules for more contrast on or off whatever the device asks, the control on the page RGAA counts for 3.2 and 3.3.
 - **Connections:** a connection's page says what Jean may do there, reading and searching apart from writing, sending and changing, each Do it, Ask me first or Never for that service alone, and what goes only to brains that never train on it.
 - **Web search** has web search's own switch, who searches where in a whole sentence a line, then where to look and search services. What an organisation or a parent chose says so, locked.
 - **Extensions** says that each runs apart from the files and keys, with no internet, and does only what the user allows. One is read on its own page before it is added, In its maker's words apart from What Jean will let it do, its code at the end.
