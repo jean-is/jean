@@ -601,9 +601,9 @@ app-composer > p .icon { --glyph: 1em; vertical-align: -0.125em; }
 .menu:popover-open { @starting-style { opacity: 0; translate: 0 0.4rem; } }
 @supports not (anchor-name: --add) { .menu { inset: auto 0 7rem; margin-inline: auto; } }
 .menu :is(button, a) { display: flex; align-items: center; gap: 0.7rem; inline-size: 100%; padding: 0.6rem 1rem 0.6rem 0.75rem; border: 0; border-radius: 0.8rem; background: none; color: inherit; text-align: start; text-decoration: none; white-space: nowrap; }
-.menu :is(button, a):hover { background: var(--line); }
+.menu :is(button, a):hover { background: var(--line); } .menu :is(button, a):hover :is(kbd, .menu-value) { color: var(--ink-soft); }
 .menu .icon { color: var(--ink-soft); }
-.menu hr { margin: 0.35rem 0.5rem; border: 0; border-block-start: 1px solid var(--line); }
+.menu hr { margin: 0.35rem 0.5rem; border: 0; border-block-start: 1px solid var(--line); } .menu ul { margin: 0; padding: 0; list-style: none; }
 .menu kbd { margin-inline-start: auto; padding-inline-start: 1.5rem; font: inherit; font-size: 0.78rem; color: var(--ink-faint); }
 @media (pointer: coarse) { .menu kbd { display: none; } }
 /* The brain picker, above its chip: one line each, an icon and a name, the one answering ticked. */
