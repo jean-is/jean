@@ -139,12 +139,19 @@ function context(event) {
 
 /** The card whose menu is open, and whether it is: one menu for every card, filled for the one it opens from. */
 const menuOf = signal(/** @type {Item | null} */ (null)), opened = signal(false)
+/**
+ * What takes the card away, and the button its menu was placed at with it (Pin draws it in another group, Delete takes it off): done
+ * once a frame has been drawn with the menu closed. In the frame it closes, the menu's fallbacks (`position-try-fallbacks`) could keep
+ * Linux WebKit resolving styles for ever.
+ * @param {(e: MouseEvent) => unknown} act
+ */
+const away = (act) => (/** @type {MouseEvent} */ e) => requestAnimationFrame(() => setTimeout(act, 0, e))
 /** That menu: Pin, Rename, Duplicate or Another like this, and Delete. @param {Item} item */
 const menu = (item) => [
-  action('creation-menu', icons.pin, t(item.pinned ? 'action.unpin' : 'action.pin'), () => change(item, { pinned: !item.pinned }, () => item.kind.pin(item, !item.pinned))),
+  action('creation-menu', icons.pin, t(item.pinned ? 'action.unpin' : 'action.pin'), away(() => change(item, { pinned: !item.pinned }, () => item.kind.pin(item, !item.pinned)))),
   action('creation-menu', icons.compose, t('action.rename'), () => rename(item.path)),
   item.kind.copy ? action('creation-menu', icons.copy, t('creations.duplicate'), () => copy(item)) : item.kind.like ? action('creation-menu', icons.fork, t('creations.like'), () => like(item)) : nothing,
-  action('creation-menu', icons.trash, t(item.kind.remove ? 'action.delete' : 'creations.remove'), (/** @type {MouseEvent} */ e) => drop(item, e.detail === 0))]
+  action('creation-menu', icons.trash, t(item.kind.remove ? 'action.delete' : 'creations.remove'), away((e) => drop(item, e.detail === 0)))]
 
 /**
  * A card: what it holds, its name, which opens it from anywhere on the card, its menu's button, and when it changed; dragged, what a
