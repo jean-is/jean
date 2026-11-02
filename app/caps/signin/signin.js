@@ -1,7 +1,8 @@
 // Signing in with the organisation's account (D385). Policy's `signIn` names its identity provider
 // (OpenID Connect, Entra ID first) and the app IT registered there for Jean; each policy brain that
 // says `auth: 'oidc'`, the organisation's AI gateway, gets the access token as its key, kept under
-// its id so that every request reads it as any brain's. Jean signs in at the first visit, with PKCE
+// its id so that every request reads it as any brain's; each policy connection that says it, such as that
+// gateway's MCP servers, sends it with each request (caps/connections/). Jean signs in at the first visit, with PKCE
 // from the browser as a connection does (caps/connections/auth.js), keeps the tokens in .secrets/
 // (sealed at rest, never in a backup, export, sync or share), and renews them before they end, one
 // tab at a time. A renewal refused, or a sign-in that came back without tokens, asks from a toast,

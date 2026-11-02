@@ -1,9 +1,9 @@
 // Signing in with the organisation's account (D385): at work, policy names the identity provider and
-// the gateway's brain; Jean signs in at the first visit, the gateway gets the token, which renews,
+// the gateway's brain; Jean signs in at the first visit, the gateway gets the token, its MCP servers too, which renews,
 // Settings › Brains says who is signed in, and signing out, from the person's menu, stays so until asked.
 import { test, expect } from '@playwright/test'
 import { start, ask, openSettings, closeSettings, openTasks, openProfile, turnOn, withPolicy } from './helpers.js'
-import { POLICY, fakeIssuer, fakeGateway, redirect } from './fixtures/fake-issuer.js'
+import { POLICY, TOOLS, fakeIssuer, fakeGateway, fakeTools, redirect } from './fixtures/fake-issuer.js'
 
 /** The task's answers, all written. @param {import('@playwright/test').Page} page @param {number} [count] */
 const answered = async (page, count = 1) => {
@@ -177,6 +177,30 @@ test('a sign-in that comes back refused asks again from a toast, never in a loop
   await expect.poll(() => issuer.authorized.length).toBe(2)
   await expect(page.locator('#prompt')).toBeVisible()
   expect(issuer.current).toBe('access-1')
+})
+
+test('a connection of the organisation’s can take the same token, as its gateway’s MCP servers do; refused, Sign in goes through the organisation’s sign-in again', async ({ page }) => {
+  const issuer = await fakeIssuer(page)
+  await fakeGateway(page, issuer)
+  const seen = await fakeTools(page, issuer)
+  await withPolicy(page, { ...POLICY, capabilities: { preUnlock: ['connections'] }, connections: [{ id: 'tools', name: 'Acme tools', url: TOOLS, auth: 'oidc' }] })
+  await start(page)
+  const settings = await openSettings(page, 'Connections')
+  await settings.locator('.data-rows button', { hasText: 'Acme tools' }).click()
+  await expect(settings.locator('.connection-kinds')).toContainText('Find a customer')
+  expect(new Set(seen)).toEqual(new Set(['Bearer access-1']))
+  // The gateway no longer takes the token Jean holds.
+  issuer.current = 'revoked'
+  await page.evaluate(() => import('/caps/connections/connections.js').then((connections) => connections.list()))
+  const waiting = settings.locator('.connection-wait')
+  await expect(waiting).toContainText('Acme tools needs you to sign in again.')
+  await waiting.getByRole('button', { name: 'Sign in' }).click()
+  await expect.poll(() => issuer.authorized.length).toBe(2)
+  // Back where the person was, on the connection's page, its actions there again.
+  await expect(page.locator('#curtain')).toHaveCount(0)
+  await expect(settings.locator('.connection-kinds')).toContainText('Find a customer')
+  await expect(waiting).toHaveCount(0)
+  expect(seen.at(-1)).toBe('Bearer access-2')
 })
 
 test('the sections of the groups the person is in apply from the first sign-in: a group’s own brain gets the token, and Settings says whose (D429)', async ({ page }) => {

@@ -1,7 +1,8 @@
 // Connections (docs/product.md): the services the user already uses, their email, documents or
 // calendar, reached through MCP (D21, D86). A connection is an address, plus a key or a sign-in
 // when the service asks for one, kept encrypted in .secrets/ and never in a backup. A service can
-// be connected once an account, and a connection kept to some projects; one that doesn't answer a
+// be connected once an account, and a connection kept to some projects. One of the organisation's
+// may take its sign-in's token instead, as its gateway's brains do (D385). One that doesn't answer a
 // browser goes through the gateway, when one is named (D191). Its tools are deferred (D47):
 // <connections> names those of the room's project, and the brain finds them with find_tools or
 // calls them from a script. Reading through a connection is "Using the internet", anything else
@@ -135,8 +136,12 @@ const renewal = (connection, tokens) => refresh(tokens, reach(connection)).then(
   throw new MCPError(signInFirst(connection), { status: 401 })
 }).finally(() => renewing.delete(connection.id))
 
-/** The Authorization header: a key, or an access token renewed before it runs out, once for all its servers. @param {Connection} connection @param {boolean} [renew] */
+/**
+ * The Authorization header: a key, an access token renewed before it runs out, once for all its servers, or the organisation's
+ * sign-in's, as its gateway's brains get it (D385). @param {Connection} connection @param {boolean} [renew]
+ */
 async function credential(connection, renew = false) {
+  if (connection.auth === 'oidc') return (await import('../signin/signin.js')).token().then((token) => (token ? `Bearer ${token}` : undefined))
   const secret = connection.auth === 'none' ? null : await getSecret(app.fs, connection.id)
   if (!secret || connection.auth === 'key') return secret ? `Bearer ${secret}` : undefined
   let tokens = JSON.parse(secret)
@@ -198,7 +203,7 @@ function asTool(connection, tool) {
       if (limited(connection) && (ctx.meta.limitedUse = true) && mayTrain(ctx.brain, app.policy)) throw new Error(`${called(connection)} isn't read by this brain: what Google's services bring in goes only to brains whose service never trains on it. Ask the user to pick one in the box, or to ask again with Auto, which picks one.`)
       return answer(connection, label, await call(args, ctx.signal).catch(async (error) => {
         if (!(error instanceof MCPError && error.auth)) throw new Error(withArguments(error.message, takes(spec)))
-        if (connection.auth === 'none') {
+        if (connection.auth === 'none' || (connection.auth === 'oidc' && error.status === 401)) {
           status.value = { ...status.value, [connection.id]: { ...status.value[connection.id], error: 'auth', challenge: error.challenge } }
           throw new Error(signInFirst(connection))
         }
@@ -364,11 +369,13 @@ export async function connectService(entry) {
 
 /**
  * Sends the user to the service's sign-in; they come back here with a code. Another account of a
- * service already connected is asked for by name. @param {Connection} connection @param {string | null} [challenge] its 401's
+ * service already connected is asked for by name; one that takes the organisation's sign-in goes through that again.
+ * @param {Connection} connection @param {string | null} [challenge] its 401's
  */
 export async function signIn(connection, challenge) {
   message.value = { kind: 'busy', text: t('brain.connecting') }
   try {
+    if (connection.auth === 'oidc') return await (await import('../signin/signin.js')).signIn()
     const fetch = reach(connection)
     // An API names no sign-in server; its entry does (D349).
     const entry = knownFor(connection.url, app.policy, served.value)

@@ -1,12 +1,13 @@
-// A fake identity provider shaped like Entra ID, an AI gateway that takes only its tokens, and an
-// OpenTelemetry collector, for the specs of the organisation's sign-in (D385) and of the audit
-// export. All three are the page's routes: Jean reaches them over https, as it would at work.
+// A fake identity provider shaped like Entra ID, an AI gateway that takes only its tokens, with its
+// MCP servers, and an OpenTelemetry collector, for the specs of the organisation's sign-in (D385) and
+// of the audit export. All are the page's routes: Jean reaches them over https, as it would at work.
 import { createHash } from 'node:crypto'
 import { BRAIN_URL } from '../helpers.js'
 
 export const ISSUER = 'https://login.fake.example/tenant-1/v2.0'
 export const GATEWAY = 'https://ai.fake.example/v1'
 export const COLLECTOR = 'https://otel.fake.example/v1/traces'
+export const TOOLS = 'https://ai.fake.example/mcp'
 const CORS = { 'access-control-allow-origin': '*', 'access-control-allow-headers': 'authorization, content-type', 'access-control-allow-methods': 'GET, POST' }
 const ENDPOINTS = 'https://login.fake.example/tenant-1/oauth2/v2.0'
 
@@ -84,6 +85,29 @@ export async function fakeGateway(page, issuer) {
     // A reply can come after the test has moved on.
     const response = await route.fetch({ url: request.url().replace(GATEWAY, BRAIN_URL) }).catch(() => null)
     return response && route.fulfill({ response, headers: { ...response.headers(), ...CORS } }).catch(() => {})
+  })
+  return seen
+}
+
+/**
+ * The gateway's MCP servers at one address, as LiteLLM's and Bifrost's are: MCP's stateless revision, its tools
+ * prefixed by their server's name, for the token the identity provider gave last only.
+ * @param {import('@playwright/test').Page} page @param {{ current: string }} issuer
+ */
+export async function fakeTools(page, issuer) {
+  const headers = { ...CORS, 'access-control-allow-headers': 'authorization, content-type, mcp-protocol-version, mcp-method, mcp-name' }
+  /** The Authorization header of each request. @type {(string | undefined)[]} */
+  const seen = []
+  await page.route(TOOLS, async (route) => {
+    const request = route.request()
+    if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers })
+    const authorization = (await request.allHeaders()).authorization
+    seen.push(authorization)
+    if (!issuer.current || authorization !== `Bearer ${issuer.current}`) return route.fulfill({ status: 401, headers, json: { error: 'invalid_token' } })
+    const { id, method } = request.postDataJSON()
+    const tools = [['crm-find_customer', 'Find a customer'], ['wiki-search_pages', 'Search the wiki']]
+      .map(([name, title]) => ({ name, title, description: `${title}.`, inputSchema: { type: 'object', properties: { query: { type: 'string' } } }, annotations: { readOnlyHint: true } }))
+    return route.fulfill({ headers, json: method === 'tools/list' ? { jsonrpc: '2.0', id, result: { tools } } : { jsonrpc: '2.0', id, error: { code: -32601, message: 'Method not found' } } })
   })
   return seen
 }

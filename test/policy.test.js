@@ -63,6 +63,9 @@ test('a policy’s typos, wrong values, missing parts and plain-http addresses a
     ['look.font', 'oneOf', ['sans', 'serif', 'rounded', 'mono']],
   ])
   assert.deepEqual(checkPolicy({ urls: { npm: 'http://localhost:4873/' } }), { problems: [], addresses: [['urls.npm', 'http://localhost:4873/']] })
+  // A connection may take the organisation's sign-in, as an AI gateway's MCP servers do (D385).
+  assert.deepEqual(checkPolicy({ connections: [{ id: 'tools', name: 'Tools', url: 'https://ai.corp.example/mcp/', auth: 'oidc' }, { id: 'crm', name: 'CRM', url: 'https://crm.corp.example/mcp', auth: 'jwt' }] }).problems,
+    [['connections[1].auth', 'oneOf', ['none', 'key', 'oauth', 'oidc']]])
 })
 
 test('a group’s section is checked as policy is, null taking a part away, but holds no sign-in, key or sections (D429)', () => {
