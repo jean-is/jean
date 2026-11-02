@@ -1,5 +1,7 @@
 node_modules/
 .DS_Store
+# Keys and settings a deploy or an example reads beside its compose.yaml (cp .env.example .env), never committed
+.env
 # Third-party code copied in from node_modules by npm run dev/start/build/check, never committed (D43, D51)
 /app/vendor/
 # Written by npm run manifest from the files above, with a copy of the licence, never committed (D74, D243)

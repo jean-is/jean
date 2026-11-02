@@ -1,8 +1,8 @@
-# Jean at work, on one computer (D415): the organisation's sign-in (Dex), its AI gateway (LiteLLM) with a
-# brain and an MCP server, and Jean, which its policy pins to both. See README.md beside this file.
+# Jean at Reefknot Mutual, a fictional insurer, on one computer (D415): its sign-in (Dex), its AI gateway
+# (LiteLLM) with a brain and an MCP server, and Jean, which its policy pins to both. See README.md beside this file.
 #   cp .env.example .env      then name the brain behind the gateway in it
 #   docker compose up -d --build
-# Then open http://localhost:8080 and sign in as ana@example.com, with the password "password".
+# Then open http://localhost:8080 and sign in as ana@reefknot.example, with the password "password".
 name: jean-enterprise
 services:
   jean:
@@ -26,6 +26,7 @@ services:
       - "127.0.0.1:5556:5556"
     volumes:
       - ./dex.yaml:/etc/dex/config.yaml:ro
+      - ./brand:/srv/dex/web/themes/reefknot:ro
     restart: unless-stopped
 
   litellm:

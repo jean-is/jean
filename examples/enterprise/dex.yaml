@@ -1,7 +1,14 @@
-# The organisation's sign-in: Dex, with Jean as a public app (PKCE, no secret, as a page in a browser
+# Reefknot Mutual's sign-in: Dex, with Jean as a public app (PKCE, no secret, as a page in a browser
 # is) and one person in its own list. Dex can put the directory you already have behind it with a
 # connector (LDAP, SAML, Entra ID, Google), or Jean signs in to that one directly.
 issuer: http://localhost:5556/dex
+
+# Its pages in Reefknot's name, logo and colours: brand/, mounted as the theme below.
+frontend:
+  dir: /srv/dex/web
+  theme: reefknot
+  issuer: Reefknot Mutual
+  logoURL: theme/logo.svg
 
 storage:
   type: memory
@@ -30,8 +37,8 @@ staticClients:
 
 enablePasswordDB: true
 staticPasswords:
-  # A test person: ana@example.com, password "password" (Dex's own example hash).
-  - email: ana@example.com
+  # A test person: ana@reefknot.example, password "password" (Dex's own example hash).
+  - email: ana@reefknot.example
     hash: "$2a$10$2b2cU8CPhOTaGrs1HRQuAueS7JTT5ZHsHSzYiFPm1leZck7Mc8T4W"
     username: Ana
     userID: 0a4c3c44-6a1f-4f5e-9d2a-0b8f3b1d6e51

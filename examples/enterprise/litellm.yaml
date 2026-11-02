@@ -1,7 +1,7 @@
-# The organisation's AI gateway: LiteLLM, with a brain and an MCP server, for whoever the organisation's
+# Reefknot Mutual's AI gateway: LiteLLM, with a brain and an MCP server, for whoever the organisation's
 # sign-in vouches for (oidc_auth.py). Jean's policy.json names both, each sent the person's token.
 model_list:
-  - model_name: company-ai
+  - model_name: reefknot-ai
     litellm_params:
       model: os.environ/UPSTREAM_MODEL
       api_base: os.environ/UPSTREAM_API_BASE

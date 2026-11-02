@@ -1,0 +1,17 @@
+/* Reefknot Mutual's theme for Dex's sign-in pages (frontend.theme in dex.yaml): its colours over Dex's own layout. */
+.theme-body { background-color: #f5f7f6; color: #1f2933; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
+.theme-navbar { background-color: #fff; border-bottom: 3px solid #23a26d; height: 56px; overflow: hidden; padding: 0 16px; }
+.theme-navbar__logo-wrap { display: inline-block; height: 100%; padding: 13px 15px; }
+.theme-navbar__logo { height: 100%; max-height: 28px; }
+.theme-heading { font-size: 21px; font-weight: 600; margin: 0 0 16px; }
+.theme-panel { background-color: #fff; border: 1px solid #dde4e1; border-radius: 12px; padding: 32px; }
+.theme-form-row { display: block; margin: 16px auto; }
+.theme-form-label { display: block; font-size: 13px; font-weight: 600; margin: 0 auto 6px; text-align: start; width: 250px; }
+.theme-form-input { background-color: #fff; border: 1px solid #b9c4c0; border-radius: 8px; color: #1f2933; display: block; font-size: 15px; height: 40px; margin: 0 auto; max-width: 100%; padding: 0 12px; width: 250px; }
+.theme-form-input:focus, .theme-form-input:active { border-color: #23a26d; outline: 3px solid rgba(35, 162, 109, 0.25); }
+.theme-btn--primary, .theme-btn--success { background-color: #1f2933; border: none; border-radius: 8px; color: #fff; font-weight: 600; height: 40px; width: 250px; }
+.theme-btn--primary:hover, .theme-btn--success:hover { background-color: #157a50; }
+.theme-btn-provider { background-color: #fff; border: 1px solid #b9c4c0; color: #1f2933; max-width: 100%; width: 260px; }
+.theme-btn-provider:hover { border-color: #23a26d; }
+.theme-link-back { color: #157a50; margin-top: 4px; }
+.theme-remember-me { font-size: 13px; }
