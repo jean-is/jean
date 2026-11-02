@@ -47,6 +47,7 @@
   "documents.linkAddress": "כתובת הקישור",
   "documents.applyLink": "החלה",
   "documents.removeLink": "הסרת הקישור",
+  "documents.badLink": "זו לא כתובת אינטרנט או דוא״ל",
   "documents.review": "שינויים מוצעים",
   "documents.accept": "קבלה",
   "documents.reject": "דחייה",
@@ -57,6 +58,8 @@
   "documents.gone": "הצעה להסרה",
   "documents.accepted": "השינוי התקבל",
   "documents.rejected": "השינוי נדחה",
+  "documents.acceptedAll": "כל השינויים התקבלו",
+  "documents.rejectedAll": "כל השינויים נדחו",
   "documents.suggests": {
     "one": "שינוי אחד מוצע מאת {name}",
     "two": "שני שינויים מוצעים מאת {name}",

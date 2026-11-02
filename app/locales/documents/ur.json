@@ -47,6 +47,7 @@
   "documents.linkAddress": "لنک کا پتا",
   "documents.applyLink": "لاگو کریں",
   "documents.removeLink": "لنک ہٹائیں",
+  "documents.badLink": "یہ ویب یا ای میل کا پتا نہیں ہے",
   "documents.review": "تجویز کردہ تبدیلیاں",
   "documents.accept": "قبول کریں",
   "documents.reject": "مسترد کریں",
@@ -57,6 +58,8 @@
   "documents.gone": "ہٹانے کی تجویز",
   "documents.accepted": "تبدیلی قبول ہو گئی",
   "documents.rejected": "تبدیلی مسترد ہو گئی",
+  "documents.acceptedAll": "تمام تبدیلیاں قبول ہو گئیں",
+  "documents.rejectedAll": "تمام تبدیلیاں مسترد ہو گئیں",
   "documents.suggests": {
     "one": "{name} کی تجویز کردہ ایک تبدیلی",
     "other": "{name} کی تجویز کردہ {n} تبدیلیاں"

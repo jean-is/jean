@@ -47,6 +47,7 @@
   "documents.linkAddress": "Àdírẹ́sì ìjápọ̀",
   "documents.applyLink": "Lò ó",
   "documents.removeLink": "Yọ ìjápọ̀ kúrò",
+  "documents.badLink": "Èyí kì í ṣe àdírẹ́sì wẹ́ẹ̀bù tàbí ímeèlì",
   "documents.review": "Àwọn àyípadà tí a dábàá",
   "documents.accept": "Gbà",
   "documents.reject": "Kọ̀",
@@ -57,6 +58,8 @@
   "documents.gone": "{name} yọ èyí kúrò",
   "documents.accepted": "A ti gba àyípadà náà",
   "documents.rejected": "A ti kọ àyípadà náà",
+  "documents.acceptedAll": "A ti gba gbogbo àyípadà",
+  "documents.rejectedAll": "A ti kọ gbogbo àyípadà",
   "documents.suggests": {
     "other": "Àwọn àyípadà {n} tí {name} dábàá"
   },

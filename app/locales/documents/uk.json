@@ -47,6 +47,7 @@
   "documents.linkAddress": "Адреса посилання",
   "documents.applyLink": "Застосувати",
   "documents.removeLink": "Прибрати посилання",
+  "documents.badLink": "Це не вебадреса й не адреса пошти",
   "documents.review": "Запропоновані правки",
   "documents.accept": "Прийняти",
   "documents.reject": "Відхилити",
@@ -57,6 +58,8 @@
   "documents.gone": "{name} прибирає цей фрагмент",
   "documents.accepted": "Правку прийнято",
   "documents.rejected": "Правку відхилено",
+  "documents.acceptedAll": "Усі правки прийнято",
+  "documents.rejectedAll": "Усі правки відхилено",
   "documents.suggests": {
     "one": "{name} пропонує {n} правку",
     "few": "{name} пропонує {n} правки",

@@ -47,6 +47,7 @@
   "documents.linkAddress": "Адрес на връзката",
   "documents.applyLink": "Приложи",
   "documents.removeLink": "Премахни връзката",
+  "documents.badLink": "Това не е уеб адрес или имейл адрес",
   "documents.review": "Предложени промени",
   "documents.accept": "Приеми",
   "documents.reject": "Отхвърли",
@@ -57,6 +58,8 @@
   "documents.gone": "{name} премахва това",
   "documents.accepted": "Промяната е приета",
   "documents.rejected": "Промяната е отхвърлена",
+  "documents.acceptedAll": "Всички промени са приети",
+  "documents.rejectedAll": "Всички промени са отхвърлени",
   "documents.suggests": {
     "one": "Промяна, предложена от {name}",
     "other": "{n} промени, предложени от {name}"

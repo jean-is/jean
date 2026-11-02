@@ -47,6 +47,7 @@
   "documents.linkAddress": "Länkadress",
   "documents.applyLink": "Använd",
   "documents.removeLink": "Ta bort länk",
+  "documents.badLink": "Det här är ingen webb- eller e-postadress",
   "documents.review": "Föreslagna ändringar",
   "documents.accept": "Godta",
   "documents.reject": "Avvisa",
@@ -57,6 +58,8 @@
   "documents.gone": "{name} tar bort detta",
   "documents.accepted": "Ändringen godtogs",
   "documents.rejected": "Ändringen avvisades",
+  "documents.acceptedAll": "Alla ändringar godtogs",
+  "documents.rejectedAll": "Alla ändringar avvisades",
   "documents.suggests": {
     "one": "En ändring föreslagen av {name}",
     "other": "{n} ändringar föreslagna av {name}"

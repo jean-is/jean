@@ -231,3 +231,18 @@ test('a document\'s first line is its title, text alone: its first heading of th
   assert.equal(move('# T\n\nPara.\n\nNext.\n', 0, 0, -1).moved, false)
   assert.equal(move('# T\n\nPara.\n\nNext.\n', 1, 1, -1).text, '# T\n\nNext.\n\nPara.\n')
 })
+
+test('a line is marked with its language only where Jean is sure of it, whatever language Jean is read in (RGAA 8.7)', async () => {
+  const { langOf } = await import('../app/caps/documents/ui.js')
+  /** Each line's mark, the page in `lang`. @param {string} lang @param {string[]} lines */
+  const marks = (lang, lines) => {
+    const was = globalThis.document
+    globalThis.document = /** @type {any} */ ({ documentElement: { lang } })
+    try { return lines.map(langOf) } finally { globalThis.document = was }
+  }
+  const other = ['The team met in Lyon.', 'ذهب الفريق إلى المدينة وعاد في المساء.', 'チームは朝早く出発しました。']
+  assert.deepEqual(marks('fr', ['Voici le plan, tiré des trois fichiers partagés, et le site du lieu.', ...other]), ['', 'en', 'ar', 'ja'])
+  // Short French shares its few words with other languages: never marked as one of them, whichever language the page is in.
+  for (const lang of ['fr', 'en', 'ro', 'nl', 'ar', 'ja']) assert.deepEqual(marks(lang, ['Programme de la semaine', 'À faire avant de partir']), ['', ''], lang)
+  assert.deepEqual(marks('en', ['Voici le plan, tiré des trois fichiers partagés, et le site du lieu.', ...other]), ['fr', '', 'ar', 'ja'])
+})

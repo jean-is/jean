@@ -47,6 +47,7 @@
   "documents.linkAddress": "Adresa linkului",
   "documents.applyLink": "Aplicați",
   "documents.removeLink": "Eliminați linkul",
+  "documents.badLink": "Aceasta nu este o adresă web sau de e-mail",
   "documents.review": "Schimbări sugerate",
   "documents.accept": "Acceptați",
   "documents.reject": "Respingeți",
@@ -57,6 +58,8 @@
   "documents.gone": "{name} elimină asta",
   "documents.accepted": "Schimbare acceptată",
   "documents.rejected": "Schimbare respinsă",
+  "documents.acceptedAll": "Toate schimbările acceptate",
+  "documents.rejectedAll": "Toate schimbările respinse",
   "documents.suggests": {
     "one": "O schimbare sugerată de {name}",
     "few": "{n} schimbări sugerate de {name}",

@@ -2,8 +2,9 @@
 // changed, a run added and a run taken away are each a change, shown where it is as Jean's version (its new words
 // tinted, Before showing the person's) with Jean's few words, Accept and Reject. Nothing of one is in the document
 // until it is accepted; what is left to decide is kept beside it (documents.js).
-import { Plugin, PluginKey, Selection, Decoration, DecorationSet, DOMSerializer, Fragment, Mark } from '#prosemirror'
-import { el, RTL } from './ui.js'
+import { Plugin, PluginKey, Selection, Decoration, DecorationSet, DOMSerializer, Fragment, Mark, closeHistory } from '#prosemirror'
+import { namesRows } from '../../ui/markdown.js'
+import { el, RTL, langOf } from './ui.js'
 
 /** @typedef {import('prosemirror-model').Node} PMNode */
 /** @typedef {import('prosemirror-state').EditorState} EditorState */
@@ -179,9 +180,11 @@ function draw(doc, changes, strings, act, form) {
 /** What a widget drew, let go with it. @param {Node} dom */
 const stop = (dom) => /** @type {HTMLElement} */ (dom).querySelectorAll?.('.suggest-form').forEach((one) => /** @type {any} */ (one).stop())
 
-/** Lines drawn outside the editor as the document's own are in it (editor.js): each its direction, a heading its level under the pane's. @param {HTMLElement} box */
+/** Lines drawn outside the editor as the document's own are in it (editor.js, drawn.js): each its direction and language, a heading its level under the pane's, a table's heads. @param {HTMLElement} box */
 const settle = (box) => {
-  for (const line of box.querySelectorAll('[dir="auto"]')) { const letter = /\p{L}/u.exec(line.textContent ?? '')?.[0]; if (letter) line.setAttribute('dir', RTL.test(letter) ? 'rtl' : 'ltr'); else line.removeAttribute('dir') } for (const heading of box.querySelectorAll('h1, h2, h3, h4, h5, h6')) heading.setAttribute('aria-level', String(Number(heading.tagName[1]) + 2)) }
+  for (const line of box.querySelectorAll('[dir="auto"]')) { const letter = /\p{L}/u.exec(line.textContent ?? '')?.[0], lang = letter && langOf(line.textContent ?? ''); if (letter) line.setAttribute('dir', RTL.test(letter) ? 'rtl' : 'ltr'); else line.removeAttribute('dir'); if (lang) line.setAttribute('lang', lang) } for (const heading of box.querySelectorAll('h1, h2, h3, h4, h5, h6')) heading.setAttribute('aria-level', String(Number(heading.tagName[1]) + 2))
+  for (const { rows: [top, ...rows] } of box.querySelectorAll('table')) if (top && namesRows(top.cells[0]?.textContent ?? '', rows.map((row) => row.cells[0]?.textContent?.trim() ?? ''))) { for (const cell of top.cells) cell.setAttribute('scope', 'col'); for (const row of rows) row.cells[0]?.setAttribute('role', 'rowheader') }
+}
 
 /**
  * A change where it is: Jean's version, its row, and for a block changed, the person's under Before. @param {Fragment} old @param {Change} change @param {Record<string, string>} strings
@@ -263,7 +266,7 @@ export function proposal(state) {
 export function accept(view, ids) {
   const chosen = pending(view.state).filter((change) => ids.includes(change.id)).reverse()
   if (!chosen.length) return
-  const tr = view.state.tr
+  const tr = closeHistory(view.state.tr)
   for (const change of chosen) tr.replaceWith(change.from, change.to, change.content)
   tr.setMeta(suggestionKey, { remove: chosen.map((change) => change.id) })
   const at = tr.mapping.map(chosen[chosen.length - 1].from, -1)

@@ -47,6 +47,7 @@
   "documents.linkAddress": "Dirección del enlace",
   "documents.applyLink": "Aplicar",
   "documents.removeLink": "Quitar enlace",
+  "documents.badLink": "Esto no es una dirección web ni de correo",
   "documents.review": "Cambios sugeridos",
   "documents.accept": "Aceptar",
   "documents.reject": "Rechazar",
@@ -57,6 +58,8 @@
   "documents.gone": "{name} quita esto",
   "documents.accepted": "Cambio aceptado",
   "documents.rejected": "Cambio rechazado",
+  "documents.acceptedAll": "Todos los cambios aceptados",
+  "documents.rejectedAll": "Todos los cambios rechazados",
   "documents.suggests": {
     "one": "{name} sugiere un cambio",
     "many": "{name} sugiere {n} de cambios",

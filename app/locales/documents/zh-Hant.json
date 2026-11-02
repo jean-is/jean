@@ -47,6 +47,7 @@
   "documents.linkAddress": "連結網址",
   "documents.applyLink": "套用",
   "documents.removeLink": "移除連結",
+  "documents.badLink": "這不是網址或電子郵件地址",
   "documents.review": "建議的修改",
   "documents.accept": "接受",
   "documents.reject": "拒絕",
@@ -57,6 +58,8 @@
   "documents.gone": "{name} 建議刪除此處",
   "documents.accepted": "已接受修改",
   "documents.rejected": "已拒絕修改",
+  "documents.acceptedAll": "已接受全部修改",
+  "documents.rejectedAll": "已拒絕全部修改",
   "documents.suggests": {
     "other": "{name} 建議了 {n} 處修改"
   },

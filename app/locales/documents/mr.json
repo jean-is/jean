@@ -47,6 +47,7 @@
   "documents.linkAddress": "लिंकचा पत्ता",
   "documents.applyLink": "लागू करा",
   "documents.removeLink": "लिंक काढा",
+  "documents.badLink": "हा वेब किंवा ईमेल पत्ता नाही",
   "documents.review": "सुचवलेले बदल",
   "documents.accept": "स्वीकारा",
   "documents.reject": "नाकारा",
@@ -57,6 +58,8 @@
   "documents.gone": "काढून टाकण्याची सूचना",
   "documents.accepted": "बदल स्वीकारला",
   "documents.rejected": "बदल नाकारला",
+  "documents.acceptedAll": "सर्व बदल स्वीकारले",
+  "documents.rejectedAll": "सर्व बदल नाकारले",
   "documents.suggests": {
     "one": "{name} कडून सुचवलेला एक बदल",
     "other": "{name} कडून सुचवलेले {n} बदल"

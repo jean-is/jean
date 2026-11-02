@@ -1,12 +1,12 @@
 // The bubble over a selection in a document (D485), as in Notion: bold, italic, strikethrough and a link for the text
 // selected. It shows once the selection is made (the mouse let go, Shift+arrows, a phone's handles),
 // above it, or below it on a touch screen, where the system's own menu sits above. From the keyboard,
-// Alt+F10 (the editors' convention) or Tab reaches it, the arrows move along it in the direction the
-// page reads, and Escape gives the document its focus and selection back, or hides the bubble from
-// the document. ⌘K opens its link box. It is a toolbar whose buttons say whether they are on: on when
+// Alt+F10 (the editors' convention) or Tab reaches it, next after the document in the order of focus, the arrows move along it in the
+// direction the page reads, and Escape or Shift+Tab gives the document its focus and selection back; Escape in the document hides it.
+// ⌘K opens its link box. It is a toolbar whose buttons say whether they are on: on when
 // all the selected text has the mark, which a press then takes off; otherwise a press puts it on all.
 import { Plugin, PluginKey, TextSelection } from '#prosemirror'
-import { el, icon, float } from './ui.js'
+import { el, icon, float, pop } from './ui.js'
 
 /** @typedef {import('prosemirror-state').EditorState} EditorState */
 /** @typedef {import('prosemirror-view').EditorView} EditorView */
@@ -36,10 +36,10 @@ function coverage(state, type) {
 }
 
 /**
- * @param {{ formats: Format[], link: MarkType, href: (typed: string) => string | null, label: (key: string) => string, mac: boolean, tabbable: (state: EditorState) => boolean }} options
- * `href` makes a typed address a link's (null when it can't be one); `tabbable` says where Tab may go to the bubble rather than indent.
+ * @param {{ formats: Format[], link: MarkType, href: (typed: string) => string | null, label: (key: string) => string, mac: boolean, tabbable: (state: EditorState) => boolean, wrong: (said: string) => void }} options
+ * `href` makes a typed address a link's (null when it can't be one), and `wrong` says when it can't; `tabbable` says where Tab may go to the bubble rather than indent.
  */
-export function bubble({ formats, link, href, label, mac, tabbable }) {
+export function bubble({ formats, link, href, label, mac, tabbable, wrong }) {
   /** What the view gives the keys: whether the bubble shows, and how to go into it. */
   const ui = { shown: false, enter: () => {}, linkBox: () => {} }
 
@@ -86,7 +86,7 @@ export function bubble({ formats, link, href, label, mac, tabbable }) {
       const apply = /** @type {HTMLButtonElement} */ (el('button', { type: 'button', class: 'bubble-apply' }, el('span', { 'aria-hidden': 'true' }, '↵')))
       const unlink = /** @type {HTMLButtonElement} */ (el('button', { type: 'button', class: 'bubble-unlink' }, el('span', { 'aria-hidden': 'true' }, '⌫')))
       const box = el('div', { class: 'bubble-box', hidden: '' }, address, apply, unlink)
-      const bar = el('div', { role: 'toolbar', class: 'bubble', hidden: '', 'aria-keyshortcuts': 'Alt+F10' }, ...buttons, box)
+      const bar = el('div', { role: 'toolbar', class: 'bubble', hidden: '', popover: 'manual', 'aria-keyshortcuts': 'Alt+F10' }, el('ul', {}, ...buttons.map((button) => el('li', {}, button))), box)
       document.body.append(bar)
 
       // A press on the bubble leaves the focus and the selection in the document: on mousedown, which a
@@ -130,13 +130,15 @@ export function bubble({ formats, link, href, label, mac, tabbable }) {
         closeBox(false)
         editor.focus()
       }
-      const setLink = () => (href(address.value) ? relink(href(address.value)) : address.setAttribute('aria-invalid', 'true'))
+      const setLink = () => (href(address.value) ? relink(href(address.value)) : (address.setAttribute('aria-invalid', 'true'), wrong(label('badLink'))))
       linkButton.addEventListener('click', () => (linking() ? closeBox(true) : ui.linkBox()))
       apply.addEventListener('click', setLink)
       unlink.addEventListener('click', () => relink(null))
 
       bar.addEventListener('keydown', (event) => {
         if (event.isComposing) return
+        // Shift+Tab from its first stop goes back to the document, which opened it, not to what the document holds last.
+        if (event.key === 'Tab' && event.shiftKey && (event.target === address || !box.contains(/** @type {Node} */ (event.target)))) return event.preventDefault(), editor.focus()
         if (event.target === address) {
           if (event.key !== 'Enter' && event.key !== 'Escape') return
           event.preventDefault()
@@ -172,7 +174,7 @@ export function bubble({ formats, link, href, label, mac, tabbable }) {
         ui.shown = show
         if (!show) {
           if (!bar.hidden) {
-            bar.hidden = true
+            pop(bar, editor.dom, false)
             closeBox(false)
           }
           return
@@ -184,12 +186,11 @@ export function bubble({ formats, link, href, label, mac, tabbable }) {
         }
         linkButton.setAttribute('aria-label', label('link'))
         linkButton.setAttribute('aria-pressed', String(coverage(state, link) !== 'none'))
-        address.setAttribute('aria-label', label('linkAddress'))
-        address.placeholder = label('linkAddress')
+        address.title = address.placeholder = label('linkAddress')
         apply.setAttribute('aria-label', label('applyLink'))
         unlink.setAttribute('aria-label', label('removeLink'))
         if (bar.hidden) buttons.forEach((button, k) => { button.tabIndex = k === roving ? 0 : -1 })
-        bar.hidden = false
+        pop(bar, editor.dom, true)
         place()
       }
 

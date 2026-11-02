@@ -1,11 +1,26 @@
-// What the parts of a document's editor share (D485): an element made, a glyph drawn, and a box floated
-// beside what it is for, under it or over it, never past the window's edges.
+// What the parts of a document's editor share (D485): an element made, a glyph drawn, a box floated
+// beside what it is for, never past the window's edges, and a line's language.
+import { languageOf } from '../../ui/language.js'
+import { LOCALES } from '../../core/i18n.js'
 
 /** An id no other in the page has, as another document open beside this one may hold the plain one. @param {string} name @param {string} [part] what is named after it */
 export const free = (name, part = '') => { let id = name; for (let n = 2; document.getElementById(id + part); n++) id = `${name}-${n}`; return id }
 
 /** A letter of a language written right to left. */
 export const RTL = /^[֐-ࣿיִ-﷿ﹰ-﻿]/
+
+/** A text's language where it isn't the page's and Jean is sure of it: one other at most as close, whatever language Jean is read in. @param {string} text */
+export function langOf(text) {
+  const page = document.documentElement.lang.split('-')[0], one = languageOf(text, page)
+  return one !== page && new Set(LOCALES.map((hint) => languageOf(text, hint))).size < 3 ? one : ''
+}
+
+/** A box over a document, shown or not: next after it in the order of focus, after its pane's view, drawn in the top layer, whatever the pane's look. @param {HTMLElement} box @param {HTMLElement} doc @param {boolean} on */
+export function pop(box, doc, on, view = doc.closest('.view')) {
+  if (on && view && box.parentElement !== view.parentElement) view.after(box)
+  box.hidden = !on
+  if (box.isConnected && box.matches(':popover-open') !== on) box.togglePopover(on)
+}
 
 /** @param {string} tag @param {Record<string, string>} [attrs] @param {...(Node | string)} children */
 export function el(tag, attrs = {}, ...children) {

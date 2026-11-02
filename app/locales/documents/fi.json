@@ -47,6 +47,7 @@
   "documents.linkAddress": "Linkin osoite",
   "documents.applyLink": "Käytä",
   "documents.removeLink": "Poista linkki",
+  "documents.badLink": "Tämä ei ole verkko- eikä sähköpostiosoite",
   "documents.review": "Ehdotetut muutokset",
   "documents.accept": "Hyväksy",
   "documents.reject": "Hylkää",
@@ -57,6 +58,8 @@
   "documents.gone": "{name} poistaa tämän",
   "documents.accepted": "Muutos hyväksytty",
   "documents.rejected": "Muutos hylätty",
+  "documents.acceptedAll": "Kaikki muutokset hyväksytty",
+  "documents.rejectedAll": "Kaikki muutokset hylätty",
   "documents.suggests": {
     "one": "Muutos, jota {name} ehdottaa",
     "other": "{n} muutosta, joita {name} ehdottaa"

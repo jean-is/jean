@@ -47,6 +47,7 @@
   "documents.linkAddress": "இணைப்பு முகவரி",
   "documents.applyLink": "பொருத்து",
   "documents.removeLink": "இணைப்பை நீக்கு",
+  "documents.badLink": "இது இணைய முகவரியோ மின்னஞ்சல் முகவரியோ அல்ல",
   "documents.review": "பரிந்துரைக்கப்பட்ட மாற்றங்கள்",
   "documents.accept": "ஏற்கவும்",
   "documents.reject": "நிராகரிக்கவும்",
@@ -57,6 +58,8 @@
   "documents.gone": "நீக்கப் பரிந்துரை",
   "documents.accepted": "மாற்றம் ஏற்கப்பட்டது",
   "documents.rejected": "மாற்றம் நிராகரிக்கப்பட்டது",
+  "documents.acceptedAll": "அனைத்து மாற்றங்களும் ஏற்கப்பட்டன",
+  "documents.rejectedAll": "அனைத்து மாற்றங்களும் நிராகரிக்கப்பட்டன",
   "documents.suggests": {
     "one": "{name} பரிந்துரைத்த ஒரு மாற்றம்",
     "other": "{name} பரிந்துரைத்த {n} மாற்றங்கள்"

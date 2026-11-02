@@ -47,6 +47,7 @@
   "documents.linkAddress": "Адрес ссылки",
   "documents.applyLink": "Применить",
   "documents.removeLink": "Убрать ссылку",
+  "documents.badLink": "Это не веб-адрес и не адрес почты",
   "documents.review": "Предложенные правки",
   "documents.accept": "Принять",
   "documents.reject": "Отклонить",
@@ -57,6 +58,8 @@
   "documents.gone": "{name} убирает этот фрагмент",
   "documents.accepted": "Правка принята",
   "documents.rejected": "Правка отклонена",
+  "documents.acceptedAll": "Все правки приняты",
+  "documents.rejectedAll": "Все правки отклонены",
   "documents.suggests": {
     "one": "{name} предлагает {n} правку",
     "few": "{name} предлагает {n} правки",
