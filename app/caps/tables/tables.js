@@ -484,7 +484,7 @@ customElements.define('app-table', class extends HTMLElement {
     document.addEventListener('scroll', lift, { capture: true, passive: true })
     holds.push(() => document.removeEventListener('scroll', lift, { capture: true }))
     // One just made from a document's "/" takes the keyboard in its first row's name.
-    if (fresh.delete(folder)) /** @type {HTMLInputElement | null} */ (this.querySelector('td input'))?.focus()
+    if (fresh.delete(folder)) /** @type {HTMLInputElement | null} */ (this.querySelector('tbody input'))?.focus()
   }
 
   disconnectedCallback() {
