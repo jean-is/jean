@@ -6,7 +6,7 @@
 import { html, nothing, render, svg } from 'lit-html'
 import { ref } from 'lit-html/directives/ref.js'
 import { colourOf, weightOf, leadOf, frameOf, stack, unitOf, inksOf, pathsOf, WEIGHTS } from './layout.js'
-import { dir, t } from '../../core/i18n.js'
+import { dir, t, locale } from '../../core/i18n.js'
 
 /** @import { Design, Part, Book } from './layout.js' */
 /** @import { Line } from './format.js' */
@@ -46,7 +46,7 @@ function partOf(design, part, stage = false) {
     <rect x="-2" y="-2" width=${code.size + 4} height=${code.size + 4} fill=${light}/><path d=${code.d} fill=${dark}/></svg>`
   if (part.role === 'picture' || part.role === 'qr') {
     return html`<div class="design-part design-picture ${form}" data-part=${part.id} ${vars({ ...place, ...round, '--pen': colourOf(design, 'ink') })}>${part.file
-      ? html`<app-shared uri=${part.file} type=${typeOf(part.file)}></app-shared>` : html`<span dir=${dir(design.lang)}>${part.role === 'qr' ? t('designs.role.qr') : part.words}</span>`}</div>`
+      ? html`<app-shared uri=${part.file} type=${typeOf(part.file)}></app-shared>` : part.role === 'qr' ? html`<span lang=${locale.value} dir=${dir()}>${t('designs.role.qr')}</span>` : html`<span dir=${dir(design.lang)}>${part.words}</span>`}</div>`
   }
   return html`<div class="design-part design-words v-${part.voice ?? design.voice}" data-part=${part.id} data-align=${part.align ?? 'center'} ${vars({ ...place,
     '--size': `${((part.size ?? 0) / w) * 100}cqi`, '--lead': String(leadOf(design, part)), '--weight': String(weightOf(design, part)), '--pen': colourOf(design, part.color) })}>
