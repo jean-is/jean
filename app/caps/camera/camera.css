@@ -34,8 +34,9 @@
 .camera-kept img { display: block; inline-size: 4.5rem; aspect-ratio: 1; object-fit: cover; border: 2px solid var(--over-ink); border-radius: 0.6rem; }
 .camera-kept .icon-button { position: absolute; inset-block-start: -0.6rem; inset-inline-end: -0.6rem; inline-size: 1.6rem; block-size: 1.6rem; }
 
-/* A tile at a corner of the window: dragged by its picture, its buttons along its foot. */
-.camera.is-tile { z-index: 5; inline-size: min(15rem, 42vw); aspect-ratio: 4 / 3; border-radius: var(--radius); box-shadow: 0 0.5rem 2rem oklch(0 0 0 / 0.35); touch-action: none; cursor: grab; }
+/* A tile at a corner of the window: dragged by its picture, its buttons along its foot. Its dialog is closed (view.js), so
+   it shows here, over the sheet that hides a closed dialog. */
+.camera.is-tile { display: block; opacity: 1; z-index: 5; inline-size: min(15rem, 42vw); aspect-ratio: 4 / 3; border-radius: var(--radius); box-shadow: 0 0.5rem 2rem oklch(0 0 0 / 0.35); touch-action: none; cursor: grab; }
 .camera.is-tile[data-corner^='top'] { inset-block-start: calc(env(safe-area-inset-top) + 4rem); }
 .camera.is-tile[data-corner^='bottom'] { inset-block-end: calc(env(safe-area-inset-bottom) + 9rem); }
 .camera.is-tile[data-corner$='end'] { inset-inline-end: 1rem; }

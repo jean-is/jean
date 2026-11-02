@@ -1,8 +1,8 @@
 // <app-camera> (D645): the camera's picture. On a touch screen it is a viewfinder over the room, a modal <dialog> the rest of
 // the page can't be reached behind: what the user says and the end of what Jean answers as captions at its foot, on a dark
 // panel whatever the picture, and its buttons where a thumb reaches. Elsewhere, and once Task or Escape shrinks it, the same
-// dialog shown without a backdrop is a tile at a corner of the window, dragged or moved by its button to another; a tap on
-// its picture makes it the viewfinder again. Its state, and that a camera is on, always show in words.
+// dialog, closed and shown by its sheet, is a tile at a corner of the window, which Escape leaves be, dragged or moved by its
+// button to another; a tap on its picture makes it the viewfinder again. Its state, and that a camera is on, always show in words.
 import { html, nothing, svg } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
@@ -47,6 +47,8 @@ function answer() {
 class Camera extends Element {
   /** @type {{ x: number, y: number } | null} */
   #from = null
+  /** What the dialog last was, so a render changes it only when it becomes the other. @type {'full' | 'tile' | null} */
+  #was = null
 
   render() {
     const now = state.value
@@ -94,13 +96,15 @@ class Camera extends Element {
   updated() {
     video.classList.toggle('is-mirrored', mirrored.value)
     const dialog = this.querySelector('dialog')
-    if (!dialog) return
-    // Modal over the room as a viewfinder, open without a backdrop as a tile.
-    const modal = dialog.matches(':modal')
-    if (full.value === modal && dialog.open) return
-    if (dialog.open) dialog.close()
-    if (full.value) dialog.showModal()
-    else dialog.show()
+    const now = dialog ? (full.value ? 'full' : 'tile') : null
+    if (!dialog || now === this.#was) return void (this.#was = now)
+    this.#was = now
+    // Modal over the room as a viewfinder. A tile is the dialog closed, which its sheet shows: opened by show(), it would
+    // hold a close request of its own, a new one after the click that opened it, and Escape would end there, closing
+    // nothing, even with Settings open over it, as when Camera is turned on there. The keyboard goes to it as show() sent it.
+    if (now === 'full') return dialog.showModal()
+    dialog.close()
+    dialog.querySelector('button')?.focus()
   }
 
   /** The tile is dragged by its picture; a tap makes it the viewfinder. @param {PointerEvent} event */

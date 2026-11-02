@@ -156,6 +156,21 @@ test.describe('on a phone', () => {
   }
 })
 
+test('turned on from Settings, the tile opens behind it, and Escape closes Settings, not the tile', async ({ page }) => {
+  const strings = stringsOf('en')
+  await withPolicy(page, { capabilities: { deny: ['live'] } })
+  await page.addInitScript(camera)
+  await start(page, 'en')
+  await connectFakeBrain(page)
+  await turnOn(page, strings['cap.camera.name'])
+  // The tile is there before Escape, under Settings: the close request is still Settings'.
+  const tile = page.locator('app-camera dialog.is-tile')
+  await expect(tile).toBeVisible()
+  await expect(page.locator('app-settings dialog[open]')).toHaveCount(1)
+  await closeSettings(page)
+  await expect(tile).toBeVisible()
+})
+
 test('while Jean watches, a look with nothing to say leaves nothing, and one that speaks is kept and shown as one', async ({ page, browserName }) => {
   test.skip(browserName === 'webkit', 'when Jean looks is timers, the camera itself the test above')
   test.setTimeout(150_000)
