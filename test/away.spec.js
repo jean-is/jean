@@ -89,7 +89,7 @@ test('an answer goes on while the user is in another conversation', async ({ pag
   await expect(list.locator('.history-list li:not([aria-hidden])').first()).toHaveClass(/is-current/)
   await page.keyboard.press('ArrowDown')
   await page.keyboard.press('Enter')
-  await expect(list.locator('.history-list li:not([aria-hidden])').nth(1)).toHaveClass(/is-current/)
+  await expect(list.locator('.history-list > li:not([aria-hidden])').nth(1)).toHaveClass(/is-current/)
 })
 
 test('hundreds of tasks: the list draws only the rows in view, as long as all of them, End and Home reach the last and the first, and a menu is filled once it opens (D627)', async ({ page }) => {
@@ -104,7 +104,7 @@ test('hundreds of tasks: the list draws only the rows in view, as long as all of
     const { app } = await import('/ui/state.js'), [one] = app.conversations.value
     app.conversations.value = [one, ...Array.from({ length: 599 }, (_, i) => ({ ...one, id: `task-${i}`, path: `${one.path}-${i}`, title: `Task ${i + 1}` }))]
   })
-  const rows = list.locator('.history-list li:not([aria-hidden])'), items = list.locator('.history-item')
+  const rows = list.locator('.history-list > li:not([aria-hidden])'), items = list.locator('.history-item')
   await expect(rows.first()).toHaveAttribute('aria-setsize', '600')
   expect(await rows.count()).toBeLessThan(100)
   await items.first().focus()

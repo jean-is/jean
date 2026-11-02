@@ -157,7 +157,7 @@ test('About you reads the instructions as text, changed with Save or Cancel, and
   await expect(panel.locator('.you-cut')).toHaveText('No longer read')
   await expect(panel.locator('.you-cut + li')).toHaveClass('is-old')
   await panel.getByRole('searchbox', { name: 'Search what Jean noticed' }).fill('number 7')
-  await expect(panel.locator('.noticed li:not(.you-cut)')).toHaveCount(11)
+  await expect(panel.locator('.noticed > li:not(.you-cut)')).toHaveCount(11)
   await panel.locator('.back').click()
   await expect(panel.locator('[data-row="noticed"]')).toBeFocused()
 })

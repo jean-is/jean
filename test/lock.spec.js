@@ -308,7 +308,7 @@ test.describe('the lock screen, reached', () => {
     const menu = await openOthers(page)
     await expect(menu.locator('.profile-switch', { hasText: 'Work' }).locator('.icon')).toHaveCount(0)
     await menu.locator('.back').click()
-    expect(await menu.evaluate((list) => [...list.children].map((row) => (row.tagName === 'HR' ? 'hr' : row.textContent?.trim())).slice(0, 3))).toEqual(['AAna', 'Lock now', 'hr'])
+    expect(await menu.evaluate((list) => [...list.querySelectorAll(':scope > ul > li, :scope > hr')].map((row) => (row.tagName === 'HR' ? 'hr' : row.textContent?.trim())).slice(0, 3))).toEqual(['AAna', 'Lock now', 'hr'])
     await menu.getByRole('button', { name: 'Lock now' }).click()
     await reachable()
     await expect(field).toBeFocused()

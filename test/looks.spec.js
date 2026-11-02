@@ -204,7 +204,7 @@ test('the drawer opens beside the conversation or is put away, as the user left 
   await row.getByRole('button', { name: 'More options' }).click()
   // Red, its words or its icon's lines, as Delete is.
   const red = (/** @type {string} */ name) => row.getByRole('button', { name }).evaluate((button) => [button, ...button.querySelectorAll('path')]
-    .some((part) => getComputedStyle(part).color === getComputedStyle(/** @type {Element} */ (button.parentElement?.lastElementChild)).color))
+    .some((part) => getComputedStyle(part).color === getComputedStyle(/** @type {Element} */ (button.closest('.menu')?.querySelector('li:last-child > button'))).color))
   expect([await red('Pin'), await red('Rename'), await red('Mark as read')]).toEqual([false, false, false])
   await row.getByRole('button', { name: 'Mark as read' }).click()
   await expect(light).toHaveCount(0)
