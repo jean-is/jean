@@ -70,7 +70,7 @@ export const BLOCKS = {
   mermaid: async (box, source, { scale, theme, ...config } = {}) => {
     const look = getComputedStyle(box), font = look.getPropertyValue('--deck-body').trim() || 'system-ui, sans-serif'
     const { svg: drawn } = await drawing(source, { fontFamily: font, links: false, images: false, autoDirection: true, maxWidth: Math.max(320, box.clientWidth * 1.4), ...(Object.keys(config).length && { config }) }, look.direction === 'rtl')
-    const words = told(source, drawn), picture = Object.assign(document.createElement('img'), { alt: words.alt }), place = Object.assign(document.createElement('div'), { className: 'deck-diagram' })
+    const words = told(source, drawn), picture = Object.assign(document.createElement('img'), { alt: words.alt, lang: document.documentElement.lang }), place = Object.assign(document.createElement('div'), { className: 'deck-diagram' })
     if (scale > 0 && scale < 1) for (const side of ['max-inline-size', 'max-block-size']) picture.style.setProperty(side, `${scale * 100}%`)
     box.appendChild(place).append(picture)
     box.append(wordsBelow(words))

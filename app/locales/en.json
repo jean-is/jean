@@ -39,8 +39,18 @@
   "action.readAloud": "Read aloud",
   "action.stopReading": "Stop reading",
   "dock.resize": "Resize",
+  "dock.move": "Move or resize",
+  "dock.start": "To the left of the task",
+  "dock.end": "To the right of the task",
+  "dock.bottom": "Under the task",
+  "dock.wider": "Wider",
+  "dock.narrower": "Narrower",
   "speech.noVoice": "No voice on this device can read {language}. Your system’s settings can add one.",
   "toast.copied": "Copied",
+  "toast.undoFor": {
+    "one": "You can undo it for {count} second.",
+    "other": "You can undo it for {count} seconds."
+  },
   "conversation.untitled": "New task",
   "history.title": "Tasks",
   "history.empty": "Your tasks will appear here.",

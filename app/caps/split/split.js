@@ -151,7 +151,7 @@ class Tile extends Element {
       <header class="pane-head">
         ${task && app.running.value.includes(task.path) ? html`<span class="ember" role="img" aria-label=${t('activity.working')}></span>` : nothing}
         <h2><button class="tile-name" @click=${this.#talk}><span dir="auto">${name}</span></button></h2>
-        <button class="icon-button" aria-label=${t('action.close')} @click=${() => { layout.value = without(layout.peek(), leaf) ?? 'here' }}>${icons.close}</button>
+        ${dock.moves(this)}<button class="icon-button" aria-label=${t('action.close')} @click=${() => { layout.value = without(layout.peek(), leaf) ?? 'here' }}>${icons.close}</button>
       </header>
       <div class="view" @click=${this.#clicked}>${records ? turns(records) : nothing}</div>
     </aside>`

@@ -39,8 +39,18 @@
   "action.readAloud": "Voorlezen",
   "action.stopReading": "Stoppen met voorlezen",
   "dock.resize": "Formaat wijzigen",
+  "dock.move": "Verplaatsen of formaat wijzigen",
+  "dock.start": "Links van de taak",
+  "dock.end": "Rechts van de taak",
+  "dock.bottom": "Onder de taak",
+  "dock.wider": "Breder",
+  "dock.narrower": "Smaller",
   "speech.noVoice": "Geen stem op dit apparaat kan {language} voorlezen. Je kunt er een toevoegen in de instellingen van je systeem.",
   "toast.copied": "Gekopieerd",
+  "toast.undoFor": {
+    "one": "Je kunt dit {count} seconde ongedaan maken.",
+    "other": "Je kunt dit {count} seconden ongedaan maken."
+  },
   "conversation.untitled": "Nieuwe taak",
   "history.title": "Taken",
   "history.empty": "Je taken verschijnen hier.",

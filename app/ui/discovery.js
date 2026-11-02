@@ -243,16 +243,17 @@ effect(() => {
   if (count >= 3) offerOnce('backup')
   if (count >= 2 && reflexive && effective.value.settings.brains.length) offerOnce('reflexes')
 })
-/** Conversations before search is offered: plenty to look back on, what was asked, answered and shared. */
-export const FINDABLE = 10
+/** Conversations before the lock is offered: plenty kept that only the person should open. */
+export const LOCKABLE = 10
 /** Conversations before the brain may offer web search, so the first ones show what Jean does on its own (D145). */
 export const SEARCHABLE = 5
 effect(() => {
-  if (everywhere.value >= FINDABLE) offerOnce('find')
   // Plenty kept, or a service's sign-in: it could open only to the person (D371). Policy may ask for it.
-  if (everywhere.value >= FINDABLE || (effective.value.settings.connections ?? []).length) offerOnce('lock')
+  if (everywhere.value >= LOCKABLE || (effective.value.settings.connections ?? []).length) offerOnce('lock')
 })
 if (app.policy.lock === 'required') unlock('lock')
+// Search is there from the start, the way around the app besides the drawer (RGAA 12.1, D5).
+unlock('find')
 effect(() => {
   // Someone who dictates often may rather talk.
   if ((effective.value.settings.dictated ?? 0) >= 3) offerOnce('live')

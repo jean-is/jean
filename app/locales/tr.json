@@ -39,8 +39,18 @@
   "action.readAloud": "Sesli oku",
   "action.stopReading": "Okumayı durdur",
   "dock.resize": "Yeniden boyutlandır",
+  "dock.move": "Taşı veya yeniden boyutlandır",
+  "dock.start": "Görevin soluna",
+  "dock.end": "Görevin sağına",
+  "dock.bottom": "Görevin altına",
+  "dock.wider": "Daha geniş",
+  "dock.narrower": "Daha dar",
   "speech.noVoice": "Bu cihazda bu dili ({language}) okuyabilen bir ses yok. Sistem ayarlarından bir ses ekleyebilirsin.",
   "toast.copied": "Kopyalandı",
+  "toast.undoFor": {
+    "one": "{count} saniye boyunca geri alabilirsin.",
+    "other": "{count} saniye boyunca geri alabilirsin."
+  },
   "conversation.untitled": "Yeni görev",
   "history.title": "Görevler",
   "history.empty": "Görevlerin burada görünecek.",

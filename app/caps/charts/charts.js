@@ -145,7 +145,7 @@ class AppChart extends HTMLElement {
           @click=${() => copyDrawing(source, this.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed'), { alert: true }))}>${icons.copy}</button>
         ${drawnActions('echarts', source)}
       </div><details class="chart-data" id=${this.wordsId}><summary lang=${locale.value} dir=${dir()}>${t('charts.data')}</summary>${figures(option, source)}</details>`
-      : html`<p class="drawn-status muted small" role="status"><span class="while">${t('charts.drawing')}</span><span class="failed">${t('charts.failed')}</span></p>
+      : html`<p class="drawn-status muted small" role="status"><span class="while">${t('charts.drawing')}</span><span class="failed" role="alert">${t('charts.failed')}</span></p>
         <pre dir="ltr" tabindex="0"><code>${source}</code></pre>`, this)
   }
 

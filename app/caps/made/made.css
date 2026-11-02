@@ -12,8 +12,8 @@ app-file { display: block; }
 .file-picture { flex: none; inline-size: calc(100% + var(--end)); margin-inline-end: calc(-1 * var(--end)); aspect-ratio: 16 / 9; object-fit: cover; border-block-end: 1px solid var(--line-strong); background: var(--room-2); }
 .file-tile img { inline-size: 100%; block-size: 100%; object-fit: cover; background: white; }
 .file-about { flex: 1; min-inline-size: 0; display: grid; gap: 0.1rem; }
-.file-name { overflow: hidden; font-size: 1.05rem; font-weight: 550; text-overflow: ellipsis; white-space: nowrap; }
-.file-meta { overflow: hidden; color: var(--ink-soft); font-size: 0.92rem; text-overflow: ellipsis; white-space: nowrap; }
+.file-name { overflow-wrap: anywhere; font-size: 1.05rem; font-weight: 550; }
+.file-meta { overflow-wrap: anywhere; color: var(--ink-soft); font-size: 0.92rem; }
 /* Each part on its own, so that in Arabic a size's number keeps to its unit, not to a kind in Latin letters (PDF). */
 .file-meta > * { unicode-bidi: isolate; }
 .file-meta > * + *::before { content: '·'; margin-inline: 0.45em; }

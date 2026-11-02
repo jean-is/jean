@@ -39,8 +39,17 @@
   "action.readAloud": "Đọc to",
   "action.stopReading": "Dừng đọc",
   "dock.resize": "Đổi kích thước",
+  "dock.move": "Di chuyển hoặc đổi kích thước",
+  "dock.start": "Bên trái nhiệm vụ",
+  "dock.end": "Bên phải nhiệm vụ",
+  "dock.bottom": "Bên dưới nhiệm vụ",
+  "dock.wider": "Rộng hơn",
+  "dock.narrower": "Hẹp hơn",
   "speech.noVoice": "Không có giọng nào trên thiết bị này đọc được {language}. Bạn có thể thêm giọng trong phần cài đặt hệ thống.",
   "toast.copied": "Đã sao chép",
+  "toast.undoFor": {
+    "other": "Bạn có thể hoàn tác trong {count} giây."
+  },
   "conversation.untitled": "Nhiệm vụ mới",
   "history.title": "Các nhiệm vụ",
   "history.empty": "Các nhiệm vụ của bạn sẽ hiện ở đây.",

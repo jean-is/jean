@@ -105,13 +105,21 @@ function listItem(item) {
   return item.tokens.map((/** @type {any} */ token) => (token.type === 'text' ? (token.tokens ? inline(token.tokens) : cite(decode(token.text))) : block(token)))
 }
 
+/**
+ * Whether a table's first column names its rows, so that its cells are the rows' heads (RGAA 5.6): its head is empty, or each of its
+ * cells holds words, a letter at least, that no other cell repeats. @param {string} head @param {string[]} cells
+ */
+export const namesRows = (head, cells) => !head.trim() || (cells.length > 1 && cells.every((cell) => /\p{L}/u.test(cell)) && new Set(cells).size === cells.length)
+
 /** @param {any} token */
 function table(token) {
   /** @param {any} cell @param {number} index */
   const align = (cell, index) => (token.align[index] ? `align-${token.align[index]}` : '')
+  const heads = namesRows(token.header[0]?.text ?? '', token.rows.map((/** @type {any[]} */ row) => row[0]?.text.trim() ?? ''))
   return html`<div class="table" tabindex="0"><table>
-    <thead><tr>${token.header.map((/** @type {any} */ cell, /** @type {number} */ i) => html`<th class=${align(cell, i)}>${inline(cell.tokens)}</th>`)}</tr></thead>
-    <tbody>${token.rows.map((/** @type {any[]} */ row) => html`<tr>${row.map((cell, i) => html`<td class=${align(cell, i)}>${inline(cell.tokens)}</td>`)}</tr>`)}</tbody>
+    <thead><tr>${token.header.map((/** @type {any} */ cell, /** @type {number} */ i) => html`<th scope="col" class=${align(cell, i)}>${inline(cell.tokens)}</th>`)}</tr></thead>
+    <tbody>${token.rows.map((/** @type {any[]} */ row) => html`<tr>${row.map((cell, i) => (i || !heads ? html`<td class=${align(cell, i)}>${inline(cell.tokens)}</td>`
+      : html`<th scope="row" class=${align(cell, i)}>${inline(cell.tokens)}</th>`))}</tr>`)}</tbody>
   </table></div>`
 }
 

@@ -39,8 +39,18 @@
   "action.readAloud": "خواندن با صدا",
   "action.stopReading": "توقف خواندن",
   "dock.resize": "تغییر اندازه",
+  "dock.move": "جابه‌جایی یا تغییر اندازه",
+  "dock.start": "سمت راست کار",
+  "dock.end": "سمت چپ کار",
+  "dock.bottom": "زیر کار",
+  "dock.wider": "پهن‌تر",
+  "dock.narrower": "باریک‌تر",
   "speech.noVoice": "هیچ صدایی روی این دستگاه نمی‌تواند این زبان ({language}) را بخواند. می‌توانید از تنظیمات سیستم خود یکی اضافه کنید.",
   "toast.copied": "رونوشت شد",
+  "toast.undoFor": {
+    "one": "تا {count} ثانیه می‌توانید آن را واگرد کنید.",
+    "other": "تا {count} ثانیه می‌توانید آن را واگرد کنید."
+  },
   "conversation.untitled": "کار تازه",
   "history.title": "کارها",
   "history.empty": "کارهای شما اینجا نمایش داده می‌شوند.",

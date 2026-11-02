@@ -39,8 +39,17 @@
   "action.readAloud": "Baca dengan kuat",
   "action.stopReading": "Berhenti membaca",
   "dock.resize": "Ubah saiz",
+  "dock.move": "Alih atau ubah saiz",
+  "dock.start": "Di kiri tugasan",
+  "dock.end": "Di kanan tugasan",
+  "dock.bottom": "Di bawah tugasan",
+  "dock.wider": "Lebih lebar",
+  "dock.narrower": "Lebih sempit",
   "speech.noVoice": "Tiada suara pada peranti ini yang boleh membaca bahasa {language}. Anda boleh menambahnya dalam tetapan sistem anda.",
   "toast.copied": "Disalin",
+  "toast.undoFor": {
+    "other": "Anda boleh membuat asal dalam masa {count} saat."
+  },
   "conversation.untitled": "Tugasan baharu",
   "history.title": "Tugasan",
   "history.empty": "Tugasan anda akan dipaparkan di sini.",

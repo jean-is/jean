@@ -39,8 +39,18 @@
   "action.readAloud": "Lue ääneen",
   "action.stopReading": "Lopeta lukeminen",
   "dock.resize": "Muuta kokoa",
+  "dock.move": "Siirrä tai muuta kokoa",
+  "dock.start": "Tehtävän vasemmalle puolelle",
+  "dock.end": "Tehtävän oikealle puolelle",
+  "dock.bottom": "Tehtävän alle",
+  "dock.wider": "Leveämmäksi",
+  "dock.narrower": "Kapeammaksi",
   "speech.noVoice": "Mikään tämän laitteen ääni ei osaa lukea tätä kieltä ({language}). Voit lisätä äänen järjestelmän asetuksissa.",
   "toast.copied": "Kopioitu",
+  "toast.undoFor": {
+    "one": "Voit kumota sen {count} sekunnin ajan.",
+    "other": "Voit kumota sen {count} sekunnin ajan."
+  },
   "conversation.untitled": "Uusi tehtävä",
   "history.title": "Tehtävät",
   "history.empty": "Tehtäväsi näkyvät tässä.",

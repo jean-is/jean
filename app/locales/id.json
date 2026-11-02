@@ -39,8 +39,17 @@
   "action.readAloud": "Bacakan",
   "action.stopReading": "Berhenti membacakan",
   "dock.resize": "Ubah ukuran",
+  "dock.move": "Pindahkan atau ubah ukuran",
+  "dock.start": "Di kiri tugas",
+  "dock.end": "Di kanan tugas",
+  "dock.bottom": "Di bawah tugas",
+  "dock.wider": "Lebih lebar",
+  "dock.narrower": "Lebih sempit",
   "speech.noVoice": "Tidak ada suara di perangkat ini yang bisa membaca bahasa {language}. Anda bisa menambahkannya di pengaturan sistem.",
   "toast.copied": "Disalin",
+  "toast.undoFor": {
+    "other": "Anda dapat mengurungkannya selama {count} detik."
+  },
   "conversation.untitled": "Tugas baru",
   "history.title": "Tugas",
   "history.empty": "Tugas Anda akan muncul di sini.",

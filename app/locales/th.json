@@ -39,8 +39,17 @@
   "action.readAloud": "อ่านออกเสียง",
   "action.stopReading": "หยุดอ่าน",
   "dock.resize": "ปรับขนาด",
+  "dock.move": "ย้ายหรือปรับขนาด",
+  "dock.start": "ทางซ้ายของงาน",
+  "dock.end": "ทางขวาของงาน",
+  "dock.bottom": "ใต้งาน",
+  "dock.wider": "กว้างขึ้น",
+  "dock.narrower": "แคบลง",
   "speech.noVoice": "อุปกรณ์นี้ไม่มีเสียงที่อ่านภาษา{language}ได้ คุณเพิ่มเสียงได้ในการตั้งค่าระบบ",
   "toast.copied": "คัดลอกแล้ว",
+  "toast.undoFor": {
+    "other": "คุณเลิกทำได้ภายใน {count} วินาที"
+  },
   "conversation.untitled": "งานใหม่",
   "history.title": "งาน",
   "history.empty": "งานของคุณจะแสดงที่นี่",

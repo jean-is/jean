@@ -12,7 +12,7 @@
    promise and who it is for show under it, cut by the window's edge, so it reads as going on. The links under the box,
    which the page's foot has too, are under the sheet, and out of the keyboard's way. */
 body > .home { margin-block-start: calc(-1 * var(--home-lift, 0px)); }
-body:has(> .home:not([hidden])) app-composer > p { visibility: hidden; }
+body:has(> .home:not([hidden])) app-composer > :is(p, footer) { visibility: hidden; }
 
 /* Once the drawer is open beside the room, as it is after a first request, the page sits beside it too, brought into
    view under the main area's top. The drawer is at the app's inline start, which is the
@@ -280,7 +280,7 @@ body:has(> .home:not([hidden])) app-composer > p { visibility: hidden; }
   .home-personal td::before { content: attr(data-label); display: block; color: var(--ink); font-size: 0.75rem; font-weight: 600; }
   body:has(> .home) app-composer { padding-block-end: 8rem; }
   body:has(> .home) app-composer > form.composer { position: fixed; inset-inline: 0; inset-block-end: max(0.75rem, env(safe-area-inset-bottom)); z-index: 4; margin-inline: auto; }
-  body:has(> .home) app-composer > p { display: none; }
+  body:has(> .home:not([hidden])) app-composer > :is(p, footer) { display: none; }
   body > .home::after { content: ''; position: fixed; inset-inline: 0; inset-block-end: 0; z-index: 1; block-size: 7rem; background: linear-gradient(oklch(from var(--room) l c h / 0), var(--room) 55%); pointer-events: none; }
   .home { --home-sheet: 1.25rem; }
   .home-strip { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; padding-inline: 1rem; scrollbar-width: none; }

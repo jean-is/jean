@@ -39,8 +39,18 @@
   "action.readAloud": "ज़ोर से पढ़ें",
   "action.stopReading": "पढ़ना रोकें",
   "dock.resize": "आकार बदलें",
+  "dock.move": "ले जाएँ या आकार बदलें",
+  "dock.start": "कार्य के बाईं ओर",
+  "dock.end": "कार्य के दाईं ओर",
+  "dock.bottom": "कार्य के नीचे",
+  "dock.wider": "और चौड़ा",
+  "dock.narrower": "और संकरा",
   "speech.noVoice": "इस डिवाइस पर कोई आवाज़ {language} नहीं पढ़ सकती। आप अपने सिस्टम की सेटिंग्स में एक जोड़ सकते हैं।",
   "toast.copied": "कॉपी हो गया",
+  "toast.undoFor": {
+    "one": "आप इसे {count} सेकंड तक वापस ले सकते हैं।",
+    "other": "आप इसे {count} सेकंड तक वापस ले सकते हैं।"
+  },
   "conversation.untitled": "नया कार्य",
   "history.title": "कार्य",
   "history.empty": "आपके कार्य यहाँ दिखेंगे।",

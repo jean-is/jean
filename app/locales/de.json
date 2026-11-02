@@ -39,8 +39,18 @@
   "action.readAloud": "Vorlesen",
   "action.stopReading": "Vorlesen beenden",
   "dock.resize": "Größe ändern",
+  "dock.move": "Verschieben oder Größe ändern",
+  "dock.start": "Links neben der Aufgabe",
+  "dock.end": "Rechts neben der Aufgabe",
+  "dock.bottom": "Unter der Aufgabe",
+  "dock.wider": "Breiter",
+  "dock.narrower": "Schmaler",
   "speech.noVoice": "Keine Stimme auf diesem Gerät kann {language} vorlesen. In den Systemeinstellungen kannst du eine hinzufügen.",
   "toast.copied": "Kopiert",
+  "toast.undoFor": {
+    "one": "Du kannst das {count} Sekunde lang rückgängig machen.",
+    "other": "Du kannst das {count} Sekunden lang rückgängig machen."
+  },
   "conversation.untitled": "Neue Aufgabe",
   "history.title": "Aufgaben",
   "history.empty": "Deine Aufgaben erscheinen hier.",

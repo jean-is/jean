@@ -39,8 +39,18 @@
   "action.readAloud": "Прочети на глас",
   "action.stopReading": "Спри четенето",
   "dock.resize": "Преоразмери",
+  "dock.move": "Премести или преоразмери",
+  "dock.start": "Вляво от задачата",
+  "dock.end": "Вдясно от задачата",
+  "dock.bottom": "Под задачата",
+  "dock.wider": "По-широко",
+  "dock.narrower": "По-тясно",
   "speech.noVoice": "Никой глас на това устройство не чете на {language}. Може да добавите в настройките на системата.",
   "toast.copied": "Копирано",
+  "toast.undoFor": {
+    "one": "Можете да отмените до {count} секунда.",
+    "other": "Можете да отмените до {count} секунди."
+  },
   "conversation.untitled": "Нова задача",
   "history.title": "Задачи",
   "history.empty": "Задачите ви ще се появят тук.",

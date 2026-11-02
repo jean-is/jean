@@ -39,8 +39,18 @@
   "action.readAloud": "Karanta da murya",
   "action.stopReading": "Daina karantawa",
   "dock.resize": "Canza girma",
+  "dock.move": "Matsar ko canza girma",
+  "dock.start": "A hagun ɗawainiyar",
+  "dock.end": "A daman ɗawainiyar",
+  "dock.bottom": "A ƙarƙashin ɗawainiyar",
+  "dock.wider": "Ƙara faɗi",
+  "dock.narrower": "Rage faɗi",
   "speech.noVoice": "Babu murya a wannan na'ura da za ta iya karanta wannan harshe ({language}). Za ka iya ƙara ɗaya a saitunan tsarinka.",
   "toast.copied": "An kwafa",
+  "toast.undoFor": {
+    "one": "Kana iya sokewa cikin daƙiƙa {count}.",
+    "other": "Kana iya sokewa cikin daƙiƙa {count}."
+  },
   "conversation.untitled": "Sabuwar ɗawainiya",
   "history.title": "Ɗawainiyoyi",
   "history.empty": "Ɗawainiyoyinka za su bayyana a nan.",

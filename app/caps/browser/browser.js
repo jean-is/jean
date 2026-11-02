@@ -524,7 +524,7 @@ class Browser extends Element {
         </form>
         ${button(t('browser.tab'), icons.external, () => openTab(address), !shown || isLocal(shown.url))}
         ${button(full.value ? t('browser.exitFullscreen') : t('browser.fullscreen'), full.value ? icons['exit-fullscreen'] : icons.fullscreen, fullscreen)}
-        ${button(t('action.close'), icons.close, close)}
+        ${dock.moves(this)}${button(t('action.close'), icons.close, close)}
       </header>
       <div class="browser-body">
         ${loading.value ? html`<div class="browser-loading" role="progressbar" aria-label=${t('browser.reload')}></div>` : nothing}

@@ -57,7 +57,7 @@ Themes and light or dark are also in {settings.title} › {settings.appearance},
 ## keyboard
 Every shortcut there is now is listed in {settings.title} › {settings.keyboard}, and given above as this keyboard writes them.
 
-A capability's shortcut comes once it is found: Search's, the browser's, the computer's terminal, talking hands-free, sharing a task. Deleting a task asks first.
+Search's shortcut is there from the start; another capability's comes once it is found: the browser's, the computer's terminal, talking hands-free, sharing a task. Deleting a task asks first.
 
 ## profiles
 A profile is a whole separate app on the same device, for another person or for work: {profiles.add}, at the top of the user's menu. Once there are two, that place shows the current profile, and its row leads to the others and {profiles.add}. Going to another opens it where this tab left it. A profile with a lock closes when left, and asks again on coming back unless another tab has it open. Each has a colour on its badge, changed on its page in {settings.title}. The keyboard goes to the next profile, and find lists them.

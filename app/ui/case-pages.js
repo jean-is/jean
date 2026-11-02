@@ -8,7 +8,7 @@ import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { app, effective, CITED, rememberUnlocked, notify } from './state.js'
 import { unlock, isDenied, loaded, configureCapabilities, SIZES, WEIGHTS } from './caps.js'
-import { CATALOGUE, FINDABLE, SEARCHABLE, BROWSED, STEPPED, everywhere, accept, begin, unlockAll } from './discovery.js'
+import { CATALOGUE, LOCKABLE, SEARCHABLE, BROWSED, STEPPED, everywhere, accept, begin, unlockAll } from './discovery.js'
 import { openSettings, ROOM_ICONS, lockedBy, pageOpen } from './dialogs.js'
 import { saveSettings } from '../core/settings.js'
 import { BRAND } from '../brand.js'
@@ -39,7 +39,7 @@ const OPENS = /** @type {Record<string, () => void>} */ ({
 })
 /** Those found by counting, as ui/discovery.js counts them: how far along, out of how many. */
 const COUNTED = /** @type {Record<string, () => number[]>} */ ({ reflexes: () => [everywhere.value, 2], backup: () => [everywhere.value, 3],
-  find: () => [everywhere.value, FINDABLE], lock: () => [everywhere.value, FINDABLE], search: () => [everywhere.value, SEARCHABLE],
+  lock: () => [everywhere.value, LOCKABLE], search: () => [everywhere.value, SEARCHABLE],
   live: () => [effective.value.settings.dictated ?? 0, 3], check: () => [effective.value.settings.cited ?? 0, CITED],
   browser: () => [effective.value.settings.browsed ?? 0, BROWSED], flows: () => [effective.value.settings.stepped ?? 0, STEPPED] })
 

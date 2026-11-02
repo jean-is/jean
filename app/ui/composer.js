@@ -143,7 +143,7 @@ class Composer extends Element {
       ${app.dialog.value === 'first' ? html`<app-first></app-first>` : fresh && !slots('main').some((main) => main.draw())
         ? html`<ul class="starters">${STARTERS.filter((key) => files || key !== 'sample').map((key) => html`<li><button class="starter" @click=${() => idea(key)}>${t(`starter.${key}`)}</button></li>`)}</ul>` : nothing}
       ${!fresh ? html`<p class="ai-note" id="ai-note">${t('composer.ai', { name: assistantName() })}</p>`
-        : legal.length ? html`<p class="legal">${legal.map(([name, url], i) => html`${i ? ' · ' : ''}<a href=${url} target="_blank">${t(`welcome.${name}`)}</a>`)}</p>` : nothing}`
+        : legal.length ? html`<footer class="legal">${legal.map(([name, url], i) => html`${i ? ' · ' : ''}<a href=${url} target="_blank">${t(`welcome.${name}`)}</a>`)}</footer>` : nothing}`
   }
 
   connectedCallback() {

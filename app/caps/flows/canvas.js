@@ -416,7 +416,7 @@ export class Flows extends Element {
         </select><span class="flows-gap"></span>` : html`<h2>${t('flows.task')}</h2>`}
         ${one ? actions(one) : nothing}
         ${iconButton(full.value ? t('flows.exitFullscreen') : t('flows.fullscreen'), full.value ? icons['exit-fullscreen'] : icons.fullscreen, fullscreen)}
-        ${iconButton(t('action.close'), icons.close, close)}
+        ${dock.moves(this)}${iconButton(t('action.close'), icons.close, close)}
       </header>
       ${board(one, drawingOf(one))}
     </aside>`

@@ -124,14 +124,14 @@ class AppScore extends HTMLElement {
     const on = this.started !== null || this.loading !== null
     const source = this.getAttribute('source') ?? ''
     render(html`<div class="score-sheet" dir="ltr" role="img" aria-describedby=${this.wordsId} aria-label=${this.label || t('scores.score')}></div>
-      ${!music ? html`<p class="drawn-status muted small" role="status"><span class="while">${t('scores.drawing')}</span><span class="failed">${t('scores.failed')}</span></p>
+      ${!music ? html`<p class="drawn-status muted small" role="status"><span class="while">${t('scores.drawing')}</span><span class="failed" role="alert">${t('scores.failed')}</span></p>
         <pre dir="ltr" tabindex="0"><code>${source}</code></pre>`
       : html`<div class="score-player" dir="ltr" lang=${locale.value} aria-busy=${this.loading !== null}>${this.notes.length ? html`
         <button class="icon-button" aria-label=${t(on ? 'scores.pause' : 'scores.play')} @click=${() => (on ? this.pause() : this.play())}>${on ? PAUSE : icons.play}</button>
         <button class="icon-button" aria-label=${t('scores.mute')} aria-pressed=${String(this.quiet)} @click=${() => this.hush()}>${icons.speaker}</button>
         <input type="range" min="0" max=${this.length} step="0.05" .value=${String(this.at)} title=${t('scores.where')} aria-valuetext=${clock(this.at)}
           @input=${(/** @type {Event} */ e) => this.seek(Number(/** @type {HTMLInputElement} */ (e.target).value))}>
-        <span class="score-time">${this.loading ? new Intl.NumberFormat(intlLocales(), { style: 'percent' }).format(this.loading) : `${clock(this.at)} / ${clock(this.length)}`}</span>` : ''}
+        ${this.loading === null ? html`<span class="score-time">${clock(this.at)} / ${clock(this.length)}</span>` : html`<span class="score-time" role="progressbar" aria-label=${this.label || t('scores.score')} aria-valuenow=${Math.round(this.loading * 100)}>${new Intl.NumberFormat(intlLocales(), { style: 'percent' }).format(this.loading)}</span>`}` : ''}
       </div>
       <div class="drawn-foot" lang=${locale.value}>
         <button class="icon-button subtle" aria-label=${t('action.copy')}

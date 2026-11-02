@@ -103,7 +103,7 @@ class Terminal extends Element {
       <header class="pane-head">
         <h2>${t('computer.terminal')}</h2>
         ${terminal.entries.some((entry) => entry.running) ? button(t('action.stop'), icons.stop, stop) : button(t('computer.terminal.clear'), broom, clear)}
-        ${button(t('action.close'), icons.close, close)}
+        ${dock.moves(this)}${button(t('action.close'), icons.close, close)}
       </header>
       <div class="terminal-body" dir="ltr" tabindex="-1" @scroll=${scrolled}>
         ${terminal.entries.length ? nothing : html`<p class="terminal-hint" dir="auto">${icons.terminal}<span>${tParts('computer.terminal.text', { keys })}</span></p>`}

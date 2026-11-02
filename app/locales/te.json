@@ -39,8 +39,18 @@
   "action.readAloud": "బిగ్గరగా చదువు",
   "action.stopReading": "చదవడం ఆపు",
   "dock.resize": "పరిమాణం మార్చు",
+  "dock.move": "తరలించు లేదా పరిమాణం మార్చు",
+  "dock.start": "పనికి ఎడమవైపు",
+  "dock.end": "పనికి కుడివైపు",
+  "dock.bottom": "పని కింద",
+  "dock.wider": "మరింత వెడల్పు",
+  "dock.narrower": "మరింత ఇరుకు",
   "speech.noVoice": "ఈ పరికరంలో {language} చదవగల గొంతు లేదు. మీ సిస్టమ్ సెట్టింగ్‌లలో ఒకదాన్ని జోడించవచ్చు.",
   "toast.copied": "కాపీ అయింది",
+  "toast.undoFor": {
+    "one": "{count} సెకనులోపు రద్దు చేయవచ్చు.",
+    "other": "{count} సెకన్లలోపు రద్దు చేయవచ్చు."
+  },
   "conversation.untitled": "కొత్త పని",
   "history.title": "పనులు",
   "history.empty": "మీ పనులు ఇక్కడ కనిపిస్తాయి.",

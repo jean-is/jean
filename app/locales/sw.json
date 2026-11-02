@@ -39,8 +39,18 @@
   "action.readAloud": "Soma kwa sauti",
   "action.stopReading": "Acha kusoma",
   "dock.resize": "Badilisha ukubwa",
+  "dock.move": "Hamisha au badilisha ukubwa",
+  "dock.start": "Kushoto mwa kazi",
+  "dock.end": "Kulia mwa kazi",
+  "dock.bottom": "Chini ya kazi",
+  "dock.wider": "Pana zaidi",
+  "dock.narrower": "Nyembamba zaidi",
   "speech.noVoice": "Hakuna sauti kwenye kifaa hiki inayoweza kusoma lugha hii ({language}). Unaweza kuongeza moja katika mipangilio ya mfumo wako.",
   "toast.copied": "Imenakiliwa",
+  "toast.undoFor": {
+    "one": "Unaweza kutendua ndani ya sekunde {count}.",
+    "other": "Unaweza kutendua ndani ya sekunde {count}."
+  },
   "conversation.untitled": "Kazi mpya",
   "history.title": "Kazi",
   "history.empty": "Kazi zako zitaonekana hapa.",

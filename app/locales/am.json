@@ -39,8 +39,18 @@
   "action.readAloud": "በድምፅ ማንበብ",
   "action.stopReading": "ንባቡን ያቁሙ",
   "dock.resize": "መጠን ቀይር",
+  "dock.move": "አንቀሳቅስ ወይም መጠን ቀይር",
+  "dock.start": "ከተግባሩ በስተግራ",
+  "dock.end": "ከተግባሩ በስተቀኝ",
+  "dock.bottom": "ከተግባሩ በታች",
+  "dock.wider": "ሰፋ",
+  "dock.narrower": "ጠበብ",
   "speech.noVoice": "በዚህ መሣሪያ ላይ {language} ማንበብ የሚችል ድምፅ የለም። በስርዓትዎ ቅንብሮች ውስጥ ማከል ይችላሉ።",
   "toast.copied": "ተቀድቷል",
+  "toast.undoFor": {
+    "one": "ለ{count} ሰከንድ መቀልበስ ይችላሉ።",
+    "other": "ለ{count} ሰከንዶች መቀልበስ ይችላሉ።"
+  },
   "conversation.untitled": "አዲስ ተግባር",
   "history.title": "ተግባራት",
   "history.empty": "ተግባራትዎ እዚህ ይታያሉ።",

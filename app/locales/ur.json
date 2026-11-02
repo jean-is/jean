@@ -39,8 +39,18 @@
   "action.readAloud": "بلند آواز سے پڑھیں",
   "action.stopReading": "پڑھنا روکیں",
   "dock.resize": "سائز تبدیل کریں",
+  "dock.move": "منتقل کریں یا سائز تبدیل کریں",
+  "dock.start": "کام کے دائیں",
+  "dock.end": "کام کے بائیں",
+  "dock.bottom": "کام کے نیچے",
+  "dock.wider": "زیادہ چوڑا",
+  "dock.narrower": "زیادہ تنگ",
   "speech.noVoice": "اس آلے پر کوئی آواز یہ زبان ({language}) نہیں پڑھ سکتی۔ آپ اپنے سسٹم کی ترتیبات میں ایک آواز شامل کر سکتے ہیں۔",
   "toast.copied": "کاپی ہو گیا",
+  "toast.undoFor": {
+    "one": "آپ {count} سیکنڈ تک اسے واپس لے سکتے ہیں۔",
+    "other": "آپ {count} سیکنڈ تک اسے واپس لے سکتے ہیں۔"
+  },
   "conversation.untitled": "نیا کام",
   "history.title": "کام",
   "history.empty": "آپ کے کام یہاں نظر آئیں گے۔",

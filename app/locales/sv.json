@@ -39,8 +39,18 @@
   "action.readAloud": "Läs upp",
   "action.stopReading": "Sluta läsa",
   "dock.resize": "Ändra storlek",
+  "dock.move": "Flytta eller ändra storlek",
+  "dock.start": "Till vänster om uppgiften",
+  "dock.end": "Till höger om uppgiften",
+  "dock.bottom": "Under uppgiften",
+  "dock.wider": "Bredare",
+  "dock.narrower": "Smalare",
   "speech.noVoice": "Ingen röst på den här enheten kan läsa det här språket ({language}). Systemets inställningar kan lägga till en.",
   "toast.copied": "Kopierat",
+  "toast.undoFor": {
+    "one": "Du kan ångra i {count} sekund.",
+    "other": "Du kan ångra i {count} sekunder."
+  },
   "conversation.untitled": "Ny uppgift",
   "history.title": "Uppgifter",
   "history.empty": "Dina uppgifter visas här.",

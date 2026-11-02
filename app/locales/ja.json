@@ -39,8 +39,17 @@
   "action.readAloud": "読み上げる",
   "action.stopReading": "読み上げを止める",
   "dock.resize": "サイズを変更",
+  "dock.move": "移動またはサイズ変更",
+  "dock.start": "タスクの左へ",
+  "dock.end": "タスクの右へ",
+  "dock.bottom": "タスクの下へ",
+  "dock.wider": "広く",
+  "dock.narrower": "狭く",
   "speech.noVoice": "このデバイスには{language}を読み上げられる声がありません。システムの設定で追加できます。",
   "toast.copied": "コピーしました",
+  "toast.undoFor": {
+    "other": "{count} 秒間、元に戻せます。"
+  },
   "conversation.untitled": "新しいタスク",
   "history.title": "タスク",
   "history.empty": "タスクはここに表示されます。",

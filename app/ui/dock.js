@@ -8,11 +8,13 @@
 // aren't as the panes opening make them, the address says how (`?split=row(here,col40(files/report.pdf,browser))`). On a window narrower
 // than 60rem the panes cover the conversation instead, along its longer side, the rest of the page inert. Loaded with the first
 // pane, with its style sheet, before the pane's own.
+import { html } from 'lit-html'
 import { batch, computed, effect, signal } from '@preact/signals-core'
 import { app, updateSettings } from './state.js'
 import { t } from '../core/i18n.js'
 import { styleSheet } from './sheet.js'
 import { keep } from './windows.js'
+import { icons } from './menu-icons.js'
 import { atEnd, scroller, toEnd } from './chat.js'
 import { MOST, leaves, parse, places, put, rename as named, reshare, swap, without, write, zone } from './tree.js'
 
@@ -180,8 +182,8 @@ const boards = new ResizeObserver(soon)
 
 // ─── The edges ───────────────────────────────────────────────────────────────
 
-/** One for each split, wider to the pointer than it looks; next to the conversation along the line, the edge of the panes' side. */
-const handles = /** @type {HTMLElement[]} */ ([])
+/** One for each split, wider to the pointer than it looks; next to the conversation along the line, the edge of the panes' side; and each one's step. */
+const handles = /** @type {HTMLElement[]} */ ([]), nudges = /** @type {WeakMap<HTMLElement, (by: number) => void>} */ (new WeakMap())
 /** @param {ReturnType<typeof places>['splits']} splits */
 function edges(splits) {
   while (handles.length > splits.length) handles.pop()?.remove()
@@ -233,12 +235,14 @@ function grip(i) {
       batch(() => { const done = moving.peek(); if (done) set(done.share); moving.value = null })
     }, { once: true })
   })
+  /** A step along the edge, the first part's way (1) or the other's (-1), as an arrow key or a pane's menu takes it. @param {number} by */
+  const nudge = (by) => { const { split: way, share, w, h } = split(), box = area(); set(share + (by * STEP * rem()) / (way === 'row' ? box.width * w : box.height * h)) }
+  nudges.set(handle, nudge)
   handle.addEventListener('keydown', (event) => {
-    const { split: way, share, w, h } = split(), box = area()
-    const by = way === 'row' ? /** @type {Record<string, number>} */ ({ ArrowRight: 1, ArrowLeft: -1 })[event.key] * (rtl() ? -1 : 1) : /** @type {Record<string, number>} */ ({ ArrowDown: 1, ArrowUp: -1 })[event.key]
+    const by = split().split === 'row' ? /** @type {Record<string, number>} */ ({ ArrowRight: 1, ArrowLeft: -1 })[event.key] * (rtl() ? -1 : 1) : /** @type {Record<string, number>} */ ({ ArrowDown: 1, ArrowUp: -1 })[event.key]
     if (!by) return
     event.preventDefault()
-    set(share + (by * STEP * rem()) / (way === 'row' ? box.width * w : box.height * h))
+    nudge(by)
   })
   handle.addEventListener('dblclick', () => {
     if (handle.classList.contains('dock-edge')) width = undefined
@@ -291,7 +295,7 @@ export function show(target) {
     insetBlockStart: `${box.top + (y + (at === 'bottom' ? down : 0)) * box.height}px`, inlineSize: `${across * box.width}px`, blockSize: `${down * box.height}px` })
 }
 
-/** Dropped: a pane moved changing places with another, one from the drawer taking a task's or a file's, or beside the part, from where it was. @param {string} part @param {NonNullable<ReturnType<typeof aim>>} target @param {boolean} [drawer] */
+/** Dropped: a pane moved changing places with another, one from the drawer taking a task's or a file's, or beside the part, from where it was. @param {string} part @param {{ leaf: string, at: Zone }} target @param {boolean} [drawer] */
 export function land(part, { leaf, at }, drawer = false) {
   const tree = visible.peek()
   layout.value = filled(at === 'center' && !drawer ? swap(tree, part, leaf) : put(without(tree, part) ?? 'here', leaf, part, at))
@@ -318,3 +322,20 @@ dock.addEventListener('pointerdown', (event) => {
     if (aimed) land(part, aimed)
   }, { once: true })
 })
+
+/**
+ * A pane's head's menu while panes are beside the conversation: the pane moved before it, after it or under it, or its side a step
+ * wider or narrower, as dragging its head and its edge do, with a press (RGAA 7.3). @param {HTMLElement} element  the pane
+ */
+export function moves(element) {
+  const id = `${element.id}-moves`, part = () => names.get(element) ?? ''
+  const go = (/** @type {Zone} */ at) => { layout.value = filled(put(without(visible.peek(), part()) ?? 'here', 'here', part(), at, at === 'end' ? besideShare() : at === 'start' ? 1 - besideShare() : 0.5)); element.removeAttribute('data-look') }
+  // The nearest edge along the line, a step towards the pane's side or away from it.
+  const grow = (/** @type {number} */ by) => {
+    const all = laid.peek().splits, i = all.findLastIndex((one) => one.split === 'row' && one.parts.some((side) => leaves(side).includes(part())))
+    if (i >= 0) nudges.get(handles[i])?.(leaves(all[i].parts[0]).includes(part()) ? by : -by)
+  }
+  const row = (/** @type {string} */ key, /** @type {() => void} */ run) => html`<li><button type="button" popovertarget=${id} popovertargetaction="hide" @click=${run}>${t(key)}</button></li>`
+  return html`<button class="icon-button pane-moves" popovertarget=${id} aria-label=${t('dock.move')}>${icons.more}</button><div id=${id} class="menu pane-menu" popover>
+    <ul>${(/** @type {Zone[]} */ (['start', 'end', 'bottom'])).map((at) => row(`dock.${at}`, () => go(at)))}</ul><hr><ul>${row('dock.wider', () => grow(1))}${row('dock.narrower', () => grow(-1))}</ul></div>`
+}

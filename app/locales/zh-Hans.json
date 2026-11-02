@@ -39,8 +39,17 @@
   "action.readAloud": "朗读",
   "action.stopReading": "停止朗读",
   "dock.resize": "调整大小",
+  "dock.move": "移动或调整大小",
+  "dock.start": "在任务左侧",
+  "dock.end": "在任务右侧",
+  "dock.bottom": "在任务下方",
+  "dock.wider": "更宽",
+  "dock.narrower": "更窄",
   "speech.noVoice": "这台设备上没有能朗读{language}的声音。你可以在系统设置中添加。",
   "toast.copied": "已复制",
+  "toast.undoFor": {
+    "other": "{count} 秒内可撤销。"
+  },
   "conversation.untitled": "新任务",
   "history.title": "任务",
   "history.empty": "你的任务会显示在这里。",

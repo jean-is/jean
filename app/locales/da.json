@@ -39,8 +39,18 @@
   "action.readAloud": "Læs højt",
   "action.stopReading": "Stop oplæsning",
   "dock.resize": "Tilpas størrelse",
+  "dock.move": "Flyt eller tilpas størrelse",
+  "dock.start": "Til venstre for opgaven",
+  "dock.end": "Til højre for opgaven",
+  "dock.bottom": "Under opgaven",
+  "dock.wider": "Bredere",
+  "dock.narrower": "Smallere",
   "speech.noVoice": "Ingen stemme på denne enhed kan læse dette sprog ({language}). Systemets indstillinger kan tilføje en.",
   "toast.copied": "Kopieret",
+  "toast.undoFor": {
+    "one": "Du kan fortryde i {count} sekund.",
+    "other": "Du kan fortryde i {count} sekunder."
+  },
   "conversation.untitled": "Ny opgave",
   "history.title": "Opgaver",
   "history.empty": "Dine opgaver vises her.",

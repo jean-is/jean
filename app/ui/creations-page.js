@@ -9,7 +9,7 @@
 import { html, nothing, svg } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
-import { app, notify } from './state.js'
+import { app, held, notify } from './state.js'
 import { slots } from './caps.js'
 import { all, reread, show, query as words, kind, order } from './creations.js'
 import { icons, icon } from './menu-icons.js'
@@ -77,10 +77,13 @@ function drop(item) {
     waiting.delete(item.path)
     import('./preview.js').then(({ unshow }) => unshow(item.link.uri)).then(() => (item.kind.remove ?? item.kind.hide)(item)).catch(console.warn).finally(() => reread().then(back))
   }
-  const timer = setTimeout(now, 5000)
+  // Kept while the toast has the pointer or the keyboard, which goes to its Undo rather than falling to the page.
+  const later = () => { timer = setTimeout(held() ? later : now, held() ? 1000 : 0) }
+  let timer = setTimeout(later, 5000)
   gone.value = new Set(gone.value).add(item.path)
   waiting.set(item.path, now)
-  notify(t(item.kind.remove ? 'creations.deleted' : 'creations.removed', { name: item.name }), { label: t('memory.undo'), run: () => { clearTimeout(timer); waiting.delete(item.path); back() } }, 5000)
+  notify(t(item.kind.remove ? 'creations.deleted' : 'creations.removed', { name: item.name }), { label: t('memory.undo'), run: () => { clearTimeout(timer); waiting.delete(item.path); back() }, undo: true }, 5000)
+  requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector('app-toasts .toast .button'))?.focus())
 }
 
 /**
@@ -192,7 +195,7 @@ class Page extends Element {
     </div>
     ${starts.length ? html`<ul class=${here.length ? 'creations-start' : 'creations-start is-empty'} aria-label=${t('creations.create')}>${starts.map((one) => html`<li><button class="creation-start" data-kind=${one.id} @click=${make(one)}>
       <span>${one.draw()}</span><span><b>${t(`creations.one.${one.id}`)}</b> <small>${t(`creations.start.${one.id}`)}</small></span>${icons.plus}<span class="creation-blank"></span></button></li>`)}</ul>` : nothing}
-    ${found && !list.length ? html`<p class="creations-none">${t('creations.none', { words: words.value.trim() })}<button class="button" @click=${() => { words.value = ''; kind.value = '' }}>${t('creations.clear')}</button></p>` : nothing}
+    <div role="status">${found && !list.length ? html`<p class="creations-none">${t('creations.none', { words: words.value.trim() })}<button class="button" @click=${() => { words.value = ''; kind.value = '' }}>${t('creations.clear')}</button></p>` : nothing}</div>
     ${groups.map(([name, items], at) => { const words = html`${name}<span>${count.format(items.length)}</span>`; return !items.length ? nothing : html`${name ? html`<h2 class="creations-group">${at ? words : folding('creations', words)}</h2>` : nothing}
       ${!at && app.folded.value.has('creations') ? nothing : html`<ul class="creations-cards">${virtual({ count: items.length, key: (i) => items[i].path,
       at: items.findIndex((item) => item.path === renaming.value), draw: (i) => card(items, i) })}</ul>`}` })}

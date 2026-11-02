@@ -51,7 +51,8 @@
 :is(.dock-edge, .dock-divider):focus-visible { outline: 0; }
 :is(.dock-edge, .dock-divider):is(:hover, :focus-visible, .is-grabbed)::after { opacity: 1; transition-delay: 0.1s; }
 :is(.dock-edge, .dock-divider).is-grabbed::after { transition-delay: 0s; }
-:root[data-dock='beside'] .pane-head { cursor: grab; }
+:root[data-dock='beside'] .pane-head { cursor: grab; } :root:not([data-dock='beside']) .pane-moves { display: none; }
+.pane-menu { position-anchor: auto; position-area: block-end span-inline-start; position-try-fallbacks: flip-block; margin: 0.25rem 0; cursor: auto; }
 /* While one is dragged: its cursor everywhere, no text selected, and pages let the pointer by. */
 :root[data-resizing] { user-select: none; -webkit-user-select: none; }
 :root[data-resizing] iframe { pointer-events: none; }

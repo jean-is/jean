@@ -39,8 +39,17 @@
   "action.readAloud": "Kà á sókè",
   "action.stopReading": "Dá kíkà dúró",
   "dock.resize": "Yí ìwọ̀n padà",
+  "dock.move": "Gbé e tàbí yí ìwọ̀n padà",
+  "dock.start": "Ní òsì iṣẹ́ náà",
+  "dock.end": "Ní ọ̀tún iṣẹ́ náà",
+  "dock.bottom": "Ní ìsàlẹ̀ iṣẹ́ náà",
+  "dock.wider": "Fẹ̀ sí i",
+  "dock.narrower": "Dín kù",
   "speech.noVoice": "Kò sí ohùn kankan lórí ẹ̀rọ yìí tó lè ka èdè yìí ({language}). Ẹ lè fi ọ̀kan kún un nínú ètò ẹ̀rọ yín.",
   "toast.copied": "A ti ṣe ẹ̀dà rẹ̀",
+  "toast.undoFor": {
+    "other": "Ẹ lè dá a padà láàárín ìṣẹ́jú-àáyá {count}."
+  },
   "conversation.untitled": "Iṣẹ́ tuntun",
   "history.title": "Àwọn iṣẹ́",
   "history.empty": "Àwọn iṣẹ́ yín yóò hàn níbí.",
