@@ -50,8 +50,8 @@ export async function makeFile(name, content, { paper = 'a4', date, look, pictur
   const clean = fileName(name)
   const ext = /\.([a-z0-9]{1,8})$/i.exec(clean)?.[1].toLowerCase() ?? ''
   if (!content.trim()) throw new Error('The file has no content.')
-  if (ext === 'docx') return { name: clean, mimeType: DOCX, bytes: await docx(content, paper, date, look ?? {}, pictures, made) }
-  if (ext === 'xlsx') return { name: clean, mimeType: XLSX, bytes: await xlsx(sheetsIn(content, clean.slice(0, -5)), date, look ?? {}) }
+  if (ext === 'docx') return { name: clean, mimeType: DOCX, bytes: await docx(content, paper, date, look ?? {}, pictures, made, clean.slice(0, -5)) }
+  if (ext === 'xlsx') return { name: clean, mimeType: XLSX, bytes: await xlsx(sheetsIn(content, clean.slice(0, -5)), date, look ?? {}, clean.slice(0, -5)) }
   if (!ext) throw new Error('Name the file with its kind, e.g. "Report.docx", "Budget.xlsx" or "Notes.txt".')
   if (BINARY.has(ext)) throw new Error(`A .${ext} file can't be made: it isn't text. Make a Word document (.docx, which Word saves as PDF too), a spreadsheet (.xlsx), a drawing (.svg) or a text file (.md, .csv, .html…).`)
   // A byte-order mark, so Excel reads a CSV as UTF-8.
@@ -80,14 +80,16 @@ const HEAD = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'
 const PACKAGE = 'http://schemas.openxmlformats.org/package/2006'
 const OFFICE = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships'
 
-/** @param {[string, string][]} parts path → content type, under officedocument's @param {string[]} [pictures] the kinds of picture it holds */
+/** @param {[string, string][]} parts path → content type, under officedocument's but the title's @param {string[]} [pictures] the kinds of picture it holds */
 const contentTypes = (parts, pictures = []) => `${HEAD}<Types xmlns="${PACKAGE}/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/>${
-  pictures.map((kind) => `<Default Extension="${kind}" ContentType="image/${kind}"/>`).join('')}${parts.map(([path, type]) => `<Override PartName="/${path}" ContentType="application/vnd.openxmlformats-officedocument.${type}+xml"/>`).join('')}</Types>`
+  pictures.map((kind) => `<Default Extension="${kind}" ContentType="image/${kind}"/>`).join('')}${parts.map(([path, type]) => `<Override PartName="/${path}" ContentType="application/vnd.openxmlformats-${type === 'core' ? 'package.core-properties' : `officedocument.${type}`}+xml"/>`).join('')}</Types>`
 
-/** @param {[string, string, string, string?][]} links id, type (under officeDocument's), target, and External for a web address */
+/** @param {[string, string, string, string?][]} links id, type (under officeDocument's but the title's), target, and External for a web address */
 const relationships = (links) => `${HEAD}<Relationships xmlns="${PACKAGE}/relationships">${
-  links.map(([id, type, target, mode]) => `<Relationship Id="${id}" Type="${OFFICE}/${type}" Target="${xml(target)}"${mode ? ' TargetMode="External"' : ''}/>`).join('')}</Relationships>`
+  links.map(([id, type, target, mode]) => `<Relationship Id="${id}" Type="${type === 'core' ? `${PACKAGE}/relationships/metadata/core-properties` : `${OFFICE}/${type}`}" Target="${xml(target)}"${mode ? ' TargetMode="External"' : ''}/>`).join('')}</Relationships>`
 
+/** A file's title, which Word and Excel show and read out (RGAA 13.3): its name. @param {string} title */
+const core = (title) => `${HEAD}<cp:coreProperties xmlns:cp="${PACKAGE}/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/"><dc:title>${xml(title)}</dc:title></cp:coreProperties>`
 /** @param {Record<string, string | Uint8Array>} parts path → XML, or a picture's bytes @param {Date} [date] */
 const zip = (parts, date) => writeZip(Object.entries(parts).map(([name, part]) => ({ name, bytes: typeof part === 'string' ? encoder.encode(part) : part })), date)
 
@@ -120,8 +122,8 @@ const PAPER = { a4: '<w:pgSz w:w="11906" w:h="16838"/>', letter: '<w:pgSz w:w="1
 /** The look here on white paper (ui/kit.js, D601, D663): its colours as `#rrggbb`, those for words reading on white, its voice or its own fonts, and for Word, its logo and the corner it sits in. @typedef {{ colour?: string, ink?: string, muted?: string, soft?: string, voice?: string, fonts?: { heading: string[], body: string[] }, logo?: Picture | string, logoAt?: string }} Look */
 /** @typedef {{ b?: boolean, i?: boolean, s?: boolean, code?: boolean, link?: boolean }} Format */
 
-/** @param {string} markdown @param {'a4' | 'letter'} paper @param {Date | undefined} date @param {Look} look @param {Map<string, Picture> | undefined} pictures @param {boolean} made */
-async function docx(markdown, paper, date, look, pictures, made) {
+/** @param {string} markdown @param {'a4' | 'letter'} paper @param {Date | undefined} date @param {Look} look @param {Map<string, Picture> | undefined} pictures @param {boolean} made @param {string} title */
+async function docx(markdown, paper, date, look, pictures, made, title) {
   /** @type {Parts} */
   const parts = { links: [], lists: [], media: [], pictures, colour: look.colour?.slice(1), fill: look.soft?.slice(1) }
   const body = blocks(lexed(markdown, { breaks: true }), parts) || '<w:p/>'
@@ -129,10 +131,10 @@ async function docx(markdown, paper, date, look, pictures, made) {
   const { logoAt = 'top-end' } = look, logo = typeof look.logo === 'object' ? look.logo : undefined, [edge, tag] = logoAt.startsWith('bottom') ? ['footer', 'ftr'] : ['header', 'hdr']
   const section = `<w:sectPr>${logo ? `<w:${edge}Reference w:type="default" r:id="rIdLogo"/>` : ''}${PAPER[paper]}<w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="708" w:footer="708" w:gutter="0"/></w:sectPr>`
   return zip({
-    '[Content_Types].xml': contentTypes([['word/document.xml', 'wordprocessingml.document.main'], ['word/styles.xml', 'wordprocessingml.styles'], ['word/numbering.xml', 'wordprocessingml.numbering'], ...(made ? /** @type {[string, string][]} */ ([['docProps/custom.xml', 'custom-properties']]) : []),
+    '[Content_Types].xml': contentTypes([['word/document.xml', 'wordprocessingml.document.main'], ['word/styles.xml', 'wordprocessingml.styles'], ['word/numbering.xml', 'wordprocessingml.numbering'], ['docProps/core.xml', 'core'], ...(made ? /** @type {[string, string][]} */ ([['docProps/custom.xml', 'custom-properties']]) : []),
       ...(logo ? /** @type {[string, string][]} */ ([[`word/${edge}.xml`, `wordprocessingml.${edge}`]]) : [])], [...new Set([...parts.media, ...(logo ? [logo] : [])].map(({ type }) => type))]),
-    '_rels/.rels': relationships([['rId1', 'officeDocument', 'word/document.xml'], ...(made ? /** @type {[string, string, string][]} */ ([['rId2', 'custom-properties', 'docProps/custom.xml']]) : [])]),
-    ...(made && { 'docProps/custom.xml': CUSTOM }),
+    '_rels/.rels': relationships([['rId1', 'officeDocument', 'word/document.xml'], ['rId3', 'core', 'docProps/core.xml'], ...(made ? /** @type {[string, string, string][]} */ ([['rId2', 'custom-properties', 'docProps/custom.xml']]) : [])]),
+    ...(made && { 'docProps/custom.xml': CUSTOM }), 'docProps/core.xml': core(title),
     'word/_rels/document.xml.rels': relationships([['rId1', 'styles', 'styles.xml'], ['rId2', 'numbering', 'numbering.xml'],
       ...parts.links.map((url, i) => /** @type {[string, string, string, string]} */ ([`rIdLink${i + 1}`, 'hyperlink', url, 'External'])),
       ...parts.media.map(({ type }, i) => /** @type {[string, string, string]} */ ([`rIdPicture${i + 1}`, 'image', `media/picture${i + 1}.${type}`])), ...(logo ? /** @type {[string, string, string][]} */ ([['rIdLogo', edge, `${edge}.xml`]]) : [])]),
@@ -436,8 +438,8 @@ const column = (index) => (index >= 26 ? column(Math.floor(index / 26) - 1) : ''
 /** How wide a text shows: CJK characters take two columns. @param {string} text */
 const width = (text) => [...text].reduce((sum, char) => sum + (/[\u1100-\u115F\u2E80-\uA4CF\uAC00-\uD7A3\uF900-\uFAFF\uFF00-\uFF60]/.test(char) ? 2 : 1), 0)
 
-/** @param {Sheet[]} sheets @param {Date} [date] @param {Look} [look] */
-async function xlsx(sheets, date, look = {}) {
+/** @param {Sheet[]} sheets @param {Date} [date] @param {Look} [look] @param {string} [title] */
+async function xlsx(sheets, date, look = {}, title = '') {
   /** @type {Map<string, number>} */
   const strings = new Map()
   /** @param {string} text */
@@ -456,7 +458,9 @@ async function xlsx(sheets, date, look = {}) {
     }
     return `<c r="${ref}" t="s"${header ? ' s="1"' : ''}><v>${shared(value)}</v></c>`
   }
-  const worksheets = sheets.map(({ rows }) => {
+  // A sheet whose head row names each column once is a table, for Excel and what reads it to say which head a cell is under (RGAA 13.3).
+  const tables = sheets.map(({ rows }) => rows.length > 1 && rows[0].every((name) => name.trim()) && new Set(rows[0].map((name) => name.toLowerCase())).size === rows[0].length)
+  const worksheets = sheets.map(({ rows }, i) => {
     const header = rows.length > 1
     /** @type {Map<string, [number, number]>} */
     const numbers = new Map()
@@ -471,19 +475,23 @@ async function xlsx(sheets, date, look = {}) {
     const frozen = header ? '<pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/>' : ''
     const direction = rightToLeft(rows.flat().join(' ')) ? ' rightToLeft="1"' : ''
     const data = rows.map((row, r) => `<row r="${r + 1}">${row.map((value, c) => cell(value, `${column(c)}${r + 1}`, r === 0 && header, numbers)).join('')}</row>`).join('')
-    return `${HEAD}<worksheet xmlns="${SHEET}"><sheetViews><sheetView workbookViewId="0"${direction}>${frozen}</sheetView></sheetViews>${cols ? `<cols>${cols}</cols>` : ''}<sheetData>${data}</sheetData></worksheet>`
+    return `${HEAD}<worksheet xmlns="${SHEET}" xmlns:r="${OFFICE}"><sheetViews><sheetView workbookViewId="0"${direction}>${frozen}</sheetView></sheetViews>${cols ? `<cols>${cols}</cols>` : ''}<sheetData>${data}</sheetData>${tables[i] ? '<tableParts count="1"><tablePart r:id="rId1"/></tableParts>' : ''}</worksheet>`
   })
+  const table = (/** @type {string[][]} */ rows, /** @type {number} */ i) => `${HEAD}<table xmlns="${SHEET}" id="${i + 1}" name="Table${i + 1}" displayName="Table${i + 1}" ref="A1:${column(rows[0].length - 1)}${rows.length}" totalsRowShown="0">`
+    + `<tableColumns count="${rows[0].length}">${rows[0].map((name, c) => `<tableColumn id="${c + 1}" name="${xml(name)}"/>`).join('')}</tableColumns></table>`
   const n = sheets.length
   return zip({
     '[Content_Types].xml': contentTypes([['xl/workbook.xml', 'spreadsheetml.sheet.main'], ...sheets.map((_, i) => /** @type {[string, string]} */ ([`xl/worksheets/sheet${i + 1}.xml`, 'spreadsheetml.worksheet'])),
-      ['xl/styles.xml', 'spreadsheetml.styles'], ['xl/sharedStrings.xml', 'spreadsheetml.sharedStrings'], ['docProps/custom.xml', 'custom-properties']]),
-    '_rels/.rels': relationships([['rId1', 'officeDocument', 'xl/workbook.xml'], ['rId2', 'custom-properties', 'docProps/custom.xml']]),
-    'docProps/custom.xml': CUSTOM,
+      ...sheets.flatMap((_, i) => (tables[i] ? [/** @type {[string, string]} */ ([`xl/tables/table${i + 1}.xml`, 'spreadsheetml.table'])] : [])),
+      ['xl/styles.xml', 'spreadsheetml.styles'], ['xl/sharedStrings.xml', 'spreadsheetml.sharedStrings'], ['docProps/custom.xml', 'custom-properties'], ['docProps/core.xml', 'core']]),
+    '_rels/.rels': relationships([['rId1', 'officeDocument', 'xl/workbook.xml'], ['rId2', 'custom-properties', 'docProps/custom.xml'], ['rId3', 'core', 'docProps/core.xml']]),
+    'docProps/custom.xml': CUSTOM, 'docProps/core.xml': core(title),
     'xl/_rels/workbook.xml.rels': relationships([...sheets.map((_, i) => /** @type {[string, string, string]} */ ([`rId${i + 1}`, 'worksheet', `worksheets/sheet${i + 1}.xml`])),
       [`rId${n + 1}`, 'styles', 'styles.xml'], [`rId${n + 2}`, 'sharedStrings', 'sharedStrings.xml']]),
     // Formulas have no saved results: they are worked out when the file opens.
     'xl/workbook.xml': `${HEAD}<workbook xmlns="${SHEET}" xmlns:r="${OFFICE}"><sheets>${sheets.map(({ name }, i) => `<sheet name="${xml(name)}" sheetId="${i + 1}" r:id="rId${i + 1}"/>`).join('')}</sheets><calcPr fullCalcOnLoad="1"/></workbook>`,
     ...Object.fromEntries(worksheets.map((sheet, i) => [`xl/worksheets/sheet${i + 1}.xml`, sheet])),
+    ...Object.fromEntries(sheets.flatMap(({ rows }, i) => (tables[i] ? [[`xl/worksheets/_rels/sheet${i + 1}.xml.rels`, relationships([['rId1', 'table', `../tables/table${i + 1}.xml`]])], [`xl/tables/table${i + 1}.xml`, table(rows, i)]] : []))),
     'xl/styles.xml': sheetStyles(look),
     'xl/sharedStrings.xml': `${HEAD}<sst xmlns="${SHEET}" count="${strings.size}" uniqueCount="${strings.size}">${[...strings.keys()].map((text) => `<si><t xml:space="preserve">${xml(text)}</t></si>`).join('')}</sst>`,
   }, date)

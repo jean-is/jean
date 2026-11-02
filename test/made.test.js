@@ -86,7 +86,7 @@ test('docx: Markdown becomes a Word document whose text reads back the same', as
 test('docx: styles, numbering, links, right-to-left paragraphs and the paper size', async () => {
   const { bytes } = await makeFile('Sales report.docx', REPORT, { date: DATE, paper: 'letter' })
   const files = await parts(bytes)
-  assert.deepEqual(Object.keys(files).sort(), ['[Content_Types].xml', '_rels/.rels', 'docProps/custom.xml', 'word/_rels/document.xml.rels', 'word/document.xml', 'word/numbering.xml', 'word/styles.xml'])
+  assert.deepEqual(Object.keys(files).sort(), ['[Content_Types].xml', '_rels/.rels', 'docProps/core.xml', 'docProps/custom.xml', 'word/_rels/document.xml.rels', 'word/document.xml', 'word/numbering.xml', 'word/styles.xml'])
   const doc = files['word/document.xml']
   assert.match(doc, /<w:pStyle w:val="Heading1"\/>/)
   assert.match(doc, /<w:b\/><w:bCs\/><\/w:rPr><w:t xml:space="preserve">bold/)
