@@ -8,6 +8,10 @@ Ask in words or with a file, and Jean hands back what you asked for, made: an an
 
 [**Open Jean at jean.is**](https://jean.is) · [Help](https://jean.is/help) · [Why Jean exists](MANIFESTO.md)
 
+[![Jean in a minute: a spreadsheet becomes a chart worked out by a program, a letter written by an AI on the computer itself, an email sent only once allowed, and everything kept on the device.](docs/reel.webp)](https://jean.is/watch)
+
+*Jean in a minute, played by Jean itself. [Watch it with sound, in your language](https://jean.is/watch).*
+
 ## What Jean does
 
 - **Reads your files:** PDF, Word, Excel, PowerPoint, CSV and text, and pictures for brains that can see.
@@ -97,6 +101,7 @@ Bugs and questions go in [issues](https://github.com/jean-is/jean/issues). Repor
 | [deploy/](deploy/README.md) | Hosting a copy of Jean: the headers, the types, and a recipe for each host |
 | [docs/gateway.md](docs/gateway.md) | Running the gateway, and what each service needs |
 | [cli/](cli/README.md) | jean-cli: Jean in an editor, and the gateway from npm |
+| [docs/reels.md](docs/reels.md) | Jean's videos of itself: the reels made and to make, the player, the score and the export |
 | [docs/sharing.md](docs/sharing.md), [docs/encryption.md](docs/encryption.md), [docs/certificates.md](docs/certificates.md) | Sharing by link, encryption at rest and answer certificates, each with its work left |
 | [docs/roadmap.md](docs/roadmap.md) | The versions, what is still to check by hand, and what the launch needs |
 | [docs/decisions.md](docs/decisions.md), [docs/open-questions.md](docs/open-questions.md) | Every decision as it stands, by topic, with the alternatives that were rejected; and what is still undecided |

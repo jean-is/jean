@@ -70,7 +70,7 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
 
 ## Site pages
 
-- Every page beside the app (the homepage, the family page, the page for IT, the privacy policy, the terms, where files go, help and its articles, and any to come) is a folder of `site/` (an article, one of `site/help/`): its `page.js`, its words as `<lang>.json` and its look as `<folder>.css`, over `site.css`, written by `site/site.js` with the site's own top and foot (D438). Never a page anywhere else, and no head, top or foot of its own.
+- Every page beside the app (the homepage, the family page, the page for IT, the privacy policy, the terms, where files go, help and its articles, and any to come) is a folder of `site/` (an article, one of `site/help/`): its `page.js`, its words as `<lang>.json` and its look as `<folder>.css`, over `site.css`, written by `site/site.js` with the site's own top and foot (D438). Never a page anywhere else, and no head, top or foot of its own. The reels' player, `reel.html`, which `/watch` writes, is no page but a document pages frame, as `demo.html` is (D687).
 - Every page is in English and French at least, and passes `site/checks.js`: accessibility, what search engines read, its languages, its links. `build:web`, `npm run build` and `npm test` enforce it, and axe-core checks contrast in `npm run e2e`. Fix the page, never the check.
 - Only a page that `ships` goes into `app/`, written there by `npm run build`; the others only jean.is serves.
 
@@ -110,6 +110,7 @@ npm run deploy  # build:web from a commit in git, never the working tree, then t
 npm run release # build a commit from git as deploy does, then dist/release/: the zip and bill of materials an organisation deploys without building, their SHA256SUMS signed with RELEASE_KEY and checked against docs/trust/allowed_signers (D419)
 npm run tenant -- add <host> --policy <file>  # a copy Warehouse SAS hosts at an organisation's address: its policy checked as policy.html would there, then dist/tenants/ for the server's Caddy (TENANTS=<registry.json>; remove, list, write; D456)
 npm run render  # build, then the package that draws a task saved as a web page, and a share’s viewer, in dist/render/, for npm publish ./dist/render (D305)
+npm run reel -- <name>  # build, then one of Jean's reels as a video, frame by frame: dist/reels/<name>.<lang>.mp4 and an animated preview, its score's loudness measured (D687); --lang, --theme light|dark, --size 1920x1080, --fps 30; needs ffmpeg
 npm run host    # build, then the share host in dist/host/, its viewer from the render package of this version (D361)
 npm run sounds -- <MuseScore's share/sound>  # the instruments scores play, MS Basic's, as a package in dist/sounds/, for npm publish ./dist/sounds (D338)
 npm run build:desktop  # build, then the desktop apps for macOS, Windows and Linux in dist/desktop/, with Neutralino (D155)
