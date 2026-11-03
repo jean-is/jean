@@ -15,6 +15,8 @@ import { loaded } from './caps.js'
 import { LOOKS } from './looks.js'
 import { scriptURL } from './trusted.js'
 import { settle, working } from './curtain.js'
+// Its toast, and every other, swiped aside.
+import './swipe.js'
 
 /** What the page left hands to the new one, in this tab only. */
 const HANDOVER = 'app.update'

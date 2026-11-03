@@ -165,11 +165,12 @@ class Toasts extends Element {
   render() {
     const waiting = app.updateReady.value
     const toast = app.toast.value, action = toast?.action, wrong = action && 'alert' in action
+    const close = (/** @type {() => void} */ away) => html`<button class="icon-button subtle" aria-label=${t('action.close')} @click=${away}>${icons.close}</button>`
     const said = toast && html`<p class="toast" role=${wrong ? 'alert' : nothing}><span dir="auto">${toast.message}${action && 'undo' in action ? html` ${t('toast.undoFor', { count: toast.seconds })}` : nothing}</span>${action && 'run' in action
-      ? html`<button class="button" @click=${() => { app.toast.value = null; action.run() }}>${action.label}</button>` : nothing}</p>`
+      ? html`<button class="button" @click=${() => { app.toast.value = null; action.run() }}>${action.label}</button>` : nothing}${close(() => { app.toast.value = null })}</p>`
     // What went wrong is said at once, the rest in a region there before its words, when the reader gets to them.
     return html`${wrong ? said : nothing}<div role="status"><span class="visually-hidden">${app.said.value}</span>${waiting ? html`<p class="toast">${t('update.ready', { name: BRAND.name })}
-      <button class="button primary" @click=${() => import('./update.js').then((update) => update.apply(waiting))}>${t('update.reload')}</button></p>` : nothing}${wrong ? nothing : said}</div>`
+      <button class="button primary" @click=${() => import('./update.js').then((update) => update.apply(waiting))}>${t('update.reload')}</button>${close(() => { app.updateReady.value = null })}</p>` : nothing}${wrong ? nothing : said}</div>`
   }
 
   updated() {

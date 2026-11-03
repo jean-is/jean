@@ -755,15 +755,16 @@ app-projects .wordmark > .icon { flex: none; --glyph: var(--icon-s); color: var(
   align-items: center;
   gap: 0.75rem;
   margin: 0;
-  padding: 0.55rem 0.6rem 0.55rem 1.1rem;
+  padding: 0.55rem 0.6rem;
+  padding-inline-start: 1.1rem;
   border: 1px solid var(--line-strong);
   border-radius: 999px;
   background: var(--glass);
   backdrop-filter: blur(14px);
   pointer-events: auto;
+  touch-action: pan-y;
   animation: arrive 0.4s var(--ease) both;
 }
-.toast:not(:has(button)) { padding-inline-end: 1.1rem; }
 .toast button { flex: none; }
 
 .noscript { padding: 2rem; text-align: center; }
