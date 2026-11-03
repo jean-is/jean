@@ -92,7 +92,7 @@ metadata:
   title-yo: "Kọ́ ọ"
   text-yo: "Ẹ̀kọ́ tí a lóye tí a sì ṣe àdánwò rẹ̀, pẹ̀lú àmì dípò ìdáhùn"
   title-zh-Hans: "真正学会"
-  text-zh-Hans: "理解课文并练习，给提示而不是答案"
+  text-zh-Hans: "把一课学懂并练熟，给提示而不是答案"
   title-zh-Hant: "真正學會"
   text-zh-Hant: "理解課文並練習，給提示而不是答案"
 ---

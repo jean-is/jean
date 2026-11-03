@@ -93,7 +93,7 @@ metadata:
   title-yo: "Ètò ìnáwó"
   text-yo: "Owó tí ń wọlé àti tí ń jáde nínú tábìlì, pẹ̀lú àwòrán"
   title-zh-Hans: "预算"
-  text-zh-Hans: "把收入和支出做成表格，并配图表"
+  text-zh-Hans: "收入和支出，做成电子表格并配上图表"
   title-zh-Hant: "預算"
   text-zh-Hant: "把收入和支出做成試算表，並附圖表"
 ---

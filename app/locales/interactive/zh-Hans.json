@@ -4,7 +4,7 @@
   "interactive.mapShow": "显示地图",
   "interactive.mapFrom": "地图来自 {site}，它会看到所显示的地点。",
   "interactive.inWords": "以文字查看",
-  "interactive.diagramSteps": "查看每一步及其后续",
+  "interactive.diagramSteps": "查看每一步和它的下一步",
   "interactive.diagramFrom": "从{first}开始的图示，文字说明就在下方",
   "interactive.diagramWords": "图示，文字说明就在下方",
   "interactive.mapNamed": "地图：{places}",

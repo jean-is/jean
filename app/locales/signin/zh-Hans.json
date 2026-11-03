@@ -4,5 +4,5 @@
   "signin.as": "已登录：{account}",
   "signin.out": "退出登录",
   "signin.signedOut": "你已退出登录。",
-  "signin.kept": "保存在这里的内容会留在此设备上。"
+  "signin.kept": "保存在这里的内容会留在这台设备上。"
 }

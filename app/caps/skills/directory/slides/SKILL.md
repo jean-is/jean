@@ -93,7 +93,7 @@ metadata:
   title-yo: "Síláìdì"
   text-yo: "Àwọn ìgbékalẹ̀ tí ó ṣetán láti gbé kalẹ̀, yípadà àti gbé jáde sí PowerPoint"
   title-zh-Hans: "幻灯片"
-  text-zh-Hans: "可直接放映、修改并导出为 PowerPoint 的演示文稿"
+  text-zh-Hans: "可直接放映、修改并导出为 PowerPoint 的幻灯片"
   title-zh-Hant: "投影片"
   text-zh-Hant: "可直接放映、修改並匯出為 PowerPoint 的簡報"
 ---
