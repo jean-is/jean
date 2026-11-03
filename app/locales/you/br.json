@@ -1,28 +1,28 @@
 {
-  "knows.instructions": "Ho kemennoù",
+  "knows.instructions": "Ho kemennadurioù",
   "knows.instructionsPlaceholder": "Da skouer : Respont e brezhoneg. Bez berr. Ur stal-vara am eus.",
   "knows.noticed": "Ar pezh en deus merzet {name}",
   "knows.forYou": "E pep lec’h",
   "knows.forProject": "E {project}",
   "knows.edit": "Kemmañ al linenn-mañ",
   "knows.from": "Digeriñ an drevell ma teu diouti",
-  "knows.promote": "Ober ur c’hemenn anezhañ",
-  "knows.promoted": "Bremañ ez eo unan eus ho kemennoù.",
+  "knows.promote": "Ober ur c’hemennadur anezhañ",
+  "knows.promoted": "Bremañ ez eo unan eus ho kemennadurioù.",
   "knows.nothing": "Netra c’hoazh.",
-  "you.line": "Ho kemennoù hag ar pezh en deus merzet {name} a vez kaset gant pep trevell d’an empenn a respont.",
+  "you.line": "Ho kemennadurioù hag ar pezh en deus merzet {name} a vez kaset gant pep trevell d’an empenn a respont.",
   "you.none": "Netra diwar ho penn c’hoazh. Ar pezh a skrivit amañ a vez lennet e penn kentañ pep trevell.",
   "you.cut": {
-    "one": "N’eo ket lennet ken an {count} linenn goshañ. Evit ma vo lennet, grit ur gemenn anezhi.",
-    "two": "N’int ket lennet ken an {count} linenn goshañ. Evit ma vo lennet unan, grit ur gemenn anezhi.",
-    "few": "N’int ket lennet ken an {count} linenn goshañ. Evit ma vo lennet unan, grit ur gemenn anezhi.",
-    "many": "N’int ket lennet ken an {count} a linennoù koshañ. Evit ma vo lennet unan, grit ur gemenn anezhi.",
-    "other": "N’int ket lennet ken an {count} linenn goshañ. Evit ma vo lennet unan, grit ur gemenn anezhi."
+    "one": "N’eo ket lennet ken an {count} linenn goshañ. Evit ma vo lennet, grit ur c’hemennadur anezhi.",
+    "two": "N’int ket lennet ken an {count} linenn goshañ. Evit ma vo lennet unan, grit ur c’hemennadur anezhi.",
+    "few": "N’int ket lennet ken an {count} linenn goshañ. Evit ma vo lennet unan, grit ur c’hemennadur anezhi.",
+    "many": "N’int ket lennet ken an {count} a linennoù koshañ. Evit ma vo lennet unan, grit ur c’hemennadur anezhi.",
+    "other": "N’int ket lennet ken an {count} linenn goshañ. Evit ma vo lennet unan, grit ur c’hemennadur anezhi."
   },
-  "you.nameText": "An anv a ro {name} deoc’h. N’eo kaset morse d’un empenn.",
+  "you.nameText": "An anv a ro {name} deoc’h. Morse n’eo kaset d’un empenn.",
   "you.edit": "Kemmañ",
   "you.cancel": "Nullañ",
   "you.more": "Muioc’h evit al linenn-mañ",
-  "you.empty": "Petra zo da zerc’hel soñj bepred ? Ho labour, ho yezhoù, an doare respontoù a blij deoc’h.",
+  "you.empty": "Petra a zlefe {name} derc’hel soñj bepred ? Ho labour, ho yezhoù, an doare respontoù a blij deoc’h.",
   "you.start.work": "Ho labour",
   "you.start.workText": "Labourat a ran evel ",
   "you.start.language": "Ho yezhoù",
@@ -46,6 +46,6 @@
   },
   "you.search": "Klask er pezh en deus merzet {name}",
   "you.unread": "N’int ket lennet ken",
-  "you.project": "Mont a reont gant ho re, en e drevelloù hepken.",
-  "you.org": "Kemennoù hoc’h aozadur"
+  "you.project": "Mont a reont gant ho re, e trevelloù ar raktres-mañ hepken.",
+  "you.org": "Kemennadurioù hoc’h aozadur"
 }
