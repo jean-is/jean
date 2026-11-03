@@ -104,8 +104,8 @@ export interface FS {
   exists: (path: string) => Promise<boolean>
   /** a file's size and when it last changed, in ms; null when missing (a folder's, D141) */
   stat?: (path: string) => Promise<{ size: number, lastModified: number } | null>
-  /** changes made by other tabs; returns unsubscribe */
-  watch?: (cb: (path: string) => void) => () => void
+  /** changes made by other tabs, and this one's too when `all`; returns unsubscribe */
+  watch?: (cb: (path: string) => void, options?: { all?: boolean }) => () => void
   estimate?: () => Promise<{ usage?: number, quota?: number, persisted?: boolean }>
   /** stops what it runs (a folder's storage worker) */
   close?: () => void

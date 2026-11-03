@@ -47,10 +47,10 @@ export async function opfsFS({ workerURL = new URL('./storage-worker.js', import
   /** @type {FS} */
   const whole = {
     ...files(call),
-    watch(cb) {
+    watch(cb, { all } = {}) {
       const channel = new BroadcastChannel('app-fs')
       channel.onmessage = ({ data }) => {
-        if (data?.from !== from && typeof data?.path === 'string') cb(data.path)
+        if ((all || data?.from !== from) && typeof data?.path === 'string') cb(data.path)
       }
       return () => channel.close()
     },

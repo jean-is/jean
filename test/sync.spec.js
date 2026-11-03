@@ -1,9 +1,11 @@
 // Sync (D157): two computers keep each other's conversations through a folder their cloud drive
-// syncs. Each computer is a browser context of its own, the system's picker is played by a folder of
-// its private file system (as in folders.spec.js), and the drive by the test, which copies one
-// computer's folder over the other's. Chromium only: elsewhere a page can't open a folder in place.
+// syncs, or two Jeans through the very same folder. Each computer is a browser context of its own, the
+// system's picker is played by a folder of its private file system (as in folders.spec.js), and the
+// drive by the test: by hand, copying one computer's folder over the other's, or on its own, as Dropbox
+// does; two Jeans on one folder are two profiles of one browser. Chromium only: elsewhere a page can't
+// open a folder in place.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, noted, turnOn, openFromCase, openSettings, openTasks, withPolicy } from './helpers.js'
+import { start, connectFakeBrain, ask, noted, turnOn, openFromCase, openSettings, openTasks, openProfile, deleteOpenTask, withPolicy } from './helpers.js'
 
 /** The system's folder picker, played by `.picked/<e2e.pick>` in the private file system, where Jean’s own files (sealed, D371) never are. @param {import('@playwright/test').Page} page */
 const picker = (page) => page.addInitScript(() => {
@@ -123,6 +125,183 @@ test('two computers keep each other’s conversations through a folder their dri
   await page.keyboard.press('Escape')
   await expect((await openTasks(page)).locator('.history-item', { hasText: 'leap year' })).toBeVisible()
   await context.close()
+})
+
+/**
+ * A drive as Dropbox keeps a folder on two computers, on its own: a moment after one computer's folder changes, the change goes to
+ * the other's, a deletion too; changed on both, one version stays and the other is kept beside it as a conflicted copy. A file
+ * that moved while it worked on it waits for its next pass. What Chrome writes beside a file meanwhile stays where it is.
+ * @param {import('@playwright/test').Page} one @param {import('@playwright/test').Page} two
+ */
+function dropbox(one, two) {
+  /** Writes a file of a computer's folder, or takes it away (null), unless it is no longer `was`. @param {import('@playwright/test').Page} page @param {string} path @param {string | null} text @param {string | null} was */
+  const put = (page, path, text, was) => page.evaluate(async ({ path, text, was }) => {
+    const parts = path.split('/'), name = String(parts.pop())
+    let dir = await (await (await navigator.storage.getDirectory()).getDirectoryHandle('.picked', { create: true })).getDirectoryHandle('Jean', { create: true })
+    try { for (const part of parts) dir = await dir.getDirectoryHandle(part, { create: text !== null }) } catch { return was === null }
+    if (await dir.getFileHandle(name).then(async (file) => (await file.getFile()).text(), () => null) !== was) return false
+    if (text === null) return dir.removeEntry(name).then(() => true, () => true)
+    const writable = await (await dir.getFileHandle(name, { create: true })).createWritable()
+    await writable.write(text)
+    await writable.close()
+    return true
+  }, { path, text, was })
+  /** What each computer's folder held as the drive last left it. @type {Record<string, string>[]} */
+  let left = [{}, {}]
+  const pass = async () => {
+    const now = await Promise.all([one, two].map(async (page) => Object.fromEntries(Object.entries(await folder(page, 'Jean')).filter(([path]) => !path.endsWith('.crswap')))))
+    const next = now.map((files) => ({ ...files }))
+    for (const path of new Set([...Object.keys(now[0]), ...Object.keys(now[1]), ...Object.keys(left[0])])) {
+      const [a, b] = now.map((files) => files[path] ?? null)
+      const [movedOne, movedTwo] = [a !== (left[0][path] ?? null), b !== (left[1][path] ?? null)]
+      if (a === b || (!movedOne && !movedTwo)) continue
+      // Changed on both: a change beats a deletion, else the first computer's stays, and the second's is a conflicted copy.
+      const [kept, other] = movedOne && movedTwo ? (a === null ? [b, null] : [a, b]) : movedOne ? [a, null] : [b, null]
+      const copy = path.replace(/(\.[^./]+)?$/, ' (Desk’s conflicted copy 2026-11-03)$1')
+      const done = await Promise.all([a === kept || put(one, path, kept, a), b === kept || put(two, path, kept, b),
+        ...(other === null ? [] : [put(one, copy, other, null), put(two, copy, other, null)])])
+      // One that moved meanwhile is seen as moved on both sides at the next pass, so neither change is lost.
+      if (done.every(Boolean)) for (const files of next) kept === null ? delete files[path] : (files[path] = kept)
+      else for (const [i, files] of next.entries()) left[i][path] === undefined ? delete files[path] : (files[path] = left[i][path])
+    }
+    left = next
+  }
+  let on = true
+  const going = (async () => {
+    while (on) {
+      await pass().catch(() => {})
+      await new Promise((resolve) => setTimeout(resolve, 300))
+    }
+  })()
+  return { stop: () => ((on = false), going) }
+}
+
+/** Every toast a page shows from now on, not one on show already; `told` gives those that showed since it last did. @param {import('@playwright/test').Page} page */
+const listen = (page) => page.evaluate(() => {
+  const told = /** @type {string[]} */ (Object.assign(window, { told: [] }).told), seen = new WeakMap()
+  /** @param {boolean} anew */
+  const look = (anew) => document.querySelectorAll('.toast').forEach((toast) => {
+    if (seen.get(toast) !== toast.textContent && seen.set(toast, toast.textContent) && anew) told.push(String(toast.textContent))
+  })
+  look(false)
+  new MutationObserver(() => look(true)).observe(document.documentElement, { subtree: true, childList: true, characterData: true })
+})
+/** @param {import('@playwright/test').Page} page @returns {Promise<string[]>} */
+const told = (page) => page.evaluate(() => /** @type {any} */ (window).told.splice(0))
+
+/** Whether a Jean holds a task whose file has all these words. @param {import('@playwright/test').Page} page @param {string[]} words */
+const holds = (page, ...words) => page.evaluate(async (words) => {
+  const [{ app }, { walk }] = await Promise.all([import('/ui/state.js'), import('/core/fs.js')])
+  for (const path of (await walk(app.fs)).filter((path) => path.endsWith('.jsonl'))) {
+    const text = (await app.fs.read(path)) ?? ''
+    if (words.every((each) => text.includes(each))) return true
+  }
+  return false
+}, words)
+
+/**
+ * Two Jeans syncing with one folder, each with a brain, keep each other in step on their own, with nothing clicked or answered
+ * for it and nothing said: a task made on one comes to the other's list, a request there shows on the first one's screen as it
+ * is, and a task deleted on the first goes from the second, where it was on screen.
+ * @param {import('@playwright/test').Page} one @param {import('@playwright/test').Page} two
+ */
+async function inStep(one, two) {
+  await Promise.all([one, two].map(listen))
+  await (await openTasks(one)).locator('.place', { hasText: 'New task' }).click()
+  await expect(one.locator('.hero-question')).toBeVisible()
+  await answered(one, 'What is a leap year?')
+  const task = (await openTasks(two)).locator('.history-item', { hasText: 'leap year' })
+  await expect(task).toBeVisible({ timeout: 20_000 })
+  // As it was once its answer was noted, which comes a moment after it: what is asked there next goes on from there.
+  await expect.poll(() => holds(two, 'What is a leap year?', '"reached"'), { timeout: 20_000 }).toBe(true)
+  expect(await told(two)).toEqual([])
+
+  await told(one)
+  await task.click()
+  await expect(two.locator('.msg-user').first()).toContainText('What is a leap year?')
+  await answered(two, 'Is 2100 one?')
+  await expect(one.locator('.msg-user')).toHaveCount(2, { timeout: 20_000 })
+  await expect(one.locator('.msg-user').last()).toContainText('Is 2100 one?')
+  await expect(one.locator('.msg-jean .prose')).toHaveCount(2)
+  // One task each, the same on both: none went apart into a copy.
+  for (const jean of [one, two]) await expect((await openTasks(jean)).locator('.history-item')).toHaveCount(2)
+  expect(await told(one)).toEqual([])
+
+  await told(two)
+  one.once('dialog', (dialog) => dialog.accept())
+  await deleteOpenTask(one)
+  await expect(two.locator('.hero-question')).toBeVisible({ timeout: 20_000 })
+  await expect((await openTasks(two)).locator('.history-item', { hasText: 'leap year' })).toHaveCount(0)
+  expect(await holds(two, 'Is 2100 one?')).toBe(false)
+  expect(await told(two)).toEqual([])
+}
+
+test('two computers stay in step through a drive like Dropbox on their own, both ways, silently', async ({ page, browser }) => {
+  test.setTimeout(120_000)
+  await picker(page)
+  await start(page)
+  await connectFakeBrain(page)
+  await answered(page, 'Explain photosynthesis in simple words')
+  await turnOn(page, 'Sync')
+  await page.keyboard.press('Escape')
+
+  // The second computer, where the drive brings the folder down before Sync is turned on there.
+  const context = await browser.newContext()
+  const other = await context.newPage()
+  await picker(other)
+  await start(other)
+  await connectFakeBrain(other)
+  const drive = dropbox(page, other)
+  try {
+    await expect.poll(async () => Object.keys(await folder(other, 'Jean')), { timeout: 20_000 }).toContain('mirror.json')
+    await turnOn(other, 'Sync')
+    await other.keyboard.press('Escape')
+    await expect((await openTasks(other)).locator('.history-item', { hasText: 'photosynthesis' })).toBeVisible({ timeout: 20_000 })
+    // From here on, nothing is clicked for Sync on either computer, and the drive goes on alone.
+    await inStep(page, other)
+  } finally {
+    await drive.stop()
+    await context.close()
+  }
+})
+
+/**
+ * Two Jeans on the very same folder: this tab's profile turns Sync on, then another profile, added in this tab, is given the same
+ * folder, which brings in what the first had; the first opens again in a tab beside it.
+ * @param {import('@playwright/test').Page} page @param {import('@playwright/test').BrowserContext} context
+ * @returns {Promise<import('@playwright/test').Page>} the first one's tab, `page` being the second's
+ */
+async function sameFolder(page, context) {
+  /** The profile a tab's page opened, once ready: a page going to another still has its own. @param {import('@playwright/test').Page} on */
+  const here = (on) => on.evaluate(async () => (document.documentElement.classList.contains('is-ready') ? /** @type {any} */ ((await import('/ui/state.js')).app.fs)?.root ?? null : null)).catch(() => null)
+  await turnOn(page, 'Sync')
+  await page.keyboard.press('Escape')
+  const laptop = await here(page)
+  await (await openProfile(page)).getByRole('button', { name: 'Add a profile' }).click()
+  const dialog = page.locator('.profile-dialog[open]')
+  await dialog.getByLabel('This profile’s name').fill('Laptop')
+  await dialog.getByLabel('The new profile’s name').fill('Desk')
+  await dialog.getByRole('button', { name: 'Add it' }).click()
+  await expect.poll(() => here(page)).toMatch(/-desk$/)
+  await turnOn(page, 'Sync')
+  await page.keyboard.press('Escape')
+  const other = await context.newPage()
+  await other.addInitScript((profile) => sessionStorage.setItem('app.profile', profile), String(laptop))
+  await start(other)
+  await expect.poll(() => here(other)).toBe(laptop)
+  return other
+}
+
+test('two Jeans on the very same folder stay in step on their own, both ways, silently', async ({ page, context }) => {
+  test.setTimeout(120_000)
+  await picker(page)
+  await start(page)
+  await connectFakeBrain(page)
+  await answered(page, 'Explain photosynthesis in simple words')
+  const other = await sameFolder(page, context)
+  await expect((await openTasks(page)).locator('.history-item', { hasText: 'photosynthesis' })).toBeVisible({ timeout: 20_000 })
+  await connectFakeBrain(page)
+  await inStep(other, page)
 })
 
 test('with retention, a task deleted from the folder is kept first, then goes from Jean too (D412)', async ({ page }) => {

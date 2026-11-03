@@ -3,8 +3,9 @@
 // syncing with it. Chrome and Edge open the folder in place, with Folders' access (D141): its handle is kept
 // in IndexedDB, and the browser asks again once a visit unless allowed on every visit. The desktop app picks
 // it with the system's dialog and keeps its path, which its host works in (D169). A round runs as Jean opens,
-// every minute while it is on screen, after each answer and as it goes out of sight, in one tab at a time
-// (mirror.js does the work). What comes in shows where the user is.
+// every minute while it is on screen, as it goes out of sight or comes back, and soon after Jean's files change
+// here or the folder's do (where the browser tells: another Jean's in it, or the drive's), in one tab at a time
+// (mirror.js does the work). What comes in shows where the user is, with nothing to answer.
 import { html } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { register, unlock, loaded as capabilities } from '../../ui/caps.js'
@@ -14,7 +15,7 @@ import { host, pickFolder, showFolder, hostFS } from '../../ui/host.js'
 import { icons } from '../../ui/menu-icons.js'
 import { loadConversation } from '../../core/conversations.js'
 import { t, useStrings, relativeTime } from '../../core/i18n.js'
-import { claim, syncRound, settleHomes, BASE } from './mirror.js'
+import { claim, syncRound, settleHomes, carried, BASE } from './mirror.js'
 
 await useStrings('sync')
 
@@ -28,6 +29,9 @@ const nameOf = (/** @type {Folder} */ folder) => (typeof folder === 'string' ? f
 const state = signal({ status: 'done' })
 /** @type {Promise<import('../../core/types.js').FS> | null} */
 let mirror = null
+/** The round to come once changes settle, and what hears of the folder's (FileSystemObserver, Chrome and Edge). */
+let soon = 0, observer = /** @type {any} */ (null)
+const later = () => { clearTimeout(soon); soon = setTimeout(round, 2000) }
 
 // The folder can't be kept in a file (a handle can't, a path is this computer's): IndexedDB keeps it, never in a backup or a sync.
 /** @type {Promise<IDBDatabase | null>} */
@@ -52,13 +56,15 @@ async function stored(mode, act) {
 /** Whether the browser lets Jean open the folder, asking when `ask` (it needs the user's click just before); the host always does. @param {Folder} folder */
 const allowed = async (folder, ask = false) => typeof folder === 'string' || /** @type {any} */ (folder)[ask ? 'requestPermission' : 'queryPermission']({ mode: 'readwrite' }).then((/** @type {string} */ answer) => answer === 'granted', () => false)
 
-/** One round, unless another tab is having one. */
+/** One round, or soon after the one this tab or another is having. */
 async function round() {
   const { folder, at } = state.peek()
   if (!folder) return
   if (!(await allowed(folder))) return void (state.value = { folder, status: 'waiting', at })
+  if (typeof folder !== 'string' && !observer && 'FileSystemObserver' in globalThis) (observer = new (/** @type {any} */ (globalThis).FileSystemObserver)(later)).observe(folder, { recursive: true }).catch(() => {})
   await navigator.locks.request(mine('app-sync'), { ifAvailable: true }, async (lock) => {
-    if (!lock || folder !== state.peek().folder) return
+    if (!lock) return void later()
+    if (folder !== state.peek().folder) return
     state.value = { folder, status: 'syncing', at }
     try {
       const fs = await (mirror ??= typeof folder === 'string' ? Promise.resolve(hostFS(folder)) : folderFS(folder))
@@ -128,7 +134,8 @@ async function stop() {
 /** What Jean knew of the last folder: its FS and the base, so another folder starts from nothing known. */
 async function forget() {
   mirror?.then((fs) => fs.close?.(), () => {})
-  mirror = null
+  observer?.disconnect()
+  mirror = observer = null
   await app.fs.remove(BASE)
 }
 
@@ -176,6 +183,8 @@ if (kept) {
 setInterval(() => document.visibilityState === 'visible' && round(), 60_000)
 // Going out of sight sends what was done; coming back brings what the other computers did.
 document.addEventListener('visibilitychange', () => round())
+// What changes here goes soon, in this tab or another: an answer, a task deleted, a document, memory, a collection.
+app.fs.watch?.((path) => carried(path) && later(), { all: true })
 effect(() => {
-  if (!app.running.value.length) setTimeout(round, 2000)
+  if (!app.running.value.length) later()
 })

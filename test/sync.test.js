@@ -67,6 +67,32 @@ test('a change, a new file or a deletion on one side goes to the other, and empt
   assert.deepEqual((await there.list('')).map((entry) => entry.name), ['memory.md', MARK])
 })
 
+test('two Jeans on the same folder, with no drive between, each bring in the other’s work at their next round, both ways, and settle', async () => {
+  const B = `${HOME}/conversations/01J0000000000000000000000B.jsonl`
+  const laptop = memoryFS({ [A]: header('01J0000000000000000000000A') + line('Hello'), 'memory.md': '- likes tea\n' })
+  const desk = memoryFS()
+  const folder = memoryFS({ [MARK]: '{}' })
+  await syncRound(laptop, folder)
+  assert.deepEqual((await syncRound(desk, folder)).sort(), [A, 'memory.md'].sort())
+
+  // Each works apart: the desk goes on with a task and starts one, the laptop changes its memory.
+  await desk.append(A, line('From the desk'))
+  await desk.write(B, header('01J0000000000000000000000B'))
+  await laptop.write('memory.md', '- likes green tea\n')
+  assert.deepEqual(await syncRound(laptop, folder), [])
+  assert.deepEqual(await syncRound(desk, folder), ['memory.md'])
+  assert.deepEqual((await syncRound(laptop, folder)).sort(), [A, B].sort())
+  assert.equal(await laptop.read(A), header('01J0000000000000000000000A') + line('Hello') + line('From the desk'))
+
+  // A task deleted on one goes from the other.
+  await laptop.remove(B)
+  await syncRound(laptop, folder)
+  assert.deepEqual(await syncRound(desk, folder), [B])
+  for (const jean of [laptop, desk]) assert.deepEqual(await syncRound(jean, folder), [])
+  assert.deepEqual(await files(desk), await files(laptop))
+  assert.deepEqual(await files(folder), await files(laptop))
+})
+
 /** A round's `removing`, Jean's protocol with a hook that notes what it is asked and lets it go or not. @param {{ lets: boolean }} answer @param {any[]} asked */
 const removing = (answer, asked) => /** @type {(removals: any[], act: () => Promise<unknown>) => Promise<boolean>} */ (async (removals, act) => !(await removal([{ on: 'remove', run: (e, next) => {
   asked.push(e)
