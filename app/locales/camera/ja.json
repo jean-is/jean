@@ -9,12 +9,12 @@
   "camera.drop": "この画像を送らない",
   "camera.watch": "見守って知らせる",
   "camera.watching": "見守り中",
-  "camera.watched": "10分たったので見守りを終えました。",
+  "camera.watched": "10 分たったので見守りを終えました。",
   "camera.paused": "カメラは一時停止中です。タップして再開します。",
   "camera.denied": "ここで見せるには、ブラウザーでカメラを許可してください。",
   "camera.failed": "カメラを起動できませんでした。もう一度お試しください。",
   "camera.blind": "この頭脳は画像を見られません。見られる頭脳を選んでください。",
   "camera.picture": "カメラ {time}",
   "camera.move": "別の隅に移動",
-  "camera.idle": "10分間使われなかったのでカメラをオフにしました。"
+  "camera.idle": "10 分間使われなかったのでカメラをオフにしました。"
 }
