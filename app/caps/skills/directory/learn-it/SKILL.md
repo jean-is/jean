@@ -94,7 +94,7 @@ metadata:
   title-zh-Hans: "真正学会"
   text-zh-Hans: "把一课学懂并练熟，给提示而不是答案"
   title-zh-Hant: "真正學會"
-  text-zh-Hant: "理解課文並練習，給提示而不是答案"
+  text-zh-Hant: "把一課弄懂並練習，給的是提示而不是答案"
 ---
 # Learn it
 

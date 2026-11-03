@@ -95,7 +95,7 @@ metadata:
   title-zh-Hans: "PowerPoint"
   text-zh-Hans: "做成 PowerPoint 文件的幻灯片，可直接放映和修改"
   title-zh-Hant: "PowerPoint"
-  text-zh-Hant: "製成 PowerPoint 檔案的簡報，可直接放映和修改"
+  text-zh-Hant: "做成 PowerPoint 檔案的投影片，可直接放映和修改"
 ---
 # PowerPoint
 

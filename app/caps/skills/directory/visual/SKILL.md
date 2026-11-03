@@ -95,7 +95,7 @@ metadata:
   title-zh-Hans: "图文回答"
   text-zh-Hans: "地图、图示、时间线和清单，直接在回答里"
   title-zh-Hant: "圖文回答"
-  text-zh-Hant: "地圖、圖示、時間線和清單，直接在回答裡"
+  text-zh-Hant: "地圖、示意圖、時間軸和清單，直接在回答裡"
 ---
 # Visual answers
 

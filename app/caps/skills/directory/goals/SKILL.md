@@ -95,7 +95,7 @@ metadata:
   title-zh-Hans: "目标与战略"
   text-zh-Hans: "带可衡量结果的目标，以及实现它们的计划"
   title-zh-Hant: "目標與策略"
-  text-zh-Hant: "帶可衡量成果的目標，以及達成它們的計畫"
+  text-zh-Hant: "有可衡量成果的目標，以及達成它們的計畫"
 ---
 # Goals and strategy
 

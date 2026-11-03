@@ -95,7 +95,7 @@ metadata:
   title-zh-Hans: "幻灯片"
   text-zh-Hans: "可直接放映、修改并导出为 PowerPoint 的幻灯片"
   title-zh-Hant: "投影片"
-  text-zh-Hant: "可直接放映、修改並匯出為 PowerPoint 的簡報"
+  text-zh-Hant: "可直接放映、修改並匯出為 PowerPoint 的投影片"
 ---
 # Slides
 

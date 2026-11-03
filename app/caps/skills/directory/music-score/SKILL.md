@@ -95,7 +95,7 @@ metadata:
   title-zh-Hans: "乐谱"
   text-zh-Hans: "把旋律写成乐谱，可以读，也可以演奏"
   title-zh-Hant: "樂譜"
-  text-zh-Hant: "寫成樂譜的旋律，可讀可播放"
+  text-zh-Hant: "把旋律寫成樂譜，能看也能播放"
 ---
 # Music score
 

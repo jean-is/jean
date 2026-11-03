@@ -94,7 +94,7 @@ metadata:
   title-zh-Hans: "设计新事物"
   text-zh-Hans: "与使用者一起打造的产品或服务"
   title-zh-Hant: "設計新事物"
-  text-zh-Hant: "與使用者一起打造的產品或服務"
+  text-zh-Hant: "和它要服務的人一起打造的產品或服務"
 ---
 # Design something new
 

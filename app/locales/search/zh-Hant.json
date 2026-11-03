@@ -1,19 +1,19 @@
 {
-  "search.where": "在哪裡查找",
+  "search.where": "在哪裡搜尋",
   "search.wikipedia": "維基百科",
-  "search.wikipedia.text": "你所用的語言，以及其他 300 多種語言",
+  "search.wikipedia.text": "你的語言，以及其他 300 多種",
   "search.vikidia": "Vikidia",
   "search.vikidia.text": {
-    "other": "給 8 至 13 歲孩子，有你所用的語言和其他 {count} 種語言"
+    "other": "給 8 到 13 歲的孩子，有你的語言和其他 {count} 種"
   },
   "search.library": "離線圖書館",
   "search.library.text": "來自 Kiwix 伺服器的維基百科和其他書籍，可以在這台電腦上，也可以在學校或公司。每個大腦都會在其中搜尋，即使不連網。",
-  "search.address": "Kiwix 伺服器位址",
-  "search.connect": "連線",
-  "search.connectTo": "連線至 {service}",
-  "search.failed": "這個位址上沒有 Kiwix 伺服器回應。",
-  "search.insecure": "從這裡只能連到這台電腦上的 Kiwix 伺服器，或以 https:// 開頭的位址上的伺服器。",
-  "search.locked": "由你的組織設定",
+  "search.address": "Kiwix 伺服器的網址",
+  "search.connect": "連接",
+  "search.connectTo": "連接 {service}",
+  "search.failed": "這個網址上沒有 Kiwix 伺服器回應。",
+  "search.insecure": "從這裡只能連到這台電腦上的 Kiwix 伺服器，或網址以 https:// 開頭的伺服器。",
+  "search.locked": "由你所屬的組織設定",
   "search.parent": "由家長設定",
   "search.books": {
     "other": "{count} 本書"
@@ -22,9 +22,9 @@
     "other": "{count} 篇文章"
   },
   "search.vikidia.not": {
-    "other": "給 8 至 13 歲孩子，有 {count} 種語言，但沒有你所用的語言"
+    "other": "給 8 到 13 歲的孩子，有 {count} 種語言，但沒有你的"
   },
-  "search.fromLibrary": "來自離線圖書館：{languages}",
+  "search.fromLibrary": "來自離線圖書館（{languages}）",
   "search.library.in": "離線圖書館",
   "search.library.row": "來自 Kiwix 伺服器的維基百科和其他書籍，即使不連網",
   "search.notSet": "未設定",
@@ -32,24 +32,24 @@
   "search.unanswered": "無回應",
   "search.answering": "有回應",
   "search.services": "搜尋服務",
-  "search.searches": "為任何大腦搜尋整個網路",
+  "search.searches": "為每個大腦搜尋整個網路",
   "search.readHere": "從這裡讀維基百科",
-  "search.readHere.text": "取代網路上的：{languages}",
+  "search.readHere.text": "代替網路上的維基百科（{languages}）",
   "search.now.own": "回答的大腦會自己搜尋整個網路。",
-  "search.now.others": "其他大腦在{sources}中查找。",
-  "search.now.every": "每個大腦都在{sources}中查找。",
+  "search.now.others": "其他大腦在{sources}裡搜尋。",
+  "search.now.every": "每個大腦都在{sources}裡搜尋。",
   "search.now.again": "只開啟維基百科時，回答的大腦會重新自己搜尋整個網路。",
-  "search.now.nowhere": "不能自己上網搜尋的大腦，就沒有地方可查。",
+  "search.now.nowhere": "不能自己搜尋網路的大腦，就無處可搜尋。",
   "search.now.off": "網路搜尋已關閉：現在開始的任務哪裡都不搜尋，連大腦自己的搜尋也不用。",
   "search.now.services": "每個大腦也可以用 {services} 搜尋。",
   "search.also": "也可以在訊息框的 + 中關閉網路搜尋。",
   "search.key": "金鑰",
   "search.engine": "搜尋引擎 ID",
-  "search.service.text": "你自己的 {service} 帳號為任何大腦搜尋整個網路。你的搜尋字詞會傳送到 {service}，可能會產生費用，你的金鑰則保留在這台裝置上。",
+  "search.service.text": "你自己的 {service} 帳號為每個大腦搜尋整個網路。你的搜尋字詞會傳送到 {service}，它可能會收費，而你的金鑰留在這台裝置上。",
   "search.getKey": "從 {service} 取得金鑰",
-  "search.refused": "{service} 拒絕了這個金鑰，或其搜尋次數已用完。",
+  "search.refused": "{service} 拒絕了這個金鑰，或它的搜尋次數已用完。",
   "search.silent": "{service} 沒有回應。請檢查金鑰，或稍後再試。",
   "search.needsGateway": "需要閘道",
-  "search.noGateway": "瀏覽器無法直接連到 {service}：需要一個轉送要求的閘道。閘道位址在「{connections}」中設定。",
+  "search.noGateway": "瀏覽器無法自己連到 {service}：需要一個幫忙轉送的閘道。閘道的網址在「{connections}」中設定。",
   "search.google.closing": "Google 不再發放新金鑰，並將於 {date} 終止這項服務。"
 }

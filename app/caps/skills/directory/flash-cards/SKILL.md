@@ -93,7 +93,7 @@ metadata:
   text-yo: "Ohun tí a kọ́ sórí káàdì, tí a ń tún wò ní ọjọ́ dé ọjọ́"
   title-zh-Hans: "抽认卡"
   text-zh-Hans: "把学到的写在卡片上，分几天复习"
-  title-zh-Hant: "抽認卡"
+  title-zh-Hant: "閃卡"
   text-zh-Hant: "把學到的寫在卡片上，隔幾天複習"
 ---
 # Flash cards
