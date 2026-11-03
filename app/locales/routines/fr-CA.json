@@ -1,5 +1,5 @@
 {
-  "routines.saved": "Routine « {title} » créée.",
+  "routines.saved": "Routine « {title} » créée.",
   "routines.text": "Des demandes envoyées toutes seules, selon un horaire. Rien ne tourne quand cet onglet est fermé : ce qui arrive à échéance est fait à votre retour.",
   "routines.none": "Pas encore de routine. Demandez que quelque chose soit fait chaque heure, jour, semaine ou mois, ou un rappel pour jeudi matin.",
   "routines.starters": "Des idées pour commencer",
@@ -28,7 +28,7 @@
   "routines.brain": "Cerveau",
   "routines.brain.yours": "Celui de vos messages",
   "routines.next": "Prochaine fois : {when}",
-  "routines.confirmDelete": "Supprimer la routine « {title} »?",
+  "routines.confirmDelete": "Supprimer la routine « {title} »?",
   "routines.run": "Lancer maintenant",
   "routines.runs": "Lancements précédents",
   "routines.new": "Nouvelle routine",

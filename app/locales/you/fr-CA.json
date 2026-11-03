@@ -24,9 +24,9 @@
   "you.start.work": "Votre métier",
   "you.start.workText": "Je travaille comme ",
   "you.start.language": "Vos langues",
-  "you.start.languageText": "Répondez en ",
+  "you.start.languageText": "Réponds en ",
   "you.start.length": "La longueur des réponses",
-  "you.start.lengthText": "Faites des réponses ",
+  "you.start.lengthText": "Fais des réponses ",
   "you.remember": "Retenir",
   "you.all": {
     "one": "Voir la ligne",
@@ -40,6 +40,6 @@
   },
   "you.search": "Chercher dans ce que {name} a remarqué",
   "you.unread": "Ne sont plus lues",
-  "you.project": "Elles s’ajoutent aux vôtres, dans ses tâches seulement.",
+  "you.project": "Elles s’ajoutent aux vôtres, dans les tâches de ce projet seulement.",
   "you.org": "Les instructions de votre organisation"
 }

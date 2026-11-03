@@ -35,7 +35,7 @@ metadata:
   title-fr: "Plan de projet"
   text-fr: "Tâches, dates et qui fait quoi, et ce qui ne peut pas être décalé"
   title-fr-CA: "Plan de projet"
-  text-fr-CA: "Tâches, dates et qui fait quoi, avec ce qui ne peut pas glisser"
+  text-fr-CA: "Tâches, dates et qui fait quoi, et ce qui ne peut pas être décalé"
   title-ha: "Shirin aiki"
   text-ha: "Ayyuka, kwanaki da wanda zai yi me, tare da abin da ba zai iya jinkiri ba"
   title-he: "תוכנית פרויקט"

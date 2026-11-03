@@ -33,7 +33,7 @@ metadata:
   text-fi: "Tuote tai palvelu muotoiltuna niiden kanssa, joille se on"
   title-fr: "Concevoir quelque chose de nouveau"
   text-fr: "Un produit ou un service conçu avec les personnes à qui il s’adresse"
-  title-fr-CA: "Concevoir du nouveau"
+  title-fr-CA: "Concevoir quelque chose de nouveau"
   text-fr-CA: "Un produit ou un service conçu avec les personnes à qui il s’adresse"
   title-ha: "Ƙirƙiri sabon abu"
   text-ha: "Kaya ko sabis da aka tsara tare da mutanen da aka yi wa"

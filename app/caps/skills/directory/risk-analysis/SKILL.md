@@ -35,7 +35,7 @@ metadata:
   title-fr: "Ce qui pourrait mal tourner"
   text-fr: "Les risques repérés et classés avant qu’ils n’arrivent, et quoi faire"
   title-fr-CA: "Ce qui pourrait mal tourner"
-  text-fr-CA: "Les risques repérés et classés avant qu’ils n’arrivent, avec quoi faire"
+  text-fr-CA: "Les risques repérés et classés avant qu’ils n’arrivent, et quoi faire"
   title-ha: "Abin da zai iya lalacewa"
   text-ha: "Haɗurra da aka gano aka jera kafin su faru, tare da abin da za a yi"
   title-he: "מה עלול להשתבש"
