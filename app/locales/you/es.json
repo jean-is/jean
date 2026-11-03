@@ -20,7 +20,7 @@
   "you.edit": "Editar",
   "you.cancel": "Cancelar",
   "you.more": "Más para esta línea",
-  "you.empty": "¿Qué hay que tener siempre presente? Tu trabajo, tus idiomas, cómo te gustan las respuestas.",
+  "you.empty": "¿Qué debería tener {name} siempre presente? Tu trabajo, tus idiomas, cómo te gustan las respuestas.",
   "you.start.work": "A qué te dedicas",
   "you.start.workText": "Trabajo como ",
   "you.start.language": "Tus idiomas",
@@ -40,6 +40,6 @@
   },
   "you.search": "Buscar en lo que {name} ha notado",
   "you.unread": "Ya no se leen",
-  "you.project": "Se suman a las tuyas, solo en sus tareas.",
+  "you.project": "Se suman a las tuyas, solo en las tareas de este proyecto.",
   "you.org": "Las instrucciones de tu organización"
 }

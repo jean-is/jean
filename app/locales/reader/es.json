@@ -1,5 +1,5 @@
 {
-  "reader.more": "La voz natural también puede leer este idioma: {language}.",
+  "reader.more": "La voz natural también puede leer en {language}.",
   "reader.credit": "Pocket TTS de Kyutai, con la voz de Alba MacKenna (CC BY 4.0).",
   "reader.on": "{languages}, creada en este dispositivo",
   "reader.none": "Aún no hay ningún idioma en este dispositivo",

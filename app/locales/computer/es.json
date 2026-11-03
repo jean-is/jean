@@ -1,10 +1,10 @@
 {
-  "computer.text": "Una computadora en un entorno aislado en esta pestaña: toma prestados el procesador y la memoria de este dispositivo, y nunca llega a nada más de él.",
-  "computer.lede": "Una computadora en esta pestaña, aparte de este dispositivo: trabaja con los archivos que le da una tarea y solo llega a los sitios que permitas.",
+  "computer.text": "Una computadora dentro de esta pestaña, aislada de este dispositivo: toma prestados el procesador y la memoria, y nunca accede a nada más.",
+  "computer.lede": "Una computadora en esta pestaña, aparte de este dispositivo: trabaja con los archivos que le da una tarea y solo accede a los sitios que permitas.",
   "computer.where": "Dónde se ejecutan los comandos",
-  "computer.reach": "Lo que puede alcanzar",
+  "computer.reach": "A qué puede acceder",
   "computer.keeps": "Lo que guarda",
-  "computer.sandbox": "Entorno aislado",
+  "computer.sandbox": "Dentro de esta pestaña",
   "computer.sandbox.text": "Comandos, JavaScript y Python",
   "computer.state.asleep": "En reposo",
   "computer.state.waking": "Arrancando",
@@ -27,12 +27,12 @@
   "computer.engine.pyodide.text": "Trabajo con datos, con pandas, NumPy y Matplotlib: unos {size} la primera vez",
   "computer.try": "Probar",
   "computer.internet": "Internet",
-  "computer.internet.text": "Lo que la computadora puede alcanzar. Nunca recibe tus cookies ni tus claves.",
+  "computer.internet.text": "A qué puede acceder la computadora. Nunca recibe tus cookies ni tus claves.",
   "computer.internet.never": "Apagado, porque en Aprobaciones «Usar internet» está en «Nunca».",
   "computer.internet.off": "Desactivado",
   "computer.internet.ask": "Preguntar antes",
   "computer.internet.any": "Cualquier sitio",
-  "computer.sites": "Sitios a los que siempre puede llegar",
+  "computer.sites": "Sitios a los que siempre puede acceder",
   "computer.sites.none": "Ninguno todavía: se pregunta primero por cada sitio nuevo.",
   "computer.sites.more": {
     "one": "{count} más",
@@ -40,7 +40,7 @@
     "other": "{count} más"
   },
   "computer.registries": "De dónde vienen los paquetes",
-  "computer.registries.text": "Para un espejo, como el de tu organización. Una clave se queda en este dispositivo y solo va a su dirección.",
+  "computer.registries.text": "Para un espejo, una copia de estas fuentes que tu organización puede tener. Una clave se queda en este dispositivo y solo va a su dirección.",
   "computer.registry.pyodide": "Python, paquetes de Pyodide",
   "computer.registry.pypi": "Python, PyPI",
   "computer.registry.npm": "JavaScript, npm",
@@ -69,7 +69,7 @@
   "computer.reach.always": "Permitir siempre {site}",
   "computer.reach.no": "No",
   "computer.relay": "Acceder a la web a través de",
-  "computer.relay.text": "La dirección de un relé, para los sitios que rechazan solicitudes de otros sitios. Vacío: directamente, por el proxy de este dispositivo.",
+  "computer.relay.text": "La dirección de un intermediario, para los sitios que rechazan solicitudes de otros sitios. Déjala vacía para ir directamente, por el proxy de este dispositivo.",
   "computer.minutes": {
     "one": "{count} minuto",
     "many": "{count} minutos",
@@ -77,9 +77,9 @@
   },
   "computer.reach.once": "Permitir una vez",
   "computer.terminal": "Terminal",
-  "computer.terminal.text": "Ejecuta comandos en la computadora por tu cuenta, sobre los mismos archivos que la conversación; tu próximo mensaje dice lo que ejecutaste. {keys} la abre desde cualquier parte.",
+  "computer.terminal.text": "Ejecuta comandos en la computadora por tu cuenta, sobre los mismos archivos que la conversación. Tu próximo mensaje dice lo que ejecutaste. {keys} la abre desde cualquier parte.",
   "computer.terminal.command": "Comando",
   "computer.terminal.clear": "Borrar",
   "computer.terminal.exit": "Código de salida {code}",
-  "computer.terminal.refused": "Cambios no guardados por ediciones hechas en otro lugar mientras tanto: {files}"
+  "computer.terminal.refused": "No se guardaron, porque cambiaron en otro lugar mientras tanto: {files}"
 }
