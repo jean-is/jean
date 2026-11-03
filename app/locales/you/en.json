@@ -37,6 +37,6 @@
   },
   "you.search": "Search what {name} noticed",
   "you.unread": "No longer read",
-  "you.project": "These go with yours, in its tasks only.",
+  "you.project": "These go with yours, in this project’s tasks only.",
   "you.org": "Your organization’s instructions"
 }

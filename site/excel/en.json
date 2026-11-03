@@ -26,7 +26,7 @@
   "tour.file": "You drop in the file: {months} months of sales, {products} products.",
   "tour.asked": "Then you ask in your own words. No formula to write.",
   "tour.brain": "Your request and the file go to the AI you chose, and nowhere else.",
-  "tour.program": "For the figures, it writes a small program that runs in a sandbox in the browser: they are worked out, not guessed.",
+  "tour.program": "For the figures, it writes a small program that runs inside the browser, walled off from your computer: they are worked out, not guessed.",
   "tour.chart": "What you asked for comes back made: here, a chart.",
   "tour.read": "Under each answer: what was read to write it.",
   "tour.end": "Nothing to install, and nothing is sent to {name}. Your turn: drop in your own spreadsheet.",
@@ -39,7 +39,7 @@
     "Units sold and revenue, month by month"
   ],
   "replay.works": [
-    "Wrote a short program, and ran it on the computer in its sandbox",
+    "Wrote a short program, and ran it on its own walled-off computer",
     "Compared each product’s {last} with its {first}"
   ],
   "replay.columns": ["Product", "Growth"],
@@ -79,7 +79,7 @@
   "exact.why": "An AI can sound sure of a total it guessed. {name} has its numbers calculated.",
   "exact.cards": [
     ["A program, not a guess", "For a total, a growth or an average, the AI writes a short program and runs it on your data. The number is calculated."],
-    ["On a computer in this tab", "A computer in a sandbox, in the browser, never your own machine: JavaScript, and Python for data work. The first time, {name} asks before turning it on."],
+    ["On a computer in this tab", "A computer inside the browser, walled off from your own machine: JavaScript, and Python for data work. The first time, {name} asks before turning it on."],
     ["Every step in view", "Each step shows as it runs. Open one to see what it was given and what came back."]
   ],
   "where.title": "Where your file goes.",
@@ -90,7 +90,7 @@
     ["Or not sent at all", "With the AI on this computer, nothing leaves it. It needs 12 GB of memory and a recent graphics chip."]
   ],
   "catch.items": [
-    "{name} is free; the AI behind it may not be. No sign-up only with the AI on this computer.",
+    "{name} is free; the AI behind it may not be. Without a sign-up, only the AI on this computer answers.",
     "It doesn’t run Excel macros, and a workbook with macros (.xlsm) isn’t read.",
     "Old Excel files (.xls, from Excel 97 to 2003) aren’t read: save them as .xlsx first.",
     "The workbooks it writes hold values and formulas. Charts come in the answer, not inside the Excel file.",

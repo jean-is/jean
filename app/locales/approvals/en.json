@@ -34,14 +34,14 @@
   "approvals.carefulNone": "Ask first, or never, for one kind of action or one service.",
   "approvals.carefulAdd": "Be more careful for…",
   "approvals.carefulTitle": "Be more careful",
-  "approvals.carefulText": "For one kind of action or one service. It never allows more than the rest.",
+  "approvals.carefulText": "For one kind of action or one service. It only tightens: it never allows more than the usual.",
   "approvals.kinds": "A kind of action",
   "approvals.services": "A service",
   "approvals.example": "Is it to a client?",
   "approvals.ifText": "{name} asks itself this before each one. When it can’t tell, it counts as yes.",
   "approvals.films": "Films",
   "approvals.what.folder": "{name} changes files in this folder without asking",
-  "approvals.what.site": "This computer may reach it",
+  "approvals.what.site": "The computer may reach it",
   "approvals.what.films": "Made without asking, though they cost more than pictures",
   "approvals.what.meeting": "These projects’ assistants may meet without asking",
   "approvals.what.extension": "May let actions go ahead without asking you",
@@ -55,5 +55,5 @@
   "approvals.certificatesText": "This device’s seal, who dates certificates, and the public log",
   "approvals.what.reads": "{name} reads there without asking",
   "approvals.what.acts": "{name} writes, sends and changes there without asking",
-  "approvals.elsewhere": "This task has read something from elsewhere, which could hold instructions, so this asks again."
+  "approvals.elsewhere": "This task has read something from elsewhere, which could hold instructions, so you’re asked again."
 }

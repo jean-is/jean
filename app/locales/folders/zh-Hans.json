@@ -1,6 +1,6 @@
 {
   "folders.in": "正在 {folder} 中工作",
-  "folders.copy": "此浏览器无法在原处修改文件：{name} 在副本上工作，改动由你自己保存。",
+  "folders.copy": "这个浏览器无法在原处修改文件：{name} 在副本上工作，改动由你来保存。",
   "folders.again": "重新连接",
   "folders.allow": "允许访问",
   "folders.save": "保存改动的文件",
@@ -30,7 +30,7 @@
   "folders.line": "第 {line} 行",
   "folders.undo": "撤销",
   "folders.undone": "已撤销",
-  "folders.undo.moved": "{path} 之后已有改动，无法在这里撤销。",
+  "folders.undo.moved": "{path} 此后又有改动，所以无法在这里撤销。",
   "folders.undo.elsewhere": "这个任务现在在另一个文件夹中工作。",
   "folders.field": "这台电脑上的文件夹",
   "folders.field.none": "无：这里的新任务开始时不带文件夹。",

@@ -5,5 +5,5 @@
   "layouts.important": "重要",
   "layouts.warning": "警告",
   "layouts.caution": "注意",
-  "layouts.ticked": "{total} 項中的 {done} 項"
+  "layouts.ticked": "{done} 項，共 {total} 項"
 }

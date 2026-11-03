@@ -1,6 +1,6 @@
 {
   "storage.persisted": "U vostru navigatore tenerà sti dati.",
-  "storage.measuring": "Misura…",
+  "storage.measuring": "Misurazione…",
   "storage.computer.text": "I so prugrammi è i schedarii nant’à quale ellu travaglia",
   "storage.brains": "Cervelli nant’à st’apparechju",
   "storage.brains.text": "Scaricati una volta, per travaglià senza internet",
@@ -31,10 +31,10 @@
   "data.importText": "E so cunversazioni è i so prughjetti ghjunghjenu in stu prughjettu",
   "data.into": "E so cunversazioni, i so prughjetti è i so schedarii ghjunghjenu in {project}. Nunda ùn hè squassatu quì, è a listessa espurtazione ùn ghjunghje mai duie volte.",
   "data.ask": "Prima, dumandate i vostri dati",
-  "data.assistants": "ChatGPT è Claude : in i so parametri, dumandate l’espurtazione di i vostri dati. Un ligame versu un schedariu .zip ghjunghje per e-mail.",
+  "data.assistants": "ChatGPT è Claude : in i so parametri, dumandate l’espurtazione di i vostri dati. Un ligame versu un schedariu .zip ghjunghje per posta elettronica.",
   "data.gemini": "Gemini : in Google Takeout, sceglite Gemini, è A mo attività cù solu Gemini Apps, in JSON.",
   "data.choose": "Sceglie u schedariu…",
-  "data.drop": "U pudete ancu pone in un compitu.",
+  "data.drop": "U pudete dinù lampà in un compitu.",
   "data.org": "A vostra urganizazione",
   "data.orgText": "Ciò ch’ella riceve da voi è ciò ch’ella tene",
   "data.private": "Per tene i vostri compiti, aprite {name} in una finestra chì ùn sia micca privata."

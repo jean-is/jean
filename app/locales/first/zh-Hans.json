@@ -1,6 +1,6 @@
 {
   "first.title": "回答之前，只差一步",
-  "first.text": "{name} 需要一个大脑来思考：一个撰写回答的服务。最快的方式是免费的。",
+  "first.text": "{name} 需要一个大脑来思考，也就是一个写出回答的服务。最快的办法是免费的。",
   "first.free": "免费开始",
   "first.freeText": "在 OpenRouter 网站上注册一个免费账号，然后回到这里。",
   "first.also": "同时为这台电脑获取一个私密大脑",
@@ -18,7 +18,7 @@
   "first.now": "我想马上开始",
   "first.nowText": "在 OpenRouter 网站上注册免费账号，一分钟就好。有每日限额，回答来自云端。",
   "first.best": "我想要尽可能好的回答",
-  "first.bestText": "使用付费服务：你已有的 ChatGPT、Claude 或 Copilot 套餐，或其中之一的密钥。",
+  "first.bestText": "使用付费服务：你已有的 ChatGPT、Claude 或 Copilot 套餐，或其中一家的密钥。",
   "first.next": "继续",
   "first.plansTitle": "你用的是哪一个？",
   "first.names": "这些名称归各自的公司所有。{name} 与它们都没有关联。",

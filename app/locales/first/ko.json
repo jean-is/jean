@@ -4,7 +4,7 @@
   "first.free": "무료로 시작",
   "first.freeText": "OpenRouter 사이트에서 무료 계정을 만든 뒤 여기로 돌아와요.",
   "first.also": "이 컴퓨터용 비공개 두뇌도 받기",
-  "first.alsoText": "{size}, 백그라운드에서 내려받아요. 이 컴퓨터에 남아야 할 것을 위해서요.",
+  "first.alsoText": "이 컴퓨터에 남겨야 할 내용을 위해 {size}를 백그라운드에서 다운로드해요.",
   "first.plans": "ChatGPT, Claude 또는 Copilot을 이미 쓰고 있어요",
   "first.plansText": "결제 중인 요금제나 키로 답해요",
   "first.choose": "직접 고를래요",
@@ -13,7 +13,7 @@
   "first.back": "뒤로",
   "first.matters": "무엇이 가장 중요한가요?",
   "first.private": "내 말은 이 컴퓨터에 남아야 해요",
-  "first.privateText": "여기 있는 비공개 두뇌, 한 번만 내려받아요({size}). 답은 더 단순하고 느리지만 인터넷 없이도 돼요.",
+  "first.privateText": "여기 있는 비공개 두뇌, 한 번만 다운로드해요({size}). 답은 더 단순하고 느리지만 인터넷 없이도 돼요.",
   "first.privateNo": "이 컴퓨터에서는 비공개 두뇌를 실행할 수 없어요.",
   "first.now": "바로 시작하고 싶어요",
   "first.nowText": "OpenRouter 사이트의 무료 계정으로 1분이면 준비돼요. 하루 한도가 있고, 답은 클라우드에서 와요.",
@@ -22,5 +22,5 @@
   "first.next": "계속",
   "first.plansTitle": "어떤 걸 쓰고 있나요?",
   "first.names": "이 이름들은 각 회사의 것이에요. {name}은(는) 그 어느 회사와도 관계가 없어요.",
-  "first.downloading": "비공개 두뇌를 내려받는 중이에요({size}). 준비될 때까지 답은 클라우드에서 와요."
+  "first.downloading": "비공개 두뇌를 다운로드하는 중이에요({size}). 준비될 때까지 답은 클라우드에서 와요."
 }

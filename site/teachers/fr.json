@@ -26,7 +26,7 @@
   "out.worksheet.text": "Des exercices sur trois niveaux et le corrigé sur une page à part, dans un fichier Word à modifier et à imprimer.",
   "out.worksheet.ask": "Une fiche d’exercices sur l’addition de fractions pour des CM2, sur trois niveaux, avec le corrigé sur une page à part, en document Word.",
   "out.slides": "Des diapos pour le tableau",
-  "out.slides.text": "Une présentation à feuilleter et à projeter en plein écran, écrite dans la réponse, ou un fichier PowerPoint si vous le demandez.",
+  "out.slides.text": "Des diapos à feuilleter et à projeter en plein écran, écrites dans la réponse, ou un fichier PowerPoint si vous le demandez.",
   "out.slides.ask": "Six diapositives pour présenter le cycle de l’eau à des élèves de 6e.",
   "out.cards": "Des flashcards",
   "out.cards.text": "Ce qu’il faut retenir, sur des cartes revues au fil des jours, dans un fichier qu’Anki et Quizlet importent.",
@@ -43,7 +43,7 @@
   "free.text": "Oui. {name} ne coûte rien, son code est ouvert et il n’y a rien à installer. L’IA qui répond peut être gratuite aussi :",
   "free.list": [
     "Sans aucun compte, sur un ordinateur avec 12 Go de mémoire et une puce graphique récente : l’IA de l’ordinateur, téléchargée une fois (3,1 Go).",
-    "Sur tout autre ordinateur, avec un compte gratuit chez un fournisseur d’IA : « {free} ».",
+    "Sur tout autre ordinateur, avec un compte gratuit chez un fournisseur d’IA : « {free} ».",
     "Ou avec un abonnement que vous payez déjà."
   ],
   "data.title": "Et les données de mes élèves ?",
@@ -77,7 +77,7 @@
     "L’IA de l’ordinateur est plus petite que les grandes IA en ligne : plus lente, et plus souvent fausse.",
     "Toute IA peut se tromper. Relisez un quiz ou une fiche avant que la classe les voie.",
     "Ce n’est pas un logiciel de vie scolaire : ni listes de classe, ni carnet de notes, ni comptes élèves.",
-    "L’aide plutôt que la réponse, c’est ce que demande le profil d’un enfant, à la maison, pas le vôtre : en classe, une IA peut donner la réponse à vos élèves.",
+    "Le profil d’un enfant, à la maison, demande de l’aide plutôt que la réponse. Pas le vôtre : en classe, une IA peut donner la réponse à vos élèves.",
     "{name} ne remplace ni les outils de votre établissement, ni ses règles, ni vous."
   ],
   "faq.title": "Vos questions.",

@@ -53,7 +53,7 @@ metadata:
   title-ja: "楽譜"
   text-ja: "メロディーを楽譜にして、読んだり再生したりできます"
   title-ko: "악보"
-  text-ko: "멜로디를 악보로 적어 보고 연주할 수 있습니다"
+  text-ko: "멜로디를 악보로 적어, 읽고 연주할 수 있게"
   title-mr: "स्वरलिपी"
   text-mr: "स्वरलिपीत लिहिलेल्या चाली, वाचण्यासाठी आणि वाजवण्यासाठी"
   title-ms: "Skor muzik"
@@ -93,9 +93,9 @@ metadata:
   title-yo: "Àkọsílẹ̀ orin"
   text-yo: "Àwọn ohùn orin tí a kọ sílẹ̀ bí àkọsílẹ̀ orin, láti kà àti láti ṣe"
   title-zh-Hans: "乐谱"
-  text-zh-Hans: "写成乐谱的旋律，可读可播放"
+  text-zh-Hans: "把旋律写成乐谱，可以读，也可以演奏"
   title-zh-Hant: "樂譜"
-  text-zh-Hant: "寫成樂譜的旋律，可讀可播放"
+  text-zh-Hant: "把旋律寫成樂譜，能看也能播放"
 ---
 # Music score
 

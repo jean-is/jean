@@ -45,7 +45,7 @@
   "certificates.words": "または、端末の頭脳の透かしを探すために文章を貼り付けてください",
   "certificates.words.marked": "この文章には端末の頭脳の透かしがあります。頭脳が書いたか、誰かがそう見せかけました",
   "certificates.words.none": "この文章に端末の頭脳の透かしは見つかりませんでした。ただし、頭脳が書いていないという証明にはなりません",
-  "certificates.words.short": "判断するには文章が短すぎます。1ページほど貼り付けてください",
+  "certificates.words.short": "判断するには文章が短すぎます。1 ページほど貼り付けてください",
   "certificates.words.fetch": "文章の透かしを探すため、このページはまず {host} から読み取り用のファイルをダウンロードし、このブラウザーに保存します",
   "certificates.log.fetch": "公開ログが保証しているか確かめるため、このページはまず {host} からログの鍵をダウンロードします",
   "certificates.fetch": "ダウンロード（{size}）",
@@ -54,5 +54,5 @@
   "certificates.trust.unchecked": "組織が信頼する認証局が証明（失効していない証拠はありません）",
   "certificates.trust.untrusted": "組織が信頼する認証局の証明はありません",
   "certificates.trust.revoked": "この封印の前に証明書が失効しています",
-  "certificates.qualified": "EU法に基づく適格な封印"
+  "certificates.qualified": "EU 法に基づく適格な封印"
 }

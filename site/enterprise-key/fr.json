@@ -33,7 +33,7 @@
   "name": "Votre nom",
   "email": "Votre adresse e-mail professionnelle",
   "billing.legend": "Pour le devis et la facture",
-  "country": "Où elle se trouve",
+  "country": "Où se trouve l’organisation",
   "countries": [
     "En France",
     "Dans un autre pays de l’UE",

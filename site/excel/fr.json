@@ -26,7 +26,7 @@
   "tour.file": "Vous déposez le fichier : {months} mois de ventes, {products} produits.",
   "tour.asked": "Puis vous demandez avec vos mots. Aucune formule à écrire.",
   "tour.brain": "Votre demande et le fichier partent à l’IA de votre choix, et nulle part ailleurs.",
-  "tour.program": "Pour les chiffres, elle écrit un petit programme, lancé dans un bac à sable du navigateur : ils sont calculés, pas devinés.",
+  "tour.program": "Pour les chiffres, elle écrit un petit programme, lancé dans un espace isolé du navigateur : ils sont calculés, pas devinés.",
   "tour.chart": "Ce que vous avez demandé revient fait : ici, un graphique.",
   "tour.read": "Sous chaque réponse : ce qui a été lu pour l’écrire.",
   "tour.end": "Rien à installer, et rien n’est envoyé à {name}. À vous : déposez votre propre tableau.",
@@ -39,7 +39,7 @@
     "Les unités vendues et le chiffre d’affaires, mois par mois"
   ],
   "replay.works": [
-    "Écriture d’un petit programme, lancé sur l’ordinateur de son bac à sable",
+    "Un petit programme écrit, puis lancé sur son ordinateur isolé",
     "Pour chaque produit, {last} comparé à {first}"
   ],
   "replay.columns": ["Produit", "Progression"],
@@ -55,7 +55,7 @@
   "asks.title": "Puis posez vos propres questions",
   "asks.items": [
     "Quels mois sont sous la moyenne, et de combien ?",
-    "Écris la formule qui additionne la colonne C quand la colonne A indique « Payé ».",
+    "Écris la formule qui additionne la colonne C quand la colonne A indique « Payé ».",
     "Trouve les doublons de cette liste et mets-les dans une feuille à part.",
     "Un récapitulatif par région, avec un graphique, pour la réunion de lundi."
   ],
@@ -79,7 +79,7 @@
   "exact.why": "Une IA peut annoncer avec aplomb un total deviné. Avec {name}, les chiffres sont calculés.",
   "exact.cards": [
     ["Un programme, pas une estimation", "Pour un total, une progression ou une moyenne, l’IA écrit un petit programme et le lance sur vos données. Le chiffre est calculé."],
-    ["Sur un ordinateur, dans cet onglet", "Un ordinateur dans un bac à sable, dans le navigateur, jamais votre propre machine : JavaScript, et Python pour les données. La première fois, {name} demande avant de l’allumer."],
+    ["Sur un ordinateur, dans cet onglet", "Un ordinateur isolé, dans le navigateur, jamais votre propre machine : JavaScript, et Python pour les données. La première fois, {name} demande avant de l’allumer."],
     ["Chaque étape sous vos yeux", "Chaque étape s’affiche pendant qu’elle tourne. Ouvrez-en une pour voir ce qu’elle a reçu et ce qui en est sorti."]
   ],
   "where.title": "Où va votre fichier.",
@@ -87,10 +87,10 @@
   "where.cards": [
     ["Gardé sur cet appareil", "Vos fichiers et vos tâches restent dans ce navigateur, chiffrés. Rien ne nous parvient."],
     ["Envoyé à l’IA de votre choix", "Votre demande et le texte du fichier vont à l’IA choisie, et nulle part ailleurs. Sous chaque réponse, {name} indique où elle a été faite."],
-    ["Ou pas envoyé du tout", "Avec l’IA sur cet ordinateur, rien n’en sort. Il lui faut 12 Go de mémoire et une puce graphique récente."]
+    ["Ou pas envoyé du tout", "Avec l’IA de cet ordinateur, rien n’en sort. Il lui faut 12 Go de mémoire et une puce graphique récente."]
   ],
   "catch.items": [
-    "Utiliser {name} est gratuit ; l’IA derrière ne l’est pas forcément. Sans inscription, seulement avec l’IA sur cet ordinateur.",
+    "{name} est gratuit ; l’IA derrière ne l’est pas toujours. Sans inscription, seule l’IA de cet ordinateur répond.",
     "Les macros Excel ne s’exécutent pas, et un classeur à macros (.xlsm) n’est pas lu.",
     "Les anciens fichiers Excel (.xls, d’Excel 97 à 2003) ne sont pas lus : enregistrez-les d’abord en .xlsx.",
     "Les classeurs produits contiennent des valeurs et des formules. Les graphiques viennent dans la réponse, pas dans le fichier Excel.",
@@ -98,12 +98,12 @@
     "Votre travail vit dans ce navigateur. Effacez ses données sans sauvegarde et il disparaît."
   ],
   "faq.items": [
-    ["Est-ce gratuit ?", "Oui, sans compte chez {name}. L’IA qui répond peut en demander un : « {free} » en ouvre un gratuit, ou utilisez un abonnement que vous payez déjà, ou l’IA sur cet ordinateur, sans aucun compte."],
+    ["Est-ce gratuit ?", "Oui, sans compte chez {name}. L’IA qui répond peut en demander un : « {free} » en ouvre un gratuit, ou utilisez un abonnement que vous payez déjà, ou l’IA de cet ordinateur, sans aucun compte."],
     ["Et les formules Excel ?", "Dites avec vos mots ce que la formule doit faire : vous l’obtenez, avec son explication. Dans un classeur fait par {name}, les formules restent des formules, qu’Excel recalcule."],
     ["Mon fichier est-il modifié ?", "Non. Un fichier déposé reste tel quel : ce que {name} produit revient sous forme d’un nouveau classeur, modifiable là où il s’affiche."],
     ["Quelle taille de tableau ?", "Jusqu’à 100 Mo. L’IA lit une longue feuille 200 lignes à la fois ; l’ordinateur travaille sur le fichier entier."],
     ["Et Google Sheets ou Numbers ?", "Téléchargez la feuille en .xlsx ou en CSV, puis déposez ce fichier dans la zone de saisie."],
-    ["Ça marche sur un téléphone ?", "Dans le navigateur, oui. L’IA sur cet ordinateur demande un ordinateur ; sur un téléphone, choisissez-en une en ligne."]
+    ["Ça marche sur un téléphone ?", "Dans le navigateur, oui. L’IA de cet ordinateur demande un ordinateur ; sur un téléphone, choisissez-en une en ligne."]
   ],
   "end.title": "Commencez par le tableau d’exemple.",
   "end.why": "Il s’ouvre dans {name}, sa question prête. Ensuite, déposez le vôtre."

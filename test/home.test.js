@@ -86,8 +86,8 @@ test('jean.is’s index.html has the page after the app’s root, and each other
   assert.match(ja, /<meta name="app-language" content="ja">/)
   assert.match(ja, /<link rel="canonical" href="https:\/\/jean\.is\/ja">/)
   assert.match(ja, /<meta property="og:url" content="https:\/\/jean\.is\/ja">/)
-  assert.match(ja, /<title>Jean · 好きなAIでつくって、ぜんぶ手元に<\/title>/)
-  assert.match(ja, /<p class="noscript">このアシスタントはブラウザの中だけで動き、JavaScriptが必要です。<\/p>/, 'what it says without scripts, in its language')
+  assert.match(ja, /<title>Jean · 好きな AI でつくって、ぜんぶ手元に<\/title>/)
+  assert.match(ja, /<p class="noscript">このアシスタントはブラウザーの中だけで動き、JavaScript が必要です。<\/p>/, 'what it says without scripts, in its language')
   // Its menu links every language the app speaks, as Settings' lists them, the page's marked.
   assert.equal(ja.match(/<a href="[^"]*" data-language="[\w-]+" lang="[\w-]+"/g)?.length, 46)
   assert.match(ja, /<a href="(\.\/)?ko" data-language="ko" lang="ko" dir="ltr" hreflang="ko">/, 'a language with its own page links there')

@@ -1,7 +1,7 @@
 {
   "charts.data": "Mustrà i dati",
   "charts.chart": "Graficu",
-  "charts.of": "Graficu: {names}",
+  "charts.of": "Graficu : {names}",
   "charts.drawing": "Disegnu di u graficu…",
   "charts.failed": "Stu graficu ùn s’hè micca pussutu disegnà."
 }

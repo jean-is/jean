@@ -26,7 +26,7 @@
   "certificates.checking": "A verificar {name}",
   "certificates.dated": "Datado por {name}",
   "certificates.badDate": "Uma data que não se confirma",
-  "certificates.date": "Fazê-lo datar por {hosts}",
+  "certificates.date": "Datá-lo com {hosts}",
   "certificates.logged": "Num registo público, entrada {index}",
   "certificates.notLogged": "Não está no registo público que nomeia",
   "certificates.logSays": "Diz estar num registo público, entrada {index}",
@@ -53,6 +53,6 @@
   "certificates.trust.trusted": "Certificado por uma autoridade em que a tua organização confia",
   "certificates.trust.unchecked": "Certificado por uma autoridade em que a tua organização confia, sem prova de que não foi revogado",
   "certificates.trust.untrusted": "Não certificado por uma autoridade em que a tua organização confia",
-  "certificates.trust.revoked": "O seu certificado foi revogado antes deste selo",
+  "certificates.trust.revoked": "O seu certificado foi revogado antes de isto ser selado",
   "certificates.qualified": "Um selo qualificado segundo o direito da UE"
 }

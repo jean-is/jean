@@ -3,7 +3,7 @@
   "description": "{name} peut télécharger un cerveau qui tourne sur votre ordinateur : rien n’en sort, c’est gratuit et ça marche hors ligne. Ce qu’il faut, et comment.",
   "h1": "Utiliser l’IA de cet ordinateur",
   "works": "Un ordinateur avec environ 12 Go de mémoire, dans un navigateur qui laisse une page utiliser sa puce graphique, Chrome ou Edge par exemple",
-  "answer": "Là où votre ordinateur peut en faire tourner un, {name} propose son propre cerveau, sous {free} dans {settings} › {brains} › {add} : {device}. Il se télécharge une fois, environ 3 Go, et ensuite rien de ce qu’il répond ne quitte cet ordinateur. Il est gratuit et marche hors ligne, avec des réponses plus simples et plus lentes que celles du cloud.",
+  "answer": "Si votre ordinateur en est capable, {name} propose un cerveau qui tourne dessus, sous {free} dans {settings} › {brains} › {add} : {device}. Il se télécharge une fois, environ 3 Go, et ensuite rien de ce qu’il répond ne quitte cet ordinateur. Il est gratuit et marche hors ligne, avec des réponses plus simples et plus lentes que celles du cloud.",
   "tour.here": "Voici {settings} › {brains}, où l’on ajoute un cerveau. La prochaine fois, {settings} est dans le menu à votre nom (ou « Vous »), au pied de la liste des tâches.",
   "tour.free": "Quand cet ordinateur peut faire tourner un cerveau lui-même, {device} est ici, sous {free} : ouvrez-le. Quand il ne peut pas, il n’est pas proposé.",
   "need": [
@@ -23,12 +23,12 @@
     "Sous une réponse qu’il a écrite, {name} affiche {local}.",
     "Chaque navigateur garde son propre téléchargement : dans un autre navigateur de cet ordinateur, il se télécharge à nouveau.",
     "{settings} › {data} › {space} montre la place qu’il prend.",
-    "Si son chargement ferme un jour l’onglet, ce navigateur cesse de le proposer et efface le téléchargement, pour libérer la place."
+    "Si l’onglet plante un jour pendant son chargement, ce navigateur cesse de le proposer et efface le téléchargement, pour libérer la place."
   ],
   "fixes": [
     [
       "{device} n’est pas proposé",
-      "Il manque à cet ordinateur l’une des choses nécessaires : la mémoire, une puce graphique que le navigateur peut utiliser, ou la place. Essayez Chrome ou Edge, ou libérez de la place. Sinon, un cerveau dans le cloud répond à sa place : voir {openrouter}."
+      "Il manque à cet ordinateur l’une des trois choses nécessaires : la mémoire, une puce graphique que le navigateur peut utiliser, ou la place. Essayez Chrome ou Edge, ou libérez de la place. Sinon, un cerveau dans le cloud répond à sa place : voir {openrouter}."
     ],
     [
       "Le téléchargement s’est arrêté",

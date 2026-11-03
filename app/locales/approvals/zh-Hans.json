@@ -32,17 +32,17 @@
   "approvals.carefulNone": "针对一类操作或一项服务，先问，或永不。",
   "approvals.carefulAdd": "对此更谨慎…",
   "approvals.carefulTitle": "更谨慎",
-  "approvals.carefulText": "针对一类操作或一项服务。它永远不会比其余的允许得更多。",
+  "approvals.carefulText": "针对一类操作或一项服务。它只会收紧：永远不会比平常允许得更多。",
   "approvals.kinds": "一类操作",
   "approvals.services": "一项服务",
   "approvals.example": "是发给客户的吗？",
-  "approvals.ifText": "{name} 每次之前都会先自问这个问题。无法判断时，按“是”处理。",
+  "approvals.ifText": "{name} 每次动手前都会先自问这个问题。无法判断时，算作“是”。",
   "approvals.films": "视频",
   "approvals.what.folder": "{name} 不问就修改这个文件夹里的文件",
-  "approvals.what.site": "这台电脑可以访问它",
+  "approvals.what.site": "电脑可以访问它",
   "approvals.what.films": "不问就生成，尽管比图片贵",
   "approvals.what.meeting": "这些项目的助手可以不问就开会",
-  "approvals.what.extension": "可以不经询问就让操作进行",
+  "approvals.what.extension": "可以不问你就让操作进行",
   "approvals.stop": "收回",
   "approvals.kept": "已保存。可以在“授权”中收回。",
   "approvals.pagesIn": "不从互联网加载任何内容",
@@ -53,5 +53,5 @@
   "approvals.certificatesText": "这台设备的印章、给证书加日期的服务，以及公开日志",
   "approvals.what.reads": "{name} 在那里不问就读取",
   "approvals.what.acts": "{name} 在那里不问就撰写、发送和修改",
-  "approvals.elsewhere": "此任务读取了来自别处的内容，其中可能含有指令，因此再次询问。"
+  "approvals.elsewhere": "这个任务读取了别处的内容，其中可能含有指令，所以又问了你一次。"
 }

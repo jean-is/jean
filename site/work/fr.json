@@ -64,7 +64,7 @@
     ],
     [
       "Peut-on l’auditer ?",
-      "Chaque échange et chaque outil peuvent aller au collecteur de l’entreprise, les métadonnées seulement, sauf si elle en demande plus."
+      "Chaque échange et chaque outil utilisé peuvent être envoyés au journal de l’entreprise, les métadonnées seulement, sauf si elle en demande plus."
     ]
   ],
   "kit.title": "Demandez à l’informatique, en deux minutes.",
@@ -79,7 +79,7 @@
     "Il lit la page écrite pour lui, et décide."
   ],
   "mail.company": "Écrire l’e-mail",
-  "mail.public": "Mon employeur est public",
+  "mail.public": "Je travaille dans le public",
   "kit.note": "Rien n’est envoyé depuis cette page : votre messagerie s’ouvre, et c’est vous qui envoyez.",
   "limits.title": "Ce que {name} ne fait pas au travail.",
   "limits.items": [

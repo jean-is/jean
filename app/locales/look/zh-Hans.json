@@ -11,10 +11,10 @@
   "look.font.mono": "打字机",
   "look.sample": "字",
   "look.motion": "动效",
-  "look.less": "减少",
-  "look.full": "全部",
-  "look.followsLess": "跟随设备：当前为减少",
-  "look.followsFull": "跟随设备：当前为全部",
+  "look.less": "较少",
+  "look.full": "完整",
+  "look.followsLess": "跟随设备：当前较少",
+  "look.followsFull": "跟随设备：当前完整",
   "look.contrast": "对比度",
   "look.usual": "标准",
   "look.more": "增强",
@@ -25,6 +25,6 @@
   "look.own": "主题自带",
   "look.another": "其他颜色",
   "look.css": "自定义 CSS",
-  "look.cssHint": "输入时即在主题之上生效。",
+  "look.cssHint": "边输入边在主题之上生效。",
   "look.reset": "撤销我的更改"
 }

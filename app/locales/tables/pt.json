@@ -20,7 +20,7 @@
   "tables.empty": "Ainda não há linhas.",
   "tables.addRow": "Nova linha",
   "tables.wrong": "Isso não serve para esta coluna.",
-  "tables.form.email": "Escreve um endereço de email, por exemplo nome@example.com.",
+  "tables.form.email": "Escreve um endereço de e-mail, por exemplo nome@example.com.",
   "tables.form.link": "Escreve um endereço web que comece por https://, por exemplo https://example.com.",
   "tables.form.phone": "Escreve um número de telefone, por exemplo +351 912 345 678.",
   "tables.none": "Sem {column}",
@@ -37,8 +37,8 @@
   "tables.kind.select": "Opção",
   "tables.kind.multi-select": "Várias opções",
   "tables.kind.checkbox": "Caixa de verificação",
-  "tables.kind.link": "Link web",
-  "tables.kind.email": "Email",
+  "tables.kind.link": "Ligação web",
+  "tables.kind.email": "E-mail",
   "tables.kind.phone": "Telefone",
   "tables.type": "Tipo",
   "tables.ascending": "Ordenar de A a Z",
@@ -66,9 +66,9 @@
   "tables.search": "Procurar uma linha",
   "tables.filter": "Filtrar",
   "tables.filterOn": {
-    "one": "Filtrar: {count} regra ativa",
-    "many": "Filtrar: {count} de regras ativas",
-    "other": "Filtrar: {count} regras ativas"
+    "one": "Filtro: {count} regra ativa",
+    "many": "Filtro: {count} de regras ativas",
+    "other": "Filtro: {count} regras ativas"
   },
   "tables.sort": "Ordenar",
   "tables.shown": "Colunas visíveis",
@@ -99,8 +99,8 @@
   "tables.noneKept": "Nenhuma linha corresponde ao filtro.",
   "tables.clear": "Limpar",
   "tables.kind.formula": "Fórmula",
-  "tables.yourFormula": "A sua fórmula",
+  "tables.yourFormula": "A tua fórmula",
   "tables.formulaHint": "As colunas pelo nome, + − * / e funções como round, min, max ou sqrt.",
-  "tables.formulaWrong": "Esta fórmula não pode ser calculada: verifique os nomes das colunas e os parênteses.",
+  "tables.formulaWrong": "Esta fórmula não pode ser calculada: verifica os nomes das colunas e os parênteses.",
   "tables.save": "Guardar"
 }

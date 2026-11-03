@@ -15,7 +15,7 @@
   "demo.sent": "Sent.",
   "demo.answer": "Sent to the team, with the minutes attached.",
   "parts": [
-    ["What {name} does by itself", "Under {allow}: reading files, making and changing its own, searching, and running calculations on its computer, which is in a sandbox, never yours."],
+    ["What {name} does by itself", "Under {allow}: reading files, making and changing its own, searching, and running calculations on its own computer, walled off inside this tab, never on yours."],
     ["What it asks you first", "Under {ask}: using the internet, moving and renaming, deleting files, and sending and sharing. A card shows what it is about to do, and {name} waits for your answer: {once}, {always}, {notnow} or {nothing}."],
     ["What it never does", "Under {never}: typing passwords and paying. {name} tells you it can’t, and why."]
   ],

@@ -1,7 +1,7 @@
 {
   "knows.instructions": "As tuas instruções",
   "knows.instructionsPlaceholder": "Por exemplo: Responde em português. Sê breve. Tenho uma padaria.",
-  "knows.noticed": "O que foi reparado",
+  "knows.noticed": "O que {name} reparou",
   "knows.forYou": "Em todo o lado",
   "knows.forProject": "Em {project}",
   "knows.edit": "Editar esta linha",
@@ -9,25 +9,25 @@
   "knows.promote": "Torná-la uma instrução",
   "knows.promoted": "Agora é uma das tuas instruções.",
   "knows.nothing": "Ainda nada.",
-  "you.line": "As tuas instruções e o que foi reparado são enviados com cada tarefa ao cérebro que responde.",
+  "you.line": "As tuas instruções e o que {name} reparou são enviados com cada tarefa ao cérebro que responde.",
   "you.none": "Ainda nada sobre ti. O que escreveres aqui é lido no início de cada tarefa.",
   "you.cut": {
-    "one": "A linha mais antiga já não é lida. Para que seja, torna-a uma instrução.",
-    "many": "As {count} de linhas mais antigas já não são lidas. Para que uma seja, torna-a uma instrução.",
-    "other": "As {count} linhas mais antigas já não são lidas. Para que uma seja, torna-a uma instrução."
+    "one": "A linha mais antiga já não é lida. Para que continue a ser lida, torna-a uma instrução.",
+    "many": "As {count} de linhas mais antigas já não são lidas. Para que uma continue a ser lida, torna-a uma instrução.",
+    "other": "As {count} linhas mais antigas já não são lidas. Para que uma continue a ser lida, torna-a uma instrução."
   },
-  "you.nameText": "O nome pelo qual te chamam. Nunca é enviado a um cérebro.",
+  "you.nameText": "Como {name} te chama. Nunca é enviado a um cérebro.",
   "you.edit": "Editar",
   "you.cancel": "Cancelar",
   "you.more": "Mais para esta linha",
-  "you.empty": "O que deve estar sempre presente? O teu trabalho, as tuas línguas, como gostas das respostas.",
+  "you.empty": "O que deve {name} ter sempre em mente? O teu trabalho, as tuas línguas, como gostas das respostas.",
   "you.start.work": "O teu trabalho",
   "you.start.workText": "Trabalho como ",
   "you.start.language": "As tuas línguas",
   "you.start.languageText": "Responde em ",
   "you.start.length": "Comprimento das respostas",
-  "you.start.lengthText": "Faz respostas ",
-  "you.remember": "Lembrar",
+  "you.start.lengthText": "Dá respostas ",
+  "you.remember": "Memorizar",
   "you.all": {
     "one": "Ver a linha",
     "many": "Ver as {count} de linhas",
@@ -38,8 +38,8 @@
     "many": "{count} de linhas",
     "other": "{count} linhas"
   },
-  "you.search": "Procurar no que foi reparado",
+  "you.search": "Procurar no que {name} reparou",
   "you.unread": "Já não são lidas",
-  "you.project": "Juntam-se às tuas, só nas tarefas dele.",
+  "you.project": "Juntam-se às tuas, só nas tarefas deste projeto.",
   "you.org": "As instruções da tua organização"
 }

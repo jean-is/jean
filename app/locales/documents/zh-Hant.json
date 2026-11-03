@@ -1,7 +1,7 @@
 {
   "documents.document": "文件：{file}",
   "documents.untitled": "新文件",
-  "documents.hint": "輸入 / 新增清單、表格、圖表等",
+  "documents.hint": "輸入 / 可加入清單、表格、圖表…",
   "documents.blocks": "轉換為",
   "documents.add": "在下方新增",
   "documents.text": "內文",
@@ -55,7 +55,7 @@
   "documents.rejectAll": "全部拒絕",
   "documents.before": "修改前",
   "documents.added": "新增",
-  "documents.gone": "{name} 建議刪除此處",
+  "documents.gone": "{name} 移除此處",
   "documents.accepted": "已接受修改",
   "documents.rejected": "已拒絕修改",
   "documents.acceptedAll": "已接受全部修改",

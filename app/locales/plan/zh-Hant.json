@@ -6,7 +6,7 @@
   "plan.completed": "已完成",
   "plan.confirm": "按這個計畫進行嗎？",
   "plan.go": "開始",
-  "plan.always": "總是直接開始",
+  "plan.always": "一律直接開始",
   "plan.paused": "在第 {count} 步暫停",
   "plan.cost": "目前約 {cost}",
   "plan.keepGoing": "繼續"

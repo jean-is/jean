@@ -55,7 +55,7 @@
   "documents.rejectAll": "Alle ablehnen",
   "documents.before": "Vorher",
   "documents.added": "Neu",
-  "documents.gone": "{name} entfernt das",
+  "documents.gone": "{name} entfernt diesen Teil",
   "documents.accepted": "Änderung angenommen",
   "documents.rejected": "Änderung abgelehnt",
   "documents.acceptedAll": "Alle Änderungen angenommen",
@@ -67,7 +67,7 @@
   "documents.change": "Änderung {i} von {n}",
   "documents.previous": "Vorherige Änderung",
   "documents.next": "Nächste Änderung",
-  "documents.done": "Erledigt",
+  "documents.done": "Fertig",
   "documents.leave": "Um eine Tabelle oder Liste zu verlassen, drücke Esc und dann Tab.",
   "documents.blocksSelected": {
     "one": "Block ausgewählt",

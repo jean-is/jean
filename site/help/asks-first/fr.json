@@ -3,7 +3,7 @@
   "description": "Ce que {name} fait sans demander, ce qui passe d’abord par vous, ce qui n’arrive jamais, et comment changer chacun dans Réglages › Autorisations.",
   "h1": "Quand {name} demande d’abord",
   "works": "Tous les navigateurs",
-  "answer": "{name} lit et crée ses propres fichiers sans demander. Avant d’utiliser Internet, de déplacer, de supprimer ou d’envoyer quoi que ce soit, {name} vous montre ce qui va se faire, et attend. Mots de passe et paiements : jamais. Vous choisissez pour chaque sorte d’action dans {settings} › {approvals}.",
+  "answer": "{name} lit et crée ses propres fichiers sans demander. Avant d’utiliser internet, de déplacer, de supprimer ou d’envoyer quoi que ce soit, {name} vous montre ce qui va se faire, et attend. Mots de passe et paiements : jamais. Vous choisissez pour chaque sorte d’action dans {settings} › {approvals}.",
   "tour.here": "Voici {settings} › {approvals}. La prochaine fois, {settings} est dans le menu à votre nom (ou « Vous »), au pied de la liste des tâches.",
   "pane.title": "Une demande d’envoi d’e-mail, traitée dans {name}",
   "pane.play": "Voir le déroulé",
@@ -17,11 +17,11 @@
   "parts": [
     [
       "Ce que {name} fait sans demander",
-      "Sous {allow} : lire des fichiers, créer et modifier les siens, chercher, et faire des calculs sur son ordinateur, qui est dans un bac à sable, jamais le vôtre."
+      "Sous {allow} : lire des fichiers, créer et modifier les siens, chercher, et faire des calculs sur son propre ordinateur, isolé dans cet onglet, jamais sur le vôtre."
     ],
     [
       "Ce qui passe d’abord par vous",
-      "Sous {ask} : utiliser Internet, déplacer et renommer, supprimer des fichiers, envoyer et partager. Une carte montre ce qui va se faire, et {name} attend votre réponse : {once}, {always}, {notnow} ou {nothing}."
+      "Sous {ask} : utiliser internet, déplacer et renommer, supprimer des fichiers, envoyer et partager. Une carte montre ce qui va se faire, et {name} attend votre réponse : {once}, {always}, {notnow} ou {nothing}."
     ],
     [
       "Ce qui n’arrive jamais",

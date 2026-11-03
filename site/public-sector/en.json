@@ -117,7 +117,7 @@
     ],
     [
       "An outside accessibility audit?",
-      "Not yet. The audit against RGAA 4.1.2 is Warehouse SAS’s own, and no person has yet tested Jean with a screen reader.",
+      "Not yet. The audit against RGAA 4.1.2 is Warehouse SAS’s own, and no person has yet tested {name} with a screen reader.",
       "not"
     ]
   ],

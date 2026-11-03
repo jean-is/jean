@@ -12,7 +12,7 @@
     ],
     [
       "{auto}",
-      "How much brain each request gets, chosen for you: a quick one for a quick question, a stronger one for a demanding task, and the one on this device for anything personal, when you have one."
+      "Which brain each request gets, chosen for you: a quick one for a quick question, a stronger one for a demanding task, and the one on this device for anything personal, when you have one."
     ],
     [
       "Task",
@@ -37,6 +37,10 @@
     [
       "Collection",
       "A list {name} keeps for you in rows and columns, shown as a table or a board: job applications, expenses, books to read."
+    ],
+    [
+      "Design",
+      "Something {name} lays out to print, post or send: an invitation, a poster, a flyer, a post. You finish it by hand, beside the task."
     ],
     [
       "Skill",

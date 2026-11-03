@@ -16,7 +16,7 @@
   "approvals.theUsual": "平常",
   "approvals.covers.read": "開啟你交給 {name} 或它產生的檔案來閱讀",
   "approvals.covers.edit": "寫新檔案，或修改 {name} 產生或你交給它的檔案",
-  "approvals.covers.search": "在網路上或你的檔案中查找內容",
+  "approvals.covers.search": "上網或在你的檔案裡查東西",
   "approvals.covers.execute": "用幾行程式碼精確計算",
   "approvals.covers.fetch": "開啟網頁，或連到某個網站",
   "approvals.covers.move": "把檔案放到別處，或替它改名",
@@ -32,14 +32,14 @@
   "approvals.carefulNone": "針對一類操作或一項服務，先問，或永不。",
   "approvals.carefulAdd": "對此更謹慎…",
   "approvals.carefulTitle": "更謹慎",
-  "approvals.carefulText": "針對一類操作或一項服務。它永遠不會比其餘的允許得更多。",
+  "approvals.carefulText": "針對一類操作或一項服務。只會更嚴格：它永遠不會比平常允許得更多。",
   "approvals.kinds": "一類操作",
   "approvals.services": "一項服務",
   "approvals.example": "是要給客戶的嗎？",
   "approvals.ifText": "{name} 每次之前都會先自問這個問題。無法判斷時，視為「是」。",
   "approvals.films": "影片",
   "approvals.what.folder": "{name} 不問就修改這個資料夾裡的檔案",
-  "approvals.what.site": "這台電腦可以連到它",
+  "approvals.what.site": "電腦可以連到它",
   "approvals.what.films": "不問就產生，雖然比圖片貴",
   "approvals.what.meeting": "這些專案的助理可以不問就開會",
   "approvals.what.extension": "可以不經詢問就讓操作進行",
@@ -53,5 +53,5 @@
   "approvals.certificatesText": "這台裝置的印章、為憑證加上日期的服務，以及公開日誌",
   "approvals.what.reads": "{name} 在那裡不問就讀取",
   "approvals.what.acts": "{name} 在那裡不問就撰寫、傳送和修改",
-  "approvals.elsewhere": "此工作讀取了來自別處的內容，其中可能含有指示，因此再次詢問。"
+  "approvals.elsewhere": "這個任務讀取了來自別處的內容，其中可能含有指示，所以會再問你一次。"
 }

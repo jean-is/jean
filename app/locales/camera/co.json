@@ -15,6 +15,6 @@
   "camera.failed": "A camera ùn hè micca partuta. Pruvate torna.",
   "camera.blind": "Stu cervellu ùn vede e fiure. Sceglitene unu chì e vede.",
   "camera.picture": "Camera {time}",
-  "camera.move": "Spiazzà in un altru cantone",
+  "camera.move": "Dispiazzà in un altru cantone",
   "camera.idle": "A camera s’hè spenta dopu à dece minuti senza usu."
 }

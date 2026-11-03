@@ -222,7 +222,7 @@ test('a conversation that ends on a picture opens at its end, once the picture i
   await expect.poll(() => page.evaluate(() => Math.round(document.documentElement.scrollHeight - innerHeight - scrollY))).toBe(0)
 })
 
-for (const [lang, save, labelled] of [['en', 'Save the picture', 'Save the picture labelled as made with AI'], ['ar', 'حفظ الصورة', 'حفظ الصورة مع وسم «صُنع بالذكاء الاصطناعي»'], ['ja', '画像を保存', '「AIで作成」の表示を付けて画像を保存']]) {
+for (const [lang, save, labelled] of [['en', 'Save the picture', 'Save the picture labelled as made with AI'], ['ar', 'حفظ الصورة', 'حفظ الصورة مع وسم «صُنع بالذكاء الاصطناعي»'], ['ja', '画像を保存', '「AI で作成」の表示を付けて画像を保存']]) {
   test(`a picture in the answer, in ${lang}, saved as it is or labelled as made with AI (D324)`, async ({ page }) => {
     await start(page, lang)
     await connectFakeBrain(page)

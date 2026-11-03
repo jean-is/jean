@@ -32,7 +32,7 @@
       "Your request and what you attach go to the AI you choose, or to your company’s own, and nowhere else. On a capable computer, the AI can answer right there."
     ],
     [
-      "Never around your IT",
+      "Never behind IT’s back",
       "If your company has rules for AI, they apply here too. Nothing on this page helps you get round them."
     ]
   ],
@@ -64,7 +64,7 @@
     ],
     [
       "Can we audit it?",
-      "Each turn and each tool can go to the company’s own collector, metadata only unless it asks for more."
+      "Each exchange and each tool used can be sent to the company’s own log, metadata only unless it asks for more."
     ]
   ],
   "kit.title": "Ask your IT, in two minutes.",
@@ -79,7 +79,7 @@
     "They read the page written for them, and decide."
   ],
   "mail.company": "Write the email",
-  "mail.public": "My employer is public",
+  "mail.public": "I work in the public sector",
   "kit.note": "Nothing is sent from this page: your own email opens, and you choose whether to send.",
   "limits.title": "What {name} doesn’t do at work.",
   "limits.items": [

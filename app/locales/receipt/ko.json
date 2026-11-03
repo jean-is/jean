@@ -4,7 +4,7 @@
   "receipt.local.text": "이 답변을 쓰기 위해 이 기기 밖으로 나간 것은 없어요. 브라우저의 자체 기록이 이를 보여 줘요.",
   "receipt.out": "이 기기 밖으로 전송됨",
   "receipt.inCloud": "클라우드에서 처리됨",
-  "receipt.inCloud.text": "이 답변을 쓰기 위해 대화가 클라우드로 전송되었습니다.",
+  "receipt.inCloud.text": "이 답변을 쓰기 위해 대화가 클라우드로 전송됐어요.",
   "receipt.unknown": "인증되지 않음",
   "receipt.unknown.text": "답변을 쓰는 동안 보낸 내용에 대한 브라우저 기록이 남아 있지 않아요.",
   "receipt.time": "시간",

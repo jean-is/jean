@@ -101,8 +101,8 @@
   ],
   "io.title": "Ce qui entre. Ce qui sort.",
   "io.why": "Dites-le ou déposez le fichier. Puis demandez la forme que vous voulez, ou laissez {name} choisir.",
-  "io.in": "Entrée",
-  "io.out": "Sortie",
+  "io.in": "En entrée",
+  "io.out": "En sortie",
   "io.ins": [
     ["file", "Vos propres mots", "Une procédure, un plan ou des notes en vrac, écrits ou dictés"],
     ["pdf", "Un PDF ou un fichier Word", "Son texte est lu : la carte mentale d’un rapport, la frise d’un contrat"],
@@ -132,7 +132,7 @@
     ["Ou pas envoyé du tout", "Avec l’IA de cet ordinateur, rien n’en sort. Il lui faut 12 Go de mémoire et une puce graphique récente."]
   ],
   "catch.items": [
-    "{name} est gratuit ; l’IA derrière ne l’est pas toujours. Sans inscription seulement avec l’IA de cet ordinateur.",
+    "{name} est gratuit ; l’IA derrière ne l’est pas toujours. Sans inscription, seule l’IA de cet ordinateur répond.",
     "Un schéma montre ce que l’IA a compris. Relisez-le comme le croquis d’un collègue avant de le transmettre.",
     "L’IA écrit les formules d’une page : essayez-en une dont vous connaissez déjà le résultat.",
     "Une IA sur cet ordinateur réussit ces pages moins souvent qu’une grande IA en ligne, et peut répondre en mots.",
@@ -141,7 +141,7 @@
     "Votre travail vit dans ce navigateur. Effacez ses données sans sauvegarde et il disparaît."
   ],
   "faq.items": [
-    ["C’est gratuit, sans inscription ?", "Oui, sans compte chez {name}. L’IA qui répond peut en demander un : {free} en ouvre un gratuit, ou utilisez un abonnement que vous payez déjà, ou l’IA de cet ordinateur, sans aucun compte."],
+    ["C’est gratuit, sans inscription ?", "Oui, sans compte chez {name}. L’IA qui répond peut en demander un : « {free} » en ouvre un gratuit, ou utilisez un abonnement que vous payez déjà, ou l’IA de cet ordinateur, sans aucun compte."],
     ["Peut-il faire une carte mentale depuis un PDF ?", "Oui. Déposez le PDF dans la zone de saisie et demandez. Un PDF scanné, sans texte, n’est pas lu."],
     ["Puis-je modifier un schéma à la main ?", "Il n’y a pas de planche à dessin : demandez la modification avec vos mots, et c’est redessiné. Pour le reprendre ailleurs, Copier donne son texte, en Mermaid, un format que beaucoup d’éditeurs lisent."],
     ["Comment le mettre dans mes diapos ou mon rapport ?", "Son bouton Copier le met dans le presse-papiers en image : collez-le dans votre document ou votre diapo."],

@@ -1,10 +1,10 @@
 {
-  "computer.text": "这个标签页里隔离环境中的一台电脑：它借用这台设备的处理器和内存，但绝不触及设备上的其他任何东西。",
+  "computer.text": "这个标签页里的一台电脑，与这台设备隔开：它借用处理器和内存，绝不触及其他任何东西。",
   "computer.lede": "这个标签页里的一台电脑，与这台设备分开：它处理任务交给它的文件，只访问你允许的网站。",
   "computer.where": "命令在哪里运行",
   "computer.reach": "它可以访问的范围",
   "computer.keeps": "它保留的内容",
-  "computer.sandbox": "隔离环境",
+  "computer.sandbox": "在这个标签页里",
   "computer.sandbox.text": "命令、JavaScript 和 Python",
   "computer.state.asleep": "休眠中",
   "computer.state.waking": "正在唤醒",
@@ -16,7 +16,7 @@
   "computer.of": "{used} / {total}",
   "computer.of.least": "{used} / 至少 {total}",
   "computer.using": "正在使用 {cores} 和 {memory} 内存。",
-  "computer.engines": "可以运行的",
+  "computer.engines": "它能运行什么",
   "computer.engine.shell": "命令",
   "computer.engine.shell.text": "文件和文件夹，以及随附的工具",
   "computer.engine.quickjs": "JavaScript",
@@ -36,7 +36,7 @@
     "other": "另外 {count} 个"
   },
   "computer.registries": "软件包来源",
-  "computer.registries.text": "用于镜像，比如你的组织的镜像。密钥留在这台设备上，只发送到该地址。",
+  "computer.registries.text": "用于镜像，也就是你的组织可能自己架设的这些来源的副本。密钥留在这台设备上，只发送到镜像的地址。",
   "computer.registry.pyodide": "Python，Pyodide 的软件包",
   "computer.registry.pypi": "Python，PyPI",
   "computer.registry.npm": "JavaScript，npm",
@@ -44,7 +44,7 @@
   "computer.time": "一条命令最长可运行",
   "computer.time.text": "更改后电脑会重新启动，正在运行的内容会停止。",
   "computer.limits": "限制和软件包来源",
-  "computer.limits.text": "用于运行时间长的命令，以及工作中的镜像。大多数人从不更改这些。",
+  "computer.limits.text": "用于耗时长的命令，以及单位里的镜像。大多数人从不更改这些。",
   "computer.limits.line": "每条命令最长 {time}",
   "computer.workspace": "这个项目的工作区",
   "computer.workspace.text": "任务没有文件夹时电脑使用的文件。",
@@ -63,15 +63,15 @@
   "computer.reach.always": "始终允许 {site}",
   "computer.reach.no": "不",
   "computer.relay": "访问网络的中转",
-  "computer.relay.text": "中转服务器的地址，用于拒绝来自其他网站请求的网站。留空：直接访问，经由这台设备自己的代理。",
+  "computer.relay.text": "一台中转服务器的地址，用于那些拒绝其他网站请求的网站。留空则直接访问，经由这台设备自己的代理。",
   "computer.minutes": {
     "other": "{count} 分钟"
   },
   "computer.reach.once": "允许一次",
   "computer.terminal": "终端",
-  "computer.terminal.text": "自己在电脑上运行命令，使用与对话相同的文件；你的下一条消息会说明你运行了什么。{keys} 可随时打开它。",
+  "computer.terminal.text": "自己在电脑上运行命令，用的是和对话相同的文件。你的下一条消息会说明你运行了什么。{keys} 可随时打开它。",
   "computer.terminal.command": "命令",
   "computer.terminal.clear": "清除",
   "computer.terminal.exit": "退出码 {code}",
-  "computer.terminal.refused": "期间已在别处更改，未保存：{files}"
+  "computer.terminal.refused": "未保存，因为期间已在别处更改：{files}"
 }

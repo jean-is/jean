@@ -8,7 +8,7 @@
   "parts": [
     [
       "Pourquoi ça arrive",
-      "Le plus souvent, la connexion a coupé : le Wi-Fi, un train, un téléphone sans réseau. {name} a déjà réessayé trois fois quand il le dit. Sinon, le service a refusé une demande venue d’une page web : quelques services n’en acceptent aucune, et Ollama et LM Studio ne les acceptent qu’une fois qu’on le leur a dit. Un navigateur ne peut pas dire à {name} lequel des deux c’était : le message nomme donc les deux."
+      "Le plus souvent, la connexion a coupé : le Wi-Fi, un train, un téléphone sans réseau. Quand {name} le dit, il a déjà réessayé trois fois. Sinon, le service a refusé une demande venue d’une page web : quelques services n’en acceptent aucune, et Ollama et LM Studio ne les acceptent qu’une fois qu’on les y a autorisés. Un navigateur ne peut pas dire à {name} lequel des deux c’était : le message nomme donc les deux."
     ]
   ],
   "steps": [
@@ -29,7 +29,7 @@
     ],
     [
       "C’est Ollama ou LM Studio",
-      "Ils ne répondent à un navigateur qu’une fois qu’un réglage sur votre ordinateur le leur dit. Si c’est plus que vous ne voulez, commencez gratuitement avec OpenRouter : {choose}."
+      "Ils ne répondent à un navigateur qu’une fois qu’un réglage sur votre ordinateur les y autorise. Si c’est trop, commencez plutôt gratuitement avec OpenRouter : {choose}."
     ],
     [
       "Ça marchait hier, avec le même cerveau",

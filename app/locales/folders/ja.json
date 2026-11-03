@@ -1,6 +1,6 @@
 {
   "folders.in": "{folder} で作業中",
-  "folders.copy": "このブラウザーではファイルをその場で変更できません。{name} はコピーで作業し、変更されたものはご自身で保存します。",
+  "folders.copy": "このブラウザーではファイルをその場で変更できません。{name} はコピーで作業し、変更したファイルはあなたが保存します。",
   "folders.again": "再接続",
   "folders.allow": "アクセスを許可",
   "folders.save": "変更したファイルを保存",
@@ -23,7 +23,7 @@
   "folders.open.yes": "許可",
   "folders.change.question": "{path} を変更しますか？",
   "folders.changes.question": {
-    "other": "フォルダー内のこの {count} 件の変更を残しますか？"
+    "other": "この {count} 件の変更をフォルダーに残しますか？"
   },
   "folders.change.yes": "変更する",
   "folders.always": "{folder} では常に許可",

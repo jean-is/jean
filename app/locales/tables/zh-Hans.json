@@ -17,7 +17,7 @@
   "tables.rowDeleted": "已删除行“{name}”。",
   "tables.empty": "还没有行。",
   "tables.addRow": "新行",
-  "tables.wrong": "这不适合此列。",
+  "tables.wrong": "这不符合此列的类型。",
   "tables.form.email": "请填写电子邮件地址，例如 name@example.com。",
   "tables.form.link": "请填写以 https:// 开头的网址，例如 https://example.com。",
   "tables.form.phone": "请填写电话号码，例如 138 1234 5678。",

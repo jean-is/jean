@@ -12,7 +12,7 @@
     ],
     [
       "Lesquelles sont prêtes à l’emploi ?",
-      "Pour tous les jours, comme Lettre formelle, Budget et En termes simples ; pour le travail, comme Plan de projet et Ce qui pourrait mal tourner ; pour apprendre, comme Fiches et Planning de révisions ; et pour dessiner et présenter, comme Graphique, Diapos, PowerPoint et Créer un jeu. Elles marchent dès votre première demande : quand l’une convient, le cerveau la lit et elle rejoint vos compétences ; un message le dit, avec {see} pour ouvrir sa page. Réponses visuelles est là dès le début."
+      "Pour tous les jours, comme Lettre formelle, Budget et En termes simples ; pour le travail, comme Plan de projet et Ce qui pourrait mal tourner ; pour apprendre, comme Fiches et Planning de révisions ; et pour dessiner et présenter, comme Graphique, Diapos, PowerPoint et Créer un jeu. Elles marchent dès votre première demande : quand l’une convient, le cerveau la lit et elle rejoint vos compétences ; un message le dit, avec {see} pour ouvrir sa page. L’une d’elles, Réponses visuelles, est active dès le début."
     ],
     [
       "Comment ajouter les miennes ?",
@@ -41,7 +41,7 @@
   "fixes": [
     [
       "Vous voyez {invalid}",
-      "Un SKILL.md commence par son nom, en lettres minuscules, chiffres et tirets, et par quand le suivre. Ouvrez le fichier dans un éditeur de texte pour vérifier, ou demandez à la personne qui vous l’a envoyé."
+      "Un SKILL.md commence par son nom, en lettres minuscules, chiffres et tirets, puis par quand le suivre. Ouvrez le fichier dans un éditeur de texte pour vérifier, ou demandez à la personne qui vous l’a envoyé."
     ],
     [
       "Une compétence venue d’un site ne peut pas être ajoutée",

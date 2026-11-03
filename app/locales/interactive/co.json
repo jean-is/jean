@@ -4,15 +4,15 @@
   "interactive.mapShow": "Mustrà a carta",
   "interactive.mapFrom": "E carte venenu da {site}, chì vede i lochi mustrati.",
   "interactive.inWords": "Vede lu cum’è testu",
-  "interactive.diagramSteps": "Vede ogni tappa è ciò chì seguita",
+  "interactive.diagramSteps": "Vede ogni passu è ciò chì vene dopu",
   "interactive.diagramFrom": "Diagramma chì principia da {first}, scrittu in parolle ghjustu quì sottu",
   "interactive.diagramWords": "Diagramma, scrittu in parolle ghjustu quì sottu",
-  "interactive.mapNamed": "Carta: {places}",
+  "interactive.mapNamed": "Carta : {places}",
   "interactive.zoomIn": "Ingrandà",
   "interactive.zoomOut": "Riduce",
   "interactive.mapCredits": "Crediti di a carta",
-  "interactive.askApp": "Fà una piccula appiecazione : {what}.",
+  "interactive.askApp": "Fà una piccula appiecazione per {what}.",
   "interactive.appExample": "sparte u contu trà amichi",
-  "interactive.noCollection": "{name}: ùn ci hè nisuna cullezzione cù stu nome quì.",
-  "interactive.unread": "{name}: ùn si pò filtrà cù «{where}»."
+  "interactive.noCollection": "{name} : ùn ci hè nisuna cullezzione cù stu nome quì.",
+  "interactive.unread": "{name} : ùn si pò filtrà cù « {where} »."
 }

@@ -1,6 +1,6 @@
 {
-  "designs.takes": "Stummoù",
-  "designs.picked": "Dibabet eo “{take}”",
+  "designs.takes": "Doareoù",
+  "designs.picked": "Dibabet eo « {take} »",
   "designs.layout.balloons": "E-kreiz",
   "designs.layout.corner": "Er c’horn",
   "designs.layout.card": "Kartenn",
@@ -98,7 +98,7 @@
   "designs.photo": "Ouzhpennañ ur poltred",
   "designs.askJean": "Goulenn ouzh {name}",
   "designs.hold": "Dalc’hit evit komz, pe stokit evit skrivañ",
-  "designs.pointed": "Diskouezet eo : {part}. Skrivit er voest petra cheñch",
+  "designs.pointed": "O poentañ war {part} : lavarit er voest kemennadenn petra cheñch",
   "designs.removed": "Lodenn dilamet",
   "designs.moved": "Dilec’hiet : {part}",
   "designs.resized": "Ment cheñchet : {part}",
@@ -110,8 +110,8 @@
   "designs.mark.reply": "An deiziad da respont a zo goude an darvoud.",
   "designs.mark.faint": "Diaes eo lenn ar skrid-mañ war e zrekleur.",
   "designs.mark.soft": "D’ar vent-se e vo moullet ar skeudenn-mañ dispis.",
-  "designs.mark.margin": "Re dost d’an ugn : ur voullerez er gêr a c’hellfe e droc’hañ.",
-  "designs.fix.use": "Implijout « {words} »",
+  "designs.mark.margin": "Re dost d’ar bord : ur voullerez er gêr a c’hellfe e droc’hañ.",
+  "designs.fix.use": "Implijout « {words} »",
   "designs.fix.keep": "Lezel evel-se",
   "designs.fix.remove": "Lemel",
   "designs.fix.readable": "Lakaat da vezañ lennus",
@@ -130,7 +130,7 @@
   },
   "designs.acceptAll": "Asantiñ an holl",
   "designs.rejectAll": "Nac’hañ an holl",
-  "designs.notPicture": "N’eo ket ar restr-mañ ur skeudenn a c’hell bezañ diskouezet gant un neuz.",
+  "designs.notPicture": "N’eo ket ar restr-mañ ur skeudenn a c’hell bezañ diskouezet gant un tres.",
   "designs.first": {
     "one": "Da sellet da gentañ : {count}",
     "two": "Da sellet da gentañ : {count}",
@@ -141,8 +141,8 @@
   "designs.out.picture": "Skeudenn",
   "designs.out.post": "Skeudenn evit un embann",
   "designs.out.story": "Skeudenn evit un istor",
-  "designs.out.file": "Restr an neuz",
-  "designs.ask": "Gra un neuz : {what}",
+  "designs.out.file": "Restr an tres",
+  "designs.ask": "Gra un tres : {what}",
   "designs.example": "ur bedadenn evit deiz-ha-bloaz ma merc’h d’ar Sadorn da 3e",
-  "designs.again": "Gra un neuz eus an dra-se."
+  "designs.again": "Gra un tres eus an dra-se."
 }

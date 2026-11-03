@@ -50,7 +50,7 @@
   "search.now.nowhere": "Un cervello che non sa cercare sul web da sé non ha dove cercare.",
   "search.now.off": "La ricerca sul web è disattivata: le attività che avvii ora non cercano da nessuna parte, nemmeno con la ricerca propria di un cervello.",
   "search.now.services": "Ogni cervello può cercare anche con {services}.",
-  "search.also": "La ricerca sul web si può disattivare anche dal + nel riquadro del messaggio.",
+  "search.also": "La ricerca sul web si può disattivare anche dal + nella casella del messaggio.",
   "search.key": "Chiave",
   "search.engine": "ID del motore di ricerca",
   "search.service.text": "Il tuo account {service} cerca in tutto il web, per qualsiasi cervello. Le parole che cerchi vanno a {service}, che può farle pagare, e la tua chiave resta su questo dispositivo.",

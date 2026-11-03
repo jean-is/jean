@@ -211,7 +211,7 @@ test('in a project with a colour, a design\'s first take wears the project\'s co
   expect(await page.evaluate(async () => { const [{ takesOf }, { book, shown }] = await Promise.all([import('/caps/designs/layout.js'), import('/caps/designs/designs.js')])
     return takesOf(book, /** @type {any} */ (shown.value).design, 0).slice(1).map((take) => take[1]) })).not.toContain('project')
   await page.locator('.design-bar').getByRole('button', { name: /Colours/ }).click()
-  await expect(page.locator('#design-colours').getByRole('menuitemradio').first()).toHaveText("The project's colours")
+  await expect(page.locator('#design-colours').getByRole('menuitemradio').first()).toHaveText('The project’s colours')
   await expect(page.locator('#design-colours').getByRole('menuitemradio').first()).toHaveAttribute('aria-checked', 'true')
 })
 

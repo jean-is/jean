@@ -7,13 +7,13 @@
     "other": "面向 8 至 13 岁孩子，有你所用的语言和其他 {count} 种语言"
   },
   "search.library": "离线图书馆",
-  "search.library.text": "来自 Kiwix 服务器的维基百科和其他书籍，可以在这台电脑上，也可以在学校或公司。每个大脑都会在其中搜索，即使不联网。",
+  "search.library.text": "来自一台 Kiwix 服务器的维基百科和其他书籍：在这台电脑上，或在学校、公司里。每个大脑都在里面搜索，不联网也行。",
   "search.address": "Kiwix 服务器地址",
   "search.connect": "连接",
   "search.connectTo": "连接 {service}",
   "search.failed": "这个地址上没有 Kiwix 服务器响应。",
   "search.insecure": "从这里只能访问这台电脑上的 Kiwix 服务器，或以 https:// 开头的地址上的服务器。",
-  "search.locked": "由你的组织设置",
+  "search.locked": "由你所在的组织设置",
   "search.parent": "由家长设置",
   "search.books": {
     "other": "{count} 本书"
@@ -45,7 +45,7 @@
   "search.also": "也可以在消息框的 + 中关闭网络搜索。",
   "search.key": "密钥",
   "search.engine": "搜索引擎 ID",
-  "search.service.text": "你自己的 {service} 账号为任何大脑搜索整个网络。你的搜索词会发送到 {service}，可能会产生费用，你的密钥则保留在这台设备上。",
+  "search.service.text": "你自己的 {service} 账号为每个大脑搜索整个网络。你的搜索词会发给 {service}，它可能收费；你的密钥留在这台设备上。",
   "search.getKey": "从 {service} 获取密钥",
   "search.refused": "{service} 拒绝了这个密钥，或者其搜索次数已用完。",
   "search.silent": "{service} 没有响应。请检查密钥，或稍后再试。",

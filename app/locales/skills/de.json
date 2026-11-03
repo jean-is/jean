@@ -17,7 +17,7 @@
   "skills.ready.when": "Ihre Schritte werden befolgt, sobald eine Anfrage passt.",
   "skills.ready.steps": "Schritte lesen",
   "skills.ready.add": "Diese Fähigkeit hinzufügen",
-  "skills.ready.loading": "Wird heruntergeladen und geprüft …",
+  "skills.ready.loading": "Wird heruntergeladen und geprüft…",
   "skills.ready.files": "Mit diesen Dateien: {files}",
   "skills.ready.digest": "Diese Fähigkeit kann nicht hinzugefügt werden: Was heruntergeladen wurde, stimmt nicht mit den Angaben ihrer Quelle überein.",
   "skills.ready.programs": "Diese Fähigkeit startet Programme, die hier nicht laufen können, deshalb kann sie nicht hinzugefügt werden.",
@@ -26,14 +26,14 @@
   "skills.lede": "Eine Fähigkeit wird befolgt, sobald eine Anfrage zu ihr passt.",
   "skills.last": "Zuletzt befolgt: {title}, {when}.",
   "skills.off": "Aus",
-  "skills.readyWord": "Fertig",
-  "skills.readyMade": "Fertige Fähigkeiten",
+  "skills.readyWord": "Vorgefertigt",
+  "skills.readyMade": "Vorgefertigte Fähigkeiten",
   "skills.more": {
     "one": "Noch {count} zum Hinzufügen",
     "other": "Noch {count} zum Hinzufügen, für Briefe, Pläne, Lernen und mehr"
   },
-  "skills.byJean": "Fertig · von {name} hinzugefügt am {date}",
-  "skills.byYou": "Fertig · hinzugefügt am {date}",
+  "skills.byJean": "Vorgefertigt · von {name} hinzugefügt am {date}",
+  "skills.byYou": "Vorgefertigt · hinzugefügt am {date}",
   "skills.made": "Mit {name} erstellt am {date}",
   "skills.fromFile": "Aus einer Datei hinzugefügt am {date}",
   "skills.followed": {

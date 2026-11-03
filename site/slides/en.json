@@ -85,7 +85,7 @@
   "exact.why": "A slide is read fast and believed. Its numbers come from what you gave {name}, and when one must be worked out, a program does it.",
   "exact.cards": [
     ["From what you gave it", "Every figure on a slide comes from your notes or your files: {name} is told never to invent one."],
-    ["Worked out by a program", "A total, a growth or a chart’s values from a spreadsheet are calculated on a computer in a sandbox, in this tab. The first time, {name} asks before turning it on."],
+    ["Worked out by a program", "A total, a growth or a chart’s values from a spreadsheet are calculated on a computer inside this tab, walled off from your own machine. The first time, {name} asks before turning it on."],
     ["Every step in view", "Each step shows as it runs. Open one to see what it was given and what came back."]
   ],
   "where.title": "Where your notes go.",
@@ -96,7 +96,7 @@
     ["Or not sent at all", "With the AI on this computer, nothing leaves it. It needs 12 GB of memory and a recent graphics chip."]
   ],
   "catch.items": [
-    "{name} is free; the AI behind it may not be. No sign-up only with the AI on this computer.",
+    "{name} is free; the AI behind it may not be. Without a sign-up, only the AI on this computer answers.",
     "A list can appear one point at a click when you present in {name}, if you ask for it. A PowerPoint file shows all its points at once.",
     "Your company’s template applies once you bring it in, under Settings › Appearance › Design system: your decks then take its colours, fonts, logo and layouts.",
     "Pictures on slides come from your own files, or from an AI that draws when you ask for one, never from the web.",

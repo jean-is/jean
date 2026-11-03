@@ -19,12 +19,12 @@
     ],
     [
       "Où est allée chaque réponse",
-      "Sous chaque réponse, {about} indique {local}, {cloud} ou {out}, d’après le propre relevé de votre navigateur de ce que la page a envoyé, et nomme chaque cerveau et chaque adresse jointe."
+      "Sous chaque réponse, {about} indique {local}, {cloud} ou {out}, d’après le relevé que votre navigateur tient de ce que la page a envoyé, et nomme chaque cerveau et chaque adresse jointe."
     ]
   ],
   "good": [
     "Pour que seul un cerveau sur cet appareil réponde, choisissez {keep} sous {who}, dans {settings} › {brains}. Une fois que vous avez des projets, {project} fait de même pour l’un d’eux.",
-    "Quand {name} fait des calculs, ils tournent sur cet appareil, dans un bac à sable sans internet à lui : le cerveau ne lit que le résultat.",
+    "Quand {name} fait des calculs, ils tournent sur cet appareil, dans un espace isolé sans internet à lui : le cerveau ne lit que le résultat.",
     "Ce qu’apportent Gmail, Google Agenda et Google Drive ne va qu’à un cerveau dont l’entreprise n’entraîne pas d’IA dessus.",
     "Il n’y a pas de serveur {name} : personne chez {name} ne peut lire ce que vous écrivez.",
     "Chaque adresse que {name} contacte, et ce que chacune reçoit : {files}. En entier : {privacy}."

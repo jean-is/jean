@@ -9,7 +9,7 @@
   "pictures.deviceText": "Creadas aquí, en privado y gratis, incluso sin conexión. Cada una se revisa aquí primero: las imágenes con desnudos, sexo o autolesiones se rechazan.",
   "pictures.check": "Qué más se rechaza",
   "pictures.suggestive": "Rechazar también imágenes insinuantes",
-  "pictures.suggestiveText": "También bañadores mínimos, lencería y poses insinuantes. Los desnudos y el sexo se rechazan siempre.",
+  "pictures.suggestiveText": "Bañadores mínimos, ropa interior y poses insinuantes. Los desnudos y el sexo se rechazan siempre.",
   "pictures.hate": "Rechazar símbolos de odio",
   "pictures.hateText": "Símbolos y propaganda nazis, terroristas y de otros extremismos. Desactívalo para historia, enseñanza o periodismo.",
   "pictures.violence": "Rechazar la violencia explícita",
@@ -19,7 +19,7 @@
   "pictures.sd-turbo": "Rápido",
   "pictures.flux2-klein": "Detallado",
   "pictures.sd-turbo.text": "Imágenes cuadradas en pocos segundos, con SD-Turbo de Stability AI, bajo su licencia comunitaria.",
-  "pictures.flux2-klein.text": "Imágenes más finas, de cualquier forma, en un minuto aproximadamente, con FLUX.2 [klein] de Black Forest Labs, bajo la licencia Apache 2.0. Es el único que también cambia una imagen. Necesita una computadora reciente con 16 GB de memoria.",
+  "pictures.flux2-klein.text": "Imágenes más finas, de cualquier forma, en un minuto aproximadamente, con FLUX.2 [klein] de Black Forest Labs, bajo la licencia Apache 2.0. Es el único que también puede cambiar una imagen tuya. Necesita una computadora reciente con 16 GB de memoria.",
   "pictures.z-image-turbo": "El más fino",
   "pictures.z-image-turbo.text": "Las imágenes más finas, de cualquier forma, con sus palabras bien escritas, en medio minuto aproximadamente, con Z-Image-Turbo de Alibaba, bajo la licencia Apache 2.0. Necesita una computadora reciente con 16 GB de memoria.",
   "pictures.fastwan": "Vídeos",
@@ -35,8 +35,8 @@
   "pictures.filmsAsk": "Volver a preguntar",
   "pictures.saveLabelled": "Guardar la imagen con la etiqueta «Hecho con IA»",
   "pictures.label": "Hecho con IA",
-  "pictures.ask": "Haz una imagen: {what}.",
+  "pictures.ask": "Haz una imagen de {what}.",
   "pictures.example": "un faro al atardecer, en acuarela",
-  "pictures.askFilm": "Haz un vídeo: {what}.",
+  "pictures.askFilm": "Haz un vídeo de {what}.",
   "pictures.exampleFilm": "un barco de papel que baja por un arroyo"
 }

@@ -45,7 +45,7 @@
   "creations.like.films": "Make a film like “{name}”, but ",
   "creations.like.music": "Compose a tune like “{name}”, but ",
   "creations.like.apps": "Make an app like “{name}”, but ",
-  "creations.like.slides": "Make a presentation like “{name}”, but ",
+  "creations.like.slides": "Make slides like “{name}”, but ",
   "creations.like.games": "Make a game like “{name}”, but ",
   "creations.remove": "Remove from Creations",
   "creations.deleted": "“{name}” deleted.",
