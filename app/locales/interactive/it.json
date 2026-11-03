@@ -11,7 +11,7 @@
   "interactive.zoomIn": "Ingrandisci",
   "interactive.zoomOut": "Riduci",
   "interactive.mapCredits": "Fonti della mappa",
-  "interactive.askApp": "Crea una piccola app: {what}.",
+  "interactive.askApp": "Crea una piccola app per {what}.",
   "interactive.appExample": "dividere il conto tra amici",
   "interactive.noCollection": "{name}: qui non c’è nessuna raccolta con questo nome.",
   "interactive.unread": "{name}: impossibile filtrare per «{where}»."

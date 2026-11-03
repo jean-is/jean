@@ -1,5 +1,5 @@
 {
-  "skills.none": "Ancora nessuna abilità. Quando chiederai la stessa cosa per la terza volta, te ne verrà proposta una.",
+  "skills.none": "Ancora nessuna abilità. Quando chiederai qualcosa dello stesso tipo per la terza volta, te ne verrà proposta una.",
   "skills.invalid": "Questo file non è un’abilità.",
   "skills.added": "Abilità «{title}» aggiunta.",
   "skills.steps": "Passaggi",
