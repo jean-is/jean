@@ -1,8 +1,8 @@
 {
   "api.search_emails": "Cerca email",
-  "api.read_email": "Leggi un'email",
+  "api.read_email": "Leggi un’email",
   "api.create_draft": "Scrivi una bozza",
-  "api.send_email": "Invia un'email",
+  "api.send_email": "Invia un’email",
   "api.list_calendars": "Elenca i calendari",
   "api.list_events": "Elenca gli eventi",
   "api.create_event": "Aggiungi un evento",
@@ -11,7 +11,7 @@
   "api.search_files": "Cerca file",
   "api.read_file": "Leggi un file",
   "api.create_document": "Crea un documento",
-  "connections.untrained": "Questa attività ha usato servizi Google, i cui dati vanno solo a cervelli che non li usano mai per addestrare un'IA. Scegline uno o aggiungine uno.",
+  "connections.untrained": "Questa attività ha usato servizi Google, i cui dati vanno solo a cervelli che non li usano mai per addestrare un’IA. Scegline uno o aggiungine uno.",
   "connections.address": "Indirizzo del servizio",
   "connections.keyHint": "Solo se il servizio ti ha dato una chiave. Altrimenti ti verrà chiesto di accedere.",
   "connections.connected": "Collegamento riuscito: {service}",
@@ -22,7 +22,7 @@
   "connections.yours": "Collegati",
   "connections.disconnect": "Scollega",
   "gateway.title": "Gateway",
-  "gateway.text": "Alcuni servizi non accettano ancora connessioni da un browser. Si raggiungono tramite un gateway gestito dalla tua organizzazione o da te: inserisci qui il suo indirizzo.",
+  "gateway.text": "Alcuni servizi non accettano ancora connessioni da un browser. {name} può raggiungerli tramite un gateway gestito dalla tua organizzazione o da te: inserisci qui il suo indirizzo.",
   "connections.services": {
     "one": "{count} servizio collegato.",
     "many": "{count} servizi collegati.",
@@ -50,13 +50,13 @@
     "other": "altre {count}"
   },
   "connections.usual": "Se qui non scegli nulla, {name} segue le Approvazioni, come per ogni servizio.",
-  "connections.guarded": "Le Approvazioni hanno una regola più severa per {service}, che viene prima.",
-  "connections.trains": "Ciò che porta {service} va solo a cervelli che non lo usano mai per addestrarsi.",
+  "connections.guarded": "In Approvazioni c’è una regola più severa per {service}, e vale quella.",
+  "connections.trains": "Ciò che arriva da {service} va solo a cervelli che non lo usano mai per addestrarsi.",
   "connections.this": "Questa connessione",
   "connections.account": "Account",
   "connections.since": "Collegato il {date}",
   "connections.signInAgain": "Accedi di nuovo",
-  "connections.disconnectAsk": "Scollegare {service}? La sua chiave lascia questo dispositivo; in {service} non cambia nulla.",
+  "connections.disconnectAsk": "Scollegare {service}? La sua chiave viene eliminata da questo dispositivo. In {service} non cambia nulla.",
   "connections.cancel": "Annulla",
   "connections.find": "Trova un servizio",
   "connections.found": {
@@ -73,9 +73,9 @@
   "connections.group.other": "Altro",
   "connections.later": "Non ancora da un browser",
   "connections.laterCount": {
-    "one": "{count} in più, non ancora da un browser",
-    "many": "{count} in più, non ancora da un browser",
-    "other": "{count} in più, non ancora da un browser"
+    "one": "{count} altro, non ancora da un browser",
+    "many": "Altri {count}, non ancora da un browser",
+    "other": "Altri {count}, non ancora da un browser"
   },
   "connections.laterText": "Tramite un gateway, gestito dalla tua organizzazione o da te",
   "connections.otherText": "Per un servizio che {name} non elenca. Il suo indirizzo arriva dal servizio o dalla tua organizzazione.",
