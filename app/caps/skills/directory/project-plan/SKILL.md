@@ -51,7 +51,7 @@ metadata:
   title-it: "Piano di progetto"
   text-it: "Attività, date e chi fa cosa, e ciò che non può slittare"
   title-ja: "プロジェクト計画"
-  text-ja: "タスク、日程、担当、遅らせられない作業まで"
+  text-ja: "タスク、日程、担当、そして遅らせられないこと"
   title-ko: "프로젝트 계획"
   text-ko: "할 일, 날짜, 담당자, 늦어지면 안 되는 일까지"
   title-mr: "प्रकल्प योजना"

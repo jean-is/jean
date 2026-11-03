@@ -50,7 +50,7 @@ metadata:
   title-it: "Piano di studio"
   text-it: "La sessione di oggi, ricavata dal tempo della settimana, dalle materie e dalle verifiche"
   title-ja: "学習計画"
-  text-ja: "1週間の時間、教科、テストから今日の学習を組み立てる"
+  text-ja: "今日の学習を、1 週間の時間、教科、テストから組み立てる"
   title-ko: "공부 계획"
   text-ko: "한 주의 시간, 과목, 시험으로 정하는 오늘의 공부"
   title-mr: "अभ्यासाचे नियोजन"

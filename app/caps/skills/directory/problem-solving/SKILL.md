@@ -51,7 +51,7 @@ metadata:
   title-it: "Risolvere problemi"
   text-it: "Problemi affrontati con il metodo giusto: 8D, DMAIC, A3 o PDCA"
   title-ja: "問題解決"
-  text-ja: "合った手法で問題に取り組む: 8D、DMAIC、A3、PDCA"
+  text-ja: "合った手法で問題に取り組む：8D、DMAIC、A3、PDCA"
   title-ko: "문제 해결"
   text-ko: "알맞은 방법으로 문제 해결: 8D, DMAIC, A3, PDCA"
   title-mr: "समस्या सोडवणे"

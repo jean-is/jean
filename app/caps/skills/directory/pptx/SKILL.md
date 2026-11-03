@@ -51,7 +51,7 @@ metadata:
   title-it: "PowerPoint"
   text-it: "Diapositive in file PowerPoint, pronte da presentare e modificare"
   title-ja: "PowerPoint"
-  text-ja: "PowerPoint のプレゼン資料を作り、そのまま発表や編集ができます"
+  text-ja: "PowerPoint ファイルのスライド。そのまま発表も編集もできます"
   title-ko: "PowerPoint"
   text-ko: "PowerPoint 파일로 만든 슬라이드, 바로 발표하고 고칠 수 있어요"
   title-mr: "PowerPoint"

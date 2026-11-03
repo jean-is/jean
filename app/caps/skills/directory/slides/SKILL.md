@@ -51,7 +51,7 @@ metadata:
   title-it: "Diapositive"
   text-it: "Diapositive pronte da presentare, modificare ed esportare in PowerPoint"
   title-ja: "スライド"
-  text-ja: "すぐに発表・編集でき、PowerPoint に書き出せるプレゼン資料"
+  text-ja: "すぐに発表も編集もでき、PowerPoint にも書き出せるスライド"
   title-ko: "슬라이드"
   text-ko: "바로 발표하고 고치고 PowerPoint로 내보낼 수 있는 프레젠테이션"
   title-mr: "स्लाइड्स"
