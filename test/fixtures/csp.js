@@ -9,10 +9,12 @@ export function line(report) {
 /**
  * The refusals expected. Pyodide asks whether its worker is a classic one by importing an empty data:
  * script, which the sandbox's policy refuses (data: isn't its scripts'), and goes on as a module
- * worker would; Python works either way, and the sandbox stays as tight. Safari makes a Trusted Types
+ * worker would; Python works either way, and the sandbox stays as tight. Firefox files the worker's
+ * report under the sandbox's page, with no file, and words it its own way. Safari makes a Trusted Types
  * policy of its own in the room, from a script it puts in the page, outside the page's own
  * `trustedTypes`: the report names the page, never a file of Jean's, which makes only its two.
  * @param {string} text a report's line, or what the console said
  */
 export const expected = (text) => /^blob\S*: script-src(-elem)? data /.test(text) || /Refused to load data:text\/javascript, /.test(text)
+  || /^\S+\/sandbox\.html: script-src-elem data :$/.test(text) || /settings (would block|blocked) a script \(script-src-elem\) at data:text\/javascript, from /.test(text)
   || /^(\S+): trusted-types trusted-types-policy \1:\d+$/.test(text)
