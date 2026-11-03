@@ -62,7 +62,7 @@ Lengths are English's; French's run a few seconds longer, Arabic's shorter.
 |---|---|---|
 | Jean | Card: the tilde draws itself, the name, the homepage's promise | — |
 | Files in, things out | A spreadsheet and a question; the program, framed while it runs; the chart, framed | Drop in a spreadsheet and ask, in your own words. · The sums are worked out by a program, in a sandbox in your browser. Not guessed. · And back comes what you asked for, made. |
-| Any AI | A letter, written by the AI on this computer; what the answer says of it, framed | Use GPT, Claude, Gemini, or an AI on your own computer. · Each answer says which AI wrote it. This one never left the computer. |
+| Any AI | A letter, written by the AI on this computer; what the answer says of it, framed | Use GPT, Claude, Gemini, or an AI on your own computer. · Each answer says which AI wrote it: here, the one on this computer. |
 | It asks first | Minutes to send; the approval card; Allow once, framed and clicked | Before it sends, shares or deletes anything, Jean asks you. |
 | Keep everything | Card: three facts, ticked | Your history, files and memory stay on your device. · As plain files, in one backup you can take anywhere. · Free and open source. |
 | Your turn | Card: the tilde, Open Jean | — |

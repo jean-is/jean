@@ -79,7 +79,7 @@
   "jean.letter.brain": "l’IA de cet ordinateur",
   "jean.letter.answer": "Voici un brouillon :\n\n« Monsieur Martin,\n\nDepuis début octobre, le mur de la chambre est humide et la peinture s’écaille. Pourriez-vous envoyer quelqu’un le voir ce mois-ci ?\n\nCordialement, »",
   "jean.letter.say.any": "GPT, Claude, Gemini, ou une IA sur votre propre ordinateur : à vous de choisir.",
-  "jean.letter.say.where": "Chaque réponse dit quelle IA l’a écrite. Celle-ci n’a pas quitté l’ordinateur.",
+  "jean.letter.say.where": "Chaque réponse dit quelle IA l’a écrite : ici, celle de cet ordinateur.",
   "jean.minutes.chapter": "Demander d’abord",
   "jean.minutes.say.asks": "Avant d’envoyer, de partager ou de supprimer quoi que ce soit, {name} vous demande.",
   "jean.keep.chapter": "Tout garder",

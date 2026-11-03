@@ -79,7 +79,7 @@
   "jean.letter.brain": "このパソコンのAI",
   "jean.letter.answer": "下書きです。\n\n「田中様\n\n10⁠月の初めから、寝室の壁が湿り、塗装がはがれてきています。今月中に、どなたかに見ていただけますでしょうか。\n\nよろしくお願いいたします。」",
   "jean.letter.say.any": "GPTでも、Claudeでも、Geminiでも、自分のパソコンのAIでも。",
-  "jean.letter.say.where": "どの答えにも、どのAIが書いたかが表示されます。この答えは、パソコンの外に出ていません。",
+  "jean.letter.say.where": "どの答えにも、書いたAIが表示されます。ここでは、このパソコンのAI。",
   "jean.minutes.chapter": "まず確認",
   "jean.minutes.say.asks": "送信、共有、削除の前には、必ずあなたに確認します。",
   "jean.keep.chapter": "ぜんぶ手元に",

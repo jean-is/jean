@@ -79,7 +79,7 @@
   "jean.letter.brain": "the AI on this computer",
   "jean.letter.answer": "Here’s a draft:\n\n“Dear Mr Martin,\n\nSince early October, the bedroom wall has been damp and the paint is peeling. Could you send someone to look at it this month?\n\nKind regards,”",
   "jean.letter.say.any": "Use GPT, Claude, Gemini, or an AI on your own computer.",
-  "jean.letter.say.where": "Each answer says which AI wrote it. This one never left the computer.",
+  "jean.letter.say.where": "Each answer says which AI wrote it: here, the one on this computer.",
   "jean.minutes.chapter": "It asks first",
   "jean.minutes.say.asks": "Before it sends, shares or deletes anything, {name} asks you.",
   "jean.keep.chapter": "Keep everything",
