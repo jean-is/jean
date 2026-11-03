@@ -15,7 +15,7 @@ metadata:
   text-bn: "পাঠ বোঝা ও অনুশীলন, উত্তরের বদলে ইঙ্গিত দিয়ে"
   title-br: "Deskiñ e gentel"
   text-br: "Ur gentel komprenet ha pleustret, gant tunioù e-lec’h ar respontoù"
-  title-co: "Amparà a so lezzione"
+  title-co: "Amparà a lezzione"
   text-co: "Una lezzione capita è praticata, cù indizii invece di e risposte"
   title-cs: "Naučit se to"
   text-cs: "Lekce pochopená a procvičená, s nápovědami místo odpovědí"

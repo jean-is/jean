@@ -27,7 +27,7 @@ metadata:
   title-el: "Επίλυση προβλημάτων"
   text-el: "Προβλήματα που λύνονται με την κατάλληλη μέθοδο: 8D, DMAIC, A3 ή PDCA"
   title-es: "Resolver problemas"
-  text-es: "Problemas con el método adecuado: 8D, DMAIC, A3 o PDCA"
+  text-es: "Problemas resueltos con el método que encaja: 8D, DMAIC, A3 o PDCA"
   title-fa: "حل مسئله"
   text-fa: "مسئله‌ها با روش مناسب: 8D، DMAIC، A3 یا PDCA"
   title-fi: "Ongelmanratkaisu"

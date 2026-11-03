@@ -26,7 +26,7 @@ metadata:
   title-el: "Σύγκριση και επιλογή"
   text-el: "Προσφορές δίπλα δίπλα, με μια σύσταση"
   title-es: "Comparar y elegir"
-  text-es: "Ofertas y cotizaciones lado a lado, con una recomendación"
+  text-es: "Ofertas y cotizaciones, una al lado de otra, con una recomendación"
   title-fa: "مقایسه و انتخاب"
   text-fa: "پیشنهادها و برآورد قیمت‌ها کنار هم، با یک توصیه"
   title-fi: "Vertaa ja valitse"
