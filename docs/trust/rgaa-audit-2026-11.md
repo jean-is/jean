@@ -267,7 +267,7 @@ What the reads found, and fixed since. A later read may fail the same criterion 
 | N85 | Jean’s own words under a design’s or a deck’s language | Jean’s controls in a design and a deck diagram’s description carry the interface’s language. |
 | N86 | Words with no direction of their own | The profile menu’s languages and the Arabic homepage’s Latin words carry their direction. dir="auto" elsewhere: N97. |
 | N87 | Card titles that aren’t headings | Card titles on the comparisons’ page, the page for IT and the public sector’s are headings. |
-| N88 | Words gone or pushed aside at 320 pixels | At 320 pixels the comparisons’ heads, Creations’ words, a design’s versions and a file’s card all show. One look’s box over the note: N100. |
+| N88 | Words gone or pushed aside at 320 pixels | At 320 pixels the comparisons’ heads, Creations’ words and a file’s card all show. A design’s versions scroll sideways in one row, read as pictures, which RGAA excepts; one reader of four didn’t. One look’s box over the note: N100. |
 | N89 | A source’s tip on the comparisons’ page ignores Escape | The comparisons’ page hides a source’s tip with Escape, and the homepage’s tiles change on a press. |
 | New | There was no way to ask for more contrast in Jean itself, only through the system | Settings › Appearance has Contrast: Auto, Usual or More, which turns the rules for more contrast on. |
 | New | Room’s red for danger was 2.7:1 by day | It has a day red, 5.6:1. |

@@ -56,12 +56,13 @@ test('a design: offered, laid out three ways, its weekday fixed, finished by han
   await page.locator('.design-bar').getByRole('button', { name: 'Undo' }).click()
   await expect.poll(async () => (await shown(page))?.parts.find((part) => part.id === 'where')?.box).toEqual(before)
 
-  // Let go with a click beside the page, the part gives the takes row back; the takes wrap, and scrolled down to their end, they deal
-  // more, with no brain, drawing only those in view (D627), and one picked there keeps its deal, the words kept; the arrow picks the next.
+  // Let go with a click beside the page, the part gives the takes row back, one row; scrolled sideways to its end, it deals more, with
+  // no brain, drawing only those in view (D627), and one picked there keeps its deal, the words kept; the arrow picks the next.
   await page.locator('.design-stage').click({ position: { x: 4, y: 4 } })
   await expect(page.locator('.design-part-bar')).toHaveCount(0)
+  expect(await takes.getByRole('radio').evaluateAll((all) => new Set(all.map((one) => Math.round(one.getBoundingClientRect().top))).size)).toBe(1)
   const last = async () => Number(await takes.getByRole('radio').last().getAttribute('aria-posinset'))
-  const end = () => takes.evaluate((row) => row.scrollBy({ top: row.scrollHeight }))
+  const end = () => takes.evaluate((row) => row.scrollBy({ left: row.scrollWidth * (getComputedStyle(row).direction === 'rtl' ? -1 : 1) }))
   const dealt = await last()
   await end()
   await expect.poll(last).toBeGreaterThan(dealt)

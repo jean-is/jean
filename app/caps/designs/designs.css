@@ -52,12 +52,20 @@
 
 /* The pane, as tall as the window: the stage takes what the rows above and the design's bar at its foot leave, the page as big as it holds; the bar's menus open above. */
 .design { display: flex; flex-direction: column; flex: 1 0 auto; gap: 0.6rem; min-inline-size: 0; container-type: inline-size; } .design > * { flex: none; }
-/* Above the page, the takes row, or while a part is picked its bar in the row's place, so that the page never moves under the pointer. */
-.design-top { display: grid; } .design-top > * { grid-area: 1 / 1; } .design-top:has(> .design-part-bar) > .design-takes { visibility: hidden; }
-.design-takes { display: grid; grid-template-columns: repeat(auto-fill, calc(4.5rem * var(--r) + 4px)); grid-auto-rows: max-content; gap: 0.5rem; block-size: calc(4.5rem + 4px + 0.6rem); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; margin: -0.15rem 0; padding: 0.3rem; list-style: none; }
-.design-take { padding: 0; border: 2px solid transparent; border-radius: 0.5rem; background: none; overflow: hidden; cursor: pointer; }
+/* Above the page, the takes row, in a box that stays as it scrolls, where its shadows hang, or while a part is picked its bar in the
+   row's place, so that the page never moves under the pointer. */
+.design-top { display: grid; } .design-top > * { grid-area: 1 / 1; } .design-top:has(> .design-part-bar) > .design-row { visibility: hidden; } .design-row { position: relative; min-inline-size: 0; }
+.design-takes { display: flex; align-items: center; gap: 0.5rem; overflow-x: auto; overscroll-behavior-inline: contain; scrollbar-width: thin; margin: -0.15rem 0; padding: 0.3rem; list-style: none; scroll-timeline: --takes inline; }
+.design-take { flex: none; padding: 0; border: 2px solid transparent; border-radius: 0.5rem; background: none; overflow: hidden; cursor: pointer; }
 .design-take .design-page { inline-size: calc(4.5rem * var(--r)); pointer-events: none; }
 .design-take[aria-checked='true'] { border-color: var(--flame); } .design-take:hover { border-color: var(--line-strong); } .design-take[aria-checked='true']:hover { border-color: var(--flame); }
+/* More takes past either end fade out into the pane there, as more tasks do above the user, where scroll timelines are known: placed
+   in the box around the row so that they stay as the row scrolls. Not sticky, which WebKit leaves behind as a row right to left
+   scrolls, nor the box's own with timeline-scope, which WebKit doesn't give a pseudo-element. */
+@supports (animation-timeline: scroll()) {
+  .design-takes::before, .design-takes::after { content: ''; position: absolute; inset-block: 0; z-index: 1; inline-size: 1.5rem; background: var(--room-2); mask: linear-gradient(to right, #000, #0000); opacity: 0; pointer-events: none; animation: tasks linear both; animation-timeline: --takes; animation-range: 0 1.5rem; }
+  .design-takes::before { inset-inline-start: 0; } .design-takes::after { inset-inline-end: 0; animation-direction: reverse; animation-range: calc(100% - 1.5rem) 100%; } .design-takes::after, .design-takes:dir(rtl)::before { scale: -1 1; } .design-takes:dir(rtl)::after { scale: none; }
+}
 .design > .design-stage { flex: 1 1 0; min-block-size: 14rem; container-type: size; } .design-stage { position: relative; display: grid; place-items: center; overflow: auto; padding: 1rem; border-radius: 0.9rem; background: color-mix(in oklch, var(--ink) 6%, transparent); }
 /* The page as big as the stage holds; in a window under 60rem, as a desktop's is zoomed to 200%, no narrower than on a laptop at 100%, scrolled in its stage, so that its words grow with the zoom. */
 .design-sheet { place-self: start; margin: auto; } .design-stage .design-page { --fit: min(100cqi, 100cqb * var(--r, 0.7)); inline-size: var(--fit); box-shadow: 0 0.6rem 2rem -1rem oklch(0 0 0 / 0.5); } @media (max-width: 60rem) { .design-stage .design-page { --fit: min(100cqi, max(100cqb * var(--r, 0.7), 27rem)); } }
@@ -113,8 +121,7 @@ span.design-dot { display: inline-block; position: static; translate: none; vert
 @media (pointer: coarse) { .design-part-bar .button { min-block-size: 2.75rem; } :is(.design-bar, .design-part-bar) .icon-button { block-size: 2.75rem; flex-basis: 2.75rem; } .design-bar .is-wide { flex: none; } }
 /* On a phone the part's bar is a sheet at the foot in the design bar's place, within reach. */
 @container (max-width: 34rem) {
-  .design-takes { block-size: calc(9rem + 8px + 1.1rem); }
-  .design-top { display: contents; } .design-top > * { flex: none; } .design-top:has(> .design-part-bar) > .design-takes { visibility: visible; } .design:has(.design-part-bar) > .design-bar { display: none; }
+  .design-top { display: contents; } .design-top > * { flex: none; } .design-top:has(> .design-part-bar) > .design-row { visibility: visible; } .design:has(.design-part-bar) > .design-bar { display: none; }
   .design-part-bar { order: 1; flex-wrap: wrap; position: sticky; inset-block-end: 0; z-index: 5; padding: 0.6rem; border: 1px solid var(--line-strong); border-radius: 1rem 1rem 0 0; background: var(--room-2); box-shadow: 0 -0.75rem 2rem -1rem oklch(0 0 0 / 0.5); }
 }
 @media (forced-colors: active) {

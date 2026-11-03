@@ -287,7 +287,7 @@ function arrows(event) {
 }
 
 /**
- * The takes, wrapping, deal after deal as the row is scrolled down, those in view drawn (D627), each laid out once; the one like the
+ * The takes, one row, deal after deal as it is scrolled sideways, those in view drawn (D627), each laid out once; the one like the
  * design's checked and tabbable, else the first drawn; one picked keeps its deal, which the row reaches again. @param {Design} design
  */
 function takesRow(design) {
@@ -295,7 +295,7 @@ function takesRow(design) {
   if (dealt.key !== key || dealt.palettes !== book.palettes) dealt = { key, palettes: book.palettes, takes: new Map() }
   const at = takesOf(book, design, design.deal).findIndex((take) => take.join() === design.take.join()), on = at < 0 ? -1 : design.deal * 3 + at
   const takeAt = (/** @type {number} */ i) => { const take = takesOf(book, design, Math.floor(i / 3))[i % 3], one = { take, page: pageOf(laid(book, { ...design, take })) }; dealt.takes.set(i, one); return one }
-  return virtual({ count: deals.value * 3, at: on, more: () => { deals.value++ }, draw: (i, from, to) => {
+  return virtual({ count: deals.value * 3, x: true, at: on, more: () => { deals.value++ }, draw: (i, from, to) => {
     const { take, page } = dealt.takes.get(i) ?? takeAt(i)
     return html`<li class="design-take" role="radio" aria-posinset=${i + 1} aria-setsize="-1" aria-checked=${String(i === on)} tabindex=${i === (on >= from && on < to ? on : from) ? 0 : -1} aria-label=${t(`designs.layout.${take[0]}`)}
       @click=${() => { change((now) => laid(book, { ...now, take, deal: Math.floor(i / 3) })); say(t('designs.picked', { take: t(`designs.layout.${take[0]}`) })) }}
@@ -317,7 +317,7 @@ function draw(one) {
   const [ring, halo] = contrastOf(design, '#111111') >= contrastOf(design, '#ffffff') ? ['#111111', '#ffffff'] : ['#ffffff', '#111111']
   return html`${count ? reviewBar({ label: t('designs.review'), count: t('designs.changed', { count }), previous: '', next: '', acceptAll: t('designs.acceptAll'), rejectAll: t('designs.rejectAll'),
       accept: () => decide(one, Object.keys(one.side?.parts ?? {}), true), reject: () => decide(one, Object.keys(one.side?.parts ?? {}), false) }) : nothing}
-    <div class="design-top"><ul class="design-takes" role="radiogroup" aria-label=${t('designs.takes')} @keydown=${arrows} ${vars({ '--r': String(w / h) })}>${takesRow(design)}</ul>
+    <div class="design-top"><div class="design-row"><ul class="design-takes" role="radiogroup" aria-label=${t('designs.takes')} @keydown=${arrows} ${vars({ '--r': String(w / h) })}>${takesRow(design)}</ul></div>
     ${part ? partBar(one, part) : nothing}</div>
     <div class="design-stage" @pointerdown=${(/** @type {PointerEvent} */ e) => /** @type {Element} */ (e.target).matches('.design-stage, .design-sheet, .design-over') && (picked.value = '', editing.value = '')}
       @dragover=${(/** @type {DragEvent} */ e) => e.preventDefault()} @drop=${(/** @type {DragEvent} */ e) => {

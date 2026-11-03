@@ -1,5 +1,5 @@
 // A long list drawn only where it shows (D627): a design's takes row, which deals as long as it is scrolled (D572), and each group
-// of cards on Creations. A directive in the list's element, which holds its items alone, one element each: it draws those in
+// of cards on Creations. A directive in the list's element, a <ul> or an <ol> holding its items alone: it draws those in
 // view and a screen's worth either side, between two empty ones as long as the rest, so that its scroll bar is as long as all of
 // them: not the element's padding, which a scroller's parent would make room for. The step from a row to the next (an item and the gap) and the lanes a row holds (a grid's columns, else one) are read from
 // those drawn, so CSS alone lays them out; what is in view is the element's own scroll along its axis, else the window's, down.
@@ -28,7 +28,7 @@ class Virtual extends AsyncDirective {
     // so that a layout before the new ones are in (a row with the keyboard taken out) never pulls the scroll back.
     const size = (/** @type {number[]} */ all) => [box?.firstElementChild, box?.lastElementChild].forEach((end, i) => { if (end instanceof HTMLElement) end.style.cssText = `display: ${all[i] > 0 ? 'block' : 'none'}; flex: none; pointer-events: none; grid-column: 1 / -1; ${x ? 'inline' : 'block'}-size: ${all[i]}px` })
     size(lengths.map((length, i) => Math.max(length, this.lengths[i]))); queueMicrotask(() => size((this.lengths = lengths)))
-    const end = x ? html`<span aria-hidden="true"></span>` : html`<li aria-hidden="true"></li>`
+    const end = html`<li aria-hidden="true"></li>`
     return html`${end}${repeat(Array.from({ length: to - from }, (_, i) => from + i), key, (i) => draw(i, from, to))}${end}`
   }
 
