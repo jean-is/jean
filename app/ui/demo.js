@@ -8,6 +8,7 @@
 // still, that button comes once it has played;
 // bare leaves the task's title out, for a page that frames it. demo.html's first line sets the look, light or dark and bare.
 // A call that asks first waits on its card for the viewer's answer, or a moment with loop; declined, the replay stops there.
+// Framed by a reel (site/watch), the reel lends its clock and its stops instead: it pauses, seeks and sets the pace.
 import { batch, effect } from '@preact/signals-core'
 import { html, render } from 'lit-html'
 import { applyUpdate } from '../core/events.js'
@@ -43,18 +44,19 @@ const lineOf = new Map()
 const lines = (await response.text()).split('\n').flatMap((line, i) => { try { const record = JSON.parse(line); lineOf.set(record, i + 1); return [record] } catch { return [] } })
 const header = lines[0]?.kind === 'conversation' ? lines.shift() : null
 if (lines.some((record) => PAGES.some((kind) => record.update?.content?.text?.includes(`\`\`\`${kind}`)))) await import('../caps/interactive/interactive.js')
-const tour = params.get('tour') ? await (await import('../caps/tour/tour.js')).load(new URL(String(params.get('tour')), location.href), root.lang, speed) : null
+// A reel framing it (site/watch, of the same origin) lends its clock and its stops: each wait ends, and each stop goes on, when the reel says.
+const lent = (() => { try { return /** @type {any} */ (parent).reel?.lend(window) } catch { return undefined } })()
+const tour = lent ?? (params.get('tour') ? await (await import('../caps/tour/tour.js')).load(new URL(String(params.get('tour')), location.href), root.lang, speed) : null)
 const cut = matchMedia('(prefers-reduced-motion: reduce)').matches ? (/** @type {string} */ text) => [text] : words(root.lang)
-const wait = (/** @type {number} */ ms) => new Promise((resolve) => setTimeout(resolve, ms / speed))
+const wait = (/** @type {number} */ ms) => lent?.wait(ms) ?? new Promise((resolve) => setTimeout(resolve, ms / speed))
 
 /** A moment, or less once the page sends the request coming next, as a tour's stop may have had it do already. @param {number} ms @param {string} request */
 async function pause(ms, request) {
-  let [timer, stop] = [0, () => {}]
+  let stop = () => {}
   await new Promise((resolve) => {
-    if (ms < Infinity) timer = setTimeout(resolve, ms / speed)
+    if (ms < Infinity) wait(ms).then(resolve)
     stop = effect(() => { if (request && sent.value?.text === request) resolve(undefined) })
   })
-  clearTimeout(timer)
   stop()
   sent.value = null
 }
