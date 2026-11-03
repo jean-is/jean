@@ -45,7 +45,7 @@
   "creations.like.films": "做一段像「{name}」這樣的影片，不過",
   "creations.like.music": "寫一首像「{name}」這樣的曲子，不過",
   "creations.like.apps": "做一個像「{name}」這樣的應用程式，不過",
-  "creations.like.slides": "做一份像「{name}」這樣的簡報，不過",
+  "creations.like.slides": "做一份像「{name}」這樣的投影片，不過",
   "creations.like.games": "做一個像「{name}」這樣的遊戲，不過",
   "creations.remove": "從創作中移除",
   "creations.deleted": "已刪除「{name}」。",
