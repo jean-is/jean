@@ -11,8 +11,8 @@
   "interactive.zoomIn": "Aproximar",
   "interactive.zoomOut": "Afastar",
   "interactive.mapCredits": "Créditos do mapa",
-  "interactive.askApp": "Cria uma pequena aplicação: {what}.",
+  "interactive.askApp": "Cria uma pequena aplicação para {what}.",
   "interactive.appExample": "dividir a conta entre amigos",
   "interactive.noCollection": "{name}: não há aqui nenhuma coleção com esse nome.",
-  "interactive.unread": "{name}: não é possível filtrar por “{where}”."
+  "interactive.unread": "{name}: não é possível filtrar por «{where}»."
 }

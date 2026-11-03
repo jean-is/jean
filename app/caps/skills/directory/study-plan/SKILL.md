@@ -62,7 +62,7 @@ metadata:
   title-pl: "Plan nauki"
   text-pl: "Dzisiejsza nauka z czasu w tygodniu, przedmiotów i sprawdzianów"
   title-pt: "Plano de estudos"
-  text-pt: "A sessão de hoje a partir do tempo da semana, das matérias e dos testes"
+  text-pt: "A sessão de hoje, calculada a partir do tempo da semana, das matérias e dos testes"
   title-ro: "Plan de studiu"
   text-ro: "Sesiunea de azi, din timpul săptămânii, materii și teste"
   title-ru: "План занятий"

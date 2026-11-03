@@ -63,7 +63,7 @@ metadata:
   title-pl: "Cele i strategia"
   text-pl: "Cele z mierzalnymi wynikami i plan, jak je osiągnąć"
   title-pt: "Metas e estratégia"
-  text-pt: "Objetivos com resultados mensuráveis e o plano para alcançá-los"
+  text-pt: "Objetivos com resultados mensuráveis e o plano para os alcançar"
   title-ro: "Obiective și strategie"
   text-ro: "Obiective cu rezultate măsurabile și planul pentru a le atinge"
   title-ru: "Цели и стратегия"

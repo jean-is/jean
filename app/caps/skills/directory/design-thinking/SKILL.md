@@ -61,7 +61,7 @@ metadata:
   text-nl: "Een product of dienst, gevormd samen met de mensen voor wie het is"
   title-pl: "Zaprojektuj coś nowego"
   text-pl: "Produkt lub usługa tworzone razem z ludźmi, dla których są"
-  title-pt: "Criar algo novo"
+  title-pt: "Conceber algo novo"
   text-pt: "Um produto ou serviço moldado com as pessoas para quem ele é"
   title-ro: "Proiectează ceva nou"
   text-ro: "Un produs sau un serviciu modelat împreună cu oamenii cărora le este destinat"

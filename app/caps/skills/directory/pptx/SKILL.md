@@ -63,7 +63,7 @@ metadata:
   title-pl: "PowerPoint"
   text-pl: "Prezentacje w plikach PowerPoint, gotowe do pokazania i zmiany"
   title-pt: "PowerPoint"
-  text-pt: "Apresentações em ficheiros PowerPoint, prontas a apresentar e a alterar"
+  text-pt: "Diapositivos em ficheiros PowerPoint, prontos a apresentar e a alterar"
   title-ro: "PowerPoint"
   text-ro: "Prezentări ca fișiere PowerPoint, gata de prezentat și de modificat"
   title-ru: "PowerPoint"

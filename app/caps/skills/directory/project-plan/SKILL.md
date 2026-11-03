@@ -63,7 +63,7 @@ metadata:
   title-pl: "Plan projektu"
   text-pl: "Zadania, terminy i kto co robi, z tym, czego nie można opóźnić"
   title-pt: "Plano de projeto"
-  text-pt: "Tarefas, datas e quem faz o quê, com o que não pode atrasar"
+  text-pt: "Tarefas, datas e quem faz o quê, e o que não pode atrasar"
   title-ro: "Plan de proiect"
   text-ro: "Sarcini, termene și cine ce face, cu ce nu are voie să întârzie"
   title-ru: "План проекта"
