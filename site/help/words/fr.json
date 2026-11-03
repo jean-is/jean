@@ -40,7 +40,7 @@
     ],
     [
       "Compétence",
-      "La façon dont vous voulez qu’un genre de chose soit fait, enregistrée pour que {name} la refasse à l’identique : un compte rendu hebdomadaire, une lettre dans votre style. Tapez / dans la zone de saisie pour en utiliser une par son nom."
+      "La façon dont vous voulez qu’un genre de chose soit fait, enregistrée pour que {name} la refasse à l’identique : un compte rendu hebdomadaire, une lettre dans votre style. Tapez / dans la zone de saisie pour en utiliser une par son nom. Voir {skills}."
     ],
     [
       "Routine",

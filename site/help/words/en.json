@@ -40,7 +40,7 @@
     ],
     [
       "Skill",
-      "How you want one kind of thing done, saved so that {name} does it the same way each time: a weekly report, a letter in your style. Type / in the box to use one by its name."
+      "How you want one kind of thing done, saved so that {name} does it the same way each time: a weekly report, a letter in your style. Type / in the box to use one by its name. See {skills}."
     ],
     [
       "Routine",

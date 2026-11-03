@@ -1,0 +1,60 @@
+{
+  "title": "Les compétences de {name} : prêtes à l’emploi, les vôtres, leur usage",
+  "description": "Une compétence, c’est votre façon de faire un genre de chose, gardée pour que {name} la refasse à l’identique. Les prêtes à l’emploi, les vôtres, où elles sont.",
+  "h1": "Comment marchent les compétences",
+  "works": "Tous les navigateurs",
+  "answer": "Une compétence, c’est la façon dont vous voulez qu’un genre de chose soit fait, enregistrée pour que {name} la refasse à l’identique à chaque fois : un compte rendu hebdomadaire, une lettre dans votre style. {name} en a de prêtes à l’emploi, et vous pouvez ajouter les vôtres. Quand une demande correspond à une compétence, le cerveau suit ses étapes ; tapez / dans la zone de saisie pour en désigner une vous-même.",
+  "show.add": "{settings} › {skills} › {add} : en créer une avec {name}, en prendre une dans un fichier ou sur un site.",
+  "parts": [
+    [
+      "Qu’est-ce qu’une compétence ?",
+      "Un fichier texte nommé SKILL.md, en mots simples : son nom, quand la suivre, puis ses étapes, et parfois d’autres textes dont elle a besoin à côté. Elle ne contient que des mots, jamais de programme. C’est un format ouvert que d’autres applications d’IA lisent aussi : une compétence écrite pour l’une d’elles peut entrer dans {name}, et les vôtres peuvent aller vers elles."
+    ],
+    [
+      "Lesquelles sont prêtes à l’emploi ?",
+      "Pour tous les jours, comme Lettre formelle, Budget et En termes simples ; pour le travail, comme Plan de projet et Ce qui pourrait mal tourner ; pour apprendre, comme Fiches et Planning de révisions ; et pour dessiner et présenter, comme Graphique, Diapos, PowerPoint et Créer un jeu. Elles marchent dès votre première demande : quand l’une convient, le cerveau la lit et elle rejoint vos compétences ; un message le dit, avec {see} pour ouvrir sa page. Réponses visuelles est là dès le début."
+    ],
+    [
+      "Comment ajouter les miennes ?",
+      "Demandez à {name}, avec vos mots, d’enregistrer la façon dont une chose a été faite. La troisième fois que vous demandez le même genre de chose, {name} le propose aussi. Ou ouvrez {settings} › {skills} › {add} : {make} vous pose quelques questions, puis l’enregistre avec un exemple à essayer ; {file} prend un SKILL.md envoyé par quelqu’un de confiance ; {site} prend une compétence publiée par un site ou une organisation."
+    ],
+    [
+      "Des compétences venues d’un site",
+      "{site} lit ce que publient quelques sources choisies pour le travail : petite entreprise, marketing, vente, ressources humaines, juridique et service client. Appuyez sur {browse} pour les voir ; en dessous, tapez l’adresse d’un site, son index de compétences ou un dépôt GitHub, et appuyez sur {source} pour voir les siennes aussi. Aucune n’entre avant que vous ayez lu ses étapes et appuyé sur {adding}, et vos demandes sont comparées avec elles sur cet appareil."
+    ],
+    [
+      "Quand une compétence est-elle suivie ?",
+      "À chaque demande, le cerveau a la liste de vos compétences, chacune avec son nom et quand la suivre. Quand une demande correspond à l’une d’elles, il lit ses étapes et les suit. Pour choisir vous-même, tapez / dans la zone de saisie et choisissez une compétence par son nom : elle est suivie pour ce message. Une compétence désactivée n’est jamais suivie."
+    ],
+    [
+      "Où sont-elles gardées ?",
+      "Dans ce navigateur, sur cet appareil, chiffrées, avec le reste de votre travail : chaque compétence est un SKILL.md dans un dossier à elle. Celle que vous créez ou ajoutez dans un de vos projets y reste ; les autres sont dans tous les projets. Elles vont dans vos sauvegardes, et {sync} les emmène sur vos autres ordinateurs. {save}, sur la page d’une compétence, vous donne son SKILL.md, à garder ou à transmettre."
+    ]
+  ],
+  "good": [
+    "{skills} fait partie des capacités que {name} propose quand un moment s’y prête. Pour l’avoir plus tôt, activez-la dans {settings} › {capabilities} : voir {can}.",
+    "{settings} › {skills} dit quelle compétence a été suivie en dernier, puis les liste toutes. La page de l’une des vôtres montre {when}, un exemple avec {try}, ses étapes et combien de fois elle a été suivie : {edit} la change sur place, et {change} ouvre une tâche pour la changer ensemble.",
+    "Une compétence prête à l’emploi suit les mises à jour de {name}, et ne se supprime pas : elle se désactive, avec l’interrupteur en haut de sa page. Pour en changer une, demandez-le à {name} dans une tâche : dès lors, elle est à vous.",
+    "Avec un cerveau dans le cloud, la liste de vos compétences part avec chaque demande, et les étapes d’une compétence quand elle est suivie : voir {sees}.",
+    "Au travail, votre organisation peut ajouter ses propres sources, que vous ne pouvez pas retirer, ou s’en tenir à elles seules."
+  ],
+  "fixes": [
+    [
+      "Vous voyez {invalid}",
+      "Un SKILL.md commence par son nom, en lettres minuscules, chiffres et tirets, et par quand le suivre. Ouvrez le fichier dans un éditeur de texte pour vérifier, ou demandez à la personne qui vous l’a envoyé."
+    ],
+    [
+      "Une compétence venue d’un site ne peut pas être ajoutée",
+      "Elle lance des programmes, qui ne peuvent pas tourner ici, ou ce qui a été téléchargé n’est pas ce que sa source annonce. Seules les compétences faites de mots peuvent entrer."
+    ],
+    [
+      "Une source ne peut pas être lue",
+      "Vérifiez son adresse. GitHub ne laisse un navigateur le lire qu’un certain nombre de fois par heure : {name} réessaie plus tard."
+    ],
+    [
+      "{name} n’a pas suivi votre compétence",
+      "Sur sa page, appuyez sur {edit} et dites sous {when} pour quel genre de demande elle est faite, en quelques mots clairs. Ou désignez-la avec / dans la zone de saisie : elle est alors suivie pour ce message."
+    ]
+  ],
+  "ask": "Quelles compétences ai-je, et quand suis-tu chacune d’elles ?"
+}

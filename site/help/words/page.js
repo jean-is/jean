@@ -10,7 +10,7 @@ export default helpArticle({
   names: {
     settings: 'settings.title', brains: 'settings.brains', approvals: 'settings.approvals', capabilities: 'settings.capabilities', auto: 'auto.name',
     new: 'action.new', creations: 'creations.title', allow: 'rules.allow', ask: 'rules.ask', never: 'rules.never', choose: 'help/choose-ai',
-    asks: 'help/asks-first', more: 'help/what-jean-can-do',
+    asks: 'help/asks-first', more: 'help/what-jean-can-do', skills: 'help/skills',
   },
   also: ['what-jean-is', 'what-jean-can-do', 'asks-first'],
 })

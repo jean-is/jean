@@ -1,0 +1,60 @@
+{
+  "title": "Skills in {name}: ready-made ones, your own, and when they’re used",
+  "description": "A skill is how you want one kind of thing done, saved so that {name} does it the same way every time. The ready-made ones, adding yours, and where they’re kept.",
+  "h1": "How skills work",
+  "works": "Every browser",
+  "answer": "A skill is how you want one kind of thing done, saved so that {name} does it the same way every time: a weekly report, a letter in your style. {name} comes with ready-made ones, and you can add your own. When a request matches a skill, the brain follows its steps; type / in the box to name one yourself.",
+  "show.add": "{settings} › {skills} › {add}: make one with {name}, take one from a file, or from a site.",
+  "parts": [
+    [
+      "What is a skill?",
+      "A text file named SKILL.md, in plain words: its name, when to follow it, then its steps, and sometimes other texts it needs beside it. It holds words only, never a program. It is an open format that other AI apps read too, so a skill written for one of them can come into {name}, and yours can go to them."
+    ],
+    [
+      "Which ones come ready-made?",
+      "For every day, such as Formal letter, Budget and In plain words; for work, such as Project plan and What could go wrong; for learning, such as Flash cards and Study plan; and to draw and present, such as Chart, Slides, PowerPoint and Make a game. They work from your first request: when one fits, the brain reads it and it joins your skills; a message says so, with {see} to open its page. Visual answers is there from the start."
+    ],
+    [
+      "How do I add my own?",
+      "Ask {name} to save how something was done, in your own words. The third time you ask for the same kind of thing, {name} offers it too. Or open {settings} › {skills} › {add}: {make} asks you a few questions, then saves it with an example to try; {file} takes a SKILL.md that someone you trust sent you; {site} takes one that a site or an organisation publishes."
+    ],
+    [
+      "Skills from a site",
+      "{site} reads what a few chosen sources publish for work: small business, marketing, sales, human resources, legal work and customer support. Press {browse} to see them; below them, type a site’s address, its skills index or a GitHub repository, and press {source} to see its skills too. None comes in until you have read its steps and pressed {adding}, and your requests are compared with them on this device."
+    ],
+    [
+      "When does {name} follow one?",
+      "With each request, the brain has the list of your skills, each with its name and when it is followed. When a request matches one, it reads that skill’s steps and follows them. To choose yourself, type / in the box and pick a skill by its name: it is followed for that message. A skill turned off is never followed."
+    ],
+    [
+      "Where are they kept?",
+      "In this browser, on this device, encrypted, with the rest of your work: each skill is a SKILL.md in a folder of its own. One you make or add in a project of yours stays in it; the others are in every project. They go into your backups, and {sync} takes them to your other computers. {save}, on a skill’s page, gives you its SKILL.md to keep or to pass on."
+    ]
+  ],
+  "good": [
+    "{skills} is one of the capabilities {name} offers when a moment calls for it. To have it sooner, turn it on in {settings} › {capabilities}: see {can}.",
+    "{settings} › {skills} says which skill was followed last, then lists them all. The page of one of yours shows {when}, an example with {try}, its steps and how many times it was followed: {edit} changes it there, and {change} opens a task to change it together.",
+    "A ready-made skill keeps up with {name}’s updates, and can’t be deleted, only turned off, with the switch at the top of its page. To change one, ask {name} in a task: from then on it is yours.",
+    "With a brain in the cloud, the list of your skills goes with each request, and a skill’s steps when it is followed: see {sees}.",
+    "At work, your organisation may add sources of its own, which you can’t remove, or keep to them alone."
+  ],
+  "fixes": [
+    [
+      "It says {invalid}",
+      "A SKILL.md starts with its name, in small letters, digits and hyphens, and with when to follow it. Open the file in a text editor to check, or ask the person who sent it."
+    ],
+    [
+      "A skill from a site can’t be added",
+      "It runs programs, which can’t run here, or what was downloaded isn’t what its source lists. Only skills made of words can come in."
+    ],
+    [
+      "A source can’t be read",
+      "Check its address. GitHub lets a browser read it only so many times an hour: {name} tries again later by itself."
+    ],
+    [
+      "{name} didn’t follow your skill",
+      "On its page, press {edit} and say under {when} what kind of request it is for, in a few clear words. Or name it with / in the box: then it is followed for that message."
+    ]
+  ],
+  "ask": "Which skills do I have, and when do you follow each one?"
+}
