@@ -1,10 +1,10 @@
 {
-  "computer.text": "Un urzhiataer en ur voestad-traezh en ivinell-mañ : amprestañ a ra kewerier ha memor an trevnad-mañ, ha ne dizh netra all warnañ biken.",
-  "computer.lede": "Un urzhiataer en ivinell-mañ, distag diouzh an trevnad-mañ : labourat a ra war ar restroù a ro un ober dezhañ, ha ne dizh nemet al lec’hiennoù a aotreit.",
+  "computer.text": "Un urzhiataer en ivinell-mañ, disrannet diouzh an trevnad-mañ : amprestañ a ra ar c’hewerier hag ar memor, ha ne dizh netra all biken.",
+  "computer.lede": "Un urzhiataer en ivinell-mañ, distag diouzh an trevnad-mañ : labourat a ra war ar restroù a ro un drevell dezhañ, ha ne dizh nemet al lec’hiennoù a aotreit.",
   "computer.where": "Pelec’h e red an urzhiadoù",
   "computer.reach": "Ar pezh a c’hall tizhout",
   "computer.keeps": "Ar pezh a vir",
-  "computer.sandbox": "Boestad-traezh",
+  "computer.sandbox": "En ivinell-mañ",
   "computer.sandbox.text": "Urzhiadoù, JavaScript ha Python",
   "computer.state.asleep": "Kousket",
   "computer.state.waking": "O tihuniñ",
@@ -29,7 +29,7 @@
   "computer.engine.pyodide.text": "Labour war ar roadennoù, gant pandas, NumPy ha Matplotlib : war-dro {size} ar wech kentañ",
   "computer.try": "Esaeañ",
   "computer.internet": "Kenrouedad",
-  "computer.internet.text": "Ar pezh a c’hall an urzhiataer tizhout. Ne gaver biken ho toupinoù pe hoc’h alc’hwezioù.",
+  "computer.internet.text": "Ar pezh a c’hall an urzhiataer tizhout. Ne vez roet dezhañ biken ho toupinoù nag hoc’h alc’hwezioù.",
   "computer.internet.never": "Lazhet, rak en Aotreoù eo Biken evit Implijout ar genrouedad.",
   "computer.internet.off": "Diweredekaet",
   "computer.internet.ask": "Goulenn da gentañ",
@@ -44,7 +44,7 @@
     "other": "{count} all"
   },
   "computer.registries": "A-belec’h e teu ar pakadoù",
-  "computer.registries.text": "Evit ur melezour, evel hini hoc’h aozadur. Un alc’hwez a chom war an trevnad-mañ hag a ya d’e chomlec’h hepken.",
+  "computer.registries.text": "Evit ur melezour, un eilskouerenn eus ar mammennoù-mañ a c’hallfe hoc’h aozadur derc’hel. Un alc’hwez a chom war an trevnad-mañ hag a ya d’e chomlec’h hepken.",
   "computer.registry.pyodide": "Python, pakadoù Pyodide",
   "computer.registry.pypi": "Python, PyPI",
   "computer.registry.npm": "JavaScript, npm",
@@ -75,7 +75,7 @@
   "computer.reach.always": "Aotren {site} bepred",
   "computer.reach.no": "Ket",
   "computer.relay": "Tizhout ar web dre",
-  "computer.relay.text": "Chomlec’h un treuzkaser, evit al lec’hiennoù a nac’h goulennoù lec’hiennoù all. Goullo : war-eeun, dre proksi an trevnad-mañ e-unan.",
+  "computer.relay.text": "Chomlec’h un treuzkaser, evit al lec’hiennoù a nac’h goulennoù lec’hiennoù all. Lezit anezhañ goullo evit mont war-eeun, dre broksi an trevnad-mañ e-unan.",
   "computer.minutes": {
     "one": "{count} vunutenn",
     "two": "{count} vunutenn",
@@ -85,9 +85,9 @@
   },
   "computer.reach.once": "Aotren ur wech",
   "computer.terminal": "Termenell",
-  "computer.terminal.text": "Lañsit urzhiadoù war an urzhiataer hoc’h-unan, war an hevelep restroù hag ar gaozeadenn ; ho kemennadenn da-heul a lavar petra ho peus lañset. {keys} a zigor anezhi eus forzh pelec’h.",
+  "computer.terminal.text": "Lañsit urzhiadoù war an urzhiataer hoc’h-unan, war an hevelep restroù hag ar gaozeadenn. Ho kemennadenn da-heul a lavar petra ho peus lañset. {keys} a zigor anezhi eus forzh pelec’h.",
   "computer.terminal.command": "Urzhiad",
   "computer.terminal.clear": "Skarzhañ",
   "computer.terminal.exit": "Kod echuiñ {code}",
-  "computer.terminal.refused": "Kemmet en ul lec’h all e-keit-se, n’eo ket bet miret eta : {files}"
+  "computer.terminal.refused": "N’int ket bet miret, rak kemmet int bet e lec’h all e-keit-se : {files}"
 }
