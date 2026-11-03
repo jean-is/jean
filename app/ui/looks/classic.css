@@ -86,6 +86,8 @@
 /* A box is a field too, sunken, ticked in ink. */
 :root[data-look='classic'] :is(input:not([type='radio'], .switch, [type='range']), select, .sheet textarea, .prose pre) { border: 0; background-color: var(--field); box-shadow: var(--sunken); } :root[data-look='classic'] input[type='checkbox'] { --on-flame: var(--ink); } @media (forced-colors: active) { :root[data-look='classic'] input[type='checkbox'] { border: 1px solid; } }
 :root[data-look='classic'] :focus-visible { outline: 2px dotted; outline-offset: -5px; }
+/* Round a link's words, as Windows rings a label's: inside, a line of text has no room for it. */
+:root[data-look='classic'] :is(a:not([class]), .link-button):focus-visible { outline-offset: 1px; }
 /* A selected line: white on blue. */
 :root[data-look='classic'] :is(.settings-nav [aria-current='page'], .history-list li.is-current) { background: var(--flame-deep); color: oklch(1 0 0); }
 :root[data-look='classic'] .history-list li.is-current :is(.history-item, .icon-button) { color: oklch(1 0 0); }
