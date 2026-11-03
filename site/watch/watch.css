@@ -1,0 +1,18 @@
+/* The page that plays Jean's reels, over site.css: the first reel under the promise, the others two by two, how to
+   watch them, and the way in. Each reel is framed at 16:9, as a video is. Logical properties only; classes start
+   with wch-. */
+.wch-hero { display: grid; gap: clamp(1.5rem, 4vw, 2.5rem); }
+.wch-hero .site-hero-text { max-inline-size: 46rem; }
+.wch-first { display: grid; gap: 0.9rem; margin: 0; }
+.wch-first figcaption { max-inline-size: 46rem; color: var(--ink-soft); }
+.wch-first figcaption strong { color: var(--ink); }
+.wch-player { position: relative; aspect-ratio: 16 / 9; overflow: hidden; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); box-shadow: var(--site-float); }
+.wch-player iframe { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; border: 0; }
+.wch-reels { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: clamp(1.5rem, 3vw, 2.25rem); }
+.wch-reels article { display: flex; flex-direction: column; gap: 0.6rem; min-inline-size: 0; }
+.wch-reels .wch-player { margin-block-end: 0.4rem; }
+.wch-reels p { color: var(--ink-soft); }
+.wch-keys { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: 0.75rem; }
+.wch-keys > div { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.9rem 1.1rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); }
+.wch-keys dt { font-weight: 600; }
+.wch-keys dd { margin: 0; color: var(--ink-soft); }

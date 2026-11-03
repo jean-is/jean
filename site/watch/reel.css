@@ -1,0 +1,153 @@
+/* The reel player (site/watch/reel.js, D687): over the app's style sheet and the viewer's look, Tilde by default.
+   The stage is a picture of a screen, 1280 × 720, scaled to its frame and laid out left to right in every language;
+   what is said on it, its captions and its controls are in the reel's language and direction, and sized by the
+   player, so they read at any size. Logical properties only; classes start with reel-. */
+
+html:has(> body > .reel), body:has(> .reel) { block-size: 100%; margin: 0; overflow: hidden; background: var(--room); }
+.reel {
+  --mark: oklch(from var(--tint) 0.84 min(c, 0.18) h);
+  --scrim: oklch(0 0 0 / 0.55);
+  position: relative; display: block; inline-size: 100vw; block-size: 100dvh; overflow: hidden;
+  container-type: size; background: var(--room); color: var(--ink); font-family: var(--sans);
+  -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent;
+}
+[data-theme='light'] .reel { --mark: oklch(from var(--tint) 0.64 min(c, 0.19) h); }
+.reel.is-full { position: fixed; inset: 0; z-index: 10; }
+.reel :focus-visible { outline: 2px solid var(--flame); outline-offset: 2px; }
+
+/* The stage, centred and scaled as a video is */
+.reel-stage {
+  position: absolute; inset-block-start: 50%; inset-inline-start: 50%; inline-size: 1280px; block-size: 720px;
+  translate: -50% -50%; scale: var(--scale, 1); direction: ltr; overflow: hidden; cursor: pointer;
+  background: var(--room);
+}
+.reel-backdrop { position: absolute; inset: 0; background: radial-gradient(70% 60% at 50% 115%, oklch(from var(--mark) l c h / 0.22), transparent 70%), linear-gradient(var(--room), var(--room-2)); }
+.reel-backdrop svg { position: absolute; inset-inline-start: -10%; inset-block-end: -20%; inline-size: 120%; block-size: 70%; fill: none; stroke: var(--mark); stroke-width: 18; stroke-linecap: round; opacity: 0.07; }
+
+/* The world the camera moves over: the window Jean plays in, with its pointer */
+.reel-world { position: absolute; inset: 0; transform-origin: 0 0; }
+.reel-window {
+  position: absolute; inset-block-start: 36px; inset-inline-start: 96px; inline-size: 1088px; block-size: 628px;
+  overflow: hidden; border-radius: 14px; background: var(--room);
+  box-shadow: 0 0 0 1px var(--line-strong), 0 36px 90px -30px oklch(0 0 0 / 0.5), 0 10px 28px -14px oklch(0 0 0 / 0.35);
+}
+.reel-window[hidden] { display: none; }
+.reel-bar { position: relative; display: flex; align-items: center; justify-content: center; block-size: 40px; background: var(--room-2); border-block-end: 1px solid var(--line); }
+.reel-dots { position: absolute; inset-inline-start: 16px; display: flex; gap: 8px; }
+.reel-dots i { inline-size: 12px; block-size: 12px; border-radius: 50%; background: var(--line-strong); }
+.reel-address { display: inline-flex; align-items: center; gap: 6px; padding: 4px 16px; border-radius: 999px; background: var(--room); color: var(--ink-soft); font-size: 14px; }
+.reel-address svg { inline-size: 14px; block-size: 14px; }
+.reel-view { position: absolute; inset-block-start: 40px; inset-inline-start: 0; inline-size: 1088px; block-size: 588px; }
+/* The conversation laid out narrower than the window and magnified to fill it (reel.js's LENS), so it reads at any size */
+.reel-frame { position: absolute; inset-block-start: 0; inset-inline-start: 0; inline-size: calc(100% / 1.25); block-size: calc(100% / 1.25); border: 0; opacity: 0; background: var(--room); pointer-events: none; scale: 1.25; transform-origin: 0 0; }
+.reel-ring { position: absolute; inset-block-start: 0; inset-inline-start: 0; border: 2.5px solid var(--mark); border-radius: 12px; opacity: 0; pointer-events: none; box-shadow: 0 0 0 6px oklch(from var(--mark) l c h / 0.16); }
+.reel-pointer { position: absolute; inset-block-start: 0; inset-inline-start: 0; inline-size: 28px; block-size: 28px; margin: -3px; opacity: 0; transform-origin: 3px 3px; pointer-events: none; filter: drop-shadow(0 3px 4px oklch(0 0 0 / 0.35)); }
+.reel-pointer svg { inline-size: 100%; block-size: 100%; fill: var(--ink); stroke: var(--room); stroke-width: 1.5; stroke-linejoin: round; }
+.reel-ripple { position: absolute; inset-block-start: 0; inset-inline-start: 0; inline-size: 48px; block-size: 48px; margin: -24px; border: 2.5px solid var(--mark); border-radius: 50%; opacity: 0; pointer-events: none; }
+
+/* Cards: the wave, the name or a title, a line, facts ticked, a way in. Their words rise one after the other. */
+.reel-cards { position: absolute; inset: 0; pointer-events: none; }
+.reel-card { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px; padding: 64px 140px; text-align: center; }
+.reel-card[hidden] { display: none; }
+:root[dir='rtl'] .reel-card { direction: rtl; }
+.reel-card p { margin: 0; }
+.reel-word { display: inline-block; white-space: pre-wrap; opacity: 0; }
+.reel-mark { inline-size: 168px; block-size: 82px; fill: none; stroke: var(--mark); stroke-width: 44; stroke-linecap: round; overflow: visible; }
+/* Drawn the way the page reads, the tilde never mirrored (docs/design.md#icons): right to left, from its end */
+.reel-mark path, .reel-facts svg path { stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--drawn, 0)); }
+:root[dir='rtl'] .reel-mark path { stroke-dashoffset: calc(var(--drawn, 0) - 1); }
+.reel-name { font: 700 156px/1 var(--display); color: var(--ink); }
+.reel-title { max-inline-size: 1000px; font: 700 80px/1.08 var(--display); color: var(--ink); text-wrap: balance; }
+.reel-line { max-inline-size: 920px; font-size: 36px; line-height: 1.3; color: var(--ink-soft); text-wrap: balance; }
+:root:is(:lang(ar), :lang(ja), :lang(ko)) .reel-title { font-family: var(--sans); font-size: 72px; line-height: 1.25; }
+/* Japanese breaks between phrases, not inside one */
+:root:lang(ja) :is(.reel-title, .reel-line, .reel-facts, .reel-caption span) { word-break: auto-phrase; }
+.reel-facts { display: grid; gap: 24px; margin: 6px 0 0; padding: 0; list-style: none; text-align: start; font-size: 36px; line-height: 1.3; }
+.reel-facts li { display: flex; align-items: center; gap: 20px; }
+.reel-facts svg { flex: none; inline-size: 40px; block-size: 40px; fill: none; stroke: var(--mark); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+:root .reel-card a.reel-cta { padding: 18px 44px; font-size: 30px; text-decoration: none; pointer-events: auto; opacity: 0; }
+
+/* What the player draws over the stage, at the frame's own size: the caption, the big button, the controls */
+.reel-caption {
+  position: absolute; inset-inline: 0; inset-block-end: max(7cqb, 3.5rem); z-index: 1; display: flex; justify-content: center;
+  margin: 0 auto; padding-inline: 6cqi; opacity: 0; pointer-events: none;
+  font-size: clamp(0.95rem, 2.6cqi, 2.05rem); line-height: 1.35; font-weight: 500;
+}
+.reel-caption.is-top { inset-block: max(5cqb, 1.25rem) auto; }
+.reel-caption span {
+  max-inline-size: 34em; padding: 0.55em 1em; border-radius: 0.8em; text-align: center; text-wrap: balance;
+  background: oklch(from var(--room-2) l c h / 0.95); color: var(--ink);
+  box-shadow: 0 0 0 1px var(--line), 0 0.8em 2em -1em oklch(0 0 0 / 0.45);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+}
+.reel-spoken { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* Before it first plays: Play under the first card, as a pill, so it hides none of its words */
+.reel-big {
+  position: absolute; inset-inline: 0; inset-block-end: 13cqb; z-index: 2; display: flex; align-items: center; gap: 0.5em;
+  inline-size: max-content; margin-inline: auto; padding: 0.7em 1.5em 0.7em 1.2em; border: 0; border-radius: 999px;
+  background: var(--ink); color: var(--room); cursor: pointer; font: 600 clamp(0.95rem, 2.4cqi, 1.35rem)/1 var(--sans);
+  box-shadow: 0 1.2rem 2.4rem -1rem oklch(0 0 0 / 0.55); transition: scale 0.2s var(--ease), opacity 0.25s;
+}
+.reel-big:hover { scale: 1.04; }
+.reel-big svg { inline-size: 1.25em; block-size: 1.25em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.reel:not([data-state='ready']) .reel-big { opacity: 0; pointer-events: none; }
+
+.reel-controls {
+  position: absolute; inset-inline: 0; inset-block-end: 0; z-index: 3; display: grid; gap: 0.35rem;
+  padding: 2.4rem clamp(0.6rem, 2cqi, 1.2rem) clamp(0.4rem, 1.4cqi, 0.8rem);
+  background: linear-gradient(transparent, var(--scrim)); color: oklch(0.98 0 0);
+  transition: opacity 0.3s, translate 0.3s var(--ease);
+}
+.reel[data-idle] .reel-controls { opacity: 0; translate: 0 0.5rem; }
+.reel[data-idle] { cursor: none; }
+.reel[data-state='ready'] .reel-controls { opacity: 0; pointer-events: none; }
+.reel[data-state='ready']:hover .reel-controls, .reel[data-state='ready']:focus-within .reel-controls { opacity: 1; pointer-events: auto; }
+.reel-row { display: flex; align-items: center; gap: clamp(0.1rem, 0.8cqi, 0.4rem); min-inline-size: 0; }
+.reel-button {
+  display: grid; place-items: center; flex: none; inline-size: 2.5rem; block-size: 2.5rem; padding: 0; border: 0; border-radius: 0.6rem;
+  background: none; color: inherit; cursor: pointer; transition: background-color 0.15s;
+}
+.reel-button:hover { background: oklch(1 0 0 / 0.16); }
+.reel-button svg { inline-size: 1.4rem; block-size: 1.4rem; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.reel-button.is-text { inline-size: auto; min-inline-size: 2.5rem; padding-inline: 0.5rem; font: 600 0.9rem/1 var(--sans); }
+.reel-time { flex: none; padding-inline: 0.4rem; font-size: 0.85rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.reel-chapter { flex: 1; min-inline-size: 0; overflow: hidden; font-size: 0.85rem; white-space: nowrap; text-overflow: ellipsis; opacity: 0.85; }
+@container (inline-size < 26rem) { .reel-chapter, .reel-time { display: none; } .reel-row { justify-content: space-between; } }
+/* A small frame: Play smaller and lower, under the first card's words */
+@container (inline-size < 30rem) { .reel-big { inset-block-end: 5cqb; padding: 0.45em 0.95em 0.45em 0.75em; font-size: 0.8rem; } }
+
+/* The bar: one segment a chapter, played as far as the reel is; the range over it takes the pointer and the keys */
+.reel-track { position: relative; block-size: 1.25rem; }
+.reel-marks { position: absolute; inset-inline: 0.5rem; inset-block-start: 50%; display: flex; gap: 3px; block-size: 4px; translate: 0 -50%; transition: block-size 0.15s; }
+.reel-marks span { position: relative; flex-basis: 0; overflow: hidden; border-radius: 2px; background: oklch(1 0 0 / 0.3); }
+.reel-marks i { position: absolute; inset: 0; background: var(--mark); transform-origin: left; }
+:root[dir='rtl'] .reel-marks i { transform-origin: right; }
+.reel-track:hover .reel-marks, .reel-track:focus-within .reel-marks { block-size: 6px; }
+.reel-seek { position: absolute; inset: 0; inline-size: 100%; margin: 0; background: none; opacity: 0; cursor: pointer; }
+.reel-seek:focus-visible { opacity: 1; accent-color: var(--mark); }
+
+.reel-menu {
+  position: fixed; inset: auto; margin: 0; padding: 0.35rem; border: 1px solid var(--line-strong); border-radius: 0.9rem;
+  background: var(--room-2); color: var(--ink); box-shadow: 0 1rem 2.5rem -1rem oklch(0 0 0 / 0.55);
+}
+.reel-menu ul { display: grid; margin: 0; padding: 0; list-style: none; }
+.reel-menu button {
+  display: flex; align-items: center; gap: 0.5rem; inline-size: 100%; padding: 0.45rem 0.9rem 0.45rem 0.6rem; border: 0; border-radius: 0.55rem;
+  background: none; color: inherit; font: inherit; font-size: 0.9rem; text-align: start; cursor: pointer;
+}
+.reel-menu button:hover, .reel-menu button:focus-visible { background: var(--line); outline: none; }
+.reel-menu svg { inline-size: 1rem; block-size: 1rem; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; visibility: hidden; }
+.reel-menu [aria-checked='true'] svg { visibility: visible; }
+
+/* An export: the picture alone */
+.reel[data-export] :is(.reel-controls, .reel-big) { display: none; }
+.reel[data-export] .reel-stage { cursor: auto; }
+
+@media (prefers-reduced-motion: reduce) { .reel :is(.reel-controls, .reel-big, .reel-marks) { transition: none; } }
+@media (forced-colors: active) {
+  .reel-caption span, .reel-menu { border: 1px solid CanvasText; }
+  .reel-marks span { background: GrayText; } .reel-marks i { background: Highlight; }
+  .reel-ring, .reel-ripple { border-color: Highlight; }
+}
+@media (prefers-contrast: more) { .reel-caption span { background: var(--room); box-shadow: 0 0 0 2px var(--ink); } }

@@ -10,7 +10,8 @@
   },
   "type": "module",
   "imports": {
-    "#prosemirror": "./scripts/prosemirror.js"
+    "#prosemirror": "./scripts/prosemirror.js",
+    "#app/*": "./app/*"
   },
   "scripts": {
     "dev": "npm run build && node scripts/serve.js --gateway --share --home",

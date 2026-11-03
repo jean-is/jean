@@ -8,13 +8,13 @@ import { TOUR } from '../demo.js'
 import { felt, xml } from '../site.js'
 import { job } from './job.js'
 
-/** The sample spreadsheet's rows: month, product, units, revenue. */
-const ROWS = (await readFile(new URL('../../app/caps/files/sales.csv', import.meta.url), 'utf8')).trim().split('\n').slice(1).map((line) => line.split(','))
-const MONTHS = [...new Set(ROWS.map(([month]) => month))].sort()
-const PRODUCTS = [...new Set(ROWS.map(([, product]) => product))]
+/** The sample spreadsheet's rows: month, product, units, revenue; and what its reel shows of them (site/watch/reels.js). */
+export const ROWS = (await readFile(new URL('../../app/caps/files/sales.csv', import.meta.url), 'utf8')).trim().split('\n').slice(1).map((line) => line.split(','))
+export const MONTHS = [...new Set(ROWS.map(([month]) => month))].sort()
+export const PRODUCTS = [...new Set(ROWS.map(([, product]) => product))]
 const units = (/** @type {string} */ month, /** @type {string} */ product) => Number(ROWS.find((row) => row[0] === month && row[1] === product)?.[2])
 /** Each product's units in the first month and the last, and its growth, as the sample's answer works them out. */
-const GROWTH = PRODUCTS.map((product) => {
+export const GROWTH = PRODUCTS.map((product) => {
   const [first, last] = [units(MONTHS[0], product), units(/** @type {string} */ (MONTHS.at(-1)), product)]
   return { product, first, last, growth: last / first - 1 }
 })
@@ -23,7 +23,7 @@ const BEST = [...GROWTH].sort((a, b) => b.growth - a.growth)[0]
 const month = (/** @type {string} */ lang, /** @type {string} */ at, short = false) => new Intl.DateTimeFormat(lang, { month: short ? 'short' : 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${at}-15T12:00:00Z`))
 
 /** The program the computer runs on the sample, as the pane's demo shows it: the growth worked out as GROWTH is. @param {string} file */
-const program = (file) => `const rows = csv(await file(${JSON.stringify(file)}))
+export const program = (file) => `const rows = csv(await file(${JSON.stringify(file)}))
 const months = [...new Set(rows.map((row) => row.month))].sort()
 const units = (month, product) => rows.find((row) => row.month === month && row.product === product).units
 return [...new Set(rows.map((row) => row.product))].map((product) => {
