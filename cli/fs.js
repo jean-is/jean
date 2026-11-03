@@ -3,8 +3,10 @@
 // a .tmp beside it first, then takes its place; a mirror never carries a .tmp (caps/sync/mirror.js), so
 // a round never takes in half a file. In the user's own folder, it is written where it is, as the
 // browser's folderFS does, keeping its links and permissions.
+import { execFile } from 'node:child_process'
 import { randomUUID } from 'node:crypto'
 import { appendFile, mkdir, readFile, readdir, rename, rm, stat, writeFile } from 'node:fs/promises'
+import { release } from 'node:os'
 import { dirname, join } from 'node:path'
 import { byName, normalizeDir, normalizePath } from '../app/core/fs.js'
 
@@ -12,6 +14,8 @@ import { byName, normalizeDir, normalizePath } from '../app/core/fs.js'
 
 /** What reading something that isn't there, or isn't a file, gives. */
 const none = () => null
+/** Where a Mac keeps a folder's mark, `#S` for one that syncs, as iCloud Drive does. */
+const MARK = 'com.apple.icon.folder#S'
 
 /** @param {string} root an absolute path @param {{ swap?: boolean }} [options] swap: through a .tmp @returns {FS} */
 export function nodeFS(root, { swap = true } = {}) {
@@ -60,4 +64,20 @@ export function nodeFS(root, { swap = true } = {}) {
       return found?.isFile() ? { size: found.size, lastModified: Math.floor(found.mtimeMs) } : null
     },
   }
+}
+
+/**
+ * On a Mac from macOS 26, the ～ Finder draws on a folder Sync now keeps, in the folder's own colour and
+ * style (D686): the mark Customize Folder writes, which iCloud keeps, and the custom-icon flag (0x0400 in
+ * FinderInfo's flags, at byte 8) that has Finder read it. Never over an icon or a mark the person chose;
+ * where it fails, the folder stays as it was.
+ * @param {string} folder an absolute path
+ */
+export async function showTilde(folder) {
+  if (process.platform !== 'darwin' || Number(release().split('.')[0]) < 25) return
+  const xattr = (/** @type {string[]} */ ...args) => new Promise((done, failed) => execFile('/usr/bin/xattr', [...args, folder], (error, out) => (error ? failed(error) : done(out))))
+  const info = await xattr('-px', 'com.apple.FinderInfo').then((hex) => Buffer.from(String(hex).replace(/\s/g, ''), 'hex'), () => Buffer.alloc(32))
+  if (info[8] & 0x04 || (await xattr('-p', MARK).then(() => true, () => false))) return
+  info[8] |= 0x04
+  await xattr('-w', MARK, JSON.stringify({ emoji: '～' })).then(() => xattr('-wx', 'com.apple.FinderInfo', info.toString('hex'))).catch(() => {})
 }

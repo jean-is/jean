@@ -2,14 +2,14 @@
 // `jean-cli acp` and speaks JSON-RPC on its input and output (cli/rpc.js). Each session is one of
 // Jean's conversations, kept in the folder Sync keeps (caps/sync/mirror.js), in the project on the
 // editor's folder or else the home one, so the browser has it after its next round; a folder not
-// made yet, or empty, becomes Sync's as it would in the browser. A session waits for a brain: with
+// made yet, or empty, becomes Sync's as it would in the browser, its icon on a Mac marked ～. A session waits for a brain: with
 // none, the editor is offered Claude Code's sign-in, run in a terminal of its own (`jean-cli --login`).
 // A turn is core's (core/loop.js), whose updates are ACP's already, as are the answers to what it asks first.
 import { readFile } from 'node:fs/promises'
 import { basename, isAbsolute, join as joinPath } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { BRAND } from '../app/brand.js'
-import { nodeFS } from './fs.js'
+import { nodeFS, showTilde } from './fs.js'
 import { peer, RpcError } from './rpc.js'
 import { chooseBrain } from './brain.js'
 import { connect, toolsFor } from './tools.js'
@@ -110,10 +110,12 @@ export function agent({ input, write, folder, brain: named, address, version, en
    */
   async function open({ cwd = '', mcpServers = [] }, id) {
     if (!isAbsolute(cwd)) throw new RpcError(-32602, 'cwd must be an absolute path.')
-    // Nothing of Jean's goes into a folder of other files, as Sync's claim() refuses one.
-    if (!(await jean.exists(MARK)) && (await jean.list('')).some((entry) => carried(entry.name))) throw new RpcError(-32603, t('cli.notSync', { folder }))
+    // Nothing of Jean's goes into a folder of other files, as Sync's claim() refuses one; one it takes shows ～ on a Mac.
+    const fresh = !(await jean.exists(MARK))
+    if (fresh && (await jean.list('')).some((entry) => carried(entry.name))) throw new RpcError(-32603, t('cli.notSync', { folder }))
     const own = await mine()
     await claim(jean, { by: own.device })
+    if (fresh) await showTilde(folder)
     let projects = await listProjects(jean)
     let project
     let path = ''

@@ -1,8 +1,8 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { spawn } from 'node:child_process'
+import { execFile, spawn } from 'node:child_process'
 import { mkdir, mkdtemp, readdir, readFile, rm, writeFile } from 'node:fs/promises'
-import { tmpdir } from 'node:os'
+import { release, tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { PassThrough } from 'node:stream'
 import { agent } from '../cli/acp.js'
@@ -277,6 +277,33 @@ test('a folder not made yet becomes Sync’s, as an empty one does in the browse
   assert.equal(mark.by, JSON.parse(await readFile(join(folder, 'settings.json'), 'utf8')).device)
   const { project } = /** @type {NonNullable<Awaited<ReturnType<typeof kept>>>} */ (await kept(folder, sessionId))
   assert.match(await readFile(join(folder, 'projects', project, 'project.md'), 'utf8'), /^default: true$/m)
+})
+
+/** What Finder reads for a folder's icon: its mark (Customize Folder's) and whether its custom-icon flag is up. @param {string} folder */
+async function icon(folder) {
+  const read = (/** @type {string[]} */ ...args) => new Promise((done) => execFile('/usr/bin/xattr', [...args, folder], (error, out) => done(error ? null : out.trim())))
+  const info = /** @type {string | null} */ (await read('-px', 'com.apple.FinderInfo'))
+  return { mark: await read('-p', 'com.apple.icon.folder#S'), custom: !!info && (parseInt(info.replace(/\s/g, '').slice(16, 18), 16) & 0x04) !== 0 }
+}
+
+test('on a Mac, a folder jean-cli sets up shows ～ on its icon; one Sync keeps already, or with a mark of the person’s, stays as it is', { skip: (process.platform !== 'darwin' || Number(release().split('.')[0]) < 25) && 'macOS 26 or later' }, async (t) => {
+  const base = await mkdtemp(join(tmpdir(), 'cli-acp-'))
+  t.after(() => rm(base, { recursive: true, force: true }))
+  await mkdir(join(base, 'work'))
+  const made = await setup(t, { base })
+  await made.editor.request('session/new', { cwd: made.cwd, mcpServers: [] })
+  assert.deepEqual(await icon(made.folder), { mark: '{"emoji":"～"}', custom: true })
+  const kept = await setup(t)
+  await kept.editor.request('session/new', { cwd: kept.cwd, mcpServers: [] })
+  assert.deepEqual(await icon(kept.folder), { mark: null, custom: false })
+  const theirs = await mkdtemp(join(tmpdir(), 'cli-acp-'))
+  t.after(() => rm(theirs, { recursive: true, force: true }))
+  await mkdir(join(theirs, 'work'))
+  await mkdir(join(theirs, 'Jean'))
+  await new Promise((done) => execFile('/usr/bin/xattr', ['-w', 'com.apple.icon.folder#S', '{"sym":"star"}', join(theirs, 'Jean')], done))
+  const chosen = await setup(t, { base: theirs })
+  await chosen.editor.request('session/new', { cwd: chosen.cwd, mcpServers: [] })
+  assert.deepEqual(await icon(chosen.folder), { mark: '{"sym":"star"}', custom: false })
 })
 
 /** jean-cli as a program, on a home folder of its own, its words in English. @param {string[]} args @param {string} home @param {Record<string, string>} [env] */

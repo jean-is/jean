@@ -6,7 +6,7 @@ Jean, an assistant that runs in a browser tab, for people who live in a terminal
 
 Jean speaks [ACP](https://agentclientprotocol.com), so any editor that does (Zed, JetBrains, Neovim, Emacs) can use it as its assistant. It works on the folder your editor has open: it reads its files, changes them once you approve each diff, and runs commands in the editor's terminal once you agree.
 
-Its projects, memory, skills and conversations are the ones you have in the browser, through Sync. It keeps them in `~/Jean`, or in the folder `--folder` names: choose the same one in Settings › Your data. A folder that doesn't exist yet, or is empty, becomes Sync's the first time; one that holds other files is refused. A conversation started in your editor shows in the browser after the next sync, and the other way round.
+Its projects, memory, skills and conversations are the ones you have in the browser, through Sync. It keeps them in `~/Jean`, or in the folder `--folder` names: choose the same one in Settings › Your data. A folder that doesn't exist yet, or is empty, becomes Sync's the first time, and on a Mac from macOS 26 shows ～ on its icon; one that holds other files is refused. A conversation started in your editor shows in the browser after the next sync, and the other way round.
 
 In Zed's settings:
 
