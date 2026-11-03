@@ -1,5 +1,6 @@
 // Documents' editor (D485), under node --test: a document's Markdown read and written back byte for byte,
-// Jean's changes found where they are, and blocks moved, a list's items among them.
+// Jean's changes found where they are, blocks moved, a list's items among them, and two versions of a
+// document merged from the one both came from (D157).
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFile, readdir } from 'node:fs/promises'
@@ -8,6 +9,7 @@ import { Marked } from 'marked'
 import { parse, parseDoc, titled, serialize, same, schema, blockMarkdown, sliceMarkdown } from '../app/caps/documents/markdown.js'
 import { diff, tints } from '../app/caps/documents/suggest.js'
 import { BlockSelection, blockRange, moveBlocks, units } from '../app/caps/documents/blocks.js'
+import { merge3 } from '../app/ui/merge.js'
 
 const ROOT = new URL('../', import.meta.url)
 const SAMPLE = new URL('fixtures/editor/jean-answer.md', import.meta.url)
@@ -245,4 +247,27 @@ test('a line is marked with its language only where Jean is sure of it, whatever
   // Short French shares its few words with other languages: never marked as one of them, whichever language the page is in.
   for (const lang of ['fr', 'en', 'ro', 'nl', 'ar', 'ja']) assert.deepEqual(marks(lang, ['Programme de la semaine', 'À faire avant de partir']), ['', ''], lang)
   assert.deepEqual(marks('en', ['Voici le plan, tiré des trois fichiers partagés, et le site du lieu.', ...other]), ['fr', '', 'ar', 'ja'])
+})
+
+test('two versions of a document merge line by line from the one both came from: each side’s changes kept, the same change once, both where they differ', () => {
+  const base = '# Trip\n\nWe leave on Monday.\n\n- tickets\n- passports\n\nCall Anna.\n'
+  // One side alone changed: its version; neither, or both the same: that one.
+  assert.equal(merge3(base, base, base), base)
+  assert.equal(merge3(base, base.replace('Monday', 'Tuesday'), base), base.replace('Monday', 'Tuesday'))
+  assert.equal(merge3(base, base, base.replace('Anna', 'Ana')), base.replace('Anna', 'Ana'))
+  assert.equal(merge3(base, base.replace('Anna', 'Ana'), base.replace('Anna', 'Ana')), base.replace('Anna', 'Ana'))
+  // Each changed its own lines, one took a line away and the other added one: all of it.
+  const mine = base.replace('Monday', 'Tuesday').replace('- passports\n', '')
+  const theirs = base.replace('Call Anna.', 'Call Anna and Tom.\nBring snacks.')
+  assert.equal(merge3(base, mine, theirs), '# Trip\n\nWe leave on Tuesday.\n\n- tickets\n\nCall Anna and Tom.\nBring snacks.\n')
+  // Side by side, a line taken away and one added are changed apart: both stay, the line taken away with them.
+  assert.equal(merge3(base, mine, base.replace('- tickets\n', '- tickets\n- adapters\n')), base.replace('Monday', 'Tuesday').replace('- tickets\n', '- tickets\n- adapters\n'))
+  // The same line changed apart: both stay, this side's first, as paragraphs of their own; a change beats taking it away.
+  assert.equal(merge3(base, base.replace('Monday', 'Tuesday'), base.replace('Monday', 'Friday')), base.replace('We leave on Monday.', 'We leave on Tuesday.\n\nWe leave on Friday.'))
+  assert.equal(merge3(base, base.replace('Call Anna.\n', ''), base.replace('Anna', 'Ana')), base.replace('Anna', 'Ana'))
+  // Long: only what lies between the lines all three share at their start and end is lined up, and too much of it is left to the newer.
+  const long = Array.from({ length: 30_000 }, (_, i) => `Line ${i}.`).join('\n')
+  const merged = merge3(long, long.replace('Line 15000.', 'Line fifteen thousand.'), long.replace('Line 15010.', 'Line 15 010.'))
+  assert.equal(merged, long.replace('Line 15000.', 'Line fifteen thousand.').replace('Line 15010.', 'Line 15 010.'))
+  assert.equal(merge3(long, `${long}\nmine`, `theirs\n${long}`), null)
 })

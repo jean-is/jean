@@ -127,7 +127,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] Live conversation on a real microphone: Silero's thresholds, Jean's voice through speakers interrupting it, Safari's `AudioContext` at 16 kHz
 
 **Sync, routines and the desktop app**
-- [ ] OneDrive, Dropbox, iCloud Drive and Google Drive on Windows and macOS: files kept online only, a computer offline for a day, the drives' own conflict copies; a task continued offline on two computers, when the drive keeps one's file (a round takes the folder's as it stands)
+- [ ] OneDrive, Dropbox, iCloud Drive and Google Drive on Windows and macOS: files kept online only, a computer offline for a day, the drives' own conflict copies; a task continued offline on two computers, when the drive keeps one's file (a round takes the folder's as it stands); a document changed offline on both, then open on both, and the drive's conflicted copy of it, which comes in as a document of its own
 - [ ] Routines over real days: a laptop that sleeps, a frozen or discarded tab, two tabs open when one falls due, and the same routine on two synced computers
 - [ ] The built desktop apps on macOS, Windows and Linux: the system's folder dialog and file manager; on Linux, whether WebKitGTK lets the microphone through
 - [ ] jean-cli (D241) in Zed, JetBrains and Neovim, from `npx -y jean-cli@latest acp`: a question about an open file, a change approved in the editor's diff, a command in its terminal, Stop during an answer; Claude Code as its brain with a Claude plan

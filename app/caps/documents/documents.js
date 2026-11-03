@@ -80,7 +80,14 @@ export async function editor(file, holds) {
       : app.fs.exists(side).then((there) => (there ? app.fs.remove(side) : undefined))),
   })
   open.set(path, (shown = one))
+  // Its file changed elsewhere, by Sync or in another tab: what changed comes in where it is, its front matter too; taken away, it stays open.
+  const unwatch = app.fs.watch?.(async (changed) => {
+    const now = changed === `${project}/${path}` ? await app.fs.read(changed) : null
+    const read = now === null ? null : parseFrontMatter(now)
+    if (read && one.editor.take(read.body)) Object.assign(one, { head: read.data, name: nameOf(read) })
+  }, { all: true })
   holds.push(() => {
+    unwatch?.()
     one.editor.destroy()
     if (open.get(path) === one) open.delete(path)
     if (shown === one) shown = [...open.values()].at(-1) ?? null

@@ -5,6 +5,7 @@
 import { Plugin, PluginKey, Selection, Decoration, DecorationSet, DOMSerializer, Fragment, Mark, closeHistory } from '#prosemirror'
 import { namesRows } from '../../ui/markdown.js'
 import { el, RTL, langOf } from './ui.js'
+import { steps } from '../../ui/merge.js'
 
 /** @typedef {import('prosemirror-model').Node} PMNode */
 /** @typedef {import('prosemirror-state').EditorState} EditorState */
@@ -14,29 +15,6 @@ import { el, RTL, langOf } from './ui.js'
 /** Blocks as an answer draws them (drawn.js). @typedef {{ drawn: (node: PMNode) => boolean, draw: (node: PMNode, plain: () => Node) => (HTMLElement & { stop: () => void }) | null }} Form */
 
 export const suggestionKey = /** @type {PluginKey<State>} */ (new PluginKey('suggestions'))
-
-/**
- * How two lists line up (their longest common subsequence): [i, j] the same in both, [i, -1] or [-1, j] in one only.
- * @template T @param {T[]} a @param {T[]} b @param {(x: T, y: T) => boolean} eq @returns {Array<[number, number]>}
- */
-function steps(a, b, eq) {
-  const rows = a.length + 1, cols = b.length + 1
-  const table = new Uint32Array(rows * cols)
-  for (let i = a.length - 1; i >= 0; i--) {
-    for (let j = b.length - 1; j >= 0; j--) {
-      table[i * cols + j] = eq(a[i], b[j]) ? table[(i + 1) * cols + j + 1] + 1 : Math.max(table[(i + 1) * cols + j], table[i * cols + j + 1])
-    }
-  }
-  /** @type {Array<[number, number]>} */
-  const out = []
-  let i = 0, j = 0
-  while (i < a.length || j < b.length) {
-    if (i < a.length && j < b.length && eq(a[i], b[j])) out.push([i++, j++])
-    else if (j >= b.length || (i < a.length && table[(i + 1) * cols + j] >= table[i * cols + j + 1])) out.push([i++, -1])
-    else out.push([-1, j++])
-  }
-  return out
-}
 
 /** A node's or a fragment's children. @param {PMNode | Fragment} node */
 const childList = (node) => { const list = /** @type {PMNode[]} */ ([]); node.forEach((child) => list.push(child)); return list }

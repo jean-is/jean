@@ -27,6 +27,7 @@ import { schema, parse, titled, serialize, sliceMarkdown, safeHref, words, broug
 import { el, RTL, free, langOf } from './ui.js'
 import { fromTree } from './clipboard.js'
 import { suggestions, suggest, accept, reject, pending, proposal, suggestionKey } from './suggest.js'
+import { merge3 } from '../../ui/merge.js'
 import { slashMenu, slashKey } from './slash.js'
 import { bookmarks, askKey } from './bookmark.js'
 import { bubble } from './bubble.js'
@@ -541,11 +542,13 @@ export function create(box, { name, path, markdown: text, pictures, write, keep,
   }
 
   const markdown = () => serialize(view.state.doc, sources)
-  let saved = text
+  // What the file holds as far as the editor knows, and its last writes, which never come back as changed elsewhere.
+  let saved = text, wrote = /** @type {string[]} */ ([])
   function save() {
     const now = markdown()
     if (now === saved) return
     saved = now
+    wrote = [now, ...wrote.slice(0, 3)]
     write(now, [...brought].filter((src) => now.includes(src)).join(' ')).catch(() => { saved = '' })
   }
   function flush() {
@@ -637,6 +640,20 @@ export function create(box, { name, path, markdown: text, pictures, write, keep,
       tally = { accepted: 0, rejected: 0 }
       const changes = suggest(view, next.doc, notes)
       return changes ? `Shown as ${changes} changes for the person to accept or reject.` : 'Nothing differs.'
+    },
+    /**
+     * Its file as it is now, changed elsewhere (Sync, another tab): what changed there comes in where it is, out of ⌘Z's way,
+     * with what was typed here since the last save. Whether anything came in. @param {string} file
+     */
+    take(file) {
+      if (file === saved || wrote.includes(file)) return false
+      const next = titled(parse(merge3(saved, markdown(), file) ?? file)), { content } = view.state.doc
+      sources.merge(next.sources)
+      ;[saved, wrote] = [file, []]
+      // Only the blocks between what the two share at their start and end are replaced, so the caret stays where it was.
+      const start = content.findDiffStart(next.doc.content), { a, b } = content.findDiffEnd(next.doc.content) ?? { a: 0, b: 0 }, over = Math.max(0, Number(start) - Math.min(a, b))
+      if (start !== null) view.dispatch(view.state.tr.replace(start, a + over, next.doc.slice(start, b + over)).setMeta('addToHistory', false))
+      return true
     },
     /** Its title renamed. @param {string} name */
     retitle(name) {

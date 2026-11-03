@@ -3,8 +3,8 @@
 // round compares each side with what it was at the last round (the base, in .cache/): what changed
 // on one side goes to the other, a deletion too; what changed on both is settled by the file's kind.
 // A conversation grows (unless gone back to a request, D188), so the longer wins; two that went apart both stay, the mirror's as a
-// new conversation; a table's changes and columns merge (D474, D491); a file named by its hash never differs; anything else,
-// the newer wins. Keys,
+// new conversation; a table's changes and columns merge (D474, D491); a Markdown file's words merge line by line from the
+// version both last had (ui/merge.js); a file named by its hash never differs; anything else, the newer wins. Keys,
 // caches, settings.json and what drives and systems leave in a folder stay where they are. What a round
 // takes from a conversation here goes only as `removing` lets it, as any removal does (D412).
 import { walk, dirname, readJSON, writeJSON } from '../../core/fs.js'
@@ -30,6 +30,11 @@ const CONVERSATION = /\/conversations\/[^/]+\.jsonl$/
 const BY_ULID = /\/[0-9A-HJKMNP-TV-Z]{26}\.jsonl$/
 /** A collection's two files, which merge (D491, D507). */
 const TABLE = /\/collections\/[^/]+\/(changes\.jsonl|collection\.json)$/
+/** A Markdown file, and where a round keeps the version both sides had after it, which a change on both merges from. */
+const MARKDOWN = /\.md$/
+const had = (/** @type {string} */ path) => `.cache/sync/${path}`
+/** A Markdown file's front matter. @param {string} text */
+const head = (text) => /^---\n[\s\S]*?\n---\n?/.exec(text)?.[0] ?? ''
 
 /**
  * Two versions of a table's file as one: every change of either, each cell its latest; the newer
@@ -48,6 +53,17 @@ async function mergedTable(path, x, y) {
   } catch {
     return null
   }
+}
+
+/**
+ * Two versions of a Markdown file as one, from the version both had: its words line by line, every change of either kept, and
+ * the newer one's front matter. Null without that version, or when they can't be lined up: the newer then wins.
+ * @param {Uint8Array | null} base @param {Uint8Array} x @param {Uint8Array} y @param {boolean} newer whether x is
+ */
+async function mergedText(base, x, y, newer) {
+  const [o, a, b] = [base, x, y].map((bytes) => new TextDecoder().decode(bytes ?? undefined))
+  const body = base && (await import('../../ui/merge.js')).merge3(o.slice(head(o).length), a.slice(head(a).length), b.slice(head(b).length))
+  return typeof body === 'string' ? new TextEncoder().encode(head(newer ? a : b) + body) : null
 }
 
 /** @param {FS} fs @param {string} path @returns {Promise<Stat>} */
@@ -101,6 +117,7 @@ export async function syncRound(here, there, { busy = () => false, removing = (_
   const put = async (fs, path, bytes, seen) => {
     const now = await stat(fs, path)
     if (!bytes || !alike(now, seen)) return null
+    if (MARKDOWN.test(path)) await here.writeBytes(had(path), bytes)
     if (now?.size === bytes.length && startsWith(bytes, (await fs.readBytes(path)) ?? new Uint8Array(1))) return now
     await fs.writeBytes(path, bytes)
     if (fs === here) came.push(path)
@@ -152,8 +169,9 @@ export async function syncRound(here, there, { busy = () => false, removing = (_
     } else {
       const [x, y] = await Promise.all([here.readBytes(path), there.readBytes(path)])
       if (!x || !y) continue
-      const merged = TABLE.test(path) && !(x.length === y.length && startsWith(x, y)) && await mergedTable(path, x, y)
-      if (x.length === y.length && startsWith(x, y)) keep(path, a, b)
+      const same = x.length === y.length && startsWith(x, y)
+      const merged = !same && (TABLE.test(path) ? await mergedTable(path, x, y) : MARKDOWN.test(path) && await mergedText(await here.readBytes(had(path)), x, y, Number(a?.lastModified) >= Number(b?.lastModified)))
+      if (same) keep(path, a, b)
       else if (merged) keep(path, await put(here, path, merged, a), await put(there, path, merged, b))
       else if (path.endsWith('.jsonl') && startsWith(y, x)) keep(path, await put(here, path, y, a), b)
       else if (path.endsWith('.jsonl') && !startsWith(x, y)) {

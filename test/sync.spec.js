@@ -304,6 +304,88 @@ test('two Jeans on the very same folder stay in step on their own, both ways, si
   await inStep(other, page)
 })
 
+const DOC = 'documents/01K9AAAAAAAAAAAAAAAAAAAAAA-trip.md'
+/** The trip, a document of this Jean's, its words these. @param {import('@playwright/test').Page} page @param {string} body */
+const keep = (page, body) => page.evaluate(async ({ path, body }) => {
+  const { app } = await import('/ui/state.js')
+  await app.fs.write(`${app.projectDir}/${path}`, `---\nformat: 1\nname: Trip\nauthor: user\n---\n${body}`)
+}, { path: DOC, body })
+/** What a Jean's editor of the trip holds, and its file but for its front matter. @param {import('@playwright/test').Page} on */
+const shown = (on) => on.evaluate(async (path) => {
+  const [{ app }, { shown }] = await Promise.all([import('/ui/state.js'), import('/caps/documents/documents.js')])
+  return { editor: shown?.editor.markdown(), file: (await app.fs.read(`${app.projectDir}/${path}`))?.replace(/^---\n[\s\S]*?\n---\n/, '') }
+}, DOC)
+/** The words on a Jean's editor selected, or the caret just after them. @param {import('@playwright/test').Page} on @param {string} words @param {boolean} [over] */
+const select = (on, words, over = false) => on.evaluate(async ({ words, over }) => {
+  const [{ TextSelection }, { shown }] = await Promise.all([import('#prosemirror'), import('/caps/documents/documents.js')])
+  const { view } = /** @type {any} */ (shown).editor
+  let at = -1
+  view.state.doc.descendants((/** @type {any} */ node, /** @type {number} */ pos) => {
+    if (node.isText && at < 0 && node.text.includes(words)) at = pos + node.text.indexOf(words)
+    return at < 0
+  })
+  view.focus()
+  view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, over ? at : at + words.length, at + words.length)))
+  await new Promise((resolve) => requestAnimationFrame(() => setTimeout(resolve, 20)))
+}, { words, over })
+/** Each Jean opens the trip beside its task, once it came in. @param {import('@playwright/test').Page[]} jeans @param {string} path */
+async function openOn(jeans, path) {
+  for (const on of jeans) {
+    await expect.poll(async () => (await shown(on)).file, { timeout: 20_000 }).toBeTruthy()
+    await on.evaluate(async (path) => {
+      await (await import('/ui/caps.js')).unlock('documents')
+      ;(await import('/ui/preview.js')).preview({ uri: path, name: 'Trip.md', title: 'Trip', mimeType: 'text/markdown' })
+    }, path)
+    await expect(on.locator('#doc')).toBeAttached()
+    await expect.poll(async () => (await shown(on)).editor).toBe((await shown(on)).file)
+  }
+}
+
+test('a document open on two Jeans takes in what the other typed, where it is, and neither writes over the other', async ({ page, context }) => {
+  test.setTimeout(120_000)
+  const both = '# Trip\n\nWe leave on Tuesday.\n\nCall Anna and Tom.\n'
+  await picker(page)
+  await start(page)
+  await keep(page, '# Trip\n\nWe leave on Monday.\n\nCall Anna.\n')
+  const other = await sameFolder(page, context)
+  await openOn([page, other], DOC)
+  await Promise.all([page, other].map(listen))
+
+  // The second has a word selected when what the first typed comes in: it shows there, and the selection stays on that word.
+  await select(page, 'Monday', true)
+  await select(other, 'Call Anna')
+  await other.keyboard.type(' and Tom')
+  await expect.poll(async () => (await shown(page)).editor, { timeout: 20_000 }).toContain('Call Anna and Tom.')
+  await page.keyboard.type('Tuesday')
+  // What the second typed over it comes to the first, which kept its own: both have both, in the editor and in the file.
+  for (const on of [page, other]) await expect.poll(() => shown(on), { timeout: 20_000 }).toEqual({ editor: both, file: both })
+  // ⌘Z on the second takes back its own typing alone, never the first one's, and that goes to the first too.
+  await page.keyboard.press('ControlOrMeta+z')
+  for (const on of [page, other]) await expect.poll(() => shown(on), { timeout: 20_000 }).toEqual({ editor: both.replace('Tuesday', 'Monday'), file: both.replace('Tuesday', 'Monday') })
+  for (const on of [page, other]) expect(await told(on)).toEqual([])
+})
+
+test('in Japanese and Arabic, a word being composed when the other’s typing comes in is kept whole, and so is theirs', async ({ page, context }) => {
+  test.setTimeout(120_000)
+  const was = '# 旅行\n\n月曜日に出発します。\n\nأتصل بآنا.\n'
+  await picker(page)
+  await start(page)
+  await keep(page, was)
+  const other = await sameFolder(page, context)
+  await openOn([page, other], DOC)
+  await select(page, '月曜日', true)
+  const cdp = await context.newCDPSession(page)
+  for (const text of ['か', 'かよ', 'かようび']) await cdp.send('Input.imeSetComposition', { text, selectionStart: text.length, selectionEnd: text.length })
+  await select(other, 'بآنا')
+  await other.keyboard.insertText(' وتوم')
+  // It comes in while the word is still being composed, which goes on undisturbed.
+  await expect.poll(async () => (await shown(page)).editor, { timeout: 20_000 }).toContain('وتوم')
+  await cdp.send('Input.imeSetComposition', { text: '火曜日', selectionStart: 3, selectionEnd: 3 })
+  await cdp.send('Input.insertText', { text: '火曜日' })
+  const both = '# 旅行\n\n火曜日に出発します。\n\nأتصل بآنا وتوم.\n'
+  for (const on of [page, other]) await expect.poll(() => shown(on), { timeout: 20_000 }).toEqual({ editor: both, file: both })
+})
+
 test('with retention, a task deleted from the folder is kept first, then goes from Jean too (D412)', async ({ page }) => {
   await picker(page)
   await withPolicy(page, { retention: 'P6M' })

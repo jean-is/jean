@@ -185,19 +185,50 @@ test('a file deleted on one side and changed on the other is kept, changed', asy
   assert.equal(await there.read('instructions.md'), 'Be brief, and kind.')
 })
 
-test('changed on both sides: a conversation’s longer version wins, anything else the newer', async () => {
+test('changed on both sides: a conversation’s longer version wins, anything else but Markdown the newer', async () => {
   const start = header('01J0000000000000000000000A') + line('Hello')
-  const here = memoryFS({ [A]: start, 'instructions.md': 'Be brief.' })
+  const PLAN = `${HOME}/workspace/plan.txt`
+  const here = memoryFS({ [A]: start, [PLAN]: 'Be brief.' })
   const there = memoryFS({ [MARK]: '{}' })
   await syncRound(here, there)
   await here.append(A, line('Mine'))
   await there.append(A, line('Mine') + line('And more'))
-  await here.write('instructions.md', 'Be brief, here.')
+  await here.write(PLAN, 'Be brief, here.')
   await later()
-  await there.write('instructions.md', 'Be brief, there.')
-  assert.deepEqual((await syncRound(here, there)).sort(), ['instructions.md', A])
+  await there.write(PLAN, 'Be brief, there.')
+  assert.deepEqual((await syncRound(here, there)).sort(), [A, PLAN])
   assert.equal(await here.read(A), start + line('Mine') + line('And more'))
-  assert.equal(await here.read('instructions.md'), 'Be brief, there.')
+  assert.equal(await here.read(PLAN), 'Be brief, there.')
+})
+
+test('a document changed on two computers keeps the changes of both, line by line, and the newer one’s front matter; with no version both had, the newer wins', async () => {
+  const DOC = `${HOME}/documents/01K90000000000000000000000-trip.md`
+  const head = (/** @type {string} */ changed) => `---\nformat: 1\nauthor: user\nchanged: ${changed}\n---\n`
+  const body = '# Trip\n\nWe leave on Monday.\n\nCall Anna.\n'
+  const here = memoryFS({ [DOC]: head('09:00') + body })
+  const there = memoryFS({ [MARK]: '{}' })
+  await syncRound(here, there)
+  // Apart, each changes its own paragraph, the folder's later.
+  await here.write(DOC, head('10:00') + body.replace('Monday', 'Tuesday'))
+  await later()
+  await there.write(DOC, head('11:00') + body.replace('Anna', 'Anna and Tom'))
+  assert.deepEqual(await syncRound(here, there), [DOC])
+  const both = head('11:00') + '# Trip\n\nWe leave on Tuesday.\n\nCall Anna and Tom.\n'
+  assert.equal(await here.read(DOC), both)
+  assert.equal(await there.read(DOC), both)
+  assert.deepEqual(await syncRound(here, there), [])
+  // Again: the version both had is that one now. Memory merges the same way.
+  await here.write(DOC, both.replace('# Trip', '# Our trip'))
+  await there.write(DOC, both.replace('Tom.\n', 'Tom.\n\nPack light.\n'))
+  await syncRound(here, there)
+  assert.equal(await here.read(DOC), head('11:00') + '# Our trip\n\nWe leave on Tuesday.\n\nCall Anna and Tom.\n\nPack light.\n')
+  // With what both had lost, a cache cleared: the newer.
+  await here.remove(`.cache/sync/${DOC}`)
+  await here.write(DOC, head('12:00') + 'Mine.\n')
+  await later()
+  await there.write(DOC, head('13:00') + 'Theirs.\n')
+  await syncRound(here, there)
+  assert.equal(await here.read(DOC), head('13:00') + 'Theirs.\n')
 })
 
 test('a table changed on two computers keeps every change of both, each cell its latest, and the columns’ choices of both (D491)', async () => {
@@ -295,9 +326,9 @@ test('a conversation being answered waits; a file that moves while the round wor
   const racing = { ...here, readBytes: async (/** @type {string} */ path) => (path === 'memory.md' && await there.write(path, '- likes coffee\n'), here.readBytes(path)) }
   await syncRound(racing, there)
   assert.equal(await there.read('memory.md'), '- likes coffee\n')
-  // The next round sees both changed, and the newer wins.
+  // The next round sees both changed, and keeps both lines, from the version both had.
   await syncRound(here, there)
-  assert.equal(await here.read('memory.md'), '- likes coffee\n')
+  assert.equal(await here.read('memory.md'), '- likes green tea\n\n- likes coffee\n')
 })
 
 test('two homes: the oldest stays the home, a newer empty one goes, one with conversations stays as a project', async () => {
