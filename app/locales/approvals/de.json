@@ -1,8 +1,8 @@
 {
   "approvals.usual": "{name} liest, sucht und erstellt Dateien selbst und fragt dich erst, bevor das Internet genutzt, etwas verschoben, gelöscht oder gesendet wird.",
   "approvals.changed": {
-    "one": "Du hast eine abweichend vom Üblichen eingestellt, mit einem Punkt markiert.",
-    "other": "Du hast {count} abweichend vom Üblichen eingestellt, jede mit einem Punkt markiert."
+    "one": "Eine weicht vom Üblichen ab, mit einem Punkt markiert.",
+    "other": "{count} weichen vom Üblichen ab, jede mit einem Punkt markiert."
   },
   "approvals.org": {
     "one": "Deine Organisation hat eine davon festgelegt, mit einem Schloss markiert.",
@@ -34,16 +34,16 @@
   "approvals.carefulNone": "Erst fragen oder nie, für eine Art von Aktion oder einen Dienst.",
   "approvals.carefulAdd": "Vorsichtiger sein bei…",
   "approvals.carefulTitle": "Vorsichtiger sein",
-  "approvals.carefulText": "Für eine Art von Aktion oder einen Dienst. Das erlaubt nie mehr als der Rest.",
+  "approvals.carefulText": "Für eine Art von Aktion oder einen Dienst. Es macht nur vorsichtiger: Es erlaubt nie mehr als das Übliche.",
   "approvals.kinds": "Eine Art von Aktion",
   "approvals.services": "Ein Dienst",
   "approvals.example": "Geht es an einen Kunden?",
   "approvals.ifText": "{name} stellt sich diese Frage vor jeder Aktion. Im Zweifel gilt die Antwort als Ja.",
   "approvals.films": "Videos",
   "approvals.what.folder": "{name} ändert Dateien in diesem Ordner ohne Nachfrage",
-  "approvals.what.site": "Dieser Computer darf diese Adresse erreichen",
+  "approvals.what.site": "Der Computer darf diese Adresse erreichen",
   "approvals.what.films": "Ohne Nachfrage erstellt, obwohl sie mehr kosten als Bilder",
-  "approvals.what.meeting": "Die Assistenten dieser Projekte dürfen ohne Nachfrage tagen",
+  "approvals.what.meeting": "Die Assistenten dieser Projekte dürfen sich ohne Nachfrage treffen",
   "approvals.what.extension": "Darf Aktionen ausführen lassen, ohne dich zu fragen",
   "approvals.stop": "Beenden",
   "approvals.kept": "Gemerkt. Du kannst es unter Berechtigungen zurücknehmen.",

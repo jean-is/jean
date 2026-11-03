@@ -13,7 +13,7 @@
   "steps": [
     "Ouvrez {settings}, depuis le menu à votre nom (ou « Vous »), au pied de la liste des tâches, puis {brains}, et appuyez sur {add}.",
     "Pour commencer gratuitement, choisissez {quick}. Le site d’OpenRouter s’ouvre : créez-y un compte, et vous revenez dans {name} avec un cerveau qui répond.",
-    "Pour utiliser une clé que vous avez déjà, choisissez {key}, prenez son service, et collez la clé créée sur le site de ce service.",
+    "Pour utiliser une clé que vous avez déjà, choisissez {key}, choisissez son service, et collez la clé créée sur le site de ce service.",
     "Ou choisissez une autre voie : un forfait que vous payez déjà, sous {paid} ; un cerveau sur cet appareil, s’il peut en faire tourner un ; ou Ollama et LM Studio, sous {local}."
   ],
   "show.first": "La première fois, pas besoin de {settings} : envoyez n’importe quoi depuis la zone de saisie, et {name} affiche {first}, avec les mêmes possibilités.",

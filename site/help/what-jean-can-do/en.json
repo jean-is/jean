@@ -3,7 +3,7 @@
   "description": "{name} starts with a single box and offers each thing it can do when a moment calls for it. Where to see them all, turn one on early, or turn one off.",
   "h1": "How {name} shows what it can do",
   "works": "Every browser",
-  "answer": "{name} starts with a single box. Each thing it can do shows up when a moment calls for it, in one sentence above the box: {yes} turns it on, {no} leaves it. {settings} › {capabilities} shows them all, found or still to find, and turns any of them on early.",
+  "answer": "{name} starts with a single box. Each thing it can do shows up when a moment calls for it, in one sentence above the box: {yes} turns it on, {no} leaves it off. {settings} › {capabilities} shows them all, found or still to find, and turns any of them on early.",
   "tour.here": "This is {settings} › {capabilities}: everything {name} can do, found or still to find. Next time, {settings} is in the menu with your name (or “You”), at the foot of the task list.",
   "tour.row": "A dashed row is still to find, and says how it comes. Open it to read more, or to turn it on now.",
   "parts": [
@@ -22,7 +22,7 @@
     "A lit row is found, and says what it does. A dashed one is still to find, and says how it comes. Open a row for its page: {on} turns it on early, and {off} turns a found one off.",
     "{all} turns on every one at once. Those that need a download still ask you first."
   ],
-  "show.offer": "An offer above the box, as it comes once a question needs the web: {search} turns it on, {no} leaves it.",
+  "show.offer": "An offer above the box, as it comes once a question needs the web: {search} turns it on, {no} leaves it off.",
   "show.rows": "{capabilities}: a lit row is found; the dashed one is still to find, and says how it comes.",
   "good": [
     "Ask {name} what it can do: it answers with two or three things that fit what you do, and one to try now.",

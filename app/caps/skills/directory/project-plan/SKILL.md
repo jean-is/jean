@@ -33,7 +33,7 @@ metadata:
   title-fi: "Projektisuunnitelma"
   text-fi: "Tehtävät, päivämäärät ja kuka tekee mitä, sekä se, mikä ei saa venyä"
   title-fr: "Plan de projet"
-  text-fr: "Tâches, dates et qui fait quoi, avec ce qui ne peut pas glisser"
+  text-fr: "Tâches, dates et qui fait quoi, et ce qui ne peut pas être décalé"
   title-fr-CA: "Plan de projet"
   text-fr-CA: "Tâches, dates et qui fait quoi, avec ce qui ne peut pas glisser"
   title-ha: "Shirin aiki"

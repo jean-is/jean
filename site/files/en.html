@@ -1,7 +1,7 @@
 <h1>Where your files go</h1>
 <p class="muted">Last updated <time datetime="2026-10-22">22 October 2026</time></p>
 
-<p>Jean runs in your browser and keeps everything it works with on your device. Something leaves your device only when an answer needs it: it goes to the brain you chose, a service you connected or a site you opened. Here is where things go for each choice, and how each answer tells you where it was done. The <a href="{privacy}">privacy policy</a> says the same in full; if the two ever differ, the policy applies.</p>
+<p>Jean runs in your browser and keeps everything it works with on your device. Something leaves your device only when an answer needs it, and then it goes to the brain you chose, a service you connected or a site you opened. Here is where things go for each choice, and how each answer tells you where it was done. The <a href="{privacy}">privacy policy</a> says the same in full; if the two ever differ, the policy applies.</p>
 
 <h2>Before you ask anything</h2>
 <ul>
@@ -25,7 +25,7 @@
 <p>You make an account on OpenRouter’s site, and Jean keeps the key it gives back, encrypted, on this device. Each request goes to OpenRouter, which passes it to a company that runs the brain. Jean asks OpenRouter to use only companies that don’t keep or train on what they’re sent, so a few free brains may not be available.</p></div></section>
 <section class="route"><div><h3>Your own key</h3><p class="muted">OpenAI, Anthropic, Google, Mistral AI, Groq, xAI and others</p><span class="verdict cloud">Done in the cloud</span></div>
 <div><div class="path"><span class="node here">This device<small>Jean, your files</small></span><span aria-hidden="true">→</span><span class="node">That company<small>api.anthropic.com, for example</small></span></div>
-<p>Your request goes straight from your browser to that company, under the terms of your account there. No one sits in between. What Gmail, Google Calendar and Google Drive bring in goes only to a company whose terms rule out training AI on it: Jean refuses the others, such as Google Gemini and Mistral AI, whose free tiers do.</p></div></section>
+<p>Your request goes straight from your browser to that company, under the terms of your account there. No one sits in between. What Gmail, Google Calendar and Google Drive bring in goes only to a company whose terms rule out training AI on it: Jean refuses the others, such as Google Gemini and Mistral AI, whose free tiers may train on it.</p></div></section>
 <section class="route"><div><h3>Your Claude, Copilot or ChatGPT plan</h3><p class="muted">Through This computer</p><span class="verdict cloud">Done in the cloud</span></div>
 <div><div class="path"><span class="node here">This device<small>Jean, your files</small></span><span aria-hidden="true">→</span><span class="node here">This computer<small>Claude Code, Copilot, ChatGPT</small></span><span aria-hidden="true">→</span><span class="node">Anthropic, GitHub or OpenAI</span></div>
 <p>Jean hands the request to the program you signed in to on this computer, which sends it on as it would if you used it yourself. Your plan’s terms apply, and Jean never reads that program’s sign-in.</p></div></section>
@@ -34,7 +34,7 @@
 <p>Your request goes to the address your organisation chose, and from there to the AI it uses. Its policy can also stop Jean from reaching anything else.</p></div></section>
 </div>
 <p><strong>Auto</strong> picks a brain for each request. Once Intuition is on and you have a private brain or a server on this computer, a request that shares personal, health, financial or confidential information goes there, and so does every request while you’re offline.</p>
-<p><strong>Keep on this device</strong>, in Settings › Brains, for all your work or for one project, lets only a brain on this device or on this computer answer. While nothing will leave, the message box says so.</p>
+<p><strong>Keep on this device</strong>, in Settings › Brains, for all your work or for one project, lets only a brain on this device or on this computer answer. While nothing will leave, the box says so.</p>
 
 <h2>What a brain in the cloud reads</h2>
 <p>For each request, a brain is sent what it needs to answer. A private brain reads the same, on your device.</p>
@@ -45,7 +45,7 @@
 <li>The files you share in the task: a file whole when it fits in about a quarter of what the brain can read at once, otherwise its first pages or the pages that match your request. The brain can ask for more pages.</li>
 <li>Pictures you share, when the brain can see.</li>
 <li>Your instructions, the project’s description and, when memory is on, its most recent lines, up to about 700 words.</li>
-<li>The names of your skills and connections and, when you opened a folder, its name, what is at its top and its AGENTS.md if you let Jean take it.</li>
+<li>The names of your skills and connections and, when you opened a folder, its name, what’s at its top level and its AGENTS.md if you let Jean take it.</li>
 <li>What Jean finds for it: passages from your files, search results, a page it read, what a connected service answered and what a calculation returned.</li>
 <li>From your other tasks, only the passages it finds when it searches them.</li>
 </ul></div>
@@ -55,7 +55,7 @@
 <li>Your settings, or the files of your other projects.</li>
 <li>Jean’s record of where each answer went, or the key that seals its certificates.</li>
 </ul>
-<p>When Jean works numbers out, the calculation runs on your device, in a sandbox with no internet of its own, and the brain reads only what it returns.</p></div>
+<p>When Jean works numbers out, the calculation runs on your device, walled off and with no internet of its own, and the brain reads only the result.</p></div>
 </div>
 
 <h2>Each answer says where it was done</h2>
@@ -81,11 +81,11 @@
 <li><strong>Web search</strong> sends your search words to whatever searches: Wikipedia in your language by default, for brains without a search of their own; Vikidia or your own offline library if you turn them on; a search service you connect, or give your own key to; or the brain’s own search.</li>
 <li><strong>Connections</strong> exchange with their service only what your requests need: what Jean reads there, and what it writes or sends after asking you first. Services that refuse browsers are reached through a gateway that keeps nothing.</li>
 <li><strong>Jean’s browser</strong> visits the sites you open, as any browser would.</li>
-<li><strong>The Computer</strong> asks before reaching a new site, and fetches the packages it installs from Python’s and JavaScript’s public indexes.</li>
+<li><strong>The Computer</strong> asks before reaching a new site, and fetches the packages it installs from PyPI and npm, Python’s and JavaScript’s public package catalogues.</li>
 <li><strong>Sharing by link</strong> uploads a copy sealed in your browser. The key is in the link, after the #, which browsers never send, so the host can’t read the copy.</li>
 <li><strong>Sync</strong> copies your tasks and files to a folder you choose, which a cloud drive may carry. Settings and keys never go there.</li>
 <li><strong>A backup</strong> is a file you download. Your keys are never in it.</li>
-<li><strong>Extensions</strong> are other people’s code. They run in a sandbox with no internet of their own, but read what each says it does.</li>
+<li><strong>Extensions</strong> are other people’s code. They run walled off, with no internet of their own, but read what each says it does.</li>
 </ul>
 
 <h2>Every address Jean contacts</h2>
@@ -108,7 +108,7 @@
 <tr><td><code>{your language}.vikidia.org</code>, your offline library</td><td>Only once you turn them on</td><td>Your search words</td></tr>
 <tr><td><code>api.search.brave.com</code>, <code>api.tavily.com</code>, <code>www.googleapis.com</code>, <code>kagi.com</code></td><td>Only once you give Jean your own key for one. Brave Search and Kagi go through the gateway, and Tavily does when a browser can’t reach it</td><td>Your search words and your key. The gateway relays and keeps nothing</td></tr>
 <tr><td><code>upload.wikimedia.org</code>, and a source’s own site</td><td>Showing a source’s picture in an answer</td><td>Your internet address</td></tr>
-<tr><td><code>icons.duckduckgo.com</code></td><td>Pointing at a web source, to show its site’s icon</td><td>The site’s name, with no referrer</td></tr>
+<tr><td><code>icons.duckduckgo.com</code></td><td>Citing a web source, to show its site’s icon</td><td>The site’s name, and nothing about the page you were on</td></tr>
 <tr><td><code>models.dev</code></td><td>Showing what a cloud answer cost, at most once a week</td><td>Your internet address</td></tr>
 <tr><th scope="rowgroup" colspan="3">Services you connect</th></tr>
 <tr><td>Each service’s own server, from your browser: Notion, Canva, Miro, Granola, ClickUp, Linear, Atlassian, Intercom, Wix, Attio, Fireflies, Exa, Gmail, Google Calendar and Google Drive</td><td>When you connect it, and when a request uses it</td><td>What your requests need</td></tr>
@@ -117,7 +117,7 @@
 <tr><td><code>accounts.google.com</code>, <code>login.microsoftonline.com</code> and each service’s sign-in page</td><td>Signing in to a service</td><td>Your sign-in, on that service’s own page</td></tr>
 <tr><th scope="rowgroup" colspan="3">The Computer</th></tr>
 <tr><td><code>cdn.jsdelivr.net</code> for Python’s own packages, <code>pypi.org</code>, <code>files.pythonhosted.org</code>, <code>registry.npmjs.org</code></td><td>Installing a package</td><td>The package’s name</td></tr>
-<tr><td>Sites you allow, one by one</td><td>When a calculation asks to reach one, after you say yes</td><td>What it asks for, without cookies or referrer</td></tr>
+<tr><td>Sites you allow, one by one</td><td>When a calculation asks to reach one, after you say yes</td><td>What it asks for, without cookies and without saying where it came from</td></tr>
 <tr><th scope="rowgroup" colspan="3">Skills, extensions and maps</th></tr>
 <tr><td><code>github.com</code>, <code>api.github.com</code>, <code>raw.githubusercontent.com</code>, or a site you name</td><td>Adding skills or an extension from there</td><td>Your internet address</td></tr>
 <tr><td><code>tiles.openfreemap.org</code></td><td>Showing a map, once you allow maps</td><td>The area on screen</td></tr>

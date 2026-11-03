@@ -7,7 +7,7 @@
   "h1.mark": "in plain words",
   "lede": "One page your association, school, company or public body can adopt as it is or change: what people may use AI for, what never goes into it, how to check what it gives, and who to ask. True of any AI, not only {name}.",
   "see": "Read the template",
-  "facts": ["Free to copy and change", "True of any AI", "Out as a Word document"],
+  "facts": ["Free to copy and change", "True of any AI", "Comes as a Word document"],
   "paper.title": "AI charter",
   "paper.signed": "Signed",
   "template.title": "The template.",
@@ -129,7 +129,7 @@
   "next.enterprise": "{name} for your IT",
   "next.public-sector": "{name} for the public sector",
   "policy.title": "Hosting your own {name}? A tool can hold part of it.",
-  "policy.why": "Nobody needs a key to use {name}, or this charter. An organisation that serves its own copy writes the rules a tool can enforce into its policy.json, and they apply to everyone, who can’t change them.",
+  "policy.why": "Nobody needs a key to use {name}, or this charter. An organisation that serves its own copy writes the rules a tool can enforce into its policy.json. They then apply to everyone, and nobody can change them.",
   "policy.rows": [
     ["Part 2, the AI tools we use", "Names them: they are the only AIs that answer, and nobody adds another. With your own service the only one, what people give it stays with you."],
     ["Part 3, what never goes into an AI", "Asks first, or refuses, when a request would send what you describe, such as someone’s personal data, to another site or service."],

@@ -335,7 +335,7 @@ test('a connection is disconnected from its page, asked there, what was chosen f
   await expect.poll(async () => Object.values((await chosen(page)).services)).toEqual([{ other: 'never' }])
   await settings.getByRole('button', { name: 'Disconnect' }).click()
   const asking = settings.getByRole('group', { name: 'Disconnect' })
-  await expect(asking).toContainText('Disconnect Mail? Its key leaves this device; nothing changes in Mail itself.')
+  await expect(asking).toContainText('Disconnect Mail? Its key is deleted from this device. Nothing changes in Mail itself.')
   await asking.getByRole('button', { name: 'Cancel' }).click()
   await expect(asking).toHaveCount(0)
   await settings.getByRole('button', { name: 'Disconnect' }).click()

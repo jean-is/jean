@@ -1,12 +1,12 @@
 {
-  "title": "Commencer gratuitement avec OpenRouter dans {name} : un compte",
+  "title": "Commencer gratuitement avec OpenRouter dans {name} : un compte suffit",
   "description": "Le plus rapide pour avoir des réponses dans {name} : un compte OpenRouter gratuit, créé en une minute. Ce qu’il donne, ses limites, ce qui peut coûter.",
   "h1": "Commencer gratuitement avec OpenRouter",
   "works": "Tous les navigateurs",
   "answer": "Envoyez votre première demande, et appuyez sur {free}. Le site d’OpenRouter s’ouvre : créez-y un compte gratuit, autorisez {name} à l’utiliser, et vous revenez à votre demande, avec sa réponse.",
-  "tour.here": "Voici {settings} › {brains}. Sans cerveau, la première demande que vous envoyez affiche {first}, dont le bouton {free} est cette même voie.",
+  "tour.here": "Voici {settings} › {brains}. Sans cerveau, la première demande que vous envoyez affiche {first}, dont le bouton {free} fait la même chose.",
   "need": [
-    "Une adresse e-mail, ou un compte avec lequel OpenRouter vous laisse vous connecter, pour créer son compte.",
+    "Une adresse e-mail, ou un autre compte avec lequel OpenRouter vous laisse vous connecter.",
     "Rien à payer : ses cerveaux gratuits ne demandent aucun moyen de paiement."
   ],
   "steps": [

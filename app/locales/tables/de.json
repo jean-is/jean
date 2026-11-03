@@ -96,8 +96,8 @@
   "tables.noneKept": "Keine Zeile passt zum Filter.",
   "tables.clear": "Zurücksetzen",
   "tables.kind.formula": "Formel",
-  "tables.yourFormula": "Ihre Formel",
+  "tables.yourFormula": "Deine Formel",
   "tables.formulaHint": "Spalten mit ihrem Namen, + − * / und Funktionen wie round, min, max oder sqrt.",
-  "tables.formulaWrong": "Diese Formel lässt sich nicht berechnen: Prüfen Sie die Spaltennamen und die Klammern.",
+  "tables.formulaWrong": "Diese Formel lässt sich nicht berechnen: Prüf die Spaltennamen und die Klammern.",
   "tables.save": "Speichern"
 }

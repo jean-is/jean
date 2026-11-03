@@ -20,7 +20,7 @@
   "count.stats": [
     ["1,6 million", "d’associations actives en France.", "Recherches & Solidarités, 2025"],
     ["9 sur 10", "fonctionnent sans salarié.", "Recherches & Solidarités, 2025"],
-    ["13 millions", "de bénévoles, ou presque, dont 5,5 millions chaque semaine.", "Recherches & Solidarités, 2025"]
+    ["Près de 13 millions", "de bénévoles, dont 5,5 millions chaque semaine.", "Recherches & Solidarités, 2025"]
   ],
   "count.free": "{name} est gratuit pour tout le monde : ni postes, ni remise à demander, ni justificatif. Chaque bénévole l’ouvre dans son navigateur, sur son propre appareil.",
   "count.source": "Recherches & Solidarités, La France associative en mouvement, 23e édition, octobre 2025",
@@ -37,7 +37,7 @@
   "job.newsletter.ask": "Écris la lettre d’avril aux adhérents : le vide-grenier du 14 juin, notre nouvelle trésorière, et un appel aux bénévoles pour tenir la buvette.",
   "job.newsletter.get": "Un texte à coller dans votre messagerie",
   "job.accounts": "Les comptes de l’année",
-  "job.accounts.ask": "Notre tableau d’exemple, un an de ventes de boissons, avec sa question : « {sample} »",
+  "job.accounts.ask": "Notre tableau d’exemple, un an de ventes de boissons, avec sa question : « {sample} »",
   "job.accounts.get": "Un graphique, ses totaux calculés par du code, sur cet ordinateur",
   "job.accounts.try": "Essayer sur un tableau d’exemple",
   "job.flyer": "L’affiche du vide-grenier",
@@ -51,7 +51,7 @@
   "worry.why": "Quatre questions reviennent dans chaque association. Voici les réponses, sans petites lignes.",
   "worry.cost": "Combien ça coûte ?",
   "worry.cost.text": "{name} est gratuit, pour autant de bénévoles que vous voulez : ni postes, ni abonnement, ni clé à demander. L’IA qui répond peut l’être aussi.",
-  "worry.cost.list": ["« {free} » : un compte gratuit chez un fournisseur, limité chaque jour.", "Sans aucun compte, sur un ordinateur doté de 12 Go de mémoire et d’une puce graphique récente.", "Ou une IA que l’un de vous paie déjà."],
+  "worry.cost.list": ["« {free} » : un compte gratuit chez un fournisseur, limité chaque jour.", "Sans aucun compte, sur un ordinateur doté de 12 Go de mémoire et d’une puce graphique récente.", "Ou une IA que l’un de vous paie déjà."],
   "worry.devices": "Sur nos propres appareils ?",
   "worry.devices.text": "Oui, et rien à installer : un navigateur récent suffit, sur un ordinateur, une tablette ou un téléphone.",
   "worry.devices.list": ["Pas de compte {name} : il n’y en a pas.", "Chacun garde son travail dans son navigateur ; une sauvegarde le met à l’abri.", "L’IA privée demande un ordinateur, pas un téléphone."],
@@ -59,7 +59,7 @@
   "worry.data.text": "Le fichier des adhérents reste chiffré sur l’appareil de qui l’ouvre. Il n’y a pas de serveur {name}.",
   "worry.data.list": ["Ce que vous envoyez à une IA en ligne part chez son fournisseur, selon ses conditions.", "Avec l’IA privée, rien ne sort de l’ordinateur, même sans Internet.", "Envoyer, partager ou supprimer : {name} vous le demande d’abord."],
   "worry.training": "Et ceux qui n’ont jamais utilisé d’IA ?",
-  "worry.training.text": "Une seule case, rien à apprendre avant. Les propositions viennent au bon moment, en une phrase, et « Non merci » vaut pour de bon.",
+  "worry.training.text": "Une seule case, rien à apprendre avant. Les propositions viennent au bon moment, en une phrase, et « Non merci » vaut pour de bon.",
   "worry.training.list": ["Demandez à {name} ce qu’on peut lui demander : deux ou trois idées, dont une à essayer tout de suite.", "Une tâche se partage par un lien : la personne qui l’ouvre la reprend chez elle.", "L’IA peut se tromper : relisez avant de signer ou d’envoyer."],
   "charter.title": "Une charte de l’IA, adoptée par le bureau.",
   "charter.text": "Qui s’en sert, pour quoi, et ce qu’on n’y met jamais : un modèle en mots simples, à écrire avec {name} et à recevoir en Word.",
@@ -77,7 +77,7 @@
   "faq.items": [
     ["Est-ce vraiment gratuit pour une association ?", "Oui. {name} est un logiciel libre et gratuit pour tout le monde, sans nombre de postes : il n’y a ni remise à demander, ni justificatif à fournir."],
     ["Faut-il une clé ou un compte pour l’association ?", "Non. Personne n’a besoin d’une clé pour utiliser {name}. Une clé ne sert qu’à une organisation qui héberge son propre {name}, avec ses propres réglages ; pour une association, elle est gratuite."],
-    ["Quelle IA répond, alors ?", "Celle que vous choisissez au premier message : « {free} », avec un compte gratuit chez OpenRouter, limité chaque jour ; une IA privée, sur un ordinateur assez puissant ; ou une IA que vous payez déjà."],
+    ["Quelle IA répond, alors ?", "Celle que vous choisissez au premier message : « {free} », avec un compte gratuit chez OpenRouter, limité chaque jour ; une IA privée, sur un ordinateur assez puissant ; ou une IA que vous payez déjà."],
     ["Et le fichier des adhérents ?", "Il reste chiffré sur l’appareil de qui l’ouvre. Avant d’en envoyer une partie à une IA en ligne, demandez-vous si elle en a besoin : tout ce que vous lui envoyez part chez son fournisseur. Pour ce qui est sensible, l’IA privée ne laisse rien sortir."],
     ["Peut-on travailler à plusieurs ?", "Chacun sur son appareil. Une tâche se partage par un lien, scellé dans votre navigateur : seuls ceux qui ont le lien peuvent la lire, et qui a {name} la reprend chez soi."],
     ["Ça marche sur le téléphone des bénévoles ?", "Oui, dans le navigateur, sans rien installer. Seule l’IA privée demande un ordinateur."],

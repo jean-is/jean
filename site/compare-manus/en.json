@@ -15,9 +15,9 @@
   "table.rows": [
     ["Where the work happens", "In your browser tab, on any recent computer, phone included. Nothing to install.", "built", "On a virtual computer in Manus’s cloud, reached from the web, its phone apps or its desktop app.", "welcome home"],
     ["Where your files live", "On your device, in this browser, encrypted. There is no {name} server.", "design", "On Manus’s servers: what you upload, what it makes, the commands it runs and their logs. Folders on your computer connect through its desktop app.", "privacy desktop"],
-    ["Which AI", "Any: on this computer, a free one, your key, your plan.", "built", "Its own. With Manus Flex, in beta, your key from one of eight providers, but no address of your own or self-hosted AI, and pictures and video stay on its credits.", "flex"],
+    ["Which AI", "Any: on this computer, a free one, your key, your plan.", "built", "Its own. With Manus Flex, in beta, your key from one of eight providers; but no address of your own or self-hosted AI, and pictures and video still cost its credits.", "flex"],
     ["Who reads what you send", "The AI you choose. With the AI on this computer, nobody.", "built", "Manus and the outside AI services it uses, which may not train on your content unless it says so. Its terms let it use your content to develop and improve its services, and data may go to the United States.", "terms privacy"],
-    ["What it costs", "{name} is free; the AI may not be.", "design", "A free plan with limited credits, then $20 a month for 4,000 credits, $40 for 8,000 or $200 for 40,000, plus 300 a day, 17% less by the year. What a task takes depends on how complex it is, and plan credits reset each month.", "pricing plans"],
+    ["What it costs", "{name} is free; the AI may not be.", "design", "A free plan with limited credits, then $20 a month for 4,000 credits, $40 for 8,000 or $200 for 40,000, plus 300 credits a day; 17% less if paid yearly. What a task takes depends on how complex it is, and plan credits reset each month.", "pricing plans"],
     ["To start", "No {name} account. A child gets a profile a parent sets. The AI you choose may ask for an account; the one on this computer doesn’t.", "built", "An account, at 18 or over.", "terms"],
     ["Passwords and payments", "Never its to touch.", "design", "It can act in accounts you log into, keep credentials where a feature allows, and buy what you approve.", "cloud privacy terms"],
     ["Open source", "Yes, MIT. Anyone can read every line.", "built", "No.", "terms"],
@@ -42,7 +42,7 @@
   "catch.items": [
     "{name} works while it is open. Close the tab and it waits for you; nothing goes on in a cloud.",
     "{name} is free; the AI behind it may not be.",
-    "No sign-up only with the AI on this computer, which needs 12 GB of memory and a recent graphics chip. Not on phones.",
+    "Without a sign-up, only the AI on this computer answers. It needs 12 GB of memory and a recent graphics chip, and no phone runs it.",
     "Your work lives in this browser. Clear its data without a backup and it’s gone.",
     "Manus’s backups don’t come into {name}. Bring the files themselves."
   ],
@@ -50,7 +50,7 @@
     ["Is there a free, open-source Manus alternative?", "{name} is free and MIT. It does the work on your files with any AI, and the AI on this computer costs nothing."],
     ["Can it run locally?", "Yes: the AI {name} downloads to this computer, or yours in Ollama or LM Studio. Your files stay on your device with any AI; one in the cloud reads only what a request sends it."],
     ["Does {name} use credits?", "No. {name} has nothing to count. The AI you choose may charge you, through your key or your plan, or not at all."],
-    ["Does it do the work, or only chat?", "It does the work: it makes documents, spreadsheets, slides and web pages, runs code in a sandbox and reads the sites you allow. Before sending, deleting or reaching outside, it asks you first."],
+    ["Does it do the work, or only chat?", "It does the work: it makes documents, spreadsheets, slides and web pages, runs code inside the tab, walled off from your computer, and reads the sites you allow. Before sending, deleting or reaching outside, it asks you first."],
     ["Can I move my work from Manus?", "Bring the files it made: drop them in {name} and carry on. Its backups and tasks don’t come in; ChatGPT’s, Claude’s and Gemini’s exports do."],
     ["What happened to Manus users’ data in August 2026?", "Manus said that, as it went back to being an independent company, it would delete data certain users had made since December 2025, and gave them 12 days to back it up and a way to restore it. Accounts it didn’t affect kept everything."]
   ],

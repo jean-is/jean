@@ -27,7 +27,7 @@
   "extensions.rightText.watch": "Alles, was darin geschrieben wird, die Dateien, die du teilst, und jede Aktion, bevor sie läuft",
   "extensions.rightText.loosen": "Nie ein Passwort oder eine Zahlung, und nie über eine Regel deiner Organisation hinaus",
   "extensions.sees": "Sieht Unterhaltungen",
-  "extensions.skips": "Darf ohne Fragen",
+  "extensions.skips": "Darf ohne Nachfrage handeln",
   "extensions.paused": "Pausiert",
   "extensions.cant": "Sie kann nicht",
   "extensions.cant.internet": "Ins Internet gehen",

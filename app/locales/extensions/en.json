@@ -25,7 +25,7 @@
   "extensions.right.refuse": "Stop an action, or ask you first",
   "extensions.right.loosen": "Let actions go ahead without asking you first",
   "extensions.rightText.watch": "All that is written in them, the files you share, and each action before it runs",
-  "extensions.rightText.loosen": "Never a password or a payment, nor past a rule your organisation set",
+  "extensions.rightText.loosen": "Never a password or a payment, nor past a rule your organization set",
   "extensions.sees": "Sees conversations",
   "extensions.skips": "May skip asking",
   "extensions.paused": "Paused",

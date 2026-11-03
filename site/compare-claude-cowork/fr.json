@@ -10,16 +10,16 @@
   "cta2": "Utiliser mon abonnement Claude",
   "facts": ["Libre, MIT", "N’importe quelle IA, Claude compris", "Une IA locale si vous voulez", "Rien à installer"],
   "fair.title": "Claude Cowork, en toute honnêteté",
-  "fair.body": "Claude Cowork est l’assistant d’Anthropic pour abattre du travail. Il mène des tâches en plusieurs étapes dans les dossiers et les outils que vous choisissez, montre chaque étape, et continue quand vous refermez votre ordinateur portable. Il vient avec les abonnements payants de Claude et fonctionne avec Claude. Depuis septembre 2026, Anthropic l’intègre à l’application Claude elle-même, d’abord en Pro et Max.",
+  "fair.body": "Claude Cowork est l’assistant d’Anthropic pour faire avancer le travail. Il mène des tâches en plusieurs étapes dans les dossiers et les outils que vous choisissez, montre chaque étape, et continue quand vous refermez votre ordinateur portable. Il vient avec les abonnements payants de Claude et fonctionne avec Claude. Depuis septembre 2026, Anthropic l’intègre à l’application Claude elle-même, d’abord en Pro et Max.",
   "fair.sources": "cowork merged",
   "table.rows": [
     ["Où il fonctionne", "Dans un onglet du navigateur, sur tout ordinateur récent, téléphone compris.", "built", "L’application Claude pour ordinateur, avec le web et les téléphones en bêta ; une tâche continue dans le cloud d’Anthropic.", "cowork"],
     ["Sur quoi il travaille", "Les fichiers que vous lui donnez, dans le périmètre du navigateur. Un vrai dossier de votre ordinateur dans Chrome et Edge.", "built", "Les dossiers et les outils que vous choisissez ; toute suppression demande votre accord.", "cowork"],
     ["Quelle IA", "N’importe laquelle, Claude compris : sur cet ordinateur, une gratuite, votre clé, votre abonnement.", "built", "Claude, chez Anthropic ou par le cloud de votre entreprise : Amazon Bedrock, Google Cloud, Microsoft Foundry.", "cowork"],
     ["Qui lit ce que vous envoyez", "L’IA que vous choisissez. Avec l’IA de cet ordinateur, personne.", "built", "Anthropic. Utilisé pour entraîner Claude seulement si vous l’autorisez dans ses réglages de confidentialité.", "training"],
-    ["Ce que ça coûte", "{name} est gratuit ; l’IA ne l’est pas toujours. Votre abonnement Claude marche aussi.", "design", "Les abonnements payants de Claude, dès Pro à 20 $ par mois, ou 17 $ par mois sur un an, hors taxes, qui s’épuisent plus vite qu’en discussion.", "pricing cowork"],
+    ["Ce que ça coûte", "{name} est gratuit ; l’IA ne l’est pas toujours. Votre abonnement Claude marche aussi.", "design", "Les abonnements payants de Claude, dès Pro à 20 $ par mois, ou 17 $ par mois sur un an, hors taxes. Cowork consomme le forfait plus vite que la discussion.", "pricing cowork"],
     ["Libre", "Oui, MIT. Environ 40 000 lignes que chacun peut lire.", "built", "Non.", ""],
-    ["Au travail", "Un dossier que l’informatique sert à sa propre adresse, derrière sa passerelle et son authentification.", "built", "Les abonnements Team et Enterprise de Claude, avec accès, dépenses et outils réglés par les administrateurs.", "cowork"],
+    ["Au travail", "Un dossier que le service informatique sert à sa propre adresse, derrière sa passerelle et son authentification.", "built", "Les abonnements Team et Enterprise de Claude, avec accès, dépenses et outils réglés par les administrateurs.", "cowork"],
     ["Partir avec vos affaires", "Des fichiers ordinaires et des sauvegardes. L’export de Claude s’importe.", "built", "L’export des données de Claude, depuis Réglages › Confidentialité, son lien envoyé par e-mail.", "export"]
   ],
   "better.title": "Là où Claude Cowork fait mieux",
@@ -32,13 +32,13 @@
   "better.sources": ["cowork", "cowork", "cowork", "cowork"],
   "both.title": "Les deux ensemble",
   "both.cards": [
-    ["plan", "Votre abonnement Claude, dans {name}", "Pro ou Max, par Claude Code installé et connecté sur cet ordinateur, et la ligne de « Votre ordinateur », collée une fois.", "computer"],
+    ["plan", "Votre abonnement Claude, dans {name}", "Pro ou Max : installez Claude Code sur cet ordinateur et connectez-vous, puis collez une fois la ligne de « Votre ordinateur ».", "computer"],
     ["history", "Importez votre historique Claude", "Dans Claude : Réglages › Confidentialité › Exporter les données. Déposez le fichier dans {name} : toutes les conversations arrivent, aucune en double.", "built"],
-    ["private", "Le privé, à la maison", "Les fiches de paie et les courriers médicaux avec l’IA de cet ordinateur ; le reste avec Claude.", "built"]
+    ["private", "Le privé reste à la maison", "Les fiches de paie et les courriers médicaux avec l’IA de cet ordinateur ; le reste avec Claude.", "built"]
   ],
   "catch.items": [
     "{name} est gratuit ; l’IA derrière ne l’est pas toujours.",
-    "Votre abonnement Claude demande Claude Code sur cet ordinateur et la ligne de « Votre ordinateur » : une étape technique, une fois.",
+    "Votre abonnement Claude demande Claude Code sur cet ordinateur et la ligne de « Votre ordinateur » : une étape technique, une fois.",
     "L’IA de cet ordinateur demande 12 Go de mémoire et une puce graphique récente. Pas sur téléphone.",
     "Votre travail vit dans ce navigateur. Effacez ses données sans sauvegarde et il disparaît."
   ],

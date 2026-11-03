@@ -12,7 +12,7 @@
     ],
     [
       "Which ones come ready-made?",
-      "For every day, such as Formal letter, Budget and In plain words; for work, such as Project plan and What could go wrong; for learning, such as Flash cards and Study plan; and to draw and present, such as Chart, Slides, PowerPoint and Make a game. They work from your first request: when one fits, the brain reads it and it joins your skills; a message says so, with {see} to open its page. Visual answers is there from the start."
+      "For every day, such as Formal letter, Budget and In plain words; for work, such as Project plan and What could go wrong; for learning, such as Flash cards and Study plan; and to draw and present, such as Chart, Slides, PowerPoint and Make a game. They work from your first request: when one fits, the brain reads it and it joins your skills; a message says so, with {see} to open its page. One of them, Visual answers, is on from the start."
     ],
     [
       "How do I add my own?",
@@ -41,7 +41,7 @@
   "fixes": [
     [
       "It says {invalid}",
-      "A SKILL.md starts with its name, in small letters, digits and hyphens, and with when to follow it. Open the file in a text editor to check, or ask the person who sent it."
+      "A SKILL.md starts with its name, in lower-case letters, digits and hyphens, then with when to follow it. Open the file in a text editor to check, or ask the person who sent it."
     ],
     [
       "A skill from a site can’t be added",

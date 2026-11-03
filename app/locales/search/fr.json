@@ -50,7 +50,7 @@
   "search.now.nowhere": "Un cerveau qui ne peut pas chercher lui-même sur le web n’a nulle part où chercher.",
   "search.now.off": "La recherche web est désactivée : les tâches que vous lancez maintenant ne cherchent nulle part, pas même avec la recherche propre d’un cerveau.",
   "search.now.services": "Tous les cerveaux peuvent aussi chercher avec {services}.",
-  "search.also": "La recherche web peut aussi être désactivée depuis le + de la zone de message.",
+  "search.also": "La recherche web peut aussi être désactivée depuis le + de la zone de saisie.",
   "search.key": "Clé",
   "search.engine": "Identifiant du moteur de recherche",
   "search.service.text": "Votre propre compte {service} cherche dans tout le web, pour tous les cerveaux. Les mots de vos recherches vont chez {service}, qui peut les facturer, et votre clé reste sur cet appareil.",

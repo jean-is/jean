@@ -4,7 +4,7 @@ description: "Plan someone's study, often a child's or a student's: the minutes 
 metadata:
   format: "1"
   title-en: "Study plan"
-  text-en: "Today's session from the week's time, the subjects and the tests"
+  text-en: "Today’s session, worked out from the week’s time, the subjects and the tests"
   title-am: "የጥናት እቅድ"
   text-am: "የዛሬው ጥናት ከሳምንቱ ጊዜ፣ ከትምህርቶቹና ከፈተናዎቹ"
   title-ar: "خطة المذاكرة"

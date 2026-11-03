@@ -1,9 +1,9 @@
 {
-  "title": "Votre première tâche dans {name} : demander, lire, faire changer",
+  "title": "Votre première tâche dans {name} : demander, lire, ajuster",
   "description": "Écrivez ce que vous voulez dans la zone de saisie de {name}, avec vos mots, et appuyez sur Entrée. Lisez la réponse et ses étapes, puis demandez un changement.",
   "h1": "Votre première tâche",
   "works": "Tous les navigateurs",
-  "answer": "Écrivez ce que vous voulez dans la zone de saisie, comme vous le demanderiez à un collègue, et appuyez sur Entrée. La réponse arrive dans la tâche, avec chaque étape suivie. Pour changer quoi que ce soit, dites-le simplement dans la zone de saisie.",
+  "answer": "Écrivez ce que vous voulez dans la zone de saisie, comme vous le demanderiez à un collègue, et appuyez sur Entrée. {name} répond dans la tâche, en montrant chaque étape. Pour changer quoi que ce soit, dites-le simplement dans la zone de saisie.",
   "pane.title": "Une première demande, traitée dans {name}",
   "pane.play": "Voir le déroulé",
   "demo.asked": "Écris un petit mot de remerciement à ma voisine Sam, qui a arrosé mes plantes pendant mon absence.",
@@ -15,16 +15,16 @@
   "steps": [
     "Cliquez là où il est écrit {placeholder} : c’est la zone de saisie.",
     "Écrivez ce que vous voulez, avec vos mots : ce que c’est, pour qui, et sous quelle forme. Pour joindre un fichier, déposez-le sur la zone, ou appuyez sur {add}, le + à côté.",
-    "Appuyez sur Entrée, ou sur {send}, la flèche, pour envoyer. Maj et Entrée passent à la ligne.",
+    "Appuyez sur Entrée, ou sur {send}, la flèche, pour envoyer. Maj et Entrée vont à la ligne.",
     "Lisez la réponse à mesure qu’elle arrive. Chaque étape s’affiche au-dessus de la réponse : ouvrez-en une pour voir ce qui a été lu et ce qui en est sorti.",
     "Pour changer quelque chose, dites-le dans la zone de saisie : plus court, en anglais, en tableau. Ou appuyez sur {retry} sous votre demande, pour une nouvelle réponse.",
     "Pour autre chose, commencez une nouvelle tâche avec {new}, pour que chaque tâche garde un seul sujet."
   ],
-  "show.box": "La zone de saisie : écrivez là où elle dit ce que vous pouvez demander, {add} (le +) ajoute un fichier, et {send} (la flèche) envoie. {chip}, la pastille à côté, nomme le cerveau qui répond.",
+  "show.box": "La zone de saisie, là où il est écrit ce que vous pouvez demander : {add} (le +) ajoute un fichier, et {send} (la flèche) envoie. {chip}, la pastille à côté, nomme le cerveau qui répond.",
   "good": [
     "Sous chaque réponse : {copy}, avec sa mise en forme, et dans {more}, le partage, un document Word ou l’impression.",
-    "Ce que vous écrivez pendant le travail est lu avant l’étape suivante. Échap arrête la réponse.",
-    "Jusqu’à trois suites possibles apparaissent en boutons sous la dernière réponse.",
+    "Ce que vous écrivez pendant que {name} travaille est lu avant l’étape suivante. Échap arrête la réponse.",
+    "Jusqu’à trois suggestions de suite apparaissent en boutons sous la dernière réponse.",
     "Chaque réponse indique quel cerveau l’a écrite, en combien de temps et pour quel coût."
   ],
   "fixes": [
@@ -34,7 +34,7 @@
     ],
     [
       "La réponse est fausse",
-      "Dites ce qui ne va pas, dans la zone de saisie, ou appuyez sur {retry}. Pour des chiffres, demandez qu’ils soient calculés : un programme les trouve, sans deviner."
+      "Dites ce qui ne va pas, dans la zone de saisie, ou appuyez sur {retry}. Pour des chiffres, demandez à {name} de les calculer : un programme les trouve, au lieu de deviner."
     ]
   ],
   "ask": "Que peux-tu faire avec un tableur ?"

@@ -20,7 +20,7 @@
   "parts": [
     [
       "Un dossier",
-      "Déposez un dossier sur la conversation, et {name} demande {work} Dans Chrome et Edge, sur un ordinateur, il trouve, lit et modifie ses fichiers là où ils sont, en vous montrant chaque modification d’abord. Dans les autres navigateurs, il travaille sur une copie, et {save} vous donne ce qui a changé. Une fois un dossier utilisé, + propose {folder}."
+      "Déposez un dossier sur la conversation, et {name} demande {work} Dans Chrome et Edge, sur un ordinateur, il trouve, lit et modifie ses fichiers là où ils sont, en vous montrant chaque modification d’abord. Dans les autres navigateurs, il travaille sur une copie, et {save} vous donne ce qui a changé. Après un premier dossier, {add} propose aussi {folder}."
     ],
     [
       "Votre écran",
@@ -29,7 +29,7 @@
   ],
   "good": [
     "Chaque fichier est gardé dans le projet, sur cet appareil. Dans une tâche suivante, tapez @ dans la zone de saisie et une partie de son nom pour le désigner à nouveau.",
-    "Le cerveau lit le texte des fichiers. Avec un cerveau dans le cloud, il y part avec votre demande : voir {sees}.",
+    "Le cerveau lit le texte des fichiers. Avec un cerveau dans le cloud, ce texte y part avec votre demande : voir {sees}.",
     "Un document scanné, ou la photo d’une page, n’a pas de texte à lire : il est montré aux cerveaux qui voient.",
     "Avec un tableur, {name} propose de calculer les chiffres avec un programme, plutôt que de les deviner."
   ],

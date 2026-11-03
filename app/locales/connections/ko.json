@@ -1,7 +1,7 @@
 {
   "api.search_emails": "이메일 검색",
   "api.read_email": "이메일 읽기",
-  "api.create_draft": "임시보관 메일 작성",
+  "api.create_draft": "이메일 초안 작성",
   "api.send_email": "이메일 보내기",
   "api.list_calendars": "캘린더 목록",
   "api.list_events": "일정 목록",
@@ -30,7 +30,7 @@
   "connections.needsYou": "{service}에 다시 로그인해야 해요.",
   "connections.notAnswering": "{service}에서 응답이 없었어요.",
   "connections.signIn": "로그인",
-  "connections.state.auth": "확인 필요",
+  "connections.state.auth": "로그인 필요",
   "connections.state.failed": "응답 없음",
   "connections.used": "{when} 사용",
   "connections.reads.allow": "묻지 않고 읽기",
@@ -45,7 +45,7 @@
   "connections.more": {
     "other": "{count}개 더"
   },
-  "connections.usual": "여기서 아무것도 고르지 않으면 모든 서비스처럼 승인 규칙을 따라요.",
+  "connections.usual": "여기서 아무것도 고르지 않으면, 다른 서비스와 마찬가지로 승인 설정을 따라요.",
   "connections.guarded": "승인에 {service}에 대한 더 엄격한 규칙이 있고, 그 규칙이 먼저 적용돼요.",
   "connections.trains": "{service}에서 가져온 내용은 그것으로 학습하지 않는 두뇌에게만 가요.",
   "connections.this": "이 연결",

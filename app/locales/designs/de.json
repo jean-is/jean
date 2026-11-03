@@ -98,7 +98,7 @@
   "designs.pointed": "{part} ausgewählt: Schreib ins Feld, was sich ändern soll",
   "designs.removed": "Teil gelöscht",
   "designs.moved": "{part} verschoben",
-  "designs.resized": "{part} in der Größe geändert",
+  "designs.resized": "Größe von {part} geändert",
   "designs.marked": "{part} ansehen",
   "designs.mark.gap": "Noch auszufüllen",
   "designs.mark.picture": "Hier fehlt noch ein Bild.",

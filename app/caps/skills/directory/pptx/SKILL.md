@@ -53,7 +53,7 @@ metadata:
   title-ja: "PowerPoint"
   text-ja: "PowerPoint のプレゼン資料を作り、そのまま発表や編集ができます"
   title-ko: "PowerPoint"
-  text-ko: "PowerPoint 프레젠테이션 파일을 만들어 바로 발표하고 고칠 수 있습니다"
+  text-ko: "PowerPoint 파일로 만든 슬라이드, 바로 발표하고 고칠 수 있어요"
   title-mr: "PowerPoint"
   text-mr: "PowerPoint फायलींमध्ये बनवलेली सादरीकरणे, दाखवण्यासाठी आणि बदलण्यासाठी तयार"
   title-ms: "PowerPoint"

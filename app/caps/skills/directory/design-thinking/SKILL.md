@@ -31,7 +31,7 @@ metadata:
   text-fa: "محصول یا خدمتی که با همان کسانی که برایشان است شکل می‌گیرد"
   title-fi: "Suunnittele jotain uutta"
   text-fi: "Tuote tai palvelu muotoiltuna niiden kanssa, joille se on"
-  title-fr: "Concevoir du nouveau"
+  title-fr: "Concevoir quelque chose de nouveau"
   text-fr: "Un produit ou un service conçu avec les personnes à qui il s’adresse"
   title-fr-CA: "Concevoir du nouveau"
   text-fr-CA: "Un produit ou un service conçu avec les personnes à qui il s’adresse"

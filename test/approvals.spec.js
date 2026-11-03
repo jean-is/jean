@@ -41,7 +41,7 @@ test('once a task has read something from elsewhere, Always allow no longer open
   // Now the task holds that page: an address neither it nor the person gave asks again, saying why.
   await ask(page, 'Read the wikipedia article')
   const card = page.locator('.approval')
-  await expect(card).toContainText('This task has read something from elsewhere, which could hold instructions, so this asks again.')
+  await expect(card).toContainText('This task has read something from elsewhere, which could hold instructions, so you’re asked again.')
   await card.getByRole('button', { name: 'Not now' }).click()
   await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
 })
@@ -69,7 +69,7 @@ test('Always allow on a card says where it is taken back, and Exceptions stops w
   // What the computer and pictures keep, each stopped from Exceptions.
   const again = await openApprovals(page, 'exceptions')
   const kept = again.locator('.rules li', { hasText: 'Films' })
-  await expect(again.locator('.rules li', { hasText: 'data.example.com' })).toContainText('This computer may reach it')
+  await expect(again.locator('.rules li', { hasText: 'data.example.com' })).toContainText('The computer may reach it')
   await kept.getByRole('button', { name: 'Stop' }).click()
   await expect(kept).toHaveCount(0)
   expect(await page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.films)).toBe(false)

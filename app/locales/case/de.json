@@ -16,7 +16,7 @@
   "case.download": "{size} zum Herunterladen",
   "case.unset": "Nicht eingerichtet",
   "case.unfound": "Noch nicht entdeckt",
-  "case.came": "Wie es kam",
+  "case.came": "Wie es dazu kam",
   "case.offText": "Ausgeschaltet: {name} bietet es nicht an, und nichts davon erscheint oder lädt.",
   "case.ask": "{cap} ausschalten? {name} öffnet sich wieder, wo du warst, und was es gemacht hat, bleibt.",
   "case.cancel": "Abbrechen",

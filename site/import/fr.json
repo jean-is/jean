@@ -39,7 +39,7 @@
     ],
     [
       "Claude",
-      "Dans Claude, sur le web ou l’application de bureau : ouvrez les paramètres, puis la confidentialité, et demandez l’export. Avec un forfait Team ou Enterprise, un propriétaire doit d’abord l’autoriser.",
+      "Dans Claude, sur le web ou l’application de bureau : ouvrez les paramètres, puis la confidentialité, et demandez l’export. Avec un abonnement Team ou Enterprise, un propriétaire doit d’abord l’autoriser.",
       "Un lien arrive par e-mail et reste valable 24 heures. Déposez le fichier dans {name} tel quel."
     ],
     [
@@ -89,7 +89,7 @@
   "limits.title": "À savoir d’abord.",
   "limits.items": [
     "L’export est préparé par l’autre application, qui envoie un lien par e-mail, de quelques minutes à quelques jours.",
-    "L’activité Gemini doit être en JSON, ses pages web ne s’importent pas.",
+    "L’activité Gemini doit être en JSON : ses pages web ne s’importent pas.",
     "Votre historique reste aussi dans l’autre application, tant que vous ne l’y supprimez pas.",
     "Un très gros export se lit plus lentement sur un ordinateur lent."
   ],

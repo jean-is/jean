@@ -18,7 +18,7 @@
   "lock.sealed": "Everything kept here is encrypted on this device. Lock it, so only you can open it.",
   "lock.withPasskey": "Locked with your passkey. It opens only with it or your recovery code.",
   "lock.withPassword": "Locked with your password. It opens only with it or your recovery code.",
-  "lock.synced": "Your synced folder keeps readable copies.",
+  "lock.synced": "Your synced folder keeps copies that aren’t locked.",
   "lock.passkey": "Use a passkey",
   "lock.password": "Use a password",
   "lock.again": "The same password again",

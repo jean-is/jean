@@ -1,10 +1,10 @@
 {
-  "computer.text": "Un ordinateur embarqué dans cet onglet : il emprunte le processeur et la mémoire de cet appareil, sans jamais rien atteindre d’autre.",
+  "computer.text": "Un ordinateur isolé dans cet onglet, à l’écart de cet appareil : il en emprunte le processeur et la mémoire, sans jamais rien atteindre d’autre.",
   "computer.lede": "Un ordinateur dans cet onglet, à part de cet appareil : il travaille sur les fichiers qu’une tâche lui donne, et ne joint que les sites que vous autorisez.",
   "computer.where": "Où les commandes s’exécutent",
   "computer.reach": "Ce qu’il peut joindre",
   "computer.keeps": "Ce qu’il garde",
-  "computer.sandbox": "Ordinateur embarqué",
+  "computer.sandbox": "Dans cet onglet",
   "computer.sandbox.text": "Commandes, JavaScript et Python",
   "computer.state.asleep": "En veille",
   "computer.state.waking": "Réveil en cours",
@@ -40,7 +40,7 @@
     "other": "{count} autres"
   },
   "computer.registries": "D’où viennent les paquets",
-  "computer.registries.text": "Pour un miroir, comme celui de votre organisation. Une clé reste sur cet appareil et ne va qu’à son adresse.",
+  "computer.registries.text": "Pour un miroir, une copie de ces sources que votre organisation peut gérer. Une clé reste sur cet appareil et ne va qu’à son adresse.",
   "computer.registry.pyodide": "Python, paquets de Pyodide",
   "computer.registry.pypi": "Python, PyPI",
   "computer.registry.npm": "JavaScript, npm",
@@ -69,7 +69,7 @@
   "computer.reach.always": "Toujours autoriser {site}",
   "computer.reach.no": "Non",
   "computer.relay": "Accéder au web via",
-  "computer.relay.text": "L’adresse d’un relais, pour les sites qui refusent les requêtes d’autres sites. Vide : directement, par le proxy de cet appareil.",
+  "computer.relay.text": "L’adresse d’un relais, pour les sites qui refusent les requêtes d’autres sites. Laissez vide pour y aller directement, par le proxy de cet appareil.",
   "computer.minutes": {
     "one": "{count} minute",
     "many": "{count} minutes",
@@ -77,9 +77,9 @@
   },
   "computer.reach.once": "Autoriser une fois",
   "computer.terminal": "Terminal",
-  "computer.terminal.text": "Lancez vous-même des commandes sur l’ordinateur, sur les mêmes fichiers que la conversation ; votre prochain message dit ce que vous avez lancé. {keys} l’ouvre de partout.",
+  "computer.terminal.text": "Lancez vous-même des commandes sur l’ordinateur, sur les mêmes fichiers que la conversation. Votre prochain message dira ce que vous avez lancé. {keys} l’ouvre de n’importe où.",
   "computer.terminal.command": "Commande",
   "computer.terminal.clear": "Effacer",
   "computer.terminal.exit": "Code de sortie {code}",
-  "computer.terminal.refused": "Changements non conservés, à cause de modifications faites ailleurs entre-temps : {files}"
+  "computer.terminal.refused": "Non conservés, car modifiés ailleurs entre-temps : {files}"
 }

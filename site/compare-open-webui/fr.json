@@ -22,7 +22,7 @@
   "table.rows": [
     ["Ce que vous faites tourner", "Un dossier de fichiers statiques sur n’importe quel serveur web, ou {domain} lui-même.", "built", "Une application Python et sa base de données, SQLite par défaut ; Docker est la voie recommandée.", "start"],
     ["Où vivent les conversations", "Dans le navigateur de chacun, scellées.", "built", "Dans la base de données du serveur.", "start"],
-    ["Les personnes", "Aucun compte à gérer : chaque navigateur est le sien. Au travail, un fichier de politique fixe les cerveaux et les règles pour tous.", "design", "Comptes, rôles et groupes, dans une console d’administration.", "features"],
+    ["Les utilisateurs", "Aucun compte à gérer : chaque navigateur est le sien. Au travail, un fichier de politique fixe les cerveaux et les règles pour tous.", "design", "Comptes, rôles et groupes, dans une console d’administration.", "features"],
     ["Les modèles", "Ollama, LM Studio, tout endpoint compatible OpenAI, des clés de fournisseurs, des abonnements, et un modèle qui tourne dans le navigateur.", "built", "Ollama et les API compatibles OpenAI.", "docs"],
     ["MCP", "Intégré, avec une connexion depuis le navigateur ; une passerelle pour les serveurs qu’un navigateur ne peut pas joindre.", "built", "En natif depuis la v0.6.31, en Streamable HTTP seulement ; les autres serveurs par son proxy mcpo.", "mcp"],
     ["Ce que vous obtenez", "Word, Excel, PowerPoint, des graphiques et des pages qui marchent, avec des chiffres calculés par du code dans un bac à sable.", "built", "Des réponses avec leurs sources web, du Python qu’elle exécute dans le navigateur ou un terminal, et des images qu’elle crée.", "features"],
@@ -52,7 +52,7 @@
   "faq.items": [
     ["{name} a-t-il besoin d’un backend ?", "Non. Ce sont des fichiers statiques ; le navigateur fait le reste. Ollama, ou l’IA sur laquelle vous le branchez, répond."],
     ["Marche-t-il hors ligne ?", "Une fois chargé, avec Ollama sur votre machine ou l’IA qui tourne dans le navigateur, oui."],
-    ["Une équipe peut-elle l’utiliser ?", "Chacun l’utilise dans son propre navigateur. L’informatique sert le dossier et fixe une politique pour les cerveaux et les règles ; voir {enterprise}."]
+    ["Une équipe peut-elle l’utiliser ?", "Chacun l’utilise dans son propre navigateur. Le service informatique sert le dossier et fixe une politique pour les cerveaux et les règles ; voir {enterprise}."]
   ],
   "end.title": "Votre Ollama, une page web devant",
   "foot.note": "Les informations sur Open WebUI ont été vérifiées le {date} dans sa documentation et sa licence. {name} n’est pas affilié à Open WebUI.",

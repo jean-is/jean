@@ -12,7 +12,7 @@
   "demo.answer": "Here is what the 24 answers say:\n\n1. **The new schedule works**: most find Thursday’s meeting shorter and clearer.\n2. **Onboarding is too fast**: newcomers want a written guide for their first week.\n3. **Tools are scattered**: files live in three places, and people lose time looking.\n4. **Recognition matters**: several ask for wins to be shared more often.\n\nWhat they ask for most: **one place for the team’s files**, named in 15 of the 24 answers.",
   "steps": [
     "Drag files from your desktop or a folder onto the box: {drop} shows where they go.",
-    "Or press {add}, the + beside the box, then {attach} if it opens a menu, and choose them.",
+    "Or press {add}, the + beside the box, then {attach} if a menu opens, and choose them.",
     "To add a picture you copied, or a screenshot, paste it in the box: Ctrl and V, or ⌘ and V on a Mac.",
     "Each file shows above the box, {reading} at first, then its pages or {picture}. Its ×, {remove}, takes it off before you send.",
     "Write what you want done with them, and send: sum it up, compare them, fill this form from that letter."
@@ -20,7 +20,7 @@
   "parts": [
     [
       "A folder",
-      "Drop a folder on the conversation, and {name} asks {work} In Chrome and Edge, on a computer, it finds, reads and changes its files where they are, showing you each change first. In other browsers it works on a copy, and {save} gives you what changed. Once you have used one, + has {folder}."
+      "Drop a folder on the conversation, and {name} asks {work} In Chrome and Edge, on a computer, it finds, reads and changes its files where they are, showing you each change first. In other browsers it works on a copy, and {save} gives you what changed. After the first folder, {add} offers {folder} too."
     ],
     [
       "Your screen",
@@ -29,7 +29,7 @@
   ],
   "good": [
     "Each file is kept in the project, on this device. In a later task, type @ in the box and part of its name to point at it again.",
-    "The brain reads the files’ text. With a brain in the cloud, it goes there with your request: see {sees}.",
+    "The brain reads the files’ text. With a brain in the cloud, that text goes there with your request: see {sees}.",
     "A scan, or a picture of a page, has no text to read: brains that can see are shown it instead.",
     "With a spreadsheet, {name} offers to work out the figures with a program, rather than guess them."
   ],

@@ -54,7 +54,7 @@
   "connections.account": "Konto",
   "connections.since": "Verbunden am {date}",
   "connections.signInAgain": "Neu anmelden",
-  "connections.disconnectAsk": "{service} trennen? Sein Schlüssel verlässt dieses Gerät; in {service} selbst ändert sich nichts.",
+  "connections.disconnectAsk": "{service} trennen? Sein Schlüssel wird von diesem Gerät gelöscht. In {service} selbst ändert sich nichts.",
   "connections.cancel": "Abbrechen",
   "connections.find": "Dienst finden",
   "connections.found": {

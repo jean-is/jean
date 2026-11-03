@@ -83,7 +83,7 @@
   ],
   "pilot.after": "Ensuite, chacun ouvre l’adresse, se connecte avec son compte professionnel et commence. Edge et Chrome peuvent l’installer comme une application via Intune.",
   "pilot.kit": "Le kit pilote : les recettes, la politique, le jeu d’en-têtes et le dossier de confiance",
-  "people.title": "Une seule boîte, pour tout le monde",
+  "people.title": "Une seule case, pour tout le monde",
   "people.body": "Une question, un fichier ou un dossier ; en retour, une réponse sourcée, un document Word, un tableur, une présentation ou un graphique. Les chiffres sont calculés par du code, pas devinés. En 46 langues, y compris de droite à gauche. Une demande est faite avant tout envoi, partage ou suppression.",
   "people.more": "Voir ce que {name} fait pour tous",
   "people.brand": "Assistant Acme",
@@ -140,7 +140,7 @@
       "built"
     ],
     [
-      "L’IA peut-elle lire les noms de clients et les numéros de carte ?",
+      "L’IA peut-elle lire les noms de clients et les numéros de carte ?",
       "Pas si vous les cachez. Les noms de personnes en français, anglais, allemand et espagnol, et les listes et motifs de votre politique, sont repérés sur l’appareil, et une IA en ligne lit des repères à leur place, remis en clair quand elle répond. Ce que rien ne trouve part tel quel, et le reste du texte peut encore dire de qui il s’agit : c’est masqué, pas anonyme.",
       "key"
     ],

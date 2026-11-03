@@ -47,14 +47,14 @@
     "one": "{count} more",
     "other": "{count} more"
   },
-  "connections.usual": "Where you choose nothing here, {name} does as Approvals says for every service.",
+  "connections.usual": "If you choose nothing here, {name} follows Approvals, as for every service.",
   "connections.guarded": "Approvals holds a stricter rule for {service}, which comes first.",
   "connections.trains": "What {service} brings in goes only to brains that never train on it.",
   "connections.this": "This connection",
   "connections.account": "Account",
   "connections.since": "Connected on {date}",
   "connections.signInAgain": "Sign in again",
-  "connections.disconnectAsk": "Disconnect {service}? Its key leaves this device; nothing changes in {service} itself.",
+  "connections.disconnectAsk": "Disconnect {service}? Its key is deleted from this device. Nothing changes in {service} itself.",
   "connections.cancel": "Cancel",
   "connections.find": "Find a service",
   "connections.found": {

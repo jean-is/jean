@@ -1,6 +1,6 @@
 {
   "title": "{name} est-il gratuit ? Ce qui peut coûter, et ce qui ne coûte jamais",
-  "description": "{name} est gratuit et libre, sans compte ni offre payante. L’IA derrière peut coûter : ce que coûte chaque façon de faire, et comment rester gratuit.",
+  "description": "{name} est gratuit et libre, sans compte ni offre payante. L’IA derrière peut coûter : ce que coûte chaque option, et comment ne rien payer.",
   "h1": "{name} est-il gratuit ?",
   "works": "Tous les navigateurs",
   "answer": "Oui. {name} est gratuit et libre : pas de compte, pas d’abonnement, pas de publicité. Le cerveau qui écrit les réponses peut coûter, selon celui que vous choisissez. Le compte gratuit d’OpenRouter et un cerveau sur cet ordinateur ne coûtent rien.",
@@ -11,11 +11,11 @@
     ],
     [
       "Ce que peut coûter le cerveau",
-      "Un compte gratuit chez OpenRouter : gratuit, dans des limites quotidiennes. Un cerveau sur cet ordinateur, ou Ollama et LM Studio : gratuit, une fois téléchargé. Un forfait ChatGPT, Claude ou Copilot que vous payez déjà : rien de plus que le forfait. Une clé à vous : l’entreprise qui l’a créée vous facture ce que vous utilisez, sur votre compte chez elle, et la plupart demandent d’abord un moyen de paiement."
+      "Un compte gratuit chez OpenRouter : gratuit, dans des limites quotidiennes. Un cerveau sur cet ordinateur, ou Ollama et LM Studio : gratuit, une fois téléchargé. Un forfait ChatGPT, Claude ou Copilot que vous payez déjà : rien de plus que le forfait. Une clé à vous : l’entreprise qui l’a délivrée vous facture ce que vous utilisez, sur votre compte chez elle, et la plupart demandent d’abord un moyen de paiement."
     ],
     [
       "Voir ce qu’une réponse a coûté",
-      "Sous chaque réponse, {about} indique à côté de {cost} combien elle a coûté environ, ou {free}, ou qu’elle était incluse dans votre forfait. Dans {settings} › {brains}, la page de chaque cerveau donne le prix de chacune de ses versions."
+      "Sous chaque réponse, {about} indique, à côté de {cost}, ce qu’elle a coûté environ, ou {free}, ou qu’elle était comprise dans votre forfait. Dans {settings} › {brains}, la page de chaque cerveau donne le prix de chacune de ses versions."
     ],
     [
       "Au travail",

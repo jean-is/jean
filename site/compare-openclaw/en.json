@@ -5,7 +5,7 @@
   "eyebrow": "{name} and OpenClaw",
   "h1": "An open-source OpenClaw alternative that stays inside your browser",
   "h1.mark": "inside your browser",
-  "lede": "{name} acts for you inside the browser’s fence: its own files, the folders you open, the sites you allow, code in a sandbox. It asks before anything leaves. Nothing to install, and ready for a company’s IT.",
+  "lede": "{name} acts for you inside the browser’s fence: its own files, the folders you open, the sites you allow, code walled off from your computer. It asks before anything leaves. Nothing to install, and ready for a company’s IT.",
   "cta": "Try {name}",
   "cta2": "Deploy it at work",
   "facts": ["Open source, MIT", "Nothing to install", "Do it, Ask me first, Never", "Deployed like a web page"],
@@ -16,7 +16,7 @@
   "fence.title": "Two ways to give an AI hands",
   "fence.computer": "Your computer",
   "fence.inside": "The browser’s fence",
-  "fence.jean": ["{name}", "Its files", "Folders you open", "Code in a sandbox"],
+  "fence.jean": ["{name}", "Its files", "Folders you open", "Code, walled off"],
   "fence.outside": "Out of reach",
   "fence.away": ["Other files", "Passwords and keys", "Your email", "Other programs"],
   "fence.jeanCaption": "{name} works inside the fence, and asks before anything leaves it.",
@@ -26,8 +26,8 @@
   "table.rows": [
     ["Where it runs", "In a browser tab. Nothing to install.", "built", "Installed on your computer or a server, as one gateway program.", "docs"],
     ["How you talk to it", "In the tab, typing or speaking.", "built", "From your chat apps: WhatsApp, Telegram, Slack, Signal, Discord, iMessage and more.", "docs"],
-    ["What it can reach", "Its own files, the folders you open, the sites you allow. Code runs in a sandbox. Your computer only through This computer, in the folder you start it in, each command asked first.", "built", "Commands, files and a browser; with its bundled skills, email and a password manager.", "tools skills"],
-    ["What it asks first", "Do it, Ask me first or Never, set by you. Sending, deleting and anything outside ask first.", "built", "What you set. Out of the box, commands run on the computer without asking, and the sandbox is off.", "exec sandbox"],
+    ["What it can reach", "Its own files, the folders you open, the sites you allow. Code runs walled off from your computer. Your computer only through This computer, in the folder you start it in, each command asked first.", "built", "Commands, files and a browser; with its bundled skills, email and a password manager.", "tools skills"],
+    ["What it asks first", "Do it, Ask me first or Never, set by you. Sending, deleting and anything outside ask first.", "built", "What you set. Out of the box, commands run on the computer without asking, and nothing walls them off.", "exec sandbox"],
     ["Passwords and payments", "Never its to touch.", "design", "Whatever its tools can reach.", "skills"],
     ["Which AI", "Any: on this computer, a free one, your key, your plan.", "built", "Any you set up, with a key from its provider, local ones included.", "docs"],
     ["For a company", "A static folder IT serves, behind its gateway and sign-in, with its policy.", "built", "Yours to secure; NVIDIA’s NemoClaw runs it in a sandbox with policy controls.", "nemoclaw"]

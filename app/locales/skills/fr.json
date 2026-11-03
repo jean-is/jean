@@ -1,9 +1,9 @@
 {
   "skills.none": "Pas encore de compétence. Quand vous demanderez la même chose une troisième fois, on vous en proposera une.",
   "skills.invalid": "Ce fichier n’est pas une compétence.",
-  "skills.added": "Compétence « {title} » ajoutée.",
+  "skills.added": "Compétence « {title} » ajoutée.",
   "skills.steps": "Étapes",
-  "skills.confirmDelete": "Supprimer la compétence « {title} » ?",
+  "skills.confirmDelete": "Supprimer la compétence « {title} » ?",
   "skills.from": "De {source}",
   "skills.elsewhere": "Compétences d’ailleurs",
   "skills.elsewhereText": "Des compétences publiées par des sites et des organisations. Elles sont comparées à vos demandes sur cet appareil, et une compétence n’est ajoutée que si vous la choisissez, après avoir lu ses étapes.",
@@ -43,7 +43,7 @@
     "other": "suivie {count} fois, la dernière {when}"
   },
   "skills.when": "Quand elle est suivie",
-  "skills.example": "Par exemple : « {example} »",
+  "skills.example": "Par exemple : « {example} »",
   "skills.try": "Essayer",
   "skills.change": "La modifier avec {name}",
   "skills.changeAsk": "Modifie la compétence {skill} : ",

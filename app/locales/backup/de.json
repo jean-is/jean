@@ -4,5 +4,5 @@
     "one": "{count} Unterhaltung übernommen.",
     "other": "{count} Unterhaltungen übernommen."
   },
-  "backup.chooseJson": "Dieser Export enthält Ihre Gemini-Aktivitäten als Webseiten. Exportieren Sie sie in Google Takeout erneut und wählen Sie JSON für „Meine Aktivitäten“."
+  "backup.chooseJson": "Dieser Export enthält deine Gemini-Aktivitäten als Webseiten. Exportiere sie in Google Takeout erneut und wähle JSON für „Meine Aktivitäten“."
 }

@@ -5,7 +5,7 @@
   "eyebrow": "{name} et OpenClaw",
   "h1": "Une alternative libre à OpenClaw qui reste dans votre navigateur",
   "h1.mark": "dans votre navigateur",
-  "lede": "{name} agit pour vous dans le périmètre du navigateur : ses propres fichiers, les dossiers que vous ouvrez, les sites que vous autorisez, du code dans un bac à sable. Il demande avant que quoi que ce soit en sorte. Rien à installer, et prêt pour l’informatique d’une entreprise.",
+  "lede": "{name} agit pour vous dans le périmètre du navigateur : ses propres fichiers, les dossiers que vous ouvrez, les sites que vous autorisez, du code dans un espace isolé. Il demande avant que quoi que ce soit en sorte. Rien à installer, et prêt pour le service informatique d’une entreprise.",
   "cta": "Essayer {name}",
   "cta2": "Le déployer au travail",
   "facts": ["Libre, MIT", "Rien à installer", "Le faire, Me demander d’abord, Jamais", "Déployé comme une page web"],
@@ -16,7 +16,7 @@
   "fence.title": "Deux façons de donner des mains à une IA",
   "fence.computer": "Votre ordinateur",
   "fence.inside": "Le périmètre du navigateur",
-  "fence.jean": ["{name}", "Ses fichiers", "Les dossiers que vous ouvrez", "Du code dans un bac à sable"],
+  "fence.jean": ["{name}", "Ses fichiers", "Les dossiers que vous ouvrez", "Du code dans un espace isolé"],
   "fence.outside": "Hors d’atteinte",
   "fence.away": ["Les autres fichiers", "Mots de passe et clés", "Vos e-mails", "Les autres programmes"],
   "fence.jeanCaption": "{name} agit dans le périmètre, et demande avant que quoi que ce soit en sorte.",
@@ -26,11 +26,11 @@
   "table.rows": [
     ["Où il fonctionne", "Dans un onglet du navigateur. Rien à installer.", "built", "Installé sur votre ordinateur ou un serveur, sous la forme d’un programme passerelle.", "docs"],
     ["Comment vous lui parlez", "Dans l’onglet, à l’écrit ou à la voix.", "built", "Depuis vos messageries : WhatsApp, Telegram, Slack, Signal, Discord, iMessage et d’autres.", "docs"],
-    ["Ce qu’il peut atteindre", "Ses propres fichiers, les dossiers que vous ouvrez, les sites que vous autorisez. Le code tourne dans un bac à sable. Le reste de la machine seulement par « Votre ordinateur », dans le dossier où vous le lancez, chaque commande demandée d’abord.", "built", "Des commandes, des fichiers et un navigateur ; avec ses compétences fournies, les e-mails et un gestionnaire de mots de passe.", "tools skills"],
-    ["Ce qu’il demande d’abord", "Le faire, Me demander d’abord ou Jamais, réglé par vous. Envoyer, supprimer et tout ce qui sort demandent d’abord.", "built", "Ce que vous réglez. Tel qu’il est livré, les commandes tournent sur l’ordinateur sans demander, et le bac à sable est désactivé.", "exec sandbox"],
+    ["Ce qu’il peut atteindre", "Ses propres fichiers, les dossiers que vous ouvrez, les sites que vous autorisez. Le code tourne dans un espace isolé. Le reste de la machine seulement par « Votre ordinateur », dans le dossier où vous le lancez, chaque commande demandée d’abord.", "built", "Des commandes, des fichiers et un navigateur ; avec ses compétences fournies, les e-mails et un gestionnaire de mots de passe.", "tools skills"],
+    ["Ce qu’il demande d’abord", "Le faire, Me demander d’abord ou Jamais, réglé par vous. Envoyer, supprimer et tout ce qui sort demandent d’abord.", "built", "Ce que vous réglez. Tel qu’il est livré, les commandes tournent sur l’ordinateur sans demander, et rien ne les isole.", "exec sandbox"],
     ["Mots de passe et paiements", "Jamais à sa portée.", "design", "Tout ce que ses outils atteignent.", "skills"],
     ["Quelle IA", "N’importe laquelle : sur cet ordinateur, une gratuite, votre clé, votre abonnement.", "built", "Celle que vous réglez, avec une clé de son fournisseur, les IA locales comprises.", "docs"],
-    ["Pour une entreprise", "Un dossier statique que l’informatique sert, derrière sa passerelle et son authentification, avec sa politique.", "built", "À vous de le sécuriser ; NemoClaw, de NVIDIA, le fait tourner dans un bac à sable avec des règles.", "nemoclaw"]
+    ["Pour une entreprise", "Un dossier statique que le service informatique sert, derrière sa passerelle et son authentification, avec sa politique.", "built", "À vous de le sécuriser ; NemoClaw, de NVIDIA, le fait tourner dans un espace isolé, avec des règles.", "nemoclaw"]
   ],
   "better.title": "Là où OpenClaw fait mieux",
   "better.items": [
@@ -43,11 +43,11 @@
   "both.cards": [
     ["skills", "Vos compétences", "{name} lit les compétences écrites en SKILL.md, le même format. Celles qui n’ont besoin d’aucun programme hors du navigateur marchent telles quelles.", "built"],
     ["connections", "Vos connexions", "Les services que vous joignez par leur adresse se connectent à {name} aussi, avec une connexion depuis le navigateur ; les autres passent par une passerelle.", "built"],
-    ["program", "Quand il faut un programme de votre ordinateur", "« Votre ordinateur » le lance, par une ligne que vous collez et que vous pouvez arrêter à tout moment, en demandant d’abord.", "computer"]
+    ["program", "Quand il faut un programme de votre ordinateur", "« Votre ordinateur » le lance, par une ligne que vous collez et que vous pouvez arrêter à tout moment, en demandant d’abord.", "computer"]
   ],
   "catch.items": [
     "{name} travaille tant qu’il est ouvert. Vos messageries ne peuvent pas le joindre.",
-    "Hors du périmètre, certaines tâches demandent « Votre ordinateur » : une ligne à coller, sur un ordinateur.",
+    "Hors du périmètre, certaines tâches demandent « Votre ordinateur » : une ligne à coller, sur un ordinateur.",
     "{name} est gratuit ; l’IA derrière ne l’est pas toujours.",
     "Votre travail vit dans ce navigateur. Effacez ses données sans sauvegarde et il disparaît."
   ],
@@ -66,7 +66,7 @@
   "source.advisory": "Avis de sécurité d’OpenClaw",
   "source.cve": "CVE-2026-25253, notée 8,8",
   "source.exec": "Documentation d’OpenClaw : validation des commandes",
-  "source.sandbox": "Documentation d’OpenClaw : bac à sable",
+  "source.sandbox": "Documentation d’OpenClaw : isolation (sandboxing)",
   "source.nemoclaw": "NemoClaw de NVIDIA",
   "source.clawhub": "Documentation d’OpenClaw : compétences et ClawHub"
 }

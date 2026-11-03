@@ -33,7 +33,7 @@ metadata:
   title-fi: "Mikä voi mennä pieleen"
   text-fi: "Riskit tunnistettuina ja järjestettyinä ennen kuin ne toteutuvat, toimenpiteineen"
   title-fr: "Ce qui pourrait mal tourner"
-  text-fr: "Les risques repérés et classés avant qu’ils n’arrivent, avec quoi faire"
+  text-fr: "Les risques repérés et classés avant qu’ils n’arrivent, et quoi faire"
   title-fr-CA: "Ce qui pourrait mal tourner"
   text-fr-CA: "Les risques repérés et classés avant qu’ils n’arrivent, avec quoi faire"
   title-ha: "Abin da zai iya lalacewa"
