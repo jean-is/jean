@@ -68,7 +68,7 @@ node test/fixtures/fake-brain.js
 - **Host your own copy:** `npm ci && npm run build:web`, then serve `dist/web/` over HTTPS from an address that won't change. [deploy/](deploy/README.md) has the headers and a recipe for each host.
 - **Reach services that refuse a browser,** such as Google Workspace or Slack, through [the gateway](docs/gateway.md).
 - **Build the desktop apps** for macOS, Windows and Linux with `npm run build:desktop`: a window of the system's own web view, made with [Neutralino](https://neutralino.js.org), which needs WebKitGTK on Linux ([how it works](docs/architecture.md#desktop-app)).
-- **Use Jean in your editor:** `npx jean-cli acp --folder <the folder Sync keeps>` in any editor that speaks ACP, such as Zed ([cli/](cli/README.md)).
+- **Use Jean in your editor:** `npx jean-cli acp` in any editor that speaks ACP, such as Zed, on the folder Sync keeps (`~/Jean` unless `--folder` names another) ([cli/](cli/README.md)).
 
 ## Contributing
 

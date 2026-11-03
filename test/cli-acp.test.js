@@ -1,5 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
+import { spawn } from 'node:child_process'
 import { mkdir, mkdtemp, readdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
@@ -107,6 +108,8 @@ test('initialize says what Jean takes, and a session is a conversation in the pr
   assert.equal(ready.protocolVersion, 1)
   assert.deepEqual(ready.agentCapabilities, { loadSession: true, promptCapabilities: { image: true, embeddedContext: true }, mcpCapabilities: { http: true } })
   assert.deepEqual(ready.agentInfo, { name: 'jean-cli', title: 'Jean', version: '0.0.0' })
+  // An editor that can't run a sign-in in a terminal is offered none.
+  assert.deepEqual(ready.authMethods, [])
   const { sessionId } = await editor.request('session/new', { cwd, mcpServers: [] })
   assert.match(sessionId, /^[0-9A-HJKMNP-TV-Z]{26}$/)
   assert.equal((await kept(folder, sessionId))?.project, '01JA0000000000000000000000-work')
@@ -247,15 +250,74 @@ test('a file the editor names is shared as the browser shares one: kept in the p
   assert.deepEqual(files.map((file) => file.replace(/sha256-\w+/, 'sha256-…')).sort(), ['sha256-….md', 'sha256-….meta.json', 'sha256-….txt'])
 })
 
-test('without a folder Sync keeps, or a brain, the editor is told what to do', async (t) => {
+test('a folder of other files is refused, and with no brain to answer a session asks for a sign-in (ACP’s auth_required)', async (t) => {
   const lost = await setup(t, { sync: false })
   await assert.rejects(lost.editor.request('session/new', { cwd: lost.cwd, mcpServers: [] }), /isn’t a folder Sync keeps\. Give the one you chose in Settings › Your data\./)
   const brainless = await setup(t, { brain: 'device' })
-  const { sessionId } = await brainless.editor.request('session/new', { cwd: brainless.cwd, mcpServers: [] })
-  await assert.rejects(brainless.editor.request('session/prompt', { sessionId, prompt: [{ type: 'text', text: 'Hi' }] }), /No brain can answer yet/)
+  await assert.rejects(brainless.editor.request('session/new', { cwd: brainless.cwd, mcpServers: [] }), { code: -32000, message: /No brain can answer yet/ })
   const nameless = await setup(t, { brain: 'openai' })
-  const other = await nameless.editor.request('session/new', { cwd: nameless.cwd, mcpServers: [] })
-  await assert.rejects(nameless.editor.request('session/prompt', { sessionId: other.sessionId, prompt: [{ type: 'text', text: 'Hi' }] }), /--brain openai:<its name>/)
+  await assert.rejects(nameless.editor.request('session/new', { cwd: nameless.cwd, mcpServers: [] }), { code: -32603, message: /--brain openai:<its name>/ })
+})
+
+test('an editor that runs a sign-in in a terminal is offered Claude Code’s, as `jean-cli --login`', async (t) => {
+  const method = { id: 'claude-code', name: 'Sign in with your Claude plan', type: 'terminal', args: ['--login'] }
+  assert.deepEqual((await setup(t, { capabilities: { auth: { terminal: true } } })).ready.authMethods, [method])
+  // The older word for it, which the ACP Registry's check still sends.
+  assert.deepEqual((await setup(t, { capabilities: { _meta: { 'terminal-auth': true } } })).ready.authMethods, [method])
+})
+
+test('a folder not made yet becomes Sync’s, as an empty one does in the browser, and the session goes to its home project', async (t) => {
+  const base = await mkdtemp(join(tmpdir(), 'cli-acp-'))
+  t.after(() => rm(base, { recursive: true, force: true }))
+  await mkdir(join(base, 'work'))
+  const { editor, folder, cwd } = await setup(t, { base })
+  const { sessionId } = await editor.request('session/new', { cwd, mcpServers: [] })
+  const mark = JSON.parse(await readFile(join(folder, 'mirror.json'), 'utf8'))
+  assert.equal(mark.kind, 'mirror')
+  assert.equal(mark.by, JSON.parse(await readFile(join(folder, 'settings.json'), 'utf8')).device)
+  const { project } = /** @type {NonNullable<Awaited<ReturnType<typeof kept>>>} */ (await kept(folder, sessionId))
+  assert.match(await readFile(join(folder, 'projects', project, 'project.md'), 'utf8'), /^default: true$/m)
+})
+
+/** jean-cli as a program, on a home folder of its own, its words in English. @param {string[]} args @param {string} home @param {Record<string, string>} [env] */
+const program = (args, home, env = {}) => spawn(process.execPath, ['cli/main.js', ...args], { env: { HOME: home, PATH: home, LANG: 'en_US.UTF-8', ...env } })
+
+test('started as the ACP Registry starts it, with no folder named, it waits; with no brain it asks for a sign-in and makes nothing, with a key it keeps ~/Jean', async (t) => {
+  const home = await mkdtemp(join(tmpdir(), 'cli-home-'))
+  t.after(() => rm(home, { recursive: true, force: true }))
+  /** @param {Record<string, string>} [env] */
+  const editor = async (env) => {
+    const child = program(['acp'], home, env)
+    t.after(() => child.kill())
+    const it = peer({ input: child.stdout, write: (line) => child.stdin.write(line), handle: async () => null })
+    return { it, ready: await it.request('initialize', { protocolVersion: 1, clientCapabilities: { _meta: { 'terminal-auth': true } } }) }
+  }
+  const signedOut = await editor()
+  assert.deepEqual(signedOut.ready.authMethods.map((/** @type {any} */ method) => method.type), ['terminal'])
+  await assert.rejects(signedOut.it.request('session/new', { cwd: home, mcpServers: [] }), { code: -32000 })
+  assert.deepEqual(await readdir(home), [])
+  const keyed = await editor({ ANTHROPIC_API_KEY: 'test' })
+  await keyed.it.request('session/new', { cwd: home, mcpServers: [] })
+  assert.equal(JSON.parse(await readFile(join(home, 'Jean', 'mirror.json'), 'utf8')).kind, 'mirror')
+})
+
+test('`jean-cli --login` signs in to Claude Code in the terminal the editor opens, and says what to do where there is none', async (t) => {
+  const home = await mkdtemp(join(tmpdir(), 'cli-home-'))
+  t.after(() => rm(home, { recursive: true, force: true }))
+  /** @param {string[]} args @returns {Promise<{ code: number | null, said: string }>} */
+  const run = (args) => new Promise((done) => {
+    const child = program(args, home)
+    let said = ''
+    child.stdout.on('data', (chunk) => { said += chunk })
+    child.stderr.on('data', (chunk) => { said += chunk })
+    child.once('exit', (code) => done({ code, said }))
+  })
+  const missing = await run(['acp', '--login'])
+  assert.equal(missing.code, 1)
+  assert.match(missing.said, /Claude Code isn’t on this computer/)
+  await writeFile(join(home, 'claude'), '#!/bin/sh\necho "claude $*"\n', { mode: 0o755 })
+  // ACP appends the method's arguments to the editor's own; an editor that puts them in their place gets the same.
+  for (const args of [['acp', '--login'], ['--login']]) assert.deepEqual(await run(args), { code: 0, said: 'claude auth login\n' })
 })
 
 test('a conversation made in the editor reaches the browser at its next round, and one appended meanwhile follows at the next', async (t) => {

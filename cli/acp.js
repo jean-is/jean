@@ -1,8 +1,10 @@
 // Jean inside an editor, through ACP (D241, https://agentclientprotocol.com): the editor starts
 // `jean-cli acp` and speaks JSON-RPC on its input and output (cli/rpc.js). Each session is one of
 // Jean's conversations, kept in the folder Sync keeps (caps/sync/mirror.js), in the project on the
-// editor's folder or else the home one, so the browser has it after its next round. A turn is core's
-// (core/loop.js), whose updates are ACP's already, as are the answers to what it asks first.
+// editor's folder or else the home one, so the browser has it after its next round; a folder not
+// made yet, or empty, becomes Sync's as it would in the browser. A session waits for a brain: with
+// none, the editor is offered Claude Code's sign-in, run in a terminal of its own (`jean-cli --login`).
+// A turn is core's (core/loop.js), whose updates are ACP's already, as are the answers to what it asks first.
 import { readFile } from 'node:fs/promises'
 import { basename, isAbsolute, join as joinPath } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
@@ -11,7 +13,7 @@ import { nodeFS } from './fs.js'
 import { peer, RpcError } from './rpc.js'
 import { chooseBrain } from './brain.js'
 import { connect, toolsFor } from './tools.js'
-import { MARK } from '../app/caps/sync/mirror.js'
+import { MARK, carried, claim } from '../app/caps/sync/mirror.js'
 import { exactText } from '../app/caps/folders/work.js'
 import { decodeText, extractPages, isBinary, paginate } from '../app/caps/files/extract.js'
 import { runTurn } from '../app/core/loop.js'
@@ -60,7 +62,10 @@ export function agent({ input, write, folder, brain: named, address, version, en
   const jean = nodeFS(folder)
   /** @type {Map<string, Session>} */
   const sessions = new Map()
-  /** @type {{ fs?: { readTextFile?: boolean, writeTextFile?: boolean }, terminal?: boolean, session?: { compaction?: unknown } }} */
+  /**
+   * @type {{ fs?: { readTextFile?: boolean, writeTextFile?: boolean }, terminal?: boolean, session?: { compaction?: unknown },
+   *   auth?: { terminal?: boolean }, _meta?: Record<string, unknown> }}
+   */
   let client = {}
   /** @type {Promise<import('./brain.js').Chosen> | null} */
   let chosen = null
@@ -68,15 +73,20 @@ export function agent({ input, write, folder, brain: named, address, version, en
   const rpc = peer({ input, write, handle: async (method, params) => {
     if (method === 'initialize') {
       client = params.clientCapabilities ?? {}
+      // A sign-in the editor runs itself, in a terminal, for an editor that says it can (auth.terminal, or _meta's older word).
+      const terminal = client.auth?.terminal === true || client._meta?.['terminal-auth'] === true
       return {
         protocolVersion: 1,
         agentCapabilities: { loadSession: true, promptCapabilities: { image: true, embeddedContext: true }, mcpCapabilities: { http: true } },
         agentInfo: { name: 'jean-cli', title: BRAND.name, version },
-        authMethods: [],
+        authMethods: terminal ? [{ id: 'claude-code', name: t('cli.signIn'), type: 'terminal', args: ['--login'] }] : [],
       }
     }
     if (method === 'authenticate') return {}
-    if (method === 'session/new') return { sessionId: (await open(params)).id }
+    if (method === 'session/new') {
+      await brain()
+      return { sessionId: (await open(params)).id }
+    }
     if (method === 'session/load') return void replay(await open(params, String(params.sessionId ?? '')))
     if (method === 'session/prompt') return answer(params)
     if (method === 'session/cancel') return void sessions.get(params.sessionId)?.controller?.abort()
@@ -100,8 +110,10 @@ export function agent({ input, write, folder, brain: named, address, version, en
    */
   async function open({ cwd = '', mcpServers = [] }, id) {
     if (!isAbsolute(cwd)) throw new RpcError(-32602, 'cwd must be an absolute path.')
-    if (!(await jean.exists(MARK))) throw new RpcError(-32603, t('cli.notSync', { folder }))
+    // Nothing of Jean's goes into a folder of other files, as Sync's claim() refuses one.
+    if (!(await jean.exists(MARK)) && (await jean.list('')).some((entry) => carried(entry.name))) throw new RpcError(-32603, t('cli.notSync', { folder }))
     const own = await mine()
+    await claim(jean, { by: own.device })
     let projects = await listProjects(jean)
     let project
     let path = ''
@@ -296,9 +308,9 @@ export function agent({ input, write, folder, brain: named, address, version, en
     return { ...(!home && { project }), ...(instructions && { instructions }), ...await session.kit.sections() }
   }
 
-  /** The brain, chosen once, at the first prompt. */
+  /** The brain, chosen once, as a session opens or a prompt comes; with none, ACP's auth_required, for which the editor offers the sign-in. */
   const brain = () => (chosen ??= chooseBrain({ named, address, env }).then((found) => {
-    if (!found) throw new RpcError(-32603, t('cli.noBrain'))
+    if (!found) throw new RpcError(-32000, t('cli.noBrain'))
     if ('needs' in found) throw new RpcError(-32603, t('cli.needsName', { provider: found.needs }))
     return found
   }).catch((error) => {
