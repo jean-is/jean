@@ -4,7 +4,7 @@
   "lock.unreadable": "Ciò chì era tenutu quì ùn si pò apre.",
   "lock.parent": "Un genitore apre stu prufilu, cù a so parolla d’entrata o a so chjave d’accessu.",
   "lock.cant": "Ùn u pudete apre ?",
-  "lock.cantText": "Senza a vostra chjave d’accessu, a vostra parolla d’entrata o u vostru codice di ricuperu, nimu ùn pò apre ciò chì hè tenutu quì. Ferma quì, s’è unu d’elli si ritrova ; un altru prufilu u pò caccià.",
+  "lock.cantText": "Senza a vostra chjave d’accessu, a vostra parolla d’entrata o u vostru codice di ricuperu, nimu ùn pò apre ciò chì hè tenutu quì. Ferma quì, in casu chì unu d’elli si ritrovi ; un altru prufilu u pò caccià.",
   "lock.afreshText": "Più nunda nant’à st’apparechju ùn u pò apre. Ripiglià da capu u squassa ; pudete tandu risturà una salvaguardia o u vostru cartulare sincrunizatu.",
   "lock.afresh": "Ripiglià da capu",
   "lock.afreshConfirm": "Squassà u prufilu « {name} » è tuttu ciò chì ci hè tenutu, per sempre ?",
@@ -18,7 +18,7 @@
   "lock.sealed": "Tuttu ciò chì hè tenutu quì hè cifratu nant’à st’apparechju. Serratelu, per chì solu voi u pudete apre.",
   "lock.withPasskey": "Serratu cù a vostra chjave d’accessu. S’apre solu cun ella o cù u vostru codice di ricuperu.",
   "lock.withPassword": "Serratu cù a vostra parolla d’entrata. S’apre solu cun ella o cù u vostru codice di ricuperu.",
-  "lock.synced": "U vostru cartulare sincrunizatu tene copie leghjibule.",
+  "lock.synced": "U vostru cartulare sincrunizatu tene copie chì ùn sò micca serrate.",
   "lock.passkey": "Impiegà una chjave d’accessu",
   "lock.password": "Impiegà una parolla d’entrata",
   "lock.again": "A listessa parolla d’entrata torna",
@@ -35,5 +35,5 @@
   "lock.on": "Attivata",
   "lock.opens.passkey": "S’apre cù a vostra chjave d’accessu",
   "lock.opens.password": "S’apre cù a vostra parolla d’entrata",
-  "lock.opens.anyone": "Chiunque adopra st’apparechju a pò apre"
+  "lock.opens.anyone": "Chiunque adopra st’apparechju u pò apre"
 }
