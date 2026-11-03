@@ -5,5 +5,5 @@
     "many": "{count} conversas importadas.",
     "other": "{count} conversas importadas."
   },
-  "backup.chooseJson": "Esta exportação tem a sua atividade do Gemini como páginas web. Exporte-a novamente no Google Takeout, escolhendo JSON para A minha atividade."
+  "backup.chooseJson": "Esta exportação tem a tua atividade do Gemini como páginas web. Exporta-a de novo no Google Takeout, escolhendo JSON para A minha atividade."
 }
