@@ -5,7 +5,9 @@
 // 61 random ones, TrustMark's BCH_5 error correction over them (5 flips mended), its schema's 4. What
 // it changes there, centred, is spread over the picture at its size. The manifest names those bits
 // (`c2pa.soft-binding`), so any of TrustMark's decoders finds the picture's credentials again; its
-// decoder, in the same worker, reads them back when a picture is checked. Pure, so Node's tests run it.
+// decoder, in the same worker, reads them back when a picture is checked. A film made on this device
+// (D585) carries the same bits in each frame, put there by FastWan's worker before its MP4 is written,
+// and read back over all its frames. Pure, so Node's tests run it.
 
 /** @typedef {[string, string, number]} File path on the weights host, SHA-256, bytes */
 
@@ -19,6 +21,8 @@ export const SIDE = 256
 /** C2PA's name for it, and TrustMark's for the schema, which a soft binding's value starts with. */
 export const ALGORITHM = 'com.adobe.trustmark.Q'
 const SCHEMA = 1
+/** What its encoder is given, by the names its graph gives them: the picture's square, as `planes` makes it, and the 100 bits. @param {typeof import('onnxruntime-web').Tensor} Tensor @param {Float32Array} cover @param {number[]} bits */
+export const inputs = (Tensor, cover, bits) => ({ 'onnx::Concat_0': new Tensor('float32', cover, [1, 3, SIDE, SIDE]), 'onnx::Gemm_1': new Tensor('float32', Float32Array.from(bits), [1, 100]) })
 
 // ─── Its 100 bits ────────────────────────────────────────────────────────────
 

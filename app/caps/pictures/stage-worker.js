@@ -13,7 +13,7 @@
 // { maker: 'fastwan', type: 'words', host, files, tokenizer, prompt }  → { type: 'done', hidden }, its tokens' rows, in halves
 // { maker: 'fastwan', type: 'read', host, files, hidden }              → { type: 'done', hidden }, through eight of umT5's layers
 // { maker: 'fastwan', type: 'denoise', host, files, decoder, embeds, width, height } → glimpses, { type: 'done', latent }
-// { maker: 'fastwan', type: 'decode', host, files, latent, width, height } → { type: 'done', bytes, checks }, an MP4 and frames as PNGs
+// { maker: 'fastwan', type: 'decode', host, files, latent, width, height, bits } → { type: 'done', bytes, checks, marked }, an MP4 its frames watermarked, frames as PNGs
 import '../../ui/model-worker.js'
 import { InferenceSession, Tensor } from '../../vendor/transformers/ort.webgpu.bundle.min.mjs'
 import { Qwen2Tokenizer, T5Tokenizer } from '../../vendor/transformers/transformers.web.min.js'
@@ -21,6 +21,7 @@ import { download } from '../../ui/weights.js'
 import * as flux from './flux.js'
 import * as zimage from './zimage.js'
 import * as fastwan from './fastwan.js'
+import * as watermark from './watermark.js'
 
 /** @typedef {[string, string, number]} File path on the weights host, SHA-256, bytes */
 
@@ -49,11 +50,11 @@ async function read(host, files) {
 /**
  * A graph's session, its weights beside it in the files named as its graph names them. Once they are on the
  * device, their copy here goes at once rather than whenever it is collected, which nearly halves what a picture holds (D545).
- * @param {string} host @param {File[]} files the graph, then its weights
+ * @param {string} host @param {File[]} files the graph, then its weights @param {any[]} [providers] TrustMark's laid out channels first (D324)
  */
-async function session(host, files) {
+async function session(host, files, providers = ['webgpu']) {
   const [graph, ...weights] = await read(host, files)
-  return InferenceSession.create(graph, { executionProviders: ['webgpu'], externalData: weights.map((data, i) => ({ path: /** @type {string} */ (files[i + 1][0].split('/').pop()), data })) })
+  return InferenceSession.create(graph, { executionProviders: providers, externalData: weights.map((data, i) => ({ path: /** @type {string} */ (files[i + 1][0].split('/').pop()), data })) })
     .finally(() => weights.forEach((data) => /** @type {any} */ (data.buffer).transfer?.(0)))
 }
 
@@ -256,15 +257,19 @@ const STAGES = {
 
     /**
      * The film, decoded by TAEHV, as an MP4 the browser's own encoder fills (H.264 Baseline, which Safari finishes), written by
-     * Mediabunny; and a frame every half second, and the last, as PNGs for the check (D275). @param {Decode} data
+     * Mediabunny; and a frame every half second, and the last, as PNGs for the check (D275). Each frame carries TrustMark's
+     * watermark of the bits given, as a picture does (D324), unless its encoder can't run here (`marked`). @param {Decode & { bits: number[] }} data
      */
-    async decode({ host, files, latent, width, height }) {
+    async decode({ host, files, latent, width, height, bits }) {
       const shape = fastwan.shape(width, height)
       const { frames } = await (await session(host, files)).run({ latents: new Tensor('float16', halves(fastwan.frames(latent, shape)), [shape[1], 48, shape[2], shape[3]]) })
-      const { Output, Mp4OutputFormat, BufferTarget, CanvasSource, QUALITY_HIGH } = await import(new URL('../../vendor/mediabunny/mediabunny.mjs', import.meta.url).href)
+      const marker = await session(host, watermark.FILES, [{ name: 'webgpu', preferredLayout: 'NCHW' }, 'wasm']).catch((error) => (console.warn(error), null))
+      const { Output, Mp4OutputFormat, BufferTarget, CanvasSource, QUALITY_VERY_HIGH } = await import(new URL('../../vendor/mediabunny/mediabunny.mjs', import.meta.url).href)
       const canvas = new OffscreenCanvas(width, height), context = /** @type {OffscreenCanvasRenderingContext2D} */ (canvas.getContext('2d'))
+      const square = /** @type {OffscreenCanvasRenderingContext2D} */ (new OffscreenCanvas(watermark.SIDE, watermark.SIDE).getContext('2d', { willReadFrequently: true }))
       const output = new Output({ format: new Mp4OutputFormat({ fastStart: 'in-memory' }), target: new BufferTarget() })
-      const video = new CanvasSource(canvas, { codec: 'avc', bitrate: QUALITY_HIGH, fullCodecString: 'avc1.42002a' })
+      // The watermark reads back from a frame alone four times in five at this rate, half as often at QUALITY_HIGH in Chromium.
+      const video = new CanvasSource(canvas, { codec: 'avc', bitrate: QUALITY_VERY_HIGH, fullCodecString: 'avc1.42002a' })
       output.addVideoTrack(video, { frameRate: fastwan.FPS })
       await output.start()
       const [values, plane, count, checks] = [new Half(frames.data.buffer, frames.data.byteOffset, frames.data.length), width * height, frames.dims[0], /** @type {Uint8Array[]} */ ([])]
@@ -272,11 +277,14 @@ const STAGES = {
       for (let frame = 0; frame < count; frame++) {
         for (let i = 0; i < plane; i++) for (let c = 0; c < 4; c++) image.data[i * 4 + c] = c === 3 ? 255 : values[(frame * 3 + c) * plane + i] * 255
         context.putImageData(image, 0, 0)
+        // What the encoder changes in the frame squashed to its square, spread over the frame, as over a picture.
+        const cover = marker && (square.drawImage(canvas, 0, 0, watermark.SIDE, watermark.SIDE), watermark.planes(square.getImageData(0, 0, watermark.SIDE, watermark.SIDE).data))
+        if (marker && cover) context.putImageData(new ImageData(watermark.watermarked(image.data, width, height, (await marker.run(watermark.inputs(Tensor, cover, bits))).image.data, cover), width, height), 0, 0)
         await video.add(frame / fastwan.FPS, 1 / fastwan.FPS)
         if (frame % (fastwan.FPS / 2) === 0 || frame === count - 1) checks.push(new Uint8Array(await (await canvas.convertToBlob({ type: 'image/png' })).arrayBuffer()))
       }
       await output.finalize()
-      return { bytes: new Uint8Array(output.target.buffer), checks }
+      return { bytes: new Uint8Array(output.target.buffer), checks, marked: Boolean(marker) }
     },
   },
 }

@@ -281,11 +281,12 @@ export const RUNTIMES = [
   },
   {
     // A film made on this device (D585): Mediabunny writes the MP4 that the browser's own encoder fills (WebCodecs), from
-    // the frames FastWan's worker draws; only what it uses, as one module, since its worker imports it by address.
+    // the frames FastWan's worker draws, and reads a film's frames back where its watermark is looked for (D324); only what
+    // they use, as one module, since their workers import it by address.
     dir: 'vendor/mediabunny',
     packages: ['mediabunny'],
     files: [],
-    bundle: { to: 'mediabunny.mjs', package: 'mediabunny', names: ['BufferTarget', 'CanvasSource', 'Mp4OutputFormat', 'Output', 'QUALITY_HIGH'] },
+    bundle: { to: 'mediabunny.mjs', package: 'mediabunny', names: ['BufferSource', 'BufferTarget', 'CanvasSink', 'CanvasSource', 'Input', 'MP4', 'Mp4OutputFormat', 'Output', 'QUALITY_VERY_HIGH'] },
   },
   {
     // Games (D648): Phaser's minified module build, whole, lent to a game's frame, which alone runs it.

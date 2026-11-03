@@ -263,9 +263,10 @@ export const fingerprint = async () => thumbprint((await sealOf()).keys.publicKe
 export const dated = async (sealed) => (({ by, ...made }) => made)(await fire(contributions().hooks, 'seal', { kind: 'dated', seal: await sealOf() }, () => vouched(sealed, { date: true })))
 
 /**
- * A picture made here with its Content Credentials (D324): signed by the seal, and dated by the first
- * witness when the user chose to have certificates dated, one that fails said and the picture left undated;
- * with any other assertions given (its watermark's soft binding). @param {Uint8Array} png @param {string} maker @param {string} [revision] @param {[string, object][]} [assertions]
+ * A picture or a film made here with its Content Credentials (D324, D585): signed by the seal, and dated by the first
+ * witness when the user chose to have certificates dated, one that fails said and the file left undated; with any
+ * other assertions given (its watermark's soft binding); the organisation's seal sees both as pictures. @param {Uint8Array} png
+ * @param {string} maker @param {string} [revision] @param {[string, object][]} [assertions]
  */
 export async function credentialed(png, maker, revision, assertions = []) {
   const [address] = app.settings.value.certificates?.date ? (await witnesses()).timestamps : []

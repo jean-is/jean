@@ -1,7 +1,7 @@
 // The check page (check.html, D274): a certificate of an answer, its proof and the files it may name,
 // any picture's or film's Content Credentials (D324), and what a file Jean made says of how it was made
 // (D410), dropped or chosen, checked here and kept nowhere: nothing given goes out, nor any address in it.
-// A picture's invisible watermark is read too, and the watermark of the brain on a device in words pasted
+// A picture's or a film's invisible watermark is read too, and the watermark of the brain on a device in words pasted
 // or dropped, a Word document's included (D402), each with its reader, TrustMark's decoder or Gemma's
 // tokenizer: from the browser's cache where Jean keeps it on this device, else downloaded from the weights
 // host, the site's policy's or Jean's own, once the visitor agrees (D410); so is the public log's key, from the log the

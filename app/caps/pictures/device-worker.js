@@ -10,7 +10,7 @@
 // { type: 'unload' }              → { type: 'done' }, its sessions let go, as its files are removed (D263)
 // { type: 'check', host, bytes }  → { type: 'done', logits, areas }, its four levels of nudity, and the other areas it shows
 // { type: 'watermark', host, bytes, bits } → { type: 'done', bytes }, the PNG with TrustMark's watermark of those 100 bits
-// { type: 'detect', host, bytes }  → progress…, { type: 'done', bits }, the 100 TrustMark's decoder reads in a picture
+// { type: 'detect', host, bytes }  → progress…, { type: 'done', bits }, the 100 TrustMark's decoder reads in a picture, or over a film's frames
 import { InferenceSession, Tensor } from '../../vendor/transformers/ort.webgpu.bundle.min.mjs'
 import { AutoTokenizer } from '../../vendor/transformers/transformers.web.min.js'
 import { weightsFrom } from '../../ui/model-worker.js'
@@ -146,7 +146,7 @@ const sessionOf = (host, [path, hash, total], id) => download(new URL(path, host
   .then((model) => InferenceSession.create(new Uint8Array(model), { executionProviders: [{ name: 'webgpu', preferredLayout: 'NCHW' }, 'wasm'] }))
 /**
  * A picture squashed to TrustMark's square, −1…1; to be read, its centre's square when one side is more than
- * twice the other, as TrustMark watermarks those (none Jean makes is). @param {ImageBitmap} picture @param {boolean} [reading]
+ * twice the other, as TrustMark watermarks those (none Jean makes is). @param {ImageBitmap | OffscreenCanvas} picture @param {boolean} [reading]
  */
 function squared(picture, reading = false) {
   const [width, height, side] = [picture.width, picture.height, watermark.SIDE]
@@ -162,7 +162,7 @@ async function watermarked({ host, bytes, bits }) {
   const picture = await createImageBitmap(new Blob([bytes]))
   const [width, height, side] = [picture.width, picture.height, watermark.SIDE]
   const cover = squared(picture)
-  const { image } = await encoder.run({ 'onnx::Concat_0': new Tensor('float32', cover, [1, 3, side, side]), 'onnx::Gemm_1': new Tensor('float32', Float32Array.from(bits), [1, 100]) })
+  const { image } = await encoder.run(watermark.inputs(Tensor, cover, bits))
   const whole = /** @type {OffscreenCanvasRenderingContext2D} */ (new OffscreenCanvas(width, height).getContext('2d'))
   whole.drawImage(picture, 0, 0)
   const pixels = whole.getImageData(0, 0, width, height)
@@ -170,9 +170,23 @@ async function watermarked({ host, bytes, bits }) {
   return (await whole.canvas.convertToBlob({ type: 'image/png' })).arrayBuffer()
 }
 
-/** The 100 bits TrustMark's decoder reads in a picture (D324), each set where its output is above 0. @param {{ host: string, bytes: Uint8Array }} data @param {number} id */
+/**
+ * The 100 bits TrustMark's decoder reads in a picture (D324), each set where its output is above 0; in a film (D585), where
+ * its outputs over all the frames add up above 0, since a frame alone loses some to the film's compression, the first most.
+ * @param {{ host: string, bytes: Uint8Array }} data @param {number} id
+ */
 async function detected({ host, bytes }, id) {
   const decoder = await (reader ??= sessionOf(host, watermark.DECODER, id).catch((error) => { reader = null; throw error }))
-  const { output } = await decoder.run({ image: new Tensor('float32', squared(await createImageBitmap(new Blob([bytes])), true), [1, 3, watermark.SIDE, watermark.SIDE]) })
-  return Array.from(/** @type {Float32Array} */ (output.data), (value) => (value > 0 ? 1 : 0))
+  const sums = new Float32Array(100)
+  for await (const picture of picturesIn(bytes)) (await decoder.run({ image: new Tensor('float32', squared(picture, true), [1, 3, watermark.SIDE, watermark.SIDE]) })).output.data.forEach((/** @type {number} */ value, /** @type {number} */ i) => { sums[i] += value })
+  return Array.from(sums, (value) => (value > 0 ? 1 : 0))
+}
+
+/** A picture, or else each frame of a film as Mediabunny decodes it with the browser's own decoder. @param {Uint8Array} bytes @returns {AsyncGenerator<ImageBitmap | OffscreenCanvas>} */
+async function* picturesIn(bytes) {
+  const picture = await createImageBitmap(new Blob([bytes])).catch(() => null)
+  if (picture) return yield picture
+  const { Input, BufferSource, MP4, CanvasSink } = await import(new URL('../../vendor/mediabunny/mediabunny.mjs', import.meta.url).href)
+  const track = await new Input({ source: new BufferSource(bytes), formats: [MP4] }).getPrimaryVideoTrack()
+  if (track) for await (const { canvas } of new CanvasSink(track).canvases()) yield canvas
 }

@@ -5,7 +5,7 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { cbor, uncbor, Tagged, credentialed, credentialsOf, storeIn } from '../app/caps/receipt/c2pa.js'
+import { cbor, uncbor, Tagged, credentialed, credentialsOf, storeIn, marksOf } from '../app/caps/receipt/c2pa.js'
 import { makeSeal, tokenFor } from '../app/caps/receipt/certificate.js'
 import { marked } from '../app/caps/pictures/mark.js'
 import { picture, film } from '../app/caps/pictures/cloud.js'
@@ -62,10 +62,52 @@ describe('the Content Credentials of a picture made here (D324)', () => {
     assert.deepEqual([(await credentialsOf(failed))?.intact, (await credentialsOf(failed))?.at], [true, null])
   })
 
-  test('anything but a PNG stays as it came; a file without a manifest has none', async () => {
+  test('anything but a PNG or an MP4 stays as it came; a file without a manifest has none', async () => {
     const jpeg = Uint8Array.of(0xff, 0xd8, 0xff, 0xd9)
     assert.equal(await credentialed(jpeg, { ...made, seal: await makeSeal() }), jpeg)
-    assert.deepEqual([storeIn(png), await credentialsOf(png), await credentialsOf(jpeg)], [null, null, null])
+    assert.deepEqual([storeIn(png), await credentialsOf(png), await credentialsOf(jpeg), await credentialsOf(fixture('film.mp4'))], [null, null, null, null])
+  })
+})
+
+describe('the Content Credentials of a film made here (D585)', () => {
+  // As FastWan's worker writes one: ftyp, moov, whose one chunk offset (at 715) points into mdat (at 747), then its XMP at the end.
+  const film = marked(fixture('film.mp4'), 'FastWan2.2-TI2V-5B', 'jean-is/FastWan2.2-TI2V-5B-ONNX@7a1c0de')
+  const maker = { ...made, maker: 'FastWan2.2-TI2V-5B', revision: 'jean-is/FastWan2.2-TI2V-5B-ONNX@7a1c0de' }
+
+  test('a manifest in C2PA’s uuid box after the ftyp, the chunk offsets moved past it, a BMFF hash binding every other box where it now is', async () => {
+    const seal = await makeSeal()
+    const out = await credentialed(film, { ...maker, seal, assertions: [['c2pa.soft-binding', { alg: 'com.adobe.trustmark.Q', blocks: [{ scope: {}, value: '1*0110' }] }]] })
+    const view = new DataView(out.buffer)
+    const size = view.getUint32(28)
+    assert.equal(Buffer.from(out.subarray(32, 52)).toString('hex'), Buffer.from('uuid').toString('hex') + 'd8fec3d61b0e483c92975828877ec481')
+    assert.equal(new TextDecoder().decode(out.subarray(56, 65)), 'manifest\0')
+    // Nothing else changed but the chunk's offset, which still points at the same frames.
+    const moved = film.slice()
+    new DataView(moved.buffer).setUint32(715, 747 + size)
+    assert.deepEqual([...out.subarray(0, 28), ...out.subarray(28 + size)], [...moved])
+    assert.deepEqual(out.subarray(view.getUint32(715 + size), view.getUint32(715 + size) + 8), film.subarray(747, 755))
+    const read = await credentialsOf(out)
+    assert.deepEqual([read?.intact, read?.bound, read?.generated, read?.maker, read?.generator, read?.watermark], [true, true, true, 'FastWan2.2-TI2V-5B', 'Jean', '0110'])
+    assert.match(Buffer.from(out).toString('latin1'), /c2pa\.hash\.bmff\.v3/)
+    // A frame changed, its XMP, or a box moved, and it no longer holds.
+    for (const at of [747 + size + 4, out.length - 40]) {
+      const changed = out.slice()
+      changed[at] ^= 1
+      assert.deepEqual([(await credentialsOf(changed))?.intact, (await credentialsOf(changed))?.bound], [false, false], String(at))
+    }
+    const reordered = new Uint8Array([...out.subarray(0, 28 + size), ...out.subarray(28 + size + 711), ...out.subarray(28 + size, 28 + size + 711)])
+    assert.equal((await credentialsOf(reordered))?.bound, false)
+  })
+
+  test('dated by a witness in the room its signature kept, so the chunk offsets and the hash still hold', async () => {
+    const out = await credentialed(film, { ...maker, seal: await makeSeal(), date: (imprint) => tokenFor(imprint, reply) })
+    const read = await credentialsOf(out)
+    assert.deepEqual([read?.intact, read?.bound, read?.witness?.['2.5.4.3']], [true, true, 'Test TSA'])
+    assert.equal(new DataView(out.buffer).getUint32(715 + new DataView(out.buffer).getUint32(28)), 747 + new DataView(out.buffer).getUint32(28))
+  })
+
+  test('its XMP says so too, read where it carries no credentials', async () => {
+    assert.deepEqual([(await marksOf('waves.mp4', film))?.generated, (await marksOf('waves.mp4', film))?.maker], [true, 'FastWan2.2-TI2V-5B'])
   })
 })
 
@@ -79,6 +121,14 @@ describe('Content Credentials made elsewhere', () => {
       changed[changed.length - 3] ^= 1
       assert.equal((await credentialsOf(changed))?.intact, false, name)
     }
+  })
+
+  test('C2PA’s tool’s, in an MP4: its BMFF hash checked over the boxes it doesn’t exclude, each at its place', async () => {
+    const read = await credentialsOf(fixture('c2pa.mp4'))
+    assert.deepEqual([read?.intact, read?.bound, read?.generated, read?.maker, read?.generator, read?.selfIssued], [true, true, true, 'Test Maker', 'c2patool test', false])
+    const changed = fixture('c2pa.mp4')
+    changed[changed.length - 3] ^= 1
+    assert.deepEqual([(await credentialsOf(changed))?.intact, (await credentialsOf(changed))?.bound], [false, false])
   })
 
   test('a provider’s picture and film pass through untouched, their marks with them', async () => {

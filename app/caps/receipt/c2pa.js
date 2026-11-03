@@ -91,14 +91,18 @@ export const uncbor = (bytes) => item(bytes, 0)[0]
 
 /** @param {number} n */
 const u32 = (n) => Uint8Array.of(n >>> 24, (n >> 16) & 255, (n >> 8) & 255, n & 255)
+/** @param {number} n */
+const u64 = (n) => concat(u32(Math.floor(n / 2 ** 32)), u32(n % 2 ** 32))
 /** A box: its length, its type and what it holds. @param {string} type @param {...Uint8Array} parts */
 const box = (type, ...parts) => concat(u32(8 + parts.reduce((sum, part) => sum + part.length, 0)), encoder.encode(type), ...parts)
 /** C2PA's box types are UUIDs: four letters, then ISO's fixed tail. */
 const TAIL = Uint8Array.of(0x00, 0x11, 0x00, 0x10, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71)
+/** The extended type of the 'uuid' box that holds a manifest store in an MP4 (C2PA A.5.1). */
+const C2PA_BOX = Uint8Array.of(0xd8, 0xfe, 0xc3, 0xd6, 0x1b, 0x0e, 0x48, 0x3c, 0x92, 0x97, 0x58, 0x28, 0x87, 0x7e, 0xc4, 0x81)
 /** A superbox of a type, requestable by its label. @param {string} type @param {string} label @param {...Uint8Array} content */
 const superbox = (type, label, ...content) => box('jumb', box('jumd', encoder.encode(type), TAIL, Uint8Array.of(3), encoder.encode(`${label}\0`)), ...content)
 
-/** The boxes between two offsets. @param {Uint8Array} bytes @returns {{ type: string, start: number, end: number }[]} */
+/** The boxes between two offsets: where each starts, and its body. @param {Uint8Array} bytes @returns {{ type: string, at: number, start: number, end: number }[]} */
 function boxesIn(bytes, start = 0, end = bytes.length) {
   const all = []
   for (let at = start; at + 8 <= end;) {
@@ -107,10 +111,38 @@ function boxesIn(bytes, start = 0, end = bytes.length) {
     if (length === 1) [length, body] = [Number(view.getBigUint64(8)), at + 16]
     else if (length === 0) length = end - at
     if (length < body - at || at + length > end) throw new Error('format')
-    all.push({ type: ascii(bytes.subarray(at + 4, at + 8)), start: body, end: at + length })
+    all.push({ type: ascii(bytes.subarray(at + 4, at + 8)), at, start: body, end: at + length })
     at += length
   }
   return all
+}
+
+/** A film's chunk offsets, in its moov's stco and co64 boxes, moved as far as a box put before its frames moves them. @param {Uint8Array} bytes @param {number} by */
+function moved(bytes, by, start = 0, end = bytes.length) {
+  const view = new DataView(bytes.buffer, bytes.byteOffset)
+  for (const { type, start: from, end: to } of boxesIn(bytes, start, end)) {
+    if (['moov', 'trak', 'mdia', 'minf', 'stbl'].includes(type)) moved(bytes, by, from, to)
+    const wide = type === 'co64'
+    if (wide || type === 'stco') for (let i = 0, at = from + 8; i < view.getUint32(from + 4); i++, at += wide ? 8 : 4) wide ? view.setBigUint64(at, view.getBigUint64(at) + BigInt(by)) : view.setUint32(at, view.getUint32(at) + by)
+  }
+  return bytes
+}
+
+/**
+ * What a film's BMFF hash covers (C2PA 18.6.2): each top-level box no exclusion matches, after its offset in 8 bytes; an
+ * exclusion matches by its path, and by its length and its data where it gives them. Null for what this doesn't read: a
+ * Merkle tree, or exclusions of a box's parts, of boxes inside others, or by version and flags, as fragmented films have.
+ * @param {Uint8Array} bytes @param {{ exclusions?: any[], merkle?: unknown }} hash
+ */
+function covered(bytes, { exclusions = [], merkle }) {
+  if (merkle || exclusions.some(({ xpath, subset, version, flags }) => subset || version !== undefined || flags || !/^\/[^/[\]]{4}(\[[1-9]\d*\])?$/.test(xpath))) return null
+  const seen = /** @type {Record<string, number>} */ ({})
+  return concat(...boxesIn(bytes).flatMap(({ type, at, end }) => {
+    const nth = (seen[type] = (seen[type] ?? 0) + 1)
+    const out = exclusions.some(({ xpath, length = end - at, data = [] }) => [`/${type}`, `/${type}[${nth}]`].includes(xpath) && length === end - at
+      && data.every((/** @type {{ offset: number, value: Uint8Array }} */ { offset, value }) => same(bytes.subarray(at + offset, at + offset + value.length), value)))
+    return out ? [] : [u64(at), bytes.subarray(at, end)]
+  }))
 }
 /**
  * A superbox: its type, its label, the superboxes it holds, its CBOR, and the bytes a hashed URI covers.
@@ -140,12 +172,14 @@ const ROOM = 8192
  * trained model made it (`c2pa.created`), and the SHA-256 of its bytes but that chunk's (`c2pa.hash.data`),
  * with any others given (a watermark's soft binding); its claim signed by the seal (ES256, its certificate in
  * x5chain); dated, when `date` is given, by the token it gets for the signature (sigTst2), else left undated.
- * Anything not a PNG as it is.
- * @param {Uint8Array} png @param {{ maker: string, revision?: string, generator: { name: string, version?: string }, seal: Seal, assertions?: [string, object][], date?: (imprint: Uint8Array) => Promise<Uint8Array> }} made
+ * An MP4, a film made on this device (D585), the same in C2PA's uuid box after its ftyp, its chunk offsets moved
+ * past it, and bound by the hash of every other box at its place (`c2pa.hash.bmff.v3`). Anything else as it is.
+ * @param {Uint8Array} file @param {{ maker: string, revision?: string, generator: { name: string, version?: string }, seal: Seal, assertions?: [string, object][], date?: (imprint: Uint8Array) => Promise<Uint8Array> }} made
  */
-export async function credentialed(png, { maker, revision, generator, seal, assertions: more = [], date }) {
-  if (ascii(png.subarray(1, 4)) !== 'PNG' || ascii(png.subarray(12, 16)) !== 'IHDR') return png
-  const [at, label, instance, hash] = [33, `urn:c2pa:${crypto.randomUUID()}`, `xmp:iid:${crypto.randomUUID()}`, await digest(png)]
+export async function credentialed(file, { maker, revision, generator, seal, assertions: more = [], date }) {
+  const film = ascii(file.subarray(4, 8)) === 'ftyp'
+  if (!film && (ascii(file.subarray(1, 4)) !== 'PNG' || ascii(file.subarray(12, 16)) !== 'IHDR')) return file
+  const [at, label, instance, hash, around] = [film ? boxesIn(file)[0].end : 33, `urn:c2pa:${crypto.randomUUID()}`, `xmp:iid:${crypto.randomUUID()}`, await digest(file), film ? 45 : 12]
   const header = cbor(new Map(/** @type {[number, unknown][]} */ ([[1, -7], [33, [seal.certificate, ...seal.chain ?? []]]])))
   const actions = { actions: [{ action: 'c2pa.created', digitalSourceType: GENERATED, softwareAgent: { name: maker, ...(revision && { version: revision }) } }] }
   /** @type {Record<string, unknown>} */
@@ -156,10 +190,16 @@ export async function credentialed(png, { maker, revision, generator, seal, asse
   let boxes = []
   const sealed = () => superbox('c2pa', 'c2pa', superbox('c2ma', label, superbox('c2as', 'c2pa.assertions', ...boxes), superbox('c2cl', 'c2pa.claim.v2', box('cbor', claim)),
     superbox('c2cs', 'c2pa.signature', box('cbor', cbor(new Tagged(18, [header, unprotected, null, signature]))))))
-  // The chunk's length is in the hash's assertion, so it is made again until that length is its own.
-  while (store.length + 12 !== length) {
-    length = store.length + 12
-    const all = /** @type {[string, object][]} */ ([['c2pa.actions.v2', actions], ...more, ['c2pa.hash.data', { exclusions: [{ start: at, length }], name: 'jumbf manifest', alg: 'sha256', hash, pad: new Uint8Array() }]])
+  // The store in its chunk, or in its box: its purpose, then the offset of no Merkle tree's box.
+  const placed = (type = encoder.encode('caBX')) => (film ? concat(file.subarray(0, at), box('uuid', C2PA_BOX, new Uint8Array(4), encoder.encode('manifest\0'), new Uint8Array(8), store), moved(file.slice(at), store.length + around))
+    : concat(file.subarray(0, at), u32(store.length), type, store, u32(crc32(concat(type, store))), file.subarray(at)))
+  const boxed = { exclusions: [{ xpath: '/uuid', data: [{ offset: 8, value: C2PA_BOX }] }], alg: 'sha256' }
+  // The chunk's length is in the hash's assertion, and the box's moves what a film's hash covers, so it is made again until that length is its own.
+  while (store.length + around !== length) {
+    length = store.length + around
+    const binding = film ? ['c2pa.hash.bmff.v3', { ...boxed, hash: await digest(/** @type {Uint8Array} */ (covered(placed(), boxed))) }]
+      : ['c2pa.hash.data', { exclusions: [{ start: at, length }], name: 'jumbf manifest', alg: 'sha256', hash, pad: new Uint8Array() }]
+    const all = /** @type {[string, object][]} */ ([['c2pa.actions.v2', actions], ...more, binding])
     boxes = all.map(([name, value]) => superbox('cbor', name, box('cbor', cbor(value))))
     const created = await Promise.all(all.map(async ([name], i) => ({ url: `self#jumbf=c2pa.assertions/${name}`, hash: await digest(boxes[i].subarray(8)) })))
     claim = cbor({ instanceID: instance, claim_generator_info: generator, signature: `self#jumbf=/c2pa/${label}/c2pa.signature`, created_assertions: created, alg: 'sha256' })
@@ -176,8 +216,7 @@ export async function credentialed(png, { maker, revision, generator, seal, asse
     unprotected = { sigTst2: { tstTokens: [{ val: token }] }, pad: new Uint8Array(pad) }
     store = sealed()
   }
-  const type = encoder.encode('caBX')
-  return concat(png.subarray(0, at), u32(store.length), type, store, u32(crc32(concat(type, store))), png.subarray(at))
+  return placed()
 }
 
 // ─── Reading ─────────────────────────────────────────────────────────────────
@@ -201,8 +240,7 @@ export function storeIn(bytes) {
   } else if (at(0) === 'RIFF' && at(8) === 'WEBP') {
     for (let i = 12; i + 8 <= bytes.length; i += 8 + ((view.getUint32(i + 4, true) + 1) & ~1)) if (at(i) === 'C2PA') return bytes.subarray(i + 8, i + 8 + view.getUint32(i + 4, true))
   } else if (at(4) === 'ftyp') {
-    const C2PA = 'd8fec3d61b0e483c92975828877ec481'
-    const found = boxesIn(bytes).find(({ type, start }) => type === 'uuid' && Array.from(bytes.subarray(start, start + 16), (byte) => byte.toString(16).padStart(2, '0')).join('') === C2PA)
+    const found = boxesIn(bytes).find(({ type, start }) => type === 'uuid' && same(bytes.subarray(start, start + 16), C2PA_BOX))
     // After the UUID: its version and flags, its purpose, the offset of its Merkle data, then the store.
     if (found) return bytes.subarray(bytes.indexOf(0, found.start + 20) + 9, found.end)
   }
@@ -212,8 +250,8 @@ export function storeIn(bytes) {
 /**
  * A file's Content Credentials, checked: null when it has none. Intact when the active manifest's
  * signature holds by the certificate it carries, its assertions are the ones its claim names, and,
- * where it binds them with a data hash, the file is the one it signed (`bound`; undefined for a film's
- * box hashes, which this doesn't check). With who signed it and who certified them, when a witness
+ * where it binds them with a data hash or a film's hash of its boxes, the file is the one it signed (`bound`;
+ * undefined for box hashes this doesn't read, `covered`'s). With who signed it and who certified them, when a witness
  * dated the signature, and what it says made the file: a trained model, and which.
  * @param {Uint8Array} bytes
  */
@@ -247,6 +285,9 @@ export async function credentialsOf(bytes) {
       const kept = [...(data.exclusions ?? [])].sort((a, b) => a.start - b.start).reduce((/** @type {{ at: number, parts: Uint8Array[] }} */ { at, parts }, { start, length }) => ({ at: start + length, parts: [...parts, bytes.subarray(at, start)] }), { at: 0, parts: [] })
       bound = same(await digest(concat(...kept.parts, bytes.subarray(kept.at)), HASHES[data.alg ?? claim.alg ?? 'sha256']), data.hash)
     }
+    const boxes = value('c2pa.hash.bmff.v3') ?? value('c2pa.hash.bmff.v2')
+    const whole = boxes?.hash && covered(bytes, boxes)
+    if (whole) bound = same(await digest(whole, HASHES[boxes.alg ?? claim.alg ?? 'sha256']), boxes.hash)
     const token = unprotected.sigTst2?.tstTokens?.[0]?.val
     const dated = token && await readToken(token).catch(() => null)
     const datedOn = dated?.intact && same(dated.imprint, await digest(toBeDated(header, signature))) ? dated : null
@@ -270,10 +311,10 @@ export const NONE = { intact: false, bound: /** @type {boolean | undefined} */ (
 /**
  * What a file says of itself of how it was made, unsigned, as those Jean makes say it (D324, D410): IPTC's Digital
  * Source Type and the system, in a Word document's or a workbook's custom properties, in XMP (a drawing's metadata,
- * a PNG's iTXt, a JPEG's packet), or in a web page's JSON-LD, in schema.org's terms. @param {string} name @param {Uint8Array} bytes
+ * a PNG's iTXt, a JPEG's packet, a film's uuid box), or in a web page's JSON-LD, in schema.org's terms. @param {string} name @param {Uint8Array} bytes
  */
 export async function marksOf(name, bytes) {
-  if (!/\.(docx|xlsx|pptx|svg|html?|png|jpe?g|webp)$/i.test(name)) return null
+  if (!/\.(docx|xlsx|pptx|svg|html?|png|jpe?g|webp|mp4|mov)$/i.test(name)) return null
   const office = /x$/i.test(name) ? await readZip(bytes).find((entry) => entry.name === 'docProps/custom.xml')?.read() : bytes
   const text = new TextDecoder().decode(office)
   const source = /DigitalSourceType(?:"><vt:lpwstr>|=["']|>|"\s*:\s*")([^"'<]+)/i.exec(text)?.[1]

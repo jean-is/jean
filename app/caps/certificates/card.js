@@ -69,12 +69,12 @@ export async function credentialsGiven(given) {
   return read.flat()
 }
 
-/** A picture's name, as one whose watermark is looked for. */
-export const PICTURE = /\.(png|jpe?g|webp|gif|avif)$/i
+/** A picture's or a film's name, as one whose watermark is looked for. */
+export const PICTURE = /\.(png|jpe?g|webp|gif|avif|mp4|mov)$/i
 
 /**
- * Each picture's watermark (D324), its 100 bits as `read` gives them: TrustMark's 61, beside those its
- * credentials name; a picture without credentials gets an entry of its own. @param {{ name: string, bytes: Uint8Array }[]} given
+ * Each picture's or film's watermark (D324, D585), its 100 bits as `read` gives them: TrustMark's 61, beside those its
+ * credentials name; one without credentials gets an entry of its own. @param {{ name: string, bytes: Uint8Array }[]} given
  * @param {Credentials[]} credentials @param {(bytes: Uint8Array) => Promise<number[]>} read
  */
 export async function watermarksOf(given, credentials, read) {

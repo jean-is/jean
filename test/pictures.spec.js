@@ -380,8 +380,8 @@ test('on this device, FLUX.2 [klein] changes a picture of the conversation in it
 })
 
 /**
- * FastWan's stages (D585): umT5's rows and layers, a glimpse after the first step, then the film, the start of an MP4,
- * and two of its frames for the check.
+ * FastWan's stages (D585): umT5's rows and layers, a glimpse after the first step, then the film, the start of an MP4 and
+ * a free box holding the watermark's bits it was given, said watermarked, and two of its frames for the check.
  */
 const FILMING = `self.onmessage = async ({ data }) => {
   const canvas = new OffscreenCanvas(8, 8)
@@ -389,10 +389,11 @@ const FILMING = `self.onmessage = async ({ data }) => {
   const png = async () => new Uint8Array(await (await canvas.convertToBlob()).arrayBuffer())
   if (data.type === 'denoise') self.postMessage({ type: 'glimpse', done: 0.25, bytes: await png() })
   self.postMessage({ type: 'done', ...(data.type === 'words' || data.type === 'read' ? { hidden: new Uint16Array(4096) } : data.type === 'denoise' ? { latent: new Float32Array(8) }
-    : data.type === 'decode' ? { bytes: new Uint8Array([0, 0, 0, 24, 102, 116, 121, 112, 105, 115, 111, 109, 0, 0, 2, 0, 105, 115, 111, 109, 97, 118, 99, 49]), checks: [await png(), await png()] } : {}) })
+    : data.type === 'decode' ? { bytes: new Uint8Array([0, 0, 0, 24, 102, 116, 121, 112, 105, 115, 111, 109, 0, 0, 2, 0, 105, 115, 111, 109, 97, 118, 99, 49, 0, 0, 0, 8 + data.bits.length, 102, 114, 101, 101, ...data.bits.map((bit) => 48 + bit)]),
+      checks: [await png(), await png()], marked: true } : {}) })
 }`
 
-test('films on this device: their own card, downloaded once, then a film of a description, its frames checked, its file saying a trained model made it (D585)', async ({ page }) => {
+test('films on this device: their own card, downloaded once, then a film of a description, its frames checked and watermarked, its file saying a trained model made it (D585)', async ({ page }) => {
   await capable(page)
   await page.route('**/caps/pictures/stage-worker.js', (route) => route.fulfill({ contentType: 'text/javascript', body: FILMING }))
   // Only this device makes films: the fake brain has no film model.
@@ -423,11 +424,20 @@ test('films on this device: their own card, downloaded once, then a film of a de
   // Its certificate says FastWan made it here, at its pinned revision (D264), and so does its file (D279).
   await expect.poll(() => page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.flatMap((record) => record.update?._meta?.made ?? []).map(({ model, revision, local }) => [model, revision, local])))
     .toEqual([['FastWan2.2-TI2V-5B', expect.stringMatching(/^jean-is\/FastWan2\.2-TI2V-5B-ONNX@[0-9a-f]{40}$/), true]])
-  const bytes = await page.evaluate(async () => {
-    const { app } = await import('/ui/state.js')
-    return new TextDecoder().decode(await app.fs.readBytes(`${app.projectDir}/${document.querySelector('app-picture')?.getAttribute('uri')}`))
+  const [bytes, credentials] = await page.evaluate(async () => {
+    const [{ app }, { credentialsOf }] = await Promise.all([import('/ui/state.js'), import('/caps/receipt/c2pa.js')])
+    const film = /** @type {Uint8Array} */ (await app.fs.readBytes(`${app.projectDir}/${document.querySelector('app-picture')?.getAttribute('uri')}`))
+    const { intact, bound, generated, maker, watermark } = /** @type {any} */ (await credentialsOf(film))
+    // The box after the ftyp's 24 bytes, and its extended type.
+    const after = [new TextDecoder().decode(film.subarray(28, 32)), Array.from(film.subarray(32, 36), (byte) => byte.toString(16)).join('')]
+    return [new TextDecoder().decode(film), { intact, bound, generated, maker, watermark, after }]
   })
   expect(bytes).toMatch(/^.{4}ftyp.*uuid.*Iptc4xmpExt:DigitalSourceType="http:\/\/cv\.iptc\.org\/newscodes\/digitalsourcetype\/trainedAlgorithmicMedia" Iptc4xmpExt:AISystemUsed="FastWan2\.2-TI2V-5B"/s)
+  // And its Content Credentials, this device's, bound by the hash of its boxes (D324), right after its ftyp, naming the watermark
+  // whose bits its worker put in its frames: the first 61 of the 100 it was given.
+  expect(bytes).toMatch(/c2pa\.hash\.bmff\.v3/)
+  const given = /free([01]{100})/.exec(bytes)?.[1] ?? ''
+  expect(credentials).toEqual({ intact: true, bound: true, generated: true, maker: 'FastWan2.2-TI2V-5B', watermark: given.slice(0, 61), after: ['uuid', 'd8fec3d6'] })
 })
 
 test('a film made here showing nudity never shows: a frame of it is refused, nothing is kept, and the brain hears why (D275, D585)', async ({ page }) => {

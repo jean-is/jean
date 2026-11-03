@@ -58,7 +58,7 @@ const checkTool = {
     name: 'check_certificate',
     description: 'Check a certificate of an answer, or its proof, that the user shared: whether its seal holds, who sealed it and when, what it says, and with its proof the words and which of the other files given it names. Also reads a picture\'s or film\'s Content Credentials: whether they hold, who signed them, and whether they say AI made it; what a document, drawing, page or picture says of itself, as those made with Jean do; and whether words carry the watermark of the brain on a device. The user sees the result in your answer.',
     parameters: { type: 'object', properties: { files: { type: 'array', items: { type: 'string' }, description: 'Names of shared files: the certificate, its proof, files to match, pictures, films and documents' },
-      watermark: { type: 'boolean', description: 'Also look for an invisible watermark in the pictures, as when asked; the first time downloads 47 MB' },
+      watermark: { type: 'boolean', description: 'Also look for an invisible watermark in the pictures and films, as when asked; the first time downloads 47 MB' },
       words: { type: 'string', description: 'Words, as the user gave them, to look for the watermark of the brain on a device in; the first time downloads 20 MB' } } },
   },
   kind: 'read',
@@ -71,7 +71,7 @@ const checkTool = {
       return { name: link.name, bytes: (await app.fs.readBytes(join(app.projectDir, link.uri))) ?? new Uint8Array() }
     }))
     const [checked, credentials] = await Promise.all([checkGiven(given, { logKey: await logKey().catch(() => null), trust: await (await import('../enterprise/enterprise.js')).trust(app.policy, app.fs) }), credentialsGiven(given)])
-    // Each picture's watermark, when asked (D324): TrustMark's 61 bits, set beside those its credentials name.
+    // Each picture's or film's watermark, when asked (D324): TrustMark's 61 bits, set beside those its credentials name.
     if (args?.watermark) await watermarksOf(given, credentials, async (bytes) => (await import('../pictures/device.js')).watermarkOf(bytes))
     const lean = args?.words ? await counter.call({ type: 'lean', host: weightsHost(), model: BRAIN, revision: REVISION, text: String(args.words) }).then(({ counted, z }) => ({ counted, z })) : null
     if (!checked && !credentials.length && !lean) return 'None of these files is a certificate of an answer, its proof, or a file that says how it was made.'

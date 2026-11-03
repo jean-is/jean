@@ -263,10 +263,11 @@ export function paint(description, shape, show = () => {}, from = []) {
 
 /**
  * A film of a description by FastWan (D585), once its files are here, one thing at a time as pictures are: 5 seconds in the
- * shape asked, glimpsed after each step; with a frame every half second as PNGs, which the check reads (D275).
- * @param {string} description @param {keyof typeof SIZES} shape @param {(glimpse: { done: number, bytes: Uint8Array }) => void} [show]
+ * shape asked, glimpsed after each step; with a frame every half second as PNGs, which the check reads (D275), and whether
+ * TrustMark's watermark of the bits given is in its frames (D324). @param {string} description @param {keyof typeof SIZES} shape
+ * @param {(glimpse: { done: number, bytes: Uint8Array }) => void} [show] @param {number[]} [bits]
  */
-export function film(description, shape, show = () => {}) {
+export function film(description, shape, show = () => {}, bits = []) {
   const [width, height] = fastwan.SIZES[shape]
   const made = holdStill(busy.then(async () => {
     let { hidden } = await stage({ maker: 'fastwan', type: 'words', files: FILM.words, tokenizer: FILM.tokenizer, prompt: description })
@@ -275,8 +276,8 @@ export function film(description, shape, show = () => {}) {
     const embeds = new Uint16Array(fastwan.WORDS * 4096)
     embeds.set(hidden)
     const { latent } = await stage({ maker: 'fastwan', type: 'denoise', files: FILM.denoise, decoder: FILM.decode, embeds, width, height }, [embeds.buffer], show)
-    return stage({ maker: 'fastwan', type: 'decode', files: FILM.decode, latent, width, height }, [latent.buffer])
+    return stage({ maker: 'fastwan', type: 'decode', files: FILM.decode, latent, width, height, bits }, [latent.buffer])
   }))
   busy = made.then(() => {}, () => {})
-  return made.then(({ bytes, checks }) => ({ bytes: new Uint8Array(bytes), mimeType: 'video/mp4', model: NAMES.fastwan, revision: WAN.replace('/resolve/', '@').slice(0, -1), checks: /** @type {Uint8Array[]} */ (checks) }))
+  return made.then(({ bytes, checks, marked }) => ({ bytes: new Uint8Array(bytes), mimeType: 'video/mp4', model: NAMES.fastwan, revision: WAN.replace('/resolve/', '@').slice(0, -1), checks: /** @type {Uint8Array[]} */ (checks), marked: Boolean(marked) }))
 }

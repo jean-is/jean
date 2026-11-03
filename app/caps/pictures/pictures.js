@@ -120,8 +120,10 @@ export async function make(kind, args, ctx) {
   const found = await engines(kind, from.length > 0)
   if (!found.length && kind === 'picture' && from.length) throw new Error(`None of the connected brains can change pictures, and on this device only Detailed (FLUX.2 [klein]) does, ${fit.value.includes('flux2-klein') ? 'not downloaded' : 'which this device can\'t run'}. Tell the user that OpenAI, Gemini and OpenRouter change them, added in Settings › Brains${fit.value.includes('flux2-klein') ? ', where Detailed can be downloaded too' : ''}, and offer a new picture from a description instead.`)
   if (!found.length) throw new Error(`None of the connected brains can ${kind === 'film' ? 'make films' : 'make pictures'}, and this device has none of its own. OpenAI, Gemini and OpenRouter make them, added in Settings › Brains, where ${kind}s on this device can be downloaded too${kind === 'film' && from.length ? ', though only from a description' : ''}.`)
-  /** @type {{ bytes: Uint8Array, mimeType: string, model?: string, checks?: Uint8Array[] } | undefined} */
+  /** @type {{ bytes: Uint8Array, mimeType: string, model?: string, checks?: Uint8Array[], marked?: boolean } | undefined} */
   let made
+  // The watermark's bits, chosen first: a film's frames carry them as it is made.
+  const { data, softBinding } = randomData()
   /** @type {Engine | undefined} */
   let by
   const failed = []
@@ -139,7 +141,7 @@ export async function make(kind, args, ctx) {
     }
     const seen = (/** @type {{ done: number, bytes: Uint8Array }} */ { done, bytes }) => glimpse({ done, image: { type: 'image', mimeType: 'image/png', data: encode(bytes) } })
     try {
-      made = 'device' in engine ? await (kind === 'film' ? device.film(description, shape, seen) : device.paint(description, shape, seen, from.map((file) => file.bytes)))
+      made = 'device' in engine ? await (kind === 'film' ? device.film(description, shape, seen, payloadOf(data)) : device.paint(description, shape, seen, from.map((file) => file.bytes)))
         : await cloud[kind]({ ...engine, apiKey: (await getSecret(app.fs, engine.brain.id)) ?? undefined, prompt: description, from, shape, seconds: secondsOf(args), show: glimpse, signal: ctx.signal })
       by = engine
       break
@@ -153,14 +155,13 @@ export async function make(kind, args, ctx) {
   let refused
   if (by && unfiltered(by)) for (const bytes of made.checks ?? [made.bytes]) if ((refused = await device.refused(bytes))) break
   if (refused) throw new Error(`Not made: it showed ${SHOWED[refused]}, which ${kind}s made on this device or this computer don't show${['suggestive', 'hate', 'violence'].includes(refused) ? ' unless allowed in Settings › Brains' : ''}. Tell the user so, without trying again in other words.`)
-  // It says which trained model made it: in its pixels, TrustMark's watermark, then in its file, its XMP (D279) and its Content
-  // Credentials, which name the watermark (D324). One that can't be watermarked keeps its other marks; a film, its XMP alone (D585).
-  // A provider's picture keeps its own.
+  // It says which trained model made it: in its pixels, TrustMark's watermark, a film's in each frame as it was made (D585), then
+  // in its file, its XMP (D279) and its Content Credentials, which name the watermark (D324). One that can't be watermarked keeps
+  // its other marks. A provider's picture or film keeps its own.
   if (by && unfiltered(by)) {
     const [maker, revision] = [made.model || ('model' in by ? by.model : ''), 'revision' in made ? String(made.revision) : undefined]
-    const { data, softBinding } = randomData()
-    const bytes = made.mimeType === 'image/png' ? await device.watermarked(made.bytes, payloadOf(data)).catch((error) => (console.warn(error), null)) : null
-    made = { ...made, bytes: kind === 'film' ? marked(made.bytes, maker, revision) : await (await import('../receipt/receipt.js')).credentialed(marked(bytes ?? made.bytes, maker, revision), maker, revision, bytes ? [['c2pa.soft-binding', softBinding]] : []) }
+    const bytes = kind === 'film' ? (made.marked ? made.bytes : null) : made.mimeType === 'image/png' ? await device.watermarked(made.bytes, payloadOf(data)).catch((error) => (console.warn(error), null)) : null
+    made = { ...made, bytes: await (await import('../receipt/receipt.js')).credentialed(marked(bytes ?? made.bytes, maker, revision), maker, revision, bytes ? [['c2pa.soft-binding', softBinding]] : []) }
   }
   const name = `${String(args?.name ?? '').trim().replace(/\.\w+$/, '') || slug(description).slice(0, 40) || kind}.${made.mimeType.split('/')[1].replace('jpeg', 'jpg').replace('quicktime', 'mov')}`
   const link = await addFile(app.fs, { projectDir: app.projectDir, name, mimeType: made.mimeType, bytes: made.bytes, pages: [description], by: 'jean' })

@@ -1,8 +1,8 @@
 // Checking certificates (D274): the check page, which anyone opens, reads a certificate of an answer,
 // its proof and files, says whether its seal holds, who sealed it and what it says, and sends nothing
 // it is given anywhere; a certificate shared in a conversation brings check_certificate, whose card in
-// the answer says the same, and knows this device's own seal. A picture's Content Credentials, read the
-// same ways (D324), what a file Jean made says of itself (D410), and words, for the watermark of the
+// the answer says the same, and knows this device's own seal. A picture's or a film's Content Credentials, read the
+// same ways (D324, D585), what a file Jean made says of itself (D410), and words, for the watermark of the
 // brain on a device (D402), whose readers a stranger's browser downloads once they agree (D410).
 import { readFile } from 'node:fs/promises'
 import { deflateSync } from 'node:zlib'
@@ -126,6 +126,52 @@ for (const [lang, watermarked, said] of [['en', true, 'It carries an invisible w
     await expect(page.locator('.msg-jean .prose').last()).toContainText(watermarked ? 'its invisible watermark: TrustMark\'s' : 'its invisible watermark: none found')
   })
 }
+
+/**
+ * A film made on this device, as Jean saves it (D585): an MP4 as FastWan's worker writes one, its XMP, and Content
+ * Credentials a device's seal signed over its boxes, naming the watermark its frames carry.
+ */
+async function madeFilm() {
+  const { marked } = await import('../app/caps/pictures/mark.js')
+  const { credentialed } = await import('../app/caps/receipt/c2pa.js')
+  const { makeSeal } = await import('../app/caps/receipt/certificate.js')
+  const film = marked(new Uint8Array(await readFile(new URL('./fixtures/film.mp4', import.meta.url))), 'FastWan2.2-TI2V-5B')
+  const bytes = await credentialed(film, { maker: 'FastWan2.2-TI2V-5B', generator: { name: 'Jean' }, seal: await makeSeal(),
+    assertions: [['c2pa.soft-binding', { alg: 'com.adobe.trustmark.Q', blocks: [{ scope: {}, value: `1*${WATERMARKED.join('')}` }] }]] })
+  return { name: 'Waves.mp4', mimeType: 'video/mp4', buffer: Buffer.from(bytes) }
+}
+
+test('in a stranger’s browser the check page reads a film Jean made: its Content Credentials hold over its boxes, and once they agree, the watermark read over its frames is the one they name (D585)', async ({ browser, baseURL }) => {
+  const context = await browser.newContext({ baseURL })
+  const checker = await context.newPage()
+  await readers(checker)
+  await checker.goto('check')
+  await checker.locator('input[type="file"]').setInputFiles([await madeFilm()])
+  const card = checker.locator('.receipt-checked')
+  await expect(card.locator('.receipt-verdict')).toHaveText('Waves.mp4 carries a signed record of how it was made, unchanged since')
+  // Its boxes' hash was checked, so nothing says it wasn't.
+  await expect(card.locator('.receipt-note')).toHaveText('It says AI made it')
+  await expect(card).toContainText('FastWan2.2-TI2V-5B')
+  await checker.locator('main > button').click()
+  await expect(card.locator('.receipt-note')).toContainText('Its invisible watermark is the one this record names')
+  await context.close()
+})
+
+test('the check page reads a film’s Content Credentials, C2PA’s own tool’s, its boxes’ hash checked: changed since, they no longer hold (D585)', async ({ browser, baseURL }) => {
+  const context = await browser.newContext({ baseURL })
+  const checker = await context.newPage()
+  await checker.goto('check')
+  const input = checker.locator('input[type="file"]')
+  const buffer = await readFile(new URL('./fixtures/c2pa.mp4', import.meta.url))
+  await input.setInputFiles([{ name: 'c2pa.mp4', mimeType: 'video/mp4', buffer }])
+  const card = checker.locator('.receipt-checked')
+  await expect(card.locator('.receipt-verdict')).toHaveText('c2pa.mp4 carries a signed record of how it was made, unchanged since')
+  await expect(card.locator('.receipt-note')).toHaveText('It says AI made it')
+  buffer[buffer.length - 3] ^= 1
+  await input.setInputFiles([{ name: 'c2pa.mp4', mimeType: 'video/mp4', buffer }])
+  await expect(card.locator('.receipt-verdict')).toHaveText('c2pa.mp4 carries a record of how it was made that doesn’t hold: changed since, or not signed by the key it names')
+  await context.close()
+})
 
 /** A picture made on this device, as Jean saves it: a PNG of one pixel, its XMP saying SD-Turbo made it (D279). */
 async function madePicture() {
