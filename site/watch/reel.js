@@ -537,16 +537,22 @@ function scrollAt (holds, frame, u) {
   page.scrollTop = y
 }
 
+/** Where each stop last pointed, in the view. @type {WeakMap<Hold, { x: number, y: number }>} */
+const pointed = new WeakMap()
+
 /** Where the pointer is in a task, and whether it presses: it travels to what each stop points at, and clicks as one with a click goes on. @param {Hold[]} holds @param {Frame} frame @param {number} u @param {Array<{ at: number }>} clicks */
 function pointerAt (holds, frame, u, clicks) {
   const pointing = holds.filter(({ stop }) => stop.on)
   const i = pointing.findLastIndex((hold) => hold.start <= u)
   const rest = { x: VIEW.width * 0.82, y: VIEW.height * 0.9 }
+  // Where a stop points; once what it points at is gone (a card answered), where it last was, as a hand stays.
   const where = (/** @type {Hold | undefined} */ hold) => {
     const target = hold && frame.find(hold.stop.on)
-    if (!target) return rest
+    if (!target) return (hold && pointed.get(hold)) ?? rest
     const box = boxOf(target)
-    return { x: box.x + Math.min(box.width * 0.5, 160), y: box.y + box.height * 0.55 }
+    const at = { x: box.x + Math.min(box.width * 0.5, 160), y: box.y + box.height * 0.55 }
+    if (hold) pointed.set(hold, at)
+    return at
   }
   if (i < 0) return { ...rest, shown: 0, press: 0, rippled: -1 }
   const [from, to] = [where(pointing[i - 1]), where(pointing[i])]
