@@ -49,14 +49,14 @@
     "many": "{count} autres",
     "other": "{count} autres"
   },
-  "connections.usual": "Sans choix ici, {name} suit les Autorisations, comme pour tout service.",
+  "connections.usual": "Si vous ne choisissez rien ici, {name} suit les Autorisations, comme pour tout service.",
   "connections.guarded": "Les Autorisations ont une règle plus stricte pour {service}, qui passe avant.",
   "connections.trains": "Ce que {service} apporte ne va qu’aux cerveaux qui ne s’en servent jamais pour s’entraîner.",
   "connections.this": "Cette connexion",
   "connections.account": "Compte",
   "connections.since": "Connecté le {date}",
   "connections.signInAgain": "Se reconnecter",
-  "connections.disconnectAsk": "Déconnecter {service}? Sa clé quitte cet appareil; rien ne change dans {service} lui-même.",
+  "connections.disconnectAsk": "Déconnecter {service}? Sa clé est supprimée de cet appareil. Rien ne change dans {service} lui-même.",
   "connections.cancel": "Annuler",
   "connections.find": "Trouver un service",
   "connections.found": {
