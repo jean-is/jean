@@ -1,9 +1,9 @@
 {
   "skills.none": "Ancu nisuna cumpetenza. Quandu vo dumanderete u listessu tipu di cosa per a terza volta, vi ne serà pruposta una.",
   "skills.invalid": "Stu schedariu ùn hè micca una cumpetenza.",
-  "skills.added": "Cumpetenza « {title} » aghjunta.",
+  "skills.added": "Cumpetenza « {title} » aghjunta.",
   "skills.steps": "Passi",
-  "skills.confirmDelete": "Squassà a cumpetenza « {title} » ?",
+  "skills.confirmDelete": "Squassà a cumpetenza « {title} » ?",
   "skills.from": "Da {source}",
   "skills.elsewhere": "Cumpetenze d’altrò",
   "skills.elsewhereText": "Cumpetenze chì siti è urganizazioni publicheghjanu. Sò paragunate cù e vostre dumande nant’à st’apparechju, è una hè aghjunta solu quandu a sciglite, dopu avè lettu i so passi.",
@@ -43,7 +43,7 @@
     "other": "seguitata {count} volte, l’ultima {when}"
   },
   "skills.when": "Quandu hè seguitata",
-  "skills.example": "Per esempiu : « {example} »",
+  "skills.example": "Per esempiu : « {example} »",
   "skills.try": "Pruvà",
   "skills.change": "Cambiala cù {name}",
   "skills.changeAsk": "Cambia a cumpetenza {skill} : ",

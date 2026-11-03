@@ -7,7 +7,7 @@
   "lock.cantText": "Senza a vostra chjave d’accessu, a vostra parolla d’entrata o u vostru codice di ricuperu, nimu ùn pò apre ciò chì hè tenutu quì. Ferma quì, in casu chì unu d’elli si ritrovi ; un altru prufilu u pò caccià.",
   "lock.afreshText": "Più nunda nant’à st’apparechju ùn u pò apre. Ripiglià da capu u squassa ; pudete tandu risturà una salvaguardia o u vostru cartulare sincrunizatu.",
   "lock.afresh": "Ripiglià da capu",
-  "lock.afreshConfirm": "Squassà u prufilu « {name} » è tuttu ciò chì ci hè tenutu, per sempre ?",
+  "lock.afreshConfirm": "Squassà u prufilu « {name} » è tuttu ciò chì ci hè tenutu, per sempre ?",
   "lock.unlock": "Sbluccà",
   "lock.passwordLabel": "Parolla d’entrata",
   "lock.codeLabel": "Codice di ricuperu",

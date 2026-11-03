@@ -1,5 +1,5 @@
 {
-  "routines.saved": "Rutina « {title} » creata.",
+  "routines.saved": "Rutina « {title} » creata.",
   "routines.text": "Dumande mandate da per elle, secondu un calendariu. Nunda ùn gira mentre chì st’unghjetta hè chjosa : ciò chì duvia esse fattu intantu hè fattu quandu vo vultate.",
   "routines.none": "Ancu nisuna rutina. Dumandate chì qualcosa sia fattu ogni ora, ghjornu, settimana o mese, o un ramentu ghjovi matina.",
   "routines.starters": "Idee per principià",
@@ -28,7 +28,7 @@
   "routines.brain": "Cervellu",
   "routines.brain.yours": "U listessu chè per i vostri messaghji",
   "routines.next": "Prossima : {when}",
-  "routines.confirmDelete": "Squassà a rutina « {title} » ?",
+  "routines.confirmDelete": "Squassà a rutina « {title} » ?",
   "routines.run": "Lancià avà",
   "routines.runs": "Esecuzioni precedenti",
   "routines.new": "Nova rutina",
