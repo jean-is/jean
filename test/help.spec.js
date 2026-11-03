@@ -72,7 +72,7 @@ test('the articles of Start here show what their steps name, ringed as Show me r
   await expect(page.locator('.help-figure button')).toHaveCount(0)
 })
 
-test('an article leads to the one before it and the one after it in its moment, as the home lists them, and a moment of one to none', async ({ page }) => {
+test('an article leads to the one before it and the one after it in its moment, as the home lists them', async ({ page }) => {
   await page.goto(`${JEAN_IS}help/your-first-task`)
   let pager = page.getByRole('navigation', { name: 'Start, 2 of 4' })
   await expect(pager.getByRole('link')).toHaveText(['PreviousWhat Jean is', 'NextIs Jean free?'])
@@ -86,7 +86,7 @@ test('an article leads to the one before it and the one after it in its moment, 
   await page.goto(`${JEAN_IS}help/my-tasks-are-gone`)
   await expect(page.getByRole('navigation', { name: 'Fix a problem, 4 of 4' }).getByRole('link')).toHaveText(['PreviousYour plan stopped answering'])
   await page.goto(`${JEAN_IS}help/what-jean-can-do`)
-  await expect(page.locator('.help-pager')).toHaveCount(0)
+  await expect(page.getByRole('navigation', { name: 'Go further, 1 of 2' }).getByRole('link')).toHaveText(['NextHow skills work'])
   await page.goto(`${JEAN_IS}fr/aide/votre-premiere-tache`)
   await expect(page.getByRole('navigation', { name: 'Commencer, 2 sur 4' }).getByRole('link')).toHaveText(['PrécédentQu’est-ce que Jean ?', 'SuivantJean est-il gratuit ?'])
 })
