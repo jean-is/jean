@@ -1,5 +1,5 @@
 // Charts (D196): a ```echarts block in an answer, drawn by ECharts on a canvas, with the theme's
-// light or dark, the room's type and numbers in the user's language; drawn again as its box, the
+// light or dark (on a slide, its paper's), the room's type and numbers in the user's language; drawn again as its box, the
 // theme, the look or the language changes; copied as its source and its picture, on light paper,
 // at once. The block is data (./option.js). While it is written, what is whole of it so far is
 // drawn, and the chart grows as more comes. Loaded by the first chart an answer holds; until then,
@@ -13,7 +13,7 @@ import { drawnActions } from '../../ui/caps.js'
 import { icons } from '../../ui/icons.js'
 import { styleSheet, still } from '../../ui/sheet.js'
 import { t, dir, locale, intlLocales, useStrings } from '../../core/i18n.js'
-import { readOption, localize, titleOf, namesIn, sideOf } from './option.js'
+import { readOption, localize, titleOf, namesIn, paperTheme, paperLabels, sideOf } from './option.js'
 
 /** @typedef {import('./option.js').Option} Option */
 
@@ -90,7 +90,7 @@ class AppChart extends HTMLElement {
   draw() {
     const source = this.getAttribute('source') ?? ''
     const open = this.hasAttribute('open')
-    const look = [theme.peek(), app.look.peek(), locale.peek()].join('\n')
+    const paper = this.paper(), look = [theme.peek(), app.look.peek(), locale.peek(), paper?.textStyle.color].join('\n')
     const key = [look, open, source].join('\n')
     if (key === this.drawn) return
     this.drawn = key
@@ -110,11 +110,11 @@ class AppChart extends HTMLElement {
     if (!option || !box) return
     try {
       // In SVG on a slide (`svg`), which a deck saved as PowerPoint reads as it is drawn (D593).
-      this.chart ??= echarts.init(box, theme.peek() === 'dark' ? 'dark' : undefined, { renderer: this.hasAttribute('svg') ? 'svg' : 'canvas' })
+      this.chart ??= echarts.init(box, paper ?? (theme.peek() === 'dark' ? 'dark' : undefined), { renderer: this.hasAttribute('svg') ? 'svg' : 'canvas' })
       if (!more) this.fit()
       this.made = look
       // Without animation while it grows: each would start again with the next few values.
-      this.chart.setOption({ ...dressed(option, getComputedStyle(this).fontFamily), ...(open && { animation: false }) })
+      this.chart.setOption({ ...dressed(paper ? { ...option, series: paperLabels(option.series, paper.textStyle.color) } : option, getComputedStyle(this).fontFamily), ...(open && { animation: false }) })
       this.sized.observe(box)
     } catch (error) {
       // Half an option may not draw yet; a whole one that doesn't is worth a word.
@@ -123,6 +123,15 @@ class AppChart extends HTMLElement {
       this.chart = null
       this.paint(source, null)
     }
+  }
+
+  /** On a slide (`svg`), ECharts' theme for the paper under the chart, which a tile or a part may have over the slide's. */
+  paper() {
+    if (!this.hasAttribute('svg')) return null
+    /** @type {Element} */
+    let under = this
+    while (under.parentElement && !getComputedStyle(under).backgroundColor.startsWith('rgb(')) under = under.parentElement
+    return paperTheme(getComputedStyle(this).color, getComputedStyle(under).backgroundColor)
   }
 
   /**

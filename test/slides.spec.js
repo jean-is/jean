@@ -442,6 +442,59 @@ for (const [lang, request, title, next] of /** @type {const} */ ([
   })
 }
 
+for (const [lang, title, sold, oven] of /** @type {const} */ ([
+  ['en', 'Sales by year', 'Sold', 'Oven'],
+  ['ar', 'المبيعات حسب السنة', 'المباع', 'فرن'],
+  ['ja', '年別の売上', '販売数', 'オーブン'],
+])) {
+  test(`${lang === 'en' ? 'a' : `in ${lang === 'ar' ? 'Arabic' : 'Japanese'}, a`} chart's words read at AA on every paper a slide has, in a light room and a dark one, a tile's and a part's too; what it names itself stays`, async ({ page }) => {
+    await start(page, lang)
+    const fence = (/** @type {object} */ own = {}, /** @type {string} */ indent = '') => `\`\`\`echarts\n${JSON.stringify({ title: { text: title, subtext: sold }, legend: { bottom: 0 }, xAxis: { type: 'category', name: sold, data: ['2024', '2025'] }, yAxis: { type: 'value', name: sold },
+      series: [{ name: oven, type: 'bar', data: [1200, 1500], label: { show: true, position: 'top' } }, { name: sold, type: 'line', data: [700, 1100], label: { show: true } }], ...own })}\n\`\`\``.replaceAll('\n', `\n${indent}`)
+    // On a fill neither its ink nor its paper reads on at AA, so that black or white has to.
+    const deck = [`lang: ${lang}\nlayout: default\nkit: {"tokens":{"primary":"#d9480f"},"layouts":{"end":{"paper":"fill"}}}`, 'layout: section', 'layout: subsection', 'layout: end', 'class: invert', 'layout: subsection\nclass: invert'].map((settings) => `---\n${settings}\n---\n\n# ${title}\n\n${fence()}`)
+    deck.push(`---\nlayout: bento\nclass: invert\n---\n\n# ${title}\n\n- **${sold}**\n\n  ${fence({}, '  ')}\n\n- **${oven}**\n\n  ${fence({}, '  ')}\n\n- **${title}**`, `---\nlayout: versus\nclass: invert\n---\n\n# ${title}\n\n## ${sold}\n\n${fence()}\n\n## ${oven}\n\n${fence()}`)
+    deck.push(`---\nlayout: section\n---\n\n# ${title}\n\n${fence({ title: { text: title, textStyle: { color: '#ff0000' } }, legend: { bottom: 0, textStyle: { color: '#00aa00' } } })}`)
+    await page.evaluate(async (source) => {
+      await (await import('/ui/caps.js')).unlock('slides')
+      const slides = document.createElement('app-slides')
+      slides.id = 'papers'
+      slides.style.cssText = 'position: fixed; inset: 0; z-index: 9; display: block; overflow: auto'
+      slides.setAttribute('source', source)
+      document.body.append(slides)
+    }, deck.join('\n\n'))
+    const slide = page.locator('#papers .deck-slide.is-shown')
+    await expect(slide).toHaveAttribute('data-paper', 'paper')
+    await expect(page.locator('#papers .deck')).toHaveAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr')
+    const go = (/** @type {number} */ index) => page.evaluate((index) => /** @type {any} */ (document.querySelector('#papers')).view.go(index), index)
+    // Each word of the charts on show, by its contrast with the paper under its chart, worked out from what the browser shows.
+    const lowest = () => slide.evaluate((shown) => {
+      const luminance = (/** @type {string} */ colour) => { const [r, g, b] = /** @type {string[]} */ (colour.match(/[\d.]+/g)).map((c) => ((s) => (s <= 0.04045 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4))(Number(c) / 255)); return 0.2126 * r + 0.7152 * g + 0.0722 * b }
+      return Math.min(...[...shown.querySelectorAll('app-chart')].flatMap((chart) => {
+        let under = /** @type {Element} */ (chart)
+        while (!getComputedStyle(under).backgroundColor.startsWith('rgb(')) under = /** @type {Element} */ (under.parentElement)
+        const paper = luminance(getComputedStyle(under).backgroundColor)
+        return [...chart.querySelectorAll('svg text')].map((word) => ((seen) => (Math.max(seen, paper) + 0.05) / (Math.min(seen, paper) + 0.05))(luminance(getComputedStyle(word).fill)))
+      }))
+    })
+    const papers = ['paper', 'ink', 'soft', 'fill', 'paper', 'soft', 'paper', 'paper']
+    for (const room of ['light', 'dark']) {
+      await page.evaluate(async (room) => (await import('/ui/state.js')).setTheme(/** @type {'light' | 'dark'} */ (room)), room)
+      await expect(page.locator('#papers .deck')).toHaveAttribute('data-scheme', room)
+      for (const [index, paper] of papers.entries()) {
+        await go(index)
+        await expect(slide).toHaveAttribute('data-paper', paper)
+        await expect(slide.locator('app-chart svg text', { hasText: oven }).first()).toBeVisible()
+        await expect.poll(lowest, `${room} room, slide ${index + 1}, on ${paper}`).toBeGreaterThanOrEqual(4.5)
+      }
+      // What it names itself stays, and the rest of its words read, on the same paper.
+      await go(papers.length)
+      await expect(slide.locator('app-chart svg text', { hasText: title })).toHaveCSS('fill', 'rgb(255, 0, 0)')
+      await expect(slide.locator('app-chart svg text', { hasText: oven }).first()).toHaveCSS('fill', 'rgb(0, 170, 0)')
+    }
+  })
+}
+
 test('a project\'s new look is offered to its decks kept, as Jean\'s version: in the new look, Before, accepted or rejected, offered once (D601)', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)

@@ -141,6 +141,23 @@ export function localize(option, format) {
   return option
 }
 
+/**
+ * ECharts' theme on a slide, whose paper isn't the room's: every word in the slide's colour where that reads on the paper under
+ * the chart at AA, else in black or white, whichever does. A theme, so that what the chart names itself stays. Colours as CSS
+ * computes them, `rgb(…)`. @param {string} words @param {string} paper
+ */
+export function paperTheme(words, paper) {
+  const luminance = (/** @type {string} */ colour) => (colour.match(/[\d.]+/g) ?? []).slice(0, 3).map((c) => Number(c) / 255).map((s) => (s <= 0.04045 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4)).reduce((sum, s, i) => sum + s * [0.2126, 0.7152, 0.0722][i], 0)
+  const under = luminance(paper), over = luminance(words), dark = under < 0.179
+  const color = (Math.max(under, over) + 0.05) / (Math.min(under, over) + 0.05) >= 4.5 ? words : dark ? 'rgb(255, 255, 255)' : 'rgb(0, 0, 0)'
+  const axis = { axisLine: { lineStyle: { color } }, axisLabel: { color }, splitLine: { lineStyle: { color: color.replace('rgb(', 'rgba(').replace(')', ', 0.2)') } } }
+  return { darkMode: dark, textStyle: { color }, title: { textStyle: { color }, subtextStyle: { color } }, legend: { textStyle: { color }, pageTextStyle: { color } }, visualMap: { textStyle: { color } }, dataZoom: { textStyle: { color } }, timeline: { label: { color } },
+    calendar: { dayLabel: { color }, monthLabel: { color }, yearLabel: { color } }, matrix: { x: { label: { color } }, y: { label: { color } } }, gauge: { title: { color }, axisLabel: { color }, detail: { color } }, radar: { ...axis, axisName: { color } }, categoryAxis: axis, valueAxis: axis, timeAxis: axis, logAxis: axis }
+}
+
+/** The series with their labels in `color` where they stand on the paper, not on their marks, as a bar's do unless it says. @param {unknown} series @param {string} color */
+export const paperLabels = (series, color) => all(series).map((one) => (/in|center/.test(one.label?.position ?? (/^(bar|pictorialBar|heatmap|treemap|sunburst|graph|map)$/.test(one.type) ? 'in' : '')) ? one : { ...one, label: { color, ...one.label } }))
+
 /** What a chart is called: its first title. @param {Option} option */
 export const titleOf = (option) => String(all(option.title).find((title) => title.text)?.text ?? '')
 

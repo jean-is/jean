@@ -2,7 +2,7 @@
 // what draws inside the chart, with its numbers written as the user's language writes them.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { readOption, localize, titleOf, soFar, sideOf, namesIn } from '../app/caps/charts/option.js'
+import { readOption, localize, titleOf, soFar, paperTheme, paperLabels, sideOf, namesIn } from '../app/caps/charts/option.js'
 
 const BARS = { title: { text: 'Sales' }, xAxis: { type: 'category', data: ['Jan', 'Feb'] }, yAxis: { type: 'value' }, series: [{ type: 'bar', data: [1200, 3400.5] }] }
 
@@ -103,6 +103,28 @@ test('numbers on value axes and in tooltips are written in the user’s language
   assert.equal(option.tooltip.valueFormatter('n/a'), 'n/a', 'only numbers')
   const own = localize(/** @type {any} */ (readOption(JSON.stringify({ ...BARS, tooltip: { valueFormatter: 'kept' } }))), format)
   assert.equal(own.tooltip.valueFormatter, 'kept')
+})
+
+test('on a slide, a chart\'s words are the slide\'s where they read on the paper under it at AA, else black or white', () => {
+  const ink = 'rgb(24, 23, 27)', white = 'rgb(255, 255, 255)', black = 'rgb(0, 0, 0)'
+  for (const theme of [paperTheme(white, ink), paperTheme(ink, white), paperTheme(white, 'rgb(244, 243, 241)'), paperTheme('rgb(255, 248, 243)', 'rgb(217, 72, 15)')]) {
+    const color = theme.textStyle.color
+    for (const words of [theme.title.textStyle, theme.title.subtextStyle, theme.legend.textStyle, theme.categoryAxis.axisLabel, theme.valueAxis.axisLabel, theme.radar.axisName, theme.gauge.detail]) assert.equal(words.color, color)
+  }
+  assert.equal(paperTheme(white, ink).textStyle.color, white)
+  assert.equal(paperTheme(white, ink).darkMode, true)
+  assert.equal(paperTheme(ink, white).textStyle.color, ink)
+  assert.equal(paperTheme(ink, white).darkMode, false)
+  assert.equal(paperTheme(white, 'rgb(244, 243, 241)').textStyle.color, black, 'inverted, over a pale tile')
+  assert.equal(paperTheme(ink, 'rgb(34, 33, 37)').textStyle.color, white, 'over a dark one')
+  assert.equal(paperTheme('rgb(255, 248, 243)', 'rgb(217, 72, 15)').textStyle.color, black, 'a fill where neither its ink nor its paper reads')
+  assert.equal(paperTheme(white, ink).categoryAxis.splitLine.lineStyle.color, 'rgba(255, 255, 255, 0.2)')
+})
+
+test('on a slide, a label takes the words\' colour where it stands on the paper, not on its mark, unless it names its own', () => {
+  const labels = paperLabels([{ type: 'bar' }, { type: 'bar', label: { position: 'top' } }, { type: 'bar', label: { position: 'insideTop' } }, { type: 'pie', label: { show: false } }, { type: 'pie', label: { position: 'inside' } }, { type: 'pie', label: { position: 'center' } }, { type: 'line' }, { type: 'scatter', label: { color: '#f00' } }, { type: 'treemap' }], 'red')
+  assert.deepEqual(labels.map((one) => one.label?.color), [undefined, 'red', undefined, 'red', undefined, undefined, 'red', '#f00', undefined])
+  assert.deepEqual(paperLabels({ type: 'line' }, 'red'), [{ type: 'line', label: { color: 'red' } }], 'one series, not in a list')
 })
 
 test('a word on a canvas takes its direction from its first letter', () => {
