@@ -69,7 +69,7 @@ test('on jean.is, the page is under the first screen, its tries fill the box, an
   }
   // A new task doesn't bring it back, and its box's line has the legal pages alone.
   await page.keyboard.press('ControlOrMeta+Shift+KeyO')
-  await expect(page.locator('app-composer .legal a')).toHaveText(['Where your files go', 'Privacy', 'Terms'])
+  await expect(page.locator('app-composer .legal a')).toHaveText(['Privacy', 'Terms'])
   await expect(home).toBeHidden()
 })
 

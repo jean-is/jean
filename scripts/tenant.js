@@ -37,7 +37,7 @@ const SOURCE = /^(?:(?:https|wss):\/\/(?:\*\.)?[a-z0-9-]+(?:\.[a-z0-9-]+)+|(?:ht
 /** The parts of policy only ee/ reads, which need a key (ui/app.js). */
 const ENTERPRISE = ['key', 'audit', 'retention', 'groups', 'jurisdictions', 'seal', 'trust']
 /** The addresses Jean links to or shows as a picture rather than fetches, which connect-src doesn't cover: a deck file's renderer among them (D591). */
-const SHOWN = /(?:^|\.)urls\.(?:searchPage|siteIcon|privacy|terms|files|deck)$/
+const SHOWN = /(?:^|\.)urls\.(?:searchPage|siteIcon|privacy|terms|deck)$/
 
 /**
  * An address the registry lists, as Caddy and a key's origins write it.

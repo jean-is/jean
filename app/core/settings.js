@@ -70,9 +70,8 @@ export const DEFAULT_URLS = Object.freeze({
   // The Computer's packages (D162): Pyodide's own builds, Python's index, JavaScript's.
   pyodide: 'https://cdn.jsdelivr.net/pyodide/v{version}/full/', pypi: 'https://pypi.org/pypi/{package_name}/json', npm: 'https://registry.npmjs.org/',
   // What whoever serves Jean names: the gateway to the services a browser can't reach (D191), none until one is
-  // named; the privacy policy and terms linked under the box, by their addresses without .html, and where
-  // files go, linked there and from About this answer, jean.is's until then, none with ''.
-  gateway: '', privacy: 'privacy', terms: 'terms', files: 'files',
+  // named; the privacy policy and terms linked under the box, by their addresses without .html, none with ''.
+  gateway: '', privacy: 'privacy', terms: 'terms',
   // The host shares go to (D361), none until one is named: jean.is's policy names hst.ing.
   share: '',
   // A web source's site icon, shown with its domain on its chip (D210): none when ''.

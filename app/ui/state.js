@@ -287,8 +287,8 @@ export function sitePage(name) {
   return sessionStorage.getItem('app.host') && !document.querySelector('meta[name="app-policy"]') ? `https://${BRAND.domain}/${at}` : null
 }
 
-/** Where files go, privacy and terms: policy's or every copy's, French's in French. */
-export const legalPages = () => /** @type {const} */ (['files', 'privacy', 'terms']).map((name) => [name, serviceURL(name, app.settings.value, app.policy)])
+/** Privacy and terms: policy's or every copy's, French's in French. */
+export const legalPages = () => /** @type {const} */ (['privacy', 'terms']).map((name) => [name, serviceURL(name, app.settings.value, app.policy)])
   .filter(([, url]) => url).map(([name, url]) => [name, url === name && locale.value === 'fr' ? `fr/${url}` : url])
 
 /** What the assistant is called in this room: the name the project gave it, or Jean's. */

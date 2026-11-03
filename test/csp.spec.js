@@ -28,8 +28,7 @@ test('nothing Jean does is refused by its own policies: the room, an answer, a p
     console.error(`Refused to apply a style attribute on ${/** @type {Node} */ (event.target).nodeName}`)
   }))
   await start(page)
-  // On a new task, the line under the box links to where files go, the privacy policy and the terms, in Jean's language.
-  await expect(page.locator('.legal a[href="files"]')).toHaveText('Where your files go')
+  // On a new task, the line under the box links to the privacy policy and the terms, in Jean's language.
   await expect(page.locator('.legal a[href="privacy"]')).toHaveText('Privacy')
   await expect(page.locator('.legal a[href="terms"]')).toHaveText('Terms')
   const reports = async () => /** @type {any[]} */ (await (await page.request.get(`csp-reports?from=${from}`)).json())

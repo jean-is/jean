@@ -385,9 +385,6 @@
         "terms": {
           "$ref": "#/$defs/link"
         },
-        "files": {
-          "$ref": "#/$defs/link"
-        },
         "share": {
           "$ref": "#/$defs/link"
         },
@@ -1486,16 +1483,6 @@
                     ]
                   },
                   "terms": {
-                    "anyOf": [
-                      {
-                        "$ref": "#/$defs/link"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
-                  "files": {
                     "anyOf": [
                       {
                         "$ref": "#/$defs/link"
