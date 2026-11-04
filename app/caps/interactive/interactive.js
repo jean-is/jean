@@ -45,6 +45,8 @@ export const capability = {
   slots: { add: { at: 6, draw: row }, modes: { at: 0, draw: chip, notes } },
   // A task gone for good takes what its apps kept with it (D688).
   hooks: [{ on: 'record', match: { type: 'removed' }, run: (/** @type {any} */ e, /** @type {any} */ next) => { const at = e.all && keptAt(e.task); if (at) app.fs.remove(at).catch(() => {}); return next(e) } },
+    // A task duplicated (D230) keeps what its apps kept, as it keeps their answers (D688).
+    { on: 'task.start', run: async (/** @type {any} */ e, /** @type {any} */ next) => { const [was, now] = [keptAt(e.from?.path ?? ''), keptAt(e.task)], kept = was && now && (await app.fs.read(was).catch(() => null)); if (kept && now) await app.fs.write(now, kept); return next(e) } },
     // An answer's pages with a script, played out of sight before the turn ends; what broke goes back to the brain (./test.js, D689).
     { on: 'turn.answer', run: async (/** @type {any} */ e, /** @type {any} */ next) => (rights.peek().allows.scripts && /```html/.test(e.text) && (await (await import('./test.js')).played(e))) || next(e) }],
 }
@@ -55,8 +57,6 @@ export const named = (source) => ((/<title[^>]*>([^<]*)</i.exec(source) ?? /<h[1
   .replace(/<[^>]*>/g, '').replaceAll('&amp;', '&').replace(/\s+/g, ' ').trim()
 /** Where a task's apps keep what they keep, each by its name: `apps/<its ULID>.json` beside its project's conversations (D688). @param {string} task */
 export const keptAt = (task) => (/\/conversations\/[^/]+\.jsonl$/.test(task) ? task.replace(/conversations\/([^/]+)\.jsonl$/, 'apps/$1.json') : null)
-/** The most an app keeps, as JSON. */
-const KEPT = 262144
 // A page, a diagram or a map needs no skill to declare it (D289, D291): they stay among the kinds drawn, however often the room's skills are read again.
 effect(() => { if (PAGES.some((kind) => !declared.value.has(kind))) declared.value = new Set([...declared.value, ...PAGES]) })
 
@@ -327,7 +327,7 @@ class AppPage extends HTMLElement {
     clearTimeout(this.keeping)
     if (kept) this.keeping = setTimeout(async () => {
       const own = Object.fromEntries(Object.entries(storage).map(([key, value]) => [String(key), String(value)]))
-      if (JSON.stringify(own).length > KEPT) return
+      if (JSON.stringify(own).length > 262144) return
       const all = JSON.parse((await app.fs.read(kept[0]).catch(() => null)) ?? '{}')
       await app.fs.write(kept[0], JSON.stringify({ format: 1, apps: { ...all.apps, [kept[1]]: own } }))
     }, 300)

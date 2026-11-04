@@ -383,7 +383,7 @@ test('the pages answers hold are apps among the creations once there is one, the
   await expect(page.locator('.msg-jean app-page')).toHaveCount(2)
 })
 
-test('an app keeps what it keeps in localStorage, by its name in its task, so it is as it was left when written again; it reads a file the user picks and saves the one it makes; its task deleted, what it kept goes (D688)', async ({ page }) => {
+test('an app keeps what it keeps in localStorage, by its name in its task, so it is as it was left when written again or its task duplicated; it reads a file the user picks and saves the one it makes; its task deleted, what it kept goes (D688)', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Make me a tally')
@@ -409,9 +409,18 @@ test('an app keeps what it keeps in localStorage, by its name in its task, so it
   const [download] = await Promise.all([page.waitForEvent('download'), app(1).getByRole('button', { name: 'Save it' }).click()])
   expect(download.suggestedFilename()).toBe('tally.txt')
 
-  // The task deleted, what its apps kept goes with it.
+  // Duplicated, as Continue in a new task does (D230), the task keeps what its apps kept.
+  const current = () => page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.path)
+  await page.locator('.msg-actions.is-request').first().getByRole('button', { name: 'Continue in a new task' }).click()
+  await expect.poll(current).not.toBe(task)
+  await answered(page)
+  await expect(page.locator('.msg-jean app-page iframe').last().contentFrame().locator('#count')).toHaveText('2')
+  const copy = /** @type {string} */ (await current()).replace(/conversations\/([^/]+)\.jsonl$/, 'apps/$1.json')
+
+  // The task deleted, what its apps kept goes with it, and the copy's stays.
   await page.evaluate(async (path) => (await import('/ui/state.js')).removeConversation(path), task)
   await expect.poll(read).toEqual({})
+  expect(await page.evaluate(async (path) => JSON.parse((await (await import('/ui/state.js')).app.fs.read(path)) ?? '{}'), copy)).toEqual({ format: 1, apps: { Tally: { count: '2' } } })
 })
 
 test('an app with a script is played out of sight before the turn ends: what broke, in the browser’s words, goes back to the brain, which writes it again fixed (D689)', async ({ page }) => {
