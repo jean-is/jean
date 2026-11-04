@@ -131,6 +131,7 @@ On [roadmap.md](roadmap.md)'s checklist (D274, D276):
 - [x] **The device brain's weights** are downloaded at a pinned revision (`REVISION` in `caps/brain-local/watermark.js`), which its entry in `brains` names, as `caps/pictures/device.js` pins the makers'.
 - [ ] **Hidden counts:** the number of shared and made files shows. SD-JWT decoy digests could hide it.
 - [ ] **Rekor v2:** move to it once the public instance defaults to it and answers browsers.
+- [ ] **A provider's proof of what ran.** A cloud brain's `model` is what Jean asked for or was told, and a router can serve another. A provider that signs its responses, or proves each against a published commitment to its weights ([provable inference](https://www.anthropic.com/research/provable-inference), 2 Nov 2026: a prototype, greedy decoding, 1,024 tokens), raises that ceiling. The brain's entry would then name the commitment and the proof's digest, in a new field of the schema, the proof travelling beside the certificate as a proof does and the check page verifying it. A greedy proof can't cover the device brain's watermarked answers (D402).
 
 ### 3. Organisations (`ee/`)
 
