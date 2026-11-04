@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "Javni zapisnik",
   "receipt.places": "Gdje su vaši mozgovi",
   "receipt.places.text": "Certifikati navode zemlju koju zadate za svaki mozak u oblaku.",
-  "receipt.places.unsaid": "Nije navedeno"
+  "receipt.places.unsaid": "Nije navedeno",
+  "receipt.spent": "Koliko je koštalo",
+  "receipt.spentMonth": "Ovaj mjesec: {cost}",
+  "receipt.spentLede": "Izračunato iz onoga što su mozgovi svakog odgovora pročitali i napisali, po današnjim cijenama, kao ispod svakog odgovora.",
+  "receipt.months": "Po mjesecima",
+  "receipt.byBrain": "Po mozgu",
+  "receipt.costliest": "Zadaci koji su najviše koštali"
 }

@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "公開日誌",
   "receipt.places": "你的大腦在哪裡",
   "receipt.places.text": "憑證會寫明你為雲端每個大腦指定的國家或地區。",
-  "receipt.places.unsaid": "未指定"
+  "receipt.places.unsaid": "未指定",
+  "receipt.spent": "花了多少",
+  "receipt.spentMonth": "本月：{cost}",
+  "receipt.spentLede": "依每個回答的大腦讀寫的內容、以今天的價格計算，與每個回答下方相同。",
+  "receipt.months": "依月份",
+  "receipt.byBrain": "依大腦",
+  "receipt.costliest": "花費最多的任務"
 }

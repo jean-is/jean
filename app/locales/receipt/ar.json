@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "السجل العام",
   "receipt.places": "أين توجد عقولك",
   "receipt.places.text": "تذكر الشهادات البلد الذي تحدده لكل عقل في السحابة.",
-  "receipt.places.unsaid": "غير محدد"
+  "receipt.places.unsaid": "غير محدد",
+  "receipt.spent": "ما كلّفه",
+  "receipt.spentMonth": "هذا الشهر: {cost}",
+  "receipt.spentLede": "محسوب مما قرأته عقول كل إجابة وكتبته، بأسعارها اليوم، كما تحت كل إجابة.",
+  "receipt.months": "حسب الشهر",
+  "receipt.byBrain": "حسب العقل",
+  "receipt.costliest": "المهام الأعلى كلفة"
 }

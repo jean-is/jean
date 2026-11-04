@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "सार्वजनिक नोंदवही",
   "receipt.places": "तुमचे मेंदू कुठे आहेत",
   "receipt.places.text": "क्लाउडमधील प्रत्येक मेंदूसाठी तुम्ही दिलेल्या देशाचे नाव प्रमाणपत्रे घेतात.",
-  "receipt.places.unsaid": "सांगितलेले नाही"
+  "receipt.places.unsaid": "सांगितलेले नाही",
+  "receipt.spent": "किती खर्च आला",
+  "receipt.spentMonth": "या महिन्यात: {cost}",
+  "receipt.spentLede": "प्रत्येक उत्तराच्या मेंदूंनी जे वाचले आणि लिहिले त्यावरून, आजच्या किमतींनी मोजले, प्रत्येक उत्तराखाली असते तसे.",
+  "receipt.months": "महिन्यानुसार",
+  "receipt.byBrain": "मेंदूनुसार",
+  "receipt.costliest": "सर्वाधिक खर्चाची कामे"
 }

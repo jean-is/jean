@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "Sổ công khai",
   "receipt.places": "Bộ não của bạn ở đâu",
   "receipt.places.text": "Chứng nhận nêu quốc gia bạn chọn cho từng bộ não trên đám mây.",
-  "receipt.places.unsaid": "Không nêu"
+  "receipt.places.unsaid": "Không nêu",
+  "receipt.spent": "Đã tốn bao nhiêu",
+  "receipt.spentMonth": "Tháng này: {cost}",
+  "receipt.spentLede": "Tính từ những gì các bộ não của mỗi câu trả lời đã đọc và viết, theo giá hôm nay, như dưới mỗi câu trả lời.",
+  "receipt.months": "Theo tháng",
+  "receipt.byBrain": "Theo bộ não",
+  "receipt.costliest": "Những việc tốn nhiều nhất"
 }

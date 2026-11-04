@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "የሕዝብ መዝገብ",
   "receipt.places": "አንጎሎችዎ ያሉበት",
   "receipt.places.text": "የምስክር ወረቀቶች በደመና ውስጥ ላለ ለእያንዳንዱ አንጎል የሰጡትን አገር ይጠቅሳሉ።",
-  "receipt.places.unsaid": "አልተገለጸም"
+  "receipt.places.unsaid": "አልተገለጸም",
+  "receipt.spent": "ምን ያህል አስወጣ",
+  "receipt.spentMonth": "በዚህ ወር: {cost}",
+  "receipt.spentLede": "የእያንዳንዱ መልስ አንጎሎች ካነበቡትና ከጻፉት፣ በዛሬ ዋጋቸው የተሰላ፣ እንደ እያንዳንዱ መልስ ስር።",
+  "receipt.months": "በወር",
+  "receipt.byBrain": "በአንጎል",
+  "receipt.costliest": "ብዙ ያስወጡ ተግባሮች"
 }

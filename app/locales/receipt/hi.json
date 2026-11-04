@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "सार्वजनिक रजिस्टर",
   "receipt.places": "आपके दिमाग़ कहाँ हैं",
   "receipt.places.text": "प्रमाणपत्र क्लाउड में हर दिमाग़ के लिए आपके बताए देश का नाम लेते हैं।",
-  "receipt.places.unsaid": "नहीं बताया"
+  "receipt.places.unsaid": "नहीं बताया",
+  "receipt.spent": "इसमें कितना ख़र्च हुआ",
+  "receipt.spentMonth": "इस महीने: {cost}",
+  "receipt.spentLede": "हर जवाब के दिमाग़ों ने जो पढ़ा और लिखा, उससे आज की कीमतों पर निकाला गया, जैसे हर जवाब के नीचे।",
+  "receipt.months": "महीने के हिसाब से",
+  "receipt.byBrain": "दिमाग़ के हिसाब से",
+  "receipt.costliest": "सबसे महंगे काम"
 }

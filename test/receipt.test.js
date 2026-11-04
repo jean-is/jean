@@ -343,3 +343,28 @@ test('a public log vouches for an entry by its key alone: its promise, and its i
   // Without a key, or with one that isn't this log's, it says nothing.
   assert.deepEqual([await inLog(real, null), await inLog(real, logKey)], [null, null])
 })
+
+test('what Jean cost over time: each brain request once, helpers and summaries too, failed ones none, priced by month, by brain and by task (D691)', async () => {
+  const { usesOf, tally } = await import('../app/caps/receipt/spent.js')
+  const brain = (/** @type {string} */ id, /** @type {string} */ at, /** @type {any} */ usage, more = {}) => ({ at, by: 'jean', update: { sessionUpdate: 'tool_call', toolCallId: id, kind: 'think', status: 'completed', rawInput: { provider: 'openrouter', model: 'anthropic/claude-sonnet-5.5', ...more }, rawOutput: { stopReason: 'end', usage } } })
+  const records = /** @type {any[]} */ ([
+    userRecord('Plan the trip', 'u'),
+    brain('brain-0-a', '2026-10-31T10:00:00', { inputTokens: 1000, outputTokens: 100, cacheReadTokens: 400 }),
+    brain('call-1/brain-0-b', '2026-10-31T10:00:05', { inputTokens: 500, outputTokens: 50 }),
+    brain('brain-1-c', '2026-11-01T09:00:00', { inputTokens: 2000, outputTokens: 200 }),
+    // Out of steps, the last entry is kept again; a request that failed wrote nothing.
+    brain('brain-1-c', '2026-11-01T09:00:01', { inputTokens: 2000, outputTokens: 200 }),
+    { at: '2026-11-01T09:00:02', by: 'jean', update: { sessionUpdate: 'tool_call', toolCallId: 'brain-2-d', kind: 'think', status: 'failed', rawInput: { provider: 'openrouter', model: 'x' }, rawOutput: { error: 'down' } } },
+    brain('brain-3-e', '2026-11-02T08:00:00', { inputTokens: 900, outputTokens: 90 }, { provider: 'device', model: 'gemma', local: true }),
+  ])
+  const uses = usesOf(records)
+  assert.deepEqual(uses.map(({ month, input, output, cached, local }) => [month, input, output, cached, local]), [['2026-10', 1000, 100, 400, false], ['2026-10', 500, 50, 0, false], ['2026-11', 2000, 200, 0, false], ['2026-11', 900, 90, 0, true]])
+  // Priced as each answer's card prices it: a cached read at its own price, on this device nothing, and one price unknown says so.
+  const prices = { prompt: 0.000003, completion: 0.000015, cacheRead: 0.0000003 }
+  const cost = (/** @type {any} */ use) => costOf([use], (brain) => (brain.provider === 'openrouter' ? prices : undefined))
+  const sum = tally([{ path: 'a.jsonl', title: 'The trip', uses }, { path: 'b.jsonl', title: 'Nothing', uses: [] }, { path: 'c.jsonl', title: 'Unknown', uses: [{ ...uses[0], provider: 'other', month: '2026-11' }] }], cost)
+  const near = (/** @type {number} */ value) => Math.round(value * 1e6) / 1e6
+  assert.deepEqual(sum.months.map(({ month, cost: spent, unknown }) => [month, near(spent), unknown]), [['2026-11', near(2000 * 0.000003 + 200 * 0.000015), true], ['2026-10', near(600 * 0.000003 + 400 * 0.0000003 + 100 * 0.000015 + 500 * 0.000003 + 50 * 0.000015), false]])
+  assert.deepEqual(sum.brains.map(({ provider, local, unknown }) => [provider, local, unknown]), [['openrouter', false, false], ['device', true, false], ['other', false, true]])
+  assert.deepEqual(sum.costly.map(({ path }) => path), ['a.jsonl'])
+})

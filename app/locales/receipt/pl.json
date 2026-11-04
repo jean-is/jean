@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "Publiczny rejestr",
   "receipt.places": "Gdzie są twoje mózgi",
   "receipt.places.text": "Certyfikaty podają kraj, który wskażesz dla każdego mózgu w chmurze.",
-  "receipt.places.unsaid": "Nie podano"
+  "receipt.places.unsaid": "Nie podano",
+  "receipt.spent": "Ile to kosztowało",
+  "receipt.spentMonth": "W tym miesiącu: {cost}",
+  "receipt.spentLede": "Wyliczone z tego, co mózgi każdej odpowiedzi przeczytały i napisały, po dzisiejszych cenach, jak pod każdą odpowiedzią.",
+  "receipt.months": "Według miesięcy",
+  "receipt.byBrain": "Według mózgu",
+  "receipt.costliest": "Zadania, które kosztowały najwięcej"
 }

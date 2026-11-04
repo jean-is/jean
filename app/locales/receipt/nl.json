@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "Openbaar register",
   "receipt.places": "Waar je breinen zijn",
   "receipt.places.text": "Certificaten noemen het land dat je voor elk brein in de cloud opgeeft.",
-  "receipt.places.unsaid": "Niet opgegeven"
+  "receipt.places.unsaid": "Niet opgegeven",
+  "receipt.spent": "Wat het kostte",
+  "receipt.spentMonth": "Deze maand: {cost}",
+  "receipt.spentLede": "Berekend uit wat de breinen van elk antwoord lazen en schreven, tegen hun prijzen van vandaag, zoals onder elk antwoord.",
+  "receipt.months": "Per maand",
+  "receipt.byBrain": "Per brein",
+  "receipt.costliest": "De taken die het meest kostten"
 }

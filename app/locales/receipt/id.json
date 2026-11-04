@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "Log publik",
   "receipt.places": "Di mana otak Anda berada",
   "receipt.places.text": "Sertifikat menyebut negara yang Anda tetapkan untuk setiap otak di cloud.",
-  "receipt.places.unsaid": "Tidak disebutkan"
+  "receipt.places.unsaid": "Tidak disebutkan",
+  "receipt.spent": "Biayanya",
+  "receipt.spentMonth": "Bulan ini: {cost}",
+  "receipt.spentLede": "Dihitung dari apa yang dibaca dan ditulis otak setiap jawaban, dengan harga hari ini, seperti di bawah setiap jawaban.",
+  "receipt.months": "Per bulan",
+  "receipt.byBrain": "Per otak",
+  "receipt.costliest": "Tugas yang paling mahal"
 }

@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "ทะเบียนสาธารณะ",
   "receipt.places": "สมองของคุณอยู่ที่ใด",
   "receipt.places.text": "ใบรับรองจะระบุประเทศที่คุณกำหนดให้สมองแต่ละตัวบนคลาวด์",
-  "receipt.places.unsaid": "ไม่ได้ระบุ"
+  "receipt.places.unsaid": "ไม่ได้ระบุ",
+  "receipt.spent": "ค่าใช้จ่าย",
+  "receipt.spentMonth": "เดือนนี้: {cost}",
+  "receipt.spentLede": "คำนวณจากสิ่งที่สมองของแต่ละคำตอบอ่านและเขียน ตามราคาวันนี้ เหมือนใต้แต่ละคำตอบ",
+  "receipt.months": "ตามเดือน",
+  "receipt.byBrain": "ตามสมอง",
+  "receipt.costliest": "งานที่ใช้จ่ายมากที่สุด"
 }

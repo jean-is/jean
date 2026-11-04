@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "Rajistar jama’a",
   "receipt.places": "Inda ƙwaƙwalwarka suke",
   "receipt.places.text": "Takardun shaida suna ambaton ƙasar da ka bayar ga kowace ƙwaƙwalwa a cikin gajimare.",
-  "receipt.places.unsaid": "Ba a faɗa ba"
+  "receipt.places.unsaid": "Ba a faɗa ba",
+  "receipt.spent": "Nawa ya kashe",
+  "receipt.spentMonth": "Wannan wata: {cost}",
+  "receipt.spentLede": "An lissafa daga abin da ƙwaƙwalwar kowace amsa ta karanta ta rubuta, a farashinsu na yau, kamar a ƙarƙashin kowace amsa.",
+  "receipt.months": "Bisa wata",
+  "receipt.byBrain": "Bisa ƙwaƙwalwa",
+  "receipt.costliest": "Ayyukan da suka fi tsada"
 }

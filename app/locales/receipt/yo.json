@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "Ìwé àkọsílẹ̀ gbogbogbò",
   "receipt.places": "Ibi tí àwọn ọpọlọ yín wà",
   "receipt.places.text": "Àwọn ìwé ẹ̀rí máa ń dárúkọ orílẹ̀-èdè tí ẹ fún ọpọlọ kọ̀ọ̀kan nínú ìkùukùu.",
-  "receipt.places.unsaid": "A kò sọ"
+  "receipt.places.unsaid": "A kò sọ",
+  "receipt.spent": "Iye tí ó ná",
+  "receipt.spentMonth": "Oṣù yìí: {cost}",
+  "receipt.spentLede": "A ṣírò rẹ̀ láti inú ohun tí ọpọlọ ìdáhùn kọ̀ọ̀kan kà tí ó sì kọ, ní iye wọn lónìí, bí ó ṣe wà lábẹ́ ìdáhùn kọ̀ọ̀kan.",
+  "receipt.months": "Ní oṣù",
+  "receipt.byBrain": "Ní ọpọlọ",
+  "receipt.costliest": "Àwọn iṣẹ́ tí ó náni jù"
 }

@@ -25,6 +25,12 @@ app-receipt:has(.receipt:popover-open) .receipt-button { opacity: 1; }
 .receipt dd { margin: 0; overflow-wrap: anywhere; }
 .receipt-stat { padding: 0.45rem 0.65rem; border-radius: 0.65rem; background: var(--line); }
 .receipt-stat dd { font-size: 0.9rem; }
+/* What it cost this month, under Brains' title (D691), and the card's cost, which opens what it cost over time. */
+.brain-spent { margin-block: -0.75rem 1rem; color: var(--ink-soft); }
+.receipt-spent { padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: start; text-decoration: underline dotted; text-underline-offset: 0.2em; cursor: pointer; }
+/* What each brain cost, under Settings › Brains (D691): side by side as the card's figures. */
+.spent-brains { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(12rem, 100%), 1fr)); gap: 0.5rem; margin: 0; }
+.spent-brains dt { color: var(--ink-soft); font-size: 0.75rem; } .spent-brains dd { margin: 0; overflow-wrap: anywhere; }
 .receipt-list { grid-column: 1 / -1; display: grid; gap: 0.3rem; margin-block-start: 0.35rem; }
 .receipt-brain { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 0.5rem; }
 .receipt-host { color: var(--ink-soft); font-family: var(--mono); font-size: 0.75rem; }

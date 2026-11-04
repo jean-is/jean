@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "Öffentliches Protokoll",
   "receipt.places": "Wo deine Gehirne sind",
   "receipt.places.text": "Zertifikate nennen das Land, das du für jedes Gehirn in der Cloud angibst.",
-  "receipt.places.unsaid": "Nicht angegeben"
+  "receipt.places.unsaid": "Nicht angegeben",
+  "receipt.spent": "Was es gekostet hat",
+  "receipt.spentMonth": "Diesen Monat: {cost}",
+  "receipt.spentLede": "Berechnet aus dem, was die Gehirne jeder Antwort gelesen und geschrieben haben, zu ihren heutigen Preisen, wie unter jeder Antwort.",
+  "receipt.months": "Nach Monat",
+  "receipt.byBrain": "Nach Gehirn",
+  "receipt.costliest": "Die teuersten Aufgaben"
 }

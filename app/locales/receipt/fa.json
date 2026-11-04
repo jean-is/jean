@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "دفتر عمومی",
   "receipt.places": "مغزهای شما کجا هستند",
   "receipt.places.text": "گواهی‌ها کشوری را که برای هر مغز در ابر تعیین می‌کنید نام می‌برند.",
-  "receipt.places.unsaid": "گفته نشده"
+  "receipt.places.unsaid": "گفته نشده",
+  "receipt.spent": "هزینه‌اش چقدر شد",
+  "receipt.spentMonth": "این ماه: {cost}",
+  "receipt.spentLede": "بر پایهٔ آنچه مغزهای هر پاسخ خواندند و نوشتند، با قیمت‌های امروزشان، مانند زیر هر پاسخ.",
+  "receipt.months": "بر اساس ماه",
+  "receipt.byBrain": "بر اساس مغز",
+  "receipt.costliest": "پرهزینه‌ترین کارها"
 }

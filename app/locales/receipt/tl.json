@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "Pampublikong log",
   "receipt.places": "Nasaan ang mga utak mo",
   "receipt.places.text": "Pinangangalanan ng mga sertipiko ang bansang ibibigay mo para sa bawat utak sa cloud.",
-  "receipt.places.unsaid": "Hindi sinabi"
+  "receipt.places.unsaid": "Hindi sinabi",
+  "receipt.spent": "Magkano ang nagastos",
+  "receipt.spentMonth": "Ngayong buwan: {cost}",
+  "receipt.spentLede": "Kinuwenta mula sa binasa at isinulat ng mga utak ng bawat sagot, sa presyo nila ngayon, gaya ng sa ilalim ng bawat sagot.",
+  "receipt.months": "Ayon sa buwan",
+  "receipt.byBrain": "Ayon sa utak",
+  "receipt.costliest": "Ang mga gawaing pinakamahal"
 }

@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "Offentlig log",
   "receipt.places": "Hvor dine hjerner er",
   "receipt.places.text": "Certifikaterne angiver det land, du opgiver for hver hjerne i skyen.",
-  "receipt.places.unsaid": "Ikke angivet"
+  "receipt.places.unsaid": "Ikke angivet",
+  "receipt.spent": "Hvad det kostede",
+  "receipt.spentMonth": "Denne måned: {cost}",
+  "receipt.spentLede": "Udregnet ud fra, hvad hvert svars hjerner læste og skrev, til deres priser i dag, som under hvert svar.",
+  "receipt.months": "Efter måned",
+  "receipt.byBrain": "Efter hjerne",
+  "receipt.costliest": "De opgaver, der kostede mest"
 }

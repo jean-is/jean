@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "బహిరంగ రిజిస్టర్",
   "receipt.places": "మీ మెదళ్లు ఎక్కడ ఉన్నాయి",
   "receipt.places.text": "క్లౌడ్‌లోని ప్రతి మెదడుకు మీరు ఇచ్చే దేశం పేరును ధృవపత్రాలు చెబుతాయి.",
-  "receipt.places.unsaid": "చెప్పలేదు"
+  "receipt.places.unsaid": "చెప్పలేదు",
+  "receipt.spent": "ఎంత ఖర్చైంది",
+  "receipt.spentMonth": "ఈ నెల: {cost}",
+  "receipt.spentLede": "ప్రతి జవాబు మెదళ్లు చదివిన, రాసిన దాని నుంచి, ఈరోజు ధరలతో లెక్కించారు, ప్రతి జవాబు కింద ఉన్నట్టే.",
+  "receipt.months": "నెలవారీగా",
+  "receipt.byBrain": "మెదడువారీగా",
+  "receipt.costliest": "ఎక్కువ ఖర్చైన పనులు"
 }

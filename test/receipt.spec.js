@@ -5,7 +5,7 @@
 // this device says so, and where.
 import { readFile } from 'node:fs/promises'
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, fadeOut, turnOn, openApprovals, closeSettings, withPolicy, MAIL_URL, BRAIN_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, fadeOut, turnOn, openApprovals, openSettings, closeSettings, withPolicy, MAIL_URL, BRAIN_URL } from './helpers.js'
 
 for (const [lang, about, local, free, save, prove] of [
   ['en', 'About this answer', 'Kept private', 'Free', 'Save the certificate', 'Save the proof'],
@@ -130,8 +130,43 @@ test('an answer in the cloud costs what its provider’s prices say, from models
   expect(read).toBe(1)
 })
 
-for (const [lang, about, plan] of [['en', 'About this answer', 'In your Claude plan'], ['ar', 'عن هذه الإجابة', 'مشمولة في اشتراكك في Claude'], ['ja', 'この回答について', 'Claude のプランに含まれます']]) {
-  test(`an answer from a Claude plan is in the plan, and no catalogue is read for it (D235, ${lang})`, async ({ page }) => {
+for (const [lang, brains, spent, month, about] of [['en', 'Brains', 'What it cost', 'This month: about', 'About this answer'], ['ar', 'العقول', 'ما كلّفه', 'هذا الشهر', 'عن هذه الإجابة'], ['ja', '頭脳', 'かかった費用', '今月', 'この回答について']]) {
+  test(`Settings › Brains says what Jean cost this month, and its page the months, the brains and the tasks that cost most (D691, ${lang})`, async ({ page }) => {
+    await start(page, lang)
+    await page.route('https://api.openai.example/v1/**', async (route) => route.fulfill({ response: await route.fetch({ url: route.request().url().replace('https://api.openai.example', BRAIN_URL.replace(/\/v1$/, '')) }) }))
+    await page.route('https://models.dev/api.json', (route) => route.fulfill({ json: { openai: { models: { 'gpt-6-sol': { cost: { input: 2, output: 8, cache_read: 0.2 } } } } } }))
+    await page.evaluate(() => import('/ui/brains.js').then(({ addBrain }) => addBrain({ id: 'cloud', provider: 'openai', api: 'openai', baseURL: 'https://api.openai.example/v1', model: 'gpt-6-sol' })))
+    await ask(page, 'Hello')
+    await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
+    // The cost on the answer's card opens it.
+    await page.locator('.msg-jean .msg-actions').last().getByRole('button', { name: about }).click()
+    await page.locator('.receipt .receipt-spent').click()
+    await expect(page.locator('app-settings dialog[open]').getByRole('heading', { name: spent })).toBeVisible()
+    await page.keyboard.press('Escape')
+    // Brains says it under its title, before the brains, and it opens the same page.
+    const settings = await openSettings(page, brains)
+    const row = settings.locator('[data-brain="spent"]')
+    await expect(row).toContainText(month)
+    await expect(row).toHaveAttribute('title', spent)
+    await expect(settings.locator('.brain-spent ~ section [data-brain="cloud"]')).toHaveCount(1)
+    await row.click()
+    await expect(settings.getByRole('heading', { name: spent })).toBeVisible()
+    const named = await page.evaluate(async () => new Intl.DateTimeFormat((await import('/core/i18n.js')).intlLocales(), { month: 'long', year: 'numeric' }).format(new Date()))
+    await expect(settings.locator('.parts li')).toHaveCount(1)
+    await expect(settings.locator('.parts li')).toContainText(named)
+    await expect(settings.getByRole('meter', { name: named })).toHaveAttribute('value', '1')
+    await expect(settings.locator('.spent-brains dt')).toHaveText(['OpenAI · gpt-6-sol'])
+    // A task that cost something opens from there.
+    await settings.locator('.list.brain-rows button').first().click()
+    await expect(page.locator('app-settings dialog[open]')).toHaveCount(0)
+    await expect(page.locator('.msg-user')).toHaveText(['Hello'])
+    // What each task cost is kept where it can be rebuilt.
+    expect(await page.evaluate(async () => Object.keys(JSON.parse((await (await import('/ui/state.js')).app.fs.read('.cache/spent.json')) ?? '{}').tasks ?? {}).length)).toBe(1)
+  })
+}
+
+for (const [lang, about, plan, brains] of [['en', 'About this answer', 'In your Claude plan', 'Brains'], ['ar', 'عن هذه الإجابة', 'مشمولة في اشتراكك في Claude', 'العقول'], ['ja', 'この回答について', 'Claude のプランに含まれます', '頭脳']]) {
+  test(`an answer from a Claude plan is in the plan, and so is the month under Brains, and no catalogue is read for it (D235, D691, ${lang})`, async ({ page }) => {
     await start(page, lang)
     // Claude Code through the bridge, which the fake brain answers for.
     let read = 0
@@ -141,6 +176,8 @@ for (const [lang, about, plan] of [['en', 'About this answer', 'In your Claude p
     await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
     await page.locator('.msg-jean .msg-actions').last().getByRole('button', { name: about }).click()
     await expect(page.locator('.receipt dd').nth(1)).toHaveText(plan)
+    await page.keyboard.press('Escape')
+    await expect((await openSettings(page, brains)).locator('[data-brain="spent"]')).toContainText(plan)
     expect(read).toBe(0)
   })
 }

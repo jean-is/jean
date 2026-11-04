@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "公開ログ",
   "receipt.places": "頭脳の所在地",
   "receipt.places.text": "証明書には、クラウド上の各頭脳について指定した国が記されます。",
-  "receipt.places.unsaid": "指定なし"
+  "receipt.places.unsaid": "指定なし",
+  "receipt.spent": "かかった費用",
+  "receipt.spentMonth": "今月: {cost}",
+  "receipt.spentLede": "各回答の頭脳が読み書きした量から、今日の価格で計算しています。各回答の下と同じです。",
+  "receipt.months": "月ごと",
+  "receipt.byBrain": "頭脳ごと",
+  "receipt.costliest": "費用がいちばんかかったタスク"
 }

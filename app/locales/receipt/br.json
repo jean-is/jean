@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "Marilh foran",
   "receipt.places": "Pelec’h emañ hoc’h empennoù",
   "receipt.places.text": "An testenioù a veneg ar vro a roit evit pep empenn er c’houmoul.",
-  "receipt.places.unsaid": "N’eo ket lavaret"
+  "receipt.places.unsaid": "N’eo ket lavaret",
+  "receipt.spent": "Ar pezh en deus koustet",
+  "receipt.spentMonth": "Ar miz-mañ : {cost}",
+  "receipt.spentLede": "Jedet diouzh ar pezh o deus lennet ha skrivet empennoù pep respont, d’o frizioù hiziv, evel dindan pep respont.",
+  "receipt.months": "Dre viz",
+  "receipt.byBrain": "Dre empenn",
+  "receipt.costliest": "An ober o deus koustet ar muiañ"
 }

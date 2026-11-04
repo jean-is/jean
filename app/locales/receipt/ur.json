@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "عوامی رجسٹر",
   "receipt.places": "آپ کے دماغ کہاں ہیں",
   "receipt.places.text": "سرٹیفکیٹ کلاؤڈ میں ہر دماغ کے لیے آپ کے بتائے ہوئے ملک کا نام لیتے ہیں۔",
-  "receipt.places.unsaid": "نہیں بتایا"
+  "receipt.places.unsaid": "نہیں بتایا",
+  "receipt.spent": "اس پر کتنا خرچ آیا",
+  "receipt.spentMonth": "اس مہینے: {cost}",
+  "receipt.spentLede": "ہر جواب کے دماغوں نے جو پڑھا اور لکھا، اس سے آج کی قیمتوں پر حساب کیا گیا، جیسے ہر جواب کے نیچے۔",
+  "receipt.months": "مہینے کے لحاظ سے",
+  "receipt.byBrain": "دماغ کے لحاظ سے",
+  "receipt.costliest": "سب سے مہنگے کام"
 }

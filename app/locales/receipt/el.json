@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "Δημόσιο αρχείο",
   "receipt.places": "Πού βρίσκονται οι εγκέφαλοί σας",
   "receipt.places.text": "Τα πιστοποιητικά αναφέρουν τη χώρα που δηλώνετε για κάθε εγκέφαλο στο cloud.",
-  "receipt.places.unsaid": "Δεν δηλώθηκε"
+  "receipt.places.unsaid": "Δεν δηλώθηκε",
+  "receipt.spent": "Πόσο κόστισε",
+  "receipt.spentMonth": "Αυτόν τον μήνα: {cost}",
+  "receipt.spentLede": "Υπολογισμένο από όσα διάβασαν και έγραψαν οι εγκέφαλοι κάθε απάντησης, στις σημερινές τιμές τους, όπως κάτω από κάθε απάντηση.",
+  "receipt.months": "Ανά μήνα",
+  "receipt.byBrain": "Ανά εγκέφαλο",
+  "receipt.costliest": "Οι εργασίες που κόστισαν περισσότερο"
 }

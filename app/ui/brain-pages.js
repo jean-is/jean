@@ -316,6 +316,9 @@ export function section() {
   const brain = settings.brains.find((one) => one.id === open)
   if (brain) return page(brain, closed)
   if (open === 'pictures') return html`${head(t('cap.pictures.name'))}${slots('pictures').map((part) => part.draw())}`
+  // A capability's own page here, which its row opens: what Jean cost, Receipt's (D691).
+  const own = slots('brains').find((part) => part.id === open && part.page)
+  if (own) return html`${head(own.title())}${own.page()}`
   if (!closed && WAYS.includes(open)) return way(open)
   if (!closed && (open === 'add' || !settings.brains.length)) return adding(!settings.brains.length)
   return open === 'auto' ? auto() : listed(closed)
@@ -374,6 +377,7 @@ function listed(closed) {
   const mode = cloud && !cloudAllowed() ? 'device' : settings.auto ? 'auto' : 'same'
   const kept = app.project.value.data.cloud === false
   return html`<header class="brain-head"><h2>${t('settings.brains')}</h2>${closed ? nothing : html`<button class="button" @click=${() => go('add')}>${icons.plus} ${t('brain.add')}</button>`}</header>
+    ${slots('brains').filter((part) => part.head).map((part) => part.draw())}
     ${troubled ? html`<div class="brain-wait" role="alert"><p>${said(troubled)} ${fix(troubled)}</p><button class="button" @click=${() => go(troubled.id)}>${t('brain.fix')}</button></div>` : nothing}
     <section><h3 id="brains-who">${t('brain.who')}</h3>
       <div class="list brains" role="radiogroup" aria-labelledby="brains-who">
@@ -389,7 +393,7 @@ function listed(closed) {
         ${troubles.value[brain.id] ? html`<span class="brain-trouble">${t('brain.trouble')}</span>` : nothing}${icons.chevron}</button></li>`)}</ul>
       ${closed ? html`<p class="muted">${lockedBy()}</p>` : nothing}
     </section>
-    ${slots('brains').map((part) => part.draw())}`
+    ${slots('brains').filter((part) => !part.head).map((part) => part.draw())}`
 }
 
 /** The levels of Auto's tiers, by their names in the picker. */
@@ -483,7 +487,7 @@ function adding(first) {
     ${['paid', 'keyed', 'free'].map((group) => all.some((one) => one.group === group) ? html`<section><h3>${t(`brain.${group}`)}</h3><ul class="list brain-rows">
       ${all.filter((one) => one.group === group).map(({ id, icon, title, needs }) => html`<li><button class="item" data-brain=${id} @click=${() => go(id)}>
         <span class="item-icon">${icon}</span><span class="item-text"><strong>${title}</strong><small>${needs}</small></span>${icons.chevron}</button></li>`)}</ul></section>` : nothing)}
-    ${first ? slots('brains').map((part) => part.draw()) : nothing}`
+    ${first ? slots('brains').filter((part) => !part.head).map((part) => part.draw()) : nothing}`
 }
 
 /** A way's page: what it needs, then the rest, and what it says back. @param {string} id */

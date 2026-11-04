@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "Verejný protokol",
   "receipt.places": "Kde sú vaše mozgy",
   "receipt.places.text": "Certifikáty uvádzajú krajinu, ktorú zadáte pre každý mozog v cloude.",
-  "receipt.places.unsaid": "Neuvedené"
+  "receipt.places.unsaid": "Neuvedené",
+  "receipt.spent": "Koľko to stálo",
+  "receipt.spentMonth": "Tento mesiac: {cost}",
+  "receipt.spentLede": "Vypočítané z toho, čo mozgy každej odpovede prečítali a napísali, za dnešné ceny, ako pod každou odpoveďou.",
+  "receipt.months": "Podľa mesiacov",
+  "receipt.byBrain": "Podľa mozgu",
+  "receipt.costliest": "Úlohy, ktoré stáli najviac"
 }

@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "Herkese açık kayıt",
   "receipt.places": "Beyinlerin nerede",
   "receipt.places.text": "Sertifikalar, buluttaki her beyin için belirttiğin ülkeyi adlandırır.",
-  "receipt.places.unsaid": "Belirtilmedi"
+  "receipt.places.unsaid": "Belirtilmedi",
+  "receipt.spent": "Ne kadar tuttu",
+  "receipt.spentMonth": "Bu ay: {cost}",
+  "receipt.spentLede": "Her yanıtın beyinlerinin okuduğu ve yazdığı kadarından, bugünkü fiyatlarıyla, her yanıtın altındaki gibi hesaplandı.",
+  "receipt.months": "Aya göre",
+  "receipt.byBrain": "Beyne göre",
+  "receipt.costliest": "En çok tutan görevler"
 }

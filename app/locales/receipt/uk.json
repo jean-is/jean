@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "Публічний журнал",
   "receipt.places": "Де ваші мозки",
   "receipt.places.text": "У сертифікатах зазначено країну, яку ви вкажете для кожного мозку в хмарі.",
-  "receipt.places.unsaid": "Не вказано"
+  "receipt.places.unsaid": "Не вказано",
+  "receipt.spent": "Скільки це коштувало",
+  "receipt.spentMonth": "Цього місяця: {cost}",
+  "receipt.spentLede": "Пораховано з того, що прочитали й написали мозки кожної відповіді, за сьогоднішніми цінами, як під кожною відповіддю.",
+  "receipt.months": "За місяцями",
+  "receipt.byBrain": "За мозками",
+  "receipt.costliest": "Найдорожчі завдання"
 }

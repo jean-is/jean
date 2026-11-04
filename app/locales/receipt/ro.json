@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "Registru public",
   "receipt.places": "Unde sunt creierele dvs.",
   "receipt.places.text": "Certificatele numesc țara pe care o indicați pentru fiecare creier din cloud.",
-  "receipt.places.unsaid": "Nespecificat"
+  "receipt.places.unsaid": "Nespecificat",
+  "receipt.spent": "Cât a costat",
+  "receipt.spentMonth": "Luna aceasta: {cost}",
+  "receipt.spentLede": "Calculat din ce au citit și au scris creierele fiecărui răspuns, la prețurile de azi, ca sub fiecare răspuns.",
+  "receipt.months": "Pe luni",
+  "receipt.byBrain": "Pe creier",
+  "receipt.costliest": "Sarcinile care au costat cel mai mult"
 }

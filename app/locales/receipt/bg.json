@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "Публичен регистър",
   "receipt.places": "Къде са мозъците ви",
   "receipt.places.text": "Сертификатите посочват държавата, която зададете за всеки мозък в облака.",
-  "receipt.places.unsaid": "Не е посочено"
+  "receipt.places.unsaid": "Не е посочено",
+  "receipt.spent": "Колко струваше",
+  "receipt.spentMonth": "Този месец: {cost}",
+  "receipt.spentLede": "Изчислено от това, което мозъците на всеки отговор са прочели и написали, по днешните им цени, както под всеки отговор.",
+  "receipt.months": "По месеци",
+  "receipt.byBrain": "По мозък",
+  "receipt.costliest": "Задачите, които струваха най-много"
 }

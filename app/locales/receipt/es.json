@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "Registro público",
   "receipt.places": "Dónde están tus cerebros",
   "receipt.places.text": "Los certificados nombran el país que indiques para cada cerebro en la nube.",
-  "receipt.places.unsaid": "Sin indicar"
+  "receipt.places.unsaid": "Sin indicar",
+  "receipt.spent": "Lo que costó",
+  "receipt.spentMonth": "Este mes: {cost}",
+  "receipt.spentLede": "Calculado a partir de lo que leyeron y escribieron los cerebros de cada respuesta, a sus precios de hoy, como bajo cada respuesta.",
+  "receipt.months": "Por mes",
+  "receipt.byBrain": "Por cerebro",
+  "receipt.costliest": "Las tareas que más costaron"
 }

@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "Daftari la umma",
   "receipt.places": "Akili zako ziko wapi",
   "receipt.places.text": "Vyeti hutaja nchi unayoweka kwa kila akili iliyo kwenye wingu.",
-  "receipt.places.unsaid": "Haijatajwa"
+  "receipt.places.unsaid": "Haijatajwa",
+  "receipt.spent": "Iligharimu kiasi gani",
+  "receipt.spentMonth": "Mwezi huu: {cost}",
+  "receipt.spentLede": "Imehesabiwa kutokana na kile akili za kila jibu zilichosoma na kuandika, kwa bei zao za leo, kama chini ya kila jibu.",
+  "receipt.months": "Kwa mwezi",
+  "receipt.byBrain": "Kwa akili",
+  "receipt.costliest": "Kazi zilizogharimu zaidi"
 }

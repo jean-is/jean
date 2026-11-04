@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "Registru publicu",
   "receipt.places": "Induve sò i vostri cervelli",
   "receipt.places.text": "I certificati numinanu u paese ch’è vo date per ogni cervellu in u nivulu.",
-  "receipt.places.unsaid": "Micca dettu"
+  "receipt.places.unsaid": "Micca dettu",
+  "receipt.spent": "Ciò ch’ellu hà custatu",
+  "receipt.spentMonth": "Stu mese : {cost}",
+  "receipt.spentLede": "Calculatu da ciò ch’elli anu lettu è scrittu i cervelli di ogni risposta, à i so prezzi d’oghje, cum’è sottu à ogni risposta.",
+  "receipt.months": "Per mese",
+  "receipt.byBrain": "Per cervellu",
+  "receipt.costliest": "I travaglii chì anu custatu u più"
 }

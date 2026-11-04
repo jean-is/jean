@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "Public log",
   "receipt.places": "Where your brains are",
   "receipt.places.text": "Certificates name the country you give for each brain in the cloud.",
-  "receipt.places.unsaid": "Not said"
+  "receipt.places.unsaid": "Not said",
+  "receipt.spent": "What it cost",
+  "receipt.spentMonth": "This month: {cost}",
+  "receipt.spentLede": "Worked out from what each answer's brains read and wrote, at their prices today, as under each answer.",
+  "receipt.months": "By month",
+  "receipt.byBrain": "By brain",
+  "receipt.costliest": "The tasks that cost most"
 }

@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "공개 로그",
   "receipt.places": "두뇌가 있는 곳",
   "receipt.places.text": "인증서에는 클라우드의 각 두뇌에 지정한 나라가 적혀요.",
-  "receipt.places.unsaid": "지정 안 함"
+  "receipt.places.unsaid": "지정 안 함",
+  "receipt.spent": "든 비용",
+  "receipt.spentMonth": "이번 달: {cost}",
+  "receipt.spentLede": "각 답변의 두뇌가 읽고 쓴 양으로 오늘 가격에 따라 계산했습니다. 각 답변 아래와 같습니다.",
+  "receipt.months": "월별",
+  "receipt.byBrain": "두뇌별",
+  "receipt.costliest": "비용이 가장 많이 든 작업"
 }

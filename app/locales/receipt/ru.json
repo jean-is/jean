@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "Публичный журнал",
   "receipt.places": "Где находятся ваши мозги",
   "receipt.places.text": "В сертификатах указывается страна, которую вы зададите для каждого мозга в облаке.",
-  "receipt.places.unsaid": "Не указано"
+  "receipt.places.unsaid": "Не указано",
+  "receipt.spent": "Сколько это стоило",
+  "receipt.spentMonth": "В этом месяце: {cost}",
+  "receipt.spentLede": "Рассчитано по тому, что прочитали и написали мозги каждого ответа, по сегодняшним ценам, как под каждым ответом.",
+  "receipt.months": "По месяцам",
+  "receipt.byBrain": "По мозгам",
+  "receipt.costliest": "Самые дорогие задачи"
 }

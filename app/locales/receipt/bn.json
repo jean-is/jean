@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "সর্বজনীন খাতা",
   "receipt.places": "আপনার মস্তিষ্কগুলো কোথায়",
   "receipt.places.text": "ক্লাউডে থাকা প্রতিটি মস্তিষ্কের জন্য আপনি যে দেশ দেন, সার্টিফিকেট তার নাম বলে।",
-  "receipt.places.unsaid": "বলা নেই"
+  "receipt.places.unsaid": "বলা নেই",
+  "receipt.spent": "কত খরচ হলো",
+  "receipt.spentMonth": "এই মাসে: {cost}",
+  "receipt.spentLede": "প্রতিটি উত্তরের মস্তিষ্ক যা পড়েছে ও লিখেছে, তা থেকে আজকের দামে হিসাব করা, প্রতিটি উত্তরের নিচের মতো।",
+  "receipt.months": "মাস অনুযায়ী",
+  "receipt.byBrain": "মস্তিষ্ক অনুযায়ী",
+  "receipt.costliest": "সবচেয়ে বেশি খরচের কাজ"
 }

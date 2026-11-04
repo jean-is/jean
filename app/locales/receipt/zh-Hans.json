@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "公开日志",
   "receipt.places": "你的大脑在哪里",
   "receipt.places.text": "证书会写明你为云端每个大脑指定的国家或地区。",
-  "receipt.places.unsaid": "未指定"
+  "receipt.places.unsaid": "未指定",
+  "receipt.spent": "花了多少",
+  "receipt.spentMonth": "本月：{cost}",
+  "receipt.spentLede": "按每个回答的大脑读写的内容、以今天的价格计算，与每个回答下方相同。",
+  "receipt.months": "按月",
+  "receipt.byBrain": "按大脑",
+  "receipt.costliest": "花费最多的任务"
 }

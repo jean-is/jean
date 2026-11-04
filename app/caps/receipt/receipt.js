@@ -97,7 +97,7 @@ const CHECK = new URL('../../check', import.meta.url).href
 // ─── The card ────────────────────────────────────────────────────────────────
 
 /** A brain's prices per token, as the picker shows them: its provider's, or models.dev's. @param {Brain} brain */
-function pricing({ provider, model }) {
+export function pricing({ provider, model }) {
   const connected = app.settings.value.brains.find((one) => one.provider === provider)
   const found = priceOf(provider, model, connected && app.models.value[connected.id]?.find((info) => info.id === model)?.pricing)
   if (!found && connected) loadModels(connected)
@@ -105,7 +105,7 @@ function pricing({ provider, model }) {
 }
 
 /** "about $0.004", "Free", "In your Claude plan" when a plan answered, or "Not known". @param {number | null} cost @param {string} [plan] */
-const costText = (cost, plan) => (cost === null ? t('receipt.costUnknown') : !cost ? (plan ? t('receipt.plan', { plan }) : t('receipt.free'))
+export const costText = (cost, plan) => (cost === null ? t('receipt.costUnknown') : !cost ? (plan ? t('receipt.plan', { plan }) : t('receipt.free'))
   : t('receipt.costAbout', { cost: new Intl.NumberFormat(intlLocales(), { style: 'currency', currency: 'USD', maximumSignificantDigits: 2 }).format(cost) }))
 
 /** A brain's settings, the organisation's when its policy names them. @param {string} provider */
@@ -148,7 +148,7 @@ function card(facts, turn, text, id, chosen) {
     </div>
     <dl>
       <div class="receipt-stat"><dt>${t('receipt.time')}</dt><dd>${formatDuration(facts.ms)}</dd></div>
-      <div class="receipt-stat"><dt>${t('receipt.cost')}</dt><dd>${costText(costOf(facts.brains, pricing), facts.brains.map(({ provider }) => PLANS[provider]).find(Boolean))}</dd></div>
+      <div class="receipt-stat"><dt>${t('receipt.cost')}</dt><dd><button class="link-button receipt-spent" title=${t('receipt.spent')} @click=${() => import('../../ui/dialogs.js').then(({ openSettings }) => openSettings('brains/spent'))}>${costText(costOf(facts.brains, pricing), facts.brains.map(({ provider }) => PLANS[provider]).find(Boolean))}</button></dd></div>
       ${brains.length ? html`<div class="receipt-list"><dt>${t('receipt.by')}</dt>${brains.map(entry)}</div>` : nothing}
       ${made.length ? html`<div class="receipt-list"><dt>${t('receipt.made')}</dt>${made.map(entry)}</div>` : nothing}
       ${others.length ? html`<div class="receipt-list"><dt>${t('receipt.reached')}</dt><dd class="receipt-hosts">${others.map((host) => html`<bdi dir="ltr">${host}</bdi>`)}</dd></div>` : nothing}
@@ -377,4 +377,9 @@ class Receipt extends Element {
 }
 
 define('app-receipt', Receipt)
-register({ id: 'receipt', slots: { approvals: { at: 1, draw: witnessing } } })
+/** What Jean cost over time, read as Settings › Brains opens and again as a task is kept meanwhile (./spent-page.js, D691). @type {import('@preact/signals-core').Signal<typeof import('./spent-page.js') | null>} */
+const spentPage = signal(null)
+effect(() => { if (/^brains(\/spent)?$/.test(app.section.value ?? '') && app.conversations.value) void import('./spent-page.js').then((module) => { spentPage.value = module; return module.spending() }).catch(console.warn) })
+register({ id: 'receipt', slots: { approvals: { at: 1, draw: witnessing },
+  // How things stand, under Brains' title, before its list (D509).
+  brains: { id: 'spent', at: 3, head: true, draw: () => spentPage.value?.row() ?? nothing, title: () => t('receipt.spent'), page: () => spentPage.value?.page() ?? nothing } } })

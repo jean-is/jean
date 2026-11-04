@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "יומן ציבורי",
   "receipt.places": "איפה נמצאים המוחות",
   "receipt.places.text": "התעודות מציינות את המדינה שנקבעה לכל מוח בענן.",
-  "receipt.places.unsaid": "לא צוין"
+  "receipt.places.unsaid": "לא צוין",
+  "receipt.spent": "כמה זה עלה",
+  "receipt.spentMonth": "החודש: {cost}",
+  "receipt.spentLede": "מחושב לפי מה שהמוחות של כל תשובה קראו וכתבו, במחירים של היום, כמו מתחת לכל תשובה.",
+  "receipt.months": "לפי חודש",
+  "receipt.byBrain": "לפי מוח",
+  "receipt.costliest": "המשימות שעלו הכי הרבה"
 }

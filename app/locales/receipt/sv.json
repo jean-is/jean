@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "Offentlig logg",
   "receipt.places": "Var dina hjärnor finns",
   "receipt.places.text": "Certifikaten anger det land du uppger för varje hjärna i molnet.",
-  "receipt.places.unsaid": "Inte angivet"
+  "receipt.places.unsaid": "Inte angivet",
+  "receipt.spent": "Vad det kostade",
+  "receipt.spentMonth": "Den här månaden: {cost}",
+  "receipt.spentLede": "Uträknat från vad varje svars hjärnor läste och skrev, till dagens priser, som under varje svar.",
+  "receipt.months": "Per månad",
+  "receipt.byBrain": "Per hjärna",
+  "receipt.costliest": "Uppgifterna som kostade mest"
 }

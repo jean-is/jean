@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "Log awam",
   "receipt.places": "Di mana otak anda berada",
   "receipt.places.text": "Sijil menamakan negara yang anda tetapkan bagi setiap otak di awan.",
-  "receipt.places.unsaid": "Tidak dinyatakan"
+  "receipt.places.unsaid": "Tidak dinyatakan",
+  "receipt.spent": "Kosnya",
+  "receipt.spentMonth": "Bulan ini: {cost}",
+  "receipt.spentLede": "Dikira daripada apa yang dibaca dan ditulis otak setiap jawapan, pada harga hari ini, seperti di bawah setiap jawapan.",
+  "receipt.months": "Mengikut bulan",
+  "receipt.byBrain": "Mengikut otak",
+  "receipt.costliest": "Tugas yang paling mahal"
 }

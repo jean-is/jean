@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "Julkinen loki",
   "receipt.places": "Missä aivosi ovat",
   "receipt.places.text": "Varmenteet mainitsevat maan, jonka annat kullekin pilviaivolle.",
-  "receipt.places.unsaid": "Ei kerrottu"
+  "receipt.places.unsaid": "Ei kerrottu",
+  "receipt.spent": "Mitä se maksoi",
+  "receipt.spentMonth": "Tässä kuussa: {cost}",
+  "receipt.spentLede": "Laskettu siitä, mitä kunkin vastauksen aivot lukivat ja kirjoittivat, tämän päivän hinnoin, kuten jokaisen vastauksen alla.",
+  "receipt.months": "Kuukausittain",
+  "receipt.byBrain": "Aivoittain",
+  "receipt.costliest": "Eniten maksaneet tehtävät"
 }

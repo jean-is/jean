@@ -35,5 +35,11 @@
   "receipt.witnesses.log": "Nyilvános napló",
   "receipt.places": "Hol vannak az agyaid",
   "receipt.places.text": "A tanúsítványok azt az országot nevezik meg, amelyet az egyes felhőbeli agyakhoz megadsz.",
-  "receipt.places.unsaid": "Nincs megadva"
+  "receipt.places.unsaid": "Nincs megadva",
+  "receipt.spent": "Mennyibe került",
+  "receipt.spentMonth": "Ebben a hónapban: {cost}",
+  "receipt.spentLede": "Abból számolva, amit az egyes válaszok agyai olvastak és írtak, a mai áraikon, ahogy minden válasz alatt.",
+  "receipt.months": "Hónapok szerint",
+  "receipt.byBrain": "Agyak szerint",
+  "receipt.costliest": "A legtöbbe került feladatok"
 }
