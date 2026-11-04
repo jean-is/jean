@@ -196,7 +196,7 @@ test('a voice kept at an older pin of its weights is loaded again at the new one
 })
 
 // Right to left and Japanese (AGENTS.md): the offer, then its switch and credit in Settings, in each.
-for (const [lang, offerText, credit] of [['ar', 'هل تريد سماع الإجابات بصوت طبيعي؟', 'بصوت Alba MacKenna'], ['ja', '回答を自然な声で聞きますか？', 'Alba MacKennaの声']]) {
+for (const [lang, offerText, credit] of [['ar', 'هل تريد سماع الإجابات بصوت طبيعي؟', 'بصوت Alba MacKenna'], ['ja', '回答を自然な声で聞きますか？', 'Alba MacKenna の声']]) {
   test(`the natural voice is offered and credited in ${lang}`, async ({ page }) => {
     await fake(page)
     await start(page, lang)

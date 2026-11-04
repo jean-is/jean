@@ -572,7 +572,7 @@ test('a design system: Jean\'s own and a project\'s, its colours written or pick
   await expect.poll(async () => (await kit('kit.json'))?.tokens?.muted).toBe('rgba(0, 0, 0, 0.6)')
   await main.fill('teal, more or less')
   await main.press('Enter')
-  await expect(settings.locator('.hint[role="status"]')).toContainText('That isn\'t a colour')
+  await expect(settings.locator('.hint[role="status"]')).toContainText('That isn’t a colour')
   await expect(main).toHaveValue('teal, more or less')
   await expect(main).toHaveAttribute('aria-invalid', 'true')
   expect((await kit('kit.json'))?.tokens?.primary).toBe('rgb(15, 118, 110)')
@@ -605,7 +605,7 @@ test('a design system: Jean\'s own and a project\'s, its colours written or pick
   await settings.getByLabel('Name', { exact: true }).fill('Broken')
   await settings.getByLabel('Grid', { exact: true }).fill('default one\none default')
   await settings.getByRole('button', { name: 'Keep' }).click()
-  await expect(settings.locator('.hint[role="status"]')).toContainText('can\'t be laid out')
+  await expect(settings.locator('.hint[role="status"]')).toContainText('can’t be laid out')
   await settings.getByRole('button', { name: 'Cancel' }).click()
   // A kit brought in, then a PowerPoint template, its theme, logo and layouts; and the kit saved as a file.
   await settings.locator('.kit-files input[type="file"]').setInputFiles({ name: 'acme.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify({ name: 'Acme', tokens: { primary: '#e30613', voice: 'bold' }, layouts: { roadmap: { label: 'Roadmap', lists: 'timeline' } } })) })

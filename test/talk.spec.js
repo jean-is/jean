@@ -200,7 +200,7 @@ test('once a task has started, a line under the box says the assistant is an AI,
   await connectFakeBrain(page)
   await ask(page, 'Explain photosynthesis in simple words')
   await expect(page.locator('.legal')).toHaveCount(0)
-  const said = { en: 'Jean is AI and can make mistakes', ar: 'Jean ذكاء اصطناعي، والأخطاء واردة', ja: 'JeanはAIのため、間違えることがあります' }
+  const said = { en: 'Jean is AI and can make mistakes', ar: 'Jean ذكاء اصطناعي، والأخطاء واردة', ja: 'Jean は AI のため、間違えることがあります' }
   for (const [lang, text] of Object.entries(said)) {
     if (lang !== 'en') {
       const settings = await openSettings(page)

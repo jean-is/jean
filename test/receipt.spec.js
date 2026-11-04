@@ -10,7 +10,7 @@ import { start, connectFakeBrain, ask, fadeOut, turnOn, openApprovals, closeSett
 for (const [lang, about, local, free, save, prove] of [
   ['en', 'About this answer', 'Kept private', 'Free', 'Save the certificate', 'Save the proof'],
   ['ar', 'عن هذه الإجابة', 'خصوصيتك محفوظة', 'مجانًا', 'حفظ الشهادة', 'حفظ الإثبات'],
-  ['ja', 'この回答について', 'プライバシーは守られました', '無料', '証明書を保存', '証拠を保存'],
+  ['ja', 'この回答について', 'この端末の中で完結', '無料', '証明書を保存', '証拠を保存'],
 ]) {
   test(`an answer done on this device says so, and ${lang === 'en' ? 'saves' : 'offers'} a sealed certificate (${lang})`, async ({ page, browserName }) => {
     await start(page, lang)

@@ -272,7 +272,7 @@ test('asked for a skill, Jean asks what it needs, saves it, and its example trie
   // Not found yet: the brain offers Skills, saying what they do rather than "the third time".
   await ask(page, 'Make me a skill for my team update')
   const card = page.locator('.msg-jean .approval')
-  await expect(card).toContainText('Keep how you want this done as a skill')
+  await expect(card).toContainText('Save the way you want this done as a skill')
   await card.getByRole('button', { name: 'Turn it on' }).click()
   await expect(page.locator('.msg-jean .prose').last()).toContainText('What will you give me')
   await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()

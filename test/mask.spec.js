@@ -222,7 +222,7 @@ test('text in another script isn’t read or sent', async ({ page, context }) =>
   await start(page)
   await useCorp(page)
   await ask(page, 'اكتب إلى مريم الحسن عن العقد')
-  await expect(page.locator('.toast')).toContainText('it’s in a script')
+  await expect(page.locator('.toast')).toContainText('it’s in a writing system')
   expect(weights).toBe(0)
   expect(asked.filter((body) => JSON.parse(body).tools?.length)).toEqual([])
 })

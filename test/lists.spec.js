@@ -51,7 +51,7 @@ for (const lang of ['en', 'ar', 'ja']) {
     await page.goto('check')
     await expect(page.locator('html')).toHaveAttribute('lang', lang)
     await page.locator('input[type="file"]').setInputFiles([{ name: 'Certificate.json', mimeType: 'application/json', buffer: Buffer.from(certificate) }])
-    const [trusted, line] = /** @type {Record<string, string[]>} */ ({ en: ['Certified by an authority your organization trusts', 'A qualified seal under EU law'], ar: ['وثّقته جهة تثق بها مؤسستك', 'ختم مؤهَّل بموجب قانون الاتحاد الأوروبي'], ja: ['組織が信頼する認証局が証明', 'EU法に基づく適格な封印'] })[lang]
+    const [trusted, line] = /** @type {Record<string, string[]>} */ ({ en: ['Certified by an authority your organization trusts', 'A qualified seal under EU law'], ar: ['وثّقته جهة تثق بها مؤسستك', 'ختم مؤهَّل بموجب قانون الاتحاد الأوروبي'], ja: ['組織が信頼する認証局が証明', 'EU 法に基づく適格な封印'] })[lang]
     const row = page.locator('.receipt-checked .receipt-list').filter({ hasText: trusted })
     await expect(row).toContainText('Qualified Seal CA')
     await expect(row.locator('dd').last()).toHaveText(line)
