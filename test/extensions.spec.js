@@ -316,3 +316,27 @@ test('At a glance (examples/extensions/glance/) draws under a long answer how lo
   await closeSettings(page)
   await expect(short).toHaveCount(2)
 })
+
+test('asked, Jean writes an extension with the skill "Make an extension": its page shows its rights and code before anything of it runs or is kept, and added, it works (D692)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await ask(page, 'Make me an extension that counts answers')
+  const settings = page.locator('app-settings dialog[open]')
+  await expect(settings.getByRole('heading', { name: 'Answer count' })).toBeVisible()
+  await expect(settings.locator('.data-head .lede')).toContainText('Written at your request')
+  await expect(settings.locator('.extensions-code code')).toContainText("on('turn.end'")
+  const kept = () => page.evaluate(async () => (await (await import('/ui/state.js')).app.fs.list('extensions').catch(() => [])).map(({ name }) => name))
+  await expect(page.locator('.msg-jean').last()).toContainText('nothing runs until the user presses Add it')
+  await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
+  expect(await kept()).toEqual([])
+  await settings.getByRole('button', { name: 'Add it' }).click()
+  await expect.poll(kept).toEqual(['answer-count'])
+  await page.keyboard.press('Escape')
+  await ask(page, 'Hello')
+  await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
+  const again = await openSettings(page, 'Extensions')
+  await again.locator('[data-extension="answer-count"]').click()
+  // Each answer that ended since it was added.
+  await expect(again.getByText('1 answers counted')).toBeVisible()
+})
+

@@ -54,5 +54,6 @@
   "extensions.safe": "Siguran način rada: tijekom ovog posjeta ne radi nijedno proširenje.",
   "extensions.leaveSafe": "Izađi iz sigurnog načina",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "Ukloniti proširenje {title}? Ono što je čuvalo odlazi s njim."
+  "extensions.confirmRemove": "Ukloniti proširenje {title}? Ono što je čuvalo odlazi s njim.",
+  "extensions.made": "Napisano na vaš zahtjev"
 }

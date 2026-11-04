@@ -54,5 +54,6 @@
   "extensions.safe": "โหมดปลอดภัย: การเข้าใช้ครั้งนี้จะไม่มีส่วนขยายใดทำงาน",
   "extensions.leaveSafe": "ออกจากโหมดปลอดภัย",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "ลบ {title} ไหม สิ่งที่มันเก็บไว้จะถูกลบไปด้วย"
+  "extensions.confirmRemove": "ลบ {title} ไหม สิ่งที่มันเก็บไว้จะถูกลบไปด้วย",
+  "extensions.made": "เขียนตามคำขอของคุณ"
 }

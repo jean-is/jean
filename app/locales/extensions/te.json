@@ -54,5 +54,6 @@
   "extensions.safe": "సురక్షిత మోడ్: ఈ సందర్శనలో ఏ ఎక్స్‌టెన్షన్ కూడా నడవదు.",
   "extensions.leaveSafe": "సురక్షిత మోడ్ నుండి బయటకు రండి",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "{title} ని తీసివేయాలా? అది ఉంచినవి కూడా దానితో పోతాయి."
+  "extensions.confirmRemove": "{title} ని తీసివేయాలా? అది ఉంచినవి కూడా దానితో పోతాయి.",
+  "extensions.made": "మీ అభ్యర్థనపై రాసింది"
 }

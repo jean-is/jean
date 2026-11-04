@@ -54,5 +54,6 @@
   "extensions.safe": "Nouzový režim: během této návštěvy neběží žádné rozšíření.",
   "extensions.leaveSafe": "Opustit nouzový režim",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "Odebrat {title}? Co si uložilo, zmizí s ním."
+  "extensions.confirmRemove": "Odebrat {title}? Co si uložilo, zmizí s ním.",
+  "extensions.made": "Napsáno na vaši žádost"
 }

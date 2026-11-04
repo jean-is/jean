@@ -54,5 +54,6 @@
   "extensions.safe": "Mod sigur: nicio extensie nu rulează în timpul acestei vizite.",
   "extensions.leaveSafe": "Ieșiți din modul sigur",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "Eliminați {title}? Ce a păstrat pleacă odată cu ea."
+  "extensions.confirmRemove": "Eliminați {title}? Ce a păstrat pleacă odată cu ea.",
+  "extensions.made": "Scrisă la cererea dumneavoastră"
 }

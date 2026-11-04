@@ -54,5 +54,6 @@
   "extensions.safe": "የጥንቃቄ ሁነታ፦ በዚህ ጉብኝት ምንም ቅጥያ አይሠራም።",
   "extensions.leaveSafe": "ከጥንቃቄ ሁነታ ውጣ",
   "extensions.says": "{title}፦ {text}",
-  "extensions.confirmRemove": "{title} ይወገድ? ያስቀመጠውም አብሮ ይሄዳል።"
+  "extensions.confirmRemove": "{title} ይወገድ? ያስቀመጠውም አብሮ ይሄዳል።",
+  "extensions.made": "በጥያቄዎ የተጻፈ"
 }

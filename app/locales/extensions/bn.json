@@ -54,5 +54,6 @@
   "extensions.safe": "নিরাপদ মোড: এই ভিজিটে কোনো এক্সটেনশন চলবে না।",
   "extensions.leaveSafe": "নিরাপদ মোড ছাড়ুন",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "{title} সরাবেন? এটি যা রেখেছিল তা-ও চলে যাবে।"
+  "extensions.confirmRemove": "{title} সরাবেন? এটি যা রেখেছিল তা-ও চলে যাবে।",
+  "extensions.made": "আপনার অনুরোধে লেখা"
 }

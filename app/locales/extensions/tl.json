@@ -54,5 +54,6 @@
   "extensions.safe": "Ligtas na mode: walang extension na tatakbo sa pagbisitang ito.",
   "extensions.leaveSafe": "Umalis sa ligtas na mode",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "Alisin ang {title}? Kasama nitong mawawala ang itinago nito."
+  "extensions.confirmRemove": "Alisin ang {title}? Kasama nitong mawawala ang itinago nito.",
+  "extensions.made": "Isinulat sa iyong kahilingan"
 }

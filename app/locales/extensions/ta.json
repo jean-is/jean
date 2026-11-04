@@ -54,5 +54,6 @@
   "extensions.safe": "பாதுகாப்பான பயன்முறை: இந்த வருகையில் எந்த நீட்டிப்பும் இயங்காது.",
   "extensions.leaveSafe": "பாதுகாப்பான பயன்முறையிலிருந்து வெளியேறு",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "{title} ஐ நீக்கவா? அது வைத்திருந்தவையும் உடன் நீங்கும்."
+  "extensions.confirmRemove": "{title} ஐ நீக்கவா? அது வைத்திருந்தவையும் உடன் நீங்கும்.",
+  "extensions.made": "உங்கள் கோரிக்கையின்படி எழுதப்பட்டது"
 }

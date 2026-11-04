@@ -54,5 +54,6 @@
   "extensions.safe": "Modo de segurança: nenhuma extensão corre durante esta visita.",
   "extensions.leaveSafe": "Sair do modo de segurança",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "Remover {title}? O que guardou vai com ela."
+  "extensions.confirmRemove": "Remover {title}? O que guardou vai com ela.",
+  "extensions.made": "Escrita a teu pedido"
 }

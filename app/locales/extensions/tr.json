@@ -54,5 +54,6 @@
   "extensions.safe": "Güvenli mod: Bu ziyarette hiçbir uzantı çalışmaz.",
   "extensions.leaveSafe": "Güvenli moddan çık",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "{title} kaldırılsın mı? Sakladıkları da onunla gider."
+  "extensions.confirmRemove": "{title} kaldırılsın mı? Sakladıkları da onunla gider.",
+  "extensions.made": "İsteğin üzerine yazıldı"
 }

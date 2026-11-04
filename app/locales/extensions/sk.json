@@ -54,5 +54,6 @@
   "extensions.safe": "Núdzový režim: počas tejto návštevy nebeží žiadne rozšírenie.",
   "extensions.leaveSafe": "Opustiť núdzový režim",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "Odstrániť {title}? Čo si uložilo, zmizne s ním."
+  "extensions.confirmRemove": "Odstrániť {title}? Čo si uložilo, zmizne s ním.",
+  "extensions.made": "Napísané na vašu žiadosť"
 }

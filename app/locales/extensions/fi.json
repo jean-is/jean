@@ -54,5 +54,6 @@
   "extensions.safe": "Vikasietotila: yksikään laajennus ei toimi tämän käynnin aikana.",
   "extensions.leaveSafe": "Poistu vikasietotilasta",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "Poistetaanko {title}? Sen säilyttämä lähtee sen mukana."
+  "extensions.confirmRemove": "Poistetaanko {title}? Sen säilyttämä lähtee sen mukana.",
+  "extensions.made": "Kirjoitettu pyynnöstäsi"
 }

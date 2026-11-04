@@ -54,5 +54,6 @@
   "extensions.safe": "Modalità provvisoria: in questa visita non funziona nessuna estensione.",
   "extensions.leaveSafe": "Esci dalla modalità provvisoria",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "Rimuovere {title}? Ciò che ha salvato viene eliminato con lei."
+  "extensions.confirmRemove": "Rimuovere {title}? Ciò che ha salvato viene eliminato con lei.",
+  "extensions.made": "Scritta su tua richiesta"
 }

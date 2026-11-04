@@ -54,5 +54,6 @@
   "extensions.safe": "Tryb awaryjny: podczas tej wizyty nie działa żadne rozszerzenie.",
   "extensions.leaveSafe": "Wyjdź z trybu awaryjnego",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "Usunąć {title}? To, co zapisało, zniknie razem z nim."
+  "extensions.confirmRemove": "Usunąć {title}? To, co zapisało, zniknie razem z nim.",
+  "extensions.made": "Napisane na twoją prośbę"
 }

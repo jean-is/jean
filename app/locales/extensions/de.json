@@ -54,5 +54,6 @@
   "extensions.safe": "Abgesicherter Modus: Bei diesem Besuch läuft keine Erweiterung.",
   "extensions.leaveSafe": "Abgesicherten Modus verlassen",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "{title} entfernen? Was sie gespeichert hat, geht mit."
+  "extensions.confirmRemove": "{title} entfernen? Was sie gespeichert hat, geht mit.",
+  "extensions.made": "Auf deine Bitte geschrieben"
 }

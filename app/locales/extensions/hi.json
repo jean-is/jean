@@ -54,5 +54,6 @@
   "extensions.safe": "सुरक्षित मोड: इस बार कोई एक्सटेंशन नहीं चलेगा।",
   "extensions.leaveSafe": "सुरक्षित मोड से बाहर निकलें",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "{title} हटाएँ? इसने जो रखा था वह भी साथ जाएगा।"
+  "extensions.confirmRemove": "{title} हटाएँ? इसने जो रखा था वह भी साथ जाएगा।",
+  "extensions.made": "आपके कहने पर लिखा गया"
 }

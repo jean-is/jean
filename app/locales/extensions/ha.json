@@ -54,5 +54,6 @@
   "extensions.safe": "Yanayin tsaro: babu ƙarin da zai yi aiki a wannan ziyarar.",
   "extensions.leaveSafe": "Fita daga yanayin tsaro",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "A cire {title}? Abin da ya ajiye zai tafi tare da shi."
+  "extensions.confirmRemove": "A cire {title}? Abin da ya ajiye zai tafi tare da shi.",
+  "extensions.made": "An rubuta bisa buƙatarka"
 }

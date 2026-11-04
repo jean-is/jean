@@ -54,5 +54,6 @@
   "extensions.safe": "Chế độ an toàn: không tiện ích nào chạy trong lần truy cập này.",
   "extensions.leaveSafe": "Thoát chế độ an toàn",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "Xóa {title}? Những gì nó lưu cũng sẽ bị xóa theo."
+  "extensions.confirmRemove": "Xóa {title}? Những gì nó lưu cũng sẽ bị xóa theo.",
+  "extensions.made": "Được viết theo yêu cầu của bạn"
 }

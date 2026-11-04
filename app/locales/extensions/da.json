@@ -54,5 +54,6 @@
   "extensions.safe": "Fejlsikret tilstand: ingen udvidelser kører under dette besøg.",
   "extensions.leaveSafe": "Forlad fejlsikret tilstand",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "Fjerne {title}? Det, den har gemt, forsvinder også."
+  "extensions.confirmRemove": "Fjerne {title}? Det, den har gemt, forsvinder også.",
+  "extensions.made": "Skrevet på din anmodning"
 }

@@ -54,5 +54,6 @@
   "extensions.safe": "حالت امن: در این بازدید هیچ افزونه‌ای اجرا نمی‌شود.",
   "extensions.leaveSafe": "خروج از حالت امن",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "{title} حذف شود؟ آنچه نگه داشته بود هم با آن می‌رود."
+  "extensions.confirmRemove": "{title} حذف شود؟ آنچه نگه داشته بود هم با آن می‌رود.",
+  "extensions.made": "به درخواست شما نوشته شد"
 }

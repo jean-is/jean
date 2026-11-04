@@ -54,5 +54,6 @@
   "extensions.safe": "セーフモード：今回は拡張機能を実行しません。",
   "extensions.leaveSafe": "セーフモードを終了",
   "extensions.says": "{title}：{text}",
-  "extensions.confirmRemove": "{title} を削除しますか？保存していた内容も一緒に削除されます。"
+  "extensions.confirmRemove": "{title} を削除しますか？保存していた内容も一緒に削除されます。",
+  "extensions.made": "あなたの依頼で書かれたもの"
 }

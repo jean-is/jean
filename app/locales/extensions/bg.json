@@ -54,5 +54,6 @@
   "extensions.safe": "Безопасен режим: при това посещение не работи никое разширение.",
   "extensions.leaveSafe": "Изход от безопасния режим",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "Да се премахне ли {title}? Каквото е пазило, изчезва с него."
+  "extensions.confirmRemove": "Да се премахне ли {title}? Каквото е пазило, изчезва с него.",
+  "extensions.made": "Написано по ваша молба"
 }

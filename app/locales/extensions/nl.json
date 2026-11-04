@@ -54,5 +54,6 @@
   "extensions.safe": "Veilige modus: tijdens dit bezoek draait geen enkele extensie.",
   "extensions.leaveSafe": "Veilige modus verlaten",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "{title} verwijderen? Wat hij bewaarde gaat mee."
+  "extensions.confirmRemove": "{title} verwijderen? Wat hij bewaarde gaat mee.",
+  "extensions.made": "Op jouw verzoek geschreven"
 }

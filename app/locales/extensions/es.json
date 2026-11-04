@@ -54,5 +54,6 @@
   "extensions.safe": "Modo seguro: ninguna extensión se ejecuta durante esta visita.",
   "extensions.leaveSafe": "Salir del modo seguro",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "¿Quitar {title}? Lo que guardó se va con ella."
+  "extensions.confirmRemove": "¿Quitar {title}? Lo que guardó se va con ella.",
+  "extensions.made": "Escrita a petición tuya"
 }

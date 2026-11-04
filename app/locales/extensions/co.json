@@ -54,5 +54,6 @@
   "extensions.safe": "Modu sicuru : nisuna estensione gira durante sta visita.",
   "extensions.leaveSafe": "Esce da u modu sicuru",
   "extensions.says": "{title} : {text}",
-  "extensions.confirmRemove": "Caccià {title} ? Ciò ch’ella hà tenutu si ne và cun ella."
+  "extensions.confirmRemove": "Caccià {title} ? Ciò ch’ella hà tenutu si ne và cun ella.",
+  "extensions.made": "Scritta à a vostra dumanda"
 }

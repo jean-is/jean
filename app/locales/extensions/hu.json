@@ -54,5 +54,6 @@
   "extensions.safe": "Csökkentett mód: ezen a látogatáson egyetlen bővítmény sem fut.",
   "extensions.leaveSafe": "Kilépés a csökkentett módból",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "Eltávolítod ezt: {title}? Amit megőrzött, vele együtt eltűnik."
+  "extensions.confirmRemove": "Eltávolítod ezt: {title}? Amit megőrzött, vele együtt eltűnik.",
+  "extensions.made": "A kérésedre írva"
 }

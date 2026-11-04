@@ -54,5 +54,6 @@
   "extensions.safe": "安全模式：本次访问不运行任何扩展程序。",
   "extensions.leaveSafe": "退出安全模式",
   "extensions.says": "{title}：{text}",
-  "extensions.confirmRemove": "移除 {title}？它保存的内容也会一起移除。"
+  "extensions.confirmRemove": "移除 {title}？它保存的内容也会一起移除。",
+  "extensions.made": "应你的要求编写"
 }

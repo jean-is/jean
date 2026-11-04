@@ -54,5 +54,6 @@
   "extensions.safe": "Безпечний режим: цього разу жодне розширення не запускається.",
   "extensions.leaveSafe": "Вийти з безпечного режиму",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "Вилучити {title}? Збережене ним зникне разом із ним."
+  "extensions.confirmRemove": "Вилучити {title}? Збережене ним зникне разом із ним.",
+  "extensions.made": "Написано на ваше прохання"
 }

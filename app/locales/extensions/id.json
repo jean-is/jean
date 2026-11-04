@@ -54,5 +54,6 @@
   "extensions.safe": "Mode aman: tidak ada ekstensi yang berjalan selama kunjungan ini.",
   "extensions.leaveSafe": "Keluar dari mode aman",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "Hapus {title}? Apa yang disimpannya ikut terhapus."
+  "extensions.confirmRemove": "Hapus {title}? Apa yang disimpannya ikut terhapus.",
+  "extensions.made": "Ditulis atas permintaanmu"
 }

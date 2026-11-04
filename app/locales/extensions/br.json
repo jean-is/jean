@@ -54,5 +54,6 @@
   "extensions.safe": "Mod surentez : astenn ebet ne ya en-dro e-pad ar weladenn-mañ.",
   "extensions.leaveSafe": "Kuitaat ar mod surentez",
   "extensions.says": "{title} : {text}",
-  "extensions.confirmRemove": "Lemel {title} ? Ar pezh en deus miret a ya gantañ."
+  "extensions.confirmRemove": "Lemel {title} ? Ar pezh en deus miret a ya gantañ.",
+  "extensions.made": "Skrivet war ho koulenn"
 }

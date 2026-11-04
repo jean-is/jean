@@ -54,5 +54,6 @@
   "extensions.safe": "Mode sans échec : aucune extension ne tourne pendant cette visite.",
   "extensions.leaveSafe": "Quitter le mode sans échec",
   "extensions.says": "{title} : {text}",
-  "extensions.confirmRemove": "Retirer {title}? Ce qu’elle gardait part avec elle."
+  "extensions.confirmRemove": "Retirer {title}? Ce qu’elle gardait part avec elle.",
+  "extensions.made": "Écrite à votre demande"
 }

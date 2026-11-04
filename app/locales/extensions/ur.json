@@ -54,5 +54,6 @@
   "extensions.safe": "محفوظ موڈ: اس بار کوئی توسیع نہیں چلے گی۔",
   "extensions.leaveSafe": "محفوظ موڈ سے باہر نکلیں",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "{title} ہٹائیں؟ اس نے جو رکھا تھا وہ بھی ساتھ جائے گا۔"
+  "extensions.confirmRemove": "{title} ہٹائیں؟ اس نے جو رکھا تھا وہ بھی ساتھ جائے گا۔",
+  "extensions.made": "آپ کی درخواست پر لکھی گئی"
 }

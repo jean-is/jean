@@ -54,5 +54,6 @@
   "extensions.safe": "Безопасный режим: в этот раз расширения не запускаются.",
   "extensions.leaveSafe": "Выйти из безопасного режима",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "Удалить {title}? Сохранённое им удалится вместе с ним."
+  "extensions.confirmRemove": "Удалить {title}? Сохранённое им удалится вместе с ним.",
+  "extensions.made": "Написано по вашей просьбе"
 }

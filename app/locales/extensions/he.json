@@ -54,5 +54,6 @@
   "extensions.safe": "מצב בטוח: אף הרחבה לא רצה בביקור הזה.",
   "extensions.leaveSafe": "יציאה ממצב בטוח",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "להסיר את {title}? מה ששמרה יוסר יחד איתה."
+  "extensions.confirmRemove": "להסיר את {title}? מה ששמרה יוסר יחד איתה.",
+  "extensions.made": "נכתבה לבקשתך"
 }

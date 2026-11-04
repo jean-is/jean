@@ -54,5 +54,6 @@
   "extensions.safe": "Hali salama: hakuna kiendelezi kinachoendeshwa katika ziara hii.",
   "extensions.leaveSafe": "Toka kwenye hali salama",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "Uondoe {title}? Kilichohifadhi kitaondoka nacho."
+  "extensions.confirmRemove": "Uondoe {title}? Kilichohifadhi kitaondoka nacho.",
+  "extensions.made": "Imeandikwa kwa ombi lako"
 }

@@ -547,6 +547,12 @@ const SPLITTER = `Here is a bill splitter:
 \`\`\`
 
 Type the bill and how many you are.`
+/** An extension a brain writes from the skill "Make an extension" (D692): it counts answers, on its page in Settings. */
+const COUNTING = `export async function register(on, $) {
+  let count = (await $.store.get('count')) ?? 0
+  on('turn.end', async (e, next) => { count++; await $.store.set('count', count); $.redraw(); return next(e) })
+  $.slot('settings', () => ({ row: [count + ' answers counted'] }))
+}`
 /** An app that keeps a count in localStorage, reads a file the user picks and saves one it makes (D688), as brains write one. */
 const TALLY = `Here is a tally:
 
@@ -933,6 +939,10 @@ createServer(async (req, res) => {
   else if (/\bjig\b/i.test(question) && last.role === 'user') answer = JIG
   // Asked for sheet music (or a partition), it reads Jean's own Music score where <skills> lists it, then writes a tune as its steps say (D401),
   // or where `skill`'s line names it, before Skills is found (D406).
+  // An extension asked for: the skill read first, which brings `extension`, then one offered on its page (D692).
+  else if (/an extension that counts/i.test(question) && last.role === 'user' && declared.has('skill')) call = { name: 'skill', args: { name: 'extension' } }
+  else if (toolName === 'skill' && /# Make an extension/.test(last.content) && declared.has('extension')) call = { name: 'extension', args: { name: 'answer-count', title: 'Answer count', description: 'Counts the answers and shows how many on its page.', rights: ['watch', 'draw'], code: COUNTING } }
+  else if (toolName === 'extension') answer = `Done: ${last.content}`
   else if (/sheet music|partition/i.test(question) && last.role === 'user' && declared.has('skill') && /^- (skill: .*\b)?music-score\b/m.test(system)) call = { name: 'skill', args: { name: 'music-score' } }
   else if (toolName === 'skill' && /ABC notation/.test(last.content)) answer = JIG
   // The deck on show, changed as asked: written again whole, its 120 now 150 (D591).

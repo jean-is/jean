@@ -54,5 +54,6 @@
   "extensions.safe": "Mod selamat: tiada pemalam berjalan semasa lawatan ini.",
   "extensions.leaveSafe": "Keluar daripada mod selamat",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "Buang {title}? Apa yang disimpannya akan turut dibuang."
+  "extensions.confirmRemove": "Buang {title}? Apa yang disimpannya akan turut dibuang.",
+  "extensions.made": "Ditulis atas permintaan anda"
 }

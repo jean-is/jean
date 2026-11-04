@@ -9,14 +9,14 @@
 import { html, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
-import { app, effective, updateSettings, notify } from '../../ui/state.js'
+import { app, effective, updateSettings, notify, assistantName } from '../../ui/state.js'
 import { markdown } from '../../ui/markdown.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { icons } from '../../ui/menu-icons.js'
 import { join, readJSON, writeJSON } from '../../core/fs.js'
 import { STRICT } from '../../core/rules.js'
 import { t, useStrings, locale } from '../../core/i18n.js'
-import { readManifest, shownIn, EVENTS } from './manifest.js'
+import { readManifest, shownIn, EVENTS, RIGHTS } from './manifest.js'
 
 await Promise.all([useStrings('extensions'), styleSheet(new URL('extensions.css', import.meta.url))])
 
@@ -298,6 +298,35 @@ export async function take(manifest, right, back) {
   await updateSettings(/** @type {any} */ ({ extensions: { ...switches(), [manifest.name]: { ...own, taken: [...(own.taken ?? []).filter((one) => one !== right), ...(back ? [right] : [])] } } }))
 }
 
+/** What a manifest's mistake is, said to the brain. */
+const WRONG = /** @type {Record<string, string>} */ ({ name: 'its name must be lowercase letters, digits and dashes', rights: `its rights must be among ${RIGHTS.join(', ')}` })
+
+/**
+ * An extension the brain writes at the user's request, reading the skill "Make an extension" first (D692): its manifest's fields and
+ * its module, checked as one read from an address is, then shown on its page in Settings, its rights and code, until the user adds it.
+ * Nothing of it runs before. Found once the skill is read, never declared before.
+ * @type {import('../../core/loop.js').Tool}
+ */
+const extensionTool = {
+  spec: { name: 'extension', description: 'Offer an extension the user reads and adds. Read the skill extension first. Its page opens in Settings, its rights and code shown; nothing runs until the user presses Add it. The same name again replaces it.',
+    parameters: { type: 'object', properties: { name: { type: 'string', description: 'Lowercase letters, digits and dashes' }, title: { type: 'string', description: "In the user's language" },
+      description: { type: 'string', description: "What it does, in the user's language, in a sentence or two" }, rights: { type: 'array', items: { type: 'string', enum: [...RIGHTS] } },
+      icon: { type: 'string' }, code: { type: 'string', description: 'main.js, which exports register(on, $)' } }, required: ['name', 'title', 'description', 'rights', 'code'] } },
+  kind: 'edit',
+  deferred: true,
+  title: (args) => `Offer the extension ${args?.title ?? ''}`,
+  run: async (args) => {
+    const { name, title, description, rights = [], icon, code = '' } = /** @type {Record<string, any>} */ (args ?? {})
+    const json = JSON.stringify({ format: 1, name, version: '1.0.0', title, description, author: assistantName(), ...(icon && { icon }), main: 'main.js', rights }, null, 2)
+    try { readManifest(json) } catch (error) { return `Not offered: ${WRONG[error instanceof Error ? error.message : ''] ?? 'its manifest is wrong'}.` }
+    if (String(code).length > LARGEST) return 'Not offered: its code is over 1 MB.'
+    if (!/export\s+(async\s+)?function\s+register\b|export\s+(const|let)\s+register\b/.test(String(code))) return 'Not offered: main.js must export register(on, $).'
+    if (switches()[name]?.from) return `Not offered: ${name} is an extension added from elsewhere; choose another name.`
+    ;(await import('./page.js')).offer(json, String(code))
+    return 'Its page is open in Settings › Extensions, its rights and code shown; nothing runs until the user presses Add it. Say so in a sentence.'
+  },
+}
+
 /** Settings' Extensions, once its module is read. */
 const page = signal(/** @type {(() => unknown) | null} */ (null))
 
@@ -310,6 +339,8 @@ effect(() => {
 
 effect(() => register({
   id: 'extensions',
+  tools: [extensionTool],
+  lines: [{ name: 'extension', line: 'offer an extension the user reads and adds' }],
   hooks: [...running.value.values()].flatMap((host) => host.hooks),
   slots: {
     above: { at: 50, draw: () => drawing('above').map((host) => html`<aside class="extensions-above" aria-label=${shownIn(host.manifest, locale.value).title}>${drawn(host, 'above', {})}</aside>`) },

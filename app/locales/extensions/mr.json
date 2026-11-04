@@ -54,5 +54,6 @@
   "extensions.safe": "सुरक्षित मोड: या भेटीत कोणतेही एक्सटेंशन चालणार नाही.",
   "extensions.leaveSafe": "सुरक्षित मोडमधून बाहेर पडा",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "{title} काढायचे? त्याने ठेवलेले तेही सोबत जाईल."
+  "extensions.confirmRemove": "{title} काढायचे? त्याने ठेवलेले तेही सोबत जाईल.",
+  "extensions.made": "तुमच्या विनंतीवरून लिहिले"
 }

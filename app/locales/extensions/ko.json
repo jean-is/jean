@@ -54,5 +54,6 @@
   "extensions.safe": "안전 모드: 이번 방문에서는 확장 프로그램을 실행하지 않아요.",
   "extensions.leaveSafe": "안전 모드 종료",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "{title}을(를) 삭제할까요? 저장한 내용도 함께 삭제돼요."
+  "extensions.confirmRemove": "{title}을(를) 삭제할까요? 저장한 내용도 함께 삭제돼요.",
+  "extensions.made": "요청에 따라 작성됨"
 }

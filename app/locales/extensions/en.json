@@ -54,5 +54,6 @@
   "extensions.safe": "Safe mode: no extension runs during this visit.",
   "extensions.leaveSafe": "Leave safe mode",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "Remove {title}? What it kept goes with it."
+  "extensions.confirmRemove": "Remove {title}? What it kept goes with it.",
+  "extensions.made": "Written at your request"
 }

@@ -5,7 +5,7 @@
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { app, notify, updateSettings } from '../../ui/state.js'
-import { pageOpen } from '../../ui/dialogs.js'
+import { pageOpen, openSettings } from '../../ui/dialogs.js'
 import { join } from '../../core/fs.js'
 import { t, locale } from '../../core/i18n.js'
 import { BRAND } from '../../brand.js'
@@ -20,7 +20,7 @@ await styleSheet(new URL('../../ui/data-pages.css', import.meta.url))
 /** @typedef {import('./manifest.js').Manifest} Manifest */
 
 /** An extension read from an address, shown before it is added. */
-const reading = signal(/** @type {{ manifest?: Manifest, json?: string, code?: string, base?: string, failed?: string } | null} */ (null))
+const reading = signal(/** @type {{ manifest?: Manifest, json?: string, code?: string, base?: string, made?: boolean, failed?: string } | null} */ (null))
 /** The extension whose Remove is being asked about, in its page. */
 const removing = signal('')
 /** The ready-made extensions policy names, read once Add an extension shows: an address's files, and its manifest unless it can't be read. */
@@ -57,6 +57,12 @@ async function look(address) {
     const code = error instanceof Error ? error.message : ''
     reading.value = { base, failed: ['json', 'format', 'name', 'main', 'rights', 'size'].includes(code) ? code : 'fetch' }
   }
+}
+
+/** An extension written at the user's request, shown before it is added as one read from an address is (D692). @param {string} json @param {string} code */
+export function offer(json, code) {
+  reading.value = { manifest: readManifest(json), json, code, made: true }
+  openSettings('extensions/read')
 }
 
 /** Reads an extension, then opens its page before it is added. @param {string} address */
@@ -119,9 +125,9 @@ const mark = (manifest, title) => html`<span class="item-icon extensions-mark is
 const strongest = (manifest) => (granted(manifest, 'loosen') ? html`<span class="data-state is-wait">${t('extensions.skips')}</span>`
   : granted(manifest, 'watch') ? html`<span class="data-state">${t('extensions.sees')}</span>` : nothing)
 
-/** Its version, who made it and where from. @param {Manifest} manifest @param {string} [from] */
-const about = (manifest, from) => [manifest.version && t('extensions.version', { version: manifest.version }), manifest.author && t('extensions.by', { author: manifest.author }),
-  from && t('extensions.from', { site: siteOf(from) })].filter(Boolean).join(' · ')
+/** Its version, who made it and where from, or that it was written at the user's request (D692). @param {Manifest} manifest @param {string} [from] @param {boolean} [made] */
+const about = (manifest, from, made) => [manifest.version && t('extensions.version', { version: manifest.version }), manifest.author && t('extensions.by', { author: manifest.author }),
+  from && t('extensions.from', { site: siteOf(from) }), made && t('extensions.made')].filter(Boolean).join(' · ')
 
 /** A line that waits for the user, with what to do. @param {string} text @param {string} label @param {() => unknown} run */
 const wait = (text, label, run) => html`<div class="extensions-wait" role="status"><p dir="auto">${text}</p><button class="button primary" @click=${run}>${label}</button></div>`
@@ -187,12 +193,12 @@ function page(manifest) {
 }
 
 /** An extension read before it is added: who made it and where from, its maker's words apart from what Jean will let it do, Add it, and its code. @param {NonNullable<typeof reading.value>} state */
-function read({ manifest, code, base }) {
+function read({ manifest, code, base, made }) {
   if (!manifest) return nothing
   const { title, description } = shownIn(manifest, locale.value)
   // A new version goes back to the extension's page, one to add to Add an extension.
   return html`${installed.value.some((one) => one.name === manifest.name) ? back(manifest.name, title) : back('add', t('extensions.adding'))}
-    <header class="data-head">${mark(manifest, title)}<div><h2 dir="auto" tabindex="-1">${title}</h2><p class="lede" dir="auto">${about(manifest, base)}</p></div></header>
+    <header class="data-head">${mark(manifest, title)}<div><h2 dir="auto" tabindex="-1">${title}</h2><p class="lede" dir="auto">${about(manifest, base, made)}</p></div></header>
     <section><h3>${t('extensions.words')}</h3><p class="extensions-words" dir="auto">${description}</p></section>
     ${rights(manifest, false)}
     <div class="row extensions-foot"><span class="row"><button class="button primary" @click=${add}>${t('extensions.add')}</button>

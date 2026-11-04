@@ -54,5 +54,6 @@
   "extensions.safe": "Ασφαλής λειτουργία: καμία επέκταση δεν τρέχει σε αυτή την επίσκεψη.",
   "extensions.leaveSafe": "Έξοδος από την ασφαλή λειτουργία",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "Αφαίρεση: {title}; Ό,τι κράτησε φεύγει μαζί της."
+  "extensions.confirmRemove": "Αφαίρεση: {title}; Ό,τι κράτησε φεύγει μαζί της.",
+  "extensions.made": "Γράφτηκε κατόπιν αιτήματός σας"
 }

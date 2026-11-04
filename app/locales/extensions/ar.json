@@ -54,5 +54,6 @@
   "extensions.safe": "الوضع الآمن: لا يعمل أي ملحق خلال هذه الزيارة.",
   "extensions.leaveSafe": "الخروج من الوضع الآمن",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "أتزيل {title}؟ ما احتفظ به يُزال معه."
+  "extensions.confirmRemove": "أتزيل {title}؟ ما احتفظ به يُزال معه.",
+  "extensions.made": "كُتبت بناءً على طلبك"
 }

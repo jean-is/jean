@@ -54,5 +54,6 @@
   "extensions.safe": "Felsäkert läge: inga tillägg körs under det här besöket.",
   "extensions.leaveSafe": "Lämna felsäkert läge",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "Ta bort {title}? Det som det sparat försvinner också."
+  "extensions.confirmRemove": "Ta bort {title}? Det som det sparat försvinner också.",
+  "extensions.made": "Skriven på din begäran"
 }
