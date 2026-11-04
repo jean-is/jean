@@ -162,7 +162,7 @@ app-shell:has(.welcome) .wordmark app-persona { display: none; }
 /* ─── Frame ─────────────────────────────────────────────────────────────── */
 
 app-shell { display: flex; flex-direction: column; min-height: 100dvh; }
-.skip { position: absolute; inset-inline-start: 1rem; inset-block-start: -4rem; z-index: 10; padding: 0.6rem 1rem; border-radius: 999px; background: var(--flame); color: var(--on-flame); }
+.skip { position: fixed; inset-inline-start: 1rem; inset-block-start: -4rem; z-index: 10; padding: 0.6rem 1rem; border-radius: 999px; background: var(--flame); color: var(--on-flame); }
 .skip:focus { inset-block-start: 1rem; }
 
 .bar {
