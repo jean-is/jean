@@ -250,7 +250,7 @@ test('on a phone, a part’s sheet leads with Ask Jean, which makes way for the 
   await sheet.getByRole('button', { name: /^Ask Jean/ }).click()
   await expect(page.locator('.design-stage')).toHaveCount(0)
   await expect(page.locator('#prompt')).toBeFocused()
-  await expect(page.locator('.toast')).toContainText('Where pointed at')
+  await expect(page.locator('.toast')).toContainText('Pointing at Where')
   await page.locator('#prompt').fill('Make it say 12 rue des Roses, Lyon')
   await page.locator('#prompt').press('Enter')
   await answered(page, 2)

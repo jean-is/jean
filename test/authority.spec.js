@@ -153,7 +153,7 @@ test('a qualified provider seals for the organisation through the CSC API: a cer
   const settings = await openData(page, 'organization')
   await expect(settings).toContainText('Your certificates are sealed with your organization’s qualified seal, which Qualified Seal CA certifies until January 1, 2030.')
   // Its certificate says it is an EU qualified seal, and the organisation's anchors vouch for it: in English, Arabic and Japanese.
-  for (const [lang, trusted, line] of [['en', 'Certified by an authority your organization trusts', 'A qualified seal under EU law'], ['ar', 'وثّقته جهة تثق بها مؤسستك', 'ختم مؤهَّل بموجب قانون الاتحاد الأوروبي'], ['ja', '組織が信頼する認証局が証明', 'EU法に基づく適格な封印']]) {
+  for (const [lang, trusted, line] of [['en', 'Certified by an authority your organization trusts', 'A qualified seal under EU law'], ['ar', 'وثّقته جهة تثق بها مؤسستك', 'ختم مؤهَّل بموجب قانون الاتحاد الأوروبي'], ['ja', '組織が信頼する認証局が証明', 'EU 法に基づく適格な封印']]) {
     const context = await browser.newContext({ locale: lang, baseURL })
     const checker = await context.newPage()
     await withPolicy(checker, policy)

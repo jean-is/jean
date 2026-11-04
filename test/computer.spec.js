@@ -476,7 +476,7 @@ test('Settings › Computer: the sandbox and its page (D176, D249), the internet
   await expect(panel.locator('.lede')).toHaveText(/^A computer in this tab, apart from this device/)
   await expect(panel.getByRole('tablist')).toHaveCount(0)
   const sandbox = panel.locator('[data-page="sandbox"]')
-  await expect(sandbox).toContainText(/Sandbox\s*Commands, JavaScript and Python\s*Asleep/)
+  await expect(sandbox).toContainText(/Inside this tab\s*Commands, JavaScript and Python\s*Asleep/)
   await expect(panel.locator('[data-page="workspace"]')).toContainText('Empty for now')
   await expect(panel.locator('[data-page="limits"]')).toContainText('Up to 2 minutes a command')
   // Its page: how it stands and, in one sentence, what it uses of this device's; nothing to restart yet; what it runs, each with Try.
