@@ -1,6 +1,6 @@
 // Service worker: offline shell and per-capability caches (classic script).
 // VERSION is rewritten by scripts/manifest.js whenever any shipped file changes.
-const VERSION = '8fae33f76a8e'
+const VERSION = '4fa96493fce9'
 const SHELL = `app-shell-${VERSION}`
 // Capability caches carry the version too: an update re-caches every unlocked capability,
 // copying unchanged files over, so old code is never served next to a new shell.
@@ -74,9 +74,11 @@ async function recacheCapabilities () {
 
 // ─── Messages from the page ──────────────────────────────────────────────────
 
+// SKIP_WAITING asked `alone`, by a page not used yet (ui/update.js), waits while another tab of Jean is open, which would
+// run this version's code over the next one's files until it could follow: there the toast's button lets it in.
 self.addEventListener('message', (event) => {
-  const { type, id } = event.data || {}
-  if (type === 'SKIP_WAITING') self.skipWaiting()
+  const { type, id, alone } = event.data || {}
+  if (type === 'SKIP_WAITING') event.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((tabs) => alone && tabs.filter((tab) => tab.frameType !== 'nested').length > 1 ? event.source?.postMessage({ type: 'WAITING' }) : self.skipWaiting()))
   if (type === 'CACHE_CAPABILITY') {
     const reply = (ok) => event.source?.postMessage({ type: 'CAPABILITY_CACHED', id, ok })
     event.waitUntil(cacheCapability(id).then(reply))

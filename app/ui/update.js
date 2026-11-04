@@ -2,9 +2,10 @@
 // comes back where the page was, on the same entry, scrolled to the same line, the caret where it
 // was. A page's code can't be swapped as it runs (a module loads once, an element is defined once),
 // so a new page comes in; with view transitions (style.css), the page left stays on screen until
-// the new one is drawn as it was, and nothing moves (D138). A capability turned off, here or in
-// another tab, goes the same way, since its module can't be unloaded either (D433). Loaded after
-// the first paint.
+// the new one is drawn as it was, and nothing moves (D138). A page not used yet, the one tab of
+// Jean, lets it in on its own, as a reload asks for the newest. A capability turned off, here or in
+// another tab, goes the same way, since its module can't be unloaded either (D433), and so does a
+// tab whose version another tab let a new one replace. Loaded after the first paint.
 import { effect } from '@preact/signals-core'
 import { app, chipLabel, decisionsHere } from './state.js'
 import { BRAND } from '../brand.js'
@@ -21,7 +22,10 @@ import './swipe.js'
 /** What the page left hands to the new one, in this tab only. */
 const HANDOVER = 'app.update'
 
-let updating = false
+// Whether this page is going for a new version, and whether the person has pressed a key or a pointer here yet
+// (Chromium carries `userActivation` over from the page reloaded).
+let updating = false, touched = false
+for (const type of ['pointerdown', 'keydown']) addEventListener(type, () => { touched = true }, { capture: true, once: true, passive: true })
 // A capability turned off is denied as the page begins (ui/app.js), so one loaded here was turned off since.
 effect(() => { if (!updating && !working() && app.settings.value.off?.some((id) => loaded.peek().has(id))) { updating = true; leave() } })
 
@@ -35,9 +39,17 @@ effect(() => { const now = app.presence.value, offer = app.offering.value, waiti
 export function start() {
   arrive()
   if (!('serviceWorker' in navigator)) return
-  navigator.serviceWorker.addEventListener('controllerchange', () => updating && leave())
+  // A page the network served, on a first visit or a hard reload, is already the newest. One the version before served,
+  // when another tab lets the new one in, runs on with the new one's files: it follows, once nothing is under way.
+  const served = Boolean(navigator.serviceWorker.controller)
+  navigator.serviceWorker.addEventListener('controllerchange', () => { if (updating) leave(); else if (served) effect(() => { if (!updating && !working()) { updating = true; leave() } }) })
   navigator.serviceWorker.register(scriptURL('./sw.js')).then((registration) => {
-    const check = () => { if (registration.waiting && navigator.serviceWorker.controller) app.updateReady.value = registration.waiting }
+    // Another tab of Jean is open, so the toast's button lets it in after all (sw.js).
+    navigator.serviceWorker.addEventListener('message', ({ data, source }) => { if (data?.type === 'WAITING' && source === registration.waiting) { updating = false; app.updateReady.value = registration.waiting } })
+    // A page not touched since it loaded, nothing under way, has nothing to keep, and a reload asks for the newest: it
+    // lets it in on its own, if alone. Once what it unlocked has asked the worker to keep its files: a message restarting
+    // the old worker as it stops for the new one leaves Chromium's swap stuck.
+    const check = () => { const next = registration.waiting; if (next && navigator.serviceWorker.controller) app.ready.catch(() => {}).then(() => { if (registration.waiting !== next || updating) return; if (touched || working()) app.updateReady.value = next; else { updating = true; next.postMessage({ type: 'SKIP_WAITING', alone: true }) } }) }
     check()
     registration.addEventListener('updatefound', () => registration.installing?.addEventListener('statechange', check))
     // The browser asks only when a page loads, and an installed app comes back on screen without loading (Android's, for days), so it asks then, at most every quarter of an hour.
