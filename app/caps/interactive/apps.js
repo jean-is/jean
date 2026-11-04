@@ -12,14 +12,11 @@ import { icon, icons } from '../../ui/menu-icons.js'
 import { t } from '../../core/i18n.js'
 import { ask, page } from '../../ui/creations.js'
 import { held } from '../../ui/held.js'
-import { capability, page as drawn } from './interactive.js'
+import { capability, named, page as drawn } from './interactive.js'
 import { frozen } from './parts.js'
 
 /** Four tiles, the last turned on its corner: what is made to be used. */
 const GLYPH = icon(svg`<rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/><g transform="rotate(45 16.75 7.25)"><rect x="14" y="4.5" width="5.5" height="5.5" rx="1.5"/></g>`, 'flip-rtl')
-/** What a page calls itself, as text: its title, else its first heading. @param {string} source */
-const named = (source) => ((/<title[^>]*>([^<]*)</i.exec(source) ?? /<h[12][^>]*>([\s\S]*?)<\/h[12]>/i.exec(source))?.[1] ?? '')
-  .replace(/<[^>]*>/g, '').replaceAll('&amp;', '&').replace(/\s+/g, ' ').trim()
 
 const { kept, find, metaOf, pin, rename, hide } = held({ fence: 'html', record: 'app', at: 'app-', latest: true, named, extension: 'html', mimeType: 'text/html' })
 /** An app's page as the pane's Download gives it, what it shows of the project's collections written in (D633). @param {string} uri */

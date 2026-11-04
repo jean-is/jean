@@ -268,6 +268,10 @@ export async function runTurn(options) {
     history.push(done?.message ?? { role: 'assistant', content: text, toolCalls: calls })
 
     if (stopReason === 'pause') continue
+    // An answer with nothing left to do: a hook may tell the brain what it found wrong, as the user's words not kept, and the turn
+    // goes on (turn.answer, D689), while steps remain.
+    const told = stopReason === 'end' && text && step + 1 < limit ? await on('turn.answer', { step, text, signal }, () => '') : ''
+    if (told) { history.push({ role: 'user', content: told }); continue }
     if (stopReason !== 'tool_use' || !calls.length) return { stopReason, usage, text }
     await runCalls(calls, step)
     if ((free = !free && calls.every((call) => ctx.byName.get(call.name)?.aside))) limit++

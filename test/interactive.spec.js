@@ -383,6 +383,51 @@ test('the pages answers hold are apps among the creations once there is one, the
   await expect(page.locator('.msg-jean app-page')).toHaveCount(2)
 })
 
+test('an app keeps what it keeps in localStorage, by its name in its task, so it is as it was left when written again; it reads a file the user picks and saves the one it makes; its task deleted, what it kept goes (D688)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await ask(page, 'Make me a tally')
+  await answered(page)
+  const app = (/** @type {number} */ n) => page.locator('.msg-jean app-page iframe').nth(n).contentFrame()
+  await app(0).getByRole('button', { name: 'Add one' }).click()
+  await app(0).getByRole('button', { name: 'Add one' }).click()
+  await expect(app(0).locator('#count')).toHaveText('2')
+
+  // Kept beside the task's conversation, by the app's name.
+  const task = /** @type {string} */ (await page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.path))
+  const at = task.replace(/conversations\/([^/]+)\.jsonl$/, 'apps/$1.json')
+  const read = () => page.evaluate(async (path) => JSON.parse((await (await import('/ui/state.js')).app.fs.read(path)) ?? '{}'), at)
+  await expect.poll(read).toEqual({ format: 1, apps: { Tally: { count: '2' } } })
+  // Written again whole, as a brain writes an app for a change, it starts where it was left.
+  await ask(page, 'Make the tally again')
+  await answered(page, 2)
+  await expect(app(1).locator('#count')).toHaveText('2')
+
+  // A file the user picks is read in the page; the one it makes is saved, on the user's click.
+  await app(1).locator('#pick').setInputFiles({ name: 'note.txt', mimeType: 'text/plain', buffer: Buffer.from('Seven apples') })
+  await expect(app(1).locator('#read')).toHaveText('Seven apples')
+  const [download] = await Promise.all([page.waitForEvent('download'), app(1).getByRole('button', { name: 'Save it' }).click()])
+  expect(download.suggestedFilename()).toBe('tally.txt')
+
+  // The task deleted, what its apps kept goes with it.
+  await page.evaluate(async (path) => (await import('/ui/state.js')).removeConversation(path), task)
+  await expect.poll(read).toEqual({})
+})
+
+test('an app with a script is played out of sight before the turn ends: what broke, in the browser’s words, goes back to the brain, which writes it again fixed (D689)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await ask(page, 'Make me a broken counter')
+  await answered(page)
+  const answer = page.locator('.msg-jean .prose').last()
+  await expect(answer.locator('app-page')).toHaveCount(2)
+  await expect(answer).toContainText(/I fixed it: .*counter/)
+  const fixed = answer.locator('app-page iframe').last().contentFrame()
+  await fixed.getByRole('button', { name: 'Add one' }).click()
+  await expect(fixed.locator('#count')).toHaveText('1')
+  await expect(page.locator('.page-test')).toHaveCount(0)
+})
+
 test('a page of parts alone is drawn in the answer itself, with no frame: key figures, cards, a table its heads sort and its form adds to, a chart, a form that asks, mirrored in Arabic, in Japanese too (D631)', async ({ page }) => {
   // Not even as it begins: a frame made and let go, in which Playwright's block on service workers throws (playwright.config.js).
   const frames = /** @type {string[]} */ ([]), errors = /** @type {string[]} */ ([])

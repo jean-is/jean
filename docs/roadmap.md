@@ -142,6 +142,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [x] What the accessibility statement listed as unchecked (D419), measured in every look and held in CI: reflow at 320 pixels and text at 200%, target sizes, contrast of controls and graphics, and nothing moving for long at rest (D420)
 - [ ] A person through RGAA's tests of what is announced, with VoiceOver and NVDA, and Word's and Excel's checkers on what is saved; then the audit again, its share and status on jean.is/accessibility (D672)
 - [ ] An outside audit against WCAG 2.2 AA
+- [ ] With real brains (D688, D689): apps that keep what they keep and save files, and how often the play-test finds a fault and the brain mends it, measured as `npm run games` measures games
 
 ## Before the public launch
 

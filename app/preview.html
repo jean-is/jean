@@ -20,8 +20,9 @@
      in an answer (D289) comes as it is written (`open`): the rest is written as it comes, and the
      page closed once it is whole. It also says how tall it is, or that it is made to fill its frame
      whatever it holds, as a page written for a whole screen is, and may send the user's next message
-     with `sendPrompt(text)`, which Jean takes only on a click of the user's. A doctype first, or
-     the policy would put every page in quirks mode. -->
+     with `sendPrompt(text)`, which Jean takes only on a click of the user's. Given `storage`, as
+     an app is (D688), it has a localStorage, which an opaque origin lacks, and each change is sent
+     to Jean, which keeps it. A doctype first, or the policy would put every page in quirks mode. -->
 <script>onmessage = ({ data, source }) => {
   if (source !== parent || typeof data?.page !== 'string' || typeof data?.policy !== 'string') return
   for (const name of Object.getOwnPropertyNames(globalThis)) if (name.endsWith('RTCPeerConnection')) delete globalThis[name]
@@ -41,6 +42,11 @@
   HTMLAnchorElement.prototype.click = function () { if (this.isConnected || !saved(this)) click.call(this) }
   HTMLAnchorElement.prototype.dispatchEvent = function (event) { return event.type === 'click' && !this.isConnected && saved(this) ? false : dispatchEvent.call(this, event) }
   globalThis.sendPrompt = (text) => parent.postMessage({ prompt: String(text) }, '*')
+  if (data.storage && typeof data.storage === 'object') {
+    const store = new Map(Object.entries(data.storage)), keep = () => parent.postMessage({ storage: Object.fromEntries(store) }, '*')
+    Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: { getItem: (key) => store.get(String(key)) ?? null, key: (i) => [...store.keys()][i] ?? null, get length() { return store.size },
+      setItem: (key, value) => (store.set(String(key), String(value)), keep()), removeItem: (key) => (store.delete(String(key)), keep()), clear: () => (store.clear(), keep()) } })
+  }
   document.open()
   document.write(`<!doctype html><meta http-equiv="Content-Security-Policy" content="${data.policy.replaceAll('"', '&quot;')}">`)
   document.write(data.page)

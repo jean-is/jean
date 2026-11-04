@@ -547,6 +547,36 @@ const SPLITTER = `Here is a bill splitter:
 \`\`\`
 
 Type the bill and how many you are.`
+/** An app that keeps a count in localStorage, reads a file the user picks and saves one it makes (D688), as brains write one. */
+const TALLY = `Here is a tally:
+
+\`\`\`html
+<title>Tally</title>
+<p>Count <output id="count">0</output></p>
+<button id="add">Add one</button>
+<label>Read <input id="pick" type="file"></label>
+<p id="read"></p>
+<button id="save">Save it</button>
+<script>
+  const count = document.getElementById('count'), show = () => { count.textContent = localStorage.getItem('count') ?? '0' }
+  document.getElementById('add').addEventListener('click', () => { localStorage.setItem('count', String(Number(localStorage.getItem('count') ?? 0) + 1)); show() })
+  document.getElementById('pick').addEventListener('change', async (event) => { document.getElementById('read').textContent = await event.target.files[0].text() })
+  document.getElementById('save').addEventListener('click', () => { const link = document.createElement('a'); link.href = URL.createObjectURL(new Blob(['Count ' + count.textContent], { type: 'text/plain' })); link.download = 'tally.txt'; link.click() })
+  show()
+</script>
+\`\`\``
+/** An app whose button names a count that isn't there, until it is told what broke when Jean played it (D689). @param {string} [told] */
+const COUNTER = (told) => `${told ? `I fixed it: ${/^- (.*)$/m.exec(told)?.[1] ?? ''}` : 'Here is a counter:'}
+
+\`\`\`html
+<title>Counter</title>
+<p>Count <output id="count">0</output></p>
+<button id="add">Add one</button>
+<script>
+  const count = document.getElementById('count')
+  document.getElementById('add').addEventListener('click', () => { ${told ? 'count' : 'counter'}.textContent = Number(count.textContent) + 1 })
+</script>
+\`\`\``
 /** A page with a title, as brains write one again whole for a change (D553): asked to round up, the same app, its tip rounded. @param {boolean} up */
 const TIPS = (up) => `Here is a tip calculator${up ? ', rounding up' : ''}:
 
@@ -915,6 +945,9 @@ createServer(async (req, res) => {
   else if (/\bmind map\b/i.test(question) && last.role === 'user') answer = FIGURES
   else if (/\bslides\b|شرائح|スライド/i.test(question) && last.role === 'user') answer = DECK(lang === 'ar' || lang === 'ja' ? lang : 'en')
   else if (/bill splitter/i.test(question) && last.role === 'user') answer = SPLITTER
+  else if (/\btally\b/i.test(question) && last.role === 'user') answer = TALLY
+  else if (/broken counter/i.test(question) && last.role === 'user') answer = COUNTER()
+  else if (/^Played out of sight/.test(question) && last.role === 'user') answer = COUNTER(question)
   // Left open, as a brain may leave a page: in a tag of its own making, its fence never closed, its words after it.
   else if (/garden log, left open|سجل الحديقة مفتوحًا|菜園の記録を開いたまま/i.test(question) && last.role === 'user') answer = GARDEN(lang === 'ar' || lang === 'ja' ? lang : 'en').replace('```html\n', '```html\n<app-page>\n').replace('\n```\n', '\n</app-page>\n')
   else if (/garden log|سجل الحديقة|菜園の記録/i.test(question) && last.role === 'user') answer = GARDEN(lang === 'ar' || lang === 'ja' ? lang : 'en')

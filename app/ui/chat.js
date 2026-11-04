@@ -193,7 +193,7 @@ function turnView(turn, live, files, upTo, last, sources, steered) {
   // Pending calls never ended, or are asked again live; one kept as running was cut short (D212).
   const steps = [...turn.steps.map((step) => ({ ...step, tools: step.tools.filter((tool) => tool.status !== 'pending').map(cutShort) })), ...(live?.steps ?? [])]
   // The brain's follow-ups come in a trailing block, hidden from the answer itself.
-  const { text, suggestions } = splitSuggestions(steps.map((step) => step.text).filter(Boolean).join('\n\n'))
+  const { text, suggestions } = splitSuggestions(steps.map((step, i) => (i < steps.length - 1 ? splitSuggestions(step.text).text : step.text)).filter(Boolean).join('\n\n'))
   const entries = steps.flatMap((step) => step.tools)
   const streaming = Boolean(live)
   const read = whatJeanRead(upTo, entries, files)

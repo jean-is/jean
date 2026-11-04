@@ -39,3 +39,6 @@ app-page:has(> pre) { padding: 0; border: 0; }
 .mode-chip:hover .icon:last-child { color: var(--ink); }
 @media (forced-colors: active) { .mode-chip { border-color: Highlight; } }
 @media (width < 30rem) { .mode-chip span { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); } }
+/* An app played before the turn ends (D689): laid out as a page in an answer is, never seen. */
+.page-test { position: fixed; inset-block-start: 0; inset-inline-start: 0; inline-size: 640px; block-size: 480px; clip-path: inset(50%); pointer-events: none; }
+.page-test iframe { inline-size: 100%; block-size: 100%; border: 0; }

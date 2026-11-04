@@ -521,6 +521,31 @@ test('loop: at its limit, a hook may give the turn another block of steps; then 
   assert.equal(kept.filter(({ update }) => update._meta?.stopped).length, 1)
 })
 
+test('loop: an answer a hook finds wrong goes on with its note, as the user’s words not kept, while steps remain; one it finds right ends the turn (turn.answer, D689)', async () => {
+  const { stream, calls } = fakeStream([
+    [{ type: 'text', delta: 'Page one.' }, done('end', { role: 'assistant', content: 'Page one.' })],
+    [{ type: 'text', delta: 'Page two.' }, done('end', { role: 'assistant', content: 'Page two.' })],
+    [{ type: 'text', delta: 'Page three.' }, done('end', { role: 'assistant', content: 'Page three.' })],
+  ])
+  /** @type {any[]} */
+  const heard = []
+  /** @type {import('../app/core/hooks.js').Hook} */
+  const hook = { on: 'turn.answer', run: (e) => { heard.push([e.step, e.text, e.task]); return e.text === 'Page one.' ? 'It broke at line 3.' : '' } }
+  /** @type {any[]} */
+  const persisted = []
+  const result = await runTurn({ brain, system: 's', history: [{ role: 'user', content: 'a page' }], tools: [], rule: () => 'allow', maxSteps: 5, hooks: [hook], about: { task: 't' },
+    stream: /** @type {any} */ (stream), persist: async (records) => { persisted.push(...records) } })
+  assert.deepEqual([result.stopReason, result.text], ['end', 'Page two.'])
+  assert.deepEqual(heard, [[0, 'Page one.', 't'], [1, 'Page two.', 't']])
+  assert.deepEqual(calls[1].slice(-2), [{ role: 'assistant', content: 'Page one.' }, { role: 'user', content: 'It broke at line 3.' }])
+  assert.ok(!persisted.some(({ update }) => JSON.stringify(update).includes('line 3')), 'the note is never kept')
+  // On the last step there is none left to go on with: the hook isn’t asked.
+  const last = fakeStream([[{ type: 'text', delta: 'Page one.' }, done('end', { role: 'assistant', content: 'Page one.' })]])
+  heard.length = 0
+  await runTurn({ brain, system: 's', history: [{ role: 'user', content: 'a page' }], tools: [], rule: () => 'allow', maxSteps: 1, hooks: [hook], stream: /** @type {any} */ (last.stream) })
+  assert.deepEqual([last.calls.length, heard.length], [1, 0])
+})
+
 test('loop: a step whose calls only update the plan isn’t counted, one in a row at most; a helper’s turn never goes on past its limit (D364)', async () => {
   const plan = { id: 'p', name: 'plan', args: {} }
   const read = { id: 'r', name: 'read', args: { path: 'a' } }

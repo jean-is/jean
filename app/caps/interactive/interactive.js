@@ -9,7 +9,8 @@
 // charts take the room's light or dark. It is as tall as what it shows, or, made to fill a screen
 // (its root or body as tall as its frame, 100% or 100vh), as tall as a page may be; it speaks to Jean on a click
 // of the user's only: `sendPrompt(text)` sends the text as the user's next message, as a follow-up
-// does, and a link opens in a new tab. With Run its code off, it is code. Copy puts its source on the
+// does, a link opens in a new tab, and a link that saves a file the page made saves it (D158). What it keeps in localStorage
+// is kept for it, by its name, in its task's file of apps (D688), so an app is still as it was left. With Run its code off, it is code. Copy puts its source on the
 // clipboard. Loaded with the first message, for its rule, then at each visit, so that pages written
 // before show again, or by the first page a conversation holds. Written again under a new policy,
 // which a page keeps from its start; a new theme, look or language is put on the page as it is
@@ -27,7 +28,7 @@ import { app, effective, theme, notify, send, updateSettings } from '../../ui/st
 import { register, drawnActions } from '../../ui/caps.js'
 import { declared, drawn, PAGES, blocks, lex } from '../../ui/markdown.js'
 import { pageRights, pagePolicy, pageAllow, mapStyles, PAGE_SANDBOX } from '../../ui/csp.js'
-import { copyDrawing } from '../../ui/save.js'
+import { copyDrawing, savePage } from '../../ui/save.js'
 import { icons } from '../../ui/icons.js'
 import { styleSheet, still } from '../../ui/sheet.js'
 import { t, locale, dir, useStrings } from '../../core/i18n.js'
@@ -39,11 +40,23 @@ await Promise.all([useStrings('interactive'), styleSheet(new URL('interactive.cs
 /** What it brings, to which ./apps.js adds the apps in the room. */
 export const capability = {
   id: 'interactive',
-  rules: ["Bills, loans, recipes, timezones, quizzes, science: end with a working ```html tool, not code: offline, var(--color-*), import 'echarts', sendPrompt(text)."],
+  rules: ["Bills, loans, recipes, timezones, quizzes, science: end with a working ```html tool, not code: offline, var(--color-*), import 'echarts', sendPrompt(text); localStorage keeps, <a download> saves."],
   // Visual answers as a mode of the box (./mode.js, D300): a row of +, then pressed at the box's foot while it is on.
   slots: { add: { at: 6, draw: row }, modes: { at: 0, draw: chip, notes } },
+  // A task gone for good takes what its apps kept with it (D688).
+  hooks: [{ on: 'record', match: { type: 'removed' }, run: (/** @type {any} */ e, /** @type {any} */ next) => { const at = e.all && keptAt(e.task); if (at) app.fs.remove(at).catch(() => {}); return next(e) } },
+    // An answer's pages with a script, played out of sight before the turn ends; what broke goes back to the brain (./test.js, D689).
+    { on: 'turn.answer', run: async (/** @type {any} */ e, /** @type {any} */ next) => (rights.peek().allows.scripts && /```html/.test(e.text) && (await (await import('./test.js')).played(e))) || next(e) }],
 }
 register(capability)
+
+/** What a page calls itself, as text: its title, else its first heading. @param {string} source */
+export const named = (source) => ((/<title[^>]*>([^<]*)</i.exec(source) ?? /<h[12][^>]*>([\s\S]*?)<\/h[12]>/i.exec(source))?.[1] ?? '')
+  .replace(/<[^>]*>/g, '').replaceAll('&amp;', '&').replace(/\s+/g, ' ').trim()
+/** Where a task's apps keep what they keep, each by its name: `apps/<its ULID>.json` beside its project's conversations (D688). @param {string} task */
+export const keptAt = (task) => (/\/conversations\/[^/]+\.jsonl$/.test(task) ? task.replace(/conversations\/([^/]+)\.jsonl$/, 'apps/$1.json') : null)
+/** The most an app keeps, as JSON. */
+const KEPT = 262144
 // A page, a diagram or a map needs no skill to declare it (D289, D291): they stay among the kinds drawn, however often the room's skills are read again.
 effect(() => { if (PAGES.some((kind) => !declared.value.has(kind))) declared.value = new Set([...declared.value, ...PAGES]) })
 
@@ -77,7 +90,7 @@ const ALIASES = Object.entries({
  * @type {Promise<{ text: string, url: string }> | undefined}
  */
 let echarts
-const library = () => (echarts ??= fetch(new URL('../../vendor/echarts/echarts.mjs', import.meta.url)).then((response) => response.text()).then((text) => {
+export const library = () => (echarts ??= fetch(new URL('../../vendor/echarts/echarts.mjs', import.meta.url)).then((response) => response.text()).then((text) => {
   const names = (/export\s*\{([^}]*)\}\s*;?\s*$/.exec(text)?.[1] ?? '').split(',').map((name) => name.trim().split(/\s+as\s+/).pop()).filter((name) => /^\w+$/.test(String(name)) && name !== 'init')
   const stand = `const text = await new Promise((resolve) => { addEventListener('message', function got({ data, source }) { if (source === parent && typeof data?.echarts === 'string') removeEventListener('message', got), resolve(data.echarts) }); parent.postMessage({ need: 'echarts' }, '*') })
 const m = await import(URL.createObjectURL(new Blob([text], { type: 'text/javascript' })))
@@ -111,8 +124,8 @@ export default { ...m, init }`
 /** What a page is lent when it holds one, each read once: Jean's diagrams and maps, and MapLibre for the maps. @type {Map<string, Promise<string>>} */
 const parts = new Map()
 /** @param {string} path */
-const part = (path) => parts.get(path) ?? /** @type {Promise<string>} */ (parts.set(path, fetch(new URL(path, import.meta.url)).then((response) => response.text())).get(path))
-const LENT = /** @type {Record<string, string>} */ ({ diagram: './page-diagram.js', map: './map.js' })
+export const part = (path) => parts.get(path) ?? /** @type {Promise<string>} */ (parts.set(path, fetch(new URL(path, import.meta.url)).then((response) => response.text())).get(path))
+export const LENT = /** @type {Record<string, string>} */ ({ diagram: './page-diagram.js', map: './map.js' })
 
 /** The map service's styles, light and dark, and the addresses that may be fetched for a map: theirs. */
 const styles = () => mapStyles(/** @type {any} */ (effective.peek().settings), app.policy)
@@ -147,7 +160,7 @@ function room(style) {
  * its <main> and <aside> side by side on a wide screen.
  * @param {CSSStyleDeclaration} style @param {string} charts the address of ECharts' stand-in
  */
-function head(style, charts) {
+export function head(style, charts) {
   const { lang, dir, theme, look, motion, css } = room(style)
   return /* html */ `<html lang="${lang}" dir="${dir}" data-theme="${theme}" data-look="${look}" data-motion="${motion}"><script type="importmap">${JSON.stringify({ imports: { echarts: charts } })}</script>${LOADER}<style>${css}</style>${ROOM}<style>
 :root { --border-radius-md: calc(var(--border-radius-lg) / 2) !important; accent-color: var(--color-ring-primary); }
@@ -177,6 +190,10 @@ class AppPage extends HTMLElement {
   whole = false
   /** @type {(() => void) | undefined} */
   unwatch
+  /** Where what it keeps is kept, and its name there; none in a saved copy, which holds no project. @type {[string, string] | null} */
+  kept = null
+  /** @type {ReturnType<typeof setTimeout> | undefined} */
+  keeping
 
   connectedCallback() {
     addEventListener('message', this.heard)
@@ -241,7 +258,10 @@ class AppPage extends HTMLElement {
       const { url } = await library()
       const now = this.text()
       const open = this.hasAttribute('open')
-      frame.contentWindow?.postMessage({ page: head(getComputedStyle(this), url) + now, policy, open }, '*')
+      const at = RELAY === null && app.projectDir && !this.hasAttribute('map') ? keptAt(this.getAttribute('task')?.replace(/#.*/, '') || app.current.peek()?.path || '') : null
+      this.kept = at ? [at, named(now)] : null
+      const storage = at ? JSON.parse((await app.fs.read(at).catch(() => null)) ?? '{}').apps?.[named(now)] ?? {} : {}
+      frame.contentWindow?.postMessage({ page: head(getComputedStyle(this), url) + now, policy, open, storage }, '*')
       this.written = now
       this.whole = !open
     } }
@@ -290,10 +310,27 @@ class AppPage extends HTMLElement {
     else if (typeof data?.diagram === 'string') void import('./diagram.js').then(({ picture }) => picture(data.diagram, this, Number(data.width) || this.clientWidth)).then(({ url, words }) => answer({ picture: url, words }), () => answer({}))
     else if (data?.need === 'maplibre') void this.maps().then(answer)
     else if (typeof data?.fetch === 'string') void this.fetched(data.fetch).then(({ bytes, error }) => answer({ bytes, error }, bytes ? [bytes.buffer] : []))
+    else if (data?.storage && typeof data.storage === 'object') this.keep(data.storage)
+    else if (data?.save instanceof Blob) savePage(data, rights.peek().allows.downloads)
     else if (navigator.userActivation?.isActive === false) return
     else if (data?.allow === 'maps') void this.allow().then((allowed) => answer({ allowed }))
     else if (typeof data?.prompt === 'string' && data.prompt.trim() && !app.busy.peek()) send(data.prompt.trim().slice(0, 2000))
     else if (typeof data?.open === 'string' && /^https:\/\//i.test(data.open)) window.open(data.open, '_blank', 'noopener')
+  }
+
+  /**
+   * What it keeps in localStorage, kept a moment after its last change, beside what its task's other apps keep;
+   * past 256 KB, nothing more is kept. @param {object} storage
+   */
+  keep(storage) {
+    const kept = this.kept
+    clearTimeout(this.keeping)
+    if (kept) this.keeping = setTimeout(async () => {
+      const own = Object.fromEntries(Object.entries(storage).map(([key, value]) => [String(key), String(value)]))
+      if (JSON.stringify(own).length > KEPT) return
+      const all = JSON.parse((await app.fs.read(kept[0]).catch(() => null)) ?? '{}')
+      await app.fs.write(kept[0], JSON.stringify({ format: 1, apps: { ...all.apps, [kept[1]]: own } }))
+    }, 300)
   }
 
   /** MapLibre, its worker and its style sheet, the styles for light and dark, and whether maps are allowed; the words its card asks with. */
