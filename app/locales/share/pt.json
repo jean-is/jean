@@ -30,7 +30,7 @@
   "share.copyPassword": "Copiar a palavra-passe",
   "share.aFile": "um ficheiro",
   "share.tooBig": "É demasiado grande para partilhar: uma ligação tem no máximo 10 MB.",
-  "share.failed": "Não foi possível criar a ligação. Verifica a tua ligação à internet e tenta de novo.",
+  "share.failed": "Não foi possível criar a ligação. Verifica se tens internet e tenta de novo.",
   "share.notHere": "Esta ligação foi criada noutro dispositivo: só esse a pode alterar.",
   "share.updated": "A ligação mostra o que está aqui agora.",
   "share.stopped": "A ligação já não abre.",
@@ -60,7 +60,7 @@
   "share.gone": "Isto já não está partilhado.",
   "share.removed": "Isto foi retirado.",
   "share.tooMany": "Demasiadas tentativas. Tenta de novo daqui a uma hora.",
-  "share.unreachable": "Não foi possível aceder. Verifica a tua ligação à internet e tenta de novo.",
+  "share.unreachable": "Não foi possível aceder. Verifica se tens internet e tenta de novo.",
   "share.certified": "Os certificados das suas respostas vão com ela. Têm o selo deste dispositivo, por isso as tuas partilhas podem ser distinguidas e associadas entre si.",
   "share.sealed": {
     "one": "{count} resposta está selada pelo dispositivo que a escreveu, sem alterações desde então.",

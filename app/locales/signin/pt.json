@@ -3,6 +3,6 @@
   "signin.in": "Iniciar sessão",
   "signin.as": "Sessão iniciada: {account}",
   "signin.out": "Terminar sessão",
-  "signin.signedOut": "Terminou sessão.",
+  "signin.signedOut": "A tua sessão terminou.",
   "signin.kept": "O que está guardado aqui fica neste dispositivo."
 }

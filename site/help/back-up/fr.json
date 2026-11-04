@@ -7,7 +7,7 @@
   "tour.here": "Voici {settings} › {data} : tout ce que {name} garde ici, et les copies que vous gardez. La prochaine fois, {settings} est dans le menu à votre nom (ou « Vous »), au pied de la liste des tâches.",
   "steps": [
     "Ouvrez {settings}, depuis le menu à votre nom (ou « Vous »), au pied de la liste des tâches, puis {data}.",
-    "Appuyez sur {download}. Votre navigateur enregistre un seul fichier, nommé avec la date du jour.",
+    "Appuyez sur {download}. Votre navigateur enregistre un seul fichier, nommé Sauvegarde et la date du jour.",
     "Gardez ce fichier là où personne d’autre ne l’ouvre : une clé USB, ou un dossier à vous. Quiconque l’a peut le lire.",
     "Pour le restaurer, sur cet appareil ou un autre : ouvrez {settings} › {data}, puis {backup}.",
     "Sous {restore}, appuyez sur {pick} et choisissez le fichier. Ce qu’il contient s’ajoute à ce qui est ici ; rien n’est supprimé."
@@ -17,14 +17,14 @@
   "show.restore": "La page qu’ouvre {backup} : {pick} est sous {restore}.",
   "good": [
     "Vos clés ne sont jamais dans une sauvegarde : après une restauration sur un autre appareil, remettez-les dans {brains}.",
-    "{data} indique la date de la dernière sauvegarde, et le signale aussi quand une semaine a passé et que vous avez travaillé depuis.",
+    "{data} indique la date de la dernière sauvegarde, et vous le rappelle quand une semaine a passé et que vous avez travaillé depuis.",
     "Une fenêtre privée ne garde rien une fois fermée, et effacer les données de ce site dans votre navigateur supprime tout ici. Une sauvegarde permet de le garder.",
     "Pour importer votre historique de ChatGPT, Claude ou Gemini, c’est {import}, sur la même page."
   ],
   "fixes": [
     [
       "{name} dit que ce fichier n’est pas une sauvegarde",
-      "Choisissez le fichier enregistré par {name}, nommé avec sa date. Un export de ChatGPT, Claude ou Gemini passe par {import}."
+      "Choisissez le fichier enregistré par {name}, nommé Sauvegarde et sa date. Un export de ChatGPT, Claude ou Gemini passe par {import}."
     ],
     [
       "Vous ne trouvez pas le fichier",

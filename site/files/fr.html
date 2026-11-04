@@ -1,7 +1,7 @@
 <h1>Où vont vos fichiers</h1>
 <p class="muted">Mise à jour le <time datetime="2026-10-22">22 octobre 2026</time></p>
 
-<p>Jean fonctionne dans votre navigateur et garde sur votre appareil tout ce avec quoi il travaille. Quelque chose ne quitte votre appareil que quand une réponse en a besoin : vers le cerveau que vous avez choisi, un service que vous avez connecté ou un site que vous avez ouvert. Voici où cela va pour chaque choix, et comment chaque réponse vous dit où elle a été faite. La <a href="{privacy}">politique de confidentialité</a> dit la même chose en entier ; si les deux diffèrent un jour, c’est elle qui s’applique.</p>
+<p>Jean fonctionne dans votre navigateur et garde sur votre appareil tout ce avec quoi il travaille. Quelque chose ne quitte votre appareil que lorsqu’une réponse en a besoin, et cela va alors au cerveau que vous avez choisi, à un service que vous avez connecté ou à un site que vous avez ouvert. Voici où cela va pour chaque choix, et comment chaque réponse vous dit où elle a été faite. La <a href="{privacy}">politique de confidentialité</a> dit la même chose en entier ; si les deux diffèrent un jour, c’est elle qui s’applique.</p>
 
 <h2>Avant toute demande</h2>
 <ul>
@@ -25,7 +25,7 @@
 <p>Vous créez un compte sur le site d’OpenRouter, et Jean garde la clé qu’il renvoie, chiffrée, sur cet appareil. Chaque demande va à OpenRouter, qui la transmet à une entreprise qui fait tourner le cerveau. Jean demande à OpenRouter de n’utiliser que des entreprises qui ne gardent pas ce qu’on leur envoie et ne s’en servent pas pour s’entraîner : quelques cerveaux gratuits peuvent donc manquer.</p></div></section>
 <section class="route"><div><h3>Votre propre clé</h3><p class="muted">OpenAI, Anthropic, Google, Mistral AI, Groq, xAI et d’autres</p><span class="verdict cloud">Rédigée dans le cloud</span></div>
 <div><div class="path"><span class="node here">Cet appareil<small>Jean, vos fichiers</small></span><span aria-hidden="true">→</span><span class="node">Cette entreprise<small>api.anthropic.com, par exemple</small></span></div>
-<p>Votre demande va directement de votre navigateur à cette entreprise, selon les conditions de votre compte chez elle. Personne ne s’intercale. Ce qu’apportent Gmail, Google Agenda et Google Drive ne va qu’à une entreprise dont les conditions excluent d’entraîner une IA avec : Jean refuse les autres, comme Google Gemini et Mistral AI, dont les offres gratuites le font.</p></div></section>
+<p>Votre demande va directement de votre navigateur à cette entreprise, selon les conditions de votre compte chez elle. Personne ne s’intercale. Ce qu’apportent Gmail, Google Agenda et Google Drive ne va qu’à une entreprise dont les conditions excluent d’entraîner une IA dessus : Jean refuse les autres, comme Google Gemini et Mistral AI, dont les offres gratuites peuvent s’en servir pour s’entraîner.</p></div></section>
 <section class="route"><div><h3>Votre abonnement Claude, Copilot ou ChatGPT</h3><p class="muted">Par Votre ordinateur</p><span class="verdict cloud">Rédigée dans le cloud</span></div>
 <div><div class="path"><span class="node here">Cet appareil<small>Jean, vos fichiers</small></span><span aria-hidden="true">→</span><span class="node here">Votre ordinateur<small>Claude Code, Copilot, ChatGPT</small></span><span aria-hidden="true">→</span><span class="node">Anthropic, GitHub ou OpenAI</span></div>
 <p>Jean confie la demande au programme auquel vous êtes connecté sur cet ordinateur, qui la transmet comme si vous l’utilisiez vous-même. Les conditions de votre abonnement s’appliquent, et Jean ne lit jamais la connexion de ce programme.</p></div></section>
@@ -34,7 +34,7 @@
 <p>Votre demande va à l’adresse que votre organisation a choisie, puis à l’IA qu’elle utilise. Sa politique peut aussi empêcher Jean de joindre quoi que ce soit d’autre.</p></div></section>
 </div>
 <p><strong>Auto</strong> choisit un cerveau pour chaque demande. Une fois Intuition activée, si vous avez un cerveau privé ou un serveur sur cet ordinateur, une demande qui partage des informations personnelles, de santé, financières ou confidentielles y va, tout comme chaque demande quand vous êtes hors ligne.</p>
-<p><strong>Garder sur cet appareil</strong>, dans Réglages › Cerveaux, pour tout votre travail ou pour un projet, ne laisse répondre qu’un cerveau sur cet appareil ou sur cet ordinateur. Tant que rien ne sortira, la zone de message le dit.</p>
+<p><strong>Garder sur cet appareil</strong>, dans Réglages › Cerveaux, pour tout votre travail ou pour un projet, ne laisse répondre qu’un cerveau sur cet appareil ou sur cet ordinateur. Tant que rien ne sortira, la zone de saisie le dit.</p>
 
 <h2>Ce que lit un cerveau dans le cloud</h2>
 <p>Pour chaque demande, un cerveau reçoit ce qu’il lui faut pour répondre. Un cerveau privé lit la même chose, sur votre appareil.</p>
@@ -55,7 +55,7 @@
 <li>Vos réglages, ni les fichiers de vos autres projets.</li>
 <li>Le relevé que garde Jean de l’endroit où chaque réponse est allée, ni la clé qui scelle ses certificats.</li>
 </ul>
-<p>Quand Jean fait des calculs, ils s’exécutent sur votre appareil, dans un bac à sable sans accès propre à internet, et le cerveau ne lit que ce qu’ils renvoient.</p></div>
+<p>Quand Jean fait des calculs, ils s’exécutent sur votre appareil, dans un espace isolé sans accès à internet, et le cerveau ne lit que le résultat.</p></div>
 </div>
 
 <h2>Chaque réponse dit où elle a été faite</h2>
@@ -81,11 +81,11 @@
 <li><strong>La recherche web</strong> envoie vos mots à ce qui cherche : Wikipédia dans votre langue par défaut, pour les cerveaux sans recherche à eux ; Vikidia ou votre propre bibliothèque hors ligne si vous les activez ; un service de recherche que vous connectez, ou à qui vous donnez votre propre clé ; ou la recherche du cerveau lui-même.</li>
 <li><strong>Les connexions</strong> n’échangent avec leur service que ce dont vos demandes ont besoin : ce que Jean y lit, et ce qu’il y écrit ou envoie après vous avoir demandé. Les services qui refusent les navigateurs sont joints par une passerelle qui ne garde rien.</li>
 <li><strong>Le navigateur de Jean</strong> visite les sites que vous ouvrez, comme tout navigateur.</li>
-<li><strong>L’Ordinateur</strong> demande avant de joindre un nouveau site, et télécharge les paquets qu’il installe depuis les index publics de Python et de JavaScript.</li>
+<li><strong>L’Ordinateur</strong> demande avant de joindre un nouveau site, et télécharge les paquets qu’il installe depuis PyPI et npm, les catalogues publics de paquets de Python et de JavaScript.</li>
 <li><strong>Le partage par lien</strong> envoie une copie scellée dans votre navigateur. La clé est dans le lien, après le #, que les navigateurs n’envoient jamais : l’hébergeur ne peut pas lire la copie.</li>
 <li><strong>La synchronisation</strong> copie vos tâches et vos fichiers dans un dossier de votre choix, qu’un service de stockage en ligne peut porter. Les réglages et les clés n’y vont jamais.</li>
 <li><strong>Une sauvegarde</strong> est un fichier que vous téléchargez. Vos clés n’y sont jamais.</li>
-<li><strong>Les extensions</strong> sont le code d’autres personnes. Elles s’exécutent dans un bac à sable sans accès propre à internet, mais lisez ce que chacune dit faire.</li>
+<li><strong>Les extensions</strong> sont le code d’autres personnes. Elles s’exécutent dans un espace isolé sans accès à internet, mais lisez ce que chacune dit faire.</li>
 </ul>
 
 <h2>Toutes les adresses que Jean contacte</h2>
@@ -108,7 +108,7 @@
 <tr><td><code>{votre langue}.vikidia.org</code>, votre bibliothèque hors ligne</td><td>Seulement une fois que vous les activez</td><td>Les mots de votre recherche</td></tr>
 <tr><td><code>api.search.brave.com</code>, <code>api.tavily.com</code>, <code>www.googleapis.com</code>, <code>kagi.com</code></td><td>Seulement une fois que vous donnez à Jean votre propre clé pour l’un d’eux. Brave Search et Kagi passent par la passerelle, et Tavily aussi quand un navigateur ne peut pas le joindre</td><td>Les mots de votre recherche et votre clé. La passerelle relaie et ne garde rien</td></tr>
 <tr><td><code>upload.wikimedia.org</code>, et le site d’une source</td><td>Pour montrer l’image d’une source dans une réponse</td><td>Votre adresse internet</td></tr>
-<tr><td><code>icons.duckduckgo.com</code></td><td>Quand vous pointez une source du web, pour montrer l’icône de son site</td><td>Le nom du site, sans page d’origine</td></tr>
+<tr><td><code>icons.duckduckgo.com</code></td><td>Quand une réponse cite une source du web, pour montrer l’icône de son site</td><td>Le nom du site, et rien de la page où vous étiez</td></tr>
 <tr><td><code>models.dev</code></td><td>Pour montrer ce qu’a coûté une réponse du cloud, au plus une fois par semaine</td><td>Votre adresse internet</td></tr>
 <tr><th scope="rowgroup" colspan="3">Les services que vous connectez</th></tr>
 <tr><td>Le serveur de chaque service, depuis votre navigateur : Notion, Canva, Miro, Granola, ClickUp, Linear, Atlassian, Intercom, Wix, Attio, Fireflies, Exa, Gmail, Google Agenda et Google Drive</td><td>Quand vous le connectez, et quand une demande l’utilise</td><td>Ce dont vos demandes ont besoin</td></tr>
@@ -117,7 +117,7 @@
 <tr><td><code>accounts.google.com</code>, <code>login.microsoftonline.com</code> et la page de connexion de chaque service</td><td>Pour vous connecter à un service</td><td>Votre connexion, sur la page du service lui-même</td></tr>
 <tr><th scope="rowgroup" colspan="3">L’Ordinateur</th></tr>
 <tr><td><code>cdn.jsdelivr.net</code> pour les paquets propres à Python, <code>pypi.org</code>, <code>files.pythonhosted.org</code>, <code>registry.npmjs.org</code></td><td>Pour installer un paquet</td><td>Le nom du paquet</td></tr>
-<tr><td>Les sites que vous autorisez, un par un</td><td>Quand un calcul demande à en joindre un, après votre accord</td><td>Ce qu’il demande, sans cookies ni page d’origine</td></tr>
+<tr><td>Les sites que vous autorisez, un par un</td><td>Quand un calcul demande à en joindre un, après votre accord</td><td>Ce qu’il demande, sans cookies et sans dire d’où il vient</td></tr>
 <tr><th scope="rowgroup" colspan="3">Compétences, extensions et cartes</th></tr>
 <tr><td><code>github.com</code>, <code>api.github.com</code>, <code>raw.githubusercontent.com</code>, ou un site que vous indiquez</td><td>Pour ajouter des compétences ou une extension depuis là</td><td>Votre adresse internet</td></tr>
 <tr><td><code>tiles.openfreemap.org</code></td><td>Pour montrer une carte, une fois les cartes autorisées</td><td>La zone à l’écran</td></tr>

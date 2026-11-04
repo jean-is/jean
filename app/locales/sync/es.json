@@ -1,15 +1,15 @@
 {
-  "sync.text": "Crea una carpeta en OneDrive, Dropbox, iCloud Drive o Google Drive, elígela aquí y luego la misma carpeta en tus otros ordenadores. Las tareas, los archivos y la memoria te acompañan; los ajustes y las claves se quedan en cada ordenador.",
+  "sync.text": "Crea una carpeta nueva en OneDrive, Dropbox, iCloud Drive o Google Drive, elígela aquí y luego la misma carpeta en tus otras computadoras. Las tareas, los archivos y la memoria te acompañan; los ajustes y las claves se quedan en cada computadora.",
   "sync.choose": "Elegir una carpeta…",
   "sync.syncing": "Sincronizando con {folder}…",
   "sync.done": "Sincronizado con {folder} · {when}",
   "sync.safe": "Las tareas, los archivos y la memoria también están en {folder}, a salvo aunque tu navegador los borre aquí.",
-  "sync.waiting": "Permite el acceso a {folder} para seguir sincronizando con tus otros ordenadores.",
+  "sync.waiting": "Permite el acceso a {folder} para seguir sincronizando con tus otras computadoras.",
   "sync.allow": "Permitir el acceso",
-  "sync.failed": "No se puede acceder a {folder}. ¿Sigue en este ordenador?",
-  "sync.refused": "{folder} contiene otros archivos. Elige una carpeta nueva y vacía, o la que sincronizas en otro ordenador.",
+  "sync.failed": "No se puede acceder a {folder}. ¿Sigue en esta computadora?",
+  "sync.refused": "{folder} contiene otros archivos. Elige una carpeta nueva y vacía, o la que sincronizas en otra computadora.",
   "sync.now": "Sincronizar ahora",
-  "sync.show": "Mostrar {folder} en este ordenador",
+  "sync.show": "Mostrar {folder} en esta computadora",
   "sync.stop": "Dejar de sincronizar",
-  "sync.off": "Solo en este ordenador"
+  "sync.off": "Solo en esta computadora"
 }

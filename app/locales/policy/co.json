@@ -1,6 +1,6 @@
 {
   "site.title": "Verificà stu situ",
-  "site.text": "Ciò chì a pulitica di stu situ cuntene è chì sta versione ùn leghje micca, o leghje d’altru modu, l’indirizzi ch’ella numina, è cumu u servitore manda ogni schedariu. Nunda ùn lascia stu navigatore fora, quandu vo u dumandate, d’una richiesta à ognunu di quessi indirizzi.",
+  "site.text": "Ciò chì a pulitica di stu situ cuntene è chì sta versione ùn leghje micca, o leghje d’altru modu, l’indirizzi ch’ella numina, è cumu u servitore manda ogni schedariu. Nunda ùn esce da stu navigatore, fora d’una richiesta à ognunu di quessi indirizzi quandu vo u dumandate.",
   "site.policy": "A pulitica",
   "site.named": "index.html numina {file}.",
   "site.unnamed": "index.html ùn numina nisuna pulitica : hè a versione aperta, senza nunda definitu da un’urganizazione.",
@@ -21,7 +21,7 @@
   "site.picture": "Duveria esse una fiura cum’è data:image/…;base64,…",
   "site.oneOf": "Duveria esse {values}.",
   "site.address": "Ùn hè micca un indirizzu web.",
-  "site.https": "Ùn hè micca un indirizzu https : i navigatori ricusanu l’http sempliciu, fora versu st’urdinatore.",
+  "site.https": "Ùn hè micca un indirizzu https : i navigatori ricusanu l’http sempliciu, fora chè versu st’urdinatore.",
   "site.capability": "Nisuna funzione ùn hà stu nome.",
   "site.addresses": "Indirizzi",
   "site.noAddresses": "A pulitica ùn numina nisunu indirizzu.",

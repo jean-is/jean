@@ -96,7 +96,8 @@ test('a task shared by link opens in the host’s viewer, with its password, and
     const dark = Array.from({ length: size * size }, (_, i) => get(i % size, Math.floor(i / size))).filter(Boolean).length
     return [svg.getAttribute('viewBox') === `-4 -4 ${size + 8} ${size + 8}`, svg.querySelector('path')?.getAttribute('d')?.match(/M/g)?.length === dark, getComputedStyle(svg).backgroundColor]
   }, link)).toEqual([true, true, 'rgb(255, 255, 255)'])
-  const close = () => dialog.getByRole('button', { name: 'Close', exact: true }).click()
+  // The dialog's own Close, in its head: a toast in the dialog has one too.
+  const close = () => dialog.locator('.dialog-head').getByRole('button', { name: 'Close' }).click()
   await close()
 
   const { context, reached } = await reading(browser)
@@ -252,6 +253,7 @@ test('a link that can’t be made or updated says why, in sharing’s own words'
     return path
   }, SHARE_URL)
   const dialog = page.locator('app-share-dialog dialog[open]')
+  const close = () => dialog.locator('.dialog-head').getByRole('button', { name: 'Close' }).click()
   const host = `${SHARE_URL}v1/*`
   // Refused by the host as too big, then not reached at all.
   await page.route(host, async (route) => (route.request().method() === 'PUT' ? route.fulfill({ response: await route.fetch(), status: 413 }) : route.continue()))
@@ -264,7 +266,7 @@ test('a link that can’t be made or updated says why, in sharing’s own words'
   await page.unroute(host)
   await dialog.getByRole('button', { name: 'Create link' }).click()
   await expect(dialog.locator('input.share-link')).toHaveValue(/#/)
-  await dialog.getByRole('button', { name: 'Close', exact: true }).click()
+  await close()
   // On a device without its write token, the dialog shows the link and says why it can't be changed there.
   await page.evaluate(async () => {
     const [{ app }, { deleteSecret }, { shares }] = await Promise.all([import('/ui/state.js'), import('/ui/secrets.js'), import('/caps/share/share.js')])
@@ -274,7 +276,7 @@ test('a link that can’t be made or updated says why, in sharing’s own words'
   await expect(dialog).toContainText('This link was made on another device: only that one can change it.')
   await expect(dialog.locator('input.share-link')).toHaveValue(/#/)
   await expect(dialog.getByRole('button', { name: 'Update' })).toHaveCount(0)
-  await dialog.getByRole('button', { name: 'Close', exact: true }).click()
+  await close()
   // Nor does Your data: neither updated nor said to be stopped, it stays listed, as it still opens.
   const settings = await openSettings(page, 'Your data')
   await settings.locator('[data-part="links"]').click()

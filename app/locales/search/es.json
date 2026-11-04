@@ -1,7 +1,7 @@
 {
   "search.where": "Dónde buscar",
   "search.wikipedia": "Wikipedia",
-  "search.wikipedia.text": "En tu idioma y en más de 300 otros",
+  "search.wikipedia.text": "En tu idioma y en más de otros 300",
   "search.vikidia": "Vikidia",
   "search.vikidia.text": {
     "one": "Para niños de 8 a 13 años, en tu idioma y {count} más",
@@ -32,7 +32,7 @@
     "many": "Para niños de 8 a 13 años, en {count} idiomas, pero no en el tuyo",
     "other": "Para niños de 8 a 13 años, en {count} idiomas, pero no en el tuyo"
   },
-  "search.fromLibrary": "Desde la biblioteca sin conexión: {languages}",
+  "search.fromLibrary": "Desde la biblioteca sin conexión, en {languages}",
   "search.library.in": "la biblioteca sin conexión",
   "search.library.row": "Wikipedia y otros libros desde un servidor Kiwix, incluso sin internet",
   "search.notSet": "Sin configurar",
@@ -42,7 +42,7 @@
   "search.services": "Servicios de búsqueda",
   "search.searches": "Busca en toda la web, para cualquier cerebro",
   "search.readHere": "Leer Wikipedia desde aquí",
-  "search.readHere.text": "En lugar de la de la web: {languages}",
+  "search.readHere.text": "En lugar de la Wikipedia de la web, en {languages}",
   "search.now.own": "El cerebro que responde busca por sí mismo en toda la web.",
   "search.now.others": "Los demás cerebros buscan en {sources}.",
   "search.now.every": "Todos los cerebros buscan en {sources}.",
@@ -58,6 +58,6 @@
   "search.refused": "{service} rechazó esta clave, o ya no le quedan búsquedas.",
   "search.silent": "{service} no respondió. Revisa la clave o inténtalo de nuevo en un momento.",
   "search.needsGateway": "Necesita una pasarela",
-  "search.noGateway": "Un navegador no puede llegar a {service} por sí solo: hace falta una pasarela que lo conecte. Su dirección se indica en {connections}.",
+  "search.noGateway": "Un navegador no puede llegar a {service} por sí solo: hace falta una pasarela que lo conecte. La dirección de la pasarela se indica en {connections}.",
   "search.google.closing": "Google ya no da claves nuevas y cerrará este servicio el {date}."
 }

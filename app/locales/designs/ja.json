@@ -21,7 +21,7 @@
   "designs.colours": "色",
   "designs.colours.ink": "文字",
   "designs.colours.accent": "アクセント",
-  "designs.colours.accent2": "2つ目のアクセント",
+  "designs.colours.accent2": "2 つ目のアクセント",
   "designs.colours.ground": "背景",
   "designs.palette.sunny": "ひだまり",
   "designs.palette.mint": "ミント",
@@ -41,7 +41,7 @@
   "designs.voice.handwritten": "手書き",
   "designs.parts": "パーツ",
   "designs.look": {
-    "other": "確認すること：{count}件"
+    "other": "確認すること：{count} 件"
   },
   "designs.add": "追加",
   "designs.shapes": "図形",
@@ -76,7 +76,7 @@
   "designs.role.picture": "画像",
   "designs.role.shape": "図形",
   "designs.role.text": "文字",
-  "designs.role.qr": "QRコード",
+  "designs.role.qr": "QR コード",
   "designs.higher": "上へ",
   "designs.lower": "下へ",
   "designs.bigger": "大きく",
@@ -92,16 +92,16 @@
   "designs.front": "最前面へ",
   "designs.back": "最背面へ",
   "designs.photo": "写真を追加",
-  "designs.askJean": "{name}にたのむ",
+  "designs.askJean": "{name} に頼む",
   "designs.hold": "長押しで話す、タップで入力",
-  "designs.pointed": "指し示したパーツ：{part}。変えたいことを入力欄に書いてください",
+  "designs.pointed": "{part} を指しています。変えたいことをメッセージ欄に書いてください",
   "designs.removed": "パーツを削除しました",
   "designs.moved": "移動しました：{part}",
   "designs.resized": "サイズを変えました：{part}",
   "designs.marked": "確認：{part}",
   "designs.mark.gap": "まだ入力されていません",
   "designs.mark.picture": "ここにまだ画像が入っていません。",
-  "designs.mark.qr": "QRコードで開くもの：アドレスまたは文字",
+  "designs.mark.qr": "QR コードで開くもの：アドレスまたは文字",
   "designs.mark.weekday": "曜日が日付と合っていません。",
   "designs.mark.reply": "返事の締め切りがイベントより後になっています。",
   "designs.mark.faint": "この文字は背景の上で読みにくくなっています。",
@@ -112,7 +112,7 @@
   "designs.fix.remove": "取り除く",
   "designs.fix.readable": "読みやすくする",
   "designs.fix.inside": "内側に寄せる",
-  "designs.jean": "{name}が変更",
+  "designs.jean": "{name} が変更",
   "designs.before": "変更前",
   "designs.accept": "承認",
   "designs.reject": "却下",
@@ -124,13 +124,13 @@
   "designs.rejectAll": "すべて却下",
   "designs.notPicture": "このファイルはデザインに表示できる画像ではありません。",
   "designs.first": {
-    "other": "先に確認すること：{count}件"
+    "other": "先に確認すること：{count} 件"
   },
   "designs.out.picture": "画像",
   "designs.out.post": "投稿用の画像",
   "designs.out.story": "ストーリー用の画像",
   "designs.out.file": "デザインファイル",
-  "designs.ask": "{what}をデザインして",
-  "designs.example": "土曜日の午後3時からの娘の誕生日会の招待状",
+  "designs.ask": "{what} をデザインして",
+  "designs.example": "土曜日の午後 3 時からの娘の誕生日会の招待状",
   "designs.again": "それをデザインにして。"
 }

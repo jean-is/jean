@@ -6,7 +6,7 @@
   "scores.mute": "Disattiva audio",
   "scores.where": "Posizione nel brano",
   "scores.drawing": "Scrittura dello spartito…",
-  "scores.failed": "Non è stato possibile disegnare questo spartito.",
+  "scores.failed": "Non è stato possibile scrivere questo spartito.",
   "scores.out.abc": "File ABC",
   "scores.out.midi": "File MIDI"
 }

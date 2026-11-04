@@ -11,7 +11,7 @@
   "facts": ["Aucun compte, nulle part", "Rien ne quitte l’ordinateur", "Gratuit et open source"],
   "pane.offline": "Wi-Fi coupé",
   "pane.ask": "Aide-moi à écrire à mon propriétaire pour l’humidité dans la chambre. Ferme, mais poli.",
-  "pane.answer": "Voici un brouillon : « Monsieur Martin, depuis début octobre, le mur de la chambre est humide et la peinture s’écaille. Pourriez-vous envoyer quelqu’un le voir ce mois-ci ? »",
+  "pane.answer": "Voici un brouillon : « Monsieur Martin, depuis début octobre, le mur de la chambre est humide et la peinture s’écaille. Pourriez-vous envoyer quelqu’un le voir ce mois-ci ? »",
   "pane.play": "Voir le déroulé",
   "pane.title": "Une lettre écrite dans {name}, hors ligne",
   "demo.brain": "l’IA de cet ordinateur",
@@ -19,7 +19,7 @@
   "needs.why": "{name} vérifie d’abord. Sur un ordinateur qui ne peut pas la faire tourner, elle n’est pas proposée du tout, et le bouton de cette page ouvre les autres IA à la place.",
   "needs.rows": [
     ["Mémoire", "{memory} ou plus"],
-    ["Graphisme", "Une puce graphique récente que votre navigateur peut utiliser (WebGPU)"],
+    ["Puce graphique", "Une puce graphique récente que votre navigateur peut utiliser (WebGPU)"],
     ["Espace libre", "{space}, pour le téléchargement"],
     ["Navigateur", "Chrome ou Edge. Safari et Firefox là où leur prise en charge graphique le permet"],
     ["Appareil", "Un ordinateur. Pas un téléphone ni une tablette"]
@@ -41,7 +41,7 @@
   "private.title": "Privée, et vous pouvez le vérifier.",
   "private.why": "Il n’y a pas de serveur {name}. Avec l’IA de votre ordinateur, ce que vous écrivez y reste, sauf si vous demandez à {name} de chercher sur le web ou d’envoyer quelque chose.",
   "private.cards": [
-    ["Rien ne sort", "Votre demande et sa réponse s’écrivent dans cet onglet du navigateur. Le bouclier sous chaque réponse le montre, d’après le propre relevé de votre navigateur."],
+    ["Rien ne sort", "Votre demande et sa réponse s’écrivent dans cet onglet du navigateur. Le bouclier sous chaque réponse le montre, d’après le journal du navigateur lui-même."],
     ["Chiffré là où c’est gardé", "Vos conversations et vos fichiers sont chiffrés sur votre ordinateur. Effacer les données du navigateur les supprime, sauf si vous avez fait une sauvegarde."],
     ["Marqué comme écrit par une IA", "Ce qu’elle écrit porte une marque invisible, comme le règlement européen sur l’IA le demande pour les textes d’IA. Ses réponses n’en sont pas moins bonnes, et chacun peut en vérifier une longue."]
   ],
@@ -75,7 +75,7 @@
     ["Où vont vos mots", "Ils restent sur votre ordinateur", "Chez son fournisseur, selon ses conditions"],
     ["Coût", "Gratuite, sans compte", "Gratuite avec des limites, ou payante, avec un compte"]
   ],
-  "versus.both": "Pas besoin de choisir. Ajoutez aussi une IA en ligne : en mode {auto}, {name} répond avec celle de votre ordinateur quand vous êtes hors ligne, et « {keep} » garde tout ici, pour tout un projet si vous voulez.",
+  "versus.both": "Pas besoin de choisir. Ajoutez aussi une IA en ligne : en mode {auto}, {name} répond avec celle de votre ordinateur quand vous êtes hors ligne, et « {keep} » garde tout ici, pour tout un projet si vous voulez.",
   "work.title": "Au travail, l’IA de votre organisation.",
   "work.why": "Une entreprise ou un organisme public peut faire répondre {name} uniquement par son propre service d’IA, sur les serveurs qu’il choisit, avec sa connexion et ses règles.",
   "work.link": "Les questions de la DSI, avec leurs réponses",
@@ -92,8 +92,8 @@
   "faq.items": [
     ["Est-ce vraiment gratuit ?", "Oui. L’IA se télécharge gratuitement, {name} est gratuit et open source, et il n’y a aucun compte à créer, ni chez {name} ni ailleurs."],
     ["Est-ce que ça marche sur mon téléphone ?", "Pas l’IA de l’ordinateur : elle demande plus qu’un téléphone ou une tablette ne peut lui donner. Sur un téléphone, {name} fonctionne avec une IA en ligne."],
-    ["Quelle IA est-ce ?", "Gemma 4 E2B, une IA que Google publie ouvertement, adaptée aux navigateurs et téléchargée depuis Hugging Face dans une version que {name} fixe. Elle lit et écrit plus de 140 langues."],
-    ["Comment savoir que rien ne sort ?", "Coupez le Wi-Fi et posez une question. Et sous chaque réponse, un bouclier montre qu’elle a été écrite sur cet ordinateur, d’après le propre relevé de votre navigateur."],
+    ["Quelle IA est-ce ?", "Gemma 4 E2B, une IA que Google publie ouvertement, adaptée aux navigateurs et téléchargée depuis Hugging Face dans une version fixée par {name}. Elle lit et écrit plus de 140 langues."],
+    ["Comment savoir que rien ne sort ?", "Coupez le Wi-Fi et posez une question. Et sous chaque réponse, un bouclier montre qu’elle a été écrite sur cet ordinateur, d’après le journal du navigateur lui-même."],
     ["Est-ce que ça ralentit mon ordinateur ?", "Pendant qu’elle répond, elle sollicite fort la puce graphique, et {name} garde la page immobile pendant ce temps. Chargée, elle occupe environ {loaded} de mémoire, d’où les {memory} demandés."],
     ["Peut-elle chercher hors ligne ?", "Pas sur le web. Elle peut chercher dans une bibliothèque hors ligne : Wikipédia et d’autres livres depuis un serveur Kiwix, sur votre ordinateur, à l’école ou au travail."]
   ],

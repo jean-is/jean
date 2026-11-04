@@ -3,6 +3,6 @@
   "signin.in": "로그인",
   "signin.as": "{account}(으)로 로그인됨",
   "signin.out": "로그아웃",
-  "signin.signedOut": "로그아웃되었습니다.",
-  "signin.kept": "여기에 보관된 내용은 이 기기에 남습니다."
+  "signin.signedOut": "로그아웃했어요.",
+  "signin.kept": "여기에 보관된 내용은 이 기기에 남아요."
 }

@@ -13,7 +13,7 @@
     "other": "{count} esperan algo de ti, marcados abajo."
   },
   "case.of": "{count} de {total}",
-  "case.so": "{done} de {goal} por ahora",
+  "case.so": "{done} de {goal} hasta ahora",
   "case.download": "{size} por descargar",
   "case.unset": "Sin configurar",
   "case.unfound": "Aún por descubrir",

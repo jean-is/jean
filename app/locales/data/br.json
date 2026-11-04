@@ -21,7 +21,7 @@
   "data.copies": "An eilskouerennoù a virit",
   "data.others": "Piv all o gwel",
   "data.space": "Lec’h implijet",
-  "data.of": "{size}, war ar {quota} a lez ar merdeer-mañ da {name}",
+  "data.of": "{size}, diwar ar {quota} a lez ar merdeer-mañ {name} da implijout",
   "data.room": "Ober lec’h en Empennoù",
   "data.last": "An hini ziwezhañ : {date}",
   "data.never": "Hini ebet c’hoazh",
@@ -34,7 +34,7 @@
   "data.assistants": "ChatGPT ha Claude : en o arventennoù, goulennit ezporzhiañ ho roadennoù. Ul liamm d’ur restr .zip a zeu dre bostel.",
   "data.gemini": "Gemini : e Google Takeout, dibabit Gemini, ha My Activity gant Gemini Apps hepken, e JSON.",
   "data.choose": "Dibab ar restr…",
-  "data.drop": "Gallout a rit ivez lakaat anezhañ en un trevell.",
+  "data.drop": "Gallout a rit ivez lakaat anezhañ en un drevell.",
   "data.org": "Hoc’h aozadur",
   "data.orgText": "Ar pezh a resev diganeoc’h hag a vir",
   "data.private": "Evit mirout ho trevelloù, digorit {name} en ur prenestr n’eo ket prevez."

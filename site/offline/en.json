@@ -92,7 +92,7 @@
   "faq.items": [
     ["Is it really free?", "Yes. The AI is a free download, {name} is free and open source, and there’s no account to make, at {name} or anywhere else."],
     ["Does it work on my phone?", "Not the AI on the computer: it needs more than a phone or a tablet can give it. On a phone, {name} works with an online AI."],
-    ["Which AI is it?", "Gemma 4 E2B, an AI Google publishes openly, converted for browsers and downloaded from Hugging Face at a version {name} fixes. It reads and writes more than 140 languages."],
+    ["Which AI is it?", "Gemma 4 E2B, an AI Google publishes openly, converted for browsers and downloaded from Hugging Face at a fixed version chosen by {name}. It reads and writes more than 140 languages."],
     ["How do I know nothing leaves?", "Turn off Wi-Fi and ask something. And under each answer, a shield shows it was written on this computer, from your browser’s own record."],
     ["Does it slow my computer down?", "While it answers, it works the graphics chip hard, and {name} keeps the page still meanwhile. Loaded, it takes about {loaded} of memory, which is why it needs {memory}."],
     ["Can it search offline?", "Not the web. It can search an offline library: Wikipedia and other books from a Kiwix server, on your computer, at school or at work."]

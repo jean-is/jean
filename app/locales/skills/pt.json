@@ -1,5 +1,5 @@
 {
-  "skills.none": "Ainda não há competências. Quando pedires o mesmo pela terceira vez, ser-te-á proposta uma.",
+  "skills.none": "Ainda não há competências. Quando pedires o mesmo tipo de coisa pela terceira vez, é-te proposta uma.",
   "skills.invalid": "Este ficheiro não é uma competência.",
   "skills.added": "Competência «{title}» adicionada.",
   "skills.steps": "Passos",
@@ -25,13 +25,13 @@
   "skills.ready.unreachable": "Não foi possível transferir esta competência.",
   "skills.lede": "Uma competência é seguida sempre que um pedido lhe corresponde.",
   "skills.last": "Última seguida: {title}, {when}.",
-  "skills.off": "Desativada",
+  "skills.off": "Desligada",
   "skills.readyWord": "Pronta a usar",
   "skills.readyMade": "Competências prontas a usar",
   "skills.more": {
     "one": "Mais {count} para adicionar",
-    "many": "Mais {count} para adicionar, para cartas, planos, aprender e mais",
-    "other": "Mais {count} para adicionar, para cartas, planos, aprender e mais"
+    "many": "Mais {count} para adicionar: cartas, planos, aprendizagem e mais",
+    "other": "Mais {count} para adicionar: cartas, planos, aprendizagem e mais"
   },
   "skills.byJean": "Pronta a usar · adicionada por {name} a {date}",
   "skills.byYou": "Pronta a usar · adicionada a {date}",
@@ -65,7 +65,7 @@
   "skills.group.learning": "Para aprender",
   "skills.group.drawn": "Para desenhar e apresentar",
   "skills.had": "Adicionada",
-  "skills.ready.off": "Podes desativá-la quando quiseres.",
+  "skills.ready.off": "Podes desligá-la quando quiseres.",
   "skills.askScore": "Compõe {what}, numa pauta que eu possa tocar.",
   "skills.scoreExample": "uma canção de embalar curta para piano",
   "skills.askDeck": "Prepara {what}, em diapositivos que eu possa apresentar.",

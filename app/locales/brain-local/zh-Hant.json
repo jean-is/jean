@@ -2,12 +2,12 @@
   "private.name": "私密 · 離線",
   "private.away": "離線 · 仍在回答",
   "private.title": "一切都留在這台裝置上",
-  "private.text": "回答就在這個分頁中寫成，無需伺服器，無需安裝。能做到這一點的助理寥寥無幾。",
+  "private.text": "回答就在這個分頁裡寫成，不需要伺服器，也不用安裝。很少有助理做得到。",
   "private.private": "私密，什麼都不會離開這裡",
   "private.free": "免費，無需帳號或金鑰",
   "private.offline": "沒有網路也能繼續回答",
   "private.try": "關掉 Wi-Fi 試試看。",
-  "private.still": "你已離線，回答仍源源不絕地送來。",
+  "private.still": "你已離線，回答仍然一個接一個送來。",
   "private.proof": "每個回答下方的盾牌就是證明，來自你瀏覽器自己的記錄。",
-  "device.unfit": "這台裝置的記憶體不足以自行運行大腦，因此已刪除下載的內容，釋放了 {size}。"
+  "device.unfit": "這台裝置的記憶體不夠，無法自行執行大腦，因此已刪除下載的內容，釋放了 {size}。"
 }

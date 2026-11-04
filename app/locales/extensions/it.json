@@ -1,8 +1,8 @@
 {
-  "extensions.text": "Fatte da altri, ampliano ciò che puoi fare qui. Ognuna funziona a parte rispetto ai tuoi file e alle tue chiavi, senza internet, e fa solo ciò che permetti.",
+  "extensions.text": "Fatte da altri, ampliano ciò che puoi fare qui. Ognuna gira separata dai tuoi file e dalle tue chiavi, senza internet, e fa solo ciò che le permetti.",
   "extensions.adding": "Aggiungi un’estensione",
-  "extensions.addText": "Chiunque può farne una. {name} la legge prima e ti mostra cosa chiede, prima che venga aggiunto qualcosa.",
-  "extensions.addHint": "L’indirizzo della sua cartella, o la sua pagina su GitHub.",
+  "extensions.addText": "Chiunque può farne una. {name} la legge e ti mostra cosa chiede, prima di aggiungere qualsiasi cosa.",
+  "extensions.addHint": "L’indirizzo della sua cartella, o della sua pagina su GitHub.",
   "extensions.readyMade": "Già pronte",
   "extensions.had": "Aggiunta",
   "extensions.may": "Cosa può fare",
@@ -54,5 +54,5 @@
   "extensions.safe": "Modalità provvisoria: in questa visita non funziona nessuna estensione.",
   "extensions.leaveSafe": "Esci dalla modalità provvisoria",
   "extensions.says": "{title}: {text}",
-  "extensions.confirmRemove": "Rimuovere {title}? Ciò che ha salvato se ne va con lei."
+  "extensions.confirmRemove": "Rimuovere {title}? Ciò che ha salvato viene eliminato con lei."
 }

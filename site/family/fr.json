@@ -8,7 +8,7 @@
   "h1.mark": "sans faire à sa place",
   "measure": "Mesuré avant d’être promis : combien de fois chaque IA donne quand même la réponse à un enfant.",
   "measure.how": "Comment nous mesurons",
-  "lede": "{name} explique à son niveau et propose de quoi faire sien son cours ; votre enfant le redit avec ses mots. Chaque enfant a son profil, réglé par vous : ce qu’on lui explique selon son âge, un verrou avant 13 ans, et une alerte si quelque chose de grave arrive.",
+  "lede": "{name} explique à son niveau et propose des façons de s’approprier la leçon ; votre enfant la redit avec ses mots. Chaque enfant a son profil, réglé par vous : ce qu’on lui explique selon son âge, un verrou avant 13 ans, et une alerte si quelque chose de grave arrive.",
   "cta": "Créer le profil d’un enfant",
   "see": "Ce que vous choisissez",
   "facts": ["Sans compte pour l’enfant", "Rien n’est envoyé à {name}", "Gratuit et open source"],
@@ -65,7 +65,7 @@
   "sees.list": [
     "Ni compte, ni adresse e-mail : son profil est sur votre ordinateur.",
     "Avant 13 ans, il s’ouvre avec vous ; à partir de la 4e, seul, ou avec son propre verrou.",
-    "Il voit ce qui a été choisi pour lui : « {tier} ».",
+    "Il voit ce qui a été choisi pour lui : « {tier} ».",
     "Ses conversations restent les siennes, sauf s’il vous en partage une."
   ],
   "learn.title": "Comment votre enfant apprend.",
@@ -99,7 +99,7 @@
   "where.cards": [
     ["Sur cet ordinateur", "L’IA privée, téléchargée une fois (3,1 Go). Rien ne sort, même sans Internet. Il faut 12 Go de mémoire et une puce graphique récente."],
     ["Avec votre propre IA", "Un abonnement ou une clé à vous, si ses conditions acceptent l’âge de votre enfant. Ses messages vont alors chez ce fournisseur."],
-    ["Jamais pour un enfant", "« {free} » n’est pas proposé dans son profil : ce service est réservé aux plus de 18 ans."]
+    ["Jamais pour un enfant", "« {free} » n’est pas proposé dans son profil : ce service est réservé aux plus de 18 ans."]
   ],
   "family.title": "Et pour toute la famille.",
   "family.why": "{name} sert aussi aux parents, aux grands-parents, à tout le monde.",
@@ -125,6 +125,6 @@
     ["Et ses frères et sœurs ?", "Un profil chacun, sur le même ordinateur, sans rien payer de plus. Rien ne passe de l’un à l’autre."]
   ],
   "start.title": "En trois étapes, sur votre ordinateur.",
-  "start.steps": ["Verrouillez votre propre profil.", "Ajoutez un profil et cochez « {forChild} ».", "Indiquez son année de naissance, puis choisissez, sujet par sujet."],
+  "start.steps": ["Verrouillez votre propre profil.", "Ajoutez un profil et cochez « {forChild} ».", "Indiquez son année de naissance, puis choisissez, sujet par sujet."],
   "start.note": "Ouvre {name} sur un nouveau profil, vos choix d’abord. Rien à installer."
 }

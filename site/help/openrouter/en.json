@@ -4,9 +4,9 @@
   "h1": "Start free with OpenRouter",
   "works": "Every browser",
   "answer": "Send your first request, and press {free}. OpenRouter’s site opens: make a free account there, allow {name} to use it, and you come back to your request, answered.",
-  "tour.here": "This is {settings} › {brains}. With no brain yet, the first request you send shows {first}, whose {free} is this same way.",
+  "tour.here": "This is {settings} › {brains}. With no brain yet, the first request you send shows {first}, whose {free} button does the same thing.",
   "need": [
-    "An email address, or an account OpenRouter lets you sign in with, to make its account.",
+    "An email address, or another account OpenRouter lets you sign in with.",
     "Nothing to pay: its free brains need no payment method."
   ],
   "steps": [

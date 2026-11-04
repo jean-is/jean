@@ -1,9 +1,9 @@
 {
   "reader.more": "自然な声は{language}も読み上げられます。",
-  "reader.credit": "KyutaiのPocket TTS、Alba MacKennaの声（CC BY 4.0）。",
-  "reader.on": "{languages}、このデバイスで作成",
-  "reader.none": "このデバイスにはまだ言語がありません",
+  "reader.credit": "Kyutai の Pocket TTS、Alba MacKenna の声（CC BY 4.0）。",
+  "reader.on": "{languages}、この端末で作成",
+  "reader.none": "この端末にはまだ言語がありません",
   "reader.off": "オフ：システムの声がすべての回答を読み上げます",
-  "reader.here": "このデバイス上、{size}",
+  "reader.here": "この端末上、{size}",
   "reader.room": "言語は「あなたのデータ › 使用中の容量」で外せます"
 }

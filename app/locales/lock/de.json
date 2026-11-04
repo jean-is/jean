@@ -4,8 +4,8 @@
   "lock.unreadable": "Was hier gespeichert war, lässt sich nicht öffnen.",
   "lock.parent": "Ein Elternteil öffnet dieses Profil, mit seinem Passwort oder Passkey.",
   "lock.cant": "Lässt es sich nicht öffnen?",
-  "lock.cantText": "Ohne deinen Passkey, dein Passwort oder deinen Wiederherstellungscode kann niemand öffnen, was hier gespeichert ist. Es bleibt hier, falls sich eines davon wieder findet; ein anderes Profil kann es entfernen.",
-  "lock.afreshText": "Nichts auf diesem Gerät kann es mehr öffnen. Neu anfangen löscht es; danach kannst du ein Backup oder deinen synchronisierten Ordner wiederherstellen.",
+  "lock.cantText": "Ohne deinen Passkey, dein Passwort oder deinen Wiederherstellungscode kann niemand öffnen, was hier gespeichert ist. Es bleibt hier, falls eines davon wieder auftaucht; ein anderes Profil kann es entfernen.",
+  "lock.afreshText": "Nichts auf diesem Gerät kann es mehr öffnen. Neu anfangen löscht es; danach kannst du eine Sicherung oder deinen synchronisierten Ordner wiederherstellen.",
   "lock.afresh": "Neu anfangen",
   "lock.afreshConfirm": "Das Profil „{name}“ und alles, was darin gespeichert ist, endgültig löschen?",
   "lock.unlock": "Entsperren",
@@ -18,7 +18,7 @@
   "lock.sealed": "Alles, was hier gespeichert ist, ist auf diesem Gerät verschlüsselt. Sperre es, damit nur du es öffnen kannst.",
   "lock.withPasskey": "Mit deinem Passkey gesperrt. Es öffnet sich nur damit oder mit deinem Wiederherstellungscode.",
   "lock.withPassword": "Mit deinem Passwort gesperrt. Es öffnet sich nur damit oder mit deinem Wiederherstellungscode.",
-  "lock.synced": "Dein synchronisierter Ordner behält lesbare Kopien.",
+  "lock.synced": "Dein synchronisierter Ordner behält ungesperrte Kopien.",
   "lock.passkey": "Passkey verwenden",
   "lock.password": "Passwort verwenden",
   "lock.again": "Dasselbe Passwort noch einmal",
@@ -35,5 +35,5 @@
   "lock.on": "An",
   "lock.opens.passkey": "Öffnet sich mit deinem Passkey",
   "lock.opens.password": "Öffnet sich mit deinem Passwort",
-  "lock.opens.anyone": "Jeder, der dieses Gerät nutzt, kann sie öffnen"
+  "lock.opens.anyone": "Jeder, der dieses Gerät nutzt, kann es öffnen"
 }

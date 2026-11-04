@@ -19,7 +19,7 @@
   "folders.agents.home": "Zu deinen Anweisungen hinzufügen?",
   "folders.agents.project": "Zu den Anweisungen von {project} hinzufügen?",
   "folders.agents.yes": "Übernehmen",
-  "folders.open.question": "{name} {folder} auf diesem Computer öffnen lassen?",
+  "folders.open.question": "{name} erlauben, {folder} auf diesem Computer zu öffnen?",
   "folders.open.yes": "Erlauben",
   "folders.change.question": "{path} ändern?",
   "folders.changes.question": {

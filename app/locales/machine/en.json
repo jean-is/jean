@@ -1,5 +1,5 @@
 {
-  "machine.text": "Run commands on your own computer, with its programs and servers, such as a site’s dev server. JavaScript and Python stay in the sandbox.",
+  "machine.text": "Run commands on your own computer, with its programs and servers, such as a site’s development server. JavaScript and Python stay in the walled-off computer in this tab.",
   "machine.on": "Tasks with the folder {folder} run their commands on this computer, each asked first, until you press Ctrl+C in its terminal.",
   "machine.forget": "Stop using it",
   "machine.question": "Run this on your computer, in {folder}?",
@@ -8,7 +8,7 @@
   "machine.choose": "Choose a folder…",
   "machine.failed": "It didn’t start: it needs Node.js on this computer, the node command a terminal runs.",
   "machine.on.app": "Tasks with the folder {folder} run their commands on this computer, each asked first.",
-  "machine.lede": "Tasks use the sandbox, except those in the folder you connect on this computer.",
+  "machine.lede": "Tasks use the walled-off computer in this tab, except those in the folder you connect on this computer.",
   "machine.off": "Not connected",
   "machine.step.open": "Open a terminal in one of your folders.",
   "machine.step.paste": "Paste this line there, then press Enter.",

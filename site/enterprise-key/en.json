@@ -22,7 +22,7 @@
     ],
     [
       "Subscription",
-      "{price} a year for an organisation of {small} people or more, whatever its size, never per seat. This page makes its quote as you fill it in."
+      "{price} a year for an organisation of {small} people or more, whatever its size, never per seat. This page writes the quote as you fill it in."
     ]
   ],
   "organisation": "Organisation",
@@ -33,7 +33,7 @@
   "name": "Your name",
   "email": "Your work email",
   "billing.legend": "For the quote and the invoice",
-  "country": "Where it is",
+  "country": "Where the organisation is",
   "countries": [
     "France",
     "Another EU country",

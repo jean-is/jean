@@ -33,7 +33,7 @@
   "site.key": "La clé débloque cette version ici pour {organisation}, jusqu’au {date}.",
   "site.trial": "La clé d’essai débloque cette version ici pour {organisation}, jusqu’au {date}.",
   "site.local": "Aucune clé n’est nécessaire sur cet ordinateur.",
-  "site.keyless": "Ces parties demandent une clé qui débloque cette version ici, sinon chacun voit à la place un message pour l’informatique :",
+  "site.keyless": "Ces parties demandent une clé qui débloque cette version ici, sinon chacun voit à la place un message pour le service informatique :",
   "site.server": "Le serveur",
   "site.sent": "Envoyé",
   "site.notSent": "Pas envoyé",

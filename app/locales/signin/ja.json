@@ -4,5 +4,5 @@
   "signin.as": "{account} でサインイン中",
   "signin.out": "サインアウト",
   "signin.signedOut": "サインアウトしました。",
-  "signin.kept": "ここに保存されたものはこのデバイスに残ります。"
+  "signin.kept": "ここに保存されたものはこの端末に残ります。"
 }

@@ -2,7 +2,7 @@
   "knows.instructions": "你的指示",
   "knows.instructionsPlaceholder": "例如：用中文回答。簡短一些。我開了一家麵包店。",
   "knows.noticed": "{name} 留意到的事",
-  "knows.forYou": "全部適用",
+  "knows.forYou": "所有地方",
   "knows.forProject": "在 {project} 中",
   "knows.edit": "編輯這一行",
   "knows.from": "開啟來源任務",
@@ -14,7 +14,7 @@
   "you.cut": {
     "other": "最早的 {count} 行已不再讀取。要讓某行繼續被讀取，請把它設為指示。"
   },
-  "you.nameText": "{name} 對你的稱呼。它從不會傳送給任何大腦。",
+  "you.nameText": "{name} 對你的稱呼。它從不傳送給大腦。",
   "you.edit": "編輯",
   "you.cancel": "取消",
   "you.more": "這一行的更多操作",
@@ -34,6 +34,6 @@
   },
   "you.search": "搜尋 {name} 留意到的事",
   "you.unread": "不再讀取",
-  "you.project": "這些會和你的一起使用，只在它的任務中。",
+  "you.project": "這些會和你的一起使用，只在這個專案的任務中。",
   "you.org": "你所屬組織的指示"
 }

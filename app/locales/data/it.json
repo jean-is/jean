@@ -21,7 +21,7 @@
   "data.copies": "Copie che conservi",
   "data.others": "Chi altro li vede",
   "data.space": "Spazio usato",
-  "data.of": "{size} dei {quota} che questo browser lascia a {name}",
+  "data.of": "{size}, dei {quota} che questo browser concede a {name}",
   "data.room": "Fai spazio in Cervelli",
   "data.last": "L’ultimo è del {date}",
   "data.never": "Ancora nessuno",

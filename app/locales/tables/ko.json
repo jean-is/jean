@@ -15,9 +15,9 @@
   "tables.insertBelow": "아래에 삽입",
   "tables.duplicate": "복제",
   "tables.rowDeleted": "‘{name}’ 행을 삭제했어요.",
-  "tables.empty": "아직 행이 없습니다.",
+  "tables.empty": "아직 행이 없어요.",
   "tables.addRow": "새 행",
-  "tables.wrong": "이 열에 맞지 않습니다.",
+  "tables.wrong": "이 열에 맞지 않아요.",
   "tables.form.email": "이메일 주소를 입력하세요. 예: name@example.com",
   "tables.form.link": "https://로 시작하는 웹 주소를 입력하세요. 예: https://example.com",
   "tables.form.phone": "전화번호를 입력하세요. 예: 010-1234-5678",
@@ -94,7 +94,7 @@
   "tables.clear": "지우기",
   "tables.kind.formula": "수식",
   "tables.yourFormula": "수식 입력",
-  "tables.formulaHint": "열은 이름으로, + − * / 와 round, min, max, sqrt 같은 함수를 쓸 수 있습니다.",
-  "tables.formulaWrong": "이 수식은 계산할 수 없습니다. 열 이름과 괄호를 확인하세요.",
+  "tables.formulaHint": "열은 이름으로, + − * / 와 round, min, max, sqrt 같은 함수를 쓸 수 있어요.",
+  "tables.formulaWrong": "이 수식은 계산할 수 없어요. 열 이름과 괄호를 확인하세요.",
   "tables.save": "저장"
 }

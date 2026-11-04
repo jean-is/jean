@@ -16,7 +16,7 @@
   ],
   "try.ask": "Les dîners de la semaine : à quatre, végétariens, pour moins de 60 €, avec la liste de courses.",
   "fair.title": "ChatGPT, en toute honnêteté",
-  "fair.body": "ChatGPT est l’assistant d’OpenAI, utilisé par plus de 900 millions de personnes chaque semaine. Il démarre en un clic, la discussion est gratuite, et il est très capable. Vos conversations sont gardées sur les serveurs d’OpenAI et, sur ses abonnements personnels, servent à entraîner son IA sauf si vous le désactivez dans ses contrôles des données.",
+  "fair.body": "ChatGPT est l’assistant d’OpenAI, utilisé par plus de 900 millions de personnes chaque semaine. Il démarre en un clic, la discussion par écrit est gratuite, et il est très capable. Vos conversations sont gardées sur les serveurs d’OpenAI et, sur ses abonnements personnels, servent à entraîner son IA sauf si vous le désactivez dans ses contrôles des données.",
   "fair.sources": "users stored data",
   "table.rows": [
     ["Où il fonctionne", "Dans un onglet du navigateur. Vos fichiers restent scellés sur votre appareil.", "built", "Sur les serveurs d’OpenAI, aux États-Unis et ailleurs dans le monde, par le web et ses applications.", "stored pricing"],
@@ -39,12 +39,12 @@
   "both.cards": [
     ["history", "Importez votre historique ChatGPT", "Dans ChatGPT : Paramètres › Contrôles des données › Exporter les données. Déposez le fichier reçu dans {name} : toutes les conversations arrivent, aucune en double.", "built"],
     ["switch", "Une IA par tâche", "La fiche de paie avec l’IA de cet ordinateur, le voyage avec ChatGPT. Changez d’IA depuis la zone de saisie et redemandez.", "built"],
-    ["plan", "Votre abonnement ChatGPT, dans {name}", "Plus ou Pro, sur un ordinateur, par « Votre ordinateur » : une ligne à coller une fois, puis vous vous connectez à ChatGPT. Pas de second abonnement.", "computer"]
+    ["plan", "Votre abonnement ChatGPT, dans {name}", "Plus ou Pro, sur un ordinateur, par « Votre ordinateur » : une ligne à coller une fois, puis vous vous connectez à ChatGPT. Pas de second abonnement.", "computer"]
   ],
   "catch.items": [
     "{name} est gratuit ; l’IA derrière ne l’est pas toujours.",
-    "Sans inscription seulement avec l’IA de cet ordinateur, qui demande 12 Go de mémoire et une puce graphique récente. Pas sur téléphone.",
-    "Votre abonnement ChatGPT passe par « Votre ordinateur » : une ligne à coller une fois, sur un ordinateur.",
+    "Sans inscription, seule l’IA de cet ordinateur répond : il lui faut 12 Go de mémoire et une puce graphique récente, et aucun téléphone ne la fait tourner.",
+    "Votre abonnement ChatGPT passe par « Votre ordinateur » : une ligne à coller une fois, sur un ordinateur.",
     "Votre travail vit dans ce navigateur. Effacez ses données sans sauvegarde et il disparaît."
   ],
   "faq.items": [

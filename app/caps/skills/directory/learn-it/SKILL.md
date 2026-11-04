@@ -15,7 +15,7 @@ metadata:
   text-bn: "পাঠ বোঝা ও অনুশীলন, উত্তরের বদলে ইঙ্গিত দিয়ে"
   title-br: "Deskiñ e gentel"
   text-br: "Ur gentel komprenet ha pleustret, gant tunioù e-lec’h ar respontoù"
-  title-co: "Amparà a so lezzione"
+  title-co: "Amparà a lezzione"
   text-co: "Una lezzione capita è praticata, cù indizii invece di e risposte"
   title-cs: "Naučit se to"
   text-cs: "Lekce pochopená a procvičená, s nápovědami místo odpovědí"
@@ -92,9 +92,9 @@ metadata:
   title-yo: "Kọ́ ọ"
   text-yo: "Ẹ̀kọ́ tí a lóye tí a sì ṣe àdánwò rẹ̀, pẹ̀lú àmì dípò ìdáhùn"
   title-zh-Hans: "真正学会"
-  text-zh-Hans: "理解课文并练习，给提示而不是答案"
+  text-zh-Hans: "把一课学懂并练熟，给提示而不是答案"
   title-zh-Hant: "真正學會"
-  text-zh-Hant: "理解課文並練習，給提示而不是答案"
+  text-zh-Hant: "把一課弄懂並練習，給的是提示而不是答案"
 ---
 # Learn it
 

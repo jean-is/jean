@@ -1,10 +1,10 @@
 {
-  "computer.text": "A computer in a sandbox in this tab: it borrows this device’s processor and memory, and never reaches anything else on it.",
+  "computer.text": "A computer inside this tab, walled off from this device: it borrows the processor and memory, and never reaches anything else.",
   "computer.lede": "A computer in this tab, apart from this device: it works on the files a task gives it, and reaches only the sites you allow.",
   "computer.where": "Where commands run",
   "computer.reach": "What it may reach",
   "computer.keeps": "What it keeps",
-  "computer.sandbox": "Sandbox",
+  "computer.sandbox": "Inside this tab",
   "computer.sandbox.text": "Commands, JavaScript and Python",
   "computer.state.asleep": "Asleep",
   "computer.state.waking": "Waking up",
@@ -38,7 +38,7 @@
     "other": "{count} more"
   },
   "computer.registries": "Where packages come from",
-  "computer.registries.text": "For a mirror, such as your organization’s. A key stays on this device and goes only to its address.",
+  "computer.registries.text": "For a mirror, a copy of these sources your organization may run. A key stays on this device and goes only to its address.",
   "computer.registry.pyodide": "Python, Pyodide’s packages",
   "computer.registry.pypi": "Python, PyPI",
   "computer.registry.npm": "JavaScript, npm",
@@ -66,16 +66,16 @@
   "computer.reach.always": "Always allow {site}",
   "computer.reach.no": "No",
   "computer.relay": "Reach the web through",
-  "computer.relay.text": "A relay’s address, for sites that refuse requests from other sites. Empty: directly, through this device’s own proxy.",
+  "computer.relay.text": "A relay’s address, for sites that refuse requests from other sites. Leave it empty to go directly, through this device’s own proxy.",
   "computer.minutes": {
     "one": "{count} minute",
     "other": "{count} minutes"
   },
   "computer.reach.once": "Allow once",
   "computer.terminal": "Terminal",
-  "computer.terminal.text": "Run commands on the computer yourself, over the same files as the conversation; your next message says what you ran. {keys} opens it from anywhere.",
+  "computer.terminal.text": "Run commands on the computer yourself, on the same files as the conversation. Your next message says what you ran. {keys} opens it from anywhere.",
   "computer.terminal.command": "Command",
   "computer.terminal.clear": "Clear",
   "computer.terminal.exit": "Exit code {code}",
-  "computer.terminal.refused": "Changed elsewhere meanwhile, so not kept: {files}"
+  "computer.terminal.refused": "Not kept, as they changed elsewhere meanwhile: {files}"
 }

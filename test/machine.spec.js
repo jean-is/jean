@@ -86,7 +86,7 @@ test('a server refused in the sandbox runs on this computer instead, and shows i
     await expect(mine.locator('.item-icon')).toHaveAttribute('data-state', 'ready')
     // The sandbox's row above it, which tasks use otherwise, with its own picture.
     await expect(panel.locator('[data-page="sandbox"] svg.art')).toHaveCount(1)
-    await expect(panel.locator('.lede')).toHaveText('Tasks use the sandbox, except those in the folder you connect on this computer.')
+    await expect(panel.locator('.lede')).toHaveText('Tasks use the walled-off computer in this tab, except those in the folder you connect on this computer.')
     await page.keyboard.press('Escape')
 
     // The brain's command is asked first, then runs on the disk; a server it starts goes on, and the browser shows it.

@@ -1,10 +1,10 @@
 {
-  "computer.text": "このタブの中の安全な環境にあるコンピューターです。この端末のプロセッサーとメモリーを借りますが、それ以外には一切触れません。",
-  "computer.lede": "このタブの中にある、この端末とは別のコンピューターです。タスクが渡したファイルで作業し、許可したサイトにだけアクセスします。",
+  "computer.text": "このタブの中にある、この端末から隔離されたコンピューターです。プロセッサーとメモリーを借りますが、それ以外には一切触れません。",
+  "computer.lede": "このタブの中にある、この端末から隔離されたコンピューターです。タスクが渡したファイルで作業し、許可したサイトにだけアクセスします。",
   "computer.where": "コマンドの実行場所",
   "computer.reach": "アクセスできる範囲",
   "computer.keeps": "残すもの",
-  "computer.sandbox": "安全な環境",
+  "computer.sandbox": "このタブの中",
   "computer.sandbox.text": "コマンド、JavaScript、Python",
   "computer.state.asleep": "休止中",
   "computer.state.waking": "起動中",
@@ -36,7 +36,7 @@
     "other": "ほか {count} 件"
   },
   "computer.registries": "パッケージの入手先",
-  "computer.registries.text": "組織のミラーなどを使う場合に。キーはこの端末に残り、そのアドレスにだけ送られます。",
+  "computer.registries.text": "組織が運用するミラー（これらの入手先の複製）を使う場合に。キーはこの端末に残り、そのアドレスにだけ送られます。",
   "computer.registry.pyodide": "Python（Pyodide のパッケージ）",
   "computer.registry.pypi": "Python（PyPI）",
   "computer.registry.npm": "JavaScript（npm）",
@@ -62,16 +62,16 @@
   "computer.reach.question": "コンピューターが {site} にアクセスするのを許可しますか？",
   "computer.reach.always": "{site} を常に許可",
   "computer.reach.no": "いいえ",
-  "computer.relay": "Web へのアクセス経路",
-  "computer.relay.text": "ほかのサイトからのリクエストを拒否するサイト向けの中継サーバーのアドレス。空欄なら、この端末のプロキシを通して直接アクセスします。",
+  "computer.relay": "ウェブへのアクセス経路",
+  "computer.relay.text": "ほかのサイトからのリクエストを拒否するサイト向けの中継サーバーのアドレス。空のままにすると、この端末自身のプロキシを通して直接アクセスします。",
   "computer.minutes": {
     "other": "{count} 分"
   },
   "computer.reach.once": "今回だけ許可",
   "computer.terminal": "ターミナル",
-  "computer.terminal.text": "コンピューターで自分でコマンドを実行できます。会話と同じファイルを使い、次のメッセージで何を実行したかが伝わります。{keys} でどこからでも開けます。",
+  "computer.terminal.text": "コンピューターで、会話と同じファイルに対して自分でコマンドを実行できます。次のメッセージに、何を実行したかが添えられます。{keys} でどこからでも開けます。",
   "computer.terminal.command": "コマンド",
   "computer.terminal.clear": "消去",
   "computer.terminal.exit": "終了コード {code}",
-  "computer.terminal.refused": "その間に別の場所で変更されたため保存されませんでした: {files}"
+  "computer.terminal.refused": "その間に別の場所で変更されたため、保存しませんでした：{files}"
 }

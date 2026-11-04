@@ -20,7 +20,7 @@
   "you.edit": "Mudificà",
   "you.cancel": "Abbandunà",
   "you.more": "Altre azzione per sta linea",
-  "you.empty": "Chì ci vole à tene sempre à mente ? U vostru travagliu, e vostre lingue, cumu vi piacenu e risposte.",
+  "you.empty": "Chì deve {name} tene sempre à mente ? U vostru travagliu, e vostre lingue, cumu vi piacenu e risposte.",
   "you.start.work": "U vostru travagliu",
   "you.start.workText": "Travagliu cum’è ",
   "you.start.language": "E vostre lingue",
@@ -40,6 +40,6 @@
   },
   "you.search": "Circà in ciò chì {name} hà rimarcatu",
   "you.unread": "Ùn sò più lette",
-  "you.project": "Vanu cù e vostre, solu in i so compiti.",
+  "you.project": "Vanu cù e vostre, solu in i compiti di stu prughjettu.",
   "you.org": "L’istruzzioni di a vostra urganizazione"
 }

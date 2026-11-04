@@ -1,7 +1,7 @@
 {
   "documents.document": "文档：{file}",
   "documents.untitled": "新文档",
-  "documents.hint": "输入 / 添加列表、表格、图表等",
+  "documents.hint": "输入 / 来添加列表、表格、图表…",
   "documents.blocks": "转换为",
   "documents.add": "在下方添加",
   "documents.text": "正文",
@@ -63,7 +63,7 @@
   "documents.suggests": {
     "other": "{name} 建议了 {n} 处修改"
   },
-  "documents.change": "修改 {i}/{n}",
+  "documents.change": "第 {i} 处修改，共 {n} 处",
   "documents.previous": "上一处修改",
   "documents.next": "下一处修改",
   "documents.done": "完成",

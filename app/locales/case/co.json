@@ -2,15 +2,15 @@
   "case.group.files": "Schedarii è ducumenti",
   "case.group.remember": "Ramintà è ritruvà",
   "case.group.again": "Rifallu",
-  "case.group.web": "U web è i to servizii",
-  "case.group.bigger": "Cervelli è travaglii più grandi",
+  "case.group.web": "U web è i vostri servizii",
+  "case.group.bigger": "Cervelli è compiti più grandi",
   "case.group.voice": "Voce è nutificazioni",
   "case.group.keep": "Tene è sparte",
   "case.rest": "U restu ghjunghje quandu un mumentu u chjama, è ognunu dice cumu.",
   "case.waiting": {
-    "one": "Unu aspetta qualcosa da tè, signalatu quì sottu.",
-    "many": "{count} aspettanu qualcosa da tè, signalati quì sottu.",
-    "other": "{count} aspettanu qualcosa da tè, signalati quì sottu."
+    "one": "Unu aspetta qualcosa da voi, signalatu quì sottu.",
+    "many": "{count} aspettanu qualcosa da voi, signalati quì sottu.",
+    "other": "{count} aspettanu qualcosa da voi, signalati quì sottu."
   },
   "case.of": "{count} nant’à {total}",
   "case.so": "{done} nant’à {goal} per avà",

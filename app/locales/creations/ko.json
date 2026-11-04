@@ -45,7 +45,7 @@
   "creations.like.films": "‘{name}’ 같은 동영상을 만들어 줘. 다만 ",
   "creations.like.music": "‘{name}’ 같은 곡을 만들어 줘. 다만 ",
   "creations.like.apps": "‘{name}’ 같은 앱을 만들어 줘. 다만 ",
-  "creations.like.slides": "‘{name}’ 같은 프레젠테이션을 만들어 줘. 다만 ",
+  "creations.like.slides": "‘{name}’ 같은 슬라이드를 만들어 줘. 다만 ",
   "creations.like.games": "‘{name}’ 같은 게임을 만들어 줘. 다만 ",
   "creations.remove": "창작물에서 빼기",
   "creations.deleted": "‘{name}’을(를) 삭제했어요.",

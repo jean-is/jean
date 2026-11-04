@@ -24,7 +24,7 @@
   ],
   "good": [
     "To let only a brain on this device answer, choose {keep} under {who}, in {settings} › {brains}. Once you have projects, {project} does the same for one of them.",
-    "When {name} works figures out, the calculation runs on this device, in a sandbox with no internet of its own: the brain reads only what it returns.",
+    "When {name} works out figures, the calculation runs on this device, walled off and with no internet of its own: the brain reads only the result.",
     "What Gmail, Google Calendar and Google Drive bring in goes only to a brain whose company doesn’t train AI on it.",
     "There is no {name} server: no one at {name} can read what you write.",
     "Every address {name} contacts, and what each receives: {files}. In full: {privacy}."

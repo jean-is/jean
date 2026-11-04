@@ -45,7 +45,7 @@
   "creations.like.films": "Crée une vidéo comme « {name} », mais ",
   "creations.like.music": "Compose un air comme « {name} », mais ",
   "creations.like.apps": "Crée une application comme « {name} », mais ",
-  "creations.like.slides": "Crée une présentation comme « {name} », mais ",
+  "creations.like.slides": "Crée des diapos comme « {name} », mais ",
   "creations.like.games": "Crée un jeu comme « {name} », mais ",
   "creations.remove": "Retirer des créations",
   "creations.deleted": "Suppression de « {name} ».",

@@ -18,7 +18,7 @@
   "lock.sealed": "Todo lo que se guarda aquí está cifrado en este dispositivo. Bloquéalo para que solo tú puedas abrirlo.",
   "lock.withPasskey": "Bloqueado con tu llave de acceso. Solo se abre con ella o con tu código de recuperación.",
   "lock.withPassword": "Bloqueado con tu contraseña. Solo se abre con ella o con tu código de recuperación.",
-  "lock.synced": "Tu carpeta sincronizada guarda copias legibles.",
+  "lock.synced": "Tu carpeta sincronizada guarda copias sin bloquear.",
   "lock.passkey": "Usar una llave de acceso",
   "lock.password": "Usar una contraseña",
   "lock.again": "La misma contraseña otra vez",

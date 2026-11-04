@@ -19,7 +19,7 @@
   "folders.agents.home": "¿Añadirlas a tus instrucciones?",
   "folders.agents.project": "¿Añadirlas a las instrucciones de {project}?",
   "folders.agents.yes": "Usarlas",
-  "folders.open.question": "¿Dejar que {name} abra {folder} en este ordenador?",
+  "folders.open.question": "¿Dejar que {name} abra {folder} en esta computadora?",
   "folders.open.yes": "Permitir",
   "folders.change.question": "¿Cambiar {path}?",
   "folders.changes.question": {
@@ -34,7 +34,7 @@
   "folders.undone": "Deshecho",
   "folders.undo.moved": "{path} ha cambiado desde entonces, así que no se puede deshacer desde aquí.",
   "folders.undo.elsewhere": "Esta tarea trabaja ahora en otra carpeta.",
-  "folders.field": "Carpeta en este ordenador",
+  "folders.field": "Carpeta en esta computadora",
   "folders.field.none": "Ninguna: las tareas nuevas aquí empiezan sin carpeta.",
   "folders.choose": "Elegir…",
   "folders.add": "Una carpeta…"

@@ -1,5 +1,5 @@
 {
-  "skills.none": "還沒有技能。當你第三次提出同樣的請求時，會建議你建立一個。",
+  "skills.none": "還沒有技能。當你第三次要求同一類的事，會向你建議一個。",
   "skills.invalid": "這個檔案不是技能。",
   "skills.added": "已新增技能「{title}」。",
   "skills.steps": "步驟",
@@ -7,7 +7,7 @@
   "skills.from": "來自 {source}",
   "skills.elsewhere": "來自其他地方的技能",
   "skills.elsewhereText": "網站和組織發布的技能。它們會在這台裝置上與你的請求比對，只有在你讀過步驟並選擇後才會新增。",
-  "skills.source": "網站、其技能索引，或 GitHub 儲存庫",
+  "skills.source": "網站、它的技能索引，或 GitHub 儲存庫",
   "skills.sourceAdd": "新增",
   "skills.browse": "瀏覽",
   "skills.search": "在這些技能中搜尋",
@@ -36,7 +36,7 @@
   "skills.made": "於 {date} 與 {name} 一起建立",
   "skills.fromFile": "於 {date} 從檔案新增",
   "skills.followed": {
-    "other": "已使用 {count} 次，最近一次在{when}"
+    "other": "{when}最後一次使用，共 {count} 次"
   },
   "skills.when": "何時使用",
   "skills.example": "例如：「{example}」",
@@ -65,7 +65,7 @@
   "skills.askScore": "寫一首{what}，做成我能彈奏的樂譜。",
   "skills.scoreExample": "簡短的鋼琴搖籃曲",
   "skills.askDeck": "準備{what}，做成我能簡報的投影片。",
-  "skills.deckExample": "一段關於水循環的五分鐘講話",
+  "skills.deckExample": "關於水循環的五分鐘演講",
   "skills.openDeck": "在對話旁開啟",
   "skills.deckNotKept": "這些投影片尚未儲存。"
 }

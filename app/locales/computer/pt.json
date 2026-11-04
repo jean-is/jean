@@ -1,14 +1,14 @@
 {
-  "computer.text": "Um computador num ambiente isolado neste separador: usa o processador e a memória deste dispositivo, e nunca alcança mais nada nele.",
-  "computer.lede": "Um computador neste separador, à parte deste dispositivo: trabalha nos ficheiros que uma tarefa lhe dá, e só alcança os sites que permitires.",
+  "computer.text": "Um computador dentro deste separador, isolado deste dispositivo: usa o processador e a memória, e nunca alcança mais nada.",
+  "computer.lede": "Um computador neste separador, isolado deste dispositivo: trabalha nos ficheiros que uma tarefa lhe dá, e só alcança os sites que permitires.",
   "computer.where": "Onde os comandos correm",
   "computer.reach": "O que pode alcançar",
   "computer.keeps": "O que guarda",
-  "computer.sandbox": "Ambiente isolado",
+  "computer.sandbox": "Dentro deste separador",
   "computer.sandbox.text": "Comandos, JavaScript e Python",
   "computer.state.asleep": "Em repouso",
   "computer.state.waking": "A arrancar",
-  "computer.state.ready": "Disponível",
+  "computer.state.ready": "Pronto",
   "computer.state.working": "A trabalhar",
   "computer.cores": {
     "one": "{used} de {count} núcleo",
@@ -33,20 +33,20 @@
   "computer.internet.ask": "Perguntar antes",
   "computer.internet.any": "Qualquer site",
   "computer.sites": "Sites que pode sempre alcançar",
-  "computer.sites.none": "Nenhum ainda: cada site novo é perguntado primeiro.",
+  "computer.sites.none": "Nenhum ainda: para cada site novo, pergunta-se primeiro.",
   "computer.sites.more": {
     "one": "mais {count}",
     "many": "mais {count}",
     "other": "mais {count}"
   },
   "computer.registries": "De onde vêm os pacotes",
-  "computer.registries.text": "Para um espelho, como o da tua organização. Uma chave fica neste dispositivo e só vai para o seu endereço.",
+  "computer.registries.text": "Para um espelho, uma cópia destas fontes que a tua organização pode ter. Uma chave fica neste dispositivo e só vai para o seu endereço.",
   "computer.registry.pyodide": "Python, pacotes do Pyodide",
   "computer.registry.pypi": "Python, PyPI",
   "computer.registry.npm": "JavaScript, npm",
   "computer.registry.key": "Chave, se for precisa",
   "computer.time": "Duração máxima de um comando",
-  "computer.time.text": "Mudá-la reinicia o computador, o que para o que estiver a fazer.",
+  "computer.time.text": "Mudar isto reinicia o computador, e para o que estiver a correr.",
   "computer.limits": "Limites e fontes de pacotes",
   "computer.limits.text": "Para comandos longos, e para um espelho no trabalho. A maioria das pessoas nunca muda isto.",
   "computer.limits.line": "Até {time} por comando",
@@ -69,7 +69,7 @@
   "computer.reach.always": "Permitir sempre {site}",
   "computer.reach.no": "Não",
   "computer.relay": "Aceder à web através de",
-  "computer.relay.text": "O endereço de um relé, para os sites que recusam pedidos de outros sites. Vazio: diretamente, pelo proxy deste dispositivo.",
+  "computer.relay.text": "O endereço de um intermediário, para os sites que recusam pedidos de outros sites. Deixa-o vazio para ir diretamente, pelo proxy deste dispositivo.",
   "computer.minutes": {
     "one": "{count} minuto",
     "many": "{count} minutos",
@@ -77,9 +77,9 @@
   },
   "computer.reach.once": "Permitir uma vez",
   "computer.terminal": "Terminal",
-  "computer.terminal.text": "Executa comandos diretamente no computador, sobre os mesmos ficheiros da conversa; a tua próxima mensagem diz o que executaste. {keys} abre-o a partir de qualquer lado.",
+  "computer.terminal.text": "Executa tu os comandos no computador, sobre os mesmos ficheiros da conversa. A tua mensagem seguinte diz o que executaste. {keys} abre-o de qualquer lado.",
   "computer.terminal.command": "Comando",
   "computer.terminal.clear": "Limpar",
   "computer.terminal.exit": "Código de saída {code}",
-  "computer.terminal.refused": "Alterações não guardadas, por mudanças feitas noutro lado entretanto: {files}"
+  "computer.terminal.refused": "Não guardados, porque mudaram noutro lado entretanto: {files}"
 }

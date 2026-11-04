@@ -1,20 +1,20 @@
 {
-  "machine.text": "在你自己的电脑上运行命令，使用它的程序和服务器，比如网站的开发服务器。JavaScript 和 Python 仍在隔离环境中。",
+  "machine.text": "在你自己的电脑上运行命令，用它的程序和服务器，比如一个网站的开发服务器。JavaScript 和 Python 仍在这个标签页里那台隔开的小电脑上运行。",
   "machine.on": "带有文件夹 {folder} 的任务会在这台电脑上运行命令，每条都会先询问，直到你在它的终端中按下 Ctrl+C。",
   "machine.forget": "停止使用",
-  "machine.question": "在你的电脑上的 {folder} 中运行这条命令吗？",
+  "machine.question": "在你电脑上的 {folder} 里运行这条命令吗？",
   "machine.always": "在 {folder} 中始终允许",
-  "machine.app": "命令也可以在这台电脑上运行，使用它自己的程序和服务器，在你选择的文件夹中：带有该文件夹的任务会在那里运行命令。",
+  "machine.app": "命令也可以在这台电脑上、在你选择的文件夹里运行，用它自己的程序和服务器：带有那个文件夹的任务会在那里运行命令。",
   "machine.choose": "选择文件夹…",
-  "machine.failed": "没有启动：这台电脑需要 Node.js，即终端里的 node 命令。",
+  "machine.failed": "没有启动：它需要这台电脑上有 Node.js，也就是终端里的 node 命令。",
   "machine.on.app": "带有文件夹 {folder} 的任务会在这台电脑上运行命令，每条都会先询问。",
-  "machine.lede": "任务使用隔离环境，只有你在这台电脑上连接的文件夹里的任务除外。",
+  "machine.lede": "任务使用这个标签页里那台隔开的小电脑，只有你在这台电脑上连接的文件夹里的任务除外。",
   "machine.off": "未连接",
   "machine.step.open": "在你的某个文件夹中打开终端。",
   "machine.step.paste": "在那里粘贴这一行，然后按 Enter。",
   "machine.step.wait": "正在等待这一行运行：此页面会自动察觉。",
   "machine.trusted": "无需询问即运行的文件夹",
-  "machine.secret": "复制会带上整行，连同其中的密钥。请自己保管：它能让这个页面使用你的电脑。",
+  "machine.secret": "复制会带上整行，连它的密钥一起。别给别人：它能让这个页面使用你的电脑。",
   "machine.row": "文件夹 {folder}，每条命令都先询问",
-  "machine.untrust": "在 {folder} 中重新先询问"
+  "machine.untrust": "在 {folder} 中恢复先询问"
 }

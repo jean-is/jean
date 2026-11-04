@@ -117,7 +117,7 @@
     ],
     [
       "Un audit d’accessibilité extérieur ?",
-      "Pas encore. L’audit au regard du RGAA 4.1.2 est celui de Warehouse SAS, et personne n’a encore testé Jean avec un lecteur d’écran.",
+      "Pas encore. L’audit au regard du RGAA 4.1.2 est celui de Warehouse SAS, et personne n’a encore testé {name} avec un lecteur d’écran.",
       "not"
     ]
   ],

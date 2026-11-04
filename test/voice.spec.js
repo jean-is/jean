@@ -114,7 +114,7 @@ test('an answer is read in its own language by a voice on the device, or Jean sa
   await ask(page, '光合成を説明して')
   await expect(page.locator('.msg-jean .prose').last()).toContainText('他にありますか')
   await readAloud()
-  await expect(page.locator('.toast')).toContainText('No voice on this device can read Japanese.')
+  await expect(page.locator('.toast')).toContainText('No voice on this device reads Japanese.')
   expect(await page.evaluate(() => /** @type {any} */ (window).spoken)).toHaveLength(1)
   // Settings › General offers the interface language's voices, the natural-sounding first, the novelty ones under Other
   // voices; Listen reads its sentence with the one picked, which reads English answers from then on.

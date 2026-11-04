@@ -60,7 +60,7 @@
   "connections.account": "Kont",
   "connections.since": "Kevreet d’ar {date}",
   "connections.signInAgain": "Kevreañ en-dro",
-  "connections.disconnectAsk": "Digevreañ {service} ? E alc’hwez a guita an trevnad-mañ ; netra ne cheñch e {service} e-unan.",
+  "connections.disconnectAsk": "Digevreañ {service} ? Dilamet e vo e alc’hwez eus an trevnad-mañ. Netra ne cheñch e {service} e-unan.",
   "connections.cancel": "Nullañ",
   "connections.find": "Kavout ur servij",
   "connections.found": {
@@ -85,12 +85,12 @@
     "many": "{count} all, n’eo ket c’hoazh eus ur merdeer",
     "other": "{count} all, n’eo ket c’hoazh eus ur merdeer"
   },
-  "connections.laterText": "Dre ur porzh-tremen, meret gant hoc’h aozadur pe ganeoc’h",
+  "connections.laterText": "Dre un nor-dremen, meret gant hoc’h aozadur pe ganeoc’h",
   "connections.otherText": "Evit ur servij n’emañ ket e roll {name}. E chomlec’h a zeu eus ar servij, pe eus hoc’h aozadur.",
   "connections.can": "Petra a c’hallo {name} ober eno",
   "connections.how": "Penaos e kevre",
   "connections.signInThere": "Ma c’houlenn {service}, e kevreit eno, hag e tistroit amañ goude. Ne wel biken {name} ho ker-tremen.",
-  "connections.sealed": "E alc’hwez a chom war an trevnad-mañ, siellet, ha ne ya biken en un enrolladenn, un ezporzhiadenn pe ur rannadenn.",
+  "connections.sealed": "E alc’hwez a chom war an trevnad-mañ, siellet, ha ne ya biken en ur warezadenn, un ezporzhiadenn pe ur rannadenn.",
   "connections.another": "Kevreet eo {service} dija : ouzhpennañ a ra ur gont all.",
   "connections.connectTo": "Kevreañ {service}",
   "connections.kept": "Miret evit {service} hepken."

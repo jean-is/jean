@@ -16,7 +16,7 @@ metadata:
   text-bn: "মানচিত্র, চিত্র, সময়রেখা আর চেকলিস্ট, উত্তরের মধ্যেই"
   title-br: "Respontoù da welet"
   text-br: "Kartennoù, brastresoù, linennoù-amzer ha rolloù da askañ, er respontoù"
-  title-co: "Risposte visuale"
+  title-co: "Risposte visuali"
   text-co: "Carte, diagrammi, cronulugie è liste da spuntà, in e risposte"
   title-cs: "Vizuální odpovědi"
   text-cs: "Mapy, diagramy, časové osy a kontrolní seznamy v odpovědích"
@@ -27,7 +27,7 @@ metadata:
   title-el: "Οπτικές απαντήσεις"
   text-el: "Χάρτες, διαγράμματα, χρονολόγια και λίστες ελέγχου, στις απαντήσεις"
   title-es: "Respuestas visuales"
-  text-es: "Mapas, diagramas, cronologías y listas de tareas en las respuestas"
+  text-es: "Mapas, diagramas, cronologías y listas de comprobación en las respuestas"
   title-fa: "پاسخ‌های تصویری"
   text-fa: "نقشه، طرح‌واره، خط زمانی و فهرست کارها، درون پاسخ‌ها"
   title-fi: "Visuaaliset vastaukset"
@@ -95,7 +95,7 @@ metadata:
   title-zh-Hans: "图文回答"
   text-zh-Hans: "地图、图示、时间线和清单，直接在回答里"
   title-zh-Hant: "圖文回答"
-  text-zh-Hant: "地圖、圖示、時間線和清單，直接在回答裡"
+  text-zh-Hant: "地圖、示意圖、時間軸和清單，直接在回答裡"
 ---
 # Visual answers
 

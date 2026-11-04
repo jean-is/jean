@@ -12,7 +12,7 @@
     ],
     [
       "{auto}",
-      "La part de cerveau que reçoit chaque demande, choisie pour vous : un cerveau rapide pour une question rapide, un plus fort pour une tâche exigeante, et celui de cet appareil pour tout ce qui est personnel, si vous en avez un."
+      "Le cerveau que reçoit chaque demande, choisi pour vous : un cerveau rapide pour une question rapide, un plus fort pour une tâche exigeante, et celui de cet appareil pour tout ce qui est personnel, si vous en avez un."
     ],
     [
       "Tâche",
@@ -37,6 +37,10 @@
     [
       "Collection",
       "Une liste que {name} tient pour vous en lignes et en colonnes, en tableau ou en colonnes de cartes : candidatures, dépenses, livres à lire."
+    ],
+    [
+      "Visuel",
+      "Ce que {name} met en page pour imprimer, publier ou envoyer : une invitation, une affiche, un flyer, une publication. Vous le finissez à la main, à côté de la tâche."
     ],
     [
       "Compétence",

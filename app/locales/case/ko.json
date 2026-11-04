@@ -11,7 +11,7 @@
     "other": "{count}개가 확인을 기다리고 있어요. 아래에 표시되어 있어요."
   },
   "case.of": "{total}개 중 {count}개",
-  "case.so": "지금까지 {goal}번 중 {done}번",
+  "case.so": "지금까지 {goal} 중 {done}",
   "case.download": "{size} 다운로드 필요",
   "case.unset": "설정 안 됨",
   "case.unfound": "아직 발견되지 않음",

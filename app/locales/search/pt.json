@@ -53,11 +53,11 @@
   "search.also": "A pesquisa na web também se pode desligar no + da caixa de mensagem.",
   "search.key": "Chave",
   "search.engine": "ID do motor de pesquisa",
-  "search.service.text": "A sua própria conta {service} pesquisa em toda a web, para qualquer cérebro. As palavras que pesquisa vão para {service}, que pode cobrar por elas, e a sua chave fica neste dispositivo.",
+  "search.service.text": "A tua própria conta {service} pesquisa em toda a web, para todos os cérebros. As palavras que pesquisas vão para {service}, que pode cobrar por elas, e a tua chave fica neste dispositivo.",
   "search.getKey": "Obter uma chave de {service}",
   "search.refused": "{service} recusou esta chave, ou já não tem pesquisas disponíveis.",
-  "search.silent": "{service} não respondeu. Verifique a chave ou tente de novo daqui a pouco.",
+  "search.silent": "{service} não respondeu. Verifica a chave ou tenta de novo daqui a pouco.",
   "search.needsGateway": "Precisa de um gateway",
-  "search.noGateway": "Um navegador não chega a {service} sozinho: é preciso um gateway que faça a ligação. O endereço do gateway indica-se em {connections}.",
+  "search.noGateway": "Um navegador não chega a {service} sozinho: é preciso um gateway, que lhe reencaminha os pedidos. O endereço do gateway indica-se em {connections}.",
   "search.google.closing": "A Google já não dá chaves novas e termina este serviço a {date}."
 }

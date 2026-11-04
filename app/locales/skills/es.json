@@ -29,9 +29,9 @@
   "skills.readyWord": "Lista para usar",
   "skills.readyMade": "Habilidades listas para usar",
   "skills.more": {
-    "one": "{count} más para añadir",
-    "many": "{count} más para añadir, para cartas, planes, aprender y más",
-    "other": "{count} más para añadir, para cartas, planes, aprender y más"
+    "one": "{count} más por añadir",
+    "many": "{count} más por añadir: cartas, planes, aprendizaje y más",
+    "other": "{count} más por añadir: cartas, planes, aprendizaje y más"
   },
   "skills.byJean": "Lista para usar · añadida por {name} el {date}",
   "skills.byYou": "Lista para usar · añadida el {date}",
@@ -55,7 +55,7 @@
   "skills.delete": "Eliminar esta habilidad",
   "skills.make": "Crear una con {name}",
   "skills.makeText": "Di para qué es y luego responde a unas preguntas.",
-  "skills.makeAsk": "Créame una habilidad para ",
+  "skills.makeAsk": "Hazme una habilidad para ",
   "skills.file": "Desde un archivo",
   "skills.fileText": "Un SKILL.md de alguien de confianza",
   "skills.site": "Desde un sitio",

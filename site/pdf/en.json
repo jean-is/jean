@@ -29,7 +29,7 @@
   ],
   "replay.works": [
     "Rebuilt each row: its date, its label, the money in or out",
-    "Added them up with a program, on the computer in its sandbox",
+    "Added them up with a program, on its own walled-off computer",
     "Compared those totals with the statement’s"
   ],
   "replay.got": "A workbook: the transactions on one sheet, the totals on another, the sums as formulas.",
@@ -68,7 +68,7 @@
   "exact.why": "Copying figures by hand is where mistakes creep in. {name} reads them from the PDF and has them added up.",
   "exact.cards": [
     ["Read from its text", "Figures come from the PDF’s own text, as it was written, not from a picture of it."],
-    ["Added up by a program", "Totals and averages are calculated on a computer in a sandbox, in this tab, never your own machine. The first time, {name} asks before turning it on."],
+    ["Added up by a program", "Totals and averages are calculated on a computer inside this tab, walled off from your own machine. The first time, {name} asks before turning it on."],
     ["Every step in view", "Each step shows as it runs. Open one to see what it was given and what came back."]
   ],
   "where.title": "Where your PDF goes.",
@@ -79,7 +79,7 @@
     ["Or not sent at all", "With the AI on this computer, nothing leaves it: the one for a payslip or a medical letter. It needs 12 GB of memory and a recent graphics chip."]
   ],
   "catch.items": [
-    "{name} is free; the AI behind it may not be. No sign-up only with the AI on this computer.",
+    "{name} is free; the AI behind it may not be. Without a sign-up, only the AI on this computer answers.",
     "A scanned PDF, with no text in it, isn’t read. A photo of the page is, by an AI that sees pictures.",
     "It doesn’t change a PDF or make one: it makes a Word document, which Word saves as PDF.",
     "A PDF’s layout isn’t kept: in Word, you get its text, headings and tables, not its look.",

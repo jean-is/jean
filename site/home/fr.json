@@ -1,5 +1,5 @@
 {
-  "description": "Créez avec l’IA de votre choix, gardez tout. Utilisez GPT, Claude, Gemini ou une IA locale dans un onglet, et gardez historique, fichiers et mémoire chez vous.",
+  "description": "Créez avec l’IA de votre choix, gardez tout. GPT, Claude, Gemini ou une IA sur votre ordinateur, dans un onglet : historique, fichiers et mémoire chez vous.",
   "noscript": "Cet assistant fonctionne entièrement dans votre navigateur et a besoin de JavaScript.",
   "promise": "Créez avec l’IA de votre choix, gardez tout",
   "strip.label": "{name} pour vous",
@@ -81,13 +81,13 @@
   "simple.name": "Simple",
   "simple.why": "La plupart des applis d’IA demandent d’abord qu’on les apprenne.",
   "simple.title": "Une seule case. Le reste quand il le faut.",
-  "simple.more": ["Le premier jour : une question et une case. Rien à apprendre avant.", "Quand c’est utile : une proposition, en une phrase au-dessus de la case, au bon moment. « Non merci » vaut pour de bon.", "Ensuite : un jeu pour les curieux, chaque découverte indiquant comment trouver la suivante."],
+  "simple.more": ["Le premier jour : une question et une case. Rien à apprendre avant.", "Quand c’est utile : une proposition, en une phrase au-dessus de la case, au bon moment. « Non merci » vaut pour de bon.", "Ensuite : un jeu pour les curieux, chaque découverte indiquant comment trouver la suivante."],
   "share.name": "Partageable",
   "share.why": "Partager une conversation, c’est d’habitude envoyer une copie que l’entreprise peut lire.",
   "share.title": "Partagez-la. Seuls vos destinataires peuvent la lire.",
   "share.limits": "Un mot de passe si vous voulez · 30 jours ou un an",
   "share.more": ["Scellée dans votre navigateur. Sa clé voyage dans le lien, jamais jusqu’à l’hébergeur.", "Elle s’ouvre telle que {name} l’a dessinée : graphiques, partitions qui se jouent, pages qui marchent.", "Ouverte chez quelqu’un qui a {name}, elle devient sa tâche, à poursuivre.", "Ou enregistrez-la comme une seule page web, qui s’ouvre dans n’importe quel navigateur."],
-  "open.name": "L’ouverture",
+  "open.name": "Ouvert",
   "open.why": "Les applis changent leurs règles, ou ferment.",
   "open.title": "Tout est ouvert.",
   "open.text": "Licence MIT, environ 40 000 lignes. Standards ouverts, n’importe quelle IA, fichiers ordinaires.",
@@ -101,11 +101,11 @@
   "catch.rest": ["Cette IA demande un ordinateur récent : 12 Go de mémoire et une puce graphique récente. Pas sur téléphone.", "Elle peut se tromper. Les chiffres sont calculés ; vérifiez les mots, comme ceux d’un collègue.", "Votre travail vit dans ce navigateur. Effacez les données du navigateur et il disparaît, sauf si vous avez fait une sauvegarde."],
   "faq.title": "Les questions qu’on se pose",
   "faq.items": [
-    ["Peut-on l’utiliser sans inscription ?", "Avec l’IA sur cet ordinateur, oui. « {free} » demande un compte OpenRouter gratuit."],
+    ["Peut-on l’utiliser sans inscription ?", "Avec l’IA sur cet ordinateur, oui. « {free} » demande un compte OpenRouter gratuit."],
     ["Ça marche avec des fichiers Excel et PDF ?", "Oui, et avec Word, PowerPoint, des photos et des dossiers entiers. Vous recevez aussi des fichiers finis : un graphique, un tableau, un document Word."],
     ["Ça marche sur téléphone, ou hors ligne ?", "Sur téléphone, oui, dans le navigateur. Hors ligne, avec l’IA sur cet ordinateur, qui demande 12 Go de mémoire et une puce graphique récente : pas sur téléphone."],
     ["Puis-je utiliser mon abonnement ChatGPT ou Claude ?", "Oui, et celui de Copilot : l’abonnement que vous payez déjà sert ici, via cet ordinateur. Pas de second abonnement."],
-    ["Y a-t-il des erreurs possibles ?", "Oui. Les chiffres sont calculés, pas devinés, et sous chaque réponse figure l’endroit où elle a été faite. Vérifiez les mots, comme ceux d’un collègue."],
+    ["Peut-il se tromper ?", "Oui. Les chiffres sont calculés, pas devinés, et sous chaque réponse figure l’endroit où elle a été faite. Vérifiez les mots, comme ceux d’un collègue."],
     ["Puis-je l’utiliser au travail ?", "Si votre entreprise ne vous fournit rien, ça marche tel quel. Si votre ordinateur est géré, demandez à votre DSI : {name} se déploie comme une page web, derrière la passerelle et la connexion de votre entreprise."]
   ],
   "personal.why": "Tous les assistants se disent personnels, désormais.",
@@ -118,7 +118,7 @@
   "personal.go": "Apporter votre historique",
   "take.why": "Rien à installer. L’IA de votre choix, ChatGPT compris. Votre historique reste chez vous.",
   "take.title": "Emportez votre historique ChatGPT.",
-  "take.sub": "Exportez-le, déposez le fichier dans un onglet et reprenez n’importe quelle conversation avec l’IA de votre choix : une IA gratuite, une IA sur votre ordinateur, ou votre propre Claude ou Gemini. Gardez ChatGPT ou résiliez-le. Votre historique ne décide plus pour vous.",
+  "take.sub": "Exportez-le, déposez le fichier dans un onglet et reprenez n’importe quelle conversation avec l’IA de votre choix : une IA gratuite, une IA sur votre ordinateur, ou votre propre Claude ou Gemini. Gardez ChatGPT ou résiliez-le. Votre historique ne vous retient plus.",
   "take.note": "Vos conversations, leurs titres et dates, et les fichiers partagés suivent. Les images créées par ChatGPT, ce qu’ont fait ses outils, les canevas et la mémoire enregistrée restent là-bas.",
   "take.go": "Comment le transférer"
 }

@@ -1,24 +1,24 @@
 {
   "knows.instructions": "あなたの指示",
   "knows.instructionsPlaceholder": "例：日本語で答えて。短くまとめて。パン屋を営んでいます。",
-  "knows.noticed": "気づいたこと",
+  "knows.noticed": "{name} が気づいたこと",
   "knows.forYou": "すべてに共通",
-  "knows.forProject": "{project}で",
+  "knows.forProject": "{project} で",
   "knows.edit": "この行を編集",
   "knows.from": "元のタスクを開く",
   "knows.promote": "指示にする",
   "knows.promoted": "あなたの指示の一つになりました。",
   "knows.nothing": "まだありません。",
-  "you.line": "あなたの指示と気づいたことは、タスクごとに、答える頭脳に送られます。",
+  "you.line": "あなたの指示と {name} が気づいたことは、タスクごとに、答える頭脳に送られます。",
   "you.none": "あなたについてはまだ何もありません。ここに書いたことは、各タスクの始めに読まれます。",
   "you.cut": {
-    "other": "古い{count}行はもう読まれません。読まれるようにするには、指示にしてください。"
+    "other": "古い {count} 行はもう読まれません。読まれ続けるようにするには、指示にしてください。"
   },
-  "you.nameText": "あなたの呼び名です。頭脳に送られることはありません。",
+  "you.nameText": "{name} があなたを呼ぶ名前です。頭脳に送られることはありません。",
   "you.edit": "編集",
   "you.cancel": "キャンセル",
   "you.more": "この行のその他の操作",
-  "you.empty": "いつも心に留めておくことは何ですか？ 仕事、使う言語、好みの答え方など。",
+  "you.empty": "{name} がいつも心に留めておくことは何ですか？仕事、使う言語、好みの答え方など。",
   "you.start.work": "仕事",
   "you.start.workText": "私の仕事は",
   "you.start.language": "使う言語",
@@ -27,12 +27,12 @@
   "you.start.lengthText": "答えの長さは",
   "you.remember": "覚えておく",
   "you.all": {
-    "other": "{count}行をすべて見る"
+    "other": "{count} 行をすべて見る"
   },
   "you.lines": {
-    "other": "{count}行"
+    "other": "{count} 行"
   },
-  "you.search": "気づいたことを検索",
+  "you.search": "{name} が気づいたことを検索",
   "you.unread": "もう読まれません",
   "you.project": "このプロジェクトのタスクでだけ、あなたの分と一緒に使われます。",
   "you.org": "組織の指示"

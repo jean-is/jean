@@ -4,7 +4,7 @@
     "other": "{count} 件を通常から変更しています。それぞれに点が付いています。"
   },
   "approvals.org": {
-    "other": "組織がこのうち {count} 件を設定しています。それぞれに錠が付いています。"
+    "other": "組織がこのうち {count} 件を設定しています。それぞれにロックの印が付いています。"
   },
   "approvals.parent": "保護者が選びました。変えたいときは保護者に聞いてください。",
   "approvals.reset": "通常に戻す",
@@ -23,7 +23,7 @@
   "approvals.covers.delete": "ファイルを削除すること",
   "approvals.covers.other": "メッセージの送信や共有など、あなたのサービスを通じて行うことすべて",
   "approvals.covers.plan": "いくつもの段階がある計画を進めること",
-  "approvals.folders": "{name} に渡したフォルダでは、ここでの選択にかかわらず、変更内容を必ず見せてから先に確認します。そのフォルダで「常に許可」を選んだ場合は別です。",
+  "approvals.folders": "{name} に渡したフォルダーでは、ここでの選択にかかわらず、変更内容を必ず見せてから先に確認します。そのフォルダーで「常に許可」を選んだ場合は別です。",
   "approvals.exceptions": "例外",
   "approvals.exceptionsText": "カードで許可したことと、より慎重にしたこと",
   "approvals.allowed": "確認なしで許可",
@@ -32,14 +32,14 @@
   "approvals.carefulNone": "ひとつの種類の操作やひとつのサービスについて、先に確認するか、決してしないかを決めます。",
   "approvals.carefulAdd": "より慎重にする…",
   "approvals.carefulTitle": "より慎重にする",
-  "approvals.carefulText": "ひとつの種類の操作やひとつのサービスについて。ほかより多くを許可することはありません。",
+  "approvals.carefulText": "ひとつの種類の操作やひとつのサービスについて。厳しくするだけで、通常より多くを許可することはありません。",
   "approvals.kinds": "操作の種類",
   "approvals.services": "サービス",
   "approvals.example": "顧客宛てですか？",
-  "approvals.ifText": "{name} は毎回その前に、この問いを自分に確かめます。判断できないときは「はい」とみなします。",
+  "approvals.ifText": "{name} は毎回その前に、この問いを自分に投げかけます。判断できないときは「はい」とみなします。",
   "approvals.films": "動画",
-  "approvals.what.folder": "{name} はこのフォルダのファイルを確認せずに変更します",
-  "approvals.what.site": "このコンピューターから接続できます",
+  "approvals.what.folder": "{name} はこのフォルダーのファイルを確認せずに変更します",
+  "approvals.what.site": "コンピューターから接続できます",
   "approvals.what.films": "画像より費用がかかりますが、確認せずに作ります",
   "approvals.what.meeting": "これらのプロジェクトのアシスタントは確認せずに会議できます",
   "approvals.what.extension": "確認せずに操作を進めさせることがあります",
@@ -51,7 +51,7 @@
   "approvals.fromInternet": "インターネットから",
   "approvals.certificates": "証明書",
   "approvals.certificatesText": "この端末の印、証明書に日付を付けるところ、公開ログ",
-  "approvals.what.reads": "{name}はそこで確認せずに読みます",
-  "approvals.what.acts": "{name}はそこで確認せずに書き、送り、変更します",
+  "approvals.what.reads": "{name} はそこで確認せずに読みます",
+  "approvals.what.acts": "{name} はそこで確認せずに書き、送り、変更します",
   "approvals.elsewhere": "このタスクは外部のものを読み込みました。指示が含まれている可能性があるため、もう一度確認します。"
 }
