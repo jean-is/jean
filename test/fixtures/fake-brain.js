@@ -947,6 +947,8 @@ createServer(async (req, res) => {
   else if (/bill splitter/i.test(question) && last.role === 'user') answer = SPLITTER
   else if (/\btally\b/i.test(question) && last.role === 'user') answer = TALLY
   else if (/broken counter/i.test(question) && last.role === 'user') answer = COUNTER()
+  // A passage of a file the user pointed at with Ask Jean (D690), its note with it.
+  else if (/points at a passage of/.test(lastUser) && last.role === 'user') answer = ((found) => `You point at “${found?.[2]}” in ${found?.[1]}${found?.[3] ? `, noted “${found[3]}”` : ''}.`)(/points at a passage of (\S+) \(.*?: "([^"]*)"(?:, with their note: "([^"]*)")?/.exec(lastUser))
   else if (/^Played out of sight/.test(question) && last.role === 'user') answer = COUNTER(question)
   // Left open, as a brain may leave a page: in a tag of its own making, its fence never closed, its words after it.
   else if (/garden log, left open|سجل الحديقة مفتوحًا|菜園の記録を開いたまま/i.test(question) && last.role === 'user') answer = GARDEN(lang === 'ar' || lang === 'ja' ? lang : 'en').replace('```html\n', '```html\n<app-page>\n').replace('\n```\n', '\n</app-page>\n')

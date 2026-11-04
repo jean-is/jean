@@ -22,6 +22,9 @@ function pdfjs() {
   return library
 }
 
+/** pdf.js's words of a page, laid over it to select (D690). */
+export const textLayer = async () => (await pdfjs()).TextLayer
+
 /** A PDF, opened: its text is read here, its pages drawn where a file shows (ui/view.js, D126). @param {Uint8Array} bytes */
 export async function openPdf(bytes) {
   return (await pdfjs()).getDocument({

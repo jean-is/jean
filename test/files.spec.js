@@ -2,7 +2,7 @@
 // being shared again; the passage comes with its page, and the answer cites it. Its index is kept (D306).
 import { readFileSync } from 'node:fs'
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, inkOf } from './helpers.js'
+import { start, connectFakeBrain, ask, answered, inkOf, pdf } from './helpers.js'
 import { numbersFile } from './fixtures/numbers.js'
 
 /** The answer on screen, once it has ended. @param {import('@playwright/test').Page} page */
@@ -111,6 +111,78 @@ test('a citation that quotes a PDF opens it at its page, the words outlined and 
   const [rect, page3] = await Promise.all([marked.locator('rect').boundingBox(), marked.boundingBox()])
   expect(rect && page3 && rect.width > page3.width / 4 && rect.width < page3.width && rect.height < page3.height / 20).toBe(true)
 })
+
+test('words selected in a PDF beside the task are highlighted, kept, noted and pointed at with Ask Jean, which the brain hears of with the next message (D690)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await page.locator('.composer input[type="file"]').setInputFiles({ name: 'menu.pdf', mimeType: 'application/pdf', buffer: pdf('Croissant 2 euros') })
+  await expect(page.locator('.attachment[data-status="ready"]')).toHaveCount(1)
+  await ask(page, 'Here is the menu')
+  await answered(page)
+  const open = async () => {
+    await page.locator('.msg-files .file-chip').filter({ hasText: 'menu.pdf' }).click()
+    await expect(page.locator('app-preview .view-words span').first()).toHaveText('Croissant 2 euros')
+  }
+  await open()
+  const words = page.locator('app-preview .view-words span').first(), bar = page.getByRole('toolbar', { name: 'Selected words' })
+  const lit = (/** @type {string} */ name) => page.evaluate((one) => [...(CSS.highlights.get(one) ?? [])].map((range) => range.toString()), name)
+
+  // Its words, laid over the page, selected: a bar offers Highlight, Note and Ask Jean.
+  await words.click({ clickCount: 3 })
+  await expect(bar.getByRole('button')).toHaveText(['Highlight', 'Note', 'Ask Jean'])
+  await bar.getByRole('button', { name: 'Highlight' }).click()
+  await expect(bar).toBeHidden()
+  await expect.poll(() => lit('mark')).toEqual(['Croissant 2 euros'])
+  // A file of its own in the project, found again when the file opens again.
+  const kept = () => page.evaluate(async () => { const { app } = await import('/ui/state.js'); const dirs = await app.fs.list(`${app.projectDir}/marks`).catch(() => []); return (await Promise.all(dirs.map(async ({ name }) => Promise.all((await app.fs.list(`${app.projectDir}/marks/${name}`)).map(async (file) => JSON.parse((await app.fs.read(`${app.projectDir}/marks/${name}/${file.name}`)) ?? '{}')))))).flat() })
+  await expect.poll(async () => (await kept()).map(({ kind, page: n, words: said, author }) => [kind, n, said, author])).toEqual([['mark', 1, 'Croissant 2 euros', 'user']])
+  await page.locator('app-preview').getByRole('button', { name: 'Close' }).first().click()
+  await expect.poll(() => lit('mark')).toEqual([])
+  await open()
+  await expect.poll(() => lit('mark')).toEqual(['Croissant 2 euros'])
+
+  // Pressed again, it offers its note and Remove; a note is kept with it, said on the bar, underlined.
+  await words.click()
+  await expect(bar.getByRole('button')).toHaveText(['Note', 'Remove', 'Ask Jean'])
+  await bar.getByRole('button', { name: 'Note' }).click()
+  await bar.getByLabel('Note').fill('Cheapest pastry')
+  await bar.getByLabel('Note').press('Enter')
+  await expect.poll(() => lit('noted')).toEqual(['Croissant 2 euros'])
+  await expect.poll(async () => (await kept())[0]?.note).toBe('Cheapest pastry')
+  await words.click()
+  await expect(bar).toContainText('Cheapest pastry')
+
+  // Ask Jean: the brain hears of the words and the note with the next message, and a toast says so.
+  await bar.getByRole('button', { name: 'Ask Jean' }).click()
+  await expect(page.locator('.toast')).toContainText('Pointing at “Croissant 2 euros”')
+  await expect(page.locator('#prompt')).toBeFocused()
+  await ask(page, 'Is it a good price?')
+  await answered(page, 2)
+  await expect(answer(page)).toContainText('You point at “Croissant 2 euros” in menu.pdf, noted “Cheapest pastry”.')
+
+  // Removed, it is neither lit nor kept.
+  await words.click()
+  await bar.getByRole('button', { name: 'Remove' }).click()
+  await expect.poll(() => lit('mark')).toEqual([])
+  await expect.poll(kept).toEqual([])
+})
+
+for (const [lang, said, highlight] of /** @type {const} */ ([['ar', 'قائمة الحلويات: كرواسون بيورو', 'تمييز'], ['ja', 'お菓子の一覧: クロワッサンは二ユーロ', 'ハイライト']])) {
+  test(`words selected in a text file are highlighted in its view, in ${lang}`, async ({ page }) => {
+    await start(page, lang)
+    await connectFakeBrain(page)
+    await page.locator('.composer input[type="file"]').setInputFiles({ name: 'menu.txt', mimeType: 'text/plain', buffer: Buffer.from(said) })
+    await expect(page.locator('.attachment[data-status="ready"]')).toHaveCount(1)
+    await ask(page, 'Here is the menu')
+    await answered(page)
+    await page.locator('.msg-files .file-chip').filter({ hasText: 'menu.txt' }).click()
+    await page.locator('app-preview .view-text').click({ clickCount: 3 })
+    const bar = page.locator('.marks-bar:popover-open')
+    await expect(bar.locator('ul')).toHaveAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr')
+    await bar.getByRole('button', { name: highlight }).click()
+    await expect.poll(() => page.evaluate(() => [...(CSS.highlights.get('mark') ?? [])].map((range) => range.toString().trim()))).toEqual([said])
+  })
+}
 
 test('a citation that quotes a Word document opens it at the words, found by its viewer (D481)', async ({ page }) => {
   await start(page)

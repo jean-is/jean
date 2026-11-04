@@ -24,7 +24,7 @@ import { pageRights, pagePolicy, pageAllow } from './csp.js'
 import { t } from '../core/i18n.js'
 import { styleSheet } from './sheet.js'
 import { changeCell, viewOf } from './view.js'
-import { loaded, slots } from './caps.js'
+import { loaded, slots, unlock } from './caps.js'
 import { leaves, without } from './tree.js'
 
 /** @typedef {{ uri: string, name: string, title: string, mimeType?: string, version?: number, at?: string }} Shown  name: the file's, which it saves as; title: what its head says, as whoever opens it names it; version: which of the conversation's, for a file Jean made (D164); at: where a citation points in it, as its mark says (D481) */
@@ -246,7 +246,10 @@ async function show(file, uri, holds, rules, allows, close) {
   // Where a citation points, found in what the file says, or said not to be there (D481).
   const at = file.at && (await import('../caps/files/search.js')).anchor(splitPages((await fileText(app.fs, dir, uri)) ?? ''), file.at)
   if (at === null) notify(t('check.is.missing'), { alert: true })
-  return viewOf({ name: file.name, bytes, type: file.mimeType, text, prose, cells, at: at || undefined }, holds, { allows: can, sites, policy: rules, allow: allows })
+  const view = await viewOf({ name: file.name, bytes, type: file.mimeType, text, prose, cells, at: at || undefined }, holds, { allows: can, sites, policy: rules, allow: allows })
+  // What the user marks in it, a file the project keeps (D690).
+  if (view && /^files\//.test(uri) && (await unlock('files'))) void import('../caps/files/marks.js').then(({ follow }) => follow(/** @type {HTMLElement} */ (view), { uri, name: file.name }, holds))
+  return view
 }
 
 define('app-preview', Pane)

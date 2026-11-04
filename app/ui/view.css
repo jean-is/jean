@@ -18,7 +18,18 @@
 .view-mark path { fill: oklch(0 0 0 / 0.35); }
 .view-mark rect { fill: none; stroke: var(--flame); stroke-width: 2px; }
 ::highlight(cite) { background: oklch(from var(--flame) l c h / 0.3); }
-@media (forced-colors: active) { .view-mark path { fill: none; } .view-mark rect { stroke: Highlight; } ::highlight(cite) { background: Highlight; color: HighlightText; } }
+/* A PDF's words over each page, as pdf.js lays them out, to select (D690): pdf_viewer.css's rules, without its nesting. */
+.view-page { position: relative; --scale-round-x: 1px; --scale-round-y: 1px; }
+.view-words { position: absolute; inset: 0; overflow: clip; line-height: 1; text-align: initial; letter-spacing: normal; word-spacing: normal; text-size-adjust: none; forced-color-adjust: none; transform-origin: 0 0; caret-color: CanvasText;
+  --min-font-size: 1; --text-scale-factor: calc(var(--total-scale-factor) * var(--min-font-size)); --min-font-size-inv: calc(1 / var(--min-font-size)); }
+.view-words :is(span, br) { position: absolute; color: transparent; white-space: pre; cursor: text; transform-origin: 0% 0%; }
+.view-words > :not(.markedContent), .view-words .markedContent span:not(.markedContent) { font-size: calc(var(--text-scale-factor) * var(--font-height, 0px)); transform: rotate(var(--rotate, 0deg)) scaleX(var(--scale-x, 1)) scale(var(--min-font-size-inv)); }
+.view-words .markedContent { display: contents; }
+.view-words ::selection { background: color-mix(in srgb, AccentColor, transparent 50%); }
+/* What the user marked (D690): highlighted, a note underlined too. */
+::highlight(mark) { background: oklch(from var(--flame) l c h / 0.35); }
+::highlight(noted) { text-decoration: underline 2px; text-decoration-color: var(--flame); }
+@media (forced-colors: active) { .view-mark path { fill: none; } .view-mark rect { stroke: Highlight; } ::highlight(cite) { background: Highlight; color: HighlightText; } ::highlight(mark) { background: Mark; color: MarkText; } }
 
 /* Markdown, or a document Jean wrote, on a sheet, where pages can't run code (D183); any other text as it is. */
 .view-sheet { padding: clamp(1.25rem, 6cqi, 3rem); border: 1px solid var(--line); border-radius: 0.6rem; background: var(--room); }
@@ -32,3 +43,11 @@
 .msg-files:has(.file-open[open]), .msg-files li:has(> .file-open[open]) { flex-basis: 100%; max-inline-size: 100%; align-self: stretch; }
 .turn > .msg-files .file-open { text-align: end; }
 .file-open > .view { block-size: min(80dvh, 44rem); margin-block-start: 0.5rem; border: 1px solid var(--line); border-radius: 0.9rem; text-align: start; }
+/* The bar over words selected in a file, or over a mark (D690), as a document's bubble is. */
+.marks-bar { position: fixed; inset: auto; margin: 0; user-select: none; padding: 0.25rem; border: 1px solid var(--line); border-radius: 0.7rem; background: var(--room); color: var(--ink); box-shadow: 0 0.5rem 1.5rem -0.75rem oklch(0 0 0 / 0.5); max-inline-size: min(24rem, calc(100vw - 1rem)); }
+.marks-bar ul { display: flex; flex-wrap: wrap; align-items: center; gap: 0.15rem; margin: 0; padding: 0; list-style: none; }
+.marks-bar button { padding: 0.35rem 0.6rem; border: 0; border-radius: 0.5rem; background: none; color: inherit; font: inherit; cursor: pointer; }
+.marks-bar button:is(:hover, :focus-visible) { background: var(--glass); }
+.marks-said, .marks-note { flex-basis: 100%; padding: 0.35rem 0.6rem; }
+.marks-note { display: grid; gap: 0.25rem; }
+.marks-note textarea { padding: 0.4rem; border: 1px solid var(--line); border-radius: 0.4rem; background: var(--room-2); color: inherit; font: inherit; resize: vertical; }

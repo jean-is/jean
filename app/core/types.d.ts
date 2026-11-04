@@ -193,6 +193,8 @@ export type SystemNoteData =
   | { kind: 'camera', on: boolean }
   /** a look the camera took while Jean watched, which said something (D645) */
   | { kind: 'look' }
+  /** the user pointed at a passage of a file of the project with Ask Jean (D690) */
+  | { kind: 'passage', uri: string }
   /** the user undid a change made in their folder, by its call (D141) */
   | { kind: 'undone', call: string, path: string }
   /** the user ran a command on the computer, in the terminal (D166) */

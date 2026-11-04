@@ -10,7 +10,7 @@ import { library } from '../../ui/complete.js'
 import { all } from '../../ui/creations.js'
 import { searchTool } from './search.js'
 import { addFile, readTool, fileText, splitPages } from '../../core/files.js'
-import { isPicture, latestOf } from '../../core/events.js'
+import { isPicture, latestOf, noteRecord } from '../../core/events.js'
 import { readZip } from '../../core/zip.js'
 import { extractPages } from './extract.js'
 import { fitPicture } from './pictures.js'
@@ -71,8 +71,14 @@ const meaning = async (query, links) => (loaded.value.has('meaning') ? (await im
 /** When words find nothing: meaning search might, where it runs (WebGPU), if the user hasn't turned it down. */
 const unfound = () => (!('gpu' in navigator) || loaded.value.has('meaning') || isDenied('meaning') || effective.value.settings.offers.meaning ? '' : ' The words may differ: offer "meaning" to search by meaning.')
 
+/** The passage of a file the user pointed at with Ask Jean, which the next message in its task tells the brain of (./marks.js, D690). @type {{ text: string, uri: string, task?: string } | null} */
+let pointed = null
+/** @param {NonNullable<typeof pointed>} one */
+export const point = (one) => { pointed = one }
+
 register({
   id: 'files',
+  slots: { modes: { at: 12, draw: () => null, notes: () => { const one = pointed?.task === app.current.peek()?.path ? pointed : null; pointed = null; return one ? [noteRecord(one.text, { kind: 'passage', uri: one.uri })] : [] } } },
   tools: [readTool({ fs: app.fs, projectDir: () => app.projectDir, files: reachable, words }), searchTool({ fs: app.fs, projectDir: () => app.projectDir, files: reachable, words, meaning, unfound }), fileTool],
   lines: [{ name: 'read', line: 'read pages of a file' }, { name: 'search_files', line: 'find what the project’s files say' }],
   rules: ['Shared files are in the message, sometimes only some pages: read the others, search_files any file of the project. Cite a passage as [n: "its exact words"], n its source number, not a page.'],

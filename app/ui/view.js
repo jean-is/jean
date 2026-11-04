@@ -108,18 +108,28 @@ async function seek(pieces, words) {
   return found && { starts, from: found.index, to: found.index + found[0].length }
 }
 
-/** The words a citation points at in a text's view, lit and brought into view (D481). @param {Element} box @param {string} words */
-async function light(box, words) {
+/**
+ * Where words are in a view's text, as a range, else null (D481): a PDF page's words count a line where pdf.js breaks one (D690).
+ * @param {Node} box @param {string} words
+ */
+export async function rangeOf(box, words) {
   const walker = document.createTreeWalker(box, NodeFilter.SHOW_TEXT)
   /** @type {Node[]} */
   const nodes = []
   for (let node = walker.nextNode(); node; node = walker.nextNode()) nodes.push(node)
-  const found = await seek(nodes.map((node) => node.nodeValue ?? ''), words)
-  if (!found || !globalThis.Highlight) return
-  const at = (/** @type {number} */ i) => { const n = Math.max(0, found.starts.findLastIndex((start) => start <= i)); return /** @type {[Node, number]} */ ([nodes[n], i - found.starts[n]]) }
+  const found = await seek(nodes.map((node) => (node.nodeValue ?? '') + (node.parentNode?.nextSibling?.nodeName === 'BR' ? '\n' : '')), words)
+  if (!found) return null
+  const at = (/** @type {number} */ i) => { const n = Math.max(0, found.starts.findLastIndex((start) => start <= i)); return /** @type {[Node, number]} */ ([nodes[n], Math.min(i - found.starts[n], nodes[n].nodeValue?.length ?? 0)]) }
   const range = new Range()
   range.setStart(...at(found.from))
   range.setEnd(...at(found.to))
+  return range
+}
+
+/** The words a citation points at in a text's view, lit and brought into view (D481). @param {Element} box @param {string} words */
+async function light(box, words) {
+  const range = await rangeOf(box, words)
+  if (!range || !globalThis.Highlight) return
   CSS.highlights.set('cite', new Highlight(range))
   bring(box, range)
 }
@@ -221,7 +231,9 @@ async function pdf(bytes, holds, at) {
   /** @type {WeakMap<object, (seen: boolean) => void>} */
   const seen = new WeakMap()
   const observer = new IntersectionObserver((entries) => entries.forEach(({ target, isIntersecting }) => seen.get(target)?.(isIntersecting)), { rootMargin: '100% 0px' })
-  holds.push(() => observer.disconnect())
+  // Its words are as wide as the page shows (D690).
+  const sized = new ResizeObserver((entries) => entries.forEach(({ target }) => target.parentElement?.style.setProperty('--total-scale-factor', String(target.clientWidth / Number(/** @type {HTMLElement} */ (target).dataset.width)))))
+  holds.push(() => observer.disconnect(), () => sized.disconnect())
   // Page by page, so the first shows at once; a PDF let go stops this (getPage fails).
   ;(async () => {
     for (let n = 1; n <= doc.numPages; n++) {
@@ -229,18 +241,26 @@ async function pdf(bytes, holds, at) {
       const { width, height } = page.getViewport({ scale: 1 })
       const canvas = document.createElement('canvas')
       canvas.style.aspectRatio = `${width} / ${height}`
+      canvas.dataset.width = String(width)
+      // Its words laid over it as pdf.js lays them, to select, once it first comes near; told with `textlayer` (D690).
+      const sheet = Object.assign(document.createElement('div'), { className: 'view-page' }), words = Object.assign(document.createElement('div'), { className: 'view-words' })
+      sheet.dataset.page = String(n)
+      sheet.append(canvas, words)
       /** @type {any} */
-      let drawing = null
+      let drawing = null, laid = false
       seen.set(canvas, (near) => {
         drawing?.cancel()
         const viewport = page.getViewport({ scale: near ? (canvas.clientWidth * devicePixelRatio) / width : 0 })
         Object.assign(canvas, { width: Math.floor(viewport.width), height: Math.floor(viewport.height) })
         drawing = canvas.width ? page.render({ canvas, viewport }) : null
         drawing?.promise.catch(() => {})
+        if (near && !laid) laid = true, void import('../caps/files/pdf.js').then(async ({ textLayer }) => new (await textLayer())({ textContentSource: page.streamTextContent(), container: words, viewport: page.getViewport({ scale: 1 }) }).render())
+          .then(() => sheet.dispatchEvent(new Event('textlayer', { bubbles: true })), () => {})
       })
       const rects = n === at?.page && (at.area ? [at.area] : at.words ? await rectsOf(page, at.words) : [])
-      pages.append(rects ? pointed(canvas, at?.area ? 100 : width, at?.area ? 100 : height, rects) : canvas)
+      pages.append(rects ? pointed(sheet, at?.area ? 100 : width, at?.area ? 100 : height, rects) : sheet)
       observer.observe(canvas)
+      sized.observe(canvas)
     }
   })().catch(() => {})
   return pages

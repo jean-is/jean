@@ -143,6 +143,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] A person through RGAA's tests of what is announced, with VoiceOver and NVDA, and Word's and Excel's checkers on what is saved; then the audit again, its share and status on jean.is/accessibility (D672)
 - [ ] An outside audit against WCAG 2.2 AA
 - [ ] With real brains (D688, D689): apps that keep what they keep and save files, and how often the play-test finds a fault and the brain mends it, measured as `npm run games` measures games
+- [ ] A PDF's words selected, highlighted, noted and pointed at in real Safari and Firefox, a scan's and a right-to-left one's too, and with caret browsing for the keyboard (D690)
 
 ## Before the public launch
 
