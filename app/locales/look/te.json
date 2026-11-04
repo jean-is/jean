@@ -26,5 +26,9 @@
   "look.another": "వేరే రంగు",
   "look.css": "మీ సొంత CSS",
   "look.cssHint": "మీరు టైప్ చేస్తుండగానే థీమ్‌పై వర్తిస్తుంది.",
-  "look.reset": "నా మార్పులను రద్దు చేయి"
+  "look.reset": "నా మార్పులను రద్దు చేయి",
+  "look.proposed": "సూచించిన రూపం:",
+  "look.before": "ముందు",
+  "look.reject": "తిరస్కరించు",
+  "look.accept": "ఆమోదించు"
 }

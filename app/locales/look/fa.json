@@ -26,5 +26,9 @@
   "look.another": "رنگ دیگر",
   "look.css": "CSS خودتان",
   "look.cssHint": "هنگام تایپ روی پوسته اعمال می‌شود.",
-  "look.reset": "واگرد تغییراتم"
+  "look.reset": "واگرد تغییراتم",
+  "look.proposed": "ظاهری پیشنهادی:",
+  "look.before": "قبل",
+  "look.reject": "رد کردن",
+  "look.accept": "پذیرفتن"
 }

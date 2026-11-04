@@ -26,5 +26,9 @@
   "look.another": "Warna lain",
   "look.css": "CSS anda sendiri",
   "look.cssHint": "Digunakan di atas tema semasa anda menaip.",
-  "look.reset": "Buat asal perubahan saya"
+  "look.reset": "Buat asal perubahan saya",
+  "look.proposed": "Rupa yang dicadangkan:",
+  "look.before": "Sebelum",
+  "look.reject": "Tolak",
+  "look.accept": "Terima"
 }

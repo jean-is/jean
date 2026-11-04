@@ -26,5 +26,9 @@
   "look.another": "Ibang kulay",
   "look.css": "Sarili mong CSS",
   "look.cssHint": "Ilalapat sa ibabaw ng tema habang nagta-type ka.",
-  "look.reset": "I-undo ang mga binago ko"
+  "look.reset": "I-undo ang mga binago ko",
+  "look.proposed": "Iminumungkahing hitsura:",
+  "look.before": "Dati",
+  "look.reject": "Tanggihan",
+  "look.accept": "Tanggapin"
 }

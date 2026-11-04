@@ -23,3 +23,6 @@
 .swatch:has(> .is-on) { border-color: oklch(from var(--flame) l c h / 0.7); background: var(--line); }
 .sheet .look-css { inline-size: 100%; font: 0.82rem/1.5 var(--mono); }
 @media (forced-colors: active) { .swatch:has(> .is-on) { border: 2px solid Highlight; } }
+/* A look Jean proposes, above the box until the user decides (D693): its few words, then Before, Reject and Accept. */
+.look-proposed { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; margin-block-end: 0.5rem; padding: 0.6rem 0.85rem; border: 1px solid var(--line); border-radius: 0.9rem; background: var(--room-2); }
+.look-proposed p { margin: 0; flex: 1 1 16rem; }

@@ -26,5 +26,9 @@
   "look.another": "Jiná barva",
   "look.css": "Vlastní CSS",
   "look.cssHint": "Použije se přes motiv už při psaní.",
-  "look.reset": "Vrátit mé změny"
+  "look.reset": "Vrátit mé změny",
+  "look.proposed": "Navržený vzhled:",
+  "look.before": "Předtím",
+  "look.reject": "Odmítnout",
+  "look.accept": "Přijmout"
 }

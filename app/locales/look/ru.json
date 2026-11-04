@@ -26,5 +26,9 @@
   "look.another": "Другой цвет",
   "look.css": "Свой CSS",
   "look.cssHint": "Применяется поверх темы по мере ввода.",
-  "look.reset": "Отменить мои изменения"
+  "look.reset": "Отменить мои изменения",
+  "look.proposed": "Предложенный вид:",
+  "look.before": "До",
+  "look.reject": "Отклонить",
+  "look.accept": "Принять"
 }

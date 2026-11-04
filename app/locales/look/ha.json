@@ -26,5 +26,9 @@
   "look.another": "Wani launi",
   "look.css": "CSS naka",
   "look.cssHint": "Yana aiki a kan jigon yayin da kake rubutu.",
-  "look.reset": "Soke canje-canjena"
+  "look.reset": "Soke canje-canjena",
+  "look.proposed": "Kamannin da aka ba da shawara:",
+  "look.before": "Kafin",
+  "look.reject": "Ƙi",
+  "look.accept": "Karɓa"
 }

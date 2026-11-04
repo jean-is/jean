@@ -26,5 +26,9 @@
   "look.another": "दुसरा रंग",
   "look.css": "तुमची स्वतःची CSS",
   "look.cssHint": "टाइप करता करता थीमवर लागू होते.",
-  "look.reset": "माझे बदल मागे घ्या"
+  "look.reset": "माझे बदल मागे घ्या",
+  "look.proposed": "सुचवलेले रूप:",
+  "look.before": "आधी",
+  "look.reject": "नाकारा",
+  "look.accept": "स्वीकारा"
 }

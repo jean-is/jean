@@ -26,5 +26,9 @@
   "look.another": "En anden farve",
   "look.css": "Din egen CSS",
   "look.cssHint": "Lægges oven på temaet, mens du skriver.",
-  "look.reset": "Fortryd mine ændringer"
+  "look.reset": "Fortryd mine ændringer",
+  "look.proposed": "Et foreslået udseende:",
+  "look.before": "Før",
+  "look.reject": "Afvis",
+  "look.accept": "Godkend"
 }

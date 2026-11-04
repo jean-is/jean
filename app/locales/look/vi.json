@@ -26,5 +26,9 @@
   "look.another": "Màu khác",
   "look.css": "CSS của riêng bạn",
   "look.cssHint": "Áp dụng lên chủ đề ngay khi bạn gõ.",
-  "look.reset": "Hoàn tác thay đổi của tôi"
+  "look.reset": "Hoàn tác thay đổi của tôi",
+  "look.proposed": "Giao diện đề xuất:",
+  "look.before": "Trước",
+  "look.reject": "Từ chối",
+  "look.accept": "Chấp nhận"
 }

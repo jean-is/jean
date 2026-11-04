@@ -26,5 +26,9 @@
   "look.another": "Àwọ̀ míì",
   "look.css": "CSS tìrẹ",
   "look.cssHint": "Ó ń ṣiṣẹ́ lórí àwòrán bí o ṣe ń tẹ̀.",
-  "look.reset": "Fagilé àwọn àyípadà mi"
+  "look.reset": "Fagilé àwọn àyípadà mi",
+  "look.proposed": "Ìrísí tí a dábàá:",
+  "look.before": "Ṣáájú",
+  "look.reject": "Kọ̀",
+  "look.accept": "Gbà"
 }

@@ -26,5 +26,9 @@
   "look.another": "Een andere kleur",
   "look.css": "Je eigen CSS",
   "look.cssHint": "Werkt over het thema terwijl je typt.",
-  "look.reset": "Mijn wijzigingen ongedaan maken"
+  "look.reset": "Mijn wijzigingen ongedaan maken",
+  "look.proposed": "Een voorgesteld uiterlijk:",
+  "look.before": "Ervoor",
+  "look.reject": "Weigeren",
+  "look.accept": "Accepteren"
 }

@@ -26,5 +26,9 @@
   "look.another": "其他顏色",
   "look.css": "自訂 CSS",
   "look.cssHint": "一邊輸入，一邊套用在主題之上。",
-  "look.reset": "復原我的變更"
+  "look.reset": "復原我的變更",
+  "look.proposed": "建議的外觀：",
+  "look.before": "修改前",
+  "look.reject": "拒絕",
+  "look.accept": "接受"
 }

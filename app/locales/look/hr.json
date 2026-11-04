@@ -26,5 +26,9 @@
   "look.another": "Druga boja",
   "look.css": "Vaš vlastiti CSS",
   "look.cssHint": "Primjenjuje se preko teme dok tipkate.",
-  "look.reset": "Poništi moje promjene"
+  "look.reset": "Poništi moje promjene",
+  "look.proposed": "Predloženi izgled:",
+  "look.before": "Prije",
+  "look.reject": "Odbaci",
+  "look.accept": "Prihvati"
 }

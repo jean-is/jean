@@ -26,5 +26,9 @@
   "look.another": "Toinen väri",
   "look.css": "Oma CSS",
   "look.cssHint": "Käytetään teeman päälle kirjoittaessasi.",
-  "look.reset": "Kumoa muutokseni"
+  "look.reset": "Kumoa muutokseni",
+  "look.proposed": "Ehdotettu ulkoasu:",
+  "look.before": "Ennen",
+  "look.reject": "Hylkää",
+  "look.accept": "Hyväksy"
 }

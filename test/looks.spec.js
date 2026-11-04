@@ -369,3 +369,32 @@ test('Appearance says what each choice follows, shows each theme by day and by n
   await expect(line('Accent colour')).toHaveText('The theme’s own')
   await expect.poll(() => savedLook(page)).toEqual({})
 })
+
+for (const [lang, accept, reject, before] of /** @type {const} */ ([['en', 'Accept', 'Reject', 'Before'], ['ar', 'قبول', 'رفض', 'قبل'], ['ja', '承認', '却下', '変更前']])) {
+  test(`asked, Jean proposes a look, worn at once above the box with Before, Reject and Accept, kept only once accepted, never CSS (D693, ${lang})`, async ({ page }) => {
+    await start(page, lang)
+    await connectFakeBrain(page)
+    const root = page.locator('html'), bar = page.locator('.look-proposed')
+    const was = await root.getAttribute('data-look')
+    await ask(page, 'Call look with {"theme":"terminal","accent":"#22cc66","font":"mono","size":1.1,"css":"body { display: none }","why":"Green on black, as a terminal"}')
+    await expect(bar).toContainText('Green on black, as a terminal')
+    // Worn at once, in memory alone: the theme, its accent, typeface and size, and nothing of the CSS.
+    await expect(root).toHaveAttribute('data-look', 'terminal')
+    await expect.poll(() => page.evaluate(() => getComputedStyle(document.documentElement).fontSize)).toBe('17.6px')
+    await expect(page.locator('body')).toBeVisible()
+    expect((await savedLook(page))?.id ?? was).toBe(was)
+    // Before shows the look there was, and the proposal again.
+    await bar.getByRole('button', { name: before }).click()
+    await expect(root).toHaveAttribute('data-look', /** @type {string} */ (was))
+    await bar.getByRole('button', { name: before }).click()
+    await expect(root).toHaveAttribute('data-look', 'terminal')
+    // Rejected, the look before comes back; proposed again and accepted, it is kept.
+    await bar.getByRole('button', { name: reject }).click()
+    await expect(bar).toHaveCount(0)
+    await expect(root).toHaveAttribute('data-look', /** @type {string} */ (was))
+    await ask(page, 'Call look with {"theme":"terminal","accent":"#22cc66","why":"Green on black"}')
+    await bar.getByRole('button', { name: accept }).click()
+    await expect(bar).toHaveCount(0)
+    await expect.poll(async () => { const one = await savedLook(page); return [one?.id, one?.accent, one?.css] }).toEqual(['terminal', '#22cc66', undefined])
+  })
+}

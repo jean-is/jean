@@ -26,5 +26,9 @@
   "look.another": "Rangi nyingine",
   "look.css": "CSS yako mwenyewe",
   "look.cssHint": "Inatumika juu ya mandhari unapoandika.",
-  "look.reset": "Tendua mabadiliko yangu"
+  "look.reset": "Tendua mabadiliko yangu",
+  "look.proposed": "Mwonekano uliopendekezwa:",
+  "look.before": "Kabla",
+  "look.reject": "Kataa",
+  "look.accept": "Kubali"
 }

@@ -26,5 +26,9 @@
   "look.another": "ሌላ ቀለም",
   "look.css": "የራስዎ CSS",
   "look.cssHint": "ሲተይቡ በገጽታው ላይ ይተገበራል።",
-  "look.reset": "ለውጦቼን መልስ"
+  "look.reset": "ለውጦቼን መልስ",
+  "look.proposed": "የቀረበ መልክ:",
+  "look.before": "በፊት",
+  "look.reject": "ውድቅ አድርግ",
+  "look.accept": "ተቀበል"
 }

@@ -26,5 +26,9 @@
   "look.another": "لون آخر",
   "look.css": "CSS الخاص بك",
   "look.cssHint": "يُطبَّق فوق السمة أثناء الكتابة.",
-  "look.reset": "التراجع عن تغييراتي"
+  "look.reset": "التراجع عن تغييراتي",
+  "look.proposed": "مظهر مقترح:",
+  "look.before": "قبل",
+  "look.reject": "رفض",
+  "look.accept": "قبول"
 }

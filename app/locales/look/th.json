@@ -26,5 +26,9 @@
   "look.another": "สีอื่น",
   "look.css": "CSS ของคุณเอง",
   "look.cssHint": "มีผลทับธีมทันทีขณะพิมพ์",
-  "look.reset": "เลิกทำการเปลี่ยนแปลงของฉัน"
+  "look.reset": "เลิกทำการเปลี่ยนแปลงของฉัน",
+  "look.proposed": "หน้าตาที่เสนอ:",
+  "look.before": "ก่อนแก้",
+  "look.reject": "ปฏิเสธ",
+  "look.accept": "ยอมรับ"
 }

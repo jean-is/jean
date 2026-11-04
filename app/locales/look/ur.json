@@ -26,5 +26,9 @@
   "look.another": "کوئی اور رنگ",
   "look.css": "آپ کی اپنی CSS",
   "look.cssHint": "ٹائپ کرتے ہی تھیم پر لاگو ہوتی ہے۔",
-  "look.reset": "میری تبدیلیاں واپس لیں"
+  "look.reset": "میری تبدیلیاں واپس لیں",
+  "look.proposed": "تجویز کردہ انداز:",
+  "look.before": "پہلے",
+  "look.reject": "مسترد کریں",
+  "look.accept": "قبول کریں"
 }

@@ -26,5 +26,9 @@
   "look.another": "Inny kolor",
   "look.css": "Własny CSS",
   "look.cssHint": "Działa na motyw na bieżąco, gdy piszesz.",
-  "look.reset": "Cofnij moje zmiany"
+  "look.reset": "Cofnij moje zmiany",
+  "look.proposed": "Proponowany wygląd:",
+  "look.before": "Przed",
+  "look.reject": "Odrzuć",
+  "look.accept": "Akceptuj"
 }

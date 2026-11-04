@@ -26,5 +26,9 @@
   "look.another": "Otro color",
   "look.css": "Tu propio CSS",
   "look.cssHint": "Se aplica sobre el tema mientras escribes.",
-  "look.reset": "Deshacer mis cambios"
+  "look.reset": "Deshacer mis cambios",
+  "look.proposed": "Un aspecto propuesto:",
+  "look.before": "Antes",
+  "look.reject": "Rechazar",
+  "look.accept": "Aceptar"
 }

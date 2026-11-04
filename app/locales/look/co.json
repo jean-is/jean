@@ -26,5 +26,9 @@
   "look.another": "Un altru culore",
   "look.css": "U vostru CSS",
   "look.cssHint": "S’applica sopra à u tema mentre chì scrivite.",
-  "look.reset": "Annullà i mo cambiamenti"
+  "look.reset": "Annullà i mo cambiamenti",
+  "look.proposed": "Un aspettu prupostu :",
+  "look.before": "Prima",
+  "look.reject": "Ricusà",
+  "look.accept": "Accettà"
 }

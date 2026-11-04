@@ -26,5 +26,9 @@
   "look.another": "其他颜色",
   "look.css": "自定义 CSS",
   "look.cssHint": "边输入边在主题之上生效。",
-  "look.reset": "撤销我的更改"
+  "look.reset": "撤销我的更改",
+  "look.proposed": "建议的外观：",
+  "look.before": "修改前",
+  "look.reject": "拒绝",
+  "look.accept": "接受"
 }

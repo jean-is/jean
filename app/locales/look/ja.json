@@ -26,5 +26,9 @@
   "look.another": "別の色",
   "look.css": "自分の CSS",
   "look.cssHint": "入力するとすぐにテーマの上に反映されます。",
-  "look.reset": "変更を元に戻す"
+  "look.reset": "変更を元に戻す",
+  "look.proposed": "提案された見た目:",
+  "look.before": "変更前",
+  "look.reject": "却下",
+  "look.accept": "承認"
 }

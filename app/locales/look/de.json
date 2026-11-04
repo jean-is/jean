@@ -26,5 +26,9 @@
   "look.another": "Andere Farbe",
   "look.css": "Eigenes CSS",
   "look.cssHint": "Wirkt über dem Design, während du tippst.",
-  "look.reset": "Meine Änderungen rückgängig machen"
+  "look.reset": "Meine Änderungen rückgängig machen",
+  "look.proposed": "Ein vorgeschlagenes Aussehen:",
+  "look.before": "Vorher",
+  "look.reject": "Ablehnen",
+  "look.accept": "Annehmen"
 }

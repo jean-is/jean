@@ -147,3 +147,31 @@ export function section() {
   return html`<header class="look-head"><h2 tabindex="-1">${t('settings.appearance')}</h2>${touched(look) ? html`<button class="button subtle" @click=${undo}>${t('look.reset')}</button>` : nothing}</header>
     ${comfort(look)}${gallery()}${yours(look)}`
 }
+
+// ─── A look Jean proposes (D693) ─────────────────────────────────────────────
+
+/** A look Jean proposes, worn while the user decides, with what was worn before, Jean's few words and whether it is shown (Before off). @type {import('@preact/signals-core').Signal<{ patch: Partial<Look>, before: Look, why: string, shown?: boolean } | null>} */
+const proposed = signal(null)
+/** A look worn, in memory alone, until it is decided. @param {Look} look */
+const wear = (look) => { app.settings.value = { ...app.settings.peek(), look } }
+/** Wears a look Jean proposes; another proposed meanwhile takes its place, over the look the user had. @param {Partial<Look>} patch @param {string} why */
+export function propose(patch, why) {
+  const before = proposed.peek()?.before ?? /** @type {Look} */ (app.settings.peek().look ?? {})
+  proposed.value = { patch, before, why }
+  wear({ ...before, ...patch })
+}
+/** Accepted, the look is kept; rejected, the one before comes back, and is kept, should anything have saved the settings meanwhile. @param {boolean} yes */
+function decide(yes) {
+  const one = proposed.peek()
+  if (!one) return
+  proposed.value = null
+  if (yes) setLook({ ...one.before, ...one.patch })
+  else wear(one.before), setLook(one.before)
+}
+/** Jean's version of the look, above the box: its few words, Before, Reject and Accept, as Jean's changes say them (D505). */
+export function proposal() {
+  const one = proposed.value
+  return one ? html`<div class="look-proposed" role="status"><p dir="auto"><strong>${t('look.proposed')}</strong> ${one.why}</p><span class="row">
+    <button class="button subtle" aria-pressed=${one.shown === false ? 'true' : 'false'} @click=${() => { const shown = one.shown === false; wear(shown ? { ...one.before, ...one.patch } : one.before); proposed.value = { ...one, shown } }}>${t('look.before')}</button>
+    <button class="button subtle" @click=${() => decide(false)}>${t('look.reject')}</button><button class="button primary" @click=${() => decide(true)}>${t('look.accept')}</button></span></div>` : nothing
+}

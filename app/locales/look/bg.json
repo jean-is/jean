@@ -26,5 +26,9 @@
   "look.another": "Друг цвят",
   "look.css": "Ваш CSS",
   "look.cssHint": "Прилага се върху темата, докато пишете.",
-  "look.reset": "Отмени промените ми"
+  "look.reset": "Отмени промените ми",
+  "look.proposed": "Предложен облик:",
+  "look.before": "Преди",
+  "look.reject": "Отхвърли",
+  "look.accept": "Приеми"
 }

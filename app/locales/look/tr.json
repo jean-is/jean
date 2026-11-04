@@ -26,5 +26,9 @@
   "look.another": "Başka renk",
   "look.css": "Kendi CSS’in",
   "look.cssHint": "Yazdıkça temanın üzerine uygulanır.",
-  "look.reset": "Değişikliklerimi geri al"
+  "look.reset": "Değişikliklerimi geri al",
+  "look.proposed": "Önerilen görünüm:",
+  "look.before": "Önce",
+  "look.reject": "Reddet",
+  "look.accept": "Kabul et"
 }

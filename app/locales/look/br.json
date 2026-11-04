@@ -26,5 +26,9 @@
   "look.another": "Ul liv all",
   "look.css": "Ho CSS deoc’h",
   "look.cssHint": "Lakaet war an neuz e-pad ma skrivit.",
-  "look.reset": "Dizober ma c’hemmoù"
+  "look.reset": "Dizober ma c’hemmoù",
+  "look.proposed": "Un neuz kinniget :",
+  "look.before": "A-raok",
+  "look.reject": "Nac’hañ",
+  "look.accept": "Asantiñ"
 }

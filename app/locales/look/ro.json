@@ -26,5 +26,9 @@
   "look.another": "Altă culoare",
   "look.css": "CSS-ul dvs.",
   "look.cssHint": "Se aplică peste temă în timp ce tastați.",
-  "look.reset": "Anulați schimbările mele"
+  "look.reset": "Anulați schimbările mele",
+  "look.proposed": "Un aspect propus:",
+  "look.before": "Înainte",
+  "look.reject": "Respingeți",
+  "look.accept": "Acceptați"
 }

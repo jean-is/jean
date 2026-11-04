@@ -26,5 +26,9 @@
   "look.another": "Másik szín",
   "look.css": "Saját CSS",
   "look.cssHint": "Gépelés közben a téma fölé kerül.",
-  "look.reset": "A módosításaim visszavonása"
+  "look.reset": "A módosításaim visszavonása",
+  "look.proposed": "Javasolt megjelenés:",
+  "look.before": "Előtte",
+  "look.reject": "Elutasítás",
+  "look.accept": "Elfogadás"
 }

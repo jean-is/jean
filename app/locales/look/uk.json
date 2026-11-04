@@ -26,5 +26,9 @@
   "look.another": "Інший колір",
   "look.css": "Власний CSS",
   "look.cssHint": "Застосовується поверх теми під час введення.",
-  "look.reset": "Скасувати мої зміни"
+  "look.reset": "Скасувати мої зміни",
+  "look.proposed": "Запропонований вигляд:",
+  "look.before": "До",
+  "look.reject": "Відхилити",
+  "look.accept": "Прийняти"
 }

@@ -26,5 +26,9 @@
   "look.another": "צבע אחר",
   "look.css": "CSS משלך",
   "look.cssHint": "חל מעל ערכת הנושא תוך כדי הקלדה.",
-  "look.reset": "ביטול השינויים שלי"
+  "look.reset": "ביטול השינויים שלי",
+  "look.proposed": "מראה מוצע:",
+  "look.before": "לפני",
+  "look.reject": "דחייה",
+  "look.accept": "קבלה"
 }
