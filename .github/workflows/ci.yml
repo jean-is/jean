@@ -146,7 +146,11 @@ jobs:
           POLICY: ${{ vars.POLICY }}
           ADDRESS: ${{ vars.ADDRESS }}
           KEYS: ${{ vars.KEYS }}
+      # The update says nothing until its services answer, which takes minutes while the host snapshots
+      # the server's disk each evening; the runner's network drops a connection silent for four, so the
+      # client speaks every fifteen seconds, and a server that stops answering fails the step in two.
       - name: Jean's server at the same commit
+        timeout-minutes: 15
         run: |
           npm run host
           mkdir -p stage/host ~/.ssh
@@ -154,7 +158,7 @@ jobs:
           git archive HEAD gateway/gateway.js gateway/serve.js requests/requests.js requests/serve.js | tar -x -C stage
           printf '%s\n' "$SERVER_HOST_KEYS" > ~/.ssh/known_hosts
           install -m 600 /dev/null ~/.ssh/deploy && printf '%s\n' "$SERVER_KEY" > ~/.ssh/deploy
-          tar -C stage -cf - gateway host requests | ssh -T -i ~/.ssh/deploy -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes "$SERVER"
+          tar -C stage -cf - gateway host requests | ssh -T -i ~/.ssh/deploy -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o ServerAliveInterval=15 -o ServerAliveCountMax=8 "$SERVER"
         env:
           SERVER: ${{ vars.SERVER }}
           SERVER_HOST_KEYS: ${{ vars.SERVER_HOST_KEYS }}
