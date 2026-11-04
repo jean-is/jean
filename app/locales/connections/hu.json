@@ -11,6 +11,8 @@
   "api.search_files": "Fájlok keresése",
   "api.read_file": "Fájl elolvasása",
   "api.create_document": "Dokumentum készítése",
+  "api.read_document": "Dokumentum elrendezésének elolvasása",
+  "api.edit_document": "Dokumentum módosítása",
   "connections.untrained": "Ez a feladat Google-szolgáltatásokat használt, amelyek adatai csak olyan agyakhoz kerülnek, amelyek soha nem tanítanak velük MI-t. Válassz egyet, vagy adj hozzá egyet.",
   "connections.address": "A szolgáltatás címe",
   "connections.keyHint": "Csak ha a szolgáltatás adott kulcsot. Különben bejelentkezést kér.",

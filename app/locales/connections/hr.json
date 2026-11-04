@@ -11,6 +11,8 @@
   "api.search_files": "Pretraži datoteke",
   "api.read_file": "Pročitaj datoteku",
   "api.create_document": "Izradi dokument",
+  "api.read_document": "Pročitaj raspored dokumenta",
+  "api.edit_document": "Promijeni dokument",
   "connections.untrained": "Ovaj je zadatak koristio Googleove usluge, čiji podaci idu samo mozgovima koji ih nikad ne koriste za učenje umjetne inteligencije. Odaberite jedan ili ga dodajte.",
   "connections.address": "Adresa usluge",
   "connections.keyHint": "Samo ako vam je usluga dala ključ. Inače ćete biti zamoljeni da se prijavite.",

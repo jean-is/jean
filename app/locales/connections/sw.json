@@ -11,6 +11,8 @@
   "api.search_files": "Tafuta faili",
   "api.read_file": "Soma faili",
   "api.create_document": "Unda hati",
+  "api.read_document": "Soma mpangilio wa hati",
+  "api.edit_document": "Badilisha hati",
   "connections.untrained": "Kazi hii ilitumia huduma za Google, ambazo data yake huenda tu kwa ubongo usiowahi kuitumia kufunza AI. Chagua mmoja, au ongeza mmoja.",
   "connections.address": "Anwani ya huduma",
   "connections.keyHint": "Ikiwa tu huduma imekupa ufunguo. Vinginevyo utaombwa kuingia.",

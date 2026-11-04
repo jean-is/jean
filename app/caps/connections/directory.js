@@ -50,7 +50,7 @@ export const DIRECTORY = Object.freeze(/** @type {Known[]} */ ([
   // Any Google account's, each asking only for what its own tools need (D349).
   { id: 'gmail', group: 'mail', name: 'Gmail', url: 'https://gmail.googleapis.com/gmail/v1/users/me/', api: true, ...google(['gmail.modify']), logo: 'gmail.svg' },
   { id: 'google-calendar', group: 'mail', name: 'Google Calendar', url: 'https://www.googleapis.com/calendar/v3/', api: true, ...google(['calendar.events', 'calendar.calendarlist.readonly']), logo: 'google-calendar.svg' },
-  { id: 'google-drive', group: 'files', name: 'Google Drive', url: 'https://www.googleapis.com/drive/v3/', api: true, ...google(['drive.readonly', 'drive.file']), logo: 'google-drive.svg' },
+  { id: 'google-drive', group: 'files', name: 'Google Drive', url: 'https://www.googleapis.com/drive/v3/', api: true, ...google(['drive.readonly', 'drive.file', 'documents']), logo: 'google-drive.svg' },
   // Google's servers, one a product, are a developer preview for Workspace accounts that refuses browsers.
   // One sign-in reaches them all, asking for what their tools need (D344).
   { id: 'google', group: 'mail', name: 'Google Workspace', url: 'https://gmailmcp.googleapis.com/mcp/v1', servers: ['drive', 'docs', 'sheets', 'slides', 'calendar', 'chat'].map((product) => `https://${product}mcp.googleapis.com/mcp/v1`).concat('https://people.googleapis.com/mcp/v1'),

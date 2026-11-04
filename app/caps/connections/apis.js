@@ -26,6 +26,8 @@ const max = { type: 'integer', minimum: 1, maximum: 50, description: 'How many a
 const tool = (name, description, inputSchema, readOnlyHint, run) => ({ name, description, inputSchema, annotations: { readOnlyHint }, run })
 /** What a call brings in: the brain reads its text, the user sees its quote. @param {string} uri @param {string} title @param {string} text @param {string} [description] */
 const resource = (uri, title, text, description) => ({ type: 'resource', resource: { uri, title, text, mimeType: 'text/plain', ...(description && { description }) } })
+/** What a call says when it brings nothing in. @param {string} text */
+const said = (text) => [{ type: 'text', text }]
 
 /** @param {string} data */
 const unbase64url = (data) => Uint8Array.from(atob(data.replace(/-/g, '+').replace(/_/g, '/')), (char) => char.charCodeAt(0))
@@ -107,10 +109,7 @@ const gmail = [
     const [{ emailAddress }, draft] = await Promise.all([call('profile'), call('drafts', { method: 'POST', body: JSON.stringify({ message: await message(args, call) }) })])
     return [resource(inGmail(emailAddress, `drafts?compose=${draft.message.id}`), args.subject ?? '', `Draft saved (id: ${draft.id}).`)]
   }),
-  tool('send_email', 'Sends an email from Gmail; a reply stays in its thread.', composing, false, async (args, call) => {
-    const sent = await call('messages/send', { method: 'POST', body: JSON.stringify(await message(args, call)) })
-    return [{ type: 'text', text: `Sent (id: ${sent.id}).` }]
-  }),
+  tool('send_email', 'Sends an email from Gmail; a reply stays in its thread.', composing, false, async (args, call) => call('messages/send', { method: 'POST', body: JSON.stringify(await message(args, call)) }).then((sent) => said(`Sent (id: ${sent.id}).`))),
 ]
 
 // ─── Google Calendar ─────────────────────────────────────────────────────────
@@ -153,10 +152,7 @@ const calendar = [
     async ({ calendar, ...args }, call) => [asEvent(await call(`${events(calendar)}?sendUpdates=all`, { method: 'POST', body: JSON.stringify(event(args)) }))]),
   tool('update_event', 'Changes what is given of an event; its guests are told.', object({ calendar: calendarId, id: eventId, ...fields }, ['id']), false,
     async ({ calendar, id, ...args }, call) => [asEvent(await call(`${events(calendar, id)}?sendUpdates=all`, { method: 'PATCH', body: JSON.stringify(event(args)) }))]),
-  tool('delete_event', 'Removes an event; its guests are told it is cancelled.', object({ calendar: calendarId, id: eventId }, ['id']), false, async ({ calendar, id }, call) => {
-    await call(`${events(calendar, id)}?sendUpdates=all`, { method: 'DELETE' })
-    return [{ type: 'text', text: 'Removed.' }]
-  }),
+  tool('delete_event', 'Removes an event; its guests are told it is cancelled.', object({ calendar: calendarId, id: eventId }, ['id']), false, ({ calendar, id }, call) => call(`${events(calendar, id)}?sendUpdates=all`, { method: 'DELETE' }).then(() => said('Removed.'))),
 ]
 
 // ─── Google Drive ────────────────────────────────────────────────────────────
@@ -166,17 +162,38 @@ const FIELDS = 'id,name,mimeType,modifiedTime,webViewLink'
 const EXPORTS = /** @type {Record<string, string>} */ ({ 'application/vnd.google-apps.document': 'text/markdown', 'application/vnd.google-apps.spreadsheet': 'text/csv', 'application/vnd.google-apps.presentation': 'text/plain' })
 /** @param {any} file */
 const asFile = (file) => resource(file.webViewLink, file.name, `id: ${file.id}\n${file.mimeType}, changed ${file.modifiedTime}`)
+/** A file's name and address in Drive, a shared drive's too. @param {string} id @param {Call} call */
+const fileAt = (id, call) => call(`files/${encodeURIComponent(id)}?fields=${FIELDS}&supportsAllDrives=true`)
+
+// Google Docs' own API, which places each part of a document by where it starts and ends, as its edits name them.
+const DOCS = 'https://docs.googleapis.com/v1/documents/'
+/** A named style's look: its font, size and colour, written as people do from Docs' fractions of red, green and blue. @param {any} style */
+const look = ({ namedStyleType, textStyle: { weightedFontFamily: font, fontSize: size, foregroundColor: { color: { rgbColor: rgb = undefined } = {} } = {}, bold } = {} }) => `${namedStyleType}: ${[font?.fontFamily, size && `${size.magnitude} ${size.unit}`,
+  rgb && `#${['red', 'green', 'blue'].map((part) => Math.round((rgb[part] ?? 0) * 255).toString(16).padStart(2, '0')).join('')}`, bold && 'bold'].filter(Boolean).join(', ')}`
+/** A document's paragraphs, each where it starts and ends, its named style and its words, and its tables', a cell's inside it. @param {any[]} [content] @param {string} [indent] @returns {string[]} */
+const outline = (content = [], indent = '') => content.flatMap(({ startIndex = 0, endIndex, paragraph, table }) => (paragraph ? `${indent}[${startIndex}–${endIndex}] ${paragraph.paragraphStyle?.namedStyleType}: ${paragraph.elements.map((/** @type {any} */ each) => each.textRun?.content ?? '').join('').trim()}`
+  : table ? [`${indent}[${startIndex}–${endIndex}] A table, ${table.rows} × ${table.columns}`, ...table.tableRows.flatMap((/** @type {any} */ row) => row.tableCells.flatMap((/** @type {any} */ cell) => outline(cell.content, `${indent}  `)))] : []))
+
+/** Where files are looked for: one shared drive the user has, by its name, or all of them and the user’s own. @param {unknown} name @param {Call} call @returns {Promise<Record<string, string>>} */
+async function corpus(name, call) {
+  if (!name) return { corpora: 'allDrives' }
+  const { drives = [] } = await call('drives?pageSize=100&fields=drives(id,name)')
+  const found = drives.find((/** @type {any} */ each) => each.name.toLowerCase().includes(String(name).toLowerCase()))
+  if (!found) throw new Error(drives.length ? `No shared drive is called ${name}. The user’s are ${drives.map((/** @type {any} */ each) => each.name).join(', ')}.` : 'The user has no shared drive.')
+  return { corpora: 'drive', driveId: found.id }
+}
 
 /** @type {Direct[]} */
 const drive = [
-  tool('search_files', 'Finds files in Google Drive by words in them or in their names; with none, those the user had open last.', object({ query: string('Words to find'), max }), true, async ({ query, max = 10 }, call) => {
+  tool('search_files', 'Finds files in Google Drive, shared drives included, by words in them or in their names; with none, those the user had open last.', object({ query: string('Words to find'), drive: string('A shared drive’s name, to look there alone'), max }), true, async ({ query, drive, max = 10 }, call) => {
     const q = `${query ? `fullText contains '${String(query).replace(/[\\']/g, '\\$&')}' and ` : ''}trashed = false`
-    const { files = [] } = await call(`files?${new URLSearchParams({ q, pageSize: String(max), fields: `files(${FIELDS})`, ...(!query && { orderBy: 'recency desc' }) })}`)
+    // Google looks in the user's own Drive alone unless told shared drives are read too.
+    const { files = [] } = await call(`files?${new URLSearchParams({ q, pageSize: String(max), fields: `files(${FIELDS})`, ...await corpus(drive, call), includeItemsFromAllDrives: 'true', supportsAllDrives: 'true', ...(!query && { orderBy: 'recency desc' }) })}`)
     return files.map(asFile)
   }),
   tool('read_file', 'Reads a file’s text: a document in Markdown, a spreadsheet’s first sheet in CSV, a presentation’s words, or a text file.', object({ id: string('The file’s id, from search_files') }, ['id']), true, async ({ id }, call) => {
     const at = `files/${encodeURIComponent(id)}`
-    const file = await call(`${at}?fields=${FIELDS}&supportsAllDrives=true`)
+    const file = await fileAt(id, call)
     const as = EXPORTS[file.mimeType]
     if (!as && !/^text\/|\/(json|xml|csv)$/.test(file.mimeType)) throw new Error(`${file.name} is a file of type ${file.mimeType}, whose text can’t be read here.`)
     return [resource(file.webViewLink, file.name, await call(as ? `${at}/export?mimeType=${encodeURIComponent(as)}` : `${at}?alt=media&supportsAllDrives=true`, { as: 'text' }))]
@@ -187,6 +204,11 @@ const drive = [
       `--${boundary}`, 'Content-Type: text/markdown; charset=UTF-8', '', content, `--${boundary}--`].join('\r\n')
     return [asFile(await call(`/upload/drive/v3/files?uploadType=multipart&fields=${FIELDS}`, { method: 'POST', headers: { 'content-type': `multipart/related; boundary=${boundary}` }, body }))]
   }),
+  tool('read_document', 'Reads a Google Docs document as edit_document places its parts: each paragraph’s startIndex–endIndex, named style and words, its tables’ cells, and its named styles’ fonts, sizes and colours.', object({ id: string('The file’s id, from search_files') }, ['id']), true,
+    ({ id }, call) => Promise.all([call(`${DOCS}${encodeURIComponent(id)}`), fileAt(id, call)]).then(([doc, file]) => [resource(file.webViewLink, file.name, [`id: ${file.id}`, 'Named styles:', ...(doc.namedStyles?.styles ?? []).map(look), '', ...outline(doc.body?.content)].join('\n'))])),
+  tool('edit_document', 'Changes a Google Docs document, shared drives’ too, with the Docs API’s batchUpdate requests, applied in order: its words (replaceAllText, insertText, deleteContentRange), their look (updateTextStyle, updateParagraphStyle), every heading or paragraph of a named style at once (updateNamedStyle), its tables. Places come from read_document.',
+    object({ id: string('The file’s id, from search_files'), requests: { type: 'array', items: { type: 'object' }, description: 'Requests as the Docs API takes them, e.g. {"updateNamedStyle": {"namedStyle": {"namedStyleType": "HEADING_1", "textStyle": {"weightedFontFamily": {"fontFamily": "Times New Roman"}, "fontSize": {"magnitude": 20, "unit": "PT"}, "foregroundColor": {"color": {"rgbColor": {"red": 0.1, "green": 0.2, "blue": 0.5}}}}}, "fields": "textStyle.weightedFontFamily,textStyle.fontSize,textStyle.foregroundColor"}}' } }, ['id', 'requests']), false,
+    ({ id, requests }, call) => call(`${DOCS}${encodeURIComponent(id)}:batchUpdate`, { method: 'POST', body: JSON.stringify({ requests }) }).then(() => fileAt(id, call)).then((file) => [asFile(file)])),
 ]
 
 // ─── Microsoft Graph ─────────────────────────────────────────────────────────
@@ -225,10 +247,8 @@ const outlook = [
     const draft = await call(args.reply_to ? `me/messages/${encodeURIComponent(args.reply_to)}/createReply` : 'me/messages', { method: 'POST', body: JSON.stringify(args.reply_to ? outgoing(args) : outgoing(args).message) })
     return [asMail(draft, `Draft saved (id: ${draft.id}).`)]
   }),
-  tool('send_email', 'Sends an email from Outlook; a reply stays in its thread.', composing, false, async (args, call) => {
-    await call(args.reply_to ? `me/messages/${encodeURIComponent(args.reply_to)}/reply` : 'me/sendMail', { method: 'POST', body: JSON.stringify(outgoing(args)) })
-    return [{ type: 'text', text: 'Sent.' }]
-  }),
+  tool('send_email', 'Sends an email from Outlook; a reply stays in its thread.', composing, false,
+    (args, call) => call(args.reply_to ? `me/messages/${encodeURIComponent(args.reply_to)}/reply` : 'me/sendMail', { method: 'POST', body: JSON.stringify(outgoing(args)) }).then(() => said('Sent.'))),
 ]
 
 // Times go in with their offset, kept in UTC, or in the zone given, and come back in the user's.
@@ -261,10 +281,7 @@ const outlookCalendar = [
     async ({ calendar, ...args }, call) => [asMeeting(await call(`${calendarAt(calendar)}/events`, { method: 'POST', body: JSON.stringify(meeting(args)), ...inZone() }))]),
   tool('update_event', 'Changes what is given of an event; its guests are told.', object({ id: eventId, ...fields }, ['id']), false,
     async ({ id, ...args }, call) => [asMeeting(await call(`me/events/${encodeURIComponent(id)}`, { method: 'PATCH', body: JSON.stringify(meeting(args)), ...inZone() }))]),
-  tool('delete_event', 'Removes an event; its guests are told it is cancelled.', object({ id: eventId }, ['id']), false, async ({ id }, call) => {
-    await call(`me/events/${encodeURIComponent(id)}`, { method: 'DELETE' })
-    return [{ type: 'text', text: 'Removed.' }]
-  }),
+  tool('delete_event', 'Removes an event; its guests are told it is cancelled.', object({ id: eventId }, ['id']), false, ({ id }, call) => call(`me/events/${encodeURIComponent(id)}`, { method: 'DELETE' }).then(() => said('Removed.'))),
 ]
 
 /** A file, where it is: one shared with the user is in another's drive, which its id names. @param {any} found */
@@ -298,11 +315,11 @@ const onedrive = [
     }),
 ]
 
-/** Each API by its address (caps/connections/directory.js), with what says who is signed in. @type {Record<string, { who: string, tools: Direct[] }>} */
+/** Each API by its address (caps/connections/directory.js), with what says who is signed in, and the other origins its tools call. @type {Record<string, { who: string, tools: Direct[], also?: string[] }>} */
 export const APIS = {
   'https://gmail.googleapis.com/gmail/v1/users/me/': { who: 'profile', tools: gmail },
   'https://www.googleapis.com/calendar/v3/': { who: 'users/me/calendarList?maxResults=1', tools: calendar },
-  'https://www.googleapis.com/drive/v3/': { who: 'about?fields=user', tools: drive },
+  'https://www.googleapis.com/drive/v3/': { who: 'about?fields=user', tools: drive, also: [new URL(DOCS).origin] },
   'https://graph.microsoft.com/v1.0/': { who: 'me?$select=id', tools: [...outlook, ...outlookCalendar, ...onedrive] },
 }
 
@@ -316,8 +333,8 @@ export function apiClient({ url, authorization, fetch = globalThis.fetch }) {
   /** @param {AbortSignal} [signal] @returns {Call} */
   const caller = (signal) => async function call(path, { as, ...init } = {}, tries = 0) {
     const at = new URL(path, url)
-    // The API's own origin alone gets the token: a file's download address is signed already (Graph's).
-    const auth = at.origin === new URL(url).origin ? await authorization() : undefined
+    // The API's own origins alone get the token: a file's download address is signed already (Graph's).
+    const auth = [new URL(url).origin, ...api.also ?? []].includes(at.origin) ? await authorization() : undefined
     const res = await fetch(at, { ...init, signal, headers: { ...(auth && { authorization: auth }), ...(typeof init.body === 'string' && { 'content-type': 'application/json' }), ...init.headers } })
     if (res.ok) return as === 'bytes' ? new Uint8Array(await res.arrayBuffer()) : as ? res.text() : res.status === 202 || res.status === 204 ? null : res.json()
     const { error } = await res.json().catch(() => ({}))
@@ -343,7 +360,7 @@ export function apiClient({ url, authorization, fetch = globalThis.fetch }) {
       if (!run) throw new Error(`No tool is called ${tool.name}.`)
       // Never more than a tool takes, though a brain asks Gmail for 500 emails.
       const content = await run({ ...args, ...(args.max > max.maximum && { max: max.maximum }) }, caller(signal))
-      return { content: content.length ? content : [{ type: 'text', text: 'Nothing found.' }] }
+      return { content: content.length ? content : said('Nothing found.') }
     },
   }
 }

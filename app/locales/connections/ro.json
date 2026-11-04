@@ -11,6 +11,8 @@
   "api.search_files": "Căutarea fișierelor",
   "api.read_file": "Citirea unui fișier",
   "api.create_document": "Crearea unui document",
+  "api.read_document": "Citirea structurii unui document",
+  "api.edit_document": "Schimbarea unui document",
   "connections.untrained": "Această sarcină a folosit servicii Google, ale căror date merg doar la creiere care nu le folosesc niciodată pentru a antrena AI. Alegeți unul sau adăugați unul.",
   "connections.address": "Adresa serviciului",
   "connections.keyHint": "Doar dacă serviciul v-a dat o cheie. Altfel vi se va cere să vă conectați.",

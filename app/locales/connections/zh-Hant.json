@@ -11,6 +11,8 @@
   "api.search_files": "搜尋檔案",
   "api.read_file": "讀取檔案",
   "api.create_document": "建立文件",
+  "api.read_document": "讀取文件結構",
+  "api.edit_document": "變更文件",
   "connections.untrained": "這個任務使用了 Google 服務，其資料只會交給從不拿它來訓練 AI 的大腦。請選一個，或新增一個。",
   "connections.address": "服務位址",
   "connections.keyHint": "僅在服務給了你金鑰時填寫。否則會請你登入。",

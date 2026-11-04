@@ -11,6 +11,8 @@
   "api.search_files": "Wá fáìlì",
   "api.read_file": "Ka fáìlì",
   "api.create_document": "Ṣẹ̀dá ìwé",
+  "api.read_document": "Ka ìtò ìwé",
+  "api.edit_document": "Yí ìwé padà",
   "connections.untrained": "Iṣẹ́ yìí lo àwọn iṣẹ́ Google, dátà wọn sì ń lọ sí ọpọlọ tí kì í lò ó láti kọ́ AI nìkan. Ẹ yan ọ̀kan, tàbí kí ẹ ṣàfikún ọ̀kan.",
   "connections.address": "Àdírẹ́sì iṣẹ́ náà",
   "connections.keyHint": "Bí iṣẹ́ náà bá fún yín ní kọ́kọ́rọ́ nìkan. Bí bẹ́ẹ̀ kọ́, a ó ní kí ẹ wọlé.",

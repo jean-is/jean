@@ -11,6 +11,8 @@
   "api.search_files": "Tìm tệp",
   "api.read_file": "Đọc tệp",
   "api.create_document": "Tạo tài liệu",
+  "api.read_document": "Đọc bố cục tài liệu",
+  "api.edit_document": "Đổi tài liệu",
   "connections.untrained": "Tác vụ này đã dùng dịch vụ của Google, và dữ liệu của chúng chỉ đến những bộ não không bao giờ dùng nó để huấn luyện AI. Hãy chọn một bộ não, hoặc thêm một bộ não.",
   "connections.address": "Địa chỉ của dịch vụ",
   "connections.keyHint": "Chỉ khi dịch vụ đã cấp cho bạn một khóa. Nếu không, bạn sẽ được yêu cầu đăng nhập.",

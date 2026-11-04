@@ -11,6 +11,8 @@
   "api.search_files": "Chercher des fichiers",
   "api.read_file": "Lire un fichier",
   "api.create_document": "Créer un document",
+  "api.read_document": "Lire la mise en page d’un document",
+  "api.edit_document": "Modifier un document",
   "connections.untrained": "Cette tâche a utilisé des services Google, dont les données ne vont qu’aux cerveaux qui ne s’en servent jamais pour entraîner une IA. Choisissez-en un, ou ajoutez-en un.",
   "connections.address": "Adresse du service",
   "connections.keyHint": "Seulement si le service vous a donné une clé. Sinon, on vous demandera de vous connecter.",

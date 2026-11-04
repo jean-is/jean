@@ -11,6 +11,8 @@
   "api.search_files": "Circà schedarii",
   "api.read_file": "Leghje un schedariu",
   "api.create_document": "Fà un ducumentu",
+  "api.read_document": "Leghje l’urganizazione di un ducumentu",
+  "api.edit_document": "Cambià un ducumentu",
   "connections.untrained": "Stu compitu hà impiegatu servizii Google, chì i so dati vanu solu à cervelli chì ùn l’impieganu mai per ammaestrà un’intelligenza artificiale. Sceglitene unu, o aghjunghjitene unu.",
   "connections.address": "Indirizzu di u serviziu",
   "connections.keyHint": "Solu s’è u serviziu vi hà datu una chjave. Altrimente, vi serà dumandatu di cunnettevi.",

@@ -740,22 +740,29 @@ describe('Google’s own APIs, for every Google account (D349)', () => {
     assert.equal(/** @type {any} */ (calls.at(-1)).url.pathname, '/calendar/v3/calendars/fr.french%23holiday%40group.v.calendar.google.com/events')
   })
 
-  test('Google Drive: files found by their words, or those open last; a document read in Markdown, a PDF not; one made from Markdown', async () => {
+  test('Google Drive: files found by their words, in shared drives too or in one by its name, or those open last; a document read in Markdown, a PDF not; one made from Markdown', async () => {
     const file = { id: 'f1', name: 'Plan', mimeType: 'application/vnd.google-apps.document', modifiedTime: '2026-10-15T08:00:00Z', webViewLink: 'https://docs.google.com/document/d/f1/edit' }
     const { fetch, calls } = fakeGoogle({
       '/drive/v3/files/f1/export': () => '# Plan\n\nShip it.',
       '/drive/v3/files/f1?': () => file,
       '/drive/v3/files/f2?': () => ({ ...file, id: 'f2', name: 'Menu', mimeType: 'application/pdf' }),
       '/drive/v3/files?': () => ({ files: [file] }),
+      '/drive/v3/drives?': () => ({ drives: [{ id: 'd1', name: 'Ventes' }, { id: 'd2', name: 'Atelier Nord' }] }),
       '/upload/drive/v3/files': () => ({ ...file, id: 'f3', name: 'Notes' }),
     })
     const drive = api('https://www.googleapis.com/drive/v3/', fetch)
     const query = () => /** @type {any} */ (calls.at(-1)).url.searchParams
     const found = await drive.callTool(named('search_files'), { query: 'Zoé\'s plan' })
     assert.deepEqual([query().get('q'), query().get('orderBy')], ['fullText contains \'Zoé\\\'s plan\' and trashed = false', null])
+    // Shared drives too, which Google leaves out unless asked.
+    assert.deepEqual(['corpora', 'includeItemsFromAllDrives', 'supportsAllDrives'].map((name) => query().get(name)), ['allDrives', 'true', 'true'])
     assert.equal(/** @type {any} */ (found.content)[0].resource.text, 'id: f1\napplication/vnd.google-apps.document, changed 2026-10-15T08:00:00Z')
     await drive.callTool(named('search_files'), {})
     assert.deepEqual([query().get('q'), query().get('orderBy')], ['trashed = false', 'recency desc'])
+    // One shared drive alone, by its name however it is written.
+    await drive.callTool(named('search_files'), { drive: 'atelier nord' })
+    assert.deepEqual([query().get('corpora'), query().get('driveId'), query().get('orderBy')], ['drive', 'd2', 'recency desc'])
+    await assert.rejects(drive.callTool(named('search_files'), { drive: 'Finance' }), /No shared drive is called Finance\. The user’s are Ventes, Atelier Nord\./)
     const read = await drive.callTool(named('read_file'), { id: 'f1' })
     assert.deepEqual([query().get('mimeType'), /** @type {any} */ (read.content)[0].resource.text], ['text/markdown', '# Plan\n\nShip it.'])
     await assert.rejects(drive.callTool(named('read_file'), { id: 'f2' }), /Menu is a file of type application\/pdf/)
@@ -764,6 +771,30 @@ describe('Google’s own APIs, for every Google account (D349)', () => {
     const boundary = /boundary=(.+)$/.exec(init.headers['content-type'])?.[1]
     assert.deepEqual(init.body.split(`--${boundary}`).map((/** @type {string} */ part) => part.trim()), ['', 'Content-Type: application/json; charset=UTF-8\r\n\r\n{"name":"Notes","mimeType":"application/vnd.google-apps.document"}', 'Content-Type: text/markdown; charset=UTF-8\r\n\r\n# Notes', '--'])
     assert.deepEqual([url.pathname, url.searchParams.get('uploadType'), /** @type {any} */ (made.content)[0].resource.title], ['/upload/drive/v3/files', 'multipart', 'Notes'])
+  })
+
+  test('Google Docs: a document read as its edits place its parts, with its named styles’ look; changed, after asking, by the Docs API’s own requests at Docs’ address, which gets the token as Drive’s does', async () => {
+    const file = { id: 'f1', name: 'Plan', mimeType: 'application/vnd.google-apps.document', modifiedTime: '2026-10-15T08:00:00Z', webViewLink: 'https://docs.google.com/document/d/f1/edit' }
+    const paragraph = (/** @type {number} */ startIndex, /** @type {number} */ endIndex, /** @type {string} */ style, /** @type {string[]} */ runs) => ({ startIndex, endIndex, paragraph: { paragraphStyle: { namedStyleType: style }, elements: runs.map((content) => ({ textRun: { content } })) } })
+    const doc = {
+      documentId: 'f1', title: 'Plan',
+      namedStyles: { styles: [{ namedStyleType: 'NORMAL_TEXT', textStyle: { weightedFontFamily: { fontFamily: 'Arial' }, fontSize: { magnitude: 11, unit: 'PT' }, foregroundColor: { color: { rgbColor: {} } } } },
+        { namedStyleType: 'HEADING_1', textStyle: { fontSize: { magnitude: 20, unit: 'PT' }, foregroundColor: { color: { rgbColor: { red: 0.1, green: 0.2, blue: 0.5 } } }, bold: true } }] },
+      body: { content: [{ endIndex: 1, sectionBreak: {} }, paragraph(1, 6, 'HEADING_1', ['Plan\n']),
+        { startIndex: 6, endIndex: 20, table: { rows: 1, columns: 2, tableRows: [{ tableCells: [{ content: [paragraph(8, 12, 'NORMAL_TEXT', ['Who', '\n'])] }, { content: [paragraph(13, 18, 'NORMAL_TEXT', ['Ana\n'])] }] }] } }] },
+    }
+    const { fetch, calls } = fakeGoogle({ '/drive/v3/about': () => ({ user: {} }), '/v1/documents/f1:batchUpdate': () => ({ documentId: 'f1', replies: [{}] }), '/v1/documents/f1': () => doc, '/drive/v3/files/f1?': () => file })
+    const drive = api('https://www.googleapis.com/drive/v3/', fetch)
+    const tools = await drive.listTools()
+    assert.deepEqual(['read_document', 'edit_document'].map((name) => tools.find((tool) => tool.name === name)?.annotations?.readOnlyHint), [true, false])
+    const read = /** @type {any} */ (await drive.callTool(named('read_document'), { id: 'f1' })).content[0].resource
+    assert.deepEqual([read.uri, read.title], [file.webViewLink, 'Plan'])
+    assert.equal(read.text, ['id: f1', 'Named styles:', 'NORMAL_TEXT: Arial, 11 PT, #000000', 'HEADING_1: 20 PT, #1a3380, bold', '', '[1–6] HEADING_1: Plan', '[6–20] A table, 1 × 2', '  [8–12] NORMAL_TEXT: Who', '  [13–18] NORMAL_TEXT: Ana'].join('\n'))
+    const requests = [{ replaceAllText: { containsText: { text: 'Ana', matchCase: true }, replaceText: 'Sam' } }, { updateNamedStyle: { namedStyle: { namedStyleType: 'HEADING_1', textStyle: { weightedFontFamily: { fontFamily: 'Times New Roman' } } }, fields: 'textStyle.weightedFontFamily' } }]
+    const edited = /** @type {any} */ (await drive.callTool(named('edit_document'), { id: 'f1', requests })).content[0].resource
+    const sent = /** @type {{ url: URL, init: any }} */ (calls.find(({ url }) => url.pathname.endsWith(':batchUpdate')))
+    assert.deepEqual([sent.url.href, sent.init.method, JSON.parse(sent.init.body), sent.init.headers.authorization], ['https://docs.googleapis.com/v1/documents/f1:batchUpdate', 'POST', { requests }, 'Bearer token'])
+    assert.deepEqual([edited.uri, edited.text], [file.webViewLink, 'id: f1\napplication/vnd.google-apps.document, changed 2026-10-15T08:00:00Z'])
   })
 
   test('signing in to one: Google’s sign-in found at the server its entry names, asking for its own scopes, offline, with no resource indicator', async () => {

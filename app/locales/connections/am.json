@@ -11,6 +11,8 @@
   "api.search_files": "ፋይሎችን ፈልግ",
   "api.read_file": "ፋይል አንብብ",
   "api.create_document": "ሰነድ ፍጠር",
+  "api.read_document": "የሰነድ አቀማመጥ አንብብ",
+  "api.edit_document": "ሰነድ ቀይር",
   "connections.untrained": "ይህ ተግባር የGoogle አገልግሎቶችን ተጠቅሟል፤ ውሂባቸው የሚሄደው AIን ለማሠልጠን ፈጽሞ ለማይጠቀሙበት አንጎሎች ብቻ ነው። አንዱን ይምረጡ፣ ወይም አንድ ያክሉ።",
   "connections.address": "የአገልግሎቱ አድራሻ",
   "connections.keyHint": "አገልግሎቱ ቁልፍ ከሰጠዎት ብቻ። ያለበለዚያ እንዲገቡ ይጠየቃሉ።",

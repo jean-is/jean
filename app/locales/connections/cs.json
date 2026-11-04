@@ -11,6 +11,8 @@
   "api.search_files": "Hledat soubory",
   "api.read_file": "Přečíst soubor",
   "api.create_document": "Vytvořit dokument",
+  "api.read_document": "Přečíst rozvržení dokumentu",
+  "api.edit_document": "Změnit dokument",
   "connections.untrained": "Tento úkol použil služby Google, jejichž data jdou jen mozkům, které je nikdy nepoužívají k trénování AI. Vyberte jeden, nebo ho přidejte.",
   "connections.address": "Adresa služby",
   "connections.keyHint": "Jen pokud vám služba dala klíč. Jinak budete požádáni o přihlášení.",

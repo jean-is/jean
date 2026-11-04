@@ -77,12 +77,12 @@ test('Google Calendar connects through the gateway with its own scopes: an event
   expect(google.api.every(({ url }) => url.pathname.startsWith('/calendar/v3/'))).toBe(true)
 })
 
-test('Google Drive connects through the gateway with its own scopes: a document made from Markdown, found by its words, then read back in Markdown', async ({ page, baseURL }) => {
+test('Google Drive connects through the gateway with its own scopes: a document made from Markdown, found by its words, read back in Markdown, then changed by Docs’ own requests', async ({ page, baseURL }) => {
   const google = await fakeGoogle(page, { jean: String(baseURL) })
   await withPolicy(page, policy())
   await start(page)
-  await connectTile(page, 'Google Drive', 3)
-  expect(scopes(google.authorized[0])).toEqual([`${AUTH}drive.readonly`, `${AUTH}drive.file`, 'openid', 'email'])
+  await connectTile(page, 'Google Drive', 5)
+  expect(scopes(google.authorized[0])).toEqual([`${AUTH}drive.readonly`, `${AUTH}drive.file`, `${AUTH}documents`, 'openid', 'email'])
   await closeSettings(page)
   const content = 'Two days in Lyon, from 12 November.\n\n## Who comes\n\n- The board.'
   await expect(await callTool(page, 'google_drive_create_document', { name: 'Offsite plan', content }, 'Google Drive: Make a document')).toContainText('Offsite plan')
@@ -90,6 +90,15 @@ test('Google Drive connects through the gateway with its own scopes: a document 
   await expect(await callTool(page, 'google_drive_search_files', { query: 'Lyon' }, 'Google Drive: Search files')).toContainText('Offsite plan')
   await expect(await callTool(page, 'google_drive_read_file', { id: google.files[0].id }, 'Google Drive: Read a file')).toContainText('Two days in Lyon, from 12 November.')
   expect(google.api.find(({ url }) => url.pathname.endsWith('/export'))?.url.searchParams.get('mimeType')).toBe('text/markdown')
+  // Its parts placed as Docs' requests name them, then its words and its headings' font changed, after asking (D694).
+  const { id } = google.files[0]
+  await expect(await callTool(page, 'google_drive_read_document', { id }, 'Google Drive: Read a document’s layout')).toContainText(`id: ${id}`)
+  const requests = [{ replaceAllText: { containsText: { text: 'Lyon', matchCase: true }, replaceText: 'Annecy' } },
+    { updateNamedStyle: { namedStyle: { namedStyleType: 'HEADING_2', textStyle: { weightedFontFamily: { fontFamily: 'Times New Roman' } } }, fields: 'textStyle.weightedFontFamily' } }]
+  await expect(await callTool(page, 'google_drive_edit_document', { id, requests }, 'Google Drive: Change a document')).toContainText('Offsite plan')
+  expect(google.edits).toEqual(requests)
+  expect(google.api.filter(({ url }) => url.hostname === 'docs.googleapis.com').map(({ method, url }) => `${method} ${url.pathname}`)).toEqual([`GET /v1/documents/${id}`, `POST /v1/documents/${id}:batchUpdate`])
+  await expect(await callTool(page, 'google_drive_read_file', { id }, 'Google Drive: Read a file')).toContainText('Two days in Annecy, from 12 November.')
 })
 
 test('Google Workspace signs in once for its eight servers, through the gateway, which carries each server’s session; their tools run there, never from the page', async ({ page, baseURL }) => {

@@ -11,6 +11,8 @@
   "api.search_files": "Hľadať súbory",
   "api.read_file": "Prečítať súbor",
   "api.create_document": "Vytvoriť dokument",
+  "api.read_document": "Prečítať rozloženie dokumentu",
+  "api.edit_document": "Zmeniť dokument",
   "connections.untrained": "Táto úloha použila služby Google, ktorých dáta idú len mozgom, ktoré ich nikdy nepoužívajú na trénovanie AI. Vyberte jeden, alebo ho pridajte.",
   "connections.address": "Adresa služby",
   "connections.keyHint": "Len ak vám služba dala kľúč. Inak budete požiadaní o prihlásenie.",

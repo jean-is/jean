@@ -11,6 +11,8 @@
   "api.search_files": "搜索文件",
   "api.read_file": "读取文件",
   "api.create_document": "创建文档",
+  "api.read_document": "读取文档结构",
+  "api.edit_document": "更改文档",
   "connections.untrained": "此任务使用了 Google 服务，其数据只会交给从不用它来训练 AI 的大脑。请选择一个，或添加一个。",
   "connections.address": "服务地址",
   "connections.keyHint": "仅当服务给了你密钥时填写。否则会请你登录。",

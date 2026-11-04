@@ -11,6 +11,8 @@
   "api.search_files": "Klask restroù",
   "api.read_file": "Lenn ur restr",
   "api.create_document": "Ober un teul",
+  "api.read_document": "Lenn aozadur un teul",
+  "api.edit_document": "Kemmañ un teul",
   "connections.untrained": "Implijet en deus an drevell-mañ servijoù Google, ha ne ya o roadennoù nemet d’an empennoù na implijont biken anezho evit stummañ ur speredegezh artifisiel. Dibabit unan, pe ouzhpennit unan.",
   "connections.address": "Chomlec’h ar servij",
   "connections.keyHint": "Nemet ma ’z eus bet roet un alc’hwez deoc’h gant ar servij. Anez e vo goulennet ouzhoc’h kevreañ.",

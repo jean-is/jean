@@ -11,6 +11,8 @@
   "api.search_files": "חיפוש קבצים",
   "api.read_file": "קריאת קובץ",
   "api.create_document": "יצירת מסמך",
+  "api.read_document": "קריאת מבנה מסמך",
+  "api.edit_document": "שינוי מסמך",
   "connections.untrained": "המשימה הזו השתמשה בשירותי Google, והנתונים שלהם עוברים רק למוחות שלעולם לא משתמשים בהם כדי לאמן בינה מלאכותית. בחרו אחד או הוסיפו אחד.",
   "connections.address": "כתובת השירות",
   "connections.keyHint": "רק אם השירות נתן מפתח. אחרת תופיע בקשה להתחבר.",

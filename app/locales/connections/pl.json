@@ -11,6 +11,8 @@
   "api.search_files": "Szukaj plików",
   "api.read_file": "Przeczytaj plik",
   "api.create_document": "Utwórz dokument",
+  "api.read_document": "Przeczytaj układ dokumentu",
+  "api.edit_document": "Zmień dokument",
   "connections.untrained": "To zadanie korzystało z usług Google, których dane trafiają tylko do mózgów, które nigdy nie używają ich do trenowania AI. Wybierz jeden albo dodaj nowy.",
   "connections.address": "Adres usługi",
   "connections.keyHint": "Tylko jeśli usługa dała ci klucz. W przeciwnym razie pojawi się prośba o zalogowanie.",

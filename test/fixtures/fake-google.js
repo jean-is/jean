@@ -1,7 +1,7 @@
 // Google's side of an organisation on Google Workspace that runs Jean (D344, D349, D440), at Google's
 // own addresses: its sign-in, which takes only the web app the organisation's gateway holds, with its
-// secret, and gives a refresh token only to an offline sign-in; Gmail's, Calendar's and Drive's APIs,
-// which answer browsers, each opened by its own scopes; Workspace's MCP servers, one sign-in for all
+// secret, and gives a refresh token only to an offline sign-in; Gmail's, Calendar's, Drive's and Docs'
+// APIs, which answer browsers, each opened by its own scopes; Workspace's MCP servers, one sign-in for all
 // eight, which answer no browser; the AI gateway, on the organisation's network; and the organisation's
 // gateway (D191, relay.js). All are the page's routes: Jean reaches them over HTTPS, as it would at work.
 // The servers' tools are made up: Google's own list theirs only to a Workspace account in its preview.
@@ -51,6 +51,8 @@ export const SERVERS = /** @type {Record<string, { scope: string, tool: string, 
 
 /** The scope Google wants for a request to one of its APIs, by its address: one of these will do. @param {string} method @param {URL} url @returns {string[]} */
 const wanted = (method, { hostname, pathname }) => (hostname === 'gmail.googleapis.com' ? ['gmail.modify']
+  // Docs' own scope changes any document the user may, as one someone else made: Drive's only those Jean made.
+  : hostname === 'docs.googleapis.com' ? (method === 'GET' ? ['documents', 'drive.readonly'] : ['documents'])
   : pathname.startsWith('/calendar/v3/users/me/calendarList') ? ['calendar.calendarlist.readonly'] : pathname.startsWith('/calendar/v3/') ? ['calendar.events']
     : method === 'GET' ? ['drive.readonly', 'drive.file'] : ['drive.file'])
 
@@ -58,7 +60,8 @@ const wanted = (method, { hostname, pathname }) => (hostname === 'gmail.googleap
  * Google, for one page. Its sign-in signs in at once, a refresh token only for `access_type=offline`;
  * its token endpoint takes the organisation's web app with its secret, from wherever it is asked.
  * Each token opens what its scopes cover, ending after `lifetime` seconds. Gmail has an inbox;
- * Calendar keeps the events added, Drive the documents made, found and exported in Markdown again.
+ * Calendar keeps the events added, Drive the documents made, found and exported in Markdown again,
+ * which Docs reads a paragraph a block, and changes, its words replaced.
  * Each Workspace server says where to sign in, starts a session (2025-06-18) and lists its tool to
  * a token with its scope; one asked from the page is refused, as Google's refuse browsers.
  * @param {import('@playwright/test').Page} page @param {{ jean: string, lifetime?: number }} options
@@ -74,6 +77,7 @@ export async function fakeGoogle(page, { jean, lifetime = 3599 }) {
     /** What the AI gateway was asked, each request's body. @type {string[]} */ ai: [],
     /** Calendar's events and Drive's files, as Google keeps them. @type {any[]} */ events: [],
     /** @type {any[]} */ files: [],
+    /** Each request Docs was sent to change a document. @type {any[]} */ edits: [],
   }
   /** @typedef {{ scopes: string[], challenge?: string, redirect?: string, offline?: boolean }} Grant */
   const [codes, refreshes, issued] = [/** @type {Map<string, Grant>} */ (new Map()), /** @type {Map<string, Grant>} */ (new Map()), /** @type {Map<string, Grant>} */ (new Map())]
@@ -123,6 +127,23 @@ export async function fakeGoogle(page, { jean, lifetime = 3599 }) {
   const api = (method, { hostname, pathname, searchParams }, body, type) => {
     const gmail = /^\/gmail\/v1\/users\/me\/messages\/(\w+)$/.exec(pathname)
     const file = /^\/drive\/v3\/files\/([\w-]+)(\/export)?$/.exec(pathname)
+    const doc = /^\/v1\/documents\/([\w-]+)(:batchUpdate)?$/.exec(pathname)
+    if (hostname === 'docs.googleapis.com') {
+      const kept = state.files.find(({ id }) => id === doc?.[1])
+      if (!kept) return { status: 404, json: { error: { code: 404, message: 'Requested entity was not found.', status: 'NOT_FOUND' } } }
+      if (doc?.[2]) {
+        state.edits.push(...body.requests)
+        for (const { replaceAllText: replace } of body.requests) if (replace) kept.content = kept.content.replaceAll(replace.containsText.text, replace.replaceText)
+        return { json: { documentId: kept.id, replies: body.requests.map(() => ({})) } }
+      }
+      // A paragraph a block of its Markdown, after the section break that holds its index 0.
+      let at = 1
+      const content = kept.content.split('\n\n').map((/** @type {string} */ block) => {
+        const text = `${block.replace(/^#+ /, '')}\n`
+        return { startIndex: at, endIndex: (at += text.length), paragraph: { paragraphStyle: { namedStyleType: block.startsWith('## ') ? 'HEADING_2' : 'NORMAL_TEXT' }, elements: [{ textRun: { content: text } }] } }
+      })
+      return { json: { documentId: kept.id, title: kept.name, namedStyles: { styles: [{ namedStyleType: 'NORMAL_TEXT', textStyle: { weightedFontFamily: { fontFamily: 'Arial' }, fontSize: { magnitude: 11, unit: 'PT' } } }] }, body: { content: [{ endIndex: 1, sectionBreak: {} }, ...content] } } }
+    }
     if (hostname === 'gmail.googleapis.com') {
       if (pathname === '/gmail/v1/users/me/profile') return { json: { emailAddress: 'ana@acme.example', messagesTotal: INBOX.length } }
       if (pathname === '/gmail/v1/users/me/messages') return { json: { messages: INBOX.map(({ id }) => ({ id, threadId: `t${id}` })), resultSizeEstimate: INBOX.length } }
@@ -183,7 +204,7 @@ export async function fakeGoogle(page, { jean, lifetime = 3599 }) {
   }
 
   await page.route((url) => [ACCOUNTS, 'https://oauth2.googleapis.com'].includes(url.origin), async (route) => answer(route, await accounts(await received(route.request()), 'page')))
-  await page.route((url) => ['gmail.googleapis.com', 'www.googleapis.com'].includes(url.hostname), async (route) => {
+  await page.route((url) => ['gmail.googleapis.com', 'www.googleapis.com', 'docs.googleapis.com'].includes(url.hostname), async (route) => {
     const request = route.request()
     if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: CORS })
     const url = new URL(request.url())

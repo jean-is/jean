@@ -11,6 +11,8 @@
   "api.search_files": "Search files",
   "api.read_file": "Read a file",
   "api.create_document": "Make a document",
+  "api.read_document": "Read a document’s layout",
+  "api.edit_document": "Change a document",
   "connections.untrained": "This task used Google services, whose data goes only to brains that never use it to train AI. Pick one, or add one.",
   "connections.address": "Address of the service",
   "connections.keyHint": "Only if the service gave you a key. Otherwise you’ll be asked to sign in.",

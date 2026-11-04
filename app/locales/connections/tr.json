@@ -11,6 +11,8 @@
   "api.search_files": "Dosya ara",
   "api.read_file": "Dosya oku",
   "api.create_document": "Belge oluştur",
+  "api.read_document": "Belgenin düzenini oku",
+  "api.edit_document": "Belgeyi değiştir",
   "connections.untrained": "Bu görev Google hizmetlerini kullandı; bunların verileri yalnızca onları asla yapay zekâ eğitmek için kullanmayan beyinlere gider. Birini seç ya da bir tane ekle.",
   "connections.address": "Hizmetin adresi",
   "connections.keyHint": "Yalnızca hizmet sana bir anahtar verdiyse. Yoksa oturum açman istenir.",

@@ -11,6 +11,8 @@
   "api.search_files": "Cari file",
   "api.read_file": "Baca file",
   "api.create_document": "Buat dokumen",
+  "api.read_document": "Baca tata letak dokumen",
+  "api.edit_document": "Ubah dokumen",
   "connections.untrained": "Tugas ini memakai layanan Google, yang datanya hanya dikirim ke otak yang tidak pernah memakainya untuk melatih AI. Pilih satu, atau tambahkan satu.",
   "connections.address": "Alamat layanan",
   "connections.keyHint": "Hanya jika layanan memberi Anda kunci. Jika tidak, Anda akan diminta masuk.",

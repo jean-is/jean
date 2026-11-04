@@ -11,6 +11,8 @@
   "api.search_files": "Hae tiedostoja",
   "api.read_file": "Lue tiedosto",
   "api.create_document": "Tee asiakirja",
+  "api.read_document": "Lue asiakirjan rakenne",
+  "api.edit_document": "Muuta asiakirjaa",
   "connections.untrained": "Tämä tehtävä käytti Googlen palveluja, joiden tiedot menevät vain aivoille, jotka eivät koskaan käytä niitä tekoälyn kouluttamiseen. Valitse tai lisää sellaiset.",
   "connections.address": "Palvelun osoite",
   "connections.keyHint": "Vain jos palvelu antoi sinulle avaimen. Muuten sinua pyydetään kirjautumaan.",

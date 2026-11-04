@@ -11,6 +11,8 @@
   "api.search_files": "Søge efter filer",
   "api.read_file": "Læse en fil",
   "api.create_document": "Lave et dokument",
+  "api.read_document": "Læse et dokuments layout",
+  "api.edit_document": "Ændre et dokument",
   "connections.untrained": "Denne opgave brugte Googles tjenester, hvis data kun går til hjerner, der aldrig bruger dem til at træne AI. Vælg én, eller tilføj én.",
   "connections.address": "Tjenestens adresse",
   "connections.keyHint": "Kun hvis tjenesten har givet dig en nøgle. Ellers bliver du bedt om at logge ind.",
