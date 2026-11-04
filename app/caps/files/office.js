@@ -1,14 +1,15 @@
 // Word, Excel and PowerPoint files as Office draws them (D183), in a file's pane and the browser: by
 // @silurus/ooxml, its parsers WebAssembly, its viewers drawing on a canvas, so nothing of the file
 // becomes markup, in a frame of a file pane's kind (an opaque origin with no network), in a page made
-// here: modules as data: addresses under an import map, the parser and the file as data too.
+// here: its modules as text the page makes blob: addresses of, under an import map it writes, the
+// parser and the file as data.
 import { encode } from '../../ui/seal.js'
 import { t } from '../../core/i18n.js'
 
 const BASE = new URL('../../vendor/ooxml/', import.meta.url)
 const VIEWERS = /** @type {Record<string, string>} */ ({ docx: 'DocxScrollViewer', pptx: 'PptxScrollViewer', xlsx: 'XlsxViewer' })
-/** A file of vendor/ooxml as a data: address. @param {string} path @param {string} [type] */
-const data = async (path, type = 'text/javascript') => `data:${type};base64,${encode(new Uint8Array(await (await fetch(new URL(path, BASE))).arrayBuffer()))}`
+/** A file of vendor/ooxml. @param {string} path */
+const read = (path) => fetch(new URL(path, BASE))
 let graph = /** @type {Promise<Record<string, string[]>> | undefined} */ (undefined)
 
 /** Where a workbook was being looked at: its sheet, how far it was scrolled, the cell chosen. @typedef {{ sheet: number, x: number, y: number, ref: string }} Place */
@@ -73,16 +74,18 @@ addEventListener('message', ({ source, data }) => { if (source === parent && dat
  */
 export async function officePage(ext, bytes, name, cells, words) {
   graph ??= fetch(new URL('graph.json', BASE)).then((response) => response.json())
-  const imports = Object.fromEntries(await Promise.all((await graph)[ext].map(async (file) => [`ooxml/${file}`, await data(file)])))
+  // Its modules as blob: addresses the page makes, never data: ones: Chromium took 2.6 s over the 1.6 MB data: address of a Word
+  // document's largest module, on a fast computer, and fourteen on a busy one, and Jean's page, whose thread the frame shares, froze with it.
+  const modules = Object.fromEntries(await Promise.all((await graph)[ext].map(async (file) => [`ooxml/${file}`, await (await read(file)).text()])))
   const failed = JSON.stringify(t('files.failed', { name })).replace(/</g, '\\u003c')
   const at = JSON.stringify(cells?.at ?? null).replace(/</g, '\\u003c')
   const find = words && JSON.stringify(words.replace(/^#+ /gm, '').split('\n').map((line) => line.trim()).sort((a, b) => b.length - a.length)[0]).replace(/</g, '\\u003c')
   return /* html */ `<meta charset="utf-8"><style>html, body { block-size: 100%; margin: 0; background: #ececef; font: 0.9rem system-ui, sans-serif; } main { block-size: 100vh; } p { margin: 2rem; text-align: center; }</style>
-<script type="importmap">${JSON.stringify({ imports })}</script><main></main>
+<script>document.head.append(Object.assign(document.createElement('script'), { type: 'importmap', textContent: JSON.stringify({ imports: Object.fromEntries(Object.entries(${JSON.stringify(modules).replace(/</g, '\\u003c')}).map(([name, text]) => [name, URL.createObjectURL(new Blob([text], { type: 'text/javascript' }))])) }) }))</script><main></main>
 <script type="module">
 import { ${VIEWERS[ext]} as Viewer } from 'ooxml/${ext}.mjs'
 const main = document.querySelector('main')
-const viewer = new Viewer(main, { wasmUrl: '${await data(`${ext}_parser_bg.wasm`, 'application/wasm')}', enableTextSelection: true, background: '#ececef' })
+const viewer = new Viewer(main, { wasmUrl: 'data:application/wasm;base64,${encode(new Uint8Array(await (await read(`${ext}_parser_bg.wasm`)).arrayBuffer()))}', enableTextSelection: true, background: '#ececef' })
 viewer.load(Uint8Array.from(atob('${encode(bytes)}'), (char) => char.charCodeAt(0)).buffer)${find ? `
   .then(() => viewer.findText(${find}).then(() => viewer.findNext()).catch(() => {}))` : ''}${ext === 'xlsx' && cells ? `
   .then(async () => {

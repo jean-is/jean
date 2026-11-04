@@ -97,24 +97,32 @@ test('slides and sheets', () => {
   assert.deepEqual(sheetRows(sheet, ['Name', 'Total']), ['Name\t\tTotal', 'Inline\t42.5\tTRUE\tName'])
 })
 
-test('an Office file is drawn in a page of its own: its viewer’s modules as data under an import map, its parser and the file as data, nothing from anywhere (D183)',
+test('an Office file is drawn in a page of its own: its viewer’s modules as text it makes blob: addresses of under an import map, its parser and the file as data, nothing from anywhere (D183)',
   { skip: !existsSync(new URL('../app/vendor/ooxml/graph.json', import.meta.url)) && 'npm run vendor makes vendor/ooxml' }, async (t) => {
     t.mock.method(globalThis, 'fetch', async (/** @type {URL} */ url) => new Response(await readFile(url)))
     const bytes = await zipOf({ '[Content_Types].xml': '<Types/>' })
-    const page = await officePage('pptx', bytes, 'Plan <1>.pptx')
-    const imports = JSON.parse(/<script type="importmap">(.*?)<\/script>/.exec(page)?.[1] ?? '{}').imports
-    assert.ok(imports['ooxml/pptx.mjs'] && Object.values(imports).every((url) => url.startsWith('data:text/javascript;base64,')))
-    assert.match(page, /import \{ PptxScrollViewer as Viewer \} from 'ooxml\/pptx\.mjs'/)
-    assert.match(page, /wasmUrl: 'data:application\/wasm;base64,/)
-    assert.ok(page.includes(`atob('${Buffer.from(bytes).toString('base64')}')`), 'the file, as data')
-    assert.ok(!/https?:|\/\/[a-z]/.test(page.replace(/data:[^'"]+/g, '')), 'nothing from anywhere')
+    // The page's modules, and the rest of it.
+    const split = (/** @type {string} */ page) => {
+      const start = page.indexOf('Object.entries(') + 'Object.entries('.length, end = page.indexOf(').map(([name, text]) => [name, URL.createObjectURL(')
+      return { text: page.slice(start, end), rest: page.slice(0, start) + page.slice(end) }
+    }
+    const page = await officePage('pptx', bytes, 'Plan <1>.pptx'), { text, rest } = split(page)
+    // Never a module's data: address, which Chromium takes seconds over: the page makes blob: ones of their text, before any module loads.
+    assert.equal(JSON.parse(text)['ooxml/pptx.mjs'], await readFile(new URL('../app/vendor/ooxml/pptx.mjs', import.meta.url), 'utf8'))
+    assert.ok(!text.includes('<'), 'no tag in their text')
+    assert.ok(rest.indexOf("type: 'importmap'") < rest.indexOf('<script type="module">'))
+    assert.ok(!rest.includes('data:text/javascript'))
+    assert.match(rest, /import \{ PptxScrollViewer as Viewer \} from 'ooxml\/pptx\.mjs'/)
+    assert.match(rest, /wasmUrl: 'data:application\/wasm;base64,/)
+    assert.ok(rest.includes(`atob('${Buffer.from(bytes).toString('base64')}')`), 'the file, as data')
+    assert.ok(!/https?:|\/\/[a-z]/.test(rest.replace(/data:[^'"]+/g, '')), 'nothing from anywhere')
     assert.ok(!page.includes('<1>'), 'its name only as text')
     // A workbook in the preview has cells to change, and shows where it was looked at (D229); elsewhere it doesn't.
     const book = await officePage('xlsx', bytes, 'Budget.xlsx', { at: { sheet: 1, x: 0, y: 120, ref: 'B3</script>' } })
-    assert.match(book, /parent\.postMessage\(\{ cell: /)
+    assert.match(split(book).rest, /parent\.postMessage\(\{ cell: /)
     assert.ok(book.includes('const at = {"sheet":1,"x":0,"y":120,"ref":"B3\\u003c/script>"}'), 'where it was, as data')
-    assert.ok(!(await officePage('xlsx', bytes, 'Budget.xlsx')).includes('postMessage'))
-    assert.ok(!(await officePage('docx', bytes, 'Plan.docx', {})).includes('postMessage'))
+    assert.ok(!split(await officePage('xlsx', bytes, 'Budget.xlsx')).rest.includes('postMessage'))
+    assert.ok(!split(await officePage('docx', bytes, 'Plan.docx', {})).rest.includes('postMessage'))
   })
 
 test('pageText reads right-to-left lines in order, joins wrapped Japanese and codes cut at a hyphen', () => {

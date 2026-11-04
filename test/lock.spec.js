@@ -33,6 +33,8 @@ async function confirmCode(part) {
   const code = String(await part.locator('.lock-code').textContent())
   await part.getByLabel('Type its last four characters').fill(code.replace(/-/g, '').slice(-4))
   await part.getByRole('button', { name: 'Set a lock' }).click()
+  // Said once vault.json holds the lock and this device's key is forgotten: a reload before then finds no lock.
+  await expect(part).toContainText(/Locked with your pass(word|key)\./)
   return code
 }
 
