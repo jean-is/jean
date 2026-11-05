@@ -23,8 +23,9 @@ import { PAGE_SANDBOX, pagePolicy } from '../../ui/csp.js'
 import { encode } from '../../ui/seal.js'
 import { unlock, loaded } from '../../ui/caps.js'
 import { declared, PAGES } from '../../ui/markdown.js'
-import { schema, parse, titled, serialize, sliceMarkdown, safeHref, words, brought } from './markdown.js'
+import { schema, parse, parseDoc, titled, serialize, sliceMarkdown, safeHref, words, brought, withContents } from './markdown.js'
 import { el, RTL, free, langOf } from './ui.js'
+import { STARTS } from '../interactive/starts.js'
 import { fromTree } from './clipboard.js'
 import { suggestions, suggest, accept, reject, pending, proposal, suggestionKey } from './suggest.js'
 import { merge3 } from '../../ui/merge.js'
@@ -32,7 +33,7 @@ import { slashMenu, slashKey } from './slash.js'
 import { bookmarks, askKey } from './bookmark.js'
 import { bubble } from './bubble.js'
 import { blocks } from './blocks.js'
-import { drawnViews, inPlace, forms } from './drawn.js'
+import { drawnViews, inPlace, forms, contents, contentsView } from './drawn.js'
 import '../../ui/shown.js'
 
 /** @typedef {import('prosemirror-model').Node} PMNode */
@@ -216,8 +217,11 @@ const insertBlocks = (make, into = 0) => (state, dispatch) => {
   }
   return true
 }
-/** A block an answer draws, of this kind, from this start. @param {string} kind @param {string} text */
-const widget = (kind, text) => ({ kind, run: insertBlocks(() => [N.code_block.create({ lang: kind }, text ? schema.text(text) : null), N.paragraph.create()], text ? 1 : 0) })
+/**
+ * A block an answer draws, from its Markdown, of the kind its fence names (a list's, `list`): the caret in it while it is empty, else
+ * on the line after it. @param {string} markdown @param {PMNode} [block]
+ */
+const widget = (markdown, block = /** @type {PMNode} */ (parseDoc(markdown).firstChild)) => ({ kind: String(block.attrs.lang ?? 'list'), run: insertBlocks(() => [block, N.paragraph.create()], block.content.size ? 1 : 0) })
 /** A callout: a quote that starts with 💡, drawn as a note, the caret after it. @type {Command} */
 const callout = (state, dispatch) => insertBlocks(() => [N.blockquote.create(null, N.paragraph.create(null, schema.text('💡 '))), N.paragraph.create()])(state, dispatch && ((tr) => dispatch(tr.setSelection(TextSelection.create(tr.doc, tr.selection.from + 3)))))
 /** A web bookmark: a line that asks for an address (./bookmark.js). @type {Command} */
@@ -257,9 +261,7 @@ const tableView = (state, _dispatch, view) => {
 const ITEMS = [
   // Text on any line, which "/" offers first.
   { key: 'text', glyph: '¶', words: 'text paragraph plain', run: /** @type {Command} */ ((state, dispatch) => (state.selection.empty && state.selection.$from.parent.type === N.paragraph) || setBlockType(N.paragraph)(state, dispatch)) },
-  { key: 'heading1', glyph: 'H1', words: 'heading title h1 #', run: setBlockType(N.heading, { level: 1 }) },
-  { key: 'heading2', glyph: 'H2', words: 'heading subtitle h2 ##', run: setBlockType(N.heading, { level: 2 }) },
-  { key: 'heading3', glyph: 'H3', words: 'heading h3 ###', run: setBlockType(N.heading, { level: 3 }) },
+  ...['title', 'subtitle', ''].map((more, i) => ({ key: `heading${i + 1}`, glyph: `H${i + 1}`, words: `heading ${more} h${i + 1} ${'#'.repeat(i + 1)}`, run: setBlockType(N.heading, { level: i + 1 }) })),
   { key: 'bullets', glyph: '•', words: 'bulleted list bullets unordered ul -', run: wrapInList(N.bullet_list) },
   { key: 'numbers', glyph: '1.', words: 'numbered list ordered ol 1.', run: wrapInList(N.ordered_list) },
   { key: 'tasks', glyph: '☐', words: 'to-do todo task checklist checkbox [ ]', run: taskList },
@@ -269,24 +271,21 @@ const ITEMS = [
   { key: 'table', glyph: '▦', words: 'table grid columns', run: insertBlocks(() => [N.table.create(null, [N.table_row.create(null, [N.table_header.create(), N.table_header.create()]), N.table_row.create(null, [N.table_cell.create(), N.table_cell.create()])]), N.paragraph.create()]) },
   { key: 'tableView', glyph: '⊞', words: 'table view database data board spreadsheet', kind: 'table', run: tableView },
   { key: 'divider', glyph: '—', words: 'divider separator line rule hr ---', run: insertBlocks(() => [N.horizontal_rule.create(), N.paragraph.create()]) },
-  { key: 'columns2', glyph: 'Ⅱ', words: 'columns two 2 side by side layout', run: columns(2) },
-  { key: 'columns3', glyph: 'Ⅲ', words: 'columns three 3 side by side layout', run: columns(3) },
-  { key: 'columns4', glyph: 'Ⅳ', words: 'columns four 4 side by side layout', run: columns(4) },
+  { key: 'toc', glyph: '§', words: 'table of contents toc outline summary index', run: insertBlocks(() => [N.toc.create(), N.paragraph.create()], 1) },
+  ...['two', 'three', 'four'].map((n, i) => ({ key: `columns${i + 2}`, glyph: 'ⅡⅢⅣ'[i], words: `columns ${n} ${i + 2} side by side layout`, run: columns(i + 2) })),
   { key: 'bookmark', glyph: '↗', words: 'web bookmark link url address site embed', run: bookmark },
-  // What an answer draws, each with a start drawn at once, the caret on the line after it (a page's in its text): a formula, a page, a
-  // diagram and a map always, a chart, a score and slides while a skill of the room writes them (widgets()).
-  { key: 'formula', glyph: '∑', words: 'formula equation math latex', ...widget('math', 'a^2 + b^2 = c^2') },
-  { key: 'chart', glyph: '▥', words: 'chart graph plot bar line pie echarts', ...widget('echarts', '{"xAxis":{"type":"category","data":["A","B","C"]},"yAxis":{"type":"value"},"series":[{"type":"bar","data":[3,5,2]}]}') },
-  { key: 'score', glyph: '♪', words: 'music score tune notes sheet abc', ...widget('abc', 'X:1\nM:4/4\nL:1/4\nK:C\nC D E F | G A B c |') },
-  { key: 'slides', glyph: '▭', words: 'slides deck presentation slidev', ...widget('deck', '# 1\n\n---\n\n## 2') },
-  { key: 'page', glyph: '</>', words: 'page html app web interactive', ...widget('html', '') },
-  { key: 'diagram', glyph: '◇', words: 'diagram flowchart graph mermaid', ...widget('mermaid', 'graph LR\n  A --> B') },
-  { key: 'map', glyph: '⌖', words: 'map places geojson', ...widget('geojson', '{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[2.35,48.86]},"properties":{}}]}') },
+  // What an answer draws, each with a start drawn at once, the caret on the line after it (a page's in its text): a formula and what
+  // visual answers draw (a page, its charts, diagrams, a map, a timeline, key figures) always, a score and slides while a skill of the
+  // room writes them (widgets()). An ECharts chart has none: the page's charts are the same ones, in words people can change.
+  { key: 'formula', glyph: '∑', words: 'formula equation math latex', ...widget('```math\na^2 + b^2 = c^2\n```') },
+  ...STARTS.map(({ markdown, ...item }) => ({ ...item, ...widget(markdown) })),
+  { key: 'score', glyph: '♪', words: 'music score tune notes sheet abc', ...widget('```abc\nX:1\nM:4/4\nL:1/4\nK:C\nC D E F | G A B c |\n```') },
+  { key: 'slides', glyph: '▭', words: 'slides deck presentation slidev', ...widget('```deck\n# 1\n\n---\n\n## 2\n```') },
 ]
 /** What "/" offers now, as the room's skills change: the blocks an answer draws only as it can (`kind`), and a table view once Tables is found. */
-const widgets = () => ITEMS.filter(({ kind }) => !kind || kind === 'math' || PAGES.includes(kind) || declared.value.has(kind) || (kind === 'table' && loaded.value.has('tables')))
+const widgets = () => ITEMS.filter(({ kind }) => !kind || ['math', 'list', ...PAGES].includes(kind) || declared.value.has(kind) || (kind === 'table' && loaded.value.has('tables')))
 /** What a block can be turned into from its grip's menu, which puts the rest below it (blocks.js). */
-const TURNS = ITEMS.filter((item) => !('kind' in item) && !/^(table|divider|callout|bookmark|columns\d)$/.test(item.key))
+const TURNS = ITEMS.filter((item) => !('kind' in item) && !/^(table|divider|toc|callout|bookmark|columns\d)$/.test(item.key))
 
 // What the bubble over a selection puts on (bubble.js).
 const FORMATS = [
@@ -456,6 +455,7 @@ export function create(box, { name, path, markdown: text, pictures, write, keep,
     bubble({ formats: FORMATS, link: M.link, href: linkHref, label: t, mac: MAC, tabbable: (state) => !itemDepth(state.selection) && !isInTable(state), wrong: (said) => notify(said, { alert: true }) }),
     blocks({ label: t, announce, mac: MAC, kinds: TURNS, adds: () => widgets().filter((item) => !TURNS.includes(item)) }),
     inPlace,
+    contents,
     RULES,
     keymap({ ...KEYS, 'Mod-s': () => (flush(), true), 'Mod-z': (state, dispatch) => back() || undo(state, dispatch) }),
     keymap(baseKeymap),
@@ -475,7 +475,7 @@ export function create(box, { name, path, markdown: text, pictures, write, keep,
   const attributes = (_state) => ({ id: me, class: 'doc prose', role: 'textbox', 'aria-multiline': 'true', 'aria-label': t('document', { file: name }), 'aria-description': t('leave'), spellcheck: 'true' })
 
   // A table scrolls sideways in a box of its own, so a wide one never widens the pane.
-  const views = () => drawnViews((node) => new TableView(node, 64))
+  const views = () => ({ ...drawnViews((node) => new TableView(node, 64)), toc: contentsView(t) })
   words.done = t('done')
   const view = new EditorView(mount, {
     state: EditorState.create({ doc: read.doc, plugins }),
@@ -541,7 +541,8 @@ export function create(box, { name, path, markdown: text, pictures, write, keep,
     timers[work.name] = setTimeout(work, ms)
   }
 
-  const markdown = () => serialize(view.state.doc, sources)
+  /** Its Markdown, each table of contents `listed` as its headings, for what draws none. */
+  const markdown = (listed = false) => serialize(listed ? withContents(view.state.doc) : view.state.doc, sources)
   // What the file holds as far as the editor knows, and its last writes, which never come back as changed elsewhere.
   let saved = text, wrote = /** @type {string[]} */ ([])
   function save() {

@@ -1002,7 +1002,7 @@ test.describe('the slash menu', () => {
     await page.keyboard.press('Enter')
     await page.keyboard.type('/')
     await expect(menu).toBeVisible()
-    await expect(menu.getByRole('option')).toHaveCount(20)
+    await expect(menu.getByRole('option')).toHaveCount(30)
     await expect(menu.getByRole('option', { name: 'Text' })).toHaveAttribute('aria-selected', 'true')
     await page.keyboard.type('hea')
     await expect(menu.getByRole('option')).toHaveCount(3)
@@ -1041,31 +1041,113 @@ test.describe('the slash menu', () => {
     expect(await doc.locator('[data-placeholder]:not(h1)').count()).toBe(0)
   })
 
-  test('it offers what an answer draws: a formula, a page, a diagram and a map, and a chart or a score once a skill of the room writes them', async ({ page }) => {
+  test('it offers what an answer draws: a formula and what visual answers draw, and a score once a skill of the room writes them, but no ECharts chart', async ({ page }) => {
     const { doc } = await start(page, { markdown: 'First.\n' })
     const menu = page.getByRole('listbox', { name: 'Turn into' })
     await caretAt(page, 'First.', 6)
     await page.keyboard.press('Enter')
     await page.keyboard.type('/')
-    for (const name of ['Formula', 'Page', 'Diagram', 'Map']) await expect(menu.getByRole('option', { name })).toBeVisible()
-    await expect(menu.getByRole('option', { name: 'Chart' })).toHaveCount(0)
+    for (const name of ['Formula', 'Page', 'Bar chart', 'Line chart', 'Area chart', 'Pie chart', 'Horizontal bar chart', 'Flowchart', 'Mind map', 'Sequence diagram', 'Map', 'Timeline', 'Key figures']) await expect(menu.getByRole('option', { name, exact: true })).toBeVisible()
+    await expect(menu.getByRole('option', { name: 'Chart', exact: true })).toHaveCount(0)
     await page.keyboard.press('Escape')
     await page.keyboard.press('Backspace')
-    // A skill that writes charts and scores: the menu offers them, each drawn at once, the caret on the line after it.
-    await page.evaluate(async () => { (await import('/ui/markdown.js')).declared.value = new Set(['echarts', 'abc']) })
-    await page.keyboard.type('/bar')
-    await expect(menu.getByRole('option')).toHaveCount(1)
-    await expect(menu.getByRole('option', { name: 'Chart' })).toBeVisible()
-    await page.keyboard.press('Enter')
-    await expect(doc.locator('.drawn-form app-chart')).toBeVisible()
-    await page.keyboard.type('After.')
-    expect(await markdownOf(page)).toMatch(/^First\.\n\n```echarts\n\{"xAxis".*\}\n```\n\nAfter\.\n$/s)
     expect(await problems(page)).toEqual([])
+    // A skill that writes scores: the menu offers one, drawn at once, the caret on the line after it. One that writes ECharts' charts adds
+    // nothing: the page's charts are the same ones.
+    await page.evaluate(async () => { (await import('/ui/markdown.js')).declared.value = new Set(['echarts', 'abc']) })
+    await page.keyboard.type('/')
+    await expect(menu.getByRole('option')).toHaveCount(31)
+    await expect(menu.getByRole('option', { name: 'Chart', exact: true })).toHaveCount(0)
     // (abcjs adds a style element of its own, which Jean's policy refuses, in an answer too: the score is drawn all the same.)
-    await page.keyboard.press('Enter')
-    await page.keyboard.type('/music')
+    await page.keyboard.type('music')
     await page.keyboard.press('Enter')
     await expect(doc.locator('.drawn-form app-score svg').first()).toBeVisible()
+    await page.keyboard.type('After.')
+    expect(await markdownOf(page)).toMatch(/^First\.\n\n```abc\nX:1\n[\s\S]*\n```\n\nAfter\.\n$/)
+  })
+
+  test('what visual answers draw, in any room: each drawn at once as an answer draws it, written as visual answers write it', async ({ page }) => {
+    const { doc } = await start(page, { markdown: 'First.\n' })
+    const menu = page.getByRole('listbox', { name: 'Turn into' })
+    await caretAt(page, 'First.', 6)
+    await page.keyboard.press('Enter')
+    /** @param {string} typed @param {string} name */
+    const add = async (typed, name) => {
+      await page.keyboard.type('/')
+      await page.keyboard.type(typed)
+      await expect(menu.getByRole('option', { name, exact: true })).toHaveAttribute('aria-selected', 'true')
+      await page.keyboard.press('Enter')
+    }
+    await add('bar', 'Bar chart')
+    // A page's chart, drawn by Charts, in one box: the page's, not one of its own inside it.
+    const chart = doc.locator('.drawn.is-drawn .drawn-form app-parts app-chart')
+    await expect(chart.locator(':is(canvas, svg)').first()).toBeVisible()
+    await expect(chart).toHaveCSS('border-top-width', '0px')
+    await add('mind', 'Mind map')
+    await expect(doc.locator('.drawn.is-drawn .drawn-form .diagram img')).toBeVisible()
+    await add('key', 'Key figures')
+    await expect(doc.locator('.drawn.is-drawn .drawn-form ul.figures li')).toHaveCount(3)
+    await add('time', 'Timeline')
+    await expect(doc.locator('.drawn.is-drawn .drawn-form ol.timeline li')).toHaveCount(3)
+    await page.keyboard.type('After.')
+    expect(await markdownOf(page)).toBe('First.\n\n```html\n<app-chart kind="bar">\nA | B | C | D\n1: 3, 5, 2, 6\n</app-chart>\n```\n\n```mermaid\nmindmap\n  root((A))\n    B\n    C\n    D\n```\n\n'
+      + '- **3** A\n- **85%** B\n- **12** C\n\n* **09:00** A\n* **10:30** B\n* **12:00** C\n\nAfter.\n')
+    // Each is added below a block from its menu, none is what a block is turned into.
+    await page.keyboard.press('Escape')
+    await page.keyboard.press('Shift+F10')
+    const blockMenu = page.getByRole('menu', { name: 'Block options' })
+    await expect(blockMenu.getByRole('group', { name: 'Add below' }).getByRole('menuitem', { name: 'Pie chart' })).toBeVisible()
+    await expect(blockMenu.getByRole('group', { name: 'Turn into' }).getByRole('menuitem', { name: /chart|map|Timeline|Key figures/i })).toHaveCount(0)
+    await page.keyboard.press('Escape')
+    expect(await problems(page)).toEqual([])
+  })
+
+  test('a table of contents: its headings as they are, each under the one above it, drawn again as they change; a click goes to one; `[TOC]` in the file, their list for Word, a copy or a share', async ({ page }) => {
+    const md = '# Trip\n\nIntro.\n\n## Before\n\nPack.\n\n### Papers\n\nPassport.\n\n## Back\n\nHome.\n'
+    const { doc } = await start(page, { markdown: md })
+    const menu = page.getByRole('listbox', { name: 'Turn into' })
+    await caretAt(page, 'Intro.', 6)
+    await page.keyboard.press('Enter')
+    await page.keyboard.type('/')
+    await page.keyboard.type('contents')
+    await expect(menu.getByRole('option')).toHaveText([/Table of contents$/])
+    await page.keyboard.press('Enter')
+    const toc = doc.getByRole('navigation', { name: 'Table of contents' })
+    await expect(toc.getByRole('button')).toHaveText(['Before', 'Papers', 'Back'])
+    await expect(toc.locator('ul ul').getByRole('button')).toHaveText(['Papers'])
+    // Its grip beside its first entry, not past its end, where a caret would be.
+    const first = /** @type {{ x: number, y: number, height: number }} */ (await toc.getByRole('button').first().boundingBox())
+    await page.mouse.move(first.x + 4, first.y + first.height / 2)
+    await expect(page.locator('.block-handle')).toBeVisible()
+    const grip = /** @type {{ y: number, height: number }} */ (await page.locator('.block-handle').boundingBox())
+    expect(Math.abs(grip.y + grip.height / 2 - (first.y + first.height / 2))).toBeLessThan(4)
+    expect(await markdownOf(page)).toBe(md.replace('Intro.\n', 'Intro.\n\n[TOC]\n'))
+    // A heading changed, or a line made one: drawn again at once.
+    await caretAt(page, 'Back', 4)
+    await page.keyboard.type(' home')
+    await caretAt(page, 'Pack.', 5)
+    await page.keyboard.press('Enter')
+    await page.keyboard.type('### Bags')
+    await expect(toc.getByRole('button')).toHaveText(['Before', 'Bags', 'Papers', 'Back home'])
+    // A click goes to the heading: the caret at its start, the document's keyboard.
+    await toc.getByRole('button', { name: 'Papers' }).click()
+    expect(await page.evaluate(() => { const { $from } = /** @type {any} */ (globalThis).editor.view.state.selection; return [$from.parent.textContent, $from.parentOffset] })).toEqual(['Papers', 0])
+    await expect(doc).toBeFocused()
+    // Where nothing draws it, it is their list.
+    expect(await page.evaluate(() => /** @type {any} */ (globalThis).editor.markdown(true))).toMatch(/^# Trip\n\nIntro\.\n\n- Before\n  - Bags\n  - Papers\n- Back home\n\n## Before\n/)
+    await expect.poll(() => saved(page)).toContain('Intro.\n\n[TOC]\n\n## Before')
+    expect(await problems(page)).toEqual([])
+  })
+
+  test('a table of contents in Arabic sets itself apart on the right; in Japanese, one with no heading says where they go', async ({ page, browser }) => {
+    const { doc } = await start(page, { lang: 'ar', markdown: '# رحلة\n\n[TOC]\n\n## قبل\n\nنص.\n' })
+    const toc = doc.getByRole('navigation', { name: 'جدول المحتويات' })
+    await expect(toc.getByRole('button')).toHaveText(['قبل'])
+    expect(await toc.evaluate((nav) => [getComputedStyle(nav).borderRightWidth, getComputedStyle(nav).borderLeftWidth])).toEqual(['2px', '0px'])
+    const other = await browser.newPage()
+    const { doc: ja } = await start(other, { lang: 'ja', markdown: '# 旅\n\n[TOC]\n\n本文。\n' })
+    await expect(ja.getByRole('navigation', { name: '目次' })).toHaveText('追加した見出しがここに表示されます。')
+    await other.close()
   })
 
   test('Escape leaves the slash as text, and a slash inside a line opens nothing', async ({ page }) => {
@@ -1165,7 +1247,7 @@ test.describe('the slash menu', () => {
     await page.keyboard.press('Enter')
     await page.keyboard.press('Enter')
     await page.keyboard.type('/tab')
-    await menu.getByRole('option', { name: 'Table' }).click()
+    await menu.getByRole('option', { name: 'Table', exact: true }).click()
     await page.keyboard.type('Who')
     await page.keyboard.press('Tab')
     await page.keyboard.type('What')
@@ -1209,7 +1291,7 @@ test.describe('the slash menu', () => {
     // A table view isn't offered before Tables is found; then it makes a table, drawn where the line is.
     await page.keyboard.press('Enter')
     await page.keyboard.type('/table')
-    await expect(menu.getByRole('option')).toHaveText([/Table/])
+    await expect(menu.getByRole('option')).toHaveText([/Table$/, /Table of contents$/])
     await page.keyboard.press('Escape')
     await page.keyboard.press('Backspace')
     await page.keyboard.press('Backspace')
@@ -1311,6 +1393,12 @@ test.describe('the slash menu', () => {
     await page.keyboard.press('Enter')
     await page.keyboard.insertText('タイトル')
     expect(await markdownOf(page)).toBe('メモ\n\n# タイトル\n')
+    // What visual answers draw, by their Japanese names: the charts a page draws.
+    await page.keyboard.press('Enter')
+    await page.keyboard.insertText('／')
+    await expect(menu).toBeVisible()
+    await page.keyboard.insertText('グラフ')
+    await expect(menu.getByRole('option')).toHaveText([/棒グラフ$/, /折れ線グラフ$/, /面グラフ$/, /円グラフ$/, /横棒グラフ$/])
   })
 
   test('in Arabic: its names, right to left, at the line\'s start on the right', async ({ page }) => {
@@ -1322,6 +1410,7 @@ test.describe('the slash menu', () => {
     await expect(menu).toBeVisible()
     await expect(menu).toHaveCSS('direction', 'rtl')
     await expect(menu.getByRole('option', { name: 'قائمة مهام' })).toBeVisible()
+    for (const name of ['مخطط دائري', 'خريطة ذهنية', 'خط زمني']) await expect(menu.getByRole('option', { name })).toBeAttached()
     const box = /** @type {{ x: number, width: number }} */ (await menu.boundingBox())
     const line = /** @type {{ x: number, width: number }} */ (await page.locator('#doc p').nth(1).boundingBox())
     // Its right edge under the slash, where the line starts.

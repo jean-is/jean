@@ -6,7 +6,8 @@
 // back needs. Two lists of a kind that end up next to each other stay two: the second is written with
 // the other marker, which Markdown reads as another list. Columns side by side are Pandoc's fenced divs (D501).
 // A document's first line is its title, text alone, which the editor holds as a node of its own (`titled()`). A creation
-// is referred to as Obsidian does, `[[its place|its name]]` (D575).
+// is referred to as Obsidian does, `[[its place|its name]]` (D575). A table of contents is `[TOC]` alone on its line, as GitLab, Typora and
+// Python-Markdown write one, which the editor draws as the headings are (toc.js), and anything else writes as their list (`withContents()`).
 import { Schema, tableNodes, MarkdownSerializer, MarkdownSerializerState } from '#prosemirror'
 import { Marked } from 'marked'
 import { columns, cjk } from '../layouts/shapes.js'
@@ -22,6 +23,9 @@ const marked = new Marked({ extensions: [
   ...mathTokens,
   columns,
 ] }, cjk)
+
+/** A table of contents' line. */
+const TOC = /^\[toc\]$/i
 
 /** The entities Jean decodes (ui/markdown.js), and so the ones written back as entities. */
 const ENTITIES = /** @type {Record<string, string>} */ ({ '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#39;': "'", '&nbsp;': '\u00a0' })
@@ -78,6 +82,9 @@ export const schema = new Schema({
       toDOM: (node) => ['pre', { class: `raw raw-${node.attrs.kind}`, dir: 'ltr' }, ['code', 0]],
     },
     horizontal_rule: { attrs: { markup: { default: '---' } }, group: 'block', parseDOM: [{ tag: 'hr' }], toDOM: () => ['hr'] },
+    // Copied, it is its line, which a paste reads again as one.
+    toc: { attrs: { markup: { default: '[TOC]' } }, group: 'block', atom: true, toDOM: (node) => ['p', { class: 'toc' }, node.attrs.markup],
+      parseDOM: [{ tag: 'p', priority: 51, getAttrs: (dom) => (TOC.test(dom.textContent?.trim() ?? '') ? { markup: dom.textContent?.trim() } : false) }] },
     bullet_list: {
       attrs: { tight: { default: true }, bullet: { default: '-' } }, content: 'list_item+', group: 'block',
       parseDOM: [{ tag: 'ul' }], toDOM: () => ['ul', dirAuto, 0],
@@ -208,7 +215,7 @@ const filled = (tokens) => ((content) => (content.length ? content : [paragraph(
 function block(token) {
   switch (token.type) {
     case 'heading': return N.heading.create({ level: token.depth }, inline(token.tokens))
-    case 'paragraph': return paragraph(inline(token.tokens))
+    case 'paragraph': return TOC.test(token.raw.trim()) ? N.toc.create({ markup: token.raw.trim() }) : paragraph(inline(token.tokens))
     case 'text': return paragraph(token.tokens ? inline(token.tokens) : inline([{ type: 'text', text: token.text }]))
     case 'code': {
       const fence = /^ {0,3}(`{3,}|~{3,})/.exec(token.raw)?.[1] ?? '```'
@@ -324,6 +331,7 @@ const NODES = {
     state.closeBlock(node)
   },
   title: (state, node, parent, index) => NODES.heading(state, N.heading.create({ level: 1 }, node.content), parent, index),
+  toc: (state, node) => (state.write(node.attrs.markup), state.closeBlock(node)),
   horizontal_rule(state, node) {
     state.write(node.attrs.markup)
     state.closeBlock(node)
@@ -546,6 +554,36 @@ export function serialize(doc, sources = new Sources(), { endsWithNewline = true
   })
   out = out.replace(/\n+$/, '')
   return out && endsWithNewline ? `${out}\n` : out
+}
+
+/** The document's headings with words, in their order, but its title: each, and where it is. @param {PMNode} doc */
+export function outline(doc) {
+  const all = /** @type {{ node: PMNode, pos: number }[]} */ ([])
+  doc.descendants((node, pos) => { if (node.type === N.heading && node.textContent.trim()) all.push({ node, pos }); return !node.isTextblock })
+  return all
+}
+
+/**
+ * Headings as a table of contents lists them: each under the last one before it of a higher level, with its place in the outline.
+ * @typedef {{ node: PMNode, i: number, level: number, kids: Entry[] }} Entry @param {{ node: PMNode }[]} heads @returns {Entry[]}
+ */
+export function tree(heads) {
+  const path = /** @type {{ level: number, kids: Entry[] }[]} */ ([{ level: 0, kids: [] }])
+  heads.forEach(({ node }, i) => {
+    while (path.length > 1 && /** @type {Entry} */ (path.at(-1)).level >= node.attrs.level) path.pop()
+    const entry = { node, i, level: node.attrs.level, kids: [] }
+    path[path.length - 1].kids.push(entry)
+    path.push(entry)
+  })
+  return path[0].kids
+}
+
+/** The document, each table of contents in it as the list of its headings, for what draws none: Word, a copy, a share. @param {PMNode} doc */
+export function withContents(doc) {
+  /** @param {Entry[]} entries @returns {PMNode} */
+  const list = (entries) => N.bullet_list.create(null, entries.map(({ node, kids }) => N.list_item.create(null, [N.paragraph.create(null, node.content), ...(kids.length ? [list(kids)] : [])])))
+  const entries = tree(outline(doc))
+  return N.doc.create(doc.attrs, doc.children.flatMap((node) => (node.type !== N.toc ? [node] : entries.length ? [list(entries)] : [])))
 }
 
 /** A piece of the document (what is selected) as Markdown. @param {PMNode} doc @param {number} from @param {number} to */

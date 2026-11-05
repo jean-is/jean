@@ -6,7 +6,7 @@ import assert from 'node:assert/strict'
 import { readFile, readdir } from 'node:fs/promises'
 import { EditorState, TextSelection } from 'prosemirror-state'
 import { Marked } from 'marked'
-import { parse, parseDoc, titled, serialize, same, schema, blockMarkdown, sliceMarkdown } from '../app/caps/documents/markdown.js'
+import { parse, parseDoc, titled, serialize, same, schema, blockMarkdown, sliceMarkdown, outline, tree, withContents } from '../app/caps/documents/markdown.js'
 import { diff, tints } from '../app/caps/documents/suggest.js'
 import { BlockSelection, blockRange, moveBlocks, units } from '../app/caps/documents/blocks.js'
 import { merge3 } from '../app/ui/merge.js'
@@ -191,6 +191,25 @@ function move(source, i, j, dir, caret = 0) {
   const moved = moveBlocks(dir)(state, (tr) => { state = state.apply(tr) })
   return { moved, text: serialize(state.doc, sources), chosen: blockRange(state).chosen.map((unit) => unit.node.textContent), type: state.selection.toJSON().type }
 }
+
+test('a table of contents is `[TOC]` alone on its line, as GitLab, Typora and Python-Markdown write it: read and written as it was; it lists the headings with words, but the title, each under the one above it', () => {
+  const source = '# Trip\n\n[TOC]\n\n## Before\n\nPack.\n\n### Papers\n\n### \n\n## **On** the way\n\n#### Snacks\n\n## Back\n\nA [TOC] in a line, and [toc]:\n\n[toc]\n'
+  const { doc, sources } = titled(parse(source))
+  assert.deepEqual(doc.children.map((node) => node.type.name), ['title', 'toc', 'heading', 'paragraph', 'heading', 'heading', 'heading', 'heading', 'heading', 'paragraph', 'toc'])
+  assert.equal(serialize(doc, sources), source)
+  assert.equal(blockMarkdown(schema.nodes.toc.create()), '[TOC]')
+  const heads = outline(doc)
+  assert.deepEqual(heads.map(({ node }) => node.textContent), ['Before', 'Papers', 'On the way', 'Snacks', 'Back'])
+  assert.deepEqual(heads.map(({ pos }) => doc.nodeAt(pos)?.type.name), ['heading', 'heading', 'heading', 'heading', 'heading'])
+  /** @param {import('../app/caps/documents/markdown.js').Entry[]} entries @returns {any[]} */
+  const shape = (entries) => entries.map(({ node, i, kids }) => [i, node.textContent, ...(kids.length ? [shape(kids)] : [])])
+  assert.deepEqual(shape(tree(heads)), [[0, 'Before', [[1, 'Papers']]], [2, 'On the way', [[3, 'Snacks']]], [4, 'Back']])
+  // A heading higher than the first starts the list again, and one lower than the one above it goes under it all the same.
+  assert.deepEqual(shape(tree(outline(parseDoc('### Deep\n\n# Top\n\n### Under\n')))), [[0, 'Deep'], [1, 'Top', [[2, 'Under']]]])
+  // Where nothing draws it (Word, a copy, a share), it is the list of the headings, their marks kept; with none, nothing.
+  assert.equal(serialize(withContents(doc), sources), source.replace(/^\[TOC\]$/m, '- Before\n  - Papers\n- **On** the way\n  - Snacks\n- Back').replace(/\n\[toc\]\n$/, '\n- Before\n  - Papers\n- **On** the way\n  - Snacks\n- Back\n'))
+  assert.equal(serialize(withContents(titled(parse('# Trip\n\n[TOC]\n\nNo heading.\n')).doc)), '# Trip\n\nNo heading.\n')
+})
 
 test('a list\'s items are blocks of their own: among their list, out of it as a list of their own, into the list beside them', () => {
   const doc = 'Para.\n\n- one\n- two\n- three\n\nLast.\n'

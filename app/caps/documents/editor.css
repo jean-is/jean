@@ -36,6 +36,10 @@
 .doc-hint { display: none; } .doc:focus p[data-placeholder]:has(> br:only-child) { position: relative; }
 .doc:focus p[data-placeholder]:has(> br:only-child)::before { content: attr(data-placeholder); position: absolute; inset-inline: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: var(--ink-soft); pointer-events: none; }
 /* A reference to a creation (D575), which a click opens, as a link; a tag (D576), a word on a tint of the look's colour, which a click looks for. */
+/* A table of contents: its headings, each under the one above it, set apart by a rule at its start; one with none says where they go. */
+.doc .toc { margin-block: 0.5em 1em; padding-block: 0.15em; padding-inline-start: 0.9em; border-inline-start: 2px solid var(--line-strong); }
+.doc .toc ul { margin: 0; padding-inline-start: 1.1em; list-style: none; } .doc .toc > ul { padding-inline-start: 0; } .doc .toc li { margin: 0; }
+.doc .toc button { padding: 0.15em 0; border: 0; background: none; color: var(--ink-soft); font: inherit; text-align: start; cursor: pointer; } .doc .toc button:hover { color: var(--ink); text-decoration: underline; } .doc .toc p { margin: 0; color: var(--ink-soft); }
 .doc .ref { color: var(--flame); text-decoration: underline; text-underline-offset: 0.2em; text-decoration-color: oklch(from currentColor l c h / 0.45); cursor: pointer; } .doc .tag { padding-inline: 0.25em; border-radius: 0.35em; background: oklch(from var(--flame) l c h / 0.16); cursor: pointer; }
 /* A table a document holds (drawn.js), Tables' view as in the pane. */
 .doc .drawn-form app-table { display: block; }
@@ -62,7 +66,7 @@
 .doc :is(.drawn-form, .drawn-formula, .suggest-form) { white-space: normal; }
 .doc .drawn:has(.block-selected) > .drawn-form, .doc .drawn.block-selected > .drawn-form { border-radius: 0.2rem; background: oklch(from var(--flame) l c h / 0.16); }
 /* What "/" offers. */
-.slash { position: fixed; z-index: 6; min-inline-size: 13rem; max-inline-size: calc(100vw - 16px); overflow-y: auto; padding: 0.3rem; border: 1px solid var(--line-strong); border-radius: 0.5rem; background: var(--room-2); color: var(--ink); box-shadow: var(--doc-shadow); }
+.slash { position: fixed; z-index: 6; min-inline-size: 13rem; max-inline-size: calc(100vw - 16px); overflow-y: auto; padding: 0.3rem; font-size: 0.875rem; border: 1px solid var(--line-strong); border-radius: 0.5rem; background: var(--room-2); color: var(--ink); box-shadow: var(--doc-shadow); }
 .slash[hidden] { display: none; }
 .slash-option { display: flex; align-items: center; gap: 0.6rem; min-block-size: 2.25rem; padding: 0.2rem 0.6rem; border-radius: 0.35rem; cursor: pointer; }
 .slash-option[aria-selected="true"] { background: var(--doc-shade); outline: 1.5px solid var(--ink-soft); outline-offset: -1.5px; }
@@ -85,7 +89,7 @@
 .block-handle { position: fixed; z-index: 5; display: grid; place-items: center; inline-size: 1.25rem; block-size: 1.5rem; padding: 0; border: none; background: transparent; color: var(--ink-soft); border-radius: 0.3rem; cursor: grab; user-select: none; -webkit-user-select: none; }
 .block-handle:hover, .block-handle[aria-expanded="true"] { background: var(--doc-shade); color: var(--ink); }
 .block-handle[hidden], .block-menu[hidden], .marquee[hidden] { display: none; }
-.block-menu { position: fixed; inset: auto; margin: 0; z-index: 6; display: flex; flex-direction: column; min-inline-size: 12rem; max-inline-size: calc(100vw - 16px); overflow-y: auto; padding: 0.3rem; border: 1px solid var(--line-strong); border-radius: 0.5rem; background: var(--room-2); color: var(--ink); box-shadow: var(--doc-shadow); }
+.block-menu { position: fixed; inset: auto; margin: 0; z-index: 6; display: flex; flex-direction: column; min-inline-size: 12rem; max-inline-size: calc(100vw - 16px); overflow-y: auto; padding: 0.3rem; font-size: 0.875rem; border: 1px solid var(--line-strong); border-radius: 0.5rem; background: var(--room-2); color: var(--ink); box-shadow: var(--doc-shadow); }
 .block-menu ul { flex-direction: column; gap: 0; } .block-menu ul[aria-label] { margin-block: 0.25rem; padding-block: 0.25rem; border-block: 1px solid var(--line-strong); }
 .block-menu ul[aria-label] + ul[aria-label] { margin-block-start: -0.25rem; border-block-start: none; }
 .block-menu-head { padding: 0.3rem 0.6rem 0.15rem; font-size: 0.8rem; color: var(--ink-soft); }

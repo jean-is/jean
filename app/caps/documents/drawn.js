@@ -6,7 +6,8 @@
 // A formula in a line is drawn in its place the same way, and a column of amounts lines up at its end, as in
 // an answer. A list of tasks stays the document's own, its ticks written in the file. A ```table block naming
 // a table of the project's is that table's view, Tables' own, changed in place. A tag, #name in a line's text, is drawn as one, which a
-// click looks for among the creations (D576).
+// click looks for among the creations (D576). A table of contents, `[TOC]` alone on its line (markdown.js), is the headings in their
+// order, each under the one above it, drawn again as soon as what they say changes; a click on one puts the caret at its start.
 import { effect, signal } from '@preact/signals-core'
 import { html, render, nothing } from 'lit-html'
 import { keyed } from 'lit-html/directives/keyed.js'
@@ -14,7 +15,7 @@ import { Plugin, Selection, TextSelection, Decoration, DecorationSet, DOMSeriali
 import { blocks, lex, shapes, widget, withFormulas, namesRows } from '../../ui/markdown.js'
 import { TAG } from '../../ui/mentions.js'
 import { aligned, compared, figured, noted, stepped, timed } from '../layouts/shapes.js'
-import { blockMarkdown, schema } from './markdown.js'
+import { blockMarkdown, schema, outline, tree } from './markdown.js'
 import { BlockSelection } from './blocks.js'
 import { unlock } from '../../ui/caps.js'
 import { el } from './ui.js'
@@ -168,3 +169,47 @@ export const inPlace = new Plugin({
     },
   },
 })
+
+// ── A table of contents ──────────────────────────────────────────────────────────────────────────────
+/** What the headings say, once for each state of the document. @type {WeakMap<PMNode, string>} */
+const outlines = new WeakMap()
+/** @param {PMNode} doc */
+const said = (doc) => outlines.get(doc) ?? /** @type {string} */ (outlines.set(doc, outline(doc).map(({ node }) => `${node.attrs.level} ${node.textContent}`).join('\n')).get(doc))
+
+/** Each table of contents marked with what the headings say, so that ProseMirror hands it to its view again once that changes. */
+export const contents = new Plugin({
+  props: {
+    decorations(state) {
+      /** @type {Decoration[]} */
+      const list = []
+      state.doc.forEach((node, pos) => { if (node.type === schema.nodes.toc) list.push(Decoration.node(pos, pos + node.nodeSize, {}, { said: said(state.doc) })) })
+      return DecorationSet.create(state.doc, list)
+    },
+  },
+})
+
+/** A table of contents' view, its words from `label`. @param {(key: string) => string} label @returns {import('prosemirror-view').NodeViewConstructor} */
+export const contentsView = (label) => (node, view) => {
+  const dom = el('nav', { class: 'toc', contenteditable: 'false' })
+  /** The `i`th heading: the caret at its start, it at the top. @param {number} i */
+  const go = (i) => {
+    const head = outline(view.state.doc)[i], line = head && /** @type {HTMLElement | null} */ (view.nodeDOM(head.pos))
+    if (!head) return
+    view.focus()
+    view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, head.pos + 1)))
+    line?.scrollIntoView({ block: 'start' })
+  }
+  /** @param {import('./markdown.js').Entry[]} entries @returns {HTMLElement} */
+  const list = (entries) => el('ul', {}, ...entries.map(({ node: head, i, kids }) => {
+    const button = el('button', { type: 'button', dir: 'auto' }, head.textContent)
+    button.addEventListener('click', () => go(i))
+    return el('li', {}, button, ...(kids.length ? [list(kids)] : []))
+  }))
+  const draw = () => {
+    const entries = tree(outline(view.state.doc))
+    dom.setAttribute('aria-label', label('toc'))
+    dom.replaceChildren(entries.length ? list(entries) : el('p', {}, label('tocEmpty')))
+  }
+  draw()
+  return { dom, update: (next) => next.type === node.type && (draw(), true), ignoreMutation: () => true, stopEvent: (event) => Boolean(/** @type {Element} */ (event.target).closest?.('button')) }
+}

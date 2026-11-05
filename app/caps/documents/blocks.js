@@ -224,7 +224,10 @@ export function blocks({ label, announce, kinds, adds, mac }) {
       /** The grip beside a block, in the margin where its line starts, outside a list's bullets, centred on its first line. @param {Unit & { rect: DOMRect }} block */
       const show = (block) => {
         at = block.at
-        const first = editor.coordsAtPos(Math.min(block.at + 1, editor.state.doc.content.size))
+        // A leaf (a rule, a table of contents) holds no caret, which would be past its end: its first words' line, or itself with none.
+        const words = block.node.isLeaf && doc.createTreeWalker(/** @type {Node} */ (editor.nodeDOM(block.at)), NodeFilter.SHOW_TEXT).nextNode(), range = doc.createRange()
+        if (words) range.selectNodeContents(words)
+        const first = !block.node.isLeaf ? editor.coordsAtPos(Math.min(block.at + 1, editor.state.doc.content.size)) : (words && range.getClientRects()[0]) || block.rect
         const side = /** @type {HTMLElement} */ (editor.nodeDOM(block.list?.pos ?? block.at)).getBoundingClientRect()
         handle.hidden = false
         handle.setAttribute('aria-label', label('handle'))
