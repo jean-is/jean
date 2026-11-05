@@ -55,8 +55,22 @@ export const otherBadges = (others) => (others.length ? html`<div class="lock-ot
 /** An answer, a dictation, or a conversation answered out of sight (D147), under way, which leaving would stop. */
 export const working = () => Boolean(app.busy.value || app.running.value.length) || !['idle', 'done'].includes(app.presence.value)
 
+/**
+ * The page a new version held on screen (ui/update.js) lets go: now, or as this one is first drawn, which a look's
+ * style sheet still loading puts off past the code that calls this.
+ */
+export function unhold() {
+  const skip = (/** @type {PageRevealEvent} */ event) => event.viewTransition?.skipTransition()
+  // A page is revealed before its frame's callbacks run, so the next one comes after its reveal.
+  addEventListener('pagereveal', skip, { once: true })
+  requestAnimationFrame(() => removeEventListener('pagereveal', skip))
+  document.activeViewTransition?.skipTransition()
+  for (const animation of document.getAnimations()) if (/** @type {KeyframeEffect | null} */ (animation.effect)?.pseudoElement?.startsWith('::view-transition')) animation.finish()
+}
+
 /** Whatever would play as a page arrives has played, the wait for it included; not what a scroll drives (the drawer's fades), which finished would stay at its end whatever the scroll. */
 export function settle() {
+  unhold()
   for (const animation of document.getAnimations()) {
     if (animation.timeline === document.timeline && animation.effect?.getComputedTiming().endTime !== Infinity) animation.finish()
   }

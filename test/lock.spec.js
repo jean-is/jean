@@ -316,6 +316,8 @@ test.describe('the lock screen, reached', () => {
     await expect(field).toBeFocused()
     await open()
 
+    // Its look's style sheets late, as on a busy computer (Tilde's, then Human's it imports): the page is drawn, and held, only once they are there, after the lock.
+    await page.route('**/ui/looks/*.css', async (route) => { await new Promise((resolve) => setTimeout(resolve, 400)); await route.continue() })
     await page.evaluate(() => {
       sessionStorage.setItem('app.update', '{}')
       location.replace(`${location.pathname}?${Date.now().toString(36)}${location.hash}`)

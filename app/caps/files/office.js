@@ -17,7 +17,9 @@ let graph = /** @type {Promise<Record<string, string[]>> | undefined} */ (undefi
 // A workbook's cells changed where they are (D229): a double click, F2 or typing opens a box over the cell
 // chosen (Enter is the viewer's, for comments); Enter, Tab or leaving it sends Jean what it is to hold, and
 // Jean keeps a new version and shows it again where it was; Escape leaves the box, as does Jean's answer
-// that the cell can't change. Closed from the keyboard, the box gives the keys back to the sheet.
+// that the cell can't change. Closed from the keyboard, the box gives the keys back to the sheet. A sheet is
+// drawn before the viewer has read it whole, and can't say what a cell holds until then: the box waits for
+// that, 10 s at most, unless another box opened meanwhile.
 const CELLS = `
 const box = Object.assign(document.createElement('input'), { dir: 'auto', spellcheck: false, autocomplete: 'off' })
 box.style.cssText = 'position: fixed; display: none; box-sizing: border-box; margin: 0; padding: 0 4px; border: 2px solid #1a73e8; background: #fff; color: #111; font: 13px system-ui, sans-serif'
@@ -27,11 +29,13 @@ let was = ''
 let back = null
 const ref = ({ row, col }) => { let name = ''; for (let n = col; n > 0; n = Math.floor((n - 1) / 26)) name = String.fromCharCode(65 + ((n - 1) % 26)) + name; return name + row }
 const close = (keys) => { cell = null; box.readOnly = false; box.style.display = 'none'; if (keys) back?.focus() }
-const open = (typed) => {
+const open = (typed, tries = 0) => {
   const active = viewer.selectionState?.activeCell
   const rect = active && viewer.getCellViewportRect(active)
   if (!rect) return
-  const known = viewer.getSelectionContext()?.cells?.find(({ address }) => address.row === active.row && address.col === active.col)
+  const context = viewer.getSelectionContext()
+  if (!context) return void (tries < 200 && setTimeout(() => cell || open(typed, tries + 1), 50))
+  const known = context.cells?.find(({ address }) => address.row === active.row && address.col === active.col)
   const grid = viewer.canvasElement.getBoundingClientRect()
   cell = active
   back = document.activeElement

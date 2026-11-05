@@ -80,6 +80,8 @@
 :root:is([data-look='human'], [data-look='tilde']) :is(.wordmark, .wordmark:hover) { font: 600 1.0625rem/1 var(--sans); text-shadow: none; }
 :root:is([data-look='human'], [data-look='tilde']) .wordmark app-persona { --persona-size: 1.5rem; }
 :root:is([data-look='human'], [data-look='tilde']) :focus-visible { outline: 3px solid var(--fill); outline-offset: 1px; }
+/* By night, the accent's lighter blue: the fill reads at 3:1 on the page, but not on a card or what is raised on one. */
+:root[data-look='human']:not([data-theme='light']) :focus-visible { outline-color: var(--flame); }
 /* A ticked box in the fill, as the accent is (ui/style.css draws it in the flame). */
 :root:is([data-look='human'], [data-look='tilde']) :is(input, progress) { accent-color: var(--fill); } :root:is([data-look='human'], [data-look='tilde']) input:where([type='checkbox']:not(.switch)) { --flame: var(--fill); --on-flame: var(--on-fill); }
 

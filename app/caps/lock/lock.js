@@ -12,7 +12,7 @@ import { app, notify, sitePage, LOCALES } from '../../ui/state.js'
 import { slotKey, close, unseal, vaultKey, vaultId, deviceKey, encode, decode, VAULT, ITERATIONS } from '../../ui/seal.js'
 import { save } from '../../ui/save.js'
 import { mine, here } from '../../ui/opfs.js'
-import { switchTo, whoOf, curtainFor, otherBadges } from '../../ui/curtain.js'
+import { switchTo, whoOf, curtainFor, otherBadges, unhold } from '../../ui/curtain.js'
 import { freeColour } from '../../ui/touches.js'
 import { ulid } from '../../core/ulid.js'
 import { BRAND } from '../../brand.js'
@@ -206,7 +206,7 @@ export async function locked(call, state, root) {
     setTimeout(() => {
       if (held) return
       // A new version that came in held the page it replaced until it was drawn (ui/update.js): here, it won't be yet.
-      if (!risen) for (const animation of document.getAnimations()) if (/** @type {KeyframeEffect | null} */ (animation.effect)?.pseudoElement?.startsWith('::view-transition')) animation.finish()
+      if (!risen) unhold()
       stop = effect(() => {
         render(html`<p class=${dead || parent ? 'muted' : 'visually-hidden'}>${t(dead ? 'lock.unreadable' : parent ? 'lock.parent' : 'lock.locked')}</p>
         ${!dead ? html`${slotOf('passkey', opener) ? html`<button class="button primary lock-key" @click=${() => go('passkey')}>${icons.lock} ${t('lock.unlock')}</button>` : nothing}

@@ -99,7 +99,7 @@ async function bytes(page, path) {
         for (const part of parts.slice(0, -1)) dir = await dir.getDirectoryHandle(part)
         return [...new Uint8Array(await (await (await dir.getFileHandle(String(parts.at(-1)))).getFile()).arrayBuffer())]
       } catch (error) {
-        if (/** @type {Error} */ (error).name !== 'NotFoundError' || tries === 20) throw error
+        if (!['NotFoundError', 'NotReadableError'].includes(/** @type {Error} */ (error).name) || tries === 20) throw error
         await new Promise((resolve) => setTimeout(resolve, 50))
       }
     }
@@ -396,6 +396,8 @@ test.describe('in place', () => {
     const view = page.frameLocator('app-browser .view iframe')
     const [grid, box, B3] = [view.locator('[data-xlsx-viewport-input]'), view.locator('body > input'), { x: 190, y: 70 }]
     await expect(view.locator('main')).toContainText('Budget', { timeout: 15_000 })
+    // Drawn before it is loaded, the sheet takes changes once its box is there.
+    await expect(box).toBeAttached({ timeout: 15_000 })
     const first = await page.locator('app-browser .view iframe').elementHandle()
     await grid.dblclick({ position: B3 })
     await expect(box).toHaveValue('450')
