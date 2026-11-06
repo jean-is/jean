@@ -1,6 +1,6 @@
 // Service worker: offline shell and per-capability caches (classic script).
 // VERSION is rewritten by scripts/manifest.js whenever any shipped file changes.
-const VERSION = 'd2114d344525'
+const VERSION = 'c0325b278fad'
 const SHELL = `app-shell-${VERSION}`
 // Capability caches carry the version too: an update re-caches every unlocked capability,
 // copying unchanged files over, so old code is never served next to a new shell.
