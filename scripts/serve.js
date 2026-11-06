@@ -150,6 +150,7 @@ export async function handle (req, res) {
   if (req.method !== 'GET' && req.method !== 'HEAD') return fail(res, 405, 'Method not allowed')
   if (HOME) {
     const made = await homePage(pathname, req.headers.host ?? `${HOST}:${PORT}`)
+    if (made && reports && extname(made.path) === '.html') reportOnly(res, req, made.text)
     if (made) return send(res, req, extname(made.path), Buffer.from(made.text))
   }
   if ((GATEWAY || SHARE_PORT) && pathname === '/policy.json') return send(res, req, '.json', Buffer.from(JSON.stringify({ urls: named(req.headers.host ?? `${HOST}:${PORT}`) })))
@@ -169,9 +170,7 @@ export async function handle (req, res) {
   }
   if (reports && extname(file) === '.html') {
     const page = await readFile(file)
-    const policy = /<meta http-equiv="Content-Security-Policy" content="([^"]+)">/.exec(page.toString('utf8'))?.[1]
-    const from = /(?:^|; )csp=([\w-]+)/.exec(req.headers.cookie ?? '')?.[1] ?? ''
-    if (policy) res.setHeader('Content-Security-Policy-Report-Only', `${policy.replaceAll('&quot;', '"')}; report-uri /csp-reports?from=${from}`)
+    reportOnly(res, req, page.toString('utf8'))
     return send(res, req, '.html', page)
   }
   res.writeHead(200, {
@@ -248,6 +247,17 @@ async function siteFor (at, policy) {
   const named = policy ? index.replace('</head>', '<meta name="app-policy" content="policy.json">\n</head>') : index
   const site = await buildSite({ brand: BRAND, base, index: (said, address) => withSite(said ? inLanguage(named, said) : named, base, BRAND, said ?? description, [], address) })
   return { files: site.files, problems: checkSite(site, { base, served: await shippedFiles(join(ROOT, 'app')) }).join('\n') }
+}
+
+/**
+ * A page's own policy (its <meta>) again as a report-only header, its refusals sent to /csp-reports by whose they are
+ * (the csp cookie), with --csp-reports: the homepage's pages (--home) as much as app/'s.
+ * @param {import('node:http').ServerResponse} res @param {import('node:http').IncomingMessage} req @param {string} page
+ */
+function reportOnly(res, req, page) {
+  const policy = /<meta http-equiv="Content-Security-Policy" content="([^"]+)">/.exec(page)?.[1]
+  const from = /(?:^|; )csp=([\w-]+)/.exec(req.headers.cookie ?? '')?.[1] ?? ''
+  if (policy) res.setHeader('Content-Security-Policy-Report-Only', `${policy.replaceAll('&quot;', '"')}; report-uri /csp-reports?from=${from}`)
 }
 
 /**
