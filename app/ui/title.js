@@ -44,8 +44,7 @@ async function titleFor(records, brain, task) {
   // A routine's run takes its routine's name (D122).
   const routine = routineOf(records)
   if (routine) return routine.title
-  const text = openingOf(records)
-  const names = linkedFiles(records).map((link) => link.name)
+  const text = openingOf(records), names = linkedFiles(records).map((link) => link.name)
   if (!text) return names[0] ?? ''
   const fallback = firstWords(text)
   // The device's brain writes one answer at a time: a title would hold this one up.
@@ -65,7 +64,7 @@ async function titleFor(records, brain, task) {
       signal: AbortSignal.timeout(20_000),
     }, (e) => streamChat({ ...e, apiKey: apiKey ?? undefined }))
     for await (const event of events) if (event.type === 'text') reply += event.delta
-    return tidy(reply) || fallback
+    return tidy(reply, text) || fallback
   } catch (error) {
     console.debug('Title from the first words', error)
     return fallback
@@ -80,6 +79,13 @@ async function simplest(brain) {
   return (app.models.value[brain.id] ?? []).some((info) => info.id === model) ? { ...brain, model } : brain
 }
 
-/** A reply's first line, without Markdown, quotes or a final full stop. @param {string} reply */
-const tidy = (reply) => firstWords(reply.replace(/<think>[\s\S]*?<\/think>/g, '').trim().split('\n')[0]
-  .replace(/^[#*_>\s]+|[*_\s]+$/g, '').replace(/^["'“”‘’«»「『]+|["'“”‘’«»」』.。]+$/g, '').trim(), 10)
+/** How much of a text's letters are Latin: NaN for a text with none, which tells no script. @param {string} text */
+const latin = (text) => (text.match(/\p{Script=Latin}/gu)?.length ?? 0) / (text.match(/\p{L}/gu)?.length ?? 0)
+
+/**
+ * A reply's first line, without Markdown, quotes or a final full stop; none when it is in another script than the
+ * message it names, as a title in another language would be (a small brain once named a Japanese task in French).
+ * @param {string} reply @param {string} text the message @param {string} [title] the reply tidied, for the check
+ */
+export const tidy = (reply, text, title = firstWords(reply.replace(/<think>[\s\S]*?<\/think>/g, '').trim().split('\n')[0]
+  .replace(/^[#*_>\s]+|[*_\s]+$/g, '').replace(/^["'“”‘’«»「『]+|["'“”‘’«»」』.。]+$/g, '').trim(), 10)) => (Math.abs(latin(title) - latin(text)) > 0.5 ? '' : title)
