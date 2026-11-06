@@ -194,7 +194,7 @@ async function answered(page) {
   return page.locator('.msg-jean .prose').last()
 }
 
-test('bash: commands, python3 and node in /workspace, kept in the project’s workspace', async ({ page }) => {
+test('bash: commands, python3, uv and node in /workspace, kept in the project’s workspace', async ({ page }) => {
   test.setTimeout(150_000)
   await start(page)
   await connectFakeBrain(page)
@@ -218,6 +218,11 @@ test('bash: commands, python3 and node in /workspace, kept in the project’s wo
   await expect(answer).toContainText('HELLO')
   await expect(answer).toContainText('42')
   await expect(answer).toContainText('45')
+  // uv as brains type it: its run of Python is python3's; uvx and its projects say what works instead.
+  answer = await command(page, '$ uv run python -c "print(7 * 8)"; uvx ruff check; uv add rich')
+  await expect(answer).toContainText('56')
+  await expect(answer).toContainText("uvx: a package's own programs don't run here: pip install it, then import it in python3.")
+  await expect(answer).toContainText('uv: only uv pip install, uv pip list and uv run (python, or a .py file) work here.')
 })
 
 test('the internet: a new site asked about first, then always; a registry’s key; the relay; and off', async ({ page }) => {

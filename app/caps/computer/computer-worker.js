@@ -331,12 +331,14 @@ function commands(computer) {
     const ran = await javascript({ ...program, run: computer.run, cwd: ctx.cwd, env: Object.fromEntries(ctx.env ?? []) }, computer)
     return exit(ran.stdout, ran.stderr, ran.exit)
   }
-  const npx = async (/** @type {string[]} */ args) => {
-    const program = args.filter((arg) => !arg.startsWith('-')).join(' ')
-    return exit('', SERVERS.test(program) ? noServer('npx') : "npx: a package's own programs don't run here: npm install it, then require or import it in node.\n", 1)
-  }
-  return [command('python', py), command('python3', py), command('pip', pip), command('pip3', pip), command('node', node), command('js', node),
-    command('tar', (args, ctx) => tarCommand(args, ctx)), command('npm', (args, ctx) => npm(args, ctx, computer)), command('npx', npx)]
+  /** npx and uvx: a package's own program, which doesn't run here, a server's least of all. @param {string} name @param {string} instead */
+  const runner = (name, instead) => async (/** @type {string[]} */ args) => exit('', SERVERS.test(args.filter((arg) => !arg.startsWith('-')).join(' ')) ? noServer(name) : `${name}: a package's own programs don't run here: ${instead}.\n`, 1)
+  // uv's pip is pip, and its run of Python is python3's; its projects (add, sync, venv…) aren't kept here.
+  const uv = async (/** @type {string[]} */ args, /** @type {any} */ ctx) => (args[0] === 'pip' ? pip(args.slice(1), ctx)
+    : args[0] === 'run' && /^python3?$|\.py$/.test(args[1] ?? '') ? py(args.slice(/\.py$/.test(args[1]) ? 1 : 2), ctx)
+    : exit('', 'uv: only uv pip install, uv pip list and uv run (python, or a .py file) work here.\n', 1))
+  return [command('python', py), command('python3', py), command('pip', pip), command('pip3', pip), command('uv', uv), command('node', node), command('js', node), command('tar', (args, ctx) => tarCommand(args, ctx)),
+    command('npm', (args, ctx) => npm(args, ctx, computer)), command('npx', runner('npx', 'npm install it, then require or import it in node')), command('uvx', runner('uvx', 'pip install it, then import it in python3'))]
 }
 
 // ─── tar and npm ─────────────────────────────────────────────────────────────
