@@ -248,7 +248,8 @@ async function show(file, uri, holds, rules, allows, close) {
   if (at === null) notify(t('check.is.missing'), { alert: true })
   const view = await viewOf({ name: file.name, bytes, type: file.mimeType, text, prose, cells, at: at || undefined }, holds, { allows: can, sites, policy: rules, allow: allows })
   // What the user marks in it, a file the project keeps (D690).
-  if (view && /^files\//.test(uri) && (await unlock('files'))) void import('../caps/files/marks.js').then(({ follow }) => follow(/** @type {HTMLElement} */ (view), { uri, name: file.name }, holds))
+  // A page drawn in a frame is a template, not an element, and takes no marks.
+  if (view instanceof HTMLElement && /^files\//.test(uri) && (await unlock('files'))) void import('../caps/files/marks.js').then(({ follow }) => follow(view, { uri, name: file.name }, holds))
   return view
 }
 
