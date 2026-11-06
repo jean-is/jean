@@ -43,13 +43,13 @@ Start from this, keep what they need and drop the rest:
 ```json
 {
   "$schema": "https://jean.is/schemas/policy.schema.json",
-  "signIn": { "issuer": "https://login.microsoftonline.com/<tenant-id>/v2.0", "clientId": "<Jean's app>", "scopes": ["api://<gateway-app>/chat"] },
+  "signIn": { "issuer": "https://login.microsoftonline.com/<tenant-id>/v2.0", "clientId": "<Jean's app>", "scopes": ["openid", "profile", "email", "offline_access", "api://<gateway-app>/chat"] },
   "brains": [{ "id": "acme", "provider": "custom", "api": "openai", "baseURL": "https://ai.acme.example/v1", "model": "<the gateway's name for it>", "label": "Acme AI", "auth": "oidc" }],
   "instructions": "Acme's house rules, in a sentence or two.",
   "locales": ["en", "fr"],
   "look": { "name": "Acme", "on": "minimal", "accent": "#e30613", "font": "sans", "logo": "data:image/svg+xml;base64,PHN2Zy8+" },
   "kit": { "name": "Acme", "tokens": { "primary": "#e30613", "ink": "#1f2933", "voice": "calm", "logo": "data:image/svg+xml;base64,PHN2Zy8+" } },
-  "capabilities": { "preUnlock": ["connections"] },
+  "capabilities": { "deny": ["scores", "games"], "preUnlock": ["connections", "machine", "documents", "tables", "slides", "projects", "browser", "search", "routines"] },
   "connections": [{ "id": "wiki", "name": "Wiki", "url": "https://ai.acme.example/wiki/mcp", "auth": "oidc" }]
 }
 ```
@@ -58,6 +58,8 @@ Start from this, keep what they need and drop the rest:
 - **The logo:** the file's base64 in place of `PHN2Zy8+`, in `look.logo` and `kit.tokens.logo`. Jean takes no picture from the web. A mark about as wide as it is tall reads best beside Jean's name and on the browser's tab. Keep it to a few kilobytes: remove an SVG's metadata, and scale a PNG down to 256 pixels or so.
 - **The look:** `look` is the theme Jean opens in, built `on` one of Jean's own. `accent` is the organisation's main colour. `kit` is the look of what people make: Word documents, prints and slides. With only their theme to offer, add `"looks": []`.
 - **The name:** `look.name` names the theme, and each brain's `label` is what people see answer. Jean's own name stays. Renaming it means changing the source and building it again, which loses Warehouse SAS's signed releases and hosted copies. Say so if they ask, and don't do it unless they insist.
+- **The sign-in's scopes:** with `signIn.scopes`, Jean asks for `openid` and those alone, as written. List `profile`, `email` and `offline_access` beside the gateway's scope, or people lose their name and are asked to sign in again each time a token ends. Leave `scopes` out only when the gateway needs no scope of its own, as with the example's Dex.
+- **Capabilities:** `preUnlock` turns on from the start what people use at work, and `deny` turns off what the organisation doesn't want. The lists above are the example's.
 - **Addresses** are `https://`. `http://` works only on `localhost`.
 - **Enterprise parts** (`groups`, `audit`, `dlp`, `session`, `retention`, `seal`, `trust`) need a key outside `localhost`. Add them only when asked, and say a key is needed: free under 250 people, asked for at https://jean.is/enterprise/key.
 
@@ -73,8 +75,8 @@ Content-Security-Policy: connect-src 'self' http://localhost:5556 http://localho
 
 ## The sign-in and the gateway
 
-- **Entra ID:** register Jean as a single-page application, with Jean's address, final `/` included, as its redirect URI. On the gateway's own app, expose a scope with v2 access tokens and grant Jean's app consent for it. Name the issuer by tenant ID. `docs/enterprise.md` has each step. Hand them over as a checklist for whoever administers the tenant: never change a production tenant or gateway yourself unless the person asks you to.
-- **Another OpenID Connect provider:** its issuer, Jean's client id and the gateway's scopes, with refresh tokens on. Its discovery and token endpoints must answer Jean's origin with CORS.
+- **Entra ID:** register Jean as a single-page application, with Jean's address, final `/` included, as its redirect URI. On the gateway's own app, expose a scope with v2 access tokens and grant Jean's app consent for it; `signIn.scopes` lists it with `openid`, `profile`, `email` and `offline_access`. Name the issuer by tenant ID. `docs/enterprise.md` has each step. Hand them over as a checklist for whoever administers the tenant: never change a production tenant or gateway yourself unless the person asks you to.
+- **Another OpenID Connect provider:** its issuer and Jean's client id, and, when the gateway needs a scope of its own, every scope the sign-in asks for, `offline_access` among them for refresh tokens. Its discovery and token endpoints must answer Jean's origin with CORS.
 - **The gateway** checks each request's token: its signature, its issuer, its audience and its expiry, as `oidc_auth.py` does for LiteLLM. It answers Jean's origin with CORS for `Authorization`, `Content-Type`, `Mcp-Protocol-Version`, `Mcp-Method` and `Mcp-Name`.
 - **Keeping the example's Dex or LiteLLM:** change every address where the README's "Make it yours" says it appears, put the brand in `brand/`, and give Dex a lasting `storage` beyond a trial.
 
