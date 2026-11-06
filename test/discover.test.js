@@ -146,7 +146,7 @@ test('find_tools finds a tool by its name, however it is written, before the too
   assert.deepEqual((await found('query_data_sources')).slice(0, 3), ['notion_query_data_sources', 'notion_3_query_data_sources', 'notion_query_multiple_data_sources'])
   assert.equal((await found('read my mail'))[0], 'mail_search', 'words of what it does still find it')
   assert.equal((await found('saved view'))[0], 'notion_query_data_sources')
-  assert.equal((await found('zzz')).length, 5, 'nothing matches: what there is')
+  assert.equal(await finder.run({ query: 'zzz' }, /** @type {any} */ ({ declared: ['find_tools', 'run'] })), 'No tool does that. Those that can be found: notion_fetch, notion_query_multiple_data_sources, notion_query_data_sources, notion_3_query_data_sources, mail_search.', 'nothing matches: said so, with what there is')
 })
 
 test('a signature shows what is nested: unions, values, arrays and references', () => {
@@ -272,6 +272,8 @@ test('a tool the user turned off stays in the requests that declared it, and is 
   assert.ok(requests.every((request) => request.tools.length === 2), 'the cache holds')
   assert.equal(await findTools({ tools: () => [search] }).run({ query: 'search' }, /** @type {any} */ ({ declared: [] })), 'There are no other tools.')
   assert.equal(await findTools({ tools: () => [search], none: 'Offer it.' }).run({ query: 'search' }, /** @type {any} */ ({ declared: [] })), 'Offer it.')
+  // Nothing that does it: said so, and nothing unrelated declared (a weather question once got `look`).
+  assert.equal(await findTools({ tools: () => [tool('read'), tool('look')] }).run({ query: 'weather forecast' }, /** @type {any} */ ({ declared: [], declare: () => assert.fail('nothing to declare') })), 'No tool does that. Those that can be found: read, look.')
 })
 
 test('find_tools finds no tool given only to other brains (D491)', async () => {

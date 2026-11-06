@@ -61,8 +61,9 @@ export function findTools({ tools, none = 'There are no other tools.' }) {
       // A tool asked for by name comes before those that mention it, the name that says least first.
       const named = deferred.filter((tool) => words(query).length && words(query).every((word) => words(spaced(tool.spec.name)).includes(word))).sort((a, b) => a.spec.name.length - b.spec.name.length)
       const hits = bm25(deferred.map((tool) => `${spaced(tool.spec.name)} ${tool.spec.description}`), query).map((hit) => deferred[hit.index])
-      const found = [...new Set([...named, ...hits, ...(named.length + hits.length ? [] : deferred)])].slice(0, 5)
-      return `${found.map(signature).join('\n')}\n\n${reach(found.map((tool) => tool.spec.name), ctx)}`
+      // Nothing that does it is said so, with what can be asked for by name, and nothing is declared.
+      const found = [...new Set([...named, ...hits])].slice(0, 5)
+      return found.length ? `${found.map(signature).join('\n')}\n\n${reach(found.map((tool) => tool.spec.name), ctx)}` : `No tool does that. Those that can be found: ${deferred.map((tool) => tool.spec.name).join(', ')}.`
     },
   }
 }
