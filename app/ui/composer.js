@@ -54,13 +54,13 @@ export const subRow = (id, icon) => html`<button type="button" class="submenu" d
 /** @param {Event} event */
 const openSub = (event) => import('./plus.js').then((module) => module.open(event))
 
+let said = ''
 /** A capability offered in one sentence, above the box (docs/product.md, progressive discovery). */
 export function offerAside() {
-  const offer = app.offer.value
-  if (!offer || app.dialog.value === 'first') return nothing
-  const { id, progress } = offer
+  if (!app.offer.value || app.dialog.value === 'first') return nothing
+  const { id, progress } = app.offer.value
   const params = { name: assistantName(), size: formatBytes(SIZES[id] ?? 0) }
-  return html`<aside class="offer" role="alert">
+  return html`<aside class="offer" role=${said === id ? nothing : ((said = id), 'alert')}>
     <p>${t(`cap.${id}.offer`, params)}</p>
     ${progress === undefined ? html`<div class="row">
       <button class="button primary" @click=${() => import('./discovery.js').then((module) => module.accept(id))}>${t(`cap.${id}.yes`, params)}</button>
