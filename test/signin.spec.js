@@ -2,7 +2,7 @@
 // the gateway's brain; Jean signs in at the first visit, the gateway gets the token, its MCP servers too, which renews,
 // Settings › Brains says who is signed in, and signing out, from the person's menu, stays so until asked.
 import { test, expect } from '@playwright/test'
-import { start, ask, openSettings, closeSettings, openTasks, openProfile, turnOn, withPolicy } from './helpers.js'
+import { start, ask, openSettings, closeSettings, openTasks, openProfile, turnOn, withPolicy, MAIL_URL } from './helpers.js'
 import { POLICY, TOOLS, fakeIssuer, fakeGateway, fakeTools, redirect } from './fixtures/fake-issuer.js'
 
 /** The task's answers, all written. @param {import('@playwright/test').Page} page @param {number} [count] */
@@ -232,6 +232,37 @@ test('a connection of the organisation’s can take the same token, as its gatew
   await expect(settings.locator('.connection-kinds')).toContainText('Find a customer')
   await expect(waiting).toHaveCount(0)
   expect(seen.at(-1)).toBe('Bearer access-2')
+})
+
+test('back from a connection’s own sign-in as the organisation’s can’t renew, Jean keeps the connection, then signs in again, never leaving before', async ({ page }) => {
+  // Five minutes, as Keycloak's access tokens last unless set otherwise.
+  const issuer = await fakeIssuer(page, { expiresIn: 300 })
+  const seen = await fakeGateway(page, issuer)
+  await withPolicy(page, POLICY)
+  await start(page)
+  // While the person signs in to the service, the organisation's token comes to renew, which its identity provider refuses.
+  await ending(page)
+  issuer.refusing = true
+  await turnOn(page, 'Connections')
+  const dialog = page.locator('app-settings dialog[open]')
+  await dialog.getByRole('button', { name: /^Another service, by its address/ }).click()
+  await expect(dialog.locator('.data-head h2')).toBeFocused()
+  await dialog.locator('input[name="url"]').fill(`${MAIL_URL}/mcp`)
+  await dialog.locator('input[name="name"]').fill('Mail')
+  await dialog.locator('#connection-add .button.primary').click()
+  // The service's code becomes its tokens and the connection is kept; then Jean leaves for the organisation's sign-in, and comes back to it.
+  await expect.poll(() => issuer.authorized.length).toBe(2)
+  await expect(page.locator('#curtain')).toHaveCount(0)
+  await expect(dialog.locator('.data-head')).toContainText('3 actions')
+  expect(await page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.connections?.map(({ name, auth }) => ({ name, auth })))).toEqual([{ name: 'Mail', auth: 'oauth' }])
+  expect(issuer.asked.map((form) => form.get('grant_type'))).toEqual(['authorization_code', 'refresh_token', 'authorization_code'])
+  await expect.poll(() => key(page)).toBe('access-3')
+  expect(new URL(page.url()).search, 'the code and state are gone from the address').toBe('')
+  issuer.refusing = false
+  await closeSettings(page)
+  await ask(page, 'Hello')
+  await answered(page)
+  expect(seen.at(-1)).toBe('Bearer access-3')
 })
 
 test('the sections of the groups the person is in apply from the first sign-in: a group’s own brain gets the token, and Settings says whose (D429)', async ({ page }) => {

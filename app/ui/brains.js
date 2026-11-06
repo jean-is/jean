@@ -131,7 +131,8 @@ export async function finishSignIn() {
     if (params.has('help')) return (await import('../caps/tour/live.js')).start(params.get('help') ?? '')
     return params.has('sample') ? (await import('./composer.js')).idea('sample') : (await import('./brain-pages.js')).openAt(params.get('brain'))
   }
-  const code = params.get('code')
+  // OpenRouter's comes back with no state: one with a state is another sign-in's.
+  const code = params.has('state') ? null : params.get('code')
   const chatgpt = params.get('chatgpt')
   const verifier = sessionStorage.getItem('app.pkce')
   if (!(code && verifier) && !chatgpt) return

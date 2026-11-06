@@ -156,6 +156,7 @@ async function start() {
   if (back.has('q')) { history.replaceState(null, '', location.pathname + location.hash); send(back.get('q') ?? '') }
   else if (back.has('child')) { history.replaceState(null, '', location.pathname + location.hash); if (!app.ephemeral.value && await unlock('profiles')) (await import('../caps/profiles/dialog.js')).open(true) }
   else if (!(back.has('state') && await (await import('../caps/connections/connections.js')).finishSignIn()) && back.size) await (await import('./brains.js')).finishSignIn()
+  if (app.policy.signIn) import('../caps/signin/signin.js').then((m) => m.handled())
   // Watching for a new version, or finishing to bring one in.
   import('./update.js').then((update) => update.start())
 }

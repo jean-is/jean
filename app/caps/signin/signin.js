@@ -6,7 +6,7 @@
 // from the browser as a connection does (caps/connections/auth.js), keeps the tokens in .secrets/
 // (sealed at rest, never in a backup, export, sync or share), and renews them half their life before they end,
 // five minutes at most, one tab at a time. A renewal refused, or a sign-in that came back without tokens, asks from a toast,
-// never in a loop. Another part of policy may name a sign-in of its own, under another id. The ID token's
+// never in a loop. A return is its sign-in's by the state it left with, and Jean never leaves while one waits. Another part of policy may name a sign-in of its own, under another id. The ID token's
 // groups and roles are kept with the tokens, for ee/'s policy by group (D429), which finishes a return first.
 // It asks for `openid` and the scopes policy names, those alone, or else for the person's name, email and
 // renewals where the provider offers them (D696); an ID token that names nobody still leaves Sign out in the menu.
@@ -51,6 +51,8 @@ const renewing = new Map()
 const timers = new Map()
 /** Each sign-in come back from, by id: whether it had, once its tokens are kept. @type {Map<string, Promise<boolean>>} */
 const returned = new Map()
+/** What ui/app.js calls once it has handled the address's return from another sign-in, a connection's: the trip to sign in that waited for it. */
+export let handled = () => {}
 
 /** This profile's vault.json, plain, with its name, colour and slots. @returns {Promise<any>} */
 const vaultOf = async () => JSON.parse(await app.fs.read(VAULT) ?? 'null')
@@ -133,10 +135,10 @@ const renew = (id) => navigator.locks.request(`app-signin-${id}`, async () => {
  */
 export const back = (id = 'signin') => returned.get(id) ?? /** @type {Promise<boolean>} */ (returned.set(id, finishing(id)).get(id))
 
-/** @param {string} id */
+/** Its own return alone, by the state it left with: another's, a connection's, stays for it, and so does what this one waits for. @param {string} id */
 async function finishing(id) {
   const [saved, query] = [JSON.parse(sessionStorage.getItem(PENDING) ?? 'null'), new URLSearchParams(location.search)]
-  if (saved?.id !== id || !query.has('state')) return false
+  if (saved?.id !== id || !saved.state || query.get('state') !== saved.state) return false
   sessionStorage.removeItem(PENDING)
   ;(await import('../../ui/brains.js')).comeBack()
   await setSecret(app.fs, id, JSON.stringify(timed({ ...await finish(query, saved), end: saved.end })))
@@ -145,7 +147,8 @@ async function finishing(id) {
 
 /**
  * Before the room shows. Back from signing in, the tokens are kept and the user is where they were;
- * with none kept, Jean leaves to sign in; otherwise they are renewed when due, and when the page shows again.
+ * with none kept, Jean leaves to sign in, once the address's return from another sign-in, a connection's, is handled
+ * as the room shows (ui/app.js), never before; otherwise they are renewed when due, and when the page shows again.
  * @param {string} [id] @param {SignIn} [given]
  * @returns {Promise<void>} never, while it leaves
  */
@@ -153,7 +156,11 @@ export async function start(id = 'signin', given = app.policy.signIn) {
   named.set(id, given)
   if (id === 'signin' && localStorage.getItem(mine(OUT))) return signedOut(given)
   try {
-    if (!(await back(id)) && !(await token(id)) && !(await read(id))) return await signIn(id, given).then(() => new Promise(() => {}))
+    if (!(await back(id)) && !(await token(id)) && !(await read(id))) {
+      // A return from signing in somewhere in the address, whose code is good once, is handled first.
+      if (!/[?&](state|code|chatgpt)=/.test(location.search)) return await signIn(id, given).then(() => new Promise(() => {}))
+      handled = () => { signIn(id, given).catch((error) => { console.warn('Sign-in', error); offer(id) }) }
+    }
   } catch (error) {
     console.warn('Sign-in', error)
     offer(id)

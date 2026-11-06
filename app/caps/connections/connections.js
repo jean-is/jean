@@ -394,11 +394,11 @@ export async function signIn(connection, challenge) {
   }
 }
 
-/** Back from signing in (`?state=…`): keep the tokens and the connection, where the user was, on its page. False when it wasn't a connection's. */
+/** Back from signing in (`?state=…`): keep the tokens and the connection, where the user was, on its page. False when it wasn't a connection's, by the state it left with. */
 export async function finishSignIn() {
   const params = new URLSearchParams(location.search)
   const saved = JSON.parse(sessionStorage.getItem(PENDING) ?? 'null')
-  if (!saved) return false
+  if (!saved?.state || params.get('state') !== saved.state) return false
   sessionStorage.removeItem(PENDING)
   // Settings opens once the conversation under it is open again, since opening one closes it.
   await returnTo(saved.route ?? '')
