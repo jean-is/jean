@@ -1,0 +1,11 @@
+{
+  "screen.close": "Paouez da rannañ",
+  "screen.watch": "Evezhiañ ha kemenn",
+  "screen.watching": "O evezhiañ",
+  "screen.watched": "Paouezet da evezhiañ goude dek munutenn.",
+  "screen.move": "Dilec’hiañ d’ur c’horn all",
+  "screen.failed": "N’eus ket bet gallet rannañ ar skramm. Klaskit en-dro.",
+  "screen.blind": "N’eo ket gouest an empenn-mañ da welet skeudennoù. Dibabit unan a wel.",
+  "screen.picture": "Skramm {time}",
+  "screen.idle": "Paouezet eo rannañ ar skramm goude dek munutenn hep implij."
+}

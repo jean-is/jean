@@ -1,0 +1,11 @@
+{
+  "screen.close": "ማጋራት አቁም",
+  "screen.watch": "መከታተል እና ማሳወቅ",
+  "screen.watching": "በመከታተል ላይ",
+  "screen.watched": "ከአሥር ደቂቃ በኋላ መከታተል ቆሟል።",
+  "screen.move": "ወደ ሌላ ጥግ ያንቀሳቅሱ",
+  "screen.failed": "ማያ ገጹን ማጋራት አልተቻለም። እንደገና ይሞክሩ።",
+  "screen.blind": "ይህ አንጎል ምስሎችን ማየት አይችልም። ማየት የሚችል ይምረጡ።",
+  "screen.picture": "ማያ ገጽ {time}",
+  "screen.idle": "ማያ ገጽ ማጋራት ለአሥር ደቂቃ ጥቅም ላይ ባለመዋሉ ቆሟል።"
+}

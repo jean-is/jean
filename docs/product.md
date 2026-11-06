@@ -98,6 +98,7 @@ Jean is learned the way *A Dark Room* is played: the first screen holds a single
 | Connections | A request needs one of the user's services, like their email (the brain offers it, and the answer waits while they connect it), or an email, an invitation or a contact card is shared (`.eml`, `.ics`, `.vcf`), read or not (D286) | "Connect a service": one Jean knows, read first, or an address, then a sign-in or a key (MCP behind the scenes, D87–D89, D95), once for all its products (D344, D382); used in every project or in those ticked (D191) |
 | Live conversation | The user has dictated three times | Hands-free: it listens, answers aloud, stops when they speak (about 82 MB, once, D93) |
 | Camera | The user shares a second picture from a phone or tablet, or the brain offers it when they ask about something in front of them (D645) | "Show me what you're looking at?" The camera opens with live conversation, each message with a picture of what it shows; Watch has Jean look on its own, for ten minutes |
+| Screen sharing | The user captures their screen, or the brain offers it when they ask how to do something in an app on their computer (D699) | "Show me your screen as you work?" A window, a tab or the screen goes with each message as a picture; Watch has Jean look on its own, for ten minutes. Jean only sees, never clicks or types |
 | Natural voice | Three answers have been read aloud in one of its six languages | "Hear answers in a natural voice?" A voice made on this device (about 108 MB for the first language, 97 MB for another; D455) |
 | Helpers | A big request with several parts (the brain offers it), or one that made three files or more, or ran past the brain's length (D286) | Jean splits the work into parts that helpers do at the same time; they appear nested in the activity view, and their approvals wait in the decision inbox and their questions in the box (D98, D99, D343) |
 | Double-check | Citations are in regular use (three answers that cite sources, D100) | Jean checks each claim against the source it cites, and shows what the sources don't support |
@@ -343,6 +344,8 @@ As in the Claude apps (D118), Ctrl outside Apple's systems: ⌘, Settings; ⌘�
 Dictation and read-aloud are always there, for accessibility. Live conversation is discovered after three dictations (D93); once on, it starts from the box's button while the box is empty, and its state shows in the box (D123, D374).
 
 The camera (D645) is found from a phone's photos or when the brain offers it, and needs a brain that can see. Opened, it starts live conversation: a picture of what the camera shows goes with each thing they say, never the video ([architecture.md](architecture.md#camera)).
+
+Screen sharing (D699), on a computer, is found from a capture of the screen or when the brain offers it, and needs a brain that can see: a picture of the window, tab or screen shared goes with each message, never the video, and Jean never clicks or types there ([architecture.md](architecture.md#screen-sharing)).
 
 ## Languages
 

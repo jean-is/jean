@@ -1,0 +1,11 @@
+{
+  "screen.close": "Itigil ang pagbabahagi",
+  "screen.watch": "Bantayan at sabihan",
+  "screen.watching": "Nagbabantay",
+  "screen.watched": "Huminto ang pagbabantay pagkalipas ng sampung minuto.",
+  "screen.move": "Ilipat sa ibang sulok",
+  "screen.failed": "Hindi naibahagi ang screen. Subukan ulit.",
+  "screen.blind": "Hindi nakakakita ng larawan ang utak na ito. Pumili ng nakakakita.",
+  "screen.picture": "Screen {time}",
+  "screen.idle": "Huminto ang pagbabahagi ng screen pagkalipas ng sampung minutong hindi ginagamit."
+}

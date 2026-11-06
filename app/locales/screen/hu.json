@@ -1,0 +1,11 @@
+{
+  "screen.close": "Megosztás leállítása",
+  "screen.watch": "Figyelni és szólni",
+  "screen.watching": "Figyel",
+  "screen.watched": "A figyelés tíz perc után leállt.",
+  "screen.move": "Áthelyezés másik sarokba",
+  "screen.failed": "Nem sikerült megosztani a képernyőt. Próbáld újra.",
+  "screen.blind": "Ez az agy nem lát képeket. Válassz olyat, amelyik lát.",
+  "screen.picture": "Képernyő {time}",
+  "screen.idle": "A képernyőmegosztás leállt, mert tíz percig nem használtad."
+}

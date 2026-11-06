@@ -54,6 +54,7 @@
   "cap.names.hint": "Start a few tasks in a project.",
   "cap.live.hint": "Use dictation three times.",
   "cap.camera.hint": "Share two photos from a phone or tablet.",
+  "cap.screen.hint": "Capture your screen once.",
   "cap.backup.hint": "Start three tasks.",
   "cap.share.hint": "Save a copy of a task.",
   "cap.sync.hint": "Mention that you also use another computer.",
@@ -93,6 +94,7 @@
   "cap.connections.text": "Connect the services you use, like your email or documents. {name} reads and acts there only with your approval.",
   "cap.live.text": "Talk with {name} hands-free: it listens, answers aloud, and stops when you speak. About {size}, once.",
   "cap.camera.text": "Talk hands-free about what’s in front of you: each thing you say goes with what the camera shows, and it can keep watching and speak up when something matters. Only the pictures it looked at are kept, in the task.",
+  "cap.screen.text": "Show a window, a tab or your whole screen while you work in another app: each thing you say goes with what it shows, and watching can go on, with a word when a step is done or something goes wrong. Nothing is ever clicked or typed there. Only the pictures looked at are kept, in the task.",
   "connections.count": {
     "one": "{count} action",
     "other": "{count} actions"

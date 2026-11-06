@@ -1,0 +1,11 @@
+{
+  "screen.close": "Sluta dela",
+  "screen.watch": "Håll utkik och säg till",
+  "screen.watching": "Håller utkik",
+  "screen.watched": "Slutade hålla utkik efter tio minuter.",
+  "screen.move": "Flytta till ett annat hörn",
+  "screen.failed": "Skärmen kunde inte delas. Försök igen.",
+  "screen.blind": "Den här hjärnan kan inte se bilder. Välj en som kan.",
+  "screen.picture": "Skärm {time}",
+  "screen.idle": "Skärmdelningen stoppades efter tio minuter utan användning."
+}

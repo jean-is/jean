@@ -1,0 +1,11 @@
+{
+  "screen.close": "Zatrzymaj udostępnianie",
+  "screen.watch": "Obserwuj i daj znać",
+  "screen.watching": "Obserwuje",
+  "screen.watched": "Obserwowanie zakończone po dziesięciu minutach.",
+  "screen.move": "Przenieś do innego rogu",
+  "screen.failed": "Nie udało się udostępnić ekranu. Spróbuj ponownie.",
+  "screen.blind": "Ten mózg nie widzi obrazów. Wybierz taki, który widzi.",
+  "screen.picture": "Ekran {time}",
+  "screen.idle": "Udostępnianie ekranu zatrzymało się po dziesięciu minutach bez użycia."
+}

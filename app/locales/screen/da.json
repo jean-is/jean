@@ -1,0 +1,11 @@
+{
+  "screen.close": "Stop deling",
+  "screen.watch": "Hold øje og sig til",
+  "screen.watching": "Holder øje",
+  "screen.watched": "Holdt op med at holde øje efter ti minutter.",
+  "screen.move": "Flyt til et andet hjørne",
+  "screen.failed": "Skærmen kunne ikke deles. Prøv igen.",
+  "screen.blind": "Denne hjerne kan ikke se billeder. Vælg en, der kan.",
+  "screen.picture": "Skærm {time}",
+  "screen.idle": "Skærmdelingen stoppede efter ti minutter uden brug."
+}

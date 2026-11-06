@@ -191,8 +191,10 @@ export type SystemNoteData =
   | { kind: 'mode', mode: string }
   /** the user's camera came on or went off, or watching ended while it was on (D645) */
   | { kind: 'camera', on: boolean }
-  /** a look the camera took while Jean watched, which said something (D645) */
-  | { kind: 'look' }
+  /** the user began or stopped sharing their screen, or watching it ended while it was shared (D699) */
+  | { kind: 'screen', on: boolean }
+  /** a look the camera or screen sharing took while Jean watched, which said something (D645, D699) */
+  | { kind: 'look', cap: 'camera' | 'screen' }
   /** the user pointed at a passage of a file of the project with Ask Jean (D690) */
   | { kind: 'passage', uri: string }
   /** the user undid a change made in their folder, by its call (D141) */

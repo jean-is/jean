@@ -54,6 +54,7 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   connections: () => import('../caps/connections/connections.js'),
   live: () => import('../caps/live/live.js'),
   camera: () => import('../caps/camera/camera.js'),
+  screen: () => import('../caps/screen/screen.js'),
   helpers: () => import('../caps/helpers/helpers.js'),
   check: () => import('../caps/check/check.js'),
   since: () => import('../caps/since/since.js'),

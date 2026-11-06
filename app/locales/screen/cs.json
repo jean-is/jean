@@ -1,0 +1,11 @@
+{
+  "screen.close": "Ukončit sdílení",
+  "screen.watch": "Sledovat a ozvat se",
+  "screen.watching": "Sleduje",
+  "screen.watched": "Sledování skončilo po deseti minutách.",
+  "screen.move": "Přesunout do jiného rohu",
+  "screen.failed": "Obrazovku se nepodařilo sdílet. Zkuste to znovu.",
+  "screen.blind": "Tento mozek nevidí obrázky. Vyberte takový, který je vidí.",
+  "screen.picture": "Obrazovka {time}",
+  "screen.idle": "Sdílení obrazovky skončilo po deseti minutách bez použití."
+}

@@ -1,0 +1,11 @@
+{
+  "screen.close": "Dejar de compartir",
+  "screen.watch": "Vigilar y avisar",
+  "screen.watching": "Vigilando",
+  "screen.watched": "Se dejó de vigilar tras diez minutos.",
+  "screen.move": "Mover a otra esquina",
+  "screen.failed": "No se pudo compartir la pantalla. Inténtalo de nuevo.",
+  "screen.blind": "Este cerebro no ve imágenes. Elige uno que sí las vea.",
+  "screen.picture": "Pantalla {time}",
+  "screen.idle": "Se dejó de compartir la pantalla tras diez minutos sin uso."
+}

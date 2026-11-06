@@ -1,0 +1,11 @@
+{
+  "screen.close": "Acha kushiriki",
+  "screen.watch": "Kufuatilia na kuarifu",
+  "screen.watching": "Inafuatilia",
+  "screen.watched": "Ufuatiliaji ulisimama baada ya dakika kumi.",
+  "screen.move": "Hamishia kona nyingine",
+  "screen.failed": "Skrini haikuweza kushirikiwa. Jaribu tena.",
+  "screen.blind": "Ubongo huu hauoni picha. Chagua unaoweza kuona.",
+  "screen.picture": "Skrini {time}",
+  "screen.idle": "Kushiriki skrini kulisimama baada ya dakika kumi bila kutumika."
+}

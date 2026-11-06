@@ -1,0 +1,11 @@
+{
+  "screen.close": "Lopeta jakaminen",
+  "screen.watch": "Tarkkaile ja kerro",
+  "screen.watching": "Tarkkailee",
+  "screen.watched": "Tarkkailu päättyi kymmenen minuutin jälkeen.",
+  "screen.move": "Siirrä toiseen kulmaan",
+  "screen.failed": "Näyttöä ei voitu jakaa. Yritä uudelleen.",
+  "screen.blind": "Nämä aivot eivät näe kuvia. Valitse sellaiset, jotka näkevät.",
+  "screen.picture": "Näyttö {time}",
+  "screen.idle": "Näytön jakaminen loppui, kun sitä ei käytetty kymmeneen minuuttiin."
+}

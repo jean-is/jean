@@ -1,0 +1,11 @@
+{
+  "screen.close": "Opriți partajarea",
+  "screen.watch": "Urmărire și semnalare",
+  "screen.watching": "Urmărire activă",
+  "screen.watched": "Urmărirea s-a oprit după zece minute.",
+  "screen.move": "Mutați în alt colț",
+  "screen.failed": "Ecranul nu a putut fi partajat. Încercați din nou.",
+  "screen.blind": "Acest creier nu vede imagini. Alegeți unul care le vede.",
+  "screen.picture": "Ecran {time}",
+  "screen.idle": "Partajarea ecranului s-a oprit după zece minute fără utilizare."
+}

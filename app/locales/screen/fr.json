@@ -1,0 +1,11 @@
+{
+  "screen.close": "Arrêter le partage",
+  "screen.watch": "Observer et prévenir",
+  "screen.watching": "En observation",
+  "screen.watched": "Observation arrêtée après dix minutes.",
+  "screen.move": "Déplacer dans un autre coin",
+  "screen.failed": "L’écran n’a pas pu être partagé. Réessayez.",
+  "screen.blind": "Ce cerveau ne voit pas les images. Choisissez-en un qui les voit.",
+  "screen.picture": "Écran {time}",
+  "screen.idle": "Le partage d’écran s’est arrêté après dix minutes sans usage."
+}

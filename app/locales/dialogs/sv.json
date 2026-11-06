@@ -54,6 +54,7 @@
   "cap.names.hint": "Starta några uppgifter i ett projekt.",
   "cap.live.hint": "Använd diktering tre gånger.",
   "cap.camera.hint": "Dela två foton från en telefon eller surfplatta.",
+  "cap.screen.hint": "Ta en skärmbild en gång.",
   "cap.backup.hint": "Starta tre uppgifter.",
   "cap.share.hint": "Spara en kopia av en uppgift.",
   "cap.sync.hint": "Nämn att du också använder en annan dator.",
@@ -93,6 +94,7 @@
   "cap.connections.text": "Anslut tjänsterna du använder, som din mejl eller dina dokument. {name} läser och agerar där bara med ditt godkännande.",
   "cap.live.text": "Prata med {name} handsfree: den lyssnar, svarar högt och tystnar när du pratar. Ungefär {size}, en gång.",
   "cap.camera.text": "Prata handsfree om det du har framför dig: allt du säger följer med det kameran visar, och den kan fortsätta titta och säga till när något spelar roll. Bara bilderna som tittats på sparas, i uppgiften.",
+  "cap.screen.text": "Visa ett fönster, en flik eller hela skärmen medan du arbetar i en annan app: allt du säger följer med det den visar, och tittandet kan fortsätta, med ett ord när ett steg är klart eller något går fel. Där klickas eller skrivs aldrig något. Bara bilderna som tittats på sparas, i uppgiften.",
   "connections.count": {
     "one": "{count} åtgärd",
     "other": "{count} åtgärder"

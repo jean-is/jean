@@ -1,0 +1,11 @@
+{
+  "screen.close": "停止分享",
+  "screen.watch": "觀察並提醒",
+  "screen.watching": "觀察中",
+  "screen.watched": "十分鐘後已停止觀察。",
+  "screen.move": "移到另一個角落",
+  "screen.failed": "無法分享螢幕。請再試一次。",
+  "screen.blind": "這個大腦看不到圖片。請選擇一個看得到的。",
+  "screen.picture": "螢幕 {time}",
+  "screen.idle": "十分鐘未使用，螢幕分享已停止。"
+}

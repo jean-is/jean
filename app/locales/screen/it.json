@@ -1,0 +1,11 @@
+{
+  "screen.close": "Interrompi la condivisione",
+  "screen.watch": "Osserva e avvisa",
+  "screen.watching": "In osservazione",
+  "screen.watched": "Osservazione interrotta dopo dieci minuti.",
+  "screen.move": "Sposta in un altro angolo",
+  "screen.failed": "Non è stato possibile condividere lo schermo. Riprova.",
+  "screen.blind": "Questo cervello non vede le immagini. Scegline uno che le veda.",
+  "screen.picture": "Schermo {time}",
+  "screen.idle": "La condivisione dello schermo si è interrotta dopo dieci minuti senza uso."
+}

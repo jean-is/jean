@@ -55,6 +55,7 @@
   "cap.names.hint": "Commencez quelques tâches dans un projet.",
   "cap.live.hint": "Dictez trois fois.",
   "cap.camera.hint": "Partagez deux photos depuis un téléphone ou une tablette.",
+  "cap.screen.hint": "Capturez votre écran une fois.",
   "cap.backup.hint": "Commencez trois tâches.",
   "cap.share.hint": "Enregistrez une copie d’une tâche.",
   "cap.sync.hint": "Mentionnez que vous utilisez aussi un autre ordinateur.",
@@ -94,6 +95,7 @@
   "cap.connections.text": "Connectez les services que vous utilisez, comme vos courriels ou vos documents. {name} n’y lit et n’y agit qu’avec votre accord.",
   "cap.live.text": "Parlez les mains libres : les réponses sont lues à voix haute et s’arrêtent dès que vous parlez. Environ {size}, une seule fois.",
   "cap.camera.text": "Parlez les mains libres de ce que vous avez sous les yeux : chaque chose dite part avec ce que montre la caméra, qui peut aussi rester à l’affût et vous prévenir quand quelque chose compte. Seules les images regardées sont gardées, dans la tâche.",
+  "cap.screen.text": "Montrez une fenêtre, un onglet ou tout votre écran pendant que vous travaillez dans une autre application : chaque chose dite part avec ce qu’il montre, et l’œil peut rester ouvert, avec un mot quand une étape est faite ou que quelque chose cloche. Rien n’y est jamais cliqué ni tapé. Seules les images regardées sont gardées, dans la tâche.",
   "connections.count": {
     "one": "{count} action",
     "many": "{count} actions",

@@ -1,0 +1,11 @@
+{
+  "screen.close": "Berhenti berbagi",
+  "screen.watch": "Awasi dan beri tahu",
+  "screen.watching": "Mengawasi",
+  "screen.watched": "Berhenti mengawasi setelah sepuluh menit.",
+  "screen.move": "Pindahkan ke sudut lain",
+  "screen.failed": "Layar tidak dapat dibagikan. Coba lagi.",
+  "screen.blind": "Otak ini tidak bisa melihat gambar. Pilih yang bisa.",
+  "screen.picture": "Layar {time}",
+  "screen.idle": "Berbagi layar berhenti setelah sepuluh menit tidak dipakai."
+}

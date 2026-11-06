@@ -1,0 +1,11 @@
+{
+  "screen.close": "Stop sharing",
+  "screen.watch": "Watch and speak up",
+  "screen.watching": "Watching",
+  "screen.watched": "Stopped watching after ten minutes.",
+  "screen.move": "Move to another corner",
+  "screen.failed": "The screen couldn’t be shared. Try again.",
+  "screen.blind": "This brain can’t see pictures. Pick one that can.",
+  "screen.picture": "Screen {time}",
+  "screen.idle": "Screen sharing stopped after ten minutes without use."
+}

@@ -1,0 +1,11 @@
+{
+  "screen.close": "Teilen beenden",
+  "screen.watch": "Beobachten und melden",
+  "screen.watching": "Beobachtet",
+  "screen.watched": "Beobachten nach zehn Minuten beendet.",
+  "screen.move": "In eine andere Ecke verschieben",
+  "screen.failed": "Der Bildschirm konnte nicht geteilt werden. Versuch es noch einmal.",
+  "screen.blind": "Dieses Gehirn kann keine Bilder sehen. Wähle eins, das es kann.",
+  "screen.picture": "Bildschirm {time}",
+  "screen.idle": "Die Bildschirmfreigabe wurde nach zehn Minuten ohne Nutzung beendet."
+}

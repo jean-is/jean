@@ -1,0 +1,11 @@
+{
+  "screen.close": "הפסקת השיתוף",
+  "screen.watch": "מעקב והתרעה",
+  "screen.watching": "במעקב",
+  "screen.watched": "המעקב הופסק אחרי עשר דקות.",
+  "screen.move": "העברה לפינה אחרת",
+  "screen.failed": "לא ניתן היה לשתף את המסך. נסו שוב.",
+  "screen.blind": "המוח הזה לא רואה תמונות. בחרו מוח שרואה.",
+  "screen.picture": "מסך {time}",
+  "screen.idle": "שיתוף המסך הופסק אחרי עשר דקות ללא שימוש."
+}

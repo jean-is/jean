@@ -1,0 +1,11 @@
+{
+  "screen.close": "Zaustavi dijeljenje",
+  "screen.watch": "Prati i javi",
+  "screen.watching": "Prati",
+  "screen.watched": "Praćenje je završilo nakon deset minuta.",
+  "screen.move": "Premjesti u drugi kut",
+  "screen.failed": "Zaslon nije bilo moguće podijeliti. Pokušajte ponovno.",
+  "screen.blind": "Ovaj mozak ne vidi slike. Odaberite onaj koji ih vidi.",
+  "screen.picture": "Zaslon {time}",
+  "screen.idle": "Dijeljenje zaslona zaustavilo se nakon deset minuta bez korištenja."
+}

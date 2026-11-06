@@ -1,0 +1,11 @@
+{
+  "screen.close": "Stoppen met delen",
+  "screen.watch": "Blijven kijken en melden",
+  "screen.watching": "Kijkt mee",
+  "screen.watched": "Na tien minuten gestopt met kijken.",
+  "screen.move": "Naar een andere hoek verplaatsen",
+  "screen.failed": "Het scherm kon niet worden gedeeld. Probeer het opnieuw.",
+  "screen.blind": "Dit brein kan geen afbeeldingen zien. Kies er een dat dat wel kan.",
+  "screen.picture": "Scherm {time}",
+  "screen.idle": "Het scherm delen stopte na tien minuten zonder gebruik."
+}

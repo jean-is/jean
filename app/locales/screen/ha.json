@@ -1,0 +1,11 @@
+{
+  "screen.close": "Daina rabawa",
+  "screen.watch": "Kallo da sanarwa",
+  "screen.watching": "Ana kallo",
+  "screen.watched": "An daina kallo bayan minti goma.",
+  "screen.move": "Matsar zuwa wani kusurwa",
+  "screen.failed": "Ba a iya raba allon ba. Sake gwadawa.",
+  "screen.blind": "Wannan ƙwaƙwalwa ba ta ganin hotuna. Zaɓi wadda ke gani.",
+  "screen.picture": "Allo {time}",
+  "screen.idle": "Raba allo ya tsaya bayan minti goma ba a yi amfani da shi ba."
+}

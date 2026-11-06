@@ -1,0 +1,11 @@
+{
+  "screen.close": "Berhenti berkongsi",
+  "screen.watch": "Perhati dan beritahu",
+  "screen.watching": "Memerhati",
+  "screen.watched": "Berhenti memerhati selepas sepuluh minit.",
+  "screen.move": "Alihkan ke sudut lain",
+  "screen.failed": "Skrin tidak dapat dikongsi. Cuba lagi.",
+  "screen.blind": "Otak ini tidak dapat melihat gambar. Pilih yang boleh.",
+  "screen.picture": "Skrin {time}",
+  "screen.idle": "Perkongsian skrin berhenti selepas sepuluh minit tidak digunakan."
+}

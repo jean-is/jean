@@ -1,0 +1,11 @@
+{
+  "screen.close": "Paylaşımı durdur",
+  "screen.watch": "İzle ve haber ver",
+  "screen.watching": "İzliyor",
+  "screen.watched": "İzleme on dakika sonra durdu.",
+  "screen.move": "Başka bir köşeye taşı",
+  "screen.failed": "Ekran paylaşılamadı. Yeniden dene.",
+  "screen.blind": "Bu beyin görüntüleri göremiyor. Görebilen birini seç.",
+  "screen.picture": "Ekran {time}",
+  "screen.idle": "Ekran paylaşımı on dakika kullanılmayınca durdu."
+}

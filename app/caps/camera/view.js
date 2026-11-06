@@ -15,21 +15,16 @@ import { plainText } from '../../ui/spoken.js'
 import { foldTurns, splitSuggestions } from '../../core/events.js'
 import { t, locale } from '../../core/i18n.js'
 import { state, full, can, light, mirrored, kept, watching, video, open, close, turn, toggleLight, closely, drop, toggleWatching } from './camera.js'
+import { button } from './feed.js'
 
 const glyphs = {
   turn: icon(svg`<path d="M4.5 12a7.5 7.5 0 0 1 12.8-5.3L19.5 9M19.5 4.5V9H15M19.5 12a7.5 7.5 0 0 1-12.8 5.3L4.5 15M4.5 19.5V15H9"/>`),
-  eye: icon(svg`<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/>`),
-  move: icon(svg`<path d="M12 3.5v17M3.5 12h17M9.5 6 12 3.5 14.5 6M9.5 18l2.5 2.5 2.5-2.5M6 9.5 3.5 12 6 14.5M18 9.5l2.5 2.5-2.5 2.5"/>`),
 }
 /** The tile's corners, in the order its Move button goes round them. */
 const CORNERS = ['top-end', 'bottom-end', 'bottom-start', 'top-start']
 const corner = signal(CORNERS[0])
 /** Characters of Jean's answer the captions show, its last sentences. */
 const CAPTION = 180
-
-/** @param {unknown} glyph @param {string} key @param {() => unknown} run @param {boolean} [pressed] */
-const button = (glyph, key, run, pressed) => html`<button type="button" class="icon-button" aria-label=${t(key)}
-  aria-pressed=${pressed === undefined ? nothing : String(pressed)} @click=${run}>${glyph}</button>`
 
 /** Talking hands-free, on or off, from the camera. */
 const talk = async () => { if (await unlock('live')) (await import('../live/live.js')).toggle() }
@@ -64,7 +59,7 @@ class Camera extends Element {
         ${video}
         ${now === 'paused' ? html`<button type="button" class="camera-paused" @click=${open}>${t('camera.paused')}</button>` : nothing}
       </div>
-      <p class="camera-state" role="status">${watched ? glyphs.eye : html`<span class="camera-dot"></span>`}<span>${t(watched ? 'camera.watching' : 'cap.camera.name')}</span></p>
+      <p class="camera-state" role="status">${watched ? menu.eye : html`<span class="camera-dot"></span>`}<span>${t(watched ? 'camera.watching' : 'cap.camera.name')}</span></p>
       ${full.value ? html`
         <div class="camera-top">
           ${can.value.turn ? button(glyphs.turn, 'camera.turn', turn) : nothing}
@@ -79,14 +74,14 @@ class Camera extends Element {
           <div class="camera-buttons">
             ${button(menu.task, 'camera.task', () => { full.value = false })}
             <button type="button" class="camera-shutter" aria-label=${t('camera.closely')} @click=${closely}></button>
-            ${button(glyphs.eye, 'camera.watch', toggleWatching, Boolean(watched))}
+            ${button(menu.eye, 'camera.watch', toggleWatching, Boolean(watched))}
             ${isDenied('live') ? nothing : button(hands === 'off' ? icons.mic : icons.voice, hands === 'off' ? 'live.start' : 'live.stop', talk, hands !== 'off')}
           </div>
         </div>` : html`
         <div class="camera-buttons">
           ${button(icons.capture, 'camera.closely', closely)}
-          ${button(glyphs.eye, 'camera.watch', toggleWatching, Boolean(watched))}
-          ${button(glyphs.move, 'camera.move', () => { corner.value = CORNERS[(CORNERS.indexOf(corner.peek()) + 1) % CORNERS.length] })}
+          ${button(menu.eye, 'camera.watch', toggleWatching, Boolean(watched))}
+          ${button(menu.move, 'camera.move', () => { corner.value = CORNERS[(CORNERS.indexOf(corner.peek()) + 1) % CORNERS.length] })}
           ${button(icons.close, 'camera.close', close)}
         </div>`}
       ${picture ? html`<figure class="camera-kept"><img src=${picture.url} alt=${t('camera.kept')}>${button(icons.close, 'camera.drop', drop)}</figure>` : nothing}

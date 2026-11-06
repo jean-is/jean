@@ -53,6 +53,7 @@
   "cap.names.hint": "Mulakan beberapa tugasan dalam sebuah projek.",
   "cap.live.hint": "Gunakan imlak tiga kali.",
   "cap.camera.hint": "Kongsi dua foto daripada telefon atau tablet.",
+  "cap.screen.hint": "Tangkap skrin anda sekali.",
   "cap.backup.hint": "Mulakan tiga tugasan.",
   "cap.share.hint": "Simpan salinan sesuatu tugasan.",
   "cap.sync.hint": "Sebutkan bahawa anda juga menggunakan komputer lain.",
@@ -92,6 +93,7 @@
   "cap.connections.text": "Sambungkan perkhidmatan yang anda gunakan, seperti e-mel atau dokumen. {name} membaca dan bertindak di sana hanya dengan kebenaran anda.",
   "cap.live.text": "Bercakap tanpa menggunakan tangan: jawapan dibacakan dan berhenti apabila anda bercakap. Kira-kira {size}, sekali.",
   "cap.camera.text": "Bercakap tanpa tangan tentang apa yang ada di hadapan anda: setiap perkara yang anda katakan dihantar bersama apa yang ditunjukkan kamera, dan kamera boleh terus memerhati dan memberitahu apabila sesuatu penting. Hanya gambar yang dilihat disimpan, dalam tugasan.",
+  "cap.screen.text": "Tunjukkan tetingkap, tab atau seluruh skrin anda semasa bekerja dalam aplikasi lain: setiap perkara yang anda katakan dihantar bersama apa yang ditunjukkannya, dan pemerhatian boleh diteruskan, dengan makluman apabila satu langkah selesai atau sesuatu tidak kena. Tiada apa-apa yang pernah diklik atau ditaip di sana. Hanya gambar yang dilihat disimpan, dalam tugasan.",
   "connections.count": {
     "other": "{count} tindakan"
   },

@@ -54,6 +54,7 @@
   "cap.names.hint": "Aloita muutama tehtävä projektissa.",
   "cap.live.hint": "Käytä sanelua kolme kertaa.",
   "cap.camera.hint": "Jaa kaksi valokuvaa puhelimesta tai tabletista.",
+  "cap.screen.hint": "Kaappaa näyttösi kerran.",
   "cap.backup.hint": "Aloita kolme tehtävää.",
   "cap.share.hint": "Tallenna kopio tehtävästä.",
   "cap.sync.hint": "Mainitse, että käytät myös toista tietokonetta.",
@@ -93,6 +94,7 @@
   "cap.connections.text": "Yhdistä käyttämäsi palvelut, kuten sähköposti tai asiakirjat. {name} lukee ja toimii niissä vain hyväksynnälläsi.",
   "cap.live.text": "Puhu sovellukselle {name} kädet vapaina: se kuuntelee, vastaa ääneen ja vaikenee, kun puhut. Noin {size}, kerran.",
   "cap.camera.text": "Puhu kädet vapaina siitä, mitä edessäsi on: kaikki mitä sanot kulkee kameran kuvan mukana, ja se voi jatkaa katsomista ja sanoa, kun jokin on tärkeää. Vain katsotut kuvat säilytetään, tehtävässä.",
+  "cap.screen.text": "Näytä ikkuna, välilehti tai koko näyttösi, kun työskentelet toisessa sovelluksessa: kaikki mitä sanot kulkee sen mukana, mitä se näyttää, ja seuraaminen voi jatkua, ja sana tulee, kun vaihe on valmis tai jokin menee pieleen. Siellä ei koskaan klikata tai kirjoiteta mitään. Vain katsotut kuvat säilytetään, tehtävässä.",
   "connections.count": {
     "one": "{count} toiminto",
     "other": "{count} toimintoa"

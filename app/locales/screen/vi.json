@@ -1,0 +1,11 @@
+{
+  "screen.close": "Dừng chia sẻ",
+  "screen.watch": "Quan sát và báo",
+  "screen.watching": "Đang quan sát",
+  "screen.watched": "Đã ngừng quan sát sau mười phút.",
+  "screen.move": "Chuyển sang góc khác",
+  "screen.failed": "Không chia sẻ được màn hình. Hãy thử lại.",
+  "screen.blind": "Bộ não này không nhìn thấy hình ảnh. Hãy chọn bộ não nhìn thấy được.",
+  "screen.picture": "Màn hình {time}",
+  "screen.idle": "Đã dừng chia sẻ màn hình sau mười phút không dùng."
+}

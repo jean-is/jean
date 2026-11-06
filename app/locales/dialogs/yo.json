@@ -53,6 +53,7 @@
   "cap.names.hint": "Ẹ bẹ̀rẹ̀ iṣẹ́ díẹ̀ nínú iṣẹ́ àkànṣe kan.",
   "cap.live.hint": "Ẹ lo kíkọ pẹ̀lú ohùn ní ẹ̀ẹ̀mẹta.",
   "cap.camera.hint": "Ẹ pín àwòrán méjì láti fóònù tàbí tábúlẹ́ẹ̀tì.",
+  "cap.screen.hint": "Ẹ ya àwòrán ojú-ìbòjú yín lẹ́ẹ̀kan.",
   "cap.backup.hint": "Ẹ bẹ̀rẹ̀ iṣẹ́ mẹ́ta.",
   "cap.share.hint": "Ẹ fi ẹ̀dà iṣẹ́ kan pamọ́.",
   "cap.sync.hint": "Ẹ sọ pé ẹ tún ń lo kọ̀ǹpútà mìíràn.",
@@ -92,6 +93,7 @@
   "cap.connections.text": "Ẹ so àwọn iṣẹ́ tí ẹ ń lò pọ̀, bíi ímeèlì tàbí àwọn ìwé yín. {name} máa ń kà, ó sì ń ṣiṣẹ́ níbẹ̀ pẹ̀lú àṣẹ yín nìkan.",
   "cap.live.text": "Ẹ sọ̀rọ̀ láìlo ọwọ́: a máa ń ka àwọn ìdáhùn sókè, wọ́n sì máa ń dúró nígbà tí ẹ bá ń sọ̀rọ̀. Nǹkan bí {size}, lẹ́ẹ̀kan.",
   "cap.camera.text": "Ẹ sọ̀rọ̀ láìlo ọwọ́ nípa ohun tó wà níwájú yín: gbogbo ohun tí ẹ bá sọ ló ń lọ pẹ̀lú ohun tí kámẹ́rà ń fihàn, ó sì lè máa wò lọ kí ó sọ fún yín nígbà tí nǹkan pàtàkì bá ṣẹlẹ̀. Àwọn àwòrán tí a wò nìkan ni a ń pa mọ́, nínú iṣẹ́ náà.",
+  "cap.screen.text": "Ẹ fi fèrèsé kan, táàbù kan tàbí gbogbo ojú-ìbòjú yín hàn bí ẹ ṣe ń ṣiṣẹ́ nínú áàpù mìíràn: gbogbo ohun tí ẹ bá sọ ló ń lọ pẹ̀lú ohun tó ń fihàn, wíwò sì lè máa bá a lọ, pẹ̀lú ọ̀rọ̀ kan nígbà tí ìgbésẹ̀ kan bá parí tàbí tí nǹkan kan bá bàjẹ́. A kì í tẹ tàbí kọ nǹkan kan síbẹ̀ rárá. Àwọn àwòrán tí a wò nìkan ni a ń pa mọ́, nínú iṣẹ́ náà.",
   "connections.count": {
     "other": "Iṣẹ́ {count}"
   },

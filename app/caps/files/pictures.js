@@ -71,6 +71,8 @@ export async function screenshot(stream) {
     })
     const bytes = await draw(video, video.videoWidth, video.videoHeight, 'image/png')
     const time = new Intl.DateTimeFormat(intlLocales(), { timeStyle: 'medium' }).format(new Date())
+    // Screen sharing is offered (D699).
+    document.dispatchEvent(new Event('app-screen-captured'))
     return new File([/** @type {BlobPart} */ (bytes)], `${t('capture.name', { time })}.png`, { type: 'image/png' })
   } finally {
     for (const track of stream.getTracks()) track.stop()

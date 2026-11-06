@@ -7,6 +7,7 @@ export const WATCH = Object.freeze({ moved: 0.04, still: 0.015, settleMs: 750, g
 
 /**
  * @param {number} start when watching began (ms)
+ * @param {Record<keyof typeof WATCH, number>} [watch] its fractions and durations: a camera's, or a screen's (D699)
  * @returns {(moved: number, step: number, now: number) => 'look' | 'end' | null} one call per sample: how far the scene is from
  *   the last look's, how far from the sample before, and when it is
  */

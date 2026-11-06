@@ -27,9 +27,10 @@ const gpu = 'gpu' in navigator // where search by meaning runs (D302)
 const told = 'Notification' in globalThis // where a task done out of sight can be told
 const shared = Boolean(serviceURL('share', app.settings.value, app.policy)) && app.policy.rules?.share !== 'never' // where a host keeps shares (D361)
 const filmed = Boolean(navigator.mediaDevices?.getUserMedia) // where a camera can show Jean things (D645)
+const screened = Boolean(navigator.mediaDevices?.getDisplayMedia) // where a screen can be shared, a computer's (D699)
 const reflexive = !handheld() // where Kev runs: a computer, never a phone or a tablet (D660)
 /** What Jean can do, in the order the house lights up (the collection page). */
-export const CATALOGUE = ['files', 'made', 'documents', 'tables', 'designs', 'computer', ...(reflexive ? ['reflexes'] : []), 'memory', 'find', ...(gpu ? ['meaning'] : []), 'projects', 'folders', 'skills', 'routines', 'flows', 'search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'check', 'since', ...(told ? ['notifications'] : []), 'names', 'live', ...(filmed ? ['camera'] : []), 'reader', 'backup', ...(shared ? ['share'] : []), ...(folders ? ['sync'] : []), 'lock', 'brain-local', 'extensions']
+export const CATALOGUE = ['files', 'made', 'documents', 'tables', 'designs', 'computer', ...(reflexive ? ['reflexes'] : []), 'memory', 'find', ...(gpu ? ['meaning'] : []), 'projects', 'folders', 'skills', 'routines', 'flows', 'search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'check', 'since', ...(told ? ['notifications'] : []), 'names', 'live', ...(filmed ? ['camera'] : []), ...(screened ? ['screen'] : []), 'reader', 'backup', ...(shared ? ['share'] : []), ...(folders ? ['sync'] : []), 'lock', 'brain-local', 'extensions']
 
 /** What the brain may offer, described for it in English, in a few words: it goes with every request. */
 const OFFERS = /** @type {Record<string, string>} */ ({
@@ -54,6 +55,7 @@ const OFFERS = /** @type {Record<string, string>} */ ({
   extensions: "adding an extension someone made, for what Jean doesn't do yet",
   certificates: 'checking whether words, a picture or a certificate came from Jean, when asked',
   ...(filmed && { camera: 'showing Jean through their camera what is in front of them, and talking about it hands-free' }),
+  ...(screened && { screen: 'sharing their screen as they work in another app, so you guide them a step at a time and can watch: offer it when they ask how to do something in an app on their computer' }),
   ...(folders && { sync: 'keeping their work the same on their other computers' }),
 })
 /** What policy leaves to offer: it is set before this module loads (ui/app.js). */
@@ -176,9 +178,9 @@ export async function begin(id) {
   if (id === 'flows') (await import('../caps/flows/flows.js')).here()
   if (id === 'machine') (await import('../caps/machine/machine.js')).show()
   if (id === 'pictures' && !(await (await import('../caps/pictures/pictures.js')).ready())) (await import('./dialogs.js')).openSettings('brains')
-  // A folder to choose, which the browser lets a page ask for just after a click: if that has gone by, a button asks.
-  if (id === 'folders' || id === 'sync') {
-    const { choose } = await (id === 'sync' ? import('../caps/sync/sync.js') : import('../caps/folders/folders.js'))
+  // A folder or a screen to choose, which the browser lets a page ask for just after a click: if that has gone by, a button asks.
+  if (id === 'folders' || id === 'sync' || id === 'screen') {
+    const { choose } = await (id === 'sync' ? import('../caps/sync/sync.js') : id === 'screen' ? import('../caps/screen/screen.js') : import('../caps/folders/folders.js'))
     if (navigator.userActivation?.isActive === false) notify(t(`cap.${id}.offer`), { label: t(`cap.${id}.yes`), run: () => choose() })
     else await choose()
   }
@@ -286,6 +288,8 @@ effect(() => {
   // Citations in regular use: each answer could be checked against them.
   if ((effective.value.settings.cited ?? 0) >= CITED) offerOnce('check')
 })
+let captured = false
+document.addEventListener('app-screen-captured', () => { captured = true })
 effect(() => {
   const shared = app.attachments.value.filter((item) => item.status === 'ready')
   // Rows of data: exact numbers are a script away.
@@ -294,6 +298,8 @@ effect(() => {
   if (app.attachments.value.some((item) => /\.(eml|ics|vcf)$/i.test(item.name))) offerOnce('connections', true)
   // A picture: it could be changed (D286).
   if (shared.some((item) => item.link && isPicture(item.link))) offerOnce('pictures', true)
+  // A screen captured: Jean could go on seeing it as the user works (D699).
+  if (captured && shared.length) offerOnce('screen', true)
 })
 /** Pictures shared from a touch screen, likely a phone's photos, before the camera is offered (D645). */
 const PHOTOS = 2

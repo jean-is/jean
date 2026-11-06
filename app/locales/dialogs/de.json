@@ -54,6 +54,7 @@
   "cap.names.hint": "Beginne ein paar Aufgaben in einem Projekt.",
   "cap.live.hint": "Diktiere dreimal.",
   "cap.camera.hint": "Teile zwei Fotos von einem Handy oder Tablet.",
+  "cap.screen.hint": "Nimm einmal ein Bildschirmfoto auf.",
   "cap.backup.hint": "Beginne drei Aufgaben.",
   "cap.share.hint": "Speichere eine Kopie einer Aufgabe.",
   "cap.sync.hint": "Erwähne, dass du auch einen anderen Computer nutzt.",
@@ -93,6 +94,7 @@
   "cap.connections.text": "Verbinde die Dienste, die du nutzt, etwa deine E-Mail oder Dokumente. {name} liest und handelt dort nur mit deiner Zustimmung.",
   "cap.live.text": "Sprich freihändig: Antworten werden vorgelesen und verstummen, sobald du sprichst. Etwa {size}, einmalig.",
   "cap.camera.text": "Sprich freihändig über das, was vor dir liegt: Alles, was du sagst, geht mit dem Bild der Kamera mit, und sie kann weiter hinschauen und sich melden, wenn etwas wichtig ist. Nur die Bilder, die sie angesehen hat, werden behalten, in der Aufgabe.",
+  "cap.screen.text": "Zeig ein Fenster, einen Tab oder deinen ganzen Bildschirm, während du in einer anderen App arbeitest: Alles, was du sagst, geht mit dem mit, was er zeigt, und das Hinschauen kann weitergehen, mit einem Wort, wenn ein Schritt fertig ist oder etwas schiefgeht. Dort wird nie etwas geklickt oder getippt. Nur die angesehenen Bilder werden behalten, in der Aufgabe.",
   "connections.count": {
     "one": "{count} Aktion",
     "other": "{count} Aktionen"

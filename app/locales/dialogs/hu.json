@@ -54,6 +54,7 @@
   "cap.names.hint": "Indíts néhány feladatot egy projektben.",
   "cap.live.hint": "Használd háromszor a diktálást.",
   "cap.camera.hint": "Ossz meg két fotót telefonról vagy táblagépről.",
+  "cap.screen.hint": "Készíts egyszer képernyőképet.",
   "cap.backup.hint": "Indíts három feladatot.",
   "cap.share.hint": "Ments el egy feladatról másolatot.",
   "cap.sync.hint": "Említsd meg, hogy másik számítógépet is használsz.",
@@ -93,6 +94,7 @@
   "cap.connections.text": "Csatlakoztasd a használt szolgáltatásaidat, például az e-mailt vagy a dokumentumokat. {name} csak a jóváhagyásoddal olvas és cselekszik ott.",
   "cap.live.text": "Beszélgess kéz nélkül: {name} figyel, hangosan válaszol, és elhallgat, amikor te beszélsz. Kb. {size}, egyszer.",
   "cap.camera.text": "Beszélgess kéz nélkül arról, ami előtted van: minden, amit mondasz, a kamera képével együtt megy, és az tovább figyelhet, és szólhat, ha valami fontos. Csak a megnézett képek maradnak meg, a feladatban.",
+  "cap.screen.text": "Mutass meg egy ablakot, egy lapot vagy az egész képernyődet, miközben egy másik alkalmazásban dolgozol: minden, amit mondasz, azzal együtt megy, amit mutat, és a figyelés folytatódhat, egy szóval, ha kész egy lépés, vagy valami elromlik. Ott soha semmire nem kattintanak, és semmit nem gépelnek be. Csak a megnézett képek maradnak meg, a feladatban.",
   "connections.count": {
     "one": "{count} művelet",
     "other": "{count} művelet"

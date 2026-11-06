@@ -1,0 +1,11 @@
+{
+  "screen.close": "共有を停止",
+  "screen.watch": "見守って知らせる",
+  "screen.watching": "見守り中",
+  "screen.watched": "10 分たったので見守りを終えました。",
+  "screen.move": "別の隅に移動",
+  "screen.failed": "画面を共有できませんでした。もう一度お試しください。",
+  "screen.blind": "この頭脳は画像を見られません。見られる頭脳を選んでください。",
+  "screen.picture": "画面 {time}",
+  "screen.idle": "10 分間使われなかったので画面共有を停止しました。"
+}

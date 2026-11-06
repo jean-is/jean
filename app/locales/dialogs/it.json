@@ -55,6 +55,7 @@
   "cap.names.hint": "Inizia qualche attività in un progetto.",
   "cap.live.hint": "Usa la dettatura tre volte.",
   "cap.camera.hint": "Condividi due foto da un telefono o un tablet.",
+  "cap.screen.hint": "Cattura lo schermo una volta.",
   "cap.backup.hint": "Inizia tre attività.",
   "cap.share.hint": "Salva una copia di un’attività.",
   "cap.sync.hint": "Accenna al fatto che usi anche un altro computer.",
@@ -94,6 +95,7 @@
   "cap.connections.text": "Collega i servizi che usi, come la posta o i documenti. Lì {name} legge e agisce solo con la tua approvazione.",
   "cap.live.text": "Parla con {name} a mani libere: ascolta, risponde a voce e si ferma appena parli. Circa {size}, una volta sola.",
   "cap.camera.text": "Parla a mani libere di quello che hai davanti: ogni cosa che dici va insieme a ciò che mostra la fotocamera, che può anche continuare a guardare e avvisarti quando qualcosa conta. Si conservano solo le immagini guardate, nell’attività.",
+  "cap.screen.text": "Mostra una finestra, una scheda o tutto lo schermo mentre lavori in un’altra app: ogni cosa che dici va insieme a ciò che mostra, e lo sguardo può restare acceso, con una parola quando un passo è fatto o qualcosa va storto. Lì non si clicca né si scrive mai nulla. Si conservano solo le immagini guardate, nell’attività.",
   "connections.count": {
     "one": "{count} azione",
     "many": "{count} azioni",

@@ -868,6 +868,16 @@ The camera (D645, `caps/camera/`) is never streamed to a brain: each time Jean l
 - **The window.** Every picture since the last summary goes with every request, each counted as about 1,600 tokens, and compaction (D359) sums a task up past 60 pictures whatever its window, Anthropic taking 100 in a request.
 - **Stopping.** Closing it, another task or project, ten minutes with nothing said and no watching, or the page hidden, where it waits for a tap to go on and never resumes on its own.
 
+## Screen sharing
+
+Screen sharing (D699, `caps/screen/`) is the camera's way for a computer's screen: never streamed to a brain, each look a picture shared in the task (D105). Both are feeds of `caps/camera/feed.js`, which keeps their pictures, has Jean watch and look, tells the brain when one comes and goes, and ends it with the task; each samples its own source, draws its own view and says its own words. Jean only sees the screen, and never clicks or types there.
+
+- **Opening it.** From its row in +, on a computer (where `getDisplayMedia` is): the browser asks for a window first (`displaySurface: 'window'`), never Jean's own tab, and Jean stays in front. With no brain that can see, it says so and opens the picker. It is found from a first capture of the screen (`app-screen-captured`, sent by `caps/files/pictures.js`) or offered by the brain; accepted once the click's moment has gone by, a button asks, as for a folder.
+- **Its tile** (`<app-screen>`, the camera tile's look, `camera.css`) shows what is shared and whether Jean watches, with Watch, Move and Stop; the box's chip stops it too, and so does the browser's own bar.
+- **Pictures.** A message sent while it is on shares the screen as a PNG 1,568 pixels long at most, a look 1,280, so its words stay readable. A note tells the brain when it comes, in full the first time in a task (a step at a time, naming what it reads there; it can't click or type; never repeat a password, a code or a card number it shows), and when it goes.
+- **Watching.** `watch_screen`, or Watch, works as the camera's `watch`, from the same module (`caps/camera/feed.js`, `watch.js`), on the screen drawn 64 × 40 every half second, with a screen's thresholds: 1% moved and 0.2% still, so a menu, a dialog or a new page is a step, and typing or a caret isn't.
+- **Stopping.** The browser's bar, its tile, its chip, another task or project, or ten minutes with nothing said and no watching. A hidden page goes on, since the user is in the other app; browsers sample it less often there.
+
 ## Sources
 
 - [Can I Use: createWritable](https://caniuse.com/mdn-api_filesystemfilehandle_createwritable) · [Can I Use: createSyncAccessHandle](https://caniuse.com/mdn-api_filesystemfilehandle_createsyncaccesshandle) · [PowerSync: SQLite persistence on the web](https://powersync.com/blog/sqlite-persistence-on-the-web)

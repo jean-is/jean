@@ -57,6 +57,7 @@
   "cap.names.hint": "Krogit gant un nebeud trevelloù en ur raktres.",
   "cap.live.hint": "Implijit ar skrivañ dre gomz teir gwech.",
   "cap.camera.hint": "Rannit div skeudenn eus ur pellgomzer pe un dablezenn.",
+  "cap.screen.hint": "Tapit ho skramm ur wech.",
   "cap.backup.hint": "Krogit gant teir zrevell.",
   "cap.share.hint": "Enrollit un eilskouerenn eus un drevell.",
   "cap.sync.hint": "Menegit e implijit un urzhiataer all ivez.",
@@ -96,6 +97,7 @@
   "cap.connections.text": "Kevreit ar servijoù a implijit, evel ho posteloù pe ho teulioù. {name} ne lenn ha ne ra netra eno nemet gant hoc’h aotre.",
   "cap.live.text": "Komzit gant {name} hep dorn : selaou a ra, respont a ra a vouezh uhel, ha paouez a ra pa gomzit. War-dro {size}, ur wech hepken.",
   "cap.camera.text": "Komzit hep dorn diwar-benn ar pezh a zo dirazoc’h : kement tra a lavarit a ya gant ar pezh a ziskouez ar gamera, hag e c’hall kenderc’hel da sellet ha kemenn deoc’h pa vez un dra a-bouez. Ne vez miret nemet ar skeudennoù he deus sellet outo, en drevell.",
+  "cap.screen.text": "Diskouezit ur prenestr, un ivinell pe ho skramm a-bezh e-pad ma labourit en ur meziant all : pep tra a lavarit a ya gant ar pezh a ziskouez, hag an evezhiañ a c’hall kenderc’hel, gant ur ger pa vez graet ur bazenn pe pa ya un dra a-dreuz. Netra ne vez kliket na skrivet eno biken. Ne vez miret nemet ar skeudennoù sellet, en drevell.",
   "connections.count": {
     "one": "{count} ober",
     "two": "{count} ober",

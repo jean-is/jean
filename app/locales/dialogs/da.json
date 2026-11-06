@@ -54,6 +54,7 @@
   "cap.names.hint": "Start et par opgaver i et projekt.",
   "cap.live.hint": "Brug diktering tre gange.",
   "cap.camera.hint": "Del to billeder fra en telefon eller tablet.",
+  "cap.screen.hint": "Tag et skærmbillede én gang.",
   "cap.backup.hint": "Start tre opgaver.",
   "cap.share.hint": "Gem en kopi af en opgave.",
   "cap.sync.hint": "Nævn, at du også bruger en anden computer.",
@@ -93,6 +94,7 @@
   "cap.connections.text": "Forbind de tjenester, du bruger, som din e-mail eller dine dokumenter. {name} læser og handler dér kun med din godkendelse.",
   "cap.live.text": "Tal med {name} håndfrit: den lytter, svarer højt og holder inde, når du taler. Omkring {size}, én gang.",
   "cap.camera.text": "Tal håndfrit om det, du har foran dig: alt, hvad du siger, følger med det, kameraet viser, og det kan blive ved med at kigge og sige til, når noget er vigtigt. Kun de billeder, der er set på, gemmes, i opgaven.",
+  "cap.screen.text": "Vis et vindue, en fane eller hele din skærm, mens du arbejder i en anden app: alt, hvad du siger, følger med det, den viser, og der kan holdes øje videre, med en besked, når et trin er færdigt, eller noget går galt. Der bliver aldrig klikket eller skrevet noget dér. Kun de billeder, der er set på, gemmes, i opgaven.",
   "connections.count": {
     "one": "{count} handling",
     "other": "{count} handlinger"
