@@ -68,7 +68,8 @@ async function served(brain, signal) {
     return await loaded() ?? (await ask('/api/generate', { model: brain.model }), await loaded())
   }
   const listed = (await ask('/api/v1/models')).models?.find((/** @type {any} */ model) => model.key === brain.model || model.loaded_instances?.some((/** @type {any} */ one) => one.id === brain.model))
-  return listed?.loaded_instances?.[0]?.config?.context_length ?? (await ask('/api/v1/models/load', { model: brain.model, echo_load_config: true })).load_config?.context_length
+  // The copy loaded under the brain's own name, when there are several, else the model's first.
+  return (listed?.loaded_instances?.find((/** @type {any} */ one) => one.id === brain.model) ?? listed?.loaded_instances?.[0])?.config?.context_length ?? (await ask('/api/v1/models/load', { model: brain.model, echo_load_config: true })).load_config?.context_length
 }
 
 /**
