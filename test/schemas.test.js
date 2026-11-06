@@ -29,6 +29,9 @@ test('a policy the schema takes is one policy.html finds nothing in, and the oth
   const started = [...skill.matchAll(/```json\n([\s\S]*?)\n```/g)].map(([, json]) => JSON.parse(json))
   assert.equal(started.length, 1)
   assert.deepEqual(checkPolicy(started[0]).problems, [], 'examples/enterprise/organisation-setup/SKILL.md’s policy')
+  // A kit's art, as Jean's kit page keeps it from a template (D606): SVG written out among them.
+  const art = { kit: { name: 'Acme', layouts: { cover: { art: ['wave', 'mark'] } }, pictures: { wave: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg"/>', mark: 'data:image/png;base64,iVBORw0KGgo=' } } }
+  assert.deepEqual(checkPolicy(art).problems, [], 'a kit’s pictures')
   const policies = [
     example,
     sketch,
@@ -42,6 +45,8 @@ test('a policy the schema takes is one policy.html finds nothing in, and the oth
     { look: { name: 'Acme', accent: 'red' } },
     { look: { name: 'Acme', logo: 'data:image/svg+xml;base64,PHN2Zy8+' } },
     { look: { name: 'Acme', logo: 'https://cdn.corp.example/logo.svg' } },
+    art,
+    { kit: { pictures: { wave: 1 } } },
     { brain: [], capabilities: { deny: 'computer' } },
     { groups: [{ id: 'legal', policy: null }] },
     { groups: [{ id: 'legal', policy: { signIn: { issuer: 'https://login.corp.example', clientId: 'jean' } } }] },

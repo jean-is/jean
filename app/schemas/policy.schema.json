@@ -102,6 +102,13 @@
           "type": "object",
           "properties": {},
           "additionalProperties": {}
+        },
+        "pictures": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "string"
+          }
         }
       },
       "additionalProperties": false
@@ -1013,6 +1020,19 @@
                     ],
                     "properties": {},
                     "additionalProperties": {}
+                  },
+                  "pictures": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "properties": {},
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
                   }
                 },
                 "additionalProperties": false
