@@ -11,7 +11,7 @@ import { signal } from '@preact/signals-core'
 import { register, unlock } from '../../ui/caps.js'
 import { effective, brainsHere, activeBrain, notify } from '../../ui/state.js'
 import { live } from '../../ui/dictation.js'
-import { icons } from '../../ui/icons.js'
+import { icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { t, useStrings } from '../../core/i18n.js'
 import { luma, sharpness, sharpest } from './frames.js'
@@ -231,9 +231,9 @@ export const toggleWatching = () => camera.toggle(DOING)
 const chip = () => (state.value !== 'off' ? html`<button type="button" class="mode-chip" aria-pressed="true" @click=${close}>${icons.camera}<span>${t('cap.camera.name')}</span>${icons.close}</button>`
   : touch.matches ? html`<button type="button" class="icon-button" aria-label=${t('camera.open')} @click=${open}>${icons.camera}</button>` : nothing)
 
-/** Its row in +, checked while it is on. */
+/** Its row in +, among what shows Jean something live, ticked while it is on. */
 const row = () => html`<button type="button" popovertarget="add-menu" popovertargetaction="hide" aria-pressed=${state.value !== 'off'}
-  @click=${() => (state.peek() === 'off' ? open() : close())}>${icons.camera}<span>${t('cap.camera.name')}</span></button>`
+  @click=${() => (state.peek() === 'off' ? open() : close())}>${icons.camera}<span>${t('cap.camera.name')}</span>${state.value !== 'off' ? icons.check : nothing}</button>`
 
 document.addEventListener('visibilitychange', () => { if (document.hidden && state.peek() === 'on') pause() })
 
@@ -241,5 +241,5 @@ register({
   id: 'camera',
   tools: [camera.tool],
   lines: [{ name: 'watch', line: "while the user's camera is on, look again on your own for what they ask you to watch for, speaking only when it matters" }],
-  slots: { modes: { at: 1, draw: chip, notes: camera.notes, files: shared }, add: { at: 1.5, draw: row } },
+  slots: { modes: { at: 1, draw: chip, notes: camera.notes, files: shared }, add: { at: 2, draw: row } },
 })

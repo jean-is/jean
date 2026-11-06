@@ -193,7 +193,7 @@
   "files.unreadable": "Tätä tiedostoa ei voitu lukea",
   "files.failed": "Ei voitu lukea: {name}",
   "files.missing": "Ei enää tällä laitteella: {name}",
-  "capture.start": "Kaappaa näyttö",
+  "capture.start": "Ota näyttökaappaus",
   "capture.name": "Näyttökaappaus {time}",
   "capture.failed": "Näyttöä ei voitu kaapata",
   "read.title": {

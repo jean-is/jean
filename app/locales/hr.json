@@ -195,7 +195,7 @@
   "files.unreadable": "Ovu datoteku nije bilo moguće pročitati",
   "files.failed": "Nije bilo moguće pročitati {name}",
   "files.missing": "{name} više nije na ovom uređaju",
-  "capture.start": "Snimi zaslon",
+  "capture.start": "Napravi snimku zaslona",
   "capture.name": "Snimka zaslona {time}",
   "capture.failed": "Zaslon nije bilo moguće snimiti",
   "read.title": {

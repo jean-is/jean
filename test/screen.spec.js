@@ -39,7 +39,7 @@ function screen() {
 async function shareFromPlus(page, strings) {
   await page.evaluate(() => import('/ui/caps.js').then((caps) => caps.unlock('screen')))
   await page.locator('.composer .add').click()
-  await page.locator('#add-menu').getByRole('button', { name: strings['cap.screen.yes'] }).click()
+  await page.locator('#add-menu').getByRole('button', { name: strings['cap.screen.name'] }).click()
 }
 
 /** Whether every stream shared has stopped. @param {import('@playwright/test').Page} page */
@@ -58,6 +58,14 @@ for (const [lang, end] of Object.entries(ENDS)) {
     const tile = page.locator('app-screen .screen.is-tile')
     await expect(tile).toBeVisible()
     await expect(tile.locator('.camera-state')).toHaveText(strings['cap.screen.name'])
+    // In +, its row is ticked while sharing is on, among what shows Jean something live, apart from the screenshot (D292).
+    await page.locator('.composer .add').click()
+    const row = page.locator('#add-menu').getByRole('button', { name: strings['cap.screen.name'] })
+    await expect(row).toHaveAttribute('aria-pressed', 'true')
+    await expect(row.locator('svg')).toHaveCount(2)
+    await expect(page.locator('#add-menu ul').filter({ has: row }).getByRole('button', { name: strings['capture.start'] })).toHaveCount(0)
+    await page.keyboard.press('Escape')
+    await expect(page.locator('#add-menu')).toBeHidden()
     await expect(page.locator('.composer .mode-chip')).toContainText(strings['cap.screen.name'])
 
     // A message shares the window as it is now, 1,568 pixels long, kept in the task under its name.
@@ -154,7 +162,7 @@ test('an organisation that denies screen sharing never has it', async ({ page })
   await expect(settings.locator('.case > li', { hasText: strings['cap.screen.name'] })).toHaveCount(0)
   await closeSettings(page)
   await page.locator('.composer .add').click()
-  await expect(page.locator('#add-menu').getByRole('button', { name: strings['cap.screen.yes'] })).toHaveCount(0)
+  await expect(page.locator('#add-menu').getByRole('button', { name: strings['cap.screen.name'] })).toHaveCount(0)
 })
 
 test('a brain that can\'t see sends the user to pick one that can, and nothing is shared', async ({ page }) => {

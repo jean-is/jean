@@ -87,11 +87,10 @@ class Composer extends Element {
       : working ? (downloading ? t('dictation.downloading', { percent: Math.round((voice.progress ?? 0) * 100) }) : t(`dictation.${voice.state}`))
       : ''
     const files = !isDenied('files')
-    // A menu when + adds more than files: what capabilities add there (a folder; on a new task, flow mode, D218; a menu beside it of
-    // skills, and of connections, D292), and a capture of the screen.
-    const more = [...slots('add'), ...(CAPTURE ? [{ at: 2, draw: () => html`<button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${captureScreen}>${icons.capture}${t('capture.start')}</button>` }] : [])]
-      .sort((a, b) => a.at - b.at).map((entry) => entry.draw(app.current.value)).filter((drawn) => drawn !== nothing)
-    const menu = more.length > 0
+    // A menu when + adds more than files, in groups by the whole part of each row's `at` (D292); a screenshot where a screen is shared.
+    const rows = [{ at: 1, draw: () => html`<button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${this.#files}>${icons.attach}${t('files.attach')}</button>` }, ...slots('add'), ...(Boolean(navigator.mediaDevices?.getDisplayMedia) ? [{ at: 1.2, draw: () => html`<button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${captureScreen}>${icons.capture}${t('capture.start')}</button>` }] : [])]
+      .sort((a, b) => a.at - b.at).map((entry) => [Math.floor(entry.at), entry.draw(app.current.value)]).filter(([, drawn]) => drawn !== nothing)
+    const menu = rows.length > 1
     const add = t(menu ? 'composer.add' : 'files.attach')
     const asked = decisionsHere().filter((decision) => 'questions' in decision).slice(0, 1)
     const legal = legalPages()
@@ -123,8 +122,7 @@ class Composer extends Element {
             ${files ? html`<button type="button" class="icon-button add" aria-label=${add}
               popovertarget=${menu ? 'add-menu' : nothing} @click=${menu ? undefined : this.#files}>${icons.plus}</button>` : nothing}
             ${files && menu ? html`<div id="add-menu" class="menu" popover>
-              <ul><li><button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${this.#files}>${icons.attach}${t('files.attach')}</button></li>
-              ${more.map((row) => html`<li>${row}</li>`)}</ul>${sub.value?.view()}
+              ${[...new Set(rows.map(([group]) => group))].map((group, i) => html`${i ? html`<hr>` : nothing}<ul>${rows.filter(([one]) => one === group).map(([, row]) => html`<li>${row}</li>`)}</ul>`)}${sub.value?.view()}
             </div>` : nothing}
             ${voice.state === 'unavailable' ? nothing : html`<button type="button"
               class="icon-button ${listening ? 'is-active is-listening' : working ? 'is-active is-working' : ''}" aria-pressed=${listening ? 'true' : 'false'} ?disabled=${working}
@@ -268,9 +266,6 @@ function complete(area) {
   else if (/(?:^|\s)[/@／＠]\S*$/u.test(area.value.slice(0, area.selectionStart))) import('./complete.js').then((module) => (naming = module).follow(area))
   if (/(?:^|\s)\/\S/.test(area.value)) import('./marks.js')
 }
-
-/** Whether this browser can share a screen (not phones, where + only adds files). */
-const CAPTURE = Boolean(navigator.mediaDevices?.getDisplayMedia)
 
 /** The brain picker, a menu above the chip, or the first brain's dialog (D329). */
 async function openPicker() {

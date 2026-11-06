@@ -193,7 +193,7 @@
   "files.unreadable": "Този файл не можа да бъде прочетен",
   "files.failed": "{name} не можа да бъде прочетен",
   "files.missing": "{name} вече не е на това устройство",
-  "capture.start": "Заснеми екрана",
+  "capture.start": "Направи снимка на екрана",
   "capture.name": "Снимка на екрана {time}",
   "capture.failed": "Екранът не можа да бъде заснет",
   "read.title": {

@@ -201,7 +201,7 @@
   "files.unreadable": "تعذّرت قراءة هذا الملف",
   "files.failed": "تعذّرت قراءة {name}",
   "files.missing": "لم يعد {name} على هذا الجهاز",
-  "capture.start": "التقاط الشاشة",
+  "capture.start": "التقاط لقطة شاشة",
   "capture.name": "لقطة شاشة {time}",
   "capture.failed": "تعذّر التقاط الشاشة",
   "read.title": {

@@ -191,7 +191,7 @@
   "files.unreadable": "このファイルを読めませんでした",
   "files.failed": "{name} を読めませんでした",
   "files.missing": "{name} はこの端末にもうありません",
-  "capture.start": "画面をキャプチャ",
+  "capture.start": "スクリーンショットを撮る",
   "capture.name": "画面キャプチャ {time}",
   "capture.failed": "画面をキャプチャできませんでした",
   "read.title": {

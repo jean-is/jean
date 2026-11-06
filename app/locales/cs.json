@@ -197,7 +197,7 @@
   "files.unreadable": "Tento soubor se nepodařilo přečíst",
   "files.failed": "{name} se nepodařilo přečíst",
   "files.missing": "{name} už v tomto zařízení není",
-  "capture.start": "Zachytit obrazovku",
+  "capture.start": "Pořídit snímek obrazovky",
   "capture.name": "Snímek obrazovky {time}",
   "capture.failed": "Obrazovku se nepodařilo zachytit",
   "read.title": {

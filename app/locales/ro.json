@@ -195,7 +195,7 @@
   "files.unreadable": "Acest fișier nu a putut fi citit",
   "files.failed": "{name} nu a putut fi citit",
   "files.missing": "{name} nu mai este pe acest dispozitiv",
-  "capture.start": "Capturați ecranul",
+  "capture.start": "Faceți o captură de ecran",
   "capture.name": "Captură de ecran {time}",
   "capture.failed": "Ecranul nu a putut fi capturat",
   "read.title": {

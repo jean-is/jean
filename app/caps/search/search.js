@@ -96,7 +96,7 @@ effect(() => register({
   ownTab: (url) => OWN_TAB.some((id) => onSite(serviceURL(id, app.settings.peek(), app.policy), url)),
   slots: {
     settings: { at: 90, id: 'search', label: 'cap.search.name', icon: icons.websearch, draw: panel, also: () => 'Kiwix Wikipedia Vikidia Brave Tavily Google Kagi' },
-    add: { at: 7, draw: row },
+    add: { at: 3.1, draw: row },
   },
 }))
 

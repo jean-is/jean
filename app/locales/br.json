@@ -199,7 +199,7 @@
   "files.unreadable": "N’haller ket lenn ar restr-mañ",
   "files.failed": "N’haller ket lenn {name}",
   "files.missing": "N’emañ ket {name} war an trevnad-mañ ken",
-  "capture.start": "Tapout ho skramm",
+  "capture.start": "Ober un dapadenn skramm",
   "capture.name": "Tapadenn skramm {time}",
   "capture.failed": "N’haller ket tapout ar skramm",
   "read.title": {

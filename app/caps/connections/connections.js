@@ -268,7 +268,7 @@ effect(() => register({
   slots: {
     settings: { at: 80, id: 'connections', label: 'cap.connections.name', icon: icons.plug, draw: page },
     // In +, a row whose menu beside it holds the room's connections (D292).
-    add: { at: 5, draw: () => subRow('connections', icons.plug) },
+    add: { at: 4.1, draw: () => subRow('connections', icons.plug) },
     // What a service may do without asking, for Approvals' exceptions, each taken back there.
     allowed: { at: 4, draw: () => all().flatMap((connection) => ['fetch', 'other'].filter((kind) => chosen(connection.id, kind) === 'allow')
       .map((kind) => ({ what: kind === 'fetch' ? 'reads' : 'acts', name: called(connection), stop: () => choose(connection.id, kind) }))) },

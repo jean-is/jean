@@ -276,7 +276,7 @@ register({
   slots: {
     views: { at: 4, draw: (/** @type {any} */ current) => (current?.records.length ? html`<button class="icon-button flows-toggle" @click=${toggle} aria-label=${t('cap.flows.name')}>${icons.flow}</button>` : nothing) },
     main: { at: 1, draw: () => (editing.value === null ? null : html`<app-flow-main></app-flow-main>`), leave: () => { editing.value = null } },
-    add: { at: 3, draw: (/** @type {any} */ current) => (current?.records.length ? nothing : html`<button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${() => edit()}>${icons.flow}${t('cap.flows.name')}</button>`) },
+    add: { at: 4.2, draw: (/** @type {any} */ current) => (current?.records.length ? nothing : html`<button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${() => edit()}>${icons.flow}${t('cap.flows.name')}</button>`) },
     activity: { at: 1, draw: () => html`<button class="link-button activity-flow" @click=${() => show('task')}>${t('flows.asFlow')}</button>` },
   },
 })

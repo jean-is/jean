@@ -695,7 +695,7 @@ app-inbox { position: sticky; z-index: 3; inset-block-start: var(--top); display
 @supports not (anchor-name: --add) { .profile-menu { inset: auto auto 4.5rem; inset-inline-start: 0.75rem; margin: 0; } }
 .menu-value { margin-inline-start: auto; padding-inline-start: 1.5rem; color: var(--ink-faint); font-size: 0.85rem; } .menu-value + kbd { margin: 0; }
 .submenu > .icon:last-child { --glyph: var(--icon-s); } :is(.submenu > .icon:last-child, .fold[aria-expanded='false'] > .icon) { rotate: -90deg; }
-.submenu > .icon + .icon { margin-inline-start: auto; }
+:is(.submenu > .icon + .icon, .menu [aria-pressed] > .icon ~ .icon) { margin-inline-start: auto; }
 :dir(rtl) :is(.submenu > .icon:last-child, .fold[aria-expanded='false'] > .icon) { rotate: 90deg; }
 .profile-menu .back { font-weight: 600; }
 .profile-menu [aria-current='true'] { font-weight: 600; }

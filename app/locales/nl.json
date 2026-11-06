@@ -193,7 +193,7 @@
   "files.unreadable": "Dit bestand kon niet gelezen worden",
   "files.failed": "{name} kon niet gelezen worden",
   "files.missing": "{name} staat niet meer op dit apparaat",
-  "capture.start": "Je scherm vastleggen",
+  "capture.start": "Een schermafbeelding maken",
   "capture.name": "Schermafbeelding {time}",
   "capture.failed": "Het scherm kon niet worden vastgelegd",
   "read.title": {

@@ -191,7 +191,7 @@
   "files.unreadable": "Fail ini tidak dapat dibaca",
   "files.failed": "Tidak dapat membaca {name}",
   "files.missing": "{name} tiada lagi pada peranti ini",
-  "capture.start": "Tangkap skrin anda",
+  "capture.start": "Ambil tangkapan skrin",
   "capture.name": "Tangkapan skrin {time}",
   "capture.failed": "Skrin tidak dapat ditangkap",
   "read.title": {

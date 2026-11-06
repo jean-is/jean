@@ -193,7 +193,7 @@
   "files.unreadable": "ይህን ፋይል ማንበብ አልተቻለም",
   "files.failed": "ማንበብ አልተቻለም፦ {name}",
   "files.missing": "{name}፦ ከአሁን በኋላ በዚህ መሣሪያ ላይ የለም",
-  "capture.start": "ማያ ገጽዎን ያንሱ",
+  "capture.start": "የማያ ገጽ ምስል ያንሱ",
   "capture.name": "የማያ ገጽ ምስል {time}",
   "capture.failed": "ማያ ገጹን ማንሳት አልተቻለም",
   "read.title": {

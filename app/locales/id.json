@@ -191,7 +191,7 @@
   "files.unreadable": "File ini tidak bisa dibaca",
   "files.failed": "Tidak bisa membaca {name}",
   "files.missing": "{name} sudah tidak ada di perangkat ini",
-  "capture.start": "Tangkap layar Anda",
+  "capture.start": "Ambil tangkapan layar",
   "capture.name": "Tangkapan layar {time}",
   "capture.failed": "Layar tidak bisa ditangkap",
   "read.title": {

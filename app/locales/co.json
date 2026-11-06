@@ -195,7 +195,7 @@
   "files.unreadable": "Ùn si pò leghje stu schedariu",
   "files.failed": "Ùn si pò leghje {name}",
   "files.missing": "{name} ùn hè più nant’à st’apparechju",
-  "capture.start": "Catturà u vostru screnu",
+  "capture.start": "Fà una cattura di screnu",
   "capture.name": "Cattura di screnu {time}",
   "capture.failed": "Ùn si pò catturà u screnu",
   "read.title": {

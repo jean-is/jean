@@ -193,7 +193,7 @@
   "files.unreadable": "Το αρχείο δεν διαβάστηκε",
   "files.failed": "Δεν διαβάστηκε: {name}",
   "files.missing": "Το {name} δεν βρίσκεται πια σε αυτή τη συσκευή",
-  "capture.start": "Λήψη οθόνης",
+  "capture.start": "Λήψη στιγμιότυπου οθόνης",
   "capture.name": "Λήψη οθόνης {time}",
   "capture.failed": "Η λήψη οθόνης απέτυχε",
   "read.title": {

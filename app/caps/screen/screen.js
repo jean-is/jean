@@ -125,11 +125,11 @@ async function shared() {
 }
 
 /** At the foot of the box, while sharing is on: its chip, which ends it. */
-const chip = () => (state.value !== 'off' ? html`<button type="button" class="mode-chip" aria-pressed="true" @click=${close}>${icons.capture}<span>${t('cap.screen.name')}</span>${icons.close}</button>` : nothing)
+const chip = () => (state.value !== 'off' ? html`<button type="button" class="mode-chip" aria-pressed="true" @click=${close}>${icons.screen}<span>${t('cap.screen.name')}</span>${icons.close}</button>` : nothing)
 
-/** Its row in +, a verb as its neighbours are, checked while it is on. */
+/** Its row in +, among what shows Jean something live, named as its chip is and ticked while it is on. */
 const row = () => html`<button type="button" popovertarget="add-menu" popovertargetaction="hide" aria-pressed=${state.value !== 'off'}
-  @click=${() => (state.peek() === 'off' ? choose() : close())}>${icons.capture}<span>${t('cap.screen.yes')}</span></button>`
+  @click=${() => (state.peek() === 'off' ? choose() : close())}>${icons.screen}<span>${t('cap.screen.name')}</span>${state.value !== 'off' ? icons.check : nothing}</button>`
 
 /** What is shared, as Jean sees it, that sharing is on and whether Jean watches, in words, and its buttons. */
 class Screen extends Element {

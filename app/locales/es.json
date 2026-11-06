@@ -195,7 +195,7 @@
   "files.unreadable": "No se pudo leer este archivo",
   "files.failed": "No se pudo leer {name}",
   "files.missing": "{name} ya no está en este dispositivo",
-  "capture.start": "Capturar tu pantalla",
+  "capture.start": "Hacer una captura de pantalla",
   "capture.name": "Captura de pantalla {time}",
   "capture.failed": "No se pudo capturar la pantalla",
   "read.title": {

@@ -42,7 +42,7 @@ export const capability = {
   id: 'interactive',
   rules: ["Bills, loans, recipes, timezones, quizzes, science: end with a working ```html tool, not code: offline, var(--color-*), import 'echarts', sendPrompt(text); localStorage keeps, <a download> saves."],
   // Visual answers as a mode of the box (./mode.js, D300): a row of +, then pressed at the box's foot while it is on.
-  slots: { add: { at: 6, draw: row }, modes: { at: 0, draw: chip, notes } },
+  slots: { add: { at: 3, draw: row }, modes: { at: 0, draw: chip, notes } },
   // A task gone for good takes what its apps kept with it (D688).
   hooks: [{ on: 'record', match: { type: 'removed' }, run: (/** @type {any} */ e, /** @type {any} */ next) => { const at = e.all && keptAt(e.task); if (at) app.fs.remove(at).catch(() => {}); return next(e) } },
     // A task duplicated (D230) keeps what its apps kept, as it keeps their answers (D688).
