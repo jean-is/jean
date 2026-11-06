@@ -315,6 +315,13 @@ describe('streamChat (OpenAI-compatible)', () => {
     })
   })
 
+  test('a tool result that already says it failed is not marked twice', async () => {
+    const messages = [{ role: 'user', content: 'Draw' }, { role: 'assistant', content: '', toolCalls: [{ id: 'c1', name: 'picture', args: {} }] }, { role: 'tool', toolCallId: 'c1', name: 'picture', content: 'Error: HTTP 404', isError: true }]
+    const { fetch, calls } = mockFetch(sseResponse(openaiSSE([{ choices: [{ delta: { content: 'ok' }, finish_reason: 'stop' }] }])))
+    await collect(streamChat({ brain: brains.ollama, messages, fetch }))
+    assert.equal(calls[0].body.messages.at(-1).content, 'Error: HTTP 404')
+  })
+
   test('local servers: no key, usage asked of Ollama and LM Studio (D359), trailing slash, max_tokens only when given', async () => {
     const ok = openaiSSE([{ choices: [{ delta: { content: 'ok' }, finish_reason: 'stop' }] }])
     const { fetch, calls } = mockFetch(sseResponse(ok))

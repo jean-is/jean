@@ -220,7 +220,7 @@ export function openaiMessages(system, messages, { systemNotes, argsAsObject = f
         : parts.map((part) => (typeof part === 'string' ? { type: 'text', text: part } : { type: 'image_url', image_url: { url: `data:${part.mimeType};base64,${part.data}` } })) })
       notes = []
     } else if (m.role === 'tool') {
-      const content = m.isError ? `Error: ${m.content}` : m.content
+      const content = m.isError && !m.content.startsWith('Error:') ? `Error: ${m.content}` : m.content
       out.push({ role: 'tool', tool_call_id: m.toolCallId, ...(argsAsObject && { name: m.name }), content })
     } else {
       /** @type {Record<string, any>} */
