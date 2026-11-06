@@ -28,12 +28,13 @@ export const SECRET = 'Q8~acme-gateway-secret'
 
 /**
  * The organisation's policy: the person signs in with the tenant's single-page app for the AI
- * gateway's scope, whose brain takes that token; its gateway is set; Connections is there from the
+ * gateway's scope, with the ones enterprise.md has Entra's sign-in list beside it (D696), and the
+ * gateway's brain takes that token; its gateway is set; Connections is there from the
  * start; and Microsoft 365 signs in at the tenant, whose app (single-tenant, as Entra registers one by
  * default) the gateway holds, since Entra refuses `common` to such an app.
  */
 export const POLICY = {
-  signIn: { issuer: ISSUER, clientId: SPA, scopes: [`${AI_APP}/chat`] },
+  signIn: { issuer: ISSUER, clientId: SPA, scopes: [...OIDC, `${AI_APP}/chat`] },
   brains: [{ id: 'corp', provider: 'custom', api: 'openai', baseURL: AI_GATEWAY, model: 'fake-brain-1', label: 'Acme AI', auth: 'oidc' }],
   urls: { gateway: GATEWAY },
   capabilities: { preUnlock: ['connections'] },

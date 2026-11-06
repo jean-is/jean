@@ -21,13 +21,14 @@ test('Entra ID signs the person in with the tenant’s single-page app, the AI g
   const microsoft = await fakeMicrosoft(page, { jean: String(baseURL) })
   await withPolicy(page, POLICY)
   await start(page)
-  // Jean left for the tenant's sign-in with its own app, for the AI gateway's scope, and redeemed the
-  // code from the page, which says its origin, with no secret, as Entra wants of a single-page app.
+  // Jean left for the tenant's sign-in with its own app, asking for what policy names, the AI gateway's scope
+  // among them, and redeemed the code from the page, which says its origin, with no secret, as Entra wants of
+  // a single-page app.
   expect(microsoft.authorized).toHaveLength(1)
   const [signIn] = microsoft.authorized
   expect(signIn.origin + signIn.pathname).toBe(AT)
   expect(signIn.searchParams.get('client_id')).toBe(SPA)
-  expect(signIn.searchParams.get('scope')?.split(' ')).toEqual(['api://acme-ai-gateway/chat', 'profile', 'openid', 'email', 'offline_access'])
+  expect(signIn.searchParams.get('scope')?.split(' ')).toEqual(['openid', 'profile', 'email', 'offline_access', 'api://acme-ai-gateway/chat'])
   expect(signIn.searchParams.get('code_challenge_method')).toBe('S256')
   expect(microsoft.redeemed.map(({ form, origin, from }) => ({ grant: form.get('grant_type'), client: form.get('client_id'), secret: form.has('client_secret'), origin, from })))
     .toEqual([{ grant: 'authorization_code', client: SPA, secret: false, origin: new URL(String(baseURL)).origin, from: 'page' }])
