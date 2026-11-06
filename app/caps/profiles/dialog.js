@@ -1,6 +1,7 @@
-// The dialog that adds a profile (D228), in steps: its name, this one's if it has none yet, and whom it is for;
-// for a child, their year of birth and what their profile is set to at that age, with the brains of this one it is given, shown before it is made; then this
-// profile's lock, set here if it has none, so the child can't open it, and the parent's password or passkey. Loaded when it first opens.
+// The dialog that adds a profile (D228), in steps: its name, this one's if it has none yet, and whom it is for, but in an
+// organisation's copy, which makes only grown-ups' (D389); for a child, their year of birth and what their profile is set to
+// at that age, with the brains of this one it is given, shown before it is made; then this profile's lock, set here if it
+// has none, so the child can't open it, and the parent's password or passkey. Loaded when it first opens.
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
@@ -8,7 +9,7 @@ import { unlock } from '../../ui/caps.js'
 import { app } from '../../ui/state.js'
 import { syncDialog, closed, backdrop, head } from '../../ui/dialogs.js'
 import { t } from '../../core/i18n.js'
-import { tierFor } from './tier.js'
+import { tierFor, forFamilies } from './tier.js'
 import { self, make, refresh, forChild } from './profiles.js'
 import { baskets, facts, years } from './view.js'
 
@@ -17,11 +18,14 @@ const form = signal(/** @type {Form} */ ({ step: 'who', child: false, name: '', 
 /** The lock, for a child's: set here if this profile has none, then the parent's way in. @type {typeof import('../lock/lock.js') | null} */
 let lock = null
 
-/** Opens it, with the profiles as they are now (this one may have been locked since), as a child's when the family page asks (?child), never from one. @param {boolean} [child] */
+/**
+ * Opens it, with the profiles as they are now (this one may have been locked since), as a child's when the family page asks (?child),
+ * never from one, nor in an organisation's copy, which makes only grown-ups'. @param {boolean} [child]
+ */
 export async function open(child = false) {
   form.value = { step: 'who', child, name: '', mine: '', born: new Date().getFullYear() - 10 }
   await refresh()
-  if (!(child && self.peek()?.parent)) app.dialog.value = 'profile'
+  if (!child || (!self.peek()?.parent && forFamilies(app.policy))) app.dialog.value = 'profile'
 }
 
 /** @param {Partial<Form>} patch */
@@ -37,8 +41,7 @@ async function next(event) {
   if (step === 'set') {
     // A concern is told on this device once the parent said yes, asked while their click still counts.
     globalThis.Notification?.requestPermission().catch(() => {})
-    await unlock('lock')
-    lock ??= await import('../lock/lock.js')
+    lock ??= await unlock('lock').then(() => import('../lock/lock.js'))
   }
   set({ step: step === 'who' ? 'set' : 'lock' })
 }
@@ -54,8 +57,8 @@ class ProfileDialog extends Element {
       ${step === 'who' ? html`<p class="lede">${t('profiles.what')}</p><form class="stack" @submit=${next}>
         ${self.value?.name ? nothing : html`<label for="profile-mine">${t('profiles.yours')}<input id="profile-mine" required maxlength="40" dir="auto" autocomplete="off" .value=${mine} @input=${(/** @type {Event} */ e) => set({ mine: value(e) })}></label>`}
         <label for="profile-name">${t('profiles.name')}<input id="profile-name" required maxlength="40" dir="auto" autocomplete="off" .value=${name} @input=${(/** @type {Event} */ e) => set({ name: value(e) })}></label>
-        <fieldset class="profile-for"><legend>${t('profiles.for')}</legend>${[false, true].map((kid) => html`<label class="choice" for=${`for-${kid}`}><input id=${`for-${kid}`} type="radio" name="for" .checked=${child === kid} @change=${() => set({ child: kid })}>
-          <span class="item-text"><strong>${t(kid ? 'profiles.forChild' : 'profiles.forAdult')}</strong><small>${t(kid ? 'profiles.forChildText' : 'profiles.forAdultText')}</small></span></label>`)}</fieldset>
+        ${forFamilies(app.policy) ? html`<fieldset class="profile-for"><legend>${t('profiles.for')}</legend>${[false, true].map((kid) => html`<label class="choice" for=${`for-${kid}`}><input id=${`for-${kid}`} type="radio" name="for" .checked=${child === kid} @change=${() => set({ child: kid })}>
+          <span class="item-text"><strong>${t(kid ? 'profiles.forChild' : 'profiles.forAdult')}</strong><small>${t(kid ? 'profiles.forChildText' : 'profiles.forAdultText')}</small></span></label>`)}</fieldset>` : nothing}
         <div class="row"><button class="button primary">${t(child ? 'profiles.next' : 'profiles.make')}</button></div></form>`
       : step === 'set' ? html`<form class="stack" @submit=${next}>
         <label class="profile-born" for="born-new">${t('profiles.born')}<select id="born-new" @change=${(/** @type {Event} */ e) => set({ born: Number(value(e)) })}>

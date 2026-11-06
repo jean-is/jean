@@ -121,6 +121,13 @@ test('a parent’s first choices follow the child’s age, from the school year 
   assert.equal(helpline(['xx']), 'their country’s child helpline')
 })
 
+test('a parent makes a child’s profile on jean.is or their own copy, never in an organisation’s, which signs in, names who answers or holds a key', async () => {
+  const { forFamilies } = await import('../app/caps/profiles/tier.js')
+  assert.ok(forFamilies({}))
+  assert.ok(forFamilies({ urls: { share: 'https://hst.ing/' }, locales: ['fr'] }))
+  for (const policy of [{ signIn: { issuer: 'https://login.corp.example', clientId: 'jean' } }, { brains: [] }, { key: 'eyJ…' }]) assert.equal(forFamilies(policy), false)
+})
+
 test('a child’s profile has the brains a parent left it, even none, and the child can’t add one', async () => {
   const { applyPolicy, DEFAULT_SETTINGS } = await import('../app/core/settings.js')
   const brain = /** @type {import('../app/core/types.js').BrainConfig} */ ({ id: 'b', provider: 'openrouter', api: 'openai', baseURL: 'https://example.org/v1', model: 'm' })

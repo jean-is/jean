@@ -37,6 +37,12 @@ export const DANGERS = /** @type {const} */ ({ harm: 'self-harm or suicide', abu
  *   pictureCheck: typeof STRICTEST, brains?: import('../../core/types.js').BrainConfig[], rules?: Record<string, import('../../core/types.js').RuleValue>, by?: string, updatedAt?: string }} Tier
  */
 
+/**
+ * Whether a parent can make a child's profile here: never in an organisation's copy, whose policy signs in, names who answers or holds
+ * a key (D389). Never asked in a child's profile, whose policy names the brains a parent left it. @param {Record<string, any>} policy
+ */
+export const forFamilies = (policy) => !(policy.signIn || policy.brains || policy.key)
+
 /** The age a child reaches in the year their school year began, in September: 13 is 4e in France. @param {number} born @param {Date} [now] */
 export const age = (born, now = new Date()) => now.getFullYear() - (now.getMonth() < 8 ? 1 : 0) - born
 

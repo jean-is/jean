@@ -2,7 +2,7 @@
 // afresh; a child's, set by a parent and opened by them under 13, whose concerns reach the parent's
 // profile, its kind and when, never the words, unless the danger is at home.
 import { test, expect } from '@playwright/test'
-import { start, openProfile, openOthers, openSettings, closeSettings, openTasks, ask, BRAIN_URL } from './helpers.js'
+import { start, openProfile, openOthers, openSettings, closeSettings, openTasks, ask, withPolicy, BRAIN_URL } from './helpers.js'
 
 const PASSWORD = 'a long and happy password'
 
@@ -58,6 +58,21 @@ test('the family page’s address opens Add a profile as a child’s, where prof
   await dialog.getByLabel('The new profile’s name').fill('Léa')
   await dialog.getByRole('button', { name: 'Next' }).click()
   await expect(dialog.getByLabel('Year of birth')).toBeVisible()
+})
+
+test('an organisation’s copy adds a grown-up’s profile at once, never a child’s, even from the family page’s address (D389)', async ({ page }) => {
+  await withPolicy(page, { brains: [{ id: 'corp', provider: 'custom', api: 'openai', baseURL: BRAIN_URL, model: 'fake', label: 'Corp AI' }] })
+  await start(page)
+  test.skip(await ephemeral(page), 'nothing is kept here: a private window, Playwright’s WebKit')
+  await page.goto('./?child')
+  await expect(page.locator('.hero-question')).toBeVisible()
+  await expect(page).not.toHaveURL(/child/)
+  await expect(page.locator('.profile-dialog[open]')).toHaveCount(0)
+  const dialog = await add(page, 'Work', 'Me')
+  await expect(dialog.getByRole('group', { name: 'Who is it for?' })).toHaveCount(0)
+  await expect(dialog.getByLabel('For a child')).toHaveCount(0)
+  await dialog.getByRole('button', { name: 'Add it' }).click()
+  await expect.poll(() => here(page)).toMatch(/-work$/)
 })
 
 test('a second profile is a Jean of its own: listed in the menu, opened afresh, and found by an address', async ({ page }) => {
