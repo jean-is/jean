@@ -33,9 +33,11 @@ EXPOSE 8787
 CMD ["node", "gateway/serve.js"]
 
 # Jean: nginx's own image without root. Its entrypoint writes nginx.conf into conf.d/ with
-# CONTENT_SECURITY_POLICY in place, an extra policy that only tightens Jean's own (none by default).
+# CONTENT_SECURITY_POLICY in place, an extra policy that only tightens Jean's own (none by default),
+# then brand.js and the manifests in the name APP_NAME gives Jean, if any, into /tmp (D698).
 FROM nginxinc/nginx-unprivileged:stable-alpine-slim
-ENV CONTENT_SECURITY_POLICY=""
+ENV CONTENT_SECURITY_POLICY="" APP_NAME=""
 COPY deploy/docker/nginx.conf /etc/nginx/templates/default.conf.template
+COPY --chmod=755 deploy/docker/app-name.sh /docker-entrypoint.d/40-app-name.sh
 COPY --from=build /site /srv
 EXPOSE 8080

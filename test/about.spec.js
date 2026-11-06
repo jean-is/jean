@@ -5,7 +5,7 @@
 // Japanese, the names of menus, shortcuts and how each capability is found are the screen's.
 import { test, expect } from '@playwright/test'
 import { readFileSync } from 'node:fs'
-import { start, connectFakeBrain, ask, withPolicy, openSettings, closeSettings } from './helpers.js'
+import { start, connectFakeBrain, ask, withPolicy, openSettings, closeSettings, BRAIN_URL } from './helpers.js'
 
 /** A language's strings, the room's and the dialogs'. @param {string} lang */
 const strings = (lang) => ({ ...JSON.parse(readFileSync(new URL(`../app/locales/${lang}.json`, import.meta.url), 'utf8')), ...JSON.parse(readFileSync(new URL(`../app/locales/dialogs/${lang}.json`, import.meta.url), 'utf8')) })
@@ -55,6 +55,25 @@ test("Settings › General says at its foot which version this is and when it wa
   await connectFakeBrain(page)
   await ask(page, 'What can you do?')
   await expect(page.locator('.msg-jean .prose').last()).toContainText(`The version, at the foot of Settings › General: ${line}.`)
+})
+
+test('an organisation’s copy goes by the name its policy gives it: on its tab, in Settings, and to the brain (D698)', async ({ page }) => {
+  await withPolicy(page, { name: '  Acme Assistant ' })
+  /** The system prompt of each request to the fake brain. @type {string[]} */
+  const prompts = []
+  await page.route(`${BRAIN_URL}/chat/completions`, (route) => {
+    prompts.push(String(route.request().postDataJSON()?.messages?.[0]?.content ?? ''))
+    return route.fallback()
+  })
+  await start(page)
+  await expect(page).toHaveTitle('Acme Assistant')
+  const settings = await openSettings(page)
+  await expect(page).toHaveTitle('General · Acme Assistant')
+  await expect(settings.locator('.settings-panel p.version')).toHaveText(/^Acme Assistant \d/)
+  await closeSettings(page)
+  await connectFakeBrain(page)
+  await ask(page, 'Hello')
+  await expect.poll(() => prompts.at(-1)).toMatch(/^You are Acme Assistant, an assistant/)
 })
 
 for (const lang of ['ar', 'ja']) {

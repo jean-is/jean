@@ -42,7 +42,8 @@ const LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])$/
 export const SCHEMA = {
   // The JSON Schema an editor checks the file against (in app/schemas/, made from this one), which Jean doesn't read.
   $schema: 'link',
-  locale: 'locale', locales: ['locale'],
+  // name: what the organisation calls its copy (D698), wherever Jean says its name.
+  name: 'text', locale: 'locale', locales: ['locale'],
   look: { 'name!': 'text', on: new Set(Object.keys(LOOKS)), accent: 'colour', background: 'colour', size: 'number', font: new Set(Object.keys(FONTS)), css: 'text', logo: 'picture' },
   looks: [new Set(Object.keys(LOOKS))],
   // The organisation's kit for decks (D594): its tokens, layouts and the pictures their art names (D606), SVG written out among them, which deck checks against its grammar as it draws.

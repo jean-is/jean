@@ -13,6 +13,7 @@ services:
       - "8080:8080"
     environment:
       - CONTENT_SECURITY_POLICY
+      - APP_NAME
     # The organisation's policy, beside index.html (docs/enterprise.md):
     # volumes:
     #   - ./policy.json:/srv/policy.json:ro

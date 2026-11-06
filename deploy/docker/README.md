@@ -57,6 +57,14 @@ Settings go in the shell's environment or in a `.env` file beside `compose.yaml`
 { "urls": { "privacy": "https://intranet.corp.example/jean/privacy", "terms": "" } }
 ```
 
+**Its name.** `APP_NAME` is what people see Jean called, in the room and when they install it, on their computer's list of apps:
+
+```bash
+APP_NAME="Acme Assistant"
+```
+
+As it starts, the container writes `brand.js` and the install's manifests with that name into `/tmp/app-name`, which it serves in place of its own. Nothing to mount, and a new version keeps the name. The policy's `name` does the same in the room, wherever Jean is served, but an install takes its name from the manifest, so set `APP_NAME` before people install it. A name on more than one line is refused, and Jean keeps its own.
+
 **A stricter policy for the browser.** `CONTENT_SECURITY_POLICY` adds a header to every file. Browsers enforce it on top of the policy in Jean's own pages, so it can only take away. This one keeps Jean, its workers and the Computer to its own address and your AI gateway:
 
 ```bash
@@ -82,6 +90,7 @@ Give the gateway an HTTPS address of its own, such as `https://gateway.corp.exam
 - Serves `app/` as `npm run build` leaves it, as `shippedFiles()` in `scripts/desktop.js` lists it: without its types, dotfiles or Markdown. It adds a `<meta name="app-policy">` to `index.html` and an empty `policy.json` beside it, so Jean reads a mounted policy, and finds an empty one rather than a 404 without it.
 - Sends `Cache-Control: no-cache` and `X-Content-Type-Options: nosniff` with every file, plus `Content-Security-Policy: frame-ancestors 'self'`, so that only Jean frames Jean's pages. File names carry no version, so each file is checked again before use, and the service worker keeps them for offline use.
 - Answers a page at its address without `.html` too, as jean.is does: `/check` is `check.html`.
+- With `APP_NAME`, serves `brand.js` and the manifests from `/tmp/app-name`, written by `/docker-entrypoint.d/40-app-name.sh` as it starts.
 - Compresses text and WebAssembly with gzip, and serves `.mjs`, `.wasm` and `.webmanifest` files with the types browsers require.
 
 ## Update it

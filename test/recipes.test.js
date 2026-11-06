@@ -59,6 +59,50 @@ test('the container sends the header set but HSTS, which its proxy adds, and ans
   assert.match(config, /try_files \$uri \$uri\.html \$uri\/ =404;/)
 })
 
+test('the container’s APP_NAME names Jean in brand.js and every manifest, as written and as minified, whatever the name holds (D698)', async () => {
+  const { execFile } = await import('node:child_process')
+  const { mkdtemp, mkdir, writeFile, readdir, rm } = await import('node:fs/promises')
+  const { tmpdir } = await import('node:os')
+  const { join } = await import('node:path')
+  const { minify } = await import('../scripts/web.js')
+  const run = (/** @type {string} */ from, /** @type {string} */ out, /** @type {string} */ name) => new Promise((resolve, reject) => {
+    execFile('sh', [fileURLToPath(new URL('deploy/docker/app-name.sh', ROOT)), from, out], { env: { ...process.env, APP_NAME: name } }, (error, stdout, stderr) => (error ? reject(error) : resolve(stderr)))
+  })
+  const scratch = await mkdtemp(join(tmpdir(), 'app-name-'))
+  try {
+    const languages = (await readdir(new URL('app/manifests/', ROOT))).slice(0, 3)
+    const brand = await read('app/brand.js')
+    for (const [kind, source] of [['as written', brand], ['minified', await minify('brand.js', brand)]]) {
+      const [from, out] = [join(scratch, kind, 'srv'), join(scratch, kind, 'named')]
+      await mkdir(join(from, 'manifests'), { recursive: true })
+      await writeFile(join(from, 'brand.js'), source)
+      for (const path of ['manifest.webmanifest', ...languages.map((file) => `manifests/${file}`)]) await writeFile(join(from, path), await read(`app/${path}`))
+      for (const name of ['Reefknot AI', 'Ana’s "assistant" & co | \\ /é', 'جان']) {
+        assert.equal(await run(from, out, name), '', kind)
+        const { BRAND, PAGES } = await import(`${new URL(`file://${join(out, 'brand.js')}`).href}?${encodeURIComponent(kind + name)}`)
+        assert.deepEqual({ ...BRAND }, { name, domain: 'jean.is' }, `${kind}: ${name}`)
+        assert.ok(PAGES.home, kind)
+        for (const path of ['manifest.webmanifest', ...languages.map((file) => `manifests/${file}`)]) {
+          const [manifest, own] = [JSON.parse(await readFile(join(out, path), 'utf8')), JSON.parse(await read(`app/${path}`))]
+          assert.deepEqual(manifest, { ...own, name, short_name: name }, `${path}: ${name}`)
+        }
+      }
+      // A line break would leave the files broken: Jean keeps its own name, and says why.
+      assert.match(String(await run(from, out, 'Two\nlines')), /APP_NAME holds a line break/)
+      await assert.rejects(readFile(join(out, 'brand.js')), 'nothing written')
+      // Without one, nothing is written, and nginx serves Jean's own.
+      await run(from, out, 'Reefknot AI')
+      await run(from, out, '')
+      await assert.rejects(readFile(join(out, 'brand.js')), 'what an earlier start wrote is gone')
+    }
+  } finally {
+    await rm(scratch, { recursive: true, force: true })
+  }
+  const [nginx, docker] = await Promise.all([read('deploy/docker/nginx.conf'), read('deploy/docker/Dockerfile')])
+  assert.match(nginx, /location ~ \^\/\(brand\\\.js\|manifest\\\.webmanifest\|manifests\/\[\\w-\]\+\\\.webmanifest\)\$ \{\s+root \/tmp\/app-name;\s+try_files \$uri @jean;/)
+  assert.match(docker, /^COPY --chmod=755 deploy\/docker\/app-name\.sh \/docker-entrypoint\.d\/40-app-name\.sh$/m)
+})
+
 test('Bunny gets the header set and every type at each deploy, and its script answers the pages without .html', async () => {
   const { BARE, objectOf, rulesFor } = await import('../scripts/bunny.js')
   const headers = rulesFor({ id: 1, name: 'jean-site' }, 'r')[1]

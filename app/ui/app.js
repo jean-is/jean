@@ -47,6 +47,8 @@ async function start() {
   app.policy = policy ? await policy.json().catch(() => ({})) : {}
   // As it is for the person signed in, by their groups (D429) and places (D434).
   if (app.policy.groups || app.policy.jurisdictions) await import('../caps/enterprise/enterprise.js').then((m) => m.groups(), console.warn)
+  // The organisation's name for it (D698).
+  BRAND.name = String(app.policy.name ?? '').trim() || BRAND.name
   // Several profiles here (D228): their menu, and in a child's, what a parent set, in policy's shape.
   if (fs && (await fs.whole.list('profiles')).length > 1) await unlock('profiles')
   app.settings.value = await loadSettings(app.fs)

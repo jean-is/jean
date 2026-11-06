@@ -115,10 +115,11 @@ Modules that a single capability or part of the UI uses live with it, tested und
 
 ```js
 // brand.js — the only place the name lives
-export const BRAND = Object.freeze({ name: 'Jean', domain: 'jean.is' })
+export const BRAND = Object.seal({ name: 'Jean', domain: 'jean.is' })
 ```
 
 - **For display only** (D4): UI strings (`{name}`), the system prompt, the page title and the web-app manifest.
+- **An organisation's copy goes by its own** (D698): policy's `name` becomes `BRAND.name` in `ui/app.js` as soon as policy is read, before anything says a name; modules that keep the name are loaded after. In the container, `APP_NAME` names the install too: `deploy/docker/app-name.sh`, in nginx's `/docker-entrypoint.d/`, writes `brand.js` and every manifest with it into `/tmp/app-name`, which `nginx.conf` serves in place of `/srv`'s, gzipped as they go. The service worker refetches them, their hashes no longer those `capabilities.json` lists. A task saved as a page draws with the render package, whose `brand.js` is Jean's.
 - **Never in anything that persists:** storage keys, OPFS paths, cache names, element prefixes, CSS classes, the desktop app's identifiers. Renaming changes one line and moves no data.
 - **The assistant's name is a setting:** `settings.assistantName ?? BRAND.name`, which a project can override.
 - **Grammar:** translations never make a word agree with the name; in conversation, the brain handles grammar itself.

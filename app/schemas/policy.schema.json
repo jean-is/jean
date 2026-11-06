@@ -8,6 +8,9 @@
     "$schema": {
       "$ref": "#/$defs/link"
     },
+    "name": {
+      "type": "string"
+    },
     "locale": {
       "$ref": "#/$defs/locale"
     },
@@ -858,6 +861,12 @@
           "policy": {
             "type": "object",
             "properties": {
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
               "locale": {
                 "anyOf": [
                   {
