@@ -71,7 +71,7 @@ async function played(one, ctx, done) {
   await write(one)
   ctx.meta.files = [{ uri: one.path, name: `${one.name}.game.html`, mimeType: 'text/html', size: one.code.length }]
   if (conversationOf(ctx.signal)?.path === app.current.peek()?.path) await open(one)
-  reread()
+  join(one.dir), reread()
   const tested = await playtest(one, ctx)
   if (tested.picture) await picture(one.path, tested.picture, { dir: one.dir })
   return `${done} ${one.name}, at ${one.path}. Its play-test:\n${tested.text}`
@@ -79,8 +79,7 @@ async function played(one, ctx, done) {
 
 /** @type {import('../../core/loop.js').Tool} */
 const gameTool = {
-  spec: GAME,
-  kind: 'edit',
+  spec: GAME, kind: 'edit',
   title: (args) => `Game ${args?.name ?? ''}`,
   run: async (args, ctx) => {
     const name = String(args?.name ?? '').trim(), code = String(args?.code ?? ''), now = new Date().toISOString(), before = args?.game ? await load(String(args.game)) : null
@@ -93,8 +92,7 @@ const gameTool = {
 
 /** @type {import('../../core/loop.js').Tool} */
 const changeTool = {
-  spec: CHANGE,
-  kind: 'edit',
+  spec: CHANGE, kind: 'edit',
   title: (args) => `Change the game ${args?.game ?? ''}`,
   run: async (args, ctx) => {
     const one = await load(String(args?.game ?? ''))
@@ -126,12 +124,15 @@ const games = { id: 'games', at: 2.7, draw: () => GLYPH, kept, preview: (/** @ty
   remove: (/** @type {{ path: string }} */ { path }) => Promise.all([path, savesOf(path)].map((one) => app.fs.remove(`${app.projectDir}/${one}`))),
   make: async () => { await skill(); await ask('games.ask', 'games.example') } }
 
-// Among the creations once the project holds a game; until then only its card to start one (D553).
+// Among the creations once the project holds a game, from when its first is written, so that the play-test's seconds show it there
+// already; until then only its card to start one (D553).
 const joined = signal(/** @type {Record<string, unknown>} */ ({ starts: games }))
 let here = ''
+/** Games among the creations of the project open, `dir`, which holds one. @param {string} dir */
+const join = (dir) => { if (here === dir && !joined.peek().creations) joined.value = { creations: games, main: page } }
 effect(() => {
   const dir = (void app.conversations.value, app.projectDir)
   if (dir !== here) (here = dir, (joined.value = { starts: games }))
-  if (!joined.peek().creations) kept().then((list) => { if (here === dir && list.length) joined.value = { creations: games, main: page } }, console.warn)
+  if (!joined.peek().creations) kept().then((list) => list.length && join(dir), console.warn)
 })
 effect(() => register({ id: 'games', tools: [gameTool, changeTool], lines: LINES, slots: { ...joined.value, modes: { at: 13, draw: () => null, notes }, out: { at: 2, draw: () => null, of: (/** @type {{ uri: string }} */ { uri }) => /^games\//.test(uri), load: async () => ({ ways }) } } }))
