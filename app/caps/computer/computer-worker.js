@@ -223,10 +223,14 @@ const stampOf = async (fs, path) => {
   return `${size}:${+mtime}`
 }
 
-/** The files of a filesystem, `node_modules` aside: it lives in the computer only. @param {any} fs */
+/**
+ * The files of a filesystem, `node_modules` and `.git` aside, as the folder's walk leaves them: they
+ * live in the computer only, so a `.git` made here never lands on a folder's own repository, which
+ * the computer never sees. @param {any} fs
+ */
 async function filesOf(fs) {
   const paths = []
-  for (const path of fs.getAllPaths()) if (!/\/node_modules\//.test(path) && (await fs.stat(path).catch(() => null))?.isFile) paths.push(path)
+  for (const path of fs.getAllPaths()) if (!/\/(node_modules|\.git)(\/|$)/.test(path) && (await fs.stat(path).catch(() => null))?.isFile) paths.push(path)
   return paths
 }
 
@@ -291,7 +295,7 @@ const text = (stdin) => (typeof stdin === 'string' ? new TextDecoder().decode(Ui
 /** @param {string} stdout @param {string} stderr @param {number} exitCode */
 const exit = (stdout, stderr, exitCode) => ({ stdout, stderr, exitCode })
 
-/** What the shell adds to its own commands: Python, pip, Node's way of running JavaScript, and tar. @param {Computer} computer */
+/** What the shell adds to its own commands: Python, pip, Node's way of running JavaScript, tar, and what git, npx and uvx can't do here. @param {Computer} computer */
 function commands(computer) {
   const { defineCommand } = engines.shell
   /** @param {string} name @param {(args: string[], ctx: any) => Promise<any>} run */
@@ -337,8 +341,9 @@ function commands(computer) {
   const uv = async (/** @type {string[]} */ args, /** @type {any} */ ctx) => (args[0] === 'pip' ? pip(args.slice(1), ctx)
     : args[0] === 'run' && /^python3?$|\.py$/.test(args[1] ?? '') ? py(args.slice(/\.py$/.test(args[1]) ? 1 : 2), ctx)
     : exit('', 'uv: only uv pip install, uv pip list and uv run (python, or a .py file) work here.\n', 1))
+  // git, which brains type by habit, says how its work is done here; a folder on This computer runs the user's own git.
   return [command('python', py), command('python3', py), command('pip', pip), command('pip3', pip), command('uv', uv), command('node', node), command('js', node), command('tar', (args, ctx) => tarCommand(args, ctx)),
-    command('npm', (args, ctx) => npm(args, ctx, computer)), command('npx', runner('npx', 'npm install it, then require or import it in node')), command('uvx', runner('uvx', 'pip install it, then import it in python3'))]
+    command('npm', (args, ctx) => npm(args, ctx, computer)), command('npx', runner('npx', 'npm install it, then require or import it in node')), command('uvx', runner('uvx', 'pip install it, then import it in python3')), command('git', async () => exit('', "git: no git runs here, and no repository can be reached from here. What changes in /workspace is kept after each run, and diff compares two files; a repository is read and changed through a GitHub connection.\n", 1))]
 }
 
 // ─── tar and npm ─────────────────────────────────────────────────────────────

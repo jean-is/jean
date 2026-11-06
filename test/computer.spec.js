@@ -223,6 +223,14 @@ test('bash: commands, python3, uv and node in /workspace, kept in the project’
   await expect(answer).toContainText('56')
   await expect(answer).toContainText("uvx: a package's own programs don't run here: pip install it, then import it in python3.")
   await expect(answer).toContainText('uv: only uv pip install, uv pip list and uv run (python, or a .py file) work here.')
+  // git says how its work is done here, and a .git made here stays in the computer, never landing on a folder's own.
+  answer = await command(page, '$ git init; mkdir -p .git && echo "ref: refs/heads/main" > .git/HEAD && echo kept > kept.txt')
+  await expect(answer).toContainText('git: no git runs here, and no repository can be reached from here.')
+  await expect(answer).toContainText('Kept in /workspace: kept.txt.')
+  expect(await page.evaluate(async () => {
+    const { app } = await import('/ui/state.js')
+    return app.fs.exists(`${app.projectDir}/workspace/.git/HEAD`)
+  })).toBe(false)
 })
 
 test('the internet: a new site asked about first, then always; a registry’s key; the relay; and off', async ({ page }) => {
