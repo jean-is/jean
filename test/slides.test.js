@@ -3,7 +3,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { parseDeck } from '@codename/deck'
-import { piecesOf, withKit, withoutKit, withLayout, changesOf, swapped, withPictures, namedIn, placeIn } from '../app/caps/slides/edit.js'
+import { piecesOf, withKit, withoutKit, withLayout, changesOf, swapped, withPictures, namedIn, placeIn, ownName, mostAlike } from '../app/caps/slides/edit.js'
 
 const DECK = '---\ntitle: A second oven\n---\n\n# A second oven\n\nPlan for 2027\n\n---\n\n## Where we are\n\n- 120 croissants a day\n\n---\nlayout: fact\n---\n\n# 14 months\n\nto pay it back\n'
 /** Each slide's layout and first words, as deck reads them. @param {string} source */
@@ -57,6 +57,25 @@ test('Jean’s version against the user’s: each slide changed, added or taken 
   assert.deepEqual(read(swapped(DECK, [2, 3], fewer, [2, 2])), [['', 'A second oven'], ['', 'Where we are']])
   assert.deepEqual(read(swapped(DECK, [0, 2], fewer, [1, 2])), [['', 'Where we are'], ['fact', '14 months']])
   assert.deepEqual(read(swapped(fewer, [1, 1], DECK, [0, 1])), [['', 'A second oven'], ['', 'A second oven'], ['', 'Where we are']])
+})
+
+test('a deck an answer writes is Jean’s version of one kept only by most of its slides: one closing slide alike, or an empty one, makes a deck of its own', () => {
+  // The name a deck gives itself: its title, else its first slide's words; none from a picture.
+  assert.equal(ownName(DECK), 'A second oven')
+  assert.equal(ownName('# **Bread** at noon\n\n---\n\n## Two\n'), 'Bread at noon')
+  assert.equal(ownName('![The oven](oven.png)\n\n---\n\n## Two\n'), '')
+  // Changed as asked, a slide or two: most of its slides alike, added ones too.
+  const changed = DECK.replace('120 croissants a day', '150 croissants a day')
+  assert.equal(mostAlike(DECK, changed), true)
+  assert.equal(mostAlike(DECK, `${DECK}\n---\n\n## Next steps\n\n---\n\n## Who does what\n`), true)
+  assert.equal(mostAlike(DECK, DECK.replace('# 14 months', '# 12 months').replace('120 croissants', '150 croissants')), false, 'two of three changed is a deck rewritten, kept apart unless by its name')
+  // About something else, ending as the other ends: a deck of its own.
+  const closing = '\n---\n\n# Questions?\n'
+  const other = '---\ntitle: Opening on Sundays\n---\n\n# Opening on Sundays\n\n---\n\n## Who works\n\n- Two of us\n'
+  assert.equal(mostAlike(DECK + closing, other + closing), false)
+  assert.equal(mostAlike('# A\n\n---\nlayout: end\n---\n', '# B\n\n---\nlayout: end\n---\n'), false, 'an empty slide alike is half, not most')
+  assert.equal(mostAlike('# A\n', '# A\n'), true)
+  assert.equal(mostAlike('', '# A\n'), false)
 })
 
 test('a deck’s pictures are found as deck reads them, a picture of the task by the name a brain gives it put at its place from the deck’s folder, the rest byte for byte', () => {

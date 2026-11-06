@@ -1,8 +1,8 @@
 // What Slides changes in a deck's Markdown (D591), as text, so that the rest of it stays byte for byte: a slide's layout, in
 // its settings; the kit the deck was drawn with, kept in its headmatter as one line, so that the file looks the same wherever it
-// goes; where its pictures are, a picture of the task named by its name kept at its place in the project; and Jean's
-// version of a deck set against the user's slide by slide, each run of slides it changes, adds or takes away a change to accept
-// or reject (D505). Pure, on deck's own reading of the Markdown (parseDeck).
+// goes; where its pictures are, a picture of the task named by its name kept at its place in the project; whether a deck an
+// answer wrote is Jean's version of one kept; and that version set against the user's slide by slide, each run of slides it
+// changes, adds or takes away a change to accept or reject (D505). Pure, on deck's own reading of the Markdown (parseDeck).
 import { parseDeck } from '@codename/deck'
 
 /** A deck's Markdown as pieces that join back into it, a slide each, each but the first from the rule before its slide. @param {string} source */
@@ -90,6 +90,16 @@ export function changesOf(mine, theirs) {
   close()
   return changes
 }
+
+/** The name a deck gives itself: its title, else its first slide's words; none when it gives neither. @param {string} source */
+export const ownName = (source) => ((deck) => String(deck.settings.title ?? deck.slides[0]?.title ?? '').replace(/[*_`#]/g, '').trim())(parseDeck(source))
+
+/**
+ * Whether two decks are one deck changed: more than half the longer one's slides alike, those of the first that no change takes.
+ * A slide alike, a closing "Questions?" or an empty one, doesn't make a deck about something else a version of another (D505).
+ * @param {string} mine @param {string} theirs
+ */
+export const mostAlike = (mine, theirs) => ((a, b) => 2 * changesOf(mine, theirs).reduce((alike, { mine: [from, to] }) => alike - (to - from), a) > Math.max(a, b))(piecesOf(mine).length, piecesOf(theirs).length)
 
 /**
  * A deck with the slides from..to of another in place of its own at..: the user's with one of Jean's changes taken, or Jean's

@@ -305,7 +305,7 @@ drawn.value = { ...drawn.peek(), deck, markdown: fenced, md: fenced, slidev: fen
 function notes(records) {
   const one = shown.peek()
   if (!one) return []
-  const text = `The deck ${one.name} (${one.path}) is open beside the conversation, on slide ${one.at + 1} of ${one.count}.${one.part ? ` The user points at its words "${one.part}".` : ''} As it is now:\n\n\`\`\`\`deck\n${one.source.trim()}\n\`\`\`\`\n\nTo change it, write it again whole in a \`\`\`\`deck block with only what is asked changed: the user accepts or rejects each slide you change.`
+  const text = `The deck ${one.name} (${one.path}) is open beside the conversation, on slide ${one.at + 1} of ${one.count}.${one.part ? ` The user points at its words "${one.part}".` : ''} As it is now:\n\n\`\`\`\`deck\n${one.source.trim()}\n\`\`\`\`\n\nTo change it, write it again whole in a \`\`\`\`deck block with only what is asked changed: the user accepts or rejects each slide you change. A deck about something else is a new one, with a title of its own.`
   const last = records.findLast(({ update }) => update?.sessionUpdate === '_system_note' && update.data?.kind === 'deck')
   return last?.update?.sessionUpdate === '_system_note' && last.update.text === text ? [] : [noteRecord(text, { kind: 'deck', uri: one.path })]
 }

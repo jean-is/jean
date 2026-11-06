@@ -4,8 +4,8 @@
 // it is pinned and the task it came from in its head. A deck an answer writes is kept once the answer ends (keep(), Skills'
 // turn.end): a new file with the kit it was drawn with (caps/slides/kit.js), the pictures of the task it names by their names at
 // their places in the project, open beside the task when that is on screen; or,
-// when it goes by the name of the deck on show as the user asked, or of one the task made, or shares a slide with it, Jean's
-// version of that one, waiting in `decks/.suggested/<file>.md` to be accepted or rejected slide by slide (D505), as a design's
+// when it goes by the name of the deck on show as the user asked, or has most of its slides alike with that one or one the task
+// made, Jean's version of that one, waiting in `decks/.suggested/<file>.md` to be accepted or rejected slide by slide (D505), as a design's
 // changes wait (D572). On its card, its first slide; picked, it opens beside the task, to page, present, change and save
 // (caps/slides/); downloaded, the file with its pictures inside (D591). Skills gives them, as it gives the scores (./scores.js).
 import { html, nothing } from 'lit-html'
@@ -121,28 +121,30 @@ async function offered(one) {
 }
 
 /**
- * A deck an answer wrote, kept once it ends (Skills' turn.end): Jean's version of the deck on show as the user asked, or of one
- * the task made, that goes by its name or shares a slide with it; else a new deck, opened beside the task when that is on screen.
+ * A deck an answer wrote, kept once it ends (Skills' turn.end): Jean's version of the deck on show as the user asked when it goes
+ * by its name, or of that one or one the task made when most of its slides are alike; else a new deck, opened beside the task when
+ * that is on screen. A slide alike, a closing "Questions?", makes no version: a deck about something else is a deck of its own.
  * @param {{ task: string, answer: string, records: import('../../core/types.js').Envelope[], routine?: unknown }} turn
  */
 export async function keep({ task, answer, records }) {
   if (!/^ {0,3}(`{3,}|~{3,})/m.test(answer) || !declared.peek().has('deck')) return
-  const [{ deckIn, parseDeck }, { piecesOf, changesOf, withKit, withPictures, namedIn }, { kitHere, copyOf, lookPrint }, { linkedFiles, filesMade, callsIn }] = await Promise.all([import('@codename/deck'), import('../slides/edit.js'), import('../slides/kit.js'), import('../../core/events.js')])
+  const [{ deckIn, parseDeck }, { ownName, mostAlike, changesOf, withKit, withPictures, namedIn }, { kitHere, copyOf, lookPrint }, { linkedFiles, filesMade, callsIn }] = await Promise.all([import('@codename/deck'), import('../slides/edit.js'), import('../slides/kit.js'), import('../../core/events.js')])
   // A picture of the task, which the brain names by its name, kept at its place from the deck's folder.
   const pictures = [...linkedFiles(records), ...filesMade(callsIn(records))].filter((one) => /^image\//.test(one.mimeType ?? '')), source = ((found) => found && withPictures(found.source, (place) => ((one) => one && `../${one.uri}`)(namedIn(pictures, place))))(deckIn(answer))
   if (!source) return
-  const dir = task.slice(0, task.indexOf('/conversations/')), deck = parseDeck(source)
-  const name = String(deck.settings.title ?? deck.slides[0]?.title ?? app.conversations.peek().find((one) => one.path === task)?.title ?? t('conversation.untitled')).replace(/[*_`#]/g, '').trim()
+  // Its name its own, else the task's, which is no deck's own: two decks of a task without one are never one deck by it.
+  const dir = task.slice(0, task.indexOf('/conversations/')), own = ownName(source)
+  const name = own || String(app.conversations.peek().find((one) => one.path === task)?.title ?? t('conversation.untitled')).replace(/[*_`#]/g, '').trim()
   // The deck on show as the user asked (its note just before the request), then the task's own, the latest first.
   const asked = records.findLastIndex(({ update }) => update?.sessionUpdate === 'user_message_chunk')
   const answered = records.slice(0, asked).findLastIndex(({ update }) => update?.sessionUpdate === 'agent_message_chunk')
   const note = records.slice(answered + 1, asked).findLast(({ update }) => update?.sessionUpdate === '_system_note' && update.data?.kind === 'deck')?.update
   const noted = note?.sessionUpdate === '_system_note' && note.data?.kind === 'deck' ? note.data.uri : ''
-  const pieces = piecesOf(source).map((piece) => piece.trim())
   for (const path of [...(noted ? [noted] : []), ...(await kept(dir)).map((item) => item.path).filter((path) => path !== noted)]) {
-    const one = await load(path, dir)
-    if (!one || (path !== noted && one.meta.source !== task) || (one.name !== name && !piecesOf(one.source).some((piece) => pieces.includes(piece.trim())))) continue
-    const own = parseDeck(one.source).settings.kit, theirs = own ? withKit(source, own) : source
+    const one = await load(path, dir), kit = one && parseDeck(one.source).settings.kit, theirs = kit ? withKit(source, kit) : source
+    // Another task's deck only when on show, and that one by its own name too, written again whole as its note asks, every slide
+    // changed if asked; any by most of its slides.
+    if (!one || (path !== noted && one.meta.source !== task) || (!(path === noted && own && own === one.name) && !mostAlike(one.source, theirs))) continue
     if (!changesOf(one.source, theirs).length) return
     await write({ ...one, theirs, meta: { ...one.meta, changed: new Date().toISOString() } })
     if (app.current.peek()?.path === task) await open(one)
