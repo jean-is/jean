@@ -5,12 +5,13 @@
 // in the box (D542). Each card has a menu, as a task has, which a right click opens too: Pin, Rename in place, Duplicate (a
 // document, a collection) or Another like this (asked for in the box), and Delete, which takes it off at once and deletes it five
 // seconds later unless Undo is pressed first; what an answer holds (a score, an app, a deck) is only taken off the page, its answer
-// keeping it. Each kind does them through its `creations` slot.
+// keeping it. Each kind does them through its `creations` slot. On a wide window, a card dragged onto the screen opens there, as a
+// row of the drawer does, and its menu opens it side by side (caps/split, D635).
 import { html, nothing, svg } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import { app, held, notify } from './state.js'
-import { slots } from './caps.js'
+import { slots, unlock } from './caps.js'
 import { all, reread, show, query as words, kind, order } from './creations.js'
 import { icons, icon } from './menu-icons.js'
 import { searchable } from './mentions.js'
@@ -43,8 +44,7 @@ const focusName = () => { const box = /** @type {HTMLInputElement | null} */ (do
 function named(event, item) {
   const key = event instanceof KeyboardEvent ? event.key : ''
   if (renaming.peek() !== item.path || (event instanceof KeyboardEvent && (event.isComposing || !['Enter', 'Escape'].includes(key)))) return
-  event.preventDefault()
-  event.stopPropagation()
+  event.preventDefault(), event.stopPropagation()
   const name = /** @type {HTMLInputElement} */ (event.target).value.trim().replace(/\s+/g, ' ')
   renaming.value = ''
   const back = () => key && requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector(`[data-path="${CSS.escape(item.path)}"] .creation-open`))?.focus())
@@ -73,8 +73,7 @@ async function like(item) {
 function drop(item, keyed = false) {
   const back = () => { gone.value = new Set([...gone.value].filter((path) => path !== item.path)) }
   const now = () => {
-    clearTimeout(timer)
-    waiting.delete(item.path)
+    clearTimeout(timer), waiting.delete(item.path)
     import('./preview.js').then(({ unshow }) => unshow(item.link.uri)).then(() => (item.kind.remove ?? item.kind.hide)(item)).catch(console.warn).finally(() => reread().then(back))
   }
   // Kept while the toast has the keyboard, which goes to its Undo rather than falling to the page when it pressed Delete.
@@ -119,6 +118,11 @@ class Later extends Element {
 const near = new IntersectionObserver((all) => { for (const { target, isIntersecting } of all) if (isIntersecting) (near.unobserve(target), (/** @type {Later} */ (target)).seen.value = true) }, { rootMargin: '50%' })
 define('app-later', Later)
 
+/**
+ * A card dragged, carrying what a document takes of it, and lifted until it is let go (creations.css): its picture, taken once this
+ * returns, is the card at rest, as wide and as tall as it whatever it holds, with its own corners. @param {DragEvent} event @param {string} type @param {string} data
+ */
+const lift = (event, type, data) => { const card = /** @type {HTMLElement} */ (event.currentTarget); event.dataTransfer?.setData(type, data); card.toggleAttribute('data-lifted', true); card.addEventListener('dragend', () => card.removeAttribute('data-lifted'), { once: true }) }
 /** One of a menu's rows, which closes it. @param {string} menu @param {unknown} icon @param {string} label @param {(event: MouseEvent) => unknown} act */
 const action = (menu, icon, label, act) => html`<li><button type="button" popovertarget=${menu} popovertargetaction="hide" @click=${act}>${icon}${label}</button></li>`
 /**
@@ -146,22 +150,23 @@ const menuOf = signal(/** @type {Item | null} */ (null)), opened = signal(false)
  * @param {(e: MouseEvent) => unknown} act
  */
 const away = (act) => (/** @type {MouseEvent} */ e) => requestAnimationFrame(() => setTimeout(act, 0, e))
-/** That menu: Pin, Rename, Duplicate or Another like this, and Delete. @param {Item} item */
+/** That menu: Pin, Rename, Duplicate or Another like this, Open side by side once tiles are found, and Delete. @param {Item} item */
 const menu = (item) => [
   action('creation-menu', icons.pin, t(item.pinned ? 'action.unpin' : 'action.pin'), away(() => change(item, { pinned: !item.pinned }, () => item.kind.pin(item, !item.pinned)))),
   action('creation-menu', icons.compose, t('action.rename'), () => rename(item.path)),
   item.kind.copy ? action('creation-menu', icons.copy, t('creations.duplicate'), () => copy(item)) : item.kind.like ? action('creation-menu', icons.fork, t('creations.like'), () => like(item)) : nothing,
-  action('creation-menu', icons.trash, t(item.kind.remove ? 'action.delete' : 'creations.remove'), away((e) => drop(item, e.detail === 0)))]
+  ...slots('kept').map((part) => part.draw(item, action.bind(null, 'creation-menu'))), action('creation-menu', icons.trash, t(item.kind.remove ? 'action.delete' : 'creations.remove'), away((e) => drop(item, e.detail === 0)))]
 
 /**
  * A card: what it holds, its name, which opens it from anywhere on the card, its menu's button, and when it changed; dragged, what a
- * document beside the task holds of it: a block (`held`, a collection's view or a picture), or else a reference to it (D575).
+ * document beside the task holds of it: a block (`held`, a collection's view or a picture), or else a reference to it (D575), and, over
+ * anything else on a wide window, the creation itself, which the screen opens where it is let go (`data-tile`, D635).
  * Its place among its group's, which a screen reader says, as the group draws only those in view (D627). @param {Item[]} items @param {number} i
  */
 function card(items, i) {
   const item = items[i], held = item.kind.held?.(item) ?? `[[${item.link.uri}|${item.name.replace(/[[\]|\n]+/g, ' ')}]]`
   return html`<li class="creation ${opened.value && menuOf.value?.path === item.path ? 'is-open' : ''}" data-path=${item.path} aria-posinset=${i + 1} aria-setsize=${items.length} @contextmenu=${context}
-    draggable=${renaming.value === item.path ? nothing : 'true'} @dragstart=${(/** @type {DragEvent} */ e) => e.dataTransfer?.setData(item.kind.held ? 'text/x-creation-block' : 'text/x-creation', held)}>
+    draggable=${renaming.value === item.path ? nothing : 'true'} data-tile=${item.path} @dragstart=${(/** @type {DragEvent} */ e) => lift(e, item.kind.held ? 'text/x-creation-block' : 'text/x-creation', held)}>
     <app-later class="creation-preview" aria-hidden="true" inert .draw=${() => item.kind.preview?.(item) ?? item.kind.draw()}></app-later>
     ${renaming.value === item.path ? html`<div class="creation-naming">${item.kind.draw()}<input class="creation-rename" dir="auto" title=${t('action.rename')} .value=${item.name}
       @keydown=${(/** @type {KeyboardEvent} */ e) => named(e, item)} @blur=${(/** @type {FocusEvent} */ e) => named(e, item)}></div>`
@@ -177,6 +182,8 @@ class Page extends Element {
   updated() { focusName() }
   render() {
     const kinds = slots('creations'), picked = kinds.find((one) => one.id === kind.value), here = all.value.filter((item) => !gone.value.has(item.path)), count = new Intl.NumberFormat(intlLocales())
+    // A card on a wide window drags onto the screen, beside the page (caps/split).
+    if (app.wide.value && here.length) unlock('split')
     // Those made include a kind not kept here yet: its `starts` slot, Apps' until the project holds one (D553).
     const found = searchable(words.value.trim()), collator = new Intl.Collator(intlLocales()), makers = [...kinds, ...slots('starts')].filter((one) => one.make).sort((a, b) => a.at - b.at), starts = found ? [] : makers
     const makes = picked?.make ? [picked] : makers, make = (/** @type {any} */ one) => () => one.make().then(reread)

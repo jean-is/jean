@@ -5,7 +5,8 @@
 // until it is kept, which goes and comes back with its task. A collection's or a document's pane is its editor, the brain hearing of
 // each one on screen, and opening it again brings its pane forward; a design's is while it is the one on show, one at a time. Without
 // dragging, a task's menu opens it beside, at the line's end: on the left in Arabic, on the right in Japanese. The pane that has the
-// keyboard says so by its head's line alone, whatever it shows.
+// keyboard says so by its head's line alone, whatever it shows. A card of the Creations page drags onto the screen as a drawer's row
+// does, but over a document's text, which takes it; its menu opens it beside too. Dragged, a card is its own picture, as large as it.
 import { test, expect } from '@playwright/test'
 import { start, openTasks, addProject, enterProject, BRAIN_URL } from './helpers.js'
 
@@ -31,7 +32,7 @@ async function seed(page) {
     await refreshConversations()
     await reread()
     await openConversation(tasks[0].path)
-    return { ids: tasks.map((task) => task.id), doc }
+    return { ids: tasks.map((task) => task.id), doc, folder }
   })
   const drawer = await openTasks(page)
   // Found with a second task in the drawer of a wide window, whose rows then drag.
@@ -39,12 +40,16 @@ async function seed(page) {
   return { ...made, drawer }
 }
 
-/** A row of the drawer dragged to a point of the screen as a hand does: nudged so that the drag starts, then in small steps. @param {import('@playwright/test').Page} page @param {import('@playwright/test').Locator} row @param {number} x @param {number} y */
-async function drag(page, row, x, y) {
-  const from = /** @type {{ x: number, y: number, width: number, height: number }} */ (await row.boundingBox())
-  await page.mouse.move(from.x + 12, from.y + from.height / 2)
+/**
+ * A row of the drawer dragged to a point of the screen as a hand does: nudged so that the drag starts, then in small steps; pressed near
+ * its start, halfway down, or where `at` says. @param {import('@playwright/test').Page} page @param {import('@playwright/test').Locator} row
+ * @param {number} x @param {number} y @param {{ x: number, y: number }} [at]
+ */
+async function drag(page, row, x, y, at) {
+  const from = /** @type {{ x: number, y: number, width: number, height: number }} */ (await row.boundingBox()), press = at ?? { x: 12, y: from.height / 2 }
+  await page.mouse.move(from.x + press.x, from.y + press.y)
   await page.mouse.down()
-  await page.mouse.move(from.x + 24, from.y + from.height / 2, { steps: 2 })
+  await page.mouse.move(from.x + press.x + 12, from.y + press.y, { steps: 2 })
   await page.mouse.move(x, y, { steps: 12 })
   await expect(page.locator('.dock-drop')).toBeVisible()
   await page.mouse.up()
@@ -355,6 +360,81 @@ test('a click opens a pane for a look, which the next click gives the next, unti
   await expect(panes).toHaveCount(0)
 })
 
+test('a card of the Creations page dragged onto the screen opens there, beside the page; let go over a document\'s text, it goes in it; its menu opens it beside', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 })
+  await start(page)
+  const { doc, folder, drawer } = await seed(page)
+  await drawer.getByRole('button', { name: 'Creations', exact: true }).click()
+  const card = (/** @type {string} */ path) => page.locator(`app-creations .creation[data-path="${path}"]`)
+  const tiles = page.locator('#dock > app-preview:not([hidden])'), tile = (/** @type {string} */ name) => page.getByRole('complementary', { name })
+  await expect(card(doc)).toHaveAttribute('data-tile', doc)
+
+  // Dropped near the screen's end, the document takes half of it, beside the page, which stays; pressed near the card's top, which the
+  // message box floating over the page's foot doesn't cover, and outside its button, from which WebKit starts no drag.
+  const screen = await box(page.locator('.here main'))
+  await drag(page, card(doc), 1270, screen.y + 300, { x: 40, y: 30 })
+  await expect(tiles).toHaveCount(1)
+  await expect(tile('Garden plan')).toContainText('North bed: beans.')
+  await expect(page.locator('app-creations')).toBeVisible()
+  expect((await box(tile('Garden plan'))).x).toBeGreaterThan((await box(page.locator('.here'))).x)
+  await expect.poll(async () => decodeURIComponent(new URL(page.url()).hash)).toMatch(new RegExp(`[?&]split=row\\(here,${doc.replace(/[.]/g, '\\.')}\\)`))
+
+  // Let go over the document's text, near its pane's end, the collection goes in the document where it is, as a drawn view: no pane of its
+  // own. The card's own dragstart fills what the drop brings, as a second drag of Playwright's mouse, right after one, sometimes never starts.
+  await page.evaluate((path) => {
+    const data = new DataTransfer(), source = /** @type {Element} */ (document.querySelector(`app-creations .creation[data-path="${path}"]`))
+    const line = /** @type {Element} */ (document.querySelector('app-preview [contenteditable="true"] p:last-of-type')).getBoundingClientRect()
+    source.dispatchEvent(new DragEvent('dragstart', { dataTransfer: data, bubbles: true }))
+    const at = { dataTransfer: data, bubbles: true, cancelable: true, clientX: line.right - 4, clientY: line.top + line.height / 2 }
+    for (const type of ['dragenter', 'dragover', 'drop']) document.elementFromPoint(at.clientX, at.clientY)?.dispatchEvent(new DragEvent(type, at))
+    source.dispatchEvent(new DragEvent('dragend', { bubbles: true }))
+  }, folder)
+  await expect(tile('Garden plan').locator('.drawn-form app-table').getByTitle('Collection name')).toHaveValue('Seeds')
+  await expect(tiles).toHaveCount(1)
+  await expect(page.locator('.dock-drop')).toBeHidden()
+
+  // Without dragging, its menu opens it beside the task.
+  await card(folder).locator('.creation-more').click()
+  await page.locator('#creation-menu').getByRole('button', { name: 'Open side by side' }).click()
+  await expect(tiles).toHaveCount(2)
+  await expect(tile('Seeds')).toBeVisible()
+})
+
+test('a card dragged is its own picture, no wider or taller than itself whatever it holds, nothing behind its corners', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 })
+  await start(page)
+  // A collection wider than its card, and a document longer than its preview.
+  await page.evaluate(async () => {
+    const [{ app }, { unlock }] = await Promise.all([import('/ui/state.js'), import('/ui/caps.js')]), at = new Date().toISOString(), folder = 'collections/01K85Z1T00000000000000000W-wide'
+    const columns = ['Name', 'Packets', 'Supplier', 'Sown on', 'Bed', 'Water'].map((name, i) => ({ id: `c${i}`, name, type: 'text' }))
+    await app.fs.write(`${app.projectDir}/${folder}/collection.json`, JSON.stringify({ format: 1, id: '01K85Z1T00000000000000000W', name: 'Wide seeds', author: 'user', created: at, changed: at, properties: columns, views: [{ id: 'table', type: 'table' }] }))
+    await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, [0, 1, 2, 3, 4, 5].map((i) => `${JSON.stringify({ row: `01K8000000000000000000000${i}`, set: Object.fromEntries(columns.map((c) => [c.id, `${c.name} ${i}`])), at, by: 'user' })}\n`).join(''))
+    await app.fs.write(`${app.projectDir}/documents/01JAQXDOC0000000000000000L-long.md`, `---\nformat: 1\nname: Long notes\nauthor: user\n---\n# Long notes\n\n${'Beans and tomatoes in the north bed, watered at dawn. '.repeat(12)}\n`)
+    await Promise.all([unlock('tables'), unlock('documents')])
+    await (await import('/ui/creations.js')).reread()
+  })
+  await (await openTasks(page)).getByRole('button', { name: 'Creations', exact: true }).click()
+  await expect(page.locator('app-creations .creation table')).toBeVisible()
+  await expect(page.locator('app-creations .creation')).toHaveCount(2)
+  for (const card of await page.locator('app-creations .creation').all()) {
+    // Under the pointer, as a drag starts there, its preview zooms, past the card. As the picture is taken, once its dragstart has run, all
+    // that has a layer of its own (moved or placed), which the picture takes whole, clipped or not, is inside the card, a layer of its own.
+    await card.hover({ position: { x: 40, y: 30 } })
+    const lifted = await card.evaluate((element) => new Promise((resolve) => {
+      document.addEventListener('dragstart', () => {
+        const box = element.getBoundingClientRect(), past = (/** @type {DOMRect} */ at) => at.left < box.left - 0.5 || at.top < box.top - 0.5 || at.right > box.right + 0.5 || at.bottom > box.bottom + 0.5
+        resolve({ past: [...element.querySelectorAll('*')].filter((one) => { const style = getComputedStyle(one); return (style.transform !== 'none' || style.position !== 'static') && past(one.getBoundingClientRect()) }).map((one) => one.localName),
+          isolation: getComputedStyle(element).isolation })
+      }, { once: true })
+      element.dispatchEvent(new DragEvent('dragstart', { dataTransfer: new DataTransfer(), bubbles: true }))
+    }))
+    expect(lifted).toEqual({ past: [], isolation: 'isolate' })
+    // Let go, it is as it was.
+    await card.dispatchEvent('dragend')
+    await expect(card).not.toHaveAttribute('data-lifted')
+  }
+})
+
 for (const [lang, label] of [['ar', 'فتح جنبًا إلى جنب'], ['ja', '並べて開く']]) {
   test(`a task's menu opens it beside the task, at the line's end, in ${lang}`, async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 })
@@ -374,6 +454,23 @@ for (const [lang, label] of [['ar', 'فتح جنبًا إلى جنب'], ['ja', '
     await expect(tile.locator('.msg-actions.is-request')).toHaveCount(1)
     await expect(tile.locator('app-composer[for] textarea')).toHaveAttribute('placeholder', /** @type {string} */ (await page.locator('#prompt').getAttribute('placeholder')))
     await expect(tile.locator('app-composer[for] .ai-note')).toHaveText(await page.locator('#ai-note').innerText())
+  })
+
+  test(`a card's menu on the Creations page opens it beside the page, at the line's end, in ${lang}`, async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 })
+    await start(page, lang)
+    const { doc, drawer } = await seed(page)
+    // The drawer's place for them, by its glyph, whatever its words.
+    await drawer.locator('button.place:has(.creations-shapes)').click()
+    const card = page.locator(`app-creations .creation[data-path="${doc}"]`)
+    await card.locator('.creation-more').click()
+    await page.locator('#creation-menu').getByRole('button', { name: label }).click()
+    const pane = page.locator('#dock > app-preview:not([hidden])')
+    await expect(pane).toContainText('North bed: beans.')
+    const [beside, here] = await Promise.all([box(pane), box(page.locator('.here'))])
+    // Right to left, the line ends on the left.
+    expect(lang === 'ar' ? beside.x < here.x : beside.x > here.x).toBe(true)
+    await expect(page.locator('app-creations')).toBeVisible()
   })
 }
 

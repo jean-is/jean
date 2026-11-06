@@ -1,13 +1,14 @@
-// Tiles (D635): what the drawer drags onto the screen, a task or a pinned creation, a part of it beside the conversation, for someone
+// Tiles (D635): what the drawer drags onto the screen, a task or a pinned creation, or the Creations page a card, a part of it beside the conversation, for someone
 // who reads several at once, face to face, as the dock lays its panes out (ui/dock.js). Dropped near the middle of a task's or a
 // creation's pane, it takes its place; a quarter from an edge of any part, half of it, a box showing where as it goes; a task dropped
-// in the middle of the conversation opens there. A task's or a pinned creation's menu opens it beside the task, without dragging. A
+// in the middle of the conversation opens there, and a card let go over a document's text goes in it (D575). A task's, a pinned
+// creation's or a card's menu opens it beside the task, without dragging. A
 // creation is a pane as anything opened is (ui/preview.js); another task's is a pane of its own here, as the others are, its head
 // naming it, dragging it and closing it, under which the task shows whole, as the one the box is for does, its answer as it comes and
 // its box at its foot, still. A click in it or the keyboard coming into it makes it the one the box is for where it is, the one before
 // taking its place, each read where it was: one box at a time has the keys. The dock keeps them in the address with the other panes
 // (`?split=row(here,col(01J…,documents/01J…))`). Never offered: found with a second task or pinned creation in the drawer of a wide
-// window, whose rows it lets drag.
+// window, whose rows it lets drag, or a card on its Creations page.
 import { html, nothing, svg } from 'lit-html'
 import { effect, signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
@@ -68,17 +69,18 @@ effect(() => { if (app.project.value.dir !== room) layout.value = leaves(layout.
 /** What is being dragged: `here` for the screen's task, another task by its id, a creation by its place. */
 let dragged = ''
 document.addEventListener('dragstart', (event) => {
-  const leaf = event.target instanceof HTMLElement && event.target.closest('app-inbox [data-tile]')?.getAttribute('data-tile')
+  const leaf = event.target instanceof HTMLElement && event.target.closest(':is(app-inbox, app-creations) [data-tile]')?.getAttribute('data-tile')
   if (!leaf || !event.dataTransfer) return
   dragged = leaf === app.current.peek()?.id ? 'here' : leaf
   event.dataTransfer.setData(TYPE, leaf)
   event.dataTransfer.effectAllowed = 'move'
 })
-// WebKit drops only where dragenter was taken as well as dragover; the drop is taken before the box, which would write what was dropped.
+// WebKit drops only where dragenter was taken as well as dragover; the drop is taken before the box, which would write what was dropped,
+// but for a card's over a document's text, which takes what it holds there.
 for (const type of ['dragenter', 'dragover', 'drop']) {
   document.addEventListener(type, (event) => {
-    const { clientX, clientY, dataTransfer } = /** @type {DragEvent} */ (event)
-    const target = dragged && dataTransfer?.types.includes(TYPE) ? dock.aim(clientX, clientY, dragged, true) : null
+    const { clientX, clientY, dataTransfer } = /** @type {DragEvent} */ (event), card = dataTransfer?.types.some((one) => one.startsWith('text/x-creation'))
+    const target = dragged && dataTransfer?.types.includes(TYPE) && !(card && document.elementFromPoint(clientX, clientY)?.closest('[contenteditable="true"]')) ? dock.aim(clientX, clientY, dragged, true) : null
     dock.show(type === 'drop' ? null : target)
     if (!target) return
     event.preventDefault()
