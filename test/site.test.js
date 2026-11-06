@@ -224,7 +224,7 @@ test('a page whose pane draws a conversation Jean can play frames Jean’s demo 
   const site = await jean()
   const pages = await sitePages()
   const framing = [...pages].filter(([, page]) => page.frames).map(([name]) => name).sort()
-  assert.deepEqual(framing, ['diagrams', 'excel', 'help/add-files', 'help/asks-first', 'help/first-task', 'help/what-jean-is', 'offline', 'slides', 'watch', 'work'])
+  assert.deepEqual(framing, ['diagrams', 'enterprise', 'excel', 'help/add-files', 'help/asks-first', 'help/first-task', 'help/what-jean-is', 'offline', 'slides', 'watch', 'work'])
   const tasks = Object.fromEntries(Object.entries(site.files).filter(([path]) => /^demos\/.*\.jsonl$/.test(path)).map(([path, file]) => [path, file.trim().split('\n').map((line) => JSON.parse(line))]))
   // The homepage is a part of index.html, the app's own document, whose policy is the app's.
   for (const page of site.pages.filter((at) => !at.fragment)) {

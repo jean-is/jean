@@ -32,7 +32,15 @@
 /* Why now */
 .ent-line { font-size: 1.15rem; max-inline-size: 46rem; }
 
-/* A pilot in an afternoon */
+/* A pilot in an afternoon: the words a coding assistant takes first, in the page's own direction, then the steps by hand, closed */
+.ent-assist { display: flex; flex-direction: column; gap: 0.75rem; max-inline-size: 46rem; padding: 1.5rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); box-shadow: var(--site-float); }
+.ent-assist h3 { font-size: 1.25rem; }
+.ent-assist p { color: var(--ink-soft); }
+.ent-assist pre { direction: inherit; }
+.ent-manual summary { display: inline-flex; align-items: center; gap: 0.5rem; min-block-size: 2.75rem; padding-inline: 0.5rem; margin-inline-start: -0.5rem; border-radius: 0.5rem; color: var(--ink-soft); font-weight: 600; cursor: pointer; list-style: none; }
+.ent-manual summary::-webkit-details-marker { display: none; }
+.ent-manual[open] .is-closed, .ent-manual:not([open]) .is-open { display: none; }
+.ent-manual[open] summary { margin-block-end: 1rem; }
 .ent-steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.25rem; counter-reset: step; }
 .ent-steps li { counter-increment: step; display: flex; flex-direction: column; gap: 0.7rem; padding: 1.25rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); min-inline-size: 0; }
 .ent-steps li::before { content: counter(step); display: grid; place-items: center; inline-size: 1.8rem; block-size: 1.8rem; border-radius: 50%; background: var(--room-2); font-weight: 600; font-size: 0.9rem; }
@@ -43,13 +51,10 @@
 .ent-two { align-items: center; }
 .ent-body { display: flex; flex-direction: column; gap: 1rem; }
 .ent-body p:first-of-type { font-size: 1.05rem; }
-.ent-pane { display: flex; flex-direction: column; gap: 0.9rem; padding-block-end: 0.9rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); box-shadow: var(--site-float); overflow: hidden; min-inline-size: 0; }
-.ent-pane-head { padding: 0.85rem 1.1rem; border-block-end: 1px solid var(--line); background: var(--site-side); font-size: 0.875rem; font-weight: 600; }
-.ent-asked { align-self: flex-end; max-inline-size: 80%; margin-inline: 1.1rem; padding: 0.45rem 0.9rem; border-radius: 1.125rem; background: var(--room-2); }
-.ent-file { align-self: flex-end; display: inline-flex; align-items: center; gap: 0.4rem; margin-inline: 1.1rem; padding: 0.25rem 0.7rem; border: 1px solid var(--line-strong); border-radius: 999px; font-size: 0.8125rem; }
-.ent-answer { margin-inline: 1.1rem; }
-.ent-box { margin-inline: 1rem; padding: 0.7rem 1rem; border: 1px solid var(--line); border-radius: 1.375rem; color: var(--ink-faint); }
-.ent-ai { text-align: center; color: var(--ink-faint); font-size: 0.75rem; }
+.ent-pane { --demo: 22rem; display: flex; flex-direction: column; gap: 0.9rem; padding-block-end: 0.9rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); box-shadow: var(--site-float); overflow: hidden; min-inline-size: 0; }
+.ent-pane-head { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; padding: 0.85rem 1.1rem; border-block-end: 1px solid var(--line); background: var(--site-side); font-size: 0.875rem; font-weight: 600; }
+.ent-chip { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.2rem 0.65rem; border: 1px solid var(--line-strong); border-radius: 999px; color: var(--ink-soft); font-size: 0.8125rem; font-weight: 500; }
+.ent-chip .icon { inline-size: 1rem; block-size: 1rem; }
 
 /* What your teams will ask: six roles, one shown at a time */
 .ent-roles { position: relative; display: flex; flex-direction: column; gap: 1.25rem; border: 0; padding: 0; min-inline-size: 0; }

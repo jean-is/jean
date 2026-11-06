@@ -63,6 +63,11 @@
   ],
   "why.line": "AI 게이트웨이는 회사가 AI, 비용, 데이터를 관리하는 곳이에요. {name}에서는 모두에게 그 안에서만 움직이는 화면을 줘요.",
   "pilot.title": "오후 한나절이면 되는 시범 도입",
+  "pilot.assist.title": "코딩 어시스턴트에게 맡기기",
+  "pilot.assist.body": "Claude Code, Codex, Copilot에 이걸 붙여 넣으세요. 로고, 로그인, 게이트웨이를 물어본 다음 회사만의 사본을 설정하고 확인해요.",
+  "pilot.assist.prompt": "우리 회사만의 {name} 사본을 이 스킬로 설정해 주세요: {skill}",
+  "pilot.assist.read": "스킬 읽기",
+  "pilot.manual": "아니면 직접 설정하기",
   "pilot.steps": [
     [
       "폴더 올리기",
@@ -86,7 +91,9 @@
   "people.title": "모두를 위한 입력창 하나",
   "people.body": "질문, 파일, 폴더를 넣으면 출처가 달린 답변, Word 문서, 스프레드시트, 슬라이드, 차트로 돌아와요. 숫자는 짐작하지 않고 코드로 계산해요. 오른쪽에서 왼쪽으로 쓰는 언어를 포함해 46개 언어로 되고, 무엇이든 보내거나 공유하거나 지우기 전에는 먼저 물어봐요.",
   "people.more": "{name}에서 모두를 위해 하는 일 보기",
-  "people.brand": "Acme 어시스턴트",
+  "demo.brain": "Acme AI",
+  "pane.title": "{name}에서 이사회용으로 요약한 매출 보고서",
+  "pane.play": "진행 과정 보기",
   "people.ask": "이걸 이사회용 한 장짜리 요약으로 만들어 줘.",
   "people.file": "3분기 매출.xlsx",
   "people.answer": "이번 분기 매출은 북부를 중심으로 12% 늘었어요. 요약과 차트는 3분기 요약.docx에 있어요.",

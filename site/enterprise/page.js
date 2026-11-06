@@ -2,7 +2,8 @@
 // security, privacy, purchasing and staff representatives who decide together, mostly without a seller, at
 // /enterprise in English and /fr/entreprise in French. Each answer says whether it is built, needs a key, holds by
 // design or isn't built yet, and the page claims nothing else. Its words are <lang>.json, the app's where they say
-// the same; its look enterprise.css, over site.css (site/site.js, D438).
+// the same; its look enterprise.css, over site.css (site/site.js, D438). Its pane is Jean's own demo of what people get.
+import { demoFiles, demoFrame } from '../demo.js'
 import { FELT, ICONS, REPOSITORY, WAVE, felt, highlight, questions, underline, xml } from '../site.js'
 
 /** Where questions go; keys are asked for on their own page (site/enterprise-key/). */
@@ -31,6 +32,8 @@ const SNIPPETS = [
   'https://assistant.acme.example/policy',
 ]
 const VERIFY = 'ssh-keygen -Y verify -f allowed_signers -I jean.is -n file -s SHA256SUMS.sig < SHA256SUMS'
+/** The skill that sets up an organisation's copy from the example (D415): one address, for a coding assistant and for Settings › Skills. */
+const SKILL = `${REPOSITORY}/tree/main/examples/enterprise/organisation-setup`
 
 /** A box of the request's path as drawn on a whiteboard: two passes of the marker, a little past the corners. */
 const SKETCH = '<svg class="ent-sketch" viewBox="0 0 300 110" preserveAspectRatio="none" aria-hidden="true"><path d="M-5 4Q150 1 305 2M301-2Q302 55 299 112M304 108Q150 110-4 107M1 111Q-1 55 2-1"/><path d="M-2 1Q150 5 302 5M298 1Q300 56 302 109M300 105Q150 106 2 110M-1 108Q2 55-1 3"/></svg>'
@@ -38,6 +41,9 @@ const SKETCH = '<svg class="ent-sketch" viewBox="0 0 300 110" preserveAspectRati
 /** @type {import('../site.js').Page} */
 export default {
   addresses: { en: 'enterprise', fr: 'fr/entreprise', ko: 'ko/enterprise' },
+  frames: true,
+  // What people get, as Jean's own demo (D457): a spreadsheet summed up for the board, answered by the organisation's AI.
+  files: (kit) => demoFiles(kit, { file: { name: kit.text('people.file'), type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }, asked: kit.text('people.ask'), brain: kit.text('demo.brain'), answer: kit.text('people.answer') }),
   // The name, then the heading's first clause: whole, it is longer than a search result shows.
   title: (kit) => `${kit.say('title')} · ${kit.say('h1').replace(/,.*$|\.$/, '')}`,
   main (kit) {
@@ -96,7 +102,16 @@ export default {
 
 <section id="ent-pilot" class="site-section" aria-labelledby="ent-pilot-title">
   <h2 id="ent-pilot-title">${say('pilot.title')}</h2>
-  <ol class="ent-steps">${table('pilot.steps', 2).map(([name, text], i) => /* html */ `<li><h3>${name}</h3><p>${text}</p><pre>${xml(SNIPPETS[i] ?? '')}</pre></li>`).join('')}</ol>
+  <div class="ent-assist">
+    <h3>${say('pilot.assist.title')}</h3>
+    <p>${say('pilot.assist.body')}</p>
+    <pre dir="auto">${say('pilot.assist.prompt', { skill: SKILL })}</pre>
+    <p><a href="${SKILL.replace('/tree/', '/blob/')}/SKILL.md">${say('pilot.assist.read')}</a></p>
+  </div>
+  <details class="ent-manual">
+    <summary><span>${say('pilot.manual')}</span>${ICONS.closed}${ICONS.open}</summary>
+    <ol class="ent-steps">${table('pilot.steps', 2).map(([name, text], i) => /* html */ `<li><h3>${name}</h3><p>${text}</p><pre>${xml(SNIPPETS[i] ?? '')}</pre></li>`).join('')}</ol>
+  </details>
   <p class="ent-after">${say('pilot.after')}</p>
   <p><a href="${pilot}">${say('pilot.kit')}</a></p>
 </section>
@@ -108,13 +123,9 @@ export default {
       <p>${say('people.body')}</p>
       <p><a href="${jean}?index=1">${say('people.more')}</a></p>
     </div>
-    <div class="ent-pane" aria-hidden="true">
-      <p class="ent-pane-head">${say('people.brand')}</p>
-      <p class="ent-file" dir="${kit.dir}">${ICONS.file}${say('people.file')}</p>
-      <p class="ent-asked" dir="${kit.dir}">${say('people.ask')}</p>
-      <p class="ent-answer" dir="${kit.dir}">${say('people.answer')}</p>
-      <p class="ent-box">${kit.app('composer.placeholder')}</p>
-      <p class="ent-ai">${kit.app('composer.ai')}</p>
+    <div class="ent-pane">
+      <p class="ent-pane-head" aria-hidden="true"><span>${xml(kit.brand.name)}</span><span class="ent-chip">${ICONS.brain}${say('demo.brain')}</span></p>
+      ${demoFrame(kit)}
     </div>
   </div>
 </section>

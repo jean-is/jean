@@ -63,6 +63,11 @@
   ],
   "why.line": "Votre passerelle IA est l’endroit où vous gouvernez les modèles, les coûts et les données. {name} donne à chacun un accès qui les y garde.",
   "pilot.title": "Un pilote en un après-midi",
+  "pilot.assist.title": "Confiez-le à votre assistant de code",
+  "pilot.assist.body": "Collez ceci dans Claude Code, Codex ou Copilot. Il demande votre logo, votre fournisseur d’identité et votre passerelle, puis installe votre copie et la vérifie.",
+  "pilot.assist.prompt": "Configurez notre propre {name} avec la compétence {skill}",
+  "pilot.assist.read": "Lire la compétence",
+  "pilot.manual": "Ou installez-le à la main",
   "pilot.steps": [
     [
       "Servez le dossier",
@@ -86,7 +91,9 @@
   "people.title": "Une seule case, pour tout le monde",
   "people.body": "Une question, un fichier ou un dossier ; en retour, une réponse sourcée, un document Word, un tableur, une présentation ou un graphique. Les chiffres sont calculés par du code, pas devinés. En 46 langues, y compris de droite à gauche. Une demande est faite avant tout envoi, partage ou suppression.",
   "people.more": "Voir ce que {name} fait pour tous",
-  "people.brand": "Assistant Acme",
+  "demo.brain": "Acme AI",
+  "pane.title": "Un rapport de ventes résumé pour la direction, dans {name}",
+  "pane.play": "Voir le déroulé",
   "people.ask": "Fais-en une synthèse d’une page pour le comité de direction.",
   "people.file": "Ventes T3.xlsx",
   "people.answer": "Les ventes progressent de 12 % sur le trimestre, portées par le nord. La synthèse et un graphique sont dans Synthèse T3.docx.",

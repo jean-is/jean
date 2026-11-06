@@ -79,7 +79,7 @@ An organisation that would rather not serve Jean itself has Warehouse SAS serve 
 
 ## Policy model (sketch)
 
-Settings resolve as **defaults ← user ← policy**. Policy wins, and locked fields are labelled "set by your organization". The policy is empty on day one, but every capability and brain choice already checks it. Its schema, `https://jean.is/schemas/policy.schema.json`, served by every copy of Jean at `/schemas/`, has an editor check it as it is typed when the policy names it in `$schema`; [examples/enterprise/](../examples/enterprise/README.md) is one that works with a sign-in and an AI gateway.
+Settings resolve as **defaults ← user ← policy**. Policy wins, and locked fields are labelled "set by your organization". The policy is empty on day one, but every capability and brain choice already checks it. Its schema, `https://jean.is/schemas/policy.schema.json`, served by every copy of Jean at `/schemas/`, has an editor check it as it is typed when the policy names it in `$schema`; [examples/enterprise/](../examples/enterprise/README.md) is one that works with a sign-in and an AI gateway. Its skill, [organisation-setup](../examples/enterprise/organisation-setup/SKILL.md), makes the example an organisation's: a coding assistant asks for its name, logo, colours, sign-in, gateway and connections, writes the policy and the header, runs it on localhost and checks it with `policy.html`; Jean, adding it from the same folder's address in Settings › Skills, follows it for the policy and the look (D415).
 
 ```json
 {

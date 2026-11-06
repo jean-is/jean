@@ -18,6 +18,8 @@ const PANES = [
   ['fr/diapos', null, 'Six diapos pour la réunion', 'l’IA de votre choix', 'Voir le déroulé', 'app-slides'],
   ['work', 'Q3 sales.xlsx', 'one-page summary', 'your company’s AI', 'Watch it unfold', '.msg-jean .prose'],
   ['fr/travail', 'Ventes T3.xlsx', 'synthèse d’une page', 'l’IA de l’entreprise', 'Voir le déroulé', '.msg-jean .prose'],
+  ['enterprise', 'Q3 sales.xlsx', 'one-page summary', 'Acme AI', 'Watch it unfold', '.msg-jean .prose'],
+  ['fr/entreprise', 'Ventes T3.xlsx', 'synthèse d’une page', 'Acme AI', 'Voir le déroulé', '.msg-jean .prose'],
   ['offline', null, 'my landlord', 'the AI on this computer', 'Watch it unfold', '.msg-jean .prose'],
   ['fr/hors-ligne', null, 'mon propriétaire', 'l’IA de cet ordinateur', 'Voir le déroulé', '.msg-jean .prose'],
   ['diagrams', null, 'refund process', 'the AI you chose', 'Watch it unfold', 'app-diagram img'],
@@ -31,6 +33,8 @@ for (const [address, file, asked, brain, play, drawn] of PANES) {
     page.on('console', (message) => { if (message.type() === 'error') wrong.push(message.text()) })
     page.on('pageerror', (error) => wrong.push(error.message))
     await page.goto(JEAN_IS + address)
+    // Framed lazily: the page for IT's is down the page, where a reader scrolls.
+    await page.locator('.site-demo').first().scrollIntoViewIfNeeded()
     const pane = page.frameLocator('.site-demo').first()
     // As it ended, the exchange alone: the file and the request, the AI asked, the answer drawn.
     await expect(pane.locator('.msg-files .file-chip')).toHaveText(file ? [file] : [])

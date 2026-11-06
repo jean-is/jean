@@ -45,8 +45,17 @@ The first build takes a few minutes. Then open http://localhost:8080 and sign in
 - `brand/`: Reefknot's logo (`logo.svg`, and `mark.svg`, the knot alone, which the policy's `kit` holds as a `data:` address), its favicon, and the style sheet of Dex's pages. Compose mounts it as Dex's theme.
 - `litellm.yaml`: the gateway's brain and MCP server, and `oidc_auth.py`, which checks who asks.
 - `.env.example`: the gateway's administrator's key and its brain.
+- `organisation-setup/SKILL.md`: the skill that makes all this your organisation's, as [Make it yours](#make-it-yours) says.
 
 ## Make it yours
+
+A coding assistant can do all of what follows for you. Give Claude Code, Codex, Copilot or Cursor this:
+
+```text
+Set up our own Jean with the skill at https://github.com/jean-is/jean/tree/main/examples/enterprise/organisation-setup
+```
+
+It asks what it needs, writes the files, runs them on this computer and checks them with `policy.html`. Jean follows the same skill for the policy and the look, added from the same address in Settings › Skills › Add a skill. By hand:
 
 - **Your name and colours.** Replace `brand/` with your own logo and colours, `frontend` in `dex.yaml` with your name, and `look`, `kit` and the brain's `label` in the policy. Their logos are `data:` addresses: Jean takes no picture from the web.
 - **Addresses.** Give each service an HTTPS address of its own, such as `jean.corp.example`, `login.corp.example` and `ai.corp.example`. Then change them everywhere they appear: `issuer`, `redirectURIs` and `allowedOrigins` in `dex.yaml`, `OIDC_ISSUER` and `CONTENT_SECURITY_POLICY` in `compose.yaml`, and the policy. Browsers run Jean only on `localhost` or over HTTPS.

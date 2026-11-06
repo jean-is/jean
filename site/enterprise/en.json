@@ -63,6 +63,11 @@
   ],
   "why.line": "Your AI gateway is where you govern models, costs and data. {name} gives everyone a front end that keeps it there.",
   "pilot.title": "A pilot in an afternoon",
+  "pilot.assist.title": "Hand it to your coding assistant",
+  "pilot.assist.body": "Paste this into Claude Code, Codex or Copilot. It asks for your logo, sign-in and gateway, then sets up your copy and checks it.",
+  "pilot.assist.prompt": "Set up our own {name} with the skill at {skill}",
+  "pilot.assist.read": "Read the skill",
+  "pilot.manual": "Or set it up by hand",
   "pilot.steps": [
     [
       "Serve the folder",
@@ -86,7 +91,9 @@
   "people.title": "One box, for everyone",
   "people.body": "A question, a file or a folder goes in; back comes an answer with its sources, a Word document, a spreadsheet, a deck or a chart. Numbers are worked out by code, not guessed. In 46 languages, right to left included. It asks before sending, sharing or deleting anything.",
   "people.more": "See what {name} does for everyone",
-  "people.brand": "Acme Assistant",
+  "demo.brain": "Acme AI",
+  "pane.title": "A sales report summed up for the board, in {name}",
+  "pane.play": "Watch it unfold",
   "people.ask": "Turn this into a one-page summary for the board.",
   "people.file": "Q3 sales.xlsx",
   "people.answer": "Sales grew 12% on the quarter, led by the north. The summary and a chart are in Q3 summary.docx.",

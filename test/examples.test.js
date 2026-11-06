@@ -4,9 +4,32 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readdir, readFile } from 'node:fs/promises'
+import { join, relative } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { readManifest, EVENTS, SLOTS } from '../app/caps/extensions/manifest.js'
+import { gitHash, readIndexes, fetchSkill } from '../app/caps/skills/sources.js'
+import { memoryFS } from '../app/core/fs.js'
 
 const ROOT = new URL('../examples/extensions/', import.meta.url)
+
+test('examples: the skill that sets up an organisation’s copy is one Jean adds from the example’s folder on GitHub, beside its pictures and code (D415)', async () => {
+  const folder = new URL('../examples/enterprise/', import.meta.url)
+  const paths = (await readdir(folder, { recursive: true, withFileTypes: true })).filter((entry) => entry.isFile() && !['.env', '.DS_Store'].includes(entry.name))
+    .map((entry) => relative(fileURLToPath(folder), join(entry.parentPath, entry.name)))
+  const files = Object.fromEntries(await Promise.all(paths.map(async (path) => [`examples/enterprise/${path}`, await readFile(new URL(path, folder))])))
+  const tree = await Promise.all(Object.entries(files).map(async ([path, bytes]) => ({ path, type: 'blob', sha: await gitHash(new Uint8Array(bytes)), size: bytes.length })))
+  const raw = 'https://raw.githubusercontent.com/jean-is/jean/main/'
+  const fetch = /** @type {typeof globalThis.fetch} */ (/** @type {unknown} */ (async (/** @type {string} */ url) => {
+    if (url === 'https://api.github.com/repos/jean-is/jean/git/trees/main?recursive=1') return new Response(JSON.stringify({ sha: 'a'.repeat(40), tree }))
+    const bytes = url.startsWith(raw) && files[url.slice(raw.length)]
+    return bytes ? new Response(bytes) : new Response('', { status: 404 })
+  }))
+  const [{ skills }] = await readIndexes(memoryFS(), ['https://github.com/jean-is/jean/tree/main/examples/enterprise'], { fetch })
+  assert.deepEqual(skills.map((entry) => entry.name), ['organisation-setup'])
+  const added = await fetchSkill(skills[0], fetch)
+  assert.match(added.body, /^# An organisation's own copy of Jean/)
+  assert.deepEqual(added.files, [], 'its steps alone: the example’s pictures and code stay out')
+})
 
 /** An extension registered as the worker registers it, with what it hooks, draws and keeps. @param {string} name @param {Record<string, any>} [stored] */
 async function load(name, stored = {}) {
