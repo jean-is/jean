@@ -6,15 +6,31 @@ import { Marked, Tokenizer } from 'marked'
 const AMOUNT = /^\P{L}*\p{N}\P{L}*$/u
 
 /** How each column lines up: as the table says, or at the end for a column of amounts. @param {any} token @returns {string[]} */
-export const aligned = (token) => token.align.map((/** @type {string | null} */ side, /** @type {number} */ i) => side ?? (i && token.rows.every((/** @type {any[]} */ row) => AMOUNT.test(row[i].text)) ? 'right' : ''))
+export const aligned = (token) => token.align.map((/** @type {string | null} */ side, /** @type {number} */ i) => side ?? (i && token.rows.length && token.rows.every((/** @type {any[]} */ row) => AMOUNT.test(row[i].text)) ? 'right' : ''))
+
+/**
+ * An answer still being written, read as it will be once its last line is, so that no table or list changes shape at each
+ * word (D215): a table's head waits for its rule, a row or a list's marker for its first word, a run of * or _ for what
+ * it opens, a number in bold for what may make it a step, and bold that opened is closed. In an open fence, as written.
+ * @param {string} source
+ */
+export function unfinished(source) {
+  if ((source.match(/^[ \t]*(?:`{3,}|~{3,})/gm)?.length ?? 0) % 2) return source
+  const lines = source.replace(/(?<!\\)[*_~]+$/, '').split('\n'), row = /^\s*\|/
+  if (/^\s*(?:\|[\s|:-]*|-+|(?:\*\*)?\d{1,9}|(?:[*+-]|\d{1,9}[.)])(?:\s+\[[ xX]?\]?)?)\s*$/.test(lines[lines.length - 1])) lines[lines.length - 1] = ''
+  const end = lines.length - (lines.at(-1) ? 0 : 1)
+  if (row.test(lines[end - 1]) && !row.test(lines[end - 2])) lines.length = end - 1
+  const text = lines.join('\n'), line = (lines.at(-1) ?? '').replace(/`[^`]*`/g, '')
+  return line.includes('`') || line.split('**').length % 2 || !/\*\*\S(?!.*\*\*)/.test(line) ? text : text.replace(/\s*$/, '**$&')
+}
+
+/** A table's rows that are whole: not the last while it is still being written. @param {any} token */
+export const settled = (token) => (token.still && !token.raw.endsWith('\n') ? { ...token, rows: token.rows.slice(0, -1) } : token)
 
 // What a cell holds: a mark (✓, ✗, a dash, or nothing), an amount, a few words, or more.
 const MARK = /^(?:[✓✔✅☑✗✘❌✖—–-]\uFE0F?)?$/u
 /** @param {any} cell */
-function kind(cell) {
-  const text = cell.text.replace(/[*_~`]/g, '').trim()
-  return MARK.test(text) ? 0 : AMOUNT.test(text) ? 1 : text.length > 24 ? 3 : 2
-}
+const kind = (cell) => { const text = cell.text.replace(/[*_~`]/g, '').trim(); return MARK.test(text) ? 0 : AMOUNT.test(text) ? 1 : text.length > 24 ? 3 : 2 }
 
 /** The share of lines whose cells are all of one kind. @param {number[][]} lines */
 const alike = (lines) => lines.filter((line) => line.every((k) => k === line[0])).length / lines.length
@@ -42,11 +58,9 @@ const DOUBLE = /[\p{sc=Han}\p{sc=Hiragana}\p{sc=Katakana}\p{sc=Hangul}\uFF00-\uF
  * Chinese, Japanese or Korean one counting two). Their cards then take the room beside the text.
  * @param {any} token
  */
-export function roomy(token) {
-  /** @param {any} cell */
-  const size = (cell) => [...cell.text.replace(/[*_~`]/g, '')].reduce((n, char) => n + (DOUBLE.test(char) ? 2 : 1), 0)
-  return token.header.slice(1).reduce((/** @type {number} */ sum, /** @type {any} */ _, /** @type {number} */ i) => sum + Math.max(...token.rows.map((/** @type {any[]} */ row) => size(row[i + 1]))), 0) > 110
-}
+export const roomy = (token) => token.header.slice(1).reduce((/** @type {number} */ sum, /** @type {any} */ _, /** @type {number} */ i) => sum + Math.max(...token.rows.map((/** @type {any[]} */ row) => size(row[i + 1]))), 0) > 110
+/** @param {any} cell */
+const size = (cell) => [...cell.text.replace(/[*_~`]/g, '')].reduce((n, char) => n + (DOUBLE.test(char) ? 2 : 1), 0)
 
 /** What sets a comparison's cell apart: the best of its row (in bold, and only that), a yes or a no. @param {any} cell */
 export function marked(cell) {
@@ -65,8 +79,8 @@ const lead = (item) => (bold(item) ? item.tokens[0].tokens[0].text.trim() : '')
 const DAY = String.raw`(?:\d{1,2}[:h.]\d{2}|\d{4}(?:-\d{2}){0,2}|\d{1,2}[/.]\d{1,2}(?:[/.]\d{2,4})?)`
 const WHEN = new RegExp(`^${DAY}(?:\\s*[–-]\\s*${DAY})?$`)
 
-/** A timeline (D291): a list whose items each start with a time or a date, in bold. @param {any} token */
-export const timed = (token) => !token.ordered && token.items.length > 1 && token.items.every((/** @type {any} */ item) => WHEN.test(lead(item)))
+/** A timeline (D291): a list whose items each start with a time or a date, in bold, the last maybe still being written. @param {any} token */
+export const timed = (token) => !token.ordered && token.items.length > 1 && token.items.every((/** @type {any} */ item, /** @type {number} */ i, /** @type {any[]} */ all) => WHEN.test(lead(item)) || (token.still && bold(item) && !all[i + 1]))
 
 /** Key figures (D291): two to six items, each a number in bold and a few words. @param {any} token */
 export const figured = (token) => !token.ordered && token.items.length > 1 && token.items.length < 7

@@ -54,6 +54,41 @@ test('a comparison, steps and notes are laid out as what they are, and copy as t
   expect(copied['text/html']).toMatch(/Get your number's code<\/strong><span class="end">: <\/span>call 3179/)
 })
 
+/**
+ * Watches the answer being written, as each word is drawn, for a mark shown (a paragraph of a table's pipes, bold's asterisks) or a
+ * shape lost (steps, a comparison or a table gone once drawn): what it saw, once written. @param {import('@playwright/test').Page} page
+ */
+async function watched(page) {
+  await page.evaluate(() => {
+    const seen = /** @type {string[]} */ ([]), most = /** @type {Record<string, number>} */ ({})
+    new MutationObserver(() => {
+      const prose = document.querySelector('.msg-jean.is-streaming .prose')
+      prose?.querySelectorAll('p').forEach((p) => /^\||\*\*/.test(p.textContent?.trim() ?? '') && seen.push(p.textContent ?? ''))
+      for (const shape of ['ol.steps', '.is-compare', '.table']) {
+        const count = prose?.querySelectorAll(shape).length ?? 0
+        if (prose && count < (most[shape] ?? 0)) seen.push(`${shape} gone`)
+        most[shape] = prose ? Math.max(most[shape] ?? 0, count) : 0
+      }
+    }).observe(document.body, { childList: true, subtree: true, characterData: true })
+    Object.assign(window, { seen })
+  })
+  return async () => {
+    await answered(page)
+    return page.evaluate(() => /** @type {any} */ (window).seen)
+  }
+}
+
+for (const [lang, request] of [['en', 'Compare the phone plans'], ['ar', 'قارن باقات الهاتف'], ['ja', '携帯プランを比べて']]) {
+  test(`while an answer is written, its tables and steps take their shape once and show no marks (${lang})`, async ({ page }) => {
+    await start(page, lang)
+    await connectFakeBrain(page)
+    const seen = await watched(page)
+    await ask(page, request)
+    expect(await seen()).toEqual([])
+    await expect(page.locator('.msg-jean .prose ol.steps > li')).toHaveCount(3)
+  })
+}
+
 test('steps written apart, each a paragraph that starts in bold with its number, are one list of steps', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)

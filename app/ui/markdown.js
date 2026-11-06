@@ -35,7 +35,7 @@ export function markdown(source, sources, still = false) {
   cited = sources ?? null
   writing = still
   try {
-    return blocks(lex(source))
+    return blocks((still && shapes.value.still?.(source)) || lex(source))
   } catch {
     return html`<p>${source}</p>`
   } finally {

@@ -4,7 +4,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { lex, parser, namesRows } from '../app/ui/markdown.js'
 import { Marked } from 'marked'
-import { aligned, compared, marked, roomy, stepped, titled, sequenced, noted, timed, figured, ticked, columns, cjk } from '../app/caps/layouts/shapes.js'
+import { aligned, compared, marked, roomy, stepped, titled, sequenced, noted, timed, figured, ticked, columns, cjk, unfinished, settled } from '../app/caps/layouts/shapes.js'
 
 /** The first block of some Markdown. @param {string} source @returns {any} */
 const first = (source) => lex(source).find((token) => token.type !== 'space')
@@ -152,6 +152,59 @@ test('two to six items, each a number in bold and a few words, are key figures (
 test('a list of tasks, ticked or not, is a checklist (D291)', () => {
   assert.ok(ticked(first('- [ ] Passport\n- [x] Tickets')))
   assert.ok(!ticked(first('- [ ] Passport\n- Tickets')))
+})
+
+test('an answer still being written reads as it will be: a head waits for its rule, a marker for its word, and bold is closed (D215)', () => {
+  // A table's head, and its rule till it is whole, wait; so does a row with no word yet, the line before it kept.
+  assert.equal(unfinished('Plans:\n\n| Plan | Price |'), 'Plans:\n')
+  assert.equal(unfinished('Plans:\n\n| Plan | Price |\n|---|-'), 'Plans:\n')
+  assert.equal(unfinished('| Plan | Price |\n|---|---|\n| Free | €2'), '| Plan | Price |\n|---|---|\n| Free | €2')
+  assert.equal(unfinished('| Plan | Price |\n|---|---|\n| Free | €20 |\n|'), '| Plan | Price |\n|---|---|\n| Free | €20 |\n')
+  // A list's marker, a task's box, a rule or a number in bold waits for what follows it; a run of * or _ for what it opens.
+  assert.equal(unfinished('1. **Choose**\n2.'), '1. **Choose**\n')
+  assert.equal(unfinished('- [ ] Passport\n- [ ]'), '- [ ] Passport\n')
+  assert.equal(unfinished('Done.\n\n**3'), 'Done.\n\n')
+  assert.equal(unfinished('Pick one **'), 'Pick one ')
+  // Bold that opened is closed, in a list, a step written apart or Japanese; ** before a space opens nothing.
+  assert.equal(unfinished('1. **Choose** a plan\n2. **Sign'), '1. **Choose** a plan\n2. **Sign**')
+  assert.equal(unfinished('**3. Pay '), '**3. Pay** ')
+  assert.equal(unfinished('**5月21日（金）'), '**5月21日（金）**')
+  assert.equal(unfinished('2 ** 3'), '2 ** 3')
+  // Code is as written: a span, one still open, and a fence still open.
+  assert.equal(unfinished('Use `x**y` and **z'), 'Use `x**y` and **z**')
+  assert.equal(unfinished('Type `**b'), 'Type `**b')
+  assert.equal(unfinished('```js\nconst a = b **'), '```js\nconst a = b **')
+  // A table's last row, while it is written, doesn't tell its shape; once a line ends it, it does.
+  assert.equal(settled({ ...first('| a | b |\n|---|---|\n| c | d'), still: true }).rows.length, 0)
+  assert.equal(settled({ ...first('| a | b |\n|---|---|\n| c | d |\n'), still: true }).rows.length, 1)
+})
+
+/** Whether inline tokens show bold's asterisks. @param {any[]} [tokens] @returns {boolean} */
+const marks = (tokens = []) => tokens.some((token) => (token.type === 'text' && token.text.includes('**')) || marks(token.tokens))
+/** Each shape an answer shows as it is written, a character at a time, as layouts.js reads it. @param {string} answer */
+function whileWritten(answer) {
+  /** @type {string[]} */
+  const shown = []
+  for (let i = 1; i <= answer.length; i++) {
+    const tokens = lex(unfinished(answer.slice(0, i)))
+    Object.assign(tokens.at(-1) ?? {}, { still: true })
+    const now = sequenced(tokens).filter((token) => token.type !== 'space').map((token) => (token.type === 'table' ? (compared(settled(token)) ? 'comparison' : `table ${aligned(settled(token))}`)
+      : token.type === 'list' ? (stepped(token) ? 'steps' : timed(token) ? 'timeline' : 'list') : /^\s*\|/.test(token.raw) || marks(token.tokens) ? 'marks' : token.type)).join(' · ')
+    if (now !== shown.at(-1)) shown.push(now)
+  }
+  return shown
+}
+
+test('while an answer is written, each table and list takes its shape once, in turn, and no mark shows (D215)', () => {
+  // A comparison's amounts line up once its first row is whole and it is one once its second is; steps and a timeline are once a second item starts.
+  assert.deepEqual(whileWritten('Here is how they compare:\n\n| | Free | Orange ★ | SFR |\n|---|---|---|---|\n| Total | €480 | **€360** | €600 |\n| Data | 100 GB | 80 GB | **200 GB** |\n\n| Plan | Price |\n|---|---|\n| Free | €20 |\n| Orange | €15 |\n\nTo switch:\n\n1. **Get your code**: call 3179.\n2. **Order the SIM** online.\n3. **Turn it on**.\n\n- **09:00** Call\n- **10:30** Order\n- **12:00** Done'), [
+    'paragraph', 'paragraph · table ,,,', 'paragraph · table ,right,right,right', 'paragraph · comparison', 'paragraph · comparison · table ,', 'paragraph · comparison · table ,right',
+    'paragraph · comparison · table ,right · paragraph', 'paragraph · comparison · table ,right · paragraph · list', 'paragraph · comparison · table ,right · paragraph · steps',
+    'paragraph · comparison · table ,right · paragraph · steps · list', 'paragraph · comparison · table ,right · paragraph · steps · timeline',
+  ])
+  // Steps written apart: the first, in bold, and its details, then one list from the second on, the closing words after it.
+  assert.deepEqual(whileWritten('**1. Choose**\n\nPick one.\n\n**2. Sign up**\n\nOnline.\n\n**3. Pay**\n\nBy card.\n\nThat is all.'), ['', 'paragraph', 'paragraph · paragraph', 'steps', 'steps · paragraph'])
+  assert.deepEqual(whileWritten('手順：\n\n1. **番号を取得**：3179に電話します。\n2. **SIMを注文**（オンライン）。\n3. **電源を入れる**。'), ['paragraph', 'paragraph · list', 'paragraph · steps'])
 })
 
 

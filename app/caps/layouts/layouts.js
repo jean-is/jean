@@ -10,7 +10,7 @@ import { app, keepRecords } from '../../ui/state.js'
 import { metaRecord } from '../../core/events.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { t, dir, locale, useStrings, intlLocales } from '../../core/i18n.js'
-import { aligned, compared, marked, roomy, stepped, titled, sequenced, noted, timed, figured, ticked, columns, cjk } from './shapes.js'
+import { aligned, compared, marked, roomy, stepped, titled, sequenced, noted, timed, figured, ticked, columns, cjk, unfinished, settled } from './shapes.js'
 
 await Promise.all([useStrings('layouts'), styleSheet(new URL('layouts.css', import.meta.url))])
 
@@ -34,11 +34,14 @@ function fits(box) {
   requestAnimationFrame(() => [box, box.firstElementChild].forEach((part) => part && fitting.observe(part)))
 }
 
-/** Options as cards, the best of each row lit, the one recommended framed under its badge; any other table as it is, its amounts at the end. @param {any} token */
+/**
+ * Options as cards, the best of each row lit, the one recommended framed under its badge; any other table as it is, its
+ * amounts at the end; each told from its whole rows, the one being written shown as it comes. @param {any} token
+ */
 function table(token) {
-  const shape = compared(token)
+  const done = settled(token), shape = compared(done)
   if (!shape) {
-    const align = aligned(token).map((side) => side && `align-${side}`), heads = namesRows(token.header[0]?.text ?? '', token.rows.map((/** @type {any[]} */ row) => row[0]?.text.trim() ?? ''))
+    const align = aligned(done).map((side) => side && `align-${side}`), heads = namesRows(token.header[0]?.text ?? '', done.rows.map((/** @type {any[]} */ row) => row[0]?.text.trim() ?? ''))
     return html`<div class="table" tabindex="0" ${ref(fits)}><table aria-label=${token.title ?? nothing}>
       <thead><tr>${token.header.map((/** @type {any} */ cell, /** @type {number} */ i) => html`<th scope="col" class=${align[i]}>${inline(cell.tokens)}</th>`)}</tr></thead>
       <tbody>${token.rows.map((/** @type {any[]} */ row) => html`<tr>${row.map((cell, i) => (i || !heads ? html`<td class=${align[i]}>${inline(cell.tokens)}</td>`
@@ -48,7 +51,7 @@ function table(token) {
   // The criteria, often in bold, are no option's best.
   /** @param {any} cell @param {number} i @param {boolean} [head] */
   const classes = (cell, i, head) => [token.align[i] && `align-${token.align[i]}`, i === shape.pick && 'is-pick', !head && i > 0 && marked(cell)].filter(Boolean).join(' ')
-  return html`<div class="table is-compare ${roomy(token) ? 'is-roomy' : ''}" tabindex="0" ${ref(fits)}><table aria-label=${token.title ?? nothing}>
+  return html`<div class="table is-compare ${roomy(done) ? 'is-roomy' : ''}" tabindex="0" ${ref(fits)}><table aria-label=${token.title ?? nothing}>
     <thead><tr>${token.header.map((/** @type {any} */ cell, /** @type {number} */ i) => html`<th scope="col" class=${classes(cell, i, true)}>${i === shape.pick ? html`<span class="pick-tag" lang=${locale.value} dir=${dir()}>${t('layouts.recommended')}</span> ` : nothing}${inline(cell.tokens)}</th>`)}</tr></thead>
     <tbody>${token.rows.map((/** @type {any[]} */ row) => html`<tr>${row.map((cell, i) => (i ? html`<td class=${classes(cell, i)}>${inline(cell.tokens)}</td>` : html`<th scope="row" class=${classes(cell, i)}>${inline(cell.tokens)}</th>`))}</tr>`)}</tbody>
   </table></div>`
@@ -122,13 +125,7 @@ function blockquote(token) {
 }
 
 /** An address as it reads, escaped or not. @param {string} address */
-function unescaped(address) {
-  try {
-    return decodeURI(address)
-  } catch {
-    return address
-  }
-}
+const unescaped = (address) => { try { return decodeURI(address) } catch { return address } }
 
 /**
  * A picture a source gave, at the address it gave, or one the user shared, by its name (D35): never
@@ -153,4 +150,6 @@ const gathered = (tokens) => sequenced(tokens).map((/** @type {any} */ token, i,
   const above = all[i - (all[i - 1]?.type === 'space' ? 2 : 1)]
   return token.type === 'table' && (above?.type === 'heading' || (above?.type === 'paragraph' && /[:：]\s*$/.test(above.text))) ? { ...token, title: above.text.replace(/[:：\s*_`]+$|[*_`]/g, '') } : token
 })
-shapes.value = { table, list, blockquote, image, blocks: gathered, columns: (token) => html`<div class="columns">${token.columns.map((/** @type {any} */ column) => html`<div>${blocks(column.tokens)}</div>`)}</div>` }
+/** An answer still being written (ui/markdown.js), read as it will be, its last block, unless a line ends it, marked as still being written. @param {string} source */
+const still = (source) => { const tokens = lex(unfinished(source)); Object.assign(tokens.at(-1) ?? {}, { still: true }); return tokens }
+shapes.value = { table, list, blockquote, image, blocks: gathered, still, columns: (token) => html`<div class="columns">${token.columns.map((/** @type {any} */ column) => html`<div>${blocks(column.tokens)}</div>`)}</div>` }
