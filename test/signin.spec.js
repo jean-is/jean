@@ -24,12 +24,13 @@ test('Jean signs in with the organisation’s account at the first visit, and it
   const seen = await fakeGateway(page, issuer)
   await withPolicy(page, POLICY)
   await start(page)
-  // Jean left for the identity provider and came back, with PKCE, the gateway's scope and who signs in, with their name.
+  // Jean left for the identity provider and came back, with PKCE, asking for what policy names: who signs in, their
+  // name and email, renewals and the gateway's scope.
   expect(issuer.authorized).toHaveLength(1)
   const [asked] = issuer.authorized
   expect(asked.get('client_id')).toBe('jean-at-acme')
   expect(asked.get('code_challenge_method')).toBe('S256')
-  expect(asked.get('scope')?.split(' ')).toEqual(['api://ai-gateway/chat', 'profile', 'openid', 'email', 'offline_access'])
+  expect(asked.get('scope')?.split(' ')).toEqual(['openid', 'profile', 'email', 'offline_access', 'api://ai-gateway/chat'])
   expect(new URL(page.url()).search, 'the code and state are gone from the address').toBe('')
   // The gateway's brain needs no step before the first answer.
   await ask(page, 'Hello')
@@ -70,6 +71,16 @@ test('Jean signs in with the organisation’s account at the first visit, and it
   await page.reload()
   await expect(page.locator('#prompt')).toBeVisible()
   expect(issuer.authorized).toHaveLength(2)
+})
+
+test('policy’s scopes are all the sign-in asks for: with `openid` alone, its ID token names nobody, and Sign out stays in the person’s menu (D696)', async ({ page }) => {
+  const issuer = await fakeIssuer(page, { claims: { preferred_username: undefined, name: undefined } })
+  await fakeGateway(page, issuer)
+  await withPolicy(page, { ...POLICY, signIn: { ...POLICY.signIn, scopes: ['openid'] } })
+  await start(page)
+  expect(issuer.authorized.map((asked) => asked.get('scope'))).toEqual(['openid'])
+  await (await openProfile(page)).getByRole('button', { name: 'Sign out' }).click()
+  await expect(page.locator('#curtain main')).toContainText('You’re signed out.')
 })
 
 test('signing out signs out every tab and locks with it; the curtain goes to the identity provider and greets the person back', async ({ page, context }) => {

@@ -8,11 +8,13 @@
 // tab at a time. A renewal refused, or a sign-in that came back without tokens, asks from a toast,
 // never in a loop. Another part of policy may name a sign-in of its own, under another id. The ID token's
 // groups and roles are kept with the tokens, for ee/'s policy by group (D429), which finishes a return first.
+// It asks for `openid` and the scopes policy names, those alone, or else for the person's name, email and
+// renewals where the provider offers them (D696); an ID token that names nobody still leaves Sign out in the menu.
 // Signing out stays signed out, on a screen of its own, until the person signs in; a lock locks with it. A curtain
 // goes before each trip to the identity provider and greets the person back (D669).
 import { signal } from '@preact/signals-core'
 import { html, nothing, render, svg } from 'lit-html'
-import { discover, authorization, finish, refresh } from '../connections/auth.js'
+import { discover, authorization, finish, refresh, scopesFor } from '../connections/auth.js'
 import { fire } from '../../core/hooks.js'
 import { register, loaded, contributions } from '../../ui/caps.js'
 import { app, effective, notify } from '../../ui/state.js'
@@ -25,7 +27,7 @@ import { styleSheet } from '../../ui/sheet.js'
 import { BRAND } from '../../brand.js'
 import { t, useStrings, locale, dir } from '../../core/i18n.js'
 
-/** @typedef {{ issuer: string, clientId: string, scopes?: string[] }} SignIn  what policy names */
+/** @typedef {{ issuer: string, clientId: string, scopes?: string[] }} SignIn  what policy names; its scopes, all the sign-in asks for besides `openid` */
 /** @typedef {import('../connections/auth.js').Tokens & { end?: string }} Kept  end: where signing out goes */
 
 const PENDING = 'app.signin'
@@ -37,9 +39,10 @@ const tabs = new BroadcastChannel(mine('app-signin'))
 const AHEAD = 5 * 60_000
 await useStrings('signin')
 
-/** Who is signed in to the organisation, for Settings › Brains, and what the account calls them, for the person's menu. */
+/** Who is signed in to the organisation, for Settings › Brains. */
 export const account = signal(/** @type {string | null} */ (null))
-const name = signal(/** @type {string | null} */ (null))
+/** What the account calls them, for the person's menu; and whether anyone is signed in, for Sign out, since an account may name nobody (`openid` alone). */
+const [name, signed] = [signal(/** @type {string | null} */ (null)), signal(false)]
 /** Each sign-in started, by id: what policy names for it. @type {Map<string, SignIn>} */
 const named = new Map()
 /** Renewals under way, one a sign-in. @type {Map<string, Promise<string | null>>} */
@@ -62,7 +65,7 @@ const brainsOf = (id) => (id === 'signin' ? effective.value.settings.brains.filt
 
 /** Kept tokens in use: who signed in, the brains' key where it changed, the next renewal. @param {string} id @param {Kept} kept */
 async function use(id, kept) {
-  if (id === 'signin') [account.value, name.value] = [kept.account ?? null, kept.name ?? null]
+  if (id === 'signin') [account.value, name.value, signed.value] = [kept.account ?? null, kept.name ?? null, true]
   for (const brain of brainsOf(id)) if ((await getSecret(app.fs, brain.id)) !== kept.access) await setSecret(app.fs, brain.id, kept.access)
   clearTimeout(timers.get(id))
   // A minute apart at least, should one fail.
@@ -75,17 +78,17 @@ const keep = (id, kept) => setSecret(app.fs, id, JSON.stringify(kept)).then(() =
 /** @param {string} id */
 async function forget(id) {
   for (const each of [id, ...brainsOf(id).map((brain) => brain.id)]) await deleteSecret(app.fs, each)
-  if (id === 'signin') account.value = name.value = null
+  if (id === 'signin') [account.value, name.value, signed.value] = [null, null, false]
 }
 
 /**
  * Leaves for the identity provider, with what the user had typed and shared (`leave()`), to come back here,
- * asking for the person's name too (`profile`).
+ * asking for what policy names alone, or else for the person's name too (`scopesFor()`).
  * @param {string} [id] @param {SignIn} [given]
  */
 export async function signIn(id = 'signin', given = named.get(id) ?? app.policy.signIn) {
   const metadata = await discover(given.issuer, { issuer: given.issuer })
-  const { url, pending } = await authorization(metadata, { clientId: given.clientId, redirectURI: location.origin + location.pathname, scopes: [...given.scopes ?? [], 'profile'] })
+  const { url, pending } = await authorization(metadata, { clientId: given.clientId, redirectURI: location.origin + location.pathname, scopes: scopesFor(metadata, given.scopes), only: true })
   sessionStorage.setItem(PENDING, JSON.stringify({ ...pending, id, end: metadata.end_session_endpoint }))
   behind(whoOf(await vaultOf()))
   ;(await import('../../ui/brains.js')).leave(url)
@@ -210,6 +213,6 @@ const leavingIcon = icon(svg`<path d="M10.5 20.5H7A2.5 2.5 0 0 1 4.5 18V6A2.5 2.
 
 // The person at the drawer's foot is named by the account, the first name they set and the profile's coming first; Sign out is beside Lock now.
 register({ id: 'signin', slots: {
-  profile: { at: 2, draw: (/** @type {string} */ menu) => (account.value ? html`<button type="button" popovertarget=${menu} popovertargetaction="hide" @click=${signOut}>${leavingIcon}${t('signin.out')}</button>` : nothing) },
+  profile: { at: 2, draw: (/** @type {string} */ menu) => (signed.value ? html`<button type="button" popovertarget=${menu} popovertargetaction="hide" @click=${signOut}>${leavingIcon}${t('signin.out')}</button>` : nothing) },
   person: { at: 1, draw: () => name.value ?? account.value }, brains: { at: 0, draw: () => (account.value ? html`<section class="setting"><div><h3>${t('signin.as', { account: account.value })}</h3></div>
   <button class="button" @click=${signOut}>${t('signin.out')}</button></section>` : nothing) } } })

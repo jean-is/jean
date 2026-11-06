@@ -90,13 +90,14 @@ export async function registerClient(metadata, { redirectURI, name, fetch = glob
  * a service asks which one (`prompt=select_account`, which a server that doesn't know it ignores).
  * A service Jean knows may say what to ask for (`scopes`) and what more its sign-in wants (`params`, D344).
  * Who signs in (an ID token) and renewals are asked for too, where the sign-in server offers them
- * and the client's registration allows them (`registered`, its scopes, when the service said, D469).
- * @param {Metadata} metadata @param {{ clientId: string, redirectURI: string, another?: boolean, scopes?: string[], params?: Record<string, string>, registered?: string }} options
+ * and the client's registration allows them (`registered`, its scopes, when the service said, D469), unless
+ * `scopes` are all it asks for (`only`: the organisation's sign-in, `scopesFor()`).
+ * @param {Metadata} metadata @param {{ clientId: string, redirectURI: string, another?: boolean, scopes?: string[], params?: Record<string, string>, registered?: string, only?: boolean }} options
  * @returns {Promise<{ url: string, pending: Pending }>}
  */
-export async function authorization(metadata, { clientId, redirectURI, another = false, scopes, params: more = {}, registered }) {
+export async function authorization(metadata, { clientId, redirectURI, another = false, scopes, params: more = {}, registered, only = false }) {
   const [verifier, state] = [createVerifier(), createVerifier().slice(0, 32)]
-  const scope = [...new Set([scopes?.join(' ') ?? metadata.scope, ...['openid', 'email', 'offline_access'].filter((one) => metadata.scopes_supported?.includes(one) && (registered?.split(' ').includes(one) ?? true))].join(' ').split(' ').filter(Boolean))].join(' ')
+  const scope = [...new Set([scopes?.join(' ') ?? metadata.scope, ...['openid', 'email', 'offline_access'].filter((one) => !only && metadata.scopes_supported?.includes(one) && (registered?.split(' ').includes(one) ?? true))].join(' ').split(' ').filter(Boolean))].join(' ')
   const url = new URL(metadata.authorization_endpoint)
   const prompt = [more.prompt, another && 'select_account'].filter(Boolean).join(' ')
   const params = { ...more, response_type: 'code', client_id: clientId, redirect_uri: redirectURI, code_challenge: await challengeS256(verifier), code_challenge_method: 'S256', state, ...(metadata.resource && { resource: metadata.resource }), ...(scope && { scope }), ...(prompt && { prompt }) }
@@ -104,6 +105,14 @@ export async function authorization(metadata, { clientId, redirectURI, another =
   const issRequired = metadata.authorization_response_iss_parameter_supported === true
   return { url: url.href, pending: { state, verifier, clientId, redirectURI, issuer: metadata.issuer, issRequired, tokenEndpoint: metadata.token_endpoint, resource: metadata.resource } }
 }
+
+/**
+ * What the organisation's sign-in asks for (D385, D696): `openid`, always, as OpenID Connect has it; then the scopes its
+ * policy names, all of them, since an identity provider may refuse one it never granted Jean's app; or else the person's
+ * name and email, and renewals, where the provider lists them, and `openid` alone where it lists none.
+ * @param {Metadata} metadata @param {string[]} [scopes] @returns {string[]}
+ */
+export const scopesFor = (metadata, scopes) => [...new Set(['openid', ...(scopes ?? ['profile', 'email', 'offline_access'].filter((one) => metadata.scopes_supported?.includes(one)))])]
 
 /**
  * The user came back: check who answered, then trade the code for tokens.
@@ -131,8 +140,7 @@ async function token({ tokenEndpoint, clientId, resource }, form, fetch) {
   const res = await fetch(tokenEndpoint, { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded', accept: 'application/json' }, body })
   const json = await res.json().catch(() => null)
   if (!res.ok || !json?.access_token) throw new Error(json?.error_description ?? json?.error ?? `HTTP ${res.status}`)
-  const expiresAt = json.expires_in ? Date.now() + json.expires_in * 1000 : undefined
-  return { access: json.access_token, ...(json.refresh_token && { refresh: json.refresh_token }), ...(expiresAt && { expiresAt }), tokenEndpoint, clientId, resource, ...(json.id_token && await whoOf(json.id_token)) }
+  return { access: json.access_token, ...(json.refresh_token && { refresh: json.refresh_token }), ...(json.expires_in && { expiresAt: Date.now() + json.expires_in * 1000 }), tokenEndpoint, clientId, resource, ...(json.id_token && await whoOf(json.id_token)) }
 }
 
 /**

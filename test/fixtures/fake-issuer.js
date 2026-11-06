@@ -17,9 +17,9 @@ const ENDPOINTS = 'https://login.fake.example/tenant-1/oauth2/v2.0'
  */
 export const redirect = (route, href) => route.fulfill({ contentType: 'text/html', body: /* html */ `<!doctype html><meta http-equiv="refresh" content="0;url=${href.replace(/&/g, '&amp;').replace(/"/g, '&quot;')}">` })
 
-/** The organisation's policy: its sign-in, and its gateway's brain, which the sign-in's token opens. */
+/** The organisation's policy: its sign-in, asking for what enterprise.md has Entra's ask for, and its gateway's brain, which the sign-in's token opens. */
 export const POLICY = {
-  signIn: { issuer: ISSUER, clientId: 'jean-at-acme', scopes: ['api://ai-gateway/chat'] },
+  signIn: { issuer: ISSUER, clientId: 'jean-at-acme', scopes: ['openid', 'profile', 'email', 'offline_access', 'api://ai-gateway/chat'] },
   brains: [{ id: 'corp', provider: 'custom', api: 'openai', baseURL: GATEWAY, model: 'fake-brain-1', label: 'Acme AI', auth: 'oidc' }],
 }
 
