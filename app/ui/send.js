@@ -123,9 +123,10 @@ let decisionId = 0
  */
 function queue(decision) {
   return new Promise((resolve) => {
+    // A card answered from the keyboard hands its focus on: to the next card waiting, else to the box.
     const item = /** @type {Decision} */ ({ ...decision, id: ++decisionId, resolve: (/** @type {any} */ answer) => {
-      app.decisions.value = app.decisions.value.filter((other) => other !== item)
-      resolve(answer)
+      const held = document.activeElement?.closest('.approval'); app.decisions.value = app.decisions.value.filter((other) => other !== item)
+      resolve(answer); if (held) requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector('.approval button, #prompt'))?.focus())
     } })
     app.decisions.value = [...app.decisions.value, item]
   })

@@ -84,7 +84,8 @@ const offerTool = {
       // One offer waits at a time, in the conversation that made it (D147).
       if (app.offering.peek()) return 'Another offer is waiting for the user. Go on without it.'
       const yes = await new Promise((resolve) => { app.offering.value = { id, conversation: conversationOf(ctx.signal)?.path, resolve } })
-      app.offering.value = null
+      // Answered from the keyboard, its card hands its focus on: to the next card waiting, else to the box.
+      const held = document.activeElement?.closest('.approval'); app.offering.value = null; if (held) requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector('.approval button, #prompt'))?.focus())
       if (!yes) {
         // Only the user's own no is for good: an answer stopped, or left for another project, said nothing (D219).
         if (!ctx.signal?.aborted) await answerOffer(id)
