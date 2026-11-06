@@ -4,8 +4,8 @@
 // its id so that every request reads it as any brain's; each policy connection that says it, such as that
 // gateway's MCP servers, sends it with each request (caps/connections/). Jean signs in at the first visit, with PKCE
 // from the browser as a connection does (caps/connections/auth.js), keeps the tokens in .secrets/
-// (sealed at rest, never in a backup, export, sync or share), and renews them before they end, one
-// tab at a time. A renewal refused, or a sign-in that came back without tokens, asks from a toast,
+// (sealed at rest, never in a backup, export, sync or share), and renews them half their life before they end,
+// five minutes at most, one tab at a time. A renewal refused, or a sign-in that came back without tokens, asks from a toast,
 // never in a loop. Another part of policy may name a sign-in of its own, under another id. The ID token's
 // groups and roles are kept with the tokens, for ee/'s policy by group (D429), which finishes a return first.
 // It asks for `openid` and the scopes policy names, those alone, or else for the person's name, email and
@@ -28,14 +28,14 @@ import { BRAND } from '../../brand.js'
 import { t, useStrings, locale, dir } from '../../core/i18n.js'
 
 /** @typedef {{ issuer: string, clientId: string, scopes?: string[] }} SignIn  what policy names; its scopes, all the sign-in asks for besides `openid` */
-/** @typedef {import('../connections/auth.js').Tokens & { end?: string }} Kept  end: where signing out goes */
+/** @typedef {import('../connections/auth.js').Tokens & { end?: string, renewAt?: number }} Kept  end: where signing out goes; renewAt: when it renews */
 
 const PENDING = 'app.signin'
 /** Kept per profile once the person signs out: they stay so until they sign in. */
 const OUT = 'app.signedOut'
 /** Signing out here signs out this profile's other tabs. */
 const tabs = new BroadcastChannel(mine('app-signin'))
-/** Renewed this long before it ends, since a turn reads its key once, as it starts. */
+/** Renewed half its life before it ends, this long at most, since a turn reads its key once, as it starts. */
 const AHEAD = 5 * 60_000
 await useStrings('signin')
 
@@ -58,8 +58,10 @@ tabs.onmessage = async ({ data }) => { if (data === 'out') switchTo(here(), whoO
 
 /** @param {string} id @returns {Promise<Kept | null>} */
 const read = async (id) => JSON.parse((await getSecret(app.fs, id)) ?? 'null')
-/** About to end, so renewed now. @param {Kept | null} kept */
-const due = (kept) => Boolean(kept?.expiresAt && kept.expiresAt <= Date.now() + AHEAD)
+/** Tokens just given, with when they renew: half their life before they end, five minutes at most. @param {Kept} kept @returns {Kept} */
+const timed = (kept) => (kept.expiresAt ? { ...kept, renewAt: kept.expiresAt - Math.min(Math.max(kept.expiresAt - Date.now(), 0) / 2, AHEAD) } : kept)
+/** About to end, so renewed now: at its time, or at once when it has none. @param {Kept | null} kept */
+const due = (kept) => Boolean(kept?.expiresAt && (kept.renewAt ?? 0) <= Date.now())
 /** The brains whose key the organisation's sign-in is. @param {string} id */
 const brainsOf = (id) => (id === 'signin' ? effective.value.settings.brains.filter((brain) => brain.auth === 'oidc') : [])
 
@@ -68,8 +70,8 @@ async function use(id, kept) {
   if (id === 'signin') [account.value, name.value, signed.value] = [kept.account ?? null, kept.name ?? null, true]
   for (const brain of brainsOf(id)) if ((await getSecret(app.fs, brain.id)) !== kept.access) await setSecret(app.fs, brain.id, kept.access)
   clearTimeout(timers.get(id))
-  // A minute apart at least, should one fail.
-  if (kept.expiresAt) timers.set(id, setTimeout(() => token(id), Math.max(kept.expiresAt - AHEAD - Date.now(), 60_000)))
+  // A minute later, should one have failed.
+  if (kept.expiresAt) timers.set(id, setTimeout(() => token(id), Math.max((kept.renewAt ?? 0) - Date.now(), 0) || 60_000))
 }
 
 /** @param {string} id @param {Kept} kept */
@@ -115,7 +117,7 @@ const renew = (id) => navigator.locks.request(`app-signin-${id}`, async () => {
   const kept = await read(id)
   if (!kept || !due(kept)) return kept?.access ?? null
   try {
-    const fresh = { ...kept, ...await refresh(kept) }
+    const fresh = timed({ ...kept, ...await refresh(kept) })
     return keep(id, fresh).then(() => fresh.access)
   } catch (error) {
     console.warn('Sign-in', error)
@@ -137,7 +139,7 @@ async function finishing(id) {
   if (saved?.id !== id || !query.has('state')) return false
   sessionStorage.removeItem(PENDING)
   ;(await import('../../ui/brains.js')).comeBack()
-  await setSecret(app.fs, id, JSON.stringify({ ...await finish(query, saved), end: saved.end }))
+  await setSecret(app.fs, id, JSON.stringify(timed({ ...await finish(query, saved), end: saved.end })))
   return true
 }
 

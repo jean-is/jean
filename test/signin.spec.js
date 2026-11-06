@@ -18,6 +18,16 @@ const key = (page) => page.evaluate(async () => {
 })
 /** The page shows again, which has Jean renew a token that is about to end. @param {import('@playwright/test').Page} page */
 const shown = (page) => page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')))
+/** The organisation's tokens, as Jean keeps them. @param {import('@playwright/test').Page} page */
+const kept = (page) => page.evaluate(async () => {
+  const [{ getSecret }, { app }] = await Promise.all([import('/ui/secrets.js'), import('/ui/state.js')])
+  return JSON.parse(await getSecret(app.fs, 'signin') ?? 'null')
+})
+/** Time passes until the token is about to end, as the person reads or is away. @param {import('@playwright/test').Page} page */
+const ending = (page) => page.evaluate(async () => {
+  const [{ getSecret, setSecret }, { app }] = await Promise.all([import('/ui/secrets.js'), import('/ui/state.js')])
+  await setSecret(app.fs, 'signin', JSON.stringify({ ...JSON.parse(await getSecret(app.fs, 'signin') ?? '{}'), renewAt: Date.now() }))
+})
 
 test('Jean signs in with the organisation’s account at the first visit, and its gateway answers with the token', async ({ page }) => {
   const issuer = await fakeIssuer(page)
@@ -136,15 +146,22 @@ test('signing out signs out every tab and locks with it; the curtain goes to the
   expect(issuer.authorized).toHaveLength(1)
 })
 
-test('the token renews before it ends; a renewal refused asks to sign in again, from a toast', async ({ page, browserName }) => {
-  // Two minutes: always about to end, so each time the page shows Jean renews it.
+test('the token renews half its life before it ends, five minutes at most; a renewal refused asks to sign in again, from a toast', async ({ page, browserName }) => {
+  // Two minutes: it renews one minute before it ends, and once it is about to, when the page shows again.
   const issuer = await fakeIssuer(page, { expiresIn: 120 })
   const seen = await fakeGateway(page, issuer)
   await withPolicy(page, POLICY)
   await start(page)
+  const { expiresAt, renewAt } = await kept(page)
+  expect(expiresAt - renewAt).toBeGreaterThan(59_000)
+  expect(expiresAt - renewAt).toBeLessThanOrEqual(60_000)
   await ask(page, 'Hello')
   await answered(page)
   expect(seen.at(-1)).toBe('Bearer access-1')
+  await shown(page)
+  expect(await page.evaluate(() => import('/caps/signin/signin.js').then((signin) => signin.token())), 'not yet').toBe('access-1')
+  expect(issuer.asked).toHaveLength(1)
+  await ending(page)
   await shown(page)
   await expect.poll(() => issuer.asked.map((form) => form.get('grant_type'))).toEqual(['authorization_code', 'refresh_token'])
   expect(issuer.asked[1].get('refresh_token')).toBe('refresh-1')
@@ -154,6 +171,7 @@ test('the token renews before it ends; a renewal refused asks to sign in again, 
   expect(seen.at(-1)).toBe('Bearer access-2')
   // Refused, the tokens go, and the toast offers to sign in, which keeps what was typed.
   issuer.refusing = true
+  await ending(page)
   await shown(page)
   const toast = page.locator('.toast')
   await expect(toast).toContainText('Sign in with your organization’s account to get answers.')
