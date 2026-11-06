@@ -376,7 +376,7 @@ const bashTool = {
     name: 'bash',
     description: [
       "Run a command on your computer: bash, in a sandbox in this tab, never the user's machine.",
-      "/workspace holds the conversation's folder, or the project's workspace when it has none, and what commands change there is kept (in the user's folder, once they agree); /home/user and /tmp last until the tab closes.",
+      "/workspace holds the conversation's folder, or the project's workspace when it has none, and what commands change there is kept (in the user's folder, once they agree); /home/user and /tmp last until the tab closes. A file the user shared is not in /workspace: python's or javascript's await file(name) reads it.",
       'Most commands are there (ls, cat, grep, sed, awk, jq, find, sort, diff, gzip, curl…), with python3, pip install and node (JavaScript).',
       'A web page, a picture or a PDF you make in /workspace opens beside the conversation for the user, as written: nothing builds a page, so its scripts are plain JavaScript, without JSX, TypeScript or npm packages. A chart is best a small HTML page with inline SVG.',
       'The internet works as Settings › Computer allows; the user is asked first for a new site. The shell keeps its directory and variables between commands.',
@@ -398,7 +398,7 @@ const javascriptTool = {
       'Run JavaScript on your computer, in a sandbox. Top-level await works; return the result, which comes back as JSON with anything logged.',
       'Available in scripts: await file(name) returns the whole text of a shared file (spreadsheets as tab-separated rows under "Sheet:" lines);',
       'csv(text) turns CSV or tab-separated text into rows, objects keyed by the header, numbers as numbers;',
-      "await fs.readFile(path), fs.writeFile(path, text) and fs.readdir(path) work in /workspace, where the conversation's files are, and a web page or a picture written there opens beside the conversation;",
+      "await fs.readFile(path), fs.writeFile(path, text) and fs.readdir(path) work in /workspace, the conversation's folder (not the files shared, which file reads), and a web page or a picture written there opens beside the conversation;",
       'await fetch(url, init) reaches the internet as Settings allow;',
       'await tools.<name>({ … }) calls any tool, including ones found with await searchTools(query) and those of connected services;',
       'await models.decide(state, questions) asks the on-device decision helper, when it is on (types noul, choice, score).',
@@ -416,7 +416,7 @@ const pythonTool = {
   spec: {
     name: 'python',
     description: [
-      "Run Python 3 on your computer, in a sandbox, in /workspace, where the conversation's files are.",
+      "Run Python 3 on your computer, in a sandbox, in /workspace, the conversation's folder (not the files shared, which file reads, below).",
       'Its standard library is there; packages install with `import micropip` then `await micropip.install("pandas")` when the internet is allowed.',
       'Top-level await works; the value of the last line comes back as JSON, with anything printed. For the internet, `from pyodide.http import pyfetch` (requests and urllib wait for a reply, which the sandbox can\'t).',
       'Available in scripts: await file(name) returns the whole text of a shared file (spreadsheets as tab-separated rows under "Sheet:" lines);',
@@ -527,7 +527,7 @@ register({
   id: 'computer',
   tools: [bashTool, javascriptTool, pythonTool, saveTool, reachTool],
   lines: [
-    { name: 'bash', line: 'commands on your own computer, a sandbox: /workspace holds the files; python3, pip, node, curl' },
+    { name: 'bash', line: "commands on your own computer, a sandbox: /workspace holds the conversation's folder; python3, pip, node, curl" },
     { name: 'javascript', line: 'JavaScript to work things out exactly; scripts read files and call tools' },
     { name: 'python', line: 'Python, for data work' },
   ],
