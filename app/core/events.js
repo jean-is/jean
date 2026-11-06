@@ -101,14 +101,14 @@ export function unanswered(records) {
 }
 
 /**
- * A reply's text without the follow-ups the brain suggested in a trailing <suggestions>
- * block, which is hidden from its opening tag on (even mid-stream), and those follow-ups.
+ * A reply's text without its trailing <suggestions> block, hidden from its opening tag on
+ * (even mid-stream), and the follow-ups in it.
  * @param {string} text
  */
 export function splitSuggestions(text) {
-  const at = text.search(/<suggestions>|<s(u(g(g(e(s(t(i(o(n(s)?)?)?)?)?)?)?)?)?)?$/i)
+  const at = text.search(/<suggestions\s*>|<s(u(g(g(e(s(t(i(o(n(s\s*)?)?)?)?)?)?)?)?)?)?$/i)
   if (at < 0) return { text, suggestions: [] }
-  const lines = text.slice(at).replace(/<\/?suggestions>?/gi, '').split('\n')
+  const lines = text.slice(at).replace(/<\/?suggestions\s*>?/gi, '').split('\n')
   const suggestions = lines.map((line) => line.replace(/^\s*(?:[-*•]|\d+[.)])?\s*/, '').trim()).filter((line) => line && !line.startsWith('<'))
   return { text: text.slice(0, at).trimEnd(), suggestions: suggestions.slice(0, 3) }
 }

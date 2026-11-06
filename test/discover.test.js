@@ -352,6 +352,9 @@ test('suggestions are hidden from the reply, even while the block streams in', (
   assert.deepEqual(splitSuggestions('Done.\n\n<suggestions>\n- Show a chart\n2. Shorter\n</suggestions>'), { text: 'Done.', suggestions: ['Show a chart', 'Shorter'] })
   assert.deepEqual(splitSuggestions('Done.\n<sugg'), { text: 'Done.', suggestions: [] })
   assert.deepEqual(splitSuggestions('a < b'), { text: 'a < b', suggestions: [] })
+  // A tag broken over lines, as some brains write it.
+  assert.deepEqual(splitSuggestions('Done.\n<suggestions\n>\n- Shorter\n</suggestions\n>'), { text: 'Done.', suggestions: ['Shorter'] })
+  assert.deepEqual(splitSuggestions('Done.\n<suggestions\n'), { text: 'Done.', suggestions: [] })
 })
 
 test('sources: a file keeps its number, and the brain sees it on the document', () => {
