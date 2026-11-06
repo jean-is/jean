@@ -119,6 +119,38 @@ describe('deploy to Bunny', () => {
     assert.ok(calls.filter((call) => call.url.startsWith('https://api.bunny.net')).every((call) => call.headers.AccessKey === 'api'))
   })
 
+  it('puts a file again that the Storage API failed to write, and stops at a refusal', async () => {
+    const dist = await mkdtemp(join(tmpdir(), 'jean-bunny-'))
+    await writeFile(join(dist, 'tool.js'), 'export {}')
+    /** @type {string[]} */
+    const puts = []
+    let refuse = 400
+    const real = globalThis.fetch
+    globalThis.fetch = /** @type {typeof fetch} */ (async (input, init = {}) => {
+      const url = String(input)
+      if (init.method === 'PUT') {
+        puts.push(url)
+        return puts.length === 1 ? Response.json({ HttpCode: refuse, Message: 'Unable to upload file: ' }, { status: refuse }) : new Response(null, { status: 201 })
+      }
+      if (url.endsWith('/pullzone/7')) return Response.json({ StorageZoneId: 3, MiddlewareScriptId: 9, EnableLogging: false, EdgeRules: [] })
+      if (url.endsWith('/storagezone/3')) return Response.json({ Id: 3, Name: 'jean-site' })
+      if (url.endsWith(`/${RELEASES}/`)) return Response.json([])
+      return new Response(null, { status: 200 })
+    })
+    const env = { BUNNY_STORAGE_KEY: 'storage', BUNNY_API_KEY: 'api', BUNNY_PULL_ZONE: '7' }
+    try {
+      await deployToBunny({ dist, zone: 'jean-site', release: 'r', keep: 5, env, say: () => {}, settle: 0 })
+      assert.equal(puts.length, 2, 'the same file, put again')
+      puts.length = 0
+      refuse = 401
+      await assert.rejects(deployToBunny({ dist, zone: 'jean-site', release: 'r', keep: 5, env, say: () => {}, settle: 0 }), /Bunny answered 401/)
+      assert.equal(puts.length, 1, 'a refusal stops at once')
+    } finally {
+      globalThis.fetch = real
+      await rm(dist, { recursive: true, force: true })
+    }
+  })
+
   it('refuses a pull zone without its script, or one that keeps logs', async () => {
     const real = globalThis.fetch
     const env = { BUNNY_STORAGE_KEY: 'storage', BUNNY_API_KEY: 'api', BUNNY_PULL_ZONE: '7' }

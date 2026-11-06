@@ -106,13 +106,16 @@ async function filesUnder (root) {
 
 /**
  * A call to one of Bunny's APIs that throws, saying what Bunny answered, unless it succeeds; tried again twice when
- * the network or Bunny fails. @param {string} url @param {RequestInit} init @returns {Promise<Response>}
+ * the network or Bunny fails. The Storage API answers some of its own failures to write a file with a 400, "Unable to
+ * upload file", which the same bytes then pass, so a PUT, which is only ever the same bytes again, is tried again
+ * after one too. @param {string} url @param {RequestInit} init @returns {Promise<Response>}
  */
 async function call (url, init) {
   for (let attempt = 1; ; attempt++) {
     const response = await fetch(url, init).catch((error) => (attempt < 3 ? null : Promise.reject(error)))
     if (response?.ok) return response
-    if (response && (response.status < 500 || attempt >= 3)) throw new Error(`${init.method ?? 'GET'} ${new URL(url).pathname}: Bunny answered ${response.status} ${(await response.text()).slice(0, 300)}`)
+    const again = response && (response.status >= 500 || (init.method === 'PUT' && response.status === 400))
+    if (response && (!again || attempt >= 3)) throw new Error(`${init.method ?? 'GET'} ${new URL(url).pathname}: Bunny answered ${response.status} ${(await response.text()).slice(0, 300)}`)
     await new Promise((resolve) => setTimeout(resolve, 1000 * attempt))
   }
 }
