@@ -117,10 +117,10 @@ function languageAndScript(code) {
   }
 }
 
-/** "14 MB", in the current locale. @param {number} bytes */
+/** "14 MB", or "30 bytes" in words, in the current locale. @param {number} bytes */
 export function formatBytes(bytes) {
-  const [unit, size] = bytes >= 1e9 ? ['gigabyte', bytes / 1e9] : bytes >= 1e6 ? ['megabyte', bytes / 1e6] : ['kilobyte', bytes / 1e3]
-  return new Intl.NumberFormat(intlLocales(), { style: 'unit', unit, maximumFractionDigits: 1 }).format(size)
+  const [unit, size] = bytes >= 1e9 ? ['gigabyte', bytes / 1e9] : bytes >= 1e6 ? ['megabyte', bytes / 1e6] : bytes >= 1e3 ? ['kilobyte', bytes / 1e3] : ['byte', bytes]
+  return new Intl.NumberFormat(intlLocales(), { style: 'unit', unit, unitDisplay: bytes < 1e3 ? 'long' : 'short', maximumFractionDigits: 1 }).format(size)
 }
 
 /** "527 ms", "1.2 sec", "1 min, 12 sec", in the current locale: to the tenth of a second under ten, else to the second. @param {number} ms */

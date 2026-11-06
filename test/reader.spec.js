@@ -245,7 +245,7 @@ test('a voice picked reads ahead of the natural voice, whose languages Listen pl
   await settings.locator('[data-part="natural"]').click()
   await settings.getByRole('button', { name: 'Remove a language in Your data › Space used' }).click()
   const part = settings.locator('.parts .list > li').filter({ hasText: 'Natural voice' })
-  await expect(part.locator('.voices li')).toHaveText([/English\s*0\.1 kB\s*Remove/, /French/])
+  await expect(part.locator('.voices li')).toHaveText([/English\s*97 bytes\s*Remove/, /French/])
   await part.locator('.voices li').filter({ hasText: 'English' }).getByRole('button', { name: 'Remove' }).click()
   await expect(part.locator('.voices li')).toHaveText([/French/])
   expect(await page.evaluate(() => caches.open('transformers-cache').then((cache) => cache.keys()).then((keys) => keys.map((key) => key.url.split('/').at(-1)).sort()))).toEqual(['decoder.bin', 'fr.bin'])

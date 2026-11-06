@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { setLoader, useLocale, t, tParts, dir, pickLocale, preferredLocales, languageName, firstWords, formatDuration, locale, intlLocales, relativeTime } from '../app/core/i18n.js'
+import { setLoader, useLocale, t, tParts, dir, pickLocale, preferredLocales, languageName, firstWords, formatDuration, formatBytes, locale, intlLocales, relativeTime } from '../app/core/i18n.js'
 import { resolveRule, ruleFromPermission } from '../app/core/rules.js'
 import { buildSystemPrompt, basePromptForBudget, toChatMessages } from '../app/core/prompt.js'
 import { foldTurns, userRecord, userRecords, noteRecord, envelope, metaRecord, titleOf, openingOf, requestsOf } from '../app/core/events.js'
@@ -108,6 +108,8 @@ test('i18n: locale picking, language names, first words', async () => {
   await useLocale('en')
   assert.equal(firstWords('one two three four', 2), 'one two…')
   assert.equal(firstWords('short text', 8), 'short text')
+  // A file of a few bytes says so, never "0 kB".
+  assert.deepEqual([0, 30, 4_200, 3_100_000_000].map(formatBytes), ['0 bytes', '30 bytes', '4.2 kB', '3.1 GB'])
 })
 
 // Browsers have Intl.DurationFormat (Chrome 129, Safari 16.4, Firefox 136); Node only from 23, and the CLI, for Node 22, never says a duration.
