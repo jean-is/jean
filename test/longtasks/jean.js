@@ -28,7 +28,7 @@ import { toolsFor } from '../../cli/tools.js'
 /** @import { Tool, PermissionOption } from '../../app/core/loop.js' */
 /** @import { Question, Answer } from '../../app/caps/ask/answers.js' */
 /** @import { Chosen } from '../../cli/brain.js' */
-/** @typedef {Chosen & { body?: Record<string, unknown>, stream?: typeof streamChat }} Brain  body: JSON added to each request; stream: a brain of the tests' own */
+/** @typedef {Chosen & { body?: Record<string, unknown>, stream?: typeof streamChat, maxTokens?: number }} Brain  body: JSON added to each request; stream: a brain of the tests' own; maxTokens: an answer's longest, if not 8192 */
 
 // ─── The room, standing in ───────────────────────────────────────────────────
 // A capability imports the room's modules (ui/caps.js, ui/state.js…): each loads here as a module of the same exports,
@@ -130,6 +130,7 @@ const load = () => (loading ??= (async () => {
  * @property {number} [most]               the brain steps after which the eval stops it, whatever carries it on (60)
  * @property {Record<string, import('../../app/core/types.js').RuleValue>} [rules]  the person's (Ask me first)
  * @property {User} user
+ * @property {{ tools: Tool[], lines: { name: string, line: string }[] }} [own]  an eval's own tools beside Jean's, such as a capability measured before it is built (npm run sites)
  */
 
 /**
@@ -195,8 +196,8 @@ export async function runTask(chosen, task, dir) {
 
   // The frozen prompt, as ui/send.js's prepare writes it: the capabilities' lines and rules, then the message.
   const caps = capsOf(task.features).map((id) => capabilities.get(id))
-  const tools = [...caps.flatMap((cap) => cap.tools ?? []), ...extra]
-  const lines = [...caps.flatMap((cap) => cap.lines ?? []), ...(task.where === 'files' ? [{ name: 'read', line: 'read pages of a file' }] : [])]
+  const tools = [...caps.flatMap((cap) => cap.tools ?? []), ...extra, ...task.own?.tools ?? []]
+  const lines = [...caps.flatMap((cap) => cap.lines ?? []), ...(task.where === 'files' ? [{ name: 'read', line: 'read pages of a file' }] : []), ...task.own?.lines ?? []]
   const rules = [...caps.flatMap((cap) => cap.rules ?? []), ...(task.where === 'files' ? ['Shared files are in the message, sometimes only some pages. Use read for the others.'] : [])]
   const hooks = caps.flatMap((cap) => (cap.hooks ?? []).map((/** @type {any} */ hook) => ({ ...hook, by: cap.id })))
   const language = languageName(task.lang, 'en')
@@ -368,14 +369,14 @@ async function changed(folder, before) {
  * once the task is past the eval's cap. @param {Brain} chosen @param {number} window @param {Outcome['spent']} spent @param {() => boolean} capped
  * @returns {typeof streamChat}
  */
-function brainStream({ body, stream = streamChat }, window, spent, capped) {
+function brainStream({ body, stream = streamChat, maxTokens = MAX_TOKENS }, window, spent, capped) {
   /** @type {typeof fetch} */
   const send = (url, init) => globalThis.fetch(url, body && typeof init?.body === 'string' ? { ...init, body: JSON.stringify({ ...JSON.parse(init.body), ...body }) } : init)
   return async function* (options) {
     if (capped()) throw new LLMError('Stopped at the eval\'s cap of steps', { code: 'aborted' })
     spent.requests++
     const events = []
-    for await (const event of stream({ ...options, maxTokens: MAX_TOKENS, fetch: send })) {
+    for await (const event of stream({ ...options, maxTokens, fetch: send })) {
       if (event.type === 'done') {
         spent.inputTokens += event.usage?.inputTokens ?? 0
         spent.outputTokens += event.usage?.outputTokens ?? 0

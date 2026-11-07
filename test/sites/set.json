@@ -1,0 +1,74 @@
+{
+  "format": 1,
+  "$comment": "What a person asks for, in English, French, Arabic and Japanese (npm run sites). files: what they share with the request, made by fixtures.js. Each brief is followed in the same task by its change, or the set's.",
+  "change": {
+    "en": "Add a page for prices and make the colours warmer.",
+    "fr": "Ajoute une page pour les tarifs et rends les couleurs plus chaudes.",
+    "ar": "أضف صفحة للأسعار واجعل الألوان أدفأ.",
+    "ja": "料金のページを追加して、色をもっと温かみのある感じにして。"
+  },
+  "briefs": {
+    "empty": {
+      "en": "Make me a website.",
+      "fr": "Fais-moi un site web.",
+      "ar": "اصنع لي موقعًا إلكترونيًا.",
+      "ja": "ウェブサイトを作って。"
+    },
+    "landing": {
+      "en": "A landing page for my app that helps freelancers send invoices, with a waitlist.",
+      "fr": "Une page d'accueil pour mon appli qui aide les indépendants à envoyer leurs factures, avec une liste d'attente.",
+      "ar": "صفحة هبوط لتطبيقي الذي يساعد العاملين المستقلين على إرسال فواتيرهم، مع قائمة انتظار.",
+      "ja": "フリーランスが請求書を送るのを助ける私のアプリのランディングページを、ウェイトリスト付きで作って。"
+    },
+    "portfolio": {
+      "files": "photos",
+      "en": "A portfolio for my photography, with these photos.",
+      "fr": "Un portfolio pour mes photos, avec celles-ci.",
+      "ar": "معرض أعمال لتصويري الفوتوغرافي، بهذه الصور.",
+      "ja": "これらの写真を使って、私の写真のポートフォリオサイトを作って。"
+    },
+    "business": {
+      "en": "A site for my bakery: we're open 7 to 7, closed Mondays. Our breads, where we are, and how to order a cake.",
+      "fr": "Un site pour ma boulangerie : on est ouverts de 7 h à 19 h, fermés le lundi. Nos pains, où nous trouver, et comment commander un gâteau.",
+      "ar": "موقع لمخبزي: نفتح من السابعة صباحًا حتى السابعة مساءً، ونغلق يوم الاثنين. خبزنا، وأين نحن، وكيف يُطلب قالب حلوى.",
+      "ja": "私のパン屋のサイトを作って。営業は朝7時から夜7時、月曜定休。パンの紹介、お店の場所、ケーキの注文方法を載せたい。"
+    },
+    "event": {
+      "en": "A site for our wedding on 12 June 2027 in Porto: the day's plan, where to stay, and a way to say if you're coming.",
+      "fr": "Un site pour notre mariage le 12 juin 2027 à Porto : le programme de la journée, où dormir, et un moyen de dire si l'on vient.",
+      "ar": "موقع لحفل زفافنا في 12 يونيو 2027 في بورتو: برنامج اليوم، وأين يمكن الإقامة، وطريقة لتأكيد الحضور.",
+      "ja": "2027年6月12日にポルトで挙げる私たちの結婚式のサイトを作って。当日の流れ、宿泊先、出欠の返事の仕方を載せたい。",
+      "change": {
+        "en": "Add a page with our story and make the colours warmer.",
+        "fr": "Ajoute une page avec notre histoire et rends les couleurs plus chaudes.",
+        "ar": "أضف صفحة عن قصتنا واجعل الألوان أدفأ.",
+        "ja": "私たちのなれそめのページを追加して、色をもっと温かみのある感じにして。"
+      }
+    },
+    "bilingual": {
+      "en": "A site for my yoga studio, in English and Spanish.",
+      "fr": "Un site pour mon cabinet de kinésithérapie, en français et en arabe.",
+      "ar": "موقع لعيادتي لطب الأسنان، بالعربية والإنجليزية.",
+      "ja": "私の英会話教室のサイトを、日本語と英語で作って。"
+    },
+    "cv": {
+      "files": "cv",
+      "en": "Make my CV into a one-page site.",
+      "fr": "Fais de mon CV un site d'une page.",
+      "ar": "حوّل سيرتي الذاتية إلى موقع من صفحة واحدة.",
+      "ja": "私の履歴書を1ページのサイトにして。",
+      "change": {
+        "en": "Add a page for my projects and make the colours warmer.",
+        "fr": "Ajoute une page pour mes projets et rends les couleurs plus chaudes.",
+        "ar": "أضف صفحة لمشاريعي واجعل الألوان أدفأ.",
+        "ja": "プロジェクトのページを追加して、色をもっと温かみのある感じにして。"
+      }
+    },
+    "saas": {
+      "en": "Build me a SaaS where my clients log in and see their invoices.",
+      "fr": "Crée-moi un SaaS où mes clients se connectent et voient leurs factures.",
+      "ar": "ابنِ لي منصة SaaS يسجّل فيها عملائي الدخول ويرون فواتيرهم.",
+      "ja": "顧客がログインして請求書を確認できるSaaSを作って。"
+    }
+  }
+}
