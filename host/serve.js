@@ -9,13 +9,17 @@
 //   node host/serve.js keys               a key pair for the records: the public half for the config, the private one to keep offline
 //   node host/serve.js open <key> <file>  the records of a day's file, opened with the private key (a JWK file)
 //   node host/serve.js remove <id>        takes a share down; its address then says so
+//   node host/serve.js take-down <name>   takes a site down (sites.js): a page saying so in its place, its name never free again
+// With `sites` in its config, it publishes sites (sites.js): their names in HOST_DIR, their files there too, served by this
+// host itself, unless `sites.bunny` names a Bunny storage zone, whose keys BUNNY_STORAGE_KEY and BUNNY_API_KEY give.
 import { createServer } from 'node:http'
 import { Readable } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
 import { appendFile, mkdir, readdir, readFile, rm, writeFile, rename } from 'node:fs/promises'
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { host } from './host.js'
+import { bunny, sweepSites, takeDown } from './sites.js'
 
 const DAY = 86_400_000
 const ECDH = { name: 'ECDH', namedCurve: 'P-256' }
@@ -43,13 +47,14 @@ export async function openRecord(line, key) {
 }
 
 /**
- * A folder as the host's store: each share's sealed copy and its metadata beside it, a file of records
- * a day, sealed when there is a key, and the reports. Once a day, what has expired goes: a share past its
- * end, a record past a year, a taken-down share's notice past a year.
- * @param {string} dir @param {CryptoKey | null} recordKey @returns {import('./host.js').Store & { sweep(): Promise<void> }}
+ * A folder as the host's store: each share's sealed copy and its metadata beside it, what it keeps of each site's name, a file
+ * of records a day, sealed when there is a key, and the reports. Once a day, what has expired goes: a share past its end, a
+ * record past a year, a taken-down share's notice past a year.
+ * @param {string} dir @param {CryptoKey | null} recordKey @returns {import('./host.js').Store & import('./sites.js').Names & { sweep(): Promise<void> }}
  */
 export function folder(dir, recordKey) {
   const shares = join(dir, 'shares')
+  const names = join(dir, 'names')
   const records = join(dir, 'records')
   /** @param {string} id */
   const at = (id) => join(shares, id)
@@ -66,6 +71,13 @@ export function folder(dir, recordKey) {
       await write(`${at(id)}.json`, JSON.stringify(meta))
     },
     remove: async (id) => { await rm(at(id), { force: true }); await rm(`${at(id)}.json`, { force: true }) },
+    held: (name) => json(join(names, `${name}.json`)),
+    async hold(name, held) {
+      await mkdir(names, { recursive: true })
+      await write(join(names, `${name}.json`), JSON.stringify(held))
+    },
+    forget: (name) => rm(join(names, `${name}.json`), { force: true }),
+    names: async () => (await readdir(names).catch(() => [])).flatMap((name) => (name.endsWith('.json') ? [name.slice(0, -5)] : [])),
     async report(text) {
       await mkdir(dir, { recursive: true })
       await appendFile(join(dir, 'reports.log'), `${text}\n`)
@@ -85,6 +97,36 @@ export function folder(dir, recordKey) {
       for (const name of await readdir(records).catch(() => [])) if (Date.parse(name.slice(0, 10)) + 366 * DAY < now) await rm(join(records, name), { force: true })
     },
   }
+}
+
+/**
+ * Sites' files in a folder, `sites/<name>/<path>`, which the host serves itself; nothing to purge.
+ * @param {string} dir @returns {import('./sites.js').Files}
+ */
+export function siteFiles(dir) {
+  const at = (/** @type {string} */ name, /** @type {string} */ path) => join(dir, 'sites', name, ...path.split('/'))
+  return {
+    async put(name, path, bytes) {
+      await mkdir(dirname(at(name, path)), { recursive: true })
+      await writeFile(at(name, path), bytes)
+    },
+    drop: (name, path) => rm(at(name, path), { force: true }),
+    purge: async () => {},
+    read: (name, path) => readFile(at(name, path)).then((bytes) => new Uint8Array(bytes), () => null),
+  }
+}
+
+/**
+ * Where a host keeps its sites' files: Bunny's storage zone where its config names one, with the keys the environment
+ * gives, or its folder. @param {import('./host.js').Config} config @param {string} dir
+ */
+export function filesOf(config, dir) {
+  const where = config.sites?.bunny
+  if (!config.sites) return undefined
+  if (!where) return siteFiles(dir)
+  const { BUNNY_STORAGE_KEY: storageKey = '', BUNNY_API_KEY: apiKey = '' } = process.env
+  if (!storageKey || !apiKey) throw new Error('sites.bunny needs BUNNY_STORAGE_KEY and BUNNY_API_KEY')
+  return bunny(where, { storageKey, apiKey }, config.sites.address)
 }
 
 /**
@@ -145,13 +187,20 @@ export async function main([command, ...args]) {
     await store.put(args[0], { ...(meta ?? { format: 1, salt: '', token: '', expires: '', size: 0 }), removed: new Date().toISOString() })
     return console.log(`Taken down: ${args[0]}`)
   }
+  const files = filesOf(config, dir)
+  if (command === 'take-down') {
+    if (!files) throw new Error('This host publishes no sites.')
+    await takeDown(args[0], store, files)
+    return console.log(`Taken down: ${args[0]}`)
+  }
   // The viewer as npm run host wrote it beside this file, unless the config says otherwise.
   const viewer = config.viewer ?? await readFile(new URL('viewer.json', import.meta.url), 'utf8').then(JSON.parse, () => undefined)
   const PORT = Number(process.env.PORT) || 8788
   const HOST = process.env.HOST ?? '127.0.0.1'
-  await store.sweep()
-  setInterval(() => store.sweep().catch(console.error), DAY).unref()
-  const handle = host({ ...config, render: config.render ?? viewer?.render, sounds: config.sounds ?? viewer?.sounds, viewer, store })
+  const sweep = async () => { await store.sweep(); if (files) await sweepSites(store, files) }
+  await sweep()
+  setInterval(() => sweep().catch(console.error), DAY).unref()
+  const handle = host({ ...config, render: config.render ?? viewer?.render, sounds: config.sounds ?? viewer?.sounds, viewer, store, files })
   stopping(createServer(listener(handle, process.env.HOST_PROXIED === '1'))).listen(PORT, HOST, () => console.log(`Share host on http://${HOST}:${PORT}/, keeping shares in ${dir}`))
 }
 

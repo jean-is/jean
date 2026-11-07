@@ -39,3 +39,14 @@ To go back to an earlier release, open the pull zone's edge rule *jean: serve th
 ```bash
 . ~/.jean-bunny && DEPLOY_TO=bunny:jean-site CSP="connect-src 'self' https://ai.corp.example" POLICY="$(cat policy.json)" npm run deploy
 ```
+
+## Published sites
+
+Sites people publish from Jean (D720) are served by a pull zone of their own on `*.hst.ing`, over a storage zone the share host writes into at each publish and purges ([deploy/server/](../server/README.md#adding-published-sites-to-a-server-that-runs-the-others)). Visitors reach only Bunny's edge, never the server. Once, in Bunny's dashboard, `hst-sites` standing for the storage zone's name:
+
+1. **hst.ing's DNS on Bunny DNS,** its records moved from where they are: `hst.ing`, `s.hst.ing` and `www.hst.ing` as A and AAAA records for Jean's server, as they are today. Only there does Bunny issue and renew a wildcard certificate itself.
+2. **Storage › Add Storage Zone:** `hst-sites`, main region Germany, no replicas outside Europe. Each site is a folder, named as the site.
+3. **CDN › Add Pull Zone:** origin type *Storage Zone*, `hst-sites`. Under **Logging**, turn logging off. Under **Caching**, files kept at the edge for a month, since each publish purges its site, and browsers told `max-age=0`, so a site published again shows at once.
+4. **Edge Scripting › Add Script:** a *Middleware* script with [`sites.js`](sites.js) as its code, linked to the pull zone, *Run script before cache* left off. It finds each page's file and adds the sites' header set, whose `sandbox` keeps every page to an opaque origin; `test/publish.test.js` holds it to the share host's own, so after a change to `HEADERS` in `host/sites.js`, paste the script again.
+5. **The pull zone › Hostnames:** `*.hst.ing` with Bunny's free certificate, after a record in Bunny DNS sending `*.hst.ing` to the pull zone.
+6. **The share host's keys:** the storage zone's password (**Storage › hst-sites › FTP & API Access**) as `BUNNY_STORAGE_KEY`, and the account's API key, which purges, as `BUNNY_API_KEY`, both in the server's `share.env`, never in the repository.

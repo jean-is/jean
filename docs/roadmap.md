@@ -99,6 +99,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] Notifications for real: the offer's Yes asking in Chrome, Edge, Firefox and Safari, a task done in another app, or one waiting on a question or an approval, the click bringing the task back; on Android, shown by the service worker, a tap opening the task; an iPhone with Jean installed on its home screen
 
 **Browsers and devices**
+- [ ] Sites published (D720) on hst.ing, once Bunny's zones and hst.ing's DNS are set: a site published, published again and taken offline; its pages in real Safari and Firefox and on phones, under their policy; a report from the host's page reaching its alert; a recovery code publishing it from another device
 - [ ] Sharing (D361) on hst.ing: a share opened in real Safari and Firefox and on phones, with and without its password; Continue with Jean from a new tab; the share sheet where the browser has one; a picture's Share beside Save
 - [ ] The CSV demo on a real managed Windows laptop with a weak graphics chip, in Edge and Chrome, in three languages
 - [ ] Firefox: a folder picked by hand, worked on as a copy, and its changed files saved

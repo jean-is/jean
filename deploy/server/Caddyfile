@@ -15,8 +15,9 @@ gateway.jean.is {
 	reverse_proxy gateway:8787
 }
 
-# The share host (D361), told the visitor's port beside the address it takes from Caddy (HOST_PROXIED).
-hst.ing {
+# The share host (D361), told the visitor's port beside the address it takes from Caddy (HOST_PROXIED): shares at s.hst.ing, the
+# bare name for the host's own page and the links made before. Published sites (D720) are Bunny's, never this server's.
+hst.ing, s.hst.ing {
 	reverse_proxy share:8788 {
 		header_up X-Client-Port {remote_port}
 	}

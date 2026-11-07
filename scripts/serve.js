@@ -348,19 +348,22 @@ function watchBudgets () {
  * (localhost or 127.0.0.1), its viewer made again each time capabilities.json is written.
  */
 async function shareHost () {
-  const [{ host }, { folder, listener: hostListener }, { viewerOf }] = await Promise.all([import('../host/host.js'), import('../host/serve.js'), import('./host.js')])
+  const [{ host }, { folder, siteFiles, listener: hostListener }, { siteAt }, { viewerOf }] = await Promise.all([import('../host/host.js'), import('../host/serve.js'), import('../host/sites.js'), import('./host.js')])
   /** @type {import('../host/host.js').Config} */
   const config = JSON.parse(process.env.HOST_CONFIG ?? '{}')
   const dir = process.env.HOST_DIR || join(tmpdir(), 'jean-shares')
   const store = folder(dir, null)
   await store.sweep()
+  // Sites it publishes at <name>.localhost, which browsers take to this computer, their files in its folder (D720).
+  const sites = config.sites ?? { address: `http://{name}.localhost:${SHARE_PORT}/` }
+  const files = siteFiles(dir)
   /** @type {Map<string, Promise<ReturnType<typeof host>>>} */
   const made = new Map()
   /** @param {string} name */
   const make = async (name) => {
     const jean = `http://${name}:${PORT}/`
     const viewer = await viewerOf(jean, `${jean}vendor/sounds/`)
-    return host({ app: jean, legal: `${jean}terms`, ...config, origins: [new URL(jean).origin, ...config.origins ?? []], viewer, render: jean, sounds: viewer.sounds, store })
+    return host({ app: jean, legal: `${jean}terms`, ...config, origins: [new URL(jean).origin, ...config.origins ?? []], viewer, render: jean, sounds: viewer.sounds, store, sites, files })
   }
   /** @param {string} name */
   const hostFor = async (name) => {
@@ -368,7 +371,7 @@ async function shareHost () {
     if (!made.has(key)) made.set(key, make(name))
     return /** @type {Promise<ReturnType<typeof host>>} */ (made.get(key))
   }
-  const server = createServer(hostListener((request, client) => hostFor(new URL(request.url).hostname).then((handle) => handle(request, client)), false))
+  const server = createServer(hostListener((request, client) => ((url) => hostFor(siteAt(url, sites.address) ? 'localhost' : url.hostname))(new URL(request.url)).then((handle) => handle(request, client)), false))
   server.on('error', (error) => {
     console.error(`serve: the share host: ${error.message}`)
     process.exit(1)

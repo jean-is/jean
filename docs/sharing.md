@@ -26,7 +26,8 @@ GitHub moved Pages to github.io in 2013 for this reason.
 
 - **Take it off Sedo's parking.**
 - **DNS only,** as jean.is is, so no proxy sees visitors' addresses. TLS from Let's Encrypt, on the server beside jean.is.
-- **No Public Suffix List entry:** one origin, and every share drawn in an opaque frame.
+- **Shares at `s.hst.ing`,** the bare name holding only the host's page: what it keeps, the legal notice and the report form. Once hst.ing is on the Public Suffix List, its bare name is no ordinary site; a share opened there goes on to `s.hst.ing`, its `#` with it.
+- **A Public Suffix List entry** for the sites published at its names (D720), filed once they have thousands of users, as the list asks. Meanwhile every site page is sandboxed to an opaque origin, so none reaches another's cookies or storage, nor the shares'.
 - **A legal notice** on hst.ing naming Warehouse SAS.
 - **The name says nothing** to someone who has never heard of Jean, so the viewer says "Shared via Jean" first.
 
@@ -70,7 +71,7 @@ GitHub moved Pages to github.io in 2013 for this reason.
 
 ## Work left
 
-- [ ] **hst.ing's server:** DNS, a Caddy site in front of `node dist/host/serve.js` (`HOST_PROXIED=1`, the port as `X-Client-Port`), a key pair for the records (`serve.js keys`, its private half kept offline), the legal notice; then jean.is deployed with `POLICY` naming `urls.share`.
+- [ ] **hst.ing's server:** DNS (`s.hst.ing` beside the bare name, `shares` in `HOST_CONFIG`), a Caddy site in front of `node dist/host/serve.js` (`HOST_PROXIED=1`, the port as `X-Client-Port`), a key pair for the records (`serve.js keys`, its private half kept offline), the legal notice; then jean.is deployed with `POLICY` naming `urls.share`.
 - [ ] **The privacy policy and the terms,** in English and French, for the records of changes and for moderation, before jean.is names the host.
 - [ ] **A received task's certificates:** the copy drops the brains' calls, so About this answer can't vouch for an answer brought in. Bring the proofs in beside the records, and show them as the sharer's.
 - [ ] **By hand:** a share opened in real Safari and Firefox, and on phones; Continue with Jean from a new tab; the share sheet where the browser has one.

@@ -1,8 +1,13 @@
 // A site (D720) is a folder of the project, `sites/<ulid>-<slug>`, named once and never renamed: its pages, style sheets,
 // scripts, drawings and pictures at their own paths in it, and site.json, its record: its format, name, author, times, whether
-// it is pinned, the task it came from, its files and its last check. Pure: node tests run it.
+// it is pinned, the task it came from, its files, its last check and where it was published, and what publishing draws from the
+// secret kept for it: its token and its recovery code. Pure: node tests run it.
 
-/** @typedef {{ format: number, name: string, author: string, created: string, changed: string, pinned?: boolean, source: string, files: string[], text?: string, check?: { problems: string[], fill: string[], at: string } }} SiteRecord */
+/**
+ * What site.json holds; `published`, where it went online (./publish.js): the host, the name, its address, until when, when, and its files' hashes.
+ * @typedef {{ format: number, name: string, author: string, created: string, changed: string, pinned?: boolean, source: string, files: string[], text?: string, check?: { problems: string[], fill: string[], at: string },
+ *   published?: { host: string, name: string, address: string, expires: string, at: string, files: Record<string, string> } }} SiteRecord
+ */
 
 export const PLACE = /^sites\/[^/.][^/]*$/
 export const RECORD = 'site.json'
@@ -35,4 +40,15 @@ export function changed(files, changes) {
     else next.set(path, new TextEncoder().encode(text.replace(old, () => String(change.new ?? ''))))
   }
   return failed.length ? { error: `Nothing changed: ${failed.join('; ')}. Quote each passage exactly as it is in the file.` } : { files: next }
+}
+
+/** A site's recovery code: its secret as the lock writes its own, hexadecimal in fours. @param {Uint8Array} bytes */
+export const codeOf = (bytes) => Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('').toUpperCase().replace(/.{4}(?=.)/g, '$&-')
+/** A recovery code read back, whatever its case, spaces and dashes; null when it isn't one. @param {string} code */
+export const secretOf = (code) => ((hex) => (/^[0-9a-f]{32}$/.test(hex) ? Uint8Array.from(hex.match(/../g) ?? [], (pair) => parseInt(pair, 16)) : null))(code.toLowerCase().replace(/[\s-]/g, ''))
+/** The token a site is published with, drawn from its secret one way, so the host, which keeps its hash, never holds the secret. @param {Uint8Array} secret */
+export async function tokenOf(secret) {
+  const key = await crypto.subtle.importKey('raw', /** @type {BufferSource} */ (secret), 'HKDF', false, ['deriveBits'])
+  const bits = new Uint8Array(await crypto.subtle.deriveBits({ name: 'HKDF', hash: 'SHA-256', salt: new Uint8Array(), info: new TextEncoder().encode('site write token') }, key, 256))
+  return btoa(String.fromCharCode(...bits)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
 }

@@ -60,7 +60,7 @@ WORKDIR /app
 COPY <<EOF package.json
 {"type":"module"}
 EOF
-COPY host/host.js host/serve.js host/
+COPY host/host.js host/sites.js host/serve.js host/
 COPY relay/ relay/
 COPY --from=relay-data --chown=1000:0 --chmod=770 /data /data
 ENV HOST=0.0.0.0 PORT=8791 RELAY_DIR=/data

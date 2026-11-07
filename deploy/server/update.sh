@@ -8,7 +8,7 @@
 set -eu
 cd /srv/jean
 services='gateway share requests relay'
-expected='gateway/gateway.js gateway/serve.js host/host.js host/package.json host/serve.js host/viewer.json relay/relay.js relay/serve.js requests/requests.js requests/serve.js'
+expected='gateway/gateway.js gateway/serve.js host/host.js host/package.json host/serve.js host/sites.js host/viewer.json relay/relay.js relay/serve.js requests/requests.js requests/serve.js'
 
 new=$(mktemp -d /srv/jean/code.new.XXXXXX)
 trap 'rm -rf "$new"' EXIT

@@ -39,7 +39,7 @@ async function main() {
   }
   const out = join(ROOT, 'dist', 'host')
   await mkdir(out, { recursive: true })
-  for (const name of ['host.js', 'serve.js']) await cp(join(ROOT, 'host', name), join(out, name))
+  for (const name of ['host.js', 'serve.js', 'sites.js']) await cp(join(ROOT, 'host', name), join(out, name))
   await writeFile(join(out, 'viewer.json'), `${JSON.stringify(viewer, null, 2)}\n`)
   await writeFile(join(out, 'package.json'), `${JSON.stringify({ type: 'module', private: true }, null, 2)}\n`)
   console.log(`host: dist/host, its viewer from ${viewer.base}; run it with HOST_CONFIG='{"origins":["https://…"]}' node dist/host/serve.js`)

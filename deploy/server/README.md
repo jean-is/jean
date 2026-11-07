@@ -5,7 +5,7 @@ jean.is's own files are on Bunny CDN ([bunny/](../bunny/README.md)). What can't 
 | Name | Service | Keeps |
 |---|---|---|
 | `gateway.jean.is` | [The gateway](../../gateway/), for the services a browser can't reach (D191) | Nothing |
-| `hst.ing` | [The share host](../../host/) (D361) | Sealed copies it can't read, in `share-data/` |
+| `hst.ing`, `s.hst.ing` | [The share host](../../host/) (D361), and where sites are published (D720) | Sealed copies it can't read, and each site name's token hash and files' hashes, in `share-data/`; sites' files are in Bunny's storage ([bunny/](../bunny/README.md#published-sites)) |
 | `relay.jean.is` | [The relay](../../relay/), where a person's devices and the people they send to meet (D45 · D226) | Sealed messages it can't read, 7 days at most, and the sealed records of each change, in `relay-data/` |
 | `keys.jean.is` | [The request service](../../requests/), where the page for a key sends | Each request, in `requests-data/` |
 | An organisation's own address | Its hosted copy (D456, [deploy/](../README.md#hosted-copies)) | Jean's files and its `policy.json`, in `hosted/` |
@@ -35,7 +35,7 @@ rsync -r dist/host/ <server>:/srv/jean/code/host/
 
 3. The services' settings, each readable by root alone (`chmod 600`):
    - `gateway.env`: `GATEWAY_CONFIG=` its configuration on one line, `{"origins":["https://jean.is"]}` and the sign-in apps' `clients`.
-   - `share.env`: `HOST_CONFIG=` the share host's, with the public half of the key that seals its records.
+   - `share.env`: `HOST_CONFIG=` the share host's, with the public half of the key that seals its records, `"shares":"https://s.hst.ing/"`, `"sites":{"address":"https://{name}.hst.ing/","bunny":{"storage":"https://storage.bunnycdn.com/<zone>/","api":"https://api.bunny.net/"}}` and an `alert` address for reports; then `BUNNY_STORAGE_KEY=` the sites' storage zone's password and `BUNNY_API_KEY=` the account's key, which purges.
    - `requests.env`: `REQUESTS_CONFIG=` the request service's, with `"site":"https://jean.is/"`, the address its answers send people back to, and the mail server.
    - `relay.env`: `RELAY_CONFIG=` the relay's: its `origins`, `https://jean.is`, the desktop app's `http://127.0.0.1:24601` and every hosted copy whose policy names this relay, and the public half of the key that seals its records (`node host/serve.js keys` makes a pair).
 4. The folders the services write, owned by uid 1000: `share-data/`, `requests-data/` and `relay-data/`. `hosted/tenants/` holds an empty `Caddyfile` until the first hosted copy.
@@ -49,7 +49,7 @@ docker compose run --rm --no-deps caddy caddy validate --config /etc/caddy/Caddy
 docker compose up -d
 ```
 
-6. DNS, not proxied: `gateway.jean.is`, `keys.jean.is`, `relay.jean.is`, `hst.ing` and `www.hst.ing`, and the name hosted copies' CNAME records point at, as A and AAAA records for the server.
+6. DNS, not proxied: `gateway.jean.is`, `keys.jean.is`, `relay.jean.is`, `hst.ing`, `s.hst.ing` and `www.hst.ing`, and the name hosted copies' CNAME records point at, as A and AAAA records for the server. Every other name of hst.ing, `*.hst.ing`, goes to Bunny's pull zone for published sites.
 
 ## Keep it current
 
@@ -78,3 +78,13 @@ docker compose up -d --force-recreate gateway share requests relay
 ## Moving from another server
 
 Copy `share-data/`, `requests-data/` and `relay-data/` as they are, owner and all, before the DNS records change: a share whose copy stays behind can no longer be opened, and its link breaks.
+
+## Adding published sites to a server that runs the others
+
+The share host's code gains `host/sites.js`, which `update.sh` refuses until it expects it, so the server changes before CI sends it (D720):
+
+1. This folder's `update.sh` as `/srv/jean/update` (root's, mode 755). Until it is there, the first push to main that holds `host/sites.js` deploys jean.is but fails at Jean's server, which keeps its code.
+2. This folder's `Caddyfile`, then `docker compose restart caddy`, for `s.hst.ing`'s route and certificate.
+3. `share.env` as above, with `shares`, `sites`, `alert` and the two Bunny keys, then `docker compose up -d --force-recreate share`.
+4. DNS: `s.hst.ing` as A and AAAA records for the server, and `*.hst.ing` for Bunny's pull zone ([bunny/](../bunny/README.md#published-sites)).
+5. jean.is's `POLICY` naming `"urls":{"share":"https://s.hst.ing/"}`, so new links are made there; the bare name sends the links made before on to it.

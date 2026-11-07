@@ -11,15 +11,23 @@
 //                            Share-Proof: the proof's hash for a password's
 //   DELETE /v1/<id>          stops sharing it, with its write token
 //   POST   /v1/<id>/report   a report for whoever runs the host: { words, link? }, the link only when the reporter gives it
+//   /v1/sites/…              sites published at names of their own, when the configuration names `sites` (sites.js)
+//   GET    / (a browser)     the host's own page: what it keeps, its legal notice, a form to report; POST /report takes it
 //
 // Its configuration, a JSON object in HOST_CONFIG:
 //   origins  the Jeans that share through it, e.g. ["https://jean.is"]
 //   viewer   how its viewer loads, from the render package: { base, entry, imports, integrity } (npm run host writes it)
 //   render   where a share's render package is, '{version}' in it; sounds the same for a score's instruments; maps a map service's styles
 //   app      where Open in my Jean opens, e.g. "https://jean.is/"; legal the address of its legal notice; name the name it shows
+//   shares   where the viewer lives when the host answers at other names too, e.g. "https://s.hst.ing/": a share opened at another
+//            name goes on there, and its link's # with it
+//   sites    sites published at names of their own (sites.js); the host's folder or Bunny keeps their files (`files`)
+//   alert    an address each report is posted to as one line of text, so that whoever runs the host hears of it at once
 //
 // Web-standard (fetch, Request, Response, Web Crypto): what it keeps goes through a store, a folder
 // on Node (serve.js). Copies are 10 MB at most.
+
+import { SITE, publishing, siteAt, serveSite, aboutPage } from './sites.js'
 
 export const LIMIT = 10_000_000
 /** How long a share lasts, in days: 30 unless the person said a year. */
@@ -32,6 +40,7 @@ const TRIES = 10
 const WRITES = 60
 const REPORTS = 10
 const HOUR = 3_600_000
+const PUTS = SITE.puts
 const ID = /^\/(?:v1\/)?([\w-]{22})(\/report)?$/
 
 /**
@@ -39,9 +48,9 @@ const ID = /^\/(?:v1\/)?([\w-]{22})(\/report)?$/
  * and its proof, until when, and the proofs tried this hour; or that it was taken down.
  * @typedef {{ format: 1, salt: string, token: string, proof?: string, expires: string, size: number, tries?: { from: number, count: number }, removed?: string }} Meta
  * @typedef {{ meta(id: string): Promise<Meta | null>, body(id: string): Promise<Uint8Array | null>, put(id: string, meta: Meta, body?: Uint8Array): Promise<void>,
- *   remove(id: string): Promise<void>, report(text: string): Promise<void>, record(text: string): Promise<void> }} Store
+ *   remove(id: string): Promise<void>, report(text: string): Promise<void>, record(text: string): Promise<void> } & Partial<Omit<import('./sites.js').Names, 'report' | 'record'>>} Store
  * @typedef {{ origins?: string[], viewer?: { base: string, entry: string, imports: Record<string, string>, integrity: Record<string, string> }, render?: string, sounds?: string,
- *   maps?: Record<string, string>, app?: string, legal?: string, name?: string }} Config
+ *   maps?: Record<string, string>, app?: string, legal?: string, name?: string, shares?: string, sites?: import('./sites.js').Config, files?: import('./sites.js').Files, alert?: string }} Config
  * Where a request came from, as the server saw it.
  * @typedef {{ address: string, port: number, protocol?: string }} Client
  */
@@ -89,7 +98,7 @@ export function host(config) {
   // What the viewer reads of the host: where shares' packages are, the map service, where Open in my Jean opens, the legal notice.
   const shown = block({ render: config.render, sounds: config.sounds, maps: config.maps, app: config.app, legal: config.legal, name })
   const importMap = viewer && block({ imports: viewer.imports, integrity: viewer.integrity })
-  const page = viewer && /* html */ `<!doctype html>
+  const viewerPage = viewer && /* html */ `<!doctype html>
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -105,7 +114,7 @@ export function host(config) {
     `font-src data: ${sources}`, `connect-src 'self' ${sources}`, `frame-src 'self'`, "base-uri 'none'", "form-action 'none'", "frame-ancestors 'none'"].join('; '))()
   const framed = ['sandbox allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox', `default-src 'none'`, `script-src 'unsafe-inline' 'wasm-unsafe-eval' data: blob: ${sources}`,
     `style-src 'unsafe-inline' ${sources}`, `img-src data: blob: ${sources}`, `font-src data: ${sources}`, 'media-src data: blob:', `connect-src ${sources}`, 'worker-src blob:', "base-uri 'none'", "form-action 'none'", "frame-ancestors 'self'"].join('; ')
-  /** What each address did this hour. @type {Map<string, { from: number, writes: number, reports: number }>} */
+  /** What each address did this hour. @type {Map<string, { from: number, writes: number, reports: number, puts: number }>} */
   const seen = new Map()
   let swept = 0
   /** Each share's proofs and changes under way, one at a time: tries made together would each read the same count. @type {Map<string, Promise<unknown>>} */
@@ -118,9 +127,22 @@ export function host(config) {
     turn.then(over, over)
     return turn
   }
+  /** A report kept, and said at once where the configuration names an address for it. @param {string} text */
+  const reported = async (text) => {
+    await config.store?.report(text)
+    if (config.alert) fetch(config.alert, { method: 'POST', headers: { 'content-type': 'text/plain; charset=utf-8' }, body: `${name}: a report. ${text.slice(0, 500)}` }).catch(console.error)
+  }
+  const { store, files } = config
+  const sites = config.sites && files && store?.held && store.hold && store.forget && store.names
+    ? publishing(config.sites, { held: store.held, hold: store.hold, forget: store.forget, names: store.names, record: store.record, report: reported }, files) : null
+  const about = `default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'`
+  const viewerAt = config.shares ? new URL(config.shares).host : ''
 
   return async (request, client = { address: '', port: 0 }) => {
     const url = new URL(request.url)
+    // A site's own address, where the host serves its sites' files itself: only under their header set.
+    const site = config.sites && files?.read ? siteAt(url, config.sites.address) : null
+    if (site && files) return request.method === 'GET' || request.method === 'HEAD' ? serveSite(files, site, url) : new Response(null, { status: 405 })
     const origin = request.headers.get('origin') ?? ''
     const ours = origins.includes(origin)
     const cors = new Headers({ vary: 'origin', 'access-control-allow-origin': ours ? origin : '*', 'access-control-expose-headers': 'share-expires', 'cache-control': 'no-store', 'x-content-type-options': 'nosniff', 'referrer-policy': 'no-referrer' })
@@ -132,19 +154,23 @@ export function host(config) {
     }
     // A HEAD is answered as a GET is, as link previews ask.
     const reading = request.method === 'GET' || request.method === 'HEAD'
-    if (url.pathname === '/' && reading) return answer(200, { format: 1, limit: LIMIT, days: DAYS })
+    const page = (/** @type {boolean} */ sent) => new Response(aboutPage({ name, legal: config.legal, host: url.host, sent }), { headers: { 'content-type': 'text/html; charset=utf-8', 'content-security-policy': about, 'x-content-type-options': 'nosniff', 'referrer-policy': 'no-referrer' } })
+    if (url.pathname === '/' && reading) return request.headers.get('accept')?.includes('text/html') ? page(false)
+      : answer(200, { format: 1, limit: LIMIT, days: DAYS, ...(sites && config.sites && { sites: { address: config.sites.address, limit: SITE.site, file: SITE.file, files: SITE.files, days: SITE.days, ...config.sites.limits } }) })
+    if (url.pathname === '/report' && reading) return page(false)
     if (url.pathname === '/frame' && reading) return new Response(RELAY, { headers: { 'content-type': 'text/html; charset=utf-8', 'content-security-policy': framed, 'x-content-type-options': 'nosniff', 'cache-control': 'public, max-age=3600' } })
     const [, id, report] = ID.exec(url.pathname) ?? []
-    if (!id) return answer(404, { error: 'Nothing is here.' })
-    if (!url.pathname.startsWith('/v1/')) {
-      if (!reading || !page) return answer(404, { error: 'Nothing is here.' })
-      return new Response(page, { headers: { 'content-type': 'text/html; charset=utf-8', 'content-security-policy': await policy, 'x-content-type-options': 'nosniff', 'x-robots-tag': 'noindex', 'referrer-policy': 'no-referrer', 'cache-control': 'public, max-age=300' } })
+    if (!id && url.pathname !== '/report' && !(sites && url.pathname.startsWith('/v1/sites/'))) return answer(404, { error: 'Nothing is here.' })
+    if (id && !url.pathname.startsWith('/v1/')) {
+      if (viewerAt && url.host !== viewerAt && reading) return new Response(null, { status: 301, headers: { location: new URL(id, config.shares).href, 'cache-control': 'public, max-age=86400' } })
+      if (!reading || !viewer) return answer(404, { error: 'Nothing is here.' })
+      return new Response(viewerPage, { headers: { 'content-type': 'text/html; charset=utf-8', 'content-security-policy': await policy, 'x-content-type-options': 'nosniff', 'x-robots-tag': 'noindex', 'referrer-policy': 'no-referrer', 'cache-control': 'public, max-age=300' } })
     }
 
     const now = Date.now()
     const network = networkOf(client.address)
     const by = seen.get(network)
-    const mine = by && now - by.from < HOUR ? by : { from: now, writes: 0, reports: 0 }
+    const mine = by && now - by.from < HOUR ? by : { from: now, writes: 0, reports: 0, puts: 0 }
     // Grown long, what is past its hour goes, once a minute at most, so that many addresses can't wipe what the others did; far past that, all goes.
     if (seen.size > 100_000 && now - swept > 60_000) {
       swept = now
@@ -152,6 +178,16 @@ export function host(config) {
       if (seen.size > 1_000_000) seen.clear()
     }
     seen.set(network, mine)
+    /** Whether the address has done this too often this hour, counting this time. @param {'writes' | 'reports' | 'puts'} kind */
+    const spend = (kind) => ++mine[kind] > { writes: WRITES, reports: REPORTS, puts: PUTS }[kind]
+    if (url.pathname === '/report') {
+      if (request.method !== 'POST') return answer(405, { error: 'Send a report.' })
+      if (spend('reports')) return answer(429, { error: 'Too many reports. Try again later.' })
+      const said = new URLSearchParams(new TextDecoder().decode(await within(request, 20_000) ?? new Uint8Array()))
+      await reported(JSON.stringify({ at: new Date(now).toISOString(), where: (said.get('where') ?? '').slice(0, 500), words: (said.get('words') ?? '').slice(0, 5000) }))
+      return page(true)
+    }
+    if (!id) return /** @type {NonNullable<typeof sites>} */ (sites)(request, url, { ours, now, network, spend, inTurn, answer, client })
     const meta = await config.store?.meta(id) ?? null
     const live = meta && !meta.removed && Date.parse(meta.expires) > now ? meta : null
     if (meta && !meta.removed && !live) await config.store?.remove(id)
@@ -160,14 +196,14 @@ export function host(config) {
 
     if (report) {
       if (request.method !== 'POST') return answer(405, { error: 'Send a report.' })
-      if (++mine.reports > REPORTS) return answer(429, { error: 'Too many reports. Try again later.' })
+      if (spend('reports')) return answer(429, { error: 'Too many reports. Try again later.' })
       const bytes = await within(request, REPORT)
       if (!bytes) return answer(413, { error: 'This report is too long.' })
       const text = new TextDecoder().decode(bytes)
       /** @type {{ words?: unknown, link?: unknown }} */
       let said = {}
       try { said = JSON.parse(text) } catch {}
-      await config.store?.report(JSON.stringify({ at: new Date(now).toISOString(), id, words: String(said.words ?? '').slice(0, 5000), ...(typeof said.link === 'string' && { link: said.link.slice(0, 200) }) }))
+      await reported(JSON.stringify({ at: new Date(now).toISOString(), id, words: String(said.words ?? '').slice(0, 5000), ...(typeof said.link === 'string' && { link: said.link.slice(0, 200) }) }))
       return answer(202, {})
     }
 
@@ -197,7 +233,7 @@ export function host(config) {
     // A change: only from the Jeans it serves, which a browser always names, with the share's write token.
     if (request.method !== 'PUT' && request.method !== 'DELETE') return answer(405, { error: 'Not here.' })
     if (!ours) return answer(403, { error: 'This host does not serve this origin.' })
-    if (++mine.writes > WRITES) return answer(429, { error: 'Too many changes. Try again later.' })
+    if (spend('writes')) return answer(429, { error: 'Too many changes. Try again later.' })
     const token = /^Bearer ([\w-]{43})$/.exec(request.headers.get('authorization') ?? '')?.[1]
     if (!token) return answer(401, { error: 'A write token is needed.' })
     if (await idOf(token) !== id) return answer(403, { error: 'This share is someone else’s.' })

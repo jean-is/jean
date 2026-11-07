@@ -8,3 +8,12 @@ app-site[data-width='phone'] iframe { max-inline-size: 390px; }
 app-site[data-width='tablet'] iframe { max-inline-size: 768px; }
 .site-test { position: fixed; inset-block-start: 0; inset-inline-start: 0; block-size: 800px; clip-path: inset(50%); pointer-events: none; }
 .site-test iframe { inline-size: 100%; block-size: 100%; border: 0; }
+/* Publishing (publish.js): the name between the address's two parts, the address once online, the recovery code. */
+.site-publish .site-name { display: flex; align-items: center; gap: 0.25rem; }
+.site-publish .site-name input { flex: 1; min-inline-size: 0; }
+.site-publish .site-out { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.site-publish .site-out a, .site-publish .site-code { overflow-wrap: anywhere; }
+.site-publish .site-code { font-size: 1.125rem; letter-spacing: 0.05em; }
+.site-publish .site-kept { display: flex; align-items: center; gap: 0.5rem; }
+.site-publish .site-told:empty { margin: 0; }
+.site-publish .button:disabled { opacity: 0.5; cursor: default; }
