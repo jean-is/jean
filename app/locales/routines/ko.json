@@ -20,6 +20,7 @@
   "routines.every.month": "매월",
   "routines.when.file": "파일이 공유될 때마다",
   "routines.when.made": "파일이 만들어질 때마다",
+  "routines.when.back": "한동안 떠났다가 돌아올 때마다",
   "routines.if": "이 질문의 답이 ‘예’일 때만",
   "routines.on": "날짜",
   "routines.at": "시간",

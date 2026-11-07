@@ -20,6 +20,7 @@
   "routines.every.month": "Co miesiąc",
   "routines.when.file": "Za każdym razem, gdy plik zostanie udostępniony",
   "routines.when.made": "Za każdym razem, gdy powstanie plik",
+  "routines.when.back": "Za każdym razem, gdy wracasz po przerwie",
   "routines.if": "Tylko gdy odpowiedź brzmi „tak” na",
   "routines.on": "Dzień",
   "routines.at": "Godzina",

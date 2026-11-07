@@ -165,7 +165,7 @@ function listed(all) {
       // The whole row opens its page, but for its switch; its button is the way there from the keyboard.
       return html`<li class=${routine.active ? '' : 'is-off'} @click=${(/** @type {Event} */ e) => /** @type {Element} */ (e.target).closest('.item, .switch') || go(id)}>
         <button class="item" data-routine=${id} @click=${() => go(id)}>
-          <span class="item-icon">${'when' in routine ? icons.file : icons.alarm}</span><span class="item-text"><strong dir="auto">${routine.title}</strong><small>${line(routine)}</small></span>
+          <span class="item-icon">${'when' in routine ? icons[routine.when === 'back' ? 'since' : 'file'] : icons.alarm}</span><span class="item-text"><strong dir="auto">${routine.title}</strong><small>${line(routine)}</small></span>
           ${routine.active ? pill(outcome(last), last?.createdAt) : pill('paused')}</button>
         <input type="checkbox" class="switch" role="switch" title=${routine.title} .checked=${routine.active} @change=${turn(routine)}>${icons.chevron}</li>`
     })}</ul></section>` : html`<p class="muted small">${t('routines.none')}</p>`}
@@ -184,7 +184,7 @@ function page(routine) {
   const runs = runsOf(routine.path).slice(0, 10)
   const at = new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'full', timeStyle: 'short' })
   // Run now and its switch beside its title (D430): a routine a file sets off runs only when one comes.
-  return html`${head(routine.title, line(routine), html`<span class="routine-acts">${'when' in routine ? nothing
+  return html`${head(routine.title, line(routine), html`<span class="routine-acts">${'when' in routine && routine.when !== 'back' ? nothing
     : html`<button class="button" ?disabled=${app.busy.value} @click=${() => runNow(routine.path)}>${icons.play} ${t('routines.run')}</button>`}
     <input type="checkbox" class="switch" role="switch" title=${routine.title} .checked=${routine.active} @change=${turn(routine)}></span>`)}
     <section class="routine-form">
@@ -242,7 +242,7 @@ function planned(routine, set) {
       ${minutes.map((each) => html`<option value=${each} ?selected=${each === minute}>${t('routines.minute', { minute: two.format(each) })}</option>`)}
     </select></label>` : html`<label for="routine-at">${t('routines.at')}<input id="routine-at" type="time" .value=${live(String(timed.at))} @change=${(/** @type {Event} */ e) => set({ at: value(e) })}></label>`}
   </div>
-  ${routine.when ? html`<label for="routine-if">${t('routines.if')}<input id="routine-if" type="text" dir="auto" .value=${routine.if ?? ''} @change=${(/** @type {Event} */ e) => set({ if: value(e) })}></label>` : nothing}`
+  ${routine.when && routine.when !== 'back' ? html`<label for="routine-if">${t('routines.if')}<input id="routine-if" type="text" dir="auto" .value=${routine.if ?? ''} @change=${(/** @type {Event} */ e) => set({ if: value(e) })}></label>` : nothing}`
 }
 
 /**

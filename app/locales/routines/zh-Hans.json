@@ -20,6 +20,7 @@
   "routines.every.month": "每月",
   "routines.when.file": "每次分享文件时",
   "routines.when.made": "每次生成文件时",
+  "routines.when.back": "每次离开一阵后回来时",
   "routines.if": "仅当以下问题的答案为“是”时",
   "routines.on": "日期",
   "routines.at": "时间",

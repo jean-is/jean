@@ -1,38 +1,11 @@
-// Since last time (docs/product.md, "What Jean is doing"): when the user opens Jean after time
-// away and has connected services, Jean starts with a short brief of what is new there. The
-// brief only reads: for that turn anything that would send, change or delete is refused,
-// whatever the rules say, and reading still asks first unless the user allowed it. Jean can't
-// work while the tab is closed, so the brief is read when the user comes back, and says so.
-import { effect } from '@preact/signals-core'
-import { register } from '../../ui/caps.js'
-import { app, effective, brainsHere, newConversation, send } from '../../ui/state.js'
-import { noteRecord } from '../../core/events.js'
+// Since last time (D101): a routine that runs each time the person comes back after time away (D294), asking what is
+// new in their connected services, its runs only reading. Found by coming back with a service connected; turned on, it
+// makes that routine in the room, run at once since they just came back, which Settings › Routines then changes, stops
+// or deletes like any other.
+import { register, unlock } from '../../ui/caps.js'
 import { t } from '../../core/i18n.js'
 
-/** Whether there is anything to read: a service the user or the organisation connected. */
-export const connected = () => Boolean((effective.peek().settings.connections ?? []).length || (app.policy.connections ?? []).length)
+/** The routine, as the capability is turned on (ui/discovery.js's begin). */
+export const make = async () => (await unlock('routines')) && (await import('../routines/routines.js')).backRoutine(t('cap.since.name'), t('since.prompt'))
 
-/** What the brain is told, in English like every prompt, with when the user was last here. @param {Date} since */
-const note = (since) => noteRecord(`The user is back; they were last here on ${since.toISOString().slice(0, 16).replace('T', ' ')} UTC. Start with a short brief of what is new in their connected services since then. Only read: never send, change or delete anything.`, { kind: 'since', since: since.toISOString() })
-
-/**
- * The brief, in a conversation of its own. Until it starts, Jean is back from time away
- * (`app.back`), which routines wait for (D122). @param {number} [since] when the user was last here
- */
-export async function brief(since = app.back.peek()) {
-  if (!since || !connected() || !brainsHere.peek().length || app.busy.peek()) return void (app.back.value = 0)
-  // The services' tools have to be listed before the brain is told about them.
-  await (await import('../connections/connections.js')).listed
-  app.back.value = 0
-  newConversation()
-  await send(t('since.prompt'), { notes: [note(new Date(since))] })
-}
-
-effect(() => {
-  if (app.back.value) queueMicrotask(() => brief())
-})
-
-// What a brief may do: read, search, look things up and work things out. Anything that would send, change or
-// delete is refused, whatever the rules say, in the turn that came with its note.
-const READING = ['read', 'search', 'fetch', 'think', 'execute']
-register({ id: 'since', hooks: [{ on: 'tool.check', run: (e, next) => (e.notes.includes('since') && !READING.includes(e.kind) ? { decision: 'never' } : next(e)) }] })
+register({ id: 'since' })

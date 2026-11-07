@@ -20,6 +20,7 @@
   "routines.every.month": "Varje månad",
   "routines.when.file": "Varje gång en fil delas",
   "routines.when.made": "Varje gång en fil skapas",
+  "routines.when.back": "Varje gång du kommer tillbaka efter en stund",
   "routines.if": "Bara om svaret är ja på",
   "routines.on": "Dag",
   "routines.at": "Tid",

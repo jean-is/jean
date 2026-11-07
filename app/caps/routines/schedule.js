@@ -3,7 +3,8 @@
 // matter holds the schedule, the body the request, in the user's words. With no server, a routine
 // runs while Jean is open, or as soon as Jean is opened after it fell due: the times missed
 // meanwhile make one run, not one each. Times are the device's local time. Or it runs each time
-// something happens instead (D294): a file shared, or a file Jean made, which passes its question if it has one.
+// something happens instead (D294): a file shared, or a file Jean made, which passes its question if it has one, or the
+// person coming back after time away, which Since last time is (D101).
 // One turned off runs only by hand, and back on it makes up none of the times it fell due while off (D430).
 // Host-agnostic: no DOM, tested under node --test.
 import { join } from '../../core/fs.js'
@@ -16,7 +17,8 @@ import { parseFrontMatter, stringifyFrontMatter } from '../../core/settings.js'
  * month's last day instead), the date, "YYYY-MM-DD", once; at: the local time, "HH:MM", of which
  * an hour takes the minutes. weekday: the days that aren't the weekend where the user lives.
  * @typedef {{ every: 'once' | 'hour' | 'day' | 'weekday' | 'week' | 'month', on?: number | string, at: string }} Schedule
- * when: what sets it off instead, a file the user shares or one Jean makes; if: a yes-or-no question about the file, in the user's words (D294).
+ * when: what sets it off instead, a file the user shares or one Jean makes, or the user coming back after time away; if: a yes-or-no
+ * question about the file, in the user's words (D294).
  * @typedef {{ when: typeof WHEN[number], if?: string }} Trigger
  * flow: the id of a flow the routine runs, its request then the flow's name (D218). brain: who answers its runs, 'auto' or a
  * brain's id, and model the version with it; without it, the brain the user's messages have (D303). active: whether it runs, on
@@ -25,7 +27,7 @@ import { parseFrontMatter, stringifyFrontMatter } from '../../core/settings.js'
  */
 
 export const EVERY = /** @type {const} */ (['once', 'hour', 'day', 'weekday', 'week', 'month'])
-export const WHEN = /** @type {const} */ (['file', 'made'])
+export const WHEN = /** @type {const} */ (['file', 'made', 'back'])
 /** Day names as the brain writes them, Sunday first like Date#getDay. */
 export const DAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
 const AT = /^([01]?\d|2[0-3]):([0-5]\d)$/
@@ -55,7 +57,7 @@ export function schedule({ every, on, at }, now = new Date()) {
 export function trigger({ when, if: question }) {
   if (!WHEN.includes(/** @type {any} */ (when))) return null
   const asked = String(question ?? '').trim()
-  return { when: /** @type {Trigger['when']} */ (when), ...(asked && { if: asked }) }
+  return { when: /** @type {Trigger['when']} */ (when), ...(asked && when !== 'back' && { if: asked }) }
 }
 
 /** Whether a routine runs on this day. @param {Schedule} plan @param {Date} day @param {number[]} weekend */
@@ -113,7 +115,7 @@ export function localStamp(time) {
 
 /** A schedule in English, for the brain. @param {Schedule | Trigger} plan */
 export function inEnglish(plan) {
-  if ('when' in plan) return `each time ${plan.when === 'file' ? 'the user shares a file' : 'you make a file'}${plan.if ? `, when the answer to "${plan.if}" about it is yes` : ''}`
+  if ('when' in plan) return plan.when === 'back' ? 'each time the user opens you again after time away' : `each time ${plan.when === 'file' ? 'the user shares a file' : 'you make a file'}${plan.if ? `, when the answer to "${plan.if}" about it is yes` : ''}`
   if (plan.every === 'once') return `once, on ${localStamp(new Date(`${plan.on}T${plan.at}`))}`
   if (plan.every === 'hour') return `every hour at :${plan.at.slice(3)}`
   const day = plan.every === 'week' ? `every ${DAYS[Number(plan.on ?? 0)].replace(/^./, (c) => c.toUpperCase())}` : plan.every === 'month' ? `on day ${plan.on} of every month` : plan.every === 'weekday' ? 'every working day' : 'every day'

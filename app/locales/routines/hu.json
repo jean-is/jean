@@ -20,6 +20,7 @@
   "routines.every.month": "Havonta",
   "routines.when.file": "Minden alkalommal, amikor egy fájlt megosztanak",
   "routines.when.made": "Minden alkalommal, amikor egy fájl elkészül",
+  "routines.when.back": "Minden alkalommal, amikor egy idő után visszatér",
   "routines.if": "Csak ha a válasz igen erre",
   "routines.on": "Nap",
   "routines.at": "Idő",

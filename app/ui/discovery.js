@@ -174,6 +174,7 @@ export async function begin(id) {
   if (id === 'live') await (await import('../caps/live/live.js')).toggle()
   if (id === 'camera') await (await import('../caps/camera/camera.js')).open()
   if (id === 'find') app.dialog.value = 'find'
+  if (id === 'since') await (await import('../caps/since/since.js')).make()
   if (id === 'lock' && app.dialog.peek() !== 'settings') (await import('./dialogs.js')).openSettings('data/lock')
   if (id === 'browser') (await import('../caps/browser/browser.js')).show()
   if (id === 'flows') (await import('../caps/flows/flows.js')).here()

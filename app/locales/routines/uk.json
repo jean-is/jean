@@ -20,6 +20,7 @@
   "routines.every.month": "Щомісяця",
   "routines.when.file": "Щоразу, коли діляться файлом",
   "routines.when.made": "Щоразу, коли створюється файл",
+  "routines.when.back": "Щоразу, коли ви повертаєтеся після перерви",
   "routines.if": "Лише якщо відповідь «так» на питання",
   "routines.on": "День",
   "routines.at": "Час",

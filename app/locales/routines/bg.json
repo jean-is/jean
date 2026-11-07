@@ -20,6 +20,7 @@
   "routines.every.month": "Всеки месец",
   "routines.when.file": "Всеки път, когато се сподели файл",
   "routines.when.made": "Всеки път, когато се създаде файл",
+  "routines.when.back": "Всеки път, когато се върнете след отсъствие",
   "routines.if": "Само ако отговорът е да на",
   "routines.on": "Ден",
   "routines.at": "Час",

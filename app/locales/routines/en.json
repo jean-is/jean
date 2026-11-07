@@ -20,6 +20,7 @@
   "routines.every.month": "Every month",
   "routines.when.file": "Each time a file is shared",
   "routines.when.made": "Each time a file is made",
+  "routines.when.back": "Each time you come back after a while",
   "routines.if": "Only if the answer is yes to",
   "routines.on": "Day",
   "routines.at": "Time",

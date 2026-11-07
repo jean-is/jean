@@ -53,7 +53,7 @@ export const runsOf = (path) => app.conversations.peek().filter((item) => item.r
 const scheduleTool = {
   spec: {
     name: 'schedule',
-    description: 'Make a routine: a request you send yourself on a schedule, in a conversation of its own, when the user wants something done regularly, or once later (a reminder). title: a few words; request: what to do, as the user would ask it, standing on its own since a run doesn’t see this conversation (where the data is, what to work out, what to report); both in the user’s language. Or flow: the name of one of the user’s flows, which the routine runs instead. every: once, hour, day, weekday (working days), week or month; on: the day of the week (monday…sunday) or of the month (1–31), or once the date (YYYY-MM-DD) or the day of the week, the next one; at: the local time, HH:MM, of which an hour takes the minutes. Or, instead of every and at, when: file, each time the user shares a file, or made, each time you make one; the file comes with the request; if: a yes-or-no question in the user’s language the file must pass (Is it an invoice?).',
+    description: 'Make a routine: a request you send yourself on a schedule, in a conversation of its own, when the user wants something done regularly, or once later (a reminder). title: a few words; request: what to do, as the user would ask it, standing on its own since a run doesn’t see this conversation (where the data is, what to work out, what to report); both in the user’s language. Or flow: the name of one of the user’s flows, which the routine runs instead. every: once, hour, day, weekday (working days), week or month; on: the day of the week (monday…sunday) or of the month (1–31), or once the date (YYYY-MM-DD) or the day of the week, the next one; at: the local time, HH:MM, of which an hour takes the minutes. Or, instead of every and at, when: file, each time the user shares a file, or made, each time you make one, the file coming with the request, with if: a yes-or-no question in the user’s language the file must pass (Is it an invoice?); or back, each time the user opens you again after time away, whose runs only read.',
     parameters: {
       type: 'object',
       properties: {
@@ -73,7 +73,7 @@ const scheduleTool = {
     const flow = args?.flow && loaded.peek().has('flows') ? (await import('../flows/graph.js')).flowNamed(await (await import('../flows/flows.js')).refresh(), args.flow) : undefined
     if (args?.flow && !flow) throw new Error(`No flow is called "${args.flow}".`)
     const request = flow?.name ?? String(args?.request ?? '').trim()
-    if (!plan) throw new Error('A routine needs every (once, hour, day, weekday, week or month), at (HH:MM), and on for a week (monday…sunday), a month (1–31) or once (YYYY-MM-DD); or when (file or made).')
+    if (!plan) throw new Error('A routine needs every (once, hour, day, weekday, week or month), at (HH:MM), and on for a week (monday…sunday), a month (1–31) or once (YYYY-MM-DD); or when (file, made or back).')
     if (!title || !request) throw new Error('A routine needs a title and a request.')
     if ('every' in plan && !dueTime(plan, new Date(), week().weekend, 1)) throw new Error(`${inEnglish(plan)} has passed: it is ${localStamp(new Date())}.`)
     const routine = newRoutine(folder(), { title, request, by: 'jean', ...(flow && { flow: /** @type {any} */ (flow).id }), ...plan })
@@ -113,15 +113,16 @@ const runsTool = {
 
 /**
  * What the brain reads before the request: whose it is, how often, and when it fell due, that the
- * user ran it, or the file that set it off; then how often it ran before, and the last run as it went.
- * @param {Routine} routine @param {Date} time @param {boolean} [asked] @param {ResourceLink} [file]
+ * user ran it, the file that set it off, or that the user came back; then how often it ran before, and the last run as it went.
+ * @param {Routine} routine @param {Date} time @param {boolean} [asked] @param {ResourceLink} [file] @param {number} [back] when the user was last here
  */
-async function note(routine, time, asked = false, file) {
+async function note(routine, time, asked = false, file, back) {
   const runs = runsOf(routine.path)
   const last = runs.length ? await loadConversation(app.fs, runs[0].path) : null
   const before = last ? ` It ran ${runs.length === 1 ? 'once' : `${runs.length} times`} before, last on ${localStamp(new Date(runs[0].createdAt))}; what is new is what came after that. routine_runs reads any earlier run.${
     loaded.peek().has('computer') ? ' What you keep in /workspace stays there for its next runs.' : ''}\n\nThe last run, as it went, for reference:\n\n${digest(last.records, 8_000)}` : ''
   const now = file ? `this time it is ${file.name}, ${'when' in routine && routine.when === 'made' ? 'which you made' : 'which the user shared'} in another task, shared with it. The user may not be watching`
+    : back ? `the user just came back, last here on ${localStamp(new Date(back))}, local time; what is new is what came after that`
     : asked ? 'the user ran it now' : `it fell due on ${localStamp(time)}, local time. The user may not be watching`
   return noteRecord(`The next message is the user's routine "${routine.title}", which you send yourself ${inEnglish(routine)}; ${now}.${before}`,
     { kind: 'routine', routine: routine.path, title: routine.title, due: time.toISOString(), ...(asked && { asked }), ...(file && { file: file.name }) })
@@ -129,8 +130,24 @@ async function note(routine, time, asked = false, file) {
 
 // ─── What sets them off (D294) ───────────────────────────────────────────────
 
-/** Files that set a routine off, oldest first, waiting for its run in this tab, where they were shared or made. @type {{ routine: string, file: ResourceLink }[]} */
+/** Files that set a routine off, oldest first, waiting for its run in this tab, where they were shared or made, or the user's coming back. @type {{ routine: string, file?: ResourceLink, back?: number }[]} */
 const waiting = []
+/** The routines that ran for this coming back, each once however often the room changes. */
+const cameBack = new Set()
+
+/** The user came back after time away (`app.back`, when they were last here): each of the room's routines it sets off, those on, waits for its run. @param {number} since */
+async function comeBack(since) {
+  for (const routine of await routines()) {
+    if (routine.active && 'when' in routine && routine.when === 'back' && !cameBack.has(routine.path)) waiting.push({ routine: cameBack.add(routine.path) && routine.path, back: since })
+  }
+  later()
+}
+
+/** Since last time (D101): the routine that comes back with the user, made in the room as it is turned on, and run now if they just came back. @param {string} title @param {string} request */
+export async function backRoutine(title, request) {
+  await writeRoutine(app.fs, newRoutine(folder(), { title, request, by: app.deviceId, when: 'back' }))
+  if (app.back.peek()) await comeBack(app.back.peek())
+}
 
 /** A file was shared or made: each of the room's routines it sets off, those on, waits for its run. @param {'file' | 'made'} when @param {ResourceLink} file */
 async function setOff(when, file) {
@@ -159,8 +176,8 @@ export async function check(now = new Date()) {
     if (routine && navigator.locks) await navigator.locks.request(`routine:${routine.path}`, { ifAvailable: true }, (lock) => lock && run(routine.path, now))
     else if (routine) await run(routine.path, now)
     else if (waiting.length) {
-      const { routine: path, file } = /** @type {typeof waiting[number]} */ (waiting.shift())
-      await run(path, now, false, file)
+      const { routine: path, file, back } = /** @type {typeof waiting[number]} */ (waiting.shift())
+      await run(path, now, false, file, back)
     }
   } finally {
     checking = false
@@ -172,20 +189,24 @@ export async function check(now = new Date()) {
  * or one a file set off, which comes with it unless it was turned off since. It shows only when the user asked for it, and
  * otherwise runs out of sight at once, the page and the address left as they were (D317, D583). It
  * returns once begun: what a run waits for, an approval or a question, holds up no other routine.
- * @param {string} path @param {Date} now @param {boolean} [asked] @param {ResourceLink} [file]
+ * @param {string} path @param {Date} now @param {boolean} [asked] @param {ResourceLink} [file] @param {number} [back] when the user who came back was last here
  */
-async function run(path, now, asked = false, file) {
+async function run(path, now, asked = false, file, back) {
   const routine = (await routines()).find((candidate) => candidate.path === path)
-  const time = asked || (file && routine?.active) ? now : routine && due(routine, now, week().weekend)
+  const time = asked || ((file || back) && routine?.active) ? now : routine && due(routine, now, week().weekend)
   if (!routine || !time) return
   await writeRoutine(app.fs, { ...routine, lastRun: now.toISOString() })
-  const told = await note(routine, time, asked, file)
+  const told = await note(routine, time, asked, file, back)
   const files = file ? [{ key: file.uri, name: file.name, status: /** @type {const} */ ('ready'), link: file, pages: splitPages((await fileText(app.fs, app.projectDir, file.uri)) ?? '') }] : []
   // A routine that runs a flow: its steps are the turn (D218).
   const call = routine.flow && await unlock('flows') ? { name: 'run_flow', args: { flow: routine.flow, name: routine.request } } : undefined
-  const options = { notes: [told], call, files, brain: brainOf(routine) }
-  if (asked) newConversation()
-  const sent = asked ? send(routine.request, options) : import('../../ui/send.js').then((module) => module.sendAside(routine.request, options))
+  // Coming back, it only reads, as the person arrives: the turn's 'since' note says so to the brain and to the hook below.
+  const since = back ? [noteRecord('Only read: never send, change or delete anything.', { kind: 'since', since: new Date(back).toISOString() })] : []
+  const options = { notes: [told, ...since], call, files, brain: brainOf(routine) }
+  // In front when the user asked, or as they come back to no task in particular, as Since last time always was; else out of sight.
+  const front = asked || (back && !app.current.peek())
+  if (front) newConversation()
+  const sent = front ? send(routine.request, options) : import('../../ui/send.js').then((module) => module.sendAside(routine.request, options))
   sent.catch((error) => console.warn('Routines', error))
 }
 /**
@@ -213,6 +234,10 @@ effect(() => {
   void app.project.value
   later()
 })
+effect(() => { if (app.back.value) void comeBack(app.back.value) })
+
+// What a run set off by coming back may do: read, search, look things up and work things out; what would send, change or delete is refused.
+const READING = ['read', 'search', 'fetch', 'think', 'execute']
 
 /** Settings' Routines, from ./page.js, loaded the first time it shows. */
 const page = lazyPage(() => import('./page.js'))
@@ -221,10 +246,11 @@ register({
   id: 'routines',
   tools: [scheduleTool, runsTool],
   slots: { settings: { id: 'routines', at: 70, label: 'cap.routines.name', icon: icons.alarm, draw: page } },
-  lines: [{ name: 'schedule', line: 'make a routine, when the user wants something done regularly, later, or each time a file comes' }, { name: 'routine_runs', line: 'read a routine’s earlier runs: what each did, answered and made' }],
+  lines: [{ name: 'schedule', line: 'make a routine, when the user wants something done regularly, later, each time a file comes, or each time they come back' }, { name: 'routine_runs', line: 'read a routine’s earlier runs: what each did, answered and made' }],
   // What sets routines off (D294): a file shared, or one Jean made; never in a routine's own run.
   hooks: [
     { on: 'file.add', run: (e, next) => { if (!e.routine) setOff('file', e.file); return next(e) } },
     { on: 'turn.end', run: (e, next) => { if (!e.routine) for (const file of e.made) setOff('made', file); return next(e) } },
+    { on: 'tool.check', run: (e, next) => (e.notes.includes('since') && !READING.includes(e.kind) ? { decision: 'never' } : next(e)) },
   ],
 })

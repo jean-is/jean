@@ -3,7 +3,7 @@
 // against its sources. The fake brain splits a briefing between two helpers, each reading one
 // email from the fake mail service (test/fixtures/fake-mail.js).
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, connect, MAIL_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, connect, openSettings, MAIL_URL } from './helpers.js'
 
 /** @param {import('@playwright/test').Page} page */
 const system = (page) => page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.find((record) => record.meta?.prompt)?.meta?.prompt.system)
@@ -85,7 +85,8 @@ test('back after time away, Jean starts with a brief of what’s new, reading on
   await start(page)
   await connect(page, `${MAIL_URL}/mcp`)
   await connectFakeBrain(page)
-  await page.evaluate(async () => (await import('/ui/caps.js')).unlock('since'))
+  // Turned on, it is a routine set off by coming back, in Settings › Routines like any other.
+  await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('since'); await (await import('/caps/since/since.js')).make() })
   // Kept as found before the page comes again: settings are written a moment after.
   await expect.poll(() => page.evaluate(async () => JSON.parse(await (await import('/ui/state.js')).app.fs.read('settings.json') ?? '{}').unlocked ?? [])).toContain('since')
   // Last on screen two days ago.
@@ -101,6 +102,8 @@ test('back after time away, Jean starts with a brief of what’s new, reading on
   await expect(page.locator('.inbox')).toHaveCount(0)
   await page.locator('.activity > summary').last().click()
   await expect(page.locator('.activity-list li[data-status="failed"]')).toContainText('Mail: Send an email')
+  const settings = await openSettings(page, 'Routines')
+  await expect(settings.locator('.item', { hasText: 'Since last time' })).toContainText('Each time you come back after a while')
 })
 
 test('a project’s assistant gets a name and a way of being', async ({ page }) => {

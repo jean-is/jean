@@ -20,6 +20,7 @@
   "routines.every.month": "Todos os meses",
   "routines.when.file": "Sempre que um ficheiro for partilhado",
   "routines.when.made": "Sempre que um ficheiro for criado",
+  "routines.when.back": "Sempre que volta passado algum tempo",
   "routines.if": "Só se a resposta for sim a",
   "routines.on": "Dia",
   "routines.at": "Hora",

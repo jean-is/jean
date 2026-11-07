@@ -20,6 +20,7 @@
   "routines.every.month": "هر ماه",
   "routines.when.file": "هر بار که فایلی به اشتراک گذاشته شود",
   "routines.when.made": "هر بار که فایلی ساخته شود",
+  "routines.when.back": "هر بار که پس از مدتی برمی‌گردید",
   "routines.if": "فقط اگر پاسخ این پرسش بله باشد",
   "routines.on": "روز",
   "routines.at": "ساعت",

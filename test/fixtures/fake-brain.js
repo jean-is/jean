@@ -761,7 +761,7 @@ createServer(async (req, res) => {
   // A connected mail service's tools, by name: declared, or listed in <connections>.
   const mailTool = [...declared].find((name) => name.endsWith('_search_emails')) ?? /\b(\w+_search_emails)\b/.exec(serialized)?.[1]
   const rowsTool = /\b(\w+_query_rows)\b/.exec(serialized)?.[1]
-  const emails = /e-?mails?|inbox|courriels?/i.test(question) || /The user is back/.test(serialized)
+  const emails = /e-?mails?|inbox|courriels?/i.test(question) || /the user just came back/.test(serialized)
   // A script, called by name even when the computer came on mid-conversation (D104).
   const script = 'javascript'
   const fromScript = (/** @type {string} */ name) => ({ name: script, args: { code: `return await tools.${name}({ limit: 3 })` } })
@@ -778,7 +778,7 @@ createServer(async (req, res) => {
   const party = /party/i.test(question) && !helper
   const briefing = /briefing/i.test(question) && !helper
   // A brief of what's new: it reads the emails, then tries to answer one, which must be refused.
-  const back = /The user is back/.test(serialized)
+  const back = /the user just came back/.test(serialized)
   const sendTool = mailTool?.replace(/_search_emails$/, '_send_email')
   const searched = sourcesIn([...messages].reverse().find((m) => m.role === 'tool' && /^Source \[/m.test(m.content))?.content ?? '')
   const steps = '# Weekly sales summary\n\n1. Read the shared sales file.\n2. Total the sales by region.\n3. Answer with a short table.'

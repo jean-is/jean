@@ -425,3 +425,14 @@ test('a routine may run each time a file is shared or made, rather than at a tim
   assert.equal(dueTime(routine, new Date('2026-10-13T10:00:00Z')), null)
   assert.equal(due(routine, new Date('2026-10-13T10:00:00Z'), [0, 6]), null)
 })
+
+test('a routine may run each time the user comes back after time away, as Since last time does, with no question to pass (D101)', async () => {
+  assert.deepEqual(trigger({ when: 'back', if: 'Is it Monday?' }), { when: 'back' })
+  assert.equal(inEnglish({ when: 'back' }), 'each time the user opens you again after time away')
+  const fs = memoryFS()
+  const routine = newRoutine('', { title: 'Since last time', request: 'What’s new since last time?', by: 'device', now: new Date('2026-11-07T10:00:00Z'), when: 'back' })
+  await writeRoutine(fs, routine)
+  assert.match(String(await fs.read(routine.path)), /\nwhen: back\n/)
+  assert.deepEqual((await listRoutines(fs, ''))[0], routine)
+  assert.equal(due(routine, new Date('2026-11-08T10:00:00Z'), [0, 6]), null)
+})

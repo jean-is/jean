@@ -20,6 +20,7 @@
   "routines.every.month": "Svaki mjesec",
   "routines.when.file": "Svaki put kad se podijeli datoteka",
   "routines.when.made": "Svaki put kad se izradi datoteka",
+  "routines.when.back": "Svaki put kad se vratite nakon nekog vremena",
   "routines.if": "Samo ako je odgovor da na",
   "routines.on": "Dan",
   "routines.at": "Vrijeme",

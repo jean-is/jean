@@ -20,6 +20,7 @@
   "routines.every.month": "Каждый месяц",
   "routines.when.file": "Каждый раз, когда делятся файлом",
   "routines.when.made": "Каждый раз, когда создаётся файл",
+  "routines.when.back": "Каждый раз, когда вы возвращаетесь после перерыва",
   "routines.if": "Только если ответ «да» на вопрос",
   "routines.on": "День",
   "routines.at": "Время",
