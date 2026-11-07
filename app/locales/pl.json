@@ -438,6 +438,7 @@
     "other": "{count} stwierdzenia nie ma oparcia w źródłach"
   },
   "check.is.supported": "Zgadza się ze źródłem",
+  "check.is.dated": "Zgadza się ze źródłem, ale mogło się zmienić od czasu odczytu",
   "check.is.contradicted": "Źródło mówi co innego",
   "check.is.missing": "Nie ma tego w źródle",
   "check.is.unknown": "Nie dało się sprawdzić",

@@ -420,6 +420,7 @@
     "other": "{count} pahayag ang hindi sinusuportahan ng mga pinagmulan nito"
   },
   "check.is.supported": "Tugma sa pinagmulan",
+  "check.is.dated": "Tugma sa pinagmulan, pero maaaring nagbago na mula nang mabasa",
   "check.is.contradicted": "Iba ang sinasabi ng pinagmulan",
   "check.is.missing": "Wala sa pinagmulan",
   "check.is.unknown": "Hindi matsek",

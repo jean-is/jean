@@ -429,6 +429,7 @@
     "other": "{count} afirmações não são sustentadas pelas suas fontes"
   },
   "check.is.supported": "Corresponde à fonte",
+  "check.is.dated": "Corresponde à fonte, mas pode ter mudado desde que foi lida",
   "check.is.contradicted": "A fonte diz o contrário",
   "check.is.missing": "Não está na fonte",
   "check.is.unknown": "Não foi possível verificar",

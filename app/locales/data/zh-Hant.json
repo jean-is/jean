@@ -37,5 +37,9 @@
   "data.drop": "也可以把它拖進某個任務。",
   "data.org": "你的組織",
   "data.orgText": "它從你這裡收到和保存的內容",
-  "data.private": "要保留你的任務，請在非無痕視窗中開啟 {name}。"
+  "data.private": "要保留你的任務，請在非無痕視窗中開啟 {name}。",
+  "data.forget": "刪除舊任務",
+  "data.forgetText": "這麼久沒有任何變動的任務會從這台裝置和同步資料夾中永久刪除；已釘選的會保留。",
+  "data.forgetConfirm": "{kept}沒有任何變動的任務將被永久刪除，現在起每天如此。要繼續嗎？",
+  "data.forgetNever": "全部保留"
 }

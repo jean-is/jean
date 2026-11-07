@@ -37,5 +37,9 @@
   "data.drop": "작업에 끌어다 놓아도 돼요.",
   "data.org": "내 조직",
   "data.orgText": "조직이 받는 것과 보관하는 것",
-  "data.private": "작업을 남기려면 비공개가 아닌 창에서 {name}을(를) 여세요."
+  "data.private": "작업을 남기려면 비공개가 아닌 창에서 {name}을(를) 여세요.",
+  "data.forget": "오래된 작업 삭제",
+  "data.forgetText": "그 기간 동안 아무것도 바뀌지 않은 작업은 이 기기와 동기화 폴더에서 영구히 삭제됩니다. 고정한 작업은 남습니다.",
+  "data.forgetConfirm": "{kept} 동안 아무것도 바뀌지 않은 작업이 지금부터 매일 영구히 삭제됩니다. 계속할까요?",
+  "data.forgetNever": "모두 보관"
 }

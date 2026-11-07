@@ -420,6 +420,7 @@
     "other": "{count} ادعا را منابعشان تأیید نمی‌کنند"
   },
   "check.is.supported": "با منبعش جور است",
+  "check.is.dated": "با منبعش می‌خواند، اما شاید از زمان خواندن تغییر کرده باشد",
   "check.is.contradicted": "منبعش چیز دیگری می‌گوید",
   "check.is.missing": "در منبعش نیست",
   "check.is.unknown": "بررسی نشد",

@@ -37,5 +37,9 @@
   "data.drop": "Anda juga boleh melepaskannya ke dalam tugasan.",
   "data.org": "Organisasi anda",
   "data.orgText": "Apa yang diterimanya daripada anda dan disimpannya",
-  "data.private": "Untuk menyimpan tugasan anda, buka {name} dalam tetingkap yang bukan peribadi."
+  "data.private": "Untuk menyimpan tugasan anda, buka {name} dalam tetingkap yang bukan peribadi.",
+  "data.forget": "Padam tugasan lama",
+  "data.forgetText": "Tugasan yang tiada perubahan selama itu dipadam terus, pada peranti ini dan dalam folder yang disegerakkan; yang disemat kekal.",
+  "data.forgetConfirm": "Tugasan yang tiada perubahan selama {kept} akan dipadam terus, sekarang dan setiap hari. Teruskan?",
+  "data.forgetNever": "Simpan semuanya"
 }

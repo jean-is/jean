@@ -37,5 +37,9 @@
   "data.drop": "Puoi anche trascinarlo in un’attività.",
   "data.org": "La tua organizzazione",
   "data.orgText": "Cosa riceve da te e cosa conserva",
-  "data.private": "Per conservare le tue attività, apri {name} in una finestra non privata."
+  "data.private": "Per conservare le tue attività, apri {name} in una finestra non privata.",
+  "data.forget": "Elimina le vecchie attività",
+  "data.forgetText": "Un’attività in cui nulla è cambiato da così tanto viene eliminata per sempre, su questo dispositivo e nella cartella sincronizzata; quelle fissate restano.",
+  "data.forgetConfirm": "Le attività in cui nulla è cambiato da {kept} saranno eliminate per sempre, ora e ogni giorno. Continuare?",
+  "data.forgetNever": "Tienile tutte"
 }

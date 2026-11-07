@@ -7,8 +7,10 @@
 
 /**
  * x and y: where it sits on the canvas, in pixels from the start of its first line.
+ * if: a yes-or-no question about what the step takes, which passes it on when yes, or with otherwise when no, and else gives nothing,
+ * so the steps after it don't run (D717): two of them on one question are an if and an else.
  * @typedef {{ id: string, name: string, x: number, y: number, text?: string, file?: string, ask?: string, skill?: string,
- *   tool?: string, args?: Record<string, any>, each?: boolean }} Step
+ *   tool?: string, args?: Record<string, any>, each?: boolean, if?: string, otherwise?: boolean }} Step
  * @typedef {{ format: 1, kind: 'flow', name: string, author: string, createdAt: string, updatedAt: string, steps: Step[], wires: [string, string][] }} Flow
  * @typedef {{ name: string, value: string }} Input
  * queued: not started; asking: waiting for the user; empty: done, giving nothing, so what follows is skipped; cut: the page
@@ -27,8 +29,8 @@ export const LINE = 120
 /** @param {string} name */
 const key = (name) => name.trim().toLocaleLowerCase()
 
-/** What a step is. @param {Partial<Step>} step @returns {'text' | 'file' | 'ask' | 'tool'} */
-export const kindOf = (step) => (step.tool !== undefined ? 'tool' : step.ask !== undefined ? 'ask' : step.file !== undefined ? 'file' : 'text')
+/** What a step is. @param {Partial<Step>} step @returns {'text' | 'file' | 'ask' | 'tool' | 'if'} */
+export const kindOf = (step) => (step.tool !== undefined ? 'tool' : step.if !== undefined ? 'if' : step.ask !== undefined ? 'ask' : step.file !== undefined ? 'file' : 'text')
 
 /** The steps whose results a step takes, in the order they were wired. @param {Pick<Flow, 'wires'>} flow @param {string} id */
 export const inputsOf = (flow, id) => flow.wires.filter(([, to]) => to === id).map(([from]) => from)
@@ -210,7 +212,7 @@ export function layout(steps, wires) {
 
 /**
  * @typedef {{ name: string, text?: string, file?: string, ask?: string, skill?: string, tool?: string, args?: Record<string, any>,
- *   after?: string[], each?: boolean }} Named
+ *   after?: string[], each?: boolean, if?: string, otherwise?: boolean }} Named
  */
 
 /**
@@ -232,8 +234,8 @@ export function fromSteps(given, previous) {
     const name = String(one?.name ?? '').trim()
     if (!name) throw new Error(`Step ${i + 1} needs a name.`)
     if (byName.has(key(name))) throw new Error(`Two steps are called "${name}": each needs a name of its own.`)
-    const kinds = ['text', 'file', 'ask', 'tool'].filter((kind) => one[/** @type {'text'} */ (kind)] !== undefined)
-    if (kinds.length !== 1) throw new Error(`The step "${name}" needs one of text, file, ask or tool.`)
+    const kinds = ['text', 'file', 'ask', 'tool', 'if'].filter((kind) => one[/** @type {'text'} */ (kind)] !== undefined)
+    if (kinds.length !== 1) throw new Error(`The step "${name}" needs one of text, file, ask, tool or if.`)
     const kept = old.get(key(name))
     let id = kept?.id
     while (!id || ids.has(id)) id = `s${next++}`
@@ -249,6 +251,8 @@ export function fromSteps(given, previous) {
       step.tool = String(one.tool)
       step.args = one.args && typeof one.args === 'object' ? one.args : {}
     }
+    if (one.if !== undefined) step.if = String(one.if)
+    if (one.if !== undefined && one.otherwise) step.otherwise = true
     if (one.each) step.each = true
     return step
   })

@@ -436,6 +436,7 @@
     "other": "{count} טענות לא נתמכות במקורות"
   },
   "check.is.supported": "תואם את המקור",
+  "check.is.dated": "תואם למקור, אבל אולי השתנה מאז שנקרא",
   "check.is.contradicted": "המקור אומר אחרת",
   "check.is.missing": "לא מופיע במקור",
   "check.is.unknown": "לא ניתן לבדוק",

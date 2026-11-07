@@ -37,5 +37,9 @@
   "data.drop": "Ẹ tún lè jù ú sínú iṣẹ́ kan.",
   "data.org": "Àjọ yín",
   "data.orgText": "Ohun tí ó ń gbà lọ́wọ́ yín àti ohun tí ó ń pa mọ́",
-  "data.private": "Láti pa àwọn iṣẹ́ yín mọ́, ẹ ṣí {name} nínú fèrèsé tí kì í ṣe àdáni."
+  "data.private": "Láti pa àwọn iṣẹ́ yín mọ́, ẹ ṣí {name} nínú fèrèsé tí kì í ṣe àdáni.",
+  "data.forget": "Pa àwọn iṣẹ́ àtijọ́ rẹ́",
+  "data.forgetText": "Iṣẹ́ tí nǹkan kan kò yí padà nínú rẹ̀ fún ìgbà tó pọ̀ tó bẹ́ẹ̀ ni a ó pa rẹ́ títí láé, lórí ẹ̀rọ yìí àti nínú fódà tí a mú bára mu; àwọn tí a pín mọ́lẹ̀ yóò dúró.",
+  "data.forgetConfirm": "A ó pa àwọn iṣẹ́ tí nǹkan kan kò yí padà nínú wọn fún {kept} rẹ́ títí láé, nísinsìnyí àti lójoojúmọ́. Ṣé ká tẹ̀síwájú?",
+  "data.forgetNever": "Pa gbogbo wọn mọ́"
 }

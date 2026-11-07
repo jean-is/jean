@@ -184,3 +184,24 @@ test('ChatGPT’s export shared in the box and Claude’s restored in Settings, 
   })
   expect(tax).toContain('Answer as a tax adviser.')
 })
+
+test('Delete old tasks in Your data: what it means said first, then tasks nothing changed in for that long go at once, pinned ones kept (D718)', async ({ page }) => {
+  await start(page)
+  await page.evaluate(async () => {
+    const [{ app, keepRecords, refreshConversations }, { createConversation }, { metaRecord }] = await Promise.all([import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js')])
+    const old = new Date(Date.now() - 200 * 86_400_000)
+    for (const [title, pinned] of [['Old and forgotten', false], ['Old but pinned', true]]) {
+      const { path } = await createConversation(app.fs, { projectDir: app.projectDir, by: 'test', now: old })
+      await keepRecords(path, [{ ...metaRecord('user', { title }), at: old.toISOString() }, ...(pinned ? [{ ...metaRecord('user', { pinned: true }), at: old.toISOString() }] : [])])
+    }
+    const { path } = await createConversation(app.fs, { projectDir: app.projectDir, by: 'test' })
+    await keepRecords(path, [metaRecord('user', { title: 'This week' })])
+    await refreshConversations()
+  })
+  const settings = await openSettings(page, 'Your data')
+  await settings.locator('[data-part="forget"]').click()
+  await expect(settings.getByLabel('Keep them all')).toBeChecked()
+  page.once('dialog', (dialog) => { expect(dialog.message()).toContain('3 months'); void dialog.accept() })
+  await settings.getByLabel('3 months').check()
+  await expect.poll(() => page.evaluate(async () => (await import('/ui/state.js')).app.conversations.value.map((one) => one.title).sort())).toEqual(['Old but pinned', 'This week'])
+})

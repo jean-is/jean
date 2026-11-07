@@ -37,5 +37,9 @@
   "data.drop": "Ayrıca bir göreve de bırakabilirsin.",
   "data.org": "Kuruluşun",
   "data.orgText": "Senden aldıkları ve sakladıkları",
-  "data.private": "Görevlerini saklamak için {name} uygulamasını gizli olmayan bir pencerede aç."
+  "data.private": "Görevlerini saklamak için {name} uygulamasını gizli olmayan bir pencerede aç.",
+  "data.forget": "Eski görevleri sil",
+  "data.forgetText": "Bu kadar süredir hiçbir şeyi değişmeyen bir görev, bu cihazdan ve eşitlenen klasörden kalıcı olarak silinir; sabitlenenler kalır.",
+  "data.forgetConfirm": "{kept} süredir hiçbir şeyi değişmeyen görevler şimdi ve her gün kalıcı olarak silinecek. Devam edilsin mi?",
+  "data.forgetNever": "Hepsini sakla"
 }

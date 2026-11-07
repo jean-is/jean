@@ -37,5 +37,9 @@
   "data.drop": "Možete je i ispustiti u zadatak.",
   "data.org": "Vaša organizacija",
   "data.orgText": "Što od vas prima i čuva",
-  "data.private": "Da biste zadržali zadatke, otvorite aplikaciju {name} u prozoru koji nije privatan."
+  "data.private": "Da biste zadržali zadatke, otvorite aplikaciju {name} u prozoru koji nije privatan.",
+  "data.forget": "Brisanje starih zadataka",
+  "data.forgetText": "Zadatak u kojem se toliko dugo ništa nije promijenilo briše se zauvijek, na ovom uređaju i u sinkroniziranoj mapi; prikvačeni ostaju.",
+  "data.forgetConfirm": "Zadaci u kojima se {kept} ništa nije promijenilo bit će zauvijek obrisani, sada i svaki dan. Nastaviti?",
+  "data.forgetNever": "Zadrži sve"
 }

@@ -37,5 +37,9 @@
   "data.drop": "Du kan også trække den ind i en opgave.",
   "data.org": "Din organisation",
   "data.orgText": "Hvad den modtager fra dig og gemmer",
-  "data.private": "Åbn {name} i et vindue, der ikke er privat, for at beholde dine opgaver."
+  "data.private": "Åbn {name} i et vindue, der ikke er privat, for at beholde dine opgaver.",
+  "data.forget": "Slet gamle opgaver",
+  "data.forgetText": "En opgave, hvor intet er ændret så længe, slettes for altid på denne enhed og i den synkroniserede mappe; fastgjorte bliver.",
+  "data.forgetConfirm": "Opgaver, hvor intet er ændret i {kept}, slettes for altid, nu og hver dag. Fortsæt?",
+  "data.forgetNever": "Behold dem alle"
 }

@@ -37,5 +37,9 @@
   "data.drop": "Kana iya kuma jefa shi cikin wani aiki.",
   "data.org": "Ƙungiyarka",
   "data.orgText": "Abin da take karɓa daga gare ka da abin da take ajiyewa",
-  "data.private": "Don ajiye ayyukanka, buɗe {name} a taga wadda ba ta sirri ba."
+  "data.private": "Don ajiye ayyukanka, buɗe {name} a taga wadda ba ta sirri ba.",
+  "data.forget": "Share tsofaffin ayyuka",
+  "data.forgetText": "Aikin da babu abin da ya canza a cikinsa tsawon wannan lokaci za a share shi har abada, a kan wannan na’ura da cikin babban fayil ɗin da aka daidaita; waɗanda aka maƙala za su tsaya.",
+  "data.forgetConfirm": "Za a share har abada ayyukan da babu abin da ya canza a cikinsu tsawon {kept}, yanzu da kowace rana. A ci gaba?",
+  "data.forgetNever": "Ajiye su duka"
 }

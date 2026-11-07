@@ -37,5 +37,9 @@
   "data.drop": "Anda juga bisa menjatuhkannya ke sebuah tugas.",
   "data.org": "Organisasi Anda",
   "data.orgText": "Yang diterimanya dari Anda dan disimpannya",
-  "data.private": "Untuk menyimpan tugas Anda, buka {name} di jendela yang bukan pribadi."
+  "data.private": "Untuk menyimpan tugas Anda, buka {name} di jendela yang bukan pribadi.",
+  "data.forget": "Hapus tugas lama",
+  "data.forgetText": "Tugas yang tidak berubah selama itu dihapus selamanya, di perangkat ini dan di folder yang disinkronkan; yang disematkan tetap ada.",
+  "data.forgetConfirm": "Tugas yang tidak berubah selama {kept} akan dihapus selamanya, sekarang dan setiap hari. Lanjutkan?",
+  "data.forgetNever": "Simpan semua"
 }

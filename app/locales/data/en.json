@@ -37,5 +37,9 @@
   "data.drop": "You can also drop it into a task.",
   "data.org": "Your organization",
   "data.orgText": "What it receives from you and keeps",
-  "data.private": "To keep your tasks, open {name} in a window that isn’t private."
+  "data.private": "To keep your tasks, open {name} in a window that isn’t private.",
+  "data.forget": "Delete old tasks",
+  "data.forgetText": "A task nothing changed in for that long is deleted for good, on this device and in the synced folder; pinned ones stay.",
+  "data.forgetConfirm": "Tasks nothing changed in for {kept} will be deleted for good, now and each day. Go on?",
+  "data.forgetNever": "Keep them all"
 }

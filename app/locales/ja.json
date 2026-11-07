@@ -411,6 +411,7 @@
     "other": "{count} 件の記述は出典で裏づけられていません"
   },
   "check.is.supported": "出典と一致",
+  "check.is.dated": "出典と一致しますが、読んだ後に変わっている可能性があります",
   "check.is.contradicted": "出典の内容と食い違う",
   "check.is.missing": "出典に記載なし",
   "check.is.unknown": "確認できませんでした",

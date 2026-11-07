@@ -37,5 +37,9 @@
   "data.drop": "Bạn cũng có thể thả nó vào một nhiệm vụ.",
   "data.org": "Tổ chức của bạn",
   "data.orgText": "Những gì tổ chức nhận từ bạn và giữ lại",
-  "data.private": "Để giữ các nhiệm vụ, hãy mở {name} trong cửa sổ không riêng tư."
+  "data.private": "Để giữ các nhiệm vụ, hãy mở {name} trong cửa sổ không riêng tư.",
+  "data.forget": "Xóa tác vụ cũ",
+  "data.forgetText": "Tác vụ không có gì thay đổi trong khoảng ấy sẽ bị xóa vĩnh viễn, trên thiết bị này và trong thư mục đồng bộ; tác vụ đã ghim được giữ lại.",
+  "data.forgetConfirm": "Các tác vụ không có gì thay đổi trong {kept} sẽ bị xóa vĩnh viễn, ngay bây giờ và mỗi ngày. Tiếp tục chứ?",
+  "data.forgetNever": "Giữ tất cả"
 }

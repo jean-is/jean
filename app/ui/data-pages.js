@@ -5,7 +5,7 @@
 // Loaded the first time Your data shows; its strings are a part of their own (locales/data/).
 import { html, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
-import { app } from './state.js'
+import { app, effective, updateSettings } from './state.js'
 import { unlock, isDenied, slots, loaded } from './caps.js'
 import { sectionOpen, pageOpen, openSettings, projectName, backup, lockedBy } from './dialogs.js'
 import { everywhere } from './discovery.js'
@@ -138,6 +138,18 @@ const BRING = { id: 'import', at: 0, group: 'others', icon: icons.upload, label:
     <p>${t('data.assistants')}</p><p>${t('data.gemini')}</p></section>
     <section><div class="row">${picker('data.choose')}</div><p class="hint">${t('data.drop')}</p></section>` }
 
+/** How long a task is kept once nothing changes in it: always, or a month, three months or a year, said as the language says it. */
+const KEEP = [0, 30, 90, 365]
+const kept = (/** @type {number} */ days) => (days ? new Intl.NumberFormat(intlLocales(), { style: 'unit', unit: days < 365 ? 'month' : 'year', unitDisplay: 'long' }).format(days < 365 ? days / 30 : 1) : t('data.forgetNever'))
+/** Delete old tasks (D718): how long, chosen with what it means said first, older ones deleted at once, then each day. @type {Part} */
+const forgetting = { id: 'forget', at: 8, group: 'here', icon: icons.trash, label: 'data.forget', text: () => kept(effective.value.settings.forget ?? 0), line: () => t('data.forgetText'),
+  draw: () => html`<ul class="list approval-choices" role="radiogroup" aria-label=${t('data.forget')}>${KEEP.map((days) => html`<li><label for=${`forget-${days}`}>
+    <input id=${`forget-${days}`} type="radio" name="forget" .checked=${(effective.value.settings.forget ?? 0) === days} @change=${async () => {
+      if (days && !confirm(t('data.forgetConfirm', { kept: kept(days) }))) return void (app.settings.value = { ...app.settings.value })
+      await updateSettings({ forget: days || undefined })
+      if (days) await import('./forget.js').then((module) => module.forget(true))
+    }}><span>${kept(days)}</span></label></li>`)}</ul>` }
+
 /** Jean's own parts, Space used and Backup, the organization's once policy names one, and the capabilities' found. @returns {Part[]} */
 function all() {
   const at = backedUp()
@@ -151,6 +163,7 @@ function all() {
     draw: () => html`<p>${t('backup.text', { name: BRAND.name })}</p><p class="hint">${t('data.readable')}</p>
       <section><h3>${t('backup.restore')}</h3><div class="row">${picker('data.pick')}</div>
       ${app.policy.child ? nothing : html`<p class="hint"><button class="link-button" @click=${() => go('import')}>${t('data.import')}</button></p>`}</section>` })]),
+  forgetting,
   ...(!slots('organization').length ? [] : [/** @type {Part} */ ({ id: 'organization', at: 9, group: 'others', icon: icons.badge, label: 'data.org', text: () => t('data.orgText'),
     draw: () => slots('organization').map((part) => part.draw()) })]),
   .../** @type {Part[]} */ (slots('data'))].filter((part) => part.when?.() ?? true)

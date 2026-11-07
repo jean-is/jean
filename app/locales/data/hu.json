@@ -37,5 +37,9 @@
   "data.drop": "Egy feladatba is behúzhatod.",
   "data.org": "A szervezeted",
   "data.orgText": "Mit kap tőled, és mit őriz meg",
-  "data.private": "A feladataid megtartásához nyisd meg a(z) {name} alkalmazást nem privát ablakban."
+  "data.private": "A feladataid megtartásához nyisd meg a(z) {name} alkalmazást nem privát ablakban.",
+  "data.forget": "Régi feladatok törlése",
+  "data.forgetText": "Az a feladat, amelyben ennyi ideje semmi sem változott, végleg törlődik erről az eszközről és a szinkronizált mappából; a kitűzöttek maradnak.",
+  "data.forgetConfirm": "Azok a feladatok, amelyekben {kept} óta semmi sem változott, végleg törlődnek, most és minden nap. Folytassuk?",
+  "data.forgetNever": "Mind megtartása"
 }

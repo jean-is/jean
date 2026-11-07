@@ -37,5 +37,9 @@
   "data.drop": "Também o podes largar numa tarefa.",
   "data.org": "A tua organização",
   "data.orgText": "O que recebe de ti e o que guarda",
-  "data.private": "Para guardares as tuas tarefas, abre {name} numa janela que não seja privada."
+  "data.private": "Para guardares as tuas tarefas, abre {name} numa janela que não seja privada.",
+  "data.forget": "Apagar tarefas antigas",
+  "data.forgetText": "Uma tarefa em que nada mudou durante esse tempo é apagada de vez, neste dispositivo e na pasta sincronizada; as fixadas ficam.",
+  "data.forgetConfirm": "As tarefas em que nada mudou durante {kept} serão apagadas de vez, agora e todos os dias. Continuar?",
+  "data.forgetNever": "Manter todas"
 }

@@ -26,6 +26,8 @@ import { ulid } from './ulid.js'
  * @property {number} [retried]                how many times the user asked an answer again (Feedback is offered, D712)
  * @property {string[]} [grouped]              the groups of tasks offered as projects, by name, and when they were last looked for (D716)
  * @property {string} [groupedAt]
+ * @property {number} [forget]                 how many days a task not changed is kept, pinned ones aside, and when that was last looked at (D718)
+ * @property {string} [forgotAt]
  * @property {number} [cited]                  how many answers cited their sources (Double-check is offered)
  * @property {number} [browsed]                how many links from answers the user opened (the browser is offered)
  * @property {number} [photos]                 how many pictures the user shared from a touch screen (the camera is offered, D645)

@@ -37,5 +37,9 @@
   "data.drop": "Unaweza pia kuidondosha kwenye kazi.",
   "data.org": "Shirika lako",
   "data.orgText": "Linachopokea kutoka kwako na kuhifadhi",
-  "data.private": "Ili kuhifadhi kazi zako, fungua {name} kwenye dirisha lisilo la faragha."
+  "data.private": "Ili kuhifadhi kazi zako, fungua {name} kwenye dirisha lisilo la faragha.",
+  "data.forget": "Futa kazi za zamani",
+  "data.forgetText": "Kazi isiyobadilika kwa muda huo hufutwa kabisa, kwenye kifaa hiki na kwenye folda iliyosawazishwa; zilizobandikwa hubaki.",
+  "data.forgetConfirm": "Kazi zisizobadilika kwa {kept} zitafutwa kabisa, sasa na kila siku. Tuendelee?",
+  "data.forgetNever": "Weka zote"
 }

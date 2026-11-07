@@ -37,5 +37,9 @@
   "data.drop": "Môžete ho aj presunúť do úlohy.",
   "data.org": "Vaša organizácia",
   "data.orgText": "Čo od vás dostáva a uchováva",
-  "data.private": "Ak si chcete úlohy ponechať, otvorte aplikáciu {name} v okne, ktoré nie je súkromné."
+  "data.private": "Ak si chcete úlohy ponechať, otvorte aplikáciu {name} v okne, ktoré nie je súkromné.",
+  "data.forget": "Mazať staré úlohy",
+  "data.forgetText": "Úloha, v ktorej sa tak dlho nič nezmenilo, sa natrvalo vymaže z tohto zariadenia aj zo synchronizovaného priečinka; pripnuté zostanú.",
+  "data.forgetConfirm": "Úlohy, v ktorých sa {kept} nič nezmenilo, sa natrvalo vymažú, teraz aj každý deň. Pokračovať?",
+  "data.forgetNever": "Ponechať všetky"
 }

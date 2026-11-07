@@ -420,6 +420,7 @@
     "other": "{count} påståenden stöds inte av sina källor"
   },
   "check.is.supported": "Stämmer med sin källa",
+  "check.is.dated": "Stämmer med källan, men kan ha ändrats sedan den lästes",
   "check.is.contradicted": "Källan säger något annat",
   "check.is.missing": "Finns inte i källan",
   "check.is.unknown": "Kunde inte kontrolleras",

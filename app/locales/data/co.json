@@ -37,5 +37,9 @@
   "data.drop": "U pudete dinù lampà in un compitu.",
   "data.org": "A vostra urganizazione",
   "data.orgText": "Ciò ch’ella riceve da voi è ciò ch’ella tene",
-  "data.private": "Per tene i vostri compiti, aprite {name} in una finestra chì ùn sia micca privata."
+  "data.private": "Per tene i vostri compiti, aprite {name} in una finestra chì ùn sia micca privata.",
+  "data.forget": "Squassà i vechji compiti",
+  "data.forgetText": "Un compitu induve nunda hè cambiatu dapoi tantu hè squassatu per sempre, nant’à st’apparechju è in u cartulare sincrunizatu ; quelli puntati fermanu.",
+  "data.forgetConfirm": "I compiti induve nunda hè cambiatu dapoi {kept} saranu squassati per sempre, avà è ogni ghjornu. Cuntinuà ?",
+  "data.forgetNever": "Tene li tutti"
 }

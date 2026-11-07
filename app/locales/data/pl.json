@@ -37,5 +37,9 @@
   "data.drop": "Możesz go też upuścić w zadaniu.",
   "data.org": "Twoja organizacja",
   "data.orgText": "Co od ciebie otrzymuje i co przechowuje",
-  "data.private": "Aby zachować swoje zadania, otwórz {name} w oknie, które nie jest prywatne."
+  "data.private": "Aby zachować swoje zadania, otwórz {name} w oknie, które nie jest prywatne.",
+  "data.forget": "Usuwaj stare zadania",
+  "data.forgetText": "Zadanie, w którym tak długo nic się nie zmieniło, jest usuwane na zawsze, na tym urządzeniu i w synchronizowanym folderze; przypięte zostają.",
+  "data.forgetConfirm": "Zadania, w których od {kept} nic się nie zmieniło, zostaną usunięte na zawsze, teraz i codziennie. Kontynuować?",
+  "data.forgetNever": "Zachowaj wszystkie"
 }

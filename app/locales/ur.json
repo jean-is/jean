@@ -420,6 +420,7 @@
     "other": "{count} باتوں کی تائید ان کے ماخذ نہیں کرتے"
   },
   "check.is.supported": "ماخذ سے ملتی ہے",
+  "check.is.dated": "ماخذ سے میل کھاتا ہے، مگر پڑھے جانے کے بعد بدل چکا ہو سکتا ہے",
   "check.is.contradicted": "ماخذ کچھ اور کہتا ہے",
   "check.is.missing": "ماخذ میں نہیں ہے",
   "check.is.unknown": "جانچ نہیں ہو سکی",

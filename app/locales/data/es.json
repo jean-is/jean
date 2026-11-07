@@ -37,5 +37,9 @@
   "data.drop": "También puedes soltarlo en una tarea.",
   "data.org": "Tu organización",
   "data.orgText": "Lo que recibe de ti y lo que guarda",
-  "data.private": "Para conservar tus tareas, abre {name} en una ventana que no sea privada."
+  "data.private": "Para conservar tus tareas, abre {name} en una ventana que no sea privada.",
+  "data.forget": "Borrar tareas antiguas",
+  "data.forgetText": "Una tarea en la que nada cambió en ese tiempo se borra para siempre, en este dispositivo y en la carpeta sincronizada; las fijadas se quedan.",
+  "data.forgetConfirm": "Las tareas en las que nada cambió en {kept} se borrarán para siempre, ahora y cada día. ¿Seguimos?",
+  "data.forgetNever": "Conservarlas todas"
 }

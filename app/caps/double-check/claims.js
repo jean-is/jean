@@ -5,7 +5,7 @@ import { bm25 } from '../../core/search.js'
 import { splitPages } from '../../core/files.js'
 import { anchor } from '../files/search.js'
 
-/** @typedef {'supported' | 'contradicted' | 'missing' | 'unknown'} Verdict */
+/** dated: supported, by a source read long ago that may have changed since (D719). @typedef {'supported' | 'dated' | 'contradicted' | 'missing' | 'unknown'} Verdict */
 /** @typedef {{ text: string, sources: number[], at?: Record<number, string> }} Claim  at: what a source's mark says of where, after its number (D481) */
 
 // Past this many claims, an answer is checked on its first ones only.
@@ -61,18 +61,19 @@ export function sourceIn(output, n) {
 /** What the brain is asked to do, in English like every prompt. */
 export const CHECKER = `You check whether sources support claims. For each claim, write one line: its number, then one word.
 supported: the sources say it.
+dated: the sources say it, but a source marked as read long ago gave something that may have changed since (a price, a schedule, a figure that moves).
 contradicted: the sources say otherwise.
 missing: the sources do not say it.
 Nothing else.`
 
-/** @param {{ text: string, passages: { n: number, text: string }[] }[]} items */
-export const request = (items) => items.map((item, i) => [`Claim ${i + 1}: ${item.text}`, ...item.passages.map((p) => `Source [${p.n}]: ${p.text}`)].join('\n')).join('\n\n')
+/** @param {{ text: string, passages: { n: number, text: string, read?: string }[] }[]} items */
+export const request = (items) => items.map((item, i) => [`Claim ${i + 1}: ${item.text}`, ...item.passages.map((p) => `Source [${p.n}]${p.read ? `, read on ${p.read}` : ''}: ${p.text}`)].join('\n')).join('\n\n')
 
 /** One verdict per claim, from lines like "2: supported"; a claim the reply skips stays unknown. @param {string} reply @param {number} count @returns {Verdict[]} */
 export function verdicts(reply, count) {
   /** @type {Verdict[]} */
   const found = Array(count).fill('unknown')
-  for (const match of reply.matchAll(/^\W*(?:claim\s*)?(\d+)\W+(supported|contradicted|missing)\b/gim)) {
+  for (const match of reply.matchAll(/^\W*(?:claim\s*)?(\d+)\W+(supported|dated|contradicted|missing)\b/gim)) {
     const i = Number(match[1]) - 1
     if (i >= 0 && i < count) found[i] = /** @type {Verdict} */ (match[2].toLowerCase())
   }

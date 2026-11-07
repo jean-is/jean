@@ -37,5 +37,9 @@
   "data.drop": "Puwede mo rin itong i-drop sa isang gawain.",
   "data.org": "Ang organisasyon mo",
   "data.orgText": "Ang natatanggap nito mula sa iyo at itinatago",
-  "data.private": "Para maitago ang mga gawain mo, buksan ang {name} sa window na hindi pribado."
+  "data.private": "Para maitago ang mga gawain mo, buksan ang {name} sa window na hindi pribado.",
+  "data.forget": "Burahin ang mga lumang gawain",
+  "data.forgetText": "Ang gawaing walang nagbago nang ganoon katagal ay buburahin nang tuluyan, sa device na ito at sa naka-sync na folder; mananatili ang mga naka-pin.",
+  "data.forgetConfirm": "Buburahin nang tuluyan ang mga gawaing walang nagbago sa loob ng {kept}, ngayon at araw-araw. Ituloy?",
+  "data.forgetNever": "Itago lahat"
 }

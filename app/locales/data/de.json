@@ -37,5 +37,9 @@
   "data.drop": "Du kannst sie auch in eine Aufgabe ziehen.",
   "data.org": "Deine Organisation",
   "data.orgText": "Was sie von dir erhält und aufbewahrt",
-  "data.private": "Um deine Aufgaben zu behalten, öffne {name} in einem Fenster, das nicht privat ist."
+  "data.private": "Um deine Aufgaben zu behalten, öffne {name} in einem Fenster, das nicht privat ist.",
+  "data.forget": "Alte Aufgaben löschen",
+  "data.forgetText": "Eine Aufgabe, in der sich so lange nichts geändert hat, wird endgültig gelöscht, auf diesem Gerät und im synchronisierten Ordner; angeheftete bleiben.",
+  "data.forgetConfirm": "Aufgaben, in denen sich seit {kept} nichts geändert hat, werden endgültig gelöscht, jetzt und jeden Tag. Fortfahren?",
+  "data.forgetNever": "Alle behalten"
 }

@@ -37,5 +37,9 @@
   "data.drop": "Gallout a rit ivez lakaat anezhañ en un drevell.",
   "data.org": "Hoc’h aozadur",
   "data.orgText": "Ar pezh a resev diganeoc’h hag a vir",
-  "data.private": "Evit mirout ho trevelloù, digorit {name} en ur prenestr n’eo ket prevez."
+  "data.private": "Evit mirout ho trevelloù, digorit {name} en ur prenestr n’eo ket prevez.",
+  "data.forget": "Dilemel an trevelloù kozh",
+  "data.forgetText": "Un trevell n’eo bet cheñchet netra ennañ e-pad an amzer-se a vez dilamet da viken, war an trevnad-mañ hag en teuliad kempredet ; ar re spilhennet a chom.",
+  "data.forgetConfirm": "An trevelloù n’eo bet cheñchet netra enno abaoe {kept} a vo dilamet da viken, bremañ ha bemdez. Kenderc’hel ?",
+  "data.forgetNever": "Derc’hel an holl anezho"
 }

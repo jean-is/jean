@@ -420,6 +420,7 @@
     "other": "{count} दाव्यांना त्यांच्या स्रोतांचा आधार नाही"
   },
   "check.is.supported": "स्रोताशी जुळते",
+  "check.is.dated": "स्रोताशी जुळते, पण वाचल्यापासून बदलले असू शकते",
   "check.is.contradicted": "स्रोत वेगळेच सांगतो",
   "check.is.missing": "स्रोतात नाही",
   "check.is.unknown": "तपासता आले नाही",

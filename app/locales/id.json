@@ -411,6 +411,7 @@
     "other": "{count} pernyataan tidak didukung sumbernya"
   },
   "check.is.supported": "Sesuai dengan sumbernya",
+  "check.is.dated": "Sesuai sumbernya, tetapi mungkin sudah berubah sejak dibaca",
   "check.is.contradicted": "Sumbernya berkata lain",
   "check.is.missing": "Tidak ada di sumbernya",
   "check.is.unknown": "Tidak bisa diperiksa",

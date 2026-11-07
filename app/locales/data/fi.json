@@ -37,5 +37,9 @@
   "data.drop": "Voit myös pudottaa sen tehtävään.",
   "data.org": "Organisaatiosi",
   "data.orgText": "Mitä se saa sinulta ja säilyttää",
-  "data.private": "Säilyttääksesi tehtäväsi avaa {name} ikkunassa, joka ei ole yksityinen."
+  "data.private": "Säilyttääksesi tehtäväsi avaa {name} ikkunassa, joka ei ole yksityinen.",
+  "data.forget": "Poista vanhat tehtävät",
+  "data.forgetText": "Tehtävä, jossa mikään ei ole muuttunut niin pitkään aikaan, poistetaan pysyvästi tältä laitteelta ja synkronoidusta kansiosta; kiinnitetyt jäävät.",
+  "data.forgetConfirm": "Tehtävät, joissa mikään ei ole muuttunut {kept} aikana, poistetaan pysyvästi nyt ja joka päivä. Jatketaanko?",
+  "data.forgetNever": "Säilytä kaikki"
 }

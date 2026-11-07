@@ -37,7 +37,7 @@ const STRIDE = 40
 const LONG = /^(content|code|text|body|request|task|prompt|message|description|query|old|new)$/
 
 /** Each kind of card, and each state, as a picture beside its words. */
-const KINDS = /** @type {Record<string, unknown>} */ ({ text: icons.note, file: icons.file, ask: icons.brain, tool: icons.bolt, request: icons.person, brain: icons.brain, answer: icons.check, call: icons.bolt })
+const KINDS = /** @type {Record<string, unknown>} */ ({ text: icons.note, file: icons.file, ask: icons.brain, tool: icons.bolt, if: icons.signpost, request: icons.person, brain: icons.brain, answer: icons.check, call: icons.bolt })
 const MARKS = /** @type {Partial<Record<State, unknown>>} */ ({ done: icons.check, failed: icons.close, declined: icons.close, cut: icons.stop, asking: icons.person })
 
 /** The step whose form is open, a card being moved, a wire being drawn, and whether the pane fills the screen. */
@@ -89,7 +89,7 @@ function drawingOf(one) {
 /** What a step does, in a few words, for its card. @param {Step} step */
 function detailOf(step) {
   const kind = kindOf(step)
-  const text = kind === 'tool' ? (step.tool ?? '').replace(/_/g, ' ') : kind === 'file' ? step.file : kind === 'ask' ? step.ask : step.text
+  const text = kind === 'tool' ? (step.tool ?? '').replace(/_/g, ' ') : kind === 'file' ? step.file : kind === 'ask' ? step.ask : kind === 'if' ? step.if : step.text
   return (text ?? '').trim().split('\n')[0].slice(0, 80)
 }
 
@@ -136,7 +136,7 @@ function freeName(one, base) {
   }
 }
 
-/** A new step after the one selected (or the last), taking its result, in the first free place. @param {Saved} one @param {'text' | 'file' | 'ask' | 'tool'} kind */
+/** A new step after the one selected (or the last), taking its result, in the first free place. @param {Saved} one @param {'text' | 'file' | 'ask' | 'tool' | 'if'} kind */
 function addStep(one, kind) {
   const after = one.steps.find((step) => step.id === selected.peek()) ?? one.steps.at(-1)
   let id = one.steps.length + 1
@@ -344,7 +344,7 @@ function board(one, { steps, wires, states, results }) {
       }}>
       <details class="flows-add">
         <summary class="button">${icons.plus} ${t('flows.add')}</summary>
-        <ul class="flows-menu">${(/** @type {const} */ (['text', 'file', 'ask', 'tool'])).map((kind) => html`<li><button class="button subtle" @click=${(/** @type {Event} */ event) => {
+        <ul class="flows-menu">${(/** @type {const} */ (['text', 'file', 'ask', 'tool', 'if'])).map((kind) => html`<li><button class="button subtle" @click=${(/** @type {Event} */ event) => {
           /** @type {HTMLDetailsElement} */ (/** @type {globalThis.Element} */ (event.target).closest('details')).open = false
           addStep(one, kind)
         }}>${KINDS[kind]} ${t(`flows.kind.${kind}`)}</button></li>`)}</ul>
@@ -564,6 +564,8 @@ function form(one, step, result) {
     : kind === 'file' ? html`<label for=${id('file')}>${t('flows.kind.file')}<select id=${id('file')} @change=${(/** @type {Event} */ event) => set({ file: valueOf(event) })}>
         <option value="" ?selected=${!step.file}></option>
         ${[...new Set([...(step.file ? [step.file] : []), ...room.value.files])].map((name) => html`<option ?selected=${name === step.file}>${name}</option>`)}</select></label>`
+    : kind === 'if' ? html`<label for=${id('if')}>${t('flows.question')}<input id=${id('if')} dir="auto" .value=${live(step.if ?? '')} @focus=${remember} @change=${(/** @type {Event} */ event) => set({ if: valueOf(event) })}></label>
+      <label class="flows-check" for=${id('otherwise')}><input id=${id('otherwise')} type="checkbox" .checked=${Boolean(step.otherwise)} @change=${(/** @type {Event} */ event) => set({ otherwise: /** @type {HTMLInputElement} */ (event.target).checked || undefined })}><span>${t('flows.otherwise')}</span></label>`
     : kind === 'ask' ? html`<label for=${id('ask')}>${t('flows.instructions')}<textarea id=${id('ask')} rows="5" dir="auto" .value=${live(step.ask ?? '')} @focus=${remember} @change=${(/** @type {Event} */ event) => set({ ask: valueOf(event) })}></textarea></label>
       ${room.value.skills.length || step.skill ? html`<label for=${id('skill')}>${t('flows.skill')}<select id=${id('skill')} @change=${(/** @type {Event} */ event) => set({ skill: valueOf(event) || undefined })}>
         <option value="" ?selected=${!step.skill}>${t('flows.noSkill')}</option>

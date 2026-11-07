@@ -420,6 +420,7 @@
     "other": "{count} beweringen worden niet gestaafd door hun bronnen"
   },
   "check.is.supported": "Klopt met de bron",
+  "check.is.dated": "Klopt met de bron, maar kan sinds het lezen veranderd zijn",
   "check.is.contradicted": "De bron zegt iets anders",
   "check.is.missing": "Staat niet in de bron",
   "check.is.unknown": "Kon niet worden nagelopen",

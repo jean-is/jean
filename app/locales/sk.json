@@ -438,6 +438,7 @@
     "other": "{count} tvrdení nie je podložených svojimi zdrojmi"
   },
   "check.is.supported": "Zodpovedá svojmu zdroju",
+  "check.is.dated": "Zodpovedá zdroju, ale od prečítania sa to mohlo zmeniť",
   "check.is.contradicted": "Zdroj hovorí niečo iné",
   "check.is.missing": "V zdroji nie je",
   "check.is.unknown": "Nepodarilo sa overiť",

@@ -63,6 +63,11 @@ test('the request names each claim and its sources; verdicts come back by number
   assert.deepEqual(verdicts('1: supported\nClaim 2 — Missing.\n3. contradicted\n7: supported\nanything else', 4), ['supported', 'missing', 'contradicted', 'unknown'])
 })
 
+test('a source read a month or more before the answer says when, and a claim it gave may be dated (D719)', () => {
+  assert.equal(request([{ text: 'A croissant is 1.20 euros.', passages: [{ n: 4, text: 'Croissant 1.20', read: '2026-08-02' }] }]), 'Claim 1: A croissant is 1.20 euros.\nSource [4], read on 2026-08-02: Croissant 1.20')
+  assert.deepEqual(verdicts('1: dated', 1), ['dated'])
+})
+
 test('a helper’s find_tools declares its tools for itself, not for the conversation', () => {
   const state = promptState({ language: 'English', tools: ['find_tools'] })
   const records = [

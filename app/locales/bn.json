@@ -420,6 +420,7 @@
     "other": "{count}টি দাবি তাদের উৎস সমর্থন করে না"
   },
   "check.is.supported": "উৎসের সঙ্গে মেলে",
+  "check.is.dated": "উৎসের সঙ্গে মেলে, তবে পড়ার পর বদলে থাকতে পারে",
   "check.is.contradicted": "উৎস অন্য কথা বলে",
   "check.is.missing": "উৎসে নেই",
   "check.is.unknown": "যাচাই করা যায়নি",

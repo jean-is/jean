@@ -420,6 +420,7 @@
     "other": "{count} ifade kaynaklarınca desteklenmiyor"
   },
   "check.is.supported": "Kaynağıyla uyuşuyor",
+  "check.is.dated": "Kaynağıyla örtüşüyor, ama okunduğundan beri değişmiş olabilir",
   "check.is.contradicted": "Kaynağı başka bir şey söylüyor",
   "check.is.missing": "Kaynağında yok",
   "check.is.unknown": "Kontrol edilemedi",

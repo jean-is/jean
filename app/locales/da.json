@@ -420,6 +420,7 @@
     "other": "{count} påstande understøttes ikke af deres kilder"
   },
   "check.is.supported": "Stemmer med sin kilde",
+  "check.is.dated": "Passer med kilden, men kan have ændret sig, siden den blev læst",
   "check.is.contradicted": "Kilden siger noget andet",
   "check.is.missing": "Ikke i kilden",
   "check.is.unknown": "Kunne ikke tjekkes",

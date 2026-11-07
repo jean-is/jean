@@ -411,6 +411,7 @@
     "other": "{count} 則說法沒有來源支持"
   },
   "check.is.supported": "與來源一致",
+  "check.is.dated": "與來源一致，但讀取後可能已有變化",
   "check.is.contradicted": "來源說法相反",
   "check.is.missing": "來源中沒有",
   "check.is.unknown": "無法核對",

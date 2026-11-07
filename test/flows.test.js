@@ -104,7 +104,7 @@ test('steps written by name: each takes the one before unless after says, and wh
   assert.deepEqual(made.steps.map((one) => [one.id, one.name]), [['s1', 'Invoices'], ['s2', 'Rates'], ['s3', 'Totals'], ['s4', 'Save']])
   assert.deepEqual(made.wires, [['s2', 's3'], ['s3', 's4']])
   assert.throws(() => fromSteps([{ name: 'A', text: 'x' }, { name: 'a', text: 'y' }]), /Two steps are called "a"/)
-  assert.throws(() => fromSteps([{ name: 'A' }]), /one of text, file, ask or tool/)
+  assert.throws(() => fromSteps([{ name: 'A' }]), /one of text, file, ask, tool or if/)
   assert.throws(() => fromSteps([{ name: 'A', text: 'x', after: ['B'] }]), /isn't a step/)
   assert.throws(() => fromSteps([{ name: 'A', text: '{{B}}', after: [] }, { name: 'B', text: '{{A}}', after: [] }]), /circle/)
 })
@@ -182,4 +182,15 @@ test('what ran inside a call comes beside it; a run of a saved flow is laid out 
   // The flow's own canvas shows its last run the same way.
   assert.deepEqual([...(lastRun(flow, [ran])?.states ?? [])], [['a', 'done'], ['b', 'empty'], ['c', 'skipped']])
   assert.equal(lastRun({ ...flow, id: 'F2', name: 'Other' }, [ran]), null)
+})
+
+test('an Only if step written by name, its question and otherwise kept; two on one question make an if and an else (D717)', async () => {
+  const { steps, wires } = fromSteps([{ name: 'Mail', text: 'Invoice from Margot' }, { name: 'Invoice?', if: 'Is it an invoice?' }, { name: 'Not one', if: 'Is it an invoice?', otherwise: true, after: ['Mail'] }, { name: 'File it', text: 'Filed', after: ['Invoice?'] }, { name: 'Reply', text: 'Replied', after: ['Not one'] }])
+  assert.deepEqual(steps.map(kindOf), ['text', 'if', 'if', 'text', 'text'])
+  assert.equal(steps[2].otherwise, true)
+  assert.equal(steps[1].otherwise, undefined)
+  assert.throws(() => fromSteps([{ name: 'Both', if: 'Is it?', text: 'x' }]), /needs one of text, file, ask, tool or if/)
+  // As the flows capability runs one: what it takes when the answer is the one it waits for, else nothing.
+  const { states } = await runFlow({ steps, wires }, { run: async (one, inputs) => (one.if === undefined ? one.text ?? '' : (true !== Boolean(one.otherwise) ? inputs[0].value : '')) })
+  assert.deepEqual([...states].map(([id, state]) => `${steps.find((one) => one.id === id)?.name}:${state}`).sort(), ['File it:done', 'Invoice?:done', 'Mail:done', 'Not one:empty', 'Reply:skipped'])
 })

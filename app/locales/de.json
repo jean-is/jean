@@ -420,6 +420,7 @@
     "other": "{count} Aussagen werden von ihren Quellen nicht gestützt"
   },
   "check.is.supported": "Stimmt mit der Quelle überein",
+  "check.is.dated": "Stimmt mit der Quelle überein, kann sich seit dem Lesen aber geändert haben",
   "check.is.contradicted": "Die Quelle sagt etwas anderes",
   "check.is.missing": "Steht nicht in der Quelle",
   "check.is.unknown": "Ließ sich nicht prüfen",

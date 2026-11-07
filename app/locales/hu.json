@@ -420,6 +420,7 @@
     "other": "{count} állítást nem támasztanak alá a forrásai"
   },
   "check.is.supported": "Egyezik a forrásával",
+  "check.is.dated": "Egyezik a forrással, de az olvasás óta változhatott",
   "check.is.contradicted": "A forrása mást mond",
   "check.is.missing": "Nincs benne a forrásában",
   "check.is.unknown": "Nem sikerült ellenőrizni",

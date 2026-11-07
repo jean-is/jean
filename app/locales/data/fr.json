@@ -37,5 +37,9 @@
   "data.drop": "Vous pouvez aussi le déposer dans une tâche.",
   "data.org": "Votre organisation",
   "data.orgText": "Ce qu’elle reçoit de vous et ce qu’elle garde",
-  "data.private": "Pour garder vos tâches, ouvrez {name} dans une fenêtre non privée."
+  "data.private": "Pour garder vos tâches, ouvrez {name} dans une fenêtre non privée.",
+  "data.forget": "Supprimer les vieilles tâches",
+  "data.forgetText": "Une tâche où rien n’a changé depuis si longtemps est supprimée pour de bon, sur cet appareil et dans le dossier synchronisé ; les épinglées restent.",
+  "data.forgetConfirm": "Les tâches où rien n’a changé depuis {kept} seront supprimées pour de bon, maintenant et chaque jour. Continuer ?",
+  "data.forgetNever": "Toutes les garder"
 }

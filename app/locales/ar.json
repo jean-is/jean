@@ -456,6 +456,7 @@
     "other": "{count} عبارة لا تدعمها مصادرها"
   },
   "check.is.supported": "تطابق مصدرها",
+  "check.is.dated": "يطابق مصدره، لكنه ربما تغيّر منذ قراءته",
   "check.is.contradicted": "مصدرها يقول غير ذلك",
   "check.is.missing": "ليست في مصدرها",
   "check.is.unknown": "تعذّر التحقق منها",

@@ -420,6 +420,7 @@
     "other": "{count} claims aren’t supported by their sources"
   },
   "check.is.supported": "Matches its source",
+  "check.is.dated": "Matches its source, but may have changed since it was read",
   "check.is.contradicted": "Its source says otherwise",
   "check.is.missing": "Not in its source",
   "check.is.unknown": "Couldn’t be checked",

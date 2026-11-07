@@ -29,7 +29,7 @@ const checking = signal(/** @type {string[]} */ ([]))
 
 /**
  * Where each source's words are, by number: a shared file's text, the part of a tool's result
- * that is that source, or the passage the brain's own search quoted.
+ * that is that source, or the passage the brain's own search quoted; and when a tool read it, for its freshness (D719).
  * @param {Envelope[]} records @returns {Map<number, () => Promise<string>>}
  */
 function sourceTexts(records) {
@@ -38,11 +38,11 @@ function sourceTexts(records) {
     const n = link._meta?.source
     if (n && !found.has(n)) found.set(n, async () => (await fileText(app.fs, app.projectDir, link.uri)) ?? '')
   }
-  for (const { update } of records) {
+  for (const { update, at } of records) {
     if (update?.sessionUpdate !== 'tool_call') continue
     for (const { n, quote } of update._meta?.sources ?? []) {
       const output = typeof update.rawOutput === 'string' ? sourceIn(update.rawOutput, n) : ''
-      if (!found.has(n)) found.set(n, async () => output || quote || '')
+      if (!found.has(n)) found.set(n, Object.assign(async () => output || quote || '', { at }))
     }
   }
   return found
@@ -77,9 +77,14 @@ export async function check(path, at, records) {
   const answer = splitSuggestions(turn.steps.map((step) => step.text).filter(Boolean).join('\n\n')).text
   const texts = sourceTexts(records)
   const claims = await Promise.all(claimsIn(answer, (n) => texts.has(n), locale.peek()).map(async (claim) => {
-    const parts = await Promise.all(claim.sources.map(async (n) => ({ n, text: passage(await /** @type {() => Promise<string>} */ (texts.get(n))(), claim.text, undefined, claim.at?.[n]) })))
+    const parts = await Promise.all(claim.sources.map(async (n) => {
+      const read = /** @type {(() => Promise<string>) & { at?: string }} */ (texts.get(n))
+      // Read a month or more before the answer: said, so a price or a schedule it gave can be said to have maybe changed (D719).
+      const old = read.at && Date.parse(at) - Date.parse(read.at) > 30 * 86_400_000 ? read.at.slice(0, 10) : undefined
+      return { n, text: passage(await read(), claim.text, undefined, claim.at?.[n]), ...(old && { read: old }) }
+    }))
     // Words a mark quotes that its source doesn't hold: missing, without asking (D481).
-    return { ...claim, unquoted: parts.some((part) => part.text === null), passages: parts.flatMap(({ n, text }) => (text ? [{ n, text }] : [])) }
+    return { ...claim, unquoted: parts.some((part) => part.text === null), passages: parts.flatMap(({ n, text, read }) => (text ? [{ n, text, ...(read && { read }) }] : [])) }
   }))
   const asked = claims.filter((claim) => claim.passages.length && !claim.unquoted)
   if (!asked.length && !claims.some((claim) => claim.unquoted)) return
@@ -97,7 +102,7 @@ export async function check(path, at, records) {
 }
 
 const OFF = new Set(['missing', 'contradicted'])
-const MARKS = /** @type {Record<string, keyof typeof icons>} */ ({ supported: 'check', contradicted: 'close', missing: 'close' })
+const MARKS = /** @type {Record<string, keyof typeof icons>} */ ({ supported: 'check', dated: 'since', contradicted: 'close', missing: 'close' })
 
 /** Under an answer: whether its sources say what it says. */
 class Check extends Element {
@@ -108,7 +113,7 @@ class Check extends Element {
     const records = (/** @type {{ task?: typeof app.current.value }} */ (this.closest('app-conversation'))?.task ?? app.current.value)?.records ?? []
     /** @type {Checked[] | undefined} */
     const claims = records.findLast((record) => record.meta?.check?.at === at)?.meta?.check.claims
-    const ok = claims?.filter((claim) => claim.verdict === 'supported') ?? []
+    const ok = claims?.filter((claim) => claim.verdict === 'supported' || claim.verdict === 'dated') ?? []
     const off = claims?.filter((claim) => OFF.has(claim.verdict)) ?? []
     if (!claims || !(ok.length + off.length)) return nothing
     const last = foldTurns(records).at(-1)?.at === at && !app.busy.value

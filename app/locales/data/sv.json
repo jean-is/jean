@@ -37,5 +37,9 @@
   "data.drop": "Du kan också släppa den i en uppgift.",
   "data.org": "Din organisation",
   "data.orgText": "Vad den tar emot från dig och sparar",
-  "data.private": "Öppna {name} i ett fönster som inte är privat för att behålla dina uppgifter."
+  "data.private": "Öppna {name} i ett fönster som inte är privat för att behålla dina uppgifter.",
+  "data.forget": "Radera gamla uppgifter",
+  "data.forgetText": "En uppgift där inget har ändrats på så länge raderas för gott, på den här enheten och i den synkade mappen; fästa stannar kvar.",
+  "data.forgetConfirm": "Uppgifter där inget har ändrats på {kept} raderas för gott, nu och varje dag. Fortsätta?",
+  "data.forgetNever": "Behåll alla"
 }

@@ -37,5 +37,9 @@
   "data.drop": "Je kunt het ook in een taak neerzetten.",
   "data.org": "Je organisatie",
   "data.orgText": "Wat ze van je krijgt en bewaart",
-  "data.private": "Open {name} in een venster dat niet privé is om je taken te bewaren."
+  "data.private": "Open {name} in een venster dat niet privé is om je taken te bewaren.",
+  "data.forget": "Oude taken verwijderen",
+  "data.forgetText": "Een taak waarin zo lang niets veranderde, wordt voorgoed verwijderd, op dit apparaat en in de gesynchroniseerde map; vastgezette blijven.",
+  "data.forgetConfirm": "Taken waarin al {kept} niets veranderde, worden voorgoed verwijderd, nu en elke dag. Doorgaan?",
+  "data.forgetNever": "Alles bewaren"
 }

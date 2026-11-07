@@ -37,5 +37,9 @@
   "data.drop": "Můžete ho také přetáhnout do úkolu.",
   "data.org": "Vaše organizace",
   "data.orgText": "Co od vás dostává a uchovává",
-  "data.private": "Chcete-li si úkoly ponechat, otevřete aplikaci {name} v okně, které není anonymní."
+  "data.private": "Chcete-li si úkoly ponechat, otevřete aplikaci {name} v okně, které není anonymní.",
+  "data.forget": "Mazat staré úkoly",
+  "data.forgetText": "Úkol, ve kterém se tak dlouho nic nezměnilo, se natrvalo smaže z tohoto zařízení i ze synchronizované složky; připnuté zůstanou.",
+  "data.forgetConfirm": "Úkoly, ve kterých se {kept} nic nezměnilo, se natrvalo smažou, teď i každý den. Pokračovat?",
+  "data.forgetNever": "Ponechat všechny"
 }

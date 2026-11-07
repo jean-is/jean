@@ -429,6 +429,7 @@
     "other": "{count} tvrdnji ne potvrđuju njihovi izvori"
   },
   "check.is.supported": "Odgovara svojem izvoru",
+  "check.is.dated": "Odgovara izvoru, ali se možda promijenilo otkad je pročitan",
   "check.is.contradicted": "Izvor kaže drukčije",
   "check.is.missing": "Nije u izvoru",
   "check.is.unknown": "Nije bilo moguće provjeriti",

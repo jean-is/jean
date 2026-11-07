@@ -429,6 +429,7 @@
     "other": "{count} de afirmații nu sunt susținute de sursele lor"
   },
   "check.is.supported": "Corespunde sursei",
+  "check.is.dated": "Se potrivește cu sursa, dar s-ar putea să se fi schimbat de când a fost citită",
   "check.is.contradicted": "Sursa spune altceva",
   "check.is.missing": "Nu este în sursă",
   "check.is.unknown": "Nu a putut fi verificat",

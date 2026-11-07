@@ -420,6 +420,7 @@
     "other": "Madai {count} hayaungwi mkono na vyanzo vyake"
   },
   "check.is.supported": "Linalingana na chanzo",
+  "check.is.dated": "Inalingana na chanzo chake, lakini huenda imebadilika tangu kisomwe",
   "check.is.contradicted": "Chanzo kinasema vinginevyo",
   "check.is.missing": "Halimo kwenye chanzo",
   "check.is.unknown": "Halikuweza kuhakikiwa",

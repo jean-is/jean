@@ -411,6 +411,7 @@
     "other": "{count} 条说法没有来源支持"
   },
   "check.is.supported": "与来源一致",
+  "check.is.dated": "与来源一致，但读取后可能已有变化",
   "check.is.contradicted": "来源说法相反",
   "check.is.missing": "来源中没有",
   "check.is.unknown": "无法核对",

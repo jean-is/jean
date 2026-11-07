@@ -420,6 +420,7 @@
     "other": "{count} አባባሎች በምንጮቻቸው አልተደገፉም"
   },
   "check.is.supported": "ከምንጩ ጋር ይስማማል",
+  "check.is.dated": "ከምንጩ ጋር ይስማማል፣ ግን ከተነበበ ወዲህ ሊቀየር ይችላል",
   "check.is.contradicted": "ምንጩ ሌላ ይላል",
   "check.is.missing": "በምንጩ ውስጥ የለም",
   "check.is.unknown": "ሊረጋገጥ አልተቻለም",

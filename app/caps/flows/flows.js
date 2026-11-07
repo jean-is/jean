@@ -23,6 +23,7 @@ import { t, useStrings } from '../../core/i18n.js'
 import { icons } from '../../ui/menu-icons.js'
 import { runFlow, fromSteps, askOf, fill, fillArgs, kindOf, result as resultOf } from './run.js'
 import { flowNamed } from './graph.js'
+import { yes } from '../../ui/yes.js'
 import { keep } from '../../ui/windows.js'
 
 // Its own strings, which its slots draw with, before it registers.
@@ -119,7 +120,7 @@ const running = new Map()
 const saveTool = {
   spec: {
     name: 'save_flow',
-    description: 'Make a flow, or change one: steps the user sees on a canvas beside the conversation and runs again by hand or on a schedule, each step’s result going to the steps after it. name: a few words, in the user’s language; the name of one of their flows replaces its steps. steps, in order, each with a name of its own in the user’s language and one of: text (a fixed text), file (the name of a file the user shared or you made: its newest version is read), ask (instructions for you, as the user would write them; skill: one of the skills to follow), or tool with args (one of your tools, called with these arguments). {{Step name}} in a text, an ask or an argument puts that step’s result there; an ask also gets the results it doesn’t name, after its instructions. after: the steps whose results it takes, by name (by default the step before it; [] for none). each: true to do the step once for each item of the list it takes (a JSON array, or one item a line), three at a time. A step that gives nothing stops the steps after it.',
+    description: 'Make a flow, or change one: steps the user sees on a canvas beside the conversation and runs again by hand or on a schedule, each step’s result going to the steps after it. name: a few words, in the user’s language; the name of one of their flows replaces its steps. steps, in order, each with a name of its own in the user’s language and one of: text (a fixed text), file (the name of a file the user shared or you made: its newest version is read), ask (instructions for you, as the user would write them; skill: one of the skills to follow), or tool with args (one of your tools, called with these arguments), or if (a yes-or-no question about what it takes, in the user’s language: it passes it on when yes, or when no with otherwise: true, and else stops the steps after it; two on one question are an if and an else). {{Step name}} in a text, an ask or an argument puts that step’s result there; an ask also gets the results it doesn’t name, after its instructions. after: the steps whose results it takes, by name (by default the step before it; [] for none). each: true to do the step once for each item of the list it takes (a JSON array, or one item a line), three at a time. A step that gives nothing stops the steps after it.',
     parameters: {
       type: 'object',
       properties: {
@@ -130,7 +131,7 @@ const saveTool = {
             type: 'object',
             properties: {
               name: { type: 'string' }, text: { type: 'string' }, file: { type: 'string' }, ask: { type: 'string' }, skill: { type: 'string' },
-              tool: { type: 'string' }, args: { type: 'object' }, after: { type: 'array', items: { type: 'string' } }, each: { type: 'boolean' },
+              tool: { type: 'string' }, args: { type: 'object' }, after: { type: 'array', items: { type: 'string' } }, each: { type: 'boolean' }, if: { type: 'string' }, otherwise: { type: 'boolean' },
             },
             required: ['name'],
           },
@@ -206,6 +207,11 @@ const stepTool = {
     if (kind === 'text') return fill(step.text ?? '', inputs)
     if (kind === 'file') return readFile(fill(step.file ?? '', inputs))
     if (kind === 'tool') return ctx.call(String(step.tool), fillArgs(step.args ?? {}, inputs))
+    // Only if (D717): what it takes, passed on when its question's answer is the one it waits for, else nothing.
+    if (kind === 'if') {
+      const taken = inputs.map((input) => input.value).join('\n\n')
+      return (await yes(fill(step.if ?? '', inputs), taken.slice(0, 4000)).catch(() => false)) !== Boolean(step.otherwise) ? taken : ''
+    }
     const skill = step.skill ? (await skills()).find((one) => one.name === step.skill) : undefined
     const tools = () => contributions().tools.filter((tool) => !NOT_ASKED.has(tool.spec.name))
     const { text } = await ctx.turn({

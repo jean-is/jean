@@ -37,5 +37,9 @@
   "data.drop": "也可以把它拖进某个任务。",
   "data.org": "你的组织",
   "data.orgText": "它从你这里收到和保存的内容",
-  "data.private": "要保留你的任务，请在非无痕窗口中打开 {name}。"
+  "data.private": "要保留你的任务，请在非无痕窗口中打开 {name}。",
+  "data.forget": "删除旧任务",
+  "data.forgetText": "这么久没有任何改动的任务会从这台设备和同步文件夹中永久删除；已置顶的会保留。",
+  "data.forgetConfirm": "{kept}没有任何改动的任务将被永久删除，现在起每天如此。要继续吗？",
+  "data.forgetNever": "全部保留"
 }

@@ -169,3 +169,25 @@ for (const lang of ['ar', 'ja']) {
     expect(lang === 'ar' ? (b?.x ?? 0) < (a?.x ?? 0) : (b?.x ?? 0) > (a?.x ?? 0)).toBe(true)
   })
 }
+
+test('an Only if step shows its question on its card, and its form asks for it and whether to go on when the answer is no (D717)', async ({ page }) => {
+  await start(page)
+  await page.evaluate(async () => {
+    await (await import('/ui/caps.js')).unlock('flows')
+    const flows = await import('/caps/flows/flows.js')
+    const made = flows.newFlow('Mail', 'dev')
+    await flows.saveFlow({ ...made, steps: [{ id: 's1', name: 'Mail', text: 'Invoice from Margot', x: 0, y: 0 }, { id: 's2', name: 'Invoice?', if: 'Is it an invoice?', x: 240, y: 0 }], wires: [['s1', 's2']] })
+    await flows.edit(made.id)
+  })
+  const mode = page.locator('app-flow-main .flows-main')
+  const card = mode.locator('.flow-step[data-id="s2"]')
+  await expect(card).toHaveAttribute('data-kind', 'if')
+  await expect(card).toContainText('Is it an invoice?')
+  await card.click()
+  await expect(mode.getByLabel('Question, yes or no')).toHaveValue('Is it an invoice?')
+  await mode.getByLabel('Go on when the answer is no').check()
+  await expect.poll(() => page.evaluate(async () => (await (await import('/caps/flows/flows.js')).refresh()).find((one) => one.name === 'Mail')?.steps[1].otherwise)).toBe(true)
+  // It is among the kinds a step can be.
+  await mode.locator('.flows-add summary').click()
+  await expect(mode.locator('.flows-menu')).toContainText('Only if')
+})

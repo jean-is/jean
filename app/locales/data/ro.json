@@ -37,5 +37,9 @@
   "data.drop": "Îl puteți și trage într-o sarcină.",
   "data.org": "Organizația dvs.",
   "data.orgText": "Ce primește de la dvs. și păstrează",
-  "data.private": "Pentru a vă păstra sarcinile, deschideți {name} într-o fereastră care nu este privată."
+  "data.private": "Pentru a vă păstra sarcinile, deschideți {name} într-o fereastră care nu este privată.",
+  "data.forget": "Șterge sarcinile vechi",
+  "data.forgetText": "O sarcină în care nu s-a schimbat nimic atâta vreme e ștearsă definitiv, pe acest dispozitiv și în dosarul sincronizat; cele fixate rămân.",
+  "data.forgetConfirm": "Sarcinile în care nu s-a schimbat nimic de {kept} vor fi șterse definitiv, acum și în fiecare zi. Continuăm?",
+  "data.forgetNever": "Păstrează-le pe toate"
 }

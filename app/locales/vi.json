@@ -411,6 +411,7 @@
     "other": "{count} nhận định không được nguồn ủng hộ"
   },
   "check.is.supported": "Khớp với nguồn",
+  "check.is.dated": "Khớp với nguồn, nhưng có thể đã thay đổi kể từ khi được đọc",
   "check.is.contradicted": "Nguồn nói khác",
   "check.is.missing": "Không có trong nguồn",
   "check.is.unknown": "Không kiểm tra được",

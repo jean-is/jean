@@ -420,6 +420,7 @@
     "other": "{count} väitettä, joita lähteet eivät tue"
   },
   "check.is.supported": "Vastaa lähdettään",
+  "check.is.dated": "Vastaa lähdettä, mutta on voinut muuttua lukemisen jälkeen",
   "check.is.contradicted": "Lähde sanoo toisin",
   "check.is.missing": "Ei lähteessä",
   "check.is.unknown": "Ei voitu tarkistaa",

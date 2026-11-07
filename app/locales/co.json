@@ -429,6 +429,7 @@
     "other": "{count} affirmazioni ùn sò micca sustenute da e so fonte"
   },
   "check.is.supported": "Currisponde à a so fonte",
+  "check.is.dated": "Currisponde à a so fonte, ma pò esse cambiatu dapoi ch’ella hè stata letta",
   "check.is.contradicted": "A so fonte dice u cuntrariu",
   "check.is.missing": "Ùn hè micca in a so fonte",
   "check.is.unknown": "Ùn s’hè micca pussutu verificà",
