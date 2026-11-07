@@ -95,6 +95,7 @@ The prompt and the declared tools are frozen for the life of a conversation. Cha
 - A browser test checks what only a browser can tell; logic goes under `node --test`. Chromium runs every spec. WebKit runs what can differ between engines (frames, the sandbox, storage, editing, the keyboard, media, drawing), in English; a spec of what Jean decides, the same JavaScript everywhere, joins `CHROMIUM_ONLY` in `test/playwright.config.js`.
 - A run repeated over looks, languages or sizes earns its time. A rule about colour runs in every look, in English; one about layout in the looks that size their own; a look's own motion only where its sheet has some. A flow's words run in Arabic and Japanese once.
 - Every UI change gets checked in one right-to-left locale (Arabic) and one CJK locale (Japanese).
+- Jean's own Node, in CI, the images and the server, is the newest LTS, named once in `.nvmrc` (D701). A new LTS means `npm run lts -- --write`, then `npm run check` on it, never a `node:<major>` or `node-version` changed by hand.
 
 ## Commands
 
@@ -120,6 +121,7 @@ npm run screenshots  # take the install dialog's screenshots, four pages in each
 npm run cards   # draw the pictures a link to jean.is shows, one per language of its homepage, after changing its promise or a language (D682)
 npm run check   # vendor, manifest, tsc --noEmit (strict), tests, budgets
 npm run security  # the security rules above, in the code, and no secret in a tracked file (D679); npm test runs it too
+npm run lts     # whether .nvmrc names Node's newest LTS, from Node's list of releases (D701); -- --write moves it and every node:<major> image there; CI runs it each Monday too
 npm test        # node --test --test-force-exit test/*.test.js
 npm run e2e     # Playwright smoke tests in Chromium and WebKit (once: npx playwright install chromium webkit)
 npm run reflexes  # measure Kev on the multilingual reflex test set (-- --lang fr,ja, -- --write); BRAIN=<provider>:<model>, a brain reading a child's danger where Kev isn't on (D661)

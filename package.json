@@ -43,6 +43,7 @@
     "typecheck": "tsc --noEmit -p .",
     "check": "npm run vendor && npm run manifest && npm run typecheck && npm test && npm run budgets",
     "security": "node scripts/security.js",
+    "lts": "node scripts/lts.js",
     "e2e": "playwright test -c test",
     "reflexes": "node scripts/reflexes.js",
     "offers": "npm run build && node scripts/offers.js",

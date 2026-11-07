@@ -5,7 +5,7 @@
 name: jean
 
 x-node: &node
-  image: node:22-alpine
+  image: node:26-alpine
   user: "1000:1000"
   logging:
     driver: none

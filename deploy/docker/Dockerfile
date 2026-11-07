@@ -10,7 +10,7 @@
 # Nothing runs at install: what is copied from node_modules needs no install script.
 # The files are the same on every platform, so they are built once, on the builder's own; the
 # stages after only copy, and an image for another platform runs nothing under emulation.
-FROM --platform=$BUILDPLATFORM node:24-alpine AS build
+FROM --platform=$BUILDPLATFORM node:26-alpine AS build
 WORKDIR /src
 COPY package.json package-lock.json ./
 RUN npm ci --ignore-scripts --no-audit --no-fund
@@ -23,7 +23,7 @@ RUN sed -i 's|</head>|<meta name="app-policy" content="policy.json">\n</head>|' 
  && echo '{}' > /site/policy.json
 
 # The gateway: one module and Node, nothing to install, configured by GATEWAY_CONFIG.
-FROM node:24-alpine AS gateway
+FROM node:26-alpine AS gateway
 WORKDIR /app
 COPY package.json ./
 COPY gateway/ gateway/
