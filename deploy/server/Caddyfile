@@ -26,6 +26,13 @@ www.hst.ing {
 	redir https://hst.ing{uri} permanent
 }
 
+# The relay (D45 · D226), told the visitor's port beside the address it takes from Caddy (RELAY_PROXIED).
+relay.jean.is {
+	reverse_proxy relay:8791 {
+		header_up X-Client-Port {remote_port}
+	}
+}
+
 # Where the page for a key sends.
 keys.jean.is {
 	reverse_proxy requests:8789

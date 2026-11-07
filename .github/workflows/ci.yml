@@ -123,7 +123,7 @@ jobs:
   # The commit pushed to main, live (D320 · D659): jean.is on Bunny with npm run deploy, which first
   # publishes the render package it names, through npm's trusted publishing (no token: npm checks this
   # workflow and environment, and records it as the version's provenance); then the gateway, the key
-  # service and the share host on Jean's server at the same commit, sent as a tar through a key that
+  # service, the share host and the relay on Jean's server at the same commit, sent as a tar through a key that
   # may run nothing but the server's update script (deploy/server/update.sh). Everything that names a
   # place or opens one comes from the environment jean.is, which only main can use: its variables
   # DEPLOY_TO, BUNNY_PULL_ZONE, POLICY, ADDRESS, KEYS, SERVER (user@address) and SERVER_HOST_KEYS (its
@@ -165,10 +165,10 @@ jobs:
           npm run host
           mkdir -p stage/host ~/.ssh
           cp dist/host/host.js dist/host/serve.js dist/host/viewer.json dist/host/package.json stage/host/
-          git archive HEAD gateway/gateway.js gateway/serve.js requests/requests.js requests/serve.js | tar -x -C stage
+          git archive HEAD gateway/gateway.js gateway/serve.js relay/relay.js relay/serve.js requests/requests.js requests/serve.js | tar -x -C stage
           printf '%s\n' "$SERVER_HOST_KEYS" > ~/.ssh/known_hosts
           install -m 600 /dev/null ~/.ssh/deploy && printf '%s\n' "$SERVER_KEY" > ~/.ssh/deploy
-          tar -C stage -cf - gateway host requests | ssh -T -i ~/.ssh/deploy -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o ServerAliveInterval=15 -o ServerAliveCountMax=8 "$SERVER"
+          tar -C stage -cf - gateway host relay requests | ssh -T -i ~/.ssh/deploy -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o ServerAliveInterval=15 -o ServerAliveCountMax=8 "$SERVER"
         env:
           SERVER: ${{ vars.SERVER }}
           SERVER_HOST_KEYS: ${{ vars.SERVER_HOST_KEYS }}
