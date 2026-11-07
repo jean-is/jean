@@ -130,7 +130,7 @@ export const part = (path) => parts.get(path) ?? /** @type {Promise<string>} */ 
 export const LENT = /** @type {Record<string, string>} */ ({ diagram: './page-diagram.js', map: './map.js' })
 
 /** The map service's styles, light and dark, and the addresses that may be fetched for a map: theirs. */
-const styles = () => mapStyles(/** @type {Settings & Parameters<typeof mapStyles>[0]} */ (effective.peek().settings), app.policy)
+const styles = () => mapStyles(effective.peek().settings, app.policy)
 const mapSites = () => Object.values(styles()).map((address) => new URL(address).origin)
 
 // Each component a page holds is asked for as it appears, and lent then; the rest isn't.
@@ -346,7 +346,7 @@ class AppPage extends HTMLElement {
   /** Maps allowed, from now on, unless the organisation says otherwise. */
   async allow() {
     const { allows, locked } = rights.peek()
-    if (!allows.maps && !locked.has('maps')) await updateSettings({ pages: /** @type {Settings['pages'] & { maps: boolean }} */ ({ ...app.settings.peek().pages, maps: true }) })
+    if (!allows.maps && !locked.has('maps')) await updateSettings({ pages: { ...app.settings.peek().pages, maps: true } })
     return rights.peek().allows.maps
   }
 

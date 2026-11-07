@@ -27,7 +27,7 @@ export const here = signal(/** @type {Set<string>} */ (new Set()))
 export const getting = signal('')
 const worker = modelWorker(new URL('./reader-worker.js', import.meta.url), 'The natural voice stopped')
 const fileOf = (/** @type {string} */ lang) => new URL(`${lang}.bin`, new URL(MANIFEST[0], weightsHost())).href
-export const on = () => /** @type {{ naturalVoice?: boolean }} */ (effective.value.settings).naturalVoice !== false
+export const on = () => effective.value.settings.naturalVoice !== false
 export const named = (/** @type {string} */ lang) => new Intl.DisplayNames(intlLocales(), { type: 'language' }).of(lang) ?? lang
 
 /**
@@ -83,7 +83,7 @@ const LIVE = 'live'
  * @type {{ id: string, context: AudioContext, made: boolean, at: number, sources: AudioBufferSourceNode[], requests: Set<number> } | null}
  */
 let playing = null
-const can = (/** @type {string} */ lang) => /** @type {{ naturalVoice?: boolean }} */ (effective.peek().settings).naturalVoice !== false && here.peek().has(lang)
+const can = (/** @type {string} */ lang) => effective.peek().settings.naturalVoice !== false && here.peek().has(lang)
 
 /**
  * Reads plain text after what `playing` holds, which starts afresh when it is another's: a promise of when it

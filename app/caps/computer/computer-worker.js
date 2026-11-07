@@ -827,7 +827,7 @@ function nodeModules(file, cwd) {
     }
   }
   const encoding = (/** @type {NodeEncoding | undefined} */ options) => (typeof options === 'string' ? options : options?.encoding)
-  const bytes = (/** @type {string | ArrayBufferView | ArrayBuffer} */ data, /** @type {NodeEncoding | undefined} */ options) => (typeof data === 'string' ? Buffer.from(data, encoding(options)) : ArrayBuffer.isView(data) ? data : new Uint8Array(data))
+  const bytes = (/** @type {string | ArrayBufferView | ArrayBuffer} */ data, /** @type {NodeEncoding | undefined} */ options) => (typeof data === 'string' ? Buffer.from(data, encoding(options)) : ArrayBuffer.isView(data) ? new Uint8Array(data.buffer, data.byteOffset, data.byteLength) : new Uint8Array(data))
   /** @param {string} p @returns {NodeStats} */
   const stat = (p) => {
     const { folder, size, mtime } = /** @type {{ folder: boolean, size: number, mtime: number }} */ (JSON.parse(call('stat', p)))
@@ -837,7 +837,7 @@ function nodeModules(file, cwd) {
   const fs = {
     readFileSync: (p, options) => (/^utf-?8$/i.test(encoding(options) ?? '') ? call('read', p) : encoding(options) ? Buffer.from(call('bytes', p)).toString(encoding(options)) : Buffer.from(call('bytes', p))),
     writeFileSync: (p, data, options) => call('write', p, bytes(data, options)),
-    appendFileSync: (p, data, options) => call('write', p, Buffer.concat([fs.existsSync(p) ? /** @type {InstanceType<typeof Buffer>} */ (fs.readFileSync(p)) : Buffer.alloc(0), /** @type {Uint8Array} */ (bytes(data, options))])),
+    appendFileSync: (p, data, options) => call('write', p, Buffer.concat([fs.existsSync(p) ? /** @type {InstanceType<typeof Buffer>} */ (fs.readFileSync(p)) : Buffer.alloc(0), bytes(data, options)])),
     existsSync: (p) => {
       try {
         return Boolean(call('stat', p))

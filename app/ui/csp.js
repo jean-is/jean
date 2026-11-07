@@ -10,7 +10,7 @@ export const PAGE_DEFAULTS = Object.freeze({ scripts: true, fullscreen: true, do
 /** Where a page's maps come from (D291), unless policy or Settings name another service: OpenFreeMap's styles for light and dark. */
 export const MAP_STYLES = Object.freeze({ light: 'https://tiles.openfreemap.org/styles/positron', dark: 'https://tiles.openfreemap.org/styles/dark' })
 
-/** The map service's styles, light and dark, as policy or Settings name them (`mapStyles`). @param {{ mapStyles?: typeof MAP_STYLES }} settings @param {{ mapStyles?: typeof MAP_STYLES }} [policy] */
+/** The map service's styles, light and dark, as policy or Settings name them (`mapStyles`). @param {Pick<import('../core/types.js').Settings, 'mapStyles'>} settings @param {Pick<import('../core/types.js').Settings, 'mapStyles'>} [policy] */
 export const mapStyles = (settings, policy = {}) => policy.mapStyles ?? settings.mapStyles ?? MAP_STYLES
 /** @typedef {Partial<Record<PageRight, boolean>> & { sites?: string[] }} PageSettings  sites: what its code may reach, any when empty */
 

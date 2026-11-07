@@ -259,3 +259,112 @@ export type ConversationSummary = { id: string, path: string, title: string, ope
 
 /** UI: "Do it" / "Ask me first" / "Never" */
 export type RuleValue = 'allow' | 'ask' | 'never'
+
+// ─── Settings ────────────────────────────────────────────────────────────────
+
+/** settings.json (core/settings.js): what the person chose on this device. Only its secrets live elsewhere. */
+export interface Settings {
+  format: 1
+  locale: string | null
+  brains: BrainConfig[]
+  activeBrain: string | null
+  rules: Record<string, RuleValue>
+  guards?: import('./rules.js').Guard[]
+  voice: string | null
+  /** what the user is called, set by them or once by Jean from a conversation; '' when they cleared it */
+  name?: string
+  /** capabilities discovered so far */
+  unlocked: string[]
+  /** turned off by the user since (D433) */
+  off?: string[]
+  /** Auto picks the brain for each message */
+  auto: boolean
+  /** false: keep messages on this device */
+  cloud: boolean
+  /** offer id → when the user answered it (ISO) */
+  offers: Record<string, string>
+  /** false: Jean neither notes nor reads what it noticed */
+  memory?: boolean
+  /** services connected through MCP (their keys and tokens are secrets) */
+  connections?: ServiceConnection[]
+  /** a connection's own rules, by its id */
+  services?: Record<string, Record<string, RuleValue>>
+  /** how many times the user dictated (live conversation is offered) */
+  dictated?: number
+  /** how many times the user asked an answer again: the second offers Feedback (D712) */
+  retried?: number
+  /** the groups of tasks offered as projects, by name, and when they were last looked for (D716) */
+  grouped?: string[]
+  groupedAt?: string
+  /** how many days a task nothing changed in is kept, pinned ones aside, and when that was last looked at (D718) */
+  forget?: number
+  forgotAt?: string
+  /** a month's limit on answers, in US dollars, past which one that costs money asks first (D711) */
+  limit?: number
+  /** how many answers cited their sources (Double-check is offered) */
+  cited?: number
+  /** how many links from answers the user opened (the browser is offered) */
+  browsed?: number
+  /** how many pictures the user shared from a touch screen (the camera is offered, D645) */
+  photos?: number
+  /** how many answers were read aloud in one of the natural voice's languages (from the third, it is offered, D455) */
+  readAloud?: number
+  /** false: answers are read aloud in the browser's own voices, never the natural one (D455) */
+  naturalVoice?: boolean
+  /** false: no notification when a task is done out of sight */
+  notifications?: boolean
+  /** how many requests took several calls (Flows is offered, D218) */
+  stepped?: number
+  /** a brain was told to answer now: Settings › Brains says how much each thinks (D414) */
+  hurried?: boolean
+  /** a backup was restored here (Sync is offered, D286) */
+  restored?: boolean
+  /** when the last backup was made here */
+  backedUp?: string
+  /** sites that open in a tab of their own, not in the browser (D140) */
+  windowed?: string[]
+  /** the user opened the terminal: the bar has a button for it (D166) */
+  terminal?: boolean
+  /** how wide the panes' side is beside the conversation, a share of the window, as the user set it (D144, D635) */
+  dock?: { width?: number }
+  /** what a web page in a pane may do, and which sites it may reach (D143, D291; ui/csp.js's PAGE_DEFAULTS) */
+  pages?: { [right in import('../ui/csp.js').PageRight]?: boolean } & { sites?: string[] }
+  /** the map service's styles, light and dark, when the user named another (D291) */
+  mapStyles?: { light: string, dark: string }
+  /** overrides of the default addresses */
+  urls?: Partial<Record<keyof typeof import('./settings.js').DEFAULT_URLS, string>>
+  /** what the Computer may reach, and where its packages come from (D162) */
+  computer?: import('../caps/computer/net.js').ComputerSettings
+  /** how Jean looks, and the user's own touches (D111) */
+  look?: Look
+  /** addresses of skills indexes, when the user changed the default list (D121) */
+  sources?: string[]
+  /** projects whose assistants meet without asking first (D224) */
+  meet?: string[]
+  /** films are made without asking first (D251) */
+  films?: boolean
+  /** which makes pictures on this device (D263) */
+  pictures?: string
+  /** certificates dated by witnesses, recorded in a public log, as the user chose (D276) */
+  certificates?: { date?: boolean, log?: boolean }
+  /** web search's sources on (D271) */
+  searches?: string[]
+  /** false: web search is off, from + in the box (D304) */
+  search?: boolean
+  /** each extension on this device: on or not, turned off for failing, where its files came from, the rights taken back (D552) */
+  extensions?: import('../caps/extensions/extensions.js').Switches
+  /** words the person added for masked requests to hide, never fewer (D681) */
+  maskWords?: string[]
+}
+
+/**
+ * A look by its id (Tilde when absent, D373), and what the user changed over it: colours as
+ * `#rrggbb`, a text size as a share of the browser's, a typeface, and their own CSS.
+ */
+export type Look = { id?: string, accent?: string, background?: string, size?: number, font?: string, css?: string }
+
+/**
+ * A service connected (D21, D87): the further servers its one sign-in reaches (D344), the projects
+ * it is kept to, whether it is reached through the gateway (D191), and who signed in.
+ */
+export type ServiceConnection = { id: string, name: string, url: string, servers?: string[], auth: 'none' | 'key' | 'oauth' | 'oidc', projects?: string[], gateway?: boolean, account?: string }

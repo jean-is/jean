@@ -89,9 +89,9 @@ export function read(id, source, hint, choice, given) {
  * by an event (a saved copy, D305, has no discovery). False: read on. @param {string} lang
  */
 function offer(lang) {
-  const count = (/** @type {{ readAloud?: number }} */ (app.settings.peek()).readAloud ?? 0) + 1
+  const count = (app.settings.peek().readAloud ?? 0) + 1
   natural.wanted = lang
-  updateSettings(/** @type {Partial<import('../core/settings.js').Settings> & { readAloud: number }} */ ({ readAloud: count }))
+  updateSettings({ readAloud: count })
   if (count >= READ) document.dispatchEvent(new CustomEvent('app-read-natural'))
   return false
 }
