@@ -27,7 +27,7 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
 - Untrusted code (JavaScript or Python written by a model, an extension's module) runs only in a sandbox worker started by `sandbox.html`, never in the main document.
 - In the main document: no `innerHTML`, no `eval`, no `new Function`. Markdown is rendered from `marked` tokens into lit-html templates. Trusted Types is enforced.
 - No hard-coded third-party URL. Every external address comes from settings or policy.
-- Secrets never enter backups, exports, syncs or shares.
+- Secrets never enter backups, exports, syncs or shares. They leave a profile only for a child's on the same device (D389), or for the person's paired devices, sealed to the receiving device's key (D700).
 - Default action rules: reading and writing Jean's own files → do it; sending, sharing, deleting, anything external → ask first; passwords and payments → never. Once a task holds something from elsewhere, an Always allow no longer sends anything out unasked (D673).
 - `npm run security`, in `npm test`, holds these rules in the code (D679). An exception goes in `scripts/security.js` with its reason.
 

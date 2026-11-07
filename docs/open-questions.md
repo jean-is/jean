@@ -20,7 +20,7 @@ What the certificates' next steps hang on ([certificates.md](certificates.md)):
   - **Qonto:** registers only the redirects on its list, added on request at its developers' support: ask for `https://jean.is/` and the desktop apps' `http://127.0.0.1:24601/`, then its entry drops `app`. An organisation's own address needs the same.
 - **Helpers on a cheaper brain?** Helpers use the brain that delegated (D98). Auto could give them a lighter tier: cheaper, but one answer would then mix two models' work. To decide with real tasks.
 - **What a template carries** (D476): a project's instructions, skills, tables and routines, and its connections as names and addresses only, without their secrets?
-- **Requests between people's Jeans (D226):** A2A's messages over the relay, or ACP's? How a person is named to send to: a pairing link once, then a name in the user's own list?
-- **Continuity (D227):** which settings follow a person (brains and connections listed without their keys, so another device asks only to sign in again, which amends D157's "settings stay on each")? Where a routine runs when several devices are open: the device that made it, or the first to claim the run in the mirror? What a phone keeps, when Safari evicts a site's data after 7 days unless it is installed?
+- **Requests between people's Jeans (D226):** A2A's messages over the relay, or ACP's?
+- **Routines on several devices (D227):** where a routine runs when several of a person's devices are open: the device that made it, or the first to claim the run in the store?
 - **Profiles (D228):** the word in the UI ("Profile", as browsers say, or one of the house's), and whether a routine of a profile not open runs.
 - **Double-check with Intuition one day?** If Jean's fine-tuned reflexes (D328) learn "does this passage support this sentence?" in every launch language, checks could stay on the device and cost nothing (D100).
