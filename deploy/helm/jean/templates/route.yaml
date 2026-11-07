@@ -1,0 +1,33 @@
+{{- if .Values.route.enabled }}
+{{- range $component := list "jean" "gateway" "relay" }}
+{{- $values := index $.Values $component }}
+{{- if and (or (eq $component "jean") $values.enabled) $values.host }}
+{{- $ctx := dict "root" $ "component" $component }}
+{{- $name := include "jean.componentName" $ctx }}
+{{- $annotations := merge (deepCopy ($values.route.annotations | default dict)) (deepCopy ($.Values.route.annotations | default dict)) (dict "haproxy.router.openshift.io/hsts_header" "max-age=31536000") }}
+---
+# Each component on a host of its own, TLS ending at the router, on its certificate unless an annotation brings one,
+# plain HTTP sent on to HTTPS. The router appends the visitor's address to X-Forwarded-For, which the relay reads.
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "jean.labels" $ctx | nindent 4 }}
+  annotations:
+    {{- toYaml $annotations | nindent 4 }}
+spec:
+  host: {{ $values.host | quote }}
+  to:
+    kind: Service
+    name: {{ $name }}
+    weight: 100
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+{{- end }}
+{{- end }}
+{{- end }}

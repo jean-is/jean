@@ -15,6 +15,7 @@ Or take a release Warehouse SAS signed, which needs no Node.js: check its signat
 | A server reached over SSH | `DEPLOY_TO=host:/path npm run deploy`: a commit in git (`HEAD` unless you name one after `--`) as a new release beside the last five, `/path/current` switched to it at once ([architecture.md](../docs/architecture.md#deploying)) |
 | Bunny CDN, as jean.is | `DEPLOY_TO=bunny:<storage zone> npm run deploy` ([bunny/](bunny/README.md)) |
 | Containers | [docker/](docker/README.md) |
+| Kubernetes or OpenShift, from a Helm chart | [helm/jean/](helm/jean/README.md) |
 | IIS | [iis/](iis/README.md) |
 | Azure Static Web Apps | [azure/](azure/README.md) |
 | Amazon S3 behind CloudFront | [aws/](aws/README.md) |

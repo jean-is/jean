@@ -1,0 +1,68 @@
+# Jean's chart with everything on, for CI: helm lint --strict (with and without OpenShift's APIs, by
+# --api-versions security.openshift.io/v1,route.openshift.io/v1) and the install in kind under Pod Security
+# "restricted". kind has no Route API, so Ingresses here; lint Routes with --set route.enabled=true,ingress.enabled=false.
+# Every pod runs as a user picked at random as OpenShift's are, in group 0, the relay's volume that user's too.
+jean:
+  host: jean.ci.test
+  replicaCount: 1
+  appName: CI
+  contentSecurityPolicy: "connect-src 'self' https://gateway.ci.test https://relay.ci.test"
+  policy:
+    capabilities:
+      preUnlock: [connections]
+  image:
+    registry: ""
+    repository: jean
+    tag: ci
+    pullPolicy: Never
+  podSecurityContext:
+    runAsUser: 1000680000
+    runAsGroup: 0
+
+gateway:
+  enabled: true
+  host: gateway.ci.test
+  replicaCount: 2
+  image:
+    registry: ""
+    repository: jean-gateway
+    tag: ci
+    pullPolicy: Never
+  config:
+    hosts: [example.com]
+  proxy:
+    no: .svc,.cluster.local
+  podSecurityContext:
+    runAsUser: 1000680000
+    runAsGroup: 0
+
+relay:
+  enabled: true
+  host: relay.ci.test
+  image:
+    registry: ""
+    repository: jean-relay
+    tag: ci
+    pullPolicy: Never
+  config:
+    limits:
+      opens: 6000
+  persistence:
+    size: 2Gi
+  podSecurityContext:
+    runAsUser: 1000680000
+    runAsGroup: 0
+    fsGroup: 1000680000
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
+  tls: true
+
+networkPolicy:
+  enabled: true
+  ingressNamespaceSelector:
+    matchLabels:
+      kubernetes.io/metadata.name: ingress-nginx
