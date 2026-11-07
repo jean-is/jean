@@ -1,5 +1,5 @@
 # Jean at Reefknot Mutual, a fictional insurer, on one computer (D415): its sign-in (Dex), its AI gateway
-# (LiteLLM) with a brain and an MCP server, and Jean, which its policy pins to both. See README.md beside this file.
+# (LiteLLM) with a brain and an MCP server, its relay, and Jean, which its policy pins to them. See README.md beside this file.
 #   cp .env.example .env      then name the brain behind the gateway in it
 #   docker compose up -d --build
 # Then open http://localhost:8080 and sign in as ana@reefknot.example, with the password "password".
@@ -13,8 +13,8 @@ services:
     ports:
       - "127.0.0.1:8080:8080"
     environment:
-      # What the browser lets Jean reach, whatever Jean's own policy allows: its own address, the sign-in, the gateway.
-      CONTENT_SECURITY_POLICY: "connect-src 'self' http://localhost:5556 http://localhost:4000"
+      # What the browser lets Jean reach, whatever Jean's own policy allows: its own address, the sign-in, the gateway, the relay.
+      CONTENT_SECURITY_POLICY: "connect-src 'self' http://localhost:5556 http://localhost:4000 http://localhost:8791"
     volumes:
       - ./policy.json:/srv/policy.json:ro
     restart: unless-stopped
@@ -50,3 +50,22 @@ services:
     depends_on:
       - dex
     restart: unless-stopped
+
+  # Reefknot's own relay (D45 · D226), where a person's devices and colleagues meet: sealed messages it can't read,
+  # for Jean at its own address alone, in a volume of its own.
+  relay:
+    build:
+      context: ../..
+      dockerfile: deploy/docker/Dockerfile
+      target: relay
+    image: jean-relay
+    ports:
+      - "127.0.0.1:8791:8791"
+    environment:
+      RELAY_CONFIG: '{"origins":["http://localhost:8080"]}'
+    volumes:
+      - relay-data:/data
+    restart: unless-stopped
+
+volumes:
+  relay-data:

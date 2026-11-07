@@ -6,6 +6,7 @@ jean.is's own files are on Bunny CDN ([bunny/](../bunny/README.md)). What can't 
 |---|---|---|
 | `gateway.jean.is` | [The gateway](../../gateway/), for the services a browser can't reach (D191) | Nothing |
 | `hst.ing` | [The share host](../../host/) (D361) | Sealed copies it can't read, in `share-data/` |
+| `relay.jean.is` | [The relay](../../relay/), where a person's devices and the people they send to meet (D45 · D226) | Sealed messages it can't read, 7 days at most, and the sealed records of each change, in `relay-data/` |
 | `keys.jean.is` | [The request service](../../requests/), where the page for a key sends | Each request, in `requests-data/` |
 | An organisation's own address | Its hosted copy (D456, [deploy/](../README.md#hosted-copies)) | Jean's files and its `policy.json`, in `hosted/` |
 
@@ -23,7 +24,7 @@ npm run host
 ```
 
 ```bash
-git archive HEAD gateway requests | ssh <server> 'mkdir -p /srv/jean/code && tar -x -C /srv/jean/code'
+git archive HEAD gateway requests relay | ssh <server> 'mkdir -p /srv/jean/code && tar -x -C /srv/jean/code'
 ```
 
 ```bash
@@ -36,7 +37,8 @@ rsync -r dist/host/ <server>:/srv/jean/code/host/
    - `gateway.env`: `GATEWAY_CONFIG=` its configuration on one line, `{"origins":["https://jean.is"]}` and the sign-in apps' `clients`.
    - `share.env`: `HOST_CONFIG=` the share host's, with the public half of the key that seals its records.
    - `requests.env`: `REQUESTS_CONFIG=` the request service's, with `"site":"https://jean.is/"`, the address its answers send people back to, and the mail server.
-4. The folders the services write, owned by uid 1000: `share-data/` and `requests-data/`. `hosted/tenants/` holds an empty `Caddyfile` until the first hosted copy.
+   - `relay.env`: `RELAY_CONFIG=` the relay's: its `origins`, `https://jean.is`, the desktop app's `http://127.0.0.1:24601` and every hosted copy whose policy names this relay, and the public half of the key that seals its records (`node host/serve.js keys` makes a pair).
+4. The folders the services write, owned by uid 1000: `share-data/`, `requests-data/` and `relay-data/`. `hosted/tenants/` holds an empty `Caddyfile` until the first hosted copy.
 5. Check the configuration, then start:
 
 ```bash
@@ -47,24 +49,32 @@ docker compose run --rm --no-deps caddy caddy validate --config /etc/caddy/Caddy
 docker compose up -d
 ```
 
-6. DNS, not proxied: `gateway.jean.is`, `keys.jean.is`, `hst.ing` and `www.hst.ing`, and the name hosted copies' CNAME records point at, as A and AAAA records for the server.
+6. DNS, not proxied: `gateway.jean.is`, `keys.jean.is`, `relay.jean.is`, `hst.ing` and `www.hst.ing`, and the name hosted copies' CNAME records point at, as A and AAAA records for the server.
 
 ## Keep it current
 
-CI does it at every push to main, right after deploying jean.is (D659): it sends the commit's gateway, key service and share host to [`update.sh`](update.sh), installed as `/srv/jean/update` (root's, mode 755), through a key that may run nothing else. The script refuses a tar that holds anything but those files, recreates the three services, checks that each answers, and puts the previous code back if one doesn't. Once, on the server, the key's public half goes in `~ubuntu/.ssh/authorized_keys` behind its restrictions:
+CI does it at every push to main, right after deploying jean.is (D659): it sends the commit's gateway, key service, share host and relay to [`update.sh`](update.sh), installed as `/srv/jean/update` (root's, mode 755), through a key that may run nothing else. The script refuses a tar that holds anything but those files, recreates the four services, checks that each answers, and puts the previous code back if one doesn't. Once, on the server, the key's public half goes in `~ubuntu/.ssh/authorized_keys` behind its restrictions:
 
 ```text
 command="sudo -n /srv/jean/update",restrict ssh-ed25519 AAAA… jean CI deploy
 ```
 
-Its private half is the environment `jean.is`'s secret `SERVER_KEY` on GitHub, beside `SERVER` (`ubuntu@<address>`) and `SERVER_HOST_KEYS` (the server's lines from a `known_hosts` that has checked it). By hand, the same tar does the same over any SSH connection: `tar -C <folder> -cf - gateway host requests | ssh <server> sudo /srv/jean/update`.
+Its private half is the environment `jean.is`'s secret `SERVER_KEY` on GitHub, beside `SERVER` (`ubuntu@<address>`) and `SERVER_HOST_KEYS` (the server's lines from a `known_hosts` that has checked it). By hand, the same tar does the same over any SSH connection: `tar -C <folder> -cf - gateway host requests relay | ssh <server> sudo /srv/jean/update`.
 
 The settings in the `.env` files are read only as a container starts, so after changing one, recreate its service:
 
 ```bash
-docker compose up -d --force-recreate gateway share requests
+docker compose up -d --force-recreate gateway share requests relay
 ``` Hosted copies' releases come from `DEPLOY_TO=<server>:/srv/jean/hosted POLICY='{}' npm run deploy`, and their sites from `npm run tenant` ([deploy/](../README.md#hosted-copies)).
+
+## Adding the relay to a server that runs the others
+
+`update.sh` refuses a tar that doesn't hold exactly what it expects, so the server changes before CI sends `relay/`:
+
+1. DNS for `relay.jean.is`, then `relay.env` and `relay-data/` as above.
+2. This folder's `compose.yaml`, `Caddyfile` and `update.sh` (as `/srv/jean/update`, root's, mode 755) in place of the old ones, and the relay's code in `code/relay/` (`git archive HEAD relay | ssh <server> 'tar -x -C /srv/jean/code'`). Check the configuration as above, then `docker compose up -d` and `docker compose restart caddy`: a running Caddy keeps the file it started with, so without the restart `relay.jean.is` gets no route and no certificate, and nothing says so.
+3. Only then the push whose CI sends the relay: until the server has the new script, a deploy that sends `relay/` fails, and one that doesn't fails once it has.
 
 ## Moving from another server
 
-Copy `share-data/` and `requests-data/` as they are, owner and all, before the DNS records change: a share whose copy stays behind can no longer be opened, and its link breaks.
+Copy `share-data/`, `requests-data/` and `relay-data/` as they are, owner and all, before the DNS records change: a share whose copy stays behind can no longer be opened, and its link breaks.

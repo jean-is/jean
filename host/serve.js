@@ -105,6 +105,25 @@ export const listener = (handle, proxied) => async (req, res) => {
   else res.end()
 }
 
+/**
+ * A server that stops when its container does. On SIGTERM or SIGINT it takes no new connection and closes the idle ones,
+ * ends the rest after `grace` (a read waiting for a message, an upload, an answer streaming), then exits. Node as a
+ * container's first process ignores SIGTERM otherwise, and waits to be killed when the orchestrator's patience ends.
+ * The relay, the request service and this host share it; the gateway, whose image holds gateway/ alone, has its own.
+ * @param {import('node:http').Server} server @param {number} [grace] milliseconds
+ */
+export function stopping(server, grace = 5_000) {
+  const stop = () => {
+    server.close(() => process.exit(0))
+    server.closeIdleConnections()
+    setTimeout(() => server.closeAllConnections(), grace).unref()
+    setTimeout(() => process.exit(0), grace + 1_000).unref()
+  }
+  process.once('SIGTERM', stop)
+  process.once('SIGINT', stop)
+  return server
+}
+
 /** @param {string[]} args */
 export async function main([command, ...args]) {
   const config = JSON.parse(process.env.HOST_CONFIG ?? '{}')
@@ -133,7 +152,7 @@ export async function main([command, ...args]) {
   await store.sweep()
   setInterval(() => store.sweep().catch(console.error), DAY).unref()
   const handle = host({ ...config, render: config.render ?? viewer?.render, sounds: config.sounds ?? viewer?.sounds, viewer, store })
-  createServer(listener(handle, process.env.HOST_PROXIED === '1')).listen(PORT, HOST, () => console.log(`Share host on http://${HOST}:${PORT}/, keeping shares in ${dir}`))
+  stopping(createServer(listener(handle, process.env.HOST_PROXIED === '1'))).listen(PORT, HOST, () => console.log(`Share host on http://${HOST}:${PORT}/, keeping shares in ${dir}`))
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) await main(process.argv.slice(2))

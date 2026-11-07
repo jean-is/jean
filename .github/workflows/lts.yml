@@ -1,0 +1,27 @@
+# Whether Jean's own Node, named once in .nvmrc, is still the newest LTS (npm run lts, D701): on every push to main and
+# every pull request, and each Monday, so that a new LTS shows within a week even when nothing is pushed. A red run says
+# which major to move to: npm run lts -- --write, then npm run check on it. It stops no image and no deploy, which never
+# wait on nodejs.org; that every pin names .nvmrc's major is test/lts.test.js's, in npm run check.
+
+name: Node LTS
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: '17 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lts:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version-file: .nvmrc
+      - run: npm run lts

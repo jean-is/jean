@@ -1,6 +1,7 @@
-# Jean, and its gateway when asked for (D232). See README.md beside this file.
+# Jean, and its gateway and relay when asked for (D232). See README.md beside this file.
 #   docker compose up -d --build                     Jean on http://localhost:8080
 #   docker compose --profile gateway up -d --build   and the gateway on http://localhost:8787
+#   docker compose --profile relay up -d --build     and the relay on http://localhost:8791
 # Variables come from the shell or from a .env file beside this one.
 name: jean
 services:
@@ -31,3 +32,23 @@ services:
     environment:
       - GATEWAY_CONFIG
     restart: unless-stopped
+
+  relay:
+    profiles: [relay]
+    build:
+      context: ../..
+      dockerfile: deploy/docker/Dockerfile
+      target: relay
+    image: jean-relay
+    ports:
+      - "8791:8791"
+    environment:
+      - RELAY_CONFIG
+      - RELAY_PROXIED
+    # Its mailboxes, kept across a new version.
+    volumes:
+      - relay-data:/data
+    restart: unless-stopped
+
+volumes:
+  relay-data:
