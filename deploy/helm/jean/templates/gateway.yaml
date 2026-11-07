@@ -1,0 +1,131 @@
+{{- if .Values.gateway.enabled -}}
+{{- $ctx := dict "root" . "component" "gateway" -}}
+{{- $name := include "jean.componentName" $ctx -}}
+{{- $values := .Values.gateway -}}
+{{- $config := include "jean.gatewayConfig" . -}}
+{{- $ca := $values.trustedCA.configMap -}}
+{{- if not $values.existingSecret.name }}
+# GATEWAY_CONFIG from the values. existingSecret keeps the apps' secrets out of them.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "jean.labels" $ctx | nindent 4 }}
+type: Opaque
+data:
+  GATEWAY_CONFIG: {{ $config | b64enc | quote }}
+---
+{{- end }}
+{{- if eq $ca "openshift" }}
+# OpenShift's cluster-wide trusted certificates, which its network operator writes into ca-bundle.crt here.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $name }}-trusted-ca
+  labels:
+    {{- include "jean.labels" $ctx | nindent 4 }}
+    config.openshift.io/inject-trusted-cabundle: "true"
+---
+{{- end }}
+# The gateway on Node, as user 1000 outside OpenShift, under Node's permission model: the network, and reading its code.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "jean.labels" $ctx | nindent 4 }}
+spec:
+  replicas: {{ $values.replicaCount }}
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      {{- include "jean.selectorLabels" $ctx | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "jean.labels" $ctx | nindent 8 }}
+        {{- with $values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        # A new config rolls the pods; a Secret of yours, changed, needs a rollout restart.
+        checksum/config: {{ $config | sha256sum }}
+        {{- with $values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- include "jean.podSecurity" $ctx | nindent 6 }}
+      {{- include "jean.placement" $ctx | nindent 6 }}
+      containers:
+        - name: gateway
+          image: {{ include "jean.image" (dict "root" . "image" $values.image) }}
+          imagePullPolicy: {{ $values.image.pullPolicy }}
+          {{- include "jean.containerSecurity" . | nindent 10 }}
+          env:
+            - name: HOST
+              value: 0.0.0.0
+            - name: PORT
+              value: "8787"
+            - name: GATEWAY_CONFIG
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $values.existingSecret.name | default $name }}
+                  key: {{ if $values.existingSecret.name }}{{ $values.existingSecret.key }}{{ else }}GATEWAY_CONFIG{{ end }}
+            {{- if or $values.proxy.http $values.proxy.https }}
+            # Node's fetch takes a proxy from the environment only when asked to.
+            - name: NODE_USE_ENV_PROXY
+              value: "1"
+            {{- end }}
+            {{- with $values.proxy.http }}
+            - name: HTTP_PROXY
+              value: {{ . | quote }}
+            {{- end }}
+            {{- with $values.proxy.https }}
+            - name: HTTPS_PROXY
+              value: {{ . | quote }}
+            {{- end }}
+            {{- with $values.proxy.no }}
+            - name: NO_PROXY
+              value: {{ . | quote }}
+            {{- end }}
+            {{- if $ca }}
+            - name: NODE_EXTRA_CA_CERTS
+              value: /etc/jean/ca/{{ if eq $ca "openshift" }}ca-bundle.crt{{ else }}{{ $values.trustedCA.key }}{{ end }}
+            {{- end }}
+          ports:
+            - name: http
+              containerPort: 8787
+              protocol: TCP
+          {{- include "jean.lifecycle" . | nindent 10 }}
+          resources:
+            {{- toYaml $values.resources | nindent 12 }}
+          {{- if $ca }}
+          volumeMounts:
+            - name: trusted-ca
+              mountPath: /etc/jean/ca
+              readOnly: true
+          {{- end }}
+      {{- if $ca }}
+      volumes:
+        - name: trusted-ca
+          configMap:
+            name: {{ if eq $ca "openshift" }}{{ $name }}-trusted-ca{{ else }}{{ $ca }}{{ end }}
+      {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "jean.labels" $ctx | nindent 4 }}
+spec:
+  type: ClusterIP
+  selector:
+    {{- include "jean.selectorLabels" $ctx | nindent 4 }}
+  ports:
+    - name: http
+      port: 8787
+      targetPort: http
+      protocol: TCP
+{{- end }}

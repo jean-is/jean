@@ -86,6 +86,12 @@ List every other address Jean must still reach, such as the mirrors named in `ur
 GATEWAY_CONFIG='{"origins":["https://jean.corp.example"]}'
 ```
 
+Behind a corporate proxy, set `HTTPS_PROXY`, and `HTTP_PROXY` and `NO_PROXY` if needed, with `NODE_USE_ENV_PROXY=1`, without which Node's `fetch` uses none. A proxy that inspects TLS needs its certificate too: mount it as a file and name it in `NODE_EXTRA_CA_CERTS`. With Compose, add them under the gateway's `environment`; without:
+
+```bash
+docker run -d -p 8787:8787 -e GATEWAY_CONFIG -e NODE_USE_ENV_PROXY=1 -e HTTPS_PROXY=http://proxy.corp.example:3128 -e NODE_EXTRA_CA_CERTS=/etc/jean/proxy.pem -v ./proxy.pem:/etc/jean/proxy.pem:ro ghcr.io/jean-is/jean-gateway:latest
+```
+
 Give the gateway an HTTPS address of its own, such as `https://gateway.corp.example`, rather than a path under Jean's, so that every request from Jean names its origin. Then name the gateway in the policy, and turn Connections on for everyone:
 
 ```json
@@ -98,7 +104,12 @@ Give the gateway an HTTPS address of its own, such as `https://gateway.corp.exam
 RELAY_CONFIG='{"origins":["https://jean.corp.example"]}'
 ```
 
-`node host/serve.js keys`, in a checkout, makes the records' key pair: its public half goes in `recordKey`, and its private half stays offline. The relay keeps its mailboxes in the volume at `/data`. Give it an HTTPS address of its own, such as `https://relay.corp.example`. Behind a reverse proxy, set `RELAY_PROXIED=1` and have the proxy send the visitor's address as the last `X-Forwarded-For` entry and its port as `X-Client-Port` (Caddy: `header_up X-Client-Port {remote_port}`, as [Jean's own server](../server/Caddyfile) does), so that limits and records name each visitor rather than the proxy. Then name it in the policy; with none named, there is none:
+`node host/serve.js keys`, in a checkout, makes the records' key pair: its public half goes in `recordKey`, and its private half stays offline. Its `limits` are [relay.js](../../relay/relay.js)'s `LIMITS`, made for a household's address. In an organisation many people share one, so raise `opens`, the mailboxes a network opens an hour (60), and `sent`, the bytes it sends a day (256 MB), by about the number of people behind one address, here a hundred:
+
+```bash
+RELAY_CONFIG='{"origins":["https://jean.corp.example"],"limits":{"opens":6000,"sent":25600000000}}'
+```
+ The relay keeps its mailboxes in the volume at `/data`. Give it an HTTPS address of its own, such as `https://relay.corp.example`. Behind a reverse proxy, set `RELAY_PROXIED=1` and have the proxy send the visitor's address as the last `X-Forwarded-For` entry and its port as `X-Client-Port` (Caddy: `header_up X-Client-Port {remote_port}`, as [Jean's own server](../server/Caddyfile) does), so that limits and records name each visitor rather than the proxy. Then name it in the policy; with none named, there is none:
 
 ```json
 { "urls": { "relay": "https://relay.corp.example/" } }
@@ -116,6 +127,30 @@ RELAY_CONFIG='{"origins":["https://jean.corp.example"]}'
 
 Pull the new version, or build again from it, and replace the container. Each open Jean finds the new version and offers it, and people keep their data.
 
-## Kubernetes and other orchestrators
+## Kubernetes and OpenShift
 
-`jean` runs as user 101 and listens on 8080. `jean-gateway` runs as user 1000 and listens on 8787. `jean-relay` runs as user 1000, listens on 8791 and writes to `/data`, which needs a persistent volume of its own that user 1000 can write to, such as one with `securityContext.fsGroup: 1000`. With a read-only root filesystem, `jean` needs `/tmp` and `/etc/nginx/conf.d` to be writable, for example as `emptyDir` volumes: as it starts, it writes its configuration to the second one. A probe can ask for `/`.
+[deploy/helm/jean/](../helm/jean/README.md) is a chart that runs the three under OpenShift's `restricted-v2` SCC or Pod Security "restricted", with Routes or Ingresses and NetworkPolicies. Run some other way, the images keep to this:
+
+| | `jean` | `jean-gateway` | `jean-relay` |
+|---|---|---|---|
+| User | 101 | 1000 | 1000 |
+| Port | 8080 | 8787 | 8791 |
+| Writes to | `/tmp`, `/etc/nginx/conf.d` | nothing | `/data` |
+| Reads | `APP_NAME`, `CONTENT_SECURITY_POLICY`, `/srv/policy.json` | `GATEWAY_CONFIG`, `HTTPS_PROXY`…, `NODE_EXTRA_CA_CERTS` | `RELAY_CONFIG`, `RELAY_PROXIED` |
+
+- Any user runs them, as OpenShift picks one, in group 0, which owns what each writes to.
+- With a read-only root filesystem, `jean` needs its two folders as `emptyDir` volumes, and the relay a persistent volume at `/data` that its user can write to, such as one with `securityContext.fsGroup`.
+- None needs a capability or a privilege escalation. Node runs the gateway and the relay under its permission model: the network, reading their own code, and for the relay `/data`.
+- nginx runs two workers, whatever the machine's processors.
+- Each stops cleanly on SIGTERM, and a probe can ask for `/`: nginx answers with Jean, the gateway and the relay with `{"format":1,…}`.
+- The relay runs as one replica, replaced rather than rolled, since its waiting reads and limits live in its memory.
+
+## Verify an image
+
+CI signs each image it publishes, keyless with Sigstore: the signature carries the identity of the workflow that built it, from GitHub's issuer, recorded in Sigstore's public log. cosign checks it:
+
+```bash
+cosign verify ghcr.io/jean-is/jean:edge --certificate-identity-regexp '^https://github\.com/jean-is/jean/\.github/workflows/ci\.yml@refs/(heads/main|tags/v.*)$' --certificate-oidc-issuer https://token.actions.githubusercontent.com
+```
+
+The same goes for `jean-gateway`, `jean-relay` and the chart, `ghcr.io/jean-is/charts/jean`. An admission policy can refuse any image without it ([the chart's README](../helm/jean/README.md#signed-images-only)).

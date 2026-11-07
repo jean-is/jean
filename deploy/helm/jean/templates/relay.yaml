@@ -1,0 +1,110 @@
+{{- if .Values.relay.enabled -}}
+{{- $ctx := dict "root" . "component" "relay" -}}
+{{- $name := include "jean.componentName" $ctx -}}
+{{- $values := .Values.relay -}}
+{{- $persistence := $values.persistence -}}
+{{- if not $persistence.existingClaim }}
+# The relay's mailboxes. Kept when the release is uninstalled, since they hold messages people haven't read yet.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "jean.labels" $ctx | nindent 4 }}
+  annotations:
+    helm.sh/resource-policy: keep
+spec:
+  accessModes:
+    - ReadWriteOnce
+  {{- if eq $persistence.storageClass "-" }}
+  storageClassName: ""
+  {{- else if $persistence.storageClass }}
+  storageClassName: {{ $persistence.storageClass }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ $persistence.size }}
+---
+{{- end }}
+# The relay on Node, as user 1000 outside OpenShift, any user in group 0 on it, writing only to /data. One replica,
+# replaced rather than rolled: its waiting reads, each mailbox's turn and its limits live in its memory, and its
+# volume is written by one pod at a time.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "jean.labels" $ctx | nindent 4 }}
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "jean.selectorLabels" $ctx | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "jean.labels" $ctx | nindent 8 }}
+        {{- with $values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with $values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- include "jean.podSecurity" $ctx | nindent 6 }}
+      {{- include "jean.placement" $ctx | nindent 6 }}
+      containers:
+        - name: relay
+          image: {{ include "jean.image" (dict "root" . "image" $values.image) }}
+          imagePullPolicy: {{ $values.image.pullPolicy }}
+          {{- include "jean.containerSecurity" . | nindent 10 }}
+          env:
+            - name: HOST
+              value: 0.0.0.0
+            - name: PORT
+              value: "8791"
+            - name: RELAY_DIR
+              value: /data
+            # Its origins and limits, and the public key its records are sealed to: nothing secret.
+            - name: RELAY_CONFIG
+              value: {{ include "jean.relayConfig" . | quote }}
+            {{- if include "jean.relayProxied" . }}
+            # Each visitor's address from the last X-Forwarded-For entry, which only the router can send (networkpolicy.yaml).
+            - name: RELAY_PROXIED
+              value: "1"
+            {{- end }}
+          ports:
+            - name: http
+              containerPort: 8791
+              protocol: TCP
+          {{- include "jean.lifecycle" . | nindent 10 }}
+          resources:
+            {{- toYaml $values.resources | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: /data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ $persistence.existingClaim | default $name }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "jean.labels" $ctx | nindent 4 }}
+spec:
+  type: ClusterIP
+  selector:
+    {{- include "jean.selectorLabels" $ctx | nindent 4 }}
+  ports:
+    - name: http
+      port: 8791
+      targetPort: http
+      protocol: TCP
+{{- end }}

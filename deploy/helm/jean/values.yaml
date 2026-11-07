@@ -1,0 +1,203 @@
+# Jean on Kubernetes or OpenShift (D232 · D702). README.md beside this file says what each value does, and
+# values.schema.json refuses a name it doesn't know, so a typo stops the install rather than being ignored.
+
+# auto: OpenShift when the cluster serves security.openshift.io/v1. There the chart leaves each pod's user, group and
+# volume group to the SCC (restricted-v2 by default); elsewhere it names them. helm template can't see the cluster,
+# so set true or false there.
+openshift: auto
+
+global:
+  # A registry that mirrors ghcr.io, used for every image instead of each one's own: registry.corp.example
+  imageRegistry: ""
+
+# Secrets for a private registry or mirror: [{ name: regcred }]
+imagePullSecrets: []
+
+nameOverride: ""
+fullnameOverride: ""
+
+# Labels on every object the chart makes.
+commonLabels: {}
+
+# The pods' own account: it holds no role, and no pod mounts its token.
+serviceAccount:
+  create: true
+  # The account's name; with create false, an existing one's.
+  name: ""
+  annotations: {}
+
+# Jean itself: its files, behind nginx, on port 8080.
+jean:
+  # The host Jean is served at, over HTTPS, such as jean.corp.example. Each person's data stays in their browser, tied
+  # to this address, so choose it once. The gateway's and the relay's origins default to it.
+  host: ""
+  replicaCount: 2
+  image:
+    registry: ghcr.io
+    repository: jean-is/jean
+    # Empty: the chart's appVersion.
+    tag: ""
+    # sha256:…, which pins the image and is used instead of the tag.
+    digest: ""
+    pullPolicy: IfNotPresent
+  # What people see Jean called, in the room and on their computer's list of apps (APP_NAME).
+  appName: ""
+  # A header added to every file, which browsers enforce on top of Jean's own policy, so it can only take away
+  # (CONTENT_SECURITY_POLICY): "connect-src 'self' https://ai.corp.example"
+  contentSecurityPolicy: ""
+  # The organisation's policy.json (docs/enterprise.md#policy-model-sketch), served at /srv/policy.json. With the
+  # gateway or the relay on and given a host, urls.gateway and urls.relay name them unless set here.
+  policy: {}
+  # Outside OpenShift: the user nginx runs as.
+  podSecurityContext:
+    runAsUser: 101
+  resources:
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      cpu: 500m
+      memory: 128Mi
+  # This host's Ingress, over ingress.annotations, and its certificate's Secret (empty: the controller's default).
+  ingress:
+    annotations: {}
+    tlsSecret: ""
+  # This host's Route, over route.annotations.
+  route:
+    annotations: {}
+  podAnnotations: {}
+  podLabels: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpreadConstraints: []
+  priorityClassName: ""
+
+# The gateway (D191): for the services a browser can't reach, such as Gmail, Microsoft 365 or Slack. Port 8787.
+gateway:
+  enabled: false
+  # Its own host, such as gateway.corp.example, never a path under Jean's.
+  host: ""
+  replicaCount: 2
+  image:
+    registry: ghcr.io
+    repository: jean-is/jean-gateway
+    tag: ""
+    digest: ""
+    pullPolicy: IfNotPresent
+  # GATEWAY_CONFIG, which holds the apps' secrets (app/schemas/gateway.schema.json): from a Secret of yours, the
+  # recommended way…
+  existingSecret:
+    name: ""
+    key: GATEWAY_CONFIG
+  # …or from this, which the chart writes into a Secret. Keep hosts narrow: the gateway can't tell a forged Origin
+  # from a program other than a browser. origins defaults to Jean's address.
+  config: {}
+  # A corporate proxy for everything the gateway reaches (HTTP_PROXY, HTTPS_PROXY, NO_PROXY, NODE_USE_ENV_PROXY=1).
+  # With networkPolicy on, add the proxy's address to networkPolicy.extraEgress.
+  proxy:
+    http: ""
+    https: ""
+    no: ""
+  # Certificates the gateway trusts beyond Node's own, such as a TLS-inspecting proxy's (NODE_EXTRA_CA_CERTS).
+  # openshift: the cluster's trusted bundle, which OpenShift injects into a ConfigMap the chart makes. Any other name:
+  # a ConfigMap of yours, holding PEM certificates under key.
+  trustedCA:
+    configMap: ""
+    key: ca-bundle.crt
+  # Outside OpenShift: the user Node runs as.
+  podSecurityContext:
+    runAsUser: 1000
+  resources:
+    requests:
+      cpu: 20m
+      memory: 64Mi
+    limits:
+      cpu: "1"
+      memory: 256Mi
+  ingress:
+    annotations: {}
+    tlsSecret: ""
+  route:
+    annotations:
+      # An answer streams for minutes.
+      haproxy.router.openshift.io/timeout: 5m
+  podAnnotations: {}
+  podLabels: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpreadConstraints: []
+  priorityClassName: ""
+
+# The relay (D45): sealed mailboxes for a person's devices and the people they send to. Port 8791. Always one
+# replica, replaced rather than rolled, since its waits and limits live in its memory.
+relay:
+  enabled: false
+  # Its own host, such as relay.corp.example.
+  host: ""
+  image:
+    registry: ghcr.io
+    repository: jean-is/jean-relay
+    tag: ""
+    digest: ""
+    pullPolicy: IfNotPresent
+  # RELAY_CONFIG: origins (Jean's address by default; without one it refuses everyone), limits (any of LIMITS in
+  # relay/relay.js) and recordKey, the public half of the key its records are sealed to (node host/serve.js keys).
+  config: {}
+  # RELAY_PROXIED=1: each visitor's address from the last X-Forwarded-For entry, rather than the router's.
+  # auto: when the chart makes a Route or an Ingress for it.
+  proxied: auto
+  # Its mailboxes, in /data. It takes no message while under 1 GB is free, so give it well over that.
+  persistence:
+    size: 10Gi
+    # Empty: the cluster's default class. "-": none.
+    storageClass: ""
+    # A claim of yours, used instead of the chart's.
+    existingClaim: ""
+  # Outside OpenShift: the user Node runs as, and the volume's group.
+  podSecurityContext:
+    runAsUser: 1000
+    fsGroup: 1000
+    fsGroupChangePolicy: OnRootMismatch
+  resources:
+    requests:
+      cpu: 20m
+      memory: 64Mi
+    limits:
+      cpu: "1"
+      memory: 512Mi
+  ingress:
+    annotations: {}
+    tlsSecret: ""
+  route:
+    annotations:
+      # A read waits 25 seconds for a message.
+      haproxy.router.openshift.io/timeout: 60s
+  podAnnotations: {}
+  podLabels: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  priorityClassName: ""
+
+# OpenShift Routes, one per component with a host: edge TLS on the router's certificate, plain HTTP sent to HTTPS.
+route:
+  enabled: false
+  annotations: {}
+
+# Ingresses, one per component with a host. Its controller's own annotations go here or under each component.
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  tls: true
+
+# Only the router reaches each pod; Jean and the relay reach nothing, the gateway only public addresses.
+networkPolicy:
+  enabled: false
+  # The router's namespace. Empty on OpenShift: policy-group.network.openshift.io/ingress. Needed elsewhere:
+  # { matchLabels: { kubernetes.io/metadata.name: ingress-nginx } }
+  ingressNamespaceSelector: {}
+  # The gateway's other destinations, as NetworkPolicy egress rules: an internal service, the proxy.
+  extraEgress: []

@@ -1,0 +1,43 @@
+{{- $openshift := include "jean.openshift" . -}}
+Jean {{ .Chart.AppVersion }} is installed in {{ .Release.Namespace }}{{ if $openshift }}, on OpenShift: the SCC chooses each pod's user{{ end }}.
+{{- range $component := list "jean" "gateway" "relay" }}
+{{- $values := index $.Values $component }}
+{{- if or (eq $component "jean") $values.enabled }}
+{{- $name := include "jean.componentName" (dict "root" $ "component" $component) }}
+{{- $origin := include "jean.origin" (dict "root" $ "component" $component) }}
+
+  {{ $component }}: {{ if $origin }}{{ $origin }}/{{ else }}no host{{ end }} (Service {{ $name }}, port {{ get (dict "jean" "8080" "gateway" "8787" "relay" "8791") $component }})
+{{- end }}
+{{- end }}
+
+Then open {{ if .Values.jean.host }}https://{{ .Values.jean.host }}/policy.html{{ else }}policy.html at Jean's address{{ end }}: it checks what the server sends and what the policy holds.
+{{- if not .Values.jean.host }}
+
+WARNING: jean.host is empty. Browsers run Jean only over HTTPS, and each person's data stays with the address it is
+served from: choose it once. Without it, the gateway and the relay know no origin, so they serve no one, unless their
+config names origins.
+{{- end }}
+{{- if and (or .Values.gateway.enabled .Values.relay.enabled) (not (or .Values.route.enabled .Values.ingress.enabled)) }}
+
+NOTE: neither route.enabled nor ingress.enabled is set. Expose each component at its host over HTTPS yourself, and
+name the gateway and the relay in jean.policy's urls if their hosts are empty.
+{{- end }}
+{{- if and .Values.networkPolicy.enabled (not .Values.networkPolicy.ingressNamespaceSelector) (not $openshift) }}
+
+WARNING: networkPolicy.ingressNamespaceSelector is empty, so nothing can reach Jean's pods. Set it to your ingress
+controller's namespace: { matchLabels: { kubernetes.io/metadata.name: ingress-nginx } }
+{{- end }}
+{{- if and .Values.relay.enabled (include "jean.relayProxied" .) (not .Values.networkPolicy.enabled) }}
+
+WARNING: the relay trusts the last X-Forwarded-For entry, so only the router may reach it. Set networkPolicy.enabled,
+or keep its port from everything else another way.
+{{- end }}
+{{- if and .Values.relay.enabled (not (include "jean.relayProxied" .)) (include "jean.exposed" (dict "root" . "component" "relay")) }}
+
+NOTE: relay.proxied is false behind a Route or an Ingress: everyone shares the router's address, and so its limits.
+{{- end }}
+{{- if and .Values.gateway.enabled .Values.networkPolicy.enabled (or .Values.gateway.proxy.http .Values.gateway.proxy.https) (not .Values.networkPolicy.extraEgress) }}
+
+NOTE: the gateway goes through a proxy, which a private address of yours can't be reached at without
+networkPolicy.extraEgress.
+{{- end }}

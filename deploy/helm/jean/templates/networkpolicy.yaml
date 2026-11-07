@@ -1,0 +1,83 @@
+{{- if .Values.networkPolicy.enabled }}
+{{- $selector := .Values.networkPolicy.ingressNamespaceSelector }}
+{{- if and (not $selector) (include "jean.openshift" .) }}
+{{- $selector = dict "matchLabels" (dict "policy-group.network.openshift.io/ingress" "") }}
+{{- end }}
+{{- range $component := list "jean" "gateway" "relay" }}
+{{- $values := index $.Values $component }}
+{{- if or (eq $component "jean") $values.enabled }}
+{{- $ctx := dict "root" $ "component" $component }}
+---
+# Only the router reaches this pod, on its port: the relay trusts the last X-Forwarded-For entry, which anything else
+# could forge. Without the router's namespace, nothing does (NOTES.txt says so).
+{{- if eq $component "gateway" }}
+# The gateway reaches the cluster's DNS, and public addresses over HTTPS and HTTP, never the cluster's, private or
+# link-local ones, so that a request it relays can't reach inside; networkPolicy.extraEgress adds others.
+{{- else }}
+# It reaches nothing.
+{{- end }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "jean.componentName" $ctx }}
+  labels:
+    {{- include "jean.labels" $ctx | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "jean.selectorLabels" $ctx | nindent 6 }}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    {{- if $selector }}
+    - from:
+        - namespaceSelector:
+            {{- toYaml $selector | nindent 12 }}
+      ports:
+        - port: http
+          protocol: TCP
+    {{- else }} []
+    {{- end }}
+  {{- if eq $component "gateway" }}
+  egress:
+    - ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+        # OpenShift's DNS pods answer on 5353 behind the Service's 53.
+        - port: 5353
+          protocol: UDP
+        - port: 5353
+          protocol: TCP
+      to:
+        - namespaceSelector: {}
+    - ports:
+        - port: 443
+          protocol: TCP
+        - port: 80
+          protocol: TCP
+      to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except:
+              - 10.0.0.0/8
+              - 172.16.0.0/12
+              - 192.168.0.0/16
+              - 100.64.0.0/10
+              - 169.254.0.0/16
+        - ipBlock:
+            cidr: ::/0
+            except:
+              - fc00::/7
+              - fe80::/10
+    {{- with $.Values.networkPolicy.extraEgress }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- else }}
+  egress: []
+  {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
