@@ -9,7 +9,7 @@ import { speaking } from '../../ui/speech.js'
 import { NATURAL, SPEAKERS, listen } from '../../ui/voices.js'
 import { icons } from '../../ui/menu-icons.js'
 import { t, intlLocales, formatBytes, preferredLocales } from '../../core/i18n.js'
-import { here, getting, download, on, named, prepare, FIRST, EACH } from './reader.js'
+import { here, getting, download, on, named, prepare, FIRST, EACH } from './natural-voice.js'
 
 /** General's list, or this voice's page, the keyboard on its title, or back on its row. */
 const go = (/** @type {string} */ to) => { openSettings(to ? `general/${to}` : 'general'); requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector(to ? '.general-head h2' : '[data-part="natural"]'))?.focus()) }
@@ -22,7 +22,7 @@ let heard = ''
 
 /** Its row in General's Reading aloud: the languages here, or off, opening its page. */
 export const row = () => html`<li><button class="item" data-part="natural" @click=${() => go('natural')}><span class="item-icon">${icons.voice}</span>
-  <span class="item-text"><strong>${t('cap.reader.name')}</strong><small>${!on() ? t('reader.off') : here.value.size
+  <span class="item-text"><strong>${t('cap.natural-voice.name')}</strong><small>${!on() ? t('reader.off') : here.value.size
     ? t('reader.on', { languages: new Intl.ListFormat(intlLocales()).format([...here.value].map(named)) }) : t('reader.none')}</small></span>
   <span class="data-state">${on() ? html`${icons.check}${t('collection.on')}` : t('collection.off')}</span>${icons.chevron}</button></li>`
 
@@ -39,10 +39,10 @@ export function page() {
   const end = (/** @type {string} */ lang) => here.value.has(lang) ? on() && samples.value[lang] ? html`<button type="button" class="icon-button listen" aria-label=${t(playing(lang) ? 'action.stop' : 'settings.listen')}
     @click=${() => { heard = lang; listen(samples.value[lang], lang, null) }}>${playing(lang) ? icons.stop : icons.play}</button>` : nothing
     : getting.value === lang && download.value.state === 'downloading' ? html`<progress value=${download.value.loaded} max=${download.value.total}></progress>`
-    : html`<button class="button" ?disabled=${Boolean(getting.value)} @click=${() => prepare(lang).catch(() => notify(t('cap.reader.failed'), { alert: true }))}>${icons.download} ${t('cap.reader.yes', { size: formatBytes(here.value.size ? EACH : FIRST) })}</button>`
+    : html`<button class="button" ?disabled=${Boolean(getting.value)} @click=${() => prepare(lang).catch(() => notify(t('cap.natural-voice.failed'), { alert: true }))}>${icons.download} ${t('cap.natural-voice.yes', { size: formatBytes(here.value.size ? EACH : FIRST) })}</button>`
   return html`<button class="back button subtle" @click=${() => go('')}>${icons.back} ${t('settings.general')}</button>
-    <header class="general-head"><div><h2 tabindex="-1">${t('cap.reader.name')}</h2><p class="lede">${t('cap.reader.text', { size: formatBytes(EACH) })}</p></div>
-      <input type="checkbox" class="switch" role="switch" title=${t('cap.reader.name')} .checked=${on()}
+    <header class="general-head"><div><h2 tabindex="-1">${t('cap.natural-voice.name')}</h2><p class="lede">${t('cap.natural-voice.text', { size: formatBytes(EACH) })}</p></div>
+      <input type="checkbox" class="switch" role="switch" title=${t('cap.natural-voice.name')} .checked=${on()}
         @change=${(/** @type {Event} */ e) => updateSettings(/** @type {any} */ ({ naturalVoice: /** @type {HTMLInputElement} */ (e.target).checked }))}></header>
     <ul class="list general">${langs.map((lang) => html`<li><span class="item-text"><strong>${named(lang)}</strong>
       <small><bdi>${SPEAKERS[lang]}</bdi>${here.value.has(lang) ? ` · ${t('reader.here', { size: formatBytes(EACH) })}` : ''}</small></span>${end(lang)}</li>`)}</ul>

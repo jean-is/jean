@@ -186,7 +186,7 @@ function general() {
     <span class="item-text"><strong id="general-voice">${t('settings.voice')}</strong><small>${t('settings.voiceText')}</small></span>
     <button type="button" class="icon-button listen" aria-label=${t(sample ? 'action.stop' : 'settings.listen')} @click=${() => listen(t('settings.sample'), tag, settings.voice)}>${sample ? icons.stop : icons.play}</button>
     <select aria-labelledby="general-voice" @change=${(/** @type {Event} */ e) => updateSettings({ voice: valueOf(e) || null })}>
-      ${reads ? html`<option value="" ?selected=${chosen === ''}>${t('cap.reader.name')} · ${SPEAKERS[lang].split(' ')[0]}</option>` : nothing}
+      ${reads ? html`<option value="" ?selected=${chosen === ''}>${t('cap.natural-voice.name')} · ${SPEAKERS[lang].split(' ')[0]}</option>` : nothing}
       ${plain.map(option)}${others.length ? html`<optgroup label=${t('settings.voicesOther')}>${others.map(option)}</optgroup>` : nothing}
     </select></li>` : nothing
   /** @param {'reading' | 'away'} group @param {unknown[]} rows */
@@ -272,7 +272,7 @@ const casePages = signal(/** @type {typeof import('./case-pages.js') | null} */ 
 const approvalPages = signal(/** @type {typeof import('./approval-pages.js') | null} */ (null))
 
 /**
- * @typedef {'general' | 'brains' | 'appearance' | 'keyboard' | 'you' | 'connections' | 'search' | 'skills' | 'routines' | 'computer' | 'extensions' | 'capabilities' | 'approvals' | 'data'} Section
+ * @typedef {'general' | 'brains' | 'appearance' | 'keyboard' | 'you' | 'connections' | 'web-search' | 'skills' | 'routines' | 'computer' | 'extensions' | 'capabilities' | 'approvals' | 'data'} Section
  * @typedef {Object} Place
  * @property {number} at       its place in the menu, lowest first
  * @property {string} label    its name in the menu
@@ -384,7 +384,7 @@ class Settings extends Element {
 // Its glyph for each capability: the case's rows (ui/case-pages.js) and the box's / menu (ui/complete.js).
 export const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
   files: 'file', meaning: 'meaning', made: 'table', documents: 'compose', tables: 'board', designs: 'palette', computer: 'computer', reflexes: 'signpost', memory: 'note', find: 'search', projects: 'layers', folders: 'folder-open', skills: 'scroll', routines: 'alarm', flows: 'flow',
-  search: 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', check: 'double-check', since: 'since', notifications: 'bell', names: 'badge', live: 'voice', camera: 'camera', screen: 'screen', reader: 'speaker', backup: 'backup', share: 'share', sync: 'sync', lock: 'lock', 'brain-local': 'brain-device', machine: 'machine', pictures: 'image', extensions: 'extensions',
+  'web-search': 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', 'double-check': 'double-check', since: 'since', notifications: 'bell', names: 'badge', live: 'voice', camera: 'camera', screen: 'screen', 'natural-voice': 'speaker', backup: 'backup', share: 'share', sync: 'sync', lock: 'lock', 'brain-local': 'brain-device', machine: 'machine', pictures: 'image', extensions: 'extensions',
 })
 
 /** @typedef {import('../core/settings.js').Look} Look */

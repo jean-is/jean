@@ -2,8 +2,8 @@
 // as libkiwix does; and web search's sources, searched at once (D271).
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { isKiwix, intro, library, searchKiwix } from '../app/caps/search/kiwix.js'
-import { searchSources, onSite, readWiki } from '../app/caps/search/sources.js'
+import { isKiwix, intro, library, searchKiwix } from '../app/caps/web-search/kiwix.js'
+import { searchSources, onSite, readWiki } from '../app/caps/web-search/sources.js'
 import { kiwix, BOOKS } from './fixtures/kiwix.js'
 
 const ADDRESS = 'http://kiwix.test/kiwix'

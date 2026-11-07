@@ -3,8 +3,8 @@
 import { test, mock } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
-import { SERVICES, Refused, isService, relayed, searchService } from '../app/caps/search/services.js'
-import { searchSources } from '../app/caps/search/sources.js'
+import { SERVICES, Refused, isService, relayed, searchService } from '../app/caps/web-search/services.js'
+import { searchSources } from '../app/caps/web-search/sources.js'
 import { gateway, covers, SERVICES as RELAYED } from '../gateway/gateway.js'
 
 const SECRET = { key: 'k-1' }

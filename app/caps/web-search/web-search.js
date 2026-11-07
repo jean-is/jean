@@ -31,7 +31,7 @@ import { known, searchers, logoAt, covers } from '../connections/directory.js'
 
 const SERVICE_IDS = /** @type {ServiceId[]} */ (Object.keys(SERVICES))
 
-await useStrings('search')
+await useStrings('web-search')
 
 /** What the brain reads back: each page a numbered source, with its picture's address. @param {Page[]} pages @param {import('../../core/loop.js').ToolContext} ctx */
 function numbered(pages, ctx) {
@@ -86,16 +86,16 @@ function searchTool(sources) {
 
 /** Its row in + (D304): a switch, which leaves the menu open, as Keep on this device does. */
 const row = () => html`<button type="button" role="switch" aria-checked=${off.value ? 'false' : 'true'}
-  @click=${() => updateSettings({ search: off.peek() })}>${icons.websearch}<span>${t('cap.search.name')}</span></button>`
+  @click=${() => updateSettings({ search: off.peek() })}>${icons.websearch}<span>${t('cap.web-search.name')}</span></button>`
 
 effect(() => register({
-  id: 'search',
+  id: 'web-search',
   tools: [{ ...searchTool(reading.value), off: off.value }],
   lines: off.value ? [] : [{ name: 'web_search', line: 'search the web for facts the conversation does not hold' }],
   // Vikidia's pages refuse to show beside the conversation: the browser opens them in a tab at once.
   ownTab: (url) => OWN_TAB.some((id) => onSite(serviceURL(id, app.settings.peek(), app.policy), url)),
   slots: {
-    settings: { at: 90, id: 'search', label: 'cap.search.name', icon: icons.websearch, draw: panel, also: () => 'Kiwix Wikipedia Vikidia Brave Tavily Google Kagi' },
+    settings: { at: 90, id: 'web-search', label: 'cap.web-search.name', icon: icons.websearch, draw: panel, also: () => 'Kiwix Wikipedia Vikidia Brave Tavily Google Kagi' },
     add: { at: 3.1, draw: row },
   },
 }))
@@ -153,7 +153,7 @@ async function readReach() {
 
 // Each time Web search is entered, the library is read again: its server may have stopped, or come back.
 let inside = false
-effect(() => { const here = app.dialog.value === 'settings' && app.section.value.split('/')[0] === 'search'; if (here && !inside) { shelves.value = {}; readReach() } inside = here })
+effect(() => { const here = app.dialog.value === 'settings' && app.section.value.split('/')[0] === 'web-search'; if (here && !inside) { shelves.value = {}; readReach() } inside = here })
 
 /** The library's address, once a Kiwix server answered there, what it holds or that it doesn't answer, and whether Wikipedia is read there. */
 function kept() {
@@ -229,7 +229,7 @@ async function forgetKey(id) {
 function go(to) {
   const from = app.section.value.split('/')[1]
   failure.value = null
-  app.section.value = to ? `search/${to}` : 'search'
+  app.section.value = to ? `web-search/${to}` : 'web-search'
   requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector(to ? '#source-title' : `[data-page="${from}"]`))?.focus())
 }
 
@@ -332,7 +332,7 @@ function panel() {
   const locked = app.policy.searches !== undefined
   const offers = isDenied('connections') ? [] : searchers(known(app.policy), [...(app.policy.connections ?? []), ...(effective.value.settings.connections ?? [])])
   const services = [...searches().map(serviceRow), ...offers.map(offerRow)]
-  return html`<header class="general-head"><div><h2 id="search-title">${t('cap.search.name')}</h2><p class="lede">${where().map((line, i) => html`${i ? html`<br>` : nothing}${line}`)}</p></div>
+  return html`<header class="general-head"><div><h2 id="search-title">${t('cap.web-search.name')}</h2><p class="lede">${where().map((line, i) => html`${i ? html`<br>` : nothing}${line}`)}</p></div>
       <input type="checkbox" class="switch" role="switch" aria-labelledby="search-title" .checked=${!off.value} @change=${() => updateSettings({ search: off.peek() })}></header>
     <section><h3>${t('search.where')}</h3><ul class="list general">${sourceRow('wikipedia', locked)}${sourceRow('vikidia', locked)}${app.policy.child ? nothing : libraryRow()}${offered().map(keyedRow)}</ul>
       ${locked ? lockedBy() : nothing}</section>
@@ -349,7 +349,7 @@ function keyedPage(id) {
   const { name, logo, keys, engine } = SERVICES[id]
   const has = keyed.value.includes(id)
   const locked = app.policy.searches !== undefined
-  return html`<button class="back button subtle" @click=${() => go('')}>${icons.back} ${t('cap.search.name')}</button>
+  return html`<button class="back button subtle" @click=${() => go('')}>${icons.back} ${t('cap.web-search.name')}</button>
     <header class="general-head"><div><h2 id="source-title" tabindex="-1"><bdi>${name}</bdi></h2><p class="lede">${t('search.service.text', { service: name })}</p></div>${mark(name, logoAt(logo))}
       <input type="checkbox" class="switch" role="switch" aria-labelledby="source-title" .checked=${on.value.includes(id)} ?disabled=${locked || (!has && !on.value.includes(id))} @change=${switched((value) => turn(id, value))}></header>
     ${id === 'google' ? html`<p class="hint">${t('search.google.closing', { date: new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'long' }).format(GOOGLE_ENDS) })}</p>` : nothing}
@@ -374,7 +374,7 @@ function libraryPage() {
   const { saved, shelf, wiki } = kept()
   const fixed = app.policy.urls?.kiwix !== undefined
   const reason = failure.value ?? (shelf?.failed ? (insecure(saved) ? 'insecure' : 'failed') : null)
-  return html`<button class="back button subtle" @click=${() => go('')}>${icons.back} ${t('cap.search.name')}</button>
+  return html`<button class="back button subtle" @click=${() => go('')}>${icons.back} ${t('cap.web-search.name')}</button>
     <header class="general-head"><div><h2 id="source-title" tabindex="-1">${t('search.library')}</h2><p class="lede">${t('search.library.text')}</p></div>
       <input type="checkbox" class="switch" role="switch" aria-labelledby="source-title" .checked=${on.value.includes('kiwix')} ?disabled=${app.policy.searches !== undefined}
         @change=${switched((value) => turn('kiwix', value))}></header>

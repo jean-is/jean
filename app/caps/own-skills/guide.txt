@@ -104,7 +104,7 @@ The magnifier at the top of the drawer, while it is open, or its shortcut: every
 ## meaning
 Once on, searching the project's files finds passages by what they mean as well as by their words. It needs a browser with WebGPU.
 
-## reader
+## natural-voice
 Once on, answers in English, French, German, Spanish, Italian or Portuguese are read aloud in a natural voice made on this device, Kyutai's Pocket TTS; the system's voices read the other languages. Talking hands-free reads its answers with it too. Each language's voice is a download of its own: the first when it is turned on, the others offered the first time an answer in them is read aloud. {settings.title} › {settings.general} turns it off or on again, and says whose voice it is.
 
 ## projects
@@ -122,8 +122,8 @@ A request you send yourself on a schedule (every hour, day, working day, week or
 ## flows
 A task's steps drawn as cards joined by wires, run again with no brain between them, and scheduled as a routine. On a new task, + in the box shows the flows; on a task, a button beside the terminal's shows it as one.
 
-## search
-The brain's own search, Wikipedia in the user's language, Vikidia for children, or an offline library (Kiwix), chosen in {settings.title} › {cap.search.name}; each answer cites its pages. That section says who searches where: a brain that searches the web itself (Claude, OpenRouter's) does so while Wikipedia from the web is the only source on; any other source on, every brain searches the sources on. The library has a page there: its server's address, its books, and whether Wikipedia is read from it. A browser reaches a Kiwix server only on this computer or at an https:// address. A search service on the user's own account is a source too: Brave Search, Tavily, Google Custom Search (Google gives no new keys, and ends it on 1 January 2027) or Kagi, each with a page there for its key, tried with one search before it is kept, and kept on this device. Brave Search and Kagi can't be reached from a browser alone: they say so until a gateway, named in {settings.title} › {cap.connections.name}, reaches them; Tavily's answer to a wrong key can't be read without one either, so the page then asks to check the key. Those switches, and the one in + in the box, stop searching.
+## web-search
+The brain's own search, Wikipedia in the user's language, Vikidia for children, or an offline library (Kiwix), chosen in {settings.title} › {cap.web-search.name}; each answer cites its pages. That section says who searches where: a brain that searches the web itself (Claude, OpenRouter's) does so while Wikipedia from the web is the only source on; any other source on, every brain searches the sources on. The library has a page there: its server's address, its books, and whether Wikipedia is read from it. A browser reaches a Kiwix server only on this computer or at an https:// address. A search service on the user's own account is a source too: Brave Search, Tavily, Google Custom Search (Google gives no new keys, and ends it on 1 January 2027) or Kagi, each with a page there for its key, tried with one search before it is kept, and kept on this device. Brave Search and Kagi can't be reached from a browser alone: they say so until a gateway, named in {settings.title} › {cap.connections.name}, reaches them; Tavily's answer to a wrong key can't be read without one either, so the page then asks to check the key. Those switches, and the one in + in the box, stop searching.
 
 ## browser
 Pages open beside the task, with back, forward, an address and tabs: links from answers, and pages you open with `browse`, asking first. You know a page by its address only. Many sites refuse to show inside another page; those open in a tab of their own.
@@ -140,7 +140,7 @@ The user runs the line {settings.title} › {cap.computer.name} gives in a termi
 ## helpers
 For a big request with independent parts, you split the work among helpers working at the same time; they show nested in the activity, their approvals and questions waiting under the answer.
 
-## check
+## double-check
 Once on, each sentence that cites a source is checked against it after the answer, the verdicts under it; words quoted that the source doesn't hold count as not in it.
 
 ## since

@@ -133,6 +133,6 @@ for (const [lang, dir] of [['en', 'ltr'], ['ar', 'rtl'], ['ja', 'ltr']]) {
     await expect(page.locator('html')).toHaveAttribute('dir', dir)
     await page.locator('aside.offer .button.primary').click()
     await expect(page.locator('aside.offer')).toBeHidden()
-    expect(await page.evaluate(async () => (await import('/ui/caps.js')).loaded.value.has('check'))).toBe(true)
+    expect(await page.evaluate(async () => (await import('/ui/caps.js')).loaded.value.has('double-check'))).toBe(true)
   })
 }

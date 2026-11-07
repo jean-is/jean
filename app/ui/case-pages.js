@@ -21,8 +21,8 @@ await Promise.all([useStrings('case'), styleSheet(new URL('data-pages.css', impo
 /** The groups, by what each capability is for, each in the case's order (CATALOGUE). */
 const GROUPS = /** @type {Record<string, string[]>} */ ({
   files: ['files', 'made', 'documents', 'tables', 'designs', 'folders', 'meaning', 'pictures'], remember: ['memory', 'projects', 'find', 'names'],
-  again: ['skills', 'routines', 'flows'], web: ['search', 'browser', 'connections', 'since', 'extensions'],
-  bigger: ['computer', 'machine', 'helpers', 'check', 'reflexes', 'brain-local'], voice: ['live', 'camera', 'screen', 'reader', 'notifications'], keep: ['backup', 'share', 'sync', 'lock'],
+  again: ['skills', 'routines', 'flows'], web: ['web-search', 'browser', 'connections', 'since', 'extensions'],
+  bigger: ['computer', 'machine', 'helpers', 'double-check', 'reflexes', 'brain-local'], voice: ['live', 'camera', 'screen', 'natural-voice', 'notifications'], keep: ['backup', 'share', 'sync', 'lock'],
 })
 /** A capability's group. @param {string} id */
 const groupOf = (id) => Object.keys(GROUPS).find((group) => GROUPS[group].includes(id)) ?? 'bigger'
@@ -30,17 +30,17 @@ const groupOf = (id) => Object.keys(GROUPS).find((group) => GROUPS[group].includ
 /** Where a capability found leads: its section of Settings, a page of one, search, or the browser. */
 const OPENS = /** @type {Record<string, () => void>} */ ({
   memory: () => openSettings('you'), skills: () => openSettings('skills'), routines: () => openSettings('routines'),
-  connections: () => openSettings('connections'), search: () => openSettings('search'), extensions: () => openSettings('extensions'), computer: () => openSettings('computer'), pictures: () => import('../caps/pictures/pictures.js').then((module) => openSettings(module.paged() ? 'brains/pictures' : 'brains')),
+  connections: () => openSettings('connections'), 'web-search': () => openSettings('web-search'), extensions: () => openSettings('extensions'), computer: () => openSettings('computer'), pictures: () => import('../caps/pictures/pictures.js').then((module) => openSettings(module.paged() ? 'brains/pictures' : 'brains')),
   share: () => openSettings('data/links'), machine: () => import('../caps/machine/machine.js').then((module) => module.show()), sync: () => openSettings('data/sync'), lock: () => openSettings('data/lock'),
-  'brain-local': () => openSettings('brains/device'), notifications: () => openSettings('general'), reader: () => openSettings('general/natural'), find: () => { app.dialog.value = 'find' },
+  'brain-local': () => openSettings('brains/device'), notifications: () => openSettings('general'), 'natural-voice': () => openSettings('general/natural'), find: () => { app.dialog.value = 'find' },
   browser: () => { app.dialog.value = null; import('../caps/browser/browser.js').then((module) => module.show()) },
   flows: () => { app.dialog.value = null; import('../caps/flows/flows.js').then((module) => module.here()) },
   folders: () => { app.dialog.value = null; import('../caps/folders/folders.js').then((module) => module.choose()) },
 })
 /** Those found by counting, as ui/discovery.js counts them: how far along, out of how many. */
 const COUNTED = /** @type {Record<string, () => number[]>} */ ({ reflexes: () => [everywhere.value, 2], backup: () => [everywhere.value, 3],
-  lock: () => [everywhere.value, LOCKABLE], search: () => [everywhere.value, SEARCHABLE],
-  live: () => [effective.value.settings.dictated ?? 0, 3], check: () => [effective.value.settings.cited ?? 0, CITED],
+  lock: () => [everywhere.value, LOCKABLE], 'web-search': () => [everywhere.value, SEARCHABLE],
+  live: () => [effective.value.settings.dictated ?? 0, 3], 'double-check': () => [effective.value.settings.cited ?? 0, CITED],
   browser: () => [effective.value.settings.browsed ?? 0, BROWSED], flows: () => [effective.value.settings.stepped ?? 0, STEPPED] })
 
 /** What the user turned off (D433). */

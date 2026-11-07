@@ -33,7 +33,7 @@ self.onmessage = async ({ data }) => {
 async function fake(page, pieces) {
   /** @type {string[]} */
   const asked = []
-  await page.route('**/caps/reader/reader-worker.js', (route) => route.fulfill({ contentType: 'text/javascript', body: worker(pieces) }))
+  await page.route('**/caps/natural-voice/reader-worker.js', (route) => route.fulfill({ contentType: 'text/javascript', body: worker(pieces) }))
   await page.route('**/__voice?*', (route) => {
     const params = new URL(route.request().url()).searchParams
     asked.push(`${params.get('type')} ${params.get('lang')}`)
@@ -123,7 +123,7 @@ test('read aloud pressed again stops the natural voice at once, what it had made
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Explain photosynthesis')
-  await page.evaluate(() => import('/ui/discovery.js').then((discovery) => discovery.offerOnce('reader', true)))
+  await page.evaluate(() => import('/ui/discovery.js').then((discovery) => discovery.offerOnce('natural-voice', true)))
   await page.locator('aside.offer').getByRole('button', { name: 'Download (108 MB)' }).click()
   await expect(page.locator('.toast')).toContainText('Natural voice is on')
   // The offer above the box goes just after, moving the page: read once it has gone.
@@ -148,7 +148,7 @@ test('Talking hands-free reads its answers in the natural voice while it is on, 
   const asked = await fake(page)
   await start(page)
   await connectFakeBrain(page)
-  await page.evaluate(() => import('/ui/discovery.js').then((discovery) => discovery.offerOnce('reader', true)))
+  await page.evaluate(() => import('/ui/discovery.js').then((discovery) => discovery.offerOnce('natural-voice', true)))
   await page.locator('aside.offer').getByRole('button', { name: 'Download (108 MB)' }).click()
   await expect(page.locator('.toast')).toContainText('Natural voice is on')
   await expect(page.locator('aside.offer')).toHaveCount(0)
@@ -183,7 +183,7 @@ test('a voice kept at an older pin of its weights is loaded again at the new one
   await start(page)
   await connectFakeBrain(page)
   await page.evaluate(() => caches.open('transformers-cache').then((cache) => cache.put('https://huggingface.co/jean-is/pocket-tts-q8-ONNX/resolve/0123abc/fr.bin', new Response('…'))))
-  await page.evaluate(() => import('/ui/discovery.js').then((discovery) => discovery.offerOnce('reader', true)))
+  await page.evaluate(() => import('/ui/discovery.js').then((discovery) => discovery.offerOnce('natural-voice', true)))
   await page.locator('aside.offer').getByRole('button', { name: 'Download (108 MB)' }).click()
   await expect(page.locator('.toast')).toContainText('Natural voice is on')
   await expect.poll(() => asked.toSorted()).toEqual(['load en', 'load fr'])
@@ -200,7 +200,7 @@ for (const [lang, offerText, credit] of [['ar', 'هل تريد سماع الإج
   test(`the natural voice is offered and credited in ${lang}`, async ({ page }) => {
     await fake(page)
     await start(page, lang)
-    await page.evaluate(() => import('/ui/discovery.js').then((discovery) => discovery.offerOnce('reader', true)))
+    await page.evaluate(() => import('/ui/discovery.js').then((discovery) => discovery.offerOnce('natural-voice', true)))
     const offer = page.locator('aside.offer')
     await expect(offer).toContainText(offerText)
     await offer.locator('.button.primary').click()
@@ -222,7 +222,7 @@ test('a voice picked reads ahead of the natural voice, whose languages Listen pl
   await page.evaluate(async (pin) => {
     const cache = await caches.open('transformers-cache')
     for (const file of ['en.bin', 'fr.bin', 'decoder.bin']) await cache.put(pin + file, new Response('x'.repeat(file === 'decoder.bin' ? 11 : 97)))
-    await (await import('/ui/caps.js')).unlock('reader')
+    await (await import('/ui/caps.js')).unlock('natural-voice')
   }, pin)
   const settings = await openSettings(page)
   const voice = settings.getByRole('combobox', { name: 'Voice' })

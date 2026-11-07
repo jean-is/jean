@@ -125,4 +125,4 @@ class Check extends Element {
 
 define('app-check', Check)
 // An answer that cites its sources is checked once it has come; what it cites is then in hand, so nothing counts it towards offering Double-check.
-register({ id: 'check', hooks: [{ on: 'turn.end', match: { cites: true }, run: (e, next) => { check(e.task, e.at, e.records); return next({ ...e, cites: false }) } }] })
+register({ id: 'double-check', hooks: [{ on: 'turn.end', match: { cites: true }, run: (e, next) => { check(e.task, e.at, e.records); return next({ ...e, cites: false }) } }] })

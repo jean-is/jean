@@ -2,7 +2,7 @@
 // declarations stay its own. Helpers' turns themselves are in loop.test.js.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { claimsIn, passage, sourceIn, request, verdicts } from '../app/caps/check/claims.js'
+import { claimsIn, passage, sourceIn, request, verdicts } from '../app/caps/double-check/claims.js'
 import { frozenPrompt, promptRecord, promptState } from '../app/core/prompt.js'
 import { envelope } from '../app/core/events.js'
 

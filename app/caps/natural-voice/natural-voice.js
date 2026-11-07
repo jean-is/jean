@@ -45,7 +45,7 @@ function ready() {
   download.value = { state: 'ready' }
   natural.read = read
   natural.live = { can, say: (text, lang, context) => queue(LIVE, text, lang, context), hush: () => playing?.id === LIVE && stop() }
-  register({ id: 'reader', ready: true, slots })
+  register({ id: 'natural-voice', ready: true, slots })
 }
 
 /**
@@ -71,7 +71,7 @@ const offered = new Set()
 function offer(lang) {
   if (!on() || offered.has(lang) || download.peek().state === 'downloading') return false
   offered.add(lang)
-  notify(t('reader.more', { language: named(lang) }), { label: t('cap.reader.yes', { size: formatBytes(EACH) }), run: () => { prepare(lang).catch(() => notify(t('cap.reader.failed'), { alert: true })) } })
+  notify(t('reader.more', { language: named(lang) }), { label: t('cap.natural-voice.yes', { size: formatBytes(EACH) }), run: () => { prepare(lang).catch(() => notify(t('cap.natural-voice.failed'), { alert: true })) } })
   return false
 }
 
@@ -161,6 +161,6 @@ let paging = /** @type {Promise<void> | null} */ (null)
 const lazily = (/** @type {'row' | 'page'} */ part) => () => (paging ??= import('./page.js').then((module) => { drawn.value = module }), drawn.value?.[part]() ?? nothing)
 const slots = { general: { id: 'natural', at: 0, group: 'reading', draw: lazily('row'), page: lazily('page') } }
 
-await useStrings('reader')
-register({ id: 'reader', slots })
+await useStrings('natural-voice')
+register({ id: 'natural-voice', slots })
 look().catch(() => {})

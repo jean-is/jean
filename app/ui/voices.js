@@ -1,7 +1,7 @@
 // The device's voices, and the one that reads a text best (language.js): loaded with the
 // first answer that can be read aloud, outside the first load. Only voices that run on the
 // device; when none speaks a text's language, Jean says so rather than read it in another's.
-// The natural voice (caps/reader, D455), once on, reads the languages it speaks well.
+// The natural voice (caps/natural-voice, D455), once on, reads the languages it speaks well.
 import { signal } from '@preact/signals-core'
 import { languageOf, rankVoices } from './language.js'
 import { t, intlLocales } from '../core/i18n.js'
@@ -14,7 +14,7 @@ export const NATURAL = ['de', 'en', 'es', 'fr', 'it', 'pt']
 /** Whose voice reads each: Kyutai's speakers, credited by name (D455). */
 export const SPEAKERS = /** @type {Record<string, string>} */ ({ de: 'Alba MacKenna', en: 'Alba MacKenna', es: 'Lola', fr: 'Stuart Bell', it: 'Giovanni', pt: 'Alba MacKenna' })
 /**
- * The natural voice (caps/reader), once one of its languages is here: true when it reads the text; the
+ * The natural voice (caps/natural-voice), once one of its languages is here: true when it reads the text; the
  * language answers were read in when it was offered, which it downloads first; and Live conversation's way
  * to it (caps/live): whether it reads a language now, a sentence queued after the last, heard when its
  * promise settles, in Live's own AudioContext, and silence.

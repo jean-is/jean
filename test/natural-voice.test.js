@@ -3,8 +3,8 @@
 // round-trip sentences matched these in all six languages; here a vocabulary small enough to reason about.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { expand, tokenizer, prepare, chunks } from '../app/caps/reader/pocket.js'
-import { number, spelled } from '../app/caps/reader/words.js'
+import { expand, tokenizer, prepare, chunks } from '../app/caps/natural-voice/pocket.js'
+import { number, spelled } from '../app/caps/natural-voice/words.js'
 
 const bytes = Array.from({ length: 256 }, (_, b) => [`<0x${b.toString(16).toUpperCase().padStart(2, '0')}>`, 0])
 const pieces = [['▁', -2], ['▁he', -3], ['llo', -3], ['▁hello', -4], ['h', -5], ['e', -5], ['l', -5], ['o', -5], ['▁w', -4], ['orld', -4],

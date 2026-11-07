@@ -45,7 +45,7 @@ const voices = signal(/** @type {Record<string, number>} */ ({}))
 /** Each kind: its icon, its name and what it holds, when its name doesn't say. */
 const KINDS = /** @type {const} */ ({
   conversations: ['list', 'history.title', ''], files: ['file', 'cap.files.name', ''], computer: ['computer', 'cap.computer.name', 'storage.computer.text'],
-  brains: ['brain-device', 'storage.brains', 'storage.brains.text'], voice: ['voice', 'cap.reader.name', ''], app: ['download', 'storage.app', 'storage.app.text'], rest: ['cabinet', 'storage.rest', 'storage.rest.text'],
+  brains: ['brain-device', 'storage.brains', 'storage.brains.text'], voice: ['voice', 'cap.natural-voice.name', ''], app: ['download', 'storage.app', 'storage.app.text'], rest: ['cabinet', 'storage.rest', 'storage.rest.text'],
 })
 
 /** A cached response's size: its length as sent, unless it came compressed, then its body's. @param {Response | undefined} response */
@@ -58,7 +58,7 @@ const sizeOf = async (response) => (response && !response.headers.has('content-e
  */
 async function cached() {
   const kept = { brains: 0, computer: 0, app: 0, voice: 0 }
-  const [langs, reader] = [/** @type {Record<string, number>} */ ({}), loaded.value.has('reader') ? await import('../caps/reader/reader.js') : null]
+  const [langs, reader] = [/** @type {Record<string, number>} */ ({}), loaded.value.has('natural-voice') ? await import('../caps/natural-voice/natural-voice.js') : null]
   for (const name of await caches.keys()) {
     const kind = name === 'transformers-cache' ? 'brains' : /^app-cap-.*-computer$/.test(name) ? 'computer' : /^app-(shell-|cap-|sounds$)/.test(name) ? 'app' : null
     if (!kind) continue
@@ -97,7 +97,7 @@ function space() {
       <meter value=${total ? bytes / total : 0} aria-labelledby=${`part-${id}`}></meter>
       ${id === 'brains' ? html`<button class="button subtle" @click=${() => openSettings('brains')}>${t('data.room')}</button>` : nothing}
       ${id === 'voice' ? html`<ul class="voices">${Object.entries(voices.value).map(([lang, size]) => html`<li><span>${new Intl.DisplayNames(intlLocales(), { type: 'language' }).of(lang)}</span>
-        <small>${formatBytes(size)}</small><button class="button subtle" @click=${() => import('../caps/reader/reader.js').then((reader) => reader.remove(lang)).then(measure)}>${t('action.remove')}</button></li>`)}</ul>` : nothing}
+        <small>${formatBytes(size)}</small><button class="button subtle" @click=${() => import('../caps/natural-voice/natural-voice.js').then((reader) => reader.remove(lang)).then(measure)}>${t('action.remove')}</button></li>`)}</ul>` : nothing}
     </li>`
   })}</ul>` : html`<p class="muted" role="status">${t('storage.measuring')}</p>`}</div>
   ${storage.value?.persisted ? html`<p class="muted">${icons.check} ${t('storage.persisted')}</p>` : app.ephemeral.value ? nothing

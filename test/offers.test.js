@@ -10,7 +10,7 @@ const files = (await readdir(dir)).filter((file) => file.endsWith('.json'))
 
 test('every English request has a label, and every label a request', () => {
   assert.deepEqual(Object.keys(english.requests).sort(), Object.keys(english.labels).sort())
-  for (const label of Object.values(english.labels)) assert.match(label, /^[a-z]+$/)
+  for (const label of Object.values(english.labels)) assert.match(label, /^[a-z]+(-[a-z]+)*$/)
 })
 
 for (const file of files.filter((name) => name !== 'en.json')) {

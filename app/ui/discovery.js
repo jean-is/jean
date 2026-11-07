@@ -30,7 +30,7 @@ const filmed = Boolean(navigator.mediaDevices?.getUserMedia) // where a camera c
 const screened = Boolean(navigator.mediaDevices?.getDisplayMedia) // where a screen can be shared, a computer's (D699)
 const reflexive = !handheld() // where Kev runs: a computer, never a phone or a tablet (D660)
 /** What Jean can do, in the order the house lights up (the collection page). */
-export const CATALOGUE = ['files', 'made', 'documents', 'tables', 'designs', 'computer', ...(reflexive ? ['reflexes'] : []), 'memory', 'find', ...(gpu ? ['meaning'] : []), 'projects', 'folders', 'skills', 'routines', 'flows', 'search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'check', 'since', ...(told ? ['notifications'] : []), 'names', 'live', ...(filmed ? ['camera'] : []), ...(screened ? ['screen'] : []), 'reader', 'backup', ...(shared ? ['share'] : []), ...(folders ? ['sync'] : []), 'lock', 'brain-local', 'extensions']
+export const CATALOGUE = ['files', 'made', 'documents', 'tables', 'designs', 'computer', ...(reflexive ? ['reflexes'] : []), 'memory', 'find', ...(gpu ? ['meaning'] : []), 'projects', 'folders', 'skills', 'routines', 'flows', 'web-search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'double-check', 'since', ...(told ? ['notifications'] : []), 'names', 'live', ...(filmed ? ['camera'] : []), ...(screened ? ['screen'] : []), 'natural-voice', 'backup', ...(shared ? ['share'] : []), ...(folders ? ['sync'] : []), 'lock', 'brain-local', 'extensions']
 
 /** What the brain may offer, described for it in English, in a few words: it goes with every request. */
 const OFFERS = /** @type {Record<string, string>} */ ({
@@ -46,7 +46,7 @@ const OFFERS = /** @type {Record<string, string>} */ ({
   skills: 'saving how a task the user repeats or describes is done, as a skill',
   routines: 'doing a task on a schedule, once later like a reminder, or each time a file comes',
   flows: 'the steps of a task the user repeats, drawn and run again',
-  search: 'searching the web for current or specific facts',
+  'web-search': 'searching the web for current or specific facts',
   browser: 'showing a web page beside the conversation',
   pictures: 'making or changing real pictures and short films, when the user asks for a picture, drawing or illustration, in place of an SVG you draw unless they ask for one',
   machine: "running commands on the user's own computer, such as a site's dev server",
@@ -76,7 +76,7 @@ const offerTool = {
   run: async (args, ctx) => {
     const id = String(args?.capability ?? ''), asked = !loaded.value.has(id)
     if (!Object.hasOwn(OFFERS, id) || isDenied(id)) return `"${id}" can't be offered.`
-    if (id === 'search' && !loaded.value.has(id) && everywhere.value < SEARCHABLE) return `"${id}" can't be offered yet.`
+    if (id === 'web-search' && !loaded.value.has(id) && everywhere.value < SEARCHABLE) return `"${id}" can't be offered yet.`
     if (id === 'tables' && isLocal(ctx.brain)) return 'Tables need a brain in the cloud or a plan. Go on without it.'
     if (!loaded.value.has(id)) {
       // A no is for good, here as above the box: the brain hears it again, and the user sees nothing (D219).
@@ -282,12 +282,12 @@ effect(() => {
 // A server the sandbox refused could run on the user's own computer (D198).
 document.addEventListener('app-server-refused', () => offerOnce('machine', true))
 // Answers read aloud in its languages: the natural voice could read them (D455).
-document.addEventListener('app-read-natural', () => offerOnce('reader'))
+document.addEventListener('app-read-natural', () => offerOnce('natural-voice'))
 // A web page made or changed in the conversation's folder could show there too (D156).
 document.addEventListener('app-folder-changed', (event) => { if (/\.html?$/i.test(/** @type {CustomEvent} */ (event).detail.path)) offerOnce('browser', true) })
 effect(() => {
   // Citations in regular use: each answer could be checked against them.
-  if ((effective.value.settings.cited ?? 0) >= CITED) offerOnce('check')
+  if ((effective.value.settings.cited ?? 0) >= CITED) offerOnce('double-check')
 })
 let captured = false
 document.addEventListener('app-screen-captured', () => { captured = true })

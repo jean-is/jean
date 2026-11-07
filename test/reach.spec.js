@@ -694,9 +694,9 @@ for (const [lang, dir] of [['ar', 'rtl'], ['ja', 'ltr']]) {
   test(`a search service’s page in another language: its name and key as they are, nothing wider than the panel (${lang}, D671)`, async ({ page }) => {
     await start(page, lang)
     await page.evaluate(async () => {
-      await (await import('/ui/caps.js')).unlock('search')
+      await (await import('/ui/caps.js')).unlock('web-search')
       const { app } = await import('/ui/state.js')
-      app.section.value = 'search/brave'
+      app.section.value = 'web-search/brave'
       app.dialog.value = 'settings'
     })
     const settings = page.locator('app-settings dialog[open]')
@@ -705,7 +705,7 @@ for (const [lang, dir] of [['ar', 'rtl'], ['ja', 'ltr']]) {
     const [logo, title] = await Promise.all([settings.locator('.general-head img.is-logo'), settings.locator('#source-title')].map((part) => part.boundingBox()))
     expect(dir === 'rtl' ? Number(logo?.x) > Number(title?.x) : Number(logo?.x) < Number(title?.x), 'its logo comes first').toBe(true)
     await expect(settings.locator('.hint')).toContainText('Brave Search')
-    await page.evaluate(async () => { (await import('/ui/state.js')).app.section.value = 'search/tavily' })
+    await page.evaluate(async () => { (await import('/ui/state.js')).app.section.value = 'web-search/tavily' })
     await expect(settings.locator('input[name="key"]')).toHaveAttribute('dir', 'ltr')
     await expect(settings.locator('.general-head .lede')).toContainText('Tavily')
     const label = await page.evaluate(async () => (await import('/core/i18n.js')).t('search.key'))
@@ -769,7 +769,7 @@ test('Settings › Web search says who searches where for the brains here, and i
   await expect(toggle).toHaveAttribute('aria-checked', 'false')
   await toggle.click()
   await page.keyboard.press('Escape')
-  await page.evaluate(async () => (await import('/ui/dialogs.js')).openSettings('search'))
+  await page.evaluate(async () => (await import('/ui/dialogs.js')).openSettings('web-search'))
   await expect(settings.getByRole('switch', { name: 'Web search' })).toBeChecked()
 })
 
@@ -778,7 +778,7 @@ test('a page of Vikidia, whose site refuses to show inside another, opens in a t
   await start(page)
   await page.evaluate(async () => {
     const { unlock } = await import('/ui/caps.js')
-    await Promise.all([unlock('search'), unlock('browser')])
+    await Promise.all([unlock('web-search'), unlock('browser')])
   })
   const click = () => page.evaluate(async () => (await import('/caps/browser/browser.js')).visit('https://fr.vikidia.org/wiki/Phare', { click: true }))
   // The pane closed, a click opens the tab alone.

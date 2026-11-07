@@ -22,7 +22,7 @@ import { APIS } from '../app/caps/connections/apis.js'
 import { gateway } from '../gateway/gateway.js'
 import { DEFAULT_SOURCES, fetchSkill, indexURL, readIndexes, siteOf } from '../app/caps/skills/sources.js'
 import { memoryFS } from '../app/core/fs.js'
-import { SERVICES } from '../app/caps/search/services.js'
+import { SERVICES } from '../app/caps/web-search/services.js'
 
 const ORIGIN = 'https://jean.example'
 // What Jean sends: the 2026-07-28 revision's headers first, then the 2025 session's (D87).

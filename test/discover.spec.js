@@ -217,7 +217,7 @@ test('a capability found turns off from its page, asked first, still found, the 
   // Found, so never offered nor turned on by what the user does, until its page does it; and still counted as found.
   expect(await page.evaluate(async () => {
     const { loaded, unlock } = await import('/ui/caps.js')
-    return [loaded.value.has('search'), await unlock('search')]
+    return [loaded.value.has('web-search'), await unlock('web-search')]
   })).toEqual([false, false])
   await settings.locator('.settings-panel > .back').click()
   await expect(settings.locator('.data-head + .lede')).toContainText(found)
@@ -230,9 +230,9 @@ test('a capability found turns off from its page, asked first, still found, the 
 })
 
 test('what the organisation turned on says so, and only the organisation turns it off', async ({ page }) => {
-  await withPolicy(page, { capabilities: { preUnlock: ['search'] } })
+  await withPolicy(page, { capabilities: { preUnlock: ['web-search'] } })
   await start(page)
-  await expect.poll(() => page.evaluate(async () => (await import('/ui/caps.js')).loaded.value.has('search'))).toBe(true)
+  await expect.poll(() => page.evaluate(async () => (await import('/ui/caps.js')).loaded.value.has('web-search'))).toBe(true)
   const settings = await openSettings(page, 'Capabilities')
   const row = settings.locator('.case > li').filter({ has: page.locator('.item-text > strong').getByText('Web search', { exact: true }) })
   await expect(row.locator('.data-state')).toHaveText('Set by your organization')

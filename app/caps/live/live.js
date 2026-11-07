@@ -4,7 +4,7 @@
 // is read aloud sentence by sentence while it streams. Speaking over Jean interrupts it. Voice
 // detection and speech to text run on this device, in dictation's worker (about 82 MB, once);
 // reading aloud uses the voices read-aloud does, in the answer's own language: the natural voice where
-// it is on and reads that language (caps/reader, D455), else the system's.
+// it is on and reads that language (caps/natural-voice, D455), else the system's.
 import { effect } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
 import { live } from '../../ui/dictation.js'

@@ -22,7 +22,7 @@ export default helpArticle({
   minutes: 3,
   start: 6,
   names: {
-    settings: 'settings.title', capabilities: 'settings.capabilities', yes: 'offer.yes', no: 'offer.no', search: 'cap.search.yes', on: 'collection.turnOn', off: 'collection.turnOff',
+    settings: 'settings.title', capabilities: 'settings.capabilities', yes: 'offer.yes', no: 'offer.no', search: 'cap.web-search.yes', on: 'collection.turnOn', off: 'collection.turnOff',
     all: 'collection.all', made: 'cap.made.name', words: 'help/words',
   },
   open: 'capabilities',
@@ -32,6 +32,6 @@ export default helpArticle({
     { point: { on: '.case li.is-todo button', say: 'tour.row' }, show: { figure: CASE, caption: 'show.rows' } },
     { point: { on: '.case-all button', named: 'collection.all' } },
   ],
-  shows: [{ figure: offered('search'), caption: 'show.offer' }],
+  shows: [{ figure: offered('web-search'), caption: 'show.offer' }],
   also: ['what-jean-is', 'words', 'first-task'],
 })
