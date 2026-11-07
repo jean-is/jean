@@ -64,7 +64,7 @@ Then open `https://jean.apps.corp.example/policy.html`: it says what the server 
 | `jean.contentSecurityPolicy` | `CONTENT_SECURITY_POLICY`: a header over Jean's own, which can only take away. |
 | `gateway.existingSecret` | A Secret of yours holding `GATEWAY_CONFIG` under `key`, the recommended way: its apps' secrets stay out of the values. |
 | `gateway.config` | Or `GATEWAY_CONFIG` itself ([its schema](../../../app/schemas/gateway.schema.json)), which the chart writes into a Secret. |
-| `gateway.proxy` | `http`, `https`, `no`: a corporate proxy, set as `HTTP_PROXY`, `HTTPS_PROXY` and `NO_PROXY` with `NODE_USE_ENV_PROXY=1`, without which Node's `fetch` uses none. |
+| `gateway.proxy` | `http`, `https`, `noProxy`: a corporate proxy, set as `HTTP_PROXY`, `HTTPS_PROXY` and `NO_PROXY` with `NODE_USE_ENV_PROXY=1`, without which Node's `fetch` uses none. |
 | `gateway.trustedCA` | Certificates the gateway trusts beyond Node's own, as `NODE_EXTRA_CA_CERTS`: `configMap: openshift` for the cluster's trusted bundle, or a ConfigMap of yours with PEM certificates under `key`. |
 | `relay.config` | `RELAY_CONFIG`: `origins`, `limits` (any of `LIMITS` in [relay.js](../../../relay/relay.js)) and `recordKey`, the public key its records are sealed to (`node host/serve.js keys`). The schema refuses a private key there. |
 | `relay.proxied` | `RELAY_PROXIED=1`. `auto`: when the chart makes a Route or an Ingress for it. |

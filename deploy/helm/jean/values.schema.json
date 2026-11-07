@@ -97,7 +97,7 @@
           "properties": {
             "http": { "type": "string" },
             "https": { "type": "string" },
-            "no": { "type": "string" }
+            "noProxy": { "type": "string" }
           }
         },
         "trustedCA": {

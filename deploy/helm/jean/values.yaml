@@ -98,7 +98,8 @@ gateway:
   proxy:
     http: ""
     https: ""
-    no: ""
+    # Not "no": YAML 1.1, which Helm reads, takes that key for false.
+    noProxy: ""
   # Certificates the gateway trusts beyond Node's own, such as a TLS-inspecting proxy's (NODE_EXTRA_CA_CERTS).
   # openshift: the cluster's trusted bundle, which OpenShift injects into a ConfigMap the chart makes. Any other name:
   # a ConfigMap of yours, holding PEM certificates under key.

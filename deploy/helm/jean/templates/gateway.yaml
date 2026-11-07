@@ -85,7 +85,7 @@ spec:
             - name: HTTPS_PROXY
               value: {{ . | quote }}
             {{- end }}
-            {{- with $values.proxy.no }}
+            {{- with $values.proxy.noProxy }}
             - name: NO_PROXY
               value: {{ . | quote }}
             {{- end }}
