@@ -41,6 +41,7 @@ import { ulid } from './ulid.js'
  * @property {string[]} [sources]              addresses of skills indexes, when the user changed the default list (D121)
  * @property {string[]} [meet]                 projects whose assistants meet without asking first (D224)
  * @property {boolean} [films]                  films are made without asking first (D251)
+ * @property {number} [limit]                   a month's limit on answers, in US dollars, past which a paid one asks first (D711)
  * @property {string} [pictures]               which makes pictures on this device (D263)
  * @property {{ date?: boolean, log?: boolean }} [certificates]  certificates dated by witnesses, recorded in a public log, as the user chose (D276)
  * @property {string[]} [searches]              web search's sources on (D271)

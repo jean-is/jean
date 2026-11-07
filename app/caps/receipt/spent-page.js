@@ -3,7 +3,7 @@
 // each answer's card is (D252). What each task asked for is kept in `.cache/spent.json`, read again only where its file changed.
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
-import { app, brainLabel, openConversation, enterProject, turnPage } from '../../ui/state.js'
+import { app, brainLabel, openConversation, enterProject, turnPage, updateSettings } from '../../ui/state.js'
 import { readJSON, writeJSON } from '../../core/fs.js'
 import { loadConversation } from '../../core/conversations.js'
 import { titleOf, requestsOf } from '../../core/events.js'
@@ -13,6 +13,7 @@ import { PLANS } from '../../ui/prices.js'
 import { costOf } from './certificate.js'
 import { pricing, costText } from './receipt.js'
 import { usesOf, tally } from './spent.js'
+import { BRAND } from '../../brand.js'
 
 const CACHE = '.cache/spent.json'
 /** What each task asked of brains, once read. @type {import('@preact/signals-core').Signal<Parameters<typeof tally>[0] | null>} */
@@ -44,6 +45,9 @@ const said = ({ cost, unknown }, plan) => costText(unknown ? null : cost, plan)
 const month = (/** @type {string} */ key) => new Intl.DateTimeFormat(intlLocales(), { month: 'long', year: 'numeric' }).format(new Date(`${key}-15T12:00:00`))
 const thisMonth = () => { const now = new Date(); return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}` }
 
+/** What this month's answers cost so far, read again first (D711). */
+export const thisMonth$ = async () => { await spending(); return spent()?.months.find((one) => one.month === thisMonth())?.cost ?? 0 }
+
 /** Its line under Settings' Brains' title, once anything was asked of a brain: this month's, in the plan's words when only plans answered, which opens its page. */
 export function row() {
   const sum = spent(), now = sum?.months.find((one) => one.month === thisMonth()) ?? { cost: 0, unknown: false }, plans = sum?.brains.map(({ provider }) => PLANS[provider]) ?? []
@@ -55,6 +59,9 @@ export function row() {
 export function page() {
   const { months = [], brains = [], costly = [] } = spent() ?? {}, most = Math.max(...months.map(({ cost }) => cost), 0)
   return html`<p class="lede">${t('receipt.spentLede')}</p>
+    <section><h3><label for="spent-limit">${t('receipt.limit')}</label></h3><p class="muted">${t('receipt.limitText', { name: BRAND.name })}</p>
+      <input id="spent-limit" class="address" type="number" min="0" step="1" inputmode="decimal" .value=${String(app.settings.value.limit ?? '')}
+        @change=${(/** @type {Event} */ e) => updateSettings({ limit: Number(/** @type {HTMLInputElement} */ (e.target).value) || undefined })}></section>
     <section class="parts"><h3>${t('receipt.months')}</h3><ul class="list">${months.map((one) => html`<li><span class="item-icon" aria-hidden="true">${icons.scroll}</span>
       <span class="item-text" id=${`spent-${one.month}`}>${month(one.month)}</span><strong>${said(one)}</strong><meter value=${most ? one.cost / most : 0} aria-labelledby=${`spent-${one.month}`}></meter></li>`)}</ul></section>
     <section><h3>${t('receipt.byBrain')}</h3><dl class="spent-brains">${brains.map((one) => html`<div class="receipt-stat"><dt><bdi>${brainLabel(/** @type {any} */ ({ ...one, api: one.provider === 'device' ? 'device' : '' }))}</bdi></dt><dd>${said(one, PLANS[one.provider])}</dd></div>`)}</dl></section>

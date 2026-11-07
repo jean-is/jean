@@ -18,7 +18,7 @@ import { priceOf, PLANS } from '../../ui/prices.js'
 import { save } from '../../ui/save.js'
 import { icon, icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
-import { PROVIDERS } from '../../core/llm.js'
+import { PROVIDERS, LLMError } from '../../core/llm.js'
 import { metaRecord } from '../../core/events.js'
 import { t, tParts, locale, intlLocales, formatDuration, useStrings } from '../../core/i18n.js'
 import { factsOf, costOf, certificate, seal, makeSeal, thumbprint, compact, sealedOf, saysOf, proof, disclosuresOf, disclosed, witness, record, tokenFor } from './certificate.js'
@@ -386,6 +386,28 @@ const certificates = { id: 'certificates', at: 5, group: 'here', icon: icons.bad
   draw: (/** @type {{ lockedBy: () => string }} */ settings) => { if (!print.value) void fingerprint().then((value) => (print.value = value))
     return html`<section><h3>${t('receipt.seal')}</h3><p class="muted">${t('receipt.seal.text')}</p><span class="key-command"><code dir="ltr">${print.value.match(/.{1,4}/g)?.join(' ')}</code>
       <button type="button" class="icon-button subtle" aria-label=${t('action.copy')} @click=${() => navigator.clipboard.writeText(print.value).then(() => notify(t('toast.copied')))}>${icons.copy}</button></span></section>${witnessing(settings)}` } }
-register({ id: 'receipt', slots: { data: certificates,
+/** Tasks let past this month's limit, by task and month (D711). */
+const past = new Set()
+/**
+ * A month's limit (D711): at a turn's first step to a brain that costs money, once this month's answers reached it, the user is
+ * asked, and Allow for this task lets the rest of that task through; otherwise nothing is sent. @param {any} e the step
+ */
+async function limited({ brain, task, step, signal }) {
+  const [limit, month] = [Number(app.settings.peek().limit) || 0, new Date().toISOString().slice(0, 7)]
+  if (!limit || step || isLocal(brain) || PLANS[brain.provider] || past.has(`${task}|${month}`)) return false
+  const cost = await (await import('./spent-page.js')).thisMonth$()
+  if (cost < limit) return false
+  const usd = (/** @type {number} */ n) => new Intl.NumberFormat(intlLocales(), { style: 'currency', currency: 'USD', maximumSignificantDigits: 3 }).format(n)
+  const option = (/** @type {string} */ label, recommended = false) => ({ label: t(label), description: '', recommended })
+  const [answer] = await (await import('../../ui/send.js')).askUser([{ question: t('receipt.limitReached', { cost: usd(cost), limit: usd(limit) }), multiple: false,
+    options: [option('approval.allowTask'), option('approval.rejectOnce', true)] }], undefined, signal) ?? []
+  if (answer?.chosen[0] !== 0) return true
+  past.add(`${task}|${month}`)
+  return false
+}
+/** A request held at the limit: nothing goes, and the turn stops as if stopped. */
+async function* held() { throw new LLMError('This month’s limit on answers is reached, and the user chose not to go on.', { code: 'aborted' }) }
+
+register({ id: 'receipt', hooks: [{ on: 'turn.step', run: async (e, next) => (await limited(e) ? held() : next(e)) }], slots: { data: certificates,
   // How things stand, under Brains' title, before its list (D509).
   brains: { id: 'spent', at: 3, head: true, draw: () => spentPage.value?.row() ?? nothing, title: () => t('receipt.spent'), page: () => spentPage.value?.page() ?? nothing } } })
