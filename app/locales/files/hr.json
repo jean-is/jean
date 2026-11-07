@@ -5,5 +5,6 @@
   "files.save": "Spremi",
   "files.askJean": "Pitaj aplikaciju {name}",
   "files.pointed": "Pokazano: „{words}”. Pitajte u polju",
-  "files.noSpeech": "U njoj se ne čuje govor"
+  "files.noSpeech": "U njoj se ne čuje govor",
+  "files.area": "Pokažite dio: povucite preko slike ili koristite strelice"
 }

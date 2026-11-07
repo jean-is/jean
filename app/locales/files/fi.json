@@ -5,5 +5,6 @@
   "files.save": "Tallenna",
   "files.askJean": "Kysy: {name}",
   "files.pointed": "Osoitettu: ”{words}”. Kysy kentässä",
-  "files.noSpeech": "Puhetta ei kuulunut"
+  "files.noSpeech": "Puhetta ei kuulunut",
+  "files.area": "Osoita osaa: vedä kuvan yli tai käytä nuolinäppäimiä"
 }

@@ -246,7 +246,9 @@ async function show(file, uri, holds, rules, allows, close) {
   // Where a citation points, found in what the file says, or said not to be there (D481).
   const at = file.at && (await import('../caps/files/search.js')).anchor(splitPages((await fileText(app.fs, dir, uri)) ?? ''), file.at)
   if (at === null) notify(t('check.is.missing'), { alert: true })
-  const view = await viewOf({ name: file.name, bytes, type: file.mimeType, text, prose, cells, at: at || undefined }, holds, { allows: can, sites, policy: rules, allow: allows })
+  // A picture of the project's, to point at a part of (D715).
+  const pointable = /^files\//.test(uri) && !at && loaded.peek().has('files') ? (/** @type {Event} */ e, picture = /** @type {HTMLElement} */ (e.currentTarget)) => void import('../caps/files/area.js').then(({ pointable: area }) => area(picture, { uri, name: file.name })) : undefined
+  const view = await viewOf({ name: file.name, bytes, type: file.mimeType, text, prose, cells, at: at || undefined, pointable }, holds, { allows: can, sites, policy: rules, allow: allows })
   // What the user marks in it, a file the project keeps (D690).
   // A page drawn in a frame is a template, not an element, and takes no marks.
   if (view instanceof HTMLElement && /^files\//.test(uri) && (await unlock('files'))) void import('../caps/files/marks.js').then(({ follow }) => follow(view, { uri, name: file.name }, holds))

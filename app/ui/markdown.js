@@ -44,6 +44,9 @@ export function markdown(source, sources, still = false) {
   }
 }
 
+/** A picture's area, in percent from its top left (D481): it shows boxed under its mark (D715). */
+const AREA = /^:\s*[\d.]+\s*,\s*[\d.]+\s*,\s*[\d.]+\s*,\s*[\d.]+\s*$/
+
 /** "[1]" or "[1, 3]" → source chips; "[1: "…"]" or "[1, p. 3]" opens the file there (D481); anything else stays text. @param {string} text */
 function cite(text) {
   const sources = cited
@@ -55,7 +58,8 @@ function cite(text) {
     return numbers.map((n) => {
       const source = /** @type {NonNullable<ReturnType<Sources['get']>>} */ (sources.get(n))
       return source.url ? html`<a class="cite" href=${source.url} target="_blank" rel="noopener noreferrer" aria-label=${`${n} · ${source.label}`}>${n}<span class="cite-tip">${source.icon ? html`<img src=${source.icon} alt="" loading="lazy">` : nothing}${source.site}<span dir="auto">${source.name}</span></span></a>`
-        : source.open ? html`<button class="cite" title=${/^:\s*([^\d\s].*)/s.exec(at ?? '')?.[1] ?? source.name} aria-label=${`${n} · ${source.label}`} @click=${() => source.open?.(at)}>${n}</button>`
+        : source.open ? html`<button class="cite" title=${/^:\s*([^\d\s].*)/s.exec(at ?? '')?.[1] ?? source.name} aria-label=${`${n} · ${source.label}`} @click=${() => source.open?.(at)}>${n}</button>${source.file && AREA.test(at ?? '')
+          ? (import('./pointed.js'), html`<app-pointed uri=${source.file.uri} type=${source.file.mimeType ?? ''} name=${source.name} area=${(at ?? '').slice(1).replace(/\s/g, '')}></app-pointed>`) : nothing}`
         : html`<span class="cite" title=${source.name}>${n}</span>`
     })
   })

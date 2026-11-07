@@ -5,5 +5,6 @@
   "files.save": "Salva",
   "files.askJean": "Chiedi a {name}",
   "files.pointed": "Stai indicando «{words}»: chiedi nella casella",
-  "files.noSpeech": "Nessuna voce sentita"
+  "files.noSpeech": "Nessuna voce sentita",
+  "files.area": "Indica una parte: trascina sull’immagine o usa le frecce"
 }

@@ -208,6 +208,8 @@ test('a citation that points at an area of a picture outlines it over the pictur
   })
   const chip = await cited(page, { name: 'Receipt.png', mimeType: 'image/png', buffer: Buffer.from(png) }, 'Point at 10,20,30,40')
   await expect(chip).toHaveAttribute('title', 'Receipt.png')
+  // Under its mark, the picture itself, small, the area boxed (D715).
+  await expect(page.locator('.msg-jean app-pointed rect')).toHaveAttribute('x', '10')
   await chip.click()
   const area = page.locator('app-preview .view-marked rect')
   await expect(area).toHaveAttribute('x', '10')
@@ -239,4 +241,44 @@ test('a recording shared is heard on the device, its windows written with when e
   expect(pages.join('\n')).toMatch(/^\[0:00\] Welcome to the quarterly review\.\n\[0:2\d\] Welcome to the quarterly review\.$/)
   await ask(page, 'Summarize this')
   await expect(answer(page)).toContainText('Review.wav')
+})
+
+test('drawn over a picture, or chosen with the keyboard in thirds, an area goes to the brain with the next message (D715)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  const png = await page.evaluate(async () => {
+    const canvas = new OffscreenCanvas(400, 300)
+    const context = /** @type {OffscreenCanvasRenderingContext2D} */ (canvas.getContext('2d'))
+    context.fillStyle = '#2a6'
+    context.fillRect(0, 0, 400, 300)
+    return [...new Uint8Array(await (await canvas.convertToBlob({ type: 'image/png' })).arrayBuffer())]
+  })
+  await page.locator('.composer input[type="file"]').setInputFiles({ name: 'Screen.png', mimeType: 'image/png', buffer: Buffer.from(png) })
+  await expect(page.locator('.attachment[data-status="ready"]')).toHaveCount(1)
+  await ask(page, 'Here is my screen')
+  await answered(page)
+  await page.locator('.msg-files').getByRole('button', { name: 'Screen.png' }).first().click()
+  const box = page.getByRole('group', { name: 'Point at a part: drag over the picture, or use the arrow keys' })
+  await box.locator('img').scrollIntoViewIfNeeded()
+  const picture = await box.locator('img').boundingBox()
+  if (!picture) throw new Error('no picture')
+  await page.mouse.move(picture.x + picture.width * 0.1, picture.y + picture.height * 0.1)
+  await page.mouse.down()
+  // Pressed, the pane stays (D640), its head over it: the picture moves, and the drag goes on over it as it is now.
+  const now = (await box.locator('img').boundingBox()) ?? picture
+  await page.mouse.move(now.x + now.width * 0.5, now.y + now.height * 0.3, { steps: 4 })
+  await page.mouse.up()
+  await box.getByRole('button', { name: 'Ask Jean' }).click()
+  await ask(page, 'What is this button?')
+  await answered(page, 2)
+  const said = await page.evaluate(async () => (await import('/ui/state.js')).app.current.value.records.map((record) => record.update?.text ?? '').find((text) => text.includes('points at an area')))
+  expect(said).toMatch(/40% wide and 20% high, 10% from its left and 10% from its top\. Cite it as \[n: 10,10,40,20\]/)
+  // The keyboard: the middle third, a third to the right, then Enter.
+  await page.locator('.msg-files').getByRole('button', { name: 'Screen.png' }).first().click()
+  await box.focus()
+  await box.press('ArrowRight')
+  await box.press('ArrowRight')
+  await expect(box.locator('rect')).toHaveAttribute('x', /^66\.6/)
+  await box.press('Enter')
+  await expect(page.locator('.toast')).toContainText('Screen.png')
 })

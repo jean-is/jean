@@ -5,5 +5,6 @@
   "files.save": "Guardar",
   "files.askJean": "Preguntar a {name}",
   "files.pointed": "Señalaste «{words}»: pregunta en el cuadro",
-  "files.noSpeech": "No se oye habla"
+  "files.noSpeech": "No se oye habla",
+  "files.area": "Señala una parte: arrastra sobre la imagen o usa las flechas"
 }

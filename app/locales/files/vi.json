@@ -5,5 +5,6 @@
   "files.save": "Lưu",
   "files.askJean": "Hỏi {name}",
   "files.pointed": "Đã chỉ vào: “{words}”. Hãy hỏi trong ô",
-  "files.noSpeech": "Không nghe thấy lời nói"
+  "files.noSpeech": "Không nghe thấy lời nói",
+  "files.area": "Chỉ vào một phần: kéo trên ảnh, hoặc dùng các phím mũi tên"
 }

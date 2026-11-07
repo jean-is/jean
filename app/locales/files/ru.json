@@ -5,5 +5,6 @@
   "files.save": "Сохранить",
   "files.askJean": "Спросить {name}",
   "files.pointed": "Выбрано: «{words}». Спросите в поле",
-  "files.noSpeech": "Речи не слышно"
+  "files.noSpeech": "Речи не слышно",
+  "files.area": "Укажите часть: проведите по картинке или используйте стрелки"
 }

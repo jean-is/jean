@@ -51,3 +51,10 @@
 .marks-said, .marks-note { flex-basis: 100%; padding: 0.35rem 0.6rem; }
 .marks-note { display: grid; gap: 0.25rem; }
 .marks-note textarea { padding: 0.4rem; border: 1px solid var(--line); border-radius: 0.4rem; background: var(--room-2); color: inherit; font: inherit; resize: vertical; }
+/* A picture's area an answer points at (ui/pointed.js, D715): small under its mark, a click opening it whole. */
+.pointed { display: grid; inline-size: fit-content; max-inline-size: min(100%, 24rem); margin-block: 0.4rem; padding: 0; border: 0; background: none; cursor: zoom-in; }
+.pointed img { max-inline-size: 100%; border-radius: 0.3rem; }
+/* A picture's area the person draws to point at (caps/files/area.js, D715). */
+.area-box { position: relative; touch-action: none; cursor: crosshair; }
+.area-box:focus-visible { outline: 2px solid var(--flame); outline-offset: 2px; }
+.area-bar { grid-area: auto; justify-self: center; margin-block-start: 0.5rem; }

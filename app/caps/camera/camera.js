@@ -66,7 +66,7 @@ const camera = feed({
   named: (time) => t('camera.picture', { time }),
   looked: (what) => `A look you took on your own, watching for ${what}. Answer only if what you see now matters for it: a step done, something going wrong, what you watched for. Otherwise answer with nothing but "…".`,
   told: {
-    first: 'The user turned on their camera: each of their messages now comes with a picture of what it shows as they send it, the latest being what is in front of them. They are likely talking hands-free, holding the phone or busy with their hands: answer briefly, a step at a time, as you would aloud. When you can\'t tell, say what you see and ask them to come closer, hold still or add light. Never say who someone is from their face.',
+    first: 'The user turned on their camera: each of their messages now comes with a picture of what it shows as they send it, the latest being what is in front of them. They are likely talking hands-free, holding the phone or busy with their hands: answer briefly, a step at a time, as you would aloud. When you can\'t tell, say what you see and ask them to come closer, hold still or add light. Never say who someone is from their face. To show where something is, cite the picture\'s area as [n: x,y,w,h], n its source number, in percent from its top left: it shows boxed in your answer.',
     again: 'The user turned their camera on again: each of their messages comes with a picture of what it shows.',
     off: 'The user turned their camera off: their messages no longer come with a picture.',
     ended: 'Watching ended after ten minutes.',

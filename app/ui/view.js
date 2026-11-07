@@ -30,9 +30,10 @@ await styleSheet(new URL('view.css', import.meta.url))
 /**
  * A file to show: its name, its bytes, its media type when known, its text when it isn't its bytes
  * as they are (what was read from a file shared), whether it is Markdown whatever its name says
- * (a document Jean wrote), for a workbook in its pane, that its cells change there (D229), and where a citation points (D481).
+ * (a document Jean wrote), for a workbook in its pane, that its cells change there (D229), where a citation points (D481), and for a
+ * picture, what it is handed to once it loads, to point at a part (D715).
  * @typedef {{ name: string, bytes: Uint8Array, type?: string, text?: () => Promise<string>, prose?: boolean, cells?: { at?: import('../caps/files/office.js').Place },
- *   at?: { page?: number, words?: string, area?: number[] } }} File
+ *   at?: { page?: number, words?: string, area?: number[] }, pointable?: (event: Event) => void }} File
  */
 /**
  * What a web page may do, as Settings and policy have it (D143, D158): its rights, its policy, and
@@ -56,7 +57,7 @@ export async function viewOf(file, holds, page) {
     holds.push(() => URL.revokeObjectURL(url))
     // A kind this browser can't draw or play (a TIFF or HEIC picture outside Safari) says so in its place.
     const failed = (/** @type {Event} */ event) => /** @type {Element} */ (event.currentTarget).replaceWith(unshown())
-    const picture = media === 'image' && html`<img class="view-picture" src=${url} alt=${name} @error=${failed}>`
+    const picture = media === 'image' && html`<img class="view-picture" src=${url} alt=${name} @error=${failed} @load=${file.pointable}>`
     return picture ? (file.at?.area ? pointed(picture, 100, 100, [file.at.area]) : picture)
       : media === 'video' ? html`<video class="view-film" src=${url} controls @error=${failed}></video>`
       : html`<audio class="view-sound" src=${url} controls @error=${failed}></audio>`

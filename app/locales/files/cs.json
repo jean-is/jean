@@ -5,5 +5,6 @@
   "files.save": "Uložit",
   "files.askJean": "Zeptat se aplikace {name}",
   "files.pointed": "Ukázáno: „{words}“. Zeptejte se v poli",
-  "files.noSpeech": "Není v tom slyšet řeč"
+  "files.noSpeech": "Není v tom slyšet řeč",
+  "files.area": "Ukázat na část: táhněte přes obrázek, nebo použijte šipky"
 }

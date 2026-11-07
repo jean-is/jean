@@ -5,5 +5,6 @@
   "files.save": "저장",
   "files.askJean": "{name}에게 묻기",
   "files.pointed": "가리킨 부분: “{words}”. 입력창에 물어보세요",
-  "files.noSpeech": "말소리가 들리지 않습니다"
+  "files.noSpeech": "말소리가 들리지 않습니다",
+  "files.area": "일부 가리키기: 그림 위로 끌거나 화살표 키를 사용하세요"
 }

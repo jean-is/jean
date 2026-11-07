@@ -5,5 +5,6 @@
   "files.save": "Mentés",
   "files.askJean": "Kérdezd: {name}",
   "files.pointed": "Kijelölve: „{words}”. Kérdezz a mezőben",
-  "files.noSpeech": "Nem hallatszik benne beszéd"
+  "files.noSpeech": "Nem hallatszik benne beszéd",
+  "files.area": "Mutass egy részre: húzd át a képen, vagy használd a nyilakat"
 }

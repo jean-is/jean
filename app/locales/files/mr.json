@@ -5,5 +5,6 @@
   "files.save": "जतन करा",
   "files.askJean": "{name} ला विचारा",
   "files.pointed": "दाखवले: “{words}”. चौकटीत विचारा",
-  "files.noSpeech": "यात बोलणे ऐकू आले नाही"
+  "files.noSpeech": "यात बोलणे ऐकू आले नाही",
+  "files.area": "एखादा भाग दाखवा: चित्रावर ओढा, किंवा बाण कळा वापरा"
 }

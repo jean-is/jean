@@ -5,5 +5,6 @@
   "files.save": "保存",
   "files.askJean": "问 {name}",
   "files.pointed": "正指向“{words}”：在消息框里提问",
-  "files.noSpeech": "里面没有听到说话声"
+  "files.noSpeech": "里面没有听到说话声",
+  "files.area": "指出一部分：在图片上拖动，或使用方向键"
 }

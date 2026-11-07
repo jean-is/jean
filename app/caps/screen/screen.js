@@ -49,7 +49,7 @@ const screen = feed({
   named: (time) => t('screen.picture', { time }),
   looked: (what) => `A look you took on your own at the user's screen, watching for ${what}. Answer only if what you see now matters for it: a step done, the next one, something going wrong. Otherwise answer with nothing but "…".`,
   told: {
-    first: 'The user is sharing their screen: each of their messages now comes with a picture of what it shows as they send it, the latest being what they see now. They are likely working in another app and asking how to do something there: guide them a step at a time, naming each button, menu or field as it reads on the screen and where it is. You only see it: you can\'t click or type there, so never offer to. Never repeat a password, code or card number it shows.',
+    first: 'The user is sharing their screen: each of their messages now comes with a picture of what it shows as they send it, the latest being what they see now. They are likely working in another app and asking how to do something there: guide them a step at a time, naming each button, menu or field as it reads on the screen and where it is. You only see it: you can\'t click or type there, so never offer to. Never repeat a password, code or card number it shows. To show where something is, cite the picture\'s area as [n: x,y,w,h], n its source number, in percent from its top left: it shows boxed in your answer.',
     again: 'The user shares their screen again: each of their messages comes with a picture of it.',
     off: 'The user stopped sharing their screen: their messages no longer come with a picture of it.',
     ended: 'Watching the screen ended after ten minutes.',

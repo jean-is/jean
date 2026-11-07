@@ -54,4 +54,5 @@ export const decisionsHere = () => decisions.value
 export const canStepUp = (/** @type {unknown} */ _brain) => false
 // Nothing to try again, go back to, answer in a new task, open or ask a smarter brain.
 const none = (/** @type {unknown} */ _what) => {}
-export { none as retry, none as rewind, none as fork, none as openFile, none as askSmarter }
+export { none as retry, none as rewind, none as fork, none as askSmarter }
+export const openFile = none

@@ -5,5 +5,6 @@
   "files.save": "Gem",
   "files.askJean": "Spørg {name}",
   "files.pointed": "Du peger på »{words}«: spørg i feltet",
-  "files.noSpeech": "Ingen tale hørt i den"
+  "files.noSpeech": "Ingen tale hørt i den",
+  "files.area": "Peg på en del: træk hen over billedet, eller brug piletasterne"
 }

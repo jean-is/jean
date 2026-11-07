@@ -5,5 +5,6 @@
   "files.save": "Hifadhi",
   "files.askJean": "Muulize {name}",
   "files.pointed": "Umeonyesha: “{words}”. Uliza kwenye kisanduku",
-  "files.noSpeech": "Hakuna sauti ya mazungumzo iliyosikika"
+  "files.noSpeech": "Hakuna sauti ya mazungumzo iliyosikika",
+  "files.area": "Onyesha sehemu: buruta juu ya picha, au tumia vitufe vya mishale"
 }
