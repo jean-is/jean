@@ -93,6 +93,7 @@
   "approval.title": "Kailangan ang pahintulot mo",
   "approval.question": "Payagan ito? {action}",
   "approval.allowOnce": "Payagan nang isang beses",
+  "approval.allowTask": "Payagan sa gawaing ito",
   "approval.allowAlways": "Laging payagan",
   "approval.rejectOnce": "Hindi muna",
   "approval.rejectAlways": "Huwag kailanman",

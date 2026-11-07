@@ -94,6 +94,7 @@
   "approval.title": "Serve la tua approvazione",
   "approval.question": "Consentire? {action}",
   "approval.allowOnce": "Consenti una volta",
+  "approval.allowTask": "Consenti per questa attività",
   "approval.allowAlways": "Consenti sempre",
   "approval.rejectOnce": "Non ora",
   "approval.rejectAlways": "Mai",

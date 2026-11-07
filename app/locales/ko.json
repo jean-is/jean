@@ -92,6 +92,7 @@
   "approval.title": "승인이 필요해요",
   "approval.question": "허용할까요? {action}",
   "approval.allowOnce": "한 번 허용",
+  "approval.allowTask": "이 작업 동안 허용",
   "approval.allowAlways": "항상 허용",
   "approval.rejectOnce": "지금은 안 함",
   "approval.rejectAlways": "절대 안 함",

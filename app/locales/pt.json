@@ -94,6 +94,7 @@
   "approval.title": "É precisa a tua aprovação",
   "approval.question": "Permitir isto? {action}",
   "approval.allowOnce": "Permitir uma vez",
+  "approval.allowTask": "Permitir nesta tarefa",
   "approval.allowAlways": "Permitir sempre",
   "approval.rejectOnce": "Agora não",
   "approval.rejectAlways": "Nunca",

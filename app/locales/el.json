@@ -93,6 +93,7 @@
   "approval.title": "Χρειάζεται η έγκρισή σας",
   "approval.question": "Να επιτραπεί; {action}",
   "approval.allowOnce": "Να επιτρέπεται μία φορά",
+  "approval.allowTask": "Να επιτρέπεται σε αυτή την εργασία",
   "approval.allowAlways": "Να επιτρέπεται πάντα",
   "approval.rejectOnce": "Όχι τώρα",
   "approval.rejectAlways": "Ποτέ",

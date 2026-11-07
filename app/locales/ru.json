@@ -95,6 +95,7 @@
   "approval.title": "Нужно ваше разрешение",
   "approval.question": "Разрешить? {action}",
   "approval.allowOnce": "Разрешить один раз",
+  "approval.allowTask": "Разрешить в этой задаче",
   "approval.allowAlways": "Разрешать всегда",
   "approval.rejectOnce": "Не сейчас",
   "approval.rejectAlways": "Никогда",

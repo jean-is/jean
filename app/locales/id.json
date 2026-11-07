@@ -92,6 +92,7 @@
   "approval.title": "Persetujuan Anda diperlukan",
   "approval.question": "Izinkan ini? {action}",
   "approval.allowOnce": "Izinkan sekali",
+  "approval.allowTask": "Izinkan untuk tugas ini",
   "approval.allowAlways": "Selalu izinkan",
   "approval.rejectOnce": "Jangan sekarang",
   "approval.rejectAlways": "Jangan pernah",

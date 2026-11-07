@@ -183,6 +183,7 @@ Every kind of action has one of three settings: **Do it / Ask me first / Never**
 | Starting a long task on a plan, once plans are found (D364) | Ask me first: the plan waits for Go ahead |
 | Passwords, payments | Never (reserved for humans) |
 
+- **For this task** (D710). From a task's second card of a kind, "Allow for this task" lets that kind go ahead there without asking (for that folder, site or service when the card has one), until the page reloads. It writes no rule, never shows on a guard's card, and a child's profile has none.
 - **Setting rules from approvals.** On an approval card, "Always allow" writes a "Do it" rule and "Never allow" writes a "Never" rule. On a connection's call, either is kept for that service alone, and says so, leading to its page in Connections.
 - **Overrides.** Projects can override rules, organisation policy can lock them, and a parent locks them all in a child's profile (D389).
 - **Rules for one kind of action or one service** (D295): Be more careful for…, on Approvals' Exceptions, adds one: Ask me first or Never, for a kind of action or a connected service, and if the user likes only when the answer to their own question about it is yes ("Is it to a client?"). They only ever make Jean more careful; an organisation's come first, locked.

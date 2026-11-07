@@ -93,6 +93,7 @@
   "approval.title": "تأیید شما لازم است",
   "approval.question": "اجازه داده شود؟ {action}",
   "approval.allowOnce": "فقط این بار",
+  "approval.allowTask": "برای این کار اجازه بده",
   "approval.allowAlways": "همیشه اجازه بده",
   "approval.rejectOnce": "الان نه",
   "approval.rejectAlways": "هرگز",

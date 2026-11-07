@@ -95,6 +95,7 @@
   "approval.title": "Potrzebna twoja zgoda",
   "approval.question": "Zezwolić? {action}",
   "approval.allowOnce": "Zezwól raz",
+  "approval.allowTask": "Zezwól w tym zadaniu",
   "approval.allowAlways": "Zawsze zezwalaj",
   "approval.rejectOnce": "Nie teraz",
   "approval.rejectAlways": "Nigdy",

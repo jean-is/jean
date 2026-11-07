@@ -94,6 +94,7 @@
   "approval.title": "Ci vole u vostru accunsentu",
   "approval.question": "Permette què ? {action}",
   "approval.allowOnce": "Permette una volta",
+  "approval.allowTask": "Permette per stu compitu",
   "approval.allowAlways": "Permette sempre",
   "approval.rejectOnce": "Micca avà",
   "approval.rejectAlways": "Mai",

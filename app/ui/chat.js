@@ -510,7 +510,7 @@ export function toolLabel(tool, files = []) {
  * @param {Extract<import('./state.js').Decision, { toolCall: any }>} decision
  * @param {string | undefined} helper @param {ResourceLink[]} files
  */
-function approval({ toolCall, resolve }, helper, files) {
+function approval({ toolCall, task, resolve }, helper, files) {
   // In the user's folder: the change and its diff, or opening the folder (caps/folders, D141).
   if (toolCall._meta?.folder) return html`<app-folder-approval .decision=${{ toolCall, resolve }} .helper=${helper}></app-folder-approval>`
   // A site the computer hasn't reached yet (caps/computer, D162).
@@ -521,6 +521,7 @@ function approval({ toolCall, resolve }, helper, files) {
     <p>${t('approval.question', { action: toolLabel(toolCall, files) })}</p>
     <div class="approval-actions">
       <button class="button primary" @click=${() => resolve('allow_once')}>${t('approval.allowOnce')}</button>
+      ${task ? html`<button class="button" @click=${() => resolve('allow_task')}>${t('approval.allowTask')}</button>` : nothing}
       ${app.policy.child ? nothing : html`<button class="button" @click=${() => resolve('allow_always')}>${t('approval.allowAlways')}</button>`}
       <button class="button" @click=${() => resolve('reject_once')}>${t('approval.rejectOnce')}</button>
       ${app.policy.child ? nothing : html`<button class="button subtle" @click=${() => resolve('reject_always')}>${t('approval.rejectAlways')}</button>`}

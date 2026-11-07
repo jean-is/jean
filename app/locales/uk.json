@@ -95,6 +95,7 @@
   "approval.title": "Потрібен ваш дозвіл",
   "approval.question": "Дозволити? {action}",
   "approval.allowOnce": "Дозволити один раз",
+  "approval.allowTask": "Дозволити в цьому завданні",
   "approval.allowAlways": "Дозволяти завжди",
   "approval.rejectOnce": "Не зараз",
   "approval.rejectAlways": "Ніколи",

@@ -95,6 +95,7 @@
   "approval.title": "Je potrebné vaše schválenie",
   "approval.question": "Povoliť toto? {action}",
   "approval.allowOnce": "Povoliť raz",
+  "approval.allowTask": "Povoliť pre túto úlohu",
   "approval.allowAlways": "Vždy povoliť",
   "approval.rejectOnce": "Teraz nie",
   "approval.rejectAlways": "Nikdy",

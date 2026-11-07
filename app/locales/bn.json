@@ -93,6 +93,7 @@
   "approval.title": "আপনার অনুমোদন দরকার",
   "approval.question": "অনুমতি দেবেন? {action}",
   "approval.allowOnce": "একবার অনুমতি দিন",
+  "approval.allowTask": "এই কাজের জন্য অনুমতি দিন",
   "approval.allowAlways": "সবসময় অনুমতি দিন",
   "approval.rejectOnce": "এখন নয়",
   "approval.rejectAlways": "কখনো নয়",

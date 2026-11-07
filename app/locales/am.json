@@ -93,6 +93,7 @@
   "approval.title": "የእርስዎ ፈቃድ ያስፈልጋል",
   "approval.question": "ይህ ይፈቀድ? {action}",
   "approval.allowOnce": "አንድ ጊዜ ይፈቀድ",
+  "approval.allowTask": "ለዚህ ተግባር ፍቀድ",
   "approval.allowAlways": "ሁልጊዜ ይፈቀድ",
   "approval.rejectOnce": "ለአሁን ይቅር",
   "approval.rejectAlways": "በፍጹም",

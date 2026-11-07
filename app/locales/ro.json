@@ -94,6 +94,7 @@
   "approval.title": "Este nevoie de aprobarea dvs.",
   "approval.question": "Permiteți asta? {action}",
   "approval.allowOnce": "Permite o dată",
+  "approval.allowTask": "Permite pentru această sarcină",
   "approval.allowAlways": "Permite întotdeauna",
   "approval.rejectOnce": "Nu acum",
   "approval.rejectAlways": "Niciodată",

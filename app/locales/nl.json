@@ -93,6 +93,7 @@
   "approval.title": "Je toestemming is nodig",
   "approval.question": "Toestaan? {action}",
   "approval.allowOnce": "Eén keer toestaan",
+  "approval.allowTask": "Toestaan voor deze taak",
   "approval.allowAlways": "Altijd toestaan",
   "approval.rejectOnce": "Nu niet",
   "approval.rejectAlways": "Nooit",

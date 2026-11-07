@@ -93,6 +93,7 @@
   "approval.title": "आपकी मंज़ूरी चाहिए",
   "approval.question": "अनुमति दें? {action}",
   "approval.allowOnce": "एक बार अनुमति दें",
+  "approval.allowTask": "इस काम के लिए अनुमति दें",
   "approval.allowAlways": "हमेशा अनुमति दें",
   "approval.rejectOnce": "अभी नहीं",
   "approval.rejectAlways": "कभी नहीं",

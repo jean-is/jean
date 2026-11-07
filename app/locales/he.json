@@ -94,6 +94,7 @@
   "approval.title": "נדרש אישור ממך",
   "approval.question": "לאשר? {action}",
   "approval.allowOnce": "אישור חד־פעמי",
+  "approval.allowTask": "לאשר למשימה הזו",
   "approval.allowAlways": "לאשר תמיד",
   "approval.rejectOnce": "לא עכשיו",
   "approval.rejectAlways": "אף פעם",

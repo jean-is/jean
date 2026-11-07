@@ -93,6 +93,7 @@
   "approval.title": "तुमची मंजुरी हवी आहे",
   "approval.question": "परवानगी द्यायची? {action}",
   "approval.allowOnce": "एकदा परवानगी द्या",
+  "approval.allowTask": "या कामासाठी परवानगी द्या",
   "approval.allowAlways": "नेहमी परवानगी द्या",
   "approval.rejectOnce": "आत्ता नको",
   "approval.rejectAlways": "कधीच नाही",

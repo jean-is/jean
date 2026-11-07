@@ -93,6 +93,7 @@
   "approval.title": "Hyväksyntäsi tarvitaan",
   "approval.question": "Sallitaanko tämä? {action}",
   "approval.allowOnce": "Salli kerran",
+  "approval.allowTask": "Salli tässä tehtävässä",
   "approval.allowAlways": "Salli aina",
   "approval.rejectOnce": "Ei nyt",
   "approval.rejectAlways": "Ei koskaan",

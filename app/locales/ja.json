@@ -92,6 +92,7 @@
   "approval.title": "承認が必要です",
   "approval.question": "許可しますか？{action}",
   "approval.allowOnce": "今回だけ許可",
+  "approval.allowTask": "このタスクでは許可",
   "approval.allowAlways": "常に許可",
   "approval.rejectOnce": "今はしない",
   "approval.rejectAlways": "許可しない",

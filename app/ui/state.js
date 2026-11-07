@@ -23,7 +23,7 @@ import { mine } from './opfs.js'
 /**
  * A decision waiting for the user, in the decision inbox: an approval, or questions from Jean or
  * one of its helpers (`from`, the part it works on; D146), in the conversation at `conversation` (D147).
- * @typedef {{ id: number, conversation?: string, toolCall: ToolCallInfo, resolve: (option: PermissionOption) => void }
+ * task: whether For this task is offered. @typedef {{ id: number, conversation?: string, toolCall: ToolCallInfo, task?: boolean, resolve: (option: PermissionOption | 'allow_task') => void }
  *   | { id: number, conversation?: string, questions: Question[], from?: string, resolve: (answers: Answer[] | null) => void }} Decision
  */
 /** @import { Question, Answer } from '../caps/ask/answers.js' */

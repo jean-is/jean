@@ -94,6 +94,7 @@
   "approval.title": "Potrebno je vaše odobrenje",
   "approval.question": "Dopustiti ovo? {action}",
   "approval.allowOnce": "Dopusti jednom",
+  "approval.allowTask": "Dopusti za ovaj zadatak",
   "approval.allowAlways": "Uvijek dopusti",
   "approval.rejectOnce": "Ne sada",
   "approval.rejectAlways": "Nikad",

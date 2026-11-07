@@ -137,6 +137,8 @@ export const askUser = (questions, from, signal) => queue({ questions, from, con
 
 /** What an approval is kept to, when its tool keeps "Always allow" itself; a guard's, which keeps asking (D295); or a service's. */
 const SCOPES = ['folder', 'site', 'projects', 'film', 'guard', 'service']
+/** Per task, what the user allowed once (a count) or for the rest of it (true), by kind and scope, until the page reloads. @type {Map<string, Map<string, number | true>>} */
+const granted = new Map()
 
 /**
  * An approval card. "Always allow" and "Never" set the rule, which the other cards of that kind then
@@ -146,8 +148,14 @@ const SCOPES = ['folder', 'site', 'projects', 'film', 'guard', 'service']
  * @param {ToolCallInfo} toolCall @param {string} conversation
  */
 async function approve(toolCall, conversation) {
-  const option = /** @type {PermissionOption} */ (await queue({ toolCall, conversation }))
   const scope = SCOPES.find((key) => toolCall._meta?.[key]) ?? ''
+  // For this task (a bounded Always allow): offered from the second card of a kind in a task, never a guard's or a child's; it holds until the task's page reloads.
+  const [mine, key] = [granted.get(conversation) ?? new Map(), `${toolCall.kind}|${scope}:${toolCall._meta?.[scope] ?? ''}`]
+  if (scope !== 'guard' && mine.get(key) === true) return 'allow_once'
+  const answer = await queue({ toolCall, conversation, task: scope !== 'guard' && !app.policy.child && Boolean(mine.get(key)) })
+  if (answer === 'allow_task' || answer === 'allow_once') granted.set(conversation, mine.set(key, answer === 'allow_task' || Number(mine.get(key) ?? 0) + 1))
+  if (answer === 'allow_task') for (const other of app.decisions.value) if ('toolCall' in other && other.conversation === conversation && `${other.toolCall.kind}|${scope}:${other.toolCall._meta?.[scope] ?? ''}` === key) other.resolve('allow_once')
+  const option = /** @type {PermissionOption} */ (answer === 'allow_task' ? 'allow_once' : answer)
   if (scope && option === 'allow_always') {
     for (const other of app.decisions.value) if ('toolCall' in other && other.toolCall.name === toolCall.name && other.toolCall._meta?.[scope] === toolCall._meta?.[scope]) other.resolve('allow_once')
   }

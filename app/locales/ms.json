@@ -92,6 +92,7 @@
   "approval.title": "Kelulusan anda diperlukan",
   "approval.question": "Benarkan ini? {action}",
   "approval.allowOnce": "Benarkan sekali",
+  "approval.allowTask": "Benarkan untuk tugas ini",
   "approval.allowAlways": "Sentiasa benarkan",
   "approval.rejectOnce": "Bukan sekarang",
   "approval.rejectAlways": "Jangan sekali-kali",

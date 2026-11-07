@@ -92,6 +92,7 @@
   "approval.title": "Cần bạn cho phép",
   "approval.question": "Cho phép việc này? {action}",
   "approval.allowOnce": "Cho phép một lần",
+  "approval.allowTask": "Cho phép trong tác vụ này",
   "approval.allowAlways": "Luôn cho phép",
   "approval.rejectOnce": "Lúc khác",
   "approval.rejectAlways": "Không bao giờ",

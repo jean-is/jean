@@ -96,6 +96,7 @@
   "approval.title": "Ezhomm ’zo eus hoc’h aotre",
   "approval.question": "Aotren an dra-se ? {action}",
   "approval.allowOnce": "Aotren ur wech",
+  "approval.allowTask": "Aotren evit an trevell-mañ",
   "approval.allowAlways": "Aotren bepred",
   "approval.rejectOnce": "Ket bremañ",
   "approval.rejectAlways": "Biken",

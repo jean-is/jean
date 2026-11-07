@@ -92,6 +92,7 @@
   "approval.title": "A nílò ìfọwọ́sí yín",
   "approval.question": "Ṣé kí a fàyè gba èyí? {action}",
   "approval.allowOnce": "Fàyè gbà lẹ́ẹ̀kan",
+  "approval.allowTask": "Gbà á láàyè fún iṣẹ́ yìí",
   "approval.allowAlways": "Fàyè gbà nígbà gbogbo",
   "approval.rejectOnce": "Kì í ṣe báyìí",
   "approval.rejectAlways": "Láé",

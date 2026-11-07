@@ -92,6 +92,7 @@
   "approval.title": "ต้องการการอนุมัติจากคุณ",
   "approval.question": "อนุญาตไหม {action}",
   "approval.allowOnce": "อนุญาตครั้งเดียว",
+  "approval.allowTask": "อนุญาตสำหรับงานนี้",
   "approval.allowAlways": "อนุญาตเสมอ",
   "approval.rejectOnce": "ไว้ก่อน",
   "approval.rejectAlways": "ไม่เลย",

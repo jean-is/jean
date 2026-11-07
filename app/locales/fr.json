@@ -94,6 +94,7 @@
   "approval.title": "Votre accord est nécessaire",
   "approval.question": "Autoriser ceci ? {action}",
   "approval.allowOnce": "Autoriser une fois",
+  "approval.allowTask": "Autoriser pour cette tâche",
   "approval.allowAlways": "Toujours autoriser",
   "approval.rejectOnce": "Pas maintenant",
   "approval.rejectAlways": "Jamais",

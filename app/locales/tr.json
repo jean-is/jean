@@ -93,6 +93,7 @@
   "approval.title": "Onayın gerekiyor",
   "approval.question": "İzin verilsin mi? {action}",
   "approval.allowOnce": "Bir kez izin ver",
+  "approval.allowTask": "Bu görev için izin ver",
   "approval.allowAlways": "Her zaman izin ver",
   "approval.rejectOnce": "Şimdi değil",
   "approval.rejectAlways": "Asla",

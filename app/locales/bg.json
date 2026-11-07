@@ -93,6 +93,7 @@
   "approval.title": "Нужно е одобрението ви",
   "approval.question": "Да се разреши ли? {action}",
   "approval.allowOnce": "Разреши веднъж",
+  "approval.allowTask": "Разреши за тази задача",
   "approval.allowAlways": "Разрешавай винаги",
   "approval.rejectOnce": "Не сега",
   "approval.rejectAlways": "Никога",

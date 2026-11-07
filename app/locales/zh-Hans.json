@@ -92,6 +92,7 @@
   "approval.title": "需要你的同意",
   "approval.question": "允许吗？{action}",
   "approval.allowOnce": "允许一次",
+  "approval.allowTask": "本任务内允许",
   "approval.allowAlways": "始终允许",
   "approval.rejectOnce": "暂不",
   "approval.rejectAlways": "永不",

@@ -93,6 +93,7 @@
   "approval.title": "Din godkendelse er nødvendig",
   "approval.question": "Tillade dette? {action}",
   "approval.allowOnce": "Tillad én gang",
+  "approval.allowTask": "Tillad i denne opgave",
   "approval.allowAlways": "Tillad altid",
   "approval.rejectOnce": "Ikke nu",
   "approval.rejectAlways": "Aldrig",

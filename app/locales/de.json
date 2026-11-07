@@ -93,6 +93,7 @@
   "approval.title": "Deine Zustimmung wird benötigt",
   "approval.question": "Erlauben? {action}",
   "approval.allowOnce": "Einmal erlauben",
+  "approval.allowTask": "Für diese Aufgabe erlauben",
   "approval.allowAlways": "Immer erlauben",
   "approval.rejectOnce": "Jetzt nicht",
   "approval.rejectAlways": "Nie",

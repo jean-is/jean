@@ -97,6 +97,7 @@
   "approval.title": "موافقتك مطلوبة",
   "approval.question": "هل تسمح بهذا؟ {action}",
   "approval.allowOnce": "السماح مرة واحدة",
+  "approval.allowTask": "اسمح طوال هذه المهمة",
   "approval.allowAlways": "السماح دائمًا",
   "approval.rejectOnce": "ليس الآن",
   "approval.rejectAlways": "أبدًا",

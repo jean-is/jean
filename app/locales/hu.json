@@ -93,6 +93,7 @@
   "approval.title": "A jóváhagyásodra van szükség",
   "approval.question": "Engedélyezed? {action}",
   "approval.allowOnce": "Egyszer engedem",
+  "approval.allowTask": "Engedélyezés ehhez a feladathoz",
   "approval.allowAlways": "Mindig engedem",
   "approval.rejectOnce": "Most nem",
   "approval.rejectAlways": "Soha",

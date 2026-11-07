@@ -93,6 +93,7 @@
   "approval.title": "Idhini yako inahitajika",
   "approval.question": "Uruhusu hili? {action}",
   "approval.allowOnce": "Ruhusu mara moja",
+  "approval.allowTask": "Ruhusu kwa kazi hii",
   "approval.allowAlways": "Ruhusu kila wakati",
   "approval.rejectOnce": "Si sasa",
   "approval.rejectAlways": "Kamwe",

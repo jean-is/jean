@@ -93,6 +93,7 @@
   "approval.title": "Ana buƙatar amincewarka",
   "approval.question": "A bari? {action}",
   "approval.allowOnce": "A bari sau ɗaya",
+  "approval.allowTask": "Ba da izini don wannan aiki",
   "approval.allowAlways": "A bari koyaushe",
   "approval.rejectOnce": "Ba yanzu ba",
   "approval.rejectAlways": "Kada ko kaɗan",

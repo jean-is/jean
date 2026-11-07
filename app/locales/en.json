@@ -93,6 +93,7 @@
   "approval.title": "Your approval is needed",
   "approval.question": "Allow this? {action}",
   "approval.allowOnce": "Allow once",
+  "approval.allowTask": "Allow for this task",
   "approval.allowAlways": "Always allow",
   "approval.rejectOnce": "Not now",
   "approval.rejectAlways": "Never",

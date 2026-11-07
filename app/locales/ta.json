@@ -93,6 +93,7 @@
   "approval.title": "உங்கள் ஒப்புதல் தேவை",
   "approval.question": "அனுமதிக்கவா? {action}",
   "approval.allowOnce": "ஒருமுறை அனுமதி",
+  "approval.allowTask": "இந்தப் பணிக்கு அனுமதி",
   "approval.allowAlways": "எப்போதும் அனுமதி",
   "approval.rejectOnce": "இப்போது வேண்டாம்",
   "approval.rejectAlways": "ஒருபோதும் வேண்டாம்",

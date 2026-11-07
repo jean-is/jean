@@ -93,6 +93,7 @@
   "approval.title": "Ditt godkännande behövs",
   "approval.question": "Tillåta detta? {action}",
   "approval.allowOnce": "Tillåt en gång",
+  "approval.allowTask": "Tillåt för den här uppgiften",
   "approval.allowAlways": "Tillåt alltid",
   "approval.rejectOnce": "Inte nu",
   "approval.rejectAlways": "Aldrig",

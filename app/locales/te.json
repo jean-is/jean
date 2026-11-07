@@ -93,6 +93,7 @@
   "approval.title": "మీ ఆమోదం కావాలి",
   "approval.question": "అనుమతించాలా? {action}",
   "approval.allowOnce": "ఒకసారి అనుమతించు",
+  "approval.allowTask": "ఈ పనికి అనుమతించు",
   "approval.allowAlways": "ఎల్లప్పుడూ అనుమతించు",
   "approval.rejectOnce": "ఇప్పుడు వద్దు",
   "approval.rejectAlways": "ఎప్పటికీ వద్దు",

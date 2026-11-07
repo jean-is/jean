@@ -92,6 +92,7 @@
   "approval.title": "需要你的同意",
   "approval.question": "要允許嗎？{action}",
   "approval.allowOnce": "允許一次",
+  "approval.allowTask": "本任務內允許",
   "approval.allowAlways": "一律允許",
   "approval.rejectOnce": "暫時不要",
   "approval.rejectAlways": "永不",
