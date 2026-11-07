@@ -142,9 +142,10 @@ async function fromEarlierCache (path, integrity) {
 // What another app shared with Jean (Web Share Target, D714): its words and files, held in this worker's memory, never in
 // storage, until the page it opens asks for them by their id, a minute at most; then they go into the box as any shared.
 const shared = new Map()
+/** @param {Request} request */
 async function received (request) {
   const form = await request.formData(), id = crypto.randomUUID()
-  shared.set(id, { title: String(form.get('title') ?? ''), text: String(form.get('text') ?? ''), url: String(form.get('url') ?? ''), files: form.getAll('files').filter((file) => file instanceof File) })
+  shared.set(id, { title: String(form.get('title') ?? ''), text: String(form.get('text') ?? ''), url: String(form.get('url') ?? ''), files: form.getAll('files').filter((/** @type {FormDataEntryValue} */ file) => file instanceof File) })
   setTimeout(() => shared.delete(id), 60_000)
   return Response.redirect(url(`?shared=${id}`), 303)
 }
