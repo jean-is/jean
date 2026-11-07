@@ -10,6 +10,8 @@ const FILES = [
   ['Cactus-Compute/needle3/resolve/2ae11323dc000f5e70c49f7403efa6af12ba9e67/wasm/needle.wasm', 'c43f48e11f302087250d1e406024956781cd2f02595a5e343b3d7ddd5ef707fa', 923348],
   ['Cactus-Compute/whistle/resolve/b358ddadd89b7a713b5aa131f23032d3cca1b251/whistle.cact', 'b6e02f048568ac5d01a2042556c658061e699acbc0aa2a1439f52f3d461dffeb', 16919407],
 ]
+/** @typedef {{ q: WebAssembly.Memory, r(): void, E(size: number): number, D(at: number): void, s(): number, y(weights: number, bytes: bigint): number, x(audio: number, samples: number, language: number, a: number, b: number, out: number, size: number): number }} WhistleEngine  the exports the calls below use, by this build's names */
+
 /** The longest clip the engine takes: 30 s at 16 kHz. */
 export const LONGEST = 480_000
 const OUT = 1 << 16
@@ -25,7 +27,7 @@ export async function whistle(host, progress) {
   let memory
   const view = () => new DataView(memory.buffer)
   const [stop, none] = [() => { throw new Error('Whistle stopped') }, () => -52]
-  /** @type {Record<string, (...args: any[]) => any>} The C runtime's calls, by this build's names: no files, an empty environment, output dropped, a clock, more memory. */
+  /** @type {Record<string, (...args: number[]) => number>} The C runtime's calls, by this build's names: no files, an empty environment, output dropped, a clock, more memory. */
   const calls = {
     a: stop, e: stop, f: () => 0, b: none, d: none, g: none, h: none, i: none, n: none, o: none, p: none, j: () => 0,
     k: (count, size) => (view().setUint32(count, 0, true), view().setUint32(size, 0, true), 0),
@@ -33,7 +35,7 @@ export async function whistle(host, progress) {
     l: (clock, precision, at) => (view().setBigUint64(at, BigInt(Math.round(performance.now() * 1e6)), true), 0),
     m: (size) => { try { return memory.grow(Math.ceil(((size >>> 0) - memory.buffer.byteLength) / 65536)), 1 } catch { return 0 } },
   }
-  const engine = /** @type {any} */ ((await WebAssembly.instantiate(wasm, { a: calls })).instance.exports)
+  const engine = /** @type {WhistleEngine} */ (/** @type {unknown} */ ((await WebAssembly.instantiate(wasm, { a: calls })).instance.exports))
   memory = engine.q
   engine.r()
   /** @param {ArrayBufferView} data */

@@ -22,7 +22,7 @@ const [echarts] = await Promise.all([import(new URL('../../vendor/echarts/echart
 const [contrast, forced] = [matchMedia('(prefers-contrast: more)'), matchMedia('(forced-colors: active)')]
 let charts = 0
 // Escape hides a tip.
-addEventListener('keydown', (event) => { if (event.key === 'Escape') for (const one of document.querySelectorAll('app-chart')) /** @type {any} */ (one).chart?.dispatchAction({ type: 'hideTip' }) })
+addEventListener('keydown', (event) => { if (event.key === 'Escape') for (const one of document.querySelectorAll('app-chart')) /** @type {{ chart?: import('echarts').ECharts | null }} */ (one).chart?.dispatchAction({ type: 'hideTip' }) })
 
 /**
  * The option as drawn here: numbers in the user's language, the room's type, no animation for
@@ -38,7 +38,7 @@ function dressed(option, font) {
   }
 }
 
-/** A chart's numbers as a table, its categories down the side and a column for each series; its source where it has neither. @param {any} option @param {string} source */
+/** A chart's numbers as a table, its categories down the side and a column for each series; its source where it has neither. @param {Option} option @param {string} source */
 function figures(option, source) {
   const series = [option.series].flat().filter((one) => Array.isArray(one?.data)), axis = [option.xAxis, option.yAxis].flat().find((one) => Array.isArray(one?.data))?.data, value = (/** @type {any} */ one) => [one?.value ?? one].flat().join(', '), rows = Math.max(0, ...series.map((one) => one.data.length))
   const links = [option.series].flat().flatMap((one) => one?.links ?? one?.edges ?? []), set = [option.dataset].flat()[0]?.source; if (links.length) return html`<ul>${links.map((/** @type {any} */ one) => html`<li dir="auto">${one.source} → ${one.target}${one.value == null ? '' : ` (${one.value})`}</li>`)}</ul>`

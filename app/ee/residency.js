@@ -18,7 +18,7 @@ function placeName(code) {
   }
 }
 
-/** @param {Record<string, any>} policy as it is here, its brains those its places allow */
+/** @param {Record<string, unknown>} policy as it is here, its brains those its places allow */
 export async function start(policy) {
   const places = check(policy)
   await useStrings('enterprise')

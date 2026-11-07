@@ -5,10 +5,11 @@ const SHELL = `app-shell-${VERSION}`
 // Capability caches carry the version too: an update re-caches every unlocked capability,
 // copying unchanged files over, so old code is never served next to a new shell.
 const CAPABILITY = 'app-cap-'
+/** @param {string} id */
 const capabilityCache = (id) => `${CAPABILITY}${VERSION}-${id}`
 const LOCAL = ['localhost', '127.0.0.1'].includes(self.location.hostname)
 
-/** Resolves an app-relative path against the scope, so sub-path deploys work. */
+/** Resolves an app-relative path against the scope, so sub-path deploys work. @param {string} path */
 const url = (path) => new URL(path, self.registration.scope).href
 
 // ─── Lifecycle ───────────────────────────────────────────────────────────────
@@ -38,6 +39,7 @@ async function precacheShell () {
  * Fetches through the HTTP cache, which the page has usually just filled, so
  * precaching costs no extra download. The integrity check catches a stale
  * cached copy; the file is then fetched again from the network.
+ * @param {string} path @param {string} [integrity]
  * @returns {Promise<[string, Response]>}
  */
 async function fetchVerified (path, integrity) {
@@ -52,6 +54,7 @@ async function fetchVerified (path, integrity) {
 
 async function deleteOldCaches () {
   const names = await caches.keys()
+  /** @param {string} name */
   const current = (name) => name === SHELL || name.startsWith(`${CAPABILITY}${VERSION}-`)
   const old = names.filter((name) => (name.startsWith('app-shell-') || name.startsWith(CAPABILITY)) && !current(name))
   await Promise.all(old.map((name) => caches.delete(name)))
@@ -84,6 +87,7 @@ self.addEventListener('message', (event) => {
     shared.delete(id)
   }
   if (type === 'CACHE_CAPABILITY') {
+    /** @param {boolean} ok */
     const reply = (ok) => event.source?.postMessage({ type: 'CAPABILITY_CACHED', id, ok })
     event.waitUntil(cacheCapability(id).then(reply))
   }
@@ -96,6 +100,7 @@ self.addEventListener('notificationclick', (event) => {
   event.waitUntil(self.clients.matchAll({ type: 'window' }).then(([client]) => (client ? client.focus().then(() => client.navigate(at)) : self.clients.openWindow(at))))
 })
 
+/** @param {unknown} id what a page asked for */
 async function cacheCapability (id) {
   try {
     const listing = await (await caches.open(SHELL)).match(url('capabilities.json'))
@@ -117,6 +122,7 @@ async function cacheCapability (id) {
 /**
  * An unchanged file from an earlier version's capability cache, so updates don't
  * download big runtimes again. Checked against the new integrity value.
+ * @param {string} path @param {string} [integrity]
  * @returns {Promise<[string, Response] | null>}
  */
 async function fromEarlierCache (path, integrity) {
@@ -151,10 +157,12 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(LOCAL ? networkFirst(request) : cacheFirst(request))
 })
 
+/** @param {Request} request */
 async function cacheFirst (request) {
   return (await fromCache(request)) || fetch(request)
 }
 
+/** @param {Request} request */
 async function networkFirst (request) {
   try {
     return await fetch(request)
@@ -165,7 +173,7 @@ async function networkFirst (request) {
   }
 }
 
-/** Looks in the current shell cache, then in unlocked capability caches. */
+/** Looks in the current shell cache, then in unlocked capability caches. @param {Request} request */
 async function fromCache (request) {
   const navigation = request.mode === 'navigate'
   const keys = navigation && isAppRoot(request.url) ? [url('index.html'), url('./')] : [request]
@@ -178,13 +186,13 @@ async function fromCache (request) {
   }
 }
 
-/** True for `./`, `./index.html`, and either with a query (OAuth returns to `./?code=…`). */
+/** True for `./`, `./index.html`, and either with a query (OAuth returns to `./?code=…`). @param {string} href */
 function isAppRoot (href) {
   const path = new URL(href).pathname
   return path === new URL(url('./')).pathname || path === new URL(url('index.html')).pathname
 }
 
-/** Browsers reject redirected responses for navigations; some hosts redirect index.html. */
+/** Browsers reject redirected responses for navigations; some hosts redirect index.html. @param {Response} response */
 function unredirect (response) {
   if (!response.redirected) return response
   const { status, statusText, headers } = response

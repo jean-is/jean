@@ -120,7 +120,7 @@ function pager (kit, moment) {
   const at = folders.indexOf(folderOf(kit))
   if (folders.length < 2) return ''
   const number = new Intl.NumberFormat(kit.lang)
-  const card = (/** @type {string | undefined} */ folder, /** @type {'prev' | 'next'} */ way) => (folder ? /* html */ `<li class="help-pager-${way}"><a href="${kit.link(`help/${folder}`)}" rel="${way}"><span>${way === 'prev' ? glyph('back', ' flip-rtl') : ''}${kit.say(`pager.${way}`)}${way === 'next' ? ICONS.arrow : ''}</span><b>${kit.from(`help/${folder}`).say('h1')}</b></a></li>` : '')
+  const card = (/** @type {string | undefined} */ folder, /** @type {'prev' | 'next'} */ way) => (folder ? /* html */ `<li class="help-pager-${way}"><a href="${kit.link(`help/${folder}`)}" rel="${way}"><span>${way === 'prev' ? glyph('back') : ''}${kit.say(`pager.${way}`)}${way === 'next' ? ICONS.arrow : ''}</span><b>${kit.from(`help/${folder}`).say('h1')}</b></a></li>` : '')
   return /* html */ `
   <nav class="help-pager" aria-labelledby="help-pager"><p id="help-pager" class="help-label">${kit.say('pager', { moment: kit.text(`moment.${moment}`), at: number.format(at + 1), count: number.format(folders.length) })}</p><ul>${card(folders[at - 1], 'prev')}${card(folders[at + 1], 'next')}</ul></nav>`
 }

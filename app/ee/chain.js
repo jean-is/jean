@@ -56,7 +56,7 @@ const HASH = 'jean.audit.hash'
 export const FIRST = '0'.repeat(64)
 
 /** An attribute's value as a string, however a collector writes it: a list by its items, which it may leave out when there are none. @param {any} value @returns {string} */
-const plain = (value) => (value && typeof value === 'object' ? JSON.stringify((value.values ?? []).map((/** @type {any} */ one) => plain(Object.values(one)[0]))) : String(value))
+const plain = (value) => (value && typeof value === 'object' ? JSON.stringify((value.values ?? []).map((/** @type {Record<string, unknown>} */ one) => plain(Object.values(one)[0]))) : String(value))
 
 /** A span as it is hashed: what a collector keeps of it, whatever order it puts its attributes in, without its own hash. @param {Span} span */
 export const canonical = (span) => JSON.stringify([span.traceId, span.spanId, span.parentSpanId ?? '', span.name, Number(span.kind), String(span.startTimeUnixNano), String(span.endTimeUnixNano), Number(span.status?.code ?? 0), span.status?.message ?? '',
@@ -79,7 +79,7 @@ export function chain({ store, key = 'app.audit.tip', id = random() } = {}) {
     /** @param {Span} span @returns {Span} */
     link(span) {
       if (span.attributes.some((one) => one.key === HASH)) return span
-      const value = (/** @type {string} */ name, /** @type {any} */ given) => ({ key: name, value: Number.isInteger(given) ? { intValue: String(given) } : { stringValue: given } })
+      const value = (/** @type {string} */ name, /** @type {string | number} */ given) => ({ key: name, value: Number.isInteger(given) ? { intValue: String(given) } : { stringValue: given } })
       const placed = { ...span, attributes: [...span.attributes, value('jean.audit.chain', id), value('jean.audit.seq', seq), value('jean.audit.prev', last), ...(dropped ? [value('jean.audit.dropped', dropped)] : [])] }
       seq++
       dropped = 0

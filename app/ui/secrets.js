@@ -6,7 +6,7 @@ import { mine } from './opfs.js'
 /** @typedef {import('../core/types.js').FS} FS */
 
 const FILE = '.secrets/keys.json'
-/** @type {Map<string, Promise<any>>} */
+/** @type {Map<string, Promise<unknown>>} */
 const keys = new Map()
 
 /**

@@ -22,7 +22,10 @@ import { parse, all, bound, key, frozen, figures, table, chart, form, number, ch
 import { shared } from './live.js'
 
 /** @import { Part } from './parts.js' */
-/** A part as it is drawn: one that shows a collection with its lines filled, the collection followed, and a form's columns; or the name of one not here, or of one its `where` can't filter. @typedef {Part & { live?: any, columns?: any[], missing?: string, unread?: string }} Shown */
+/** @import { Signal } from '@preact/signals-core' */
+/** @import { Loaded } from '../tables/tables.js' */
+/** @import { Property } from '../tables/table.js' */
+/** A part as it is drawn: one that shows a collection with its lines filled, the collection followed, and a form's columns; or the name of one not here, or of one its `where` can't filter. @typedef {Part & { live?: Signal<Loaded | null>, columns?: Property[], missing?: string, unread?: string }} Shown */
 
 /** A chart's option for ECharts: bars, lines, areas, bars across or a pie, by its labels and series. @param {ReturnType<typeof chart>} drawing */
 function option({ kind, labels, series }) {
@@ -65,7 +68,7 @@ customElements.define('app-parts', class extends HTMLElement {
   given = new Map()
   /** How each of its tables is sorted, by its place among them: by which column, and whether down. @type {Map<number, { column: number, down: boolean }>} */
   sorted = new Map()
-  /** The collections its parts name, by name: followed, a signal; being read, null; out of its reach, false. @type {Map<string, any>} */
+  /** The collections its parts name, by name: followed, a signal; being read, null; out of its reach, false. @type {Map<string, Signal<Loaded | null> | null | false>} */
   followed = new Map()
   /** What lets them go with it. @type {(() => void)[]} */
   holds = []

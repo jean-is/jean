@@ -13,15 +13,24 @@ import { InferenceSession } from '../../vendor/transformers/ort.webgpu.bundle.mi
 import { weightsFrom } from '../../ui/model-worker.js'
 import { watermarker, lean } from './watermark.js'
 
+/** @import { DataType } from '@huggingface/transformers' */
+/** @import { OpenAIMessage, OpenAITool } from '../../core/wire.js' */
+/** @typedef {{ id: number, type: 'load', host: string, model: string, revision: string, dtype: DataType }} Load */
+/** @typedef {{ id: number, type: 'generate', messages: OpenAIMessage[], tools?: OpenAITool[], maxTokens?: number, contextTokens?: number }} Generate */
+/** @typedef {{ id: number, type: 'abort' }} Abort */
+/** @typedef {{ id: number, type: 'lean', host: string, model: string, revision: string, text: string }} Lean */
+/** @typedef {{ path: string, data: URL }} Weights a file of weights, at its address in the cache until a session reads it */
+/** @typedef {Omit<InferenceSession.SessionOptions, 'externalData'> & { externalData?: Weights[] }} Options */
+
 // Transformers.js gives each session the same options, the weights as their addresses in its cache:
 // each session reads only the file its graph names, as ONNX Runtime makes it.
-const create = InferenceSession.create
-InferenceSession.create = async function (graph, options = {}) {
+const create = /** @type {(graph: string | Uint8Array, options: InferenceSession.SessionOptions) => Promise<InferenceSession>} as Transformers.js calls it */ (InferenceSession.create)
+InferenceSession.create = /** @type {typeof InferenceSession.create} */ (/** @this {typeof InferenceSession} @param {string | Uint8Array} graph @param {Options} [options] */ async function (graph, options = {}) {
   const names = graph instanceof Uint8Array ? new TextDecoder('latin1').decode(graph) : ''
   const externalData = await Promise.all((options.externalData ?? []).filter(({ path }) => names.includes(path)).map(async ({ path, data }) =>
     ({ path, data: data instanceof URL ? await read(data.href) : data })))
   return create.call(this, graph, { ...options, externalData })
-}
+})
 
 /**
  * A file in the cache, written by its stream straight into one buffer of its size (D408): WebKit won't
@@ -57,19 +66,20 @@ let loading = null
 let tokenizing = null
 /** What the cache holds: the exact text and tokens read so far. */
 let cached = /** @type {{ text: string, ids: number[], cache: any } | null} */ (null)
-/** @type {any} */
+/** @type {InterruptableStoppingCriteria | null} */
 let stopping = null
 let busy = Promise.resolve()
 /** The generation under way, and those stopped before their turn: two conversations can be answered at once (D147). */
 let current = 0
 const dropped = new Set()
 
-self.onmessage = ({ data }) => {
+self.onmessage = (/** @type {MessageEvent<Load | Generate | Abort | Lean>} */ { data }) => {
   if (data.type === 'abort') return data.id === current ? stopping?.interrupt() : dropped.add(data.id)
   // One generation at a time: they share the cache.
   busy = busy.then(() => handle(data)).catch(() => {})
 }
 
+/** @param {Load | Generate | Lean} data */
 async function handle(data) {
   const { id, type } = data
   try {
@@ -88,7 +98,7 @@ async function handle(data) {
   } catch (error) {
     if (type === 'load') loading = null
     if (type === 'lean') tokenizing = null
-    self.postMessage({ id, type: 'error', message: error?.message ?? String(error), code: error?.code })
+    self.postMessage({ id, type: 'error', message: /** @type {Error} */ (error)?.message ?? String(error), code: /** @type {Error & { code?: string }} */ (error)?.code })
   }
 }
 
@@ -96,6 +106,7 @@ async function handle(data) {
 // on a 32 GB Mac the load took 11 GB at its peak, which ends the tab on a phone. Here they go to its
 // cache as they come, and each session reads its own from there only while ONNX Runtime makes it,
 // which Transformers.js does one at a time: 9 GB at the peak, 7 once loaded (D319).
+/** @param {Load} data @param {number} id */
 function load({ host, model, revision, dtype }, id) {
   const progress_callback = weightsFrom(host, id)
   // The weights' two files: the embeddings (1.6 GB in q4f16) and the decoder (1.5 GB).
@@ -103,7 +114,7 @@ function load({ host, model, revision, dtype }, id) {
     .then((externalData) => Promise.all([
       AutoTokenizer.from_pretrained(model, { revision, progress_callback }),
       // The causal-LM class loads the text sessions only; image and audio come later (D42).
-      Gemma4ForCausalLM.from_pretrained(model, { revision, dtype, device: 'webgpu', progress_callback, use_external_data_format: false, session_options: { externalData } }),
+      Gemma4ForCausalLM.from_pretrained(model, { revision, dtype, device: 'webgpu', progress_callback, use_external_data_format: false, session_options: /** @type {any} the weights' addresses, which create above reads */ ({ externalData }) }),
     ]))
     .then(([tokenizer, model]) => ({ tokenizer, model }))
   return loading
@@ -112,7 +123,7 @@ function load({ host, model, revision, dtype }, id) {
 /**
  * A weights file in Transformers.js's cache, under the address it gives it, written there as it comes
  * the first time. @param {string} url @param {(event: any) => void} progress
- * @returns {Promise<{ path: string, data: URL }>}
+ * @returns {Promise<Weights>}
  */
 async function weights(url, progress) {
   const cache = await caches.open('transformers-cache')
@@ -138,6 +149,7 @@ async function weights(url, progress) {
   return { path: file, data: new URL(url) }
 }
 
+/** @param {Generate} data @param {number} id */
 async function generate({ messages, tools, maxTokens = 4096, contextTokens = 32768 }, id) {
   if (!loading) throw new Error('The brain is not loaded')
   const { tokenizer, model } = await loading

@@ -47,11 +47,11 @@ const ID = /^\/(?:v1\/)?([\w-]{22})(\/report)?$/
  */
 
 /** @param {Uint8Array} bytes */
-const base64url = (bytes) => btoa(Array.from(bytes, (byte) => String.fromCharCode(byte)).join('')).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+export const base64url = (bytes) => btoa(Array.from(bytes, (byte) => String.fromCharCode(byte)).join('')).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
 /** @param {string} text */
-const hashOf = async (text) => base64url(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text))))
+export const hashOf = async (text) => base64url(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text))))
 /** The id a write token's share has: its SHA-256's first 16 bytes, so no other token ever puts a copy there. @param {string} token */
-const idOf = async (token) => base64url(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(token))).slice(0, 16))
+export const idOf = async (token) => base64url(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(token))).slice(0, 16))
 /** @param {string} text */
 const escape = (text) => text.replace(/[&<>"]/g, (mark) => `&${{ '&': 'amp', '<': 'lt', '>': 'gt', '"': 'quot' }[mark]};`)
 /** JSON in a script block, which nothing in it can end. @param {unknown} value */
@@ -61,10 +61,10 @@ const sha256 = async (text) => `'sha256-${btoa(String.fromCharCode(...new Uint8A
 /** The origin of an address, or nothing. @param {string | undefined} address */
 const originOf = (address) => { try { return address ? [new URL(address.replace('{version}', '0')).origin] : [] } catch { return [] } }
 /** Whom an address counts as, for what it may do in an hour: an IPv6 address's network, which one customer holds whole. @param {string} address */
-const networkOf = (address) => (address.includes(':') && !address.startsWith('::ffff:') ? [...address.split('::')[0].split(':'), 0, 0, 0, 0].slice(0, 4).join(':') : address)
+export const networkOf = (address) => (address.includes(':') && !address.startsWith('::ffff:') ? [...address.split('::')[0].split(':'), 0, 0, 0, 0].slice(0, 4).join(':') : address)
 
 /** A request's body, read only as far as a limit, whatever its length claims: null past it. @param {Request} request @param {number} limit */
-async function within(request, limit) {
+export async function within(request, limit) {
   if (Number(request.headers.get('content-length')) > limit) return null
   const reader = request.body?.getReader()
   const parts = []

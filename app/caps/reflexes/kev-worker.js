@@ -7,15 +7,21 @@ import { AutoTokenizer, PreTrainedModel, Tensor } from '../../vendor/transformer
 import { weightsFrom } from '../../ui/model-worker.js'
 import { pack, answers } from '../../core/decide.js'
 
+/** @import { DataType, DeviceType } from '@huggingface/transformers' */
+/** @import { Question } from '../../core/decide.js' */
+/** @typedef {{ id: number, type: 'load', host: string, model: string, device: DeviceType, dtype: DataType }} Load */
+/** @typedef {{ id: number, type: 'decide', state: unknown, questions: Record<string, Question> }} Decide */
+
 /** @type {Promise<{ tokenizer: any, model: any }> | null} */
 let loading = null
 let busy = Promise.resolve()
 
-self.onmessage = ({ data }) => {
+self.onmessage = (/** @type {MessageEvent<Load | Decide>} */ { data }) => {
   // One pass at a time: they share the session.
   busy = busy.then(() => handle(data)).catch(() => {})
 }
 
+/** @param {Load | Decide} data */
 async function handle(data) {
   const { id, type } = data
   try {
@@ -27,10 +33,11 @@ async function handle(data) {
     }
   } catch (error) {
     if (type === 'load') loading = null
-    self.postMessage({ id, type: 'error', message: error?.message ?? String(error) })
+    self.postMessage({ id, type: 'error', message: /** @type {Error} */ (error)?.message ?? String(error) })
   }
 }
 
+/** @param {Load} data @param {number} id */
 function load({ host, model, device, dtype }, id) {
   const progress_callback = weightsFrom(host, id)
   loading ??= Promise.all([
@@ -40,10 +47,11 @@ function load({ host, model, device, dtype }, id) {
   return loading
 }
 
+/** @param {Decide} data */
 async function decide({ state, questions }) {
   if (!loading) throw new Error('Not loaded')
   const { tokenizer, model } = await loading
-  const encode = (text) => Array.from(tokenizer(text, { add_special_tokens: false }).input_ids.data, Number)
+  const encode = (/** @type {string} */ text) => Array.from(tokenizer(text, { add_special_tokens: false }).input_ids.data, Number)
   const { ids, ends } = pack(state, questions, encode)
   const { logits } = await model({
     input_ids: new Tensor('int64', BigInt64Array.from(ids, BigInt), [1, ids.length]),

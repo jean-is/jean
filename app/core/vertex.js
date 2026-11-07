@@ -33,5 +33,5 @@ export async function vertexModels({ brain, apiKey, signal, fetch = globalThis.f
   const res = await fetchOrThrow(fetch, `${new URL(brain.baseURL).origin}/v1beta1/publishers/google/models`, { headers }, signal)
   const list = (await res.json().catch(() => null))?.publisherModels
   if (!Array.isArray(list)) throw new LLMError('Unexpected model list', { code: 'bad_response' })
-  return list.map((/** @type {any} */ m) => ({ id: `google/${String(m.name).split('/').at(-1)}` })).filter((m) => m.id.includes('gemini'))
+  return list.map((/** @type {{ name?: string }} */ m) => ({ id: `google/${String(m.name).split('/').at(-1)}` })).filter((m) => m.id.includes('gemini'))
 }

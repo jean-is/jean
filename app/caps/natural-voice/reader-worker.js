@@ -79,7 +79,7 @@ async function language({ host, manifest: pinned, lang }, id) {
 const state = (manifest, from = {}) => Object.fromEntries(manifest.map((e) => {
   const size = e.shape.reduce((/** @type {number} */ a, /** @type {number} */ b) => a * b, 1)
   const T = ARRAYS[/** @type {keyof typeof ARRAYS} */ (e.dtype)]
-  const data = from[e.input_name] ?? (e.dtype === 'int64' ? new BigInt64Array(size) : new T(size).fill(e.fill === 'nan' ? NaN : e.fill === 'ones' ? 1 : 0))
+  const data = from[e.input_name] ?? (e.dtype === 'int64' ? new BigInt64Array(size) : new (/** @type {Float32ArrayConstructor | Uint8ArrayConstructor} int64 has its own */ (T))(size).fill(e.fill === 'nan' ? NaN : e.fill === 'ones' ? 1 : 0))
   return [e.input_name, new Tensor(e.dtype, data, e.shape)]
 }))
 

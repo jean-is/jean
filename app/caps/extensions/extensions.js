@@ -21,13 +21,18 @@ import { readManifest, shownIn, EVENTS, RIGHTS } from './manifest.js'
 await Promise.all([useStrings('extensions'), styleSheet(new URL('extensions.css', import.meta.url))])
 
 /** @typedef {import('./manifest.js').Manifest} Manifest */
+/** @typedef {import('./manifest.js').Right} Right */
 /** @typedef {import('../../core/hooks.js').Hook} Hook */
+/** @import { Settings } from '../../core/settings.js' */
+/** Each extension on this device: on or not, turned off for failing, the address its files came from and the rights taken back. @typedef {Record<string, { on?: boolean, failed?: boolean, from?: string, taken?: string[] }>} Switches */
+/** A change of Settings that sets those, which Settings' own type leaves out. @typedef {Partial<Settings> & { extensions: Switches }} Switched */
+/** A message to an extension's sandbox (extension-worker.js). @typedef {{ type: string, id?: string, [field: string]: unknown }} Sent */
 /**
  * An extension running: its frame, what it hooks and draws, and what waits on it: answers by id, and the
  * rest of the chain an event's next asks for, which holds the extension's own time still; and how many
  * times it failed in this visit.
  * @typedef {{ manifest: Manifest, frame: HTMLIFrameElement, hooks: Hook[], slots: string[], stop: () => void, failed: number,
- *   calls: Map<string, (data: any) => void>, nexts: Map<string, (e: any) => Promise<any>>, still: Map<string, (still: boolean) => void> }} Host
+ *   calls: Map<string, (data: unknown) => void>, nexts: Map<string, (e: any) => Promise<unknown>>, still: Map<string, (still: boolean) => void> }} Host
  */
 
 export const DIR = 'extensions'
@@ -45,20 +50,17 @@ export const installed = signal(/** @type {Manifest[]} */ ([]))
 /** Those running, by name. */
 export const running = signal(/** @type {Map<string, Host>} */ (new Map()))
 /** What each extension drew, by its name, slot and key: null while it draws. */
-const trees = signal(/** @type {Map<string, any>} */ (new Map()))
+const trees = signal(/** @type {Map<string, unknown>} */ (new Map()))
 /** Safe mode: with ?safe in the address, no extension runs until the user leaves it (D309). */
 export const safe = signal(new URLSearchParams(location.search).has('safe'))
 const worker = fetch(new URL('extension-worker.js', import.meta.url)).then((response) => response.text())
 let ids = 0
 
-/** Whether an extension holds a right: asked for when it was added, and not taken back since. @param {Manifest} manifest @param {string} right */
-export const granted = (manifest, right) => manifest.rights.includes(/** @type {any} */ (right)) && !switches()[manifest.name]?.taken?.includes(right)
-/**
- * Each extension on this device: on or not, turned off for failing, the address its files came from and the rights taken back.
- * @returns {Record<string, { on?: boolean, failed?: boolean, from?: string, taken?: string[] }>}
- */
-export const switches = () => /** @type {any} */ (effective.value.settings).extensions ?? {}
-/** Plain data, as a message carries it. @param {any} value */
+/** Whether an extension holds a right: asked for when it was added, and not taken back since. @param {Manifest} manifest @param {Right} right */
+export const granted = (manifest, right) => manifest.rights.includes(right) && !switches()[manifest.name]?.taken?.includes(right)
+/** Each extension's switches on this device. @returns {Switches} */
+export const switches = () => /** @type {Settings & { extensions?: Switches }} */ (effective.value.settings).extensions ?? {}
+/** Plain data, as a message carries it. @param {unknown} value */
 const plain = (value) => (value === undefined ? undefined : JSON.parse(JSON.stringify(value)))
 
 /** Reads the extensions added. */
@@ -77,18 +79,18 @@ export async function refresh() {
 
 // ─── Running them, each in a sandbox of its own ──────────────────────────────
 
-/** @param {Host} host @param {any} message */
+/** @param {Host} host @param {Sent} message */
 const post = (host, message) => host.frame.contentWindow?.postMessage(message, '*')
 
 /**
  * Sends an extension a message that it answers, and waits for the answer: undefined when it takes longer
- * than its patience, the time it waits on Jean not counted. @param {Host} host @param {any} message
+ * than its patience, the time it waits on Jean not counted. @param {Host} host @param {Sent} message
  */
 function call(host, message) {
   const id = message.id ?? `c${++ids}`
   return new Promise((resolve) => {
     let timer = 0
-    const done = (/** @type {any} */ data) => {
+    const done = (/** @type {unknown} */ data) => {
       clearTimeout(timer)
       host.calls.delete(id)
       host.still.delete(id)
@@ -135,7 +137,7 @@ async function start(manifest) {
     return notify(t('extensions.failed', { title: shownIn(manifest, locale.peek()).title }), { alert: true })
   }
   // Only the events an extension may hook, and only once it may watch them.
-  host.hooks = granted(manifest, 'watch') ? started.hooks.flatMap((/** @type {any} */ hook, /** @type {number} */ index) => (EVENTS.includes(hook.on) ? [proxy(host, index, hook)] : [])) : []
+  host.hooks = granted(manifest, 'watch') ? started.hooks.flatMap((/** @type {{ on: string, match?: unknown }} */ hook, /** @type {number} */ index) => (EVENTS.includes(hook.on) ? [proxy(host, index, hook)] : [])) : []
   host.slots = granted(manifest, 'draw') ? started.slots : []
   running.value = new Map(running.peek())
 }
@@ -152,7 +154,7 @@ export function stop(name) {
 /** Counts an extension's failure, and turns it off at the last one, saying so; stopped meanwhile, it no longer counts. @param {Host} host */
 function failing(host) {
   if (++host.failed !== FAILURES || running.peek().get(host.manifest.name) !== host) return
-  updateSettings(/** @type {any} */ ({ extensions: { ...switches(), [host.manifest.name]: { ...switches()[host.manifest.name], on: false, failed: true } } }))
+  updateSettings(/** @type {Switched} */ ({ extensions: { ...switches(), [host.manifest.name]: { ...switches()[host.manifest.name], on: false, failed: true } } }))
   notify(t('extensions.off', { title: shownIn(host.manifest, locale.peek()).title }), { alert: true })
 }
 
@@ -184,7 +186,7 @@ function heard(host, data) {
 /** Each extension's reads and writes of its data, one after the other, so that none is lost. */
 const keeping = new Map()
 
-/** What an extension keeps for itself, in its folder's data.json: a value read, or set. @param {Host} host @param {{ id: string, key: string, value?: any }} asked */
+/** What an extension keeps for itself, in its folder's data.json: a value read, or set. @param {Host} host @param {{ id: string, key: string, value?: unknown }} asked */
 function keep(host, { id, key, value }) {
   const path = join(DIR, host.manifest.name, 'data.json')
   const turn = (keeping.get(path) ?? Promise.resolve()).then(async () => {
@@ -209,7 +211,7 @@ function proxy(host, index, { on, match }) {
       const id = `e${++ids}`
       const sent = plain(e)
       const before = JSON.stringify(sent)
-      /** @type {{ gave?: any, given?: string, threw?: unknown }} */
+      /** @type {{ gave?: unknown, given?: string, threw?: unknown }} */
       const went = {}
       host.nexts.set(id, async (changed) => {
         try {
@@ -250,7 +252,7 @@ function allowed(manifest, on, e, result, gave) {
 
 // ─── What they draw ──────────────────────────────────────────────────────────
 
-/** What an extension draws in a slot, under a key: asked the first time it shows, and again once it says to redraw. @param {Host} host @param {string} slot @param {any} props @param {string} [key] */
+/** What an extension draws in a slot, under a key: asked the first time it shows, and again once it says to redraw. @param {Host} host @param {string} slot @param {unknown} props @param {string} [key] */
 export function drawn(host, slot, props, key = '') {
   const at = `${host.manifest.name} ${slot} ${key}`
   const tree = trees.value.get(at)
@@ -295,7 +297,7 @@ const drawing = (slot) => [...running.value.values()].filter((host) => host.slot
 export async function take(manifest, right, back) {
   const own = switches()[manifest.name] ?? {}
   stop(manifest.name)
-  await updateSettings(/** @type {any} */ ({ extensions: { ...switches(), [manifest.name]: { ...own, taken: [...(own.taken ?? []).filter((one) => one !== right), ...(back ? [right] : [])] } } }))
+  await updateSettings(/** @type {Switched} */ ({ extensions: { ...switches(), [manifest.name]: { ...own, taken: [...(own.taken ?? []).filter((one) => one !== right), ...(back ? [right] : [])] } } }))
 }
 
 /** What a manifest's mistake is, said to the brain. */

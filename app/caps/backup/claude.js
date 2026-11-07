@@ -12,6 +12,7 @@ import { iso, turnsOf } from './imports.js'
 import { firstWords } from '../../core/i18n.js'
 
 /** @import { Found, Shared } from './imports.js' */
+/** @import { ClaudeConversation, ClaudeMessage, ClaudeProject } from './types.js' */
 
 const encoder = new TextEncoder()
 const UNSUPPORTED = /(```[^\n]*\s*)?This block is not supported on your current device yet\.(\s*```)?/g
@@ -23,22 +24,24 @@ function textFile(name, text) {
   return [{ name: /\.(txt|md|csv|json|html?|xml)$/i.test(base) ? base : `${base}.txt`, read: async () => encoder.encode(text) }]
 }
 
-/** The branch the user saw last, oldest first; the whole list when its messages have no parents. @param {any} conversation @returns {any[]} */
+/** The branch the user saw last, oldest first; the whole list when its messages have no parents. @param {ClaudeConversation} conversation @returns {ClaudeMessage[]} */
 function branchOf(conversation) {
-  const messages = conversation.chat_messages.filter(Boolean)
-  const byId = new Map(messages.map((/** @type {any} */ message) => [message.uuid, message]))
-  if (!messages.some((/** @type {any} */ message) => byId.has(message.parent_message_uuid))) return messages
-  /** How far each is from the start, its parent coming before it. @type {Map<string, number>} */
+  const messages = /** @type {ClaudeMessage[]} */ (conversation.chat_messages.filter(Boolean))
+  /** @type {Map<string | undefined, ClaudeMessage>} */
+  const byId = new Map(messages.map((message) => [message.uuid, message]))
+  if (!messages.some((message) => byId.has(message.parent_message_uuid))) return messages
+  /** How far each is from the start, its parent coming before it. @type {Map<string | undefined, number>} */
   const depth = new Map()
   for (const message of messages) depth.set(message.uuid, (depth.get(message.parent_message_uuid) ?? 0) + 1)
-  /** @type {any[]} */
+  /** @type {ClaudeMessage[]} */
   const branch = []
-  let at = byId.get(conversation.current_leaf_message_uuid) ?? messages.reduce((/** @type {any} */ deepest, /** @type {any} */ message) => ((depth.get(message.uuid) ?? 0) >= (depth.get(deepest.uuid) ?? 0) ? message : deepest))
+  /** @type {ClaudeMessage | undefined} */
+  let at = byId.get(conversation.current_leaf_message_uuid) ?? messages.reduce((deepest, message) => ((depth.get(message.uuid) ?? 0) >= (depth.get(deepest.uuid) ?? 0) ? message : deepest))
   for (; at && !branch.includes(at); at = byId.get(at.parent_message_uuid)) branch.push(at)
   return branch.reverse()
 }
 
-/** @param {any[]} items Claude's conversations and projects @returns {Found} */
+/** @param {(ClaudeConversation & ClaudeProject)[]} items Claude's conversations and projects @returns {Found} */
 export function claudeOf(items) {
   const chats = items.filter((item) => Array.isArray(item.chat_messages)).flatMap((conversation) => {
     const start = iso(conversation.created_at)
@@ -46,12 +49,12 @@ export function claudeOf(items) {
     let time = start
     const messages = branchOf(conversation).map((message) => {
       time = iso(message.created_at) ?? time
-      const blocks = (Array.isArray(message.content) ? message.content : []).filter((/** @type {any} */ block) => block?.type === 'text' && typeof block.text === 'string')
+      const blocks = (Array.isArray(message.content) ? message.content : []).filter((block) => block?.type === 'text' && typeof block.text === 'string')
       return {
         time,
         user: message.sender === 'human',
-        text: (blocks.length ? blocks.map((/** @type {any} */ block) => block.text).join('\n\n') : String(message.text ?? '').replace(UNSUPPORTED, '')).trim(),
-        files: (Array.isArray(message.attachments) ? message.attachments : []).flatMap((/** @type {any} */ file) => textFile(file?.file_name, file?.extracted_content)),
+        text: (blocks.length ? blocks.map((block) => block.text).join('\n\n') : String(message.text ?? '').replace(UNSUPPORTED, '')).trim(),
+        files: (Array.isArray(message.attachments) ? message.attachments : []).flatMap((file) => textFile(file?.file_name, file?.extracted_content)),
       }
     })
     return [{ key: `claude ${conversation.uuid}`, title: String(conversation.name ?? ''), turns: turnsOf(messages) }]
@@ -59,7 +62,7 @@ export function claudeOf(items) {
   const rooms = items.filter((item) => item.prompt_template !== undefined && !item.is_starter_project).map((project) => ({
     name: String(project.name ?? ''),
     instructions: String(project.prompt_template ?? '').trim(),
-    files: (Array.isArray(project.docs) ? project.docs : []).flatMap((/** @type {any} */ doc) => textFile(doc?.filename, doc?.content)),
+    files: (Array.isArray(project.docs) ? project.docs : []).flatMap((doc) => textFile(doc?.filename, doc?.content)),
   }))
   return { chats, rooms, files: [] }
 }

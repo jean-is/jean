@@ -159,7 +159,7 @@ export async function prepare(maker) {
   if (download.value.state === 'downloading' || download.value.state === 'loading') return
   download.value = { state: 'downloading', loaded: 0, total: BYTES[maker] }
   navigator.storage?.persist?.().catch(() => {})
-  const onMessage = (/** @type {any} */ message) => { download.value = downloading(message, BYTES[maker]) }
+  const onMessage = (/** @type {{ loaded: number, total: number }} */ message) => { download.value = downloading(message, BYTES[maker]) }
   try {
     await stage({ type: 'fetch', files: FILES[maker] }, [], onMessage)
     if (maker === 'sd-turbo') await load()

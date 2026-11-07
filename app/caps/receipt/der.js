@@ -194,7 +194,7 @@ export async function readToken(token) {
   for (const certificate of children(signed.find((node) => node.tag === 0xa0) ?? read(Uint8Array.of(0x30, 0)))) {
     const { spki, subject } = readCertificate(raw(certificate))
     const key = await keyOf(spki, hash).catch(() => null)
-    const curve = /** @type {any} */ (key?.algorithm)?.namedCurve
+    const curve = /** @type {Partial<EcKeyAlgorithm> | undefined} */ (key?.algorithm)?.namedCurve
     const bytes = curve ? p1363(valueOf(signature), Math.ceil(Number(curve.slice(2)) / 8)) : valueOf(signature)
     if (key && await crypto.subtle.verify(curve ? { name: 'ECDSA', hash } : 'RSASSA-PKCS1-v1_5', key, /** @type {BufferSource} */ (bytes), /** @type {BufferSource} */ (message))) authority = subject
   }

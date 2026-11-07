@@ -47,7 +47,12 @@ const keeper = (uri) => {
   const [, id, load] = KEEPERS.find(([place]) => place.test(uri)) ?? []
   return id && load && loaded.peek().has(id) ? load() : null
 }
-const KEEPERS = /** @type {[RegExp, string, () => Promise<any>][]} */ ([[/^documents\//, 'documents', () => import('../caps/documents/documents.js')], [/^collections\//, 'tables', () => import('../caps/tables/tables.js')],
+/**
+ * A capability's module for its creations: what an address names, and its view in a pane; some, their file as Save gives it, where that isn't what is kept.
+ * @typedef {{ metaOf: (uri: string) => Promise<{ name: string, title: string, mimeType?: string } | null | undefined>, editor: (file: Shown, holds: (() => void)[], close: () => void) => unknown }} Kept
+ * @typedef {Kept | (Kept & { bytesOf: (uri: string) => Promise<Uint8Array | null> })} Keeper
+ */
+const KEEPERS = /** @type {[RegExp, string, () => Promise<Keeper>][]} */ ([[/^documents\//, 'documents', () => import('../caps/documents/documents.js')], [/^collections\//, 'tables', () => import('../caps/tables/tables.js')],
   [/^designs\//, 'designs', () => import('../caps/designs/designs.js')], [/^conversations\/[^#]+#\d+$/, 'skills', () => import('../caps/skills/scores.js')], [/^decks\//, 'skills', () => import('../caps/skills/decks.js')], [/^games\//, 'games', () => import('../caps/games/games.js')], [/^conversations\/[^#]+#app-\d+$/, 'interactive', () => import('../caps/interactive/apps.js')]])
 /** A file's name, title and kind by its place; a creation's by its capability's, once found (D485, D491). @param {string} uri */
 const metaOf = async (uri) => (/^files\/[^/]+$/.test(uri) ? await fileMeta(app.fs, app.projectDir, uri).then((one) => one && { ...one, title: fileTitle(one.name) }) : await (await keeper(uri))?.metaOf(uri))
@@ -128,7 +133,7 @@ class Pane extends Element {
 
   /** Opened; asked for again, brought forward where it is, marked a moment, a design's view there again (D635). @param {boolean} [again] */
   forward(again) {
-    if (again) /** @type {any} */ (this.querySelector('.view')?.firstElementChild)?.wake?.(), this.toggleAttribute('data-called', true), setTimeout(() => this.removeAttribute('data-called'), 1200)
+    if (again) /** @type {(Element & { wake?: () => void }) | null | undefined} */ (this.querySelector('.view')?.firstElementChild)?.wake?.(), this.toggleAttribute('data-called', true), setTimeout(() => this.removeAttribute('data-called'), 1200)
     this.updated()
   }
 

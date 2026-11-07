@@ -18,7 +18,10 @@ export const PLANS = { claudecode: 'Claude', copilot: 'Copilot', chatgpt: 'ChatG
 const FILE = '.cache/prices.json'
 const FRESH_MS = 7 * 86_400_000
 
-/** What a price needs of models.dev's catalogue. @param {any} catalogue @returns {Prices} */
+/**
+ * What a price needs of models.dev's catalogue: each provider's models, by id, with what they cost in dollars per million tokens.
+ * @param {Record<string, { models?: Record<string, { cost?: { input?: unknown, output?: unknown, cache_read?: unknown } }> } | undefined> | null} catalogue @returns {Prices}
+ */
 export const pricesFrom = (catalogue) => Object.fromEntries(Object.entries(NAMES).map(([provider, name]) => [provider, Object.fromEntries(
   Object.entries(catalogue?.[name]?.models ?? {}).flatMap(([id, { cost } = {}]) => (typeof cost?.input === 'number' && typeof cost.output === 'number'
     ? [[id, [cost.input, cost.output, ...(typeof cost.cache_read === 'number' ? [cost.cache_read] : [])]]] : [])))]))

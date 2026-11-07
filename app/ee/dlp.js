@@ -13,7 +13,7 @@ import { isLocal } from '../core/settings.js'
 import { t, useStrings, intlLocales } from '../core/i18n.js'
 import { checked, dlpHooks } from './detect.js'
 
-/** @param {Record<string, any>} policy */
+/** @param {{ dlp?: unknown, brains?: import('../core/types.js').BrainConfig[] }} policy */
 export async function start(policy) {
   const dlp = checked(policy.dlp, policy)
   await useStrings('enterprise')
@@ -25,7 +25,7 @@ export async function start(policy) {
     if (typeof own === 'object') return own.name ?? own.id
     return id === 'card' || id === 'iban' ? t('dlp.bank') : id === 'nir' || id === 'ssn' ? t('dlp.social') : id === 'secret' ? t('dlp.secret') : t('dlp.label')
   }
-  const brains = () => list((dlp.brains ?? []).map((id) => policy.brains?.find((/** @type {any} */ brain) => brain.id === id)?.label ?? id))
+  const brains = () => list((dlp.brains ?? []).map((id) => policy.brains?.find((brain) => brain.id === id)?.label ?? id))
   register({
     id: 'dlp',
     hooks: dlpHooks(dlp, {

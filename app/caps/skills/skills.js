@@ -66,7 +66,7 @@ export const redeclare = async () => { await follow(await room()); declare(await
  */
 async function follow(list) {
   const ours = list.filter((skill) => !skill.source && skill.metadata?.['title-en']), own = ours.length ? await directory() : []
-  const words = (/** @type {any} */ { author, created, format, off, blocks, ...rest } = {}) => JSON.stringify(rest)
+  const words = (/** @type {Record<string, unknown>} */ { author, created, format, off, blocks, ...rest } = {}) => JSON.stringify(rest)
   for (const skill of ours) {
     const entry = own.find((one) => one.name === skill.name)
     if (entry && [skill.body, skill.description, skill.blocks, words(skill.metadata)].join('\0') !== [entry.body, entry.description, entry.blocks, words(entry.metadata)].join('\0')) {

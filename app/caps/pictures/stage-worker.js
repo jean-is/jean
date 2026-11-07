@@ -23,7 +23,9 @@ import * as zimage from './zimage.js'
 import * as fastwan from './fastwan.js'
 import * as watermark from './watermark.js'
 
+/** @import { TypedTensor } from 'onnxruntime-web' */
 /** @typedef {[string, string, number]} File path on the weights host, SHA-256, bytes */
+/** @typedef {(data: any) => Promise<object>} Stage one, given the message's data, answering what it posts */
 
 /** Halves, as the graphs take and give them. */
 const Half = /** @type {any} */ (globalThis).Float16Array
@@ -32,7 +34,7 @@ const numbers = (/** @type {any} */ data) => Float32Array.from(data instanceof U
 
 self.onmessage = async ({ data: { maker, type, ...data } }) => {
   try {
-    const done = await (type === 'fetch' ? fetchAll(data) : STAGES[/** @type {keyof typeof STAGES} */ (maker)][/** @type {'encode'} */ (type)](data))
+    const done = await (type === 'fetch' ? fetchAll(data) : /** @type {Record<string, Record<string, Stage>>} */ (STAGES)[maker][type](data))
     self.postMessage({ type: 'done', ...done }, { transfer: Object.values(done).flatMap((value) => value.buffer ?? []) })
   } catch (error) {
     self.postMessage({ type: 'error', message: error instanceof Error ? error.message : String(error) })
@@ -230,7 +232,7 @@ const STAGES = {
      * giving a Float16Array where the browser has one. @param {{ host: string, files: File[], hidden: Uint16Array }} data
      */
     async read({ host, files, hidden }) {
-      const { out } = await (await session(host, files)).run({ hidden: new Tensor('float16', hidden, [1, hidden.length / 4096, 4096]) })
+      const { out } = /** @type {{ out: TypedTensor<'float16'> | TypedTensor<'float32'> }} */ (await (await session(host, files)).run({ hidden: new Tensor('float16', hidden, [1, hidden.length / 4096, 4096]) }))
       return { hidden: out.type === 'float16' ? new Uint16Array(out.data.buffer, out.data.byteOffset, out.data.length) : halves(out.data) }
     },
 
@@ -262,7 +264,7 @@ const STAGES = {
      */
     async decode({ host, files, latent, width, height, bits }) {
       const shape = fastwan.shape(width, height)
-      const { frames } = await (await session(host, files)).run({ latents: new Tensor('float16', halves(fastwan.frames(latent, shape)), [shape[1], 48, shape[2], shape[3]]) })
+      const { frames } = /** @type {{ frames: TypedTensor<'float16'> }} */ (await (await session(host, files)).run({ latents: new Tensor('float16', halves(fastwan.frames(latent, shape)), [shape[1], 48, shape[2], shape[3]]) }))
       const marker = await session(host, watermark.FILES, [{ name: 'webgpu', preferredLayout: 'NCHW' }, 'wasm']).catch((error) => (console.warn(error), null))
       const { Output, Mp4OutputFormat, BufferTarget, CanvasSource, QUALITY_VERY_HIGH } = await import(new URL('../../vendor/mediabunny/mediabunny.mjs', import.meta.url).href)
       const canvas = new OffscreenCanvas(width, height), context = /** @type {OffscreenCanvasRenderingContext2D} */ (canvas.getContext('2d'))
@@ -279,7 +281,7 @@ const STAGES = {
         context.putImageData(image, 0, 0)
         // What the encoder changes in the frame squashed to its square, spread over the frame, as over a picture.
         const cover = marker && (square.drawImage(canvas, 0, 0, watermark.SIDE, watermark.SIDE), watermark.planes(square.getImageData(0, 0, watermark.SIDE, watermark.SIDE).data))
-        if (marker && cover) context.putImageData(new ImageData(watermark.watermarked(image.data, width, height, (await marker.run(watermark.inputs(Tensor, cover, bits))).image.data, cover), width, height), 0, 0)
+        if (marker && cover) context.putImageData(new ImageData(/** @type {ImageDataArray} image.data, changed in place */ (watermark.watermarked(image.data, width, height, /** @type {Float32Array} */ ((await marker.run(watermark.inputs(Tensor, cover, bits))).image.data), cover)), width, height), 0, 0)
         await video.add(frame / fastwan.FPS, 1 / fastwan.FPS)
         if (frame % (fastwan.FPS / 2) === 0 || frame === count - 1) checks.push(new Uint8Array(await (await canvas.convertToBlob({ type: 'image/png' })).arrayBuffer()))
       }

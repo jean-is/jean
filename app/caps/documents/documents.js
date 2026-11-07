@@ -20,6 +20,7 @@ import { ulid } from '../../core/ulid.js'
 import { t, useStrings } from '../../core/i18n.js'
 import '../made/paper.js'
 import { kitSlot } from '../slides/kit-slot.js'
+/** @import { Editor, Kept } from './types.js' */
 
 await Promise.all([useStrings('documents'), ...['prosemirror/prosemirror', 'prosemirror/tables', 'prosemirror/gapcursor'].map((name) => styleSheet(new URL(`../../vendor/${name}.css`, import.meta.url))),
   styleSheet(new URL('editor.css', import.meta.url))])
@@ -27,17 +28,12 @@ await Promise.all([useStrings('documents'), ...['prosemirror/prosemirror', 'pros
 /** How many of the project's documents the brain's <documents> names. */
 const LISTED = 20
 
-/**
- * An editor open: the document it shows, its front matter and text as last saved, what the person selected
- * in it, and its editor.
- * @typedef {{ path: string, name: string, head: Record<string, any>, body: string, context: string, editor: ReturnType<typeof import('./editor.js').create> }} Editor
- */
 /** The documents on show, each in its editor, by its place: each in a pane beside the task (D635), each of which the brain hears of. @type {Map<string, Editor>} */
 const open = new Map()
 /** The one opened last. @type {Editor | null} */
 export let shown = null
 
-/** A document's name: the brain's, else its title. @param {{ data: Record<string, any>, body: string }} read */
+/** A document's name: the brain's, else its title. @param {{ data: Record<string, unknown>, body: string }} read */
 const nameOf = ({ data, body }) => String(data.name ?? /^# +(.*\S)/.exec(body)?.[1] ?? t('documents.untitled'))
 /** Where Jean's changes left to decide wait (D505). @param {string} path */
 const waiting = (path) => path.replace(/^documents\//, 'documents/.suggested/').replace(/\.md$/, '.json')
@@ -140,7 +136,7 @@ async function blank() {
 }
 
 // From the Creations page: pinned, renamed with its title line, copied or deleted, the one on show through its editor, saved at once, so that it isn't dated after what comes next.
-/** @typedef {{ path: string }} Kept @param {string} body @param {string} name */
+/** @param {string} body @param {string} name */
 const titled = (body, name) => (/^# /.test(body) ? body.replace(/^.*/, () => `# ${name}`) : `# ${name}\n\n${body}`)
 /** @param {string} path */
 const current = async (path, one = open.get(path)) => (one ? { data: one.head, body: one.editor.markdown() } : parseFrontMatter((await app.fs.read(`${app.projectDir}/${path}`)) ?? ''))

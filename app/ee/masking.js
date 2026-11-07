@@ -95,14 +95,14 @@ async function flaggedIn(text) {
 const lastRead = new Map()
 
 /** The words the person added: more to hide, never less. */
-const addedWords = () => /** @type {string[]} */ (/** @type {any} */ (app.settings.peek()).maskWords ?? [])
+const addedWords = () => /** @type {string[]} */ (/** @type {{ maskWords?: string[] }} */ (app.settings.peek()).maskWords ?? [])
 
 /** Whether the Computer can reach anything: a site it lists or a registry goes without a card of its own. */
 const reaches = () => computerRights(app.settings.value, app.policy).rights.internet !== 'off'
 
-/** @type {WeakMap<any[], [string, string][]>} */
+/** @type {WeakMap<import('../core/types.js').Envelope[], [string, string][]>} */
 const maps = new WeakMap()
-/** What a conversation's notes say was masked, read once for each version of its records. @param {any[]} records */
+/** What a conversation's notes say was masked, read once for each version of its records. @param {import('../core/types.js').Envelope[]} records */
 function mapIn(records) {
   const had = maps.get(records)
   if (had) return had
@@ -119,7 +119,7 @@ async function addWord(event) {
   const input = /** @type {HTMLInputElement} */ (form.elements.namedItem('word'))
   const word = input.value.trim()
   if (word.length < 2) return
-  if (!addedWords().includes(word)) await updateSettings(/** @type {any} */ ({ maskWords: [...addedWords(), word] }))
+  if (!addedWords().includes(word)) await updateSettings(/** @type {Partial<import('../core/settings.js').Settings>} */ ({ maskWords: [...addedWords(), word] }))
   input.value = ''
   notify(t('dlp.mask.added'))
 }
@@ -163,8 +163,8 @@ export async function start(dlp) {
       ...(dlp.mask?.hide?.includes('person') && { names: async (/** @type {string} */ text) => namesIn(text, await flaggedIn(text)) }),
       told: (letters, task) => act('dlp.masked', { task, kinds: [...new Set(letters)], count: letters.length }),
       sent: (task, step) => {
-        const last = step.messages.findLast((/** @type {any} */ message) => message.role === 'user')
-        if (task && last) lastRead.set(task, [last.content, ...(last.documents ?? []).map((/** @type {any} */ part) => part.text)].filter(Boolean).join('\n\n').slice(0, 4000))
+        const last = step.messages.findLast((message) => message.role === 'user')
+        if (task && last) lastRead.set(task, [last.content, ...(last.documents ?? []).map((part) => part.text)].filter(Boolean).join('\n\n').slice(0, 4000))
       },
       held: () => notify(t('dlp.mask.picture')),
       heldReason: () => "A picture was here. The organisation's rules keep pictures from this brain, as they can't be read for what to hide.",

@@ -26,7 +26,7 @@ await styleSheet(new URL('creations.css', import.meta.url))
 
 /** The latest changed first. @param {Creation} a @param {Creation} b */
 const latest = (a, b) => (a.changed < b.changed ? 1 : -1)
-/** A kind's creations, each with its kind's slot. @param {any} kind */
+/** A kind's creations, each with its kind's slot. @param {import('./caps.js').Slot} kind */
 const of = async (kind) => (/** @type {Creation[]} */ (await kind.kept())).map((item) => ({ ...item, kind }))
 /** The open project's creations, the latest changed first, each with its kind's slot: what the drawer, the page and @ list. */
 export const creationsHere = async () => (await Promise.all(slots('creations').map(of))).flat().sort(latest)
@@ -58,7 +58,7 @@ const follow = async (state, stays) => { const [{ ORDERS }] = await Promise.all(
 // task was asked for while they were, which leaves it as it would have left it shown.
 keep('creations', { get: () => (shown.value ? showing() : null), set: async (state) => { const on = state !== null && !app.current.peek()?.records.length, asked = newTasks.peek(), task = app.current.peek(), stays = () => newTasks.peek() === asked && app.current.peek() === task; if (on) await follow(state, stays); if (stays()) shown.value = on } })
 
-/** One opened beside the task, or where its kind opens it (a score, its task), the drawer put away where it is over the conversation. @param {Creation & { kind: any }} item */
+/** One opened beside the task, or where its kind opens it (a score, its task), the drawer put away where it is over the conversation. @param {Creation & { kind: import('./caps.js').Slot }} item */
 export const show = (item) => () => { app.dialog.value = null; item.kind.open ? item.kind.open(item) : openFile(item.link) }
 
 /**

@@ -109,8 +109,8 @@ export async function film({ brain, apiKey, model, prompt, from: [first], shape,
  */
 export async function filmModels({ brain, apiKey, signal, fetch = globalThis.fetch }) {
   const json = await answer(fetchOrThrow(fetch, endpoint(brain, '/videos/models'), { headers: plain(brain, apiKey) }, signal))
-  return (json?.data ?? []).filter((/** @type {any} */ model) => model.supported_durations?.length)
-    .map((/** @type {any} */ model) => ({ id: model.id, output: ['video'], lengths: model.supported_durations }))
+  return (json?.data ?? []).filter((/** @type {{ id: string, supported_durations?: number[] }} */ model) => model.supported_durations?.length)
+    .map((/** @type {{ id: string, supported_durations?: number[] }} */ model) => ({ id: model.id, output: ['video'], lengths: model.supported_durations }))
 }
 
 /**
@@ -121,7 +121,7 @@ export async function filmModels({ brain, apiKey, signal, fetch = globalThis.fet
 async function interaction({ brain, apiKey, model, prompt, from, signal, fetch = globalThis.fetch }, format) {
   const input = [{ type: 'text', text: prompt }, ...from.map((file) => ({ type: 'image', mime_type: file.mimeType, data: base64(file.bytes) }))]
   const json = await answer(post(fetch, { url: `${google(brain)}/interactions`, headers: keyed(brain, apiKey), body: { model, input, response_format: format, background: false, store: false } }, signal))
-  const made = json?.steps?.flatMap((/** @type {any} */ step) => (step.type === 'model_output' && step.content) || []).find((/** @type {any} */ part) => part.type === format.type && part.data)
+  const made = json?.steps?.flatMap((/** @type {{ type?: string, content?: { type?: string, data?: string, mime_type?: string }[] }} */ step) => (step.type === 'model_output' && step.content) || []).find((/** @type {{ type?: string, data?: string, mime_type?: string }} */ part) => part.type === format.type && part.data)
   if (!made) throw new LLMError(json?.errors?.[0]?.message ?? `No ${format.type === 'video' ? 'film' : 'picture'} came back`, { code: 'bad_response' })
   return { mimeType: made.mime_type, bytes: bytesOf(made.data) }
 }

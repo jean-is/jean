@@ -74,7 +74,7 @@ const SANDBOX = html`<svg class="art" viewBox="0 0 48 48" aria-hidden="true" foc
  * This device's memory, in bytes (D176): exactly, as the system tells the desktop app; otherwise at
  * least what Chromium's `deviceMemory` says (GiB rounded down to a power of two, at most 32); or 0, unknown.
  */
-const deviceMemory = signal({ bytes: (/** @type {any} */ (navigator).deviceMemory ?? 0) * 2 ** 30, exact: false })
+const deviceMemory = signal({ bytes: (/** @type {Navigator & { deviceMemory?: number }} */ (navigator).deviceMemory ?? 0) * 2 ** 30, exact: false })
 memoryTotal().then((bytes) => { if (bytes) deviceMemory.value = { bytes, exact: true } }, () => {})
 
 /** Memory as systems count it, by 1,024, never less than a megabyte. @param {number} bytes */
@@ -118,7 +118,7 @@ function sandboxPage() {
 /** Off, Ask first or Any site, one checked, those not to be had disabled. @param {string} current @param {string[]} out */
 const choice = (current, out) => html`<span class="segmented" role="radiogroup" aria-labelledby="computer-internet">
   ${['off', 'ask', 'any'].map((option) => html`<label for=${`internet-${option}`}><input id=${`internet-${option}`} type="radio" name="internet" .checked=${current === option} ?disabled=${out.includes(option)}
-    @change=${() => setComputer({ internet: /** @type {any} */ (option) })}><span>${t(`computer.internet.${option}`)}</span></label>`)}
+    @change=${() => setComputer({ internet: /** @type {'off' | 'ask' | 'any'} */ (option) })}><span>${t(`computer.internet.${option}`)}</span></label>`)}
 </span>`
 
 /** The sites it reaches without asking, the first two by name, each isolated from the language around it. @param {string[]} sites */

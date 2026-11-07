@@ -23,7 +23,7 @@ let decisions = 0
 
 /** WebGPU with fp16 shaders runs the q4f16 graph; everything else the q4 one on WebAssembly. */
 async function backend() {
-  const gpu = /** @type {any} */ (navigator).gpu
+  const gpu = /** @type {Navigator & { gpu?: { requestAdapter(): Promise<unknown> } }} */ (navigator).gpu
   const adapter = gpu ? await gpu.requestAdapter().catch(() => null) : null
   return adapter?.features.has('shader-f16') ? { device: 'webgpu', dtype: 'q4f16' } : { device: 'wasm', dtype: 'q4' }
 }

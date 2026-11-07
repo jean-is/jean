@@ -8,7 +8,8 @@ env.allowLocalModels = false
 // ONNX Runtime streams its WebAssembly from the file, which Chrome keeps compiled once it has run
 // (D287), rather than from bytes Transformers.js would read itself, which it compiles every time.
 env.useWasmCache = false
-env.backends.onnx.wasm.wasmPaths = {
+// ONNX Runtime's own env, whose WebAssembly flags are always there; Transformers.js's type makes them optional.
+;/** @type {NonNullable<typeof env.backends.onnx.wasm>} */ (env.backends.onnx.wasm).wasmPaths = {
   wasm: new URL('ort-wasm-simd-threaded.asyncify.wasm', RUNTIME).href,
   mjs: new URL('ort-wasm-simd-threaded.asyncify.mjs', RUNTIME).href,
 }
@@ -17,6 +18,7 @@ env.backends.onnx.wasm.wasmPaths = {
  * Weights from this host, and the callback that reports to the page what of all their files has
  * come: `{ id, type: 'progress', loaded, total }`, every PACE ms and as each file ends.
  * @param {string} host @param {number} id
+ * @returns {import('@huggingface/transformers').ProgressCallback}
  */
 export function weightsFrom(host, id) {
   env.remoteHost = host

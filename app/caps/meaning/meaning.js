@@ -29,7 +29,7 @@ const worker = modelWorker(new URL('./embed-worker.js', import.meta.url), 'Meani
  * with an operator WebAssembly's runtime lacks (GatherBlockQuantized), so it is offered where WebGPU is (ui/discovery.js).
  */
 async function backend() {
-  const adapter = await /** @type {any} */ (navigator).gpu?.requestAdapter().catch(() => null)
+  const adapter = await /** @type {Navigator & { gpu?: { requestAdapter(): Promise<unknown> } }} */ (navigator).gpu?.requestAdapter().catch(() => null)
   return { device: 'webgpu', dtype: adapter?.features.has('shader-f16') ? 'q4f16' : 'q4' }
 }
 const where = backend()

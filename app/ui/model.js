@@ -5,14 +5,14 @@ import { scriptURL } from './trusted.js'
 
 /**
  * @param {URL} url the worker's module @param {string} stopped what requests are told when it stops
- * @returns {{ id: () => number, post: (message: any) => void, stop: () => void,
- *   call: (message: Record<string, any>, options?: { onMessage?: (message: any) => void, id?: number, transfer?: Transferable[] }) => Promise<any> }}
+ * @returns {{ id: () => number, post: (message: object) => void, stop: () => void,
+ *   call: (message: Record<string, unknown>, options?: { onMessage?: (message: any) => void, id?: number, transfer?: Transferable[] }) => Promise<any> }}
  */
 export function modelWorker(url, stopped) {
   /** @type {Worker | null} */
   let worker = null
   let ids = 0
-  /** @type {Map<number, { resolve: (value: any) => void, reject: (error: any) => void, onMessage: (message: any) => void }>} */
+  /** @type {Map<number, { resolve: (value: unknown) => void, reject: (error: Error) => void, onMessage: (message: unknown) => void }>} */
   const pending = new Map()
   /** Ends the worker, and the requests still waiting on it with this message. */
   function stop(message = stopped) {
@@ -51,7 +51,7 @@ export function modelWorker(url, stopped) {
  * A phone or a tablet, as its browser says (an iPad says it is a Mac, with touch points): what holds a model of hundreds of
  * megabytes stutters there, so the device's brain (D319) and Kev (D660) never run on it.
  */
-export const handheld = () => Boolean(/** @type {any} */ (navigator).userAgentData?.mobile) || /Android|iPhone|iPad|Mobile/.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1)
+export const handheld = () => Boolean(/** @type {Navigator & { userAgentData?: { mobile?: boolean } }} */ (navigator).userAgentData?.mobile) || /Android|iPhone|iPad|Mobile/.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1)
 
 let working = 0
 

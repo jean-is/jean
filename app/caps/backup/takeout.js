@@ -103,7 +103,7 @@ export function activitiesOf(text, dir) {
   return (Array.isArray(list) ? list : []).flatMap((item) => {
     if (!item || ![item.header, ...(Array.isArray(item.products) ? item.products : [])].some((name) => /Gemini|Bard/.test(String(name)))) return []
     const title = String(item.title ?? '')
-    const answer = (Array.isArray(item.safeHtmlItem) ? item.safeHtmlItem : []).map((/** @type {any} */ part) => markdownOf(String(part?.html ?? ''))).filter(Boolean).join('\n\n')
+    const answer = (Array.isArray(item.safeHtmlItem) ? item.safeHtmlItem : []).map((/** @type {{ html?: unknown } | null} */ part) => markdownOf(String(part?.html ?? ''))).filter(Boolean).join('\n\n')
     const time = Date.parse(item.time)
     if ((!PROMPTED.test(title) && !answer) || Number.isNaN(time)) return []
     const files = [item.imageFile, ...(Array.isArray(item.attachedFiles) ? item.attachedFiles : [])].filter((name) => typeof name === 'string' && name)

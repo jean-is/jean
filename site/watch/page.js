@@ -22,14 +22,14 @@ const hash = (/** @type {string} */ script) => `'sha256-${createHash('sha256').u
 const own = (name, from = /** @type {any} */ (name)) => glyph(from).replace('<svg ', `<svg data-icon="${name}" `)
 /** A glyph only the player draws, in the app's grid and pen (docs/design.md#icons). @param {string} name @param {string} body */
 const drawn = (name, body, extra = '', box = '0 0 24 24') => /* html */ `<svg data-icon="${name}" class="icon${extra}" viewBox="${box}" width="24" height="24" fill="none" stroke="currentColor" aria-hidden="true">${body}</svg>`
-/** What the player draws: the app's glyphs where it means what they mean, and pause, sound off, leaving full screen, the pointer, the mark and a tick. */
+/** What the player draws: the app's glyphs where it means what they mean, and pause, sound off, leaving full screen, the pointer, a tick, and the mark: icons/icon.svg's tilde, its box round its pen's round ends. */
 const GLYPHS = [
   own('play'), own('retry'), own('speaker'), own('fullscreen'), own('language'), own('check'), own('lock'),
   drawn('pause', '<rect x="6.5" y="5.5" width="3.5" height="13" rx="1.5"/><rect x="14" y="5.5" width="3.5" height="13" rx="1.5"/>'),
   drawn('muted', '<path d="M4.5 9.5v5h3l4.5 4v-13l-4.5 4Z"/><path d="m15.5 9.5 5 5M20.5 9.5l-5 5"/>', ' flip-rtl'),
   drawn('shrink', '<path d="M9 4.5V7a2 2 0 0 1-2 2H4.5M15 4.5V7a2 2 0 0 0 2 2h2.5M19.5 15H17a2 2 0 0 0-2 2v2.5M4.5 15H7a2 2 0 0 1 2 2v2.5"/>'),
   drawn('pointer', '<path d="M5 3.5v16.8l4.3-4.1 2.9 6.6 3-1.3-2.9-6.5h6Z"/>'),
-  drawn('wave', '<path pathLength="1" d="M112 256q72-112 144 0t144 0"/>', '', '96 160 320 192'),
+  drawn('wave', '<path pathLength="1" d="M112 256q72-112 144 0t144 0"/>', '', '84 172 344 168'),
   drawn('tick', '<path pathLength="1" d="m5 12.5 4.5 4.5L19 7.5"/>'),
 ]
 
@@ -94,14 +94,7 @@ export default {
   </div>
 </section>
 
-<section class="site-section" aria-labelledby="wch-how">
-  <header><h2 id="wch-how">${say('how.title')}</h2><p class="site-why">${say('how.why')}</p></header>
-  <dl class="wch-keys">${kit.table('how.keys', 2).map(([keys, does]) => /* html */ `
-    <div><dt>${keys}</dt><dd>${does}</dd></div>`).join('')}
-  </dl>
-</section>
-
-<section class="site-section is-side site-end" aria-labelledby="wch-end">
+<section class="site-section site-end" aria-labelledby="wch-end">
   ${WAVE}
   <h2 id="wch-end">${say('end.title')}</h2>
   <p class="site-why">${say('end.why')}</p>

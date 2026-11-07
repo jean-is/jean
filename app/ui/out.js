@@ -24,17 +24,20 @@ await useStrings('out')
  * @typedef {{ first?: Way, share?: () => unknown, send?: { file?: string, type?: string, make: () => Promise<ShareData> }, copy?: Way, files: Way[], print?: Way, kit?: boolean }} Ways
  */
 
-/** Each kind's module, once read. @type {import('@preact/signals-core').Signal<Map<unknown, { ways: (file: any, pane: Element) => Ways | null }>>} */
-const read = signal(new Map())
-const moduleOf = (/** @type {any} */ part) => read.value.get(part) ?? void part.load().then((/** @type {any} */ module) => { read.value = new Map(read.peek()).set(part, module) })
+/** @typedef {import('./preview.js').Shown} Shown */
+/** @typedef {{ ways: (file: Shown, pane: Element) => Ways | null }} Kind */
 
-/** What an `out` slot says of the file a pane shows, or `other` where no kind claims it. @param {any} file @param {Element} pane @param {() => Ways} other @returns {Ways | null} */
+/** Each kind's module, once read. @type {import('@preact/signals-core').Signal<Map<unknown, Kind>>} */
+const read = signal(new Map())
+const moduleOf = (/** @type {import('./caps.js').Slot} */ part) => read.value.get(part) ?? void part.load().then((/** @type {Kind} */ module) => { read.value = new Map(read.peek()).set(part, module) })
+
+/** What an `out` slot says of the file a pane shows, or `other` where no kind claims it. @param {Shown} file @param {Element} pane @param {() => Ways} other @returns {Ways | null} */
 export function waysOf(file, pane, other) {
   const part = slots('out').find((one) => one.of(file))
   return part ? moduleOf(part)?.ways(file, pane) ?? null : other()
 }
 
-/** A way taken, said to the audit once done; a system sheet closed unused is no failure. @param {any} file @param {Way} way @param {EventTarget | null} [from] */
+/** A way taken, said to the audit once done; a system sheet closed unused is no failure. @param {Shown} file @param {Way} way @param {EventTarget | null} [from] */
 async function take(file, way, from = null) {
   try {
     await way.run(from)
@@ -44,7 +47,7 @@ async function take(file, way, from = null) {
   }
 }
 
-/** ⌘P in a pane prints what it shows, not the task beside it, for a kind that prints. @param {KeyboardEvent} event @param {any} file @param {Ways | null} ways */
+/** ⌘P in a pane prints what it shows, not the task beside it, for a kind that prints. @param {KeyboardEvent} event @param {Shown} file @param {Ways | null} ways */
 export function printKey(event, file, ways) {
   if ((event.metaKey || event.ctrlKey) && !event.shiftKey && event.key === 'p' && ways?.print) (event.preventDefault(), take(file, ways.print))
 }
@@ -55,13 +58,13 @@ let ready = null
 /** The design system's page: the project's where it has a look of its own, which goes over the person's, so that a change shows in the pane. */
 const toKit = async () => { const [{ openSettings }, { projectKit }] = await Promise.all([import('./dialogs.js'), import('./kit.js')]); await openSettings(app.project.peek().data.default !== true && await projectKit() ? 'appearance/kit-project' : 'appearance/kit') }
 
-/** The button and its menu, or the button alone. @param {any} file @param {Ways | null} ways */
+/** The button and its menu, or the button alone. @param {Shown} file @param {Ways | null} ways */
 export function outButton(file, ways) {
   if (!ways) return nothing
   const { send, share, first, copy, files, print, kit } = ways, menu = `out-${file.uri}`, linked = share && loaded.value.has('share')
   const sends = send && navigator.canShare?.(send.file ? { files: [new File([''], send.file, { type: send.type })] } : { text: 'a' })
   const row = (/** @type {Way} */ way) => html`<li><button type="button" popovertarget=${menu} popovertargetaction="hide" @click=${(/** @type {Event} */ event) => take(file, way, event.currentTarget)}>${way.glyph}<span dir="auto">${way.label}</span></button></li>`
-  const to = /** @type {Way[]} */ ([...(linked ? [{ id: '', glyph: icons.share, label: t('out.share'), run: async (/** @type {EventTarget | null} */ from) => (await import('../caps/share/share.js')).openShare({ path: app.current.peek()?.path ?? `${app.projectDir}/conversations/`, title: file.title, item: /** @type {any} */ (await share()) }, from) }] : []),
+  const to = /** @type {Way[]} */ ([...(linked ? [{ id: '', glyph: icons.share, label: t('out.share'), run: async (/** @type {EventTarget | null} */ from) => (await import('../caps/share/share.js')).openShare({ path: app.current.peek()?.path ?? `${app.projectDir}/conversations/`, title: file.title, item: /** @type {import('../caps/share/share.js').Item} */ (await share()) }, from) }] : []),
     ...(sends ? [{ id: 'share', glyph: icons.send, label: t('out.send'), run: async () => navigator.share(await (ready ?? send.make())) }] : []), ...(copy ? [{ glyph: icons.copy, label: t('action.copy'), ...copy }] : [])])
   const paper = print ? [{ glyph: icons.print, label: t('out.print'), ...print }] : [], every = [...to, ...files, ...paper]
   if (every.length === 1 && !first && !kit) return html`<button class="icon-button" aria-label=${t('out.name', { name: file.name })} @click=${() => take(file, every[0])}>${icons.download}</button>`

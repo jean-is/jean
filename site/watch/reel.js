@@ -828,10 +828,20 @@ for (const [button, menu] of /** @type {const} */ ([[speed, speeds], [language, 
     const open = /** @type {ToggleEvent} */ (event).newState === 'open'
     button.setAttribute('aria-expanded', String(open))
     if (!open) return
-    // Above its button, its end with the button's.
+    // Above its button, its end with the button's; in a frame too short for all its rows, they go on in a column
+    // beside, as few as fit and none left alone, so a short player cuts none of it.
     const box = button.getBoundingClientRect()
+    const room = box.top - 16
     menu.style.insetBlockEnd = `${innerHeight - box.top + 8}px`
     menu.style.insetInlineEnd = `${root.dir === 'rtl' ? box.left : innerWidth - box.right}px`
+    const list = /** @type {HTMLElement} */ (menu.firstElementChild)
+    const count = list.children.length
+    menu.style.maxBlockSize = ''
+    menu.style.setProperty('--rows', String(count))
+    const [row, edges] = [list.offsetHeight / count, menu.offsetHeight - list.offsetHeight]
+    const fit = Math.max(1, Math.floor((room - edges) / row))
+    menu.style.setProperty('--rows', String(Math.ceil(count / Math.ceil(count / fit))))
+    menu.style.maxBlockSize = `${Math.max(room, 0)}px`
     const chosen = /** @type {HTMLElement | null} */ (menu.querySelector('[aria-checked="true"]') ?? menu.querySelector('button'))
     chosen?.focus()
   })

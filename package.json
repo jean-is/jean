@@ -14,7 +14,7 @@
     "#app/*": "./app/*"
   },
   "scripts": {
-    "dev": "npm run build && node scripts/serve.js --gateway --share --home",
+    "dev": "npm run build && node scripts/serve.js --gateway --share --relay --home",
     "dev:gateway": "npm run build && node scripts/serve.js --gateway",
     "dev:share": "npm run build && node scripts/serve.js --share",
     "dev:home": "npm run build && node scripts/serve.js --home",
@@ -40,9 +40,10 @@
     "screenshots": "npm run build && node scripts/screenshots.js",
     "budgets": "node scripts/budgets.js",
     "masks": "node scripts/masks.js",
-    "typecheck": "tsc --noEmit -p .",
+    "typecheck": "tsc --noEmit -p . && tsc --noEmit -p tsconfig.workers.json && tsc --noEmit -p tsconfig.sw.json",
     "check": "npm run vendor && npm run manifest && npm run typecheck && npm test && npm run budgets",
     "security": "node scripts/security.js",
+    "lts": "node scripts/lts.js",
     "e2e": "playwright test -c test",
     "reflexes": "node scripts/reflexes.js",
     "offers": "npm run build && node scripts/offers.js",

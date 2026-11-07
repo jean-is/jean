@@ -1,8 +1,24 @@
-# The actions CI runs are pinned to commits (scripts/security.js): this says when one has a new version. Jean's packages are
-# changed by hand, each read first, since each one ships.
+# The actions CI runs are pinned to commits, and the images the containers start from to digests (scripts/security.js):
+# this says when one has a new version. Node's major moves with npm run lts alone (D701), so Dependabot only moves a
+# digest within it, as Alpine, nginx and Caddy publish fixes. Jean's packages are changed by hand, each read first,
+# since each one ships.
 version: 2
 updates:
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+  - package-ecosystem: docker
+    directory: /deploy/docker
+    schedule:
+      interval: weekly
+    ignore:
+      - dependency-name: node
+        update-types: [version-update:semver-major]
+  - package-ecosystem: docker-compose
+    directory: /deploy/server
+    schedule:
+      interval: weekly
+    ignore:
+      - dependency-name: node
+        update-types: [version-update:semver-major]

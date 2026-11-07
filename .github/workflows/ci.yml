@@ -1,12 +1,14 @@
 # Jean's CI on GitHub, as .gitlab-ci.yml is on GitLab: budgets, types and tests (npm run check), the
 # packages' audit, and the smoke tests in Chromium and WebKit against the fake brain (npm run e2e).
 # The jobs run side by side; going over a budget fails the run (AGENTS.md), and so does a known high
-# or critical advisory. Once all of them pass, a push to main or a version's tag publishes the container
-# images to the repository's packages, and a push to main deploys jean.is and Jean's server
+# or critical advisory, in a package or in a container image. Once all of them pass, a push to main or a version's tag
+# publishes the container images to the repository's packages, signed, a version's tag the Helm chart too, and a push
+# to main deploys jean.is and Jean's server
 # (D320 · D659), which only GitHub does. The image's browsers match the
 # pinned @playwright/test: change both together, here and in .gitlab-ci.yml. The runners are Ubuntu
 # 24.04, as the image is (noble), never ubuntu-latest, which moves under the run. An action is named by its commit, which
 # can't move, its version beside it (scripts/security.js holds this; Dependabot says when one is new).
+# Every job that runs Node runs Jean's own, the newest LTS, named once in .nvmrc, over the image's (D701).
 
 name: CI
 
@@ -30,6 +32,9 @@ jobs:
     container: mcr.microsoft.com/playwright:v1.64.1-noble
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version-file: .nvmrc
       - run: npm ci --no-audit --no-fund
       - run: npm run check
 
@@ -40,6 +45,9 @@ jobs:
     container: mcr.microsoft.com/playwright:v1.64.1-noble
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version-file: .nvmrc
       - run: npm ci --no-audit --no-fund
       - run: npm audit signatures
       - run: npm audit --audit-level=high
@@ -49,17 +57,110 @@ jobs:
           name: sbom
           path: sbom.cdx.json
 
-  # Both container images (D232) in the repository's packages on ghcr.io, pushed with the run's own
+  # The three images as an organisation's hardened cluster takes them (D232): built for amd64 and scanned by Trivy,
+  # which refuses a high or critical vulnerability that has a fix (v0.36.0, after the tags hijacked in March 2026).
+  # The chart (deploy/helm/jean) rendered as Kubernetes and as OpenShift take it, Trivy reading its manifests too,
+  # then installed in kind in a namespace held to Pod Security's "restricted" level, every pod as a random user in
+  # group 0 as OpenShift runs it (deploy/helm/ci-values.yaml), and checked by scripts/kube-check.js. The images wait
+  # on it; jean.is's deploy doesn't, so a fix Alpine hasn't shipped yet never holds the site back.
+  containers:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version-file: .nvmrc
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4
+      - uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7
+        with:
+          context: .
+          file: deploy/docker/Dockerfile
+          platforms: linux/amd64
+          load: true
+          tags: jean-ci:jean
+          cache-from: type=gha,scope=jean
+      - uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7
+        with:
+          context: .
+          file: deploy/docker/Dockerfile
+          target: gateway
+          platforms: linux/amd64
+          load: true
+          tags: jean-ci:gateway
+          cache-from: type=gha,scope=jean-gateway
+      - uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7
+        with:
+          context: .
+          file: deploy/docker/Dockerfile
+          target: relay
+          platforms: linux/amd64
+          load: true
+          tags: jean-ci:relay
+          cache-from: type=gha,scope=jean-relay
+      - uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: jean-ci:jean
+          scanners: vuln
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: 1
+      - uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: jean-ci:gateway
+          scanners: vuln
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: 1
+      - uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: jean-ci:relay
+          scanners: vuln
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: 1
+      # The runner's own Helm and kind (Ubuntu 24.04's image has both).
+      - run: |
+          helm version --short && kind version
+          helm lint --strict deploy/helm/jean
+          helm lint --strict deploy/helm/jean -f deploy/helm/ci-values.yaml
+          mkdir -p rendered
+          helm template jean deploy/helm/jean -n jean -f deploy/helm/ci-values.yaml > rendered/kubernetes.yaml
+          # As OpenShift takes it: the SCC's users, Routes, the router's own selector, the cluster's injected CA.
+          helm template jean deploy/helm/jean -n jean -f deploy/helm/ci-values.yaml --set openshift=true --set route.enabled=true \
+            --set networkPolicy.ingressNamespaceSelector=null --set gateway.trustedCA.configMap=openshift \
+            --api-versions security.openshift.io/v1 --api-versions route.openshift.io/v1 > rendered/openshift.yaml
+      - uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          scan-type: config
+          scan-ref: rendered
+          severity: HIGH,CRITICAL
+          exit-code: 1
+      - run: |
+          kind create cluster --wait 120s
+          kind load docker-image jean-ci:jean jean-ci:gateway jean-ci:relay
+          kubectl create namespace jean
+          kubectl label namespace jean pod-security.kubernetes.io/enforce=restricted pod-security.kubernetes.io/enforce-version=latest
+          helm install jean deploy/helm/jean -n jean -f deploy/helm/ci-values.yaml --wait --timeout 5m
+          node scripts/kube-check.js jean jean
+      - if: failure()
+        run: |
+          kubectl -n jean get events --sort-by=.lastTimestamp | tail -40 || true
+          kubectl -n jean get pods -o wide || true
+          kubectl -n jean logs -l app.kubernetes.io/instance=jean --all-containers --tail 40 --prefix || true
+
+  # The three container images (D232) in the repository's packages on ghcr.io, pushed with the run's own
   # token: main as edge and sha-<commit>, a version's tag (v0.9) as 0.9 and latest. For amd64
   # and arm64, the Dockerfile building Jean's files once, on the runner's own platform, each image with
-  # its build's provenance and its bill of materials.
+  # its build's provenance and its bill of materials, and signed by this workflow's own identity, keyless, through
+  # Sigstore, so that a cluster's admission policy can refuse any image this workflow didn't push (deploy/docker/README.md).
   images:
-    needs: [check, audit, e2e]
+    needs: [check, audit, e2e, containers]
     if: github.event_name == 'push'
     runs-on: ubuntu-24.04
     permissions:
       contents: read
       packages: write
+      id-token: write
     strategy:
       matrix:
         include:
@@ -69,6 +170,9 @@ jobs:
           - image: jean-gateway
             target: gateway
             description: Jean's gateway, on Node on port 8787, for the services a browser can't reach
+          - image: jean-relay
+            target: relay
+            description: Jean's relay, on Node on port 8791, where a person's devices and the people they send to meet
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
       - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4
@@ -95,7 +199,8 @@ jobs:
           annotations: |
             org.opencontainers.image.title=${{ matrix.image }}
             org.opencontainers.image.description=${{ matrix.description }}
-      - uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7
+      - id: build
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7
         with:
           context: .
           file: deploy/docker/Dockerfile
@@ -109,11 +214,43 @@ jobs:
           sbom: true
           cache-from: type=gha,scope=${{ matrix.image }}
           cache-to: type=gha,scope=${{ matrix.image }},mode=max
+      - uses: sigstore/cosign-installer@756fe2d284c7292c4e9b62c8a28f1e5629c59532 # v4.1.3
+      # The index and each platform's image, by digest, which no tag moved since.
+      - run: cosign sign --yes --recursive "ghcr.io/${OWNER}/${IMAGE}@${DIGEST}"
+        env:
+          OWNER: ${{ github.repository_owner }}
+          IMAGE: ${{ matrix.image }}
+          DIGEST: ${{ steps.build.outputs.digest }}
+
+  # The chart (deploy/helm/jean) for a version's tag, beside the images as an OCI artifact: v0.9 as 0.9.0, its images'
+  # tag 0.9, signed as they are.
+  chart:
+    needs: [images]
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - uses: sigstore/cosign-installer@756fe2d284c7292c4e9b62c8a28f1e5629c59532 # v4.1.3
+      - run: |
+          tag=${GITHUB_REF_NAME#v}
+          case $tag in *.*.*) version=$tag ;; *) version=$tag.0 ;; esac
+          helm package deploy/helm/jean --version "$version" --app-version "$tag" --destination chart
+          printf '%s' "$TOKEN" | helm registry login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
+          digest=$(helm push "chart/jean-$version.tgz" "oci://ghcr.io/$OWNER/charts" 2>&1 | tee /dev/stderr | sed -n 's/^Digest: //p')
+          printf '%s' "$TOKEN" | cosign login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
+          cosign sign --yes "ghcr.io/$OWNER/charts/jean@$digest"
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OWNER: ${{ github.repository_owner }}
 
   # The commit pushed to main, live (D320 · D659): jean.is on Bunny with npm run deploy, which first
   # publishes the render package it names, through npm's trusted publishing (no token: npm checks this
   # workflow and environment, and records it as the version's provenance); then the gateway, the key
-  # service and the share host on Jean's server at the same commit, sent as a tar through a key that
+  # service, the share host and the relay on Jean's server at the same commit, sent as a tar through a key that
   # may run nothing but the server's update script (deploy/server/update.sh). Everything that names a
   # place or opens one comes from the environment jean.is, which only main can use: its variables
   # DEPLOY_TO, BUNNY_PULL_ZONE, POLICY, ADDRESS, KEYS, SERVER (user@address) and SERVER_HOST_KEYS (its
@@ -131,10 +268,10 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
-      # npm 11.5.1 or later publishes with the workflow's identity; Node 24 brings it.
+      # npm 11.5.1 or later publishes with the workflow's identity; Jean's own Node brings it.
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
-          node-version: 24
+          node-version-file: .nvmrc
       - run: npm ci --no-audit --no-fund
       - name: jean.is on Bunny
         run: npm run deploy
@@ -155,10 +292,10 @@ jobs:
           npm run host
           mkdir -p stage/host ~/.ssh
           cp dist/host/host.js dist/host/serve.js dist/host/viewer.json dist/host/package.json stage/host/
-          git archive HEAD gateway/gateway.js gateway/serve.js requests/requests.js requests/serve.js | tar -x -C stage
+          git archive HEAD gateway/gateway.js gateway/serve.js relay/relay.js relay/serve.js requests/requests.js requests/serve.js | tar -x -C stage
           printf '%s\n' "$SERVER_HOST_KEYS" > ~/.ssh/known_hosts
           install -m 600 /dev/null ~/.ssh/deploy && printf '%s\n' "$SERVER_KEY" > ~/.ssh/deploy
-          tar -C stage -cf - gateway host requests | ssh -T -i ~/.ssh/deploy -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o ServerAliveInterval=15 -o ServerAliveCountMax=8 "$SERVER"
+          tar -C stage -cf - gateway host relay requests | ssh -T -i ~/.ssh/deploy -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o ServerAliveInterval=15 -o ServerAliveCountMax=8 "$SERVER"
         env:
           SERVER: ${{ vars.SERVER }}
           SERVER_HOST_KEYS: ${{ vars.SERVER_HOST_KEYS }}
@@ -178,6 +315,9 @@ jobs:
         shard: [1, 2, 3]
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version-file: .nvmrc
       - run: npm ci --no-audit --no-fund
       - run: npm run build
       - run: npm run e2e -- --project=${{ matrix.project }} --shard=${{ matrix.shard }}/3 --retries=1 --trace=on-first-retry

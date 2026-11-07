@@ -20,7 +20,7 @@ export const initialOf = (name) => ([...new Intl.Segmenter(locale.value).segment
 export const whoOf = (of) => ({ name: of?.name || BRAND.name, initial: of?.name ? initialOf(of.name) : '', colour: of?.colour })
 
 /** The curtain that is up, or one drawn now for this person. @param {Who} who @returns {HTMLElement} */
-export const curtainFor = (who) => document.getElementById('curtain') ?? /** @type {any} */ (self).curtain(who)
+export const curtainFor = (who) => document.getElementById('curtain') ?? /** @type {typeof self & { curtain: (who: Who) => HTMLElement }} */ (self).curtain(who)
 
 /** This page leaves Jean's address and comes back to it behind the curtain, as for an identity provider. @param {Who} who */
 export function behind(who) {
@@ -81,7 +81,7 @@ export async function lift() {
   const curtain = document.getElementById('curtain')
   if (!curtain) return
   const soon = new Promise((resolve) => setTimeout(resolve, 150))
-  await Promise.all([/** @type {any} */ (curtain).arrived, sidebarOpen.peek() && import('./inbox.js')])
+  await Promise.all([/** @type {HTMLElement & { arrived?: Promise<void> }} */ (curtain).arrived, sidebarOpen.peek() && import('./inbox.js')])
   await Promise.race([app.ready.catch(() => {}), soon])
   await new Promise(requestAnimationFrame)
   const [disc, badge, name, wave] = /** @type {HTMLElement[]} */ ([...curtain.children])

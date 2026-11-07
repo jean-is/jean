@@ -54,7 +54,7 @@ const returned = new Map()
 /** What ui/app.js calls once it has handled the address's return from another sign-in, a connection's: the trip to sign in that waited for it. */
 export let handled = () => {}
 
-/** This profile's vault.json, plain, with its name, colour and slots. @returns {Promise<any>} */
+/** This profile's vault.json, plain, with its name, colour and slots. @returns {Promise<Record<string, any> | null>} */
 const vaultOf = async () => JSON.parse(await app.fs.read(VAULT) ?? 'null')
 tabs.onmessage = async ({ data }) => { if (data === 'out') switchTo(here(), whoOf(await vaultOf())) }
 

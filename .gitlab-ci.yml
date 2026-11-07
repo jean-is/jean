@@ -1,7 +1,9 @@
 # Jean's CI: budgets, types and tests (npm run check) and the packages' audit. The smoke tests
 # (npm run e2e) run on GitHub's CI, the job below kept for later. The jobs run side by side; going
 # over a budget fails the pipeline (AGENTS.md), and so does a known high or critical advisory.
-# The image's browsers match the pinned @playwright/test: change both together.
+# The image's browsers match the pinned @playwright/test: change both together. Its Node is Playwright's;
+# every job runs Jean's own instead, the newest LTS, named once in .nvmrc (D701): Node's own build of that
+# line's latest release, checked against the sums published beside it.
 
 workflow:
   rules:
@@ -19,6 +21,9 @@ default:
       files: [package-lock.json]
     paths: [.npm/]
   before_script:
+    - v=$(cat .nvmrc) && arch=$(uname -m | sed 's/x86_64/x64/;s/aarch64/arm64/') && dist=https://nodejs.org/dist/latest-v$v.x
+    - curl -fsSLO "$dist/SHASUMS256.txt" && tarball=$(grep -o "node-v$v\.[0-9.]*-linux-$arch\.tar\.gz" SHASUMS256.txt) && curl -fsSLO "$dist/$tarball"
+    - sha256sum -c --ignore-missing SHASUMS256.txt && tar -xzf "$tarball" -C /usr/local --strip-components=1 --exclude='*.md' --exclude=LICENSE && rm "$tarball" SHASUMS256.txt
     - npm ci --cache .npm --prefer-offline --no-audit --no-fund
 
 check:

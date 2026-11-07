@@ -8,10 +8,10 @@ import { t } from '../core/i18n.js'
 /**
  * "Refused by …", "Asked first by …" or "Allowed by …": an app by its title (the by slot) or a capability by
  * its name; a guard as the organisation's rules or the person's; one removed since, by its id.
- * @param {Record<string, any>} meta
+ * @param {{ by: string, decision?: string }} meta a call's (`_meta`), once it says whose
  */
 export function whose({ by, decision }) {
-  const guard = ['policy', 'user'].find((tier) => (tier === 'user' ? effective.value.settings : app.policy).guards?.some((/** @type {any} */ one) => one.id === by))
+  const guard = ['policy', 'user'].find((tier) => (tier === 'user' ? effective.value.settings : app.policy).guards?.some((/** @type {import('../core/rules.js').Guard} */ one) => one.id === by))
   const who = slots('by').map((slot) => slot.draw({ by })).find(Boolean) ?? (loaded.value.has(by) ? t(`cap.${by}.name`) : guard ? t(`activity.by.${guard}`) : by)
   return ` · ${t(`activity.by.${decision}`, { who: String(who) })}`
 }

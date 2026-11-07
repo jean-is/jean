@@ -19,7 +19,11 @@ import { LLMError } from '../../core/llm.js'
 import { t, useStrings } from '../../core/i18n.js'
 import { ulid } from '../../core/ulid.js'
 
-/** @import { BrainConfig, ChatMessage, CompactionUpdate, Envelope, StreamEvent, ToolCallInfo, Usage } from '../../core/types.js' */
+/** @import { BrainConfig, ChatMessage, CompactionUpdate, Envelope, StreamEvent, ToolCallInfo, ToolSpec, Usage } from '../../core/types.js' */
+/** @typedef {{ step: number, brain: BrainConfig, system: string, messages: ChatMessage[], tools: ToolSpec[], usage?: Usage, window: number, reason: 'window' | 'too_long', signal?: AbortSignal, task?: string, ask: (messages: ChatMessage[]) => Promise<{ text: string, done?: { usage?: Usage } }> }} CompactEvent */
+/** @typedef {{ id: string, config?: { context_length?: number } }} Loaded */
+/** @typedef {{ name: string, key?: string, context_length?: number, loaded_instances?: Loaded[] }} LocalModel */
+/** @typedef {{ brain: BrainConfig, system: string, messages: ChatMessage[], tools: ToolSpec[] }} StepEvent */
 
 await Promise.all([useStrings('compact'), styleSheet(new URL('compact.css', import.meta.url))])
 
@@ -59,17 +63,17 @@ const keyOf = (brain) => `${brain.id} ${brain.model}`
  */
 async function served(brain, signal) {
   const origin = new URL(brain.baseURL).origin
-  /** @param {string} path @param {object} [body] posted when given @returns {Promise<any>} */
+  /** @param {string} path @param {object} [body] posted when given @returns {Promise<{ models?: LocalModel[], load_config?: { context_length?: number } }>} */
   const ask = async (path, body) => (await fetch(`${origin}${path}`, {
     signal, headers: { 'content-type': 'application/json', ...brain.headers }, ...(body && { method: 'POST', body: JSON.stringify(body) }) })).json()
   if (brain.provider === 'ollama') {
-    const loaded = async () => (await ask('/api/ps')).models?.find((/** @type {any} */ model) => [brain.model, `${brain.model}:latest`].includes(model.name))?.context_length
+    const loaded = async () => (await ask('/api/ps')).models?.find((/** @type {LocalModel} */ model) => [brain.model, `${brain.model}:latest`].includes(model.name))?.context_length
     // Loaded with no prompt, nothing is written (done_reason "load").
     return await loaded() ?? (await ask('/api/generate', { model: brain.model }), await loaded())
   }
-  const listed = (await ask('/api/v1/models')).models?.find((/** @type {any} */ model) => model.key === brain.model || model.loaded_instances?.some((/** @type {any} */ one) => one.id === brain.model))
+  const listed = (await ask('/api/v1/models')).models?.find((/** @type {LocalModel} */ model) => model.key === brain.model || model.loaded_instances?.some((/** @type {Loaded} */ one) => one.id === brain.model))
   // The copy loaded under the brain's own name, when there are several, else the model's first.
-  return (listed?.loaded_instances?.find((/** @type {any} */ one) => one.id === brain.model) ?? listed?.loaded_instances?.[0])?.config?.context_length ?? (await ask('/api/v1/models/load', { model: brain.model, echo_load_config: true })).load_config?.context_length
+  return (listed?.loaded_instances?.find((/** @type {Loaded} */ one) => one.id === brain.model) ?? listed?.loaded_instances?.[0])?.config?.context_length ?? (await ask('/api/v1/models/load', { model: brain.model, echo_load_config: true })).load_config?.context_length
 }
 
 /**
@@ -87,7 +91,7 @@ function fullness({ brain, system, tools, messages, usage }) {
 /**
  * Before a step: past 3/4 of its window, or past it (the provider said so), the brain sums up the conversation, which
  * it reads on from. A summary that can't be written leaves the conversation as it is.
- * @param {any} e @param {(e?: any) => Promise<any>} next
+ * @param {CompactEvent} e @param {(e?: CompactEvent) => Promise<any>} next
  */
 async function compact(e, next) {
   const size = fullness(e)
@@ -97,7 +101,7 @@ async function compact(e, next) {
     if (asked) windows.set(keyOf(e.brain), asked)
     window = windows.get(keyOf(e.brain)) ?? window
   }
-  const pictures = e.messages.flatMap((/** @type {ChatMessage} */ message) => ('documents' in message && message.documents) || []).reduce((/** @type {number} */ sum, /** @type {any} */ doc) => sum + (doc.images?.length ?? 0), 0)
+  const pictures = e.messages.flatMap((/** @type {ChatMessage} */ message) => ('documents' in message && message.documents) || []).reduce((/** @type {number} */ sum, /** @type {{ images?: unknown[] }} */ doc) => sum + (doc.images?.length ?? 0), 0)
   if (e.reason === 'window' && size <= FULL * window && pictures <= PICTURES) return next(e)
   const { text, usage } = await summary(e)
   if (!text) return next(e)
@@ -108,7 +112,7 @@ async function compact(e, next) {
 
 /**
  * The brain's summary, on the conversation as it is, or, past the window, with what calls brought in and the files'
- * text cut short. @param {any} e @returns {Promise<{ text: string, usage?: Usage }>}
+ * text cut short. @param {CompactEvent} e @returns {Promise<{ text: string, usage?: Usage }>}
  */
 async function summary(e) {
   const ask = async (/** @type {ChatMessage[]} */ messages) => {
@@ -176,7 +180,7 @@ function known(records) {
  * A local server that cuts what doesn't fit without a word (Ollama) says it read far less than was sent: too long, as a
  * provider would say. Only a request past the window it gave can be cut, and there the answer is held until the server
  * says how much it read, so that a cut one is asked again once summed up, with nothing shown of it.
- * @param {any} e @param {(e?: any) => Promise<AsyncIterable<StreamEvent>>} next @returns {AsyncGenerator<StreamEvent>}
+ * @param {StepEvent} e @param {(e?: StepEvent) => Promise<AsyncIterable<StreamEvent>>} next @returns {AsyncGenerator<StreamEvent>}
  */
 async function* uncut(e, next) {
   const sent = estimateMessages([e.system, e.tools, e.messages])

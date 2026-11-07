@@ -83,6 +83,21 @@ test('a reel goes on in another language where it was, its frames Jean in that l
   expect(page.url()).toContain('lang=fr')
 })
 
+for (const [lang, size] of /** @type {const} */ ([['en', { width: 360, height: 200 }], ['ar', { width: 360, height: 200 }]])) {
+  test(`a short player’s menus go on in columns beside, none of them cut (${lang})`, async ({ page }) => {
+    await page.setViewportSize(size)
+    await page.goto(`${JEAN_IS}reel.html#reel=first-task&lang=${lang}`)
+    await expect(page.locator('main.reel')).toHaveAttribute('data-state', 'ready')
+    for (const menu of ['reel-speeds', 'reel-languages']) {
+      await page.locator(`[popovertarget="${menu}"]`).evaluate((button) => /** @type {HTMLButtonElement} */ (button).click())
+      const box = await page.locator(`#${menu}`).boundingBox()
+      expect(box && box.y >= 0 && box.x >= 0 && box.x + box.width <= size.width).toBe(true)
+      expect(await page.locator(`#${menu}`).evaluate((element) => element.scrollHeight <= element.clientHeight)).toBe(true)
+      await page.keyboard.press('Escape')
+    }
+  })
+}
+
 test('/watch frames each reel’s player in its language, full screen allowed (en)', async ({ page }) => {
   await page.goto(`${JEAN_IS}watch`)
   const frames = page.locator('.wch-player iframe')

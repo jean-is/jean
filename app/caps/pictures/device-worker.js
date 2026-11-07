@@ -22,6 +22,7 @@ const SIGMA = 14.6146 // the scheduler's largest, at timestep 999
 const SCALE = 0.18215 // the VAE's latent scaling
 const SIDE = 512
 // Each file's free dimensions, fixed: one picture, 64 × 64 latents, CLIP's 77 tokens.
+/** @type {Record<string, number>[]} */
 const DIMENSIONS = [{ batch_size: 1 }, { batch_size: 1, num_channels: 4, height: 64, width: 64, sequence_length: 77 },
   { batch_size: 1, num_channels_latent: 4, height_latent: 64, width_latent: 64 }]
 
@@ -113,7 +114,7 @@ async function paint(prompt) {
 /**
  * What the check sees in a picture (D275, D280), squashed whole into the squares its two encoders see:
  * Freepik's four levels of nudity, and the areas SigLIP's view of it is close to. On WebGPU where there
- * is one, else WebAssembly, their files downloaded first if they aren't here. @param {{ host: string, bytes: Uint8Array }} data
+ * is one, else WebAssembly, their files downloaded first if they aren't here. @param {{ host: string, bytes: Uint8Array<ArrayBuffer> }} data
  */
 async function checked({ host, bytes }) {
   const loaded = (checker ??= (async () => {
@@ -156,7 +157,7 @@ function squared(picture, reading = false) {
   return watermark.planes(square.getImageData(0, 0, side, side).data)
 }
 
-/** A picture with TrustMark's watermark of 100 bits (D324): what the encoder changes in its square is spread over the picture at its size. @param {{ host: string, bytes: Uint8Array, bits: number[] }} data */
+/** A picture with TrustMark's watermark of 100 bits (D324): what the encoder changes in its square is spread over the picture at its size. @param {{ host: string, bytes: Uint8Array<ArrayBuffer>, bits: number[] }} data */
 async function watermarked({ host, bytes, bits }) {
   const encoder = await (marker ??= sessionOf(host, watermark.FILES[0]).catch((error) => { marker = null; throw error }))
   const picture = await createImageBitmap(new Blob([bytes]))
@@ -166,14 +167,14 @@ async function watermarked({ host, bytes, bits }) {
   const whole = /** @type {OffscreenCanvasRenderingContext2D} */ (new OffscreenCanvas(width, height).getContext('2d'))
   whole.drawImage(picture, 0, 0)
   const pixels = whole.getImageData(0, 0, width, height)
-  whole.putImageData(new ImageData(watermark.watermarked(pixels.data, width, height, image.data, cover), width, height), 0, 0)
+  whole.putImageData(new ImageData(/** @type {ImageDataArray} pixels.data, changed in place */ (watermark.watermarked(pixels.data, width, height, image.data, cover)), width, height), 0, 0)
   return (await whole.canvas.convertToBlob({ type: 'image/png' })).arrayBuffer()
 }
 
 /**
  * The 100 bits TrustMark's decoder reads in a picture (D324), each set where its output is above 0; in a film (D585), where
  * its outputs over all the frames add up above 0, since a frame alone loses some to the film's compression, the first most.
- * @param {{ host: string, bytes: Uint8Array }} data @param {number} id
+ * @param {{ host: string, bytes: Uint8Array<ArrayBuffer> }} data @param {number} id
  */
 async function detected({ host, bytes }, id) {
   const decoder = await (reader ??= sessionOf(host, watermark.DECODER, id).catch((error) => { reader = null; throw error }))
@@ -182,7 +183,7 @@ async function detected({ host, bytes }, id) {
   return Array.from(sums, (value) => (value > 0 ? 1 : 0))
 }
 
-/** A picture, or else each frame of a film as Mediabunny decodes it with the browser's own decoder. @param {Uint8Array} bytes @returns {AsyncGenerator<ImageBitmap | OffscreenCanvas>} */
+/** A picture, or else each frame of a film as Mediabunny decodes it with the browser's own decoder. @param {Uint8Array<ArrayBuffer>} bytes @returns {AsyncGenerator<ImageBitmap | OffscreenCanvas>} */
 async function* picturesIn(bytes) {
   const picture = await createImageBitmap(new Blob([bytes])).catch(() => null)
   if (picture) return yield picture

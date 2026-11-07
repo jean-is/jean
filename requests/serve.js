@@ -16,7 +16,7 @@ import { join } from 'node:path'
 import { createInterface } from 'node:readline'
 import { connect as tls } from 'node:tls'
 import { pathToFileURL } from 'node:url'
-import { listener } from '../host/serve.js'
+import { listener, stopping } from '../host/serve.js'
 import { requests } from './requests.js'
 
 /**
@@ -113,5 +113,5 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     keep: (line) => appendFile(join(dir, 'requests.jsonl'), `${line}\n`),
     mail: async (mail) => { if (config.mail) await smtp(config.mail, mail); else console.log(`${mail.subject}\n\n${mail.text}\n`) },
   }, { site: config.site })
-  createServer(listener(/** @type {any} */ (handle), process.env.REQUESTS_PROXIED === '1')).listen(PORT, HOST, () => console.log(`Request service on http://${HOST}:${PORT}/, keeping requests in ${dir}${config.mail ? `, mailing ${config.mail.to}` : ''}`))
+  stopping(createServer(listener(/** @type {any} */ (handle), process.env.REQUESTS_PROXIED === '1'))).listen(PORT, HOST, () => console.log(`Request service on http://${HOST}:${PORT}/, keeping requests in ${dir}${config.mail ? `, mailing ${config.mail.to}` : ''}`))
 }

@@ -97,7 +97,7 @@ const changeTool = {
   run: async (args, ctx) => {
     const one = await load(String(args?.game ?? ''))
     if (!one) throw new Error(`There is no game at ${args?.game}.`)
-    const changed = replaceOnce(one.code, (Array.isArray(args?.changes) ? args.changes : []).map((/** @type {any} */ change) => ({ old: String(change?.old ?? ''), new: String(change?.new ?? '') })))
+    const changed = replaceOnce(one.code, (Array.isArray(args?.changes) ? args.changes : []).map((/** @type {{ old?: unknown, new?: unknown } | undefined} */ change) => ({ old: String(change?.old ?? ''), new: String(change?.new ?? '') })))
     if ('error' in changed) throw new Error(changed.error)
     return played({ ...one, code: changed.code, card: args?.card ? String(args.card) : one.card, meta: { ...one.meta, changed: new Date().toISOString() } }, ctx, 'Changed')
   },
@@ -105,7 +105,7 @@ const changeTool = {
 
 /** The note a message comes with while a game is open beside the task, as it is now, once. @param {import('../../core/types.js').Envelope[]} records */
 function notes(records) {
-  const one = /** @type {any} */ (document.querySelector('app-preview app-game'))?.game
+  const one = /** @type {{ game?: { name: string, path: string, code: string } } | null} */ (document.querySelector('app-preview app-game'))?.game
   if (!one) return []
   const text = `The game ${one.name} (${one.path}) is open beside the conversation. Change it with game_change. Its code now:\n\n\`\`\`js\n${one.code}\n\`\`\``
   const last = records.findLast(({ update }) => update?.sessionUpdate === '_system_note' && update.data?.kind === 'game')

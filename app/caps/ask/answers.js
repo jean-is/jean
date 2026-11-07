@@ -25,6 +25,9 @@ function list(value) {
   return Array.isArray(value) ? value : []
 }
 
+/** @typedef {{ question?: unknown, multiple?: unknown, options?: unknown }} Asked */
+/** @typedef {{ label?: unknown, description?: unknown, recommended?: unknown }} AskedOption */
+
 /**
  * The questions asked, even wrapped twice, without what can't be shown: empty ones, answers
  * without words or repeating the question or another answer, and more than the card holds. A
@@ -33,18 +36,18 @@ function list(value) {
  */
 export function questionsOf(args) {
   return list(args?.questions?.questions ?? args?.questions).flatMap((item) => {
-    const question = text(typeof item === 'string' ? item : /** @type {any} */ (item)?.question)
+    const question = text(typeof item === 'string' ? item : /** @type {Asked | undefined} */ (item)?.question)
     if (!question) return []
-    const multiple = /** @type {any} */ (item)?.multiple === true
+    const multiple = /** @type {Asked | undefined} */ (item)?.multiple === true
     let recommended = false
     const seen = new Set([question])
-    const options = list(/** @type {any} */ (item)?.options).flatMap((option) => {
-      const label = text(typeof option === 'string' ? option : /** @type {any} */ (option)?.label)
+    const options = list(/** @type {Asked | undefined} */ (item)?.options).flatMap((option) => {
+      const label = text(typeof option === 'string' ? option : /** @type {AskedOption | undefined} */ (option)?.label)
       if (!label || seen.has(label)) return []
       seen.add(label)
-      const wanted = /** @type {any} */ (option)?.recommended === true && (multiple || !recommended)
+      const wanted = /** @type {AskedOption | undefined} */ (option)?.recommended === true && (multiple || !recommended)
       recommended ||= wanted
-      return [{ label, description: text(/** @type {any} */ (option)?.description), recommended: wanted }]
+      return [{ label, description: text(/** @type {AskedOption | undefined} */ (option)?.description), recommended: wanted }]
     }).slice(0, MAX_OPTIONS)
     return [{ question, options, multiple }]
   }).slice(0, MAX_QUESTIONS)

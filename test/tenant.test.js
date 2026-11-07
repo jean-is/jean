@@ -34,9 +34,10 @@ describe('hosted copies', () => {
   })
 
   it("narrows connect-src to what the policy has Jean fetch, its brains' providers included, but links", () => {
-    const tenant = tenantOf('ai.acme.com', { ...ACME, brains: [...ACME.brains, { id: 'mistral', provider: 'mistral' }], urls: { privacy: 'https://intranet.acme.example/privacy', modelWeights: 'https://mirror.acme.example/hf/' } })
-    assert.deepEqual(tenant.connect, ['https://gateway.acme.example', 'https://login.acme.example', 'https://mirror.acme.example', 'https://api.mistral.ai'])
-    assert.equal(cspOf(tenant), "frame-ancestors 'self'; connect-src 'self' https://gateway.acme.example https://login.acme.example https://mirror.acme.example https://api.mistral.ai")
+    const tenant = tenantOf('ai.acme.com', { ...ACME, brains: [...ACME.brains, { id: 'mistral', provider: 'mistral' }],
+      urls: { privacy: 'https://intranet.acme.example/privacy', modelWeights: 'https://mirror.acme.example/hf/', relay: 'https://relay.acme.example/' } })
+    assert.deepEqual(tenant.connect, ['https://gateway.acme.example', 'https://login.acme.example', 'https://mirror.acme.example', 'https://relay.acme.example', 'https://api.mistral.ai'])
+    assert.equal(cspOf(tenant), "frame-ancestors 'self'; connect-src 'self' https://gateway.acme.example https://login.acme.example https://mirror.acme.example https://relay.acme.example https://api.mistral.ai")
     assert.deepEqual(tenantOf('ai.acme.com', ACME, { connect: ['https://gateway.acme.example', 'https://tokens.acme.example'] }).connect, ['https://gateway.acme.example', 'https://login.acme.example', 'https://tokens.acme.example'])
     const open = tenantOf('acme.jean.is', {}, { open: true, release: '20261021-093000-91f6a1c3' })
     assert.deepEqual(open, { host: 'acme.jean.is', policy: {}, release: '20261021-093000-91f6a1c3' })

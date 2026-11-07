@@ -6,7 +6,7 @@ import { signal } from '@preact/signals-core'
 import { Marked } from 'marked'
 import { unlock } from './caps.js'
 
-/** @typedef {import('marked').Token} Token */
+/** @import { Token, Tokens } from 'marked' */
 /** @typedef {Map<number, { name: string, label: string, open?: (at?: string) => void, url?: string, site?: string, icon?: string, picture?: string, file?: import('../core/types.js').ResourceLink }>} Sources  by the number the brain cites: a file opens, a web page is a link, some can't be opened; a picture, its own or the one shared */
 
 /** Sources for the text being rendered: `[n]` becomes a chip when n is one of them. @type {Sources | null} */
@@ -97,16 +97,16 @@ function heading(depth, content) {
   return html`<h5>${content}</h5>`
 }
 
-/** @param {any} token */
+/** @param {Tokens.List} token */
 function list(token) {
-  const items = token.items.map((/** @type {any} */ item) => html`<li>${item.task ? html`<input type="checkbox" disabled ?checked=${item.checked}> ` : nothing}${listItem(item)}</li>`)
+  const items = token.items.map((item) => html`<li>${item.task ? html`<input type="checkbox" disabled ?checked=${item.checked}> ` : nothing}${listItem(item)}</li>`)
   return token.ordered ? html`<ol start=${token.start || 1}>${items}</ol>` : html`<ul>${items}</ul>`
 }
 
-/** @param {any} item */
+/** @param {Tokens.ListItem} item */
 function listItem(item) {
   if (item.loose) return blocks(item.tokens)
-  return item.tokens.map((/** @type {any} */ token) => (token.type === 'text' ? (token.tokens ? inline(token.tokens) : cite(decode(token.text))) : block(token)))
+  return item.tokens.map((token) => (token.type === 'text' ? (token.tokens ? inline(token.tokens) : cite(decode(token.text))) : block(token)))
 }
 
 /**
@@ -116,21 +116,21 @@ function listItem(item) {
  */
 export const namesRows = (head, cells) => !head.trim() || (cells.length > 1 && cells.every((cell) => /\p{L}/u.test(cell) && !/\p{N}/u.test(cell)) && new Set(cells).size === cells.length)
 
-/** @param {any} token */
+/** @param {Tokens.Table} token */
 function table(token) {
-  /** @param {any} cell @param {number} index */
+  /** @param {Tokens.TableCell} cell @param {number} index */
   const align = (cell, index) => (token.align[index] ? `align-${token.align[index]}` : '')
-  const heads = namesRows(token.header[0]?.text ?? '', token.rows.map((/** @type {any[]} */ row) => row[0]?.text.trim() ?? ''))
+  const heads = namesRows(token.header[0]?.text ?? '', token.rows.map((row) => row[0]?.text.trim() ?? ''))
   return html`<div class="table" tabindex="0"><table>
-    <thead><tr>${token.header.map((/** @type {any} */ cell, /** @type {number} */ i) => html`<th scope="col" class=${align(cell, i)}>${inline(cell.tokens)}</th>`)}</tr></thead>
-    <tbody>${token.rows.map((/** @type {any[]} */ row) => html`<tr>${row.map((cell, i) => (i || !heads ? html`<td class=${align(cell, i)}>${inline(cell.tokens)}</td>`
+    <thead><tr>${token.header.map((cell, i) => html`<th scope="col" class=${align(cell, i)}>${inline(cell.tokens)}</th>`)}</tr></thead>
+    <tbody>${token.rows.map((row) => html`<tr>${row.map((cell, i) => (i || !heads ? html`<td class=${align(cell, i)}>${inline(cell.tokens)}</td>`
       : html`<th scope="row" class=${align(cell, i)}>${inline(cell.tokens)}</th>`))}</tr>`)}</tbody>
   </table></div>`
 }
 
 /** @param {Token[] | undefined} tokens @returns {unknown} */
 export function inline(tokens = []) {
-  return tokens.map((/** @type {any} */ token) => {
+  return tokens.map((token) => {
     switch (token.type) {
       case 'text': return token.tokens ? inline(token.tokens) : cite(decode(token.text))
       case 'strong': return html`<strong>${inline(token.tokens)}</strong>`
@@ -151,7 +151,7 @@ export function inline(tokens = []) {
 
 /** @type {Promise<boolean> | undefined} */
 let drawing
-/** A formula, which the math capability draws once it has loaded; until then, or if it can't, its source shows. @param {{ text: string, block?: boolean }} token */
+/** A formula, which the math capability draws once it has loaded; until then, or if it can't, its source shows. @param {{ text: string, block?: boolean } | Tokens.Generic} token */
 function formula(token) {
   drawing ??= unlock('math')
   return html`<app-math dir="ltr" tex=${token.text} ?block=${token.block}></app-math>`
@@ -162,7 +162,7 @@ const FORMULAS = new RegExp(`(?<!\\\\)${FORMULA.source.slice(1)}`, 'g')
 /** @param {string} text @param {(token: { text: string }) => unknown} [draw] */
 export const withFormulas = (text, draw = formula) => text.split(FORMULAS).map((part, i) => (i % 5 ? part && draw({ text: part.trim() }) : part))
 
-/** A LaTeX document, which the math capability lays out; until then, or if it can't, its source shows. @param {any} token */
+/** A LaTeX document, which the math capability lays out; until then, or if it can't, its source shows. @param {Tokens.Code} token */
 function latex(token) {
   drawing ??= unlock('math')
   return html`<app-latex dir="auto" source=${token.text} ?open=${open(token)}></app-latex>`
@@ -188,9 +188,9 @@ export function widget(token) {
 // marked doesn't wait for a closing fence: until it is written, the block is still being written. An
 // answer that ended without one (a brain may leave it out) is as whole as it will be.
 const CLOSED = /^ {0,3}(`{3,}(?!`)|~{3,}(?!~))[^\n]*\n(?:[\s\S]*\n)? {0,3}\1[`~]* *\n*$/
-/** @param {any} token */
+/** @param {Tokens.Code} token */
 const open = (token) => writing && !CLOSED.test(token.raw)
-/** A fence whose first line is still being written, kind and all: nothing to show yet. @param {any} token */
+/** A fence whose first line is still being written, kind and all: nothing to show yet. @param {Tokens.Code} token */
 const opening = (token) => token.codeBlockStyle !== 'indented' && !token.raw.includes('\n')
 
 /** @param {string} href */

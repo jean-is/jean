@@ -108,7 +108,7 @@ export async function choose() {
   try {
     folder = (await host) ? await pickFolder(t('sync.choose')) : await /** @type {any} */ (window).showDirectoryPicker({ id: 'sync', mode: 'readwrite', startIn: 'documents' })
   } catch (error) {
-    if (/** @type {any} */ (error)?.name !== 'AbortError') console.warn('Sync', error)
+    if (/** @type {{ name?: string } | undefined} */ (error)?.name !== 'AbortError') console.warn('Sync', error)
     return
   }
   const fs = typeof folder === 'string' ? hostFS(folder) : await folderFS(folder)

@@ -34,7 +34,7 @@ setTimeout(()=>parent.postMessage({faults},'*'),400)})}</script>`
  * @param {string} source @param {Record<string, string>} storage what it kept @param {AbortSignal} [signal] @returns {Promise<string[]>}
  */
 function play(source, storage, signal) {
-  const { allows, sites } = pageRights(/** @type {any} */ (app.settings.peek()), app.policy)
+  const { allows, sites } = pageRights(app.settings.peek(), app.policy)
   const box = Object.assign(document.createElement('div'), { className: 'page-test', inert: true }), frame = Object.assign(document.createElement('iframe'), { src: new URL('../../preview.html', import.meta.url).href })
   frame.setAttribute('sandbox', PAGE_SANDBOX)
   box.setAttribute('aria-hidden', 'true')

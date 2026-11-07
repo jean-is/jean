@@ -194,7 +194,7 @@ export function result(flow, results, states, which = () => true) {
  * @template {{ id: string }} T @param {T[]} steps @param {[string, string][]} wires @returns {(T & { x: number, y: number })[]}
  */
 export function layout(steps, wires) {
-  const sorted = order({ steps: /** @type {any} */ (steps), wires })
+  const sorted = order({ steps: /** @type {Step[]} */ (/** @type {unknown} */ (steps)), wires })
   /** @type {Map<string, number>} */
   const depth = new Map()
   for (const step of sorted) depth.set(step.id, Math.max(0, ...inputsOf({ wires }, step.id).map((id) => (depth.get(id) ?? 0) + 1)))

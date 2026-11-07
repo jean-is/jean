@@ -25,10 +25,11 @@ export class MCPError extends Error {
 /** A service's words, with what the tool takes when they refuse its arguments: "data: Invalid input" alone teaches nothing. @param {string} message @param {string} takes */
 export const withArguments = (message, takes) => (/invalid (arguments|params|input)|validation error|-32602/i.test(message) ? `${message}\nIts arguments: ${takes}` : message)
 
+/** @import { JsonSchema, ToolAnnotations, Content, RpcMessage, RpcParams } from './types.js' */
 /**
- * @typedef {{ name: string, title?: string, description?: string, inputSchema?: any, annotations?: Record<string, any> }} McpTool
- * @typedef {{ content?: any[], structuredContent?: any, isError?: boolean }} CallResult
- * @typedef {{ status: number, headers: Headers, message: any }} Reply
+ * @typedef {{ name: string, title?: string, description?: string, inputSchema?: JsonSchema, annotations?: ToolAnnotations }} McpTool
+ * @typedef {{ content?: Content[], structuredContent?: any, isError?: boolean }} CallResult  structuredContent: the tool's own JSON
+ * @typedef {{ status: number, headers: Headers, message: RpcMessage | null }} Reply
  */
 
 /**
@@ -66,7 +67,7 @@ export function mcpClient({ url, client, authorization = async () => undefined, 
   let handshake = null
   let lastId = 0
 
-  /** @param {string} method @param {Record<string, any>} params @param {Record<string, string>} [extra] @param {AbortSignal} [signal] @returns {Promise<Reply>} */
+  /** @param {string} method @param {RpcParams} params @param {Record<string, string>} [extra] @param {AbortSignal} [signal] @returns {Promise<Reply>} */
   async function send(method, params, extra = {}, signal) {
     const modern = era !== 'legacy'
     const id = method.startsWith('notifications/') ? undefined : ++lastId
@@ -94,7 +95,7 @@ export function mcpClient({ url, client, authorization = async () => undefined, 
     await send('notifications/initialized', {})
   }
 
-  /** @param {string} method @param {Record<string, any>} params @param {Record<string, string>} [extra] @param {AbortSignal} [signal] */
+  /** @param {string} method @param {RpcParams} params @param {Record<string, string>} [extra] @param {AbortSignal} [signal] */
   async function request(method, params, extra, signal) {
     if (era !== 'legacy') {
       // A modern request first. An earlier server answers it with an error no modern server
@@ -136,12 +137,12 @@ export function mcpClient({ url, client, authorization = async () => undefined, 
         if (!(cursor = result.nextCursor) || tools.length >= 1000) return tools
       }
     },
-    /** @param {McpTool} tool @param {Record<string, any>} args @param {AbortSignal} [signal] @returns {Promise<CallResult>} */
+    /** @param {McpTool} tool @param {Record<string, unknown>} args @param {AbortSignal} [signal] @returns {Promise<CallResult>} */
     callTool: (tool, args, signal) => request('tools/call', { name: tool.name, arguments: args }, paramHeaders(tool.inputSchema, args), signal),
   }
 }
 
-/** The JSON-RPC answer to request `id`: the body, or the message of the stream that answers it. @param {Response} res @param {number} id */
+/** The JSON-RPC answer to request `id`: the body, or the message of the stream that answers it. @param {Response} res @param {number} id @returns {Promise<RpcMessage | null>} */
 async function read(res, id) {
   if (!/text\/event-stream/.test(res.headers.get('content-type') ?? '')) return res.json().catch(() => null)
   for await (const { data } of res.body ? parseSSE(res.body) : []) {
@@ -159,12 +160,12 @@ function unwrap(reply) {
 
 /**
  * Arguments a tool asks to see in headers too (`x-mcp-header` in its schema, 2026-07-28).
- * @param {any} schema @param {any} args @param {Record<string, string>} [headers] @returns {Record<string, string>}
+ * @param {JsonSchema | undefined} schema @param {any} args @param {Record<string, string>} [headers] @returns {Record<string, string>}
  */
 export function paramHeaders(schema, args, headers = {}) {
   for (const [key, property] of Object.entries(schema?.properties ?? {})) {
     const value = args?.[key]
-    const name = /** @type {any} */ (property)?.['x-mcp-header']
+    const name = property?.['x-mcp-header']
     if (name && value != null && typeof value !== 'object') headers[`mcp-param-${String(name).toLowerCase()}`] = headerValue(String(value))
     else if (value && typeof value === 'object') paramHeaders(property, value, headers)
   }

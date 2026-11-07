@@ -187,7 +187,7 @@ export function logoOf(connection) { return known(app.policy).find((entry) => en
 function asTool(connection, tool) {
   const { $schema, ...schema } = tool.inputSchema ?? {}
   const label = labelOf(tool)
-  const call = (/** @type {any} */ args, /** @type {AbortSignal | undefined} */ signal) => client(connection, tool.at).callTool(tool, args ?? {}, signal)
+  const call = (/** @type {Record<string, unknown> | undefined} */ args, /** @type {AbortSignal | undefined} */ signal) => client(connection, tool.at).callTool(tool, args ?? {}, signal)
   const spec = { name: toolName(connection, tool.name), description: `${called(connection)}: ${tool.description ?? label}`, parameters: { ...schema, type: 'object' } }
   return {
     spec,

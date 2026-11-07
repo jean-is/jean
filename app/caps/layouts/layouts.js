@@ -11,6 +11,8 @@ import { metaRecord } from '../../core/events.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { t, dir, locale, useStrings, intlLocales } from '../../core/i18n.js'
 import { aligned, compared, marked, roomy, stepped, titled, sequenced, noted, timed, figured, ticked, columns, cjk, unfinished, settled } from './shapes.js'
+/** @import { Token, Tokens } from 'marked' */
+/** @import { Table, List } from './types.js' */
 
 await Promise.all([useStrings('layouts'), styleSheet(new URL('layouts.css', import.meta.url))])
 
@@ -36,31 +38,31 @@ function fits(box) {
 
 /**
  * Options as cards, the best of each row lit, the one recommended framed under its badge; any other table as it is, its
- * amounts at the end; each told from its whole rows, the one being written shown as it comes. @param {any} token
+ * amounts at the end; each told from its whole rows, the one being written shown as it comes. @param {Table} token
  */
 function table(token) {
   const done = settled(token), shape = compared(done)
   if (!shape) {
-    const align = aligned(done).map((side) => side && `align-${side}`), heads = namesRows(token.header[0]?.text ?? '', done.rows.map((/** @type {any[]} */ row) => row[0]?.text.trim() ?? ''))
+    const align = aligned(done).map((side) => side && `align-${side}`), heads = namesRows(token.header[0]?.text ?? '', done.rows.map((row) => row[0]?.text.trim() ?? ''))
     return html`<div class="table" tabindex="0" ${ref(fits)}><table aria-label=${token.title ?? nothing}>
-      <thead><tr>${token.header.map((/** @type {any} */ cell, /** @type {number} */ i) => html`<th scope="col" class=${align[i]}>${inline(cell.tokens)}</th>`)}</tr></thead>
-      <tbody>${token.rows.map((/** @type {any[]} */ row) => html`<tr>${row.map((cell, i) => (i || !heads ? html`<td class=${align[i]}>${inline(cell.tokens)}</td>`
+      <thead><tr>${token.header.map((cell, i) => html`<th scope="col" class=${align[i]}>${inline(cell.tokens)}</th>`)}</tr></thead>
+      <tbody>${token.rows.map((row) => html`<tr>${row.map((cell, i) => (i || !heads ? html`<td class=${align[i]}>${inline(cell.tokens)}</td>`
         : html`<th scope="row" class=${align[i]}>${inline(cell.tokens)}</th>`))}</tr>`)}</tbody>
     </table></div>`
   }
   // The criteria, often in bold, are no option's best.
-  /** @param {any} cell @param {number} i @param {boolean} [head] */
+  /** @param {Tokens.TableCell} cell @param {number} i @param {boolean} [head] */
   const classes = (cell, i, head) => [token.align[i] && `align-${token.align[i]}`, i === shape.pick && 'is-pick', !head && i > 0 && marked(cell)].filter(Boolean).join(' ')
   return html`<div class="table is-compare ${roomy(done) ? 'is-roomy' : ''}" tabindex="0" ${ref(fits)}><table aria-label=${token.title ?? nothing}>
-    <thead><tr>${token.header.map((/** @type {any} */ cell, /** @type {number} */ i) => html`<th scope="col" class=${classes(cell, i, true)}>${i === shape.pick ? html`<span class="pick-tag" lang=${locale.value} dir=${dir()}>${t('layouts.recommended')}</span> ` : nothing}${inline(cell.tokens)}</th>`)}</tr></thead>
-    <tbody>${token.rows.map((/** @type {any[]} */ row) => html`<tr>${row.map((cell, i) => (i ? html`<td class=${classes(cell, i)}>${inline(cell.tokens)}</td>` : html`<th scope="row" class=${classes(cell, i)}>${inline(cell.tokens)}</th>`))}</tr>`)}</tbody>
+    <thead><tr>${token.header.map((cell, i) => html`<th scope="col" class=${classes(cell, i, true)}>${i === shape.pick ? html`<span class="pick-tag" lang=${locale.value} dir=${dir()}>${t('layouts.recommended')}</span> ` : nothing}${inline(cell.tokens)}</th>`)}</tr></thead>
+    <tbody>${token.rows.map((row) => html`<tr>${row.map((cell, i) => (i ? html`<td class=${classes(cell, i)}>${inline(cell.tokens)}</td>` : html`<th scope="row" class=${classes(cell, i)}>${inline(cell.tokens)}</th>`))}</tr>`)}</tbody>
   </table></div>`
 }
 
-/** Steps, each number in a ring, a title on a line of its own; a timeline, key figures, a checklist. @param {any} token */
+/** Steps, each number in a ring, a title on a line of its own; a timeline, key figures, a checklist. @param {List} token */
 const list = (token) => stepped(token) ? html`<ol class="steps" start=${token.start || 1}>${token.items.map(step)}</ol>`
-  : timed(token) ? html`<ol class="timeline">${token.items.map((/** @type {any} */ item) => html`<li>${told(item, (when, rest) => html`<time>${when}</time><div>${rest}</div>`)}</li>`)}</ol>`
-  : figured(token) ? html`<ul class="figures">${token.items.map((/** @type {any} */ item) => html`<li>${told(item, (number, rest) => html`<strong>${number}</strong><span>${rest}</span>`)}</li>`)}</ul>`
+  : timed(token) ? html`<ol class="timeline">${token.items.map((item) => html`<li>${told(item, (when, rest) => html`<time>${when}</time><div>${rest}</div>`)}</li>`)}</ol>`
+  : figured(token) ? html`<ul class="figures">${token.items.map((item) => html`<li>${told(item, (number, rest) => html`<strong>${number}</strong><span>${rest}</span>`)}</li>`)}</ul>`
   : ticked(token) ? checklist(token) : null
 
 /**
@@ -70,24 +72,24 @@ const list = (token) => stepped(token) ? html`<ol class="steps" start=${token.st
 function told(item, draw) {
   const [first, ...more] = item.tokens
   const title = titled(first.tokens)
-  return draw(inline(first.tokens[0].tokens), [inline(title ? title.rest : first.tokens.slice(1)), more.map((/** @type {any} */ token) => blocks([token]))])
+  return draw(inline(first.tokens[0].tokens), [inline(title ? title.rest : first.tokens.slice(1)), more.map((/** @type {Token} */ token) => blocks([token]))])
 }
 
-/** A list's own name, from what it holds, for the ticks kept for it. @param {any} token */
-const named = (token) => token.items.map((/** @type {any} */ item) => item.text).join('\n')
+/** A list's own name, from what it holds, for the ticks kept for it. @param {List} token */
+const named = (token) => token.items.map((item) => item.text).join('\n')
 
 /** Checklists drawn, which names each one's boxes apart. */
 let checklists = 0
 /**
  * A checklist: each thing to do ticked, struck through, and how many are done, with a bar. What is
  * ticked is kept in the conversation, a meta record for the list (its items' words), the latest winning.
- * @param {any} token
+ * @param {List} token
  */
 function checklist(token) {
   const list = named(token)
   /** @param {import('../../core/types.js').Envelope[]} records */
   const doneIn = (records) => new Set(/** @type {number[]} */ (records.findLast((record) => record.meta?.ticks?.list === list)?.meta?.ticks.done
-    ?? token.items.flatMap((/** @type {any} */ item, /** @type {number} */ i) => (item.checked ? [i] : []))))
+    ?? token.items.flatMap((item, i) => (item.checked ? [i] : []))))
   const done = doneIn(app.current.value?.records ?? [])
   const count = new Intl.NumberFormat(intlLocales()), at = ++checklists
   // Shown at once, from the ticks of the moment, then kept, in the order they were made.
@@ -101,9 +103,9 @@ function checklist(token) {
   }
   return html`<div class="checklist">
     <p class="checklist-count"><span role="status" lang=${locale.value} dir=${dir()}>${t('layouts.ticked', { done: count.format(done.size), total: count.format(token.items.length) })}</span><progress aria-hidden="true" max=${token.items.length} .value=${done.size}></progress></p>
-    <ul>${token.items.map((/** @type {any} */ item, /** @type {number} */ i) => html`<li class=${done.has(i) ? 'is-done' : ''}><label for=${`tick-${at}-${i}`}>
+    <ul>${token.items.map((item, i) => html`<li class=${done.has(i) ? 'is-done' : ''}><label for=${`tick-${at}-${i}`}>
       <input id=${`tick-${at}-${i}`} type="checkbox" .checked=${done.has(i)} @change=${(/** @type {Event} */ e) => tick(i, /** @type {HTMLInputElement} */ (e.target).checked)}>
-      <span>${item.tokens.map((/** @type {any} */ part) => (part.type === 'checkbox' ? nothing : part.type === 'text' ? inline(part.tokens ?? [part]) : blocks([part])))}</span>
+      <span>${item.tokens.map((part) => (part.type === 'checkbox' ? nothing : part.type === 'text' ? inline(part.tokens ?? [part]) : blocks([part])))}</span>
     </label></li>`)}</ul>
   </div>`
 }
@@ -113,15 +115,15 @@ function step(item) {
   const [first, ...rest] = item.tokens
   const title = titled(first.tokens)
   const lead = title ? html`${inline(first.tokens.slice(0, 1))}<span class="end">${title.end}</span>${inline(title.rest)}` : inline(first.tokens)
-  return html`<li>${first.type === 'paragraph' ? html`<p>${lead}</p>` : lead}${rest.map((/** @type {any} */ token) => (token.type === 'text' ? inline(token.tokens ?? [token]) : blocks([token])))}</li>`
+  return html`<li>${first.type === 'paragraph' ? html`<p>${lead}</p>` : lead}${rest.map((/** @type {Token} */ token) => (token.type === 'text' ? inline(token.tokens ?? [token]) : blocks([token])))}</li>`
 }
 
-/** A note, in its kind's colour, titled with the kind's name or its own words. @param {any} token */
+/** A note, in its kind's colour, titled with the kind's name or its own words. @param {Tokens.Blockquote} token */
 function blockquote(token) {
   const note = noted(token)
   if (!note) return null
   return html`<blockquote class="callout is-${note.kind}" role="note">${note.text === undefined ? blocks(token.tokens)
-    : html`<p class="callout-title" role="heading" aria-level="4" lang=${note.title ? nothing : locale.value} dir=${note.title ? nothing : dir()}>${note.title ? inline(/** @type {any} */ (lex(note.title)[0])?.tokens) : t(`layouts.${note.kind}`)}</p>${blocks(lex(note.text))}`}</blockquote>`
+    : html`<p class="callout-title" role="heading" aria-level="4" lang=${note.title ? nothing : locale.value} dir=${note.title ? nothing : dir()}>${note.title ? inline(/** @type {{ tokens?: Token[] } | undefined} */ (lex(note.title)[0])?.tokens) : t(`layouts.${note.kind}`)}</p>${blocks(lex(note.text))}`}</blockquote>`
 }
 
 /** An address as it reads, escaped or not. @param {string} address */
@@ -130,7 +132,7 @@ const unescaped = (address) => { try { return decodeURI(address) } catch { retur
 /**
  * A picture a source gave, at the address it gave, or one the user shared, by its name (D35): never
  * an address the brain wrote, which injected words could have filled with what the conversation
- * holds. One that doesn't load goes. Any other picture stays its words. @param {any} token
+ * holds. One that doesn't load goes. Any other picture stays its words. @param {Tokens.Image} token
  */
 function image(token) {
   const href = unescaped(token.href)
@@ -145,11 +147,11 @@ function image(token) {
 }
 
 parser.use({ extensions: [columns] }, cjk)
-/** Tokens with steps gathered, each table told its title: the heading or the line ending in a colon just above it. @param {any[]} tokens */
-const gathered = (tokens) => sequenced(tokens).map((/** @type {any} */ token, i, all) => {
+/** Tokens with steps gathered, each table told its title: the heading or the line ending in a colon just above it. @param {Token[]} tokens */
+const gathered = (tokens) => sequenced(tokens).map((token, i, all) => {
   const above = all[i - (all[i - 1]?.type === 'space' ? 2 : 1)]
   return token.type === 'table' && (above?.type === 'heading' || (above?.type === 'paragraph' && /[:：]\s*$/.test(above.text))) ? { ...token, title: above.text.replace(/[:：\s*_`]+$|[*_`]/g, '') } : token
 })
 /** An answer still being written (ui/markdown.js), read as it will be, its last block, unless a line ends it, marked as still being written. @param {string} source */
 const still = (source) => { const tokens = lex(unfinished(source)); Object.assign(tokens.at(-1) ?? {}, { still: true }); return tokens }
-shapes.value = { table, list, blockquote, image, blocks: gathered, still, columns: (token) => html`<div class="columns">${token.columns.map((/** @type {any} */ column) => html`<div>${blocks(column.tokens)}</div>`)}</div>` }
+shapes.value = { table, list, blockquote, image, blocks: gathered, still, columns: (token) => html`<div class="columns">${token.columns.map((/** @type {{ tokens: Token[] }} */ column) => html`<div>${blocks(column.tokens)}</div>`)}</div>` }

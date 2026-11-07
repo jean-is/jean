@@ -7,34 +7,6 @@
   "lede": "Chaque vidéo, c’est {name} en personne, qui rejoue de vraies tâches dans votre langue, de jour comme de nuit. Mettez en pause, revenez en arrière, ralentissez ou coupez le son.",
   "more.title": "À voir aussi",
   "more.why": "Moins d’une minute chacune : ce que devient un tableur, ce que {name} demande avant d’agir, et une première demande.",
-  "how.title": "Regardez à votre façon",
-  "how.why": "Rien n’y est enregistré : c’est {name} qui rejoue une tâche, alors la vidéo parle votre langue et prend la taille de votre écran.",
-  "how.keys": [
-    [
-      "Espace ou K",
-      "Lire ou mettre en pause"
-    ],
-    [
-      "← et →",
-      "Cinq secondes en arrière ou en avant"
-    ],
-    [
-      "Page préc. et Page suiv.",
-      "Le chapitre d’avant ou d’après"
-    ],
-    [
-      "< et >",
-      "Plus lent ou plus rapide"
-    ],
-    [
-      "M",
-      "Couper ou remettre le son"
-    ],
-    [
-      "F",
-      "Plein écran"
-    ]
-  ],
   "end.title": "À vous.",
   "end.why": "C’est gratuit, open source, et ça tient dans un onglet du navigateur : rien à installer, aucun compte à créer.",
   "end.cta": "Ouvrir {name}",

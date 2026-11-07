@@ -18,7 +18,7 @@ What you deliver:
 
 These come from the repository, https://github.com/jean-is/jean, at the version the organisation deploys. They are the truth whenever they and this skill disagree:
 
-- `examples/enterprise/`: a sign-in (Dex), a gateway (LiteLLM) and Jean, working together on one computer. Its README's "Make it yours" lists every place an address appears.
+- `examples/enterprise/`: a sign-in (Dex), a gateway (LiteLLM), a relay and Jean, working together on one computer. Its README's "Make it yours" lists every place an address appears.
 - `app/schemas/policy.schema.json`, also served by every copy of Jean at `/schemas/policy.schema.json`: every field Jean reads. Never write a field it doesn't have.
 - `docs/enterprise.md`: what each part of the policy does, signing in at work (Entra ID step by step) and hosted copies.
 - `deploy/README.md`: the header set, the file types, and recipes for IIS, Azure Static Web Apps, S3 behind CloudFront and a container.
@@ -60,15 +60,16 @@ Start from this, keep what they need and drop the rest:
 - **The name:** `look.name` names the theme, and each brain's `label` is what people see answer. Jean keeps its own name unless they ask for theirs: then `name` in the policy, such as `"Acme Assistant"`, and in the container `APP_NAME` too, so that an install has it. Never change the source for it.
 - **The sign-in's scopes:** with `signIn.scopes`, Jean asks for `openid` and those alone, as written. List `profile`, `email` and `offline_access` beside the gateway's scope, or people lose their name and are asked to sign in again each time a token ends. Leave `scopes` out only when the gateway needs no scope of its own, as with the example's Dex.
 - **Capabilities:** `preUnlock` turns on from the start what people use at work, and `deny` turns off what the organisation doesn't want. The lists above are the example's.
+- **The relay:** `urls.relay` names the organisation's own, the image `jean-relay` (`deploy/docker/README.md`), the meeting point for a person's devices and colleagues once Jean has those features. Name it only when they run one: with none named, there is none.
 - **Addresses** are `https://`. `http://` works only on `localhost`.
 - **Enterprise parts** (`groups`, `audit`, `dlp`, `session`, `retention`, `seal`, `trust`) need a key outside `localhost`. Add them only when asked, and say a key is needed: free under 250 people, asked for at https://jean.is/enterprise/key.
 
 ## The header
 
-`connect-src` lists `'self'` and the origin of every address the policy names: the sign-in's issuer, the gateway, each connection. The example's is:
+`connect-src` lists `'self'` and the origin of every address the policy names: the sign-in's issuer, the gateway, each connection, the relay. The example's is:
 
 ```
-Content-Security-Policy: connect-src 'self' http://localhost:5556 http://localhost:4000
+Content-Security-Policy: connect-src 'self' http://localhost:5556 http://localhost:4000 http://localhost:8791
 ```
 
 `deploy/README.md` gives the rest of the header set and how each kind of server sends it. Never loosen the header to make an error go away. Fix the address instead.
@@ -85,7 +86,7 @@ Content-Security-Policy: connect-src 'self' http://localhost:5556 http://localho
 With a terminal, try it on this computer first, where no key is needed:
 
 1. Copy `examples/enterprise/` to a folder of the organisation's own, and put their `policy.json` and `brand/` in it.
-2. Outside the repository, replace the `jean` service's `build:` with `image: ghcr.io/jean-is/jean:latest`, or the version they deploy.
+2. Outside the repository, replace the `jean` service's `build:` with `image: ghcr.io/jean-is/jean:latest`, or the version they deploy, and the `relay` service's with `image: ghcr.io/jean-is/jean-relay:edge` until a version tagged after it gives it `latest`. Or remove the `relay` service, and `urls.relay` from their policy, if they don't want one.
 3. Run `docker compose up -d`, open http://localhost:8080, sign in, and look: their logo beside Jean's name, their theme, their brain answering.
 4. Open http://localhost:8080/policy.html. It must find nothing wrong. Then open `policy.html` at the organisation's address once it is served there.
 

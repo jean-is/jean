@@ -115,7 +115,7 @@ export function isShipped (path) {
   const segments = path.split('/')
   const name = segments[segments.length - 1]
   // Markdown ships as a skill's steps, or as the sheets beside one of Jean's own (D648).
-  return segments.every((s) => !s.startsWith('.')) && (name === 'SKILL.md' || path.startsWith('caps/skills/directory/') || !/\.(md|map)$|\.d\.ts$/.test(name))
+  return segments.every((s) => !s.startsWith('.')) && (name === 'SKILL.md' || path.startsWith('caps/skills/directory/') || !/\.(md|map)$|\.d\.m?ts$/.test(name))
 }
 
 /**

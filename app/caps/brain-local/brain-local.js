@@ -42,7 +42,7 @@ const worker = modelWorker(new URL('./brain-worker.js', import.meta.url), 'The o
  * @returns {Promise<{ ok: true } | { ok: false, reason: 'webgpu' | 'f16' | 'storage' } | { ok: false, reason: 'memory', freed: number }>}
  */
 export async function checkDevice() {
-  const nav = /** @type {any} */ (navigator)
+  const nav = /** @type {Navigator & { deviceMemory: number, gpu?: { requestAdapter(options?: { powerPreference?: string }): Promise<{ features: Set<string> } | null> } }} */ (navigator)
   const adapter = nav.gpu ? await nav.gpu.requestAdapter({ powerPreference: 'high-performance' }).catch(() => null) : null
   if (!adapter) return { ok: false, reason: 'webgpu' }
   if (!adapter.features.has('shader-f16')) return { ok: false, reason: 'f16' }
@@ -122,12 +122,12 @@ export async function* stream({ system, messages, tools = [], maxTokens, signal 
   const queue = []
   /** @type {(() => void) | null} */
   let wake = null
-  /** @type {{ usage?: any, error?: any } | null} */
+  /** @type {{ usage?: import('../../core/types.js').Usage, error?: { message: string, code?: string } } | null} */
   let finished = null
   const id = worker.id()
   const onAbort = () => worker.post({ type: 'abort', id })
   signal?.addEventListener('abort', onAbort, { once: true })
-  /** @param {any[]} events */
+  /** @param {unknown[]} events */
   const push = (events) => {
     queue.push(.../** @type {StreamEvent[]} */ (events))
     wake?.()
@@ -168,7 +168,7 @@ export async function* stream({ system, messages, tools = [], maxTokens, signal 
   } finally {
     signal?.removeEventListener('abort', onAbort)
   }
-  const { error, usage } = /** @type {{ usage?: any, error?: any }} */ (finished)
+  const { error, usage } = /** @type {{ usage?: import('../../core/types.js').Usage, error?: { message: string, code?: string } }} */ (finished)
   if (signal?.aborted) throw new LLMError('Request aborted', { code: 'aborted' })
   // Nothing to reconnect to here: what failed on the device would fail again.
   if (error) throw new LLMError(error.message, { code: error.code === 'too_long' ? 'too_long' : 'server', retryable: false })

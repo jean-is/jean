@@ -1,0 +1,281 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Jean's chart",
+  "description": "The values of Jean's Helm chart (deploy/helm/jean/). Every level refuses a name it doesn't know, but global, which an umbrella chart shares with others, and what Kubernetes or Jean's own schemas define.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "openshift": { "enum": ["auto", true, false], "description": "auto: OpenShift when the cluster serves security.openshift.io/v1" },
+    "global": {
+      "type": "object",
+      "properties": { "imageRegistry": { "type": "string" } }
+    },
+    "imagePullSecrets": {
+      "type": "array",
+      "items": { "type": "object", "required": ["name"], "additionalProperties": false, "properties": { "name": { "type": "string", "minLength": 1 } } }
+    },
+    "nameOverride": { "type": "string" },
+    "fullnameOverride": { "type": "string" },
+    "commonLabels": { "$ref": "#/definitions/strings" },
+    "serviceAccount": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "create": { "type": "boolean" },
+        "name": { "type": "string" },
+        "annotations": { "$ref": "#/definitions/strings" }
+      }
+    },
+    "jean": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "host": { "$ref": "#/definitions/host" },
+        "replicaCount": { "type": "integer", "minimum": 1 },
+        "image": { "$ref": "#/definitions/image" },
+        "appName": { "type": "string", "pattern": "^[^\\n\\r]*$", "description": "APP_NAME: one line" },
+        "contentSecurityPolicy": { "type": "string", "pattern": "^[^\\n\\r\"]*$", "description": "CONTENT_SECURITY_POLICY: one line, no double quote" },
+        "policy": { "type": "object", "description": "policy.json, which app/schemas/policy.schema.json describes and policy.html checks" },
+        "podSecurityContext": { "$ref": "#/definitions/podSecurityContext" },
+        "resources": { "$ref": "#/definitions/resources" },
+        "ingress": { "$ref": "#/definitions/ingressOverride" },
+        "route": { "$ref": "#/definitions/routeOverride" },
+        "podAnnotations": { "$ref": "#/definitions/strings" },
+        "podLabels": { "$ref": "#/definitions/strings" },
+        "nodeSelector": { "$ref": "#/definitions/strings" },
+        "tolerations": { "type": "array", "items": { "type": "object" } },
+        "affinity": { "type": "object" },
+        "topologySpreadConstraints": { "type": "array", "items": { "type": "object" } },
+        "priorityClassName": { "type": "string" }
+      }
+    },
+    "gateway": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "host": { "$ref": "#/definitions/host" },
+        "replicaCount": { "type": "integer", "minimum": 1 },
+        "image": { "$ref": "#/definitions/image" },
+        "existingSecret": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "name": { "type": "string" },
+            "key": { "type": "string", "minLength": 1 }
+          }
+        },
+        "config": {
+          "type": "object",
+          "description": "GATEWAY_CONFIG, as app/schemas/gateway.schema.json describes it",
+          "additionalProperties": false,
+          "properties": {
+            "origins": { "type": "array", "items": { "type": "string", "pattern": "^https?://[^/?#]+$" } },
+            "hosts": { "type": "array", "items": { "type": "string", "pattern": "^[A-Za-z0-9.-]+$|^\\[[0-9A-Fa-f:]+\\]$|^https?://[^/?#]+$" } },
+            "clients": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["issuer", "tokenEndpoint", "clientId", "clientSecret"],
+                "properties": {
+                  "issuer": { "$ref": "#/definitions/address" },
+                  "tokenEndpoint": { "$ref": "#/definitions/address" },
+                  "clientId": { "type": "string" },
+                  "clientSecret": { "type": "string" },
+                  "auth": { "enum": ["post", "basic"] }
+                }
+              }
+            },
+            "timestamps": { "type": "array", "items": { "$ref": "#/definitions/address" } },
+            "logs": { "type": "array", "items": { "$ref": "#/definitions/address" } }
+          }
+        },
+        "proxy": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "http": { "type": "string" },
+            "https": { "type": "string" },
+            "noProxy": { "type": "string" }
+          }
+        },
+        "trustedCA": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "configMap": { "type": "string", "description": "openshift: the cluster's injected bundle; another name: a ConfigMap of yours" },
+            "key": { "type": "string", "minLength": 1 }
+          }
+        },
+        "podSecurityContext": { "$ref": "#/definitions/podSecurityContext" },
+        "resources": { "$ref": "#/definitions/resources" },
+        "ingress": { "$ref": "#/definitions/ingressOverride" },
+        "route": { "$ref": "#/definitions/routeOverride" },
+        "podAnnotations": { "$ref": "#/definitions/strings" },
+        "podLabels": { "$ref": "#/definitions/strings" },
+        "nodeSelector": { "$ref": "#/definitions/strings" },
+        "tolerations": { "type": "array", "items": { "type": "object" } },
+        "affinity": { "type": "object" },
+        "topologySpreadConstraints": { "type": "array", "items": { "type": "object" } },
+        "priorityClassName": { "type": "string" }
+      }
+    },
+    "relay": {
+      "type": "object",
+      "description": "One replica, always: it has no replicaCount",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "host": { "$ref": "#/definitions/host" },
+        "image": { "$ref": "#/definitions/image" },
+        "config": {
+          "type": "object",
+          "description": "RELAY_CONFIG (relay/serve.js)",
+          "additionalProperties": false,
+          "properties": {
+            "origins": { "type": "array", "items": { "type": "string", "pattern": "^https?://[^/?#]+$" } },
+            "limits": {
+              "type": "object",
+              "description": "Any of LIMITS in relay/relay.js",
+              "additionalProperties": false,
+              "properties": {
+                "message": { "type": "integer", "minimum": 1 },
+                "inline": { "type": "integer", "minimum": 0 },
+                "messages": { "type": "integer", "minimum": 1 },
+                "bytes": { "type": "integer", "minimum": 1 },
+                "days": { "type": "integer", "minimum": 1 },
+                "idle": { "type": "integer", "minimum": 1 },
+                "writes": { "type": "integer", "minimum": 1 },
+                "opens": { "type": "integer", "minimum": 1 },
+                "sent": { "type": "integer", "minimum": 1 },
+                "waits": { "type": "integer", "minimum": 1 },
+                "free": { "type": "integer", "minimum": 0 }
+              }
+            },
+            "recordKey": {
+              "type": "object",
+              "description": "The public half of node host/serve.js keys: never the private one, which stays offline",
+              "additionalProperties": false,
+              "required": ["kty", "crv", "x", "y"],
+              "properties": {
+                "kty": { "const": "EC" },
+                "crv": { "const": "P-256" },
+                "x": { "type": "string" },
+                "y": { "type": "string" },
+                "ext": { "type": "boolean" },
+                "key_ops": { "type": "array", "items": { "type": "string" } }
+              }
+            }
+          }
+        },
+        "proxied": { "enum": ["auto", true, false] },
+        "persistence": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "size": { "type": "string", "pattern": "^[0-9]+(\\.[0-9]+)?(Ki|Mi|Gi|Ti|Pi|k|M|G|T|P)?$" },
+            "storageClass": { "type": "string" },
+            "existingClaim": { "type": "string" }
+          }
+        },
+        "podSecurityContext": { "$ref": "#/definitions/podSecurityContext" },
+        "resources": { "$ref": "#/definitions/resources" },
+        "ingress": { "$ref": "#/definitions/ingressOverride" },
+        "route": { "$ref": "#/definitions/routeOverride" },
+        "podAnnotations": { "$ref": "#/definitions/strings" },
+        "podLabels": { "$ref": "#/definitions/strings" },
+        "nodeSelector": { "$ref": "#/definitions/strings" },
+        "tolerations": { "type": "array", "items": { "type": "object" } },
+        "affinity": { "type": "object" },
+        "priorityClassName": { "type": "string" }
+      }
+    },
+    "route": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "annotations": { "$ref": "#/definitions/strings" }
+      }
+    },
+    "ingress": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "className": { "type": "string" },
+        "annotations": { "$ref": "#/definitions/strings" },
+        "tls": { "type": "boolean" }
+      }
+    },
+    "networkPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "ingressNamespaceSelector": {
+          "type": "object",
+          "description": "A label selector",
+          "additionalProperties": false,
+          "properties": {
+            "matchLabels": { "$ref": "#/definitions/strings" },
+            "matchExpressions": { "type": "array", "items": { "type": "object" } }
+          }
+        },
+        "extraEgress": { "type": "array", "items": { "type": "object" } }
+      }
+    }
+  },
+  "definitions": {
+    "strings": { "type": "object", "additionalProperties": { "type": "string" } },
+    "host": { "type": "string", "pattern": "^$|^[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?(\\.[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?)*$", "description": "A host name alone: no scheme, port or path" },
+    "address": { "type": "string", "pattern": "^https?://" },
+    "image": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "registry": { "type": "string" },
+        "repository": { "type": "string", "minLength": 1 },
+        "tag": { "type": "string" },
+        "digest": { "type": "string", "pattern": "^$|^sha256:[0-9a-f]{64}$" },
+        "pullPolicy": { "enum": ["Always", "IfNotPresent", "Never"] }
+      }
+    },
+    "podSecurityContext": {
+      "type": "object",
+      "description": "Outside OpenShift only, where the SCC chooses them",
+      "additionalProperties": false,
+      "properties": {
+        "runAsUser": { "type": "integer", "minimum": 1 },
+        "runAsGroup": { "type": "integer", "minimum": 0 },
+        "fsGroup": { "type": "integer", "minimum": 0 },
+        "fsGroupChangePolicy": { "enum": ["OnRootMismatch", "Always"] },
+        "supplementalGroups": { "type": "array", "items": { "type": "integer", "minimum": 0 } }
+      }
+    },
+    "resources": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "requests": { "type": "object", "additionalProperties": { "type": ["string", "number"] } },
+        "limits": { "type": "object", "additionalProperties": { "type": ["string", "number"] } }
+      }
+    },
+    "ingressOverride": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "annotations": { "$ref": "#/definitions/strings" },
+        "tlsSecret": { "type": "string" }
+      }
+    },
+    "routeOverride": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "annotations": { "$ref": "#/definitions/strings" }
+      }
+    }
+  }
+}

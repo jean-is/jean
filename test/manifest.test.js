@@ -58,6 +58,7 @@ describe('manifest: file filters', () => {
     assert.equal(isShipped('caps/skills/directory/chart/SKILL.md'), true, 'a skill Jean ships (D196)')
     assert.equal(isShipped('vendor/marked.esm.js.map'), false)
     assert.equal(isShipped('vendor/lit-html/lit-html.d.ts'), false)
+    assert.equal(isShipped('vendor/transformers/ort.webgpu.bundle.min.d.mts'), false)
     assert.equal(isShipped('ui/.DS_Store'), false)
     assert.equal(isShipped('ui/.hidden/x.js'), false)
   })

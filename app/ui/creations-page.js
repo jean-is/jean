@@ -21,7 +21,7 @@ import { t, relativeTime, intlLocales, useStrings } from '../core/i18n.js'
 
 await useStrings('creations')
 
-/** @typedef {import('./creations.js').Creation & { kind: any }} Item */
+/** @typedef {import('./creations.js').Creation & { kind: import('./caps.js').Slot }} Item */
 /** The one whose name is being changed, and those deleted but for Undo; the kind picked, the order and the words typed are creations.js's, which the address and a tag set. */
 const renaming = signal(''), gone = signal(/** @type {Set<string>} */ (new Set()))
 /** The orders, which creations.js checks an address's against, Sort's glyph, an arrow up beside an arrow down, and Show's, three lines narrowing. */
@@ -91,7 +91,7 @@ function drop(item, keyed = false) {
  */
 function headings() {
   const now = new Date(), day = (/** @type {Date} */ date) => new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime(), today = day(now), known = new Map()
-  const here = /** @type {any} */ (new Intl.Locale(intlLocales()[0])), week = (now.getDay() - ((here.getWeekInfo?.() ?? here.weekInfo)?.firstDay ?? 1) + 7) % 7
+  const here = /** @type {Intl.Locale & { getWeekInfo?: () => { firstDay?: number }, weekInfo?: { firstDay?: number } }} */ (new Intl.Locale(intlLocales()[0])), week = (now.getDay() - ((here.getWeekInfo?.() ?? here.weekInfo)?.firstDay ?? 1) + 7) % 7
   const months = /** @type {Intl.DateTimeFormatOptions[]} */ ([{}, { year: 'numeric' }]).map((year) => new Intl.DateTimeFormat(intlLocales(), { month: 'long', ...year }))
   /** @param {Date} at @param {number} days */
   const of = (at, days) => {
@@ -186,7 +186,7 @@ class Page extends Element {
     if (app.wide.value && here.length) unlock('split')
     // Those made include a kind not kept here yet: its `starts` slot, Apps' until the project holds one (D553).
     const found = searchable(words.value.trim()), collator = new Intl.Collator(intlLocales()), makers = [...kinds, ...slots('starts')].filter((one) => one.make).sort((a, b) => a.at - b.at), starts = found ? [] : makers
-    const makes = picked?.make ? [picked] : makers, make = (/** @type {any} */ one) => () => one.make().then(reread)
+    const makes = picked?.make ? [picked] : makers, make = (/** @type {import('./caps.js').Slot} */ one) => () => one.make().then(reread)
     const when = (/** @type {Item} */ item) => (order.value === 'made' ? item.created || item.changed : item.changed)
     const list = here.filter((item) => (!picked || item.kind === picked) && (!found || searchable(`${item.name} ${item.text}`).includes(found)))
       .sort(order.value === 'name' ? (a, b) => collator.compare(a.name, b.name) : (a, b) => (when(a) < when(b) ? 1 : -1))

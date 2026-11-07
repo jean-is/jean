@@ -92,7 +92,7 @@ async function away({ wipe: wiping }) {
   if (!wiping && loaded.value.has('signin')) (await import('../caps/signin/signin.js')).signOut()
 }
 
-/** @param {Record<string, any>} policy */
+/** @param {Record<string, unknown>} policy */
 export async function start(policy) {
   const read = session(policy)
   await useStrings('enterprise')

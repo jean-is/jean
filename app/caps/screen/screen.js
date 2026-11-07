@@ -87,7 +87,7 @@ export async function choose() {
   } catch (error) {
     state.value = 'off'
     // Closing the browser's picker isn't a failure.
-    return void (/** @type {any} */ (error)?.name !== 'NotAllowedError' && notify(t('screen.failed'), { alert: true }))
+    return void (/** @type {{ name?: string } | undefined} */ (error)?.name !== 'NotAllowedError' && notify(t('screen.failed'), { alert: true }))
   }
   // Stop sharing, in the browser's own bar.
   stream.getVideoTracks()[0]?.addEventListener('ended', close)

@@ -20,8 +20,11 @@ import { words } from './kiwix.js'
  * @property {boolean} [relayed]  it refuses browsers, so the gateway reaches it
  * @property {boolean} [engine]  it asks for a search engine too
  * @property {(asked: Asked) => Request} ask
- * @property {(answer: any) => Page[]} read
+ * @property {(answer: Answer) => Page[]} read
  */
+
+/** @typedef {{ title: string, url: string }} Hit */
+/** @typedef {{ web?: { results?: (Hit & { description?: string })[] }, results?: (Hit & { content?: string })[], items?: { title: string, link: string, snippet?: string }[], data?: { search?: (Hit & { snippet?: string })[] } }} Answer  what the four services send, each its own part */
 
 /** A language as Brave's search_lang names it, or nothing: it refuses any other, and its default is English. @param {string} lang two-letter */
 const braveLang = (lang) => ({ zh: 'zh-hans', pt: 'pt-br', no: 'nb' })[lang] ?? (/^(ar|eu|bn|bg|ca|hr|cs|da|nl|en|et|fi|fr|gl|de|el|gu|he|hi|hu|is|it|ja|kn|ko|lv|lt|ms|ml|mr|nb|pl|pa|ro|ru|sr|sk|sl|es|sv|ta|te|th|tr|uk|vi)$/.test(lang) ? lang : '')
@@ -32,23 +35,23 @@ export const SERVICES = {
     name: 'Brave Search', logo: 'brave.svg', address: 'https://api.search.brave.com/res/v1/web/search', keys: 'https://api-dashboard.search.brave.com/app/keys', relayed: true,
     ask: ({ query, lang, count, key }) => ({ params: { q: query, count: String(count), ...(braveLang(lang) && { search_lang: braveLang(lang) }) }, headers: { 'x-subscription-token': key } }),
     // Its titles and descriptions come as HTML, the words searched for in <strong>.
-    read: (answer) => (answer.web?.results ?? []).map((/** @type {any} */ page) => ({ title: words(page.title), url: page.url, extract: words(page.description) })),
+    read: (answer) => (answer.web?.results ?? []).map((page) => ({ title: words(page.title), url: page.url, extract: words(page.description) })),
   },
   tavily: {
     name: 'Tavily', logo: 'tavily.svg', address: 'https://api.tavily.com/search', keys: 'https://app.tavily.com/home',
     ask: ({ query, lang, count, key }) => ({ body: { query, max_results: count, language: lang }, headers: { authorization: `Bearer ${key}` } }),
-    read: (answer) => (answer.results ?? []).map((/** @type {any} */ page) => ({ title: page.title, url: page.url, extract: page.content ?? '' })),
+    read: (answer) => (answer.results ?? []).map((page) => ({ title: page.title, url: page.url, extract: page.content ?? '' })),
   },
   google: {
     name: 'Google Custom Search', logo: 'google.svg', address: 'https://www.googleapis.com/customsearch/v1', engine: true,
     // In a header, so that it stays out of the address.
     ask: ({ query, lang, count, key, engine = '' }) => ({ params: { q: query, cx: engine, num: String(count), hl: lang }, headers: { 'x-goog-api-key': key } }),
-    read: (answer) => (answer.items ?? []).map((/** @type {any} */ page) => ({ title: page.title, url: page.link, extract: page.snippet ?? '' })),
+    read: (answer) => (answer.items ?? []).map((page) => ({ title: page.title, url: page.link, extract: page.snippet ?? '' })),
   },
   kagi: {
     name: 'Kagi', logo: 'kagi.svg', address: 'https://kagi.com/api/v1/search', keys: 'https://kagi.com/api/keys', relayed: true,
     ask: ({ query, count, key }) => ({ body: { query, limit: count }, headers: { authorization: `Bearer ${key}` } }),
-    read: (answer) => (answer.data?.search ?? []).map((/** @type {any} */ page) => ({ title: words(page.title), url: page.url, extract: words(page.snippet) })),
+    read: (answer) => (answer.data?.search ?? []).map((page) => ({ title: words(page.title), url: page.url, extract: words(page.snippet) })),
   },
 }
 

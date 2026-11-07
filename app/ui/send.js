@@ -26,6 +26,7 @@ import {
 /** @import { BrainConfig, Envelope, ToolCallInfo, ResourceLink } from '../core/types.js' */
 /** @import { Decision, PermissionOption, Run } from './state.js' */
 /** @import { Question, Answer } from '../caps/ask/answers.js' */
+/** What the brain entry records of why this brain answers: how much it thinks, and Auto's level and reason (D414). @typedef {Record<string, unknown> & { effort?: import('../core/types.js').Effort }} Why */
 
 // A shared file's share of the brain's context (see docs/architecture.md#retrieval-and-extraction).
 const DOCUMENT_SHARE = 0.25
@@ -124,7 +125,7 @@ let decisionId = 0
 function queue(decision) {
   return new Promise((resolve) => {
     // A card answered from the keyboard hands its focus on: to the next card waiting, else to the box.
-    const item = /** @type {Decision} */ ({ ...decision, id: ++decisionId, resolve: (/** @type {any} */ answer) => {
+    const item = /** @type {Decision} */ ({ ...decision, id: ++decisionId, resolve: (/** @type {PermissionOption | Answer[] | null} */ answer) => {
       const held = document.activeElement?.closest('.approval'); app.decisions.value = app.decisions.value.filter((other) => other !== item)
       resolve(answer); if (held) requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector('.approval button, #prompt'))?.focus())
     } })
@@ -217,10 +218,10 @@ async function prepare(text, brain, task, notes = [], items = app.attachments.va
 // ─── Auto ────────────────────────────────────────────────────────────────────
 
 /** The highest level Auto used in a conversation: it never steps down within one. @param {Envelope[]} records */
-const autoLevel = (records) => Math.max(0, ...records.map((record) => /** @type {any} */ (record.update)?.rawInput?.auto?.level ?? 0))
+const autoLevel = (records) => Math.max(0, ...records.map((record) => /** @type {Partial<ToolCallInfo> | undefined} */ (record.update)?.rawInput?.auto?.level ?? 0))
 
 /** The most thinking asked of a brain in a conversation, by its index among `efforts`: Auto never asks for less within one (D414). @param {Envelope[]} records @param {readonly string[]} efforts */
-const effortLevel = (records, efforts) => Math.max(-1, ...records.map((record) => efforts.indexOf(/** @type {any} */ (record.update)?.rawInput?.effort)))
+const effortLevel = (records, efforts) => Math.max(-1, ...records.map((record) => efforts.indexOf(/** @type {Partial<ToolCallInfo> | undefined} */ (record.update)?.rawInput?.effort)))
 
 /** The last answer's text, for "is the user unhappy with it?". @param {Envelope[]} records */
 const lastAnswer = (records) => {
@@ -235,7 +236,7 @@ const lastAnswer = (records) => {
  * @param {string} text @param {Envelope[]} records @param {number} [boost] levels above the last one
  * @param {BrainConfig | 'auto'} [chosen] who answers whatever the box has: a routine's own brain, or Auto (D303)
  * @param {boolean} [pictured] the message shares a picture the box doesn't hold: the camera's (D645)
- * @returns {Promise<{ brain: BrainConfig, meta?: Record<string, any>, signals: import('./auto.js').Signals } | null>}
+ * @returns {Promise<{ brain: BrainConfig, meta?: Why, signals: import('./auto.js').Signals } | null>}
  */
 async function pickBrain(text, records, boost = 0, chosen, pictured = false) {
   const { settings } = effective.value
@@ -243,7 +244,7 @@ async function pickBrain(text, records, boost = 0, chosen, pictured = false) {
   const signals = await sense(text, lastAnswer(records))
   // How much it thinks: the brain's own setting, or as much as the request demands, never less than before (D414).
   const floor = effortLevel(records, EFFORTS)
-  const meta = (/** @type {BrainConfig} */ brain, /** @type {Record<string, any>} */ more = {}) => ({ ...more, effort: chooseEffort({ setting: brain.effort, signals: { ...signals, unhappy: signals.unhappy || boost > 0 }, floor }) })
+  const meta = (/** @type {BrainConfig} */ brain, /** @type {Record<string, unknown>} */ more = {}) => ({ ...more, effort: chooseEffort({ setting: brain.effort, signals: { ...signals, unhappy: signals.unhappy || boost > 0 }, floor }) })
   if (chosen !== 'auto' && (chosen || !settings.auto)) {
     const brain = chosen || activeBrain.value
     return brain && (cloudAllowed() || isLocal(brain)) ? { brain, meta: meta(brain), signals } : null
@@ -271,7 +272,7 @@ async function pickBrain(text, records, boost = 0, chosen, pictured = false) {
  * A message on its way, which holds the box from now until its run has it, so that nothing is asked twice. Going elsewhere frees
  * the box there (showRun); so does stopping short of a run.
  * @param {string} text
- * @param {{ boost?: number, notes?: Envelope[], call?: { name: string, args: any }, files?: import('./state.js').Attachment[], brain?: BrainConfig | 'auto', look?: boolean }} [options] boost: Auto's levels above the last
+ * @param {{ boost?: number, notes?: Envelope[], call?: { name: string, args: Record<string, unknown> }, files?: import('./state.js').Attachment[], brain?: BrainConfig | 'auto', look?: boolean }} [options] boost: Auto's levels above the last
  *   answer's; notes: what the brain is told just before the message ("Since last time"); call: the one call the turn is,
  *   whose result is the answer, with no brain before or after it (a flow run by hand or by a routine, D218); files: what it
  *   shares, if not the box's (the file that set a routine off, D294); brain: who answers, if not the box's choice (a routine's, D303);
@@ -354,7 +355,7 @@ const mentioned = async (text) => (/(?:^|\s)[/@]\S/u.test(text) ? import('./comp
 /**
  * Sends a request in a task of its own, out of sight (D147), the page, the box and its files as they are: a routine's run
  * that fell due or a file set off (D317, D583). The task starts on its project's folder, never one chosen on screen, and without the
- * box's modes. @param {string} text @param {{ notes?: Envelope[], call?: { name: string, args: any }, files?: import('./state.js').Attachment[], brain?: BrainConfig | 'auto' }} [options] as send()'s
+ * box's modes. @param {string} text @param {{ notes?: Envelope[], call?: { name: string, args: Record<string, unknown> }, files?: import('./state.js').Attachment[], brain?: BrainConfig | 'auto' }} [options] as send()'s
  */
 export async function sendAside(text, { notes = [], call, files = [], brain: chosen } = {}) {
   const picked = await pickBrain(text, [], 0, chosen)
@@ -411,7 +412,7 @@ export async function rewind(upTo, text) {
   const from = text === undefined ? upTo : current.records.slice(0, upTo - 1).findLastIndex(({ update }) => update?.sessionUpdate !== 'user_message_chunk' || update.content.type !== 'resource_link') + 1
   const start = current.records.slice(0, from).findLastIndex((record) => record.update && record.update.sessionUpdate !== '_system_note') + 1
   const told = current.records.slice(start, from).find(({ update }) => update?.sessionUpdate === '_system_note' && update.data.kind === 'mentions')
-  const words = /** @type {string[]} */ (/** @type {any} */ (told?.update)?.data.words ?? [])
+  const words = /** @type {{ data: Extract<import('../core/types.js').SystemNoteData, { kind: 'mentions' }> } | undefined} */ (told?.update)?.data.words ?? []
   const kept = text === undefined || !told || (await import('./mentions.js')).holds(text, words).length === words.length
   const records = [...current.records.slice(0, from).filter((record) => kept || record !== told),
     ...current.records.slice(upTo).filter((record) => record.meta?.title || typeof record.meta?.pinned === 'boolean')]
@@ -515,7 +516,7 @@ async function hurried() {
 
 /**
  * Answers a conversation up to its last user message, on screen or not (D147). @param {{ id: string, path: string, records: Envelope[] }} conversation
- * @param {BrainConfig} brain @param {Record<string, any>} [meta] why Auto chose it @param {{ name: string, args: any }} [call] the one call the turn is (D218)
+ * @param {BrainConfig} brain @param {Why} [meta] why Auto chose it @param {{ name: string, args: Record<string, unknown> }} [call] the one call the turn is (D218)
  * @param {number} [after] the step it goes on after, with a block of steps more (Keep going, D364)
  * @param {Envelope[]} [held] a look's records, which the conversation has once its answer says something, a letter or a figure, or
  *   calls a tool (D645): a look that says nothing is never written nor shown, and the next request reads what it would have read without it
@@ -647,7 +648,7 @@ async function runAgent(conversation, brain, meta, call, after, held) {
     failed = true
     if (shown() && !run.held) {
       setPresence('idle')
-      if (/** @type {any} */ (error)?.code !== 'aborted') showError(error)
+      if (/** @type {{ code?: string } | null | undefined} */ (error)?.code !== 'aborted') showError(error)
       else notify(t('activity.unfinished'), { quiet: true })
     }
   } finally {

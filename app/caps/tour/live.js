@@ -19,6 +19,6 @@ export async function start(article) {
   if (!response.ok) return
   /** @type {{ open?: string, stops?: import('./tour.js').Stop[] }} */
   const tour = await response.json()
-  if (tour.open) openSettings(/** @type {any} */ (tour.open))
+  if (tour.open) openSettings(/** @type {Parameters<typeof openSettings>[0]} */ (tour.open))
   for (const [i, stop] of (tour.stops ?? []).entries()) if (await show(stop, lang, 1, WAIT[Math.min(i, 1)])) break
 }

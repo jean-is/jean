@@ -22,10 +22,15 @@ export function hexOf(colour) {
 
 /** Counts each kit kept, for what wears one. */
 export const kits = signal(0)
-/** Each kit.json, read once a visit, and again once written. @type {Map<string, Promise<{ tokens?: Record<string, any>, layouts?: Record<string, any> } | null>>} */
+/**
+ * A kit as kit.json holds it: its flat tokens, `dark` the night's over them, its layouts, and the pictures they draw, as the person or the
+ * organisation wrote them (caps/slides/kit-page.js).
+ * @typedef {{ name?: string, tokens?: Record<string, any>, layouts?: Record<string, unknown>, pictures?: Record<string, string> }} Kit
+ */
+/** Each kit.json, read once a visit, and again once written. @type {Map<string, Promise<Kit | null>>} */
 const files = new Map()
 /** @param {string} path */
-const read = (path) => files.get(path) ?? /** @type {Promise<any>} */ (files.set(path, app.fs.read(path).then((text) => (text ? JSON.parse(text) : null)).catch(() => null)).get(path))
+const read = (path) => files.get(path) ?? /** @type {Promise<Kit | null>} */ (files.set(path, app.fs.read(path).then((text) => (text ? JSON.parse(text) : null)).catch(() => null)).get(path))
 /** Where a kit is kept: the person's at the root of their files, a project's in its folder. @param {string | null} dir null for the person's */
 export const kitPath = (dir) => (dir === null ? 'kit.json' : `${dir}/kit.json`)
 

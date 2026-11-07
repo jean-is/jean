@@ -83,7 +83,7 @@ async function evaluate(slots) {
   const url = (/** @type {string} */ id) => id.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '') // base64url, as evalByCredential names them
   const found = /** @type {any} */ (await navigator.credentials.get({ publicKey: { challenge: random(32), userVerification: 'required',
     allowCredentials: slots.map((slot) => ({ type: 'public-key', id: decode(slot.credential ?? '') })),
-    extensions: /** @type {any} */ ({ prf: { evalByCredential: Object.fromEntries(slots.map((slot) => [url(slot.credential ?? ''), { first: decode(slot.salt ?? '') }])) } }) } }))
+    extensions: /** @type {AuthenticationExtensionsClientInputs} */ ({ prf: { evalByCredential: Object.fromEntries(slots.map((slot) => [url(slot.credential ?? ''), { first: decode(slot.salt ?? '') }])) } }) } }))
   const slot = slots.find((each) => each.credential === encode(new Uint8Array(found.rawId)))
   const output = found.getClientExtensionResults().prf?.results?.first
   if (!slot || !output) throw new Error('No secret from this passkey')
@@ -246,7 +246,7 @@ async function newPasskey(raw) {
   const salt = random(32)
   const made = /** @type {any} */ (await navigator.credentials.create({ publicKey: { rp: { name: BRAND.name }, challenge: random(32),
     user: { id: random(16), name: BRAND.name, displayName: BRAND.name }, pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }],
-    authenticatorSelection: { residentKey: 'preferred', userVerification: 'required' }, extensions: /** @type {any} */ ({ prf: { eval: { first: salt } } }) } }))
+    authenticatorSelection: { residentKey: 'preferred', userVerification: 'required' }, extensions: /** @type {AuthenticationExtensionsClientInputs} */ ({ prf: { eval: { first: salt } } }) } }))
   /** @type {Slot} */
   const slot = { kind: 'passkey', salt: encode(salt), credential: encode(new Uint8Array(made.rawId)), iv: '', data: '' }
   const first = made.getClientExtensionResults().prf?.results?.first

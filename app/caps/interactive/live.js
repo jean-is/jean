@@ -9,7 +9,7 @@ import { compile } from '../tables/formula.js'
 import { all, form, lines, number, split, table } from './parts.js'
 
 /** @import { Part } from './parts.js' */
-/** What a form's fields, what they work out and a table's sums hold, by their names. @typedef {Record<string, any>} Cells */
+/** What a form's fields, what they work out and a table's sums hold, by their names. @typedef {Record<string, unknown>} Cells */
 
 const FORMULA = /\{([^{}]+)\}/g, HOLDS = /\{[^{}]+\}/, LIST = /\s*[,،、]\s*/
 /** The parts whose lines may hold a formula: a diagram's braces are its own. */
@@ -41,7 +41,7 @@ export function shared(parts, { given, added, lang, locales }) {
   const reader = (/** @type {string} */ text) => { try { return compile(text.replace(/[{}]/g, ''), columns) } catch { return () => NaN } }
   /** What a formula comes to; NaN where it can't be read or worked out. @param {string} text @param {Cells} cells */
   const value = (text, cells) => /** @type {(cells: Cells) => any} */ (readers.get(text) ?? readers.set(text, reader(text)).get(text))(cells)
-  /** A result in the page's words. @param {any} got @param {string} [digits] @param {boolean} [bare] with no marks between thousands */
+  /** A result in the page's words. @param {unknown} got @param {string} [digits] @param {boolean} [bare] with no marks between thousands */
   const said = (got, digits, bare) => (typeof got === 'boolean' ? (got ? '✓' : '') : typeof got !== 'number' ? String(got) : !Number.isFinite(got) ? '—' : /** @type {Intl.NumberFormat} */ (formats.get(`${digits}${bare}`)
     ?? formats.set(`${digits}${bare}`, new Intl.NumberFormat(locales, { maximumFractionDigits: digits ? Number(digits) : 2, minimumFractionDigits: digits ? Number(digits) : 0, useGrouping: !bare, signDisplay: 'negative' })).get(`${digits}${bare}`)).format(got))
   /** A line with each formula worked out, an `each`'s own name as it is written. @param {string} line @param {Cells} cells @param {string} [name] */
@@ -50,7 +50,7 @@ export function shared(parts, { given, added, lang, locales }) {
     : /^(number|range)$/.test(kind) ? (raw === '' ? NaN : number(raw, lang, true)) : read(raw)])(given.get(label) ?? (start || choices?.[0] || '')))))
   /** The fields, the tables' sums, and each value worked out, as often as there are values, so that one written before what it reads sees it. @param {Cells} [extra] */
   const work = (extra) => { const cells = { ...base, ...extra }; for (const _ of worked) for (const [name, text] of worked) cells[name] = value(text, cells); return cells }
-  /** The name an `each` gives, and the values it goes over: `from..to..step`, or a list. @param {string} each @returns {[string, any[]]} */
+  /** The name an `each` gives, and the values it goes over: `from..to..step`, or a list. @param {string} each @returns {[string, unknown[]]} */
   const steps = (each) => {
     const [name, over] = split(each, '='), cells = work(), [from, to, by = 1] = over.split('..').map((text) => value(text, cells))
     return [name, !over.includes('..') ? over.split(LIST).map(read) : by > 0 ? Array.from({ length: Math.min(MOST, Math.max(0, Math.floor((to - from) / by + 1e-9) + 1 || 0)) }, (_, i) => from + i * by) : []]
@@ -87,7 +87,7 @@ export function shared(parts, { given, added, lang, locales }) {
     if (drawn) return { ...part, text: [drawn.heads, ...drawn.rows].map((row) => row.join(' | ')).join('\n') }
     if (!live) return part
     if (part.tag === 'app-card') return { ...part, attrs: { ...part.attrs, heading: spell(part.attrs.heading ?? '', cells) } }
-    if (part.tag === 'app-chart') return { ...part, text: from ? tally(part, /** @type {any} */ (shown.get(from))) : lines(part).map((line, i) => (i ? spelled(line, (text, digits) => plain(value(text, cells), digits)) : spell(line, cells))).join('\n') }
+    if (part.tag === 'app-chart') return { ...part, text: from ? tally(part, /** @type {ReturnType<typeof tabled>} */ (shown.get(from))) : lines(part).map((line, i) => (i ? spelled(line, (text, digits) => plain(value(text, cells), digits)) : spell(line, cells))).join('\n') }
     return SPELLED.includes(part.tag) ? { ...part, text: spell(part.text, cells) } : part
   }
   const now = () => [...fields.map(({ label }) => [label, base[label]]), ...worked.map(([name]) => [name, cells[name]])].map(([name, held]) => [name, typeof held === 'number' ? plain(held) : held]).filter(([, held]) => held !== '').map(([name, held]) => `${name}: ${held}`)

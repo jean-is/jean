@@ -26,8 +26,25 @@ export const listener = (handle) => async (req, res) => {
   else res.end()
 }
 
+/**
+ * A server that stops when its container does: on SIGTERM or SIGINT, no new connection, the idle ones closed, the rest
+ * (an answer streaming) ended after `grace`, then out. As host/serve.js's stopping(), which this image doesn't hold.
+ * @param {import('node:http').Server} server @param {number} [grace] milliseconds
+ */
+export function stopping(server, grace = 5_000) {
+  const stop = () => {
+    server.close(() => process.exit(0))
+    server.closeIdleConnections()
+    setTimeout(() => server.closeAllConnections(), grace).unref()
+    setTimeout(() => process.exit(0), grace + 1_000).unref()
+  }
+  process.once('SIGTERM', stop)
+  process.once('SIGINT', stop)
+  return server
+}
+
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const PORT = Number(process.env.PORT) || 8787
   const HOST = process.env.HOST ?? '127.0.0.1'
-  createServer(listener(gateway(JSON.parse(process.env.GATEWAY_CONFIG ?? '{}')))).listen(PORT, HOST, () => console.log(`Gateway on http://${HOST}:${PORT}/`))
+  stopping(createServer(listener(gateway(JSON.parse(process.env.GATEWAY_CONFIG ?? '{}'))))).listen(PORT, HOST, () => console.log(`Gateway on http://${HOST}:${PORT}/`))
 }

@@ -281,7 +281,7 @@ async function pick() {
       allowed.value = new Set(allowed.peek()).add(handle)
       return { name: handle.name, handle }
     } catch (error) {
-      if (/** @type {any} */ (error)?.name !== 'AbortError') throw error
+      if (/** @type {{ name?: string } | undefined} */ (error)?.name !== 'AbortError') throw error
       return null
     }
   }

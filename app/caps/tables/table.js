@@ -190,7 +190,7 @@ export function propertyOf(table, ref) {
  */
 export function checkCell(property, value) {
   const { name, type } = property
-  if (COMPUTED.includes(/** @type {any} */ (type))) return `${name} is worked out by Jean: it can't be set.`
+  if (COMPUTED.includes(/** @type {typeof COMPUTED[number]} */ (type))) return `${name} is worked out by Jean: it can't be set.`
   if (value === null) return null
   const choice = (/** @type {unknown} */ v) => typeof v === 'string' && v.trim() !== ''
   const steps = property.options?.map((option) => option.name) ?? []
@@ -221,7 +221,7 @@ export function checkCell(property, value) {
  * @returns {unknown}
  */
 export function converted(property, value, named) {
-  const text = Array.isArray(value) ? value.map((/** @type {any} */ one) => one?.name ?? one).join(', ') : typeof value === 'string' || typeof value === 'number' ? String(value) : /** @type {any} */ (value)?.name
+  const text = Array.isArray(value) ? value.map((/** @type {{ name?: unknown } | null} */ one) => one?.name ?? one).join(', ') : typeof value === 'string' || typeof value === 'number' ? String(value) : /** @type {{ name?: unknown } | null} */ (value)?.name
   if (typeof text !== 'string' || !text.trim()) return undefined
   const next = property.type === 'number' ? Number(text.replace(/\s/g, '').replace(',', '.')) : property.type === 'multi-select' ? text.split(/[,،、]/).map((one) => one.trim()).filter(Boolean) : property.type === 'relation' ? named?.(text) : text.trim()
   return checkCell(property, next) ? undefined : next

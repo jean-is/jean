@@ -73,7 +73,8 @@ test('an organisation’s copy goes by the name its policy gives it: on its tab,
   await closeSettings(page)
   await connectFakeBrain(page)
   await ask(page, 'Hello')
-  await expect.poll(() => prompts.at(-1)).toMatch(/^You are Acme Assistant, an assistant/)
+  // The task's title is asked in a request of its own beside the first answer's (ui/title.js), before or after it.
+  await expect.poll(() => prompts.find((prompt) => prompt.startsWith('You are '))).toMatch(/^You are Acme Assistant, an assistant/)
 })
 
 for (const lang of ['ar', 'ja']) {

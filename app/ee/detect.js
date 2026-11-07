@@ -147,8 +147,8 @@ export function leaves(given) {
   return found
 }
 
-/** What a message to a brain holds in words: its text, its files', its calls' arguments. @param {import('../core/types.js').ChatMessage} message */
-const wordsOf = (message) => [message.content, ...(/** @type {any} */ (message).documents ?? []).map((/** @type {any} */ part) => part.text), ...leaves(/** @type {any} */ (message).toolCalls?.map((/** @type {any} */ call) => call.args))].filter(Boolean).join('\n')
+/** What a message to a brain holds in words: its text, its files', its calls' arguments. @param {import('./types.js').Message} message */
+const wordsOf = (message) => [message.content, ...(message.documents ?? []).map((part) => part.text), ...leaves(message.toolCalls?.map((call) => call.args))].filter(Boolean).join('\n')
 
 const STRICT = /** @type {Record<string, number>} */ ({ allow: 0, ask: 1, never: 2 })
 /** What reaches outside, as a call's kind says, and what sends its words to a service of its own whatever its kind: a search's, a picture's or a film's provider. */
@@ -159,7 +159,7 @@ export const SENT = ['web_search', 'picture', 'film']
  * The hooks, the organisation's, outermost: a brain's step goes only to a brain allowed to read what the task holds, and
  * a call's arguments leave only as `then` says. What each case says comes from `say`.
  * @param {Dlp} dlp
- * @param {{ isLocal: (brain: any) => boolean, refused: (found: string[]) => AsyncIterable<any>, reason: (found: string[]) => string, why: (found: string[]) => string, told?: (found: string[], where: 'brain' | 'call') => void }} say
+ * @param {{ isLocal: (brain: import('../core/types.js').BrainConfig) => boolean, refused: (found: string[]) => AsyncIterable<import('../core/types.js').StreamEvent>, reason: (found: string[]) => string, why: (found: string[]) => string, told?: (found: string[], where: 'brain' | 'call') => void }} say
  * @returns {import('../core/hooks.js').Hook[]}
  */
 export function dlpHooks(dlp, say) {
@@ -167,10 +167,10 @@ export function dlpHooks(dlp, say) {
   const then = dlp.then ?? 'ask'
   /** What each message was found to hold, read once. @type {WeakMap<object, string[]>} */
   const read = new WeakMap()
-  /** @param {any} message */
+  /** @param {import('./types.js').Message} message */
   const holds = (message) => read.get(message) ?? /** @type {string[]} */ (read.set(message, find(wordsOf(message))).get(message))
   return [
-    { on: 'turn.step', tier: 'policy', run: (e, next) => {
+    { on: 'turn.step', tier: 'policy', run: (/** @type {import('./types.js').Step} */ e, next) => {
       if (!dlp.brains || say.isLocal(e.brain) || dlp.brains.includes(e.brain.id)) return next(e)
       // What can be masked goes masked; a label marks the whole of a document, which hiding its names doesn't change.
       const found = [...new Set([...find(e.system ?? ''), ...e.messages.flatMap(holds)])].filter((id) => !dlp.mask || id === 'label')
