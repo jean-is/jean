@@ -1,7 +1,7 @@
 // Memory, projects and skills (0.4), the version's done-when: two projects keep separate
 // memories, and a skill is created from repeated requests. Plus "What Jean knows about you".
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, openSettings, closeSettings } from './helpers.js'
+import { start, connectFakeBrain, ask, answered, turnOn, openSettings, closeSettings } from './helpers.js'
 
 /** Makes a project in a light other than Jean's own (the first swatch), and says which.
  * @param {import('@playwright/test').Page} page @param {string} name */
@@ -294,4 +294,35 @@ test('asked for a skill, Jean asks what it needs, saves it, and its example trie
   const notes = await page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.flatMap((record) => (record.update?.sessionUpdate === '_system_note' ? [record.update.text] : [])).join('\n'))
   expect(notes).toContain('- team-update: When the user wants their weekly team update written from their notes.')
   expect(notes).toContain('2. Write three short bullet points.')
+})
+
+test('many tasks in the home project: those about one thing are offered as a project, and taken, moved there with their files (D716)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  // One task that shared a file, about the bakery, then thirty-three more, four of them about it too.
+  await page.locator('.composer input[type="file"]').setInputFiles({ name: 'flour.txt', mimeType: 'text/plain', buffer: Buffer.from('Flour: 25 kg a week') })
+  await expect(page.locator('.attachment[data-status="ready"]')).toHaveCount(1)
+  await ask(page, 'How much flour does the boulangerie need?')
+  await answered(page)
+  await page.evaluate(async () => {
+    const [{ app, keepRecords, refreshConversations }, { createConversation }, { metaRecord }] = await Promise.all([import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js')])
+    const first = app.conversations.value[0].path
+    await keepRecords(first, [metaRecord('user', { title: 'Flour for the boulangerie' })])
+    const titles = ['Boulangerie opening hours', 'Poster for the boulangerie', 'Hiring at the boulangerie', 'Boulangerie prices',
+      ...Array.from({ length: 29 }, (_, i) => `Question ${String.fromCharCode(97 + (i % 26))}${String.fromCharCode(97 + Math.floor(i / 26))}xyzzy`)]
+    for (const [i, title] of titles.entries()) {
+      const { path } = await createConversation(app.fs, { projectDir: app.projectDir, by: 'test', now: new Date(Date.now() - (i + 1) * 60_000) })
+      await keepRecords(path, [metaRecord('user', { title })])
+    }
+    await refreshConversations()
+  })
+  const toast = page.locator('.toast', { hasText: 'These tasks look like one project: Boulangerie' })
+  await toast.getByRole('button', { name: 'Make it a project' }).click()
+  // Its dialog opens on it, to name it otherwise; the five tasks are there, the file with them.
+  await expect(page.locator('app-project-dialog dialog[open] input[name="name"]')).toHaveValue('Boulangerie')
+  const moved = await page.evaluate(async () => {
+    const { app } = await import('/ui/state.js')
+    return { here: app.conversations.value.length, project: app.project.value.data.name, file: await app.fs.exists(`${app.projectDir}/files`) }
+  })
+  expect(moved).toEqual({ here: 5, project: 'Boulangerie', file: true })
 })

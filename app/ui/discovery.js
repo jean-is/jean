@@ -263,6 +263,10 @@ effect(() => {
   // Someone who dictates often may rather talk.
   if ((effective.value.settings.dictated ?? 0) >= 3) offerOnce('live')
 })
+// Many tasks in the home project: those that go together could be a project, looked for once a week (D716).
+effect(() => {
+  if (app.conversations.value.length >= 30 && app.project.value.data.default === true && Date.now() - (Date.parse(effective.value.settings.groupedAt ?? '') || 0) > 6.048e8) void import('../caps/projects/grouping.js').then((module) => module.suggest())
+})
 // Asking an answer again twice, or a reply Intuition reads as unhappy: an answer could be told it wasn't right (D712).
 effect(() => { if ((effective.value.settings.retried ?? 0) >= 2) offerOnce('feedback') })
 effect(() => {

@@ -111,7 +111,7 @@ Once on, searching the project's files finds passages by what they mean as well 
 Once on, answers in English, French, German, Spanish, Italian or Portuguese are read aloud in a natural voice made on this device, Kyutai's Pocket TTS; the system's voices read the other languages. Talking hands-free reads its answers with it too. Each language's voice is a download of its own: the first when it is turned on, the others offered the first time an answer in them is read aloud. {settings.title} › {settings.general} turns it off or on again, and says whose voice it is.
 
 ## projects
-A project keeps its own tasks, files, instructions, memory, skills and brain, apart from the rest. Its name in the header opens the others, and makes a new one. The assistants of two projects can meet when the user asks, once they allow it.
+A project keeps its own tasks, files, instructions, memory, skills and brain, apart from the rest. Once the home project holds many tasks, the app offers, in a toast, those about one thing as a project of their own, found on this device by their titles; taken, they move there with their files. Its name in the header opens the others, and makes a new one. The assistants of two projects can meet when the user asks, once they allow it.
 
 ## folders
 Dropped or picked, a folder of the computer opens a task, or every new one in its project, on it: you find, read and change its files where they are, showing each change first. In Chrome and Edge; elsewhere a folder is a read-only copy, and what changed is saved as one zip.

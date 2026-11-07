@@ -62,6 +62,8 @@ export async function bringIn(files) {
     // Its Gems or projects are Jean's projects now: the rooms they are in show.
     if (result.projects) unlock('projects')
     notify(t('backup.imported', { count: result.conversations }))
+    // What was brought in may hold a project's worth of tasks (D716).
+    void import('../projects/grouping.js').then((module) => module.suggest())
   } catch (error) {
     console.warn('Import', error)
     notify(t('backup.notABackup'), { alert: true })

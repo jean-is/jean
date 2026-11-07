@@ -128,6 +128,7 @@ A project is a self-contained folder with its own files, conversations, instruct
 - **Meetings** (D224). Asked to hold a meeting, Jean has the assistants of the other projects speak on the topic in rounds, each from its own project's instructions, memory and latest tasks ([architecture.md](architecture.md#meetings)); then it says what was decided and what needs the user. A project kept on this device doesn't hear a brain in the cloud.
 - **Its name** (D18). The home project's name is never translated: the UI calls it by its assistant's.
 - **Hidden default.** There is always a default project, invisible until the Projects capability is discovered.
+- **Tasks that go together** (D716). Once the home project holds thirty tasks, once a week, and once a bring-in ends, Jean looks on this device for tasks about one thing, by the telling words of their titles, four at least. A toast offers the first group not offered before as a project; taken, its tasks move there with the files they shared or Jean made, and its dialog opens, to name it otherwise.
 
 ## Profiles
 
