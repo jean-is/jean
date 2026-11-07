@@ -144,7 +144,7 @@ async function start() {
   addEventListener('pagehide', stamp)
   document.addEventListener('visibilitychange', stamp)
 
-  // Old tasks let go (D718); what another app gave (D714).
+  // D718, D714.
   if (app.settings.value.forget) import('./forget.js').then((module) => module.forget()).catch(console.warn)
   const shared = new URLSearchParams(location.search).get('shared')
   if (shared) import('./received.js').then((module) => module.received(shared)).catch(console.warn)

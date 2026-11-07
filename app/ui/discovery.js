@@ -263,7 +263,7 @@ effect(() => {
   // Someone who dictates often may rather talk.
   if ((effective.value.settings.dictated ?? 0) >= 3) offerOnce('live')
 })
-// Tasks that go together, once a week (D716); an answer asked again twice (D712).
+// Grouping, weekly (D716); Feedback (D712).
 effect(() => {
   if (app.conversations.value.length >= 30 && app.project.value.data.default === true && Date.now() - (Date.parse(effective.value.settings.groupedAt ?? '') || 0) > 6.048e8) void import('../caps/projects/grouping.js').then((module) => module.suggest())
 })
