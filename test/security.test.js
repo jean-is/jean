@@ -29,6 +29,7 @@ test('each rule finds what it says', () => {
   ])) assert.deepEqual(rules(text), [rule], text)
   assert.deepEqual(rules('Math.random()', 'app/ee/x.js'), ['weak-random'])
   assert.deepEqual(rules('Math.random()', 'host/host.js'), ['weak-random'])
+  assert.deepEqual(rules('Math.random()', 'relay/relay.js'), ['weak-random'])
 })
 
 test('it leaves alone what looks like it and isn’t', () => {

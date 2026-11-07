@@ -91,7 +91,7 @@ export function codeOf(text, strings = false) {
 }
 
 /** Paths where randomness guards something. */
-const GUARDED = /^(app\/ee\/|app\/ui\/(seal|secrets|storage-worker)\.js|app\/caps\/(share|lock|connections|signin|receipt)\/|app\/core\/oauth\.js|host\/|requests\/|gateway\/)/
+const GUARDED = /^(app\/ee\/|app\/ui\/(seal|secrets|storage-worker)\.js|app\/caps\/(share|lock|connections|signin|receipt)\/|app\/core\/oauth\.js|host\/|relay\/|requests\/|gateway\/)/
 
 /**
  * What a module does against the rules, each a pattern on its code, or on its code with its strings where a string is what's wrong.
@@ -138,7 +138,7 @@ export function scan(path, text) {
 /** Modules that are code of Jean's, its services' or its build's, not third party's. @returns {string[]} */
 export function modules() {
   return listed('*.js', '*.mjs')
-    .filter((path) => path && /^(app|gateway|host|requests|cli|scripts|deploy)\//.test(path) && !/^app\/vendor\//.test(path))
+    .filter((path) => path && /^(app|gateway|host|relay|requests|cli|scripts|deploy)\//.test(path) && !/^app\/vendor\//.test(path))
 }
 
 /** What a secret looks like: never in a tracked file. */

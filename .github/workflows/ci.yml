@@ -56,7 +56,7 @@ jobs:
           name: sbom
           path: sbom.cdx.json
 
-  # Both container images (D232) in the repository's packages on ghcr.io, pushed with the run's own
+  # The three container images (D232) in the repository's packages on ghcr.io, pushed with the run's own
   # token: main as edge and sha-<commit>, a version's tag (v0.9) as 0.9 and latest. For amd64
   # and arm64, the Dockerfile building Jean's files once, on the runner's own platform, each image with
   # its build's provenance and its bill of materials.
@@ -76,6 +76,9 @@ jobs:
           - image: jean-gateway
             target: gateway
             description: Jean's gateway, on Node on port 8787, for the services a browser can't reach
+          - image: jean-relay
+            target: relay
+            description: Jean's relay, on Node on port 8791, where a person's devices and the people they send to meet
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
       - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4

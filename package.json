@@ -14,7 +14,7 @@
     "#app/*": "./app/*"
   },
   "scripts": {
-    "dev": "npm run build && node scripts/serve.js --gateway --share --home",
+    "dev": "npm run build && node scripts/serve.js --gateway --share --relay --home",
     "dev:gateway": "npm run build && node scripts/serve.js --gateway",
     "dev:share": "npm run build && node scripts/serve.js --share",
     "dev:home": "npm run build && node scripts/serve.js --home",

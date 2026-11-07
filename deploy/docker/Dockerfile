@@ -1,9 +1,10 @@
 # syntax=docker/dockerfile:1
 # Jean in a container (D232): its files, as a web deploy serves them, behind nginx on port 8080,
-# as a user other than root. The gateway (D191) is a second, optional image: --target gateway.
+# as a user other than root. The gateway (D191) and the relay (D45) are optional images: --target gateway, --target relay.
 # Built from the repository's root, as compose.yaml does:
 #   docker build -f deploy/docker/Dockerfile -t jean .
 #   docker build -f deploy/docker/Dockerfile --target gateway -t jean-gateway .
+#   docker build -f deploy/docker/Dockerfile --target relay -t jean-relay .
 
 # npm run build:web: third-party code into vendor/, the listings, then dist/web/, Jean's own code minified
 # and each file beside itself in brotli and gzip (D318), with esbuild, a dev dependency.
@@ -31,6 +32,26 @@ ENV HOST=0.0.0.0 PORT=8787
 USER node
 EXPOSE 8787
 CMD ["node", "gateway/serve.js"]
+
+# The relay's empty folder, made on the builder's own platform like Jean's files, so that the relay's image runs
+# nothing under emulation either.
+FROM --platform=$BUILDPLATFORM node:26-alpine AS relay-data
+RUN mkdir /data
+
+# The relay: its two modules and the two of the share host's it uses, and Node, nothing to install, configured
+# by RELAY_CONFIG. It keeps its mailboxes in /data, owned by the user it runs as, so that a volume Docker makes
+# there starts as theirs.
+FROM node:26-alpine AS relay
+WORKDIR /app
+COPY package.json ./
+COPY host/host.js host/serve.js host/
+COPY relay/ relay/
+COPY --from=relay-data --chown=node:node /data /data
+ENV HOST=0.0.0.0 PORT=8791 RELAY_DIR=/data
+USER node
+VOLUME /data
+EXPOSE 8791
+CMD ["node", "relay/serve.js"]
 
 # Jean: nginx's own image without root. Its entrypoint writes nginx.conf into conf.d/ with
 # CONTENT_SECURITY_POLICY in place, an extra policy that only tightens Jean's own (none by default),

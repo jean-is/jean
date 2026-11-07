@@ -11,6 +11,9 @@
 // shares in HOST_DIR (a folder of the system's temporary one by default); its viewer draws from this
 // server's own files, which any page may then read, and the policy names it, as jean.is's names
 // hst.ing. Sharing is still found as anywhere else (D281). HOST_CONFIG may add to its configuration.
+// With --relay (npm run dev), the relay (relay/, D45 · D226) runs beside it on RELAY_PORT (8791 by default), for Jean
+// opened from here, keeping its mailboxes in RELAY_DIR (a folder of the system's temporary one by default), and the
+// policy names it, as jean.is's names its own. RELAY_CONFIG may add to its configuration.
 // With --budgets (npm run dev, dev:gateway, dev:share and start), it checks the budgets as it starts and after
 // each change to app/, cli/ or budgets.json, and says as soon as one is over, still serving; after each
 // change it writes again what a build writes in app/ and git never holds (capabilities.json, the manifests),
@@ -63,11 +66,18 @@ const GATEWAY = process.argv.includes('--gateway') ? withGitHub(JSON.parse(proce
 const relay = GATEWAY && listener((request) => gateway({ ...GATEWAY, origins: [...GATEWAY.origins ?? [], new URL(request.url).origin] })(request))
 /** The share host's port, with --share; 0 without. */
 const SHARE_PORT = process.argv.includes('--share') ? Number(process.env.SHARE_PORT) || 8788 : 0
+/** The relay's port, with --relay; 0 without. */
+const RELAY_PORT = process.argv.includes('--relay') ? Number(process.env.RELAY_PORT) || 8791 : 0
+/** Whether this server's policy names anything, for Jean to read it. */
+const POLICY = Boolean(GATEWAY || SHARE_PORT || RELAY_PORT)
 /**
  * The addresses this server's policy names for Jean opened at `at` (its host and port): the gateway
- * there, the share host on the same name. @param {string} at
+ * there, the share host and the relay on the same name. @param {string} at
  */
-const named = (at) => ({ ...(GATEWAY && { gateway: `http://${at}/gateway` }), ...(SHARE_PORT && { share: `http://${new URL(`http://${at}`).hostname}:${SHARE_PORT}/` }) })
+const named = (at) => {
+  const { hostname } = new URL(`http://${at}`)
+  return { ...(GATEWAY && { gateway: `http://${at}/gateway` }), ...(SHARE_PORT && { share: `http://${hostname}:${SHARE_PORT}/` }), ...(RELAY_PORT && { relay: `http://${hostname}:${RELAY_PORT}/` }) }
+}
 /** With --home, jean.is's own pages, made as build:web makes them for it. */
 const HOME = process.argv.includes('--home')
 /** With --home, the request service, each request printed. */
@@ -154,7 +164,7 @@ export async function handle (req, res) {
     if (made && reports && extname(made.path) === '.html') reportOnly(res, req, made.text)
     if (made) return send(res, req, extname(made.path), Buffer.from(made.text))
   }
-  if ((GATEWAY || SHARE_PORT) && pathname === '/policy.json') return send(res, req, '.json', Buffer.from(JSON.stringify({ urls: named(req.headers.host ?? `${HOST}:${PORT}`) })))
+  if (POLICY && pathname === '/policy.json') return send(res, req, '.json', Buffer.from(JSON.stringify({ urls: named(req.headers.host ?? `${HOST}:${PORT}`) })))
   const example = pathname.startsWith('/examples/')
   const asked = example ? resolveRequest(pathname.slice('/examples'.length), EXAMPLES) : resolveRequest(req.url ?? '/')
   if (!asked) return fail(res, 404, 'Not found')
@@ -168,7 +178,7 @@ export async function handle (req, res) {
   if (!info?.isFile()) return fail(res, 404, 'Not found')
   // Git holds the worker without its version (D74): it goes out with the one capabilities.json names, as a deploy's does.
   if (file === join(APP, 'sw.js')) return send(res, req, '.js', Buffer.from(await stampedWorker(APP)))
-  if ((GATEWAY || SHARE_PORT) && file === join(APP, 'index.html')) {
+  if (POLICY && file === join(APP, 'index.html')) {
     return send(res, req, '.html', Buffer.from((await readFile(file, 'utf8')).replace('</head>', '<meta name="app-policy" content="policy.json">\n</head>')))
   }
   if (reports && extname(file) === '.html') {
@@ -221,7 +231,7 @@ async function homePage (pathname, at) {
  */
 function makeSite (at) {
   return new Promise((resolve) => {
-    const worker = new Worker(new URL(import.meta.url), { workerData: { at, policy: Boolean(GATEWAY || SHARE_PORT) } })
+    const worker = new Worker(new URL(import.meta.url), { workerData: { at, policy: POLICY } })
     worker.once('message', (/** @type {{ files: Record<string, string>, problems: string }} */ { files, problems }) => {
       if (problems !== found) console.warn(problems ? `site: what its pages must be and aren't (site/checks.js):\n${problems}` : 'site: every page is as it must be')
       found = problems
@@ -366,6 +376,23 @@ async function shareHost () {
   server.listen(SHARE_PORT, HOST, () => console.log(`Share host on http://${HOST}:${SHARE_PORT}/, keeping shares in ${dir}`))
 }
 
+/** The relay of --relay, for Jean at either name it is opened from here (localhost or 127.0.0.1). */
+async function relayServer () {
+  const [{ relay }, { folder }, { listener: hostListener }] = await Promise.all([import('../relay/relay.js'), import('../relay/serve.js'), import('../host/serve.js')])
+  /** @type {import('../relay/relay.js').Config} */
+  const config = JSON.parse(process.env.RELAY_CONFIG ?? '{}')
+  const dir = process.env.RELAY_DIR || join(tmpdir(), 'jean-mailboxes')
+  const store = folder(dir, null)
+  await store.sweep()
+  const origins = [`http://localhost:${PORT}`, `http://${HOST}:${PORT}`, ...config.origins ?? []]
+  const server = createServer(hostListener(relay({ ...config, origins, store }), false))
+  server.on('error', (error) => {
+    console.error(`serve: the relay: ${error.message}`)
+    process.exit(1)
+  })
+  server.listen(RELAY_PORT, HOST, () => console.log(`Relay on http://${HOST}:${RELAY_PORT}/, keeping mailboxes in ${dir}`))
+}
+
 function main () {
   const server = createServer((req, res) => {
     handle(req, res).catch((error) => {
@@ -384,6 +411,10 @@ function main () {
   })
   if (SHARE_PORT) shareHost().catch((error) => {
     console.error(`serve: the share host: ${error.message}`)
+    process.exit(1)
+  })
+  if (RELAY_PORT) relayServer().catch((error) => {
+    console.error(`serve: the relay: ${error.message}`)
     process.exit(1)
   })
 }

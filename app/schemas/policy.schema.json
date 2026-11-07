@@ -398,6 +398,9 @@
         "share": {
           "$ref": "#/$defs/link"
         },
+        "relay": {
+          "$ref": "#/$defs/link"
+        },
         "siteIcon": {
           "$ref": "#/$defs/link"
         },
@@ -1522,6 +1525,16 @@
                     ]
                   },
                   "share": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/link"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "relay": {
                     "anyOf": [
                       {
                         "$ref": "#/$defs/link"
