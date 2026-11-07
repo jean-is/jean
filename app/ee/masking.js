@@ -95,7 +95,7 @@ async function flaggedIn(text) {
 const lastRead = new Map()
 
 /** The words the person added: more to hide, never less. */
-const addedWords = () => /** @type {string[]} */ (/** @type {{ maskWords?: string[] }} */ (app.settings.peek()).maskWords ?? [])
+const addedWords = () => app.settings.peek().maskWords ?? []
 
 /** Whether the Computer can reach anything: a site it lists or a registry goes without a card of its own. */
 const reaches = () => computerRights(app.settings.value, app.policy).rights.internet !== 'off'
@@ -119,7 +119,7 @@ async function addWord(event) {
   const input = /** @type {HTMLInputElement} */ (form.elements.namedItem('word'))
   const word = input.value.trim()
   if (word.length < 2) return
-  if (!addedWords().includes(word)) await updateSettings(/** @type {Partial<import('../core/settings.js').Settings>} */ ({ maskWords: [...addedWords(), word] }))
+  if (!addedWords().includes(word)) await updateSettings({ maskWords: [...addedWords(), word] })
   input.value = ''
   notify(t('dlp.mask.added'))
 }

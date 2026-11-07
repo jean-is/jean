@@ -25,7 +25,6 @@ await Promise.all([useStrings('extensions'), styleSheet(new URL('extensions.css'
 /** @typedef {import('../../core/hooks.js').Hook} Hook */
 /** @import { Settings } from '../../core/settings.js' */
 /** Each extension on this device: on or not, turned off for failing, the address its files came from and the rights taken back. @typedef {Record<string, { on?: boolean, failed?: boolean, from?: string, taken?: string[] }>} Switches */
-/** A change of Settings that sets those, which Settings' own type leaves out. @typedef {Partial<Settings> & { extensions: Switches }} Switched */
 /** A message to an extension's sandbox (extension-worker.js). @typedef {{ type: string, id?: string, [field: string]: unknown }} Sent */
 /**
  * An extension running: its frame, what it hooks and draws, and what waits on it: answers by id, and the
@@ -59,7 +58,7 @@ let ids = 0
 /** Whether an extension holds a right: asked for when it was added, and not taken back since. @param {Manifest} manifest @param {Right} right */
 export const granted = (manifest, right) => manifest.rights.includes(right) && !switches()[manifest.name]?.taken?.includes(right)
 /** Each extension's switches on this device. @returns {Switches} */
-export const switches = () => /** @type {Settings & { extensions?: Switches }} */ (effective.value.settings).extensions ?? {}
+export const switches = () => effective.value.settings.extensions ?? {}
 /** Plain data, as a message carries it. @param {unknown} value */
 const plain = (value) => (value === undefined ? undefined : JSON.parse(JSON.stringify(value)))
 
@@ -154,7 +153,7 @@ export function stop(name) {
 /** Counts an extension's failure, and turns it off at the last one, saying so; stopped meanwhile, it no longer counts. @param {Host} host */
 function failing(host) {
   if (++host.failed !== FAILURES || running.peek().get(host.manifest.name) !== host) return
-  updateSettings(/** @type {Switched} */ ({ extensions: { ...switches(), [host.manifest.name]: { ...switches()[host.manifest.name], on: false, failed: true } } }))
+  updateSettings({ extensions: { ...switches(), [host.manifest.name]: { ...switches()[host.manifest.name], on: false, failed: true } } })
   notify(t('extensions.off', { title: shownIn(host.manifest, locale.peek()).title }), { alert: true })
 }
 
@@ -297,7 +296,7 @@ const drawing = (slot) => [...running.value.values()].filter((host) => host.slot
 export async function take(manifest, right, back) {
   const own = switches()[manifest.name] ?? {}
   stop(manifest.name)
-  await updateSettings(/** @type {Switched} */ ({ extensions: { ...switches(), [manifest.name]: { ...own, taken: [...(own.taken ?? []).filter((one) => one !== right), ...(back ? [right] : [])] } } }))
+  await updateSettings({ extensions: { ...switches(), [manifest.name]: { ...own, taken: [...(own.taken ?? []).filter((one) => one !== right), ...(back ? [right] : [])] } } })
 }
 
 /** What a manifest's mistake is, said to the brain. */

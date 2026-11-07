@@ -43,7 +43,7 @@ export function page() {
   return html`<button class="back button subtle" @click=${() => go('')}>${icons.back} ${t('settings.general')}</button>
     <header class="general-head"><div><h2 tabindex="-1">${t('cap.reader.name')}</h2><p class="lede">${t('cap.reader.text', { size: formatBytes(EACH) })}</p></div>
       <input type="checkbox" class="switch" role="switch" title=${t('cap.reader.name')} .checked=${on()}
-        @change=${(/** @type {Event} */ e) => updateSettings(/** @type {any} */ ({ naturalVoice: /** @type {HTMLInputElement} */ (e.target).checked }))}></header>
+        @change=${(/** @type {Event} */ e) => updateSettings({ naturalVoice: /** @type {HTMLInputElement} */ (e.target).checked })}></header>
     <ul class="list general">${langs.map((lang) => html`<li><span class="item-text"><strong>${named(lang)}</strong>
       <small><bdi>${SPEAKERS[lang]}</bdi>${here.value.has(lang) ? ` · ${t('reader.here', { size: formatBytes(EACH) })}` : ''}</small></span>${end(lang)}</li>`)}</ul>
     <p class="hint"><button class="link-button" @click=${() => openSettings('data/space')}>${t('reader.room')}</button></p>

@@ -152,7 +152,7 @@ export async function drawingOf() {
   if (!render) return null
   const { settings } = effective.peek()
   const { allows } = pageRights(settings, app.policy)
-  const styles = allows.maps ? mapStyles(/** @type {Parameters<typeof mapStyles>[0]} */ (settings), app.policy) : null
+  const styles = allows.maps ? mapStyles(settings, app.policy) : null
   const imports = JSON.parse(document.querySelector('script[type="importmap"]')?.textContent ?? '{}').imports ?? {}
   // Its pages offline, as Jean's are unless Settings say otherwise, and maps as they were.
   return { drawing: { render, imports, settings: { look: app.look.peek(), kinds: [...declared.peek()], pages: { ...allows, web: false, network: false } }, sounds: sounds.version, maps: Boolean(styles) }, styles }

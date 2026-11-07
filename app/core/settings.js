@@ -4,60 +4,7 @@ import { ulid } from './ulid.js'
 
 /** @import { FS, BrainConfig, RuleValue } from './types.js' */
 
-/**
- * @typedef {Object} Settings
- * @property {1} format
- * @property {string | null} locale
- * @property {BrainConfig[]} brains
- * @property {string | null} activeBrain
- * @property {Record<string, RuleValue>} rules
- * @property {import('./rules.js').Guard[]} [guards]
- * @property {string | null} voice
- * @property {string} [name]                  what the user is called, set by them or once by Jean from a conversation; '' when they cleared it
- * @property {string[]} unlocked              capabilities discovered so far
- * @property {string[]} [off]                 turned off by the user since (D433)
- * @property {boolean} auto                   Auto picks the brain for each message
- * @property {boolean} cloud                  false: keep messages on this device
- * @property {Record<string, string>} offers  offer id → when the user answered it (ISO)
- * @property {boolean} [memory]               false: Jean neither notes nor reads what it noticed
- * @property {Connection[]} [connections]      services connected through MCP (their keys and tokens are secrets)
- * @property {Record<string, Record<string, RuleValue>>} [services]  a connection's own rules, by its id
- * @property {number} [dictated]               how many times the user dictated (live conversation is offered)
- * @property {number} [cited]                  how many answers cited their sources (Double-check is offered)
- * @property {number} [browsed]                how many links from answers the user opened (the browser is offered)
- * @property {number} [photos]                 how many pictures the user shared from a touch screen (the camera is offered, D645)
- * @property {boolean} [notifications]        false: no notification when a task is done out of sight
- * @property {number} [stepped]                how many requests took several calls (Flows is offered, D218)
- * @property {boolean} [hurried]              a brain was told to answer now: Settings › Brains says how much each thinks (D414)
- * @property {boolean} [restored]             a backup was restored here (Sync is offered, D286)
- * @property {string} [backedUp]             when the last backup was made here
- * @property {string[]} [windowed]             sites that open in a tab of their own, not in the browser (D140)
- * @property {boolean} [terminal]             the user opened the terminal: the bar has a button for it (D166)
- * @property {{ width?: number }} [dock]  how wide the panes' side is beside the conversation, a share of the window, as the user set it (D144, D635)
- * @property {{ scripts?: boolean, web?: boolean, network?: boolean, sites?: string[] }} [pages]  what a web page in a pane may do, and which sites it may reach (D143)
- * @property {Partial<Record<keyof typeof DEFAULT_URLS, string>>} [urls]  overrides of the default addresses
- * @property {import('../caps/computer/net.js').ComputerSettings} [computer]  what the Computer may reach, and where its packages come from (D162)
- * @property {Look} [look]                     how Jean looks, and the user's own touches (D111)
- * @property {string[]} [sources]              addresses of skills indexes, when the user changed the default list (D121)
- * @property {string[]} [meet]                 projects whose assistants meet without asking first (D224)
- * @property {boolean} [films]                  films are made without asking first (D251)
- * @property {string} [pictures]               which makes pictures on this device (D263)
- * @property {{ date?: boolean, log?: boolean }} [certificates]  certificates dated by witnesses, recorded in a public log, as the user chose (D276)
- * @property {string[]} [searches]              web search's sources on (D271)
- * @property {boolean} [search]               false: web search is off, from + in the box (D304)
- */
-
-/**
- * A look by its id (Tilde when absent, D373), and what the user changed over it: colours as
- * `#rrggbb`, a text size as a share of the browser's, a typeface, and their own CSS.
- * @typedef {{ id?: string, accent?: string, background?: string, size?: number, font?: string, css?: string }} Look
- */
-
-/**
- * A service connected (D21, D87): the further servers its one sign-in reaches (D344), the projects
- * it is kept to, whether it is reached through the gateway (D191), and who signed in.
- * @typedef {{ id: string, name: string, url: string, servers?: string[], auth: 'none' | 'key' | 'oauth' | 'oidc', projects?: string[], gateway?: boolean, account?: string }} Connection
- */
+/** Its shapes live in types.d.ts, which never ships. @typedef {import('./types.js').Settings} Settings @typedef {import('./types.js').Look} Look @typedef {import('./types.js').ServiceConnection} Connection */
 
 /**
  * Addresses of services Jean can use, each replaceable in settings and by policy
