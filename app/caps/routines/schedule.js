@@ -37,7 +37,7 @@ const AT = /^([01]?\d|2[0-3]):([0-5]\d)$/
  */
 export function schedule({ every, on, at }, now = new Date()) {
   const time = AT.exec(String(at ?? '').trim())
-  if (!EVERY.includes(/** @type {any} */ (every)) || !time) return null
+  if (!EVERY.includes(/** @type {never} */ (every)) || !time) return null
   const given = String(on ?? '').trim().toLowerCase()
   const named = DAYS.indexOf(given)
   const day = named >= 0 ? named : Number(on)
@@ -53,7 +53,7 @@ export function schedule({ every, on, at }, now = new Date()) {
 
 /** What sets a routine off, from what the brain or the page gives, or null when it isn't one. @param {{ when?: unknown, if?: unknown }} given @returns {Trigger | null} */
 export function trigger({ when, if: question }) {
-  if (!WHEN.includes(/** @type {any} */ (when))) return null
+  if (!WHEN.includes(/** @type {never} */ (when))) return null
   const asked = String(question ?? '').trim()
   return { when: /** @type {Trigger['when']} */ (when), ...(asked && { if: asked }) }
 }

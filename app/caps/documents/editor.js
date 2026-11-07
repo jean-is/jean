@@ -36,8 +36,7 @@ import { blocks } from './blocks.js'
 import { drawnViews, inPlace, forms, contents, contentsView } from './drawn.js'
 import '../../ui/shown.js'
 
-/** @typedef {import('prosemirror-model').Node} PMNode */
-/** @typedef {import('prosemirror-state').Command} Command */
+/** @import { PMNode, Command, Change, Keep, Creations } from './types.js' */
 
 const { nodes: N, marks: M } = schema
 const MAC = /Mac|iP(hone|[oa]d)/.test(navigator.platform)
@@ -117,7 +116,6 @@ function taken(view, event, data, at, keep) {
   insertHTML(view, html ?? '', at, pictures, keep)
   return true
 }
-/** @typedef {(file: File) => Promise<string | null>} Keep a picture kept, its place from the document's folder */
 
 /** A copy's pictures as <img>, in ProseMirror's inert document, so that they paste as pictures. */
 const COPY = new DOMSerializer({ ...DOMSerializer.nodesFromSchema(schema), image: ({ attrs }) => ['img', attrs] }, DOMSerializer.marksFromSchema(schema))
@@ -250,7 +248,7 @@ async function follow(uri) {
 const followSelected = ({ selection }) => selection instanceof NodeSelection && selection.node.type === N.ref && (follow(selection.node.attrs.uri), true)
 /** What "[[" offers of each kind, by a glyph. */
 const KINDS = /** @type {Record<string, string>} */ ({ documents: '¶', tables: '⊞', pictures: '▨', films: '▶', music: '♪', slides: '▭', apps: '⧉' })
-const refKey = /** @type {PluginKey<any>} */ (new PluginKey('refs'))
+const refKey = /** @type {typeof slashKey} */ (new PluginKey('refs'))
 
 /** A new collection, held where the line is. @type {Command} */
 const tableView = (state, _dispatch, view) => {
@@ -388,7 +386,7 @@ export function create(box, { name, path, markdown: text, pictures, write, keep,
   /** The change the bar's arrows went to last. @type {number | null} */
   let current = null
 
-  /** Jean's changes decided all at once, which Undo or ⌘Z gives back until the document changes. @type {{ kind: string, was: import('./suggest.js').Change[], doc: PMNode, had: typeof tally } | null} */
+  /** Jean's changes decided all at once, which Undo or ⌘Z gives back until the document changes. @type {{ kind: string, was: Change[], doc: PMNode, had: typeof tally } | null} */
   let last = null
   const back = () => {
     if (last?.doc !== view.state.doc) return false
@@ -437,7 +435,7 @@ export function create(box, { name, path, markdown: text, pictures, write, keep,
     return known.map(({ path, name }) => ({ key: path, name, typed: true, glyph: '⊞', words: `collection ${t('collection')}`, run: holding(path) }))
   }
   // All the project's creations, which "[[" offers (D575), read again a moment apart: a collection or a picture drawn where the line is, as "/" puts one, any other referred to.
-  let made = /** @type {any[]} */ ([])
+  let made = /** @type {Creations} */ ([])
   let looked = 0
   const creations = () => {
     if (Date.now() - looked > 2000) {
@@ -487,7 +485,7 @@ export function create(box, { name, path, markdown: text, pictures, write, keep,
       view.updateState(view.state.apply(tr))
       if (tr.docChanged) later(save, 300)
       // Changed since: the changes decided all at once stay so, and their Undo goes.
-      if (tr.docChanged && last) { if (/** @type {any} */ (app.toast.peek()?.action)?.run === back) app.toast.value = null; last = null }
+      if (tr.docChanged && last) { if (/** @type {{ run?: () => void } | undefined} */ (app.toast.peek()?.action)?.run === back) app.toast.value = null; last = null }
       if (tr.selectionSet || tr.docChanged) later(select, 250)
     },
     handleDOMEvents: {
@@ -573,7 +571,7 @@ export function create(box, { name, path, markdown: text, pictures, write, keep,
     hold?.(left.length ? { markdown: serialize(proposal(view.state), sources), notes: left.map((change) => change.why) } : null)
   }
 
-  /** The bar over the changes (ui/review.js). @param {import('./suggest.js').Change[]} changes */
+  /** The bar over the changes (ui/review.js). @param {Change[]} changes */
   function showReview(changes) {
     if (!changes.some((change) => change.id === current)) current = null
     const at = changes.findIndex((change) => change.id === current)
@@ -585,7 +583,7 @@ export function create(box, { name, path, markdown: text, pictures, write, keep,
     }) : nothing, review)
   }
 
-  /** A change in view, the keyboard on its Accept. @param {import('./suggest.js').Change} change */
+  /** A change in view, the keyboard on its Accept. @param {Change} change */
   function reach(change) {
     current = change.id
     showReview(pending(view.state))

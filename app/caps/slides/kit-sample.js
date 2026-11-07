@@ -24,7 +24,7 @@ const picture = (colour) => `data:image/svg+xml;base64,${btoa(`<svg xmlns="http:
 /**
  * A slide's words on a layout, under its name: a line on a slide of few words, else a list; a lead and a line in each of its other
  * slots but one beside a list, which goes on with it. A sentence, a quote and a big number have their name small, as it would take their room.
- * @param {string} name @param {any} layout as deck's mergeKits() reads it @returns {string}
+ * @param {string} name @param {ReturnType<typeof import('@codename/deck').mergeKits>['kit']['layouts'][string]} layout as deck's mergeKits() reads it @returns {string}
  */
 function words(name, layout) {
   const key = layout.parts === 'none' ? (layout.lists === 'bullets' ? name : layout.lists) : layout.parts, rest = layout.slots.filter((/** @type {string} */ slot) => slot !== 'default')

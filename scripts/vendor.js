@@ -107,7 +107,8 @@ async function copyLicense (pkg) {
  * `patch` makes exact replacements in a file (`patchSource`), or in a package's file a bundle reads. `bundle` makes one
  * minified module of what the modules of a folder of Jean's import by the names `specifier` matches (`bundled`), or of `names` from `package`,
  * or of everything the `modules` of a package export, with the `effects` they need, modules that only register a part.
- * @type {{ dir: string, packages: string[], files: Array<[string, string]>, folders?: Array<[string, string, RegExp?]>, rewrite?: Record<string, string>, wrap?: Record<string, string[]>, global?: Record<string, string>,
+ * `types` writes beside a module a declaration that is its package's own types, so `tsc` checks the workers importing it.
+ * @type {{ dir: string, packages: string[], files: Array<[string, string]>, folders?: Array<[string, string, RegExp?]>, rewrite?: Record<string, string>, wrap?: Record<string, string[]>, global?: Record<string, string>, types?: Record<string, string>,
  *   patch?: Record<string, Array<[RegExp, string, number]>>, bundle?: { to: string, from?: string, specifier?: RegExp, package?: string, names?: string[], modules?: string[], effects?: string[] },
  *   scripts?: Record<string, [string, Record<string, string>, string]>, graph?: { from: string, entries: string[], prefix: string, skip: RegExp } }[]}
  */
@@ -131,6 +132,7 @@ export const RUNTIMES = [
       ['onnxruntime-web/dist/ort-wasm-simd-threaded.asyncify.wasm', 'ort-wasm-simd-threaded.asyncify.wasm'],
     ],
     rewrite: { 'onnxruntime-web/webgpu': './ort.webgpu.bundle.min.mjs', 'onnxruntime-common': './ort.webgpu.bundle.min.mjs' },
+    types: { 'transformers.web.min.js': '@huggingface/transformers', 'ort.webgpu.bundle.min.mjs': 'onnxruntime-web/webgpu' },
   },
   {
     // QuickJS for Calculations (D13, D48): flat, so the sandbox can load it from blob URLs. Node's
@@ -268,6 +270,7 @@ export const RUNTIMES = [
     packages: ['pele'],
     files: [],
     folders: [['pele/dist/esm', '.', /^lazy\.js$/], ['pele/dist/esm/chunks', 'chunks', /\.js$/]],
+    types: { 'lazy.js': 'pele/lazy' },
   },
   {
     // A deck saved as PowerPoint (D593): PptxGenJS's bundle, JSZip inside it, loaded only then; JSZip it leaves on
@@ -445,6 +448,7 @@ export async function copyRuntime (runtime, modules = MODULES, app = APP) {
     await mkdir(join(target, to), { recursive: true })
     for (const name of await readdir(join(modules, from))) if (!only || only.test(name)) await copy(join(from, name), join(to, name))
   }
+  for (const [to, from] of Object.entries(runtime.types ?? {})) await writeFile(join(target, to.replace(/\.(m?)js$/, '.d.$1ts')), `export * from '${from}'\n`)
   /** @param {string} path */
   const source = (path) => readFile(join(modules, path), 'utf8')
   for (const [to, [main, required, then]] of Object.entries(runtime.scripts ?? {})) {

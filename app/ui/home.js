@@ -139,7 +139,7 @@ export async function follow(home, shown, lang) {
   if (bound !== home) bind(home)
   let menu = home.querySelector('.home-languages')
   const there = document.querySelector(`link[rel="alternate"][hreflang="${lang}"]`) ?? document.querySelector('link[rel="alternate"][hreflang="en"]')
-  /** @type {any} */
+  /** @type {ReturnType<typeof reading> | false | null} */
   let kept = null
   if (shown && there instanceof HTMLLinkElement && there.hreflang !== home.lang) {
     kept = showing && reading(home, menu)

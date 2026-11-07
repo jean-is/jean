@@ -10,6 +10,9 @@
 import { finder, leaves, OUT, PLACES, SENT } from './detect.js'
 import { partsOf, SPREAD } from './names.js'
 
+/** @import { BrainConfig, Envelope, StreamEvent, ToolCall } from '../core/types.js' */
+/** @import { Step, CheckEvent, Decision } from './types.js' */
+
 const PLACEHOLDER = /⟦\s*([A-Z])([0-9a-f]{6,})\s*⟧/g
 // A brain may drop the brackets, or write others: a known id is known without them, sparse as ids are, and any other stays as it is.
 const REVEALED = /⟦\s*([A-Z])([0-9a-f]{6,})\s*⟧|(?<![\p{L}\p{N}])([A-Z])([0-9a-f]{6,})(?![\p{L}\p{N}])/gu
@@ -380,15 +383,15 @@ const stopped = (signal) => new Promise((_, reject) => {
 
 /**
  * A copy of a value with each string, key and number as `each` gives it, by a list, however deep what a brain wrote goes.
- * @param {any} given @param {(text: string) => string} each @param {string[]} [left] the keys whose values stay as they are
+ * @param {unknown} given @param {(text: string) => string} each @param {string[]} [left] the keys whose values stay as they are
  */
 export function mapped(given, each, left = []) {
   const out = /** @type {any} */ ({})
-  const set = (/** @type {any} */ into, /** @type {string | number} */ key, /** @type {unknown} */ value) => Object.defineProperty(into, key, { value, enumerable: true, writable: true, configurable: true })
-  /** @type {[any, any, string | number][]} */
+  const set = (/** @type {object} */ into, /** @type {string | number} */ key, /** @type {unknown} */ value) => Object.defineProperty(into, key, { value, enumerable: true, writable: true, configurable: true })
+  /** @type {[unknown, object, string | number][]} */
   const stack = [[given, out, 'value']]
   while (stack.length) {
-    const [value, into, key] = /** @type {[any, any, string | number]} */ (stack.pop())
+    const [value, into, key] = /** @type {[unknown, object, string | number]} */ (stack.pop())
     if (typeof value === 'string') set(into, key, each(value))
     else if (typeof value === 'number' || typeof value === 'bigint') {
       const said = each(String(value))
@@ -419,7 +422,7 @@ const SHAPE_KEYS = ['type', 'format']
 /**
  * What goes on the wire of a step, each string through `each`, with what it is: a list of what's sent, so that a field added
  * later goes nowhere until it's named here.
- * @param {any} e @param {(text: string, part: Part) => string} each
+ * @param {Step} e @param {(text: string, part: Part) => string} each
  */
 function onWire(e, each) {
   const text = (/** @type {any} */ value, /** @type {Part} */ part = 'text') => {
@@ -430,16 +433,16 @@ function onWire(e, each) {
   return {
     ...e,
     system: text(e.system, 'system'),
-    messages: e.messages.map((/** @type {any} */ { role, content, documents, toolCalls, raw, rawModel, toolCallId, name, isError }) => ({
+    messages: e.messages.map(({ role, content, documents, toolCalls, raw, rawModel, toolCallId, name, isError }) => ({
       role,
       content: text(content),
-      ...(documents && { documents: documents.map((/** @type {any} */ part) => ({ ...part, name: text(part.name), text: text(part.text) })) }),
-      ...(toolCalls && { toolCalls: toolCalls.map((/** @type {any} */ call) => ({ ...call, args: mapped(call.args, plain) })) }),
+      ...(documents && { documents: documents.map((part) => ({ ...part, name: text(part.name), text: text(part.text) })) }),
+      ...(toolCalls && { toolCalls: toolCalls.map((call) => ({ ...call, args: mapped(call.args, plain) })) }),
       ...(raw && { raw, rawModel }),
       ...(toolCallId !== undefined && { toolCallId, name }),
       ...(isError && { isError }),
     })),
-    ...(e.tools && { tools: e.tools.map((/** @type {any} */ tool) => ({ ...tool, description: text(tool.description, 'schema'), parameters: mapped(tool.parameters, (one) => each(one, 'schema'), SHAPE_KEYS) })) }),
+    ...(e.tools && { tools: e.tools.map((tool) => ({ ...tool, description: text(tool.description, 'schema'), parameters: mapped(tool.parameters, (one) => each(one, 'schema'), SHAPE_KEYS) })) }),
   }
 }
 
@@ -476,12 +479,12 @@ const foldedInSource = (reading, start, end) => inSource(reading, reading.folded
  * The hooks. What each case says and where things are kept come from `say`.
  * @param {import('./detect.js').Dlp} dlp
  * @param {{
- *   isLocal: (brain: any) => boolean,
- *   load: (task: string) => Promise<{ id: string, records: any[] } | null>,
- *   keep: (task: string, meta: Record<string, any>) => Promise<void>,
+ *   isLocal: (brain: BrainConfig) => boolean,
+ *   load: (task: string) => Promise<{ id: string, records: Envelope[] } | null>,
+ *   keep: (task: string, meta: Record<string, unknown>) => Promise<void>,
  *   assistant: () => string,
  *   open: () => boolean,
- *   refused: (why: string, e: any, script?: boolean) => AsyncIterable<any>,
+ *   refused: (why: string, e: Step, script?: boolean) => AsyncIterable<StreamEvent>,
  *   held?: () => void,
  *   heldReason: () => string,
  *   why: (values: string[]) => string,
@@ -490,7 +493,7 @@ const foldedInSource = (reading, start, end) => inSource(reading, reading.folded
  *   names?: (text: string) => Promise<Span[]>,
  *   more?: () => string[],
  *   told?: (letters: string[], task?: string) => void,
- *   sent?: (task: string | undefined, step: any) => void,
+ *   sent?: (task: string | undefined, step: Step) => void,
  *   scripts?: 'any',
  * }} say
  * @returns {import('../core/hooks.js').Hook[]}
@@ -734,7 +737,7 @@ export function maskHooks(dlp, say) {
     }
   }
 
-  /** `raw` goes back only as the brain wrote it to this mask, whose mark was kept, and holding nothing hidden since: a signature can't be read, and an earlier turn's can hold anything. From the first that doesn't, none does. @param {any[]} messages @param {Entry} entry @param {any} brain */
+  /** `raw` goes back only as the brain wrote it to this mask, whose mark was kept, and holding nothing hidden since: a signature can't be read, and an earlier turn's can hold anything. From the first that doesn't, none does. @param {any[]} messages @param {Entry} entry @param {BrainConfig} brain */
   async function replayable(messages, entry, brain) {
     let dropped = false
     const out = []
@@ -750,14 +753,14 @@ export function maskHooks(dlp, say) {
     return out
   }
 
-  /** Any picture out of the step, unless policy sends them, with a line saying so: they aren't read. @param {any} e */
+  /** Any picture out of the step, unless policy sends them, with a line saying so: they aren't read. @param {Step} e */
   function held(e) {
-    if (pictures === 'send' || !e.messages.some((/** @type {any} */ message) => message.documents?.some((/** @type {any} */ part) => part.images?.length))) return e
+    if (pictures === 'send' || !e.messages.some((message) => message.documents?.some((part) => part.images?.length))) return e
     say.held?.()
-    return { ...e, messages: e.messages.map((/** @type {any} */ message) => (message.documents ? { ...message, documents: message.documents.map((/** @type {any} */ { images, ...part }) => (images?.length ? { ...part, text: `${part.text ? `${part.text}\n` : ''}${say.heldReason()}` } : part)) } : message)) }
+    return { ...e, messages: e.messages.map((message) => (message.documents ? { ...message, documents: message.documents.map(({ images, ...part }) => (images?.length ? { ...part, text: `${part.text ? `${part.text}\n` : ''}${say.heldReason()}` } : part)) } : message)) }
   }
 
-  /** The last look, over what is about to go, names of tools included: nothing found may go, whatever put it there. @param {any} e @param {Entry} entry */
+  /** The last look, over what is about to go, names of tools included: nothing found may go, whatever put it there. @param {Step} e @param {Entry} entry */
   function sweep(e, entry) {
     const look = (/** @type {string} */ text, /** @type {Part} */ part) => {
       const without = text.replace(PLACEHOLDER, 'x').replace(BRACKETED, 'x')
@@ -773,14 +776,14 @@ export function maskHooks(dlp, say) {
     onWire(e, look)
     // A tool's name is someone's choice, and can't be masked: what the organisation lists stops it, and what a reading took for a name doesn't.
     const listed = wordsNow().map(keyOf)
-    const names = [...e.messages.flatMap((/** @type {any} */ message) => (message.toolCalls ?? []).map((/** @type {any} */ call) => call.name)), ...(e.tools ?? []).map((/** @type {any} */ tool) => tool.name)]
+    const names = [...e.messages.flatMap((message) => (message.toolCalls ?? []).map((call) => call.name)), ...(e.tools ?? []).map((tool) => tool.name)]
     for (const name of names) {
       const { folded } = readingOf(String(name))
       if (search(entry.trie, folded.text).some(({ value }) => listed.includes(keyOf(value)))) throw new Error('what should be masked is still there: a tool\'s name')
     }
   }
 
-  /** The step as it goes. @param {any} e @param {Entry} entry */
+  /** The step as it goes. @param {Step} e @param {Entry} entry */
   async function masked(e, entry) {
     withWords(entry)
     const step = held(e)
@@ -839,10 +842,10 @@ export function maskHooks(dlp, say) {
     return { ...going, system: [going.system, RULE].filter(Boolean).join('\n\n') }
   }
 
-  /** What came back, real: `raw` as the brain wrote it, its mark kept. @param {AsyncIterable<any>} events @param {Entry} entry @param {any} e */
+  /** What came back, real: `raw` as the brain wrote it, its mark kept. @param {AsyncIterable<StreamEvent>} events @param {Entry} entry @param {Step} e */
   async function* revealed(events, entry, e) {
     const real = (/** @type {string} */ text) => text.replace(REVEALED, (found, kind, id, bareKind, bareId) => entry.values.get(`${kind ?? bareKind}${id ?? bareId}`) ?? found)
-    const argsOf = (/** @type {any} */ call) => {
+    const argsOf = (/** @type {ToolCall} */ call) => {
       const args = mapped(call.args, real)
       const code = Object.hasOwn(CODE, call.name) ? CODE[call.name] : null
       if (!code || typeof call.args?.[code[0]] !== 'string') return args
@@ -883,28 +886,28 @@ export function maskHooks(dlp, say) {
           entry.raws.add(mark)
           if (e.task) await say.keep(e.task, { maskedRaw: mark }).catch((error) => console.warn('Mask', error))
         }
-        yield { ...event, message: event.message && { ...event.message, content: real(event.message.content ?? ''), ...(event.message.toolCalls && { toolCalls: event.message.toolCalls.map((/** @type {any} */ call) => ({ ...call, args: argsOf(call) })) }) } }
+        yield { ...event, message: event.message && { ...event.message, content: real(event.message.content ?? ''), ...(event.message.toolCalls && { toolCalls: event.message.toolCalls.map((call) => ({ ...call, args: argsOf(call) })) }) } }
       } else yield event
     }
     yield* flush()
   }
 
   return [
-    { on: 'turn.step', tier: 'edge', by: 'dlp', run: async function* (/** @type {any} */ e, /** @type {(e?: any) => Promise<any>} */ next) {
+    { on: 'turn.step', tier: 'edge', by: 'dlp', run: async function* (/** @type {Step} */ e, /** @type {(e?: Step) => Promise<AsyncIterable<StreamEvent>>} */ next) {
       if (say.isLocal(e.brain) || dlp.brains?.includes(e.brain.id)) return yield* await next(e)
       /** @type {Entry} */
       let entry
-      /** @type {any} */
+      /** @type {Step} */
       let going
       try {
         entry = await entryOf(e.task)
         going = await masked(e, entry)
       } catch (error) {
-        return yield* say.refused(/** @type {Error} */ (error).message, e, /** @type {any} */ (error).script)
+        return yield* say.refused(/** @type {Error} */ (error).message, e, /** @type {{ script?: boolean }} */ (error).script)
       }
       yield* revealed(await next(going), entry, e)
     } },
-    { on: 'tool.check', tier: 'policy', by: 'dlp', run: async (/** @type {any} */ e, /** @type {(e?: any) => Promise<any>} */ next) => {
+    { on: 'tool.check', tier: 'policy', by: 'dlp', run: async (/** @type {CheckEvent} */ e, /** @type {(e?: CheckEvent) => Promise<Decision | undefined>} */ next) => {
       if (e.args?.[UNREVEALED]) return { decision: 'never', reason: String(e.args[UNREVEALED]) }
       const said = await next(e)
       if (said?.refuse || said?.decision === 'never') return said
@@ -929,7 +932,7 @@ export function maskHooks(dlp, say) {
         return dlp.then === 'never' ? { decision: 'never', reason: 'This could not be checked for what is hidden.' } : { decision: 'ask', meta: { ...said?.meta, guard: 'dlp' } }
       }
     } },
-    { on: 'remove', tier: 'policy', by: 'dlp', run: async (/** @type {any} */ e, /** @type {(e?: any) => Promise<any>} */ next) => {
+    { on: 'remove', tier: 'policy', by: 'dlp', run: async (/** @type {{ task?: string }} */ e, /** @type {(e?: { task?: string }) => Promise<unknown>} */ next) => {
       const said = await next(e)
       if (e.task) entries.delete(e.task)
       return said

@@ -22,7 +22,13 @@ const routed = (url) => url.replace(/^(https?):\/\//, 'jean://$1/')
 /** @param {string} url */
 const direct = (url) => url.replace(/^jean:\/\/(https?)\//, '$1://')
 
-/** MapLibre, made ready once: its worker classic, and every address it reaches fetched by Jean. @type {Promise<any> | undefined} */
+/**
+ * What Jean lends a map (interactive.js): MapLibre and its worker as text, its style sheet, the map service's styles for light and dark,
+ * whether maps are allowed, and the words it says; with MapLibre made ready.
+ * @typedef {{ library: string, worker: string, css: string, styles: Record<'light' | 'dark', string>, allowed: boolean, strings: Record<string, string>, maplibregl: typeof import('maplibre-gl') }} Lent
+ */
+/** A place its fold names, and what it says of itself. @typedef {{ name: unknown, about: unknown }} Named */
+/** MapLibre, made ready once: its worker classic, and every address it reaches fetched by Jean. @type {Promise<Lent> | undefined} */
 let lent
 const lend = () => (lent ??= ask({ need: 'maplibre' }).then(async (given) => {
   const maplibregl = await import(URL.createObjectURL(new Blob([given.library], { type: 'text/javascript' })))
@@ -55,7 +61,7 @@ function rgba(colour) {
 /** Features of a kind, one or many (MultiPoint is points too). @param {string} type */
 const kind = (type) => ['in', ['geometry-type'], ['literal', [type, `Multi${type}`]]]
 
-/** Every position in some GeoJSON. @param {any} value @returns {number[][]} */
+/** Every position in some GeoJSON. @param {unknown} value @returns {number[][]} */
 const positions = (value) => (Array.isArray(value) && typeof value[0] === 'number' ? [value] : Array.isArray(value) ? value.flatMap(positions)
   : value && typeof value === 'object' ? Object.entries(value).flatMap(([key, inner]) => (key === 'properties' ? [] : positions(inner))) : [])
 
@@ -132,12 +138,12 @@ class AppMap extends HTMLElement {
   tell() {
     const data = this.data, strings = this.given?.strings
     if (!data || !strings) return
-    const named = (data.features ?? [data]).map((/** @type {any} */ one) => ({ name: one?.properties?.name ?? one?.properties?.title ?? positions(one)[0]?.toReversed().join(', '), about: one?.properties?.description })).filter((/** @type {any} */ { name }) => name)
+    const named = (data.features ?? [data]).map((/** @type {{ properties?: Record<string, unknown> | null }} */ one) => ({ name: one?.properties?.name ?? one?.properties?.title ?? positions(one)[0]?.toReversed().join(', '), about: one?.properties?.description })).filter((/** @type {Named} */ { name }) => name)
     const list = this.words.querySelector('ul') ?? this.words.appendChild(document.createElement('ul'))
-    list.replaceChildren(...named.map((/** @type {any} */ { name, about }) => Object.assign(document.createElement('li'), { dir: 'auto', textContent: about ? `${name}: ${about}` : name })))
+    list.replaceChildren(...named.map((/** @type {Named} */ { name, about }) => Object.assign(document.createElement('li'), { dir: 'auto', textContent: about ? `${name}: ${about}` : name })))
     this.words.hidden = !named.length
     if (!this.words.querySelector('summary')) this.words.prepend(Object.assign(document.createElement('summary'), { textContent: strings.words }))
-    this.map?.getCanvas().setAttribute('aria-label', named.length ? strings.named.replace('{places}', new Intl.ListFormat(document.documentElement.lang || undefined).format(named.map((/** @type {any} */ { name }) => String(name)))) : strings.map)
+    this.map?.getCanvas().setAttribute('aria-label', named.length ? strings.named.replace('{places}', new Intl.ListFormat(document.documentElement.lang || undefined).format(named.map((/** @type {Named} */ { name }) => String(name)))) : strings.map)
   }
 
   /** The map service's style for the page's light or dark. */

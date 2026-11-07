@@ -154,6 +154,8 @@ function pointed(content, w, h, rects) {
   return box
 }
 
+/** @typedef {import('pdfjs-dist/types/src/display/api.js').TextItem} TextItem  each item of a page's text, asked without marked content */
+
 /**
  * Where words are on a PDF's page, as rects at scale 1 (D481): its items' text read as one, as pageText joins them, folded; none
  * where they read otherwise (a right-to-left line, which pdf.js gives as drawn). A rect a line, its runs joined, with room around
@@ -164,17 +166,17 @@ function pointed(content, w, h, rects) {
  */
 async function rectsOf(page, words) {
   const [{ items }, viewport] = [await page.getTextContent(), page.getViewport({ scale: 1 })]
-  const found = await seek(items.map((/** @type {any} */ item) => item.str + (item.hasEOL ? '\n' : '')), words)
+  const found = await seek(items.map((/** @type {TextItem} */ item) => item.str + (item.hasEOL ? '\n' : '')), words)
   /** @type {{ x1: number, x2: number, y: number, h: number }[]} */
   const lines = []
-  if (found) items.forEach((/** @type {any} */ item, /** @type {number} */ i) => {
+  if (found) items.forEach((/** @type {TextItem} */ item, /** @type {number} */ i) => {
     const [a, b] = [Math.max(found.from - found.starts[i], 0), Math.min(found.to - found.starts[i], item.str.length)]
     const [x, y, h, w] = [item.transform[4], item.transform[5], item.height, item.width / item.str.length]
     const [line, x1, x2] = [lines.find((other) => Math.abs(other.y - y) < h / 3), x + w * a, x + w * b]
     if (a < b) line ? Object.assign(line, { x1: Math.min(line.x1, x1), x2: Math.max(line.x2, x2), h: Math.max(line.h, h) }) : lines.push({ x1, x2, y, h })
   })
   return lines.map(({ x1, x2, y, h }) => {
-    const pitch = Math.max(h, Math.min(1.6 * h, ...items.filter((/** @type {any} */ other) => other.str.trim() && other.transform[4] < x2 && other.transform[4] + other.width > x1 && Math.abs(other.transform[5] - y) > h / 3).map((/** @type {any} */ other) => Math.abs(other.transform[5] - y))))
+    const pitch = Math.max(h, Math.min(1.6 * h, ...items.filter((/** @type {TextItem} */ other) => other.str.trim() && other.transform[4] < x2 && other.transform[4] + other.width > x1 && Math.abs(other.transform[5] - y) > h / 3).map((/** @type {TextItem} */ other) => Math.abs(other.transform[5] - y))))
     const [[a, b], [c, d]] = [[x1 - h / 4, y - pitch / 4], [x2 + h / 4, y + (pitch * 3) / 4]].map(([px, py]) => viewport.convertToViewportPoint(px, py))
     return [Math.min(a, c), Math.min(b, d), Math.abs(c - a), Math.abs(d - b)]
   })
@@ -246,7 +248,7 @@ async function pdf(bytes, holds, at) {
       const sheet = Object.assign(document.createElement('div'), { className: 'view-page' }), words = Object.assign(document.createElement('div'), { className: 'view-words' })
       sheet.dataset.page = String(n)
       sheet.append(canvas, words)
-      /** @type {any} */
+      /** @type {{ cancel: () => void, promise: Promise<unknown> } | null} */
       let drawing = null, laid = false
       seen.set(canvas, (near) => {
         drawing?.cancel()

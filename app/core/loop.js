@@ -41,7 +41,7 @@ const KEPT = 12_000
  * @property {(args: any, ctx: ToolContext) => Promise<string>} run
  */
 
-/** @typedef {{ ask?: boolean, meta?: Record<string, any>, content?: import('./types.js').ToolCallContent[] }} Check */
+/** @typedef {{ ask?: boolean, meta?: Record<string, unknown>, content?: import('./types.js').ToolCallContent[] }} Check */
 
 /**
  * @typedef {Object} ToolContext
@@ -71,7 +71,7 @@ const KEPT = 12_000
  *   a function is read again at each step, so a capability turned on mid-turn can be called
  * @property {string[]} [declared]                   the ones the brain sees (default: all but hidden ones)
  * @property {string} [label]                        shown on the brain entry
- * @property {Record<string, any>} [meta]            recorded on the brain entry (why Auto chose it)
+ * @property {Record<string, unknown>} [meta]        recorded on the brain entry (why Auto chose it)
  * @property {number} [firstSource]                  the number the turn's first new source is cited by (D71)
  * @property {Map<string, number>} [numbers]         sources numbered so far: a helper shares its parent's
  * @property {(kind: string, reserved: boolean) => RuleValue} [rule]
@@ -136,7 +136,7 @@ export async function runTurn(options) {
   /**
    * One request to the brain, asked again while it may pass, its entry shown and kept with what it thought and
    * wrote. A hook's own (a summary) keeps only its entry, `own` on it; what it wrote goes back to the hook.
-   * @param {number} step @param {ChatMessage[]} messages @param {ToolSpec[]} specs @param {Record<string, any>} [own]
+   * @param {number} step @param {ChatMessage[]} messages @param {ToolSpec[]} specs @param {Record<string, unknown>} [own]
    */
   const request = async (step, messages, specs, own) => {
     const started = Date.now()
@@ -418,13 +418,13 @@ async function runTool(call, tool, step, ctx, parent, waiting) {
 
 /**
  * A helper's call under the one that started it: its own id, prefixed so helpers never clash,
- * and without what a brain keeps for replay. @template {{ toolCallId: string, _meta?: Record<string, any> }} T
+ * and without what a brain keeps for replay. @template {{ toolCallId: string, _meta?: Record<string, unknown> }} T
  * @param {T} update @param {string} parent @returns {T}
  */
 const under = (update, parent) => ({ ...update, toolCallId: `${parent}/${update.toolCallId}`, _meta: { ...update._meta, raw: undefined, parent: update._meta?.parent ? `${parent}/${update._meta.parent}` : parent } })
 
 /** The arguments a tool requires that a call leaves out. @param {Tool} tool @param {any} args @returns {string[]} */
-const lacking = ({ spec }, args) => (/** @type {any} */ (spec.parameters).required ?? []).filter((/** @type {string} */ name) => args?.[name] == null)
+const lacking = ({ spec }, args) => (/** @type {{ required?: string[] }} */ (spec.parameters).required ?? []).filter((/** @type {string} */ name) => args?.[name] == null)
 
 /** @template T @param {() => T} fn @param {T} fallback */
 function safe(fn, fallback) {

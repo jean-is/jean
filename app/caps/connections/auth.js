@@ -7,7 +7,8 @@
 import { createVerifier, challengeS256 } from '../../core/oauth.js'
 
 /**
- * @typedef {Record<string, any> & { issuer: string, authorization_endpoint: string, token_endpoint: string, resource?: string, scope?: string }} Metadata
+ * @typedef {{ issuer: string, authorization_endpoint: string, token_endpoint: string, registration_endpoint?: string, end_session_endpoint?: string, scopes_supported?: string[],
+ *   authorization_response_iss_parameter_supported?: boolean, resource?: string, scope?: string, [field: string]: unknown }} Metadata  the sign-in server's, with the resource and scopes to ask for
  * @typedef {{ state: string, verifier: string, clientId: string, redirectURI: string, issuer: string, issRequired: boolean, tokenEndpoint: string, resource?: string }} Pending
  * @typedef {{ access: string, refresh?: string, expiresAt?: number, tokenEndpoint: string, clientId: string, resource?: string, account?: string, name?: string, groups?: string[] | null }} Tokens
  *   account: who signed in, name: what they are called, groups: the directory's groups and roles they are in (D429)

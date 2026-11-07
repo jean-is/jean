@@ -70,10 +70,11 @@ export function zone(u, v) {
 
 /**
  * Each part's place and each split's, as shares of the screen along the line and down, a split by the way to it (`a`, `b`) with its parts.
- * @param {Tree} tree @returns {{ tiles: Place[], splits: (Place & { path: string, split: 'row' | 'col', share: number, parts: [Tree, Tree] })[] }}
+ * @param {Tree} tree @returns {{ tiles: Place[], splits: Split[] }}
  * @typedef {{ leaf: string, x: number, y: number, w: number, h: number }} Place
+ * @typedef {Place & { path: string, split: 'row' | 'col', share: number, parts: [Tree, Tree] }} Split
  */
-export function places(tree, x = 0, y = 0, w = 1, h = 1, path = '', found = { tiles: /** @type {Place[]} */ ([]), splits: /** @type {any[]} */ ([]) }) {
+export function places(tree, x = 0, y = 0, w = 1, h = 1, path = '', found = { tiles: /** @type {Place[]} */ ([]), splits: /** @type {Split[]} */ ([]) }) {
   if (typeof tree === 'string') return found.tiles.push({ leaf: tree, x, y, w, h }), found
   const row = tree.split === 'row', [aw, ah] = row ? [w * tree.share, h] : [w, h * tree.share]
   found.splits.push({ leaf: '', x, y, w, h, path, split: tree.split, share: tree.share, parts: [tree.a, tree.b] })

@@ -21,8 +21,8 @@ async function print(view, resolve) {
   for (const picture of holder.querySelectorAll('img')) picture.loading = 'eager'
   // Its charts drawn and still, its diagrams and pictures in, its faces too.
   const blocks = () => [...holder.querySelectorAll('.deck-block, .deck-picture')]
-  await printAlone(holder, 'is-printing-deck', { page: '@page { size: 13.333in 7.5in; margin: 0 }', drawing: () => blocks().some((box) => !(/** @type {any} */ (box).chart || box.querySelector('img')?.complete || box.classList.contains('is-failed'))),
-    ready: () => { for (const box of blocks()) /** @type {any} */ (box).chart?.setOption({ animation: false }); printed.fitAll() }, gone: () => printed.destroy() })
+  await printAlone(holder, 'is-printing-deck', { page: '@page { size: 13.333in 7.5in; margin: 0 }', drawing: () => blocks().some((box) => !(/** @type {{ chart?: import('echarts').ECharts | null }} */ (box).chart || box.querySelector('img')?.complete || box.classList.contains('is-failed'))),
+    ready: () => { for (const box of blocks()) /** @type {{ chart?: import('echarts').ECharts | null }} */ (box).chart?.setOption({ animation: false }); printed.fitAll() }, gone: () => printed.destroy() })
 }
 
 /** What a deck can do (ui/out.js): the one in this pane, as it is on show when pressed. @param {{ uri: string, name: string }} file @param {Element} pane @returns {import('../../ui/out.js').Ways | null} */

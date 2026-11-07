@@ -47,7 +47,7 @@ async function ask(brain) {
     app.models.value = { ...app.models.value, [brain.id]: await listModels({ brain, apiKey }) }
     troubles.value = { ...troubles.value, [brain.id]: '' }
   } catch (error) {
-    troubles.value = { ...troubles.value, [brain.id]: /** @type {any} */ (error)?.code ?? 'unknown' }
+    troubles.value = { ...troubles.value, [brain.id]: /** @type {{ code?: string } | null | undefined} */ (error)?.code ?? 'unknown' }
   }
 }
 
@@ -125,7 +125,7 @@ async function attempt(way, name, task) {
     document.querySelector('details.way[open]')?.removeAttribute('open')
     continueWithBrain()
   } catch (error) {
-    const code = /** @type {any} */ (error)?.code ?? 'unknown'
+    const code = /** @type {{ code?: string } | null | undefined} */ (error)?.code ?? 'unknown'
     status.value = { way, kind: 'error', message: t(`error.${code}`, { brain: name, origin: location.origin }) }
   }
 }
@@ -283,7 +283,7 @@ function waysOf(all) {
       <form class="stack" @submit=${connectLocal}><p class="muted small" id="brain-local-required">${t('brain.required')}</p>
         <label for="brain-app">${t('brain.local.app')}
           <select id="brain-app" @change=${(/** @type {Event} */ e) => {
-            localProvider.value = /** @type {any} */ (valueOf(e))
+            localProvider.value = /** @type {'ollama' | 'lmstudio' | 'custom'} */ (valueOf(e))
             localAddress.value = PROVIDERS[localProvider.value].baseURL
           }}>
             ${['ollama', 'lmstudio', 'custom'].map((id) => html`<option value=${id} ?selected=${id === localProvider.value}>${t(`provider.${id}`)}</option>`)}
@@ -431,7 +431,7 @@ function auto() {
     <p class="hint">${t('auto.steps')}</p>`
 }
 
-/** A version's price for a typical answer, or the plan it is in (D235). @param {BrainConfig} brain @param {string} model @param {any} listed */
+/** A version's price for a typical answer, or the plan it is in (D235). @param {BrainConfig} brain @param {string} model @param {import('./prices.js').Pricing} [listed] */
 const price = (brain, model, listed) => (PLANS[brain.provider] ? t('picker.plan', { plan: PLANS[brain.provider] }) : cost(priceOf(brain.provider, model, listed)))
 
 /** The brain whose key is being replaced. */

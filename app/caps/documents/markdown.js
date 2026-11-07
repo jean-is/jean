@@ -13,8 +13,8 @@ import { Marked } from 'marked'
 import { columns, cjk } from '../layouts/shapes.js'
 import { mathTokens } from '../../ui/markdown.js'
 
-/** @typedef {import('prosemirror-model').Node} PMNode */
-/** @typedef {import('prosemirror-model').Mark} PMMark */
+/** @import { Token, Tokens } from 'marked' */
+/** @import { PMNode, PMMark, NodeType, Writer, Writing, Link, Spec } from './types.js' */
 
 /** A reference (D575): `[[place|name]]`, or `[[name]]`. @param {RegExpExecArray | null} match */
 const refToken = (match) => match ? { type: 'ref', raw: match[0], uri: match[1].trim(), label: (match[2] ?? match[1]).trim() } : undefined
@@ -60,7 +60,7 @@ export const schema = new Schema({
   nodes: {
     doc: { content: 'title (block | columns)*' },
     // The title: first, text alone, written as a heading of the first level; no block is let go on it, which goes after it (editor.js).
-    title: { content: 'text*', marks: '', defining: true, disableDropCursor: (/** @type {any} */ view) => Boolean(view.dragging && !view.dragging.slice.openStart), toDOM: () => ['h1', dirAuto, 0] },
+    title: { content: 'text*', marks: '', defining: true, disableDropCursor: (view) => Boolean(view.dragging && !view.dragging.slice.openStart), toDOM: () => ['h1', dirAuto, 0] },
     // A paragraph in a table's cell, as Word and Google Docs copy one, is only its text.
     paragraph: { content: 'inline*', group: 'block', parseDOM: [{ tag: 'p', context: 'table_cell/|table_header/', skip: true, priority: 60 }, { tag: 'p' }], toDOM: () => ['p', dirAuto, 0] },
     heading: {
@@ -191,7 +191,7 @@ function inline(tokens, marks = []) {
 const paragraph = (content) => N.paragraph.create(null, content)
 
 /**
- * Block tokens as nodes, each with the source it was read from. @param {any[]} tokens
+ * Block tokens as nodes, each with the source it was read from. @param {Token[]} tokens
  * @returns {Array<{ node: PMNode, raw: string }>}
  */
 function blocks(tokens) {
@@ -206,9 +206,9 @@ function blocks(tokens) {
   return out
 }
 
-/** Blocks inside another, columns there staying as written. @param {any[]} tokens */
+/** Blocks inside another, columns there staying as written. @param {Token[]} tokens */
 const children = (tokens) => blocks(tokens).map(({ node, raw }) => (node.type === N.columns ? N.raw_block.create({ kind: 'columns' }, schema.text(raw.replace(/\n+$/, ''))) : node))
-/** Those, or an empty line. @param {any[]} tokens */
+/** Those, or an empty line. @param {Token[]} tokens */
 const filled = (tokens) => ((content) => (content.length ? content : [paragraph([])]))(children(tokens))
 
 /** @param {any} token @returns {PMNode | null} */
@@ -222,9 +222,9 @@ function block(token) {
       return N.code_block.create({ lang: token.lang ?? '', fence }, token.text ? schema.text(token.text) : null)
     }
     case 'blockquote': return N.blockquote.create(null, filled(token.tokens))
-    case 'columns': return N.columns.create(null, token.columns.map((/** @type {any} */ column) => N.column.create(null, filled(column.tokens))))
+    case 'columns': return N.columns.create(null, token.columns.map((/** @type {{ tokens: Token[] }} */ column) => N.column.create(null, filled(column.tokens))))
     case 'list': {
-      const items = token.items.map((/** @type {any} */ item) => {
+      const items = token.items.map((/** @type {Tokens.ListItem} */ item) => {
         const content = children(item.tokens)
         if (content[0]?.type !== N.paragraph) content.unshift(paragraph([]))
         return N.list_item.create({ checked: item.task ? Boolean(item.checked) : null }, content)
@@ -235,9 +235,9 @@ function block(token) {
         : N.bullet_list.create({ tight: !token.loose, bullet: marker?.[1] ?? '-' }, items)
     }
     case 'table': {
-      const row = (/** @type {any[]} */ cells, /** @type {any} */ type) => N.table_row.create(null, cells.map((cell, i) => type.create({ align: token.align[i] ?? null }, inline(cell.tokens))))
+      const row = (/** @type {Tokens.TableCell[]} */ cells, /** @type {NodeType} */ type) => N.table_row.create(null, cells.map((cell, i) => type.create({ align: token.align[i] ?? null }, inline(cell.tokens))))
       const rule = token.raw.split('\n')[1]?.trim() ?? null
-      return N.table.create({ rule }, [row(token.header, N.table_header), ...token.rows.map((/** @type {any[]} */ cells) => row(cells, N.table_cell))])
+      return N.table.create({ rule }, [row(token.header, N.table_header), ...token.rows.map((/** @type {Tokens.TableCell[]} */ cells) => row(cells, N.table_cell))])
     }
     case 'hr': return N.horizontal_rule.create({ markup: token.raw.trim() })
     case 'checkbox': return null
@@ -319,7 +319,7 @@ const NODES = {
     node.forEach((column, _, i) => {
       state.write(`${i ? '\n' : ''}::: column\n`)
       state.renderContent(column)
-      ;/** @type {any} */ (state).flushClose(1)
+      ;/** @type {Writer} */ (state).flushClose(1)
       state.write(':::\n')
     })
     state.write('::::')
@@ -390,7 +390,7 @@ const NODES = {
       }
     }
   },
-  text: (state, node) => state.text(/** @type {string} */ (node.text), !(/** @type {any} */ (state).inAutolink)),
+  text: (state, node) => state.text(/** @type {string} */ (node.text), !(/** @type {Writer} */ (state).inAutolink)),
 }
 
 /** @param {PMNode} node @param {number} side */
@@ -410,16 +410,17 @@ function plainURL(link, parent, index) {
   return index === parent.childCount - 1 || !link.isInSet(parent.child(index + 1).marks)
 }
 
-const MARKED = { open: (/** @type {any} */ _s, /** @type {PMMark} */ mark) => mark.attrs.marker, close: (/** @type {any} */ _s, /** @type {PMMark} */ mark) => mark.attrs.marker, mixable: true, expelEnclosingWhitespace: true }
-/** @type {Record<string, any>} */
+/** @type {Spec} */
+const MARKED = { open: (_s, mark) => mark.attrs.marker, close: (_s, mark) => mark.attrs.marker, mixable: true, expelEnclosingWhitespace: true }
+/** @type {MarkdownSerializer['marks']} */
 const MARKS = {
   em: MARKED, strong: MARKED, del: MARKED,
   link: {
-    open(/** @type {any} */ state, /** @type {PMMark} */ mark, /** @type {PMNode} */ parent, /** @type {number} */ index) {
+    open(/** @type {Link} */ state, mark, parent, index) {
       state.inAutolink = plainURL(mark, parent, index)
       return state.inAutolink ? '<' : '['
     },
-    close(/** @type {any} */ state, /** @type {PMMark} */ mark) {
+    close(/** @type {Link} */ state, mark) {
       const { inAutolink } = state
       state.inAutolink = undefined
       return inAutolink ? '>' : `](${mark.attrs.href.replace(/[()"\s]/g, '\\$&')}${mark.attrs.title ? ` "${mark.attrs.title.replace(/"/g, '\\"')}"` : ''})`
@@ -427,11 +428,11 @@ const MARKS = {
     mixable: true,
   },
   code: {
-    open: (/** @type {any} */ _s, /** @type {PMMark} */ _m, /** @type {PMNode} */ parent, /** @type {number} */ index) => backticksFor(parent.child(index), -1),
-    close: (/** @type {any} */ _s, /** @type {PMMark} */ _m, /** @type {PMNode} */ parent, /** @type {number} */ index) => backticksFor(parent.child(index - 1), 1),
+    open: (_s, _m, parent, index) => backticksFor(parent.child(index), -1),
+    close: (_s, _m, parent, index) => backticksFor(parent.child(index - 1), 1),
     escape: false,
   },
-  math: { open: (/** @type {any} */ _s, /** @type {PMMark} */ mark) => (mark.attrs.display ? '$$' : '$'), close: (/** @type {any} */ _s, /** @type {PMMark} */ mark) => (mark.attrs.display ? '$$' : '$'), escape: false },
+  math: { open: (_s, mark) => (mark.attrs.display ? '$$' : '$'), close: (_s, mark) => (mark.attrs.display ? '$$' : '$'), escape: false },
   html: { open: '', close: '', escape: false },
 }
 
@@ -466,7 +467,7 @@ function fullEscape(text, startOfLine) {
  * One node's Markdown, escaped one way or the other. @param {PMNode} node @param {(text: string, start: boolean) => string} esc
  */
 function write(node, esc) {
-  const state = /** @type {any} */ (new (/** @type {any} */ (MarkdownSerializerState))(serializer.nodes, serializer.marks, { tightLists: true }))
+  const state = new (/** @type {Writing} */ (MarkdownSerializerState))(serializer.nodes, serializer.marks, { tightLists: true })
   state.esc = esc
   if (node.type === N.doc) state.renderContent(node)
   else state.render(node, N.doc.create(null, [node]), 0)

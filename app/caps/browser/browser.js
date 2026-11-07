@@ -152,8 +152,8 @@ export function show() {
 /** The last web page Jean made or changed in this conversation's folder, which the browser opens on. */
 function lastMade() {
   const records = (app.current.peek()?.records ?? []).flatMap(({ update }) => (update?.sessionUpdate === 'tool_call' ? [/** @type {import('../../core/types.js').ToolCallInfo} */ (update)] : []))
-  const calls = [...records, ...(app.live.peek()?.turn.steps ?? []).flatMap((/** @type {any} */ step) => step.tools)]
-  const path = (/** @type {any} */ call) => call.content?.find((/** @type {any} */ part) => part.type === 'diff')?.path ?? ''
+  const calls = [...records, ...(app.live.peek()?.turn.steps ?? []).flatMap((step) => step.tools)]
+  const path = (/** @type {{ content?: { type: string, path?: string }[] }} */ call) => call.content?.find((part) => part.type === 'diff')?.path ?? ''
   const made = calls.findLast((call) => call.name === 'change' && call.status !== 'failed' && call._meta?.folder && /\.html?$/i.test(path(call)))
   return made && `${FOLDER}${made._meta?.folder}/${path(made)}`
 }
@@ -404,7 +404,7 @@ const HOLD_MS = 3000
 let settled = 0
 const holds = () => open.peek() && page.peek()?.own === false && (loading.peek() || Date.now() < settled)
 const navigation = /** @type {any} */ (globalThis).navigation
-navigation?.addEventListener('navigate', (/** @type {any} */ event) => {
+navigation?.addEventListener('navigate', (/** @type {Event & { cancelable: boolean, destination: { url: string } }} */ event) => {
   const shown = page.peek()
   if (event.cancelable && holds() && shown && new URL(event.destination.url).origin === new URL(shown.url).origin) event.preventDefault()
 })

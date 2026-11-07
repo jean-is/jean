@@ -27,7 +27,7 @@ export function patch(target, given) {
   return out
 }
 
-/** Policy's sections, as forPerson() reads them; throws, saying why. @param {Record<string, any>} policy @returns {Section[]} */
+/** Policy's sections, as forPerson() reads them; throws, saying why. @param {{ signIn?: unknown, groups?: unknown }} policy @returns {Section[]} */
 export function check({ signIn, groups }) {
   if (!Array.isArray(groups)) throw new Error('policy.json’s groups is a list of sections, each with an id and a policy')
   if (!signIn) throw new Error('policy.json’s groups need signIn: the organisation’s sign-in says which groups the person is in')
@@ -41,7 +41,7 @@ export function check({ signIn, groups }) {
 }
 
 /**
- * The sections of the groups someone is in, in policy's order. @param {Record<string, any>} policy
+ * The sections of the groups someone is in, in policy's order. @param {Record<string, unknown>} policy
  * @param {string[] | null} groups the sign-in's; null when it had more than its token holds @returns {Section[]}
  */
 export function theirs(policy, groups) {
@@ -50,5 +50,5 @@ export function theirs(policy, groups) {
   return sections.filter((section) => groups.includes(section.id))
 }
 
-/** Policy as it is for someone in these groups: each of their sections over it. @param {Record<string, any>} policy @param {string[] | null} groups */
-export const forPerson = (policy, groups) => theirs(policy, groups).reduce((so, section) => /** @type {Record<string, any>} */ (patch(so, section.policy)), policy)
+/** Policy as it is for someone in these groups: each of their sections over it. @param {Record<string, unknown>} policy @param {string[] | null} groups */
+export const forPerson = (policy, groups) => theirs(policy, groups).reduce((so, section) => /** @type {Record<string, unknown>} */ (patch(so, section.policy)), policy)

@@ -129,7 +129,7 @@ async function deflate(bytes) {
   return transform(bytes, stream)
 }
 
-/** @param {Uint8Array} bytes @param {TransformStream<any, any>} stream */
+/** @param {Uint8Array} bytes @param {TransformStream<BufferSource, Uint8Array>} stream */
 async function transform(bytes, stream) {
   const piped = new Blob([/** @type {BlobPart} */ (bytes)]).stream().pipeThrough(stream)
   return new Uint8Array(await new Response(piped).arrayBuffer())

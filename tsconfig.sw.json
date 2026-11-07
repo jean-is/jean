@@ -1,0 +1,4 @@
+{
+  "extends": "./tsconfig.workers.json",
+  "include": ["app/sw.js", "app/service-worker.d.ts"]
+}

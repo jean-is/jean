@@ -174,7 +174,7 @@ function tones(style) {
 let worker
 let count = 0
 const asked = /** @type {Map<number, { source: string, options: object, resolve: (drawn: Drawn) => void, reject: (error: Error) => void }>} */ (new Map())
-/** Pele beside the page. @type {Promise<any> | undefined} */
+/** Pele beside the page. @type {Promise<typeof import('pele/lazy')> | undefined} */
 let here
 
 /** Mermaid as Pele draws it. @param {string} source @param {object} options @returns {Promise<Drawn>} */

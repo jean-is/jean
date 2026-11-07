@@ -8,11 +8,11 @@
 // check_certificate what the organisation's anchors say of a certificate (D434), the EU's trusted lists' too (D439).
 import { checkKey } from './key.js'
 
-/** @param {Record<string, any>} policy @returns {Promise<Record<string, any>>} throws when the key doesn't unlock this version here, or the groups' sections can't be applied */
+/** @param {Record<string, unknown>} policy @returns {Promise<Record<string, unknown>>} throws when the key doesn't unlock this version here, or the groups' sections can't be applied */
 export async function groups(policy) {
   await checkKey(policy.key, { origin: location.origin })
   const theirs = policy.groups ? await (await import('./groups.js')).resolve(policy) : policy
-  return theirs.jurisdictions ? (await import('./places.js')).kept(/** @type {any} */ (theirs)) : theirs
+  return theirs.jurisdictions ? (await import('./places.js')).kept(/** @type {{ brains?: import('../core/types.js').BrainConfig[], jurisdictions: string[] }} */ (theirs)) : theirs
 }
 
 /** @param {Record<string, any>} policy @returns {Promise<void>} throws when the key doesn't unlock this version here, or a section is wrong */

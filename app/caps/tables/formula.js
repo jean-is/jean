@@ -84,7 +84,7 @@ export function compile(text, columns) {
       if (!yes || !no || !take(')')) throw wrong()
       return (cells) => (test(cells) ? yes(cells) : no(cells))
     }
-    const member = /** @type {any} */ (Math)[MATH.get(token.text.toLowerCase()) ?? '']
+    const member = /** @type {Record<string, unknown>} */ (/** @type {unknown} */ (Math))[MATH.get(token.text.toLowerCase()) ?? '']
     if (member === undefined) throw wrong()
     if (typeof member !== 'function') return () => member
     if (!take('(')) throw wrong()

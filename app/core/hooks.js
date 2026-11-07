@@ -18,18 +18,18 @@ export const TIERS = /** @type {const} */ (['policy', 'user', 'jean', 'edge'])
  * @property {string} [refuse]                    a guard that fails closed: what it answers when it fails before going on
  */
 
-/** @param {Record<string, unknown> | undefined} match @param {any} e */
+/** @param {Record<string, unknown> | undefined} match @param {Record<string, unknown>} e */
 const matches = (match, e) => Object.entries(match ?? {}).every(([key, want]) => (Array.isArray(want) ? want.includes(e?.[key])
   : want instanceof RegExp ? want.test(String(e?.[key] ?? '')) : e?.[key] === want))
 
 /**
  * Runs an event through its hooks, then through Jean's behaviour, and gives back what came of it.
- * @param {Hook[]} hooks @param {string} name @param {any} input @param {(e: any) => any} behaviour @returns {Promise<any>}
+ * @param {Hook[]} hooks @param {string} name @param {Record<string, unknown>} input @param {(e: any) => any} behaviour @returns {Promise<any>}
  */
 export async function fire(hooks, name, input, behaviour) {
   const chain = hooks.filter((hook) => hook.on === name && matches(hook.match, input))
     .sort((a, b) => TIERS.indexOf(a.tier ?? 'jean') - TIERS.indexOf(b.tier ?? 'jean'))
-  /** @param {number} i @param {any} e @returns {Promise<any>} */
+  /** @param {number} i @param {Record<string, unknown>} e @returns {Promise<any>} */
   const step = async (i, e) => {
     const hook = chain[i]
     if (!hook) return behaviour(e)

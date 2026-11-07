@@ -57,7 +57,7 @@ export async function toggle() {
     console.warn('Dictation', error)
     session = null
     dictation.value = { state: 'idle' }
-    notify(t(/** @type {any} */ (error)?.name === 'NotAllowedError' ? 'dictation.denied' : 'dictation.failed'), { alert: true })
+    notify(t(/** @type {{ name?: string } | undefined} */ (error)?.name === 'NotAllowedError' ? 'dictation.denied' : 'dictation.failed'), { alert: true })
   }
 }
 
@@ -113,13 +113,13 @@ function listen(lang) {
   let heard = false
   /** @type {string | null} */
   let error = null
-  recognition.onresult = (/** @type {any} */ event) => {
+  recognition.onresult = (/** @type {SpeechRecognitionEvent} */ event) => {
     heard = true
     let words = ''
     for (const result of event.results) words += result[0].transcript
     app.draft.value = join(before, words.trim())
   }
-  recognition.onerror = (/** @type {any} */ event) => {
+  recognition.onerror = (/** @type {{ error: string }} */ event) => {
     console.warn('Dictation', event.error)
     error = event.error
   }

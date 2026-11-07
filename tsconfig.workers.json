@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "lib": ["ES2023", "ES2025.Intl", "WebWorker"], "moduleDetection": "force", "paths": { "sharp": ["./app/sharp.d.ts"] } },
+  "include": ["app/ui/*-worker.js", "app/caps/**/*-worker.js", "app/ee/mask-worker.js", "app/caps/computer/quickjs-globals.d.ts"],
+  "exclude": ["node_modules", "app/vendor"]
+}

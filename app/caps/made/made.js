@@ -251,7 +251,7 @@ class Made extends Element {
   #menu = `answer-menu-${++menus}`
 
   render() {
-    const source = /** @type {string} */ (/** @type {any} */ (this).source ?? '')
+    const source = /** @type {string} */ (/** @type {{ source?: string }} */ (this).source ?? '')
     const prose = this.closest('.msg-jean')?.querySelector('.prose')
     if (prose) prose.setAttribute('lang', languageOf(source, locale.value)), sided(prose, source)
     if (!source) return nothing
@@ -271,7 +271,7 @@ class Made extends Element {
       @click=${async (/** @type {Event} */ event) => { await run(event); if (type) act(type, { task, format }) }}>${icon}${label}</button></li>`
     return html`<button class="icon-button subtle" popovertarget=${id} aria-label=${t('action.more')}>${icons.more}</button>
       <div id=${id} class="menu answer-menu" popover>
-        ${sharing ? html`<ul>${linked.length ? linked.map((part) => part.draw({ text: source, files: /** @type {any} */ (this).files }, item)) : item(icons.share, t('made.share'),
+        ${sharing ? html`<ul>${linked.length ? linked.map((part) => part.draw({ text: source, files: /** @type {{ files?: unknown }} */ (this).files }, item)) : item(icons.share, t('made.share'),
           () => navigator.share({ title, text: source }).then(() => act('answer.share', { task }), (/** @type {Error} */ error) => error.name === 'AbortError' || console.warn('Share', error)))}</ul><hr>` : nothing}
         <ul>${item(icons.globe, t('made.htmlTitle'), () => import('../../ui/export.js').then((module) => module.saveAnswer(source, name)), 'answer.save', 'html')}
         ${item(icons.file, t('made.docxTitle'), () => downloadWord(source, name), 'answer.save', 'docx')}

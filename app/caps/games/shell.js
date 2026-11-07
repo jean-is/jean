@@ -48,7 +48,7 @@
     Object.defineProperties(document, { hidden: { get: () => false }, visibilityState: { get: () => 'visible' } })
   }
   win.Date = class extends RealDate {
-    constructor(/** @type {any[]} */ ...args) { if (args.length) super(.../** @type {[any]} */ (args)); else super(start + now) }
+    constructor(/** @type {unknown[]} */ ...args) { if (args.length) super(.../** @type {[string | number | Date]} */ (args)); else super(start + now) }
     static now() { return start + now }
   }
   performance.now = () => now
@@ -56,7 +56,7 @@
   const timers = /** @type {Map<number, { at: number, every?: number, fn: unknown, args: unknown[] }>} */ (new Map())
   win.requestAnimationFrame = (/** @type {Function} */ fn) => (frames.set(++ids, fn), ids)
   win.cancelAnimationFrame = (/** @type {number} */ id) => frames.delete(id)
-  win.setTimeout = (/** @type {any} */ fn, ms = 0, /** @type {unknown[]} */ ...args) => (running ? (timers.set(++ids, { at: now + Math.max(0, Number(ms) || 0), fn, args }), ids) : real.later(fn, ms, ...args))
+  win.setTimeout = (/** @type {TimerHandler} */ fn, ms = 0, /** @type {unknown[]} */ ...args) => (running ? (timers.set(++ids, { at: now + Math.max(0, Number(ms) || 0), fn, args }), ids) : real.later(fn, ms, ...args))
   win.setInterval = (/** @type {unknown} */ fn, ms = 0, /** @type {unknown[]} */ ...args) => ((every) => (timers.set(++ids, { at: now + every, every, fn, args }), ids))(Math.max(1, Number(ms) || 0))
   win.clearTimeout = win.clearInterval = (/** @type {number} */ id) => (id > 1e6 ? timers.delete(id) : real.clear(id))
   const step = (/** @type {number} */ ms) => {

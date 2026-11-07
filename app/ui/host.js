@@ -17,7 +17,7 @@ export const host = globalThis.location?.hostname !== '127.0.0.1' ? Promise.reso
   })
 
 let socket = /** @type {Promise<WebSocket> | null} */ (null)
-const waiting = /** @type {Map<string, { resolve: (value: any) => void, reject: (error: Error) => void }>} */ (new Map())
+const waiting = /** @type {Map<string, { resolve: (value: unknown) => void, reject: (error: Error) => void }>} */ (new Map())
 /** Whoever listens to the host's events: what a program it started writes, and its end. */
 const listeners = /** @type {Set<(event: string, data: any) => void>} */ (new Set())
 

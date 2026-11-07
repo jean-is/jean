@@ -84,7 +84,7 @@ const KEPT = /!\[[^\]]*\]\((\.\.\/files\/sha256-[\da-f]{64}\.(\w+))\)/g
 const picturesIn = async (source, page) => new Map(/** @type {[string, import('./formats.js').Picture][]} */ ((await Promise.all(/** @type {Promise<any[]>[]} */ ([
   ...[...source.matchAll(KEPT)].map(async ([, at, kind]) => [at, await forWord(new Blob([/** @type {BlobPart} */ (await app.fs.readBytes(`${app.projectDir}/${at.slice(3)}`))], { type: `image/${kind.replace('jpg', 'jpeg')}` }))]),
   // Drawn twice as fine as they show.
-  ...[...page?.querySelectorAll('.drawn-form :is(app-chart, app-score, app-slides, app-latex, app-diagram)') ?? []].map(async (one) => [one.getAttribute('source'), await forWord(await /** @type {any} */ (one).picture(), (width, height) => [width / 2, height / 2])]),
+  ...[...page?.querySelectorAll('.drawn-form :is(app-chart, app-score, app-slides, app-latex, app-diagram)') ?? []].map(async (one) => [one.getAttribute('source'), await forWord(await /** @type {{ picture(): Promise<Blob | string> }} */ (/** @type {unknown} */ (one)).picture(), (width, height) => [width / 2, height / 2])]),
 ]).map((entry) => entry.catch((error) => console.warn('Word', error) ?? [])))).filter((entry) => entry.length)))
 
 /** A collection in a document's Markdown, each as its rows under its name, in Word's Markdown. @param {string} source */

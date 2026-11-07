@@ -5,15 +5,20 @@
 import { AutoConfig, AutoModel, AutoTokenizer } from '../../vendor/transformers/transformers.web.min.js'
 import { weightsFrom } from '../../ui/model-worker.js'
 
+/** @import { DataType, DeviceType } from '@huggingface/transformers' */
+/** @typedef {{ id: number, type: 'load', host: string, model: string, device: DeviceType, dtype: DataType }} Load */
+/** @typedef {{ id: number, type: 'embed', texts: string[] }} Embed */
+
 /** @type {Promise<{ tokenizer: any, model: any }> | null} */
 let loading = null
 let busy = Promise.resolve()
 
-self.onmessage = ({ data }) => {
+self.onmessage = (/** @type {MessageEvent<Load | Embed>} */ { data }) => {
   // One batch at a time: they share the session.
   busy = busy.then(() => handle(data)).catch(() => {})
 }
 
+/** @param {Load | Embed} data */
 async function handle(data) {
   const { id, type } = data
   try {
@@ -26,10 +31,11 @@ async function handle(data) {
     }
   } catch (error) {
     if (type === 'load') loading = null
-    self.postMessage({ id, type: 'error', message: error?.message ?? String(error) })
+    self.postMessage({ id, type: 'error', message: /** @type {Error} */ (error)?.message ?? String(error) })
   }
 }
 
+/** @param {Load} data @param {number} id */
 function load({ host, model, device, dtype }, id) {
   const progress_callback = weightsFrom(host, id)
   loading ??= AutoConfig.from_pretrained(model, { progress_callback }).then((config) => Promise.all([

@@ -23,6 +23,7 @@ import { styleSheet } from '../../ui/sheet.js'
 
 await Promise.all([useStrings('slides'), styleSheet(new URL('../../vendor/deck/deck.css', import.meta.url)), styleSheet(new URL('kit-page.css', import.meta.url))])
 
+/** One of deck's layouts. @typedef {ReturnType<typeof mergeKits>['kit']['layouts'][string]} Layout */
 /** @typedef {{ name?: string, tokens: Record<string, any>, layouts: Record<string, any>, pictures?: Record<string, string> }} Own */
 /** The kit open: its place (null, the person's) and as its file holds it; a layout being made or changed ('+' a new one); what the page says; colours written that deck doesn't read, by field. */
 const open = signal(/** @type {{ dir: string | null, kit: Own } | null} */ (null))
@@ -172,7 +173,7 @@ function layoutForm(kit, key) {
     making.value = ''
   }
   return html`<form class="kit-layout" @submit=${keep}>
-    <label class="kit-field" for="layout-name">${t('slides.kit.name')}<input id="layout-name" name="name" required maxlength="40" dir="auto" .value=${given ? labelOf(/** @type {any} */ (given), key, locale.peek()) : ''}></label>
+    <label class="kit-field" for="layout-name">${t('slides.kit.name')}<input id="layout-name" name="name" required maxlength="40" dir="auto" .value=${given ? labelOf(/** @type {Layout} */ (given), key, locale.peek()) : ''}></label>
     <label class="kit-field" for="layout-grid">${t('slides.kit.grid')}<textarea id="layout-grid" name="areas" rows="3" dir="ltr" spellcheck="false" required aria-describedby="kit-grid-hint" .value=${given ? given.areas.map((/** @type {string[]} */ line) => line.join(' ')).join('\n') : 'default default\nleft right'}></textarea></label>
     <p class="hint" id="kit-grid-hint">${t('slides.kit.gridHint')}</p>
     <label class="kit-field" for="layout-columns">${t('slides.kit.columns')}<input id="layout-columns" name="columns" dir="ltr" placeholder="1fr 1fr" .value=${given ? given.columns.join(' ') : ''}></label>
@@ -194,10 +195,10 @@ function layouts(kit) {
   const all = withNames(mergeKits(jeanKit(), kit).kit).layouts, standard = Object.keys(STANDARD.layouts), mine = Object.keys(kit.layouts).filter((key) => !STANDARD.layouts[key] && kit.layouts[key])
   const turn = (/** @type {string} */ key) => change((next) => { if (next.layouts[key] === false) delete next.layouts[key]; else next.layouts[key] = false })
   return html`<section><h3>${t('slides.kit.layouts')}</h3><p class="hint">${t('slides.kit.slidesOnly')}</p><ul class="list kit-layouts">
-    ${[...standard, ...mine].map((key) => row(labelOf(all[key] ?? /** @type {any} */ (jeanKit().layouts[key]), key, locale.peek()), nothing, html`<span class="row">
+    ${[...standard, ...mine].map((key) => row(labelOf(all[key] ?? /** @type {Layout} */ (jeanKit().layouts[key]), key, locale.peek()), nothing, html`<span class="row">
       ${mine.includes(key) ? html`<button type="button" class="button subtle" @click=${() => { making.value = key }}>${t('slides.kit.change')}</button>
         <button type="button" class="button subtle danger" @click=${() => change((next) => { delete next.layouts[key] })}>${t('slides.kit.delete')}</button>`
-      : html`<input type="checkbox" class="switch" role="switch" title=${labelOf(/** @type {any} */ (jeanKit().layouts[key]), key, locale.peek())} .checked=${live(kit.layouts[key] !== false)} ?disabled=${key === 'default'} @change=${() => turn(key)}>`}</span>`))}
+      : html`<input type="checkbox" class="switch" role="switch" title=${labelOf(/** @type {Layout} */ (jeanKit().layouts[key]), key, locale.peek())} .checked=${live(kit.layouts[key] !== false)} ?disabled=${key === 'default'} @change=${() => turn(key)}>`}</span>`))}
     </ul>${making.value ? layoutForm(kit, making.value) : html`<button type="button" class="button" @click=${() => { making.value = '+' }}>${icons.plus} ${t('slides.kit.newLayout')}</button>`}</section>`
 }
 

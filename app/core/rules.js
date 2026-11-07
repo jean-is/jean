@@ -42,7 +42,7 @@ export const STRICT = /** @type {Record<RuleValue, number>} */ ({ allow: 0, ask:
 export const guardHooks = (guards, tier, yes) => guards.filter((guard) => (guard.kind || guard.service) && STRICT[guard.then] > 0).map((guard) => ({
   on: 'tool.check', tier, by: guard.id,
   match: { ...(guard.kind && { kind: guard.kind }), ...(guard.service && { service: guard.service }) },
-  run: async (/** @type {any} */ e, /** @type {(e: any) => Promise<any>} */ next) => {
+  run: async (/** @type {{ title: string, args?: unknown, task?: string }} */ e, /** @type {(e: object) => Promise<{ refuse?: string, decision?: RuleValue } | undefined>} */ next) => {
     const said = await next(e)
     if (said?.refuse || STRICT[/** @type {RuleValue} */ (said?.decision)] >= STRICT[guard.then]) return said
     if (guard.if && !(await yes(guard.if, `${e.title}\n${JSON.stringify(e.args ?? {}).slice(0, 2000)}`, e.task).catch(() => true))) return said

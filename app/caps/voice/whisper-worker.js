@@ -8,6 +8,12 @@ import { env, pipeline, AutoModel, Tensor } from '../../vendor/transformers/tran
 import { weightsFrom } from '../../ui/model-worker.js'
 import { whistle } from './whistle.js'
 
+/** @import { DataType, PretrainedConfig } from '@huggingface/transformers' */
+/** @typedef {{ id: number, type: 'load', host: string, engine: 'whistle' }} Whistle */
+/** @typedef {{ id: number, type: 'load', host: string, engine: 'whisper', model: string, dtype: DataType | Record<string, DataType> }} Whisper */
+/** @typedef {{ id: number, type: 'transcribe', audio: Float32Array, language: string, engine: 'whistle' | 'whisper' }} Transcribe */
+/** @typedef {{ id: number, type: 'vad', host: string, model: string, audio: Float32Array }} Vad */
+
 /** @type {Promise<any> | null} */
 let transcriber = null
 /** @type {Promise<(audio: Float32Array, language: string) => string> | null} */
@@ -18,7 +24,7 @@ let detector = null
 let state = new Tensor('float32', new Float32Array(256), [2, 1, 128])
 const rate = new Tensor('int64', new BigInt64Array([16000n]), [])
 
-self.onmessage = async ({ data }) => {
+self.onmessage = async (/** @type {MessageEvent<Whistle | Whisper | Transcribe | Vad>} */ { data }) => {
   const { id, type } = data
   try {
     if (type === 'load') {
@@ -35,7 +41,7 @@ self.onmessage = async ({ data }) => {
       self.postMessage({ id, type: 'result', text: output.text })
     } else if (type === 'vad') {
       env.remoteHost = data.host
-      detector ??= AutoModel.from_pretrained(data.model, { config: { model_type: 'custom' }, dtype: 'fp32', device: 'wasm' })
+      detector ??= AutoModel.from_pretrained(data.model, { config: /** @type {PretrainedConfig} a plain object, which Transformers.js makes one of */ ({ model_type: 'custom' }), dtype: 'fp32', device: 'wasm' })
       const model = await detector
       const speech = []
       for (let at = 0; at + 512 <= data.audio.length; at += 512) {
@@ -49,10 +55,11 @@ self.onmessage = async ({ data }) => {
     if (type === 'load' && data.engine === 'whistle') whistler = null
     else if (type === 'load') transcriber = null
     if (type === 'vad') detector = null
-    self.postMessage({ id, type: 'error', message: error?.message ?? String(error) })
+    self.postMessage({ id, type: 'error', message: /** @type {Error} */ (error)?.message ?? String(error) })
   }
 }
 
+/** @param {Whisper} data @param {number} id */
 function load({ host, model, dtype }, id) {
   return pipeline('automatic-speech-recognition', model, { dtype, device: 'wasm', progress_callback: weightsFrom(host, id) })
 }

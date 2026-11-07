@@ -12,9 +12,9 @@
 export function usesOf(records) {
   const by = /** @type {Map<string, Use>} */ (new Map())
   for (const { at, update } of records) {
-    const usage = update?.sessionUpdate === 'tool_call' && update.kind === 'think' && update.rawInput?.provider ? /** @type {any} */ (update.rawOutput)?.usage : null
+    const usage = update?.sessionUpdate === 'tool_call' && update.kind === 'think' && update.rawInput?.provider ? /** @type {{ usage?: { inputTokens?: number, outputTokens?: number, cacheReadTokens?: number } } | undefined} */ (update.rawOutput)?.usage : null
     if (!usage || update?.sessionUpdate !== 'tool_call') continue
-    const when = new Date(at), input = /** @type {any} */ (update.rawInput)
+    const when = new Date(at), input = /** @type {{ provider: string, model?: string, local?: boolean }} */ (update.rawInput)
     by.set(update.toolCallId, { month: `${when.getFullYear()}-${String(when.getMonth() + 1).padStart(2, '0')}`, provider: input.provider, model: input.model ?? '', local: input.local === true,
       input: usage.inputTokens ?? 0, output: usage.outputTokens ?? 0, cached: usage.cacheReadTokens ?? 0 })
   }

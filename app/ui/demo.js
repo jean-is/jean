@@ -38,7 +38,7 @@ app.look.value = root.dataset.look ?? 'tilde'
 const speed = Math.max(Number(params.get('speed')) || 1, 0.1)
 const response = await fetch(new URL(params.get('src') ?? '', location.href))
 if (!response.ok) throw new Error(`demo: ${response.status} for ${params.get('src')}`)
-/** Each record's line in the file, as an editor numbers them, which a tour's stops name. @type {Map<any, number>} */
+/** Each record's line in the file, as an editor numbers them, which a tour's stops name. @type {Map<unknown, number>} */
 const lineOf = new Map()
 /** @type {any[]} */
 const lines = (await response.text()).split('\n').flatMap((line, i) => { try { const record = JSON.parse(line); lineOf.set(record, i + 1); return [record] } catch { return [] } })
@@ -74,7 +74,7 @@ function show(added) {
   app.current.value = { id: String(header?.id ?? ''), path: '', records: [...app.current.peek()?.records ?? [], ...added.map((record) => ({ ...record, at }))] }
 }
 
-/** Whether the viewer allows a call that asks first, on its card. @param {any} toolCall @returns {Promise<boolean>} */
+/** Whether the viewer allows a call that asks first, on its card. @param {import('../core/types.js').ToolCallInfo} toolCall @returns {Promise<boolean>} */
 const approve = (toolCall) => new Promise((resolve) => {
   const timer = params.has('loop') ? setTimeout(() => answer('allow_once'), PACE.read / speed) : 0
   function answer(/** @type {string} */ option) { clearTimeout(timer); decisions.value = []; resolve(option.startsWith('allow')) }

@@ -38,7 +38,7 @@ export const routines = () => listRoutines(app.fs, folder())
 
 /** Week facts where the user lives (the browser's region): the weekend's days, and the first day. */
 export function week() {
-  const where = /** @type {any} */ (new Intl.Locale(navigator.language))
+  const where = /** @type {Intl.Locale & { weekInfo?: { firstDay?: number, weekend?: number[] }, getWeekInfo?(): { firstDay?: number, weekend?: number[] } }} */ (new Intl.Locale(navigator.language))
   const info = where.getWeekInfo?.() ?? where.weekInfo ?? {}
   return { weekend: /** @type {number[]} */ (info.weekend ?? [6, 7]).map((day) => day % 7), first: (info.firstDay ?? 1) % 7 }
 }
@@ -76,7 +76,7 @@ const scheduleTool = {
     if (!plan) throw new Error('A routine needs every (once, hour, day, weekday, week or month), at (HH:MM), and on for a week (monday…sunday), a month (1–31) or once (YYYY-MM-DD); or when (file or made).')
     if (!title || !request) throw new Error('A routine needs a title and a request.')
     if ('every' in plan && !dueTime(plan, new Date(), week().weekend, 1)) throw new Error(`${inEnglish(plan)} has passed: it is ${localStamp(new Date())}.`)
-    const routine = newRoutine(folder(), { title, request, by: 'jean', ...(flow && { flow: /** @type {any} */ (flow).id }), ...plan })
+    const routine = newRoutine(folder(), { title, request, by: 'jean', ...(flow && { flow: flow.id }), ...plan })
     await writeRoutine(app.fs, routine)
     act('routine.add', { task: conversationOf(ctx.signal)?.path, path: routine.path, title, flow: Boolean(flow) || undefined, ...('every' in plan ? { every: plan.every } : { when: plan.when }) })
     notify(t('routines.saved', { title }), { label: t('skills.open'), run: () => import('../../ui/dialogs.js').then((dialogs) => dialogs.openSettings('routines')) })

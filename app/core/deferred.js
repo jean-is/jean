@@ -22,8 +22,8 @@ function shape(schema, root, depth) {
   const { $ref, anyOf, oneOf, enum: values, type, items, properties } = schema ?? {}
   const either = (/** @type {string[]} */ list) => [...new Set(list)].join(' | ')
   if ($ref) return depth ? shape((root.$defs ?? root.definitions)?.[$ref.split('/').pop()], root, depth - 1) : 'object'
-  if (schema?.const !== undefined || values) return either((values ?? [schema.const]).map((/** @type {any} */ value) => JSON.stringify(value)))
-  if (anyOf ?? oneOf) return either((anyOf ?? oneOf).map((/** @type {any} */ one) => shape(one, root, depth)))
+  if (schema?.const !== undefined || values) return either((values ?? [schema.const]).map((/** @type {unknown} */ value) => JSON.stringify(value)))
+  if (anyOf ?? oneOf) return either((anyOf ?? oneOf).map((/** @type {unknown} */ one) => shape(one, root, depth)))
   if (Array.isArray(type)) return either(type.map((one) => shape({ ...schema, type: one }, root, depth)))
   if (type === 'array' && items && depth) return shape(items, root, depth - 1).replace(/^.* \| .*$/, '($&)') + '[]'
   if (properties && depth) return `{ ${fields(schema, (property) => shape(property, root, depth - 1))} }`

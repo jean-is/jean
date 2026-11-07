@@ -18,6 +18,7 @@ import { DIR, LARGEST, installed, running, safe, switches, granted, refresh, sto
 await styleSheet(new URL('../../ui/data-pages.css', import.meta.url))
 
 /** @typedef {import('./manifest.js').Manifest} Manifest */
+/** @import { Switched } from './extensions.js' */
 
 /** An extension read from an address, shown before it is added. */
 const reading = signal(/** @type {{ manifest?: Manifest, json?: string, code?: string, base?: string, made?: boolean, failed?: string } | null} */ (null))
@@ -77,7 +78,7 @@ async function add() {
   await app.fs.write(join(DIR, manifest.name, 'extension.json'), json)
   await app.fs.write(join(DIR, manifest.name, manifest.main), code)
   await refresh()
-  await updateSettings(/** @type {any} */ ({ extensions: { ...switches(), [manifest.name]: { on: true, from: base } } }))
+  await updateSettings(/** @type {Switched} */ ({ extensions: { ...switches(), [manifest.name]: { on: true, from: base } } }))
   notify(t('extensions.added', { title: shownIn(manifest, locale.peek()).title }))
   go(manifest.name)
 }
@@ -85,7 +86,7 @@ async function add() {
 /** Turned on, it starts again, failed or not; its address and the rights taken back stay. @param {Manifest} manifest @param {boolean} on */
 function turn(manifest, on) {
   const { failed, ...own } = switches()[manifest.name] ?? {}
-  return updateSettings(/** @type {any} */ ({ extensions: { ...switches(), [manifest.name]: { ...own, on } } }))
+  return updateSettings(/** @type {Switched} */ ({ extensions: { ...switches(), [manifest.name]: { ...own, on } } }))
 }
 
 /** Reads it again from where it came: the same, it says so; else its new version shows before it takes this one's place. @param {Manifest} manifest @param {string} from */
@@ -103,7 +104,7 @@ async function remove(manifest) {
   stop(manifest.name)
   await app.fs.remove(join(DIR, manifest.name))
   const { [manifest.name]: gone, ...rest } = switches()
-  await updateSettings(/** @type {any} */ ({ extensions: rest }))
+  await updateSettings(/** @type {Switched} */ ({ extensions: rest }))
   await refresh()
   go('')
 }

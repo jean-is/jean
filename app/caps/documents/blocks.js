@@ -17,17 +17,7 @@
 import { Plugin, PluginKey, Selection, TextSelection, Fragment, Decoration, DecorationSet } from '#prosemirror'
 import { el, icon, float, pop } from './ui.js'
 
-/** @typedef {import('prosemirror-model').Node} PMNode */
-/** @typedef {import('prosemirror-state').EditorState} EditorState */
-/** @typedef {import('prosemirror-state').Command} Command */
-/** @typedef {import('prosemirror-view').EditorView} EditorView */
-/** @typedef {import('prosemirror-transform').Mappable} Mappable */
-/**
- * A block: where it starts and ends as a selection of blocks has it (a list's first item from the list's
- * start, its last to the list's end), where its node is, and the list it is an item of.
- * @typedef {{ from: number, to: number, at: number, node: PMNode, list: { pos: number, node: PMNode } | null }} Unit
- */
-/** What a line can become, from the "/" menu's: its name's key, its glyph, and the command that turns it. @typedef {{ key: string, glyph: string, run: Command }} Kind */
+/** @import { PMNode, EditorState, Command, EditorView, Mappable, Unit, Kind } from './types.js' */
 
 const LIST = /^(bullet|ordered)_list$/
 const EDGE = 32
@@ -432,7 +422,7 @@ export function blocks({ label, announce, kinds, adds, mac }) {
         event.dataTransfer.effectAllowed = 'copyMove'
         const block = /** @type {HTMLElement | null} */ (editor.nodeDOM(unit.at))
         if (block) event.dataTransfer.setDragImage(block.getClientRects().length ? block : /** @type {HTMLElement} */ (editor.nodeDOM(unit.list?.pos ?? unit.at)), 0, 0)
-        editor.dragging = /** @type {any} */ ({ slice, move: true })
+        editor.dragging = { slice, move: true }
       })
       handle.addEventListener('dragend', () => { editor.dragging = null })
       // A drag near the top or the foot of the document scrolls it, as the browser would a page's.

@@ -7,12 +7,7 @@ import { namesRows } from '../../ui/markdown.js'
 import { el, RTL, langOf } from './ui.js'
 import { steps } from '../../ui/merge.js'
 
-/** @typedef {import('prosemirror-model').Node} PMNode */
-/** @typedef {import('prosemirror-state').EditorState} EditorState */
-/** @typedef {import('prosemirror-view').EditorView} EditorView */
-/** The blocks a change replaces (from–to; none: from = to), Jean's (none for blocks taken away), how many, and Jean's words. @typedef {{ id: number, from: number, to: number, content: Fragment, size: number, why: string }} Change */
-/** @typedef {{ changes: Change[], deco: DecorationSet }} State */
-/** Blocks as an answer draws them (drawn.js). @typedef {{ drawn: (node: PMNode) => boolean, draw: (node: PMNode, plain: () => Node) => (HTMLElement & { stop: () => void }) | null }} Form */
+/** @import { PMNode, EditorState, EditorView, Change, State, Form, Drawn } from './types.js' */
 
 export const suggestionKey = /** @type {PluginKey<State>} */ (new PluginKey('suggestions'))
 
@@ -156,7 +151,7 @@ function draw(doc, changes, strings, act, form) {
 }
 
 /** What a widget drew, let go with it. @param {Node} dom */
-const stop = (dom) => /** @type {HTMLElement} */ (dom).querySelectorAll?.('.suggest-form').forEach((one) => /** @type {any} */ (one).stop())
+const stop = (dom) => /** @type {HTMLElement} */ (dom).querySelectorAll?.('.suggest-form').forEach((one) => /** @type {Drawn} */ (one).stop())
 
 /** Lines drawn outside the editor as the document's own are in it (editor.js, drawn.js): each its direction and language, a heading its level under the pane's, a table's heads. @param {HTMLElement} box */
 const settle = (box) => {

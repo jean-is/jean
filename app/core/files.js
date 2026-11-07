@@ -221,7 +221,7 @@ export function parsePages(spec, count) {
  * @returns {import('./loop.js').Tool}
  */
 export function readTool({ fs, projectDir, files, maxTokens = 6000, words = () => undefined }) {
-  /** @param {any} args @param {AbortSignal} [signal] */
+  /** @param {{ file?: unknown } | undefined} args @param {AbortSignal} [signal] */
   const find = (args, signal) => {
     const wanted = String(args?.file ?? '').trim().toLowerCase()
     return files(signal).findLast((link) => link.name.toLowerCase() === wanted || link.uri.toLowerCase() === wanted)

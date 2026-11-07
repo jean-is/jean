@@ -42,7 +42,7 @@ export function answered(der) {
 /**
  * The chains of the witnesses that dated a sealed certificate: each token's signer, the certificate its authority
  * reserves for time-stamping (RFC 3161 2.3), then the others the token carries, issuer by issuer.
- * @param {{ header?: { etsiU?: any[] } }} sealed @returns {Promise<Uint8Array[][]>}
+ * @param {{ header?: { etsiU?: { sigTst?: { tstTokens?: { val?: string }[] } }[] } }} sealed @returns {Promise<Uint8Array[][]>}
  */
 export async function witnessesOf(sealed) {
   const chains = []

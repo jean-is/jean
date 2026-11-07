@@ -57,12 +57,12 @@ const delegateTool = {
     },
   },
   kind: 'think',
-  title: (args) => `Delegate: ${(args?.parts ?? []).map((/** @type {any} */ part) => part?.title).join(', ')}`,
+  title: (args) => `Delegate: ${(args?.parts ?? []).map((/** @type {{ title?: string } | undefined} */ part) => part?.title).join(', ')}`,
   run: async (args, ctx) => {
-    const parts = (Array.isArray(args?.parts) ? args.parts : []).filter((/** @type {any} */ part) => part?.task).slice(0, MAX_PARTS)
+    const parts = (Array.isArray(args?.parts) ? args.parts : []).filter((/** @type {{ task?: string } | undefined} */ part) => part?.task).slice(0, MAX_PARTS)
     if (!parts.length) throw new Error('Give at least one part, with its task.')
-    const titles = parts.map((/** @type {any} */ part) => String(part.title || part.task).slice(0, 80))
-    const reports = await pool(parts.map((/** @type {any} */ part, /** @type {number} */ i) => () => ctx.call('helper', { title: titles[i], task: String(part.task) })), AT_ONCE)
+    const titles = parts.map((/** @type {{ title?: string, task?: string }} */ part) => String(part.title || part.task).slice(0, 80))
+    const reports = await pool(parts.map((/** @type {{ task?: string }} */ part, /** @type {number} */ i) => () => ctx.call('helper', { title: titles[i], task: String(part.task) })), AT_ONCE)
     return reports.map((report, i) => `Part ${i + 1}, ${titles[i]}:\n${report}`).join('\n\n')
   },
 }

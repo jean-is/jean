@@ -9,6 +9,7 @@ import { isLocal } from './settings.js'
  * @import { ProviderId, WireApi, ChatMessage, AssistantMessage, ToolCall, StreamEvent, StopReason, Usage, ModelInfo,
  *   DocumentPart, LLMErrorCode, Connection, Prompt, WireRequest, BrainConfig } from './types.js'
  * @import { SSEEvent } from './sse.js'
+ * @import { OpenAIMessage, OpenAIAssistantMessage, OpenAIRequestBody, OpenAIChunk, OpenAIToolCallDelta, ModelEntry } from './wire.js'
  */
 
 /** What OpenRouter is asked of every request: only providers that neither keep nor train on what they're sent. */
@@ -148,7 +149,7 @@ export async function listModels({ brain, apiKey, signal, fetch = globalThis.fet
   const json = await res.json().catch((e) => { throw wrapError(e, signal, 'bad_response') })
   const list = json?.data
   if (!Array.isArray(list)) throw new LLMError('Unexpected model list', { code: 'bad_response' })
-  return list.map((/** @type {any} */ m) => (anthropic
+  return list.map((/** @type {ModelEntry} */ m) => (anthropic
     ? { id: m.id, name: m.display_name, contextLength: m.max_input_tokens }
     // Gemini lists its models as models/gemini-…, and answers to the bare name too.
     : { id: m.id.replace(/^models\//, ''), name: m.name, contextLength: m.context_length, pricing: m.pricing ? { prompt: Number(m.pricing.prompt), completion: Number(m.pricing.completion) } : undefined, input: m.architecture?.input_modalities, output: m.architecture?.output_modalities }))
@@ -177,7 +178,7 @@ export const post = (fetch, { url, headers, body }, signal) => fetchOrThrow(fetc
 function openaiRequest({ brain, apiKey, system, messages, tools = [], maxTokens, effort }) {
   // OpenAI and OpenRouter take system messages anywhere; local servers' chat templates often don't.
   const systemNotes = brain.provider === 'openai' || brain.provider === 'openrouter'
-  /** @type {Record<string, any>} */
+  /** @type {OpenAIRequestBody} */
   const body = { model: brain.model, stream: true, messages: openaiMessages(system, messages, { systemNotes, brain }), ...(brain.provider === 'openrouter' && { provider: UNKEPT }) }
   if (tools.length) {
     // OpenRouter runs the brain's own web search itself, and cites pages in annotations.
@@ -200,10 +201,10 @@ function openaiRequest({ brain, apiKey, system, messages, tools = [], maxTokens,
  * become system messages where they fall, or a tagged block at the top of the next user turn.
  * @param {string | undefined} system @param {ChatMessage[]} messages
  * @param {{ systemNotes: boolean, argsAsObject?: boolean, brain?: BrainConfig }} options argsAsObject: for chat templates; brain: who reads them
- * @returns {Record<string, any>[]}
+ * @returns {OpenAIMessage[]}
  */
 export function openaiMessages(system, messages, { systemNotes, argsAsObject = false, brain }) {
-  /** @type {Record<string, any>[]} */
+  /** @type {OpenAIMessage[]} */
   const out = system ? [{ role: 'system', content: system }] : []
   /** @type {string[]} */
   let notes = []
@@ -223,11 +224,11 @@ export function openaiMessages(system, messages, { systemNotes, argsAsObject = f
       const content = m.isError && !m.content.startsWith('Error:') ? `Error: ${m.content}` : m.content
       out.push({ role: 'tool', tool_call_id: m.toolCallId, ...(argsAsObject && { name: m.name }), content })
     } else {
-      /** @type {Record<string, any>} */
+      /** @type {OpenAIAssistantMessage} */
       const message = { role: 'assistant', content: m.content }
       if (m.toolCalls?.length) {
         message.tool_calls = m.toolCalls.map(({ id, name, args }, n) => {
-          const sent = !m.rawModel || m.rawModel === brain?.model ? m.raw?.find((/** @type {any} */ block) => block.id === id)?.extra_content : null
+          const sent = !m.rawModel || m.rawModel === brain?.model ? m.raw?.find((/** @type {{ id?: string }} */ block) => block.id === id)?.extra_content : null
           // A call another brain or model made has none: this is the word Google's docs give for one, at some cost to its thinking.
           const extra = sent ?? (!n && at > turn ? { google: { thought_signature: 'skip_thought_signature_validator' } } : null)
           return { id, type: 'function', function: { name, arguments: argsAsObject ? args ?? {} : JSON.stringify(args ?? {}) }, ...(extra && { extra_content: extra }) }
@@ -247,13 +248,14 @@ export const documentBlock = (doc) => `<document${doc.source ? ` source="${doc.s
 
 /** @param {AsyncIterable<SSEEvent>} events @returns {AsyncGenerator<StreamEvent, void, undefined>} */
 async function* readOpenAI(events) {
-  /** @type {{ id: string, name: string, args: string, extra?: any }[]} */
+  /** @type {{ id: string, name: string, args: string, extra?: unknown }[]} */
   const slots = []
   let [text, finish, received] = ['', '', false]
   /** @type {Usage|undefined} */
   let usage
   for await (const { data } of events) {
     if (data === '[DONE]') break
+    /** @type {OpenAIChunk} */
     const chunk = parseData(data)
     received = true
     if (chunk.error) throw streamError(chunk.error)
@@ -272,7 +274,7 @@ async function* readOpenAI(events) {
     const thought = [delta.reasoning, delta.reasoning_content].find(isText)
     if (thought) yield { type: 'thinking', delta: thought }
     for (const call of delta.tool_calls ?? []) addToolDelta(slots, call)
-    const cited = (delta.annotations ?? []).flatMap((/** @type {any} */ a) => (a.url_citation?.url ? [{ title: a.url_citation.title || a.url_citation.url, url: a.url_citation.url, quote: a.url_citation.content }] : []))
+    const cited = (delta.annotations ?? []).flatMap((a) => (a.url_citation?.url ? [{ title: a.url_citation.title || a.url_citation.url, url: a.url_citation.url, quote: a.url_citation.content }] : []))
     if (cited.length) yield { type: 'cite', sources: cited }
     if (choice.finish_reason) finish = choice.finish_reason
   }
@@ -287,7 +289,7 @@ async function* readOpenAI(events) {
 
 /**
  * Tool calls stream as fragments keyed by `index`: id and name first, then pieces of arguments.
- * @param {{ id: string, name: string, args: string, extra?: any }[]} slots @param {any} delta
+ * @param {{ id: string, name: string, args: string, extra?: unknown }[]} slots @param {OpenAIToolCallDelta} delta
  */
 function addToolDelta(slots, delta) {
   // Some servers omit the index and send each call whole.
@@ -333,7 +335,7 @@ export function parseArgs(raw) {
 /** @param {unknown} value @returns {value is string} */
 const isText = (value) => typeof value === 'string' && value !== ''
 
-/** @param {StopReason} stopReason @param {Usage|undefined} usage @param {string} content @param {ToolCall[]} toolCalls @param {any[]} [raw] @returns {StreamEvent} */
+/** @param {StopReason} stopReason @param {Usage|undefined} usage @param {string} content @param {ToolCall[]} toolCalls @param {unknown[]} [raw] @returns {StreamEvent} */
 export function doneEvent(stopReason, usage, content, toolCalls, raw) {
   /** @type {AssistantMessage} */
   const message = { role: 'assistant', content, ...(toolCalls.length && { toolCalls }), ...(raw && { raw }) }
@@ -379,7 +381,7 @@ export function streamError(error) {
 /** @param {unknown} error @param {AbortSignal|undefined} signal @param {LLMErrorCode} code */
 function wrapError(error, signal, code) {
   if (error instanceof LLMError) return error
-  const e = /** @type {any} */ (error)
+  const e = /** @type {{ name?: string, message?: string } | null | undefined} */ (error)
   if (signal?.aborted || e?.name === 'AbortError') return new LLMError('Request aborted', { code: 'aborted', cause: error })
   return new LLMError(e?.message || String(error), { code, cause: error })
 }

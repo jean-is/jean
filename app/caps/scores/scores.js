@@ -106,9 +106,9 @@ class AppScore extends HTMLElement {
     } catch (error) {
       console.warn('Score', error)
     }
-    const music = tune?.lines?.some((/** @type {any} */ line) => line.staff)
+    const music = tune?.lines?.some((/** @type {{ staff?: unknown }} */ line) => line.staff)
     this.notes = music ? notesOf(tune.setUpAudio(), wholeNote(tune.millisecondsPerMeasure(), tune.getMeterFraction())) : []
-    this.moments = music ? tune.setTiming().filter((/** @type {any} */ moment) => moment.type === 'event') : []
+    this.moments = music ? tune.setTiming().filter((/** @type {{ type: string }} */ moment) => moment.type === 'event') : []
     this.length = Math.max(0, ...this.notes.map((note) => note.at + note.length))
     this.at = Math.min(this.at, this.length)
     this.label = music ? String(tune.metaText?.title ?? '') : ''

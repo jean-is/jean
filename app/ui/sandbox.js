@@ -12,7 +12,11 @@
 import { signal } from '@preact/signals-core'
 
 /** @typedef {import('../core/loop.js').ToolContext} ToolContext */
-/** @typedef {{ frame: HTMLIFrameElement, runs: Map<number, (message: any) => void>, engines: Map<string, Promise<void>>, loading: Map<string, (message: any) => void>, reset: boolean, epoch: number }} Box */
+/**
+ * runs: what each run's messages go to, a call, a need, a request or its end, each as the engine sends it; loading: each engine's `loaded`
+ * @typedef {{ frame: HTMLIFrameElement, runs: Map<number, (message: any) => void>, engines: Map<string, Promise<void>>, loading: Map<string, (message: Loaded) => void>, reset: boolean, epoch: number }} Box
+ */
+/** @typedef {{ error?: string, memory?: number }} Loaded */
 /**
  * What a sandbox is doing, for Settings to show (D176): asleep until a run needs it, waking up while
  * it or an engine starts, then ready, or working while a run goes on; each engine waking or ready;
@@ -127,7 +131,7 @@ export function sandbox({ capability, worker, page, engines }) {
       }))
       await new Promise((resolve, reject) => {
         const slow = setTimeout(() => reject(new Error('The sandbox did not start.')), bootMs)
-        box.loading.set(engine, (/** @type {any} */ data) => {
+        box.loading.set(engine, (/** @type {Loaded} */ data) => {
           clearTimeout(slow)
           if (data.error) return reject(new Error(data.error))
           trace(`${engine} ready`, since(began))
@@ -158,8 +162,8 @@ export function sandbox({ capability, worker, page, engines }) {
    * the rules; anything else it asks of Jean (a request to the internet) goes to `handle`. `prepare`
    * adds what depends on the sandbox it runs in (what it already has, by its epoch). Resolves with
    * the `done` message.
-   * @param {{ engine: string } & Record<string, any>} message @param {ToolContext} ctx
-   * @param {{ handle?: (message: any) => Promise<any>, prepare?: (epoch: number) => Promise<Record<string, any>>, quietMs?: number }} [options]
+   * @param {{ engine: string } & Record<string, unknown>} message @param {ToolContext} ctx
+   * @param {{ handle?: (message: any) => Promise<unknown>, prepare?: (epoch: number) => Promise<Record<string, unknown>>, quietMs?: number }} [options]
    * @returns {Promise<any>}
    */
   async function execute(message, ctx, { handle, prepare, quietMs = WATCHDOG_MS } = {}) {
@@ -171,7 +175,7 @@ export function sandbox({ capability, worker, page, engines }) {
     const extra = await prepare?.(box.epoch)
     const id = ++lastRun
     const began = performance.now()
-    const post = (/** @type {any} */ data) => box.frame.contentWindow?.postMessage(data, '*')
+    const post = (/** @type {Record<string, unknown>} */ data) => box.frame.contentWindow?.postMessage(data, '*')
     return new Promise((resolve, reject) => {
       let waiting = 0
       /** @type {ReturnType<typeof setTimeout> | undefined} */

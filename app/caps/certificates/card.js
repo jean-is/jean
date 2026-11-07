@@ -130,7 +130,7 @@ export function card(checked) {
   if (!checked) return html`<div class="receipt receipt-checked"><p class="receipt-verdict">${t('certificates.unreadable')}</p></div>`
   const said = checked.says?.credentialSubject ?? {}
   const where = ['device', 'cloud', 'outside'].includes(said.where) ? said.where : 'unknown'
-  const reached = [...new Set((checked.says?.evidence ?? []).flatMap((/** @type {any} */ record) => Object.keys(record.hosts ?? {})))]
+  const reached = [...new Set((checked.says?.evidence ?? []).flatMap((/** @type {{ hosts?: object }} */ record) => Object.keys(record.hosts ?? {})))]
   const by = signer(checked)
   return html`<div class="receipt receipt-checked">
     <div class="receipt-head ${checked.intact ? 'is-local' : ''}">

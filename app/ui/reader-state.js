@@ -49,7 +49,7 @@ export const keepRecords = async (/** @type {string} */ _path, /** @type {unknow
 export const assistantName = () => BRAND.name
 export const brainLabel = (/** @type {{ provider: string, model: string, api: string }} */ brain) => (brain.api === 'device' ? t('provider.device') : `${t(`provider.${brain.provider}`)} · ${brain.model.split('/').at(-1)}`)
 /** The approval a demo's call waits on (ui/demo.js), drawn as the room's inbox draws one. */
-export const decisions = signal(/** @type {any[]} */ ([]))
+export const decisions = signal(/** @type {{ id: string, toolCall: import('../core/types.js').ToolCallInfo, resolve: (option: string) => void }[]} */ ([]))
 export const decisionsHere = () => decisions.value
 export const canStepUp = (/** @type {unknown} */ _brain) => false
 // Nothing to try again, go back to, answer in a new task, open or ask a smarter brain.

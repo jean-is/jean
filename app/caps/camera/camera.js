@@ -99,7 +99,7 @@ export async function open() {
   } catch (error) {
     console.warn('Camera', error)
     close()
-    return notify(t(/** @type {any} */ (error)?.name === 'NotAllowedError' ? 'camera.denied' : 'camera.failed'), { alert: true })
+    return notify(t(/** @type {{ name?: string } | undefined} */ (error)?.name === 'NotAllowedError' ? 'camera.denied' : 'camera.failed'), { alert: true })
   }
   if (resuming) return
   full.value = touch.matches
@@ -117,7 +117,7 @@ async function start() {
   await video.play().catch(() => {})
   mirrored.value = track.getSettings().facingMode !== 'environment'
   const cameras = (await navigator.mediaDevices.enumerateDevices()).filter((device) => device.kind === 'videoinput').length
-  can.value = { turn: cameras > 1, light: Boolean(/** @type {any} */ (track.getCapabilities?.())?.torch) }
+  can.value = { turn: cameras > 1, light: Boolean(/** @type {MediaTrackCapabilities & { torch?: boolean }} */ (track.getCapabilities?.())?.torch) }
   light.value = false
   // The system took the camera (a call, another app): as when the page is hidden.
   track.addEventListener('ended', () => { if (state.peek() === 'on') pause() })
@@ -165,7 +165,7 @@ export async function turn() {
 
 export async function toggleLight() {
   const [track] = stream?.getVideoTracks() ?? []
-  await track?.applyConstraints({ advanced: [/** @type {any} */ ({ torch: !light.peek() })] }).then(() => { light.value = !light.peek() }, console.warn)
+  await track?.applyConstraints({ advanced: [/** @type {MediaTrackConstraintSet & { torch?: boolean }} */ ({ torch: !light.peek() })] }).then(() => { light.value = !light.peek() }, console.warn)
 }
 
 // ─── Frames ──────────────────────────────────────────────────────────────────

@@ -4,7 +4,7 @@ import { LLMError, headersFor, post, endpoint, sseEvents, parseData, parseArgs, 
 /**
  * @import { ChatMessage, SystemNote, StreamEvent, StopReason, Usage, Connection, Prompt, WireRequest } from './types.js'
  * @import { SSEEvent } from './sse.js'
- * @typedef {{ role: 'user'|'assistant', content: any[] }} AnthropicMessage
+ * @import { AnthropicMessage, AnthropicBlock, AnthropicRequestBody, AnthropicStreamBlock, AnthropicDelta, AnthropicCitation, AnthropicUsage } from './wire.js'
  */
 
 // Adaptive thinking exists from Claude 4.6 on, except Haiku; older models reject it.
@@ -81,7 +81,7 @@ export function minimumCacheable(model) {
 /** @param {Connection & Prompt} options @returns {WireRequest} */
 function anthropicRequest({ brain, apiKey, system, messages, tools = [], maxTokens, effort }) {
   const headers = headersFor(brain, apiKey)
-  /** @type {Record<string, any>} */
+  /** @type {AnthropicRequestBody} */
   const body = { model: brain.model, max_tokens: maxTokens ?? 64000, stream: true }
   // One breakpoint at the end of the frozen system prompt (tools come before it), and
   // automatic caching for the growing conversation (D49).
@@ -126,7 +126,7 @@ function toAnthropic(messages, model) {
     if (!next.content.length) continue
     const prev = out.at(-1)
     // Roles must alternate: consecutive tool results become one user message.
-    if (prev?.role === next.role) /** @type {AnthropicMessage} */ (prev).content = [.../** @type {any[]} */ (prev.content), ...next.content]
+    if (prev?.role === next.role) /** @type {AnthropicMessage} */ (prev).content = [.../** @type {AnthropicMessage['content']} */ (prev.content), ...next.content]
     else out.push(next)
     if (message.role === 'user' && notes.length) {
       if (native) for (const text of notes) out.push({ role: 'system', content: text })
@@ -148,7 +148,7 @@ function toAnthropicMessage(m, model) {
   }
   // Thinking blocks must come back exactly as they were received, to the model that made them.
   if (Array.isArray(m.raw) && (!m.rawModel || m.rawModel === model)) return { role: 'assistant', content: m.raw }
-  /** @type {any[]} */
+  /** @type {AnthropicBlock[]} */
   const content = m.content ? [{ type: 'text', text: m.content }] : []
   for (const c of m.toolCalls ?? []) content.push({ type: 'tool_use', id: c.id, name: c.name, input: c.args ?? {} })
   return { role: 'assistant', content }
@@ -173,8 +173,8 @@ async function* readAnthropic(events) {
       if (out) yield out
     }
     // Text that cites web pages: the sources follow it, as [n] once numbered.
-    const cited = type === 'content_block_stop' ? blocks[d.index]?.citations?.filter((/** @type {any} */ c) => c.url) : null
-    if (cited?.length) yield { type: 'cite', sources: cited.map((/** @type {any} */ c) => ({ title: c.title || c.url, url: c.url, quote: c.cited_text })) }
+    const cited = type === 'content_block_stop' ? blocks[d.index]?.citations?.filter((/** @type {AnthropicCitation} */ c) => c.url) : null
+    if (cited?.length) yield { type: 'cite', sources: cited.map((/** @type {AnthropicCitation & { url: string }} */ c) => ({ title: c.title || c.url, url: c.url, quote: c.cited_text })) }
     if (type === 'message_delta') {
       stop = d.delta?.stop_reason ?? stop
       // Later counts are cumulative and may restate earlier ones.
@@ -191,7 +191,7 @@ async function* readAnthropic(events) {
   yield doneEvent(STOP.get(stop) ?? 'other', anthropicUsage(usage), text, toolCalls, raw)
 }
 
-/** @param {any} block */
+/** @param {any} block @returns {AnthropicStreamBlock} */
 function startBlock(block = {}) {
   switch (block.type) {
     case 'text': return { type: 'text', text: block.text ?? '' }
@@ -203,7 +203,7 @@ function startBlock(block = {}) {
   }
 }
 
-/** @param {any} block @param {any} delta @returns {StreamEvent|null} */
+/** @param {any} block @param {AnthropicDelta | undefined} delta @returns {StreamEvent|null} */
 function applyDelta(block, delta) {
   if (!block || !delta) return null
   if (delta.type === 'signature_delta') block.signature += delta.signature
@@ -219,7 +219,7 @@ function applyDelta(block, delta) {
 /**
  * After a mid-output refusal, the API keeps the declined partial and marks the switch with a
  * 'fallback' block. Only its text may be echoed back; thinking and tool calls before it are dropped.
- * @param {any[]} blocks
+ * @template {{ type: string }} T @param {T[]} blocks
  */
 function keepAfterFallback(blocks) {
   const cut = blocks.map((b) => b.type).lastIndexOf('fallback')
@@ -239,7 +239,7 @@ function finishBlock(block) {
   }
 }
 
-/** Anthropic counts cached input apart; Usage.inputTokens counts all of it. @param {any} u @returns {Usage} */
+/** Anthropic counts cached input apart; Usage.inputTokens counts all of it. @param {AnthropicUsage} u @returns {Usage} */
 function anthropicUsage(u) {
   const read = u.cache_read_input_tokens ?? 0
   const write = u.cache_creation_input_tokens ?? 0

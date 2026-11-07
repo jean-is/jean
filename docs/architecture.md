@@ -15,7 +15,7 @@ How Jean is built, as it is now. Why each choice was made, and what was rejected
 
 ## Stack
 
-**No build step** (D9). Plain ES modules and an import map; types in JSDoc, checked by `tsc --noEmit`. Development serves `app/` as written (D243), and view-source is the source; a web deploy copies `dist/web/`, the same files with Jean's own code minified and each file compressed beside itself (D318).
+**No build step** (D9). Plain ES modules and an import map; types in JSDoc, checked by `tsc --noEmit` in three programs, each with its global's library: the pages' modules (`tsconfig.json`), the workers (`tsconfig.workers.json`) and the service worker (`tsconfig.sw.json`, with `service-worker.d.ts` for the scope TypeScript has no library for). A bundled module a worker imports gets, beside it, a line re-exporting its package's own types (`types` in `scripts/vendor.js`); shapes too long for a comment go in a `.d.ts` beside the modules that use them, never named after one of them. No `.d.ts` ships. Development serves `app/` as written (D243), and view-source is the source; a web deploy copies `dist/web/`, the same files with Jean's own code minified and each file compressed beside itself (D318).
 
 **A first load without a bundle.** `npm run manifest` writes a `<link rel="modulepreload">` into `index.html` for every module the first load imports, so the browser fetches the graph in one round trip; `npm run manifest -- --check` fails if it is stale. The first screen loads only what it draws (D76, D94, D148): the desktop app's host, the dialogs, the adapters, the loop, Auto and what a message needs on its way (`ui/send.js`, loaded as the user starts typing) all load when first needed, and stay in the shell's precache for offline use.
 

@@ -20,9 +20,8 @@ import { BlockSelection } from './blocks.js'
 import { unlock } from '../../ui/caps.js'
 import { el } from './ui.js'
 
-/** @typedef {import('prosemirror-model').Node} PMNode */
-/** @typedef {import('prosemirror-view').EditorView} EditorView */
-/** @typedef {{ dom: Node, contentDOM?: HTMLElement | null, update?: (node: PMNode) => boolean, ignoreMutation?: (mutation: any) => boolean, destroy?: () => void }} Own */
+/** @import { Tokens } from 'marked' */
+/** @import { PMNode, EditorView, Own, Form, ToDOM } from './types.js' */
 
 /** The blocks an answer may draw, and so a document. */
 const DRAWABLE = ['bullet_list', 'ordered_list', 'blockquote', 'table', 'code_block', 'raw_block']
@@ -91,7 +90,7 @@ function drawable(node, view, getPos, own) {
 }
 
 /** ProseMirror's own drawing of a block, as its toDOM has it. @param {PMNode} node @returns {Own} */
-const plain = (node) => DOMSerializer.renderSpec(document, /** @type {any} */ (node.type.spec.toDOM)(node))
+const plain = (node) => DOMSerializer.renderSpec(document, /** @type {ToDOM} */ (node.type.spec.toDOM)(node))
 
 /** The views of the blocks an answer may draw, at the document's top level; a table's own view (`table`) inside them too. @param {(node: PMNode) => Own} table */
 export function drawnViews(table) {
@@ -99,12 +98,12 @@ export function drawnViews(table) {
   const make = (name) => (node, view, getPos) => {
     const own = name === 'table' ? table(node) : null
     if (view.state.doc.resolve(getPos() ?? 0).depth) return /** @type {any} */ (own)
-    return /** @type {any} */ (drawable(node, view, getPos, own ?? plain(node)))
+    return drawable(node, view, getPos, own ?? plain(node))
   }
   return Object.fromEntries(DRAWABLE.map((name) => [name, make(name)]))
 }
 
-/** Blocks as an answer draws them, for Jean's suggestions (suggest.js): drawn again as what draws them loads. @type {import('./suggest.js').Form} */
+/** Blocks as an answer draws them, for Jean's suggestions (suggest.js): drawn again as what draws them loads. @type {Form} */
 export const forms = {
   drawn: (node) => Boolean(DRAWN[tokenOf(node)?.type]?.(tokenOf(node))),
   draw(node, text) {
@@ -150,7 +149,7 @@ export const inPlace = new Plugin({
         // A cell of a column an answer lines up at its end, its amounts', which the table doesn't line up itself; row heads by namesRows().
         const $cell = parent?.type === schema.nodes.table_row ? state.doc.resolve(pos) : null, row = $cell?.index(-1), token = $cell && tokenOf($cell.node(-1))
         if (token && !node.attrs.align && aligned(token)[i] === 'right') list.push(Decoration.node(pos, pos + node.nodeSize, { 'data-align': 'right' }))
-        if (token && (!row || !i) && (token.heads ??= namesRows(token.header[0]?.text ?? '', token.rows.map((/** @type {any[]} */ cells) => cells[0]?.text.trim() ?? '')))) list.push(Decoration.node(pos, pos + node.nodeSize, row ? { role: 'rowheader' } : { scope: 'col' }))
+        if (token && (!row || !i) && (token.heads ??= namesRows(token.header[0]?.text ?? '', token.rows.map((/** @type {Tokens.TableCell[]} */ cells) => cells[0]?.text.trim() ?? '')))) list.push(Decoration.node(pos, pos + node.nodeSize, row ? { role: 'rowheader' } : { scope: 'col' }))
         return !node.isTextblock || node.inlineContent
       })
       return DecorationSet.create(state.doc, list)
@@ -159,7 +158,7 @@ export const inPlace = new Plugin({
       const forward = /** @type {Record<string, boolean>} */ ({ ArrowDown: true, ArrowUp: false, ArrowRight: document.dir !== 'rtl', ArrowLeft: document.dir === 'rtl' })[event.key]
       const { $head, empty } = view.state.selection
       if (forward === undefined || event.shiftKey || event.altKey || event.metaKey || event.ctrlKey || !empty || !$head.parent.isTextblock) return false
-      if (!view.endOfTextblock(/** @type {any} */ ({ ArrowDown: 'down', ArrowUp: 'up', ArrowRight: 'right', ArrowLeft: 'left' })[event.key])) return false
+      if (!view.endOfTextblock(/** @type {Record<string, 'down' | 'up' | 'right' | 'left'>} */ ({ ArrowDown: 'down', ArrowUp: 'up', ArrowRight: 'right', ArrowLeft: 'left' })[event.key])) return false
       const found = Selection.findFrom(view.state.doc.resolve(forward ? $head.after() : $head.before()), forward ? 1 : -1, true)
       if (!found || found.$head.index(0) === $head.index(0)) return false
       const block = view.nodeDOM(found.$head.before(1))

@@ -34,6 +34,8 @@ import { styleSheet, still } from '../../ui/sheet.js'
 import { t, locale, dir, useStrings } from '../../core/i18n.js'
 import { row, chip, notes } from './mode.js'
 import { parse } from './parts.js'
+/** @import { Settings } from '../../core/settings.js' */
+/** What goes on to the next hook, and what came of it (core/hooks.js). @typedef {(e?: unknown) => Promise<unknown>} Next */
 
 await Promise.all([useStrings('interactive'), styleSheet(new URL('interactive.css', import.meta.url))])
 
@@ -44,11 +46,11 @@ export const capability = {
   // Visual answers as a mode of the box (./mode.js, D300): a row of +, then pressed at the box's foot while it is on.
   slots: { add: { at: 3, draw: row }, modes: { at: 0, draw: chip, notes } },
   // A task gone for good takes what its apps kept with it (D688).
-  hooks: [{ on: 'record', match: { type: 'removed' }, run: (/** @type {any} */ e, /** @type {any} */ next) => { const at = e.all && keptAt(e.task); if (at) app.fs.remove(at).catch(() => {}); return next(e) } },
+  hooks: [{ on: 'record', match: { type: 'removed' }, run: (/** @type {{ all: true, task: string } | { all?: false }} */ e, /** @type {Next} */ next) => { const at = e.all && keptAt(e.task); if (at) app.fs.remove(at).catch(() => {}); return next(e) } },
     // A task duplicated (D230) keeps what its apps kept, as it keeps their answers (D688).
-    { on: 'task.start', run: async (/** @type {any} */ e, /** @type {any} */ next) => { const [was, now] = [keptAt(e.from?.path ?? ''), keptAt(e.task)], kept = was && now && (await app.fs.read(was).catch(() => null)); if (kept && now) await app.fs.write(now, kept); return next(e) } },
+    { on: 'task.start', run: async (/** @type {{ task: string, from?: { path: string } }} */ e, /** @type {Next} */ next) => { const [was, now] = [keptAt(e.from?.path ?? ''), keptAt(e.task)], kept = was && now && (await app.fs.read(was).catch(() => null)); if (kept && now) await app.fs.write(now, kept); return next(e) } },
     // An answer's pages with a script, played out of sight before the turn ends; what broke goes back to the brain (./test.js, D689).
-    { on: 'turn.answer', run: async (/** @type {any} */ e, /** @type {any} */ next) => (rights.peek().allows.scripts && /```html/.test(e.text) && (await (await import('./test.js')).played(e))) || next(e) }],
+    { on: 'turn.answer', run: async (/** @type {{ text: string, task?: string, signal?: AbortSignal }} */ e, /** @type {Next} */ next) => (rights.peek().allows.scripts && /```html/.test(e.text) && (await (await import('./test.js')).played(e))) || next(e) }],
 }
 register(capability)
 
@@ -128,7 +130,7 @@ export const part = (path) => parts.get(path) ?? /** @type {Promise<string>} */ 
 export const LENT = /** @type {Record<string, string>} */ ({ diagram: './page-diagram.js', map: './map.js' })
 
 /** The map service's styles, light and dark, and the addresses that may be fetched for a map: theirs. */
-const styles = () => mapStyles(/** @type {any} */ (effective.peek().settings), app.policy)
+const styles = () => mapStyles(/** @type {Settings & Parameters<typeof mapStyles>[0]} */ (effective.peek().settings), app.policy)
 const mapSites = () => Object.values(styles()).map((address) => new URL(address).origin)
 
 // Each component a page holds is asked for as it appears, and lent then; the rest isn't.
@@ -344,7 +346,7 @@ class AppPage extends HTMLElement {
   /** Maps allowed, from now on, unless the organisation says otherwise. */
   async allow() {
     const { allows, locked } = rights.peek()
-    if (!allows.maps && !locked.has('maps')) await updateSettings({ pages: /** @type {any} */ ({ ...app.settings.peek().pages, maps: true }) })
+    if (!allows.maps && !locked.has('maps')) await updateSettings({ pages: /** @type {Settings['pages'] & { maps: boolean }} */ ({ ...app.settings.peek().pages, maps: true }) })
     return rights.peek().allows.maps
   }
 

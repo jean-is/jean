@@ -8,16 +8,23 @@
 // → { type: 'event', id, hook, e }        ← { type: 'next', id, e } → { type: 'answer', id, value }…, then { type: 'done', id, result } | { type: 'threw', id, error }
 // → { type: 'draw', id, slot, props }     ← { type: 'drawn', id, tree }
 // → { type: 'press', action }             ← { type: 'notify', text } | { type: 'redraw' } | { type: 'store', id, key, value? } → { type: 'answer', id, value }
+/** @typedef {(e: unknown, next: (e?: unknown) => Promise<unknown>) => unknown} Run */
+/** @type {{ on: string, match?: Record<string, unknown>, run: Run }[]} */
 const hooks = []
+/** @type {Record<string, (props: unknown) => unknown>} */
 const draws = {}
+/** @type {(action: unknown) => unknown} */
 let pressed = () => {}
+/** @type {Map<string, { resolve: (value: unknown) => void, reject: (error: Error) => void }>} */
 const waiting = new Map()
 let asked = 0
+/** @param {Record<string, unknown>} message @returns {Promise<unknown>} */
 const ask = (message) => new Promise((resolve, reject) => {
   const id = `p${++asked}`
   waiting.set(id, { resolve, reject })
   self.postMessage({ ...message, id })
 })
+/** @type {{ slot: (name: string, draw: (props: unknown) => unknown) => void, press: (handler: (action: unknown) => unknown) => void, redraw: () => void, notify: (text: unknown) => void, store: { get: (key: string) => Promise<unknown>, set: (key: string, value: unknown) => Promise<unknown> } }} */
 const $ = {
   slot: (name, draw) => { draws[name] = draw },
   press: (handler) => { pressed = handler },
@@ -30,7 +37,7 @@ self.onmessage = async ({ data }) => {
   try {
     if (data.type === 'start') {
       const module = await import(URL.createObjectURL(new Blob([data.code], { type: 'text/javascript' })))
-      await module.register((on, match, run) => { hooks.push(typeof match === 'function' ? { on, run: match } : { on, match, run }) }, $)
+      await module.register((/** @type {string} */ on, /** @type {Run | Record<string, unknown>} */ match, /** @type {Run} */ run) => { hooks.push(typeof match === 'function' ? { on, run: match } : { on, match, run }) }, $)
       self.postMessage({ type: 'started', id: data.id, hooks: hooks.map(({ on, match }) => ({ on, match })), slots: Object.keys(draws) })
     } else if (data.type === 'event') {
       const result = await hooks[data.hook].run(data.e, (e = data.e) => ask({ type: 'next', event: data.id, e }))
@@ -44,6 +51,6 @@ self.onmessage = async ({ data }) => {
       else resolve?.(data.value)
     }
   } catch (error) {
-    self.postMessage({ type: data.type === 'start' ? 'failed' : 'threw', id: data.id, error: String(error?.message ?? error) })
+    self.postMessage({ type: data.type === 'start' ? 'failed' : 'threw', id: data.id, error: String(/** @type {Error} */ (error)?.message ?? error) })
   }
 }

@@ -56,8 +56,8 @@ const projectOf = (task) => /(?:^|\/)projects\/([0-9A-HJKMNP-TV-Z]{26})/.exec(ta
 export const profileOf = (dir) => /(?:^|\/)profiles\/([0-9A-HJKMNP-TV-Z]{26})/.exec(dir)?.[1]
 /** The id of what a file holds, the ULID it is named by (a routine's). @param {unknown} path */
 const idIn = (path) => /([0-9A-HJKMNP-TV-Z]{26})\.\w+$/.exec(String(path ?? ''))?.[1]
-/** @param {Envelope['update']} update @returns {string} */
-const textOf = (update) => (/** @type {any} */ (update)?.content?.type === 'text' ? /** @type {any} */ (update).content.text : '')
+/** @param {Extract<Envelope['update'], { content: unknown }> | undefined} update a request's, or a part of what a brain wrote @returns {string} */
+const textOf = (update) => (update?.content?.type === 'text' ? update.content.text : '')
 
 /**
  * Follows the `record` and `turn.end` events and makes a span of each turn, request and call as it ends,

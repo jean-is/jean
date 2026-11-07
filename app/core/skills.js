@@ -79,7 +79,7 @@ export const skillLines = (skills) => skills.map((skill) => `- ${skill.name}: ${
  * where it came from and the digest it was checked against (D121); any skill, the kinds of block it draws, and the
  * metadata it came with (D222), whose author and date a skill saved again keeps.
  * @param {FS} fs @param {string} dir
- * @param {{ name: string, description: string, body: string, by: string, now?: Date, source?: string, digest?: string, blocks?: string[], metadata?: Record<string, any> }} skill
+ * @param {{ name: string, description: string, body: string, by: string, now?: Date, source?: string, digest?: string, blocks?: string[], metadata?: Record<string, unknown> }} skill
  */
 export async function saveSkill(fs, dir, { name, description, body, by, now = new Date(), source, digest, blocks, metadata }) {
   if (!NAME.test(name)) throw new Error(`"${name}" is not a valid name: use lower-case letters, digits and hyphens.`)

@@ -26,7 +26,7 @@ export const kept = (policy) => (policy.brains ? { ...policy, brains: policy.bra
 
 /**
  * Policy's places, read; throws, saying why, when they aren't codes, when policy names no brains of its own, or
- * when it names one they would leave out. @param {Record<string, any>} policy @returns {string[]}
+ * when it names one they would leave out. @param {{ jurisdictions?: unknown, brains?: unknown }} policy @returns {string[]}
  */
 export function check(policy) {
   const { jurisdictions, brains } = policy

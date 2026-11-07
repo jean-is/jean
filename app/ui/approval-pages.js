@@ -66,7 +66,7 @@ const row = (page, icon, label, text, count) => html`<li><button class="item" da
   <span class="item-text"><strong>${t(label)}</strong><small dir="auto">${text}</small></span>${count ? html`<span class="data-state">${number(count)}</span>` : nothing}${icons.chevron}</button></li>`
 
 /** The guards, the organisation's first and locked (D295). */
-const guards = () => [...(app.policy.guards ?? []).map((/** @type {any} */ guard) => /** @type {const} */ ([guard, true])), ...(effective.value.settings.guards ?? []).map((guard) => /** @type {const} */ ([guard, false]))]
+const guards = () => [...(app.policy.guards ?? []).map((/** @type {import('../core/rules.js').Guard} */ guard) => /** @type {const} */ ([guard, true])), ...(effective.value.settings.guards ?? []).map((guard) => /** @type {const} */ ([guard, false]))]
 /** The services a guard may be for, once Connections is found. */
 const services = () => (loaded.value.has('connections') ? [...(app.policy.connections ?? []), ...(effective.value.settings.connections ?? [])] : [])
 /** A guard in words: what it is for and what Jean does then. @param {import('../core/rules.js').Guard} guard */

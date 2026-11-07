@@ -17,7 +17,7 @@ let named = []
 /** Why they weren't applied, for start() to stop Jean with: until resolve() has, that it hasn't. @type {unknown} */
 let failed = new Error('The groups’ sections weren’t applied before policy was read')
 
-/** Policy as it is for the person signed in here. @param {Record<string, any>} policy @returns {Promise<Record<string, any>>} */
+/** Policy as it is for the person signed in here. @param {Record<string, unknown>} policy @returns {Promise<Record<string, unknown>>} */
 export async function resolve(policy) {
   try {
     // None kept is none; null, more than the sign-in's token held.

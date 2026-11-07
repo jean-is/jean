@@ -43,7 +43,7 @@ async function wikiPages(api, params, { fetch = globalThis.fetch, signal }) {
   const response = await fetch(url, { signal })
   if (!response.ok) throw new Error(`The search answered ${response.status}.`)
   /** @type {{ index?: number, title: string, fullurl: string, extract?: string, missing?: boolean, invalid?: boolean, thumbnail?: { source: string } }[]} */
-  const pages = ((await response.json())?.query?.pages ?? []).filter((/** @type {any} */ page) => !page.missing && !page.invalid).sort((/** @type {any} */ a, /** @type {any} */ b) => a.index - b.index)
+  const pages = ((await response.json())?.query?.pages ?? []).filter((/** @type {{ missing?: unknown, invalid?: unknown }} */ page) => !page.missing && !page.invalid).sort((/** @type {{ index: number }} */ a, /** @type {{ index: number }} */ b) => a.index - b.index)
   return pages.map((page) => ({ title: page.title, url: page.fullurl, extract: page.extract ?? '', ...(page.thumbnail && { picture: page.thumbnail.source.replace(/\?utm_.*/, '') }) }))
 }
 

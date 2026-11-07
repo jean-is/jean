@@ -14,6 +14,8 @@ import { costOf } from './certificate.js'
 import { pricing, costText } from './receipt.js'
 import { usesOf, tally } from './spent.js'
 
+/** @typedef {{ seen: string, dir: string, title: string, uses: import('./spent.js').Use[] }} Kept a task's uses, as the cache keeps them */
+
 const CACHE = '.cache/spent.json'
 /** What each task asked of brains, once read. @type {import('@preact/signals-core').Signal<Parameters<typeof tally>[0] | null>} */
 const tasks = signal(null)
@@ -25,8 +27,8 @@ let reading = null
 /** Reads it again: each project's tasks, those whose file changed read anew. */
 export const spending = () => (reading ??= reread().finally(() => { reading = null }))
 async function reread() {
-  const kept = /** @type {{ tasks: Record<string, any> }} */ (await readJSON(app.fs, CACHE, { tasks: {} }).catch(() => ({ tasks: {} })))
-  const read = /** @type {Record<string, { seen: string, dir: string, title: string, uses: import('./spent.js').Use[] }>} */ ({})
+  const kept = /** @type {{ tasks?: Record<string, Kept> }} */ (await readJSON(app.fs, CACHE, { tasks: {} }).catch(() => ({ tasks: {} })))
+  const read = /** @type {Record<string, Kept>} */ ({})
   for (const { dir } of app.projects.peek()) {
     for (const { name } of (await app.fs.list(`${dir}/conversations`).catch(() => [])).filter((entry) => entry.name.endsWith('.jsonl'))) {
       const path = `${dir}/conversations/${name}`, stat = await app.fs.stat?.(path), seen = stat ? `${stat.size} ${stat.lastModified}` : ''
