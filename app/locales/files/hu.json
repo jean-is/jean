@@ -4,5 +4,6 @@
   "files.note": "Jegyzet",
   "files.save": "Mentés",
   "files.askJean": "Kérdezd: {name}",
-  "files.pointed": "Kijelölve: „{words}”. Kérdezz a mezőben"
+  "files.pointed": "Kijelölve: „{words}”. Kérdezz a mezőben",
+  "files.noSpeech": "Nem hallatszik benne beszéd"
 }

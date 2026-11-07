@@ -331,6 +331,7 @@ app-latex:not(:defined) { white-space: pre-wrap; font: 0.86rem var(--mono); }
 }
 @keyframes caret { 50% { opacity: 0.35; } }
 
+.attachment-progress { inline-size: 3rem; block-size: 0.25rem; accent-color: var(--flame); }
 .msg-actions, app-made { display: flex; align-items: center; gap: 0.15rem; }
 .msg-actions { margin-inline-start: -0.5rem; }
 .msg-actions .icon-button { opacity: 0.75; transition: opacity 0.3s; }

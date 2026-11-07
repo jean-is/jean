@@ -4,5 +4,6 @@
   "files.note": "குறிப்பு",
   "files.save": "சேமி",
   "files.askJean": "{name}-இடம் கேள்",
-  "files.pointed": "சுட்டியது: “{words}”. பெட்டியில் கேளுங்கள்"
+  "files.pointed": "சுட்டியது: “{words}”. பெட்டியில் கேளுங்கள்",
+  "files.noSpeech": "இதில் பேச்சு கேட்கவில்லை"
 }

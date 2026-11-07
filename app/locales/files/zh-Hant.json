@@ -4,5 +4,6 @@
   "files.note": "筆記",
   "files.save": "儲存",
   "files.askJean": "問 {name}",
-  "files.pointed": "指著「{words}」：在訊息框提問"
+  "files.pointed": "指著「{words}」：在訊息框提問",
+  "files.noSpeech": "裡面沒有聽到說話聲"
 }

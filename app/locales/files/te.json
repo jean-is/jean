@@ -4,5 +4,6 @@
   "files.note": "గమనిక",
   "files.save": "సేవ్ చేయి",
   "files.askJean": "{name}ని అడుగు",
-  "files.pointed": "చూపించారు: “{words}”. పెట్టెలో అడగండి"
+  "files.pointed": "చూపించారు: “{words}”. పెట్టెలో అడగండి",
+  "files.noSpeech": "ఇందులో మాటలు వినిపించలేదు"
 }

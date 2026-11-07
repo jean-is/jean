@@ -4,5 +4,6 @@
   "files.note": "Notă",
   "files.save": "Salvează",
   "files.askJean": "Întrebați {name}",
-  "files.pointed": "Ați arătat „{words}”: întrebați în casetă"
+  "files.pointed": "Ați arătat „{words}”: întrebați în casetă",
+  "files.noSpeech": "Nu se aude vorbire"
 }

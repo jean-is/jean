@@ -4,5 +4,6 @@
   "files.note": "메모",
   "files.save": "저장",
   "files.askJean": "{name}에게 묻기",
-  "files.pointed": "가리킨 부분: “{words}”. 입력창에 물어보세요"
+  "files.pointed": "가리킨 부분: “{words}”. 입력창에 물어보세요",
+  "files.noSpeech": "말소리가 들리지 않습니다"
 }

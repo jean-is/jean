@@ -4,5 +4,6 @@
   "files.note": "Σημείωση",
   "files.save": "Αποθήκευση",
   "files.askJean": "Ερώτηση στο {name}",
-  "files.pointed": "Δείξατε: «{words}». Ρωτήστε στο πλαίσιο"
+  "files.pointed": "Δείξατε: «{words}». Ρωτήστε στο πλαίσιο",
+  "files.noSpeech": "Δεν ακούγεται ομιλία"
 }

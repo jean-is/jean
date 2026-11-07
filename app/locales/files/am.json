@@ -4,5 +4,6 @@
   "files.note": "ማስታወሻ",
   "files.save": "አስቀምጥ",
   "files.askJean": "{name}ን ጠይቅ",
-  "files.pointed": "የተጠቆመው: “{words}”። በሳጥኑ ውስጥ ይጠይቁ"
+  "files.pointed": "የተጠቆመው: “{words}”። በሳጥኑ ውስጥ ይጠይቁ",
+  "files.noSpeech": "በውስጡ ንግግር አልተሰማም"
 }

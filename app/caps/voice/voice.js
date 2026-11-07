@@ -100,6 +100,9 @@ export async function prepare(consented = false) {
 /** Writes down what was said. @param {Float32Array} audio 16 kHz mono @param {string} lang a tag ("fr-FR") */
 const write = async (audio, lang) => String((await worker.call({ type: 'transcribe', audio, language: lang.split('-')[0], engine: writer(lang).engine }, { transfer: [audio.buffer] })).text ?? '')
 
+/** What a window of a recording says, in the interface language (heard.js, D713). @param {Float32Array} audio 16 kHz mono */
+export const transcribe = (audio) => write(audio, languageTag())
+
 /** What is said in the interface language, written as it comes (passes.js), for live conversation's 16 kHz frames. @param {(words: string) => void} show */
 export const writing = (show) => passes((audio) => write(audio, languageTag()), show, languageTag())
 

@@ -14,7 +14,7 @@ import { mine } from './opfs.js'
 /**
  * A file the user is about to send. `pages` holds its extracted text, page by page; `preview`
  * a picture's address while it waits.
- * @typedef {{ key: string, name: string, status: 'reading' | 'ready' | 'failed', link?: ResourceLink, pages?: string[], error?: string, preview?: string }} Attachment
+ * @typedef {{ key: string, name: string, status: 'reading' | 'ready' | 'failed', link?: ResourceLink, pages?: string[], error?: string, preview?: string, progress?: number }} Attachment
  */
 /** @import { Settings, Project } from '../core/settings.js' */
 /** @typedef {'idle' | 'listening' | 'thinking' | 'answering' | 'done'} Presence */

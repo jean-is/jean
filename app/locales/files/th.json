@@ -4,5 +4,6 @@
   "files.note": "บันทึกย่อ",
   "files.save": "บันทึก",
   "files.askJean": "ถาม {name}",
-  "files.pointed": "ชี้ที่: “{words}” พิมพ์คำถามในช่อง"
+  "files.pointed": "ชี้ที่: “{words}” พิมพ์คำถามในช่อง",
+  "files.noSpeech": "ไม่ได้ยินเสียงพูด"
 }

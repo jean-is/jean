@@ -4,5 +4,6 @@
   "files.note": "Nota",
   "files.save": "Salvà",
   "files.askJean": "Dumandà à {name}",
-  "files.pointed": "Indicate « {words} » : dumandate in a zona di messaghju"
+  "files.pointed": "Indicate « {words} » : dumandate in a zona di messaghju",
+  "files.noSpeech": "Nisuna parolla intesa"
 }

@@ -4,5 +4,6 @@
   "files.note": "Нотатка",
   "files.save": "Зберегти",
   "files.askJean": "Запитати {name}",
-  "files.pointed": "Вибрано: «{words}». Запитайте в полі"
+  "files.pointed": "Вибрано: «{words}». Запитайте в полі",
+  "files.noSpeech": "Мовлення не чути"
 }

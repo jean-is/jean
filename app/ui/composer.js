@@ -107,7 +107,7 @@ class Composer extends Element {
               <img src=${item.preview} alt=""></button>` : icons.file}<span class="attachment-name" dir="auto">${item.name}</span>
             <span class="attachment-note" role="status"><span class="visually-hidden" dir="auto">${item.name}: </span>${item.status === 'reading' ? t('files.reading')
               : item.status === 'failed' ? item.error ?? t('files.unreadable')
-              : item.preview ? t('files.picture') : t('files.pages', { count: item.pages?.length ?? 0 })}</span>
+              : item.preview ? t('files.picture') : t('files.pages', { count: item.pages?.length ?? 0 })}</span>${item.progress && item.status === 'reading' ? html`<progress class="attachment-progress" value=${item.progress} aria-hidden="true"></progress>` : nothing}
             <button type="button" class="icon-button subtle" aria-label=${t('files.remove', { name: item.name })}
               @click=${() => removeAttachment(item.key)}>${icons.close}</button>
           </li>`)}</ul>` : nothing}

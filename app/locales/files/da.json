@@ -4,5 +4,6 @@
   "files.note": "Note",
   "files.save": "Gem",
   "files.askJean": "Spørg {name}",
-  "files.pointed": "Du peger på »{words}«: spørg i feltet"
+  "files.pointed": "Du peger på »{words}«: spørg i feltet",
+  "files.noSpeech": "Ingen tale hørt i den"
 }

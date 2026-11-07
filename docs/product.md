@@ -257,6 +257,7 @@ The picker offers the brains of the project the user is in. A brain is used in e
 
 ## Files and outputs
 
+- **Recordings and films** (D713). A recording or a film shared is heard on this device by dictation's writer, downloaded once with consent: its text is what is said, a line for each half minute or so with when it starts, so "minutes and actions from this meeting" works with any brain, and only words go to one in the cloud.
 - **Dropped files are kept** in the project's library. Each file is stored as the original, an extracted text version and a metadata file; files are named by content hash, so duplicates are stored once. Conversations reference files rather than copying them.
 - **Or left where they are** (D141, D149). A project or a conversation opened on a folder works on that folder's files in place, and each keeps its own. Nothing is copied, and a change Jean makes is in the folder as soon as the user has seen and allowed it.
 - **Pictures and the screen.** Brains that can see are shown it, and the pages of a scanned PDF too (D105 · D479).

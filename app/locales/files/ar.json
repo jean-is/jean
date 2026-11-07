@@ -4,5 +4,6 @@
   "files.note": "ملاحظة",
   "files.save": "حفظ",
   "files.askJean": "اسأل {name}",
-  "files.pointed": "تمت الإشارة إلى «{words}». اكتب سؤالك في المربع"
+  "files.pointed": "تمت الإشارة إلى «{words}». اكتب سؤالك في المربع",
+  "files.noSpeech": "لم يُسمع فيه كلام"
 }

@@ -4,5 +4,6 @@
   "files.note": "Note",
   "files.save": "Enregistrer",
   "files.askJean": "Demander à {name}",
-  "files.pointed": "Vous désignez « {words} » : posez votre question dans la zone de saisie"
+  "files.pointed": "Vous désignez « {words} » : posez votre question dans la zone de saisie",
+  "files.noSpeech": "Aucune parole entendue"
 }

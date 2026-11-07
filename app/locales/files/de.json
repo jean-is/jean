@@ -4,5 +4,6 @@
   "files.note": "Notiz",
   "files.save": "Speichern",
   "files.askJean": "{name} fragen",
-  "files.pointed": "„{words}“ ausgewählt: Frag im Feld"
+  "files.pointed": "„{words}“ ausgewählt: Frag im Feld",
+  "files.noSpeech": "Keine Sprache darin zu hören"
 }

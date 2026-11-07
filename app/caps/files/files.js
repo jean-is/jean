@@ -12,9 +12,9 @@ import { searchTool } from './search.js'
 import { addFile, readTool, fileText, splitPages } from '../../core/files.js'
 import { isPicture, latestOf, noteRecord } from '../../core/events.js'
 import { readZip } from '../../core/zip.js'
-import { extractPages } from './extract.js'
+import { extractPages, paginate } from './extract.js'
 import { fitPicture } from './pictures.js'
-import { t } from '../../core/i18n.js'
+import { t, useStrings } from '../../core/i18n.js'
 
 const MAX_BYTES = 100 * 1024 * 1024
 
@@ -135,7 +135,7 @@ async function readOne(file) {
   app.attachments.value = [...app.attachments.value, { key, name: file.name, status: 'reading' }]
   try {
     if (file.size > MAX_BYTES) throw new Error(t('files.tooBig'))
-    const { name, mimeType, bytes, pages } = await contents(file)
+    const { name, mimeType, bytes, pages } = await contents(file, (progress) => update({ progress }))
     const link = await addFile(app.fs, { projectDir: app.projectDir, name, mimeType, bytes, pages, by: app.deviceId })
     rememberText(link, pages)
     // A certificate of an answer, or its proof, brings what checks it (D274); so does a picture or a film with Content Credentials (D324),
@@ -152,14 +152,23 @@ async function readOne(file) {
   }
 }
 
-/** What a file keeps: its bytes and its text's pages, or a picture as brains take it, with one empty page. @param {File} file */
-async function contents(file) {
+/**
+ * What a file keeps: its bytes and its text's pages, or a picture as brains take it, with one empty page; a recording or a film,
+ * what is said in it (D713). @param {File} file @param {(done: number) => void} progress
+ */
+async function contents(file, progress) {
   if (file.type.startsWith('image/')) {
     const picture = await fitPicture(file)
     if (!picture) throw new Error(t('files.unsupported'))
     return { ...picture, pages: [''] }
   }
   const bytes = new Uint8Array(await file.arrayBuffer())
+  if (/^(audio|video)\//.test(file.type) || /\.(mp3|m4a|wav|ogg|oga|opus|flac|aac|weba|webm|mp4|m4v|mov)$/i.test(file.name)) {
+    const lines = await (await import('../voice/heard.js')).heard(file, progress)
+    if (!lines) throw new Error(t('files.unreadable'))
+    if (!lines.length) throw new Error(await useStrings('files').then(() => t('files.noSpeech')))
+    return { name: file.name, mimeType: file.type, bytes, pages: paginate(lines) }
+  }
   const pdf = /\.pdf$/i.test(file.name) || file.type === 'application/pdf'
   const pages = await (pdf ? import('./pdf.js').then((module) => module.pdfPages(bytes)) : extractPages(file.name, bytes))
   if (!pages) throw new Error(t('files.unsupported'))

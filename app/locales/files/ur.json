@@ -4,5 +4,6 @@
   "files.note": "نوٹ",
   "files.save": "محفوظ کریں",
   "files.askJean": "{name} سے پوچھیں",
-  "files.pointed": "آپ نے نشان دہی کی: «{words}»۔ خانے میں پوچھیں"
+  "files.pointed": "آپ نے نشان دہی کی: «{words}»۔ خانے میں پوچھیں",
+  "files.noSpeech": "اس میں کوئی بات سنائی نہیں دی"
 }

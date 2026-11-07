@@ -4,5 +4,6 @@
   "files.note": "یادداشت",
   "files.save": "ذخیره",
   "files.askJean": "پرسیدن از {name}",
-  "files.pointed": "نشان دادید: «{words}». در کادر بپرسید"
+  "files.pointed": "نشان دادید: «{words}». در کادر بپرسید",
+  "files.noSpeech": "صحبتی در آن شنیده نشد"
 }

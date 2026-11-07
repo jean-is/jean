@@ -4,5 +4,6 @@
   "files.note": "Anteckning",
   "files.save": "Spara",
   "files.askJean": "Fråga {name}",
-  "files.pointed": "Du pekar på ”{words}”: fråga i rutan"
+  "files.pointed": "Du pekar på ”{words}”: fråga i rutan",
+  "files.noSpeech": "Inget tal hördes"
 }

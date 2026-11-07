@@ -4,5 +4,6 @@
   "files.note": "Notenn",
   "files.save": "Enrollañ",
   "files.askJean": "Goulenn ouzh {name}",
-  "files.pointed": "O poentañ war « {words} » : goulennit er voest kemennadenn"
+  "files.pointed": "O poentañ war « {words} » : goulennit er voest kemennadenn",
+  "files.noSpeech": "Komz ebet klevet ennañ"
 }

@@ -4,5 +4,6 @@
   "files.note": "メモ",
   "files.save": "保存",
   "files.askJean": "{name} に頼む",
-  "files.pointed": "「{words}」を指しています。聞きたいことをメッセージ欄に書いてください"
+  "files.pointed": "「{words}」を指しています。聞きたいことをメッセージ欄に書いてください",
+  "files.noSpeech": "話し声が聞こえません"
 }

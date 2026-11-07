@@ -4,5 +4,6 @@
   "files.note": "Nota",
   "files.save": "Guardar",
   "files.askJean": "Preguntar a {name}",
-  "files.pointed": "Señalaste «{words}»: pregunta en el cuadro"
+  "files.pointed": "Señalaste «{words}»: pregunta en el cuadro",
+  "files.noSpeech": "No se oye habla"
 }

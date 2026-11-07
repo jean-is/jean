@@ -4,5 +4,6 @@
   "files.note": "Catatan",
   "files.save": "Simpan",
   "files.askJean": "Tanya {name}",
-  "files.pointed": "Ditunjuk: “{words}”. Tanyakan di kotak"
+  "files.pointed": "Ditunjuk: “{words}”. Tanyakan di kotak",
+  "files.noSpeech": "Tidak terdengar ucapan"
 }

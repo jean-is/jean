@@ -4,5 +4,6 @@
   "files.note": "टीप",
   "files.save": "जतन करा",
   "files.askJean": "{name} ला विचारा",
-  "files.pointed": "दाखवले: “{words}”. चौकटीत विचारा"
+  "files.pointed": "दाखवले: “{words}”. चौकटीत विचारा",
+  "files.noSpeech": "यात बोलणे ऐकू आले नाही"
 }

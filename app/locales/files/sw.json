@@ -4,5 +4,6 @@
   "files.note": "Dokezo",
   "files.save": "Hifadhi",
   "files.askJean": "Muulize {name}",
-  "files.pointed": "Umeonyesha: “{words}”. Uliza kwenye kisanduku"
+  "files.pointed": "Umeonyesha: “{words}”. Uliza kwenye kisanduku",
+  "files.noSpeech": "Hakuna sauti ya mazungumzo iliyosikika"
 }

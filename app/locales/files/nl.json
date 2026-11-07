@@ -4,5 +4,6 @@
   "files.note": "Notitie",
   "files.save": "Opslaan",
   "files.askJean": "{name} vragen",
-  "files.pointed": "Je wijst „{words}” aan: vraag het in het vak"
+  "files.pointed": "Je wijst „{words}” aan: vraag het in het vak",
+  "files.noSpeech": "Geen spraak gehoord"
 }

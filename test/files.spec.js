@@ -215,3 +215,28 @@ test('a citation that points at an area of a picture outlines it over the pictur
   const [box, picture] = await Promise.all([area.boundingBox(), page.locator('app-preview .view-marked img').boundingBox()])
   expect(box && picture && Math.round((100 * (box.x - picture.x)) / picture.width)).toBe(10)
 })
+
+/** A WAV of quiet, 16-bit mono at 16 kHz. @param {number} seconds */
+const wav = (seconds) => {
+  const samples = seconds * 16_000, out = Buffer.alloc(44 + samples * 2)
+  out.write('RIFF', 0); out.writeUInt32LE(36 + samples * 2, 4); out.write('WAVEfmt ', 8); out.writeUInt32LE(16, 16); out.writeUInt16LE(1, 20); out.writeUInt16LE(1, 22)
+  out.writeUInt32LE(16_000, 24); out.writeUInt32LE(32_000, 28); out.writeUInt16LE(2, 32); out.writeUInt16LE(16, 34); out.write('data', 36); out.writeUInt32LE(samples * 2, 40)
+  for (let i = 0; i < samples; i++) out.writeInt16LE(Math.round(Math.sin(i / 7) * (i % 16_000 < 12_000 ? 2000 : 10)), 44 + i * 2)
+  return out
+}
+
+test('a recording shared is heard on the device, its windows written with when each starts (D713)', async ({ page }) => {
+  // Dictation's writer, faked: each window says the same sentence.
+  await page.route('**/caps/voice/whisper-worker.js', (route) => route.fulfill({ contentType: 'text/javascript',
+    body: "self.onmessage = ({ data: { id, type } }) => self.postMessage(type === 'transcribe' ? { id, type: 'result', text: 'Welcome to the quarterly review.' } : { id, type: 'ready' })" }))
+  await start(page)
+  await connectFakeBrain(page)
+  // Its download is asked first.
+  page.once('dialog', (dialog) => dialog.accept())
+  await page.locator('.composer input[type="file"]').setInputFiles({ name: 'Review.wav', mimeType: 'audio/wav', buffer: wav(45) })
+  await expect(page.locator('.attachment[data-status="ready"]')).toHaveCount(1)
+  const pages = await page.evaluate(async () => (await import('/ui/state.js')).app.attachments.value[0].pages ?? [])
+  expect(pages.join('\n')).toMatch(/^\[0:00\] Welcome to the quarterly review\.\n\[0:2\d\] Welcome to the quarterly review\.$/)
+  await ask(page, 'Summarize this')
+  await expect(answer(page)).toContainText('Review.wav')
+})

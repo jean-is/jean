@@ -4,5 +4,6 @@
   "files.note": "Tala",
   "files.save": "I-save",
   "files.askJean": "Itanong kay {name}",
-  "files.pointed": "Itinuro mo: “{words}”. Magtanong sa kahon"
+  "files.pointed": "Itinuro mo: “{words}”. Magtanong sa kahon",
+  "files.noSpeech": "Walang narinig na pananalita"
 }

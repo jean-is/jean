@@ -4,5 +4,6 @@
   "files.note": "Note",
   "files.save": "Save",
   "files.askJean": "Ask {name}",
-  "files.pointed": "Pointing at “{words}”: ask in the box"
+  "files.pointed": "Pointing at “{words}”: ask in the box",
+  "files.noSpeech": "No speech heard in it"
 }

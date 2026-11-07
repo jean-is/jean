@@ -4,5 +4,6 @@
   "files.note": "Bilješka",
   "files.save": "Spremi",
   "files.askJean": "Pitaj aplikaciju {name}",
-  "files.pointed": "Pokazano: „{words}”. Pitajte u polju"
+  "files.pointed": "Pokazano: „{words}”. Pitajte u polju",
+  "files.noSpeech": "U njoj se ne čuje govor"
 }

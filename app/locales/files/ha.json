@@ -4,5 +4,6 @@
   "files.note": "Bayani",
   "files.save": "Ajiye",
   "files.askJean": "Tambayi {name}",
-  "files.pointed": "Ka nuna: “{words}”. Yi tambaya a akwatin"
+  "files.pointed": "Ka nuna: “{words}”. Yi tambaya a akwatin",
+  "files.noSpeech": "Ba a ji magana a ciki ba"
 }

@@ -4,5 +4,6 @@
   "files.note": "नोट",
   "files.save": "सहेजें",
   "files.askJean": "{name} से पूछें",
-  "files.pointed": "इशारा किया: “{words}”। बॉक्स में पूछें"
+  "files.pointed": "इशारा किया: “{words}”। बॉक्स में पूछें",
+  "files.noSpeech": "इसमें कोई बोली सुनाई नहीं दी"
 }
