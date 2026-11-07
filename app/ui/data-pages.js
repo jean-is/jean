@@ -143,12 +143,12 @@ const KEEP = [0, 30, 90, 365]
 const kept = (/** @type {number} */ days) => (days ? new Intl.NumberFormat(intlLocales(), { style: 'unit', unit: days < 365 ? 'month' : 'year', unitDisplay: 'long' }).format(days < 365 ? days / 30 : 1) : t('data.forgetNever'))
 /** Delete old tasks (D718): how long, chosen with what it means said first, older ones deleted at once, then each day. @type {Part} */
 const forgetting = { id: 'forget', at: 8, group: 'here', icon: icons.trash, label: 'data.forget', text: () => kept(effective.value.settings.forget ?? 0), line: () => t('data.forgetText'),
-  draw: () => html`<ul class="list approval-choices" role="radiogroup" aria-label=${t('data.forget')}>${KEEP.map((days) => html`<li><label for=${`forget-${days}`}>
+  draw: () => html`<ul class="list forget-choices" role="radiogroup" aria-label=${t('data.forget')}>${KEEP.map((days) => html`<li><label for=${`forget-${days}`}>
     <input id=${`forget-${days}`} type="radio" name="forget" .checked=${(effective.value.settings.forget ?? 0) === days} @change=${async () => {
       if (days && !confirm(t('data.forgetConfirm', { kept: kept(days) }))) return void (app.settings.value = { ...app.settings.value })
       await updateSettings({ forget: days || undefined })
       if (days) await import('./forget.js').then((module) => module.forget(true))
-    }}><span>${kept(days)}</span></label></li>`)}</ul>` }
+    }}><strong>${kept(days)}</strong></label></li>`)}</ul>` }
 
 /** Jean's own parts, Space used and Backup, the organization's once policy names one, and the capabilities' found. @returns {Part[]} */
 function all() {

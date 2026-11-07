@@ -267,7 +267,7 @@ export async function openData(page, part, section = 'Your data') {
 }
 
 /**
- * Opens a page of Settings › Approvals from its row: exceptions, pages, certificates, or a kind of action's chip.
+ * Opens a page of Settings › Approvals from its row: exceptions, pages, or a kind of action's chip.
  * @param {import('@playwright/test').Page} page @param {string} part @param {string} [section] the section's name in the menu, in the page's language
  */
 export async function openApprovals(page, part, section = 'Approvals') {

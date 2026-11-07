@@ -9,3 +9,6 @@
 .data-rows .item > .icon:last-child { flex: none; rotate: -90deg; color: var(--ink-faint); } :dir(rtl) .data-rows .item > .icon:last-child { rotate: 90deg; }
 /* Lock's own section is its page, under the page's title. */
 .settings-panel > .lock-part > h3:first-child { display: none; }
+/* Delete old tasks' choices (D718), as Approvals' are drawn. */
+.forget-choices label { flex: 1; display: flex; align-items: center; gap: 0.75rem; cursor: pointer; }
+.forget-choices > li:has(:checked) { background: oklch(from var(--flame) l c h / 0.08); }

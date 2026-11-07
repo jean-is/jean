@@ -5,7 +5,7 @@
 // this device says so, and where.
 import { readFile } from 'node:fs/promises'
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, fadeOut, turnOn, openApprovals, openSettings, closeSettings, withPolicy, MAIL_URL, BRAIN_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, fadeOut, turnOn, openSettings, closeSettings, withPolicy, MAIL_URL, BRAIN_URL } from './helpers.js'
 
 for (const [lang, about, local, free, save, prove] of [
   ['en', 'About this answer', 'Kept private', 'Free', 'Save the certificate', 'Save the proof'],
@@ -189,13 +189,20 @@ async function cloudBrain(page) {
   await page.evaluate(() => import('/ui/brains.js').then(({ addBrain }) => addBrain({ id: 'cloud', provider: 'openai', api: 'openai', baseURL: 'https://api.openai.example/v1', model: 'gpt-6-sol' })))
 }
 
-for (const [lang, section, dates, unsaid] of [['en', 'Approvals', 'Who dates them', 'Not said'], ['ar', 'الموافقات', 'من يؤرّخها', 'غير محدد'], ['ja', '承認', '日時を証明する相手', '指定なし']]) {
-  test(`Settings › Approvals names who dates certificates, the public log, and the country of each brain in the cloud, which certificates then name (D276, ${lang})`, async ({ page }) => {
+/** Your data's Certificates, the receipt's part there. @param {import('@playwright/test').Page} page @param {string} [section] */
+const openCertificates = async (page, section = 'Your data') => {
+  const settings = await openSettings(page, section)
+  await settings.locator('[data-part="certificates"]').click()
+  return settings
+}
+
+for (const [lang, section, dates, unsaid] of [['en', 'Your data', 'Who dates them', 'Not said'], ['ar', 'بياناتك', 'من يؤرّخها', 'غير محدد'], ['ja', 'あなたのデータ', '日時を証明する相手', '指定なし']]) {
+  test(`Settings › Your data's Certificates names who dates certificates, the public log, and the country of each brain in the cloud, which certificates then name (D276, ${lang})`, async ({ page }) => {
     await start(page, lang)
     await cloudBrain(page)
     // About this answer, which comes with the first message.
     await page.evaluate(async () => (await import('/ui/caps.js')).unlock('receipt'))
-    const settings = await openApprovals(page, 'certificates', section)
+    const settings = await openCertificates(page, section)
     const witnesses = settings.getByRole('textbox', { name: dates })
     await expect(witnesses).toHaveAttribute('placeholder', 'https://timestamp.sigstore.dev/api/v1/timestamp')
     const country = settings.getByRole('combobox', { name: /gpt-6-sol/ })
@@ -225,11 +232,11 @@ for (const [lang, section, dates, unsaid] of [['en', 'Approvals', 'Who dates the
   })
 }
 
-test('what policy names, who dates, the log and its brains’ countries, shows in Settings › Approvals, locked (D276)', async ({ page }) => {
+test('what policy names, who dates, the log and its brains’ countries, shows in Your data’s Certificates, locked (D276)', async ({ page }) => {
   await withPolicy(page, { urls: { timestamp: 'https://tsa.corp.example/tsr', transparencyLog: 'https://log.corp.example' }, brains: [{ id: 'corp', provider: 'custom', api: 'openai', baseURL: 'https://api.corp.example/v1', model: 'fake', label: 'Corp', jurisdiction: 'DE' }] })
   await start(page)
   await page.evaluate(async () => (await import('/ui/caps.js')).unlock('receipt'))
-  const settings = await openApprovals(page, 'certificates')
+  const settings = await openCertificates(page)
   for (const [name, value] of [['Who dates them', 'https://tsa.corp.example/tsr'], ['Public log', 'https://log.corp.example']]) {
     await expect(settings.getByRole('textbox', { name })).toHaveValue(value)
     await expect(settings.getByRole('textbox', { name })).toBeDisabled()

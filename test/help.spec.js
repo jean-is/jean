@@ -35,7 +35,7 @@ test('What Jean is shows each part: the box, the first step and an offer drawn a
   await expect(figures.nth(1)).toContainText('One step before I answer')
   await expect(figures.nth(1).locator('.button.primary')).toHaveText('Start for free')
   await expect(figures.nth(3)).toContainText('No Jean server in between')
-  await expect(figures.nth(5).locator('.approval')).toContainText('ComputerWant exact numbers')
+  await expect(figures.nth(5).locator('.approval')).toContainText('Computer in this tabWant exact numbers')
   await expect(figures.nth(4).locator('figcaption .help-ui')).toHaveText(['Allow once', 'Not now'])
   // A drawing can't be pressed, and screen readers read its caption instead.
   await expect(page.locator('.help-figure button')).toHaveCount(0)

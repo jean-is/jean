@@ -485,7 +485,7 @@ test('Settings › Computer: the sandbox and its page (D176, D249), the internet
   // Its title with the terminal, a line on what it is, then the sandbox, the one computer until This computer is found:
   // a row, asleep until something runs, that opens its page.
   const panel = settings.locator('.settings-panel')
-  await expect(panel.locator('.data-head h2')).toHaveText('Computer')
+  await expect(panel.locator('.data-head h2')).toHaveText('Computer in this tab')
   await expect(panel.locator('.lede')).toHaveText(/^A computer in this tab, apart from this device/)
   await expect(panel.getByRole('tablist')).toHaveCount(0)
   const sandbox = panel.locator('[data-page="sandbox"]')
@@ -515,7 +515,7 @@ test('Settings › Computer: the sandbox and its page (D176, D249), the internet
   await expect(panel.locator('.engines li')).toHaveText([/Commands[\s\S]*Ready/, /JavaScript[\s\S]*Asleep/, /Python[\s\S]*Ready/])
   // Of this device's memory, at least as much as Chromium says; WebKit doesn't say.
   await expect(panel.locator('.computer-now')).toHaveText(/ and [\d.]+ MB( of at least \d+ GB)? of memory\.$/)
-  await panel.getByRole('button', { name: 'Computer', exact: true }).click()
+  await panel.getByRole('button', { name: 'Computer in this tab', exact: true }).click()
   await expect(panel.locator('[data-page="sandbox"]')).toBeFocused()
 
   // The internet, changed in place; its sites a page of their own.
@@ -531,7 +531,7 @@ test('Settings › Computer: the sandbox and its page (D176, D249), the internet
   await sites.fill('example.com')
   await sites.press('Enter')
   await expect(panel.locator('.sites li')).toHaveText(['example.com'])
-  await panel.getByRole('button', { name: 'Computer', exact: true }).click()
+  await panel.getByRole('button', { name: 'Computer in this tab', exact: true }).click()
   await expect(panel.locator('[data-page="sites"]')).toContainText(/example\.com\s*1/)
   // Never for Using the internet, in Approvals, turns it off too, and says so.
   await page.evaluate(async () => (await import('/ui/state.js')).updateSettings({ rules: { fetch: 'never' } }))
@@ -567,7 +567,7 @@ test('Settings › Computer: the sandbox and its page (D176, D249), the internet
   await panel.locator('.computer-ask').getByRole('button', { name: 'Empty it' }).click()
   await expect(panel.locator('.computer-files')).toHaveCount(0)
   await expect(panel.getByRole('button', { name: 'Empty it' })).toBeDisabled()
-  await panel.getByRole('button', { name: 'Computer', exact: true }).click()
+  await panel.getByRole('button', { name: 'Computer in this tab', exact: true }).click()
 
   // The longest a command may run, saying it restarts the computer; the relay; where packages come from.
   await panel.locator('[data-page="limits"]').click()

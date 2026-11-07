@@ -272,7 +272,9 @@ test('drawn over a picture, or chosen with the keyboard in thirds, an area goes 
   await ask(page, 'What is this button?')
   await answered(page, 2)
   const said = await page.evaluate(async () => (await import('/ui/state.js')).app.current.value.records.map((record) => record.update?.text ?? '').find((text) => text.includes('points at an area')))
-  expect(said).toMatch(/40% wide and 20% high, 10% from its left and 10% from its top\. Cite it as \[n: 10,10,40,20\]/)
+  // Its place in percent, to a pixel's rounding: 40 wide, 20 high, 10 from the left and the top.
+  const [x, y, w, h] = (/Cite it as \[n: ([\d.]+),([\d.]+),([\d.]+),([\d.]+)\]/.exec(String(said)) ?? []).slice(1).map(Number)
+  for (const [got, want] of [[x, 10], [y, 10], [w, 40], [h, 20]]) expect(Math.abs(got - want)).toBeLessThan(1)
   // The keyboard: the middle third, a third to the right, then Enter.
   await page.locator('.msg-files').getByRole('button', { name: 'Screen.png' }).first().click()
   await box.focus()
