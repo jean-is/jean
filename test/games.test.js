@@ -117,6 +117,11 @@ test('the report: words over other words, or under the frame\'s buttons, are to 
 test('the report: too slow, which got some way, apart from frozen, which got nowhere', () => {
   assert.match(say({ base: run({ timeout: true, frames: 100 }), again: run(), runs: {}, lang: 'en', langOf: english, seconds: 20 }).text, /^Too slow: 100 frames of 420 in 20 s, about 200 ms a frame against 16\.7\./)
   assert.equal(say({ base: run({ timeout: true, frames: 0 }), again: run(), runs: {}, lang: 'en', langOf: english, seconds: 20 }).text, 'The game froze: no frame came in 20 s.')
+  // The baseline played again ran out of time, as frame.js says it, with nothing else: the first alone says what moves by itself.
+  const base = run(), moved = run({ prints: base.prints.map((print, k) => (k > 25 ? [k + 1] : print)) })
+  const { clean, text } = say({ base, again: { timeout: true, frames: 300 }, runs: { left: moved, b: run() }, lang: 'en', langOf: english, seconds: 20 })
+  assert.ok(clean, text)
+  assert.match(text, /^left changed the picture; b changed nothing\.$/m)
 })
 
 test('what the brain is given: a line each within 40 tokens, schemas within 400, the actions and engines Jean knows', () => {

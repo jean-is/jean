@@ -33,10 +33,12 @@ export const changed = (run, base, again) => run.prints.some((print, k) => k * 1
 
 /**
  * The report, and whether it leaves anything to fix.
- * @param {{ base: Run, again: Run, runs: Record<string, Run>, lang: string, langOf: (text: string) => string, seconds: number }} played
+ * @param {{ base: Run, again: Run | { timeout: true, frames: number }, runs: Record<string, Run>, lang: string, langOf: (text: string) => string, seconds: number }} played
  */
 export function say({ base, again, runs, lang, langOf, seconds }) {
   const lines = /** @type {string[]} */ ([]), fix = /** @type {string[]} */ ([])
+  // The baseline played again, out of time on a slow device: the first alone says what moves by itself.
+  const twice = again.timeout ? base : again
   const both = (/** @type {string} */ line) => (lines.push(line), fix.push(line))
   if (base.timeout) {
     both(base.frames ? `Too slow: ${base.frames} frames of ${FRAMES} in ${seconds} s, about ${Math.round((seconds * 1000) / base.frames)} ms a frame against 16.7. Draw less: fewer objects, smaller textures, fewer effects.` : `The game froze: no frame came in ${seconds} s.`)
@@ -52,7 +54,7 @@ export function say({ base, again, runs, lang, langOf, seconds }) {
   const moments = base.states.map(([, name]) => name)
   if (moments.includes('play')) lines.push(`Moments: ${moments.slice(0, 8).join(' → ')}.`)
   else both(`It never called host.state('play') after a was pressed${moments.length ? ` (moments: ${moments.join(' → ')})` : ''}.`)
-  const did = Object.keys(runs).filter((action) => !runs[action].timeout && changed(runs[action], base, again)), not = Object.keys(runs).filter((action) => !did.includes(action))
+  const did = Object.keys(runs).filter((action) => !runs[action].timeout && changed(runs[action], base, twice)), not = Object.keys(runs).filter((action) => !did.includes(action))
   if (did.length) lines.push(`${did.join(', ')} changed the picture${not.length ? `; ${not.join(', ')} changed nothing` : ''}.`)
   else both(`No control changed the picture (${not.join(', ')}).`)
   const playing = base.prints.slice(Math.ceil(START.to / 10))

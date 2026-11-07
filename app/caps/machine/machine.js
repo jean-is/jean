@@ -52,12 +52,16 @@ let paired = null
 /** The pairing as last read or saved, for Settings: the line, and the folders always allowed. */
 const known = signal(/** @type {Pairing | null} */ (null))
 
-/** The line's port and key, made once and kept in .secrets/, with the folders always allowed; one at a time, so two renders make one key. */
+/**
+ * The line's port and key, made once and kept in .secrets/, with the folders always allowed; one at a time, so two renders make one key.
+ * The port is below where systems pick their own connections' ports (Linux from 32768, macOS and Windows from 49152): one such
+ * connection to this computer, even closed a minute ago, would keep the bridge from listening there.
+ */
 const pairing = () => (paired ??= (async () => {
   const kept = await getSecret(app.fs, SECRET)
   if (kept) return (known.value = /** @type {Pairing} */ (JSON.parse(kept)))
   const bytes = crypto.getRandomValues(new Uint8Array(20))
-  const pair = /** @type {Pairing} */ ({ port: 41_000 + ((bytes[0] << 8) | bytes[1]) % 1000, key: btoa(String.fromCharCode(...bytes.slice(2))).replace(/[+/=]/g, (c) => ({ '+': '-', '/': '_', '=': '' })[c] ?? ''), always: [] })
+  const pair = /** @type {Pairing} */ ({ port: 23_000 + ((bytes[0] << 8) | bytes[1]) % 1000, key: btoa(String.fromCharCode(...bytes.slice(2))).replace(/[+/=]/g, (c) => ({ '+': '-', '/': '_', '=': '' })[c] ?? ''), always: [] })
   await setSecret(app.fs, SECRET, JSON.stringify(pair))
   // The plans' brains answer through the bridge: they follow the new port and key (D235, D262).
   const brains = app.settings.peek().brains.map((brain) => (PLANS[brain.provider] ? { ...brain, baseURL: `http://127.0.0.1:${pair.port}${PLANS[brain.provider][0]}` } : brain))

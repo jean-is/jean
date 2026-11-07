@@ -70,9 +70,13 @@ test('a server refused in the sandbox runs on this computer instead, and shows i
   const another = spawnSync('bash', ['-c', line.replace(/!=="[^"]+"/, '!=="not-this-one"')], { cwd: disk, encoding: 'utf8', timeout: 20_000 })
   expect(another.status).toBe(1)
   expect(another.stderr).toContain("This isn't the bridge this page expects, so nothing ran")
-  const bridge = spawn('bash', ['-c', line], { cwd: disk, stdio: 'ignore', detached: true })
+  // What it says in the terminal, for a failure to show why it didn't answer.
+  let said = ''
+  const bridge = spawn('bash', ['-c', line], { cwd: disk, stdio: ['ignore', 'ignore', 'pipe'], detached: true })
+  bridge.stderr?.setEncoding('utf8').on('data', (chunk) => { said += chunk })
   try {
     await expect(panel).toContainText('Tasks with the folder shop run their commands on this computer', { timeout: 15_000 })
+      .catch((error) => { throw new Error(`${error.message}\n\nThe bridge said: ${said.trim() || 'nothing'}${bridge.exitCode === null ? '' : `, and ended (${bridge.exitCode})`}`) })
     // Its key is in no process's arguments, which another user's ps could read.
     const key = String(/JEAN_BRIDGE_KEY=(\S+)/.exec(line)?.[1])
     expect(spawnSync('ps', ['-axww', '-o', 'command='], { encoding: 'utf8' }).stdout.split('\n').filter((one) => /^node /.test(one) && one.includes(key))).toEqual([])
