@@ -22,7 +22,9 @@ html:has(> body > .reel), body:has(> .reel) { block-size: 100%; margin: 0; overf
   background: var(--room);
 }
 .reel-backdrop { position: absolute; inset: 0; background: radial-gradient(70% 60% at 50% 115%, oklch(from var(--mark) l c h / 0.22), transparent 70%), linear-gradient(var(--room), var(--room-2)); }
-.reel-backdrop svg { position: absolute; inset-inline-start: -10%; inset-block-end: -20%; inline-size: 120%; block-size: 70%; fill: none; stroke: var(--mark); stroke-width: 18; stroke-linecap: round; opacity: 0.07; }
+.reel-backdrop svg { position: absolute; inset-inline-start: 0; inset-block-end: -30%; inline-size: 100%; block-size: 62%; fill: none; stroke: var(--mark); stroke-linecap: round; opacity: 0.05; }
+/* The tilde, on a card and behind it, is the icon's (icons/icon.svg): its pen grows with it, as the icon's does */
+:is(.reel-backdrop, .reel-mark) path { stroke-width: 56; vector-effect: none; }
 
 /* The world the camera moves over: the window Jean plays in, with its pointer */
 .reel-world { position: absolute; inset: 0; transform-origin: 0 0; }
@@ -52,7 +54,7 @@ html:has(> body > .reel), body:has(> .reel) { block-size: 100%; margin: 0; overf
 :root[dir='rtl'] .reel-card { direction: rtl; }
 .reel-card p { margin: 0; }
 .reel-word { display: inline-block; white-space: pre-wrap; opacity: 0; }
-.reel-mark { inline-size: 168px; block-size: 82px; fill: none; stroke: var(--mark); stroke-width: 44; stroke-linecap: round; overflow: visible; }
+.reel-mark { inline-size: 168px; block-size: 82px; fill: none; stroke: var(--mark); stroke-linecap: round; overflow: visible; }
 /* Drawn the way the page reads, the tilde never mirrored (docs/design.md#icons): right to left, from its end */
 .reel-mark path, .reel-facts svg path { stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--drawn, 0)); }
 :root[dir='rtl'] .reel-mark path { stroke-dashoffset: calc(var(--drawn, 0) - 1); }
@@ -74,11 +76,11 @@ html:has(> body > .reel), body:has(> .reel) { block-size: 100%; margin: 0; overf
   font-size: clamp(0.95rem, 2.6cqi, 2.05rem); line-height: 1.35; font-weight: 500;
 }
 .reel-caption.is-top { inset-block: max(5cqb, 1.25rem) auto; }
+/* In the look's ink, its words in the room's colour, as Play is: the other way round from the picture under it */
 .reel-caption span {
   max-inline-size: 34em; padding: 0.55em 1em; border-radius: 0.8em; text-align: center; text-wrap: balance;
-  background: oklch(from var(--room-2) l c h / 0.95); color: var(--ink);
-  box-shadow: 0 0 0 1px var(--line), 0 0.8em 2em -1em oklch(0 0 0 / 0.45);
-  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  background: var(--ink); color: var(--room);
+  box-shadow: 0 0.8em 2em -1em oklch(0 0 0 / 0.55);
 }
 .reel-spoken { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
@@ -127,11 +129,13 @@ html:has(> body > .reel), body:has(> .reel) { block-size: 100%; margin: 0; overf
 .reel-seek { position: absolute; inset: 0; inline-size: 100%; margin: 0; background: none; opacity: 0; cursor: pointer; }
 .reel-seek:focus-visible { opacity: 1; accent-color: var(--mark); }
 
+/* Above its button, in as many columns as the frame's height needs for none of it to be cut (reel.js sets --rows) */
 .reel-menu {
-  position: fixed; inset: auto; margin: 0; padding: 0.35rem; border: 1px solid var(--line-strong); border-radius: 0.9rem;
+  position: fixed; inset: auto; box-sizing: border-box; max-inline-size: calc(100vw - 1rem); margin: 0; padding: 0.35rem; overflow: auto;
+  border: 1px solid var(--line-strong); border-radius: 0.9rem;
   background: var(--room-2); color: var(--ink); box-shadow: 0 1rem 2.5rem -1rem oklch(0 0 0 / 0.55);
 }
-.reel-menu ul { display: grid; margin: 0; padding: 0; list-style: none; }
+.reel-menu ul { display: grid; grid-auto-flow: column; grid-template-rows: repeat(var(--rows, 1), auto); column-gap: 0.15rem; margin: 0; padding: 0; list-style: none; }
 .reel-menu button {
   display: flex; align-items: center; gap: 0.5rem; inline-size: 100%; padding: 0.45rem 0.9rem 0.45rem 0.6rem; border: 0; border-radius: 0.55rem;
   background: none; color: inherit; font: inherit; font-size: 0.9rem; text-align: start; cursor: pointer;
@@ -139,6 +143,7 @@ html:has(> body > .reel), body:has(> .reel) { block-size: 100%; margin: 0; overf
 .reel-menu button:hover, .reel-menu button:focus-visible { background: var(--line); outline: none; }
 .reel-menu svg { inline-size: 1rem; block-size: 1rem; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; visibility: hidden; }
 .reel-menu [aria-checked='true'] svg { visibility: visible; }
+@media (max-height: 20rem) { .reel-menu { padding: 0.25rem; border-radius: 0.75rem; } .reel-menu button { padding-block: 0.3rem; font-size: 0.85rem; } }
 
 /* An export: the picture alone */
 .reel[data-export] :is(.reel-controls, .reel-big) { display: none; }
@@ -150,4 +155,4 @@ html:has(> body > .reel), body:has(> .reel) { block-size: 100%; margin: 0; overf
   .reel-marks span { background: GrayText; } .reel-marks i { background: Highlight; }
   .reel-ring, .reel-ripple { border-color: Highlight; }
 }
-@media (prefers-contrast: more) { .reel-caption span { background: var(--room); box-shadow: 0 0 0 2px var(--ink); } }
+@media (prefers-contrast: more) { .reel-caption span { box-shadow: 0 0 0 2px var(--room); } }

@@ -99,11 +99,11 @@ export const fill = (text, params) => text.replace(/\{(\w+)\}/g, (whole, key) =>
  * the pages need, in the same grid and pen (docs/design.md#icons).
  */
 const svg = (/** @type {string} */ body, extra = '') => /* html */ `<svg class="icon${extra}" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" aria-hidden="true">${body}</svg>`
-/** One of the app's glyphs, as its template draws it: icon()'s drawing, a static svg`…`. @param {keyof typeof GLYPHS} name */
+/** One of the app's glyphs, as its template draws it: icon()'s drawing, a static svg`…`, and its class, so one that turns with the page (flip-rtl) turns here too. @param {keyof typeof GLYPHS} name */
 export function glyph (name, extra = '') {
-  const drawing = /** @type {import('lit-html').TemplateResult} */ (GLYPHS[name].values[1])
+  const [own, drawing] = /** @type {[string, import('lit-html').TemplateResult]} */ (GLYPHS[name].values)
   if (drawing.values.length) throw new Error(`app/ui/menu-icons.js: the ${name} glyph isn't a static drawing`)
-  return svg(drawing.strings.join(''), extra)
+  return svg(drawing.strings.join(''), `${own ? ` ${own}` : ''}${extra}`)
 }
 export const ICONS = {
   lock: glyph('lock'),
@@ -124,8 +124,8 @@ export const ICONS = {
   close: glyph('close'),
   mic: glyph('mic'),
   send: glyph('send'),
-  arrow: glyph('arrow', ' flip-rtl'),
-  external: glyph('external', ' flip-rtl'),
+  arrow: glyph('arrow'),
+  external: glyph('external'),
   closed: glyph('plus', ' is-closed'),
   // Only the pages draw these: no glyph of the app means the same.
   clock: svg('<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>'),

@@ -10,7 +10,7 @@ import { BRAND } from '../app/brand.js'
 import { PACE, beats, exchanges, words } from '../app/ui/replay.js'
 import { GROWTH } from '../site/excel/page.js'
 import { buildSite } from '../site/site.js'
-import { NAMES, ON, reading } from '../site/watch/reels.js'
+import { MONTHLY, NAMES, ON, reading } from '../site/watch/reels.js'
 import { reelTime, steps, taskTime } from '../site/watch/schedule.js'
 import { compose, encode, energy, random } from '../site/watch/score.js'
 
@@ -115,6 +115,8 @@ test('/watch writes the player: a document of its own, out of search results, ru
   // Each glyph the player names is in its template.
   const glyphs = new Set([...html.matchAll(/data-icon="([a-z]+)"/g)].map(([, name]) => name))
   for (const name of new Set([...site.files['reels/reel.js'].matchAll(/icon\('([a-z]+)'\)/g)].map(([, name]) => name))) assert.ok(glyphs.has(name), name)
+  // Sound on and sound off turn with the page together, as the app's speaker does.
+  for (const name of ['speaker', 'muted']) assert.match(html, new RegExp(`<svg data-icon="${name}" class="icon flip-rtl"`), name)
   // Each page frames the reels in its language, full screen allowed.
   for (const page of site.pages.filter(({ name }) => name === 'watch')) {
     const frames = [...site.files[page.path].matchAll(/<iframe src="([^"]+)" title="[^"]+" allow="fullscreen; autoplay" loading="lazy">/g)].map(([, src]) => new URLSearchParams(src.replaceAll('&amp;', '&').split('#')[1]))
@@ -151,9 +153,14 @@ test('every reel, in every language of /watch, plays tasks the site writes, ever
     // The same scenes and stops in every language.
     assert.equal(new Set(shapes.get(name)).size, 1, name)
   }
-  // The sample's growth, worked out from sales.csv, in every language's chart.
+  // The sample's growth month by month, worked out from sales.csv, in every language's chart: a line a product from
+  // the same start, each ending on the growth the answer names, the one that grew the most drawn over its area.
   for (const lang of languages) {
     const answer = site.files[`demos/reels/jean/chart.${lang}.jsonl`].trim().split('\n').map((line) => JSON.parse(line)).at(-1).update.content.text
-    assert.deepEqual(JSON.parse(/```echarts\n(.*)\n```/.exec(answer)?.[1] ?? 'null').series[0].data, GROWTH.map(({ growth }) => Math.round(growth * 100)), lang)
+    const { series } = JSON.parse(/```echarts\n(.*)\n```/.exec(answer)?.[1] ?? 'null')
+    assert.deepEqual(series.map((/** @type {any} */ one) => one.data), MONTHLY.map(({ months }) => months.map((growth) => Math.round(growth * 100))), lang)
+    assert.deepEqual(series.map((/** @type {any} */ one) => one.data.at(-1)), GROWTH.map(({ growth }) => Math.round(growth * 100)), lang)
+    const best = GROWTH.indexOf([...GROWTH].sort((a, b) => b.growth - a.growth)[0])
+    assert.deepEqual(series.map((/** @type {any} */ one) => Boolean(one.areaStyle)), GROWTH.map((_, i) => i === best), lang)
   }
 })
