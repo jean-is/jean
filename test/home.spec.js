@@ -90,6 +90,8 @@ test('at a language’s own address, the page and the app speak it; once hidden,
   await expect(page.locator('.home')).toBeHidden()
   await expect.poll(() => new URL(page.url()).pathname).toBe('/')
   if (browserName !== 'webkit') {
+    // Kept once written: the language the address chose, in settings.json before the reload reads it again.
+    await expect.poll(() => page.evaluate(async () => JSON.parse(await (await import('/ui/state.js')).app.fs.read('settings.json') ?? '{}').locale)).toBe('ja')
     await page.reload()
     await expect(page.locator('html')).toHaveClass(/is-ready/)
     await expect(page.locator('html')).toHaveAttribute('lang', 'ja')

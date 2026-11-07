@@ -4,6 +4,7 @@
 // the room declares them, they stay code. While an answer writes one, it is drawn as far as it goes.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, turnOn, openSettings, nextCopy } from './helpers.js'
+import { DIRECTORY } from '../app/caps/skills/directory.js'
 
 test('a chart is code until a skill declares it, then drawn in the answer, and copied with it as a picture', async ({ page }) => {
   await start(page)
@@ -21,7 +22,7 @@ test('a chart is code until a skill declares it, then drawn in the answer, and c
   await expect(knows.locator('.skills .item', { hasText: 'Visual answers' })).toHaveCount(1)
   await knows.getByRole('button', { name: 'Add a skill' }).click()
   const tiles = knows.locator('.ready-made .service')
-  await expect(tiles).toHaveCount(23)
+  await expect(tiles).toHaveCount(DIRECTORY.length)
   await tiles.filter({ hasText: 'Bars, lines, pies' }).click()
   await expect(page).toHaveURL(/\/settings\/skills\/add\/chart$/)
   await expect(knows.locator('.skill-head h2')).toBeFocused()
@@ -39,7 +40,7 @@ test('a chart is code until a skill declares it, then drawn in the answer, and c
   await expect(knows.locator('.skills .item', { hasText: 'Chart' })).toContainText('Bars, lines, pies and more')
   await expect(knows.locator('.skills .item', { hasText: 'Chart' })).toBeFocused()
   await knows.getByRole('button', { name: 'Ready-made skills' }).click()
-  await expect(tiles).toHaveCount(23)
+  await expect(tiles).toHaveCount(DIRECTORY.length)
   await expect(tiles.filter({ hasText: 'Bars, lines, pies' })).toContainText('Added')
   const steps = await page.evaluate(async () => (await import('/ui/state.js')).app.fs.read('skills/chart/SKILL.md'))
   expect(steps).toContain('  blocks: echarts\n')
