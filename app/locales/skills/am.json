@@ -40,6 +40,7 @@
     "one": "አንድ ጊዜ ተከትሏል፣ {when}",
     "other": "{count} ጊዜ ተከትሏል፣ በመጨረሻ {when}"
   },
+  "skills.missed": "ትክክል ያልሆኑ፦ {number}",
   "skills.when": "መቼ እንደሚከተል",
   "skills.example": "ለምሳሌ፦ “{example}”",
   "skills.try": "ይሞክሩት",

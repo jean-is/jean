@@ -38,6 +38,7 @@
   "skills.followed": {
     "other": "đã dùng {count} lần, lần gần nhất {when}"
   },
+  "skills.missed": "Chưa đúng: {number}",
   "skills.when": "Khi nào được dùng",
   "skills.example": "Ví dụ: “{example}”",
   "skills.try": "Dùng thử",

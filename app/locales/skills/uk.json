@@ -44,6 +44,7 @@
     "many": "застосовано {count} разів, востаннє {when}",
     "other": "застосовано {count} раза, востаннє {when}"
   },
+  "skills.missed": "Неправильно: {number}",
   "skills.when": "Коли її застосовують",
   "skills.example": "Наприклад: «{example}»",
   "skills.try": "Спробувати",

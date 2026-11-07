@@ -40,6 +40,7 @@
     "one": "একবার ব্যবহৃত, {when}",
     "other": "{count} বার ব্যবহৃত, সবশেষে {when}"
   },
+  "skills.missed": "ঠিক নয়: {number}",
   "skills.when": "এটি কখন ব্যবহার হয়",
   "skills.example": "যেমন: “{example}”",
   "skills.try": "চেষ্টা করুন",

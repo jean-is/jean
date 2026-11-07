@@ -40,6 +40,7 @@
     "one": "noudatettu kerran, {when}",
     "other": "noudatettu {count} kertaa, viimeksi {when}"
   },
+  "skills.missed": "Väärät: {number}",
   "skills.when": "Milloin sitä noudatetaan",
   "skills.example": "Esimerkiksi: ”{example}”",
   "skills.try": "Kokeile",

@@ -197,5 +197,7 @@
   "cap.machine.hint": "Bed om at køre et websteds udviklingsserver, som npm run dev.",
   "cap.machine.text": "Kører computerens kommandoer på selve denne enhed, i en mappe af dine, med dens egne programmer og servere: et websteds udviklingsserver vises i browseren. Der spørges først om hver kommando, og Ctrl+C i din terminal stopper det hele.",
   "cap.pictures.hint": "Bed om et billede.",
-  "cap.pictures.text": "Billeder og korte film ud fra en beskrivelse, eller et af dine billeder ændret: af de hjerner, du forbinder, eller privat på denne enhed. Der spørges først om en film, da den koster mere."
+  "cap.pictures.text": "Billeder og korte film ud fra en beskrivelse, eller et af dine billeder ændret: af de hjerner, du forbinder, eller privat på denne enhed. Der spørges først om en film, da den koster mere.",
+  "cap.feedback.hint": "Bed om et svar igen to gange.",
+  "cap.feedback.text": "Under det seneste svar markerer du det som godt eller forkert. Forkert spørger, hvad der manglede, svarer igen med en stærkere hjerne og kan huske det til næste gang, på denne enhed."
 }

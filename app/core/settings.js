@@ -23,6 +23,7 @@ import { ulid } from './ulid.js'
  * @property {Connection[]} [connections]      services connected through MCP (their keys and tokens are secrets)
  * @property {Record<string, Record<string, RuleValue>>} [services]  a connection's own rules, by its id
  * @property {number} [dictated]               how many times the user dictated (live conversation is offered)
+ * @property {number} [retried]                how many times the user asked an answer again (Feedback is offered, D712)
  * @property {number} [cited]                  how many answers cited their sources (Double-check is offered)
  * @property {number} [browsed]                how many links from answers the user opened (the browser is offered)
  * @property {number} [photos]                 how many pictures the user shared from a touch screen (the camera is offered, D645)

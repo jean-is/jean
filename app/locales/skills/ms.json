@@ -38,6 +38,7 @@
   "skills.followed": {
     "other": "digunakan {count} kali, terakhir {when}"
   },
+  "skills.missed": "Tidak betul: {number}",
   "skills.when": "Bila digunakan",
   "skills.example": "Contohnya: “{example}”",
   "skills.try": "Cuba",

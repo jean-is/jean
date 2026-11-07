@@ -40,6 +40,7 @@
     "one": "fulgt én gang, {when}",
     "other": "fulgt {count} gange, senest {when}"
   },
+  "skills.missed": "Forkerte: {number}",
   "skills.when": "Hvornår den følges",
   "skills.example": "For eksempel: “{example}”",
   "skills.try": "Prøv den",

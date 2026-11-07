@@ -40,6 +40,7 @@
     "one": "egyszer követve, {when}",
     "other": "{count} alkalommal követve, utoljára {when}"
   },
+  "skills.missed": "Rossz: {number}",
   "skills.when": "Mikor követi",
   "skills.example": "Például: „{example}”",
   "skills.try": "Kipróbálás",

@@ -40,6 +40,7 @@
     "one": "followed once, {when}",
     "other": "followed {count} times, last {when}"
   },
+  "skills.missed": "Not right: {number}",
   "skills.when": "When it is followed",
   "skills.example": "For example: “{example}”",
   "skills.try": "Try it",

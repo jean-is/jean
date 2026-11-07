@@ -40,6 +40,7 @@
     "one": "एकदा वापरले, {when}",
     "other": "{count} वेळा वापरले, शेवटी {when}"
   },
+  "skills.missed": "बरोबर नाही: {number}",
   "skills.when": "हे केव्हा वापरले जाते",
   "skills.example": "उदाहरणार्थ: “{example}”",
   "skills.try": "वापरून पाहा",

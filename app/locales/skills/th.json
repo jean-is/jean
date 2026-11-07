@@ -38,6 +38,7 @@
   "skills.followed": {
     "other": "ใช้ไปแล้ว {count} ครั้ง ล่าสุด{when}"
   },
+  "skills.missed": "ไม่ถูก: {number}",
   "skills.when": "ใช้เมื่อใด",
   "skills.example": "ตัวอย่าง: “{example}”",
   "skills.try": "ลองใช้",

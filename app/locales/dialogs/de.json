@@ -197,5 +197,7 @@
   "cap.machine.hint": "Bitte darum, den Entwicklungsserver einer Website zu starten, etwa npm run dev.",
   "cap.machine.text": "Führt Befehle auf diesem Computer selbst aus, in einem deiner Ordner, mit seinen eigenen Programmen und Servern: Der Entwicklungsserver einer Website erscheint im Browser. Jeder Befehl wird vorher erfragt, und Strg+C in deinem Terminal beendet alles.",
   "cap.pictures.hint": "Bitte um ein Bild.",
-  "cap.pictures.text": "Bilder und kurze Videos aus einer Beschreibung oder ein geändertes Bild von dir: von den Gehirnen, die du verbindest, oder privat auf diesem Gerät. Vor einem Video wirst du gefragt, denn es kostet mehr."
+  "cap.pictures.text": "Bilder und kurze Videos aus einer Beschreibung oder ein geändertes Bild von dir: von den Gehirnen, die du verbindest, oder privat auf diesem Gerät. Vor einem Video wirst du gefragt, denn es kostet mehr.",
+  "cap.feedback.hint": "Bitten Sie zweimal um eine neue Antwort.",
+  "cap.feedback.text": "Unter der letzten Antwort markieren Sie sie als gut oder nicht richtig. Nicht richtig fragt, was fehlte, antwortet mit einem stärkeren Gehirn neu und kann es sich fürs nächste Mal merken, auf diesem Gerät."
 }

@@ -40,6 +40,7 @@
     "one": "ακολουθήθηκε μία φορά, {when}",
     "other": "ακολουθήθηκε {count} φορές, τελευταία {when}"
   },
+  "skills.missed": "Λάθος: {number}",
   "skills.when": "Πότε ακολουθείται",
   "skills.example": "Για παράδειγμα: «{example}»",
   "skills.try": "Δοκιμή",

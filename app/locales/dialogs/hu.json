@@ -197,5 +197,7 @@
   "cap.machine.hint": "Kérd egy webhely fejlesztői szerverének futtatását, például: npm run dev.",
   "cap.machine.text": "A számítógép parancsait magán az eszközön futtatja, egy saját mappádban, a saját programjaival és szervereivel: egy webhely fejlesztői szervere a böngészőben jelenik meg. Minden parancs előtt kérdez, és a terminálodban a Ctrl+C mindent leállít.",
   "cap.pictures.hint": "Kérj egy képet.",
-  "cap.pictures.text": "Képek és rövid videók leírás alapján, vagy egy saját képed módosítva: a csatlakoztatott agyakkal, vagy privát módon ezen az eszközön. Videó előtt kérdez, mert többe kerül."
+  "cap.pictures.text": "Képek és rövid videók leírás alapján, vagy egy saját képed módosítva: a csatlakoztatott agyakkal, vagy privát módon ezen az eszközön. Videó előtt kérdez, mert többe kerül.",
+  "cap.feedback.hint": "Kérj kétszer új választ.",
+  "cap.feedback.text": "Az utolsó válasz alatt jelöld jónak vagy rossznak. A rossz megkérdezi, mi hiányzott, erősebb aggyal újra válaszol, és legközelebbre megjegyezheti, ezen az eszközön."
 }

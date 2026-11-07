@@ -40,6 +40,7 @@
     "one": "ஒருமுறை பயன்பட்டது, {when}",
     "other": "{count} முறை பயன்பட்டது, கடைசியாக {when}"
   },
+  "skills.missed": "சரியில்லை: {number}",
   "skills.when": "இது எப்போது பயன்படுகிறது",
   "skills.example": "எடுத்துக்காட்டாக: “{example}”",
   "skills.try": "முயன்று பார்",

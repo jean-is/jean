@@ -38,6 +38,7 @@
   "skills.followed": {
     "other": "a ti tẹ̀lé e ní ìgbà {count}, ìgbà ìkẹyìn {when}"
   },
+  "skills.missed": "Kò tọ̀nà: {number}",
   "skills.when": "Ìgbà tí a ń tẹ̀lé e",
   "skills.example": "Fún àpẹẹrẹ: “{example}”",
   "skills.try": "Gbìyànjú rẹ̀",

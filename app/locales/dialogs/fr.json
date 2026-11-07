@@ -199,5 +199,7 @@
   "cap.machine.hint": "Demandez à lancer le serveur de développement d’un site, comme npm run dev.",
   "cap.machine.text": "Lance les commandes sur votre ordinateur lui-même, dans l’un de vos dossiers, avec ses propres programmes et serveurs : le serveur de développement d’un site s’affiche dans le navigateur. Chaque commande vous est demandée d’abord, et Ctrl+C dans votre terminal arrête tout.",
   "cap.pictures.hint": "Demandez une image.",
-  "cap.pictures.text": "Des images et de courtes vidéos à partir d’une description, ou une image à vous modifiée : par les cerveaux que vous connectez, ou en privé sur cet appareil. Une vidéo vous est demandée d’abord, car elle coûte plus cher."
+  "cap.pictures.text": "Des images et de courtes vidéos à partir d’une description, ou une image à vous modifiée : par les cerveaux que vous connectez, ou en privé sur cet appareil. Une vidéo vous est demandée d’abord, car elle coûte plus cher.",
+  "cap.feedback.hint": "Redemandez une réponse deux fois.",
+  "cap.feedback.text": "Sous la dernière réponse, marquez-la bonne ou pas juste. Pas juste demande ce qui manquait, répond à nouveau avec un cerveau plus puissant, et peut le garder en tête la prochaine fois, sur cet appareil."
 }

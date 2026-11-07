@@ -197,5 +197,7 @@
   "cap.machine.hint": "Be om att köra en webbplats utvecklingsserver, som npm run dev.",
   "cap.machine.text": "Kör datorns kommandon på själva enheten, i en mapp som är din, med dess egna program och servrar: en webbplats utvecklingsserver visas i webbläsaren. Varje kommando frågas om först, och Ctrl+C i din terminal stoppar allt.",
   "cap.pictures.hint": "Be om en bild.",
-  "cap.pictures.text": "Bilder och korta filmer utifrån en beskrivning, eller en av dina bilder ändrad: av hjärnorna du ansluter, eller privat på den här enheten. En film frågas om först, eftersom den kostar mer."
+  "cap.pictures.text": "Bilder och korta filmer utifrån en beskrivning, eller en av dina bilder ändrad: av hjärnorna du ansluter, eller privat på den här enheten. En film frågas om först, eftersom den kostar mer.",
+  "cap.feedback.hint": "Be om ett svar igen två gånger.",
+  "cap.feedback.text": "Under det senaste svaret markerar du det som bra eller fel. Fel frågar vad som saknades, svarar igen med en starkare hjärna och kan komma ihåg det till nästa gång, på den här enheten."
 }

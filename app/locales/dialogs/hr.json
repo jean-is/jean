@@ -199,5 +199,7 @@
   "cap.machine.hint": "Zatražite pokretanje razvojnog poslužitelja web-mjesta, poput npm run dev.",
   "cap.machine.text": "Pokreće naredbe računala na samom ovom uređaju, u vašoj mapi, s njegovim vlastitim programima i poslužiteljima: razvojni poslužitelj web-mjesta prikazuje se u pregledniku. Za svaku se naredbu prvo pita, a Ctrl+C u vašem terminalu sve zaustavlja.",
   "cap.pictures.hint": "Zatražite sliku.",
-  "cap.pictures.text": "Slike i kratki videozapisi prema opisu, ili promijenjena vaša slika: pomoću mozgova koje povežete ili privatno na ovom uređaju. Za videozapis se prvo pita, jer košta više."
+  "cap.pictures.text": "Slike i kratki videozapisi prema opisu, ili promijenjena vaša slika: pomoću mozgova koje povežete ili privatno na ovom uređaju. Za videozapis se prvo pita, jer košta više.",
+  "cap.feedback.hint": "Dvaput zatražite odgovor ponovno.",
+  "cap.feedback.text": "Ispod zadnjeg odgovora označite ga kao dobar ili netočan. Netočan pita što je nedostajalo, odgovara ponovno jačim mozgom i može to zapamtiti za drugi put, na ovom uređaju."
 }

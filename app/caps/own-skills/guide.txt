@@ -95,6 +95,9 @@ A computer in the sandbox, never the user's own: you run JavaScript, Python and 
 ## reflexes
 What lets {auto.name} pick a brain for each request, and suggest next steps and things to try. It runs on a computer, never on a phone or a tablet, where it would hold too much memory.
 
+## feedback
+Under the last answer, a tick (good) and a cross (not right): not right asks what wasn't, then sends those words as the next request with a note that the answer missed, to a stronger brain when Auto chooses; trying again and keeping it in mind turns memory on so you note what will still matter and change the skill you followed. Nothing leaves this device for it. {settings.title} › {cap.skills.name} says how often a skill's answers were not right.
+
 ## memory
 What you noted (`remember`, with an Undo) is in {settings.title} › {settings.you}, newest first, each line to change, make an instruction or delete, where memory can be turned off too. Only the newest lines that fit go into a task; the rest are marked there as no longer read, and a line kept as an instruction is always read. Each project keeps its own as well, on its own page there.
 

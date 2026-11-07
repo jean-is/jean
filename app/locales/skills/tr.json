@@ -40,6 +40,7 @@
     "one": "bir kez izlendi, {when}",
     "other": "{count} kez izlendi, en son {when}"
   },
+  "skills.missed": "Doğru değil: {number}",
   "skills.when": "Ne zaman izlenir",
   "skills.example": "Örneğin: “{example}”",
   "skills.try": "Dene",

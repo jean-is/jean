@@ -30,7 +30,7 @@ const filmed = Boolean(navigator.mediaDevices?.getUserMedia) // where a camera c
 const screened = Boolean(navigator.mediaDevices?.getDisplayMedia) // where a screen can be shared, a computer's (D699)
 const reflexive = !handheld() // where Kev runs: a computer, never a phone or a tablet (D660)
 /** What Jean can do, in the order the house lights up (the collection page). */
-export const CATALOGUE = ['files', 'made', 'documents', 'tables', 'designs', 'computer', ...(reflexive ? ['reflexes'] : []), 'memory', 'find', ...(gpu ? ['meaning'] : []), 'projects', 'folders', 'skills', 'routines', 'flows', 'web-search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'double-check', 'since', ...(told ? ['notifications'] : []), 'names', 'live', ...(filmed ? ['camera'] : []), ...(screened ? ['screen'] : []), 'natural-voice', 'backup', ...(shared ? ['share'] : []), ...(folders ? ['sync'] : []), 'lock', 'brain-local', 'extensions']
+export const CATALOGUE = ['files', 'made', 'documents', 'tables', 'designs', 'computer', ...(reflexive ? ['reflexes'] : []), 'memory', 'feedback', 'find', ...(gpu ? ['meaning'] : []), 'projects', 'folders', 'skills', 'routines', 'flows', 'web-search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'double-check', 'since', ...(told ? ['notifications'] : []), 'names', 'live', ...(filmed ? ['camera'] : []), ...(screened ? ['screen'] : []), 'natural-voice', 'backup', ...(shared ? ['share'] : []), ...(folders ? ['sync'] : []), 'lock', 'brain-local', 'extensions']
 
 /** What the brain may offer, described for it in English, in a few words: it goes with every request. */
 const OFFERS = /** @type {Record<string, string>} */ ({
@@ -40,6 +40,7 @@ const OFFERS = /** @type {Record<string, string>} */ ({
   documents: 'documents kept and edited beside the conversation',
   tables: 'a table you fill and keep up to date beside the conversation, in place of a spreadsheet file unless they ask for a file, when the user wants to keep track of something (applications, expenses, books…)',
   designs: 'a design to print, post or send, in place of an SVG, a web page or a Word file unless they ask for a file: an invitation, a poster, a flyer, a card',
+  feedback: 'telling you under an answer that it was good or not right, and why, so that you answer again better and keep it in mind: offer it when the user says an answer missed',
   memory: 'remembering lasting facts about the user and how they want you to answer, from one conversation to the next, which you otherwise forget: offer it as soon as they state one ("from now on…", "keep in mind…"), even beside another request, unless a project or a skill fits better',
   projects: 'a project of its own, with its notes and files, for something the user keeps coming back to',
   folders: 'working on the files of a folder of their computer, where they are',
@@ -262,6 +263,8 @@ effect(() => {
   // Someone who dictates often may rather talk.
   if ((effective.value.settings.dictated ?? 0) >= 3) offerOnce('live')
 })
+// Asking an answer again twice, or a reply Intuition reads as unhappy: an answer could be told it wasn't right (D712).
+effect(() => { if ((effective.value.settings.retried ?? 0) >= 2) offerOnce('feedback') })
 effect(() => {
   // Back after time away, with services connected: what's new there?
   if (app.back.value && ((effective.value.settings.connections ?? []).length || (app.policy.connections ?? []).length)) offerOnce('since', true)
@@ -354,6 +357,7 @@ export async function sense(text, previous) {
   if (capability?.type === 'choice' && capability.choice !== 'none' && capability.probabilities[capability.choice] >= YES) offerOnce(OFFERED[capability.choice], true)
   // A lasting fact, preference or correction: memory could keep it.
   if (lasting?.type === 'noul' && lasting.noul >= YES) offerOnce('memory', true)
+  if (after?.unhappy?.type === 'noul' && after.unhappy.noul >= YES) offerOnce('feedback', true)
   return {
     ...(demand?.type === 'score' && { demand: likeliest(demand.probabilities) }),
     ...(personal?.type === 'noul' && { personal: personal.noul >= YES }),

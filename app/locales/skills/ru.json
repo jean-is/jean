@@ -44,6 +44,7 @@
     "many": "применён {count} раз, последний раз {when}",
     "other": "применён {count} раза, последний раз {when}"
   },
+  "skills.missed": "Неверно: {number}",
   "skills.when": "Когда применяется",
   "skills.example": "Например: «{example}»",
   "skills.try": "Попробовать",

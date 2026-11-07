@@ -44,6 +44,7 @@
     "many": "הופעלה {count} פעמים, לאחרונה {when}",
     "other": "הופעלה {count} פעמים, לאחרונה {when}"
   },
+  "skills.missed": "לא נכונות: {number}",
   "skills.when": "מתי היא מופעלת",
   "skills.example": "לדוגמה: „{example}”",
   "skills.try": "לנסות",

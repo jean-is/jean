@@ -199,5 +199,7 @@
   "cap.machine.hint": "Cereți să rulați serverul de dezvoltare al unui site, cum ar fi npm run dev.",
   "cap.machine.text": "Rulează comenzile computerului pe acest dispozitiv, într-un dosar al dvs., cu propriile programe și servere: serverul de dezvoltare al unui site apare în browser. Pentru fiecare comandă se întreabă mai întâi, iar Ctrl+C în terminalul dvs. oprește totul.",
   "cap.pictures.hint": "Cereți o imagine.",
-  "cap.pictures.text": "Imagini și filme scurte după o descriere, sau o imagine a dvs. schimbată: de creierele pe care le conectați sau privat, pe acest dispozitiv. Pentru un film se întreabă mai întâi, deoarece costă mai mult."
+  "cap.pictures.text": "Imagini și filme scurte după o descriere, sau o imagine a dvs. schimbată: de creierele pe care le conectați sau privat, pe acest dispozitiv. Pentru un film se întreabă mai întâi, deoarece costă mai mult.",
+  "cap.feedback.hint": "Cere de două ori un răspuns din nou.",
+  "cap.feedback.text": "Sub ultimul răspuns, marchează-l bun sau greșit. Greșit întreabă ce a lipsit, răspunde din nou cu un creier mai puternic și poate ține minte data viitoare, pe acest dispozitiv."
 }

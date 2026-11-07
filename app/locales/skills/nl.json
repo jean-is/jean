@@ -40,6 +40,7 @@
     "one": "één keer gevolgd, {when}",
     "other": "{count} keer gevolgd, laatst {when}"
   },
+  "skills.missed": "Niet goed: {number}",
   "skills.when": "Wanneer ze gevolgd wordt",
   "skills.example": "Bijvoorbeeld: ‘{example}’",
   "skills.try": "Uitproberen",

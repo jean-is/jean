@@ -40,6 +40,7 @@
     "one": "یک بار دنبال شد، {when}",
     "other": "{count} بار دنبال شد، آخرین بار {when}"
   },
+  "skills.missed": "نادرست: {number}",
   "skills.when": "چه وقت دنبال می‌شود",
   "skills.example": "برای نمونه: «{example}»",
   "skills.try": "امتحانش کنید",

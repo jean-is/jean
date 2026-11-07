@@ -195,5 +195,7 @@
   "cap.machine.hint": "Minta untuk menjalankan server pengembangan sebuah situs, seperti npm run dev.",
   "cap.machine.text": "Menjalankan perintah komputer di perangkat ini sendiri, di salah satu folder Anda, dengan program dan servernya sendiri: server pengembangan situs tampil di browser. Setiap perintah ditanyakan dulu, dan Ctrl+C di terminal Anda menghentikan semuanya.",
   "cap.pictures.hint": "Minta sebuah gambar.",
-  "cap.pictures.text": "Gambar dan video pendek dari deskripsi, atau gambar Anda yang diubah: oleh otak yang Anda hubungkan, atau secara pribadi di perangkat ini. Sebelum video, Anda ditanya dulu karena biayanya lebih besar."
+  "cap.pictures.text": "Gambar dan video pendek dari deskripsi, atau gambar Anda yang diubah: oleh otak yang Anda hubungkan, atau secara pribadi di perangkat ini. Sebelum video, Anda ditanya dulu karena biayanya lebih besar.",
+  "cap.feedback.hint": "Minta jawaban ulang dua kali.",
+  "cap.feedback.text": "Di bawah jawaban terakhir, tandai baik atau kurang tepat. Kurang tepat menanyakan apa yang kurang, menjawab ulang dengan otak yang lebih kuat, dan bisa mengingatnya lain kali, di perangkat ini."
 }

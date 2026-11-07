@@ -38,6 +38,7 @@
   "skills.followed": {
     "other": "{when}最後一次使用，共 {count} 次"
   },
+  "skills.missed": "不對：{number}",
   "skills.when": "何時使用",
   "skills.example": "例如：「{example}」",
   "skills.try": "試試看",

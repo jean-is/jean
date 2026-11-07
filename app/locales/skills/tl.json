@@ -40,6 +40,7 @@
     "one": "sinunod nang {count} beses, huli {when}",
     "other": "sinunod nang {count} beses, huli {when}"
   },
+  "skills.missed": "Hindi tama: {number}",
   "skills.when": "Kailan ito sinusunod",
   "skills.example": "Halimbawa: “{example}”",
   "skills.try": "Subukan",

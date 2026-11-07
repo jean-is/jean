@@ -42,6 +42,7 @@
     "many": "suivie {count} fois, la dernière {when}",
     "other": "suivie {count} fois, la dernière {when}"
   },
+  "skills.missed": "Pas justes : {number}",
   "skills.when": "Quand elle est suivie",
   "skills.example": "Par exemple : « {example} »",
   "skills.try": "Essayer",

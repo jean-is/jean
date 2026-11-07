@@ -42,6 +42,7 @@
     "many": "seguida {count} veces, la última {when}",
     "other": "seguida {count} veces, la última {when}"
   },
+  "skills.missed": "Incorrectas: {number}",
   "skills.when": "Cuándo se sigue",
   "skills.example": "Por ejemplo: «{example}»",
   "skills.try": "Probarla",

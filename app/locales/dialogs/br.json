@@ -203,5 +203,7 @@
   "cap.machine.hint": "Goulennit lañsañ servijer diorren ul lec’hienn, evel npm run dev.",
   "cap.machine.text": "Lañsañ a ra urzhiadoù war an urzhiataer-mañ e-unan, en unan eus ho teuliadoù, gant e brogrammoù hag e servijerioù dezhañ : servijer diorren ul lec’hienn a ziskouez er merdeer. Pep urzhiad a vez goulennet da gentañ, ha Ctrl+C en ho termenell a ehan pep tra.",
   "cap.pictures.hint": "Goulennit ur skeudenn.",
-  "cap.pictures.text": "Skeudennoù ha filmoù berr diwar un deskrivadur, pe ur skeudenn deoc’h kemmet : gant an empennoù a gevreit, pe e prevez war an trevnad-mañ. Goulennet e vez da gentañ evit ur film, rak keroc’h eo."
+  "cap.pictures.text": "Skeudennoù ha filmoù berr diwar un deskrivadur, pe ur skeudenn deoc’h kemmet : gant an empennoù a gevreit, pe e prevez war an trevnad-mañ. Goulennet e vez da gentañ evit ur film, rak keroc’h eo.",
+  "cap.feedback.hint": "Goulennit ur respont en-dro div wech.",
+  "cap.feedback.text": "Dindan ar respont diwezhañ, merkit anezhañ mat pe fall. Fall a c’houlenn petra a vank, a respont en-dro gant un empenn kreñvoc’h, hag a c’hall derc’hel soñj evit ar wech all, war an trevnad-mañ."
 }

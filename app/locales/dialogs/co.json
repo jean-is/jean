@@ -199,5 +199,7 @@
   "cap.machine.hint": "Dumandate di lancià u servitore di sviluppu d’un situ, cum’è npm run dev.",
   "cap.machine.text": "Eseguisce cumande nant’à st’urdinatore stessu, in un cartulare vostru, cù i so prugrammi è servitori : u servitore di sviluppu d’un situ si vede in u navigatore. Ogni cumanda vi hè dumandata prima, è Ctrl+C in u vostru terminale ferma tuttu.",
   "cap.pictures.hint": "Dumandate una fiura.",
-  "cap.pictures.text": "Fiure è filmi corti à partesi da una discrizzione, o una fiura vostra cambiata : da i cervelli ch’è vo cunnettite, o in privatu nant’à st’apparechju. Per un filmu, vi hè dumandatu prima, perchè costa di più."
+  "cap.pictures.text": "Fiure è filmi corti à partesi da una discrizzione, o una fiura vostra cambiata : da i cervelli ch’è vo cunnettite, o in privatu nant’à st’apparechju. Per un filmu, vi hè dumandatu prima, perchè costa di più.",
+  "cap.feedback.hint": "Dumandate torna una risposta duie volte.",
+  "cap.feedback.text": "Sottu à l’ultima risposta, marcatela bona o sbagliata. Sbagliata dumanda ciò chì manca, risponde torna cù un cervellu più forte, è pò tene à mente per a prossima volta, nant’à st’apparechju."
 }

@@ -40,6 +40,7 @@
     "one": "следвано веднъж, {when}",
     "other": "следвано {count} пъти, последно {when}"
   },
+  "skills.missed": "Неточни: {number}",
   "skills.when": "Кога се следва",
   "skills.example": "Например: „{example}“",
   "skills.try": "Опитай",

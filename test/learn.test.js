@@ -25,6 +25,14 @@ test('a skill is followed when its steps are read or the box names it, never for
   })
 })
 
+test('an answer marked Not right counts against the skills its turn followed, not those of earlier turns (D712)', () => {
+  const asked = (/** @type {string} */ at) => ({ at, update: { sessionUpdate: 'user_message_chunk', content: { type: 'text', text: 'Hi' } } })
+  const read = (/** @type {string} */ at, /** @type {string} */ name) => ({ at, update: { sessionUpdate: 'tool_call', name: 'skill', rawInput: { name } } })
+  const bad = (/** @type {string} */ at) => ({ at, meta: { feedback: { at, value: 'bad' } } })
+  const seen = followed([asked('1'), read('2', 'letter'), asked('3'), read('4', 'budget'), bad('5'), asked('6'), bad('7')])
+  assert.deepEqual(Object.fromEntries(seen), { letter: { count: 1, at: '2' }, budget: { count: 1, at: '4', missed: 1 } })
+})
+
 test('a file beside a skill\'s steps is read by its name, its .md said or not, never from outside its folder (D648)', async () => {
   const fs = memoryFS()
   await fs.write('skills/game/canvas.md', '# Canvas')

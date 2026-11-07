@@ -197,5 +197,7 @@
   "cap.machine.hint": "Pyydä ajamaan sivuston kehityspalvelin, kuten npm run dev.",
   "cap.machine.text": "Ajaa tietokoneen komennot tällä laitteella itsellään, omassa kansiossasi, sen omilla ohjelmilla ja palvelimilla: sivuston kehityspalvelin näkyy selaimessa. Jokaisesta komennosta kysytään ensin, ja Ctrl+C päätteessäsi pysäyttää kaiken.",
   "cap.pictures.hint": "Pyydä kuvaa.",
-  "cap.pictures.text": "Kuvia ja lyhyitä videoita kuvauksesta, tai oma kuvasi muutettuna: yhdistämilläsi aivoilla tai yksityisesti tällä laitteella. Videosta kysytään ensin, koska se maksaa enemmän."
+  "cap.pictures.text": "Kuvia ja lyhyitä videoita kuvauksesta, tai oma kuvasi muutettuna: yhdistämilläsi aivoilla tai yksityisesti tällä laitteella. Videosta kysytään ensin, koska se maksaa enemmän.",
+  "cap.feedback.hint": "Pyydä vastausta uudelleen kahdesti.",
+  "cap.feedback.text": "Merkitse viimeinen vastaus hyväksi tai vääräksi. Väärä kysyy, mikä puuttui, vastaa uudelleen vahvemmalla aivolla ja voi muistaa sen ensi kerralla, tällä laitteella."
 }

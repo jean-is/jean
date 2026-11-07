@@ -40,6 +40,7 @@
     "one": "följd en gång, {when}",
     "other": "följd {count} gånger, senast {when}"
   },
+  "skills.missed": "Fel: {number}",
   "skills.when": "När den följs",
   "skills.example": "Till exempel: ”{example}”",
   "skills.try": "Prova den",

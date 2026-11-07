@@ -42,6 +42,7 @@
     "few": "urmată de {count} ori, ultima dată {when}",
     "other": "urmată de {count} de ori, ultima dată {when}"
   },
+  "skills.missed": "Greșite: {number}",
   "skills.when": "Când este urmată",
   "skills.example": "De exemplu: „{example}”",
   "skills.try": "Încercați-o",

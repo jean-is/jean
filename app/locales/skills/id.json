@@ -38,6 +38,7 @@
   "skills.followed": {
     "other": "dipakai {count} kali, terakhir {when}"
   },
+  "skills.missed": "Kurang tepat: {number}",
   "skills.when": "Kapan dipakai",
   "skills.example": "Misalnya: “{example}”",
   "skills.try": "Coba",

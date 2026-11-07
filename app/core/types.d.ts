@@ -179,8 +179,10 @@ export type SystemNoteData =
   | { kind: 'switch', off?: string[], on?: string[] }
   /** version: the section's fingerprint now, '' when it is empty */
   | { kind: 'section', name: 'project' | 'instructions' | 'memory' | 'skills' | 'connections' | 'documents' | 'tables' | 'designs' | 'folder' | 'page', version: string }
-  /** the user came back: a read-only brief of what is new since then ("Since last time") */
+  /** the user came back: a routine's run set off by it only reads ("Since last time", D101) */
   | { kind: 'since', since: string }
+  /** the user marked the answer to the request at `answer` as not right, its words the next message, and asked it kept in mind (D712) */
+  | { kind: 'feedback', answer: string, keep?: boolean }
   /** a routine's request, sent by Jean on its schedule (D122): its file, its title, when it fell due, or that the user ran it */
   | { kind: 'routine', routine: string, title: string, due: string, asked?: boolean, file?: string }
   /** when requests like this one were made before, for a routine to fit the habit (D122) */

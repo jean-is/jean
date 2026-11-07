@@ -199,5 +199,7 @@
   "cap.machine.hint": "Pede para correr o servidor de desenvolvimento de um site, como npm run dev.",
   "cap.machine.text": "Executa comandos neste próprio computador, numa das tuas pastas, com os seus programas e servidores: o servidor de desenvolvimento de um site aparece no navegador. Pergunta-te antes de cada comando, e Ctrl+C no teu terminal para tudo.",
   "cap.pictures.hint": "Pede uma imagem.",
-  "cap.pictures.text": "Imagens e vídeos curtos a partir de uma descrição, ou uma imagem tua alterada: pelos cérebros que ligas, ou em privado neste dispositivo. Para um vídeo, pergunta-te primeiro, porque custa mais."
+  "cap.pictures.text": "Imagens e vídeos curtos a partir de uma descrição, ou uma imagem tua alterada: pelos cérebros que ligas, ou em privado neste dispositivo. Para um vídeo, pergunta-te primeiro, porque custa mais.",
+  "cap.feedback.hint": "Peça uma resposta de novo duas vezes.",
+  "cap.feedback.text": "Por baixo da última resposta, marque-a como boa ou errada. Errada pergunta o que faltou, responde de novo com um cérebro mais forte e pode ter isso em conta da próxima vez, neste dispositivo."
 }

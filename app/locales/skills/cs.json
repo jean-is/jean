@@ -44,6 +44,7 @@
     "many": "použita {count}krát, naposledy {when}",
     "other": "použita {count}krát, naposledy {when}"
   },
+  "skills.missed": "Nesprávné: {number}",
   "skills.when": "Kdy se použije",
   "skills.example": "Například: „{example}“",
   "skills.try": "Vyzkoušet",

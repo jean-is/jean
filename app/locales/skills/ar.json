@@ -48,6 +48,7 @@
     "many": "اتُّبعت {count} مرة، آخرها {when}",
     "other": "اتُّبعت {count} مرة، آخرها {when}"
   },
+  "skills.missed": "غير صحيحة: {number}",
   "skills.when": "متى تُتّبع",
   "skills.example": "مثلًا: «{example}»",
   "skills.try": "جرّبها",

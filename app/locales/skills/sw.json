@@ -40,6 +40,7 @@
     "one": "ulifuatwa mara moja, {when}",
     "other": "ulifuatwa mara {count}, mwisho {when}"
   },
+  "skills.missed": "Si sahihi: {number}",
   "skills.when": "Unapofuatwa",
   "skills.example": "Kwa mfano: “{example}”",
   "skills.try": "Ujaribu",

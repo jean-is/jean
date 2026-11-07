@@ -238,7 +238,7 @@ function turnView(turn, live, files, upTo, last, sources, steered) {
         ${!streaming && read.length ? readView(read) : nothing}
         ${!streaming && entries.some((entry) => entry._meta?.sources) ? sourcesView(entries.flatMap((entry) => entry._meta?.sources ?? [])) : nothing}
         ${!streaming && text ? html`<app-check at=${turn.at}></app-check>` : nothing}
-        ${!streaming && text ? actions(turn, text) : nothing}
+        ${!streaming && text ? actions(turn, text, last) : nothing}
       </article>` : nothing}
     ${last && !streaming && !drawing.busy ? followUps(turn.at, suggestions, entries.findLast((entry) => entry.kind === 'think' && !entry.name && !entry._meta?.parent)) : nothing}
   </li>`
@@ -545,8 +545,8 @@ function requestActions({ text, at, upTo }, answered) {
     <button class="icon-button subtle" aria-label=${t('action.fork')} @click=${() => fork(upTo)}>${icons.fork}</button>` : nothing}</div>`
 }
 
-/** @param {Turn} turn @param {string} text */
-function actions(turn, text) {
+/** @param {Turn} turn @param {string} text @param {boolean} [last] the task's last answer */
+function actions(turn, text, last = false) {
   const isSpeaking = speaking.value === turn.at
   // Copy and More options belong to "Things Jean made", which loads with the first answer.
   unlock('made')
@@ -557,7 +557,7 @@ function actions(turn, text) {
       aria-label=${t(isSpeaking ? 'action.stopReading' : 'action.readAloud')}
       @click=${() => toggleSpeech(turn.at, text, locale.value, effective.value.settings.voice)}>${icons.speaker}</button>` : nothing}
     <app-receipt .turn=${turn} .text=${text}></app-receipt>
-    ${slots('answer').map((entry) => entry.draw({ text, at: turn.at }))}
+    ${slots('answer').map((entry) => entry.draw({ text, at: turn.at, last }))}
     <app-made .source=${text} .files=${filesMade(turn.steps.flatMap((step) => step.tools))} menu></app-made>
     ${when(turn.end ?? turn.at)}
   </div>`

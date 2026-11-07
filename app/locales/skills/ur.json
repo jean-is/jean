@@ -40,6 +40,7 @@
     "one": "ایک بار استعمال ہوئی، {when}",
     "other": "{count} بار استعمال ہوئی، آخری بار {when}"
   },
+  "skills.missed": "غلط: {number}",
   "skills.when": "یہ کب استعمال ہوتی ہے",
   "skills.example": "مثال کے طور پر: “{example}”",
   "skills.try": "آزمائیں",

@@ -42,6 +42,7 @@
     "many": "seguitata {count} volte, l’ultima {when}",
     "other": "seguitata {count} volte, l’ultima {when}"
   },
+  "skills.missed": "Sbagliate : {number}",
   "skills.when": "Quandu hè seguitata",
   "skills.example": "Per esempiu : « {example} »",
   "skills.try": "Pruvà",

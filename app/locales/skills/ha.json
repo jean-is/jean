@@ -40,6 +40,7 @@
     "one": "an bi ta sau ɗaya, {when}",
     "other": "an bi ta sau {count}, ta ƙarshe {when}"
   },
+  "skills.missed": "Ba daidai ba: {number}",
   "skills.when": "Yaushe ake bin ta",
   "skills.example": "Misali: “{example}”",
   "skills.try": "Gwada ta",

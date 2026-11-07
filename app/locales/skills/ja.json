@@ -38,6 +38,7 @@
   "skills.followed": {
     "other": "{count} 回使用、最後は {when}"
   },
+  "skills.missed": "違う：{number}",
   "skills.when": "使うとき",
   "skills.example": "例：「{example}」",
   "skills.try": "試す",

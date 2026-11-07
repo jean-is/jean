@@ -95,7 +95,7 @@ function said(skill) {
   const [date, jean] = [when ? new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'long' }).format(when) : '', skill.metadata?.author === 'jean']
   const from = skill.source ? t('skills.from', { source: siteOf(skill.source) }) : t(ownOf(skill) ? (jean ? 'skills.byJean' : 'skills.byYou') : jean ? 'skills.made' : 'skills.fromFile', { name: BRAND.name, date })
   const seen = known.value?.followed.get(skill.name)
-  return seen ? `${from} · ${t('skills.followed', { count: seen.count, when: relativeTime(new Date(seen.at)) })}` : from
+  return seen ? `${from} · ${t('skills.followed', { count: seen.count, when: relativeTime(new Date(seen.at)) })}${seen.missed ? ` · ${t('skills.missed', { number: seen.missed })}` : ''}` : from
 }
 
 // ─── Changing them ───────────────────────────────────────────────────────────

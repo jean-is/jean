@@ -284,6 +284,7 @@ async function pickBrain(text, records, boost = 0, chosen, pictured = false) {
  */
 async function request(text, { boost = 0, notes = [], call, files = app.attachments.value, brain: chosen, look = false } = {}) {
   if ((!text.trim() && !files.some((item) => item.status === 'ready')) || app.busy.value) return
+  if (boost) void askedAgain()
   if (files.some((item) => item.status === 'reading')) return notify(t('files.stillReading'))
   if (!brainsHere.value.length) return (app.draft.value = text), import('./picker.js').then((module) => module.openPicker())
   let current = app.current.value
@@ -393,6 +394,9 @@ export async function removing(removals, act) {
   return !refuse
 }
 
+/** An answer asked again, by Try again, an edit or a smarter brain: the second offers Feedback (D712). */
+const askedAgain = () => updateSettings({ retried: (effective.peek().settings.retried ?? 0) + 1 })
+
 /**
  * Goes back to a request: what came after it is gone from the conversation, but its title and pin, and the
  * request is answered again (D188); edited, it is asked now in its new words (D312).
@@ -405,6 +409,7 @@ export async function rewind(upTo, text) {
   await new Promise((resolve) => { const done = effect(() => { if (!app.running.value.includes(path ?? '')) queueMicrotask(() => resolve(done())) }) })
   const current = app.current.value
   if (!current || current.path !== path || app.busy.value) return
+  void askedAgain()
   // Edited, its words go too, with its files, which come just before them (a request before ends with its own words),
   // and so does its note of what / and @ named (D199), unless the new words name all it did.
   const from = text === undefined ? upTo : current.records.slice(0, upTo - 1).findLastIndex(({ update }) => update?.sessionUpdate !== 'user_message_chunk' || update.content.type !== 'resource_link') + 1

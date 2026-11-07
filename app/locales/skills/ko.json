@@ -38,6 +38,7 @@
   "skills.followed": {
     "other": "{count}번 사용, 마지막 {when}"
   },
+  "skills.missed": "틀림: {number}",
   "skills.when": "언제 쓰이는지",
   "skills.example": "예: ‘{example}’",
   "skills.try": "써 보기",

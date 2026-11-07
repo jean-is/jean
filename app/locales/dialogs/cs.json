@@ -201,5 +201,7 @@
   "cap.machine.hint": "Požádejte o spuštění vývojového serveru webu, například npm run dev.",
   "cap.machine.text": "Spouští příkazy počítače přímo v tomto zařízení, ve vaší složce, s jeho vlastními programy a servery: vývojový server webu se zobrazí v prohlížeči. Na každý příkaz se nejdřív zeptá a Ctrl+C ve vašem terminálu zastaví všechno.",
   "cap.pictures.hint": "Požádejte o obrázek.",
-  "cap.pictures.text": "Obrázky a krátká videa podle popisu, nebo úprava vašeho obrázku: mozky, které připojíte, nebo soukromě v tomto zařízení. Na video se nejdřív zeptá, protože stojí víc."
+  "cap.pictures.text": "Obrázky a krátká videa podle popisu, nebo úprava vašeho obrázku: mozky, které připojíte, nebo soukromě v tomto zařízení. Na video se nejdřív zeptá, protože stojí víc.",
+  "cap.feedback.hint": "Dvakrát si řekněte o odpověď znovu.",
+  "cap.feedback.text": "Pod poslední odpovědí ji označte jako dobrou nebo nesprávnou. Nesprávná se zeptá, co chybělo, odpoví znovu silnějším mozkem a může si to zapamatovat na příště, na tomto zařízení."
 }

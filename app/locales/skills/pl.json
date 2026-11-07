@@ -44,6 +44,7 @@
     "many": "zastosowana {count} razy, ostatnio {when}",
     "other": "zastosowana {count} razy, ostatnio {when}"
   },
+  "skills.missed": "Nietrafione: {number}",
   "skills.when": "Kiedy jest stosowana",
   "skills.example": "Na przykład: „{example}”",
   "skills.try": "Wypróbuj",

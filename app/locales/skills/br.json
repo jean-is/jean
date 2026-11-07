@@ -46,6 +46,7 @@
     "many": "heuliet {count} gwech, ar wech diwezhañ {when}",
     "other": "heuliet {count} gwech, ar wech diwezhañ {when}"
   },
+  "skills.missed": "Fall : {number}",
   "skills.when": "Pa vez heuliet",
   "skills.example": "Da skouer : « {example} »",
   "skills.try": "Esaeañ",

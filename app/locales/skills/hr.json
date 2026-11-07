@@ -42,6 +42,7 @@
     "few": "slijeđena {count} puta, posljednji put {when}",
     "other": "slijeđena {count} puta, posljednji put {when}"
   },
+  "skills.missed": "Netočni: {number}",
   "skills.when": "Kad se slijedi",
   "skills.example": "Na primjer: „{example}“",
   "skills.try": "Isprobaj",
