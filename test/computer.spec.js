@@ -354,10 +354,10 @@ test('npm install from the registry Settings name, then node requires and import
   await expect(answer).toContainText('bell rang 2 times in /home/user 0\n<Buffer 6f 6e 65 20 74 77 6f>')
   answer = await command(page, `$ echo "import { join, relative } from 'node:path'; import { readFile } from 'fs/promises'; console.log(join('a', '..', 'b/'), relative('/x/y', '/x/z'), await readFile('n.txt', 'utf8'))" > own.mjs && node own.mjs`)
   await expect(answer).toContainText('b/ ../z one two')
-  // Bytes, Buffer and timers, as Node has them, so a package that makes a deck or a workbook writes it whole; a cleared timer is gone at once.
-  answer = await command(page, `$ node -e "const fs = require('fs'); clearTimeout(setTimeout(() => console.log('never'), 60000)); setTimeout(() => { fs.writeFileSync('b.bin', new Uint8Array([0, 1, 2, 255])); fs.appendFileSync('b.bin', Buffer.from('/w==', 'base64')); const b = fs.readFileSync('b.bin'); console.log(b.toString('hex'), Buffer.isBuffer(b), process.release.name) }, 20)" && base64 b.bin`)
-  await expect(answer).toContainText('000102ffff true node')
-  await expect(answer).toContainText('AAEC//8=')
+  // Bytes, Buffer and timers, as Node has them, so a package that makes a deck or a workbook writes it whole, whatever view it appends; a cleared timer is gone at once.
+  answer = await command(page, `$ node -e "const fs = require('fs'); clearTimeout(setTimeout(() => console.log('never'), 60000)); setTimeout(() => { fs.writeFileSync('b.bin', new Uint8Array([0, 1, 2, 255])); fs.appendFileSync('b.bin', Buffer.from('/w==', 'base64')); fs.appendFileSync('b.bin', new DataView(new Uint8Array([7]).buffer)); fs.appendFileSync('b.bin', new Uint16Array([0x0908])); const b = fs.readFileSync('b.bin'); console.log(b.toString('hex'), Buffer.isBuffer(b), process.release.name) }, 20)" && base64 b.bin`)
+  await expect(answer).toContainText('000102ffff070809 true node')
+  await expect(answer).toContainText('AAEC//8HCAk=')
 
   answer = await command(page, '$ tar czf both.tgz package.json hi.mjs && rm hi.mjs && tar xzf both.tgz && tar tzf both.tgz && cat hi.mjs')
   await expect(answer).toContainText('package.json\nhi.mjs')
