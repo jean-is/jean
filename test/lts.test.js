@@ -11,7 +11,7 @@ import { images, newest, pinned, write } from '../scripts/lts.js'
 
 const ROOT = new URL('..', import.meta.url)
 const read = (/** @type {string} */ path) => readFile(new URL(path, ROOT), 'utf8')
-const image = (/** @type {number} */ major) => `node:${major}-alpine`
+const image = (/** @type {number} */ major, variant = 'alpine') => `node:${major}-${variant}`
 
 /** A workflow's jobs, each its name and its lines but comments, which may name npm for a job below. @param {string} text */
 const jobs = (text) => text.slice(text.indexOf('\njobs:')).split(/\n(?= {2}[\w-]+:\s*$)/m).slice(1)
@@ -48,20 +48,26 @@ describe("Jean's own Node", () => {
     assert.equal(newest([{ version: 'v27.0.0', lts: false }, { version: 'v26.13.0', lts: 'Lithium' }, { version: 'v24.22.2', lts: 'Krypton' }, { version: 'v25.9.0', lts: false }]), 26)
   })
 
-  it('moves to a new LTS in .nvmrc and every image at once', async () => {
+  it('moves to a new LTS in .nvmrc and every image at once, a pinned one to the new tag’s digest', async () => {
     const root = await mkdtemp(join(tmpdir(), 'lts-'))
+    const old = `sha256:${'a'.repeat(64)}`
+    /** @type {string[]} */
+    const asked = []
+    const digest = async (/** @type {string} */ tag) => { asked.push(tag); return `sha256:${tag.startsWith('28-alpine') ? 'b'.repeat(64) : 'c'.repeat(64)}` }
     try {
       await mkdir(join(root, 'deploy'))
       await writeFile(join(root, '.nvmrc'), '26\n')
-      await writeFile(join(root, 'deploy/Dockerfile'), `FROM ${image(26)} AS build\nRUN node --test\nFROM ${image(26)}\n`)
+      await writeFile(join(root, 'deploy/Dockerfile'), `FROM ${image(26)}@${old} AS build\nRUN node --test\nFROM ${image(26)}@${old}\nFROM ${image(26, 'slim')}@${old}\n`)
       await writeFile(join(root, 'deploy/compose.yaml'), `image: ${image(26)}\n`)
       await writeFile(join(root, 'notes.md'), 'import { test } from "node:test"\n')
       execFileSync('git', ['init', '-q'], { cwd: root })
-      assert.deepEqual(write(28, root), ['.nvmrc', 'deploy/Dockerfile', 'deploy/compose.yaml'])
+      assert.deepEqual(await write(28, root, digest), ['.nvmrc', 'deploy/Dockerfile', 'deploy/compose.yaml'])
       assert.equal(pinned(root), 28)
-      assert.equal(await readFile(join(root, 'deploy/Dockerfile'), 'utf8'), `FROM ${image(28)} AS build\nRUN node --test\nFROM ${image(28)}\n`)
-      assert.deepEqual(images(root).map(({ major }) => major), [28, 28, 28])
-      assert.deepEqual(write(28, root), [])
+      assert.equal(await readFile(join(root, 'deploy/Dockerfile'), 'utf8'), `FROM ${image(28)}@sha256:${'b'.repeat(64)} AS build\nRUN node --test\nFROM ${image(28)}@sha256:${'b'.repeat(64)}\nFROM ${image(28, 'slim')}@sha256:${'c'.repeat(64)}\n`)
+      assert.equal(await readFile(join(root, 'deploy/compose.yaml'), 'utf8'), `image: ${image(28)}\n`)
+      assert.deepEqual(asked, ['28-alpine', '28-slim'], 'each variant asked once')
+      assert.deepEqual(images(root).map(({ major }) => major), [28, 28, 28, 28])
+      assert.deepEqual(await write(28, root, digest), [])
     } finally {
       await rm(root, { recursive: true, force: true })
     }

@@ -9,7 +9,7 @@ import { createServer } from 'node:http'
 import { appendFile, mkdir, readdir, readFile, rename, rm, statfs, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
-import { listener, sealRecord } from '../host/serve.js'
+import { listener, sealRecord, stopping } from '../host/serve.js'
 import { relay, LIMITS } from './relay.js'
 
 const DAY = 86_400_000
@@ -87,7 +87,7 @@ export async function main(args = []) {
   const HOST = process.env.HOST ?? '127.0.0.1'
   await store.sweep()
   setInterval(() => store.sweep().catch(console.error), DAY).unref()
-  createServer(listener(relay({ origins: config.origins, limits, store }), process.env.RELAY_PROXIED === '1'))
+  stopping(createServer(listener(relay({ origins: config.origins, limits, store }), process.env.RELAY_PROXIED === '1')))
     .listen(PORT, HOST, () => console.log(`Relay on http://${HOST}:${PORT}/, keeping mailboxes in ${dir}`))
 }
 

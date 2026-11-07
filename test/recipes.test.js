@@ -103,6 +103,34 @@ test('the container’s APP_NAME names Jean in brand.js and every manifest, as w
   assert.match(docker, /^COPY --chmod=755 deploy\/docker\/app-name\.sh \/docker-entrypoint\.d\/40-app-name\.sh$/m)
 })
 
+test('the container images run on a hardened cluster: any user in group 0, a read-only root, nothing they never run', async () => {
+  const docker = await read('deploy/docker/Dockerfile')
+  /** Each stage by its name, the last one, Jean's, as ''. */
+  const stages = Object.fromEntries(docker.split(/^FROM /m).slice(1).map((stage) => [/^.*\bAS ([\w-]+)$/m.exec(stage.split('\n')[0])?.[1] ?? '', stage]))
+  // Node without npm, npx, corepack or yarn, which scanners report and nothing runs, copied rather than deleted.
+  assert.match(stages['node-runtime'], /^scratch AS node-runtime$/m)
+  for (const left of ['usr/local/lib/node_modules', 'usr/local/bin/npm', 'usr/local/bin/npx', 'usr/local/bin/corepack', 'usr/local/bin/yarn']) assert.ok(stages['node-runtime'].includes(`--exclude=${left} `), left)
+  for (const name of ['gateway', 'relay']) {
+    const stage = stages[name]
+    assert.match(stage, /^node-runtime AS /, `${name} runs on node-runtime`)
+    // A user by number, which Kubernetes can tell isn't root without running it.
+    assert.match(stage, /^USER 1000$/m, `${name} runs as 1000`)
+    const cmd = JSON.parse(/^CMD (\[.*\])$/m.exec(stage)?.[1] ?? '[]')
+    assert.deepEqual(cmd.slice(0, 3), ['node', '--permission', '--allow-net'], `${name} runs under Node's permission model`)
+    assert.ok(!cmd.some((/** @type {string} */ flag) => /^--allow-(child-process|worker|addons|wasi|ffi|inspector)/.test(flag)), `${name} spawns nothing`)
+    assert.ok(!stage.includes('COPY package.json'), `${name} takes no package.json but its own`)
+  }
+  assert.ok(!JSON.parse(/^CMD (\[.*\])$/m.exec(stages.gateway)?.[1] ?? '[]').some((/** @type {string} */ flag) => flag.startsWith('--allow-fs-write')), 'the gateway writes nothing')
+  // The relay's folder, its user's and group 0's, which any user OpenShift picks is in.
+  assert.match(stages.relay, /^COPY --from=relay-data --chown=1000:0 --chmod=770 \/data \/data$/m)
+  // Two nginx workers, not one per processor of the machine, written before the root is read-only.
+  assert.match(stages['nginx-conf'], /^--platform=\$BUILDPLATFORM /)
+  assert.ok(stages['nginx-conf'].includes("s/^worker_processes .*/worker_processes 2;/"))
+  assert.match(stages[''], /^COPY --from=nginx-conf \/etc\/nginx\/nginx\.conf \/etc\/nginx\/nginx\.conf$/m)
+  // Every image for another platform runs nothing under emulation: a RUN only where the builder's own platform is.
+  for (const [name, stage] of Object.entries(stages)) if (/^RUN /m.test(stage)) assert.match(stage, /^--platform=\$BUILDPLATFORM /, `${name || 'jean'} runs only on the builder's platform`)
+})
+
 test('Bunny gets the header set and every type at each deploy, and its script answers the pages without .html', async () => {
   const { BARE, objectOf, rulesFor } = await import('../scripts/bunny.js')
   const headers = rulesFor({ id: 1, name: 'jean-site' }, 'r')[1]

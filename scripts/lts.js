@@ -1,8 +1,9 @@
 // Jean's own Node, the one CI, the container images and Jean's server run, is the newest LTS, named once in .nvmrc (D701).
-// What can't read that file names the same major in an image's tag, node:<major>-alpine, and test/lts.test.js holds every
-// one to it. This asks Node's own list of releases whether a newer LTS has come out since.
+// What can't read that file names the same major in an image's tag, node:<major>-alpine, pinned to its digest where
+// scripts/security.js asks for one, and test/lts.test.js holds every one to it. This asks Node's own list of releases
+// whether a newer LTS has come out since.
 //   npm run lts              exits 1 when .nvmrc isn't the newest LTS's major, or an image names another
-//   npm run lts -- --write   moves .nvmrc and every image to the newest LTS
+//   npm run lts -- --write   moves .nvmrc and every image to the newest LTS, each pinned one to the new tag's digest
 // CI runs it on every push to main, every pull request and each Monday (.github/workflows/lts.yml). The engines in
 // package.json are something else: the oldest Node Jean's scripts run on, for Intl's features.
 import { execFileSync } from 'node:child_process'
@@ -15,6 +16,13 @@ const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const RELEASES = 'https://nodejs.org/dist/index.json'
 /** An image of Node's by its major, as Docker names one: node:<major>, node:<major>-alpine. */
 const IMAGE = /\bnode:(\d+)\b/g
+/** One pinned to its digest, which a new major's tag needs a new one of: node:<major><variant>@sha256:<hex>. */
+const PINNED = /\bnode:(\d+)([\w.-]*)@sha256:[0-9a-f]{64}\b/g
+/** Docker Hub, where Node's images are, and where a token to read them comes from. */
+const REGISTRY = 'https://registry-1.docker.io/v2/library/node'
+const AUTH = 'https://auth.docker.io/token?service=registry.docker.io&scope=repository:library/node:pull'
+/** What an image for every platform is, as registries name its index. */
+const INDEX = ['application/vnd.oci.image.index.v1+json', 'application/vnd.docker.distribution.manifest.list.v2+json']
 
 /** The major .nvmrc names, alone on its line. @param {string} [root] @returns {number} */
 export function pinned(root = ROOT) {
@@ -40,10 +48,29 @@ export function images(root = ROOT) {
   })
 }
 
-/** Moves .nvmrc and every image of Node's to `major`. @param {number} major @param {string} [root] @returns {string[]} the files changed */
-export function write(major, root = ROOT) {
+/** The digest of a tag of Node's image, for every platform, as Docker Hub serves it. @param {string} tag e.g. 28-alpine */
+export async function digestOf(tag) {
+  const { token } = await (await fetch(AUTH)).json()
+  const response = await fetch(`${REGISTRY}/manifests/${tag}`, { method: 'HEAD', headers: { authorization: `Bearer ${token}`, accept: INDEX.join(', ') } })
+  const digest = response.headers.get('docker-content-digest')
+  if (!response.ok || !digest?.startsWith('sha256:')) throw new Error(`node:${tag} has no digest on Docker Hub (${response.status})`)
+  return digest
+}
+
+/**
+ * Moves .nvmrc and every image of Node's to `major`, a pinned one to the new tag's digest.
+ * @param {number} major @param {string} [root] @param {(tag: string) => Promise<string>} [digest]
+ * @returns {Promise<string[]>} the files changed
+ */
+export async function write(major, root = ROOT, digest = digestOf) {
   const paths = [...new Set(images(root).filter((image) => image.major !== major).map((image) => image.path))]
-  for (const path of paths) writeFileSync(join(root, path), readFileSync(join(root, path), 'utf8').replace(IMAGE, `node:${major}`))
+  /** Each variant's new digest, asked once. @type {Map<string, string>} */
+  const digests = new Map()
+  for (const path of paths) {
+    const text = readFileSync(join(root, path), 'utf8')
+    for (const [, , variant] of text.matchAll(PINNED)) if (!digests.has(variant)) digests.set(variant, await digest(`${major}${variant}`))
+    writeFileSync(join(root, path), text.replace(PINNED, (_, __, variant) => `node:${major}${variant}@${digests.get(variant)}`).replace(IMAGE, `node:${major}`))
+  }
   if (pinned(root) === major) return paths
   writeFileSync(join(root, '.nvmrc'), `${major}\n`)
   return ['.nvmrc', ...paths]
@@ -55,7 +82,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   const lts = newest(await response.json())
   const ours = pinned()
   if (process.argv.includes('--write')) {
-    const changed = write(lts)
+    const changed = await write(lts)
     console.log(changed.length ? `Node ${lts}, the newest LTS, in ${changed.join(', ')}: run npm run check on Node ${lts}, and give Jean's server its compose.yaml again (deploy/server/README.md)` : `Node ${lts}, the newest LTS, everywhere already`)
   } else {
     const off = images().filter((image) => image.major !== ours)

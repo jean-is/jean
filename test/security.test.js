@@ -1,7 +1,7 @@
 // The security rules AGENTS.md writes down (scripts/security.js): held in the code's own syntax, in every module, on every push.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { audit, codeOf, scan, unpinned } from '../scripts/security.js'
+import { audit, codeOf, scan, unpinned, unpinnedImages } from '../scripts/security.js'
 
 const rules = (/** @type {string} */ text, path = 'app/ui/x.js') => scan(path, text).map(({ rule }) => rule)
 
@@ -44,6 +44,16 @@ test('a workflow’s action is named by its commit, never by a tag that can move
   assert.equal(unpinned('ci.yml', '      - uses: actions/checkout@main').length, 1)
   assert.equal(unpinned('ci.yml', `      - uses: actions/checkout@${'a'.repeat(40)} # v5`).length, 0)
   assert.equal(unpinned('ci.yml', '      - uses: ./local-action').length, 0)
+})
+
+test('a container image is named by its digest, never by a tag alone, but a stage or an image built here', () => {
+  const digest = `sha256:${'a'.repeat(64)}`
+  const rules = (/** @type {string} */ text) => unpinnedImages('Dockerfile', text).map(({ line }) => line)
+  assert.deepEqual(rules('FROM node:26-alpine AS build\nRUN npm ci\nFROM --platform=$BUILDPLATFORM nginx:stable\n'), [1, 3])
+  assert.deepEqual(rules(`FROM node:26-alpine@${digest} AS build\nFROM build AS gateway\nFROM scratch AS runtime\nFROM runtime\n`), [])
+  const compose = (/** @type {string} */ text) => unpinnedImages('compose.yaml', text).map(({ line }) => line)
+  assert.deepEqual(compose('x-node: &node\n  image: node:26-alpine\nservices:\n  caddy:\n    image: caddy:2\n  jean:\n    image: jean\n    build:\n      context: .\n'), [2, 5])
+  assert.deepEqual(compose(`services:\n  caddy:\n    image: caddy:2@${digest}\n  relay:\n    build:\n      target: relay\n    image: jean-relay\n`), [])
 })
 
 test('every module of Jean’s keeps the rules, and nothing tracked looks like a secret', () => {

@@ -161,11 +161,36 @@ const tracked = () => listed()
 /** A workflow's actions as anything but a commit, which is all that can't move under a run. @param {string} path @param {string} text @returns {Finding[]} */
 export const unpinned = (path, text) => text.split('\n').flatMap((line, i) => (/^\s*-?\s*uses:\s*(?!\.\/)[^#\s]+@(?![0-9a-f]{40}\b)/.test(line) ? [{ rule: 'unpinned-action', path, line: i + 1, text: line.trim() }] : []))
 
+/**
+ * A container image by its tag alone, which can move under a build, rather than by its digest: every `FROM` of a
+ * Dockerfile but one naming an earlier stage, and every `image:` of a compose file but one it builds itself.
+ * @param {string} path @param {string} text @returns {Finding[]}
+ */
+export const unpinnedImages = (path, text) => {
+  const lines = text.split('\n')
+  /** The stages named so far, which a later FROM may start from. */
+  const stages = new Set(['scratch'])
+  /** Whether the compose service being read builds its image, which it then names as it likes. */
+  let builds = false
+  return lines.flatMap((line, i) => {
+    if (/^\S/.test(line)) builds = false
+    if (/^ {2}[\w.-]+:\s*$/.test(line)) {
+      const end = lines.findIndex((one, j) => j > i && /^ {0,2}\S/.test(one))
+      builds = lines.slice(i + 1, end < 0 ? undefined : end).some((one) => /^\s+build:/.test(one))
+    }
+    const from = /^FROM\s+(?:--\S+\s+)*(\S+)(?:\s+AS\s+(\S+))?/i.exec(line)
+    const image = from ? from[1] : builds ? undefined : /^\s*image:\s*["']?([^\s"'#]+)/.exec(line)?.[1]
+    if (from?.[2]) stages.add(from[2])
+    return !image || stages.has(image) || image.includes('@sha256:') ? [] : [{ rule: 'unpinned-image', path, line: i + 1, text: line.trim() }]
+  })
+}
+
 /** @returns {{ findings: Finding[], stale: string[] }} what goes against a rule, and exceptions that no longer need to be */
 export function audit() {
   /** @type {Finding[]} */
   const all = []
   for (const path of tracked().filter((one) => /^\.github\/workflows\//.test(one))) all.push(...unpinned(path, readFileSync(join(ROOT, path), 'utf8')))
+  for (const path of tracked().filter((one) => /^deploy\/.*(Dockerfile[^/]*|compose\.ya?ml)$/.test(one) && !one.endsWith('.dockerignore'))) all.push(...unpinnedImages(path, readFileSync(join(ROOT, path), 'utf8')))
   for (const path of modules()) all.push(...scan(path, readFileSync(join(ROOT, path), 'utf8')))
   for (const path of tracked()) {
     if (NOT_SECRETS[path]) continue
