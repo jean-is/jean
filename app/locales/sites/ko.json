@@ -1,0 +1,10 @@
+{
+  "sites.frame": "{name}, 사이트",
+  "sites.width": "너비",
+  "sites.phone": "휴대폰",
+  "sites.tablet": "태블릿",
+  "sites.computer": "컴퓨터",
+  "sites.zip": "사이트를 ZIP으로",
+  "sites.ask": "{what} 사이트를 만들어 줘.",
+  "sites.example": "구시가지에 있는 내 빵집"
+}

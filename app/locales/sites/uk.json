@@ -1,0 +1,10 @@
+{
+  "sites.frame": "{name}, сайт",
+  "sites.width": "Ширина",
+  "sites.phone": "Телефон",
+  "sites.tablet": "Планшет",
+  "sites.computer": "Комп’ютер",
+  "sites.zip": "Сайт архівом zip",
+  "sites.ask": "Зроби сайт для {what}.",
+  "sites.example": "моєї пекарні в старому місті"
+}

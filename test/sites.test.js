@@ -1,7 +1,10 @@
-// The check npm run sites gives a brain for each site it makes (Sites' phase 0), from the files alone.
+// Sites (D720): a site's paths and changes, what the brain is given, and its check from its files, which npm run sites measures
+// brains with too.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { checkFiles, told } from './sites/check.js'
+import { checkFiles, told } from '../app/caps/sites/check.js'
+import { pathIn, changed, reach, PLACE } from '../app/caps/sites/file.js'
+import { LINES, SITE, CHANGE } from '../app/caps/sites/tool.js'
 
 const encode = (/** @type {string} */ text) => new TextEncoder().encode(text)
 
@@ -59,4 +62,31 @@ test('each language has every page, and names the others', () => {
   assert.ok(problems.some((problem) => problem.startsWith('index.html: it names no version in en, fr')))
   // margin-left is only backwards where a language reads right to left: none here.
   assert.ok(!problems.some((problem) => problem.includes('physical')))
+})
+
+test("a site's paths: its own files, never its record, a hidden file, one outside it or a kind it doesn't hold", () => {
+  assert.equal(pathIn('./fr/index.html'), 'fr/index.html')
+  assert.equal(pathIn('/photos/dunes.JPG'), 'photos/dunes.JPG')
+  for (const wrong of ['', 'site.json', '../index.html', 'a//b.html', '.hidden/page.html', 'https://example.com/a.html', 'notes.docx', 'app.php']) assert.throws(() => pathIn(wrong), undefined, wrong)
+  assert.ok(PLACE.test('sites/01ABC-bakery') && !PLACE.test('sites/01ABC-bakery/index.html') && !PLACE.test('sites/.cache'))
+  const files = new Map([['index.html', 1], ['fr/index.html', 1], ['menu.html', 1]])
+  assert.deepEqual(['', 'fr/', 'fr', 'menu', 'menu.html', 'missing'].map((path) => reach(files, path)), ['index.html', 'fr/index.html', 'fr/index.html', 'menu.html', 'menu.html', null])
+})
+
+test('a change by exact passages: each found once in its file, or nothing changed and each failure said', () => {
+  const files = new Map([['index.html', encode('<h1>Bread</h1><p>Bread</p>')], ['style.css', encode('a { color: red }')]])
+  const done = changed(files, [{ path: 'style.css', old: 'red', new: 'brown' }])
+  assert.ok('files' in done)
+  assert.equal(new TextDecoder().decode(done.files.get('style.css')), 'a { color: brown }')
+  assert.equal(new TextDecoder().decode(files.get('style.css')), 'a { color: red }', 'the site as it was is left alone')
+  const failed = changed(files, [{ path: 'index.html', old: 'Bread', new: 'Cake' }, { path: 'about.html', old: 'x', new: 'y' }, { path: 'style.css', old: 'red', new: 'pink' }])
+  assert.ok('error' in failed)
+  assert.match(failed.error, /index\.html: the passage "Bread" is found 2 times, not once; about\.html isn't in the site/)
+  assert.match(failed.error, /^Nothing changed/)
+})
+
+test('what the brain is given: a line each within 40 tokens, schemas within 400', () => {
+  assert.deepEqual(LINES.map((line) => line.name), [SITE.name, CHANGE.name])
+  for (const line of LINES) assert.ok(Math.ceil(`- ${line.name}: ${line.line}`.length / 4) <= 40, line.line)
+  for (const spec of [SITE, CHANGE]) assert.ok(Math.ceil(JSON.stringify(spec).length / 4) <= 400, `${spec.name}: ${JSON.stringify(spec).length} characters`)
 })

@@ -39,7 +39,7 @@ GitHub moved Pages to github.io in 2013 for this reason.
 | Plain pages search engines index | ChatGPT's and Grok's shared chats ended up in Google in 2025, and the host would read everything |
 | The whole task in the link | Too long for text messages and some mail, pictures don't fit, and nothing could be taken down |
 | The saved page through the person's drive | Drives don't show web pages, so recipients download an `.html`, which people are rightly taught not to open |
-| Published sites with their own address | Web hosting, moderated and in plain text: another product |
+| Published sites with their own address, as shares | Web hosting, moderated and in plain text: sites publish apart, at a name of hst.ing (D720) |
 | Argon2 for passwords | A dependency; PBKDF2 is the browser's own, and the host's proof keeps guesses online |
 
 ## Working together

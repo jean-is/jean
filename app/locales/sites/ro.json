@@ -1,0 +1,10 @@
+{
+  "sites.frame": "{name}, un site",
+  "sites.width": "Lățime",
+  "sites.phone": "Telefon",
+  "sites.tablet": "Tabletă",
+  "sites.computer": "Calculator",
+  "sites.zip": "Site-ul ca zip",
+  "sites.ask": "Fă un site pentru {what}.",
+  "sites.example": "brutăria mea din orașul vechi"
+}

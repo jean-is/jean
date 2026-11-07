@@ -1,0 +1,10 @@
+{
+  "sites.frame": "{name}, een website",
+  "sites.width": "Breedte",
+  "sites.phone": "Telefoon",
+  "sites.tablet": "Tablet",
+  "sites.computer": "Computer",
+  "sites.zip": "De website als zip",
+  "sites.ask": "Maak een website voor {what}.",
+  "sites.example": "mijn bakkerij in de oude stad"
+}

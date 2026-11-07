@@ -1,0 +1,10 @@
+{
+  "sites.frame": "{name}, isang site",
+  "sites.width": "Lapad",
+  "sites.phone": "Telepono",
+  "sites.tablet": "Tablet",
+  "sites.computer": "Computer",
+  "sites.zip": "Ang site bilang zip",
+  "sites.ask": "Gumawa ka ng site para sa {what}.",
+  "sites.example": "aking panaderya sa lumang bayan"
+}

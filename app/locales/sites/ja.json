@@ -1,0 +1,10 @@
+{
+  "sites.frame": "サイト「{name}」",
+  "sites.width": "幅",
+  "sites.phone": "スマートフォン",
+  "sites.tablet": "タブレット",
+  "sites.computer": "パソコン",
+  "sites.zip": "サイトをZIPで",
+  "sites.ask": "{what}のサイトを作ってください。",
+  "sites.example": "旧市街にある私のパン屋"
+}

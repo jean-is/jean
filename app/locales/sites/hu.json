@@ -1,0 +1,10 @@
+{
+  "sites.frame": "{name}, weboldal",
+  "sites.width": "Szélesség",
+  "sites.phone": "Telefon",
+  "sites.tablet": "Táblagép",
+  "sites.computer": "Számítógép",
+  "sites.zip": "A weboldal zipben",
+  "sites.ask": "Készíts weboldalt ehhez: {what}.",
+  "sites.example": "a pékségem az óvárosban"
+}

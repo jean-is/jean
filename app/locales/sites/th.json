@@ -1,0 +1,10 @@
+{
+  "sites.frame": "เว็บไซต์ {name}",
+  "sites.width": "ความกว้าง",
+  "sites.phone": "โทรศัพท์",
+  "sites.tablet": "แท็บเล็ต",
+  "sites.computer": "คอมพิวเตอร์",
+  "sites.zip": "เว็บไซต์เป็นไฟล์ zip",
+  "sites.ask": "สร้างเว็บไซต์สำหรับ{what}",
+  "sites.example": "ร้านเบเกอรี่ของฉันในเมืองเก่า"
+}

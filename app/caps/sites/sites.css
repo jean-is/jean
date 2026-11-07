@@ -1,0 +1,10 @@
+/* Sites (D720): a site fills its pane under its widths, its frame as wide as the one picked, centred; a check's frames are laid out at
+   each width and never seen. */
+app-site { display: flex; flex-direction: column; block-size: 100%; min-block-size: 16rem; }
+app-site .site-widths { align-self: center; margin-block: 0.5rem; }
+app-site .site-view { flex: 1; display: flex; justify-content: center; overflow: auto; background: var(--line); }
+app-site iframe { display: block; inline-size: 100%; block-size: 100%; min-block-size: 16rem; border: 0; background: #fff; }
+app-site[data-width='phone'] iframe { max-inline-size: 390px; }
+app-site[data-width='tablet'] iframe { max-inline-size: 768px; }
+.site-test { position: fixed; inset-block-start: 0; inset-inline-start: 0; block-size: 800px; clip-path: inset(50%); pointer-events: none; }
+.site-test iframe { inline-size: 100%; block-size: 100%; border: 0; }

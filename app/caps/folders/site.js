@@ -10,7 +10,6 @@
 // (a name starting with a dot) or one outside the folder. A folder shows its index.html, or what it
 // holds, which the browser draws itself; any other file goes to the browser as it is, which shows it
 // as a file's pane does (D190). No DOM: node tests run it.
-import { walkFolder } from './work.js'
 import { encode as base64 } from '../../ui/seal.js'
 
 /** The made-up site a page's addresses are resolved in, never fetched. */
@@ -208,7 +207,8 @@ export async function sitePage(fs, path, name = '') {
     if (dir && !(await fs.exists(dir))) return { note: 'missing' }
     const at = dir ? `${dir}/` : ''
     if (await fs.stat?.(`${at}index.html`).catch(() => null)) return sitePage(fs, `${at}index.html`, name)
-    const { entries } = await walkFolder(fs, dir, 1)
+    // Only a folder's list needs work.js, and what it brings: a site's pages (D720) don't.
+    const { entries } = await (await import('./work.js')).walkFolder(fs, dir, 1)
     const list = entries.flatMap((entry) => {
       const last = entry.path.split('/').at(-1) ?? ''
       return last.startsWith('.') ? [] : [{ name: last, folder: entry.kind === 'directory' }]

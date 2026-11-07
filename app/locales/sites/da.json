@@ -1,0 +1,10 @@
+{
+  "sites.frame": "{name}, et websted",
+  "sites.width": "Bredde",
+  "sites.phone": "Telefon",
+  "sites.tablet": "Tablet",
+  "sites.computer": "Computer",
+  "sites.zip": "Webstedet som zip",
+  "sites.ask": "Lav et websted til {what}.",
+  "sites.example": "mit bageri i den gamle bydel"
+}

@@ -1,0 +1,10 @@
+{
+  "sites.frame": "{name}, ένας ιστότοπος",
+  "sites.width": "Πλάτος",
+  "sites.phone": "Τηλέφωνο",
+  "sites.tablet": "Tablet",
+  "sites.computer": "Υπολογιστής",
+  "sites.zip": "Ο ιστότοπος σε zip",
+  "sites.ask": "Φτιάξε έναν ιστότοπο για {what}.",
+  "sites.example": "τον φούρνο μου στην παλιά πόλη"
+}

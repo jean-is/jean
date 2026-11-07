@@ -53,7 +53,7 @@ const keeper = (uri) => {
  * @typedef {Kept | (Kept & { bytesOf: (uri: string) => Promise<Uint8Array | null> })} Keeper
  */
 const KEEPERS = /** @type {[RegExp, string, () => Promise<Keeper>][]} */ ([[/^documents\//, 'documents', () => import('../caps/documents/documents.js')], [/^collections\//, 'tables', () => import('../caps/tables/tables.js')],
-  [/^designs\//, 'designs', () => import('../caps/designs/designs.js')], [/^conversations\/[^#]+#\d+$/, 'skills', () => import('../caps/skills/scores.js')], [/^decks\//, 'skills', () => import('../caps/skills/decks.js')], [/^games\//, 'games', () => import('../caps/games/games.js')], [/^conversations\/[^#]+#app-\d+$/, 'interactive', () => import('../caps/interactive/apps.js')]])
+  [/^designs\//, 'designs', () => import('../caps/designs/designs.js')], [/^conversations\/[^#]+#\d+$/, 'skills', () => import('../caps/skills/scores.js')], [/^decks\//, 'skills', () => import('../caps/skills/decks.js')], [/^games\//, 'games', () => import('../caps/games/games.js')], [/^sites\//, 'sites', () => import('../caps/sites/sites.js')], [/^conversations\/[^#]+#app-\d+$/, 'interactive', () => import('../caps/interactive/apps.js')]])
 /** A file's name, title and kind by its place; a creation's by its capability's, once found (D485, D491). @param {string} uri */
 const metaOf = async (uri) => (/^files\/[^/]+$/.test(uri) ? await fileMeta(app.fs, app.projectDir, uri).then((one) => one && { ...one, title: fileTitle(one.name) }) : await (await keeper(uri))?.metaOf(uri))
 /** The pane a click opened for a look, if one is open. */
@@ -139,9 +139,9 @@ class Pane extends Element {
 
   /** What its frame sends: a file a page made, saved for it, or a cell of a workbook changed, as a copy in the version on show (D229). @param {Window} source @param {any} data */
   received(source, data) {
-    // A game's frame says nothing here (D648): its own element hears it.
+    // A game's frame says nothing here (D648), nor a site's (D720): its own element hears it.
     const file = this.file.peek()
-    if (/^games\//.test(file?.uri ?? '')) return
+    if (/^(games|sites)\//.test(file?.uri ?? '')) return
     if (!data?.cell || !file) return savePage(data, rights.peek().allows.downloads)
     changeCell(data.cell, source, { name: file.name, said: 'beside the task', read: () => app.fs.readBytes(`${app.projectDir}/${this.#copy.peek()}`), keep: async (bytes, at) => {
       const pages = (await (await import('../caps/files/extract.js')).extractPages(file.name, bytes)) ?? []

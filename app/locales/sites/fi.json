@@ -1,0 +1,10 @@
+{
+  "sites.frame": "{name}, verkkosivusto",
+  "sites.width": "Leveys",
+  "sites.phone": "Puhelin",
+  "sites.tablet": "Tabletti",
+  "sites.computer": "Tietokone",
+  "sites.zip": "Sivusto zip-tiedostona",
+  "sites.ask": "Tee verkkosivusto: {what}.",
+  "sites.example": "leipomoni vanhassa kaupungissa"
+}

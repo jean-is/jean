@@ -1,0 +1,10 @@
+{
+  "sites.frame": "網站「{name}」",
+  "sites.width": "寬度",
+  "sites.phone": "手機",
+  "sites.tablet": "平板",
+  "sites.computer": "電腦",
+  "sites.zip": "網站打包成 zip",
+  "sites.ask": "幫{what}做一個網站。",
+  "sites.example": "我在老城區的麵包店"
+}

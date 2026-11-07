@@ -1,0 +1,10 @@
+{
+  "sites.frame": "网站“{name}”",
+  "sites.width": "宽度",
+  "sites.phone": "手机",
+  "sites.tablet": "平板",
+  "sites.computer": "电脑",
+  "sites.zip": "网站打包为 zip",
+  "sites.ask": "给{what}做一个网站。",
+  "sites.example": "我在老城区的面包店"
+}

@@ -1,0 +1,10 @@
+{
+  "sites.frame": "{name}, bir site",
+  "sites.width": "Genişlik",
+  "sites.phone": "Telefon",
+  "sites.tablet": "Tablet",
+  "sites.computer": "Bilgisayar",
+  "sites.zip": "Site zip olarak",
+  "sites.ask": "{what} için bir site yap.",
+  "sites.example": "eski şehirdeki fırınım"
+}

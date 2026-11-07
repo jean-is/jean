@@ -1,0 +1,10 @@
+{
+  "sites.frame": "{name}، موقع",
+  "sites.width": "العرض",
+  "sites.phone": "هاتف",
+  "sites.tablet": "جهاز لوحي",
+  "sites.computer": "حاسوب",
+  "sites.zip": "الموقع في ملف zip",
+  "sites.ask": "اصنع موقعًا لـ{what}.",
+  "sites.example": "مخبزي في المدينة القديمة"
+}

@@ -1,0 +1,10 @@
+{
+  "sites.frame": "{name}, אתר",
+  "sites.width": "רוחב",
+  "sites.phone": "טלפון",
+  "sites.tablet": "טאבלט",
+  "sites.computer": "מחשב",
+  "sites.zip": "האתר כקובץ zip",
+  "sites.ask": "צור אתר עבור {what}.",
+  "sites.example": "המאפייה שלי בעיר העתיקה"
+}

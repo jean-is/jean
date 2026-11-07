@@ -35,6 +35,7 @@ export const ALLOWED = {
   'message-unchecked': {
     'app/caps/extensions/extensions.js': 'hear: source === frame.contentWindow',
     'app/caps/games/frame.js': 'heard: source checked against its frame',
+    'app/caps/sites/frame.js': 'heard: source checked against its frame, in the check and in the pane',
     'app/caps/interactive/interactive.js': 'heard: source !== frame.contentWindow returns',
   },
   'blank-target': { 'app/ui/composer.js': 'the site\'s own privacy policy and terms; browsers open such a link without an opener anyway' },

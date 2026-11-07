@@ -1,0 +1,10 @@
+{
+  "sites.frame": "{name}, sebuah laman web",
+  "sites.width": "Lebar",
+  "sites.phone": "Telefon",
+  "sites.tablet": "Tablet",
+  "sites.computer": "Komputer",
+  "sites.zip": "Laman web sebagai zip",
+  "sites.ask": "Hasilkan laman web untuk {what}.",
+  "sites.example": "kedai roti saya di bandar lama"
+}

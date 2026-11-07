@@ -1,8 +1,8 @@
 # Sites: how often a brain makes one that passes its check
 
-Written by `npm run sites -- --write`, one section per brain, replaced when that brain is measured again: Sites' phase 0,
-before the kind is built. Each brief of set.json is a task of Jean's run in Node in its language, the measured brain
-answering through Jean's prompt and own capabilities, the draft skill "Make a site" (skill/) among Jean's own, and the two
+Written by `npm run sites -- --write`, one section per brain, replaced when that brain is measured again: first Sites' phase 0,
+before the kind was built (D720). Each brief of set.json is a task of Jean's run in Node in its language, the measured brain
+answering through Jean's prompt and own capabilities, the skill "Make a site" among Jean's own, and the two
 tools Sites would declare, unguided: a question it asks gets the recommended answer. Its change follows in the same task.
 A site is clean when its last check has nothing to fix. The judge sees the brief and the first page on a computer and a
 phone, and says whether the person would put it online as it is. A brief that failed for another reason than the brain is

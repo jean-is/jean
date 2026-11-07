@@ -1,0 +1,10 @@
+{
+  "sites.frame": "{name}, en webbplats",
+  "sites.width": "Bredd",
+  "sites.phone": "Telefon",
+  "sites.tablet": "Surfplatta",
+  "sites.computer": "Dator",
+  "sites.zip": "Webbplatsen som zip",
+  "sites.ask": "Gör en webbplats för {what}.",
+  "sites.example": "mitt bageri i gamla stan"
+}

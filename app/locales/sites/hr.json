@@ -1,0 +1,10 @@
+{
+  "sites.frame": "{name}, web-stranica",
+  "sites.width": "Širina",
+  "sites.phone": "Telefon",
+  "sites.tablet": "Tablet",
+  "sites.computer": "Računalo",
+  "sites.zip": "Web-stranica kao zip",
+  "sites.ask": "Izradi web-stranicu za {what}.",
+  "sites.example": "moju pekaru u starom gradu"
+}

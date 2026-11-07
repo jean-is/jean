@@ -1,0 +1,10 @@
+{
+  "sites.frame": "{name}, eine Website",
+  "sites.width": "Breite",
+  "sites.phone": "Handy",
+  "sites.tablet": "Tablet",
+  "sites.computer": "Computer",
+  "sites.zip": "Die Website als ZIP",
+  "sites.ask": "Mach eine Website für {what}.",
+  "sites.example": "meine Bäckerei in der Altstadt"
+}

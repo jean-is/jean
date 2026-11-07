@@ -33,6 +33,8 @@ export const DIRECTORY = Object.freeze([
   { name: 'slides', group: 'drawn', icon: 'M3.5 4.5h17M5 4.5V14a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 14V4.5M12 15.5V18M8.5 20.5 12 18l3.5 2.5M9 12v-1.5M12 12V8M15 12V9.5' },
   // Games (D648): the capability it brings, and its sheets beside its steps.
   { name: 'game', group: 'drawn', icon: 'M7.5 7h9a4.5 4.5 0 0 1 4.4 5.4l-1 4.4a2.3 2.3 0 0 1-4 1L14 16h-4l-1.9 1.8a2.3 2.3 0 0 1-4-1l-1-4.4A4.5 4.5 0 0 1 7.5 7zM8 10v4M6 12h4M15.5 10.5v.01M17.5 13v.01', cap: 'games', beside: ['phaser.md', 'babylon.md', 'canvas.md', 'feel.md'] },
+  // Sites (D720): the capability it brings, and its sheets of the kinds of site and of the look.
+  { name: 'site', group: 'drawn', icon: 'M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM3 9h18M6 7h.01M8.5 7h.01M7 13h6M7 16h4', cap: 'sites', beside: ['kinds.md', 'look.md'] },
   { name: 'pptx', group: 'drawn', icon: 'M6.5 3.5h8l4 4v13h-12zM14.5 3.5v4h4M9 14a3 3 0 1 0 6 0 3 3 0 1 0-6 0M12 11v3h3' },
   // Extensions (D692): the capability whose tool it brings, `extension`, which offers one on its page in Settings.
   { name: 'extension', group: 'work', icon: 'M4 10a2.5 2.5 0 0 1 2.5-2.5h2a2.25 2.25 0 1 1 3.5 0h4.5V12a2.25 2.25 0 1 1 0 3.5v2a2.5 2.5 0 0 1-2.5 2.5h-7.5A2.5 2.5 0 0 1 4 17.5Z', cap: 'extensions' },

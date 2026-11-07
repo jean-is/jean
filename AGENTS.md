@@ -128,7 +128,7 @@ npm run reflexes  # measure Kev on the multilingual reflex test set (-- --lang f
 npm run offers    # measure what a brain offers on the multilingual offer test set (BRAIN=<provider>:<model>, -- --write)
 npm run tutor     # measure how often a brain gives the answer to a child's work, on the multilingual tutor test set (BRAIN=<provider>:<model>, JUDGE=<provider>:<model>, -- --write)
 npm run games     # measure how often a brain makes a game that plays clean, unguided, from briefs in four languages, in Jean's own page (BRAIN=<provider>:<model>, JUDGE=<provider>:<model>, -- --write)
-npm run sites     # Sites' phase 0: how often a brain makes a site that passes its check and a judge would put online, from the draft skill in test/sites/skill/ and briefs in four languages (BRAIN=…, JUDGE=…, -- --write, -- --judge to judge kept runs again)
+npm run sites     # how often a brain makes a site that passes its check and a judge would put online (D720), with the skill "Make a site", from briefs in four languages (BRAIN=…, JUDGE=…, -- --write, -- --judge to judge kept runs again)
 npm run concepts  # read the picture check's words into app/caps/pictures/concepts.json, after changing one (D280)
 npm run schemas   # write app/schemas/policy.schema.json again from what policy.html checks, after changing SCHEMA (D415)
 npm run masks     # measure the names model of masked requests in Jean's own worker, on an annotated set in eight languages (-- --speed, -- --write; weights fetched once into test/masks/.cache/)

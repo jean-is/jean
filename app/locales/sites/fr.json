@@ -1,0 +1,10 @@
+{
+  "sites.frame": "{name}, un site",
+  "sites.width": "Largeur",
+  "sites.phone": "Téléphone",
+  "sites.tablet": "Tablette",
+  "sites.computer": "Ordinateur",
+  "sites.zip": "Le site en zip",
+  "sites.ask": "Crée un site pour {what}.",
+  "sites.example": "ma boulangerie de la vieille ville"
+}

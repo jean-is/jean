@@ -1,0 +1,10 @@
+{
+  "sites.frame": "{name}, web",
+  "sites.width": "Šířka",
+  "sites.phone": "Telefon",
+  "sites.tablet": "Tablet",
+  "sites.computer": "Počítač",
+  "sites.zip": "Web jako zip",
+  "sites.ask": "Vytvoř web pro {what}.",
+  "sites.example": "moji pekárnu ve starém městě"
+}

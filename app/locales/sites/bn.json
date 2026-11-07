@@ -1,0 +1,10 @@
+{
+  "sites.frame": "{name}, একটি সাইট",
+  "sites.width": "প্রস্থ",
+  "sites.phone": "ফোন",
+  "sites.tablet": "ট্যাবলেট",
+  "sites.computer": "কম্পিউটার",
+  "sites.zip": "সাইটটি zip হিসেবে",
+  "sites.ask": "{what}-এর জন্য একটা সাইট বানাও।",
+  "sites.example": "পুরোনো শহরে আমার বেকারি"
+}
