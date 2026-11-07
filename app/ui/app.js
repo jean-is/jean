@@ -144,6 +144,11 @@ async function start() {
   addEventListener('pagehide', stamp)
   document.addEventListener('visibilitychange', stamp)
 
+  // What another app shared, by its id in the address, and files the system opened with Jean (D714).
+  const shared = new URLSearchParams(location.search).get('shared')
+  if (shared) import('./received.js').then((module) => module.received(shared)).catch(console.warn)
+  ;/** @type {any} */ (globalThis).launchQueue?.setConsumer((/** @type {any} */ launch) => launch.files.length && import('./received.js').then((module) => module.opened(launch.files)))
+
   // First, before what jean.is has under it (D397).
   document.body.prepend(document.createElement('app-shell'))
   root.classList.add('is-ready')

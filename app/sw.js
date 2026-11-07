@@ -79,6 +79,10 @@ async function recacheCapabilities () {
 self.addEventListener('message', (event) => {
   const { type, id, alone } = event.data || {}
   if (type === 'SKIP_WAITING') event.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((tabs) => alone && tabs.filter((tab) => tab.frameType !== 'nested').length > 1 ? event.source?.postMessage({ type: 'WAITING' }) : self.skipWaiting()))
+  if (type === 'SHARED') {
+    event.ports[0]?.postMessage(shared.get(id) ?? null)
+    shared.delete(id)
+  }
   if (type === 'CACHE_CAPABILITY') {
     const reply = (ok) => event.source?.postMessage({ type: 'CAPABILITY_CACHED', id, ok })
     event.waitUntil(cacheCapability(id).then(reply))
@@ -129,8 +133,19 @@ async function fromEarlierCache (path, integrity) {
 
 // ─── Fetch ───────────────────────────────────────────────────────────────────
 
+// What another app shared with Jean (Web Share Target, D714): its words and files, held in this worker's memory, never in
+// storage, until the page it opens asks for them by their id, a minute at most; then they go into the box as any shared.
+const shared = new Map()
+async function received (request) {
+  const form = await request.formData(), id = crypto.randomUUID()
+  shared.set(id, { title: String(form.get('title') ?? ''), text: String(form.get('text') ?? ''), url: String(form.get('url') ?? ''), files: form.getAll('files').filter((file) => file instanceof File) })
+  setTimeout(() => shared.delete(id), 60_000)
+  return Response.redirect(url(`?shared=${id}`), 303)
+}
+
 self.addEventListener('fetch', (event) => {
   const { request } = event
+  if (request.method === 'POST' && new URL(request.url).pathname.endsWith('/share-target')) return event.respondWith(received(request))
   if (request.method !== 'GET') return
   if (new URL(request.url).origin !== self.location.origin) return
   event.respondWith(LOCAL ? networkFirst(request) : cacheFirst(request))

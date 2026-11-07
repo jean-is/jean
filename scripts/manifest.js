@@ -226,6 +226,15 @@ export function computeVersion (entries) {
  * @param {string} [lang]  the language of its description and screenshots, which its `lang` and `dir` say
  * @param {Record<string, string>} [labels]  theirs, in that language
  */
+/** What another app shares with Jean, and what the system opens with it once installed (D714): files Jean reads, and words or an address. */
+export const OPENS = {
+  'application/pdf': ['.pdf'], 'text/csv': ['.csv'], 'text/plain': ['.txt', '.md'],
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation': ['.pptx'],
+  'audio/mpeg': ['.mp3'], 'audio/mp4': ['.m4a'], 'audio/wav': ['.wav'],
+}
+
 export function buildWebmanifest (brand, description, lang = 'en', labels = ENGLISH) {
   const up = lang === 'en' ? '' : '../'
   const manifest = {
@@ -242,6 +251,10 @@ export function buildWebmanifest (brand, description, lang = 'en', labels = ENGL
     theme_color: '#131313',
     icons: ICONS.map((icon) => ({ ...icon, src: up + icon.src })),
     screenshots: screenshotsOf(lang, labels, up),
+    share_target: { action: `${up || './'}share-target`, method: 'POST', enctype: 'multipart/form-data',
+      params: { title: 'title', text: 'text', url: 'url', files: [{ name: 'files', accept: ['image/*', 'audio/*', 'video/*', ...Object.keys(OPENS), ...Object.values(OPENS).flat()] }] } },
+    file_handlers: [{ action: up || './', accept: OPENS }],
+    launch_handler: { client_mode: ['focus-existing', 'auto'] },
   }
   return `${JSON.stringify(manifest, null, 2)}\n`
 }
