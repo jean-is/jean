@@ -49,7 +49,7 @@ Start from this, keep what they need and drop the rest:
   "locales": ["en", "fr"],
   "look": { "name": "Acme", "on": "minimal", "accent": "#e30613", "font": "sans", "logo": "data:image/svg+xml;base64,PHN2Zy8+" },
   "kit": { "name": "Acme", "tokens": { "primary": "#e30613", "ink": "#1f2933", "voice": "calm", "logo": "data:image/svg+xml;base64,PHN2Zy8+" } },
-  "capabilities": { "deny": ["scores", "games"], "preUnlock": ["connections", "machine", "documents", "tables", "slides", "projects", "browser", "search", "routines"] },
+  "capabilities": { "deny": ["scores", "games"], "preUnlock": ["connections", "machine", "documents", "tables", "slides", "projects", "browser", "web-search", "routines"] },
   "connections": [{ "id": "wiki", "name": "Wiki", "url": "https://ai.acme.example/wiki/mcp", "auth": "oidc" }]
 }
 ```

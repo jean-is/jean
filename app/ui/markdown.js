@@ -44,7 +44,7 @@ export function markdown(source, sources, still = false) {
   }
 }
 
-/** A picture's area, in percent from its top left (D481): it shows boxed under its mark (D715). */
+/** A picture's area (D481), boxed under its mark (D715). */
 const AREA = /^:\s*[\d.]+\s*,\s*[\d.]+\s*,\s*[\d.]+\s*,\s*[\d.]+\s*$/
 
 /** "[1]" or "[1, 3]" → source chips; "[1: "…"]" or "[1, p. 3]" opens the file there (D481); anything else stays text. @param {string} text */

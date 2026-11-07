@@ -24,7 +24,7 @@ Ask in words or with a file, and Jean hands back what you asked for, made: an an
 - **Repeats on a schedule:** a routine is a request Jean sends itself every hour, day or week, or once later.
 - **Takes on bigger tasks:** helpers work on a task's parts at once, and Double-check compares each cited claim with its source.
 - **Speaks your language,** one of 46, right to left included.
-- **Listens and speaks:** dictation, read-aloud and live conversation, with speech recognised on your device.
+- **Listens and speaks:** dictation, read-aloud and talking hands-free, and recordings heard, with speech recognised on your device.
 - **Asks first:** by default before sending, sharing, deleting or anything external, and it never touches passwords or payments. You choose *Do it*, *Ask me first* or *Never* for each kind of action.
 
 Jean starts as a single box and offers each of these when you need it, like a game that teaches itself. [docs/product.md](docs/product.md) describes every feature.

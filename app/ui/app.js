@@ -144,9 +144,8 @@ async function start() {
   addEventListener('pagehide', stamp)
   document.addEventListener('visibilitychange', stamp)
 
-  // Old tasks let go, as Your data says, once a day (D718).
+  // Old tasks let go (D718); what another app gave (D714).
   if (app.settings.value.forget) import('./forget.js').then((module) => module.forget()).catch(console.warn)
-  // What another app shared, by its id in the address, and files the system opened with Jean (D714).
   const shared = new URLSearchParams(location.search).get('shared')
   if (shared) import('./received.js').then((module) => module.received(shared)).catch(console.warn)
   ;/** @type {any} */ (globalThis).launchQueue?.setConsumer((/** @type {any} */ launch) => launch.files.length && import('./received.js').then((module) => module.opened(launch.files)))

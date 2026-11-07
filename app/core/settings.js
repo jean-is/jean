@@ -23,10 +23,10 @@ import { ulid } from './ulid.js'
  * @property {Connection[]} [connections]      services connected through MCP (their keys and tokens are secrets)
  * @property {Record<string, Record<string, RuleValue>>} [services]  a connection's own rules, by its id
  * @property {number} [dictated]               how many times the user dictated (live conversation is offered)
- * @property {number} [retried]                how many times the user asked an answer again (Feedback is offered, D712)
- * @property {string[]} [grouped]              the groups of tasks offered as projects, by name, and when they were last looked for (D716)
+ * @property {number} [retried]                answers asked again (D712)
+ * @property {string[]} [grouped]              groups offered as projects (D716)
  * @property {string} [groupedAt]
- * @property {number} [forget]                 how many days a task not changed is kept, pinned ones aside, and when that was last looked at (D718)
+ * @property {number} [forget]                 days an unchanged task is kept (D718)
  * @property {string} [forgotAt]
  * @property {number} [cited]                  how many answers cited their sources (Double-check is offered)
  * @property {number} [browsed]                how many links from answers the user opened (the browser is offered)
@@ -46,7 +46,7 @@ import { ulid } from './ulid.js'
  * @property {string[]} [sources]              addresses of skills indexes, when the user changed the default list (D121)
  * @property {string[]} [meet]                 projects whose assistants meet without asking first (D224)
  * @property {boolean} [films]                  films are made without asking first (D251)
- * @property {number} [limit]                   a month's limit on answers, in US dollars, past which a paid one asks first (D711)
+ * @property {number} [limit]                  a month's limit on answers, in US dollars (D711)
  * @property {string} [pictures]               which makes pictures on this device (D263)
  * @property {{ date?: boolean, log?: boolean }} [certificates]  certificates dated by witnesses, recorded in a public log, as the user chose (D276)
  * @property {string[]} [searches]              web search's sources on (D271)

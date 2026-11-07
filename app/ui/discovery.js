@@ -40,7 +40,7 @@ const OFFERS = /** @type {Record<string, string>} */ ({
   documents: 'documents kept and edited beside the conversation',
   tables: 'a table you fill and keep up to date beside the conversation, in place of a spreadsheet file unless they ask for a file, when the user wants to keep track of something (applications, expenses, books…)',
   designs: 'a design to print, post or send, in place of an SVG, a web page or a Word file unless they ask for a file: an invitation, a poster, a flyer, a card',
-  feedback: 'telling you under an answer that it was good or not right, and why, so that you answer again better and keep it in mind: offer it when the user says an answer missed',
+  feedback: 'marking an answer not right, and why, so you answer again and keep it in mind: offer it when the user says an answer missed',
   memory: 'remembering lasting facts about the user and how they want you to answer, from one conversation to the next, which you otherwise forget: offer it as soon as they state one ("from now on…", "keep in mind…"), even beside another request, unless a project or a skill fits better',
   projects: 'a project of its own, with its notes and files, for something the user keeps coming back to',
   folders: 'working on the files of a folder of their computer, where they are',
@@ -263,11 +263,10 @@ effect(() => {
   // Someone who dictates often may rather talk.
   if ((effective.value.settings.dictated ?? 0) >= 3) offerOnce('live')
 })
-// Many tasks in the home project: those that go together could be a project, looked for once a week (D716).
+// Tasks that go together, once a week (D716); an answer asked again twice (D712).
 effect(() => {
   if (app.conversations.value.length >= 30 && app.project.value.data.default === true && Date.now() - (Date.parse(effective.value.settings.groupedAt ?? '') || 0) > 6.048e8) void import('../caps/projects/grouping.js').then((module) => module.suggest())
 })
-// Asking an answer again twice, or a reply Intuition reads as unhappy: an answer could be told it wasn't right (D712).
 effect(() => { if ((effective.value.settings.retried ?? 0) >= 2) offerOnce('feedback') })
 effect(() => {
   // Back after time away, with services connected: what's new there?

@@ -38,8 +38,16 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] The page for IT (D428): /enterprise and /fr/entreprise on a phone, the roles' answers with a keyboard in Safari (its ring goes once an arrow moves to the next role) and with a screen reader, and both in Search Console
 - [ ] The comparison pages: /compare and its five products' pages on a phone, every fact read again on its maker's page with its date moved (products change monthly), and all in Search Console
 - [ ] Profiles (D228, D389, D390): a parent's passkey opening a child's profile and Set by a parent (PRF, a different credential per profile); a child's concern as a notification on Android, the parent's tab open and closed; whether strong brains and the device's call `raise_concern` for a danger and not for a story or a quarrel, and set `home` when it is, in French, English, Arabic and Japanese; Kev fine-tuned on the danger question, as D328 did for the others
+- [ ] A share from another app (D714): Jean installed on Android Chrome and desktop Chrome and Edge, a photo, a PDF and a page shared to it, each landing in the box; a PDF, a Word file and an MP3 opened with Jean from the system's Open with, Jean already open and not
+- [ ] A recording heard on the device (D713): an hour's meeting as MP3 and M4A, and a phone's MP4 film, in Chrome, real Safari and Firefox, on the weakest laptop; how long Whistle and Whisper take, what the decoded sound holds in memory, and its words in French, Arabic and Japanese
+- [ ] Pointing (D715): the box drawn on a picture with a finger on an iPad and a phone, with VoiceOver and NVDA in thirds; does each brain cite a screen's area as asked, and how often the box holds the button it names (IoU ≥ 0.5 on a dozen screens in four languages)
+- [ ] Delete old tasks (D718) with Sync on: tasks deleted on one computer go from the other; an organisation's retention refusing it says so
 
 **With real brains**
+- [ ] Feedback (D712): does each brain answer again better from the person's words, and with Keep it in mind call `remember` for what lasts and change the skill it followed, in four languages?
+- [ ] Tasks that go together (D716) on real exports of ChatGPT, Claude and Gemini, a few hundred conversations each, in English, French, Arabic and Japanese: are the groups ones a person would make a project of?
+- [ ] Only if (D717): does a brain write an if and an else with save_flow when asked, and does Intuition or the brain answer a step's question the way the person would?
+- [ ] Dated (D719): on a task months old that cites a price from the web, does each brain call it dated, and never a fact that doesn't move?
 - [ ] Scans (D479): an office scanner's PDF (JBIG2 or CCITT fax), a phone app's (JPEG) and one in JPEG 2000, each read by Anthropic, OpenAI and Gemini brains, a page of small print among them, in French, Arabic and Japanese; one of forty pages, its first twenty read and the rest said; the same in a share's viewer and a task saved as a web page
 - [ ] Do strong cloud brains call `remember` for lasting facts only, and does the device's brain call it at all?
 - [ ] `suggest_skill` when a task could use one
