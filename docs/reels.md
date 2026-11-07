@@ -35,7 +35,8 @@ Nothing in a reel is a recording or a drawing of Jean. The conversation is Jean'
 | Sound | on or off | M |
 | Full screen | the bar's button, a double click on the stage; the window filled where a browser can't | F |
 
-- **Captions are live text,** in a polite live region with each card's words, so a screen reader reads the reel; the replay itself is hidden from it, as a video's pixels are.
+- **Captions are live text,** in a polite live region with each card's words, so a screen reader reads the reel; the replay itself is hidden from it, as a video's pixels are. They show in the look's ink, their words in the room's colour, as Play is: the other way round from the picture under them, so they read over any moment.
+- **Menus fit their frame:** a short player's speeds and languages go on in a column beside, never cut.
 - **Speed and sound are kept** in the browser, a viewer's convenience, never needed.
 - **The page frames it at 16:9,** loaded once near, full screen allowed.
 
@@ -61,7 +62,7 @@ Lengths are English's; French's run a few seconds longer, Arabic's shorter.
 | Chapter | Scene | Caption |
 |---|---|---|
 | Jean | Card: the tilde draws itself, the name, the homepage's promise | — |
-| Files in, things out | A spreadsheet and a question; the program, framed while it runs; the chart, framed | Drop in a spreadsheet and ask, in your own words. · The sums are worked out by a program, in a sandbox in your browser. Not guessed. · And back comes what you asked for, made. |
+| Files in, things out | A spreadsheet and a question; the program, framed while it runs; the chart, a line a product from the same start, framed | Drop in a spreadsheet and ask, in your own words. · The sums are worked out by a program, in a sandbox in your browser. Not guessed. · And back comes what you asked for, made. |
 | Any AI | A letter, written by the AI on this computer; what the answer says of it, framed | Use GPT, Claude, Gemini, or an AI on your own computer. · Each answer says which AI wrote it: here, the one on this computer. |
 | It asks first | Minutes to send; the approval card; Allow once, framed and clicked | Before it sends, shares or deletes anything, Jean asks you. |
 | Keep everything | Card: three facts, ticked | Your history, files and memory stay on your device. · As plain files, in one backup you can take anywhere. · Free and open source. |
