@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { createServer } from 'node:http'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { after, describe, it } from 'node:test'
@@ -17,9 +18,9 @@ import {
 } from '../scripts/graph.js'
 import {
   buildCapabilities, buildWebmanifest, collectFiles, computeVersion, integrityOf, isShipped, manifestOf, PAGES, plan, releaseDate, SHARE, shotsOf,
-  stampPreloads, stampVersion,
+  stampedWorker, stampPreloads, stampVersion,
 } from '../scripts/manifest.js'
-import { pageOf, resolveRequest } from '../scripts/serve.js'
+import { handle, pageOf, resolveRequest } from '../scripts/serve.js'
 import { rewriteSpecifiers, stripSourceMaps, classicScript, classicWorkers, copyRuntime, forImportMap, patchSource } from '../scripts/vendor.js'
 
 const IMPORT_MAP = {
@@ -217,6 +218,18 @@ describe('manifest: outputs', () => {
     assert.equal(stampVersion('const X = 1\n', 'abc'), null)
   })
 
+  it('stamps sw.js with the version capabilities.json names where it is served, git holding none (D74)', async () => {
+    const root = await fixture({ 'sw.js': "// sw\nconst VERSION = 'dev'\n" })
+    assert.equal(await stampedWorker(root), "// sw\nconst VERSION = 'dev'\n", 'as written, without a listing')
+    await writeFile(join(root, 'capabilities.json'), '{ "version": "abc123de')
+    assert.equal(await stampedWorker(root), "// sw\nconst VERSION = 'dev'\n", 'a listing cut short is no version')
+    await writeFile(join(root, 'capabilities.json'), JSON.stringify({ version: 'abc123def456' }))
+    assert.equal(await stampedWorker(root), "// sw\nconst VERSION = 'abc123def456'\n")
+    await writeFile(join(root, 'sw.js'), "const VERSION = 'next00000001'\n")
+    assert.equal(await stampedWorker(root), "const VERSION = 'next00000001'\n", "a deploy's copy keeps its own")
+    assert.match(await readFile(new URL('../app/sw.js', import.meta.url), 'utf8'), /^const VERSION = 'dev'$/m, 'git holds the worker without its version')
+  })
+
   it('builds a web manifest that works under a sub-path', () => {
     const manifest = JSON.parse(buildWebmanifest({ name: 'Test' }, 'One sentence.'))
     assert.equal(manifest.name, 'Test')
@@ -278,7 +291,7 @@ describe('manifest: outputs', () => {
     const first = await plan(await fixture(files))
     const second = await plan(await fixture({ ...files, 'core/a.js': 'export const a = 2\n' }))
     assert.notEqual(first.version, second.version)
-    assert.match(first.outputs['sw.js'], new RegExp(`^const VERSION = '${first.version}'$`, 'm'))
+    assert.equal(first.outputs['sw.js'], undefined, 'the worker takes its version where it is served')
     assert.equal(JSON.parse(first.outputs['manifest.webmanifest']).name, 'Planned')
     assert.deepEqual(JSON.parse(first.outputs['capabilities.json']).shell, ['brand.js', 'core/a.js', 'manifest.webmanifest'])
     assert.equal(first.outputs['index.html'], undefined)
@@ -288,7 +301,6 @@ describe('manifest: outputs', () => {
     const root = await fixture({
       'package.json': '{ "version": "1.2.3" }',
       'app/brand.js': 'export const BRAND = { name: "P", domain: "x.test" }\n',
-      'app/sw.js': "const VERSION = 'dev'\n",
       'app/core/a.js': '',
     })
     const app = join(root, 'app')
@@ -305,7 +317,6 @@ describe('manifest: outputs', () => {
   it('preloads the first-load graph and hashes index.html as written', async () => {
     const root = await fixture({
       'brand.js': 'export const BRAND = { name: "P", domain: "x.test" }\n',
-      'sw.js': "const VERSION = 'dev'\n",
       'index.html': '<script type="importmap">{"imports":{}}</script>\n<script type="module" src="ui/app.js"></script>\n',
       'ui/app.js': "import '../core/a.js'\nconst lazy = () => import('./lazy.js')\n",
       'ui/lazy.js': '',
@@ -351,7 +362,7 @@ describe('manifest: screenshots', () => {
       const { description } = await shotsOf(lang)
       assert.ok(description && description !== english, `${lang}: no description of its own in scripts/screenshots/${lang}.json`)
     }
-    const { outputs } = await plan(await fixture({ 'brand.js': 'export const BRAND = { name: "P" }\n', 'sw.js': "const VERSION = 'dev'\n" }))
+    const { outputs } = await plan(await fixture({ 'brand.js': 'export const BRAND = { name: "P" }\n' }))
     assert.equal(JSON.parse(outputs[manifestOf('ja')]).description, (await shotsOf('ja')).description)
   })
 
@@ -553,6 +564,18 @@ describe('vendor and serve helpers', () => {
     assert.equal(resolveRequest('/core/..%5c..%5cetc', root), null)
     assert.equal(resolveRequest('/.git/config', root), null)
     assert.equal(resolveRequest('/%E0%A4%A', root), null)
+  })
+
+  it('sends sw.js with the version capabilities.json names', async () => {
+    const server = createServer(handle).listen(0, '127.0.0.1')
+    await new Promise((done) => server.once('listening', done))
+    try {
+      const response = await fetch(`http://127.0.0.1:${/** @type {import('node:net').AddressInfo} */ (server.address()).port}/sw.js`)
+      assert.equal(response.headers.get('content-type'), 'text/javascript; charset=utf-8')
+      assert.equal(await response.text(), await stampedWorker(fileURLToPath(new URL('../app', import.meta.url))))
+    } finally {
+      server.close()
+    }
   })
 
   it('answers a page without its .html, and a file or folder of that name as itself', async () => {

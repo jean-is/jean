@@ -11,7 +11,7 @@ import { spawn } from 'node:child_process'
 import { copyFile, lstat, mkdir, readdir, readFile, rename, rm, stat, symlink, writeFile } from 'node:fs/promises'
 import { dirname, join, relative } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
-import { isShipped, walk } from './manifest.js'
+import { isShipped, stampedWorker, walk } from './manifest.js'
 import { PAGES } from '../app/caps/policy/checks.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
@@ -235,7 +235,7 @@ async function binaries () {
   await writeFile(join(bin, 'VERSION'), NEUTRALINO)
 }
 
-/** Copies what a web deploy serves into Neutralino's resources, with the short addresses' copies, and Neutralino's notices beside the other runtimes'. */
+/** Copies what a web deploy serves into Neutralino's resources, with the short addresses' copies, and Neutralino's notices beside the other runtimes'; the worker with its version (D74). */
 async function stage () {
   const app = join(WORK, 'app')
   await rm(app, { recursive: true, force: true })
@@ -245,6 +245,7 @@ async function stage () {
     await mkdir(dirname(to), { recursive: true })
     await copyFile(from, to)
   }
+  await writeFile(join(app, 'sw.js'), await stampedWorker(APP))
 }
 
 /**

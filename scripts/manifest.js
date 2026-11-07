@@ -1,8 +1,7 @@
-// Generates manifest.webmanifest and capabilities.json (content hashes) in app/, writes
-// a modulepreload link for every module of the first load into index.html,
-// stamps the resulting version into sw.js so that any asset change produces a
-// byte-different service worker, which is what triggers an update, and copies
-// LICENSE beside them, so that app/ is the whole of a deploy (D243).
+// Generates manifest.webmanifest and capabilities.json (content hashes, and the version they make)
+// in app/, writes a modulepreload link for every module of the first load into index.html, and
+// copies LICENSE beside them, so that app/ is the whole of a deploy (D243). sw.js carries that
+// version only where it is served (stampedWorker), never in git (D74).
 // Usage: npm run manifest              write the outputs
 //        npm run manifest -- --check   exit 1 if a committed output is stale (CI)
 //        npm run manifest -- --listings  write only the outputs never committed (npm run dev, after each change)
@@ -304,6 +303,21 @@ export function stampVersion (source, version) {
 }
 
 /**
+ * sw.js as a copy serves it, carrying the version capabilities.json names, so that a change to any
+ * shipped file makes a byte-different worker, which is what makes a browser update it. Git holds it
+ * as 'dev' (D74): the dev server stamps it as it sends it, build:desktop as it copies it, and the
+ * web's copy its own, from its minified files (scripts/web.js). As written without a listing, or
+ * once it carries a version, as a deploy's copy does.
+ * @param {string} [root]
+ */
+export async function stampedWorker (root = APP) {
+  const [worker, listing] = await Promise.all([readFile(join(root, 'sw.js'), 'utf8'), readOrNull(root, 'capabilities.json')])
+  if (VERSION_LINE.exec(worker)?.[0] !== "const VERSION = 'dev'") return worker
+  const version = (() => { try { return JSON.parse(listing?.toString('utf8') ?? 'null')?.version } catch { return null } })()
+  return (typeof version === 'string' && /^\w+$/.test(version) && stampVersion(worker, version)) || worker
+}
+
+/**
  * Computes every output without writing anything.
  * @param {string} root
  */
@@ -340,9 +354,6 @@ export async function plan (root = APP) {
   // Its modules' hashes as the package holds them, which a web deploy's minified files no longer match (D318).
   const listing = await readOrNull(root, READER) ? await renderListing(root, text) : null
   const render = listing && { ...listing, integrity: Object.fromEntries(listing.files.map((path) => [path, integrity[path]])) }
-  const sw = await readOrNull(root, 'sw.js')
-  const stamped = sw && stampVersion(sw.toString('utf8'), version)
-  if (!stamped) throw new Error("sw.js is missing or has no `const VERSION = '…'` line")
   const licence = await readOrNull(join(root, '..'), 'LICENSE')
   const [listed, pkg] = await Promise.all([readOrNull(root, 'capabilities.json'), readOrNull(join(root, '..'), 'package.json')])
   // A listing cut short by a write that never finished dates the files now.
@@ -354,7 +365,6 @@ export async function plan (root = APP) {
     outputs: {
       ...generated,
       'capabilities.json': buildCapabilities(version, shell, locales, integrity, capabilities, render, release),
-      'sw.js': stamped,
       ...(licence ? { LICENSE: licence.toString('utf8') } : {}),
     },
   }

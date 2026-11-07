@@ -14,7 +14,8 @@
 // With --budgets (npm run dev, dev:gateway, dev:share and start), it checks the budgets as it starts and after
 // each change to app/, cli/ or budgets.json, and says as soon as one is over, still serving; after each
 // change it writes again what a build writes in app/ and git never holds (capabilities.json, the manifests),
-// so the hashes a share or a saved page carries are those of the files it serves.
+// so the hashes a share or a saved page carries are those of the files it serves. sw.js, which git holds
+// without its version, goes out with the one capabilities.json names, so the worker updates as a deploy's does.
 // It serves examples/ too, at /examples/, to any page, so that Settings › Extensions reads the example
 // extensions at http://127.0.0.1:<port>/examples/extensions/<name>/, and a folder there opened in a browser
 // lists its files; a deploy never has them.
@@ -38,7 +39,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 import { Worker, isMainThread, parentPort, workerData } from 'node:worker_threads'
 import { gateway } from '../gateway/gateway.js'
 import { listener } from '../gateway/serve.js'
-import { UNCOMMITTED } from './manifest.js'
+import { UNCOMMITTED, stampedWorker } from './manifest.js'
 
 const ROOT = resolve(fileURLToPath(new URL('..', import.meta.url)))
 const APP = resolve(ROOT, process.env.SITE || 'app')
@@ -165,6 +166,8 @@ export async function handle (req, res) {
     if (names) return send(res, req, '.html', Buffer.from(/* html */ `<!doctype html><meta charset="utf-8"><title>${pathname}</title><h1>${pathname}</h1><ul>${links}</ul>`))
   }
   if (!info?.isFile()) return fail(res, 404, 'Not found')
+  // Git holds the worker without its version (D74): it goes out with the one capabilities.json names, as a deploy's does.
+  if (file === join(APP, 'sw.js')) return send(res, req, '.js', Buffer.from(await stampedWorker(APP)))
   if ((GATEWAY || SHARE_PORT) && file === join(APP, 'index.html')) {
     return send(res, req, '.html', Buffer.from((await readFile(file, 'utf8')).replace('</head>', '<meta name="app-policy" content="policy.json">\n</head>')))
   }
