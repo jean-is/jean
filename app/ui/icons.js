@@ -28,6 +28,6 @@ export const icons = {
   alarm: icon(svg`<circle cx="12" cy="13" r="7"/><path d="M12 9.5V13l2.5 1.5M4.5 7 7 4.5M19.5 7 17 4.5"/>`),
   since: icon(svg`<path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3L4.5 9M4.5 4.5V9H9M12 8v4l2.5 1.5"/>`),
   camera: icon(svg`<path d="M6 7h.5a2 2 0 0 0 2-2 1 1 0 0 1 1-1h5a1 1 0 0 1 1 1 2 2 0 0 0 2 2h.5a2.5 2.5 0 0 1 2.5 2.5V17a2.5 2.5 0 0 1-2.5 2.5H6A2.5 2.5 0 0 1 3.5 17V9.5A2.5 2.5 0 0 1 6 7Z"/><circle cx="12" cy="13" r="3"/>`),
-  screen: icon(svg`<path d="M12.5 3.5H6A2.5 2.5 0 0 0 3.5 6v7A2.5 2.5 0 0 0 6 15.5h12a2.5 2.5 0 0 0 2.5-2.5v-2M9 15.5v4M15 15.5v4M7 19.5h10M14 10l6.5-6.5M16 3.5h4.5V8"/>`, 'flip-rtl'),
+  screen: icon(svg`<path d="M12.5 4.5H7A2.5 2.5 0 0 0 4.5 7v6A2.5 2.5 0 0 0 7 15.5h10a2.5 2.5 0 0 0 2.5-2.5v-1.5M3 19.5h18M14 10l5.5-5.5M15.5 4.5h4v4"/>`, 'flip-rtl'),
   helpers: icon(svg`<circle cx="9" cy="8.5" r="3"/><circle cx="16.5" cy="9.5" r="2.5"/><path d="M3.5 19.5a5.5 5.5 0 0 1 11 0M14.5 14.6a4.5 4.5 0 0 1 6 4.9"/>`),
 }
