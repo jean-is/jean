@@ -41,5 +41,9 @@
   "receipt.spentLede": "A ṣírò rẹ̀ láti inú ohun tí ọpọlọ ìdáhùn kọ̀ọ̀kan kà tí ó sì kọ, ní iye wọn lónìí, bí ó ṣe wà lábẹ́ ìdáhùn kọ̀ọ̀kan.",
   "receipt.months": "Ní oṣù",
   "receipt.byBrain": "Ní ọpọlọ",
-  "receipt.costliest": "Àwọn iṣẹ́ tí ó náni jù"
+  "receipt.costliest": "Àwọn iṣẹ́ tí ó náni jù",
+  "receipt.certificates": "Àwọn ìwé ẹ̀rí",
+  "receipt.certificatesText": "Èdìdì ẹ̀rọ yìí, ẹni tí ó ń fi ọjọ́ sí ìwé ẹ̀rí, àti ìwé àkọsílẹ̀ gbogbogbò",
+  "receipt.seal": "Èdìdì ẹ̀rọ yìí",
+  "receipt.seal.text": "A ń fi kọ́kọ́rọ́ tí kì í kúrò lórí ẹ̀rọ yìí láé fi èdìdì di àwọn ìwé ẹ̀rí tí a fi pamọ́ síbí. Ẹni tí ó bá gbára lé wọn lè ṣàyẹ̀wò àmì ìka yìí, tàbí kí ẹ jọ fohùn ṣọ̀kan lórí rẹ̀ ṣáájú."
 }

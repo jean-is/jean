@@ -41,5 +41,9 @@
   "receipt.spentLede": "Jedet diouzh ar pezh o deus lennet ha skrivet empennoù pep respont, d’o frizioù hiziv, evel dindan pep respont.",
   "receipt.months": "Dre viz",
   "receipt.byBrain": "Dre empenn",
-  "receipt.costliest": "An ober o deus koustet ar muiañ"
+  "receipt.costliest": "An ober o deus koustet ar muiañ",
+  "receipt.certificates": "Testenioù",
+  "receipt.certificatesText": "Siell an trevnad-mañ, piv a zeiziad an testenioù, hag ar marilh foran",
+  "receipt.seal": "Siell an trevnad-mañ",
+  "receipt.seal.text": "An testenioù enrollet amañ a vez siellet gant un alc’hwez na guita biken an trevnad-mañ. An neb a fiz enno a c’hall gwiriañ ar roudoù-biz-mañ, pe en em glevet warno ganeoc’h en a-raok."
 }

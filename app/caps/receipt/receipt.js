@@ -256,7 +256,7 @@ function setAddress(name, input) {
  */
 export const sealOf = async () => (await deviceKey('seal-x509', () => makeSeal())) ?? makeSeal()
 
-/** The seal's fingerprint: its key's RFC 7638 thumbprint, which its certificates' issuer names, as Settings › Approvals shows it. */
+/** The seal's fingerprint: its key's RFC 7638 thumbprint, which its certificates' issuer names, as Your data's Certificates shows it. */
 export const fingerprint = async () => thumbprint((await sealOf()).keys.publicKey)
 
 /** A certificate saved undated, dated now by the witnesses as the user asked on its card (D276), and what the hooks add, the organisation's validation data for their dates (D434). @param {Sealed} sealed @returns {Promise<Sealed>} */
@@ -380,6 +380,12 @@ define('app-receipt', Receipt)
 /** What Jean cost over time, read as Settings › Brains opens and again as a task is kept meanwhile (./spent-page.js, D691). @type {import('@preact/signals-core').Signal<typeof import('./spent-page.js') | null>} */
 const spentPage = signal(null)
 effect(() => { if (/^brains(\/spent)?$/.test(app.section.value ?? '') && app.conversations.value) void import('./spent-page.js').then((module) => { spentPage.value = module; return module.spending() }).catch(console.warn) })
-register({ id: 'receipt', slots: { approvals: { at: 1, draw: witnessing },
+/** The device's seal (D274), whose fingerprint whoever relies on its certificates checks or agrees on beforehand, then who dates them: Your data's Certificates. */
+const print = signal('')
+const certificates = { id: 'certificates', at: 5, group: 'here', icon: icons.badge, label: 'receipt.certificates', text: () => t('receipt.certificatesText'),
+  draw: (/** @type {{ lockedBy: () => string }} */ settings) => { if (!print.value) void fingerprint().then((value) => (print.value = value))
+    return html`<section><h3>${t('receipt.seal')}</h3><p class="muted">${t('receipt.seal.text')}</p><span class="key-command"><code dir="ltr">${print.value.match(/.{1,4}/g)?.join(' ')}</code>
+      <button type="button" class="icon-button subtle" aria-label=${t('action.copy')} @click=${() => navigator.clipboard.writeText(print.value).then(() => notify(t('toast.copied')))}>${icons.copy}</button></span></section>${witnessing(settings)}` } }
+register({ id: 'receipt', slots: { data: certificates,
   // How things stand, under Brains' title, before its list (D509).
   brains: { id: 'spent', at: 3, head: true, draw: () => spentPage.value?.row() ?? nothing, title: () => t('receipt.spent'), page: () => spentPage.value?.page() ?? nothing } } })

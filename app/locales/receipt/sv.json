@@ -41,5 +41,9 @@
   "receipt.spentLede": "Uträknat från vad varje svars hjärnor läste och skrev, till dagens priser, som under varje svar.",
   "receipt.months": "Per månad",
   "receipt.byBrain": "Per hjärna",
-  "receipt.costliest": "Uppgifterna som kostade mest"
+  "receipt.costliest": "Uppgifterna som kostade mest",
+  "receipt.certificates": "Certifikat",
+  "receipt.certificatesText": "Den här enhetens sigill, vem som daterar certifikat, och den offentliga loggen",
+  "receipt.seal": "Den här enhetens sigill",
+  "receipt.seal.text": "Certifikat som sparas här förseglas med en nyckel som aldrig lämnar den här enheten. Den som förlitar sig på dem kan kontrollera det här fingeravtrycket, eller komma överens om det med dig i förväg."
 }

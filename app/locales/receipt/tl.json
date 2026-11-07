@@ -41,5 +41,9 @@
   "receipt.spentLede": "Kinuwenta mula sa binasa at isinulat ng mga utak ng bawat sagot, sa presyo nila ngayon, gaya ng sa ilalim ng bawat sagot.",
   "receipt.months": "Ayon sa buwan",
   "receipt.byBrain": "Ayon sa utak",
-  "receipt.costliest": "Ang mga gawaing pinakamahal"
+  "receipt.costliest": "Ang mga gawaing pinakamahal",
+  "receipt.certificates": "Mga sertipiko",
+  "receipt.certificatesText": "Ang selyo ng device na ito, kung sino ang naglalagay ng petsa sa mga sertipiko, at ang pampublikong log",
+  "receipt.seal": "Ang selyo ng device na ito",
+  "receipt.seal.text": "Sineselyuhan ang mga sertipikong naka-save dito gamit ang isang susi na hindi kailanman umaalis sa device na ito. Puwedeng suriin ng sinumang umaasa sa mga ito ang fingerprint na ito, o pagkasunduan ito kasama mo nang maaga."
 }

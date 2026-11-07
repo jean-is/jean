@@ -151,7 +151,7 @@ test('Capabilities groups the capabilities by what each is for, a page each, and
   const row = (/** @type {string} */ name) => settings.locator('.case > li').filter({ has: page.locator('.item-text > strong').getByText(name, { exact: true }) })
   await expect(row('Collections')).toHaveClass('is-todo')
   await expect(row('Collections')).toContainText('Ask to keep track of something')
-  await expect(row('Documents and spreadsheets')).toContainText('Send your first message.')
+  await expect(row('Files made for you')).toContainText('Send your first message.')
   const found = Number((await lede.textContent())?.match(/^\d+/)?.[0])
   await expect(settings.locator('.case-bar meter')).toHaveAttribute('value', String(found))
   // Its page: what it does, how it comes, Turn on; then back on the list, on its row, lit.
@@ -192,7 +192,7 @@ test('a capability found turns off from its page, asked first, still found, the 
   await settings.locator('.settings-panel > .back').click()
   const row = (/** @type {string} */ name) => settings.locator('.case > li').filter({ has: page.locator('.item-text > strong').getByText(name, { exact: true }) })
   const found = (await settings.locator('.data-head + .lede').textContent())?.match(/^\d+ of \d+/)?.[0] ?? ''
-  await row('Documents and spreadsheets').locator('button.item').click()
+  await row('Files made for you').locator('button.item').click()
   await expect(settings.getByRole('button', { name: 'Turn off' })).toHaveCount(0)
   await settings.locator('.settings-panel > .back').click()
   await row('Web search').locator('button.item').click()
@@ -446,7 +446,7 @@ test('the picker: a menu above the chip, Auto by default, a brain by hand, kept 
 test('a service’s refusal says what its tool takes, and a script parses a long result whole', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
-  await turnOn(page, 'Computer')
+  await turnOn(page, 'Computer in this tab')
   await page.keyboard.press('Escape')
   await connect(page, `${MAIL_URL}/rows/mcp`, 2)
   await ask(page, 'Query the ledger')

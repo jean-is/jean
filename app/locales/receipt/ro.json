@@ -41,5 +41,9 @@
   "receipt.spentLede": "Calculat din ce au citit și au scris creierele fiecărui răspuns, la prețurile de azi, ca sub fiecare răspuns.",
   "receipt.months": "Pe luni",
   "receipt.byBrain": "Pe creier",
-  "receipt.costliest": "Sarcinile care au costat cel mai mult"
+  "receipt.costliest": "Sarcinile care au costat cel mai mult",
+  "receipt.certificates": "Certificate",
+  "receipt.certificatesText": "Sigiliul acestui dispozitiv, cine datează certificatele și registrul public",
+  "receipt.seal": "Sigiliul acestui dispozitiv",
+  "receipt.seal.text": "Certificatele salvate aici sunt sigilate cu o cheie care nu părăsește niciodată acest dispozitiv. Cine se bazează pe ele poate verifica această amprentă sau o poate stabili cu dvs. dinainte."
 }

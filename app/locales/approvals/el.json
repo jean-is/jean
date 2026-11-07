@@ -51,8 +51,6 @@
   "approvals.pagesOut": "Μπορούν να φτάσουν στο διαδίκτυο",
   "approvals.inPage": "Στη σελίδα",
   "approvals.fromInternet": "Από το διαδίκτυο",
-  "approvals.certificates": "Πιστοποιητικά",
-  "approvals.certificatesText": "Η σφραγίδα αυτής της συσκευής, ποιος χρονοσημαίνει τα πιστοποιητικά και το δημόσιο αρχείο",
   "approvals.what.reads": "{name} διαβάζει εκεί χωρίς ερώτηση",
   "approvals.what.acts": "{name} γράφει, στέλνει και αλλάζει εκεί χωρίς ερώτηση",
   "approvals.elsewhere": "Αυτή η εργασία διάβασε κάτι από αλλού που μπορεί να περιέχει οδηγίες, γι’ αυτό ρωτά ξανά."

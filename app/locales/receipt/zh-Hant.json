@@ -41,5 +41,9 @@
   "receipt.spentLede": "依每個回答的大腦讀寫的內容、以今天的價格計算，與每個回答下方相同。",
   "receipt.months": "依月份",
   "receipt.byBrain": "依大腦",
-  "receipt.costliest": "花費最多的任務"
+  "receipt.costliest": "花費最多的任務",
+  "receipt.certificates": "憑證",
+  "receipt.certificatesText": "這台裝置的印章、為憑證加上日期的服務，以及公開日誌",
+  "receipt.seal": "這台裝置的印章",
+  "receipt.seal.text": "在這裡儲存的憑證，由一把從不離開這台裝置的金鑰蓋章。依賴這些憑證的人可以核對這個指紋，或事先和你約定好。"
 }

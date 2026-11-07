@@ -41,5 +41,9 @@
   "receipt.spentLede": "Dihitung dari apa yang dibaca dan ditulis otak setiap jawaban, dengan harga hari ini, seperti di bawah setiap jawaban.",
   "receipt.months": "Per bulan",
   "receipt.byBrain": "Per otak",
-  "receipt.costliest": "Tugas yang paling mahal"
+  "receipt.costliest": "Tugas yang paling mahal",
+  "receipt.certificates": "Sertifikat",
+  "receipt.certificatesText": "Segel perangkat ini, siapa yang memberi tanggal sertifikat, dan log publik",
+  "receipt.seal": "Segel perangkat ini",
+  "receipt.seal.text": "Sertifikat yang disimpan di sini disegel dengan kunci yang tidak pernah keluar dari perangkat ini. Siapa pun yang mengandalkannya dapat memeriksa sidik jari ini, atau menyepakatinya dengan Anda sebelumnya."
 }

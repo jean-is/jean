@@ -114,7 +114,7 @@ test('the desktop app syncs with a folder picked with the system’s dialog, and
 test('in the desktop app, Settings › Computer has the computer’s whole memory, as the system tells it (D176, D249)', async ({ page }) => {
   const host = await desktop(page, tmpdir())
   await start(page)
-  await turnOn(page, 'Computer')
+  await turnOn(page, 'Computer in this tab')
   const settings = page.locator('app-settings dialog[open]')
   await settings.locator('.settings-nav button', { hasText: 'Computer' }).click()
   await settings.locator('[data-page="sandbox"]').click()
@@ -158,7 +158,7 @@ test('in the desktop app, This computer starts its bridge itself in a folder the
     await start(page)
     await page.evaluate(async () => (await import('/ui/caps.js')).unlock('machine'))
     // Its page, a row under the sandbox's (D248): no line to paste, a folder to choose, where the app starts the bridge through the user's shell.
-    const settings = await openSettings(page, 'Computer')
+    const settings = await openSettings(page, 'Computer in this tab')
     await settings.locator('[data-page="machine"]').click()
     const part = settings.locator('.settings-panel')
     await expect(part).toContainText('in a folder you choose')

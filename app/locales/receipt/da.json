@@ -41,5 +41,9 @@
   "receipt.spentLede": "Udregnet ud fra, hvad hvert svars hjerner læste og skrev, til deres priser i dag, som under hvert svar.",
   "receipt.months": "Efter måned",
   "receipt.byBrain": "Efter hjerne",
-  "receipt.costliest": "De opgaver, der kostede mest"
+  "receipt.costliest": "De opgaver, der kostede mest",
+  "receipt.certificates": "Certifikater",
+  "receipt.certificatesText": "Denne enheds segl, hvem der tidsstempler certifikater, og den offentlige log",
+  "receipt.seal": "Denne enheds segl",
+  "receipt.seal.text": "Certifikater, der gemmes her, forsegles med en nøgle, der aldrig forlader denne enhed. Den, der forlader sig på dem, kan tjekke dette fingeraftryk eller aftale det med dig på forhånd."
 }

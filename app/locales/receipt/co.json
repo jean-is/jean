@@ -41,5 +41,9 @@
   "receipt.spentLede": "Calculatu da ciò ch’elli anu lettu è scrittu i cervelli di ogni risposta, à i so prezzi d’oghje, cum’è sottu à ogni risposta.",
   "receipt.months": "Per mese",
   "receipt.byBrain": "Per cervellu",
-  "receipt.costliest": "I travaglii chì anu custatu u più"
+  "receipt.costliest": "I travaglii chì anu custatu u più",
+  "receipt.certificates": "Certificati",
+  "receipt.certificatesText": "U sigillu di st’apparechju, quale data i certificati, è u registru publicu",
+  "receipt.seal": "U sigillu di st’apparechju",
+  "receipt.seal.text": "I certificati arregistrati quì sò sigillati cù una chjave chì ùn lascia mai st’apparechju. Quellu chì si ne fida pò verificà st’impronta, o mettesi d’accordu nant’à ella cun voi prima."
 }

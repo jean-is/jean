@@ -51,8 +51,6 @@
   "approvals.pagesOut": "ఇవి ఇంటర్నెట్‌ను చేరవచ్చు",
   "approvals.inPage": "పేజీ లోపల",
   "approvals.fromInternet": "ఇంటర్నెట్ నుంచి",
-  "approvals.certificates": "ధ్రువపత్రాలు",
-  "approvals.certificatesText": "ఈ పరికరం ముద్ర, ధ్రువపత్రాలకు తేదీ వేసేవారు, బహిరంగ రిజిస్టర్",
   "approvals.what.reads": "{name} అక్కడ అడగకుండా చదువుతుంది",
   "approvals.what.acts": "{name} అక్కడ అడగకుండా రాస్తుంది, పంపుతుంది, మారుస్తుంది",
   "approvals.elsewhere": "ఈ పని వేరే చోటి నుండి ఏదో చదివింది, అందులో సూచనలు ఉండవచ్చు, కాబట్టి మళ్లీ అడుగుతోంది."

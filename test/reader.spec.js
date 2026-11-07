@@ -144,7 +144,7 @@ test('read aloud pressed again stops the natural voice at once, what it had made
   await answer.getByRole('button', { name: 'Stop reading' }).click()
 })
 
-test('Live conversation reads its answers in the natural voice while it is on, in the system’s once it is off', async ({ page }) => {
+test('Talking hands-free reads its answers in the natural voice while it is on, in the system’s once it is off', async ({ page }) => {
   const asked = await fake(page)
   await start(page)
   await connectFakeBrain(page)

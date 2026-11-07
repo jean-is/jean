@@ -41,5 +41,9 @@
   "receipt.spentLede": "按每个回答的大脑读写的内容、以今天的价格计算，与每个回答下方相同。",
   "receipt.months": "按月",
   "receipt.byBrain": "按大脑",
-  "receipt.costliest": "花费最多的任务"
+  "receipt.costliest": "花费最多的任务",
+  "receipt.certificates": "证书",
+  "receipt.certificatesText": "这台设备的印章、给证书加日期的服务，以及公开日志",
+  "receipt.seal": "这台设备的印章",
+  "receipt.seal.text": "在这里保存的证书由一把从不离开这台设备的密钥盖章。依赖这些证书的人可以核对这个指纹，或事先和你约定好。"
 }

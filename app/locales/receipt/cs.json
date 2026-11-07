@@ -41,5 +41,9 @@
   "receipt.spentLede": "Spočítáno z toho, co mozky každé odpovědi přečetly a napsaly, za dnešní ceny, jako pod každou odpovědí.",
   "receipt.months": "Podle měsíců",
   "receipt.byBrain": "Podle mozku",
-  "receipt.costliest": "Úkoly, které stály nejvíc"
+  "receipt.costliest": "Úkoly, které stály nejvíc",
+  "receipt.certificates": "Certifikáty",
+  "receipt.certificatesText": "Pečeť tohoto zařízení, kdo certifikáty datuje a veřejný protokol",
+  "receipt.seal": "Pečeť tohoto zařízení",
+  "receipt.seal.text": "Certifikáty uložené zde se pečetí klíčem, který nikdy neopustí toto zařízení. Kdo na ně spoléhá, může ověřit tento otisk, nebo se na něm s vámi předem dohodnout."
 }

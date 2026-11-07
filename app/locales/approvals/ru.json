@@ -55,8 +55,6 @@
   "approvals.pagesOut": "Могут выходить в интернет",
   "approvals.inPage": "Внутри страницы",
   "approvals.fromInternet": "Из интернета",
-  "approvals.certificates": "Сертификаты",
-  "approvals.certificatesText": "Печать этого устройства, кто ставит дату на сертификаты и публичный журнал",
   "approvals.what.reads": "{name} читает там без вопросов",
   "approvals.what.acts": "{name} пишет, отправляет и меняет там без вопросов",
   "approvals.elsewhere": "Эта задача прочитала что-то извне, что может содержать инструкции, поэтому вопрос задан снова."

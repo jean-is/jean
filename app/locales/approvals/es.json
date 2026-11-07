@@ -53,8 +53,6 @@
   "approvals.pagesOut": "Pueden acceder a internet",
   "approvals.inPage": "En la página",
   "approvals.fromInternet": "Desde internet",
-  "approvals.certificates": "Certificados",
-  "approvals.certificatesText": "El sello de este dispositivo, quién fecha los certificados y el registro público",
   "approvals.what.reads": "{name} lee ahí sin preguntar",
   "approvals.what.acts": "{name} escribe, envía y cambia ahí sin preguntar",
   "approvals.elsewhere": "Esta tarea ha leído algo de otro sitio, que podría contener instrucciones, así que se te vuelve a preguntar."

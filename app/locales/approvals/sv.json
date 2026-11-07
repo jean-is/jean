@@ -51,8 +51,6 @@
   "approvals.pagesOut": "De får nå internet",
   "approvals.inPage": "På sidan",
   "approvals.fromInternet": "Från internet",
-  "approvals.certificates": "Certifikat",
-  "approvals.certificatesText": "Den här enhetens sigill, vem som daterar certifikat, och den offentliga loggen",
   "approvals.what.reads": "{name} läser där utan att fråga",
   "approvals.what.acts": "{name} skriver, skickar och ändrar där utan att fråga",
   "approvals.elsewhere": "Den här uppgiften har läst något från annat håll som kan innehålla instruktioner, så frågan ställs igen."

@@ -41,5 +41,9 @@
   "receipt.spentLede": "Calculado a partir do que os cérebros de cada resposta leram e escreveram, aos preços de hoje, como em cada resposta.",
   "receipt.months": "Por mês",
   "receipt.byBrain": "Por cérebro",
-  "receipt.costliest": "As tarefas que custaram mais"
+  "receipt.costliest": "As tarefas que custaram mais",
+  "receipt.certificates": "Certificados",
+  "receipt.certificatesText": "O selo deste dispositivo, quem data os certificados e o registo público",
+  "receipt.seal": "O selo deste dispositivo",
+  "receipt.seal.text": "Os certificados guardados aqui são selados com uma chave que nunca sai deste dispositivo. Quem confia neles pode verificar esta impressão digital, ou combiná-la contigo antecipadamente."
 }

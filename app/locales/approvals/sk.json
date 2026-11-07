@@ -55,8 +55,6 @@
   "approvals.pagesOut": "Smú sa pripojiť k internetu",
   "approvals.inPage": "Na stránke",
   "approvals.fromInternet": "Z internetu",
-  "approvals.certificates": "Certifikáty",
-  "approvals.certificatesText": "Pečať tohto zariadenia, kto certifikáty datuje a verejný protokol",
   "approvals.what.reads": "{name} tam číta bez pýtania",
   "approvals.what.acts": "{name} tam píše, odosiela a mení bez pýtania",
   "approvals.elsewhere": "Táto úloha prečítala niečo odinakiaľ, čo môže obsahovať pokyny, preto sa pýta znova."

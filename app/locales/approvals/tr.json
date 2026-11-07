@@ -51,8 +51,6 @@
   "approvals.pagesOut": "İnternete ulaşabilirler",
   "approvals.inPage": "Sayfanın içinde",
   "approvals.fromInternet": "İnternetten",
-  "approvals.certificates": "Sertifikalar",
-  "approvals.certificatesText": "Bu cihazın mührü, sertifikalara kimin tarih attığı ve herkese açık kayıt",
   "approvals.what.reads": "{name} orada sormadan okur",
   "approvals.what.acts": "{name} orada sormadan yazar, gönderir ve değiştirir",
   "approvals.elsewhere": "Bu görev başka bir yerden, talimat içerebilecek bir şey okudu; bu yüzden yeniden soruyor."

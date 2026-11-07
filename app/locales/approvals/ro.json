@@ -53,8 +53,6 @@
   "approvals.pagesOut": "Pot accesa internetul",
   "approvals.inPage": "În pagină",
   "approvals.fromInternet": "De pe internet",
-  "approvals.certificates": "Certificate",
-  "approvals.certificatesText": "Sigiliul acestui dispozitiv, cine datează certificatele și registrul public",
   "approvals.what.reads": "{name} citește acolo fără să întrebe",
   "approvals.what.acts": "{name} scrie, trimite și schimbă acolo fără să întrebe",
   "approvals.elsewhere": "Această sarcină a citit ceva din altă parte, care poate conține instrucțiuni, așa că se întreabă din nou."

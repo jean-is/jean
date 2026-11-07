@@ -41,5 +41,9 @@
   "receipt.spentLede": "Laskettu siitä, mitä kunkin vastauksen aivot lukivat ja kirjoittivat, tämän päivän hinnoin, kuten jokaisen vastauksen alla.",
   "receipt.months": "Kuukausittain",
   "receipt.byBrain": "Aivoittain",
-  "receipt.costliest": "Eniten maksaneet tehtävät"
+  "receipt.costliest": "Eniten maksaneet tehtävät",
+  "receipt.certificates": "Varmenteet",
+  "receipt.certificatesText": "Tämän laitteen sinetti, kuka aikaleimaa varmenteet ja julkinen loki",
+  "receipt.seal": "Tämän laitteen sinetti",
+  "receipt.seal.text": "Tänne tallennetut varmenteet sinetöidään avaimella, joka ei koskaan lähde tältä laitteelta. Niihin luottava voi tarkistaa tämän sormenjäljen tai sopia siitä kanssasi etukäteen."
 }

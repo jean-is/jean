@@ -41,5 +41,9 @@
   "receipt.spentLede": "Berechnet aus dem, was die Gehirne jeder Antwort gelesen und geschrieben haben, zu ihren heutigen Preisen, wie unter jeder Antwort.",
   "receipt.months": "Nach Monat",
   "receipt.byBrain": "Nach Gehirn",
-  "receipt.costliest": "Die teuersten Aufgaben"
+  "receipt.costliest": "Die teuersten Aufgaben",
+  "receipt.certificates": "Zertifikate",
+  "receipt.certificatesText": "Das Siegel dieses Geräts, wer Zertifikate datiert, und das öffentliche Protokoll",
+  "receipt.seal": "Das Siegel dieses Geräts",
+  "receipt.seal.text": "Hier gespeicherte Zertifikate werden mit einem Schlüssel versiegelt, der dieses Gerät nie verlässt. Wer sich auf sie verlässt, kann diesen Fingerabdruck prüfen oder ihn vorab mit dir vereinbaren."
 }

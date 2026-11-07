@@ -41,5 +41,9 @@
   "receipt.spentLede": "An lissafa daga abin da ƙwaƙwalwar kowace amsa ta karanta ta rubuta, a farashinsu na yau, kamar a ƙarƙashin kowace amsa.",
   "receipt.months": "Bisa wata",
   "receipt.byBrain": "Bisa ƙwaƙwalwa",
-  "receipt.costliest": "Ayyukan da suka fi tsada"
+  "receipt.costliest": "Ayyukan da suka fi tsada",
+  "receipt.certificates": "Takardun shaida",
+  "receipt.certificatesText": "Hatimin wannan na'urar, wanda ke saka kwanan wata a takardun shaida, da rajistar jama’a",
+  "receipt.seal": "Hatimin wannan na'urar",
+  "receipt.seal.text": "Ana rufe takardun shaidar da aka ajiye a nan da maɓalli wanda ba ya taɓa barin wannan na'urar. Duk wanda ya dogara da su zai iya duba wannan alamar yatsa, ko ya amince da ita tare da kai tun da wuri."
 }

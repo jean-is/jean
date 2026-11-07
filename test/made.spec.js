@@ -149,7 +149,7 @@ test('a Word document from the first message, saved, then changed', async ({ pag
 test('a spreadsheet written by a script, with exact totals', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
-  await turnOn(page, 'Computer')
+  await turnOn(page, 'Computer in this tab')
   await page.keyboard.press('Escape')
   await page.locator('.composer input[type="file"]').setInputFiles({ name: 'sales.csv', mimeType: 'text/csv', buffer: Buffer.from(SALES) })
   await expect(page.locator('.attachment[data-status="ready"]')).toHaveCount(1)

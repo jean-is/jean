@@ -41,5 +41,9 @@
   "receipt.spentLede": "Tính từ những gì các bộ não của mỗi câu trả lời đã đọc và viết, theo giá hôm nay, như dưới mỗi câu trả lời.",
   "receipt.months": "Theo tháng",
   "receipt.byBrain": "Theo bộ não",
-  "receipt.costliest": "Những việc tốn nhiều nhất"
+  "receipt.costliest": "Những việc tốn nhiều nhất",
+  "receipt.certificates": "Chứng nhận",
+  "receipt.certificatesText": "Con dấu của thiết bị này, ai ghi ngày cho chứng nhận, và sổ công khai",
+  "receipt.seal": "Con dấu của thiết bị này",
+  "receipt.seal.text": "Các chứng nhận lưu ở đây được đóng dấu bằng một khóa không bao giờ rời khỏi thiết bị này. Người dựa vào chúng có thể kiểm tra dấu vân tay này, hoặc thống nhất trước với bạn về nó."
 }

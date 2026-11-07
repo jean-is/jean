@@ -41,5 +41,9 @@
   "receipt.spentLede": "各回答の頭脳が読み書きした量から、今日の価格で計算しています。各回答の下と同じです。",
   "receipt.months": "月ごと",
   "receipt.byBrain": "頭脳ごと",
-  "receipt.costliest": "費用がいちばんかかったタスク"
+  "receipt.costliest": "費用がいちばんかかったタスク",
+  "receipt.certificates": "証明書",
+  "receipt.certificatesText": "この端末の印、証明書に日付を付けるところ、公開ログ",
+  "receipt.seal": "この端末の印",
+  "receipt.seal.text": "ここで保存した証明書には、この端末から決して出ない鍵で封印が施されます。証明書を信頼する相手は、このフィンガープリントを確かめるか、事前にあなたと取り決めておくことができます。"
 }

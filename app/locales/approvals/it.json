@@ -53,8 +53,6 @@
   "approvals.pagesOut": "Possono raggiungere internet",
   "approvals.inPage": "Nella pagina",
   "approvals.fromInternet": "Da internet",
-  "approvals.certificates": "Certificati",
-  "approvals.certificatesText": "Il sigillo di questo dispositivo, chi data i certificati e il registro pubblico",
   "approvals.what.reads": "{name} ci legge senza chiedere",
   "approvals.what.acts": "{name} ci scrive, invia e modifica senza chiedere",
   "approvals.elsewhere": "Questa attività ha letto qualcosa da altrove, che potrebbe contenere istruzioni, quindi ti viene chiesto di nuovo."

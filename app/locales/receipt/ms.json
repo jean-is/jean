@@ -41,5 +41,9 @@
   "receipt.spentLede": "Dikira daripada apa yang dibaca dan ditulis otak setiap jawapan, pada harga hari ini, seperti di bawah setiap jawapan.",
   "receipt.months": "Mengikut bulan",
   "receipt.byBrain": "Mengikut otak",
-  "receipt.costliest": "Tugas yang paling mahal"
+  "receipt.costliest": "Tugas yang paling mahal",
+  "receipt.certificates": "Sijil",
+  "receipt.certificatesText": "Meterai peranti ini, siapa yang menarikhkan sijil, dan log awam",
+  "receipt.seal": "Meterai peranti ini",
+  "receipt.seal.text": "Sijil yang disimpan di sini dimeterai dengan kunci yang tidak pernah keluar dari peranti ini. Sesiapa yang bergantung padanya boleh menyemak cap jari ini, atau bersetuju mengenainya dengan anda terlebih dahulu."
 }

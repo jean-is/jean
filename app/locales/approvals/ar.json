@@ -59,8 +59,6 @@
   "approvals.pagesOut": "يمكنها الوصول إلى الإنترنت",
   "approvals.inPage": "داخل الصفحة",
   "approvals.fromInternet": "من الإنترنت",
-  "approvals.certificates": "الشهادات",
-  "approvals.certificatesText": "ختم هذا الجهاز، ومن يؤرّخ الشهادات، والسجل العام",
   "approvals.what.reads": "تُقرأ فيها البيانات دون سؤال",
   "approvals.what.acts": "يُكتب فيها ويُرسل ويُعدَّل دون سؤال",
   "approvals.elsewhere": "قرأت هذه المهمة شيئًا من مصدر آخر قد يتضمن تعليمات، لذا يُطرح السؤال مجددًا."

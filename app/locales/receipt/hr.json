@@ -41,5 +41,9 @@
   "receipt.spentLede": "Izračunato iz onoga što su mozgovi svakog odgovora pročitali i napisali, po današnjim cijenama, kao ispod svakog odgovora.",
   "receipt.months": "Po mjesecima",
   "receipt.byBrain": "Po mozgu",
-  "receipt.costliest": "Zadaci koji su najviše koštali"
+  "receipt.costliest": "Zadaci koji su najviše koštali",
+  "receipt.certificates": "Certifikati",
+  "receipt.certificatesText": "Pečat ovog uređaja, tko datira certifikate i javni zapisnik",
+  "receipt.seal": "Pečat ovog uređaja",
+  "receipt.seal.text": "Certifikati spremljeni ovdje zapečaćeni su ključem koji nikad ne napušta ovaj uređaj. Tko se na njih oslanja, može provjeriti ovaj otisak ili se o njemu unaprijed dogovoriti s vama."
 }

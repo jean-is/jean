@@ -41,5 +41,9 @@
   "receipt.spentLede": "የእያንዳንዱ መልስ አንጎሎች ካነበቡትና ከጻፉት፣ በዛሬ ዋጋቸው የተሰላ፣ እንደ እያንዳንዱ መልስ ስር።",
   "receipt.months": "በወር",
   "receipt.byBrain": "በአንጎል",
-  "receipt.costliest": "ብዙ ያስወጡ ተግባሮች"
+  "receipt.costliest": "ብዙ ያስወጡ ተግባሮች",
+  "receipt.certificates": "ሰርተፊኬቶች",
+  "receipt.certificatesText": "የዚህ መሣሪያ ማኅተም፣ ለሰርተፊኬቶች ቀን የሚያስቀምጠው፣ እና የሕዝብ መዝገብ",
+  "receipt.seal": "የዚህ መሣሪያ ማኅተም",
+  "receipt.seal.text": "እዚህ የሚቀመጡ የምስክር ወረቀቶች ከዚህ መሣሪያ ፈጽሞ በማይወጣ ቁልፍ ይታተማሉ። በእነሱ የሚተማመን ሰው ይህን የጣት አሻራ ማረጋገጥ ወይም አስቀድሞ ከእርስዎ ጋር በእሱ ላይ መስማማት ይችላል።"
 }

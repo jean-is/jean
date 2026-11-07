@@ -55,8 +55,6 @@
   "approvals.pagesOut": "Можуть виходити в інтернет",
   "approvals.inPage": "Усередині сторінки",
   "approvals.fromInternet": "З інтернету",
-  "approvals.certificates": "Сертифікати",
-  "approvals.certificatesText": "Печатка цього пристрою, хто датує сертифікати, і публічний журнал",
   "approvals.what.reads": "{name} читає там без запитань",
   "approvals.what.acts": "{name} пише, надсилає й змінює там без запитань",
   "approvals.elsewhere": "Це завдання прочитало щось ззовні, що може містити інструкції, тому питання поставлено знову."

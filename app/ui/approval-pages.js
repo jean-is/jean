@@ -1,7 +1,7 @@
 // Settings' Approvals: one line on how things stand, then the three rules as baskets of the kinds of action they
 // hold, each kind opening its page at its own address (D509): what it covers, its three choices with the usual marked,
 // and its exceptions. Then the exceptions themselves, every Always allow a capability keeps (its part of the allowed
-// slot) with Stop and the stricter rules (D295), Web pages (D143) and, once found, Certificates (D274), each a page.
+// slot) with Stop and the stricter rules (D295), and Web pages and apps (D143), each a page.
 // Loaded the first time Approvals shows; its strings are a part of their own (locales/approvals/).
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
@@ -42,7 +42,7 @@ const stopped = signal(0)
 /** What Be more careful starts on: a kind's page's own kind. */
 const preset = signal('')
 
-// The page open (pageOpen()): a kind's, or exceptions, careful, pages or certificates; '' for the list.
+// The page open (pageOpen()): a kind's, or exceptions, careful or pages; '' for the list.
 
 /** @param {string} to */
 const go = (to) => goPage('approvals', to)
@@ -72,7 +72,7 @@ const services = () => (loaded.value.has('connections') ? [...(app.policy.connec
 /** A guard in words: what it is for and what Jean does then. @param {import('../core/rules.js').Guard} guard */
 const said = (guard) => `${guard.service ? services().find((one) => one.id === guard.service)?.name ?? guard.service : t(`kind.${guard.kind}.label`)} · ${t(`rules.${guard.then}`)}`
 
-/** Settings' Approvals: the line, the baskets, the exceptions, then Web pages and Certificates. */
+/** Settings' Approvals: the line, the baskets, the exceptions, then Web pages and apps. */
 function list() {
   const shown = kinds()
   const [set, mine, items, careful] = [shown.filter(locked).length, shown.filter(changed).length, allowed(), guards()]
@@ -87,8 +87,7 @@ function list() {
       ${row('exceptions', icons.shield, 'approvals.allowed', items.length ? items.map(named).join(' · ') : t('approvals.allowedNone', { name }), items.length)}
       ${row('exceptions', icons.plus, 'approvals.careful', careful.length ? said(careful[0][0]) : t('approvals.carefulNone'), careful.length)}
     </ul></section>
-    <section><ul class="list data-rows">${row('pages', icons.code, 'pages.title', t(out ? 'approvals.pagesOut' : 'approvals.pagesIn'))}${loaded.value.has('receipt')
-      ? row('certificates', icons.badge, 'approvals.certificates', t('approvals.certificatesText')) : nothing}</ul></section>`
+    <section><ul class="list data-rows">${row('pages', icons.code, 'pages.title', t(out ? 'approvals.pagesOut' : 'approvals.pagesIn'))}</ul></section>`
 }
 
 // ─── The pages ───────────────────────────────────────────────────────────────
@@ -160,29 +159,18 @@ function webPages() {
   return [all.slice(0, 3), all.slice(3)].map((group, i) => html`<section><h3>${t(i ? 'approvals.fromInternet' : 'approvals.inPage')}</h3><ul class="rules">${group.map(one)}</ul></section>`)
 }
 
-/** This device's seal (D274): its key's fingerprint, which whoever relies on its certificates checks, or agrees on beforehand. */
-const sealPrint = signal('')
-function certificates() {
-  if (!sealPrint.value) import('../caps/receipt/receipt.js').then(({ fingerprint }) => fingerprint()).then((print) => (sealPrint.value = print))
-  return html`<section><h3>${t('seal.title')}</h3><p class="muted">${t('seal.text')}</p>
-    <span class="key-command"><code dir="ltr">${sealPrint.value.match(/.{1,4}/g)?.join(' ')}</code><button type="button" class="icon-button subtle" aria-label=${t('action.copy')}
-      @click=${() => navigator.clipboard.writeText(sealPrint.value).then(() => notify(t('toast.copied')))}>${icons.copy}</button></span></section>
-  ${slots('approvals').map((part) => part.draw({ lockedBy }))}`
-}
-
-/** Each page but a kind's: its title, the line under it, what it holds. @type {Record<string, [string, string, () => unknown, (() => boolean)?]>} */
+/** Each page but a kind's: its title, the line under it, what it holds. @type {Record<string, [string, string, () => unknown]>} */
 const PAGES = {
   exceptions: ['approvals.exceptions', 'approvals.exceptionsText', exceptions],
   careful: ['approvals.carefulTitle', 'approvals.carefulText', careful],
   pages: ['pages.title', 'pages.text', webPages],
-  certificates: ['approvals.certificates', 'approvals.certificatesText', certificates, () => loaded.value.has('receipt')],
 }
 
 /** Settings' Approvals: the list, or the page open. */
 export function section() {
   const open = pageOpen()
-  /** @type {[string, string, () => unknown, (() => boolean)?] | undefined} */
-  const page = kinds().includes(open) ? [`kind.${open}.label`, `approvals.covers.${open}`, () => kindPage(open)] : PAGES[open]?.[3]?.() === false ? undefined : PAGES[open]
+  /** @type {[string, string, () => unknown] | undefined} */
+  const page = kinds().includes(open) ? [`kind.${open}.label`, `approvals.covers.${open}`, () => kindPage(open)] : PAGES[open]
   if (!page) return list()
   const [title, text, draw] = page
   return html`<button class="back button subtle" @click=${() => go(open === 'careful' ? 'exceptions' : '')}>${icons.back} ${t(open === 'careful' ? 'approvals.exceptions' : 'settings.approvals')}</button>

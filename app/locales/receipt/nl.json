@@ -41,5 +41,9 @@
   "receipt.spentLede": "Berekend uit wat de breinen van elk antwoord lazen en schreven, tegen hun prijzen van vandaag, zoals onder elk antwoord.",
   "receipt.months": "Per maand",
   "receipt.byBrain": "Per brein",
-  "receipt.costliest": "De taken die het meest kostten"
+  "receipt.costliest": "De taken die het meest kostten",
+  "receipt.certificates": "Certificaten",
+  "receipt.certificatesText": "Het zegel van dit apparaat, wie certificaten dateert, en het openbaar register",
+  "receipt.seal": "Het zegel van dit apparaat",
+  "receipt.seal.text": "Certificaten die hier worden opgeslagen, worden verzegeld met een sleutel die dit apparaat nooit verlaat. Wie erop vertrouwt, kan deze vingerafdruk controleren of die vooraf met je afspreken."
 }

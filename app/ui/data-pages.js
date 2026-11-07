@@ -7,7 +7,7 @@ import { html, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { app } from './state.js'
 import { unlock, isDenied, slots, loaded } from './caps.js'
-import { sectionOpen, pageOpen, openSettings, projectName, backup } from './dialogs.js'
+import { sectionOpen, pageOpen, openSettings, projectName, backup, lockedBy } from './dialogs.js'
 import { everywhere } from './discovery.js'
 import { BRAND } from '../brand.js'
 import { weigh } from '../core/files.js'
@@ -22,7 +22,7 @@ await Promise.all([useStrings('data'), styleSheet(new URL('data-pages.css', impo
  * row's unless it has its own; at the row's end how it stands, at its page's head what it does most, what presses, and,
  * while a copy it keeps elsewhere is in step, where the user's things are safe (Sync's), which stands for the browser that may clear them.
  * @typedef {{ id: string, at: number, group: 'here' | 'copies' | 'others', icon: unknown, label: string, text: () => string, line?: () => string,
- *   state?: () => unknown, end?: () => unknown, say?: () => string | undefined, copy?: () => string | undefined, when?: () => boolean, draw: () => unknown }} Part
+ *   state?: () => unknown, end?: () => unknown, say?: () => string | undefined, copy?: () => string | undefined, when?: () => boolean, draw: (settings: { lockedBy: () => string }) => unknown }} Part
  */
 
 /** How much the browser keeps for Jean, how much it would, and whether it keeps it come what may. */
@@ -185,7 +185,7 @@ export function section() {
   const page = [...shown, BRING].find((part) => part.id === open)
   const said = page ? (page.line ?? page.text)() : pressing(shown)
   if (page) return html`<button class="back button subtle" @click=${() => go('')}>${icons.back} ${t('settings.storage')}</button>
-    <header class="data-head"><div><h2 tabindex="-1">${t(page.label)}</h2>${said ? html`<p class="lede">${said}</p>` : nothing}</div>${page.end?.() ?? nothing}</header>${page.draw()}`
+    <header class="data-head"><div><h2 tabindex="-1">${t(page.label)}</h2>${said ? html`<p class="lede">${said}</p>` : nothing}</div>${page.end?.() ?? nothing}</header>${page.draw({ lockedBy })}`
   return html`<header class="data-head"><h2>${t('settings.storage')}</h2>${download()}</header>
     <p class="lede">${app.ephemeral.value ? html`<strong>${t('storage.ephemeral')}</strong>` : html`${t('data.kept')} ${said ? html`<strong>${said}</strong>` : nothing}`}</p>
     ${GROUPS.map((group) => {

@@ -41,5 +41,9 @@
   "receipt.spentLede": "Her yanıtın beyinlerinin okuduğu ve yazdığı kadarından, bugünkü fiyatlarıyla, her yanıtın altındaki gibi hesaplandı.",
   "receipt.months": "Aya göre",
   "receipt.byBrain": "Beyne göre",
-  "receipt.costliest": "En çok tutan görevler"
+  "receipt.costliest": "En çok tutan görevler",
+  "receipt.certificates": "Sertifikalar",
+  "receipt.certificatesText": "Bu cihazın mührü, sertifikalara kimin tarih attığı ve herkese açık kayıt",
+  "receipt.seal": "Bu cihazın mührü",
+  "receipt.seal.text": "Burada kaydedilen sertifikalar, bu cihazdan hiç çıkmayan bir anahtarla mühürlenir. Onlara güvenen kişi bu parmak izini doğrulayabilir ya da önceden seninle üzerinde anlaşabilir."
 }

@@ -41,5 +41,9 @@
   "receipt.spentLede": "Calcolato da ciò che i cervelli di ogni risposta hanno letto e scritto, ai loro prezzi di oggi, come sotto ogni risposta.",
   "receipt.months": "Per mese",
   "receipt.byBrain": "Per cervello",
-  "receipt.costliest": "Le attività che sono costate di più"
+  "receipt.costliest": "Le attività che sono costate di più",
+  "receipt.certificates": "Certificati",
+  "receipt.certificatesText": "Il sigillo di questo dispositivo, chi data i certificati e il registro pubblico",
+  "receipt.seal": "Il sigillo di questo dispositivo",
+  "receipt.seal.text": "I certificati salvati qui sono sigillati con una chiave che non lascia mai questo dispositivo. Chi vi fa affidamento può verificare questa impronta, o concordarla con te in anticipo."
 }

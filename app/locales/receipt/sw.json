@@ -41,5 +41,9 @@
   "receipt.spentLede": "Imehesabiwa kutokana na kile akili za kila jibu zilichosoma na kuandika, kwa bei zao za leo, kama chini ya kila jibu.",
   "receipt.months": "Kwa mwezi",
   "receipt.byBrain": "Kwa akili",
-  "receipt.costliest": "Kazi zilizogharimu zaidi"
+  "receipt.costliest": "Kazi zilizogharimu zaidi",
+  "receipt.certificates": "Vyeti",
+  "receipt.certificatesText": "Muhuri wa kifaa hiki, anayeweka tarehe kwenye vyeti, na daftari la umma",
+  "receipt.seal": "Muhuri wa kifaa hiki",
+  "receipt.seal.text": "Vyeti vinavyohifadhiwa hapa vinagongwa muhuri kwa ufunguo ambao hauondoki kamwe kwenye kifaa hiki. Anayevitegemea anaweza kukagua alama hii ya kidole, au kukubaliana nawe kuihusu mapema."
 }

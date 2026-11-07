@@ -358,7 +358,7 @@ test('a connection that comes after Jean opened, from another tab or a sync, is 
 test('a service of the earlier MCP revision, reached from a script', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
-  await turnOn(page, 'Computer')
+  await turnOn(page, 'Computer in this tab')
   await page.keyboard.press('Escape')
   await connect(page, `${MAIL_URL}/legacy/mcp`)
   await ask(page, 'What are my latest emails?')

@@ -41,5 +41,9 @@
   "receipt.spentLede": "Calculé d’après ce que les cerveaux de chaque réponse ont lu et écrit, à leurs prix d’aujourd’hui, comme sous chaque réponse.",
   "receipt.months": "Par mois",
   "receipt.byBrain": "Par cerveau",
-  "receipt.costliest": "Les tâches qui ont coûté le plus"
+  "receipt.costliest": "Les tâches qui ont coûté le plus",
+  "receipt.certificates": "Certificats",
+  "receipt.certificatesText": "Le sceau de cet appareil, qui date les certificats, et le registre public",
+  "receipt.seal": "Le sceau de cet appareil",
+  "receipt.seal.text": "Les certificats enregistrés ici sont scellés avec une clé qui ne quitte jamais cet appareil. Qui s’y fie peut vérifier cette empreinte, ou en convenir avec vous à l’avance."
 }

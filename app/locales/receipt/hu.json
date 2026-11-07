@@ -41,5 +41,9 @@
   "receipt.spentLede": "Abból számolva, amit az egyes válaszok agyai olvastak és írtak, a mai áraikon, ahogy minden válasz alatt.",
   "receipt.months": "Hónapok szerint",
   "receipt.byBrain": "Agyak szerint",
-  "receipt.costliest": "A legtöbbe került feladatok"
+  "receipt.costliest": "A legtöbbe került feladatok",
+  "receipt.certificates": "Tanúsítványok",
+  "receipt.certificatesText": "Ennek az eszköznek a pecsétje, ki látja el dátummal a tanúsítványokat, és a nyilvános napló",
+  "receipt.seal": "Ennek az eszköznek a pecsétje",
+  "receipt.seal.text": "Az itt mentett tanúsítványokat egy olyan kulccsal pecsételi le, amely soha nem hagyja el ezt az eszközt. Aki támaszkodik rájuk, ellenőrizheti ezt az ujjlenyomatot, vagy előre megegyezhet benne veled."
 }
