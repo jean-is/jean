@@ -125,7 +125,7 @@
     ["Changed in a sentence", "Another step, the other way round, in French for the Lyon office: ask, and it’s drawn again. Earlier versions stay in the task."]
   ],
   "where.title": "Where your words go.",
-  "where.why": "There is no {name} server. What changes is the AI that answers, and you choose it.",
+  "where.why": "No {name} server keeps your words in a form it can read. What changes is the AI that answers, and you choose it.",
   "where.cards": [
     ["Kept on this device", "Your files and your tasks are kept in this browser, encrypted. Nothing reaches us."],
     ["Sent to the AI you chose", "Your request and the file’s text go to the AI you picked, and nowhere else. Under every answer, {name} says where it was done."],

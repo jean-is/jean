@@ -49,7 +49,7 @@
   ],
   "faq.items": [
     ["Can I keep my ChatGPT conversations?", "Yes. Export them from ChatGPT and drop the file in {name}. They stay yours, in plain files on your device."],
-    ["Is it safer than ChatGPT?", "With the AI on this computer, nothing you write leaves it. With an AI online, ChatGPT included, that provider reads what you send, as in its own app. {name} adds no server of its own."],
+    ["Is it safer than ChatGPT?", "With the AI on this computer, what you write stays on it. With an AI online, ChatGPT included, that provider reads what you send, as in its own app. No {name} server keeps it in a form it can read."],
     ["Do I need an account?", "Not with the AI on this computer. The free one asks for an OpenRouter account."],
     ["Is there a European ChatGPT alternative?", "{name} is made in France and open source, and its AI can be European too: Mistral’s with your key, or one on your own computer."]
   ],

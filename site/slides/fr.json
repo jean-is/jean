@@ -89,7 +89,7 @@
     ["Chaque étape sous vos yeux", "Chaque étape s’affiche pendant qu’elle tourne. Ouvrez-en une pour voir ce qu’elle a reçu et ce qui en est sorti."]
   ],
   "where.title": "Où vont vos notes.",
-  "where.why": "Il n’existe aucun serveur {name}. Ce qui change, c’est l’IA qui répond, et c’est vous qui la choisissez.",
+  "where.why": "Aucun serveur de {name} ne garde vos notes sous une forme qu’il puisse lire. Ce qui change, c’est l’IA qui répond, et c’est vous qui la choisissez.",
   "where.cards": [
     ["Gardées sur cet appareil", "Vos fichiers et vos tâches restent dans ce navigateur, chiffrés. Rien ne nous parvient."],
     ["Envoyées à l’IA de votre choix", "Votre demande et ce que vous joignez vont à l’IA choisie, et nulle part ailleurs. Sous chaque réponse, {name} indique où elle a été faite."],

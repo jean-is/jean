@@ -21,7 +21,7 @@
     "OpenRouter gives access to hundreds of brains. Some are free, within daily limits; the others are paid for with credits you add on its site.",
     "{name} asks OpenRouter to send your requests only to services that neither keep nor train on them.",
     "OpenRouter’s answers come from the cloud. For what should stay on this computer, add a brain on this device too: see {device}.",
-    "The key OpenRouter gives {name} stays on this device, encrypted, and is never in a backup.",
+    "The key OpenRouter gives {name} is kept on this device, encrypted, and goes to another of your devices only if you add one, sealed so only that device can open it. It is never in a backup.",
     "OpenRouter’s terms are for adults, so a child’s profile doesn’t offer it."
   ],
   "fixes": [

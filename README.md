@@ -4,7 +4,7 @@
 
 Create with any AI, keep everything.
 
-Ask in words or with a file, and Jean hands back what you asked for, made: an answer with its sources, a document, a spreadsheet, a chart. It works with GPT, Claude, Gemini or an AI on your own computer, and it is made for people who will never open a terminal. There is nothing to install and no Jean server: everything Jean keeps lives in your browser as plain files, and the thinking happens on your device or with a provider you choose. Free and open source.
+Ask in words or with a file, and Jean hands back what you asked for, made: an answer with its sources, a document, a spreadsheet, a chart. It works with GPT, Claude, Gemini or an AI on your own computer, and it is made for people who will never open a terminal. There is nothing to install and no Jean server that can read what Jean keeps: it all lives in your browser as plain files, and the thinking happens on your device or with a provider you choose. Free and open source.
 
 [**Open Jean at jean.is**](https://jean.is) · [Help](https://jean.is/help) · [Why Jean exists](MANIFESTO.md)
 
@@ -31,7 +31,7 @@ Jean starts as a single box and offers each of these when you need it, like a ga
 
 ## Private by design
 
-- **Your data stays on your device,** as plain files in the browser's private file system, one file per thing. A backup is one zip you keep wherever you like; your keys are encrypted on the device and never part of it.
+- **Your data stays on your device,** as plain files in the browser's private file system, one file per thing. A backup is one zip you keep wherever you like; your keys are encrypted on the device, never part of it, and go to another of your devices only if you add one, sealed so only it can open them.
 - **You choose the brain:**
   - **On this device:** Gemma 4 E2B on WebGPU, about 3.1 GB, downloaded once if you agree, and offered only where it can run.
   - **In one click:** sign in with OpenRouter.

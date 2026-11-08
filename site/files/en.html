@@ -1,14 +1,14 @@
 <h1>Where your files go</h1>
-<p class="muted">Last updated <time datetime="2026-10-22">22 October 2026</time></p>
+<p class="muted">Last updated <time datetime="2026-11-08">8 November 2026</time></p>
 
-<p>Jean runs in your browser and keeps everything it works with on your device. Something leaves your device only when an answer needs it, and then it goes to the brain you chose, a service you connected or a site you opened. Here is where things go for each choice, and how each answer tells you where it was done. The <a href="{privacy}">privacy policy</a> says the same in full; if the two ever differ, the policy applies.</p>
+<p>Jean runs in your browser and keeps everything it works with on your device. Something leaves your device only when an answer needs it, going to the brain you chose, a service you connected or a site you opened, or when you add another of your devices, which then gets most of your settings and keys, sealed so only it can open them. Here is where things go for each choice, and how each answer tells you where it was done. The <a href="{privacy}">privacy policy</a> says the same in full; if the two ever differ, the policy applies.</p>
 
 <h2>Before you ask anything</h2>
 <ul>
-<li>Opening Jean contacts only the address you opened it from, to fetch Jean’s own files.</li>
+<li>Opening Jean contacts only the address you opened it from, to fetch Jean’s own files, and, once you’ve added another of your devices, a server that passes sealed messages between them.</li>
 <li>No account, no cookies, no analytics. Jean has no server that sees what you write.</li>
-<li>Your tasks, files, memory, settings and keys stay in this browser’s storage, on this device, encrypted with a key that never leaves it.</li>
-<li>Your keys are never in a backup, a sync or a share, and no brain ever reads them.</li>
+<li>Your tasks, files, memory, settings and keys are kept in this browser’s storage, on this device, encrypted with a key that never leaves it. If you add another of your devices, most of your settings and keys go to it too, and a task when you send it there, sealed so only it can open them.</li>
+<li>Your keys are never in a backup, a synced folder or a share, and no brain ever reads them.</li>
 </ul>
 
 <h2>When you ask, it depends on the brain</h2>
@@ -22,7 +22,7 @@
 <p>Your request goes to the server on this computer. If the server runs on another machine on your network, the button says <em>Sent outside this device</em>, because it was.</p></div></section>
 <section class="route"><div><h3>Start for free</h3><p class="muted">A free account at OpenRouter</p><span class="verdict cloud">Done in the cloud</span></div>
 <div><div class="path"><span class="node here">This device<small>Jean, your files</small></span><span aria-hidden="true">→</span><span class="node">OpenRouter<small>openrouter.ai</small></span><span aria-hidden="true">→</span><span class="node">A company that runs the brain</span></div>
-<p>You make an account on OpenRouter’s site, and Jean keeps the key it gives back, encrypted, on this device. Each request goes to OpenRouter, which passes it to a company that runs the brain. Jean asks OpenRouter to use only companies that don’t keep or train on what they’re sent, so a few free brains may not be available.</p></div></section>
+<p>You make an account on OpenRouter’s site, and Jean keeps the key it gives back, encrypted, on this device and on any other device of yours you add. Each request goes to OpenRouter, which passes it to a company that runs the brain. Jean asks OpenRouter to use only companies that don’t keep or train on what they’re sent, so a few free brains may not be available.</p></div></section>
 <section class="route"><div><h3>Your own key</h3><p class="muted">OpenAI, Anthropic, Google, Mistral AI, Groq, xAI and others</p><span class="verdict cloud">Done in the cloud</span></div>
 <div><div class="path"><span class="node here">This device<small>Jean, your files</small></span><span aria-hidden="true">→</span><span class="node">That company<small>api.anthropic.com, for example</small></span></div>
 <p>Your request goes straight from your browser to that company, under the terms of your account there. No one sits in between. What Gmail, Google Calendar and Google Drive bring in goes only to a company whose terms rule out training AI on it: Jean refuses the others, such as Google Gemini and Mistral AI, whose free tiers may train on it.</p></div></section>
@@ -83,6 +83,7 @@
 <li><strong>Jean’s browser</strong> visits the sites you open, as any browser would.</li>
 <li><strong>The Computer</strong> asks before reaching a new site, and fetches the packages it installs from PyPI and npm, Python’s and JavaScript’s public package catalogues.</li>
 <li><strong>Sharing by link</strong> uploads a copy sealed in your browser. The key is in the link, after the #, which browsers never send, so the host can’t read the copy.</li>
+<li><strong>Your devices</strong>, where Jean offers it: once you add another of your devices, with a QR code and six digits, it gets your projects’ names and descriptions, most of your settings, and the keys for your brains in the cloud, search services, connections and the sites you published. Each change to your settings and keys then goes to it too, and a task when you send it there. All of it is sealed so only that device can open it, and goes through a server that can’t read it and keeps it 7 days at most. Your plans and the key that encrypts your files here never go, and services you signed in to ask you to sign in again there.</li>
 <li><strong>Sync</strong> copies your tasks and files to a folder you choose, which a cloud drive may carry. Settings and keys never go there.</li>
 <li><strong>A backup</strong> is a file you download. Your keys are never in it.</li>
 <li><strong>Extensions</strong> are other people’s code. They run walled off, with no internet of their own, but read what each says it does.</li>
@@ -121,6 +122,8 @@
 <tr><th scope="rowgroup" colspan="3">Skills, extensions and maps</th></tr>
 <tr><td><code>github.com</code>, <code>api.github.com</code>, <code>raw.githubusercontent.com</code>, or a site you name</td><td>Adding skills or an extension from there</td><td>Your internet address</td></tr>
 <tr><td><code>tiles.openfreemap.org</code></td><td>Showing a map, once you allow maps</td><td>The area on screen</td></tr>
+<tr><th scope="rowgroup" colspan="3">Your devices</th></tr>
+<tr><td><code>relay.jean.is</code></td><td>Once you add another of your devices, while Jean is open</td><td>Messages sealed so only your devices can open them, kept 7 days at most, and your internet address, noted in a sealed record each time a device sends it something, kept a year</td></tr>
 <tr><th scope="rowgroup" colspan="3">Sharing, saved copies and certificates</th></tr>
 <tr><td><code>hst.ing</code></td><td>Sharing by link</td><td>A sealed copy it can’t read</td></tr>
 <tr><td><code>cdn.jsdelivr.net</code>, for <code>@jean-is/render</code> and <code>@jean-is/sounds</code></td><td>When someone opens a task saved as a web page, or a shared link</td><td>Their internet address</td></tr>

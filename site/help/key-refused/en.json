@@ -17,7 +17,7 @@
   "good": [
     "Under an answer, the same message has a button that opens the brain’s page.",
     "Each time you open {brains}, {name} asks every brain again: once the new key works, {trouble} goes away.",
-    "A key stays on this device, encrypted, and goes only to its own service."
+    "A key is kept on this device, encrypted, and used only with its own service. If you’ve added another of your devices, the new key goes there too, sealed so only that device can open it: no need to paste it there."
   ],
   "fixes": [
     ["The new key is refused too", "Look at the account on the service’s site: some ask for a payment method before a key works. Or start for free with OpenRouter: {choose}."],

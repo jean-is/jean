@@ -4,7 +4,7 @@ What Warehouse SAS's server sees and keeps when it serves an organisation's copy
 
 ## Where it runs
 
-On a server that runs nothing but Jean's services, rented from OVHcloud (OVH SAS, a French company), in its Gravelines data centre in France ([deploy/server/](../../deploy/server/README.md), D634). Caddy serves every hosted copy there, beside Jean's gateway, its share host and its key requests; jean.is's own files are on Bunny CDN. Warehouse SAS alone administers it, over SSH with a key. OVHcloud runs the building, the hardware and the network.
+On a server that runs nothing but Jean's services, rented from OVHcloud (OVH SAS, a French company), in its Gravelines data centre in France ([deploy/server/](../../deploy/server/README.md), D634). Caddy serves every hosted copy there, beside Jean's gateway, its share host, its relay and its key requests; jean.is's own files are on Bunny CDN. Warehouse SAS alone administers it, over SSH with a key. OVHcloud runs the building, the hardware and the network.
 
 Two other services take part, and neither carries a visit:
 
@@ -21,13 +21,14 @@ Once a browser has Jean, its service worker serves it from the device, and the s
 - when someone finds a capability, for that capability's files, whose names say which capability it is;
 - after an update, for the new version's files.
 
-It never sees requests, answers, files, memory, keys, sign-in tokens or anything sent to a brain, a gateway or a connected service. Those go from the browser to the addresses the policy names, and the address's `Content-Security-Policy`, which `npm run tenant` writes from that policy, keeps Jean to its own files and those addresses. A trial left open (`--open`) has no such limit, and still sends nothing through this server.
+It never sees requests, answers, files, memory, keys, sign-in tokens or anything sent to a brain, a gateway or a connected service. Those go from the browser to the addresses the policy names, and the address's `Content-Security-Policy`, which `npm run tenant` writes from that policy, keeps Jean to its own files and those addresses. A trial left open (`--open`) has no such limit, and still sends nothing through this server, as no copy does unless its policy names the relay this server runs (`urls.relay`) and signs no one in: then what goes between a person's devices, once they add one, passes through it, sealed so it can't read it, each message kept 7 days at most, and the address each change came from, sealed, a year.
 
 ## What it keeps
 
 - **Jean's files:** one release every hosted copy shares, the last five releases and any an address is pinned to. Hosted copies share files, never data: each address is an origin of its own, and the browser keeps each one's data apart.
 - **Each address's `policy.json`**, and the Caddyfile listing the addresses and their headers. The registry they are written from, with every organisation's policy, stays with Warehouse SAS, off the server and outside this repository.
 - **Each address's certificate and its private key**, in Caddy's store, which renews the certificate before it expires.
+- **For a copy whose policy names this server's relay** (`urls.relay`), once people add another of their devices: sealed messages it can't read, 7 days at most; a hash of each mailbox's token, until the mailbox goes unused 90 days; and the address each change came from, sealed to a key kept off the server, a year.
 - **No log of visits.** Caddy holds ports 80 and 443, writes no access log and discards its own messages, and Docker keeps none of its containers' output. A visit to `http://ai.acme.com` is sent on to `https://`, and after the first, HSTS keeps the browser there.
 
 ## What it can't promise

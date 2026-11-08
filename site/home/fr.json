@@ -61,7 +61,7 @@
   "confidential.mostLabel": "Dans la plupart des applis d’IA",
   "confidential.most": "Sur les serveurs de l’entreprise, selon ses conditions.",
   "confidential.oursLabel": "Avec {name}",
-  "confidential.ours": "Vos données restent chiffrées sur votre appareil. Aucun serveur {name}.",
+  "confidential.ours": "Vos fichiers restent chiffrés sur votre appareil. Aucun serveur de {name} ne les garde sous une forme qu’il puisse lire.",
   "confidential.sealed": "Privé · hors ligne",
   "confidential.offline": "Coupez le Wi-Fi : les réponses arrivent toujours, sur un ordinateur doté de 12 Go de mémoire.",
   "ai.name": "Votre IA",

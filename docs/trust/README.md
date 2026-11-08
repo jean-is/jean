@@ -1,6 +1,6 @@
 # Trust pack
 
-What an organisation's IT, security, privacy and purchasing teams ask for before a pilot, in place of a SOC 2 report. SOC 2 audits a provider's servers and how it runs them. An organisation that serves its own copy of Jean, with its own gateway and no share host of Warehouse SAS's, sends nothing of its own through any server Warehouse SAS runs: the questions are about the code it deploys, which these documents answer and anyone can check. When Warehouse SAS hosts the copy instead (D456), its server serves Jean's files and sees what any web server sees of a visit: [Hosted copies](hosted.md) says what that is, what it keeps and where it runs.
+What an organisation's IT, security, privacy and purchasing teams ask for before a pilot, in place of a SOC 2 report. SOC 2 audits a provider's servers and how it runs them. An organisation that serves its own copy of Jean, with its own gateway and no share host or relay of Warehouse SAS's, sends nothing of its own through any server Warehouse SAS runs: the questions are about the code it deploys, which these documents answer and anyone can check. When Warehouse SAS hosts the copy instead (D456), its server serves Jean's files and sees what any web server sees of a visit: [Hosted copies](hosted.md) says what that is, what it keeps and where it runs.
 
 | Document | For | What it answers |
 |---|---|---|

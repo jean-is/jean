@@ -19,7 +19,7 @@
     ],
     [
       "Your work stays here",
-      "Your tasks and files are kept in this browser, on this device, encrypted. There is no {name} server: a brain in the cloud reads only what a request sends it, and a brain on this computer sends nothing at all."
+      "Your tasks and files are kept in this browser, on this device, encrypted. No {name} server keeps them in a form it can read, except a site you publish. A brain in the cloud reads only what a request sends it, and a brain on this computer sends nothing at all."
     ],
     [
       "It asks before it acts",
@@ -50,7 +50,7 @@
     ],
     [
       "Your tasks are gone",
-      "A private window keeps nothing once it is closed, and clearing this site’s data deletes everything. A backup keeps a copy: see {backup}."
+      "A private window keeps nothing once it is closed, and clearing this site’s data deletes everything here. A backup keeps a copy: see {backup}."
     ]
   ],
   "ask": "What can you do for me?"

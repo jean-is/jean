@@ -21,7 +21,7 @@
     "OpenRouter donne accès à des centaines de cerveaux. Certains sont gratuits, dans des limites par jour ; les autres se paient avec des crédits ajoutés sur son site.",
     "{name} demande à OpenRouter de n’envoyer vos demandes qu’à des services qui ne les gardent pas et ne s’en servent pas pour s’entraîner.",
     "Les réponses d’OpenRouter viennent du cloud. Pour ce qui doit rester sur cet ordinateur, ajoutez aussi un cerveau sur cet appareil : voir {device}.",
-    "La clé qu’OpenRouter donne à {name} reste sur cet appareil, chiffrée, et n’est jamais dans une sauvegarde.",
+    "La clé qu’OpenRouter donne à {name} est gardée sur cet appareil, chiffrée, et ne va sur un autre de vos appareils que si vous en ajoutez un, scellée pour que seul cet autre appareil puisse l’ouvrir. Elle n’est jamais dans une sauvegarde.",
     "Les conditions d’OpenRouter sont réservées aux adultes : le profil d’un enfant ne le propose pas."
   ],
   "fixes": [

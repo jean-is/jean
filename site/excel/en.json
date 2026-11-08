@@ -83,7 +83,7 @@
     ["Every step in view", "Each step shows as it runs. Open one to see what it was given and what came back."]
   ],
   "where.title": "Where your file goes.",
-  "where.why": "There is no {name} server. What changes is the AI that answers, and you choose it.",
+  "where.why": "No {name} server keeps your file in a form it can read. What changes is the AI that answers, and you choose it.",
   "where.cards": [
     ["Kept on this device", "Your files and your tasks are kept in this browser, encrypted. Nothing reaches us."],
     ["Sent to the AI you chose", "Your request and the file’s text go to the AI you picked, and nowhere else. Under every answer, {name} says where it was done."],

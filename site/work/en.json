@@ -21,7 +21,7 @@
   "jobs.why": "An answer with its sources, a Word document, a spreadsheet or slides. Numbers are worked out by code, not guessed.",
   "jobs.sample": "Which product grew the most this year? A sample sales spreadsheet, worked out on this computer.",
   "where.title": "Where your work goes.",
-  "where.why": "There is no {name} server. What changes is the AI that answers, and that is your company’s choice as much as yours.",
+  "where.why": "No {name} server keeps your work in a form it can read. What changes is the AI that answers, and that is your company’s choice as much as yours.",
   "where.cards": [
     [
       "On your computer",

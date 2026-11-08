@@ -21,7 +21,7 @@
   "good": [
     "{name} has no tie to OpenRouter, nor to any other service it offers.",
     "OpenRouter’s free account has daily limits, and its answers come from the cloud.",
-    "A key stays on this device, encrypted. It is never in a backup.",
+    "A key is kept on this device, encrypted, and goes to another of your devices only if you add one, sealed so only that device can open it. It is never in a backup.",
     "With more than one brain, {auto} picks one for each request: quicker or stronger as the request needs, and the one on this device for anything personal.",
     "Under every answer, {name} says which brain wrote it, and where."
   ],

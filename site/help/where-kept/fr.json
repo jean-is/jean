@@ -1,13 +1,13 @@
 {
   "title": "Où {name} garde votre travail : ce navigateur, cet appareil, chiffré",
-  "description": "{name} garde vos tâches, fichiers et réglages dans ce navigateur, sur cet appareil, chiffrés, sans serveur. Ce qui peut les effacer, et comment les copier.",
+  "description": "{name} garde vos tâches et fichiers dans ce navigateur, sur cet appareil, chiffrés, sans copie lisible sur ses serveurs. Ce qui les efface, et comment les copier.",
   "h1": "Où est gardé votre travail",
   "works": "Tous les navigateurs",
-  "answer": "Dans ce navigateur, sur cet appareil, chiffrés : vos tâches, fichiers, mémoire, réglages et clés. Il n’y a pas de serveur {name}, et aucune copie ailleurs sauf si vous en faites une : une sauvegarde, ou un dossier que votre stockage en ligne synchronise.",
+  "answer": "Dans ce navigateur, sur cet appareil, chiffrés : vos tâches, fichiers, mémoire, réglages et clés. Aucun serveur {name} ne les garde sous une forme qu’il puisse lire, sauf un site que vous publiez. Ils ne sont copiés ailleurs que si vous le choisissez : une sauvegarde ou un dossier synchronisé garde vos tâches et fichiers ; un autre de vos appareils que vous ajoutez reçoit la plupart de vos réglages et de vos clés, scellés pour que lui seul puisse les ouvrir, et chaque tâche que vous lui envoyez.",
   "parts": [
     [
       "Dans ce navigateur, sur cet appareil",
-      "Chaque navigateur garde son propre {name} : ce que vous faites dans Chrome n’est pas dans Safari, et ce que vous faites sur votre ordinateur n’est pas sur votre téléphone. De même pour chaque profil du navigateur, l’application de bureau, et une copie de {name} que votre organisation sert à sa propre adresse."
+      "Chaque navigateur garde son propre {name} : ce que vous faites dans Chrome n’est pas dans Safari, et ce que vous faites sur votre ordinateur n’est pas sur votre téléphone. De même pour chaque profil du navigateur, l’application de bureau, et une copie de {name} que votre organisation sert à sa propre adresse. Si vous ajoutez votre téléphone ou un autre ordinateur, il reçoit aussi la plupart de vos cerveaux et de vos réglages, et le nom de vos projets, scellés pour que lui seul puisse les ouvrir ; une tâche n’y va que quand vous l’envoyez."
     ],
     [
       "Chiffré",
@@ -27,7 +27,7 @@
     "{space}, sur la même page, montre la place que prend chaque partie, et ce qui peut partir pour en libérer.",
     "Installer {name} comme une application, dans Chrome ou Edge ou sur l’écran d’accueil d’un téléphone, aide le navigateur à garder ses données.",
     "Un dossier de votre ordinateur ouvert dans {name} reste où il est : dans Chrome et Edge, {name} modifie ses fichiers sur place ; dans les autres navigateurs, il travaille sur une copie.",
-    "Vos clés ne sont jamais dans une sauvegarde, une synchronisation ou un partage.",
+    "Vos clés ne sont jamais dans une sauvegarde, une synchronisation ou un partage. Un autre de vos appareils que vous ajoutez en reçoit la plupart, scellées pour que lui seul puisse les ouvrir ; là-bas, les services qui vous ont demandé de vous connecter vous le redemandent.",
     "Où va ce que vous partagez, cerveau par cerveau, et chaque adresse que {name} contacte : {files}."
   ],
   "fixes": [

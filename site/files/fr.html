@@ -1,14 +1,14 @@
 <h1>Où vont vos fichiers</h1>
-<p class="muted">Mise à jour le <time datetime="2026-10-22">22 octobre 2026</time></p>
+<p class="muted">Mise à jour le <time datetime="2026-11-08">8 novembre 2026</time></p>
 
-<p>Jean fonctionne dans votre navigateur et garde sur votre appareil tout ce avec quoi il travaille. Quelque chose ne quitte votre appareil que lorsqu’une réponse en a besoin, et cela va alors au cerveau que vous avez choisi, à un service que vous avez connecté ou à un site que vous avez ouvert. Voici où cela va pour chaque choix, et comment chaque réponse vous dit où elle a été faite. La <a href="{privacy}">politique de confidentialité</a> dit la même chose en entier ; si les deux diffèrent un jour, c’est elle qui s’applique.</p>
+<p>Jean fonctionne dans votre navigateur et garde sur votre appareil tout ce avec quoi il travaille. Quelque chose ne quitte votre appareil que lorsqu’une réponse en a besoin, pour aller au cerveau que vous avez choisi, à un service que vous avez connecté ou à un site que vous avez ouvert, ou quand vous ajoutez un autre de vos appareils, qui reçoit alors la plupart de vos réglages et de vos clés, scellés pour que lui seul puisse les ouvrir. Voici où cela va pour chaque choix, et comment chaque réponse vous dit où elle a été faite. La <a href="{privacy}">politique de confidentialité</a> dit la même chose en entier ; si les deux diffèrent un jour, c’est elle qui s’applique.</p>
 
 <h2>Avant toute demande</h2>
 <ul>
-<li>Ouvrir Jean ne contacte que l’adresse d’où vous l’avez ouvert, pour charger les fichiers de Jean lui-même.</li>
+<li>Ouvrir Jean ne contacte que l’adresse d’où vous l’avez ouvert, pour charger les fichiers de Jean lui-même, et, une fois un autre de vos appareils ajouté, un serveur qui transmet des messages scellés entre vos appareils.</li>
 <li>Pas de compte, pas de cookies, pas de statistiques. Jean n’a aucun serveur qui voit ce que vous écrivez.</li>
-<li>Vos tâches, vos fichiers, votre mémoire, vos réglages et vos clés restent dans le stockage de ce navigateur, sur cet appareil, chiffrés avec une clé qui ne le quitte jamais.</li>
-<li>Vos clés ne sont jamais dans une sauvegarde, une synchronisation ou un partage, et aucun cerveau ne les lit jamais.</li>
+<li>Vos tâches, vos fichiers, votre mémoire, vos réglages et vos clés sont gardés dans le stockage de ce navigateur, sur cet appareil, chiffrés avec une clé qui ne le quitte jamais. Si vous ajoutez un autre de vos appareils, la plupart de vos réglages et de vos clés y vont aussi, et une tâche quand vous l’y envoyez, scellés pour que lui seul puisse les ouvrir.</li>
+<li>Vos clés ne sont jamais dans une sauvegarde, un dossier synchronisé ou un partage, et aucun cerveau ne les lit jamais.</li>
 </ul>
 
 <h2>Quand vous demandez, tout dépend du cerveau</h2>
@@ -22,7 +22,7 @@
 <p>Votre demande va au serveur de cet ordinateur. Si le serveur tourne sur une autre machine de votre réseau, le bouton dit <em>Envoyée hors de cet appareil</em>, parce que c’est le cas.</p></div></section>
 <section class="route"><div><h3>Commencer gratuitement</h3><p class="muted">Un compte gratuit chez OpenRouter</p><span class="verdict cloud">Rédigée dans le cloud</span></div>
 <div><div class="path"><span class="node here">Cet appareil<small>Jean, vos fichiers</small></span><span aria-hidden="true">→</span><span class="node">OpenRouter<small>openrouter.ai</small></span><span aria-hidden="true">→</span><span class="node">Une entreprise qui fait tourner le cerveau</span></div>
-<p>Vous créez un compte sur le site d’OpenRouter, et Jean garde la clé qu’il renvoie, chiffrée, sur cet appareil. Chaque demande va à OpenRouter, qui la transmet à une entreprise qui fait tourner le cerveau. Jean demande à OpenRouter de n’utiliser que des entreprises qui ne gardent pas ce qu’on leur envoie et ne s’en servent pas pour s’entraîner : quelques cerveaux gratuits peuvent donc manquer.</p></div></section>
+<p>Vous créez un compte sur le site d’OpenRouter, et Jean garde la clé qu’il renvoie, chiffrée, sur cet appareil et sur chaque autre appareil que vous ajoutez. Chaque demande va à OpenRouter, qui la transmet à une entreprise qui fait tourner le cerveau. Jean demande à OpenRouter de n’utiliser que des entreprises qui ne gardent pas ce qu’on leur envoie et ne s’en servent pas pour s’entraîner : quelques cerveaux gratuits peuvent donc manquer.</p></div></section>
 <section class="route"><div><h3>Votre propre clé</h3><p class="muted">OpenAI, Anthropic, Google, Mistral AI, Groq, xAI et d’autres</p><span class="verdict cloud">Rédigée dans le cloud</span></div>
 <div><div class="path"><span class="node here">Cet appareil<small>Jean, vos fichiers</small></span><span aria-hidden="true">→</span><span class="node">Cette entreprise<small>api.anthropic.com, par exemple</small></span></div>
 <p>Votre demande va directement de votre navigateur à cette entreprise, selon les conditions de votre compte chez elle. Personne ne s’intercale. Ce qu’apportent Gmail, Google Agenda et Google Drive ne va qu’à une entreprise dont les conditions excluent d’entraîner une IA dessus : Jean refuse les autres, comme Google Gemini et Mistral AI, dont les offres gratuites peuvent s’en servir pour s’entraîner.</p></div></section>
@@ -83,6 +83,7 @@
 <li><strong>Le navigateur de Jean</strong> visite les sites que vous ouvrez, comme tout navigateur.</li>
 <li><strong>L’Ordinateur</strong> demande avant de joindre un nouveau site, et télécharge les paquets qu’il installe depuis PyPI et npm, les catalogues publics de paquets de Python et de JavaScript.</li>
 <li><strong>Le partage par lien</strong> envoie une copie scellée dans votre navigateur. La clé est dans le lien, après le #, que les navigateurs n’envoient jamais : l’hébergeur ne peut pas lire la copie.</li>
+<li><strong>Vos appareils</strong>, là où Jean le propose : une fois un autre de vos appareils ajouté, avec un QR code et six chiffres, il reçoit le nom et la description de vos projets, la plupart de vos réglages, et les clés de vos cerveaux dans le cloud, de vos services de recherche, de vos connexions et des sites que vous avez publiés. Ensuite, chaque changement de vos réglages et de vos clés lui parvient aussi, ainsi qu’une tâche quand vous l’y envoyez. Tout est scellé pour que seul cet appareil puisse l’ouvrir, et passe par un serveur qui ne peut pas le lire et le garde 7 jours au plus. Vos abonnements et la clé qui chiffre vos fichiers ici n’y vont jamais, et les services auxquels vous vous êtes connecté vous demandent de vous reconnecter là-bas.</li>
 <li><strong>La synchronisation</strong> copie vos tâches et vos fichiers dans un dossier de votre choix, qu’un service de stockage en ligne peut porter. Les réglages et les clés n’y vont jamais.</li>
 <li><strong>Une sauvegarde</strong> est un fichier que vous téléchargez. Vos clés n’y sont jamais.</li>
 <li><strong>Les extensions</strong> sont le code d’autres personnes. Elles s’exécutent dans un espace isolé sans accès à internet, mais lisez ce que chacune dit faire.</li>
@@ -121,6 +122,8 @@
 <tr><th scope="rowgroup" colspan="3">Compétences, extensions et cartes</th></tr>
 <tr><td><code>github.com</code>, <code>api.github.com</code>, <code>raw.githubusercontent.com</code>, ou un site que vous indiquez</td><td>Pour ajouter des compétences ou une extension depuis là</td><td>Votre adresse internet</td></tr>
 <tr><td><code>tiles.openfreemap.org</code></td><td>Pour montrer une carte, une fois les cartes autorisées</td><td>La zone à l’écran</td></tr>
+<tr><th scope="rowgroup" colspan="3">Vos appareils</th></tr>
+<tr><td><code>relay.jean.is</code></td><td>Une fois un autre de vos appareils ajouté, tant que Jean est ouvert</td><td>Des messages scellés que seuls vos appareils peuvent ouvrir, gardés 7 jours au plus, et votre adresse internet, consignée dans un registre scellé chaque fois qu’un appareil lui envoie quelque chose, gardé un an</td></tr>
 <tr><th scope="rowgroup" colspan="3">Partage, copies enregistrées et certificats</th></tr>
 <tr><td><code>hst.ing</code></td><td>Le partage par lien</td><td>Une copie scellée qu’il ne peut pas lire</td></tr>
 <tr><td><code>cdn.jsdelivr.net</code>, pour <code>@jean-is/render</code> et <code>@jean-is/sounds</code></td><td>Quand quelqu’un ouvre une tâche enregistrée comme page web, ou un lien partagé</td><td>Son adresse internet</td></tr>

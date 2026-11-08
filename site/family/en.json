@@ -95,7 +95,7 @@
   "learn.none": "The first measurements are on their way.",
   "learn.source": "Bastani and others, PNAS, 2025 · Measured {date} · The test’s requests, replies and code are public.",
   "where.title": "At home, not with us.",
-  "where.why": "There is no {name} server. What {name} keeps stays encrypted on your computer. What changes is the AI that answers.",
+  "where.why": "What {name} keeps is encrypted on your computer, and no {name} server keeps it in a form it can read. A child’s profile is never sent to another device. What changes is the AI that answers.",
   "where.cards": [
     ["On this computer", "The private AI, downloaded once (3.1 GB). Nothing leaves, even offline. It needs 12 GB of memory and a recent graphics chip."],
     ["With your own AI", "A plan or a key of yours, if its terms allow your child’s age. Their messages then go to that provider."],

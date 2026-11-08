@@ -14,7 +14,7 @@
   "fair.sources": "welcome automations skills desktop privacy",
   "table.rows": [
     ["Où se fait le travail", "Dans un onglet du navigateur, sur tout ordinateur récent, téléphone compris. Rien à installer.", "built", "Sur un ordinateur virtuel dans le cloud de Manus, depuis le web, ses applications pour téléphone ou son application pour ordinateur.", "welcome home"],
-    ["Où sont vos fichiers", "Sur votre appareil, dans ce navigateur, chiffrés. Il n’y a pas de serveur {name}.", "design", "Sur les serveurs de Manus : ce que vous déposez, ce qu’il produit, les commandes qu’il lance et leurs journaux. Les dossiers de votre ordinateur se connectent par son application pour ordinateur.", "privacy desktop"],
+    ["Où sont vos fichiers", "Sur votre appareil, dans ce navigateur, chiffrés. Aucun serveur de {name} ne les garde sous une forme qu’il puisse lire.", "design", "Sur les serveurs de Manus : ce que vous déposez, ce qu’il produit, les commandes qu’il lance et leurs journaux. Les dossiers de votre ordinateur se connectent par son application pour ordinateur.", "privacy desktop"],
     ["Quelle IA", "N’importe laquelle : sur cet ordinateur, une gratuite, votre clé, votre abonnement.", "built", "La sienne. Avec Manus Flex, en bêta, votre clé chez l’un de huit fournisseurs, mais ni adresse à vous ni IA auto-hébergée, et les images et les vidéos restent sur ses crédits.", "flex"],
     ["Qui lit ce que vous envoyez", "L’IA que vous choisissez. Avec l’IA de cet ordinateur, personne.", "built", "Manus et les services d’IA extérieurs qu’il utilise, qui ne peuvent s’entraîner sur vos contenus que s’il l’annonce. Ses conditions lui permettent d’utiliser vos contenus pour développer et améliorer ses services, et des données peuvent partir aux États-Unis.", "terms privacy"],
     ["Ce que ça coûte", "{name} est gratuit ; l’IA ne l’est pas toujours.", "design", "Une offre gratuite aux crédits limités, puis 20 $ par mois pour 4 000 crédits, 40 $ pour 8 000 ou 200 $ pour 40 000, plus 300 par jour, 17 % de moins à l’année. Ce qu’une tâche consomme dépend de sa complexité, et les crédits de l’abonnement ne se reportent pas d’un mois à l’autre.", "pricing plans"],
@@ -30,7 +30,7 @@
     "Un compte et c’est prêt : Manus choisit l’IA, et les images, la vidéo, la musique et la 3D sont incluses. {name} vous demande d’abord de choisir une IA.",
     "Il met plusieurs assistants à la fois sur un gros travail, avec Wide Research.",
     "Il publie ce qu’il construit : sites et applications sur son hébergement ou votre domaine.",
-    "Il détient les certificats SOC 2 Type II et ISO 27001, que certaines entreprises demandent. {name} n’en a aucun : il n’a pas de serveurs à auditer, et offre au service informatique un dossier de confiance à la place."
+    "Il détient les certificats SOC 2 Type II et ISO 27001, que certaines entreprises demandent. {name} n’en a aucun, et offre au service informatique un dossier de confiance à la place."
   ],
   "better.sources": ["automations privacy", "models", "privacy", "terms", "team"],
   "both.title": "Les deux ensemble",

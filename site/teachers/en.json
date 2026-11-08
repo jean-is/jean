@@ -47,9 +47,9 @@
     "Or with a plan you already pay for."
   ],
   "data.title": "And my pupils’ data?",
-  "data.text": "There is no {name} server. What {name} keeps, your lessons, your files and its answers, stays on your computer, encrypted.",
+  "data.text": "No {name} server keeps it in a form it can read. What {name} keeps, your lessons, your files and its answers, stays on your computer, encrypted.",
   "data.list": [
-    "With the AI on the computer, nothing leaves it, pupils’ names included, even offline.",
+    "With the AI on the computer, what you ask it stays there, pupils’ names included, even offline.",
     "With any other AI, what you send goes to its provider, under its terms: leave pupils’ names out.",
     "Your school’s rules on pupils’ data apply here as anywhere."
   ],

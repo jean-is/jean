@@ -16,7 +16,7 @@
   "show.data": "{data}, with {download} at its top.",
   "show.restore": "The page {backup} opens: {pick} is under {restore}.",
   "good": [
-    "Your keys are never in a backup: after restoring on another device, put them in again in {brains}.",
+    "Your keys are never in a backup: after restoring on another device, put them in again in {brains}. On another of your devices that you added, most are there already.",
     "{data} shows when the last backup was made, and reminds you when a week has gone by and you have done more since.",
     "A private window keeps nothing once it is closed, and clearing this site’s data in your browser deletes everything here. A backup is the way to keep it.",
     "To bring in your history from ChatGPT, Claude or Gemini, it’s {import}, on the same page."

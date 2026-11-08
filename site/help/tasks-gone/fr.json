@@ -7,7 +7,7 @@
   "parts": [
     [
       "Pourquoi un navigateur les efface",
-      "{name} garde tout dans ce navigateur, et nulle part ailleurs. Effacer les données de ce site, ou l’historique de votre navigateur avec ses cookies et données de sites, supprime tout. Un navigateur à court de place peut aussi l’effacer, et Safari peut effacer un site que vous n’avez pas ouvert depuis une semaine, sauf s’il est dans le Dock ou sur l’écran d’accueil."
+      "{name} garde vos tâches et vos fichiers dans ce navigateur, et nulle part ailleurs, sauf si vous envoyez une tâche à un autre de vos appareils. Effacer les données de ce site, ou l’historique de votre navigateur avec ses cookies et données de sites, supprime tout ce qui est ici. Un navigateur à court de place peut aussi l’effacer, et Safari peut effacer un site que vous n’avez pas ouvert depuis une semaine, sauf s’il est dans le Dock ou sur l’écran d’accueil."
     ]
   ],
   "steps": [
@@ -26,7 +26,7 @@
   "fixes": [
     [
       "Il n’y a pas de sauvegarde",
-      "Alors ce que ce navigateur a effacé ne peut pas revenir : il n’en existe aucune copie, nulle part, pas même chez {name}, qui n’a pas de serveur. Désormais, gardez-en une : voir {backups}."
+      "Alors aucun serveur {name} ne peut ramener ce que ce navigateur a effacé. Si vous avez ajouté un autre de vos appareils, il en a encore une partie : la plupart de vos réglages et de vos clés, et chaque tâche que vous lui avez envoyée. Depuis cet autre appareil, ajoutez de nouveau celui-ci : les réglages et les clés reviennent ; puis, de là-bas, renvoyez chaque tâche ici. Désormais, gardez une sauvegarde : voir {backups}."
     ],
     [
       "La sauvegarde n’a ramené que des tâches plus anciennes",

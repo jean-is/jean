@@ -1,13 +1,13 @@
 {
   "title": "Where your work is kept in {name}: this browser, this device, encrypted",
-  "description": "{name} keeps your tasks, files and settings in this browser, on this device, encrypted, with no server of its own. What can clear them, and how to keep a copy.",
+  "description": "{name} keeps your tasks and files in this browser, on this device, encrypted, with no copy its servers can read. What can clear them, and how to keep a copy.",
   "h1": "Where your work is kept",
   "works": "Every browser",
-  "answer": "In this browser, on this device, encrypted: your tasks, files, memory, settings and keys. There is no {name} server, and no copy anywhere else unless you make one: a backup, or a folder that your cloud drive syncs.",
+  "answer": "In this browser, on this device, encrypted: your tasks, files, memory, settings and keys. No {name} server keeps them in a form it can read, except a site you publish. They are copied elsewhere only if you choose: a backup or a synced folder keeps your tasks and files; another of your devices that you add gets most of your settings and keys, sealed so only it can open them, and each task you send it.",
   "parts": [
     [
       "In this browser, on this device",
-      "Each browser keeps its own {name}: what you do in Chrome isn’t in Safari, and what you do on your computer isn’t on your phone. So does each browser profile, the desktop app, and a copy of {name} that your organisation serves at its own address."
+      "Each browser keeps its own {name}: what you do in Chrome isn’t in Safari, and what you do on your computer isn’t on your phone. So does each browser profile, the desktop app, and a copy of {name} that your organisation serves at its own address. If you add your phone or another computer, it gets most of your brains and settings too, and your projects’ names, sealed so only it can open them; a task goes there only when you send it."
     ],
     [
       "Encrypted",
@@ -27,7 +27,7 @@
     "{space}, on the same page, shows how much room each part takes, and what can go to make room.",
     "Installing {name} as an app, in Chrome or Edge or on a phone’s home screen, helps the browser keep its data.",
     "A folder of your computer that you open in {name} stays where it is: in Chrome and Edge, {name} changes its files there; in other browsers, it works on a copy.",
-    "Your keys are never in a backup, a sync or a share.",
+    "Your keys are never in a backup, a sync or a share. Another of your devices that you add gets most of them, sealed so only it can open them; there, the services that asked you to sign in ask again.",
     "Where what you share goes, brain by brain, and every address {name} contacts: {files}."
   ],
   "fixes": [

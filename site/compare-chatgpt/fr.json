@@ -50,7 +50,7 @@
   "faq.items": [
     ["Puis-je garder mes conversations ChatGPT ?", "Oui. Exportez-les depuis ChatGPT et déposez le fichier dans {name}. Elles restent à vous, en fichiers ordinaires sur votre appareil."],
     ["Existe-t-il une alternative européenne à ChatGPT ?", "{name} est fait en France et libre, et son IA peut être européenne elle aussi : celle de Mistral avec votre clé, ou une IA sur votre propre ordinateur."],
-    ["Est-ce plus sûr que ChatGPT ?", "Avec l’IA de cet ordinateur, rien de ce que vous écrivez n’en sort. Avec une IA en ligne, ChatGPT compris, ce fournisseur lit ce que vous envoyez, comme dans sa propre application. {name} n’ajoute aucun serveur à lui."],
+    ["Est-ce plus sûr que ChatGPT ?", "Avec l’IA de cet ordinateur, ce que vous écrivez y reste. Avec une IA en ligne, ChatGPT compris, ce fournisseur lit ce que vous envoyez, comme dans sa propre application. Aucun serveur de {name} ne le garde sous une forme qu’il puisse lire."],
     ["Faut-il un compte ?", "Pas avec l’IA de cet ordinateur. L’IA gratuite demande un compte OpenRouter."]
   ],
   "end.title": "Essayez {name}, et emportez ChatGPT avec vous",

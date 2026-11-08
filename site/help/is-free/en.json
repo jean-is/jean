@@ -24,7 +24,7 @@
   ],
   "good": [
     "{name} has no tie to OpenRouter, nor to any other service it offers.",
-    "A key goes only to its own company, so only that company can bill you.",
+    "A key is used only with its own company, so only that company can bill you.",
     "A service you connect, Notion or Gmail for instance, costs what your account there costs; {name} adds nothing.",
     "{name}’s code is open, under the MIT licence: anyone may read it, use it and change it, for free."
   ],

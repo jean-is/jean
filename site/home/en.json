@@ -61,7 +61,7 @@
   "confidential.mostLabel": "In most AI apps",
   "confidential.most": "On the company’s servers, under its terms.",
   "confidential.oursLabel": "With {name}",
-  "confidential.ours": "On your device, encrypted. No {name} server.",
+  "confidential.ours": "On your device, encrypted. No {name} server keeps them in a form it can read.",
   "confidential.sealed": "Private · offline",
   "confidential.offline": "Turn off Wi-Fi and it still answers, on a computer with 12 GB of memory.",
   "ai.name": "Your AI",

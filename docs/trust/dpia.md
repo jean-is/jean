@@ -2,7 +2,7 @@
 
 For an organisation's data protection officer, deploying Jean for its people. It follows Article 35(7) of the GDPR: a description of the processing, its necessity and proportionality, the risks to people, and the measures that address them. What Jean does is filled in; what only the organisation can say is marked **[To fill]**. Copy this file, fill it in, and keep it with the deployment's `policy.json`, since most answers depend on it.
 
-The organisation decides why and how Jean is used, which brain answers, and what is connected. Warehouse SAS publishes Jean's code and receives nothing of what the organisation's people do with a copy the organisation serves itself, with its own gateway and no share host of Warehouse SAS's ([threat model](threat-model.md#out-of-scope)). A copy Warehouse SAS hosts is served from its server in France, which sees each visit's IP address and the files asked for, and logs none of them ([hosted copies](hosted.md)).
+The organisation decides why and how Jean is used, which brain answers, and what is connected. Warehouse SAS publishes Jean's code and receives nothing of what the organisation's people do with a copy the organisation serves itself, with its own gateway and no share host or relay of Warehouse SAS's ([threat model](threat-model.md#out-of-scope)). A copy Warehouse SAS hosts is served from its server in France, which sees each visit's IP address and the files asked for, and logs none of them ([hosted copies](hosted.md)).
 
 ## 1. Is an assessment needed?
 
@@ -29,9 +29,11 @@ Jean is an AI assistant: many supervisory authorities list new technologies such
 |---|---|---|
 | Tasks: requests, answers, the steps Jean took, the files given and made | The person's browser, on their device, each file sealed with AES-256-GCM ([encryption.md](../encryption.md)) | Until the person deletes them, or clears the site's data; with `retention`, a deleted task stays out of sight at least that period (D412) |
 | Memory: lines Jean keeps about the person's work and preferences | The same; the person sees, changes and deletes every line in Settings › About you | As above |
-| Keys and sign-ins | `.secrets/`, sealed, never in a backup, export, sync or share | Until signed out or removed |
+| Keys and sign-ins | `.secrets/`, sealed, never in a backup, export, sync or share; the keys the person typed for their own brains in the cloud, connections and search services, and published sites', also on each device the person adds, never a sign-in's tokens (D700) | Until signed out or removed, on each device the person added as on this one; on a device they remove, until it erases Jean, which it does unless unticked, and Jean lists the keys it held, to replace |
 | A copy in a folder, if Sync is on | The folder the person or policy chooses, for example the work drive | The drive's own rules **[To fill]** |
 | Shared copies, if sharing is on | A share host that can't read them (`urls.share`) | 30 days or a year, as the person chooses (D361) |
+| The profile, the settings that follow, the keys above and each project's name and how its assistant should be (not its instructions, tasks or memory), if the person adds another of their devices | Each device they add, sealed at rest there as here; a task, with its files, only when they send it there; nothing of a project kept on one device. Only where policy names a relay and signs no one in (D700) | Until the device is removed, which erases Jean there unless the person unticks it |
+| Messages between a person's devices | The relay policy names (`urls.relay`), sealed so it can't read them, with a hash of each mailbox's token, never a key or a name, and the address each change came from, sealed when its configuration names a record key | Messages 7 days at most, a mailbox nobody uses 90 days, addresses a year |
 | The audit trace, with `ee/`'s `audit` | The organisation's OpenTelemetry collector: the sign-in's email, device and profile ids, brains and tools used, rules' decisions, token counts; the words too only with `"content": true` ([enterprise.md](../enterprise.md#audit-to-opentelemetry)) | **[To fill]** |
 | The gateway's log | The organisation's AI gateway | **[To fill]** |
 
@@ -44,13 +46,14 @@ Jean is an AI assistant: many supervisory authorities list new technologies such
 | Sites the person opens or Jean reads with `browse` | The address, as any browser sends it | The person; the `Content-Security-Policy` header narrows it |
 | A gateway for services browsers can't reach | What it relays, keeping none of it | `urls.gateway`: the organisation's, or none |
 | A share host | A sealed copy it can't read | `urls.share`, or `rules.share: "never"` |
+| A relay, if the person adds another of their devices | Sealed messages between their own devices, which it can't read: the settings that follow, the keys that follow, each project's name and how its assistant should be, a task they send; the address each came from | `urls.relay`, none by default; no device is added where policy signs in |
 | Warehouse SAS, for a copy it hosts | Each visit's IP address, time and the files asked for, as any web host sees them, logging none ([hosted copies](hosted.md)) | The organisation, choosing a hosted copy **[To fill: the agreement with Warehouse SAS that covers it]** |
 
 [Where your files go](../../site/files/en.html) names every address a copy of Jean contacts. `policy.html` at the deployment's address lists those its policy names and whether its headers let Jean reach them.
 
 ### Outside the EEA
 
-**[To fill: where the brain's provider, the connected services and their sub-processors process data, and the transfer tool for each.]** Jean adds no transfer of its own when the organisation serves it and runs its own gateway. A copy Warehouse SAS hosts is served from OVHcloud's Gravelines data centre, in France ([hosted copies](hosted.md#where-it-runs)).
+**[To fill: where the brain's provider, the connected services and their sub-processors process data, and the transfer tool for each.]** Jean adds no transfer of its own when the organisation serves it and runs its own gateway, and its own share host and relay or none. A copy Warehouse SAS hosts is served from OVHcloud's Gravelines data centre, in France ([hosted copies](hosted.md#where-it-runs)).
 
 ## 3. Necessity and proportionality
 
@@ -71,6 +74,7 @@ Rate each for this deployment: severity and likelihood, before and after the mea
 | Risk | Where it comes from | Jean's measures | The organisation's measures | Residual **[To fill]** |
 |---|---|---|---|---|
 | Someone reads a person's tasks | A lost or shared device, another profile, a copy of the disk | Files sealed at rest; a lock behind a passkey or password, which policy can require (`"lock": "required"`); profiles apart (D228, D371) | Device encryption and screen lock; no shared accounts | |
+| A person's keys or settings reach a device that isn't theirs, or stay on one they lost | Someone who gets the person to type the six digits their device shows, or uses Jean on an unlocked computer; a lost device still listed | Six digits typed on the old device, after its lock if it has one, three tries, and Join asked twice on the new one; removing a device erases Jean there unless unticked, and Jean lists the keys it held, to replace ([threat model](threat-model.md), threat 29) | No relay in policy (`urls.relay`, none by default), or `signIn`, under which devices don't pair; `"lock": "required"`; keys replaced when a device is lost | |
 | Content leaves for somewhere it shouldn't | Instructions hidden in a page, a file or a mail; a person's mistake | Anything external asks first; no picture loads from an address the brain wrote; code runs in a sandbox without network ([threat model](threat-model.md), threats 1–5) | Rules locked in policy (`rules`); the header's `connect-src` limited to the gateway and the services allowed | |
 | A provider keeps or reuses what it receives | The brain's provider | Brains pinned to the gateway by policy; the brain on the device for what must stay | The provider's contract: no training, retention, region | |
 | An answer is wrong and a person relies on it | The brain | The AI line under the box; sources and certificates under answers | Training; uses that are forbidden | |
@@ -90,7 +94,7 @@ The measures above, as this deployment sets them. Attach the `policy.json` and t
 | `groups`: each section, and the directory's groups or roles it is for | |
 | `rules` | |
 | `lock` | |
-| `urls.gateway`, `urls.share`, `urls.privacy` | |
+| `urls.gateway`, `urls.share`, `urls.relay`, `urls.privacy` | |
 | `audit` (with `content`?) and `retention` | |
 | `dlp` (what it looks for, and with `mask` what a brain reads masked; masked data is still personal data) and `session` (idle, wipe) | |
 | `Content-Security-Policy` header | |

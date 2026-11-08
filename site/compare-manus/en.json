@@ -14,7 +14,7 @@
   "fair.sources": "welcome automations skills desktop privacy",
   "table.rows": [
     ["Where the work happens", "In your browser tab, on any recent computer, phone included. Nothing to install.", "built", "On a virtual computer in Manus’s cloud, reached from the web, its phone apps or its desktop app.", "welcome home"],
-    ["Where your files live", "On your device, in this browser, encrypted. There is no {name} server.", "design", "On Manus’s servers: what you upload, what it makes, the commands it runs and their logs. Folders on your computer connect through its desktop app.", "privacy desktop"],
+    ["Where your files live", "On your device, in this browser, encrypted. No {name} server keeps them in a form it can read.", "design", "On Manus’s servers: what you upload, what it makes, the commands it runs and their logs. Folders on your computer connect through its desktop app.", "privacy desktop"],
     ["Which AI", "Any: on this computer, a free one, your key, your plan.", "built", "Its own. With Manus Flex, in beta, your key from one of eight providers; but no address of your own or self-hosted AI, and pictures and video still cost its credits.", "flex"],
     ["Who reads what you send", "The AI you choose. With the AI on this computer, nobody.", "built", "Manus and the outside AI services it uses, which may not train on your content unless it says so. Its terms let it use your content to develop and improve its services, and data may go to the United States.", "terms privacy"],
     ["What it costs", "{name} is free; the AI may not be.", "design", "A free plan with limited credits, then $20 a month for 4,000 credits, $40 for 8,000 or $200 for 40,000, plus 300 credits a day; 17% less if paid yearly. What a task takes depends on how complex it is, and plan credits reset each month.", "pricing plans"],
@@ -30,7 +30,7 @@
     "One account and it’s ready: Manus picks the AI, and pictures, video, music and 3D come built in. {name} asks you to choose an AI first.",
     "It puts many helpers on a big job at once, with Wide Research.",
     "It publishes what it builds: websites and apps on its own hosting or your domain.",
-    "It holds SOC 2 Type II and ISO 27001 certificates, which some companies ask for. {name} holds neither: it has no servers of its own to audit, and offers IT a trust pack instead."
+    "It holds SOC 2 Type II and ISO 27001 certificates, which some companies ask for. {name} holds neither, and offers IT a trust pack instead."
   ],
   "better.sources": ["automations privacy", "models", "privacy", "terms", "team"],
   "both.title": "Use both",

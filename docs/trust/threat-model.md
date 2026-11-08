@@ -4,14 +4,14 @@ What Jean protects, from whom, what stops each threat, and what is left to the o
 
 ## Jean in one paragraph
 
-Jean is static files served from one address. It runs in the person's browser tab and keeps everything on their device, in the browser's private file system for that address, sealed at rest. It sends something out only to the brain that answers (a provider, the organisation's gateway, or none, for the brain on the device), the services the person connects, the sites they open, and, if they share, a host that keeps sealed copies it can't read. There is no Jean server holding anyone's data. The [architecture](../architecture.md#security) has the detail; [Where your files go](../../site/files/en.html) names every address Jean contacts.
+Jean is static files served from one address. It runs in the person's browser tab and keeps everything on their device, in the browser's private file system for that address, sealed at rest. It sends something out only to the brain that answers (a provider, the organisation's gateway, or none, for the brain on the device), the services the person connects and the sites they open; if they share, to a host that keeps sealed copies it can't read; and if they add another of their devices, to that device, through the relay policy names, which passes messages sealed from one device's key to the other's. There is no Jean server that keeps what people do in Jean in a form it can read, except a site they publish, which is for anyone to read. The [architecture](../architecture.md#security) has the detail; [Where your files go](../../site/files/en.html) names every address Jean contacts.
 
 ## What Jean protects
 
 | Asset | Where it lives |
 |---|---|
 | What the person writes, the files they give, what Jean makes, its memory | The device, in OPFS, each file sealed with AES-256-GCM ([encryption.md](../encryption.md)) |
-| Keys and sign-ins: brains' keys, connections' tokens, the organisation's sign-in | `.secrets/`, sealed as every file is, never in a backup, export, sync or share |
+| Keys and sign-ins: brains' keys, connections' tokens, the organisation's sign-in | `.secrets/`, sealed as every file is, never in a backup, export, sync or share; the keys the person typed for their own brains in the cloud, connections and search services, and published sites', also on each device the person adds, never a sign-in's tokens (29) |
 | What Jean does on the person's behalf: sending, sharing, deleting, changing their files | Decided by the rules (Do it, Ask me first, Never) before each call |
 | The organisation's policy: which brains, which capabilities, which rules | `policy.json` beside Jean, and the site's own HTTP headers |
 | The record of what happened | The conversation's file, and with `ee/`, the organisation's collector (D386) |
@@ -23,7 +23,7 @@ Jean is static files served from one address. It runs in the person's browser ta
 - **Code Jean runs:** scripts a brain wrote, pages in answers, extensions.
 - **A malicious site** in Jean's browser pane.
 - **Someone with the device:** a lost laptop, a shared computer, another profile.
-- **A service on the way:** a brain's provider, the gateway, the share host, a connected service, the network.
+- **A service on the way:** a brain's provider, the gateway, the share host, the relay between the person's devices, a connected service, the network.
 - **Whoever serves Jean's files,** or a package Jean is built from.
 - **The person themself,** getting around their organisation's policy.
 
@@ -46,6 +46,8 @@ flowchart LR
   MCP["Connected services"]
   Gateway["Gateway<br/>(relays, keeps nothing)"]
   Share["Share host<br/>(sealed copies)"]
+  Relay["Relay<br/>(sealed messages between devices)"]
+  Other["Another of the person's devices"]
   Host -- files --> Doc
   Doc <--> Store
   Doc -- messages --> Sandbox
@@ -55,6 +57,8 @@ flowchart LR
   Doc <--> MCP
   Doc <--> Gateway
   Doc <--> Share
+  Doc <--> Relay
+  Relay <--> Other
   Doc <--> Bridge
 ```
 
@@ -90,7 +94,7 @@ Jean's document is the only part with its origin's storage and network. Everythi
 | # | Threat | What stops it | What is left |
 |---|---|---|---|
 | 9 | Someone copies Jean's files off the disk, or out of a backup of the browser's profile | Each file is sealed under a key of its own, derived from the vault key, which is sealed under a non-extractable key of the browser's (D371). | Nothing more is needed to open them in the person's own session. |
-| 10 | Someone opens Jean on an unlocked computer | A lock keeps the vault key behind the person's passkey or password, with a recovery code; `"lock": "required"` in policy asks for one at the first run and hides Turn off (D371); `session.idle` locks every tab, or signs out, once nobody has done anything for that long, with `ee/` (D676). | Without a lock, whoever uses the browser as the person uses Jean as them. A password can be any length, policy's `required` included, so a short one can be guessed from a copy of the profile; a passkey can't. Malware running as the person is outside what a web page can stop. |
+| 10 | Someone opens Jean on an unlocked computer | A lock keeps the vault key behind the person's passkey or password, with a recovery code; `"lock": "required"` in policy asks for one at the first run and hides Turn off (D371); `session.idle` locks every tab, or signs out, once nobody has done anything for that long, with `ee/` (D676). | Without a lock, whoever uses the browser as the person uses Jean as them, and, where policy names a relay and signs no one in, can add a device of theirs, which then gets the keys and settings that follow until the person removes it (29). A password can be any length, policy's `required` included, so a short one can be guessed from a copy of the profile; a passkey can't. Malware running as the person is outside what a web page can stop. |
 | 11 | Keys leak through a backup, an export, a sync or a share | `.secrets/` is never in any of them (`test/secrets.test.js`, `test/backup.spec.js`, `test/sync.spec.js`). | Backups and Sync's folder are readable copies of everything else, by design ([encryption.md](../encryption.md)): where they go is the organisation's choice. |
 | 12 | Another profile on the device reads this one | Each profile is a whole Jean with its own vault and lock; nothing crosses (D228). | A profile without a lock is open to anyone at that browser. |
 | 27 | The next person at a shared computer finds the last one's work | With `ee/`, `session.signOut: "wipe"` erases the profile as the person signs out, once they confirm (D676). | Someone who walks away without signing out leaves it, behind the lock if there is one. Backups and Sync's folder are elsewhere. |
@@ -113,7 +117,7 @@ Jean's document is the only part with its origin's storage and network. Everythi
 | 17 | A brain's provider reads or keeps what it is sent | It is sent what it must answer, by design. Policy pins brains to the organisation's gateway and locks them (`brains`), behind its sign-in (D385); the brain on the device keeps everything there. Each answer says where it was done (D252). | What a provider keeps is set by its contract with whoever pays it. |
 | 18 | The gateway sees what it relays, sign-in codes included | It keeps nothing (no logs, no database), relays only for Jean's origins to the hosts it allows, and holds registered apps' secrets so no browser gets them (D191). A redirect to another address takes no credentials with it, and a request holding a secret goes nowhere but where it was sent; what it relays can't run as a page of its address. An organisation runs its own (`node gateway/serve.js`) or none (`urls.gateway: ""`). | It is trusted with what passes through it while it passes. |
 | 19 | The share host reads a shared copy | The copy is sealed in the browser with AES-256-GCM under a key in the link's `#`, which browsers never send; a password adds PBKDF2 at 600,000 rounds and ten tries an hour, however many come at once; the host keeps a hash of the write token (D361, [sharing.md](../sharing.md)). An organisation turns sharing off (`rules.share: "never"`) or runs its own host (`npm run host`). | Anyone holding the link reads the copy, and links travel. The host sees sizes, times and the sharer's address. |
-| 29 | Someone pairs a device of theirs into the person's Jean, or reads what pairing carries | Everything between devices is sealed from one device's key to the other's (ECDH P-256, HKDF, AES-GCM); the relay keeps sealed messages for 7 days and a hash of each mailbox's token, never a key or a name. The link's secret travels after `#`, which browsers never send. The person types on the old device the six digits the new one shows, drawn from all that crossed after a nonce committed to, so holding the link and the relay lets no one try keys until a code matches, and three wrong tries end it; the pairing mailbox takes one message, so a photographed or forwarded link opened second gets 409 and says it was used. On the new device a link alone does nothing: it says what joining does and waits for Join, then names the profile and the device it came from and asks again before opening it. The bundle is taken only from the key the link names, and later messages only from keys the profile lists and hasn't removed; that list is kept with the keys, which neither Sync nor backups carry, so writing in the person's synced folder adds no device (D700). The old device keeps the new one only once it says it opened the profile. A removed device is dropped here at once and the others are told before it is, so what it sends them after hearing comes after its removal; it can't fill a still-paired device's profile in place. A child's profile and a copy whose policy signs in don't pair. | Whoever opens the link first and gets the person to type the digits they show is paired: the code proves the two screens match, not whose the other device is. The relay sees when devices talk, sizes and addresses. Keys that crossed can't be taken back from a removed device: Jean lists them, to replace. A device away longer than the relay keeps messages (7 days) learns of a removal only from a later message of another device, and until then still trusts the removed one. |
+| 29 | Someone pairs a device of theirs into the person's Jean, or reads what pairing carries | Everything between devices is sealed from one device's key to the other's (ECDH P-256, HKDF, AES-GCM); the relay keeps sealed messages for 7 days and a hash of each mailbox's token, never a key or a name. The link's secret travels after `#`, which browsers never send. The person types on the old device the six digits the new one shows, drawn from all that crossed after a nonce committed to, so holding the link and the relay lets no one try keys until a code matches, and three wrong tries end it; the pairing mailbox takes one message, so a photographed or forwarded link opened second gets 409 and says it was used. On the new device a link alone does nothing: it says what joining does and waits for Join, then names the profile and the device it came from and asks again before opening it. The bundle is taken only from the key the link names, and later messages only from keys the profile lists and hasn't removed; that list is kept with the keys, which neither Sync nor backups carry, so writing in the person's synced folder adds no device (D700). The old device keeps the new one only once it says it opened the profile. A removed device is dropped here at once and the others are told before it is, so what it sends them after hearing comes after its removal; it can't fill a still-paired device's profile in place. A child's profile and a copy whose policy signs in don't pair. | Whoever opens the link first and gets the person to type the digits they show is paired: the code proves the two screens match, not whose the other device is. The relay sees when devices talk, sizes and addresses, and keeps the address each change came from a year, as French law asks of a host, sealed when its configuration names a record key. A stolen device gets each key and setting that changes until the person removes it, and can fill a mailbox up to the relay's fair share until that removal reaches every device. Keys that crossed can't be taken back from a removed device: Jean lists them, to replace. A device away longer than the relay keeps messages (7 days) learns of a removal only from a later message of another device, and until then still trusts the removed one. |
 | 20 | A connected service's answer carries instructions, or its tool does more than it says | Its answers are content (1, 2); its tools ask first by default, read-only ones too; tokens are per account and per project (D89, D194). | As 1. |
 
 ### Beside Jean
@@ -136,7 +140,7 @@ Jean's document is the only part with its origin's storage and network. Everythi
 
 - The operating system, the browser and its extensions. A malicious extension reads every page. Managed browsers restrict them (`ExtensionInstallAllowlist`, `DeveloperToolsAvailability`).
 - What brains' providers and connected services do with what they are sent, beyond choosing which ones Jean may use.
-- jean.is's own servers when an organisation serves its own copy with its own gateway and no share host: then nothing of the organisation's passes through them. A copy Warehouse SAS hosts is served from one of them: [hosted.md](hosted.md) says what it sees and keeps.
+- jean.is's own servers when an organisation serves its own copy with its own gateway, and its own share host and relay or none: then nothing of the organisation's passes through them. A copy Warehouse SAS hosts is served from one of them: [hosted.md](hosted.md) says what it sees and keeps.
 
 ## What the organisation adds
 
@@ -149,6 +153,6 @@ Jean's document is the only part with its origin's storage and network. Everythi
 | Set them by team | `groups` in policy, from the directory's groups and app roles, with an `ee/` key ([enterprise.md](../enterprise.md#policy-by-group)) |
 | Require a lock, lock when idle, erase at sign-out | `"lock": "required"`, and with an `ee/` key `session` in policy ([enterprise.md](../enterprise.md#sessions)) |
 | Keep sensitive data from brains and services | `dlp` with an `ee/` key ([enterprise.md](../enterprise.md#data-loss-checks)), masked rather than refused with `dlp.mask` ([enterprise.md](../enterprise.md#masked-requests)) |
-| Run its own gateway and share host, or none | `urls.gateway`, `urls.share` |
+| Run its own gateway, share host and relay, or none | `urls.gateway`, `urls.share`, `urls.relay` |
 | Keep a record | `audit`, `retention` with an `ee/` key |
 | Check the site as deployed | `policy.html` at its address (D415) |

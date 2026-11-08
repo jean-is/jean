@@ -61,7 +61,7 @@
   "confidential.mostLabel": "多くの AI アプリでは",
   "confidential.most": "会社のサーバーに、その会社の規約のもとで。",
   "confidential.oursLabel": "{name} なら",
-  "confidential.ours": "あなたの端末に暗号化して保存。{name} のサーバーはありません。",
+  "confidential.ours": "あなたの端末に暗号化して保存。{name} のどのサーバーからも読めません。",
   "confidential.sealed": "プライベート・オフライン",
   "confidential.offline": "Wi-Fi を切っても答えます（メモリ 12⁠GB のパソコンなら）。",
   "ai.name": "使う AI",

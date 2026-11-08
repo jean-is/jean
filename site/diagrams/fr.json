@@ -125,7 +125,7 @@
     ["Modifié en une phrase", "Une étape de plus, dans l’autre sens, en anglais pour le bureau de Londres : demandez, et c’est redessiné. Les versions précédentes restent dans la tâche."]
   ],
   "where.title": "Où vont vos mots.",
-  "where.why": "Il n’y a pas de serveur {name}. Ce qui change, c’est l’IA qui répond, et c’est vous qui la choisissez.",
+  "where.why": "Aucun serveur de {name} ne garde vos mots sous une forme qu’il puisse lire. Ce qui change, c’est l’IA qui répond, et c’est vous qui la choisissez.",
   "where.cards": [
     ["Gardé sur cet appareil", "Vos fichiers et vos tâches sont gardés dans ce navigateur, chiffrés. Rien ne nous parvient."],
     ["Envoyé à l’IA de votre choix", "Votre demande et le texte du fichier vont à l’IA que vous avez choisie, et nulle part ailleurs. Sous chaque réponse, {name} dit où elle a été faite."],

@@ -24,7 +24,7 @@
   ],
   "good": [
     "{name} n’a aucun lien avec OpenRouter, ni avec aucun autre service qu’il propose.",
-    "Une clé ne va qu’à sa propre entreprise : elle seule peut donc vous facturer.",
+    "Une clé ne sert qu’auprès de sa propre entreprise : elle seule peut donc vous facturer.",
     "Un service que vous connectez, Notion ou Gmail par exemple, coûte ce que coûte votre compte chez lui ; {name} n’ajoute rien.",
     "Le code de {name} est ouvert, sous licence MIT : chacun peut le lire, l’utiliser et le modifier, gratuitement."
   ],

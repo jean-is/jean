@@ -47,9 +47,9 @@
     "Ou avec un abonnement que vous payez déjà."
   ],
   "data.title": "Et les données de mes élèves ?",
-  "data.text": "Il n’y a pas de serveur {name}. Ce que {name} garde, vos cours, vos fichiers et ses réponses, reste chiffré sur votre ordinateur.",
+  "data.text": "Aucun serveur de {name} ne les garde sous une forme qu’il puisse lire. Ce que {name} garde, vos cours, vos fichiers et ses réponses, reste chiffré sur votre ordinateur.",
   "data.list": [
-    "Avec l’IA de l’ordinateur, rien n’en sort, pas même les noms des élèves, même hors ligne.",
+    "Avec l’IA de l’ordinateur, ce que vous lui demandez y reste, noms des élèves compris, même hors ligne.",
     "Avec toute autre IA, ce que vous envoyez va chez son fournisseur, selon ses conditions : laissez les noms des élèves de côté.",
     "Les règles de votre établissement sur les données des élèves s’appliquent ici comme ailleurs."
   ],

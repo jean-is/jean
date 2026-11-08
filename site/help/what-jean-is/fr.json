@@ -19,7 +19,7 @@
     ],
     [
       "Votre travail reste ici",
-      "Vos tâches et vos fichiers sont gardés dans ce navigateur, sur cet appareil, chiffrés. Il n’y a pas de serveur {name} : un cerveau dans le cloud ne lit que ce qu’une demande lui envoie, et un cerveau sur cet ordinateur n’envoie rien du tout."
+      "Vos tâches et vos fichiers sont gardés dans ce navigateur, sur cet appareil, chiffrés. Aucun serveur {name} ne les garde sous une forme qu’il puisse lire, sauf un site que vous publiez. Un cerveau dans le cloud ne lit que ce qu’une demande lui envoie, et un cerveau sur cet ordinateur n’envoie rien du tout."
     ],
     [
       "Une question avant d’agir",
@@ -50,7 +50,7 @@
     ],
     [
       "Vos tâches ont disparu",
-      "Une fenêtre privée ne garde rien une fois fermée, et effacer les données de ce site supprime tout. Une sauvegarde en garde une copie : voir {backup}."
+      "Une fenêtre privée ne garde rien une fois fermée, et effacer les données de ce site supprime tout ce qui est ici. Une sauvegarde en garde une copie : voir {backup}."
     ]
   ],
   "ask": "Que peux-tu faire pour moi ?"

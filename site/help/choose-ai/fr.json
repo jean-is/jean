@@ -21,7 +21,7 @@
   "good": [
     "{name} n’a aucun lien avec OpenRouter, ni avec aucun autre service proposé.",
     "Le compte gratuit d’OpenRouter a des limites par jour, et ses réponses viennent du cloud.",
-    "Une clé reste sur cet appareil, chiffrée. Elle n’est jamais dans une sauvegarde.",
+    "Une clé est gardée sur cet appareil, chiffrée, et ne va sur un autre de vos appareils que si vous en ajoutez un, scellée pour que seul cet autre appareil puisse l’ouvrir. Elle n’est jamais dans une sauvegarde.",
     "Avec plusieurs cerveaux, {auto} en choisit un pour chaque demande : plus rapide ou plus fort selon la demande, et celui de cet appareil pour tout ce qui est personnel.",
     "Sous chaque réponse, {name} indique quel cerveau l’a écrite, et où."
   ],

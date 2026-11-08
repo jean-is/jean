@@ -8,7 +8,7 @@
   "cta": "Essayer {name}",
   "see": "Voir le tableau",
   "facts": [
-    "Aucun serveur {name}",
+    "Aucun serveur de {name} ne lit votre travail",
     "N’importe quelle IA, y compris celle que vous payez",
     "Rien à installer",
     "Gratuit et libre, MIT"

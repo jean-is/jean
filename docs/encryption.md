@@ -7,11 +7,11 @@ Every file Jean keeps on a device is sealed with keys that never leave it, and a
 
 ## Principles
 
-1. **Plain formats, sealed at rest.** Inside the seal, files stay Markdown, JSONL and the person's own files. Whatever leaves for the person stays plain: a backup, Sync's folder, a folder of theirs, a saved task, and a share before its own encryption.
+1. **Plain formats, sealed at rest.** Inside the seal, files stay Markdown, JSONL and the person's own files. Whatever leaves for the person stays plain: a backup, Sync's folder, a folder of theirs, a saved task, and a share before its own encryption; what goes to another of their devices is sealed from one device's key to the other's, then under the receiving profile's own vault key (D700).
 2. **Only one module seals: the storage worker.** Nothing above `FS` knows, the core included.
 3. **Always on, and never in the way.** Every device seals from its first run, with nothing to set up or remember.
 4. **The lock is the person's choice, and it gives the real protection.**
-5. **Nothing leaves the device.** No server holds a key, a copy or a hint.
+5. **The vault key never leaves the device.** No server holds it or a hint of it; what goes to the person's other devices, keys they typed included, is sealed from one device's key to the other's, and the relay that carries it keeps it 7 days at most (D45, D700).
 6. **Settings says plainly what sealing stops and what it doesn't.**
 
 ## What it protects, and what it doesn't

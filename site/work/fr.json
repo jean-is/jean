@@ -21,7 +21,7 @@
   "jobs.why": "Une réponse avec ses sources, un document Word, un tableau ou des diapos. Les chiffres sont calculés par du code, pas devinés.",
   "jobs.sample": "Quel produit a le plus progressé cette année ? Un tableau de ventes d’exemple, calculé sur cet ordinateur.",
   "where.title": "Où va votre travail.",
-  "where.why": "Il n’existe aucun serveur {name}. Ce qui change, c’est l’IA qui répond, et ce choix revient autant à votre entreprise qu’à vous.",
+  "where.why": "Aucun serveur de {name} ne garde votre travail sous une forme qu’il puisse lire. Ce qui change, c’est l’IA qui répond, et ce choix revient autant à votre entreprise qu’à vous.",
   "where.cards": [
     [
       "Sur votre ordinateur",

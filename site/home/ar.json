@@ -61,7 +61,7 @@
   "confidential.mostLabel": "في معظم تطبيقات الذكاء الاصطناعي",
   "confidential.most": "على خوادم الشركة، وبشروطها.",
   "confidential.oursLabel": "مع {name}",
-  "confidential.ours": "على جهازك، مشفّرة. لا خادم لـ {name}.",
+  "confidential.ours": "على جهازك، مشفّرة. لا يستطيع أي خادم لـ {name} قراءتها.",
   "confidential.sealed": "خاص · دون اتصال",
   "confidential.offline": "أطفئ الـ Wi-Fi وستبقى الإجابات تصل، على حاسوب بذاكرة ١٢ غيغابايت.",
   "ai.name": "ذكاؤك الاصطناعي",

@@ -20,7 +20,7 @@
   "good": [
     "Sous une réponse, le même message a un bouton qui ouvre la page du cerveau.",
     "Chaque fois que vous ouvrez {brains}, {name} interroge de nouveau chaque cerveau : une fois la nouvelle clé acceptée, {trouble} disparaît.",
-    "Une clé reste sur cet appareil, chiffrée, et ne va qu’à son propre service."
+    "Une clé est gardée sur cet appareil, chiffrée, et ne sert que pour son propre service. Si vous avez ajouté un autre de vos appareils, la nouvelle clé y va aussi, scellée pour que seul cet autre appareil puisse l’ouvrir : pas besoin de l’y coller."
   ],
   "fixes": [
     [
