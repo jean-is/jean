@@ -44,9 +44,9 @@
   "choose.history": "Vous venez de l’un d’eux ? Importez votre historique : les exports de ChatGPT, de Claude et de Gemini arrivent, aucune conversation en double.",
   "one.title": "Comparés un par un",
   "one.cards": [
-    "Gardez ChatGPT si vous voulez. Vos fichiers restent sur votre appareil.",
+    "Gardez ChatGPT si vous voulez. Vos fichiers restent sur vos appareils.",
     "Libre, dans un onglet du navigateur, avec n’importe quelle IA.",
-    "Le travail sur votre appareil, avec n’importe quelle IA et sans crédits.",
+    "Le travail sur vos appareils, avec n’importe quelle IA et sans crédits.",
     "Il agit dans le périmètre du navigateur, et demande avant que quoi que ce soit en sorte.",
     "Un dossier statique devant Ollama, sans serveur à faire tourner."
   ],
@@ -61,7 +61,7 @@
   ],
   "faq.title": "Les questions qu’on se pose",
   "faq.items": [
-    ["{name} est-il une alternative à ChatGPT ?", "Il peut l’être. Il peut aussi être l’endroit où vous utilisez ChatGPT, vos fichiers gardés sur votre appareil. {name} est l’appli ; l’IA, c’est vous qui la choisissez."],
+    ["{name} est-il une alternative à ChatGPT ?", "Il peut l’être. Il peut aussi être l’endroit où vous utilisez ChatGPT, vos fichiers gardés sur vos appareils. {name} est l’appli ; l’IA, c’est vous qui la choisissez."],
     ["Lequel est le meilleur : ChatGPT, Claude ou Gemini ?", "Ça dépend de la tâche, et ça change souvent. Avec {name}, vous changez d’IA depuis la zone de saisie et vous redemandez."],
     ["C’est gratuit ?", "{name} est gratuit et libre. L’IA peut coûter : gratuite sur cet ordinateur ou avec un compte gratuit, sinon votre clé ou votre abonnement."],
     ["Faut-il un compte ?", "Pas avec l’IA de cet ordinateur. L’IA gratuite demande un compte OpenRouter."],

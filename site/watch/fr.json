@@ -41,7 +41,7 @@
   "minutes.sent": "Envoyé.",
   "minutes.answer": "C’est envoyé à l’équipe, avec le compte rendu en pièce jointe.",
   "jean.title": "{name} en une minute",
-  "jean.about": "Ce qu’est {name}, pour qui a déjà utilisé ChatGPT : l’IA de votre choix, un fichier confié et quelque chose de fait en retour, et tout gardé sur votre appareil.",
+  "jean.about": "Ce qu’est {name}, pour qui a déjà utilisé ChatGPT : l’IA de votre choix, un fichier confié et quelque chose de fait en retour, et tout gardé sur vos appareils.",
   "jean.chart.chapter": "Un fichier, un résultat",
   "jean.chart.say.ask": "Déposez un tableur et demandez, avec vos mots.",
   "jean.chart.say.program": "Les calculs sont faits par un programme, dans un bac à sable de votre navigateur. Pas devinés.",
@@ -57,7 +57,7 @@
   "jean.keep.chapter": "Tout garder",
   "jean.keep.title": "Gardez tout.",
   "jean.keep.facts": [
-    "Votre historique, vos fichiers et votre mémoire restent sur votre appareil.",
+    "Votre historique, vos fichiers et votre mémoire restent sur vos appareils.",
     "En simples fichiers, dans une sauvegarde à emporter où vous voulez.",
     "C’est gratuit et open source."
   ],

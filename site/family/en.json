@@ -95,7 +95,7 @@
   "learn.none": "The first measurements are on their way.",
   "learn.source": "Bastani and others, PNAS, 2025 · Measured {date} · The test’s requests, replies and code are public.",
   "where.title": "At home, not with us.",
-  "where.why": "What {name} keeps is encrypted on your computer, and no {name} server keeps it in a form it can read. A child’s profile is never sent to another device. What changes is the AI that answers.",
+  "where.why": "What {name} keeps is encrypted on your devices, and no {name} server keeps it in a form it can read. A child’s profile is never sent to another device. What changes is the AI that answers.",
   "where.cards": [
     ["On this computer", "The private AI, downloaded once (3.1 GB). Nothing leaves, even offline. It needs 12 GB of memory and a recent graphics chip."],
     ["With your own AI", "A plan or a key of yours, if its terms allow your child’s age. Their messages then go to that provider."],
@@ -117,7 +117,7 @@
   "faq.items": [
     ["Is it a ChatGPT for kids?", "It’s an AI of the same kind, in a browser tab, with a profile for each child that you set. The AI that answers is the one on this computer, or your own."],
     ["From what age?", "You enter their year of birth. Under 13, their profile opens only with you; from the school year they turn 13, they open it alone."],
-    ["Do we need an account?", "No, neither you nor your child. Everything is on your computer."],
+    ["Do we need an account?", "No, neither you nor your child. Everything is on your devices."],
     ["Is it free?", "{name} is free and open source, for as many children as you like. So is the private AI; a plan for an AI is paid to its provider."],
     ["Can I read their conversations?", "No. You see the time spent, and a concern if one comes up. Their conversations stay theirs, unless they share one."],
     ["Will it do their homework?", "No: when they’re stuck, {name} gives a question, a reminder, then an example, and stops. We measure how often an AI gives the answer anyway, and publish it."],

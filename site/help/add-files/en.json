@@ -28,7 +28,7 @@
     ]
   ],
   "good": [
-    "Each file is kept in the project, on this device. In a later task, type @ in the box and part of its name to point at it again.",
+    "Each file is kept in the project, on your devices. In a later task, type @ in the box and part of its name to point at it again.",
     "The brain reads the files’ text. With a brain in the cloud, that text goes there with your request: see {sees}.",
     "A scan, or a picture of a page, has no text to read: brains that can see are shown it instead.",
     "With a spreadsheet, {name} offers to work out the figures with a program, rather than guess them."

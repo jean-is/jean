@@ -44,9 +44,9 @@
   "choose.history": "Coming from one of them? Bring your history: ChatGPT’s, Claude’s and Gemini’s exports come in, nothing twice.",
   "one.title": "Compared one by one",
   "one.cards": [
-    "Keep ChatGPT if you like. Your files stay on your device.",
+    "Keep ChatGPT if you like. Your files stay on your devices.",
     "Open source, in a browser tab, with any AI.",
-    "The work on your device, with any AI and no credits.",
+    "The work on your devices, with any AI and no credits.",
     "It works inside the browser’s fence, and asks before anything leaves it.",
     "A static folder in front of Ollama, with no server to run."
   ],
@@ -61,7 +61,7 @@
   ],
   "faq.title": "Questions people ask",
   "faq.items": [
-    ["Is {name} a ChatGPT alternative?", "It can be. It can also be where you use ChatGPT, with your files kept on your device. {name} is the app; the AI is your choice."],
+    ["Is {name} a ChatGPT alternative?", "It can be. It can also be where you use ChatGPT, with your files kept on your devices. {name} is the app; the AI is your choice."],
     ["Which is best: ChatGPT, Claude or Gemini?", "It depends on the task, and it changes often. In {name} you can switch the AI from the box and ask again."],
     ["Is it free?", "{name} is free and open source. The AI may cost: free on this computer or with a free account, otherwise your key or your plan."],
     ["Do I need an account?", "Not with the AI on this computer. The free one asks for an OpenRouter account."],

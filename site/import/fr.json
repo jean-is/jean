@@ -11,7 +11,7 @@
   "facts": [
     "ChatGPT, Claude et Gemini",
     "Rien en double",
-    "Gardé sur votre ordinateur"
+    "Gardé sur vos appareils"
   ],
   "pane.head": "Importées",
   "pane.rows": [
@@ -74,7 +74,7 @@
   "never.cards": [
     [
       "Vos propres fichiers",
-      "Chaque conversation est un fichier à part, dans un format ouvert, gardé chiffré sur votre ordinateur par {name}."
+      "Chaque conversation est un fichier à part, dans un format ouvert, gardé chiffré sur vos appareils par {name}."
     ],
     [
       "N’importe quelle IA",
@@ -101,7 +101,7 @@
     ],
     [
       "Mon historique part-il sur un serveur ?",
-      "Non. {name} lit l’export sur votre ordinateur et y garde ce qui est importé, chiffré. Rien ne nous parvient."
+      "Non. {name} lit l’export sur votre ordinateur et garde ce qui est importé sur vos appareils, chiffré. Rien de lisible ne nous parvient."
     ],
     [
       "Puis-je importer plusieurs applications ?",

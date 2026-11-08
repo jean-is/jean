@@ -8,7 +8,7 @@
   "lede": "Téléchargez-la une fois ({size}) : elle répond dans votre navigateur, sans internet, sans compte et sans rien installer. Il lui faut un ordinateur avec {memory} de mémoire et une puce graphique récente, pas un téléphone, et ses réponses sont plus simples et plus lentes que celles d’une grande IA en ligne.",
   "cta": "Mettre l’IA sur cet ordinateur",
   "check": "Mon ordinateur suffit-il ?",
-  "facts": ["Aucun compte, nulle part", "Vos mots restent sur l’ordinateur", "Gratuit et open source"],
+  "facts": ["Aucun compte, nulle part", "Vos mots restent sur vos appareils", "Gratuit et open source"],
   "pane.offline": "Wi-Fi coupé",
   "pane.ask": "Aide-moi à écrire à mon propriétaire pour l’humidité dans la chambre. Ferme, mais poli.",
   "pane.answer": "Voici un brouillon : « Monsieur Martin, depuis début octobre, le mur de la chambre est humide et la peinture s’écaille. Pourriez-vous envoyer quelqu’un le voir ce mois-ci ? »",
@@ -25,7 +25,7 @@
     ["Appareil", "Un ordinateur. Pas un téléphone ni une tablette"]
   ],
   "needs.elseTitle": "Si le vôtre ne peut pas",
-  "needs.else": "{name} fonctionne quand même, avec une IA en ligne à la place : un compte gratuit chez un fournisseur, un abonnement que vous payez déjà, ou celle de votre organisation. Vos tâches et vos fichiers restent sur votre ordinateur dans tous les cas.",
+  "needs.else": "{name} fonctionne quand même, avec une IA en ligne à la place : un compte gratuit chez un fournisseur, un abonnement que vous payez déjà, ou celle de votre organisation. Vos tâches et vos fichiers restent sur vos appareils dans tous les cas.",
   "needs.local": "Vous utilisez déjà Ollama ou LM Studio ? {name} peut aussi répondre par lui, une fois que l’application autorise ce site.",
   "needs.localLink": "Connecter Ollama ou LM Studio",
   "needs.crash": "Si le chargement de l’IA ferme un jour l’onglet, {name} cesse de la proposer dans ce navigateur.",
@@ -39,10 +39,10 @@
   "how.speed": "À chaque ouverture de {name}, elle se charge depuis votre ordinateur avant sa première réponse. Ensuite, sur un ordinateur rapide, ses premiers mots arrivent en moins d’une seconde. Un ordinateur plus modeste est plus lent.",
   "how.source": "Mesuré le {date} sur un M3 Max, une fois chargée : premiers mots après {chromium} dans le moteur de Chrome, {webkit} dans celui de Safari.",
   "private.title": "Privée, et vous pouvez le vérifier.",
-  "private.why": "Aucun serveur de {name} ne garde ce que vous écrivez sous une forme qu’il puisse lire. Avec l’IA de votre ordinateur, vos mots y restent, sauf si vous demandez à {name} de chercher sur le web ou d’envoyer quelque chose à quelqu’un ou à un autre de vos appareils.",
+  "private.why": "Aucun serveur de {name} ne garde ce que vous écrivez sous une forme qu’il puisse lire. Avec l’IA de votre ordinateur, vos mots restent sur vos appareils, sauf si vous demandez à {name} de chercher sur le web ou d’envoyer quelque chose à quelqu’un.",
   "private.cards": [
     ["Rien ne sort", "Votre demande et sa réponse s’écrivent dans cet onglet du navigateur. Le bouclier sous chaque réponse le montre, d’après le journal du navigateur lui-même."],
-    ["Chiffré là où c’est gardé", "Vos conversations et vos fichiers sont chiffrés sur votre ordinateur. Effacer les données du navigateur les supprime, sauf si vous avez fait une sauvegarde."],
+    ["Chiffré là où c’est gardé", "Vos conversations et vos fichiers sont chiffrés sur vos appareils. Effacer les données d’un navigateur les y supprime, sauf si une sauvegarde ou un autre de vos appareils les garde."],
     ["Marqué comme écrit par une IA", "Ce qu’elle écrit porte une marque invisible, comme le règlement européen sur l’IA le demande pour les textes d’IA. Ses réponses n’en sont pas moins bonnes, et chacun peut en vérifier une longue."]
   ],
   "private.check": "Chercher la marque dans un texte",
@@ -72,7 +72,7 @@
     ["Images", "Ne les voit pas", "Les voit"],
     ["Faits récents", "Seulement ce qu’elle a appris, sauf si elle peut chercher", "Cherche sur le web"],
     ["Vitesse", "Selon votre ordinateur", "Rapide, sur ses serveurs"],
-    ["Où vont vos mots", "Ils restent sur votre ordinateur", "Chez son fournisseur, selon ses conditions"],
+    ["Où vont vos mots", "Ils restent sur vos appareils", "Chez son fournisseur, selon ses conditions"],
     ["Coût", "Gratuite, sans compte", "Gratuite avec des limites, ou payante, avec un compte"]
   ],
   "versus.both": "Pas besoin de choisir. Ajoutez aussi une IA en ligne : en mode {auto}, {name} répond avec celle de votre ordinateur quand vous êtes hors ligne, et « {keep} » garde ici vos demandes, pour tout un projet si vous voulez.",

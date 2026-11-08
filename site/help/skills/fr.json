@@ -28,7 +28,7 @@
     ],
     [
       "Où sont-elles gardées ?",
-      "Dans ce navigateur, sur cet appareil, chiffrées, avec le reste de votre travail : chaque compétence est un SKILL.md dans un dossier à elle. Celle que vous créez ou ajoutez dans un de vos projets y reste ; les autres sont dans tous les projets. Elles vont dans vos sauvegardes, et {sync} les emmène sur vos autres ordinateurs. {save}, sur la page d’une compétence, vous donne son SKILL.md, à garder ou à transmettre."
+      "Dans votre navigateur, chiffrées, avec le reste de votre travail : chaque compétence est un SKILL.md dans un dossier à elle. Celle que vous créez ou ajoutez dans un de vos projets y reste ; les autres sont dans tous les projets. Elles vont dans vos sauvegardes et sur les autres appareils que vous ajoutez, et {sync} les emmène sur vos autres ordinateurs. {save}, sur la page d’une compétence, vous donne son SKILL.md, à garder ou à transmettre."
     ]
   ],
   "good": [

@@ -91,7 +91,7 @@
   "where.title": "Où vont vos notes.",
   "where.why": "Aucun serveur de {name} ne garde vos notes sous une forme qu’il puisse lire. Ce qui change, c’est l’IA qui répond, et c’est vous qui la choisissez.",
   "where.cards": [
-    ["Gardées sur cet appareil", "Vos fichiers et vos tâches restent dans ce navigateur, chiffrés. Rien ne nous parvient."],
+    ["Gardées sur vos appareils", "Vos fichiers et vos tâches restent dans vos navigateurs, chiffrés. Rien de lisible ne nous parvient."],
     ["Envoyées à l’IA de votre choix", "Votre demande et ce que vous joignez vont à l’IA choisie, et nulle part ailleurs. Sous chaque réponse, {name} indique où elle a été faite."],
     ["Ou pas envoyées du tout", "Avec l’IA de cet ordinateur, rien n’en sort. Il lui faut 12 Go de mémoire et une puce graphique récente."]
   ],

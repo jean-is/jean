@@ -28,7 +28,7 @@
     ]
   ],
   "good": [
-    "Chaque fichier est gardé dans le projet, sur cet appareil. Dans une tâche suivante, tapez @ dans la zone de saisie et une partie de son nom pour le désigner à nouveau.",
+    "Chaque fichier est gardé dans le projet, sur vos appareils. Dans une tâche suivante, tapez @ dans la zone de saisie et une partie de son nom pour le désigner à nouveau.",
     "Le cerveau lit le texte des fichiers. Avec un cerveau dans le cloud, ce texte y part avec votre demande : voir {sees}.",
     "Un document scanné, ou la photo d’une page, n’a pas de texte à lire : il est montré aux cerveaux qui voient.",
     "Avec un tableur, {name} propose de calculer les chiffres avec un programme, plutôt que de les deviner."

@@ -74,7 +74,7 @@
   "where.title": "Where your PDF goes.",
   "where.why": "No {name} server keeps your PDF in a form it can read. What changes is the AI that answers, and you choose it.",
   "where.cards": [
-    ["Kept on this device", "Your files and your tasks are kept in this browser, encrypted. Nothing reaches us."],
+    ["Kept on your devices", "Your files and tasks stay in your browsers, encrypted. Nothing we can read reaches us."],
     ["Sent to the AI you chose", "Your request and the PDF’s text go to the AI you picked, and nowhere else. Under every answer, {name} says where it was done."],
     ["Or not sent at all", "With the AI on this computer, nothing leaves it: the one for a payslip or a medical letter. It needs 12 GB of memory and a recent graphics chip."]
   ],
@@ -91,7 +91,7 @@
     ["Can it read a scanned PDF?", "Not as a PDF: a scan has no text in it to read. Take a photo or a screenshot of the page instead, for an AI that sees pictures."],
     ["How long can the PDF be?", "Up to 100 MB. A long one is read a part at a time, the pages a question needs found by search."],
     ["Can it turn a PDF into Word?", "It writes a Word document from the PDF’s text, with its headings, lists and tables. The layout isn’t copied."],
-    ["Is my PDF safe?", "It is kept on your device, encrypted. Its text goes to the AI you chose, to answer; with the AI on this computer, nowhere."],
+    ["Is my PDF safe?", "It is kept on your devices, encrypted. Its text goes to the AI you chose, to answer; with the AI on this computer, nowhere."],
     ["Does it read other languages?", "Yes: PDFs in Chinese, Japanese, Arabic and many more, and it answers in yours."]
   ],
   "end.title": "Start with a PDF that isn’t confidential.",

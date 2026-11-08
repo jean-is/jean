@@ -1,17 +1,17 @@
 {
   "title": "Où {name} garde votre travail : ce navigateur, cet appareil, chiffré",
-  "description": "{name} garde vos tâches et fichiers dans ce navigateur, sur cet appareil, chiffrés, sans copie lisible sur ses serveurs. Ce qui les efface, et comment les copier.",
+  "description": "{name} garde vos tâches et fichiers dans vos navigateurs, chiffrés, sans copie lisible sur ses serveurs. Ce qui les efface, et comment les copier.",
   "h1": "Où est gardé votre travail",
   "works": "Tous les navigateurs",
-  "answer": "Dans ce navigateur, sur cet appareil, chiffrés : vos tâches, fichiers, mémoire, réglages et clés. Aucun serveur {name} ne les garde sous une forme qu’il puisse lire, sauf un site que vous publiez. Ils ne sont copiés ailleurs que si vous le choisissez : une sauvegarde ou un dossier synchronisé garde vos tâches et fichiers ; un autre de vos appareils que vous ajoutez reçoit la plupart de vos réglages et de vos clés, scellés pour que lui seul puisse les ouvrir, et chaque tâche que vous lui envoyez.",
+  "answer": "Dans ce navigateur, sur cet appareil, chiffrés : vos tâches, fichiers, mémoire, réglages et clés. Aucun serveur {name} ne les garde sous une forme qu’il puisse lire, sauf un site que vous publiez. Ils ne sont copiés ailleurs que si vous le choisissez : une sauvegarde ou un dossier synchronisé garde vos tâches et fichiers ; un autre de vos appareils que vous ajoutez les reçoit aussi, avec la plupart de vos réglages et de vos clés, scellés pour que seuls vos appareils puissent les ouvrir.",
   "parts": [
     [
       "Dans ce navigateur, sur cet appareil",
-      "Chaque navigateur garde son propre {name} : ce que vous faites dans Chrome n’est pas dans Safari, et ce que vous faites sur votre ordinateur n’est pas sur votre téléphone. De même pour chaque profil du navigateur, l’application de bureau, et une copie de {name} que votre organisation sert à sa propre adresse. Si vous ajoutez votre téléphone ou un autre ordinateur, il reçoit aussi la plupart de vos cerveaux et de vos réglages, et le nom de vos projets, scellés pour que lui seul puisse les ouvrir ; une tâche n’y va que quand vous l’envoyez."
+      "Chaque navigateur garde son propre {name} : ce que vous faites dans Chrome n’est pas dans Safari, et ce que vous faites sur votre ordinateur n’est pas sur votre téléphone, tant que vous n’ajoutez pas l’un à l’autre. De même pour chaque profil du navigateur, l’application de bureau, et une copie de {name} que votre organisation sert à sa propre adresse. Une fois votre téléphone ou un autre ordinateur ajouté, vos tâches, vos fichiers et vos projets y arrivent en une minute tant que {name} est ouvert des deux côtés, avec la plupart de vos cerveaux et de vos réglages, scellés pour que seuls vos appareils puissent les ouvrir ; un projet que vous gardez sur un appareil y reste."
     ],
     [
       "Chiffré",
-      "Chaque fichier est scellé avec une clé créée sur cet appareil, qui ne le quitte jamais. Avec un verrou, {name} ne s’ouvre qu’avec votre mot de passe ou votre clé d’accès."
+      "Chaque fichier est scellé avec une clé créée sur cet appareil, qui ne le quitte jamais ; ce que vos appareils gardent en commun est scellé avec des clés qu’eux seuls détiennent. Avec un verrou, {name} ne s’ouvre qu’avec votre mot de passe ou votre clé d’accès."
     ],
     [
       "Ce qui peut l’effacer",

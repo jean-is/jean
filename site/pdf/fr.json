@@ -74,7 +74,7 @@
   "where.title": "Où va votre PDF.",
   "where.why": "Aucun serveur de {name} ne garde votre PDF sous une forme qu’il puisse lire. Ce qui change, c’est l’IA qui répond, et c’est vous qui la choisissez.",
   "where.cards": [
-    ["Gardé sur cet appareil", "Vos fichiers et vos tâches restent dans ce navigateur, chiffrés. Rien ne nous parvient."],
+    ["Gardé sur vos appareils", "Vos fichiers et vos tâches restent dans vos navigateurs, chiffrés. Rien de lisible ne nous parvient."],
     ["Envoyé à l’IA de votre choix", "Votre demande et le texte du PDF vont à l’IA choisie, et nulle part ailleurs. Sous chaque réponse, {name} indique où elle a été faite."],
     ["Ou pas envoyé du tout", "Avec l’IA de cet ordinateur, rien n’en sort : celle qu’il faut pour une fiche de paie ou un courrier médical. Il lui faut 12 Go de mémoire et une puce graphique récente."]
   ],
@@ -91,7 +91,7 @@
     ["Et un PDF scanné ?", "Pas en tant que PDF : un scan ne contient pas de texte à lire. Prenez plutôt la page en photo ou en capture d’écran, pour une IA qui voit les images."],
     ["Quelle longueur de PDF ?", "Jusqu’à 100 Mo. Un long PDF est lu par parties, les pages utiles à une question trouvées par recherche."],
     ["Peut-on convertir un PDF en Word ?", "Un document Word est écrit à partir du texte du PDF, avec ses titres, ses listes et ses tableaux. La mise en page n’est pas copiée."],
-    ["Mon PDF est-il en sécurité ?", "Il est gardé sur votre appareil, chiffré. Son texte va à l’IA choisie, pour répondre ; avec l’IA de cet ordinateur, nulle part."],
+    ["Mon PDF est-il en sécurité ?", "Il est gardé sur vos appareils, chiffré. Son texte va à l’IA choisie, pour répondre ; avec l’IA de cet ordinateur, nulle part."],
     ["Et les PDF dans d’autres langues ?", "Ils sont lus : chinois, japonais, arabe et bien d’autres, avec une réponse dans la vôtre."]
   ],
   "end.title": "Commencez par un PDF qui n’est pas confidentiel.",

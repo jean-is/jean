@@ -7,7 +7,7 @@
   "parts": [
     [
       "Why a browser clears them",
-      "{name} keeps your tasks and files in this browser, and nowhere else, unless you send a task to another of your devices. Clearing this site’s data, or your browser’s history with its cookies and site data, deletes everything here. A browser short of room may clear it too, and Safari may clear a site you haven’t opened for a week, unless it is on the Dock or the home screen."
+      "{name} keeps your tasks and files in this browser and, if you add another of your devices, on it too, sealed so only your devices can open them. Clearing this site’s data, or your browser’s history with its cookies and site data, deletes everything here. A browser short of room may clear it too, and Safari may clear a site you haven’t opened for a week, unless it is on the Dock or the home screen."
     ]
   ],
   "steps": [
@@ -26,7 +26,7 @@
   "fixes": [
     [
       "There is no backup",
-      "Then no {name} server can bring back what this browser cleared. If you added another of your devices, it still has some of it: most of your settings and keys, and any task you sent it. From that device, add this one again: the settings and keys come back; then send each task back from there. From now on, keep a backup: see {backups}."
+      "Then no {name} server can bring back what this browser cleared. If you added another of your devices, it still has your tasks and files, with most of your settings and keys. From that device, add this one again: they come back. From now on, keep a backup: see {backups}."
     ],
     [
       "The backup brought back older tasks only",

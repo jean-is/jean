@@ -8,7 +8,7 @@
   "lede": "Download it once ({size}) and it answers right here in your browser, with no internet, no account and nothing to install. It needs a computer with {memory} of memory and a recent graphics chip, not a phone, and its answers are simpler and slower than a big online AI’s.",
   "cta": "Get the AI on this computer",
   "check": "Is my computer enough?",
-  "facts": ["No account, anywhere", "Your words stay on the computer", "Free and open source"],
+  "facts": ["No account, anywhere", "Your words stay on your devices", "Free and open source"],
   "pane.offline": "Wi-Fi off",
   "pane.ask": "Help me write to my landlord about the damp in the bedroom. Firm, but polite.",
   "pane.answer": "Here’s a draft: “Dear Mr Martin, since early October the bedroom wall has been damp and the paint is peeling. Could you send someone to look at it this month?”",
@@ -25,7 +25,7 @@
     ["Device", "A computer. Not a phone or a tablet"]
   ],
   "needs.elseTitle": "If yours can’t",
-  "needs.else": "{name} still works, with an AI online instead: a free account at a provider, a plan you already pay for, or your organisation’s own. Your tasks and files stay on your computer either way.",
+  "needs.else": "{name} still works, with an AI online instead: a free account at a provider, a plan you already pay for, or your organisation’s own. Your tasks and files stay on your devices either way.",
   "needs.local": "Already run Ollama or LM Studio? {name} can answer through it too, once that app allows this site.",
   "needs.localLink": "Connect Ollama or LM Studio",
   "needs.crash": "If loading the AI ever closes the tab, {name} stops offering it in that browser.",
@@ -39,10 +39,10 @@
   "how.speed": "Each time you open {name}, it loads from your computer before its first answer. Then, on a fast computer, its first words come in under a second. A smaller computer is slower.",
   "how.source": "Measured on {date} on an M3 Max, once loaded: first words after {chromium} in Chrome’s engine, {webkit} in Safari’s.",
   "private.title": "Private, and you can check.",
-  "private.why": "No {name} server keeps what you write in a form it can read. With the AI on your computer, your words stay on it, unless you have {name} search the web or send something to someone or to another of your devices.",
+  "private.why": "No {name} server keeps what you write in a form it can read. With the AI on your computer, your words stay on your devices, unless you have {name} search the web or send something to someone.",
   "private.cards": [
     ["Nothing leaves", "Your request and its answer are written in this browser tab. The shield under each answer says so, from your browser’s own record of what the page sent."],
-    ["Encrypted where it’s kept", "Your conversations and files are encrypted on your computer. Clearing the browser’s data deletes them, unless you made a backup."],
+    ["Encrypted where it’s kept", "Your conversations and files are encrypted on your devices. Clearing a browser’s data deletes them there, unless a backup or another of your devices keeps them."],
     ["Marked as written by AI", "What it writes carries a hidden mark, as the EU’s AI Act asks of AI text. Its answers are no worse for it, and anyone can check a long one."]
   ],
   "private.check": "Check a text for the mark",
@@ -72,7 +72,7 @@
     ["Pictures", "Doesn’t see them", "Sees them"],
     ["Recent facts", "Only what it learned, unless it can search", "Searches the web"],
     ["Speed", "Depends on your computer", "Fast, on its servers"],
-    ["Where your words go", "They stay on your computer", "To its provider, on its terms"],
+    ["Where your words go", "They stay on your devices", "To its provider, on its terms"],
     ["Cost", "Free, with no account", "Free with limits, or paid, with an account"]
   ],
   "versus.both": "You don’t have to choose. Add an online AI too: with {auto}, {name} answers with the one on your computer while you’re offline, and “{keep}” keeps your requests there, for a whole project if you like.",

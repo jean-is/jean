@@ -41,7 +41,7 @@
   "minutes.sent": "Sent.",
   "minutes.answer": "Sent to the team, with the minutes attached.",
   "jean.title": "{name} in a minute",
-  "jean.about": "What {name} is, for anyone who has used ChatGPT: the AI you like, a file in and something made back, and everything kept on your device.",
+  "jean.about": "What {name} is, for anyone who has used ChatGPT: the AI you like, a file in and something made back, and everything kept on your devices.",
   "jean.chart.chapter": "Files in, things out",
   "jean.chart.say.ask": "Drop in a spreadsheet and ask, in your own words.",
   "jean.chart.say.program": "The sums are worked out by a program, in a sandbox in your browser. Not guessed.",
@@ -57,7 +57,7 @@
   "jean.keep.chapter": "Keep everything",
   "jean.keep.title": "Keep everything.",
   "jean.keep.facts": [
-    "Your history, files and memory stay on your device.",
+    "Your history, files and memory stay on your devices.",
     "As plain files, in one backup you can take anywhere.",
     "Free and open source."
   ],

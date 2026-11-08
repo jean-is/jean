@@ -1,9 +1,9 @@
 {
   "title": "What {name} is: an AI assistant in a browser tab, in plain words",
-  "description": "{name} is an AI assistant in a browser tab: one box, the AI you choose, files in and out, and your work kept on this device. Nothing to install.",
+  "description": "{name} is an AI assistant in a browser tab: one box, the AI you choose, files in and out, and your work kept on your devices. Nothing to install.",
   "h1": "What {name} is",
   "works": "Every browser, on a computer or a phone",
-  "answer": "{name} is an AI assistant in a browser tab. You write, dictate or drop a file in its box, and it answers: words, tables, charts, documents, slides. Nothing to install, no account at {name}, and your work stays on this device.",
+  "answer": "{name} is an AI assistant in a browser tab. You write, dictate or drop a file in its box, and it answers: words, tables, charts, documents, slides. Nothing to install, no account at {name}, and your work stays on your devices.",
   "parts": [
     [
       "One box",
@@ -18,8 +18,8 @@
       "For figures, {name} writes a small program and runs it in a walled-off corner of the browser, so they are calculated, not guessed. It makes Word, Excel and PowerPoint files, and opens them beside the task."
     ],
     [
-      "Your work stays here",
-      "Your tasks and files are kept in this browser, on this device, encrypted. No {name} server keeps them in a form it can read, except a site you publish. A brain in the cloud reads only what a request sends it, and a brain on this computer sends nothing at all."
+      "Your work stays yours",
+      "Your tasks and files are kept in this browser, encrypted, and on the other devices you add, sealed so only your devices can open them. No {name} server can read them, except a site you publish. A brain in the cloud reads only what a request sends it, and a brain on this computer sends nothing at all."
     ],
     [
       "It asks before it acts",
@@ -33,7 +33,7 @@
   "show.box": "The box, as a new task shows it: {add} (the +) adds a file, {dictate} (the microphone) dictates, {chip} (the chip) names the brain that answers, and {send} (the arrow) sends.",
   "show.first": "The first time you send, {name} asks how to get a brain: free in a minute, or with a plan or a key you already have.",
   "show.sales": "A request about a sales spreadsheet, played again: the program {name} ran on it, what came back, then the chart.",
-  "show.kept": "What stays on this device, and what a brain in the cloud reads.",
+  "show.kept": "What stays on your devices, and what a brain in the cloud reads.",
   "show.email": "A request to send an email, played again: it waits on its card for your answer, {once} or {notnow}.",
   "show.offer": "An offer, as it shows in an answer once a spreadsheet is dropped in. Nothing turns on until you say so.",
   "good": [

@@ -24,8 +24,8 @@
   "where.why": "Aucun serveur de {name} ne garde votre travail sous une forme qu’il puisse lire. Ce qui change, c’est l’IA qui répond, et ce choix revient autant à votre entreprise qu’à vous.",
   "where.cards": [
     [
-      "Sur votre ordinateur",
-      "Ce que {name} garde, vos tâches et vos fichiers, est chiffré sur votre ordinateur. Rien ne nous parvient."
+      "Sur vos appareils",
+      "Ce que {name} garde, vos tâches et vos fichiers, est chiffré sur vos appareils. Rien de lisible ne nous parvient."
     ],
     [
       "Vers l’IA qui répond",
@@ -106,7 +106,7 @@
     ],
     [
       "Mon entreprise verra-t-elle mes conversations ?",
-      "Elles restent sur votre ordinateur. Le service d’IA de l’entreprise voit ce qui lui est envoyé, comme avec toute IA qu’elle fait tourner. Si l’informatique active l’audit, il note quelle IA et quel outil ont servi, et quand, sous votre adresse professionnelle."
+      "Elles restent sur vos appareils. Le service d’IA de l’entreprise voit ce qui lui est envoyé, comme avec toute IA qu’elle fait tourner. Si l’informatique active l’audit, il note quelle IA et quel outil ont servi, et quand, sous votre adresse professionnelle."
     ],
     [
       "Quelle IA répond ?",

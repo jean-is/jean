@@ -4,13 +4,13 @@ What Jean protects, from whom, what stops each threat, and what is left to the o
 
 ## Jean in one paragraph
 
-Jean is static files served from one address. It runs in the person's browser tab and keeps everything on their device, in the browser's private file system for that address, sealed at rest. It sends something out only to the brain that answers (a provider, the organisation's gateway, or none, for the brain on the device), the services the person connects and the sites they open; if they share, to a host that keeps sealed copies it can't read; and if they add another of their devices, to that device, through the relay policy names, which passes messages sealed from one device's key to the other's. There is no Jean server that keeps what people do in Jean in a form it can read, except a site they publish, which is for anyone to read. The [architecture](../architecture.md#security) has the detail; [Where your files go](../../site/files/en.html) names every address Jean contacts.
+Jean is static files served from one address. It runs in the person's browser tab and keeps everything on their device, in the browser's private file system for that address, sealed at rest. It sends something out only to the brain that answers (a provider, the organisation's gateway, or none, for the brain on the device), the services the person connects and the sites they open; if they share, to a host that keeps sealed copies it can't read; and if they add another of their devices, to that device, through the relay policy names, which passes messages sealed from one device's key to the other's and, where its configuration keeps stores, keeps their tasks and files sealed under keys only their devices hold (D721). There is no Jean server that keeps what people do in Jean in a form it can read, except a site they publish, which is for anyone to read. The [architecture](../architecture.md#security) has the detail; [Where your files go](../../site/files/en.html) names every address Jean contacts.
 
 ## What Jean protects
 
 | Asset | Where it lives |
 |---|---|
-| What the person writes, the files they give, what Jean makes, its memory | The device, in OPFS, each file sealed with AES-256-GCM ([encryption.md](../encryption.md)) |
+| What the person writes, the files they give, what Jean makes, its memory | The device, in OPFS, each file sealed with AES-256-GCM ([encryption.md](../encryption.md)); once they add another of their devices, that device, and the store the relay keeps for them, sealed under keys only their devices hold (30) |
 | Keys and sign-ins: brains' keys, connections' tokens, the organisation's sign-in | `.secrets/`, sealed as every file is, never in a backup, export, sync or share; the keys the person typed for their own brains in the cloud, connections and search services, and published sites', also on each device the person adds, never a sign-in's tokens (29) |
 | What Jean does on the person's behalf: sending, sharing, deleting, changing their files | Decided by the rules (Do it, Ask me first, Never) before each call |
 | The organisation's policy: which brains, which capabilities, which rules | `policy.json` beside Jean, and the site's own HTTP headers |
@@ -46,7 +46,7 @@ flowchart LR
   MCP["Connected services"]
   Gateway["Gateway<br/>(relays, keeps nothing)"]
   Share["Share host<br/>(sealed copies)"]
-  Relay["Relay<br/>(sealed messages between devices)"]
+  Relay["Relay<br/>(sealed messages and store between devices)"]
   Other["Another of the person's devices"]
   Host -- files --> Doc
   Doc <--> Store

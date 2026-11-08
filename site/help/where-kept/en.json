@@ -1,17 +1,17 @@
 {
   "title": "Where your work is kept in {name}: this browser, this device, encrypted",
-  "description": "{name} keeps your tasks and files in this browser, on this device, encrypted, with no copy its servers can read. What can clear them, and how to keep a copy.",
+  "description": "{name} keeps your tasks and files in your browsers, encrypted, with no copy its servers can read. What can clear them, and how to keep a copy.",
   "h1": "Where your work is kept",
   "works": "Every browser",
-  "answer": "In this browser, on this device, encrypted: your tasks, files, memory, settings and keys. No {name} server keeps them in a form it can read, except a site you publish. They are copied elsewhere only if you choose: a backup or a synced folder keeps your tasks and files; another of your devices that you add gets most of your settings and keys, sealed so only it can open them, and each task you send it.",
+  "answer": "In this browser, on this device, encrypted: your tasks, files, memory, settings and keys. No {name} server keeps them in a form it can read, except a site you publish. They are copied elsewhere only if you choose: a backup or a synced folder keeps your tasks and files; another of your devices that you add gets them too, with most of your settings and keys, sealed so only your devices can open them.",
   "parts": [
     [
       "In this browser, on this device",
-      "Each browser keeps its own {name}: what you do in Chrome isn’t in Safari, and what you do on your computer isn’t on your phone. So does each browser profile, the desktop app, and a copy of {name} that your organisation serves at its own address. If you add your phone or another computer, it gets most of your brains and settings too, and your projects’ names, sealed so only it can open them; a task goes there only when you send it."
+      "Each browser keeps its own {name}: what you do in Chrome isn’t in Safari, and what you do on your computer isn’t on your phone, until you add one to the other. So does each browser profile, the desktop app, and a copy of {name} that your organisation serves at its own address. Once you add your phone or another computer, your tasks, files and projects follow there within a minute while {name} is open on both, with most of your brains and settings, sealed so only your devices can open them; a project you keep on one device stays there."
     ],
     [
       "Encrypted",
-      "Every file is sealed with a key made on this device, which never leaves it. With a lock, {name} opens only with your password or passkey."
+      "Every file is sealed with a key made on this device, which never leaves it; what your devices keep in common is sealed with keys only they hold. With a lock, {name} opens only with your password or passkey."
     ],
     [
       "What can clear it",

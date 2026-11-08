@@ -24,8 +24,8 @@
   "where.why": "No {name} server keeps your work in a form it can read. What changes is the AI that answers, and that is your company’s choice as much as yours.",
   "where.cards": [
     [
-      "On your computer",
-      "What {name} keeps, your tasks and your files, is encrypted on your computer. Nothing reaches us."
+      "On your devices",
+      "What {name} keeps, your tasks and your files, is encrypted on your devices. Nothing we can read reaches us."
     ],
     [
       "To the AI that answers",
@@ -106,7 +106,7 @@
     ],
     [
       "Will my company see my conversations?",
-      "They stay on your computer. The company’s AI service sees what is sent to it, as with any AI it runs. If IT turns the audit on, it records which AI and tool were used, and when, under your work address."
+      "They stay on your devices. The company’s AI service sees what is sent to it, as with any AI it runs. If IT turns the audit on, it records which AI and tool were used, and when, under your work address."
     ],
     [
       "Which AI answers?",

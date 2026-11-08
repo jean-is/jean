@@ -1,10 +1,10 @@
 {
-  "title": "Free ChatGPT alternative that keeps your files on your device · {name}",
+  "title": "Free ChatGPT alternative that keeps your files on your devices · {name}",
   "description": "{name} answers with the AI you choose: one on your computer, a free one, or ChatGPT itself. Bring your ChatGPT history. Nothing to install, open source.",
   "product": "ChatGPT",
   "eyebrow": "{name} and ChatGPT",
-  "h1": "A free ChatGPT alternative that keeps your files on your device",
-  "h1.mark": "on your device",
+  "h1": "A free ChatGPT alternative that keeps your files on your devices",
+  "h1.mark": "on your devices",
   "lede": "{name} answers with the AI you choose: one on this computer, a free one, or ChatGPT itself. Bring your ChatGPT history with you. Nothing to install, made in France, open source.",
   "cta": "Try {name}",
   "cta2": "Bring your ChatGPT history",
@@ -19,7 +19,7 @@
   "fair.body": "ChatGPT is OpenAI’s assistant, used by more than 900 million people a week. It starts in one click, its text chat is free, and it is very capable. Your conversations are kept on OpenAI’s servers, and on its personal plans they help train OpenAI’s AI unless you turn that off in its Data controls.",
   "fair.sources": "users stored data",
   "table.rows": [
-    ["Where it runs", "In a browser tab. Your files are sealed on your device.", "built", "On OpenAI’s servers, in the US and around the world, through the web and its apps.", "stored pricing"],
+    ["Where it runs", "In a browser tab. Your files are sealed on your devices.", "built", "On OpenAI’s servers, in the US and around the world, through the web and its apps.", "stored pricing"],
     ["Who reads what you send", "The AI you choose. With the AI on this computer, nobody.", "built", "OpenAI. On personal plans, used to train its AI unless you turn that off.", "pricing data"],
     ["Which AI", "Any, ChatGPT included: on this computer, a free one, your key or your plan.", "built", "OpenAI’s own; the free plan gets the lighter ones.", "pricing"],
     ["What comes back", "Answers with sources, and finished files: Word, Excel, PowerPoint, charts. Numbers worked out by code.", "built", "Answers, pictures and files, with data analysis; limited on the free plan.", "pricing"],
@@ -29,7 +29,7 @@
   ],
   "better.title": "Where ChatGPT does better",
   "better.items": [
-    "One account on every device: your history follows you. {name} keeps it on this device, unless you set up sync on a computer.",
+    "One account on any device: sign in and your history is there. {name} has it only on the devices you add, one by one.",
     "Spoken conversation and polished phone apps.",
     "Pictures made in the app, with nothing to set up.",
     "It starts in one click. {name} asks you to pick an AI first."
@@ -48,7 +48,7 @@
     "Your work lives in this browser. Clear its data without a backup and it’s gone."
   ],
   "faq.items": [
-    ["Can I keep my ChatGPT conversations?", "Yes. Export them from ChatGPT and drop the file in {name}. They stay yours, in plain files on your device."],
+    ["Can I keep my ChatGPT conversations?", "Yes. Export them from ChatGPT and drop the file in {name}. They stay yours, in plain files on your devices."],
     ["Is it safer than ChatGPT?", "With the AI on this computer, what you write stays on it. With an AI online, ChatGPT included, that provider reads what you send, as in its own app. No {name} server keeps it in a form it can read."],
     ["Do I need an account?", "Not with the AI on this computer. The free one asks for an OpenRouter account."],
     ["Is there a European ChatGPT alternative?", "{name} is made in France and open source, and its AI can be European too: Mistral’s with your key, or one on your own computer."]

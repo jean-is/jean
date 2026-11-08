@@ -95,7 +95,7 @@
   "learn.none": "Les premières mesures arrivent.",
   "learn.source": "Bastani et autres, PNAS, 2025 · Mesuré le {date} · Les demandes, les réponses et le code du test sont publics.",
   "where.title": "Chez vous, pas chez nous.",
-  "where.why": "Ce que {name} garde est chiffré sur votre ordinateur, et aucun serveur de {name} ne le garde sous une forme qu’il puisse lire. Le profil d’un enfant n’est jamais envoyé à un autre appareil. Ce qui change, c’est l’IA qui répond.",
+  "where.why": "Ce que {name} garde est chiffré sur vos appareils, et aucun serveur de {name} ne le garde sous une forme qu’il puisse lire. Le profil d’un enfant n’est jamais envoyé à un autre appareil. Ce qui change, c’est l’IA qui répond.",
   "where.cards": [
     ["Sur cet ordinateur", "L’IA privée, téléchargée une fois (3,1 Go). Rien ne sort, même sans Internet. Il faut 12 Go de mémoire et une puce graphique récente."],
     ["Avec votre propre IA", "Un abonnement ou une clé à vous, si ses conditions acceptent l’âge de votre enfant. Ses messages vont alors chez ce fournisseur."],
@@ -117,7 +117,7 @@
   "faq.items": [
     ["Est-ce un ChatGPT pour enfants ?", "C’est une IA du même genre, dans un onglet, avec un profil par enfant que vous réglez. L’IA qui répond est celle de cet ordinateur, ou la vôtre."],
     ["À partir de quel âge ?", "Vous indiquez son année de naissance. Avant 13 ans, son profil ne s’ouvre qu’avec vous ; à partir de la 4e, il l’ouvre seul."],
-    ["Faut-il créer un compte ?", "Non, ni pour vous, ni pour votre enfant. Tout est sur votre ordinateur."],
+    ["Faut-il créer un compte ?", "Non, ni pour vous, ni pour votre enfant. Tout est sur vos appareils."],
     ["Est-ce gratuit ?", "{name} est gratuit et open source, pour autant d’enfants que vous voulez. L’IA privée aussi ; un abonnement à une IA se paie chez son fournisseur."],
     ["Puis-je lire ses conversations ?", "Non. Vous voyez le temps passé, et une inquiétude si elle apparaît. Ses conversations restent les siennes, sauf s’il vous en partage une."],
     ["Est-ce que ça fait ses devoirs ?", "Non : quand il bloque, {name} donne une question, un rappel, puis un exemple, et s’arrête. Nous mesurons combien de fois une IA donne quand même la réponse, et le publions."],
