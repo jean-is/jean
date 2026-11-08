@@ -7,6 +7,7 @@ import { memoryFS } from '../app/core/fs.js'
 import { crossing } from '../app/ui/secrets.js'
 import { DEFAULT_SETTINGS } from '../app/core/settings.js'
 import { CONDITIONAL, FOLLOWS, STAYS, following, merged, ownOf, snapshotOf, stamp } from '../app/caps/devices/bundle.js'
+import { revoking } from '../app/caps/devices/flow.js'
 import { codeOf } from '../scripts/security.js'
 
 const APP = new URL('../app/', import.meta.url)
@@ -87,6 +88,27 @@ test('the secrets that cross are chosen by their kind: a typed brain key, a conn
   assert.deepEqual(Object.keys(await crossing(fs, stays)).sort(), ['search:brave', 'site:01JSITE0000000000000000000'])
   // Nor a brain named as one of the organisation's, whose token its sign-in keeps under that id (policy.brains).
   assert.equal((await crossing(fs, settings, { brains: [{ id: 'TYPED000000000000000000000' }] })).TYPED000000000000000000000, undefined)
+})
+
+test('a device removed may hold the keys that crossed: the brains and services named, and the sites published with one, by their names online', async () => {
+  const record = (/** @type {object} */ more) => JSON.stringify({ format: 1, name: 'Bakery', files: ['index.html'], ...more })
+  const published = (/** @type {string} */ name) => ({ published: { host: 'https://hst.example/', name, address: `https://${name}.hst.example/`, expires: '2027-11-08T00:00:00.000Z', at: '2026-11-08T00:00:00.000Z', files: {} } })
+  const fs = memoryFS({
+    '.secrets/keys.json': JSON.stringify({ TYPED000000000000000000000: 'sk', KEYED000000000000000000000: 'k', 'site:01JSITEA000000000000000000': 'A', 'site:01JSITEB000000000000000000': 'B', 'site:01JSITEC000000000000000000': 'C', 'share:01J': 's' }),
+    'projects/01JHOME0000000000000000000-home/project.md': '---\nname: Home\n---\n',
+    'projects/01JHOME0000000000000000000-home/sites/01JSITEA000000000000000000-bakery/site.json': record(published('lyon-bakery')),
+    // Its secret made, never published: nothing at any name to take back.
+    'projects/01JHOME0000000000000000000-home/sites/01JSITEB000000000000000000-draft/site.json': record({}),
+    // Published from another device whose code never came here: this one never held it to give.
+    'projects/01JHOME0000000000000000000-home/sites/01JSITED000000000000000000-theirs/site.json': record(published('their-site')),
+    'projects/01JWORK0000000000000000000-work/sites/01JSITEC000000000000000000-club/site.json': record(published('chess-club')),
+  })
+  const settings = /** @type {any} */ ({ brains: BRAINS, connections: CONNECTIONS, unlocked: [] })
+  const left = await revoking(fs, settings, Object.keys(await crossing(fs, settings)))
+  assert.deepEqual(left.brains.map((one) => one.id), ['TYPED000000000000000000000'])
+  assert.deepEqual(left.services, ['K', 'O'], 'a keyed connection, and one it signed in to itself')
+  assert.deepEqual(left.sites.sort(), ['chess-club', 'lyon-bakery'])
+  assert.deepEqual((await revoking(memoryFS(), settings, [])).sites, [])
 })
 
 test('a secret that holds an object never crosses, whatever the record beside it says, but a service account’s key file', async () => {

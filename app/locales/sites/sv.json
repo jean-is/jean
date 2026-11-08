@@ -40,5 +40,9 @@
   "sites.published": "Webbplatsen är online.",
   "sites.wentOffline": "Webbplatsen är offline.",
   "sites.elsewhere": "Webbplatsen publicerades från en annan enhet. Skriv in dess återställningskod för att publicera den härifrån.",
-  "sites.failed": "Webbplatsen kunde inte publiceras. Kontrollera din anslutning och försök igen."
+  "sites.failed": "Webbplatsen kunde inte publiceras. Kontrollera din anslutning och försök igen.",
+  "sites.newCode": "Skapa en ny återställningskod",
+  "sites.confirmNewCode": "Skapa en ny återställningskod? Den gamla koden och enheter du har tagit bort kan inte längre ändra webbplatsen. Dina andra enheter får den nya koden.",
+  "sites.newCodeMade": "Den gamla återställningskoden fungerar inte längre för den här webbplatsen.",
+  "sites.newCodeFailed": "Ingen ny återställningskod skapades. Kontrollera din anslutning och försök igen."
 }

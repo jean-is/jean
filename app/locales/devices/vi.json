@@ -57,6 +57,7 @@
   "devices.notYet": "Chưa báo được cho {device}. Thiết bị này sẽ tự báo ngay khi có thể.",
   "devices.erasing": "{name} sẽ bị xóa khỏi thiết bị đó vào lần tới nó được mở.",
   "devices.revoke": "Thiết bị đó có thể vẫn giữ các khóa này, vì một khóa không thể lấy lại được. Để an toàn, hãy thay từng khóa ở nơi bạn đã tạo nó:",
+  "devices.sites": "Thiết bị đó có thể vẫn thay đổi được các trang web này trên mạng. Để chặn việc đó, hãy mở từng trang, chọn Đưa lên mạng…, rồi chọn Tạo mã khôi phục mới:",
   "devices.send": "Gửi đến {device}",
   "devices.task.sent": "Đã gửi đến {device}.",
   "devices.task.kept": "Dự án này được giữ trên thiết bị này.",

@@ -41,5 +41,9 @@
   "sites.published": "Web-stranica je na mreži.",
   "sites.wentOffline": "Web-stranica je izvan mreže.",
   "sites.elsewhere": "Ova je web-stranica objavljena s drugog uređaja. Upišite njezin kod za oporavak da biste je objavili odavde.",
-  "sites.failed": "Web-stranicu nije bilo moguće objaviti. Provjerite vezu i pokušajte ponovno."
+  "sites.failed": "Web-stranicu nije bilo moguće objaviti. Provjerite vezu i pokušajte ponovno.",
+  "sites.newCode": "Izradi novi kod za oporavak",
+  "sites.confirmNewCode": "Izraditi novi kod za oporavak? Stari kod i uređaji koje ste uklonili više neće moći mijenjati ovu web-stranicu. Vaši drugi uređaji dobit će novi kod.",
+  "sites.newCodeMade": "Stari kod za oporavak više ne vrijedi za ovu web-stranicu.",
+  "sites.newCodeFailed": "Novi kod za oporavak nije izrađen. Provjerite vezu i pokušajte ponovno."
 }

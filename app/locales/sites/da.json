@@ -40,5 +40,9 @@
   "sites.published": "Webstedet er online.",
   "sites.wentOffline": "Webstedet er offline.",
   "sites.elsewhere": "Dette websted blev udgivet fra en anden enhed. Skriv dets gendannelseskode for at udgive det herfra.",
-  "sites.failed": "Webstedet kunne ikke udgives. Tjek din forbindelse, og prøv igen."
+  "sites.failed": "Webstedet kunne ikke udgives. Tjek din forbindelse, og prøv igen.",
+  "sites.newCode": "Lav en ny gendannelseskode",
+  "sites.confirmNewCode": "Lav en ny gendannelseskode? Den gamle kode og de enheder, du har fjernet, kan ikke længere ændre dette websted. Dine andre enheder får den nye kode.",
+  "sites.newCodeMade": "Den gamle gendannelseskode virker ikke længere for dette websted.",
+  "sites.newCodeFailed": "Der blev ikke lavet en ny gendannelseskode. Tjek din forbindelse, og prøv igen."
 }

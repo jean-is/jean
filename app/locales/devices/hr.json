@@ -61,6 +61,7 @@
   "devices.notYet": "Uređaj {device} još nije obaviješten. Ovaj će ga uređaj sam obavijestiti čim bude mogao.",
   "devices.erasing": "Aplikacija {name} bit će izbrisana s njega kad se idući put otvori.",
   "devices.revoke": "Taj uređaj možda još ima ove ključeve jer se ključ ne može vratiti. Radi sigurnosti zamijenite svaki ondje gdje je nastao:",
+  "devices.sites": "Taj uređaj možda još može mijenjati ove web-stranice na mreži. Da biste to spriječili, otvorite svaku od njih, odaberite Objavi…, a zatim Izradi novi kod za oporavak:",
   "devices.send": "Pošalji na uređaj {device}",
   "devices.task.sent": "Poslano na uređaj {device}.",
   "devices.task.kept": "Ovaj se projekt čuva na ovom uređaju.",

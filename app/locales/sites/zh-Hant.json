@@ -39,5 +39,9 @@
   "sites.published": "網站已上線。",
   "sites.wentOffline": "網站已下線。",
   "sites.elsewhere": "這個網站是在另一台裝置上發布的。輸入它的復原碼，就能在這裡發布。",
-  "sites.failed": "網站無法發布。請檢查網路連線後再試一次。"
+  "sites.failed": "網站無法發布。請檢查網路連線後再試一次。",
+  "sites.newCode": "產生新的復原碼",
+  "sites.confirmNewCode": "產生新的復原碼？舊的復原碼和你移除的裝置將無法再變更這個網站。你的其他裝置會收到新的復原碼。",
+  "sites.newCodeMade": "舊的復原碼已無法再用於這個網站。",
+  "sites.newCodeFailed": "無法產生新的復原碼。請檢查網路連線後再試一次。"
 }

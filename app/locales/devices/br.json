@@ -65,6 +65,7 @@
   "devices.notYet": "N’eo ket bet kemennet {device} c’hoazh. An trevnad-mañ a gemenno anezhañ e-unan kerkent ha ma c’hallo.",
   "devices.erasing": "Dilamet e vo {name} diwarnañ ar wech kentañ ma vo digoret.",
   "devices.revoke": "Gallout a ra derc’hel an alc’hwezioù-mañ c’hoazh, rak n’haller ket kemer un alc’hwez en-dro. Evit surentez, erlec’hit pep hini el lec’h m’ho peus e grouet :",
+  "devices.sites": "Gallout a ra kemmañ al lec’hiennoù-mañ enlinenn c’hoazh. Evit mirout outañ, digorit pep hini, dibabit Embann…, ha goude Krouiñ ur c’hod adtapout nevez :",
   "devices.send": "Kas da {device}",
   "devices.task.sent": "Kaset da {device}.",
   "devices.task.kept": "Miret eo ar raktres-mañ war an trevnad-mañ.",

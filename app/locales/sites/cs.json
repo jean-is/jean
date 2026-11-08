@@ -42,5 +42,9 @@
   "sites.published": "Web je online.",
   "sites.wentOffline": "Web je offline.",
   "sites.elsewhere": "Tento web byl zveřejněn z jiného zařízení. Chcete-li ho zveřejnit odtud, zadejte jeho kód pro obnovení.",
-  "sites.failed": "Web se nepodařilo zveřejnit. Zkontrolujte připojení a zkuste to znovu."
+  "sites.failed": "Web se nepodařilo zveřejnit. Zkontrolujte připojení a zkuste to znovu.",
+  "sites.newCode": "Vytvořit nový kód pro obnovení",
+  "sites.confirmNewCode": "Vytvořit nový kód pro obnovení? Starý kód ani zařízení, která jste odebrali, už nebudou moci tento web měnit. Vaše další zařízení dostanou nový kód.",
+  "sites.newCodeMade": "Starý kód pro obnovení už pro tento web nefunguje.",
+  "sites.newCodeFailed": "Nový kód pro obnovení se nepodařilo vytvořit. Zkontrolujte připojení a zkuste to znovu."
 }

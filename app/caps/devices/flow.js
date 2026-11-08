@@ -608,14 +608,17 @@ export async function receive(ctx, from, value, at = ctx.now()) {
 }
 
 /**
- * What a removed device may still hold of the keys that crossed, to revoke where each was made: the brains, and the services by their own
- * names (connections, search services), never a key. @param {Settings} settings @param {string[]} ids those crossing() gives
+ * What a removed device may still hold of the keys that crossed, to revoke where each was made: the brains, the services by their own
+ * names (connections, search services), and the sites published with one, by their names online, which a new recovery code in Publish
+ * takes back (D720); never a key. @param {FS} fs @param {Settings} settings @param {string[]} ids those crossing() gives
  */
-export function revoking(settings, ids) {
+export async function revoking(fs, settings, ids) {
   const nameOf = (/** @type {string} */ id) => settings.connections?.find((one) => one.id === id)?.name
     ?? (id.startsWith('search:') && isService(id.slice(7)) ? SERVICES[/** @type {import('../web-search/services.js').ServiceId} */ (id.slice(7))].name : '')
+  const sites = await Promise.all((await fs.list('projects')).map(async ({ name: dir }) => Promise.all((await fs.list(`projects/${dir}/sites`)).filter(({ name }) => ids.includes(`site:${name.split('-')[0]}`))
+    .map(async ({ name }) => (await readJSON(fs, `projects/${dir}/sites/${name}/site.json`, {}))?.published?.name))))
   // And the services it signed in to itself, whose sign-in there stays until it is ended at the service.
-  return { brains: settings.brains.filter((brain) => ids.includes(brain.id)), services: [...ids.map(nameOf), ...(following(settings).connections ?? []).filter((one) => one.auth === 'oauth').map((one) => one.name)].filter(Boolean) }
+  return { brains: settings.brains.filter((brain) => ids.includes(brain.id)), services: [...ids.map(nameOf), ...(following(settings).connections ?? []).filter((one) => one.auth === 'oauth').map((one) => one.name)].filter(Boolean), sites: sites.flat().filter(Boolean) }
 }
 
 /**
@@ -631,7 +634,7 @@ export async function removal(ctx, id, erase) {
   // The devices it added are this one's to vouch for now, so that one that hears of the removal first still takes them.
   await changeList(ctx.fs, (list) => (gone.removedAt ? null : list.map((one) => (one.id === id ? { ...one, removedAt, erase } : one.addedBy === id && !one.removedAt ? { ...one, addedBy: ctx.me.id } : one))), ctx.lock)
   const settings = await ctx.settings()
-  return { ...revoking(settings, Object.keys(await keysOf(ctx.fs, settings, ctx.policy))), unreached: (await share(ctx)).map((one) => one.name) }
+  return { ...await revoking(ctx.fs, settings, Object.keys(await keysOf(ctx.fs, settings, ctx.policy))), unreached: (await share(ctx)).map((one) => one.name) }
 }
 
 /**

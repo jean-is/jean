@@ -40,5 +40,9 @@
   "sites.published": "Online na ang site.",
   "sites.wentOffline": "Offline na ang site.",
   "sites.elsewhere": "Inilathala ang site na ito mula sa ibang device. I-type ang recovery code nito para mailathala ito mula rito.",
-  "sites.failed": "Hindi nailathala ang site. Tingnan ang koneksyon mo at subukang muli."
+  "sites.failed": "Hindi nailathala ang site. Tingnan ang koneksyon mo at subukang muli.",
+  "sites.newCode": "Gumawa ng bagong recovery code",
+  "sites.confirmNewCode": "Gumawa ng bagong recovery code? Hindi na mababago ng lumang code, o ng anumang device na inalis mo, ang site na ito. Matatanggap ng iba mong device ang bagong code.",
+  "sites.newCodeMade": "Hindi na gumagana ang lumang recovery code para sa site na ito.",
+  "sites.newCodeFailed": "Walang nagawang bagong recovery code. Tingnan ang koneksyon mo at subukang muli."
 }

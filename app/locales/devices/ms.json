@@ -57,6 +57,7 @@
   "devices.notYet": "{device} belum dimaklumkan. Peranti ini akan memaklumkannya sendiri sebaik sahaja boleh.",
   "devices.erasing": "{name} akan dipadam daripada peranti itu apabila ia dibuka nanti.",
   "devices.revoke": "Peranti itu mungkin masih menyimpan kunci-kunci ini, kerana kunci tidak boleh ditarik balik. Demi keselamatan, gantikan setiap kunci di tempat anda membuatnya:",
+  "devices.sites": "Peranti itu mungkin masih boleh mengubah laman-laman web ini dalam talian. Untuk menghalangnya, buka setiap satu, pilih Terbitkan…, kemudian Buat kod pemulihan baharu:",
   "devices.send": "Hantar ke {device}",
   "devices.task.sent": "Dihantar ke {device}.",
   "devices.task.kept": "Projek ini kekal pada peranti ini.",

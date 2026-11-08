@@ -41,5 +41,9 @@
   "sites.published": "Il sito è online.",
   "sites.wentOffline": "Il sito è offline.",
   "sites.elsewhere": "Questo sito è stato pubblicato da un altro dispositivo. Scrivi il suo codice di recupero per pubblicarlo da qui.",
-  "sites.failed": "Non è stato possibile pubblicare il sito. Controlla la connessione e riprova."
+  "sites.failed": "Non è stato possibile pubblicare il sito. Controlla la connessione e riprova.",
+  "sites.newCode": "Crea un nuovo codice di recupero",
+  "sites.confirmNewCode": "Creare un nuovo codice di recupero? Il vecchio codice, e qualsiasi dispositivo che hai rimosso, non potranno più modificare questo sito. Gli altri tuoi dispositivi riceveranno il nuovo codice.",
+  "sites.newCodeMade": "Il vecchio codice di recupero non funziona più per questo sito.",
+  "sites.newCodeFailed": "Non è stato creato nessun nuovo codice di recupero. Controlla la connessione e riprova."
 }

@@ -59,6 +59,7 @@
   "devices.notYet": "Kifaa {device} bado hakijaarifiwa. Kifaa hiki kitakiarifu chenyewe mara kitakapoweza.",
   "devices.erasing": "Kifaa hicho kitafuta {name} kitakapofunguka tena.",
   "devices.revoke": "Huenda bado kina funguo hizi, kwa kuwa ufunguo hauwezi kurudishwa. Kwa usalama, badilisha kila ufunguo pale ulipoutengeneza:",
+  "devices.sites": "Huenda bado kinaweza kubadilisha tovuti hizi mtandaoni. Ili kukizuia, fungua kila moja, chagua Chapisha…, kisha Tengeneza msimbo mpya wa urejeshaji:",
   "devices.send": "Tuma kwa {device}",
   "devices.task.sent": "Imetumwa kwa {device}.",
   "devices.task.kept": "Mradi huu umehifadhiwa kwenye kifaa hiki.",

@@ -59,6 +59,7 @@
   "devices.notYet": "{device} cihazına henüz haber verilemedi. Bu cihaz, mümkün olur olmaz kendiliğinden haber verecek.",
   "devices.erasing": "{name}, bir sonraki açılışta o cihazdan silinecek.",
   "devices.revoke": "Bu anahtarlar hâlâ onda olabilir, çünkü bir anahtar geri alınamaz. Güvende olmak için her birini oluşturduğun yerde değiştir:",
+  "devices.sites": "Bu siteleri internette hâlâ değiştirebilir. Bunu durdurmak için her birini aç, Yayınla…’yı seç, ardından Yeni kurtarma kodu oluştur’u seç:",
   "devices.send": "{device} cihazına gönder",
   "devices.task.sent": "{device} cihazına gönderildi.",
   "devices.task.kept": "Bu proje bu cihazda tutuluyor.",

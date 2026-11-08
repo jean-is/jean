@@ -39,5 +39,9 @@
   "sites.published": "Ojú òpó náà wà lórí ayélujára.",
   "sites.wentOffline": "Ojú òpó náà kò sí lórí ayélujára mọ́.",
   "sites.elsewhere": "Láti orí ẹ̀rọ mìíràn ni a ti tẹ ojú òpó yìí jáde. Ẹ kọ kóòdù ìmúpadàbọ̀sípò rẹ̀ kí ẹ lè tẹ̀ ẹ́ jáde láti ibí.",
-  "sites.failed": "A kò lè tẹ ojú òpó náà jáde. Ẹ ṣàyẹ̀wò ìsopọ̀ yín kí ẹ sì tún gbìyànjú."
+  "sites.failed": "A kò lè tẹ ojú òpó náà jáde. Ẹ ṣàyẹ̀wò ìsopọ̀ yín kí ẹ sì tún gbìyànjú.",
+  "sites.newCode": "Ṣe kóòdù ìmúpadàbọ̀sípò tuntun",
+  "sites.confirmNewCode": "Ṣé kí ẹ ṣe kóòdù ìmúpadàbọ̀sípò tuntun? Kóòdù àtijọ́, àti ẹ̀rọ èyíkéyìí tí ẹ ti yọ kúrò, kò ní lè yí ojú òpó yìí padà mọ́. Àwọn ẹ̀rọ yín mìíràn yóò gba kóòdù tuntun náà.",
+  "sites.newCodeMade": "Kóòdù ìmúpadàbọ̀sípò àtijọ́ kò ṣiṣẹ́ fún ojú òpó yìí mọ́.",
+  "sites.newCodeFailed": "A kò lè ṣe kóòdù ìmúpadàbọ̀sípò tuntun. Ẹ ṣàyẹ̀wò ìsopọ̀ yín kí ẹ sì tún gbìyànjú."
 }

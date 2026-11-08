@@ -40,5 +40,9 @@
   "sites.published": "Sivusto on verkossa.",
   "sites.wentOffline": "Sivusto on poissa verkosta.",
   "sites.elsewhere": "Tämä sivusto julkaistiin toiselta laitteelta. Kirjoita sen palautuskoodi, niin voit julkaista sen täältä.",
-  "sites.failed": "Sivustoa ei voitu julkaista. Tarkista yhteytesi ja yritä uudelleen."
+  "sites.failed": "Sivustoa ei voitu julkaista. Tarkista yhteytesi ja yritä uudelleen.",
+  "sites.newCode": "Luo uusi palautuskoodi",
+  "sites.confirmNewCode": "Luodaanko uusi palautuskoodi? Vanha koodi ja poistamasi laitteet eivät voi enää muuttaa tätä sivustoa. Muut laitteesi saavat uuden koodin.",
+  "sites.newCodeMade": "Vanha palautuskoodi ei enää toimi tällä sivustolla.",
+  "sites.newCodeFailed": "Uutta palautuskoodia ei luotu. Tarkista yhteytesi ja yritä uudelleen."
 }

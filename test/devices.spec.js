@@ -344,6 +344,12 @@ test('a device removed with its box ticked erases Jean there the next time it re
   // B closed meanwhile, as a phone put away: its storage stays with its context.
   const context = b.context()
   await b.close()
+  // A site published here, whose key crossed (D720).
+  await page.evaluate(async () => {
+    const [{ app }, { setSecret }] = await Promise.all([import('/ui/state.js'), import('/ui/secrets.js')])
+    await app.fs.write(`${app.projectDir}/sites/01JSITE0000000000000000000-bakery/site.json`, JSON.stringify({ format: 1, name: 'Bakery', files: [], published: { name: 'lyon-bakery' } }))
+    await setSecret(app.fs, 'site:01JSITE0000000000000000000', '0123-4567-89AB-CDEF-0123-4567-89AB-CDEF')
+  })
   await settings.locator('.devices-flow > .list > li').last().getByRole('button', { name: 'Remove' }).click()
   const dialog = page.locator('dialog.devices-remove[open]')
   await expect(dialog.getByRole('heading')).toHaveText(/^Remove .+\?$/)
@@ -360,8 +366,9 @@ test('a device removed with its box ticked erases Jean there the next time it re
   await expect(dialog.getByRole('alert').locator('bdi')).toHaveCount(1)
   await expect(dialog.getByRole('button', { name: 'Done' })).toBeFocused()
   await page.unroute(`${RELAY_URL}v1/m/**`)
-  // What it may still hold, by where each was made, never a key, and the service it signed in to itself.
-  await expect(dialog.locator('li')).toHaveText(['OpenAI · fake', 'Notes', 'Brave Search', 'Mail'])
+  // What it may still hold, by where each was made, never a key, and the service it signed in to itself; then the site, by its name online.
+  await expect(dialog.locator('li')).toHaveText(['OpenAI · fake', 'Notes', 'Brave Search', 'Mail', 'lyon-bakery'])
+  await expect(dialog.getByRole('status')).toContainText('It may still change these sites online. To stop it, open each one, choose Publish…, then Make a new recovery code:')
   await dialog.getByRole('button', { name: 'Done' }).click()
   await expect(settings.locator('.devices-flow > .list > li')).toHaveCount(1)
   // Back online, what waits goes on its own.

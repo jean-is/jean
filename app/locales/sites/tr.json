@@ -40,5 +40,9 @@
   "sites.published": "Site yayında.",
   "sites.wentOffline": "Site yayından kaldırıldı.",
   "sites.elsewhere": "Bu site başka bir cihazdan yayınlandı. Buradan yayınlamak için kurtarma kodunu yaz.",
-  "sites.failed": "Site yayınlanamadı. Bağlantını kontrol edip yeniden dene."
+  "sites.failed": "Site yayınlanamadı. Bağlantını kontrol edip yeniden dene.",
+  "sites.newCode": "Yeni kurtarma kodu oluştur",
+  "sites.confirmNewCode": "Yeni bir kurtarma kodu oluşturulsun mu? Eski kod ve kaldırdığın cihazlar artık bu siteyi değiştiremez. Diğer cihazların yeni kodu alır.",
+  "sites.newCodeMade": "Eski kurtarma kodu artık bu site için çalışmıyor.",
+  "sites.newCodeFailed": "Yeni kurtarma kodu oluşturulamadı. Bağlantını kontrol edip yeniden dene."
 }

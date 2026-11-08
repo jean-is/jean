@@ -61,6 +61,7 @@
   "devices.notYet": "Dispozitivul {device} nu a fost anunțat încă. Acest dispozitiv îl va anunța singur imediat ce poate.",
   "devices.erasing": "Data viitoare când se deschide, acel dispozitiv va șterge {name}.",
   "devices.revoke": "Este posibil să mai păstreze aceste chei, deoarece o cheie nu poate fi luată înapoi. Pentru siguranță, înlocuiți fiecare cheie acolo unde ați creat-o:",
+  "devices.sites": "Este posibil să mai poată modifica aceste site-uri online. Pentru a-l opri, deschideți fiecare site, alegeți Publicați…, apoi Creați un cod de recuperare nou:",
   "devices.send": "Trimiteți către {device}",
   "devices.task.sent": "Sarcina a fost trimisă către {device}.",
   "devices.task.kept": "Acest proiect este păstrat pe acest dispozitiv.",

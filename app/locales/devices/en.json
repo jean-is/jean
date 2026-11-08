@@ -59,6 +59,7 @@
   "devices.notYet": "{device} hasn’t been told yet. This device tells it on its own as soon as it can.",
   "devices.erasing": "{name} is erased from it the next time it opens.",
   "devices.revoke": "It may still hold these keys, since a key can’t be taken back. To be safe, replace each one where you made it:",
+  "devices.sites": "It may still change these sites online. To stop it, open each one, choose Publish…, then Make a new recovery code:",
   "devices.send": "Send to {device}",
   "devices.task.sent": "Sent to {device}.",
   "devices.task.kept": "This project is kept on this device.",

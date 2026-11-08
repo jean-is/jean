@@ -59,6 +59,7 @@
   "devices.notYet": "Még nem sikerült szólni ide: {device}. Ez az eszköz magától szól, amint tud.",
   "devices.erasing": "A(z) {name} törlődik róla, amikor legközelebb megnyílik.",
   "devices.revoke": "Ezek a kulcsok még megmaradhattak rajta, mert egy kulcsot nem lehet visszavenni. A biztonság kedvéért mindegyiket cseréld le ott, ahol létrehoztad:",
+  "devices.sites": "Lehet, hogy még módosíthatja ezeket a weboldalakat az interneten. Hogy ezt megakadályozd, nyisd meg mindegyiket, válaszd a Közzététel… lehetőséget, majd az Új helyreállítási kód létrehozása gombot:",
   "devices.send": "Küldés ide: {device}",
   "devices.task.sent": "Elküldve ide: {device}.",
   "devices.task.kept": "Ez a projekt ezen az eszközön van tárolva.",

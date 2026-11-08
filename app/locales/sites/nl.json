@@ -40,5 +40,9 @@
   "sites.published": "De website staat online.",
   "sites.wentOffline": "De website is offline.",
   "sites.elsewhere": "Deze website is vanaf een ander apparaat gepubliceerd. Typ de herstelcode om hem vanaf hier te publiceren.",
-  "sites.failed": "De website kon niet worden gepubliceerd. Controleer je verbinding en probeer het opnieuw."
+  "sites.failed": "De website kon niet worden gepubliceerd. Controleer je verbinding en probeer het opnieuw.",
+  "sites.newCode": "Nieuwe herstelcode maken",
+  "sites.confirmNewCode": "Nieuwe herstelcode maken? De oude code en apparaten die je hebt weggehaald, kunnen deze website dan niet meer wijzigen. Je andere apparaten krijgen de nieuwe code.",
+  "sites.newCodeMade": "De oude herstelcode werkt niet meer voor deze website.",
+  "sites.newCodeFailed": "Er is geen nieuwe herstelcode gemaakt. Controleer je verbinding en probeer het opnieuw."
 }

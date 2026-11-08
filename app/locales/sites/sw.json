@@ -40,5 +40,9 @@
   "sites.published": "Tovuti iko mtandaoni.",
   "sites.wentOffline": "Tovuti imeondolewa mtandaoni.",
   "sites.elsewhere": "Tovuti hii ilichapishwa kutoka kifaa kingine. Andika msimbo wake wa urejeshaji ili uichapishe kutoka hapa.",
-  "sites.failed": "Tovuti haikuweza kuchapishwa. Angalia muunganisho wako na ujaribu tena."
+  "sites.failed": "Tovuti haikuweza kuchapishwa. Angalia muunganisho wako na ujaribu tena.",
+  "sites.newCode": "Tengeneza msimbo mpya wa urejeshaji",
+  "sites.confirmNewCode": "Utengeneze msimbo mpya wa urejeshaji? Msimbo wa zamani hautaweza tena kubadilisha tovuti hii, wala kifaa chochote ulichoondoa. Vifaa vyako vingine vitapata msimbo mpya.",
+  "sites.newCodeMade": "Msimbo wa zamani wa urejeshaji haufanyi kazi tena kwa tovuti hii.",
+  "sites.newCodeFailed": "Msimbo mpya wa urejeshaji haukuweza kutengenezwa. Angalia muunganisho wako na ujaribu tena."
 }

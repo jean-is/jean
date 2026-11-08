@@ -61,6 +61,7 @@
   "devices.notYet": "L’appareil {device} n’a pas encore été prévenu. Cet appareil le préviendra de lui-même dès que possible.",
   "devices.erasing": "L’appareil effacera {name} la prochaine fois qu’il l’ouvrira.",
   "devices.revoke": "Il peut encore détenir ces clés, car une clé ne se reprend pas. Par sécurité, remplacez chacune là où vous l’avez créée :",
+  "devices.sites": "Il peut encore modifier ces sites en ligne. Pour l’en empêcher, ouvrez chacun d’eux, choisissez Publier…, puis Créer un nouveau code de récupération :",
   "devices.send": "Envoyer à {device}",
   "devices.task.sent": "Tâche envoyée à {device}.",
   "devices.task.kept": "Ce projet est gardé sur cet appareil.",

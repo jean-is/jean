@@ -39,5 +39,9 @@
   "sites.published": "Laman web sudah dalam talian.",
   "sites.wentOffline": "Laman web sudah luar talian.",
   "sites.elsewhere": "Laman web ini diterbitkan daripada peranti lain. Taip kod pemulihannya untuk menerbitkannya dari sini.",
-  "sites.failed": "Laman web tidak dapat diterbitkan. Semak sambungan anda dan cuba lagi."
+  "sites.failed": "Laman web tidak dapat diterbitkan. Semak sambungan anda dan cuba lagi.",
+  "sites.newCode": "Buat kod pemulihan baharu",
+  "sites.confirmNewCode": "Buat kod pemulihan baharu? Kod lama, dan mana-mana peranti yang telah anda buang, tidak boleh mengubah laman web ini lagi. Peranti anda yang lain akan menerima kod baharu.",
+  "sites.newCodeMade": "Kod pemulihan lama tidak lagi berfungsi untuk laman web ini.",
+  "sites.newCodeFailed": "Kod pemulihan baharu tidak dapat dibuat. Semak sambungan anda dan cuba lagi."
 }

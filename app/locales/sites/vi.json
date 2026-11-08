@@ -39,5 +39,9 @@
   "sites.published": "Trang web đã có trên mạng.",
   "sites.wentOffline": "Trang web đã được gỡ khỏi mạng.",
   "sites.elsewhere": "Trang web này được đưa lên mạng từ một thiết bị khác. Hãy nhập mã khôi phục của trang để đưa lên mạng từ đây.",
-  "sites.failed": "Không đưa được trang web lên mạng. Hãy kiểm tra kết nối rồi thử lại."
+  "sites.failed": "Không đưa được trang web lên mạng. Hãy kiểm tra kết nối rồi thử lại.",
+  "sites.newCode": "Tạo mã khôi phục mới",
+  "sites.confirmNewCode": "Tạo mã khôi phục mới? Mã cũ, và mọi thiết bị bạn đã gỡ bỏ, sẽ không thể thay đổi trang web này nữa. Các thiết bị khác của bạn sẽ nhận được mã mới.",
+  "sites.newCodeMade": "Mã khôi phục cũ không còn dùng được cho trang web này.",
+  "sites.newCodeFailed": "Không tạo được mã khôi phục mới. Hãy kiểm tra kết nối rồi thử lại."
 }

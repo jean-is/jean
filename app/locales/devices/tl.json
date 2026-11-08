@@ -59,6 +59,7 @@
   "devices.notYet": "Hindi pa naaabisuhan ang {device}. Kusang aabisuhan ito ng device na ito sa lalong madaling panahon.",
   "devices.erasing": "Mabubura doon ang {name} sa susunod na pagbukas nito.",
   "devices.revoke": "Maaaring hawak pa nito ang mga susing ito, dahil hindi na mababawi ang isang susi. Para sigurado, palitan ang bawat isa kung saan mo ito ginawa:",
+  "devices.sites": "Maaaring kaya pa nitong baguhin online ang mga site na ito. Para pigilan ito, buksan ang bawat isa, piliin ang Ilathala…, at saka ang Gumawa ng bagong recovery code:",
   "devices.send": "Ipadala sa {device}",
   "devices.task.sent": "Naipadala sa {device}.",
   "devices.task.kept": "Nakatago sa device na ito ang proyektong ito.",

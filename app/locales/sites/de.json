@@ -40,5 +40,9 @@
   "sites.published": "Die Website ist online.",
   "sites.wentOffline": "Die Website ist offline.",
   "sites.elsewhere": "Diese Website wurde von einem anderen Gerät aus veröffentlicht. Gib ihren Wiederherstellungscode ein, um sie von hier aus zu veröffentlichen.",
-  "sites.failed": "Die Website konnte nicht veröffentlicht werden. Prüfe deine Verbindung und versuche es erneut."
+  "sites.failed": "Die Website konnte nicht veröffentlicht werden. Prüfe deine Verbindung und versuche es erneut.",
+  "sites.newCode": "Neuen Wiederherstellungscode erstellen",
+  "sites.confirmNewCode": "Neuen Wiederherstellungscode erstellen? Der alte Code und jedes Gerät, das du entfernt hast, können diese Website dann nicht mehr ändern. Deine anderen Geräte bekommen den neuen Code.",
+  "sites.newCodeMade": "Der alte Wiederherstellungscode funktioniert für diese Website nicht mehr.",
+  "sites.newCodeFailed": "Es wurde kein neuer Wiederherstellungscode erstellt. Prüfe deine Verbindung und versuche es erneut."
 }

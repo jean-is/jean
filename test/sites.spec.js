@@ -2,7 +2,8 @@
 // brain hearing what to fix (a line too pale, a placeholder left); it opens beside the task, at a phone's width once picked, its link
 // to its other page followed there; it is among the creations, changed by `site_change` until nothing is left to fix, and leaves as
 // a zip of its files. Published at a name of its own on the share host, asked first, its recovery code shown once, its pages
-// served under the host's policy; published again, only what changed goes; taken offline. Its widths in Arabic and Japanese.
+// served under the host's policy; published again, only what changed goes; a new recovery code; taken offline. Its widths in
+// Arabic and Japanese.
 import { readFile } from 'node:fs/promises'
 import { request } from 'node:http'
 import { test, expect } from '@playwright/test'
@@ -117,7 +118,7 @@ async function throughHost(context) {
   })
 }
 
-test('a site goes online at a name of its own, asked first, its recovery code shown once and kept apart; published again, only what changed goes; taken offline (D720)', async ({ page, context, browserName }) => {
+test('a site goes online at a name of its own, asked first, its recovery code shown once and kept apart; published again, only what changed goes; a new code takes the old one back; taken offline (D720)', async ({ page, context, browserName }) => {
   // One host serves every browser's run, its retries and repeats, so each takes a name of its own.
   const name = `atelier-nord-${browserName}-${test.info().retry}-${test.info().repeatEachIndex}`, address = `http://${name}.localhost:4185/`
   await start(page)
@@ -201,6 +202,21 @@ test('a site goes online at a name of its own, asked first, its recovery code sh
   await dialog.getByRole('button', { name: 'Publish again' }).click()
   await expect(dialog).toContainText('Nothing changed since it was published.')
   expect(await secret()).toBe(recovery)
+
+  // A new recovery code, once the person says so, shown once and kept here: the host takes the old one no more, nor a device that holds it.
+  const state = (/** @type {string | null} */ held) => page.evaluate(async ([host, name, held]) => { const { tokenOf, secretOf } = await import('/caps/sites/file.js')
+    return (await (await fetch(`${host}v1/sites/${name}`, { headers: { authorization: `Bearer ${await tokenOf(/** @type {Uint8Array} */ (secretOf(String(held))))}` } })).json()).state }, [SHARE_URL, name, held])
+  page.once('dialog', (asked) => { expect(asked.message()).toContain('any device you removed'); asked.accept() })
+  await dialog.getByRole('button', { name: 'Make a new recovery code' }).click()
+  await expect(code).toHaveText(/^([0-9A-F]{4}-){7}[0-9A-F]{4}$/)
+  const renewed = await code.textContent()
+  expect(renewed).not.toBe(recovery)
+  expect(await secret()).toBe(renewed)
+  expect([await state(recovery), await state(renewed)]).toEqual(['taken', 'yours'])
+  await expect(dialog.getByRole('status').last()).toHaveText('The old recovery code no longer works for this site.')
+  await dialog.getByLabel('I’ve kept it somewhere safe').check()
+  await dialog.getByRole('button', { name: 'Done' }).click()
+  await expect(dialog).toContainText('Nothing changed since it was published.')
 
   // Taken offline, once the person says so: its address answers nothing more.
   page.once('dialog', (asked) => asked.accept())

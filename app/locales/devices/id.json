@@ -57,6 +57,7 @@
   "devices.notYet": "{device} belum diberi tahu. Perangkat ini akan memberitahunya sendiri begitu bisa.",
   "devices.erasing": "{name} akan dihapus dari perangkat itu saat dibuka lagi.",
   "devices.revoke": "Perangkat itu mungkin masih menyimpan kunci-kunci ini, karena kunci tidak bisa ditarik kembali. Demi keamanan, ganti setiap kunci di tempat Anda membuatnya:",
+  "devices.sites": "Perangkat itu mungkin masih bisa mengubah situs-situs ini secara online. Untuk mencegahnya, buka setiap situs, pilih Terbitkan…, lalu Buat kode pemulihan baru:",
   "devices.send": "Kirim ke {device}",
   "devices.task.sent": "Terkirim ke {device}.",
   "devices.task.kept": "Proyek ini tetap di perangkat ini.",

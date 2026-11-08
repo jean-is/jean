@@ -40,5 +40,9 @@
   "sites.published": "Shafin yana kan intanet.",
   "sites.wentOffline": "An cire shafin daga intanet.",
   "sites.elsewhere": "An wallafa wannan shafin daga wata na’ura. Rubuta lambar maidowarsa don ka wallafa shi daga nan.",
-  "sites.failed": "Ba a iya wallafa shafin ba. Duba haɗinka ka sake gwadawa."
+  "sites.failed": "Ba a iya wallafa shafin ba. Duba haɗinka ka sake gwadawa.",
+  "sites.newCode": "Ƙirƙiri sabuwar lambar maidowa",
+  "sites.confirmNewCode": "A ƙirƙiri sabuwar lambar maidowa? Tsohuwar lambar, da duk na’urar da ka cire, ba za su ƙara iya canza wannan shafin ba. Sauran na’urorinka za su sami sabuwar lambar.",
+  "sites.newCodeMade": "Tsohuwar lambar maidowa ba ta ƙara aiki a wannan shafin.",
+  "sites.newCodeFailed": "Ba a iya ƙirƙirar sabuwar lambar maidowa ba. Duba haɗinka ka sake gwadawa."
 }

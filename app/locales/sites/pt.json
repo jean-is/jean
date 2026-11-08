@@ -41,5 +41,9 @@
   "sites.published": "O site está online.",
   "sites.wentOffline": "O site está offline.",
   "sites.elsewhere": "Este site foi publicado a partir de outro dispositivo. Escreve o código de recuperação dele para o publicar a partir daqui.",
-  "sites.failed": "Não foi possível publicar o site. Verifica se tens internet e tenta de novo."
+  "sites.failed": "Não foi possível publicar o site. Verifica se tens internet e tenta de novo.",
+  "sites.newCode": "Criar um novo código de recuperação",
+  "sites.confirmNewCode": "Criar um novo código de recuperação? O código antigo, e qualquer dispositivo que tenhas removido, deixam de poder alterar este site. Os teus outros dispositivos recebem o novo código.",
+  "sites.newCodeMade": "O código de recuperação antigo já não funciona para este site.",
+  "sites.newCodeFailed": "Não foi criado nenhum código de recuperação novo. Verifica se tens internet e tenta de novo."
 }

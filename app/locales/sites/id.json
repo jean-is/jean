@@ -39,5 +39,9 @@
   "sites.published": "Situs sudah online.",
   "sites.wentOffline": "Situs sudah offline.",
   "sites.elsewhere": "Situs ini diterbitkan dari perangkat lain. Ketik kode pemulihannya untuk menerbitkannya dari sini.",
-  "sites.failed": "Situs tidak bisa diterbitkan. Periksa koneksi Anda lalu coba lagi."
+  "sites.failed": "Situs tidak bisa diterbitkan. Periksa koneksi Anda lalu coba lagi.",
+  "sites.newCode": "Buat kode pemulihan baru",
+  "sites.confirmNewCode": "Buat kode pemulihan baru? Kode lama, dan perangkat apa pun yang telah Anda hapus, tidak bisa lagi mengubah situs ini. Perangkat Anda yang lain akan mendapat kode baru.",
+  "sites.newCodeMade": "Kode pemulihan lama tidak berlaku lagi untuk situs ini.",
+  "sites.newCodeFailed": "Kode pemulihan baru tidak berhasil dibuat. Periksa koneksi Anda lalu coba lagi."
 }

@@ -61,6 +61,7 @@
   "devices.notYet": "Ainda não foi possível avisar {device}. Este dispositivo fá-lo sozinho assim que puder.",
   "devices.erasing": "Esse dispositivo apaga {name} da próxima vez que abrir.",
   "devices.revoke": "Pode ainda guardar estas chaves, já que uma chave não se pode retirar. Por segurança, substitui cada uma onde a criaste:",
+  "devices.sites": "Pode ainda conseguir alterar estes sites online. Para o impedir, abre cada um, escolhe Publicar… e depois Criar um novo código de recuperação:",
   "devices.send": "Enviar para {device}",
   "devices.task.sent": "Tarefa enviada para {device}.",
   "devices.task.kept": "Este projeto fica neste dispositivo.",

@@ -39,5 +39,9 @@
   "sites.published": "网站已上线。",
   "sites.wentOffline": "网站已下线。",
   "sites.elsewhere": "这个网站是在另一台设备上发布的。输入它的恢复码，就能在这里发布。",
-  "sites.failed": "网站未能发布。请检查网络连接后重试。"
+  "sites.failed": "网站未能发布。请检查网络连接后重试。",
+  "sites.newCode": "生成新的恢复码",
+  "sites.confirmNewCode": "生成新的恢复码？旧的恢复码和你移除的设备将无法再更改这个网站。你的其他设备会收到新的恢复码。",
+  "sites.newCodeMade": "旧的恢复码已无法再用于这个网站。",
+  "sites.newCodeFailed": "未能生成新的恢复码。请检查网络连接后重试。"
 }

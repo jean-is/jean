@@ -23,7 +23,7 @@ await styleSheet(new URL('devices.css', import.meta.url))
  * The device Remove was pressed on, whether Jean is erased from it, while it goes, once gone the keys it may hold, by where each was made,
  * and the devices that took nothing yet, or that the removal failed.
  */
-const removing = signal(/** @type {{ device: Device, erase: boolean, busy?: boolean, left?: string[], unreached?: string[], refused?: boolean } | null} */ (null))
+const removing = signal(/** @type {{ device: Device, erase: boolean, busy?: boolean, left?: string[], sites?: string[], unreached?: string[], refused?: boolean } | null} */ (null))
 /** The lock's ways in, loaded when adding asks for them. */
 const lock = signal(/** @type {typeof import('../lock/lock.js') | null} */ (null))
 
@@ -125,12 +125,13 @@ function closed() {
 function asking() {
   const one = removing.value
   if (!one) return nothing
-  const { device, erase, busy, left, unreached = [], refused } = one
+  const { device, erase, busy, left, sites = [], unreached = [], refused } = one
   return html`<dialog class="sheet devices-remove" aria-labelledby="devices-remove" @close=${closed} @keydown=${(/** @type {KeyboardEvent} */ e) => e.key === 'Escape' && e.stopPropagation()}>
     <header class="dialog-head"><h2 id="devices-remove">${tParts('devices.remove', { device: named(device.name) })}</h2>
       <button class="icon-button" aria-label=${t('action.close')} @click=${() => dialog()?.close()}>${icons.close}</button></header>
     <div class="stack" role="status">${left ? html`<p>${tParts('devices.removed', { device: named(device.name) })}</p>${erase && !unreached.includes(device.name) ? html`<p>${t('devices.erasing', { name: BRAND.name })}</p>` : nothing}
-      ${left.length ? html`<p>${t('devices.revoke')}</p><ul>${left.map((label) => html`<li dir="auto">${label}</li>`)}</ul>` : nothing}` : nothing}</div>
+      ${left.length ? html`<p>${t('devices.revoke')}</p><ul>${left.map((label) => html`<li dir="auto">${label}</li>`)}</ul>` : nothing}
+      ${sites.length ? html`<p>${t('devices.sites')}</p><ul>${sites.map((name) => html`<li dir="ltr">${name}</li>`)}</ul>` : nothing}` : nothing}</div>
     <p class="devices-wrong" role="alert">${refused ? t('devices.why.relay') : unreached.map((name) => html`${tParts('devices.notYet', { device: named(name) })} `)}</p>
     ${left ? nothing : html`<p>${t('devices.removeText')}</p><label class="row" for="devices-erase"><input id="devices-erase" type="checkbox" .checked=${erase}
       @change=${(/** @type {Event} */ e) => { removing.value = { ...one, erase: /** @type {HTMLInputElement} */ (e.target).checked } }}>${t('devices.erase', { name: BRAND.name })}</label>`}

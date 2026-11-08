@@ -61,6 +61,7 @@
   "devices.notYet": "{device} aún no lo sabe. Este dispositivo se lo dirá por sí solo en cuanto pueda.",
   "devices.erasing": "{name} se borrará de él la próxima vez que se abra.",
   "devices.revoke": "Puede que aún guarde estas claves, porque una clave no se puede retirar. Por seguridad, sustituye cada una donde la creaste:",
+  "devices.sites": "Es posible que aún pueda cambiar estos sitios en internet. Para impedirlo, abre cada uno, elige Publicar… y luego Crear un nuevo código de recuperación:",
   "devices.send": "Enviar a {device}",
   "devices.task.sent": "Tarea enviada a {device}.",
   "devices.task.kept": "Este proyecto se queda en este dispositivo.",

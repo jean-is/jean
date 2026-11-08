@@ -41,5 +41,9 @@
   "sites.published": "U situ hè in linea.",
   "sites.wentOffline": "U situ hè fora di linea.",
   "sites.elsewhere": "Stu situ hè statu publicatu da un altru apparechju. Scrivite u so codice di ricuperu per publicallu da quì.",
-  "sites.failed": "Ùn s’hè micca pussutu publicà u situ. Verificate a vostra cunnessione è pruvate torna."
+  "sites.failed": "Ùn s’hè micca pussutu publicà u situ. Verificate a vostra cunnessione è pruvate torna.",
+  "sites.newCode": "Fà un codice di ricuperu novu",
+  "sites.confirmNewCode": "Fà un codice di ricuperu novu ? U codice vechju, è ogni apparechju chì avete cacciatu, ùn puderanu più cambià stu situ. I vostri altri apparechji riceveranu u codice novu.",
+  "sites.newCodeMade": "U codice di ricuperu vechju ùn funziona più per stu situ.",
+  "sites.newCodeFailed": "Ùn s’hè fattu nisun codice di ricuperu novu. Verificate a vostra cunnessione è pruvate torna."
 }

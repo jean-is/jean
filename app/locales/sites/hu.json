@@ -40,5 +40,9 @@
   "sites.published": "A weboldal online.",
   "sites.wentOffline": "A weboldal offline.",
   "sites.elsewhere": "Ezt a weboldalt egy másik eszközről tették közzé. Írd be a helyreállítási kódját, hogy innen is közzétehesd.",
-  "sites.failed": "A weboldalt nem sikerült közzétenni. Ellenőrizd a kapcsolatot, és próbáld újra."
+  "sites.failed": "A weboldalt nem sikerült közzétenni. Ellenőrizd a kapcsolatot, és próbáld újra.",
+  "sites.newCode": "Új helyreállítási kód létrehozása",
+  "sites.confirmNewCode": "Létrehozol egy új helyreállítási kódot? A régi kód és az eltávolított eszközeid ezután nem módosíthatják ezt a weboldalt. A többi eszközöd megkapja az új kódot.",
+  "sites.newCodeMade": "A régi helyreállítási kód már nem működik ennél a weboldalnál.",
+  "sites.newCodeFailed": "Nem jött létre új helyreállítási kód. Ellenőrizd a kapcsolatot, és próbáld újra."
 }

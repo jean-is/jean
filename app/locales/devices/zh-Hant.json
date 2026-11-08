@@ -57,6 +57,7 @@
   "devices.notYet": "還沒能通知 {device}。這台裝置會在可以時自動通知。",
   "devices.erasing": "它下次開啟時，會從上面清除 {name}。",
   "devices.revoke": "它可能仍保存著這些金鑰，因為金鑰無法收回。為了安全，請在建立每個金鑰的地方把它換掉：",
+  "devices.sites": "它可能仍能在線上變更這些網站。若要阻止，請開啟每個網站，選擇「發布…」，然後選擇「產生新的復原碼」：",
   "devices.send": "傳送到 {device}",
   "devices.task.sent": "已傳送到 {device}。",
   "devices.task.kept": "這個專案只保存在這台裝置上。",

@@ -499,7 +499,7 @@ export async function sendTask(path, id) {
 
 /**
  * Removes a device from this profile's: the others get the list with it removed, then it is told, and to erase Jean there unless `erase`
- * is false. Gives what may be revoked where it was made, the brains' and services' names, never a key, and the devices that took nothing
+ * is false. Gives what may be revoked where it was made, the brains' and services' names, the sites' online, never a key, and the devices that took nothing
  * yet, by name, which it goes again to on its own. @param {string} id @param {{ erase?: boolean }} [options]
  */
 export async function removeDevice(id, { erase = true } = {}) {
@@ -507,7 +507,7 @@ export async function removeDevice(id, { erase = true } = {}) {
   try {
     const done = ctx ? await removal(ctx, id, erase) : null
     if (ctx) await again(ctx)
-    return { left: done ? [...done.brains.map(brainLabel), ...done.services] : [], unreached: done?.unreached ?? [] }
+    return { left: done ? [...done.brains.map(brainLabel), ...done.services] : [], sites: done?.sites ?? [], unreached: done?.unreached ?? [] }
   } finally { refresh() }
 }
 

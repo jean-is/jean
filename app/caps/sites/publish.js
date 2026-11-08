@@ -2,8 +2,8 @@
 // publishes sites. A name, Jean's suggestion from the site's name at first, said free or taken by the host as it is typed; what
 // publishing means; then the site's list, and only the files the host lacks. A site's first publish makes its secret, kept among
 // the secrets (never in a backup, export or share) and shown once as its recovery code, which brings it to another device. Once
-// published: its address, until when, what changed, Publish again and Take it offline. Asked each time: nothing goes before
-// the person presses Publish.
+// published: its address, until when, what changed, a new recovery code, Publish again and Take it offline. Asked each time:
+// nothing goes before the person presses Publish.
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
@@ -24,7 +24,7 @@ const site = signal(/** @type {Shown | null} */ (null))
 /** The name typed, what the host says of it, the recovery code typed (null while its field is closed), the code just made, whether it was kept. */
 const [name, said, typed, made, kept] = [signal(''), signal(/** @type {{ state: string, why?: string }} */ ({ state: '' })), signal(/** @type {string | null} */ (null)), signal(''), signal(false)]
 /** The files sent so far while publishing, what the dialog last said, what was just copied. */
-const [working, told, copied] = [signal(/** @type {{ done: number, count: number } | null} */ (null)), signal(/** @type {{ text: string, alert?: boolean }} */ ({ text: '' })), signal('')]
+const [working, told, copied, renewing] = [signal(/** @type {{ done: number, count: number } | null} */ (null)), signal(/** @type {{ text: string, alert?: boolean }} */ ({ text: '' })), signal(''), signal(false)]
 
 const SHAPE = /^[a-z0-9][a-z0-9-]{1,38}[a-z0-9]$/
 /** Where a site's secret is kept: its folder's ULID. @param {string} path */
@@ -108,6 +108,21 @@ async function offline() {
   notify(t('sites.wentOffline'))
 }
 
+/**
+ * A new secret in place of this one, which a device removed may keep: the host takes its token from the one it replaces, asked again
+ * when the answer was lost; then it is kept here, going to the person's other devices as keys do (D700), and its code shows once.
+ */
+async function renew() {
+  const one = site.peek(), out = one?.record.published, old = secretNow(), secret = crypto.getRandomValues(new Uint8Array(16))
+  if (!one || !out || !old || renewing.peek() || !confirm(t('sites.confirmNewCode'))) return
+  const post = async () => ask(`${out.name}/token`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token: await tokenOf(secret) }) }, await tokenOf(old))
+  renewing.value = true
+  const response = await post().catch(post).catch(() => null).finally(() => { renewing.value = false })
+  if (!response?.ok) return void (told.value = { text: t('sites.newCodeFailed'), alert: true })
+  await setSecret(app.fs, keyOf(one.path), codeOf(secret))
+  site.value = { ...one, secret: codeOf(secret) }; made.value = codeOf(secret); kept.value = false; told.value = { text: t('sites.newCodeMade') }
+}
+
 /** Copies the address or the code, whose button says so for two seconds. @param {string} text @param {string} which */
 const copy = (text, which) => navigator.clipboard.writeText(text).then(() => { copied.value = which; setTimeout(() => { if (copied.peek() === which) copied.value = '' }, 2000) })
 /** What the host said of the name typed, in words. */
@@ -133,7 +148,8 @@ class PublishDialog extends Element {
         : out ? html`<section class="stack"><div class="site-out"><a href=${out.address} target="_blank" rel="noopener" dir="ltr">${out.address}</a>
             <button class="button" @click=${() => copy(out.address, 'address')}>${done('address')} <span aria-live="polite">${t(copied.value === 'address' ? 'toast.copied' : 'action.copy')}</span></button></div>
           <p>${t(live ? 'sites.online' : 'sites.ended', { date: day(out.expires) })}</p>
-          ${one.secret ? html`<p>${changed ? t('sites.changed', { count: changed }) : t('sites.same')}</p>` : html`<p>${t('sites.elsewhere')}</p>${code}`}</section>`
+          ${one.secret ? html`<p>${changed ? t('sites.changed', { count: changed }) : t('sites.same')}</p>
+            <button type="button" class="button subtle" ?disabled=${renewing.value || Boolean(step)} @click=${renew}>${t('sites.newCode')}</button>` : html`<p>${t('sites.elsewhere')}</p>${code}`}</section>`
         : html`<form id="publish-form" class="stack" @submit=${(/** @type {Event} */ event) => { event.preventDefault(); if (ready) publish() }}>
           <label for="publish-name">${t('sites.address')}</label>
           <span class="site-name" dir="ltr"><span aria-hidden="true">${before}</span><input id="publish-name" autocomplete="off" spellcheck="false" maxlength="40" aria-describedby="publish-said"

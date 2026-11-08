@@ -9,6 +9,7 @@
 //                                    the edge is purged, the year starts again
 //   PUT    /v1/sites/<name>/<path>   one file, its bytes
 //   DELETE /v1/sites/<name>          takes it offline; its name then waits a year for its token alone
+//   POST   /v1/sites/<name>/token    a new token in place of the one sent, { token }: a secret a device removed may keep stops there
 //   POST   /v1/sites/<name>/report   a report: { words, page? }
 //
 // `sites` in the configuration:
@@ -284,6 +285,22 @@ export function publishing(config, names, files) {
         await files.put(name, path, bytes, TYPES[path.toLowerCase().split('.').pop() ?? ''])
         await names.hold(name, { ...held, files: { ...held.files, [path]: { hash, size: bytes.length } } })
         return answer(200, { hash })
+      })
+    }
+
+    // A new token for the name, from the holder of the one it replaces; sent again once taken, it is taken already, its answer lost.
+    if (request.method === 'POST' && rest === 'token') {
+      if (spend('writes')) return answer(429, { error: 'Too many changes. Try again later.' })
+      const next = /^[\w-]{43}$/.exec(String(await within(request, 1000).then((bytes) => JSON.parse(new TextDecoder().decode(bytes ?? new Uint8Array())).token).catch(() => '')))?.[0]
+      if (!next) return answer(400, { error: 'A new token is needed.' })
+      return inTurn(`site:${name}`, async () => {
+        const was = live(await names.held(name)), hash = await hashOf(next)
+        if (was && was.state !== 'removed' && was.token === hash) return answer(200, {})
+        const held = mine(was)
+        if (held instanceof Response) return held
+        await names.hold(name, { ...held, token: hash })
+        await record('token')
+        return answer(200, {})
       })
     }
 

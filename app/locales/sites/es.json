@@ -41,5 +41,9 @@
   "sites.published": "El sitio está en línea.",
   "sites.wentOffline": "El sitio ya no está en línea.",
   "sites.elsewhere": "Este sitio se publicó desde otro dispositivo. Escribe su código de recuperación para publicarlo desde aquí.",
-  "sites.failed": "No se pudo publicar el sitio. Revisa tu conexión e inténtalo de nuevo."
+  "sites.failed": "No se pudo publicar el sitio. Revisa tu conexión e inténtalo de nuevo.",
+  "sites.newCode": "Crear un nuevo código de recuperación",
+  "sites.confirmNewCode": "¿Crear un nuevo código de recuperación? El código anterior, y cualquier dispositivo que hayas quitado, ya no podrán cambiar este sitio. Tus otros dispositivos recibirán el nuevo código.",
+  "sites.newCodeMade": "El código de recuperación anterior ya no sirve para este sitio.",
+  "sites.newCodeFailed": "No se creó ningún código de recuperación nuevo. Revisa tu conexión e inténtalo de nuevo."
 }

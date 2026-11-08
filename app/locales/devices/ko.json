@@ -57,6 +57,7 @@
   "devices.notYet": "{device} 기기에는 아직 알리지 못했어요. 이 기기가 가능해지는 대로 알아서 알려요.",
   "devices.erasing": "다음에 그 기기에서 열릴 때 {name}의 데이터가 지워져요.",
   "devices.revoke": "키는 회수할 수 없어서, 그 기기에 아직 이 키들이 남아 있을 수 있어요. 안전을 위해 각 키를 만든 곳에서 새 키로 바꾸세요:",
+  "devices.sites": "그 기기에서 아직 이 사이트들을 온라인으로 바꿀 수도 있어요. 막으려면 각 사이트를 열고 ‘게시…’를 누른 다음 ‘새 복구 코드 만들기’를 누르세요:",
   "devices.send": "{device}에 보내기",
   "devices.task.sent": "{device}에 보냈어요.",
   "devices.task.kept": "이 프로젝트는 이 기기에만 보관돼요.",

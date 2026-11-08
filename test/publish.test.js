@@ -153,6 +153,38 @@ test('a site taken down shows a page saying so, and its name never comes back', 
   assert.equal(on.held.get('lyon-bakery')?.state, 'removed')
 })
 
+test('the holder of a name’s token gives it a new one, the old then refused, a lost answer asked again taken already', async () => {
+  const on = hostOn(), old = token(), next = token()
+  await publish(on, 'lyon-bakery', old, PAGES)
+  const renew = (/** @type {string} */ bearer, /** @type {string} */ to, name = 'lyon-bakery') => on.ask(`/v1/sites/${name}/token`, { method: 'POST', token: bearer, headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token: to }) })
+  // Only the token that holds it, with a new one written as a token is, from Jean's origins.
+  assert.equal((await renew(token(), token())).status, 403)
+  assert.equal((await renew(old, 'short')).status, 400)
+  assert.equal((await on.ask('/v1/sites/lyon-bakery/token', { method: 'POST', token: old, origin: 'https://evil.example', body: JSON.stringify({ token: next }) })).status, 403)
+  assert.equal((await renew(old, next)).status, 200)
+  assert.equal(JSON.parse(on.records.at(-1) ?? '').operation, 'token')
+  // Sent again, its answer lost, it is taken already; but the old token changes nothing more, and the new one does everything.
+  assert.equal((await renew(old, next)).status, 200)
+  assert.equal((await renew(old, token())).status, 403)
+  assert.equal((await publish(on, 'lyon-bakery', old, PAGES)).first.status, 403)
+  assert.equal((await on.ask('/v1/sites/lyon-bakery', { method: 'DELETE', token: old })).status, 403)
+  assert.equal((await (await on.ask('/v1/sites/lyon-bakery', { token: old })).json()).state, 'taken')
+  assert.equal((await (await on.ask('/v1/sites/lyon-bakery', { token: next })).json()).state, 'yours')
+  assert.equal((await publish(on, 'lyon-bakery', next, { ...PAGES, 'style.css': 'body { color: #111 }' })).done?.status, 200)
+  // Offline, its name held a year for its token, it changes too; never a name that is free or taken down.
+  assert.equal((await on.ask('/v1/sites/lyon-bakery', { method: 'DELETE', token: next })).status, 200)
+  const third = token()
+  assert.equal((await renew(next, third)).status, 200)
+  assert.equal((await publish(on, 'lyon-bakery', third, PAGES)).done?.status, 201)
+  assert.equal((await renew(third, token(), 'free-bakery')).status, 404)
+  await takeDown('lyon-bakery', /** @type {any} */ (on.store), on.sites)
+  assert.equal((await renew(third, token())).status, 410)
+  // Limited as every change is: sixty an hour from one address.
+  const busy = hostOn(), said = []
+  for (let n = 0; n <= 60; n++) said.push((await busy.ask('/v1/sites/lyon-bakery/token', { method: 'POST', token: old, body: JSON.stringify({ token: next }) })).status)
+  assert.deepEqual([said[0], said.at(-1)], [404, 429])
+})
+
 test('every file of a site is served under the same strict header set, a page found without its .html', async () => {
   const on = hostOn({ sites: { address: 'http://{name}.localhost:8788/' } })
   await publish(on, 'lyon-bakery', token(), PAGES)

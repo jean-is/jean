@@ -42,5 +42,9 @@
   "sites.published": "Strona jest online.",
   "sites.wentOffline": "Strona jest offline.",
   "sites.elsewhere": "Ta strona została opublikowana z innego urządzenia. Wpisz jej kod odzyskiwania, żeby opublikować ją stąd.",
-  "sites.failed": "Nie udało się opublikować strony. Sprawdź połączenie i spróbuj ponownie."
+  "sites.failed": "Nie udało się opublikować strony. Sprawdź połączenie i spróbuj ponownie.",
+  "sites.newCode": "Utwórz nowy kod odzyskiwania",
+  "sites.confirmNewCode": "Utworzyć nowy kod odzyskiwania? Ani stary kod, ani urządzenia usunięte przez ciebie nie będą już mogły zmieniać tej strony. Twoje pozostałe urządzenia dostaną nowy kod.",
+  "sites.newCodeMade": "Stary kod odzyskiwania nie działa już dla tej strony.",
+  "sites.newCodeFailed": "Nie udało się utworzyć nowego kodu odzyskiwania. Sprawdź połączenie i spróbuj ponownie."
 }

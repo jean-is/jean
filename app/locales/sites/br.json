@@ -43,5 +43,9 @@
   "sites.published": "Enlinenn eo al lec’hienn.",
   "sites.wentOffline": "Ezlinenn eo al lec’hienn.",
   "sites.elsewhere": "Embannet eo bet al lec’hienn-mañ diwar un trevnad all. Skrivit he c’hod adtapout evit he embann diwar amañ.",
-  "sites.failed": "N’eus ket bet gallet embann al lec’hienn. Gwiriit ho kevreadur ha klaskit en-dro."
+  "sites.failed": "N’eus ket bet gallet embann al lec’hienn. Gwiriit ho kevreadur ha klaskit en-dro.",
+  "sites.newCode": "Krouiñ ur c’hod adtapout nevez",
+  "sites.confirmNewCode": "Krouiñ ur c’hod adtapout nevez ? Ar c’hod kozh, hag an trevnadoù ho peus lamet, ne c’hallint ket kemmañ al lec’hienn-mañ ken. Ho trevnadoù all a resevo ar c’hod nevez.",
+  "sites.newCodeMade": "Ne dalvez ket ken ar c’hod adtapout kozh evit al lec’hienn-mañ.",
+  "sites.newCodeFailed": "N’eus bet krouet kod adtapout nevez ebet. Gwiriit ho kevreadur ha klaskit en-dro."
 }
