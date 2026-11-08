@@ -232,7 +232,7 @@ function actions(id) {
 }
 
 /** The homepage, in place where it is under the app (D397), and Help; from the desktop app, the site's. */
-const links = () => /** @type {Array<['globe' | 'help' | 'file', string, string, boolean?]>} */ ([['globe', 'learn.home', sitePage('home') && `${sitePage('home')}?index=1`, !!document.querySelector('body > .home')], ['help', 'learn.help', sitePage('help')], ['file', 'learn.map', sitePage('site-map')]].filter(([, , url]) => url))
+const links = () => /** @type {Array<['globe' | 'help', string, string, boolean?]>} */ ([['globe', 'learn.home', sitePage('home') && `${sitePage('home')}?index=1`, !!document.querySelector('body > .home')], ['help', 'learn.help', sitePage('help')]].filter(([, , url]) => url))
 
 /** A page of choices: its title, which goes back, then each group of choices, a list, the one in use marked. @param {string} title @param {unknown[][]} groups */
 export const choices = (title, ...groups) => html`<button type="button" class="back" @click=${(/** @type {Event} */ e) => turn(e, 'actions')}>${icons.back}${title}</button>
@@ -286,17 +286,18 @@ const once = { capture: true, handleEvent: (/** @type {MouseEvent} */ event) => 
  * initial and their name, the first name they set or else the first that capabilities' `person` slot
  * gives (the profile's, then what the account they signed in with calls them), or "You" until one is
  * known, opening a menu above them.
- * It goes back to its actions once closed.
+ * It goes back to its actions once closed. At the row's end, what capabilities' `foot` slot draws, given where: an icon button each, which
+ * may open a popover of its own, the row being no button.
  * @param {'drawer' | 'list'} where
  */
 export function profileEntry(where) {
   const name = effective.value.settings.name || /** @type {string | undefined} */ (slots('person').map((part) => part.draw()).find(Boolean))
   const id = `profile-${where}`
   const shown = page.value
-  return html`<button class="sidebar-settings profile" popovertarget=${id}>
+  return html`<div class="sidebar-settings profile"><button type="button" class="profile-button" popovertarget=${id}>
       <span class="avatar" aria-hidden="true">${name ? initial(name) : icons.person}</span>
       <span class="profile-name" dir="auto">${name || t('profile.you')}</span>${icons.chevron}
-    </button>
+    </button>${slots('foot').map((part) => part.draw(where))}</div>
     <div id=${id} class="menu profile-menu" popover @keydown=${walk} @click=${once} @toggle=${(/** @type {ToggleEvent} */ e) => {
       if (e.newState === 'open') /** @type {HTMLElement | null} */ (/** @type {HTMLElement} */ (e.target).querySelector('[aria-current="true"]') ?? /** @type {HTMLElement} */ (e.target).querySelector('button'))?.focus()
       if (e.newState === 'closed' && !document.querySelector('.profile-menu:popover-open')) page.value = 'actions'

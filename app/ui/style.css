@@ -674,8 +674,10 @@ app-inbox { position: sticky; z-index: 3; inset-block-start: var(--top); display
 @media (hover: hover) { .fold[aria-expanded='true']:not(:hover, :focus-visible) > .icon { opacity: 0; } }
 
 /* At the foot of the drawer, as in the Claude apps (D115): the user, their initial (or a silhouette) and their name, a menu above them. */
-.sidebar-settings { position: sticky; inset-block-end: 0; flex: none; display: flex; align-items: center; gap: 0.65rem; margin-block-start: auto; padding: 0.45rem 0.75rem; border: 0; border-radius: 0.9rem; background: inherit; color: var(--ink); text-align: start; }
-.sidebar-settings:hover { box-shadow: inset 0 0 0 100vmax var(--line); }
+.sidebar-settings { position: sticky; inset-block-end: 0; flex: none; display: flex; align-items: center; gap: 0.25rem; margin-block-start: auto; border-radius: 0.9rem; background: inherit; color: var(--ink); }
+.profile-button { flex: 1; display: flex; align-items: center; gap: 0.65rem; min-inline-size: 0; padding: 0.45rem 0.75rem; border: 0; border-radius: inherit; background: none; text-align: start; }
+.profile-button:hover { box-shadow: inset 0 0 0 100vmax var(--line); }
+.sidebar-settings > .icon-button { flex: none; margin-inline-end: 0.3rem; }
 /* Under it, the drawer's padding, which the tasks scrolling past showed through. */
 .sidebar-settings::after { content: ''; position: absolute; inset: 100% 0 auto; block-size: var(--foot); background: inherit; }
 /* More tasks above or below fade out at the drawer's top or above the user, where scroll timelines are known. */
@@ -684,12 +686,12 @@ app-inbox { position: sticky; z-index: 3; inset-block-start: var(--top); display
   .sidebar-settings::before { position: absolute; inset: auto 0 100%; block-size: 1.5rem; margin: 0; mask: linear-gradient(#0000, #000); animation-direction: reverse; animation-range: calc(100% - 1.5rem) 100%; }
 }
 @keyframes tasks { to { opacity: 1; } }
-.profile > .icon { flex: none; --glyph: var(--icon-m); margin-inline-start: auto; color: var(--ink-soft); rotate: 180deg; }
+.profile-button > .icon { flex: none; --glyph: var(--icon-m); margin-inline-start: auto; color: var(--ink-soft); rotate: 180deg; }
 .avatar { flex: none; display: grid; place-items: center; inline-size: 1.85rem; block-size: 1.85rem; border: 1px solid transparent; border-radius: 50%; background: oklch(from var(--badge, var(--flame)) l c h / 0.2); font-size: 0.85rem; font-weight: 600; line-height: 1; }
 .avatar .icon { --glyph: var(--icon-s); }
 .profile-name { min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.profile[popovertarget='profile-drawer'] { anchor-name: --profile-drawer; }
-.profile[popovertarget='profile-list'] { anchor-name: --profile-list; }
+.profile:has(> [popovertarget='profile-drawer']) { anchor-name: --profile-drawer; }
+.profile:has(> [popovertarget='profile-list']) { anchor-name: --profile-list; }
 #profile-drawer { position-anchor: --profile-drawer; }
 #profile-list { position-anchor: --profile-list; }
 .profile-menu { min-inline-size: 15rem; min-inline-size: anchor-size(inline); max-block-size: min(70dvh, 34rem); overflow-y: auto; }

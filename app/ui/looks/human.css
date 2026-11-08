@@ -139,7 +139,7 @@
 :root:is([data-look='human'], [data-look='tilde']) .menu .icon { --glyph: var(--icon-s); }
 
 /* The conversations: rows in the sidebar or the drawer, the open one filled with blue. */
-:root:is([data-look='human'], [data-look='tilde']) :is(.place, .sidebar-settings) { justify-content: flex-start; gap: 0.5rem; padding: 0.4375rem 0.625rem; border-radius: 0.625rem; box-shadow: none; color: var(--ink); font-size: 0.875rem; font-weight: 400; }
+:root:is([data-look='human'], [data-look='tilde']) :is(.place, .profile-button) { justify-content: flex-start; gap: 0.5rem; padding: 0.4375rem 0.625rem; border-radius: 0.625rem; box-shadow: none; color: var(--ink); font-size: 0.875rem; font-weight: 400; }
 :root:is([data-look='human'], [data-look='tilde']) :is(.place:hover, .history-list li:hover) { background: var(--hover); }
 :root:is([data-look='human'], [data-look='tilde']) :is(.place, .sidebar-settings) .icon { color: var(--flame); }
 :root:is([data-look='human'], [data-look='tilde']) .sidebar-heading { padding-inline: 0.625rem; font-size: 0.75rem; font-weight: 600; }
@@ -185,7 +185,7 @@
 @keyframes human-panel { from { opacity: 0; scale: 0.94; } }
 :root:is([data-look='human'], [data-look='tilde']) .pane-head { padding-inline: 1rem 0.625rem; }
 :root:is([data-look='human'], [data-look='tilde']) .pane-head h2 { font-size: 0.9375rem; text-align: center; }
-:root:is([data-look='human'], [data-look='tilde']) .drawer { margin-block: 0.625rem; margin-inline-start: 0.625rem; block-size: calc(100dvh - 1.25rem); border-radius: 1.25rem; } :root:is([data-look='human'], [data-look='tilde']) .drawer .sidebar-settings { background: var(--room-2); border-end-start-radius: 0; border-end-end-radius: 0; }
+:root:is([data-look='human'], [data-look='tilde']) .drawer { margin-block: 0.625rem; margin-inline-start: 0.625rem; block-size: calc(100dvh - 1.25rem); border-radius: 1.25rem; } :root:is([data-look='human'], [data-look='tilde']) .drawer .sidebar-settings { background: var(--room-2); border-radius: 0.625rem; border-end-start-radius: 0; border-end-end-radius: 0; }
 
 @media (width > 40rem) {
   /* Settings is a window of its own: its sections in a sidebar, the open one's settings in groups. */

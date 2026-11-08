@@ -210,8 +210,10 @@ test('a device added: six digits typed on the one that has the Jean, and the oth
   await settings.getByRole('button', { name: 'Done' }).click()
   await expect(settings.locator('.devices-flow > .list > li')).toHaveCount(2)
   await expect(settings.locator('.devices-flow > .list > li').first()).toContainText('This device, added')
-  // B's, from the person's menu.
-  await (await openProfile(b)).getByRole('button', { name: 'Your devices' }).click()
+  // B's, from its button at the end of the person's row, the menu no longer holding it.
+  await expect((await openProfile(b)).getByRole('button', { name: 'Your devices' })).toHaveCount(0)
+  await b.keyboard.press('Escape')
+  await (await openTasks(b)).locator('.profile').getByRole('button', { name: 'Your devices' }).click()
   const there = b.locator('app-settings dialog[open]')
   await expect(there.locator('.data-head h2')).toHaveText('Your devices')
   await expect(there.locator('.devices-flow > .list > li')).toHaveCount(2)

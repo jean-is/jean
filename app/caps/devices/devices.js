@@ -524,9 +524,9 @@ if (offered()) {
     task: { at: 2, draw: (/** @type {{ path: string }} */ item, /** @type {(icon: unknown, label: string, act: () => unknown) => unknown} */ action) =>
       (app.projects.value.find((one) => item.path.startsWith(`${one.dir}/`))?.data.cloud === false ? []
         : devices.value.filter((one) => one.id !== own.value).map((one) => action(icons.devices, t('devices.send', { device: one.name }), () => handOver(item.path, one)))) },
-    // In the person's menu, Your devices.
-    profile: { at: 2, draw: (/** @type {string} */ menu) => html`<button type="button" popovertarget=${menu} popovertargetaction="hide"
-      @click=${() => import('../../ui/dialogs.js').then((dialogs) => dialogs.openSettings('data/devices'))}>${icons.devices}${t('cap.devices.name')}</button>` },
+    // At the end of the person's row, at the drawer's foot, Your devices, by its icon.
+    foot: { at: 1, draw: () => html`<button type="button" class="icon-button subtle" aria-label=${t('cap.devices.name')}
+      @click=${() => import('../../ui/dialogs.js').then((dialogs) => dialogs.openSettings('data/devices'))}>${icons.devices}</button>` },
   } })
   // The keys, where this device's identity and the devices it knows are kept too, changed in any tab, this one's as well.
   app.fs.watch?.((path) => { if (path === '.secrets/keys.json') { refresh(); noticed().catch(warn) } }, { all: true })

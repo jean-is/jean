@@ -228,7 +228,7 @@ export async function enterProject(page, name) {
  * @param {import('@playwright/test').Page} page
  */
 export async function openProfile(page) {
-  await (await openTasks(page)).locator('.profile').click()
+  await (await openTasks(page)).locator('.profile-button').click()
   const menu = page.locator('.profile-menu:popover-open')
   await expect(menu).toBeVisible()
   return menu
