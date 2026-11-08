@@ -138,6 +138,8 @@ test('in the desktop app, plain HTTP reaches the computer’s own addresses, as 
   await openFromCase(page)
   const settings = page.locator('app-settings dialog[open]')
   await settings.getByRole('button', { name: /^Offline library/ }).click()
+  // Its page puts the keyboard on its title a frame later: an address typed before goes there, and the field stays empty.
+  await expect(settings.getByRole('heading', { name: 'Offline library' })).toBeFocused()
   await settings.getByRole('textbox', { name: 'Address of the Kiwix server' }).fill('http://192.0.2.7:4445/')
   await settings.getByRole('button', { name: 'Connect', exact: true }).click()
   await expect(settings.getByRole('heading', { name: '3 books' })).toBeVisible()

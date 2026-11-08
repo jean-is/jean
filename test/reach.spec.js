@@ -722,6 +722,8 @@ test('Wikipedia can be read from the library’s Kiwix server, its Wikipedia boo
   const settings = page.locator('app-settings dialog[open]')
   expect((await webSearch(page)).native).toBe('web_search')
   await settings.getByRole('button', { name: /^Offline library/ }).click()
+  // Its page puts the keyboard on its title a frame later: an address typed before goes there, and the field stays empty.
+  await expect(settings.getByRole('heading', { name: 'Offline library' })).toBeFocused()
   await settings.getByLabel('Address of the Kiwix server').fill(`${MAIL_URL}/kiwix/`)
   await settings.getByRole('button', { name: 'Connect', exact: true }).click()
   await expect(settings.getByRole('heading', { name: '3 books' })).toBeVisible()

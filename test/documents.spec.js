@@ -2151,9 +2151,11 @@ test.describe('paste', () => {
   })
 
   test('what is pasted runs nothing and loads nothing but its pictures, without cookies nor the page\'s address, in Jean\'s own origin', async ({ page }) => {
-    const requests = /** @type {string[]} */ ([])
-    // Headers read once the page asked for them: one still being read as the test ends is let go, never failing it.
-    page.on('request', (request) => { Promise.all([request.headerValue('referer'), request.headerValue('cookie')]).then(([referer, cookie]) => { if (!referer && !cookie) requests.push(request.url()) }, () => {}) })
+    // Every request to the attacker's site, its headers read when the test looks. A request to a network that never
+    // answers keeps them waiting, as CI's runners did, so the site refuses at once here, wherever the test runs.
+    const asked = /** @type {import('@playwright/test').Request[]} */ ([])
+    page.on('request', (request) => { if (request.url().includes('attacker.example')) asked.push(request) })
+    await page.route('https://attacker.example/**', (route) => route.abort())
     await page.addInitScript(() => addEventListener('message', ({ data }) => { if (typeof data === 'string') (/** @type {any} */ (globalThis).pwned ??= []).push(data) }))
     await start(page, { markdown: 'Start.\n' })
     await caretAt(page, 'Start.', 6)
@@ -2163,7 +2165,9 @@ test.describe('paste', () => {
     await page.locator('#doc').click({ position: { x: 5, y: 5 } })
     await page.waitForTimeout(500)
     // Its picture, fetched to be kept and drawn from its address, with neither; never its frame.
-    expect([...new Set(requests.filter((url) => url.includes('attacker.example')))]).toEqual(['https://attacker.example/x.png'])
+    const sent = await Promise.all(asked.map(async (request) => ((await request.headerValue('referer')) || (await request.headerValue('cookie'))
+      ? `${request.url()}, with the page's address or a cookie` : request.url())))
+    expect([...new Set(sent)]).toEqual(['https://attacker.example/x.png'])
     expect(await page.evaluate(() => /** @type {any} */ (globalThis).pwned ?? [])).toEqual([])
     const text = await markdownOf(page)
     expect(text).toContain('[ok](https://ok.example/)')
