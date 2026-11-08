@@ -63,12 +63,12 @@ test('at an address of its own, the service answers with the page at the site’
   const { post } = service({ site: 'https://jean.is/' })
   assert.equal((await post(FORM)).headers.get('location'), 'https://jean.is/enterprise/key#sent')
 
-  const { files } = await buildSite({ brand: BRAND, base: 'https://jean.is/', keys: 'https://keys.jean.is/' })
+  const [{ files }, { files: { 'fr/entreprise/cle.html': own } }] = await Promise.all([
+    buildSite({ brand: BRAND, base: 'https://jean.is/', keys: 'https://keys.jean.is/' }), buildSite({ brand: BRAND, base: 'https://jean.is/' })])
   for (const path of ['enterprise/key.html', 'fr/entreprise/cle.html']) {
     assert.match(files[path], /<form id="key-form" class="key-form" method="post" action="https:\/\/keys\.jean\.is\/"/, path)
     assert.match(files[path], /; form-action 'self' https:\/\/keys\.jean\.is;/, `${path}: the service, and the page it answers with`)
   }
-  const own = (await buildSite({ brand: BRAND, base: 'https://jean.is/' })).files['fr/entreprise/cle.html']
   assert.match(own, /method="post" action="\.\.\/\.\.\/keys"/, 'without one, /keys on the site’s own address')
   assert.match(own, /; form-action 'self';/)
 })

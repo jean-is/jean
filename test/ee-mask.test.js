@@ -1,7 +1,8 @@
 // Masked requests (D681): what the organisation hides reaches a brain in the cloud as placeholders, and comes back real.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { execFileSync } from 'node:child_process'
+import { spawn } from 'node:child_process'
+import { availableParallelism } from 'node:os'
 import { fire } from '../app/core/hooks.js'
 import { LLMError } from '../app/core/llm.js'
 import { runTurn } from '../app/core/loop.js'
@@ -233,40 +234,56 @@ test('a value lands in code as what it is, in each tool and wherever it stands',
   assert.equal(revealInCode('cat <<EOF\nFor Pabcdef\nEOF', 'shell', (_, kind, id) => (id === 'abcdef' ? 'Marie' : undefined)), 'cat <<EOF\nFor Marie\nEOF')
 })
 
-/** What code really does. @param {string} command @param {string[]} args */
-function ran(command, args) {
-  try { return execFileSync(command, args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }) } catch (error) { return `FAILED ${/** @type {any} */ (error).code ?? ''}` }
+/** What code really does. @param {string} command @param {string[]} args @returns {Promise<string>} */
+const ran = (command, args) => new Promise((resolve) => {
+  let out = ''
+  try {
+    const child = spawn(command, args, { stdio: ['ignore', 'pipe', 'ignore'] })
+    child.stdout.setEncoding('utf8').on('data', (chunk) => { out += chunk })
+    child.on('error', (error) => resolve(`FAILED ${/** @type {any} */ (error).code ?? ''}`))
+    child.on('close', (status) => resolve(status === 0 ? out : 'FAILED '))
+  } catch (error) { resolve(`FAILED ${/** @type {any} */ (error).code ?? ''}`) }
+})
+/** What each run prints, in its place: as many at once as there are cores, since one at a time took seconds. @param {Array<[string, string[]]>} runs */
+async function together(runs) {
+  const outputs = /** @type {string[]} */ ([])
+  let next = 0
+  const lane = async () => { while (next < runs.length) { const at = next++; outputs[at] = await ran(...runs[at]) } }
+  await Promise.all(Array.from({ length: availableParallelism() }, lane))
+  return outputs
 }
 const HOSTILE = ["a'; echo PWNED; echo 'b", 'a"; echo PWNED; echo "b', 'a`echo PWNED`b', 'a$(echo PWNED)b', 'a\necho PWNED\nb', 'a\\', "'", '"', '*/ console.log("PWNED") /*', '{x}', '${process.exit}', '\r\nprint("PWNED")']
-const hasPython = ran('python3', ['-c', 'print(1)']).startsWith('1')
+const hasPython = (await ran('python3', ['-c', 'print(1)'])).startsWith('1')
 
-test('a value that means harm stays a value in real shells and languages, or the call is refused', () => {
+test('a value that means harm stays a value in real shells and languages, or the call is refused', async () => {
   const quiet = (/** @type {string} */ code, /** @type {'shell' | 'js' | 'py'} */ lang, /** @type {string} */ value) => { try { return revealInCode(code, lang, () => value) } catch { return null } }
+  /** @type {Array<{ run: [string, string[]], want: string, message: string }>} */
+  const checks = []
+  const prints = (/** @type {string} */ command, /** @type {string} */ code, /** @type {string} */ want, message = code) => { checks.push({ run: [command, [command === 'node' ? '-e' : '-c', code]], want, message }) }
   for (const value of HOSTILE) {
     for (const template of ["printf %s '⟦Pabcdef⟧'", 'printf %s "⟦Pabcdef⟧"', 'printf %s ⟦Pabcdef⟧', 'printf %s "$(printf %s \'⟦Pabcdef⟧\')"']) {
-      const code = /** @type {string} */ (quiet(template, 'shell', value))
-      assert.equal(ran('bash', ['-c', code]), value, code)
+      prints('bash', /** @type {string} */ (quiet(template, 'shell', value)), value)
     }
     // Text run as code, arithmetic and backquotes: refused, as nothing here can tell what they'd do.
     for (const template of ["bash -c 'echo \"⟦Pabcdef⟧\"'", 'eval "echo ⟦Pabcdef⟧"', 'echo $((1 << ⟦Pabcdef⟧))', 'echo `echo ⟦Pabcdef⟧`']) assert.equal(quiet(template, 'shell', value), null, template)
     const here = quiet('cat <<EOF\n⟦Pabcdef⟧\nEOF\necho end', 'shell', value)
     if (/\r|\n/.test(value)) assert.equal(here, null)
-    else assert.equal(ran('bash', ['-c', /** @type {string} */ (here)]), `${value}\nend\n`, here ?? '')
+    else prints('bash', /** @type {string} */ (here), `${value}\nend\n`)
     if (hasPython) {
       for (const template of ["x = '⟦Pabcdef⟧'\nprint(x, end='')", 'x = "⟦Pabcdef⟧"\nprint(x, end="")', 'x = """⟦Pabcdef⟧"""\nprint(x, end="")', 'x = ⟦Pabcdef⟧\nprint(x, end="")', "x = f'⟦Pabcdef⟧'\nprint(x, end='')"]) {
-        const code = /** @type {string} */ (quiet(template, 'py', value))
-        assert.equal(ran('python3', ['-c', code]), value, code)
+        prints('python3', /** @type {string} */ (quiet(template, 'py', value)), value)
       }
-      assert.equal(ran('python3', ['-c', /** @type {string} */ (quiet('# ⟦Pabcdef⟧\nprint("ok", end="")', 'py', value))]), 'ok')
+      prints('python3', /** @type {string} */ (quiet('# ⟦Pabcdef⟧\nprint("ok", end="")', 'py', value)), 'ok')
     }
     for (const template of ["const x = '⟦Pabcdef⟧'; process.stdout.write(x)", 'const x = "⟦Pabcdef⟧"; process.stdout.write(x)', 'const x = `⟦Pabcdef⟧`; process.stdout.write(x)', 'const x = ⟦Pabcdef⟧; process.stdout.write(x)']) {
-      const code = /** @type {string} */ (quiet(template, 'js', value))
-      assert.equal(ran('node', ['-e', code]), value, code)
+      prints('node', /** @type {string} */ (quiet(template, 'js', value)), value)
     }
-    for (const template of ["/* ⟦Pabcdef⟧ */ process.stdout.write('ok')", "// ⟦Pabcdef⟧\nprocess.stdout.write('ok')"]) assert.equal(ran('node', ['-e', /** @type {string} */ (quiet(template, 'js', value))]), 'ok', template)
+    for (const template of ["/* ⟦Pabcdef⟧ */ process.stdout.write('ok')", "// ⟦Pabcdef⟧\nprocess.stdout.write('ok')"]) prints('node', /** @type {string} */ (quiet(template, 'js', value)), 'ok', template)
     // A regular expression can't hold a value safely.
     assert.equal(quiet("const r = /'/; const x = /⟦Pabcdef⟧/", 'js', value), null)
   }
+  const outputs = await together(checks.map(({ run }) => run))
+  checks.forEach(({ want, message }, at) => assert.equal(outputs[at], want, message))
   // What is plain goes through what runs text as code; what isn't doesn't.
   assert.equal(quiet("bash -c 'echo ⟦Pabcdef⟧'", 'shell', 'Marie Dupont'), "bash -c 'echo Marie Dupont'")
   assert.equal(quiet("bash -c 'echo ⟦Pabcdef⟧'", 'shell', "L'Oréal"), null)

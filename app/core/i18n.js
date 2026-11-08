@@ -78,10 +78,14 @@ const format = (value, lang) => (typeof value === 'number' ? new Intl.NumberForm
 /** @param {string} [lang] @returns {'rtl' | 'ltr'} */
 export const dir = (lang = locale.value) => (RTL.has(lang.split('-')[0].toLowerCase()) ? 'rtl' : 'ltr')
 
+/** Each language's names of languages, made once: a menu of them names each language in each. @type {Map<string, Intl.DisplayNames>} */
+const names = new Map()
+const namesIn = (/** @type {string} */ lang) => names.get(lang) ?? names.set(lang, new Intl.DisplayNames(intlLocales(lang), { type: 'language' })).get(lang)
+
 /** Name of a language, written in `inLang` (defaults to itself). */
 export function languageName(/** @type {string} */ code, inLang = code) {
   try {
-    const name = (code === inLang && SPARSE[code]?.name) || (new Intl.DisplayNames(intlLocales(inLang), { type: 'language' }).of(code) ?? code)
+    const name = (code === inLang && SPARSE[code]?.name) || (namesIn(inLang)?.of(code) ?? code)
     return name.charAt(0).toLocaleUpperCase(inLang) + name.slice(1)
   } catch {
     return code

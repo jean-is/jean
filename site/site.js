@@ -431,6 +431,9 @@ export async function buildSite ({ brand, base = null, ships = false, index, key
   // Every page's words, and the site's shared ones (site/words/), in each of its languages; a page may repeat another's.
   /** @type {Map<string, Record<string, Words>>} */
   const words = new Map()
+  // The app's strings, read once for each language rather than for each page in it.
+  /** @type {Map<string, Promise<Record<string, string>>>} */
+  const apps = new Map()
   for (const name of [...all.keys(), 'words']) {
     words.set(name, Object.fromEntries(await Promise.all((await languagesOf(name)).map(async (lang) => [lang, /** @type {Words} */ (await wordsOf(name, lang))]))))
   }
@@ -444,7 +447,7 @@ export async function buildSite ({ brand, base = null, ships = false, index, key
       const shared = words.get('words')?.[lang]
       if (!shared) throw new Error(`site/${name} is in ${lang}, site/words/ isn't`)
       const own = { ...page.words && words.get(page.words)?.[lang], ...words.get(name)?.[lang] }
-      const kit = await kitFor({ name, page, lang, languages, own, shared, others: words, brand, base, keys, now, built, index })
+      const kit = await kitFor({ name, page, lang, languages, own, shared, others: words, apps, brand, base, keys, now, built, index })
       const path = fileOf(page.addresses[lang])
       files[path] = written(page, kit, root, css === null ? null : `${style}.css`)
       Object.assign(files, page.files?.(kit))
@@ -468,11 +471,12 @@ export async function shippedPages (served) {
 
 /**
  * @param {{ name: string, page: Page, lang: string, languages: string[], own: Words, shared: Words, others: Map<string, Record<string, Words>>,
- *   brand: { name: string, domain: string }, base: string | null, keys: string | null, now: Date, built: Map<string, Page>, index?: (said: string | null, address: string, shown?: typeof SHARE) => string }} at
+ *   apps: Map<string, Promise<Record<string, string>>>, brand: { name: string, domain: string }, base: string | null, keys: string | null, now: Date, built: Map<string, Page>, index?: (said: string | null, address: string, shown?: typeof SHARE) => string }} at
  * @returns {Promise<Kit>}
  */
-async function kitFor ({ name, page, lang, languages, own, shared, others, brand, base, keys, now, built, index }) {
-  const [app, body] = await Promise.all([appWords(lang), readFile(join(SITE, name, `${lang}.html`), 'utf8').catch(() => '')])
+async function kitFor ({ name, page, lang, languages, own, shared, others, apps, brand, base, keys, now, built, index }) {
+  if (!apps.has(lang)) apps.set(lang, appWords(lang))
+  const [app, body] = await Promise.all([apps.get(lang), readFile(join(SITE, name, `${lang}.html`), 'utf8').catch(() => '')])
   const params = { name: brand.name, domain: brand.domain }
   /** @param {Words} words @param {string} key @param {string} where */
   const lookup = (words, key, where) => {

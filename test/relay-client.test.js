@@ -44,6 +44,16 @@ const bytes = (/** @type {string} */ text) => new TextEncoder().encode(text)
 const text = (/** @type {Uint8Array} */ bytes) => new TextDecoder().decode(bytes)
 /** What a promise was refused with. @param {Promise<unknown>} promise @returns {Promise<any>} */
 const refusal = (promise) => promise.then(() => assert.fail('it was taken'), (error) => error)
+/**
+ * Mocked time passing, 10 ms at a time, what waits on it run in between: `ms` of it, or until `ended` settles, so that the
+ * listening's pauses take none. @param {import('node:test').TestContext['mock']['timers']} timers @param {number | Promise<unknown>} until
+ */
+async function passing(timers, until) {
+  let over = false
+  if (typeof until !== 'number') until.finally(() => { over = true }).catch(() => {})
+  for (let at = 0; !over && (typeof until !== 'number' || at < until); at += 10) { await new Promise((resolve) => setImmediate(resolve)); timers.tick(10) }
+  return until
+}
 
 test('a mailbox is a fresh token and its id, the start of its SHA-256', async () => {
   const { token, id } = await mailbox()
@@ -171,32 +181,35 @@ test('a pairing’s reader hands out one message at a time, and only what it han
   assert.equal(clock.length, 1)
 })
 
-test('listening hears the relay’s clock at each read, opens its mailbox again when the relay lost it, and reads it from the start', { timeout: 10_000 }, async () => {
+test('listening hears the relay’s clock at each read, opens its mailbox again when the relay lost it, and reads it from the start', { timeout: 10_000 }, async (t) => {
   const { store } = relayed()
   const { token, id } = await mailbox()
   await open(BASE, token)
   await send(BASE, id, bytes('one'))
+  t.mock.timers.enable({ apis: ['setTimeout'] })
   const clock = /** @type {number[]} */ ([])
   /** @type {string[]} */
   const heard = []
-  await new Promise((resolve) => {
+  const reopened = async () => { while (!store.boxes.has(id)) await new Promise((resolve) => setImmediate(resolve)) }
+  await passing(t.mock.timers, new Promise((resolve) => {
     const stop = listen({ base: BASE, token, lock: 'relay-lost', clock: (now) => clock.push(now), onMessages: async (messages) => {
       heard.push(...messages.map((message) => text(message.bytes)))
       // The relay loses its store: the mailbox is gone, then opened again by the listening, and what comes next is heard.
-      if (heard.length === 1) { store.boxes.clear(); setTimeout(() => send(BASE, id, bytes('two')).catch(() => {}), 1500) }
+      if (heard.length === 1) { store.boxes.clear(); reopened().then(() => send(BASE, id, bytes('two'))).catch(() => {}) }
       else resolve(stop())
     } })
-  })
+  }))
   assert.deepEqual(heard, ['one', 'two'])
   assert.ok(clock.length > 0 && clock.every((now) => typeof now === 'number'))
   await remove(BASE, token)
 })
 
-test('listening reads its mailbox from the start once the relay’s next number is at or below what it read, as after a rollback', { timeout: 10_000 }, async () => {
+test('listening reads its mailbox from the start once the relay’s next number is at or below what it read, as after a rollback', { timeout: 10_000 }, async (t) => {
   const { store } = relayed()
   const { token, id } = await mailbox()
   await open(BASE, token)
   for (const one of ['one', 'two']) await send(BASE, id, bytes(one))
+  t.mock.timers.enable({ apis: ['setTimeout'] })
   // Rolled back to before both, the relay answers the next read at once; three messages come in right after it, before the read after.
   const relayed1 = globalThis.fetch
   let phase = 0
@@ -208,13 +221,13 @@ test('listening reads its mailbox from the start once the relay’s next number 
   }
   /** @type {string[]} */
   const heard = []
-  await new Promise((resolve) => {
+  await passing(t.mock.timers, new Promise((resolve) => {
     const stop = listen({ base: BASE, token, lock: 'relay-rollback', onMessages: (messages) => {
       heard.push(...messages.map((message) => text(message.bytes)))
       if (heard.length === 2) { store.boxes.set(id, { ...store.boxes.get(id), next: 1, messages: [] }); phase = 1 }
       if (heard.includes('five')) resolve(stop())
     } })
-  })
+  }))
   assert.deepEqual(heard, ['one', 'two', 'three', 'four', 'five'])
   await remove(BASE, token)
 })
@@ -231,7 +244,7 @@ test('listening asks `lost` what to do with a mailbox the relay lost, and opens 
   assert.deepEqual([lost, store.boxes.has(id)], [[token], false])
 })
 
-test('listening pauses a second after an empty answer that came long before its wait, never reading in a spin', { timeout: 10_000 }, async () => {
+test('listening pauses a second after an empty answer that came long before its wait, never reading in a spin', { timeout: 10_000 }, async (t) => {
   relayed()
   const { token } = await mailbox()
   await open(BASE, token)
@@ -242,8 +255,9 @@ test('listening pauses a second after an empty answer that came long before its 
     if (new URL(String(url)).search) reads++
     return relayed1(new URL(String(url)).search ? String(url).replace(/wait=\d+/, 'wait=0') : url, init)
   }
+  t.mock.timers.enable({ apis: ['setTimeout', 'Date'], now: Date.now() })
   const stop = listen({ base: BASE, token, lock: 'relay-spin', onMessages: () => {} })
-  await new Promise((resolve) => setTimeout(resolve, 1500))
+  await passing(t.mock.timers, 1500)
   stop()
   assert.ok(reads <= 3, `${reads} reads in 1.5 s`)
 })
