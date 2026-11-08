@@ -7,7 +7,7 @@
 import { readFile } from 'node:fs/promises'
 import { request } from 'node:http'
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, SHARE_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, answered, nameOf, SHARE_URL } from './helpers.js'
 
 test.setTimeout(120_000)
 
@@ -71,7 +71,7 @@ test('a site made with its skill is checked from its files and as its pages show
   // It leaves as a zip of its files, from the button just before Close, its one way out.
   const download = page.waitForEvent('download')
   await pane.getByRole('button', { name: 'Download Atelier Nord' }).click()
-  expect((await download).suggestedFilename()).toBe('Atelier Nord.zip')
+  expect(nameOf(await download)).toBe('Atelier Nord.zip')
   // A zip names its files in the clear, each in its local header and its central directory.
   const zip = await readFile(await (await download).path())
   for (const name of ['index.html', 'prices.html', 'style.css']) expect(zip.includes(name)).toBe(true)
