@@ -9,6 +9,7 @@ export const icons = {
   ...first,
   external: icon(svg`<path d="M7 17 17 7M9 7h8v8"/>`, 'flip-rtl'),
   check: icon(svg`<path d="m5 12.5 4.5 4.5L19 7.5"/>`),
+  'thumb-up': icon(svg`<path d="M7.5 11v7.5a1.5 1.5 0 0 1-1.5 1.5h-1a1.5 1.5 0 0 1-1.5-1.5v-6a1.5 1.5 0 0 1 1.5-1.5h2.5a4 4 0 0 0 4-4V6a2 2 0 0 1 4 0v5h2.5a2.5 2.5 0 0 1 2.44 3.04L19.46 18.43a2 2 0 0 1-1.95 1.57H10.5a3 3 0 0 1-3-3"/>`),
   more: icon(svg`<circle cx="12" cy="5.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="18.5" r="1.5" fill="currentColor" stroke="none"/>`),
   dot: icon(svg`<circle cx="12" cy="12" r="3.5" fill="currentColor" stroke="none"/>`),
   arrow: icon(svg`<path d="M5 12h14M13 6l6 6-6 6"/>`, 'flip-rtl'),
