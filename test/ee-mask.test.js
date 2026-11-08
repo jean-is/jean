@@ -491,7 +491,8 @@ test('a value made real asks before it leaves, whatever Always allow said', asyn
   assert.equal(refused.reason, 'Refused')
 })
 
-test('the guard finds a real value however it is written, seen before or not, and never fails open', async () => {
+test('the guard finds a real value however it is written, seen before or not, and never fails open', async (t) => {
+  const warn = t.mock.method(console, 'warn', () => {})
   const { hooks } = room({ words: ['Marie Dupont', 'Projet Atlas'], hide: ['email'] })
   for (const body of ['Pour Projet Atlas', 'marie@acme.fr', 'Marie\\nDupont', 'Marie\u00a0Dupont', 'MARIE-DUPONT', 'Marie%20Dupont']) assert.equal((await check(hooks, { kind: 'other', name: 'mail_send', args: { body } })).decision, 'ask', body)
   // With the Computer able to reach anything, code that holds one asks.
@@ -504,6 +505,7 @@ test('the guard finds a real value however it is written, seen before or not, an
   }
   const thrower = room(undefined, undefined, { open: () => { throw new Error('no') } })
   assert.equal((await check(thrower.hooks, { kind: 'execute', name: 'python', args: { code: 'x' } })).decision, 'ask')
+  assert.deepEqual(warn.mock.calls.map((call) => call.arguments[1].message), ['words', 'words', 'no'])
   assert.equal((await check(hooks, { kind: 'other', name: 'mail_send', title: 5, args: { body: 'ok' } })).decision, 'allow')
 })
 
