@@ -84,6 +84,18 @@ test('loop: tool call allowed by rule, then final answer; records replay as cont
   assert.deepEqual(toChatMessages(persisted).map((message) => message.role), ['user', 'assistant', 'tool', 'assistant'])
 })
 
+test('loop: a list or an object a brain sent as JSON text is read as such where its tool asks for one; the rest stays as sent', async () => {
+  const listTool = { spec: { name: 'change', description: 'change', parameters: { type: 'object', properties: { site: { type: 'string' }, changes: { type: 'array' }, files: { type: 'array' }, about: { type: 'object' } } } },
+    kind: /** @type {const} */ ('edit'), title: () => 'Change', run: async (/** @type {any} */ args) => JSON.stringify(args) }
+  const args = { site: '["a"]', changes: '[{"path":"index.html","old":"a","new":"b"}]', files: '[broken', about: '{"x":1}', other: '[1]' }
+  const { stream, calls } = fakeStream([
+    [{ type: 'tool_call', call: { id: 'c1', name: 'change', args } }, done('tool_use', { role: 'assistant', content: '', toolCalls: [{ id: 'c1', name: 'change', args }] })],
+    [done('end', { role: 'assistant', content: 'Done.' })],
+  ])
+  await runTurn({ brain, system: 'sys', history: [{ role: 'user', content: 'Change it' }], tools: [listTool], stream: /** @type {any} */ (stream), rule: () => 'allow', persist: async () => {} })
+  assert.deepEqual(JSON.parse(calls[1].at(-1).content), { site: '["a"]', changes: [{ path: 'index.html', old: 'a', new: 'b' }], files: '[broken', about: { x: 1 }, other: '[1]' })
+})
+
 test('loop: what a server sent with a call is kept with its step, for the model it came from', async () => {
   const raw = [{ type: 'tool_call', id: 'c1', extra_content: { google: { thought_signature: 'c2lnbmVk' } } }]
   const toolCalls = [{ id: 'c1', name: 'read', args: { path: 'a.csv' } }]

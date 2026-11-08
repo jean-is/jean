@@ -2,13 +2,37 @@
 // with a [[page N]] line before each page) and .meta.json. Named by content, so the
 // same file dropped twice is stored once. Conversations link to files, never copy them.
 import { encoder, join, readJSON, walk, writeJSON } from './fs.js'
-import { isPicture } from './events.js'
+import { isPicture, filesMade } from './events.js'
 import { lexicon, lookup } from './search.js'
 
-/** @import { FS, Envelope, ResourceLink, DocumentPart } from './types.js' */
+/** @import { FS, Envelope, ResourceLink, DocumentPart, ToolCallInfo } from './types.js' */
 /** @typedef {{ format: 1, kind: 'file', name: string, mimeType: string, size: number, hash: string, pages: number, createdAt: string, author: string, pinned?: boolean }} FileMeta */
 
 const MARKER = /^\[\[page (\d+)\]\]$/m
+
+/**
+ * Every file of a conversation as it came, each the user shared and each its calls made, then those of the answer being written:
+ * what a brain can put in what it makes. @param {Envelope[]} records @param {{ tools: ToolCallInfo[] }[]} [steps]
+ * @returns {{ uri: string, name: string, mimeType?: string }[]}
+ */
+export const taskFiles = (records, steps = []) => [...records.flatMap(({ update }) => /** @type {{ uri: string, name: string, mimeType?: string }[]} */ (update?.sessionUpdate === 'user_message_chunk'
+  && update.content.type === 'resource_link' && update.content.uri ? [update.content] : update?.sessionUpdate === 'tool_call' ? filesMade([update]) : [])), ...filesMade(steps.flatMap((step) => step.tools))]
+
+/**
+ * The file of a conversation a brain names: by its place, else the latest of that name as a brain writes one, its case, %20, a
+ * folder before it and its extension aside. @template {{ uri: string, name: string }} T @param {T[]} files @param {string} said
+ * @returns {T | undefined}
+ */
+export const fileNamed = (files, said) => ((bare, place = String(said ?? '').trim().replace(/^(\.\.?\/)+/, '')) => files.findLast((one) => one.uri === place)
+  ?? files.findLast((one) => bare(one.name) === bare(place)))((/** @type {string} */ name) => name.normalize().toLowerCase().replace(/%20/g, ' ').replace(/^.*\//, '').replace(/\.\w+$/, ''))
+
+/**
+ * Markdown with each picture that names a file of the task as a brain writes one, `![words](name.png)`, at that file's place from a
+ * folder of the project, `../files/sha256-…`, where documents and Word files take it. @param {string} markdown
+ * @param {{ uri: string, name: string }[]} files
+ */
+export const picturesPlaced = (markdown, files) => markdown.replace(/(!\[[^\]\n]*\]\()(<[^>\n]+>|[^\s)]+)/g, (all, open, said) => ((one) => (one ? `${open}../${one.uri}` : all))(
+  /^<?([a-z][\w+.-]*:|\.\.\/files\/)/i.test(said) ? undefined : fileNamed(files, said.replace(/^<|>$/g, ''))))
 
 /** @param {Uint8Array} bytes */
 export async function sha256Hex(bytes) {

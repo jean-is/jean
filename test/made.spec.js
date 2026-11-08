@@ -1,10 +1,10 @@
 // Things Jean made (0.2): an answer copied as rich text; in its More options, shared, downloaded as a
 // web page or a Word document, its table as CSV the way this locale's spreadsheets read it, and
 // printed alone. Files the brain writes (D119): a Word document from the first message on,
-// changed in place, and a spreadsheet written from a script.
+// changed in place, holding a picture Jean made in the task by its name (D730), and a spreadsheet written from a script.
 import { test, expect } from '@playwright/test'
 import { readZip } from '../app/core/zip.js'
-import { start, connectFakeBrain, ask, turnOn, SALES, nameOf } from './helpers.js'
+import { start, connectFakeBrain, ask, answered, turnOn, paint, SALES, nameOf } from './helpers.js'
 import { extractPages } from '../app/caps/files/extract.js'
 
 test.beforeEach(async ({ page }) => {
@@ -146,6 +146,25 @@ test('a Word document from the first message, saved, then changed', async ({ pag
   const drawn = page.frameLocator('app-preview iframe').locator('main')
   await expect(drawn).toContainText('Deliver them', { timeout: 15_000 })
   await expect(drawn).not.toContainText('Sell the rest')
+})
+
+test('a Word document holds a picture Jean made in the task, named in its Markdown by the name it was made under (D730)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  const uri = await paint(page, 'portrait-lea', 'Léa at seven, laughing, balloons behind her')
+  await ask(page, `Call write with ${JSON.stringify({ name: 'Léa.docx', content: '# Léa\n\n![Léa laughing](portrait-lea.png)\n\nSeven today.' })}`)
+  await answered(page, 2)
+  const [picture, word] = await page.evaluate(async (uri) => {
+    const { app } = await import('/ui/state.js'), made = app.current.peek()?.records.findLast(({ update }) => update?.sessionUpdate === 'tool_call' && update._meta?.file)
+    const read = async (/** @type {string} */ at) => [...(await app.fs.readBytes(`${app.projectDir}/${at}`)) ?? []]
+    return [await read(uri), await read(String(/** @type {any} */ (made)?.update._meta.file.uri))]
+  }, uri)
+  const entries = readZip(new Uint8Array(word))
+  const media = entries.find((entry) => entry.name.startsWith('word/media/'))
+  expect(media?.name).toMatch(/\.png$/)
+  expect((await media?.read())?.length).toBeGreaterThan(0)
+  expect(picture.length).toBeGreaterThan(0)
+  expect(new TextDecoder().decode(await entries.find((entry) => entry.name === 'word/document.xml')?.read())).not.toContain('[Léa laughing]')
 })
 
 test('a spreadsheet written by a script, with exact totals', async ({ page }) => {

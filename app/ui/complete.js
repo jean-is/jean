@@ -37,7 +37,7 @@ import { BRAND } from '../brand.js'
  * @typedef {{ icon: unknown, label: string, detail?: string, aside?: string, add?: boolean, words: string, pick: () => unknown, key?: string, word?: string, id?: string, about?: string }} Option
  * @typedef {{ heading: string, options: Option[] }} Group
  */
-/** What @ picked, by the words it put in the box: a path in the conversation's folder, a document, a table, a design, or an earlier task. @typedef {{ kind: 'file' | 'folder', path: string } | { kind: 'task' | 'document' | 'table' | 'design', path: string, title: string }} Pointed */
+/** What @ picked, by the words it put in the box: a path in the conversation's folder, a creation (a document, a table, a design, a site, a game), or an earlier task. @typedef {{ kind: 'file' | 'folder', path: string } | { kind: 'task' | 'document' | 'table' | 'design' | 'site' | 'game', path: string, title: string }} Pointed */
 
 await styleSheet(new URL('complete.css', import.meta.url))
 
@@ -271,7 +271,7 @@ async function folder(show) {
 }
 
 /**
- * The project's creations whose word tells the brain what it is (`mention`), documents and tables so far, once a capability that
+ * The project's creations whose word tells the brain what it is (`mention`): documents, tables, designs, sites and games, once a capability that
  * keeps them is found (D488, D491, D497), the latest changed first; picked, one opens beside the conversation, and the box keeps the
  * keyboard where the pane is beside it. A picture or a film made is among the files, picked to be attached (D542). @type {Maker}
  */
@@ -363,7 +363,7 @@ export async function pointed(text, told = []) {
   }
   for (const [word, what] of picked) {
     meanings.set(word, async () => (what.kind === 'task' ? { means: `is the earlier task "${what.title}", as it went`, body: digest((await loadConversation(app.fs, what.path))?.records ?? []) }
-      : what.kind === 'document' || what.kind === 'design' ? { means: `is the ${what.kind} "${what.title}", ${what.path}` }
+      : what.kind === 'document' || what.kind === 'design' || what.kind === 'site' || what.kind === 'game' ? { means: `is the ${what.kind} "${what.title}", ${what.path}` }
       : what.kind === 'table' ? ((told) => ({ means: `is the table "${what.title}", ${what.path}${told ? `, its columns ${told.columns}` : ''}: read its rows with table_rows`, ...(told && { body: told.body }) }))(loaded.value.has('tables') ? await (await import('../caps/tables/tables.js')).mentioned(what.path) : null)
       : { means: `is the ${what.kind} "${what.path}" in the user's folder: ${what.kind === 'file' ? 'read it with open' : 'see what it holds with list'}` }))
   }

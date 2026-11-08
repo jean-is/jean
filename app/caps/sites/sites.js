@@ -13,7 +13,8 @@ import { icon, icons } from '../../ui/menu-icons.js'
 import { ask, reread, page } from '../../ui/creations.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { save } from '../../ui/save.js'
-import { noteRecord, linkedFiles } from '../../core/events.js'
+import { noteRecord } from '../../core/events.js'
+import { taskFiles, fileNamed } from '../../core/files.js'
 import { writeZip } from '../../core/zip.js'
 import { ulid } from '../../core/ulid.js'
 import { slug, serviceURL } from '../../core/settings.js'
@@ -87,13 +88,17 @@ const ways = (file, offer) => ({ ...(offer && { publish: { id: '', glyph: icons.
   if (one) save(new Blob([/** @type {BlobPart} */ (await writeZip([...one.files].map(([name, bytes]) => ({ name, bytes }))))], { type: 'application/zip' }), `${one.record.name}.zip`)
 } }] })
 
-/** A file of a call: its text, or a file the user shared, by its name. @param {any} file @param {import('../../core/loop.js').ToolContext} ctx @returns {Promise<[string, Uint8Array]>} */
+/**
+ * A file of a call: its text, or a file of the task by its name or place, one the user shared or Jean made (a picture, a chart), else
+ * one of the project's by its place. @param {any} file @param {import('../../core/loop.js').ToolContext} ctx @returns {Promise<[string, Uint8Array]>}
+ */
 async function fileOf(file, ctx) {
   const path = pathIn(file?.path)
   if (typeof file?.text === 'string') return [path, new TextEncoder().encode(file.text)]
-  const from = String(file?.from ?? '').normalize(), links = linkedFiles(conversationOf(ctx.signal)?.records ?? []), link = links.find((one) => one.name.normalize() === from)
-  const bytes = link && await app.fs.readBytes(`${app.projectDir}/${link.uri}`)
-  if (!bytes) throw new Error(from ? `There is no shared file named "${from}". Shared: ${links.map((one) => one.name).join(', ') || 'none'}.` : `${path} has neither text nor from`)
+  const from = String(file?.from ?? ''), conversation = conversationOf(ctx.signal), files = taskFiles(conversation?.records ?? [], conversation?.turn?.steps).filter((one) => !/^sites\//.test(one.uri))
+  const uri = fileNamed(files, from)?.uri ?? (/^files\/[\w.-]+$/.test(from.replace(/^(\.\.?\/)+/, '')) ? from.replace(/^(\.\.?\/)+/, '') : '')
+  const bytes = uri && await app.fs.readBytes(`${app.projectDir}/${uri}`)
+  if (!bytes) throw new Error(from ? `There is no file named "${from}" in this task. Its files: ${[...new Set(files.map((one) => one.name))].join(', ') || 'none'}.` : `${path} has neither text nor from`)
   return [path, bytes]
 }
 
@@ -147,7 +152,7 @@ function notes(records) {
   return last?.update?.sessionUpdate === '_system_note' && last.update.text === text ? [] : [noteRecord(text, { kind: 'site', uri: one.path })]
 }
 
-const sites = { id: 'sites', at: 2.8, draw: () => GLYPH, kept, like: skill,
+const sites = { id: 'sites', at: 2.8, draw: () => GLYPH, kept, mention: 'site', like: skill,
   pin: (/** @type {{ path: string }} */ { path }, /** @type {boolean} */ pinned) => update(path, (record) => ({ ...record, pinned })),
   rename: (/** @type {{ path: string }} */ { path }, /** @type {string} */ name) => update(path, (record) => ({ ...record, name })),
   remove: (/** @type {{ path: string }} */ { path }) => app.fs.remove(`${app.projectDir}/${path}`),

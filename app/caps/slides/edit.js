@@ -38,8 +38,6 @@ export const withTitle = (source, title) => withSetting(source, 'title', JSON.st
 const PICTURE = /(!\[[^\]\n]*\]\(<?)([^<>)\n]+?)(>?(?:\s+(?:"[^"\n]*"|'[^'\n]*'))?\))|^([ \t]*(?:image|background|backgroundImage)[ \t]*:[ \t]*)(.+?)([ \t]*)$/gm
 /** The deck with each picture at the place `to` gives it, else where it was. @param {string} source @param {(place: string) => string | undefined | void} to */
 export const withPictures = (source, to) => source.replace(PICTURE, (all, open, place, close, key, set, rest) => ((there) => (there ? `${open ?? key}${there}${close ?? rest}` : all))(to(place?.trim() ?? set.replace(/^(['"])(.*)\1$/, '$2'))))
-/** The latest of the task's pictures that goes by the name a deck gives it, as the brain writes one: its case, %20 and its extension aside. @template {{ name: string }} T @param {T[]} pictures @param {string} place */
-export const namedIn = (pictures, place) => ((bare) => pictures.findLast((one) => bare(one.name) === bare(place)))((/** @type {string} */ name) => name.trim().toLowerCase().replace(/%20/g, ' ').replace(/\.\w+$/, ''))
 /** A place from the deck's folder, in the project, unless it is the web's, held inside or the page's own. @param {string} place */
 export const placeIn = (place) => (/^([a-z][\w+.-]*:|\/)/i.test(place) ? undefined : new URL(place, 'file:///decks/').pathname.slice(1))
 

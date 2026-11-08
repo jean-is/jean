@@ -5,12 +5,12 @@
 // and its menu, a list's items as blocks, Japanese composition, Arabic, paste from Word and Google Docs read
 // in a small sealed frame, the keys, Jean's theme, what a screen reader reads, focus, the clipboard and drag
 // and drop, a phone; and Documents found as Jean writes a document again, then made and changed by the
-// brain's own tools, and found again from another task, with @ in the box and by the brain, which reads one
-// before it changes it.
+// brain's own tools, a picture Jean made in the task put in by its name (D730), and found again from another task, with @ in the box
+// and by the brain, which reads one before it changes it.
 import { test, expect } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
 import { readZip } from '../app/core/zip.js'
-import { start as begin, connectFakeBrain, ask, answered, openTasks, openSettings, addProject, enterProject, SHARE_URL } from './helpers.js'
+import { start as begin, connectFakeBrain, ask, answered, openTasks, openSettings, addProject, enterProject, paint, SHARE_URL } from './helpers.js'
 
 const fixture = (/** @type {string} */ name) => readFile(new URL(`fixtures/editor/${name}`, import.meta.url), 'utf8')
 const sample = () => fixture('jean-answer.md')
@@ -411,6 +411,23 @@ test.describe('found and used by the brain', () => {
     await expect(page.locator('#doc .suggest-new')).toHaveText(' of editor')
     await page.getByRole('button', { name: 'Accept', exact: true }).click()
     await expect.poll(() => saved(page, path)).toBe('# Cover letter\n\nI am writing to apply for the post of editor.\n')
+  })
+
+  test('a picture Jean made in the task goes into a document by the name it was made under, kept at its place and drawn there; another creation by its place (D730)', async ({ page }) => {
+    await begin(page)
+    await connectFakeBrain(page)
+    await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('documents') })
+    const uri = await paint(page, 'portrait-lea', 'Léa at seven, laughing, balloons behind her')
+    await ask(page, `Call document with ${JSON.stringify({ name: 'Léa', markdown: '# Léa\n\n![Léa laughing](Portrait-Lea.png)\n\nSeven today, as [[documents/01JAQXDOC0000000000000000B-party.md|The party]] says.' })}`)
+    await answered(page, 2)
+    await expect(page.locator('#doc app-shared.picture')).toHaveAttribute('uri', uri)
+    await expect(page.locator('#doc app-shared.picture img')).toHaveJSProperty('naturalWidth', 96)
+    await expect(page.locator('#doc .ref')).toHaveText('The party')
+    const path = await page.evaluate(async () => {
+      const { app } = await import('/ui/state.js')
+      return `documents/${(await app.fs.list(`${app.projectDir}/documents`)).map((entry) => entry.name).find((name) => name.endsWith('-lea.md'))}`
+    })
+    expect(await saved(page, path)).toContain(`![Léa laughing](../${uri})`)
   })
 
   test('a document made in one task opens from another: with @ in the box, and by the brain, which is told of it and reads it before it changes it', async ({ page }) => {

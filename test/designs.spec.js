@@ -2,10 +2,10 @@
 // its wrong weekday marked and fixed in place; its words changed as fields; a part moved with the keys and the move undone; More
 // takes; the part the user points at changed by the brain, accepted (D505); and saved as its file, which holds the design and its
 // faces, and as a picture, which carries the design too; printed two to a sheet; a shape, an ornament and a QR code added behind the
-// words, arranged and duplicated; offered for an invitation written as a web page. In Arabic its words run right to left in Jean's own
+// words, arranged and duplicated; offered for an invitation written as a web page; a picture Jean made in the task put in by its name (D730). In Arabic its words run right to left in Jean's own
 // face; in Japanese the weekday in brackets is marked.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, nameOf } from './helpers.js'
+import { start, connectFakeBrain, ask, answered, nameOf, paint } from './helpers.js'
 
 /** The design on show, as the pane holds it. @param {import('@playwright/test').Page} page */
 const shown = (page) => page.evaluate(async () => (await import('/caps/designs/designs.js')).shown.value?.design)
@@ -120,6 +120,27 @@ test('a design: offered, laid out three ways, its weekday fixed, finished by han
 
 // Add: a shape, an ornament and a QR code go behind the words, never over them; Arrange puts one in front or at the back, ⌘D
 // duplicates it; a picture's frame goes round; and the file draws them all, as drawings of their own where they are.
+test('a picture Jean made in the task goes into a design by its name, as it is, saying what it shows; a change puts in another the same way (D730)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('designs') })
+  const uri = await paint(page, 'portrait-lea', 'Léa at seven, laughing, balloons behind her')
+  await ask(page, `Call design with ${JSON.stringify({ name: 'Léa’s party', size: 'a5', words: { title: 'Léa is 7!', when: 'Saturday 14 November · 3 pm' }, pictures: [{ describe: 'portrait-lea.png' }] })}`)
+  await answered(page, 2)
+  await expect.poll(async () => (await shown(page))?.parts.find((/** @type {any} */ part) => part.role === 'picture')?.file).toBe(uri)
+  expect((await shown(page))?.parts.find((/** @type {any} */ part) => part.role === 'picture')?.words).toBe('Léa at seven, laughing, balloons behind her')
+  await expect(page.locator('app-picture')).toHaveCount(1)
+  await expect(page.locator('.msg-jean .prose').last()).not.toContainText('empty frame')
+  await expect(page.locator('.design-stage .design-page [data-part="picture"] image, .design-stage .design-page [data-part="picture"] img').first()).toBeAttached()
+  // Changed for another of the task's, by its name too: Jean's version of the part, for the user to accept or reject.
+  const design = /designs\/\S+\.svg/.exec(await page.locator('.msg-jean .prose').last().innerText())?.[0]
+  const other = await paint(page, 'portrait-tom', 'Tom, her brother, waving')
+  await ask(page, `Call design_change with ${JSON.stringify({ design, changes: [{ part: 'picture', picture: 'Portrait-Tom' }] })}`)
+  await answered(page, 4)
+  await expect.poll(() => page.evaluate(async () => (await import('/caps/designs/designs.js')).shown.value?.side?.parts.picture?.file)).toBe(other)
+  await expect(page.locator('app-picture')).toHaveCount(2)
+})
+
 test('Add puts a shape, an ornament and a QR code behind the words, Arrange brings one in front or duplicates it, a picture goes round, and the file draws them', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)

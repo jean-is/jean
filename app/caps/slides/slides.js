@@ -20,14 +20,15 @@ import { icon } from '../../ui/icons.js'
 import { icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { reviewBar } from '../../ui/review.js'
-import { noteRecord, linkedFiles, filesMade, callsIn } from '../../core/events.js'
+import { noteRecord } from '../../core/events.js'
+import { taskFiles, fileNamed } from '../../core/files.js'
 import { t, useStrings, locale, intlLocales } from '../../core/i18n.js'
 import { languageOf } from '../../ui/language.js'
 import { kitHere, withNames, words } from './kit.js'
 import { kitSlot } from './kit-slot.js'
 import { cjk } from '../layouts/shapes.js'
 import { drawing, coloured, told, wordsBelow } from '../interactive/diagram.js'
-import { withLayout, withoutKit, changesOf, swapped, withPictures, namedIn, placeIn } from './edit.js'
+import { withLayout, withoutKit, changesOf, swapped, withPictures, placeIn } from './edit.js'
 
 await Promise.all([useStrings('slides'), useStrings('interactive'), styleSheet(new URL('../../vendor/deck/deck.css', import.meta.url)), styleSheet(new URL('slides.css', import.meta.url))])
 
@@ -137,9 +138,9 @@ class AppSlides extends HTMLElement {
 
   /** The pictures the deck names that aren't read yet: one of the task's by the name the brain gave it, else at its place from the deck's folder; none in a task saved as a page, whose room has no files. */
   async held() {
-    const records = app.current.peek()?.records ?? [], pictures = [...linkedFiles(records), ...filesMade(callsIn(records, app.live.peek()?.turn?.steps))].filter((one) => /^image\//.test(one.mimeType ?? '')), places = /** @type {string[]} */ ([])
+    const records = app.current.peek()?.records ?? [], pictures = taskFiles(records, app.live.peek()?.turn?.steps).filter((one) => /^image\//.test(one.mimeType ?? '')), places = /** @type {string[]} */ ([])
     withPictures(this.source, (place) => void (!app.fs || /^[a-z][\w+.-]*:/i.test(place) || this.urls.has(place) || (places.push(place), this.urls.set(place, ''))))
-    await Promise.all(places.map((place) => ((uri) => uri && app.fs.readBytes(`${app.projectDir}/${uri}`).then((bytes) => bytes && this.urls.set(place, URL.createObjectURL(new Blob([/** @type {BlobPart} */ (bytes)], { type: /\.svg$/i.test(uri) ? 'image/svg+xml' : '' })))))(namedIn(pictures, place)?.uri ?? placeIn(place))))
+    await Promise.all(places.map((place) => ((uri) => uri && app.fs.readBytes(`${app.projectDir}/${uri}`).then((bytes) => bytes && this.urls.set(place, URL.createObjectURL(new Blob([/** @type {BlobPart} */ (bytes)], { type: /\.svg$/i.test(uri) ? 'image/svg+xml' : '' })))))(fileNamed(pictures, place)?.uri ?? placeIn(place))))
     return this.isConnected
   }
 

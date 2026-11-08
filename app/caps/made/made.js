@@ -12,13 +12,13 @@ import { app, notify, conversationOf } from '../../ui/state.js'
 import { save } from '../../ui/save.js'
 import { act } from '../../ui/acts.js'
 import { icon, icons } from '../../ui/menu-icons.js'
-import { addFile, fileText, fileTitle, splitPages } from '../../core/files.js'
-import { callsIn, filesMade, latestOf, nextVersion, versionsOf, titleOf } from '../../core/events.js'
+import { addFile, fileText, fileTitle, splitPages, taskFiles, picturesPlaced } from '../../core/files.js'
+import { callsIn, filesMade, isPicture, latestOf, nextVersion, versionsOf, titleOf } from '../../core/events.js'
 import { t, locale, intlLocales, formatBytes, useStrings } from '../../core/i18n.js'
 import { languageOf } from '../../ui/language.js'
 import { offerOnce } from '../../ui/discovery.js'
 import { all as creations } from '../../ui/creations.js'
-import { dress, downloadWord, wordLook } from './paper.js'
+import { dress, downloadWord, wordLook, picturesIn } from './paper.js'
 import { copyRich } from './ways.js'
 import { onPaper } from '../../ui/kit.js'
 
@@ -50,8 +50,11 @@ function madeFiles(signal, written = false) {
  */
 async function keep(name, content, ctx) {
   // The writers load with the first file made, not with the first message.
-  const { makeFile, paperFor } = await import('./formats.js')
-  const { name: kept, mimeType, bytes } = typeof content === 'string' ? await makeFile(name, content, { paper: paperFor(navigator.language), look: /\.docx$/i.test(name) ? await wordLook() : /\.xlsx$/i.test(name) ? await onPaper() : null }) : { name, ...content }
+  const { makeFile, paperFor } = await import('./formats.js'), word = /\.docx$/i.test(name), conversation = conversationOf(ctx.signal)
+  // A Word file holds the task's pictures it names, the user's or those made, as a document does.
+  const placed = typeof content === 'string' && word ? picturesPlaced(content, taskFiles(conversation?.records ?? [], conversation?.turn?.steps).filter(isPicture)) : content
+  const { name: kept, mimeType, bytes } = typeof placed === 'string' ? await makeFile(name, placed, { paper: paperFor(navigator.language), look: word ? await wordLook() : /\.xlsx$/i.test(name) ? await onPaper() : null,
+    ...(word && { pictures: await picturesIn(placed) }) }) : { name, ...placed }
   const link = await addFile(app.fs, { projectDir: app.projectDir, name: kept, mimeType, bytes, pages: typeof content === 'string' ? [content] : content.pages, by: 'jean' })
   // Each version is a file of its own, by its content, and the earlier ones stay where they are (D164).
   const version = nextVersion(madeFiles(ctx.signal), kept, link.uri)

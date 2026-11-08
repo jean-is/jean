@@ -20,7 +20,8 @@ import { icon, icons } from '../../ui/menu-icons.js'
 import { library, remeta } from '../../ui/complete.js'
 import { ask, page } from '../../ui/creations.js'
 import { addFile, fileText } from '../../core/files.js'
-import { callsIn, filesMade, linkedFiles, isPicture, nextVersion } from '../../core/events.js'
+import { callsIn, filesMade, isPicture, nextVersion } from '../../core/events.js'
+import { taskFiles, fileNamed } from '../../core/files.js'
 import { slug } from '../../core/settings.js'
 import { t, useStrings, formatBytes, intlLocales } from '../../core/i18n.js'
 import * as device from './device.js'
@@ -83,13 +84,13 @@ async function engines(kind, changing) {
   return found
 }
 
-/** The conversation's pictures, shared or made, newest first. @param {AbortSignal} [signal] */
-const pictures = (signal) => ((conversation, records = conversation?.records ?? []) => [...linkedFiles(records).filter(isPicture), ...filesMade(callsIn(records, conversation?.turn?.steps)).filter((file) => file.mimeType.startsWith('image/'))].reverse())(conversationOf(signal))
+/** The conversation's pictures a brain takes as they are, shared or made, in order. @param {AbortSignal} [signal] */
+const pictures = (signal) => ((conversation) => taskFiles(conversation?.records ?? [], conversation?.turn?.steps).filter(isPicture))(conversationOf(signal))
 
-/** A picture of the conversation by its name, to start from. @param {string} name @param {AbortSignal} [signal] */
+/** A picture of the conversation by its name or place, the latest of that name, to start from. @param {string} name @param {AbortSignal} [signal] */
 async function named(name, signal) {
-  const found = pictures(signal).find((file) => file.name.toLowerCase() === name.trim().toLowerCase())
-  if (!found) throw new Error(`No picture named "${name}" in this conversation. Pictures: ${[...new Set(pictures(signal).map((file) => file.name))].join(', ') || 'none'}.`)
+  const all = pictures(signal), found = fileNamed(all, name)
+  if (!found) throw new Error(`No picture named "${name}" in this conversation. Pictures: ${[...new Set(all.map((file) => file.name))].reverse().join(', ') || 'none'}.`)
   const bytes = await app.fs.readBytes(`${app.projectDir}/${found.uri}`)
   if (!bytes) throw new Error(`${found.name} is no longer on this device.`)
   return { name: found.name, mimeType: found.mimeType ?? 'image/png', bytes, uri: found.uri }
@@ -170,7 +171,7 @@ export async function make(kind, args, ctx) {
   ctx.meta.picture = { uri: link.uri, name, mimeType: made.mimeType, size: made.bytes.length, version }
   // Who made it, as its answer's certificate says (D252).
   ctx.meta.made = by && 'brain' in by ? { kind, provider: by.brain.provider, model: by.model, local: isLocal(by.brain) } : { kind, provider: 'device', model: made.model ?? '', ...('revision' in made && { revision: made.revision }), local: true }
-  return `Made ${name}${version > 1 ? `, version ${version}: the earlier ones stay` : ''}${kind === 'film' && by && 'device' in by ? ', 5 seconds long, as films made on this device are' : ''}. The user sees it in your answer.`
+  return `Made ${name}${version > 1 ? `, version ${version}: the earlier ones stay` : ''}${kind === 'film' && by && 'device' in by ? ', 5 seconds long, as films made on this device are' : ''}. The user sees it in your answer; by its name, it goes into a site, a document, a design or a Word file you make.`
 }
 
 /** What the brain hears a refused picture showed (D275, D280). */

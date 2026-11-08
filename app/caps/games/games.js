@@ -112,7 +112,7 @@ function notes(records) {
   return last?.update?.sessionUpdate === '_system_note' && last.update.text === text ? [] : [noteRecord(text, { kind: 'game', uri: one.path })]
 }
 
-const games = { id: 'games', at: 2.7, draw: () => GLYPH, kept, preview: (/** @type {{ picture?: string }} */ item) => (item.picture ? html`<img class="game-picture" src=${item.picture} alt="">` : null), like: skill,
+const games = { id: 'games', at: 2.7, draw: () => GLYPH, kept, mention: 'game', preview: (/** @type {{ picture?: string }} */ item) => (item.picture ? html`<img class="game-picture" src=${item.picture} alt="">` : null), like: skill,
   pin: (/** @type {{ path: string }} */ { path }, /** @type {boolean} */ pinned) => update(path, (one) => ({ ...one, meta: { ...one.meta, pinned: pinned ? 'true' : '' } })),
   rename: (/** @type {{ path: string }} */ { path }, /** @type {string} */ name) => update(path, (one) => ({ ...one, name })),
   copy: async (/** @type {{ path: string }} */ { path }, /** @type {string} */ name) => {

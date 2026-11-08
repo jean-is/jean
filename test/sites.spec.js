@@ -2,12 +2,12 @@
 // brain hearing what to fix (a line too pale, a placeholder left); it opens beside the task, at a phone's width once picked, its link
 // to its other page followed there; it is among the creations, changed by `site_change` until nothing is left to fix, and leaves as
 // a zip of its files. Published at a name of its own on the share host, asked first, its recovery code shown once, its pages
-// served under the host's policy; published again, only what changed goes; a new recovery code; taken offline. Its widths in
-// Arabic and Japanese.
+// served under the host's policy; published again, only what changed goes; a new recovery code; taken offline. A picture Jean made
+// in the task goes into it by its name, and @ names it from another task (D730). Its widths in Arabic and Japanese.
 import { readFile } from 'node:fs/promises'
 import { request } from 'node:http'
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, nameOf, SHARE_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, answered, nameOf, paint, SHARE_URL } from './helpers.js'
 
 test.setTimeout(120_000)
 
@@ -76,6 +76,50 @@ test('a site made with its skill is checked from its files and as its pages show
   const zip = await readFile(await (await download).path())
   for (const name of ['index.html', 'prices.html', 'style.css']) expect(zip.includes(name)).toBe(true)
   expect(zip.includes('site.json')).toBe(false)
+})
+
+test('a picture Jean made in the task goes into its site by the name it was made under, its lists as JSON text read as lists (D730)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  const answer = await make(page), place = /sites\/[^:]+/.exec(await answer.innerText())?.[0] ?? ''
+  const uri = await paint(page, 'portrait-atelier', 'The workshop at dawn, bikes on the wall')
+  // As a brain sent it through another's tools: its lists as JSON text, the picture by its name, in another case, without its extension.
+  const files = JSON.stringify([{ path: 'photos/atelier.png', from: 'Portrait-Atelier' }]), changes = JSON.stringify([{ path: 'index.html', old: '<p>Bring it in before noon.</p>', new: '<p>Bring it in before noon.</p><img src="photos/atelier.png" alt="The workshop at dawn" width="96" height="64">' }])
+  await ask(page, `Call site_change with ${JSON.stringify({ site: place, files, changes })}`)
+  await answered(page, 4)
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Changed.')
+  const [made, kept, record] = await page.evaluate(async ([place, uri]) => {
+    const { app } = await import('/ui/state.js'), length = async (/** @type {string} */ path) => (await app.fs.readBytes(`${app.projectDir}/${path}`))?.length ?? 0
+    return [await length(uri), await length(`${place}/photos/atelier.png`), JSON.parse((await app.fs.read(`${app.projectDir}/${place}/site.json`)) ?? '{}')]
+  }, [place, uri])
+  expect(made).toBeGreaterThan(0)
+  expect(kept).toBe(made)
+  expect(record.files).toContain('photos/atelier.png')
+  await expect(page.frameLocator('app-preview app-site iframe').locator('img[alt="The workshop at dawn"]')).toHaveJSProperty('naturalWidth', 96)
+  // A name the task holds nothing by says what it does hold.
+  await ask(page, `Call site_change with ${JSON.stringify({ site: place, files: [{ path: 'photos/other.png', from: 'bicorne.png' }] })}`)
+  await answered(page, 5)
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('There is no file named "bicorne.png" in this task. Its files: portrait-atelier.png.')
+})
+
+test('from another task, @ names a site by its place, opening it beside the task for the brain to change (D730)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  const place = /sites\/[^:]+/.exec(await (await make(page)).innerText())?.[0] ?? ''
+  await page.locator('.wordmark').click()
+  await expect(page.locator('app-preview .pane')).toHaveCount(0)
+  const box = page.locator('#prompt')
+  await box.pressSequentially('Brighter @atel')
+  await expect(page.locator('#complete .complete-heading').first()).toHaveText('Creations')
+  await expect(page.locator('#complete [aria-selected="true"]')).toContainText('Atelier Nord')
+  await box.press('Enter')
+  await expect(box).toHaveValue('Brighter @Atelier Nord ')
+  await expect(page.locator('app-preview:has(app-site)')).toBeVisible()
+  await box.press('Enter')
+  await answered(page)
+  const records = await page.evaluate(async () => JSON.stringify((await import('/ui/state.js')).app.current.value?.records ?? []))
+  expect(records).toContain(`\\"@Atelier Nord\\" is the site \\"Atelier Nord\\", ${place}.`)
+  expect(records).toContain(`The site Atelier Nord (${place}) is open beside the conversation, on index.html. Change it with site_change.`)
 })
 
 for (const [lang, width, phone] of [['ar', 'العرض', 'هاتف'], ['ja', '幅', 'スマートフォン']]) {

@@ -128,9 +128,9 @@ async function offered(one) {
  */
 export async function keep({ task, answer, records }) {
   if (!/^ {0,3}(`{3,}|~{3,})/m.test(answer) || !declared.peek().has('deck')) return
-  const [{ deckIn, parseDeck }, { ownName, mostAlike, changesOf, withKit, withPictures, namedIn }, { kitHere, copyOf, lookPrint }, { linkedFiles, filesMade, callsIn }] = await Promise.all([import('@codename/deck'), import('../slides/edit.js'), import('../slides/kit.js'), import('../../core/events.js')])
+  const [{ deckIn, parseDeck }, { ownName, mostAlike, changesOf, withKit, withPictures }, { kitHere, copyOf, lookPrint }, { taskFiles, fileNamed }] = await Promise.all([import('@codename/deck'), import('../slides/edit.js'), import('../slides/kit.js'), import('../../core/files.js')])
   // A picture of the task, which the brain names by its name, kept at its place from the deck's folder.
-  const pictures = [...linkedFiles(records), ...filesMade(callsIn(records))].filter((one) => /^image\//.test(one.mimeType ?? '')), source = ((found) => found && withPictures(found.source, (place) => ((one) => one && `../${one.uri}`)(namedIn(pictures, place))))(deckIn(answer))
+  const pictures = taskFiles(records).filter((one) => /^image\//.test(one.mimeType ?? '')), source = ((found) => found && withPictures(found.source, (place) => ((one) => one && `../${one.uri}`)(fileNamed(pictures, place))))(deckIn(answer))
   if (!source) return
   // Its name its own, else the task's, which is no deck's own: two decks of a task without one are never one deck by it.
   const dir = task.slice(0, task.indexOf('/conversations/')), own = ownName(source)

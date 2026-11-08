@@ -193,6 +193,23 @@ export async function callTool(page, name, args, approval) {
 }
 
 /**
+ * A picture the fake brain makes in the task, Pictures found first: it is on this computer, so its picture goes through the
+ * check, which passes it, watermark and all (pictures.spec.js). Its place in the project. @param {import('@playwright/test').Page} page
+ * @param {string} name @param {string} description
+ */
+export async function paint(page, name, description) {
+  await page.route('**/caps/pictures/device-worker.js', (route) => route.fulfill({ contentType: 'text/javascript',
+    body: 'self.onmessage = ({ data }) => self.postMessage(data.type === \'watermark\' ? { id: data.id, type: \'done\', bytes: data.bytes } : { id: data.id, type: \'done\', logits: [5, 0, 0, 0], areas: [] })' }))
+  await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('pictures') })
+  const before = await page.locator('.msg-jean .prose').count()
+  await ask(page, `Call picture with ${JSON.stringify({ name, description, shape: 'tall' })}`)
+  await answered(page, before + 1)
+  const picture = page.locator('.msg-jean').last().locator('app-picture')
+  await expect(picture.locator('img')).toHaveJSProperty('naturalWidth', 96)
+  return String(await picture.getAttribute('uri'))
+}
+
+/**
  * The tasks, in view: the drawer open beside the conversation on a wide window, or over it on a
  * narrow one, opened from the header's button when it isn't (D165).
  * @param {import('@playwright/test').Page} page

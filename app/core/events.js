@@ -71,7 +71,7 @@ export function foldTurns(records) {
 /** Every file linked from the conversation, in order. @param {Envelope[]} records @returns {ResourceLink[]} */
 export const linkedFiles = (records) => records.flatMap(({ update }) => (update?.sessionUpdate === 'user_message_chunk' && update.content.type === 'resource_link' ? [update.content] : []))
 
-/** A picture brains that can see take as it is: PNG, JPEG, WebP or GIF. @param {ResourceLink} link */
+/** A picture brains that can see take as it is: PNG, JPEG, WebP or GIF. @param {{ mimeType?: string }} link */
 export const isPicture = (link) => /^image\/(png|jpeg|webp|gif)$/.test(link.mimeType ?? '')
 
 /** @param {Turn} turn @param {AcpUpdate} update @param {number} index */

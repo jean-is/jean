@@ -12,7 +12,8 @@ import { signal } from '@preact/signals-core'
 import { register, loaded } from '../../ui/caps.js'
 import { app, conversationOf, send } from '../../ui/state.js'
 import { styleSheet } from '../../ui/sheet.js'
-import { noteRecord } from '../../core/events.js'
+import { noteRecord, isPicture } from '../../core/events.js'
+import { splitPages, taskFiles, fileNamed } from '../../core/files.js'
 import { slug } from '../../core/settings.js'
 import { ulid } from '../../core/ulid.js'
 import { useStrings, locale, t } from '../../core/i18n.js'
@@ -114,29 +115,32 @@ export async function update(path, change, dir = app.projectDir) {
 }
 
 /**
- * The pictures a design asks for made as Pictures makes them (its checks, its marks: D251, D275, D324), once found, each into
- * its part or Jean's version of it; what it says of them, for the brain. @param {Kept} one @param {string[]} ids
- * @param {import('../../core/loop.js').ToolContext} ctx
+ * The pictures a design asks for: one of the task's that a part names, the user's or one made, as it is; the others made as Pictures
+ * makes them (its checks, its marks: D251, D275, D324), once found, each into its part or Jean's version of it; what it says of them,
+ * for the brain. @param {Kept} one @param {string[]} ids @param {import('../../core/loop.js').ToolContext} ctx
  */
 async function paint(one, ids, ctx) {
-  if (!ids.length) return ''
-  if (!loaded.peek().has('pictures')) return ' Its picture is an empty frame for a photo of the user\'s own: say so, as nothing is drawn in it. Pictures, which could make one, isn\'t on: you may offer it.'
-  const { make } = await import('../pictures/pictures.js'), said = []
+  const conversation = conversationOf(ctx.signal), held = taskFiles(conversation?.records ?? [], conversation?.turn?.steps).filter(isPicture), said = new Set()
   for (const id of ids) {
     const part = suggested(one).parts.find((each) => each.id === id), [, , w, h] = part?.box ?? [1, 1, 1, 1], made = /** @type {import('../../core/loop.js').ToolContext} */ ({ ...ctx, meta: {}, progress: () => {} })
-    try {
-      await make('picture', { description: part?.words, shape: w / h > 1.2 ? 'wide' : h / w > 1.2 ? 'tall' : 'square', name: one.design.name }, made)
-    } catch (error) {
-      said.push(` Its picture wasn't made: ${error instanceof Error ? error.message : error}`)
-      continue
+    let uri = fileNamed(held, part?.words ?? '')?.uri
+    if (!uri && !loaded.peek().has('pictures')) said.add(' Its picture is an empty frame for a photo of the user\'s own: say so, as nothing is drawn in it. Pictures, which could make one, isn\'t on: you may offer it.')
+    if (!uri && loaded.peek().has('pictures')) {
+      try {
+        await (await import('../pictures/pictures.js')).make('picture', { description: part?.words, shape: w / h > 1.2 ? 'wide' : h / w > 1.2 ? 'tall' : 'square', name: one.design.name }, made)
+        ;({ uri } = made.meta.picture)
+        ctx.meta.made ??= made.meta.made
+      } catch (error) { said.add(` Its picture wasn't made: ${error instanceof Error ? error.message : error}`) }
     }
-    const { uri } = made.meta.picture, bitmap = await createImageBitmap(new Blob([/** @type {BlobPart} */ (await app.fs.readBytes(`${one.dir}/${uri}`))]))
-    const fill = (/** @type {Part} */ each) => ({ ...each, file: uri, px: [bitmap.width, bitmap.height] })
-    ctx.meta.made ??= made.meta.made
+    if (!uri) continue
+    // One of the task's says what it shows as its own text does, a picture made its description, rather than by its name.
+    const bitmap = await createImageBitmap(new Blob([/** @type {BlobPart} */ (await app.fs.readBytes(`${one.dir}/${uri}`))])), file = /** @type {string} */ (uri)
+    const told = made.meta.picture ? '' : splitPages((await app.fs.read(`${one.dir}/${file.replace(/\.\w+$/, '.md')}`)) ?? '').join(' ').trim()
+    const fill = (/** @type {Part} */ each) => ({ ...each, file, px: [bitmap.width, bitmap.height], ...(told && { words: told }) })
     one = (await update(one.path, (now) => (now.side?.parts[id] ? { ...now, side: { ...now.side, parts: { ...now.side.parts, [id]: fill(/** @type {Part} */ (now.side.parts[id])) } } }
       : { ...now, design: { ...now.design, parts: now.design.parts.map((each) => (each.id === id ? fill(each) : each)) } }), one.dir)) ?? one
   }
-  return said.join('')
+  return [...said].join('')
 }
 
 /** A design, open beside the conversation once it is on show: in its pane, if it has one, else in one for a look. @param {Kept} one */

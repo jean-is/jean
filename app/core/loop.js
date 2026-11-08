@@ -311,6 +311,7 @@ function stepRecords(step, brainEntry, thought, text) {
  */
 async function runTool(call, tool, step, ctx, parent, waiting) {
   const { rule, askPermission, onUpdate, signal } = ctx
+  if (tool) call = { ...call, args: typed(tool, call.args) }
   // Stopped: nothing more runs, and nothing more is asked.
   if (signal?.aborted) throw new LLMError('Request aborted', { code: 'aborted' })
   /** @type {ToolCallInfo} */
@@ -425,6 +426,13 @@ const under = (update, parent) => ({ ...update, toolCallId: `${parent}/${update.
 
 /** The arguments a tool requires that a call leaves out. @param {Tool} tool @param {any} args @returns {string[]} */
 const lacking = ({ spec }, args) => (/** @type {{ required?: string[] }} */ (spec.parameters).required ?? []).filter((/** @type {string} */ name) => args?.[name] == null)
+
+/**
+ * A call's arguments with each list or object its tool asks for that a brain sent as JSON text read as such, as some send a
+ * tool of another's (Claude Code's own tools): never a list left out unseen. @param {Tool} tool @param {any} args
+ */
+const typed = ({ spec }, args) => (args && typeof args === 'object' && !Array.isArray(args) ? Object.fromEntries(Object.entries(args).map(([name, value]) => [name,
+  typeof value === 'string' && /^(array|object)$/.test(/** @type {any} */ (spec.parameters).properties?.[name]?.type) ? safe(() => ((read) => (typeof read === 'object' && read ? read : value))(JSON.parse(value)), value) : value])) : args)
 
 /** @template T @param {() => T} fn @param {T} fallback */
 function safe(fn, fallback) {

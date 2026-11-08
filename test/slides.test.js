@@ -3,7 +3,8 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { parseDeck } from '@codename/deck'
-import { piecesOf, withKit, withoutKit, withLayout, changesOf, swapped, withPictures, namedIn, placeIn, ownName, mostAlike } from '../app/caps/slides/edit.js'
+import { piecesOf, withKit, withoutKit, withLayout, changesOf, swapped, withPictures, placeIn, ownName, mostAlike } from '../app/caps/slides/edit.js'
+import { fileNamed } from '../app/core/files.js'
 
 const DECK = '---\ntitle: A second oven\n---\n\n# A second oven\n\nPlan for 2027\n\n---\n\n## Where we are\n\n- 120 croissants a day\n\n---\nlayout: fact\n---\n\n# 14 months\n\nto pay it back\n'
 /** Each slide's layout and first words, as deck reads them. @param {string} source */
@@ -84,12 +85,12 @@ test('a deck’s pictures are found as deck reads them, a picture of the task by
   assert.equal(withPictures(deck, (place) => void places.push(place)), deck, 'nothing given, nothing moves')
   assert.deepEqual(places, ["Cycle de l'eau.png", "cycle de l'eau.PNG", 'https://example.com/a.png', "Cycle%20de%20l'eau.png"], 'words that start as a setting does are no picture')
   const pictures = [{ name: "Cycle de l'eau.png", uri: 'files/sha256-aa.png' }, { name: 'oven.jpg', uri: 'files/sha256-bb.jpg' }, { name: "Cycle de l'eau.png", uri: 'files/sha256-cc.png' }]
-  const kept = withPictures(deck, (place) => ((one) => one && `../${one.uri}`)(namedIn(pictures, place)))
+  const kept = withPictures(deck, (place) => ((one) => one && `../${one.uri}`)(fileNamed(pictures, place)))
   assert.equal(kept, deck.replace(`"Cycle de l'eau.png"`, '../files/sha256-cc.png').replace(`<cycle de l'eau.PNG>`, '<../files/sha256-cc.png>').replace(`(Cycle%20de%20l'eau.png)`, '(../files/sha256-cc.png)'), 'the latest of that name, its case, %20 and extension aside')
   assert.deepEqual(read(kept), read(deck))
   assert.equal(parseDeck(kept).slides[3].settings.image, '../files/sha256-cc.png')
-  assert.equal(namedIn(pictures, 'oven'), pictures[1])
-  assert.equal(namedIn(pictures, 'stove.png'), undefined)
+  assert.equal(fileNamed(pictures, 'oven'), pictures[1])
+  assert.equal(fileNamed(pictures, 'stove.png'), undefined)
   // Its place in the project, from decks/: never above it, never the web's, one held inside or the page's own.
   assert.equal(placeIn('../files/sha256-aa.png'), 'files/sha256-aa.png')
   assert.equal(placeIn('oven.png'), 'decks/oven.png')

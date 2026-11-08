@@ -14,7 +14,8 @@ import { app, conversationOf } from '../../ui/state.js'
 import { icons } from '../../ui/menu-icons.js'
 import { page, prose, reread } from '../../ui/creations.js'
 import { styleSheet } from '../../ui/sheet.js'
-import { noteRecord } from '../../core/events.js'
+import { noteRecord, isPicture } from '../../core/events.js'
+import { taskFiles, picturesPlaced } from '../../core/files.js'
 import { parseFrontMatter, stringifyFrontMatter, slug } from '../../core/settings.js'
 import { ulid } from '../../core/ulid.js'
 import { t, useStrings } from '../../core/i18n.js'
@@ -27,6 +28,8 @@ await Promise.all([useStrings('documents'), ...['prosemirror/prosemirror', 'pros
 
 /** How many of the project's documents the brain's <documents> names. */
 const LISTED = 20
+/** A brain's Markdown with the pictures it names as files of its task, one the user shared or one made, where the editor draws them. @param {string} markdown @param {AbortSignal} [signal] */
+const placed = (markdown, signal) => ((conversation) => picturesPlaced(markdown, taskFiles(conversation?.records ?? [], conversation?.turn?.steps).filter(isPicture)))(conversationOf(signal))
 
 /** The documents on show, each in its editor, by its place: each in a pane beside the task (D635), each of which the brain hears of. @type {Map<string, Editor>} */
 const open = new Map()
@@ -172,7 +175,7 @@ const notes = (records) => [...open.values()].flatMap((one) => {
 const documentTool = {
   spec: {
     name: 'document',
-    description: "Make a document the user keeps: a letter, notes, a plan… It opens beside the conversation, where the user edits it, and you change it with suggest. Write it in Markdown, in the user's language.",
+    description: "Make a document the user keeps: a letter, notes, a plan… It opens beside the conversation, where the user edits it, and you change it with suggest. Write it in Markdown, in the user's language: a picture of the task by its name, ![words](name.png), another creation by [[its place|its name]].",
     parameters: { type: 'object', required: ['name', 'markdown'],
       properties: { name: { type: 'string', description: "Its name, in the user's language, without an extension" }, markdown: { type: 'string', description: 'What it says' } } },
   },
@@ -183,7 +186,7 @@ const documentTool = {
     const path = `documents/${ulid()}-${slug(name) || 'document'}.md`
     const now = new Date().toISOString()
     // Its first line is its title: the brain's, else its name.
-    const markdown = String(args?.markdown ?? '').trim(), body = /^# /.test(markdown) ? markdown : titled(markdown, name).trim()
+    const markdown = placed(String(args?.markdown ?? '').trim(), ctx.signal), body = /^# /.test(markdown) ? markdown : titled(markdown, name).trim()
     const text = stringifyFrontMatter({ format: 1, name, author: 'jean', created: now, changed: now }, `${body}\n`)
     await app.fs.write(`${app.projectDir}/${path}`, text)
     ctx.meta.files = [{ uri: path, name: `${name}.md`, mimeType: 'text/markdown', size: new TextEncoder().encode(text).length }]
@@ -209,7 +212,7 @@ const suggestTool = {
     if (conversationOf(ctx.signal)?.path !== app.current.peek()?.path) return 'The user is in another task: suggest the changes once they are back in this one.'
     // One that wasn't on show opens as it is, which the brain reads before it changes it (D488).
     if (!open.has(path)) return show(path).then((one) => `${one.name} is open beside the conversation now, unchanged. It reads:\n\n${one.body}\n\nSuggest your changes to this text.`)
-    return (await show(path)).editor.suggest(String(args?.markdown ?? ''), Array.isArray(args?.notes) ? args.notes.map(String) : [])
+    return (await show(path)).editor.suggest(placed(String(args?.markdown ?? ''), ctx.signal), Array.isArray(args?.notes) ? args.notes.map(String) : [])
   },
 }
 

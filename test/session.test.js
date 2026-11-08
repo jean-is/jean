@@ -4,7 +4,7 @@ import assert from 'node:assert/strict'
 import { foldTurns, linkedFiles, noteRecord, userRecords } from '../app/core/events.js'
 import { buildSystemPrompt, changeNotes, frozenPrompt, promptRecord, promptState, toChatMessages } from '../app/core/prompt.js'
 import { runTurn } from '../app/core/loop.js'
-import { documentPart, joinPages } from '../app/core/files.js'
+import { documentPart, joinPages, taskFiles, fileNamed, picturesPlaced } from '../app/core/files.js'
 
 /** @type {import('../app/core/types.js').ResourceLink} */
 const link = { type: 'resource_link', uri: 'files/sha256-ab.pdf', name: 'report.pdf', mimeType: 'application/pdf', size: 10, _meta: { pages: [[1, 1]], of: 2 } }
@@ -24,6 +24,32 @@ test('a user message with files folds into one turn, and notes attach to the nex
   assert.deepEqual(turns[1].notes, [{ text: 'The interface language is now French.', data: { kind: 'language', language: 'French' } }])
   assert.deepEqual(linkedFiles(records), [link])
   assert.deepEqual(userRecords('', [link], 'dev').length, 1, 'a file alone needs no empty text chunk')
+})
+
+test('the files of a task are those the user shared and those Jean made, in the order they came; one is found by its place or by the name a brain gives it', () => {
+  const made = (/** @type {string} */ id, /** @type {Record<string, any>} */ meta) => ({ at: 't', by: 'jean', update: /** @type {any} */ ({ sessionUpdate: 'tool_call', toolCallId: id, title: id, _meta: meta }) })
+  const portrait = { uri: 'files/sha256-01.png', name: 'portrait-napoleon.png', mimeType: 'image/png', size: 1 }, again = { ...portrait, uri: 'files/sha256-02.png' }
+  const site = { uri: 'sites/01M6-napoleon', name: 'Napoléon Iᵉʳ', mimeType: 'text/html', size: 2 }
+  const records = /** @type {any[]} */ ([...userRecords('A site on him', [link], 'dev'), made('a', { files: [site] }), made('b', { picture: portrait }), ...userRecords('Again', [], 'dev'), made('c', { picture: again })])
+  const live = [{ tools: /** @type {any[]} */ ([{ toolCallId: 'd', _meta: { file: { uri: 'files/sha256-03.csv', name: 'dates.csv', mimeType: 'text/csv', size: 3 } } }]) }]
+  const files = taskFiles(records, live)
+  assert.deepEqual(files.map((one) => one.uri), ['files/sha256-ab.pdf', 'sites/01M6-napoleon', 'files/sha256-01.png', 'files/sha256-02.png', 'files/sha256-03.csv'])
+  assert.equal(fileNamed(files, 'portrait-napoleon.png'), again, 'the latest of that name')
+  for (const said of ['Portrait-Napoleon.PNG', 'portrait-napoleon', 'photos/portrait-napoleon.png', '/workspace/portrait-napoleon.png', 'portrait%20napoleon.png'.replace('%20', '-')]) assert.equal(fileNamed(files, said), again, said)
+  assert.equal(fileNamed(files, 'files/sha256-01.png'), portrait, 'an earlier one by its place')
+  assert.equal(fileNamed(files, '../files/sha256-01.png'), portrait)
+  assert.equal(fileNamed(files, 'Report.pdf'), link)
+  assert.equal(fileNamed(files, 'dates'), files[4], 'one the answer being written made')
+  assert.equal(fileNamed(files, 'Napoléon Iᵉʳ'), site)
+  assert.equal(fileNamed(files, 'portrait-bonaparte.png'), undefined)
+  assert.equal(fileNamed(files, ''), undefined)
+})
+
+test('a picture a brain names in Markdown as a file of its task is put at that file’s place, as documents and Word files draw it; the web’s, the project’s and the rest stay', () => {
+  const files = [{ uri: 'files/sha256-01.png', name: 'portrait-napoleon.png' }, { uri: 'files/sha256-02.png', name: "Cycle de l'eau.png" }]
+  const markdown = "# Napoléon\n\n![His portrait](portrait-napoleon.png) and ![The cycle](<Cycle de l'eau.png>), ![Again](Portrait-Napoleon) ![Web](https://example.com/a.png) ![Kept](../files/sha256-01.png) ![Other](bicorne.png) [a link](portrait-napoleon.png)"
+  assert.equal(picturesPlaced(markdown, files), "# Napoléon\n\n![His portrait](../files/sha256-01.png) and ![The cycle](../files/sha256-02.png), ![Again](../files/sha256-01.png) ![Web](https://example.com/a.png) ![Kept](../files/sha256-01.png) ![Other](bicorne.png) [a link](portrait-napoleon.png)")
+  assert.equal(picturesPlaced(markdown, []), markdown)
 })
 
 test('toChatMessages: notes where they fall, documents with their recorded pages', () => {

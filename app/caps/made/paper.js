@@ -81,7 +81,7 @@ export async function wordLook() {
 /** A picture of the project's, as a document names one. */
 const KEPT = /!\[[^\]]*\]\((\.\.\/files\/sha256-[\da-f]{64}\.(\w+))\)/g
 /** What a Word file holds as pictures, by what its Markdown says of each: the project's it names, and what's drawn on the page, by its code. @param {string} source @param {Element} [page] */
-const picturesIn = async (source, page) => new Map(/** @type {[string, import('./formats.js').Picture][]} */ ((await Promise.all(/** @type {Promise<any[]>[]} */ ([
+export const picturesIn = async (source, page) => new Map(/** @type {[string, import('./formats.js').Picture][]} */ ((await Promise.all(/** @type {Promise<any[]>[]} */ ([
   ...[...source.matchAll(KEPT)].map(async ([, at, kind]) => [at, await forWord(new Blob([/** @type {BlobPart} */ (await app.fs.readBytes(`${app.projectDir}/${at.slice(3)}`))], { type: `image/${kind.replace('jpg', 'jpeg')}` }))]),
   // Drawn twice as fine as they show.
   ...[...page?.querySelectorAll('.drawn-form :is(app-chart, app-score, app-slides, app-latex, app-diagram)') ?? []].map(async (one) => [one.getAttribute('source'), await forWord(await /** @type {{ picture(): Promise<Blob | string> }} */ (/** @type {unknown} */ (one)).picture(), (width, height) => [width / 2, height / 2])]),
