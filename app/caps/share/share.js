@@ -5,7 +5,7 @@
 // The copy holds the requests, the answers and the files made, never the notes, the prompt, the
 // thinking or the secrets (copy.js). Each share is a file of Jean's, shares/<ulid>.json; its write
 // token and what its password made stay among the secrets, so only this device changes it.
-import { html, nothing } from 'lit-html'
+import { html, svg, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { walkTokens } from 'marked'
 import { register, unlock, slots, loaded } from '../../ui/caps.js'
@@ -18,7 +18,7 @@ import { join } from '../../core/fs.js'
 import { foldTurns } from '../../core/events.js'
 import { BRAND } from '../../brand.js'
 import { ulid } from '../../core/ulid.js'
-import { icons } from '../../ui/menu-icons.js'
+import { icon, icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { getSecret, setSecret, deleteSecret } from '../../ui/secrets.js'
 import { drawingOf } from '../../ui/export.js'
@@ -258,9 +258,16 @@ export async function fromAddress() {
 // ─── Settings › Your data ────────────────────────────────────────────────────
 
 /**
- * At the top of the open task, beside what opens next to it: Share…; once its link opens, a light at its corner, as the terminal's, a
- * lock when a password closes it, and Shared until when as its name; else, once it went to people, whom (D727). Each opens the dialog.
- * @param {{ path: string, records: unknown[] }} current
+ * Share as it stands, always Share's tray and arrow: a password's lock, or a person it went to, solid in the tray's corner, which
+ * gives way to it (docs/design.md#icons).
+ */
+const [locked, sent] = [icon(svg`<path d="M8.5 9.5H7A2.5 2.5 0 0 0 4.5 12v5.5A2.5 2.5 0 0 0 7 20h4.5M15.5 9.5H17a2.5 2.5 0 0 1 2.5 2.5M12 14V3.5M8.5 7 12 3.5 15.5 7M16.25 17.5v-1.25a1.75 1.75 0 0 1 3.5 0v1.25"/><rect x="14" y="17" width="8" height="5" rx="1.5" fill="currentColor" stroke="none"/>`),
+  icon(svg`<path d="M8.5 9.5H7A2.5 2.5 0 0 0 4.5 12v5.5A2.5 2.5 0 0 0 7 20h4.5M15.5 9.5H17a2.5 2.5 0 0 1 2.5 2.5M12 14V3.5M8.5 7 12 3.5 15.5 7"/><circle cx="17.75" cy="15.5" r="1.75" fill="currentColor" stroke="none"/><path d="M14.25 22a3.5 3 0 0 1 7 0Z" fill="currentColor" stroke="none"/>`)]
+
+/**
+ * At the top of the open task, beside what opens next to it: Share…; once its link opens, a light at its corner, as the terminal's, with
+ * the lock when a password closes it, and Shared until when as its name; else, once it went to people, the person, and whom (D727).
+ * Each opens the dialog. @param {{ path: string, records: unknown[] }} current
  */
 function state({ path, records }) {
   const share = shareOf({ path, title: '' }), live = share && Date.parse(share.expires) > Date.now()
@@ -268,7 +275,7 @@ function state({ path, records }) {
   const act = (/** @type {Event} */ event) => openShare({ path, title: app.conversations.value.find((one) => one.path === path)?.title ?? '' }, event.currentTarget)
   return html`<button class="icon-button share-top ${live ? 'share-state' : ''}" @click=${act} aria-keyshortcuts=${SHORTCUTS.share}
     aria-label=${live ? t('share.sharedUntil', { date: new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'medium' }).format(new Date(share.expires)) }) : went || t('share.menu')}>${
-    live ? html`${share.password ? icons.lock : icons.share}<span class="ember" aria-hidden="true"></span>` : went ? icons.people : icons.share}</button>`
+    live ? html`${share.password ? locked : icons.share}<span class="ember" aria-hidden="true"></span>` : went ? sent : icons.share}</button>`
 }
 
 /** Shared links' page in Your data: each with its task, until when, and Copy, Update, Stop sharing. */
