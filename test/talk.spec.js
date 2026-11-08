@@ -219,12 +219,13 @@ test('once a task has started, a line under the box says the assistant is an AI,
   await expect(page.locator('#prompt')).not.toHaveAccessibleDescription(said.ja)
 })
 
-test('before any task, the welcome says what Jean is; the box sits under the question, its ideas under it, the fine print at the foot, and on a phone at the foot under its ideas (D366)', async ({ page }) => {
+test('before any task, the welcome says what Jean is; the box sits under the question, its ideas under it, the fine print at the foot, and on a phone at the foot under its ideas, the fine print just under it (D366)', async ({ page }) => {
   await start(page)
   const pitch = page.locator('.pitch')
   await expect(pitch.locator('p')).toHaveText('Ask for anything. Get back an answer, a document, a chart, a tune, a picture or a small app, right in this tab.')
   await expect(pitch.locator('li')).toHaveText(['Nothing to install', 'Kept on this device', 'Free and open source'])
   const top = async (/** @type {string} */ selector) => (await page.locator(selector).boundingBox())?.y ?? 0
+  const under = async () => { const box = await page.locator('.composer').boundingBox(); return (await top('.legal')) - (box ? box.y + box.height : 0) }
   const { width, height } = page.viewportSize() ?? { width: 1280, height: 720 }
   expect(await top('.composer')).toBeLessThan(height * 0.7)
   expect(await top('.starters')).toBeGreaterThan(await top('.composer'))
@@ -233,6 +234,8 @@ test('before any task, the welcome says what Jean is; the box sits under the que
   await expect(async () => {
     expect(await top('.composer')).toBeGreaterThan(844 * 0.7)
     expect(await top('.starters')).toBeLessThan(await top('.composer'))
+    expect(await under()).toBeGreaterThanOrEqual(0)
+    expect(await under()).toBeLessThan(16)
   }).toPass()
   await page.setViewportSize({ width, height })
   // Once there is a task, a new one says nothing more.

@@ -118,7 +118,7 @@ test('an answer in the cloud costs what its provider’s prices say, from models
   await button.click()
   const card = page.locator('.receipt')
   await expect(card.locator('.receipt-verdict')).toHaveText('Done in the cloud')
-  await expect(card.locator('dd').nth(1)).toHaveText(/^about \$0\.0\d+$/)
+  await expect(card.locator('dd').nth(1)).toHaveText(/^\$0\.0\d+$/)
   // Its address is the brain's own, which alone was given the conversation, not among the rest.
   await expect(card.locator('.receipt-brain .receipt-host')).toHaveText('api.openai.example')
   await expect(card.locator('.receipt-hosts')).toHaveCount(0)
@@ -126,11 +126,11 @@ test('an answer in the cloud costs what its provider’s prices say, from models
   // Open again, from what was kept.
   await page.keyboard.press('Escape')
   await button.click()
-  await expect(card.locator('dd').nth(1)).toHaveText(/^about \$/)
+  await expect(card.locator('dd').nth(1)).toHaveText(/^\$0\.\d+$/)
   expect(read).toBe(1)
 })
 
-for (const [lang, brains, spent, month, about] of [['en', 'Brains', 'What it cost', 'This month: about', 'About this answer'], ['ar', 'العقول', 'ما كلّفه', 'هذا الشهر', 'عن هذه الإجابة'], ['ja', '頭脳', 'かかった費用', '今月', 'この回答について']]) {
+for (const [lang, brains, spent, month, about] of [['en', 'Brains', 'What it cost', 'This month: $', 'About this answer'], ['ar', 'العقول', 'ما كلّفه', 'هذا الشهر', 'عن هذه الإجابة'], ['ja', '頭脳', 'かかった費用', '今月', 'この回答について']]) {
   test(`Settings › Brains says what Jean cost this month, and its page the months, the brains and the tasks that cost most (D691, ${lang})`, async ({ page }) => {
     await start(page, lang)
     await page.route('https://api.openai.example/v1/**', async (route) => route.fulfill({ response: await route.fetch({ url: route.request().url().replace('https://api.openai.example', BRAIN_URL.replace(/\/v1$/, '')) }) }))

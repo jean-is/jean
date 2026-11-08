@@ -107,9 +107,9 @@ export function pricing({ provider, model }) {
   return found
 }
 
-/** "about $0.004", "Free", "In your Claude plan" when a plan answered, or "Not known". @param {number | null} cost @param {string} [plan] */
+/** "$0.004", "Free", "In your Claude plan" when a plan answered, or "Not known". @param {number | null} cost @param {string} [plan] */
 export const costText = (cost, plan) => (cost === null ? t('receipt.costUnknown') : !cost ? (plan ? t('receipt.plan', { plan }) : t('receipt.free'))
-  : t('receipt.costAbout', { cost: new Intl.NumberFormat(intlLocales(), { style: 'currency', currency: 'USD', maximumSignificantDigits: 2 }).format(cost) }))
+  : new Intl.NumberFormat(intlLocales(), { style: 'currency', currency: 'USD', maximumSignificantDigits: 2 }).format(cost))
 
 /** A brain's settings, the organisation's when its policy names them. @param {string} provider */
 const brainOf = (provider) => effective.value.settings.brains.find((one) => one.provider === provider)

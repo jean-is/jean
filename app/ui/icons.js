@@ -12,7 +12,7 @@ export const icons = {
   attach: icon(svg`<path d="m19 11.5-7.1 7.1a4.5 4.5 0 0 1-6.4-6.4l7.4-7.4a3 3 0 0 1 4.2 4.2l-7.3 7.3a1.5 1.5 0 0 1-2.1-2.1l6.6-6.6"/>`),
   capture: icon(svg`<path d="M4.5 7A2.5 2.5 0 0 1 7 4.5M11 4.5h2M17 4.5A2.5 2.5 0 0 1 19.5 7M19.5 11v2M7 19.5A2.5 2.5 0 0 1 4.5 17M4.5 11v2M11 19.5h2M19.5 17v5M17 19.5h5"/>`),
   mic: icon(svg`<rect x="9" y="3.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5v3"/>`),
-  voice: icon(svg`<path d="M5.5 7.5a7 7 0 0 0 0 9M18.5 7.5a7 7 0 0 1 0 9M7.5 12q2.25-3.6 4.5 0t4.5 0"/>`),
+  voice: icon(svg`<path d="M5 10.5v3M8.5 7.5v9M12 4.5v15M15.5 8.5v7M19 10.5v3"/>`),
   close: icon(svg`<path d="m6.5 6.5 11 11M17.5 6.5l-11 11"/>`),
   copy: icon(svg`<rect x="8.5" y="8.5" width="11" height="11" rx="2.5"/><path d="M15.5 8.5V7A2.5 2.5 0 0 0 13 4.5H7A2.5 2.5 0 0 0 4.5 7v6A2.5 2.5 0 0 0 7 15.5h1.5"/>`),
   retry: icon(svg`<path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3L4.5 9M4.5 4.5V9H9"/>`),

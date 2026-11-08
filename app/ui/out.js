@@ -71,7 +71,7 @@ export function outButton(file, ways) {
   return html`<button class="icon-button" popovertarget=${menu} aria-label=${t(shares ? (print ? 'out.menu' : 'out.menuNoPrint') : 'out.menuNoShare')}>${shares ? icons.share : icons.download}</button>
     <div id=${menu} class="menu out-menu" popover @toggle=${(/** @type {ToggleEvent} */ event) => { ready = sends && event.newState === 'open' ? send.make() : null; ready?.catch(() => {}) }}>
       ${first ? html`<ul>${row(first)}</ul><hr>` : nothing}${to.length ? html`<ul>${to.map(row)}</ul><hr>` : nothing}
-      <div role="group" aria-label=${t('out.download')}><p class="out-heading" aria-hidden="true">${t('out.download')}</p><ul>${files.map(row)}</ul></div>
+      <div role="group" aria-label=${t('out.download')}><p class="menu-heading" aria-hidden="true">${t('out.download')}</p><ul>${files.map(row)}</ul></div>
       ${paper.length ? html`<hr><ul>${paper.map(row)}</ul>` : nothing}${kit ? html`<hr><ul>${row({ id: '', glyph: icons.palette, label: t('out.kit'), run: toKit })}</ul>` : nothing}
     </div>`
 }

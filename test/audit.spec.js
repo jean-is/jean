@@ -198,7 +198,7 @@ test('what is done outside the records goes as a span each: a skill added, used 
   const actions = answer.locator('.msg-actions')
   await actions.getByRole('button', { name: 'Copy' }).click()
   await expect(page.locator('.toast')).toContainText('Copied')
-  for (const name of ['Download as a Word document', 'Print']) {
+  for (const name of ['Word', 'Print']) {
     await actions.getByRole('button', { name: 'More options' }).click()
     await answer.locator('.answer-menu').getByRole('button', { name }).click()
   }

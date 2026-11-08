@@ -20,10 +20,12 @@ app-file { display: block; }
 .file-card .button { border-color: transparent; background: var(--line); }
 .file-card .button:hover { background: var(--line-strong); }
 @media (max-width: 30rem) { .file-card { --end: 0.6rem; gap: 0.4rem; min-block-size: 5.25rem; } .file-tile { inline-size: 3rem; block-size: 3.7rem; margin-inline-end: 0.3rem; } }
-/* An answer's More options: under its button, running the way the page reads, flipped where there is no room. */
+/* An answer's More options: under its button, running the way the page reads, flipped where there is no room; its formats under
+   a heading, as a pane's menu has them (ui/preview.css), which either sheet may draw first. */
 .answer-menu { position-anchor: auto; position-area: block-end span-inline-end; position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline; margin: 0.25rem 0; }
 .answer-menu:not(:popover-open) { translate: 0 -0.4rem; }
 .answer-menu:popover-open { @starting-style { translate: 0 -0.4rem; } }
+.menu-heading { margin: 0.35rem 0.75rem 0.15rem; color: var(--ink-soft); font-size: 0.8rem; }
 /* Printing in the look here (paper.js, D663). A logo in place of Jean's mark, on its corner's side. A document alone: on screen, out of sight at the width of A4's text, so that what it draws has a size; on paper, the only thing there, as wide as the paper, a chart scaled to it and a ticked box still drawn, which is a background, nothing drawn cut across two pages nor a heading left at a page's foot. */
 .paper-print { position: fixed; inset-block-start: 0; inset-inline-start: 0; z-index: -1; inline-size: 15.92cm; visibility: hidden; pointer-events: none; }
 .paper-logo { display: block; max-block-size: 1cm; max-inline-size: 4cm; }

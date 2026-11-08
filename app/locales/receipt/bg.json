@@ -11,7 +11,6 @@
   "receipt.cost": "Цена",
   "receipt.free": "Безплатно",
   "receipt.plan": "В абонамента ви {plan}",
-  "receipt.costAbout": "около {cost}",
   "receipt.costUnknown": "Неизвестна",
   "receipt.by": "Отговор от",
   "receipt.made": "Създадено от",

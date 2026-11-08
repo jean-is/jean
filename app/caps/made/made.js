@@ -14,13 +14,16 @@ import { act } from '../../ui/acts.js'
 import { icon, icons } from '../../ui/menu-icons.js'
 import { addFile, fileText, fileTitle, splitPages } from '../../core/files.js'
 import { callsIn, filesMade, latestOf, nextVersion, versionsOf, titleOf } from '../../core/events.js'
-import { t, locale, intlLocales, formatBytes } from '../../core/i18n.js'
+import { t, locale, intlLocales, formatBytes, useStrings } from '../../core/i18n.js'
 import { languageOf } from '../../ui/language.js'
 import { offerOnce } from '../../ui/discovery.js'
 import { all as creations } from '../../ui/creations.js'
 import { dress, downloadWord, wordLook } from './paper.js'
 import { copyRich } from './ways.js'
 import { onPaper } from '../../ui/kit.js'
+
+// An answer's More options say Download and Web page in the words of a pane's menu (ui/out.js, D683).
+await useStrings('out')
 
 /** @typedef {import('../../core/events.js').MadeFile} MadeFile what a call that made a file records (`_meta.file`), with its version (D164) */
 
@@ -242,7 +245,8 @@ let menus = 0
  * Under an answer: Copy, the most used, before Read aloud and About this answer; then, as
  * `menu`, More options: under the last answer, what the `more` slot draws (Good and Not right), then the other ways to take it away: Share, a link to it and the files it
  * made (`files`) once sharing by link is found (D361), else the system's share sheet where there is
- * one; Download as a web page, drawn as Jean draws it, as a Word document, and each table as CSV; Print.
+ * one; then under Download, as a pane's menu has it (ui/out.js, D683), its formats by their names: a web page, drawn as Jean draws it,
+ * Word, and each table as CSV; Print.
  */
 const RIGHT = /[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]/
 /** Each block of an answer that holds right-to-left words, or in a room that reads right to left, in its own direction, as one direction can't hold both. @param {ParentNode} prose @param {string} source */
@@ -280,9 +284,10 @@ class Made extends Element {
         ${first.length ? html`<ul>${first}</ul><hr>` : nothing}
         ${sharing ? html`<ul>${linked.length ? linked.map((part) => part.draw({ text: source, files: /** @type {{ files?: unknown }} */ (this).files }, item)) : item(icons.share, t('made.share'),
           () => navigator.share({ title, text: source }).then(() => act('answer.share', { task }), (/** @type {Error} */ error) => error.name === 'AbortError' || console.warn('Share', error)))}</ul><hr>` : nothing}
-        <ul>${item(icons.globe, t('made.htmlTitle'), () => import('../../ui/export.js').then((module) => module.saveAnswer(source, name)), 'answer.save', 'html')}
-        ${item(icons.file, t('made.docxTitle'), () => downloadWord(source, name), 'answer.save', 'docx')}
-        ${tables.map((table, i) => item(icons.table, tables.length > 1 ? t('made.csvNumbered', { count: i + 1 }) : t('made.csvTitle'), () => downloadCSV(table, i + 1), 'answer.save', 'csv'))}</ul>
+        <div role="group" aria-label=${t('out.download')}><p class="menu-heading" aria-hidden="true">${t('out.download')}</p>
+        <ul>${item(icons.globe, t('out.webPage'), () => import('../../ui/export.js').then((module) => module.saveAnswer(source, name)), 'answer.save', 'html')}
+        ${item(icons.file, t('made.out.word'), () => downloadWord(source, name), 'answer.save', 'docx')}
+        ${tables.map((table, i) => item(icons.table, tables.length > 1 ? t('made.csvNumbered', { count: i + 1 }) : t('made.csvTitle'), () => downloadCSV(table, i + 1), 'answer.save', 'csv'))}</ul></div>
         <hr>
         <ul>${item(icons.print, t('made.print'), () => dress().then(() => printAlone(this.closest('.msg-jean'))), 'answer.print')}</ul>
       </div>`

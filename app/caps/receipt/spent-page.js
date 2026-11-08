@@ -42,7 +42,7 @@ async function reread() {
   tasks.value = Object.entries(read).map(([path, one]) => ({ path, ...one }))
 }
 
-/** A sum as the card says it: about $…, Free (or In your plan), or Not known once one price wasn't. @param {{ cost: number, unknown: boolean }} sum @param {string} [plan] */
+/** A sum as the card says it: $…, Free (or In your plan), or Not known once one price wasn't. @param {{ cost: number, unknown: boolean }} sum @param {string} [plan] */
 const said = ({ cost, unknown }, plan) => costText(unknown ? null : cost, plan)
 const month = (/** @type {string} */ key) => new Intl.DateTimeFormat(intlLocales(), { month: 'long', year: 'numeric' }).format(new Date(`${key}-15T12:00:00`))
 const thisMonth = () => { const now = new Date(); return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}` }

@@ -11,7 +11,6 @@
   "receipt.cost": "Hinta",
   "receipt.free": "Ilmainen",
   "receipt.plan": "Tilauksessasi {plan}",
-  "receipt.costAbout": "noin {cost}",
   "receipt.costUnknown": "Ei tiedossa",
   "receipt.by": "Vastaaja",
   "receipt.made": "Tekijä",

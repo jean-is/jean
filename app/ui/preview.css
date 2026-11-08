@@ -7,7 +7,8 @@
 .pane-head .versions { --at: 0.65rem; flex: none; inline-size: auto; margin-inline-end: 0.35rem; padding-block: 0.3rem; padding-inline-start: var(--at); border-radius: 0.6rem; font-size: 0.85rem; font-variant-numeric: tabular-nums; }
 /* A look a click opened, which the next click gives another file until it is kept: its name in the softer ink (D640). One asked for again, marked a moment. */
 app-preview[data-look] .pane-head h2 { color: var(--ink-soft); } app-preview[data-called] > .pane { box-shadow: inset 0 0 0 2px var(--flame); }
-/* What takes it out (ui/out.js, D683): under its button, a way a line, as wide as its words need, a heading over the formats, which are nouns. */
+/* What takes it out (ui/out.js, D683): under its button, a way a line, as wide as its words need, a heading over the formats, which are nouns,
+   as an answer's More options has it (caps/made/made.css). */
 .out-menu { position-anchor: auto; position-area: block-end span-inline-start; position-try-fallbacks: flip-block, flip-inline; margin: 0.25rem 0; max-inline-size: min(22rem, 92vw); max-block-size: calc(100dvh - 5rem); overflow-y: auto; }
-.out-menu button { white-space: normal; } .out-menu button > :first-child { flex: none; } 
-.out-heading { margin: 0.35rem 0.75rem 0.15rem; color: var(--ink-soft); font-size: 0.8rem; }
+.out-menu button { white-space: normal; } .out-menu button > :first-child { flex: none; }
+.menu-heading { margin: 0.35rem 0.75rem 0.15rem; color: var(--ink-soft); font-size: 0.8rem; }

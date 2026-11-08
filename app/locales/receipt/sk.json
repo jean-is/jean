@@ -11,7 +11,6 @@
   "receipt.cost": "Cena",
   "receipt.free": "Zadarmo",
   "receipt.plan": "Vo vašom predplatnom {plan}",
-  "receipt.costAbout": "asi {cost}",
   "receipt.costUnknown": "Neznáma",
   "receipt.by": "Kto odpovedal",
   "receipt.made": "Kto vytvoril",

@@ -42,7 +42,9 @@ test('an answer copied with its formatting; in its More options, shared, as a we
     return menu
   }
   expect(await (await more()).getByRole('button').allTextContents())
-    .toEqual(['Share', 'Download as a web page', 'Download as a Word document', 'Download the table as a spreadsheet (CSV)', 'Print'])
+    .toEqual(['Share', 'Web page', 'Word', 'Table (CSV)', 'Print'])
+  // The formats by their names under Download, as a pane's menu has them (D683).
+  await expect(menu.getByRole('group', { name: 'Download' }).getByRole('button')).toHaveText(['Web page', 'Word', 'Table (CSV)'])
   await page.keyboard.press('Escape')
   await expect(menu).toBeHidden()
 
@@ -54,18 +56,18 @@ test('an answer copied with its formatting; in its More options, shared, as a we
   expect(copied['text/html']).not.toContain('<!--')
   expect(copied['text/plain']).toContain('| Read | done |')
 
-  const csv = await saved(page, await more(), 'Download the table as a spreadsheet (CSV)')
+  const csv = await saved(page, await more(), 'Table (CSV)')
   expect(csv.name).toBe('Table 1.csv')
   expect(csv.bytes.toString('utf8')).toBe('﻿Step,Status\r\nRead,done\r\nAnswer,done\r\n')
   await expect(menu).toBeHidden()
 
   // As a web page named after its task, the answer alone in it, drawn as a saved task is; as a Word document, its table a table.
-  const web = await saved(page, await more(), 'Download as a web page')
+  const web = await saved(page, await more(), 'Web page')
   expect(web.name).toMatch(/^[^/\\]+\.html$/)
   const records = (/<script type="application\/jsonl">\n([^]*?)<\/script>/.exec(web.bytes.toString('utf8'))?.[1] ?? '').trim().split('\n').map((line) => JSON.parse(line))
   expect(records.map((record) => record.update?.sessionUpdate ?? record.kind)).toEqual(['conversation', 'agent_message_chunk'])
   expect(records[1].update.content.text).toContain('Then, I worked it out **carefully**.')
-  const word = await saved(page, await more(), 'Download as a Word document')
+  const word = await saved(page, await more(), 'Word')
   expect(word.name).toBe(web.name.replace(/html$/, 'docx'))
   expect(word.text).toContain('Then, I worked it out carefully.')
   expect(word.text).toContain('| Read | done |')
@@ -179,7 +181,7 @@ test('in the organisation\'s or the project\'s look, a Word document\'s headings
     return readable('#2dd4bf', '#ffffff')
   })
   await answer.locator('.msg-actions').getByRole('button', { name: 'More options' }).click()
-  const word = await saved(page, answer.locator('.answer-menu'), 'Download as a Word document')
+  const word = await saved(page, answer.locator('.answer-menu'), 'Word')
   const xml = Object.fromEntries(await Promise.all(readZip(new Uint8Array(word.bytes)).map(async (entry) => [entry.name, new TextDecoder().decode(await entry.read())])))
   expect(xml['word/styles.xml']).toContain(`<w:rFonts w:ascii="Georgia" w:hAnsi="Georgia" w:cs="Arial"/><w:b/><w:bCs/><w:color w:val="${colour.slice(1)}"/>`)
   expect(xml['word/document.xml']).toContain(`<w:bottom w:val="single" w:sz="12" w:space="0" w:color="${colour.slice(1)}"/>`)
@@ -201,7 +203,7 @@ test('an answer printed with the design system\'s logo has it in place of Jean\'
     await (await import('/ui/kit.js')).keepKit(null, { tokens: { ink: '#223344', fonts: { heading: ['Georgia'], body: ['Verdana'] }, logo: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAEBgIApD5fRAAAAABJRU5ErkJggg==' } })
   })
   await answer.locator('.msg-actions').getByRole('button', { name: 'More options' }).click()
-  const word = await saved(page, answer.locator('.answer-menu'), 'Download as a Word document')
+  const word = await saved(page, answer.locator('.answer-menu'), 'Word')
   const paths = readZip(new Uint8Array(word.bytes)).map((entry) => entry.name)
   expect(paths).toEqual(expect.arrayContaining(['word/header.xml', 'word/media/logo.png']))
   await page.evaluate(async () => (await import('/caps/made/paper.js')).dress())
