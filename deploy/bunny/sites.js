@@ -20,8 +20,9 @@ const NAME = /^[a-z0-9][a-z0-9-]{1,38}[a-z0-9]$/
 
 BunnySDK.net.http.servePullZone({ url: 'http://localhost:4173' })
   .onOriginRequest((context) => {
+    // The request's address is already the storage zone's; the one the visitor typed is in its Host.
     const url = new URL(context.request.url)
-    const name = url.hostname.split('.')[0]
+    const name = (context.request.headers.get('host') ?? '').split('.')[0]
     const path = decodeURIComponent(url.pathname).replace(/^\/+/, '')
     const file = !path || path.endsWith('/') ? `${path}index.html` : /\.[^/]+$/.test(path) ? path : `${path}.html`
     // A name no site can have asks the zone for a file that is never there.
