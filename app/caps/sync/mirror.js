@@ -92,7 +92,7 @@ export async function claim(there, { by, now = new Date() }) {
 /**
  * One round, both sides made the same as far as they can be. A file that changes while the round works on it, is `busy`
  * (a conversation being answered), whose records `removing` won't let go, or that fails, waits for the next round; the
- * others go on, and the first failure is thrown once the base is kept. `cache` names where the base is kept, `<cache>.json`,
+ * others go on, and the first failure is thrown once the base is kept, with the paths that came in all the same. `cache` names where the base is kept, `<cache>.json`,
  * and the versions Markdown merges from, `<cache>/<path>`; `carry` what goes, the base's paths too.
  * @param {FS} here @param {FS} there
  * @param {{ cache?: string, carry?: (path: string) => boolean, busy?: (path: string) => boolean,
@@ -195,7 +195,8 @@ export async function syncRound(here, there, { cache = BASE.slice(0, -5), carry 
     for (let path; (path = paths.shift()) !== undefined;) await one(path).catch((error) => { failed ??= error; if (base[path]) next[path] = base[path] })
   }))
   await writeJSON(here, `${cache}.json`, { format: 1, files: next })
-  if (failed) throw failed
+  // What came in all the same goes with the failure, to be shown.
+  if (failed) throw Object.assign(/** @type {object} */ (failed), { came })
   return came
 }
 

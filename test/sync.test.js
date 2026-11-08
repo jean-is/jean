@@ -432,3 +432,38 @@ test('two homes: the oldest stays the home, a newer empty one goes, one with con
   assert.equal(other.data.name, 'Home')
   assert.equal(await settleHomes(fs), false)
 })
+
+test('rounds (rounds.js): one round at a time, each kind once; one that sends outside starts none while an answer is written, here or in another tab', async () => {
+  globalThis.sessionStorage ??= /** @type {any} */ ({ getItem: () => 'profiles/01J00000000000000000000000-ada' })
+  const { app } = await import('../app/ui/state.js')
+  const { rounds, round, answering } = await import('../app/caps/sync/rounds.js')
+  const { mine } = await import('../app/ui/opfs.js')
+  const ran = /** @type {string[]} */ ([])
+  /** A kind of round that takes a moment. @param {string} name @param {boolean} [outside] */
+  const kind = (name, outside = false) => rounds({ carry: () => true, outside, run: async () => { ran.push(name); await later(); return [] } })
+  const stops = [kind('folder'), kind('store', true)]
+  // Asked twice at once: the second finds the first under way and comes later; each kind runs once.
+  await Promise.all([round(), round()])
+  assert.deepEqual(ran.splice(0), ['folder', 'store'])
+  // An answer here: the tab holds `app-answering` meanwhile, and the store's round waits, the folder's goes on.
+  app.running.value = ['projects/x/conversations/a.jsonl']
+  await later()
+  assert.ok((await navigator.locks.query()).held?.some((one) => one.name === mine('app-answering') && one.mode === 'shared'))
+  assert.equal(await answering(), true)
+  await round()
+  assert.deepEqual(ran.splice(0), ['folder'])
+  app.running.value = []
+  await later()
+  assert.equal(await answering(), false)
+  // An answer in another tab, which holds the lock: the same.
+  let release = () => {}
+  navigator.locks.request(mine('app-answering'), { mode: 'shared' }, () => new Promise((resolve) => { release = () => resolve(undefined) }))
+  await later()
+  await round()
+  assert.deepEqual(ran.splice(0), ['folder'])
+  release()
+  await later()
+  await round()
+  assert.deepEqual(ran.splice(0), ['folder', 'store'])
+  for (const stop of stops) stop()
+})

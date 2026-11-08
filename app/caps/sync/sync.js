@@ -2,21 +2,20 @@
 // Dropbox, iCloud Drive, Google Drive) keeps the same on their other computers, each computer's Jean
 // syncing with it. Chrome and Edge open the folder in place, with Folders' access (D141): its handle is kept
 // in IndexedDB, and the browser asks again once a visit unless allowed on every visit. The desktop app picks
-// it with the system's dialog and keeps its path, which its host works in (D169). A round runs as Jean opens,
-// every minute while it is on screen, as it goes out of sight or comes back, and soon after Jean's files change
-// here or the folder's do (where the browser tells: another Jean's in it, or the drive's), in one tab at a time
-// (mirror.js does the work). What comes in shows where the user is, with nothing to answer.
+// it with the system's dialog and keeps its path, which its host works in (D169). Rounds run as rounds.js
+// says, and soon after the folder's files change too (where the browser tells: another Jean's in it, or the
+// drive's); mirror.js does the work.
 import { html } from 'lit-html'
-import { signal, effect } from '@preact/signals-core'
-import { register, unlock, loaded as capabilities } from '../../ui/caps.js'
-import { app, notify, refreshProjects, refreshConversations } from '../../ui/state.js'
-import { folderFS, mine } from '../../ui/opfs.js'
+import { signal } from '@preact/signals-core'
+import { register } from '../../ui/caps.js'
+import { app, notify } from '../../ui/state.js'
+import { folderFS } from '../../ui/opfs.js'
 import { keptIn } from '../../ui/idb.js'
 import { host, pickFolder, showFolder, hostFS } from '../../ui/host.js'
 import { icons } from '../../ui/menu-icons.js'
-import { loadConversation } from '../../core/conversations.js'
 import { t, useStrings, relativeTime } from '../../core/i18n.js'
-import { claim, syncRound, settleHomes, carried, BASE } from './mirror.js'
+import { claim, syncRound, carried, BASE } from './mirror.js'
+import { rounds, round, later } from './rounds.js'
 
 await useStrings('sync')
 
@@ -30,9 +29,8 @@ const nameOf = (/** @type {Folder} */ folder) => (typeof folder === 'string' ? f
 const state = signal({ status: 'done' })
 /** @type {Promise<import('../../core/types.js').FS> | null} */
 let mirror = null
-/** The round to come once changes settle, and what hears of the folder's (FileSystemObserver, Chrome and Edge). */
-let soon = 0, observer = /** @type {any} */ (null)
-const later = () => { clearTimeout(soon); soon = setTimeout(round, 2000) }
+/** What hears of the folder's changes (FileSystemObserver, Chrome and Edge). */
+let observer = /** @type {any} */ (null)
 
 // The folder can't be kept in a file (a handle can't, a path is this computer's): IndexedDB keeps it, never in a backup or a sync.
 const stored = keptIn('sync')
@@ -40,49 +38,25 @@ const stored = keptIn('sync')
 /** Whether the browser lets Jean open the folder, asking when `ask` (it needs the user's click just before); the host always does. @param {Folder} folder */
 const allowed = async (folder, ask = false) => typeof folder === 'string' || /** @type {any} */ (folder)[ask ? 'requestPermission' : 'queryPermission']({ mode: 'readwrite' }).then((/** @type {string} */ answer) => answer === 'granted', () => false)
 
-/** One round, or soon after the one this tab or another is having. */
-async function round() {
+/** One round with the folder, under rounds.js's lock: the paths that came in. @returns {Promise<string[]>} */
+async function run() {
   const { folder, at } = state.peek()
-  if (!folder) return
-  if (!(await allowed(folder))) return void (state.value = { folder, status: 'waiting', at })
+  if (!folder) return []
+  if (!(await allowed(folder))) { state.value = { folder, status: 'waiting', at }; return [] }
   if (typeof folder !== 'string' && !observer && 'FileSystemObserver' in globalThis) (observer = new (/** @type {any} */ (globalThis).FileSystemObserver)(later)).observe(folder, { recursive: true }).catch(() => {})
-  await navigator.locks.request(mine('app-sync'), { ifAvailable: true }, async (lock) => {
-    if (!lock) return void later()
-    if (folder !== state.peek().folder) return
-    state.value = { folder, status: 'syncing', at }
-    try {
-      const fs = await (mirror ??= typeof folder === 'string' ? Promise.resolve(hostFS(folder)) : folderFS(folder))
-      if (!(await claim(fs, { by: app.deviceId }))) throw new Error('Not a folder Jean syncs with')
-      // What a round takes from a task goes as any removal does: kept first where policy says, or refused, which a toast says (D412).
-      const came = await syncRound(app.fs, fs, { busy: (path) => app.running.peek().includes(path), removing: async (removals, act) => (await import('../../ui/send.js')).removing(removals, act) })
-      if (came.length) await show(came)
-      if (folder === state.peek().folder) state.value = { folder, status: 'done', at: Date.now() }
-    } catch (error) {
-      console.warn('Sync', error)
-      if (folder === state.peek().folder) state.value = { folder, status: 'failed', at }
-    }
-  })
-}
-
-/**
- * What came in shows: the projects (and Projects, Memory and Skills when what they keep came), the
- * room's conversations, and the one on screen unless it is being answered, which closes if it went. @param {string[]} came
- */
-async function show(came) {
-  await settleHomes(app.fs)
-  await refreshProjects()
-  const home = app.projects.value.find((project) => project.data.default === true)
-  if (home && !app.projects.value.some((project) => project.dir === app.projectDir)) app.project.value = home
-  await refreshConversations()
-  if (app.projects.value.some((project) => !project.data.default)) unlock('projects')
-  if (came.some((path) => path.endsWith('memory.md'))) unlock('memory')
-  if (came.some((path) => /(^|\/)skills\//.test(path))) unlock('skills')
-  // Collections changed on the other computer, read again wherever they are drawn: a view, a document, a page's parts (D633).
-  if (capabilities.peek().has('tables') && came.some((path) => path.includes('/collections/'))) await (await import('../tables/tables.js')).came(came)
-  const current = app.current.peek()
-  if (!current || !came.includes(current.path) || app.running.peek().includes(current.path)) return
-  const loaded = await loadConversation(app.fs, current.path).catch(() => null)
-  if (app.current.peek() === current) app.current.value = loaded && { ...current, records: loaded.records }
+  state.value = { folder, status: 'syncing', at }
+  try {
+    const fs = await (mirror ??= typeof folder === 'string' ? Promise.resolve(hostFS(folder)) : folderFS(folder))
+    if (!(await claim(fs, { by: app.deviceId }))) throw new Error('Not a folder Jean syncs with')
+    // What a round takes from a task goes as any removal does: kept first where policy says, or refused, which a toast says (D412).
+    const came = await syncRound(app.fs, fs, { busy: (path) => app.running.peek().includes(path), removing: async (removals, act) => (await import('../../ui/send.js')).removing(removals, act) })
+    if (folder === state.peek().folder) state.value = { folder, status: 'done', at: Date.now() }
+    return came
+  } catch (error) {
+    console.warn('Sync', error)
+    if (folder === state.peek().folder) state.value = { folder, status: 'failed', at }
+    return /** @type {any} */ (error)?.came ?? []
+  }
 }
 
 /** The user picks the folder: an empty one, or the one they sync with on another computer. */
@@ -164,11 +138,4 @@ if (kept) {
     notify(t('sync.waiting', { folder: nameOf(kept) }), { label: t('sync.allow'), run: allow })
   }
 }
-setInterval(() => document.visibilityState === 'visible' && round(), 60_000)
-// Going out of sight sends what was done; coming back brings what the other computers did.
-document.addEventListener('visibilitychange', () => round())
-// What changes here goes soon, in this tab or another: an answer, a task deleted, a document, memory, a collection.
-app.fs.watch?.((path) => carried(path) && later(), { all: true })
-effect(() => {
-  if (!app.running.value.length) later()
-})
+rounds({ carry: carried, run })
