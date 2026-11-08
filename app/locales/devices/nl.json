@@ -86,6 +86,7 @@
   "devices.notYet": "{device} weet het nog niet. Dit apparaat laat het zelf weten zodra het kan.",
   "devices.erasing": "{name} wordt daar gewist bij de volgende keer openen.",
   "devices.revoke": "Het apparaat kan deze sleutels nog hebben, want een sleutel kun je niet terugnemen. Vervang voor de zekerheid elke sleutel waar je hem hebt gemaakt:",
+  "devices.people": "De mensen in je lijst krijgen nu je nieuwe sleutel. Haal onder ‘Mensen’ iedereen weg die je niet kent: ze zijn misschien toegevoegd vanaf het apparaat dat je hebt weggehaald.",
   "devices.sites": "Het apparaat kan deze websites online misschien nog wijzigen. Om dat te voorkomen open je ze een voor een, kies je ‘Publiceren…’ en daarna ‘Nieuwe herstelcode maken’:",
   "devices.send": "Naar {device} sturen",
   "devices.task.sent": "Naar {device} gestuurd.",

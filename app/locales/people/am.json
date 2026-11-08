@@ -25,6 +25,7 @@
   "people.sent": "በ{date} የተላከ ግብዣ",
   "people.accepted": "ለ{name} የላኩት ግብዣ ተቀባይነት አግኝቷል። መልሰው የተላኩልዎትን ስድስት አሃዞች ይጻፉ።",
   "people.answer": "መልስ በመጠበቅ ላይ",
+  "people.again": "እንደገና መገናኘት ያስፈልጋል፦ ቁልፋቸው ሊረጋገጥ ባልቻለ መንገድ ተቀይሯል",
   "people.calls": "የመገለጫ ስም፦ {name}",
   "people.rename": "እንደገና ሰይም",
   "people.save": "ያስቀምጡ",

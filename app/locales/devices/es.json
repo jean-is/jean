@@ -88,6 +88,7 @@
   "devices.notYet": "{device} aún no lo sabe. Este dispositivo se lo dirá por sí solo en cuanto pueda.",
   "devices.erasing": "{name} se borrará de él la próxima vez que se abra.",
   "devices.revoke": "Puede que aún guarde estas claves, porque una clave no se puede retirar. Por seguridad, sustituye cada una donde la creaste:",
+  "devices.people": "Las personas que has añadido reciben ahora tu nueva clave. En Personas, quita a quien no conozcas: puede que se haya añadido desde el dispositivo que quitaste.",
   "devices.sites": "Es posible que aún pueda cambiar estos sitios en internet. Para impedirlo, abre cada uno, elige Publicar… y luego Crear un nuevo código de recuperación:",
   "devices.send": "Enviar a {device}",
   "devices.task.sent": "Tarea enviada a {device}.",

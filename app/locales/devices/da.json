@@ -86,6 +86,7 @@
   "devices.notYet": "{device} har ikke fået besked endnu. Denne enhed giver selv besked, så snart den kan.",
   "devices.erasing": "{name} slettes fra enheden, næste gang den åbnes.",
   "devices.revoke": "Enheden kan stadig have disse nøgler, for en nøgle kan ikke tages tilbage. Udskift for en sikkerheds skyld hver af dem dér, hvor du lavede den:",
+  "devices.people": "De personer, du har tilføjet, får nu din nye nøgle. Fjern dem, du ikke kender, fra “Personer”: de kan være blevet tilføjet fra den enhed, du fjernede.",
   "devices.sites": "Enheden kan stadig ændre disse websteder online. For at stoppe det skal du åbne hvert af dem, vælge “Udgiv…” og så “Lav en ny gendannelseskode”:",
   "devices.send": "Send til {device}",
   "devices.task.sent": "Sendt til {device}.",

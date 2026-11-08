@@ -86,6 +86,7 @@
   "devices.notYet": "Ba a sanar da na'urar {device} ba tukuna. Wannan na'urar za ta sanar da ita da kanta da zarar ta iya.",
   "devices.erasing": "Za a goge {name} daga cikinta a karo na gaba da ta buɗe.",
   "devices.revoke": "Wataƙila tana da waɗannan makullan har yanzu, tun da ba a iya karɓar makulli baya. Don tsaro, sauya kowanne a inda ka yi shi:",
+  "devices.people": "Mutanenka suna samun sabon makullinka yanzu. A cikin Mutane, cire duk waɗanda ba ka sani ba: wataƙila an ƙara su ta na'urar da ka cire.",
   "devices.sites": "Wataƙila tana iya canza waɗannan shafuka a intanet har yanzu. Don hana hakan, buɗe kowanne, zaɓi Wallafa…, sannan Ƙirƙiri sabuwar lambar maidowa:",
   "devices.send": "Aika zuwa {device}",
   "devices.task.sent": "An aika zuwa {device}.",

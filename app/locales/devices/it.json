@@ -88,6 +88,7 @@
   "devices.notYet": "Non è stato ancora possibile avvisare {device}. Questo dispositivo lo farà da solo appena possibile.",
   "devices.erasing": "Il dispositivo cancellerà {name} alla prossima apertura.",
   "devices.revoke": "Potrebbe avere ancora queste chiavi, perché una chiave non si può riprendere. Per sicurezza, sostituiscile una per una dove le hai create:",
+  "devices.people": "Le tue persone ricevono ora la tua nuova chiave. In Persone, rimuovi le persone che non conosci: potrebbero essere state aggiunte dal dispositivo che hai rimosso.",
   "devices.sites": "Potrebbe ancora modificare questi siti online. Per impedirlo, aprili uno per uno, scegli Pubblica… e poi Crea un nuovo codice di recupero:",
   "devices.send": "Invia a {device}",
   "devices.task.sent": "Attività inviata a {device}.",

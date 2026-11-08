@@ -24,6 +24,7 @@
   "people.sent": "於 {date} 傳送",
   "people.accepted": "有人接受了你傳給 {name} 的邀請。請輸入對方傳回給你的六位數字。",
   "people.answer": "等待對方回覆",
+  "people.again": "需要重新見面：對方的金鑰以無法確認的方式變更了",
   "people.calls": "自稱 {name}",
   "people.rename": "重新命名",
   "people.save": "儲存",

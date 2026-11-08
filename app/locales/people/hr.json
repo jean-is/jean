@@ -26,6 +26,7 @@
   "people.sent": "Poslano {date}",
   "people.accepted": "Vaša je pozivnica za osobu {name} prihvaćena. Upišite šest znamenki koje su vam vraćene.",
   "people.answer": "Čeka se odgovor",
+  "people.again": "Potreban je novi susret: ključ se promijenio na način koji nije bilo moguće provjeriti",
   "people.calls": "Predstavlja se kao {name}",
   "people.rename": "Preimenuj",
   "people.save": "Spremi",

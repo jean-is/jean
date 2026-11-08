@@ -5,7 +5,7 @@
 // crosses in ./bundle.js, and what a device keeps and does with what comes in ./flow.js.
 import { html } from 'lit-html'
 import { signal, effect, computed } from '@preact/signals-core'
-import { register } from '../../ui/caps.js'
+import { register, unlock } from '../../ui/caps.js'
 import { app, changeSettings, rememberUnlocked, refreshConversations, refreshProjects, brainLabel, notify, pairs } from '../../ui/state.js'
 import { PLACE, here, mine } from '../../ui/opfs.js'
 import { host } from '../../ui/host.js'
@@ -501,7 +501,9 @@ export async function removeDevice(id, { erase = true } = {}) {
     const done = ctx ? await removal(ctx, id, erase) : null
     // The store's next epoch shuts it out at the next round, soon (./store.js).
     if (ctx) await Promise.all([again(ctx), import('../sync/rounds.js').then((rounds) => rounds.later())])
-    return { left: done ? [...done.brains.map(brainLabel), ...done.services] : [], sites: done?.sites ?? [], unreached: done?.unreached ?? [] }
+    // This profile as a person turns its key too, which the device removed knew, and the removal lists the people met (caps/people, D727).
+    const people = done && await getSecret(app.fs, 'person') && await unlock('people') ? await (await import('../people/people.js')).turned().catch((error) => { warn(error); return [] }) : []
+    return { left: done ? [...done.brains.map(brainLabel), ...done.services] : [], sites: done?.sites ?? [], unreached: done?.unreached ?? [], people }
   } finally { refresh() }
 }
 

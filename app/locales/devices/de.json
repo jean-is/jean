@@ -86,6 +86,7 @@
   "devices.notYet": "{device} wurde noch nicht benachrichtigt. Dieses Gerät holt das von selbst nach, sobald es kann.",
   "devices.erasing": "{name} wird dort beim nächsten Öffnen gelöscht.",
   "devices.revoke": "Das Gerät könnte diese Schlüssel noch haben, denn ein Schlüssel lässt sich nicht zurücknehmen. Ersetze sicherheitshalber jeden dort, wo du ihn erstellt hast:",
+  "devices.people": "Die Personen, die du hinzugefügt hast, bekommen jetzt deinen neuen Schlüssel. Entferne unter „Personen“ alle, die du nicht kennst: Vielleicht wurden sie über das Gerät hinzugefügt, das du entfernt hast.",
   "devices.sites": "Das Gerät könnte diese Websites online noch ändern. Um das zu verhindern, öffne jede davon, wähle „Veröffentlichen…“ und dann „Neuen Wiederherstellungscode erstellen“:",
   "devices.send": "An {device} senden",
   "devices.task.sent": "An {device} gesendet.",

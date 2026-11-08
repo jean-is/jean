@@ -26,6 +26,7 @@
   "people.sent": "Invito inviato il {date}",
   "people.accepted": "Qualcuno ha accettato il tuo invito per {name}. Digita le sei cifre che ti ha rimandato.",
   "people.answer": "In attesa della sua risposta",
+  "people.again": "Da incontrare di nuovo: la sua chiave è cambiata in un modo che non si è potuto verificare",
   "people.calls": "Si fa chiamare {name}",
   "people.rename": "Rinomina",
   "people.save": "Salva",

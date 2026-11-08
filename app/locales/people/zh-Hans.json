@@ -24,6 +24,7 @@
   "people.sent": "发送于 {date}",
   "people.accepted": "有人接受了你发给 {name} 的邀请。请输入对方发回给你的六位数字。",
   "people.answer": "等待对方回复",
+  "people.again": "需要重新见面：对方的密钥以无法确认的方式变了",
   "people.calls": "自称 {name}",
   "people.rename": "重命名",
   "people.save": "保存",

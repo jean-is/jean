@@ -8,7 +8,7 @@ import { fingerprintOf } from '../app/ui/seal.js'
 import { bytesOf } from '../app/caps/share/seal.js'
 import { pairingBox, codeOf, envelope } from '../app/caps/devices/pair.js'
 import { memoryFS } from '../app/core/fs.js'
-import { personOf, peopleOf, invite, heardHello, heardReveal, confirmed, accept, heardNonce, heardMet, received, forget, tidy, metId, nameId, WEEK, sendTo, arrivalsOf, ARRIVALS } from '../app/caps/people/flow.js'
+import { personOf, peopleOf, invite, heardHello, heardReveal, confirmed, accept, heardNonce, heardMet, received, forget, tidy, metId, nameId, WEEK, sendTo, arrivalsOf, ARRIVALS, turn, letter, madePerson } from '../app/caps/people/flow.js'
 
 const [JEAN, BASE] = ['https://jean.example', 'https://relay.example/']
 
@@ -181,4 +181,44 @@ test('nothing goes to someone who never answered, nor to someone forgotten, nor 
   await heardMet(bob, accepting, await next(accepting.token))
   await received(ana, await next((await personOf(ana)).token))
   assert.equal(await reasonOf(sendTo(ana, fpB, { title: 'x', words: '', value: { ...VALUE, file: randomBytes(20_000_000).toString('base64') }, thread: THREAD })), 'large')
+})
+
+test('a device removed turns the profile’s key: each person takes the new key and mailbox from the old, says so, and what goes after reaches them; the old mailbox is gone', async () => {
+  relayed()
+  const { ana, bob, fpA, fpB } = await met()
+  const was = await personOf(ana)
+  await turn(ana)
+  const now = await personOf(ana)
+  assert.notEqual(now.public.x, was.public.x)
+  assert.deepEqual([now.old?.length, now.pending], [1, undefined])
+  // Bob's Jean takes it from the key it knew, and says so to the new one.
+  assert.equal((await received(bob, await next((await personOf(bob)).token)))?.kind, 'met')
+  const [ana2] = await peopleOf(bob)
+  assert.deepEqual([ana2.key.x, ana2.mailbox, ana2.before?.x], [now.public.x, now.mailbox, was.public.x])
+  assert.equal((await received(ana, await next(now.token)))?.kind, 'took')
+  assert.equal((await peopleOf(ana))[0].took, await fingerprintOf(now.public))
+  // What Ana sends now opens on Bob's Jean; what he sends reaches her new mailbox; the old one is no more.
+  await sendTo(ana, fpB, { title: 'After', words: '', value: VALUE, thread: THREAD })
+  await received(bob, await next((await personOf(bob)).token))
+  assert.equal((await arrivalsOf(bob))[0]?.title, 'After')
+  await sendTo(bob, fpA, { title: 'Back', words: '', value: VALUE, thread: THREAD }, 'reply')
+  assert.equal((await received(ana, await next(now.token)))?.kind, 'reply')
+  assert.equal(await read(BASE, was.token).then(() => 'open', (error) => error.status), 404)
+})
+
+test('a second turn from the same old key, as a stolen device would make, marks the person to meet again, and nothing goes to them', async () => {
+  relayed()
+  const { ana, bob, fpA } = await met()
+  const was = await personOf(ana)
+  await turn(ana)
+  await received(bob, await next((await personOf(bob)).token))
+  // Someone holding Ana's old key turns it again, to a key of their own.
+  const thief = await madePerson(), bobKey = (await personOf(bob)).public
+  const chain = await envelope(was, bobKey, { kind: 'chain', key: thief.public, prior: await fingerprintOf(was.public), mailbox: thief.mailbox, at: clock })
+  const bytes = await letter(thief, bobKey, 'send', { title: 'Steal', words: '', value: VALUE, thread: THREAD }, ana)
+  assert.equal(await received(bob, new TextEncoder().encode(JSON.stringify({ ...JSON.parse(new TextDecoder().decode(bytes)), chain: new TextDecoder().decode(chain) }))), null)
+  const [ana2] = await peopleOf(bob)
+  assert.equal(ana2.again, true)
+  assert.equal(ana2.key.x, (await personOf(ana)).public.x, 'the key taken stays')
+  assert.equal(await reasonOf(sendTo(bob, fpA, { title: 'x', words: '', value: VALUE, thread: THREAD })), 'again')
 })

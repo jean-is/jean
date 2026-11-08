@@ -26,6 +26,7 @@
   "people.sent": "Invitație trimisă pe {date}",
   "people.accepted": "Cineva a acceptat invitația dvs. pentru {name}. Tastați cele șase cifre pe care vi le-a trimis înapoi.",
   "people.answer": "Se așteaptă răspunsul",
+  "people.again": "De întâlnit din nou: cheia acestei persoane s-a schimbat într-un mod care nu a putut fi verificat",
   "people.calls": "Își spune {name}",
   "people.rename": "Redenumiți",
   "people.save": "Salvați",

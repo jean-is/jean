@@ -86,6 +86,7 @@
   "devices.notYet": "Laitteelle {device} ei ole vielä kerrottu. Tämä laite kertoo sen itse heti, kun pystyy.",
   "devices.erasing": "Sovellus {name} poistetaan siltä laitteelta, kun se avataan seuraavan kerran.",
   "devices.revoke": "Laitteella voi yhä olla nämä avaimet, koska avainta ei voi ottaa takaisin. Vaihda varmuuden vuoksi jokainen niistä siellä, missä teit sen:",
+  "devices.people": "Lisäämäsi ihmiset saavat nyt uuden avaimesi. Poista kohdasta ”Ihmiset” kaikki, joita et tunne: heidät on ehkä lisätty poistamallasi laitteella.",
   "devices.sites": "Laite saattaa yhä pystyä muuttamaan näitä sivustoja verkossa. Voit estää sen avaamalla jokaisen niistä ja valitsemalla ”Julkaise…” ja sitten ”Luo uusi palautuskoodi”:",
   "devices.send": "Lähetä laitteelle {device}",
   "devices.task.sent": "Lähetetty laitteelle {device}.",

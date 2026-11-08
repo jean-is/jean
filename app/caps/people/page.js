@@ -80,7 +80,7 @@ function rest() {
   return html`${list.length ? html`<ul class="list">${list.map((one) => html`<li>${renaming.value === one.fp
       ? html`<form class="people-field" @submit=${(/** @type {SubmitEvent} */ e) => { e.preventDefault(); rename(one.fp, valueIn(e, 'name') || one.name).then(() => { renaming.value = '' }) }}>
           <input name="name" required maxlength="80" dir="auto" title=${t('people.rename')} .value=${one.name} @keydown=${composing}><button class="button">${t('people.save')}</button></form>`
-      : html`<span class="item-text"><strong dir="auto">${one.name}</strong><small>${one.waiting ? t('people.answer', { name: one.name }) : tParts('people.calls', { name: named(one.said) })}</small></span>
+      : html`<span class="item-text"><strong dir="auto">${one.name}</strong><small>${one.again ? t('people.again') : one.waiting ? t('people.answer', { name: one.name }) : tParts('people.calls', { name: named(one.said) })}</small></span>
         <button class="button subtle" @click=${() => { renaming.value = one.fp }}>${t('people.rename')}</button>
         <button class="button subtle danger" @click=${() => confirmRemove(one)}>${t('action.remove')}</button>`}</li>`)}</ul>` : nothing}
     ${invitations.value.length ? html`<h3>${t('people.invitations')}</h3><ul class="list">${invitations.value.map((one) => html`<li>${one.code

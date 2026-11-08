@@ -25,6 +25,7 @@
   "people.sent": "Sendt den {date}",
   "people.accepted": "Nogen har accepteret din invitation til {name}. Skriv de seks cifre, du har fået tilbage.",
   "people.answer": "Venter på svar",
+  "people.again": "I skal mødes igen: vedkommendes nøgle blev ændret på en måde, der ikke kunne kontrolleres",
   "people.calls": "Kalder sig {name}",
   "people.rename": "Omdøb",
   "people.save": "Gem",

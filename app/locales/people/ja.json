@@ -24,6 +24,7 @@
   "people.sent": "{date} に送信",
   "people.accepted": "{name} への招待を誰かが受け入れました。送り返された 6 桁の数字を入力してください。",
   "people.answer": "返事を待っています",
+  "people.again": "改めて会う必要があります：相手のキーが確認できない形で変わりました",
   "people.calls": "{name} と名乗っています",
   "people.rename": "名前を変更",
   "people.save": "保存",

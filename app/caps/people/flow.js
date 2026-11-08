@@ -12,8 +12,16 @@ import { ulid } from '../../core/ulid.js'
 import { base64url, bytesOf, random } from '../share/seal.js'
 import { linkOf, parseLink, pairingBox, sealHello, openHello, sealNonce, openNonce, sealReveal, openReveal, codeOf, sameCode, envelope, openEnvelope } from '../devices/pair.js'
 
-/** This profile as a person: its key pair and the mailbox every device of it reads. @typedef {{ key: JsonWebKey, public: JsonWebKey, token: string, mailbox: string }} Person */
-/** Someone met, as `people:<fp>` keeps them: their key, the name they gave themselves, how they were met, when, and where they read once they answered. @typedef {{ format: 1, key: JsonWebKey, said: string, met: 'side' | 'link', at: number, mailbox?: string, waiting?: true }} Met */
+/** A key turned: the new one, the fingerprint of the one before, the new mailbox, when. @typedef {{ kind: 'chain', key: JsonWebKey, prior: string, mailbox: string, at: number }} Chain */
+/**
+ * This profile as a person: its key pair and the mailbox every device of it reads; after a turn, the pairs it had and the chain to this one; a
+ * turn under way. @typedef {{ key: JsonWebKey, public: JsonWebKey, token: string, mailbox: string, old?: { key: JsonWebKey, public: JsonWebKey }[], chain?: Chain, pending?: Person }} Person
+ */
+/**
+ * Someone met, as `people:<fp>` keeps them: their key, the name they gave themselves, how they were met, when, where they read once they
+ * answered; their key before a turn; which of this profile's keys they took; whether they are to be met again.
+ * @typedef {{ format: 1, key: JsonWebKey, said: string, met: 'side' | 'link', at: number, mailbox?: string, waiting?: true, before?: JsonWebKey, took?: string, again?: true }} Met
+ */
 /** B's hello as A read it. @typedef {{ key: JsonWebKey, mailbox: string, name: string, commit: string }} Hello */
 /** An invitation under way on the device that made it (`invite:<id>`): its secret, who it is for, which way, when, the tries left, and what came. @typedef {{ id: string, s: string, name: string, way: 'side' | 'link', at: number, tries: number, said?: string, hello?: Hello, nA?: string, code?: string }} Invite */
 /** An acceptance under way on the device that made it (`accept:<id>`): the link's secret and key, its reply mailbox, who it came from, and what came. @typedef {{ id: string, s: string, fpA: string, token: string, name: string, said: string, nB: string, at: number, key?: JsonWebKey, theirs?: string, code?: string }} Accept */
@@ -55,6 +63,22 @@ export async function peopleOf(ctx) {
 }
 /** A value from this profile to someone met, as the relay carries it. @param {Person} me @param {JsonWebKey} to @param {string} kind @param {object} body @param {Context} ctx */
 export const letter = (me, to, kind, body, ctx) => envelope(me, to, { format: 1, kind, id: ulid(), at: ctx.now(), body })
+const [encoder, decoder] = [new TextEncoder(), new TextDecoder()]
+/** @param {JsonWebKey} a @param {JsonWebKey} b */
+const same = (a, b) => a.x === b.x && a.y === b.y
+/** A letter to someone met and, until they took this profile's key since its turn, the chain to it, sealed from the key they knew. @param {Context} ctx @param {Person} me @param {Met} one @param {string} kind @param {object} body */
+async function letterTo(ctx, me, one, kind, body) {
+  const [bytes, was] = [await letter(me, one.key, kind, body, ctx), me.old?.at(-1)]
+  if (!me.chain || !was || one.took === await fingerprintOf(me.public)) return bytes
+  return encoder.encode(JSON.stringify({ ...JSON.parse(decoder.decode(bytes)), chain: decoder.decode(await envelope(was, one.key, me.chain)) }))
+}
+/** What came, opened with this profile's key or one it had before a turn, from one of the keys given; null otherwise. @param {Person} me @param {JsonWebKey[]} keys @param {Uint8Array} bytes */
+async function openAny(me, keys, bytes) {
+  for (const pair of [me, ...(me.old ?? []).toReversed()]) { const one = await openEnvelope(pair, keys, bytes).catch(() => null); if (one) return one }
+  return null
+}
+/** Someone met, changed. @param {Context} ctx @param {Met & { fp: string, name?: string }} one @param {Partial<Met>} change */
+const update = (ctx, { fp, name, ...kept }, change) => ctx.set({ [metId(fp)]: JSON.stringify({ ...kept, ...change }) })
 
 // ─── Ana's side ──────────────────────────────────────────────────────────────
 
@@ -177,15 +201,19 @@ export const dropped = (ctx, one) => Promise.all([remove(ctx.base, one.token).ca
  * they read. What it was, or null. @param {Context} ctx @param {Uint8Array} bytes @returns {Promise<{ kind: string, from: string, body: any, id: string } | null>}
  */
 export async function received(ctx, bytes) {
-  const [me, people] = [await personOf(ctx), await peopleOf(ctx)]
-  const opened = await openEnvelope(me, people.map((one) => one.key), bytes).catch(() => null)
-  const from = opened && people.find((one) => one.key.x === opened.from.x && one.key.y === opened.from.y)
+  const me = await personOf(ctx)
+  /** @type {any} */
+  let sent = {}
+  try { sent = JSON.parse(decoder.decode(bytes)) } catch {}
+  if (typeof sent?.chain === 'string') await chained(ctx, me, encoder.encode(sent.chain))
+  const people = await peopleOf(ctx), opened = await openAny(me, people.map((one) => one.key), bytes)
+  const from = opened && people.find((one) => same(one.key, opened.from))
   if (!opened || !from || typeof opened.value?.kind !== 'string') return null
   const { kind, body = {}, id = '' } = opened.value
-  if (kind === 'met' && from.waiting && typeof body.mailbox === 'string') {
-    const { fp, name, waiting, ...kept } = from
-    await ctx.set({ [metId(fp)]: JSON.stringify({ ...kept, mailbox: body.mailbox }) })
-  }
+  if (kind === 'met' && from.waiting && typeof body.mailbox === 'string') await update(ctx, from, { mailbox: body.mailbox, waiting: undefined })
+  if (kind === 'took' && body.key === await fingerprintOf(me.public)) await update(ctx, from, { took: body.key })
+  // Removed by them: forgotten here too, unless what says so is older than this record of them, as a relay giving it again would be.
+  if (kind === 'gone' && Number(opened.value.at) >= from.at) await ctx.set({ [metId(from.fp)]: null, [nameId(from.fp)]: null })
   if ((kind === 'send' || kind === 'reply') && typeof id === 'string' && ULID.test(id)) await keep(ctx, from.fp, id, bytes)
   return { kind, from: from.fp, body, id }
 }
@@ -209,7 +237,7 @@ export async function arrivalsOf(ctx) {
   const [me, people] = [await personOf(ctx), await peopleOf(ctx)]
   const opened = await Promise.all((await kept(ctx)).map(async ({ name, from, box }) => {
     const one = people.find((person) => person.fp === from)
-    const { value } = (one && await openEnvelope(me, [one.key], bytesOf(box)).catch(() => null)) ?? {}
+    const { value } = (one && await openAny(me, [one.key, ...(one.before ? [one.before] : [])], bytesOf(box))) ?? {}
     return one && (value?.kind === 'send' || value?.kind === 'reply') && `${value.id}.json` === name ? [{ id: value.id, kind: value.kind, from, name: one.name, at: Number(value.at) || 0, title: String(value.body?.title ?? '').slice(0, 200),
       words: String(value.body?.words ?? '').slice(0, 280), value: value.body?.value ?? {}, ...(value.body?.thread && { thread: value.body.thread }) }] : []
   }))
@@ -224,8 +252,8 @@ export async function arrivalsOf(ctx) {
 export async function sendTo(ctx, fp, body, kind = 'send') {
   const [me, held] = [await personOf(ctx), await ctx.get(metId(fp))]
   const one = held ? /** @type {Met} */ (JSON.parse(held)) : null
-  if (!one?.mailbox) refuse(one ? 'waiting' : 'gone')
-  const bytes = await letter(me, one.key, kind, body, ctx)
+  if (!one?.mailbox || one.again) refuse(one?.again ? 'again' : one ? 'waiting' : 'gone')
+  const bytes = await letterTo(ctx, me, one, kind, body)
   if (bytes.length > LIMIT) refuse('large')
   await send(ctx.base, one.mailbox, bytes).catch((error) => refuse(error?.status === 404 ? 'gone' : error?.status === 413 ? 'large' : 'relay'))
   return bytes.length
@@ -235,7 +263,7 @@ export async function sendTo(ctx, fp, body, kind = 'send') {
 export async function forget(ctx, fp) {
   const [me, kept] = [await personOf(ctx), await ctx.get(metId(fp))]
   const one = kept ? /** @type {Met} */ (JSON.parse(kept)) : null
-  if (one?.mailbox) await send(ctx.base, one.mailbox, await letter(me, one.key, 'gone', {}, ctx)).catch(() => {})
+  if (one?.mailbox) await send(ctx.base, one.mailbox, await letterTo(ctx, me, one, 'gone', {})).catch(() => {})
   await ctx.set({ [metId(fp)]: null, [nameId(fp)]: null })
 }
 
@@ -248,5 +276,42 @@ export async function tidy(ctx) {
     if (id.startsWith('invite:')) await ended(ctx, one)
     else if (id.startsWith('accept:')) await dropped(ctx, one)
     else if (one.waiting) await ctx.set({ [id]: null, [`${id}:name`]: null })
+  }
+}
+
+// ─── A key turned ────────────────────────────────────────────────────────────
+
+/**
+ * This profile's key turned, as a device removed knew it, its person mailbox's token and everyone's mailbox (D727): a new pair and mailbox
+ * kept as the turn under way first, so that any device finding it there ends it; each person met told, in a letter from the new key with the
+ * chain from the old; then the new one is the person, the old pair kept for what was sealed to it, and the old mailbox gone. @param {Context} ctx
+ */
+export async function turn(ctx) {
+  const me = await personOf(ctx)
+  const next = me.pending ?? await (async () => { const made = await madePerson()
+    return { ...made, old: [...me.old ?? [], { key: me.key, public: me.public }], chain: /** @type {Chain} */ ({ kind: 'chain', key: made.public, prior: await fingerprintOf(me.public), mailbox: made.mailbox, at: ctx.now() }) } })()
+  if (!me.pending) await ctx.set({ [PERSON]: JSON.stringify({ ...me, pending: next }) })
+  await open(ctx.base, next.token)
+  const said = await ctx.said()
+  for (const one of (await peopleOf(ctx)).filter((person) => person.mailbox && !person.again)) await send(ctx.base, String(one.mailbox), await letterTo(ctx, next, one, 'met', { mailbox: next.mailbox, said })).catch(() => {})
+  await ctx.set({ [PERSON]: JSON.stringify(next) })
+  await remove(ctx.base, me.token).catch(() => {})
+}
+
+/**
+ * A chain someone's Jean attached: their new key and mailbox, sealed from the key held for them. Taken from that key, and told back (`took`);
+ * one from the key before it naming yet another key is a second turn from one key, which can't be told apart from a stolen device's, so they
+ * are to be met again. @param {Context} ctx @param {Person} me @param {Uint8Array} bytes
+ */
+async function chained(ctx, me, bytes) {
+  for (const one of await peopleOf(ctx)) {
+    const opened = await openAny(me, [one.key, ...(one.before ? [one.before] : [])], bytes), chain = opened?.value
+    if (!opened || chain?.kind !== 'chain' || typeof chain.mailbox !== 'string' || typeof chain.key?.x !== 'string') continue
+    const key = { kty: 'EC', crv: 'P-256', x: chain.key.x, y: chain.key.y }, fresh = await fingerprintOf(key).catch(() => '')
+    if (!fresh) return
+    if (!same(key, one.key) && !same(opened.from, one.key)) return update(ctx, one, { again: true })
+    if (!same(key, one.key)) await update(ctx, one, { key, before: one.key, mailbox: chain.mailbox, at: ctx.now() })
+    await send(ctx.base, chain.mailbox, await letterTo(ctx, me, { ...one, key }, 'took', { key: fresh })).catch(() => {})
+    return
   }
 }

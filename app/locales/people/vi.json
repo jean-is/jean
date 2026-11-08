@@ -24,6 +24,7 @@
   "people.sent": "Gửi ngày {date}",
   "people.accepted": "Có người đã chấp nhận lời mời bạn gửi cho {name}. Hãy nhập sáu chữ số họ gửi lại cho bạn.",
   "people.answer": "Đang chờ trả lời",
+  "people.again": "Cần gặp lại: khóa của người đó đã đổi theo cách không thể kiểm tra",
   "people.calls": "Tự gọi mình là {name}",
   "people.rename": "Đổi tên",
   "people.save": "Lưu",

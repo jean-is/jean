@@ -25,6 +25,7 @@
   "people.sent": "{date} tarihinde gönderildi",
   "people.accepted": "Biri, {name} için gönderdiğin daveti kabul etti. Sana geri gönderilen altı rakamı gir.",
   "people.answer": "Yanıtı bekleniyor",
+  "people.again": "Yeniden tanışmanız gerek: anahtarı kontrol edilemeyen bir şekilde değişti",
   "people.calls": "Kendine verdiği ad: {name}",
   "people.rename": "Yeniden adlandır",
   "people.save": "Kaydet",

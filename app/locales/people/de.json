@@ -25,6 +25,7 @@
   "people.sent": "Gesendet am {date}",
   "people.accepted": "Jemand hat deine Einladung für {name} angenommen. Gib die sechs Ziffern ein, die du zurückbekommen hast.",
   "people.answer": "Antwort steht noch aus",
+  "people.again": "Erneut treffen: Der Schlüssel dieser Person hat sich so geändert, dass es sich nicht prüfen ließ",
   "people.calls": "Nennt sich {name}",
   "people.rename": "Umbenennen",
   "people.save": "Speichern",

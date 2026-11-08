@@ -25,6 +25,7 @@
   "people.sent": "Verstuurd op {date}",
   "people.accepted": "Iemand heeft je uitnodiging voor {name} aangenomen. Typ de zes cijfers die je hebt teruggekregen.",
   "people.answer": "Wacht op antwoord",
+  "people.again": "Opnieuw ontmoeten: de sleutel van deze persoon veranderde op een manier die niet gecontroleerd kon worden",
   "people.calls": "Noemt zichzelf {name}",
   "people.rename": "Naam wijzigen",
   "people.save": "Opslaan",

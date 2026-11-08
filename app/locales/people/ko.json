@@ -24,6 +24,7 @@
   "people.sent": "{date}에 보냄",
   "people.accepted": "누군가 {name}에게 보낸 초대를 수락했어요. 돌려받은 여섯 자리 숫자를 입력하세요.",
   "people.answer": "응답을 기다리는 중",
+  "people.again": "다시 만나야 해요: 상대방의 키가 확인할 수 없는 방식으로 바뀌었어요",
   "people.calls": "본인이 쓰는 이름: {name}",
   "people.rename": "이름 바꾸기",
   "people.save": "저장",

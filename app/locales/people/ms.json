@@ -24,6 +24,7 @@
   "people.sent": "Dihantar {date}",
   "people.accepted": "Seseorang menerima jemputan anda untuk {name}. Taip enam digit yang dihantar balik kepada anda.",
   "people.answer": "Menunggu jawapan",
+  "people.again": "Perlu bertemu semula: kuncinya berubah dengan cara yang tidak dapat disemak",
   "people.calls": "Menggelar dirinya {name}",
   "people.rename": "Namakan semula",
   "people.save": "Simpan",

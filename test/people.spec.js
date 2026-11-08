@@ -43,6 +43,8 @@ async function meetBeside(ana, bob) {
   await settings.getByRole('button', { name: 'Add' }).click()
   await expect.poll(() => peopleOf(ana)).toEqual([{ name: 'Bob from the bakery', said: 'Bob', waiting: false, reads: true }])
   await expect.poll(() => peopleOf(bob)).toEqual([{ name: 'Ana', said: 'Ana', waiting: false, reads: true }])
+  await settings.getByRole('button', { name: 'Done' }).click()
+  await bob.locator('app-settings dialog[open]').getByRole('button', { name: 'Done' }).click()
   await closeSettings(ana)
   await closeSettings(bob)
 }
@@ -175,4 +177,14 @@ test('an answer goes back on its thread: only what Bob added, from his task’s 
   await expect(ana.locator('app-conversation .msg-user')).toHaveText(['Plan my trip to Lyon', 'Make it shorter'])
   await expect(ana.locator('app-conversation .msg-actions.is-request')).toHaveCount(1)
   await expect(card).toHaveCount(0)
+})
+
+test('someone removed from People goes from both sides', async ({ browser }) => {
+  const [ana, bob] = await Promise.all([person(browser, 'Ana'), person(browser, 'Bob')])
+  await meetBeside(ana, bob)
+  const settings = await peoplePage(ana)
+  ana.once('dialog', (asked) => asked.accept())
+  await settings.locator('.people-flow .list li', { hasText: 'Bob from the bakery' }).getByRole('button', { name: 'Remove' }).click()
+  await expect.poll(() => peopleOf(ana)).toEqual([])
+  await expect.poll(() => peopleOf(bob)).toEqual([])
 })

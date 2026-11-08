@@ -25,6 +25,7 @@
   "people.sent": "Skickad den {date}",
   "people.accepted": "Någon har tackat ja till din inbjudan till {name}. Skriv de sex siffrorna som skickades tillbaka till dig.",
   "people.answer": "Väntar på svar",
+  "people.again": "Ni behöver mötas igen: personens nyckel ändrades på ett sätt som inte gick att kontrollera",
   "people.calls": "Kallar sig {name}",
   "people.rename": "Byt namn",
   "people.save": "Spara",

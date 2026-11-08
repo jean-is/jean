@@ -84,6 +84,7 @@
   "devices.notYet": "A kò tíì sọ fún {device}. Ẹ̀rọ yìí yóò sọ fún un fúnra rẹ̀ ní kété tí ó bá ṣeé ṣe.",
   "devices.erasing": "A ó pa {name} rẹ́ kúrò lórí rẹ̀ nígbà tí ó bá ṣí lẹ́ẹ̀kan sí i.",
   "devices.revoke": "Ó ṣì lè ní àwọn kọ́kọ́rọ́ wọ̀nyí, nítorí a kò lè gba kọ́kọ́rọ́ padà. Fún ààbò, ẹ pààrọ̀ ọ̀kọ̀ọ̀kan níbi tí ẹ ti ṣe é:",
+  "devices.people": "Àwọn ènìyàn yín ń gba kọ́kọ́rọ́ tuntun yín báyìí. Nínú Àwọn ènìyàn, ẹ yọ àwọn tí ẹ kò mọ̀ kúrò: ó ṣeé ṣe kí a ti ṣàfikún wọn láti orí ẹ̀rọ tí ẹ yọ kúrò.",
   "devices.sites": "Ó ṣì lè yí àwọn ojú òpó wọ̀nyí padà lórí ayélujára. Láti dá a dúró, ẹ ṣí ọ̀kọ̀ọ̀kan, ẹ yan Tẹ̀ jáde…, lẹ́yìn náà Ṣe kóòdù ìmúpadàbọ̀sípò tuntun:",
   "devices.send": "Fi ránṣẹ́ sí {device}",
   "devices.task.sent": "A ti fi ránṣẹ́ sí {device}.",

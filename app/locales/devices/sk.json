@@ -90,6 +90,7 @@
   "devices.notYet": "Zariadenie {device} o tom zatiaľ nevie. Toto zariadenie mu to samo oznámi, hneď ako to pôjde.",
   "devices.erasing": "Aplikácia {name} sa z neho vymaže, keď sa nabudúce otvorí.",
   "devices.revoke": "Toto zariadenie môže mať tieto kľúče stále, pretože kľúč sa nedá vziať späť. Pre istotu každý nahraďte novým tam, kde vznikol:",
+  "devices.people": "Vaši ľudia teraz dostávajú váš nový kľúč. V časti Ľudia odstráňte tých, ktorých nepoznáte: mohli ich pridať zo zariadenia, ktoré ste odstránili.",
   "devices.sites": "Toto zariadenie môže tieto weby online stále meniť. Ak tomu chcete zabrániť, otvorte každý z nich, zvoľte Zverejniť… a potom Vytvoriť nový kód na obnovenie:",
   "devices.send": "Poslať do zariadenia {device}",
   "devices.task.sent": "Poslané do zariadenia {device}.",

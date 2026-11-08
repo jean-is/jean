@@ -27,6 +27,7 @@
   "people.sent": "Odesláno {date}",
   "people.accepted": "Někdo přijal vaši pozvánku pro osobu {name}. Zadejte šest číslic, které vám přišly zpět.",
   "people.answer": "Čeká se na odpověď",
+  "people.again": "Je třeba se znovu setkat: klíč se změnil způsobem, který nešlo ověřit",
   "people.calls": "Říká si {name}",
   "people.rename": "Přejmenovat",
   "people.save": "Uložit",

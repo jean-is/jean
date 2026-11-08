@@ -25,6 +25,7 @@
   "people.sent": "Elküldve: {date}",
   "people.accepted": "Valaki elfogadta a meghívót, amelyet {name} számára küldtél. Írd be a hat számjegyet, amelyet visszaküldött neked.",
   "people.answer": "Válaszra vár",
+  "people.again": "Újra találkozni kell: a kulcsa úgy változott meg, hogy nem lehetett ellenőrizni",
   "people.calls": "Így nevezi magát: {name}",
   "people.rename": "Átnevezés",
   "people.save": "Mentés",

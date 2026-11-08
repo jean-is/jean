@@ -23,9 +23,10 @@ import { listen, reader } from '../../ui/relay.js'
 import { serviceURL } from '../../core/settings.js'
 import { parseLink, pairingBox } from '../devices/pair.js'
 import { base64url, bytesOf, random } from '../share/seal.js'
-import { personOf, peopleOf, invite as invited, heardHello, heardReveal, confirmed, ended, accept as accepted, heardNonce, heardMet, dropped, received, forget, tidy, nameId, arrivalsOf, sendTo, ARRIVALS, LIMIT } from './flow.js'
+import { personOf, peopleOf, invite as invited, heardHello, heardReveal, confirmed, ended, accept as accepted, heardNonce, heardMet, dropped, received, forget, tidy, nameId, arrivalsOf, sendTo, ARRIVALS, LIMIT, turn } from './flow.js'
 
 /** @typedef {import('./flow.js').Invite} Invite */
+/** @typedef {import('./flow.js').Met} Met */
 /** @typedef {import('./flow.js').Accept} Accept */
 /** Why a meeting stopped. @typedef {'link' | 'used' | 'gone' | 'self' | 'known' | 'tries' | 'relay' | 'child' | 'broken'} Reason */
 /**
@@ -86,6 +87,8 @@ async function watch() {
   const [ctx, controller, base] = [await contextOf(), (reading = new AbortController()), relayOf()]
   if (!base) return
   await tidy(ctx).catch(warn)
+  // A turn of the key a tab left halfway is ended here (./flow.js, turn()).
+  if ((await me()).pending) await locked('app-person', async () => turn(ctx)).catch(warn)
   const person = await me()
   const stop = listen({ base, token: person.token, lock: mine('app-people'), quiet: answering, onMessages: async (messages) => {
     for (const { bytes } of messages) if ((await received(ctx, bytes).catch(() => null))?.kind) await refresh()
@@ -190,6 +193,16 @@ export function fromAddress() {
   accepting.value = !offered() ? { step: 'failed', reason: child ? 'child' : 'relay' } : parseLink(link, 'meet') ? { step: 'ask', link } : { step: 'failed', reason: 'link' }
 }
 
+/**
+ * The profile's key turned as a device is removed (caps/devices), which knew it: one tab at a time, then read again on the new mailbox. Gives
+ * the names of the people met, which the removal lists to be checked. @returns {Promise<string[]>}
+ */
+export async function turned() {
+  await locked('app-person', async () => turn(await contextOf()))
+  await watch()
+  return people.peek().map((one) => one.name)
+}
+
 // ─── Sending and what comes ──────────────────────────────────────────────────
 
 /** Once no answer is being written, so that an answer's record holds only what it reached (caps/receipt). */
@@ -254,12 +267,14 @@ const add = () => import('../../ui/dialogs.js').then((dialogs) => { inviting.val
  */
 function pane(what) {
   if (sending.peek()?.what !== what) queueMicrotask(() => { if (sending.peek()?.what !== what) measure(what, false) })
-  const now = sending.value?.what === what ? sending.value : null, first = people.value.find((one) => !one.waiting)
+  // The person a task came from first, for an answer back; else the first who can be sent to: answered, and not to meet again.
+  const now = sending.value?.what === what ? sending.value : null, back = threadOf(what), able = (/** @type {Met} */ one) => !one.waiting && !one.again
+  const first = people.value.find((one) => able(one) && one.fp === back?.fp) ?? people.value.find(able)
   const records = now?.value ? recordsOf(now.value.file) : [], total = now?.value ? JSON.stringify(now.value).length : 0
   const files = filesIn(records).flatMap(({ uri, name }) => ((data) => (data ? [{ name, size: Math.floor((data.length - data.indexOf(',') - 1) * 0.75) }] : []))(now?.value?.files[uri] ?? ''))
   return html`<section>${now?.said ? nothing : html`<form id="people-send" class="stack people-pane" @submit=${submit}>
       <fieldset><legend>${t('people.toWhom')}</legend>${people.value.map((one) => html`<label class="row" for=${`people-to-${one.fp}`}>
-        <input id=${`people-to-${one.fp}`} type="radio" name="to" value=${one.fp} ?disabled=${one.waiting} ?checked=${one === first} required><bdi>${one.name}</bdi>
+        <input id=${`people-to-${one.fp}`} type="radio" name="to" value=${one.fp} ?disabled=${!able(one)} ?checked=${one === first} required><bdi>${one.name}</bdi>
         ${one.waiting ? html`<small class="muted">${t('people.answer')}</small>` : nothing}</label>`)}
         <button type="button" class="button subtle" @click=${add}>${icons.plus} ${t('people.add')}</button></fieldset>
       ${what.item ? nothing : html`<label class="setting" for="people-read">${t('people.reading', { name: BRAND.name })}<input id="people-read" type="checkbox" class="switch" role="switch"

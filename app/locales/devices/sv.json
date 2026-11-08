@@ -86,6 +86,7 @@
   "devices.notYet": "{device} har inte fått veta det än. Den här enheten meddelar det själv så snart den kan.",
   "devices.erasing": "{name} raderas från enheten nästa gång den öppnas.",
   "devices.revoke": "Enheten kan fortfarande ha de här nycklarna, eftersom en nyckel inte kan tas tillbaka. Byt för säkerhets skull ut var och en där du skapade den:",
+  "devices.people": "Dina personer får nu din nya nyckel. Ta bort dem du inte känner från ”Personer”: de kan ha lagts till från enheten du tog bort.",
   "devices.sites": "Enheten kan fortfarande ändra de här webbplatserna online. Stoppa det genom att öppna var och en, välja ”Publicera…” och sedan ”Skapa en ny återställningskod”:",
   "devices.send": "Skicka till {device}",
   "devices.task.sent": "Skickades till {device}.",

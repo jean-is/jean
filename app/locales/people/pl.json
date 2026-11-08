@@ -27,6 +27,7 @@
   "people.sent": "Wysłano {date}",
   "people.accepted": "Zaproszenie dla osoby {name} zostało przyjęte. Wpisz sześć cyfr, które ci odesłano.",
   "people.answer": "Oczekiwanie na odpowiedź",
+  "people.again": "Trzeba się ponownie spotkać: klucz tej osoby zmienił się w sposób, którego nie dało się sprawdzić",
   "people.calls": "Przedstawia się jako {name}",
   "people.rename": "Zmień nazwę",
   "people.save": "Zapisz",

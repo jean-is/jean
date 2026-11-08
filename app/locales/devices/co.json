@@ -88,6 +88,7 @@
   "devices.notYet": "{device} ùn hè ancu statu avvisatu. St’apparechju l’avviserà da per ellu appena ch’ellu pò.",
   "devices.erasing": "L’apparechju squasserà {name} a prossima volta ch’ellu l’aprerà.",
   "devices.revoke": "Pò tene sempre ste chjave, chì una chjave ùn si pò ripiglià. Per sicurezza, rimpiazzatele una per una induve l’avete fatte :",
+  "devices.people": "E persone ch’è vo avete aghjuntu ricevenu avà a vostra chjave nova. In Persone, cacciate e persone scunnisciute : ponu esse state aghjunte da l’apparechju ch’è vo avete cacciatu.",
   "devices.sites": "Pò sempre cambià sti siti in linea. Per impedillu, apriteli unu per unu, sceglite Publicà…, è dopu Fà un codice di ricuperu novu :",
   "devices.send": "Mandà à {device}",
   "devices.task.sent": "Compitu mandatu à {device}.",

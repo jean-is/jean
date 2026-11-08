@@ -26,6 +26,7 @@
   "people.sent": "Convite enviado a {date}",
   "people.accepted": "Alguém aceitou o teu convite para {name}. Escreve os seis dígitos que te enviou de volta.",
   "people.answer": "À espera da resposta",
+  "people.again": "Há que voltar a encontrar-se: a chave dessa pessoa mudou de uma forma que não foi possível verificar",
   "people.calls": "Apresenta-se como {name}",
   "people.rename": "Renomear",
   "people.save": "Guardar",

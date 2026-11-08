@@ -84,6 +84,7 @@
   "devices.notYet": "还没能通知 {device}。这台设备会在可以时自动通知。",
   "devices.erasing": "它下次打开时，会从上面清除 {name}。",
   "devices.revoke": "它可能仍保存着这些密钥，因为密钥无法收回。为了安全，请在创建每个密钥的地方把它换掉：",
+  "devices.people": "你的联系人现在会收到你的新密钥。请把不认识的人从“联系人”中移除：他们可能是从你移除的那台设备上添加的。",
   "devices.sites": "它可能仍能在线更改这些网站。要阻止它，请打开每个网站，选择“发布…”，然后选择“生成新的恢复码”：",
   "devices.send": "发送到 {device}",
   "devices.task.sent": "已发送到 {device}。",

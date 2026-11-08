@@ -90,6 +90,7 @@
   "devices.notYet": "Urządzenie {device} jeszcze o tym nie wie. To urządzenie samo mu to przekaże, gdy tylko będzie mogło.",
   "devices.erasing": "Aplikacja {name} zostanie z niego wymazana przy następnym otwarciu.",
   "devices.revoke": "To urządzenie może nadal mieć te klucze, bo klucza nie da się odebrać. Dla bezpieczeństwa wymień każdy z nich tam, gdzie go utworzono:",
+  "devices.people": "Osoby z twojej listy dostają teraz twój nowy klucz. W sekcji Osoby usuń osoby, których nie znasz: mogły zostać dodane z usuniętego urządzenia.",
   "devices.sites": "To urządzenie może nadal zmieniać te strony w sieci. Aby temu zapobiec, otwórz każdą z nich, wybierz Opublikuj…, a potem Utwórz nowy kod odzyskiwania:",
   "devices.send": "Wyślij na urządzenie {device}",
   "devices.task.sent": "Wysłano na urządzenie {device}.",

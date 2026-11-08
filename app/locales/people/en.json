@@ -25,6 +25,7 @@
   "people.sent": "Sent {date}",
   "people.accepted": "Someone accepted your invitation for {name}. Type the six digits they sent you back.",
   "people.answer": "Waiting for their answer",
+  "people.again": "To meet again: their key changed in a way that couldn’t be checked",
   "people.calls": "Calls themselves {name}",
   "people.rename": "Rename",
   "people.save": "Save",
