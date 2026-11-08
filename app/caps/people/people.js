@@ -130,10 +130,7 @@ async function answer(ctx, one, signal) {
     accepting.value = { step: 'done', name: one.name }
     await refresh()
   } catch (error) {
-    if (signal.aborted) return
-    warn(error)
-    await dropped(ctx, one)
-    accepting.value = { step: 'failed', reason: reasonOf(error) }
+    if (!signal.aborted) { warn(error); await dropped(ctx, one); accepting.value = { step: 'failed', reason: reasonOf(error) } }
   }
 }
 
@@ -152,8 +149,7 @@ export async function invite(name, way) {
 export async function confirm(id, typed) {
   const ctx = await contextOf(), kept = await getSecret(app.fs, `invite:${id}`)
   if (!kept) return false
-  const done = await confirmed(ctx, JSON.parse(kept), typed).catch((error) => { warn(error); inviting.value = { step: 'failed', reason: reasonOf(error) }; return null })
-  const step = inviting.peek()
+  const done = await confirmed(ctx, JSON.parse(kept), typed).catch((error) => { warn(error); inviting.value = { step: 'failed', reason: reasonOf(error) }; return null }), step = inviting.peek()
   if (done === 'wrong' && step.step === 'code') inviting.value = { ...step, left: step.left - 1 }
   else if (done) inviting.value = done === 'met' ? { step: 'done', name: JSON.parse(kept).name } : { step: 'failed', reason: 'tries' }
   await watch()
@@ -216,8 +212,7 @@ const quiet = () => new Promise((done) => { const stop = effect(() => { if (!ans
  */
 export async function sendIt(fp, what, { reading = false, words = '', back } = {}, during = false) {
   if (!during) await quiet()
-  const { valueOf } = await import('../share/value.js')
-  const value = await valueOf(app.fs, what, { reading, lang: locale.peek(), aFile: t('people.aFile'), since: Boolean(back) })
+  const value = await (await import('../share/value.js')).valueOf(app.fs, what, { reading, lang: locale.peek(), aFile: t('people.aFile'), since: Boolean(back) })
   const thread = back ?? { task: what.path.slice(-32, -6), id: base64url(random(16)) }
   const size = await sendTo(await contextOf(), fp, { title: what.title, words: words.trim().slice(0, 280), value, thread }, back ? 'reply' : 'send')
   await keepRecords(what.path, [metaRecord(app.deviceId, { sent: { to: fp, thread } })], !during)
@@ -243,17 +238,15 @@ const recordsOf = (file) => file.split('\n').flatMap((line) => { try { return [J
 /** Sent to whom was picked, with the words written: said so, or why not. @param {SubmitEvent} event */
 async function submit(event) {
   event.preventDefault()
-  const [now, form] = [sending.peek(), new FormData(/** @type {HTMLFormElement} */ (event.target))]
-  const one = people.peek().find((person) => person.fp === form.get('to'))
+  const [now, form] = [sending.peek(), new FormData(/** @type {HTMLFormElement} */ (event.target))], one = people.peek().find((person) => person.fp === form.get('to'))
   if (!now || !one || now.busy) return
   sending.value = { ...now, busy: true, wrong: '' }
   try {
     const back = threadOf(now.what)
     await sendIt(one.fp, now.what, { reading: now.reading, words: String(form.get('words') ?? ''), back: back?.fp === one.fp ? back.thread : undefined })
     sending.value = { ...now, busy: false, said: t('people.sentTo', { name: one.name }) }
-  } catch (error) {
-    const reason = /** @type {any} */ (error)?.reason
-    sending.value = { ...now, busy: false, wrong: t(`people.why.${reason === 'waiting' || reason === 'large' ? reason : 'unreached'}`, { name: BRAND.name }) }
+  } catch (/** @type {any} */ error) {
+    sending.value = { ...now, busy: false, wrong: t(`people.why.${error?.reason === 'waiting' || error?.reason === 'large' ? error.reason : 'unreached'}`, { name: BRAND.name }) }
   }
 }
 
