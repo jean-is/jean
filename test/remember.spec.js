@@ -25,6 +25,18 @@ async function openKnows(page) {
   return knows
 }
 
+test('a new project’s name and light stay as chosen while something else comes in and redraws its dialog', async ({ page }) => {
+  await start(page)
+  await turnOn(page, 'Projects')
+  const dialog = page.locator('app-project-dialog dialog[open]')
+  await dialog.locator('input[name="name"]').fill('Bakery')
+  await dialog.locator('.swatch').nth(4).click()
+  await page.evaluate(async () => (await import('/ui/caps.js')).unlock('names'))
+  await expect(dialog.locator('input[name="assistant"]')).toBeVisible()
+  await expect(dialog.locator('input[name="name"]')).toHaveValue('Bakery')
+  await expect(dialog.locator('.swatch').nth(4).locator('input')).toBeChecked()
+})
+
 test('two projects keep separate memories, each in its own light', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)

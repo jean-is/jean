@@ -5,7 +5,7 @@
 // A project can be kept on this device, whatever brain Auto would otherwise pick. Once there are
 // projects, their assistants can meet (./meeting.js, D224).
 import { html, nothing } from 'lit-html'
-import { live } from 'lit-html/directives/live.js'
+import { keyed } from 'lit-html/directives/keyed.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { register, loaded, slots } from '../../ui/caps.js'
@@ -22,12 +22,13 @@ import { COLOURS } from '../../ui/touches.js'
 /** @typedef {import('../../core/settings.js').Project} Project */
 
 
-/** The project whose dialog is open: null while a new one is being made. */
-const editing = signal(/** @type {Project | null} */ (null))
+/** The project whose dialog is open: null while a new one is being made; and how many times it opened, each a form of its own. */
+const editing = signal(/** @type {Project | null} */ (null)), opened = signal(0)
 
 /** Opens a project's dialog, or a new one's. @param {Project | null} [project] */
 export function editProject(project = null) {
   editing.value = project
+  opened.value++
   app.dialog.value = 'project'
 }
 
@@ -114,42 +115,43 @@ async function remove(project) {
 }
 
 // A project's dialog (D182): who it is first, its light as it will look beside its name and the
-// colours to pick from; then its assistant, then where it is kept. Its actions stay at its foot.
+// colours to pick from; then its assistant, then where it is kept. Its actions stay at its foot. Its form
+// is made afresh each time it opens, so that what is typed and picked stays as anything else redraws it.
 class ProjectDialog extends Element {
   render() {
     const project = editing.value
     const current = typeof project?.data.colour === 'string' ? project.data.colour : COLOURS[0][1]
     return html`<dialog class="sheet project-dialog" @close=${closed('project')} @click=${backdrop}>
       ${head(t(project ? 'projects.edit' : 'projects.new'))}
-      <form id="project-form" class="project-form" @submit=${save}>
+      ${keyed(opened.value, html`<form id="project-form" class="project-form" @submit=${save}>
         ${project ? nothing : html`<p class="lede">${t('cap.projects.text', { name: BRAND.name })}</p>`}
         <div class="project-identity">
           <app-persona class="project-light" data-tint=${current}></app-persona>
           <label for="project-name">${t('projects.name')}
-            <input id="project-name" name="name" required maxlength="80" dir="auto" autocomplete="off" autofocus .value=${live(project ? String(project.data.name) : '')}>
+            <input id="project-name" name="name" required maxlength="80" dir="auto" autocomplete="off" autofocus .value=${project ? String(project.data.name) : ''}>
           </label>
-          <fieldset class="swatches" @change=${(/** @type {Event} */ e) => /** @type {HTMLElement} */ (this.querySelector('.project-light')).style.setProperty('--tint', /** @type {HTMLInputElement} */ (e.target).value)}>
+          <fieldset class="swatches" @change=${(/** @type {Event} */ e) => { /** @type {HTMLElement} */ (this.querySelector('.project-light')).dataset.tint = /** @type {HTMLInputElement} */ (e.target).value; tint(this) }}>
             <legend class="visually-hidden">${t('projects.colour')}</legend>
             ${COLOURS.map(([name, value]) => html`<label class="swatch" for=${`project-${name}`}>
-              <input id=${`project-${name}`} title=${t(`colour.${name}`)} type="radio" name="colour" value=${value} .checked=${live(value === current)}>
+              <input id=${`project-${name}`} title=${t(`colour.${name}`)} type="radio" name="colour" value=${value} .checked=${value === current}>
               <app-persona data-tint=${value}></app-persona><span class="visually-hidden">${t(`colour.${name}`)}</span>
             </label>`)}
           </fieldset>
         </div>
         ${loaded.value.has('names') ? html`<section class="stack">
           <label for="project-assistant">${t('projects.assistant')}
-            <input id="project-assistant" name="assistant" maxlength="40" dir="auto" autocomplete="off" placeholder=${BRAND.name} .value=${live(String(project?.data.assistantName ?? ''))}>
+            <input id="project-assistant" name="assistant" maxlength="40" dir="auto" autocomplete="off" placeholder=${BRAND.name} .value=${String(project?.data.assistantName ?? '')}>
           </label>
           <label for="project-persona">${t('projects.persona')}
-            <textarea id="project-persona" name="persona" rows="2" maxlength="300" dir="auto" placeholder=${t('projects.personaHint')} .value=${live(project?.body.trim() ?? '')}></textarea>
+            <textarea id="project-persona" name="persona" rows="2" maxlength="300" dir="auto" placeholder=${t('projects.personaHint')} .value=${project?.body.trim() ?? ''}></textarea>
           </label>
         </section>` : nothing}
         <section class="stack">
-          <label class="setting" for="project-local">${t('projects.local')}<input id="project-local" type="checkbox" class="switch" role="switch" name="local" .checked=${live(project?.data.cloud === false)}></label>
+          <label class="setting" for="project-local">${t('projects.local')}<input id="project-local" type="checkbox" class="switch" role="switch" name="local" .checked=${project?.data.cloud === false}></label>
           ${project && loaded.value.has('folders') ? html`<app-folder-field .project=${project}></app-folder-field>` : nothing}
           ${project?.dir === app.projectDir && slots('look').length ? html`<button type="button" class="button subtle" @click=${() => openSettings('appearance/kit-project')}>${icons.palette} ${t('projects.kit')}</button>` : nothing}
         </section>
-      </form>
+      </form>`)}
       <footer class="dialog-foot">
         ${project ? html`<button class="button subtle danger" @click=${() => remove(project)}>${icons.trash} ${t('projects.delete')}</button>` : nothing}
         <button class="button primary" form="project-form">${t(project ? 'projects.save' : 'projects.create')}</button>
