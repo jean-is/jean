@@ -260,7 +260,8 @@ export async function bringIn(remote, text) {
     }
     if (!response.ok) throw new Error(String(response.status))
     const value = await openValue(new Uint8Array(await response.arrayBuffer()), material)
-    const [, ...records] = String(value.file ?? '').split('\n').filter(Boolean).map((line) => JSON.parse(line))
+    // What came is read as its copy again (./copy.js): requests, answers and calls, and links only to the files that came with it.
+    const [, ...records] = copyOf(String(value.file ?? ''), { read: true, aFile: t('share.aFile'), files: value.files ?? {} }).split('\n').filter(Boolean).map((line) => JSON.parse(line))
     const [at, id] = [new Date().toISOString(), ulid()]
     const path = join(app.projectDir, 'conversations', `${id}.jsonl`)
     // Each file kept as Files keeps one, with its text for the brain, under the name its bytes' SHA-256 gives it: one whose bytes aren't
