@@ -8,6 +8,7 @@
   "devices.added": "{date}에 추가됨",
   "devices.store.use": "{quota} 중 {used} 공유 중",
   "devices.store.full": "가득 찼어요. 새로운 것은 이 기기에 남아요.",
+  "devices.store.owed": "제거한 기기를 차단하는 중…",
   "devices.store.gone": "이 기기는 이제 다른 기기에서 한 일을 받지 않아요.",
   "devices.store.room": "이 기기에 공간이 없어요. 더 이상 아무것도 오지 않아요.",
   "devices.store.again": "다시 시작",

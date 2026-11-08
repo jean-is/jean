@@ -9,6 +9,7 @@
   "devices.added": "Lisätty {date}",
   "devices.store.use": "{used} / {quota} yhteisessä käytössä",
   "devices.store.full": "Täynnä: uudet asiat jäävät tälle laitteelle.",
+  "devices.store.owed": "Poistamasi laite suljetaan ulos…",
   "devices.store.gone": "Tämä laite ei enää saa sitä, mitä muut laitteesi tekevät.",
   "devices.store.room": "Tällä laitteella ei ole enää tilaa: tänne ei tule enää mitään.",
   "devices.store.again": "Aloita alusta",

@@ -9,6 +9,7 @@
   "devices.added": "Tilføjet den {date}",
   "devices.store.use": "{used} af {quota} fælles",
   "devices.store.full": "Fuldt: det nye bliver på denne enhed.",
+  "devices.store.owed": "Den enhed, du fjernede, lukkes ude…",
   "devices.store.gone": "Denne enhed får ikke længere det, dine andre enheder laver.",
   "devices.store.room": "Der er ikke mere plads på denne enhed: intet mere kommer til den.",
   "devices.store.again": "Start forfra",

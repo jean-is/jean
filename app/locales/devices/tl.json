@@ -9,6 +9,7 @@
   "devices.added": "Idinagdag noong {date}",
   "devices.store.use": "{used} sa {quota} na pinagsasaluhan",
   "devices.store.full": "Puno na: ang bago ay nananatili sa device na ito.",
+  "devices.store.owed": "Inaalis ang access ng device na tinanggal mo…",
   "devices.store.gone": "Hindi na natatanggap ng device na ito ang ginagawa ng iba mong device.",
   "devices.store.room": "Wala nang espasyo sa device na ito: wala nang darating dito.",
   "devices.store.again": "Magsimulang muli",

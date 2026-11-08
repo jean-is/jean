@@ -9,6 +9,7 @@
   "devices.added": "{date} tarihinde eklendi",
   "devices.store.use": "{quota} içinde {used} ortak",
   "devices.store.full": "Dolu: yeni olan bu cihazda kalır.",
+  "devices.store.owed": "Kaldırdığın cihaz dışarıda bırakılıyor…",
   "devices.store.gone": "Bu cihaz artık diğer cihazlarında yaptıklarını almıyor.",
   "devices.store.room": "Bu cihazda yer kalmadı: buraya artık hiçbir şey gelmiyor.",
   "devices.store.again": "Baştan başla",

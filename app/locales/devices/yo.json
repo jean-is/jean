@@ -8,6 +8,7 @@
   "devices.added": "A ṣàfikún rẹ̀ ní {date}",
   "devices.store.use": "{used} nínú {quota} lápapọ̀",
   "devices.store.full": "Ó ti kún: ohun tuntun máa ń wà lórí ẹ̀rọ yìí.",
+  "devices.store.owed": "À ń yọ ẹ̀rọ tí ẹ yọ kúrò sí ìta…",
   "devices.store.gone": "Ẹ̀rọ yìí kò gba ohun tí àwọn ẹ̀rọ yín mìíràn ń ṣe mọ́.",
   "devices.store.room": "Kò sí àyè mọ́ lórí ẹ̀rọ yìí: kò sí ohun kankan tí yóò dé ọ̀dọ̀ rẹ̀ mọ́.",
   "devices.store.again": "Bẹ̀rẹ̀ lẹ́ẹ̀kan sí i",

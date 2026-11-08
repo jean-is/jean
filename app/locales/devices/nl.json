@@ -9,6 +9,7 @@
   "devices.added": "Toegevoegd op {date}",
   "devices.store.use": "{used} van {quota} gedeeld",
   "devices.store.full": "Vol: wat nieuw is, blijft op dit apparaat.",
+  "devices.store.owed": "Het verwijderde apparaat wordt buitengesloten…",
   "devices.store.gone": "Dit apparaat krijgt niet meer wat je andere apparaten doen.",
   "devices.store.room": "Geen ruimte meer op dit apparaat: er komt niets meer bij.",
   "devices.store.again": "Opnieuw beginnen",

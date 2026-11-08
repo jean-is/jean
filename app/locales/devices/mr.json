@@ -9,6 +9,7 @@
   "devices.added": "{date} रोजी जोडले",
   "devices.store.use": "{quota} पैकी {used} सामायिक",
   "devices.store.full": "भरले: जे नवीन आहे ते याच डिव्हाइसवर राहते.",
+  "devices.store.owed": "तुम्ही काढलेले डिव्हाइस बाहेर ठेवले जात आहे…",
   "devices.store.gone": "या डिव्हाइसला आता तुमच्या इतर डिव्हाइसवर केलेले मिळत नाही.",
   "devices.store.room": "या डिव्हाइसवर जागा उरलेली नाही: आता त्यावर काहीही येत नाही.",
   "devices.store.again": "पुन्हा सुरू करा",

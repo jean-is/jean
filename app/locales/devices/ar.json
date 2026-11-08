@@ -13,6 +13,7 @@
   "devices.added": "أُضيف في {date}",
   "devices.store.use": "{used} من {quota} مشتركة",
   "devices.store.full": "ممتلئ: يبقى الجديد على هذا الجهاز.",
+  "devices.store.owed": "جارٍ إخراج الجهاز الذي أزلته…",
   "devices.store.gone": "لم يعد هذا الجهاز يتلقى ما تفعله أجهزتك الأخرى.",
   "devices.store.room": "لا مساحة متبقية على هذا الجهاز: لن يصل إليه شيء بعد الآن.",
   "devices.store.again": "ابدأ من جديد",

@@ -9,6 +9,7 @@
   "devices.added": "Hinzugefügt am {date}",
   "devices.store.use": "{used} von {quota} gemeinsam",
   "devices.store.full": "Voll: Neues bleibt auf diesem Gerät.",
+  "devices.store.owed": "Das entfernte Gerät wird ausgesperrt…",
   "devices.store.gone": "Dieses Gerät bekommt nicht mehr, was deine anderen Geräte tun.",
   "devices.store.room": "Auf diesem Gerät ist kein Platz mehr: Nichts kommt mehr hierher.",
   "devices.store.again": "Neu beginnen",

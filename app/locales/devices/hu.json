@@ -9,6 +9,7 @@
   "devices.added": "Hozzáadva: {date}",
   "devices.store.use": "{used} / {quota} közösen",
   "devices.store.full": "Megtelt: az új dolgok ezen az eszközön maradnak.",
+  "devices.store.owed": "Az eltávolított eszköz kizárása folyamatban…",
   "devices.store.gone": "Ez az eszköz már nem kapja meg, amit a többi eszközöd csinál.",
   "devices.store.room": "Ezen az eszközön nincs több hely: semmi sem érkezik már ide.",
   "devices.store.again": "Kezdés elölről",

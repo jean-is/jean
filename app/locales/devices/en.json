@@ -9,6 +9,7 @@
   "devices.added": "Added {date}",
   "devices.store.use": "{used} of {quota} in common",
   "devices.store.full": "Full: what is new stays on this device.",
+  "devices.store.owed": "Shutting out the device you removed…",
   "devices.store.gone": "This device no longer gets what your other devices do.",
   "devices.store.room": "This device is out of room: nothing more comes to it.",
   "devices.store.again": "Start again",

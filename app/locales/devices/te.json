@@ -9,6 +9,7 @@
   "devices.added": "{date}న జోడించబడింది",
   "devices.store.use": "{quota}లో {used} ఉమ్మడిగా",
   "devices.store.full": "నిండిపోయింది: కొత్తవి ఈ పరికరంలోనే ఉంటాయి.",
+  "devices.store.owed": "మీరు తీసివేసిన పరికరాన్ని బయటికి పంపుతోంది…",
   "devices.store.gone": "మీ ఇతర పరికరాల్లో చేసేవి ఇకపై ఈ పరికరానికి రావు.",
   "devices.store.room": "ఈ పరికరంలో ఖాళీ లేదు: ఇకపై దీనికి ఏదీ రాదు.",
   "devices.store.again": "మళ్లీ మొదలుపెట్టు",

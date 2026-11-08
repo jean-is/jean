@@ -10,6 +10,7 @@
   "devices.added": "Aghjuntu u {date}",
   "devices.store.use": "{used} nant’à {quota} in cumunu",
   "devices.store.full": "Pienu : ciò chì hè novu ferma nant’à st’apparechju.",
+  "devices.store.owed": "Si mette fora l’apparechju chì avete cacciatu…",
   "devices.store.gone": "St’apparechju ùn riceve più ciò chì facenu i vostri altri apparechji.",
   "devices.store.room": "Ùn ci hè più piazza nant’à st’apparechju : più nunda ùn li ghjunghje.",
   "devices.store.again": "Ricumincià",

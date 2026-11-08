@@ -11,6 +11,7 @@
   "devices.added": "Pridané {date}",
   "devices.store.use": "{used} z {quota} spoločne",
   "devices.store.full": "Plné: nové veci zostávajú v tomto zariadení.",
+  "devices.store.owed": "Odstránené zariadenie sa odpája…",
   "devices.store.gone": "Toto zariadenie už nedostáva to, čo robia vaše ďalšie zariadenia.",
   "devices.store.room": "V tomto zariadení už nie je miesto: nič ďalšie doň nepríde.",
   "devices.store.again": "Začať odznova",

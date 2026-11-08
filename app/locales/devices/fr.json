@@ -10,6 +10,7 @@
   "devices.added": "Ajouté le {date}",
   "devices.store.use": "{used} sur {quota} en commun",
   "devices.store.full": "Plein : ce qui est nouveau reste sur cet appareil.",
+  "devices.store.owed": "L’appareil retiré est mis à l’écart…",
   "devices.store.gone": "Cet appareil ne reçoit plus ce que font vos autres appareils.",
   "devices.store.room": "Plus de place sur cet appareil : plus rien ne lui parvient.",
   "devices.store.again": "Recommencer",

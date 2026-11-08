@@ -9,6 +9,7 @@
   "devices.added": "Tillagd den {date}",
   "devices.store.use": "{used} av {quota} gemensamt",
   "devices.store.full": "Fullt: det nya stannar på den här enheten.",
+  "devices.store.owed": "Enheten du tog bort stängs ute…",
   "devices.store.gone": "Den här enheten får inte längre det dina andra enheter gör.",
   "devices.store.room": "Det finns inget utrymme kvar på den här enheten: inget mer kommer hit.",
   "devices.store.again": "Börja om",

@@ -9,6 +9,7 @@
   "devices.added": "{date} তারিখে যোগ করা",
   "devices.store.use": "{quota}-এর মধ্যে {used} ভাগাভাগি করা",
   "devices.store.full": "ভরে গেছে: নতুন যা কিছু, এই ডিভাইসেই থাকে।",
+  "devices.store.owed": "আপনি যে ডিভাইস সরিয়েছেন, সেটিকে বাইরে রাখা হচ্ছে…",
   "devices.store.gone": "এই ডিভাইস আর আপনার অন্য ডিভাইসগুলোর কাজ পায় না।",
   "devices.store.room": "এই ডিভাইসে আর জায়গা নেই: এখানে আর কিছু আসবে না।",
   "devices.store.again": "আবার শুরু করুন",

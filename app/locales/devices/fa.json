@@ -9,6 +9,7 @@
   "devices.added": "افزوده‌شده در {date}",
   "devices.store.use": "{used} از {quota} مشترک",
   "devices.store.full": "پر است: چیزهای تازه روی همین دستگاه می‌مانند.",
+  "devices.store.owed": "دستگاهی که حذف کردید بیرون گذاشته می‌شود…",
   "devices.store.gone": "این دستگاه دیگر آنچه دستگاه‌های دیگرتان انجام می‌دهند را دریافت نمی‌کند.",
   "devices.store.room": "این دستگاه دیگر جا ندارد: چیز دیگری به آن نمی‌رسد.",
   "devices.store.again": "شروع دوباره",

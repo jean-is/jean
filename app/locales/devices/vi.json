@@ -8,6 +8,7 @@
   "devices.added": "Thêm ngày {date}",
   "devices.store.use": "{used} trên {quota} dùng chung",
   "devices.store.full": "Đã đầy: cái mới ở lại trên thiết bị này.",
+  "devices.store.owed": "Đang chặn thiết bị bạn đã gỡ…",
   "devices.store.gone": "Thiết bị này không còn nhận những gì các thiết bị khác của bạn làm.",
   "devices.store.room": "Thiết bị này đã hết chỗ: không còn gì đến với nó nữa.",
   "devices.store.again": "Bắt đầu lại",

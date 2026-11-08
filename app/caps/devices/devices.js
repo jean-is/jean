@@ -518,7 +518,8 @@ export async function removeDevice(id, { erase = true } = {}) {
   const ctx = await identity(false).then((me) => me && contextOf(me))
   try {
     const done = ctx ? await removal(ctx, id, erase) : null
-    if (ctx) await again(ctx)
+    // The store's next epoch shuts it out at the next round, soon (./store.js).
+    if (ctx) await Promise.all([again(ctx), import('../sync/rounds.js').then((rounds) => rounds.later())])
     return { left: done ? [...done.brains.map(brainLabel), ...done.services] : [], sites: done?.sites ?? [], unreached: done?.unreached ?? [] }
   } finally { refresh() }
 }

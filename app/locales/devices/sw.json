@@ -9,6 +9,7 @@
   "devices.added": "Kiliongezwa tarehe {date}",
   "devices.store.use": "{used} kati ya {quota} kwa pamoja",
   "devices.store.full": "Imejaa: kipya kinabaki kwenye kifaa hiki.",
+  "devices.store.owed": "Kifaa ulichoondoa kinazuiwa…",
   "devices.store.gone": "Kifaa hiki hakipokei tena kile ambacho vifaa vyako vingine hufanya.",
   "devices.store.room": "Hakuna nafasi tena kwenye kifaa hiki: hakuna kitu zaidi kinachokifikia.",
   "devices.store.again": "Anza upya",

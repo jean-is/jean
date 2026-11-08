@@ -12,6 +12,7 @@ import { isBackedUp } from '../app/caps/backup/archive.js'
 import { carried } from '../app/caps/sync/mirror.js'
 import { following, snapshotOf } from '../app/caps/devices/bundle.js'
 import { headersFor } from '../app/core/llm.js'
+import { owed, merged } from '../app/caps/devices/epochs.js'
 import { SECRET, DEVICES, STORE, STORED, TIMES, carrying, shaped, deviceName, recordFor, recordsOf, listOf, changeList, mergeLists, tell, quiet, writeRecord, writeOwn, inPlace, bundleOf, adopt, refill, untouched, taskOf, arrive, receive, removal, look, share, unreached, known, back, firstOf, broughtFrom, alone } from '../app/caps/devices/flow.js'
 
 const T = 1_800_000_000_000
@@ -183,7 +184,7 @@ test('the store’s keys A sent with *kept* are written with B’s identity and 
   assert.equal(await getSecret(other, STORE), null)
   assert.equal(shaped({ ...store, epochs: {} }), false)
   // Its settings tell the others which store it holds, none once the relay no longer opens it.
-  assert.equal((await look(context(onB, b, T + 9).ctx)).value.store, store.sid)
+  assert.deepEqual((await look(context(onB, b, T + 9).ctx)).value.store, { sid: store.sid, epoch: 0 })
   await setSecret(onB, STORE, JSON.stringify({ ...store, gone: true }))
   assert.equal((await look(context(onB, b, T + 9).ctx)).value.store, null)
 })
@@ -576,6 +577,24 @@ test('a device removed is kept as removed at once, the others told before it, no
   assert.deepEqual(await receive(ctx, from, { kind: 'removed', erase: false }), { removed: { erase: false } })
   const { fs: there, path } = taskHere()
   assert.deepEqual(await receive(ctx, from, await taskOf(there, path)), { arrived: { path, title: 'The trip' } })
+})
+
+test('a device removed is owed to the store until an epoch names it, on the device that removed it and on one that hears of it, and stays owed while no epoch does', async () => {
+  const { fs, me, c, d } = await three()
+  const { ctx, sent } = context(fs, me)
+  const held = /** @type {any} */ ({ epochs: { 0: 'k' } })
+  assert.equal(owed(held, await listOf(fs)), false)
+  await removal(ctx, c.id, true)
+  assert.equal(owed(held, await listOf(fs)), true)
+  // D hears of it from the list that removed it, and owes it too, whichever of them begins the epoch first.
+  const onD = memoryFS()
+  for (const [one, name] of /** @type {const} */ ([[me, 'Mac · Chrome'], [c, 'iPhone · Safari'], [d, 'Windows · Edge']])) await writeRecord(onD, recordOfIt(one, name))
+  await receive(context(onD, d).ctx, /** @type {any} */ ((await listOf(onD)).find((one) => one.id === me.id)), sent[0].value)
+  assert.equal(owed(held, await listOf(onD)), true)
+  // Owed still, each round, until an epoch names C; then never again, removed staying removed whatever another epoch says.
+  assert.equal(owed(merged(held, { epochs: {}, removed: [d.id] }), await listOf(fs)), true)
+  const named = merged(held, { epochs: { 1: 'k1' }, removed: [c.id] })
+  assert.equal(owed(merged(named, { epochs: {}, removed: [] }), await listOf(fs)), false)
 })
 
 test('a removal the relay can’t take stands here and is tried again, the device told only once the others all were', async (t) => {

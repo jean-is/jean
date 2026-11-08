@@ -745,6 +745,43 @@ test('a project kept on one device, asked first, leaves the other, and the first
   await b.context().close()
 })
 
+test('a device removed is let out of the store: what is made after reaches it no more, even before it hears of its removal', async ({ page, browser }) => {
+  await deviceA(page)
+  const b = await device(browser)
+  const { dir, settings } = await pair(page, b)
+  // B reads its mailbox no more, the read under way ended with a reload, so only the store can keep it out.
+  await b.context().route('**/v1/m/**', (route) => route.abort())
+  await b.reload()
+  await expect.poll(() => here(b), { timeout: 20_000 }).toBe(dir)
+  const before = await taskOn(page, 'Before', 'Plan the trip')
+  await expect.poll(async () => { await storeRound(page); return inStore(page) }, { timeout: 20_000 }).toContain(before)
+  await expect.poll(async () => { await storeRound(b); return read(b, before) }, { timeout: 20_000 }).not.toBeNull()
+  // The store's next epoch, refused at first: A says so, and goes on trying.
+  await page.context().route('**/v1/s/*/epoch', (route) => route.abort())
+  await settings.locator('.devices-flow > .list > li').last().getByRole('button', { name: 'Remove' }).click()
+  const dialog = page.locator('dialog.devices-remove[open]')
+  await dialog.getByRole('button', { name: 'Remove' }).click()
+  await expect(dialog.getByRole('status')).toContainText(/ is removed\./)
+  await dialog.getByRole('button', { name: 'Done' }).click()
+  await expect.poll(async () => { await storeRound(page); return settings.locator('.devices-flow > .hint').textContent() }, { timeout: 20_000 }).toBe('Shutting out the device you removed…')
+  await page.context().unroute('**/v1/s/*/epoch')
+  const epochs = async () => Object.keys(JSON.parse(JSON.parse(String(await read(page, '.secrets/keys.json'))).store).epochs)
+  await expect.poll(async () => { await storeRound(page); return epochs() }, { timeout: 20_000 }).toEqual(['0', '1'])
+  await expect(settings.locator('.devices-flow > .hint')).toHaveText(/ in common$/)
+  await closeSettings(page)
+  const after = await taskOn(page, 'After', 'Book the train')
+  await expect.poll(async () => { await storeRound(page); return inStore(page) }, { timeout: 20_000 }).toContain(after)
+  await storeRound(b)
+  expect(await read(b, after)).toBeNull()
+  // B says it no longer receives, with Start again; nothing of its own was erased.
+  expect(await read(b, before)).not.toBeNull()
+  await b.evaluate(async () => (await import('/ui/dialogs.js')).openSettings('data/devices'))
+  await expect(b.locator('app-settings .devices-flow > .hint')).toHaveText('This device no longer gets what your other devices do.')
+  await expect(b.locator('app-settings').getByRole('button', { name: 'Start again' })).toBeVisible()
+  await b.context().unrouteAll({ behavior: 'ignoreErrors' })
+  await b.context().close()
+})
+
 test('a document changed on both devices, one of them offline, keeps both changes', async ({ page, browser }) => {
   await deviceA(page)
   const b = await device(browser)

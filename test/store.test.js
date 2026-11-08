@@ -7,8 +7,12 @@ import { hashOf } from '../host/host.js'
 import { memoryFS, walk } from '../app/core/fs.js'
 import { syncRound, carried } from '../app/caps/sync/mirror.js'
 import { openStore, MANIFEST } from '../app/caps/devices/store-fs.js'
-import { carrying } from '../app/caps/devices/flow.js'
+import { carrying, recordFor } from '../app/caps/devices/flow.js'
 import { listProjects } from '../app/core/settings.js'
+import { ulid } from '../app/core/ulid.js'
+import { boxPair } from '../app/ui/seal.js'
+import { idOf } from '../app/caps/share/seal.js'
+import { newest, proofOf, call, enter, merged, owed, opened, next, rotate, behind } from '../app/caps/devices/epochs.js'
 import { memory } from './fixtures/relay-memory.js'
 
 /** @typedef {import('../app/core/types.js').FS} FS */
@@ -215,4 +219,132 @@ test('the store takes no keys, caches or projects kept on a device; one switched
   assert.match(String(await phone.read(`${HOME}/project.md`)), /default: true/)
   const held = JSON.stringify([...memo.metas, ...memo.objects].map(([key, value]) => [key, value instanceof Map ? [...value] : value]))
   assert.ok(!held.includes('key of x'))
+})
+
+/** A store some of a person's devices are in, as pairing leaves it: each with its identity, its record and its own token. @param {number} count */
+async function people(count) {
+  const memo = memory()
+  const handle = relay({ origins: [JEAN], store: memo.backend, stores: {} })
+  /** @type {typeof fetch} */
+  const fetch = async (url, init = {}) => handle(new Request(url, { ...init, headers: { .../** @type {Record<string, string>} */ (init.headers), origin: JEAN } }), { address: '203.0.113.7', port: 51234 })
+  const T = Date.parse('2026-11-08T10:00:00Z')
+  const devices = await Promise.all(Array.from({ length: count }, async (_, i) => ({ id: ulid(T + i), ...await boxPair(), token: random(32), mailbox: random(16) })))
+  const list = devices.map((one, i) => recordFor(one, `Device ${i}`, T))
+  const keys = { relay: BASE, sid: random(16), N: random(32), epochs: { 0: random(32) } }
+  const held = devices.map(() => ({ ...keys, token: random(32) }))
+  await fetch(`${BASE}v1/s/${keys.sid}`, { method: 'PUT', headers: { authorization: `Bearer ${held[0].token}` }, body: JSON.stringify({ id: await idOf(devices[0].id), proof: await hashOf(await proofOf(keys.epochs)) }) })
+  for (let i = 1; i < count; i++) await enter(held[0], devices[i].id, await hashOf(held[i].token), fetch)
+  /** The list as a device has it once it removed these. @param {...number} gone */
+  const without = (...gone) => list.map((one, i) => (gone.includes(i) ? { ...one, removedAt: new Date(T).toISOString(), erase: false } : one))
+  /** The store as device `i` sees it, from its own files and the keys it holds. @param {number} i @param {FS} here @param {import('../app/caps/devices/epochs.js').Held} [mine] */
+  const open = (i, here, mine = held[i]) => openStore({ base: BASE, sid: keys.sid, token: held[i].token, names: Buffer.from(keys.N, 'base64url'), here, fetch, starts: mine.starts,
+    epochs: Object.fromEntries(Object.entries(mine.epochs).map(([epoch, raw]) => [epoch, Buffer.from(raw, 'base64url')])) })
+  return { memo, fetch, devices, list, held, without, open, sid: keys.sid }
+}
+
+test('a device removed is let out of the store by the next epoch, sealed to each device the remover still has, itself too: the removed one gets 403 and opens nothing new', async () => {
+  const { fetch, devices: [a, b, c], list, held, without, open } = await people(3)
+  const laptop = memoryFS({ 'memory.md': '- likes tea\n' })
+  await round(laptop, open(0, laptop))
+  const mine = without(2)
+  assert.equal(owed(held[0], mine), true)
+  const epoch = next(held[0], mine, await call(held[0], '', {}, fetch))
+  const after = await rotate(held[0], a, mine, epoch, fetch)
+  assert.deepEqual([newest(after.epochs), after.removed, owed(after, mine)], [1, [c.id], false])
+  await assert.rejects(call(held[2], '', {}, fetch), (/** @type {any} */ error) => error.status === 403)
+  // B opens its envelope from A's key, and takes the removal; C's keys open none of it, and A's own opens for A.
+  const seen = await call(held[1], '', {}, fetch)
+  const got = await opened(b, list, seen)
+  assert.deepEqual([got?.epochs, got?.removed, got?.starts?.[1]], [after.epochs, [c.id], epoch.starts?.[1]])
+  assert.equal(await opened(c, list, seen), null)
+  assert.equal(await opened(b, list.filter((one) => one.id !== a.id), seen), null, 'never from a key it doesn’t have')
+  assert.ok(await opened(a, list, await call(held[0], '', {}, fetch)))
+  // What A writes now, B reads with the new key, and only the new key opens.
+  await laptop.write('memory.md', '- likes green tea\n')
+  await round(laptop, open(0, laptop, after))
+  const [phone, old] = [memoryFS(), memoryFS()]
+  await round(phone, open(1, phone, merged(held[1], /** @type {any} */ (got))))
+  assert.equal(await phone.read('memory.md'), '- likes green tea\n')
+  const behindKeys = open(1, old)
+  assert.equal((await behindKeys.pull()).waiting, true)
+  assert.equal(await behindKeys.fs.read('memory.md'), null)
+})
+
+test('two devices removing others at once: the second, refused, takes the first’s epoch and begins the next, and both end with both removals', async () => {
+  const { fetch, devices: [a, b], held, without } = await people(4)
+  const [ofA, ofB] = [without(2), without(3)]
+  const [atA, atB] = [await call(held[0], '', {}, fetch), await call(held[1], '', {}, fetch)]
+  let keysA = await rotate(held[0], a, ofA, next(held[0], ofA, atA), fetch)
+  await assert.rejects(rotate(held[1], b, ofB, next(held[1], ofB, atB), fetch), (/** @type {any} */ error) => [403, 409].includes(error.status))
+  // B reads its envelope again: A's epoch, which names C; D is still owed.
+  const seen = await call(held[1], '', {}, fetch)
+  let keysB = merged(held[1], /** @type {any} */ (await opened(b, ofB, seen)))
+  assert.equal(owed(keysB, ofB), true)
+  keysB = await rotate(keysB, b, ofB, next(keysB, ofB, seen), fetch)
+  assert.deepEqual([newest(keysB.epochs), keysB.removed?.sort()], [2, [without(2, 3)[2].id, without(2, 3)[3].id].sort()])
+  keysA = merged(keysA, /** @type {any} */ (await opened(a, ofA, await call(held[0], '', {}, fetch))))
+  assert.deepEqual(keysA.epochs, keysB.epochs)
+  for (const i of [2, 3]) await assert.rejects(call(held[i], '', {}, fetch), (/** @type {any} */ error) => error.status === 403)
+})
+
+test('the keys go again only to a device behind that no epoch named: never to one removed, even one a list still has', async () => {
+  const { fetch, devices: [a, , c], list, held, without, sid } = await people(3)
+  const after = await rotate(held[0], a, without(2), next(held[0], without(2), await call(held[0], '', {}, fetch)), fetch)
+  assert.equal(behind(after, list[1], { sid, epoch: 0 }), true)
+  assert.equal(behind(after, list[1], { sid, epoch: 1 }), false)
+  assert.equal(behind(after, list[2], { sid, epoch: 0 }), false, 'C, named by the epoch')
+  assert.equal(behind(after, list[1], null), true, 'a device with no store')
+  // The next epoch, begun from a list that never heard C was removed, seals nothing to C, whom the last one named.
+  /** @type {any[]} */
+  const sent = []
+  const watch = /** @type {typeof fetch} */ (async (url, init) => { if (String(url).endsWith('/epoch')) sent.push(JSON.parse(String(init?.body))); return fetch(url, init) })
+  const gone = without(1)
+  await rotate(after, a, gone.map((one) => (one.id === c.id ? list[2] : one)), next(after, gone, await call(after, '', {}, fetch)), watch)
+  assert.deepEqual(Object.keys(sent[0].envelopes), [await idOf(a.id)])
+})
+
+test('a version sealed under an older epoch after a newer one began is passed over by its readers, whatever the relay says', async () => {
+  const { fetch, memo, devices: [a], held, without, open, sid } = await people(3)
+  const [laptop, thief] = [memoryFS({ 'notes.md': '# Notes\n' }), memoryFS()]
+  await round(laptop, open(0, laptop))
+  await round(thief, open(2, thief))
+  await thief.write('notes.md', '# Notes\nWritten by the thief\n')
+  await round(thief, open(2, thief))
+  const [oid, theirs] = [...(memo.objects.get(sid) ?? new Map())][0]
+  const after = await rotate(held[0], a, without(2), next(held[0], without(2), await call(held[0], '', {}, fetch)), fetch)
+  await laptop.write('notes.md', '# Notes\nWritten on the laptop\n')
+  await round(laptop, open(0, laptop, after))
+  // A relay working with the thief puts its old version back in the feed, as the newest.
+  const colluding = /** @type {typeof fetch} */ (async (url, init) => {
+    const response = await fetch(url, init)
+    if (!String(url).includes('/changes')) return response
+    const page = await response.json()
+    const rev = page.last + 10
+    return Response.json({ ...page, changes: [...page.changes, { oid, ...theirs, rev }], last: rev })
+  })
+  /** The phone's store through that relay. @param {FS} here @param {import('../app/caps/devices/epochs.js').Held} keys */
+  const through = (here, keys) => openStore({ base: BASE, sid, token: held[1].token, names: Buffer.from(keys.N, 'base64url'), here, fetch: colluding, starts: keys.starts,
+    epochs: Object.fromEntries(Object.entries(keys.epochs).map(([epoch, raw]) => [epoch, Buffer.from(raw, 'base64url')])) })
+  const [phone, fooled] = [memoryFS(), memoryFS()]
+  await round(phone, through(phone, after))
+  assert.match(String(await laptop.read('notes.md')), /Written on the laptop/)
+  assert.equal(await phone.read('notes.md'), await laptop.read('notes.md'))
+  // Without the epoch's start, the thief's old version would win.
+  await round(fooled, through(fooled, { ...after, starts: {} }))
+  assert.equal(await fooled.read('notes.md'), '# Notes\nWritten by the thief\n')
+})
+
+test('a removal the relay didn’t take stays owed, the same key tried again, until it does', async () => {
+  const { fetch, devices: [a], held, without } = await people(3)
+  const mine = without(2)
+  const info = await call(held[0], '', {}, fetch)
+  const epoch = next(held[0], mine, info)
+  const offline = /** @type {typeof fetch} */ (async () => { throw new TypeError('Failed to fetch') })
+  await assert.rejects(rotate(held[0], a, mine, epoch, offline))
+  const kept = { ...held[0], pending: epoch }
+  assert.equal(owed(kept, mine), true)
+  assert.equal(next(kept, mine, info), epoch, 'the pending one, tried again')
+  const after = await rotate(kept, a, mine, next(kept, mine, info), fetch)
+  assert.deepEqual([owed(after, mine), after.pending, newest(after.epochs)], [false, undefined, 1])
+  assert.equal(after.epochs[1], epoch.epochs[1])
 })

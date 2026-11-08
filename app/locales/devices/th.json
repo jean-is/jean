@@ -8,6 +8,7 @@
   "devices.added": "เพิ่มเมื่อ {date}",
   "devices.store.use": "ใช้ร่วมกัน {used} จาก {quota}",
   "devices.store.full": "เต็มแล้ว: ของใหม่จะอยู่บนอุปกรณ์นี้",
+  "devices.store.owed": "กำลังกันอุปกรณ์ที่คุณนำออกไม่ให้เข้าถึง…",
   "devices.store.gone": "อุปกรณ์นี้ไม่ได้รับสิ่งที่อุปกรณ์อื่นของคุณทำอีกต่อไป",
   "devices.store.room": "อุปกรณ์นี้ไม่มีที่ว่างแล้ว: จะไม่มีอะไรมาถึงอีก",
   "devices.store.again": "เริ่มใหม่",

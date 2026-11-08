@@ -9,6 +9,7 @@
   "devices.added": "{date} को जोड़ा गया",
   "devices.store.use": "{quota} में से {used} साझा",
   "devices.store.full": "भर गया: जो नया है, वह इसी डिवाइस पर रहता है।",
+  "devices.store.owed": "आपके हटाए गए डिवाइस को बाहर किया जा रहा है…",
   "devices.store.gone": "यह डिवाइस अब आपके दूसरे डिवाइसों का किया हुआ नहीं पाता।",
   "devices.store.room": "इस डिवाइस पर जगह नहीं बची: अब इस पर और कुछ नहीं आता।",
   "devices.store.again": "फिर से शुरू करें",

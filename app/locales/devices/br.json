@@ -12,6 +12,7 @@
   "devices.added": "Ouzhpennet d’an {date}",
   "devices.store.use": "{used} diwar {quota} boutin",
   "devices.store.full": "Leun : ar pezh a zo nevez a chom war an trevnad-mañ.",
+  "devices.store.owed": "O lakaat an trevnad hoc’h eus lamet er-maez…",
   "devices.store.gone": "N’eus mui netra eus ho trevnadoù all o tont d’an trevnad-mañ.",
   "devices.store.room": "N’eus mui a blas war an trevnad-mañ : netra ken ne zeu dezhañ.",
   "devices.store.again": "Adkregiñ",

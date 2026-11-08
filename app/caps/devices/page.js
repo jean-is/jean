@@ -95,10 +95,10 @@ function rest() {
       <p class="hint" id="devices-pasted">${t('devices.pasteHint', { name: BRAND.name })}</p></form></section>`
 }
 
-/** Under the list, what the devices keep in common in the store: its room used, full, or no longer reaching this device, with Start again where it is gone. */
+/** Under the list, what the devices keep in common in the store: its room used, full, a removed device still being shut out, or no longer reaching this device, with Start again where it is gone. */
 function common() {
-  const { use = 0, quota, full, gone, room } = store.value
-  const said = gone ? 'devices.store.gone' : room ? 'devices.store.room' : full ? 'devices.store.full' : quota ? 'devices.store.use' : ''
+  const { use = 0, quota, full, gone, room, owing } = store.value
+  const said = gone ? 'devices.store.gone' : room ? 'devices.store.room' : owing ? 'devices.store.owed' : full ? 'devices.store.full' : quota ? 'devices.store.use' : ''
   return said ? html`<p class="hint">${t(said, { used: formatBytes(use), quota: formatBytes(quota ?? 0) })}</p>
     ${gone ? html`<div class="row"><button class="button" @click=${again}>${t('devices.store.again')}</button></div>` : nothing}` : nothing
 }

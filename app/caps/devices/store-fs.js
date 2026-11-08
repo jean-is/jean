@@ -32,10 +32,10 @@ const sha256 = async (bytes) => base64url(new Uint8Array(await crypto.subtle.dig
 const refusal = (message, name) => new DOMException(message, name)
 
 /**
- * @param {{ base: string, sid: string, token: string, names: Uint8Array, epochs: Record<string, Uint8Array>, here: FS, fetch?: typeof globalThis.fetch }} options
- *   names: the key objects are named under; epochs: each epoch's key, the newest the one writes go under
+ * @param {{ base: string, sid: string, token: string, names: Uint8Array, epochs: Record<string, Uint8Array>, starts?: Record<string, number>, here: FS, fetch?: typeof globalThis.fetch }} options
+ *   names: the key objects are named under; epochs: each epoch's key, the newest the one writes go under; starts: the rev each began after
  */
-export function openStore({ base, sid, token, names, epochs, here, fetch = globalThis.fetch }) {
+export function openStore({ base, sid, token, names, epochs, starts = {}, here, fetch = globalThis.fetch }) {
   /** @type {Manifest} */
   let manifest = { format: 1, sid, after: 0, objects: {}, waiting: [] }
   let refused = 0
@@ -68,8 +68,9 @@ export function openStore({ base, sid, token, names, epochs, here, fetch = globa
       return typeof meta.path === 'string' && await oidOf(meta.path) === change.oid ? meta : null
     } catch { return null }
   }
-  /** A change taken into the manifest: a version, or a deletion; false when its epoch's key isn't here. @param {Change} change */
+  /** A change taken into the manifest: a version, or a deletion; passed over when sealed under an epoch older than one begun before it (a removed device's old key); false when its epoch's key isn't here. @param {Change} change */
   const take = async (change) => {
+    if (Object.entries(starts).some(([epoch, start]) => Number(epoch) > change.epoch && change.rev > start)) return true
     if (!epochs[change.epoch]) return false
     const meta = await openMeta(change)
     if (meta && (change.gone || meta.gone)) delete manifest.objects[change.oid]

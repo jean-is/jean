@@ -191,8 +191,8 @@ export async function tell(ctx, value, but = []) {
 /** Whether the store's keys are whole: its id, the naming key and an epoch's key at least, base64url. @param {any} one */
 export const shaped = (one) => /^[\w-]{22}$/.test(one?.sid) && /^[\w-]{43}$/.test(one.N) && Object.keys(one.epochs ?? {}).length > 0
   && Object.entries(one.epochs).every(([epoch, key]) => /^\d{1,9}$/.test(epoch) && /^[\w-]{43}$/.test(String(key)))
-/** The store this device holds, by its id, as its settings tell the others: none where it has none, or where the relay no longer opens it. @param {FS} fs */
-const storeOf = async (fs) => ((held) => (shaped(held) && !held.gone ? held.sid : null))(JSON.parse(await getSecret(fs, STORE) ?? 'null'))
+/** The store this device holds, by its id, and its newest epoch, as its settings tell the others: none where it has none, or where the relay no longer opens it. @param {FS} fs */
+const storeOf = async (fs) => ((held) => (shaped(held) && !held.gone ? { sid: held.sid, epoch: Math.max(...Object.keys(held.epochs).map(Number)) } : null))(JSON.parse(await getSecret(fs, STORE) ?? 'null'))
 /**
  * What the store carries from this device (D721): what Sync's mirror carries, but projects kept on this device (`cloud: false`), their
  * project.md aside where it is Home's, so that every device keeps one Home. @param {{ dir: string, data: Record<string, unknown> }[]} projects

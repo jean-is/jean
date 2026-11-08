@@ -9,6 +9,7 @@
   "devices.added": "An ƙara ta a {date}",
   "devices.store.use": "{used} daga cikin {quota} na tare",
   "devices.store.full": "Ya cika: sabon abu yana zama a wannan na'urar.",
+  "devices.store.owed": "Ana fitar da na'urar da ka cire…",
   "devices.store.gone": "Wannan na'urar ba ta ƙara samun abin da sauran na'urorinka suke yi.",
   "devices.store.room": "Babu sauran sarari a wannan na'urar: babu abin da zai ƙara zuwa gare ta.",
   "devices.store.again": "Sake farawa",

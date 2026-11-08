@@ -8,6 +8,7 @@
   "devices.added": "Ditambah pada {date}",
   "devices.store.use": "{used} daripada {quota} dikongsi",
   "devices.store.full": "Penuh: perkara baharu kekal pada peranti ini.",
+  "devices.store.owed": "Mengeluarkan peranti yang anda alih keluar…",
   "devices.store.gone": "Peranti ini tidak lagi menerima apa yang dibuat oleh peranti anda yang lain.",
   "devices.store.room": "Tiada ruang lagi pada peranti ini: tiada apa-apa lagi yang sampai kepadanya.",
   "devices.store.again": "Mula semula",

@@ -8,6 +8,7 @@
   "devices.added": "於 {date} 新增",
   "devices.store.use": "已共用 {used}／{quota}",
   "devices.store.full": "已滿：新內容會留在這台裝置上。",
+  "devices.store.owed": "正在將你移除的裝置拒於門外…",
   "devices.store.gone": "這台裝置不再收到你其他裝置上的內容。",
   "devices.store.room": "這台裝置沒有空間了：不會再有內容傳來。",
   "devices.store.again": "重新開始",

@@ -10,6 +10,7 @@
   "devices.added": "Adăugat pe {date}",
   "devices.store.use": "{used} din {quota} în comun",
   "devices.store.full": "Plin: ce este nou rămâne pe acest dispozitiv.",
+  "devices.store.owed": "Dispozitivul eliminat este exclus…",
   "devices.store.gone": "Acest dispozitiv nu mai primește ce fac celelalte dispozitive ale dvs.",
   "devices.store.room": "Nu mai este loc pe acest dispozitiv: nu mai ajunge nimic la el.",
   "devices.store.again": "Începeți din nou",

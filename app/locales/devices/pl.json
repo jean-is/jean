@@ -11,6 +11,7 @@
   "devices.added": "Dodane {date}",
   "devices.store.use": "{used} z {quota} wspólnie",
   "devices.store.full": "Pełno: nowe rzeczy zostają na tym urządzeniu.",
+  "devices.store.owed": "Usunięte urządzenie jest odcinane…",
   "devices.store.gone": "To urządzenie nie dostaje już tego, co robią twoje inne urządzenia.",
   "devices.store.room": "Na tym urządzeniu nie ma już miejsca: nic więcej do niego nie trafi.",
   "devices.store.again": "Zacznij od nowa",

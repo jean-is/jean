@@ -10,6 +10,7 @@
   "devices.added": "נוסף ב־{date}",
   "devices.store.use": "{used} מתוך {quota} משותפים",
   "devices.store.full": "מלא: מה שחדש נשאר במכשיר הזה.",
+  "devices.store.owed": "מנתקים את המכשיר שהסרת…",
   "devices.store.gone": "המכשיר הזה כבר לא מקבל את מה שהמכשירים האחרים שלך עושים.",
   "devices.store.room": "אין יותר מקום במכשיר הזה: שום דבר נוסף לא מגיע אליו.",
   "devices.store.again": "להתחיל מחדש",

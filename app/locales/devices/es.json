@@ -10,6 +10,7 @@
   "devices.added": "Añadido el {date}",
   "devices.store.use": "{used} de {quota} en común",
   "devices.store.full": "Lleno: lo nuevo se queda en este dispositivo.",
+  "devices.store.owed": "Dejando fuera el dispositivo que quitaste…",
   "devices.store.gone": "Este dispositivo ya no recibe lo que hacen tus otros dispositivos.",
   "devices.store.room": "No queda espacio en este dispositivo: ya no le llega nada más.",
   "devices.store.again": "Empezar de nuevo",

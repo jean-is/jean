@@ -52,6 +52,10 @@ slots            VK sealed with AES-256-GCM, once under each of these keys, in .
   password       PBKDF2-SHA-256(password, salt, 600,000); the iteration count is kept in the slot
   recovery       HKDF(the recovery code's 128 bits, "recovery")
   parent         HKDF(the parent's profile's VK, the slot's salt, "parent"): a child's under 13, alone (D389)
+the store's (D721), the secret `store`, the same on each of the person's devices:
+  naming key N   32 random bytes; an object's id is the first 128 bits of HMAC-SHA-256(N, its path)
+  epoch key      32 random bytes for each epoch, a vault key for seal(): a file under its path, a meta under `.store/meta/<id>`
+  proof          HKDF-SHA-256(the newest epoch key, "admin"), of which the relay keeps the SHA-256
 ```
 
 - **VK never rests anywhere unsealed.** The worker holds it as a non-extractable `CryptoKey` for HKDF. The page holds its bytes only while the lock adds a slot, read back from a slot just opened, and wipes them after.
@@ -61,6 +65,7 @@ slots            VK sealed with AES-256-GCM, once under each of these keys, in .
 - **The browser clears the key and the files together.** IndexedDB and OPFS sit in one storage bucket, which the Storage Standard clears as a whole, so neither outlives the other. This includes Safari's seven-day rule.
 - **Rotating VK** (sealing everything again under a new key) isn't built. The vault id in each header would tell a background pass which files are left.
 - **A device's own pair, for the person's other devices** (D700): an ECDH P-256 pair and its relay mailbox's token, kept as the secret `device`, and the devices the profile knows as the secret `devices`, so sealed under VK and closed with the lock, and never in a backup or a synced folder, where someone could add a key of theirs. What goes between two devices is sealed from one's key to the other's (`sealBox()` in `ui/seal.js`: HKDF over their ECDH secret, bound to both fingerprints, then AES-256-GCM), and nothing from a key the profile doesn't list is opened. The keys that cross (D700) are re-sealed under the receiving profile's own VK as they are written.
+- **The store's keys** (D721) go to a new device with pairing's *kept*, after Join, and to the others by mailbox, sealed from one device's key to the other's. Removing a device starts the next epoch: the remover makes its key and seals it, with every device removed so far and the rev the epoch begins after, from its own device key to each device its own list still has, itself too (an envelope the relay keeps for each), never by the relay's list, and the relay lets the removed device's token out and takes the new proof's hash in the same write. The key is kept as pending before that write, so a crash on the way leaves it to try again. A device opens its envelope only from a key it has, takes the removals it names as its own, and refuses a version sealed under an older epoch whose rev comes after a newer epoch began. A device that missed an epoch gets the keys by mailbox from one that has them, never one an epoch removed. Old epoch keys stay, since what they sealed the removed device already had; files go up again under the newest as they change.
 
 ## The seal
 

@@ -9,6 +9,7 @@
   "devices.added": "{date} کو شامل کیا گیا",
   "devices.store.use": "{quota} میں سے {used} مشترک",
   "devices.store.full": "بھر گیا: جو نیا ہے وہ اسی آلے پر رہتا ہے۔",
+  "devices.store.owed": "آپ کا ہٹایا ہوا آلہ باہر کیا جا رہا ہے…",
   "devices.store.gone": "یہ آلہ اب آپ کے دوسرے آلات پر کیا گیا کام نہیں پاتا۔",
   "devices.store.room": "اس آلے پر جگہ نہیں بچی: اب اس پر کچھ اور نہیں آتا۔",
   "devices.store.again": "دوبارہ شروع کریں",

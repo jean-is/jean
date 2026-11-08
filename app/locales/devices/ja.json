@@ -8,6 +8,7 @@
   "devices.added": "{date} に追加",
   "devices.store.use": "{quota} のうち {used} を共有中",
   "devices.store.full": "いっぱいです。新しいものはこの端末に残ります。",
+  "devices.store.owed": "外した端末を締め出しています…",
   "devices.store.gone": "この端末には、ほかの端末での作業がもう届きません。",
   "devices.store.room": "この端末に空きがありません。これ以上何も届きません。",
   "devices.store.again": "やり直す",
