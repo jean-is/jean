@@ -13,7 +13,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 /** Node's own list of releases, newest first, each with its LTS's name, or false. */
-const RELEASES = 'https://nodejs.org/dist/index.json'
+export const RELEASES = 'https://nodejs.org/dist/index.json'
 /** An image of Node's by its major, as Docker names one: node:<major>, node:<major>-alpine. */
 const IMAGE = /\bnode:(\d+)\b/g
 /** One pinned to its digest, which a new major's tag needs a new one of: node:<major><variant>@sha256:<hex>. */

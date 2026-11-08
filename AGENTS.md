@@ -125,6 +125,7 @@ npm run security  # the security rules above, in the code, and no secret in a tr
 npm run lts     # whether .nvmrc names Node's newest LTS, from Node's list of releases (D701); -- --write moves it and every node:<major> image there; CI runs it each Monday too
 npm test        # node --test --test-force-exit test/*.test.js
 npm run e2e     # Playwright smoke tests in Chromium and WebKit (once: npx playwright install chromium webkit)
+npm run ci      # GitHub's CI here (D724): every job read from .github/workflows/, run in the images CI uses, side by side, logs in dist/ci/; -- e2e:webkit or -- check audit picks jobs, --worktree takes uncommitted changes, --amd64 runs as GitHub's runners do; what publishes is rehearsed, never pushed; needs Docker, and helm, kind and kubectl for the containers job
 npm run reflexes  # measure Kev on the multilingual reflex test set (-- --lang fr,ja, -- --write); BRAIN=<provider>:<model>, a brain reading a child's danger where Kev isn't on (D661)
 npm run offers    # measure what a brain offers on the multilingual offer test set (BRAIN=<provider>:<model>, -- --write)
 npm run tutor     # measure how often a brain gives the answer to a child's work, on the multilingual tutor test set (BRAIN=<provider>:<model>, JUDGE=<provider>:<model>, -- --write)

@@ -45,6 +45,7 @@
     "security": "node scripts/security.js",
     "lts": "node scripts/lts.js",
     "e2e": "playwright test -c test",
+    "ci": "node scripts/ci.js",
     "reflexes": "node scripts/reflexes.js",
     "offers": "npm run build && node scripts/offers.js",
     "tables": "node scripts/tables.js",

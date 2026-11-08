@@ -82,7 +82,7 @@ Read [AGENTS.md](AGENTS.md) before writing code: it holds the rules every change
 npm run check
 ```
 
-It builds, type-checks, runs the tests and checks the budgets. `npm run e2e` runs the browser tests in Chromium and WebKit against the fake brain (first, once: `npx playwright install chromium webkit`). [CI](.github/workflows/ci.yml) runs both on every push and pull request, and [GitLab's](.gitlab-ci.yml) the first.
+It builds, type-checks, runs the tests and checks the budgets. `npm run e2e` runs the browser tests in Chromium and WebKit against the fake brain (first, once: `npx playwright install chromium webkit`). [CI](.github/workflows/ci.yml) runs both on every push and pull request, and [GitLab's](.gitlab-ci.yml) the first. `npm run ci` runs GitHub's every job on your machine, in Docker, as CI does.
 
 `app/` holds everything a deploy serves; the root holds what never ships: jean-cli, the gateway, the desktop and container builds, the scripts, the tests and the docs.
 

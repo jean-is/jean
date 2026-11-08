@@ -9,6 +9,8 @@
 # 24.04, as the image is (noble), never ubuntu-latest, which moves under the run. An action is named by its commit, which
 # can't move, its version beside it (scripts/security.js holds this; Dependabot says when one is new).
 # Every job that runs Node runs Jean's own, the newest LTS, named once in .nvmrc, over the image's (D701).
+# npm run ci replays every job of these workflows on a machine with Docker, what publishes rehearsed (scripts/ci.js, D724):
+# an action, an input or a condition it can't replay fails npm test, so a change here brings its replay there.
 
 name: CI
 
