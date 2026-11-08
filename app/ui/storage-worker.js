@@ -66,6 +66,8 @@ async function openVault() {
 
 /** @param {any} err */
 const isMissing = (err) => err?.name === 'NotFoundError' || err?.name === 'TypeMismatchError'
+/** What `work` gives, or `missing` where the file or folder isn't there. @template T, M @param {Promise<T>} work @param {M} missing @returns {Promise<T | M>} */
+const orMissing = (work, missing) => work.catch((err) => { if (isMissing(err)) return missing; throw err })
 
 /** @param {string} path */
 function split(path) {
@@ -100,14 +102,7 @@ function locked(path, mode, fn) {
 }
 
 /** @param {string} path @returns {Promise<File|null>} */
-async function readFile(path) {
-  try {
-    return await (await fileHandle(path, false)).getFile()
-  } catch (err) {
-    if (isMissing(err)) return null
-    throw err
-  }
-}
+const readFile = (path) => orMissing(fileHandle(path, false).then((handle) => handle.getFile()), null)
 
 /** @param {string} path @returns {Promise<Uint8Array|null>} */
 async function readBytes(path) {
@@ -151,23 +146,14 @@ async function writeBytes(path, bytes, append) {
 /** @param {string} path */
 async function removeEntry(path) {
   const { parents, name } = split(path)
-  try {
-    await (await dirHandle(parents, false)).removeEntry(name, { recursive: true })
-  } catch (err) {
-    if (!isMissing(err)) throw err
-  }
+  await orMissing(dirHandle(parents, false).then((dir) => dir.removeEntry(name, { recursive: true })), undefined)
 }
 
 /** @param {string} dir */
 async function list(dir) {
   /** @type {any} */
-  let handle
-  try {
-    handle = await dirHandle(dir ? dir.split('/') : [], false)
-  } catch (err) {
-    if (isMissing(err)) return []
-    throw err
-  }
+  const handle = await orMissing(dirHandle(dir ? dir.split('/') : [], false), null)
+  if (!handle) return []
   /** @type {{ name: string, kind: 'file'|'directory' }[]} */
   const entries = []
   for await (const entry of handle.values()) {
@@ -180,21 +166,13 @@ async function list(dir) {
 /** @param {string} path */
 async function exists(path) {
   const { parents, name } = split(path)
-  let dir
-  try {
-    dir = await dirHandle(parents, false)
-  } catch (err) {
+  const dir = await orMissing(dirHandle(parents, false), null)
+  // A directory there is there too.
+  return Boolean(dir) && /** @type {FileSystemDirectoryHandle} */ (dir).getFileHandle(name).then(() => true, (/** @type {any} */ err) => {
+    if (err?.name === 'TypeMismatchError') return true
     if (isMissing(err)) return false
     throw err
-  }
-  try {
-    await dir.getFileHandle(name)
-    return true
-  } catch (err) {
-    if (/** @type {any} */ (err)?.name === 'TypeMismatchError') return true // a directory
-    if (isMissing(err)) return false
-    throw err
-  }
+  })
 }
 
 /** A file's bytes as kept, the tmp copy's when a crash between truncating and writing left it empty; with no file, its first write was cut short. @param {string} path */

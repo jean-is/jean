@@ -11,6 +11,7 @@ import { signal, effect } from '@preact/signals-core'
 import { register, unlock, loaded as capabilities } from '../../ui/caps.js'
 import { app, notify, refreshProjects, refreshConversations } from '../../ui/state.js'
 import { folderFS, mine } from '../../ui/opfs.js'
+import { keptIn } from '../../ui/idb.js'
 import { host, pickFolder, showFolder, hostFS } from '../../ui/host.js'
 import { icons } from '../../ui/menu-icons.js'
 import { loadConversation } from '../../core/conversations.js'
@@ -34,24 +35,7 @@ let soon = 0, observer = /** @type {any} */ (null)
 const later = () => { clearTimeout(soon); soon = setTimeout(round, 2000) }
 
 // The folder can't be kept in a file (a handle can't, a path is this computer's): IndexedDB keeps it, never in a backup or a sync.
-/** @type {Promise<IDBDatabase | null>} */
-const database = new Promise((resolve) => {
-  if (!globalThis.indexedDB) return resolve(null)
-  const request = indexedDB.open(mine('app-sync'), 1)
-  request.onupgradeneeded = () => request.result.createObjectStore('sync')
-  request.onerror = () => resolve(null)
-  request.onsuccess = () => resolve(request.result)
-})
-/** @param {IDBTransactionMode} mode @param {(store: IDBObjectStore) => IDBRequest} act @returns {Promise<any>} */
-async function stored(mode, act) {
-  const db = await database
-  return db && new Promise((resolve) => {
-    const transaction = db.transaction('sync', mode)
-    const request = act(transaction.objectStore('sync'))
-    transaction.oncomplete = () => resolve(request.result)
-    transaction.onerror = transaction.onabort = () => resolve(undefined)
-  })
-}
+const stored = keptIn('sync')
 
 /** Whether the browser lets Jean open the folder, asking when `ask` (it needs the user's click just before); the host always does. @param {Folder} folder */
 const allowed = async (folder, ask = false) => typeof folder === 'string' || /** @type {any} */ (folder)[ask ? 'requestPermission' : 'queryPermission']({ mode: 'readwrite' }).then((/** @type {string} */ answer) => answer === 'granted', () => false)

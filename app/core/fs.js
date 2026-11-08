@@ -8,44 +8,30 @@ export function normalizeDir(path) {
   if (typeof path !== 'string') throw new TypeError(`Path must be a string, got ${typeof path}`)
   if (path.startsWith('/') || path.includes('\\')) throw new TypeError(`Invalid path: ${path}`)
   const trimmed = path.endsWith('/') ? path.slice(0, -1) : path
-  if (trimmed === '') return ''
-  for (const segment of trimmed.split('/')) {
-    if (segment === '' || segment === '.' || segment === '..') throw new TypeError(`Invalid path: ${path}`)
-  }
+  if (trimmed && trimmed.split('/').some((segment) => segment === '' || segment === '.' || segment === '..')) throw new TypeError(`Invalid path: ${path}`)
   return trimmed
 }
 
 /** @param {string} path relative POSIX path, e.g. "projects/x/project.md" @returns {string} */
-export function normalizePath(path) {
-  const normalized = normalizeDir(path)
-  if (normalized === '') throw new TypeError('Empty path')
-  return normalized
-}
+export const normalizePath = (path) => normalizeDir(path) || (() => { throw new TypeError('Empty path') })()
 
 /** Empty parts are ignored; joining nothing gives '' (the root). @param {...string} parts */
 export const join = (...parts) => parts.map(normalizeDir).filter(Boolean).join('/')
 
 /** @param {string} path @returns {string} '' for top-level entries */
-export function dirname(path) {
-  const normalized = normalizePath(path)
-  const slash = normalized.lastIndexOf('/')
-  return slash < 0 ? '' : normalized.slice(0, slash)
-}
+export const dirname = (path) => ((normalized) => normalized.slice(0, Math.max(normalized.lastIndexOf('/'), 0)))(normalizePath(path))
 
-/** @param {string} path */
-export function basename(path) {
-  const normalized = normalizePath(path)
-  return normalized.slice(normalized.lastIndexOf('/') + 1)
-}
+/** @param {string} path @returns {string} */
+export const basename = (path) => ((normalized) => normalized.slice(normalized.lastIndexOf('/') + 1))(normalizePath(path))
 
 /** Entries in the order of their names' code units, as every FS lists them. @param {DirEntry} a @param {DirEntry} b */
 export const byName = (a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0)
 
-/** @param {unknown} text */
-function assertText(text) { if (typeof text !== 'string') throw new TypeError(`File content must be a string, got ${typeof text}`) }
+/** File content as text, or a TypeError. @param {unknown} text @returns {string} */
+export function assertText(text) { if (typeof text !== 'string') throw new TypeError(`File content must be a string, got ${typeof text}`); return text }
 
-/** @param {unknown} bytes */
-function assertBytes(bytes) { if (!(bytes instanceof Uint8Array)) throw new TypeError('File content must be a Uint8Array') }
+/** File content as bytes, or a TypeError. @param {unknown} bytes @returns {Uint8Array} */
+export function assertBytes(bytes) { if (!(bytes instanceof Uint8Array)) throw new TypeError('File content must be a Uint8Array'); return bytes }
 
 export const encoder = new TextEncoder()
 const decoder = new TextDecoder()
@@ -64,22 +50,13 @@ export function memoryFS(initial = {}) {
   const changed = new Map()
   let clock = 0
   /** @param {string} key @param {string | Uint8Array} value */
-  const put = (key, value) => {
-    files.set(key, value)
-    changed.set(key, (clock = Math.max(clock + 1, Date.now())))
-  }
+  const put = (key, value) => { files.set(key, value); changed.set(key, (clock = Math.max(clock + 1, Date.now()))) }
   /** @param {string} key */
-  const text = (key) => {
-    const value = files.get(key)
-    return value === undefined ? null : typeof value === 'string' ? value : decoder.decode(value)
-  }
+  const text = (key) => ((value) => (value === undefined ? null : typeof value === 'string' ? value : decoder.decode(value)))(files.get(key))
   for (const [path, value] of Object.entries(initial)) put(normalizePath(path), value)
 
   /** @param {string} path */
-  const isDir = (path) => {
-    for (const key of files.keys()) if (key.startsWith(path + '/')) return true
-    return false
-  }
+  const isDir = (path) => [...files.keys()].some((key) => key.startsWith(path + '/'))
 
   /** A path a file can be written at, normalized: not a directory, and under none of the files. @param {string} path */
   const writable = (path) => {
@@ -90,26 +67,11 @@ export function memoryFS(initial = {}) {
   }
 
   return {
-    async read(path) {
-      return text(normalizePath(path))
-    },
-    async readBytes(path) {
-      const value = files.get(normalizePath(path))
-      return value === undefined ? null : typeof value === 'string' ? encoder.encode(value) : value.slice()
-    },
-    async write(path, value) {
-      assertText(value)
-      put(writable(path), value)
-    },
-    async writeBytes(path, bytes) {
-      assertBytes(bytes)
-      put(writable(path), bytes.slice())
-    },
-    async append(path, value) {
-      assertText(value)
-      const key = writable(path)
-      put(key, (text(key) ?? '') + value)
-    },
+    read: async (path) => text(normalizePath(path)),
+    readBytes: async (path) => ((value) => (value === undefined ? null : typeof value === 'string' ? encoder.encode(value) : value.slice()))(files.get(normalizePath(path))),
+    write: async (path, value) => put(writable(path), assertText(value)),
+    writeBytes: async (path, bytes) => put(writable(path), assertBytes(bytes).slice()),
+    append: async (path, value) => ((key) => put(key, (text(key) ?? '') + assertText(value)))(writable(path)),
     async list(dir) {
       const normalized = normalizeDir(dir)
       const prefix = normalized ? normalized + '/' : ''
@@ -122,27 +84,11 @@ export function memoryFS(initial = {}) {
       }
       return [...children].map(([name, kind]) => ({ name, kind })).sort(byName)
     },
-    async remove(path) {
-      const key = normalizePath(path)
-      for (const file of [...files.keys()]) {
-        if (file === key || file.startsWith(key + '/')) files.delete(file)
-      }
-    },
-    async exists(path) {
-      const key = normalizePath(path)
-      return files.has(key) || isDir(key)
-    },
-    async stat(path) {
-      const key = normalizePath(path)
-      const value = files.get(key)
-      return value === undefined ? null : { size: typeof value === 'string' ? encoder.encode(value).length : value.length, lastModified: changed.get(key) ?? 0 }
-    },
+    remove: async (path) => { const key = normalizePath(path); for (const file of [...files.keys()]) if (file === key || file.startsWith(key + '/')) files.delete(file) },
+    exists: async (path) => ((key) => files.has(key) || isDir(key))(normalizePath(path)),
+    stat: async (path) => ((key, value) => (value === undefined ? null : { size: typeof value === 'string' ? encoder.encode(value).length : value.length, lastModified: changed.get(key) ?? 0 }))(normalizePath(path), files.get(normalizePath(path))),
     watch: () => () => {},
-    async estimate() {
-      let usage = 0
-      for (const value of files.values()) usage += value.length
-      return { usage }
-    },
+    estimate: async () => ({ usage: [...files.values()].reduce((usage, value) => usage + value.length, 0) }),
   }
 }
 

@@ -16,7 +16,8 @@ import { signal, effect } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { register, unlock } from '../../ui/caps.js'
 import { app, conversationOf, refreshProjects, notify, assistantName, readBody, keepRecords } from '../../ui/state.js'
-import { folderFS, mine } from '../../ui/opfs.js'
+import { folderFS } from '../../ui/opfs.js'
+import { keptIn } from '../../ui/idb.js'
 import { save } from '../../ui/save.js'
 import { icon, icons } from '../../ui/menu-icons.js'
 import { join } from '../../core/fs.js'
@@ -98,29 +99,9 @@ const ALWAYS = 'always'
 const READING = 'app.folders-reading'
 const VISIT = 'app.folders-visit'
 const VISIT_MS = 12 * 3600_000
-/** @type {Promise<IDBDatabase | null>} */
-const database = new Promise((resolve) => {
-  if (!globalThis.indexedDB) return resolve(null)
-  const request = indexedDB.open(mine('app-folders'), 1)
-  request.onupgradeneeded = () => request.result.createObjectStore('folders')
-  request.onerror = () => resolve(null)
-  request.onsuccess = () => resolve(request.result)
-})
-
-/**
- * What the store answers, once what changed is written for good.
- * @template T @param {IDBTransactionMode} mode @param {(store: IDBObjectStore) => IDBRequest<T>} act @returns {Promise<T | undefined>}
- */
-async function stored(mode, act) {
-  const db = await database
-  if (!db || (mode === 'readwrite' && visitOnly)) return undefined
-  return new Promise((resolve) => {
-    const transaction = db.transaction('folders', mode)
-    const request = act(transaction.objectStore('folders'))
-    transaction.oncomplete = () => resolve(request.result)
-    transaction.onerror = transaction.onabort = () => resolve(undefined)
-  })
-}
+const kept = keptIn('folders')
+/** What the store answers, once what changed is written for good; nothing is written while only visiting. @type {typeof kept} */
+const stored = async (mode, act) => (mode === 'readwrite' && visitOnly ? undefined : kept(mode, act))
 
 /** Handles "Always allow" was given for, read once. @type {FileSystemDirectoryHandle[]} */
 let trusted = []

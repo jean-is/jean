@@ -2,7 +2,7 @@
 // with synchronous access handles; this is its RPC client. The same worker
 // works in a folder of the user's, on its handle (D141). The FS is rooted in a profile's folder (D228).
 
-import { normalizeDir, normalizePath, rootedFS } from '../core/fs.js'
+import { normalizeDir, normalizePath, rootedFS, assertText, assertBytes } from '../core/fs.js'
 import { profileOf } from '../core/settings.js'
 import { ulid } from '../core/ulid.js'
 import { scriptURL } from './trusted.js'
@@ -103,18 +103,6 @@ export const files = (call) => ({
   exists: async (path) => call('exists', normalizePath(path)),
   stat: async (path) => call('stat', normalizePath(path)),
 })
-
-/** @param {unknown} text */
-function assertText(text) {
-  if (typeof text !== 'string') throw new TypeError(`File content must be a string, got ${typeof text}`)
-  return text
-}
-
-/** @param {unknown} bytes */
-function assertBytes(bytes) {
-  if (!(bytes instanceof Uint8Array)) throw new TypeError('File content must be a Uint8Array')
-  return bytes
-}
 
 /**
  * @typedef {(op: string, path?: string, text?: string | Uint8Array | FileSystemDirectoryHandle) => Promise<any>} Call
