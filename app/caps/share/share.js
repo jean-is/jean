@@ -24,7 +24,7 @@ import { icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { getSecret, setSecret, deleteSecret } from '../../ui/secrets.js'
 import { filesIn, filesOf, drawingOf, keeping } from '../../ui/export.js'
-import { copyOf } from './copy.js'
+import { copyOf, broughtIn } from './copy.js'
 import { sealValue, openValue, materialOf, keysOf, idOf, random, base64url, bytesOf, linkOf, hashOf, isPart } from './seal.js'
 
 await Promise.all([useStrings('share'), styleSheet(new URL('share.css', import.meta.url))])
@@ -260,8 +260,7 @@ export async function bringIn(remote, text) {
     }
     if (!response.ok) throw new Error(String(response.status))
     const value = await openValue(new Uint8Array(await response.arrayBuffer()), material)
-    // What came is read as its copy again (./copy.js): requests, answers and calls, and links only to the files that came with it.
-    const [, ...records] = copyOf(String(value.file ?? ''), { read: true, aFile: t('share.aFile'), files: value.files ?? {} }).split('\n').filter(Boolean).map((line) => JSON.parse(line))
+    const records = broughtIn(String(value.file ?? ''), value.files ?? {}, t('share.aFile'))
     const [at, id] = [new Date().toISOString(), ulid()]
     const path = join(app.projectDir, 'conversations', `${id}.jsonl`)
     // Each file kept as Files keeps one, with its text for the brain, under the name its bytes' SHA-256 gives it: one whose bytes aren't

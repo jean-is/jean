@@ -4,7 +4,7 @@
 // summaries, what the page reached and the device's id stay here; what Jean read (the tools' calls and
 // results, the files shared) goes only when the person says so. A share brought in is read through it
 // again, so its task holds only what a copy can. No DOM: tested with node --test.
-import { filesMade } from '../../core/events.js'
+import { filesMade, metaRecord } from '../../core/events.js'
 
 /** What a call that made a file keeps: the file, who made it (D263). */
 const MADE = ['file', 'picture', 'files', 'made']
@@ -42,4 +42,15 @@ export function copyOf(file, { read = false, aFile, files }) {
       rawInput: call._meta?.picture && call.rawInput?.description ? { description: call.rawInput.description } : {} })
   })
   return `${[{ format: header.format, kind: header.kind, id: header.id, createdAt: header.createdAt, by: 'user' }, ...kept].map((record) => JSON.stringify(record)).join('\n')}\n`
+}
+
+/**
+ * The records a share brought in writes as its task (Continue with Jean): its copy again, links only to the files that came with it,
+ * and what its parts were filled with, as its sender's Jean kept it (ui/export.js, keeping()).
+ * @param {string} file the share's JSONL @param {Record<string, string>} files those that came with it @param {string} aFile
+ */
+export function broughtIn(file, files, aFile) {
+  const filled = file.split('\n').map((line) => { try { return JSON.parse(line).meta?.filled } catch { return undefined } }).findLast((one) => one && typeof one === 'object')
+  const [, ...records] = copyOf(file, { read: true, aFile, files }).trim().split('\n').map((line) => JSON.parse(line))
+  return [...records, ...(filled ? [metaRecord('user', { filled })] : [])]
 }
