@@ -1,14 +1,14 @@
-// Sharing by link (D361, docs/sharing.md): a task, or one page, chart, deck or picture Jean made, as
-// a link to a copy sealed here and kept by a host that can't read it, which whoever has the link, and
-// the password when there is one, opens. The host is the one whoever serves Jean names (`urls.share`),
-// none until one is, and policy can say never (`rules.share`). Found after a first copy saved (D281).
+// Sharing (D361, docs/sharing.md): a task, or one page, chart, deck or picture Jean made, with anyone who has its link, or with only the
+// people chosen, whose pane People draws in the same dialog (its `audience` slot, D727). A link is a copy sealed here and kept by a host that
+// can't read it, which whoever has the link, and the password when there is one, opens. The host is the one whoever serves Jean names
+// (`urls.share`), none until one is, and policy can say never (`rules.share`). Found after a first copy saved, or with People (D281).
 // The copy holds the requests, the answers and the files made, never the notes, the prompt, the
 // thinking or the secrets (copy.js). Each share is a file of Jean's, shares/<ulid>.json; its write
 // token and what its password made stay among the secrets, so only this device changes it.
 import { html, nothing } from 'lit-html'
-import { signal } from '@preact/signals-core'
+import { signal, effect } from '@preact/signals-core'
 import { walkTokens } from 'marked'
-import { register, unlock } from '../../ui/caps.js'
+import { register, unlock, slots, loaded } from '../../ui/caps.js'
 import { act } from '../../ui/acts.js'
 import { lex, WIDGETS, PAGES } from '../../ui/markdown.js'
 import { app, notify, showError, refreshConversations, openConversation, SHORTCUTS } from '../../ui/state.js'
@@ -61,8 +61,13 @@ export const linkFor = (share) => linkOf(share.host, share.remote, bytesOf(share
 /** The host's address, or '' where none is named. */
 export const hostOf = () => String(serviceURL('share', app.settings.value, app.policy) ?? '')
 
-/** Whether this Jean shares at all: a host named, and policy not saying never. */
+/** Whether this Jean shares by link: a host named, and policy not saying never. */
 export const allowed = () => Boolean(hostOf()) && app.policy.rules?.share !== 'never'
+
+/** The dialog's other audiences, those on now: People's, only the people chosen (D727). */
+export const audiences = () => slots('audience').filter((one) => one.when())
+/** Whether there is anyone to share with: by link, or another audience. */
+const shown = () => allowed() || audiences().length > 0
 
 /** The share's file. @param {string} id */
 const fileOf = (id) => join(DIR, `${id}.json`)
@@ -252,18 +257,17 @@ export async function fromAddress() {
 // ─── Settings › Your data ────────────────────────────────────────────────────
 
 /**
- * At the top of the open task, beside what opens next to it: Share…, or once its link opens
- * a light at its corner, as the terminal's, a lock when a password closes it, and Shared until when
- * as its name; either opens the dialog on it.
- * @param {string} path
+ * At the top of the open task, beside what opens next to it: Share…; once its link opens, a light at its corner, as the terminal's, a
+ * lock when a password closes it, and Shared until when as its name; else, once it went to people, whom (D727). Each opens the dialog.
+ * @param {{ path: string, records: unknown[] }} current
  */
-function state(path) {
-  const share = shareOf({ path, title: '' })
+function state({ path, records }) {
+  const share = shareOf({ path, title: '' }), live = share && Date.parse(share.expires) > Date.now()
+  const went = live ? '' : audiences().map((one) => one.went(records)).find(Boolean)
   const act = (/** @type {Event} */ event) => openShare({ path, title: app.conversations.value.find((one) => one.path === path)?.title ?? '' }, event.currentTarget)
-  return share && Date.parse(share.expires) > Date.now()
-    ? html`<button class="icon-button share-top share-state" @click=${act} aria-keyshortcuts=${SHORTCUTS.share}
-      aria-label=${t('share.sharedUntil', { date: new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'medium' }).format(new Date(share.expires)) })}>${share.password ? icons.lock : icons.share}<span class="ember" aria-hidden="true"></span></button>`
-    : html`<button class="icon-button share-top" @click=${act} aria-label=${t('share.menu')} aria-keyshortcuts=${SHORTCUTS.share}>${icons.share}</button>`
+  return html`<button class="icon-button share-top ${live ? 'share-state' : ''}" @click=${act} aria-keyshortcuts=${SHORTCUTS.share}
+    aria-label=${live ? t('share.sharedUntil', { date: new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'medium' }).format(new Date(share.expires)) }) : went || t('share.menu')}>${
+    live ? html`${share.password ? icons.lock : icons.share}<span class="ember" aria-hidden="true"></span>` : went ? icons.people : icons.share}</button>`
 }
 
 /** Shared links' page in Your data: each with its task, until when, and Copy, Update, Stop sharing. */
@@ -282,29 +286,30 @@ function panel() {
   </section>`
 }
 
-if (allowed()) {
-  await read()
-  register({
-    id: 'share',
-    slots: {
-      // In a task's ⋮ menu (ui/inbox.js), after Save a copy, drawn as the menu's own actions: ⌘⇧U on the open task's (D377).
-      task: { at: 1, draw: (/** @type {{ path: string, title: string }} */ item, /** @type {(icon: unknown, label: string, act: (event: Event) => unknown, shortcut: string) => unknown} */ action) =>
-        action(icons.share, t('share.menu'), (/** @type {Event} */ event) => openShare({ path: item.path, title: item.title }, event.currentTarget), SHORTCUTS.share) },
-      // Beside Copy, under a page, a chart, a deck or a diagram, and on a picture made; first in an answer's More options, as its item.
-      drawn: { at: 1, draw: (/** @type {Item} */ item, /** @type {((icon: unknown, label: string, act: (event: Event) => unknown) => unknown) | undefined} */ action) => {
-        if (!app.current.value) return nothing
-        const act = (/** @type {Event} */ event) => openShare({ path: String(app.current.value?.path), title: app.conversations.value.find((one) => one.path === app.current.value?.path)?.title ?? '', item }, event.currentTarget)
-        return action ? action(icons.share, t('share.menu'), act) : html`<button class="icon-button subtle" aria-label=${t('share.menu')} @click=${act}>${icons.share}</button>`
-      } },
-      views: { at: 5, draw: (/** @type {{ path: string, records: unknown[] } | null} */ current) => (current?.records.length ? state(current.path) : nothing) },
-      // Who else sees the user's things, in Your data: how many links are open and when the next ends.
-      data: { id: 'links', at: 0, group: 'others', icon: icons.share, label: 'share.links', draw: panel, when: () => shares.value.length > 0, line: () => t('share.page'),
-        text: () => t('share.count', { count: shares.value.length, date: new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'medium' }).format(Math.min(...shares.value.map((share) => Date.parse(share.expires)))) }) },
-      dialog: { at: 1, draw: () => html`<app-share-dialog></app-share-dialog>` },
-    },
-    hooks: [
-      // A share that follows its task is sealed again once each answer ends.
-      { on: 'turn.end', match: { aborted: false }, run: (e, next) => { for (const share of shares.peek()) if (share.keep && share.task === e.task) update(share, { quiet: true }); return next(e) } },
-    ],
-  })
+if (allowed()) await read()
+/** @type {import('../../ui/caps.js').Capability} */
+const capability = {
+  id: 'share',
+  slots: {
+    // In a task's ⋮ menu (ui/inbox.js), after Save a copy, drawn as the menu's own actions: ⌘⇧U on the open task's (D377).
+    task: { at: 1, draw: (/** @type {{ path: string, title: string }} */ item, /** @type {(icon: unknown, label: string, act: (event: Event) => unknown, shortcut: string) => unknown} */ action) =>
+      action(icons.share, t('share.menu'), (/** @type {Event} */ event) => openShare({ path: item.path, title: item.title }, event.currentTarget), SHORTCUTS.share) },
+    // Beside Copy, under a page, a chart, a deck or a diagram, and on a picture made; first in an answer's More options, as its item.
+    drawn: { at: 1, draw: (/** @type {Item} */ item, /** @type {((icon: unknown, label: string, act: (event: Event) => unknown) => unknown) | undefined} */ action) => {
+      if (!app.current.value) return nothing
+      const act = (/** @type {Event} */ event) => openShare({ path: String(app.current.value?.path), title: app.conversations.value.find((one) => one.path === app.current.value?.path)?.title ?? '', item }, event.currentTarget)
+      return action ? action(icons.share, t('share.menu'), act) : html`<button class="icon-button subtle" aria-label=${t('share.menu')} @click=${act}>${icons.share}</button>`
+    } },
+    views: { at: 5, draw: (/** @type {{ path: string, records: unknown[] } | null} */ current) => (current?.records.length ? state(current) : nothing) },
+    // Who else sees the user's things, in Your data: how many links are open and when the next ends.
+    data: { id: 'links', at: 0, group: 'others', icon: icons.share, label: 'share.links', draw: panel, when: () => shares.value.length > 0, line: () => t('share.page'),
+      text: () => t('share.count', { count: shares.value.length, date: new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'medium' }).format(Math.min(...shares.value.map((share) => Date.parse(share.expires)))) }) },
+    dialog: { at: 1, draw: () => html`<app-share-dialog></app-share-dialog>` },
+  },
+  hooks: [
+    // A share that follows its task is sealed again once each answer ends.
+    { on: 'turn.end', match: { aborted: false }, run: (e, next) => { for (const share of shares.peek()) if (share.keep && share.task === e.task) update(share, { quiet: true }); return next(e) } },
+  ],
 }
+// Its entries, once there is anyone to share with: a link's host, or another audience, People's, which may load after it.
+effect(() => { if (shown() && !loaded.peek().has('share')) register(capability) })

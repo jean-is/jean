@@ -1,8 +1,8 @@
-// Share a link (D361): who opens it, a card for each choice saying what it means, the password chosen in
-// its own before the link is made; for how long, each length with the day it ends; for a task, what goes.
-// Once shared, the link or its QR code, a password just chosen, shown this once, and the choices
-// folded into one line, opened to change them under the same link or to stop sharing. Loaded when
-// it first opens.
+// Share (D361): to whom first, anyone with the link or only the people chosen, whose pane People draws (its `audience` slot, D727); the
+// choice shows where both can. A link: a password or none, a card for each saying what it means, the password chosen in its own before
+// the link is made; for how long, each length with the day it ends; for a task, what goes. Once shared, the link or its QR code, a
+// password just chosen, shown this once, and the choices folded into one line, opened to change them under the same link or to stop
+// sharing. Loaded when it first opens.
 import { html, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
@@ -11,7 +11,7 @@ import { t, intlLocales } from '../../core/i18n.js'
 import { BRAND } from '../../brand.js'
 import { icons } from '../../ui/menu-icons.js'
 import { codeOf } from '../../ui/qr.js'
-import { sharing, shares, shareOf, linkFor, here, create, update, stop, failed } from './share.js'
+import { sharing, shares, shareOf, linkFor, here, create, update, stop, failed, allowed, audiences } from './share.js'
 
 /** Letters and digits that read alike in every script's fonts: none of 0, O, 1, l, I. */
 const LETTERS = 'abcdefghjkmnpqrstuvwxyz23456789'
@@ -28,6 +28,8 @@ const choices = signal(/** @type {Choices} */ ({ closed: false, word: '', changi
 const [mine, working, coded, copied] = /** @type {const} */ ([signal(true), signal(false), signal(false), signal('')])
 /** The password just chosen for a share, which only this dialog ever shows, until it opens again. */
 const told = signal(/** @type {{ id: string, word: string } | null} */ (null))
+/** The audience picked other than a link, People's; none for a link, or the first other where no link can be made. */
+const to = signal(/** @type {import('../../ui/caps.js').Slot | null} */ (null))
 
 /** The link's QR code for a phone's camera, which share.css draws dark on light, or none where there is none to draw. @param {ReturnType<typeof codeOf>} code */
 const drawn = (code) => code && html`<svg class="share-code" role="img" aria-label=${t('share.code')} viewBox="-4 -4 ${code.size + 8} ${code.size + 8}"><path d=${code.d}/></svg><p class="share-point">${t('share.point')}</p>`
@@ -46,7 +48,7 @@ function reset(what) {
   mine.value = true; coded.value = false
   if (share) here(share).then((yes) => { if (sharing.peek() === what) mine.value = yes })
 }
-effect(() => { reset(sharing.value); told.value = null })
+effect(() => { reset(sharing.value); told.value = null; to.value = null })
 
 /** Makes the link, or changes the one made: its password kept, a new one, or none. @param {SubmitEvent} event */
 async function submit(event) {
@@ -78,10 +80,13 @@ class ShareDialog extends Element {
     const word = share && told.value?.id === share.id ? told.value.word : ''
     const { closed: closing, changing, days, read, keep, open } = choices.value
     const done = (/** @type {string} */ which) => (copied.value === which ? icons.check : icons.copy)
+    const others = audiences(), other = others.includes(/** @type {any} */ (to.value)) ? to.value : allowed() ? null : others[0]
     return html`<dialog class="sheet share-dialog" @close=${closed('share')} @click=${backdrop}>
       ${head(t('share.title'))}
       ${what ? html`<p class="lede" dir="auto">${what.title || t('conversation.untitled')}</p>` : nothing}
-      ${share ? html`<section class="stack">${live ? html`<div class="share-pick" role="radiogroup" aria-label=${t('share.title')}>${[false, true].map((code) => html`<label for=${`shown-${code}`}><input id=${`shown-${code}`} type="radio" name="shown" .checked=${coded.value === code} @change=${() => { coded.value = code }}>${t(code ? 'share.qr' : 'share.link')}</label>`)}</div>`
+      ${allowed() && others.length ? html`<div class="share-pick share-to" role="radiogroup" aria-label=${t('share.who')}>${[null, ...others].map((one, i) => html`<label for=${`share-to-${i}`}>
+        <input id=${`share-to-${i}`} type="radio" name="to" .checked=${other === one} @change=${() => { to.value = one }}>${one ? one.label() : t('share.anyone')}</label>`)}</div>` : nothing}
+      ${other ? (what && other.draw(what)) : html`${share ? html`<section class="stack">${live ? html`<div class="share-pick" role="radiogroup" aria-label=${t('share.title')}>${[false, true].map((code) => html`<label for=${`shown-${code}`}><input id=${`shown-${code}`} type="radio" name="shown" .checked=${coded.value === code} @change=${() => { coded.value = code }}>${t(code ? 'share.qr' : 'share.link')}</label>`)}</div>`
             : html`<p>${t('share.ended', { date: day(share.expires) })}</p>`}
           ${(live && coded.value && drawn(codeOf(link))) || html`<div class="share-field">
             <input class="share-link" readonly dir="ltr" title=${t('share.link')} .value=${link} @focus=${(/** @type {Event} */ event) => /** @type {HTMLInputElement} */ (event.target).select()}>
@@ -90,8 +95,8 @@ class ShareDialog extends Element {
             <button class="icon-button" aria-label=${t('share.copyPassword')} @click=${() => copy(word, 'word')}>${done('word')}</button><small>${t('share.apart')}</small></div>` : nothing}
           ${!mine.value ? html`<p class="hint">${t('share.notHere')}</p>` : html`<button class="share-sum" aria-expanded=${String(open)} @click=${take(() => ({ open: !open }))}>
             ${share.password ? icons.lock : icons.globe}<span>${t(share.password ? 'share.withPassword' : 'share.anyone')} · ${t('share.until', { date: day(share.expires, 'medium') })}</span> ${t('share.change')} ${icons.chevron}</button>`}</section>` : nothing}
-      ${share && !(mine.value && open) ? nothing : html`<section><form id="share-form" class="stack" @submit=${submit}><fieldset><legend>${t('share.who')}</legend>
-            <label class="share-choice" for="share-open"><input id="share-open" type="radio" name="who" .checked=${!closing} @change=${take(() => ({ closed: false }))}><span><span><b>${t('share.anyone')}</b> <small>${t('share.anyoneSays')}</small></span></span></label>
+      ${share && !(mine.value && open) ? nothing : html`<section><form id="share-form" class="stack" @submit=${submit}><fieldset><legend>${t('share.password')}</legend>
+            <label class="share-choice" for="share-open"><input id="share-open" type="radio" name="who" .checked=${!closing} @change=${take(() => ({ closed: false }))}><span><span><b>${t('share.bare')}</b> <small>${t('share.anyoneSays')}</small></span></span></label>
             <div class="share-choice"><input type="radio" name="who" id="share-closed" .checked=${closing} @change=${take(() => ({ closed: true, word: offered() }))}>
               <span><label for="share-closed"><b>${t('share.withPassword')}</b> <small>${t('share.passwordSays')}</small></label>${!closing ? nothing : share?.password && !changing
                 ? html`<small>${t('share.notKept')}</small><button type="button" class="button" @click=${take(() => ({ changing: true, word: offered() }))}>${t('share.changePassword')}</button>`
@@ -105,7 +110,7 @@ class ShareDialog extends Element {
       ${share && !mine.value ? nothing : html`<footer class="dialog-foot">${share ? html`<button class="button subtle danger" @click=${() => stop(share)}>${t('share.stop')}</button>` : nothing}
           ${share && !open ? ('share' in navigator ? html`<button class="button" @click=${() => navigator.share({ title: what?.title, url: link }).catch(() => {})}>${icons.share} ${t('share.send')}</button>` : nothing)
             : html`<button class="button primary" form="share-form" ?disabled=${working.value}>${icons.share} ${t(working.value ? 'share.sealing' : share ? 'share.update' : 'share.create')}</button>`}
-        </footer>`}
+        </footer>`}`}
     </dialog>`
   }
 

@@ -1,9 +1,10 @@
 {
   "share.menu": "Chia sẻ…",
   "share.sharedUntil": "Đã chia sẻ đến {date}",
-  "share.title": "Chia sẻ đường liên kết",
+  "share.title": "Chia sẻ",
   "share.who": "Ai có thể mở",
   "share.anyone": "Bất kỳ ai có đường liên kết",
+  "share.bare": "Không có mật khẩu",
   "share.withPassword": "Có mật khẩu",
   "share.anyoneSays": "Đơn giản nhất: chỉ gửi cho đúng người cần nhận.",
   "share.passwordSays": "Họ cũng cần mật khẩu, được gửi bằng cách khác.",

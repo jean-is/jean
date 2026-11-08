@@ -1,9 +1,10 @@
 {
   "share.menu": "Shiriki…",
   "share.sharedUntil": "Imeshirikiwa hadi {date}",
-  "share.title": "Shiriki kiungo",
+  "share.title": "Shiriki",
   "share.who": "Nani anaweza kukifungua",
   "share.anyone": "Yeyote mwenye kiungo",
+  "share.bare": "Bila nenosiri",
   "share.withPassword": "Kwa nenosiri",
   "share.anyoneSays": "Rahisi zaidi: kitume tu kwa wale kinaowahusu.",
   "share.passwordSays": "Wanahitaji pia nenosiri, litakalotumwa kwa njia nyingine.",

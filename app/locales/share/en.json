@@ -1,9 +1,10 @@
 {
   "share.menu": "Share…",
   "share.sharedUntil": "Shared until {date}",
-  "share.title": "Share a link",
+  "share.title": "Share",
   "share.who": "Who can open it",
   "share.anyone": "Anyone with the link",
+  "share.bare": "No password",
   "share.withPassword": "With a password",
   "share.anyoneSays": "The simplest: send it only to those it’s for.",
   "share.passwordSays": "They also need the password, sent another way.",

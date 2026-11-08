@@ -1,9 +1,10 @@
 {
   "share.menu": "አጋራ…",
   "share.sharedUntil": "እስከ {date} ድረስ ተጋርቷል",
-  "share.title": "አገናኝ ያጋሩ",
+  "share.title": "አጋራ",
   "share.who": "ማን ሊከፍተው ይችላል",
   "share.anyone": "አገናኙ ያለው ማንኛውም ሰው",
+  "share.bare": "ያለ የይለፍ ቃል",
   "share.withPassword": "በይለፍ ቃል",
   "share.anyoneSays": "ቀላሉ፦ ለሚመለከታቸው ብቻ ይላኩት።",
   "share.passwordSays": "የይለፍ ቃሉም ያስፈልጋቸዋል፣ በሌላ መንገድ የሚላክ።",

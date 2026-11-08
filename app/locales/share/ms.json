@@ -1,9 +1,10 @@
 {
   "share.menu": "Kongsi…",
   "share.sharedUntil": "Dikongsi sehingga {date}",
-  "share.title": "Kongsi pautan",
+  "share.title": "Kongsi",
   "share.who": "Siapa yang boleh membukanya",
   "share.anyone": "Sesiapa yang ada pautan",
+  "share.bare": "Tanpa kata laluan",
   "share.withPassword": "Dengan kata laluan",
   "share.anyoneSays": "Paling mudah: hantar hanya kepada orang yang dituju.",
   "share.passwordSays": "Mereka juga perlukan kata laluan, yang dihantar melalui cara lain.",

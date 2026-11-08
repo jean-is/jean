@@ -1,9 +1,10 @@
 {
   "share.menu": "Delen…",
   "share.sharedUntil": "Gedeeld tot {date}",
-  "share.title": "Een link delen",
+  "share.title": "Delen",
   "share.who": "Wie hem kan openen",
   "share.anyone": "Iedereen met de link",
+  "share.bare": "Zonder wachtwoord",
   "share.withPassword": "Met een wachtwoord",
   "share.anyoneSays": "Het eenvoudigst: stuur hem alleen naar wie hij voor bedoeld is.",
   "share.passwordSays": "Ze hebben ook het wachtwoord nodig, op een andere manier gestuurd.",

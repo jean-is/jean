@@ -1,9 +1,10 @@
 {
   "share.menu": "แชร์…",
   "share.sharedUntil": "แชร์อยู่ถึง {date}",
-  "share.title": "แชร์ลิงก์",
+  "share.title": "แชร์",
   "share.who": "ใครเปิดได้",
   "share.anyone": "ทุกคนที่มีลิงก์",
+  "share.bare": "ไม่ใช้รหัสผ่าน",
   "share.withPassword": "ใช้รหัสผ่าน",
   "share.anyoneSays": "ง่ายที่สุด: ส่งให้เฉพาะคนที่ตั้งใจจะให้เท่านั้น",
   "share.passwordSays": "ผู้รับต้องมีรหัสผ่านด้วย ซึ่งส่งทางช่องทางอื่น",

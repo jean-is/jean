@@ -1,9 +1,10 @@
 {
   "share.menu": "Поделиться…",
   "share.sharedUntil": "Доступ открыт до {date}",
-  "share.title": "Поделиться ссылкой",
+  "share.title": "Поделиться",
   "share.who": "Кто может открыть",
   "share.anyone": "Все, у кого есть ссылка",
+  "share.bare": "Без пароля",
   "share.withPassword": "С паролем",
   "share.anyoneSays": "Проще всего: отправьте её только тем, для кого она.",
   "share.passwordSays": "Им понадобится и пароль, отправленный другим путём.",

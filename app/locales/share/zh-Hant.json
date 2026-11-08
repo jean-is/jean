@@ -1,9 +1,10 @@
 {
   "share.menu": "分享…",
   "share.sharedUntil": "分享至 {date}",
-  "share.title": "分享連結",
+  "share.title": "分享",
   "share.who": "誰可以開啟",
   "share.anyone": "任何有連結的人",
+  "share.bare": "不使用密碼",
   "share.withPassword": "使用密碼",
   "share.anyoneSays": "最簡單：只傳給該收到的人。",
   "share.passwordSays": "對方還需要密碼，請用另一種方式傳給他。",

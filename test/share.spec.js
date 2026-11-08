@@ -74,8 +74,10 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   await row.getByRole('button', { name: 'Share…' }).click()
   const dialog = page.locator('app-share-dialog dialog[open]')
   await expect(dialog).toContainText('Its answers’ certificates go with it.')
-  // Who opens it, a card for each choice saying what it means, and for how long, each length with the day it would end.
-  await expect(dialog.getByRole('radio', { name: /^Anyone with the link The simplest/ })).toBeChecked()
+  // Anyone with the link, the one audience without People: a password or none, a card for each saying what it means, and for how long,
+  // each length with the day it would end.
+  await expect(dialog.getByRole('radiogroup', { name: 'Who can open it' })).toHaveCount(0)
+  await expect(dialog.getByRole('radio', { name: /^No password The simplest/ })).toBeChecked()
   await expect(dialog.getByRole('radio', { name: /^30 days Until .+ \d{4}$/ })).toBeChecked()
   await expect(dialog.getByRole('radio', { name: /^A year Until / })).not.toBeChecked()
   await dialog.getByRole('button', { name: 'Create link' }).click()
@@ -161,7 +163,7 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   // The choices, opened from their line: a password, offered in its card before it applies and drawn again on asking, and a year.
   await expect(dialog.getByRole('radio', { name: 'Link', exact: true })).toBeChecked()
   await dialog.getByRole('button', { name: /^Anyone with the link · Until / }).click()
-  await expect(dialog.getByRole('radio', { name: /^Anyone with the link / })).toBeChecked()
+  await expect(dialog.getByRole('radio', { name: /^No password / })).toBeChecked()
   await dialog.getByRole('radio', { name: /^With a password They also need/ }).check()
   const first = await dialog.getByLabel('Password', { exact: true }).inputValue()
   expect(first).toMatch(/^[a-km-z2-9]{4}-[a-km-z2-9]{4}-[a-km-z2-9]{4}$/)

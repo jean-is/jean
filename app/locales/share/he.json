@@ -1,9 +1,10 @@
 {
   "share.menu": "שיתוף…",
   "share.sharedUntil": "משותף עד {date}",
-  "share.title": "שיתוף קישור",
+  "share.title": "שיתוף",
   "share.who": "מי יכול לפתוח",
   "share.anyone": "כל מי שיש לו את הקישור",
+  "share.bare": "בלי סיסמה",
   "share.withPassword": "עם סיסמה",
   "share.anyoneSays": "הכי פשוט: כדאי לשלוח אותו רק למי שהוא מיועד לו.",
   "share.passwordSays": "צריך גם את הסיסמה, שנשלחת בדרך אחרת.",

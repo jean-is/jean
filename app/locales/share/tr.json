@@ -1,9 +1,10 @@
 {
   "share.menu": "Paylaş…",
   "share.sharedUntil": "{date} tarihine kadar paylaşıldı",
-  "share.title": "Bağlantı paylaş",
+  "share.title": "Paylaş",
   "share.who": "Kimler açabilir",
   "share.anyone": "Bağlantıya sahip herkes",
+  "share.bare": "Şifresiz",
   "share.withPassword": "Şifreyle",
   "share.anyoneSays": "En basiti: yalnızca kimin içinse ona gönder.",
   "share.passwordSays": "Başka bir yolla gönderilen şifreye de ihtiyaçları olur.",

@@ -65,7 +65,7 @@ export const app = {
   folded: signal(/** @type {Set<string>} */ (new Set())),
   /** Whether the window is wide enough for the drawer to stay open beside the conversation. */
   wide: signal(false),
-  /** @type {import('@preact/signals-core').Signal<'settings' | 'history' | 'find' | 'project' | 'skill' | 'first' | 'share' | 'profile' | 'publish' | 'people-send' | null>} */
+  /** @type {import('@preact/signals-core').Signal<'settings' | 'history' | 'find' | 'project' | 'skill' | 'first' | 'share' | 'profile' | 'publish' | null>} */
   dialog: signal(null),
   section: signal('general'),
   draft: signal(''),

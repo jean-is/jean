@@ -1,9 +1,10 @@
 {
   "share.menu": "Partajați…",
   "share.sharedUntil": "Partajat până la {date}",
-  "share.title": "Partajați un link",
+  "share.title": "Partajați",
   "share.who": "Cine îl poate deschide",
   "share.anyone": "Oricine are linkul",
+  "share.bare": "Fără parolă",
   "share.withPassword": "Cu o parolă",
   "share.anyoneSays": "Cel mai simplu: trimiteți-l doar celor cărora le este destinat.",
   "share.passwordSays": "Au nevoie și de parolă, trimisă pe altă cale.",

@@ -1,9 +1,10 @@
 {
   "share.menu": "शेअर करा…",
   "share.sharedUntil": "{date} पर्यंत शेअर केले",
-  "share.title": "लिंक शेअर करा",
+  "share.title": "शेअर करा",
   "share.who": "ती कोण उघडू शकते",
   "share.anyone": "लिंक असलेली कोणतीही व्यक्ती",
+  "share.bare": "पासवर्डशिवाय",
   "share.withPassword": "पासवर्डसह",
   "share.anyoneSays": "सर्वात सोपे: ती फक्त ज्यांच्यासाठी आहे त्यांनाच पाठवा.",
   "share.passwordSays": "त्यांना पासवर्डही लागेल, जो वेगळ्या मार्गाने पाठवला जाईल.",

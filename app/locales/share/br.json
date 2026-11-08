@@ -1,9 +1,10 @@
 {
   "share.menu": "Rannañ…",
   "share.sharedUntil": "Rannet betek {date}",
-  "share.title": "Rannañ ul liamm",
+  "share.title": "Rannañ",
   "share.who": "Piv a c’hall e zigeriñ",
   "share.anyone": "Forzh piv gant al liamm",
+  "share.bare": "Hep ger-tremen",
   "share.withPassword": "Gant ur ger-tremen",
   "share.anyoneSays": "An eeunañ : na gasit anezhañ nemet d’ar re eo graet evito.",
   "share.passwordSays": "Ezhomm o deus ivez eus ar ger-tremen, kaset en un doare all.",

@@ -1,9 +1,10 @@
 {
   "share.menu": "Megosztás…",
   "share.sharedUntil": "Megosztva eddig: {date}",
-  "share.title": "Link megosztása",
+  "share.title": "Megosztás",
   "share.who": "Ki nyithatja meg",
   "share.anyone": "Bárki, akinél a link van",
+  "share.bare": "Jelszó nélkül",
   "share.withPassword": "Jelszóval",
   "share.anyoneSays": "A legegyszerűbb: csak azoknak küldd el, akiknek szól.",
   "share.passwordSays": "A jelszó is kell nekik, más úton elküldve.",

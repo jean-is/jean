@@ -1,9 +1,10 @@
 {
   "share.menu": "شیئر کریں…",
   "share.sharedUntil": "{date} تک شیئر کیا گیا",
-  "share.title": "لنک شیئر کریں",
+  "share.title": "شیئر کریں",
   "share.who": "اسے کون کھول سکتا ہے",
   "share.anyone": "ہر وہ شخص جس کے پاس لنک ہو",
+  "share.bare": "پاس ورڈ کے بغیر",
   "share.withPassword": "پاس ورڈ کے ساتھ",
   "share.anyoneSays": "سب سے آسان: اسے صرف انہیں بھیجیں جن کے لیے ہے۔",
   "share.passwordSays": "انہیں پاس ورڈ بھی چاہیے، جو کسی اور طریقے سے بھیجا جائے۔",

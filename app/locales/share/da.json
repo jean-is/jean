@@ -1,9 +1,10 @@
 {
   "share.menu": "Del…",
   "share.sharedUntil": "Delt frem til {date}",
-  "share.title": "Del et link",
+  "share.title": "Del",
   "share.who": "Hvem der kan åbne det",
   "share.anyone": "Alle med linket",
+  "share.bare": "Uden adgangskode",
   "share.withPassword": "Med en adgangskode",
   "share.anyoneSays": "Det enkleste: send det kun til dem, det er til.",
   "share.passwordSays": "De skal også have adgangskoden, sendt på en anden måde.",

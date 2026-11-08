@@ -13,7 +13,7 @@ import { t, tParts, intlLocales } from '../../core/i18n.js'
 import { BRAND } from '../../brand.js'
 import { inviting, accepting, people, invitations, invite, confirm as right, stopInvite, accept, stopAccept, rename, remove } from './people.js'
 
-await Promise.all([styleSheet(new URL('people.css', import.meta.url)), styleSheet(new URL('../../ui/data-pages.css', import.meta.url))])
+await styleSheet(new URL('../../ui/data-pages.css', import.meta.url))
 
 /** What a step shows, its buttons, and what it says as it comes, or what went wrong. @typedef {{ body?: unknown, buttons?: unknown, said?: string, wrong?: string }} Step */
 

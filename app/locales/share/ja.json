@@ -1,9 +1,10 @@
 {
   "share.menu": "共有…",
   "share.sharedUntil": "{date} まで共有中",
-  "share.title": "リンクを共有",
+  "share.title": "共有",
   "share.who": "開ける人",
   "share.anyone": "リンクを知っている全員",
+  "share.bare": "パスワードなし",
   "share.withPassword": "パスワード付き",
   "share.anyoneSays": "いちばん簡単です。見せたい相手にだけ送ってください。",
   "share.passwordSays": "パスワードも必要です。リンクとは別の方法で送ります。",

@@ -1,9 +1,10 @@
 {
   "share.menu": "مشاركة…",
   "share.sharedUntil": "تمت المشاركة حتى {date}",
-  "share.title": "مشاركة رابط",
+  "share.title": "مشاركة",
   "share.who": "من يستطيع فتحه",
   "share.anyone": "كل من لديه الرابط",
+  "share.bare": "بدون كلمة مرور",
   "share.withPassword": "بكلمة مرور",
   "share.anyoneSays": "الأبسط: أرسله فقط إلى من يعنيهم.",
   "share.passwordSays": "يحتاجون أيضًا إلى كلمة المرور، مرسلةً بطريقة أخرى.",

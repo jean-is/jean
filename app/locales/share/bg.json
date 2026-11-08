@@ -1,9 +1,10 @@
 {
   "share.menu": "Сподели…",
   "share.sharedUntil": "Споделено до {date}",
-  "share.title": "Сподели връзка",
+  "share.title": "Сподели",
   "share.who": "Кой може да я отвори",
   "share.anyone": "Всеки с връзката",
+  "share.bare": "Без парола",
   "share.withPassword": "С парола",
   "share.anyoneSays": "Най-простото: изпратете я само на тези, за които е.",
   "share.passwordSays": "Нужна им е и паролата, изпратена по друг начин.",

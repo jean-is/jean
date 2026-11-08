@@ -3,7 +3,7 @@
 // screen shows are typed on Ana's; then each has the other, Ana's Jean naming Bob as she did, and where each reads. Chromium only:
 // Playwright's WebKit keeps nothing, where no one is kept (test/playwright.config.js).
 import { test, expect } from '@playwright/test'
-import { start, openSettings, closeSettings, openTasks, RELAY_URL } from './helpers.js'
+import { start, openSettings, closeSettings, openTasks, RELAY_URL, SHARE_URL } from './helpers.js'
 
 /** @typedef {import('@playwright/test').Page} Page */
 
@@ -79,7 +79,7 @@ test('two people meet side by side: Bob’s six digits typed on Ana’s Jean, th
   await expect(settings.locator('.people-flow .list li')).toContainText(['Calls themselves Bob'])
 })
 
-test('a task sent from its menu to someone met: what goes shown first, then a card on their Jean, which opens it as theirs, from Ana', async ({ browser }) => {
+test('a task shared from its menu with only the people chosen: what goes shown first, then a card on their Jean, which opens it as theirs, from Ana', async ({ browser }) => {
   const [ana, bob] = await Promise.all([person(browser, 'Ana'), person(browser, 'Bob')])
   await meetBeside(ana, bob)
   await ana.evaluate(async () => {
@@ -91,16 +91,36 @@ test('a task sent from its menu to someone met: what goes shown first, then a ca
     await refreshConversations()
   })
   const row = (await openTasks(ana)).locator('.history-list li:not([aria-hidden])', { hasText: 'Plan the trip' })
-  await row.hover()
-  await row.getByRole('button', { name: 'More options' }).click()
-  await row.getByRole('button', { name: 'Send to…' }).click()
-  const dialog = ana.locator('app-people-send dialog[open]')
+  const share = async () => {
+    await row.hover()
+    await row.getByRole('button', { name: 'More options' }).click()
+    await row.getByRole('button', { name: 'Share…' }).click()
+  }
+  // Share, found with People: without a host for links, only the people chosen, without asking to whom.
+  await share()
+  const dialog = ana.locator('app-share-dialog dialog[open]')
+  await expect(dialog.getByRole('radiogroup', { name: 'Who can open it' })).toHaveCount(0)
   await expect(dialog.getByRole('radio', { name: 'Bob from the bakery' })).toBeChecked()
+  await dialog.locator('.dialog-head').getByRole('button', { name: 'Close' }).click()
+  // With one, it asks to whom first: anyone with the link, as before, or only the people chosen.
+  await ana.evaluate(async (host) => { const { app, updateSettings } = await import('/ui/state.js'); await updateSettings({ urls: { ...app.settings.value.urls, share: host } }) }, SHARE_URL)
+  await share()
+  const to = dialog.getByRole('radiogroup', { name: 'Who can open it' })
+  await expect(to.getByRole('radio', { name: 'Anyone with the link' })).toBeChecked()
+  await expect(dialog.getByRole('button', { name: 'Create link' })).toBeVisible()
+  await to.getByRole('radio', { name: 'Only people you choose' }).check()
+  await expect(dialog.getByRole('button', { name: 'Create link' })).toHaveCount(0)
+  await expect(dialog.getByRole('radio', { name: 'Bob from the bakery' })).toBeChecked()
+  await expect(dialog.getByRole('button', { name: 'Add a person' })).toBeVisible()
   await expect(dialog.getByText('1 request and its answer')).toBeVisible()
   await expect(dialog.getByText('They have a week to open it.')).toBeVisible()
   await dialog.getByLabel('A few words for them').fill('For Monday')
   await dialog.getByRole('button', { name: 'Send' }).click()
   await expect(dialog.locator('p[role="status"]')).toHaveText('Sent to Bob from the bakery.')
+  await dialog.getByRole('button', { name: 'Done' }).click()
+  // The task's Share at its top says whom it went to.
+  await ana.evaluate(async () => { const { app, openConversation } = await import('/ui/state.js'); await openConversation(String(app.conversations.value.find((one) => one.title === 'Plan the trip')?.path)) })
+  await expect(ana.locator('.views').getByRole('button', { name: 'Sent to Bob from the bakery.' })).toBeVisible()
 
   // On Bob's Jean, a card: who sent what, their words; opened, it is a task of his, from Ana, her request without actions.
   const card = bob.locator('.people-card')

@@ -1,9 +1,10 @@
 {
   "share.menu": "Udostępnij…",
   "share.sharedUntil": "Udostępnione do {date}",
-  "share.title": "Udostępnij link",
+  "share.title": "Udostępnij",
   "share.who": "Kto może go otworzyć",
   "share.anyone": "Każdy, kto ma link",
+  "share.bare": "Bez hasła",
   "share.withPassword": "Z hasłem",
   "share.anyoneSays": "Najprościej: wyślij go tylko tym, dla których jest.",
   "share.passwordSays": "Potrzebują też hasła, wysłanego inną drogą.",

@@ -1,9 +1,10 @@
 {
   "share.menu": "Jaa…",
   "share.sharedUntil": "Jaettu {date} asti",
-  "share.title": "Jaa linkki",
+  "share.title": "Jaa",
   "share.who": "Kuka voi avata sen",
   "share.anyone": "Kuka tahansa, jolla on linkki",
+  "share.bare": "Ilman salasanaa",
   "share.withPassword": "Salasanalla",
   "share.anyoneSays": "Yksinkertaisinta: lähetä se vain niille, joille se on tarkoitettu.",
   "share.passwordSays": "He tarvitsevat myös salasanan, joka lähetetään toista kautta.",

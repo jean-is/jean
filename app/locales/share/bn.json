@@ -1,9 +1,10 @@
 {
   "share.menu": "শেয়ার করুন…",
   "share.sharedUntil": "{date} পর্যন্ত শেয়ার করা হয়েছে",
-  "share.title": "লিংক শেয়ার করুন",
+  "share.title": "শেয়ার করুন",
   "share.who": "কে এটি খুলতে পারবে",
   "share.anyone": "লিংক আছে এমন যে কেউ",
+  "share.bare": "পাসওয়ার্ড ছাড়া",
   "share.withPassword": "পাসওয়ার্ড দিয়ে",
   "share.anyoneSays": "সবচেয়ে সহজ: যাদের জন্য, শুধু তাদেরই পাঠান।",
   "share.passwordSays": "তাদের পাসওয়ার্ডও লাগবে, যা অন্য উপায়ে পাঠানো হবে।",

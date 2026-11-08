@@ -1,9 +1,10 @@
 {
   "share.menu": "Zdieľať…",
   "share.sharedUntil": "Zdieľané do {date}",
-  "share.title": "Zdieľať odkaz",
+  "share.title": "Zdieľať",
   "share.who": "Kto ho môže otvoriť",
   "share.anyone": "Ktokoľvek s odkazom",
+  "share.bare": "Bez hesla",
   "share.withPassword": "S heslom",
   "share.anyoneSays": "Najjednoduchšie: pošlite ho len tým, pre ktorých je.",
   "share.passwordSays": "Potrebujú aj heslo, poslané inou cestou.",

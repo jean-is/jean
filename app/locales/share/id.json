@@ -1,9 +1,10 @@
 {
   "share.menu": "Bagikan…",
   "share.sharedUntil": "Dibagikan sampai {date}",
-  "share.title": "Bagikan tautan",
+  "share.title": "Bagikan",
   "share.who": "Siapa yang bisa membukanya",
   "share.anyone": "Siapa pun yang punya tautannya",
+  "share.bare": "Tanpa kata sandi",
   "share.withPassword": "Dengan kata sandi",
   "share.anyoneSays": "Paling sederhana: kirim hanya ke orang yang dituju.",
   "share.passwordSays": "Mereka juga perlu kata sandinya, yang dikirim lewat cara lain.",

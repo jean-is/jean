@@ -1,9 +1,10 @@
 {
   "share.menu": "Dijeli…",
   "share.sharedUntil": "Dijeli se do {date}",
-  "share.title": "Dijeli poveznicu",
+  "share.title": "Dijeli",
   "share.who": "Tko je može otvoriti",
   "share.anyone": "Svatko s poveznicom",
+  "share.bare": "Bez lozinke",
   "share.withPassword": "S lozinkom",
   "share.anyoneSays": "Najjednostavnije: pošaljite je samo onima kojima je namijenjena.",
   "share.passwordSays": "Trebaju i lozinku, poslanu na drugi način.",

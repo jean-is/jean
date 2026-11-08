@@ -1,9 +1,10 @@
 {
   "share.menu": "Compartir…",
   "share.sharedUntil": "Compartido hasta el {date}",
-  "share.title": "Compartir un enlace",
+  "share.title": "Compartir",
   "share.who": "Quién puede abrirlo",
   "share.anyone": "Cualquiera con el enlace",
+  "share.bare": "Sin contraseña",
   "share.withPassword": "Con una contraseña",
   "share.anyoneSays": "Lo más sencillo: envíalo solo a quien va dirigido.",
   "share.passwordSays": "También necesitan la contraseña, enviada por otro medio.",

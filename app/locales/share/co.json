@@ -1,9 +1,10 @@
 {
   "share.menu": "Sparte…",
   "share.sharedUntil": "Spartutu finu à u {date}",
-  "share.title": "Sparte un ligame",
+  "share.title": "Sparte",
   "share.who": "Quale u pò apre",
   "share.anyone": "Chiunque hà u ligame",
+  "share.bare": "Senza parolla d’entrata",
   "share.withPassword": "Cù una parolla d’entrata",
   "share.anyoneSays": "U più simplice : mandatelu solu à quelli per quale hè.",
   "share.passwordSays": "Ci vole ancu a parolla d’entrata, mandata d’un’altra manera.",
