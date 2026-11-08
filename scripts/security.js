@@ -92,7 +92,7 @@ export function codeOf(text, strings = false) {
 }
 
 /** Paths where randomness guards something. */
-const GUARDED = /^(app\/ee\/|app\/ui\/(seal|secrets|storage-worker)\.js|app\/caps\/(share|lock|connections|signin|receipt)\/|app\/core\/oauth\.js|host\/|relay\/|requests\/|gateway\/)/
+const GUARDED = /^(app\/ee\/|app\/ui\/(seal|secrets|storage-worker)\.js|app\/caps\/(share|lock|connections|signin|receipt|devices)\/|app\/core\/oauth\.js|host\/|relay\/|requests\/|gateway\/)/
 
 /**
  * What a module does against the rules, each a pattern on its code, or on its code with its strings where a string is what's wrong.
