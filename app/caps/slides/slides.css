@@ -2,6 +2,9 @@
    the room's, Jean's version of a slide ringed in the flame, the words pointed at outlined; beside the conversation, the
    deck's Markdown under its slides, as the pane is narrow; on a card, its first slide alone. */
 app-slides { display: block; }
+/* deck names its stage for its slides' transitions: named only while one pages, so that through Jean's own (the drawer's, a
+   first answer's) it stays in the page rather than over its top bar, and two decks on screen don't share a name, which ends them. */
+:root:not([data-deck-transition]) .deck-stage { view-transition-name: none; }
 app-slides .deck { gap: 0.4rem; }
 app-slides .deck-bar { flex-wrap: wrap; gap: 0.15rem; color: var(--ink-soft); font: inherit; font-size: 0.85rem; }
 app-slides .deck-bar button { min-inline-size: 2.1rem; min-block-size: 2.1rem; border-radius: 50%; color: var(--ink-soft); }

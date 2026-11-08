@@ -372,6 +372,19 @@ test('the decks kept are slides among the creations: their first slide on their 
   await expect(card.locator('.creation-open')).toHaveText(['A second oven'])
   await expect(card.locator('.creation-preview .deck-slide.is-shown')).toContainText('A second oven')
   await expect(card.locator('.creation-preview .deck-bar')).toBeHidden()
+  // Out of its deck's own transitions, its stage has no name; and with Settings open, nothing has one while a view transition plays
+  // (a new version's page, a capability turned off), which would draw it over Settings.
+  const names = (/** @type {boolean} */ during) => page.evaluate(async (during) => {
+    const read = () => ['.creation-preview .deck-stage', 'app-composer'].map((one) => getComputedStyle(/** @type {Element} */ (document.querySelector(one))).viewTransitionName)
+    /** @type {string[]} */
+    let seen = during ? [] : read()
+    if (during) await document.startViewTransition(() => { seen = read() }).finished
+    return seen
+  }, during)
+  expect(await names(false)).toEqual(['none', 'composer'])
+  await openSettings(page)
+  expect(await names(true)).toEqual(['none', 'none'])
+  await closeSettings(page)
   // Renamed: its title, in its Markdown and its page; copied, the user's; deleted, its file gone.
   const menu = async (/** @type {number} */ n = 0) => { await card.nth(n).click({ button: 'right' }); return creations.locator('.task-menu:popover-open') }
   await (await menu()).getByRole('button', { name: 'Rename' }).click()

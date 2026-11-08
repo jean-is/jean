@@ -18,6 +18,9 @@ dialog:not([open]), dialog:not([open])::backdrop { opacity: 0; }
 dialog[open] { @starting-style { opacity: 0; translate: 0 1rem; } }
 /* The page's skip links show where the page is read, however far down (ui/style.css); a dialog's shows in the dialog. */
 dialog[open]::backdrop { @starting-style { opacity: 0; } } dialog .skip { position: absolute; }
+/* While a view transition plays (a new version's page, a capability turned off, a deck written), what has a name is drawn over
+   the whole page, a dialog shown over it too: under one, nothing has a name. */
+:root:active-view-transition:has(dialog:modal) :not(dialog:modal *) { view-transition-name: none; }
 .sheet { inline-size: min(100% - 2rem, 34rem); max-block-size: min(88dvh, 52rem); padding: 1.25rem 1.5rem 1.5rem; border-radius: 1.6rem; }
 .drawer {
   display: flex;
