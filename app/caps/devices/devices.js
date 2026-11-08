@@ -514,6 +514,9 @@ const said = () => ((now, quiet) => (trouble() ? t(`devices.store.${now.gone ? '
   : quiet && t('devices.lastSeen', { device: `\u2068${quiet.name}\u2069`, when: relativeTime(Math.min(seen.value[quiet.id] ?? Date.parse(quiet.createdAt), Date.now())) })))(kept.value?.value ?? {}, others().find(quietOf))
 /** Your devices opened, then what comes next there (Add a device's first step). @param {() => unknown} [then] */
 const opening = (then) => import('../../ui/dialogs.js').then((dialogs) => { dialogs.openSettings('devices'); then?.() })
+/** The person's other devices on a map (ui/map.js), past two a second standing for the rest, moving while the store keeps them in step; while this one is alone, the one to add. */
+export const places = () => ((rest, flow) => (!rest.length ? (app.ephemeral.value ? undefined : ghost(() => opening(start))) : (rest.length > 2 ? [rest[0], null] : rest).map((one) => /** @type {import('../../ui/map.js').Place} */ (one
+  ? { side: 'end', icon: kindOf(one.name), name: one.name, sub: lastSeen(one), state: quietOf(one) ? 'wait' : 'ok', flow } : { side: 'end', icon: icons.devices, name: t('devices.more', { count: rest.length - 1 }), flow }))))(others(), stored.value && Boolean(kept.value?.value.at) && !trouble())
 
 /** A task handed to another device, and how it went, said. @param {string} path @param {Device} to */
 const handOver = (path, to) => sendTask(path, to.id).then((said) => notify(t(`devices.task.${said}`, { device: to.name }), said === 'sent' ? undefined : { alert: true }),
@@ -529,8 +532,7 @@ if (offered()) {
     data: { id: 'devices', at: 2, group: 'copies', icon: icons.devices, label: 'cap.devices.name', text: () => '', page: false, draw: () => null, copy: () => (stored.value && others().length && kept.value?.value.at && !trouble() ? t('devices.safe') : undefined),
       say: () => said() || undefined, fix: () => (!others().length ? html`<button class="button primary" @click=${() => opening(start)}>${icons.plus} ${t('devices.add')}</button>`
         : said() && !kept.value?.value.unreached ? html`<button class="button primary" @click=${() => opening()}>${icons.devices} ${t('devices.see')}</button>` : undefined),
-      node: () => ((rest, flow) => (!rest.length ? (app.ephemeral.value ? undefined : ghost(() => opening(start))) : (rest.length > 2 ? [rest[0], null] : rest).map((one) => /** @type {import('../../ui/map.js').Place} */ (one
-        ? { side: 'end', icon: kindOf(one.name), name: one.name, sub: lastSeen(one), state: quietOf(one) ? 'wait' : 'ok', flow } : { side: 'end', icon: icons.devices, name: t('devices.more', { count: rest.length - 1 }), flow }))))(others(), stored.value && Boolean(kept.value?.value.at) && !trouble()) },
+      node: places },
     // In a task's ⋮ menu, Send to each other device, unless its project is kept on this one.
     task: { at: 2, draw: (/** @type {{ path: string }} */ item, /** @type {(icon: unknown, label: string, act: () => unknown) => unknown} */ action) =>
       (app.projects.value.find((one) => item.path.startsWith(`${one.dir}/`))?.data.cloud === false ? []

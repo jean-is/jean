@@ -23,3 +23,7 @@ app-map button { padding: 0.3rem; border: 0; border-radius: 0.75rem; background:
 .data-lines { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; overflow: visible; fill: none; stroke: var(--line-strong); stroke-width: 1.5; } .data-lines :is(.is-off, .is-ghost) { stroke-dasharray: 4 5; }
 .data-lines .is-flow { stroke: var(--flame); stroke-dasharray: 3 7; animation: along 1.6s linear infinite var(--loops, running); } @keyframes along { to { stroke-dashoffset: -20; } }
 @media (forced-colors: active) { .data-lines { stroke: CanvasText; } app-map .data-disc { border-color: CanvasText; } }
+/* Where a flow of a few steps is (ui/rail.js): a bar above each name, the step under way in the flame, those done ticked and their bar softer. */
+.rail { display: flex; gap: 0.4rem; margin: 0; padding: 0; list-style: none; font-size: 0.8rem; line-height: 1.3; color: var(--ink-soft); }
+.rail > li { --glyph: 0.9rem; flex: 1 1 0; display: flex; align-items: start; gap: 0.25rem; padding-block-start: 0.45rem; border-block-start: 3px solid var(--line-strong); overflow-wrap: anywhere; }
+.rail > [aria-current] { border-color: var(--flame); color: var(--ink); font-weight: 600; } .rail > .is-done { border-color: oklch(from var(--flame) l c h / 0.45); } @media (forced-colors: active) { .rail > [aria-current] { border-color: Highlight; } }

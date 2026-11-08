@@ -120,20 +120,26 @@ async function exchange(a, b) {
   return { settings, link, code: String(await digits.textContent()).replace(' ', '') }
 }
 
-/** On the new device, what joining does said, and Join chosen. @param {Page} b */
+/** On the new device, at the first of the three steps, what joining does said, and Bring it here chosen. @param {Page} b */
 async function joinThere(b) {
   const flow = b.locator('app-settings .devices-flow')
+  await expect(flow.locator('.rail > li')).toHaveText(['Show the code', 'Match the digits', 'Done'])
+  await expect(flow.locator('.rail [aria-current="step"]')).toHaveText('Show the code')
+  await expect(flow.getByRole('heading')).toHaveText('Bring your Jean here?')
   await expect(flow.locator('p').first()).toHaveText('Your Jean on your other device comes to this one, with its brains, settings and projects. You then type six digits there.')
-  await flow.getByRole('button', { name: 'Join' }).click()
+  await flow.getByRole('button', { name: 'Bring it here' }).click()
 }
 
-/** On the new device, the profile that came and the device it came from, opened with Join. @param {Page} b @param {Page} a */
+/** On the new device, still matching, the profile that came as a card, from the device it came from, opened with Yes, it's mine. @param {Page} b @param {Page} a */
 async function trustThere(b, a) {
   const flow = b.locator('app-settings .devices-flow')
   const question = flow.getByRole('heading')
-  await expect(question).toHaveText(new RegExp(`^Open “.+” from ${escaped(await nameOf(a))} on this device\\? Only if you just chose Add a device there yourself\\.$`))
+  await expect(question).toHaveText('Is this yours?')
   await expect(question).toBeFocused()
-  await flow.getByRole('button', { name: 'Join' }).click()
+  await expect(flow.locator('.rail [aria-current="step"]')).toHaveText('Match the digits')
+  await expect(flow.locator('.devices-who small')).toHaveText(`From ${await nameOf(a)}`)
+  await expect(flow.locator('.devices-who + .hint')).toHaveText('Only if you just chose Add a device there yourself.')
+  await flow.getByRole('button', { name: 'Yes, it’s mine' }).click()
 }
 
 /** The devices A has, by id, none removed. @param {Page} page */
@@ -144,21 +150,25 @@ async function sent(settings, a) {
   expect((await listed(a)).length).toBe(1)
 }
 
-/** The six digits typed on A. @param {Locator} settings @param {string} code */
+/** The six digits typed on A, at the second step, which go at the sixth. @param {Locator} settings @param {string} code */
 async function typeCode(settings, code) {
   const field = settings.getByLabel(/^The six digits .+ shows$/)
   await expect(field).toBeFocused()
+  await expect(settings.locator('.rail [aria-current="step"]')).toHaveText('Match the digits')
   await field.fill(code)
-  await settings.getByRole('button', { name: 'Add', exact: true }).click()
 }
 
 /** A and B paired, B in A's profile and listening, A's Your devices back at rest. Gives A's profile and its Your devices. @param {Page} a @param {Page} b */
 async function pair(a, b) {
   const { settings, code } = await exchange(a, b)
-  await typeCode(settings, code)
+  // Typed as the new device shows them, a space between the halves: they go at the sixth digit, without Add.
+  await typeCode(settings, `${code.slice(0, 3)} ${code.slice(3)}`)
   await sent(settings, a)
   await trustThere(b, a)
   await expect(settings.locator('.devices-said')).toHaveText(/ is added\. It opens with your brains, settings and projects\.$/)
+  // Done on the rail, every step ticked, and on the map, the device just added beside this one.
+  await expect(settings.locator('.rail > .is-done')).toHaveCount(3)
+  await expect(settings.getByRole('list', { name: 'Your devices' }).getByRole('listitem')).toHaveCount(2)
   const dir = await here(a)
   await expect.poll(() => here(b), { timeout: 20_000 }).toBe(dir)
   await settings.getByRole('button', { name: 'Done' }).click()
@@ -234,10 +244,8 @@ test('three wrong codes end the adding, on both devices', async ({ page, browser
   const field = settings.getByLabel(/^The six digits .+ shows$/)
   expect(await field.evaluate((box) => /** @type {HTMLInputElement} */ (box).selectionEnd - (/** @type {HTMLInputElement} */ (box).selectionStart ?? 0))).toBe(6)
   await field.fill(wrong(wrong(code)))
-  await settings.getByRole('button', { name: 'Add', exact: true }).click()
   await expect(settings.locator('.devices-wrong')).toHaveText('Those digits don’t match. 1 try left.')
   await field.fill(wrong(wrong(wrong(code))))
-  await settings.getByRole('button', { name: 'Add', exact: true }).click()
   const said = 'Three wrong tries: adding stopped, to be safe. Start again.'
   await expect(settings.locator('.devices-wrong')).toHaveText(said)
   await expect(settings.getByLabel(/^The six digits .+ shows$/)).toHaveCount(0)
@@ -275,7 +283,7 @@ test('a second device opening the same link hears it was already used', async ({
   await expect(c.locator('#prompt')).toHaveValue('')
   await expect(c).toHaveURL(/#\/settings\/devices$/)
   const there = c.locator('app-settings dialog[open]')
-  await there.getByRole('button', { name: 'Join' }).click()
+  await there.getByRole('button', { name: 'Bring it here' }).click()
   await expect(there.locator('.devices-wrong')).toHaveText('This link was already used. On your other device, choose Add a device again for a new one.')
   await expect(c.locator('app-settings .devices-digits')).toHaveCount(0)
   // B's adding goes on.
@@ -511,7 +519,7 @@ test('a locked profile asks for its lock before the six digits', async ({ page, 
   await b.context().close()
 })
 
-test('a link opened does nothing until Join, and the profile that comes, from a device this one doesn’t know, opens only on Join again', async ({ page, browser }) => {
+test('a link opened does nothing until Bring it here, and the profile that comes, from a device this one doesn’t know, opens only on Yes, it’s mine', async ({ page, browser }) => {
   await deviceA(page)
   const b = await device(browser)
   const first = await here(b)
@@ -520,9 +528,9 @@ test('a link opened does nothing until Join, and the profile that comes, from a 
   const link = await settings.getByRole('textbox', { name: 'The link to open on your other device' }).inputValue()
   await b.goto(link)
   const flow = b.locator('app-settings .devices-flow')
-  await expect(flow.getByRole('button', { name: 'Join' })).toBeVisible()
+  await expect(flow.getByRole('button', { name: 'Bring it here' })).toBeVisible()
   await expect(b).toHaveURL(/#\/settings\/devices$/)
-  // Nothing goes from B until Join: A still waits, B shows no digits.
+  // Nothing goes from B until Bring it here: A still waits, B shows no digits.
   await b.waitForTimeout(1500)
   await expect(settings.locator('.devices-said')).toHaveText('Waiting for your other device…')
   await expect(flow.locator('.devices-digits')).toHaveCount(0)
@@ -538,14 +546,14 @@ test('a link opened does nothing until Join, and the profile that comes, from a 
   await expect(digits).toHaveText(/^\d{3} \d{3}$/)
   await typeCode(settings, String(await digits.textContent()).replace(' ', ''))
   await sent(settings, page)
-  // B names the profile and the device it came from, and opens nothing until Join; A keeps nothing meanwhile.
-  const question = flow.getByRole('heading')
-  await expect(question).toHaveText(`Open “Jean” from ${await nameOf(page)} on this device? Only if you just chose Add a device there yourself.`)
-  await expect(question.locator('bdi')).toHaveCount(2)
+  // B shows the profile and the device it came from, the device's name set apart, and opens nothing until Yes, it's mine; A keeps nothing meanwhile.
+  await expect(flow.getByRole('heading')).toHaveText('Is this yours?')
+  await expect(flow.locator('.devices-who')).toContainText(`JeanFrom ${await nameOf(page)}`)
+  await expect(flow.locator('.devices-who bdi')).toHaveCount(1)
   await b.waitForTimeout(1000)
   expect([await here(b), await profiles(b)]).toEqual([first, [first]])
-  // Cancel: B stays as it was, with none of A's keys, and A, told, keeps nothing and says so.
-  await flow.getByRole('button', { name: 'Cancel' }).click()
+  // No, stop: B stays as it was, with none of A's keys, and A, told, keeps nothing and says so.
+  await flow.getByRole('button', { name: 'No, stop' }).click()
   await expect(flow.getByRole('button', { name: 'Add a device' })).toBeFocused()
   expect([await here(b), await profiles(b)]).toEqual([first, [first]])
   expect(String(await read(b, '.secrets/keys.json'))).not.toMatch(/key of the cloud/)
@@ -563,10 +571,10 @@ test('Cancel on the device that has the Jean while the other asks: Join there th
   const { settings, code } = await exchange(page, b)
   await typeCode(settings, code)
   await sent(settings, page)
-  await expect(b.locator('app-settings .devices-flow').getByRole('heading')).toHaveText(/^Open “/)
+  await expect(b.locator('app-settings .devices-flow').getByRole('heading')).toHaveText('Is this yours?')
   await settings.locator('.devices-actions').getByRole('button', { name: 'Cancel' }).click()
   await expect(settings.getByRole('button', { name: 'Add a device' })).toBeFocused()
-  await b.locator('app-settings .devices-flow').getByRole('button', { name: 'Join' }).click()
+  await b.locator('app-settings .devices-flow').getByRole('button', { name: 'Yes, it’s mine' }).click()
   await expect(b.locator('app-settings .devices-wrong')).toHaveText('Your other device stopped adding this one. Start again there.')
   expect([await here(b), await profiles(b), await listed(page)]).toEqual([first, [first], [await page.evaluate(async () => (await import('/caps/devices/devices.js')).own.value)]])
   await b.context().close()
@@ -575,7 +583,7 @@ test('Cancel on the device that has the Jean while the other asks: Join there th
 for (const lang of ['ar', 'ja']) {
   test(`joining shows its steps and its code in the device’s language, at 320 px (${lang})`, async ({ page, browser }) => {
     await deviceA(page)
-    const words = JSON.parse(await readFile(new URL(`../app/locales/devices/${lang}.json`, import.meta.url), 'utf8'))
+    const words = { ...JSON.parse(await readFile(new URL(`../app/locales/${lang}.json`, import.meta.url), 'utf8')), ...JSON.parse(await readFile(new URL(`../app/locales/devices/${lang}.json`, import.meta.url), 'utf8')) }
     const b = await device(browser, { lang, viewport: { width: 320, height: 640 } })
     const settings = await devicesPage(page)
     await settings.getByRole('button', { name: 'Add a device' }).click()
@@ -585,11 +593,13 @@ for (const lang of ['ar', 'ja']) {
     /** Nothing wider than the screen, and nothing cut. */
     const fits = () => b.evaluate(() => [document.documentElement.scrollWidth <= innerWidth,
       [...document.querySelectorAll('app-settings .devices-flow *')].every((element) => element.scrollWidth <= element.clientWidth + 1 || getComputedStyle(element).display === 'inline')])
-    // What joining does, then Join.
+    // The three steps, the first under way; what joining does, then Bring it here.
+    await expect(flow.locator('.rail > li')).toHaveText([words['devices.step.show'], words['devices.step.match'], words['devices.step.done']])
+    await expect(flow.getByRole('heading')).toHaveText(words['devices.askTitle'].replaceAll('{name}', 'Jean'))
     await expect(flow.locator('p').first()).toHaveText(words['devices.coming'].replaceAll('{name}', 'Jean'))
-    await expect(flow.getByRole('button')).toHaveText([words['devices.join'], words['devices.cancel']])
+    await expect(flow.getByRole('button')).toHaveText([words['welcome.bring'], words['devices.cancel']])
     expect(await fits()).toEqual([true, true])
-    await flow.getByRole('button', { name: words['devices.join'] }).click()
+    await flow.getByRole('button', { name: words['welcome.bring'] }).click()
     await expect(flow.locator('.devices-digits')).toHaveText(/^\d{3} \d{3}$/)
     await expect(b.locator('html')).toHaveAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr')
     await expect(flow.getByRole('heading')).toHaveText(words['devices.typeThere'])
@@ -597,13 +607,14 @@ for (const lang of ['ar', 'ja']) {
     // The digits read left to right, in Latin digits, whatever the language around them.
     await expect(flow.locator('.devices-digits')).toHaveAttribute('dir', 'ltr')
     expect(await fits()).toEqual([true, true])
-    // What came and from where, each name set apart, in a sentence that reads the page's way (once devices.trust is in this language).
+    // The profile that came as a card, the device it came from set apart in a line that reads the page's way.
     await typeCode(settings, String(await flow.locator('.devices-digits').textContent()).replace(' ', ''))
-    await expect(flow.getByRole('heading').locator('bdi')).toHaveCount(2)
-    await expect(flow.getByRole('heading')).not.toHaveAttribute('dir', /./)
-    await expect(flow.getByRole('button')).toHaveText([words['devices.join'], words['devices.cancel']])
+    await expect(flow.getByRole('heading')).toHaveText(words['devices.yours'])
+    await expect(flow.locator('.devices-who small bdi')).toHaveCount(1)
+    await expect(flow.locator('.devices-who small')).not.toHaveAttribute('dir', /./)
+    await expect(flow.getByRole('button')).toHaveText([words['devices.mine'], words['devices.stop']])
     expect(await fits()).toEqual([true, true])
-    await flow.getByRole('button', { name: words['devices.cancel'] }).click()
+    await flow.getByRole('button', { name: words['devices.stop'] }).click()
     await b.context().close()
   })
 }

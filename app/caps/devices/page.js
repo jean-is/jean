@@ -1,8 +1,9 @@
 // Your devices (D700, D726, D728), a section of Settings: cards, this device first, then the others, each with when it was last seen, or
-// added, and Remove, asked in a dialog that also erases Jean there; what they keep in common, what each keeps; Add a device, its steps shown in its place (the link and its QR code, the wait, the lock, the six
-// digits the new device shows, done). A new device joins from its own page, devices/join, which its welcome opens: a link from the other
-// device, pasted there, in the box or opened, joined in the same place once the person chooses Join, its six digits shown to type there,
-// then what came and from where, opened only on Join again. Loaded the first time it shows.
+// added, and Remove, asked in a dialog that also erases Jean there; what they keep in common, what each keeps; Add a device, its steps
+// shown in its place under the three both devices name (the link and its QR code, the wait; the lock, the six digits the new device shows,
+// sent at the sixth; done, on the map). A new device joins from its own page, devices/join, which its welcome opens: a link from the other
+// device, pasted there, in the box or opened, joined in the same place once the person chooses Bring it here, its six digits shown to type
+// there, then the profile that came and the device it came from, as a card, opened only on Yes, it's mine. Loaded the first time it shows.
 import { html, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { app, notify } from '../../ui/state.js'
@@ -11,16 +12,19 @@ import { handheld } from '../../ui/model.js'
 import { codeOf } from '../../ui/qr.js'
 import { icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
+import { rail } from '../../ui/rail.js'
+import { map } from '../../ui/map.js'
+import { initialOf } from '../../ui/curtain.js'
 import { t, tParts, intlLocales, formatBytes, relativeTime } from '../../core/i18n.js'
 import { BRAND } from '../../brand.js'
-import { adding, joining, devices, own, stored, start, passed, confirm, cancel, join, trusted, removeDevice, kindOf, lastSeen, quietOf } from './devices.js'
+import { adding, joining, devices, own, stored, start, passed, confirm, cancel, join, trusted, removeDevice, kindOf, lastSeen, quietOf, places } from './devices.js'
 import { state as store, again } from './store.js'
 
 // The head and the back button Your data's pages have.
 await styleSheet(new URL('../../ui/data-pages.css', import.meta.url))
 
 /** @typedef {import('./flow.js').Device} Device */
-/** What a step shows, its buttons, and what it says as it comes, or what went wrong. @typedef {{ body?: unknown, buttons?: unknown, said?: string, wrong?: string }} Step */
+/** Which of the three steps it is, what it shows, its buttons, and what it says as it comes, or what went wrong. @typedef {{ at?: number, body?: unknown, buttons?: unknown, said?: string, wrong?: string }} Step */
 
 /**
  * The device Remove was pressed on, whether Jean is erased from it, while it goes, once gone the keys it may hold, by where each was made,
@@ -40,9 +44,9 @@ const quit = (/** @type {string} */ label = 'devices.cancel') => html`<button cl
 const composing = (e) => { if (e.isComposing && e.key === 'Enter') e.preventDefault() }
 /** A name a person or a device gave, set apart in a sentence of Jean's, whichever way it reads. @param {string} name */
 const named = (name) => html`<bdi>${name}</bdi>`
-/** @param {() => unknown} act */
-const joinButton = (act) => html`<button class="button primary" @click=${act}>${t('devices.join')}</button>`
 
+/** Only digits, six at most, sent at the sixth unless an IME composes. @param {InputEvent} e */
+const digitsIn = (e) => { const box = /** @type {HTMLInputElement} */ (e.target); box.value = box.value.replace(/\D/g, '').slice(0, 6); if (box.value.length === 6 && !e.isComposing) box.form?.requestSubmit() }
 /** The six digits typed on this device: wrong, selected to type again. @param {SubmitEvent} event */
 async function typed(event) {
   event.preventDefault()
@@ -53,30 +57,35 @@ async function typed(event) {
 /** The step under way, adding on this device or joining another, or none. @returns {Step | null} */
 function step() {
   const [a, b, name] = [adding.value, joining.value, BRAND.name]
-  if (b.step === 'home') return { body: html`<h3 tabindex="-1">${t('devices.homeTitle', { name })}</h3><p>${t('devices.homeText', { name })}</p><p>${t('devices.homePaste')}</p>${field(b.link)}`,
+  if (b.step === 'home') return { at: 0, body: html`<h3 tabindex="-1">${t('devices.homeTitle', { name })}</h3><p>${t('devices.homeText', { name })}</p><p>${t('devices.homePaste')}</p>${field(b.link)}`,
     buttons: row(html`<button class="button" @click=${() => { joining.value = { step: 'ask', link: b.link } }}>${t('devices.inSafari')}</button>`, quit()) }
-  if (b.step === 'ask') return { body: html`<p>${t('devices.coming', { name })}</p>`, buttons: row(joinButton(() => join(b.link)), quit()) }
-  if (b.step === 'waiting') return { body: html`<p>${t('devices.coming', { name })}</p>`, said: t('devices.joining'), buttons: row(quit()) }
-  if (b.step === 'code') return { body: html`<h3 tabindex="-1">${t('devices.typeThere')}</h3><p class="devices-digits" dir="ltr">${b.code.slice(0, 3)} ${b.code.slice(3)}</p>`, buttons: row(quit()) }
-  // One span in the heading, which lays out what it holds side by side, so the sentence wraps as one.
-  if (b.step === 'trust') return { body: html`<h3 tabindex="-1"><span>${tParts('devices.trust', { profile: named(b.profile), device: named(b.device) })}</span></h3>`, buttons: row(joinButton(trusted), quit()) }
-  if (b.step === 'adopting' || b.step === 'done') return { said: t(b.step === 'done' ? 'devices.joined' : 'devices.adopting', { name }) }
+  const asked = html`<h3 tabindex="-1">${t('devices.askTitle', { name })}</h3><p>${t('devices.coming', { name })}</p>`
+  if (b.step === 'ask') return { at: 0, body: asked, buttons: row(html`<button class="button primary" @click=${() => join(b.link)}>${t('welcome.bring')}</button>`, quit()) }
+  if (b.step === 'waiting') return { at: 0, body: asked, said: t('devices.joining'), buttons: row(quit()) }
+  if (b.step === 'code') return { at: 1, body: html`<h3 tabindex="-1">${t('devices.typeThere')}</h3><p class="devices-digits" dir="ltr">${b.code.slice(0, 3)} ${b.code.slice(3)}</p>`, buttons: row(quit()) }
+  // The profile that came as a card, its initial and its name, and the device it came from; Yes, it's mine opens it.
+  if (b.step === 'trust') return { at: 1, body: html`<h3 tabindex="-1">${t('devices.yours')}</h3><div class="devices-who"><span class="avatar" aria-hidden="true">${initialOf(b.profile)}</span>
+      <strong dir="auto">${b.profile}</strong><small>${tParts('devices.fromDevice', { device: named(b.device) })}</small></div><p class="hint">${t('devices.trustHint')}</p>`,
+    buttons: row(html`<button class="button primary" @click=${trusted}>${t('devices.mine')}</button>`, quit('devices.stop')) }
+  if (b.step === 'adopting' || b.step === 'done') return { at: 2, said: t(b.step === 'done' ? 'devices.joined' : 'devices.adopting', { name }) }
   if (b.step === 'failed') return { wrong: t(`devices.why.${b.reason}`, { name }), buttons: row(quit('devices.close')) }
   if (a.step === 'waiting') {
     const code = a.address ? codeOf(a.link) : null
-    return { body: html`<h3 tabindex="-1">${t('devices.open')}</h3>
+    return { at: 0, body: html`<h3 tabindex="-1">${t('devices.open')}</h3>
       ${code ? html`<svg class="devices-qr" role="img" aria-label=${t('devices.qr')} viewBox="-4 -4 ${code.size + 8} ${code.size + 8}"><path d=${code.d}/></svg>` : nothing}
       <p>${a.address ? t('devices.point') : t('devices.pasteThere', { name })}</p>${field(a.link)}`, said: t('devices.waiting'),
     buttons: row(handheld() && 'share' in navigator ? html`<button class="button" @click=${() => navigator.share({ url: a.link }).catch(() => {})}>${icons.share} ${t('devices.share')}</button>` : nothing, quit()) }
   }
-  if (a.step === 'lock') return { body: html`<h3 tabindex="-1">${t('devices.unlock', { device: a.name })}</h3>${lock.value?.ways(passed) ?? (import('../lock/lock.js').then((module) => { lock.value = module }), nothing)}`, buttons: row(quit()) }
-  if (a.step === 'code') return { body: html`<form class="stack" @submit=${typed}><label for="devices-code">${t('devices.typeCode', { device: a.name })}</label>
-      <input id="devices-code" class="devices-type" name="code" inputmode="numeric" autocomplete="one-time-code" spellcheck="false" dir="ltr" required aria-describedby="devices-wrong devices-hint" @keydown=${composing}>
+  if (a.step === 'lock') return { at: 1, body: html`<h3 tabindex="-1">${t('devices.unlock', { device: a.name })}</h3>${lock.value?.ways(passed) ?? (import('../lock/lock.js').then((module) => { lock.value = module }), nothing)}`, buttons: row(quit()) }
+  if (a.step === 'code') return { at: 1, body: html`<form class="stack" @submit=${typed}><label for="devices-code">${t('devices.typeCode', { device: a.name })}</label>
+      <input id="devices-code" class="devices-type" name="code" inputmode="numeric" autocomplete="one-time-code" spellcheck="false" dir="ltr" required aria-describedby="devices-wrong devices-hint" @keydown=${composing} @input=${digitsIn}>
       <p class="hint" id="devices-hint">${t('devices.codeHint')}</p><div class="row"><button class="button primary">${t('devices.confirm')}</button></div></form>`,
     wrong: a.left < 3 ? t('devices.wrong', { count: a.left }) : '', buttons: row(quit()) }
   // Until the new device says it opened what came, which waits on the person there.
-  if (a.step === 'sending') return { said: t('devices.sending', { device: a.name }), buttons: row(quit()) }
-  if (a.step === 'done') return { said: t('devices.done', { device: a.name }), buttons: row(quit('devices.ok')) }
+  if (a.step === 'sending') return { at: 1, said: t('devices.sending', { device: a.name }), buttons: row(quit()) }
+  // Done, on the map the device just added joins.
+  if (a.step === 'done') return { at: 2, body: ((mine) => mine && map(t('cap.devices.name'), { icon: kindOf(mine.name), name: mine.name }, [places() ?? []].flat()))(devices.value.find((one) => one.id === own.value)),
+    said: t('devices.done', { device: a.name }), buttons: row(quit('devices.ok')) }
   if (a.step === 'failed') return { wrong: t(`devices.why.${a.reason}`, { name }), buttons: row(html`<button class="button" @click=${start}>${t('devices.again')}</button>`, quit('devices.close')) }
   return null
 }
@@ -169,6 +178,6 @@ export function section() {
   const [now, name] = [step(), BRAND.name], joins = !now && pageOpen() === 'join'
   return html`${joins ? html`<button class="back button subtle" @click=${() => goPage('devices', '')}>${icons.back} ${t('cap.devices.name')}</button>` : nothing}<header class="data-head"><div><h2 tabindex="-1">${t(joins ? 'devices.joinTitle' : 'cap.devices.name', { name })}</h2>
       <p class="lede" id="devices-line">${t(joins ? 'devices.joinText' : stored.value ? 'devices.lineStore' : 'devices.line', { name, place: `${t('settings.title')} › ${t('cap.devices.name')}`, case: `${t('settings.title')} › ${t('settings.capabilities')}` })}</p></div></header>
-    <div class="devices-flow">${now ? now.body : joins ? pasting() : rest()}
+    <div class="devices-flow">${now?.at === undefined ? nothing : rail(t('devices.adding'), [t('devices.step.show'), t('devices.step.match'), t('devices.step.done')], now.at, now.at === 2)}${now ? now.body : joins ? pasting() : rest()}
     <p class="devices-said" role="status">${now?.said ?? ''}</p><p class="devices-wrong" id="devices-wrong" role="alert">${now?.wrong ?? ''}</p>${now?.buttons ?? nothing}</div>${asking()}`
 }
