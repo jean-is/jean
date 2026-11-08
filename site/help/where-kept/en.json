@@ -27,7 +27,7 @@
     "{space}, on the same page, shows how much room each part takes, and what can go to make room.",
     "Installing {name} as an app, in Chrome or Edge or on a phone’s home screen, helps the browser keep its data.",
     "A folder of your computer that you open in {name} stays where it is: in Chrome and Edge, {name} changes its files there; in other browsers, it works on a copy.",
-    "Your keys are never in a backup, a sync or a share. Another of your devices that you add gets most of them, sealed so only it can open them; there, the services that asked you to sign in ask again.",
+    "Your keys are never in a backup, a synced folder or a share. Another of your devices that you add gets most of them, sealed so only it can open them; there, the services that asked you to sign in ask again.",
     "Where what you share goes, brain by brain, and every address {name} contacts: {files}."
   ],
   "fixes": [

@@ -252,7 +252,7 @@ test('a file the editor names is shared as the browser shares one: kept in the p
 
 test('a folder of other files is refused, and with no brain to answer a session asks for a sign-in (ACP’s auth_required)', async (t) => {
   const lost = await setup(t, { sync: false })
-  await assert.rejects(lost.editor.request('session/new', { cwd: lost.cwd, mcpServers: [] }), /isn’t a folder Sync keeps\. Give the one you chose in Settings › Your data\./)
+  await assert.rejects(lost.editor.request('session/new', { cwd: lost.cwd, mcpServers: [] }), /isn’t the synced folder\. Give the one you chose in Settings › Your data\./)
   const brainless = await setup(t, { brain: 'device' })
   await assert.rejects(brainless.editor.request('session/new', { cwd: brainless.cwd, mcpServers: [] }), { code: -32000, message: /No brain can answer yet/ })
   const nameless = await setup(t, { brain: 'openai' })

@@ -19,7 +19,7 @@
   "cli.needsName": "Navedite mozak koji odgovara: --brain {provider}:<njegov naziv>.",
   "cli.signIn": "Prijavite se pretplatom na Claude",
   "cli.login.missing": "Claude Code nije na ovom računalu. Instalirajte ga i pokušajte ponovno ili stavite ključ nekog mozga u okruženje, primjerice ANTHROPIC_API_KEY.",
-  "cli.help.acp": "{name} u vašem uređivaču, u sinkroniziranoj mapi.",
+  "cli.help.acp": "{name} u vašem uređivaču, u vašoj sinkroniziranoj mapi.",
   "cli.help.brain": "--brain bira mozak, primjerice anthropic, openrouter ili claudecode; njegov ključ dolazi iz okruženja.",
   "cli.help.gateway": "Pristupnik, za usluge do kojih preglednik ne može doći, poput Gmaila ili Slacka.",
   "cli.gateway.origin": "Navedite adresu koju otvarate u pregledniku, primjerice https://{domain}: --origin <adresa>.",

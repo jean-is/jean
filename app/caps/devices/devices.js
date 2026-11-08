@@ -6,7 +6,7 @@
 import { html } from 'lit-html'
 import { signal, effect, computed } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
-import { app, changeSettings, rememberUnlocked, refreshConversations, refreshProjects, brainLabel, notify } from '../../ui/state.js'
+import { app, changeSettings, rememberUnlocked, refreshConversations, refreshProjects, brainLabel, notify, pairs } from '../../ui/state.js'
 import { PLACE, here, mine } from '../../ui/opfs.js'
 import { host } from '../../ui/host.js'
 import { handheld } from '../../ui/model.js'
@@ -55,16 +55,18 @@ export const joining = signal(/** @type {Joining} */ ({ step: 'idle' }))
 export const devices = signal(/** @type {Device[]} */ ([]))
 export const own = signal('')
 /** Whether this device holds a store it can use, and how the store stands, once its rounds started (./store.js). */
-const stored = signal(false)
+export const stored = signal(false)
 const kept = signal(/** @type {typeof import('./store.js').state | null} */ (null))
+/** The store's module, its state followed here once it is loaded, whichever way: rounds started, a device admitted, a message heard. */
+const storeOf = () => import('./store.js').then((store) => { kept.value = store.state; return store })
 
 await Promise.all([useStrings('devices'), styleSheet(new URL('devices.css', import.meta.url))])
 /** Whether this is a child's profile, which never pairs: their parent's slot needs the parent's vault key, another on each device. */
 const child = Boolean(JSON.parse(await app.fs.read(VAULT) ?? 'null')?.parent)
 /** The relay's address, ending in /, or '' where none is named. */
 const relayOf = () => String(serviceURL('relay', app.settings.peek(), app.policy) ?? '').replace(/^(.+?)\/?$/, '$1/')
-/** Whether this Jean pairs devices: a relay named, not a child's profile, and no organisation's sign-in, for now. */
-export const offered = () => Boolean(relayOf()) && !child && !app.policy.signIn
+/** Whether this Jean pairs devices (ui/state.js), its vault saying too that this isn't a child's profile. */
+export const offered = () => pairs() && !child
 /** How far the relay's clock is from this device's, as its last read said, kept for a Jean opened offline, its clock off as it may be. */
 let offset = (() => { try { return Number(localStorage.getItem('app.relay-offset')) || 0 } catch { return 0 } })()
 /** @param {number} at the relay's clock */
@@ -133,7 +135,7 @@ async function listening() {
   if (turn !== listenings) return
   // Paired, or once was: the store's rounds, which its keys, held or not, decide (./store.js).
   const paired = (await listOf(app.fs)).length > 1
-  if (paired) await import('./store.js').then((store) => { kept.value = store.state; return store.start(ctx, relayOf) }).catch(warn)
+  if (paired) await storeOf().then((store) => store.start(ctx, relayOf)).catch(warn)
   // Its identity gone or another now, as this device's removal was acted on in another tab, its mailbox is never opened again.
   stop = listen({ base, token: me.token, lock: mine('app-devices'), onMessages: (messages) => heard(ctx, messages), clock: clocked, quiet: answering,
     lost: async (...box) => ((await identity(false))?.id === me.id ? open(...box) : stop()) })
@@ -159,7 +161,7 @@ async function heard(ctx, messages) {
     if (from?.removedAt && await back(ctx, from, opened?.value)) later(ctx)
     if (!opened || !from || from.removedAt) continue
     const done = await receive(ctx, from, opened.value, at).catch((error) => { warn(error); return null })
-    if (['settings', 'store', 'round'].includes(opened.value?.kind)) await import('./store.js').then((store) => store.heard(ctx, from, opened.value)).catch(warn)
+    if (['settings', 'store', 'round'].includes(opened.value?.kind)) await storeOf().then((store) => store.heard(ctx, from, opened.value)).catch(warn)
     // A device the last share didn't reach writes: what waits goes to it now.
     if (await unreached(app.fs, from.id)) later(ctx)
     if (done && 'removed' in done) removals.push({ ...done.removed, by: from.id })
@@ -320,7 +322,7 @@ export async function confirm(typed) {
     await writeRecord(app.fs, you, locked)
     await mark(ctx)
     // B's token let into the store, made where there is none, whose keys *kept* takes; on a relay without stores, B joins without.
-    const store = await (await import('./store.js')).admit(ctx, you.id, joined.store, relayOf).catch((error) => { warn(error); return null })
+    const store = await (await storeOf()).admit(ctx, you.id, joined.store, relayOf).catch((error) => { warn(error); return null })
     await send(relayOf(), hello.mailbox, await envelope(me, hello.key, { kind: 'kept', ...(store && { store }) }))
     await end(one)
     adding.value = { step: 'done', name: hello.name }
@@ -463,7 +465,7 @@ async function adoptHere(bundle, me, one, again, store) {
  */
 export function fromAddress() {
   const link = location.href
-  history.replaceState(null, '', `${location.pathname}#/settings/data/devices`)
+  history.replaceState(null, '', `${location.pathname}#/settings/devices`)
   if (!parseLink(link)) return join(link)
   cancel()
   joining.value = /** @type {any} */ (navigator).standalone === false && handheld() ? { step: 'home', link } : { step: 'ask', link }
@@ -504,15 +506,23 @@ export async function removeDevice(id, { erase = true } = {}) {
   } finally { refresh() }
 }
 
+/** Whether the store wants a look: full, gone, this device out of room, or the relay out of reach. */
+const trouble = () => ((now) => Boolean(now.full || now.gone || now.room || now.unreached))(kept.value?.value ?? {})
+/** Your devices opened, then what comes next there (Add a device's first step). @param {() => unknown} [then] */
+const opening = (then) => import('../../ui/dialogs.js').then((dialogs) => { dialogs.openSettings('devices'); then?.() })
+
 /** A task handed to another device, and how it went, said. @param {string} path @param {Device} to */
 const handOver = (path, to) => sendTask(path, to.id).then((said) => notify(t(`devices.task.${said}`, { device: to.name }), said === 'sent' ? undefined : { alert: true }),
   (error) => { warn(error); notify(t('devices.task.failed', { device: to.name }), { alert: true }) })
 
 if (offered()) {
   register({ id: 'devices', slots: {
-    // Its row in Your data, among the copies the person keeps, and its page, data/devices (./page.js).
-    data: { id: 'devices', at: 2, group: 'copies', icon: icons.devices, label: 'cap.devices.name', text: () => t('devices.count', { count: Math.max(devices.value.length, 1) }),
-      line: () => t(stored.value ? 'devices.lineStore' : 'devices.line'), draw: lazyPage(() => import('./page.js')) },
+    // Its own section of Settings, settings/devices (./page.js, D726), which ⌘K finds by Add a device too.
+    settings: { id: 'devices', at: 130, label: 'cap.devices.name', icon: icons.devices, also: () => t('devices.add'), draw: lazyPage(() => import('./page.js')) },
+    // No row in Your data, but its line: the person's things safe on their other devices while the store keeps them in step, or, while this
+    // device is alone, Add a device beside what says they are only here.
+    data: { id: 'devices', at: 2, group: 'copies', icon: icons.devices, label: 'cap.devices.name', text: () => '', page: false, draw: () => null, copy: () => (stored.value && devices.value.length > 1 && kept.value?.value.at && !trouble() ? t('devices.safe') : undefined),
+      fix: () => (devices.value.length > 1 ? undefined : html`<button class="button primary" @click=${() => opening(start)}>${icons.plus} ${t('devices.add')}</button>`) },
     // In a task's ⋮ menu, Send to each other device, unless its project is kept on this one.
     task: { at: 2, draw: (/** @type {{ path: string }} */ item, /** @type {(icon: unknown, label: string, act: () => unknown) => unknown} */ action) =>
       (app.projects.value.find((one) => item.path.startsWith(`${one.dir}/`))?.data.cloud === false ? []
@@ -524,9 +534,9 @@ if (offered()) {
     keep: { at: 1, draw: () => null, on: () => stored.value, keep: (/** @type {string} */ dir) => import('./store.js').then((store) => store.withdraw(dir)) },
     // At the end of the person's row, at the drawer's foot, Your devices, by its icon: breathing while bytes go up or come down, with a dot
     // when the store wants a look (full, gone, this device out of room, the relay out of reach), its name saying so, and its page what.
-    foot: { at: 1, draw: () => { const { moving, full, gone, room, unreached } = kept.value?.value ?? {}, trouble = full || gone || room || unreached
-      return html`<button type="button" class="icon-button subtle${moving ? ' devices-syncing' : ''}${trouble ? ' devices-trouble' : ''}" aria-label=${t(moving ? 'devices.syncing' : trouble ? 'devices.trouble' : 'cap.devices.name')}
-        @click=${() => import('../../ui/dialogs.js').then((dialogs) => dialogs.openSettings('data/devices'))}>${icons.devices}</button>` } },
+    foot: { at: 1, draw: () => { const moving = kept.value?.value.moving, wants = trouble()
+      return html`<button type="button" class="icon-button subtle${moving ? ' devices-syncing' : ''}${wants ? ' devices-trouble' : ''}" aria-label=${t(moving ? 'devices.syncing' : wants ? 'devices.trouble' : 'cap.devices.name')}
+        @click=${() => opening()}>${icons.devices}</button>` } },
   } })
   // The keys, where this device's identity and the devices it knows are kept too, changed in any tab, this one's as well.
   app.fs.watch?.((path) => { if (path === '.secrets/keys.json') { refresh(); noticed().catch(warn) } }, { all: true })

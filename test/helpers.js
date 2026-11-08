@@ -290,9 +290,9 @@ export async function closeSettings(page) {
 
 /** Turns a capability on from Settings' Capabilities: its row, then Turn on, or its download, on its page. @param {import('@playwright/test').Page} page @param {string} name */
 export async function turnOn(page, name) {
-  // Sync and Folders begin with a folder to choose: the page's picker, which the specs play, opens at once after the click, or from
+  // Synced folder and Folders begin with a folder to choose: the page's picker, which the specs play, opens at once after the click, or from
   // a toast's button once that click is too long gone by for the browser, as on a busy computer (ui/discovery.js). Either way, it opens.
-  const picks = (name === 'Sync' || name === 'Folders') && await page.evaluate(async () => {
+  const picks = (name === 'Synced folder' || name === 'Folders') && await page.evaluate(async () => {
     const pick = /** @type {any} */ (window).showDirectoryPicker
     if (!pick || await (await import('/ui/host.js')).host) return false
     Object.assign(window, { picked: false, showDirectoryPicker: (/** @type {any[]} */ ...args) => (Object.assign(window, { picked: true }), pick(...args)) })

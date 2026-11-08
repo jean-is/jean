@@ -27,7 +27,7 @@
     "{space}, sur la même page, montre la place que prend chaque partie, et ce qui peut partir pour en libérer.",
     "Installer {name} comme une application, dans Chrome ou Edge ou sur l’écran d’accueil d’un téléphone, aide le navigateur à garder ses données.",
     "Un dossier de votre ordinateur ouvert dans {name} reste où il est : dans Chrome et Edge, {name} modifie ses fichiers sur place ; dans les autres navigateurs, il travaille sur une copie.",
-    "Vos clés ne sont jamais dans une sauvegarde, une synchronisation ou un partage. Un autre de vos appareils que vous ajoutez en reçoit la plupart, scellées pour que lui seul puisse les ouvrir ; là-bas, les services qui vous ont demandé de vous connecter vous le redemandent.",
+    "Vos clés ne sont jamais dans une sauvegarde, un dossier synchronisé ou un partage. Un autre de vos appareils que vous ajoutez en reçoit la plupart, scellées pour que lui seul puisse les ouvrir ; là-bas, les services qui vous ont demandé de vous connecter vous le redemandent.",
     "Où va ce que vous partagez, cerveau par cerveau, et chaque adresse que {name} contacte : {files}."
   ],
   "fixes": [

@@ -7,7 +7,7 @@ import { signal, effect } from '@preact/signals-core'
 import { live as current } from 'lit-html/directives/live.js'
 import { repeat } from 'lit-html/directives/repeat.js'
 import { Element, define } from './base.js'
-import { app, activeBrain, brainsHere, chipLabel, decisionsHere, effective, send, steer, stop, setPresence, warm, removeAttachment, openFile, notify, assistantName, legalPages, SHORTCUTS } from './state.js'
+import { app, activeBrain, brainsHere, chipLabel, decisionsHere, effective, send, steer, stop, setPresence, warm, removeAttachment, openFile, notify, assistantName, legalPages, pairs, SHORTCUTS } from './state.js'
 import { SIZES, unlock, isDenied, loaded, slots } from './caps.js'
 import { t, formatBytes } from '../core/i18n.js'
 import { requestsOf } from '../core/events.js'
@@ -204,9 +204,11 @@ class Composer extends Element {
 
   /** @param {ClipboardEvent} event */
   #paste = (event) => {
-    const files = [...(event.clipboardData?.files ?? [])]
+    const [files, text] = [[...(event.clipboardData?.files ?? [])], event.clipboardData?.getData('text').trim() ?? '']
+    // A link from another of the person's devices goes where opening it would, which asks before anything joins (caps/devices, D726).
+    if (pairs() && /^[^#\s]*#\/pair\/[\w-]{43}\.[\w-]{22}$/.test(text)) return void (event.preventDefault(), (location.hash = text.replace(/^[^#]*/, '')))
     // A long paste is a document in disguise: offer files (an event, so any language works).
-    if (!files.length && (event.clipboardData?.getData('text').length ?? 0) > LONG_PASTE) import('./discovery.js').then((module) => module.offerOnce('files', true))
+    if (!files.length && text.length > LONG_PASTE) import('./discovery.js').then((module) => module.offerOnce('files', true))
     if (!files.length) return
     event.preventDefault()
     attachFiles(files)

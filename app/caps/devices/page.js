@@ -1,18 +1,23 @@
-// Your devices (D700), a page of Settings › Your data: this device first, then the others, each with when it was added and Remove, asked
+// Your devices (D700, D726), a section of Settings: this device first, then the others, each with when it was added and Remove, asked
 // in a dialog that also erases Jean there; Add a device, its steps shown in its place (the link and its QR code, the wait, the lock, the six
-// digits the new device shows, done); and a link from another device, pasted here or opened, joined in the same place once the person
-// chooses Join, its six digits shown to type there, then what came and from where, opened only on Join again. Loaded the first time it shows.
+// digits the new device shows, done). A new device joins from its own page, devices/join, which its welcome opens: a link from the other
+// device, pasted there, in the box or opened, joined in the same place once the person chooses Join, its six digits shown to type there,
+// then what came and from where, opened only on Join again. Loaded the first time it shows.
 import { html, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
-import { notify } from '../../ui/state.js'
-import { pageOpen } from '../../ui/dialogs.js'
+import { app, notify } from '../../ui/state.js'
+import { sectionOpen, pageOpen, goPage } from '../../ui/dialogs.js'
 import { handheld } from '../../ui/model.js'
 import { codeOf } from '../../ui/qr.js'
 import { icons } from '../../ui/menu-icons.js'
+import { styleSheet } from '../../ui/sheet.js'
 import { t, tParts, intlLocales, formatBytes, relativeTime } from '../../core/i18n.js'
 import { BRAND } from '../../brand.js'
-import { adding, joining, devices, own, start, passed, confirm, cancel, join, trusted, removeDevice } from './devices.js'
+import { adding, joining, devices, own, stored, start, passed, confirm, cancel, join, trusted, removeDevice } from './devices.js'
 import { state as store, again } from './store.js'
+
+// The head and the back button Your data's pages have.
+await styleSheet(new URL('../../ui/data-pages.css', import.meta.url))
 
 /** @typedef {import('./flow.js').Device} Device */
 /** What a step shows, its buttons, and what it says as it comes, or what went wrong. @typedef {{ body?: unknown, buttons?: unknown, said?: string, wrong?: string }} Step */
@@ -25,8 +30,6 @@ const removing = signal(/** @type {{ device: Device, erase: boolean, busy?: bool
 /** The lock's ways in, loaded when adding asks for them. */
 const lock = signal(/** @type {typeof import('../lock/lock.js') | null} */ (null))
 
-/** Where the other device has its own Your devices: Capabilities turns it on there first, or opens it. */
-const place = () => [t('settings.title'), t('settings.capabilities'), t('cap.devices.name')].join(' › ')
 /** A link for the other device, to copy. @param {string} link */
 const field = (link) => html`<div class="devices-field"><input readonly dir="ltr" title=${t('devices.link')} .value=${link} @focus=${(/** @type {Event} */ e) => /** @type {HTMLInputElement} */ (e.target).select()}>
   <button class="button" @click=${() => navigator.clipboard.writeText(link).then(() => notify(t('toast.copied')))}>${icons.copy} ${t('devices.copy')}</button></div>`
@@ -50,7 +53,7 @@ async function typed(event) {
 /** The step under way, adding on this device or joining another, or none. @returns {Step | null} */
 function step() {
   const [a, b, name] = [adding.value, joining.value, BRAND.name]
-  if (b.step === 'home') return { body: html`<h3 tabindex="-1">${t('devices.homeTitle', { name })}</h3><p>${t('devices.homeText', { name })}</p><p>${t('devices.homePaste', { place: place() })}</p>${field(b.link)}`,
+  if (b.step === 'home') return { body: html`<h3 tabindex="-1">${t('devices.homeTitle', { name })}</h3><p>${t('devices.homeText', { name })}</p><p>${t('devices.homePaste')}</p>${field(b.link)}`,
     buttons: row(html`<button class="button" @click=${() => { joining.value = { step: 'ask', link: b.link } }}>${t('devices.inSafari')}</button>`, quit()) }
   if (b.step === 'ask') return { body: html`<p>${t('devices.coming', { name })}</p>`, buttons: row(joinButton(() => join(b.link)), quit()) }
   if (b.step === 'waiting') return { body: html`<p>${t('devices.coming', { name })}</p>`, said: t('devices.joining'), buttons: row(quit()) }
@@ -63,7 +66,7 @@ function step() {
     const code = a.address ? codeOf(a.link) : null
     return { body: html`<h3 tabindex="-1">${t('devices.open')}</h3>
       ${code ? html`<svg class="devices-qr" role="img" aria-label=${t('devices.qr')} viewBox="-4 -4 ${code.size + 8} ${code.size + 8}"><path d=${code.d}/></svg>` : nothing}
-      <p>${a.address ? t('devices.point') : t('devices.pasteThere', { name, place: place() })}</p>${field(a.link)}`, said: t('devices.waiting'),
+      <p>${a.address ? t('devices.point') : t('devices.pasteThere', { name })}</p>${field(a.link)}`, said: t('devices.waiting'),
     buttons: row(handheld() && 'share' in navigator ? html`<button class="button" @click=${() => navigator.share({ url: a.link }).catch(() => {})}>${icons.share} ${t('devices.share')}</button>` : nothing, quit()) }
   }
   if (a.step === 'lock') return { body: html`<h3 tabindex="-1">${t('devices.unlock', { device: a.name })}</h3>${lock.value?.ways(passed) ?? (import('../lock/lock.js').then((module) => { lock.value = module }), nothing)}`, buttons: row(quit()) }
@@ -78,7 +81,7 @@ function step() {
   return null
 }
 
-/** At rest: the devices, this one first, Add a device, and the field a link from another is pasted in. */
+/** At rest: the devices, this one first, Add a device, and, while this one is alone, the way to its page for joining another instead. */
 function rest() {
   const date = new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'medium' })
   const list = [...devices.value].sort((x, y) => Number(y.id === own.value) - Number(x.id === own.value))
@@ -86,11 +89,12 @@ function rest() {
       <small>${t(one.id === own.value ? 'devices.here' : 'devices.added', { date: date.format(new Date(one.createdAt)) })}</small></span>
       ${one.id === own.value ? nothing : html`<button class="button subtle danger" @click=${() => ask(one)}>${t('action.remove')}</button>`}</li>`)}</ul>` : nothing}
     ${common()}<div class="row"><button id="devices-add" class="button primary" @click=${start}>${icons.plus} ${t('devices.add')}</button></div>
-    <section><form class="stack" @submit=${(/** @type {SubmitEvent} */ e) => { e.preventDefault(); join(String(new FormData(/** @type {HTMLFormElement} */ (e.target)).get('link'))) }}>
-      <label for="devices-link">${t('devices.paste')}</label>
-      <div class="devices-field"><input id="devices-link" name="link" required autocomplete="off" spellcheck="false" dir="ltr" aria-describedby="devices-pasted" @keydown=${composing}><button class="button">${t('devices.join')}</button></div>
-      <p class="hint" id="devices-pasted">${t('devices.pasteHint', { name: BRAND.name })}</p></form></section>`
+    ${list.length > 1 ? nothing : html`<p><button class="link-button" data-page="join" @click=${() => goPage('devices', 'join')}>${t('devices.bring', { name: BRAND.name })}</button></p>`}`
 }
+
+/** devices/join, on the new device: the field the other device's link is pasted in, its title and its line saying where that link comes from. */
+const pasting = () => html`<form class="stack" @submit=${(/** @type {SubmitEvent} */ e) => { e.preventDefault(); app.section.value = 'devices'; join(String(new FormData(/** @type {HTMLFormElement} */ (e.target)).get('link'))) }}><label for="devices-link">${t('devices.paste')}</label>
+  <div class="devices-field"><input id="devices-link" name="link" required autocomplete="off" spellcheck="false" dir="ltr" aria-describedby="devices-line" @keydown=${composing}><button class="button">${t('devices.join')}</button></div></form>`
 
 /**
  * Under the list, what the devices keep in common in the store: its room used, full, a removed device still being shut out, the relay out
@@ -153,14 +157,16 @@ function asking() {
 let was = ''
 effect(() => {
   const now = `${adding.value.step} ${joining.value.step}`
-  if (was && now !== was) requestAnimationFrame(() => pageOpen() === 'devices' && /** @type {HTMLElement | null} */ (document.querySelector('.devices-type')
+  if (was && now !== was) requestAnimationFrame(() => sectionOpen() === 'devices' && /** @type {HTMLElement | null} */ (document.querySelector('.devices-type')
     ?? document.querySelector('.devices-flow h3') ?? document.querySelector('.devices-actions .button') ?? document.getElementById('devices-add'))?.focus())
   was = now
 })
 
-/** Your devices' page: the step under way, or the devices at rest; what a step says, then its buttons. */
+/** Your devices: its head, then the step under way, its page for joining, or the devices at rest; what a step says, then its buttons. */
 export function section() {
-  const now = step()
-  return html`<div class="devices-flow">${now ? now.body : rest()}
+  const [now, name] = [step(), BRAND.name], joins = !now && pageOpen() === 'join'
+  return html`${joins ? html`<button class="back button subtle" @click=${() => goPage('devices', '')}>${icons.back} ${t('cap.devices.name')}</button>` : nothing}<header class="data-head"><div><h2 tabindex="-1">${t(joins ? 'devices.joinTitle' : 'cap.devices.name', { name })}</h2>
+      <p class="lede" id="devices-line">${t(joins ? 'devices.joinText' : stored.value ? 'devices.lineStore' : 'devices.line', { name, place: `${t('settings.title')} › ${t('cap.devices.name')}`, case: `${t('settings.title')} › ${t('settings.capabilities')}` })}</p></div></header>
+    <div class="devices-flow">${now ? now.body : joins ? pasting() : rest()}
     <p class="devices-said" role="status">${now?.said ?? ''}</p><p class="devices-wrong" id="devices-wrong" role="alert">${now?.wrong ?? ''}</p>${now?.buttons ?? nothing}</div>${asking()}`
 }

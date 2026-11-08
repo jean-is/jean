@@ -1,5 +1,5 @@
 // Your devices (D700): a person's devices paired through the relay (relay/, D45 · D226), each its own browser context, so its own
-// storage. The one that has the Jean adds the other from Settings › Your data › Your devices: a link, joined on the new one only once
+// storage. The one that has the Jean adds the other from Settings › Your devices (D726): a link, joined on the new one only once
 // the person chooses Join, six digits the new one shows, typed there, and the new one, asked again, opens the same profile, with the
 // brains and keys that cross and none of those that never do; settings then follow the person, a task goes from one to the other from
 // its menu, and a device removed erases Jean there. Playwright's
@@ -9,7 +9,7 @@ import { readFile, readdir } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, openData, openProfile, closeSettings, openTasks, ask, answered, RELAY_URL, BRAIN_URL } from './helpers.js'
+import { start, connectFakeBrain, openData, openSettings, openProfile, closeSettings, openTasks, ask, answered, RELAY_URL, BRAIN_URL } from './helpers.js'
 
 const PASSWORD = 'a long and happy password'
 /** A brain in the cloud with a key, which crosses, the fake brain answering for it; the fake brain itself, on this computer, stays (bundle.js). */
@@ -67,11 +67,11 @@ async function device(browser, { lang = 'en', viewport, relay = RELAY_URL } = {}
   return page
 }
 
-/** Your devices found, as a capability found by the person is (ui/caps.js), and its page opened from Your data. @param {Page} page */
+/** Your devices found, as a capability found by the person is (ui/caps.js), and its section opened from Settings' menu (D726). @param {Page} page */
 async function devicesPage(page) {
   await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('devices') })
-  const settings = await openData(page, 'devices')
-  await expect(settings.locator('.data-head h2')).toBeFocused()
+  const settings = await openSettings(page, 'Your devices')
+  await expect(settings.locator('.data-head h2')).toHaveText('Your devices')
   return settings
 }
 
@@ -116,7 +116,7 @@ async function exchange(a, b) {
   const digits = b.locator('app-settings .devices-digits')
   await expect(digits).toHaveText(/^\d{3} \d{3}$/)
   // The link leaves no trace in the address.
-  await expect(b).toHaveURL(/#\/settings\/data\/devices$/)
+  await expect(b).toHaveURL(/#\/settings\/devices$/)
   return { settings, link, code: String(await digits.textContent()).replace(' ', '') }
 }
 
@@ -265,10 +265,16 @@ test('a second device opening the same link hears it was already used', async ({
   await deviceA(page)
   const b = await device(browser)
   const { link } = await exchange(page, b)
-  // Pasted into the field Your devices has for it, as from a camera app that opened it elsewhere.
+  // Pasted into a fresh device's box, as from a camera app that opened it elsewhere: never typed there, but where opening it leads (D726).
   const c = await device(browser)
-  const there = await devicesPage(c)
-  await there.getByRole('textbox', { name: 'A link from your other device' }).fill(link)
+  await c.locator('#prompt').evaluate((box, link) => {
+    const data = new DataTransfer()
+    data.setData('text/plain', ` ${link}\n`)
+    box.dispatchEvent(new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }))
+  }, link)
+  await expect(c.locator('#prompt')).toHaveValue('')
+  await expect(c).toHaveURL(/#\/settings\/devices$/)
+  const there = c.locator('app-settings dialog[open]')
   await there.getByRole('button', { name: 'Join' }).click()
   await expect(there.locator('.devices-wrong')).toHaveText('This link was already used. On your other device, choose Add a device again for a new one.')
   await expect(c.locator('app-settings .devices-digits')).toHaveCount(0)
@@ -515,13 +521,17 @@ test('a link opened does nothing until Join, and the profile that comes, from a 
   await b.goto(link)
   const flow = b.locator('app-settings .devices-flow')
   await expect(flow.getByRole('button', { name: 'Join' })).toBeVisible()
-  await expect(b).toHaveURL(/#\/settings\/data\/devices$/)
+  await expect(b).toHaveURL(/#\/settings\/devices$/)
   // Nothing goes from B until Join: A still waits, B shows no digits.
   await b.waitForTimeout(1500)
   await expect(settings.locator('.devices-said')).toHaveText('Waiting for your other device…')
   await expect(flow.locator('.devices-digits')).toHaveCount(0)
-  // Cancelled, nothing was sent: the same link, pasted later and joined, still works.
+  // Cancelled, nothing was sent: the same link, pasted later in the page for joining, which B, alone, leads to, and joined, still works.
   await flow.getByRole('button', { name: 'Cancel' }).click()
+  await b.locator('app-settings').getByRole('button', { name: 'Bring Jean here from another device' }).click()
+  await expect(b.locator('app-settings .data-head h2')).toBeFocused()
+  await expect(b.locator('app-settings .data-head h2')).toHaveText('Bring your Jean here')
+  await expect(b).toHaveURL(/#\/settings\/devices\/join$/)
   await flow.getByRole('textbox', { name: 'A link from your other device' }).fill(link)
   await flow.getByRole('button', { name: 'Join' }).click()
   const digits = flow.locator('.devices-digits')
@@ -710,6 +720,11 @@ test('a task made on one device shows on the other through the store, and the re
   await expect.poll(async () => { await storeRound(page); return inStore(page) }, { timeout: 20_000 }).toContain(path)
   await expect.poll(async () => { await storeRound(b); return read(b, path) }, { timeout: 20_000 }).toBe(await read(page, path))
   await expect((await openTasks(b)).locator('.history-list li:not([aria-hidden])', { hasText: TITLE })).toBeVisible()
+  // Your data says where they are safe now, never that they are only here, and offers no device to add (D726).
+  const data = await openSettings(page, 'Your data')
+  await expect(data.locator('.lede strong')).toHaveText('Your tasks and files are also on your other devices, sealed so only they can read them.')
+  await expect(data.locator('.data-fix')).toHaveCount(0)
+  await closeSettings(page)
   const held = (await relayHolds(keysA.sid)).join('\n')
   expect(held.length).toBeGreaterThan(0)
   for (const word of [TITLE, 'Lyon', 'the plan', 'conversations', 'projects', 'key of the cloud']) expect(held).not.toContain(word)
@@ -799,7 +814,7 @@ test('the last other device removed, the store goes from the relay: what is made
   expect(await read(b, after)).toBeNull()
   // B says it no longer receives, with Start again; nothing of its own was erased.
   expect(await read(b, before)).not.toBeNull()
-  await b.evaluate(async () => (await import('/ui/dialogs.js')).openSettings('data/devices'))
+  await b.evaluate(async () => (await import('/ui/dialogs.js')).openSettings('devices'))
   await expect(b.locator('app-settings .devices-flow > .hint')).toHaveText('This device no longer gets what your other devices do.')
   await expect(b.locator('app-settings').getByRole('button', { name: 'Start again' })).toBeVisible()
   await b.context().unrouteAll({ behavior: 'ignoreErrors' })
@@ -866,7 +881,35 @@ test('where nothing is kept, a device is neither added nor joined, and the page 
   await settings.getByRole('button', { name: 'Add a device' }).click()
   await expect(settings.locator('.devices-wrong')).toHaveText('This browser can’t keep Jean’s files here, in a private window for instance.')
   await settings.locator('.devices-actions').getByRole('button', { name: 'Close' }).click()
+  await settings.getByRole('button', { name: 'Bring Jean here from another device' }).click()
   await settings.getByRole('textbox', { name: 'A link from your other device' }).fill(`http://127.0.0.1:4180/#/pair/${'A'.repeat(43)}.${'A'.repeat(22)}`)
   await settings.getByRole('button', { name: 'Join' }).click()
   await expect(settings.locator('.devices-wrong')).toHaveText('This browser can’t keep Jean’s files here, in a private window for instance.')
+})
+
+test('a fresh Jean offers, from its welcome, to bring Jean from another device, and Your data, while this device is alone, to add one', async ({ browser }) => {
+  const b = await device(browser)
+  test.skip(await ephemeral(b), 'nothing is kept here: a private window, Playwright’s WebKit')
+  const line = b.locator('.welcome > p.muted')
+  await expect(line).toHaveText('Already use Jean on another device? Bring it here')
+  await line.getByRole('button', { name: 'Bring it here' }).click()
+  const settings = b.locator('app-settings dialog[open]')
+  await expect(settings.locator('.data-head h2')).toHaveText('Bring your Jean here')
+  await expect(settings.locator('.data-head .lede')).toHaveText('On the device that has your Jean, open Settings › Your devices and choose Add a device. Not there yet? It’s in Settings › Capabilities. Then point this device’s camera at its code, or paste its link here.')
+  await expect(b).toHaveURL(/#\/settings\/devices\/join$/)
+  // Back on Your devices, the keyboard on what led to the page; no row of it left in Your data, whose line offers to add a device.
+  await settings.locator('.back').click()
+  await expect(settings.getByRole('button', { name: 'Bring Jean here from another device' })).toBeFocused()
+  await taskOn(b, TITLE, 'Plan my trip to Lyon by the sea')
+  await settings.locator('.settings-nav button', { hasText: 'Your data' }).click()
+  await expect(settings.locator('.lede strong')).toHaveText('It is only here: nothing is backed up yet.')
+  await expect(settings.locator('[data-part="devices"]')).toHaveCount(0)
+  await settings.locator('.data-fix').getByRole('button', { name: 'Add a device' }).click()
+  await expect(settings.getByRole('heading', { name: 'Open this on your other device' })).toBeVisible()
+  await expect(b).toHaveURL(/#\/settings\/devices$/)
+  await settings.locator('.devices-actions').getByRole('button', { name: 'Cancel' }).click()
+  // Found now, and the room holding a task, the welcome no longer offers it.
+  await closeSettings(b)
+  await expect(line).toHaveCount(0)
+  await b.context().close()
 })

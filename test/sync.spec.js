@@ -66,7 +66,7 @@ test.skip(({ browserName }) => browserName !== 'chromium', 'Chromium opens a fol
 async function syncPage(page) {
   const settings = await openSettings(page, 'Your data')
   await settings.locator('[data-part="sync"]').click()
-  await expect(settings.getByRole('heading', { name: 'Sync', exact: true })).toBeFocused()
+  await expect(settings.getByRole('heading', { name: 'Synced folder', exact: true })).toBeFocused()
   return settings
 }
 
@@ -80,7 +80,7 @@ test('two computers keep each other’s conversations through a folder their dri
   await page.evaluate(async () => (await import('/ui/state.js')).app.fs.write('.secrets/keys.json', '{"format":1}\n'))
 
   // The first computer: an empty folder, which gets the mark and everything but keys and settings.
-  await turnOn(page, 'Sync')
+  await turnOn(page, 'Synced folder')
   // Its page leads to its page in Your data, which says how it stands.
   await openFromCase(page)
   await expect(page.locator('app-settings .data-head')).toContainText('Synced with Jean')
@@ -103,7 +103,7 @@ test('two computers keep each other’s conversations through a folder their dri
   await picker(other)
   await start(other)
   await drive(other, 'Jean', first)
-  await turnOn(other, 'Sync')
+  await turnOn(other, 'Synced folder')
   await other.keyboard.press('Escape')
   const list = await openTasks(other)
   await list.locator('.history-item', { hasText: 'photosynthesis' }).click()
@@ -242,7 +242,7 @@ test('two computers stay in step through a drive like Dropbox on their own, both
   await start(page)
   await connectFakeBrain(page)
   await answered(page, 'Explain photosynthesis in simple words')
-  await turnOn(page, 'Sync')
+  await turnOn(page, 'Synced folder')
   await page.keyboard.press('Escape')
 
   // The second computer, where the drive brings the folder down before Sync is turned on there.
@@ -254,7 +254,7 @@ test('two computers stay in step through a drive like Dropbox on their own, both
   const drive = dropbox(page, other)
   try {
     await expect.poll(async () => Object.keys(await folder(other, 'Jean')), { timeout: 20_000 }).toContain('mirror.json')
-    await turnOn(other, 'Sync')
+    await turnOn(other, 'Synced folder')
     await other.keyboard.press('Escape')
     await expect((await openTasks(other)).locator('.history-item', { hasText: 'photosynthesis' })).toBeVisible({ timeout: 20_000 })
     // From here on, nothing is clicked for Sync on either computer, and the drive goes on alone.
@@ -274,7 +274,7 @@ test('two computers stay in step through a drive like Dropbox on their own, both
 async function sameFolder(page, context) {
   /** The profile a tab's page opened, once ready: a page going to another still has its own. @param {import('@playwright/test').Page} on */
   const here = (on) => on.evaluate(async () => (document.documentElement.classList.contains('is-ready') ? /** @type {any} */ ((await import('/ui/state.js')).app.fs)?.root ?? null : null)).catch(() => null)
-  await turnOn(page, 'Sync')
+  await turnOn(page, 'Synced folder')
   await page.keyboard.press('Escape')
   const laptop = await here(page)
   await (await openProfile(page)).getByRole('button', { name: 'Add a profile' }).click()
@@ -283,7 +283,7 @@ async function sameFolder(page, context) {
   await dialog.getByLabel('The new profile’s name').fill('Desk')
   await dialog.getByRole('button', { name: 'Add it' }).click()
   await expect.poll(() => here(page)).toMatch(/-desk$/)
-  await turnOn(page, 'Sync')
+  await turnOn(page, 'Synced folder')
   await page.keyboard.press('Escape')
   const other = await context.newPage()
   await other.addInitScript((profile) => sessionStorage.setItem('app.profile', profile), String(laptop))
@@ -392,7 +392,7 @@ test('with retention, a task deleted from the folder is kept first, then goes fr
   await start(page)
   await connectFakeBrain(page)
   await answered(page, 'Explain photosynthesis in simple words')
-  await turnOn(page, 'Sync')
+  await turnOn(page, 'Synced folder')
   await page.keyboard.press('Escape')
   const inFolder = () => folder(page, 'Jean')
   // The first round, which seals and writes everything there is, takes longest.
@@ -436,7 +436,7 @@ test('two computers change a collection apart, and both keep every change, each 
       properties: [{ id: 'company', name: 'Company', type: 'text' }, { id: 'stage', name: 'Stage', type: 'text' }], views: [{ id: 'table', type: 'table' }] }))
     await app.fs.write(`${app.projectDir}/${place}/changes.jsonl`, [['1', 'Acme'], ['2', 'Globex']].map(([n, company]) => `${JSON.stringify({ row: `01K8000000000000000000000${n}`, set: { company, stage: 'Applied' }, at, by: 'user' })}\n`).join(''))
   }, place)
-  await turnOn(page, 'Sync')
+  await turnOn(page, 'Synced folder')
   await page.keyboard.press('Escape')
   await expect.poll(async () => Object.keys(await folder(page, 'Jean')).some((path) => path.endsWith('/changes.jsonl'))).toBe(true)
 
@@ -446,7 +446,7 @@ test('two computers change a collection apart, and both keep every change, each 
   await picker(other)
   await start(other)
   await drive(other, 'Jean', await folder(page, 'Jean'))
-  await turnOn(other, 'Sync')
+  await turnOn(other, 'Synced folder')
   await other.keyboard.press('Escape')
   // Its first round has brought the collection, which nothing can show until then.
   await expect.poll(() => other.evaluate(async (place) => {
@@ -495,7 +495,7 @@ test('a folder of other files is refused, and nothing of it comes in', async ({ 
   await start(page)
   await page.evaluate(() => localStorage.setItem('e2e.pick', 'Documents'))
   await drive(page, 'Documents', { 'Taxes 2025.txt': 'Mine', 'projects/notes.md': 'Mine too' })
-  await turnOn(page, 'Sync')
+  await turnOn(page, 'Synced folder')
   await expect(page.locator('.toast')).toContainText('Documents holds other files.')
   await page.keyboard.press('Escape')
   const panel = await syncPage(page)

@@ -20,9 +20,10 @@ await Promise.all([useStrings('data'), styleSheet(new URL('data-pages.css', impo
 /**
  * A part of Your data: its row in a group, which opens its page, settings/data/<id>, under its name and a line, its
  * row's unless it has its own; at the row's end how it stands, at its page's head what it does most, what presses, and,
- * while a copy it keeps elsewhere is in step, where the user's things are safe (Sync's), which stands for the browser that may clear them.
- * @typedef {{ id: string, at: number, group: 'here' | 'copies' | 'others', icon: unknown, label: string, text: () => string, line?: () => string,
- *   state?: () => unknown, end?: () => unknown, say?: () => string | undefined, copy?: () => string | undefined, when?: () => boolean, draw: (settings: { lockedBy: () => string }) => unknown }} Part
+ * while a copy it keeps elsewhere is in step, where the user's things are safe (the synced folder's, the devices'), which stands for the browser
+ * that may clear them, and its fix beside a line saying they are only here (Add a device). With `page: false`, no row and no page (Your devices, D726).
+ * @typedef {{ id: string, at: number, group: 'here' | 'copies' | 'others', icon: unknown, label: string, text: () => string, line?: () => string, page?: false,
+ *   state?: () => unknown, end?: () => unknown, say?: () => string | undefined, copy?: () => string | undefined, fix?: () => unknown, when?: () => boolean, draw: (settings: { lockedBy: () => string }) => unknown }} Part
  */
 
 /** How much the browser keeps for Jean, how much it would, and whether it keeps it come what may. */
@@ -177,13 +178,13 @@ const copied = (shown) => shown.map((part) => part.copy?.()).find(Boolean)
 /**
  * The one thing that matters most, a whole sentence: nothing backed up yet, the browser that may clear it all, a part
  * that needs the user (Sync), a copy in step elsewhere, which says they are safe there (Sync's, which also answers the
- * first two), a backup grown old; otherwise, when the last one was made. @param {Part[]} shown
+ * first two), a backup grown old; otherwise, when the last one was made. With the first two, a part's fix. @param {Part[]} shown @returns {[string, unknown?]}
  */
 function pressing(shown) {
-  const [at, copy] = [backedUp(), copied(shown)]
-  if (!copy && !at && backs() && everywhere.value) return t('data.none')
-  if (!copy && storage.value?.persisted === false) return t('data.unkept')
-  return shown.map((part) => part.say?.()).find(Boolean) ?? copy ?? (at ? t(stale(at) ? 'data.old' : 'data.fine', { when: ago(at) }) : '')
+  const [at, copy, fix] = [backedUp(), copied(shown), shown.map((part) => part.fix?.()).find(Boolean)]
+  if (!copy && !at && backs() && everywhere.value) return [t('data.none'), fix]
+  if (!copy && storage.value?.persisted === false) return [t('data.unkept'), fix]
+  return [shown.map((part) => part.say?.()).find(Boolean) ?? copy ?? (at ? t(stale(at) ? 'data.old' : 'data.fine', { when: ago(at) }) : '')]
 }
 
 /** A part's row: the whole of it opens its page. @param {Part} part */
@@ -195,14 +196,14 @@ const GROUPS = /** @type {const} */ (['here', 'copies', 'others'])
 /** Settings' Your data: the list, or the page open. */
 export function section() {
   const [shown, open] = [all(), pageOpen()]
-  const page = [...shown, BRING].find((part) => part.id === open)
-  const said = page ? (page.line ?? page.text)() : pressing(shown)
+  const page = [...shown, BRING].find((part) => part.id === open && part.page !== false)
+  const [said, fix] = page ? [(page.line ?? page.text)()] : pressing(shown)
   if (page) return html`<button class="back button subtle" @click=${() => go('')}>${icons.back} ${t('settings.storage')}</button>
     <header class="data-head"><div><h2 tabindex="-1">${t(page.label)}</h2>${said ? html`<p class="lede">${said}</p>` : nothing}</div>${page.end?.() ?? nothing}</header>${page.draw({ lockedBy })}`
   return html`<header class="data-head"><h2>${t('settings.storage')}</h2>${download()}</header>
-    <p class="lede">${app.ephemeral.value ? html`<strong>${t('storage.ephemeral')}</strong>` : html`${t('data.kept')} ${said ? html`<strong>${said}</strong>` : nothing}`}</p>
+    <p class="lede">${app.ephemeral.value ? html`<strong>${t('storage.ephemeral')}</strong>` : html`${t('data.kept')} ${said ? html`<strong>${said}</strong>` : nothing}`}</p>${fix && !app.ephemeral.value ? html`<div class="row data-fix">${fix}</div>` : nothing}
     ${GROUPS.map((group) => {
-      const rows = shown.filter((part) => part.group === group).sort((a, b) => a.at - b.at)
+      const rows = shown.filter((part) => part.group === group && part.page !== false).sort((a, b) => a.at - b.at)
       return rows.length ? html`<section><h3>${t(`data.${group}`)}</h3><ul class="list data-rows">${rows.map(row)}</ul></section>` : nothing
     })}
     ${app.policy.child ? nothing : html`<section><ul class="list data-rows">${row(BRING)}</ul></section>`}

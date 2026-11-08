@@ -297,6 +297,8 @@ export async function enterProject(project) {
 
 /** Before any task, in a browser's tab (not the desktop app, whose key the tab keeps). */
 export const firstVisit = () => !app.conversations.value.length && !sessionStorage.getItem('app.host') && matchMedia('(display-mode: browser)').matches
+/** Whether this Jean pairs devices (caps/devices, D726): a relay named, not a child's profile, no organisation's sign-in. */
+export const pairs = () => Boolean(serviceURL('relay', app.settings.value, app.policy)) && !app.policy.child && !app.policy.signIn
 
 /** A page of the brand's site in the app's language or English: beside the app there, the site's from its desktop app, else none. @param {keyof typeof PAGES} name */
 export function sitePage(name) {

@@ -84,7 +84,7 @@ test('the desktop app syncs with a folder picked with the system’s dialog, and
   try {
     const host = await desktop(page, folder)
     await start(page)
-    await turnOn(page, 'Sync')
+    await turnOn(page, 'Synced folder')
     await openFromCase(page)
     // Its page in Your data: how it stands under its title, and Show Jean Sync on this computer.
     const panel = page.locator('app-settings .settings-panel')

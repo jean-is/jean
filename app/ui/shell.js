@@ -2,10 +2,10 @@
 import { html, nothing } from 'lit-html'
 import { effect, signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
-import { app, newConversation, turnPage, assistantName, switchTheme, sidebarOpen, toggleSidebar, firstVisit, APPLE, SHORTCUTS } from './state.js'
+import { app, newConversation, turnPage, assistantName, switchTheme, sidebarOpen, toggleSidebar, firstVisit, pairs, APPLE, SHORTCUTS } from './state.js'
 import { loaded, unlock, isDenied, slots } from './caps.js'
 import { BRAND } from '../brand.js'
-import { t, locale } from '../core/i18n.js'
+import { t, tParts, locale } from '../core/i18n.js'
 import { icons } from './icons.js'
 import { focusComposer, offerAside } from './composer.js'
 import { toggleDictation } from './dictation.js'
@@ -132,13 +132,16 @@ document.addEventListener('keydown', (event) => {
   }
 })
 
-// Before any task, in a browser's tab: what Jean is (D366).
+const bringHere = () => unlock('devices').then((on) => { if (on) import('./dialogs.js').then((dialogs) => dialogs.openSettings('devices/join')) })
+
+// Before any task, in a browser's tab: what Jean is (D366); in an installed Jean too, until Your devices is found, a way to bring it here (D726).
 function welcome() {
-  const pitch = firstVisit() && app.dialog.value !== 'first'
+  const [pitch, bring] = [firstVisit() && app.dialog.value !== 'first', !app.conversations.value.length && pairs() && !loaded.value.has('devices') && !isDenied('devices') && !app.ephemeral.value]
   return html`<section class="welcome">
     <app-persona></app-persona>
     <h1 class="hero-question">${t('welcome.question')}</h1>
     ${pitch ? html`<div class="pitch"><p>${t('welcome.promise')}</p><ul>${['install', 'device', 'open'].map((key) => html`<li>${t(`welcome.${key}`)}</li>`)}</ul></div>` : nothing}
+    ${bring ? html`<p class="muted">${tParts('welcome.join', { name: BRAND.name, link: html`<button type="button" class="link-button" @click=${bringHere}>${t('welcome.bring')}</button>` })}</p>` : nothing}
   </section>`
 }
 
