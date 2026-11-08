@@ -201,11 +201,23 @@ const anchored = (html, name) => {
 }
 
 /**
+ * Prose's own felt-tip marks: an element written with class="felt is-under" (circle, strike) given the pen's drawing
+ * before it closes, as felt() gives it. A mark with one of its own kind inside, or of a kind the pen lacks, stops the build.
+ * @param {string} html
+ */
+export const penned = (html) => html.replace(/<([a-z]+)(\s[^>]*?)?\sclass="felt is-([a-z]+)"([^>]*)>([\s\S]*?)<\/\1>/g, (whole, tag, before = '', how, after, words) => {
+  if (!Object.hasOwn(STROKES, how)) throw new Error(`the pen has no “${how}”: ${Object.keys(STROKES).join(', ')}`)
+  if (new RegExp(`<${tag}[\\s>]`).test(words)) throw new Error(`a felt-tip <${tag}> holds another: ${whole}`)
+  return /* html */ `<${tag}${before} class="felt is-${how}"${after}>${words}${STROKES[/** @type {keyof typeof STROKES} */ (how)]}</${tag}>`
+})
+
+/**
  * A page of prose that every copy has: its text in each language as written, <lang>.html, whose links name the
- * site's pages ({privacy}, {terms}…) and its root ({root}check), filled from where it is.
+ * site's pages ({privacy}, {terms}…) and its root ({root}check), filled from where it is, and whose felt-tip marks
+ * the pen draws (penned).
  * @param {Record<string, string>} addresses @returns {Page}
  */
-export const prose = (addresses) => ({ addresses, ships: true, main: (kit) => /* html */ `<article class="prose site-prose">\n${kit.prose}</article>` })
+export const prose = (addresses) => ({ addresses, ships: true, main: (kit) => /* html */ `<article class="prose site-prose">\n${penned(kit.prose)}</article>` })
 
 /**
  * The theme line the app's documents run first (app/index.html's first script), and the hash a page's policy allows it by.

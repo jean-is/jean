@@ -16,7 +16,7 @@ import { SHARE } from '../scripts/manifest.js'
 import { withSite } from '../scripts/seo.js'
 import { checkPage, checkSite, checkStyle, checkWords } from '../site/checks.js'
 import { inLanguage } from '../site/home/page.js'
-import { LANGUAGES, buildSite, sitePages, theme, themeFor, wordsOf, xml } from '../site/site.js'
+import { LANGUAGES, buildSite, penned, sitePages, theme, themeFor, wordsOf, xml } from '../site/site.js'
 
 const BASE = 'https://jean.is/'
 const index = await readFile(new URL('../app/index.html', import.meta.url), 'utf8')
@@ -314,5 +314,19 @@ test('every heading with an id links to itself after its words, by a named link,
       assert.deepEqual(links.map((link) => [link[1], words.endsWith(link[0])]), id && !page.fragment ? [[`#${id}`, true]] : [], `${page.path}: <${tag}${attrs}>`)
       if (links.length) assert.ok(attrs.includes(`aria-labelledby="${id}-words"`) && words.startsWith(`<span id="${id}-words">`), `${page.path}: <${tag}${attrs}> names itself by its words`)
     }
+  }
+})
+
+test('prose marks a phrase with the felt-tip by its class alone, the pen drawing it as felt() does, and a mark the pen can’t draw stops the build', async () => {
+  const drawn = penned('<p>Read <strong class="felt is-under">this</strong>, <em lang="en" class="felt is-circle">that</em> and <span class="felt-mark">those</span>.</p>')
+  assert.match(drawn, /<strong class="felt is-under">this<svg class="felt-under" [^>]*aria-hidden="true"><path d="[^"]+"\/><\/svg><\/strong>/)
+  assert.match(drawn, /<em lang="en" class="felt is-circle">that<svg class="felt-circle" [^>]*><path d="[^"]+"\/><\/svg><\/em>/)
+  assert.ok(drawn.includes('<span class="felt-mark">those</span>'))
+  assert.throws(() => penned('<b class="felt is-wave">no</b>'), /the pen has no “wave”/)
+  assert.throws(() => penned('<span class="felt is-under">a <span>b</span> c</span>'), /holds another/)
+  const site = await jean()
+  for (const page of site.pages) {
+    const marks = [...site.files[page.path].matchAll(/<([a-z]+)[^>]*\sclass="felt is-([a-z]+)"[^>]*>([\s\S]*?)<\/\1>/g)]
+    for (const [whole, , how, words] of marks) assert.ok(words.includes(`<svg class="felt-${how}"`), `${page.path}: ${whole}`)
   }
 })
