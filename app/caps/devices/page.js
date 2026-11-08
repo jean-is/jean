@@ -1,5 +1,5 @@
-// Your devices (D700, D726), a section of Settings: this device first, then the others, each with when it was added and Remove, asked
-// in a dialog that also erases Jean there; Add a device, its steps shown in its place (the link and its QR code, the wait, the lock, the six
+// Your devices (D700, D726, D728), a section of Settings: cards, this device first, then the others, each with when it was last seen, or
+// added, and Remove, asked in a dialog that also erases Jean there; what they keep in common, what each keeps; Add a device, its steps shown in its place (the link and its QR code, the wait, the lock, the six
 // digits the new device shows, done). A new device joins from its own page, devices/join, which its welcome opens: a link from the other
 // device, pasted there, in the box or opened, joined in the same place once the person chooses Join, its six digits shown to type there,
 // then what came and from where, opened only on Join again. Loaded the first time it shows.
@@ -13,7 +13,7 @@ import { icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { t, tParts, intlLocales, formatBytes, relativeTime } from '../../core/i18n.js'
 import { BRAND } from '../../brand.js'
-import { adding, joining, devices, own, stored, start, passed, confirm, cancel, join, trusted, removeDevice } from './devices.js'
+import { adding, joining, devices, own, stored, start, passed, confirm, cancel, join, trusted, removeDevice, kindOf, lastSeen, quietOf } from './devices.js'
 import { state as store, again } from './store.js'
 
 // The head and the back button Your data's pages have.
@@ -81,14 +81,16 @@ function step() {
   return null
 }
 
-/** At rest: the devices, this one first, Add a device, and, while this one is alone, the way to its page for joining another instead. */
+/**
+ * At rest: the devices as cards, this one first, a device two weeks unheard as a state that waits; what they keep in common and what each
+ * keeps; Add a device, and, while this one is alone, the way to its page for joining another instead.
+ */
 function rest() {
-  const date = new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'medium' })
   const list = [...devices.value].sort((x, y) => Number(y.id === own.value) - Number(x.id === own.value))
-  return html`${list.length ? html`<ul class="list">${list.map((one) => html`<li><span class="item-text"><strong dir="auto">${one.name}</strong>
-      <small>${t(one.id === own.value ? 'devices.here' : 'devices.added', { date: date.format(new Date(one.createdAt)) })}</small></span>
-      ${one.id === own.value ? nothing : html`<button class="button subtle danger" @click=${() => ask(one)}>${t('action.remove')}</button>`}</li>`)}</ul>` : nothing}
-    ${common()}<div class="row"><button id="devices-add" class="button primary" @click=${start}>${icons.plus} ${t('devices.add')}</button></div>
+  return html`${list.length ? html`<ul class="devices-cards">${list.map((one) => html`<li class=${one.id === own.value ? 'is-here' : ''}>${kindOf(one.name)}<strong dir="auto">${one.name}</strong>
+      ${one.id === own.value ? html`<small>${t('devices.here', { date: new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'medium' }).format(new Date(one.createdAt)) })}</small>`
+        : html`<small class=${quietOf(one) ? 'data-state is-wait' : ''}>${lastSeen(one)}</small><button class="button subtle danger" @click=${() => ask(one)}>${t('action.remove')}</button>`}</li>`)}</ul>` : nothing}
+    ${common()}<p class="hint">${t('devices.own')}</p><div class="row"><button id="devices-add" class="button primary" @click=${start}>${icons.plus} ${t('devices.add')}</button></div>
     ${list.length > 1 ? nothing : html`<p><button class="link-button" data-page="join" @click=${() => goPage('devices', 'join')}>${t('devices.bring', { name: BRAND.name })}</button></p>`}`
 }
 
@@ -103,7 +105,7 @@ const pasting = () => html`<form class="stack" @submit=${(/** @type {SubmitEvent
 function common() {
   const { use = 0, quota, full, gone, room, owing, unreached, at } = store.value
   const said = gone ? 'devices.store.gone' : room ? 'devices.store.room' : unreached ? 'devices.store.unreached' : owing ? 'devices.store.owed' : full ? 'devices.store.full' : quota ? 'devices.store.use' : ''
-  return said ? html`<p class="hint">${t(said, { used: formatBytes(use), quota: formatBytes(quota ?? 0) })}</p>${at && !gone ? html`<p class="hint devices-synced">${t('devices.store.synced', { when: relativeTime(at) })}</p>` : nothing}
+  return said ? html`<p class="hint" id="devices-use">${t(said, { used: formatBytes(use), quota: formatBytes(quota ?? 0) })}</p>${quota ? html`<meter value=${use} max=${quota} aria-labelledby="devices-use"></meter>` : nothing}${at && !gone ? html`<p class="hint devices-synced">${t('devices.store.synced', { when: relativeTime(at) })}</p>` : nothing}
     ${gone ? html`<div class="row"><button class="button" @click=${again}>${t('devices.store.again')}</button></div>` : nothing}` : nothing
 }
 

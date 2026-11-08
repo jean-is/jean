@@ -1,11 +1,11 @@
-// Settings' Your data: one line on how things stand, the most pressing thing in it, and Download a backup at
-// its head; then where each copy of the user's things is, as rows that open their pages at their own addresses (D509):
+// Settings' Your data: Download a backup at its head, the map of where the user's things are (ui/map.js, D728), one line on how
+// things stand, the most pressing thing in it with its fix; then where each copy is, as rows that open their pages at their own addresses (D509):
 // on this device (Lock, Space used), the copies they keep (Backup, Sync), who else sees them (Shared links, their
 // organization), and Bring in. A capability's row and page are its part of the data slot, shown once it is found.
 // Loaded the first time Your data shows; its strings are a part of their own (locales/data/).
 import { html, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
-import { app, effective, updateSettings } from './state.js'
+import { app, effective, updateSettings, pairs } from './state.js'
 import { unlock, isDenied, slots, loaded } from './caps.js'
 import { sectionOpen, pageOpen, openSettings, projectName, backup, lockedBy } from './dialogs.js'
 import { everywhere } from './discovery.js'
@@ -14,6 +14,8 @@ import { weigh } from '../core/files.js'
 import { t, relativeTime, intlLocales, formatBytes, useStrings } from '../core/i18n.js'
 import { icons } from './menu-icons.js'
 import { styleSheet } from './sheet.js'
+import { handheld } from './model.js'
+import { map, ghost } from './map.js'
 
 await Promise.all([useStrings('data'), styleSheet(new URL('data-pages.css', import.meta.url))])
 
@@ -21,10 +23,12 @@ await Promise.all([useStrings('data'), styleSheet(new URL('data-pages.css', impo
  * A part of Your data: its row in a group, which opens its page, settings/data/<id>, under its name and a line, its
  * row's unless it has its own; at the row's end how it stands, at its page's head what it does most, what presses, and,
  * while a copy it keeps elsewhere is in step, where the user's things are safe (the synced folder's, the devices'), which stands for the browser
- * that may clear them, and its fix beside a line saying they are only here (Add a device). With `page: false`, no row and no page (Your devices, D726).
- * @typedef {{ id: string, at: number, group: 'here' | 'copies' | 'others', icon: unknown, label: string, text: () => string, line?: () => string, page?: false,
- *   state?: () => unknown, end?: () => unknown, say?: () => string | undefined, copy?: () => string | undefined, fix?: () => unknown, when?: () => boolean, draw: (settings: { lockedBy: () => string }) => unknown }} Part
+ * that may clear them, its fix beside what it says or beside a line saying they are only here (Add a device), and its places on the map.
+ * With `page: false`, no row and no page (Your devices, D726).
+ * @typedef {{ id: string, at: number, group: 'here' | 'copies' | 'others', icon: unknown, label: string, text: () => string, line?: () => string, page?: false, state?: () => unknown,
+ *   end?: () => unknown, say?: () => string | undefined, copy?: () => string | undefined, fix?: () => unknown, node?: () => Place | Place[] | undefined, when?: () => boolean, draw: (settings: { lockedBy: () => string }) => unknown }} Part
  */
+/** @typedef {import('./map.js').Place} Place */
 
 /** How much the browser keeps for Jean, how much it would, and whether it keeps it come what may. */
 const storage = signal(/** @type {{ usage?: number, quota?: number, persisted?: boolean } | null} */ (null))
@@ -159,6 +163,7 @@ function all() {
   return [/** @type {Part} */ ({ id: 'space', at: 9, group: 'here', icon: icons.cabinet, label: 'data.space', text: () => (usage === undefined ? '' : formatBytes(usage)),
     line: () => (usage === undefined || !storage.value?.quota ? '' : t('data.of', { size: formatBytes(usage), quota: formatBytes(storage.value.quota), name: BRAND.name })), draw: space }),
   ...(!backs() ? [] : [/** @type {Part} */ ({ id: 'backup', at: 0, group: 'copies', icon: icons.backup, label: 'cap.backup.name', text: () => (date ? t('data.last', { date }) : t('cap.backup.text')), line: () => (date ? t('data.last', { date }) : ''),
+    node: () => ({ side: 'start', icon: icons.backup, name: t('cap.backup.name'), sub: at ? ago(at) : t('data.never'), state: !at ? 'off' : stale(at) ? 'wait' : 'ok' }),
     state: () => html`<span class=${`data-state ${stale(at) || !at ? 'is-wait' : ''}`}>${at ? ago(at) : t('data.never')}</span>`,
     end: download,
     draw: () => html`<p>${t('backup.text', { name: BRAND.name })}</p><p class="hint">${t('data.readable')}</p>
@@ -176,16 +181,23 @@ function all() {
 const copied = (shown) => shown.map((part) => part.copy?.()).find(Boolean)
 
 /**
- * The one thing that matters most, a whole sentence: nothing backed up yet, the browser that may clear it all, a part
- * that needs the user (Sync), a copy in step elsewhere, which says they are safe there (Sync's, which also answers the
- * first two), a backup grown old; otherwise, when the last one was made. With the first two, a part's fix. @param {Part[]} shown @returns {[string, unknown?]}
+ * The one thing that matters most, a whole sentence: a part that needs the user (the synced folder stuck, the devices' store), with its
+ * fix; nothing backed up yet, the browser that may clear it all, with the first part's fix (Add a device); a copy in step elsewhere, which
+ * says they are safe there (and answers those two); a backup grown old; otherwise, when the last one was made. @param {Part[]} shown @returns {[string, unknown?]}
  */
 function pressing(shown) {
-  const [at, copy, fix] = [backedUp(), copied(shown), shown.map((part) => part.fix?.()).find(Boolean)]
+  const [at, copy, says, fix] = [backedUp(), copied(shown), shown.find((part) => part.say?.()), shown.map((part) => part.fix?.()).find(Boolean)]
+  if (says) return [says.say?.() ?? '', says.fix?.()]
   if (!copy && !at && backs() && everywhere.value) return [t('data.none'), fix]
-  if (!copy && storage.value?.persisted === false) return [t('data.unkept'), fix]
-  return [shown.map((part) => part.say?.()).find(Boolean) ?? copy ?? (at ? t(stale(at) ? 'data.old' : 'data.fine', { when: ago(at) }) : '')]
+  return !copy && storage.value?.persisted === false ? [t('data.unkept'), fix] : [copy ?? (at ? t(stale(at) ? 'data.old' : 'data.fine', { when: ago(at) }) : '')]
 }
+
+/**
+ * The map's places, the parts' and, before Your devices is found where devices pair, the phone it would add, dashed: choosing it finds it
+ * there (D281) and starts adding. @param {Part[]} shown @returns {Place[]}
+ */
+const places = (shown) => [...shown.flatMap((part) => part.node?.() ?? []), ...(pairs() && !loaded.value.has('devices') && !isDenied('devices') && !app.ephemeral.value ? [ghost(() => unlock('devices').then((on) => {
+  if (on) import('../caps/devices/devices.js').then((devices) => { openSettings('devices'); devices.start() }) }))] : [])]
 
 /** A part's row: the whole of it opens its page. @param {Part} part */
 const row = (part) => html`<li><button class="item" data-part=${part.id} @click=${() => go(part.id)}><span class="item-icon">${part.icon}</span>
@@ -200,8 +212,9 @@ export function section() {
   const [said, fix] = page ? [(page.line ?? page.text)()] : pressing(shown)
   if (page) return html`<button class="back button subtle" @click=${() => go('')}>${icons.back} ${t('settings.storage')}</button>
     <header class="data-head"><div><h2 tabindex="-1">${t(page.label)}</h2>${said ? html`<p class="lede">${said}</p>` : nothing}</div>${page.end?.() ?? nothing}</header>${page.draw({ lockedBy })}`
+  const around = places(shown)
   return html`<header class="data-head"><h2>${t('settings.storage')}</h2>${download()}</header>
-    <p class="lede">${app.ephemeral.value ? html`<strong>${t('storage.ephemeral')}</strong>` : html`${t('data.kept')} ${said ? html`<strong>${said}</strong>` : nothing}`}</p>${fix && !app.ephemeral.value ? html`<div class="row data-fix">${fix}</div>` : nothing}
+    ${around.length ? map(t('data.where'), { icon: handheld() ? icons.phone : icons.computer, name: t('data.this') }, around) : nothing}<p class="lede">${app.ephemeral.value ? html`<strong>${t('storage.ephemeral')}</strong>` : html`${t('data.kept')} ${said ? html`<strong>${said}</strong>` : nothing}`}</p>${fix && !app.ephemeral.value ? html`<div class="row data-fix">${fix}</div>` : nothing}
     ${GROUPS.map((group) => {
       const rows = shown.filter((part) => part.group === group && part.page !== false).sort((a, b) => a.at - b.at)
       return rows.length ? html`<section><h3>${t(`data.${group}`)}</h3><ul class="list data-rows">${rows.map(row)}</ul></section>` : nothing

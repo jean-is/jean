@@ -4,6 +4,13 @@
   "devices.safe": "Ɗawainiyoyinka da fayilolinka suna kan sauran na'urorinka ma, a rufe ta yadda su kaɗai za su iya karanta su.",
   "devices.here": "Wannan na'urar, an ƙara ta a {date}",
   "devices.added": "An ƙara ta a {date}",
+  "devices.seen": "An gan ta {when}",
+  "devices.more": {
+    "one": "Ƙarin na'ura {count}",
+    "other": "Ƙarin na'urori {count}"
+  },
+  "devices.lastSeen": "An ga na'urar {device} karo na ƙarshe {when}. Idan ka daina amfani da ita, cire ta.",
+  "devices.see": "Duba na'urorinka",
   "devices.store.use": "{used} daga cikin {quota} na tare",
   "devices.store.full": "Ya cika: sabon abu yana zama a wannan na'urar.",
   "devices.store.owed": "Ana fitar da na'urar da ka cire…",
@@ -11,6 +18,7 @@
   "devices.store.room": "Babu sauran sarari a wannan na'urar: babu abin da zai ƙara zuwa gare ta.",
   "devices.store.again": "Sake farawa",
   "devices.store.synced": "Daidaitawa ta ƙarshe: {when}",
+  "devices.own": "Kowace na'ura tana riƙe da jigonta, jakar da aka daidaita, ƙwaƙwalwar da aka sauke, da shigarta cikin ayyuka.",
   "devices.store.unreached": "Wannan na'ura ba ta iya kaiwa ga sauran na'urorinka yanzu: abin da ya canza a nan zai jira har sai ta iya.",
   "devices.syncing": "Na'urorinka · ana daidaitawa",
   "devices.trouble": "Na'urorinka · a duba",

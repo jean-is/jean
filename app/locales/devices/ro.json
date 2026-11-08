@@ -4,6 +4,14 @@
   "devices.safe": "Sarcinile și fișierele dvs. sunt și pe celelalte dispozitive ale dvs., sigilate astfel încât doar ele să le poată citi.",
   "devices.here": "Acest dispozitiv, adăugat pe {date}",
   "devices.added": "Adăugat pe {date}",
+  "devices.seen": "Văzut {when}",
+  "devices.more": {
+    "one": "Încă {count} dispozitiv",
+    "few": "Încă {count} dispozitive",
+    "other": "Încă {count} de dispozitive"
+  },
+  "devices.lastSeen": "Dispozitivul {device} a fost văzut ultima dată {when}. Dacă nu-l mai folosiți, eliminați-l.",
+  "devices.see": "Vedeți dispozitivele dvs.",
   "devices.store.use": "{used} din {quota} în comun",
   "devices.store.full": "Plin: ce este nou rămâne pe acest dispozitiv.",
   "devices.store.owed": "Dispozitivul eliminat este exclus…",
@@ -11,6 +19,7 @@
   "devices.store.room": "Nu mai este loc pe acest dispozitiv: nu mai ajunge nimic la el.",
   "devices.store.again": "Începeți din nou",
   "devices.store.synced": "Ultima sincronizare: {when}",
+  "devices.own": "Fiecare dispozitiv își păstrează propria temă, propriul dosar sincronizat, creierele descărcate și conectările la servicii.",
   "devices.store.unreached": "Acest dispozitiv nu poate ajunge acum la celelalte dispozitive ale dvs.: ce se schimbă aici așteaptă până reușește.",
   "devices.syncing": "Dispozitivele dvs. · se sincronizează",
   "devices.trouble": "Dispozitivele dvs. · necesită atenție",

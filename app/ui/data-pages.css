@@ -12,3 +12,14 @@
 /* Delete old tasks' choices (D718), as Approvals' are drawn. */
 .forget-choices label { flex: 1; display: flex; align-items: center; gap: 0.75rem; cursor: pointer; }
 .forget-choices > li:has(:checked) { background: oklch(from var(--flame) l c h / 0.08); }
+/* Where things are, drawn (ui/map.js, D728): the middle larger, ringed in the flame; a place waiting tinted as a state that waits, one off or to add dashed, that one a button; the lines under the discs, still, or moving dashes while in step. */
+app-map { position: relative; display: block; max-inline-size: 30rem; margin: -0.25rem auto 1rem; } app-map + .lede { margin-block-end: 1.25rem; }
+app-map ul { position: relative; display: grid; grid-template-columns: 1fr minmax(5rem, auto) 1fr; gap: 0.9rem 0.5rem; margin: 0; padding: 0; list-style: none; text-align: center; font-size: 0.8rem; line-height: 1.3; }
+app-map :is(li, button) { display: flex; flex-direction: column; align-items: center; gap: 0.2rem; overflow-wrap: anywhere; } app-map small { color: var(--ink-soft); }
+app-map .is-here { grid-area: 1 / 2 / 3; align-self: center; } .at-start { grid-area: 1 / 1 / 3; align-self: center; } .at-start1 { grid-area: 1 / 1; } .at-start2 { grid-area: 2 / 1; } .at-end { grid-area: 1 / 3 / 3; align-self: center; } .at-end1 { grid-area: 1 / 3; } .at-end2 { grid-area: 2 / 3; }
+.data-disc { --glyph: 1.25rem; display: grid; place-items: center; inline-size: 2.75rem; block-size: 2.75rem; border: 1.5px solid var(--line-strong); border-radius: 50%; background: var(--room-2); } .is-here .data-disc { --glyph: 1.6rem; inline-size: 3.5rem; block-size: 3.5rem; border: 2px solid var(--flame); }
+app-map .is-wait .data-disc { border-color: var(--wait-line, oklch(from var(--flame) l c h / 0.45)); background: var(--wait, oklch(from var(--flame) l c h / 0.14)); } app-map :is(.is-off, .is-ghost) .data-disc { border-style: dashed; } app-map .is-off .data-disc { color: var(--ink-faint); }
+app-map button { padding: 0.3rem; border: 0; border-radius: 0.75rem; background: none; color: inherit; font: inherit; cursor: pointer; } app-map button:hover { background: var(--line); } app-map .is-ghost .data-disc { border-color: var(--flame); color: var(--flame); }
+.data-lines { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; overflow: visible; fill: none; stroke: var(--line-strong); stroke-width: 1.5; } .data-lines :is(.is-off, .is-ghost) { stroke-dasharray: 4 5; }
+.data-lines .is-flow { stroke: var(--flame); stroke-dasharray: 3 7; animation: along 1.6s linear infinite var(--loops, running); } @keyframes along { to { stroke-dashoffset: -20; } }
+@media (forced-colors: active) { .data-lines { stroke: CanvasText; } app-map .data-disc { border-color: CanvasText; } }

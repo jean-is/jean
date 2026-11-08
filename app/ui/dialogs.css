@@ -186,12 +186,12 @@ label.item, .list summary { cursor: pointer; }
 /* What takes up space, under Storage: a row a kind, its size, then a bar of its share, the track a lighter step of its fill, and Make room under it, at its end as the voices' Remove are, not in the icon's column, which it widened. */
 .parts .list > li { display: grid; grid-template-columns: auto 1fr auto; gap: 0.35rem 0.75rem; } .parts .list > li > .button { justify-self: end; }
 .parts .item-icon { grid-row: span 2; } .parts strong { font-weight: 600; font-variant-numeric: tabular-nums; }
-.parts :is(meter, .list > li > .button) { grid-column: 2 / -1; } :is(.parts, .filled, .case-bar) meter { appearance: none; inline-size: 100%; block-size: 0.3rem; border: 0; border-radius: 999px; background: oklch(from var(--flame) l c h / 0.18); }
-:is(.parts, .filled, .case-bar) meter::-webkit-meter-bar { block-size: 100%; border: 0; border-radius: inherit; background: none; }
-:is(.parts, .filled, .case-bar) meter::-webkit-meter-optimum-value { border-radius: inherit; background: var(--flame); }
-:is(.parts, .filled, .case-bar) meter::-moz-meter-bar { border-radius: inherit; background: var(--flame); }
-@media (forced-colors: active) { :is(.parts, .filled, .case-bar) meter { forced-color-adjust: none; background: GrayText; } :is(.parts, .filled, .case-bar) meter::-webkit-meter-optimum-value { background: CanvasText; } }
-@media (forced-colors: active) { :is(.parts, .filled, .case-bar) meter::-moz-meter-bar { background: CanvasText; } }
+.parts :is(meter, .list > li > .button) { grid-column: 2 / -1; } :is(.parts, .filled, .case-bar, .devices-flow) meter { appearance: none; inline-size: 100%; block-size: 0.3rem; border: 0; border-radius: 999px; background: oklch(from var(--flame) l c h / 0.18); }
+:is(.parts, .filled, .case-bar, .devices-flow) meter::-webkit-meter-bar { block-size: 100%; border: 0; border-radius: inherit; background: none; }
+:is(.parts, .filled, .case-bar, .devices-flow) meter::-webkit-meter-optimum-value { border-radius: inherit; background: var(--flame); }
+:is(.parts, .filled, .case-bar, .devices-flow) meter::-moz-meter-bar { border-radius: inherit; background: var(--flame); }
+@media (forced-colors: active) { :is(.parts, .filled, .case-bar, .devices-flow) meter { forced-color-adjust: none; background: GrayText; } :is(.parts, .filled, .case-bar, .devices-flow) meter::-webkit-meter-optimum-value { background: CanvasText; } }
+@media (forced-colors: active) { :is(.parts, .filled, .case-bar, .devices-flow) meter::-moz-meter-bar { background: CanvasText; } }
 .other summary { padding-block: 0.5rem; color: var(--ink-soft); cursor: pointer; }
 .model-input { font: 0.85rem var(--mono); }
 .rule-kind { font-size: 0.92rem; }

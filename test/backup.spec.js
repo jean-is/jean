@@ -58,7 +58,7 @@ test('Your data says what matters most, then where each copy is, and a backup ch
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Anything else?')
   const settings = await openSettings(page, 'Your data')
   const ephemeral = await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value)
-  await expect(settings.locator('.data-head + .lede')).toContainText(ephemeral ? 'Private window: nothing will be saved after you close it.' : 'Kept on this device, encrypted. It is only here: nothing is backed up yet.')
+  await expect(settings.locator('.data-head ~ .lede')).toContainText(ephemeral ? 'Private window: nothing will be saved after you close it.' : 'Kept on this device, encrypted. It is only here: nothing is backed up yet.')
   // Only what is found shows: Space used on this device, Backup among the copies, then Bring in.
   await expect(settings.locator('.settings-panel h3')).toHaveText(['On this device', 'Copies you keep'])
   const backup = settings.locator('[data-part="backup"]')

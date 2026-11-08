@@ -124,9 +124,13 @@ function page() {
 /** Whether the folder chosen can't be synced with until the user acts. */
 const stuck = () => !!state.value.folder && ['waiting', 'failed'].includes(state.value.status)
 
-// A copy the user keeps, in Your data; what keeps it from syncing is the section's line, and once a round was in step, that the user's things are safe in the folder.
+// A copy the user keeps, in Your data; what keeps it from syncing is the section's line, with what lets it go on, and once a round was in
+// step, that the user's things are safe in the folder; on the map, the folder chosen, moving once in step.
 register({ id: 'sync', waiting: () => !state.value.folder, slots: { data: { id: 'sync', at: 1, group: 'copies', icon: icons.sync, label: 'cap.sync.name', text: line, draw: page,
   say: () => (stuck() ? line() : undefined),
+  fix: () => (stuck() ? html`<button class="button primary" @click=${state.value.status === 'waiting' ? allow : round}>${icons.sync} ${t(state.value.status === 'waiting' ? 'sync.allow' : 'sync.now')}</button>` : undefined),
+  node: () => (state.value.folder ? /** @type {import('../../ui/map.js').Place} */ ({ side: 'start', icon: icons.folder, name: t('cap.sync.name'), sub: nameOf(state.value.folder),
+    state: stuck() ? 'wait' : state.value.at ? 'ok' : 'off', flow: Boolean(state.value.at) && !stuck() }) : undefined),
   copy: () => (state.value.folder && state.value.at && !stuck() ? t('sync.safe', { folder: nameOf(state.value.folder) }) : undefined) } } })
 
 // The folder chosen on an earlier visit: synced now, or once the user lets the browser open it again.

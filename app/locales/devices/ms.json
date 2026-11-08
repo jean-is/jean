@@ -4,6 +4,12 @@
   "devices.safe": "Tugasan dan fail anda juga ada pada peranti anda yang lain, dimeterai supaya hanya peranti itu yang boleh membacanya.",
   "devices.here": "Peranti ini, ditambah pada {date}",
   "devices.added": "Ditambah pada {date}",
+  "devices.seen": "Terakhir dilihat {when}",
+  "devices.more": {
+    "other": "{count} peranti lagi"
+  },
+  "devices.lastSeen": "{device} terakhir dilihat {when}. Jika anda tidak menggunakannya lagi, buang peranti itu.",
+  "devices.see": "Lihat peranti anda",
   "devices.store.use": "{used} daripada {quota} dikongsi",
   "devices.store.full": "Penuh: perkara baharu kekal pada peranti ini.",
   "devices.store.owed": "Mengeluarkan peranti yang anda alih keluar…",
@@ -11,6 +17,7 @@
   "devices.store.room": "Tiada ruang lagi pada peranti ini: tiada apa-apa lagi yang sampai kepadanya.",
   "devices.store.again": "Mula semula",
   "devices.store.synced": "Kali terakhir disegerakkan: {when}",
+  "devices.own": "Tema, folder yang disegerakkan, otak yang dimuat turun dan log masuk ke perkhidmatan disimpan berasingan pada setiap peranti.",
   "devices.store.unreached": "Peranti ini tidak dapat mencapai peranti anda yang lain sekarang: apa yang berubah di sini menunggu sehingga ia dapat.",
   "devices.syncing": "Peranti anda · sedang menyegerak",
   "devices.trouble": "Peranti anda · perlu dilihat",

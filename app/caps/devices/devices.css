@@ -8,3 +8,7 @@
 .icon-button.devices-syncing { color: var(--ink); } .devices-syncing svg { animation: waits 1.6s ease-in-out infinite var(--loops, running); }
 .devices-trouble { position: relative; } .devices-trouble::after { content: ''; position: absolute; inset-block-start: 0.3rem; inset-inline-end: 0.3rem; inline-size: 0.45rem; block-size: 0.45rem; border-radius: 50%; background: var(--danger); }
 @media (forced-colors: active) { .devices-trouble::after { background: CanvasText; } }
+/* The devices as cards (D728): the picture of its kind, its name, how it stands, Remove at its foot; this one ringed in the flame. */
+.devices-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 9.5rem), 1fr)); gap: 0.6rem; margin: 0; padding: 0; list-style: none; }
+.devices-cards > li { --glyph: 1.75rem; display: flex; flex-direction: column; align-items: start; gap: 0.3rem; padding: 0.85rem; border: 1px solid var(--line-strong); border-radius: 1rem; overflow-wrap: anywhere; }
+.devices-cards > .is-here { border-color: var(--flame); } .devices-cards :is(small, .icon) { color: var(--ink-soft); } .devices-cards .button { margin-block-start: auto; }

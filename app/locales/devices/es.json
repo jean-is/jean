@@ -4,6 +4,14 @@
   "devices.safe": "Tus tareas y archivos también están en tus otros dispositivos, sellados para que solo ellos puedan leerlos.",
   "devices.here": "Este dispositivo, añadido el {date}",
   "devices.added": "Añadido el {date}",
+  "devices.seen": "Visto {when}",
+  "devices.more": {
+    "one": "{count} dispositivo más",
+    "many": "{count} dispositivos más",
+    "other": "{count} dispositivos más"
+  },
+  "devices.lastSeen": "El dispositivo {device} fue visto por última vez {when}. Si ya no lo usas, quítalo.",
+  "devices.see": "Ver tus dispositivos",
   "devices.store.use": "{used} de {quota} en común",
   "devices.store.full": "Lleno: lo nuevo se queda en este dispositivo.",
   "devices.store.owed": "Dejando fuera el dispositivo que quitaste…",
@@ -11,6 +19,7 @@
   "devices.store.room": "No queda espacio en este dispositivo: ya no le llega nada más.",
   "devices.store.again": "Empezar de nuevo",
   "devices.store.synced": "Última sincronización: {when}",
+  "devices.own": "Cada dispositivo conserva su propio tema, su carpeta sincronizada, sus cerebros descargados y sus sesiones iniciadas en los servicios.",
   "devices.store.unreached": "Este dispositivo no puede llegar a tus otros dispositivos ahora mismo: lo que cambie aquí esperará hasta que pueda.",
   "devices.syncing": "Tus dispositivos · sincronizando",
   "devices.trouble": "Tus dispositivos · conviene revisarlos",

@@ -96,6 +96,18 @@ test('two computers keep each other’s conversations through a folder their dri
   await expect(page.locator('app-settings .muted', { hasText: 'Your tasks, files and memory are also in Jean' })).toBeVisible()
   await expect(page.locator('app-settings')).not.toContainText('Your browser may clear it')
   await page.keyboard.press('Escape')
+  // The folder waiting for access: Your data says so first, with the button that gives it, which lets it go on (D728).
+  await page.evaluate(() => { const proto = /** @type {any} */ (FileSystemHandle.prototype), query = proto.queryPermission
+    Object.assign(proto, { queryPermission: async () => 'prompt', requestPermission: async () => { proto.queryPermission = query; return 'granted' } }) })
+  const data = await openSettings(page, 'Your data')
+  await data.locator('[data-part="sync"]').click()
+  await data.getByRole('button', { name: 'Sync now' }).click()
+  await data.locator('.back').click()
+  await expect(data.locator('.lede strong')).toHaveText('Allow access to Jean to go on syncing with your other computers.')
+  await data.locator('.data-fix').getByRole('button', { name: 'Allow access' }).click()
+  await expect(data.locator('.lede')).toHaveText('Kept on this device, encrypted. Your tasks, files and memory are also in Jean, safe even if your browser clears them here.')
+  await expect(data.getByRole('list', { name: 'Where your things are' }).getByRole('listitem')).toHaveText(['This device', /^Backup/, /^Synced folder\s*Jean$/])
+  await page.keyboard.press('Escape')
 
   // The second computer, where the drive brought the folder: the first one's conversation comes in.
   const context = await browser.newContext()

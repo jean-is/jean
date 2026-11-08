@@ -4,6 +4,12 @@
   "devices.safe": "작업과 파일이 내 다른 기기에도 있어요. 그 기기들만 읽을 수 있도록 봉인돼요.",
   "devices.here": "이 기기, {date}에 추가됨",
   "devices.added": "{date}에 추가됨",
+  "devices.seen": "{when} 접속",
+  "devices.more": {
+    "other": "다른 기기 {count}대"
+  },
+  "devices.lastSeen": "{device} 기기는 {when} 마지막으로 접속했어요. 그 기기를 더 이상 쓰지 않는다면 제거하세요.",
+  "devices.see": "내 기기 보기",
   "devices.store.use": "{quota} 중 {used} 공유 중",
   "devices.store.full": "가득 찼어요. 새로운 것은 이 기기에 남아요.",
   "devices.store.owed": "제거한 기기를 차단하는 중…",
@@ -11,6 +17,7 @@
   "devices.store.room": "이 기기에 공간이 없어요. 더 이상 아무것도 오지 않아요.",
   "devices.store.again": "다시 시작",
   "devices.store.synced": "마지막 동기화: {when}",
+  "devices.own": "테마, 동기화 폴더, 다운로드한 두뇌, 서비스 로그인은 기기마다 따로 유지돼요.",
   "devices.store.unreached": "이 기기가 지금 다른 기기에 연결할 수 없어요. 여기서 바뀐 내용은 연결될 때까지 기다려요.",
   "devices.syncing": "내 기기 · 동기화 중",
   "devices.trouble": "내 기기 · 확인이 필요해요",

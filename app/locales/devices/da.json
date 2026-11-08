@@ -4,6 +4,13 @@
   "devices.safe": "Dine opgaver og filer er også på dine andre enheder, forseglet, så kun de kan læse dem.",
   "devices.here": "Denne enhed, tilføjet den {date}",
   "devices.added": "Tilføjet den {date}",
+  "devices.seen": "Sidst set {when}",
+  "devices.more": {
+    "one": "{count} enhed mere",
+    "other": "{count} enheder mere"
+  },
+  "devices.lastSeen": "{device} blev sidst set {when}. Hvis du ikke længere bruger enheden, så fjern den.",
+  "devices.see": "Se dine enheder",
   "devices.store.use": "{used} af {quota} fælles",
   "devices.store.full": "Fuldt: det nye bliver på denne enhed.",
   "devices.store.owed": "Den enhed, du fjernede, lukkes ude…",
@@ -11,6 +18,7 @@
   "devices.store.room": "Der er ikke mere plads på denne enhed: intet mere kommer til den.",
   "devices.store.again": "Start forfra",
   "devices.store.synced": "Sidst synkroniseret: {when}",
+  "devices.own": "Hver enhed beholder sit eget tema, sin synkroniserede mappe, sine hentede hjerner og sine login til tjenester.",
   "devices.store.unreached": "Denne enhed kan ikke nå dine andre enheder lige nu: det, der ændres her, venter, til den kan.",
   "devices.syncing": "Dine enheder · synkroniserer",
   "devices.trouble": "Dine enheder · bør ses efter",

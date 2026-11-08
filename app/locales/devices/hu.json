@@ -4,6 +4,13 @@
   "devices.safe": "A feladataid és fájljaid a többi eszközödön is megvannak, lepecsételve, hogy csak azok olvashassák őket.",
   "devices.here": "Ez az eszköz, hozzáadva: {date}",
   "devices.added": "Hozzáadva: {date}",
+  "devices.seen": "Utoljára online: {when}",
+  "devices.more": {
+    "one": "Még {count} eszköz",
+    "other": "Még {count} eszköz"
+  },
+  "devices.lastSeen": "{device} utoljára ekkor volt online: {when}. Ha már nem használod, távolítsd el.",
+  "devices.see": "Eszközeid megtekintése",
   "devices.store.use": "{used} / {quota} közösen",
   "devices.store.full": "Megtelt: az új dolgok ezen az eszközön maradnak.",
   "devices.store.owed": "Az eltávolított eszköz kizárása folyamatban…",
@@ -11,6 +18,7 @@
   "devices.store.room": "Ezen az eszközön nincs több hely: semmi sem érkezik már ide.",
   "devices.store.again": "Kezdés elölről",
   "devices.store.synced": "Utoljára szinkronizálva: {when}",
+  "devices.own": "Minden eszköznek saját témája, szinkronizált mappája, letöltött agyai és szolgáltatásokba való bejelentkezései vannak.",
   "devices.store.unreached": "Ez az eszköz most nem éri el a többi eszközödet: ami itt változik, megvárja, amíg sikerül.",
   "devices.syncing": "Eszközeid · szinkronizálás",
   "devices.trouble": "Eszközeid · érdemes megnézni",

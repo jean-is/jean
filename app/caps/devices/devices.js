@@ -13,7 +13,8 @@ import { handheld } from '../../ui/model.js'
 import { lazyPage } from '../../ui/lazy-page.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { icons } from '../../ui/menu-icons.js'
-import { t, useStrings, useLocale } from '../../core/i18n.js'
+import { ghost } from '../../ui/map.js'
+import { t, useStrings, useLocale, relativeTime, intlLocales } from '../../core/i18n.js'
 import { switchTo, initialOf, whoOf } from '../../ui/curtain.js'
 import { getSecret, setSecret } from '../../ui/secrets.js'
 import { VAULT, boxPair, fingerprintOf, close, deviceKey } from '../../ui/seal.js'
@@ -23,7 +24,7 @@ import { ulid } from '../../core/ulid.js'
 import { BRAND } from '../../brand.js'
 import { base64url, hashOf, random } from '../share/seal.js'
 import { linkOf, parseLink, pairingBox, sealHello, openHello, sealNonce, openNonce, sealReveal, openReveal, codeOf, sameCode, envelope, openEnvelope } from './pair.js'
-import { SECRET, STORE, LIMIT, ULID, PROFILE, deviceName, recordOf, recordFor, recordsOf, listOf, sameKey, writeRecord, writeOwn, inPlace, tell, look, mark, share, unreached, known, quiet, bundleOf, adopt, refill, untouched, broughtFrom, taskOf, receive, removal, back, firstOf, alone } from './flow.js'
+import { SECRET, STORE, LIMIT, ULID, PROFILE, deviceName, recordOf, recordFor, recordsOf, listOf, sameKey, writeRecord, writeOwn, inPlace, tell, look, mark, share, unreached, known, quiet, followsOf, bundleOf, adopt, refill, untouched, broughtFrom, taskOf, receive, removal, back, firstOf, alone } from './flow.js'
 
 /** @typedef {import('./flow.js').Identity} Identity */
 /** @typedef {import('./flow.js').Device} Device */
@@ -54,6 +55,13 @@ export const [adding, joining] = [signal(/** @type {Adding} */ ({ step: 'idle' }
 export const [devices, own] = [signal(/** @type {Device[]} */ ([])), signal('')]
 /** Whether this device holds a store it can use, and how the store stands, once its rounds started (./store.js). */
 export const stored = signal(false)
+/** When this device last heard each other one, by id (./flow.js's follows.json), and whether one went two weeks unheard since it was added. */
+export const seen = signal(/** @type {Record<string, number>} */ ({}))
+export const quietOf = (/** @type {Device} */ one) => Date.now() - Math.max(seen.value[one.id] ?? 0, Date.parse(one.createdAt)) > 14 * 86_400_000
+/** How a device stands, on its card and on Your data's map: when it was last seen, or added, never heard from yet. @param {Device} one */
+export const lastSeen = (one) => (seen.value[one.id] ? t('devices.seen', { when: relativeTime(Math.min(seen.value[one.id], Date.now())) }) : t('devices.added', { date: new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'medium' }).format(new Date(one.createdAt)) }))
+/** A device's picture, from the system its name reads (./flow.js's deviceName()): a phone, a tablet, or a computer. @param {string} name */
+export const kindOf = (name) => (/^(iPhone|Android)\b/.test(name) ? icons.phone : /^iPad\b/.test(name) ? icons.tablet : icons.computer)
 const kept = signal(/** @type {typeof import('./store.js').state | null} */ (null))
 /** The store's module, its state followed here once it is loaded, whichever way: rounds started, a device admitted, a message heard. */
 const storeOf = () => import('./store.js').then((store) => { kept.value = store.state; return store })
@@ -86,6 +94,7 @@ const warn = (error) => console.warn('Devices', error)
 const refresh = () => (async () => {
   own.value = (await identity(false))?.id ?? ''
   devices.value = own.value ? await recordsOf(app.fs) : []
+  seen.value = (await followsOf(app.fs)).from ?? {}
   stored.value = ((held) => Boolean(held && !held.gone))(JSON.parse(await getSecret(app.fs, STORE) ?? 'null'))
 })().catch(warn)
 
@@ -498,6 +507,11 @@ export async function removeDevice(id, { erase = true } = {}) {
 
 /** Whether the store wants a look: full, gone, this device out of room, or the relay out of reach. */
 const trouble = () => ((now) => Boolean(now.full || now.gone || now.room || now.unreached))(kept.value?.value ?? {})
+/** The person's other devices. */
+const others = () => devices.value.filter((one) => one.id !== own.value)
+/** What Your data says of them: what the store wants a look for, as Your devices says it, else the first device two weeks unheard, its name set apart. */
+const said = () => ((now, quiet) => (trouble() ? t(`devices.store.${now.gone ? 'gone' : now.room ? 'room' : now.unreached ? 'unreached' : 'full'}`)
+  : quiet && t('devices.lastSeen', { device: `\u2068${quiet.name}\u2069`, when: relativeTime(Math.min(seen.value[quiet.id] ?? Date.parse(quiet.createdAt), Date.now())) })))(kept.value?.value ?? {}, others().find(quietOf))
 /** Your devices opened, then what comes next there (Add a device's first step). @param {() => unknown} [then] */
 const opening = (then) => import('../../ui/dialogs.js').then((dialogs) => { dialogs.openSettings('devices'); then?.() })
 
@@ -509,10 +523,14 @@ if (offered()) {
   register({ id: 'devices', slots: {
     // Its own section of Settings, settings/devices (./page.js, D726), which ⌘K finds by Add a device too.
     settings: { id: 'devices', at: 130, label: 'cap.devices.name', icon: icons.devices, also: () => t('devices.add'), draw: lazyPage(() => import('./page.js')) },
-    // No row in Your data, but its line: the person's things safe on their other devices while the store keeps them in step, or, while this
-    // device is alone, Add a device beside what says they are only here.
-    data: { id: 'devices', at: 2, group: 'copies', icon: icons.devices, label: 'cap.devices.name', text: () => '', page: false, draw: () => null, copy: () => (stored.value && devices.value.length > 1 && kept.value?.value.at && !trouble() ? t('devices.safe') : undefined),
-      fix: () => (devices.value.length > 1 ? undefined : html`<button class="button primary" @click=${() => opening(start)}>${icons.plus} ${t('devices.add')}</button>`) },
+    // No row in Your data, but its line: the person's things safe on their other devices while the store keeps them in step; what the store
+    // wants a look for or a device two weeks unheard, with the way to Your devices (none for a relay out of reach); while this device is alone,
+    // Add a device beside what says they are only here. On the map, the other devices, past two a second standing for the rest, or the one to add.
+    data: { id: 'devices', at: 2, group: 'copies', icon: icons.devices, label: 'cap.devices.name', text: () => '', page: false, draw: () => null, copy: () => (stored.value && others().length && kept.value?.value.at && !trouble() ? t('devices.safe') : undefined),
+      say: () => said() || undefined, fix: () => (!others().length ? html`<button class="button primary" @click=${() => opening(start)}>${icons.plus} ${t('devices.add')}</button>`
+        : said() && !kept.value?.value.unreached ? html`<button class="button primary" @click=${() => opening()}>${icons.devices} ${t('devices.see')}</button>` : undefined),
+      node: () => ((rest, flow) => (!rest.length ? (app.ephemeral.value ? undefined : ghost(() => opening(start))) : (rest.length > 2 ? [rest[0], null] : rest).map((one) => /** @type {import('../../ui/map.js').Place} */ (one
+        ? { side: 'end', icon: kindOf(one.name), name: one.name, sub: lastSeen(one), state: quietOf(one) ? 'wait' : 'ok', flow } : { side: 'end', icon: icons.devices, name: t('devices.more', { count: rest.length - 1 }), flow }))))(others(), stored.value && Boolean(kept.value?.value.at) && !trouble()) },
     // In a task's ⋮ menu, Send to each other device, unless its project is kept on this one.
     task: { at: 2, draw: (/** @type {{ path: string }} */ item, /** @type {(icon: unknown, label: string, act: () => unknown) => unknown} */ action) =>
       (app.projects.value.find((one) => item.path.startsWith(`${one.dir}/`))?.data.cloud === false ? []

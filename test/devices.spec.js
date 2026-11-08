@@ -162,7 +162,7 @@ async function pair(a, b) {
   const dir = await here(a)
   await expect.poll(() => here(b), { timeout: 20_000 }).toBe(dir)
   await settings.getByRole('button', { name: 'Done' }).click()
-  await expect(settings.locator('.devices-flow > .list > li')).toHaveCount(2)
+  await expect(settings.locator('.devices-cards > li')).toHaveCount(2)
   return { dir, settings }
 }
 
@@ -210,17 +210,17 @@ test('a device added: six digits typed on the one that has the Jean, and the oth
 
   // Both list two devices, this one first.
   await settings.getByRole('button', { name: 'Done' }).click()
-  await expect(settings.locator('.devices-flow > .list > li')).toHaveCount(2)
-  await expect(settings.locator('.devices-flow > .list > li').first()).toContainText('This device, added')
+  await expect(settings.locator('.devices-cards > li')).toHaveCount(2)
+  await expect(settings.locator('.devices-cards > li').first()).toContainText('This device, added')
   // B's, from its button at the end of the person's row, the menu no longer holding it.
   await expect((await openProfile(b)).getByRole('button', { name: 'Your devices' })).toHaveCount(0)
   await b.keyboard.press('Escape')
   await (await openTasks(b)).locator('.profile').getByRole('button', { name: 'Your devices' }).click()
   const there = b.locator('app-settings dialog[open]')
   await expect(there.locator('.data-head h2')).toHaveText('Your devices')
-  await expect(there.locator('.devices-flow > .list > li')).toHaveCount(2)
-  await expect(there.locator('.devices-flow > .list > li').first()).toContainText('This device, added')
-  await expect(there.locator('.devices-flow > .list > li').last()).toContainText('Added')
+  await expect(there.locator('.devices-cards > li')).toHaveCount(2)
+  await expect(there.locator('.devices-cards > li').first()).toContainText('This device, added')
+  await expect(there.locator('.devices-cards > li').last().locator('small')).toHaveText(/^(Seen|Added) /)
   await b.context().close()
 })
 
@@ -391,7 +391,7 @@ test('a device removed with its box ticked erases Jean there the next time it re
     await app.fs.write(`${app.projectDir}/sites/01JSITE0000000000000000000-bakery/site.json`, JSON.stringify({ format: 1, name: 'Bakery', files: [], published: { name: 'lyon-bakery' } }))
     await setSecret(app.fs, 'site:01JSITE0000000000000000000', '0123-4567-89AB-CDEF-0123-4567-89AB-CDEF')
   })
-  await settings.locator('.devices-flow > .list > li').last().getByRole('button', { name: 'Remove' }).click()
+  await settings.locator('.devices-cards > li').last().getByRole('button', { name: 'Remove' }).click()
   const dialog = page.locator('dialog.devices-remove[open]')
   await expect(dialog.getByRole('heading')).toHaveText(/^Remove .+\?$/)
   // The device's name set apart in Jean's sentence, which reads the page's way.
@@ -411,7 +411,7 @@ test('a device removed with its box ticked erases Jean there the next time it re
   await expect(dialog.locator('li')).toHaveText(['OpenAI · fake', 'Notes', 'Brave Search', 'Mail', 'lyon-bakery'])
   await expect(dialog.getByRole('status')).toContainText('It may still change these sites online. To stop it, open each one, choose Publish…, then Make a new recovery code:')
   await dialog.getByRole('button', { name: 'Done' }).click()
-  await expect(settings.locator('.devices-flow > .list > li')).toHaveCount(1)
+  await expect(settings.locator('.devices-cards > li')).toHaveCount(1)
   // Back online, what waits goes on its own.
   await page.evaluate(() => dispatchEvent(new Event('online')))
   // B opened again reads its mailbox: the profile is erased there, and it starts afresh.
@@ -434,7 +434,7 @@ test('a device removed with its box unticked keeps Jean on its own, and added ag
     const [{ app }, { createConversation }] = await Promise.all([import('/ui/state.js'), import('/core/conversations.js')])
     return (await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })).path
   })
-  await settings.locator('.devices-flow > .list > li').last().getByRole('button', { name: 'Remove' }).click()
+  await settings.locator('.devices-cards > li').last().getByRole('button', { name: 'Remove' }).click()
   const dialog = page.locator('dialog.devices-remove[open]')
   await dialog.getByLabel('Also erase Jean from it').uncheck()
   await dialog.getByRole('button', { name: 'Remove' }).click()
@@ -457,14 +457,14 @@ test('a device removed with its box unticked keeps Jean on its own, and added ag
   await expect(b.locator('app-settings .devices-said')).toHaveText('Done. Opening your Jean…')
   // Opened again where it was, on Your devices, which lists both.
   await reloaded
-  await expect(b.locator('app-settings .devices-flow > .list > li')).toHaveCount(2)
+  await expect(b.locator('app-settings .devices-cards > li')).toHaveCount(2)
   await expect.poll(() => here(b)).toBe(dir)
   expect(await profiles(b)).toEqual([dir])
   expect(await read(b, mine)).not.toBeNull()
   // Its keys again, the store's among them, A having let its new token in.
   expect(Object.keys(JSON.parse(String(await read(b, '.secrets/keys.json')))).sort()).toEqual([NOTES, CLOUD.id, 'device', 'devices', 'search:brave', 'store'])
   await again.getByRole('button', { name: 'Done' }).click()
-  await expect(again.locator('.devices-flow > .list > li')).toHaveCount(2)
+  await expect(again.locator('.devices-cards > li')).toHaveCount(2)
   // And it hears A again.
   await change(page, { name: 'Ada' })
   await expect.poll(async () => (await settingsOf(b))?.name, { timeout: 15_000 }).toBe('Ada')
@@ -552,7 +552,7 @@ test('a link opened does nothing until Join, and the profile that comes, from a 
   await expect(settings.locator('.devices-wrong')).toHaveText('Your other device stopped adding this one. Start again there.')
   expect(await listed(page)).toHaveLength(1)
   await settings.locator('.devices-actions').getByRole('button', { name: 'Close' }).click()
-  await expect(settings.locator('.devices-flow > .list > li')).toHaveCount(1)
+  await expect(settings.locator('.devices-cards > li')).toHaveCount(1)
   await b.context().close()
 })
 
@@ -714,7 +714,7 @@ test('a task made on one device shows on the other through the store, and the re
   const [keysA, keysB] = await Promise.all([page, b].map(async (one) => JSON.parse(JSON.parse(String(await read(one, '.secrets/keys.json'))).store)))
   expect([keysB.sid, keysB.N, keysB.relay]).toEqual([keysA.sid, keysA.N, RELAY_URL])
   expect(keysB.token).not.toBe(keysA.token)
-  await expect(settings.locator('.devices-flow > .hint:not(.devices-synced)')).toHaveText(/ in common$/)
+  await expect(settings.locator('#devices-use')).toHaveText(/ in common$/)
   await closeSettings(page)
   const path = await taskOn(page, TITLE, 'Plan my trip to Lyon by the sea')
   await expect.poll(async () => { await storeRound(page); return inStore(page) }, { timeout: 20_000 }).toContain(path)
@@ -797,12 +797,12 @@ test('the last other device removed, the store goes from the relay: what is made
   // The store's deletion, refused at first: A says so, and goes on trying.
   const deleting = (/** @type {URL} */ url) => /\/v1\/s\/[\w-]{22}$/.test(url.pathname)
   await page.context().route(deleting, (route) => (route.request().method() === 'DELETE' ? route.abort() : route.fallback()))
-  await settings.locator('.devices-flow > .list > li').last().getByRole('button', { name: 'Remove' }).click()
+  await settings.locator('.devices-cards > li').last().getByRole('button', { name: 'Remove' }).click()
   const dialog = page.locator('dialog.devices-remove[open]')
   await dialog.getByRole('button', { name: 'Remove' }).click()
   await expect(dialog.getByRole('status')).toContainText(/ is removed\./)
   await dialog.getByRole('button', { name: 'Done' }).click()
-  await expect.poll(async () => { await storeRound(page); return settings.locator('.devices-flow > .hint:not(.devices-synced)').textContent() }, { timeout: 20_000 }).toBe('Shutting out the device you removed…')
+  await expect.poll(async () => { await storeRound(page); return settings.locator('#devices-use').textContent() }, { timeout: 20_000 }).toBe('Shutting out the device you removed…')
   await page.context().unroute(deleting)
   // B was the last other device: the store goes, its keys with it, and A keeps its files, alone.
   const held = async () => JSON.parse(String(await read(page, '.secrets/keys.json'))).store ?? null
@@ -815,7 +815,7 @@ test('the last other device removed, the store goes from the relay: what is made
   // B says it no longer receives, with Start again; nothing of its own was erased.
   expect(await read(b, before)).not.toBeNull()
   await b.evaluate(async () => (await import('/ui/dialogs.js')).openSettings('devices'))
-  await expect(b.locator('app-settings .devices-flow > .hint')).toHaveText('This device no longer gets what your other devices do.')
+  await expect(b.locator('app-settings #devices-use')).toHaveText('This device no longer gets what your other devices do.')
   await expect(b.locator('app-settings').getByRole('button', { name: 'Start again' })).toBeVisible()
   await b.context().unrouteAll({ behavior: 'ignoreErrors' })
   await b.context().close()
@@ -911,5 +911,33 @@ test('a fresh Jean offers, from its welcome, to bring Jean from another device, 
   // Found now, and the room holding a task, the welcome no longer offers it.
   await closeSettings(b)
   await expect(line).toHaveCount(0)
+  await b.context().close()
+})
+
+test('Your data draws where things are: a dashed phone, before Your devices is found, adds one; paired, the other shows when it was last seen, and two weeks unheard, Your data says so, with the way there', async ({ page, browser }) => {
+  await deviceA(page)
+  const data = await openSettings(page, 'Your data')
+  const map = data.getByRole('list', { name: 'Where your things are' })
+  await expect(map.getByRole('listitem')).toHaveText(['This device', /^Backup\s*None yet$/, /^Your phone\s*Add it$/])
+  await map.getByRole('button', { name: 'Your phone' }).click()
+  await expect(data.getByRole('heading', { name: 'Open this on your other device' })).toBeVisible()
+  await expect(page).toHaveURL(/#\/settings\/devices$/)
+  await data.locator('.devices-actions').getByRole('button', { name: 'Cancel' }).click()
+  await closeSettings(page)
+  const b = await device(browser)
+  const { settings } = await pair(page, b)
+  // A card each, this one first; the other as when it was last seen, or added while nothing came from it yet.
+  await expect(settings.locator('.devices-cards > li').first()).toContainText('This device, added ')
+  await expect(settings.locator('.devices-cards > li').nth(1).locator('small')).toHaveText(/^(Seen|Added) /)
+  await closeSettings(page)
+  await expect((await openSettings(page, 'Your data')).getByRole('list', { name: 'Where your things are' }).getByRole('listitem')).toHaveCount(3)
+  await closeSettings(page)
+  // Fifteen days on by this device's clock, the other is quiet: Your data says so first and leads to it, its card as a state that waits.
+  await page.clock.setFixedTime(Date.now() + 15 * 86_400_000)
+  const later = await openSettings(page, 'Your data')
+  await expect(later.locator('.lede strong')).toHaveText(/ was last seen .+\. If you no longer use it, remove it\.$/)
+  await later.locator('.data-fix').getByRole('button', { name: 'See your devices' }).click()
+  await expect(later.locator('.data-head h2')).toHaveText('Your devices')
+  await expect(later.locator('.devices-cards > li').nth(1).locator('small.is-wait')).toBeVisible()
   await b.context().close()
 })

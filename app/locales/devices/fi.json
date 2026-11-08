@@ -4,6 +4,13 @@
   "devices.safe": "Tehtäväsi ja tiedostosi ovat myös muilla laitteillasi, sinetöityinä niin, että vain nuo laitteet voivat lukea ne.",
   "devices.here": "Tämä laite, lisätty {date}",
   "devices.added": "Lisätty {date}",
+  "devices.seen": "Viimeksi nähty {when}",
+  "devices.more": {
+    "one": "{count} muu laite",
+    "other": "{count} muuta laitetta"
+  },
+  "devices.lastSeen": "{device} nähtiin viimeksi {when}. Jos et enää käytä laitetta, poista se.",
+  "devices.see": "Näytä laitteesi",
   "devices.store.use": "{used} / {quota} yhteisessä käytössä",
   "devices.store.full": "Täynnä: uudet asiat jäävät tälle laitteelle.",
   "devices.store.owed": "Poistamasi laite suljetaan ulos…",
@@ -11,6 +18,7 @@
   "devices.store.room": "Tällä laitteella ei ole enää tilaa: tänne ei tule enää mitään.",
   "devices.store.again": "Aloita alusta",
   "devices.store.synced": "Viimeksi synkronoitu: {when}",
+  "devices.own": "Jokaisella laitteella on oma teemansa, synkronoitu kansionsa, ladatut aivonsa ja kirjautumisensa palveluihin.",
   "devices.store.unreached": "Tämä laite ei juuri nyt tavoita muita laitteitasi: täällä tehdyt muutokset odottavat, kunnes se onnistuu.",
   "devices.syncing": "Laitteesi · synkronoidaan",
   "devices.trouble": "Laitteesi · tarkista",

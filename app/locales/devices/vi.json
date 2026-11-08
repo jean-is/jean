@@ -4,6 +4,12 @@
   "devices.safe": "Nhiệm vụ và tệp của bạn cũng có trên các thiết bị khác của bạn, được niêm phong để chỉ các thiết bị đó đọc được.",
   "devices.here": "Thiết bị này, thêm ngày {date}",
   "devices.added": "Thêm ngày {date}",
+  "devices.seen": "Hoạt động {when}",
+  "devices.more": {
+    "other": "{count} thiết bị khác"
+  },
+  "devices.lastSeen": "{device} hoạt động lần cuối {when}. Nếu bạn không còn dùng thiết bị đó nữa, hãy gỡ bỏ nó.",
+  "devices.see": "Xem thiết bị của bạn",
   "devices.store.use": "{used} trên {quota} dùng chung",
   "devices.store.full": "Đã đầy: cái mới ở lại trên thiết bị này.",
   "devices.store.owed": "Đang chặn thiết bị bạn đã gỡ…",
@@ -11,6 +17,7 @@
   "devices.store.room": "Thiết bị này đã hết chỗ: không còn gì đến với nó nữa.",
   "devices.store.again": "Bắt đầu lại",
   "devices.store.synced": "Đồng bộ lần cuối: {when}",
+  "devices.own": "Mỗi thiết bị giữ riêng chủ đề, thư mục đồng bộ, các bộ não đã tải về và việc đăng nhập vào các dịch vụ.",
   "devices.store.unreached": "Thiết bị này hiện không kết nối được với các thiết bị khác của bạn: những gì thay đổi ở đây sẽ chờ đến khi kết nối được.",
   "devices.syncing": "Thiết bị của bạn · đang đồng bộ",
   "devices.trouble": "Thiết bị của bạn · cần xem qua",

@@ -4,6 +4,15 @@
   "devices.safe": "Vaše úlohy a súbory sú aj vo vašich ďalších zariadeniach, zapečatené tak, aby ich mohli čítať len ony.",
   "devices.here": "Toto zariadenie, pridané {date}",
   "devices.added": "Pridané {date}",
+  "devices.seen": "Naposledy online {when}",
+  "devices.more": {
+    "one": "{count} ďalšie zariadenie",
+    "few": "{count} ďalšie zariadenia",
+    "many": "{count} ďalšieho zariadenia",
+    "other": "{count} ďalších zariadení"
+  },
+  "devices.lastSeen": "Zariadenie {device} bolo naposledy online {when}. Ak ho už nepoužívate, odstráňte ho.",
+  "devices.see": "Zobraziť vaše zariadenia",
   "devices.store.use": "{used} z {quota} spoločne",
   "devices.store.full": "Plné: nové veci zostávajú v tomto zariadení.",
   "devices.store.owed": "Odstránené zariadenie sa odpája…",
@@ -11,6 +20,7 @@
   "devices.store.room": "V tomto zariadení už nie je miesto: nič ďalšie doň nepríde.",
   "devices.store.again": "Začať odznova",
   "devices.store.synced": "Naposledy synchronizované: {when}",
+  "devices.own": "Každé zariadenie má vlastný motív, synchronizovaný priečinok, stiahnuté mozgy a prihlásenia do služieb.",
   "devices.store.unreached": "Toto zariadenie sa teraz nemôže spojiť s vašimi ostatnými zariadeniami: čo sa tu zmení, počká, kým to pôjde.",
   "devices.syncing": "Vaše zariadenia · synchronizácia",
   "devices.trouble": "Vaše zariadenia · vyžadujú pozornosť",

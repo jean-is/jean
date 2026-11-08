@@ -4,6 +4,13 @@
   "devices.safe": "Your tasks and files are also on your other devices, sealed so only they can read them.",
   "devices.here": "This device, added {date}",
   "devices.added": "Added {date}",
+  "devices.seen": "Seen {when}",
+  "devices.more": {
+    "one": "{count} more device",
+    "other": "{count} more devices"
+  },
+  "devices.lastSeen": "{device} was last seen {when}. If you no longer use it, remove it.",
+  "devices.see": "See your devices",
   "devices.store.use": "{used} of {quota} in common",
   "devices.store.full": "Full: what is new stays on this device.",
   "devices.store.owed": "Shutting out the device you removed…",
@@ -11,6 +18,7 @@
   "devices.store.room": "This device is out of room: nothing more comes to it.",
   "devices.store.again": "Start again",
   "devices.store.synced": "Last synced: {when}",
+  "devices.own": "Each device keeps its own theme, synced folder, downloaded brains and sign-ins to services.",
   "devices.store.unreached": "This device can’t reach your other devices right now: what changes here waits until it can.",
   "devices.syncing": "Your devices · syncing",
   "devices.trouble": "Your devices · needs a look",

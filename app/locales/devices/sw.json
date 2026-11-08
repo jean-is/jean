@@ -4,6 +4,13 @@
   "devices.safe": "Kazi na faili zako ziko pia kwenye vifaa vyako vingine, zimefungwa ili vifaa hivyo pekee viweze kuzisoma.",
   "devices.here": "Kifaa hiki, kiliongezwa tarehe {date}",
   "devices.added": "Kiliongezwa tarehe {date}",
+  "devices.seen": "Kilionekana {when}",
+  "devices.more": {
+    "one": "Kifaa {count} zaidi",
+    "other": "Vifaa {count} zaidi"
+  },
+  "devices.lastSeen": "Kifaa {device} kilionekana mara ya mwisho {when}. Kama hukitumii tena, kiondoe.",
+  "devices.see": "Tazama vifaa vyako",
   "devices.store.use": "{used} kati ya {quota} kwa pamoja",
   "devices.store.full": "Imejaa: kipya kinabaki kwenye kifaa hiki.",
   "devices.store.owed": "Kifaa ulichoondoa kinazuiwa…",
@@ -11,6 +18,7 @@
   "devices.store.room": "Hakuna nafasi tena kwenye kifaa hiki: hakuna kitu zaidi kinachokifikia.",
   "devices.store.again": "Anza upya",
   "devices.store.synced": "Ulisawazishwa mara ya mwisho: {when}",
+  "devices.own": "Mandhari, folda iliyosawazishwa, akili zilizopakuliwa na kuingia kwenye huduma ni tofauti kwa kila kifaa.",
   "devices.store.unreached": "Kifaa hiki hakiwezi kufikia vifaa vyako vingine kwa sasa: kinachobadilika hapa kinasubiri hadi kiweze.",
   "devices.syncing": "Vifaa vyako · vinasawazishwa",
   "devices.trouble": "Vifaa vyako · vinahitaji kuangaliwa",

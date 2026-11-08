@@ -4,6 +4,13 @@
   "devices.safe": "Deine Aufgaben und Dateien sind auch auf deinen anderen Geräten, versiegelt, sodass nur diese sie lesen können.",
   "devices.here": "Dieses Gerät, hinzugefügt am {date}",
   "devices.added": "Hinzugefügt am {date}",
+  "devices.seen": "Zuletzt gesehen {when}",
+  "devices.more": {
+    "one": "{count} weiteres Gerät",
+    "other": "{count} weitere Geräte"
+  },
+  "devices.lastSeen": "{device} wurde {when} zuletzt gesehen. Wenn du das Gerät nicht mehr nutzt, entferne es.",
+  "devices.see": "Deine Geräte ansehen",
   "devices.store.use": "{used} von {quota} gemeinsam",
   "devices.store.full": "Voll: Neues bleibt auf diesem Gerät.",
   "devices.store.owed": "Das entfernte Gerät wird ausgesperrt…",
@@ -11,6 +18,7 @@
   "devices.store.room": "Auf diesem Gerät ist kein Platz mehr: Nichts kommt mehr hierher.",
   "devices.store.again": "Neu beginnen",
   "devices.store.synced": "Zuletzt synchronisiert: {when}",
+  "devices.own": "Jedes Gerät behält sein eigenes Design, seinen synchronisierten Ordner, seine heruntergeladenen Gehirne und seine Anmeldungen bei Diensten.",
   "devices.store.unreached": "Dieses Gerät erreicht deine anderen Geräte gerade nicht: Was sich hier ändert, wartet, bis es wieder geht.",
   "devices.syncing": "Deine Geräte · wird synchronisiert",
   "devices.trouble": "Deine Geräte · bitte ansehen",

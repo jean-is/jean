@@ -4,6 +4,14 @@
   "devices.safe": "I vostri compiti è schedarii sò dinù nant’à i vostri altri apparechji, sigillati per chì solu elli i possinu leghje.",
   "devices.here": "St’apparechju, aghjuntu u {date}",
   "devices.added": "Aghjuntu u {date}",
+  "devices.seen": "Vistu {when}",
+  "devices.more": {
+    "one": "{count} altru apparechju",
+    "many": "{count} d’altri apparechji",
+    "other": "{count} altri apparechji"
+  },
+  "devices.lastSeen": "L’apparechju {device} hè statu vistu l’ultima volta {when}. S’è vo ùn l’impiegate più, cacciatelu.",
+  "devices.see": "Vede i vostri apparechji",
   "devices.store.use": "{used} nant’à {quota} in cumunu",
   "devices.store.full": "Pienu : ciò chì hè novu ferma nant’à st’apparechju.",
   "devices.store.owed": "Si mette fora l’apparechju chì avete cacciatu…",
@@ -11,6 +19,7 @@
   "devices.store.room": "Ùn ci hè più piazza nant’à st’apparechju : più nunda ùn li ghjunghje.",
   "devices.store.again": "Ricumincià",
   "devices.store.synced": "Ultima sincrunizazione : {when}",
+  "devices.own": "Ogni apparechju tene u so propiu tema, u so cartulare sincrunizatu, i so cervelli scaricati è e so cunnessioni à i servizii.",
   "devices.store.unreached": "St’apparechju ùn pò micca ghjunghje à i vostri altri apparechji per avà : ciò chì cambia quì aspetta ch’ellu possi.",
   "devices.syncing": "I vostri apparechji · sincrunizazione in corsu",
   "devices.trouble": "I vostri apparechji · da verificà",

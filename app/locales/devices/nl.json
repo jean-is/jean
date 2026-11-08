@@ -4,6 +4,13 @@
   "devices.safe": "Je taken en bestanden staan ook op je andere apparaten, verzegeld zodat alleen zij ze kunnen lezen.",
   "devices.here": "Dit apparaat, toegevoegd op {date}",
   "devices.added": "Toegevoegd op {date}",
+  "devices.seen": "Laatst gezien {when}",
+  "devices.more": {
+    "one": "Nog {count} apparaat",
+    "other": "Nog {count} apparaten"
+  },
+  "devices.lastSeen": "{device} is {when} voor het laatst gezien. Gebruik je het apparaat niet meer, haal het dan weg.",
+  "devices.see": "Bekijk je apparaten",
   "devices.store.use": "{used} van {quota} gedeeld",
   "devices.store.full": "Vol: wat nieuw is, blijft op dit apparaat.",
   "devices.store.owed": "Het verwijderde apparaat wordt buitengesloten…",
@@ -11,6 +18,7 @@
   "devices.store.room": "Geen ruimte meer op dit apparaat: er komt niets meer bij.",
   "devices.store.again": "Opnieuw beginnen",
   "devices.store.synced": "Laatst gesynchroniseerd: {when}",
+  "devices.own": "Elk apparaat bewaart zijn eigen thema, gesynchroniseerde map, gedownloade breinen en aanmeldingen bij diensten.",
   "devices.store.unreached": "Dit apparaat kan je andere apparaten nu niet bereiken: wat hier verandert, wacht tot dat weer lukt.",
   "devices.syncing": "Je apparaten · synchroniseren",
   "devices.trouble": "Je apparaten · even nakijken",

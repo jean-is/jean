@@ -4,6 +4,13 @@
   "devices.safe": "Görevlerin ve dosyaların diğer cihazlarında da var; yalnızca onların okuyabileceği şekilde mühürlü.",
   "devices.here": "Bu cihaz, {date} tarihinde eklendi",
   "devices.added": "{date} tarihinde eklendi",
+  "devices.seen": "Son görülme: {when}",
+  "devices.more": {
+    "one": "{count} cihaz daha",
+    "other": "{count} cihaz daha"
+  },
+  "devices.lastSeen": "{device} cihazı en son {when} görüldü. Artık kullanmıyorsan kaldır.",
+  "devices.see": "Cihazlarını gör",
   "devices.store.use": "{quota} içinde {used} ortak",
   "devices.store.full": "Dolu: yeni olan bu cihazda kalır.",
   "devices.store.owed": "Kaldırdığın cihaz dışarıda bırakılıyor…",
@@ -11,6 +18,7 @@
   "devices.store.room": "Bu cihazda yer kalmadı: buraya artık hiçbir şey gelmiyor.",
   "devices.store.again": "Baştan başla",
   "devices.store.synced": "Son eşitleme: {when}",
+  "devices.own": "Her cihazın kendi teması, eşitlenen klasörü, indirilen beyinleri ve hizmetlerdeki oturumları vardır.",
   "devices.store.unreached": "Bu cihaz şu anda diğer cihazlarına ulaşamıyor: burada değişenler, ulaşana kadar bekler.",
   "devices.syncing": "Cihazların · eşitleniyor",
   "devices.trouble": "Cihazların · göz atmak gerekiyor",

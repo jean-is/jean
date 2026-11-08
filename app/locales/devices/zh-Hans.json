@@ -4,6 +4,12 @@
   "devices.safe": "你的任务和文件也在你的其他设备上，并且经过封存，只有它们能读取。",
   "devices.here": "这台设备，添加于 {date}",
   "devices.added": "添加于 {date}",
+  "devices.seen": "上次在线：{when}",
+  "devices.more": {
+    "other": "另外 {count} 台设备"
+  },
+  "devices.lastSeen": "{device} 上次在线是在{when}。如果你已不再使用那台设备，请将它移除。",
+  "devices.see": "查看你的设备",
   "devices.store.use": "已共用 {used}／{quota}",
   "devices.store.full": "已满：新内容会留在这台设备上。",
   "devices.store.owed": "正在将你移除的设备拒之门外…",
@@ -11,6 +17,7 @@
   "devices.store.room": "这台设备没有空间了：不会再有内容传来。",
   "devices.store.again": "重新开始",
   "devices.store.synced": "上次同步：{when}",
+  "devices.own": "每台设备各自保留自己的主题、同步文件夹、下载的大脑，以及在各项服务上的登录。",
   "devices.store.unreached": "这台设备暂时连不上你的其他设备：这里的改动会等到能连上时再传过去。",
   "devices.syncing": "你的设备 · 正在同步",
   "devices.trouble": "你的设备 · 需要看看",

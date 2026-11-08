@@ -4,6 +4,14 @@
   "devices.safe": "המשימות והקבצים שלך נמצאים גם במכשירים האחרים שלך, חתומים כך שרק הם יכולים לקרוא אותם.",
   "devices.here": "המכשיר הזה, נוסף ב־{date}",
   "devices.added": "נוסף ב־{date}",
+  "devices.seen": "נראה לאחרונה: {when}",
+  "devices.more": {
+    "one": "עוד מכשיר {count}",
+    "two": "עוד {count} מכשירים",
+    "other": "עוד {count} מכשירים"
+  },
+  "devices.lastSeen": "המכשיר {device} נראה לאחרונה: {when}. אם כבר לא משתמשים בו, כדאי להסיר אותו.",
+  "devices.see": "הצגת המכשירים שלך",
   "devices.store.use": "{used} מתוך {quota} משותפים",
   "devices.store.full": "מלא: מה שחדש נשאר במכשיר הזה.",
   "devices.store.owed": "מנתקים את המכשיר שהסרת…",
@@ -11,6 +19,7 @@
   "devices.store.room": "אין יותר מקום במכשיר הזה: שום דבר נוסף לא מגיע אליו.",
   "devices.store.again": "להתחיל מחדש",
   "devices.store.synced": "סנכרון אחרון: {when}",
+  "devices.own": "לכל מכשיר משלו: ערכת נושא, תיקייה מסונכרנת, מוחות שהורדו והתחברויות לשירותים.",
   "devices.store.unreached": "המכשיר הזה לא מצליח להגיע כרגע למכשירים האחרים שלך: מה שמשתנה כאן ימתין עד שיצליח.",
   "devices.syncing": "המכשירים שלך · מסתנכרנים",
   "devices.trouble": "המכשירים שלך · כדאי לבדוק",

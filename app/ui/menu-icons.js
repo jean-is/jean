@@ -64,6 +64,7 @@ export const icons = {
   computer: icon(svg`<rect x="4.5" y="4.5" width="15" height="11" rx="2.5"/><path d="M3 19.5h18"/>`),
   machine: icon(svg`<rect x="4.5" y="4.5" width="15" height="11" rx="2.5"/><path d="M3 19.5h18M8.5 8l2.25 2-2.25 2M12.5 12h3"/>`),
   devices: icon(svg`<rect x="3" y="5.5" width="11" height="8.5" rx="2"/><path d="M2 17.5h13M18.5 15.5h1.5"/><rect x="17" y="7.5" width="4.5" height="11" rx="1.5"/>`),
+  phone: icon(svg`<rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M10.5 18.5h3"/>`), tablet: icon(svg`<rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M10.5 18h3"/>`),
   fullscreen: icon(svg`<path d="M4.5 9V6.5a2 2 0 0 1 2-2H9M15 4.5h2.5a2 2 0 0 1 2 2V9M19.5 15v2.5a2 2 0 0 1-2 2H15M9 19.5H6.5a2 2 0 0 1-2-2V15"/>`),
   'exit-fullscreen': icon(svg`<path d="M9 4.5V7a2 2 0 0 1-2 2H4.5M19.5 9H17a2 2 0 0 1-2-2V4.5M15 19.5V17a2 2 0 0 1 2-2h2.5M4.5 15H7a2 2 0 0 1 2 2v2.5"/>`),
   play: icon(svg`<path d="M8.5 5.5v13L19 12Z"/>`),

@@ -4,6 +4,13 @@
   "devices.safe": "Dina uppgifter och filer finns också på dina andra enheter, förseglade så att bara de kan läsa dem.",
   "devices.here": "Den här enheten, tillagd den {date}",
   "devices.added": "Tillagd den {date}",
+  "devices.seen": "Senast sedd {when}",
+  "devices.more": {
+    "one": "{count} enhet till",
+    "other": "{count} enheter till"
+  },
+  "devices.lastSeen": "{device} sågs senast {when}. Om du inte längre använder enheten, ta bort den.",
+  "devices.see": "Se dina enheter",
   "devices.store.use": "{used} av {quota} gemensamt",
   "devices.store.full": "Fullt: det nya stannar på den här enheten.",
   "devices.store.owed": "Enheten du tog bort stängs ute…",
@@ -11,6 +18,7 @@
   "devices.store.room": "Det finns inget utrymme kvar på den här enheten: inget mer kommer hit.",
   "devices.store.again": "Börja om",
   "devices.store.synced": "Senast synkroniserad: {when}",
+  "devices.own": "Varje enhet behåller sitt eget tema, sin synkroniserade mapp, sina nedladdade hjärnor och sina inloggningar till tjänster.",
   "devices.store.unreached": "Den här enheten når inte dina andra enheter just nu: det som ändras här väntar tills den gör det.",
   "devices.syncing": "Dina enheter · synkroniserar",
   "devices.trouble": "Dina enheter · behöver ses över",

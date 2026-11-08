@@ -4,6 +4,12 @@
   "devices.safe": "Tugas dan file Anda juga ada di perangkat Anda yang lain, disegel sehingga hanya perangkat itu yang bisa membacanya.",
   "devices.here": "Perangkat ini, ditambahkan pada {date}",
   "devices.added": "Ditambahkan pada {date}",
+  "devices.seen": "Terlihat {when}",
+  "devices.more": {
+    "other": "{count} perangkat lainnya"
+  },
+  "devices.lastSeen": "{device} terakhir terlihat {when}. Jika Anda tidak lagi memakainya, hapus perangkat itu.",
+  "devices.see": "Lihat perangkat Anda",
   "devices.store.use": "{used} dari {quota} bersama",
   "devices.store.full": "Penuh: hal baru tetap di perangkat ini.",
   "devices.store.owed": "Mengeluarkan perangkat yang Anda hapus…",
@@ -11,6 +17,7 @@
   "devices.store.room": "Tidak ada ruang lagi di perangkat ini: tidak ada lagi yang masuk ke sini.",
   "devices.store.again": "Mulai lagi",
   "devices.store.synced": "Terakhir disinkronkan: {when}",
+  "devices.own": "Tema, folder yang disinkronkan, otak yang diunduh, dan status masuk ke layanan tersimpan terpisah di setiap perangkat.",
   "devices.store.unreached": "Perangkat ini tidak dapat menjangkau perangkat Anda yang lain saat ini: yang berubah di sini menunggu sampai bisa.",
   "devices.syncing": "Perangkat Anda · menyinkronkan",
   "devices.trouble": "Perangkat Anda · perlu dicek",

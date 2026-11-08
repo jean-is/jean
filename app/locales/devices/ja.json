@@ -4,6 +4,12 @@
   "devices.safe": "タスクとファイルは、あなたのほかの端末にもあります。それらの端末だけが読めるよう、封をしてあります。",
   "devices.here": "この端末（{date} に追加）",
   "devices.added": "{date} に追加",
+  "devices.seen": "最終接続：{when}",
+  "devices.more": {
+    "other": "ほかの端末 {count} 台"
+  },
+  "devices.lastSeen": "{device} が最後に接続したのは{when}です。もう使っていない端末なら、外してください。",
+  "devices.see": "あなたの端末を見る",
   "devices.store.use": "{quota} のうち {used} を共有中",
   "devices.store.full": "いっぱいです。新しいものはこの端末に残ります。",
   "devices.store.owed": "外した端末を締め出しています…",
@@ -11,6 +17,7 @@
   "devices.store.room": "この端末に空きがありません。これ以上何も届きません。",
   "devices.store.again": "やり直す",
   "devices.store.synced": "最終同期：{when}",
+  "devices.own": "テーマ、同期フォルダー、ダウンロードした頭脳、サービスへのサインインは、端末ごとに別々です。",
   "devices.store.unreached": "この端末はいま、ほかの端末に接続できません。ここでの変更は、接続できるまで待機します。",
   "devices.syncing": "あなたの端末・同期中",
   "devices.trouble": "あなたの端末・確認が必要です",

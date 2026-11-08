@@ -4,6 +4,13 @@
   "devices.safe": "ተግባሮችዎና ፋይሎችዎ በሌሎች መሣሪያዎችዎም ላይ አሉ፣ እነሱ ብቻ እንዲያነቧቸው ታሽገው።",
   "devices.here": "ይህ መሣሪያ፣ በ{date} የታከለ",
   "devices.added": "በ{date} የታከለ",
+  "devices.seen": "ለመጨረሻ ጊዜ የታየው፦ {when}",
+  "devices.more": {
+    "one": "{count} ተጨማሪ መሣሪያ",
+    "other": "{count} ተጨማሪ መሣሪያዎች"
+  },
+  "devices.lastSeen": "{device} ለመጨረሻ ጊዜ የታየው {when} ነው። ከእንግዲህ የማይጠቀሙበት ከሆነ ያስወግዱት።",
+  "devices.see": "መሣሪያዎችዎን ይመልከቱ",
   "devices.store.use": "ከ{quota} ውስጥ {used} የጋራ",
   "devices.store.full": "ሞልቷል፦ አዲስ ነገር በዚህ መሣሪያ ላይ ይቆያል።",
   "devices.store.owed": "ያስወገዱትን መሣሪያ በማስወጣት ላይ…",
@@ -11,6 +18,7 @@
   "devices.store.room": "ይህ መሣሪያ ቦታ የለውም፦ ከእንግዲህ ምንም አይመጣለትም።",
   "devices.store.again": "እንደገና ይጀምሩ",
   "devices.store.synced": "የመጨረሻ ማመሳሰል፦ {when}",
+  "devices.own": "እያንዳንዱ መሣሪያ የራሱን ገጽታ፣ የተመሳሰለ አቃፊ፣ የወረዱ አንጎሎችና የገባባቸውን አገልግሎቶች ይይዛል።",
   "devices.store.unreached": "ይህ መሣሪያ አሁን ሌሎች መሣሪያዎችዎን መድረስ አይችልም፦ እዚህ የሚለወጠው እስኪችል ድረስ ይጠብቃል።",
   "devices.syncing": "መሣሪያዎችዎ · በማመሳሰል ላይ",
   "devices.trouble": "መሣሪያዎችዎ · ይመልከቱ",

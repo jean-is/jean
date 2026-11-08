@@ -4,6 +4,15 @@
   "devices.safe": "Twoje zadania i pliki są też na twoich innych urządzeniach, zapieczętowane tak, by czytać je mogły tylko one.",
   "devices.here": "To urządzenie, dodane {date}",
   "devices.added": "Dodane {date}",
+  "devices.seen": "Ostatnio widziane {when}",
+  "devices.more": {
+    "one": "Jeszcze {count} urządzenie",
+    "few": "Jeszcze {count} urządzenia",
+    "many": "Jeszcze {count} urządzeń",
+    "other": "Jeszcze {count} urządzenia"
+  },
+  "devices.lastSeen": "Urządzenie {device} było ostatnio widziane {when}. Jeśli już go nie używasz, usuń je.",
+  "devices.see": "Zobacz swoje urządzenia",
   "devices.store.use": "{used} z {quota} wspólnie",
   "devices.store.full": "Pełno: nowe rzeczy zostają na tym urządzeniu.",
   "devices.store.owed": "Usunięte urządzenie jest odcinane…",
@@ -11,6 +20,7 @@
   "devices.store.room": "Na tym urządzeniu nie ma już miejsca: nic więcej do niego nie trafi.",
   "devices.store.again": "Zacznij od nowa",
   "devices.store.synced": "Ostatnia synchronizacja: {when}",
+  "devices.own": "Każde urządzenie ma własny motyw, zsynchronizowany folder, pobrane mózgi i logowania do usług.",
   "devices.store.unreached": "To urządzenie nie może teraz połączyć się z innymi Twoimi urządzeniami: to, co się tu zmieni, poczeka, aż się uda.",
   "devices.syncing": "Twoje urządzenia · synchronizacja",
   "devices.trouble": "Twoje urządzenia · wymagają uwagi",
