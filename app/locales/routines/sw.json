@@ -29,6 +29,7 @@
   "routines.brain": "Ubongo",
   "routines.brain.yours": "Sawa na wa jumbe zako",
   "routines.next": "Ijayo: {when}",
+  "routines.elsewhere": "Inaendeshwa kwenye {device}",
   "routines.confirmDelete": "Futa ratiba “{title}”?",
   "routines.run": "Endesha sasa",
   "routines.runs": "Mara zilizopita",

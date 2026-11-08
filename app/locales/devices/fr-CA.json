@@ -1,5 +1,6 @@
 {
   "devices.line": "Vos cerveaux, vos réglages et vos projets, aussi sur votre téléphone ou un autre ordinateur. Une tâche reste sur l’appareil où elle a été faite, jusqu’à ce que vous l’envoyiez vers un autre.",
+  "devices.lineStore": "Vos tâches, vos fichiers, vos cerveaux et vos réglages, aussi sur votre téléphone ou un autre ordinateur, scellés pour que seuls vos appareils puissent les lire.",
   "devices.count": {
     "one": "{count} appareil",
     "many": "{count} appareils",
@@ -7,6 +8,11 @@
   },
   "devices.here": "Cet appareil, ajouté le {date}",
   "devices.added": "Ajouté le {date}",
+  "devices.store.use": "{used} sur {quota} en commun",
+  "devices.store.full": "Plein : ce qui est nouveau reste sur cet appareil.",
+  "devices.store.gone": "Cet appareil ne reçoit plus ce que font vos autres appareils.",
+  "devices.store.room": "Plus de place sur cet appareil : plus rien ne lui parvient.",
+  "devices.store.again": "Recommencer",
   "devices.add": "Ajouter un appareil",
   "devices.paste": "Un lien venant de votre autre appareil",
   "devices.pasteHint": "Sur l’appareil qui a votre {name}, Ajouter un appareil donne un lien. Collez-le ici pour avoir aussi votre {name} sur cet appareil.",

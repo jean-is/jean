@@ -1,11 +1,17 @@
 {
   "devices.line": "Beyinlerin, ayarların ve projelerin telefonunda ya da başka bir bilgisayarda da. Bir görev, sen başka bir cihaza gönderene kadar üzerinde çalışıldığı cihazda kalır.",
+  "devices.lineStore": "Görevlerin, dosyaların, beyinlerin ve ayarların telefonunda ya da başka bir bilgisayarda da; yalnızca kendi cihazlarının okuyabileceği şekilde mühürlü.",
   "devices.count": {
     "one": "{count} cihaz",
     "other": "{count} cihaz"
   },
   "devices.here": "Bu cihaz, {date} tarihinde eklendi",
   "devices.added": "{date} tarihinde eklendi",
+  "devices.store.use": "{quota} içinde {used} ortak",
+  "devices.store.full": "Dolu: yeni olan bu cihazda kalır.",
+  "devices.store.gone": "Bu cihaz artık diğer cihazlarında yaptıklarını almıyor.",
+  "devices.store.room": "Bu cihazda yer kalmadı: buraya artık hiçbir şey gelmiyor.",
+  "devices.store.again": "Baştan başla",
   "devices.add": "Cihaz ekle",
   "devices.paste": "Diğer cihazından bir bağlantı",
   "devices.pasteHint": "{name} uygulamasını kullandığın cihazda Cihaz ekle düğmesi bir bağlantı verir. Aynı {name} bu cihazda da olsun diye bağlantıyı buraya yapıştır.",

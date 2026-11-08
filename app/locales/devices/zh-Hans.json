@@ -1,10 +1,16 @@
 {
   "devices.line": "你的大脑、设置和项目，在手机或另一台电脑上也能用。任务会留在完成它的设备上，直到你把它发送到另一台设备。",
+  "devices.lineStore": "你的任务、文件、大脑和设置，在手机或另一台电脑上也能用，并且经过封存，只有你的设备能读取。",
   "devices.count": {
     "other": "{count} 台设备"
   },
   "devices.here": "这台设备，添加于 {date}",
   "devices.added": "添加于 {date}",
+  "devices.store.use": "已共用 {used}／{quota}",
+  "devices.store.full": "已满：新内容会留在这台设备上。",
+  "devices.store.gone": "这台设备不再收到你其他设备上的内容。",
+  "devices.store.room": "这台设备没有空间了：不会再有内容传来。",
+  "devices.store.again": "重新开始",
   "devices.add": "添加设备",
   "devices.paste": "来自你另一台设备的链接",
   "devices.pasteHint": "在有你的 {name} 的设备上，点“添加设备”会得到一个链接。把它粘贴到这里，这台设备上也能用那个 {name}。",

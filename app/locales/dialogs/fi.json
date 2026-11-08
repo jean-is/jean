@@ -73,6 +73,7 @@
   "projects.name": "Nimi",
   "projects.colour": "Sen valo",
   "projects.local": "Pidä tämä projekti tällä laitteella",
+  "projects.keepHere": "Pidetäänkö ”{name}” vain tällä laitteella? Sen tehtävät ja tiedostot lähtevät muilta laitteiltasi. Laite, joka muutti sitä offline-tilassa, tuo ne takaisin.",
   "projects.kit": "Sen suunnittelujärjestelmä",
   "projects.create": "Luo projekti",
   "projects.save": "Tallenna",

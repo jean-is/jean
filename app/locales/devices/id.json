@@ -1,10 +1,16 @@
 {
   "devices.line": "Otak, pengaturan, dan proyek Anda juga ada di ponsel atau komputer lain. Tugas tetap di perangkat tempat tugas itu dikerjakan, sampai Anda mengirimnya ke perangkat lain.",
+  "devices.lineStore": "Tugas, file, otak, dan pengaturan Anda juga ada di ponsel atau komputer lain, disegel sehingga hanya perangkat Anda yang bisa membacanya.",
   "devices.count": {
     "other": "{count} perangkat"
   },
   "devices.here": "Perangkat ini, ditambahkan pada {date}",
   "devices.added": "Ditambahkan pada {date}",
+  "devices.store.use": "{used} dari {quota} bersama",
+  "devices.store.full": "Penuh: hal baru tetap di perangkat ini.",
+  "devices.store.gone": "Perangkat ini tidak lagi menerima apa yang dikerjakan perangkat Anda yang lain.",
+  "devices.store.room": "Tidak ada ruang lagi di perangkat ini: tidak ada lagi yang masuk ke sini.",
+  "devices.store.again": "Mulai lagi",
   "devices.add": "Tambah perangkat",
   "devices.paste": "Tautan dari perangkat Anda yang lain",
   "devices.pasteHint": "Di perangkat yang memiliki {name} Anda, Tambah perangkat memberi tautan. Tempel di sini agar {name} itu ada juga di perangkat ini.",

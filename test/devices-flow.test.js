@@ -12,7 +12,7 @@ import { isBackedUp } from '../app/caps/backup/archive.js'
 import { carried } from '../app/caps/sync/mirror.js'
 import { following, snapshotOf } from '../app/caps/devices/bundle.js'
 import { headersFor } from '../app/core/llm.js'
-import { SECRET, DEVICES, TIMES, deviceName, recordFor, recordsOf, listOf, changeList, mergeLists, tell, quiet, writeRecord, writeOwn, inPlace, bundleOf, adopt, refill, untouched, taskOf, arrive, receive, removal, look, share, unreached, known, back, firstOf, broughtFrom, alone } from '../app/caps/devices/flow.js'
+import { SECRET, DEVICES, STORE, STORED, TIMES, carrying, shaped, deviceName, recordFor, recordsOf, listOf, changeList, mergeLists, tell, quiet, writeRecord, writeOwn, inPlace, bundleOf, adopt, refill, untouched, taskOf, arrive, receive, removal, look, share, unreached, known, back, firstOf, broughtFrom, alone } from '../app/caps/devices/flow.js'
 
 const T = 1_800_000_000_000
 const CATALOGUE = ['files', 'tables', 'documents', 'camera']
@@ -165,6 +165,35 @@ test('B’s new profile, filled from the bundle: its own voice and look, nothing
   assert.equal((await look(context(onB, b, T + 9).ctx)).changed, false)
 })
 
+test('the store’s keys A sent with *kept* are written with B’s identity and devices, in one write; malformed, none are', async () => {
+  const { fs, me } = await profileA()
+  const b = await identity()
+  const bundle = await bundleOf(context(fs, me).ctx, { dir: `profiles/${ulid(T)}-ada`, name: 'Ada' }, recordOfIt(b, 'iPhone · Safari'))
+  const store = { sid: base64url(random(16)), N: base64url(random(32)), epochs: { 0: base64url(random(32)) }, relay: 'https://relay.example/', token: base64url(random(32)) }
+  const onB = memoryFS()
+  /** @type {string[][]} */
+  const writes = []
+  const write = onB.write.bind(onB)
+  onB.write = async (path, text) => { if (path === '.secrets/keys.json') writes.push(Object.keys(JSON.parse(text))); return write(path, text) }
+  await adopt(onB, bundle, { settings: DEFAULT_SETTINGS, catalogue: CATALOGUE, me: b, now: T + 5, store })
+  assert.deepEqual(JSON.parse(String(await getSecret(onB, STORE))), store)
+  assert.ok([SECRET, DEVICES, STORE].every((id) => writes.at(-1)?.includes(id)) && !writes.slice(0, -1).some((ids) => ids.includes(SECRET)), 'the identity, the devices and the store together')
+  const other = memoryFS()
+  await adopt(other, bundle, { settings: DEFAULT_SETTINGS, catalogue: CATALOGUE, me: b, now: T + 5, store: { ...store, N: 'short' } })
+  assert.equal(await getSecret(other, STORE), null)
+  assert.equal(shaped({ ...store, epochs: {} }), false)
+  // Its settings tell the others which store it holds, none once the relay no longer opens it.
+  assert.equal((await look(context(onB, b, T + 9).ctx)).value.store, store.sid)
+  await setSecret(onB, STORE, JSON.stringify({ ...store, gone: true }))
+  assert.equal((await look(context(onB, b, T + 9).ctx)).value.store, null)
+})
+
+test('the store carries what Sync does, but projects kept on this device, Home’s project.md aside, so that every device keeps one Home', () => {
+  const carry = carrying([{ dir: HOME, data: { default: true, cloud: false } }, { dir: WORK, data: { cloud: false } }, { dir: HEALTH, data: {} }])
+  assert.deepEqual([`${HOME}/project.md`, `${HOME}/conversations/a.jsonl`, `${WORK}/project.md`, `${WORK}/files/a.png`, `${HEALTH}/project.md`, 'memory.md', '.secrets/keys.json', 'settings.json', '.devices/store.json'].map(carry),
+    [true, false, false, false, true, true, false, false, false])
+})
+
 test('B keeps what is its own beside what comes: its settings that stay, the brains it alone runs, its connections and capabilities on this computer, and their keys', async () => {
   const { fs, me } = await profileA()
   const b = await identity()
@@ -237,7 +266,11 @@ test('refilled in place, a device keeps what it did on its own since: its projec
   bundle.settings.brains.X = { value: brain('X', 'openai', 'https://api.openai.com/v1'), at: T + 40 }
   assert.deepEqual([await inPlace(fsB, a.public), await inPlace(fsB, c.public)], [true, false], 'only the device that removed it, never one removed after, which it never hears of')
   const B = context(fsB, meB, T + 50)
-  await refill(B.ctx, bundle)
+  // What it knew of a store before goes, the store's keys that came taking its place; the versions Markdown merges from stay.
+  for (const path of [...STORED, '.cache/store/memory.md']) await fsB.write(path, '{}')
+  const store = { sid: base64url(random(16)), N: base64url(random(32)), epochs: { 0: base64url(random(32)) }, relay: 'https://relay.example/', token: base64url(random(32)) }
+  await refill(B.ctx, bundle, store)
+  assert.deepEqual([JSON.parse(String(await getSecret(fsB, STORE))), ...await Promise.all([...STORED, '.cache/store/memory.md'].map((path) => fsB.exists(path)))], [store, false, false, true])
   const after = await loadSettings(fsB)
   assert.deepEqual([after.name, after.maskWords], ['Ada L.', ['Ada']], 'A’s later change comes, B’s own stays')
   assert.deepEqual(after.brains.map((one) => [one.id, one.provider]), [['TYPED000000000000000000000', 'openai'], ['X', 'claudecode'], ['MSTRA000000000000000000000', 'mistral']])
@@ -626,8 +659,13 @@ test('a device removed that keeps Jean forgets who it is, and is added again in 
   await fs.write(TIMES, '{}')
   // Still paired: no device, not even one it has, fills it again in place.
   assert.equal(await inPlace(fs, c.public), false)
+  await setSecret(fs, STORE, '{"sid":"S"}')
+  for (const path of [...STORED, '.cache/store/memory.md']) await fs.write(path, '{}')
   await alone(fs, c.id, T, me.id)
   assert.equal(await getSecret(fs, SECRET), null)
+  // The store's keys go, and what it knew of the store, but the versions Markdown merges from, so that joined again its words meet the others'.
+  assert.equal(await getSecret(fs, STORE), null)
+  assert.deepEqual(await Promise.all([...STORED, '.cache/store/memory.md'].map((path) => fs.exists(path))), [false, false, true])
   assert.equal(await fs.exists(TIMES), true, 'the times stay, so that what it does on its own since wins when it is filled again')
   assert.deepEqual((await recordsOf(fs)).map((one) => one.id), [c.id])
   assert.equal(await inPlace(fs, c.public), true)

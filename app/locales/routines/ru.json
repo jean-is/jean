@@ -29,6 +29,7 @@
   "routines.brain": "Мозг",
   "routines.brain.yours": "Как для ваших сообщений",
   "routines.next": "В следующий раз: {when}",
+  "routines.elsewhere": "Выполняется на {device}",
   "routines.confirmDelete": "Удалить регулярную задачу «{title}»?",
   "routines.run": "Запустить сейчас",
   "routines.runs": "Прошлые запуски",

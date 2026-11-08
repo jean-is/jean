@@ -29,6 +29,7 @@
   "routines.brain": "Agy",
   "routines.brain.yours": "Ugyanaz, mint az üzeneteidnél",
   "routines.next": "Következő: {when}",
+  "routines.elsewhere": "Itt fut: {device}",
   "routines.confirmDelete": "Törlöd ezt a rutint: „{title}”?",
   "routines.run": "Futtatás most",
   "routines.runs": "Korábbi futások",

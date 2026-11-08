@@ -74,6 +74,7 @@
   "projects.name": "Nom",
   "projects.colour": "Sa lumière",
   "projects.local": "Garder ce projet sur cet appareil",
+  "projects.keepHere": "Garder « {name} » sur cet appareil seulement ? Ses tâches et ses fichiers quittent vos autres appareils. Un appareil qui l’a modifié hors ligne les ramène.",
   "projects.kit": "Sa charte graphique",
   "projects.create": "Créer le projet",
   "projects.save": "Enregistrer",

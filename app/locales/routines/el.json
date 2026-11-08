@@ -29,6 +29,7 @@
   "routines.brain": "Εγκέφαλος",
   "routines.brain.yours": "Ο ίδιος με τα μηνύματά σας",
   "routines.next": "Επόμενη: {when}",
+  "routines.elsewhere": "Εκτελείται στη συσκευή {device}",
   "routines.confirmDelete": "Διαγραφή της ρουτίνας «{title}»;",
   "routines.run": "Εκτέλεση τώρα",
   "routines.runs": "Προηγούμενες εκτελέσεις",

@@ -29,6 +29,7 @@
   "routines.brain": "मेंदू",
   "routines.brain.yours": "तुमच्या संदेशांसारखाच",
   "routines.next": "पुढच्या वेळी: {when}",
+  "routines.elsewhere": "{device} वर चालते",
   "routines.confirmDelete": "नियमित काम “{title}” हटवायचे?",
   "routines.run": "आता चालवा",
   "routines.runs": "आधी केव्हा चालले",

@@ -29,6 +29,7 @@
   "routines.brain": "Brain",
   "routines.brain.yours": "Same as your messages",
   "routines.next": "Next: {when}",
+  "routines.elsewhere": "Runs on {device}",
   "routines.confirmDelete": "Delete the routine “{title}”?",
   "routines.run": "Run now",
   "routines.runs": "Past runs",

@@ -8,8 +8,8 @@ import { mine } from './opfs.js'
 /** @typedef {import('../core/settings.js').Settings} Settings */
 
 const FILE = '.secrets/keys.json'
-/** This device's own, which never cross whatever a brain or a connection is called: its identity in the profile and the devices it knows (caps/devices/). */
-const OWN = ['device', 'devices']
+/** This device's own, which never cross whatever a brain or a connection is called: its identity in the profile, the devices it knows and the store's keys (caps/devices/). */
+const OWN = ['device', 'devices', 'store']
 const ULID = /^[0-9A-HJKMNP-TV-Z]{26}$/
 /**
  * Whether a secret is a key the person typed by what it holds, whatever the record beside it says, which another device's older copy

@@ -75,6 +75,7 @@
   "projects.name": "Název",
   "projects.colour": "Jeho světlo",
   "projects.local": "Ponechat tento projekt v tomto zařízení",
+  "projects.keepHere": "Ponechat „{name}“ jen v tomto zařízení? Jeho úkoly a soubory zmizí z vašich dalších zařízení. Zařízení, které ho změnilo offline, je vrátí.",
   "projects.kit": "Jeho designový systém",
   "projects.create": "Vytvořit projekt",
   "projects.save": "Uložit",

@@ -1,5 +1,6 @@
 {
   "devices.line": "Os teus cérebros, definições e projetos também no teu telemóvel ou noutro computador. Uma tarefa fica no dispositivo onde foi feita, até a enviares para outro.",
+  "devices.lineStore": "As tuas tarefas, ficheiros, cérebros e definições também no teu telemóvel ou noutro computador, selados para que só os teus dispositivos os possam ler.",
   "devices.count": {
     "one": "{count} dispositivo",
     "many": "{count} dispositivos",
@@ -7,6 +8,11 @@
   },
   "devices.here": "Este dispositivo, adicionado a {date}",
   "devices.added": "Adicionado a {date}",
+  "devices.store.use": "{used} de {quota} em comum",
+  "devices.store.full": "Cheio: o que é novo fica neste dispositivo.",
+  "devices.store.gone": "Este dispositivo já não recebe o que os teus outros dispositivos fazem.",
+  "devices.store.room": "Já não há espaço neste dispositivo: nada mais lhe chega.",
+  "devices.store.again": "Recomeçar",
   "devices.add": "Adicionar um dispositivo",
   "devices.paste": "Uma ligação do teu outro dispositivo",
   "devices.pasteHint": "No dispositivo onde tens {name}, Adicionar um dispositivo dá uma ligação. Cola-a aqui para teres {name}, com tudo o que é teu, também neste dispositivo.",

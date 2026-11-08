@@ -29,6 +29,7 @@
   "routines.brain": "አንጎል",
   "routines.brain.yours": "እንደ መልእክቶችዎ",
   "routines.next": "ቀጣይ፦ {when}",
+  "routines.elsewhere": "በ{device} ላይ ይሠራል",
   "routines.confirmDelete": "መደበኛ ተግባሩ “{title}” ይሰረዝ?",
   "routines.run": "አሁን አስኪድ",
   "routines.runs": "ያለፉ ሂደቶች",

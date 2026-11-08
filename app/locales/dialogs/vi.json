@@ -72,6 +72,7 @@
   "projects.name": "Tên",
   "projects.colour": "Ánh sáng của nó",
   "projects.local": "Giữ dự án này trên thiết bị này",
+  "projects.keepHere": "Chỉ giữ “{name}” trên thiết bị này? Nhiệm vụ và tệp của nó sẽ rời khỏi các thiết bị khác của bạn. Thiết bị nào đã sửa nó khi ngoại tuyến sẽ mang chúng trở lại.",
   "projects.kit": "Hệ thống thiết kế của dự án",
   "projects.create": "Tạo dự án",
   "projects.save": "Lưu",

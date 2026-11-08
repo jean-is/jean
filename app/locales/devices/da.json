@@ -1,11 +1,17 @@
 {
   "devices.line": "Dine hjerner, indstillinger og projekter også på din telefon eller en anden computer. En opgave bliver på den enhed, den blev lavet på, indtil du sender den til en anden.",
+  "devices.lineStore": "Dine opgaver, filer, hjerner og indstillinger også på din telefon eller en anden computer, forseglet, så kun dine enheder kan læse dem.",
   "devices.count": {
     "one": "{count} enhed",
     "other": "{count} enheder"
   },
   "devices.here": "Denne enhed, tilføjet den {date}",
   "devices.added": "Tilføjet den {date}",
+  "devices.store.use": "{used} af {quota} fælles",
+  "devices.store.full": "Fuldt: det nye bliver på denne enhed.",
+  "devices.store.gone": "Denne enhed får ikke længere det, dine andre enheder laver.",
+  "devices.store.room": "Der er ikke mere plads på denne enhed: intet mere kommer til den.",
+  "devices.store.again": "Start forfra",
   "devices.add": "Tilføj en enhed",
   "devices.paste": "Et link fra din anden enhed",
   "devices.pasteHint": "På den enhed, hvor du har {name}, giver “Tilføj en enhed” et link. Indsæt det her for også at have {name} derfra på denne enhed.",

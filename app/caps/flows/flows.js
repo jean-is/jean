@@ -294,7 +294,7 @@ export async function schedule(flow) {
   let routine = (await listRoutines(app.fs, folder())).find((one) => one.flow === flow.id)
   if (!routine) {
     const at = new Date(Date.now() + 3600_000)
-    routine = newRoutine(folder(), { title: flow.name, request: flow.name, flow: flow.id, by: app.deviceId, every: 'weekday', at: `${String(at.getHours()).padStart(2, '0')}:00` })
+    routine = newRoutine(folder(), { title: flow.name, request: flow.name, flow: flow.id, by: app.deviceId, device: slots('runs')[0]?.here(), every: 'weekday', at: `${String(at.getHours()).padStart(2, '0')}:00` })
     await writeRoutine(app.fs, routine)
     act('routine.add', { path: routine.path, title: flow.name, flow: true, every: 'weekday' })
   }

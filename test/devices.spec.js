@@ -5,7 +5,9 @@
 // its menu, and a device removed erases Jean there. Playwright's
 // WebKit keeps nothing (a private window's storage), where a device is neither added nor joined: there, the exchange itself runs
 // between two pages, from the modules, against the relay.
-import { readFile } from 'node:fs/promises'
+import { readFile, readdir } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, openData, openProfile, closeSettings, openTasks, ask, answered, RELAY_URL, BRAIN_URL } from './helpers.js'
 
@@ -191,9 +193,9 @@ test('a device added: six digits typed on the one that has the Jean, and the oth
   expect(settled.voice).toBe('Kyoko')
   expect(settled.urls.relay).toBe(RELAY_URL)
   expect(settled.unlocked).toContain('devices')
-  // Its keys: those that cross, never a plan's, the bridge's, a connection's tokens or a sign-in's.
+  // Its keys: those that cross, never a plan's, the bridge's, a connection's tokens or a sign-in's; its own, and the store's.
   const keys = JSON.parse(String(await read(b, '.secrets/keys.json')))
-  expect(Object.keys(keys).sort()).toEqual([NOTES, CLOUD.id, 'device', 'devices', 'search:brave'])
+  expect(Object.keys(keys).sort()).toEqual([NOTES, CLOUD.id, 'device', 'devices', 'search:brave', 'store'])
   expect(JSON.parse(keys.devices).map((/** @type {{ removedAt?: string }} */ one) => Boolean(one.removedAt))).toEqual([false, false])
   expect([keys[CLOUD.id], keys[NOTES], keys['search:brave']]).toEqual(['key of the cloud', 'key of notes', 'key of brave'])
   expect(JSON.stringify(keys)).not.toMatch(/key of the plan|key of the bridge|tokens of mail|token of the sign-in/)
@@ -453,7 +455,8 @@ test('a device removed with its box unticked keeps Jean on its own, and added ag
   await expect.poll(() => here(b)).toBe(dir)
   expect(await profiles(b)).toEqual([dir])
   expect(await read(b, mine)).not.toBeNull()
-  expect(Object.keys(JSON.parse(String(await read(b, '.secrets/keys.json')))).sort()).toEqual([NOTES, CLOUD.id, 'device', 'devices', 'search:brave'])
+  // Its keys again, the store's among them, A having let its new token in.
+  expect(Object.keys(JSON.parse(String(await read(b, '.secrets/keys.json')))).sort()).toEqual([NOTES, CLOUD.id, 'device', 'devices', 'search:brave', 'store'])
   await again.getByRole('button', { name: 'Done' }).click()
   await expect(again.locator('.devices-flow > .list > li')).toHaveCount(2)
   // And it hears A again.
@@ -667,6 +670,130 @@ test('the exchange runs in this engine, between two pages and the relay, up to t
   }, /** @type {const} */ ([modules, RELAY_URL, link]))
   expect(again).toBe(409)
   await a.evaluate(async (a, base) => { await a.relay.remove(base, a.pairing.token); await a.relay.remove(base, a.answers.token) }, RELAY_URL)
+  await b.context().close()
+})
+
+/** A round with the store now, as one comes every minute in sight: the paths that came in. @param {Page} page */
+const storeRound = (page) => page.evaluate(async () => (await import('/caps/sync/rounds.js')).round())
+/** The paths the store's last round left the same on both sides. @param {Page} page */
+const inStore = async (page) => Object.keys(JSON.parse(String(await read(page, '.cache/store.json') ?? '{}')).files ?? {})
+/** The store's version of a path, as the last round left it. @param {Page} page @param {string} path */
+const revOf = async (page, path) => JSON.parse(String(await read(page, '.cache/store.json') ?? '{}')).files?.[path]?.[3]
+/** A task made on a device, as Jean writes one, with a request and an answer. @param {Page} page @param {string} title @param {string} words */
+const taskOn = (page, title, words) => page.evaluate(async ({ title, words }) => {
+  const [{ app, refreshConversations }, { createConversation, appendRecords }, { metaRecord, userRecord, envelope }] = await Promise.all([
+    import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js')])
+  const { path } = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })
+  await appendRecords(app.fs, path, [metaRecord(app.deviceId, { title }), userRecord(words, app.deviceId), envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: 'Here is **the plan**.' } }, 0)])
+  await refreshConversations()
+  return path
+}, { title, words })
+/** Every file the relay keeps for a store, as bytes read as text, wherever this run's relay keeps its folder. @param {string} sid */
+async function relayHolds(sid) {
+  const runs = (await readdir(tmpdir())).filter((name) => name.startsWith('jean-mailboxes-')).map((name) => join(tmpdir(), name, 'stores', sid))
+  const texts = []
+  for (const dir of runs) for (const entry of await readdir(dir, { recursive: true, withFileTypes: true }).catch(() => [])) if (entry.isFile()) texts.push(await readFile(join(entry.parentPath, entry.name), 'latin1'))
+  return texts
+}
+
+test('a task made on one device shows on the other through the store, and the relay keeps none of its words', async ({ page, browser }) => {
+  await deviceA(page)
+  const b = await device(browser)
+  const { settings } = await pair(page, b)
+  // Both hold the store's keys, made by A as it added B, each with a token of its own.
+  const [keysA, keysB] = await Promise.all([page, b].map(async (one) => JSON.parse(JSON.parse(String(await read(one, '.secrets/keys.json'))).store)))
+  expect([keysB.sid, keysB.N, keysB.relay]).toEqual([keysA.sid, keysA.N, RELAY_URL])
+  expect(keysB.token).not.toBe(keysA.token)
+  await expect(settings.locator('.devices-flow > .hint')).toHaveText(/ in common$/)
+  await closeSettings(page)
+  const path = await taskOn(page, TITLE, 'Plan my trip to Lyon by the sea')
+  await expect.poll(async () => { await storeRound(page); return inStore(page) }, { timeout: 20_000 }).toContain(path)
+  await expect.poll(async () => { await storeRound(b); return read(b, path) }, { timeout: 20_000 }).toBe(await read(page, path))
+  await expect((await openTasks(b)).locator('.history-list li:not([aria-hidden])', { hasText: TITLE })).toBeVisible()
+  const held = (await relayHolds(keysA.sid)).join('\n')
+  expect(held.length).toBeGreaterThan(0)
+  for (const word of [TITLE, 'Lyon', 'the plan', 'conversations', 'projects', 'key of the cloud']) expect(held).not.toContain(word)
+  await b.context().close()
+})
+
+test('a project kept on one device, asked first, leaves the other, and the first keeps it', async ({ page, browser }) => {
+  await deviceA(page)
+  const b = await device(browser)
+  await pair(page, b)
+  await closeSettings(page)
+  const dir = await page.evaluate(async () => {
+    const [{ app, refreshProjects, enterProject }, { createProject }] = await Promise.all([import('/ui/state.js'), import('/core/settings.js')])
+    const made = await createProject(app.fs, { name: 'Trip', colour: 'oklch(0.7 0.1 200)', by: app.deviceId })
+    await refreshProjects()
+    await enterProject(/** @type {any} */ (app.projects.value.find((one) => one.dir === made)))
+    return made
+  })
+  const path = await taskOn(page, TITLE, 'Plan my trip to Lyon')
+  await expect.poll(async () => { await storeRound(page); return inStore(page) }, { timeout: 20_000 }).toContain(path)
+  await expect.poll(async () => { await storeRound(b); return read(b, path) }, { timeout: 20_000 }).not.toBeNull()
+  // Kept on A from now on: A asks first, saying it leaves the other devices.
+  await page.evaluate(async (dir) => (await import('/caps/projects/projects.js')).editProject((await import('/ui/state.js')).app.projects.value.find((one) => one.dir === dir)), dir)
+  const dialog = page.locator('app-project-dialog dialog[open]')
+  await dialog.getByRole('switch', { name: 'Keep this project on this device' }).check()
+  const asked = new Promise((resolve) => page.once('dialog', (one) => { resolve(one.message()); one.accept() }))
+  await dialog.getByRole('button', { name: 'Save' }).click()
+  expect(await asked).toBe('Keep “Trip” on this device alone? Its tasks and files leave your other devices. One that changed it while offline brings them back.')
+  await expect.poll(async () => { await storeRound(page); return (await inStore(page)).some((one) => one.startsWith(`${dir}/`)) }, { timeout: 20_000 }).toBe(false)
+  await expect.poll(async () => { await storeRound(b); return read(b, `${dir}/project.md`) }, { timeout: 20_000 }).toBeNull()
+  expect(await read(b, path)).toBeNull()
+  expect(await read(page, path)).not.toBeNull()
+  await b.context().close()
+})
+
+test('a document changed on both devices, one of them offline, keeps both changes', async ({ page, browser }) => {
+  await deviceA(page)
+  const b = await device(browser)
+  await pair(page, b)
+  await closeSettings(page)
+  const path = await page.evaluate(async () => `${(await import('/ui/state.js')).app.projectDir}/documents/01K90000000000000000000000-trip.md`)
+  const write = (/** @type {Page} */ one, /** @type {string} */ text) => one.evaluate(async ({ path, text }) => (await import('/ui/state.js')).app.fs.write(path, text), { path, text })
+  await write(page, '# Trip\n\nThe train at nine.\n\nA room by the sea.\n\nDinner on the harbour.\n')
+  await expect.poll(async () => { await storeRound(page); return inStore(page) }, { timeout: 20_000 }).toContain(path)
+  await expect.poll(async () => { await storeRound(b); return inStore(b) }, { timeout: 20_000 }).toContain(path)
+  // B offline changes the last paragraph, A the first.
+  const rev = await revOf(page, path)
+  await b.context().setOffline(true)
+  await write(b, '# Trip\n\nThe train at nine.\n\nA room by the sea.\n\nDinner at the market.\n')
+  await storeRound(b)
+  await write(page, '# Trip\n\nThe train at ten.\n\nA room by the sea.\n\nDinner on the harbour.\n')
+  await expect.poll(async () => { await storeRound(page); return revOf(page, path) }, { timeout: 20_000 }).not.toBe(rev)
+  await b.context().setOffline(false)
+  const both = '# Trip\n\nThe train at ten.\n\nA room by the sea.\n\nDinner at the market.\n'
+  await expect.poll(async () => { await storeRound(b); return read(b, path) }, { timeout: 20_000 }).toBe(both)
+  await expect.poll(async () => { await storeRound(page); return read(page, path) }, { timeout: 20_000 }).toBe(both)
+  await b.context().close()
+})
+
+test('an answer written while new things wait in the store stays Kept private, and they come once it is written', async ({ page, browser }) => {
+  // B answers with the fake brain alone, on this computer, as Ollama would be; the relay at an address outside, as relay.jean.is is.
+  await outside(page.context())
+  await start(page)
+  test.skip(await ephemeral(page), 'nothing is kept here: a private window, Playwright’s WebKit')
+  await connectFakeBrain(page)
+  await useRelay(page, OUTSIDE)
+  const b = await device(browser, { relay: OUTSIDE })
+  await pair(page, b)
+  await closeSettings(page)
+  const path = await taskOn(page, TITLE, 'Plan my trip to Lyon')
+  await expect.poll(async () => { await storeRound(page); return inStore(page) }, { timeout: 20_000 }).toContain(path)
+  // A round asked for on A meanwhile, while A answers, takes nothing: it starts after the answer.
+  await ask(page, 'Count slowly to five')
+  await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(1)
+  const other = await taskOn(b, 'From the phone', 'Pack the bags')
+  await expect.poll(async () => { await storeRound(b); return inStore(b) }, { timeout: 20_000 }).toContain(other)
+  await storeRound(page)
+  expect(await read(page, other)).toBeNull()
+  await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0, { timeout: 15_000 })
+  await expect(page.locator('.msg-jean').last()).toContainText('I counted to five, slowly.')
+  await expect(page.locator('.msg-jean .msg-actions').last().getByRole('button', { name: 'About this answer' })).toHaveClass(/is-local/)
+  // Once it is written, what waited comes, without asking.
+  await expect.poll(() => read(page, other), { timeout: 20_000 }).not.toBeNull()
+  await Promise.all([page.context(), b.context()].map((context) => context.unrouteAll({ behavior: 'ignoreErrors' })))
   await b.context().close()
 })
 

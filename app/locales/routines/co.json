@@ -29,6 +29,7 @@
   "routines.brain": "Cervellu",
   "routines.brain.yours": "U listessu chè per i vostri messaghji",
   "routines.next": "Prossima : {when}",
+  "routines.elsewhere": "Gira nant’à {device}",
   "routines.confirmDelete": "Squassà a rutina « {title} » ?",
   "routines.run": "Lancià avà",
   "routines.runs": "Esecuzioni precedenti",

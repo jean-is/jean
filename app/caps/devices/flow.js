@@ -10,7 +10,9 @@ import { VAULT, encode, decode } from '../../ui/seal.js'
 import { DEFAULT_RULES } from '../../core/rules.js'
 import { filesIn } from '../../ui/export.js'
 import { SERVICES, isService } from '../web-search/services.js'
+import { carried } from '../sync/mirror.js'
 import { CONDITIONAL, FOLLOWS, ULID, following, merged, ownOf, snapshotOf, stamp, timeOf, wins } from './bundle.js'
+import { MANIFEST } from './store-fs.js'
 
 /** @typedef {import('../../core/types.js').FS} FS */
 /** @typedef {import('../../core/settings.js').Settings} Settings */
@@ -47,6 +49,8 @@ export const SECRET = 'device'
 export const DEVICES = 'devices'
 /** The times of what follows, this device's own: in a folder Sync and backups leave out (caps/sync/mirror.js, caps/backup/archive.js). */
 export const TIMES = '.devices/follows.json'
+/** The secret that holds the store's keys (./store.js, D721), and what this device knows of a store, dropped with them: the round's base and the manifest. */
+export const [STORE, STORED] = ['store', ['.cache/store.json', MANIFEST]]
 /** The most a message holds, as the relay takes them. */
 export const LIMIT = 25_000_000
 export { ULID } from './bundle.js'
@@ -182,6 +186,20 @@ export async function tell(ctx, value, but = []) {
   return others.filter((_, i) => !taken[i])
 }
 
+// ─── The store ───────────────────────────────────────────────────────────────
+
+/** Whether the store's keys are whole: its id, the naming key and an epoch's key at least, base64url. @param {any} one */
+export const shaped = (one) => /^[\w-]{22}$/.test(one?.sid) && /^[\w-]{43}$/.test(one.N) && Object.keys(one.epochs ?? {}).length > 0
+  && Object.entries(one.epochs).every(([epoch, key]) => /^\d{1,9}$/.test(epoch) && /^[\w-]{43}$/.test(String(key)))
+/** The store this device holds, by its id, as its settings tell the others: none where it has none, or where the relay no longer opens it. @param {FS} fs */
+const storeOf = async (fs) => ((held) => (shaped(held) && !held.gone ? held.sid : null))(JSON.parse(await getSecret(fs, STORE) ?? 'null'))
+/**
+ * What the store carries from this device (D721): what Sync's mirror carries, but projects kept on this device (`cloud: false`), their
+ * project.md aside where it is Home's, so that every device keeps one Home. @param {{ dir: string, data: Record<string, unknown> }[]} projects
+ */
+export const carrying = (projects) => ((kept) => (/** @type {string} */ path) => carried(path)
+  && !kept.some(({ dir, data }) => path.startsWith(`${dir}/`) && !(data.default === true && path === `${dir}/project.md`)))(projects.filter((one) => one.data.cloud === false))
+
 // ─── Keys that cross, and their times ────────────────────────────────────────
 
 /** A key's SHA-256, all that follows.json keeps of it. @param {string} value */
@@ -314,7 +332,7 @@ async function stamped(ctx, kept) {
 async function messageOf(ctx, settings, state, values, times) {
   const snapshot = snapshotOf(state, times)
   if (settings.cloud === false) for (const name of ['auto', 'activeBrain']) delete snapshot.fields[name]
-  return { kind: 'settings', snapshot, keys: keysOut(values, times.keys), devices: await listOf(ctx.fs) }
+  return { kind: 'settings', snapshot, keys: keysOut(values, times.keys), devices: await listOf(ctx.fs), store: await storeOf(ctx.fs) }
 }
 
 /**
@@ -436,12 +454,12 @@ const timed = (part = {}) => Object.fromEntries(Object.entries(part).map(([id, o
  * B's new profile filled from A's bundle, before it opens: B's settings for all that doesn't follow, and of what does, the brains,
  * connections, addresses and capabilities of B alone beside A's, leaving out what B's catalogue lacks, saved with their times; the keys of
  * what B keeps of its own, from its profile until now (`secretOf`); A's keys, chosen again by crossing(); every project.md, Home's too, so
- * that no second Home is made; the devices; and B's own identity. @param {FS} fs the new profile's @param {any} bundle
- * @param {{ settings: Settings, catalogue: string[], me: Identity, now: number, secretOf?: (id: string) => Promise<string | null>, policy?: Policy, lock?: boolean }} here
+ * that no second Home is made; the devices; B's own identity; and the store's keys, if any. @param {FS} fs the new profile's @param {any} bundle
+ * @param {{ settings: Settings, catalogue: string[], me: Identity, now: number, secretOf?: (id: string) => Promise<string | null>, policy?: Policy, lock?: boolean, store?: unknown }} here
  *   B's settings until now, its catalogue and identity, the relay's clock, the keys of the profile it was in, the organisation's brains,
- *   and whether the profile left beside it has a lock
+ *   whether the profile left beside it has a lock, and the store's keys A sent with *kept*, with B's own token
  */
-export async function adopt(fs, bundle, { settings, catalogue, me, now, secretOf = async () => null, policy, lock }) {
+export async function adopt(fs, bundle, { settings, catalogue, me, now, secretOf = async () => null, policy, lock, store }) {
   const base = /** @type {Settings} */ ({ ...DEFAULT_SETTINGS, ...ownOf(settings) })
   const { fields, brains, connections } = bundle.settings ?? {}
   const { patch, times } = merged(base, {}, { fields: timed(fields), brains: timed(brains), connections: timed(connections) }, now + SOON)
@@ -457,16 +475,15 @@ export async function adopt(fs, bundle, { settings, catalogue, me, now, secretOf
   await takeKeys(fs, bundle.keys, [next], keys, now + SOON, policy)
   await keep(fs, { ...times, keys, seen: following(next), heard: now, had: projectsOf(bundle) })
   for (const { path, text } of bundle.projects ?? []) if (PROJECT.test(path) && typeof text === 'string') await fs.write(path, text)
-  await setSecret(fs, DEVICES, JSON.stringify(mergeLists([], bundle.devices, '', null) ?? []))
-  await setSecret(fs, SECRET, JSON.stringify(me))
+  await setSecrets(fs, { [DEVICES]: JSON.stringify(mergeLists([], bundle.devices, '', null) ?? []), [SECRET]: JSON.stringify(me), ...(shaped(store) && { [STORE]: JSON.stringify(store) }) })
 }
 
 /**
  * The profile open here filled again from A's bundle, on a device removed that kept Jean on its own (inPlace()): what it did on its own
  * since, stamped now, wins over what came, as with any other device's settings and keys (settle()); a project.md only where none is; then
- * the devices and its identity. @param {Context} ctx its new identity's @param {any} bundle
+ * the devices, its identity and the store's keys, with nothing it knew of a store before. @param {Context} ctx its new identity's @param {any} bundle @param {unknown} [store]
  */
-export async function refill(ctx, bundle) {
+export async function refill(ctx, bundle, store) {
   const { had, left = [] } = await followsOf(ctx.fs)
   await settle(ctx, bundle.settings ?? {}, bundle.keys)
   // A project it deleted on its own, paired or since, stays deleted: only those it never had come.
@@ -475,7 +492,8 @@ export async function refill(ctx, bundle) {
   // The devices it removed itself stay removed, which the device that removed it may never have heard of; those alone() set aside are
   // forgotten only once the new list is written, so that a refill failing on the way and tried again still knows them.
   const removed = (await listOf(ctx.fs)).filter((one) => one.removedAt && !left.includes(one.id))
-  await setSecrets(ctx.fs, { [DEVICES]: JSON.stringify(mergeLists(removed, bundle.devices, '', null) ?? removed), [SECRET]: JSON.stringify(ctx.me) })
+  await Promise.all(STORED.map((path) => ctx.fs.remove(path)))
+  await setSecrets(ctx.fs, { [DEVICES]: JSON.stringify(mergeLists(removed, bundle.devices, '', null) ?? removed), [SECRET]: JSON.stringify(ctx.me), [STORE]: shaped(store) ? JSON.stringify(store) : null })
   await locked(ctx, FOLLOWING, () => keep(ctx.fs, { left: undefined }))
 }
 
@@ -673,7 +691,9 @@ export const alone = (fs, by, now, as, lock) => locked({ lock }, LISTING, async 
     const kept = await followsOf(fs)
     await keep(fs, { left: [...new Set([...(kept.leftAs === as ? kept.left ?? [] : []), ...live])], leftAs: as, had: [...new Set([...kept.had ?? [], ...projects])] })
   })
-  // Its identity gone and the others marked removed in one write, never one without the other.
+  // Its identity gone, the store's keys with it, and the others marked removed in one write, never one without the other. What it
+  // knew of the store goes, but the versions Markdown merges from, so that joined again its words meet the others' (D721).
   const removedAt = new Date(now).toISOString()
-  await setSecrets(fs, { [SECRET]: null, [DEVICES]: JSON.stringify((await listOf(fs)).map((one) => (one.id === by ? one : { removedAt, ...one }))) })
+  await setSecrets(fs, { [SECRET]: null, [STORE]: null, [DEVICES]: JSON.stringify((await listOf(fs)).map((one) => (one.id === by ? one : { removedAt, ...one }))) })
+  await Promise.all(STORED.map((path) => fs.remove(path)))
 })

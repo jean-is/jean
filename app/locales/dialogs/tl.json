@@ -73,6 +73,7 @@
   "projects.name": "Pangalan",
   "projects.colour": "Ang liwanag nito",
   "projects.local": "Itago ang proyektong ito sa device na ito",
+  "projects.keepHere": "Itago ang “{name}” sa device na ito lang? Aalis ang mga gawain at file nito sa iba mong device. Ibabalik ang mga ito ng device na nagbago nito habang offline.",
   "projects.kit": "Ang sistema ng disenyo nito",
   "projects.create": "Gawin ang proyekto",
   "projects.save": "I-save",

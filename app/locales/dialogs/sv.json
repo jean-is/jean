@@ -73,6 +73,7 @@
   "projects.name": "Namn",
   "projects.colour": "Dess ljus",
   "projects.local": "Behåll det här projektet på den här enheten",
+  "projects.keepHere": "Behålla ”{name}” bara på den här enheten? Dess uppgifter och filer lämnar dina andra enheter. En enhet som ändrade det offline tar tillbaka dem.",
   "projects.kit": "Dess designsystem",
   "projects.create": "Skapa projektet",
   "projects.save": "Spara",

@@ -1,11 +1,17 @@
 {
   "devices.line": "Ang mga utak, setting at proyekto mo, nasa telepono mo o sa ibang computer din. Nananatili ang isang gawain sa device kung saan ito ginawa, hanggang ipadala mo ito sa iba.",
+  "devices.lineStore": "Ang mga gawain, file, utak at setting mo, nasa telepono mo o sa ibang computer din, selyado para ang mga device mo lang ang makabasa.",
   "devices.count": {
     "one": "{count} device",
     "other": "{count} device"
   },
   "devices.here": "Ang device na ito, idinagdag noong {date}",
   "devices.added": "Idinagdag noong {date}",
+  "devices.store.use": "{used} sa {quota} na pinagsasaluhan",
+  "devices.store.full": "Puno na: ang bago ay nananatili sa device na ito.",
+  "devices.store.gone": "Hindi na natatanggap ng device na ito ang ginagawa ng iba mong device.",
+  "devices.store.room": "Wala nang espasyo sa device na ito: wala nang darating dito.",
+  "devices.store.again": "Magsimulang muli",
   "devices.add": "Magdagdag ng device",
   "devices.paste": "Isang link mula sa iba mong device",
   "devices.pasteHint": "Sa device na may {name} mo, nagbibigay ng link ang Magdagdag ng device. I-paste ito rito para magkaroon din ng {name} na iyon sa device na ito.",

@@ -29,6 +29,7 @@
   "routines.brain": "Hjärna",
   "routines.brain.yours": "Samma som för dina meddelanden",
   "routines.next": "Nästa: {when}",
+  "routines.elsewhere": "Körs på {device}",
   "routines.confirmDelete": "Radera rutinen ”{title}”?",
   "routines.run": "Kör nu",
   "routines.runs": "Tidigare körningar",

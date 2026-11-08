@@ -1,11 +1,17 @@
 {
   "devices.line": "Akili, mipangilio na miradi yako kwenye simu yako au kompyuta nyingine pia. Kazi hubaki kwenye kifaa ilipofanywa, hadi uitume kwa kingine.",
+  "devices.lineStore": "Kazi, faili, akili na mipangilio yako kwenye simu yako au kompyuta nyingine pia, zimefungwa ili vifaa vyako pekee viweze kuzisoma.",
   "devices.count": {
     "one": "Kifaa {count}",
     "other": "Vifaa {count}"
   },
   "devices.here": "Kifaa hiki, kiliongezwa tarehe {date}",
   "devices.added": "Kiliongezwa tarehe {date}",
+  "devices.store.use": "{used} kati ya {quota} kwa pamoja",
+  "devices.store.full": "Imejaa: kipya kinabaki kwenye kifaa hiki.",
+  "devices.store.gone": "Kifaa hiki hakipokei tena kile ambacho vifaa vyako vingine hufanya.",
+  "devices.store.room": "Hakuna nafasi tena kwenye kifaa hiki: hakuna kitu zaidi kinachokifikia.",
+  "devices.store.again": "Anza upya",
   "devices.add": "Ongeza kifaa",
   "devices.paste": "Kiungo kutoka kwenye kifaa chako kingine",
   "devices.pasteHint": "Kwenye kifaa chako kilicho na {name}, Ongeza kifaa hutoa kiungo. Kibandike hapa ili kifaa hiki pia kiwe na {name} kutoka kwenye kifaa hicho.",

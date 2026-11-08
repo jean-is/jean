@@ -76,6 +76,7 @@
   "projects.name": "Anv",
   "projects.colour": "E c’houlou",
   "projects.local": "Mirout ar raktres-mañ war an trevnad-mañ",
+  "projects.keepHere": "Mirout « {name} » war an trevnad-mañ hepken ? Mont a ra e drevelloù hag e restroù kuit eus ho trevnadoù all. Un trevnad en deus e cheñchet ezlinenn a zegas anezho en-dro.",
   "projects.kit": "E garta grafek",
   "projects.create": "Krouiñ ar raktres",
   "projects.save": "Enrollañ",

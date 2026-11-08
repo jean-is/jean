@@ -1,10 +1,16 @@
 {
   "devices.line": "頭脳、設定、プロジェクトを、スマートフォンや別のコンピューターでも使えます。タスクは、別の端末に送るまで、そのタスクを行った端末に残ります。",
+  "devices.lineStore": "タスク、ファイル、頭脳、設定を、スマートフォンや別のコンピューターでも。あなたの端末だけが読めるよう、封をして届けます。",
   "devices.count": {
     "other": "{count} 台の端末"
   },
   "devices.here": "この端末（{date} に追加）",
   "devices.added": "{date} に追加",
+  "devices.store.use": "{quota} のうち {used} を共有中",
+  "devices.store.full": "いっぱいです。新しいものはこの端末に残ります。",
+  "devices.store.gone": "この端末には、ほかの端末での作業がもう届きません。",
+  "devices.store.room": "この端末に空きがありません。これ以上何も届きません。",
+  "devices.store.again": "やり直す",
   "devices.add": "端末を追加",
   "devices.paste": "もう一台の端末からのリンク",
   "devices.pasteHint": "{name} が入っている端末で「端末を追加」を選ぶと、リンクが表示されます。ここに貼り付けると、その {name} をこの端末でも使えます。",

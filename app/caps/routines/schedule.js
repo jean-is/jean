@@ -23,7 +23,7 @@ import { parseFrontMatter, stringifyFrontMatter } from '../../core/settings.js'
  * flow: the id of a flow the routine runs, its request then the flow's name (D218). brain: who answers its runs, 'auto' or a
  * brain's id, and model the version with it; without it, the brain the user's messages have (D303). active: whether it runs, on
  * when made; resumed: when it was last turned back on, so the times it fell due while off make no run (D430).
- * @typedef {(Schedule | Trigger) & { path: string, title: string, request: string, author: string, createdAt: string, active: boolean, lastRun?: string, resumed?: string, flow?: string, brain?: string, model?: string }} Routine
+ * @typedef {(Schedule | Trigger) & { path: string, title: string, request: string, author: string, createdAt: string, active: boolean, lastRun?: string, resumed?: string, flow?: string, brain?: string, model?: string, device?: string }} Routine
  */
 
 export const EVERY = /** @type {const} */ (['once', 'hour', 'day', 'weekday', 'week', 'month'])
@@ -129,7 +129,7 @@ export function parseRoutine(text, path) {
   const request = body.trim()
   if (!plan || !request || !data.title) return null
   return { ...plan, path, title: String(data.title), request, author: String(data.author ?? ''), createdAt: String(data.createdAt ?? ''), active: data.active !== false, ...(data.lastRun && { lastRun: String(data.lastRun) }),
-    ...(data.resumed && { resumed: String(data.resumed) }), ...(data.flow && { flow: String(data.flow) }), ...(data.brain && { brain: String(data.brain) }), ...(data.brain && data.model && { model: String(data.model) }) }
+    ...(data.resumed && { resumed: String(data.resumed) }), ...(data.flow && { flow: String(data.flow) }), ...(data.brain && { brain: String(data.brain) }), ...(data.brain && data.model && { model: String(data.model) }), ...(data.device && { device: String(data.device) }) }
 }
 
 /** The routines in a folder ('' for the home project's), oldest first. @param {FS} fs @param {string} dir @returns {Promise<Routine[]>} */
@@ -141,15 +141,16 @@ export async function listRoutines(fs, dir) {
 
 /**
  * A new routine, in a file named by a ULID that never changes, on.
- * @param {string} dir @param {{ title: string, request: string, by: string, now?: Date, flow?: string } & (Schedule | Trigger)} fields @returns {Routine}
+ * @param {string} dir @param {{ title: string, request: string, by: string, now?: Date, flow?: string, device?: string } & (Schedule | Trigger)} fields the device it runs on among the person's, its maker
+ * @returns {Routine}
  */
-export function newRoutine(dir, { title, request, by, now = new Date(), flow, ...plan }) {
-  return { ...plan, path: join(dir, 'routines', `${ulid(now.getTime())}.md`), title, request, author: by, createdAt: now.toISOString(), active: true, ...(flow && { flow }) }
+export function newRoutine(dir, { title, request, by, now = new Date(), flow, device, ...plan }) {
+  return { ...plan, path: join(dir, 'routines', `${ulid(now.getTime())}.md`), title, request, author: by, createdAt: now.toISOString(), active: true, ...(flow && { flow }), ...(device && { device }) }
 }
 
 /** Writes a routine whole (a change, turning it on or off, or the time it last ran). @param {FS} fs @param {Routine} routine */
-export async function writeRoutine(fs, { path, title, request, author, createdAt, active, lastRun, resumed, flow, brain, model, ...plan }) {
+export async function writeRoutine(fs, { path, title, request, author, createdAt, active, lastRun, resumed, flow, brain, model, device, ...plan }) {
   const when = 'when' in plan ? { when: plan.when, ...(plan.if && { if: plan.if }) } : { every: plan.every, ...(plan.on !== undefined && { on: plan.on }), at: plan.at }
-  const data = { format: 1, title, ...when, active, ...(flow && { flow }), ...(brain && { brain }), ...(brain && model && { model }), author, createdAt, ...(lastRun && { lastRun }), ...(resumed && { resumed }) }
+  const data = { format: 1, title, ...when, active, ...(flow && { flow }), ...(brain && { brain }), ...(brain && model && { model }), ...(device && { device }), author, createdAt, ...(lastRun && { lastRun }), ...(resumed && { resumed }) }
   await fs.write(path, stringifyFrontMatter(data, `${request.trim()}\n`))
 }

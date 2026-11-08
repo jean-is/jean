@@ -29,6 +29,7 @@
   "routines.brain": "మెదడు",
   "routines.brain.yours": "మీ సందేశాలకు ఉన్నదే",
   "routines.next": "తదుపరి: {when}",
+  "routines.elsewhere": "{device}లో నడుస్తుంది",
   "routines.confirmDelete": "“{title}” రొటీన్‌ను తొలగించాలా?",
   "routines.run": "ఇప్పుడే నడుపు",
   "routines.runs": "ఇంతకు ముందు నడిచినవి",

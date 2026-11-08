@@ -1,5 +1,6 @@
 {
   "devices.line": "Vaši mozgovi, postavke i projekti i na telefonu ili drugom računalu. Zadatak ostaje na uređaju na kojem je nastao, dok ga ne pošaljete na drugi.",
+  "devices.lineStore": "Vaši zadaci, datoteke, mozgovi i postavke i na telefonu ili drugom računalu, zapečaćeni tako da ih mogu čitati samo vaši uređaji.",
   "devices.count": {
     "one": "{count} uređaj",
     "few": "{count} uređaja",
@@ -7,6 +8,11 @@
   },
   "devices.here": "Ovaj uređaj, dodan {date}",
   "devices.added": "Dodan {date}",
+  "devices.store.use": "{used} od {quota} zajedničko",
+  "devices.store.full": "Puno: novo ostaje na ovom uređaju.",
+  "devices.store.gone": "Ovaj uređaj više ne dobiva ono što rade vaši drugi uređaji.",
+  "devices.store.room": "Na ovom uređaju više nema mjesta: ništa više ne stiže na njega.",
+  "devices.store.again": "Počni ispočetka",
   "devices.add": "Dodaj uređaj",
   "devices.paste": "Poveznica s vašeg drugog uređaja",
   "devices.pasteHint": "Na uređaju na kojem već imate aplikaciju {name}, gumb Dodaj uređaj daje poveznicu. Zalijepite je ovdje i ista aplikacija {name} bit će i na ovom uređaju.",

@@ -1,11 +1,17 @@
 {
   "devices.line": "Az agyaid, a beállításaid és a projektjeid a telefonodon vagy egy másik számítógépen is. Egy feladat azon az eszközön marad, amelyen készült, amíg el nem küldöd egy másikra.",
+  "devices.lineStore": "A feladataid, fájljaid, agyaid és beállításaid a telefonodon vagy egy másik számítógépen is, lepecsételve, hogy csak a saját eszközeid olvashassák őket.",
   "devices.count": {
     "one": "{count} eszköz",
     "other": "{count} eszköz"
   },
   "devices.here": "Ez az eszköz, hozzáadva: {date}",
   "devices.added": "Hozzáadva: {date}",
+  "devices.store.use": "{used} / {quota} közösen",
+  "devices.store.full": "Megtelt: az új dolgok ezen az eszközön maradnak.",
+  "devices.store.gone": "Ez az eszköz már nem kapja meg, amit a többi eszközöd csinál.",
+  "devices.store.room": "Ezen az eszközön nincs több hely: semmi sem érkezik már ide.",
+  "devices.store.again": "Kezdés elölről",
   "devices.add": "Eszköz hozzáadása",
   "devices.paste": "Link a másik eszközödről",
   "devices.pasteHint": "Azon az eszközön, amelyen már megvan a(z) {name}, az Eszköz hozzáadása gomb ad egy linket. Illeszd be ide, hogy ugyanez a(z) {name} ezen az eszközön is meglegyen.",

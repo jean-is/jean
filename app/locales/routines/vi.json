@@ -29,6 +29,7 @@
   "routines.brain": "Bộ não",
   "routines.brain.yours": "Giống như tin nhắn của bạn",
   "routines.next": "Lần tới: {when}",
+  "routines.elsewhere": "Chạy trên {device}",
   "routines.confirmDelete": "Xóa tác vụ định kỳ “{title}”?",
   "routines.run": "Chạy ngay",
   "routines.runs": "Các lần chạy trước",

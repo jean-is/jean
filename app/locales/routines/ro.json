@@ -29,6 +29,7 @@
   "routines.brain": "Creier",
   "routines.brain.yours": "Același ca pentru mesajele dvs.",
   "routines.next": "Următoarea: {when}",
+  "routines.elsewhere": "Rulează pe {device}",
   "routines.confirmDelete": "Ștergeți rutina „{title}”?",
   "routines.run": "Rulați acum",
   "routines.runs": "Rulări anterioare",

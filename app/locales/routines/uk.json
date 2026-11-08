@@ -29,6 +29,7 @@
   "routines.brain": "Мозок",
   "routines.brain.yours": "Як для ваших повідомлень",
   "routines.next": "Наступного разу: {when}",
+  "routines.elsewhere": "Виконується на {device}",
   "routines.confirmDelete": "Видалити регулярне завдання «{title}»?",
   "routines.run": "Запустити зараз",
   "routines.runs": "Попередні запуски",

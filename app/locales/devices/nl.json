@@ -1,11 +1,17 @@
 {
   "devices.line": "Je breinen, instellingen en projecten ook op je telefoon of een andere computer. Een taak blijft op het apparaat waarop hij is gedaan, tot je hem naar een ander stuurt.",
+  "devices.lineStore": "Je taken, bestanden, breinen en instellingen ook op je telefoon of een andere computer, verzegeld zodat alleen je eigen apparaten ze kunnen lezen.",
   "devices.count": {
     "one": "{count} apparaat",
     "other": "{count} apparaten"
   },
   "devices.here": "Dit apparaat, toegevoegd op {date}",
   "devices.added": "Toegevoegd op {date}",
+  "devices.store.use": "{used} van {quota} gedeeld",
+  "devices.store.full": "Vol: wat nieuw is, blijft op dit apparaat.",
+  "devices.store.gone": "Dit apparaat krijgt niet meer wat je andere apparaten doen.",
+  "devices.store.room": "Geen ruimte meer op dit apparaat: er komt niets meer bij.",
+  "devices.store.again": "Opnieuw beginnen",
   "devices.add": "Apparaat toevoegen",
   "devices.paste": "Een link van je andere apparaat",
   "devices.pasteHint": "Op het apparaat waarop je {name} al hebt, geeft ‘Apparaat toevoegen’ een link. Plak die hier om {name} van daar ook op dit apparaat te hebben.",

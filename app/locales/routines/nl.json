@@ -29,6 +29,7 @@
   "routines.brain": "Brein",
   "routines.brain.yours": "Hetzelfde als voor je berichten",
   "routines.next": "Volgende keer: {when}",
+  "routines.elsewhere": "Draait op {device}",
   "routines.confirmDelete": "Routine ‘{title}’ verwijderen?",
   "routines.run": "Nu uitvoeren",
   "routines.runs": "Eerdere uitvoeringen",

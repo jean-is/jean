@@ -1,10 +1,16 @@
 {
   "devices.line": "Àwọn ọpọlọ, ètò àti iṣẹ́ àkànṣe yín lórí fóònù yín tàbí kọ̀ǹpútà mìíràn náà. Iṣẹ́ kan máa ń wà lórí ẹ̀rọ tí a ti ṣe é, títí ẹ ó fi fi ránṣẹ́ sí òmíràn.",
+  "devices.lineStore": "Àwọn iṣẹ́, fáìlì, ọpọlọ àti ètò yín lórí fóònù yín tàbí kọ̀ǹpútà mìíràn náà, tí a dì pa kí ẹ̀rọ yín nìkan lè kà wọ́n.",
   "devices.count": {
     "other": "Ẹ̀rọ {count}"
   },
   "devices.here": "Ẹ̀rọ yìí, a ṣàfikún rẹ̀ ní {date}",
   "devices.added": "A ṣàfikún rẹ̀ ní {date}",
+  "devices.store.use": "{used} nínú {quota} lápapọ̀",
+  "devices.store.full": "Ó ti kún: ohun tuntun máa ń wà lórí ẹ̀rọ yìí.",
+  "devices.store.gone": "Ẹ̀rọ yìí kò gba ohun tí àwọn ẹ̀rọ yín mìíràn ń ṣe mọ́.",
+  "devices.store.room": "Kò sí àyè mọ́ lórí ẹ̀rọ yìí: kò sí ohun kankan tí yóò dé ọ̀dọ̀ rẹ̀ mọ́.",
+  "devices.store.again": "Bẹ̀rẹ̀ lẹ́ẹ̀kan sí i",
   "devices.add": "Ṣàfikún ẹ̀rọ kan",
   "devices.paste": "Ìjápọ̀ kan láti ẹ̀rọ yín mìíràn",
   "devices.pasteHint": "Lórí ẹ̀rọ tí {name} yín wà, Ṣàfikún ẹ̀rọ kan máa ń fúnni ní ìjápọ̀. Ẹ lẹ̀ ẹ́ síbí kí {name} náà lè wà lórí ẹ̀rọ yìí pẹ̀lú.",

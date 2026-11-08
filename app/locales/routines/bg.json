@@ -29,6 +29,7 @@
   "routines.brain": "Мозък",
   "routines.brain.yours": "Същият като за съобщенията ви",
   "routines.next": "Следващо: {when}",
+  "routines.elsewhere": "Изпълнява се на {device}",
   "routines.confirmDelete": "Да се изтрие ли рутината „{title}“?",
   "routines.run": "Изпълни сега",
   "routines.runs": "Предишни изпълнения",

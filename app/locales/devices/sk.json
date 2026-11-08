@@ -1,5 +1,6 @@
 {
   "devices.line": "Vaše mozgy, nastavenia a projekty aj v telefóne alebo na inom počítači. Úloha zostáva v zariadení, v ktorom vznikla, kým ju nepošlete do iného.",
+  "devices.lineStore": "Vaše úlohy, súbory, mozgy a nastavenia aj v telefóne alebo na inom počítači, zapečatené tak, aby ich mohli čítať len vaše zariadenia.",
   "devices.count": {
     "one": "{count} zariadenie",
     "few": "{count} zariadenia",
@@ -8,6 +9,11 @@
   },
   "devices.here": "Toto zariadenie, pridané {date}",
   "devices.added": "Pridané {date}",
+  "devices.store.use": "{used} z {quota} spoločne",
+  "devices.store.full": "Plné: nové veci zostávajú v tomto zariadení.",
+  "devices.store.gone": "Toto zariadenie už nedostáva to, čo robia vaše ďalšie zariadenia.",
+  "devices.store.room": "V tomto zariadení už nie je miesto: nič ďalšie doň nepríde.",
+  "devices.store.again": "Začať odznova",
   "devices.add": "Pridať zariadenie",
   "devices.paste": "Odkaz z vášho druhého zariadenia",
   "devices.pasteHint": "V zariadení, kde už máte aplikáciu {name}, vám tlačidlo Pridať zariadenie dá odkaz. Vložte ho sem a tú istú aplikáciu {name} budete mať aj v tomto zariadení.",

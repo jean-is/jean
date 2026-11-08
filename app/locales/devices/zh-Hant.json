@@ -1,10 +1,16 @@
 {
   "devices.line": "你的大腦、設定和專案，在手機或另一台電腦上也能用。任務會留在完成它的裝置上，直到你把它傳送到另一台裝置。",
+  "devices.lineStore": "你的任務、檔案、大腦和設定，在手機或另一台電腦上也能用，並且經過封存，只有你的裝置能讀取。",
   "devices.count": {
     "other": "{count} 台裝置"
   },
   "devices.here": "這台裝置，於 {date} 新增",
   "devices.added": "於 {date} 新增",
+  "devices.store.use": "已共用 {used}／{quota}",
+  "devices.store.full": "已滿：新內容會留在這台裝置上。",
+  "devices.store.gone": "這台裝置不再收到你其他裝置上的內容。",
+  "devices.store.room": "這台裝置沒有空間了：不會再有內容傳來。",
+  "devices.store.again": "重新開始",
   "devices.add": "新增裝置",
   "devices.paste": "來自你另一台裝置的連結",
   "devices.pasteHint": "在有你的 {name} 的裝置上，點「新增裝置」會得到一個連結。把它貼到這裡，這台裝置上也能用那個 {name}。",

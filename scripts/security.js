@@ -122,6 +122,8 @@ const RULES = [
   // The one reader of every secret at once, which picks those that cross to the person's other devices (D700), is theirs alone.
   { rule: 'secrets-crossing', strings: /\bimport\s*(?:\{[^}]*\bcrossing\b[^}]*\}|\*\s*as\s+[\w$]+)\s*from\s*['"][^'"]*\/secrets\.js['"]/g, where: /^app\/(?!caps\/devices\/)/ },
   { rule: 'secrets-crossing', strings: /\bimport\(\s*['"][^'"]*\/secrets\.js['"]\s*\)[^\n]*\bcrossing\b|\{[^}]*\bcrossing\b[^}]*\}[^\n]*\bimport\(\s*['"][^'"]*\/secrets\.js['"]/g, where: /^app\/(?!caps\/devices\/)/ },
+  // The store's keys (D721), which open every file the person's devices keep in common, are theirs alone too.
+  { rule: 'secrets-store', strings: /\b(?:get|set|delete)Secrets?\([^)\n]*['"]store['"]|\bSTORE\b[^\n]*\bfrom\s*['"][^'"]*\/devices\/flow\.js['"]/g, where: /^app\/(?!caps\/devices\/)/ },
 ]
 
 /**

@@ -18,7 +18,8 @@
 //   PUT    /v1/s/<sid>/o             a version of the object named in Store-Object, If-Match: <rev> or If-None-Match: *,
 //                                    { meta, parts, epoch }: { rev }; 412 with the version that won; 409 { epoch } for an older epoch
 //   DELETE /v1/s/<sid>/o             with If-Match, { meta, epoch }, the deletion's meta: { rev }, or 412
-//   POST   /v1/s/<sid>/devices       with Store-Proof: { id, token?, envelope?, epoch } adds a device, or gives one its envelope
+//   POST   /v1/s/<sid>/devices       with Store-Proof: { id, token?, envelope?, epoch } adds a device, or gives one its envelope; a
+//                                    device not in yet adds itself, Authorization its own token, the one it names
 //   POST   /v1/s/<sid>/epoch         with Store-Proof: { epoch, remove, proof, envelopes }, the next epoch, devices removed, the
 //                                    next proof's SHA-256 and each remaining device's envelope, in one write; 409 { epoch } if
 //                                    another went first
@@ -172,14 +173,16 @@ export function stores({ backend, limits, now, inTurn, record, free }) {
       const meta = await backend.store(sid)
       if (!meta) return answer(404, { error: 'No store is here.' })
       const device = Object.entries(meta.devices).find(([, one]) => one.token === hash)?.[0]
-      if (!device) return answer(403, { error: 'This store is someone else’s.' })
+      // A device that holds the store's keys, sent by another of the person's, comes in by itself: its own token, with the proof.
+      const itself = part === 'devices' && request.method === 'POST' && body?.token === hash && ID.test(body?.id) && !meta.devices[body.id]
+      if (!device && !itself) return answer(403, { error: 'This store is someone else’s.' })
       const save = () => backend.saveStore(sid, meta)
       if (at - meta.touched > HOUR) { meta.touched = at; await save() }
       const proved = async () => (await hashOf(request.headers.get('store-proof') ?? '')) === meta.proof
 
       if (!part && request.method === 'GET') {
         return answer(200, { epoch: meta.epoch, since: meta.since, last: meta.last, devices: Object.entries(meta.devices).map(([id, one]) => ({ id, added: one.added })),
-          envelope: meta.devices[device].envelope ?? null, use: meta.use, quota: limits.quota })
+          envelope: meta.devices[device ?? '']?.envelope ?? null, use: meta.use, quota: limits.quota })
       }
       if (part === 'changes' && request.method === 'GET') {
         const after = Math.max(0, Math.floor(Number(url.searchParams.get('after')) || 0))

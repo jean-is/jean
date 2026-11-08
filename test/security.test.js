@@ -68,6 +68,14 @@ test('only caps/devices/ reads every secret at once, the ones that cross to the 
   }
 })
 
+test('only caps/devices/ reads the store’s keys, which open what the person’s devices keep in common', () => {
+  for (const text of ["const held = await getSecret(app.fs, 'store')", 'await setSecrets(fs, { "store": null })', "await deleteSecret(fs, 'store')", "import { SECRET, STORE } from '../devices/flow.js'"]) {
+    assert.deepEqual(rules(text, 'app/caps/backup/backup.js'), ['secrets-store'], text)
+    assert.deepEqual(rules(text, 'app/caps/devices/store.js'), [], text)
+  }
+  for (const text of ["await getSecret(app.fs, 'share:01J')", "const STORE = 'app-store'", "import { recordsOf } from '../devices/flow.js'"]) assert.deepEqual(rules(text, 'app/ui/state.js'), [], text)
+})
+
 test('every module of Jean’s keeps the rules, and nothing tracked looks like a secret', () => {
   const { findings, stale } = audit()
   assert.deepEqual(findings, [])

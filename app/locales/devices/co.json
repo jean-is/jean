@@ -1,5 +1,6 @@
 {
   "devices.line": "I vostri cervelli, parametri è prughjetti dinù nant’à u vostru telefuninu o un altru urdinatore. Un compitu ferma nant’à l’apparechju induve hè statu fattu, finu à ch’è vo u mandate à un altru.",
+  "devices.lineStore": "I vostri compiti, schedarii, cervelli è parametri dinù nant’à u vostru telefuninu o un altru urdinatore, sigillati per chì solu i vostri apparechji i pudessinu leghje.",
   "devices.count": {
     "one": "{count} apparechju",
     "many": "{count} di apparechji",
@@ -7,6 +8,11 @@
   },
   "devices.here": "St’apparechju, aghjuntu u {date}",
   "devices.added": "Aghjuntu u {date}",
+  "devices.store.use": "{used} nant’à {quota} in cumunu",
+  "devices.store.full": "Pienu : ciò chì hè novu ferma nant’à st’apparechju.",
+  "devices.store.gone": "St’apparechju ùn riceve più ciò chì facenu i vostri altri apparechji.",
+  "devices.store.room": "Ùn ci hè più piazza nant’à st’apparechju : più nunda ùn li ghjunghje.",
+  "devices.store.again": "Ricumincià",
   "devices.add": "Aghjunghje un apparechju",
   "devices.paste": "Un ligame da u vostru altru apparechju",
   "devices.pasteHint": "Nant’à l’apparechju chì hà digià {name}, Aghjunghje un apparechju dà un ligame. Incullatelu quì per avè dinù {name} nant’à st’apparechju, cù i vostri cervelli, parametri è prughjetti.",

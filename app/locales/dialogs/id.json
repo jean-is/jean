@@ -72,6 +72,7 @@
   "projects.name": "Nama",
   "projects.colour": "Cahayanya",
   "projects.local": "Simpan proyek ini di perangkat ini",
+  "projects.keepHere": "Simpan “{name}” hanya di perangkat ini? Tugas dan file-nya keluar dari perangkat Anda yang lain. Perangkat yang mengubahnya saat offline akan membawanya kembali.",
   "projects.kit": "Sistem desainnya",
   "projects.create": "Buat proyek",
   "projects.save": "Simpan",

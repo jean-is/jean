@@ -73,6 +73,7 @@
   "projects.name": "Ad",
   "projects.colour": "Işığı",
   "projects.local": "Bu projeyi bu cihazda tut",
+  "projects.keepHere": "“{name}” yalnızca bu cihazda kalsın mı? Görevleri ve dosyaları diğer cihazlarından çıkar. Onu çevrimdışıyken değiştiren bir cihaz bunları geri getirir.",
   "projects.kit": "Tasarım sistemi",
   "projects.create": "Projeyi oluştur",
   "projects.save": "Kaydet",

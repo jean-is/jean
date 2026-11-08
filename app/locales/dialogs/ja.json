@@ -72,6 +72,7 @@
   "projects.name": "名前",
   "projects.colour": "明かりの色",
   "projects.local": "このプロジェクトをこの端末だけに置く",
+  "projects.keepHere": "「{name}」をこの端末だけに置きますか？タスクとファイルはほかの端末から消えます。オフライン中に変更した端末があれば、それらが戻ってきます。",
   "projects.kit": "このプロジェクトのデザインシステム",
   "projects.create": "プロジェクトを作成",
   "projects.save": "保存",

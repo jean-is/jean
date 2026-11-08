@@ -1,11 +1,17 @@
 {
   "devices.line": "Dina hjärnor, inställningar och projekt även på din telefon eller en annan dator. En uppgift stannar på enheten där den gjordes, tills du skickar den till en annan.",
+  "devices.lineStore": "Dina uppgifter, filer, hjärnor och inställningar även på din telefon eller en annan dator, förseglade så att bara dina enheter kan läsa dem.",
   "devices.count": {
     "one": "{count} enhet",
     "other": "{count} enheter"
   },
   "devices.here": "Den här enheten, tillagd den {date}",
   "devices.added": "Tillagd den {date}",
+  "devices.store.use": "{used} av {quota} gemensamt",
+  "devices.store.full": "Fullt: det nya stannar på den här enheten.",
+  "devices.store.gone": "Den här enheten får inte längre det dina andra enheter gör.",
+  "devices.store.room": "Det finns inget utrymme kvar på den här enheten: inget mer kommer hit.",
+  "devices.store.again": "Börja om",
   "devices.add": "Lägg till en enhet",
   "devices.paste": "En länk från din andra enhet",
   "devices.pasteHint": "På enheten där du har {name} ger ”Lägg till en enhet” en länk. Klistra in den här för att ha {name} därifrån på den här enheten också.",

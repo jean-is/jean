@@ -1,5 +1,6 @@
 {
   "devices.line": "Hoc’h empennoù, hoc’h arventennoù hag ho raktresoù war ho pellgomzer pe war un urzhiataer all ivez. Chom a ra pep trevell war an trevnad m’eo bet graet warnañ, betek ma kasot anezhi d’unan all.",
+  "devices.lineStore": "Ho trevelloù, ho restroù, hoc’h empennoù hag hoc’h arventennoù war ho pellgomzer pe war un urzhiataer all ivez, siellet evit ma c’hallfe ho trevnadoù hepken o lenn.",
   "devices.count": {
     "one": "{count} trevnad",
     "two": "{count} drevnad",
@@ -9,6 +10,11 @@
   },
   "devices.here": "An trevnad-mañ, ouzhpennet d’an {date}",
   "devices.added": "Ouzhpennet d’an {date}",
+  "devices.store.use": "{used} diwar {quota} boutin",
+  "devices.store.full": "Leun : ar pezh a zo nevez a chom war an trevnad-mañ.",
+  "devices.store.gone": "N’eus mui netra eus ho trevnadoù all o tont d’an trevnad-mañ.",
+  "devices.store.room": "N’eus mui a blas war an trevnad-mañ : netra ken ne zeu dezhañ.",
+  "devices.store.again": "Adkregiñ",
   "devices.add": "Ouzhpennañ un trevnad",
   "devices.paste": "Ul liamm eus ho trevnad all",
   "devices.pasteHint": "War an trevnad m’emañ ho {name} warnañ, Ouzhpennañ un trevnad a ro ul liamm. Pegit anezhañ amañ evit kaout ar memes {name} war an trevnad-mañ ivez.",

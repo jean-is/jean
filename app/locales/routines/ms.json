@@ -29,6 +29,7 @@
   "routines.brain": "Otak",
   "routines.brain.yours": "Sama seperti mesej anda",
   "routines.next": "Seterusnya: {when}",
+  "routines.elsewhere": "Berjalan pada {device}",
   "routines.confirmDelete": "Padam rutin “{title}”?",
   "routines.run": "Jalankan sekarang",
   "routines.runs": "Larian terdahulu",

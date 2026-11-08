@@ -73,6 +73,7 @@
   "projects.name": "Suna",
   "projects.colour": "Haskensa",
   "projects.local": "Ajiye wannan aiki a wannan na'urar",
+  "projects.keepHere": "A ajiye “{name}” a wannan na'urar kaɗai? Ɗawainiyoyinsa da fayilolinsa za su bar sauran na'urorinka. Na'urar da ta canza shi ba tare da intanet ba za ta dawo da su.",
   "projects.kit": "Tsarin zanensa",
   "projects.create": "Ƙirƙiri aikin",
   "projects.save": "Ajiye",

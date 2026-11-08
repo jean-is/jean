@@ -73,6 +73,7 @@
   "projects.name": "Navn",
   "projects.colour": "Dets lys",
   "projects.local": "Behold dette projekt på denne enhed",
+  "projects.keepHere": "Behold “{name}” kun på denne enhed? Dets opgaver og filer forsvinder fra dine andre enheder. En enhed, der ændrede det offline, bringer dem tilbage.",
   "projects.kit": "Dets designsystem",
   "projects.create": "Opret projektet",
   "projects.save": "Gem",

@@ -29,6 +29,7 @@
   "routines.brain": "מוח",
   "routines.brain.yours": "כמו בהודעות שלך",
   "routines.next": "בפעם הבאה: {when}",
+  "routines.elsewhere": "פועלת ב־{device}",
   "routines.confirmDelete": "למחוק את השגרה “{title}”?",
   "routines.run": "הפעלה עכשיו",
   "routines.runs": "הפעלות קודמות",

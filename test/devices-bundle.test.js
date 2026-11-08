@@ -36,7 +36,7 @@ const KINDS = /** @type {Record<string, Record<string, boolean>>} */ ({
   signin: { signin: false, 'signin:audit': false },
   'seal-authority': { 'seal-authority': false },
   share: { 'share:01J': false },
-  device: { device: false, devices: false },
+  device: { device: false, devices: false, store: false },
   unknown: { 'something-new': false },
 })
 /** What each is, as the code writes it where that isn't a key typed: a search service's key and engine (web-search.js), tokens, the bridge's port and key. */
@@ -64,7 +64,7 @@ const KNOWN = /** @type {Record<string, string>} */ ({
   'app/caps/share/share.js `share:${now.id}`': 'share',
   'app/ee/authority.js KEPT': 'seal-authority',
   'app/caps/devices/devices.js SECRET': 'device', // this device's identity in the profile
-  'app/caps/devices/flow.js SECRET': 'device', // the new device's own, into the profile it pairs into
+  'app/caps/devices/store.js STORE': 'device', // the store's keys (D721), which open what the person's devices keep in common
   'app/caps/devices/flow.js DEVICES': 'device', // the devices the profile knows, removed ones too
   'app/caps/devices/flow.js id': 'brain', // what crossed, chosen again by crossing(), or what the new device keeps of its own: a brain's, a connection's, a search service's, a registry's, the bridge's
 })

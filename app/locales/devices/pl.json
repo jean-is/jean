@@ -1,5 +1,6 @@
 {
   "devices.line": "Twoje mózgi, ustawienia i projekty także na telefonie lub innym komputerze. Zadanie zostaje na urządzeniu, na którym powstało, dopóki nie wyślesz go na inne.",
+  "devices.lineStore": "Twoje zadania, pliki, mózgi i ustawienia także na telefonie lub innym komputerze, zapieczętowane tak, by czytać je mogły tylko twoje urządzenia.",
   "devices.count": {
     "one": "{count} urządzenie",
     "few": "{count} urządzenia",
@@ -8,6 +9,11 @@
   },
   "devices.here": "To urządzenie, dodane {date}",
   "devices.added": "Dodane {date}",
+  "devices.store.use": "{used} z {quota} wspólnie",
+  "devices.store.full": "Pełno: nowe rzeczy zostają na tym urządzeniu.",
+  "devices.store.gone": "To urządzenie nie dostaje już tego, co robią twoje inne urządzenia.",
+  "devices.store.room": "Na tym urządzeniu nie ma już miejsca: nic więcej do niego nie trafi.",
+  "devices.store.again": "Zacznij od nowa",
   "devices.add": "Dodaj urządzenie",
   "devices.paste": "Link z twojego drugiego urządzenia",
   "devices.pasteHint": "Na urządzeniu, na którym masz już aplikację {name}, wybierz Dodaj urządzenie, żeby dostać link. Wklej go tutaj, a ta sama aplikacja {name} będzie także na tym urządzeniu.",

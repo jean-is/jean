@@ -75,6 +75,7 @@
   "projects.name": "Nazwa",
   "projects.colour": "Jego światło",
   "projects.local": "Zatrzymaj ten projekt na tym urządzeniu",
+  "projects.keepHere": "Zatrzymać „{name}” tylko na tym urządzeniu? Jego zadania i pliki znikną z twoich innych urządzeń. Urządzenie, które zmieniło go offline, przywróci je.",
   "projects.kit": "Jego system projektowy",
   "projects.create": "Utwórz projekt",
   "projects.save": "Zapisz",

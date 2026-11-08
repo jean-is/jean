@@ -29,6 +29,7 @@
   "routines.brain": "Mózg",
   "routines.brain.yours": "Ten sam co w Twoich wiadomościach",
   "routines.next": "Następnym razem: {when}",
+  "routines.elsewhere": "Działa na urządzeniu {device}",
   "routines.confirmDelete": "Usunąć rutynę „{title}”?",
   "routines.run": "Uruchom teraz",
   "routines.runs": "Wcześniejsze uruchomienia",

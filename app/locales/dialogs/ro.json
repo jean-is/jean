@@ -74,6 +74,7 @@
   "projects.name": "Nume",
   "projects.colour": "Lumina lui",
   "projects.local": "Păstrați acest proiect pe acest dispozitiv",
+  "projects.keepHere": "Păstrați „{name}” doar pe acest dispozitiv? Sarcinile și fișierele lui pleacă de pe celelalte dispozitive ale dvs. Un dispozitiv care l-a modificat offline le aduce înapoi.",
   "projects.kit": "Identitatea sa vizuală",
   "projects.create": "Creați proiectul",
   "projects.save": "Salvați",

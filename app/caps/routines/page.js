@@ -14,7 +14,7 @@ import { routineOf, unanswered } from '../../core/events.js'
 import { t, relativeTime, intlLocales } from '../../core/i18n.js'
 import { icons } from '../../ui/menu-icons.js'
 import { EVERY, WHEN, newRoutine, schedule, trigger, writeRoutine } from './schedule.js'
-import { folder, next, routines, runNow, runsOf, week } from './routines.js'
+import { folder, next, routines, runNow, runsOf, week, elsewhere, deviceHere } from './routines.js'
 
 /** @typedef {import('./schedule.js').Routine} Routine */
 /** When a routine runs, or what sets it off, as the page changes it. @typedef {{ every?: string, on?: number | string, at?: string, when?: string, if?: string }} Plan */
@@ -68,7 +68,7 @@ function when(routine) {
 }
 
 /** When it runs and when next, as its row and its page say it. @param {Routine} routine */
-const line = (routine, soon = next(routine)) => (soon ? `${when(routine)} · ${t('routines.next', { when: relativeTime(soon) })}` : when(routine))
+const line = (routine, soon = next(routine)) => [when(routine), soon && t('routines.next', { when: relativeTime(soon) }), elsewhere(routine) && t('routines.elsewhere', { device: elsewhere(routine) })].filter(Boolean).join(' · ')
 
 /**
  * How a run went: still working (or only just begun, maybe in another tab), waiting for the user, done, or stopped before any answer.
@@ -109,9 +109,9 @@ function change(routine, change) {
   changing = changing.then(async () => {
     const kept = (await routines()).find((other) => other.path === routine.path)
     if (!kept) return
-    const { path, title, request, author, createdAt, active, lastRun, resumed, flow, brain, model } = /** @type {Routine} */ ({ ...kept, ...change })
+    const { path, title, request, author, createdAt, active, lastRun, resumed, flow, brain, model, device } = /** @type {Routine} */ ({ ...kept, ...change })
     const plan = replan(kept, change)
-    if (plan && request.trim()) await writeRoutine(app.fs, { path, title, request, author, createdAt, active, lastRun, resumed, flow, brain, model, ...plan })
+    if (plan && request.trim()) await writeRoutine(app.fs, { path, title, request, author, createdAt, active, lastRun, resumed, flow, brain, model, device, ...plan })
   }).then(refresh, (error) => console.warn('Routine', error))
   return changing
 }
@@ -131,7 +131,7 @@ async function remove(routine) {
 async function make(event) {
   event.preventDefault()
   const { title, request, ...plan } = draft.value
-  const routine = newRoutine(folder(), { title: title.trim(), request: request.trim(), by: app.deviceId, .../** @type {any} */ (replan(plan, {})) })
+  const routine = newRoutine(folder(), { title: title.trim(), request: request.trim(), by: app.deviceId, device: deviceHere(), .../** @type {any} */ (replan(plan, {})) })
   await writeRoutine(app.fs, routine)
   act('routine.add', { path: routine.path, title: routine.title, ...('every' in routine ? { every: routine.every } : { when: routine.when }) })
   draft.value = { title: '', request: '', every: 'day', at: '09:00' }

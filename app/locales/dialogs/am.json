@@ -73,6 +73,7 @@
   "projects.name": "ስም",
   "projects.colour": "ብርሃኑ",
   "projects.local": "ይህን ፕሮጀክት በዚህ መሣሪያ ላይ ያቆዩ",
+  "projects.keepHere": "“{name}” በዚህ መሣሪያ ላይ ብቻ ይቆይ? ተግባሮቹና ፋይሎቹ ከሌሎች መሣሪያዎችዎ ይወጣሉ። ከመስመር ውጭ ሆኖ የቀየረው መሣሪያ መልሶ ያመጣቸዋል።",
   "projects.kit": "የእሱ የንድፍ ሥርዓት",
   "projects.create": "ፕሮጀክቱን ይፍጠሩ",
   "projects.save": "ያስቀምጡ",

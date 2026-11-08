@@ -218,6 +218,15 @@ test('a device joins with the proof; an epoch removes devices, never to come bac
   const behind = await relay.call('POST', `/v1/s/${sid}/epoch`, { token: second.token, json: { epoch: 1, remove: [], proof: await hashOf(random(32)), envelopes: {} }, headers: { 'store-proof': next } })
   assert.deepEqual([behind.status, behind.body.epoch], [409, 1])
   assert.equal((await join(third, next, 1)).status, 403)
+  // A device the store's keys were sent to comes in by itself, with its own token and the proof; never without the proof, under
+  // another token than its own, or as a device removed.
+  const itself = (/** @type {Awaited<ReturnType<typeof device>>} */ one, with_ = next, hash = one.hash) => relay.call('POST', `/v1/s/${sid}/devices`, { token: one.token, json: { id: one.id, token: hash, epoch: 1 }, headers: { 'store-proof': with_ } })
+  const fifth = await device()
+  assert.equal((await itself(fifth, proof)).status, 403)
+  assert.equal((await itself(fifth, next, second.hash)).status, 403)
+  assert.equal((await itself({ ...third, token: fifth.token, hash: fifth.hash })).status, 403)
+  assert.equal((await itself(fifth)).status, 200)
+  assert.equal((await relay.call('GET', `/v1/s/${sid}`, { token: fifth.token })).status, 200)
   // A version sealed under the old epoch is refused.
   assert.equal((await putter(relay.call, sid, second.token)(random(16), 'old', { 'if-none-match': '*' }, 0)).status, 409)
   assert.equal((await putter(relay.call, sid, second.token)(random(16), 'new', { 'if-none-match': '*' }, 1)).status, 200)

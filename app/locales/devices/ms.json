@@ -1,10 +1,16 @@
 {
   "devices.line": "Otak, tetapan dan projek anda juga ada pada telefon atau komputer lain. Tugasan kekal pada peranti tempat ia dibuat, sehingga anda menghantarnya ke peranti lain.",
+  "devices.lineStore": "Tugasan, fail, otak dan tetapan anda juga ada pada telefon atau komputer lain, dimeterai supaya hanya peranti anda yang boleh membacanya.",
   "devices.count": {
     "other": "{count} peranti"
   },
   "devices.here": "Peranti ini, ditambah pada {date}",
   "devices.added": "Ditambah pada {date}",
+  "devices.store.use": "{used} daripada {quota} dikongsi",
+  "devices.store.full": "Penuh: perkara baharu kekal pada peranti ini.",
+  "devices.store.gone": "Peranti ini tidak lagi menerima apa yang dibuat oleh peranti anda yang lain.",
+  "devices.store.room": "Tiada ruang lagi pada peranti ini: tiada apa-apa lagi yang sampai kepadanya.",
+  "devices.store.again": "Mula semula",
   "devices.add": "Tambah peranti",
   "devices.paste": "Pautan daripada peranti anda yang lain",
   "devices.pasteHint": "Pada peranti yang mempunyai {name} anda, Tambah peranti memberi pautan. Tampal di sini supaya {name} itu ada juga pada peranti ini.",

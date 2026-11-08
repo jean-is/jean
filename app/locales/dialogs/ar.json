@@ -77,6 +77,7 @@
   "projects.name": "الاسم",
   "projects.colour": "ضوؤه",
   "projects.local": "أبقِ هذا المشروع على هذا الجهاز",
+  "projects.keepHere": "هل تريد إبقاء «{name}» على هذا الجهاز وحده؟ تغادر مهامه وملفاته أجهزتك الأخرى. والجهاز الذي غيّره دون اتصال يعيدها.",
   "projects.kit": "نظام تصميمه",
   "projects.create": "أنشئ المشروع",
   "projects.save": "احفظ",

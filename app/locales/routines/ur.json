@@ -29,6 +29,7 @@
   "routines.brain": "دماغ",
   "routines.brain.yours": "وہی جو آپ کے پیغامات کا ہے",
   "routines.next": "اگلی بار: {when}",
+  "routines.elsewhere": "{device} پر چلتا ہے",
   "routines.confirmDelete": "معمول “{title}” حذف کریں؟",
   "routines.run": "ابھی چلائیں",
   "routines.runs": "پچھلی دفعات",

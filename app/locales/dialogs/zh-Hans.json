@@ -72,6 +72,7 @@
   "projects.name": "名称",
   "projects.colour": "灯光颜色",
   "projects.local": "让这个项目只留在这台设备上",
+  "projects.keepHere": "要让“{name}”只留在这台设备上吗？它的任务和文件会离开你的其他设备。离线时改过它的设备会把它们带回来。",
   "projects.kit": "此项目的设计系统",
   "projects.create": "创建项目",
   "projects.save": "保存",

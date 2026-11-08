@@ -74,6 +74,7 @@
   "projects.name": "Nome",
   "projects.colour": "A so luce",
   "projects.local": "Tene stu prughjettu nant’à st’apparechju",
+  "projects.keepHere": "Tene « {name} » solu nant’à st’apparechju ? I so compiti è schedarii lascianu i vostri altri apparechji. Un apparechju chì l’hà cambiatu fora di linea i rimette.",
   "projects.kit": "A so carta grafica",
   "projects.create": "Creà u prughjettu",
   "projects.save": "Arregistrà",

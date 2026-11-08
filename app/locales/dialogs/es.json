@@ -74,6 +74,7 @@
   "projects.name": "Nombre",
   "projects.colour": "Su luz",
   "projects.local": "Mantener este proyecto en este dispositivo",
+  "projects.keepHere": "¿Mantener «{name}» solo en este dispositivo? Sus tareas y archivos salen de tus otros dispositivos. Uno que lo cambió sin conexión los trae de vuelta.",
   "projects.kit": "Su sistema de diseño",
   "projects.create": "Crear el proyecto",
   "projects.save": "Guardar",

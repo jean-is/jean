@@ -73,6 +73,7 @@
   "projects.name": "Név",
   "projects.colour": "A fénye",
   "projects.local": "A projekt maradjon ezen az eszközön",
+  "projects.keepHere": "Csak ezen az eszközön maradjon ez: „{name}”? A feladatai és fájljai eltűnnek a többi eszközödről. Az az eszköz, amelyik offline módosította, visszahozza őket.",
   "projects.kit": "Az arculata",
   "projects.create": "A projekt létrehozása",
   "projects.save": "Mentés",

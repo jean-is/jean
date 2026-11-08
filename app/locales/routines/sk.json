@@ -29,6 +29,7 @@
   "routines.brain": "Mozog",
   "routines.brain.yours": "Rovnaký ako pre vaše správy",
   "routines.next": "Nabudúce: {when}",
+  "routines.elsewhere": "Beží na zariadení {device}",
   "routines.confirmDelete": "Odstrániť rutinu „{title}“?",
   "routines.run": "Spustiť teraz",
   "routines.runs": "Minulé spustenia",

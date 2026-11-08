@@ -20,9 +20,9 @@ import { mailbox, open, send, read, remove, listen, reader } from '../../ui/rela
 import { DEFAULT_SETTINGS, loadSettings, serviceURL } from '../../core/settings.js'
 import { ulid } from '../../core/ulid.js'
 import { BRAND } from '../../brand.js'
-import { random } from '../share/seal.js'
+import { base64url, hashOf, random } from '../share/seal.js'
 import { linkOf, parseLink, pairingBox, sealHello, openHello, sealNonce, openNonce, sealReveal, openReveal, codeOf, sameCode, envelope, openEnvelope } from './pair.js'
-import { SECRET, LIMIT, ULID, PROFILE, deviceName, recordOf, recordFor, recordsOf, listOf, sameKey, writeRecord, writeOwn, inPlace, tell, look, mark, share, unreached, known, quiet, bundleOf, adopt, refill, untouched, broughtFrom, taskOf, receive, removal, back, firstOf, alone } from './flow.js'
+import { SECRET, STORE, LIMIT, ULID, PROFILE, deviceName, recordOf, recordFor, recordsOf, listOf, sameKey, writeRecord, writeOwn, inPlace, tell, look, mark, share, unreached, known, quiet, bundleOf, adopt, refill, untouched, broughtFrom, taskOf, receive, removal, back, firstOf, alone } from './flow.js'
 
 /** @typedef {import('./flow.js').Identity} Identity */
 /** @typedef {import('./flow.js').Device} Device */
@@ -53,6 +53,8 @@ export const joining = signal(/** @type {Joining} */ ({ step: 'idle' }))
 /** The devices this profile knows, this one among them, and this one's id, '' until it has one. */
 export const devices = signal(/** @type {Device[]} */ ([]))
 export const own = signal('')
+/** Whether this device holds a store it can use (./store.js). */
+const stored = signal(false)
 
 await useStrings('devices')
 /** Whether this is a child's profile, which never pairs: their parent's slot needs the parent's vault key, another on each device. */
@@ -82,6 +84,7 @@ const warn = (error) => console.warn('Devices', error)
 const refresh = () => (async () => {
   own.value = (await identity(false))?.id ?? ''
   devices.value = own.value ? await recordsOf(app.fs) : []
+  stored.value = ((held) => Boolean(held && !held.gone))(JSON.parse(await getSecret(app.fs, STORE) ?? 'null'))
 })().catch(warn)
 
 /**
@@ -126,11 +129,14 @@ async function listening() {
   await read(base, me.token).then(({ now: at }) => clocked(at), () => {})
   const ctx = await contextOf(me)
   if (turn !== listenings) return
+  // Paired, or once was: the store's rounds, which its keys, held or not, decide (./store.js).
+  const paired = (await listOf(app.fs)).length > 1
+  if (paired) await import('./store.js').then((store) => store.start(ctx, relayOf)).catch(warn)
   // Its identity gone or another now, as this device's removal was acted on in another tab, its mailbox is never opened again.
   stop = listen({ base, token: me.token, lock: mine('app-devices'), onMessages: (messages) => heard(ctx, messages), clock: clocked, quiet: answering,
     lost: async (...box) => ((await identity(false))?.id === me.id ? open(...box) : stop()) })
-  // Paired, or once was: a device removed here may still be owed its removal.
-  if ((await listOf(app.fs)).length < 2) return
+  // A device removed here may still be owed its removal.
+  if (!paired) return
   if (await quiet(ctx)) await tell(ctx, { kind: 'ask' })
   // What changed here and never went, the tab closed too soon, or that a device didn't take.
   if ((await look(ctx)).pending || await unreached(app.fs)) later(ctx)
@@ -151,6 +157,7 @@ async function heard(ctx, messages) {
     if (from?.removedAt && await back(ctx, from, opened?.value)) later(ctx)
     if (!opened || !from || from.removedAt) continue
     const done = await receive(ctx, from, opened.value, at).catch((error) => { warn(error); return null })
+    if (['settings', 'store'].includes(opened.value?.kind)) await import('./store.js').then((store) => store.heard(ctx, from, opened.value)).catch(warn)
     // A device the last share didn't reach writes: what waits goes to it now.
     if (await unreached(app.fs, from.id)) later(ctx)
     if (done && 'removed' in done) removals.push({ ...done.removed, by: from.id })
@@ -323,11 +330,14 @@ export async function confirm(typed) {
     // B shows what came and asks before it opens it: only then is it one of this profile's devices, which B waits to hear before it
     // makes anything. Then every device has the list, B too, whose mailbox, read in order, holds it before anything a device removed
     // meanwhile may send; one that didn't take it gets it again (share()).
-    if (await answerOf(one.answers, me, hello.key) !== 'joined') throw Object.assign(new Error('The other device didn’t open it.'), { reason: 'gone' })
+    const joined = await answerOf(one.answers, me, hello.key)
+    if (joined.kind !== 'joined') throw Object.assign(new Error('The other device didn’t open it.'), { reason: 'gone' })
     if ((await identity(false))?.id !== me.id) throw new Error('This device was removed meanwhile.')
     await writeRecord(app.fs, you, locked)
     await mark(ctx)
-    await send(relayOf(), hello.mailbox, await envelope(me, hello.key, { kind: 'kept' }))
+    // B's token let into the store, made where there is none, whose keys *kept* takes; on a relay without stores, B joins without.
+    const store = await (await import('./store.js')).admit(ctx, you.id, joined.store, relayOf).catch((error) => { warn(error); return null })
+    await send(relayOf(), hello.mailbox, await envelope(me, hello.key, { kind: 'kept', ...(store && { store }) }))
     await end(one)
     adding.value = { step: 'done', name: hello.name }
     refresh()
@@ -338,11 +348,11 @@ export async function confirm(typed) {
   return true
 }
 
-/** What B said of the bundle, from B's key alone: opened, or left. @param {import('../../ui/relay.js').Reader} next @param {Identity} me @param {JsonWebKey} key B's */
+/** What B said of the bundle, from B's key alone: opened, with its store token's SHA-256, or left. @param {import('../../ui/relay.js').Reader} next @param {Identity} me @param {JsonWebKey} key B's */
 async function answerOf(next, me, key) {
   for (;;) {
-    const kind = (await openEnvelope(me, [key], await next()).catch(() => null))?.value?.kind
-    if (kind === 'joined' || kind === 'left') return kind
+    const value = (await openEnvelope(me, [key], await next()).catch(() => null))?.value
+    if (value?.kind === 'joined' || value?.kind === 'left') return value
   }
 }
 
@@ -398,12 +408,14 @@ export async function join(link) {
     // A told, which keeps B, then says so: only then is anything made here. Gone meanwhile (Cancel there, its tab closed), B goes on
     // waiting, and says so, until the person cancels here.
     joining.value = { step: 'waiting' }
-    await send(base, nonce.mailbox, await envelope(me, nonce.key, { kind: 'joined' }))
-    await fromA('kept')
+    // Its own token for the store, which A lets in by its SHA-256 and sends the store's keys with *kept*.
+    const token = base64url(random(32))
+    await send(base, nonce.mailbox, await envelope(me, nonce.key, { kind: 'joined', store: await hashOf(token) }))
+    const kept = await fromA('kept')
     await next.done()
     one.leave = undefined
     joining.value = { step: 'adopting' }
-    await adoptHere(bundle, { ...me, id: bundle.you }, one, again)
+    await adoptHere(bundle, { ...me, id: bundle.you }, one, again, kept.store && { ...kept.store, relay: base, token })
   } catch (error) {
     failed(one, joining, error)
   }
@@ -429,10 +441,10 @@ async function welcome(bundle, key) {
 /**
  * A's profile made here under its folder's own name, with a vault of its own, filled before it first opens, with what this device keeps
  * of its own from the profile open until now; the profile first run made removed when nothing was ever done in it; then opened. Joined
- * again where a removal kept this Jean (removed(false)), the profile open is that one, filled again in place.
- * @param {any} bundle @param {Identity} me @param {Flow} one @param {boolean} again
+ * again where a removal kept this Jean (removed(false)), the profile open is that one, filled again in place; with the store's keys, if any.
+ * @param {any} bundle @param {Identity} me @param {Flow} one @param {boolean} again @param {unknown} store
  */
-async function adoptHere(bundle, me, one, again) {
+async function adoptHere(bundle, me, one, again, store) {
   const { dir, name, colour } = bundle.profile
   const tint = typeof colour === 'string' && /^oklch\([\d. ]+\)$/.test(colour) ? colour : undefined
   const [{ vaulted, into, erase }, { CATALOGUE: catalogue }] = await Promise.all([import('../profiles/made.js'), import('../../ui/discovery.js')])
@@ -440,8 +452,8 @@ async function adoptHere(bundle, me, one, again) {
   const brought = again ? null : await broughtFrom(app.fs, app.settings.peek())
   // The profile left beside it has a lock: the new one has Lock, and opens on it, since it doesn't have one yet.
   const lock = !again && await lockedHere()
-  const mine = { settings: brought ?? DEFAULT_SETTINGS, catalogue, me, now: now(), policy: app.policy, lock }
-  if (again) await refill(await contextOf(me), bundle)
+  const mine = { settings: brought ?? DEFAULT_SETTINGS, catalogue, me, now: now(), policy: app.policy, lock, store }
+  if (again) await refill(await contextOf(me), bundle, store)
   else try {
     const raw = random(32)
     const key = await vaulted(dir, raw, [await close(raw, /** @type {CryptoKey} */ (await deviceKey('make', dir)), { kind: 'device' })], { name, ...(tint && { colour: tint }) })
@@ -519,11 +531,16 @@ if (offered()) {
   register({ id: 'devices', slots: {
     // Its row in Your data, among the copies the person keeps, and its page, data/devices (./page.js).
     data: { id: 'devices', at: 2, group: 'copies', icon: icons.devices, label: 'cap.devices.name', text: () => t('devices.count', { count: Math.max(devices.value.length, 1) }),
-      line: () => t('devices.line'), draw: lazyPage(() => import('./page.js')) },
+      line: () => t(stored.value ? 'devices.lineStore' : 'devices.line'), draw: lazyPage(() => import('./page.js')) },
     // In a task's ⋮ menu, Send to each other device, unless its project is kept on this one.
     task: { at: 2, draw: (/** @type {{ path: string }} */ item, /** @type {(icon: unknown, label: string, act: () => unknown) => unknown} */ action) =>
       (app.projects.value.find((one) => item.path.startsWith(`${one.dir}/`))?.data.cloud === false ? []
         : devices.value.filter((one) => one.id !== own.value).map((one) => action(icons.devices, t('devices.send', { device: one.name }), () => handOver(item.path, one)))) },
+    // A routine on a schedule runs on one of the person's devices: the one it names while they have it, else the first; its name where it isn't this one.
+    runs: { at: 1, draw: () => null, here: () => own.value || undefined, elsewhere: (/** @type {string | undefined} */ id) => ((live) => ((one) => (live.length > 1 && one.id !== own.value ? one.name : ''))(
+      live.find((device) => device.id === id) ?? [...live].sort((x, y) => (x.id < y.id ? -1 : 1))[0]))(devices.value) },
+    // A project switched to kept on this device leaves the store, where there is one, asked first (caps/projects).
+    keep: { at: 1, draw: () => null, on: () => stored.value, keep: (/** @type {string} */ dir) => import('./store.js').then((store) => store.withdraw(dir)) },
     // At the end of the person's row, at the drawer's foot, Your devices, by its icon.
     foot: { at: 1, draw: () => html`<button type="button" class="icon-button subtle" aria-label=${t('cap.devices.name')}
       @click=${() => import('../../ui/dialogs.js').then((dialogs) => dialogs.openSettings('data/devices'))}>${icons.devices}</button>` },

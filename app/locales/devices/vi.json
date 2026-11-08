@@ -1,10 +1,16 @@
 {
   "devices.line": "Bộ não, cài đặt và dự án của bạn có cả trên điện thoại hoặc một máy tính khác. Một nhiệm vụ ở lại trên thiết bị nơi nó được thực hiện, cho đến khi bạn gửi nó sang thiết bị khác.",
+  "devices.lineStore": "Nhiệm vụ, tệp, bộ não và cài đặt của bạn có cả trên điện thoại hoặc một máy tính khác, được niêm phong để chỉ thiết bị của bạn đọc được.",
   "devices.count": {
     "other": "{count} thiết bị"
   },
   "devices.here": "Thiết bị này, thêm ngày {date}",
   "devices.added": "Thêm ngày {date}",
+  "devices.store.use": "{used} trên {quota} dùng chung",
+  "devices.store.full": "Đã đầy: cái mới ở lại trên thiết bị này.",
+  "devices.store.gone": "Thiết bị này không còn nhận những gì các thiết bị khác của bạn làm.",
+  "devices.store.room": "Thiết bị này đã hết chỗ: không còn gì đến với nó nữa.",
+  "devices.store.again": "Bắt đầu lại",
   "devices.add": "Thêm thiết bị",
   "devices.paste": "Đường liên kết từ thiết bị khác của bạn",
   "devices.pasteHint": "Trên thiết bị đang có {name} của bạn, chọn Thêm thiết bị để nhận một đường liên kết. Dán nó vào đây để có {name} đó trên cả thiết bị này.",

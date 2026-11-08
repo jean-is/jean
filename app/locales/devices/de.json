@@ -1,11 +1,17 @@
 {
   "devices.line": "Deine Gehirne, Einstellungen und Projekte auch auf deinem Handy oder einem anderen Computer. Eine Aufgabe bleibt auf dem Gerät, auf dem sie erledigt wurde, bis du sie an ein anderes schickst.",
+  "devices.lineStore": "Deine Aufgaben, Dateien, Gehirne und Einstellungen auch auf deinem Handy oder einem anderen Computer, versiegelt, sodass nur deine Geräte sie lesen können.",
   "devices.count": {
     "one": "{count} Gerät",
     "other": "{count} Geräte"
   },
   "devices.here": "Dieses Gerät, hinzugefügt am {date}",
   "devices.added": "Hinzugefügt am {date}",
+  "devices.store.use": "{used} von {quota} gemeinsam",
+  "devices.store.full": "Voll: Neues bleibt auf diesem Gerät.",
+  "devices.store.gone": "Dieses Gerät bekommt nicht mehr, was deine anderen Geräte tun.",
+  "devices.store.room": "Auf diesem Gerät ist kein Platz mehr: Nichts kommt mehr hierher.",
+  "devices.store.again": "Neu beginnen",
   "devices.add": "Gerät hinzufügen",
   "devices.paste": "Ein Link von deinem anderen Gerät",
   "devices.pasteHint": "Auf dem Gerät, auf dem du {name} schon hast, gibt dir „Gerät hinzufügen“ einen Link. Füge ihn hier ein, um {name} von dort auch auf diesem Gerät zu haben.",

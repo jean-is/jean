@@ -1,10 +1,16 @@
 {
   "devices.line": "두뇌, 설정, 프로젝트를 휴대폰이나 다른 컴퓨터에서도 쓸 수 있어요. 작업은 다른 기기로 보내기 전까지 그 작업을 한 기기에 남아요.",
+  "devices.lineStore": "작업, 파일, 두뇌, 설정을 휴대폰이나 다른 컴퓨터에서도 쓸 수 있어요. 내 기기만 읽을 수 있도록 봉인돼요.",
   "devices.count": {
     "other": "기기 {count}대"
   },
   "devices.here": "이 기기, {date}에 추가됨",
   "devices.added": "{date}에 추가됨",
+  "devices.store.use": "{quota} 중 {used} 공유 중",
+  "devices.store.full": "가득 찼어요. 새로운 것은 이 기기에 남아요.",
+  "devices.store.gone": "이 기기는 이제 다른 기기에서 한 일을 받지 않아요.",
+  "devices.store.room": "이 기기에 공간이 없어요. 더 이상 아무것도 오지 않아요.",
+  "devices.store.again": "다시 시작",
   "devices.add": "기기 추가",
   "devices.paste": "다른 기기에서 받은 링크",
   "devices.pasteHint": "{name}의 데이터가 있는 기기에서 ‘기기 추가’를 누르면 링크가 나와요. 여기에 붙여 넣으면 그 기기의 {name}에 있는 두뇌, 설정, 프로젝트를 이 기기에서도 쓸 수 있어요.",

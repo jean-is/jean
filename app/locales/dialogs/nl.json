@@ -73,6 +73,7 @@
   "projects.name": "Naam",
   "projects.colour": "Het licht",
   "projects.local": "Dit project op dit apparaat houden",
+  "projects.keepHere": "‘{name}’ alleen op dit apparaat houden? De taken en bestanden ervan verdwijnen van je andere apparaten. Een apparaat dat het offline heeft veranderd, brengt ze terug.",
   "projects.kit": "Zijn ontwerpsysteem",
   "projects.create": "Project maken",
   "projects.save": "Opslaan",

@@ -29,6 +29,7 @@
   "routines.brain": "মস্তিষ্ক",
   "routines.brain.yours": "আপনার বার্তাগুলোর মতোই",
   "routines.next": "পরের বার: {when}",
+  "routines.elsewhere": "{device}-এ চলে",
   "routines.confirmDelete": "রুটিন “{title}” মুছবেন?",
   "routines.run": "এখনই চালান",
   "routines.runs": "আগের বারগুলো",

@@ -72,6 +72,7 @@
   "projects.name": "Nama",
   "projects.colour": "Cahayanya",
   "projects.local": "Simpan projek ini pada peranti ini",
+  "projects.keepHere": "Simpan “{name}” pada peranti ini sahaja? Tugasan dan failnya akan meninggalkan peranti anda yang lain. Peranti yang mengubahnya semasa luar talian akan membawanya kembali.",
   "projects.kit": "Sistem reka bentuknya",
   "projects.create": "Cipta projek",
   "projects.save": "Simpan",

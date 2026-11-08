@@ -29,6 +29,7 @@
   "routines.brain": "สมอง",
   "routines.brain.yours": "เหมือนกับข้อความของคุณ",
   "routines.next": "ครั้งถัดไป: {when}",
+  "routines.elsewhere": "ทำงานบน {device}",
   "routines.confirmDelete": "ลบกิจวัตร “{title}” ไหม",
   "routines.run": "เรียกใช้เลย",
   "routines.runs": "การเรียกใช้ที่ผ่านมา",

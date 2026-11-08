@@ -1,11 +1,17 @@
 {
   "devices.line": "Your brains, settings and projects on your phone or another computer too. A task stays on the device it was done on, until you send it to another.",
+  "devices.lineStore": "Your tasks, files, brains and settings on your phone or another computer too, sealed so that only your devices can read them.",
   "devices.count": {
     "one": "{count} device",
     "other": "{count} devices"
   },
   "devices.here": "This device, added {date}",
   "devices.added": "Added {date}",
+  "devices.store.use": "{used} of {quota} in common",
+  "devices.store.full": "Full: what is new stays on this device.",
+  "devices.store.gone": "This device no longer gets what your other devices do.",
+  "devices.store.room": "This device is out of room: nothing more comes to it.",
+  "devices.store.again": "Start again",
   "devices.add": "Add a device",
   "devices.paste": "A link from your other device",
   "devices.pasteHint": "On the device that has your {name}, Add a device gives a link. Paste it here to have that {name} on this device too.",

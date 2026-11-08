@@ -1,5 +1,6 @@
 {
   "devices.line": "I tuoi cervelli, le impostazioni e i progetti anche sul telefono o su un altro computer. Un’attività resta sul dispositivo dove è stata fatta, finché non la invii a un altro.",
+  "devices.lineStore": "Le tue attività, i file, i cervelli e le impostazioni anche sul telefono o su un altro computer, sigillati in modo che solo i tuoi dispositivi possano leggerli.",
   "devices.count": {
     "one": "{count} dispositivo",
     "many": "{count} dispositivi",
@@ -7,6 +8,11 @@
   },
   "devices.here": "Questo dispositivo, aggiunto il {date}",
   "devices.added": "Aggiunto il {date}",
+  "devices.store.use": "{used} di {quota} in comune",
+  "devices.store.full": "Pieno: le novità restano su questo dispositivo.",
+  "devices.store.gone": "Questo dispositivo non riceve più ciò che fanno i tuoi altri dispositivi.",
+  "devices.store.room": "Su questo dispositivo non c’è più spazio: non gli arriva più nulla.",
+  "devices.store.again": "Ricomincia",
   "devices.add": "Aggiungi un dispositivo",
   "devices.paste": "Un link dal tuo altro dispositivo",
   "devices.pasteHint": "Sul dispositivo che ha già {name}, Aggiungi un dispositivo dà un link. Incollalo qui per avere {name}, così com’è lì, anche su questo dispositivo.",

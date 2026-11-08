@@ -29,6 +29,7 @@
   "routines.brain": "மூளை",
   "routines.brain.yours": "உங்கள் செய்திகளுக்கானதே",
   "routines.next": "அடுத்த முறை: {when}",
+  "routines.elsewhere": "{device}-இல் இயங்கும்",
   "routines.confirmDelete": "“{title}” வழக்கத்தை நீக்கவா?",
   "routines.run": "இப்போது இயக்கு",
   "routines.runs": "முந்தைய இயக்கங்கள்",

@@ -29,6 +29,7 @@
   "routines.brain": "Cérebro",
   "routines.brain.yours": "O mesmo das tuas mensagens",
   "routines.next": "Próxima: {when}",
+  "routines.elsewhere": "Corre em {device}",
   "routines.confirmDelete": "Eliminar a rotina «{title}»?",
   "routines.run": "Executar agora",
   "routines.runs": "Execuções anteriores",

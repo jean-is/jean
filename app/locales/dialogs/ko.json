@@ -72,6 +72,7 @@
   "projects.name": "이름",
   "projects.colour": "불빛",
   "projects.local": "이 프로젝트는 이 기기에만 두기",
+  "projects.keepHere": "‘{name}’을(를) 이 기기에만 둘까요? 작업과 파일이 다른 기기에서 사라져요. 오프라인일 때 바꾼 기기가 있으면 다시 가져와요.",
   "projects.kit": "이 프로젝트의 디자인 시스템",
   "projects.create": "프로젝트 만들기",
   "projects.save": "저장",

@@ -29,6 +29,7 @@
   "routines.brain": "Hjerne",
   "routines.brain.yours": "Samme som til dine beskeder",
   "routines.next": "Næste: {when}",
+  "routines.elsewhere": "Kører på {device}",
   "routines.confirmDelete": "Slette rutinen “{title}”?",
   "routines.run": "Kør nu",
   "routines.runs": "Tidligere kørsler",

@@ -29,6 +29,7 @@
   "routines.brain": "مغز",
   "routines.brain.yours": "مانند پیام‌های شما",
   "routines.next": "دفعهٔ بعد: {when}",
+  "routines.elsewhere": "روی {device} اجرا می‌شود",
   "routines.confirmDelete": "روال «{title}» حذف شود؟",
   "routines.run": "همین حالا اجرا شود",
   "routines.runs": "دفعات قبلی",

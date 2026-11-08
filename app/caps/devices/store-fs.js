@@ -133,7 +133,7 @@ export function openStore({ base, sid, token, names, epochs, here, fetch = globa
   }
   /** @param {string} path @param {Uint8Array} bytes */
   async function writeBytes(path, bytes) {
-    if (bytes.length > LARGEST) throw refusal('Too large for the store: it stays on its device.', 'QuotaExceededError')
+    if (bytes.length > LARGEST) throw refusal('Too large for the store: it stays on its device.', 'NotSupportedError')
     const { oid, entry } = await entryOf(path)
     const epoch = newest()
     const { vault, id } = await keyOf(epoch)

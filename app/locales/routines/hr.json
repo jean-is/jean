@@ -29,6 +29,7 @@
   "routines.brain": "Mozak",
   "routines.brain.yours": "Isti kao za vaše poruke",
   "routines.next": "Sljedeće: {when}",
+  "routines.elsewhere": "Radi na uređaju {device}",
   "routines.confirmDelete": "Izbrisati rutinu „{title}“?",
   "routines.run": "Pokreni sada",
   "routines.runs": "Prethodna izvođenja",

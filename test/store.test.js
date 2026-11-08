@@ -7,6 +7,8 @@ import { hashOf } from '../host/host.js'
 import { memoryFS, walk } from '../app/core/fs.js'
 import { syncRound, carried } from '../app/caps/sync/mirror.js'
 import { openStore, MANIFEST } from '../app/caps/devices/store-fs.js'
+import { carrying } from '../app/caps/devices/flow.js'
+import { listProjects } from '../app/core/settings.js'
 import { memory } from './fixtures/relay-memory.js'
 
 /** @typedef {import('../app/core/types.js').FS} FS */
@@ -177,4 +179,40 @@ test('a change sealed under an epoch whose key this device lacks waits, deleting
   assert.equal((await caught.pull()).waiting, false)
   await syncRound(phone, caught.fs, { cache: '.cache/store' })
   assert.equal(await phone.read('memory.md'), '- likes green tea\n')
+})
+
+test('the store takes no keys, caches or projects kept on a device; one switched to it leaves the store and the other devices, and stays on its own', async () => {
+  const { open, memo } = await world()
+  const WORK = 'projects/01J00000000000000000000001-work'
+  const laptop = memoryFS({ '.secrets/keys.json': '{"x":"key of x"}', '.cache/sync.json': '{}', '.devices/follows.json': '{}', 'settings.json': '{}',
+    [`${HOME}/project.md`]: '---\ndefault: true\nname: Home\n---\n', [CHAT]: line('Plan the trip'), [`${WORK}/project.md`]: '---\nname: Work\n---\n', [`${WORK}/documents/plan.md`]: '# Plan\n' })
+  const phone = memoryFS()
+  const [a, b] = [open(0, laptop), open(1, phone)]
+  /** A round as store.js has it, carrying what the device's projects say. @param {FS} fs @param {ReturnType<typeof openStore>} store */
+  const go = async (fs, store) => { await store.pull(); return syncRound(fs, store.fs, { cache: '.cache/store', carry: carrying(await listProjects(fs)) }) }
+  /** A project switched to kept on the laptop leaves the store, as store.js withdraws it. @param {string} dir */
+  const withdraw = async (dir) => { const carry = carrying(await listProjects(laptop)); for (const path of await walk(a.fs, dir)) if (!carry(path)) await a.fs.remove(path) }
+  await go(laptop, a)
+  await go(phone, b)
+  assert.deepEqual((await walk(phone)).filter((path) => !path.startsWith('.cache/')).sort(), [`${HOME}/project.md`, CHAT, `${WORK}/documents/plan.md`, `${WORK}/project.md`].sort())
+  // Work kept on the laptop: its files leave the store, then the phone, and the laptop keeps them.
+  await laptop.write(`${WORK}/project.md`, '---\nname: Work\ncloud: false\n---\n')
+  await withdraw(WORK)
+  await go(laptop, a)
+  await go(phone, b)
+  assert.equal(await phone.exists(WORK), false)
+  assert.deepEqual([await laptop.read(`${WORK}/documents/plan.md`), await walk(a.fs, WORK)], ['# Plan\n', []])
+  // A change on the laptop to a kept project goes nowhere.
+  await laptop.write(`${WORK}/documents/plan.md`, '# Plan, kept\n')
+  await go(laptop, a)
+  assert.deepEqual(await walk(a.fs, WORK), [])
+  // Home kept: its tasks leave, its project.md stays, so that the phone keeps one Home.
+  await laptop.write(`${HOME}/project.md`, '---\ndefault: true\nname: Home\ncloud: false\n---\n')
+  await withdraw(HOME)
+  await go(laptop, a)
+  await go(phone, b)
+  assert.deepEqual([await phone.exists(CHAT), await laptop.exists(CHAT)], [false, true])
+  assert.match(String(await phone.read(`${HOME}/project.md`)), /default: true/)
+  const held = JSON.stringify([...memo.metas, ...memo.objects].map(([key, value]) => [key, value instanceof Map ? [...value] : value]))
+  assert.ok(!held.includes('key of x'))
 })

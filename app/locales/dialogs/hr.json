@@ -74,6 +74,7 @@
   "projects.name": "Naziv",
   "projects.colour": "Njegovo svjetlo",
   "projects.local": "Zadrži ovaj projekt na ovom uređaju",
+  "projects.keepHere": "Zadržati „{name}“ samo na ovom uređaju? Njegovi zadaci i datoteke napuštaju vaše druge uređaje. Uređaj koji ga je promijenio izvan mreže vraća ih.",
   "projects.kit": "Njegov dizajnerski sustav",
   "projects.create": "Izradi projekt",
   "projects.save": "Spremi",

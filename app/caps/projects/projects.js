@@ -86,6 +86,9 @@ async function save(event) {
   const persona = String(form.get('persona') ?? '').trim()
   if (!name) return
   let project = editing.value
+  // Kept on this device from now on: where its tasks and files are on the person's other devices too, it leaves them, asked first (D721).
+  const leaving = local && project && project.data.cloud !== false ? slots('keep').filter((one) => one.on()) : []
+  if (leaving.length && !confirm(t('projects.keepHere', { name }))) return
   if (!project) {
     const dir = await createProject(app.fs, { name, colour, by: app.deviceId })
     await refreshProjects()
@@ -94,6 +97,7 @@ async function save(event) {
   const drop = [...(local ? [] : ['cloud']), ...(named && !assistant ? ['assistantName'] : [])]
   if (project) await rewrite(project, { name, colour, ...(local && { cloud: false }), ...(assistant && { assistantName: assistant }) }, drop, named ? (persona && `${persona}\n`) : project.body)
   await refreshProjects()
+  for (const one of leaving) await one.keep(project?.dir)
   const entered = app.projects.value.find((candidate) => candidate.dir === project?.dir)
   if (entered) await enterProject(entered)
   close()

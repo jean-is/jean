@@ -29,6 +29,7 @@
   "routines.brain": "Mozek",
   "routines.brain.yours": "Stejný jako pro vaše zprávy",
   "routines.next": "Příště: {when}",
+  "routines.elsewhere": "Běží na zařízení {device}",
   "routines.confirmDelete": "Smazat rutinu „{title}“?",
   "routines.run": "Spustit teď",
   "routines.runs": "Minulá spuštění",

@@ -29,6 +29,7 @@
   "routines.brain": "Aivot",
   "routines.brain.yours": "Samat kuin viesteissäsi",
   "routines.next": "Seuraava: {when}",
+  "routines.elsewhere": "Toimii laitteella {device}",
   "routines.confirmDelete": "Poistetaanko rutiini ”{title}”?",
   "routines.run": "Aja nyt",
   "routines.runs": "Aiemmat ajot",

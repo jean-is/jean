@@ -10,9 +10,10 @@ import { handheld } from '../../ui/model.js'
 import { codeOf } from '../../ui/qr.js'
 import { icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
-import { t, tParts, intlLocales } from '../../core/i18n.js'
+import { t, tParts, intlLocales, formatBytes } from '../../core/i18n.js'
 import { BRAND } from '../../brand.js'
 import { adding, joining, devices, own, start, passed, confirm, cancel, join, trusted, removeDevice } from './devices.js'
+import { state as store, again } from './store.js'
 
 /** @typedef {import('./flow.js').Device} Device */
 /** What a step shows, its buttons, and what it says as it comes, or what went wrong. @typedef {{ body?: unknown, buttons?: unknown, said?: string, wrong?: string }} Step */
@@ -87,11 +88,19 @@ function rest() {
   return html`${list.length ? html`<ul class="list">${list.map((one) => html`<li><span class="item-text"><strong dir="auto">${one.name}</strong>
       <small>${t(one.id === own.value ? 'devices.here' : 'devices.added', { date: date.format(new Date(one.createdAt)) })}</small></span>
       ${one.id === own.value ? nothing : html`<button class="button subtle danger" @click=${() => ask(one)}>${t('action.remove')}</button>`}</li>`)}</ul>` : nothing}
-    <div class="row"><button id="devices-add" class="button primary" @click=${start}>${icons.plus} ${t('devices.add')}</button></div>
+    ${common()}<div class="row"><button id="devices-add" class="button primary" @click=${start}>${icons.plus} ${t('devices.add')}</button></div>
     <section><form class="stack" @submit=${(/** @type {SubmitEvent} */ e) => { e.preventDefault(); join(String(new FormData(/** @type {HTMLFormElement} */ (e.target)).get('link'))) }}>
       <label for="devices-link">${t('devices.paste')}</label>
       <div class="devices-field"><input id="devices-link" name="link" required autocomplete="off" spellcheck="false" dir="ltr" aria-describedby="devices-pasted" @keydown=${composing}><button class="button">${t('devices.join')}</button></div>
       <p class="hint" id="devices-pasted">${t('devices.pasteHint', { name: BRAND.name })}</p></form></section>`
+}
+
+/** Under the list, what the devices keep in common in the store: its room used, full, or no longer reaching this device, with Start again where it is gone. */
+function common() {
+  const { use = 0, quota, full, gone, room } = store.value
+  const said = gone ? 'devices.store.gone' : room ? 'devices.store.room' : full ? 'devices.store.full' : quota ? 'devices.store.use' : ''
+  return said ? html`<p class="hint">${t(said, { used: formatBytes(use), quota: formatBytes(quota ?? 0) })}</p>
+    ${gone ? html`<div class="row"><button class="button" @click=${again}>${t('devices.store.again')}</button></div>` : nothing}` : nothing
 }
 
 // ─── Removing one ────────────────────────────────────────────────────────────

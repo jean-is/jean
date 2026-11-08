@@ -1,5 +1,6 @@
 {
   "devices.line": "Creierele, setările și proiectele dvs. și pe telefon sau pe alt computer. O sarcină rămâne pe dispozitivul pe care a fost făcută, până când o trimiteți către altul.",
+  "devices.lineStore": "Sarcinile, fișierele, creierele și setările dvs. și pe telefon sau pe alt computer, sigilate astfel încât doar dispozitivele dvs. să le poată citi.",
   "devices.count": {
     "one": "{count} dispozitiv",
     "few": "{count} dispozitive",
@@ -7,6 +8,11 @@
   },
   "devices.here": "Acest dispozitiv, adăugat pe {date}",
   "devices.added": "Adăugat pe {date}",
+  "devices.store.use": "{used} din {quota} în comun",
+  "devices.store.full": "Plin: ce este nou rămâne pe acest dispozitiv.",
+  "devices.store.gone": "Acest dispozitiv nu mai primește ce fac celelalte dispozitive ale dvs.",
+  "devices.store.room": "Nu mai este loc pe acest dispozitiv: nu mai ajunge nimic la el.",
+  "devices.store.again": "Începeți din nou",
   "devices.add": "Adăugați un dispozitiv",
   "devices.paste": "Un link de pe celălalt dispozitiv al dvs.",
   "devices.pasteHint": "Pe dispozitivul pe care aveți {name}, Adăugați un dispozitiv vă dă un link. Lipiți-l aici ca să aveți {name}, cu tot ce e al dvs., și pe acest dispozitiv.",

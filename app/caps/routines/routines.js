@@ -11,7 +11,7 @@
 // each file, but never in a routine's own run, so a routine never sets another off.
 import { nothing } from 'lit-html'
 import { effect, signal } from '@preact/signals-core'
-import { register, loaded, unlock } from '../../ui/caps.js'
+import { register, loaded, unlock, slots } from '../../ui/caps.js'
 import { lazyPage } from '../../ui/lazy-page.js'
 import { app, brainsHere, newConversation, notify, send, conversationOf } from '../../ui/state.js'
 import { act } from '../../ui/acts.js'
@@ -43,6 +43,13 @@ export function week() {
   return { weekend: /** @type {number[]} */ (info.weekend ?? [6, 7]).map((day) => day % 7), first: (info.firstDay ?? 1) % 7 }
 }
 
+/**
+ * The device a routine on a schedule runs on, by its name, where it isn't this one: one of the person's devices runs it, the one that made
+ * it (D721); what a file or the person's coming back sets off runs where that happens. @param {Routine} routine
+ */
+export const elsewhere = (routine) => ('every' in routine && slots('runs').map((one) => one.elsewhere(routine.device)).find(Boolean)) || ''
+/** This device among the person's, for a routine made here. */
+export const deviceHere = () => slots('runs')[0]?.here()
 /** When a routine runs next, for the page: never while it is off. @param {Routine} routine */
 export const next = (routine) => (routine.active ? dueTime(routine, new Date(), week().weekend, 1) : null)
 
@@ -76,7 +83,7 @@ const scheduleTool = {
     if (!plan) throw new Error('A routine needs every (once, hour, day, weekday, week or month), at (HH:MM), and on for a week (monday…sunday), a month (1–31) or once (YYYY-MM-DD); or when (file, made or back).')
     if (!title || !request) throw new Error('A routine needs a title and a request.')
     if ('every' in plan && !dueTime(plan, new Date(), week().weekend, 1)) throw new Error(`${inEnglish(plan)} has passed: it is ${localStamp(new Date())}.`)
-    const routine = newRoutine(folder(), { title, request, by: 'jean', ...(flow && { flow: flow.id }), ...plan })
+    const routine = newRoutine(folder(), { title, request, by: 'jean', device: deviceHere(), ...(flow && { flow: flow.id }), ...plan })
     await writeRoutine(app.fs, routine)
     act('routine.add', { task: conversationOf(ctx.signal)?.path, path: routine.path, title, flow: Boolean(flow) || undefined, ...('every' in plan ? { every: plan.every } : { when: plan.when }) })
     notify(t('routines.saved', { title }), { label: t('skills.open'), run: () => import('../../ui/dialogs.js').then((dialogs) => dialogs.openSettings('routines')) })
@@ -171,7 +178,7 @@ export async function check(now = new Date()) {
   if (checking || !brainsHere.peek().length) return
   checking = true
   try {
-    const routine = (await routines()).find((candidate) => due(candidate, now, week().weekend))
+    const routine = (await routines()).find((candidate) => due(candidate, now, week().weekend) && !elsewhere(candidate))
     // One tab runs it: another that looks finds it ran.
     if (routine && navigator.locks) await navigator.locks.request(`routine:${routine.path}`, { ifAvailable: true }, (lock) => lock && run(routine.path, now))
     else if (routine) await run(routine.path, now)
