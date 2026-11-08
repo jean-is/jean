@@ -600,11 +600,45 @@ test('importing adds what is missing, grows conversations and keeps local files'
     'projects/A/conversations/1.jsonl': 'header\nline1\n',
   })
   const result = await importBackup(target, bytes)
-  assert.deepEqual(result, { added: 2, updated: 1, kept: 1 })
-  assert.equal(await target.read('settings.json'), '{"from":"device"}')
+  assert.deepEqual(result, { added: 2, updated: 2, kept: 0 })
+  assert.equal(JSON.parse(await target.read('settings.json') ?? '').from, 'backup')
   assert.equal(await target.read('projects/A/conversations/1.jsonl'), 'header\nline1\nline2\n')
   assert.deepEqual(await target.readBytes('projects/A/files/x.bin'), new Uint8Array([1, 2, 3]))
   assert.equal(await target.exists('projects/B'), false, 'the empty local default project is gone')
+})
+
+test('a restored backup brings its brains, connections and choices, on a profile with settings and on a fresh one, and the device keeps its own', async () => {
+  const brain = { id: 'B1', provider: 'anthropic', api: 'anthropic', baseURL: 'https://api.anthropic.com', model: 'claude' }
+  const { bytes } = await exportBackup(memoryFS({
+    '.secrets/keys.json': '{"B1":"sk-old"}',
+    'settings.json': JSON.stringify({
+      format: 1, locale: 'fr', brains: [brain], activeBrain: 'B1', rules: { send: 'ask' }, unlocked: ['backup', 'projects', 'reflexes'], offers: { sync: '2026-11-01' }, auto: false, cloud: false,
+      connections: [{ id: 'C1', name: 'Notion', url: 'https://mcp.notion.com/mcp', auth: 'oauth' }],
+      voice: 'Thomas', dock: { width: 0.5 }, look: { id: 'paper' }, notifications: false, backedUp: '2026-11-01T09:00:00Z', dictated: 9, restored: true,
+    }),
+  }), { by: 'old' })
+  // A device with settings of its own: its voice, its width, a brain set up here whose key is here, and no reflexes in its catalogue (D660).
+  const local = { id: 'D1', provider: 'device', api: 'device', baseURL: '', model: 'gemma' }
+  const device = memoryFS({
+    '.secrets/keys.json': '{}',
+    'settings.json': JSON.stringify({ format: 1, locale: null, brains: [local], activeBrain: 'D1', rules: {}, voice: 'Amélie', unlocked: ['first'], offers: {}, auto: true, cloud: true, dock: { width: 0.3 } }),
+  })
+  assert.deepEqual(await importBackup(device, bytes, ['backup', 'projects']), { added: 0, updated: 1, kept: 0 })
+  const settings = JSON.parse(await device.read('settings.json') ?? '')
+  assert.deepEqual(settings.brains, [brain, local], 'the backup’s brains, and the one only this device has')
+  assert.deepEqual(settings.connections.map((/** @type {{ id: string }} */ c) => c.id), ['C1'])
+  assert.deepEqual([settings.activeBrain, settings.locale, settings.auto, settings.rules, settings.offers], ['B1', 'fr', false, { send: 'ask' }, { sync: '2026-11-01' }])
+  assert.deepEqual(settings.unlocked, ['backup', 'projects', 'first'], 'but what this device can’t run')
+  // What stays on one device, as pairing has it (STAYS): its own, or none where it had none.
+  assert.deepEqual([settings.voice, settings.dock, settings.cloud, settings.look, settings.notifications, settings.backedUp, settings.dictated, settings.restored],
+    ['Amélie', { width: 0.3 }, true, undefined, undefined, undefined, undefined, undefined])
+  assert.equal(await device.read('.secrets/keys.json'), '{}', 'keys never travel')
+  // A profile with no settings yet takes the backup's over the defaults, without the other device's own.
+  const fresh = memoryFS()
+  assert.deepEqual(await importBackup(fresh, bytes, ['reflexes']), { added: 1, updated: 0, kept: 0 })
+  const taken = JSON.parse(await fresh.read('settings.json') ?? '')
+  assert.deepEqual([taken.format, taken.brains, taken.activeBrain, taken.unlocked, taken.voice, taken.cloud, taken.dock, taken.backedUp, taken.restored],
+    [1, [brain], 'B1', ['backup', 'projects', 'reflexes'], null, true, undefined, undefined, undefined])
 })
 
 test('importing never shortens a conversation that diverged, and rejects non-backups', async () => {
