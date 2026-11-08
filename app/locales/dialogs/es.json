@@ -26,15 +26,15 @@
   "cap.lock.text": "Tus tareas, archivos y claves solo se abren con tu llave de acceso o tu contraseña.",
   "cap.brain-local.text": "Privado, gratuito y sin conexión: un cerebro que funciona en esta computadora, si es lo bastante potente.",
   "collection.count": {
-    "one": "{count} de {total} descubierto.",
-    "many": "{count} de {total} descubiertos.",
-    "other": "{count} de {total} descubiertos."
+    "one": "{count} de {total} capacidades descubiertas.",
+    "many": "{count} de {total} capacidades descubiertas.",
+    "other": "{count} de {total} capacidades descubiertas."
   },
   "collection.turnOn": "Activar",
   "collection.on": "Activado",
   "collection.turnOff": "Desactivar",
   "collection.off": "Desactivado",
-  "collection.how": "Cómo descubrirlo",
+  "collection.how": "Cómo se descubre",
   "cap.files.hint": "Comparte un archivo o pega un texto largo.",
   "cap.made.hint": "Envía tu primer mensaje.",
   "cap.documents.hint": "Pide un cambio en un documento ya escrito.",

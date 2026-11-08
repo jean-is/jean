@@ -135,6 +135,7 @@
   "provider.fireworks": "Fireworks AI",
   "provider.xai": "xAI",
   "settings.title": "Asetukset",
+  "settings.computer": "Tietokone",
   "settings.language": "Kieli",
   "collection.title": "Mitä {name} osaa",
   "learn.home": "Etusivu",

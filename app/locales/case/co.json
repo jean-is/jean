@@ -6,19 +6,19 @@
   "case.group.bigger": "Cervelli è compiti più grandi",
   "case.group.voice": "Voce è nutificazioni",
   "case.group.keep": "Tene è sparte",
-  "case.rest": "U restu ghjunghje quandu un mumentu u chjama, è ognunu dice cumu.",
+  "case.rest": "L’altre ghjunghjenu quandu un mumentu e chjama, è ognuna dice cumu.",
   "case.waiting": {
-    "one": "Unu aspetta qualcosa da voi, signalatu quì sottu.",
-    "many": "{count} aspettanu qualcosa da voi, signalati quì sottu.",
-    "other": "{count} aspettanu qualcosa da voi, signalati quì sottu."
+    "one": "Una d’elle aspetta qualcosa da voi : hè signalata quì sottu.",
+    "many": "{count} d’elle aspettanu qualcosa da voi : sò signalate quì sottu.",
+    "other": "{count} d’elle aspettanu qualcosa da voi : sò signalate quì sottu."
   },
   "case.of": "{count} nant’à {total}",
   "case.so": "{done} nant’à {goal} per avà",
   "case.download": "{size} à scaricà",
-  "case.unset": "Micca cunfiguratu",
-  "case.unfound": "Micca ancu scupertu",
-  "case.came": "Cumu hè ghjuntu",
-  "case.offText": "Disattivatu : {name} ùn u prupone più, è nunda d’ellu ùn appare nè si carica.",
+  "case.unset": "Da cunfigurà",
+  "case.unfound": "Da truvà",
+  "case.came": "Cumu ghjunghje",
+  "case.offText": "Disattivatu : {name} ùn ne parla più, è nunda ùn appare nè si carica.",
   "case.ask": "Disattivà {cap} ? {name} si riapre induve erate, è ciò ch’ellu hà fattu hè tenutu.",
   "case.cancel": "Annullà",
   "case.allHint": "Ciò chì si deve scaricà vi hè sempre dumandatu prima."

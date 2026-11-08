@@ -135,6 +135,7 @@
   "provider.fireworks": "Fireworks AI",
   "provider.xai": "xAI",
   "settings.title": "Настройки",
+  "settings.computer": "Компютър",
   "settings.language": "Език",
   "collection.title": "Какво може {name}",
   "learn.home": "Начална страница",

@@ -534,7 +534,7 @@ register({
   rules: ['Compute numbers with code instead of estimating them.', 'In files, write formulas with symbols, such as φ ≈ 1.618 or x², not LaTeX.'],
   slots: {
     views: { at: 2, draw: () => html`<app-terminal-toggle></app-terminal-toggle>` },
-    settings: { at: 95, id: 'computer', label: 'cap.computer.name', icon: icons.computer, draw: page },
+    settings: { at: 95, id: 'computer', label: 'settings.computer', icon: icons.computer, draw: page },
     // The user's own sites, those that count: none in a child's profile.
     allowed: { at: 1, draw: () => (rightsNow().locked.has('sites') ? [] : app.settings.value.computer?.sites ?? []).map((site) => ({ what: 'site', name: site, stop: () => setComputer({ sites: app.settings.value.computer?.sites?.filter((one) => one !== site) }) })) },
   },

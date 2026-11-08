@@ -6,11 +6,11 @@
   "case.group.bigger": "Cérebros e tarefas maiores",
   "case.group.voice": "Voz e notificações",
   "case.group.keep": "Guardar e partilhar",
-  "case.rest": "O resto chega quando um momento o pede, e cada um diz como.",
+  "case.rest": "As outras chegarão no momento certo, e cada uma diz como.",
   "case.waiting": {
-    "one": "Um espera algo de ti, assinalado abaixo.",
-    "many": "{count} esperam algo de ti, assinalados abaixo.",
-    "other": "{count} esperam algo de ti, assinalados abaixo."
+    "one": "Uma delas espera algo de ti: está assinalada abaixo.",
+    "many": "{count} delas esperam algo de ti: estão assinaladas abaixo.",
+    "other": "{count} delas esperam algo de ti: estão assinaladas abaixo."
   },
   "case.of": "{count} de {total}",
   "case.so": "{done} de {goal} até agora",
@@ -18,7 +18,7 @@
   "case.unset": "Por configurar",
   "case.unfound": "Ainda por descobrir",
   "case.came": "Como surgiu",
-  "case.offText": "Desativado: {name} não o propõe, e nada dele aparece nem carrega.",
+  "case.offText": "Desativado: {name} já não te fala disso, e nada aparece nem é carregado.",
   "case.ask": "Desativar {cap}? {name} volta a abrir onde estavas, e o que fez fica guardado.",
   "case.cancel": "Cancelar",
   "case.allHint": "O que for preciso transferir continua a ser-te perguntado antes."

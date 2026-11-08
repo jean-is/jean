@@ -6,19 +6,19 @@
   "case.group.bigger": "Cervelli e compiti più grandi",
   "case.group.voice": "Voce e notifiche",
   "case.group.keep": "Conservare e condividere",
-  "case.rest": "Il resto arriva quando il momento lo richiede, e ognuno dice come.",
+  "case.rest": "Le altre arriveranno al momento giusto, e ognuna dice come.",
   "case.waiting": {
-    "one": "Uno aspetta qualcosa da te, segnato qui sotto.",
-    "many": "{count} aspettano qualcosa da te, segnati qui sotto.",
-    "other": "{count} aspettano qualcosa da te, segnati qui sotto."
+    "one": "Una di esse aspetta qualcosa da te: è segnalata qui sotto.",
+    "many": "{count} di esse aspettano qualcosa da te: sono segnalate qui sotto.",
+    "other": "{count} di esse aspettano qualcosa da te: sono segnalate qui sotto."
   },
   "case.of": "{count} su {total}",
   "case.so": "{done} su {goal} finora",
   "case.download": "{size} da scaricare",
-  "case.unset": "Non configurato",
-  "case.unfound": "Non ancora scoperto",
-  "case.came": "Com’è arrivato",
-  "case.offText": "Disattivato: {name} non lo propone, e non ne compare né se ne carica nulla.",
+  "case.unset": "Da configurare",
+  "case.unfound": "Da scoprire",
+  "case.came": "Come arriva",
+  "case.offText": "Disattivato: {name} non te ne parla più, e non ne compare né se ne carica nulla.",
   "case.ask": "Disattivare {cap}? {name} si riapre dove eri, e ciò che ha fatto resta.",
   "case.cancel": "Annulla",
   "case.allHint": "Ciò che va scaricato ti viene comunque chiesto prima."

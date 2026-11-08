@@ -26,15 +26,15 @@
   "cap.lock.text": "Le tue attività, i file e le chiavi si aprono solo con la tua passkey o la tua password.",
   "cap.brain-local.text": "Privato, gratuito e offline: un cervello che gira su questo computer, se è abbastanza potente.",
   "collection.count": {
-    "one": "{count} su {total} scoperto.",
-    "many": "{count} su {total} scoperti.",
-    "other": "{count} su {total} scoperti."
+    "one": "{count} capacità scoperta su {total}.",
+    "many": "{count} capacità scoperte su {total}.",
+    "other": "{count} capacità scoperte su {total}."
   },
   "collection.turnOn": "Attiva",
   "collection.on": "Attivo",
   "collection.turnOff": "Disattiva",
   "collection.off": "Disattivato",
-  "collection.how": "Come scoprirlo",
+  "collection.how": "Come si scopre",
   "cap.files.hint": "Condividi un file o incolla un testo lungo.",
   "cap.made.hint": "Invia il tuo primo messaggio.",
   "cap.documents.hint": "Chiedi una modifica a un documento già scritto.",

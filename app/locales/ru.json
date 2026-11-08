@@ -137,6 +137,7 @@
   "provider.fireworks": "Fireworks AI",
   "provider.xai": "xAI",
   "settings.title": "Настройки",
+  "settings.computer": "Компьютер",
   "settings.language": "Язык",
   "collection.title": "Что умеет {name}",
   "learn.home": "Главная страница",

@@ -135,6 +135,7 @@
   "provider.fireworks": "Fireworks AI",
   "provider.xai": "xAI",
   "settings.title": "Indstillinger",
+  "settings.computer": "Computer",
   "settings.language": "Sprog",
   "collection.title": "Hvad {name} kan",
   "learn.home": "Forside",

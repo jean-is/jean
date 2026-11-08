@@ -26,15 +26,15 @@
   "cap.lock.text": "I vostri compiti, schedarii è chjave s’aprenu solu cù a vostra chjave d’accessu o a vostra parolla d’entrata.",
   "cap.brain-local.text": "Privatu, gratuitu è fora di linea : un cervellu chì gira nant’à st’urdinatore, s’ellu hè abbastanza putente.",
   "collection.count": {
-    "one": "{count} nant’à {total} scupertu.",
-    "many": "{count} nant’à {total} scuperti.",
-    "other": "{count} nant’à {total} scuperti."
+    "one": "{count} funzione scuperta nant’à {total}.",
+    "many": "{count} funzioni scuperte nant’à {total}.",
+    "other": "{count} funzioni scuperte nant’à {total}."
   },
   "collection.turnOn": "Attivà",
   "collection.on": "Attivatu",
   "collection.turnOff": "Disattivà",
   "collection.off": "Disattivatu",
-  "collection.how": "Cumu truvallu",
+  "collection.how": "Cumu si trova",
   "cap.files.hint": "Spartite un schedariu, o incollate un testu longu.",
   "cap.made.hint": "Mandate u vostru primu messaghju.",
   "cap.documents.hint": "Dumandate un cambiamentu in un ducumentu una volta scrittu.",

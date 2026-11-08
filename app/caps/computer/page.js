@@ -172,7 +172,7 @@ function list() {
   const set = ['timeMs', 'relay', ...REGISTRIES.map((kind) => `registries.${kind}`)].some((key) => locked.has(key))
   const why = rule === 'never' ? t('computer.internet.never') : locked.has('internet') || locked.has('any') ? html`${icons.lock} ${lockedBy()}` : t('computer.internet.text')
   const mine = there?.about(t('computer.state.ready'))
-  return html`<header class="data-head"><div><h2>${t('cap.computer.name')}</h2></div>
+  return html`<header class="data-head"><div><h2>${t('settings.computer')}</h2></div>
       <button class="button" aria-keyshortcuts=${SHORTCUTS.terminal} @click=${() => terminal()}>${icons.terminal} ${t('computer.terminal')} ${keys}</button></header>
     <p class="lede">${there ? there.lede() : t('computer.lede')}</p>
     <section>${there ? html`<h3>${t('computer.where')}</h3>` : nothing}<ul class="list data-rows">
@@ -226,7 +226,7 @@ export function section() {
   const page = pages(shown)[shown]
   if (!page) return list()
   const art = shown === 'sandbox' ? picture(SANDBOX, box.status.value.state) : shown === 'machine' ? picture(machine.value?.LAPTOP, machine.value?.about('').light ?? 'asleep') : nothing
-  return html`<button class="back button subtle" @click=${() => go('')}>${icons.back} ${t('cap.computer.name')}</button>
+  return html`<button class="back button subtle" @click=${() => go('')}>${icons.back} ${t('settings.computer')}</button>
     <header class="data-head computer-head">${art}<div><h2 tabindex="-1">${page.title}</h2>${page.lede ? html`<p class="lede">${page.lede}</p>` : nothing}</div>${page.end ?? nothing}</header>${page.draw()}`
 }
 

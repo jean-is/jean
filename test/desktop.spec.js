@@ -158,7 +158,7 @@ test('in the desktop app, This computer starts its bridge itself in a folder the
     await start(page)
     await page.evaluate(async () => (await import('/ui/caps.js')).unlock('machine'))
     // Its page, a row under the sandbox's (D248): no line to paste, a folder to choose, where the app starts the bridge through the user's shell.
-    const settings = await openSettings(page, 'Computer in this tab')
+    const settings = await openSettings(page, 'Computer')
     await settings.locator('[data-page="machine"]').click()
     const part = settings.locator('.settings-panel')
     await expect(part).toContainText('in a folder you choose')

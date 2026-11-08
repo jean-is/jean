@@ -6,20 +6,20 @@
   "case.group.bigger": "Cerveaux et grandes tâches",
   "case.group.voice": "Voix et notifications",
   "case.group.keep": "Garder et partager",
-  "case.rest": "Le reste vient quand un moment s’y prête, et chacun dit comment.",
+  "case.rest": "Les autres apparaîtront au bon moment, et chacune indique comment.",
   "case.waiting": {
-    "one": "Un attend quelque chose de vous, signalé plus bas.",
-    "many": "{count} attendent quelque chose de vous, signalés plus bas.",
-    "other": "{count} attendent quelque chose de vous, signalés plus bas."
+    "one": "L’une d’elles attend une action de votre part : elle est signalée plus bas.",
+    "many": "{count} d’entre elles attendent une action de votre part : elles sont signalées plus bas.",
+    "other": "{count} d’entre elles attendent une action de votre part : elles sont signalées plus bas."
   },
   "case.of": "{count} sur {total}",
   "case.so": "{done} sur {goal} jusqu’ici",
   "case.download": "{size} à télécharger",
-  "case.unset": "Pas configuré",
-  "case.unfound": "Pas encore découvert",
-  "case.came": "Comment vous l’avez découvert",
-  "case.offText": "Désactivé : {name} ne le propose plus, et rien n’en apparaît ni ne se charge.",
-  "case.ask": "Désactiver {cap} ? {name} se rouvre là où vous étiez, et ce qui a été fait est gardé.",
+  "case.unset": "À configurer",
+  "case.unfound": "À découvrir",
+  "case.came": "Ce qui l’a fait apparaître",
+  "case.offText": "Désactivé : {name} ne vous en parle plus, et rien n’en apparaît ni ne se charge.",
+  "case.ask": "Désactiver {cap} ? {name} se rouvre là où vous étiez, et tout ce qui a été créé est conservé.",
   "case.cancel": "Annuler",
   "case.allHint": "Tout téléchargement vous est d’abord demandé."
 }

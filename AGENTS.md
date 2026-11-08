@@ -58,6 +58,7 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
   - Never build sentences by concatenating strings.
   - Plurals use `Intl.PluralRules`; dates, numbers and lists use `Intl.*`.
   - Never make a translation agree grammatically with the assistant's name.
+  - Translate a screen, never a key alone: read its strings in the order the page shows them, so each agrees with the noun it sits under, a pronoun says what it stands for, and the whole says what the English says. A word beside names of either gender, such as a status, takes a form that agrees with none.
   - A string that only dialogs show lives in `locales/dialogs/<lang>.json`, loaded with them; the rest in `locales/<lang>.json`. `test/locales.test.js` checks which modules use each one (D97).
   - A ready-made skill's name and few words live in its own `SKILL.md`, as `title-<lang>` and `text-<lang>` in `metadata`, never in `locales/` (D222).
 - **Bidirectional text:** CSS uses logical properties only (`margin-inline-start`, never `margin-left`), and every message element gets `dir="auto"`.

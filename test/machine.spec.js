@@ -81,7 +81,7 @@ test('a server refused in the sandbox runs on this computer instead, and shows i
     const key = String(/JEAN_BRIDGE_KEY=(\S+)/.exec(line)?.[1])
     expect(spawnSync('ps', ['-axww', '-o', 'command='], { encoding: 'utf8' }).stdout.split('\n').filter((one) => /^node /.test(one) && one.includes(key))).toEqual([])
     // Back on the list, its row under the sandbox's, ready, the folder it runs in said.
-    await panel.getByRole('button', { name: 'Computer in this tab', exact: true }).click()
+    await panel.getByRole('button', { name: 'Computer', exact: true }).click()
     const mine = panel.locator('[data-page="machine"]')
     await expect(mine).toContainText('Ready')
     await expect(mine).toContainText('The folder shop, each command asked first')
@@ -115,7 +115,7 @@ test('a server refused in the sandbox runs on this computer instead, and shows i
     await expect(terminal.locator('.terminal-entry').last()).toContainText('serve.mjs')
 
     // "Always" shows on its page, and × takes it back: the folder's commands are asked first again.
-    await openSettings(page, 'Computer in this tab')
+    await openSettings(page, 'Computer')
     await settings.locator('[data-page="machine"]').click()
     const trusted = part.locator('.sites li')
     await expect(trusted).toHaveText(['shop'])
