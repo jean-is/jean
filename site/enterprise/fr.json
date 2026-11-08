@@ -197,6 +197,11 @@
       "Nos données entraînent-elles des modèles ?",
       "Nous ne les recevons jamais. Les conditions des fournisseurs de votre passerelle s’appliquent.",
       "design"
+    ],
+    [
+      "Y a-t-il des cookies ?",
+      "Aucun, d’aucune sorte : rien à déclarer dans votre bandeau de consentement. Chaque modification de {name} est vérifiée, et refusée si elle en dépose un.",
+      "design"
     ]
   ],
   "answers.it": [

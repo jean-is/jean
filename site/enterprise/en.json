@@ -197,6 +197,11 @@
       "Is our data used to train models?",
       "We never receive it. The terms of your gateway’s providers apply.",
       "design"
+    ],
+    [
+      "Does it set cookies?",
+      "None, of any kind, so there is nothing to declare in your consent banner. Every change to {name} is checked, and refused if it sets one.",
+      "design"
     ]
   ],
   "answers.it": [

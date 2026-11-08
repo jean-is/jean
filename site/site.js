@@ -391,7 +391,7 @@ export function foot (kit, languages = '') {
   const uses = USES.map((name) => item(kit.link(name), kit.say(`foot.${name}`), name)).join('')
   const compared = COMPARED.map((name, i) => item(kit.link(name), i ? kit.from(name).say('product') : kit.say('foot.all'), name)).join('')
   return /* html */ `<footer class="site-foot">
-  <div><p class="site-mark"><span dir="ltr">${xml(kit.brand.name)}</span></p><p>${kit.say('foot.tagline')}</p><p>${kit.say('foot.made')}</p>${languages}</div>
+  <div><p class="site-mark"><span dir="ltr">${xml(kit.brand.name)}</span></p><p>${kit.say('foot.tagline')}</p><p>${kit.say('foot.made')}</p><p>${kit.say('foot.cookies')}</p>${languages}</div>
   <nav aria-label="${xml(kit.brand.name)}"><h2 class="site-foot-head">${xml(kit.brand.name)}</h2><ul>
     ${item(kit.link('home') && `${kit.link('home')}?index=1`, kit.app('learn.home'), 'home')}${item(kit.link('help'), kit.app('learn.help'), 'help')}${item(kit.link('files'), kit.app('welcome.files'), 'files')}${item(kit.link('privacy'), kit.app('welcome.privacy'), 'privacy')}${item(kit.link('terms'), kit.app('welcome.terms'), 'terms')}${item(kit.link('accessibility'), kit.say('foot.accessibility'), 'accessibility')}${item(kit.link('site-map'), kit.say('foot.map'), 'site-map')}${item(REPOSITORY, kit.say('foot.source'))}
   </ul></nav>${audiences ? /* html */ `

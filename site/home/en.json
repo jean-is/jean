@@ -106,7 +106,8 @@
     ["Does it work on a phone, or offline?", "On a phone, yes, in the browser. Offline, with the AI on this computer, which needs 12 GB of memory and a recent graphics chip: not on phones."],
     ["Can I use my ChatGPT or Claude plan?", "Yes, and Copilot’s: {name} uses the plan you already pay for, through this computer. No second subscription."],
     ["Can it make mistakes?", "Yes. Numbers are calculated rather than guessed, and under every answer it says where it was done. Check the words, as you would a colleague’s."],
-    ["Can I use it at work?", "If your company gives you no AI, it works as it is. If your computer is managed, ask your IT: {name} is deployed like a web page, behind your company’s gateway and sign-in."]
+    ["Can I use it at work?", "If your company gives you no AI, it works as it is. If your computer is managed, ask your IT: {name} is deployed like a web page, behind your company’s gateway and sign-in."],
+    ["Does {name} track me?", "No. There are no tracking cookies, and there never will be; in fact, no cookies at all. No analytics, no advertising, and no cookie banner, since there is nothing to agree to. Every change to {name} is checked, and refused if it sets a cookie."]
   ],
   "personal.why": "Every assistant calls itself personal now.",
   "personal.title": "Personal, as in yours.",

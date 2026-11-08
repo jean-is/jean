@@ -106,7 +106,8 @@
     ["Ça marche sur téléphone, ou hors ligne ?", "Sur téléphone, oui, dans le navigateur. Hors ligne, avec l’IA sur cet ordinateur, qui demande 12 Go de mémoire et une puce graphique récente : pas sur téléphone."],
     ["Puis-je utiliser mon abonnement ChatGPT ou Claude ?", "Oui, et celui de Copilot : l’abonnement que vous payez déjà sert ici, via cet ordinateur. Pas de second abonnement."],
     ["Peut-il se tromper ?", "Oui. Les chiffres sont calculés, pas devinés, et sous chaque réponse figure l’endroit où elle a été faite. Vérifiez les mots, comme ceux d’un collègue."],
-    ["Puis-je l’utiliser au travail ?", "Si votre entreprise ne vous fournit rien, ça marche tel quel. Si votre ordinateur est géré, demandez à votre DSI : {name} se déploie comme une page web, derrière la passerelle et la connexion de votre entreprise."]
+    ["Puis-je l’utiliser au travail ?", "Si votre entreprise ne vous fournit rien, ça marche tel quel. Si votre ordinateur est géré, demandez à votre DSI : {name} se déploie comme une page web, derrière la passerelle et la connexion de votre entreprise."],
+    ["Est-ce qu’on me piste ?", "Non. Aucun cookie de suivi, et il n’y en aura jamais ; en fait, aucun cookie du tout. Ni mesure d’audience, ni publicité, ni bandeau de cookies, puisqu’il n’y a rien à accepter. Chaque modification de {name} est vérifiée, et refusée si elle dépose un cookie."]
   ],
   "personal.why": "Tous les assistants se disent personnels, désormais.",
   "personal.title": "Personnel, parce qu’il est à vous.",
