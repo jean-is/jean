@@ -88,8 +88,21 @@ export function languageName(/** @type {string} */ code, inLang = code) {
   }
 }
 
-/** Available locales that match the user's preferences, in their order, without repeats. @param {string[]} available @param {readonly string[]} preferred e.g. navigator.languages */
+/**
+ * Available locales that match the user's preferences, in their order, without repeats: the same tag, else the same language
+ * and likely script, so zh-TW meets zh-Hant and pt-BR meets pt, and the "fil" browsers say meets the "tl" Filipino is written
+ * in. Nothing outside it, since the site's pages run it as written (site/site.js).
+ * @param {string[]} available @param {readonly string[]} preferred e.g. navigator.languages
+ */
 export function preferredLocales(available, preferred) {
+  const languageAndScript = (/** @type {string} */ code) => {
+    try {
+      const { language, script } = new Intl.Locale(code).maximize()
+      return `${language === 'fil' ? 'tl' : language}-${script}`
+    } catch {
+      return null
+    }
+  }
   /** @type {string[]} */
   const found = []
   for (const wanted of preferred) {
@@ -102,20 +115,6 @@ export function preferredLocales(available, preferred) {
 
 /** Best available locale for the user's preferences. @param {string[]} available @param {readonly string[]} preferred e.g. navigator.languages */
 export const pickLocale = (available, preferred) => preferredLocales(available, preferred)[0] ?? (available.includes('en') ? 'en' : available[0])
-
-// Browsers say "fil" for the Filipino that the "tl" catalogue is written in.
-/** @type {Record<string, string>} */
-const SAME_LANGUAGE = { fil: 'tl' }
-
-/** Language and likely script, so zh-TW meets zh-Hant and pt-BR meets pt. @param {string} code */
-function languageAndScript(code) {
-  try {
-    const { language, script } = new Intl.Locale(code).maximize()
-    return `${SAME_LANGUAGE[language] ?? language}-${script}`
-  } catch {
-    return null
-  }
-}
 
 /** "14 MB", or "30 bytes" in words, in the current locale. @param {number} bytes */
 export function formatBytes(bytes) {

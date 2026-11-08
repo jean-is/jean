@@ -249,14 +249,16 @@ test.describe('in a Japanese browser', () => {
     await expect.poll(() => new URL(page.url()).pathname).toBe('/fr')
     await expect(shown(page, 'fr')).toBeVisible()
     await expect(page.locator('html')).toHaveAttribute('lang', 'fr')
-    const menu = page.locator('.home-languages'), summary = menu.locator('summary')
-    await expect(summary).toContainText('Français')
+    const menu = page.locator('.home .site-languages'), button = menu.locator('button')
+    await expect(button).toContainText('Français')
     await expect.poll(async () => Math.abs(await door() - 200)).toBeLessThan(40)
-    // From the page's own menu at its foot, by real links: walking them changes nothing, and one pressed brings the page in that
-    // language, back at the foot, the closed menu with the keyboard (D680).
-    await summary.focus()
+    // From the page's own menu at its foot, by real links, the reader's language first, as the person's menu has it:
+    // walking them changes nothing, and one pressed brings the page in that language, back at the foot, the closed
+    // menu's button with the keyboard (D680).
+    await button.focus()
     await page.keyboard.press('Enter')
     const japanese = menu.getByRole('link', { name: '日本語' })
+    await expect(menu.locator('ul').first().getByRole('link')).toHaveText(['日本語'])
     await expect(japanese).toHaveAttribute('hreflang', 'ja')
     await expect(menu.locator('[aria-current="true"]')).toHaveText('Français')
     await japanese.focus()
@@ -266,18 +268,18 @@ test.describe('in a Japanese browser', () => {
     await page.keyboard.press('Enter')
     await expect.poll(() => new URL(page.url()).pathname).toBe('/ja')
     await expect(shown(page, 'ja')).toBeVisible()
-    await expect(summary).toBeInViewport()
-    await expect(summary).toBeFocused()
-    await expect(menu).not.toHaveAttribute('open')
-    await expect(summary).toContainText('日本語')
+    await expect(button).toBeInViewport()
+    await expect(button).toBeFocused()
+    await expect(menu.locator('.menu')).toBeHidden()
+    await expect(button).toContainText('日本語')
     // German has none: the app speaks it, and the page is English's, at the site's own address.
     await page.keyboard.press('Enter')
     await menu.getByRole('link', { name: 'Deutsch' }).click()
     await expect.poll(() => new URL(page.url()).pathname).toBe('/')
     await expect(shown(page, 'en')).toBeVisible()
     await expect(page.locator('html')).toHaveAttribute('lang', 'de')
-    await expect(summary).toContainText('Deutsch')
-    await expect(summary).toBeFocused()
+    await expect(button).toContainText('Deutsch')
+    await expect(button).toBeFocused()
   })
 })
 

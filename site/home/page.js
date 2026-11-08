@@ -8,8 +8,8 @@
 // catalogues where the app already says the same (the sample request, the receipt, the legal links), and its look
 // home.css, over the app's style sheet and site.css, whose foot it ends with (site/site.js, D438).
 import { readFile } from 'node:fs/promises'
-import { LOCALES, dir as dirOf, languageName } from '../../app/core/i18n.js'
-import { ICONS, REPOSITORY, fill, foot, pictureOf, xml } from '../site.js'
+import { LOCALES } from '../../app/core/i18n.js'
+import { ICONS, REPOSITORY, fill, foot, languageMenu, pictureOf, xml } from '../site.js'
 
 /** Each language's page, from the site's root. @type {Record<string, string>} */
 const ADDRESSES = { en: '', ar: 'ar', fr: 'fr', ja: 'ja', ko: 'ko' }
@@ -140,10 +140,7 @@ export function homeOf (kit, { sample = SAMPLE, saved = savingsAnswer() } = {}) 
   const columns = (/** @type {string[]} */ items) => [items.slice(0, Math.ceil(items.length / 2)), items.slice(Math.ceil(items.length / 2))].map((half) => /* html */ `<div>${half.join('')}</div>`).join('')
   const person = (/** @type {string} */ who, /** @type {string} */ how) => /* html */ `<li><i aria-hidden="true">${xml([...kit.text(who, params)][0] ?? '')}</i><span><b>${say(who)}</b><small>${say(how)}</small></span></li>`
   // Each language a link, to its own page or, where it has none, to English's, where the app speaks it all the same (ui/home.js, D680).
-  const menu = /* html */ `
-    <details class="home-languages"><summary><span class="visually-hidden">${appSays('settings.language')} </span><span lang="${lang}" dir="${dir}">${xml(languageName(lang))}</span>${ICONS.down}</summary><ul>${LOCALES.map((code) => /* html */ `
-      <li><a href="${kit.site(ADDRESSES[code] ?? '')}" data-language="${code}" lang="${code}" dir="${dirOf(code)}"${code in ADDRESSES ? ` hreflang="${code}"` : ''}${code === lang ? ' aria-current="true"' : ''}>${xml(languageName(code))}</a></li>`).join('')}
-    </ul></details>`
+  const menu = languageMenu(kit, LOCALES, (code) => /* html */ `href="${kit.site(ADDRESSES[code] ?? '')}" data-language="${code}"${code in ADDRESSES ? ` hreflang="${code}"` : ''}${code === lang ? ' aria-current="true"' : ''}`)
   // Under the promise, how it is kept: the rest of the description, which search results show after the title.
   const described = kit.text('description')
   const rest = described.slice(described.split(/(?<=[.!?؟])\s+|(?<=[。！？])/u)[0].length).trim()

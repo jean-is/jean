@@ -12,7 +12,8 @@
 // pane covers it (D635) it is out of the keys' way.
 import { app, effective, newConversation, setLocale, turnPage, updateSettings, LOCALES } from './state.js'
 import { homepage } from './shell.js'
-import { locale, pickLocale } from '../core/i18n.js'
+import { dir, locale, pickLocale } from '../core/i18n.js'
+import { yoursFirst } from './yours.js'
 import { idea, skillFor, focusComposer } from './composer.js'
 import { tiles } from './tiles.js'
 
@@ -56,13 +57,15 @@ function bind(home) {
     placing.observe(document.documentElement, { attributeFilter: ['data-dock'] })
   }
   bound = home
+  const list = home.querySelector('#site-languages > ul')
+  if (list) yoursFirst(list, navigator.languages)
   home.addEventListener('click', (event) => {
     const button = event.target instanceof Element ? event.target.closest('[data-try]') : null
     if (button instanceof HTMLElement) ask(button.dataset.try ?? '')
-    // A language is the app's, which this page follows from the same place, the keyboard on the closed menu; a link asked to open elsewhere does.
-    const link = event.target instanceof Element ? event.target.closest('[data-language]') : null, menu = link?.closest('details')
-    if (!(link instanceof HTMLElement) || !menu || event.metaKey || event.ctrlKey || event.shiftKey) return
-    event.preventDefault(); menu.open = false; menu.querySelector('summary')?.focus(); setLocale(link.dataset.language ?? '')
+    // A language is the app's, which this page follows from the same place, the keyboard on the menu's button; a link asked to open elsewhere does.
+    const link = event.target instanceof Element ? event.target.closest('[data-language]') : null, menu = link?.closest('[popover]')
+    if (!(link instanceof HTMLElement) || !(menu instanceof HTMLElement) || event.metaKey || event.ctrlKey || event.shiftKey) return
+    event.preventDefault(); menu.hidePopover(); /** @type {HTMLElement | null} */ (home.querySelector('.site-languages button'))?.focus(); setLocale(link.dataset.language ?? '')
   })
   sizes.disconnect()
   sizes.observe(home)
@@ -137,7 +140,7 @@ export async function follow(home, shown, lang) {
   const call = ++calls
   home = document.querySelector('body > .home') ?? home
   if (bound !== home) bind(home)
-  let menu = home.querySelector('.home-languages')
+  let menu = home.querySelector('.site-languages')
   const there = document.querySelector(`link[rel="alternate"][hreflang="${lang}"]`) ?? document.querySelector('link[rel="alternate"][hreflang="en"]')
   /** @type {ReturnType<typeof reading> | false | null} */
   let kept = null
@@ -150,12 +153,12 @@ export async function follow(home, shown, lang) {
     home.replaceWith(document.adoptNode(next))
     home = next
     bind(home)
-    menu = home.querySelector('.home-languages')
+    menu = home.querySelector('.site-languages')
   }
   // Its language, the app's, which may have no page of its own, or none to choose where an organisation set it.
   const now = /** @type {HTMLElement | null | undefined} */ (menu?.querySelector(`[data-language="${lang}"]`))
   if (menu instanceof HTMLElement) menu.hidden = effective.value.locked.has('locale')
-  if (now) Object.assign(/** @type {HTMLElement} */ (menu?.querySelector('summary [lang]')), { lang, dir: now.dir, textContent: now.textContent })
+  if (now) Object.assign(/** @type {HTMLElement} */ (menu?.querySelector('button [lang]')), { lang, dir: dir(lang), textContent: now.textContent })
   for (const link of menu?.querySelectorAll('[data-language]') ?? []) link === now ? link.setAttribute('aria-current', 'true') : link.removeAttribute('aria-current')
   showing = shown
   place(home)
@@ -169,7 +172,7 @@ export async function follow(home, shown, lang) {
     for (const type of ['wheel', 'touchstart', 'keydown', 'pointerdown', 'focusin']) addEventListener(type, stop, { once: true, passive: true })
     setTimeout(stop, 1500)
     document.fonts.ready.then(hold)
-    if (kept.menu) /** @type {HTMLElement | null | undefined} */ (menu?.querySelector('summary'))?.focus({ preventScroll: true })
+    if (kept.menu) menu?.querySelector('button')?.focus({ preventScroll: true })
   }
   const query = new URLSearchParams(location.search)
   // Shown, the page is at its own address, asked for there once the Vous menu's Homepage showed it; hidden, at the site's.

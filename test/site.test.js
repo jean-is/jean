@@ -16,7 +16,7 @@ import { SHARE } from '../scripts/manifest.js'
 import { withSite } from '../scripts/seo.js'
 import { checkPage, checkSite, checkStyle, checkWords } from '../site/checks.js'
 import { inLanguage } from '../site/home/page.js'
-import { LANGUAGES, buildSite, penned, sitePages, theme, themeFor, wordsOf, xml } from '../site/site.js'
+import { LANGUAGES, MENU, buildSite, penned, sitePages, theme, themeFor, wordsOf, xml } from '../site/site.js'
 
 const BASE = 'https://jean.is/'
 const index = await readFile(new URL('../app/index.html', import.meta.url), 'utf8')
@@ -82,7 +82,7 @@ test('every page is in English and French at least, each language at an address 
   }
 })
 
-test('every page runs the app’s theme line and nothing else but its own script, with no style but the site’s own sheets', async () => {
+test('every page runs the app’s theme line and nothing else but its menu of languages’ script and its own, with no style but the site’s own sheets', async () => {
   const root = await theme()
   assert.equal(root.script, /<script>([^<]*)<\/script>/.exec(index)?.[1], 'index.html’s first script, byte for byte')
   const site = await jean()
@@ -92,8 +92,9 @@ test('every page runs the app’s theme line and nothing else but its own script
     const up = '../'.repeat(page.address.split('/').length - 1)
     const { script, hash } = themeFor(root, up)
     const { script: own, sends, frames } = pages.get(page.name) ?? {}
-    assert.deepEqual([...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g)].map((match) => match[1]), [script, ...own ? [own] : []], `${page.path}: the theme’s script, its looks named from the site’s root, then the page’s own`)
-    const hashes = [hash, ...own ? [`'sha256-${createHash('sha256').update(own).digest('base64')}'`] : []].join(' ')
+    const runs = own ? `${MENU}\n${own}` : MENU
+    assert.deepEqual([...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g)].map((match) => match[1]), [script, runs], `${page.path}: the theme’s script, its looks named from the site’s root, then its menu of languages’ and its own`)
+    const hashes = [hash, `'sha256-${createHash('sha256').update(runs).digest('base64')}'`].join(' ')
     const policy = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(html)?.[1]
     assert.equal(policy, `default-src 'none'; script-src ${hashes}; style-src 'self'; img-src 'self'; font-src 'self';${frames ? " frame-src 'self';" : ''} base-uri 'none'; form-action ${sends ? "'self'" : "'none'"}; require-trusted-types-for 'script'; trusted-types 'none'`, page.path)
     assert.ok(html.indexOf('Content-Security-Policy') < html.indexOf('<script>') && html.indexOf('<script>') < html.indexOf('<link rel="stylesheet"'), `${page.path}: the policy, then the theme, then the style sheets`)

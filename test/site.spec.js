@@ -55,3 +55,24 @@ for (const [name, page] of await sitePages()) {
     }
   }
 }
+
+test.describe('in a Korean browser', () => {
+  test.use({ locale: 'ko-KR' })
+
+  test('a page’s menu of languages opens from its button in the top, the reader’s language first and the page’s ticked, and leads to the page in another', async ({ page }) => {
+    await page.goto(`${JEAN_IS}family`)
+    const menu = page.locator('.site-top .site-languages'), button = menu.getByRole('button', { name: 'Language English' })
+    await expect(menu.locator('.menu')).toBeHidden()
+    await button.focus()
+    await page.keyboard.press('Enter')
+    await expect(menu.locator('ul').first().getByRole('link')).toHaveText(['한국어'])
+    await expect(menu.locator('ul').last().getByRole('link')).toHaveText(['English', 'Français'])
+    await expect(menu.locator('[aria-current="page"]')).toHaveText('English')
+    await expect(menu.locator('[aria-current="page"] .icon')).toBeVisible()
+    await page.keyboard.press('Tab')
+    await expect(menu.getByRole('link', { name: '한국어' })).toBeFocused()
+    await page.keyboard.press('Enter')
+    await expect.poll(() => new URL(page.url()).pathname).toBe('/ko/family')
+    await expect(page.locator('html')).toHaveAttribute('lang', 'ko')
+  })
+})

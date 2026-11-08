@@ -14,8 +14,9 @@ import { createHash } from 'node:crypto'
 import { readdir, readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
-import { dir, languageName } from '../app/core/i18n.js'
+import { dir, languageName, preferredLocales } from '../app/core/i18n.js'
 import { icons as GLYPHS } from '../app/ui/menu-icons.js'
+import { yoursFirst } from '../app/ui/yours.js'
 import { xml } from '../scripts/desktop.js'
 import { SHARE, cardOf } from '../scripts/manifest.js'
 import { ownSite } from '../scripts/seo.js'
@@ -120,6 +121,8 @@ export const ICONS = {
   shield: glyph('shield'),
   down: glyph('chevron'),
   globe: glyph('globe'),
+  language: glyph('language'),
+  check: glyph('check'),
   play: glyph('play'),
   close: glyph('close'),
   mic: glyph('mic'),
@@ -296,7 +299,9 @@ function written (page, kit, root, sheet) {
   const main = anchored(page.main(kit), kit.say('anchor'))
   const up = kit.site('')
   const { script, hash } = themeFor(root, up === './' ? '' : up)
-  const own = page.script ? ` 'sha256-${createHash('sha256').update(page.script).digest('base64')}'` : ''
+  // What it runs after the foot: its menu of languages' script, then its own.
+  const runs = page.script ? `${MENU}\n${page.script}` : MENU
+  const own = ` 'sha256-${createHash('sha256').update(runs).digest('base64')}'`
   const title = page.title ? page.title(kit) : kit.say('title')
   const description = kit.say('description')
   const shown = pictureOf(kit)
@@ -329,29 +334,45 @@ ${top(kit, page)}
 ${main}
 </main>
 ${foot(kit)}
-${page.script ? /* html */ `<script>${page.script}</script>\n` : ''}</body>
+<script>${runs}</script>
+</body>
 </html>
 `
 }
 
-/** The top: a way past it, the name, whom the page is for, its languages, and the way into the app. @param {Kit} kit @param {Page} page */
+/** The top: a way past it, the name, whom the page is for, its menu of languages, and the way into the app. @param {Kit} kit @param {Page} page */
 function top (kit, page) {
-  const languages = kit.languages.map((code) => code === kit.lang
-    ? /* html */ `<span lang="${code}" dir="${dir(code)}" aria-current="page">${xml(languageName(code))}</span>`
-    : /* html */ `<a href="${kit.site(page.addresses[code])}" hreflang="${code}" lang="${code}" dir="${dir(code)}">${xml(languageName(code))}</a>`)
+  const link = (/** @type {string} */ code) => /* html */ `href="${kit.site(page.addresses[code])}" hreflang="${code}"${code === kit.lang ? ' aria-current="page"' : ''}`
   return /* html */ `<a class="site-skip" href="#main">${kit.say('skip')}</a>
 <header class="site-top">
   <a class="wordmark" href="${kit.start}">${WAVE}<span dir="ltr">${xml(kit.brand.name)}</span></a>${kit.has('for') ? /* html */ `<span class="site-for">${kit.say('for')}</span>` : ''}
-  <nav class="site-langs" aria-label="${kit.say('languages')}">${ICONS.globe}<ul>${languages.map((language) => /* html */ `<li>${language}</li>`).join('')}</ul></nav>
+  ${languageMenu(kit, kit.languages, link)}
   <a class="button" href="${kit.start}">${kit.say('open')}</a>
 </header>`
 }
 
 /**
- * The foot every page ends with, the same on each: the name, what Jean is and where it's made; the homepage,
- * at ?index=1, Help, the pages every copy has, Accessibility and the source; whom the site's other pages are for, where they're built, with the
- * homepage's language menu; what people use Jean for (USES); and the comparison's pages. The page it is on is
- * marked, not left out.
+ * A menu of languages, the person's menu's (ui/inbox.js) on a page: a button with the language glyph and the language of
+ * the page, which opens the app's menu over it (.menu, a popover, so no script is needed to open it), with a link for
+ * each language, in its own words, the one in use ticked. MENU, or ui/home.js on the homepage, puts the reader's
+ * languages first, as that menu does; without scripts, they stay in the page's order.
+ * @param {Kit} kit @param {string[]} codes  in order @param {(code: string) => string} link  its link's attributes, its address first, aria-current on the one in use
+ */
+export function languageMenu (kit, codes, link) {
+  return /* html */ `<div class="site-languages"><button type="button" popovertarget="site-languages">${ICONS.language}<span class="visually-hidden">${kit.app('settings.language')} </span><span lang="${kit.lang}" dir="${kit.dir}">${xml(languageName(kit.lang))}</span>${ICONS.down}</button>
+    <div id="site-languages" class="menu" popover><ul>${codes.map((code) => /* html */ `
+      <li><a ${link(code)} lang="${code}"><span dir="${dir(code)}">${xml(languageName(code))}</span>${ICONS.check}</a></li>`).join('')}
+    </ul></div></div>`
+}
+
+/** What every page runs for its menu of languages: the reader's first, by the app's own functions as they are written (ui/yours.js). */
+export const MENU = `(() => {\n${preferredLocales}\n${yoursFirst}\nfor (const list of document.querySelectorAll('#site-languages > ul')) yoursFirst(list, navigator.languages)\n})()`
+
+/**
+ * The foot every page ends with, the same on each: the name, what Jean is and where it's made, with the homepage's
+ * menu of languages under them; the homepage, at ?index=1, Help, the pages every copy has, Accessibility and the source;
+ * whom the site's other pages are for, where they're built; what people use Jean for (USES); and the comparison's
+ * pages. The page it is on is marked, not left out.
  * @param {Kit} kit @param {string} [languages]  HTML
  */
 export function foot (kit, languages = '') {
@@ -362,13 +383,13 @@ export function foot (kit, languages = '') {
   const uses = USES.map((name) => item(kit.link(name), kit.say(`foot.${name}`), name)).join('')
   const compared = COMPARED.map((name, i) => item(kit.link(name), i ? kit.from(name).say('product') : kit.say('foot.all'), name)).join('')
   return /* html */ `<footer class="site-foot">
-  <div><p class="site-mark"><span dir="ltr">${xml(kit.brand.name)}</span></p><p>${kit.say('foot.tagline')}</p><p>${kit.say('foot.made')}</p></div>
+  <div><p class="site-mark"><span dir="ltr">${xml(kit.brand.name)}</span></p><p>${kit.say('foot.tagline')}</p><p>${kit.say('foot.made')}</p>${languages}</div>
   <nav aria-label="${xml(kit.brand.name)}"><h2 class="site-foot-head">${xml(kit.brand.name)}</h2><ul>
     ${item(kit.link('home') && `${kit.link('home')}?index=1`, kit.app('learn.home'), 'home')}${item(kit.link('help'), kit.app('learn.help'), 'help')}${item(kit.link('files'), kit.app('welcome.files'), 'files')}${item(kit.link('privacy'), kit.app('welcome.privacy'), 'privacy')}${item(kit.link('terms'), kit.app('welcome.terms'), 'terms')}${item(kit.link('accessibility'), kit.say('foot.accessibility'), 'accessibility')}${item(kit.link('site-map'), kit.say('foot.map'), 'site-map')}${item(REPOSITORY, kit.say('foot.source'))}
-  </ul></nav>${audiences || languages ? /* html */ `
-  <nav aria-label="${kit.say('foot.for')}"><h2 class="site-foot-head">${kit.say('foot.for')}</h2>${audiences ? /* html */ `<ul>
+  </ul></nav>${audiences ? /* html */ `
+  <nav aria-label="${kit.say('foot.for')}"><h2 class="site-foot-head">${kit.say('foot.for')}</h2><ul>
     ${audiences}
-  </ul>` : ''}${languages}</nav>` : ''}${uses ? /* html */ `
+  </ul></nav>` : ''}${uses ? /* html */ `
   <nav aria-label="${kit.say('foot.uses')}"><h2 class="site-foot-head">${kit.say('foot.uses')}</h2><ul>
     ${uses}
   </ul></nav>` : ''}${compared ? /* html */ `

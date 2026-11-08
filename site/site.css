@@ -41,10 +41,9 @@
 .site-top .wordmark { color: var(--ink); text-decoration: none; font-size: 1.1875rem; }
 .site-top app-persona { --persona-size: 1.5rem; }
 .site-for { color: var(--ink-soft); font-size: 0.9375rem; }
-.site-langs, .site-langs ul { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; }
-.site-langs { margin-inline-start: auto; font-size: 0.875rem; color: var(--ink-soft); }
-.site-langs .icon { inline-size: 1rem; block-size: 1rem; }
-.site-langs [aria-current] { color: var(--ink); font-weight: 600; }
+.site-top .site-languages { margin-inline-start: auto; }
+.site-top .site-languages .menu { position-area: block-end span-inline-start; margin: 0.5rem 0 0; }
+@supports not (anchor-name: --site-languages) { .site-top .site-languages .menu { inset: 4rem auto auto; inset-inline-end: var(--site-edge); margin: 0; } }
 html:has(> body.site) { scroll-padding-block-start: 4.5rem; }
 
 /* A heading's link to itself (site.js's anchored()), shown while the pointer is over the heading: after its words, or
@@ -153,6 +152,20 @@ svg.felt-tick { inline-size: 1.05em; block-size: 1.05em; margin-inline-end: 0.5r
 .site-prose h2 { font-size: clamp(1.35rem, 3vw, 1.6rem); }
 .site-prose :is(ul, ol) { list-style: revert; }
 
+/* A menu of languages (site.js's languageMenu()), the top's or the homepage's foot's: the app's menu, above its button
+   unless the top places it below, a link per language, the one in use ticked, the reader's own first once the page's
+   script has run */
+.site-languages > button { anchor-name: --site-languages; display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.375rem 0.5rem 0.375rem 0.625rem; border: 0; border-radius: 999px; background: none; color: var(--ink-soft); font-size: 0.875rem; font-weight: 500; transition: background-color 0.2s, color 0.2s; }
+.site-languages > button:hover { background: var(--line); color: var(--ink); }
+.site-languages > button .icon { inline-size: 1rem; block-size: 1rem; }
+.site-languages > button > .icon:last-child { transition: rotate 0.2s; }
+.site-languages > button:has(+ :popover-open) > .icon:last-child { rotate: 180deg; }
+.site-languages .menu { position-anchor: --site-languages; min-inline-size: 10rem; max-block-size: min(70dvh, 34rem); overflow-y: auto; font-size: 0.9375rem; }
+.site-languages .menu a { color: inherit; text-decoration: none; }
+.site-languages .menu a[aria-current] { font-weight: 600; }
+.site-languages .menu a > .icon { margin-inline-start: auto; color: var(--flame); }
+.site-languages .menu a:not([aria-current]) > .icon { visibility: hidden; }
+
 /* The foot */
 .site-foot { display: grid; grid-template-columns: 1.4fr repeat(4, 1fr); gap: 2.5rem; padding: 3rem var(--site-edge); border-block-start: 1px solid var(--line); background: var(--site-side); color: var(--ink); font-size: 0.875rem; }
 .site-foot > * { display: flex; flex-direction: column; gap: 0.4rem; }
@@ -171,7 +184,6 @@ svg.felt-tick { inline-size: 1.05em; block-size: 1.05em; margin-inline-end: 0.5r
   .site-foot { gap: 1.25rem; }
 }
 @media (max-width: 30rem) {
-  .site-langs .icon { display: none; }
   /* Its lines kept with the page rather than over it, where the window has little room */
   .site-top { position: static; }
   html:has(> body.site) { scroll-padding-block-start: 0.5rem; }

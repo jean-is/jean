@@ -39,7 +39,7 @@ test('its gate passed, it says how a child learns, Jean only helping, with the m
   for (const address of Object.values(page.addresses)) {
     const html = files[`${address}.html`]
     assert.doesNotMatch(html.replace(/<[^>]*>/g, ''), /tutor|tuteur/i, 'never a tutor, even after the gate')
-    assert.doesNotMatch(html.replace(/<script>[^<]*<\/script>/, ''), /\{\w+\}/, 'every {param} filled')
+    assert.doesNotMatch(html.replace(/<script>[^<]*<\/script>/g, ''), /\{\w+\}/, 'every {param} filled, its scripts aside')
     assert.equal(html.match(/<ol class="fam-steps">(.*?)<\/ol>/)?.[1].match(/<li>/g)?.length, 3, `${address}: three steps`)
     assert.equal(html.match(/<ol class="fam-ladder">(.*?)<\/ol>/)?.[1].match(/<li>/g)?.length, 4, `${address}: four rungs`)
     assert.match(html, /<p class="fam-measure">[^<]+<a href="#fam-learn">/)
