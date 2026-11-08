@@ -323,3 +323,23 @@ test('a value that came is a new task of the user’s: its files kept, its recor
   assert.equal(turns[0].user?.text, 'For Monday')
   assert.equal(turns[0].notes[0].data.kind, 'shared')
 })
+
+test('an answer back holds only what came after what someone sent, or after the last answer; taken in, it goes in the task it answers, between the two notes', async () => {
+  const { takeIn, takeInto, valueOf } = await import('../app/caps/share/value.js')
+  const { memoryFS } = await import('../app/core/fs.js')
+  const { requestsOf } = await import('../app/core/events.js')
+  const fs = memoryFS(), value = /** @type {any} */ ({ format: 1, kind: 'task', lang: 'en', title: 'Cat', file: copyOf(task(), { aFile: 'a file' }), files: {}, certificates: [] })
+  const { path } = await takeIn(fs, value, { projectDir: 'projects/home', by: 'device-2', aFile: 'a file', from: { from: 'x' } })
+  await fs.append(path, `${JSON.stringify(userRecord('Make it blue', 'device-2'))}\n${JSON.stringify(envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: 'Blue now.' } }, 0))}\n`)
+  const back = await valueOf(fs, { path, title: 'Cat' }, { reading: false, lang: 'en', aFile: 'a file', since: true })
+  assert.deepEqual(requestsOf(parse(back.file)), ['Make it blue'])
+  // After an answer sent, the next holds only what came since.
+  await fs.append(path, `${JSON.stringify(metaRecord('device-2', { sent: { to: 'x', thread: { task: 't', id: 'i' } } }))}\n${JSON.stringify(userRecord('And bigger', 'device-2'))}\n`)
+  assert.deepEqual(requestsOf(parse((await valueOf(fs, { path, title: 'Cat' }, { reading: false, lang: 'en', aFile: 'a file', since: true })).file)), ['And bigger'])
+  // Taken into the task it answers: after it, a note that it is someone else's, their request theirs, and where the user's start again.
+  const before = parse(String(await fs.read(path))).length
+  await takeInto(fs, path, back, { by: 'device-1', aFile: 'a file', from: { from: 'y', person: 'y' } })
+  const after = parse(String(await fs.read(path)))
+  assert.deepEqual([after[before].update.data.kind, after.at(-1).update.data], ['shared', { kind: 'shared', end: true }])
+  assert.equal(after.slice(before).find((record) => record.update?.sessionUpdate === 'user_message_chunk')?.update._meta?.theirs, true)
+})

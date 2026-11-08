@@ -132,3 +132,47 @@ test('a task shared from its menu with only the people chosen: what goes shown f
   await expect(bob.locator('app-conversation .msg-actions.is-request')).toHaveCount(0)
   await expect(card).toHaveCount(0)
 })
+
+test('an answer goes back on its thread: only what Bob added, from his task’s menu, taken into the task Ana sent', async ({ browser }) => {
+  const [ana, bob] = await Promise.all([person(browser, 'Ana'), person(browser, 'Bob')])
+  await meetBeside(ana, bob)
+  const path = await ana.evaluate(async () => {
+    const [{ app, refreshConversations, openConversation }, { createConversation, appendRecords }, { metaRecord, userRecord, envelope }, { people, sendIt }] = await Promise.all([
+      import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js'), import('/caps/people/people.js')])
+    const { path } = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })
+    await appendRecords(app.fs, path, [metaRecord(app.deviceId, { title: 'Plan the trip' }), userRecord('Plan my trip to Lyon', app.deviceId),
+      envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: 'Here is the plan.' } }, 0)])
+    await refreshConversations()
+    await openConversation(path)
+    await sendIt(people.value[0].fp, { path, title: 'Plan the trip' })
+    return path
+  })
+  await bob.locator('.people-card').getByRole('button', { name: 'Open' }).click()
+  await expect(bob.locator('app-conversation .since')).toContainText('From Ana')
+  // Bob asks something of his own there, then sends back from its menu: to Ana, picked, and only his request goes.
+  await bob.evaluate(async () => {
+    const [{ app, openConversation }, { appendRecords }, { userRecord, envelope }] = await Promise.all([import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js')])
+    const here = String(app.current.value?.path)
+    await appendRecords(app.fs, here, [userRecord('Make it shorter', app.deviceId), envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: 'Two days, then.' } }, 0)])
+    await openConversation(here)
+  })
+  const row = (await openTasks(bob)).locator('.history-list li:not([aria-hidden])', { hasText: 'Plan the trip' })
+  await row.hover()
+  await row.getByRole('button', { name: 'More options' }).click()
+  await row.getByRole('button', { name: 'Send back to Ana' }).click()
+  const dialog = bob.locator('app-share-dialog dialog[open]')
+  await expect(dialog.getByRole('radio', { name: 'Ana' })).toBeChecked()
+  await expect(dialog.getByText('1 request and its answer')).toBeVisible()
+  await dialog.getByRole('button', { name: 'Send' }).click()
+  await expect(dialog.locator('p[role="status"]')).toHaveText('Sent to Ana.')
+
+  // Ana's card says Bob answered; taken in, his answer is in her task, after a line from him, his request his.
+  const card = ana.locator('.people-card')
+  await expect(card).toContainText('Bob from the bakery answered “Plan the trip”')
+  await card.getByRole('button', { name: 'Take in' }).click()
+  await expect.poll(() => ana.evaluate(async () => (await import('/ui/state.js')).app.current.value?.path)).toBe(path)
+  await expect(ana.locator('app-conversation .since')).toContainText('From Bob from the bakery')
+  await expect(ana.locator('app-conversation .msg-user')).toHaveText(['Plan my trip to Lyon', 'Make it shorter'])
+  await expect(ana.locator('app-conversation .msg-actions.is-request')).toHaveCount(1)
+  await expect(card).toHaveCount(0)
+})

@@ -192,13 +192,14 @@ export async function stop(share) {
  * Opens the dialog on what to share, or on the link already made of it, on a wide window under what
  * was pressed: for a menu's item, what holds the menu, the task's row or the answer's actions; never
  * in a dialog, which closes as this one opens. Else under the task's own Share at its top (share.css).
- * @param {What} what @param {EventTarget | null} [from]
+ * @param {What} what @param {EventTarget | null} [from] @param {boolean} [others] on the other audience, People's, rather than a link
  */
-export async function openShare(what, from) {
+export async function openShare(what, from, others = false) {
   document.querySelector('.share-from')?.classList.remove('share-from')
   if (from instanceof Element && !from.closest('dialog')) (from.closest('[popover]')?.parentElement ?? from).classList.add('share-from')
   sharing.value = { ...what, sealed: what.item ? 0 : await sealedIn(what.path) }
-  await import('./dialog.js')
+  const dialog = await import('./dialog.js')
+  if (others) dialog.toward(audiences()[0] ?? null)
   app.dialog.value = 'share'
 }
 

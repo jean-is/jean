@@ -6,6 +6,7 @@ import { foldTurns, metaRecord, noteRecord, splitSuggestions, userRecord } from 
 import { join } from '../../core/fs.js'
 import { addFile } from '../../core/files.js'
 import { ulid } from '../../core/ulid.js'
+import { appendRecords } from '../../core/conversations.js'
 import { BRAND } from '../../brand.js'
 import { filesIn, filesOf, keeping } from '../../ui/export.js'
 import { copyOf, broughtIn } from './copy.js'
@@ -40,15 +41,16 @@ async function certificatesOf(file) {
 /**
  * The value of what is shared or sent: the copy as JSONL, with the files it made, and those shared with it when what Jean read goes
  * too, and its answers' certificates, in the language Jean speaks. @param {import('../../core/types.js').FS} fs @param {What} what
- * @param {{ reading: boolean, lang: string, aFile: string }} options reading: with what Jean read; aFile: what a file shared is called otherwise
+ * @param {{ reading: boolean, lang: string, aFile: string, since?: boolean }} options reading: with what Jean read; aFile: what a file shared is
+ * called otherwise; since: an answer back, only what came after the task's last answer sent, or after what someone sent it (since())
  * @returns {Promise<Value>}
  */
-export async function valueOf(fs, { path, title, item }, { reading, lang, aFile }) {
+export async function valueOf(fs, { path, title, item }, { reading, lang, aFile, since: back = false }) {
   const at = new Date().toISOString(), header = { format: 1, kind: 'conversation', id: ulid(), createdAt: at, by: 'user' }
   const made = (/** @type {Record<string, unknown>} */ meta, rawInput = {}) => ({ sessionUpdate: 'tool_call', toolCallId: 'made', title: '', status: 'completed', _meta: meta, rawInput })
   const answer = !item ? [] : 'text' in item ? [{ sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: item.text } }, ...(item.files?.length ? [made({ files: item.files })] : [])]
     : [made({ picture: item.picture }, { description: item.description })]
-  const whole = item ? '' : (await fs.read(path)) ?? ''
+  const whole = item ? '' : ((text) => (back ? since(text) : text))((await fs.read(path)) ?? '')
   const file = await keeping(item ? `${[header, ...answer.map((update) => ({ at, by: 'jean', step: 0, update }))].map((record) => JSON.stringify(record)).join('\n')}\n` : copyOf(whole, { read: reading, aFile }))
   return { format: 1, kind: item ? 'item' : 'task', lang, title, file, files: await filesOf(fs, path, file), certificates: await certificatesOf(whole) }
 }
@@ -62,19 +64,32 @@ export async function valueOf(fs, { path, title, item }, { reading, lang, aFile 
  * @param {{ projectDir: string, by: string, aFile: string, from: { from?: string, person?: string, thread?: { task: string, id: string }, id?: string }, words?: string }} options from: the note's data
  * @returns {Promise<{ path: string, records: import('../../core/types.js').Envelope[] }>} the task's path, and the records that came
  */
-export async function takeIn(fs, value, { projectDir, by, aFile, from, words }) {
-  const records = broughtIn(String(value.file ?? ''), value.files ?? {}, aFile).map(theirs), at = new Date().toISOString(), id = ulid()
+export async function takeIn(fs, value, options) {
+  const { records, block } = await cameIn(fs, value, options), id = ulid(), path = join(options.projectDir, 'conversations', `${id}.jsonl`)
+  const lines = [{ format: 1, kind: 'conversation', id, createdAt: new Date().toISOString(), by: options.by }, ...block, metaRecord(options.by, { title: String(value.title ?? '') })]
+  await fs.write(path, `${lines.map((line) => JSON.stringify(line)).join('\n')}\n`)
+  return { path, records }
+}
+
+/** An answer that came, added to the task it answers, in that task's project, between the same two notes (takeIn()). @param {import('../../core/types.js').FS} fs @param {string} path @param {Value} value @param {Omit<Parameters<typeof takeIn>[2], 'projectDir'>} options */
+export const takeInto = async (fs, path, value, options) => appendRecords(fs, path, (await cameIn(fs, value, { ...options, projectDir: path.slice(0, path.lastIndexOf('/conversations/')) })).block)
+
+/** What a value that came adds to a task: its files kept first, then its records between a note that they are someone else's and one where the user's start. @param {import('../../core/types.js').FS} fs @param {Value} value @param {Parameters<typeof takeIn>[2]} options */
+async function cameIn(fs, value, { projectDir, by, aFile, from, words }) {
+  const records = broughtIn(String(value.file ?? ''), value.files ?? {}, aFile).map(theirs)
   for (const { uri, name, mimeType = '' } of filesIn(records)) {
     const data = String(value.files?.[uri] ?? ''), bytes = bytesOf(data.slice(data.indexOf(',') + 1))
     if (!data || (await fs.exists(join(projectDir, uri)))) continue
     const pages = await (/\.pdf$/i.test(name) ? import('../files/pdf.js').then((pdf) => pdf.pdfPages(bytes)) : import('../files/extract.js').then((read) => read.extractPages(name, bytes))).catch(() => null)
     await addFile(fs, { projectDir, name, mimeType, bytes, pages: pages ?? [''], by })
   }
-  const lines = [{ format: 1, kind: 'conversation', id, createdAt: at, by }, opening(from), ...(value.kind === 'item' ? [theirs(userRecord(words || String(value.title ?? ''), 'user'))] : []), ...records,
-    noteRecord(`The user's own requests start here.`, { kind: 'shared', end: true }), metaRecord(by, { title: String(value.title ?? '') })]
-  const path = join(projectDir, 'conversations', `${id}.jsonl`)
-  await fs.write(path, `${lines.map((line) => JSON.stringify(line)).join('\n')}\n`)
-  return { path, records }
+  return { records, block: [opening(from), ...(value.kind === 'item' ? [theirs(userRecord(words || String(value.title ?? ''), 'user'))] : []), ...records, noteRecord(`The user's own requests start here.`, { kind: 'shared', end: true })] }
+}
+
+/** A task's file from its header on, but only what came after its last answer sent (`meta.sent`) or after what someone sent it, its own requests then. @param {string} file */
+function since(file) {
+  const lines = file.split('\n'), last = lines.findLastIndex((line) => { try { const { update: u, meta } = JSON.parse(line); return Boolean(meta?.sent) || (u?.sessionUpdate === '_system_note' && u.data?.kind === 'shared' && u.data.end) } catch { return false } })
+  return last > 0 ? [lines[0], ...lines.slice(last + 1)].join('\n') : file
 }
 
 /** A request that came, marked as someone else's, which the room draws without its actions and never counts as the user's. @param {import('../../core/types.js').Envelope} record */

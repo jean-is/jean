@@ -162,6 +162,11 @@ test('a task sent to someone met waits for them, sealed as it came, under its id
   const other = { ...profile('Bob', bob.fs), secrets: bob.secrets, get: bob.get, set: bob.set, all: bob.all }
   const [arrived] = await arrivalsOf(other)
   assert.deepEqual([arrived.from, arrived.name, arrived.title, arrived.words, arrived.value.title, arrived.thread?.id], [fpA, 'Ana', 'Budget 2027', 'For Monday', 'Budget 2027', 'thread'])
+  // An answer back on the thread is kept as what came is, and opens as an answer.
+  await sendTo(bob, fpA, { title: 'Budget 2027', words: 'Done', value: VALUE, thread: THREAD }, 'reply')
+  assert.equal((await received(ana, await next((await personOf(ana)).token)))?.kind, 'reply')
+  const [answer] = await arrivalsOf(ana)
+  assert.deepEqual([answer.kind, answer.name, answer.thread?.id], ['reply', 'Bob from the bakery', 'thread'])
   for (let n = 0; n < 25; n++) await received(bob, await sendTo(ana, fpB, { title: `${n}`, words: '', value: VALUE, thread: THREAD }).then(() => next((/** @type {any} */ (JSON.parse(bob.secrets.person))).token)))
   assert.equal((await bob.fs.list(ARRIVALS)).length, 20)
 })

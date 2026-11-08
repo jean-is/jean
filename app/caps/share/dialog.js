@@ -30,6 +30,8 @@ const [mine, working, coded, copied] = /** @type {const} */ ([signal(true), sign
 const told = signal(/** @type {{ id: string, word: string } | null} */ (null))
 /** The audience picked other than a link, People's; none for a link, or the first other where no link can be made. */
 const to = signal(/** @type {import('../../ui/caps.js').Slot | null} */ (null))
+/** The dialog opened on an audience: People's for an answer back, none for a link. @param {import('../../ui/caps.js').Slot | null} slot */
+export const toward = (slot) => { to.value = slot }
 
 /** The link's QR code for a phone's camera, which share.css draws dark on light, or none where there is none to draw. @param {ReturnType<typeof codeOf>} code */
 const drawn = (code) => code && html`<svg class="share-code" role="img" aria-label=${t('share.code')} viewBox="-4 -4 ${code.size + 8} ${code.size + 8}"><path d=${code.d}/></svg><p class="share-point">${t('share.point')}</p>`

@@ -198,16 +198,17 @@ const quiet = () => new Promise((done) => { const stop = effect(() => { if (!ans
 /**
  * Sends a task, or one thing it made, to someone met, with what Jean read for a task when the person says so and a few words of theirs; the
  * task keeps that it went, which an answer back follows (D727). During an answer only for send_to, whose answer then counts it. Its size.
- * @param {string} fp @param {import('../share/value.js').What} what @param {{ reading?: boolean, words?: string }} [options] @param {boolean} [during]
+ * An answer back (`back`, the thread a task someone sent opens) holds only what came after it, or after the last answer.
+ * @param {string} fp @param {import('../share/value.js').What} what @param {{ reading?: boolean, words?: string, back?: { task: string, id: string } }} [options] @param {boolean} [during]
  */
-export async function sendIt(fp, what, { reading = false, words = '' } = {}, during = false) {
+export async function sendIt(fp, what, { reading = false, words = '', back } = {}, during = false) {
   if (!during) await quiet()
   const { valueOf } = await import('../share/value.js')
-  const value = await valueOf(app.fs, what, { reading, lang: locale.peek(), aFile: t('people.aFile') })
-  const thread = { task: what.path.slice(-32, -6), id: base64url(random(16)) }
-  const size = await sendTo(await contextOf(), fp, { title: what.title, words: words.trim().slice(0, 280), value, thread })
+  const value = await valueOf(app.fs, what, { reading, lang: locale.peek(), aFile: t('people.aFile'), since: Boolean(back) })
+  const thread = back ?? { task: what.path.slice(-32, -6), id: base64url(random(16)) }
+  const size = await sendTo(await contextOf(), fp, { title: what.title, words: words.trim().slice(0, 280), value, thread }, back ? 'reply' : 'send')
   await keepRecords(what.path, [metaRecord(app.deviceId, { sent: { to: fp, thread } })], !during)
-  act('people.send', { task: what.path, kind: what.item ? 'item' : 'task', size })
+  act('people.send', { task: what.path, kind: back ? 'reply' : what.item ? 'item' : 'task', size })
   return size
 }
 
@@ -217,9 +218,12 @@ const sending = signal(/** @type {Sending | null} */ (null))
 /** What would go, as it would, with what Jean read or not. @param {What} what @param {boolean} reading */
 async function measure(what, reading) {
   sending.value = { what, reading }
-  const value = await (await import('../share/value.js')).valueOf(app.fs, what, { reading, lang: locale.peek(), aFile: t('people.aFile') })
+  const value = await (await import('../share/value.js')).valueOf(app.fs, what, { reading, lang: locale.peek(), aFile: t('people.aFile'), since: Boolean(threadOf(what)) })
   if (sending.peek()?.what === what && sending.peek()?.reading === reading) sending.value = { what, reading, value }
 }
+/** The thread the task on screen opens, sent by someone met, whom an answer goes back to on it; none for another task. @param {{ path: string }} what */
+const threadOf = (what) => (app.current.peek()?.path === what.path ? app.current.peek()?.records ?? [] : []).flatMap(({ update: u }) => (u?.sessionUpdate === '_system_note'
+  && u.data.kind === 'shared' && !u.data.end && u.data.person && u.data.thread ? [{ fp: u.data.person, thread: u.data.thread }] : [])).at(-1)
 /** A JSONL's records, those that read. @param {string} file */
 const recordsOf = (file) => file.split('\n').flatMap((line) => { try { return [JSON.parse(line)] } catch { return [] } })
 
@@ -231,7 +235,8 @@ async function submit(event) {
   if (!now || !one || now.busy) return
   sending.value = { ...now, busy: true, wrong: '' }
   try {
-    await sendIt(one.fp, now.what, { reading: now.reading, words: String(form.get('words') ?? '') })
+    const back = threadOf(now.what)
+    await sendIt(one.fp, now.what, { reading: now.reading, words: String(form.get('words') ?? ''), back: back?.fp === one.fp ? back.thread : undefined })
     sending.value = { ...now, busy: false, said: t('people.sentTo', { name: one.name }) }
   } catch (error) {
     const reason = /** @type {any} */ (error)?.reason
@@ -276,17 +281,32 @@ const went = (records) => {
 
 /** What came opened: a task of the person's in the project on screen, after a note that it is someone else's (../share/value.js), and gone from what waits. @param {Awaited<ReturnType<typeof arrivalsOf>>[number]} one */
 export async function openArrival(one) {
-  const { takeIn } = await import('../share/value.js')
-  const { path } = await takeIn(app.fs, one.value, { projectDir: app.projectDir, by: app.deviceId, aFile: t('people.aFile'), words: one.words,
-    from: { from: one.from, person: one.from, id: one.id, ...(one.thread && { thread: one.thread }) } })
+  const { takeIn, takeInto } = await import('../share/value.js'), into = one.kind === 'reply' ? await answered(one) : ''
+  const options = { by: app.deviceId, aFile: t('people.aFile'), words: one.words, from: { from: one.from, person: one.from, id: one.id, ...(one.thread && { thread: one.thread }) } }
+  const path = into ? (await takeInto(app.fs, into, one.value, options), into) : (await takeIn(app.fs, one.value, { ...options, projectDir: app.projectDir })).path
   await app.fs.remove(`${ARRIVALS}/${one.id}.json`)
   await Promise.all([refreshConversations(), refresh()])
-  await openConversation(path)
+  // In the project on screen it opens there, read again even where it was open; in another, by its address.
+  if (path.startsWith(`${app.projectDir}/`)) await openConversation(path)
+  else location.hash = (await import('../../ui/router.js')).hashFor(app.projects.value.find((project) => path.startsWith(`${project.dir}/`)) ?? app.project.value, path.slice(-32, -6))
+}
+
+/**
+ * The task an answer answers, in any project: the one its thread names, holding that it went to whoever answers, on that thread; none
+ * otherwise, the answer then opening as a task of its own. @param {Awaited<ReturnType<typeof arrivalsOf>>[number]} one
+ */
+async function answered(one) {
+  if (!/^[0-9A-HJKMNP-TV-Z]{26}$/.test(one.thread?.task ?? '')) return ''
+  for (const dir of new Set([app.projectDir, ...app.projects.value.map((project) => project.dir)])) {
+    const path = `${dir}/conversations/${one.thread?.task}.jsonl`
+    if (((await app.fs.read(path)) ?? '').split('\n').some((line) => { try { const sent = JSON.parse(line).meta?.sent; return sent?.to === one.from && sent.thread?.id === one.thread?.id } catch { return false } })) return path
+  }
+  return ''
 }
 
 /** The card of what came, above the conversation on each of the person's devices: who sent what, their words, Open and Not now. @param {Awaited<ReturnType<typeof arrivalsOf>>[number]} one */
-const card = (one) => html`<aside class="offer people-card" role="note"><p>${tParts('people.came', { name: html`<bdi>${one.name}</bdi>`, title: html`<bdi>${one.title || t('conversation.untitled')}</bdi>` })}</p>
-  ${one.words ? html`<p dir="auto">${one.words}</p>` : nothing}<div class="row"><button class="button primary" @click=${() => openArrival(one).catch(warn)}>${t('people.open')}</button>
+const card = (one) => html`<aside class="offer people-card" role="note"><p>${tParts(one.kind === 'reply' ? 'people.answered' : 'people.came', { name: html`<bdi>${one.name}</bdi>`, title: html`<bdi>${one.title || t('conversation.untitled')}</bdi>` })}</p>
+  ${one.words ? html`<p dir="auto">${one.words}</p>` : nothing}<div class="row"><button class="button primary" @click=${() => openArrival(one).catch(warn)}>${t(one.kind === 'reply' ? 'people.takeIn' : 'people.open')}</button>
   <button class="button subtle" @click=${() => { later.value = new Set([...later.peek(), one.id]) }}>${t('people.notNow')}</button></div></aside>`
 
 /** send_to: this task, or one file it made, to one of the person's people by the name they gave them; asked first, as any `other` call is. @type {import('../../core/loop.js').Tool} */
@@ -314,6 +334,9 @@ register({ id: 'people', tools: [sendTool], lines: [{ name: 'send_to', line: "se
   settings: { id: 'people', at: 135, label: 'cap.people.name', icon: icons.people, also: () => t('people.add'), draw: lazyPage(() => import('./page.js')) },
   // What came, above the conversation, each until it is opened here or on another device, or put off.
   above: { at: 2, draw: () => arrivals.value.filter((one) => !later.value.has(one.id)).map(card) },
+  // In the ⋮ menu of a task someone met sent, on screen: Send back to them, in share's dialog on its people.
+  task: { at: 3, draw: (/** @type {{ path: string, title: string }} */ item, /** @type {(icon: unknown, label: string, act: () => unknown) => unknown} */ action) => ((back) => (back
+    ? action(icons.people, t('people.back', { name: people.value.find((one) => one.fp === back.fp)?.name ?? '' }), () => import('../share/share.js').then((share) => share.openShare(item, null, true))) : []))(threadOf(item)) },
   // Only people chosen, share's dialog's second audience (caps/share/dialog.js), and whom a task went to, which its Share at the top says.
   audience: { at: 1, when: offered, label: () => t('people.only'), draw: pane, went },
   // The room's line over what someone sent names them as the person does (ui/chat.js).

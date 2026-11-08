@@ -186,7 +186,7 @@ export async function received(ctx, bytes) {
     const { fp, name, waiting, ...kept } = from
     await ctx.set({ [metId(fp)]: JSON.stringify({ ...kept, mailbox: body.mailbox }) })
   }
-  if (kind === 'send' && typeof id === 'string' && ULID.test(id)) await keep(ctx, from.fp, id, bytes)
+  if ((kind === 'send' || kind === 'reply') && typeof id === 'string' && ULID.test(id)) await keep(ctx, from.fp, id, bytes)
   return { kind, from: from.fp, body, id }
 }
 
@@ -203,28 +203,29 @@ async function keep(ctx, fp, id, bytes) {
 /**
  * What waits, opened with this profile's key: each with who sent it, as this person calls them, its title, their words and its value. One that
  * doesn't open here (from someone forgotten, or kept by a folder this device shares without being paired) is passed over, never deleted.
- * @param {Context} ctx @returns {Promise<{ id: string, from: string, name: string, at: number, title: string, words: string, value: any, thread?: { task: string, id: string } }[]>}
+ * @param {Context} ctx @returns {Promise<{ id: string, kind: 'send' | 'reply', from: string, name: string, at: number, title: string, words: string, value: any, thread?: { task: string, id: string } }[]>}
  */
 export async function arrivalsOf(ctx) {
   const [me, people] = [await personOf(ctx), await peopleOf(ctx)]
   const opened = await Promise.all((await kept(ctx)).map(async ({ name, from, box }) => {
     const one = people.find((person) => person.fp === from)
     const { value } = (one && await openEnvelope(me, [one.key], bytesOf(box)).catch(() => null)) ?? {}
-    return one && value?.kind === 'send' && `${value.id}.json` === name ? [{ id: value.id, from, name: one.name, at: Number(value.at) || 0, title: String(value.body?.title ?? '').slice(0, 200),
+    return one && (value?.kind === 'send' || value?.kind === 'reply') && `${value.id}.json` === name ? [{ id: value.id, kind: value.kind, from, name: one.name, at: Number(value.at) || 0, title: String(value.body?.title ?? '').slice(0, 200),
       words: String(value.body?.words ?? '').slice(0, 280), value: value.body?.value ?? {}, ...(value.body?.thread && { thread: value.body.thread }) }] : []
   }))
   return opened.flat().sort((a, b) => a.at - b.at)
 }
 
 /**
- * A value sent to someone met, sealed to them and posted where they read: refused for someone who never answered, gone, or past what the relay
- * carries. Its size. @param {Context} ctx @param {string} fp @param {{ title: string, words: string, value: object, thread: { task: string, id: string } }} body
+ * A value sent to someone met, or an answer back on the thread they sent, sealed to them and posted where they read: refused for someone who
+ * never answered, gone, or past what the relay carries. Its size. @param {Context} ctx @param {string} fp
+ * @param {{ title: string, words: string, value: object, thread: { task: string, id: string } }} body @param {'send' | 'reply'} [kind]
  */
-export async function sendTo(ctx, fp, body) {
+export async function sendTo(ctx, fp, body, kind = 'send') {
   const [me, held] = [await personOf(ctx), await ctx.get(metId(fp))]
   const one = held ? /** @type {Met} */ (JSON.parse(held)) : null
   if (!one?.mailbox) refuse(one ? 'waiting' : 'gone')
-  const bytes = await letter(me, one.key, 'send', body, ctx)
+  const bytes = await letter(me, one.key, kind, body, ctx)
   if (bytes.length > LIMIT) refuse('large')
   await send(ctx.base, one.mailbox, bytes).catch((error) => refuse(error?.status === 404 ? 'gone' : error?.status === 413 ? 'large' : 'relay'))
   return bytes.length
