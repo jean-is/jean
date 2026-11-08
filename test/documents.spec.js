@@ -2152,7 +2152,8 @@ test.describe('paste', () => {
 
   test('what is pasted runs nothing and loads nothing but its pictures, without cookies nor the page\'s address, in Jean\'s own origin', async ({ page }) => {
     const requests = /** @type {string[]} */ ([])
-    page.on('request', async (request) => { if (!(await request.headerValue('referer')) && !(await request.headerValue('cookie'))) requests.push(request.url()) })
+    // Headers read once the page asked for them: one still being read as the test ends is let go, never failing it.
+    page.on('request', (request) => { Promise.all([request.headerValue('referer'), request.headerValue('cookie')]).then(([referer, cookie]) => { if (!referer && !cookie) requests.push(request.url()) }, () => {}) })
     await page.addInitScript(() => addEventListener('message', ({ data }) => { if (typeof data === 'string') (/** @type {any} */ (globalThis).pwned ??= []).push(data) }))
     await start(page, { markdown: 'Start.\n' })
     await caretAt(page, 'Start.', 6)
