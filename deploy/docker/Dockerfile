@@ -77,12 +77,31 @@ FROM --platform=$BUILDPLATFORM nginxinc/nginx-unprivileged:stable-alpine-slim@sh
 RUN sed -i 's/^worker_processes .*/worker_processes 2;/' /etc/nginx/nginx.conf \
  && grep -qx 'worker_processes 2;' /etc/nginx/nginx.conf
 
+# nginx's image for the platform built, which Jean's starts from.
+FROM nginxinc/nginx-unprivileged:stable-alpine-slim@sha256:5d8bb9437d74a600ec5dbf90c035451c724dc33eac8d3a71078f6f8612c345f6 AS nginx
+
+# Alpine's fixes that nginx's image doesn't have yet, for which Trivy fails CI: musl and musl-utils 1.2.6-r3
+# (CVE-2026-107891) and zlib after 1.3.2-r0 (CVE-2026-85091). apk upgrades them in a copy of the image for the
+# platform built, from the builder's own platform, running nothing of that copy's, and Jean's image takes only the
+# files they change and apk's record of them, so that an image for another platform still runs nothing under
+# emulation. This stage and the COPY from it go once nginx's image at the digest pinned has them, which Trivy says
+# when it scans that image alone.
+FROM --platform=$BUILDPLATFORM nginxinc/nginx-unprivileged:stable-alpine-slim@sha256:5d8bb9437d74a600ec5dbf90c035451c724dc33eac8d3a71078f6f8612c345f6 AS alpine-fixes
+USER root
+COPY --from=nginx / /target
+RUN apk --root /target upgrade --no-cache --no-scripts musl musl-utils zlib \
+ && mkdir /fixes \
+ && apk --root /target info -qL musl musl-utils zlib | grep . \
+  | tar -C /target -cf - -T - lib/apk/db/installed lib/apk/db/scripts.tar.gz lib/apk/db/triggers \
+  | tar -C /fixes -xf -
+
 # Jean: nginx's own image without root, as user 101, whose folders are group 0's, so any user OpenShift picks runs
 # it as well. Its entrypoint writes nginx.conf into conf.d/ with CONTENT_SECURITY_POLICY in place, an extra policy
 # that only tightens Jean's own (none by default), then brand.js and the manifests in the name APP_NAME gives Jean,
 # if any, into /tmp (D698): with a read-only root, those two folders are the ones to leave writable.
-FROM nginxinc/nginx-unprivileged:stable-alpine-slim@sha256:5d8bb9437d74a600ec5dbf90c035451c724dc33eac8d3a71078f6f8612c345f6
+FROM nginx
 ENV CONTENT_SECURITY_POLICY="" APP_NAME=""
+COPY --from=alpine-fixes /fixes/ /
 COPY --from=nginx-conf /etc/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY deploy/docker/nginx.conf /etc/nginx/templates/default.conf.template
 COPY --chmod=755 deploy/docker/app-name.sh /docker-entrypoint.d/40-app-name.sh
