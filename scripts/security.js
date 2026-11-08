@@ -3,8 +3,8 @@
 // its scripts; what a rule allows on purpose is listed here with the reason. A second pass looks through every tracked file
 // for what a secret looks like. CodeQL (.github/workflows/codeql.yml) looks further, at what flows where.
 import { execFileSync } from 'node:child_process'
-import { readFileSync } from 'node:fs'
-import { join, resolve } from 'node:path'
+import { readdirSync, readFileSync } from 'node:fs'
+import { join, resolve, sep } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
@@ -39,6 +39,7 @@ export const ALLOWED = {
     'app/caps/interactive/interactive.js': 'heard: source !== frame.contentWindow returns',
   },
   'blank-target': { 'app/ui/composer.js': 'the site\'s own privacy policy and terms; browsers open such a link without an opener anyway' },
+  cookie: { 'scripts/serve.js': 'the dev server reads the cookie npm run csp gives each browser it drives, to tell their reports apart (D326); never deployed' },
 }
 
 /** @typedef {{ rule: string, path: string, line: number, text: string }} Finding */
@@ -124,7 +125,17 @@ const RULES = [
   { rule: 'secrets-crossing', strings: /\bimport\(\s*['"][^'"]*\/secrets\.js['"]\s*\)[^\n]*\bcrossing\b|\{[^}]*\bcrossing\b[^}]*\}[^\n]*\bimport\(\s*['"][^'"]*\/secrets\.js['"]/g, where: /^app\/(?!caps\/devices\/)/ },
   // The store's keys (D721), which open every file the person's devices keep in common, are theirs alone too.
   { rule: 'secrets-store', strings: /\b(?:get|set|delete)Secrets?\([^)\n]*['"]store['"]|\bSTORE\b[^\n]*\bfrom\s*['"][^'"]*\/devices\/flow\.js['"]/g, where: /^app\/(?!caps\/devices\/)/ },
+  // No cookie, for tracking or anything else (D725): nothing of Jean's writes, reads, passes on or sends one.
+  { rule: 'cookie', code: /\b(?:document\.cookie|cookieStore|getSetCookie|headers\.cookie)\b/g },
+  { rule: 'cookie', strings: /\.(?!delete\()[\w$]+\(\s*['"`](?:set-)?cookie['"`]|\[\s*['"`](?:set-)?cookie['"`]\s*\]|['"`](?:set-)?cookie['"`]\s*:|\bcredentials\s*:\s*['"`]include['"`]/gi },
 ]
+
+/**
+ * Where a third party's code writes a cookie, found in its text as it ships, often minified on one line, so each finding
+ * shows what is around it. @param {string} path @param {string} text @returns {Finding[]}
+ */
+export const writesCookie = (path, text) => [...text.matchAll(/\bdocument\.cookie\s*=(?!=)|\bcookieStore\.set\b/g)]
+  .map(({ index }) => ({ rule: 'cookie', path, line: text.slice(0, index).split('\n').length, text: text.slice(Math.max(0, index - 40), index + 40).trim() }))
 
 /**
  * What one module does against the rules. @param {string} path relative to the root @param {string} text
@@ -145,6 +156,13 @@ export function scan(path, text) {
 export function modules() {
   return listed('*.js', '*.mjs')
     .filter((path) => path && /^(app|gateway|host|relay|requests|cli|scripts|deploy)\//.test(path) && !/^app\/vendor\//.test(path))
+}
+
+/** Third parties' code as Jean ships it, in app/vendor/, which git ignores and the builds fill; none before one. @returns {string[]} */
+function vendored() {
+  try {
+    return readdirSync(join(ROOT, 'app', 'vendor'), { recursive: true, encoding: 'utf8' }).filter((path) => /\.m?js$/.test(path)).map((path) => `app/vendor/${path.split(sep).join('/')}`)
+  } catch { return [] }
 }
 
 /** What a secret looks like: never in a tracked file. */
@@ -198,6 +216,8 @@ export function audit() {
   for (const path of tracked().filter((one) => /^\.github\/workflows\//.test(one))) all.push(...unpinned(path, readFileSync(join(ROOT, path), 'utf8')))
   for (const path of tracked().filter((one) => /^deploy\/.*(Dockerfile[^/]*|compose\.ya?ml)$/.test(one) && !one.endsWith('.dockerignore'))) all.push(...unpinnedImages(path, readFileSync(join(ROOT, path), 'utf8')))
   for (const path of modules()) all.push(...scan(path, readFileSync(join(ROOT, path), 'utf8')))
+  // What Jean ships of others' code writes no cookie either: npm run check fills app/vendor/ before its tests run this.
+  for (const path of vendored()) all.push(...writesCookie(path, readFileSync(join(ROOT, path), 'utf8')))
   for (const path of tracked()) {
     if (NOT_SECRETS[path]) continue
     let text = ''

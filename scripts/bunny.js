@@ -4,7 +4,7 @@
 // five. Bunny compresses as it serves, so the build's .br and .gz copies stay behind. A storage zone has no
 // `try_files`: the pull zone's script (deploy/bunny/pages.js) asks for <path>.html when an address has no ending, so a
 // file without one, LICENSE, is stored as LICENSE.html, with its own type. Every deploy also sets what the zone
-// must keep to: logging off, the header set (deploy/README.md), and files kept at the edge until the next deploy.
+// must keep to: logging off, cookies stripped, the header set (deploy/README.md), and files kept at the edge until the next deploy.
 // DEPLOY_TO=bunny:<storage zone> names the zone; BUNNY_STORAGE_KEY is its password, BUNNY_API_KEY the account's key
 // for the pull zone BUNNY_PULL_ZONE (its id), and BUNNY_STORAGE_HOST the zone's region, storage.bunnycdn.com, in
 // Germany, by default; CSP adds the organisation's own policy to the header's. No address but Bunny's own APIs is
@@ -36,6 +36,12 @@ export function typeOf (ending) {
   const type = ending ? TYPES[ending] ?? 'application/octet-stream' : 'text/plain'
   return /^text\/|^application\/json$/.test(type) ? `${type}; charset=utf-8` : type
 }
+
+/**
+ * What the pull zone keeps to, set at each deploy: no logs; no cookie of any kind (D725), Bunny stripping any an answer
+ * carries and pinning no visitor to a server with one of its own (a sticky session). A setting Bunny leaves out reads as 0.
+ */
+export const ZONE = { EnableLogging: false, DisableCookies: true, StickySessionType: 0 }
 
 /** Bunny's numbers for the edge rules used here (its API's EdgeRuleV2Model). */
 export const ACTION = { block: 4, header: 5, storage: 17 }
@@ -161,10 +167,12 @@ export async function deployToBunny ({ dist, zone, release, keep, env = process.
     }
   }))
 
-  // Logging off, files kept at the edge until the next deploy purges them and checked again by browsers before each
-  // use; read back, so a setting Bunny didn't take stops the deploy before anything is served.
-  await api(`/pullzone/${pullZone}`, { method: 'POST', body: JSON.stringify({ EnableLogging: false, CacheControlMaxAgeOverride: EDGE, CacheControlPublicMaxAgeOverride: BROWSER }) })
-  if ((await (await api(`/pullzone/${pullZone}`)).json()).EnableLogging !== false) throw new Error(`pull zone ${pullZone} still keeps logs: turn its logging off`)
+  // What the zone keeps to (ZONE), files kept at the edge until the next deploy purges them and checked again by browsers
+  // before each use; read back, so a setting Bunny didn't take stops the deploy before anything is served.
+  await api(`/pullzone/${pullZone}`, { method: 'POST', body: JSON.stringify({ ...ZONE, CacheControlMaxAgeOverride: EDGE, CacheControlPublicMaxAgeOverride: BROWSER }) })
+  const taken = await (await api(`/pullzone/${pullZone}`)).json()
+  const refused = Object.keys(ZONE).filter((name) => (taken[name] ?? 0) !== ZONE[/** @type {keyof typeof ZONE} */ (name)])
+  if (refused.length) throw new Error(`pull zone ${pullZone} didn't take ${refused.join(', ')}: it must keep no logs and no cookies (D725)`)
 
   const existing = /** @type {Array<{ Guid?: string, Description?: string }>} */ (pulled.EdgeRules ?? [])
   for (const rule of rulesFor({ id: stored.Id, name: zone }, release, env.CSP)) {

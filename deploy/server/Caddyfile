@@ -10,14 +10,21 @@
 	}
 }
 
+# No cookie of any kind (D725): one a service's answer would carry is dropped before it leaves.
+(no-cookies) {
+	header -Set-Cookie
+}
+
 # The gateway, for the services a browser can't reach (D191, D344).
 gateway.jean.is {
+	import no-cookies
 	reverse_proxy gateway:8787
 }
 
 # The share host (D361), told the visitor's port beside the address it takes from Caddy (HOST_PROXIED): shares under /s/, the
 # root for the host's own page and the links made before. Published sites (D720) are Bunny's, never this server's.
 hst.ing {
+	import no-cookies
 	reverse_proxy share:8788 {
 		header_up X-Client-Port {remote_port}
 	}
@@ -29,6 +36,7 @@ www.hst.ing {
 
 # The relay (D45 · D226), told the visitor's port beside the address it takes from Caddy (RELAY_PROXIED).
 relay.jean.is {
+	import no-cookies
 	reverse_proxy relay:8791 {
 		header_up X-Client-Port {remote_port}
 	}
@@ -36,6 +44,7 @@ relay.jean.is {
 
 # Where the page for a key sends.
 keys.jean.is {
+	import no-cookies
 	reverse_proxy requests:8789
 }
 

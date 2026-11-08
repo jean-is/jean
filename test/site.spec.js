@@ -7,6 +7,7 @@ import { readFile } from 'node:fs/promises'
 import { createRequire } from 'node:module'
 import { test, expect } from '@playwright/test'
 import { sitePages } from '../site/site.js'
+import { answered, ask, connectFakeBrain, start } from './helpers.js'
 
 const JEAN_IS = 'http://127.0.0.1:4186/'
 const AXE = await readFile(createRequire(import.meta.url).resolve('axe-core/axe.min.js'), 'utf8')
@@ -45,6 +46,7 @@ for (const [name, page] of await sitePages()) {
         expect(violations).toEqual([])
         expect(ran, 'contrast was checked').toContain('color-contrast')
         if (name !== 'home') expect(ran, 'and the page as a whole: its language and its title').toEqual(expect.arrayContaining(['html-has-lang', 'html-lang-valid', 'document-title']))
+        expect(await tab.context().cookies(), 'and no cookie, of any kind (D725)').toEqual([])
         // A tour's popover, opened by the page's Play, and the tour it frames at its first stop.
         const play = tab.locator('.site-demo-play')
         if (!await play.count()) return
@@ -55,6 +57,16 @@ for (const [name, page] of await sitePages()) {
     }
   }
 }
+
+test('Jean leaves no cookie in the browser, of any kind, from its first screen to an answer (D725)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await ask(page, 'Hello')
+  await answered(page)
+  await page.reload()
+  await expect(page.locator('#prompt')).toBeVisible()
+  expect(await page.context().cookies()).toEqual([])
+})
 
 test('a page the browser translates into a language it has comes in that language’s own words instead, and from there into another (D723)', async ({ page }) => {
   // As Chrome marks a page it translates: the language it translates into, and its direction.

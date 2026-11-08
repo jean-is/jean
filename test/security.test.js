@@ -1,7 +1,7 @@
 // The security rules AGENTS.md writes down (scripts/security.js): held in the code's own syntax, in every module, on every push.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { audit, codeOf, scan, unpinned, unpinnedImages } from '../scripts/security.js'
+import { audit, codeOf, scan, unpinned, unpinnedImages, writesCookie } from '../scripts/security.js'
 
 const rules = (/** @type {string} */ text, path = 'app/ui/x.js') => scan(path, text).map(({ rule }) => rule)
 
@@ -37,6 +37,21 @@ test('it leaves alone what looks like it and isn’t', () => {
     'addEventListener("message", ({ source, data }) => { if (source === parent) run(data) })', 'frame.setAttribute("sandbox", "allow-scripts")', 'const a = `<a href="x" target="_blank" rel="noopener">`', 'setTimeout(run, 1)', 'Math.random()']) {
     assert.deepEqual(rules(text), [], text)
   }
+})
+
+test('nothing writes, reads, passes on or sends a cookie, for tracking or anything else (D725)', () => {
+  for (const [text, path] of [['document.cookie = "id=1"', 'app/ui/x.js'], ['const all = document.cookie', 'app/caps/x/x.js'], ['await cookieStore.set("id", "1")', 'app/ui/x.js'],
+    ['headers.set("Set-Cookie", "id=1")', 'host/host.js'], ["res.setHeader('set-cookie', id)", 'relay/serve.js'], ["new Response(body, { headers: { 'Set-Cookie': id } })", 'requests/requests.js'],
+    ['for (const one of response.headers.getSetCookie()) out.append(one)', 'gateway/gateway.js'], ["const id = request.headers.get('cookie')", 'host/host.js'], ['const id = req.headers.cookie', 'relay/serve.js'],
+    ["const id = req.headers['cookie']", 'requests/serve.js'], ["await fetch(url, { credentials: 'include' })", 'app/core/llm.js'], ['const a = `${document.cookie}`', 'deploy/bunny/pages.js']]) {
+    assert.deepEqual(rules(text, path), ['cookie'], text)
+  }
+  for (const text of ["t('No cookies, ever')", '// document.cookie', "headers.delete('set-cookie')", "const rule = { rule: 'cookie', path }", 'const cookie = 1', "await fetch(url, { credentials: 'omit' })"]) {
+    assert.deepEqual(rules(text, 'host/host.js'), [], text)
+  }
+  assert.deepEqual(writesCookie('app/vendor/x.js', 'a();document.cookie=n+"="+v;b()').map(({ rule, line }) => [rule, line]), [['cookie', 1]])
+  assert.deepEqual(writesCookie('app/vendor/x.js', 'x\ncookieStore.set(n, v)').map(({ line }) => line), [2])
+  assert.deepEqual(writesCookie('app/vendor/x.js', 'if (document.cookie == "") read(document.cookie)'), [])
 })
 
 test('a workflow’s action is named by its commit, never by a tag that can move', () => {

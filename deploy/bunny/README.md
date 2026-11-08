@@ -9,7 +9,7 @@ Bunny compresses as it serves, WebAssembly included, so the build's `.br` and `.
 In Bunny's dashboard, `jean-site` standing for the storage zone's name:
 
 1. **Storage › Add Storage Zone:** `jean-site`, main region Germany, no replicas outside Europe.
-2. **CDN › Add Pull Zone:** origin type *Storage Zone*, `jean-site`. Under **Logging**, turn logging off; each deploy turns it off again and stops if Bunny still keeps logs.
+2. **CDN › Add Pull Zone:** origin type *Storage Zone*, `jean-site`. Under **Logging**, turn logging off; each deploy turns it off again, strips cookies and keeps sticky sessions off (Jean sets no cookie, D725), and stops if Bunny didn't take one.
 3. **Edge Scripting › Add Script:** a *Middleware* script with [`pages.js`](pages.js) as its code, linked to the pull zone, *Run script before cache* left off. Each deploy stops if the pull zone has no script.
 4. **The pull zone › Hostnames:** the address Jean will keep, with Bunny's free certificate, after a CNAME record of that name for the pull zone's `b-cdn.net` name, not proxied. At a domain's apex, the DNS host must flatten the CNAME, as Cloudflare's does.
 5. **Another name for the same site**, such as `www`: add it as a hostname too, then an edge rule redirecting it, *Redirect to URL* `https://<the address>%{Request.Path}`, status 301, when the request header `Host` is that name.
@@ -28,7 +28,7 @@ Then deploy a commit, with the site's own policy and address:
 . ~/.jean-bunny && DEPLOY_TO=bunny:jean-site POLICY="$(cat policy.json)" ADDRESS=https://jean.example/ npm run deploy
 ```
 
-It builds the commit as git has it, uploads it to `releases/<when>-<commit>/`, sets the pull zone (logging off, files kept at the edge until the next deploy, browsers told `public, max-age=0`, since Bunny caches nothing marked `no-cache`, and the rest of the header set), points it at the new release, purges the cache twice, 15 seconds apart, so no edge keeps a file of the release before, and keeps the last five releases. `BUNNY_STORAGE_HOST` names the storage zone's region when it isn't Germany's, `storage.bunnycdn.com`.
+It builds the commit as git has it, uploads it to `releases/<when>-<commit>/`, sets the pull zone (logging off, cookies stripped, sticky sessions off, files kept at the edge until the next deploy, browsers told `public, max-age=0`, since Bunny caches nothing marked `no-cache`, and the rest of the header set), points it at the new release, purges the cache twice, 15 seconds apart, so no edge keeps a file of the release before, and keeps the last five releases. `BUNNY_STORAGE_HOST` names the storage zone's region when it isn't Germany's, `storage.bunnycdn.com`.
 
 To go back to an earlier release, open the pull zone's edge rule *jean: serve the current release*, put that release's folder in its path, and purge the cache.
 
@@ -46,7 +46,7 @@ Sites people publish from Jean (D720) are served by a pull zone of their own on 
 
 1. **hst.ing's DNS on Bunny DNS,** its records moved from where they are: `hst.ing` and `www.hst.ing` as A and AAAA records for Jean's server, as they are today. Only there does Bunny issue and renew a wildcard certificate itself.
 2. **Storage › Add Storage Zone:** `hst-sites`, main region Germany, no replicas outside Europe. Each site is a folder, named as the site.
-3. **CDN › Add Pull Zone:** origin type *Storage Zone*, `hst-sites`. Under **Logging**, turn logging off. Under **Caching**, files kept at the edge for a month, since each publish purges its site, and browsers told `max-age=0`, so a site published again shows at once.
+3. **CDN › Add Pull Zone:** origin type *Storage Zone*, `hst-sites`. Under **Logging**, turn logging off. Under **Caching**, *Disable Cookies* on, files kept at the edge for a month, since each publish purges its site, and browsers told `max-age=0`, so a site published again shows at once.
 4. **Edge Scripting › Add Script:** a *Middleware* script with [`sites.js`](sites.js) as its code, linked to the pull zone, *Run script before cache* left off. It finds each page's file and adds the sites' header set, whose `sandbox` keeps every page to an opaque origin; `test/publish.test.js` holds it to the share host's own, so after a change to `HEADERS` in `host/sites.js`, paste the script again.
 5. **The pull zone › Hostnames:** `*.hst.ing` with Bunny's free certificate, after a record in Bunny DNS sending `*.hst.ing` to the pull zone, and only once the registrar names Bunny's nameservers: Bunny checks a wildcard against public DNS.
 6. **The share host's keys:** the storage zone's password (**Storage › hst-sites › FTP & API Access**) as `BUNNY_STORAGE_KEY`, and the account's API key, which purges, as `BUNNY_API_KEY`, both in the server's `share.env`, never in the repository.

@@ -100,14 +100,15 @@ describe('deploy to Bunny', () => {
     await Promise.all([['index.html', '<!doctype html>'], ['index.html.br', 'x'], ['LICENSE', 'MIT'], ['ui/app.js', 'export {}'], ['.well-known/security.txt', 'Contact: mailto:a@example.org\n']].map(([path, text]) => writeFile(join(dist, path), text)))
     /** @type {Array<{ method: string, url: string, headers: Record<string, string>, body: string }>} */
     const calls = []
-    let logging = true
+    /** The pull zone's settings, as Bunny keeps them: logs and cookies, until the deploy sets them. */
+    let zone = { EnableLogging: true, DisableCookies: false }
     const real = globalThis.fetch
     globalThis.fetch = /** @type {typeof fetch} */ (async (input, init = {}) => {
       const url = String(input)
       const body = init.body instanceof Uint8Array ? Buffer.from(init.body).toString() : String(init.body ?? '')
       calls.push({ method: init.method ?? 'GET', url, headers: /** @type {Record<string, string>} */ (init.headers), body })
-      if (url.endsWith('/pullzone/7') && init.method === 'POST') logging = JSON.parse(body).EnableLogging
-      if (url.endsWith('/pullzone/7')) return Response.json({ StorageZoneId: 3, MiddlewareScriptId: 9, EnableLogging: logging, EdgeRules: [{ Guid: 'g1', Description: 'jean: serve the current release' }] })
+      if (url.endsWith('/pullzone/7') && init.method === 'POST') zone = { ...zone, ...JSON.parse(body) }
+      if (url.endsWith('/pullzone/7')) return Response.json({ StorageZoneId: 3, MiddlewareScriptId: 9, ...zone, EdgeRules: [{ Guid: 'g1', Description: 'jean: serve the current release' }] })
       if (url.endsWith('/storagezone/3')) return Response.json({ Id: 3, Name: 'jean-site' })
       if (url.endsWith(`/${RELEASES}/`)) return Response.json(['20261001-000000-a', '20261002-000000-b', '20261027-120000-c'].map((ObjectName) => ({ ObjectName, IsDirectory: true })))
       return new Response(null, { status: init.method === 'PUT' ? 201 : 200 })
@@ -129,6 +130,7 @@ describe('deploy to Bunny', () => {
     assert.equal(rules.at(-1).ActionParameter3, `/${RELEASES}/20261027-120000-c/`, 'the switch comes last')
     assert.equal(rules.at(-1).Guid, 'g1', 'and replaces the rule it wrote before')
     assert.ok(calls.filter((call) => call.url.startsWith('https://api.bunny.net')).every((call) => call.headers.AccessKey === 'api'))
+    assert.deepEqual([zone.EnableLogging, zone.DisableCookies, zone.StickySessionType], [false, true, 0], 'no logs, and no cookie of any kind')
   })
 
   it('puts a file again that the Storage API failed to write, and stops at a refusal', async () => {
@@ -144,7 +146,7 @@ describe('deploy to Bunny', () => {
         puts.push(url)
         return puts.length === 1 ? Response.json({ HttpCode: refuse, Message: 'Unable to upload file: ' }, { status: refuse }) : new Response(null, { status: 201 })
       }
-      if (url.endsWith('/pullzone/7')) return Response.json({ StorageZoneId: 3, MiddlewareScriptId: 9, EnableLogging: false, EdgeRules: [] })
+      if (url.endsWith('/pullzone/7')) return Response.json({ StorageZoneId: 3, MiddlewareScriptId: 9, EnableLogging: false, DisableCookies: true, EdgeRules: [] })
       if (url.endsWith('/storagezone/3')) return Response.json({ Id: 3, Name: 'jean-site' })
       if (url.endsWith(`/${RELEASES}/`)) return Response.json([])
       return new Response(null, { status: 200 })
@@ -163,7 +165,7 @@ describe('deploy to Bunny', () => {
     }
   })
 
-  it('refuses a pull zone without its script, or one that keeps logs', async () => {
+  it('refuses a pull zone without its script, or one that keeps logs or cookies', async () => {
     const real = globalThis.fetch
     const env = { BUNNY_STORAGE_KEY: 'storage', BUNNY_API_KEY: 'api', BUNNY_PULL_ZONE: '7' }
     try {
@@ -172,6 +174,18 @@ describe('deploy to Bunny', () => {
       globalThis.fetch = /** @type {typeof fetch} */ (async (input) => (String(input).endsWith('/storagezone/3') ? Response.json({ Id: 3, Name: 'other' }) : Response.json({ StorageZoneId: 3, MiddlewareScriptId: 9 })))
       await assert.rejects(deployToBunny({ dist: '/nowhere', zone: 'jean-site', release: 'r', keep: 5, env, say: () => {}, settle: 0 }), /doesn't serve the storage zone jean-site/)
       await assert.rejects(deployToBunny({ dist: '/nowhere', zone: 'jean-site', release: 'r', keep: 5, env: {}, say: () => {}, settle: 0 }), /BUNNY_STORAGE_KEY/)
+      // A zone that keeps what the deploy sets: its logs, or a cookie to pin each visitor to a server.
+      for (const [kept, refused] of /** @type {const} */ ([[{ EnableLogging: true, DisableCookies: true }, /didn't take EnableLogging:/], [{ EnableLogging: false }, /didn't take DisableCookies:/],
+        [{ EnableLogging: false, DisableCookies: true, StickySessionType: 1 }, /didn't take StickySessionType:/]])) {
+        const dist = await mkdtemp(join(tmpdir(), 'jean-bunny-'))
+        globalThis.fetch = /** @type {typeof fetch} */ (async (input, init = {}) => {
+          const url = String(input)
+          if (url.endsWith('/storagezone/3')) return Response.json({ Id: 3, Name: 'jean-site' })
+          if (url.endsWith('/pullzone/7')) return init.method === 'POST' ? new Response(null) : Response.json({ StorageZoneId: 3, MiddlewareScriptId: 9, ...kept })
+          return new Response(null, { status: 201 })
+        })
+        await assert.rejects(deployToBunny({ dist, zone: 'jean-site', release: 'r', keep: 5, env, say: () => {}, settle: 0 }), refused).finally(() => rm(dist, { recursive: true, force: true }))
+      }
     } finally {
       globalThis.fetch = real
     }
