@@ -436,6 +436,7 @@
   "since.prompt": "Was gibt es Neues seit dem letzten Mal?",
   "since.closed": "Bei geschlossenem Tab ruht die Arbeit, deshalb wurde das hier gerade erst gelesen.",
   "shared.came": "Mit Ihnen geteilt",
+  "shared.from": "Von {name}",
   "cap.machine.name": "Dieser Computer",
   "cap.machine.offer": "Den Entwicklungsserver einer Website oder deine eigenen Programme auf diesem Computer ausführen?",
   "cap.machine.yes": "Diesen Computer verwenden",

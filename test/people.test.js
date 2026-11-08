@@ -1,12 +1,14 @@
 // People (D727): meeting on pairing's exchange between two profiles, against the relay in this process; what a person mailbox takes.
 import { test } from 'node:test'
+import { randomBytes } from 'node:crypto'
 import assert from 'node:assert/strict'
 import { relay } from '../relay/relay.js'
 import { open, read } from '../app/ui/relay.js'
 import { fingerprintOf } from '../app/ui/seal.js'
 import { bytesOf } from '../app/caps/share/seal.js'
 import { pairingBox, codeOf, envelope } from '../app/caps/devices/pair.js'
-import { personOf, peopleOf, invite, heardHello, heardReveal, confirmed, accept, heardNonce, heardMet, received, forget, tidy, metId, nameId, WEEK } from '../app/caps/people/flow.js'
+import { memoryFS } from '../app/core/fs.js'
+import { personOf, peopleOf, invite, heardHello, heardReveal, confirmed, accept, heardNonce, heardMet, received, forget, tidy, metId, nameId, WEEK, sendTo, arrivalsOf, ARRIVALS } from '../app/caps/people/flow.js'
 
 const [JEAN, BASE] = ['https://jean.example', 'https://relay.example/']
 
@@ -28,10 +30,10 @@ function relayed() {
 }
 
 let clock = Date.parse('2026-11-09T09:00:00Z')
-/** A profile's secrets, and what the meeting needs of its app. @param {string} said */
-function profile(said) {
+/** A profile's secrets and files, and what the meeting needs of its app. @param {string} said */
+function profile(said, fs = memoryFS()) {
   const secrets = /** @type {Record<string, string>} */ ({})
-  return { secrets, get: async (/** @type {string} */ id) => secrets[id] ?? null, all: async () => ({ ...secrets }), base: BASE, address: `${JEAN}/`, now: () => clock, said: async () => said,
+  return { secrets, fs, get: async (/** @type {string} */ id) => secrets[id] ?? null, all: async () => ({ ...secrets }), base: BASE, address: `${JEAN}/`, now: () => clock, said: async () => said,
     set: async (/** @type {Record<string, string | null>} */ values) => { for (const [id, value] of Object.entries(values)) if (value === null) delete secrets[id]; else secrets[id] = value } }
 }
 /** The one message come to a mailbox since the last read, read with its token. @type {Map<string, number>} */
@@ -130,4 +132,48 @@ test('someone forgotten is told so; a week on, an invitation and someone who nev
   clock += WEEK + 1
   await tidy(ana)
   assert.equal(ana.secrets[`invite:${late.invite.id}`], undefined)
+})
+
+/** Ana and Bob met, each with the other's mailbox, Bob's answer taken by Ana. */
+async function met() {
+  const { ana, bob, inviting, accepting } = await meet()
+  await confirmed(ana, inviting, String(accepting.code))
+  await heardMet(bob, accepting, await next(accepting.token))
+  await received(ana, await next((await personOf(ana)).token))
+  return { ana, bob, fpA: await fingerprintOf((await personOf(ana)).public), fpB: await fingerprintOf((await personOf(bob)).public) }
+}
+const VALUE = { format: 1, kind: 'task', lang: 'en', title: 'Budget 2027', file: '{}\n', files: {}, certificates: [] }
+const THREAD = { task: '01JTASK0000000000000000000', id: 'thread' }
+
+test('a task sent to someone met waits for them, sealed as it came, under its id: their other device opens it too, once, and nothing more than 20 from one person', async () => {
+  relayed()
+  const { ana, bob, fpA, fpB } = await met()
+  const size = await sendTo(ana, fpB, { title: 'Budget 2027', words: 'For Monday', value: VALUE, thread: THREAD })
+  assert.ok(size > 0)
+  const bytes = await next((await personOf(bob)).token)
+  assert.equal((await received(bob, bytes))?.kind, 'send')
+  const files = await bob.fs.list(ARRIVALS)
+  assert.equal(files.length, 1)
+  assert.doesNotMatch(String(await bob.fs.read(`${ARRIVALS}/${files[0].name}`)), /Budget|Monday/)
+  // The same message again, as a relay may give it: written once.
+  await received(bob, bytes)
+  assert.equal((await bob.fs.list(ARRIVALS)).length, 1)
+  // Bob's other device, the same person with the same files, which his store would bring: it opens it as his first does.
+  const other = { ...profile('Bob', bob.fs), secrets: bob.secrets, get: bob.get, set: bob.set, all: bob.all }
+  const [arrived] = await arrivalsOf(other)
+  assert.deepEqual([arrived.from, arrived.name, arrived.title, arrived.words, arrived.value.title, arrived.thread?.id], [fpA, 'Ana', 'Budget 2027', 'For Monday', 'Budget 2027', 'thread'])
+  for (let n = 0; n < 25; n++) await received(bob, await sendTo(ana, fpB, { title: `${n}`, words: '', value: VALUE, thread: THREAD }).then(() => next((/** @type {any} */ (JSON.parse(bob.secrets.person))).token)))
+  assert.equal((await bob.fs.list(ARRIVALS)).length, 20)
+})
+
+test('nothing goes to someone who never answered, nor to someone forgotten, nor past what the relay carries', async () => {
+  relayed()
+  const { ana, bob, inviting, accepting } = await meet()
+  await confirmed(ana, inviting, String(accepting.code))
+  const fpB = await fingerprintOf((await personOf(bob)).public)
+  assert.equal(await reasonOf(sendTo(ana, fpB, { title: 'x', words: '', value: VALUE, thread: THREAD })), 'waiting')
+  assert.equal(await reasonOf(sendTo(ana, 'A'.repeat(22), { title: 'x', words: '', value: VALUE, thread: THREAD })), 'gone')
+  await heardMet(bob, accepting, await next(accepting.token))
+  await received(ana, await next((await personOf(ana)).token))
+  assert.equal(await reasonOf(sendTo(ana, fpB, { title: 'x', words: '', value: { ...VALUE, file: randomBytes(20_000_000).toString('base64') }, thread: THREAD })), 'large')
 })

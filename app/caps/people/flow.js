@@ -18,13 +18,18 @@ import { linkOf, parseLink, pairingBox, sealHello, openHello, sealNonce, openNon
 /** An invitation under way on the device that made it (`invite:<id>`): its secret, who it is for, which way, when, the tries left, and what came. @typedef {{ id: string, s: string, name: string, way: 'side' | 'link', at: number, tries: number, said?: string, hello?: Hello, nA?: string, code?: string }} Invite */
 /** An acceptance under way on the device that made it (`accept:<id>`): the link's secret and key, its reply mailbox, who it came from, and what came. @typedef {{ id: string, s: string, fpA: string, token: string, name: string, said: string, nB: string, at: number, key?: JsonWebKey, theirs?: string, code?: string }} Accept */
 /**
- * What the meeting needs of the app: the secrets, the relay's address, this Jean's web address ('' in the desktop app), the clock, and the
- * name this profile gives itself. @typedef {{ get: (id: string) => Promise<string | null>, set: (values: Record<string, string | null>) => Promise<unknown>,
- *   all: () => Promise<Record<string, string>>, base: string, address: string, now: () => number, said: () => Promise<string> }} Context
+ * What the meeting needs of the app: the secrets, the profile's files, the relay's address, this Jean's web address ('' in the desktop app),
+ * the clock, and the name this profile gives itself. @typedef {{ get: (id: string) => Promise<string | null>, set: (values: Record<string, string | null>) => Promise<unknown>,
+ *   all: () => Promise<Record<string, string>>, fs: import('../../core/types.js').FS, base: string, address: string, now: () => number, said: () => Promise<string> }} Context
  */
 
 export const PERSON = 'person'
 export const WEEK = 7 * 864e5
+/** The most a message may be as the relay carries it (relay/relay.js): nothing larger is sent. */
+export const LIMIT = 25_000_000
+/** Where what came from someone waits, sealed as it came, under its id; the person's store carries it to their other devices. */
+export const ARRIVALS = 'people'
+const ULID = /^[0-9A-HJKMNP-TV-Z]{26}$/
 /** The ids of someone met: who they are, and what this person calls them. @param {string} fp */
 export const metId = (fp) => `people:${fp}`
 /** @param {string} fp */
@@ -181,7 +186,48 @@ export async function received(ctx, bytes) {
     const { fp, name, waiting, ...kept } = from
     await ctx.set({ [metId(fp)]: JSON.stringify({ ...kept, mailbox: body.mailbox }) })
   }
+  if (kind === 'send' && typeof id === 'string' && ULID.test(id)) await keep(ctx, from.fp, id, bytes)
   return { kind, from: from.fp, body, id }
+}
+
+/** What waits from someone, as kept. @param {Context} ctx @returns {Promise<{ name: string, from: string, box: string }[]>} */
+const kept = async (ctx) => (await Promise.all((await ctx.fs.list(ARRIVALS)).filter((one) => one.name.endsWith('.json'))
+  .map(async ({ name }) => ({ name, ...JSON.parse(await ctx.fs.read(`${ARRIVALS}/${name}`) ?? '{}') })))).filter((one) => one.box)
+/** What came kept as it came, under its id, never over one there already; dropped once its sender has 20 waiting or 100 MB. @param {Context} ctx @param {string} fp @param {string} id @param {Uint8Array} bytes */
+async function keep(ctx, fp, id, bytes) {
+  const theirs = (await kept(ctx)).filter((one) => one.from === fp)
+  if (await ctx.fs.exists(`${ARRIVALS}/${id}.json`) || theirs.length >= 20 || theirs.reduce((sum, one) => sum + one.box.length, bytes.length) > 100e6) return
+  await ctx.fs.write(`${ARRIVALS}/${id}.json`, JSON.stringify({ format: 1, from: fp, box: base64url(bytes) }))
+}
+
+/**
+ * What waits, opened with this profile's key: each with who sent it, as this person calls them, its title, their words and its value. One that
+ * doesn't open here (from someone forgotten, or kept by a folder this device shares without being paired) is passed over, never deleted.
+ * @param {Context} ctx @returns {Promise<{ id: string, from: string, name: string, at: number, title: string, words: string, value: any, thread?: { task: string, id: string } }[]>}
+ */
+export async function arrivalsOf(ctx) {
+  const [me, people] = [await personOf(ctx), await peopleOf(ctx)]
+  const opened = await Promise.all((await kept(ctx)).map(async ({ name, from, box }) => {
+    const one = people.find((person) => person.fp === from)
+    const { value } = (one && await openEnvelope(me, [one.key], bytesOf(box)).catch(() => null)) ?? {}
+    return one && value?.kind === 'send' && `${value.id}.json` === name ? [{ id: value.id, from, name: one.name, at: Number(value.at) || 0, title: String(value.body?.title ?? '').slice(0, 200),
+      words: String(value.body?.words ?? '').slice(0, 280), value: value.body?.value ?? {}, ...(value.body?.thread && { thread: value.body.thread }) }] : []
+  }))
+  return opened.flat().sort((a, b) => a.at - b.at)
+}
+
+/**
+ * A value sent to someone met, sealed to them and posted where they read: refused for someone who never answered, gone, or past what the relay
+ * carries. Its size. @param {Context} ctx @param {string} fp @param {{ title: string, words: string, value: object, thread: { task: string, id: string } }} body
+ */
+export async function sendTo(ctx, fp, body) {
+  const [me, held] = [await personOf(ctx), await ctx.get(metId(fp))]
+  const one = held ? /** @type {Met} */ (JSON.parse(held)) : null
+  if (!one?.mailbox) refuse(one ? 'waiting' : 'gone')
+  const bytes = await letter(me, one.key, 'send', body, ctx)
+  if (bytes.length > LIMIT) refuse('large')
+  await send(ctx.base, one.mailbox, bytes).catch((error) => refuse(error?.status === 404 ? 'gone' : error?.status === 413 ? 'large' : 'relay'))
+  return bytes.length
 }
 
 /** Someone forgotten here and on the person's other devices, told where they read. @param {Context} ctx @param {string} fp */

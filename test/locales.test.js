@@ -36,6 +36,15 @@ for (const file of others) {
   }
 }
 
+test('no catalogue holds a key twice, which JSON would read as the last one alone', async () => {
+  const twice = []
+  for (const part of PARTS) for (const file of ['en.json', ...others]) {
+    const keys = [...(await readFile(new URL(file, folder(part)), 'utf8')).matchAll(/^ {2}"((?:[^"\\]|\\.)+)":/gm)].map(([, key]) => key)
+    twice.push(...keys.filter((key, i) => keys.indexOf(key) !== i).map((key) => `${part}${file} ${key}`))
+  }
+  assert.deepEqual(twice, [])
+})
+
 test('the language menu offers exactly the catalogues there are', async () => {
   const i18n = await readFile(new URL('../app/core/i18n.js', import.meta.url), 'utf8')
   const listed = JSON.parse((/export const LOCALES = (\[[^\]]*\])/.exec(i18n)?.[1] ?? '[]').replace(/'/g, '"'))

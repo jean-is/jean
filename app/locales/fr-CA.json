@@ -445,6 +445,7 @@
   "since.prompt": "Quoi de neuf depuis la dernière fois?",
   "since.closed": "Le travail s’arrête quand cet onglet est fermé : tout ceci vient d’être lu.",
   "shared.came": "Partagé avec vous",
+  "shared.from": "De la part de {name}",
   "cap.machine.name": "Votre ordinateur",
   "cap.machine.offer": "Faire tourner le serveur de développement d’un site, ou vos propres programmes, sur votre ordinateur?",
   "cap.machine.yes": "Utiliser votre ordinateur",

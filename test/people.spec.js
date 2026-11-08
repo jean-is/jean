@@ -3,7 +3,7 @@
 // screen shows are typed on Ana's; then each has the other, Ana's Jean naming Bob as she did, and where each reads. Chromium only:
 // Playwright's WebKit keeps nothing, where no one is kept (test/playwright.config.js).
 import { test, expect } from '@playwright/test'
-import { start, openSettings, RELAY_URL } from './helpers.js'
+import { start, openSettings, closeSettings, openTasks, RELAY_URL } from './helpers.js'
 
 /** @typedef {import('@playwright/test').Page} Page */
 
@@ -26,6 +26,26 @@ async function peoplePage(page) {
 }
 /** The people a Jean keeps, as People reads them. @param {Page} page */
 const peopleOf = (page) => page.evaluate(async () => (await import('/caps/people/people.js')).people.value.map(({ name, said, waiting, mailbox }) => ({ name, said, waiting: Boolean(waiting), reads: Boolean(mailbox) })))
+
+/** Ana adds Bob side by side, as the first test shows; each then has the other. @param {Page} ana @param {Page} bob */
+async function meetBeside(ana, bob) {
+  const settings = await peoplePage(ana)
+  await settings.getByRole('button', { name: 'Add a person' }).click()
+  await settings.getByLabel('Who is it for?').fill('Bob from the bakery')
+  await settings.getByRole('button', { name: 'Show a code to scan' }).click()
+  await bob.goto(await settings.getByTitle('The invitation’s link').inputValue())
+  const there = bob.locator('app-settings dialog[open]')
+  await there.getByLabel('Who sent you this?').fill('Ana')
+  await there.getByRole('button', { name: 'Accept' }).click()
+  const digits = there.locator('.people-digits')
+  await expect(digits).toHaveText(/^\d{3} \d{3}$/)
+  await settings.getByLabel('The six digits Bob from the bakery shows you or sends back').fill(String(await digits.textContent()))
+  await settings.getByRole('button', { name: 'Add' }).click()
+  await expect.poll(() => peopleOf(ana)).toEqual([{ name: 'Bob from the bakery', said: 'Bob', waiting: false, reads: true }])
+  await expect.poll(() => peopleOf(bob)).toEqual([{ name: 'Ana', said: 'Ana', waiting: false, reads: true }])
+  await closeSettings(ana)
+  await closeSettings(bob)
+}
 
 test('two people meet side by side: Bob’s six digits typed on Ana’s Jean, then each has the other', async ({ browser }) => {
   const [ana, bob] = await Promise.all([person(browser, 'Ana'), person(browser, 'Bob')])
@@ -57,4 +77,38 @@ test('two people meet side by side: Bob’s six digits typed on Ana’s Jean, th
   await settings.getByRole('button', { name: 'Done' }).click()
   await expect(settings.locator('.people-flow .list li')).toContainText(['Bob from the bakery'])
   await expect(settings.locator('.people-flow .list li')).toContainText(['Calls themselves Bob'])
+})
+
+test('a task sent from its menu to someone met: what goes shown first, then a card on their Jean, which opens it as theirs, from Ana', async ({ browser }) => {
+  const [ana, bob] = await Promise.all([person(browser, 'Ana'), person(browser, 'Bob')])
+  await meetBeside(ana, bob)
+  await ana.evaluate(async () => {
+    const [{ app, refreshConversations }, { createConversation, appendRecords }, { metaRecord, userRecord, envelope }] = await Promise.all([
+      import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js')])
+    const { path } = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })
+    await appendRecords(app.fs, path, [metaRecord(app.deviceId, { title: 'Plan the trip' }), userRecord('Plan my trip to Lyon', app.deviceId),
+      envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: 'Here is **the plan**.' } }, 0)])
+    await refreshConversations()
+  })
+  const row = (await openTasks(ana)).locator('.history-list li:not([aria-hidden])', { hasText: 'Plan the trip' })
+  await row.hover()
+  await row.getByRole('button', { name: 'More options' }).click()
+  await row.getByRole('button', { name: 'Send to…' }).click()
+  const dialog = ana.locator('app-people-send dialog[open]')
+  await expect(dialog.getByRole('radio', { name: 'Bob from the bakery' })).toBeChecked()
+  await expect(dialog.getByText('1 request and its answer')).toBeVisible()
+  await expect(dialog.getByText('They have a week to open it.')).toBeVisible()
+  await dialog.getByLabel('A few words for them').fill('For Monday')
+  await dialog.getByRole('button', { name: 'Send' }).click()
+  await expect(dialog.locator('p[role="status"]')).toHaveText('Sent to Bob from the bakery.')
+
+  // On Bob's Jean, a card: who sent what, their words; opened, it is a task of his, from Ana, her request without actions.
+  const card = bob.locator('.people-card')
+  await expect(card).toContainText('Ana sent you “Plan the trip”')
+  await expect(card).toContainText('For Monday')
+  await card.getByRole('button', { name: 'Open' }).click()
+  await expect(bob.locator('app-conversation .since')).toContainText('From Ana')
+  await expect(bob.locator('app-conversation .msg-user')).toHaveText('Plan my trip to Lyon')
+  await expect(bob.locator('app-conversation .msg-actions.is-request')).toHaveCount(0)
+  await expect(card).toHaveCount(0)
 })

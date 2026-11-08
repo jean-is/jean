@@ -445,6 +445,7 @@
   "since.prompt": "Chì ci hè di novu dapoi l’ultima volta ?",
   "since.closed": "U travagliu si ferma quandu st’unghjetta hè chjosa, dunque què hè statu lettu avà avà.",
   "shared.came": "Spartutu cun voi",
+  "shared.from": "Da {name}",
   "cap.machine.name": "St’urdinatore",
   "cap.machine.offer": "Lancià u servitore di sviluppu di un situ, o i vostri prugrammi, nant’à st’urdinatore ?",
   "cap.machine.yes": "Impiegà st’urdinatore",

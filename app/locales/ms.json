@@ -427,6 +427,7 @@
   "since.prompt": "Apa yang baharu sejak kali terakhir?",
   "since.closed": "Kerja berhenti selagi tab ini ditutup, jadi ini baru sahaja dibaca.",
   "shared.came": "Dikongsi dengan anda",
+  "shared.from": "Daripada {name}",
   "cap.machine.name": "Komputer ini",
   "cap.machine.offer": "Jalankan pelayan pembangunan sesebuah laman, atau program anda sendiri, pada komputer ini?",
   "cap.machine.yes": "Gunakan komputer ini",

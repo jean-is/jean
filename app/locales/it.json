@@ -445,6 +445,7 @@
   "since.prompt": "Che novità ci sono dall’ultima volta?",
   "since.closed": "Il lavoro si ferma mentre questa scheda è chiusa: tutto questo è stato letto adesso.",
   "shared.came": "Condiviso con te",
+  "shared.from": "Da {name}",
   "cap.machine.name": "Questo computer",
   "cap.machine.offer": "Eseguire il server di sviluppo di un sito, o i tuoi programmi, su questo computer?",
   "cap.machine.yes": "Usa questo computer",

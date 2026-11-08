@@ -427,6 +427,7 @@
   "since.prompt": "지난번 이후로 새로운 게 있어?",
   "since.closed": "이 탭이 닫혀 있는 동안에는 작업이 멈추므로, 이건 방금 읽은 내용이에요.",
   "shared.came": "나와 공유됨",
+  "shared.from": "보낸 사람: {name}",
   "cap.machine.name": "이 컴퓨터",
   "cap.machine.offer": "사이트의 개발 서버나 내 프로그램을 이 컴퓨터에서 실행할까요?",
   "cap.machine.yes": "이 컴퓨터 사용",

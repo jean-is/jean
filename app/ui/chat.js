@@ -202,8 +202,9 @@ function turnView(turn, live, files, upTo, last, sources, steered) {
   const routine = turn.notes.map((note) => note.data).find((data) => data.kind === 'routine')
   // A look the camera, or screen sharing, took on its own (D645, D699).
   const looked = turn.notes.find((note) => note.data.kind === 'look')?.data
-  // What someone else sent or shared: its line, and its requests theirs, without actions.
-  const came = turn.notes.find((note) => note.data.kind === 'shared' && !note.data.end), theirs = turn.user?.theirs
+  // What someone else sent or shared: its line, naming who sent it as the person does (caps/people), and its requests theirs, without actions.
+  const came = turn.notes.find((note) => note.data.kind === 'shared' && !note.data.end)?.data, theirs = turn.user?.theirs
+  const who = came?.kind === 'shared' && came.person ? slots('came')[0]?.name(came.person) : ''
   // A summary the brain read on from (D359).
   const summed = steps.findLast((step) => step.compaction)?.compaction
   if (summed) unlock('compact')
@@ -216,7 +217,7 @@ function turnView(turn, live, files, upTo, last, sources, steered) {
     if (!theirs && !(last && app.busy.value)) import('./edit.js').then(() => { editing.value = turn.at })
   }
   return html`<li class="turn">
-    ${came ? html`<p class="since">${icons.send}<span>${t('shared.came')} · ${when(turn.at)}</span></p>` : nothing}
+    ${came ? html`<p class="since">${icons.send}<span>${who ? t('shared.from', { name: who }) : t('shared.came')} · ${when(turn.at)}</span></p>` : nothing}
     ${looked?.kind === 'look' ? html`<p class="since">${looked.cap === 'screen' ? icons.screen : icons.camera}<span>${t(`cap.${looked.cap}.name`)} · ${when(turn.at)}</span></p>` : nothing}
     ${routine?.kind === 'routine' ? html`<button class="since" @click=${() => import('./knows.js').then((knows) => knows.showRoutine(routine.routine))}>${since ? html`${icons.since}<span><span dir="auto">${routine.title}</span> · ${relativeTime(since.since)}</span>`
       : html`${icons.alarm}<span>${t('cap.routines.name')} · <span dir="auto">${routine.title}</span></span>`}</button>` : nothing}

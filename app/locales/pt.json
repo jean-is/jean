@@ -445,6 +445,7 @@
   "since.prompt": "O que há de novo desde a última vez?",
   "since.closed": "O trabalho para enquanto este separador está fechado: isto acabou de ser lido.",
   "shared.came": "Partilhado consigo",
+  "shared.from": "De {name}",
   "cap.machine.name": "Este computador",
   "cap.machine.offer": "Correr o servidor de desenvolvimento de um site, ou os teus programas, neste computador?",
   "cap.machine.yes": "Usar este computador",

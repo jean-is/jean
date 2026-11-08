@@ -436,6 +436,7 @@
   "since.prompt": "Me ya sabunta tun lokacin ƙarshe?",
   "since.closed": "Aiki na tsayawa idan wannan shafi a rufe yake, don haka yanzun nan aka karanta wannan.",
   "shared.came": "An raba tare da ku",
+  "shared.from": "Daga {name}",
   "cap.machine.name": "Wannan kwamfutar",
   "cap.machine.offer": "A gudanar da sabar haɓaka ta wani shafi, ko shirye-shiryenka, a wannan kwamfutar?",
   "cap.machine.yes": "Yi amfani da wannan kwamfutar",

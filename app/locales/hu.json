@@ -436,6 +436,7 @@
   "since.prompt": "Mi újság legutóbb óta?",
   "since.closed": "A munka szünetel, amíg ez a lap zárva van, ezért ezt most olvasta el.",
   "shared.came": "Önnel megosztva",
+  "shared.from": "Feladó: {name}",
   "cap.machine.name": "Ez a számítógép",
   "cap.machine.offer": "Futtatnád egy webhely fejlesztői szerverét vagy a saját programjaidat ezen a számítógépen?",
   "cap.machine.yes": "Ennek a számítógépnek a használata",

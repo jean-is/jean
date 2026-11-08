@@ -427,6 +427,7 @@
   "since.prompt": "自上次以來有什麼新狀況？",
   "since.closed": "這個分頁關閉時工作會停止，所以這些是剛剛讀取的。",
   "shared.came": "與你共享的",
+  "shared.from": "來自 {name}",
   "cap.machine.name": "這台電腦",
   "cap.machine.offer": "在這台電腦上執行網站的開發伺服器或你自己的程式嗎？",
   "cap.machine.yes": "使用這台電腦",

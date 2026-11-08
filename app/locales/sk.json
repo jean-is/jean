@@ -454,6 +454,7 @@
   "since.prompt": "Čo je nové od minula?",
   "since.closed": "Keď je táto karta zatvorená, práca stojí, takže sa to prečítalo práve teraz.",
   "shared.came": "Zdieľané s vami",
+  "shared.from": "Od: {name}",
   "cap.machine.name": "Tento počítač",
   "cap.machine.offer": "Spustiť vývojový server webu, alebo svoje vlastné programy, v tomto počítači?",
   "cap.machine.yes": "Použiť tento počítač",

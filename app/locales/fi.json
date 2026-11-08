@@ -436,6 +436,7 @@
   "since.prompt": "Mitä uutta viime kerran jälkeen?",
   "since.closed": "Työ pysähtyy, kun tämä välilehti on suljettu, joten tämä luettiin juuri nyt.",
   "shared.came": "Jaettu kanssasi",
+  "shared.from": "Lähettäjä: {name}",
   "cap.machine.name": "Tämä tietokone",
   "cap.machine.offer": "Ajetaanko sivuston kehityspalvelin tai omia ohjelmiasi tällä tietokoneella?",
   "cap.machine.yes": "Käytä tätä tietokonetta",

@@ -4,3 +4,4 @@
 .people-qr { display: block; inline-size: min(100%, 14rem); margin-inline: auto; border-radius: 0.6rem; background: white; fill: black; forced-color-adjust: none; }
 .people-field { display: flex; align-items: center; gap: 0.5rem; } .people-field input { flex: 1; min-inline-size: 0; } .people-field input[readonly] { font: 0.875rem var(--mono); }
 .people-digits { text-align: center; font: 600 2.5rem/1.2 var(--mono); letter-spacing: 0.1em; user-select: all; } .people-type { inline-size: 10ch; font: 600 1.5rem var(--mono); letter-spacing: 0.15em; text-align: center; }
+.people-files { margin: 0; padding-inline-start: 1.25rem; } .people-send fieldset { border: 0; margin: 0; padding: 0; }

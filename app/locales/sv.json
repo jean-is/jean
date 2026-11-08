@@ -436,6 +436,7 @@
   "since.prompt": "Vad är nytt sedan sist?",
   "since.closed": "Arbetet stannar medan den här fliken är stängd, så det här lästes nyss.",
   "shared.came": "Delat med dig",
+  "shared.from": "Från {name}",
   "cap.machine.name": "Den här datorn",
   "cap.machine.offer": "Köra en webbplats utvecklingsserver, eller dina egna program, på den här datorn?",
   "cap.machine.yes": "Använd den här datorn",

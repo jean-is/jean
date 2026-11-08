@@ -454,6 +454,7 @@
   "since.prompt": "Co nowego od ostatniego razu?",
   "since.closed": "Gdy ta karta jest zamknięta, praca stoi, więc to zostało przeczytane przed chwilą.",
   "shared.came": "Udostępnione dla ciebie",
+  "shared.from": "Od osoby {name}",
   "cap.machine.name": "Ten komputer",
   "cap.machine.offer": "Uruchamiać serwer deweloperski strony albo własne programy na tym komputerze?",
   "cap.machine.yes": "Używaj tego komputera",
