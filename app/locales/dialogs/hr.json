@@ -23,6 +23,7 @@
   "cap.share.text": "Pošaljite zadatak, ili stranicu, grafikon, prezentaciju ili sliku, kao poveznicu koju primatelj može otvoriti.",
   "cap.sync.text": "Održava vaše zadatke, datoteke i pamćenje istima na drugim računalima, preko mape koju sinkronizira OneDrive, Dropbox, iCloud Drive ili Google Drive.",
   "cap.devices.text": "{name} i na telefonu ili drugom računalu, s vašim mozgovima, postavkama i projektima, zapečaćenima tako da ih čitaju samo vaši uređaji. Zadatak prelazi s jednog na drugi kad ga pošaljete.",
+  "cap.people.text": "Pošaljite zadatak ili ono što je izrađeno u aplikaciji {name} nekome tko je također koristi, s pečatom koji samo ta osoba može otvoriti, i dobijte odgovor u istom zadatku.",
   "cap.lock.text": "Vaši se zadaci, datoteke i ključevi otvaraju samo vašim pristupnim ključem ili lozinkom.",
   "cap.brain-local.text": "Privatno, besplatno i izvanmrežno: mozak koji radi na ovom računalu, ako je dovoljno snažno.",
   "collection.count": {
@@ -61,6 +62,7 @@
   "cap.share.hint": "Spremite kopiju zadatka.",
   "cap.sync.hint": "Spomenite da koristite i drugo računalo.",
   "cap.devices.hint": "Spomenite da ovo želite i na telefonu ili drugom računalu, ili to uključite ovdje.",
+  "cap.people.hint": "Spomenite da biste nekome htjeli nešto poslati, ili to uključite ovdje.",
   "cap.lock.hint": "Povežite uslugu ili započnite deset zadataka.",
   "cap.brain-local.hint": "Odaberite mozak koji radi na ovom uređaju.",
   "cap.memory.text": "{name} pamti trajne stvari koje spomenete, poput sklonosti, činjenica i ispravaka. Sve to možete vidjeti i promijeniti.",

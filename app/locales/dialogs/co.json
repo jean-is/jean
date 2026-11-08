@@ -23,6 +23,7 @@
   "cap.share.text": "Mandà un compitu, una pagina, un graficu, diapò o una fiura cum’è un ligame chì quellu chì u riceve pò apre.",
   "cap.sync.text": "Tene i vostri compiti, schedarii è memoria listessi nant’à i vostri altri urdinatori, per mezu d’un cartulare chì OneDrive, Dropbox, iCloud Drive o Google Drive sincrunizeghja.",
   "cap.devices.text": "{name} dinù nant’à u vostru telefuninu o un altru urdinatore, cù i vostri cervelli, parametri è prughjetti, sigillati per chì solu i vostri apparechji i possinu leghje. Un compitu passa da unu à l’altru quandu u mandate.",
+  "cap.people.text": "Mandate un compitu, o ciò chì {name} hà fattu, à qualchissia chì impiega dinù {name} : hè sigillatu per chì solu sta persona u possi apre, è a risposta torna in u listessu compitu.",
   "cap.lock.text": "I vostri compiti, schedarii è chjave s’aprenu solu cù a vostra chjave d’accessu o a vostra parolla d’entrata.",
   "cap.brain-local.text": "Privatu, gratuitu è fora di linea : un cervellu chì gira nant’à st’urdinatore, s’ellu hè abbastanza putente.",
   "collection.count": {
@@ -61,6 +62,7 @@
   "cap.share.hint": "Arregistrate una copia d’un compitu.",
   "cap.sync.hint": "Mintuvate ch’è vo impiegate dinù un altru urdinatore.",
   "cap.devices.hint": "Mintuvate ch’è vo vulerete què nant’à u vostru telefuninu o un altru urdinatore, o attivate sta funzione quì.",
+  "cap.people.hint": "Mintuvate ch’è vo vulerete mandà qualcosa à qualchissia, o attivate sta funzione quì.",
   "cap.lock.hint": "Cunnettite un serviziu, o principiate dece compiti.",
   "cap.brain-local.hint": "Sceglite u cervellu chì gira nant’à st’apparechju.",
   "cap.memory.text": "{name} si ricorda di e cose durevule ch’è vo mintuvate, cum’è preferenze, fatti è currezzioni. Pudete vede è cambià tuttu.",

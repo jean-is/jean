@@ -277,7 +277,7 @@ const casePages = signal(/** @type {typeof import('./case-pages.js') | null} */ 
 const approvalPages = signal(/** @type {typeof import('./approval-pages.js') | null} */ (null))
 
 /**
- * @typedef {'general' | 'brains' | 'appearance' | 'keyboard' | 'you' | 'connections' | 'web-search' | 'skills' | 'routines' | 'computer' | 'extensions' | 'capabilities' | 'approvals' | 'data' | 'devices'} Section
+ * @typedef {'general' | 'brains' | 'appearance' | 'keyboard' | 'you' | 'connections' | 'web-search' | 'skills' | 'routines' | 'computer' | 'extensions' | 'capabilities' | 'approvals' | 'data' | 'devices' | 'people'} Section
  * @typedef {Object} Place
  * @property {number} at       its place in the menu, lowest first
  * @property {string} label    its name in the menu
@@ -389,7 +389,7 @@ class Settings extends Element {
 // Its glyph for each capability: the case's rows (ui/case-pages.js) and the box's / menu (ui/complete.js).
 export const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
   files: 'file', meaning: 'meaning', made: 'table', documents: 'compose', tables: 'board', designs: 'palette', computer: 'computer', reflexes: 'signpost', memory: 'note', feedback: 'thumb-up', find: 'search', projects: 'layers', folders: 'folder-open', skills: 'scroll', routines: 'alarm', flows: 'flow',
-  'web-search': 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', 'double-check': 'double-check', since: 'since', notifications: 'bell', names: 'badge', live: 'voice', camera: 'camera', screen: 'screen', 'natural-voice': 'speaker', backup: 'backup', share: 'share', sync: 'sync', devices: 'devices', lock: 'lock', 'brain-local': 'brain-device', machine: 'machine', pictures: 'image', extensions: 'extensions',
+  'web-search': 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', 'double-check': 'double-check', since: 'since', notifications: 'bell', names: 'badge', live: 'voice', camera: 'camera', screen: 'screen', 'natural-voice': 'speaker', backup: 'backup', share: 'share', people: 'people', sync: 'sync', devices: 'devices', lock: 'lock', 'brain-local': 'brain-device', machine: 'machine', pictures: 'image', extensions: 'extensions',
 })
 
 /** @typedef {import('../core/settings.js').Look} Look */

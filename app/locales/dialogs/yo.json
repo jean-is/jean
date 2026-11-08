@@ -23,6 +23,7 @@
   "cap.share.text": "Ẹ fi iṣẹ́ kan ránṣẹ́, tàbí ojú-ìwé, àwòrán ìṣirò, ìgbékalẹ̀ tàbí àwòrán kan, gẹ́gẹ́ bí ìjápọ̀ tí ẹnikẹ́ni tí ẹ fi ránṣẹ́ sí lè ṣí.",
   "cap.sync.text": "Ó ń jẹ́ kí àwọn iṣẹ́, fáìlì àti ìrántí yín jẹ́ bákan náà lórí àwọn kọ̀ǹpútà yín mìíràn, nípasẹ̀ fódà kan tí OneDrive, Dropbox, iCloud Drive tàbí Google Drive ń mú ṣọ̀kan.",
   "cap.devices.text": "{name} lórí fóònù yín tàbí kọ̀ǹpútà mìíràn náà, pẹ̀lú àwọn ọpọlọ, ètò àti iṣẹ́ àkànṣe yín, tí a fi èdìdì dì kí àwọn ẹ̀rọ yín nìkan lè kà wọ́n. Iṣẹ́ kan máa ń lọ láti ọ̀kan sí òmíràn nígbà tí ẹ bá fi ránṣẹ́.",
+  "cap.people.text": "Ẹ fi iṣẹ́ kan, tàbí ohun tí {name} ṣe, ránṣẹ́ sí ẹnìkan tí òun náà ń lo {name}, tí a fi èdìdì dì kí òun nìkan lè ṣí i, kí ẹ sì gba ìdáhùn rẹ̀ padà nínú iṣẹ́ kan náà.",
   "cap.lock.text": "Àwọn iṣẹ́, fáìlì àti kọ́kọ́rọ́ yín máa ń ṣí pẹ̀lú passkey tàbí ọ̀rọ̀ aṣínà yín nìkan.",
   "cap.brain-local.text": "Àdáni, ọ̀fẹ́, ó sì ń ṣiṣẹ́ láìsí íntánẹ́ẹ̀tì: ọpọlọ tí ó ń ṣiṣẹ́ lórí kọ̀ǹpútà yìí, bí ó bá lágbára tó.",
   "collection.count": {
@@ -59,6 +60,7 @@
   "cap.share.hint": "Ẹ fi ẹ̀dà iṣẹ́ kan pamọ́.",
   "cap.sync.hint": "Ẹ sọ pé ẹ tún ń lo kọ̀ǹpútà mìíràn.",
   "cap.devices.hint": "Ẹ sọ pé ẹ fẹ́ èyí lórí fóònù yín tàbí kọ̀ǹpútà mìíràn, tàbí kí ẹ tàn án níbí.",
+  "cap.people.hint": "Ẹ sọ pé ẹ fẹ́ fi nǹkan kan ránṣẹ́ sí ẹnìkan, tàbí kí ẹ tàn án níbí.",
   "cap.lock.hint": "Ẹ so iṣẹ́ ìsìn kan pọ̀, tàbí ẹ bẹ̀rẹ̀ iṣẹ́ mẹ́wàá.",
   "cap.brain-local.hint": "Ẹ yan ọpọlọ tí ń ṣiṣẹ́ lórí ẹ̀rọ yìí.",
   "cap.memory.text": "{name} máa ń rántí àwọn nǹkan pípẹ́ tí ẹ mẹ́nu bà: ohun tí ẹ fẹ́, òtítọ́, àtúnṣe. Ẹ lè rí gbogbo rẹ̀, kí ẹ sì yí i padà.",

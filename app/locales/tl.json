@@ -302,6 +302,8 @@
   "cap.sync.yes": "Pumili ng folder",
   "cap.devices.name": "Ang mga device mo",
   "cap.devices.offer": "Gusto mo bang nasa telepono mo o sa ibang computer din ang mga utak, setting at proyekto mo? Idaragdag mo ito gamit ang QR code at anim na numero.",
+  "cap.people.name": "Mga tao",
+  "cap.people.offer": "Ipadala ito sa isang gumagamit din ng {name}, at matanggap ang sagot nila?",
   "cap.lock.name": "Lock",
   "cap.lock.offer": "I-lock ang mga gawain, file at key mo, para ikaw lang ang makapagbukas sa mga ito sa device na ito?",
   "cap.lock.yes": "Maglagay ng lock",

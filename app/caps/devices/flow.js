@@ -5,7 +5,7 @@
 import { DEFAULT_SETTINGS, loadSettings, saveSettings, parseFrontMatter, stringifyFrontMatter } from '../../core/settings.js'
 import { memoryFS, readJSON, writeJSON, walk } from '../../core/fs.js'
 import { ulid } from '../../core/ulid.js'
-import { crossing, getSecret, setSecret, setSecrets, deleteSecret } from '../../ui/secrets.js'
+import { crossing, getSecret, setSecret, setSecrets, deleteSecret, dropSecrets } from '../../ui/secrets.js'
 import { VAULT, encode, decode } from '../../ui/seal.js'
 import { DEFAULT_RULES } from '../../core/rules.js'
 import { filesIn } from '../../ui/export.js'
@@ -13,6 +13,7 @@ import { SERVICES, isService } from '../web-search/services.js'
 import { carried } from '../sync/mirror.js'
 import { CONDITIONAL, FOLLOWS, ULID, following, merged, ownOf, snapshotOf, stamp, timeOf, wins } from './bundle.js'
 import { MANIFEST } from './store-fs.js'
+import { PERSON, madePerson } from '../people/flow.js'
 
 /** @typedef {import('../../core/types.js').FS} FS */
 /** @typedef {import('../../core/settings.js').Settings} Settings */
@@ -401,6 +402,8 @@ export const quiet = (ctx) => follows(ctx, async (kept) => (ctx.now() - Math.max
  * this device (Home's front matter alone), and the devices it knows, B's among them. @param {Context} ctx @param {{ dir: string, name: string, colour?: string }} profile @param {Device} you B's record
  */
 export async function bundleOf(ctx, profile, you) {
+  // This profile as a person (caps/people), made here where it has none, so that the device added is the same person (D727).
+  if (!(await getSecret(ctx.fs, PERSON))) await setSecret(ctx.fs, PERSON, JSON.stringify(await madePerson()))
   const { value } = await look(ctx)
   // One kept on this device stays, but Home, its front matter alone, so that no second Home is made there; those that go, this device had.
   const projects = (await Promise.all((await ctx.fs.list('projects')).map(async ({ name }) => ({ path: `projects/${name}/project.md`, text: await ctx.fs.read(`projects/${name}/project.md`) }))))
@@ -655,5 +658,7 @@ export const alone = (fs, by, now, as, lock) => locked({ lock }, LISTING, async 
   // knew of the store goes, but the versions Markdown merges from, so that joined again its words meet the others' (D721).
   const removedAt = new Date(now).toISOString()
   await setSecrets(fs, { [SECRET]: null, [STORE]: null, [DEVICES]: JSON.stringify((await listOf(fs)).map((one) => (one.id === by ? one : { removedAt, ...one }))) })
+  // Nor is it the person any more, nor does it know whom the person met: the others' key turns (caps/people, D727).
+  await dropSecrets(fs, (id) => /^(person$|people:|invite:|accept:)/.test(id))
   await Promise.all(STORED.map((path) => fs.remove(path)))
 })

@@ -21,7 +21,7 @@ await Promise.all([useStrings('case'), styleSheet(new URL('data-pages.css', impo
 const GROUPS = /** @type {Record<string, string[]>} */ ({
   files: ['files', 'made', 'documents', 'tables', 'designs', 'folders', 'meaning', 'pictures'], remember: ['memory', 'feedback', 'projects', 'find', 'names'],
   again: ['skills', 'routines', 'flows'], web: ['web-search', 'browser', 'connections', 'since', 'extensions'],
-  bigger: ['computer', 'machine', 'helpers', 'double-check', 'reflexes', 'brain-local'], voice: ['live', 'camera', 'screen', 'natural-voice', 'notifications'], keep: ['backup', 'share', 'sync', 'devices', 'lock'],
+  bigger: ['computer', 'machine', 'helpers', 'double-check', 'reflexes', 'brain-local'], voice: ['live', 'camera', 'screen', 'natural-voice', 'notifications'], keep: ['backup', 'share', 'people', 'sync', 'devices', 'lock'],
 })
 /** A capability's group. @param {string} id */
 const groupOf = (id) => Object.keys(GROUPS).find((group) => GROUPS[group].includes(id)) ?? 'bigger'
@@ -30,7 +30,7 @@ const groupOf = (id) => Object.keys(GROUPS).find((group) => GROUPS[group].includ
 const OPENS = /** @type {Record<string, () => void>} */ ({
   memory: () => openSettings('you'), skills: () => openSettings('skills'), routines: () => openSettings('routines'),
   connections: () => openSettings('connections'), 'web-search': () => openSettings('web-search'), extensions: () => openSettings('extensions'), computer: () => openSettings('computer'), pictures: () => import('../caps/pictures/pictures.js').then((module) => openSettings(module.paged() ? 'brains/pictures' : 'brains')),
-  share: () => openSettings('data/links'), machine: () => import('../caps/machine/machine.js').then((module) => module.show()), sync: () => openSettings('data/sync'), devices: () => openSettings('devices'), lock: () => openSettings('data/lock'),
+  share: () => openSettings('data/links'), machine: () => import('../caps/machine/machine.js').then((module) => module.show()), sync: () => openSettings('data/sync'), devices: () => openSettings('devices'), people: () => openSettings('people'), lock: () => openSettings('data/lock'),
   'brain-local': () => openSettings('brains/device'), notifications: () => openSettings('general'), 'natural-voice': () => openSettings('general/natural'), find: () => { app.dialog.value = 'find' },
   browser: () => { app.dialog.value = null; import('../caps/browser/browser.js').then((module) => module.show()) },
   flows: () => { app.dialog.value = null; import('../caps/flows/flows.js').then((module) => module.here()) },

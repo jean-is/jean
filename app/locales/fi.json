@@ -302,6 +302,8 @@
   "cap.sync.yes": "Valitse kansio",
   "cap.devices.name": "Laitteesi",
   "cap.devices.offer": "Haluatko aivosi, asetuksesi ja projektisi myös puhelimeesi tai toiselle tietokoneelle? Lisäät laitteen QR-koodilla ja kuudella numerolla.",
+  "cap.people.name": "Ihmiset",
+  "cap.people.offer": "Haluatko lähettää tämän jollekulle, joka käyttää myös sovellusta {name}, ja saada vastauksen takaisin?",
   "cap.lock.name": "Lukitus",
   "cap.lock.offer": "Lukitaanko tehtäväsi, tiedostosi ja avaimesi, jotta vain sinä voit avata ne tällä laitteella?",
   "cap.lock.yes": "Aseta lukitus",

@@ -23,6 +23,7 @@
   "cap.share.text": "把任务、页面、图表、幻灯片或图片做成链接发送，收到的人都能打开。",
   "cap.sync.text": "通过 OneDrive、Dropbox、iCloud Drive 或 Google Drive 同步的文件夹，让你的任务、文件和记忆在其他电脑上保持一致。",
   "cap.devices.text": "在手机或另一台电脑上也能用 {name}，你的大脑、设置和项目一并带上，并经过密封，只有你的设备能读取。任务在你发送时从一台设备到另一台。",
+  "cap.people.text": "把任务或 {name} 做出的东西发给也在用 {name} 的人，并经过密封，只有对方能打开，回答也会回到同一个任务里。",
   "cap.lock.text": "你的任务、文件和密钥只能用你的通行密钥或密码打开。",
   "cap.brain-local.text": "私密、免费、离线：一个在这台电脑上运行的大脑，只要电脑性能够强。",
   "collection.count": {
@@ -59,6 +60,7 @@
   "cap.share.hint": "保存一个任务的副本。",
   "cap.sync.hint": "提到你也在用另一台电脑。",
   "cap.devices.hint": "提到你想在手机或另一台电脑上也用它，或者在这里开启。",
+  "cap.people.hint": "提到你想给某人发送东西，或者在这里开启。",
   "cap.lock.hint": "连接一个服务，或开始十个任务。",
   "cap.brain-local.hint": "选择在这台设备上运行的大脑。",
   "cap.memory.text": "{name} 会记住你提到的长期有用的信息，比如偏好、事实和更正。你可以查看和修改全部内容。",

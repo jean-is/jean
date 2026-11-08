@@ -23,6 +23,7 @@
   "cap.share.text": "Magpadala ng gawain, o ng page, chart, deck o larawan, bilang link na mabubuksan ng sinumang padalhan mo.",
   "cap.sync.text": "Pinapanatiling pareho ang mga gawain, file, at memorya mo sa iba mo pang computer, sa pamamagitan ng folder na sini-sync ng OneDrive, Dropbox, iCloud Drive o Google Drive.",
   "cap.devices.text": "{name} sa telepono mo o sa ibang computer din, kasama ang mga utak, setting at proyekto mo, selyado para mga device mo lang ang makabasa ng mga ito. Lumilipat ang isang gawain mula sa isang device papunta sa iba kapag ipinadala mo ito.",
+  "cap.people.text": "Magpadala ng gawain, o ng ginawa ni {name}, sa isang gumagamit din ng {name}, selyado para sila lang ang makabukas nito, at matanggap ang sagot nila sa parehong gawain.",
   "cap.lock.text": "Bumubukas lang ang mga gawain, file at key mo gamit ang passkey o password mo.",
   "cap.brain-local.text": "Pribado, libre at offline: isang utak na tumatakbo sa computer na ito, kung sapat ang lakas nito.",
   "collection.count": {
@@ -60,6 +61,7 @@
   "cap.share.hint": "Mag-save ng kopya ng isang gawain.",
   "cap.sync.hint": "Banggitin na gumagamit ka rin ng ibang computer.",
   "cap.devices.hint": "Banggitin na gusto mo ito sa telepono mo o sa ibang computer, o i-on ito rito.",
+  "cap.people.hint": "Banggitin na gusto mong magpadala ng isang bagay sa isang tao, o i-on ito rito.",
   "cap.lock.hint": "Magkonekta ng serbisyo, o magsimula ng sampung gawain.",
   "cap.brain-local.hint": "Piliin ang utak na tumatakbo sa device na ito.",
   "cap.memory.text": "Tinatandaan ng {name} ang mga pangmatagalang bagay na binabanggit mo: mga gusto, katotohanan, pagwawasto. Makikita at mababago mo ang lahat.",

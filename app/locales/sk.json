@@ -312,6 +312,8 @@
   "cap.sync.yes": "Vybrať priečinok",
   "cap.devices.name": "Vaše zariadenia",
   "cap.devices.offer": "Mať vaše mozgy, nastavenia a projekty aj v telefóne alebo na inom počítači? Zariadenie pridáte pomocou QR kódu a šiestich číslic.",
+  "cap.people.name": "Ľudia",
+  "cap.people.offer": "Poslať to niekomu, kto tiež používa aplikáciu {name}, a dostať odpoveď?",
   "cap.lock.name": "Zámok",
   "cap.lock.offer": "Zamknúť vaše úlohy, súbory a kľúče, aby ich v tomto zariadení mohli otvoriť len vy?",
   "cap.lock.yes": "Nastaviť zámok",

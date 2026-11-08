@@ -36,7 +36,7 @@ const OWN_OFFERS = ['voice.download', 'voice.whistle', 'live']
 /** An id Jean gives a brain or a connection: a ULID, never one a secret that stays has (computer-bridge, signin, share:…). */
 export const ULID = /^[0-9A-HJKMNP-TV-Z]{26}$/
 /** Those the catalogue (ui/discovery.js) holds only where a device can: unlocked where it can't, they would load there (D660). */
-export const CONDITIONAL = ['reflexes', 'meaning', 'notifications', 'camera', 'screen', 'share', 'sync', 'devices']
+export const CONDITIONAL = ['reflexes', 'meaning', 'notifications', 'camera', 'screen', 'share', 'sync', 'devices', 'people']
 
 /** An address, or one of several, on this computer. @param {unknown} url */
 const here = (url) => String(url).split(/\s+/).some((one) => /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:|\/|$)/.test(one))

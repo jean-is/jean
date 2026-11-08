@@ -307,6 +307,8 @@
   "cap.sync.yes": "Sceglie un cartulare",
   "cap.devices.name": "I vostri apparechji",
   "cap.devices.offer": "Avè i vostri cervelli, parametri è prughjetti dinù nant’à u vostru telefuninu o un altru urdinatore ? L’aghjunghjite cù un codice QR è sei cifre.",
+  "cap.people.name": "Persone",
+  "cap.people.offer": "Mandà què à qualchissia chì impiega dinù {name}, è riceve a so risposta ?",
   "cap.lock.name": "Serratura",
   "cap.lock.offer": "Serrà i vostri compiti, schedarii è chjave, per chì solu voi i pudete apre nant’à st’apparechju ?",
   "cap.lock.yes": "Mette una serratura",

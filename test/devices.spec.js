@@ -193,9 +193,9 @@ test('a device added: six digits typed on the one that has the Jean, and the oth
   expect(settled.voice).toBe('Kyoko')
   expect(settled.urls.relay).toBe(RELAY_URL)
   expect(settled.unlocked).toContain('devices')
-  // Its keys: those that cross, never a plan's, the bridge's, a connection's tokens or a sign-in's; its own, and the store's.
+  // Its keys: those that cross, never a plan's, the bridge's, a connection's tokens or a sign-in's; its own, the store's, and this profile as a person (D727).
   const keys = JSON.parse(String(await read(b, '.secrets/keys.json')))
-  expect(Object.keys(keys).sort()).toEqual([NOTES, CLOUD.id, 'device', 'devices', 'search:brave', 'store'])
+  expect(Object.keys(keys).sort()).toEqual([NOTES, CLOUD.id, 'device', 'devices', 'person', 'search:brave', 'store'])
   expect(JSON.parse(keys.devices).map((/** @type {{ removedAt?: string }} */ one) => Boolean(one.removedAt))).toEqual([false, false])
   expect([keys[CLOUD.id], keys[NOTES], keys['search:brave']]).toEqual(['key of the cloud', 'key of notes', 'key of brave'])
   expect(JSON.stringify(keys)).not.toMatch(/key of the plan|key of the bridge|tokens of mail|token of the sign-in/)

@@ -302,6 +302,8 @@
   "cap.sync.yes": "Zaɓi fayil ɗin ajiya",
   "cap.devices.name": "Na'urorinka",
   "cap.devices.offer": "Kana so ƙwaƙwalwarka, saitunanka da ayyukanka su kasance a wayarka ko wata kwamfuta ma? Za ka ƙara ta da lambar QR da lambobi shida.",
+  "cap.people.name": "Mutane",
+  "cap.people.offer": "Kana so ka aika wannan ga wani mai amfani da {name}, ka kuma sami amsarsu?",
   "cap.lock.name": "Kulle",
   "cap.lock.offer": "A kulle ɗawainiyoyinka, fayilolinka da makullanka, don kai kaɗai ka iya buɗe su a wannan na'urar?",
   "cap.lock.yes": "Saka kulle",

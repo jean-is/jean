@@ -37,10 +37,12 @@ const KINDS = /** @type {Record<string, Record<string, boolean>>} */ ({
   'seal-authority': { 'seal-authority': false },
   share: { 'share:01J': false },
   device: { device: false, devices: false, store: false },
+  // This profile as a person and the people it met, whatever they hold; an invitation or an acceptance under way stays (D727).
+  person: { person: true, 'people:AAAAAAAAAAAAAAAAAAAAAA': true, 'people:AAAAAAAAAAAAAAAAAAAAAA:name': true, 'invite:x': false, 'accept:x': false },
   unknown: { 'something-new': false },
 })
 /** What each is, as the code writes it where that isn't a key typed: a search service's key and engine (web-search.js), tokens, the bridge's port and key. */
-const SHAPES = /** @type {Record<string, string>} */ ({ 'search:brave': JSON.stringify({ key: 'secret of search:brave' }), SGNED000000000000000000000: JSON.stringify({ access: 'a', refresh: 'r' }),
+const SHAPES = /** @type {Record<string, string>} */ ({ person: JSON.stringify({ key: {}, public: {}, token: 't', mailbox: 'm' }), 'people:AAAAAAAAAAAAAAAAAAAAAA': JSON.stringify({ format: 1, key: {} }), 'invite:x': JSON.stringify({ s: 's' }), 'search:brave': JSON.stringify({ key: 'secret of search:brave' }), SGNED000000000000000000000: JSON.stringify({ access: 'a', refresh: 'r' }),
   signin: JSON.stringify({ access: 'a', refresh: 'r' }), 'computer-bridge': JSON.stringify({ port: 23001, key: 'k' }) })
 
 /**
@@ -66,6 +68,7 @@ const KNOWN = /** @type {Record<string, string>} */ ({
   'app/caps/devices/devices.js SECRET': 'device', // this device's identity in the profile
   'app/caps/devices/store.js STORE': 'device', // the store's keys (D721), which open what the person's devices keep in common
   'app/caps/devices/flow.js DEVICES': 'device', // the devices the profile knows, removed ones too
+  'app/caps/devices/flow.js PERSON': 'person', // this profile as a person, made as a device is added where it has none (D727)
   'app/caps/devices/flow.js id': 'brain', // what crossed, chosen again by crossing(), or what the new device keeps of its own: a brain's, a connection's, a search service's, a registry's, the bridge's
 })
 
@@ -82,10 +85,10 @@ test('the secrets that cross are chosen by their kind: a typed brain key, a conn
   assert.deepEqual(await crossing(memoryFS(), settings), {})
   // Nor does a brain or a connection named as this device's own secrets are: they never cross.
   const named = /** @type {any} */ ({ brains: [brain('device', 'openai', 'https://api.openai.com/v1'), brain('devices', 'openai', 'https://api.openai.com/v1')], connections: [{ id: 'device', name: 'D', url: 'https://d.example/', auth: 'key' }] })
-  assert.deepEqual(Object.keys(await crossing(fs, named)).sort(), ['search:brave', 'site:01JSITE0000000000000000000'])
+  assert.deepEqual(Object.keys(await crossing(fs, named)).sort(), ['people:AAAAAAAAAAAAAAAAAAAAAA', 'people:AAAAAAAAAAAAAAAAAAAAAA:name', 'person', 'search:brave', 'site:01JSITE0000000000000000000'])
   // Nor a brain or a connection under an id Jean doesn't give, as a secret that stays has.
   const stays = /** @type {any} */ ({ brains: ['signin', 'computer-bridge', 'seal-authority'].map((id) => brain(id, 'openai', 'https://api.openai.com/v1')), connections: [{ id: 'share:01J', name: 'S', url: 'https://s.example/', auth: 'key' }] })
-  assert.deepEqual(Object.keys(await crossing(fs, stays)).sort(), ['search:brave', 'site:01JSITE0000000000000000000'])
+  assert.deepEqual(Object.keys(await crossing(fs, stays)).sort(), ['people:AAAAAAAAAAAAAAAAAAAAAA', 'people:AAAAAAAAAAAAAAAAAAAAAA:name', 'person', 'search:brave', 'site:01JSITE0000000000000000000'])
   // Nor a brain named as one of the organisation's, whose token its sign-in keeps under that id (policy.brains).
   assert.equal((await crossing(fs, settings, { brains: [{ id: 'TYPED000000000000000000000' }] })).TYPED000000000000000000000, undefined)
 })

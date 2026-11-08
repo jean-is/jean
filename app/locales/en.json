@@ -302,6 +302,8 @@
   "cap.sync.yes": "Choose a folder",
   "cap.devices.name": "Your devices",
   "cap.devices.offer": "Have your brains, settings and projects on your phone or another computer too? You add it with a QR code and six digits.",
+  "cap.people.name": "People",
+  "cap.people.offer": "Send this to someone who also uses {name}, and get their answer back?",
   "cap.lock.name": "Lock",
   "cap.lock.offer": "Lock your tasks, files and keys, so only you can open them on this device?",
   "cap.lock.yes": "Set a lock",

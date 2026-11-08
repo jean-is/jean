@@ -302,6 +302,8 @@
   "cap.sync.yes": "Bir klasör seç",
   "cap.devices.name": "Cihazların",
   "cap.devices.offer": "Beyinlerin, ayarların ve projelerin telefonunda ya da başka bir bilgisayarda da olsun mu? Cihazı bir QR kodu ve altı rakamla eklersin.",
+  "cap.people.name": "Kişiler",
+  "cap.people.offer": "Bunu {name} uygulamasını kullanan birine gönderip yanıtını geri almak ister misin?",
   "cap.lock.name": "Kilit",
   "cap.lock.offer": "Görevlerini, dosyalarını ve anahtarlarını kilitleyelim mi, böylece bu cihazda onları yalnızca sen açabilirsin?",
   "cap.lock.yes": "Kilit koy",

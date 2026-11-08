@@ -307,6 +307,8 @@
   "cap.sync.yes": "Escolher uma pasta",
   "cap.devices.name": "Os teus dispositivos",
   "cap.devices.offer": "Ter os teus cérebros, definições e projetos também no teu telemóvel ou noutro computador? Adiciona-se com um código QR e seis dígitos.",
+  "cap.people.name": "Pessoas",
+  "cap.people.offer": "Enviar isto a alguém que também usa {name} e receber a resposta?",
   "cap.lock.name": "Bloqueio",
   "cap.lock.offer": "Bloquear as tuas tarefas, ficheiros e chaves, para que só tu as possas abrir neste dispositivo?",
   "cap.lock.yes": "Pôr um bloqueio",

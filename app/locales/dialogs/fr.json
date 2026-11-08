@@ -23,6 +23,7 @@
   "cap.share.text": "Envoyer une tâche, une page, un graphique, des diapos ou une image sous forme de lien, que la personne qui le reçoit peut ouvrir.",
   "cap.sync.text": "Garde vos tâches, vos fichiers et la mémoire identiques sur vos autres ordinateurs, grâce à un dossier que OneDrive, Dropbox, iCloud Drive ou Google Drive synchronise.",
   "cap.devices.text": "{name} aussi sur votre téléphone ou un autre ordinateur, avec vos cerveaux, vos réglages et vos projets, scellés pour que seuls vos appareils puissent les lire. Une tâche passe de l’un à l’autre quand vous l’envoyez.",
+  "cap.people.text": "Envoyez une tâche, ou ce que {name} a fait, à quelqu’un qui utilise aussi {name} : c’est scellé pour que cette personne seule puisse l’ouvrir, et sa réponse revient dans la même tâche.",
   "cap.lock.text": "Vos tâches, fichiers et clés ne s’ouvrent qu’avec votre clé d’accès ou votre mot de passe.",
   "cap.brain-local.text": "Privé, gratuit et hors ligne : un cerveau qui tourne sur cet ordinateur, s’il est assez puissant.",
   "collection.count": {
@@ -61,6 +62,7 @@
   "cap.share.hint": "Enregistrez une copie d’une tâche.",
   "cap.sync.hint": "Mentionnez que vous utilisez aussi un autre ordinateur.",
   "cap.devices.hint": "Mentionnez que vous aimeriez avoir ceci sur votre téléphone ou un autre ordinateur, ou activez-le ici.",
+  "cap.people.hint": "Mentionnez que vous aimeriez envoyer quelque chose à quelqu’un, ou activez-le ici.",
   "cap.lock.hint": "Connectez un service, ou commencez dix tâches.",
   "cap.brain-local.hint": "Choisissez le cerveau qui fonctionne sur cet appareil.",
   "cap.memory.text": "{name} retient ce que vous mentionnez de durable : préférences, faits, corrections. Vous pouvez tout voir et tout modifier.",

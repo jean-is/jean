@@ -103,7 +103,7 @@ test('A’s bundle: settings and keys with the times they changed, nothing stamp
   assert.equal(bundle.kind, 'bundle')
   assert.equal(bundle.you, b.id)
   assert.deepEqual(bundle.profile, profile)
-  assert.deepEqual(Object.keys(bundle.keys).sort(), ['KEYED000000000000000000000', 'TYPED000000000000000000000', 'search:brave'])
+  assert.deepEqual(Object.keys(bundle.keys).sort(), ['KEYED000000000000000000000', 'TYPED000000000000000000000', 'person', 'search:brave'], 'this profile as a person, made with the bundle')
   assert.deepEqual(bundle.keys.TYPED000000000000000000000, { value: 'key of typed', at: 0 }, 'each key with its time, none here: it never changed since')
   const text = JSON.stringify(bundle)
   for (const kept of ['key of plan', 'token of oauth', 'key of the bridge', 'token of signin', '"share"', '"seal"', me.token, /** @type {string} */ (me.key.d)]) assert.ok(!text.includes(kept), kept)
@@ -118,7 +118,7 @@ test('A’s bundle: settings and keys with the times they changed, nothing stamp
   assert.deepEqual(kept.fields, { locale: T + 5 })
   assert.deepEqual(kept.seen, JSON.parse(JSON.stringify(following(await loadSettings(fs)))))
   // Of the keys, follows.json keeps when each changed and its hash, never the key.
-  assert.deepEqual(Object.keys(kept.keys).sort(), ['KEYED000000000000000000000', 'TYPED000000000000000000000', 'search:brave'])
+  assert.deepEqual(Object.keys(kept.keys).sort(), ['KEYED000000000000000000000', 'TYPED000000000000000000000', 'person', 'search:brave'])
   assert.equal(kept.keys.TYPED000000000000000000000.at, 0)
   assert.match(kept.keys.TYPED000000000000000000000.hash, /^[\w+/]{43}=$/)
   assert.ok(!JSON.stringify(kept).includes('key of'))

@@ -106,8 +106,8 @@ export function drafts() {
   }
 }
 
-/** What an address brings, handed to its capability, which leaves the address to follow: a share from its viewer's Continue (D361), another of the person's devices to join (D700). */
-const ARRIVALS = [['#/shared/', 'share'], ['#/pair/', 'devices']]
+/** What an address brings, handed to its capability, which leaves the address to follow: a share (D361), a device to join (D700), someone to meet (D727). */
+const ARRIVALS = [['#/shared/', 'share'], ['#/pair/', 'devices'], ['#/meet/', 'people']]
 const arrive = async () => { const [, id = ''] = ARRIVALS.find(([start]) => location.hash.startsWith(start)) ?? []; return Boolean(id && await unlock(id) && (await (await import(`../caps/${id}/${id}.js`)).fromAddress(), true)) }
 
 export async function startRouter() {

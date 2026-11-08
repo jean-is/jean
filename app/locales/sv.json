@@ -302,6 +302,8 @@
   "cap.sync.yes": "Välj en mapp",
   "cap.devices.name": "Dina enheter",
   "cap.devices.offer": "Ha dina hjärnor, inställningar och projekt på din telefon eller en annan dator också? Du lägger till enheten med en QR-kod och sex siffror.",
+  "cap.people.name": "Personer",
+  "cap.people.offer": "Skicka det här till någon som också använder {name}, och få svaret tillbaka?",
   "cap.lock.name": "Lås",
   "cap.lock.offer": "Låsa dina uppgifter, filer och nycklar, så att bara du kan öppna dem på den här enheten?",
   "cap.lock.yes": "Ställ in ett lås",

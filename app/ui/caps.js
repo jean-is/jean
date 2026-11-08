@@ -81,6 +81,7 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   plan: () => import('../caps/plan/plan.js'),
   share: () => import('../caps/share/share.js'),
   devices: () => import('../caps/devices/devices.js'),
+  people: () => import('../caps/people/people.js'),
   'natural-voice': () => import('../caps/natural-voice/natural-voice.js'),
   split: () => import('../caps/split/split.js'),
 })

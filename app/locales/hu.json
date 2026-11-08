@@ -302,6 +302,8 @@
   "cap.sync.yes": "Mappa kiválasztása",
   "cap.devices.name": "Eszközeid",
   "cap.devices.offer": "Az agyaid, a beállításaid és a projektjeid a telefonodon vagy egy másik számítógépen is meglegyenek? Egy QR-kóddal és hat számjeggyel adod hozzá.",
+  "cap.people.name": "Személyek",
+  "cap.people.offer": "Elküldenéd ezt valakinek, aki szintén a(z) {name} alkalmazást használja, és visszakapnád a válaszát?",
   "cap.lock.name": "Zár",
   "cap.lock.offer": "Lezárod a feladataidat, fájljaidat és kulcsaidat, hogy ezen az eszközön csak te nyithasd meg őket?",
   "cap.lock.yes": "Zár beállítása",

@@ -2,8 +2,9 @@
 // A's fingerprint; a mailbox drawn from `s`, opened once, takes B's hello; A answers with a nonce, B reveals the nonce it
 // had committed to, all three sealed under `s`; then both sides draw six digits from everything that crossed, which the
 // person types on A. The commitment stops someone holding the link and the relay from trying keys until a code matches.
-// After that, every message between the two travels in an envelope from one device's key to the other's. Pure, no DOM
-// and no app state, so node --test covers it.
+// After that, every message between the two travels in an envelope from one device's key to the other's. Meeting a person
+// (caps/people) is the same exchange under its own route and labels, between profile keys, the names both give in its code.
+// Pure, no DOM and no app state, so node --test covers it.
 import { base64url, bytesOf, idOf, openValue, pack, random, sealValue, unpack } from '../share/seal.js'
 import { fingerprintOf, openBox, sealBox } from '../../ui/seal.js'
 
@@ -28,18 +29,18 @@ async function publicOf(key) {
 // ─── The link and the pairing mailbox ────────────────────────────────────────
 
 /** The link B opens: Jean's web address, then `s` and A's fingerprint after `#`, which browsers never send. @param {string} address @param {Uint8Array} s @param {string} fpA */
-export const linkOf = (address, s, fpA) => `${address}#/pair/${base64url(s)}.${fpA}`
+export const linkOf = (address, s, fpA, route = 'pair') => `${address}#/${route}/${base64url(s)}.${fpA}`
 
 /** The secret and A's fingerprint from a link's hash, or a whole link as pasted; null for anything else. @param {string} hash @returns {{ s: Uint8Array, fpA: string } | null} */
-export function parseLink(hash) {
-  const [, s, fpA] = /^[^#\s]*#\/pair\/([\w-]{43})\.([\w-]{22})$/.exec(hash.trim()) ?? []
+export function parseLink(hash, route = 'pair') {
+  const [, s, fpA] = new RegExp(`^[^#\\s]*#/${route}/([\\w-]{43})\\.([\\w-]{22})$`).exec(hash.trim()) ?? []
   return exact(s, 43) && exact(fpA, 22) ? { s: bytesOf(s), fpA } : null
 }
 
-/** The one-time mailbox B says hello in, drawn from `s` alone: its token, HKDF-SHA-256(s, "pair"), and the relay's id for it. @param {Uint8Array} s */
-export async function pairingBox(s) {
+/** The one-time mailbox B says hello in, drawn from `s` alone: its token, HKDF-SHA-256(s, label), and the relay's id for it. @param {Uint8Array} s */
+export async function pairingBox(s, label = 'pair') {
   const base = await crypto.subtle.importKey('raw', /** @type {BufferSource} */ (s), 'HKDF', false, ['deriveBits'])
-  const token = base64url(new Uint8Array(await crypto.subtle.deriveBits({ name: 'HKDF', hash: 'SHA-256', salt: new Uint8Array(), info: encoder.encode('pair') }, base, 256)))
+  const token = base64url(new Uint8Array(await crypto.subtle.deriveBits({ name: 'HKDF', hash: 'SHA-256', salt: new Uint8Array(), info: encoder.encode(label) }, base, 256)))
   return { token, id: await idOf(token) }
 }
 
@@ -71,19 +72,19 @@ export async function openHello(s, bytes) {
   return { key: await publicOf(key), mailbox, name, commit }
 }
 
-/** A's nonce, for B's mailbox, with A's public key and its mailbox's id. @param {Uint8Array} s @param {{ key: JsonWebKey, mailbox: string }} nonce */
-export async function sealNonce(s, { key, mailbox }) {
+/** A's nonce, for B's mailbox, with A's public key, its mailbox's id, and its name where it gives one. @param {Uint8Array} s @param {{ key: JsonWebKey, mailbox: string, name?: string }} nonce */
+export async function sealNonce(s, { key, mailbox, name }) {
   const nA = base64url(random(32))
-  return { bytes: await sealed(s, { kind: 'nonce', key, mailbox, nA }), nA }
+  return { bytes: await sealed(s, { kind: 'nonce', key, mailbox, nA, name }), nA }
 }
 
-/** A's nonce as B reads it, refused unless its key is the one the link named. @param {Uint8Array} s @param {string} fpA @param {Uint8Array} bytes @returns {Promise<{ key: JsonWebKey, mailbox: string, nA: string }>} */
+/** A's nonce as B reads it, refused unless its key is the one the link named. @param {Uint8Array} s @param {string} fpA @param {Uint8Array} bytes @returns {Promise<{ key: JsonWebKey, mailbox: string, nA: string, name: string }>} */
 export async function openNonce(s, fpA, bytes) {
-  const { key, mailbox, nA } = await opened(s, bytes, 'nonce')
-  if (!exact(mailbox, 22) || !exact(nA, 43)) refuse('This nonce isn’t whole.')
+  const { key, mailbox, nA, name = '' } = await opened(s, bytes, 'nonce')
+  if (!exact(mailbox, 22) || !exact(nA, 43) || typeof name !== 'string' || name.length > 100) refuse('This nonce isn’t whole.')
   const only = await publicOf(key)
   if (await fingerprintOf(only) !== fpA) refuse('This nonce comes from another key than the link’s.')
-  return { key: only, mailbox, nA }
+  return { key: only, mailbox, nA, name }
 }
 
 /** B's nonce revealed, for A's mailbox. @param {Uint8Array} s @param {string} nB */
@@ -98,11 +99,11 @@ export async function openReveal(s, commit, bytes) {
 // ─── The code ────────────────────────────────────────────────────────────────
 
 /**
- * The six digits both sides draw from what crossed: the first 32 bits of SHA-256 over it, mod a million, in Latin digits.
- * @param {{ s: Uint8Array, fpA: string, keyB: JsonWebKey, mailboxB: string, nA: string, nB: string }} pairing
+ * The six digits both sides draw from what crossed, under the exchange's label, the names given too: the first 32 bits of SHA-256 over it,
+ * mod a million, in Latin digits. @param {{ s: Uint8Array, fpA: string, keyB: JsonWebKey, mailboxB: string, nA: string, nB: string, label?: string, names?: string[] }} pairing
  */
-export async function codeOf({ s, fpA, keyB, mailboxB, nA, nB }) {
-  const digest = await digestOf(encoder.encode(['pair', base64url(s), fpA, await fingerprintOf(keyB), mailboxB, nA, nB].join('|')))
+export async function codeOf({ s, fpA, keyB, mailboxB, nA, nB, label = 'pair', names = [] }) {
+  const digest = await digestOf(encoder.encode([label, base64url(s), fpA, await fingerprintOf(keyB), mailboxB, nA, nB, ...names.map((name) => JSON.stringify(name))].join('|')))
   return String(new DataView(digest.buffer).getUint32(0) % 1_000_000).padStart(6, '0')
 }
 
