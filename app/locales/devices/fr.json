@@ -20,6 +20,11 @@
   "devices.store.again": "Recommencer",
   "devices.store.synced": "Dernière synchronisation : {when}",
   "devices.own": "Chaque appareil garde son propre thème, son dossier synchronisé, ses cerveaux téléchargés et ses connexions aux services.",
+  "devices.reading": {
+    "one": "{count} appareil peut lire vos affaires",
+    "many": "{count} appareils peuvent lire vos affaires",
+    "other": "{count} appareils peuvent lire vos affaires"
+  },
   "devices.store.unreached": "Cet appareil ne peut pas joindre vos autres appareils pour l’instant : ce qui change ici attendra qu’il le puisse.",
   "devices.syncing": "Vos appareils · synchronisation en cours",
   "devices.trouble": "Vos appareils · à vérifier",

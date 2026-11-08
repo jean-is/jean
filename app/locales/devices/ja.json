@@ -18,6 +18,9 @@
   "devices.store.again": "やり直す",
   "devices.store.synced": "最終同期：{when}",
   "devices.own": "テーマ、同期フォルダー、ダウンロードした頭脳、サービスへのサインインは、端末ごとに別々です。",
+  "devices.reading": {
+    "other": "あなたのデータを読める端末 {count} 台"
+  },
   "devices.store.unreached": "この端末はいま、ほかの端末に接続できません。ここでの変更は、接続できるまで待機します。",
   "devices.syncing": "あなたの端末・同期中",
   "devices.trouble": "あなたの端末・確認が必要です",

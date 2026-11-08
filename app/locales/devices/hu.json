@@ -19,6 +19,10 @@
   "devices.store.again": "Kezdés elölről",
   "devices.store.synced": "Utoljára szinkronizálva: {when}",
   "devices.own": "Minden eszköznek saját témája, szinkronizált mappája, letöltött agyai és szolgáltatásokba való bejelentkezései vannak.",
+  "devices.reading": {
+    "one": "{count} eszköz olvashatja a dolgaidat",
+    "other": "{count} eszköz olvashatja a dolgaidat"
+  },
   "devices.store.unreached": "Ez az eszköz most nem éri el a többi eszközödet: ami itt változik, megvárja, amíg sikerül.",
   "devices.syncing": "Eszközeid · szinkronizálás",
   "devices.trouble": "Eszközeid · érdemes megnézni",

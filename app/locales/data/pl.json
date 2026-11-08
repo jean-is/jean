@@ -20,6 +20,8 @@
   "data.here": "Na tym urządzeniu",
   "data.copies": "Kopie, które zachowujesz",
   "data.others": "Kto jeszcze je widzi",
+  "data.privacyLine": "Kto może otworzyć twoje rzeczy na tym urządzeniu i kto widzi to, co udostępniasz.",
+  "data.peopleText": "Komu coś wysyłasz i kto przysyła ci swoje rzeczy",
   "data.space": "Zajęte miejsce",
   "data.of": "{size} z {quota}, które ta przeglądarka daje aplikacji {name}",
   "data.room": "Zwolnij miejsce w sekcji Mózgi",

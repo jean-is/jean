@@ -2,7 +2,7 @@
 // afresh; a child's, set by a parent and opened by them under 13, whose concerns reach the parent's
 // profile, its kind and when, never the words, unless the danger is at home.
 import { test, expect } from '@playwright/test'
-import { start, openProfile, openOthers, openSettings, closeSettings, openTasks, ask, withPolicy, BRAIN_URL } from './helpers.js'
+import { start, openProfile, openProfiles, openOthers, openSettings, closeSettings, openTasks, ask, withPolicy, BRAIN_URL } from './helpers.js'
 
 const PASSWORD = 'a long and happy password'
 
@@ -228,7 +228,7 @@ test.describe('moving between profiles (D669)', () => {
     expect(Math.abs(await page.evaluate(() => scrollY) - reading)).toBeLessThan(5)
 
     // Its colour changes from its page in Settings › Profiles.
-    const settings = await openSettings(page, 'Profiles')
+    const settings = await openProfiles(page)
     await settings.locator('[data-profile]', { hasText: 'Work' }).click()
     await settings.getByTitle('Rose').click()
     await expect.poll(async () => JSON.parse(String(await read(page, '.secrets/vault.json'))).colour).not.toBe(colour)
@@ -441,7 +441,7 @@ test('a child’s profile: set by a parent, opened with their password under 13,
   await banner.getByRole('button', { name: 'Seen' }).click()
   await expect(banner).toHaveCount(0)
   // Settings › Profiles: Léa's row, her age and today's minutes; her page, the concern, the week and what she is set to.
-  settings = await openSettings(page, 'Profiles')
+  settings = await openProfiles(page)
   const panel = settings.locator('.settings-panel')
   await expect(panel.locator('.profiles')).toContainText('9 years · 0 min today')
   await panel.locator('.profiles button.item', { hasText: 'Léa' }).click()
@@ -498,7 +498,7 @@ test('a child’s lock screen offers neither a new profile nor deleting; a paren
   await expect(lock.getByRole('button', { name: 'Start afresh' })).toHaveCount(0)
   await lock.getByRole('button', { name: 'Add a profile' }).click()
   await expect.poll(() => here(page)).toMatch(/-profile$/)
-  const settings = await openSettings(page, 'Profiles')
+  const settings = await openProfiles(page)
   const rows = settings.locator('.profiles li')
   await expect(rows.filter({ hasText: 'Ana' }).getByRole('button', { name: 'Open' })).toBeVisible()
   await expect(rows.filter({ hasText: 'Léa' }).getByRole('button', { name: 'Open' })).toBeVisible()
@@ -539,7 +539,7 @@ test('a child’s profile is given its parent’s brains with their keys, never 
   // From Ana's profile, with her password once: Groq taken back, its key gone with it.
   await (await openOthers(page)).locator('.profile-switch', { hasText: 'Ana' }).click()
   await unlockIn(page.locator('main.lock'))
-  const settings = await openSettings(page, 'Profiles')
+  const settings = await openProfiles(page)
   const panel = settings.locator('.settings-panel')
   await panel.locator('.profiles button.item', { hasText: 'Léa' }).click()
   await panel.getByRole('button', { name: 'Change', exact: true }).click()

@@ -277,7 +277,7 @@ const casePages = signal(/** @type {typeof import('./case-pages.js') | null} */ 
 const approvalPages = signal(/** @type {typeof import('./approval-pages.js') | null} */ (null))
 
 /**
- * @typedef {'general' | 'brains' | 'appearance' | 'keyboard' | 'you' | 'connections' | 'web-search' | 'skills' | 'routines' | 'computer' | 'extensions' | 'capabilities' | 'approvals' | 'data' | 'devices' | 'people'} Section
+ * @typedef {'general' | 'brains' | 'appearance' | 'keyboard' | 'you' | 'connections' | 'web-search' | 'skills' | 'routines' | 'computer' | 'extensions' | 'capabilities' | 'approvals' | 'privacy' | 'data' | 'devices' | 'people' | 'profiles'} Section
  * @typedef {Object} Place
  * @property {number} at       its place in the menu, lowest first
  * @property {string} label    its name in the menu
@@ -286,6 +286,7 @@ const approvalPages = signal(/** @type {typeof import('./approval-pages.js') | n
  * @property {() => boolean} [when]  shown once its capability is on
  * @property {() => string} [also]   more words it is found by (⌘K)
  * @property {boolean} [group]       starts a group of the menu
+ * @property {Section} [under]       no row of its own: a page of that section, which the menu marks while it is open (Profiles, D729)
  */
 
 /** What Jean knows about you (ui/knows.js): loaded the first time it is shown. */
@@ -314,6 +315,9 @@ const SECTIONS = {
   you: { at: 50, label: 'settings.you', icon: icons.person, show: () => knows.value?.you() ?? nothing, also: () => `${t('knows.title', { name: BRAND.name })} ${t('you.name')}`, group: true },
   capabilities: { at: 100, label: 'settings.capabilities', icon: icons.trophy, show: () => casePages.value?.section() ?? (import('./case-pages.js').then((module) => { casePages.value = module }), nothing) },
   approvals: { at: 110, label: 'settings.approvals', icon: icons.shield, show: () => approvalPages.value?.section() ?? (import('./approval-pages.js').then((module) => { approvalPages.value = module }), nothing), group: true },
+  // Who can open or see the user's things (D729): Your data's module draws it, once a part of it is found, People, or an organisation.
+  privacy: { at: 115, label: 'settings.privacy', icon: icons.eye, show: () => dataPages.value?.privacy() ?? (import('./data-pages.js').then((module) => { dataPages.value = module }), nothing),
+    when: () => slots('data').some((part) => part.section === 'privacy' && (part.when?.() ?? true)) || loaded.value.has('people') || slots('organization').length > 0 },
   data: { at: 120, label: 'settings.storage', icon: icons.cabinet, show: () => dataPages.value?.section() ?? (import('./data-pages.js').then((module) => { dataPages.value = module }), nothing) },
 }
 /** The sections shown now, in their order. @returns {[Section, Place][]} */
@@ -342,14 +346,14 @@ export function goPage(section, to) {
 class Settings extends Element {
   render() {
     const shown = places()
-    const [open, place] = shown.find(([id]) => id === sectionOpen()) ?? shown[0]
+    const [open, place] = shown.find(([id]) => id === sectionOpen()) ?? shown[0], marked = place.under ?? open
     if (app.dialog.value === 'settings') document.title = `${t(place.label)} · ${BRAND.name}`
     // No title: the menu says where the user is. Closing sits above it, where the eye starts.
     return html`<dialog class="sheet settings" aria-label=${t('settings.title')} @close=${closed('settings')} @click=${backdrop}>
       <button class="icon-button settings-close" @click=${close} aria-label=${t('action.close')}>${icons.close}</button>
       <a class="skip" href="#settings-panel" @click=${(/** @type {Event} */ e) => { e.preventDefault(); document.getElementById('settings-panel')?.focus() }}>${t('a11y.main')}</a>
       <nav class="settings-nav" aria-label=${t('settings.title')}>
-        ${shown.reduce((groups, row) => (row[1].group || !groups.length ? groups.push([row]) : groups[groups.length - 1].push(row), groups), /** @type {typeof shown[]} */ ([])).map((rows, i) => html`${i ? html`<hr>` : nothing}<ul>${rows.map(([id, { icon, label }]) => html`<li><button aria-current=${id === open ? 'page' : 'false'}
+        ${shown.filter(([, one]) => !one.under).reduce((groups, row) => (row[1].group || !groups.length ? groups.push([row]) : groups[groups.length - 1].push(row), groups), /** @type {typeof shown[]} */ ([])).map((rows, i) => html`${i ? html`<hr>` : nothing}<ul>${rows.map(([id, { icon, label }]) => html`<li><button aria-current=${id === marked ? 'page' : 'false'}
           aria-keyshortcuts=${id === 'keyboard' ? KEYBOARD_KEYS : nothing} @click=${() => { app.section.value = id }}>${icon}${t(label)}</button></li>`)}</ul>`)}
       </nav>
       <div id="settings-panel" class="settings-panel" tabindex=${open === 'keyboard' ? 0 : -1}>${place.show()}</div>

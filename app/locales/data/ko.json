@@ -20,6 +20,8 @@
   "data.here": "이 기기",
   "data.copies": "보관하는 사본",
   "data.others": "또 누가 보나요",
+  "data.privacyLine": "이 기기에서 내 데이터를 열 수 있는 사람, 그리고 내가 공유한 것을 보는 사람.",
+  "data.peopleText": "내가 보내는 사람과 나에게 보내 주는 사람",
   "data.space": "사용 중인 공간",
   "data.of": "이 브라우저가 {name}에 허용한 {quota} 중 {size}",
   "data.room": "두뇌에서 공간 확보",

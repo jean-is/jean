@@ -19,6 +19,10 @@
   "devices.store.again": "Neu beginnen",
   "devices.store.synced": "Zuletzt synchronisiert: {when}",
   "devices.own": "Jedes Gerät behält sein eigenes Design, seinen synchronisierten Ordner, seine heruntergeladenen Gehirne und seine Anmeldungen bei Diensten.",
+  "devices.reading": {
+    "one": "{count} Gerät kann deine Sachen lesen",
+    "other": "{count} Geräte können deine Sachen lesen"
+  },
   "devices.store.unreached": "Dieses Gerät erreicht deine anderen Geräte gerade nicht: Was sich hier ändert, wartet, bis es wieder geht.",
   "devices.syncing": "Deine Geräte · wird synchronisiert",
   "devices.trouble": "Deine Geräte · bitte ansehen",

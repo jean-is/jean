@@ -1,5 +1,10 @@
 {
   "profiles.title": "Profili",
+  "profiles.row": {
+    "one": "{count} profil na ovom uređaju",
+    "few": "{count} profila na ovom uređaju",
+    "other": "{count} profila na ovom uređaju"
+  },
   "profiles.what": "Svaki profil čuva vlastite zadatke, pamćenje, postavke i ključeve na ovom uređaju. Ništa ne prelazi iz jednog u drugi.",
   "profiles.name": "Naziv novog profila",
   "profiles.yours": "Naziv ovog profila",

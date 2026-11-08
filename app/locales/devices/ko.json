@@ -18,6 +18,9 @@
   "devices.store.again": "다시 시작",
   "devices.store.synced": "마지막 동기화: {when}",
   "devices.own": "테마, 동기화 폴더, 다운로드한 두뇌, 서비스 로그인은 기기마다 따로 유지돼요.",
+  "devices.reading": {
+    "other": "내 데이터를 읽을 수 있는 기기 {count}대"
+  },
   "devices.store.unreached": "이 기기가 지금 다른 기기에 연결할 수 없어요. 여기서 바뀐 내용은 연결될 때까지 기다려요.",
   "devices.syncing": "내 기기 · 동기화 중",
   "devices.trouble": "내 기기 · 확인이 필요해요",

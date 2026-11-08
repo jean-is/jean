@@ -20,6 +20,8 @@
   "data.here": "Ezen az eszközön",
   "data.copies": "Az általad őrzött másolatok",
   "data.others": "Ki látja még",
+  "data.privacyLine": "Ki nyithatja meg a dolgaidat ezen az eszközön, és ki látja, amit megosztasz.",
+  "data.peopleText": "Kinek küldesz dolgokat, és ki küldi neked a sajátjait",
   "data.space": "Felhasznált tárhely",
   "data.of": "{size} / {quota} (ennyit enged ez a böngésző a(z) {name} alkalmazásnak)",
   "data.room": "Hely felszabadítása az Agyakban",

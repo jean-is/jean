@@ -20,6 +20,11 @@
   "devices.store.again": "Începeți din nou",
   "devices.store.synced": "Ultima sincronizare: {when}",
   "devices.own": "Fiecare dispozitiv își păstrează propria temă, propriul dosar sincronizat, creierele descărcate și conectările la servicii.",
+  "devices.reading": {
+    "one": "{count} dispozitiv poate citi lucrurile dvs.",
+    "few": "{count} dispozitive pot citi lucrurile dvs.",
+    "other": "{count} de dispozitive pot citi lucrurile dvs."
+  },
   "devices.store.unreached": "Acest dispozitiv nu poate ajunge acum la celelalte dispozitive ale dvs.: ce se schimbă aici așteaptă până reușește.",
   "devices.syncing": "Dispozitivele dvs. · se sincronizează",
   "devices.trouble": "Dispozitivele dvs. · necesită atenție",

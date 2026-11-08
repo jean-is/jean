@@ -18,6 +18,9 @@
   "devices.store.again": "Mulai lagi",
   "devices.store.synced": "Terakhir disinkronkan: {when}",
   "devices.own": "Tema, folder yang disinkronkan, otak yang diunduh, dan status masuk ke layanan tersimpan terpisah di setiap perangkat.",
+  "devices.reading": {
+    "other": "{count} perangkat bisa membaca data Anda"
+  },
   "devices.store.unreached": "Perangkat ini tidak dapat menjangkau perangkat Anda yang lain saat ini: yang berubah di sini menunggu sampai bisa.",
   "devices.syncing": "Perangkat Anda · menyinkronkan",
   "devices.trouble": "Perangkat Anda · perlu dicek",

@@ -19,6 +19,10 @@
   "devices.store.again": "እንደገና ይጀምሩ",
   "devices.store.synced": "የመጨረሻ ማመሳሰል፦ {when}",
   "devices.own": "እያንዳንዱ መሣሪያ የራሱን ገጽታ፣ የተመሳሰለ አቃፊ፣ የወረዱ አንጎሎችና የገባባቸውን አገልግሎቶች ይይዛል።",
+  "devices.reading": {
+    "one": "{count} መሣሪያ ነገሮችዎን ማንበብ ይችላል",
+    "other": "{count} መሣሪያዎች ነገሮችዎን ማንበብ ይችላሉ"
+  },
   "devices.store.unreached": "ይህ መሣሪያ አሁን ሌሎች መሣሪያዎችዎን መድረስ አይችልም፦ እዚህ የሚለወጠው እስኪችል ድረስ ይጠብቃል።",
   "devices.syncing": "መሣሪያዎችዎ · በማመሳሰል ላይ",
   "devices.trouble": "መሣሪያዎችዎ · ይመልከቱ",

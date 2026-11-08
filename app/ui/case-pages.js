@@ -30,7 +30,7 @@ const groupOf = (id) => Object.keys(GROUPS).find((group) => GROUPS[group].includ
 const OPENS = /** @type {Record<string, () => void>} */ ({
   memory: () => openSettings('you'), skills: () => openSettings('skills'), routines: () => openSettings('routines'),
   connections: () => openSettings('connections'), 'web-search': () => openSettings('web-search'), extensions: () => openSettings('extensions'), computer: () => openSettings('computer'), pictures: () => import('../caps/pictures/pictures.js').then((module) => openSettings(module.paged() ? 'brains/pictures' : 'brains')),
-  share: () => openSettings('data/links'), machine: () => import('../caps/machine/machine.js').then((module) => module.show()), sync: () => openSettings('data/sync'), devices: () => openSettings('devices'), people: () => openSettings('people'), lock: () => openSettings('data/lock'),
+  share: () => openSettings('privacy/links'), machine: () => import('../caps/machine/machine.js').then((module) => module.show()), sync: () => openSettings('data/sync'), devices: () => openSettings('devices'), people: () => openSettings('people'), lock: () => openSettings('privacy/lock'),
   'brain-local': () => openSettings('brains/device'), notifications: () => openSettings('general'), 'natural-voice': () => openSettings('general/natural'), find: () => { app.dialog.value = 'find' },
   browser: () => { app.dialog.value = null; import('../caps/browser/browser.js').then((module) => module.show()) },
   flows: () => { app.dialog.value = null; import('../caps/flows/flows.js').then((module) => module.here()) },

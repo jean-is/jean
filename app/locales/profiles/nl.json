@@ -1,5 +1,9 @@
 {
   "profiles.title": "Profielen",
+  "profiles.row": {
+    "one": "{count} profiel op dit apparaat",
+    "other": "{count} profielen op dit apparaat"
+  },
   "profiles.what": "Elk profiel bewaart op dit apparaat zijn eigen taken, geheugen, instellingen en sleutels. Niets gaat van het ene naar het andere.",
   "profiles.name": "De naam van het nieuwe profiel",
   "profiles.yours": "De naam van dit profiel",

@@ -1,5 +1,9 @@
 {
   "profiles.title": "Profiler",
+  "profiles.row": {
+    "one": "{count} profil på den här enheten",
+    "other": "{count} profiler på den här enheten"
+  },
   "profiles.what": "Varje profil har sina egna uppgifter, sitt minne, sina inställningar och nycklar på den här enheten. Inget går över från en till en annan.",
   "profiles.name": "Den nya profilens namn",
   "profiles.yours": "Den här profilens namn",

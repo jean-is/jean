@@ -20,6 +20,8 @@
   "data.here": "Trên thiết bị này",
   "data.copies": "Bản sao bạn giữ",
   "data.others": "Ai khác thấy được",
+  "data.privacyLine": "Ai mở được dữ liệu của bạn trên thiết bị này, và ai thấy những gì bạn chia sẻ.",
+  "data.peopleText": "Những người bạn gửi cho, và những người gửi cho bạn",
   "data.space": "Dung lượng đã dùng",
   "data.of": "{size} trong {quota} mà trình duyệt này dành cho {name}",
   "data.room": "Giải phóng dung lượng trong Bộ não",

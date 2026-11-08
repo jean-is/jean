@@ -19,6 +19,10 @@
   "devices.store.again": "Start forfra",
   "devices.store.synced": "Sidst synkroniseret: {when}",
   "devices.own": "Hver enhed beholder sit eget tema, sin synkroniserede mappe, sine hentede hjerner og sine login til tjenester.",
+  "devices.reading": {
+    "one": "{count} enhed kan læse dine ting",
+    "other": "{count} enheder kan læse dine ting"
+  },
   "devices.store.unreached": "Denne enhed kan ikke nå dine andre enheder lige nu: det, der ændres her, venter, til den kan.",
   "devices.syncing": "Dine enheder · synkroniserer",
   "devices.trouble": "Dine enheder · bør ses efter",

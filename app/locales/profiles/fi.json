@@ -1,5 +1,9 @@
 {
   "profiles.title": "Profiilit",
+  "profiles.row": {
+    "one": "{count} profiili tällä laitteella",
+    "other": "{count} profiilia tällä laitteella"
+  },
   "profiles.what": "Jokaisella profiililla on omat tehtävänsä, muistinsa, asetuksensa ja avaimensa tällä laitteella. Mikään ei siirry yhdestä toiseen.",
   "profiles.name": "Uuden profiilin nimi",
   "profiles.yours": "Tämän profiilin nimi",

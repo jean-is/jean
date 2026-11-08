@@ -1,5 +1,9 @@
 {
   "profiles.title": "Profiler",
+  "profiles.row": {
+    "one": "{count} profil på denne enhed",
+    "other": "{count} profiler på denne enhed"
+  },
   "profiles.what": "Hver profil har sine egne opgaver, sin hukommelse, sine indstillinger og nøgler på denne enhed. Intet går fra den ene til den anden.",
   "profiles.name": "Den nye profils navn",
   "profiles.yours": "Denne profils navn",

@@ -20,7 +20,7 @@ test('a task holding what is sensitive reaches only the brains the organisation 
   await withPolicy(page, { dlp: { detect: ['card'], labels: ['Confidentiel'], brains: ['vault'] }, brains: [{ ...BRAIN, id: 'corp', label: 'Corp AI' }, { ...BRAIN, id: 'vault', label: 'Vault AI' }] })
   await start(page)
   await page.evaluate(async () => { await (await import('/ui/state.js')).updateSettings({ activeBrain: 'corp' }) })
-  const settings = await openData(page, 'organization')
+  const settings = await openData(page, 'organization', 'Privacy')
   await expect(settings).toContainText('it is checked here for bank or card details and something marked confidential')
   await page.keyboard.press('Escape')
   // Nothing sensitive: any brain.

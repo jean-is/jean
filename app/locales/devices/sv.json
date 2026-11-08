@@ -19,6 +19,10 @@
   "devices.store.again": "Börja om",
   "devices.store.synced": "Senast synkroniserad: {when}",
   "devices.own": "Varje enhet behåller sitt eget tema, sin synkroniserade mapp, sina nedladdade hjärnor och sina inloggningar till tjänster.",
+  "devices.reading": {
+    "one": "{count} enhet kan läsa dina saker",
+    "other": "{count} enheter kan läsa dina saker"
+  },
   "devices.store.unreached": "Den här enheten når inte dina andra enheter just nu: det som ändras här väntar tills den gör det.",
   "devices.syncing": "Dina enheter · synkroniserar",
   "devices.trouble": "Dina enheter · behöver ses över",

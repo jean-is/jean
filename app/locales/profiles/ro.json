@@ -1,5 +1,10 @@
 {
   "profiles.title": "Profiluri",
+  "profiles.row": {
+    "one": "{count} profil pe acest dispozitiv",
+    "few": "{count} profiluri pe acest dispozitiv",
+    "other": "{count} de profiluri pe acest dispozitiv"
+  },
   "profiles.what": "Fiecare profil își păstrează pe acest dispozitiv propriile sarcini, memorie, setări și chei. Nimic nu trece de la unul la altul.",
   "profiles.name": "Numele noului profil",
   "profiles.yours": "Numele acestui profil",

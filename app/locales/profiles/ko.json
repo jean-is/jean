@@ -1,5 +1,8 @@
 {
   "profiles.title": "프로필",
+  "profiles.row": {
+    "other": "이 기기의 프로필 {count}개"
+  },
   "profiles.what": "프로필마다 작업, 기억, 설정, 키를 이 기기에 따로 보관해요. 프로필 사이에 오가는 건 없어요.",
   "profiles.name": "새 프로필 이름",
   "profiles.yours": "이 프로필 이름",

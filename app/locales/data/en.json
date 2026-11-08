@@ -20,6 +20,8 @@
   "data.here": "On this device",
   "data.copies": "Copies you keep",
   "data.others": "Who else sees it",
+  "data.privacyLine": "Who can open your things on this device, and who sees what you share.",
+  "data.peopleText": "Who you send things to, and who sends you theirs",
   "data.space": "Space used",
   "data.of": "{size}, of the {quota} this browser lets {name} use",
   "data.room": "Make room in Brains",

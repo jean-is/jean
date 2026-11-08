@@ -1,5 +1,10 @@
 {
   "profiles.title": "Perfis",
+  "profiles.row": {
+    "one": "{count} perfil neste dispositivo",
+    "many": "{count} perfis neste dispositivo",
+    "other": "{count} perfis neste dispositivo"
+  },
   "profiles.what": "Cada perfil guarda neste dispositivo as suas próprias tarefas, memória, definições e chaves. Nada passa de um para outro.",
   "profiles.name": "O nome do novo perfil",
   "profiles.yours": "O nome deste perfil",

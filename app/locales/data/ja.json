@@ -20,6 +20,8 @@
   "data.here": "この端末",
   "data.copies": "手元に置くコピー",
   "data.others": "ほかに見られる人",
+  "data.privacyLine": "この端末であなたのデータを開ける人と、共有したものを見る人。",
+  "data.peopleText": "あなたが送る相手と、あなたに送ってくる相手",
   "data.space": "使用中の容量",
   "data.of": "このブラウザーが {name} に使わせる {quota} のうち {size}",
   "data.room": "頭脳で空きを作る",

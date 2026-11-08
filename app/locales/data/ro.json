@@ -20,6 +20,8 @@
   "data.here": "Pe acest dispozitiv",
   "data.copies": "Copiile pe care le păstrați",
   "data.others": "Cine altcineva îl vede",
+  "data.privacyLine": "Cine poate deschide lucrurile dvs. pe acest dispozitiv și cine vede ce partajați.",
+  "data.peopleText": "Cui trimiteți lucruri și cine vi le trimite pe ale sale",
   "data.space": "Spațiu folosit",
   "data.of": "{size} din {quota}, cât îi permite acest browser aplicației {name}",
   "data.room": "Faceți loc în Creiere",

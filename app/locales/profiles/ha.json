@@ -1,5 +1,9 @@
 {
   "profiles.title": "Bayanan martaba",
+  "profiles.row": {
+    "one": "Bayanin martaba {count} a wannan na'urar",
+    "other": "Bayanan martaba {count} a wannan na'urar"
+  },
   "profiles.what": "Kowace bayanin martaba tana ajiye ayyukanta, ƙwaƙwalwarta, saitunanta da maɓallanta a wannan na'urar. Babu abin da ke wucewa daga ɗaya zuwa wata.",
   "profiles.name": "Sunan sabon bayanin martaba",
   "profiles.yours": "Sunan wannan bayanin martaba",

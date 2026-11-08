@@ -20,6 +20,8 @@
   "data.here": "Op dit apparaat",
   "data.copies": "Kopieën die je bewaart",
   "data.others": "Wie ze nog meer ziet",
+  "data.privacyLine": "Wie je spullen op dit apparaat kan openen en wie ziet wat je deelt.",
+  "data.peopleText": "Naar wie je iets stuurt en wie jou iets stuurt",
   "data.space": "Gebruikte ruimte",
   "data.of": "{size} van de {quota} die deze browser {name} geeft",
   "data.room": "Ruimte maken bij Breinen",

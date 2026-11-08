@@ -20,6 +20,8 @@
   "data.here": "Kwenye kifaa hiki",
   "data.copies": "Nakala unazohifadhi",
   "data.others": "Nani mwingine anaiona",
+  "data.privacyLine": "Nani anaweza kufungua vitu vyako kwenye kifaa hiki, na nani anaona unachoshiriki.",
+  "data.peopleText": "Watu unaowatumia vitu, na wanaokutumia vyao",
   "data.space": "Nafasi iliyotumika",
   "data.of": "{size} kati ya {quota} ambazo kivinjari hiki kinampa {name}",
   "data.room": "Pata nafasi kwenye Akili",

@@ -329,8 +329,8 @@ register({
   // Found, but not set up by the user yet, Settings' Capabilities says.
   waiting: () => !isOn(),
   slots: {
-    // Its row in Your data, on this device, and its page, data/lock: how it opens, On once it is set.
-    data: { id: 'lock', at: 0, group: 'here', icon: icons.lock, label: 'cap.lock.name', draw: panel, state: () => (isOn() ? html`<span class="data-state">${icons.check}${t('lock.on')}</span>` : nothing),
+    // Its row in Privacy, on this device, and its page, privacy/lock (D729): how it opens, On once it is set.
+    data: { id: 'lock', at: 0, section: 'privacy', group: 'here', icon: icons.lock, label: 'cap.lock.name', draw: panel, state: () => (isOn() ? html`<span class="data-state">${icons.check}${t('lock.on')}</span>` : nothing),
       text: () => t(slotOf('parent') ? 'lock.parent' : !isOn() ? 'lock.opens.anyone' : slotOf('passkey') ? 'lock.opens.passkey' : 'lock.opens.password') },
     // Lock now, in the person's menu, while there is a lock.
     profile: { at: 1, draw: (/** @type {string} */ menu) => (isOn() ? html`<button type="button" popovertarget=${menu} popovertargetaction="hide" @click=${lockNow}>${icons.lock}${t('lock.now')}</button>` : nothing) },
@@ -338,4 +338,4 @@ register({
 })
 
 // An organisation's policy can ask for a lock (`lock: "required"` in policy.json): Settings opens on it until there is one.
-if (app.policy?.lock === 'required' && vault.value && !isOn()) import('../../ui/dialogs.js').then((dialogs) => dialogs.openSettings('data/lock'))
+if (app.policy?.lock === 'required' && vault.value && !isOn()) import('../../ui/dialogs.js').then((dialogs) => dialogs.openSettings('privacy/lock'))

@@ -18,6 +18,9 @@
   "devices.store.again": "Bắt đầu lại",
   "devices.store.synced": "Đồng bộ lần cuối: {when}",
   "devices.own": "Mỗi thiết bị giữ riêng chủ đề, thư mục đồng bộ, các bộ não đã tải về và việc đăng nhập vào các dịch vụ.",
+  "devices.reading": {
+    "other": "{count} thiết bị đọc được dữ liệu của bạn"
+  },
   "devices.store.unreached": "Thiết bị này hiện không kết nối được với các thiết bị khác của bạn: những gì thay đổi ở đây sẽ chờ đến khi kết nối được.",
   "devices.syncing": "Thiết bị của bạn · đang đồng bộ",
   "devices.trouble": "Thiết bị của bạn · cần xem qua",

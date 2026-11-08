@@ -222,10 +222,11 @@ test('a device added: six digits typed on the one that has the Jean, and the oth
   await settings.getByRole('button', { name: 'Done' }).click()
   await expect(settings.locator('.devices-cards > li')).toHaveCount(2)
   await expect(settings.locator('.devices-cards > li').first()).toContainText('This device, added')
-  // B's, from its button at the end of the person's row, the menu no longer holding it.
-  await expect((await openProfile(b)).getByRole('button', { name: 'Your devices' })).toHaveCount(0)
-  await b.keyboard.press('Escape')
-  await (await openTasks(b)).locator('.profile').getByRole('button', { name: 'Your devices' }).click()
+  // B's, from the person's menu, where its row counts them, no icon left at the row's end (D729).
+  await expect((await openTasks(b)).locator('.profile > .icon-button')).toHaveCount(0)
+  const menu = await openProfile(b)
+  await expect(menu.getByRole('button', { name: /^Your devices/ })).toHaveText(/^Your devices\s*2$/)
+  await menu.getByRole('button', { name: /^Your devices/ }).click()
   const there = b.locator('app-settings dialog[open]')
   await expect(there.locator('.data-head h2')).toHaveText('Your devices')
   await expect(there.locator('.devices-cards > li')).toHaveCount(2)
@@ -482,7 +483,7 @@ test('a device removed with its box unticked keeps Jean on its own, and added ag
 test('a locked profile asks for its lock before the six digits', async ({ page, browser }) => {
   await deviceA(page)
   await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('lock') })
-  const lock = await openData(page, 'lock')
+  const lock = await openData(page, 'lock', 'Privacy')
   const part = lock.locator('.lock-part')
   await part.getByRole('button', { name: 'Use a password' }).click()
   await part.getByLabel('Password', { exact: true }).fill(PASSWORD)
@@ -742,25 +743,26 @@ test('a task made on one device shows on the other through the store, and the re
   await b.context().close()
 })
 
-test('what one device sends reaches the other without waiting for its minute, told by its mailbox, whose Your devices breathes meanwhile, and says when it last synced', async ({ page, browser }) => {
+test('what one device sends reaches the other without waiting for its minute, told by its mailbox, whose Your devices row says it syncs meanwhile, and says when it last synced', async ({ page, browser }) => {
   await deviceA(page)
   const b = await device(browser)
   // B's round every minute never comes, from the page the pairing opens on: what A sends reaches it only by being told.
   await b.context().addInitScript(() => { const every = setInterval; Object.assign(window, { setInterval: (/** @type {() => void} */ run, /** @type {number} */ ms) => (ms === 60_000 ? 0 : every(run, ms)) }) })
   await pair(page, b)
   await closeSettings(page)
-  const foot = (await openTasks(b)).locator('.profile').getByRole('button', { name: /^Your devices/ })
-  await expect(foot).toHaveAccessibleName('Your devices')
+  // The person's menu holds its row whether or not it is open (D729).
+  const row = (await openTasks(b)).locator('.profile-menu').getByRole('button', { name: /^Your devices/, includeHidden: true })
+  await expect(row).toHaveText(/^Your devices\s*2$/)
   // B's rounds as it opened, and those the files they brought called for, over: from here, only being told brings it another.
   await expect.poll(() => b.evaluate(async () => Date.now() - ((await import('/caps/devices/store.js')).state.value.at ?? Date.now())), { timeout: 30_000 }).toBeGreaterThan(4_000)
-  await b.evaluate(() => new MutationObserver(() => { if (document.querySelector('.profile .devices-syncing[aria-label="Your devices · syncing"]')) Object.assign(window, { breathed: true }) })
-    .observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ['class'] }))
+  await b.evaluate(() => new MutationObserver(() => { if ([...document.querySelectorAll('.profile-menu button')].some((one) => one.textContent?.includes('Your devices · syncing'))) Object.assign(window, { breathed: true }) })
+    .observe(document.body, { subtree: true, childList: true, characterData: true }))
   const path = await taskOn(page, TITLE, 'Plan my trip to Lyon by the sea')
   await expect.poll(async () => { await storeRound(page); return inStore(page) }, { timeout: 20_000 }).toContain(path)
   // Told at once, or 30 seconds after A last told it, when A's own first round, which sent all it had, told it then.
   await expect.poll(() => read(b, path), { timeout: 40_000 }).toBe(await read(page, path))
   expect(await b.evaluate(() => /** @type {any} */ (window).breathed)).toBe(true)
-  await expect(foot).toHaveAccessibleName('Your devices')
+  await expect(row).toHaveText(/^Your devices\s*2$/)
   await expect((await devicesPage(b)).locator('.devices-synced')).toHaveText(/^Last synced: /)
   await b.context().close()
 })

@@ -18,6 +18,9 @@
   "devices.store.again": "Mula semula",
   "devices.store.synced": "Kali terakhir disegerakkan: {when}",
   "devices.own": "Tema, folder yang disegerakkan, otak yang dimuat turun dan log masuk ke perkhidmatan disimpan berasingan pada setiap peranti.",
+  "devices.reading": {
+    "other": "{count} peranti boleh membaca data anda"
+  },
   "devices.store.unreached": "Peranti ini tidak dapat mencapai peranti anda yang lain sekarang: apa yang berubah di sini menunggu sehingga ia dapat.",
   "devices.syncing": "Peranti anda · sedang menyegerak",
   "devices.trouble": "Peranti anda · perlu dilihat",

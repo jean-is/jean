@@ -1,5 +1,11 @@
 {
   "profiles.title": "Profily",
+  "profiles.row": {
+    "one": "{count} profil v tomto zariadení",
+    "few": "{count} profily v tomto zariadení",
+    "many": "{count} profilu v tomto zariadení",
+    "other": "{count} profilov v tomto zariadení"
+  },
   "profiles.what": "Každý profil má v tomto zariadení vlastné úlohy, pamäť, nastavenia a kľúče. Nič neprechádza z jedného do druhého.",
   "profiles.name": "Názov nového profilu",
   "profiles.yours": "Názov tohto profilu",

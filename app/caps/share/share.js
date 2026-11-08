@@ -309,8 +309,8 @@ const capability = {
       return action ? action(icons.share, t('share.menu'), act) : html`<button class="icon-button subtle" aria-label=${t('share.menu')} @click=${act}>${icons.share}</button>`
     } },
     views: { at: 5, draw: (/** @type {{ path: string, records: unknown[] } | null} */ current) => (current?.records.length ? state(current) : nothing) },
-    // Who else sees the user's things, in Your data: how many links are open and when the next ends.
-    data: { id: 'links', at: 0, group: 'others', icon: icons.share, label: 'share.links', draw: panel, when: () => shares.value.length > 0, line: () => t('share.page'),
+    // Who else sees the user's things, in Privacy (D729): how many links are open and when the next ends.
+    data: { id: 'links', at: 0, section: 'privacy', group: 'others', icon: icons.share, label: 'share.links', draw: panel, when: () => shares.value.length > 0, line: () => t('share.page'),
       text: () => t('share.count', { count: shares.value.length, date: new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'medium' }).format(Math.min(...shares.value.map((share) => Date.parse(share.expires)))) }) },
     dialog: { at: 1, draw: () => html`<app-share-dialog></app-share-dialog>` },
   },

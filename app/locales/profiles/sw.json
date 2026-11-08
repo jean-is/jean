@@ -1,5 +1,9 @@
 {
   "profiles.title": "Wasifu",
+  "profiles.row": {
+    "one": "Wasifu {count} kwenye kifaa hiki",
+    "other": "Wasifu {count} kwenye kifaa hiki"
+  },
   "profiles.what": "Kila wasifu huhifadhi kwenye kifaa hiki kazi zake, kumbukumbu, mipangilio na funguo zake. Hakuna kinachovuka kutoka kimoja hadi kingine.",
   "profiles.name": "Jina la wasifu mpya",
   "profiles.yours": "Jina la wasifu huu",

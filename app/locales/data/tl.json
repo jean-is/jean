@@ -20,6 +20,8 @@
   "data.here": "Sa device na ito",
   "data.copies": "Mga kopyang itinatago mo",
   "data.others": "Sino pa ang nakakakita",
+  "data.privacyLine": "Kung sino ang makakabukas ng data mo sa device na ito, at kung sino ang nakakakita ng ibinabahagi mo.",
+  "data.peopleText": "Kung kanino ka nagpapadala, at kung sino ang nagpapadala sa iyo",
   "data.space": "Nagamit na espasyo",
   "data.of": "{size} sa {quota} na ibinibigay ng browser na ito sa {name}",
   "data.room": "Magbakante ng espasyo sa Mga utak",

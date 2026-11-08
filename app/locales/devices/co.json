@@ -20,6 +20,11 @@
   "devices.store.again": "Ricumincià",
   "devices.store.synced": "Ultima sincrunizazione : {when}",
   "devices.own": "Ogni apparechju tene u so propiu tema, u so cartulare sincrunizatu, i so cervelli scaricati è e so cunnessioni à i servizii.",
+  "devices.reading": {
+    "one": "{count} apparechju pò leghje e vostre cose",
+    "many": "{count} d’apparechji ponu leghje e vostre cose",
+    "other": "{count} apparechji ponu leghje e vostre cose"
+  },
   "devices.store.unreached": "St’apparechju ùn pò micca ghjunghje à i vostri altri apparechji per avà : ciò chì cambia quì aspetta ch’ellu possi.",
   "devices.syncing": "I vostri apparechji · sincrunizazione in corsu",
   "devices.trouble": "I vostri apparechji · da verificà",

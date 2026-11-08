@@ -1,5 +1,8 @@
 {
   "profiles.title": "プロフィール",
+  "profiles.row": {
+    "other": "この端末のプロフィール {count} 件"
+  },
   "profiles.what": "プロフィールごとに、タスク、記憶、設定、キーをこの端末に別々に保ちます。プロフィールの間で行き来するものはありません。",
   "profiles.name": "新しいプロフィールの名前",
   "profiles.yours": "このプロフィールの名前",

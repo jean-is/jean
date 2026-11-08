@@ -20,6 +20,8 @@
   "data.here": "A wannan na'urar",
   "data.copies": "Kwafin da kake ajiyewa",
   "data.others": "Wa kuma yake gani",
+  "data.privacyLine": "Wa zai iya buɗe kayanka a wannan na'urar, kuma wa ke ganin abin da kake rabawa.",
+  "data.peopleText": "Waɗanda kake aika musu abubuwa, da waɗanda ke aiko maka nasu",
   "data.space": "Wurin da aka yi amfani da shi",
   "data.of": "{size} daga cikin {quota} da wannan burauzar ta ba {name}",
   "data.room": "Samar da wuri a Ƙwaƙwalwa",

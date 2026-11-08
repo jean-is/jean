@@ -20,6 +20,8 @@
   "data.here": "Na ovom uređaju",
   "data.copies": "Kopije koje čuvate",
   "data.others": "Tko to još vidi",
+  "data.privacyLine": "Tko može otvoriti vaše podatke na ovom uređaju i tko vidi ono što dijelite.",
+  "data.peopleText": "Kome šaljete stvari i tko vam šalje svoje",
   "data.space": "Iskorišteni prostor",
   "data.of": "{size}, od {quota} koliko ovaj preglednik dopušta aplikaciji {name}",
   "data.room": "Oslobodi prostor u Mozgovima",

@@ -20,6 +20,11 @@
   "devices.store.again": "Recomeçar",
   "devices.store.synced": "Última sincronização: {when}",
   "devices.own": "Cada dispositivo guarda o seu próprio tema, a sua pasta sincronizada, os seus cérebros transferidos e as sessões iniciadas nos serviços.",
+  "devices.reading": {
+    "one": "{count} dispositivo pode ler as tuas coisas",
+    "many": "{count} dispositivos podem ler as tuas coisas",
+    "other": "{count} dispositivos podem ler as tuas coisas"
+  },
   "devices.store.unreached": "Este dispositivo não consegue chegar aos teus outros dispositivos neste momento: o que mudar aqui fica à espera até conseguir.",
   "devices.syncing": "Os teus dispositivos · a sincronizar",
   "devices.trouble": "Os teus dispositivos · a verificar",

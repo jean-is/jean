@@ -70,7 +70,7 @@ A switch, Lock now and an unlock are one gesture, the curtain (D669, `ui/curtain
 - **The person's menu** keeps who they are and how they leave together: this profile's row, then Lock now, above Settings. That row, with a caret up and a caret down at its end, turns the menu to a page of the other profiles and Add a profile, as Language turns to the languages. It opens with the keyboard on that row, and the arrow keys, Home and End walk it. ⌘⇧P goes to the next profile, ⌘⌥⇧P to the one before, and ⌘K lists the others.
 - **At work,** Sign out sits beside Lock now. A curtain goes before each trip to the identity provider and greets the person back, and signing out comes back to a screen that stays: the badge, that they are signed out, Sign in and the other profiles.
 - **An answer being written** is never stopped by surprise: its row asks in the menu, Stay or Go anyway, and a toast asks after a key or from Settings. Lock now never asks, since a lock can't wait, and stops it as closing the tab does.
-- **Each profile's colour** tints its badge, here and wherever its initial shows: the first keeps Jean's sunflower, each new one takes the first of the eight colours projects use that no profile has, and its page in Settings › Profiles changes it.
+- **Each profile's colour** tints its badge, here and wherever its initial shows: the first keeps Jean's sunflower, each new one takes the first of the eight colours projects use that no profile has, and its page in Settings › Privacy › Profiles changes it.
 
 ## Typography
 

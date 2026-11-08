@@ -149,7 +149,7 @@ The lock is a capability, `lock`, found like the others (D281).
 - *Can't open it?*, which holds the recovery code's field, reading the code whatever its case, spaces and dashes, says that nobody can open it without one of those, and offers Add a profile. Nothing is deleted here (D371): the new profile opens with this device's key, its colour the first no profile has, and this one stays as it is, for the day its way in turns up. A child's offers no profile, a parent seeing to it;
 - the other profiles' badges at its foot, a lock on those that will ask.
 
-**Removing a locked profile** takes another profile: Settings › Profiles has Remove on its row, whose confirmation says that no way in brings it back, and which retention can refuse (D412). Not from a child's profile, nor for a child's whose parent is on this device, nor for one a child's opens only with.
+**Removing a locked profile** takes another profile: Settings › Privacy › Profiles has Remove on its row, whose confirmation says that no way in brings it back, and which retention can refuse (D412). Not from a child's profile, nor for a child's whose parent is on this device, nor for one a child's opens only with.
 
 **When it locks:** whenever Jean closes, with *Lock now*, in the person's menu and in Settings, and with *Sign out* at work. Lock now stops a task at work, as closing the tab does. Locking after a time away can come later, with no change to the seal.
 

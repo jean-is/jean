@@ -20,6 +20,8 @@
   "data.here": "Sur cet appareil",
   "data.copies": "Les copies que vous gardez",
   "data.others": "Qui d’autre les voit",
+  "data.privacyLine": "Qui peut ouvrir vos affaires sur cet appareil, et qui voit ce que vous partagez.",
+  "data.peopleText": "À qui vous envoyez des choses, et qui vous envoie les siennes",
   "data.space": "Espace utilisé",
   "data.of": "{size}, sur les {quota} que ce navigateur laisse à {name}",
   "data.room": "Faire de la place dans Cerveaux",

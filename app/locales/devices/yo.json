@@ -18,6 +18,9 @@
   "devices.store.again": "Bẹ̀rẹ̀ lẹ́ẹ̀kan sí i",
   "devices.store.synced": "Ìmúṣọ̀kan tó kẹ́yìn: {when}",
   "devices.own": "Ẹ̀rọ kọ̀ọ̀kan ní tirẹ̀: àwòrán, fódà tí a ń múṣọ̀kan, àwọn ọpọlọ tí a gbà sílẹ̀ àti ìwọlé sí àwọn iṣẹ́.",
+  "devices.reading": {
+    "other": "Ẹ̀rọ {count} lè ka àwọn nǹkan yín"
+  },
   "devices.store.unreached": "Ẹ̀rọ yìí kò lè dé ọ̀dọ̀ àwọn ẹ̀rọ yín mìíràn báyìí: ohun tó bá yí padà níbí yóò dúró títí yóò fi lè dé.",
   "devices.syncing": "Àwọn ẹ̀rọ yín · ń ṣe ìmúṣọ̀kan",
   "devices.trouble": "Àwọn ẹ̀rọ yín · ẹ wò ó",

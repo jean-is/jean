@@ -20,6 +20,8 @@
   "data.here": "På den här enheten",
   "data.copies": "Kopior du sparar",
   "data.others": "Vem mer som ser det",
+  "data.privacyLine": "Vem som kan öppna dina saker på den här enheten och vem som ser det du delar.",
+  "data.peopleText": "Vem du skickar saker till och vem som skickar något till dig",
   "data.space": "Använt utrymme",
   "data.of": "{size}, av de {quota} som den här webbläsaren låter {name} använda",
   "data.room": "Frigör plats i Hjärnor",

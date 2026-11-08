@@ -1,5 +1,12 @@
 {
   "profiles.title": "Profiloù",
+  "profiles.row": {
+    "one": "{count} profil war an trevnad-mañ",
+    "two": "{count} profil war an trevnad-mañ",
+    "few": "{count} profil war an trevnad-mañ",
+    "many": "{count} a brofiloù war an trevnad-mañ",
+    "other": "{count} profil war an trevnad-mañ"
+  },
   "profiles.what": "Pep profil a vir e drevelloù, e vemor, e arventennoù hag e alc’hwezioù dezhañ war an trevnad-mañ. Netra ne dremen eus unan d’egile.",
   "profiles.name": "Anv ar profil nevez",
   "profiles.yours": "Anv ar profil-mañ",

@@ -19,6 +19,10 @@
   "devices.store.again": "Aloita alusta",
   "devices.store.synced": "Viimeksi synkronoitu: {when}",
   "devices.own": "Jokaisella laitteella on oma teemansa, synkronoitu kansionsa, ladatut aivonsa ja kirjautumisensa palveluihin.",
+  "devices.reading": {
+    "one": "{count} laite voi lukea tietosi",
+    "other": "{count} laitetta voi lukea tietosi"
+  },
   "devices.store.unreached": "Tämä laite ei juuri nyt tavoita muita laitteitasi: täällä tehdyt muutokset odottavat, kunnes se onnistuu.",
   "devices.syncing": "Laitteesi · synkronoidaan",
   "devices.trouble": "Laitteesi · tarkista",

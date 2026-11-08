@@ -20,6 +20,8 @@
   "data.here": "在这台设备上",
   "data.copies": "你保留的副本",
   "data.others": "还有谁能看到",
+  "data.privacyLine": "谁能在这台设备上打开你的数据，谁能看到你共享的内容。",
+  "data.peopleText": "你发东西给谁，谁又发东西给你",
   "data.space": "已用空间",
   "data.of": "这个浏览器给 {name} 的 {quota} 中已用 {size}",
   "data.room": "到“大脑”中腾出空间",

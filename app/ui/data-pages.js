@@ -1,7 +1,8 @@
 // Settings' Your data: Download a backup at its head, the map of where the user's things are (ui/map.js, D728), one line on how
 // things stand, the most pressing thing in it with its fix; then where each copy is, as rows that open their pages at their own addresses (D509):
-// on this device (Lock, Space used), the copies they keep (Backup, Sync), who else sees them (Shared links, their
-// organization), and Bring in. A capability's row and page are its part of the data slot, shown once it is found.
+// on this device (Space used, Delete old tasks), the copies they keep (Backup, the synced folder), and Bring in. And Privacy (D729), from the
+// same parts: who can open them on this device (Lock, Profiles) and who else sees them (Your devices, People, Shared links, their organization).
+// A capability's row and page are its part of the data slot, shown once it is found.
 // Loaded the first time Your data shows; its strings are a part of their own (locales/data/).
 import { html, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
@@ -24,8 +25,8 @@ await Promise.all([useStrings('data'), styleSheet(new URL('data-pages.css', impo
  * row's unless it has its own; at the row's end how it stands, at its page's head what it does most, what presses, and,
  * while a copy it keeps elsewhere is in step, where the user's things are safe (the synced folder's, the devices'), which stands for the browser
  * that may clear them, its fix beside what it says or beside a line saying they are only here (Add a device), and its places on the map.
- * With `page: false`, no row and no page (Your devices, D726).
- * @typedef {{ id: string, at: number, group: 'here' | 'copies' | 'others', icon: unknown, label: string, text: () => string, line?: () => string, page?: false, state?: () => unknown,
+ * With `page: false`, no row and no page (Your devices, D726); with `section`, Privacy's (D729); with `link`, a row that opens that section.
+ * @typedef {{ id: string, at: number, group: 'here' | 'copies' | 'others', icon: unknown, label: string, text: () => string, line?: () => string, page?: false, section?: 'privacy', link?: import('./dialogs.js').Section, state?: () => unknown,
  *   end?: () => unknown, say?: () => string | undefined, copy?: () => string | undefined, fix?: () => unknown, node?: () => Place | Place[] | undefined, when?: () => boolean, draw: (settings: { lockedBy: () => string }) => unknown }} Part
  */
 /** @typedef {import('./map.js').Place} Place */
@@ -34,10 +35,10 @@ await Promise.all([useStrings('data'), styleSheet(new URL('data-pages.css', impo
 const storage = signal(/** @type {{ usage?: number, quota?: number, persisted?: boolean } | null} */ (null))
 // The page open (pageOpen()): a part's id, or '' for the list.
 
-/** Opens the list ('') or a page, the keyboard on its title, or back on the list on the row it came from. @param {string} to */
+/** Opens the section's list ('') or a page, the keyboard on its title, or back on the list on the row it came from. @param {string} to */
 function go(to) {
   const from = pageOpen()
-  app.section.value = to ? `data/${to}` : 'data'
+  app.section.value = to ? `${sectionOpen()}/${to}` : sectionOpen()
   requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector(to ? '.data-head h2' : `[data-part="${from}"]`))?.focus())
 }
 
@@ -170,7 +171,9 @@ function all() {
       <section><h3>${t('backup.restore')}</h3><div class="row">${picker('data.pick')}</div>
       ${app.policy.child ? nothing : html`<p class="hint"><button class="link-button" @click=${() => go('import')}>${t('data.import')}</button></p>`}</section>` })]),
   forgetting,
-  ...(!slots('organization').length ? [] : [/** @type {Part} */ ({ id: 'organization', at: 9, group: 'others', icon: icons.badge, label: 'data.org', text: () => t('data.orgText'),
+  // People met (D727), a way to their section from Privacy's, People's own code unchanged.
+  ...(!loaded.value.has('people') ? [] : [/** @type {Part} */ ({ id: 'people', at: -1, section: 'privacy', group: 'others', icon: icons.people, label: 'cap.people.name', text: () => t('data.peopleText'), link: 'people', draw: () => null })]),
+  ...(!slots('organization').length ? [] : [/** @type {Part} */ ({ id: 'organization', at: 9, section: 'privacy', group: 'others', icon: icons.badge, label: 'data.org', text: () => t('data.orgText'),
     draw: () => slots('organization').map((part) => part.draw()) })]),
   .../** @type {Part[]} */ (slots('data'))].filter((part) => part.when?.() ?? true)
 }
@@ -199,26 +202,32 @@ function pressing(shown) {
 const places = (shown) => [...shown.flatMap((part) => part.node?.() ?? []), ...(pairs() && !loaded.value.has('devices') && !isDenied('devices') && !app.ephemeral.value ? [ghost(() => unlock('devices').then((on) => {
   if (on) import('../caps/devices/devices.js').then((devices) => { openSettings('devices'); devices.start() }) }))] : [])]
 
-/** A part's row: the whole of it opens its page. @param {Part} part */
-const row = (part) => html`<li><button class="item" data-part=${part.id} @click=${() => go(part.id)}><span class="item-icon">${part.icon}</span>
+/** A part's row: the whole of it opens its page, or the section it leads to. @param {Part} part */
+const row = (part) => html`<li><button class="item" data-part=${part.id} @click=${() => (part.link ? openSettings(part.link) : go(part.id))}><span class="item-icon">${part.icon}</span>
   <span class="item-text"><strong>${t(part.label)}</strong>${part.text() ? html`<small dir="auto">${part.text()}</small>` : nothing}</span>${part.state?.() ?? nothing}${icons.chevron}</button></li>`
 
-const GROUPS = /** @type {const} */ (['here', 'copies', 'others'])
+/** The page open among these parts, under Back to its section, its name and its line, what it does most at its end; or null. @param {Part[]} shown @param {string} title */
+function opened(shown, title) {
+  const page = shown.find((part) => part.id === pageOpen() && part.page !== false && !part.link), said = page && (page.line ?? page.text)()
+  return page ? html`<button class="back button subtle" @click=${() => go('')}>${icons.back} ${t(title)}</button>
+    <header class="data-head"><div><h2 tabindex="-1">${t(page.label)}</h2>${said ? html`<p class="lede">${said}</p>` : nothing}</div>${page.end?.() ?? nothing}</header>${page.draw({ lockedBy })}` : null
+}
+/** These parts' rows, in these groups, each under its heading. @param {Part[]} shown @param {Part['group'][]} names */
+const grouped = (shown, names) => names.map((group) => ((rows) => (rows.length ? html`<section><h3>${t(`data.${group}`)}</h3><ul class="list data-rows">${rows.map(row)}</ul></section>` : nothing))(
+  shown.filter((part) => part.group === group && part.page !== false).sort((a, b) => a.at - b.at)))
+
+/** Settings' Privacy (D729): who can open the user's things on this device, and who else sees them; or the page open. */
+export const privacy = () => ((shown) => opened(shown, 'settings.privacy') ?? html`<header class="data-head"><div><h2>${t('settings.privacy')}</h2><p class="lede">${t('data.privacyLine')}</p></div></header>
+  ${grouped(shown, ['here', 'others'])}`)(all().filter((part) => part.section === 'privacy'))
 
 /** Settings' Your data: the list, or the page open. */
 export function section() {
-  const [shown, open] = [all(), pageOpen()]
-  const page = [...shown, BRING].find((part) => part.id === open && part.page !== false)
-  const [said, fix] = page ? [(page.line ?? page.text)()] : pressing(shown)
-  if (page) return html`<button class="back button subtle" @click=${() => go('')}>${icons.back} ${t('settings.storage')}</button>
-    <header class="data-head"><div><h2 tabindex="-1">${t(page.label)}</h2>${said ? html`<p class="lede">${said}</p>` : nothing}</div>${page.end?.() ?? nothing}</header>${page.draw({ lockedBy })}`
-  const around = places(shown)
+  const shown = all().filter((part) => !part.section), page = opened([...shown, BRING], 'settings.storage')
+  if (page) return page
+  const [[said, fix], around] = [pressing(shown), places(shown)]
   return html`<header class="data-head"><h2>${t('settings.storage')}</h2>${download()}</header>
     ${around.length ? map(t('data.where'), { icon: handheld() ? icons.phone : icons.computer, name: t('data.this') }, around) : nothing}<p class="lede">${app.ephemeral.value ? html`<strong>${t('storage.ephemeral')}</strong>` : html`${t('data.kept')} ${said ? html`<strong>${said}</strong>` : nothing}`}</p>${fix && !app.ephemeral.value ? html`<div class="row data-fix">${fix}</div>` : nothing}
-    ${GROUPS.map((group) => {
-      const rows = shown.filter((part) => part.group === group && part.page !== false).sort((a, b) => a.at - b.at)
-      return rows.length ? html`<section><h3>${t(`data.${group}`)}</h3><ul class="list data-rows">${rows.map(row)}</ul></section>` : nothing
-    })}
+    ${grouped(shown, ['here', 'copies'])}
     ${app.policy.child ? nothing : html`<section><ul class="list data-rows">${row(BRING)}</ul></section>`}
     ${app.ephemeral.value ? html`<p class="hint">${t('data.private', { name: BRAND.name })}</p>` : nothing}`
 }

@@ -1,5 +1,8 @@
 {
   "profiles.title": "个人资料",
+  "profiles.row": {
+    "other": "这台设备上有 {count} 份个人资料"
+  },
   "profiles.what": "每个个人资料都在这台设备上保存自己的任务、记忆、设置和密钥。彼此之间互不相通。",
   "profiles.name": "新个人资料的名字",
   "profiles.yours": "这个个人资料的名字",

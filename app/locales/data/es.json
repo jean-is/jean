@@ -20,6 +20,8 @@
   "data.here": "En este dispositivo",
   "data.copies": "Copias que guardas",
   "data.others": "Quién más los ve",
+  "data.privacyLine": "Quién puede abrir tus cosas en este dispositivo y quién ve lo que compartes.",
+  "data.peopleText": "A quién envías cosas y quién te envía las suyas",
   "data.space": "Espacio usado",
   "data.of": "{size} de los {quota} que este navegador deja usar a {name}",
   "data.room": "Liberar espacio en Cerebros",

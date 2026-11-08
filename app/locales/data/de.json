@@ -20,6 +20,8 @@
   "data.here": "Auf diesem Gerät",
   "data.copies": "Kopien, die du behältst",
   "data.others": "Wer sie noch sieht",
+  "data.privacyLine": "Wer deine Sachen auf diesem Gerät öffnen kann und wer sieht, was du teilst.",
+  "data.peopleText": "Wem du etwas schickst und wer dir etwas schickt",
   "data.space": "Belegter Speicher",
   "data.of": "{size} von den {quota}, die dieser Browser {name} lässt",
   "data.room": "Unter Gehirne Platz schaffen",

@@ -1,7 +1,7 @@
 // The lock (D371): every file is sealed at rest, and a lock keeps the key behind a password or a
 // passkey, with a recovery code; a second tab is handed the key, Lock now locks them all.
 import { test, expect } from '@playwright/test'
-import { start, turnOn, openSettings, closeSettings, openProfile, openOthers } from './helpers.js'
+import { start, turnOn, openSettings, closeSettings, openProfile, openProfiles, openOthers } from './helpers.js'
 
 const PASSWORD = 'a long and happy password'
 
@@ -18,9 +18,9 @@ const onDisk = (page, name) => page.evaluate(async (name) => {
   return (await (await dir.getFileHandle(name)).getFile()).text()
 }, name)
 
-/** The lock's page in Settings › Your data, from its row. @param {import('@playwright/test').Page} page */
+/** The lock's page in Settings › Privacy, from its row (D729). @param {import('@playwright/test').Page} page */
 async function lockPart(page) {
-  const settings = await openSettings(page, 'Your data')
+  const settings = await openSettings(page, 'Privacy')
   await settings.locator('[data-part="lock"]').click()
   await expect(settings.getByRole('heading', { name: 'Lock', exact: true })).toBeFocused()
   const part = settings.locator('.lock-part')
@@ -60,7 +60,7 @@ test('files are sealed on disk; a password locks them, another tab is handed the
   const code = await confirmCode(part)
   expect(code).toMatch(/^([0-9A-F]{4}-){7}[0-9A-F]{4}$/)
   await expect(part).toContainText('Locked with your password.')
-  // Back on Your data, its row says how it opens, and that it is on.
+  // Back on Privacy, its row says how it opens, and that it is on.
   await page.locator('app-settings .back').click()
   const row = page.locator('app-settings [data-part="lock"]')
   await expect(row).toBeFocused()
@@ -196,7 +196,7 @@ test('a way in lost deletes nothing: the lock screen adds a profile beside it, i
   expect(vaults[2]).toBeNull()
 
   // The locked one opens as it was, the day its password turns up.
-  const row = (await openSettings(page, 'Profiles')).locator('.profiles li', { hasText: 'Locked' })
+  const row = (await openProfiles(page)).locator('.profiles li', { hasText: 'Locked' })
   await row.getByRole('button', { name: 'Open' }).click()
   await lock.getByLabel('Password', { exact: true }).fill(PASSWORD)
   await lock.getByRole('button', { name: 'Unlock' }).click()
@@ -387,4 +387,32 @@ test.describe('a passkey', () => {
     await unlock.click()
     await expect(page.locator('.hero-question')).toBeVisible()
   })
+})
+
+test('Privacy holds who can open or see things, once found: Lock and Profiles on this device, its pages under it, and Your data keeps neither (D729)', async ({ page }) => {
+  await start(page)
+  await expect((await openSettings(page)).locator('.settings-nav')).not.toContainText('Privacy')
+  await closeSettings(page)
+  await turnOn(page, 'Lock')
+  await closeSettings(page)
+  await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('profiles') })
+  const settings = await openSettings(page, 'Privacy')
+  await expect(settings.locator('.data-head h2')).toHaveText('Privacy')
+  await expect(settings.locator('.data-head .lede')).toHaveText('Who can open your things on this device, and who sees what you share.')
+  await expect(settings.locator('.data-rows [data-part]')).toHaveText([/Lock\s*Anyone using this device can open it/, /Profiles\s*1 profile on this device/])
+  // Profiles: no row of its own in the menu, which marks Privacy while it is open; Back lands on its row.
+  await expect(settings.locator('.settings-nav')).not.toContainText('Profiles')
+  await settings.locator('[data-part="profiles"]').click()
+  await expect(settings.locator('.profile-head h2')).toHaveText('Profiles')
+  await expect(settings.locator('.settings-nav [aria-current="page"]')).toHaveText('Privacy')
+  await settings.locator('.settings-panel > .back').click()
+  await expect(settings.locator('[data-part="profiles"]')).toBeFocused()
+  // Lock's page is Privacy's, at its address.
+  await settings.locator('[data-part="lock"]').click()
+  await expect(page).toHaveURL(/#\/settings\/privacy\/lock$/)
+  await settings.locator('.settings-panel > .back').click()
+  // Your data keeps keeping and room: no Lock, links or profiles.
+  await settings.locator('.settings-nav button', { hasText: 'Your data' }).click()
+  await expect(settings.locator('.data-rows [data-part]')).not.toHaveCount(0)
+  await expect(settings.locator('[data-part="lock"], [data-part="links"], [data-part="profiles"], [data-part="organization"]')).toHaveCount(0)
 })

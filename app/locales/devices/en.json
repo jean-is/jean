@@ -19,6 +19,10 @@
   "devices.store.again": "Start again",
   "devices.store.synced": "Last synced: {when}",
   "devices.own": "Each device keeps its own theme, synced folder, downloaded brains and sign-ins to services.",
+  "devices.reading": {
+    "one": "{count} device can read your things",
+    "other": "{count} devices can read your things"
+  },
   "devices.store.unreached": "This device can’t reach your other devices right now: what changes here waits until it can.",
   "devices.syncing": "Your devices · syncing",
   "devices.trouble": "Your devices · needs a look",

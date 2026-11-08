@@ -4,7 +4,7 @@
 // no key is needed, and elsewhere a policy that asks for it without one stops Jean with a message for IT (D139).
 // Settings › Your data says what goes, and who it names: the account, or a pseudonym (D427).
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, withPolicy, openSettings, openProfile, closeSettings, openTasks, turnOn, connect, MAIL_URL, deleteOpenTask, openData, servedFrom } from './helpers.js'
+import { start, connectFakeBrain, ask, withPolicy, openSettings, openProfile, openProfiles, closeSettings, openTasks, turnOn, connect, MAIL_URL, deleteOpenTask, openData, servedFrom } from './helpers.js'
 import { POLICY, COLLECTOR, fakeIssuer, fakeGateway, fakeCollector } from './fixtures/fake-issuer.js'
 import { open, trusteePair } from './fixtures/trustee.js'
 
@@ -69,8 +69,8 @@ test('with the organisation’s sign-in, the collector gets its token, who signe
   expect(JSON.parse(root.attrs['gen_ai.output.messages'])[0].role).toBe('assistant')
   const [{ resource }] = collector.sent.at(-1)?.body.resourceSpans
   expect(resource.attributes).toContainEqual({ key: 'user.email', value: { stringValue: 'ana@acme.example' } })
-  // Your data's row for the organization opens what it receives, and how it names the person.
-  const settings = await openSettings(page, 'Your data')
+  // Privacy's row for the organization opens what it receives, and how it names the person.
+  const settings = await openSettings(page, 'Privacy')
   await expect(settings.locator('[data-part="organization"]')).toContainText('Your organizationWhat it receives from you and keeps')
   await settings.locator('[data-part="organization"]').click()
   await expect(settings).toContainText('It names you by ana@acme.example.')
@@ -90,7 +90,7 @@ test('as a pseudonym, the collector gets neither the email nor the device, only 
   for (const key of ['user.email', 'user.name', 'device.id']) expect(named[key], key).toBeUndefined()
   // This browser's Web Crypto sealed it as RFC 7516 says: the trustee's private key opens it.
   expect(JSON.parse(open(named['jean.user.sealed'], trustee.private).text)).toEqual({ 'user.email': 'ana@acme.example' })
-  const settings = await openData(page, 'organization')
+  const settings = await openData(page, 'organization', 'Privacy')
   await expect(settings).toContainText('It names you by a random name made on this device. Only whoever holds a key your organization chose can tell from it that it’s you.')
   await expect(settings).not.toContainText('ana@acme.example')
 })
@@ -168,7 +168,7 @@ test('a removal refused goes nowhere: a profile retention keeps, its id on every
   await expect.poll(here).toMatch(/-work$/)
   page.on('dialog', (asked) => asked.accept())
   // Its own page holds Remove.
-  const profiles = await openSettings(page, 'Profiles')
+  const profiles = await openProfiles(page)
   await profiles.locator('.profiles button.item', { hasText: 'Work' }).click()
   await profiles.getByRole('button', { name: 'Remove' }).click()
   await expect(page.locator('.toast')).toContainText('This profile stays')

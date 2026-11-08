@@ -20,6 +20,8 @@
   "data.here": "På denne enhed",
   "data.copies": "Kopier, du gemmer",
   "data.others": "Hvem der ellers ser det",
+  "data.privacyLine": "Hvem der kan åbne dine ting på denne enhed, og hvem der ser det, du deler.",
+  "data.peopleText": "Hvem du sender ting til, og hvem der sender dig noget",
   "data.space": "Brugt plads",
   "data.of": "{size} af de {quota}, denne browser lader {name} bruge",
   "data.room": "Skaf plads i Hjerner",

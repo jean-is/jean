@@ -1,4 +1,4 @@
-// Settings › Profiles (D228): a concern not yet seen, then every profile on this device, each saying how it opens,
+// Settings › Privacy › Profiles (D228, D729): Back to Privacy, a concern not yet seen, then every profile on this device, each saying how it opens,
 // a child's of this one its age and today's minutes. This one's row opens its page, profiles/<ULID>: its name, its lock,
 // and Remove, held while a child's under 13 opens only with it. A child's opens theirs: concerns, the week, what it is
 // set to in three baskets, Change, which asks this profile's way in once and changes it here, and Remove. Another's
@@ -46,10 +46,13 @@ function line(profile) {
   return [profile.dir === here() && t('profiles.this'), profile.locked && t('profiles.locked'), profile.parent && profile.dir !== here() && t('profiles.aChild')].filter(Boolean).join(' · ')
 }
 
+/** Back to Privacy (D729), the keyboard on its row for Profiles. */
+const back = () => { app.section.value = 'privacy'; requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector('[data-part="profiles"]'))?.focus()) }
 /** The concerns not yet seen, every profile, and the way to add one. */
 function list() {
   const fresh = unseen()
-  return html`<header class="profile-head"><h2>${t('profiles.title')}</h2>${child ? nothing : html`<button class="button" @click=${add}>${icons.plus} ${t('profiles.add')}</button>`}</header>
+  return html`<button class="back button subtle" @click=${back}>${icons.back} ${t('settings.privacy')}</button>
+    <header class="profile-head"><h2 tabindex="-1">${t('profiles.title')}</h2>${child ? nothing : html`<button class="button" @click=${add}>${icons.plus} ${t('profiles.add')}</button>`}</header>
     ${fresh.length ? told(fresh) : nothing}
     <section><ul class="list profiles">${all.value.map((profile) => {
       // This one's and a child's of this one open their page; another's opens, and goes from here if it has a lock.
@@ -74,7 +77,7 @@ function own(profile) {
       <fieldset class="swatches"><legend>${t('profiles.colour')}</legend>${COLOURS.map(([name, value]) => html`<label class="swatch" for=${`colour-${name}`}>
         <input id=${`colour-${name}`} title=${t(`colour.${name}`)} type="radio" name="profile-colour" value=${value} .checked=${value === (profile.colour ?? COLOURS[0][1])} @change=${() => keep({ colour: value })}>
         <span class="avatar" aria-hidden="true" ${tinted(value)}>${initial(profile)}</span><span class="visually-hidden">${t(`colour.${name}`)}</span></label>`)}</fieldset>
-      <ul class="list profiles"><li><button class="item" @click=${() => openSettings('data/lock')}><span class="item-icon">${icons.lock}</span>
+      <ul class="list profiles"><li><button class="item" @click=${() => openSettings('privacy/lock')}><span class="item-icon">${icons.lock}</span>
         <span class="item-text"><strong>${t(profile.locked ? 'profiles.locked' : 'profiles.unlocked')}</strong><small>${t('settings.storage')}</small></span>${icons.chevron}</button></li>
         ${all.value.some((other) => other.parent === here()) ? html`<li><span class="item"><span class="item-icon">${icons.person}</span><span class="item-text"><small>${t('profiles.hears')}</small></span></span></li>` : nothing}</ul>
     </section>

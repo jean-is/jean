@@ -20,6 +20,8 @@
   "data.here": "Bu cihazda",
   "data.copies": "Sakladığın kopyalar",
   "data.others": "Başka kimler görüyor",
+  "data.privacyLine": "Bu cihazda verilerini kimin açabileceği ve paylaştıklarını kimin gördüğü.",
+  "data.peopleText": "Kime bir şeyler gönderdiğin ve kimin sana gönderdiği",
   "data.space": "Kullanılan alan",
   "data.of": "Bu tarayıcının {name} için ayırdığı {quota} alanın {size} kadarı",
   "data.room": "Beyinler bölümünde yer aç",

@@ -18,6 +18,9 @@
   "devices.store.again": "重新开始",
   "devices.store.synced": "上次同步：{when}",
   "devices.own": "每台设备各自保留自己的主题、同步文件夹、下载的大脑，以及在各项服务上的登录。",
+  "devices.reading": {
+    "other": "{count} 台设备能读取你的数据"
+  },
   "devices.store.unreached": "这台设备暂时连不上你的其他设备：这里的改动会等到能连上时再传过去。",
   "devices.syncing": "你的设备 · 正在同步",
   "devices.trouble": "你的设备 · 需要看看",

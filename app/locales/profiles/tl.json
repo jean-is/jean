@@ -1,5 +1,9 @@
 {
   "profiles.title": "Mga profile",
+  "profiles.row": {
+    "one": "{count} profile sa device na ito",
+    "other": "{count} profile sa device na ito"
+  },
   "profiles.what": "Bawat profile ay may sariling mga gawain, alaala, setting at susi sa device na ito. Walang lumilipat mula sa isa papunta sa iba.",
   "profiles.name": "Pangalan ng bagong profile",
   "profiles.yours": "Pangalan ng profile na ito",

@@ -29,7 +29,7 @@ test('signing out on a shared computer erases this profile once the person confi
   await ask(page, 'Hello')
   await expect(page.locator('.msg-jean .prose')).not.toBeEmpty()
   await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
-  const settings = await openData(page, 'organization')
+  const settings = await openData(page, 'organization', 'Privacy')
   await expect(settings).toContainText('Signing out erases everything kept here on this computer')
   await page.keyboard.press('Escape')
   const before = await held(page)

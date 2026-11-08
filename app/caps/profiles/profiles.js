@@ -236,7 +236,9 @@ register({
     // The person at the drawer's foot is named by this profile, the first name they set coming first.
     profiles: { at: 0, draw: menu, page: others }, person: { at: 0, draw: () => self.value?.name },
     dialog: { at: 2, draw: () => html`<app-profile-dialog></app-profile-dialog>` },
-    settings: [{ id: 'profiles', at: 15, label: 'profiles.title', icon: icons.person, when: () => all.value.length > 1, draw: page }, ...(parts ? [parts.settings] : [])],
+    // Profiles, a page of Privacy (D729) at its own address, settings/profiles, no row of its own in the menu; Privacy's row, always there, leads to it.
+    settings: [{ id: 'profiles', at: 15, under: 'privacy', label: 'profiles.title', icon: icons.person, draw: page }, ...(parts ? [parts.settings] : [])],
+    data: { id: 'profiles', at: 1, section: 'privacy', group: 'here', icon: icons.person, label: 'profiles.title', text: () => t('profiles.row', { count: Math.max(all.value.length, 1) }), link: 'profiles', draw: () => null },
     above: [{ at: 0, draw: banner }, ...(parts ? [parts.above] : [])],
     // In ⌘K, the others, by name.
     find: { at: 0, draw: () => ({ heading: t('profiles.title'), options: all.value.filter(({ dir }) => dir !== here()).map((profile) => ({ label: nameOf(profile), go: () => goTo(profile) })) }) },

@@ -224,10 +224,10 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   }, kept)).toEqual([expect.stringContaining('Week'), expect.stringContaining('Dear Ana')])
   await expect(page.locator('.views').getByRole('button', { name: 'Share…' })).toBeVisible()
 
-  // Settings › Keyboard shortcuts lists it, now it is found, and Your data the one link made.
+  // Settings › Keyboard shortcuts lists it, now it is found, and Privacy the one link made (D729).
   const settings = await openSettings(page, 'Keyboard shortcuts')
   await expect(settings.locator('.keyboard > div', { hasText: 'Sharing' }).locator('kbd')).toHaveText(/^(⌘⇧U|Ctrl\+Shift\+U)$/)
-  await settings.locator('.settings-nav button', { hasText: 'Your data' }).click()
+  await settings.locator('.settings-nav button', { hasText: 'Privacy' }).click()
   // Its row says how many are open and when the next ends; its page lists them.
   await expect(settings.locator('[data-part="links"]')).toContainText(/Shared links\s*1 open · it ends on /)
   await settings.locator('[data-part="links"]').click()
@@ -282,8 +282,8 @@ test('a link that can’t be made or updated says why, in sharing’s own words'
   await expect(dialog.locator('input.share-link')).toHaveValue(/#/)
   await expect(dialog.getByRole('button', { name: 'Update' })).toHaveCount(0)
   await close()
-  // Nor does Your data: neither updated nor said to be stopped, it stays listed, as it still opens.
-  const settings = await openSettings(page, 'Your data')
+  // Nor does Privacy: neither updated nor said to be stopped, it stays listed, as it still opens.
+  const settings = await openSettings(page, 'Privacy')
   await settings.locator('[data-part="links"]').click()
   await settings.locator('.share-list li').getByRole('button', { name: 'Update' }).click()
   await expect(settings.getByText('This link was made on another device: only that one can change it.')).toBeVisible()

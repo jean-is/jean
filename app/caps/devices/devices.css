@@ -4,10 +4,10 @@
 .devices-qr { display: block; inline-size: min(100%, 14rem); margin-inline: auto; border-radius: 0.6rem; background: white; fill: black; forced-color-adjust: none; }
 .devices-field { display: flex; align-items: center; gap: 0.5rem; } .devices-field input { flex: 1; min-inline-size: 0; font: 0.875rem var(--mono); }
 .devices-digits { text-align: center; font: 600 2.5rem/1.2 var(--mono); letter-spacing: 0.1em; user-select: all; } .devices-flow .devices-type { box-sizing: content-box; inline-size: 12ch; padding-inline: 0.5ch 0; font: 600 1.5rem var(--mono); letter-spacing: 1ch; background: repeating-linear-gradient(90deg, transparent 0 0.2ch, var(--line) 0.2ch 1.8ch, transparent 1.8ch 2ch); }
-/* The Your devices icon at the drawer's foot: syncing, it breathes, in the ink's own colour where motion is reduced; the store wanting a look, a dot at its corner. */
-.icon-button.devices-syncing { color: var(--ink); } .devices-syncing svg { animation: waits 1.6s ease-in-out infinite var(--loops, running); }
-.devices-trouble { position: relative; } .devices-trouble::after { content: ''; position: absolute; inset-block-start: 0.3rem; inset-inline-end: 0.3rem; inline-size: 0.45rem; block-size: 0.45rem; border-radius: 50%; background: var(--danger); }
-@media (forced-colors: active) { .devices-trouble::after { background: CanvasText; } }
+/* A dot on the person's initial at the drawer's foot while the store wants a look (D729), which their menu's Your devices row says. */
+:root[data-devices-trouble] .profile-button .avatar { position: relative; }
+:root[data-devices-trouble] .profile-button .avatar::after { content: ''; position: absolute; inset-block-start: -0.1rem; inset-inline-end: -0.1rem; inline-size: 0.5rem; block-size: 0.5rem; border-radius: 50%; background: var(--danger); box-shadow: 0 0 0 2px var(--room); }
+@media (forced-colors: active) { :root[data-devices-trouble] .profile-button .avatar::after { background: CanvasText; } }
 /* The devices as cards (D728): the picture of its kind, its name, how it stands, Remove at its foot; this one ringed in the flame. */
 .devices-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 9.5rem), 1fr)); gap: 0.6rem; margin: 0; padding: 0; list-style: none; }
 .devices-cards > li { --glyph: 1.75rem; display: flex; flex-direction: column; align-items: start; gap: 0.3rem; padding: 0.85rem; border: 1px solid var(--line-strong); border-radius: 1rem; overflow-wrap: anywhere; }

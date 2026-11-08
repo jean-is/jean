@@ -1,5 +1,10 @@
 {
   "profiles.title": "Prufili",
+  "profiles.row": {
+    "one": "{count} prufilu nant’à st’apparechju",
+    "many": "{count} di prufili nant’à st’apparechju",
+    "other": "{count} prufili nant’à st’apparechju"
+  },
   "profiles.what": "Ogni prufilu tene i so compiti, a so memoria, i so parametri è e so chjave nant’à st’apparechju. Nunda ùn passa da unu à l’altru.",
   "profiles.name": "U nome di u prufilu novu",
   "profiles.yours": "U nome di stu prufilu",

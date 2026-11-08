@@ -118,7 +118,7 @@ test('signing out signs out every tab and locks with it; the curtain goes to the
   // With a lock, signing out locks: every tab, and the signed-out screen comes after it.
   await turnOn(page, 'Lock')
   await closeSettings(page)
-  const settings = await openSettings(page, 'Your data')
+  const settings = await openSettings(page, 'Privacy')
   await settings.locator('[data-part="lock"]').click()
   const part = settings.locator('.lock-part')
   await part.getByRole('button', { name: 'Use a password' }).click()

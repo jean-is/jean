@@ -1,5 +1,10 @@
 {
   "profiles.title": "Profils",
+  "profiles.row": {
+    "one": "{count} profil sur cet appareil",
+    "many": "{count} profils sur cet appareil",
+    "other": "{count} profils sur cet appareil"
+  },
   "profiles.what": "Chaque profil garde sur cet appareil ses propres tâches, sa mémoire, ses réglages et ses clés. Rien ne passe de l’un à l’autre.",
   "profiles.name": "Le nom du nouveau profil",
   "profiles.yours": "Le nom de ce profil",

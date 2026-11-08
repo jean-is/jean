@@ -20,6 +20,8 @@
   "data.here": "Pada peranti ini",
   "data.copies": "Salinan yang anda simpan",
   "data.others": "Siapa lagi yang melihatnya",
+  "data.privacyLine": "Siapa yang boleh membuka data anda pada peranti ini, dan siapa yang melihat apa yang anda kongsi.",
+  "data.peopleText": "Kepada siapa anda menghantar, dan siapa yang menghantar kepada anda",
   "data.space": "Ruang digunakan",
   "data.of": "{size} daripada {quota} yang pelayar ini berikan kepada {name}",
   "data.room": "Kosongkan ruang dalam Otak",

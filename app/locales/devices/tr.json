@@ -19,6 +19,10 @@
   "devices.store.again": "Baştan başla",
   "devices.store.synced": "Son eşitleme: {when}",
   "devices.own": "Her cihazın kendi teması, eşitlenen klasörü, indirilen beyinleri ve hizmetlerdeki oturumları vardır.",
+  "devices.reading": {
+    "one": "{count} cihaz verilerini okuyabilir",
+    "other": "{count} cihaz verilerini okuyabilir"
+  },
   "devices.store.unreached": "Bu cihaz şu anda diğer cihazlarına ulaşamıyor: burada değişenler, ulaşana kadar bekler.",
   "devices.syncing": "Cihazların · eşitleniyor",
   "devices.trouble": "Cihazların · göz atmak gerekiyor",

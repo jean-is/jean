@@ -33,7 +33,7 @@ async function now() {
   const services = loaded.value.has('connections') ? (await import('../connections/connections.js')).services() : []
   const reached = (/** @type {boolean} */ yes) => services.filter((entry) => Boolean(entry.via) === yes).map(named).join(', ') || 'none'
   const { version, date } = await released()
-  return [`{settings.title} has these sections now: ${places().map(([, place]) => t(place.label)).join(', ')}.`, `{settings.keyboard}, as this keyboard writes them: ${keys.join(', ')}.`,
+  return [`{settings.title} has these sections now: ${places().filter(([, place]) => !place.under).map(([, place]) => t(place.label)).join(', ')}.`, `{settings.keyboard}, as this keyboard writes them: ${keys.join(', ')}.`,
     ...(version && date ? [`The version, at the foot of {settings.title} › {settings.general}: ${t('settings.version', { name: BRAND.name, version, date: madeOn(date) })}.`, `{settings.checkVersion}, under it, looks for a new version and brings it in.`] : []),
     ...(locked.length ? [`${lockedBy()}, so the user can't change it: ${locked.join(', ')}.`] : []),
     ...(services.length ? [`Services that can be connected here: ${reached(true)}. Shown, but not reachable here yet: ${reached(false)}.`] : [])]

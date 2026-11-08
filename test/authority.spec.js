@@ -80,7 +80,7 @@ test('the organisation’s authority certifies the seal: a certificate carries i
   // Asked once, kept since.
   expect(asked.filter((path) => path.endsWith('/simpleenroll'))).toHaveLength(1)
   await page.keyboard.press('Escape')
-  const settings = await openData(page, 'organization')
+  const settings = await openData(page, 'organization', 'Privacy')
   await expect(settings).toContainText('Sealed for your organization')
   await expect(settings).toContainText('Your organization’s authority, Acme Issuing CA, certifies the key this device seals your certificates with, until January 1, 2030.')
   // The check page beside that policy says the organisation trusts the seal, in English, Arabic and Japanese.
@@ -150,7 +150,7 @@ test('a qualified provider seals for the organisation through the CSC API: a cer
   expect(saved.header.etsiU.map((/** @type {object} */ one) => Object.keys(one)[0])).toEqual(['xVals', 'rVals'])
   expect(saved.header.etsiU[1].rVals.ocspVals).toHaveLength(2)
   await page.keyboard.press('Escape')
-  const settings = await openData(page, 'organization')
+  const settings = await openData(page, 'organization', 'Privacy')
   await expect(settings).toContainText('Your certificates are sealed with your organization’s qualified seal, which Qualified Seal CA certifies until January 1, 2030.')
   // Its certificate says it is an EU qualified seal, and the organisation's anchors vouch for it: in English, Arabic and Japanese.
   for (const [lang, trusted, line] of [['en', 'Certified by an authority your organization trusts', 'A qualified seal under EU law'], ['ar', 'وثّقته جهة تثق بها مؤسستك', 'ختم مؤهَّل بموجب قانون الاتحاد الأوروبي'], ['ja', '組織が信頼する認証局が証明', 'EU 法に基づく適格な封印']]) {
@@ -168,8 +168,9 @@ test('a qualified provider seals for the organisation through the CSC API: a cer
   }
 })
 
-for (const [lang, section, line] of [['ar', 'بياناتك', 'تُختم شهاداتك بالختم المؤهَّل لمؤسستك، الذي توثّقه جهة التصديق Qualified Seal CA'], ['ja', 'あなたのデータ', '証明書は組織の適格な封印で封印され、認証局（Qualified Seal CA）が']]) {
-  test(`Settings › Your data names the qualified seal and its authority (${lang})`, async ({ page }) => {
+for (const [lang, line] of [['ar', 'تُختم شهاداتك بالختم المؤهَّل لمؤسستك، الذي توثّقه جهة التصديق Qualified Seal CA'], ['ja', '証明書は組織の適格な封印で封印され、認証局（Qualified Seal CA）が']]) {
+  test(`Settings › Privacy names the qualified seal and its authority (${lang})`, async ({ page }) => {
+    const section = JSON.parse(await readFile(new URL(`../app/locales/dialogs/${lang}.json`, import.meta.url), 'utf8'))['settings.privacy']
     const { asked } = await qualifiedProvider(page)
     await withPolicy(page, { seal: { csc: CSC, credential: 'acme-seal' } })
     await start(page, lang)

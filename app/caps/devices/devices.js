@@ -3,7 +3,7 @@
 // before it starts and again before the profile that came opens; once paired, each device listens on its mailbox for the devices the
 // profile knows, settings and keys that follow the person, a task handed over, or its own removal. The steps are pure in ./pair.js, what
 // crosses in ./bundle.js, and what a device keeps and does with what comes in ./flow.js.
-import { html } from 'lit-html'
+import { html, nothing } from 'lit-html'
 import { signal, effect, computed } from '@preact/signals-core'
 import { register, unlock } from '../../ui/caps.js'
 import { app, changeSettings, rememberUnlocked, refreshConversations, refreshProjects, brainLabel, notify, pairs } from '../../ui/state.js'
@@ -453,7 +453,7 @@ async function adoptHere(bundle, me, one, again, store) {
   // Never a profile another's names as its parent: its family key would go with it, and the child's settings stay locked.
   const parent = (await Promise.all((await app.whole?.list('profiles') ?? []).map(async ({ name }) => JSON.parse(await app.whole?.read(`profiles/${name}/${VAULT}`) ?? 'null')?.parent?.profile))).includes(here())
   if (brought && !parent && await untouched(app.fs)) await erase(here())
-  if (lock) sessionStorage.setItem(`${PLACE}:${dir}`, JSON.stringify({ place: '#/settings/data/lock', caret: null }))
+  if (lock) sessionStorage.setItem(`${PLACE}:${dir}`, JSON.stringify({ place: '#/settings/privacy/lock', caret: null }))
   switchTo(dir, { name, initial: initialOf(name), colour: tint })
 }
 
@@ -531,10 +531,12 @@ if (offered()) {
     // No row in Your data, but its line: the person's things safe on their other devices while the store keeps them in step; what the store
     // wants a look for or a device two weeks unheard, with the way to Your devices (none for a relay out of reach); while this device is alone,
     // Add a device beside what says they are only here. On the map, the other devices, past two a second standing for the rest, or the one to add.
-    data: { id: 'devices', at: 2, group: 'copies', icon: icons.devices, label: 'cap.devices.name', text: () => '', page: false, draw: () => null, copy: () => (stored.value && others().length && kept.value?.value.at && !trouble() ? t('devices.safe') : undefined),
+    data: [{ id: 'devices', at: 2, group: 'copies', icon: icons.devices, label: 'cap.devices.name', text: () => '', page: false, draw: () => null, copy: () => (stored.value && others().length && kept.value?.value.at && !trouble() ? t('devices.safe') : undefined),
       say: () => said() || undefined, fix: () => (!others().length ? html`<button class="button primary" @click=${() => opening(start)}>${icons.plus} ${t('devices.add')}</button>`
         : said() && !kept.value?.value.unreached ? html`<button class="button primary" @click=${() => opening()}>${icons.devices} ${t('devices.see')}</button>` : undefined),
       node: places },
+    // In Privacy (D729), among who else sees the user's things: how many devices can read them, a way to Your devices.
+    { id: 'devices', at: -2, section: 'privacy', group: 'others', icon: icons.devices, label: 'cap.devices.name', text: () => t('devices.reading', { count: Math.max(devices.value.length, 1) }), link: 'devices', draw: () => null }],
     // In a task's ⋮ menu, Send to each other device, unless its project is kept on this one.
     task: { at: 2, draw: (/** @type {{ path: string }} */ item, /** @type {(icon: unknown, label: string, act: () => unknown) => unknown} */ action) =>
       (app.projects.value.find((one) => item.path.startsWith(`${one.dir}/`))?.data.cloud === false ? []
@@ -544,11 +546,10 @@ if (offered()) {
       live.find((device) => device.id === id) ?? [...live].sort((x, y) => (x.id < y.id ? -1 : 1))[0]))(devices.value) },
     // A project switched to kept on this device leaves the store, where there is one, asked first (caps/projects).
     keep: { at: 1, draw: () => null, on: () => stored.value, keep: (/** @type {string} */ dir) => import('./store.js').then((store) => store.withdraw(dir)) },
-    // At the end of the person's row, at the drawer's foot, Your devices, by its icon: breathing while bytes go up or come down, with a dot
-    // when the store wants a look (full, gone, this device out of room, the relay out of reach), its name saying so, and its page what.
-    foot: { at: 1, draw: () => { const moving = kept.value?.value.moving, wants = trouble()
-      return html`<button type="button" class="icon-button subtle${moving ? ' devices-syncing' : ''}${wants ? ' devices-trouble' : ''}" aria-label=${t(moving ? 'devices.syncing' : wants ? 'devices.trouble' : 'cap.devices.name')}
-        @click=${() => opening()}>${icons.devices}</button>` } },
+    // In the person's menu (D729), Your devices: syncing while bytes go up or come down, or needing a look when the store does (full, gone,
+    // this device out of room, the relay out of reach), its page saying what; once paired, how many there are.
+    profile: { at: 1, draw: (/** @type {string} */ menu) => html`<button type="button" popovertarget=${menu} popovertargetaction="hide" @click=${() => opening()}>${icons.devices}${t(kept.value?.value.moving ? 'devices.syncing' : trouble() ? 'devices.trouble' : 'cap.devices.name')}
+      ${devices.value.length > 1 ? html`<span class="menu-value">${new Intl.NumberFormat(intlLocales()).format(devices.value.length)}</span>` : nothing}</button>` },
   } })
   // The keys, where this device's identity and the devices it knows are kept too, changed in any tab, this one's as well.
   app.fs.watch?.((path) => { if (path === '.secrets/keys.json') { refresh(); noticed().catch(warn) } }, { all: true })
@@ -556,6 +557,8 @@ if (offered()) {
   addEventListener('online', () => noticed(true).catch(warn))
   document.addEventListener('visibilitychange', () => document.visibilityState === 'visible' && noticed(true).catch(warn))
   effect(() => { void app.settings.value; noticed().catch(warn) })
+  // A dot on the person's initial while the store wants a look (./devices.css), which their menu's row says in words.
+  effect(() => { document.documentElement.toggleAttribute('data-devices-trouble', trouble()) })
   refresh()
   listening().catch(warn)
 }

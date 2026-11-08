@@ -20,6 +20,8 @@
   "data.here": "V tomto zariadení",
   "data.copies": "Kópie, ktoré si uchovávate",
   "data.others": "Kto ďalší to vidí",
+  "data.privacyLine": "Kto môže otvoriť vaše údaje v tomto zariadení a kto vidí, čo zdieľate.",
+  "data.peopleText": "Komu posielate veci a kto vám posiela svoje",
   "data.space": "Využité miesto",
   "data.of": "{size} z {quota}, ktoré tento prehliadač dovolí aplikácii {name} využiť",
   "data.room": "Uvoľniť miesto v Mozgoch",

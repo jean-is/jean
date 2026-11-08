@@ -49,7 +49,7 @@ test('a brain in the cloud reads marks, and the person the real thing', async ({
   await start(page)
   await useCorp(page)
   // Settings says so, and that it isn't anonymous.
-  const settings = await openData(page, 'organization')
+  const settings = await openData(page, 'organization', 'Privacy')
   await expect(settings).toContainText('That isn’t anonymous')
   await page.keyboard.press('Escape')
 

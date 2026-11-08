@@ -21,6 +21,12 @@
   "devices.store.again": "Zacznij od nowa",
   "devices.store.synced": "Ostatnia synchronizacja: {when}",
   "devices.own": "Każde urządzenie ma własny motyw, zsynchronizowany folder, pobrane mózgi i logowania do usług.",
+  "devices.reading": {
+    "one": "{count} urządzenie może czytać twoje rzeczy",
+    "few": "{count} urządzenia mogą czytać twoje rzeczy",
+    "many": "{count} urządzeń może czytać twoje rzeczy",
+    "other": "{count} urządzenia może czytać twoje rzeczy"
+  },
   "devices.store.unreached": "To urządzenie nie może teraz połączyć się z innymi Twoimi urządzeniami: to, co się tu zmieni, poczeka, aż się uda.",
   "devices.syncing": "Twoje urządzenia · synchronizacja",
   "devices.trouble": "Twoje urządzenia · wymagają uwagi",

@@ -22,6 +22,13 @@
   "devices.store.again": "Adkregiñ",
   "devices.store.synced": "Goubredañ diwezhañ : {when}",
   "devices.own": "Pep trevnad a vir e neuz, e deuliad goubredet, e empennoù pellgarget hag e gevreadurioù ouzh ar servijoù dezhañ e-unan.",
+  "devices.reading": {
+    "one": "{count} trevnad a c’hall lenn ho traoù",
+    "two": "{count} trevnad a c’hall lenn ho traoù",
+    "few": "{count} trevnad a c’hall lenn ho traoù",
+    "many": "{count} a drevnadoù a c’hall lenn ho traoù",
+    "other": "{count} trevnad a c’hall lenn ho traoù"
+  },
   "devices.store.unreached": "N’hall ket an trevnad-mañ tizhout ho trevnadoù all evit ar mare : ar pezh a cheñch amañ a c’hortozo betek ma c’hallo.",
   "devices.syncing": "Ho trevnadoù · o c’houbredañ",
   "devices.trouble": "Ho trevnadoù · da welet",

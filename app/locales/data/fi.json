@@ -20,6 +20,8 @@
   "data.here": "Tällä laitteella",
   "data.copies": "Säilyttämäsi kopiot",
   "data.others": "Kuka muu sen näkee",
+  "data.privacyLine": "Kuka voi avata tietosi tällä laitteella ja kuka näkee, mitä jaat.",
+  "data.peopleText": "Kenelle lähetät asioita ja kuka lähettää sinulle omiaan",
   "data.space": "Käytetty tila",
   "data.of": "{size}/{quota}, jonka tämä selain antaa sovellukselle {name}",
   "data.room": "Vapauta tilaa Aivoissa",

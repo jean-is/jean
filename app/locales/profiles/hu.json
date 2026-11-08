@@ -1,5 +1,9 @@
 {
   "profiles.title": "Profilok",
+  "profiles.row": {
+    "one": "{count} profil ezen az eszközön",
+    "other": "{count} profil ezen az eszközön"
+  },
   "profiles.what": "Minden profil saját feladatokat, memóriát, beállításokat és kulcsokat tárol ezen az eszközön. Semmi sem kerül át egyikből a másikba.",
   "profiles.name": "Az új profil neve",
   "profiles.yours": "Ennek a profilnak a neve",

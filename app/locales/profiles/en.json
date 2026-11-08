@@ -1,5 +1,9 @@
 {
   "profiles.title": "Profiles",
+  "profiles.row": {
+    "one": "{count} profile on this device",
+    "other": "{count} profiles on this device"
+  },
   "profiles.what": "Each profile keeps its own tasks, memory, settings and keys on this device. Nothing crosses from one to another.",
   "profiles.name": "The new profile’s name",
   "profiles.yours": "This profile’s name",

@@ -21,6 +21,12 @@
   "devices.store.again": "Začít znovu",
   "devices.store.synced": "Naposledy synchronizováno: {when}",
   "devices.own": "Každé zařízení má vlastní motiv, synchronizovanou složku, stažené mozky a přihlášení ke službám.",
+  "devices.reading": {
+    "one": "{count} zařízení může číst vaše věci",
+    "few": "{count} zařízení mohou číst vaše věci",
+    "many": "{count} zařízení může číst vaše věci",
+    "other": "{count} zařízení může číst vaše věci"
+  },
   "devices.store.unreached": "Toto zařízení se teď nemůže spojit s vašimi ostatními zařízeními: co se tu změní, počká, až to půjde.",
   "devices.syncing": "Vaše zařízení · synchronizace",
   "devices.trouble": "Vaše zařízení · vyžadují pozornost",

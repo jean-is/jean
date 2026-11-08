@@ -1,5 +1,9 @@
 {
   "profiles.title": "Profiller",
+  "profiles.row": {
+    "one": "Bu cihazda {count} profil",
+    "other": "Bu cihazda {count} profil"
+  },
   "profiles.what": "Her profil bu cihazda kendi görevlerini, belleğini, ayarlarını ve anahtarlarını saklar. Birinden diğerine hiçbir şey geçmez.",
   "profiles.name": "Yeni profilin adı",
   "profiles.yours": "Bu profilin adı",

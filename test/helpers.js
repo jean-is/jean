@@ -280,6 +280,9 @@ export async function openSettings(page, section) {
  * Opens a page of Settings › Your data from its row: lock, sync, links, organization, backup, space or import.
  * @param {import('@playwright/test').Page} page @param {string} part @param {string} [section] the section's name in the menu, in the page's language
  */
+/** Settings › Privacy › Profiles, from Privacy's row (D729). @param {import('@playwright/test').Page} page */
+export const openProfiles = (page) => openData(page, 'profiles', 'Privacy')
+
 export async function openData(page, part, section = 'Your data') {
   const settings = await openSettings(page, section)
   await settings.locator(`[data-part="${part}"]`).click()

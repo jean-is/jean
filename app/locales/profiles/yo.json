@@ -1,5 +1,8 @@
 {
   "profiles.title": "Àwọn profaili",
+  "profiles.row": {
+    "other": "Profaili {count} lórí ẹ̀rọ yìí"
+  },
   "profiles.what": "Profaili kọ̀ọ̀kan ń pa iṣẹ́ rẹ̀, ìrántí rẹ̀, ètò rẹ̀ àti àwọn kọ́kọ́rọ́ rẹ̀ mọ́ lórí ẹ̀rọ yìí. Kò sí ohun tó ń kọjá láti ọ̀kan sí òmíràn.",
   "profiles.name": "Orúkọ profaili tuntun",
   "profiles.yours": "Orúkọ profaili yìí",

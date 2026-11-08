@@ -1,5 +1,8 @@
 {
   "profiles.title": "Profil",
+  "profiles.row": {
+    "other": "{count} profil di perangkat ini"
+  },
   "profiles.what": "Setiap profil menyimpan tugas, ingatan, pengaturan, dan kuncinya sendiri di perangkat ini. Tidak ada yang berpindah dari satu profil ke profil lain.",
   "profiles.name": "Nama profil baru",
   "profiles.yours": "Nama profil ini",

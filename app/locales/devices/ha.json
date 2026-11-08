@@ -19,6 +19,10 @@
   "devices.store.again": "Sake farawa",
   "devices.store.synced": "Daidaitawa ta ƙarshe: {when}",
   "devices.own": "Kowace na'ura tana riƙe da jigonta, jakar da aka daidaita, ƙwaƙwalwar da aka sauke, da shigarta cikin ayyuka.",
+  "devices.reading": {
+    "one": "Na'ura {count} za ta iya karanta kayanka",
+    "other": "Na'urori {count} za su iya karanta kayanka"
+  },
   "devices.store.unreached": "Wannan na'ura ba ta iya kaiwa ga sauran na'urorinka yanzu: abin da ya canza a nan zai jira har sai ta iya.",
   "devices.syncing": "Na'urorinka · ana daidaitawa",
   "devices.trouble": "Na'urorinka · a duba",

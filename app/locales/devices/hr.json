@@ -20,6 +20,11 @@
   "devices.store.again": "Počni ispočetka",
   "devices.store.synced": "Zadnja sinkronizacija: {when}",
   "devices.own": "Svaki uređaj ima vlastitu temu, sinkroniziranu mapu, preuzete mozgove i prijave u usluge.",
+  "devices.reading": {
+    "one": "{count} uređaj može čitati vaše podatke",
+    "few": "{count} uređaja mogu čitati vaše podatke",
+    "other": "{count} uređaja može čitati vaše podatke"
+  },
   "devices.store.unreached": "Ovaj uređaj trenutačno ne može doći do vaših drugih uređaja: ono što se ovdje promijeni čeka dok ne uspije.",
   "devices.syncing": "Vaši uređaji · sinkronizacija",
   "devices.trouble": "Vaši uređaji · treba pogledati",
