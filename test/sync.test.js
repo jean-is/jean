@@ -331,6 +331,92 @@ test('a conversation being answered waits; a file that moves while the round wor
   assert.equal(await here.read('memory.md'), '- likes green tea\n\n- likes coffee\n')
 })
 
+/** An FS whose writes of the paths `when` names are refused, as the store refuses a version that moved since it was read. @param {FS} fs @param {(path: string) => boolean} when */
+const refusing = (fs, when) => ({ ...fs, writeBytes: async (/** @type {string} */ path, /** @type {Uint8Array} */ bytes) => {
+  if (when(path)) throw new DOMException('It moved.', 'InvalidModificationError')
+  return fs.writeBytes(path, bytes)
+} })
+
+test('a write the other side refuses keeps this side’s words: alone, or merged with that side’s, until a round gets them there', async () => {
+  for (const both of [false, true]) {
+    const here = memoryFS({ 'memory.md': 'A\n\nB\n\nC\n' })
+    const there = memoryFS({ [MARK]: '{}' })
+    await syncRound(here, there)
+    await here.write('memory.md', 'A mine\n\nB\n\nC\n')
+    await later()
+    if (both) await there.write('memory.md', 'A\n\nB\n\nC theirs\n')
+    await syncRound(here, refusing(there, (path) => path === 'memory.md'))
+    if (!both) await there.write('memory.md', 'A\n\nB\n\nC theirs\n')
+    await later()
+    await syncRound(here, there)
+    assert.equal(await here.read('memory.md'), 'A mine\n\nB\n\nC theirs\n', both ? 'merged' : 'alone')
+    assert.equal(await there.read('memory.md'), 'A mine\n\nB\n\nC theirs\n')
+  }
+})
+
+test('a conversation that grew by as many bytes as a sealed file’s size counts beyond its words still goes', async () => {
+  const added = line('And one more thing.')
+  // OPFS says a sealed file's size, which is more than its words.
+  const sealed = (/** @type {FS} */ fs) => ({ ...fs, stat: async (/** @type {string} */ path) => ((one) => one && { ...one, size: one.size + new TextEncoder().encode(added).length })(await fs.stat?.(path)) })
+  const here = memoryFS({ [A]: header('01J0000000000000000000000A') + line('Hello') })
+  const there = sealed(memoryFS({ [MARK]: '{}' }))
+  await syncRound(here, there)
+  await here.append(A, added)
+  await syncRound(here, there)
+  assert.equal(await there.read(A), header('01J0000000000000000000000A') + line('Hello') + added)
+})
+
+test('two mirrors each keep their base and their versions to merge from where `cache` says, and a path `carry` leaves out stays here', async () => {
+  const BAKERY = 'projects/01J00000000000000000000001-bakery/project.md'
+  const here = memoryFS({ 'memory.md': '- likes tea\n', [BAKERY]: '---\nname: Bakery\n---\n' })
+  const [one, two] = [memoryFS({ [MARK]: '{}' }), memoryFS({ [MARK]: '{}' })]
+  await syncRound(here, one, { cache: '.cache/one' })
+  await syncRound(here, two, { cache: '.cache/two' })
+  assert.deepEqual([await here.exists('.cache/one.json'), await here.exists('.cache/two.json'), await here.exists(BASE)], [true, true, false])
+  assert.deepEqual([await here.read('.cache/one/memory.md'), await here.read('.cache/two/memory.md')], ['- likes tea\n', '- likes tea\n'])
+  // The bakery kept on this device from now on: the mirror's copy goes as `carry` withdraws it, never this device's.
+  const kept = (/** @type {string} */ path) => carried(path) && !path.startsWith('projects/01J00000000000000000000001-bakery/')
+  await one.remove(BAKERY)
+  await syncRound(here, one, { cache: '.cache/one', carry: kept })
+  assert.equal(await here.read(BAKERY), '---\nname: Bakery\n---\n')
+})
+
+test('a path that fails waits for the next round, the others go on, the base is kept and the failure thrown; a file deleted takes its version to merge from', async () => {
+  const here = memoryFS({ 'memory.md': '- likes tea\n', 'skills/a/SKILL.md': '---\nname: a\n---\n' })
+  const there = memoryFS({ [MARK]: '{}' })
+  const failing = { ...there, writeBytes: async (/** @type {string} */ path, /** @type {Uint8Array} */ bytes) => {
+    if (path === 'memory.md') throw new Error('The drive is full.')
+    return there.writeBytes(path, bytes)
+  } }
+  await assert.rejects(syncRound(here, failing), /The drive is full/)
+  assert.ok(await there.exists('skills/a/SKILL.md'))
+  assert.equal(await there.exists('memory.md'), false)
+  await syncRound(here, there)
+  assert.equal(await there.read('memory.md'), '- likes tea\n')
+  await there.remove('memory.md')
+  await syncRound(here, there)
+  assert.deepEqual([await here.exists('memory.md'), await here.exists('.cache/sync/memory.md')], [false, false])
+})
+
+test('a first round takes four paths at a time, words before pictures', async () => {
+  const pictures = Object.fromEntries(Array.from({ length: 6 }, (_, i) => [`${HOME}/files/sha256-${i}.png`, 'picture']))
+  const here = memoryFS({ ...pictures, 'memory.md': '- likes tea\n', [A]: header('01J0000000000000000000000A') })
+  const there = memoryFS({ [MARK]: '{}' })
+  let [now, most] = [0, 0]
+  /** @type {string[]} */
+  const order = []
+  const counting = { ...there, writeBytes: async (/** @type {string} */ path, /** @type {Uint8Array} */ bytes) => {
+    order.push(path)
+    most = Math.max(most, ++now)
+    await later()
+    now--
+    return there.writeBytes(path, bytes)
+  } }
+  await syncRound(here, counting)
+  assert.equal(most, 4)
+  assert.deepEqual(order.slice(0, 2).sort(), ['memory.md', A])
+})
+
 test('two homes: the oldest stays the home, a newer empty one goes, one with conversations stays as a project', async () => {
   const project = (/** @type {string} */ by) => `---\nformat: 1\ndefault: true\nname: Home\nby: ${by}\n---\n`
   const fs = memoryFS({ [`${HOME}/project.md`]: project('laptop'), 'projects/01J00000000000000000000009-home/project.md': project('desk') })

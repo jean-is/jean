@@ -131,12 +131,12 @@ async function stop() {
   state.value = { status: 'done' }
 }
 
-/** What Jean knew of the last folder: its FS and the base, so another folder starts from nothing known. */
+/** What Jean knew of the last folder: its FS, the base and the versions Markdown merged from, so another folder starts from nothing known. */
 async function forget() {
   mirror?.then((fs) => fs.close?.(), () => {})
   observer?.disconnect()
   mirror = observer = null
-  await app.fs.remove(BASE)
+  await Promise.all([BASE, BASE.slice(0, -5)].map((path) => app.fs.remove(path)))
 }
 
 async function allow() {

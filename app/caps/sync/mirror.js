@@ -30,9 +30,10 @@ const CONVERSATION = /\/conversations\/[^/]+\.jsonl$/
 const BY_ULID = /\/[0-9A-HJKMNP-TV-Z]{26}\.jsonl$/
 /** A collection's two files, which merge (D491, D507). */
 const TABLE = /\/collections\/[^/]+\/(changes\.jsonl|collection\.json)$/
-/** A Markdown file, and where a round keeps the version both sides had after it, which a change on both merges from. */
+/** A Markdown file, whose version both sides had after a round is kept, which a change on both merges from. */
 const MARKDOWN = /\.md$/
-const had = (/** @type {string} */ path) => `.cache/sync/${path}`
+/** What a first round takes first: words before pictures and films. */
+const TEXT = /\.(jsonl|md|json)$/
 /** A Markdown file's front matter. @param {string} text */
 const head = (text) => /^---\n[\s\S]*?\n---\n?/.exec(text)?.[0] ?? ''
 
@@ -41,18 +42,10 @@ const head = (text) => /^---\n[\s\S]*?\n---\n?/.exec(text)?.[0] ?? ''
  * collection.json with the other's columns and choices. Null when one can't be read: the newer then wins.
  * @param {string} path @param {Uint8Array} x @param {Uint8Array} y
  */
-async function mergedTable(path, x, y) {
+function mergedTable(path, x, y) {
   const [a, b] = [x, y].map((bytes) => new TextDecoder().decode(bytes))
-  try {
-    if (path.endsWith('.jsonl')) {
-      const { merge, parseChanges, stringifyChanges } = await import('../tables/changes.js')
-      return new TextEncoder().encode(stringifyChanges(merge(parseChanges(a), parseChanges(b))))
-    }
-    const { mergeTables, readTable } = await import('../tables/table.js')
-    return new TextEncoder().encode(`${JSON.stringify(mergeTables(readTable(a), readTable(b)), null, 2)}\n`)
-  } catch {
-    return null
-  }
+  return (path.endsWith('.jsonl') ? import('../tables/changes.js').then(({ merge, parseChanges, stringifyChanges }) => stringifyChanges(merge(parseChanges(a), parseChanges(b))))
+    : import('../tables/table.js').then(({ mergeTables, readTable }) => `${JSON.stringify(mergeTables(readTable(a), readTable(b)), null, 2)}\n`)).then((text) => new TextEncoder().encode(text), () => null)
 }
 
 /**
@@ -75,6 +68,10 @@ const as = (a, was = []) => alike(a, was.length ? { size: was[0], lastModified: 
 
 /** @param {Uint8Array} bytes @param {Uint8Array} prefix */
 const startsWith = (bytes, prefix) => prefix.length <= bytes.length && prefix.every((byte, i) => byte === bytes[i])
+/** @param {Uint8Array} x @param {Uint8Array | null} y */
+const equal = (x, y) => y?.length === x.length && startsWith(x, y)
+/** A write or a removal the other side refused, its file having moved since it was read (the store's conditional writes): false. @param {any} error */
+const refused = (error) => { if (error?.name === 'InvalidModificationError') return false; throw error }
 
 /** A conversation file's lines. @param {Uint8Array | null} bytes */
 const lines = (bytes) => new TextDecoder().decode(bytes ?? undefined).split('\n')
@@ -89,21 +86,24 @@ const lost = (mine, theirs, held = new Set(lines(theirs))) => lines(mine).slice(
 export async function claim(there, { by, now = new Date() }) {
   if (await there.exists(MARK)) return true
   if ((await there.list('')).some((entry) => carried(entry.name))) return false
-  await writeJSON(there, MARK, { format: 1, kind: 'mirror', createdAt: now.toISOString(), by })
-  return true
+  return writeJSON(there, MARK, { format: 1, kind: 'mirror', createdAt: now.toISOString(), by }).then(() => true)
 }
 
 /**
- * One round, both sides made the same as far as they can be. A file that changes while the round
- * works on it, is `busy` (a conversation being answered), or whose records `removing` won't let go, waits for the next round.
+ * One round, both sides made the same as far as they can be. A file that changes while the round works on it, is `busy`
+ * (a conversation being answered), whose records `removing` won't let go, or that fails, waits for the next round; the
+ * others go on, and the first failure is thrown once the base is kept. `cache` names where the base is kept, `<cache>.json`,
+ * and the versions Markdown merges from, `<cache>/<path>`; `carry` what goes, the base's paths too.
  * @param {FS} here @param {FS} there
- * @param {{ busy?: (path: string) => boolean, removing?: (removals: { task: string, records: Envelope[], all: boolean }[], act: () => Promise<unknown>) => Promise<boolean> }} [options]
+ * @param {{ cache?: string, carry?: (path: string) => boolean, busy?: (path: string) => boolean,
+ *   removing?: (removals: { task: string, records: Envelope[], all: boolean }[], act: () => Promise<unknown>) => Promise<boolean> }} [options]
  * @returns {Promise<string[]>} the paths that came in here
  */
-export async function syncRound(here, there, { busy = () => false, removing = (_, act) => act().then(() => true) } = {}) {
+export async function syncRound(here, there, { cache = BASE.slice(0, -5), carry = carried, busy = () => false, removing = (_, act) => act().then(() => true) } = {}) {
   /** @type {Base} */
-  let base = (await readJSON(here, BASE, null))?.files ?? {}
-  const [mine, theirs] = await Promise.all([here, there].map(async (fs) => new Set((await walk(fs)).filter(carried))))
+  let base = (await readJSON(here, `${cache}.json`, null))?.files ?? {}
+  const had = (/** @type {string} */ path) => `${cache}/${path}`
+  const [mine, theirs] = await Promise.all([here, there].map(async (fs) => new Set((await walk(fs)).filter(carry))))
   // A side that holds nothing it held (a folder emptied, a drive not down yet) is new: nothing on it is taken as deleted.
   const known = Object.keys(base)
   if (known.length && (!known.some((path) => mine.has(path)) || !known.some((path) => theirs.has(path)))) base = {}
@@ -113,21 +113,26 @@ export async function syncRound(here, there, { busy = () => false, removing = (_
   const came = []
   /** @param {string} path @param {Stat} a @param {Stat} b */
   const keep = (path, a, b) => { if (a && b) next[path] = [a.size, a.lastModified, b.size, b.lastModified] }
-  /** Writes over what was seen, unless it moved meanwhile or is the same already (a drive's copy, dated anew). @param {FS} fs @param {string} path @param {Uint8Array | null} bytes @param {Stat} seen */
-  const put = async (fs, path, bytes, seen) => {
+  /**
+   * Writes over what was seen, unless it moved meanwhile or is the same already (a drive's copy, dated anew); a Markdown file's
+   * version both have is kept once written, and only `held`, both sides then holding it. @param {FS} fs @param {string} path
+   * @param {Uint8Array | null} bytes @param {Stat} seen
+   */
+  const put = async (fs, path, bytes, seen, held = true) => {
     const now = await stat(fs, path)
     if (!bytes || !alike(now, seen)) return null
-    if (MARKDOWN.test(path)) await here.writeBytes(had(path), bytes)
-    if (now?.size === bytes.length && startsWith(bytes, (await fs.readBytes(path)) ?? new Uint8Array(1))) return now
-    await fs.writeBytes(path, bytes)
-    if (fs === here) came.push(path)
-    return stat(fs, path)
+    const same = now?.size === bytes.length && equal(bytes, await fs.readBytes(path))
+    if (!same && !(await fs.writeBytes(path, bytes).then(() => true, refused))) return null
+    if (held && MARKDOWN.test(path)) await here.writeBytes(had(path), bytes)
+    if (!same && fs === here) came.push(path)
+    return same ? now : stat(fs, path)
   }
   /** @param {FS} fs @param {string} path @param {Stat} seen */
   const drop = async (fs, path, seen) => {
     if (!seen || !alike(await stat(fs, path), seen)) return
     // As a conversation goes, so a record that comes late can't bring it back without its header.
-    await deleteConversation(fs, path)
+    if (!(await deleteConversation(fs, path).then(() => true, refused))) return
+    if (MARKDOWN.test(path)) await here.remove(had(path)).catch(() => {})
     if (fs === here) came.push(path)
     for (let dir = dirname(path); dir && !(await fs.list(dir)).length; dir = dir.includes('/') ? dirname(dir) : '') await fs.remove(dir)
   }
@@ -142,12 +147,12 @@ export async function syncRound(here, there, { busy = () => false, removing = (_
     keep(to, await stat(here, to), await stat(there, to))
   }
 
-  for (const path of new Set([...mine, ...theirs, ...Object.keys(base)])) {
+  /** @type {unknown} */
+  let failed
+  /** @param {string} path */
+  const one = async (path) => {
     const was = base[path]
-    if (busy(path)) {
-      if (was) next[path] = was
-      continue
-    }
+    if (busy(path)) { if (was) next[path] = was; return }
     const [a, b] = await Promise.all([stat(here, path), stat(there, path)])
     const movedHere = !was || !as(a, was)
     const movedThere = !was || !as(b, was.slice(2))
@@ -168,11 +173,13 @@ export async function syncRound(here, there, { busy = () => false, removing = (_
       if (!went && was) next[path] = was
     } else {
       const [x, y] = await Promise.all([here.readBytes(path), there.readBytes(path)])
-      if (!x || !y) continue
-      const same = x.length === y.length && startsWith(x, y)
+      if (!x || !y) return
+      const same = equal(x, y)
       const merged = !same && (TABLE.test(path) ? await mergedTable(path, x, y) : MARKDOWN.test(path) && await mergedText(await here.readBytes(had(path)), x, y, Number(a?.lastModified) >= Number(b?.lastModified)))
+      if (same && MARKDOWN.test(path)) await here.writeBytes(had(path), x)
       if (same) keep(path, a, b)
-      else if (merged) keep(path, await put(here, path, merged, a), await put(there, path, merged, b))
+      // Merged, the version both have is kept only once both hold it: a write refused there leaves the last one.
+      else if (merged) { const took = await put(here, path, merged, a, false); keep(path, took, await put(there, path, merged, b, Boolean(took))) }
       else if (path.endsWith('.jsonl') && startsWith(y, x)) keep(path, await put(here, path, y, a), b)
       else if (path.endsWith('.jsonl') && !startsWith(x, y)) {
         await fork(path, y)
@@ -181,7 +188,14 @@ export async function syncRound(here, there, { busy = () => false, removing = (_
       else keep(path, await put(here, path, y, a), b)
     }
   }
-  await writeJSON(here, BASE, { format: 1, files: next })
+  const paths = [...new Set([...mine, ...theirs, ...Object.keys(base).filter(carry)])]
+  // A first round, with nothing known, takes four paths at a time, words first: a new device's whole store.
+  if (!Object.keys(base).length) paths.sort((p, q) => Number(!TEXT.test(p)) - Number(!TEXT.test(q)))
+  await Promise.all(Array.from({ length: Object.keys(base).length ? 1 : 4 }, async () => {
+    for (let path; (path = paths.shift()) !== undefined;) await one(path).catch((error) => { failed ??= error; if (base[path]) next[path] = base[path] })
+  }))
+  await writeJSON(here, `${cache}.json`, { format: 1, files: next })
+  if (failed) throw failed
   return came
 }
 
