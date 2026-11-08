@@ -22,7 +22,8 @@ const root = document.documentElement
 root.lang = locale.value
 root.dir = dir()
 
-const id = location.pathname.slice(1)
+// The share's id ends the address, which may open under a path of the host's (hst.ing/s/<id>).
+const id = location.pathname.split('/').pop() ?? ''
 const secret = location.hash.slice(1)
 /**
  * Where the viewer is: opening; asking for the password, after a wrong one perhaps; the share drawn,

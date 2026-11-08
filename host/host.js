@@ -19,8 +19,8 @@
 //   viewer   how its viewer loads, from the render package: { base, entry, imports, integrity } (npm run host writes it)
 //   render   where a share's render package is, '{version}' in it; sounds the same for a score's instruments; maps a map service's styles
 //   app      where Open in my Jean opens, e.g. "https://jean.is/"; legal the address of its legal notice; name the name it shows
-//   shares   where the viewer lives when the host answers at other names too, e.g. "https://s.hst.ing/": a share opened at another
-//            name goes on there, and its link's # with it
+//   shares   where shares open when the host answers elsewhere too, a path perhaps, e.g. "https://hst.ing/s/": under it the host
+//            answers as at its root, and a share opened at another name or path goes on there, its link's # with it
 //   sites    sites published at names of their own (sites.js); the host's folder or Bunny keeps their files (`files`)
 //   alert    an address each report is posted to as one line of text, so that whoever runs the host hears of it at once
 //
@@ -136,13 +136,16 @@ export function host(config) {
   const sites = config.sites && files && store?.held && store.hold && store.forget && store.names
     ? publishing(config.sites, { held: store.held, hold: store.hold, forget: store.forget, names: store.names, record: store.record, report: reported }, files) : null
   const about = `default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'`
-  const viewerAt = config.shares ? new URL(config.shares).host : ''
+  const shares = config.shares ? new URL(config.shares) : null
 
   return async (request, client = { address: '', port: 0 }) => {
     const url = new URL(request.url)
     // A site's own address, where the host serves its sites' files itself: only under their header set.
     const site = config.sites && files?.read ? siteAt(url, config.sites.address) : null
     if (site && files) return request.method === 'GET' || request.method === 'HEAD' ? serveSite(files, site, url) : new Response(null, { status: 405 })
+    // Under the shares' own path (hst.ing/s/…), what follows it is read as the host's own path.
+    const under = shares !== null && url.host === shares.host && url.pathname.startsWith(shares.pathname)
+    if (under) url.pathname = url.pathname.slice(shares.pathname.length - 1)
     const origin = request.headers.get('origin') ?? ''
     const ours = origins.includes(origin)
     const cors = new Headers({ vary: 'origin', 'access-control-allow-origin': ours ? origin : '*', 'access-control-expose-headers': 'share-expires', 'cache-control': 'no-store', 'x-content-type-options': 'nosniff', 'referrer-policy': 'no-referrer' })
@@ -162,7 +165,7 @@ export function host(config) {
     const [, id, report] = ID.exec(url.pathname) ?? []
     if (!id && url.pathname !== '/report' && !(sites && url.pathname.startsWith('/v1/sites/'))) return answer(404, { error: 'Nothing is here.' })
     if (id && !url.pathname.startsWith('/v1/')) {
-      if (viewerAt && url.host !== viewerAt && reading) return new Response(null, { status: 301, headers: { location: new URL(id, config.shares).href, 'cache-control': 'public, max-age=86400' } })
+      if (shares && !under && reading) return new Response(null, { status: 301, headers: { location: new URL(id, shares).href, 'cache-control': 'public, max-age=86400' } })
       if (!reading || !viewer) return answer(404, { error: 'Nothing is here.' })
       return new Response(viewerPage, { headers: { 'content-type': 'text/html; charset=utf-8', 'content-security-policy': await policy, 'x-content-type-options': 'nosniff', 'x-robots-tag': 'noindex', 'referrer-policy': 'no-referrer', 'cache-control': 'public, max-age=300' } })
     }

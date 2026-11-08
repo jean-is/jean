@@ -229,12 +229,22 @@ test('the host says it publishes sites, and its own page has a form to report on
   assert.match(sent[0].body, /A fake bank/)
 })
 
-test('once shares have a name of their own, a link opened at the bare name goes on there', async () => {
-  const on = hostOn({ shares: 'https://s.hst.example/', viewer: { base: 'https://cdn.example/', entry: 'https://cdn.example/view.js', imports: {}, integrity: {} } })
-  const moved = await on.ask('/AAAAAAAAAAAAAAAAAAAAAA', { origin: null })
-  assert.equal(moved.status, 301)
-  assert.equal(moved.headers.get('location'), 'https://s.hst.example/AAAAAAAAAAAAAAAAAAAAAA')
-  assert.equal((await on.handle(new Request('https://s.hst.example/AAAAAAAAAAAAAAAAAAAAAA'))).status, 200)
+test('shares open under a path of the host, where it answers as at its root; a link opened elsewhere goes on there', async () => {
+  const on = hostOn({ shares: 'https://hst.example/s/', viewer: { base: 'https://cdn.example/', entry: 'https://cdn.example/view.js', imports: {}, integrity: {} } })
+  const id = 'AAAAAAAAAAAAAAAAAAAAAA'
+  // Links made at the bare name, or at a name of the shares' own before.
+  for (const at of [`https://hst.example/${id}`, `https://s.hst.example/${id}`]) {
+    const moved = await on.handle(new Request(at))
+    assert.deepEqual([moved.status, moved.headers.get('location')], [301, `https://hst.example/s/${id}`], at)
+  }
+  const opened = await on.ask(`/s/${id}`, { origin: null })
+  assert.equal(opened.status, 200)
+  assert.match(await opened.text(), /cdn\.example\/view\.js/)
+  // What Jean asks of it there: what it offers, a name's state; and a share's copy, which the viewer asks at the root.
+  assert.deepEqual(Object.keys(await (await on.ask('/s/', { origin: null })).json()).sort(), ['days', 'format', 'limit', 'sites'])
+  assert.equal((await (await on.ask('/s/v1/sites/lyon-bakery', { origin: null })).json()).state, 'free')
+  assert.equal((await on.ask(`/v1/${id}`, { origin: null })).status, 404)
+  assert.equal((await on.ask(`/s/v1/${id}`, { origin: null })).status, 404)
 })
 
 test('a folder keeps names and files; Bunny gets each file with its type and checksum, and a purge of the whole site', async () => {

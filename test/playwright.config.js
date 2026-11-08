@@ -57,9 +57,10 @@ export default defineConfig({
     { command: 'node test/fixtures/fake-brain.js', cwd: '..', port: BRAIN, env: { PORT: String(BRAIN), PACE: process.env.PACE ?? '5' }, reuseExistingServer: false },
     { command: 'node test/fixtures/fake-mail.js', cwd: '..', port: MAIL, env: { PORT: String(MAIL) }, reuseExistingServer: false },
     { command: 'node gateway/serve.js', cwd: '..', port: GATEWAY, env: { PORT: String(GATEWAY), GATEWAY_CONFIG: JSON.stringify(RELAYED) }, reuseExistingServer: false },
-    // The share host (D361), for Jean's origin, keeping its shares in a folder of the run's; its viewer from the render package's address, which the test serves.
+    // The share host (D361), for Jean's origin, keeping its shares in a folder of the run's; its viewer from the render package's address, which the test serves,
+    // under /s/ as jean.is's, so that each link made at its root opens there.
     { command: 'node scripts/host.js --serve', cwd: '..', port: SHARE, reuseExistingServer: false,
-      env: { PORT: String(SHARE), HOST_DIR: join(tmpdir(), `jean-shares-${process.pid}`), HOST_CONFIG: JSON.stringify({ origins: [`http://127.0.0.1:${APP}`], app: `http://127.0.0.1:${APP}/`, legal: 'https://legal.example/', name: 'Jean', sites: { address: `http://{name}.localhost:${SHARE}/` } }) } },
+      env: { PORT: String(SHARE), HOST_DIR: join(tmpdir(), `jean-shares-${process.pid}`), HOST_CONFIG: JSON.stringify({ origins: [`http://127.0.0.1:${APP}`], app: `http://127.0.0.1:${APP}/`, legal: 'https://legal.example/', name: 'Jean', shares: `http://127.0.0.1:${SHARE}/s/`, sites: { address: `http://{name}.localhost:${SHARE}/` } }) } },
     // The relay (D45 · D226), for Jean's origin by either name, keeping its mailboxes in a folder of the run's (test/devices.spec.js). Every
     // device of every test opens mailboxes from this one address, past the hour's limit a network has.
     { command: 'node relay/serve.js', cwd: '..', port: RELAY, reuseExistingServer: false,
