@@ -162,11 +162,14 @@ export const released = () => (releasing ??= fetch(new URL('../capabilities.json
   .then((listing) => listing.release ?? {}, () => ({})).then((found) => (release.value = found)))
 /** When a version was made, as General's foot says it. @param {string} date */
 export const madeOn = (date) => new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'long', timeStyle: 'short' }).format(new Date(date))
+/** What General's Check for a new version says as it goes: looking, the newest already, or what went wrong; one found says itself (app.updateReady). */
+const looked = signal('')
+const lookNow = () => { looked.value = 'settings.checking'; import('./update.js').then((update) => update.look()).then((next) => { looked.value = next ? '' : 'settings.newest' }, (error) => { looked.value = error instanceof TypeError ? 'error.network' : 'error.unknown' }) }
 
 /**
  * Settings' General: its title; the language, with its shortcut or who set it; Reading aloud, the voice that reads
  * the interface's language with Listen, and what capabilities add (the natural voice's row, which opens its page); While
- * you're away, Notifications once found; at its foot, the version and when it was made. A capability's part is a
+ * you're away, Notifications once found; at its foot, the version and when it was made, and a check for a new one. A capability's part is a
  * row in a group, `{ id, at, group, draw, page? }`.
  */
 function general() {
@@ -193,7 +196,7 @@ function general() {
   const group = (group, rows) => rows.length ? html`<section><h3>${t(`settings.${group}`)}</h3><ul class="list general">${rows}</ul></section>` : nothing
   const drawn = (/** @type {string} */ group) => parts.filter((part) => part.group === group).map((part) => part.draw())
   released()
-  const { version, date } = release.value
+  const { version, date } = release.value, ready = app.updateReady.value
   return html`<header class="general-head"><h2>${t('settings.general')}</h2></header>
     <ul class="list general"><li><span class="item-icon">${icons.language}</span>
       <span class="item-text"><strong id="general-language">${t('settings.language')}</strong>${locked.has('locale') ? html`<small>${icons.lock} ${lockedBy()}</small>`
@@ -203,7 +206,9 @@ function general() {
       ${picked.value && picked.value !== locale.value ? html`<button class="button primary language-change" @click=${(/** @type {Event} */ e) => { /** @type {HTMLElement} */ (/** @type {Element} */ (e.currentTarget).previousElementSibling).focus(); setLocale(picked.value); picked.value = '' }}>${t('settings.changeLanguage')}</button>` : nothing}</li></ul>
     ${group('reading', [voice, ...drawn('reading')].filter((row) => row !== nothing))}
     ${group('away', drawn('away'))}
-    ${version && date ? html`<p class="muted small version">${tParts('settings.version', { name: BRAND.name, version, date: html`<time datetime=${date}>${madeOn(date)}</time>` })}</p>` : nothing}`
+    ${version && date ? html`<p class="muted small version">${tParts('settings.version', { name: BRAND.name, version, date: html`<time datetime=${date}>${madeOn(date)}</time>` })}</p>` : nothing}
+    ${'serviceWorker' in navigator ? html`<p class="small version-check"><span role="status">${ready ? t('update.ready', { name: BRAND.name }) : looked.value && t(looked.value)}</span> ${ready
+      ? html`<button class="button primary" @click=${() => import('./update.js').then((update) => update.apply(ready))}>${t('update.reload')}</button>` : html`<button class="button" @click=${lookNow}>${t('settings.checkVersion')}</button>`}</p>` : nothing}`
 }
 
 /** ⌘/, beside ⌘,: Settings on its keyboard shortcuts (D257). */

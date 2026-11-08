@@ -163,7 +163,8 @@ class Toasts extends Element {
   }
 
   render() {
-    const waiting = app.updateReady.value
+    // In Settings, General's foot says a new version is ready, with its Reload (ui/dialogs.js).
+    const waiting = app.dialog.value === 'settings' ? null : app.updateReady.value
     const toast = app.toast.value, action = toast?.action, wrong = action && 'alert' in action
     const close = (/** @type {() => void} */ away) => html`<button class="icon-button subtle" aria-label=${t('action.close')} @click=${away}>${icons.close}</button>`
     const said = toast && html`<p class="toast" role=${wrong ? 'alert' : nothing}><span dir="auto">${toast.message}${action && 'undo' in action ? html` ${t('toast.undoFor', { count: toast.seconds })}` : nothing}</span>${action && 'run' in action

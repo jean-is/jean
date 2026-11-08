@@ -6,7 +6,8 @@
 // Jean, lets it in on its own, as a reload asks for the newest. A capability turned off, here or in
 // another tab, goes the same way, since its module can't be unloaded either (D433), and so does a
 // tab whose version another tab let a new one replace, and one the browser translates into a language Jean has, in it
-// (D723), since the browser's words replace the text Jean's elements write to. Loaded after the first paint.
+// (D723), since the browser's words replace the text Jean's elements write to. Settings › General asks for a new version at
+// once (look()). Loaded after the first paint.
 import { effect } from '@preact/signals-core'
 import { app, chipLabel, decisionsHere, effective, offeredLocales, setLocale } from './state.js'
 import { BRAND } from '../brand.js'
@@ -56,10 +57,24 @@ export function start() {
     const check = () => { const next = registration.waiting; if (next && navigator.serviceWorker.controller) app.ready.catch(() => {}).then(() => { if (registration.waiting !== next || updating) return; if (touched || working()) app.updateReady.value = next; else { updating = true; next.postMessage({ type: 'SKIP_WAITING', alone: true }) } }) }
     check()
     registration.addEventListener('updatefound', () => registration.installing?.addEventListener('statechange', check))
-    // The browser asks only when a page loads, and an installed app comes back on screen without loading (Android's, for days), so it asks then, at most every quarter of an hour.
+    // The browser asks only when a page loads, and an installed app comes back on screen without loading (Android's, for days), so it asks then, at most
+    // every quarter of an hour; a new version already waiting, its toast closed or never seen, is offered again, since the browser finds nothing newer.
     let asked = Date.now()
-    document.addEventListener('visibilitychange', () => { if (!document.hidden && Date.now() - asked > 15 * 60e3) { asked = Date.now(); registration.update().catch(() => {}) } })
+    document.addEventListener('visibilitychange', () => { if (!document.hidden && Date.now() - asked > 15 * 60e3) { asked = Date.now(); registration.update().then(check, () => {}) } })
   }).catch((error) => console.warn('Service worker', error))
+}
+
+/**
+ * Settings' Check for a new version: the browser asks now, and the new version, once its files are kept, waits for Reload there,
+ * not in a toast too; null where this one is the newest. It throws where the server can't be reached or the new version can't be kept.
+ */
+export async function look() {
+  const registration = await navigator.serviceWorker.getRegistration()
+  await registration?.update()
+  const next = registration?.installing
+  if (next) await new Promise((done) => next.addEventListener('statechange', done, { once: true }))
+  if (next?.state === 'redundant') throw new Error('The new version could not be kept.')
+  return (app.updateReady.value = registration?.waiting ?? null)
 }
 
 /** Lets the new version in, after the answer or the dictation under way. @param {ServiceWorker} worker */

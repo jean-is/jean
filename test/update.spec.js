@@ -12,6 +12,7 @@ import { test, expect } from '@playwright/test'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const strings = JSON.parse(readFileSync(join(ROOT, 'app', 'locales', 'en.json'), 'utf8'))
+const dialogs = JSON.parse(readFileSync(join(ROOT, 'app', 'locales', 'dialogs', 'en.json'), 'utf8'))
 
 // Each test deploys over the last one's version.
 test.describe.configure({ mode: 'serial' })
@@ -76,6 +77,36 @@ test('a page not used yet takes a new version once it is ready, where it was', a
   await expect.poll(() => loads.count).toBe(2)
   expect(new URL(page.url()).hash).toBe('#/settings')
   await expect(toast(page)).toHaveCount(0)
+  await context.close()
+})
+
+test('Settings looks for a new version when asked, says when there is none, and brings one in, said there alone', async ({ browser }) => {
+  const context = await browser.newContext({ serviceWorkers: 'allow' })
+  const { page } = await open(context, '#/settings')
+  const said = page.locator('.version-check [role="status"]'), look = page.getByRole('button', { name: dialogs['settings.checkVersion'] })
+  await look.click()
+  await expect(said).toHaveText(dialogs['settings.newest'])
+  const next = await deploy()
+  await look.click()
+  await expect(said).toHaveText(strings['update.ready'].replace('{name}', 'Jean'))
+  await expect(toast(page)).toHaveCount(0)
+  await page.getByRole('button', { name: strings['update.reload'] }).click()
+  await expect.poll(() => version(page)).toBe(next)
+  expect(new URL(page.url()).hash).toBe('#/settings')
+  await context.close()
+})
+
+test('a toast closed comes back once the page is back on screen a quarter of an hour later', async ({ browser }) => {
+  const context = await browser.newContext({ serviceWorkers: 'allow' })
+  const { page } = await open(context)
+  await page.locator('#prompt').click()
+  await deploy()
+  await page.evaluate(async () => { await (await navigator.serviceWorker.getRegistration())?.update() })
+  await toast(page).getByRole('button', { name: strings['action.close'] }).click()
+  await expect(toast(page)).toHaveCount(0)
+  // An installed app on Android comes back without loading, and the browser finds nothing newer than the one waiting.
+  await page.evaluate(() => { const now = Date.now; Date.now = () => now() + 16 * 60e3; document.dispatchEvent(new Event('visibilitychange')) })
+  await expect(toast(page)).toBeVisible()
   await context.close()
 })
 
