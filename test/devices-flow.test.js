@@ -1200,10 +1200,10 @@ test('asking the others after a quiet week leaves when another was last heard as
   const DAY = 86_400_000
   const { devices: [A, F, H], clock, noticed, settled } = await mesh(3, { brains: [BRAINS[0]] }, { TYPED000000000000000000000: 'sk1' })
   for (const one of [A, F, H]) await fs2heard(one.fs, T - 5 * DAY)
-  // F, opened offline with its clock three days ahead, asks the others after what looks like a quiet week, then gets a key typed.
-  F.ctx.now = () => clock.now + 3 * DAY
+  // F, opened offline with its clock eight days ahead, asks the others after what looks like a quiet week since they were added, then gets a key typed.
+  F.ctx.now = () => clock.now + 8 * DAY
   assert.equal(await quiet(F.ctx), true)
-  assert.deepEqual([(await readJSON(F.fs, TIMES)).heard, (await readJSON(F.fs, TIMES)).asked], [T - 5 * DAY, T + 3 * DAY])
+  assert.deepEqual([(await readJSON(F.fs, TIMES)).heard, (await readJSON(F.fs, TIMES)).asked], [T - 5 * DAY, T + 8 * DAY])
   // What it hears then is dated by the relay's clock, never its own.
   await receive(F.ctx, /** @type {any} */ ((await recordsOf(F.fs)).find((one) => one.id === A.me.id)), null, T)
   assert.equal((await readJSON(F.fs, TIMES)).heard, T)
@@ -1224,6 +1224,24 @@ test('asking the others after a quiet week leaves when another was last heard as
   await settled()
   for (const one of [A, F, H]) assert.equal(await getSecret(one.fs, 'TYPED000000000000000000000'), 'skH')
 })
+test('each device is kept as last heard, by the relay\'s time, and one a week unheard is asked even while another speaks every day', async () => {
+  const DAY = 86_400_000
+  const { devices: [A, F, H] } = await mesh(3, { brains: [BRAINS[0]] }, {})
+  const record = async (/** @type {string} */ id) => /** @type {any} */ ((await recordsOf(A.fs)).find((one) => one.id === id))
+  await receive(A.ctx, await record(F.me.id), null, T + 6 * DAY)
+  await receive(A.ctx, await record(H.me.id), null, T + 2 * DAY)
+  // Heard later than it was, F keeps its time; heard earlier, nothing goes back.
+  await receive(A.ctx, await record(F.me.id), null, T + DAY)
+  assert.deepEqual([(await readJSON(A.fs, TIMES)).heard, (await readJSON(A.fs, TIMES)).from], [T + 6 * DAY, { [F.me.id]: T + 6 * DAY, [H.me.id]: T + 2 * DAY }])
+  // Nine days in, F heard three days ago, H seven: H's week asks them all, once a week.
+  A.ctx.now = () => T + 9 * DAY + 1
+  assert.equal(await quiet(A.ctx), true)
+  assert.equal(await quiet(A.ctx), false)
+  A.ctx.now = () => T + 16 * DAY + 2
+  await receive(A.ctx, await record(H.me.id), null, T + 16 * DAY)
+  assert.equal(await quiet(A.ctx), true, 'F, unheard since the sixth day')
+})
+
 /** follows.json as a device that last heard another at `at`. @param {any} fs @param {number} at */
 const fs2heard = async (fs, at) => fs.write(TIMES, JSON.stringify({ ...await readJSON(fs, TIMES), heard: at }))
 

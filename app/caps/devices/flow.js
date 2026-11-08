@@ -29,11 +29,11 @@ import { PERSON, madePerson } from '../people/flow.js'
 /** Keys as they go to another device, each with its time, a forgotten one as a tombstone. @typedef {Record<string, { value?: string, at: number, gone?: true }>} Keys */
 /**
  * follows.json: the times of what follows (bundle.js) and of the keys that cross, what settings were when last stamped, when another device
- * was last heard, by the relay's time of its message, when it last asked them, a mark while something waits to reach every device, the
+ * was last heard, by the relay's time of its message, and each one, by its id, kept on this device alone, when it last asked them, a mark while something waits to reach every device, the
  * devices the last share didn't reach and the mark it was for, those removed and not yet told (whether to erase Jean there) and of those
  * the ones the relay took, the projects it had, which refill() won't bring back, and, removed, the devices it had then, with the identity
  * it was removed as.
- * @typedef {Partial<import('./bundle.js').Times> & { keys?: Record<string, KeyStamp>, seen?: Partial<Settings>, heard?: number, asked?: number, pending?: number, unreached?: string[], sentFor?: number, posted?: string[], owe?: Record<string, boolean>, had?: string[], left?: string[], leftAs?: string }} Follows
+ * @typedef {Partial<import('./bundle.js').Times> & { keys?: Record<string, KeyStamp>, seen?: Partial<Settings>, heard?: number, from?: Record<string, number>, asked?: number, pending?: number, unreached?: string[], sentFor?: number, posted?: string[], owe?: Record<string, boolean>, had?: string[], left?: string[], leftAs?: string }} Follows
  */
 /**
  * What handling needs: the profile's files, this device, its catalogue (ui/discovery.js), now by the relay's clock, settings.json as it
@@ -272,7 +272,7 @@ async function takeKeys(fs, keys, settings, times, limit, policy, records = {}) 
 // ─── Settings that follow, and their times ───────────────────────────────────
 
 /** @param {FS} fs @returns {Promise<Follows>} */
-const followsOf = (fs) => readJSON(fs, TIMES, {})
+export const followsOf = (fs) => readJSON(fs, TIMES, {})
 /** follows.json written again over itself with what changed, a value undefined dropped. @param {FS} fs @param {Follows} next */
 const keep = async (fs, next) => writeJSON(fs, TIMES, { format: 1, ...await followsOf(fs), ...next })
 /** follows.json as it is, handed to `run`, one tab at a time. @template T @param {Pick<Context, 'fs' | 'lock'>} ctx @param {(kept: Follows) => Promise<T>} run @returns {Promise<T>} */
@@ -388,11 +388,15 @@ export const settle = (ctx, snapshot, keys) => follows(ctx, async (kept) => {
   return ours
 })
 
-/** Another device heard from at `at`, the relay's time of its message, never this device's clock, so that nothing it took is capped below it. @param {Context} ctx @param {number} at */
-const hear = (ctx, at) => follows(ctx, async (kept) => { if (at > (kept.heard ?? 0)) await keep(ctx.fs, { heard: at }) })
+/**
+ * Device `id` heard from at `at`, the relay's time of its message, never this device's clock, so that nothing it took is capped below it;
+ * kept for it too, for Your devices to say when each was last seen. @param {Context} ctx @param {number} at @param {string} id
+ */
+const hear = (ctx, at, id) => follows(ctx, async (kept) => { if (at > (kept.from?.[id] ?? 0)) await keep(ctx.fs, { heard: Math.max(at, kept.heard ?? 0), from: { ...kept.from, [id]: at } }) })
 
-/** Whether nothing came from the others for a week, which asking them answers; asked, it waits another week, `heard` left as it is. @param {Context} ctx */
-export const quiet = (ctx) => follows(ctx, async (kept) => (ctx.now() - Math.max(kept.heard ?? 0, kept.asked ?? 0) <= WEEK ? false : keep(ctx.fs, { asked: ctx.now() }).then(() => true)))
+/** Whether one of the others went a week unheard since it was added, which asking them answers; asked, it waits another week. @param {Context} ctx */
+export const quiet = (ctx) => follows(ctx, async (kept) => ((await recordsOf(ctx.fs)).some((one) => one.id !== ctx.me.id && ctx.now() - Math.max(kept.from?.[one.id] ?? 0, Date.parse(one.createdAt), kept.asked ?? 0) > WEEK)
+  && keep(ctx.fs, { asked: ctx.now() }).then(() => true)))
 
 // ─── Pairing: the bundle, and B's new profile ────────────────────────────────
 
@@ -575,7 +579,7 @@ export async function receive(ctx, from, value, at = ctx.now()) {
   // Only from a device this one has at this moment: one removed, here or as a list just told, is heard no more. Its own removal comes
   // with the remover's list, whose removals it then owes too, before it erases.
   if (!(await recordsOf(ctx.fs)).some((one) => one.id === from.id && one.id !== ctx.me.id)) return null
-  await hear(ctx, at)
+  await hear(ctx, at, from.id)
   const kind = value?.kind
   // A list that changed this one goes on to the others with this device's state, as what changed here does, until every one has it; a
   // device it newly lists as removed is owed the removal by this one too, since that device may not know the one that removed it,
