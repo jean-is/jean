@@ -151,8 +151,8 @@ export interface ToolCallInfo {
 
 /** ACP session/update payloads used by Jean (https://agentclientprotocol.com). */
 export type AcpUpdate =
-  /** steer: sent while the task worked, read before its next step (D365) */
-  | { sessionUpdate: 'user_message_chunk', content: ContentBlock, _meta?: { steer?: boolean } }
+  /** steer: sent while the task worked, read before its next step (D365); theirs: someone else's, in a task they sent or shared */
+  | { sessionUpdate: 'user_message_chunk', content: ContentBlock, _meta?: { steer?: boolean, theirs?: true } }
   | { sessionUpdate: 'agent_message_chunk', content: TextBlock }
   | { sessionUpdate: 'agent_thought_chunk', content: TextBlock }
   | ({ sessionUpdate: 'tool_call' } & ToolCallInfo)
@@ -217,8 +217,8 @@ export type SystemNoteData =
   | { kind: 'game', uri: string }
   /** the site on show beside the conversation, its page on show as it is now (D720) */
   | { kind: 'site', uri: string }
-  /** what follows was shared from someone else's Jean, through the host named (D361) */
-  | { kind: 'shared', from: string }
+  /** what follows came from someone else's Jean, shared through the host named (D361) or sent by a person met, and where the user's own requests start again (end) */
+  | { kind: 'shared', from?: string, person?: string, thread?: { task: string, id: string }, id?: string, end?: true }
   /** Intuition read a danger in a child's message, told to their parent unless it is at home (D228) */
   | { kind: 'concern', concern: string }
 

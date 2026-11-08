@@ -442,6 +442,7 @@
   "check.fix.prompt": "Tvoji izvori ne potvrđuju ove točke. Ponovno ih provjeri i ispravi svoj odgovor:",
   "since.prompt": "Što je novo od prošlog puta?",
   "since.closed": "Rad staje dok je ova kartica zatvorena, pa je ovo pročitano upravo sada.",
+  "shared.came": "Podijeljeno s vama",
   "cap.machine.name": "Ovo računalo",
   "cap.machine.offer": "Pokretati razvojni poslužitelj web-mjesta ili vlastite programe na ovom računalu?",
   "cap.machine.yes": "Koristi ovo računalo",

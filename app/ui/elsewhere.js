@@ -1,8 +1,8 @@
 // What Jean reads from elsewhere can carry instructions (threat 1, docs/trust/threat-model.md). Once a task holds some, a
 // person's Always allow no longer sends anything out unasked: a service's action, a move, a delete, a command on their own
 // computer, an address that neither they nor what was read gave as it is, which a brain may have written something into, or
-// what would carry its words into later tasks, a routine, a memory, a skill (D673). A rule the organisation set stands, and a
-// task whose records can't be read holds some. Pure, so that it runs under node --test.
+// what would carry its words into later tasks, a routine, a memory, a skill (D673). A rule the organisation set stands, but for
+// a service's call in a task someone else sent or shared, and a task whose records can't be read holds some. Pure: node --test.
 
 /** What outlives the task, and would read as the person's own in the next. */
 const CARRIES = ['schedule', 'remember', 'save_skill', 'save_flow']
@@ -23,8 +23,8 @@ export const elsewhere = (recordsOf, rules, why) => ({ on: 'tool.check', tier: '
   const said = await next(e)
   // Going back, or showing a file of the task's own, sends nothing out; a call with neither names an address, whatever shape it comes in.
   const out = e.kind === 'fetch' ? !e.service && !said?.meta?.site && typeof e.args?.path !== 'string' && !e.args?.go : CARRIES.includes(e.name) || ['other', 'move', 'delete'].includes(e.kind) || said?.meta?.machine
-  if (said?.decision !== 'allow' || !out || rules()?.[e.kind] || !e.task) return said
+  if (said?.decision !== 'allow' || !(out || e.service) || !e.task) return said
   const records = await recordsOf(e.task)
-  if (records && (!records.some(fromElsewhere) || (e.kind === 'fetch' && given(records, e.args?.url)))) return said
+  if (!(e.service && records?.some(({ update: u }) => u?.sessionUpdate === '_system_note' && u.data.kind === 'shared')) && (!out || rules()?.[e.kind] || (records && (!records.some(fromElsewhere) || (e.kind === 'fetch' && given(records, e.args?.url)))))) return said
   return { decision: 'ask', meta: { ...said.meta, guard: 'elsewhere', why: await why() } }
 } })

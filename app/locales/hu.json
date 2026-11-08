@@ -433,6 +433,7 @@
   "check.fix.prompt": "A forrásaid nem támasztják alá ezeket a pontokat. Ellenőrizd őket újra, és javítsd a válaszodat:",
   "since.prompt": "Mi újság legutóbb óta?",
   "since.closed": "A munka szünetel, amíg ez a lap zárva van, ezért ezt most olvasta el.",
+  "shared.came": "Önnel megosztva",
   "cap.machine.name": "Ez a számítógép",
   "cap.machine.offer": "Futtatnád egy webhely fejlesztői szerverét vagy a saját programjaidat ezen a számítógépen?",
   "cap.machine.yes": "Ennek a számítógépnek a használata",

@@ -433,6 +433,7 @@
   "check.fix.prompt": "Lähteesi eivät tue näitä kohtia. Tarkista ne uudelleen ja korjaa vastauksesi:",
   "since.prompt": "Mitä uutta viime kerran jälkeen?",
   "since.closed": "Työ pysähtyy, kun tämä välilehti on suljettu, joten tämä luettiin juuri nyt.",
+  "shared.came": "Jaettu kanssasi",
   "cap.machine.name": "Tämä tietokone",
   "cap.machine.offer": "Ajetaanko sivuston kehityspalvelin tai omia ohjelmiasi tällä tietokoneella?",
   "cap.machine.yes": "Käytä tätä tietokonetta",

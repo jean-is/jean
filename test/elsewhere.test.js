@@ -109,3 +109,12 @@ test('reading, searching and Jean’s own files are not held; nor what is alread
   assert.deepEqual(await decide({ kind: 'other' }, [read], { decision: 'ask' }), { decision: 'ask' })
   assert.deepEqual(await decide({ kind: 'other' }, [read], { decision: 'allow' }, { other: 'allow' }), { decision: 'allow' })
 })
+
+test('in a task someone else sent or shared, a call to a service the person connected asks, reading too, past the organisation’s rule', async () => {
+  const came = record({ sessionUpdate: '_system_note', text: 'What follows came from someone else.', data: { kind: 'shared', from: 'hst.ing' } })
+  assert.equal((await decide({ kind: 'fetch', service: 'drive', args: {} }, [came, asked('Mine')])).decision, 'ask')
+  assert.equal((await decide({ kind: 'other', service: 'mail' }, [came], { decision: 'allow' }, { other: 'allow' })).decision, 'ask')
+  // What the person or the organisation refused stays refused, and a call to no service is as before.
+  assert.deepEqual(await decide({ kind: 'other', service: 'mail' }, [came], { decision: 'never', reason: 'No' }), { decision: 'never', reason: 'No' })
+  assert.deepEqual(await decide({ kind: 'read' }, [came]), { decision: 'allow' })
+})

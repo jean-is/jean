@@ -451,6 +451,7 @@
   "check.fix.prompt": "Tvoje zdroje tyto body nepodporují. Ověř je znovu a oprav svou odpověď:",
   "since.prompt": "Co je nového od minula?",
   "since.closed": "Když je tato karta zavřená, práce stojí, takže se to přečetlo právě teď.",
+  "shared.came": "Sdíleno s vámi",
   "cap.machine.name": "Tento počítač",
   "cap.machine.offer": "Spustit vývojový server webu, nebo své vlastní programy, v tomto počítači?",
   "cap.machine.yes": "Použít tento počítač",

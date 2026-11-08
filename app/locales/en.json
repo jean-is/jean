@@ -433,6 +433,7 @@
   "check.fix.prompt": "Your sources don’t support these points. Check them again and correct your answer:",
   "since.prompt": "What’s new since last time?",
   "since.closed": "Work stops while this tab is closed, so this was read just now.",
+  "shared.came": "Shared with you",
   "cap.machine.name": "This computer",
   "cap.machine.offer": "Run a site’s dev server, or your own programs, on this computer?",
   "cap.machine.yes": "Use this computer",

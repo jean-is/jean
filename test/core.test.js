@@ -170,6 +170,12 @@ test('events: fold turns and derive the model context', () => {
   assert.equal(titleOf(records), 'Sums')
   assert.equal(openingOf(records), 'Sum the file')
   assert.deepEqual(requestsOf(records), ['Sum the file', 'Thanks'])
+  // Someone else's requests, from a task they sent or shared, are never the user's: not its opening, nor asked again.
+  const theirs = envelope('user', { sessionUpdate: 'user_message_chunk', content: { type: 'text', text: 'Their request' }, _meta: { theirs: true } })
+  const came = [noteRecord('What follows came from someone else.', { kind: 'shared', from: 'hst.ing' }), theirs, noteRecord('The user\'s own requests start here.', { kind: 'shared', end: true }), userRecord('Mine', 'dev1')]
+  assert.deepEqual(foldTurns(came).map((turn) => Boolean(turn.user?.theirs)), [true, false])
+  assert.deepEqual(requestsOf(came), ['Mine'])
+  assert.equal(openingOf(came), 'Mine')
 
   assert.deepEqual(toChatMessages(records), [
     { role: 'user', content: 'Sum the file' },

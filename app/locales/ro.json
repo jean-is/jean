@@ -442,6 +442,7 @@
   "check.fix.prompt": "Sursele tale nu susțin aceste puncte. Verifică-le din nou și corectează-ți răspunsul:",
   "since.prompt": "Ce e nou de data trecută?",
   "since.closed": "Munca se oprește cât această filă e închisă, așa că asta a fost citit chiar acum.",
+  "shared.came": "Partajat cu tine",
   "cap.machine.name": "Acest computer",
   "cap.machine.offer": "Rulați serverul de dezvoltare al unui site sau propriile programe pe acest computer?",
   "cap.machine.yes": "Folosiți acest computer",

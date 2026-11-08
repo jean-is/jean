@@ -26,7 +26,7 @@ export const metaRecord = (by, meta) => ({ at: new Date().toISOString(), by, met
 /**
  * @typedef {{ index: number, text: string, thought: string, tools: ToolCallInfo[], compaction?: CompactionUpdate }} Step compaction: a summary read on from (D359)
  * @typedef {{ text: string, data: SystemNoteData }} Note
- * @typedef {{ text: string, files: ResourceLink[], at: string, upTo: number, steer?: boolean }} UserTurn upTo: how many records lead up to its end; steer: D365
+ * @typedef {{ text: string, files: ResourceLink[], at: string, upTo: number, steer?: boolean, theirs?: true }} UserTurn upTo: how many records lead up to its end; steer: D365; theirs: someone else's
  * @typedef {{ user: UserTurn | null, notes: Note[], steps: Step[], plan?: PlanEntry[], at: string, end?: string }} Turn
  *   notes are the system notes recorded just before this turn's user message; end is when its answer was last written.
  */
@@ -55,6 +55,7 @@ export function foldTurns(records) {
       const user = /** @type {UserTurn} */ (turn.user)
       user.upTo = index + 1
       if (update._meta?.steer) user.steer = true
+      if (update._meta?.theirs) user.theirs = true
       if (update.content.type === 'resource_link') user.files.push(update.content)
       else user.text += update.content.text
     } else {
@@ -116,8 +117,8 @@ export function splitSuggestions(text) {
 /** Latest title from meta records. @param {Envelope[]} records @returns {string} */
 export const titleOf = (records) => records.findLast((record) => record.meta?.title)?.meta?.title ?? ''
 
-/** The words of each request, in order. @param {Envelope[]} records @returns {string[]} */
-export const requestsOf = (records) => records.flatMap(({ update }) => (update?.sessionUpdate === 'user_message_chunk' && update.content.type === 'text' && update.content.text ? [update.content.text] : []))
+/** The words of each request, in order, but someone else's. @param {Envelope[]} records @returns {string[]} */
+export const requestsOf = (records) => records.flatMap(({ update }) => (update?.sessionUpdate === 'user_message_chunk' && update.content.type === 'text' && update.content.text && !update._meta?.theirs ? [update.content.text] : []))
 
 /** The words of the request that opened the conversation. @param {Envelope[]} records */
 export const openingOf = (records) => requestsOf(records)[0] ?? ''

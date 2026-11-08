@@ -433,6 +433,7 @@
   "check.fix.prompt": "Kaynakların bu noktaları desteklemiyor. Onları yeniden kontrol et ve yanıtını düzelt:",
   "since.prompt": "Son seferden beri yeni ne var?",
   "since.closed": "Bu sekme kapalıyken çalışma durur; bu yüzden bunlar az önce okundu.",
+  "shared.came": "Sizinle paylaşıldı",
   "cap.machine.name": "Bu bilgisayar",
   "cap.machine.offer": "Bir sitenin geliştirme sunucusunu ya da kendi programlarını bu bilgisayarda çalıştırmak ister misin?",
   "cap.machine.yes": "Bu bilgisayarı kullan",

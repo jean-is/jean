@@ -212,6 +212,9 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   await expect.poll(() => page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.find((record) => record.update?.sessionUpdate === '_system_note')?.update))
     .toMatchObject({ data: { kind: 'shared', from: '127.0.0.1:4185' } })
   await expect(page.locator('app-conversation .msg-user')).toHaveText('Plan my week')
+  // Its line says it was shared, and its request is that person's, without actions: never tried again here.
+  await expect(page.locator('app-conversation .since', { hasText: 'Shared with you' })).toBeVisible()
+  await expect(page.locator('app-conversation .msg-actions.is-request')).toHaveCount(0)
   await expect(page.locator('app-conversation .file-card .file-name')).toHaveText(['Week.pdf', 'Letter.docx'])
   expect(await page.evaluate(async (uris) => {
     const [{ app }, { fileText }] = await Promise.all([import('/ui/state.js'), import('/core/files.js')])

@@ -442,6 +442,7 @@
   "check.fix.prompt": "Tes sources n’étayent pas ces points. Vérifie-les à nouveau et corrige ta réponse :",
   "since.prompt": "Quoi de neuf depuis la dernière fois ?",
   "since.closed": "Le travail s’arrête quand cet onglet est fermé : tout ceci vient d’être lu.",
+  "shared.came": "Partagé avec vous",
   "cap.machine.name": "Votre ordinateur",
   "cap.machine.offer": "Faire tourner le serveur de développement d’un site, ou vos propres programmes, sur votre ordinateur ?",
   "cap.machine.yes": "Utiliser votre ordinateur",

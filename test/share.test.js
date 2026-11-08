@@ -301,3 +301,25 @@ test('a folder keeps shares and records, sealed to a key only its private half o
   assert.equal(await store.meta('a'.repeat(22)), null)
   assert.deepEqual(await store.body('b'.repeat(22)), new Uint8Array([4, 5, 6]))
 })
+
+test('a value that came is a new task of the user’s: its files kept, its records between a note that they are someone else’s and one where the user’s own start', async () => {
+  const { takeIn } = await import('../app/caps/share/value.js')
+  const { memoryFS } = await import('../app/core/fs.js')
+  const { requestsOf } = await import('../app/core/events.js')
+  const fs = memoryFS(), value = /** @type {any} */ ({ format: 1, kind: 'task', lang: 'en', title: 'Cat', file: copyOf(task(), { aFile: 'a file' }), files: { [PICTURE.uri]: 'data:image/png;base64,AAAA' }, certificates: [] })
+  const { path, records } = await takeIn(fs, value, { projectDir: 'projects/home', by: 'device-2', aFile: 'a file', from: { from: 'hst.ing' } })
+  assert.match(path, /^projects\/home\/conversations\/[0-9A-Z]{26}\.jsonl$/)
+  const written = parse(String(await fs.read(path)))
+  assert.notEqual(written[0].id, '01M4N18BCYXJ5WQDF3TW1C43KC')
+  assert.deepEqual(written[1].update.data, { from: 'hst.ing', kind: 'shared' })
+  assert.deepEqual(written.at(-2).update.data, { kind: 'shared', end: true })
+  assert.equal(written.at(-1).meta.title, 'Cat')
+  assert.equal(records.length, written.length - 4)
+  // Its requests are that person's: none is the user's, and what the user asks next is.
+  assert.deepEqual(requestsOf(written), [])
+  // A thing on its own comes as a request, the sender's words or its title, and its answer.
+  const item = /** @type {any} */ ({ ...value, kind: 'item', file: `${JSON.stringify({ format: 1, kind: 'conversation', id: 'x' })}\n${JSON.stringify({ by: 'jean', step: 0, update: { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: 'A chart.' } } })}\n` })
+  const turns = foldTurns(parse(String(await fs.read((await takeIn(fs, item, { projectDir: 'projects/home', by: 'device-2', aFile: 'a file', from: {}, words: 'For Monday' })).path))))
+  assert.equal(turns[0].user?.text, 'For Monday')
+  assert.equal(turns[0].notes[0].data.kind, 'shared')
+})

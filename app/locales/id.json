@@ -424,6 +424,7 @@
   "check.fix.prompt": "Sumbermu tidak mendukung poin-poin ini. Periksa lagi dan perbaiki jawabanmu:",
   "since.prompt": "Apa yang baru sejak terakhir kali?",
   "since.closed": "Pekerjaan berhenti selama tab ini tertutup, jadi ini baru saja dibaca.",
+  "shared.came": "Dibagikan dengan Anda",
   "cap.machine.name": "Komputer ini",
   "cap.machine.offer": "Jalankan server pengembangan sebuah situs, atau program Anda sendiri, di komputer ini?",
   "cap.machine.yes": "Gunakan komputer ini",

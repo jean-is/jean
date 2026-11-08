@@ -202,6 +202,8 @@ function turnView(turn, live, files, upTo, last, sources, steered) {
   const routine = turn.notes.map((note) => note.data).find((data) => data.kind === 'routine')
   // A look the camera, or screen sharing, took on its own (D645, D699).
   const looked = turn.notes.find((note) => note.data.kind === 'look')?.data
+  // What someone else sent or shared: its line, and its requests theirs, without actions.
+  const came = turn.notes.find((note) => note.data.kind === 'shared' && !note.data.end), theirs = turn.user?.theirs
   // A summary the brain read on from (D359).
   const summed = steps.findLast((step) => step.compaction)?.compaction
   if (summed) unlock('compact')
@@ -211,9 +213,10 @@ function turnView(turn, live, files, upTo, last, sources, steered) {
   // A double click on its request, or Enter on it, edits it, once Try again could (D312); Enter goes no further.
   const edit = (/** @type {Event} */ event) => {
     event.preventDefault()
-    if (!(last && app.busy.value)) import('./edit.js').then(() => { editing.value = turn.at })
+    if (!theirs && !(last && app.busy.value)) import('./edit.js').then(() => { editing.value = turn.at })
   }
   return html`<li class="turn">
+    ${came ? html`<p class="since">${icons.send}<span>${t('shared.came')} · ${when(turn.at)}</span></p>` : nothing}
     ${looked?.kind === 'look' ? html`<p class="since">${looked.cap === 'screen' ? icons.screen : icons.camera}<span>${t(`cap.${looked.cap}.name`)} · ${when(turn.at)}</span></p>` : nothing}
     ${routine?.kind === 'routine' ? html`<button class="since" @click=${() => import('./knows.js').then((knows) => knows.showRoutine(routine.routine))}>${since ? html`${icons.since}<span><span dir="auto">${routine.title}</span> · ${relativeTime(since.since)}</span>`
       : html`${icons.alarm}<span>${t('cap.routines.name')} · <span dir="auto">${routine.title}</span></span>`}</button>` : nothing}
@@ -222,9 +225,9 @@ function turnView(turn, live, files, upTo, last, sources, steered) {
       ${isPicture(link) ? shared(link) : html`<button class="file-chip" @click=${() => openFile(link)} title=${t('files.open')}>${icons.file}<span dir="auto">${link.name}</span></button>`}
     </li>`)}</ul>` : nothing}
     ${turn.user?.text ? editing.value === turn.at ? html`<app-edit class="msg-user" .request=${turn.user}></app-edit>`
-      : html`<p class="msg msg-user" dir="auto" tabindex=${last && drawing.busy ? nothing : 0} aria-keyshortcuts="Enter" @dblclick=${edit}
+      : html`<p class="msg msg-user" dir="auto" tabindex=${theirs || (last && drawing.busy) ? nothing : 0} aria-keyshortcuts="Enter" @dblclick=${edit}
         @keydown=${(/** @type {KeyboardEvent} */ event) => event.key === 'Enter' && edit(event)}>${asked.value(turn.user.text)}</p>` : nothing}
-    ${turn.user ? requestActions(turn.user, !(last && drawing.busy)) : nothing}
+    ${turn.user && !theirs ? requestActions(turn.user, !(last && drawing.busy)) : nothing}
     ${summed ? html`<app-compaction .record=${summed}></app-compaction>` : nothing}
     ${streaming || text || entries.length ? html`
       <article class="msg msg-jean ${streaming ? 'is-streaming' : ''}" aria-busy=${streaming ? 'true' : 'false'}>

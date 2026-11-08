@@ -433,6 +433,7 @@
   "check.fix.prompt": "Dine kilder understøtter ikke disse punkter. Tjek dem igen, og ret dit svar:",
   "since.prompt": "Hvad er nyt siden sidst?",
   "since.closed": "Arbejdet står stille, mens denne fane er lukket, så dette blev læst lige nu.",
+  "shared.came": "Delt med dig",
   "cap.machine.name": "Denne computer",
   "cap.machine.offer": "Køre et websteds udviklingsserver, eller dine egne programmer, på denne computer?",
   "cap.machine.yes": "Brug denne computer",
