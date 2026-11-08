@@ -300,7 +300,9 @@ export const ACTIONS = {
     run: (job, inputs) => {
       const type = inputs['scan-type'] || 'image'
       if (!['image', 'config', 'fs'].includes(type)) { job.log(`Trivy's ${type} scan isn't replayed here\n`); return Promise.resolve(1) }
-      const args = ['docker run --rm', '-v /var/run/docker.sock:/var/run/docker.sock', '-v jean-ci-trivy:/root/.cache', `-v "$PWD":/scan:ro`, '-w /scan', TRIVY.image, type, '--no-progress']
+      const args = ['docker run --rm', '-v /var/run/docker.sock:/var/run/docker.sock', '-v jean-ci-trivy:/root/.cache', `-v "$PWD":/scan:ro`, '-w /scan', TRIVY.image, type]
+      // No progress bar in the log; `trivy config` knows no such flag and stops at it.
+      if (type === 'image') args.push('--no-progress')
       if (inputs.scanners) args.push(`--scanners ${inputs.scanners}`)
       if (inputs.severity) args.push(`--severity ${inputs.severity}`)
       if (inputs['ignore-unfixed'] === 'true') args.push('--ignore-unfixed')

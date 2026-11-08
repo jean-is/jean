@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { describe, it } from 'node:test'
-import { OUTWARD, TRIVY, adjust, combinations, parse, plan, rehearse, schedule, substitute, when, workflows } from '../scripts/ci.js'
+import { ACTIONS, OUTWARD, TRIVY, adjust, combinations, parse, plan, rehearse, schedule, substitute, when, workflows } from '../scripts/ci.js'
 
 const CI = readFileSync(new URL('../.github/workflows/ci.yml', import.meta.url), 'utf8')
 /** @type {import('../scripts/ci.js').GitHub} */
@@ -88,6 +88,18 @@ describe('the jobs, as replayed here', () => {
     assert.ok(deploy.steps.every((step) => !('BUNNY_API_KEY' in step.env)), 'a secret is unset here, not empty')
     assert.equal(runs.find((run) => run.job === 'chart')?.when, 'tag')
     assert.ok(runs.filter((run) => run.job === 'images').every((run) => run.steps.some((step) => step.action === 'docker/login-action' && step.skipped.length)))
+  })
+
+  it('asks Trivy only what each scan knows', async () => {
+    /** @type {string[]} */
+    const asked = []
+    const job = /** @type {import('../scripts/ci.js').Job} */ ({ sh: async (script) => { asked.push(script); return 0 }, log: () => {} })
+    const trivy = /** @type {NonNullable<import('../scripts/ci.js').Action['run']>} */ (ACTIONS['aquasecurity/trivy-action'].run)
+    const context = { matrix: {}, github: GITHUB, steps: {} }
+    await trivy(job, { 'image-ref': 'jean-ci:jean', scanners: 'vuln', severity: 'HIGH,CRITICAL', 'ignore-unfixed': 'true', 'exit-code': '1' }, context, {})
+    await trivy(job, { 'scan-type': 'config', 'scan-ref': 'rendered', severity: 'HIGH,CRITICAL', 'exit-code': '1' }, context, {})
+    assert.match(asked[0], / image --no-progress --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 jean-ci:jean$/)
+    assert.match(asked[1], / config --severity HIGH,CRITICAL --exit-code 1 rendered$/)
   })
 
   it('runs the Trivy that the pinned trivy-action runs', () => {
