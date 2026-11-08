@@ -7,7 +7,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { host, base64url } from '../host/host.js'
 import { folder, siteFiles } from '../host/serve.js'
-import { refused, fileAt, siteAt, serveSite, sweepSites, takeDown, bunny, digest, unfit, HEADERS, TYPES, GONE } from '../host/sites.js'
+import { refused, fileAt, cleanAt, tidy, siteAt, serveSite, sweepSites, takeDown, bunny, digest, unfit, HEADERS, TYPES, GONE } from '../host/sites.js'
 import { TYPES as JEANS, tokenOf, codeOf, secretOf } from '../app/caps/sites/file.js'
 
 const JEAN = 'https://jean.example'
@@ -206,6 +206,30 @@ test('every file of a site is served under the same strict header set, a page fo
   assert.equal((await on.handle(new Request('http://lyon-bakery.localhost:8788/', { method: 'POST' }))).status, 405)
 })
 
+test('no address of a site shows .html: its pages’ links lose it as the host keeps them, and an address with it goes to the one without', async () => {
+  assert.deepEqual(['/about.html', '/about.HTM', '/index.html', '/index', '/fr/index.htm', '/fr/contact.html', '/myindex.html', '/a%20b.html'].map(cleanAt), ['/about', '/about', '/', '/', '/fr/', '/fr/contact', '/myindex', '/a%20b'])
+  for (const path of ['/', '/about', '/fr/', '/style.css', '/index-2026', '/about.html/']) assert.equal(cleanAt(path), null, path)
+  assert.equal(tidy(`<nav><a href="index.html">Home</a> <a class="x" href='about.html#team'>About</a> <a href=fr/index.html>FR</a> <A HREF="../index.htm?x=1">Up</A> <a href="/fr/contact.html">Contact</a>
+<a href="https://example.com/page.html">Elsewhere</a> <a href="//cdn.example/a.html">CDN</a> <a href="mailto:a@b.example">Mail</a> <a href="style.css">CSS</a> <a href="#top">Top</a> <a data-href="x.html" href="myindex.html">Mine</a>
+<link rel="alternate" hreflang="fr" href="fr/index.html"></nav><p>&lt;a href="code.html"&gt;</p>`), `<nav><a href="./">Home</a> <a class="x" href='about#team'>About</a> <a href=fr/>FR</a> <A HREF="../?x=1">Up</A> <a href="/fr/contact">Contact</a>
+<a href="https://example.com/page.html">Elsewhere</a> <a href="//cdn.example/a.html">CDN</a> <a href="mailto:a@b.example">Mail</a> <a href="style.css">CSS</a> <a href="#top">Top</a> <a data-href="x.html" href="myindex">Mine</a>
+<link rel="alternate" hreflang="fr" href="fr/"></nav><p>&lt;a href="code.html"&gt;</p>`)
+
+  const on = hostOn({ sites: { address: 'http://{name}.localhost:8788/' } }), mine = token()
+  const pages = { ...PAGES, 'index.html': '<!doctype html><title>Bakery</title><a href="about.html">About</a>' }
+  await publish(on, 'lyon-bakery', mine, pages)
+  assert.equal(new TextDecoder().decode(on.files.get('lyon-bakery/index.html')), '<!doctype html><title>Bakery</title><a href="about">About</a>')
+  // The host keeps the hash of what Jean sent, so Publish again finds nothing changed.
+  const { files } = await (await on.ask('/v1/sites/lyon-bakery', { token: mine })).json()
+  assert.deepEqual(files, (await siteOf(pages)).list)
+  for (const [path, to] of [['/about.html', '/about'], ['/index.html', '/'], ['/fr/index', '/fr/']]) {
+    const moved = await on.handle(new Request(`http://lyon-bakery.localhost:8788${path}`))
+    assert.equal(moved.status, 301, path)
+    assert.equal(moved.headers.get('location'), to)
+    for (const [name, value] of Object.entries(HEADERS)) assert.equal(moved.headers.get(name), value)
+  }
+})
+
 test('the host says it publishes sites, and its own page has a form to report one', async () => {
   const on = hostOn({ legal: 'https://legal.example/', alert: 'https://alerts.example/topic' })
   const told = await (await on.ask('/', { origin: null })).json()
@@ -277,6 +301,10 @@ test('the host serves what Jean makes, and Bunny’s edge adds the same headers'
   assert.deepEqual(TYPES, JEANS)
   const edge = await readFile(new URL('../deploy/bunny/sites.js', import.meta.url), 'utf8')
   assert.deepEqual(JSON.parse(/** @type {string} */ (/const HEADERS = (\{[\s\S]*?\n\})/.exec(edge)?.[1])), { ...HEADERS })
+  // The edge sends an address with .html where the host does: its own cleanAt, run here.
+  const own = /** @type {string} */ (/^const cleanAt = .*$/m.exec(edge)?.[0])
+  const { cleanAt: edgeAt } = await import(`data:text/javascript,${encodeURIComponent(`${own}\nexport { cleanAt }`)}`)
+  for (const path of ['/about.html', '/index.html', '/index', '/fr/index.htm', '/fr/contact.HTML', '/', '/about', '/fr/', '/style.css', '/index-2026']) assert.equal(edgeAt(path), cleanAt(path), path)
 })
 
 test('a site’s token comes from its secret one way, and its recovery code reads back whatever its case, spaces and dashes', async () => {

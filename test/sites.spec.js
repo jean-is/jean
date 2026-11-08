@@ -174,6 +174,10 @@ test('a site goes online at a name of its own, asked first, its recovery code sh
   await expect(visit.locator('h1')).toHaveText('Prices')
   await expect.poll(() => visit.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe('rgb(255, 253, 249)')
   expect(await visit.evaluate(() => [self.origin, (() => { try { return typeof localStorage.length } catch { return 'none' } })()])).toEqual(['null', 'none'])
+  // No address shows .html: the page's links lost theirs as the host kept it (an address typed with it: test/publish.test.js).
+  expect(await visit.locator('nav a').evaluateAll((links) => links.map((link) => link.getAttribute('href')))).toEqual(['./', 'prices'])
+  await visit.locator('nav a').first().click()
+  await expect(visit).toHaveURL(address)
   await visit.close()
 
   // Changed, then published again: only the style sheet goes.

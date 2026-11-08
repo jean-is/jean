@@ -86,6 +86,22 @@ export function refused(name, more = []) {
 export const pathOf = (path) => (path && path.length <= 300 && !path.split('/').some((part) => !part || part === '..' || part.startsWith('.')) && TYPES[path.toLowerCase().split('.').pop() ?? ''] ? path : null)
 /** The file an address of a site reaches: a folder's index.html, a page without its .html. @param {string} pathname */
 export const fileAt = (pathname) => ((path) => (!path || path.endsWith('/') ? `${path}index.html` : /\.[^/]+$/.test(path) ? path : `${path}.html`))(decodeURIComponent(pathname).replace(/^\/+/, ''))
+/**
+ * Where an address with a page's .html or .htm, or a folder's index, goes instead, or null: `/about.html` to `/about`, `/fr/index.html`
+ * to `/fr/`, as the site's links say them (tidy), so no address shows an ending. Bunny's edge script has the same, which a test holds it to.
+ * @param {string} pathname
+ */
+export const cleanAt = (pathname) => ((match) => (match ? `${match[1]}${match[2] ?? ''}` : null))(/^(.*?)(?:(\/)index(?:\.html?)?|\.html?)$/i.exec(pathname))
+/**
+ * A page with its links to the site's own pages as cleanAt answers them: `about.html` as `about`, `fr/index.html` as `fr/`,
+ * `index.html` as `./`, what follows `?` or `#` kept. Links elsewhere, and words that only show a link, stay as they are. @param {string} text
+ */
+export const tidy = (text) => text.replace(/(<[a-z][^<>]*?\shref\s*=\s*)(?:"([^"]*)"|'([^']*)'|([^\s"'<>]+))/gi, (whole, before, double, single, bare) => {
+  const link = double ?? single ?? bare, [, path = '', rest = ''] = /^([^?#]*)(.*)$/s.exec(link) ?? []
+  if (/^([a-z][\w+.-]*:|\/\/)/i.test(link) || !/\.html?$|(^|\/)index$/i.test(path)) return whole
+  const quote = double !== undefined ? '"' : single !== undefined ? "'" : ''
+  return `${before}${quote}${path.replace(/(^|\/)index(\.html?)?$|\.html?$/i, '$1') || './'}${rest}${quote}`
+})
 /** A site's address. @param {string} address @param {string} name */
 export const addressOf = (address, name) => address.replace('{name}', name)
 
@@ -170,9 +186,10 @@ export async function takeDown(name, names, files) {
  * @param {Files} files @param {string} name @param {URL} url
  */
 export async function serveSite(files, name, url) {
+  const headers = { ...HEADERS, 'cache-control': 'no-cache' }, clean = cleanAt(url.pathname)
+  if (clean !== null) return new Response(null, { status: 301, headers: { ...headers, location: clean } })
   const path = fileAt(url.pathname)
   const bytes = pathOf(path) && await files.read?.(name, path)
-  const headers = { ...HEADERS, 'cache-control': 'no-cache' }
   if (!bytes) return new Response('Nothing is here.', { status: 404, headers: { ...headers, 'content-type': 'text/plain; charset=utf-8' } })
   const type = TYPES[path.toLowerCase().split('.').pop() ?? '']
   return new Response(/** @type {BodyInit} */ (bytes), { headers: { ...headers, 'content-type': /^text\/|xml|javascript|svg|manifest/.test(type) ? `${type}; charset=utf-8` : type } })
@@ -274,15 +291,18 @@ export function publishing(config, names, files) {
       if (!path) return answer(400, { error: 'A site holds pages, style sheets, scripts, drawings and pictures, at paths of their own.' })
       const bytes = await within(request, limits.file)
       if (!bytes) return answer(413, { error: `A file holds ${limits.file / 1_000_000} MB at most.` })
-      const unfitting = path.toLowerCase().endsWith('.html') ? unfit(new TextDecoder().decode(bytes)) : ''
+      const page = path.toLowerCase().endsWith('.html'), text = page ? new TextDecoder().decode(bytes) : ''
+      const unfitting = page ? unfit(text) : ''
       if (unfitting) return answer(422, { error: 'A site’s page asks for no password or card, and sends its forms nowhere of its own.', why: unfitting })
+      // A page goes with its links tidied, unless it isn't UTF-8; its hash stays that of what Jean sent, which Publish again compares.
+      const kept = page && !text.includes('�') ? new TextEncoder().encode(tidy(text)) : bytes
       const hash = await digest(bytes)
       return inTurn(`site:${name}`, async () => {
         const held = mine(live(await names.held(name)))
         if (held instanceof Response) return held
         const others = Object.entries(held.files).filter(([one]) => one !== path)
         if (others.length + 1 > limits.files || others.reduce((sum, [, file]) => sum + file.size, bytes.length) > limits.site) return answer(413, { error: `A site holds ${limits.site / 1_000_000} MB and ${limits.files} files at most.` })
-        await files.put(name, path, bytes, TYPES[path.toLowerCase().split('.').pop() ?? ''])
+        await files.put(name, path, kept, TYPES[path.toLowerCase().split('.').pop() ?? ''])
         await names.hold(name, { ...held, files: { ...held.files, [path]: { hash, size: bytes.length } } })
         return answer(200, { hash })
       })
