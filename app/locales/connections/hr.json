@@ -58,7 +58,7 @@
   "connections.account": "Račun",
   "connections.since": "Povezano {date}",
   "connections.signInAgain": "Ponovno se prijavi",
-  "connections.disconnectAsk": "Odspojiti uslugu {service}? Njezin ključ napušta ovaj uređaj; u samoj usluzi {service} ništa se ne mijenja.",
+  "connections.disconnectAsk": "Odspojiti uslugu {service}? Njezin ključ briše se s vaših uređaja; u samoj usluzi {service} ništa se ne mijenja.",
   "connections.cancel": "Odustani",
   "connections.find": "Pronađi uslugu",
   "connections.found": {
@@ -84,7 +84,7 @@
   "connections.can": "Što {name} ondje smije raditi",
   "connections.how": "Kako se povezuje",
   "connections.signInThere": "Ako usluga {service} zatraži, ondje se prijavite, zatim se vratite ovamo. {name} nikad ne vidi vašu lozinku.",
-  "connections.sealed": "Njezin ključ ostaje na ovom uređaju, zapečaćen, i nikad ne ulazi u sigurnosnu kopiju, izvoz ni dijeljenje.",
+  "connections.sealed": "Njezin ključ ostaje na vašim uređajima, zapečaćen, i nikad ne ulazi u sigurnosnu kopiju, izvoz ni dijeljenje.",
   "connections.another": "Usluga {service} već je povezana: ovo dodaje još jedan račun.",
   "connections.connectTo": "Poveži {service}",
   "connections.kept": "Samo za uslugu {service}."

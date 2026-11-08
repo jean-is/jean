@@ -53,7 +53,7 @@
   "search.also": "La recherche web peut aussi être désactivée depuis le + de la zone de saisie.",
   "search.key": "Clé",
   "search.engine": "Identifiant du moteur de recherche",
-  "search.service.text": "Votre propre compte {service} cherche dans tout le web, pour tous les cerveaux. Les mots de vos recherches vont chez {service}, qui peut les facturer, et votre clé reste sur cet appareil.",
+  "search.service.text": "Votre propre compte {service} cherche dans tout le web, pour tous les cerveaux. Les mots de vos recherches vont chez {service}, qui peut les facturer, et votre clé reste sur vos propres appareils.",
   "search.getKey": "Obtenir une clé chez {service}",
   "search.refused": "{service} a refusé cette clé, ou il n’y reste plus de recherches.",
   "search.silent": "{service} n’a pas répondu. Vérifiez la clé, ou réessayez dans un instant.",

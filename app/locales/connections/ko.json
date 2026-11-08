@@ -54,7 +54,7 @@
   "connections.account": "계정",
   "connections.since": "{date}에 연결됨",
   "connections.signInAgain": "다시 로그인",
-  "connections.disconnectAsk": "{service} 연결을 해제할까요? 키가 이 기기에서 지워지고, {service} 자체에는 아무 변화가 없어요.",
+  "connections.disconnectAsk": "{service} 연결을 해제할까요? 키가 내 기기에서 지워지고, {service} 자체에는 아무 변화가 없어요.",
   "connections.cancel": "취소",
   "connections.find": "서비스 찾기",
   "connections.found": {
@@ -76,7 +76,7 @@
   "connections.can": "그곳에서 할 수 있는 일",
   "connections.how": "연결 방식",
   "connections.signInThere": "{service}에서 요청하면 그곳에서 로그인한 뒤 여기로 돌아와요. 비밀번호는 여기서 절대 보이지 않아요.",
-  "connections.sealed": "키는 이 기기에 봉인된 채 남고, 백업·내보내기·공유에는 절대 들어가지 않아요.",
+  "connections.sealed": "키는 내 기기에 봉인된 채 남고, 백업·내보내기·공유에는 절대 들어가지 않아요.",
   "connections.another": "{service}은(는) 이미 연결되어 있어요. 다른 계정이 추가돼요.",
   "connections.connectTo": "{service} 연결",
   "connections.kept": "{service}에만 저장했어요."

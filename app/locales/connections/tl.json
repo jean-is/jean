@@ -56,7 +56,7 @@
   "connections.account": "Account",
   "connections.since": "Nakakonekta noong {date}",
   "connections.signInAgain": "Mag-sign in ulit",
-  "connections.disconnectAsk": "Idiskonekta ang {service}? Aalis sa device na ito ang susi nito; walang magbabago sa {service} mismo.",
+  "connections.disconnectAsk": "Idiskonekta ang {service}? Mabubura sa mga device mo ang susi nito; walang magbabago sa {service} mismo.",
   "connections.cancel": "Kanselahin",
   "connections.find": "Maghanap ng serbisyo",
   "connections.found": {
@@ -80,7 +80,7 @@
   "connections.can": "Ang puwedeng gawin ni {name} doon",
   "connections.how": "Paano ito kumokonekta",
   "connections.signInThere": "Kung hihilingin ng {service}, mag-sign in ka roon, saka bumalik dito. Hindi kailanman nakikita ni {name} ang password mo.",
-  "connections.sealed": "Nananatiling selyado ang susi nito sa device na ito, at hindi kailanman napupunta sa backup, export o pagbabahagi.",
+  "connections.sealed": "Nananatiling selyado ang susi nito sa sarili mong mga device, at hindi kailanman napupunta sa backup, export o pagbabahagi.",
   "connections.another": "Nakakonekta na ang {service}: magdaragdag ito ng isa pang account.",
   "connections.connectTo": "Ikonekta ang {service}",
   "connections.kept": "Itinabi para sa {service} lang."

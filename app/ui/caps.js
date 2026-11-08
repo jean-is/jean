@@ -80,6 +80,7 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   compact: () => import('../caps/compact/compact.js'),
   plan: () => import('../caps/plan/plan.js'),
   share: () => import('../caps/share/share.js'),
+  devices: () => import('../caps/devices/devices.js'),
   'natural-voice': () => import('../caps/natural-voice/natural-voice.js'),
   split: () => import('../caps/split/split.js'),
 })

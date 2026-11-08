@@ -292,6 +292,8 @@
   "cap.sync.name": "同步",
   "cap.sync.offer": "讓你的任務、檔案和記憶在你的其他電腦上保持一致？只要選一個你的雲端硬碟會同步的資料夾。",
   "cap.sync.yes": "選擇資料夾",
+  "cap.devices.name": "你的裝置",
+  "cap.devices.offer": "讓你的大腦、設定和專案在手機或另一台電腦上也能用？用 QR 碼和六位數字就能新增。",
   "cap.lock.name": "鎖定",
   "cap.lock.offer": "要鎖定你的任務、檔案和金鑰，讓這台裝置上只有你能打開嗎？",
   "cap.lock.yes": "設定鎖定",

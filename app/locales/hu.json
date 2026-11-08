@@ -297,6 +297,8 @@
   "cap.sync.name": "Szinkronizálás",
   "cap.sync.offer": "Ugyanazok legyenek a feladataid, fájljaid és memóriád a többi számítógépeden? Választasz egy mappát, amelyet a felhőtárhelyed szinkronizál.",
   "cap.sync.yes": "Mappa kiválasztása",
+  "cap.devices.name": "Eszközeid",
+  "cap.devices.offer": "Az agyaid, a beállításaid és a projektjeid a telefonodon vagy egy másik számítógépen is meglegyenek? Egy QR-kóddal és hat számjeggyel adod hozzá.",
   "cap.lock.name": "Zár",
   "cap.lock.offer": "Lezárod a feladataidat, fájljaidat és kulcsaidat, hogy ezen az eszközön csak te nyithasd meg őket?",
   "cap.lock.yes": "Zár beállítása",

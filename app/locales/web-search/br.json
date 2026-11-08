@@ -61,7 +61,7 @@
   "search.also": "Gallout a reer lazhañ ar c’hlask war ar web ivez, adalek + er voest kemennadenn.",
   "search.key": "Alc’hwez",
   "search.engine": "ID al lusker klask",
-  "search.service.text": "Ho kont {service} deoc’h a glask war ar web a-bezh, evit pep empenn. Ar gerioù a glaskit a ya da {service}, a c’hall lakaat paeañ evito, hag hoc’h alc’hwez a chom war an trevnad-mañ.",
+  "search.service.text": "Ho kont {service} deoc’h a glask war ar web a-bezh, evit pep empenn. Ar gerioù a glaskit a ya da {service}, a c’hall lakaat paeañ evito, hag hoc’h alc’hwez a chom war ho trevnadoù deoc’h.",
   "search.getKey": "Kaout un alc’hwez digant {service}",
   "search.refused": "{service} en deus nac’het an alc’hwez-mañ, pe n’eus klask ebet ken warnañ.",
   "search.silent": "N’en deus ket respontet {service}. Gwiriit an alc’hwez, pe klaskit en-dro a-benn ur pennadig.",

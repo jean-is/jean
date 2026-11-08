@@ -56,6 +56,18 @@ test('a container image is named by its digest, never by a tag alone, but a stag
   assert.deepEqual(compose(`services:\n  caddy:\n    image: caddy:2@${digest}\n  relay:\n    build:\n      target: relay\n    image: jean-relay\n`), [])
 })
 
+test('only caps/devices/ reads every secret at once, the ones that cross to the person’s other devices', () => {
+  const imports = ["import { crossing } from '../../ui/secrets.js'", "import { getSecret, crossing as all } from './secrets.js'", "import * as secrets from '../ui/secrets.js'",
+    "const { crossing } = await import('../../ui/secrets.js')", "const keys = await (await import('../../ui/secrets.js')).crossing(fs, settings)", "const [{ crossing }] = await Promise.all([import('./secrets.js')])"]
+  for (const text of imports) {
+    assert.deepEqual(rules(text, 'app/caps/share/share.js'), ['secrets-crossing'], text)
+    assert.deepEqual(rules(text, 'app/caps/devices/devices.js'), [], text)
+  }
+  for (const text of ["import { getSecret, setSecret } from '../../ui/secrets.js'", "const [{ listModels }, { getSecret }] = await Promise.all([import('../core/llm.js'), import('./secrets.js')])", '// import { crossing } from "./secrets.js"']) {
+    assert.deepEqual(rules(text, 'app/ui/state.js'), [], text)
+  }
+})
+
 test('every module of Jean’s keeps the rules, and nothing tracked looks like a secret', () => {
   const { findings, stale } = audit()
   assert.deepEqual(findings, [])

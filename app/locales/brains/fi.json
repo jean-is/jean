@@ -6,7 +6,7 @@
   "brain.quick.text": "Kirjaudu OpenRouterilla: ilmainen tili, joka antaa pääsyn satoihin aivoihin, joista osa on ilmaisia.",
   "brain.quick.action": "Jatka OpenRouterilla",
   "brain.key.title": "Käytä avainta, joka sinulla jo on",
-  "brain.key.text": "Avaimesi pysyy tällä laitteella salattuna.",
+  "brain.key.text": "Avaimesi pysyy omilla laitteillasi salattuna.",
   "brain.key.provider": "Palvelu",
   "brain.key.project": "Google Cloud -projekti",
   "brain.key.open": "Avaa palvelu ({service}) ja kirjaudu tai luo tili",

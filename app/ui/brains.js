@@ -88,8 +88,9 @@ export async function useBrain(id, model) {
 
 /** Keeps messages on this device, or lets them go to the cloud; a brain there picked by hand gives way to Auto. @param {boolean} on */
 export async function keepOnDevice(on) {
-  const brain = activeBrain.value
-  await updateSettings({ cloud: !on, ...(on && brain && !isLocal(brain) && { auto: true }) })
+  const [brain, { auto, wasAuto }] = [activeBrain.value, app.settings.value]
+  // Auto set for it, put back as it was after, so that nothing chosen while kept goes out then (caps/devices/).
+  await updateSettings(on ? { cloud: false, ...(brain && !isLocal(brain) && { auto: true, wasAuto: auto }) } : { cloud: true, ...(wasAuto !== undefined && { auto: wasAuto, wasAuto: undefined }) })
 }
 
 /** Leaves to sign in somewhere that comes back to this page, with what the user had typed and shared, and where they were. @param {string} url */

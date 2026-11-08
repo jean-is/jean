@@ -56,7 +56,7 @@
   "connections.account": "ఖాతా",
   "connections.since": "{date}న అనుసంధానమైంది",
   "connections.signInAgain": "మళ్లీ సైన్ ఇన్",
-  "connections.disconnectAsk": "{service} అనుసంధానం తీసేయాలా? దాని కీ ఈ పరికరం నుండి పోతుంది; {service}లో ఏమీ మారదు.",
+  "connections.disconnectAsk": "{service} అనుసంధానం తీసేయాలా? దాని కీ మీ పరికరాల నుండి తొలగిపోతుంది; {service}లో ఏమీ మారదు.",
   "connections.cancel": "రద్దు చేయి",
   "connections.find": "సేవను వెతకండి",
   "connections.found": {
@@ -80,7 +80,7 @@
   "connections.can": "{name} అక్కడ ఏమి చేయవచ్చు",
   "connections.how": "ఇది ఎలా అనుసంధానమవుతుంది",
   "connections.signInThere": "{service} అడిగితే, మీరు అక్కడ సైన్ ఇన్ చేసి ఇక్కడికి తిరిగి వస్తారు. {name} మీ పాస్‌వర్డ్‌ను ఎప్పుడూ చూడదు.",
-  "connections.sealed": "దాని కీ ఈ పరికరంలోనే సీల్ చేసి ఉంటుంది, ఎప్పుడూ బ్యాకప్, ఎగుమతి లేదా షేర్‌లోకి వెళ్లదు.",
+  "connections.sealed": "దాని కీ మీ సొంత పరికరాల్లోనే సీల్ చేసి ఉంటుంది, ఎప్పుడూ బ్యాకప్, ఎగుమతి లేదా షేర్‌లోకి వెళ్లదు.",
   "connections.another": "{service} ఇప్పటికే అనుసంధానమైంది: ఇది మరో ఖాతాను జోడిస్తుంది.",
   "connections.connectTo": "{service}ని అనుసంధానించు",
   "connections.kept": "{service}కి మాత్రమే ఉంచాం."

@@ -58,7 +58,7 @@
   "connections.account": "Compte",
   "connections.since": "Connecté le {date}",
   "connections.signInAgain": "Se reconnecter",
-  "connections.disconnectAsk": "Déconnecter {service}? Sa clé est supprimée de cet appareil. Rien ne change dans {service} lui-même.",
+  "connections.disconnectAsk": "Déconnecter {service}? Sa clé est supprimée de vos appareils. Rien ne change dans {service} lui-même.",
   "connections.cancel": "Annuler",
   "connections.find": "Trouver un service",
   "connections.found": {
@@ -84,7 +84,7 @@
   "connections.can": "Ce que {name} pourra y faire",
   "connections.how": "Comment il se connecte",
   "connections.signInThere": "Si {service} le demande, vous vous connectez chez lui, puis revenez ici. {name} ne voit jamais votre mot de passe.",
-  "connections.sealed": "Sa clé reste sur cet appareil, scellée, et ne va jamais dans une sauvegarde, un export ou un partage.",
+  "connections.sealed": "Sa clé reste sur vos propres appareils, scellée, et ne va jamais dans une sauvegarde, un export ou un partage.",
   "connections.another": "{service} est déjà connecté : ceci ajoute un autre compte.",
   "connections.connectTo": "Connecter {service}",
   "connections.kept": "Gardé pour {service} seulement."

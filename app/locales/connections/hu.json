@@ -56,7 +56,7 @@
   "connections.account": "Fiók",
   "connections.since": "Csatlakoztatva: {date}",
   "connections.signInAgain": "Újbóli bejelentkezés",
-  "connections.disconnectAsk": "Leválasztod ezt: {service}? A kulcsa elhagyja ezt az eszközt; magában a szolgáltatásban semmi sem változik.",
+  "connections.disconnectAsk": "Leválasztod ezt: {service}? A kulcsa törlődik az eszközeidről; magában a szolgáltatásban semmi sem változik.",
   "connections.cancel": "Mégse",
   "connections.find": "Szolgáltatás keresése",
   "connections.found": {
@@ -80,7 +80,7 @@
   "connections.can": "Mit tehet ott {name}",
   "connections.how": "Hogyan csatlakozik",
   "connections.signInThere": "Ha a(z) {service} szolgáltatás kéri, ott jelentkezel be, aztán visszajössz ide. {name} soha nem látja a jelszavadat.",
-  "connections.sealed": "A kulcsa lepecsételve ezen az eszközön marad, és soha nem kerül biztonsági mentésbe, exportba vagy megosztásba.",
+  "connections.sealed": "A kulcsa lepecsételve a saját eszközeiden marad, és soha nem kerül biztonsági mentésbe, exportba vagy megosztásba.",
   "connections.another": "Ez már csatlakoztatva van: {service}. Így egy újabb fiókot adsz hozzá.",
   "connections.connectTo": "Csatlakoztatás: {service}",
   "connections.kept": "Csak ehhez megtartva: {service}."

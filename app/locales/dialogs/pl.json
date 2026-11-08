@@ -22,6 +22,7 @@
   "cap.backup.text": "Zachowaj kopię wszystkiego w jednym pliku i przywróć ją na dowolnym urządzeniu.",
   "cap.share.text": "Wyślij zadanie albo stronę, wykres, prezentację lub obraz jako link, który otworzy każdy, komu go wyślesz.",
   "cap.sync.text": "Utrzymuje twoje zadania, pliki i pamięć takie same na innych twoich komputerach, przez folder synchronizowany przez OneDrive, Dropbox, iCloud Drive lub Google Drive.",
+  "cap.devices.text": "{name} także na telefonie lub innym komputerze, z twoimi mózgami, ustawieniami i projektami, zapieczętowanymi tak, że odczytać je mogą tylko twoje urządzenia. Zadanie przechodzi z jednego na drugie, gdy je wyślesz.",
   "cap.lock.text": "Twoje zadania, pliki i klucze otwierają się tylko twoim kluczem dostępu lub hasłem.",
   "cap.brain-local.text": "Prywatnie, za darmo i bez internetu: mózg działający na tym komputerze, jeśli jest wystarczająco mocny.",
   "collection.count": {
@@ -60,6 +61,7 @@
   "cap.backup.hint": "Rozpocznij trzy zadania.",
   "cap.share.hint": "Zapisz kopię zadania.",
   "cap.sync.hint": "Wspomnij, że używasz też innego komputera.",
+  "cap.devices.hint": "Wspomnij, że chcesz mieć to na telefonie lub innym komputerze, albo włącz to tutaj.",
   "cap.lock.hint": "Połącz usługę albo rozpocznij dziesięć zadań.",
   "cap.brain-local.hint": "Wybierz mózg, który działa na tym urządzeniu.",
   "cap.memory.text": "{name} zapamiętuje trwałe rzeczy, o których wspominasz: preferencje, fakty, poprawki. Wszystko możesz zobaczyć i zmienić.",

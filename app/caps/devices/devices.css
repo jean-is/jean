@@ -1,0 +1,6 @@
+/* Your devices (D700): a step of adding or joining one, what it says taking no room while it says nothing; the QR code dark on light, as a shared link's; the six digits. */
+.devices-flow { display: flex; flex-direction: column; gap: 0.75rem; } .devices-flow :is(h3, p) { margin: 0; } .devices-flow > :is(.devices-said, .devices-wrong):empty { margin-block-end: -0.75rem; }
+.devices-wrong { color: var(--danger); } .devices-remove ul { margin: 0; padding-inline-start: 1.25rem; } .devices-remove .devices-wrong:empty { margin: 0; }
+.devices-qr { display: block; inline-size: min(100%, 14rem); margin-inline: auto; border-radius: 0.6rem; background: white; fill: black; forced-color-adjust: none; }
+.devices-field { display: flex; align-items: center; gap: 0.5rem; } .devices-field input { flex: 1; min-inline-size: 0; font: 0.875rem var(--mono); }
+.devices-digits { text-align: center; font: 600 2.5rem/1.2 var(--mono); letter-spacing: 0.1em; user-select: all; } .devices-type { inline-size: 10ch; font: 600 1.5rem var(--mono); letter-spacing: 0.15em; text-align: center; }

@@ -56,7 +56,7 @@
   "connections.account": "கணக்கு",
   "connections.since": "{date} அன்று இணைக்கப்பட்டது",
   "connections.signInAgain": "மீண்டும் உள்நுழை",
-  "connections.disconnectAsk": "{service}-ஐத் துண்டிக்கவா? அதன் சாவி இந்தச் சாதனத்திலிருந்து நீங்கும்; {service}-இல் எதுவும் மாறாது.",
+  "connections.disconnectAsk": "{service}-ஐத் துண்டிக்கவா? அதன் சாவி உங்கள் சாதனங்களிலிருந்து நீக்கப்படும்; {service}-இல் எதுவும் மாறாது.",
   "connections.cancel": "ரத்துசெய்",
   "connections.find": "சேவையைக் கண்டுபிடி",
   "connections.found": {
@@ -80,7 +80,7 @@
   "connections.can": "{name} அங்கு என்ன செய்யலாம்",
   "connections.how": "இது எப்படி இணைகிறது",
   "connections.signInThere": "{service} கேட்டால், அங்கே உள்நுழைந்து இங்கே திரும்புவீர்கள். {name} உங்கள் கடவுச்சொல்லை ஒருபோதும் பார்க்காது.",
-  "connections.sealed": "அதன் சாவி இந்தச் சாதனத்திலேயே முத்திரையிடப்பட்டு இருக்கும்; காப்புப்பிரதி, ஏற்றுமதி, பகிர்வு எதிலும் ஒருபோதும் செல்லாது.",
+  "connections.sealed": "அதன் சாவி உங்கள் சொந்தச் சாதனங்களிலேயே முத்திரையிடப்பட்டு இருக்கும்; காப்புப்பிரதி, ஏற்றுமதி, பகிர்வு எதிலும் ஒருபோதும் செல்லாது.",
   "connections.another": "{service} ஏற்கெனவே இணைக்கப்பட்டுள்ளது: இது இன்னொரு கணக்கைச் சேர்க்கும்.",
   "connections.connectTo": "{service}-ஐ இணை",
   "connections.kept": "{service}-க்கு மட்டும் வைக்கப்பட்டது."

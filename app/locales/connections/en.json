@@ -56,7 +56,7 @@
   "connections.account": "Account",
   "connections.since": "Connected on {date}",
   "connections.signInAgain": "Sign in again",
-  "connections.disconnectAsk": "Disconnect {service}? Its key is deleted from this device. Nothing changes in {service} itself.",
+  "connections.disconnectAsk": "Disconnect {service}? Its key is deleted from your devices. Nothing changes in {service} itself.",
   "connections.cancel": "Cancel",
   "connections.find": "Find a service",
   "connections.found": {
@@ -80,7 +80,7 @@
   "connections.can": "What {name} may do there",
   "connections.how": "How it connects",
   "connections.signInThere": "If {service} asks, you sign in there, then come back here. {name} never sees your password.",
-  "connections.sealed": "Its key stays on this device, sealed, and never goes into a backup, an export or a share.",
+  "connections.sealed": "Its key stays on your own devices, sealed, and never goes into a backup, an export or a share.",
   "connections.another": "{service} is connected already: this adds another account.",
   "connections.connectTo": "Connect {service}",
   "connections.kept": "Kept for {service} alone."

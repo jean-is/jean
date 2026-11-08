@@ -10,6 +10,7 @@ import { syncDialog, closed, backdrop, head } from '../../ui/dialogs.js'
 import { t, intlLocales } from '../../core/i18n.js'
 import { BRAND } from '../../brand.js'
 import { icons } from '../../ui/menu-icons.js'
+import { codeOf } from '../../ui/qr.js'
 import { sharing, shares, shareOf, linkFor, here, create, update, stop, failed } from './share.js'
 
 /** Letters and digits that read alike in every script's fonts: none of 0, O, 1, l, I. */
@@ -27,14 +28,9 @@ const choices = signal(/** @type {Choices} */ ({ closed: false, word: '', changi
 const [mine, working, coded, copied] = /** @type {const} */ ([signal(true), signal(false), signal(false), signal('')])
 /** The password just chosen for a share, which only this dialog ever shows, until it opens again. */
 const told = signal(/** @type {{ id: string, word: string } | null} */ (null))
-/** lean-qr's smallest build, or none where it isn't installed, and then no QR code. */
-const qr = await import(new URL('../../vendor/lean-qr/lean-qr.mjs', import.meta.url).href).catch(() => null)
 
-/** The link as a QR code for a phone's camera, a square for each dark module, which share.css draws dark on light. @param {string} link */
-function drawn(link) {
-  const { size, get } = qr.generate(link), cells = Array.from({ length: size * size }, (_, i) => [i % size, Math.floor(i / size)])
-  return html`<svg class="share-code" role="img" aria-label=${t('share.code')} viewBox="-4 -4 ${size + 8} ${size + 8}"><path d=${cells.filter(([x, y]) => get(x, y)).map(([x, y]) => `M${x} ${y}h1v1h-1z`).join('')}/></svg>`
-}
+/** The link's QR code for a phone's camera, which share.css draws dark on light, or none where there is none to draw. @param {ReturnType<typeof codeOf>} code */
+const drawn = (code) => code && html`<svg class="share-code" role="img" aria-label=${t('share.code')} viewBox="-4 -4 ${code.size + 8} ${code.size + 8}"><path d=${code.d}/></svg><p class="share-point">${t('share.point')}</p>`
 
 /** A field's handler, taking what it now says into the choices. @param {(field: HTMLInputElement) => Partial<Choices>} pick */
 const take = (pick) => (/** @type {Event} */ event) => { choices.value = { ...choices.peek(), ...pick(/** @type {HTMLInputElement} */ (event.target)) } }
@@ -87,7 +83,7 @@ class ShareDialog extends Element {
       ${what ? html`<p class="lede" dir="auto">${what.title || t('conversation.untitled')}</p>` : nothing}
       ${share ? html`<section class="stack">${live ? html`<div class="share-pick" role="radiogroup" aria-label=${t('share.title')}>${[false, true].map((code) => html`<label for=${`shown-${code}`}><input id=${`shown-${code}`} type="radio" name="shown" .checked=${coded.value === code} @change=${() => { coded.value = code }}>${t(code ? 'share.qr' : 'share.link')}</label>`)}</div>`
             : html`<p>${t('share.ended', { date: day(share.expires) })}</p>`}
-          ${live && coded.value && qr ? html`${drawn(link)}<p class="share-point">${t('share.point')}</p>` : html`<div class="share-field">
+          ${(live && coded.value && drawn(codeOf(link))) || html`<div class="share-field">
             <input class="share-link" readonly dir="ltr" title=${t('share.link')} .value=${link} @focus=${(/** @type {Event} */ event) => /** @type {HTMLInputElement} */ (event.target).select()}>
             <button class="button primary" @click=${() => copy(link, 'link')}>${done('link')} <span aria-live="polite">${t(copied.value === 'link' ? 'toast.copied' : 'share.copyLink')}</span></button></div>`}
           ${word ? html`<div class="share-told"><span>${t('share.password')}</span><code class="share-password" dir="ltr">${word}</code>

@@ -56,7 +56,7 @@
   "connections.account": "Tili",
   "connections.since": "Yhdistetty {date}",
   "connections.signInAgain": "Kirjaudu uudelleen",
-  "connections.disconnectAsk": "Katkaistaanko yhteys: {service}? Sen avain poistuu tältä laitteelta; itse palvelussa ei muutu mitään.",
+  "connections.disconnectAsk": "Katkaistaanko yhteys: {service}? Sen avain poistetaan laitteiltasi; itse palvelussa ei muutu mitään.",
   "connections.cancel": "Peruuta",
   "connections.find": "Etsi palvelu",
   "connections.found": {
@@ -80,7 +80,7 @@
   "connections.can": "Mitä {name} saa tehdä siellä",
   "connections.how": "Miten se yhdistää",
   "connections.signInThere": "Jos {service}-palvelu pyytää, kirjaudut sinne ja palaat sitten tänne. {name} ei koskaan näe salasanaasi.",
-  "connections.sealed": "Sen avain pysyy tällä laitteella sinetöitynä eikä koskaan päädy varmuuskopioon, vientiin tai jakoon.",
+  "connections.sealed": "Sen avain pysyy omilla laitteillasi sinetöitynä eikä koskaan päädy varmuuskopioon, vientiin tai jakoon.",
   "connections.another": "Tämä on jo yhdistetty: {service}. Näin lisäät toisen tilin.",
   "connections.connectTo": "Yhdistä: {service}",
   "connections.kept": "Tallennettu vain tälle: {service}."

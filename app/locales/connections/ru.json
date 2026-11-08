@@ -60,7 +60,7 @@
   "connections.account": "Аккаунт",
   "connections.since": "Подключено {date}",
   "connections.signInAgain": "Войти снова",
-  "connections.disconnectAsk": "Отключить {service}? Его ключ будет удалён с этого устройства; в самом {service} ничего не изменится.",
+  "connections.disconnectAsk": "Отключить {service}? Его ключ будет удалён с ваших устройств; в самом {service} ничего не изменится.",
   "connections.cancel": "Отмена",
   "connections.find": "Найти сервис",
   "connections.found": {
@@ -88,7 +88,7 @@
   "connections.can": "Что {name} сможет там делать",
   "connections.how": "Как он подключается",
   "connections.signInThere": "Если {service} попросит, вы войдёте там и вернётесь сюда. {name} никогда не видит ваш пароль.",
-  "connections.sealed": "Его ключ остаётся на этом устройстве, запечатанным, и никогда не попадает в резервную копию, экспорт или общий доступ.",
+  "connections.sealed": "Его ключ остаётся на ваших устройствах, запечатанным, и никогда не попадает в резервную копию, экспорт или общий доступ.",
   "connections.another": "{service} уже подключён: так добавится ещё один аккаунт.",
   "connections.connectTo": "Подключить {service}",
   "connections.kept": "Сохранено только для {service}."

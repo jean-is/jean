@@ -49,7 +49,7 @@
   "search.also": "Puwede ring i-off ang paghahanap sa web mula sa + sa kahon ng mensahe.",
   "search.key": "Susi",
   "search.engine": "ID ng search engine",
-  "search.service.text": "Ang sarili mong {service} account ang naghahanap sa buong web, para sa kahit anong utak. Napupunta sa {service} ang mga salitang hinahanap mo, na maaaring maningil para rito, at nananatili sa device na ito ang susi mo.",
+  "search.service.text": "Ang sarili mong {service} account ang naghahanap sa buong web, para sa kahit anong utak. Napupunta sa {service} ang mga salitang hinahanap mo, na maaaring maningil para rito, at nananatili sa sarili mong mga device ang susi mo.",
   "search.getKey": "Kumuha ng susi mula sa {service}",
   "search.refused": "Tinanggihan ng {service} ang susing ito, o wala na itong natitirang paghahanap.",
   "search.silent": "Hindi sumagot ang {service}. Suriin ang susi, o subukan ulit maya-maya.",

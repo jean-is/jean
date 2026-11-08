@@ -29,8 +29,9 @@ const shared = Boolean(serviceURL('share', app.settings.value, app.policy)) && a
 const filmed = Boolean(navigator.mediaDevices?.getUserMedia) // where a camera can show Jean things (D645)
 const screened = Boolean(navigator.mediaDevices?.getDisplayMedia) // where a screen can be shared, a computer's (D699)
 const reflexive = !handheld() // where Kev runs: a computer, never a phone or a tablet (D660)
+const paired = Boolean(serviceURL('relay', app.settings.value, app.policy)) && !app.policy.child && !app.policy.signIn // where a relay carries what a person's devices send each other (D700)
 /** What Jean can do, in the order the house lights up (the collection page). */
-export const CATALOGUE = ['files', 'made', 'documents', 'tables', 'designs', 'computer', ...(reflexive ? ['reflexes'] : []), 'memory', 'feedback', 'find', ...(gpu ? ['meaning'] : []), 'projects', 'folders', 'skills', 'routines', 'flows', 'web-search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'double-check', 'since', ...(told ? ['notifications'] : []), 'names', 'live', ...(filmed ? ['camera'] : []), ...(screened ? ['screen'] : []), 'natural-voice', 'backup', ...(shared ? ['share'] : []), ...(folders ? ['sync'] : []), 'lock', 'brain-local', 'extensions']
+export const CATALOGUE = ['files', 'made', 'documents', 'tables', 'designs', 'computer', ...(reflexive ? ['reflexes'] : []), 'memory', 'feedback', 'find', ...(gpu ? ['meaning'] : []), 'projects', 'folders', 'skills', 'routines', 'flows', 'web-search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'double-check', 'since', ...(told ? ['notifications'] : []), 'names', 'live', ...(filmed ? ['camera'] : []), ...(screened ? ['screen'] : []), 'natural-voice', 'backup', ...(shared ? ['share'] : []), ...(folders ? ['sync'] : []), ...(paired ? ['devices'] : []), 'lock', 'brain-local', 'extensions']
 
 /** What the brain may offer, described for it in English, in a few words: it goes with every request. */
 const OFFERS = /** @type {Record<string, string>} */ ({
@@ -58,6 +59,7 @@ const OFFERS = /** @type {Record<string, string>} */ ({
   ...(filmed && { camera: 'showing Jean through their camera what is in front of them, and talking about it hands-free' }),
   ...(screened && { screen: 'sharing their screen as they work in another app, so you guide them a step at a time and can watch: offer it when they ask how to do something in an app on their computer' }),
   ...(folders && { sync: 'keeping their work the same on their other computers' }),
+  ...(paired && { devices: "using this Jean on the user's other devices, a phone or another computer, with its brains and settings" }),
 })
 /** What policy leaves to offer: it is set before this module loads (ui/app.js). */
 const offerable = Object.keys(OFFERS).filter((id) => !isDenied(id))
@@ -176,7 +178,7 @@ export async function begin(id) {
   if (id === 'camera') await (await import('../caps/camera/camera.js')).open()
   if (id === 'find') app.dialog.value = 'find'
   if (id === 'since') await (await import('../caps/since/since.js')).make()
-  if (id === 'lock' && app.dialog.peek() !== 'settings') (await import('./dialogs.js')).openSettings('data/lock')
+  if ((id === 'lock' || id === 'devices') && app.dialog.peek() !== 'settings') (await import('./dialogs.js')).openSettings(`data/${id}`)
   if (id === 'browser') (await import('../caps/browser/browser.js')).show()
   if (id === 'flows') (await import('../caps/flows/flows.js')).here()
   if (id === 'machine') (await import('../caps/machine/machine.js')).show()

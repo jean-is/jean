@@ -302,6 +302,8 @@
   "cap.sync.name": "Sincronización",
   "cap.sync.offer": "¿Mantener tus tareas, tus archivos y la memoria iguales en tus otras computadoras? Eliges una carpeta que tu almacenamiento en la nube sincroniza.",
   "cap.sync.yes": "Elegir una carpeta",
+  "cap.devices.name": "Tus dispositivos",
+  "cap.devices.offer": "¿Tener tus cerebros, ajustes y proyectos también en tu teléfono o en otra computadora? Se añade con un código QR y seis dígitos.",
   "cap.lock.name": "Bloqueo",
   "cap.lock.offer": "¿Bloquear tus tareas, archivos y claves para que solo tú puedas abrirlos en este dispositivo?",
   "cap.lock.yes": "Poner un bloqueo",

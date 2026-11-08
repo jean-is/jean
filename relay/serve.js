@@ -18,10 +18,10 @@ const DAY = 86_400_000
  * A folder as the relay's store: each mailbox's file, its messages in a folder beside it, and a file of
  * records a day, sealed when there is a key. Once a day, what is past its time goes: a message past its
  * days, a mailbox nobody opened or read for its idle days, a record past a year.
- * @param {string} dir @param {CryptoKey | null} recordKey @param {typeof LIMITS} [limits]
- * @returns {import('./relay.js').Store & { free(): Promise<number>, sweep(now?: number): Promise<void> }}
+ * @param {string} dir @param {CryptoKey | null} recordKey
+ * @returns {import('./relay.js').Store & { free(): Promise<number>, sweep(tidy: (id: string, at: number) => Promise<void>, now?: number): Promise<void> }}
  */
-export function folder(dir, recordKey, limits = LIMITS) {
+export function folder(dir, recordKey) {
   const boxes = join(dir, 'boxes')
   const records = join(dir, 'records')
   /** @param {string} id */
@@ -55,21 +55,9 @@ export function folder(dir, recordKey, limits = LIMITS) {
       const { bavail, bsize } = await statfs(dir)
       return bavail * bsize
     },
-    async sweep(now = Date.now()) {
-      for (const name of await readdir(boxes).catch(() => [])) {
-        if (!name.endsWith('.json')) continue
-        const id = name.slice(0, -5)
-        /** @type {import('./relay.js').Box | null} */
-        const box = await json(join(boxes, name))
-        if (!box || now - box.touched > limits.idle * DAY) {
-          await this.remove(id)
-          continue
-        }
-        const old = box.messages.filter((entry) => now - entry.at > limits.days * DAY)
-        if (!old.length) continue
-        await this.drop(id, old.map((entry) => entry.seq))
-        await this.save(id, { ...box, messages: box.messages.filter((entry) => !old.includes(entry)) })
-      }
+    // Each mailbox tidied in its turn (relay.js), so that a read or a message meanwhile is never undone.
+    async sweep(tidy, now = Date.now()) {
+      for (const name of await readdir(boxes).catch(() => [])) if (name.endsWith('.json')) await tidy(name.slice(0, -5), now)
       for (const name of await readdir(records).catch(() => [])) if (Date.parse(name.slice(0, 10)) + 366 * DAY < now) await rm(join(records, name), { force: true })
     },
   }
@@ -82,12 +70,13 @@ export async function main(args = []) {
   const dir = process.env.RELAY_DIR ?? 'mailboxes'
   const recordKey = config.recordKey ? await crypto.subtle.importKey('jwk', config.recordKey, { name: 'ECDH', namedCurve: 'P-256' }, false, []) : null
   const limits = { ...LIMITS, ...config.limits }
-  const store = folder(dir, recordKey, limits)
+  const store = folder(dir, recordKey)
   const PORT = Number(process.env.PORT) || 8791
   const HOST = process.env.HOST ?? '127.0.0.1'
-  await store.sweep()
-  setInterval(() => store.sweep().catch(console.error), DAY).unref()
-  stopping(createServer(listener(relay({ origins: config.origins, limits, store }), process.env.RELAY_PROXIED === '1')))
+  const handle = relay({ origins: config.origins, limits, store })
+  await store.sweep(handle.tidy)
+  setInterval(() => store.sweep(handle.tidy).catch(console.error), DAY).unref()
+  stopping(createServer(listener(handle, process.env.RELAY_PROXIED === '1')))
     .listen(PORT, HOST, () => console.log(`Relay on http://${HOST}:${PORT}/, keeping mailboxes in ${dir}`))
 }
 

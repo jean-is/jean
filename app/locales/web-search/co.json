@@ -53,7 +53,7 @@
   "search.also": "A ricerca web si pò ancu spegne da u + di a zona di messaghju.",
   "search.key": "Chjave",
   "search.engine": "ID di u mutore di ricerca",
-  "search.service.text": "U vostru contu {service} circa in tuttu u web, per ogni cervellu. E parolle chì vo circate vanu à {service}, chì e pò fà pagà, è a vostra chjave ferma nant’à st’apparechju.",
+  "search.service.text": "U vostru contu {service} circa in tuttu u web, per ogni cervellu. E parolle chì vo circate vanu à {service}, chì e pò fà pagà, è a vostra chjave ferma nant’à i vostri apparechji.",
   "search.getKey": "Ottene una chjave da {service}",
   "search.refused": "{service} hà ricusatu sta chjave, o ùn ci hè più ricerche nant’à ella.",
   "search.silent": "{service} ùn hà micca rispostu. Verificate a chjave, o pruvate torna frà un mumentu.",

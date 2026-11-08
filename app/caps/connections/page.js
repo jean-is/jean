@@ -92,8 +92,11 @@ const groupOf = (entry) => (GROUPS.includes(entry.group ?? '') ? entry.group : '
 
 /** A kind's rule for every service, the organisation's first. @param {string} kind @returns {RuleValue} */
 const usual = (kind) => resolveRule(kind, { user: effective.value.settings.rules, policy: app.policy.rules })
-/** What Jean does in this service for a kind: the user's choice for it, else the usual. @param {Connection} connection @param {string} kind */
-const rule = (connection, kind) => chosen(connection.id, kind) ?? usual(kind)
+/**
+ * What Jean does in this service for a kind, as its check does: the user's Ask first or Never where stricter than the usual, their
+ * Always allow where the organisation set none, else the usual. @param {Connection} connection @param {string} kind
+ */
+const rule = (connection, kind) => ((own, kept) => (own && (own === 'allow' ? !app.policy.rules?.[kind] : STRICT[own] > STRICT[kept]) ? own : kept))(chosen(connection.id, kind), usual(kind))
 /** A word on a row, where this service is freer or stricter than the usual, reading first. @param {Connection} connection */
 const differs = (connection) => ['fetch', 'other'].filter((kind) => rule(connection, kind) !== usual(kind)).map((kind) => t(`connections.${kind === 'fetch' ? 'reads' : 'acts'}.${rule(connection, kind)}`))[0]
 /** The user's own, which they may rename, keep to projects and disconnect; the organisation's are set. @param {Connection} connection */

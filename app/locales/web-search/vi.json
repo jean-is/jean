@@ -45,7 +45,7 @@
   "search.also": "Bạn cũng có thể tắt tìm trên web từ dấu + trong ô tin nhắn.",
   "search.key": "Khóa",
   "search.engine": "ID công cụ tìm kiếm",
-  "search.service.text": "Tài khoản {service} của chính bạn tìm trên toàn bộ web, cho mọi bộ não. Từ khóa bạn tìm được gửi đến {service}, dịch vụ này có thể tính phí, và khóa của bạn vẫn ở trên thiết bị này.",
+  "search.service.text": "Tài khoản {service} của chính bạn tìm trên toàn bộ web, cho mọi bộ não. Từ khóa bạn tìm được gửi đến {service}, dịch vụ này có thể tính phí, và khóa của bạn vẫn ở trên các thiết bị của chính bạn.",
   "search.getKey": "Lấy khóa từ {service}",
   "search.refused": "{service} đã từ chối khóa này, hoặc khóa không còn lượt tìm kiếm.",
   "search.silent": "{service} không trả lời. Hãy kiểm tra khóa, hoặc thử lại sau giây lát.",

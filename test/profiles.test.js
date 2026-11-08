@@ -74,7 +74,7 @@ test('an address finds its profile by its project’s or its task’s ULID', asy
 })
 
 test('what a child’s profile tells its parent’s opens with the parent’s key alone, and holds no words', async () => {
-  const { pair, sealFor, openFrom, inbox } = await import('../app/caps/profiles/family.js')
+  const [{ pair, inbox }, { sealFor, openFrom }] = await Promise.all([import('../app/caps/profiles/family.js'), import('../app/ui/seal.js')])
   const [parent, other] = [await pair(), await pair()]
   const sealed = await sealFor(parent.public, { kind: 'bullying', at: '2026-10-17T16:20:00.000Z' })
   assert.ok(!sealed.includes('bullying'))

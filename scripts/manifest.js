@@ -39,6 +39,7 @@ export const CAPABILITY_RUNTIMES = /** @type {Record<string, string[]>} */ ({
   scores: ['vendor/abcjs', 'vendor/spessasynth', 'vendor/sounds'],
   share: ['vendor/lean-qr'],
   designs: ['vendor/lean-qr'],
+  devices: ['vendor/lean-qr'],
   documents: ['vendor/prosemirror'],
   games: ['vendor/phaser', 'vendor/babylon', 'vendor/zzfx'],
   // Not a runtime, but on demand as one: the enterprise integrations, which only their loader imports (D139).

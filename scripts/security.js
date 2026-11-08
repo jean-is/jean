@@ -119,6 +119,9 @@ const RULES = [
   { rule: 'blank-target', strings: /target=["']?_blank["']?(?![^>\n]*rel=["'][^"'\n]*noopener)/g },
   { rule: 'tls-off', code: /\b(?:rejectUnauthorized|strictSSL)\s*:\s*false\b/g },
   { rule: 'tls-off', strings: /NODE_TLS_REJECT_UNAUTHORIZED/g },
+  // The one reader of every secret at once, which picks those that cross to the person's other devices (D700), is theirs alone.
+  { rule: 'secrets-crossing', strings: /\bimport\s*(?:\{[^}]*\bcrossing\b[^}]*\}|\*\s*as\s+[\w$]+)\s*from\s*['"][^'"]*\/secrets\.js['"]/g, where: /^app\/(?!caps\/devices\/)/ },
+  { rule: 'secrets-crossing', strings: /\bimport\(\s*['"][^'"]*\/secrets\.js['"]\s*\)[^\n]*\bcrossing\b|\{[^}]*\bcrossing\b[^}]*\}[^\n]*\bimport\(\s*['"][^'"]*\/secrets\.js['"]/g, where: /^app\/(?!caps\/devices\/)/ },
 ]
 
 /**

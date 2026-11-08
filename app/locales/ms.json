@@ -292,6 +292,8 @@
   "cap.sync.name": "Penyegerakan",
   "cap.sync.offer": "Kekalkan tugasan, fail dan memori anda sama pada komputer anda yang lain? Anda memilih folder yang disegerakkan oleh storan awan anda.",
   "cap.sync.yes": "Pilih folder",
+  "cap.devices.name": "Peranti anda",
+  "cap.devices.offer": "Mahu otak, tetapan dan projek anda ada juga pada telefon atau komputer lain? Anda menambahnya dengan kod QR dan enam digit.",
   "cap.lock.name": "Kunci",
   "cap.lock.offer": "Kunci tugasan, fail dan kunci API anda, supaya hanya anda boleh membukanya pada peranti ini?",
   "cap.lock.yes": "Pasang kunci",

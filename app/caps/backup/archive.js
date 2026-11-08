@@ -1,4 +1,4 @@
-// Backups: every file of Jean's folder in one zip, secrets and caches left out.
+// Backups: every file of Jean's folder in one zip, secrets, caches and a device's pairing left out.
 // Importing never deletes or overwrites what is already here, with one exception:
 // a conversation that is longer in the backup (conversations only ever grow).
 import { walk } from '../../core/fs.js'
@@ -9,8 +9,8 @@ import { listProjects } from '../../core/settings.js'
 
 const MANIFEST = 'backup.json'
 
-/** Secrets never leave the device; caches can always be rebuilt. @param {string} path */
-export const isBackedUp = (path) => !/^\.(secrets|cache)(\/|$)/.test(path) && !path.endsWith('.tmp') && path !== MANIFEST
+/** Secrets never leave the device; caches can always be rebuilt; what a device's pairing keeps is its own (caps/devices/, D700). @param {string} path */
+export const isBackedUp = (path) => !/^\.(secrets|cache|devices)(\/|$)/.test(path) && !path.endsWith('.tmp') && path !== MANIFEST
 
 /**
  * @param {FS} fs @param {{ by: string, now?: Date }} options

@@ -22,6 +22,7 @@
   "cap.backup.text": "Weka nakala ya kila kitu katika faili moja, na uirejeshe kwenye kifaa chochote.",
   "cap.share.text": "Tuma kazi, au ukurasa, chati, wasilisho au picha, kama kiungo ambacho yeyote unayemtumia anaweza kukifungua.",
   "cap.sync.text": "Hufanya kazi, faili na kumbukumbu zako zibaki sawa kwenye kompyuta zako nyingine, kupitia folda ambayo OneDrive, Dropbox, iCloud Drive au Google Drive husawazisha.",
+  "cap.devices.text": "{name} kwenye simu yako au kompyuta nyingine pia, pamoja na akili, mipangilio na miradi yako, vikiwa vimefungwa ili vifaa vyako pekee viweze kuvisoma. Kazi huhama kutoka kifaa kimoja hadi kingine unapoituma.",
   "cap.lock.text": "Kazi, faili na funguo zako hufunguka tu kwa ufunguo wako wa siri (passkey) au nenosiri lako.",
   "cap.brain-local.text": "Faragha, bure na bila mtandao: ubongo unaoendeshwa kwenye kompyuta hii, ikiwa ina nguvu ya kutosha.",
   "collection.count": {
@@ -58,6 +59,7 @@
   "cap.backup.hint": "Anza kazi tatu.",
   "cap.share.hint": "Hifadhi nakala ya kazi.",
   "cap.sync.hint": "Taja kwamba unatumia pia kompyuta nyingine.",
+  "cap.devices.hint": "Taja kwamba ungependa hili kwenye simu yako au kompyuta nyingine, au liwashe hapa.",
   "cap.lock.hint": "Unganisha huduma, au anza kazi kumi.",
   "cap.brain-local.hint": "Chagua ubongo unaofanya kazi kwenye kifaa hiki.",
   "cap.memory.text": "{name} hukumbuka mambo ya kudumu unayotaja: unachopendelea, ukweli, masahihisho. Unaweza kuona na kubadilisha yote.",

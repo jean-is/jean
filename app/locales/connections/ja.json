@@ -54,7 +54,7 @@
   "connections.account": "アカウント",
   "connections.since": "{date} に接続",
   "connections.signInAgain": "もう一度サインイン",
-  "connections.disconnectAsk": "{service} の接続を解除しますか？キーはこの端末から削除されます。{service} 自体は何も変わりません。",
+  "connections.disconnectAsk": "{service} の接続を解除しますか？キーはご自身の端末から削除されます。{service} 自体は何も変わりません。",
   "connections.cancel": "キャンセル",
   "connections.find": "サービスを探す",
   "connections.found": {
@@ -76,7 +76,7 @@
   "connections.can": "そこで {name} ができること",
   "connections.how": "接続のしかた",
   "connections.signInThere": "{service} に求められたら、そちらでサインインしてここに戻ります。{name} があなたのパスワードを見ることはありません。",
-  "connections.sealed": "キーは封印されたままこの端末に残り、バックアップ、エクスポート、共有には決して含まれません。",
+  "connections.sealed": "キーは封印されたままご自身の端末に残り、バックアップ、エクスポート、共有には決して含まれません。",
   "connections.another": "{service} はすでに接続済みです。別のアカウントが追加されます。",
   "connections.connectTo": "{service} を接続",
   "connections.kept": "{service} だけに保存しました。"

@@ -297,6 +297,8 @@
   "cap.sync.name": "Synchronisierung",
   "cap.sync.offer": "Deine Aufgaben, Dateien und das Gedächtnis auf deinen anderen Computern gleich halten? Du wählst einen Ordner, den dein Cloud-Speicher synchronisiert.",
   "cap.sync.yes": "Ordner wählen",
+  "cap.devices.name": "Deine Geräte",
+  "cap.devices.offer": "Deine Gehirne, Einstellungen und Projekte auch auf deinem Handy oder einem anderen Computer haben? Du fügst das Gerät mit einem QR-Code und sechs Ziffern hinzu.",
   "cap.lock.name": "Sperre",
   "cap.lock.offer": "Deine Aufgaben, Dateien und Schlüssel sperren, damit nur du sie auf diesem Gerät öffnen kannst?",
   "cap.lock.yes": "Sperre einrichten",

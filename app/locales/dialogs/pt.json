@@ -22,6 +22,7 @@
   "cap.backup.text": "Guarda uma cópia de tudo num só ficheiro e restaura-a em qualquer dispositivo.",
   "cap.share.text": "Envia uma tarefa, uma página, um gráfico, diapositivos ou uma imagem como um link que quem o receber pode abrir.",
   "cap.sync.text": "Mantém as tuas tarefas, os teus ficheiros e a memória iguais nos teus outros computadores, através de uma pasta que o OneDrive, o Dropbox, o iCloud Drive ou o Google Drive sincroniza.",
+  "cap.devices.text": "{name} também no teu telemóvel ou noutro computador, com os teus cérebros, definições e projetos, selados para que só os teus dispositivos os leiam. Uma tarefa passa de um para outro quando a envias.",
   "cap.lock.text": "As tuas tarefas, ficheiros e chaves só abrem com a tua chave de acesso ou palavra-passe.",
   "cap.brain-local.text": "Privado, gratuito e sem internet: um cérebro que funciona neste computador, se for potente o suficiente.",
   "collection.count": {
@@ -59,6 +60,7 @@
   "cap.backup.hint": "Começa três tarefas.",
   "cap.share.hint": "Guarda uma cópia de uma tarefa.",
   "cap.sync.hint": "Menciona que também usas outro computador.",
+  "cap.devices.hint": "Menciona que gostavas de ter isto no teu telemóvel ou noutro computador, ou ativa-o aqui.",
   "cap.lock.hint": "Liga um serviço ou começa dez tarefas.",
   "cap.brain-local.hint": "Escolhe o cérebro que funciona neste dispositivo.",
   "cap.memory.text": "{name} lembra-se do que mencionas de duradouro: preferências, factos, correções. Podes ver e alterar tudo.",

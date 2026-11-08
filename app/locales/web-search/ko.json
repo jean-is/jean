@@ -45,7 +45,7 @@
   "search.also": "입력창의 +에서도 웹 검색을 끌 수 있어요.",
   "search.key": "키",
   "search.engine": "검색 엔진 ID",
-  "search.service.text": "내 {service} 계정이 어떤 두뇌든 웹 전체를 검색해요. 검색어는 {service}로 전송되고 요금이 부과될 수 있으며, 키는 이 기기에 남아요.",
+  "search.service.text": "내 {service} 계정이 어떤 두뇌든 웹 전체를 검색해요. 검색어는 {service}로 전송되고 요금이 부과될 수 있으며, 키는 내 기기에만 남아요.",
   "search.getKey": "{service}에서 키 받기",
   "search.refused": "{service}에서 이 키를 거부했거나 남은 검색 횟수가 없어요.",
   "search.silent": "{service}에서 응답하지 않았어요. 키를 확인하거나 잠시 후 다시 시도해 주세요.",

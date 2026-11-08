@@ -54,7 +54,7 @@
   "connections.account": "Akun",
   "connections.since": "Terhubung pada {date}",
   "connections.signInAgain": "Masuk lagi",
-  "connections.disconnectAsk": "Putuskan {service}? Kuncinya dihapus dari perangkat ini; tidak ada yang berubah di {service} itu sendiri.",
+  "connections.disconnectAsk": "Putuskan {service}? Kuncinya dihapus dari perangkat Anda; tidak ada yang berubah di {service} itu sendiri.",
   "connections.cancel": "Batal",
   "connections.find": "Cari layanan",
   "connections.found": {
@@ -76,7 +76,7 @@
   "connections.can": "Yang boleh dilakukan {name} di sana",
   "connections.how": "Cara menghubungkannya",
   "connections.signInThere": "Jika {service} meminta, Anda masuk di sana, lalu kembali ke sini. {name} tidak pernah melihat kata sandi Anda.",
-  "connections.sealed": "Kuncinya tetap tersegel di perangkat ini, dan tidak pernah masuk ke cadangan, ekspor, atau berbagi.",
+  "connections.sealed": "Kuncinya tetap tersegel di perangkat Anda sendiri, dan tidak pernah masuk ke cadangan, ekspor, atau berbagi.",
   "connections.another": "{service} sudah terhubung: ini menambah akun lain.",
   "connections.connectTo": "Hubungkan {service}",
   "connections.kept": "Disimpan untuk {service} saja."

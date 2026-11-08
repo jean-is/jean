@@ -22,6 +22,7 @@
   "cap.backup.text": "Keep a copy of everything in one file, and restore it on any device.",
   "cap.share.text": "Send a task, a page, a chart, slides or a picture as a link that whoever receives it can open.",
   "cap.sync.text": "Keeps your tasks, files and memory the same on your other computers, through a folder that OneDrive, Dropbox, iCloud Drive or Google Drive syncs.",
+  "cap.devices.text": "{name} on your phone or another computer too, with your brains, settings and projects, sealed so that only your devices read them. A task goes from one to another when you send it.",
   "cap.lock.text": "Your tasks, files and keys open only with your passkey or password.",
   "cap.brain-local.text": "Private, free and offline: a brain that runs on this computer, if it is powerful enough.",
   "collection.count": {
@@ -58,6 +59,7 @@
   "cap.backup.hint": "Start three tasks.",
   "cap.share.hint": "Save a copy of a task.",
   "cap.sync.hint": "Mention that you also use another computer.",
+  "cap.devices.hint": "Mention that you’d like this on your phone or another computer, or turn it on here.",
   "cap.lock.hint": "Connect a service, or start ten tasks.",
   "cap.brain-local.hint": "Choose the brain that runs on this device.",
   "cap.memory.text": "{name} remembers the lasting things you mention, like preferences, facts and corrections. You can see and change all of it.",

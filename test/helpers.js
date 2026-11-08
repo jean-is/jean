@@ -5,6 +5,7 @@ export const BRAIN_URL = 'http://127.0.0.1:4181/v1'
 export const MAIL_URL = 'http://127.0.0.1:4182'
 export const GATEWAY_URL = 'http://127.0.0.1:4183/'
 export const SHARE_URL = 'http://127.0.0.1:4185/'
+export const RELAY_URL = 'http://127.0.0.1:4187/'
 export const SALES = 'region,month,sales\nNorth,Jan,1200\nSouth,Jan,950\nNorth,Feb,1340\nSouth,Feb,1010\nEast,Jan,700\nEast,Feb,815\n'
 
 /**

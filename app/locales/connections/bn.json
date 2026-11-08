@@ -56,7 +56,7 @@
   "connections.account": "অ্যাকাউন্ট",
   "connections.since": "{date} তারিখে যুক্ত",
   "connections.signInAgain": "আবার সাইন ইন",
-  "connections.disconnectAsk": "{service} বিচ্ছিন্ন করবেন? এর কী এই ডিভাইস থেকে সরে যাবে; {service}-এ নিজে কিছুই বদলাবে না।",
+  "connections.disconnectAsk": "{service} বিচ্ছিন্ন করবেন? এর কী আপনার ডিভাইসগুলো থেকে মুছে যাবে; {service}-এ নিজে কিছুই বদলাবে না।",
   "connections.cancel": "বাতিল",
   "connections.find": "পরিষেবা খুঁজুন",
   "connections.found": {
@@ -80,7 +80,7 @@
   "connections.can": "{name} সেখানে কী করতে পারবে",
   "connections.how": "কীভাবে যুক্ত হয়",
   "connections.signInThere": "{service} চাইলে আপনি সেখানে সাইন ইন করে এখানে ফিরে আসবেন। {name} কখনো আপনার পাসওয়ার্ড দেখে না।",
-  "connections.sealed": "এর কী এই ডিভাইসেই সিল করা থাকে, কখনো ব্যাকআপ, এক্সপোর্ট বা শেয়ারে যায় না।",
+  "connections.sealed": "এর কী আপনার নিজের ডিভাইসেই সিল করা থাকে, কখনো ব্যাকআপ, এক্সপোর্ট বা শেয়ারে যায় না।",
   "connections.another": "{service} আগেই যুক্ত: এতে আরেকটি অ্যাকাউন্ট যোগ হবে।",
   "connections.connectTo": "{service} যুক্ত করুন",
   "connections.kept": "শুধু {service}-এর জন্য রাখা হলো।"

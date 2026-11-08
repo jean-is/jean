@@ -53,7 +53,7 @@
   "search.also": "La búsqueda web también se puede desactivar desde el + del cuadro de mensaje.",
   "search.key": "Clave",
   "search.engine": "ID del motor de búsqueda",
-  "search.service.text": "Tu propia cuenta de {service} busca en toda la web, para cualquier cerebro. Las palabras que buscas van a {service}, que puede cobrar por ellas, y tu clave se queda en este dispositivo.",
+  "search.service.text": "Tu propia cuenta de {service} busca en toda la web, para cualquier cerebro. Las palabras que buscas van a {service}, que puede cobrar por ellas, y tu clave se queda en tus propios dispositivos.",
   "search.getKey": "Obtener una clave de {service}",
   "search.refused": "{service} rechazó esta clave, o ya no le quedan búsquedas.",
   "search.silent": "{service} no respondió. Revisa la clave o inténtalo de nuevo en un momento.",

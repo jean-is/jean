@@ -297,6 +297,8 @@
   "cap.sync.name": "Sync",
   "cap.sync.offer": "Panatilihing pareho ang mga gawain, file, at memorya mo sa iba mo pang computer? Pipili ka ng folder na sini-sync ng cloud drive mo.",
   "cap.sync.yes": "Pumili ng folder",
+  "cap.devices.name": "Ang mga device mo",
+  "cap.devices.offer": "Gusto mo bang nasa telepono mo o sa ibang computer din ang mga utak, setting at proyekto mo? Idaragdag mo ito gamit ang QR code at anim na numero.",
   "cap.lock.name": "Lock",
   "cap.lock.offer": "I-lock ang mga gawain, file at key mo, para ikaw lang ang makapagbukas sa mga ito sa device na ito?",
   "cap.lock.yes": "Maglagay ng lock",

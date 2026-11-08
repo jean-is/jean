@@ -64,7 +64,7 @@
   "connections.account": "الحساب",
   "connections.since": "تاريخ الاتصال: {date}",
   "connections.signInAgain": "تسجيل الدخول من جديد",
-  "connections.disconnectAsk": "قطع الاتصال بـ{service}؟ يُحذف مفتاح الاتصال من هذا الجهاز، ولا يتغير شيء داخل {service}.",
+  "connections.disconnectAsk": "قطع الاتصال بـ{service}؟ يُحذف مفتاح الاتصال من أجهزتك، ولا يتغير شيء داخل {service}.",
   "connections.cancel": "إلغاء",
   "connections.find": "ابحث عن خدمة",
   "connections.found": {
@@ -96,7 +96,7 @@
   "connections.can": "ما يُسمح به هناك",
   "connections.how": "كيف يتم الاتصال",
   "connections.signInThere": "إذا طُلب ذلك، تسجّل الدخول في {service} ثم تعود إلى هنا. لا تُرى كلمة مرورك هنا أبدًا.",
-  "connections.sealed": "يبقى المفتاح على هذا الجهاز مختومًا، ولا يدخل أبدًا في نسخة احتياطية أو تصدير أو مشاركة.",
+  "connections.sealed": "يبقى المفتاح على أجهزتك أنت مختومًا، ولا يدخل أبدًا في نسخة احتياطية أو تصدير أو مشاركة.",
   "connections.another": "هناك اتصال بـ{service} من قبل: سيُضاف حساب آخر.",
   "connections.connectTo": "ربط {service}",
   "connections.kept": "حُفظ لـ{service} فقط."

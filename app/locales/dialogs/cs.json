@@ -22,6 +22,7 @@
   "cap.backup.text": "Uchovejte si kopii všeho v jednom souboru a obnovte ji na kterémkoli zařízení.",
   "cap.share.text": "Pošlete úkol, nebo stránku, graf, prezentaci či obrázek, jako odkaz, který příjemce může otevřít.",
   "cap.sync.text": "Udržuje vaše úkoly, soubory a paměť stejné na vašich dalších počítačích, přes složku, kterou synchronizuje OneDrive, Dropbox, iCloud Drive nebo Disk Google.",
+  "cap.devices.text": "{name} i v telefonu nebo na jiném počítači, s vašimi mozky, nastavením a projekty, zapečetěnými tak, že je přečtou jen vaše zařízení. Úkol přejde z jednoho do druhého, když ho pošlete.",
   "cap.lock.text": "Vaše úkoly, soubory a klíče se otevřou jen vaším přístupovým klíčem nebo heslem.",
   "cap.brain-local.text": "Soukromý, zdarma a offline: mozek, který běží v tomto počítači, pokud je dost výkonný.",
   "collection.count": {
@@ -60,6 +61,7 @@
   "cap.backup.hint": "Začněte tři úkoly.",
   "cap.share.hint": "Uložte kopii úkolu.",
   "cap.sync.hint": "Zmiňte, že používáte i jiný počítač.",
+  "cap.devices.hint": "Zmiňte, že to chcete mít i v telefonu nebo na jiném počítači, nebo to zapněte tady.",
   "cap.lock.hint": "Připojte službu nebo začněte deset úkolů.",
   "cap.brain-local.hint": "Vyberte mozek, který běží v tomto zařízení.",
   "cap.memory.text": "{name} si pamatuje trvalé věci, které zmíníte, jako preference, fakta a opravy. Vše můžete vidět a měnit.",

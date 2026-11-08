@@ -246,13 +246,14 @@ effect(() => register({
   rules: ['Find the tools of the services in <connections> with find_tools.'],
   // A task that used Google's services goes to no brain whose service may train on it, whoever asks it (D440).
   hooks: [{ on: 'turn.step', run: async (e, next) => (e.task && mayTrain(e.brain, app.policy) && !mayRead(e.brain, (await loadConversation(app.fs, e.task).catch(() => null))?.records ?? [], app.policy) ? refused(e.step !== undefined) : next(e)) },
-    // What the user chose for a service stands over its kind's rule, freer only where the organisation set none; the guards
-    // still come after (D295). Its calls are marked, so a card's Always allow or Never is kept to the service.
+    // What the user chose for a service: its Ask first or Never only ever tightens its kind's rule, its Always allow stands over it
+    // where the organisation set none; the guards still come after (D295). Its calls are marked, so a card's Always allow or Never
+    // is kept to the service.
     { on: 'tool.check', match: { service: /./ }, run: async (e, next) => {
       const said = await next(e)
       const own = chosen(e.service, e.kind)
       const freer = own && STRICT[own] < STRICT[/** @type {RuleValue} */ (said?.decision)]
-      return said?.refuse || !own || (freer && app.policy.rules?.[e.kind]) ? { ...said, meta: { ...said?.meta, service: e.service } }
+      return said?.refuse || !own || (freer && (own !== 'allow' || app.policy.rules?.[e.kind])) ? { ...said, meta: { ...said?.meta, service: e.service } }
         : { decision: own, meta: { ...said?.meta, service: e.service }, ...(own === 'never' && { reason: "The user's settings for this service refuse this action." }) }
     } }],
   // Each service of the room's project, and the names of its tools.

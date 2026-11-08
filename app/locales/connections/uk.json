@@ -60,7 +60,7 @@
   "connections.account": "Обліковий запис",
   "connections.since": "Під'єднано {date}",
   "connections.signInAgain": "Увійти знову",
-  "connections.disconnectAsk": "Від'єднати {service}? Його ключ буде видалено з цього пристрою; у самому {service} нічого не зміниться.",
+  "connections.disconnectAsk": "Від'єднати {service}? Його ключ буде видалено з ваших пристроїв; у самому {service} нічого не зміниться.",
   "connections.cancel": "Скасувати",
   "connections.find": "Знайти сервіс",
   "connections.found": {
@@ -88,7 +88,7 @@
   "connections.can": "Що {name} зможе там робити",
   "connections.how": "Як він під'єднується",
   "connections.signInThere": "Якщо {service} попросить, ви ввійдете там і повернетеся сюди. {name} ніколи не бачить ваш пароль.",
-  "connections.sealed": "Його ключ лишається на цьому пристрої, запечатаним, і ніколи не потрапляє до резервної копії, експорту чи спільного доступу.",
+  "connections.sealed": "Його ключ лишається на ваших пристроях, запечатаним, і ніколи не потрапляє до резервної копії, експорту чи спільного доступу.",
   "connections.another": "{service} уже під'єднано: так додасться ще один обліковий запис.",
   "connections.connectTo": "Під'єднати {service}",
   "connections.kept": "Збережено лише для {service}."

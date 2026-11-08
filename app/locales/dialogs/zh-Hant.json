@@ -22,6 +22,7 @@
   "cap.backup.text": "把所有內容存成一個檔案的副本，在任何裝置上都能還原。",
   "cap.share.text": "把任務、頁面、圖表、投影片或圖片做成連結傳送，收到的人都能開啟。",
   "cap.sync.text": "透過 OneDrive、Dropbox、iCloud Drive 或 Google Drive 同步的資料夾，讓你的任務、檔案和記憶在其他電腦上保持一致。",
+  "cap.devices.text": "在手機或另一台電腦上也能用 {name}，你的大腦、設定和專案一併帶上，並經過密封，只有你的裝置能讀取。任務在你傳送時從一台裝置到另一台。",
   "cap.lock.text": "你的任務、檔案和金鑰只能用你的密碼金鑰或密碼打開。",
   "cap.brain-local.text": "私密、免費、離線：如果電腦效能足夠，就能在這台電腦上執行的大腦。",
   "collection.count": {
@@ -57,6 +58,7 @@
   "cap.backup.hint": "開始三個任務。",
   "cap.share.hint": "儲存一個任務的副本。",
   "cap.sync.hint": "提到你也在用另一台電腦。",
+  "cap.devices.hint": "提到你想在手機或另一台電腦上也用它，或在這裡開啟。",
   "cap.lock.hint": "連接一個服務，或開始十個任務。",
   "cap.brain-local.hint": "選擇在這台裝置上執行的大腦。",
   "cap.memory.text": "{name} 會記住你提到的長期有用的資訊，例如偏好、事實和更正。你可以查看和修改全部內容。",

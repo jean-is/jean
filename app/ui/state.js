@@ -124,9 +124,27 @@ export function brainLabel(brain) {
 export const weightsHost = () => serviceURL('modelWeights', app.settings.value, app.policy)
 
 /** @param {Partial<Settings>} patch */
-export async function updateSettings(patch) {
-  app.settings.value = { ...app.settings.value, ...patch }
-  await saveSettings(app.fs, app.settings.value)
+export async function updateSettings(patch) { app.settings.value = { ...app.settings.value, ...patch }; await changeSettings(patch, true) }
+
+/** settings.json as this tab last read or wrote it. @type {Partial<Settings>} */
+let known = {}
+/**
+ * Writes settings.json one tab at a time, the patch over the file as it is, or reads it again. Only the fields another
+ * tab changed since come in, so what this tab holds alone stays (a look being tried, a child's profile being set). A
+ * patch already shown (updateSettings, setLook) is never put back once written: something newer may be on screen since.
+ * A file that doesn't read as JSON is never written over, nor read as the defaults.
+ * @param {Partial<Settings>} [patch] @param {boolean} [shown]
+ */
+export function changeSettings(patch, shown = false) {
+  const run = async () => {
+    let file; try { file = JSON.parse(await app.fs.read('settings.json') ?? '{}') } catch (error) { if (patch) throw error; return }
+    const fresh = { ...DEFAULT_SETTINGS, ...file, ...patch }
+    if (patch) await saveSettings(app.fs, fresh)
+    const theirs = Object.fromEntries(Object.entries(fresh).filter(([key, value]) => (!shown || !patch || !(key in patch)) && JSON.stringify(value) !== JSON.stringify(known[/** @type {keyof Settings} */ (key)])))
+    known = fresh
+    app.settings.value = { ...app.settings.peek(), ...theirs }
+  }
+  return navigator.locks?.request(mine('app-settings'), run) ?? run()
 }
 
 /** @param {Presence} presence */
@@ -230,7 +248,7 @@ export function setLook(patch, { later = false } = {}) {
   const look = app.settings.value.look ?? {}
   app.settings.value = { ...app.settings.value, look: patch ? { ...look, ...patch } : { id: look.id } }
   clearTimeout(lookWrite)
-  lookWrite = setTimeout(() => saveSettings(app.fs, app.settings.value).catch(showError), later ? 500 : 0)
+  lookWrite = setTimeout(() => changeSettings({ look: app.settings.peek().look }, true).catch(showError), later ? 500 : 0)
 }
 
 /** @param {string} id */

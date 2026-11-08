@@ -9,14 +9,13 @@ import { ref } from 'lit-html/directives/ref.js'
 import { signal, computed, effect } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
 import { lazyPage } from '../../ui/lazy-page.js'
-import { app, effective, notify, removing } from '../../ui/state.js'
-import { here, rpc, files } from '../../ui/opfs.js'
+import { app, effective, notify } from '../../ui/state.js'
+import { here } from '../../ui/opfs.js'
 import { switchTo, initialOf, working } from '../../ui/curtain.js'
 import { freeColour } from '../../ui/touches.js'
-import { scriptURL } from '../../ui/trusted.js'
 import { getSecret, setSecret, deleteSecret } from '../../ui/secrets.js'
-import { VAULT, vaultKey, vaultId, close, slotKey, deviceKey, encode } from '../../ui/seal.js'
-import { readJSON, writeJSON, rootedFS } from '../../core/fs.js'
+import { VAULT, close, slotKey, deviceKey, encode, openFrom, sealFor } from '../../ui/seal.js'
+import { readJSON, writeJSON } from '../../core/fs.js'
 import { slug } from '../../core/settings.js'
 import { ulid } from '../../core/ulid.js'
 import { t, useStrings, locale, intlLocales } from '../../core/i18n.js'
@@ -24,7 +23,8 @@ import { icons, icon } from '../../ui/menu-icons.js'
 import { turn, choices, listed } from '../../ui/inbox.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { TIER, DANGERS, age, tierFor } from './tier.js'
-import { inbox, pair, openFrom, sealFor } from './family.js'
+import { inbox, pair } from './family.js'
+import { into, vaulted, erase } from './made.js'
 
 await Promise.all([useStrings('profiles'), styleSheet(new URL('profiles.css', import.meta.url))])
 
@@ -134,13 +134,8 @@ function banner() {
 /** Opens the dialog that adds one. */
 export const add = () => import('./dialog.js').then((dialog) => dialog.open())
 
-/** A child's profile's files, read and written by a storage worker of its own, handed its vault key, and that worker, to end. @param {string} dir @param {CryptoKey} key */
-export async function into(dir, key) {
-  const worker = new Worker(scriptURL(new URL('../../ui/storage-worker.js', import.meta.url)), { type: 'module' })
-  const call = rpc(worker, crypto.randomUUID())
-  if (await call('ping', dir) !== 'open') await call('key', '', /** @type {any} */ (key))
-  return { worker, fs: rootedFS(files(call), dir) }
-}
+/** A child's profile's files, through a storage worker of its own (./made.js). */
+export { into }
 
 /**
  * A profile made, then opened: its vault, and the slot that opens it, this device's, or for a child
@@ -151,13 +146,13 @@ export async function into(dir, key) {
  */
 export async function make({ name, mine, born }, parentRaw) {
   const [dir, raw] = [`profiles/${ulid()}-${slug(name) || 'profile'}`, crypto.getRandomValues(new Uint8Array(32))]
-  const [key, slot] = [await vaultKey(raw), { kind: /** @type {const} */ ('parent'), profile: here(), salt: encode(crypto.getRandomValues(new Uint8Array(16))) }]
+  const slot = { kind: /** @type {const} */ ('parent'), profile: here(), salt: encode(crypto.getRandomValues(new Uint8Array(16))) }
   const slots = [born !== undefined && age(born) < 13 && parentRaw ? await close(raw, await slotKey(slot, parentRaw), slot)
     : await close(raw, /** @type {CryptoKey} */ (await deviceKey('make', dir)), { kind: 'device' })]
   if (born !== undefined && !kept.peek()) await writeJSON(app.fs, FAMILY, (kept.value = await pair()))
   const parent = born !== undefined && { profile: here(), key: kept.peek()?.public }
   const colour = freeColour(all.peek())
-  await app.whole?.write(`${dir}/${VAULT}`, JSON.stringify({ format: 1, id: encode(await vaultId(key)), slots, name, colour, ...(parent && { parent }) }, null, 2) + '\n')
+  const key = await vaulted(dir, raw, slots, { name, colour, ...(parent && { parent }) })
   if (born !== undefined) {
     const [{ worker, fs }, set] = [await into(dir, key), { ...tierFor(born), brains: forChild() }]
     await Promise.all([writeJSON(fs, TIER, set), give(fs, set.brains)])
@@ -184,10 +179,7 @@ export const removable = (profile) => !child && profile.locked && profile.dir !=
  */
 export async function remove(profile) {
   if (needing(profile.dir).length) return notify(t('profiles.needed', { names: new Intl.ListFormat(intlLocales()).format(needing(profile.dir).map(nameOf)) }), { alert: true })
-  if (!confirm(t(removable(profile) ? 'profiles.removeLocked' : 'profiles.removeConfirm', { name: nameOf(profile) })) || !(await removing([{ profile: profile.dir }], async () => {
-    for (const path of [profile.dir, inbox(profile.dir), ...['time', 'set'].map((what) => `${inbox(here())}/${what}-${profile.dir.slice(9, 35)}.json`)]) await app.whole?.remove(path)
-    await deviceKey('forget', profile.dir)
-  }))) return
+  if (!confirm(t(removable(profile) ? 'profiles.removeLocked' : 'profiles.removeConfirm', { name: nameOf(profile) })) || !(await erase(profile.dir))) return
   if (profile.dir === here()) {
     const next = all.peek().find((other) => other.dir !== here())
     return switchTo(next?.dir ?? '', next ? whoIs(next) : { name: '', initial: '' })

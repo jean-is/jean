@@ -49,7 +49,7 @@
   "search.also": "Utafutaji wa wavuti unaweza pia kuzimwa kwa + kwenye kisanduku cha ujumbe.",
   "search.key": "Ufunguo",
   "search.engine": "Kitambulisho cha injini ya utafutaji",
-  "search.service.text": "Akaunti yako mwenyewe ya {service} hutafuta kwenye wavuti yote, kwa akili yoyote. Maneno unayotafuta huenda kwa {service}, ambayo inaweza kutoza ada, na ufunguo wako hubaki kwenye kifaa hiki.",
+  "search.service.text": "Akaunti yako mwenyewe ya {service} hutafuta kwenye wavuti yote, kwa akili yoyote. Maneno unayotafuta huenda kwa {service}, ambayo inaweza kutoza ada, na ufunguo wako hubaki kwenye vifaa vyako mwenyewe.",
   "search.getKey": "Pata ufunguo kutoka {service}",
   "search.refused": "{service} imekataa ufunguo huu, au hauna utafutaji uliobaki.",
   "search.silent": "{service} haikujibu. Kagua ufunguo, au jaribu tena baada ya muda mfupi.",

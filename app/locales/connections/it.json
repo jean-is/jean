@@ -58,7 +58,7 @@
   "connections.account": "Account",
   "connections.since": "Collegato il {date}",
   "connections.signInAgain": "Accedi di nuovo",
-  "connections.disconnectAsk": "Scollegare {service}? La sua chiave viene eliminata da questo dispositivo. In {service} non cambia nulla.",
+  "connections.disconnectAsk": "Scollegare {service}? La sua chiave viene eliminata dai tuoi dispositivi. In {service} non cambia nulla.",
   "connections.cancel": "Annulla",
   "connections.find": "Trova un servizio",
   "connections.found": {
@@ -84,7 +84,7 @@
   "connections.can": "Cosa potrà farci {name}",
   "connections.how": "Come si collega",
   "connections.signInThere": "Se {service} lo chiede, accedi lì e poi torni qui. {name} non vede mai la tua password.",
-  "connections.sealed": "La sua chiave resta sigillata su questo dispositivo e non finisce mai in un backup, un’esportazione o una condivisione.",
+  "connections.sealed": "La sua chiave resta sigillata sui tuoi dispositivi e non finisce mai in un backup, un’esportazione o una condivisione.",
   "connections.another": "{service} è già collegato: questo aggiunge un altro account.",
   "connections.connectTo": "Collega {service}",
   "connections.kept": "Salvato solo per {service}."

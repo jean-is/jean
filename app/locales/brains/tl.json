@@ -6,7 +6,7 @@
   "brain.quick.text": "Mag-sign in gamit ang OpenRouter: libreng account na may access sa daan-daang utak, ang ilan ay libre.",
   "brain.quick.action": "Magpatuloy gamit ang OpenRouter",
   "brain.key.title": "Gumamit ng susi na mayroon ka na",
-  "brain.key.text": "Nananatili ang susi mo sa device na ito, naka-encrypt.",
+  "brain.key.text": "Nananatili ang susi mo sa sarili mong mga device, naka-encrypt.",
   "brain.key.provider": "Serbisyo",
   "brain.key.project": "Proyekto sa Google Cloud",
   "brain.key.open": "Buksan ang {service}, at mag-sign in o gumawa ng account",

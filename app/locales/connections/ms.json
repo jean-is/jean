@@ -54,7 +54,7 @@
   "connections.account": "Akaun",
   "connections.since": "Disambungkan pada {date}",
   "connections.signInAgain": "Log masuk semula",
-  "connections.disconnectAsk": "Putuskan {service}? Kuncinya dibuang dari peranti ini; tiada apa-apa yang berubah dalam {service} itu sendiri.",
+  "connections.disconnectAsk": "Putuskan {service}? Kuncinya dibuang dari peranti anda; tiada apa-apa yang berubah dalam {service} itu sendiri.",
   "connections.cancel": "Batal",
   "connections.find": "Cari perkhidmatan",
   "connections.found": {
@@ -76,7 +76,7 @@
   "connections.can": "Apa yang boleh {name} lakukan di sana",
   "connections.how": "Cara ia bersambung",
   "connections.signInThere": "Jika {service} meminta, anda log masuk di sana, kemudian kembali ke sini. {name} tidak pernah melihat kata laluan anda.",
-  "connections.sealed": "Kuncinya kekal di peranti ini, dimeterai, dan tidak sekali-kali masuk ke sandaran, eksport atau perkongsian.",
+  "connections.sealed": "Kuncinya kekal di peranti anda sendiri, dimeterai, dan tidak sekali-kali masuk ke sandaran, eksport atau perkongsian.",
   "connections.another": "{service} sudah disambungkan: ini menambah akaun lain.",
   "connections.connectTo": "Sambung {service}",
   "connections.kept": "Disimpan untuk {service} sahaja."

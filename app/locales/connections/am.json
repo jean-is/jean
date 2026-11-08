@@ -56,7 +56,7 @@
   "connections.account": "መለያ",
   "connections.since": "በ{date} ተገናኝቷል",
   "connections.signInAgain": "እንደገና ይግቡ",
-  "connections.disconnectAsk": "{service}ን ያቋርጡ? ቁልፉ ከዚህ መሣሪያ ይወጣል፤ በ{service} ውስጥ ምንም አይቀየርም።",
+  "connections.disconnectAsk": "{service}ን ያቋርጡ? ቁልፉ ከመሣሪያዎችዎ ይሰረዛል፤ በ{service} ውስጥ ምንም አይቀየርም።",
   "connections.cancel": "ሰርዝ",
   "connections.find": "አገልግሎት ይፈልጉ",
   "connections.found": {
@@ -80,7 +80,7 @@
   "connections.can": "እዚያ የሚፈቀደው",
   "connections.how": "እንዴት እንደሚገናኝ",
   "connections.signInThere": "{service} ከጠየቀ፣ እዚያ ገብተው ወደዚህ ይመለሳሉ። የይለፍ ቃልዎ እዚህ ፈጽሞ አይታይም።",
-  "connections.sealed": "ቁልፉ በዚህ መሣሪያ ላይ ታሽጎ ይቆያል፣ ወደ ምትኬ፣ ወደ ውጭ መላክ ወይም ማጋራት ፈጽሞ አይገባም።",
+  "connections.sealed": "ቁልፉ በራስዎ መሣሪያዎች ላይ ታሽጎ ይቆያል፣ ወደ ምትኬ፣ ወደ ውጭ መላክ ወይም ማጋራት ፈጽሞ አይገባም።",
   "connections.another": "{service} አስቀድሞ ተገናኝቷል፦ ይህ ሌላ መለያ ያክላል።",
   "connections.connectTo": "{service}ን ያገናኙ",
   "connections.kept": "ለ{service} ብቻ ተቀምጧል።"

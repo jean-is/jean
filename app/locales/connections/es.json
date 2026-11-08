@@ -58,7 +58,7 @@
   "connections.account": "Cuenta",
   "connections.since": "Conectado el {date}",
   "connections.signInAgain": "Volver a iniciar sesión",
-  "connections.disconnectAsk": "¿Desconectar {service}? Su clave se elimina de este dispositivo. Nada cambia en el propio {service}.",
+  "connections.disconnectAsk": "¿Desconectar {service}? Su clave se elimina de tus dispositivos. Nada cambia en el propio {service}.",
   "connections.cancel": "Cancelar",
   "connections.find": "Buscar un servicio",
   "connections.found": {
@@ -84,7 +84,7 @@
   "connections.can": "Qué podrá hacer {name} ahí",
   "connections.how": "Cómo se conecta",
   "connections.signInThere": "Si {service} lo pide, inicias sesión allí y vuelves aquí. {name} nunca ve tu contraseña.",
-  "connections.sealed": "Su clave se queda en este dispositivo, sellada, y nunca va a una copia de seguridad, una exportación ni un enlace compartido.",
+  "connections.sealed": "Su clave se queda en tus propios dispositivos, sellada, y nunca va a una copia de seguridad, una exportación ni un enlace compartido.",
   "connections.another": "{service} ya está conectado: esto añade otra cuenta.",
   "connections.connectTo": "Conectar {service}",
   "connections.kept": "Guardado solo para {service}."

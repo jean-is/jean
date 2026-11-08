@@ -14,6 +14,7 @@ const GATEWAY = 4183
 const CSP = 4184
 const SHARE = 4185
 const HOME = 4186
+const RELAY = 4187
 // The gateway (D191) serves Jean's origin, and holds the app the fake mail's closed service registered.
 // WebKit runs what can differ between engines: frames and the sandbox, storage, editing, the keyboard, media, drawing. These
 // specs check what Jean decides, the same JavaScript in every engine (protocols, policy, offers, skills, routines, the site's
@@ -59,6 +60,10 @@ export default defineConfig({
     // The share host (D361), for Jean's origin, keeping its shares in a folder of the run's; its viewer from the render package's address, which the test serves.
     { command: 'node scripts/host.js --serve', cwd: '..', port: SHARE, reuseExistingServer: false,
       env: { PORT: String(SHARE), HOST_DIR: join(tmpdir(), `jean-shares-${process.pid}`), HOST_CONFIG: JSON.stringify({ origins: [`http://127.0.0.1:${APP}`], app: `http://127.0.0.1:${APP}/`, legal: 'https://legal.example/', name: 'Jean' }) } },
+    // The relay (D45 · D226), for Jean's origin by either name, keeping its mailboxes in a folder of the run's (test/devices.spec.js). Every
+    // device of every test opens mailboxes from this one address, past the hour's limit a network has.
+    { command: 'node relay/serve.js', cwd: '..', port: RELAY, reuseExistingServer: false,
+      env: { PORT: String(RELAY), RELAY_DIR: join(tmpdir(), `jean-mailboxes-${process.pid}`), RELAY_CONFIG: JSON.stringify({ origins: [`http://127.0.0.1:${APP}`, `http://localhost:${APP}`], limits: { opens: 10_000 } }) } },
     // Jean as jean.is's deploy has it, its page under the first screen and its pages in other languages (test/home.spec.js, D397).
     { command: 'node scripts/serve.js --home', cwd: '..', port: HOME, env: { PORT: String(HOME) }, reuseExistingServer: false },
     // Jean again, each page's policy also a report-only header that says what it refused (test/csp.spec.js).

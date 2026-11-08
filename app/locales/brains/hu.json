@@ -6,7 +6,7 @@
   "brain.quick.text": "Jelentkezz be az OpenRouterrel: egy ingyenes fiók, amely több száz agyhoz ad hozzáférést, ezek közül néhány ingyenes.",
   "brain.quick.action": "Folytatás az OpenRouterrel",
   "brain.key.title": "Már meglévő kulcs használata",
-  "brain.key.text": "A kulcsod titkosítva ezen az eszközön marad.",
+  "brain.key.text": "A kulcsod titkosítva a saját eszközeiden marad.",
   "brain.key.provider": "Szolgáltatás",
   "brain.key.project": "Google Cloud-projekt",
   "brain.key.open": "Nyisd meg a szolgáltatást ({service}), és jelentkezz be, vagy hozz létre fiókot",

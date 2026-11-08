@@ -6,7 +6,7 @@
   "brain.quick.text": "Přihlaste se přes OpenRouter: bezplatný účet s přístupem ke stovkám mozků, z nichž některé jsou zdarma.",
   "brain.quick.action": "Pokračovat přes OpenRouter",
   "brain.key.title": "Použít klíč, který už máte",
-  "brain.key.text": "Váš klíč zůstane v tomto zařízení, zašifrovaný.",
+  "brain.key.text": "Váš klíč zůstane ve vašich zařízeních, zašifrovaný.",
   "brain.key.provider": "Služba",
   "brain.key.project": "Projekt Google Cloud",
   "brain.key.open": "Otevřete službu {service} a přihlaste se nebo si vytvořte účet",

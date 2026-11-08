@@ -6,7 +6,7 @@
   "brain.quick.text": "OpenRouter ile giriş yap: yüzlerce beyne erişim sağlayan ücretsiz bir hesap, bazıları ücretsiz.",
   "brain.quick.action": "OpenRouter ile devam et",
   "brain.key.title": "Zaten sahip olduğun bir anahtarı kullan",
-  "brain.key.text": "Anahtarın şifrelenmiş olarak bu cihazda kalır.",
+  "brain.key.text": "Anahtarın şifrelenmiş olarak kendi cihazlarında kalır.",
   "brain.key.provider": "Hizmet",
   "brain.key.project": "Google Cloud projesi",
   "brain.key.open": "{service} sayfasını aç, giriş yap ya da hesap oluştur",

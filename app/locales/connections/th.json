@@ -54,7 +54,7 @@
   "connections.account": "บัญชี",
   "connections.since": "เชื่อมต่อเมื่อ {date}",
   "connections.signInAgain": "ลงชื่อเข้าใช้อีกครั้ง",
-  "connections.disconnectAsk": "ยกเลิกการเชื่อมต่อ {service} ไหม คีย์จะถูกลบออกจากอุปกรณ์นี้ และไม่มีอะไรเปลี่ยนใน {service} เอง",
+  "connections.disconnectAsk": "ยกเลิกการเชื่อมต่อ {service} ไหม คีย์จะถูกลบออกจากอุปกรณ์ของคุณ และไม่มีอะไรเปลี่ยนใน {service} เอง",
   "connections.cancel": "ยกเลิก",
   "connections.find": "ค้นหาบริการ",
   "connections.found": {
@@ -76,7 +76,7 @@
   "connections.can": "สิ่งที่ {name} ทำได้ที่นั่น",
   "connections.how": "วิธีเชื่อมต่อ",
   "connections.signInThere": "ถ้า {service} ขอ คุณจะลงชื่อเข้าใช้ที่นั่นแล้วกลับมาที่นี่ {name} ไม่เคยเห็นรหัสผ่านของคุณ",
-  "connections.sealed": "คีย์จะอยู่บนอุปกรณ์นี้แบบปิดผนึก และไม่เคยถูกใส่ในข้อมูลสำรอง การส่งออก หรือการแชร์",
+  "connections.sealed": "คีย์จะอยู่บนอุปกรณ์ของคุณเองแบบปิดผนึก และไม่เคยถูกใส่ในข้อมูลสำรอง การส่งออก หรือการแชร์",
   "connections.another": "{service} เชื่อมต่ออยู่แล้ว การเชื่อมต่อนี้จะเพิ่มอีกบัญชีหนึ่ง",
   "connections.connectTo": "เชื่อมต่อ {service}",
   "connections.kept": "เก็บไว้สำหรับ {service} เท่านั้น"

@@ -56,7 +56,7 @@
   "connections.account": "Asusu",
   "connections.since": "An haɗa a {date}",
   "connections.signInAgain": "Sake shiga",
-  "connections.disconnectAsk": "Cire haɗin {service}? Makullinsa zai bar wannan na’ura; babu abin da zai canza a cikin {service} kansa.",
+  "connections.disconnectAsk": "Cire haɗin {service}? Makullinsa zai goge daga na’urorinka; babu abin da zai canza a cikin {service} kansa.",
   "connections.cancel": "Soke",
   "connections.find": "Nemi wani aiki",
   "connections.found": {
@@ -80,7 +80,7 @@
   "connections.can": "Abin da za a yarda a yi a can",
   "connections.how": "Yadda yake haɗawa",
   "connections.signInThere": "Idan {service} ya tambaya, za ka shiga a can, sannan ka dawo nan. Ba a taɓa ganin kalmar sirrinka a nan ba.",
-  "connections.sealed": "Makullinsa yana zama a wannan na’ura a rufe, kuma ba ya taɓa shiga ajiya, fitarwa ko rabawa.",
+  "connections.sealed": "Makullinsa yana zama a na’urorinka a rufe, kuma ba ya taɓa shiga ajiya, fitarwa ko rabawa.",
   "connections.another": "An riga an haɗa {service}: wannan zai ƙara wani asusu.",
   "connections.connectTo": "Haɗa {service}",
   "connections.kept": "An ajiye don {service} kaɗai."

@@ -45,7 +45,7 @@
   "search.also": "也可以在訊息框的 + 中關閉網路搜尋。",
   "search.key": "金鑰",
   "search.engine": "搜尋引擎 ID",
-  "search.service.text": "你自己的 {service} 帳號為每個大腦搜尋整個網路。你的搜尋字詞會傳送到 {service}，它可能會收費，而你的金鑰留在這台裝置上。",
+  "search.service.text": "你自己的 {service} 帳號為每個大腦搜尋整個網路。你的搜尋字詞會傳送到 {service}，它可能會收費，而你的金鑰留在你自己的裝置上。",
   "search.getKey": "從 {service} 取得金鑰",
   "search.refused": "{service} 拒絕了這個金鑰，或它的搜尋次數已用完。",
   "search.silent": "{service} 沒有回應。請檢查金鑰，或稍後再試。",

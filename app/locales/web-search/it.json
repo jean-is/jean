@@ -53,7 +53,7 @@
   "search.also": "La ricerca sul web si può disattivare anche dal + nella casella del messaggio.",
   "search.key": "Chiave",
   "search.engine": "ID del motore di ricerca",
-  "search.service.text": "Il tuo account {service} cerca in tutto il web, per qualsiasi cervello. Le parole che cerchi vanno a {service}, che può farle pagare, e la tua chiave resta su questo dispositivo.",
+  "search.service.text": "Il tuo account {service} cerca in tutto il web, per qualsiasi cervello. Le parole che cerchi vanno a {service}, che può farle pagare, e la tua chiave resta sui tuoi dispositivi.",
   "search.getKey": "Ottieni una chiave da {service}",
   "search.refused": "{service} ha rifiutato questa chiave, oppure non ha più ricerche disponibili.",
   "search.silent": "{service} non ha risposto. Controlla la chiave o riprova tra un momento.",

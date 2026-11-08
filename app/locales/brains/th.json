@@ -6,7 +6,7 @@
   "brain.quick.text": "ลงชื่อเข้าใช้ด้วย OpenRouter: บัญชีฟรีที่ใช้สมองได้หลายร้อยแบบ บางแบบฟรี",
   "brain.quick.action": "ดำเนินการต่อด้วย OpenRouter",
   "brain.key.title": "ใช้คีย์ที่คุณมีอยู่แล้ว",
-  "brain.key.text": "คีย์ของคุณถูกเข้ารหัสและอยู่บนอุปกรณ์นี้",
+  "brain.key.text": "คีย์ของคุณถูกเข้ารหัสและอยู่บนอุปกรณ์ของคุณเอง",
   "brain.key.provider": "บริการ",
   "brain.key.project": "โปรเจกต์ Google Cloud",
   "brain.key.open": "เปิด {service} แล้วลงชื่อเข้าใช้หรือสร้างบัญชี",

@@ -58,7 +58,7 @@
   "connections.account": "Cont",
   "connections.since": "Conectat pe {date}",
   "connections.signInAgain": "Conectați-vă din nou",
-  "connections.disconnectAsk": "Deconectați {service}? Cheia lui părăsește acest dispozitiv; nimic nu se schimbă în {service}.",
+  "connections.disconnectAsk": "Deconectați {service}? Cheia lui este ștearsă de pe dispozitivele dvs.; nimic nu se schimbă în {service}.",
   "connections.cancel": "Anulați",
   "connections.find": "Găsiți un serviciu",
   "connections.found": {
@@ -84,7 +84,7 @@
   "connections.can": "Ce poate face acolo {name}",
   "connections.how": "Cum se conectează",
   "connections.signInThere": "Dacă {service} cere, vă conectați acolo, apoi reveniți aici. {name} nu vă vede niciodată parola.",
-  "connections.sealed": "Cheia lui rămâne pe acest dispozitiv, sigilată, și nu ajunge niciodată într-o copie de rezervă, un export sau o partajare.",
+  "connections.sealed": "Cheia lui rămâne pe dispozitivele dvs., sigilată, și nu ajunge niciodată într-o copie de rezervă, un export sau o partajare.",
   "connections.another": "{service} este deja conectat: aceasta adaugă un alt cont.",
   "connections.connectTo": "Conectați {service}",
   "connections.kept": "Păstrat doar pentru {service}."

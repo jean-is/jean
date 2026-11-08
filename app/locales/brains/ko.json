@@ -6,7 +6,7 @@
   "brain.quick.text": "OpenRouter로 로그인하세요. 무료 계정 하나로 수백 개의 두뇌를 쓸 수 있고, 그중 일부는 무료예요.",
   "brain.quick.action": "OpenRouter로 계속",
   "brain.key.title": "가지고 있는 키 사용",
-  "brain.key.text": "키는 암호화되어 이 기기에만 저장돼요.",
+  "brain.key.text": "키는 암호화되어 내 기기에만 저장돼요.",
   "brain.key.provider": "서비스",
   "brain.key.project": "Google Cloud 프로젝트",
   "brain.key.open": "{service}을(를) 열고 로그인하거나 계정을 만드세요",

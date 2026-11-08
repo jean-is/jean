@@ -45,7 +45,7 @@
   "search.also": "也可以在消息框的 + 中关闭网络搜索。",
   "search.key": "密钥",
   "search.engine": "搜索引擎 ID",
-  "search.service.text": "你自己的 {service} 账号为每个大脑搜索整个网络。你的搜索词会发给 {service}，它可能收费；你的密钥留在这台设备上。",
+  "search.service.text": "你自己的 {service} 账号为每个大脑搜索整个网络。你的搜索词会发给 {service}，它可能收费；你的密钥留在你自己的设备上。",
   "search.getKey": "从 {service} 获取密钥",
   "search.refused": "{service} 拒绝了这个密钥，或者其搜索次数已用完。",
   "search.silent": "{service} 没有响应。请检查密钥，或稍后再试。",

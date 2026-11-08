@@ -56,7 +56,7 @@
   "connections.account": "Акаунт",
   "connections.since": "Свързано на {date}",
   "connections.signInAgain": "Влез отново",
-  "connections.disconnectAsk": "Да се прекъсне ли {service}? Ключът ѝ напуска това устройство; в самата услуга нищо не се променя.",
+  "connections.disconnectAsk": "Да се прекъсне ли {service}? Ключът ѝ се изтрива от вашите устройства; в самата услуга нищо не се променя.",
   "connections.cancel": "Отказ",
   "connections.find": "Намери услуга",
   "connections.found": {
@@ -80,7 +80,7 @@
   "connections.can": "Какво може да прави там {name}",
   "connections.how": "Как се свързва",
   "connections.signInThere": "Ако {service} поиска, влизате там и после се връщате тук. {name} никога не вижда паролата ви.",
-  "connections.sealed": "Ключът ѝ остава на това устройство, запечатан, и никога не попада в резервно копие, експорт или споделяне.",
+  "connections.sealed": "Ключът ѝ остава на вашите устройства, запечатан, и никога не попада в резервно копие, експорт или споделяне.",
   "connections.another": "{service} вече е свързана: това добавя още един акаунт.",
   "connections.connectTo": "Свържи {service}",
   "connections.kept": "Запазено само за {service}."

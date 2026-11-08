@@ -57,7 +57,7 @@
   "search.also": "Hledání na webu lze vypnout i přes + v poli.",
   "search.key": "Klíč",
   "search.engine": "ID vyhledávače",
-  "search.service.text": "Váš vlastní účet {service} prohledává celý web, pro jakýkoli mozek. Hledaná slova jdou do služby {service}, která si za ně může účtovat, a váš klíč zůstává v tomto zařízení.",
+  "search.service.text": "Váš vlastní účet {service} prohledává celý web, pro jakýkoli mozek. Hledaná slova jdou do služby {service}, která si za ně může účtovat, a váš klíč zůstává ve vašich zařízeních.",
   "search.getKey": "Získat klíč od služby {service}",
   "search.refused": "Služba {service} tento klíč odmítla, nebo už na něm nezbývají žádná hledání.",
   "search.silent": "Služba {service} neodpověděla. Zkontrolujte klíč nebo to zkuste za chvíli znovu.",

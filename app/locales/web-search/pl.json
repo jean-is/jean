@@ -57,7 +57,7 @@
   "search.also": "Wyszukiwanie w sieci można też wyłączyć przez + w polu wiadomości.",
   "search.key": "Klucz",
   "search.engine": "Identyfikator wyszukiwarki",
-  "search.service.text": "Twoje własne konto {service} przeszukuje całą sieć, dla każdego mózgu. Wyszukiwane słowa trafiają do {service}, który może za nie pobierać opłaty, a Twój klucz zostaje na tym urządzeniu.",
+  "search.service.text": "Twoje własne konto {service} przeszukuje całą sieć, dla każdego mózgu. Wyszukiwane słowa trafiają do {service}, który może za nie pobierać opłaty, a Twój klucz zostaje na Twoich urządzeniach.",
   "search.getKey": "Zdobądź klucz w {service}",
   "search.refused": "{service} odrzuca ten klucz albo nie ma na nim już wyszukiwań.",
   "search.silent": "{service} nie odpowiada. Sprawdź klucz lub spróbuj ponownie za chwilę.",

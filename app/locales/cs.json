@@ -307,6 +307,8 @@
   "cap.sync.name": "Synchronizace",
   "cap.sync.offer": "Udržovat vaše úkoly, soubory a paměť stejné na vašich dalších počítačích? Vyberete složku, kterou synchronizuje vaše cloudové úložiště.",
   "cap.sync.yes": "Vybrat složku",
+  "cap.devices.name": "Vaše zařízení",
+  "cap.devices.offer": "Mít vaše mozky, nastavení a projekty i v telefonu nebo na jiném počítači? Zařízení přidáte pomocí QR kódu a šesti číslic.",
   "cap.lock.name": "Zámek",
   "cap.lock.offer": "Zamknout vaše úkoly, soubory a klíče, aby je v tomto zařízení mohli otevřít jen vy?",
   "cap.lock.yes": "Nastavit zámek",

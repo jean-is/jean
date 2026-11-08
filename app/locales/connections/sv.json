@@ -56,7 +56,7 @@
   "connections.account": "Konto",
   "connections.since": "Ansluten den {date}",
   "connections.signInAgain": "Logga in igen",
-  "connections.disconnectAsk": "Koppla från {service}? Dess nyckel lämnar den här enheten; inget ändras i själva {service}.",
+  "connections.disconnectAsk": "Koppla från {service}? Dess nyckel raderas från dina enheter; inget ändras i själva {service}.",
   "connections.cancel": "Avbryt",
   "connections.find": "Hitta en tjänst",
   "connections.found": {
@@ -80,7 +80,7 @@
   "connections.can": "Vad {name} får göra där",
   "connections.how": "Hur den ansluter",
   "connections.signInThere": "Om {service} frågar loggar du in där och kommer sedan tillbaka hit. {name} ser aldrig ditt lösenord.",
-  "connections.sealed": "Dess nyckel stannar på den här enheten, förseglad, och hamnar aldrig i en säkerhetskopia, en export eller en delning.",
+  "connections.sealed": "Dess nyckel stannar på dina egna enheter, förseglad, och hamnar aldrig i en säkerhetskopia, en export eller en delning.",
   "connections.another": "{service} är redan ansluten: det här lägger till ett konto till.",
   "connections.connectTo": "Anslut {service}",
   "connections.kept": "Sparad bara för {service}."

@@ -60,7 +60,7 @@
   "connections.account": "Konto",
   "connections.since": "Połączono {date}",
   "connections.signInAgain": "Zaloguj się ponownie",
-  "connections.disconnectAsk": "Odłączyć usługę {service}? Jej klucz zniknie z tego urządzenia; w samej usłudze {service} nic się nie zmieni.",
+  "connections.disconnectAsk": "Odłączyć usługę {service}? Jej klucz zniknie z twoich urządzeń; w samej usłudze {service} nic się nie zmieni.",
   "connections.cancel": "Anuluj",
   "connections.find": "Znajdź usługę",
   "connections.found": {
@@ -88,7 +88,7 @@
   "connections.can": "Co {name} może tam robić",
   "connections.how": "Jak się łączy",
   "connections.signInThere": "Jeśli {service} o to poprosi, logujesz się tam i wracasz tutaj. {name} nigdy nie widzi twojego hasła.",
-  "connections.sealed": "Jej klucz zostaje zapieczętowany na tym urządzeniu i nigdy nie trafia do kopii zapasowej, eksportu ani udostępnienia.",
+  "connections.sealed": "Jej klucz zostaje zapieczętowany na twoich urządzeniach i nigdy nie trafia do kopii zapasowej, eksportu ani udostępnienia.",
   "connections.another": "Usługa {service} jest już połączona: to doda kolejne konto.",
   "connections.connectTo": "Połącz {service}",
   "connections.kept": "Zapisano tylko dla usługi {service}."

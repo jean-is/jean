@@ -49,7 +49,7 @@
   "search.also": "Websøgning kan også slås fra med + i feltet.",
   "search.key": "Nøgle",
   "search.engine": "Søgemaskine-id",
-  "search.service.text": "Din egen {service}-konto søger på hele nettet, for alle hjerner. Dine søgeord sendes til {service}, som kan tage betaling for dem, og din nøgle bliver på denne enhed.",
+  "search.service.text": "Din egen {service}-konto søger på hele nettet, for alle hjerner. Dine søgeord sendes til {service}, som kan tage betaling for dem, og din nøgle bliver på dine egne enheder.",
   "search.getKey": "Hent en nøgle hos {service}",
   "search.refused": "{service} afviste denne nøgle, eller der er ikke flere søgninger tilbage på den.",
   "search.silent": "{service} svarede ikke. Tjek nøglen, eller prøv igen om lidt.",

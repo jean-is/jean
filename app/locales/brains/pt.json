@@ -6,7 +6,7 @@
   "brain.quick.text": "Inicia sessão com o OpenRouter: uma conta gratuita com acesso a centenas de cérebros, alguns gratuitos.",
   "brain.quick.action": "Continuar com o OpenRouter",
   "brain.key.title": "Usar uma chave que já tens",
-  "brain.key.text": "A tua chave fica neste dispositivo, cifrada.",
+  "brain.key.text": "A tua chave fica nos teus dispositivos, cifrada.",
   "brain.key.provider": "Serviço",
   "brain.key.project": "Projeto do Google Cloud",
   "brain.key.open": "Abre {service} e inicia sessão ou cria uma conta",

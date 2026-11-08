@@ -56,7 +56,7 @@
   "connections.account": "Konto",
   "connections.since": "Verbunden am {date}",
   "connections.signInAgain": "Neu anmelden",
-  "connections.disconnectAsk": "{service} trennen? Sein Schlüssel wird von diesem Gerät gelöscht. In {service} selbst ändert sich nichts.",
+  "connections.disconnectAsk": "{service} trennen? Sein Schlüssel wird von deinen Geräten gelöscht. In {service} selbst ändert sich nichts.",
   "connections.cancel": "Abbrechen",
   "connections.find": "Dienst finden",
   "connections.found": {
@@ -80,7 +80,7 @@
   "connections.can": "Was {name} dort darf",
   "connections.how": "Wie die Verbindung entsteht",
   "connections.signInThere": "Fragt {service} danach, meldest du dich dort an und kommst hierher zurück. {name} sieht dein Passwort nie.",
-  "connections.sealed": "Sein Schlüssel bleibt versiegelt auf diesem Gerät und kommt nie in eine Sicherung, einen Export oder eine Freigabe.",
+  "connections.sealed": "Sein Schlüssel bleibt versiegelt auf deinen eigenen Geräten und kommt nie in eine Sicherung, einen Export oder eine Freigabe.",
   "connections.another": "{service} ist schon verbunden: Damit kommt ein weiteres Konto hinzu.",
   "connections.connectTo": "{service} verbinden",
   "connections.kept": "Nur für {service} gemerkt."

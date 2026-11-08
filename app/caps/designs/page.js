@@ -7,6 +7,7 @@ import { html, nothing, render, svg } from 'lit-html'
 import { ref } from 'lit-html/directives/ref.js'
 import { colourOf, weightOf, leadOf, frameOf, stack, unitOf, inksOf, pathsOf, WEIGHTS } from './layout.js'
 import { dir, t, locale } from '../../core/i18n.js'
+import { codeOf } from '../../ui/qr.js'
 
 /** @import { Design, Part, Book } from './layout.js' */
 /** @import { Line } from './format.js' */
@@ -16,18 +17,9 @@ const GAP = /(\[[^\]\n]{1,40}\]|［[^］\n]{1,40}］)/
 const SEPARATOR = / ([·•|–—])(?= )/g
 /** Custom properties set through the CSSOM, as the policy refuses a style attribute. @param {Record<string, string>} values */
 export const vars = (values) => ref((element) => { for (const [name, value] of Object.entries(element ? values : {})) /** @type {HTMLElement} */ (element).style.setProperty(name, value) })
-// The ornaments (art.json), and lean-qr's smallest build, which draws a QR code: without it, a QR code is its frame.
-export const [ART, qr] = await Promise.all([fetch(new URL('art.json', import.meta.url)).then((response) => response.json()), import(new URL('../../vendor/lean-qr/lean-qr.mjs', import.meta.url).href).catch(() => null)])
-/** Each QR code's dark modules, a square each as one path, and how many to a side, by what it holds. @type {Map<string, { size: number, d: string } | null>} */
-const codes = new Map()
-/** A QR code for an address or words, or null where there is none to draw. @param {string} [link] */
-export function codeOf(link) {
-  if (!link || !qr) return null
-  if (!codes.has(link)) {
-    try { const { size, get } = qr.generate(link), d = []; for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) if (get(x, y)) d.push(`M${x} ${y}h1v1h-1z`); codes.set(link, { size, d: d.join('') }) } catch { codes.set(link, null) }
-  }
-  return codes.get(link) ?? null
-}
+// The ornaments (art.json). A QR code is ui/qr.js's, here for the file's writers too: without lean-qr, it is its frame.
+export const ART = await fetch(new URL('art.json', import.meta.url)).then((response) => response.json())
+export { codeOf }
 
 /** A picture's type, from its file's extension. @param {string} file */
 export const typeOf = (file) => `image/${(/\.(\w+)$/.exec(file)?.[1] ?? 'png').replace('jpg', 'jpeg').replace('svg', 'svg+xml')}`

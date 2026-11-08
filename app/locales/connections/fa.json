@@ -56,7 +56,7 @@
   "connections.account": "حساب",
   "connections.since": "متصل از {date}",
   "connections.signInAgain": "ورود دوباره",
-  "connections.disconnectAsk": "اتصال {service} قطع شود؟ کلید آن از این دستگاه می‌رود؛ در خود {service} چیزی تغییر نمی‌کند.",
+  "connections.disconnectAsk": "اتصال {service} قطع شود؟ کلید آن از دستگاه‌هایتان پاک می‌شود؛ در خود {service} چیزی تغییر نمی‌کند.",
   "connections.cancel": "لغو",
   "connections.find": "یافتن سرویس",
   "connections.found": {
@@ -80,7 +80,7 @@
   "connections.can": "آنچه {name} آنجا می‌تواند بکند",
   "connections.how": "چطور متصل می‌شود",
   "connections.signInThere": "اگر {service} بخواهد، آنجا وارد می‌شوید و به اینجا برمی‌گردید. {name} هرگز گذرواژهٔ شما را نمی‌بیند.",
-  "connections.sealed": "کلیدش مهروموم‌شده روی همین دستگاه می‌ماند و هرگز وارد پشتیبان، خروجی یا اشتراک‌گذاری نمی‌شود.",
+  "connections.sealed": "کلیدش مهروموم‌شده روی دستگاه‌های خودتان می‌ماند و هرگز وارد پشتیبان، خروجی یا اشتراک‌گذاری نمی‌شود.",
   "connections.another": "{service} از قبل متصل است: این یک حساب دیگر اضافه می‌کند.",
   "connections.connectTo": "اتصال {service}",
   "connections.kept": "فقط برای {service} نگه داشته شد."

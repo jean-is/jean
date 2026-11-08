@@ -6,7 +6,7 @@
   "brain.quick.text": "使用 OpenRouter 登录：一个免费账户，可使用数百个大脑，其中一些是免费的。",
   "brain.quick.action": "通过 OpenRouter 继续",
   "brain.key.title": "使用已有的密钥",
-  "brain.key.text": "你的密钥加密保存在这台设备上。",
+  "brain.key.text": "你的密钥加密保存在你自己的设备上。",
   "brain.key.provider": "服务",
   "brain.key.project": "Google Cloud 项目",
   "brain.key.open": "打开 {service}，登录或创建账号",

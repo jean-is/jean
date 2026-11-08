@@ -6,7 +6,7 @@
   "brain.quick.text": "Log in met OpenRouter: een gratis account met toegang tot honderden breinen, sommige gratis.",
   "brain.quick.action": "Doorgaan met OpenRouter",
   "brain.key.title": "Gebruik een sleutel die je al hebt",
-  "brain.key.text": "Je sleutel blijft versleuteld op dit apparaat.",
+  "brain.key.text": "Je sleutel blijft versleuteld op je eigen apparaten.",
   "brain.key.provider": "Dienst",
   "brain.key.project": "Google Cloud-project",
   "brain.key.open": "Open {service}, en log in of maak een account",

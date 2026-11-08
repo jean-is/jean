@@ -58,7 +58,7 @@
   "connections.account": "Contu",
   "connections.since": "Cunnessu u {date}",
   "connections.signInAgain": "Cunnettevi torna",
-  "connections.disconnectAsk": "Scunnette {service} ? A so chjave hè squassata da st’apparechju. Nunda ùn cambia in {service} stessu.",
+  "connections.disconnectAsk": "Scunnette {service} ? A so chjave hè squassata da i vostri apparechji. Nunda ùn cambia in {service} stessu.",
   "connections.cancel": "Annullà",
   "connections.find": "Truvà un serviziu",
   "connections.found": {
@@ -84,7 +84,7 @@
   "connections.can": "Ciò chì {name} puderà facci",
   "connections.how": "Cumu si cunnette",
   "connections.signInThere": "S’è {service} u dumanda, vi cunnettite culà, po vultate quì. {name} ùn vede mai a vostra parolla d’entrata.",
-  "connections.sealed": "A so chjave ferma nant’à st’apparechju, sigillata, è ùn và mai in una salvaguardia, un’espurtazione o una spartera.",
+  "connections.sealed": "A so chjave ferma nant’à i vostri apparechji, sigillata, è ùn và mai in una salvaguardia, un’espurtazione o una spartera.",
   "connections.another": "{service} hè digià cunnessu : què aghjunghje un altru contu.",
   "connections.connectTo": "Cunnette {service}",
   "connections.kept": "Tenutu solu per {service}."

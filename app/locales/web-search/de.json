@@ -49,7 +49,7 @@
   "search.also": "Die Websuche lässt sich auch über + im Nachrichtenfeld ausschalten.",
   "search.key": "Schlüssel",
   "search.engine": "Suchmaschinen-ID",
-  "search.service.text": "Dein eigenes {service}-Konto sucht im ganzen Web, für jedes Gehirn. Deine Suchbegriffe gehen an {service}, das dafür Kosten berechnen kann, und dein Schlüssel bleibt auf diesem Gerät.",
+  "search.service.text": "Dein eigenes {service}-Konto sucht im ganzen Web, für jedes Gehirn. Deine Suchbegriffe gehen an {service}, das dafür Kosten berechnen kann, und dein Schlüssel bleibt auf deinen eigenen Geräten.",
   "search.getKey": "Schlüssel bei {service} holen",
   "search.refused": "{service} hat diesen Schlüssel abgelehnt, oder er hat keine Suchanfragen mehr.",
   "search.silent": "{service} hat nicht geantwortet. Prüfe den Schlüssel oder versuche es gleich noch einmal.",

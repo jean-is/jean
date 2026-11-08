@@ -57,7 +57,7 @@
   "search.also": "Hľadanie na webe možno vypnúť aj cez + v poli.",
   "search.key": "Kľúč",
   "search.engine": "ID vyhľadávača",
-  "search.service.text": "Váš vlastný účet {service} prehľadáva celý web, pre akýkoľvek mozog. Hľadané slová idú do služby {service}, ktorá si za ne môže účtovať, a váš kľúč zostáva v tomto zariadení.",
+  "search.service.text": "Váš vlastný účet {service} prehľadáva celý web, pre akýkoľvek mozog. Hľadané slová idú do služby {service}, ktorá si za ne môže účtovať, a váš kľúč zostáva vo vašich zariadeniach.",
   "search.getKey": "Získať kľúč od služby {service}",
   "search.refused": "Služba {service} tento kľúč odmietla alebo už na ňom nezostali žiadne hľadania.",
   "search.silent": "Služba {service} neodpovedala. Skontrolujte kľúč alebo to skúste o chvíľu znova.",

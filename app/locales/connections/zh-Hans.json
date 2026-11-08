@@ -54,7 +54,7 @@
   "connections.account": "账户",
   "connections.since": "连接于 {date}",
   "connections.signInAgain": "重新登录",
-  "connections.disconnectAsk": "断开 {service}？它的密钥会从这台设备上删除。{service} 本身不会有任何变化。",
+  "connections.disconnectAsk": "断开 {service}？它的密钥会从你的设备上删除。{service} 本身不会有任何变化。",
   "connections.cancel": "取消",
   "connections.find": "查找服务",
   "connections.found": {
@@ -76,7 +76,7 @@
   "connections.can": "{name} 在那里可以做什么",
   "connections.how": "如何连接",
   "connections.signInThere": "如果 {service} 要求，你会在那里登录，然后回到这里。{name} 永远看不到你的密码。",
-  "connections.sealed": "它的密钥封存在这台设备上，绝不会进入备份、导出或共享。",
+  "connections.sealed": "它的密钥封存在你自己的设备上，绝不会进入备份、导出或共享。",
   "connections.another": "{service} 已经连接：这会再添加一个账户。",
   "connections.connectTo": "连接 {service}",
   "connections.kept": "已保存，只对 {service} 有效。"

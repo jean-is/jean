@@ -49,7 +49,7 @@
   "search.also": "Web search can also be turned off from + in the box.",
   "search.key": "Key",
   "search.engine": "Search engine ID",
-  "search.service.text": "Your own {service} account searches the whole web, for every brain. Your search words go to {service}, which may charge for them, and your key stays on this device.",
+  "search.service.text": "Your own {service} account searches the whole web, for every brain. Your search words go to {service}, which may charge for them, and your key stays on your own devices.",
   "search.getKey": "Get a key from {service}",
   "search.refused": "{service} refused this key, or has no searches left on it.",
   "search.silent": "{service} didn’t answer. Check the key, or try again in a moment.",

@@ -56,7 +56,7 @@
   "connections.account": "Account",
   "connections.since": "Verbonden op {date}",
   "connections.signInAgain": "Opnieuw inloggen",
-  "connections.disconnectAsk": "{service} loskoppelen? De sleutel verdwijnt van dit apparaat; in {service} zelf verandert niets.",
+  "connections.disconnectAsk": "{service} loskoppelen? De sleutel verdwijnt van je apparaten; in {service} zelf verandert niets.",
   "connections.cancel": "Annuleren",
   "connections.find": "Een dienst zoeken",
   "connections.found": {
@@ -80,7 +80,7 @@
   "connections.can": "Wat {name} daar mag",
   "connections.how": "Hoe het verbindt",
   "connections.signInThere": "Vraagt {service} erom, dan log je daar in en kom je hier terug. {name} ziet je wachtwoord nooit.",
-  "connections.sealed": "De sleutel blijft verzegeld op dit apparaat en komt nooit in een back-up, een export of een gedeelde link.",
+  "connections.sealed": "De sleutel blijft verzegeld op je eigen apparaten en komt nooit in een back-up, een export of een gedeelde link.",
   "connections.another": "{service} is al verbonden: dit voegt een ander account toe.",
   "connections.connectTo": "{service} verbinden",
   "connections.kept": "Alleen voor {service} bewaard."

@@ -6,7 +6,7 @@
   "brain.quick.text": "Melde dich mit OpenRouter an: ein kostenloses Konto mit Zugang zu Hunderten von Gehirnen, einige davon kostenlos.",
   "brain.quick.action": "Weiter mit OpenRouter",
   "brain.key.title": "Einen vorhandenen Schlüssel nutzen",
-  "brain.key.text": "Dein Schlüssel bleibt verschlüsselt auf diesem Gerät.",
+  "brain.key.text": "Dein Schlüssel bleibt verschlüsselt auf deinen eigenen Geräten.",
   "brain.key.provider": "Dienst",
   "brain.key.project": "Google-Cloud-Projekt",
   "brain.key.open": "Öffne {service} und melde dich an oder erstelle ein Konto",

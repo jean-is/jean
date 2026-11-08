@@ -31,7 +31,7 @@ test('plain HTTP reaches this computer alone: index.html allows it, and ui/app.j
   const boot = await readFile(new URL('../app/ui/app.js', import.meta.url), 'utf8')
   assert.ok(csp.includes("connect-src 'self' https: wss: http:;"))
   const narrowed = boot.indexOf("httpEquiv: 'Content-Security-Policy', content: `connect-src 'self' https: wss: ${reach.map(")
-  assert.ok(narrowed > 0 && narrowed < boot.indexOf('opfsFS()') && narrowed < boot.indexOf('loadSettings(app.fs)'), 'the narrower policy comes first')
+  assert.ok(narrowed > 0 && narrowed < boot.indexOf('opfsFS()') && narrowed < boot.indexOf('changeSettings()'), 'the narrower policy comes first')
 })
 
 test('light or dark is set before the first paint, with the key ui/state.js uses, the profile’s own (D228)', async () => {

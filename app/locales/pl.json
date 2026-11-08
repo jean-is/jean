@@ -307,6 +307,8 @@
   "cap.sync.name": "Synchronizacja",
   "cap.sync.offer": "Utrzymywać twoje zadania, pliki i pamięć takie same na innych twoich komputerach? Wybierasz folder, który synchronizuje twój dysk w chmurze.",
   "cap.sync.yes": "Wybierz folder",
+  "cap.devices.name": "Twoje urządzenia",
+  "cap.devices.offer": "Mieć twoje mózgi, ustawienia i projekty także na telefonie lub innym komputerze? Urządzenie dodajesz kodem QR i sześcioma cyframi.",
   "cap.lock.name": "Blokada",
   "cap.lock.offer": "Zablokować twoje zadania, pliki i klucze, żeby tylko ty mógł je otworzyć na tym urządzeniu?",
   "cap.lock.yes": "Ustaw blokadę",

@@ -56,7 +56,7 @@
   "connections.account": "Konto",
   "connections.since": "Forbundet den {date}",
   "connections.signInAgain": "Log ind igen",
-  "connections.disconnectAsk": "Afbryde {service}? Dens nøgle forlader denne enhed; intet ændres i selve {service}.",
+  "connections.disconnectAsk": "Afbryde {service}? Dens nøgle slettes fra dine enheder; intet ændres i selve {service}.",
   "connections.cancel": "Annuller",
   "connections.find": "Find en tjeneste",
   "connections.found": {
@@ -80,7 +80,7 @@
   "connections.can": "Hvad {name} må gøre dér",
   "connections.how": "Sådan forbinder den",
   "connections.signInThere": "Hvis {service} beder om det, logger du ind dér og vender så tilbage hertil. {name} ser aldrig din adgangskode.",
-  "connections.sealed": "Dens nøgle bliver på denne enhed, forseglet, og havner aldrig i en sikkerhedskopi, en eksport eller en deling.",
+  "connections.sealed": "Dens nøgle bliver på dine egne enheder, forseglet, og havner aldrig i en sikkerhedskopi, en eksport eller en deling.",
   "connections.another": "{service} er allerede forbundet: dette tilføjer endnu en konto.",
   "connections.connectTo": "Forbind {service}",
   "connections.kept": "Gemt kun til {service}."

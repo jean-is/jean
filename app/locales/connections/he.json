@@ -60,7 +60,7 @@
   "connections.account": "חשבון",
   "connections.since": "חובר ב־{date}",
   "connections.signInAgain": "התחברות מחדש",
-  "connections.disconnectAsk": "לנתק את {service}? המפתח יימחק מהמכשיר הזה; ב־{service} עצמו שום דבר לא ישתנה.",
+  "connections.disconnectAsk": "לנתק את {service}? המפתח יימחק מהמכשירים שלך; ב־{service} עצמו שום דבר לא ישתנה.",
   "connections.cancel": "ביטול",
   "connections.find": "חיפוש שירות",
   "connections.found": {
@@ -88,7 +88,7 @@
   "connections.can": "מה יהיה מותר לעשות שם",
   "connections.how": "איך מתחברים",
   "connections.signInThere": "אם {service} מבקש, מתחברים שם וחוזרים לכאן. הסיסמה שלך לא נראית כאן לעולם.",
-  "connections.sealed": "המפתח נשאר חתום במכשיר הזה, ואף פעם לא נכנס לגיבוי, לייצוא או לשיתוף.",
+  "connections.sealed": "המפתח נשאר חתום במכשירים שלך, ואף פעם לא נכנס לגיבוי, לייצוא או לשיתוף.",
   "connections.another": "{service} כבר מחובר: זה יוסיף חשבון נוסף.",
   "connections.connectTo": "חיבור {service}",
   "connections.kept": "נשמר עבור {service} בלבד."

@@ -6,7 +6,7 @@
   "brain.quick.text": "OpenRouter でサインイン：無料のアカウントで数百の頭脳が使えます。無料のものもあります。",
   "brain.quick.action": "OpenRouter で続ける",
   "brain.key.title": "お持ちのキーを使う",
-  "brain.key.text": "キーは暗号化され、この端末に保存されます。",
+  "brain.key.text": "キーは暗号化され、ご自身の端末に保存されます。",
   "brain.key.provider": "サービス",
   "brain.key.project": "Google Cloud プロジェクト",
   "brain.key.open": "{service} を開き、サインインするかアカウントを作成します",

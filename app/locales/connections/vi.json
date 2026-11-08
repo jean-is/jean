@@ -54,7 +54,7 @@
   "connections.account": "Tài khoản",
   "connections.since": "Kết nối ngày {date}",
   "connections.signInAgain": "Đăng nhập lại",
-  "connections.disconnectAsk": "Ngắt kết nối {service}? Khóa của nó rời khỏi thiết bị này; trong chính {service} không có gì thay đổi.",
+  "connections.disconnectAsk": "Ngắt kết nối {service}? Khóa của nó bị xóa khỏi các thiết bị của bạn; trong chính {service} không có gì thay đổi.",
   "connections.cancel": "Hủy",
   "connections.find": "Tìm dịch vụ",
   "connections.found": {
@@ -76,7 +76,7 @@
   "connections.can": "Điều {name} được làm ở đó",
   "connections.how": "Cách kết nối",
   "connections.signInThere": "Nếu {service} yêu cầu, bạn đăng nhập ở đó rồi quay lại đây. {name} không bao giờ thấy mật khẩu của bạn.",
-  "connections.sealed": "Khóa của nó ở lại trên thiết bị này, được niêm phong, và không bao giờ vào bản sao lưu, bản xuất hay chia sẻ.",
+  "connections.sealed": "Khóa của nó ở lại trên các thiết bị của bạn, được niêm phong, và không bao giờ vào bản sao lưu, bản xuất hay chia sẻ.",
   "connections.another": "{service} đã được kết nối: thao tác này thêm một tài khoản khác.",
   "connections.connectTo": "Kết nối {service}",
   "connections.kept": "Đã lưu chỉ cho {service}."

@@ -6,7 +6,7 @@
   "brain.quick.text": "Prijavite se putem OpenRoutera: besplatan račun koji daje pristup stotinama mozgova, od kojih su neki besplatni.",
   "brain.quick.action": "Nastavi s OpenRouterom",
   "brain.key.title": "Upotrijebite ključ koji već imate",
-  "brain.key.text": "Vaš ključ ostaje na ovom uređaju, šifriran.",
+  "brain.key.text": "Vaš ključ ostaje na vašim uređajima, šifriran.",
   "brain.key.provider": "Usluga",
   "brain.key.project": "Projekt u Google Cloudu",
   "brain.key.open": "Otvorite uslugu {service} i prijavite se ili izradite račun",

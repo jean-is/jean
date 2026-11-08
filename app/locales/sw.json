@@ -297,6 +297,8 @@
   "cap.sync.name": "Usawazishaji",
   "cap.sync.offer": "Kazi, faili na kumbukumbu zako zibaki sawa kwenye kompyuta zako nyingine? Unachagua folda ambayo hifadhi yako ya wingu husawazisha.",
   "cap.sync.yes": "Chagua folda",
+  "cap.devices.name": "Vifaa vyako",
+  "cap.devices.offer": "Uwe na akili, mipangilio na miradi yako kwenye simu yako au kompyuta nyingine pia? Unaongeza kifaa kwa msimbo wa QR na tarakimu sita.",
   "cap.lock.name": "Kufuli",
   "cap.lock.offer": "Ufunge kazi, faili na funguo zako, ili wewe tu uweze kuzifungua kwenye kifaa hiki?",
   "cap.lock.yes": "Weka kufuli",

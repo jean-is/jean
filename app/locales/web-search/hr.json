@@ -53,7 +53,7 @@
   "search.also": "Pretraživanje weba može se isključiti i pomoću + u okviru.",
   "search.key": "Ključ",
   "search.engine": "ID tražilice",
-  "search.service.text": "Vaš vlastiti račun {service} pretražuje cijeli web, za bilo koji mozak. Riječi koje tražite idu na {service}, koji ih može naplatiti, a vaš ključ ostaje na ovom uređaju.",
+  "search.service.text": "Vaš vlastiti račun {service} pretražuje cijeli web, za bilo koji mozak. Riječi koje tražite idu na {service}, koji ih može naplatiti, a vaš ključ ostaje na vašim uređajima.",
   "search.getKey": "Nabavite ključ od {service}",
   "search.refused": "{service} je odbio ovaj ključ ili na njemu nema više pretraživanja.",
   "search.silent": "{service} nije odgovorio. Provjerite ključ ili pokušajte ponovno za trenutak.",

@@ -22,6 +22,7 @@
   "cap.backup.text": "Păstrați o copie a tuturor într-un singur fișier și restaurați-o pe orice dispozitiv.",
   "cap.share.text": "Trimiteți o sarcină, sau o pagină, un grafic, o prezentare ori o imagine, ca link pe care destinatarul îl poate deschide.",
   "cap.sync.text": "Păstrează sarcinile, fișierele și memoria dvs. la fel pe celelalte computere, printr-un dosar pe care îl sincronizează OneDrive, Dropbox, iCloud Drive sau Google Drive.",
+  "cap.devices.text": "{name} și pe telefon sau pe alt computer, cu creierele, setările și proiectele dvs., sigilate astfel încât doar dispozitivele dvs. să le poată citi. O sarcină trece de pe unul pe altul când o trimiteți.",
   "cap.lock.text": "Sarcinile, fișierele și cheile dvs. se deschid doar cu cheia de acces sau parola dvs.",
   "cap.brain-local.text": "Privat, gratuit și offline: un creier care rulează pe acest computer, dacă este destul de puternic.",
   "collection.count": {
@@ -59,6 +60,7 @@
   "cap.backup.hint": "Începeți trei sarcini.",
   "cap.share.hint": "Salvați o copie a unei sarcini.",
   "cap.sync.hint": "Menționați că folosiți și un alt computer.",
+  "cap.devices.hint": "Menționați că v-ar plăcea să aveți asta pe telefon sau pe alt computer, sau activați funcția aici.",
   "cap.lock.hint": "Conectați un serviciu sau începeți zece sarcini.",
   "cap.brain-local.hint": "Alegeți creierul care rulează pe acest dispozitiv.",
   "cap.memory.text": "{name} își amintește lucrurile durabile pe care le menționați, cum ar fi preferințe, fapte și corecturi. Puteți vedea și schimba totul.",

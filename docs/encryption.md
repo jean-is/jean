@@ -60,6 +60,7 @@ slots            VK sealed with AES-256-GCM, once under each of these keys, in .
 - **Setting a lock removes the device slot**, and deletes its key from IndexedDB. Turning the lock off makes a new one.
 - **The browser clears the key and the files together.** IndexedDB and OPFS sit in one storage bucket, which the Storage Standard clears as a whole, so neither outlives the other. This includes Safari's seven-day rule.
 - **Rotating VK** (sealing everything again under a new key) isn't built. The vault id in each header would tell a background pass which files are left.
+- **A device's own pair, for the person's other devices** (D700): an ECDH P-256 pair and its relay mailbox's token, kept as the secret `device`, and the devices the profile knows as the secret `devices`, so sealed under VK and closed with the lock, and never in a backup or a synced folder, where someone could add a key of theirs. What goes between two devices is sealed from one's key to the other's (`sealBox()` in `ui/seal.js`: HKDF over their ECDH secret, bound to both fingerprints, then AES-256-GCM), and nothing from a key the profile doesn't list is opened. The keys that cross (D700) are re-sealed under the receiving profile's own VK as they are written.
 
 ## The seal
 

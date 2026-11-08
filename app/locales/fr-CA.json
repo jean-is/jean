@@ -302,6 +302,8 @@
   "cap.sync.name": "Synchronisation",
   "cap.sync.offer": "Garder vos tâches, vos fichiers et la mémoire identiques sur vos autres ordinateurs? Vous choisissez un dossier que votre stockage en ligne synchronise.",
   "cap.sync.yes": "Choisir un dossier",
+  "cap.devices.name": "Vos appareils",
+  "cap.devices.offer": "Avoir vos cerveaux, vos réglages et vos projets aussi sur votre téléphone ou un autre ordinateur? Vous l’ajoutez avec un code QR et six chiffres.",
   "cap.lock.name": "Verrou",
   "cap.lock.offer": "Verrouiller vos tâches, fichiers et clés, pour que vous seul puissiez les ouvrir sur cet appareil?",
   "cap.lock.yes": "Poser un verrou",

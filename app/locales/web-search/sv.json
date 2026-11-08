@@ -49,7 +49,7 @@
   "search.also": "Webbsökning kan också stängas av från + i rutan.",
   "search.key": "Nyckel",
   "search.engine": "Sökmotor-id",
-  "search.service.text": "Ditt eget {service}-konto söker på hela webben, för alla hjärnor. Dina sökord går till {service}, som kan ta betalt för dem, och din nyckel stannar på den här enheten.",
+  "search.service.text": "Ditt eget {service}-konto söker på hela webben, för alla hjärnor. Dina sökord går till {service}, som kan ta betalt för dem, och din nyckel stannar på dina egna enheter.",
   "search.getKey": "Hämta en nyckel från {service}",
   "search.refused": "{service} avvisade nyckeln, eller så finns inga sökningar kvar på den.",
   "search.silent": "{service} svarade inte. Kontrollera nyckeln eller försök igen om en stund.",

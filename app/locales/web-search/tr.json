@@ -49,7 +49,7 @@
   "search.also": "Web araması, mesaj kutusundaki + ile de kapatılabilir.",
   "search.key": "Anahtar",
   "search.engine": "Arama motoru kimliği",
-  "search.service.text": "Kendi {service} hesabınız tüm web’de arar, her beyin için. Arama sözcükleriniz {service} hizmetine gider, bu hizmet bunlar için ücret alabilir; anahtarınız bu cihazda kalır.",
+  "search.service.text": "Kendi {service} hesabınız tüm web’de arar, her beyin için. Arama sözcükleriniz {service} hizmetine gider, bu hizmet bunlar için ücret alabilir; anahtarınız kendi cihazlarınızda kalır.",
   "search.getKey": "{service} üzerinden anahtar alın",
   "search.refused": "{service} bu anahtarı reddetti ya da anahtarda arama hakkı kalmadı.",
   "search.silent": "{service} yanıt vermedi. Anahtarı denetleyin ya da birazdan yeniden deneyin.",

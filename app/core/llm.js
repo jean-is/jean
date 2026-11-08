@@ -109,7 +109,8 @@ export function headersFor(brain, apiKey) {
   } else if (apiKey) {
     headers.authorization = `Bearer ${apiKey}`
   }
-  for (const [name, value] of Object.entries(brain.headers ?? {})) headers[name.toLowerCase()] = value
+  // Never in place of the key held, which a header another device set (D700) would swap for an account of its own.
+  for (const [name, value] of Object.entries(brain.headers ?? {})) if (!(apiKey && /^(authorization|x-api-key|proxy-authorization)$/i.test(name))) headers[name.toLowerCase()] = value
   return headers
 }
 

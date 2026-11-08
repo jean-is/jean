@@ -22,6 +22,7 @@
   "cap.backup.text": "Bewaar een kopie van alles in één bestand en zet die op elk apparaat terug.",
   "cap.share.text": "Stuur een taak, of een pagina, grafiek, presentatie of afbeelding, als link die iedereen naar wie je hem stuurt kan openen.",
   "cap.sync.text": "Houdt je taken, bestanden en het geheugen gelijk op je andere computers, via een map die OneDrive, Dropbox, iCloud Drive of Google Drive synchroniseert.",
+  "cap.devices.text": "{name} ook op je telefoon of een andere computer, met je breinen, instellingen en projecten, zo verzegeld dat alleen je apparaten ze lezen. Een taak gaat van het ene naar het andere als je hem stuurt.",
   "cap.lock.text": "Je taken, bestanden en sleutels gaan alleen open met je toegangssleutel of wachtwoord.",
   "cap.brain-local.text": "Privé, gratis en offline: een brein dat op deze computer draait, als die krachtig genoeg is.",
   "collection.count": {
@@ -58,6 +59,7 @@
   "cap.backup.hint": "Begin drie taken.",
   "cap.share.hint": "Bewaar een kopie van een taak.",
   "cap.sync.hint": "Vertel dat je ook een andere computer gebruikt.",
+  "cap.devices.hint": "Vertel dat je dit graag op je telefoon of een andere computer wilt, of zet het hier aan.",
   "cap.lock.hint": "Koppel een dienst of begin tien taken.",
   "cap.brain-local.hint": "Kies het brein dat op dit apparaat draait.",
   "cap.memory.text": "{name} onthoudt blijvende dingen die je noemt: voorkeuren, feiten, correcties. Je kunt alles zien en aanpassen.",

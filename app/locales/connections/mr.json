@@ -56,7 +56,7 @@
   "connections.account": "खाते",
   "connections.since": "{date} रोजी जोडले",
   "connections.signInAgain": "पुन्हा साइन इन करा",
-  "connections.disconnectAsk": "{service} डिस्कनेक्ट करायची? तिची की या डिव्हाइसवरून जाईल; {service} मध्ये काहीही बदलणार नाही.",
+  "connections.disconnectAsk": "{service} डिस्कनेक्ट करायची? तिची की तुमच्या डिव्हाइसवरून काढली जाईल; {service} मध्ये काहीही बदलणार नाही.",
   "connections.cancel": "रद्द करा",
   "connections.find": "सेवा शोधा",
   "connections.found": {
@@ -80,7 +80,7 @@
   "connections.can": "तिथे काय करण्याची परवानगी असेल",
   "connections.how": "ती कशी जोडली जाते",
   "connections.signInThere": "{service} ने विचारल्यास, तुम्ही तिथे साइन इन करून इथे परत येता. तुमचा पासवर्ड इथे कधीच दिसत नाही.",
-  "connections.sealed": "तिची की या डिव्हाइसवरच सीलबंद राहते, आणि कधीच बॅकअप, एक्सपोर्ट किंवा शेअरमध्ये जात नाही.",
+  "connections.sealed": "तिची की तुमच्या स्वतःच्या डिव्हाइसवरच सीलबंद राहते, आणि कधीच बॅकअप, एक्सपोर्ट किंवा शेअरमध्ये जात नाही.",
   "connections.another": "{service} आधीच जोडलेली आहे: याने आणखी एक खाते जोडले जाईल.",
   "connections.connectTo": "{service} जोडा",
   "connections.kept": "फक्त {service} साठी ठेवले."

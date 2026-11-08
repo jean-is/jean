@@ -22,6 +22,7 @@
   "cap.backup.text": "Mirout un eilskouerenn eus pep tra en ur restr hepken, hag e adsevel war forzh peseurt trevnad.",
   "cap.share.text": "Kas un drevell, ur bajenn, ur grafik, treyonennoù pe ur skeudenn evel ul liamm a c’hall bezañ digoret gant an hini a resev anezhañ.",
   "cap.sync.text": "Mirout a ra an hevelep trevelloù, restroù ha memor war hoc’h urzhiataerioù all, dre un teuliad goubredet gant OneDrive, Dropbox, iCloud Drive pe Google Drive.",
+  "cap.devices.text": "{name} war ho pellgomzer pe war un urzhiataer all ivez, gant hoc’h empennoù, hoc’h arventennoù hag ho raktresoù, siellet evit na vefent lennet nemet gant ho trevnadoù. Ur drevell a dremen eus unan d’egile pa gasit anezhi.",
   "cap.lock.text": "Ho trevelloù, ho restroù hag hoc’h alc’hwezioù ne zigoront nemet gant hoc’h alc’hwez-tremen pe ho ker-tremen.",
   "cap.brain-local.text": "Prevez, digoust hag ezlinenn : un empenn a red war an urzhiataer-mañ, mar bez galloudek a-walc’h.",
   "collection.count": {
@@ -61,6 +62,7 @@
   "cap.backup.hint": "Krogit gant teir zrevell.",
   "cap.share.hint": "Enrollit un eilskouerenn eus un drevell.",
   "cap.sync.hint": "Menegit e implijit un urzhiataer all ivez.",
+  "cap.devices.hint": "Menegit e karfec’h kaout an dra-mañ war ho pellgomzer pe war un urzhiataer all, pe gweredekait anezhañ amañ.",
   "cap.lock.hint": "Kevreit ur servij, pe krogit gant dek trevell.",
   "cap.brain-local.hint": "Dibabit an empenn a red war an trevnad-mañ.",
   "cap.memory.text": "{name} a zalc’h soñj eus an traoù padus a venegit, evel dibaboù, fedoù ha reizhadennoù. Gallout a rit gwelout ha kemmañ pep tra.",

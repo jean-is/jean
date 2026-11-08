@@ -60,7 +60,7 @@
   "connections.account": "Účet",
   "connections.since": "Pripojené {date}",
   "connections.signInAgain": "Prihlásiť sa znova",
-  "connections.disconnectAsk": "Odpojiť službu {service}? Jej kľúč opustí toto zariadenie; v samotnej službe sa nič nezmení.",
+  "connections.disconnectAsk": "Odpojiť službu {service}? Jej kľúč zmizne z vašich zariadení; v samotnej službe sa nič nezmení.",
   "connections.cancel": "Zrušiť",
   "connections.find": "Nájsť službu",
   "connections.found": {
@@ -88,7 +88,7 @@
   "connections.can": "Čo tam {name} smie robiť",
   "connections.how": "Ako sa pripája",
   "connections.signInThere": "Ak sa služba {service} opýta, prihlásite sa tam a potom sa vrátite sem. {name} vaše heslo nikdy nevidí.",
-  "connections.sealed": "Jej kľúč zostane v tomto zariadení, zapečatený, a nikdy sa nedostane do zálohy, exportu ani zdieľania.",
+  "connections.sealed": "Jej kľúč zostane vo vašich zariadeniach, zapečatený, a nikdy sa nedostane do zálohy, exportu ani zdieľania.",
   "connections.another": "Služba {service} je už pripojená: týmto pridáte ďalší účet.",
   "connections.connectTo": "Pripojiť službu {service}",
   "connections.kept": "Uložené len pre službu {service}."

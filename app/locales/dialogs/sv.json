@@ -22,6 +22,7 @@
   "cap.backup.text": "Spara en kopia av allt i en fil, och återställ den på vilken enhet som helst.",
   "cap.share.text": "Skicka en uppgift, eller en sida, ett diagram, en presentation eller en bild, som en länk som mottagaren kan öppna.",
   "cap.sync.text": "Håller dina uppgifter, filer och ditt minne likadana på dina andra datorer, via en mapp som OneDrive, Dropbox, iCloud Drive eller Google Drive synkroniserar.",
+  "cap.devices.text": "{name} även på din telefon eller en annan dator, med dina hjärnor, inställningar och projekt, förseglade så att bara dina enheter kan läsa dem. En uppgift går från den ena till den andra när du skickar den.",
   "cap.lock.text": "Dina uppgifter, filer och nycklar öppnas bara med din lösennyckel eller ditt lösenord.",
   "cap.brain-local.text": "Privat, gratis och offline: en hjärna som körs på den här datorn, om den är tillräckligt kraftfull.",
   "collection.count": {
@@ -58,6 +59,7 @@
   "cap.backup.hint": "Starta tre uppgifter.",
   "cap.share.hint": "Spara en kopia av en uppgift.",
   "cap.sync.hint": "Nämn att du också använder en annan dator.",
+  "cap.devices.hint": "Nämn att du gärna vill ha det här på din telefon eller en annan dator, eller slå på funktionen här.",
   "cap.lock.hint": "Anslut en tjänst, eller starta tio uppgifter.",
   "cap.brain-local.hint": "Välj hjärnan som körs på den här enheten.",
   "cap.memory.text": "{name} minns de bestående saker du nämner, som preferenser, fakta och rättelser. Du kan se och ändra allt.",

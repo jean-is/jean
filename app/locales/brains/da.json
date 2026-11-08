@@ -6,7 +6,7 @@
   "brain.quick.text": "Log ind med OpenRouter: en gratis konto, der giver adgang til hundredvis af hjerner, nogle af dem gratis.",
   "brain.quick.action": "Fortsæt med OpenRouter",
   "brain.key.title": "Brug en nøgle, du allerede har",
-  "brain.key.text": "Din nøgle bliver på denne enhed, krypteret.",
+  "brain.key.text": "Din nøgle bliver på dine egne enheder, krypteret.",
   "brain.key.provider": "Tjeneste",
   "brain.key.project": "Google Cloud-projekt",
   "brain.key.open": "Åbn {service}, og log ind eller opret en konto",

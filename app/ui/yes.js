@@ -2,7 +2,8 @@
 // it is on (a yes at 0.6, D67), else by the room's brain in a word, a step of its own outside any
 // conversation. What sets a routine off asks it (D294), and so do guards (D295).
 import { loaded, contributions } from './caps.js'
-import { app, activeBrain } from './state.js'
+import { app, activeBrain, brainsHere, cloudAllowed } from './state.js'
+import { isLocal } from '../core/settings.js'
 import { getSecret } from './secrets.js'
 import { fire } from '../core/hooks.js'
 
@@ -13,7 +14,8 @@ export async function yes(question, text, task) {
     const { answer } = await decide(text, { answer: { type: 'noul', instructions: question } })
     return answer?.type === 'noul' && answer.noul >= 0.6
   }
-  const brain = activeBrain.peek()
+  // Kept on this device, never a brain in the cloud: one here, else none, and whoever asked asks the person.
+  const brain = cloudAllowed() ? activeBrain.peek() : brainsHere.peek().find(isLocal)
   if (!brain) throw new Error('No brain to ask')
   const [{ streamChat }, apiKey] = await Promise.all([import('../core/llm.js'), getSecret(app.fs, brain.id)])
   const asked = { task, brain, system: 'Answer the question about what follows with yes or no, in English, and nothing else.', messages: [{ role: 'user', content: `${question}\n\n<about>\n${text}\n</about>` }], tools: [], maxTokens: 400, effort: /** @type {const} */ ('low') }

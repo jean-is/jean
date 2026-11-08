@@ -312,6 +312,8 @@
   "cap.sync.name": "Goubredañ",
   "cap.sync.offer": "Mirout an hevelep trevelloù, restroù ha memor war hoc’h urzhiataerioù all ? Dibab a rit un teuliad goubredet gant ho pladenn er c’houmoul.",
   "cap.sync.yes": "Dibab un teuliad",
+  "cap.devices.name": "Ho trevnadoù",
+  "cap.devices.offer": "Kaout hoc’h empennoù, hoc’h arventennoù hag ho raktresoù war ho pellgomzer pe war un urzhiataer all ivez ? Ouzhpennañ a rit anezhañ gant ur c’hod QR ha c’hwec’h sifr.",
   "cap.lock.name": "Prenn",
   "cap.lock.offer": "Prennañ ho trevelloù, ho restroù hag hoc’h alc’hwezioù, evit ma c’hallfec’h o digeriñ war an trevnad-mañ hepken ?",
   "cap.lock.yes": "Lakaat ur prenn",

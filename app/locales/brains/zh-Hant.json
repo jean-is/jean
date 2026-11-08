@@ -6,7 +6,7 @@
   "brain.quick.text": "用 OpenRouter 登入：一個免費帳號，就能使用數百個大腦，其中有些是免費的。",
   "brain.quick.action": "透過 OpenRouter 繼續",
   "brain.key.title": "使用你已有的金鑰",
-  "brain.key.text": "你的金鑰會加密保存在這台裝置上。",
+  "brain.key.text": "你的金鑰會加密保存在你自己的裝置上。",
   "brain.key.provider": "服務",
   "brain.key.project": "Google Cloud 專案",
   "brain.key.open": "開啟 {service}，登入或建立帳號",

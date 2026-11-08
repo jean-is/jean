@@ -1,7 +1,8 @@
 // The seal on Jean's files at rest (docs/encryption.md): a header, then records of AES-256-GCM,
 // each file's key derived from the vault key and the file's own salt, and the slots that keep the
-// vault key sealed under this device's key, a passkey, a password or a recovery code. Web Crypto
-// only, so the storage worker, the lock and node --test share it.
+// vault key sealed under this device's key, a passkey, a password or a recovery code. And what goes
+// from one ECDH key to another: a device's to another's, a child's profile's to its parent's. Web
+// Crypto only, so the storage worker, the lock and node --test share it.
 
 const MAGIC = [0x89, 0x73, 0x65, 0x61, 0x6c] // "\x89seal"
 export const HEADER = 32
@@ -157,4 +158,63 @@ export function deviceKey(what, root) {
       asked.onerror = () => (what === 'get' ? reject(asked.error) : resolve(null))
     }
   })
+}
+
+// ─── From one key to another ─────────────────────────────────────────────────
+
+const EC = { name: 'ECDH', namedCurve: 'P-256' }
+
+/** A new ECDH P-256 pair, both halves as JWK: a device's, kept in .secrets/ behind the lock, or a parent's profile's (D228). */
+export async function boxPair() {
+  const made = await subtle.generateKey(EC, true, ['deriveBits'])
+  return { key: await subtle.exportKey('jwk', made.privateKey), public: await subtle.exportKey('jwk', made.publicKey) }
+}
+
+/** A key's fingerprint, the same from either half: the first 16 bytes of SHA-256 of its raw bytes, base64url. @param {JsonWebKey} key */
+export const fingerprintOf = async ({ kty, crv, x, y }) => encode(new Uint8Array(await subtle.digest('SHA-256', await subtle.exportKey('raw',
+  await subtle.importKey('jwk', { kty, crv, x, y }, EC, true, [])))).slice(0, 16)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+
+/**
+ * The 32 bytes two ECDH keys share, the same from either side. A private half is taken whatever ops its
+ * JWK lists, since the same secret makes a key or bits. @param {JsonWebKey} mine @param {JsonWebKey} theirs
+ */
+const shared = async (mine, theirs) => new Uint8Array(await subtle.deriveBits({ name: 'ECDH', public: await subtle.importKey('jwk', theirs, EC, false, []) },
+  await subtle.importKey('jwk', { ...mine, key_ops: ['deriveBits'] }, EC, false, ['deriveBits']), 256))
+
+/**
+ * A box's key: HKDF over what the two keys share, bound to the sender's fingerprint and the recipient's in that
+ * order, so it opens only from the key that sealed it, for the key it was sealed for, and never reflected back.
+ * @param {JsonWebKey} mine @param {JsonWebKey} theirs @param {Uint8Array} salt @param {boolean} sending
+ */
+async function boxKey(mine, theirs, salt, sending) {
+  const ends = await Promise.all([fingerprintOf(mine), fingerprintOf(theirs)])
+  const base = await subtle.importKey('raw', await shared(mine, theirs), 'HKDF', false, ['deriveKey'])
+  return subtle.deriveKey(hkdf(salt, `box|${(sending ? ends : ends.reverse()).join('|')}`), base, AES, false, ['encrypt', 'decrypt'])
+}
+
+/**
+ * Bytes from this device's key to another's: a fresh salt, a fresh IV, then AES-256-GCM.
+ * @param {JsonWebKey} mine this device's private key @param {JsonWebKey} theirs the other's public key @param {Uint8Array} bytes
+ */
+export async function sealBox(mine, theirs, bytes) {
+  const [salt, iv] = [crypto.getRandomValues(new Uint8Array(16)), crypto.getRandomValues(new Uint8Array(12))]
+  return join([salt, iv, new Uint8Array(await subtle.encrypt({ name: 'AES-GCM', iv }, await boxKey(mine, theirs, salt, true), /** @type {BufferSource} */ (bytes)))])
+}
+
+/** What another device's key sealed for this one; throws for anything else. @param {JsonWebKey} mine @param {JsonWebKey} theirs the sender's public key @param {Uint8Array} sealed */
+export const openBox = async (mine, theirs, sealed) => new Uint8Array(await subtle.decrypt({ name: 'AES-GCM', iv: sealed.slice(16, 28) }, await boxKey(mine, theirs, sealed.slice(0, 16), false), sealed.slice(28)))
+
+/** A value only the holder of a private key opens, sealed from a throwaway key, as a child's profile tells its parent's (D228). @param {JsonWebKey} to its public key @param {unknown} value */
+export async function sealFor(to, value) {
+  const [own, iv] = [await boxPair(), crypto.getRandomValues(new Uint8Array(12))]
+  const key = await subtle.importKey('raw', await shared(own.key, to), 'AES-GCM', false, ['encrypt'])
+  const data = new Uint8Array(await subtle.encrypt({ name: 'AES-GCM', iv }, key, encoder.encode(JSON.stringify(value))))
+  return JSON.stringify({ format: 1, from: own.public, iv: encode(iv), data: encode(data) })
+}
+
+/** What sealFor() sealed for this key; throws for any other. @param {JsonWebKey} mine its private key @param {string} text */
+export async function openFrom(mine, text) {
+  const { from, iv, data } = JSON.parse(text)
+  const key = await subtle.importKey('raw', await shared(mine, from), 'AES-GCM', false, ['decrypt'])
+  return JSON.parse(new TextDecoder().decode(await subtle.decrypt({ name: 'AES-GCM', iv: decode(iv) }, key, decode(data))))
 }

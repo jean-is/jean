@@ -106,15 +106,16 @@ export function drafts() {
   }
 }
 
-/** A share opened in this Jean (D361), from its viewer's Continue: brought in, then the address is the task's (caps/share/share.js), which it follows. */
-const bringShared = async () => location.hash.startsWith('#/shared/') && unlock('share').then((ok) => ok && import('../caps/share/share.js').then((module) => module.fromAddress()).then(() => true))
+/** What an address brings, handed to its capability, which leaves the address to follow: a share from its viewer's Continue (D361), another of the person's devices to join (D700). */
+const ARRIVALS = [['#/shared/', 'share'], ['#/pair/', 'devices']]
+const arrive = async () => { const [, id = ''] = ARRIVALS.find(([start]) => location.hash.startsWith(start)) ?? []; return Boolean(id && await unlock(id) && (await (await import(`../caps/${id}/${id}.js`)).fromAddress(), true)) }
 
 export async function startRouter() {
-  await bringShared()
+  await arrive()
   await follow()
   // A skip link's fragment isn't a place: the address goes back to where Jean is.
   addEventListener('hashchange', () => (/^#\w/.test(location.hash) ? write(true) : turnPage(async () => {
-    if (await bringShared()) return follow()
+    if (await arrive()) return follow()
     if (!backing) return follow(!samePlace(location.hash, place()))
     backing = false
     write()

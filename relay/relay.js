@@ -2,7 +2,11 @@
 // Whoever serves Jean runs one, or none, and Jean names it in settings or policy (`urls.relay`). A
 // mailbox is named by the token that opens it, as the share host names a share (D361): its id is the
 // token's SHA-256's first 16 bytes, so the relay holds no key and no name. It keeps each change's
-// address, as French law asks of hosts, sealed by the store, and nothing about who reads.
+// address, as French law asks of hosts, sealed by the store, and nothing about who reads. What a mailbox
+// takes is counted for each network that sends, so that one sender, a stolen device knowing every
+// mailbox, can't fill it for the others: each message keeps 24 bits of a hash of its mailbox and network.
+// The mailbox's own ceiling, a few networks' worth, holds only against a network at or past its fair share;
+// one under it takes the room of the oldest message of the network furthest past its own, if any is.
 //
 //   GET    /                    what it keeps: { format: 1, message, days }
 //   PUT    /v1/m/<id>           opens a mailbox: Authorization: Bearer <token>, whose SHA-256 the id is the start of;
@@ -11,7 +15,8 @@
 //   GET    /v1/m/<id>?after=<seq>&wait=<seconds>
 //                               with the token: what came after seq, each small one whole, waiting up to 25 seconds
 //                               for one; what is at or before seq has been read, and goes:
-//                               { messages: [{ seq, at, size, body? }], now }, now the relay's clock
+//                               { messages: [{ seq, at, size, body? }], now, next }, now the relay's clock, next the next
+//                               message's number; a seq at or above it, a reader's from before a rollback, reads from the start
 //   GET    /v1/m/<id>/<seq>     with the token: a large message's bytes
 //   DELETE /v1/m/<id>           with the token: the mailbox and all it holds
 //
@@ -27,18 +32,19 @@ export const LIMITS = Object.freeze({
   message: 25_000_000,
   /** A message small enough to come whole in a read. */
   inline: 65_536,
-  /** Messages a mailbox holds, and their bytes. */
+  /** Messages a mailbox holds from one network, and their bytes. */
   messages: 500,
   bytes: 64_000_000,
   /** Days a message stays, and days a mailbox nobody opens or reads stays. */
   days: 7,
   idle: 90,
-  /** Messages a mailbox takes in an hour, mailboxes a network opens in an hour, bytes a network sends in a day. */
+  /** Messages a mailbox takes from one network in an hour, mailboxes a network opens in an hour, bytes a network sends in a day. */
   writes: 200,
   opens: 60,
   sent: 256_000_000,
-  /** Reads waiting on one mailbox at once: a person's devices, each its own. */
+  /** Reads waiting on one mailbox at once: a person's devices, each its own; and how many networks' share of messages a mailbox takes in all. */
   waits: 4,
+  networks: 4,
   /** Bytes of disk under which no message is taken. */
   free: 1_000_000_000,
 })
@@ -52,7 +58,7 @@ const PATH = /^\/v1\/m\/([\w-]{22})(?:\/(\d{1,9}))?$/
  * A mailbox as the store keeps it: its token's hash, whether it takes one message (and took it), the next message's number,
  * where its messages are, and when it was last opened or read.
  * @typedef {{ format: 1, token: string, once?: true, used?: true, next: number, messages: Entry[], touched: number }} Box
- * @typedef {{ seq: number, at: number, size: number }} Entry
+ * @typedef {{ seq: number, at: number, size: number, net?: string }} Entry
  * @typedef {{ box(id: string): Promise<Box | null>, save(id: string, box: Box): Promise<void>, add(id: string, seq: number, body: Uint8Array): Promise<void>,
  *   read(id: string, seq: number): Promise<Uint8Array | null>, drop(id: string, seqs: number[]): Promise<void>, remove(id: string): Promise<void>,
  *   record(text: string): Promise<void>, free?(): Promise<number> }} Store
@@ -60,7 +66,7 @@ const PATH = /^\/v1\/m\/([\w-]{22})(?:\/(\d{1,9}))?$/
  * @typedef {import('../host/host.js').Client} Client
  */
 
-/** @param {Config} config @returns {(request: Request, client?: Client) => Promise<Response>} */
+/** @param {Config} config @returns {((request: Request, client?: Client) => Promise<Response>) & { tidy(id: string, at: number): Promise<void> }} */
 export function relay(config) {
   const { origins = [], store } = config
   const limits = { ...LIMITS, ...config.limits }
@@ -96,7 +102,10 @@ export function relay(config) {
     return box
   }
 
-  return async (request, client = { address: '', port: 0 }) => {
+  /** A mailbox tidied in its turn, as the daily sweep asks: its messages past their days dropped, or all of it, nobody opened or read for its idle days. @param {string} id @param {number} at */
+  const tidy = (id, at) => inTurn(id, async () => { const box = await live(id, at); if (!box || at - box.touched > limits.idle * DAY) await store?.remove(id) })
+
+  return Object.assign(async (/** @type {Request} */ request, /** @type {Client} */ client = { address: '', port: 0 }) => {
     const url = new URL(request.url)
     const origin = request.headers.get('origin') ?? ''
     const ours = origins.includes(origin)
@@ -118,8 +127,8 @@ export function relay(config) {
 
     const at = now()
     const network = networkOf(client.address)
-    const was = seen.get(network)
-    const mine = { hour: at, opens: 0, day: at, sent: 0, ...was }
+    // One count per network, changed in place, so that a request from it meanwhile counts with this one, never over it.
+    const mine = seen.get(network) ?? { hour: at, opens: 0, day: at, sent: 0 }
     if (at - mine.hour >= HOUR) Object.assign(mine, { hour: at, opens: 0 })
     if (at - mine.day >= DAY) Object.assign(mine, { day: at, sent: 0 })
     // Grown long, what is past its day goes, once a minute at most; far past that, all goes.
@@ -141,28 +150,53 @@ export function relay(config) {
       if (!body) return answer(413, { error: 'This message is too large.' })
       if (!body.length) return answer(400, { error: 'This message is empty.' })
       if (mine.sent + body.length > limits.sent) return answer(429, { error: 'Too much sent today. Try again later.' })
+      // Counted before anything waits, and given back unless it is taken, whatever stops it.
+      mine.sent += body.length
+      let status = 0
+      try {
+      const done = await (async () => {
       if ((await store?.free?.() ?? Infinity) < limits.free) return answer(507, { error: 'The relay is full. Try again later.' })
+      const net = (await hashOf(`${id} ${network}`)).slice(0, 4)
       return inTurn(id, async () => {
         const box = await live(id, at)
         if (!box) return answer(404, { error: 'No mailbox is open here.' })
         if (box.once && box.used) return answer(409, { error: 'This mailbox took its message.' })
-        const hour = taken.get(id)
-        const count = hour && at - hour.from < HOUR ? hour : { from: at, count: 0 }
-        if (count.count >= limits.writes) return answer(429, { error: 'Too many messages. Try again later.' })
-        const held = box.messages.reduce((sum, entry) => sum + entry.size, 0)
-        if (box.messages.length >= limits.messages || held + body.length > limits.bytes) return answer(507, { error: 'This mailbox is full.' })
+        // This network's share of the mailbox, and the mailbox's own, a few networks' worth, which holds only against a network at or past
+        // its fair share of it: one under it takes room from the network holding the most, its oldest first, so that a few never shut out another.
+        const [hour, all] = [`${id} ${net}`, id].map((key) => ((one) => (one && at - one.from < HOUR ? one : { from: at, count: 0 }))(taken.get(key)))
+        if (hour.count >= limits.writes || (all.count >= limits.writes * limits.networks && hour.count >= limits.writes / limits.networks)) return answer(429, { error: 'Too many messages. Try again later.' })
+        const bytes = (/** @type {Entry[]} */ list) => list.reduce((sum, entry) => sum + entry.size, body.length)
+        const full = (/** @type {Entry[]} */ list, /** @type {number} */ times) => list.length >= limits.messages * times || bytes(list) > limits.bytes * times
+        const ours = box.messages.filter((entry) => entry.net === net)
+        if (full(ours, 1)) return answer(507, { error: 'This mailbox is full.' })
+        while (full(box.messages, limits.networks)) {
+          if (ours.length >= limits.messages / limits.networks || bytes(ours) > limits.bytes / limits.networks) return answer(507, { error: 'This mailbox is full.' })
+          /** @type {Map<string | undefined, Entry[]>} */
+          const held = new Map()
+          for (const entry of box.messages) held.set(entry.net, [...held.get(entry.net) ?? [], entry])
+          // Only from a network past its share, the furthest over first: what one within its share was told was taken stays.
+          const over = (/** @type {Entry[]} */ list) => Math.max(list.length / (limits.messages / limits.networks), (bytes(list) - body.length) / (limits.bytes / limits.networks))
+          const [most] = [...held.values()].filter((list) => over(list) > 1).sort((a, b) => over(b) - over(a))
+          if (!most) return answer(507, { error: 'This mailbox is full.' })
+          await store?.drop(id, [most[0].seq])
+          box.messages = box.messages.filter((entry) => entry !== most[0])
+        }
         await store?.add(id, box.next, body)
-        box.messages.push({ seq: box.next, at, size: body.length })
+        box.messages.push({ seq: box.next, at, size: body.length, net })
         const sent = box.next
         box.next += 1
         if (box.once) box.used = true
         await store?.save(id, box)
-        mine.sent += body.length
-        taken.set(id, { from: count.from, count: count.count + 1 })
+        taken.set(`${id} ${net}`, { from: hour.from, count: hour.count + 1 })
+        taken.set(id, { from: all.from, count: all.count + 1 })
         await record('message')
         wake(id)
         return answer(201, { seq: sent })
       })
+      })()
+      status = done.status
+      return done
+      } finally { if (status !== 201) mine.sent -= body.length }
     }
 
     // The rest is the mailbox's own, with its token.
@@ -170,7 +204,6 @@ export function relay(config) {
     if (!owner) return answer(403, { error: 'This mailbox is someone else’s.' })
 
     if (request.method === 'PUT' && !seq) {
-      if (++mine.opens > limits.opens) return answer(429, { error: 'Too many mailboxes. Try again later.' })
       /** @type {{ once?: unknown }} */
       let asked = {}
       try { asked = JSON.parse(new TextDecoder().decode(await within(request, 1_000) ?? new Uint8Array())) } catch {}
@@ -181,6 +214,8 @@ export function relay(config) {
           await store?.save(id, { ...held, touched: at })
           return answer(200, {})
         }
+        // Only a new mailbox counts: a device opens its own again at each start, many behind one office's address.
+        if (++mine.opens > limits.opens) return answer(429, { error: 'Too many mailboxes. Try again later.' })
         await store?.save(id, { format: 1, token: hash, ...(asked.once === true && { once: /** @type {const} */ (true) }), next: 1, messages: [], touched: at })
         await record('open')
         return answer(201, {})
@@ -202,19 +237,24 @@ export function relay(config) {
 
     if (!reading) return answer(405, { error: 'Not here.' })
     if (seq) {
-      const box = await live(id, at)
+      // Outside the mailbox's turn, what is past its days is passed over, never saved: that is for the turn's read, or the sweep.
+      const box = await store?.box(id)
       if (box && box.token !== hash) return answer(403, { error: 'This mailbox is someone else’s.' })
-      const body = box?.messages.some((entry) => entry.seq === Number(seq)) ? await store?.read(id, Number(seq)) : null
+      const listed = box?.messages.some((entry) => entry.seq === Number(seq) && at - entry.at <= limits.days * DAY)
+      const body = listed ? await store?.read(id, Number(seq)) : null
+      // Listed, its body gone: dropped from the mailbox in its turn, as a read does, so that it is never handed out again.
+      if (listed && !body) await inTurn(id, async () => { const held = await store?.box(id); if (held) await store?.save(id, { ...held, messages: held.messages.filter((entry) => entry.seq !== Number(seq)) }) })
       if (!body) return answer(404, { error: 'This message is gone.' })
       cors.set('content-type', 'application/octet-stream')
       return new Response(/** @type {BodyInit} */ (body), { headers: cors })
     }
-    const after = Math.max(0, Math.floor(Number(url.searchParams.get('after')) || 0))
+    let after = Math.max(0, Math.floor(Number(url.searchParams.get('after')) || 0))
     const wait = Math.min(WAIT, Math.max(0, Number(url.searchParams.get('wait')) || 0))
-    // What was read goes; then, with nothing new, the read waits outside the mailbox's turn, so others go on.
+    // What was read goes.
     const opened = await inTurn(id, async () => {
       const box = await live(id, at)
       if (!box || box.token !== hash) return box
+      if (after >= box.next) after = 0
       const read = box.messages.filter((entry) => entry.seq <= after)
       if (read.length) await store?.drop(id, read.map((entry) => entry.seq))
       const kept = { ...box, messages: box.messages.filter((entry) => entry.seq > after), touched: at }
@@ -223,13 +263,25 @@ export function relay(config) {
     })
     if (!opened) return answer(404, { error: 'No mailbox is open here.' })
     if (opened.token !== hash) return answer(403, { error: 'This mailbox is someone else’s.' })
-    let box = opened
-    if (!box.messages.length && wait > 0) {
+    /** What a mailbox holds past `after`, each small one whole; an entry whose body is gone (an older sweep) is dropped from it. @param {Box} box */
+    const handed = async (box) => {
+      const out = await Promise.all(box.messages.filter((entry) => entry.seq > after).map(async (entry) => {
+        if (entry.size > limits.inline) return { seq: entry.seq, at: entry.at, size: entry.size }
+        const body = await store?.read(id, entry.seq)
+        return body ? { seq: entry.seq, at: entry.at, size: entry.size, body: base64url(body) } : entry.seq
+      }))
+      const gone = out.filter((one) => typeof one === 'number')
+      if (gone.length) await inTurn(id, async () => { const held = await store?.box(id); if (held) await store?.save(id, { ...held, messages: held.messages.filter((entry) => !gone.includes(entry.seq)) }) })
+      return out.filter((one) => typeof one !== 'number')
+    }
+    let [box, messages] = [opened, await handed(opened)]
+    // Nothing to hand out: the read waits for what comes, outside the mailbox's turn, so others go on.
+    if (!messages.length && wait > 0) {
       await new Promise((resolve) => {
+        // One device too many: the oldest wait ends, empty, as its device has likely gone, before this one takes its place.
+        if ((waiting.get(id)?.size ?? 0) >= limits.waits) [...waiting.get(id) ?? []][0]()
         const set = waiting.get(id) ?? new Set()
         waiting.set(id, set)
-        // One device too many: the oldest wait ends, empty, as its device has likely gone.
-        if (set.size >= limits.waits) [...set][0]()
         const done = () => {
           clearTimeout(timer)
           set.delete(done)
@@ -240,12 +292,8 @@ export function relay(config) {
         set.add(done)
       })
       box = await store?.box(id) ?? { ...box, messages: [] }
+      messages = await handed(box)
     }
-    const messages = (await Promise.all(box.messages.filter((entry) => entry.seq > after).map(async (entry) => {
-      if (entry.size > limits.inline) return { seq: entry.seq, at: entry.at, size: entry.size }
-      const body = await store?.read(id, entry.seq)
-      return body && { seq: entry.seq, at: entry.at, size: entry.size, body: base64url(body) }
-    }))).filter(Boolean)
-    return answer(200, { messages, now: now() })
-  }
+    return answer(200, { messages, now: now(), next: box.next })
+  }, { tidy })
 }

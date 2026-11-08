@@ -55,7 +55,7 @@ function relayOn(config = {}) {
     const response = await ask(`/v1/m/${id}${query}`, { token })
     return { status: response.status, body: await response.json() }
   }
-  return { store, ask, open, send, read }
+  return { store, handle, ask, open, send, read }
 }
 
 test('a mailbox opens with its token, the one whose hash names it, and anyone may leave a message in it', async () => {
@@ -205,6 +205,15 @@ test('the limits: a message’s size, a mailbox’s count, bytes and changes, a 
   }
 })
 
+test('only a new mailbox counts against what a network opens in an hour: opening one’s own again never does', async () => {
+  const { open } = relayOn({ limits: { opens: 2 } })
+  const [one, two, three] = [await mailbox(), await mailbox(), await mailbox()]
+  assert.equal((await open(one.id, one.token)).status, 201)
+  for (let i = 0; i < 5; i++) assert.equal((await open(one.id, one.token)).status, 200)
+  assert.equal((await open(two.id, two.token)).status, 201)
+  assert.equal((await open(three.id, three.token)).status, 429)
+})
+
 test('only the Jeans it serves reach it, and a poll costs no second preflight', async () => {
   const { ask, open } = relayOn()
   const box = await mailbox()
@@ -243,9 +252,200 @@ test('the folder keeps mailboxes and their messages, seals its records, and swee
     assert.ok(await store.free() > 0)
     // A mailbox nobody opened or read for its idle days goes, with what it held.
     now += 91 * 86_400_000
-    await store.sweep(now)
+    await store.sweep(handle.tidy, now)
     assert.equal(await store.box(box.id), null)
   } finally {
     await rm(dir, { recursive: true, force: true })
   }
+})
+
+test('a read says the next message’s number, and one from past it, a reader’s from before a rollback, reads from the start and drops nothing', async () => {
+  const { open, send, read } = relayOn()
+  const box = await mailbox()
+  await open(box.id, box.token)
+  await send(box.id, 'one')
+  await send(box.id, 'two')
+  assert.equal((await read(box.id, box.token)).body.next, 3)
+  const stale = await read(box.id, box.token, '?after=40')
+  assert.deepEqual([stale.body.messages.map((/** @type {any} */ message) => message.seq), stale.body.next], [[1, 2], 3])
+  assert.deepEqual((await read(box.id, box.token)).body.messages.map((/** @type {any} */ message) => message.seq), [1, 2], 'nothing taken as read')
+})
+
+test('a mailbox counts what each network sends it: one that fills its share, a stolen device knowing every mailbox, leaves the others theirs', async () => {
+  const small = { message: 100, messages: 2, bytes: 1_000, writes: 4, sent: 10_000, free: 1_000, networks: 2 }
+  const elsewhere = (/** @type {string} */ address) => ({ client: { ...CLIENT, address } })
+  {
+    const { open, send } = relayOn({ limits: small })
+    const box = await mailbox()
+    await open(box.id, box.token)
+    for (const n of [1, 2]) assert.equal((await send(box.id, 'x')).status, 201, `message ${n}`)
+    assert.equal((await send(box.id, 'x')).status, 507, 'its share of the messages held')
+    for (const n of [1, 2]) assert.equal((await send(box.id, 'x', elsewhere('198.51.100.9'))).status, 201, `another network’s ${n}`)
+    // The mailbox holds two networks' worth: a third, under its share, takes the room of the oldest of those holding the most; at it, no more.
+    assert.equal((await send(box.id, 'x', elsewhere('203.0.113.99'))).status, 201, 'a third network still gets in')
+    assert.equal((await send(box.id, 'x', elsewhere('203.0.113.99'))).status, 507, 'the mailbox’s, past its share')
+  }
+  {
+    const { open, send, read } = relayOn({ limits: { ...small, messages: 100 } })
+    const box = await mailbox()
+    await open(box.id, box.token)
+    for (const n of [1, 2, 3, 4]) assert.equal((await send(box.id, 'x')).status, 201, `write ${n}`)
+    assert.equal((await send(box.id, 'x')).status, 429, 'its share of an hour’s writes')
+    assert.equal((await send(box.id, 'x', elsewhere('198.51.100.9'))).status, 201, 'another network still gets in')
+    await read(box.id, box.token, '?after=5')
+  }
+})
+
+test('the daily sweep tidies each mailbox in its turn: a read and its ack, or a message, meanwhile are never undone', async () => {
+  let now = Date.parse('2027-01-04T00:00:00Z')
+  const { store, handle, open, send, read } = relayOn({ now: () => now })
+  const box = await mailbox()
+  await open(box.id, box.token)
+  // A device away a week: one message on day 0, two on day 6; on day 7 the sweep drops the first as the device reads and another writes.
+  await send(box.id, 'm1')
+  now += 6 * 86_400_000
+  for (const one of ['m2', 'm3']) await send(box.id, one)
+  now += 86_400_000 + 60_000
+  const drop = store.drop.bind(store)
+  let release = () => {}
+  const gate = new Promise((resolve) => { release = () => resolve(undefined) })
+  let held = true
+  store.drop = async (id, seqs) => { if (held) { held = false; await gate } return drop(id, seqs) }
+  const sweeping = handle.tidy(box.id, now)
+  await new Promise((resolve) => setTimeout(resolve, 10))
+  const reading = (async () => {
+    const one = await read(box.id, box.token)
+    await read(box.id, box.token, `?after=${one.body.messages.at(-1).seq}`)
+    return one
+  })()
+  const sending = send(box.id, 'm4')
+  await new Promise((resolve) => setTimeout(resolve, 10))
+  release()
+  const [one] = await Promise.all([reading, sweeping, sending])
+  const handed = one.body.messages.map((/** @type {any} */ message) => message.seq)
+  assert.deepEqual(handed.slice(0, 2), [2, 3], 'the first past its days')
+  // Every message read went with its ack; the one that came, if not yet read, stays, its body with it.
+  const kept = store.boxes.get(box.id).messages.map((/** @type {any} */ entry) => entry.seq)
+  assert.deepEqual(kept, [4].filter((seq) => !handed.includes(seq)))
+  for (const seq of kept) assert.ok(store.bodies.has(`${box.id}/${seq}`))
+})
+
+test('a read whose messages’ bodies are gone drops them from the mailbox and waits, never answering empty at once', async () => {
+  const { store, open, send, read } = relayOn()
+  const box = await mailbox()
+  await open(box.id, box.token)
+  for (const one of ['m1', 'm2']) await send(box.id, one)
+  for (const seq of [1, 2]) store.bodies.delete(`${box.id}/${seq}`)
+  const asked = Date.now()
+  const { body } = await read(box.id, box.token, '?wait=1')
+  assert.deepEqual(body.messages, [])
+  assert.ok(Date.now() - asked >= 900, 'it waited')
+  assert.deepEqual(store.boxes.get(box.id).messages, [])
+})
+
+test('a message past its days, asked for by its number, is gone, and the mailbox is left for its own turn to tidy', async () => {
+  let now = Date.parse('2027-01-04T00:00:00Z')
+  const { store, ask, open, send } = relayOn({ now: () => now })
+  const box = await mailbox()
+  await open(box.id, box.token)
+  await send(box.id, 'old')
+  now += 8 * 86_400_000
+  assert.equal((await ask(`/v1/m/${box.id}/1`, { token: box.token })).status, 404)
+  assert.deepEqual(store.boxes.get(box.id).messages.map((/** @type {any} */ entry) => entry.seq), [1], 'nothing saved outside the turn')
+})
+
+test('a message listed whose body is gone answers 404 by its number and leaves the mailbox, so it is never handed out again', async () => {
+  const { store, ask, open, send, read } = relayOn({ limits: { inline: 4 } })
+  const box = await mailbox()
+  await open(box.id, box.token)
+  await send(box.id, 'large enough')
+  store.bodies.delete(`${box.id}/1`)
+  assert.deepEqual((await read(box.id, box.token)).body.messages.map((/** @type {any} */ one) => one.seq), [1], 'listed, too large to come whole')
+  assert.equal((await ask(`/v1/m/${box.id}/1`, { token: box.token })).status, 404)
+  assert.deepEqual(store.boxes.get(box.id).messages, [])
+})
+
+test('one device too many: the oldest wait ends, and the one that took its place is still woken by what comes', async () => {
+  const { open, send, read } = relayOn({ limits: { waits: 1 } })
+  const box = await mailbox()
+  await open(box.id, box.token)
+  const first = read(box.id, box.token, '?wait=5')
+  await new Promise((resolve) => setTimeout(resolve, 20))
+  const asked = Date.now()
+  const second = read(box.id, box.token, '?wait=5')
+  assert.deepEqual((await first).body.messages, [], 'the oldest wait ends, empty')
+  await new Promise((resolve) => setTimeout(resolve, 20))
+  await send(box.id, 'hello')
+  assert.deepEqual((await second).body.messages.map((/** @type {any} */ one) => one.seq), [1])
+  assert.ok(Date.now() - asked < 2_000, 'woken, not left to its wait')
+})
+
+test('one network’s counts are changed in place: requests from it at once, a refused read among them, never count over each other', async () => {
+  {
+    const { open, send } = relayOn({ limits: { sent: 100, writes: 100, messages: 100, bytes: 10_000 } })
+    const boxes = [await mailbox(), await mailbox(), await mailbox()]
+    for (const box of boxes) await open(box.id, box.token)
+    const statuses = (await Promise.all(boxes.map((box) => send(box.id, 'x'.repeat(40))))).map((answer) => answer.status).sort()
+    assert.deepEqual(statuses, [201, 201, 429], 'what one network sends in a day, sent at once')
+  }
+  {
+    const { open } = relayOn({ limits: { opens: 2 } })
+    const boxes = [await mailbox(), await mailbox(), await mailbox()]
+    assert.deepEqual((await Promise.all(boxes.map((box) => open(box.id, box.token)))).map((answer) => answer.status).sort(), [201, 201, 429], 'mailboxes one network opens in an hour')
+  }
+  {
+    const { ask, open, send } = relayOn({ limits: { sent: 100, writes: 100, messages: 100, bytes: 10_000 } })
+    const [one, two] = [await mailbox(), await mailbox()]
+    for (const box of [one, two]) await open(box.id, box.token)
+    // A read without a token, refused, from the same network, as a message is on its way.
+    const [sent] = await Promise.all([send(one.id, 'x'.repeat(60)), ask(`/v1/m/${one.id}`), ask(`/v1/m/${two.id}`)])
+    assert.equal(sent.status, 201)
+    assert.equal((await send(two.id, 'x'.repeat(60))).status, 429, 'the first one counted')
+  }
+})
+
+test('networks that fill a mailbox’s ceiling never shut out another under its share: an hour’s writes, and the bytes held', async () => {
+  const at = (/** @type {number} */ n) => ({ client: { ...CLIENT, address: `198.51.100.${n}` } })
+  {
+    const { open, send } = relayOn({ limits: { writes: 4, networks: 2, messages: 100, bytes: 100_000 } })
+    const box = await mailbox()
+    await open(box.id, box.token)
+    for (const n of [1, 2]) for (let i = 0; i < 4; i++) assert.equal((await send(box.id, 'x', at(n))).status, 201)
+    assert.equal((await send(box.id, 'x', at(3))).status, 201, 'a third network, under its share of the writes')
+    assert.equal((await send(box.id, 'x', at(3))).status, 201)
+    assert.equal((await send(box.id, 'x', at(3))).status, 429, 'at its share, the mailbox’s ceiling holds')
+  }
+  {
+    const { store, open, send } = relayOn({ limits: { bytes: 100, networks: 2, messages: 100, writes: 100 } })
+    const box = await mailbox()
+    await open(box.id, box.token)
+    for (const n of [1, 2]) assert.equal((await send(box.id, 'x'.repeat(100), at(n))).status, 201)
+    assert.equal((await send(box.id, 'y'.repeat(40), at(3))).status, 201, 'a third network, under its share of the bytes')
+    const held = store.boxes.get(box.id).messages
+    assert.deepEqual([held.length, held.at(-1).size], [2, 40], 'the oldest of those holding the most gave way')
+  }
+})
+
+test('a message from a network within its share, once taken, is never dropped for another, however small the others’ messages', async () => {
+  const at = (/** @type {number} */ n) => ({ client: { ...CLIENT, address: `198.51.100.${n}` } })
+  const { store, open, send } = relayOn({ limits: { messages: 8, networks: 4, bytes: 100_000, writes: 100 } })
+  const box = await mailbox()
+  await open(box.id, box.token)
+  // Four networks fill it with one-byte messages; the person's list, one kilobyte, from a fifth, takes room as it is under its share.
+  for (const n of [1, 2, 3, 4]) for (let i = 0; i < 8; i++) await send(box.id, 'x', at(n))
+  assert.equal((await send(box.id, 'y'.repeat(1_000), at(5))).status, 201)
+  // A sixth network: room only from those past their share, never the list.
+  await send(box.id, 'z', at(6))
+  assert.ok(store.boxes.get(box.id).messages.some((/** @type {any} */ entry) => entry.size === 1_000), 'the list stays')
+})
+
+test('a message the store fails to keep gives its bytes back to what its network may send today', async () => {
+  const { store, open, send } = relayOn({ limits: { sent: 100, writes: 100, messages: 100, bytes: 10_000 } })
+  const box = await mailbox()
+  await open(box.id, box.token)
+  const add = store.add.bind(store)
+  store.add = async () => { throw new Error('disk') }
+  await send(box.id, 'x'.repeat(60)).catch(() => {})
+  store.add = add
+  assert.equal((await send(box.id, 'x'.repeat(60))).status, 201)
 })

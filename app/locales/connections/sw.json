@@ -56,7 +56,7 @@
   "connections.account": "Akaunti",
   "connections.since": "Imeunganishwa {date}",
   "connections.signInAgain": "Ingia tena",
-  "connections.disconnectAsk": "Tenganisha {service}? Ufunguo wake utaondoka kwenye kifaa hiki; hakuna kinachobadilika ndani ya {service} yenyewe.",
+  "connections.disconnectAsk": "Tenganisha {service}? Ufunguo wake utafutwa kwenye vifaa vyako; hakuna kinachobadilika ndani ya {service} yenyewe.",
   "connections.cancel": "Ghairi",
   "connections.find": "Tafuta huduma",
   "connections.found": {
@@ -80,7 +80,7 @@
   "connections.can": "Kitakachoruhusiwa huko",
   "connections.how": "Inavyounganishwa",
   "connections.signInThere": "{service} ikiomba, unaingia huko, kisha unarudi hapa. Nenosiri lako halionekani hapa kamwe.",
-  "connections.sealed": "Ufunguo wake unabaki kwenye kifaa hiki, umefungwa, na hauingii kamwe kwenye nakala, uhamishaji au ushirikishaji.",
+  "connections.sealed": "Ufunguo wake unabaki kwenye vifaa vyako mwenyewe, umefungwa, na hauingii kamwe kwenye nakala, uhamishaji au ushirikishaji.",
   "connections.another": "{service} tayari imeunganishwa: hii inaongeza akaunti nyingine.",
   "connections.connectTo": "Unganisha {service}",
   "connections.kept": "Imehifadhiwa kwa {service} pekee."

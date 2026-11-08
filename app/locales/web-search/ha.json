@@ -49,7 +49,7 @@
   "search.also": "Ana iya kashe binciken yanar gizo daga + a akwatin saƙo ma.",
   "search.key": "Makulli",
   "search.engine": "Lambar injin bincike",
-  "search.service.text": "Asusunka na {service} yana bincike a duk yanar gizo, ga kowace ƙwaƙwalwa. Kalmomin bincikenka suna zuwa {service}, wanda zai iya karɓar kuɗi a kansu, kuma makullinka yana nan a wannan na’ura.",
+  "search.service.text": "Asusunka na {service} yana bincike a duk yanar gizo, ga kowace ƙwaƙwalwa. Kalmomin bincikenka suna zuwa {service}, wanda zai iya karɓar kuɗi a kansu, kuma makullinka yana kan na’urorinka.",
   "search.getKey": "Samu makulli daga {service}",
   "search.refused": "{service} ya ƙi wannan makulli, ko kuma babu sauran bincike a kansa.",
   "search.silent": "{service} bai amsa ba. Duba makullin, ko sake gwadawa nan da ɗan lokaci.",

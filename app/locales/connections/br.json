@@ -62,7 +62,7 @@
   "connections.account": "Kont",
   "connections.since": "Kevreet d’ar {date}",
   "connections.signInAgain": "Kevreañ en-dro",
-  "connections.disconnectAsk": "Digevreañ {service} ? Dilamet e vo e alc’hwez eus an trevnad-mañ. Netra ne cheñch e {service} e-unan.",
+  "connections.disconnectAsk": "Digevreañ {service} ? Dilamet e vo e alc’hwez diwar ho trevnadoù. Netra ne cheñch e {service} e-unan.",
   "connections.cancel": "Nullañ",
   "connections.find": "Kavout ur servij",
   "connections.found": {
@@ -92,7 +92,7 @@
   "connections.can": "Petra a c’hallo {name} ober eno",
   "connections.how": "Penaos e kevre",
   "connections.signInThere": "Ma c’houlenn {service}, e kevreit eno, hag e tistroit amañ goude. Ne wel biken {name} ho ker-tremen.",
-  "connections.sealed": "E alc’hwez a chom war an trevnad-mañ, siellet, ha ne ya biken en ur warezadenn, un ezporzhiadenn pe ur rannadenn.",
+  "connections.sealed": "E alc’hwez a chom war ho trevnadoù deoc’h, siellet, ha ne ya biken en ur warezadenn, un ezporzhiadenn pe ur rannadenn.",
   "connections.another": "Kevreet eo {service} dija : ouzhpennañ a ra ur gont all.",
   "connections.connectTo": "Kevreañ {service}",
   "connections.kept": "Miret evit {service} hepken."

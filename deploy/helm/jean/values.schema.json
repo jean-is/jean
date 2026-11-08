@@ -150,6 +150,7 @@
                 "opens": { "type": "integer", "minimum": 1 },
                 "sent": { "type": "integer", "minimum": 1 },
                 "waits": { "type": "integer", "minimum": 1 },
+                "networks": { "type": "integer", "minimum": 1 },
                 "free": { "type": "integer", "minimum": 0 }
               }
             },

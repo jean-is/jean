@@ -6,11 +6,10 @@
 // first (D433). Loaded the first time it shows; its strings are a part of their own (locales/case/).
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
-import { app, effective, CITED, rememberUnlocked, notify } from './state.js'
+import { app, effective, CITED, rememberUnlocked, notify, changeSettings } from './state.js'
 import { unlock, isDenied, loaded, configureCapabilities, SIZES, WEIGHTS } from './caps.js'
 import { CATALOGUE, LOCKABLE, SEARCHABLE, BROWSED, STEPPED, everywhere, accept, begin, unlockAll } from './discovery.js'
 import { openSettings, ROOM_ICONS, lockedBy, pageOpen } from './dialogs.js'
-import { saveSettings } from '../core/settings.js'
 import { BRAND } from '../brand.js'
 import { t, formatBytes, useStrings } from '../core/i18n.js'
 import { icons } from './menu-icons.js'
@@ -22,7 +21,7 @@ await Promise.all([useStrings('case'), styleSheet(new URL('data-pages.css', impo
 const GROUPS = /** @type {Record<string, string[]>} */ ({
   files: ['files', 'made', 'documents', 'tables', 'designs', 'folders', 'meaning', 'pictures'], remember: ['memory', 'feedback', 'projects', 'find', 'names'],
   again: ['skills', 'routines', 'flows'], web: ['web-search', 'browser', 'connections', 'since', 'extensions'],
-  bigger: ['computer', 'machine', 'helpers', 'double-check', 'reflexes', 'brain-local'], voice: ['live', 'camera', 'screen', 'natural-voice', 'notifications'], keep: ['backup', 'share', 'sync', 'lock'],
+  bigger: ['computer', 'machine', 'helpers', 'double-check', 'reflexes', 'brain-local'], voice: ['live', 'camera', 'screen', 'natural-voice', 'notifications'], keep: ['backup', 'share', 'sync', 'devices', 'lock'],
 })
 /** A capability's group. @param {string} id */
 const groupOf = (id) => Object.keys(GROUPS).find((group) => GROUPS[group].includes(id)) ?? 'bigger'
@@ -31,7 +30,7 @@ const groupOf = (id) => Object.keys(GROUPS).find((group) => GROUPS[group].includ
 const OPENS = /** @type {Record<string, () => void>} */ ({
   memory: () => openSettings('you'), skills: () => openSettings('skills'), routines: () => openSettings('routines'),
   connections: () => openSettings('connections'), 'web-search': () => openSettings('web-search'), extensions: () => openSettings('extensions'), computer: () => openSettings('computer'), pictures: () => import('../caps/pictures/pictures.js').then((module) => openSettings(module.paged() ? 'brains/pictures' : 'brains')),
-  share: () => openSettings('data/links'), machine: () => import('../caps/machine/machine.js').then((module) => module.show()), sync: () => openSettings('data/sync'), lock: () => openSettings('data/lock'),
+  share: () => openSettings('data/links'), machine: () => import('../caps/machine/machine.js').then((module) => module.show()), sync: () => openSettings('data/sync'), devices: () => openSettings('data/devices'), lock: () => openSettings('data/lock'),
   'brain-local': () => openSettings('brains/device'), notifications: () => openSettings('general'), 'natural-voice': () => openSettings('general/natural'), find: () => { app.dialog.value = 'find' },
   browser: () => { app.dialog.value = null; import('../caps/browser/browser.js').then((module) => module.show()) },
   flows: () => { app.dialog.value = null; import('../caps/flows/flows.js').then((module) => module.here()) },
@@ -108,11 +107,7 @@ function row(id) {
  * @param {string} id
  */
 async function turnOn(id) {
-  if (app.settings.peek().off?.includes(id)) {
-    const settings = { ...app.settings.peek(), off: app.settings.peek().off?.filter((other) => other !== id) }
-    await saveSettings(app.fs, settings)
-    app.settings.value = settings
-  }
+  if (turnedOff().includes(id)) await changeSettings({ off: turnedOff().filter((other) => other !== id) })
   configureCapabilities({ deny: [...app.policy.capabilities?.deny ?? [], ...turnedOff()], remember: rememberUnlocked })
   if (WEIGHTS.includes(id)) return accept(id)
   if (!(await unlock(id)) || app.dialog.peek() !== 'settings') return
@@ -130,9 +125,7 @@ async function turnOn(id) {
  * @param {string} id
  */
 async function turnOff(id) {
-  const settings = { ...app.settings.peek(), off: [...app.settings.peek().off ?? [], id] }
-  await saveSettings(app.fs, settings)
-  app.settings.value = settings
+  await changeSettings({ off: [...turnedOff(), id] })
   asking.value = ''
 }
 

@@ -56,7 +56,7 @@
   "connections.account": "اکاؤنٹ",
   "connections.since": "{date} کو جڑا",
   "connections.signInAgain": "دوبارہ سائن اِن کریں",
-  "connections.disconnectAsk": "{service} منقطع کریں؟ اس کی کلید اس ڈیوائس سے ہٹ جائے گی؛ {service} میں کچھ نہیں بدلے گا۔",
+  "connections.disconnectAsk": "{service} منقطع کریں؟ اس کی کلید آپ کے آلات سے ہٹ جائے گی؛ {service} میں کچھ نہیں بدلے گا۔",
   "connections.cancel": "منسوخ کریں",
   "connections.find": "سروس تلاش کریں",
   "connections.found": {
@@ -80,7 +80,7 @@
   "connections.can": "وہاں کیا کرنے کی اجازت ہوگی",
   "connections.how": "یہ کیسے جڑتی ہے",
   "connections.signInThere": "اگر {service} کہے تو آپ وہاں سائن اِن کر کے یہاں لوٹتے ہیں۔ آپ کا پاس ورڈ یہاں کبھی نظر نہیں آتا۔",
-  "connections.sealed": "اس کی کلید اسی ڈیوائس پر مہربند رہتی ہے، اور کبھی بیک اپ، ایکسپورٹ یا شیئر میں نہیں جاتی۔",
+  "connections.sealed": "اس کی کلید آپ کے اپنے آلات پر مہربند رہتی ہے، اور کبھی بیک اپ، ایکسپورٹ یا شیئر میں نہیں جاتی۔",
   "connections.another": "{service} پہلے سے جڑی ہے: اس سے ایک اور اکاؤنٹ جڑے گا۔",
   "connections.connectTo": "{service} جوڑیں",
   "connections.kept": "صرف {service} کے لیے رکھا گیا۔"

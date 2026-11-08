@@ -297,6 +297,8 @@
   "cap.sync.name": "Synkronointi",
   "cap.sync.offer": "Pidetäänkö tehtäväsi, tiedostosi ja muistisi samoina muilla tietokoneillasi? Valitset kansion, jonka pilvitallennustilasi synkronoi.",
   "cap.sync.yes": "Valitse kansio",
+  "cap.devices.name": "Laitteesi",
+  "cap.devices.offer": "Haluatko aivosi, asetuksesi ja projektisi myös puhelimeesi tai toiselle tietokoneelle? Lisäät laitteen QR-koodilla ja kuudella numerolla.",
   "cap.lock.name": "Lukitus",
   "cap.lock.offer": "Lukitaanko tehtäväsi, tiedostosi ja avaimesi, jotta vain sinä voit avata ne tällä laitteella?",
   "cap.lock.yes": "Aseta lukitus",

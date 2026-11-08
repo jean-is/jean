@@ -383,9 +383,10 @@ async function relayServer () {
   const config = JSON.parse(process.env.RELAY_CONFIG ?? '{}')
   const dir = process.env.RELAY_DIR || join(tmpdir(), 'jean-mailboxes')
   const store = folder(dir, null)
-  await store.sweep()
   const origins = [`http://localhost:${PORT}`, `http://${HOST}:${PORT}`, ...config.origins ?? []]
-  const server = createServer(hostListener(relay({ ...config, origins, store }), false))
+  const handle = relay({ ...config, origins, store })
+  await store.sweep(handle.tidy)
+  const server = createServer(hostListener(handle, false))
   server.on('error', (error) => {
     console.error(`serve: the relay: ${error.message}`)
     process.exit(1)

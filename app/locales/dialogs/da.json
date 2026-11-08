@@ -22,6 +22,7 @@
   "cap.backup.text": "Gem en kopi af det hele i én fil, og gendan den på enhver enhed.",
   "cap.share.text": "Send en opgave, eller en side, et diagram, en præsentation eller et billede, som et link, modtageren kan åbne.",
   "cap.sync.text": "Holder dine opgaver, filer og din hukommelse ens på dine andre computere via en mappe, som OneDrive, Dropbox, iCloud Drive eller Google Drev synkroniserer.",
+  "cap.devices.text": "{name} også på din telefon eller en anden computer, med dine hjerner, indstillinger og projekter, forseglet, så kun dine enheder kan læse dem. En opgave går fra den ene til den anden, når du sender den.",
   "cap.lock.text": "Dine opgaver, filer og nøgler åbnes kun med din adgangsnøgle eller adgangskode.",
   "cap.brain-local.text": "Privat, gratis og offline: en hjerne, der kører på denne computer, hvis den er kraftig nok.",
   "collection.count": {
@@ -58,6 +59,7 @@
   "cap.backup.hint": "Start tre opgaver.",
   "cap.share.hint": "Gem en kopi af en opgave.",
   "cap.sync.hint": "Nævn, at du også bruger en anden computer.",
+  "cap.devices.hint": "Nævn, at du gerne vil have dette på din telefon eller en anden computer, eller slå det til her.",
   "cap.lock.hint": "Forbind en tjeneste, eller start ti opgaver.",
   "cap.brain-local.hint": "Vælg den hjerne, der kører på denne enhed.",
   "cap.memory.text": "{name} husker de varige ting, du nævner, som præferencer, fakta og rettelser. Du kan se og ændre det hele.",

@@ -302,6 +302,8 @@
   "cap.sync.name": "Sincronizare",
   "cap.sync.offer": "Păstrați sarcinile, fișierele și memoria la fel pe celelalte computere? Alegeți un dosar pe care îl sincronizează spațiul dvs. din cloud.",
   "cap.sync.yes": "Alegeți un dosar",
+  "cap.devices.name": "Dispozitivele dvs.",
+  "cap.devices.offer": "Vreți creierele, setările și proiectele dvs. și pe telefon sau pe alt computer? Îl adăugați cu un cod QR și șase cifre.",
   "cap.lock.name": "Blocare",
   "cap.lock.offer": "Blocați sarcinile, fișierele și cheile, ca doar dvs. să le puteți deschide pe acest dispozitiv?",
   "cap.lock.yes": "Setați o blocare",

@@ -61,6 +61,7 @@ export const icons = {
   bell: icon(svg`<path d="M12 3v2M17.5 15v-4.5a5.5 5.5 0 0 0-11 0V15L5 17.5h14Z"/><path d="M10.25 20.25a1.9 1.9 0 0 0 3.5 0"/>`),
   computer: icon(svg`<rect x="4.5" y="4.5" width="15" height="11" rx="2.5"/><path d="M3 19.5h18"/>`),
   machine: icon(svg`<rect x="4.5" y="4.5" width="15" height="11" rx="2.5"/><path d="M3 19.5h18M8.5 8l2.25 2-2.25 2M12.5 12h3"/>`),
+  devices: icon(svg`<rect x="3" y="5.5" width="11" height="8.5" rx="2"/><path d="M2 17.5h13M18.5 15.5h1.5"/><rect x="17" y="7.5" width="4.5" height="11" rx="1.5"/>`),
   fullscreen: icon(svg`<path d="M4.5 9V6.5a2 2 0 0 1 2-2H9M15 4.5h2.5a2 2 0 0 1 2 2V9M19.5 15v2.5a2 2 0 0 1-2 2H15M9 19.5H6.5a2 2 0 0 1-2-2V15"/>`),
   'exit-fullscreen': icon(svg`<path d="M9 4.5V7a2 2 0 0 1-2 2H4.5M19.5 9H17a2 2 0 0 1-2-2V4.5M15 19.5V17a2 2 0 0 1 2-2h2.5M4.5 15H7a2 2 0 0 1 2 2v2.5"/>`),
   play: icon(svg`<path d="M8.5 5.5v13L19 12Z"/>`),

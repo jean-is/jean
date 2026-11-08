@@ -53,7 +53,7 @@
   "search.also": "Căutarea pe web poate fi dezactivată și din + din casetă.",
   "search.key": "Cheie",
   "search.engine": "ID-ul motorului de căutare",
-  "search.service.text": "Propriul cont {service} caută pe tot webul, pentru orice creier. Cuvintele căutate ajung la {service}, care le poate taxa, iar cheia rămâne pe acest dispozitiv.",
+  "search.service.text": "Propriul cont {service} caută pe tot webul, pentru orice creier. Cuvintele căutate ajung la {service}, care le poate taxa, iar cheia rămâne pe propriile dispozitive.",
   "search.getKey": "Obțineți o cheie de la {service}",
   "search.refused": "{service} a refuzat această cheie sau nu mai are căutări disponibile.",
   "search.silent": "{service} nu a răspuns. Verificați cheia sau încercați din nou peste puțin timp.",

@@ -283,6 +283,8 @@ export interface Settings {
   auto: boolean
   /** false: keep messages on this device */
   cloud: boolean
+  /** Auto as it was before keeping messages on this device set it */
+  wasAuto?: boolean
   /** offer id → when the user answered it (ISO) */
   offers: Record<string, string>
   /** false: Jean neither notes nor reads what it noticed */

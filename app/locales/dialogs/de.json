@@ -22,6 +22,7 @@
   "cap.backup.text": "Behalte eine Kopie von allem in einer Datei und stelle sie auf jedem Gerät wieder her.",
   "cap.share.text": "Eine Aufgabe, eine Seite, ein Diagramm, Folien oder ein Bild als Link senden, den öffnen kann, wer ihn von dir bekommt.",
   "cap.sync.text": "Hält deine Aufgaben, Dateien und das Gedächtnis auf deinen anderen Computern gleich, über einen Ordner, den OneDrive, Dropbox, iCloud Drive oder Google Drive synchronisiert.",
+  "cap.devices.text": "{name} auch auf deinem Handy oder einem anderen Computer, mit deinen Gehirnen, Einstellungen und Projekten, so versiegelt, dass nur deine Geräte sie lesen. Eine Aufgabe geht von einem zum anderen, wenn du sie schickst.",
   "cap.lock.text": "Deine Aufgaben, Dateien und Schlüssel öffnen sich nur mit deinem Passkey oder Passwort.",
   "cap.brain-local.text": "Privat, kostenlos und offline: ein Gehirn, das auf diesem Computer läuft, wenn er leistungsstark genug ist.",
   "collection.count": {
@@ -58,6 +59,7 @@
   "cap.backup.hint": "Beginne drei Aufgaben.",
   "cap.share.hint": "Speichere eine Kopie einer Aufgabe.",
   "cap.sync.hint": "Erwähne, dass du auch einen anderen Computer nutzt.",
+  "cap.devices.hint": "Erwähne, dass du das gern auf deinem Handy oder einem anderen Computer hättest, oder schalte es hier ein.",
   "cap.lock.hint": "Verbinde einen Dienst oder beginne zehn Aufgaben.",
   "cap.brain-local.hint": "Wähle das Gehirn, das auf diesem Gerät läuft.",
   "cap.memory.text": "{name} merkt sich Dauerhaftes, das du erwähnst: Vorlieben, Fakten, Korrekturen. Du kannst alles sehen und ändern.",

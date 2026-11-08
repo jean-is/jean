@@ -49,7 +49,7 @@
   "search.also": "Verkkohaun voi poistaa käytöstä myös kentän +-painikkeesta.",
   "search.key": "Avain",
   "search.engine": "Hakukoneen tunnus",
-  "search.service.text": "Oma tilisi palvelussa {service} hakee koko verkosta, kaikille aivoille. Hakusanasi menevät tähän palveluun, joka voi veloittaa niistä, ja avaimesi pysyy tällä laitteella.",
+  "search.service.text": "Oma tilisi palvelussa {service} hakee koko verkosta, kaikille aivoille. Hakusanasi menevät tähän palveluun, joka voi veloittaa niistä, ja avaimesi pysyy omilla laitteillasi.",
   "search.getKey": "Hae avain palvelusta {service}",
   "search.refused": "{service} hylkäsi tämän avaimen, tai siinä ei ole enää hakuja jäljellä.",
   "search.silent": "{service} ei vastannut. Tarkista avain tai yritä hetken päästä uudelleen.",

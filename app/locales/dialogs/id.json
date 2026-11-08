@@ -22,6 +22,7 @@
   "cap.backup.text": "Simpan salinan semuanya dalam satu file, dan pulihkan di perangkat mana pun.",
   "cap.share.text": "Kirim tugas, atau halaman, diagram, presentasi, atau gambar, sebagai tautan yang bisa dibuka siapa pun yang Anda kirimi.",
   "cap.sync.text": "Menjaga tugas, file, dan memori Anda tetap sama di komputer Anda yang lain, melalui folder yang disinkronkan oleh OneDrive, Dropbox, iCloud Drive, atau Google Drive.",
+  "cap.devices.text": "{name} juga di ponsel atau komputer lain, dengan otak, pengaturan, dan proyek Anda, disegel agar hanya perangkat Anda yang bisa membacanya. Tugas berpindah dari satu perangkat ke perangkat lain saat Anda mengirimnya.",
   "cap.lock.text": "Tugas, file, dan kunci API Anda hanya terbuka dengan kunci sandi atau kata sandi Anda.",
   "cap.brain-local.text": "Pribadi, gratis, dan offline: otak yang berjalan di komputer ini, jika cukup kuat.",
   "collection.count": {
@@ -57,6 +58,7 @@
   "cap.backup.hint": "Mulai tiga tugas.",
   "cap.share.hint": "Simpan salinan sebuah tugas.",
   "cap.sync.hint": "Sebutkan bahwa Anda juga memakai komputer lain.",
+  "cap.devices.hint": "Sebutkan bahwa Anda ingin ini ada di ponsel atau komputer lain, atau nyalakan di sini.",
   "cap.lock.hint": "Hubungkan layanan, atau mulai sepuluh tugas.",
   "cap.brain-local.hint": "Pilih otak yang berjalan di perangkat ini.",
   "cap.memory.text": "{name} mengingat hal-hal yang bertahan lama yang Anda sebutkan: preferensi, fakta, koreksi. Anda bisa melihat dan mengubah semuanya.",

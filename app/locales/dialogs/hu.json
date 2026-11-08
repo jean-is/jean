@@ -22,6 +22,7 @@
   "cap.backup.text": "Tarts meg mindenről egy másolatot egyetlen fájlban, és állítsd vissza bármely eszközön.",
   "cap.share.text": "Küldj el egy feladatot, vagy egy oldalt, diagramot, bemutatót vagy képet linkként, amelyet a címzett megnyithat.",
   "cap.sync.text": "Ugyanúgy tartja a feladataidat, fájljaidat és memóriádat a többi számítógépeden, egy mappán keresztül, amelyet a OneDrive, a Dropbox, az iCloud Drive vagy a Google Drive szinkronizál.",
+  "cap.devices.text": "A(z) {name} a telefonodon vagy egy másik számítógépen is, az agyaiddal, a beállításaiddal és a projektjeiddel, lepecsételve, hogy csak az eszközeid olvashassák őket. Egy feladat akkor kerül át egyikről a másikra, amikor elküldöd.",
   "cap.lock.text": "A feladataid, fájljaid és kulcsaid csak az azonosítókulcsoddal vagy a jelszavaddal nyílnak meg.",
   "cap.brain-local.text": "Privát, ingyenes és offline: egy agy, amely ezen a számítógépen fut, ha elég erős hozzá.",
   "collection.count": {
@@ -58,6 +59,7 @@
   "cap.backup.hint": "Indíts három feladatot.",
   "cap.share.hint": "Ments el egy feladatról másolatot.",
   "cap.sync.hint": "Említsd meg, hogy másik számítógépet is használsz.",
+  "cap.devices.hint": "Említsd meg, hogy ezt a telefonodon vagy egy másik számítógépen is szeretnéd, vagy kapcsold be itt.",
   "cap.lock.hint": "Csatlakoztass egy szolgáltatást, vagy indíts tíz feladatot.",
   "cap.brain-local.hint": "Válaszd az ezen az eszközön futó agyat.",
   "cap.memory.text": "{name} megjegyzi az általad említett tartós dolgokat, például szokásokat, tényeket és javításokat. Mindent láthatsz és módosíthatsz.",

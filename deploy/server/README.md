@@ -72,8 +72,8 @@ docker compose up -d --force-recreate gateway share requests relay
 `update.sh` refuses a tar that doesn't hold exactly what it expects, so the server changes before CI sends `relay/`:
 
 1. DNS for `relay.jean.is`, then `relay.env` and `relay-data/` as above.
-2. This folder's `compose.yaml`, `Caddyfile` and `update.sh` (as `/srv/jean/update`, root's, mode 755) in place of the old ones, and the relay's code in `code/relay/` (`git archive HEAD relay | ssh <server> 'tar -x -C /srv/jean/code'`). Check the configuration as above, then `docker compose up -d` and `docker compose restart caddy`: a running Caddy keeps the file it started with, so without the restart `relay.jean.is` gets no route and no certificate, and nothing says so.
-3. Only then the push whose CI sends the relay: until the server has the new script, a deploy that sends `relay/` fails, and one that doesn't fails once it has.
+2. This folder's `compose.yaml`, `Caddyfile` and `update.sh` (as `/srv/jean/update`, root's, mode 755) in place of the old ones. Check the configuration as above, then `docker compose up -d caddy gateway share requests`, and `docker compose restart caddy` if Caddy wasn't recreated: a running Caddy keeps the file it started with, so without the restart `relay.jean.is` gets no route and no certificate, and nothing says so. The relay itself waits for the deploy: its code imports `host/`'s, which only the deploy brings at the same commit, and started beside an older `host/` it stops at once, with nothing logged.
+3. Only then the deploy whose CI sends the relay (a push, or the failed deploy job run again): until the server has the new script, a deploy that sends `relay/` fails, and one that doesn't fails once it has. `update.sh` starts the relay with the other three and checks that it answers.
 
 ## Moving from another server
 

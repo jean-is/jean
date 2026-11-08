@@ -45,7 +45,7 @@
   "search.also": "ウェブ検索は、メッセージ欄の + からもオフにできます。",
   "search.key": "キー",
   "search.engine": "検索エンジン ID",
-  "search.service.text": "ご自身の {service} アカウントで、どの頭脳でもウェブ全体を検索します。検索語は {service} に送られ、料金がかかることがあります。キーはこの端末に残ります。",
+  "search.service.text": "ご自身の {service} アカウントで、どの頭脳でもウェブ全体を検索します。検索語は {service} に送られ、料金がかかることがあります。キーはご自身の端末に残ります。",
   "search.getKey": "{service} でキーを取得",
   "search.refused": "{service} がこのキーを拒否したか、検索回数が残っていません。",
   "search.silent": "{service} から応答がありませんでした。キーを確認するか、少し待ってもう一度お試しください。",

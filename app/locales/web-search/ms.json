@@ -45,7 +45,7 @@
   "search.also": "Carian web juga boleh dimatikan melalui + dalam kotak mesej.",
   "search.key": "Kunci",
   "search.engine": "ID enjin carian",
-  "search.service.text": "Akaun {service} anda sendiri mencari di seluruh web, untuk mana-mana otak. Perkataan carian anda dihantar ke {service}, yang mungkin mengenakan bayaran, dan kunci anda kekal pada peranti ini.",
+  "search.service.text": "Akaun {service} anda sendiri mencari di seluruh web, untuk mana-mana otak. Perkataan carian anda dihantar ke {service}, yang mungkin mengenakan bayaran, dan kunci anda kekal pada peranti anda sendiri.",
   "search.getKey": "Dapatkan kunci daripada {service}",
   "search.refused": "{service} menolak kunci ini, atau tiada lagi carian yang tinggal padanya.",
   "search.silent": "{service} tidak menjawab. Semak kunci, atau cuba lagi sebentar nanti.",

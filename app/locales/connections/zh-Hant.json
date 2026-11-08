@@ -54,7 +54,7 @@
   "connections.account": "帳號",
   "connections.since": "於{date}連接",
   "connections.signInAgain": "重新登入",
-  "connections.disconnectAsk": "中斷連接 {service}？它的金鑰會從這台裝置上刪除。{service} 本身不會有任何變化。",
+  "connections.disconnectAsk": "中斷連接 {service}？它的金鑰會從你的裝置上刪除。{service} 本身不會有任何變化。",
   "connections.cancel": "取消",
   "connections.find": "尋找服務",
   "connections.found": {
@@ -76,7 +76,7 @@
   "connections.can": "{name} 在那裡可以做什麼",
   "connections.how": "如何連接",
   "connections.signInThere": "如果 {service} 要求，你會在那裡登入，然後回到這裡。{name} 永遠看不到你的密碼。",
-  "connections.sealed": "它的金鑰封存在這台裝置上，絕不會進入備份、匯出或分享。",
+  "connections.sealed": "它的金鑰封存在你自己的裝置上，絕不會進入備份、匯出或分享。",
   "connections.another": "{service} 已經連接：這會再新增一個帳號。",
   "connections.connectTo": "連接 {service}",
   "connections.kept": "已保留，只用於 {service}。"

@@ -54,7 +54,7 @@
   "connections.account": "Àkáǹtì",
   "connections.since": "A so ó pọ̀ ní {date}",
   "connections.signInAgain": "Wọlé lẹ́ẹ̀kan sí i",
-  "connections.disconnectAsk": "Ṣé kí a yà {service} kúrò? Kọ́kọ́rọ́ rẹ̀ á kúrò lórí ẹ̀rọ yìí; kò sí ohun tí yóò yípadà nínú {service} fúnra rẹ̀.",
+  "connections.disconnectAsk": "Ṣé kí a yà {service} kúrò? Kọ́kọ́rọ́ rẹ̀ á kúrò lórí àwọn ẹ̀rọ yín; kò sí ohun tí yóò yípadà nínú {service} fúnra rẹ̀.",
   "connections.cancel": "Fagilé",
   "connections.find": "Wá iṣẹ́ kan",
   "connections.found": {
@@ -76,7 +76,7 @@
   "connections.can": "Ohun tí {name} lè ṣe níbẹ̀",
   "connections.how": "Bí ó ṣe ń so pọ̀",
   "connections.signInThere": "Bí {service} bá béèrè, ẹ ó wọlé níbẹ̀, lẹ́yìn náà ẹ padà síbí. {name} kì í rí ọ̀rọ̀ aṣínà yín láé.",
-  "connections.sealed": "Kọ́kọ́rọ́ rẹ̀ ń wà lórí ẹ̀rọ yìí, a dí i, kò sì ní wọ ẹ̀dà ìpamọ́, ìkójáde tàbí pínpín láé.",
+  "connections.sealed": "Kọ́kọ́rọ́ rẹ̀ ń wà lórí àwọn ẹ̀rọ yín, a dí i, kò sì ní wọ ẹ̀dà ìpamọ́, ìkójáde tàbí pínpín láé.",
   "connections.another": "{service} ti so pọ̀ tẹ́lẹ̀: èyí á ṣàfikún àkáǹtì mìíràn.",
   "connections.connectTo": "So {service} pọ̀",
   "connections.kept": "A pa á mọ́ fún {service} nìkan."

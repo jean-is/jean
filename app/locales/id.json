@@ -292,6 +292,8 @@
   "cap.sync.name": "Sinkronisasi",
   "cap.sync.offer": "Jaga agar tugas, file, dan memori Anda sama di komputer Anda yang lain? Anda memilih folder yang disinkronkan oleh penyimpanan cloud Anda.",
   "cap.sync.yes": "Pilih folder",
+  "cap.devices.name": "Perangkat Anda",
+  "cap.devices.offer": "Ingin otak, pengaturan, dan proyek Anda ada juga di ponsel atau komputer lain? Anda menambahkannya dengan kode QR dan enam angka.",
   "cap.lock.name": "Kunci",
   "cap.lock.offer": "Kunci tugas, file, dan kunci API Anda, agar hanya Anda yang bisa membukanya di perangkat ini?",
   "cap.lock.yes": "Pasang kunci",

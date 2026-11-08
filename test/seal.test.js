@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { seal, records, open, isSealed, vaultKey, vaultId, slotKey, close, unseal, encode, deviceKey, HEADER, RECORD } from '../app/ui/seal.js'
+import { seal, records, open, isSealed, vaultKey, vaultId, slotKey, close, unseal, encode, decode, deviceKey, boxPair, fingerprintOf, sealBox, openBox, sealFor, openFrom, HEADER, RECORD } from '../app/ui/seal.js'
 
 const encoder = new TextEncoder()
 const decoder = new TextDecoder()
@@ -79,4 +79,59 @@ test('this device’s key that can’t be read is an error, not no key: a profil
   await assert.rejects(deviceKey('get', 'profiles/01J-profile'), /server lost/)
   assert.equal(await deviceKey('make', 'profiles/01J-profile'), null)
   assert.equal(await deviceKey('forget', 'profiles/01J-profile'), null)
+})
+
+test('a box from one device’s key opens with the other’s, both ways, under a fresh salt and IV each time', async () => {
+  const [a, b] = [await boxPair(), await boxPair()]
+  const bundle = encoder.encode('{"brains":[]}')
+  assert.equal(decoder.decode(await openBox(b.key, a.public, await sealBox(a.key, b.public, bundle))), '{"brains":[]}')
+  assert.equal(decoder.decode(await openBox(a.key, b.public, await sealBox(b.key, a.public, bundle))), '{"brains":[]}')
+  const [one, two] = [await sealBox(a.key, b.public, bundle), await sealBox(a.key, b.public, bundle)]
+  assert.equal(one.length, 16 + 12 + bundle.length + 16)
+  assert.notDeepEqual(one.slice(0, 16), two.slice(0, 16))
+  assert.notDeepEqual(one.slice(16, 28), two.slice(16, 28))
+})
+
+test('a box taken as from another key, opened by a third, sent back to its sender, changed or cut short, is refused', async () => {
+  const [a, b, c] = [await boxPair(), await boxPair(), await boxPair()]
+  const sealed = await sealBox(a.key, b.public, encoder.encode('the bundle'))
+  await assert.rejects(openBox(b.key, c.public, sealed))
+  await assert.rejects(openBox(c.key, a.public, sealed))
+  // Re-addressed: A and B share the same secret either way, so only the fingerprints it is bound to refuse it.
+  await assert.rejects(openBox(a.key, b.public, sealed))
+  for (const at of [0, 20, 30, sealed.length - 1]) {
+    const changed = sealed.slice()
+    changed[at] ^= 1
+    await assert.rejects(openBox(b.key, a.public, changed))
+  }
+  await assert.rejects(openBox(b.key, a.public, sealed.slice(0, 27)))
+})
+
+test('a key’s fingerprint is the first 16 bytes of SHA-256 of its raw bytes, the same from either half or a copy', async () => {
+  const [a, b] = [await boxPair(), await boxPair()]
+  const print = await fingerprintOf(a.public)
+  const raw = Buffer.concat([Buffer.of(4), Buffer.from(/** @type {string} */ (a.public.x), 'base64url'), Buffer.from(/** @type {string} */ (a.public.y), 'base64url')])
+  assert.equal(print, Buffer.from(await crypto.subtle.digest('SHA-256', raw)).subarray(0, 16).toString('base64url'))
+  assert.match(print, /^[\w-]{22}$/)
+  assert.equal(await fingerprintOf(a.key), print)
+  assert.equal(await fingerprintOf(JSON.parse(JSON.stringify(a.public))), print)
+  assert.notEqual(await fingerprintOf(b.public), print)
+})
+
+test('sealFor() and openFrom() keep the format a child’s profile has sealed in for its parent’s, from a pair made to derive keys', async () => {
+  const [subtle, EC, AES] = [crypto.subtle, { name: 'ECDH', namedCurve: 'P-256' }, { name: 'AES-GCM', length: 256 }]
+  const made = await subtle.generateKey(EC, true, ['deriveKey'])
+  const parent = { key: await subtle.exportKey('jwk', made.privateKey), public: await subtle.exportKey('jwk', made.publicKey) }
+  // As caps/profiles/family.js sealed and opened before: the AES key derived from ECDH at once.
+  const own = await subtle.generateKey(EC, true, ['deriveKey'])
+  const key = await subtle.deriveKey({ name: 'ECDH', public: await subtle.importKey('jwk', parent.public, EC, false, []) }, own.privateKey, AES, false, ['encrypt'])
+  const iv = crypto.getRandomValues(new Uint8Array(12))
+  const data = new Uint8Array(await subtle.encrypt({ name: 'AES-GCM', iv }, key, encoder.encode(JSON.stringify({ kind: 'bullying' }))))
+  const old = JSON.stringify({ format: 1, from: await subtle.exportKey('jwk', own.publicKey), iv: encode(iv), data: encode(data) })
+  assert.deepEqual(await openFrom(parent.key, old), { kind: 'bullying' })
+  await assert.rejects(openFrom((await boxPair()).key, old))
+  const sealed = JSON.parse(await sealFor(parent.public, { kind: 'bullying' }))
+  assert.deepEqual(Object.keys(sealed), ['format', 'from', 'iv', 'data'])
+  const back = await subtle.deriveKey({ name: 'ECDH', public: await subtle.importKey('jwk', sealed.from, EC, false, []) }, await subtle.importKey('jwk', parent.key, EC, false, ['deriveKey']), AES, false, ['decrypt'])
+  assert.deepEqual(JSON.parse(decoder.decode(await subtle.decrypt({ name: 'AES-GCM', iv: decode(sealed.iv) }, back, decode(sealed.data)))), { kind: 'bullying' })
 })

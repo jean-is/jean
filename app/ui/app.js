@@ -2,11 +2,11 @@
 import { effect } from '@preact/signals-core'
 import { BRAND } from '../brand.js'
 import { memoryFS } from '../core/fs.js'
-import { loadSettings, ensureHome, listProjects } from '../core/settings.js'
+import { ensureHome, listProjects } from '../core/settings.js'
 import { setLoader, useLocale, pickLocale, locale, dir } from '../core/i18n.js'
 import { ulid } from '../core/ulid.js'
 import { opfsFS, mine } from './opfs.js'
-import { app, effective, theme, sidebarOpen, chosenLook, offeredLocales, THEME_KEY, SIDEBAR_KEY, FOLDED_KEY, SEEN_KEY, AWAY_MS, refreshConversations, refreshProjects, rememberUnlocked, send } from './state.js'
+import { app, effective, theme, sidebarOpen, chosenLook, offeredLocales, THEME_KEY, SIDEBAR_KEY, FOLDED_KEY, SEEN_KEY, AWAY_MS, refreshConversations, refreshProjects, rememberUnlocked, send, changeSettings } from './state.js'
 import { LOOKS, LOOK_KEY, OWN, lookId, baseOf, touched } from './looks.js'
 import { configureCapabilities, unlock } from './caps.js'
 import './shell.js'
@@ -51,7 +51,7 @@ async function start() {
   BRAND.name = String(app.policy.name ?? '').trim() || BRAND.name
   // Several profiles here (D228): their menu, and in a child's, what a parent set, in policy's shape.
   if (fs && (await fs.whole.list('profiles')).length > 1) await unlock('profiles')
-  app.settings.value = await loadSettings(app.fs)
+  await changeSettings()
   // Policy names capabilities by today's ids: `routines` are the tasks on a schedule (D122).
   const [deny, preUnlock] = ['deny', 'preUnlock'].map((list) => /** @type {string[]} */ (app.policy.capabilities?.[list] ?? []))
   configureCapabilities({ deny: [...deny, ...app.settings.value.off ?? []], remember: rememberUnlocked }) // and what the user turned off (D433)
@@ -134,7 +134,7 @@ async function start() {
   })
   await refreshConversations()
   await startRouter()
-  app.fs.watch?.((path) => (path.endsWith('project.md') ? refreshProjects() : refreshConversations()))
+  app.fs.watch?.((path) => (path === 'settings.json' ? changeSettings() : path.endsWith('project.md') ? refreshProjects() : refreshConversations()))
 
   // Opened after time away: "Since last time" (an event with no language), each device its own.
   const seen = Number(localStorage.getItem(mine(SEEN_KEY))) || 0

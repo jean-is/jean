@@ -138,15 +138,17 @@ describe('parseSSE', () => {
 // ─── Headers ─────────────────────────────────────────────────────────────────
 
 describe('headersFor', () => {
-  test('OpenAI-compatible: bearer only with a key, extra headers merged in lower case', () => {
+  test('OpenAI-compatible: bearer only with a key, extra headers merged in lower case, never one in place of the key held', () => {
     assert.deepEqual(headersFor(brains.openrouter, 'k'), { 'content-type': 'application/json', authorization: 'Bearer k' })
     assert.deepEqual(headersFor(brains.ollama), { 'content-type': 'application/json' })
     const brain = { ...brains.openrouter, headers: { 'HTTP-Referer': 'https://example.test', Authorization: 'Bearer override' } }
     assert.deepEqual(headersFor(brain, 'k'), {
       'content-type': 'application/json',
-      authorization: 'Bearer override',
+      authorization: 'Bearer k',
       'http-referer': 'https://example.test',
     })
+    // Without a key held, a brain's own credential header goes, as a gateway's may.
+    assert.equal(headersFor({ ...brains.ollama, headers: { Authorization: 'Bearer gw' } }).authorization, 'Bearer gw')
   })
 
   test('Anthropic: key, version and the browser-access header', () => {
@@ -156,6 +158,8 @@ describe('headersFor', () => {
       'anthropic-version': '2023-06-01',
       'anthropic-dangerous-direct-browser-access': 'true',
     })
+    assert.equal(headersFor({ ...brains.anthropic, headers: { 'X-Api-Key': 'theirs', 'Proxy-Authorization': 'Basic x' } }, 'k')['x-api-key'], 'k')
+    assert.equal('proxy-authorization' in headersFor({ ...brains.anthropic, headers: { 'Proxy-Authorization': 'Basic x' } }, 'k'), false)
   })
 })
 
