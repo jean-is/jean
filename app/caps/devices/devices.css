@@ -4,3 +4,7 @@
 .devices-qr { display: block; inline-size: min(100%, 14rem); margin-inline: auto; border-radius: 0.6rem; background: white; fill: black; forced-color-adjust: none; }
 .devices-field { display: flex; align-items: center; gap: 0.5rem; } .devices-field input { flex: 1; min-inline-size: 0; font: 0.875rem var(--mono); }
 .devices-digits { text-align: center; font: 600 2.5rem/1.2 var(--mono); letter-spacing: 0.1em; user-select: all; } .devices-type { inline-size: 10ch; font: 600 1.5rem var(--mono); letter-spacing: 0.15em; text-align: center; }
+/* The Your devices icon at the drawer's foot: syncing, it breathes, in the ink's own colour where motion is reduced; the store wanting a look, a dot at its corner. */
+.icon-button.devices-syncing { color: var(--ink); } .devices-syncing svg { animation: waits 1.6s ease-in-out infinite var(--loops, running); }
+.devices-trouble { position: relative; } .devices-trouble::after { content: ''; position: absolute; inset-block-start: 0.3rem; inset-inline-end: 0.3rem; inline-size: 0.45rem; block-size: 0.45rem; border-radius: 50%; background: var(--danger); }
+@media (forced-colors: active) { .devices-trouble::after { background: CanvasText; } }

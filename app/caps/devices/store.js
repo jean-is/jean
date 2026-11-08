@@ -6,6 +6,7 @@
 // written, here or in another tab; a round ends after 20 seconds and the next goes on; a file that fails the same way again waits
 // until it changes; a full store keeps new things here until it has room, and a full device stops its rounds. A device removed here is
 // shut out by the store's next epoch (./epochs.js), begun by the next round, and an epoch begun elsewhere is taken at the round's start.
+// A round that sent something tells the other devices by mailbox, which they read as it comes, so that each has its own round at once.
 import { signal } from '@preact/signals-core'
 import { app } from '../../ui/state.js'
 import { mine } from '../../ui/opfs.js'
@@ -26,10 +27,14 @@ import { STORE, STORED, shaped, carrying, tell, look, listOf, changeList, record
 
 /** Where the round's base is kept, and the projects owed their leaving the store. */
 const [CACHE, OWED] = ['.cache/store', '.devices/store.json']
-/** How the store stands, for Your devices: what it holds of its room, full, gone (the relay no longer opens it), this device out of room, or a removed device not yet shut out. */
-export const state = signal(/** @type {{ use?: number, quota?: number, full?: boolean, gone?: boolean, room?: boolean, owing?: boolean }} */ ({}))
+/**
+ * How the store stands, for Your devices: what it holds of its room, full, gone (the relay no longer opens it), this device out of room, a
+ * removed device not yet shut out, the relay out of reach though the device is online, bytes on their way, and when a round last reached it.
+ * @type {import('@preact/signals-core').Signal<{ use?: number, quota?: number, full?: boolean, gone?: boolean, room?: boolean, owing?: boolean, unreached?: boolean, moving?: boolean, at?: number }>}
+ */
+export const state = signal({})
 let [context, relay, stop] = [/** @type {Context | null} */ (null), () => '', () => {}]
-let [full, halted, asked] = [false, false, false]
+let [full, halted, asked, wrote, told, telling] = [false, false, false, false, 0, false]
 
 /** @returns {Promise<Held | null>} */
 const heldOf = async () => JSON.parse(await getSecret(app.fs, STORE) ?? 'null')
@@ -90,9 +95,11 @@ export async function admit(ctx, id, hash, relayOf) {
 /**
  * Another device's message about stores: its keys (`store`), taken where this device holds none, one the relay no longer opens, or one
  * whose id comes after, coming in with a token of its own, or, of the same store, its later epochs; or its settings, saying which it
- * holds and at which epoch, sent this one's keys when it is behind (./epochs.js). @param {Context} ctx @param {Device} from @param {any} value
+ * holds and at which epoch, sent this one's keys when it is behind (./epochs.js); or a round it had that sent something, which brings
+ * one here soon. @param {Context} ctx @param {Device} from @param {any} value
  */
 export async function heard(ctx, from, value) {
+  if (value.kind === 'round') return later()
   const held = await heldOf()
   if (value.kind === 'settings' && usable(held) && behind(held, from, value.store)) return ctx.send(from, { kind: 'store', ...keysOf(held) })
   if (value.kind !== 'store' || !shaped(value) || value.relay !== relay()) return
@@ -125,9 +132,23 @@ async function failing(fs, path, error) {
   if (['DataError', 'NotSupportedError'].includes(error?.name)) skip.set(path, await versionOf(fs, path))
   throw error
 }
+/** Bytes on their way, which the Your devices icon shows; up, the other devices are told once the round ends. @template T @param {Promise<T>} going @param {boolean} [up] */
+const moved = (going, up = false) => { wrote ||= up; if (!state.peek().moving) state.value = { ...state.peek(), moving: true }; return going }
 /** The store's FS with what this device remembers of it: full, nothing new goes up; a path that failed waits. @param {FS} fs @returns {FS} */
-const guarded = (fs) => ({ ...fs, readBytes: (path) => fs.readBytes(path).catch((error) => failing(fs, path, error)),
-  writeBytes: (path, bytes) => (full ? Promise.reject(new DOMException('The store is full.', 'QuotaExceededError')) : fs.writeBytes(path, bytes)).catch((error) => failing(fs, path, error)) })
+const guarded = (fs) => ({ ...fs, readBytes: (path) => moved(fs.readBytes(path)).catch((error) => failing(fs, path, error)), remove: (path) => moved(fs.remove(path), true),
+  writeBytes: (path, bytes) => (full ? Promise.reject(new DOMException('The store is full.', 'QuotaExceededError')) : moved(fs.writeBytes(path, bytes), true)).catch((error) => failing(fs, path, error)) })
+/**
+ * The other devices told something went up, at once, then once in 30 seconds at most, which the relay's count of messages allows: each,
+ * reading its mailbox, has a round now rather than at its next minute (devices.js). Never while an answer is written, but just after.
+ */
+function nudge() {
+  if (telling) return
+  telling = true
+  setTimeout(async () => {
+    [telling, told] = [false, Date.now()]
+    if (context) await (await answering() ? nudge() : tell(context, { kind: 'round' }))
+  }, Math.max(0, told + 30_000 - Date.now()))
+}
 
 /**
  * A round with the store, under rounds.js's lock: its room read, the feed, the projects owed their leaving, then Sync's round with the
@@ -137,12 +158,13 @@ async function run() {
   const first = await heldOf()
   if (!first || halted || !context) return []
   if (!usable(first)) { state.value = { gone: true }; return [] }
+  wrote = false
   let held = first
   // Its room, and whether the relay still opens it to this device: gone after months unused, or this device let out, it is said so and
   // kept until another store's keys come or the person starts again; never a file deleted on the relay's word.
   const info = await call(held, '', {}, gate).catch((/** @type {any} */ error) => ({ error }))
   if ([403, 404].includes(info.error?.status)) await navigator.locks.request(mine('app-store'), async () => (await heldOf())?.sid === first.sid && keep({ ...first, gone: true }))
-  if (info.error) return []
+  if (info.error) { state.value = { ...state.peek(), unreached: info.error instanceof TypeError && navigator.onLine }; return [] }
   full &&= info.use + 4_194_304 > info.quota
   const [me, list, came] = [context.me, await listOf(app.fs), /** @type {string[]} */ ([])]
   try {
@@ -155,7 +177,7 @@ async function run() {
       else if (!asked) asked = Boolean(await tell(context, (await look(context)).value))
     }
     // A device this one's list removed and no epoch shut out yet: the next epoch, its key kept first, so a crash on the way loses nothing.
-    state.value = { use: info.use, quota: info.quota, full, owing: owed(held, list) }
+    state.value = { use: info.use, quota: info.quota, full, owing: owed(held, list), at: state.peek().at }
     if (state.peek().owing && info.epoch === newest(held.epochs)) {
       // The last other device removed, no device needs the copy any more: it goes from the relay, and this device keeps its files alone.
       if (list.every((one) => one.removedAt || one.id === me.id)) {
@@ -187,6 +209,7 @@ async function run() {
         removing: async (removals, act) => (await import('../../ui/send.js')).removing(removals, act) }))
     }
     if (Date.now() > until) later()
+    state.value = { ...state.peek(), at: Date.now() }
   } catch (error) {
     const { name, came: some = [] } = /** @type {any} */ (error)
     came.push(...some)
@@ -194,6 +217,8 @@ async function run() {
     if (state.peek().room) halted = true
     else if (!['AbortError', 'QuotaExceededError'].includes(name)) console.warn('Store', error)
   }
+  state.value = { ...state.peek(), moving: false }
+  if (wrote) nudge()
   return came
 }
 

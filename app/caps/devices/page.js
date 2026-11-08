@@ -9,16 +9,13 @@ import { pageOpen } from '../../ui/dialogs.js'
 import { handheld } from '../../ui/model.js'
 import { codeOf } from '../../ui/qr.js'
 import { icons } from '../../ui/menu-icons.js'
-import { styleSheet } from '../../ui/sheet.js'
-import { t, tParts, intlLocales, formatBytes } from '../../core/i18n.js'
+import { t, tParts, intlLocales, formatBytes, relativeTime } from '../../core/i18n.js'
 import { BRAND } from '../../brand.js'
 import { adding, joining, devices, own, start, passed, confirm, cancel, join, trusted, removeDevice } from './devices.js'
 import { state as store, again } from './store.js'
 
 /** @typedef {import('./flow.js').Device} Device */
 /** What a step shows, its buttons, and what it says as it comes, or what went wrong. @typedef {{ body?: unknown, buttons?: unknown, said?: string, wrong?: string }} Step */
-
-await styleSheet(new URL('devices.css', import.meta.url))
 
 /**
  * The device Remove was pressed on, whether Jean is erased from it, while it goes, once gone the keys it may hold, by where each was made,
@@ -95,11 +92,14 @@ function rest() {
       <p class="hint" id="devices-pasted">${t('devices.pasteHint', { name: BRAND.name })}</p></form></section>`
 }
 
-/** Under the list, what the devices keep in common in the store: its room used, full, a removed device still being shut out, or no longer reaching this device, with Start again where it is gone. */
+/**
+ * Under the list, what the devices keep in common in the store: its room used, full, a removed device still being shut out, the relay out
+ * of reach, or no longer reaching this device, with Start again where it is gone; and when a round last reached it.
+ */
 function common() {
-  const { use = 0, quota, full, gone, room, owing } = store.value
-  const said = gone ? 'devices.store.gone' : room ? 'devices.store.room' : owing ? 'devices.store.owed' : full ? 'devices.store.full' : quota ? 'devices.store.use' : ''
-  return said ? html`<p class="hint">${t(said, { used: formatBytes(use), quota: formatBytes(quota ?? 0) })}</p>
+  const { use = 0, quota, full, gone, room, owing, unreached, at } = store.value
+  const said = gone ? 'devices.store.gone' : room ? 'devices.store.room' : unreached ? 'devices.store.unreached' : owing ? 'devices.store.owed' : full ? 'devices.store.full' : quota ? 'devices.store.use' : ''
+  return said ? html`<p class="hint">${t(said, { used: formatBytes(use), quota: formatBytes(quota ?? 0) })}</p>${at && !gone ? html`<p class="hint devices-synced">${t('devices.store.synced', { when: relativeTime(at) })}</p>` : nothing}
     ${gone ? html`<div class="row"><button class="button" @click=${again}>${t('devices.store.again')}</button></div>` : nothing}` : nothing
 }
 

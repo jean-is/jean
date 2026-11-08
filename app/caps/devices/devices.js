@@ -11,6 +11,7 @@ import { PLACE, here, mine } from '../../ui/opfs.js'
 import { host } from '../../ui/host.js'
 import { handheld } from '../../ui/model.js'
 import { lazyPage } from '../../ui/lazy-page.js'
+import { styleSheet } from '../../ui/sheet.js'
 import { icons } from '../../ui/menu-icons.js'
 import { t, useStrings, useLocale } from '../../core/i18n.js'
 import { switchTo, initialOf, whoOf } from '../../ui/curtain.js'
@@ -53,10 +54,11 @@ export const joining = signal(/** @type {Joining} */ ({ step: 'idle' }))
 /** The devices this profile knows, this one among them, and this one's id, '' until it has one. */
 export const devices = signal(/** @type {Device[]} */ ([]))
 export const own = signal('')
-/** Whether this device holds a store it can use (./store.js). */
+/** Whether this device holds a store it can use, and how the store stands, once its rounds started (./store.js). */
 const stored = signal(false)
+const kept = signal(/** @type {typeof import('./store.js').state | null} */ (null))
 
-await useStrings('devices')
+await Promise.all([useStrings('devices'), styleSheet(new URL('devices.css', import.meta.url))])
 /** Whether this is a child's profile, which never pairs: their parent's slot needs the parent's vault key, another on each device. */
 const child = Boolean(JSON.parse(await app.fs.read(VAULT) ?? 'null')?.parent)
 /** The relay's address, ending in /, or '' where none is named. */
@@ -131,7 +133,7 @@ async function listening() {
   if (turn !== listenings) return
   // Paired, or once was: the store's rounds, which its keys, held or not, decide (./store.js).
   const paired = (await listOf(app.fs)).length > 1
-  if (paired) await import('./store.js').then((store) => store.start(ctx, relayOf)).catch(warn)
+  if (paired) await import('./store.js').then((store) => { kept.value = store.state; return store.start(ctx, relayOf) }).catch(warn)
   // Its identity gone or another now, as this device's removal was acted on in another tab, its mailbox is never opened again.
   stop = listen({ base, token: me.token, lock: mine('app-devices'), onMessages: (messages) => heard(ctx, messages), clock: clocked, quiet: answering,
     lost: async (...box) => ((await identity(false))?.id === me.id ? open(...box) : stop()) })
@@ -157,7 +159,7 @@ async function heard(ctx, messages) {
     if (from?.removedAt && await back(ctx, from, opened?.value)) later(ctx)
     if (!opened || !from || from.removedAt) continue
     const done = await receive(ctx, from, opened.value, at).catch((error) => { warn(error); return null })
-    if (['settings', 'store'].includes(opened.value?.kind)) await import('./store.js').then((store) => store.heard(ctx, from, opened.value)).catch(warn)
+    if (['settings', 'store', 'round'].includes(opened.value?.kind)) await import('./store.js').then((store) => store.heard(ctx, from, opened.value)).catch(warn)
     // A device the last share didn't reach writes: what waits goes to it now.
     if (await unreached(app.fs, from.id)) later(ctx)
     if (done && 'removed' in done) removals.push({ ...done.removed, by: from.id })
@@ -520,9 +522,11 @@ if (offered()) {
       live.find((device) => device.id === id) ?? [...live].sort((x, y) => (x.id < y.id ? -1 : 1))[0]))(devices.value) },
     // A project switched to kept on this device leaves the store, where there is one, asked first (caps/projects).
     keep: { at: 1, draw: () => null, on: () => stored.value, keep: (/** @type {string} */ dir) => import('./store.js').then((store) => store.withdraw(dir)) },
-    // At the end of the person's row, at the drawer's foot, Your devices, by its icon.
-    foot: { at: 1, draw: () => html`<button type="button" class="icon-button subtle" aria-label=${t('cap.devices.name')}
-      @click=${() => import('../../ui/dialogs.js').then((dialogs) => dialogs.openSettings('data/devices'))}>${icons.devices}</button>` },
+    // At the end of the person's row, at the drawer's foot, Your devices, by its icon: breathing while bytes go up or come down, with a dot
+    // when the store wants a look (full, gone, this device out of room, the relay out of reach), its name saying so, and its page what.
+    foot: { at: 1, draw: () => { const { moving, full, gone, room, unreached } = kept.value?.value ?? {}, trouble = full || gone || room || unreached
+      return html`<button type="button" class="icon-button subtle${moving ? ' devices-syncing' : ''}${trouble ? ' devices-trouble' : ''}" aria-label=${t(moving ? 'devices.syncing' : trouble ? 'devices.trouble' : 'cap.devices.name')}
+        @click=${() => import('../../ui/dialogs.js').then((dialogs) => dialogs.openSettings('data/devices'))}>${icons.devices}</button>` } },
   } })
   // The keys, where this device's identity and the devices it knows are kept too, changed in any tab, this one's as well.
   app.fs.watch?.((path) => { if (path === '.secrets/keys.json') { refresh(); noticed().catch(warn) } }, { all: true })

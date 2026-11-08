@@ -704,7 +704,7 @@ test('a task made on one device shows on the other through the store, and the re
   const [keysA, keysB] = await Promise.all([page, b].map(async (one) => JSON.parse(JSON.parse(String(await read(one, '.secrets/keys.json'))).store)))
   expect([keysB.sid, keysB.N, keysB.relay]).toEqual([keysA.sid, keysA.N, RELAY_URL])
   expect(keysB.token).not.toBe(keysA.token)
-  await expect(settings.locator('.devices-flow > .hint')).toHaveText(/ in common$/)
+  await expect(settings.locator('.devices-flow > .hint:not(.devices-synced)')).toHaveText(/ in common$/)
   await closeSettings(page)
   const path = await taskOn(page, TITLE, 'Plan my trip to Lyon by the sea')
   await expect.poll(async () => { await storeRound(page); return inStore(page) }, { timeout: 20_000 }).toContain(path)
@@ -713,6 +713,29 @@ test('a task made on one device shows on the other through the store, and the re
   const held = (await relayHolds(keysA.sid)).join('\n')
   expect(held.length).toBeGreaterThan(0)
   for (const word of [TITLE, 'Lyon', 'the plan', 'conversations', 'projects', 'key of the cloud']) expect(held).not.toContain(word)
+  await b.context().close()
+})
+
+test('what one device sends reaches the other without waiting for its minute, told by its mailbox, whose Your devices breathes meanwhile, and says when it last synced', async ({ page, browser }) => {
+  await deviceA(page)
+  const b = await device(browser)
+  // B's round every minute never comes, from the page the pairing opens on: what A sends reaches it only by being told.
+  await b.context().addInitScript(() => { const every = setInterval; Object.assign(window, { setInterval: (/** @type {() => void} */ run, /** @type {number} */ ms) => (ms === 60_000 ? 0 : every(run, ms)) }) })
+  await pair(page, b)
+  await closeSettings(page)
+  const foot = (await openTasks(b)).locator('.profile').getByRole('button', { name: /^Your devices/ })
+  await expect(foot).toHaveAccessibleName('Your devices')
+  // B's rounds as it opened, and those the files they brought called for, over: from here, only being told brings it another.
+  await expect.poll(() => b.evaluate(async () => Date.now() - ((await import('/caps/devices/store.js')).state.value.at ?? Date.now())), { timeout: 30_000 }).toBeGreaterThan(4_000)
+  await b.evaluate(() => new MutationObserver(() => { if (document.querySelector('.profile .devices-syncing[aria-label="Your devices · syncing"]')) Object.assign(window, { breathed: true }) })
+    .observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ['class'] }))
+  const path = await taskOn(page, TITLE, 'Plan my trip to Lyon by the sea')
+  await expect.poll(async () => { await storeRound(page); return inStore(page) }, { timeout: 20_000 }).toContain(path)
+  // Told at once, or 30 seconds after A last told it, when A's own first round, which sent all it had, told it then.
+  await expect.poll(() => read(b, path), { timeout: 40_000 }).toBe(await read(page, path))
+  expect(await b.evaluate(() => /** @type {any} */ (window).breathed)).toBe(true)
+  await expect(foot).toHaveAccessibleName('Your devices')
+  await expect((await devicesPage(b)).locator('.devices-synced')).toHaveText(/^Last synced: /)
   await b.context().close()
 })
 
@@ -764,7 +787,7 @@ test('the last other device removed, the store goes from the relay: what is made
   await dialog.getByRole('button', { name: 'Remove' }).click()
   await expect(dialog.getByRole('status')).toContainText(/ is removed\./)
   await dialog.getByRole('button', { name: 'Done' }).click()
-  await expect.poll(async () => { await storeRound(page); return settings.locator('.devices-flow > .hint').textContent() }, { timeout: 20_000 }).toBe('Shutting out the device you removed…')
+  await expect.poll(async () => { await storeRound(page); return settings.locator('.devices-flow > .hint:not(.devices-synced)').textContent() }, { timeout: 20_000 }).toBe('Shutting out the device you removed…')
   await page.context().unroute(deleting)
   // B was the last other device: the store goes, its keys with it, and A keeps its files, alone.
   const held = async () => JSON.parse(String(await read(page, '.secrets/keys.json'))).store ?? null
