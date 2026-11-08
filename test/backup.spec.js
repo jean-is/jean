@@ -25,6 +25,8 @@ test('a backup holds the conversations but no key, and restores on a fresh devic
   expect(names).toContain('backup.json')
   expect(names.some((name) => name.endsWith('.jsonl'))).toBe(true)
   expect(names.filter((name) => /^\.(secrets|cache)\//.test(name))).toEqual([])
+  const brains = await page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.brains.map((brain) => brain.id))
+  expect(brains).toHaveLength(1)
 
   // Another device: nothing yet, then everything from the backup.
   const context = await browser.newContext()
@@ -36,6 +38,9 @@ test('a backup holds the conversations but no key, and restores on a fresh devic
   await restore.locator('[data-part="backup"]').click()
   await restore.locator('input[type="file"]').setInputFiles(path)
   await expect(other.locator('.toast')).toContainText(/Restored \d+ files/)
+  // Its settings, which choosing its language wrote, now hold the backup's brain (its key stayed behind), and say it was restored.
+  const restored = await other.evaluate(async () => JSON.parse(await (await import('/ui/state.js')).app.fs.read('settings.json') ?? '{}'))
+  expect([restored.brains.map((/** @type {{ id: string }} */ brain) => brain.id), restored.restored]).toEqual([brains, true])
   const ephemeral = await other.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value)
   // Playwright's WebKit has no lasting storage (like a private window): the reload starts empty.
   if (!ephemeral) {
