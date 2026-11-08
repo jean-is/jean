@@ -1,5 +1,6 @@
-// A score's sound (D338): the instruments its notes ask for, from MS Basic's files in vendor/sounds/,
-// or where a saved copy names them, each downloaded once, checked against its SHA-256 and kept apart
+// A score's sound (D338): the instruments its notes ask for, MS Basic's files from where Settings or policy
+// name them (jsDelivr's copy of the sounds package unless they name another), or where a saved copy names
+// them, each downloaded once, checked against its SHA-256 in Jean's own list of them and kept apart
 // from app versions where the browser keeps caches, then played by spessasynth_core a second at a
 // time, each second handed on as it is made, so that the music starts with the first. In a worker
 // (./sound-worker.js), or on the page of a saved copy, whose files come from an address that starts none.
@@ -20,15 +21,15 @@ const banks = new Map()
 const channelOf = (note) => (note.instrument === 128 ? 9 : (note.track + (note.track >= 9 ? 1 : 0)) % 16)
 
 /**
- * The music of `notes` at `rate`, from the instruments at `base` (this Jean's own when none): what of
- * them has come, then each second, handed to `post`, until it is done or `stopped()`.
- * @param {{ notes: Note[], rate: number, base?: string }} request
+ * The music of `notes` at `rate`, from the instruments at `base` as `index` lists them (the list there when
+ * none): what of them has come, then each second, handed to `post`, until it is done or `stopped()`.
+ * @param {{ notes: Note[], rate: number, base: string, index?: string }} request
  * @param {(message: Record<string, any>, transfer?: Transferable[]) => void} post @param {() => boolean} stopped
  */
-export async function render({ notes, rate, base }, post, stopped) {
+export async function render({ notes, rate, base, index }, post, stopped) {
   const { SoundBankLoader, SpessaSynthProcessor } = await (library ??= import(new URL('../../vendor/spessasynth/spessasynth.mjs', import.meta.url).href))
-  const sounds = new URL(base || '../../vendor/sounds/', import.meta.url)
-  const { files, programs, drums } = /** @type {Index} */ (await (await fetch(new URL('sounds.json', sounds))).json())
+  const sounds = new URL(base, import.meta.url)
+  const { files, programs, drums } = /** @type {Index} */ (await (await fetch(index ?? new URL('sounds.json', sounds))).json())
   const wanted = [...new Set(notes.map((note) => files[note.instrument === 128 ? drums : (programs[note.instrument] ?? programs[0])]))]
   const got = wanted.map((file) => (banks.has(file.path) ? file.bytes : 0))
   const total = wanted.reduce((sum, file) => sum + file.bytes, 0)

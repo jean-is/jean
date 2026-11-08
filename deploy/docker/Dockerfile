@@ -17,21 +17,59 @@ COPY package.json package-lock.json ./
 RUN npm ci --ignore-scripts --no-audit --no-fund
 COPY . .
 # Jean reads the policy.json beside index.html (docs/enterprise.md): an empty one, until the
-# organisation mounts its own over it. Then dist/web/, what a web deploy serves, into /site.
+# organisation mounts its own over it. Then dist/web/, what a web deploy serves, into /site, without
+# its gzip copies: nginx sends the brotli ones, and gzips as it goes for a browser that takes no brotli.
 RUN sed -i 's|</head>|<meta name="app-policy" content="policy.json">\n</head>|' app/index.html \
  && npm run build:web \
  && cp -R dist/web /site \
- && echo '{}' > /site/policy.json
+ && echo '{}' > /site/policy.json \
+ && find /site -type f -name '*.gz' -exec sh -c 'for copy; do if [ -f "${copy%.gz}" ]; then rm "$copy"; fi; done' sh {} +
 
-# Node for the gateway and the relay: Node's image for the platform built, without npm, npx, corepack, yarn or the
-# headers, which neither runs and which scanners would report. Copied past them rather than deleted, so nothing runs
-# under emulation, and nothing that was left out sits in a layer below.
+# Node for the gateway and the relay, and nothing else: no shell, no package manager, no tool an intruder could run.
+# Its binary, stripped of its symbols and debugging information, 24 MB that nothing reads but a debugger; the Alpine
+# packages whose libraries it links, each whole, with apk's record of them, and Alpine's release, so that scanners
+# still see them; CA certificates; a user; and /tmp. Gathered on the builder's own platform, LLVM reading every
+# platform's binaries, so nothing runs under emulation; the build stops if Node links a library left out.
 FROM node:26-alpine@sha256:8996bb5821d62a8fd9bb27c1cb07462f3fdce6e47d640c6a881ead0b064ce216 AS node
+FROM --platform=$BUILDPLATFORM node:26-alpine@sha256:8996bb5821d62a8fd9bb27c1cb07462f3fdce6e47d640c6a881ead0b064ce216 AS node-files
+RUN apk add --no-cache llvm
+COPY --from=node / /node
+RUN mkdir -p /target/lib/apk/db /target/usr/local/bin /target/etc /target/tmp \
+ && awk -v keep=' musl libgcc libatomic libstdc++ ca-certificates-bundle alpine-release ' -v db=/target/lib/apk/db/installed ' \
+      BEGIN { RS = ""; FS = "\n" } \
+      { name = ""; for (i = 1; i <= NF; i++) if ($i ~ /^P:/) name = substr($i, 3) } \
+      index(keep, " " name " ") { \
+        printf "%s\n\n", $0 > db; \
+        for (i = 1; i <= NF; i++) if ($i ~ /^F:/) dir = substr($i, 3); else if ($i ~ /^R:/) print dir "/" substr($i, 3) \
+      }' /node/lib/apk/db/installed > /files \
+ && tar -C /node -cf - -T /files | tar -C /target -xf - \
+ && llvm-strip -o /target/usr/local/bin/node /node/usr/local/bin/node \
+ && printf 'root:x:0:0:root:/root:/sbin/nologin\nnode:x:1000:1000:node:/home/node:/sbin/nologin\n' > /target/etc/passwd \
+ && printf 'root:x:0:root\nnode:x:1000:node\n' > /target/etc/group \
+ && chmod 1777 /target/tmp \
+ && interpreter=$(llvm-readelf -l /target/usr/local/bin/node | sed -n 's/.*interpreter: \(.*\)]$/\1/p') \
+ && test -e "/target$interpreter" \
+ && for elf in /target/usr/local/bin/node $(find /target/lib /target/usr/lib -name '*.so*' -type f); do \
+      for lib in $(llvm-readelf --needed-libs "$elf" | sed -n 's/^ *\(lib[^ ]*\)$/\1/p'); do \
+        test -e "/target/lib/$lib" || test -e "/target/usr/lib/$lib" || { echo "$elf links $lib, which isn't copied"; exit 1; }; \
+      done; \
+    done
 FROM scratch AS node-runtime
-COPY --from=node --exclude=usr/local/lib/node_modules --exclude=usr/local/bin/npm --exclude=usr/local/bin/npx \
-     --exclude=usr/local/bin/corepack --exclude=usr/local/bin/yarn --exclude=usr/local/bin/yarnpkg --exclude=opt/yarn-* \
-     --exclude=usr/local/include / /
+COPY --from=node-files /target/ /
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+# Jean's own labels, OCI's, which the gateway and the relay each give their name and words. Its version, revision
+# and date come from CI, which builds with them; a build of its own is "dev".
+ARG VERSION=dev REVISION="" CREATED=""
+LABEL org.opencontainers.image.licenses="MIT" \
+      org.opencontainers.image.vendor="Warehouse SAS" \
+      org.opencontainers.image.authors="Warehouse SAS" \
+      maintainer="Warehouse SAS" \
+      org.opencontainers.image.url="https://jean.is" \
+      org.opencontainers.image.source="https://github.com/jean-is/jean" \
+      org.opencontainers.image.documentation="https://github.com/jean-is/jean/blob/main/deploy/docker/README.md" \
+      org.opencontainers.image.version="${VERSION}" \
+      org.opencontainers.image.revision="${REVISION}" \
+      org.opencontainers.image.created="${CREATED}"
 
 # The gateway: one module and Node, nothing to install, configured by GATEWAY_CONFIG. It runs as a user by number,
 # which Kubernetes can tell isn't root, under Node's permission model: the network, and reading its own folder.
@@ -43,6 +81,8 @@ EOF
 COPY gateway/ gateway/
 ENV HOST=0.0.0.0 PORT=8787
 USER 1000
+LABEL org.opencontainers.image.title="jean-gateway" \
+      org.opencontainers.image.description="Jean's gateway, on Node on port 8787, for the services a browser can't reach"
 EXPOSE 8787
 CMD ["node", "--permission", "--allow-net", "--allow-fs-read=/app/", "--disallow-code-generation-from-strings", "--disable-warning=ExperimentalWarning", "gateway/serve.js"]
 
@@ -66,6 +106,8 @@ COPY --from=relay-data --chown=1000:0 --chmod=770 /data /data
 ENV HOST=0.0.0.0 PORT=8791 RELAY_DIR=/data
 USER 1000
 VOLUME /data
+LABEL org.opencontainers.image.title="jean-relay" \
+      org.opencontainers.image.description="Jean's relay, on Node on port 8791, where a person's devices and the people they send to meet"
 EXPOSE 8791
 CMD ["node", "--permission", "--allow-net", "--allow-fs-read=/app/", "--allow-fs-read=/data/", "--allow-fs-write=/data/", "--disallow-code-generation-from-strings", "--disable-warning=ExperimentalWarning", "relay/serve.js"]
 
@@ -106,4 +148,19 @@ COPY --from=nginx-conf /etc/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY deploy/docker/nginx.conf /etc/nginx/templates/default.conf.template
 COPY --chmod=755 deploy/docker/app-name.sh /docker-entrypoint.d/40-app-name.sh
 COPY --from=build /site /srv
+# Jean's own labels, OCI's, in place of nginx's, which its image would otherwise pass on: Jean's files are MIT's, but for
+# ee/, the enterprise integrations, under the Elastic License 2.0 (ee/GRANT.md).
+ARG VERSION=dev REVISION="" CREATED=""
+LABEL org.opencontainers.image.title="jean" \
+      org.opencontainers.image.description="Jean, served by nginx without root on port 8080" \
+      org.opencontainers.image.licenses="MIT AND Elastic-2.0" \
+      org.opencontainers.image.vendor="Warehouse SAS" \
+      org.opencontainers.image.authors="Warehouse SAS" \
+      maintainer="Warehouse SAS" \
+      org.opencontainers.image.url="https://jean.is" \
+      org.opencontainers.image.source="https://github.com/jean-is/jean" \
+      org.opencontainers.image.documentation="https://github.com/jean-is/jean/blob/main/deploy/docker/README.md" \
+      org.opencontainers.image.version="${VERSION}" \
+      org.opencontainers.image.revision="${REVISION}" \
+      org.opencontainers.image.created="${CREATED}"
 EXPOSE 8080

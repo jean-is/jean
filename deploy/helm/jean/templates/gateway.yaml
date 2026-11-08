@@ -97,7 +97,7 @@ spec:
             - name: http
               containerPort: 8787
               protocol: TCP
-          {{- include "jean.lifecycle" . | nindent 10 }}
+          {{- include "jean.lifecycle" (list "node" "-e" "setTimeout(Boolean, 5000)") | nindent 10 }}
           resources:
             {{- toYaml $values.resources | nindent 12 }}
           {{- if $ca }}

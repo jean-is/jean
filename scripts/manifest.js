@@ -51,8 +51,6 @@ export const CAPABILITY_RUNTIMES = /** @type {Record<string, string[]>} */ ({
 const RUNTIME_DIRS = [...new Set(Object.values(CAPABILITY_RUNTIMES).flat())]
 /** The skill a first request reads (caps/own-skills, caps/interactive): by its address, so that no import brings it. */
 const VISUAL = 'caps/skills/directory/visual/SKILL.md'
-/** Fetched one at a time when first needed, and kept apart from app versions, never precached: a score's instruments (D338). */
-const ON_DEMAND = /^vendor\/sounds\/.+\.sf3$/
 /** Drawn for installs (D131): only the browser or the system fetches them, once, so the shell doesn't precache them. */
 const INSTALL_ICON = /^icons\/.+\.png$/
 /**
@@ -179,7 +177,7 @@ export async function collectFiles (root) {
   const capabilities = {}
   for (const entry of caps) {
     const dirs = [`caps/${entry.name}`, `locales/${entry.name}`, ...(CAPABILITY_RUNTIMES[entry.name] ?? [])]
-    const files = (await Promise.all(dirs.map((dir) => walk(root, dir)))).flat().filter((path) => isShipped(path) && !ON_DEMAND.test(path)).sort()
+    const files = (await Promise.all(dirs.map((dir) => walk(root, dir)))).flat().filter((path) => isShipped(path)).sort()
     capabilities[entry.name] = { files: [...new Set([...files, ...await borrowed(root, entry.name, files)])].sort() }
   }
   // What a first request loads, and what starts with the app, come with the shell (D667), and so are no capability's to cache again.

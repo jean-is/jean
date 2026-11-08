@@ -362,7 +362,7 @@ async function shareHost () {
   /** @param {string} name */
   const make = async (name) => {
     const jean = `http://${name}:${PORT}/`
-    const viewer = await viewerOf(jean, `${jean}vendor/sounds/`)
+    const viewer = await viewerOf(jean)
     return host({ app: jean, legal: `${jean}terms`, ...config, origins: [new URL(jean).origin, ...config.origins ?? []], viewer, render: jean, sounds: viewer.sounds, store, sites, files })
   }
   /** @param {string} name */

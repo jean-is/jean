@@ -50,13 +50,14 @@ Jean is an AI assistant: many supervisory authorities list new technologies such
 | A share host | A sealed copy it can't read | `urls.share`, or `rules.share: "never"` |
 | A relay, if the person adds another of their devices | Sealed messages between their own devices, which it can't read: the settings that follow, the keys that follow, each project's name and how its assistant should be, a task they send; where it keeps stores, their sealed store, 1 GB, gone after 6 months unused; the address each came from | `urls.relay`, none by default; no device is added where policy signs in |
 | The same relay, if the person meets someone in People | Sealed messages between people who met with six digits, which it can't read: a task or what Jean made, a few words, an answer back, a new key after a device is removed; the address each came from | `urls.relay`; `capabilities.deny: ["people"]` or `rules.share: "never"` turns People off |
+| jsDelivr, the first time a score plays an instrument | The instrument's file name and the browser's IP address, as any download sends them | `urls.sounds`: the organisation's own copy of the instruments, or `""` for none |
 | Warehouse SAS, for a copy it hosts | Each visit's IP address, time and the files asked for, as any web host sees them, logging none ([hosted copies](hosted.md)) | The organisation, choosing a hosted copy **[To fill: the agreement with Warehouse SAS that covers it]** |
 
 [Where your files go](../../site/files/en.html) names every address a copy of Jean contacts. `policy.html` at the deployment's address lists those its policy names and whether its headers let Jean reach them.
 
 ### Outside the EEA
 
-**[To fill: where the brain's provider, the connected services and their sub-processors process data, and the transfer tool for each.]** Jean adds no transfer of its own when the organisation serves it and runs its own gateway, and its own share host and relay or none. A copy Warehouse SAS hosts is served from OVHcloud's Gravelines data centre, in France ([hosted copies](hosted.md#where-it-runs)).
+**[To fill: where the brain's provider, the connected services and their sub-processors process data, and the transfer tool for each.]** Jean adds no transfer of its own when the organisation serves it and runs its own gateway, its own share host and relay or none, and its own copy of a score's instruments or none. A copy Warehouse SAS hosts is served from OVHcloud's Gravelines data centre, in France ([hosted copies](hosted.md#where-it-runs)).
 
 ## 3. Necessity and proportionality
 

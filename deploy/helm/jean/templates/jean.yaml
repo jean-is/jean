@@ -56,7 +56,7 @@ spec:
             - name: http
               containerPort: 8080
               protocol: TCP
-          {{- include "jean.lifecycle" . | nindent 10 }}
+          {{- include "jean.lifecycle" (list "sleep" "5") | nindent 10 }}
           resources:
             {{- toYaml .Values.jean.resources | nindent 12 }}
           volumeMounts:

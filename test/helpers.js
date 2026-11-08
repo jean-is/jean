@@ -1,4 +1,5 @@
 // Shared steps: a fresh Jean in a given language, with the fake brain connected.
+import { readFile } from 'node:fs/promises'
 import { expect } from '@playwright/test'
 
 export const BRAIN_URL = 'http://127.0.0.1:4181/v1'
@@ -40,6 +41,24 @@ export async function withPolicy(page, policy) {
   await page.addInitScript(() => document.addEventListener('readystatechange', () => {
     if (document.readyState === 'interactive') document.head.append(Object.assign(document.createElement('meta'), { name: 'app-policy', content: 'policy.json' }))
   }, { once: true }))
+}
+
+/** A file of the sounds package on jsDelivr, where a score's instruments come from (D338). */
+const SOUNDS = /^https:\/\/cdn\.jsdelivr\.net\/npm\/@jean-is\/sounds@[^/]+\/(.+)$/
+
+/**
+ * The sounds package on jsDelivr, served from this repository's copy of it, in `context`: the paths asked for, in order.
+ * @param {import('@playwright/test').BrowserContext} context
+ */
+export async function servedInstruments(context) {
+  const asked = /** @type {string[]} */ ([])
+  await context.route(SOUNDS, async (route) => {
+    const path = /** @type {string} */ (SOUNDS.exec(route.request().url())?.[1])
+    asked.push(path)
+    const body = await readFile(new URL(`../node_modules/@jean-is/sounds/${path}`, import.meta.url)).catch(() => null)
+    await route.fulfill(body ? { body, headers: { 'access-control-allow-origin': '*' } } : { status: 404 })
+  })
+  return asked
 }
 
 /**

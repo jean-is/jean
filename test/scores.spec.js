@@ -5,9 +5,10 @@
 // answers hold are among the creations, where Create's Score asks for one with Music score (D542).
 import { test, expect } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
-import { start, connectFakeBrain, ask, turnOn, openSettings, openTasks, nextCopy, SHARE_URL, nameOf } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, openSettings, openTasks, nextCopy, SHARE_URL, nameOf, servedInstruments, withPolicy } from './helpers.js'
 
 test('a tune is drawn as a score once its skill is added, and plays, each note lit as it sounds', async ({ page }) => {
+  const instruments = await servedInstruments(page.context())
   await start(page)
   await connectFakeBrain(page)
   await turnOn(page, 'Skills')
@@ -34,7 +35,9 @@ test('a tune is drawn as a score once its skill is added, and plays, each note l
   expect(width).toBeGreaterThan(0)
   expect(height).toBeGreaterThan(40)
   await expect.poll(async () => (await place())[0]).not.toBe(x)
-  // On its instruments: the piano's file came once and is kept apart from app versions, and what it plays isn't silence.
+  // On its instruments: the piano's file came once, from jsDelivr, checked against Jean's own list of them, which came with
+  // Jean, and is kept apart from app versions; and what it plays isn't silence.
+  expect(instruments).toEqual([expect.stringMatching(/^grand-piano\.[0-9a-f]{12}\.sf3$/)])
   expect(await page.evaluate(async () => (await (await caches.open('app-sounds')).keys()).map((request) => request.url.split('/').pop()))).toEqual([expect.stringMatching(/^grand-piano\.[0-9a-f]{12}\.sf3$/)])
   expect(await score.evaluate((element) => (/** @type {any} */ (element)).parts.reduce((/** @type {number} */ peak, /** @type {any} */ part) => part.buffer.getChannelData(0).reduce((/** @type {number} */ most, /** @type {number} */ value) => Math.max(most, Math.abs(value)), peak), 0))).toBeGreaterThan(0.05)
   await expect.poll(async () => Number(await score.locator('input[type="range"]').inputValue())).toBeGreaterThan(0.5)
@@ -60,6 +63,33 @@ test('a tune is drawn as a score once its skill is added, and plays, each note l
   const whole = await nextCopy(page)
   await page.locator('.msg-jean').last().locator('app-made').getByRole('button', { name: 'Copy' }).click()
   expect((await whole.read())['text/html']).toMatch(/<img [^>]*src="data:image\/png;base64,[^"]+"[^>]*alt="The Legacy Jig"/)
+})
+
+test('an organisation’s own copy of the instruments, beside Jean, plays a score, and jsDelivr is asked nothing', async ({ page }) => {
+  // As deploy/docker/README.md has it: the package's files at vendor/sounds/, which the policy names, relative to Jean.
+  await withPolicy(page, { urls: { sounds: 'vendor/sounds/' } })
+  const own = /** @type {string[]} */ ([])
+  await page.context().route(/\/vendor\/sounds\/[^/]+\.sf3$/, async (route) => {
+    const path = new URL(route.request().url()).pathname
+    own.push(path)
+    await route.fulfill({ body: await readFile(new URL(`../node_modules/@jean-is/sounds/${path.split('/').pop()}`, import.meta.url)) })
+  })
+  const cdn = await servedInstruments(page.context())
+  await start(page)
+  await connectFakeBrain(page)
+  await turnOn(page, 'Skills')
+  await page.keyboard.press('Escape')
+  const knows = await openSettings(page, 'Skills')
+  await knows.locator('.ready-made .service', { hasText: 'Music score' }).click()
+  await knows.getByRole('button', { name: 'Add this skill' }).click()
+  await page.keyboard.press('Escape')
+  await ask(page, 'Write me a jig')
+  const score = page.locator('.msg-jean app-score').last()
+  await score.getByRole('button', { name: 'Play' }).click()
+  await expect(score.locator('.score-sheet .is-sounding').first()).toBeAttached()
+  await expect.poll(() => own).toEqual([expect.stringMatching(/^\/vendor\/sounds\/grand-piano\.[0-9a-f]{12}\.sf3$/)])
+  expect(cdn).toEqual([])
+  expect(await score.evaluate((element) => (/** @type {any} */ (element)).parts.reduce((/** @type {number} */ peak, /** @type {any} */ part) => part.buffer.getChannelData(0).reduce((/** @type {number} */ most, /** @type {number} */ value) => Math.max(most, Math.abs(value)), peak), 0))).toBeGreaterThan(0.05)
 })
 
 test('a tune saved as a .abc file shows as its text, and as its score once Music score is a skill of the room, even while it is open, in the preview and in the browser, as one in a Markdown file does', async ({ page }) => {

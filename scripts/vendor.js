@@ -230,12 +230,12 @@ export const RUNTIMES = [
     bundle: { to: 'fflate.mjs', package: 'fflate', names: ['inflateSync'] },
   },
   {
-    // The instruments (D338): MS Basic, a file for each group that shares samples, their index, and the
-    // package's version, which a saved copy gets them at.
+    // The instruments (D338): only their list, each file's SHA-256, and the package's version, at which they come
+    // from where Settings or policy name them, jsDelivr unless they name another, the files themselves 46 MB.
     dir: 'vendor/sounds',
     packages: ['@jean-is/sounds'],
     files: [],
-    folders: [['@jean-is/sounds', '.', /\.sf3$|^(sounds|package)\.json$/]],
+    folders: [['@jean-is/sounds', '.', /^(sounds|package)\.json$/]],
   },
   {
     // A shared link's QR code: lean-qr's smallest build, which only encodes, in bytes.

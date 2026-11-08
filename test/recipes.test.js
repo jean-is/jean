@@ -107,9 +107,14 @@ test('the container images run on a hardened cluster: any user in group 0, a rea
   const docker = await read('deploy/docker/Dockerfile')
   /** Each stage by its name, the last one, Jean's, as ''. */
   const stages = Object.fromEntries(docker.split(/^FROM /m).slice(1).map((stage) => [/^.*\bAS ([\w-]+)$/m.exec(stage.split('\n')[0])?.[1] ?? '', stage]))
-  // Node without npm, npx, corepack or yarn, which scanners report and nothing runs, copied rather than deleted.
-  assert.match(stages['node-runtime'], /^scratch AS node-runtime$/m)
-  for (const left of ['usr/local/lib/node_modules', 'usr/local/bin/npm', 'usr/local/bin/npx', 'usr/local/bin/corepack', 'usr/local/bin/yarn']) assert.ok(stages['node-runtime'].includes(`--exclude=${left} `), left)
+  // Node and nothing else: no shell, no package manager, nothing an intruder could run. Its binary stripped, and the
+  // Alpine packages it links, whole, with apk's record of them, gathered on the builder's own platform, the build stopping
+  // on a library left out.
+  assert.match(stages['node-runtime'], /^scratch AS node-runtime\nCOPY --from=node-files \/target\/ \/$/m)
+  assert.match(stages['node-files'], /^--platform=\$BUILDPLATFORM /)
+  assert.deepEqual(/keep=' ([^']+) '/.exec(stages['node-files'])?.[1].split(' '), ['musl', 'libgcc', 'libatomic', 'libstdc++', 'ca-certificates-bundle', 'alpine-release'])
+  assert.ok(stages['node-files'].includes('llvm-strip -o /target/usr/local/bin/node /node/usr/local/bin/node'), 'Node stripped')
+  assert.ok(stages['node-files'].includes('llvm-readelf --needed-libs'), 'every library Node links, there')
   for (const name of ['gateway', 'relay']) {
     const stage = stages[name]
     assert.match(stage, /^node-runtime AS /, `${name} runs on node-runtime`)
@@ -129,6 +134,38 @@ test('the container images run on a hardened cluster: any user in group 0, a rea
   assert.match(stages[''], /^COPY --from=nginx-conf \/etc\/nginx\/nginx\.conf \/etc\/nginx\/nginx\.conf$/m)
   // Every image for another platform runs nothing under emulation: a RUN only where the builder's own platform is.
   for (const [name, stage] of Object.entries(stages)) if (/^RUN /m.test(stage)) assert.match(stage, /^--platform=\$BUILDPLATFORM /, `${name || 'jean'} runs only on the builder's platform`)
+})
+
+test('each container image carries Jean’s own labels, in place of nginx’s, and CI labels and annotates it alike', async () => {
+  const [docker, ci] = await Promise.all([read('deploy/docker/Dockerfile'), read('.github/workflows/ci.yml')])
+  /** Each stage by its name, the last one, Jean's, as ''. */
+  const stages = Object.fromEntries(docker.split(/^FROM /m).slice(1).map((stage) => [/^.*\bAS ([\w-]+)$/m.exec(stage.split('\n')[0])?.[1] ?? '', stage]))
+  /** A stage's labels over those of the stage it starts from. @param {string} name @returns {Record<string, string>} */
+  const labelsOf = (name) => {
+    const stage = stages[name]
+    const base = /^\S+/.exec(stage)?.[0] ?? ''
+    const own = [...stage.replace(/\\\n/g, ' ').matchAll(/^LABEL (.+)$/gm)].flatMap(([, line]) => [...line.matchAll(/([\w.-]+)="([^"]*)"/g)].map(([, key, value]) => [key, value]))
+    return { ...(base !== name && base in stages ? labelsOf(base) : {}), ...Object.fromEntries(own) }
+  }
+  const { parse, substitute } = await import('../scripts/ci.js')
+  const images = /** @type {any} */ (parse(ci)).jobs.images
+  const meta = images.steps.find((/** @type {any} */ step) => step.id === 'meta').with
+  const OCI = 'org.opencontainers.image.'
+  for (const entry of /** @type {{ image: string, target: string, description: string, licenses: string }[]} */ (images.strategy.matrix.include)) {
+    const labels = labelsOf(entry.target)
+    assert.deepEqual([labels[`${OCI}title`], labels[`${OCI}description`], labels[`${OCI}licenses`]], [entry.image, entry.description, entry.licenses], entry.image)
+    // Every label nginx's image has, said again, so that none of its own passes on, and who made it and where to read more.
+    for (const key of ['title', 'description', 'licenses', 'url', 'source', 'version', 'revision', 'created', 'vendor', 'authors', 'documentation']) assert.ok(`${OCI}${key}` in labels, `${entry.image} has its own ${key}`)
+    assert.equal(labels.maintainer, labels[`${OCI}vendor`], `${entry.image}'s maintainer`)
+    assert.equal(labels[`${OCI}version`], '${VERSION}', `${entry.image}'s version comes from CI, "dev" otherwise`)
+    // What CI writes where the metadata action would say the repository's, the same as the Dockerfile.
+    for (const kind of ['labels', 'annotations']) {
+      for (const line of substitute(meta[kind], { matrix: entry, github: {}, steps: {} }).split('\n').filter(Boolean)) {
+        const at = line.indexOf('=')
+        assert.equal(line.slice(at + 1), labels[line.slice(0, at)], `CI's ${kind} for ${entry.image}: ${line.slice(0, at)}`)
+      }
+    }
+  }
 })
 
 test('Bunny gets the header set and every type at each deploy, and its script answers the pages without .html', async () => {

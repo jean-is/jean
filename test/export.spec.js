@@ -7,12 +7,11 @@
 import { readFile } from 'node:fs/promises'
 import { pathToFileURL } from 'node:url'
 import { test, expect } from '@playwright/test'
-import { start, openTasks } from './helpers.js'
+import { start, openTasks, servedInstruments } from './helpers.js'
 
 test.use({ viewport: { width: 1280, height: 800 } })
 
 const PACKAGE = /^https:\/\/cdn\.jsdelivr\.net\/npm\/@jean-is\/render@[^/]+\/(.+)$/
-const SOUNDS = /^https:\/\/cdn\.jsdelivr\.net\/npm\/@jean-is\/sounds@[^/]+\/(.+)$/
 const TYPES = /** @type {Record<string, string>} */ ({ js: 'text/javascript', mjs: 'text/javascript', css: 'text/css', json: 'application/json', woff2: 'font/woff2', html: 'text/plain' })
 
 const ANSWER = `Here is **the plan**, and $x^2 + 1$.
@@ -89,13 +88,7 @@ test('a saved copy draws itself as Jean does, from the render package', async ({
     const body = await readFile(new URL(`../app/${path}`, import.meta.url)).catch(() => null)
     await route.fulfill(body ? { body, headers: { 'content-type': TYPES[path.split('.').at(-1) ?? ''] ?? 'application/octet-stream', 'access-control-allow-origin': '*' } } : { status: 404 })
   })
-  const instruments = /** @type {string[]} */ ([])
-  await reading.route(SOUNDS, async (route) => {
-    const path = /** @type {string} */ (SOUNDS.exec(route.request().url())?.[1])
-    instruments.push(path)
-    const body = await readFile(new URL(`../app/vendor/sounds/${path}`, import.meta.url)).catch(() => null)
-    await route.fulfill(body ? { body, headers: { 'access-control-allow-origin': '*' } } : { status: 404 })
-  })
+  const instruments = await servedInstruments(reading)
   const saved = await reading.newPage()
   const errors = /** @type {string[]} */ ([])
   saved.on('pageerror', (error) => errors.push(error.message))

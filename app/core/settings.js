@@ -29,6 +29,8 @@ export const DEFAULT_URLS = Object.freeze({
   timestamp: 'https://timestamp.sigstore.dev/api/v1/timestamp', transparencyLog: 'https://rekor.sigstore.dev',
   // The renderer a deck file links to (D595): deck's own, at its version, on jsDelivr's npm mirror.
   deck: 'https://cdn.jsdelivr.net/npm/@codename/deck@{version}/dist/deck.js',
+  // The instruments a score plays (D338): the sounds package on jsDelivr, at this Jean's version of it, none when ''.
+  sounds: 'https://cdn.jsdelivr.net/npm/@jean-is/sounds@{version}/',
 })
 
 /** @param {keyof typeof DEFAULT_URLS} name @param {Settings} settings @param {{ urls?: Record<string, string> }} [policy] */

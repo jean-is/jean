@@ -54,10 +54,13 @@ test('every pod takes the shared pod and container security, probes and stop', (
     assert.doesNotMatch(text, /securityContext:|runAsUser|automountServiceAccountToken/, `${name}: security belongs in _helpers.tpl alone`)
   }
   const helpers = templates['_helpers.tpl']
-  for (const line of ['automountServiceAccountToken: false', 'enableServiceLinks: false', 'runAsNonRoot: true', 'type: RuntimeDefault', 'allowPrivilegeEscalation: false', 'readOnlyRootFilesystem: true', '- ALL', 'command: ["sleep", "5"]']) {
+  for (const line of ['automountServiceAccountToken: false', 'enableServiceLinks: false', 'runAsNonRoot: true', 'type: RuntimeDefault', 'allowPrivilegeEscalation: false', 'readOnlyRootFilesystem: true', '- ALL', 'command: {{ toJson . }}']) {
     assert.ok(helpers.includes(line), line)
   }
   assert.match(helpers, /\.Capabilities\.APIVersions\.Has "security\.openshift\.io\/v1"/)
+  // Five seconds before it stops, waited by what each image holds: nginx's has sleep, the gateway's and the relay's only Node.
+  assert.match(templates['jean.yaml'], /include "jean\.lifecycle" \(list "sleep" "5"\)/)
+  for (const name of ['gateway.yaml', 'relay.yaml']) assert.match(templates[name], /include "jean\.lifecycle" \(list "node" "-e" "setTimeout\(Boolean, 5000\)"\)/, name)
 })
 
 test('the relay is one pod, replaced rather than rolled, and has no replicaCount', () => {

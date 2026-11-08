@@ -170,12 +170,15 @@ jobs:
           - image: jean
             target: ''
             description: Jean, served by nginx without root on port 8080
+            licenses: MIT AND Elastic-2.0
           - image: jean-gateway
             target: gateway
             description: Jean's gateway, on Node on port 8787, for the services a browser can't reach
+            licenses: MIT
           - image: jean-relay
             target: relay
             description: Jean's relay, on Node on port 8791, where a person's devices and the people they send to meet
+            licenses: MIT
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
       - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4
@@ -185,7 +188,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       # The package's page reads a multi-platform image's description from its index, so the
-      # annotations go there as well as on each platform's image.
+      # annotations go there as well as on each platform's image. Labels and annotations say what the Dockerfile's
+      # labels say (test/recipes.test.js), where the action's own defaults, the repository's, would say otherwise;
+      # the action adds the version, the revision and the date.
       - id: meta
         uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6
         env:
@@ -199,9 +204,16 @@ jobs:
           labels: |
             org.opencontainers.image.title=${{ matrix.image }}
             org.opencontainers.image.description=${{ matrix.description }}
+            org.opencontainers.image.licenses=${{ matrix.licenses }}
+            org.opencontainers.image.url=https://jean.is
           annotations: |
             org.opencontainers.image.title=${{ matrix.image }}
             org.opencontainers.image.description=${{ matrix.description }}
+            org.opencontainers.image.licenses=${{ matrix.licenses }}
+            org.opencontainers.image.url=https://jean.is
+            org.opencontainers.image.vendor=Warehouse SAS
+            org.opencontainers.image.authors=Warehouse SAS
+            org.opencontainers.image.documentation=https://github.com/jean-is/jean/blob/main/deploy/docker/README.md
       - id: build
         uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7
         with:

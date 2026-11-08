@@ -46,7 +46,7 @@ describe('hosted copies', () => {
   })
 
   it('checks a policy as policy.html does: a typo warns, a wrong value, an address its own header refuses or no brain stops it', async () => {
-    assert.deepEqual(await checkTenant(tenantOf('ai.acme.com', ACME)), { problems: [], warnings: [`Jean's own defaults its Content-Security-Policy refuses, unless the policy's urls name mirrors: modelWeights, wikipedia, vikidia, pyodide, pypi, npm, prices, timestamp, transparencyLog`] })
+    assert.deepEqual(await checkTenant(tenantOf('ai.acme.com', ACME)), { problems: [], warnings: [`Jean's own defaults its Content-Security-Policy refuses, unless the policy's urls name mirrors: modelWeights, wikipedia, vikidia, pyodide, pypi, npm, prices, timestamp, transparencyLog, sounds`] })
     const { problems, warnings } = await checkTenant({ ...tenantOf('ai.acme.com', { ...ACME, brain: [], rules: { fetch: 'maybe' } }), connect: ['https://login.acme.example', 'gateway'] })
     assert.ok(warnings.includes("brain isn't read by this version (brains?)"), warnings.join('; '))
     assert.ok(problems.includes('rules.fetch should be one of "allow", "ask", "never"'), problems.join('; '))

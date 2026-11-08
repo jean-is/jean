@@ -64,6 +64,18 @@ Settings go in the shell's environment or in a `.env` file beside `compose.yaml`
 { "urls": { "privacy": "https://intranet.corp.example/jean/privacy", "terms": "" } }
 ```
 
+**A score's instruments.** The first time a score plays an instrument, the browser fetches its file from the `@jean-is/sounds` package on jsDelivr, at the version Jean names, 46 MB in all, and checks it against the SHA-256 Jean ships. To keep that inside, serve the package's files yourself, here beside Jean, and name them in the policy; or name none with `""`, and scores play on Jean's own synthesizer:
+
+```bash
+docker run --rm --entrypoint cat ghcr.io/jean-is/jean:latest /srv/vendor/sounds/package.json   # the version Jean names
+npm pack @jean-is/sounds@<that version> && mkdir sounds && tar -xzf jean-is-sounds-*.tgz -C sounds --strip-components 1
+docker run -d -p 8080:8080 -v ./policy.json:/srv/policy.json:ro -v ./sounds:/srv/vendor/sounds:ro ghcr.io/jean-is/jean:latest
+```
+
+```json
+{ "urls": { "sounds": "vendor/sounds/" } }
+```
+
 **Its name.** `APP_NAME` is what people see Jean called, in the room and when they install it, on their computer's list of apps:
 
 ```bash
@@ -128,7 +140,8 @@ The relay keeps its mailboxes, and its stores, in the volume at `/data`. Give it
 - Sends `Cache-Control: no-cache` and `X-Content-Type-Options: nosniff` with every file, plus `Content-Security-Policy: frame-ancestors 'self'`, so that only Jean frames Jean's pages. File names carry no version, so each file is checked again before use, and the service worker keeps them for offline use.
 - Answers a page at its address without `.html` too, as jean.is does: `/check` is `check.html`.
 - With `APP_NAME`, serves `brand.js` and the manifests from `/tmp/app-name`, written by `/docker-entrypoint.d/40-app-name.sh` as it starts.
-- Compresses text and WebAssembly with gzip, and serves `.mjs`, `.wasm` and `.webmanifest` files with the types browsers require.
+- Carries Jean's own OCI labels, never nginx's: its name and words, Warehouse SAS as its vendor, its licences (MIT, and the Elastic License 2.0 for `ee/` in `jean`), jean.is, its source and this page. CI adds its version, revision and date; a build of your own says `dev`, or what `--build-arg VERSION=…`, `REVISION` and `CREATED` give.
+- Sends the brotli copy written beside each file to a browser that takes brotli, gzips text and WebAssembly as it goes for one that doesn't, and serves `.mjs`, `.wasm` and `.webmanifest` files with the types browsers require.
 
 ## Update it
 
@@ -148,6 +161,7 @@ Pull the new version, or build again from it, and replace the container. Each op
 - Any user runs them, as OpenShift picks one, in group 0, which owns what each writes to.
 - With a read-only root filesystem, `jean` needs its two folders as `emptyDir` volumes, and the relay a persistent volume at `/data` that its user can write to, such as one with `securityContext.fsGroup`.
 - None needs a capability or a privilege escalation. Node runs the gateway and the relay under its permission model: the network, reading their own code, and for the relay `/data`.
+- The gateway and the relay hold Node and nothing else: no shell, no package manager, only the Alpine packages whose libraries Node links (musl, libgcc, libatomic, libstdc++), CA certificates and apk's record of them, which scanners read. So `exec` finds no shell in them, and nothing an intruder could run: debug one with `kubectl debug -it <pod> --image=<an image of yours> --target=gateway --profile=restricted` (or `relay`), which a namespace held to \"restricted\" lets in, and wait before it stops with `node -e "setTimeout(Boolean, 5000)"`, as the chart's `preStop` does, since `sleep` isn't there.
 - nginx runs two workers, whatever the machine's processors.
 - Each stops cleanly on SIGTERM, and a probe can ask for `/`: nginx answers with Jean, the gateway and the relay with `{"format":1,…}`.
 - The relay runs as one replica, replaced rather than rolled, since its waiting reads and limits live in its memory.

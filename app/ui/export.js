@@ -8,6 +8,7 @@ import { BRAND } from '../brand.js'
 import { t, locale, dir } from '../core/i18n.js'
 import { callsIn, filesMade, metaRecord } from '../core/events.js'
 import { ulid } from '../core/ulid.js'
+import { DEFAULT_URLS } from '../core/settings.js'
 
 const STYLE = ':root>body{max-width:46rem;margin:auto;padding:1rem}:root{color-scheme:light dark;font:1rem/1.5 system-ui,sans-serif}h1{font-size:1.5rem}' +
   'section{margin-block:1.5rem}section p{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}section time{display:block;font-size:.8rem;opacity:.75}' +
@@ -62,8 +63,6 @@ function draw() {
 
 /** What a copy draws itself with, unless policy or Settings name another address (`urls.render`), none when '': the render package on jsDelivr, at the version that saved it. */
 const RENDER = 'https://cdn.jsdelivr.net/npm/@jean-is/render@{version}/'
-/** Where its scores get their instruments (D338), unless policy or Settings name another address (`urls.sounds`): the sounds package on jsDelivr, at this Jean's version of it. */
-const SOUNDS = 'https://cdn.jsdelivr.net/npm/@jean-is/sounds@{version}/'
 
 /** What a policy allows by its hash. @param {string} text */
 const hashOf = async (text) => `'sha256-${btoa(String.fromCharCode(...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)))))}'`
@@ -169,7 +168,8 @@ async function readerOf() {
   const { drawing, styles } = found
   const urls = /** @type {Record<string, string>} */ (effective.peek().settings.urls ?? {})
   const base = String(app.policy.urls?.render ?? urls.render ?? RENDER).replace('{version}', drawing.render.version)
-  const instruments = drawing.sounds && String(app.policy.urls?.sounds ?? urls.sounds ?? SOUNDS).replace('{version}', drawing.sounds)
+  const sounds = drawing.sounds && String(app.policy.urls?.sounds ?? urls.sounds ?? DEFAULT_URLS.sounds).replace('{version}', drawing.sounds)
+  const instruments = sounds ? new URL(sounds, location.href).href : null
   return base ? readerAt(base, drawing, { instruments, styles }) : null
 }
 

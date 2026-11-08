@@ -130,7 +130,8 @@ securityContext:
     type: RuntimeDefault
 {{- end -}}
 
-{{/* What every container does the same: probes on /, and five seconds for its address to leave the Service before it stops. */}}
+{{/* What every container does the same: probes on /, and five seconds for its address to leave the Service before it stops,
+     waited by the command given: `sleep` in Jean's, Node in the gateway's and the relay's, which hold nothing else. */}}
 {{- define "jean.lifecycle" -}}
 startupProbe:
   httpGet:
@@ -154,7 +155,7 @@ livenessProbe:
 lifecycle:
   preStop:
     exec:
-      command: ["sleep", "5"]
+      command: {{ toJson . }}
 {{- end -}}
 
 {{/* Where a pod runs, as the component's values say. */}}

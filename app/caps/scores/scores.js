@@ -15,6 +15,7 @@ import { icon, icons } from '../../ui/menu-icons.js'
 import { styleSheet, still } from '../../ui/sheet.js'
 import { modelWorker } from '../../ui/model.js'
 import { t, dir, locale, useStrings, intlLocales } from '../../core/i18n.js'
+import { serviceURL } from '../../core/settings.js'
 import { notesOf, wholeNote } from './notes.js'
 
 /** @typedef {import('./notes.js').Note} Note */
@@ -37,6 +38,23 @@ let playing = /** @type {AppScore | null} */ (null)
 /** Where the music is made: a worker of this Jean's own, or none in a saved copy, whose files come from an address that starts none. */
 const WORKER = new URL('./sound-worker.js', import.meta.url)
 const sounds = WORKER.origin === location.origin ? modelWorker(WORKER, 'The score’s sound stopped') : null
+/** Jean's own list of the instruments (D338): the sounds package's version, and each file's SHA-256, which the files that come from elsewhere are checked against. */
+const OWN = new URL('../../vendor/sounds/', import.meta.url)
+let version = /** @type {Promise<string> | null} */ (null)
+
+/**
+ * Where the instruments come from, as Settings or policy name it, at this Jean's version of them, an address of Jean's own
+ * when relative (an organisation's copy beside it), with Jean's own list of them; in a saved copy, the address it was saved
+ * with, and the list there. None when the address is ''.
+ * @returns {Promise<{ base: string, index?: string }>}
+ */
+async function instruments() {
+  const where = String(serviceURL('sounds', app.settings.peek(), app.policy) ?? '')
+  if (!where || !sounds && where.includes('{version}')) throw new Error('No address for the instruments')
+  if (!sounds) return { base: where }
+  const at = await (version ??= fetch(new URL('package.json', OWN)).then((response) => response.json()).then((found) => String(found.version)))
+  return { base: new URL(where.replace('{version}', at), document.baseURI).href, index: new URL('sounds.json', OWN).href }
+}
 
 /**
  * One note: a triangle wave and, softer, its octave, struck and fading as a plucked string does,
@@ -179,7 +197,6 @@ class AppScore extends HTMLElement {
       this.loading = null
       this.start(sound)
     }
-    const request = { notes: this.notes, rate: sound.sampleRate, base: (/** @type {Record<string, string>} */ (app.settings.peek().urls ?? {})).sounds }
     const made = (/** @type {Record<string, any>} */ message) => {
       if (this.parts !== parts) return
       if (message.type === 'progress') return this.loading !== null && ((this.loading = message.loaded / message.total), this.paint())
@@ -190,7 +207,10 @@ class AppScore extends HTMLElement {
       if (this.started !== null) this.schedule(parts[parts.length - 1])
       ready()
     }
-    const making = sounds ? sounds.call(request, { onMessage: made }) : import('./sound.js').then(({ render }) => render(request, made, () => this.parts !== parts))
+    const making = instruments().then((where) => {
+      const request = { notes: this.notes, rate: sound.sampleRate, ...where }
+      return sounds ? sounds.call(request, { onMessage: made }) : import('./sound.js').then(({ render }) => render(request, made, () => this.parts !== parts))
+    })
     making.catch((error) => {
       console.warn('Score', error)
       if (this.parts !== parts || parts.length) return

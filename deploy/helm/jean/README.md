@@ -81,7 +81,7 @@ The same two helpers in `_helpers.tpl` write it for the three, so none can drift
 
 - Its own ServiceAccount, with no role bound and its token never mounted (`automountServiceAccountToken: false`), and no service links in its environment.
 - `runAsNonRoot`, the runtime's seccomp profile, no privilege escalation, every capability dropped, and a read-only root filesystem. Jean writes only to two `emptyDir` volumes, `/tmp` and `/etc/nginx/conf.d`; the gateway nowhere; the relay to `/data`. Node runs them under its permission model besides: the network, reading their own code, and for the relay its folder.
-- Probes on `/`, which nginx answers with Jean and the two others with `{"format":1,…}`, and five seconds' sleep before it stops, so that the Service sends it nothing more by the time it closes. Each stops cleanly on SIGTERM.
+- Probes on `/`, which nginx answers with Jean and the two others with `{"format":1,…}`, and five seconds' wait before it stops (`sleep` in Jean's, Node in the gateway's and the relay's, which hold no shell), so that the Service sends it nothing more by the time it closes. Each stops cleanly on SIGTERM.
 
 ## OpenShift
 
