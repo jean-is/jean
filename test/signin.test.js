@@ -83,6 +83,7 @@ test('back from Entra, the code becomes tokens and who signed in; they renew wit
   const { pending } = await authorization(found, { clientId: CLIENT, redirectURI: JEAN, scopes: [SCOPE] })
   const tokens = await finish(new URLSearchParams({ code: 'the-code', state: pending.state, session_state: 'x' }), pending, fetch)
   assert.equal(tokens.account, 'ana@acme.example')
+  assert.equal(tokens.idToken, idToken, 'kept whole, for the organisation’s relay (D731)')
   assert.deepEqual(tokens.groups, ['5a8e2c41-0b7d-4c1e-9f3a-6d2b8e4f1a07', 'Jean.Legal'])
   assert.equal(tokens.clientId, CLIENT)
   assert.ok(tokens.expiresAt && tokens.expiresAt > Date.now() + 3500_000)

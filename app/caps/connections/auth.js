@@ -10,7 +10,7 @@ import { createVerifier, challengeS256 } from '../../core/oauth.js'
  * @typedef {{ issuer: string, authorization_endpoint: string, token_endpoint: string, registration_endpoint?: string, end_session_endpoint?: string, scopes_supported?: string[],
  *   authorization_response_iss_parameter_supported?: boolean, resource?: string, scope?: string, [field: string]: unknown }} Metadata  the sign-in server's, with the resource and scopes to ask for
  * @typedef {{ state: string, verifier: string, clientId: string, redirectURI: string, issuer: string, issRequired: boolean, tokenEndpoint: string, resource?: string }} Pending
- * @typedef {{ access: string, refresh?: string, expiresAt?: number, tokenEndpoint: string, clientId: string, resource?: string, account?: string, name?: string, groups?: string[] | null }} Tokens
+ * @typedef {{ access: string, refresh?: string, expiresAt?: number, tokenEndpoint: string, clientId: string, resource?: string, account?: string, name?: string, groups?: string[] | null, idToken?: string }} Tokens
  *   account: who signed in, name: what they are called, groups: the directory's groups and roles they are in (D429)
  */
 
@@ -141,7 +141,7 @@ async function token({ tokenEndpoint, clientId, resource }, form, fetch) {
   const res = await fetch(tokenEndpoint, { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded', accept: 'application/json' }, body })
   const json = await res.json().catch(() => null)
   if (!res.ok || !json?.access_token) throw new Error(json?.error_description ?? json?.error ?? `HTTP ${res.status}`)
-  return { access: json.access_token, ...(json.refresh_token && { refresh: json.refresh_token }), ...(json.expires_in && { expiresAt: Date.now() + json.expires_in * 1000 }), tokenEndpoint, clientId, resource, ...(json.id_token && await whoOf(json.id_token)) }
+  return { access: json.access_token, ...(json.refresh_token && { refresh: json.refresh_token }), ...(json.expires_in && { expiresAt: Date.now() + json.expires_in * 1000 }), tokenEndpoint, clientId, resource, ...(json.id_token && { idToken: json.id_token, ...await whoOf(json.id_token) }) }
 }
 
 /**

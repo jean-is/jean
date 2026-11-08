@@ -16,7 +16,7 @@ const idOf = async (token) => base64url(new Uint8Array(await crypto.subtle.diges
 const [WAIT, LONGEST] = [25, 60_000]
 
 /** The relay's answer, or an Error with its status (404, 409, 413, 429, 507…) when it refuses. @param {string} url @param {RequestInit} [init] */
-async function ask(url, init) {
+export async function ask(url, init) {
   const response = await fetch(url, init)
   if (response.ok) return response
   const { error = `The relay answered ${response.status}.` } = await response.json().catch(() => ({}))

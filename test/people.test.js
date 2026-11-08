@@ -9,13 +9,18 @@ import { bytesOf } from '../app/caps/share/seal.js'
 import { pairingBox, codeOf, envelope } from '../app/caps/devices/pair.js'
 import { memoryFS } from '../app/core/fs.js'
 import { personOf, peopleOf, invite, heardHello, heardReveal, confirmed, accept, heardNonce, heardMet, received, forget, tidy, metId, nameId, WEEK, sendTo, arrivalsOf, ARRIVALS, turn, letter, madePerson } from '../app/caps/people/flow.js'
+import { lists, listed } from '../app/caps/people/colleagues.js'
+import { ISSUER, JWKS, POLICY, idTokenOf } from './fixtures/fake-issuer.js'
 
 const [JEAN, BASE] = ['https://jean.example', 'https://relay.example/']
 
-/** A relay in this process, which fetch now reaches, its mailboxes in memory. */
-function relayed() {
-  const [boxes, bodies] = [new Map(), new Map()]
+/** A relay in this process, which fetch now reaches, its mailboxes in memory; with `issuers`, the organisation's people too. @param {Partial<import('../relay/relay.js').Config>} [config] */
+function relayed(config = {}) {
+  const [boxes, bodies, people] = [new Map(), new Map(), new Map()]
   const store = {
+    entries: async () => [...people.values()],
+    saveEntry: async (/** @type {any} */ entry) => { people.set(entry.id, structuredClone(entry)) },
+    dropEntry: async (/** @type {string} */ id) => { people.delete(id) },
     box: async (/** @type {string} */ id) => structuredClone(boxes.get(id) ?? null),
     save: async (/** @type {string} */ id, /** @type {any} */ box) => { boxes.set(id, structuredClone(box)) },
     add: async (/** @type {string} */ id, /** @type {number} */ seq, /** @type {Uint8Array} */ body) => { bodies.set(`${id}/${seq}`, body) },
@@ -24,7 +29,7 @@ function relayed() {
     remove: async (/** @type {string} */ id) => { boxes.delete(id); for (const key of [...bodies.keys()]) if (key.startsWith(`${id}/`)) bodies.delete(key) },
     record: async () => {}, free: async () => Infinity,
   }
-  const handle = relay({ origins: [JEAN], store, limits: {} })
+  const handle = relay({ origins: [JEAN], store, limits: {}, ...config })
   globalThis.fetch = (url, init = {}) => handle(new Request(url, { ...init, headers: { .../** @type {Record<string, string>} */ (init.headers), origin: JEAN } }), { address: '203.0.113.7', port: 51234 })
   return boxes
 }
@@ -221,4 +226,20 @@ test('a second turn from the same old key, as a stolen device would make, marks 
   assert.equal(ana2.again, true)
   assert.equal(ana2.key.x, (await personOf(ana)).public.x, 'the key taken stays')
   assert.equal(await reasonOf(sendTo(bob, fpA, { title: 'x', words: '', value: VALUE, thread: THREAD })), 'again')
+})
+
+test('where the organisation’s relay lists its people, a person is listed there by the ID token its sign-in gave, under each device’s key and mailbox, which a colleague then finds (D731)', async () => {
+  assert.equal(await lists(BASE, ISSUER), false, 'a relay that lists nobody')
+  relayed({ issuers: [{ issuer: ISSUER, audience: POLICY.signIn.clientId, jwks: JWKS }] })
+  assert.equal(await lists(BASE, ISSUER), true)
+  assert.equal(await lists(BASE, 'https://login.other.example/v2.0'), false)
+  const [ana, laptop, phone] = [await madePerson(), await madePerson(), await madePerson()]
+  assert.deepEqual(await listed(BASE, ana, await idTokenOf()), { name: 'Ana Martín', account: 'ana@acme.example' }, 'its mailbox opened first')
+  const bob = { sub: 'sub-bob', name: 'Bob Dupont', preferred_username: 'bob@acme.example' }
+  await listed(BASE, laptop, await idTokenOf(bob))
+  await listed(BASE, phone, await idTokenOf(bob))
+  const found = await (await fetch(`${BASE}v1/people?q=bob`, { headers: { authorization: `Bearer ${ana.token}` } })).json()
+  assert.deepEqual(found.people.map((/** @type {any} */ one) => [one.account, one.devices.map((/** @type {any} */ device) => device.mailbox).sort()]), [['bob@acme.example', [laptop.mailbox, phone.mailbox].sort()]])
+  assert.deepEqual(found.people[0].devices.find((/** @type {any} */ device) => device.mailbox === phone.mailbox).key, (({ kty, crv, x, y }) => ({ kty, crv, x, y }))(phone.public))
+  await assert.rejects(listed(BASE, ana, await idTokenOf({ aud: 'someone-else' })), (/** @type {any} */ error) => error.status === 403)
 })

@@ -514,7 +514,7 @@ async function listingRelay(config = {}) {
   return { ...on, clock, idp, opened, list, search }
 }
 
-test('an organisation’s relay lists whom its sign-in names, the newest key winning, for listed colleagues to find; the proof itself is never kept', async () => {
+test('an organisation’s relay lists whom its sign-in names, each of their devices under its own key, for listed colleagues to find; the proof itself is never kept', async () => {
   const { store, ask, clock, idp, opened, list, search } = await listingRelay()
   assert.deepEqual((await (await ask('/')).json()).issuers, [ISSUER])
   const [ana, bob] = [await opened(), await opened()]
@@ -527,26 +527,31 @@ test('an organisation’s relay lists whom its sign-in names, the newest key win
   assert.equal((await list(bob, await idp.sign({ sub: 'sub-bob', name: 'Bob Dupont', email: 'bob@acme.example', preferred_username: 'bdupont@acme.example' }, { alg: 'RS256' }))).status, 201, 'RS256 too; the email first')
   const found = await search(bob, 'q=ana')
   assert.equal(found.status, 200)
-  assert.deepEqual(found.people, [{ name: 'Ana Martín', account: 'ana@acme.example', mailbox: ana.id, key: anaKey }])
+  assert.deepEqual(found.people, [{ name: 'Ana Martín', account: 'ana@acme.example', devices: [{ mailbox: ana.id, key: anaKey }] }])
   assert.deepEqual((await search(bob, 'q=martin')).people.map((one) => one.name), ['Ana Martín'], 'accents aside')
   assert.deepEqual((await search(ana, 'q=bob%20dup')).people.map((one) => one.account), ['bob@acme.example'], 'every word')
-  assert.deepEqual((await search(bob, 'account=ANA%40acme.example')).people.map((one) => one.mailbox), [ana.id])
+  assert.deepEqual((await search(bob, 'account=ANA%40acme.example')).people.map((one) => one.devices[0].mailbox), [ana.id])
   assert.deepEqual((await search(bob, `mailbox=${ana.id}`)).people.map((one) => one.name), ['Ana Martín'])
   assert.deepEqual((await search(bob, 'account=carol%40acme.example')).people, [])
-  // Her key turned: the same person, a new key, the entry replaced.
+  // The same device listed again under another key: its own key replaced.
   clock.at += 60_000
   const newer = await profileKey()
-  assert.equal((await list(ana, await idp.sign(), newer)).status, 200)
-  assert.deepEqual((await search(bob, 'q=ana')).people.map((one) => one.key), [newer])
-  // And a new mailbox with it: the old one is off the list and searches no more.
-  const moved = await opened()
-  assert.equal((await list(moved, await idp.sign(), newer)).status, 200)
-  assert.deepEqual((await search(bob, 'q=ana')).people.map((one) => one.mailbox), [moved.id])
-  assert.equal((await search(ana, 'q=bob')).status, 403)
+  assert.equal((await list(ana, await idp.sign({ name: 'Ana Martín García' }), newer)).status, 200)
+  assert.deepEqual((await search(bob, 'q=ana')).people.map((one) => [one.name, one.devices]), [['Ana Martín García', [{ mailbox: ana.id, key: newer }]]], 'the newest proof names her')
+  // Her phone: a second device, both listed, the newest first.
+  const phone = await opened()
+  const phoneKey = await profileKey()
+  clock.at += 60_000
+  assert.equal((await list(phone, await idp.sign(), phoneKey)).status, 201)
+  assert.deepEqual((await search(bob, 'q=ana')).people[0].devices, [{ mailbox: phone.id, key: phoneKey }, { mailbox: ana.id, key: newer }])
+  assert.equal((await search(phone, 'q=bob')).status, 200, 'each device of someone listed searches')
+  // A mailbox listed by someone else since is theirs alone.
+  assert.equal((await list(phone, await idp.sign({ sub: 'sub-bob', name: 'Bob Dupont', preferred_username: 'bob@acme.example' }))).status, 201)
+  assert.deepEqual((await search(bob, 'q=ana')).people[0].devices.map((one) => one.mailbox), [ana.id])
   assert.equal(store.people.size, 2)
   const kept = JSON.stringify([...store.people.values()])
   assert.ok(!kept.includes(proof.split('.')[2]) && !kept.includes('"proof"'), 'the proof goes')
-  assert.deepEqual(store.records.filter((one) => one.operation === 'list').length, 4)
+  assert.deepEqual(store.records.filter((one) => one.operation === 'list').length, 5)
 })
 
 test('a proof is refused unless the organisation signed it, for Jean, now: issuer, audience, its dates, its algorithm and key, an account', async () => {
@@ -632,12 +637,17 @@ test('only a listed mailbox searches the list: three letters at least, ten peopl
   assert.equal((await search(ana, 'q=colleague')).status, 200)
 })
 
-test('a listing lapses a month after its last proof; off the list, by its owner or by forget, nobody finds it', async () => {
+test('a device lapses a month after its last proof, and its person with the last; off the list, by its owner or by forget, nobody finds it', async () => {
   const { store, handle, clock, idp, opened, list, search, ask } = await listingRelay()
-  const [ana, bob] = [await opened(), await opened()]
+  const [ana, phone, bob] = [await opened(), await opened(), await opened()]
   await list(ana, await idp.sign())
   await list(bob, await idp.sign({ sub: 'sub-bob', name: 'Bob Dupont', preferred_username: 'bob@acme.example' }))
-  clock.at += (PEOPLE.lapse + 1) * DAY
+  clock.at += 10 * DAY
+  await list(phone, await idp.sign())
+  clock.at += (PEOPLE.lapse - 9) * DAY
+  await list(bob, await idp.sign({ sub: 'sub-bob', name: 'Bob Dupont', preferred_username: 'bob@acme.example' }))
+  assert.deepEqual((await search(bob, 'q=ana')).people.map((one) => one.devices.map((device) => device.mailbox)), [[phone.id]], 'her laptop lapsed, her phone not yet')
+  clock.at += 10 * DAY
   await list(bob, await idp.sign({ sub: 'sub-bob', name: 'Bob Dupont', preferred_username: 'bob@acme.example' }))
   assert.deepEqual((await search(bob, 'q=ana')).people, [], 'lapsed')
   await /** @type {any} */ (handle).tidyPeople(clock.at)

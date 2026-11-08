@@ -319,7 +319,8 @@ describe('signing in to a connection', () => {
       assert.equal(tokens.account, 'ana@example.com')
       const mcp = mcpClient({ url: `${origin}/mcp`, client: jean, authorization: async () => `Bearer ${tokens.access}` })
       assert.equal((await mcp.listTools()).length, 3)
-      const { account: _, name: __, groups: ___, ...kept } = tokens
+      // Who signed in, as the first ID token said, isn't asked of a renewal, which brings no ID token here.
+      const { account: _, name: __, groups: ___, idToken: ____, ...kept } = tokens
       assert.deepEqual({ ...(await refresh(tokens)), expiresAt: 0 }, { ...kept, access: 'renewed', expiresAt: 0 })
     } finally {
       await close()

@@ -7,7 +7,8 @@
 // (sealed at rest, never in a backup, export, sync or share), and renews them half their life before they end,
 // five minutes at most, one tab at a time. A renewal refused, or a sign-in that came back without tokens, asks from a toast,
 // never in a loop. A return is its sign-in's by the state it left with, and Jean never leaves while one waits. Another part of policy may name a sign-in of its own, under another id. The ID token's
-// groups and roles are kept with the tokens, for ee/'s policy by group (D429), which finishes a return first.
+// groups and roles are kept with the tokens, for ee/'s policy by group (D429), which finishes a return first, and the ID token itself,
+// as the last sign-in or renewal gave it, which only the organisation's relay is shown, to list the person among colleagues (D731).
 // It asks for `openid` and the scopes policy names, those alone, or else for the person's name, email and
 // renewals where the provider offers them (D696); an ID token that names nobody still leaves Sign out in the menu.
 // Signing out stays signed out, on a screen of its own, until the person signs in; a lock locks with it. A curtain
@@ -97,6 +98,9 @@ export async function signIn(id = 'signin', given = named.get(id) ?? app.policy.
   behind(whoOf(await vaultOf()))
   ;(await import('../../ui/brains.js')).leave(url)
 }
+
+/** The organisation's ID token, renewed with the rest when due, for its relay alone (D731); null where there is none. */
+export const idToken = async () => (await token(), (await read('signin'))?.idToken ?? null)
 
 /** Asks to sign in again, from a toast. @param {string} id */
 const offer = (id) => notify(t('signin.needed'), { label: t('signin.in'), run: () => { signIn(id).catch((error) => console.warn('Sign-in', error)) } })

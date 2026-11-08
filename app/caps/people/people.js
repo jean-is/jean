@@ -49,9 +49,11 @@ export const [arrivals, later] = [signal(/** @type {Awaited<ReturnType<typeof ar
 await Promise.all([useStrings('people'), styleSheet(new URL('people.css', import.meta.url))])
 /** Whether this is a child's profile, which meets no one. */
 const child = Boolean(JSON.parse(await app.fs.read(VAULT) ?? 'null')?.parent)
-/** Whether this Jean meets people: it pairs devices, and policy lets it share. */
-export const offered = () => pairs() && !child && app.policy.rules?.share !== 'never'
 const relayOf = () => String(serviceURL('relay', app.settings.peek(), app.policy) ?? '').replace(/^(.+?)\/?$/, '$1/')
+/** Whether the organisation's own relay lists the people its sign-in names (D731), where policy signs in: People is there only then. */
+const colleagues = Boolean(app.policy.signIn && relayOf()) && await (await import('./colleagues.js')).lists(relayOf(), String(app.policy.signIn?.issuer))
+/** Whether this Jean meets people: it pairs devices, or its organisation's relay lists colleagues; and policy lets it share. */
+export const offered = () => (pairs() || colleagues) && !child && app.policy.rules?.share !== 'never'
 /** Whether an answer is being written: nothing is read from the relay meanwhile but what the person asks for (caps/receipt). */
 const answering = computed(() => app.running.value.length > 0)
 /** @template T @param {string} name @param {() => Promise<T>} run @returns {Promise<T>} */
@@ -90,6 +92,7 @@ async function watch() {
   // A turn of the key a tab left halfway is ended here (./flow.js, turn()).
   if ((await me()).pending) await locked('app-person', async () => turn(ctx)).catch(warn)
   const person = await me()
+  if (colleagues) listOn(person).catch(warn)
   const stop = listen({ base, token: person.token, lock: mine('app-people'), quiet: answering, onMessages: async (messages) => {
     for (const { bytes } of messages) if ((await received(ctx, bytes).catch(() => null))?.kind) await refresh()
   } })
@@ -132,6 +135,13 @@ async function answer(ctx, one, signal) {
   } catch (error) {
     if (!signal.aborted) { warn(error); await dropped(ctx, one); accepting.value = { step: 'failed', reason: reasonOf(error) } }
   }
+}
+
+/** Listed among colleagues on the organisation's relay, at most daily and as soon as the person mailbox changed (D731). @param {import('./flow.js').Person} person */
+async function listOn(person) {
+  const [kept, at] = [mine('app.listed'), Date.now()], last = JSON.parse(localStorage.getItem(kept) ?? 'null')
+  const proof = last?.mailbox === person.mailbox && at - last.at < 864e5 ? null : await (await import('../signin/signin.js')).idToken()
+  if (proof) await (await import('./colleagues.js')).listed(relayOf(), person, proof).then(() => localStorage.setItem(kept, JSON.stringify({ mailbox: person.mailbox, at })))
 }
 
 // ─── What the page does ──────────────────────────────────────────────────────
@@ -352,5 +362,6 @@ register({ id: 'people', tools: [sendTool], lines: [{ name: 'send_to', line: "se
 } })
 // The secrets, where the people met follow the person's devices, and what came, which the store brings from them, changed in any tab or by another device.
 app.fs.watch?.((path) => { if (path === '.secrets/keys.json' || path.startsWith(`${ARRIVALS}/`)) refresh().catch(warn) }, { all: true })
-// What goes to people goes from share's dialog, found with People.
+// What goes to people goes from share's dialog, found with People. A tab open for days lists the person again each day.
 if (offered()) { watch().catch(warn); unlock('share') } else refresh().catch(warn)
+if (colleagues) setInterval(() => me().then(listOn).catch(warn), 36e5)

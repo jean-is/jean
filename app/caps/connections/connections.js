@@ -130,7 +130,7 @@ const renewing = new Map()
  * New tokens, kept. A renewal the service refuses (not a network lost) leaves the connection to
  * sign in again (D344). @param {Connection} connection @param {import('./auth.js').Tokens} tokens
  */
-const renewal = (connection, tokens) => refresh(tokens, reach(connection)).then(async (fresh) => (await setSecret(app.fs, connection.id, JSON.stringify(fresh)), fresh), (error) => {
+const renewal = (connection, tokens) => refresh(tokens, reach(connection)).then(async ({ idToken, ...fresh }) => (await setSecret(app.fs, connection.id, JSON.stringify(fresh)), fresh), (error) => {
   if (error instanceof TypeError) throw error
   status.value = { ...status.value, [connection.id]: { ...status.value[connection.id], error: 'auth' } }
   throw new MCPError(signInFirst(connection), { status: 401 })
@@ -406,7 +406,8 @@ export async function finishSignIn() {
   app.draft.value = saved.draft ?? ''
   openSettings('connections')
   try {
-    const { account, ...tokens } = await finish(params, saved, reach(saved.connection))
+    // Its ID token goes: only the organisation's sign-in keeps one, for its relay (D731).
+    const { account, idToken, ...tokens } = await finish(params, saved, reach(saved.connection))
     await setSecret(app.fs, saved.connection.id, JSON.stringify(tokens))
     await save(Object.assign(saved.connection, account && { account }), await toolsAt(saved.connection))
   } catch (error) {

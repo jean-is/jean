@@ -1,15 +1,16 @@
 // Colleagues (D731): on an organisation's own relay, the people its sign-in names, each listed by the ID token it gave them, so that
-// colleagues find each other's person mailbox and profile key with no meeting (D727). A device sends that token beside the profile's
-// public key, with the token of the person mailbox it lists; the relay checks the token's signature by the issuer's keys, its issuer,
-// audience and dates, keeps whom it names under a hash of issuer and subject, the newest key and mailbox winning, and drops the token.
-// Only a listed mailbox searches the list, a few times an hour. A listing lapses a month after its last proof, and
-// `node relay/serve.js forget <account>` takes a leaver off at once.
+// colleagues find each other's devices, a person mailbox and a profile key each, with no meeting (D727). A device sends that token beside
+// its profile's public key, with the token of the person mailbox it lists; the relay checks the token's signature by the issuer's keys, its
+// issuer, audience and dates, keeps whom it names under a hash of issuer and subject, with each of their devices, the newest proof naming
+// them, and drops the token. Only a listed device searches the list, a few times an hour. A device lapses a month after its last proof,
+// its person with the last, and `node relay/serve.js forget <account>` takes a leaver off at once.
 //
 //   PUT    /v1/people/<id>      Authorization: Bearer <the mailbox's token>, { proof: <ID token>, key: <P-256 public JWK>, chain?: string[] }:
-//                               lists the mailbox's owner under that key: { name, account, guest?, groups? }; 201 the first time
-//   DELETE /v1/people/<id>      with the token: off the list
-//   GET    /v1/people?q=<words> with a listed mailbox's token: up to 10 people whose name or account holds every word, by name:
-//                               { people: [{ name, account, mailbox, key, chain?, groups?, guest? }] }
+//                               lists the mailbox among its owner's devices under that key: { name, account, guest?, groups? }; 201 the
+//                               first time it is listed for them
+//   DELETE /v1/people/<id>      with the token: that device off the list
+//   GET    /v1/people?q=<words> with a listed device's token: up to 10 people whose name or account holds every word, by name, each
+//                               device the newest first: { people: [{ name, account, devices: [{ mailbox, key, chain? }], groups?, guest? }] }
 //   GET    /v1/people?account=<account> or ?mailbox=<id>
 //                               the same, for one person: { people: [] } when nobody is listed so
 //
@@ -24,6 +25,8 @@ import { hashOf, idOf, within } from '../host/host.js'
 export const PEOPLE = Object.freeze({
   /** Days a listing stays after its last proof. */
   lapse: 30,
+  /** Devices listed for one person, the newest kept. */
+  devices: 16,
   /** Letters a search takes at least, people it gives at most, searches a listed mailbox makes in an hour, listings a mailbox makes in an hour. */
   letters: 3,
   results: 10,
@@ -44,9 +47,10 @@ const ALGORITHMS = /** @type {const} */ ({ ES256: { name: 'ECDSA', namedCurve: '
 /**
  * A key of an issuer's, by its kid. @typedef {JsonWebKey & { kid?: string }} Key
  * An issuer as the configuration names it. @typedef {{ issuer: string, audience: string, jwks?: { keys: Key[] } | string, groups?: string, guest?: boolean }} Issuer
- * Someone listed: a hash of issuer and subject, the name and account the token gave, their person mailbox and profile key, what an
- * organisation's authority certified of it (ee/), their groups, whether a guest, when last proved.
- * @typedef {{ format: 1, id: string, name: string, account: string, mailbox: string, key: JsonWebKey, chain?: string[], groups?: string[], guest?: true, proved: number }} Entry
+ * Someone listed: a hash of issuer and subject, the name and account the newest token gave, their groups, whether a guest, and their devices.
+ * @typedef {{ format: 1, id: string, name: string, account: string, groups?: string[], guest?: true, devices: Device[] }} Entry
+ * A device of theirs: its person mailbox and profile key, what an organisation's authority certified of the key (ee/), when last proved.
+ * @typedef {{ mailbox: string, key: JsonWebKey, chain?: string[], proved: number }} Device
  * The list as the relay's store keeps it, `entries` read only. @typedef {{ entries(): Promise<Entry[]>, saveEntry(entry: Entry): Promise<void>, dropEntry(id: string): Promise<void> }} Backend
  */
 
@@ -56,8 +60,9 @@ const decoded = (text) => Uint8Array.from(atob(text.replace(/-/g, '+').replace(/
 const objectOf = (part) => { try { const value = JSON.parse(new TextDecoder().decode(decoded(part))); return value && typeof value === 'object' && !Array.isArray(value) ? value : null } catch { return null } }
 /** Words to compare, without case or accents. @param {string} text */
 const folded = (text) => text.normalize('NFKD').replace(/\p{M}/gu, '').toLowerCase()
-/** What a colleague sees of someone listed. @param {Entry} entry */
-const shown = ({ name, account, mailbox, key, chain, groups, guest }) => ({ name, account, mailbox, key, ...(chain && { chain }), ...(groups && { groups }), ...(guest && { guest }) })
+/** What a colleague sees of someone listed, their devices the newest first. @param {Entry} entry */
+const shown = ({ name, account, devices, groups, guest }) => ({ name, account, devices: devices.toSorted((a, b) => b.proved - a.proved).map(({ mailbox, key, chain }) => ({ mailbox, key, ...(chain && { chain }) })),
+  ...(groups && { groups }), ...(guest && { guest }) })
 /** A P-256 public key, its curve's point, or null. @param {any} key @returns {Promise<JsonWebKey | null>} */
 async function pointOf(key) {
   if (key?.kty !== 'EC' || key.crv !== 'P-256' || !/^[\w-]{43}$/.test(key.x) || !/^[\w-]{43}$/.test(key.y)) return null
@@ -141,8 +146,12 @@ export function colleagues({ backend, issuers, fetch, now, inTurn, record, owns 
     }
   }
 
-  /** Those listed whose last proof is within the month. */
-  const fresh = async () => { const at = now(); return (await backend.entries()).filter((entry) => at - entry.proved <= PEOPLE.lapse * DAY) }
+  /** Those listed with their devices proved within the month, at `at`. */
+  const fresh = async (at = now()) => (await backend.entries()).flatMap((entry) => ((devices) => (devices.length ? [{ ...entry, devices }] : []))(entry.devices.filter((one) => at - one.proved <= PEOPLE.lapse * DAY)))
+  /** An entry kept with these devices, or dropped with none. @param {Entry} entry @param {Device[]} devices */
+  const kept = (entry, devices) => (devices.length ? backend.saveEntry({ ...entry, devices }) : backend.dropEntry(entry.id))
+  /** Whether a device of this entry reads at this mailbox. @param {Entry} entry @param {string | null} mailbox */
+  const reads = (entry, mailbox) => entry.devices.some((one) => one.mailbox === mailbox)
 
   /**
    * @param {Request} request @param {import('../host/host.js').Client} client
@@ -158,14 +167,14 @@ export function colleagues({ backend, issuers, fetch, now, inTurn, record, owns 
       if (request.method !== 'GET') return answer(405, { error: 'Not here.' })
       const me = await idOf(token)
       const all = await fresh()
-      if (!all.some((entry) => entry.mailbox === me)) return answer(403, { error: 'Only someone listed here searches it.' })
+      if (!all.some((entry) => reads(entry, me))) return answer(403, { error: 'Only someone listed here searches it.' })
       const [words, account, mailbox] = ['q', 'account', 'mailbox'].map((name) => url.searchParams.get(name))
       if (words !== null && folded(words).replace(/\s/g, '').length < PEOPLE.letters) return answer(400, { error: `A search takes ${PEOPLE.letters} letters at least.` })
       if (words === null && !account && !mailbox) return answer(400, { error: 'Search by words, an account or a mailbox.' })
       if (!counted(`search ${me}`, PEOPLE.searches)) return answer(429, { error: 'Too many searches. Try again later.' })
       const asked = folded(words ?? '').split(/\s+/).filter(Boolean)
       const found = words !== null ? all.filter((entry) => ((text) => asked.every((word) => text.includes(word)))(folded(`${entry.name} ${entry.account}`)))
-        : all.filter((entry) => (account ? folded(entry.account) === folded(account) : entry.mailbox === mailbox))
+        : all.filter((entry) => (account ? folded(entry.account) === folded(account) : reads(entry, mailbox)))
       const collator = new Intl.Collator('und')
       return answer(200, { people: found.sort((a, b) => collator.compare(a.name, b.name)).slice(0, PEOPLE.results).map(shown) })
     }
@@ -178,9 +187,9 @@ export function colleagues({ backend, issuers, fetch, now, inTurn, record, owns 
 
     if (request.method === 'DELETE') {
       return inTurn('people', async () => {
-        const gone = (await backend.entries()).filter((entry) => entry.mailbox === id)
-        for (const entry of gone) await backend.dropEntry(entry.id)
-        if (gone.length) await noted('unlist')
+        const listed = (await backend.entries()).filter((entry) => reads(entry, id))
+        for (const entry of listed) await kept(entry, entry.devices.filter((one) => one.mailbox !== id))
+        if (listed.length) await noted('unlist')
         return answer(200, {})
       })
     }
@@ -202,17 +211,22 @@ export function colleagues({ backend, issuers, fetch, now, inTurn, record, owns 
     if (!who) return answer(403, { error: 'This proof isn’t the organisation’s sign-in, for Jean, now.' })
     return inTurn('people', async () => {
       const all = await backend.entries()
-      // One listing a person and a mailbox: the newest wins.
-      for (const entry of all) if (entry.mailbox === id && entry.id !== who.id) await backend.dropEntry(entry.id)
+      // A mailbox is one device's, of one person: off anyone else's listing.
+      for (const entry of all) if (entry.id !== who.id && reads(entry, id)) await kept(entry, entry.devices.filter((one) => one.mailbox !== id))
+      const was = all.find((entry) => entry.id === who.id)
+      const devices = [{ mailbox: id, key, ...(Array.isArray(chain) && { chain }), proved: now() }, ...(was?.devices ?? []).filter((one) => one.mailbox !== id)]
       const { groups, guest, ...named } = who
-      await backend.saveEntry({ format: 1, ...named, mailbox: id, key, ...(Array.isArray(chain) && { chain }), ...(groups && { groups }), ...(guest && { guest }), proved: now() })
+      await backend.saveEntry({ format: 1, ...named, ...(groups && { groups }), ...(guest && { guest }), devices: devices.sort((a, b) => b.proved - a.proved).slice(0, PEOPLE.devices) })
       await noted('list')
-      return answer(all.some((entry) => entry.id === who.id) ? 200 : 201, { name: who.name, account: who.account, ...(guest && { guest }), ...(groups && { groups }) })
+      return answer(was && reads(was, id) ? 200 : 201, { name: who.name, account: who.account, ...(guest && { guest }), ...(groups && { groups }) })
     })
   }
 
-  /** What lapsed goes, as the daily sweep asks. @param {number} at */
-  const tidy = (at) => inTurn('people', async () => { for (const entry of await backend.entries()) if (at - entry.proved > PEOPLE.lapse * DAY) await backend.dropEntry(entry.id) })
+  /** What lapsed goes, as the daily sweep asks: a device past its month, a person with none left. @param {number} at */
+  const tidy = (at) => inTurn('people', async () => {
+    const left = new Map((await fresh(at)).map((entry) => [entry.id, entry.devices.length]))
+    for (const entry of await backend.entries()) if (left.get(entry.id) !== entry.devices.length) await kept(entry, entry.devices.filter((one) => at - one.proved <= PEOPLE.lapse * DAY))
+  })
 
   return { handle, tidy, handles: (/** @type {string} */ path) => PATH.test(path), issuers: issuers.map((one) => one.issuer) }
 }
