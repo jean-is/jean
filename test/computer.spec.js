@@ -485,7 +485,7 @@ test('Settings › Computer: the sandbox and its page (D176, D249), the internet
   // Its title with the terminal, a line on what it is, then the sandbox, the one computer until This computer is found:
   // a row, asleep until something runs, that opens its page.
   const panel = settings.locator('.settings-panel')
-  await expect(panel.locator('.data-head h2')).toHaveText('Computer in this tab')
+  await expect(panel.locator('.data-head h2')).toHaveText('Computer')
   await expect(panel.locator('.lede')).toHaveText(/^A computer in this tab, apart from this device/)
   await expect(panel.getByRole('tablist')).toHaveCount(0)
   const sandbox = panel.locator('[data-page="sandbox"]')
@@ -508,14 +508,14 @@ test('Settings › Computer: the sandbox and its page (D176, D249), the internet
   await expect(page.locator('app-terminal .terminal-entry pre')).toHaveText('1267650600228229401496703205376', { timeout: 90_000 })
   // Ready now, with the shell and Python, and the memory they hold; its light is on the terminal's button.
   await expect(page.locator('app-shell > .views .terminal-toggle .ember')).toHaveAttribute('data-state', 'ready')
-  await openSettings(page, 'Computer in this tab')
+  await openSettings(page, 'Computer')
   await expect(panel.locator('[data-page="sandbox"]')).toContainText('Ready')
   await panel.locator('[data-page="sandbox"]').click()
   await expect(panel.getByRole('button', { name: 'Restart the computer' })).toBeVisible()
   await expect(panel.locator('.engines li')).toHaveText([/Commands[\s\S]*Ready/, /JavaScript[\s\S]*Asleep/, /Python[\s\S]*Ready/])
   // Of this device's memory, at least as much as Chromium says; WebKit doesn't say.
   await expect(panel.locator('.computer-now')).toHaveText(/ and [\d.]+ MB( of at least \d+ GB)? of memory\.$/)
-  await panel.getByRole('button', { name: 'Computer in this tab', exact: true }).click()
+  await panel.getByRole('button', { name: 'Computer', exact: true }).click()
   await expect(panel.locator('[data-page="sandbox"]')).toBeFocused()
 
   // The internet, changed in place; its sites a page of their own.
@@ -531,7 +531,7 @@ test('Settings › Computer: the sandbox and its page (D176, D249), the internet
   await sites.fill('example.com')
   await sites.press('Enter')
   await expect(panel.locator('.sites li')).toHaveText(['example.com'])
-  await panel.getByRole('button', { name: 'Computer in this tab', exact: true }).click()
+  await panel.getByRole('button', { name: 'Computer', exact: true }).click()
   await expect(panel.locator('[data-page="sites"]')).toContainText(/example\.com\s*1/)
   // Never for Using the internet, in Approvals, turns it off too, and says so.
   await page.evaluate(async () => (await import('/ui/state.js')).updateSettings({ rules: { fetch: 'never' } }))
@@ -548,7 +548,7 @@ test('Settings › Computer: the sandbox and its page (D176, D249), the internet
     await app.fs.write(`${app.projectDir}/workspace/notes.md`, '# Notes\n\nFirst line.\n')
   })
   await closeSettings(page)
-  await openSettings(page, 'Computer in this tab')
+  await openSettings(page, 'Computer')
   // The space it takes here, sealed at rest where the browser keeps files (D371).
   await expect(panel.locator('[data-page="workspace"]')).toContainText(/1 file, \d+ bytes/)
   await panel.locator('[data-page="workspace"]').click()
@@ -561,13 +561,13 @@ test('Settings › Computer: the sandbox and its page (D176, D249), the internet
   await expect(settings).toBeHidden()
   await expect(page.locator('app-preview .pane-head h2')).toHaveText('notes')
   await expect(page.locator('app-preview .preview')).toContainText('First line.')
-  await openSettings(page, 'Computer in this tab')
+  await openSettings(page, 'Computer')
   await panel.locator('[data-page="workspace"]').click()
   await panel.getByRole('button', { name: 'Empty it' }).click()
   await panel.locator('.computer-ask').getByRole('button', { name: 'Empty it' }).click()
   await expect(panel.locator('.computer-files')).toHaveCount(0)
   await expect(panel.getByRole('button', { name: 'Empty it' })).toBeDisabled()
-  await panel.getByRole('button', { name: 'Computer in this tab', exact: true }).click()
+  await panel.getByRole('button', { name: 'Computer', exact: true }).click()
 
   // The longest a command may run, saying it restarts the computer; the relay; where packages come from.
   await panel.locator('[data-page="limits"]').click()
@@ -757,7 +757,7 @@ test('the terminal: the user’s commands run on the conversation’s computer, 
   // Escape closes it; Settings › Computer opens it again.
   await line.press('Escape')
   await expect(terminal).toBeHidden()
-  const settings = await openSettings(page, 'Computer in this tab')
+  const settings = await openSettings(page, 'Computer')
   await settings.getByRole('button', { name: /^Terminal/ }).click()
   await expect(terminal).toBeVisible()
   await expect(terminal.locator('.terminal-entry')).toHaveCount(5)
