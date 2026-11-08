@@ -1,12 +1,13 @@
 // Runs the relay (relay.js, D45 · D226) on Node 22 or later, with nothing to install:
 //   RELAY_CONFIG='{"origins":["https://jean.example"]}' node relay/serve.js
 // PORT (8791 by default) and HOST (127.0.0.1; 0.0.0.0 to answer other machines) say where it listens,
-// RELAY_DIR (./mailboxes by default) where it keeps mailboxes and the records of changes, and
+// RELAY_DIR (./mailboxes by default) where it keeps mailboxes, people's stores and the records of changes, and
 // RELAY_PROXIED=1 takes the address from the proxy in front, as the share host does (host/serve.js).
 // Its config may name `recordKey`, a public P-256 key (JWK), to which each record is sealed, as the
 // share host's are: `node host/serve.js keys` makes a pair, and `node host/serve.js open` reads them.
 import { createServer } from 'node:http'
-import { appendFile, mkdir, readdir, readFile, rename, rm, statfs, writeFile } from 'node:fs/promises'
+import { appendFile, mkdir, readdir, readFile, rename, rm, stat, statfs, writeFile } from 'node:fs/promises'
+import { randomUUID } from 'node:crypto'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { listener, sealRecord, stopping } from '../host/serve.js'
@@ -15,15 +16,20 @@ import { relay, LIMITS } from './relay.js'
 const DAY = 86_400_000
 
 /**
- * A folder as the relay's store: each mailbox's file, its messages in a folder beside it, and a file of
- * records a day, sealed when there is a key. Once a day, what is past its time goes: a message past its
- * days, a mailbox nobody opened or read for its idle days, a record past a year.
+ * A folder as the relay's store: each mailbox's file, its messages in a folder beside it; each person's store in a folder of its own,
+ * its file, its objects' versions in o/ and its parts in b/; and a file of records a day, sealed when there is a key. Once a day,
+ * what is past its time goes: a message past its days, a mailbox nobody opened or read for its idle days, what a store no longer
+ * keeps (store.js), a part's upload cut short, a record past a year.
  * @param {string} dir @param {CryptoKey | null} recordKey
- * @returns {import('./relay.js').Store & { free(): Promise<number>, sweep(tidy: (id: string, at: number) => Promise<void>, now?: number): Promise<void> }}
+ * @returns {import('./relay.js').Store & import('./store.js').Backend & { free(): Promise<number>,
+ *   sweep(handle: { tidy(id: string, at: number): Promise<void>, tidyStore?(sid: string, at: number): Promise<void> }, now?: number): Promise<void> }}
  */
 export function folder(dir, recordKey) {
   const boxes = join(dir, 'boxes')
   const records = join(dir, 'records')
+  const shelf = join(dir, 'stores')
+  /** @param {string} sid @param {string[]} rest */
+  const of = (sid, ...rest) => join(shelf, sid, ...rest)
   /** @param {string} id */
   const at = (id) => join(boxes, id)
   /** @param {string} path */
@@ -55,9 +61,53 @@ export function folder(dir, recordKey) {
       const { bavail, bsize } = await statfs(dir)
       return bavail * bsize
     },
-    // Each mailbox tidied in its turn (relay.js), so that a read or a message meanwhile is never undone.
-    async sweep(tidy, now = Date.now()) {
+    store: (sid) => json(of(sid, 'store.json')),
+    async saveStore(sid, meta) {
+      await mkdir(of(sid), { recursive: true })
+      await write(of(sid, 'store.json'), JSON.stringify(meta))
+    },
+    removeStore: (sid) => rm(of(sid), { recursive: true, force: true }),
+    stores: async () => (await readdir(shelf).catch(() => [])).filter((name) => /^[\w-]{22}$/.test(name)),
+    async objects(sid) {
+      /** @type {Record<string, import('./store.js').Version>} */
+      const out = {}
+      for (const name of await readdir(of(sid, 'o')).catch(() => [])) if (name.endsWith('.json')) { const one = await json(of(sid, 'o', name)); if (one) out[name.slice(0, -5)] = one }
+      return out
+    },
+    async saveObject(sid, oid, version) {
+      await mkdir(of(sid, 'o'), { recursive: true })
+      await write(of(sid, 'o', `${oid}.json`), JSON.stringify(version))
+    },
+    dropObject: (sid, oid) => rm(of(sid, 'o', `${oid}.json`), { force: true }),
+    part: (sid, hash) => readFile(of(sid, 'b', hash)).then((bytes) => new Uint8Array(bytes), () => null),
+    hasPart: (sid, hash) => stat(of(sid, 'b', hash)).then(() => true, () => false),
+    // Each upload under a name of its own, so that two of the same part never write one file.
+    async addPart(sid, hash, bytes) {
+      await mkdir(of(sid, 'b'), { recursive: true })
+      const part = of(sid, 'b', `${hash}.${randomUUID()}.part`)
+      await writeFile(part, bytes)
+      await rename(part, of(sid, 'b', hash))
+    },
+    async parts(sid) {
+      const out = []
+      for (const name of await readdir(of(sid, 'b')).catch(() => [])) {
+        const info = await stat(of(sid, 'b', name)).catch(() => null)
+        // An upload cut short, a day on.
+        if (name.endsWith('.part')) { if (info && Date.now() - info.mtimeMs > DAY) await rm(of(sid, 'b', name), { force: true }) }
+        else if (info) out.push({ hash: name, size: info.size, at: info.mtimeMs })
+      }
+      return out
+    },
+    dropPart: (sid, hash) => rm(of(sid, 'b', hash), { force: true }),
+    counts: () => json(join(dir, 'counts.json')).then((counts) => counts ?? {}),
+    async saveCounts(counts) {
+      await mkdir(dir, { recursive: true })
+      await write(join(dir, 'counts.json'), JSON.stringify(counts))
+    },
+    // Each mailbox and store tidied in its turn (relay.js), so that a read or a message meanwhile is never undone.
+    async sweep({ tidy, tidyStore }, now = Date.now()) {
       for (const name of await readdir(boxes).catch(() => [])) if (name.endsWith('.json')) await tidy(name.slice(0, -5), now)
+      if (tidyStore) for (const sid of await this.stores()) await tidyStore(sid, now)
       for (const name of await readdir(records).catch(() => [])) if (Date.parse(name.slice(0, 10)) + 366 * DAY < now) await rm(join(records, name), { force: true })
     },
   }
@@ -73,11 +123,12 @@ export async function main(args = []) {
   const store = folder(dir, recordKey)
   const PORT = Number(process.env.PORT) || 8791
   const HOST = process.env.HOST ?? '127.0.0.1'
-  const handle = relay({ origins: config.origins, limits, store })
-  await store.sweep(handle.tidy)
-  setInterval(() => store.sweep(handle.tidy).catch(console.error), DAY).unref()
+  const handle = relay({ origins: config.origins, limits, stores: config.stores, store })
+  // Answering first: a sweep through many stores could outlast the check that a new release answers.
   stopping(createServer(listener(handle, process.env.RELAY_PROXIED === '1')))
-    .listen(PORT, HOST, () => console.log(`Relay on http://${HOST}:${PORT}/, keeping mailboxes in ${dir}`))
+    .listen(PORT, HOST, () => console.log(`Relay on http://${HOST}:${PORT}/, keeping mailboxes${config.stores ? ' and stores' : ''} in ${dir}`))
+  await store.sweep(handle)
+  setInterval(() => store.sweep(handle).catch(console.error), DAY).unref()
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) await main(process.argv.slice(2))

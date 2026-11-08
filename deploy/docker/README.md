@@ -109,7 +109,14 @@ RELAY_CONFIG='{"origins":["https://jean.corp.example"]}'
 ```bash
 RELAY_CONFIG='{"origins":["https://jean.corp.example"],"limits":{"opens":6000,"sent":25600000000}}'
 ```
- The relay keeps its mailboxes in the volume at `/data`. Give it an HTTPS address of its own, such as `https://relay.corp.example`. Behind a reverse proxy, set `RELAY_PROXIED=1` and have the proxy send the visitor's address as the last `X-Forwarded-For` entry and its port as `X-Client-Port` (Caddy: `header_up X-Client-Port {remote_port}`, as [Jean's own server](../server/Caddyfile) does), so that limits and records name each visitor rather than the proxy. Then name it in the policy; with none named, there is none:
+
+It keeps people's stores (D721), each person's files sealed so it can't read them, only with `stores`, any of [store.js](../../relay/store.js)'s `STORE`. Behind one office address, raise `made` and `sent`, which count by network, and give the volume room for 1 GB a person:
+
+```bash
+RELAY_CONFIG='{"origins":["https://jean.corp.example"],"stores":{"made":500,"sent":100000000000}}'
+```
+
+The relay keeps its mailboxes, and its stores, in the volume at `/data`. Give it an HTTPS address of its own, such as `https://relay.corp.example`. Behind a reverse proxy, set `RELAY_PROXIED=1` and have the proxy send the visitor's address as the last `X-Forwarded-For` entry and its port as `X-Client-Port` (Caddy: `header_up X-Client-Port {remote_port}`, as [Jean's own server](../server/Caddyfile) does), so that limits and records name each visitor rather than the proxy. Then name it in the policy; with none named, there is none:
 
 ```json
 { "urls": { "relay": "https://relay.corp.example/" } }

@@ -252,7 +252,7 @@ test('the folder keeps mailboxes and their messages, seals its records, and swee
     assert.ok(await store.free() > 0)
     // A mailbox nobody opened or read for its idle days goes, with what it held.
     now += 91 * 86_400_000
-    await store.sweep(handle.tidy, now)
+    await store.sweep(handle, now)
     assert.equal(await store.box(box.id), null)
   } finally {
     await rm(dir, { recursive: true, force: true })

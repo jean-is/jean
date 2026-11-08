@@ -4,6 +4,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readdir, readFile } from 'node:fs/promises'
 import { LIMITS } from '../relay/relay.js'
+import { STORE } from '../relay/store.js'
 
 const CHART = new URL('../deploy/helm/jean/', import.meta.url)
 const read = (/** @type {string} */ path) => readFile(new URL(path, CHART), 'utf8')
@@ -98,6 +99,7 @@ test("the gateway's and the relay's configs take what their servers read", async
   const gateway = JSON.parse(await readFile(new URL('../app/schemas/gateway.schema.json', import.meta.url), 'utf8'))
   assert.deepEqual(Object.keys(schema.properties.gateway.properties.config.properties), Object.keys(gateway.properties).filter((key) => key !== '$schema'))
   assert.deepEqual(Object.keys(schema.properties.relay.properties.config.properties.limits.properties), Object.keys(LIMITS))
+  assert.deepEqual(Object.keys(schema.properties.relay.properties.config.properties.stores.properties), Object.keys(STORE))
 })
 
 test('the NetworkPolicy keeps the gateway from private and link-local addresses, and the others from everything', () => {

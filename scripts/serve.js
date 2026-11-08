@@ -387,8 +387,9 @@ async function relayServer () {
   const dir = process.env.RELAY_DIR || join(tmpdir(), 'jean-mailboxes')
   const store = folder(dir, null)
   const origins = [`http://localhost:${PORT}`, `http://${HOST}:${PORT}`, ...config.origins ?? []]
-  const handle = relay({ ...config, origins, store })
-  await store.sweep(handle.tidy)
+  // People's stores too, in development, as a relay keeps them once its configuration asks (relay/store.js).
+  const handle = relay({ stores: {}, ...config, origins, store })
+  await store.sweep(handle)
   const server = createServer(hostListener(handle, false))
   server.on('error', (error) => {
     console.error(`serve: the relay: ${error.message}`)

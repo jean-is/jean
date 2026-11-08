@@ -154,6 +154,24 @@
                 "free": { "type": "integer", "minimum": 0 }
               }
             },
+            "stores": {
+              "type": "object",
+              "description": "Any of STORE in relay/store.js, {} for them all: without it, the relay keeps no person's store",
+              "additionalProperties": false,
+              "properties": {
+                "quota": { "type": "integer", "minimum": 1 },
+                "part": { "type": "integer", "minimum": 1 },
+                "meta": { "type": "integer", "minimum": 1 },
+                "devices": { "type": "integer", "minimum": 1 },
+                "page": { "type": "integer", "minimum": 1 },
+                "unused": { "type": "integer", "minimum": 1 },
+                "orphans": { "type": "integer", "minimum": 1 },
+                "tombstones": { "type": "integer", "minimum": 1 },
+                "made": { "type": "integer", "minimum": 1 },
+                "sent": { "type": "integer", "minimum": 1 },
+                "free": { "type": "integer", "minimum": 0 }
+              }
+            },
             "recordKey": {
               "type": "object",
               "description": "The public half of node host/serve.js keys: never the private one, which stays offline",

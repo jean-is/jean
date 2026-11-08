@@ -6,7 +6,7 @@ jean.is's own files are on Bunny CDN ([bunny/](../bunny/README.md)). What can't 
 |---|---|---|
 | `gateway.jean.is` | [The gateway](../../gateway/), for the services a browser can't reach (D191) | Nothing |
 | `hst.ing` | [The share host](../../host/) (D361), and where sites are published (D720) | Sealed copies it can't read, and each site name's token hash and files' hashes, in `share-data/`; sites' files are in Bunny's storage ([bunny/](../bunny/README.md#published-sites)) |
-| `relay.jean.is` | [The relay](../../relay/), where a person's devices and the people they send to meet (D45 · D226) | Sealed messages it can't read, 7 days at most, and the sealed records of each change, in `relay-data/` |
+| `relay.jean.is` | [The relay](../../relay/), where a person's devices and the people they send to meet (D45 · D226) | Sealed messages it can't read, 7 days at most, once turned on each person's sealed store (D721), and the sealed records of each change, in `relay-data/` |
 | `keys.jean.is` | [The request service](../../requests/), where the page for a key sends | Each request, in `requests-data/` |
 | An organisation's own address | Its hosted copy (D456, [deploy/](../README.md#hosted-copies)) | Jean's files and its `policy.json`, in `hosted/` |
 
@@ -37,7 +37,7 @@ rsync -r dist/host/ <server>:/srv/jean/code/host/
    - `gateway.env`: `GATEWAY_CONFIG=` its configuration on one line, `{"origins":["https://jean.is"]}` and the sign-in apps' `clients`.
    - `share.env`: `HOST_CONFIG=` the share host's, with the public half of the key that seals its records, `"shares":"https://hst.ing/s/"`, `"sites":{"address":"https://{name}.hst.ing/","bunny":{"storage":"https://storage.bunnycdn.com/<zone>/","api":"https://api.bunny.net/"}}` and an `alert` address for reports; then `BUNNY_STORAGE_KEY=` the sites' storage zone's password and `BUNNY_API_KEY=` the account's key, which purges.
    - `requests.env`: `REQUESTS_CONFIG=` the request service's, with `"site":"https://jean.is/"`, the address its answers send people back to, and the mail server.
-   - `relay.env`: `RELAY_CONFIG=` the relay's: its `origins`, `https://jean.is`, the desktop app's `http://127.0.0.1:24601` and every hosted copy whose policy names this relay, and the public half of the key that seals its records (`node host/serve.js keys` makes a pair).
+   - `relay.env`: `RELAY_CONFIG=` the relay's: its `origins`, `https://jean.is`, the desktop app's `http://127.0.0.1:24601` and every hosted copy whose policy names this relay, and the public half of the key that seals its records (`node host/serve.js keys` makes a pair). Without `stores` it keeps no person's store: see [Turning the store on](#turning-the-store-on).
 4. The folders the services write, owned by uid 1000: `share-data/`, `requests-data/` and `relay-data/`. `hosted/tenants/` holds an empty `Caddyfile` until the first hosted copy.
 5. Check the configuration, then start:
 
@@ -65,7 +65,9 @@ The settings in the `.env` files are read only as a container starts, so after c
 
 ```bash
 docker compose up -d --force-recreate gateway share requests relay
-``` Hosted copies' releases come from `DEPLOY_TO=<server>:/srv/jean/hosted POLICY='{}' npm run deploy`, and their sites from `npm run tenant` ([deploy/](../README.md#hosted-copies)).
+```
+
+Hosted copies' releases come from `DEPLOY_TO=<server>:/srv/jean/hosted POLICY='{}' npm run deploy`, and their sites from `npm run tenant` ([deploy/](../README.md#hosted-copies)).
 
 ## Adding the relay to a server that runs the others
 
@@ -74,6 +76,18 @@ docker compose up -d --force-recreate gateway share requests relay
 1. DNS for `relay.jean.is`, then `relay.env` and `relay-data/` as above.
 2. This folder's `compose.yaml`, `Caddyfile` and `update.sh` (as `/srv/jean/update`, root's, mode 755) in place of the old ones. Check the configuration as above, then `docker compose up -d caddy gateway share requests`, and `docker compose restart caddy` if Caddy wasn't recreated: a running Caddy keeps the file it started with, so without the restart `relay.jean.is` gets no route and no certificate, and nothing says so. The relay itself waits for the deploy: its code imports `host/`'s, which only the deploy brings at the same commit, and started beside an older `host/` it stops at once, with nothing logged.
 3. Only then the deploy whose CI sends the relay (a push, or the failed deploy job run again): until the server has the new script, a deploy that sends `relay/` fails, and one that doesn't fails once it has. `update.sh` starts the relay with the other three and checks that it answers.
+
+## Turning the store on
+
+The relay keeps people's stores (D721, up to 1 GB each) only once `relay.env` says so, and jean.is's policy names the relay only after that. In this order:
+
+1. `relay-data/` on a disk of its own (a block volume mounted at `/srv/jean/relay-data`, owned by uid 1000), so that stores never fill the disk the other services share.
+2. The privacy policy and the terms, in English and French at least, naming the store: what it keeps (sealed files it can't read, 1 GB, gone after 6 months unused) and the records.
+3. In `relay.env`, beside `origins` and `recordKey`: `"limits":{"free":<bytes>}`, the floor under which no message is taken, and `"stores":{"free":<bytes>}`, a higher one under which no store takes more, both for that disk; `"stores":{}` takes every default.
+4. `docker compose up -d --force-recreate relay`; `GET https://relay.jean.is/` then shows `store`.
+5. Only then jean.is's `POLICY` names `urls.relay`, in a deploy whose e2e passes.
+
+`update.sh` takes the code with or without `relay/store.js`, so that a job from before the store, run again, still deploys.
 
 ## Moving from another server
 
