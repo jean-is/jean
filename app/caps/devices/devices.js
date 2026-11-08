@@ -234,11 +234,7 @@ let flow = /** @type {Flow | null} */ (null)
 /** A new pairing, the last one ended. @returns {Flow} */
 const begin = () => { cancel(); return (flow = { controller: new AbortController(), boxes: [] }) }
 /** A pairing ended: its reads stopped, its mailboxes removed. @param {Flow} one */
-async function end(one) {
-  one.controller.abort()
-  if (flow === one) flow = null
-  await Promise.all(one.boxes.splice(0).map((token) => remove(relayOf(), token).catch(() => {})))
-}
+const end = async (one) => { one.controller.abort(); if (flow === one) flow = null; await Promise.all(one.boxes.splice(0).map((token) => remove(relayOf(), token).catch(() => {}))) }
 
 /** The new device told the adding stopped here, rather than left showing its digits for a profile that won't come: three wrong tries, or Cancel. @param {Flow} one @param {'tries' | 'gone'} reason */
 const refuse = ({ me, hello }, reason) => { if (me && hello) envelope(me, hello.key, { kind: 'refused', reason }).then((bytes) => send(relayOf(), hello.mailbox, bytes)).catch(() => {}) }
@@ -253,24 +249,14 @@ export function cancel() {
 /** Why a pairing failed, from what refused it. @param {any} error @returns {Reason} */
 const reasonOf = (error) => error?.reason ?? (error?.status === 409 ? 'used' : error?.status === 404 ? 'gone' : error?.status || error instanceof TypeError ? 'relay' : /another key/.test(error?.message) ? 'key' : 'broken')
 /** A pairing ended by what went wrong, said on its side, unless it was stopped. @param {Flow} one @param {typeof adding | typeof joining} side @param {unknown} error */
-function failed(one, side, error) {
-  if (one.controller.signal.aborted) return
-  warn(error)
-  one.leave?.().catch(() => {})
-  end(one)
-  side.value = { step: 'failed', reason: reasonOf(error) }
-}
+const failed = (one, side, error) => { if (!one.controller.signal.aborted) { warn(error); one.leave?.().catch(() => {}); end(one); side.value = { step: 'failed', reason: reasonOf(error) } } }
 
 /**
  * Adds a device, on A: the pairing mailbox opened once and one for B's answers, the link shown, then B's hello, A's nonce, B's reveal, and
  * the lock asked for where the profile has one, then the code B shows, typed here (confirm()).
  */
 export async function start() {
-  if (!offered() || !app.whole) {
-    cancel()
-    adding.value = { step: 'failed', reason: child ? 'child' : app.whole ? 'relay' : 'storage' }
-    return
-  }
+  if (!offered() || !app.whole) { cancel(); adding.value = { step: 'failed', reason: child ? 'child' : app.whole ? 'relay' : 'storage' }; return }
   const one = begin()
   try {
     const [base, me] = [relayOf(), /** @type {Identity} */ (await identity())]
@@ -312,11 +298,7 @@ export async function confirm(typed) {
   if (!one?.me || !one.hello || !one.code || !one.answers || step.step !== 'code') return false
   if (!sameCode(typed, one.code)) {
     if (step.left > 1) adding.value = { ...step, left: step.left - 1 }
-    else {
-      refuse(one, 'tries')
-      end(one)
-      adding.value = { step: 'failed', reason: 'tries' }
-    }
+    else { refuse(one, 'tries'); end(one); adding.value = { step: 'failed', reason: 'tries' } }
     return false
   }
   const { me, hello } = one
@@ -367,11 +349,7 @@ export async function join(link) {
   const got = typeof link === 'string' ? parseLink(link) : link
   const base = relayOf()
   const reason = !got ? 'link' : child ? 'child' : !base || app.policy.signIn ? 'relay' : !app.whole ? 'storage' : null
-  if (!got || reason) {
-    cancel()
-    joining.value = { step: 'failed', reason: reason ?? 'link' }
-    return
-  }
+  if (!got || reason) { cancel(); joining.value = { step: 'failed', reason: reason ?? 'link' }; return }
   const one = begin()
   // At once, so that Join pressed twice joins once.
   joining.value = { step: 'waiting' }
