@@ -6,7 +6,7 @@ import { join } from 'node:path'
 import { describe, it } from 'node:test'
 import { HEADERS } from '../app/caps/policy/checks.js'
 import { ACTION, RELEASES, deployToBunny, objectOf, oldReleases, rulesFor, typeOf, zoneOf } from '../scripts/bunny.js'
-import { KEEP, parseTarget, releaseName, remote, unpublished } from '../scripts/deploy.js'
+import { KEEP, parseTarget, releaseName, remote, staged, unpublished, whenPublic } from '../scripts/deploy.js'
 
 describe('deploy', () => {
   it('reads the server and its folder from DEPLOY_TO, as rsync writes them', () => {
@@ -41,6 +41,18 @@ describe('deploy', () => {
     assert.equal(unpublished(listing, []), '0.8.0-r9e695e594201', 'before its first version')
     assert.equal(unpublished(listing, ['0.8.0-re4c5b5a2bb10', '0.8.0-r9e695e594201']), null)
     assert.equal(unpublished({}, []), null, 'a build without a reader has no package')
+  })
+
+  it('goes on only once npm lists the version it published, which npm may hold staged for minutes, and stops past its time', async () => {
+    const lists = [[], ['0.8.0-r1a'], ['0.8.0-r1a', '0.8.0-r2b']]
+    const waits = /** @type {number[]} */ ([])
+    const quiet = { wait: async (/** @type {number} */ ms) => { waits.push(ms) }, say: () => {} }
+    await whenPublic('0.8.0-r2b', () => lists.shift() ?? [], { every: 10, within: 100, ...quiet })
+    assert.deepEqual(waits, [10, 10])
+    await assert.rejects(whenPublic('0.8.0-r3c', () => [], { every: 10, within: 30, ...quiet }), /npm stage list @jean-is\/render/)
+    // Run again while npm holds it, the publish is refused, and the deploy waits for it all the same.
+    assert.equal(staged('npm error 409 Conflict - PUT https://registry.npmjs.org/@jean-is%2frender - Cannot publish over previously staged version "0.8.0-r2ac5fe39c4a3".'), true)
+    assert.equal(staged('npm error code E403\nnpm error 403 OIDC permission denied for this action'), false)
   })
 })
 

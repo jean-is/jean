@@ -2,12 +2,13 @@
 // tree, with `npm run build:web`, uploads dist/web/ as a new release beside the earlier ones, then
 // points `current` at it in one step, keeping the last five. Before the server, it publishes the render
 // package from the same build when npm doesn't have the version that build names (D321), under the
-// npm login here, which may ask for its one-time code; if that fails, the server is left as it was.
+// npm login here, which may ask for its one-time code, then waits until npm lists it, since npm may hold
+// a publish staged for minutes; if either fails, the server is left as it was.
 // DEPLOY_TO names the server and its folder, as rsync writes them, so no address is written here; the
 // server serves <folder>/current. It needs ssh and rsync here, and rsync with GNU cp and mv (Linux) there.
 // DEPLOY_TO=bunny:<storage zone> puts the release on Bunny CDN instead, as jean.is is served (bunny.js).
 // Usage: DEPLOY_TO=host:/path npm run deploy [-- <commit>]     (HEAD by default)
-import { execFileSync } from 'node:child_process'
+import { execFileSync, spawn } from 'node:child_process'
 import { mkdir, mkdtemp, readFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
@@ -72,8 +73,37 @@ function publishedVersions (cwd) {
   }
 }
 
+/** How long a deploy waits for npm to list what it published, and how often it asks, in milliseconds. */
+export const PUBLIC = { within: 20 * 60_000, every: 15_000 }
+
+/**
+ * Waits until npm lists the version: npm may hold a publish staged a while before anyone can download it,
+ * and neither the site nor the share host may name it before then. Throws once `within` has passed.
+ * @param {string} version @param {() => string[] | Promise<string[]>} versions  what npm lists now
+ * @param {{ within?: number, every?: number, wait?: (ms: number) => Promise<void>, say?: (text: string) => void }} [options]
+ */
+export async function whenPublic (version, versions, { within = PUBLIC.within, every = PUBLIC.every, wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms)), say = console.log } = {}) {
+  for (let waited = 0; ; waited += every) {
+    if ((await versions()).includes(version)) return
+    if (waited >= within) throw new Error(`npm hasn't made ${NAME}@${version} public in ${Math.round(within / 60_000)} minutes, and nothing names it yet; a staged publish may wait for approval (npm stage list ${NAME}). Run the deploy again once npm lists it.`)
+    if (waited % 60_000 === 0) say(`deploy: waiting for npm to make ${NAME}@${version} public`)
+    await wait(every)
+  }
+}
+
+/** Whether npm refused a publish because that version is staged already, as when a deploy runs again while npm holds it. @param {string} errors */
+export const staged = (errors) => /previously staged version/i.test(errors)
+
 /** @param {string} command @param {string[]} args @param {string} [cwd] @param {NodeJS.ProcessEnv} [env] */
 const run = (command, args, cwd, env) => execFileSync(command, args, { cwd, env, stdio: 'inherit' })
+
+/** A command run as run() does, what it writes to standard error shown as it comes and kept. @param {string} command @param {string[]} args @param {string} cwd @returns {Promise<{ code: number | null, errors: string }>} */
+const shown = (command, args, cwd) => new Promise((resolve, reject) => {
+  const child = spawn(command, args, { cwd, stdio: ['inherit', 'inherit', 'pipe'] })
+  let errors = ''
+  child.stderr.on('data', (chunk) => { process.stderr.write(chunk); errors += chunk })
+  child.on('error', reject).on('close', (code) => resolve({ code, errors }))
+})
 
 /** The commit a name gives, short, as git has it. @param {string} [name]  HEAD by default */
 export const commitOf = (name = 'HEAD') => execFileSync('git', ['-C', ROOT, 'rev-parse', '--short', `${name}^{commit}`], { encoding: 'utf8' }).trim()
@@ -109,7 +139,9 @@ async function main () {
     if (version) {
       console.log(`deploy: publishing ${NAME}@${version}, which pages saved from this release draw themselves with`)
       run(process.execPath, [join('scripts', 'render.js')], source)
-      run('npm', ['publish', './dist/render'], source)
+      const { code, errors } = await shown('npm', ['publish', './dist/render'], source)
+      if (code !== 0 && !staged(errors)) throw new Error(`npm publish ./dist/render failed (exit ${code})`)
+      await whenPublic(version, () => publishedVersions(source))
     }
     if (!server) {
       await deployToBunny({ dist: join(source, 'dist', 'web'), zone: String(zone), release, keep: KEEP })
