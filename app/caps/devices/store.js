@@ -9,7 +9,7 @@
 import { signal } from '@preact/signals-core'
 import { app } from '../../ui/state.js'
 import { mine } from '../../ui/opfs.js'
-import { getSecret, setSecret } from '../../ui/secrets.js'
+import { getSecret, setSecret, deleteSecret } from '../../ui/secrets.js'
 import { readJSON, writeJSON, walk } from '../../core/fs.js'
 import { rounds, later, answering } from '../sync/rounds.js'
 import { syncRound } from '../sync/mirror.js'
@@ -157,6 +157,13 @@ async function run() {
     // A device this one's list removed and no epoch shut out yet: the next epoch, its key kept first, so a crash on the way loses nothing.
     state.value = { use: info.use, quota: info.quota, full, owing: owed(held, list) }
     if (state.peek().owing && info.epoch === newest(held.epochs)) {
+      // The last other device removed, no device needs the copy any more: it goes from the relay, and this device keeps its files alone.
+      if (list.every((one) => one.removedAt || one.id === me.id)) {
+        await call(held, '', { method: 'DELETE', proof: await proofOf(held.epochs) }, gate)
+        await Promise.all([deleteSecret(app.fs, STORE), ...STORED.map((path) => app.fs.remove(path))])
+        state.value = {}
+        return came
+      }
       const epoch = next(held, list, info)
       await keep({ ...held, pending: epoch })
       await keep(held = await rotate(held, me, list, epoch, gate))

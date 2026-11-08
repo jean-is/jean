@@ -232,6 +232,16 @@ test('a device joins with the proof; an epoch removes devices, never to come bac
   assert.equal((await putter(relay.call, sid, second.token)(random(16), 'new', { 'if-none-match': '*' }, 1)).status, 200)
 })
 
+test('a store is deleted whole with its proof, as the last other device leaves, and then opens to nobody', async () => {
+  const relay = relayed()
+  const { sid, first, proof } = await made(relay)
+  await putter(relay.call, sid, first.token)(random(16), 'kept', { 'if-none-match': '*' })
+  assert.equal((await relay.call('DELETE', `/v1/s/${sid}`, { token: first.token, headers: { 'store-proof': random(32) } })).status, 403)
+  assert.equal((await relay.call('DELETE', `/v1/s/${sid}`, { token: first.token, headers: { 'store-proof': proof } })).status, 200)
+  assert.equal((await relay.call('GET', `/v1/s/${sid}`, { token: first.token })).status, 404)
+  assert.deepEqual([await relay.backend.store(sid), (await relay.backend.parts(sid)).length], [null, 0])
+})
+
 test('each change is recorded once an hour for each store, address and kind, sealed by the backend; reads never are', async () => {
   const memo = memory()
   const relay = relayed({ backend: memo.backend })

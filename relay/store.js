@@ -9,6 +9,7 @@
 //   PUT    /v1/s/<sid>               makes a store: Authorization: Bearer <token>, { id, proof }, the first device's id and the
 //                                    proof's SHA-256; 409 if it exists
 //   GET    /v1/s/<sid>               { epoch, since, last, devices: [{ id, added }], envelope, use, quota }, envelope the caller's
+//   DELETE /v1/s/<sid>               with Store-Proof: the store and all it holds, as the last other device leaves
 //   GET    /v1/s/<sid>/changes?after=<rev>
 //                                    { changes: [{ oid, rev, epoch, meta, parts, gone? }], last, more }, a page in the order of rev,
 //                                    `last` the cursor to read on from; { reset: true, last } when `after` is older than the
@@ -183,6 +184,13 @@ export function stores({ backend, limits, now, inTurn, record, free }) {
       if (!part && request.method === 'GET') {
         return answer(200, { epoch: meta.epoch, since: meta.since, last: meta.last, devices: Object.entries(meta.devices).map(([id, one]) => ({ id, added: one.added })),
           envelope: meta.devices[device ?? '']?.envelope ?? null, use: meta.use, quota: limits.quota })
+      }
+      if (!part && request.method === 'DELETE') {
+        if (!(await proved())) return answer(403, { error: 'Deleting this store takes its proof.' })
+        held.delete(sid)
+        await backend.removeStore(sid)
+        await note('delete')
+        return answer(200, {})
       }
       if (part === 'changes' && request.method === 'GET') {
         const after = Math.max(0, Math.floor(Number(url.searchParams.get('after')) || 0))

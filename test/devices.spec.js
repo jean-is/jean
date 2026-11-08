@@ -745,7 +745,7 @@ test('a project kept on one device, asked first, leaves the other, and the first
   await b.context().close()
 })
 
-test('a device removed is let out of the store: what is made after reaches it no more, even before it hears of its removal', async ({ page, browser }) => {
+test('the last other device removed, the store goes from the relay: what is made after reaches it no more, even before it hears of its removal', async ({ page, browser }) => {
   await deviceA(page)
   const b = await device(browser)
   const { dir, settings } = await pair(page, b)
@@ -756,21 +756,22 @@ test('a device removed is let out of the store: what is made after reaches it no
   const before = await taskOn(page, 'Before', 'Plan the trip')
   await expect.poll(async () => { await storeRound(page); return inStore(page) }, { timeout: 20_000 }).toContain(before)
   await expect.poll(async () => { await storeRound(b); return read(b, before) }, { timeout: 20_000 }).not.toBeNull()
-  // The store's next epoch, refused at first: A says so, and goes on trying.
-  await page.context().route('**/v1/s/*/epoch', (route) => route.abort())
+  // The store's deletion, refused at first: A says so, and goes on trying.
+  const deleting = (/** @type {URL} */ url) => /\/v1\/s\/[\w-]{22}$/.test(url.pathname)
+  await page.context().route(deleting, (route) => (route.request().method() === 'DELETE' ? route.abort() : route.fallback()))
   await settings.locator('.devices-flow > .list > li').last().getByRole('button', { name: 'Remove' }).click()
   const dialog = page.locator('dialog.devices-remove[open]')
   await dialog.getByRole('button', { name: 'Remove' }).click()
   await expect(dialog.getByRole('status')).toContainText(/ is removed\./)
   await dialog.getByRole('button', { name: 'Done' }).click()
   await expect.poll(async () => { await storeRound(page); return settings.locator('.devices-flow > .hint').textContent() }, { timeout: 20_000 }).toBe('Shutting out the device you removed…')
-  await page.context().unroute('**/v1/s/*/epoch')
-  const epochs = async () => Object.keys(JSON.parse(JSON.parse(String(await read(page, '.secrets/keys.json'))).store).epochs)
-  await expect.poll(async () => { await storeRound(page); return epochs() }, { timeout: 20_000 }).toEqual(['0', '1'])
-  await expect(settings.locator('.devices-flow > .hint')).toHaveText(/ in common$/)
+  await page.context().unroute(deleting)
+  // B was the last other device: the store goes, its keys with it, and A keeps its files, alone.
+  const held = async () => JSON.parse(String(await read(page, '.secrets/keys.json'))).store ?? null
+  await expect.poll(async () => { await storeRound(page); return held() }, { timeout: 20_000 }).toBeNull()
+  expect(await read(page, before)).not.toBeNull()
   await closeSettings(page)
   const after = await taskOn(page, 'After', 'Book the train')
-  await expect.poll(async () => { await storeRound(page); return inStore(page) }, { timeout: 20_000 }).toContain(after)
   await storeRound(b)
   expect(await read(b, after)).toBeNull()
   // B says it no longer receives, with Start again; nothing of its own was erased.
