@@ -1,11 +1,11 @@
-// Feedback (D712): under the last answer, Good and Not right. Not right asks what wasn't, then answers again a level up
+// Feedback (D712): in the last answer's More options, Good and Not right. Not right asks what wasn't, then answers again a level up
 // with the person's words as a note, and with Keep it in mind has the brain note what will still matter (remember) and
 // mend the skill it followed: Jean learns from the person on this device, sending nothing anywhere else. Each mark is a
 // meta record of the task, which Settings' Skills counts for the skill an answer followed.
 import { html, svg, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { register, unlock, isDenied } from '../../ui/caps.js'
-import { app, send, keepRecords } from '../../ui/state.js'
+import { app, send, keepRecords, notify } from '../../ui/state.js'
 import { metaRecord, noteRecord } from '../../core/events.js'
 import { t, useStrings } from '../../core/i18n.js'
 import { icons, icon } from '../../ui/menu-icons.js'
@@ -37,18 +37,37 @@ async function again(at, why, keep) {
   await send(why || t('feedback.again'), { boost: 1, notes: [noteRecord(told, { kind: 'feedback', answer: at, ...(keep && { keep }) })] })
 }
 
-/** Its buttons, and Not right's few words, under the last answer. @param {{ at: string, last?: boolean }} answer */
-function draw({ at, last }) {
-  if (!last) return nothing
+/**
+ * At the top of the last answer's More options: Good, said aloud once chosen as the menu closes on it, and Not right, which
+ * opens its few words under the answer, the keyboard in them. Each is ticked once chosen.
+ * @param {{ at: string, menu: string }} answer
+ */
+function marks({ at, menu }) {
   const was = markOf(at)
-  const said = (/** @type {Event} */ event) => /** @type {HTMLTextAreaElement} */ (/** @type {HTMLElement} */ (event.currentTarget).closest('.feedback')?.querySelector('textarea'))?.value.trim() ?? ''
-  return html`<button class="icon-button subtle" aria-pressed=${String(was === 'good')} aria-label=${t('feedback.good')} @click=${() => mark(at, 'good')}>${icons['thumb-up']}</button>
-    <button class="icon-button subtle" aria-pressed=${String(was === 'bad' || open.value === at)} aria-expanded=${String(open.value === at)} aria-label=${t('feedback.bad')}
-      @click=${() => { open.value = open.value === at ? '' : at }}>${thumbDown}</button>
-    ${open.value === at ? html`<div class="feedback" role="group" aria-label=${t('feedback.bad')}><label for="feedback-why">${t('feedback.why')}</label>
-      <textarea id="feedback-why" rows="2" dir="auto" @keydown=${(/** @type {KeyboardEvent} */ e) => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); void again(at, said(e), false) } }}></textarea>
-      <div class="row"><button class="button primary" @click=${(/** @type {Event} */ e) => again(at, said(e), false)}>${t('action.retry')}</button>
-      <button class="button" @click=${(/** @type {Event} */ e) => again(at, said(e), true)}>${t('feedback.keep')}</button></div></div>` : nothing}`
+  const row = (/** @type {unknown} */ glyph, /** @type {string} */ label, /** @type {boolean} */ on, /** @type {() => void} */ run) => html`<li><button type="button"
+    popovertarget=${menu} popovertargetaction="hide" aria-pressed=${String(on)} @click=${run}>${glyph}<span>${label}</span>${on ? icons.check : nothing}</button></li>`
+  return [row(icons['thumb-up'], t('feedback.good'), was === 'good', () => { void mark(at, 'good'); notify(t('feedback.good'), { quiet: true }) }),
+    row(thumbDown, t('feedback.bad'), was === 'bad' || open.value === at, () => { open.value = open.value === at ? '' : at; setTimeout(() => document.getElementById('feedback-why')?.focus()) })]
 }
 
-register({ id: 'feedback', slots: { answer: { at: 10, draw } } })
+/** Not right's few words, under the last answer, once asked for; Escape puts them away, the keyboard back on More options. @param {{ at: string, last?: boolean }} answer */
+function draw({ at, last }) {
+  if (!last || open.value !== at) return nothing
+  const said = (/** @type {Event} */ event) => /** @type {HTMLTextAreaElement} */ (/** @type {HTMLElement} */ (event.currentTarget).closest('.feedback')?.querySelector('textarea'))?.value.trim() ?? ''
+  /** @param {KeyboardEvent} e */
+  const key = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); void again(at, said(e), false) }
+    if (e.key === 'Escape' && !e.isComposing) {
+      e.preventDefault()
+      const more = /** @type {HTMLElement | null | undefined} */ (/** @type {HTMLElement} */ (e.currentTarget).closest('.msg-actions')?.querySelector('[popovertarget^="answer-menu"]'))
+      open.value = ''
+      more?.focus()
+    }
+  }
+  return html`<div class="feedback" role="group" aria-label=${t('feedback.bad')}><label for="feedback-why">${t('feedback.why')}</label>
+      <textarea id="feedback-why" rows="2" dir="auto" @keydown=${key}></textarea>
+      <div class="row"><button class="button primary" @click=${(/** @type {Event} */ e) => again(at, said(e), false)}>${t('action.retry')}</button>
+      <button class="button" @click=${(/** @type {Event} */ e) => again(at, said(e), true)}>${t('feedback.keep')}</button></div></div>`
+}
+
+register({ id: 'feedback', slots: { answer: { at: 10, draw }, more: { at: 10, draw: marks } } })

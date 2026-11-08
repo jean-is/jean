@@ -3,4 +3,3 @@
 .msg-actions .feedback { order: 1; display: grid; gap: 0.5rem; flex-basis: 100%; margin-block: 0.5rem; margin-inline-start: 0.5rem; max-inline-size: 36rem; }
 .msg-actions .feedback label { font-size: 0.86rem; color: var(--ink-soft); }
 .msg-actions .feedback textarea { inline-size: 100%; resize: vertical; }
-.msg-actions [aria-pressed='true'] { color: var(--flame-deep); }
