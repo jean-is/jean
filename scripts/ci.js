@@ -29,7 +29,7 @@ const OUT = join(ROOT, 'dist/ci')
 /** The runner every job names: GitHub's for a public repository has four processors, and Playwright's '50%' two workers. */
 const RUNNER = { label: 'ubuntu-24.04', workers: 2 }
 /** The Trivy that trivy-action runs at the commit ci.yml pins (its input `version`'s default), as Aqua's image of it. */
-export const TRIVY = { action: 'ed142fd0673e97e23eac54620cfb913e5ce36c25', image: 'aquasec/trivy:0.70.0@sha256:be1190afcb28352bfddc4ddeb71470835d16462af68d310f9f4bca710961a41e' }
+export const TRIVY = { action: '38b337fff0a2f984d5be173c99e3f633438167ec', image: 'aquasec/trivy:0.76.2@sha256:8f6bb947dbc528902e11f2f5be52f7b519f6a39d5d148f41166f2040499768fb' }
 /** The buildx builder setup-buildx-action makes: BuildKit in a container of its own, which builds for several platforms. */
 const BUILDER = 'jean-ci'
 /** What a job takes of Docker's machine, processors and GB, by its id: the scheduler's measure, and a container's limits. */

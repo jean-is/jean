@@ -60,7 +60,8 @@ jobs:
           path: sbom.cdx.json
 
   # The three images as an organisation's hardened cluster takes them (D232): built for amd64 and scanned by Trivy,
-  # which refuses a high or critical vulnerability that has a fix (v0.36.0, after the tags hijacked in March 2026).
+  # which refuses a high or critical vulnerability that has a fix (trivy-action's commit past v0.36.0 that runs Trivy
+  # v0.76.2, pinned by hash after the tags hijacked in March 2026).
   # The chart (deploy/helm/jean) rendered as Kubernetes and as OpenShift take it, Trivy reading its manifests too,
   # then installed in kind in a namespace held to Pod Security's "restricted" level, every pod as a random user in
   # group 0 as OpenShift runs it (deploy/helm/ci-values.yaml), and checked by scripts/kube-check.js. The images wait
@@ -99,21 +100,21 @@ jobs:
           load: true
           tags: jean-ci:relay
           cache-from: type=gha,scope=jean-relay
-      - uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+      - uses: aquasecurity/trivy-action@38b337fff0a2f984d5be173c99e3f633438167ec # master after v0.36.0: Trivy v0.76.2
         with:
           image-ref: jean-ci:jean
           scanners: vuln
           severity: HIGH,CRITICAL
           ignore-unfixed: true
           exit-code: 1
-      - uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+      - uses: aquasecurity/trivy-action@38b337fff0a2f984d5be173c99e3f633438167ec # master after v0.36.0: Trivy v0.76.2
         with:
           image-ref: jean-ci:gateway
           scanners: vuln
           severity: HIGH,CRITICAL
           ignore-unfixed: true
           exit-code: 1
-      - uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+      - uses: aquasecurity/trivy-action@38b337fff0a2f984d5be173c99e3f633438167ec # master after v0.36.0: Trivy v0.76.2
         with:
           image-ref: jean-ci:relay
           scanners: vuln
@@ -131,7 +132,7 @@ jobs:
           helm template jean deploy/helm/jean -n jean -f deploy/helm/ci-values.yaml --set openshift=true --set route.enabled=true \
             --set networkPolicy.ingressNamespaceSelector=null --set gateway.trustedCA.configMap=openshift \
             --api-versions security.openshift.io/v1 --api-versions route.openshift.io/v1 > rendered/openshift.yaml
-      - uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+      - uses: aquasecurity/trivy-action@38b337fff0a2f984d5be173c99e3f633438167ec # master after v0.36.0: Trivy v0.76.2
         with:
           scan-type: config
           scan-ref: rendered
