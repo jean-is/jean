@@ -4,7 +4,7 @@
 // profile knows, settings and keys that follow the person, a task handed over, or its own removal. The steps are pure in ./pair.js, what
 // crosses in ./bundle.js, and what a device keeps and does with what comes in ./flow.js.
 import { html } from 'lit-html'
-import { signal, effect } from '@preact/signals-core'
+import { signal, effect, computed } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
 import { app, changeSettings, rememberUnlocked, refreshConversations, refreshProjects, brainLabel, notify } from '../../ui/state.js'
 import { PLACE, here, mine } from '../../ui/opfs.js'
@@ -72,10 +72,9 @@ const locked = (name, run) => navigator.locks?.request(mine(name), run) ?? run()
 const lockedHere = async () => ((kept) => Boolean(kept) && !kept.slots?.some((/** @type {{ kind: string }} */ slot) => slot.kind === 'device'))(JSON.parse(await app.fs.read(VAULT) ?? 'null'))
 
 /** This device's name, as its browser tells it, or the desktop app its system. */
-async function nameHere() {
-  const told = /** @type {any} */ (navigator).userAgentData
-  return deviceName({ userAgent: navigator.userAgent, platform: told?.platform, brands: told?.brands, touch: navigator.maxTouchPoints, os: (await host)?.os, app: BRAND.name })
-}
+const nameHere = async (told = /** @type {any} */ (navigator).userAgentData) => deviceName({ userAgent: navigator.userAgent, platform: told?.platform, brands: told?.brands, touch: navigator.maxTouchPoints, os: (await host)?.os, app: BRAND.name })
+/** Whether an answer is being written: nothing goes to the relay meanwhile but what the person asks for, so its record holds what it reached (caps/receipt). */
+const answering = computed(() => app.running.value.length > 0)
 
 /** What went wrong, said in the console, as nothing waits on it. @param {unknown} error */
 const warn = (error) => console.warn('Devices', error)
@@ -128,7 +127,7 @@ async function listening() {
   const ctx = await contextOf(me)
   if (turn !== listenings) return
   // Its identity gone or another now, as this device's removal was acted on in another tab, its mailbox is never opened again.
-  stop = listen({ base, token: me.token, lock: mine('app-devices'), onMessages: (messages) => heard(ctx, messages), clock: clocked,
+  stop = listen({ base, token: me.token, lock: mine('app-devices'), onMessages: (messages) => heard(ctx, messages), clock: clocked, quiet: answering,
     lost: async (...box) => ((await identity(false))?.id === me.id ? open(...box) : stop()) })
   // Paired, or once was: a device removed here may still be owed its removal.
   if ((await listOf(app.fs)).length < 2) return
@@ -199,6 +198,7 @@ let [timer, retrying, wait] = [/** @type {ReturnType<typeof setTimeout> | undefi
 const later = (ctx) => { clearTimeout(timer); timer = setTimeout(() => sent(ctx, false), 2000) }
 /** What waits sent, then what a device didn't take sent again on its own (again()); removals owed only by that timer, at most hourly. @param {Context} ctx @param {boolean} [notices] */
 async function sent(ctx, notices = true) {
+  if (answering.peek()) return later(ctx)
   clearTimeout(retrying)
   retrying = undefined
   await share(ctx, false, notices).catch(warn)

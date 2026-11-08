@@ -3,6 +3,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
+import { signal } from '@preact/signals-core'
 import { relay } from '../relay/relay.js'
 import { mailbox, open, send, read, remove, listen, reader } from '../app/ui/relay.js'
 
@@ -245,6 +246,33 @@ test('listening pauses a second after an empty answer that came long before its 
   await new Promise((resolve) => setTimeout(resolve, 1500))
   stop()
   assert.ok(reads <= 3, `${reads} reads in 1.5 s`)
+})
+
+test('listening holds back while `quiet` is true: nothing read, a wait under way ended as it turns true, and what came read once it is false', { timeout: 10_000 }, async () => {
+  const { asked } = relayed()
+  const { token, id } = await mailbox()
+  await open(BASE, token)
+  const quiet = signal(true)
+  /** @type {string[]} */
+  const heard = []
+  const reads = () => asked.filter((one) => one.startsWith('GET ')).length
+  const until = async (/** @type {() => boolean} */ done) => { while (!done()) await new Promise((resolve) => setTimeout(resolve, 10)) }
+  const stop = listen({ base: BASE, token, lock: 'relay-quiet', quiet, onMessages: (messages) => { heard.push(...messages.map((message) => text(message.bytes))) } })
+  await send(BASE, id, bytes('one'))
+  await new Promise((resolve) => setTimeout(resolve, 100))
+  assert.equal(reads(), 0)
+  quiet.value = false
+  await until(() => heard.length === 1)
+  // Read past 'one', it now waits on the relay; turning quiet ends that wait, and reads nothing more.
+  await until(() => reads() === 2)
+  quiet.value = true
+  await send(BASE, id, bytes('two'))
+  await new Promise((resolve) => setTimeout(resolve, 100))
+  assert.deepEqual([heard, reads()], [['one'], 2])
+  quiet.value = false
+  await until(() => heard.length === 2)
+  stop()
+  assert.deepEqual(heard, ['one', 'two'])
 })
 
 test('a large message gone as it is fetched is passed over, never failing what came with it', async () => {

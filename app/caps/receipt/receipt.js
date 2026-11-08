@@ -36,13 +36,13 @@ const SEAL = icon(svg`<circle cx="12" cy="9" r="5.5"/><path d="M8.8 13.5 7.5 20.
 
 // ─── What the page reached ───────────────────────────────────────────────────
 
-/** The page's requests anywhere but to Jean's own address, as the browser recorded them, once each ended (ms). @type {{ start: number, end: number, host: string }[]} */
+/** The page's requests anywhere but to Jean's own address, as the browser recorded them once each ended, by when each began (ms). @type {{ start: number, host: string }[]} */
 const requests = []
 /** @param {PerformanceEntryList} entries */
 function keep(entries) {
-  for (const { name, startTime, duration } of entries) {
+  for (const { name, startTime } of entries) {
     const url = new URL(name)
-    if (/^https?:$/.test(url.protocol) && url.origin !== location.origin) requests.push({ start: performance.timeOrigin + startTime, end: performance.timeOrigin + startTime + duration, host: url.host })
+    if (/^https?:$/.test(url.protocol) && url.origin !== location.origin) requests.push({ start: performance.timeOrigin + startTime, host: url.host })
   }
 }
 const observer = new PerformanceObserver((list) => keep(list.getEntries()))
@@ -52,13 +52,14 @@ observer.observe({ type: 'resource', buffered: true })
 const answering = new Map()
 /** Answers that ended, whose record is still to be kept. @type {Set<{ from: number, to: number }>} */
 const ended = new Set()
+// Timed on the clock the browser's record keeps, which the system's may drift from.
 effect(() => {
   const running = app.running.value
-  for (const path of running) if (!answering.has(path)) answering.set(path, Date.now())
+  for (const path of running) if (!answering.has(path)) answering.set(path, performance.timeOrigin + performance.now())
   for (const [path, from] of answering) {
     if (running.includes(path)) continue
     answering.delete(path)
-    const answer = { from, to: Date.now() }
+    const answer = { from, to: performance.timeOrigin + performance.now() }
     ended.add(answer)
     // The browser tells of a request a moment after it ends.
     setTimeout(() => note(path, answer).catch((error) => console.warn('Receipt', error)), 1000)
@@ -66,8 +67,10 @@ effect(() => {
 })
 
 /**
- * Keeps in the conversation what the page reached while it was answered: every request that ran
+ * Keeps in the conversation what the page reached while it was answered: every request that began
  * meanwhile, another conversation's too, which can only make an answer look less private than it was.
+ * One that began before carries nothing of it, as Jean sends no request's body while it goes, and so
+ * a wait on the relay under way as the answer begins, which caps/devices ends, is no part of it.
  * @param {string} path @param {{ from: number, to: number }} answer
  */
 async function note(path, answer) {
@@ -75,11 +78,11 @@ async function note(path, answer) {
   keep(observer.takeRecords())
   /** @type {Record<string, number>} */
   const hosts = {}
-  for (const { start, end, host } of requests) if (start <= to && end >= from) hosts[host] = (hosts[host] ?? 0) + 1
+  for (const { start, host } of requests) if (start >= from && start <= to) hosts[host] = (hosts[host] ?? 0) + 1
   // What no answer still needs goes.
   ended.delete(answer)
   const since = Math.min(...answering.values(), ...[...ended].map((other) => other.from))
-  requests.splice(0, requests.length, ...requests.filter(({ end }) => end >= since))
+  requests.splice(0, requests.length, ...requests.filter(({ start }) => start >= since))
   await append(path, { reached: /** @type {Reached} */ ({ from: new Date(from).toISOString(), to: new Date(to).toISOString(), hosts }) })
 }
 

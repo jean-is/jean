@@ -98,10 +98,12 @@ export function reader(base, token, signal, clock) {
  * it was read: a batch whose handling fails comes again, and one may come twice as another tab takes over. A failure
  * pauses it, a second, then twice as long each time up to a minute, or until the device is back online. Its mailbox gone (the relay
  * lost it), it is opened again, or `lost` decides; numbered lower than what was read (the relay rolled back), it is read from its start. `clock` hears the
- * relay's time at each read. Gives what stops it.
- * @param {{ base: string, token: string, lock: string, onMessages: (messages: Message[]) => unknown, clock?: (now: number) => void, lost?: typeof open }} options
+ * relay's time at each read. `quiet`, a signal, holds it back while it is true, ending a read under way: nothing goes to the relay while
+ * an answer is written, which reads what the page reached meanwhile (caps/receipt). Gives what stops it.
+ * @param {{ base: string, token: string, lock: string, onMessages: (messages: Message[]) => unknown, clock?: (now: number) => void, lost?: typeof open,
+ *   quiet?: { peek: () => boolean, subscribe: (heard: (on: boolean) => void) => () => void } }} options
  */
-export function listen({ base, token, lock, onMessages, clock, lost = open }) {
+export function listen({ base, token, lock, onMessages, clock, lost = open, quiet }) {
   const page = globalThis.document
   const locks = globalThis.navigator?.locks
   let stopped = false
@@ -140,7 +142,7 @@ export function listen({ base, token, lock, onMessages, clock, lost = open }) {
     }
   }
   const hold = (steal = true) => {
-    if (stopped || page?.visibilityState === 'hidden') return
+    if (stopped || quiet?.peek() || page?.visibilityState === 'hidden') return
     held?.abort()
     const mine = (held = new AbortController())
     const run = () => (turn = turn.then(() => reading(mine.signal)))
@@ -152,9 +154,10 @@ export function listen({ base, token, lock, onMessages, clock, lost = open }) {
   const online = () => wake()
   page?.addEventListener('visibilitychange', seen)
   globalThis.addEventListener?.('online', online)
-  hold()
+  const unquiet = quiet?.subscribe((on) => (on ? held?.abort() : hold())) ?? (hold(), undefined)
   return () => {
     stopped = true
+    unquiet?.()
     held?.abort()
     page?.removeEventListener('visibilitychange', seen)
     globalThis.removeEventListener?.('online', online)

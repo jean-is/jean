@@ -41,21 +41,26 @@ const nameOf = (page) => page.evaluate(async () => {
 /** @param {string} text */
 const escaped = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
-/** The relay named in this Jean's settings, as test/share.spec.js names a share host. @param {Page} page */
-const useRelay = (page) => page.evaluate(async (relay) => {
+/** The relay named in this Jean's settings, as test/share.spec.js names a share host. @param {Page} page @param {string} [relay] */
+const useRelay = (page, relay = RELAY_URL) => page.evaluate(async (relay) => {
   const { app, updateSettings } = await import('/ui/state.js')
   await updateSettings({ urls: { ...app.settings.value.urls, relay } })
-}, RELAY_URL)
+}, relay)
+/** An address outside this device for the relay, as relay.jean.is is, where the test's relay answers: the page's own record names it. */
+const OUTSIDE = 'https://relay.outside.example/'
+/** @param {import('@playwright/test').BrowserContext} context */
+const outside = (context) => context.route(`${OUTSIDE}**`, async (route) => route.fulfill({ response: await route.fetch({ url: route.request().url().replace(OUTSIDE, RELAY_URL) }) }))
 
 /**
  * Another device: a fresh Jean in a context of its own, in its language, the relay named, its voice its own.
- * @param {import('@playwright/test').Browser} browser @param {{ lang?: string, viewport?: { width: number, height: number } }} [options]
+ * @param {import('@playwright/test').Browser} browser @param {{ lang?: string, viewport?: { width: number, height: number }, relay?: string }} [options]
  */
-async function device(browser, { lang = 'en', viewport } = {}) {
+async function device(browser, { lang = 'en', viewport, relay = RELAY_URL } = {}) {
   const context = await browser.newContext(viewport ? { viewport } : {})
+  if (relay === OUTSIDE) await outside(context)
   const page = await context.newPage()
   await start(page, lang)
-  await useRelay(page)
+  await useRelay(page, relay)
   await change(page, { voice: 'Kyoko' })
   return page
 }
@@ -334,6 +339,32 @@ test('a task handed from one device to the other opens there under the same path
   await expect(b.locator('.msg-jean strong')).toHaveText('the plan')
   expect(await b.evaluate(async () => (await import('/ui/state.js')).app.current.value?.path)).toBe(path)
   expect(await read(b, path)).toBe(await read(page, path))
+  await b.context().close()
+})
+
+test('an answer on this device stays Kept private while the tab waits on its mailbox: the wait under way ends, and what another device sends meanwhile is read once it is written', async ({ page, browser }) => {
+  // A with the fake brain alone, on this computer, as Ollama would be.
+  await outside(page.context())
+  await start(page)
+  test.skip(await ephemeral(page), 'nothing is kept here: a private window, Playwright’s WebKit')
+  await connectFakeBrain(page)
+  await useRelay(page, OUTSIDE)
+  const b = await device(browser, { relay: OUTSIDE })
+  await pair(page, b)
+  await closeSettings(page)
+  // A listens, waiting on its mailbox at that address.
+  await expect.poll(() => page.evaluate((relay) => performance.getEntriesByType('resource').some(({ name }) => name.startsWith(relay)), OUTSIDE)).toBe(true)
+  // An answer of five seconds, during which B changes a setting, which it sends A two seconds later: A's wait would end on it.
+  await ask(page, 'Count slowly to five')
+  await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(1)
+  await change(b, { name: 'Ada' })
+  await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0, { timeout: 15_000 })
+  await expect(page.locator('.msg-jean').last()).toContainText('I counted to five, slowly.')
+  await expect(page.locator('.msg-jean .msg-actions').last().getByRole('button', { name: 'About this answer' })).toHaveClass(/is-local/)
+  // A reads what B sent once the answer is written.
+  await expect.poll(async () => (await settingsOf(page))?.name, { timeout: 20_000 }).toBe('Ada')
+  // The waits on the relay still routed end with the test.
+  await Promise.all([page.context(), b.context()].map((context) => context.unrouteAll({ behavior: 'ignoreErrors' })))
   await b.context().close()
 })
 
