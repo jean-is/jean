@@ -10,9 +10,13 @@
 ---
 # Only the router reaches this pod, on its port: the relay trusts the last X-Forwarded-For entry, which anything else
 # could forge. Without the router's namespace, nothing does (NOTES.txt says so).
+{{- $lists := and (eq $component "relay") $values.config.issuers }}
 {{- if eq $component "gateway" }}
 # The gateway reaches the cluster's DNS, and public addresses over HTTPS and HTTP, never the cluster's, private or
 # link-local ones, so that a request it relays can't reach inside; networkPolicy.extraEgress adds others.
+{{- else if $lists }}
+# Listing the organisation's people (D731), the relay reaches the cluster's DNS and public addresses over HTTPS, for each
+# issuer's discovery and keys; nothing else.
 {{- else }}
 # It reaches nothing.
 {{- end }}
@@ -39,7 +43,7 @@ spec:
           protocol: TCP
     {{- else }} []
     {{- end }}
-  {{- if eq $component "gateway" }}
+  {{- if or (eq $component "gateway") $lists }}
   egress:
     - ports:
         - port: 53
@@ -56,8 +60,10 @@ spec:
     - ports:
         - port: 443
           protocol: TCP
+        {{- if eq $component "gateway" }}
         - port: 80
           protocol: TCP
+        {{- end }}
       to:
         - ipBlock:
             cidr: 0.0.0.0/0
@@ -72,8 +78,10 @@ spec:
             except:
               - fc00::/7
               - fe80::/10
+    {{- if eq $component "gateway" }}
     {{- with $.Values.networkPolicy.extraEgress }}
     {{- toYaml . | nindent 4 }}
+    {{- end }}
     {{- end }}
   {{- else }}
   egress: []

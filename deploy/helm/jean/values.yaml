@@ -144,8 +144,10 @@ relay:
     digest: ""
     pullPolicy: IfNotPresent
   # RELAY_CONFIG: origins (Jean's address by default; without one it refuses everyone), limits (any of LIMITS in
-  # relay/relay.js), stores (any of STORE in relay/store.js, {} for them all, to keep people's stores: none without it)
-  # and recordKey, the public half of the key its records are sealed to (node host/serve.js keys).
+  # relay/relay.js), stores (any of STORE in relay/store.js, {} for them all, to keep people's stores: none without it),
+  # issuers (the organisation's sign-ins whose people it lists, [{ issuer, audience }], relay/colleagues.js; with networkPolicy
+  # on, the relay then reaches public addresses over HTTPS, for their keys) and recordKey, the public half of the key its
+  # records are sealed to (node host/serve.js keys).
   config: {}
   # RELAY_PROXIED=1: each visitor's address from the last X-Forwarded-For entry, rather than the router's.
   # auto: when the chart makes a Route or an Ingress for it.

@@ -1,6 +1,7 @@
 // A fake identity provider shaped like Entra ID, an AI gateway that takes only its tokens, with its
 // MCP servers, and an OpenTelemetry collector, for the specs of the organisation's sign-in (D385) and
 // of the audit export. All are the page's routes: Jean reaches them over https, as it would at work.
+// Its ID tokens are signed (ES256) by a key it publishes, as an organisation's relay checks them (D731).
 import { createHash } from 'node:crypto'
 import { BRAIN_URL } from '../helpers.js'
 
@@ -10,6 +11,11 @@ export const COLLECTOR = 'https://otel.fake.example/v1/traces'
 export const TOOLS = 'https://ai.fake.example/mcp'
 const CORS = { 'access-control-allow-origin': '*', 'access-control-allow-headers': 'authorization, content-type', 'access-control-allow-methods': 'GET, POST' }
 const ENDPOINTS = 'https://login.fake.example/tenant-1/oauth2/v2.0'
+const KEYS = 'https://login.fake.example/tenant-1/discovery/v2.0/keys'
+/** The provider's signing key, the same in every process that loads this file: made for these tests, it signs nothing else. */
+const SIGNING = { kty: 'EC', crv: 'P-256', x: 'ogjh4qGOGa8E6p5JPDJWzsXuMkwk2IE5Es8ccrZpZ8w', y: 'aGhuwneGVHrZhePmtLiw2a_tfDUYwifycV0q4yUlr24', d: 'Ju65g1F9pWDOM-37JTMkS1taQouG3ua_vr4pNYL32eQ' }
+/** Its public half, as its keys' address gives it and an organisation's relay may name it (`issuers[].jwks`). */
+export const JWKS = { keys: [{ kty: 'EC', crv: 'P-256', x: SIGNING.x, y: SIGNING.y, kid: 'fake-1', use: 'sig', alg: 'ES256' }] }
 
 /**
  * Sends the browser on to an address, with a page that does at once: WebKit's routes can't answer
@@ -24,7 +30,20 @@ export const POLICY = {
 }
 
 /**
- * The identity provider: its discovery, a sign-in that comes straight back with a code, a token
+ * An ID token from the provider for Jean, an hour long, signed by its key: Ana's unless `claims` say otherwise.
+ * @param {Record<string, unknown>} [claims]
+ */
+export async function idTokenOf(claims = {}) {
+  const now = Math.floor(Date.now() / 1000)
+  const encoded = (/** @type {object} */ value) => Buffer.from(JSON.stringify(value)).toString('base64url')
+  const data = `${encoded({ alg: 'ES256', kid: 'fake-1', typ: 'JWT' })}.${encoded({ iss: ISSUER, aud: POLICY.signIn.clientId, sub: 'sub-ana', iat: now, nbf: now, exp: now + 3600,
+    preferred_username: 'ana@acme.example', name: 'Ana Martín', ...claims })}`
+  const key = await crypto.subtle.importKey('jwk', SIGNING, { name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign'])
+  return `${data}.${Buffer.from(await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, key, new TextEncoder().encode(data))).toString('base64url')}`
+}
+
+/**
+ * The identity provider: its discovery and keys, a sign-in that comes straight back with a code, a token
  * endpoint that checks PKCE and renews (or, `refusing`, refuses to), and signing out; `claims` go in its ID token too.
  * @param {import('@playwright/test').Page} page @param {{ expiresIn?: number, claims?: Record<string, unknown> }} [options]
  */
@@ -42,8 +61,9 @@ export async function fakeIssuer(page, { expiresIn = 3599, claims = {} } = {}) {
     const url = new URL(request.url())
     if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: CORS })
     if (url.pathname === '/tenant-1/v2.0/.well-known/openid-configuration') {
-      return route.fulfill({ headers: CORS, json: { issuer: ISSUER, authorization_endpoint: `${ENDPOINTS}/authorize`, token_endpoint: `${ENDPOINTS}/token`, end_session_endpoint: `${ENDPOINTS}/logout`, scopes_supported: ['openid', 'profile', 'email', 'offline_access'] } })
+      return route.fulfill({ headers: CORS, json: { issuer: ISSUER, authorization_endpoint: `${ENDPOINTS}/authorize`, token_endpoint: `${ENDPOINTS}/token`, end_session_endpoint: `${ENDPOINTS}/logout`, jwks_uri: KEYS, scopes_supported: ['openid', 'profile', 'email', 'offline_access'] } })
     }
+    if (url.href === KEYS) return route.fulfill({ headers: CORS, json: JWKS })
     if (url.pathname === '/tenant-1/oauth2/v2.0/authorize') {
       state.authorized.push(url.searchParams)
       challenge = url.searchParams.get('code_challenge') ?? ''
@@ -57,7 +77,7 @@ export async function fakeIssuer(page, { expiresIn = 3599, claims = {} } = {}) {
       const verified = form.get('grant_type') === 'authorization_code' && createHash('sha256').update(form.get('code_verifier') ?? '').digest('base64url') === challenge
       if (form.get('grant_type') === 'refresh_token' ? state.refusing : !verified) return route.fulfill({ status: 400, headers: CORS, json: { error: 'invalid_grant', error_description: 'AADSTS70000: The grant is not valid.' } })
       state.current = `access-${state.asked.length}`
-      const idToken = `e30.${Buffer.from(JSON.stringify({ preferred_username: 'ana@acme.example', name: 'Ana Martín', ...claims })).toString('base64url')}.`
+      const idToken = await idTokenOf(claims)
       return route.fulfill({ headers: CORS, json: { token_type: 'Bearer', access_token: state.current, refresh_token: `refresh-${state.asked.length}`, expires_in: expiresIn, id_token: idToken } })
     }
     if (url.pathname === '/tenant-1/oauth2/v2.0/logout') {

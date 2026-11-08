@@ -172,6 +172,22 @@
                 "free": { "type": "integer", "minimum": 0 }
               }
             },
+            "issuers": {
+              "type": "array",
+              "description": "The organisation's sign-ins whose people it lists, for colleagues to find each other (relay/colleagues.js, D731): the relay then reaches each one's discovery and keys over HTTPS",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["issuer", "audience"],
+                "properties": {
+                  "issuer": { "type": "string", "description": "Exactly as its ID tokens name it" },
+                  "audience": { "type": "string", "description": "Jean's client id there" },
+                  "jwks": { "type": ["object", "string"], "description": "Its keys, a JWK Set or the address of one, where its discovery's aren't those (Entra, for an app with claims mapping)" },
+                  "groups": { "type": "string", "description": "The claim that lists a person's groups: groups by default" },
+                  "guest": { "type": "boolean", "description": "Everyone it names is a guest" }
+                }
+              }
+            },
             "recordKey": {
               "type": "object",
               "description": "The public half of node host/serve.js keys: never the private one, which stays offline",

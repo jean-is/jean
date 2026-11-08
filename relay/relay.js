@@ -8,7 +8,8 @@
 // The mailbox's own ceiling, a few networks' worth, holds only against a network at or past its fair share;
 // one under it takes the room of the oldest message of the network furthest past its own, if any is.
 //
-//   GET    /                    what it keeps: { format: 1, message, days, store? }, store its { quota, part, devices } where it keeps stores
+//   GET    /                    what it keeps: { format: 1, message, days, store?, issuers? }, store its { quota, part, devices } where it keeps
+//                               stores, issuers those whose people it lists
 //   PUT    /v1/m/<id>           opens a mailbox: Authorization: Bearer <token>, whose SHA-256 the id is the start of;
 //                               { "once": true } as its body takes one message, then refuses (409)
 //   POST   /v1/m/<id>           leaves a sealed message in an open mailbox, from anyone: { seq }
@@ -20,15 +21,18 @@
 //   GET    /v1/m/<id>/<seq>     with the token: a large message's bytes
 //   DELETE /v1/m/<id>           with the token: the mailbox and all it holds
 //   …      /v1/s/<sid>…         a person's store, where its configuration has `stores` (store.js)
+//   …      /v1/people…          the organisation's people, where its configuration has `issuers` (colleagues.js)
 //
 // Its configuration, a JSON object in RELAY_CONFIG:
 //   origins  the Jeans that use it, e.g. ["https://jean.is", "http://127.0.0.1:24601"]
 //   limits   any of LIMITS below, to change it
 //   stores   any of store.js's STORE, {} for them all, to keep stores: none are kept without it
+//   issuers  the organisation's sign-ins whose people it lists (colleagues.js): none are listed without it
 //
 // Web-standard (fetch, Request, Response, Web Crypto): what it keeps goes through a store, a folder on Node (serve.js).
 import { base64url, hashOf, idOf, networkOf, within } from '../host/host.js'
 import { stores, STORE } from './store.js'
+import { colleagues } from './colleagues.js'
 
 export const LIMITS = Object.freeze({
   /** A message's bytes. */
@@ -64,14 +68,16 @@ const PATH = /^\/v1\/m\/([\w-]{22})(?:\/(\d{1,9}))?$/
  * @typedef {{ seq: number, at: number, size: number, net?: string }} Entry
  * @typedef {{ box(id: string): Promise<Box | null>, save(id: string, box: Box): Promise<void>, add(id: string, seq: number, body: Uint8Array): Promise<void>,
  *   read(id: string, seq: number): Promise<Uint8Array | null>, drop(id: string, seqs: number[]): Promise<void>, remove(id: string): Promise<void>,
- *   record(text: string): Promise<void>, free?(): Promise<number> } & Partial<import('./store.js').Backend>} Store
- * @typedef {{ origins?: string[], limits?: Partial<typeof LIMITS>, stores?: Partial<typeof STORE>, store?: Store, now?: () => number }} Config
+ *   record(text: string): Promise<void>, free?(): Promise<number> } & Partial<import('./store.js').Backend> & Partial<import('./colleagues.js').Backend>} Store
+ * @typedef {{ origins?: string[], limits?: Partial<typeof LIMITS>, stores?: Partial<typeof STORE>, issuers?: import('./colleagues.js').Issuer[], store?: Store, now?: () => number,
+ *   fetch?: typeof fetch }} Config  fetch: what reads an issuer's keys
  * @typedef {import('../host/host.js').Client} Client
  */
 
 /**
  * @param {Config} config
- * @returns {((request: Request, client?: Client) => Promise<Response>) & { tidy(id: string, at: number): Promise<void>, tidyStore?(sid: string, at: number): Promise<void>, stores?(): Promise<string[]> }}
+ * @returns {((request: Request, client?: Client) => Promise<Response>) & { tidy(id: string, at: number): Promise<void>, tidyStore?(sid: string, at: number): Promise<void>, stores?(): Promise<string[]>,
+ *   tidyPeople?(at: number): Promise<void> }}
  */
 export function relay(config) {
   const { origins = [], store } = config
@@ -114,6 +120,9 @@ export function relay(config) {
   const shelves = { ...STORE, ...config.stores }
   const kept = config.stores && store?.store ? stores({ backend: /** @type {import('./store.js').Backend} */ (store), limits: shelves, now, inTurn,
     record: (text) => store.record(text), free: async () => await store.free?.() ?? Infinity }) : null
+  // The organisation's people, where the configuration names its sign-ins.
+  const listed = config.issuers?.length && store?.entries ? colleagues({ backend: /** @type {import('./colleagues.js').Backend} */ (store), issuers: config.issuers, fetch: config.fetch ?? fetch, now, inTurn,
+    record: (text) => store.record(text), owns: async (id, hash) => ((box) => (box ? box.token === hash : null))(await store.box(id)) }) : null
 
   return Object.assign(async (/** @type {Request} */ request, /** @type {Client} */ client = { address: '', port: 0 }) => {
     const url = new URL(request.url)
@@ -130,14 +139,17 @@ export function relay(config) {
     }
     const reading = request.method === 'GET' || request.method === 'HEAD'
     if (url.pathname === '/' && reading) {
-      return answer(200, { format: 1, message: limits.message, days: limits.days, ...(kept && { store: { quota: shelves.quota, part: shelves.part, devices: shelves.devices } }) })
+      return answer(200, { format: 1, message: limits.message, days: limits.days, ...(kept && { store: { quota: shelves.quota, part: shelves.part, devices: shelves.devices } }),
+        ...(listed && { issuers: listed.issuers }) })
     }
     const [, id, seq] = PATH.exec(url.pathname) ?? []
     const shelf = kept && url.pathname.startsWith('/v1/s/')
-    if (!id && !shelf) return answer(404, { error: 'Nothing is here.' })
+    const people = listed && listed.handles(url.pathname)
+    if (!id && !shelf && !people) return answer(404, { error: 'Nothing is here.' })
     // Only the Jeans it serves, which a browser always names.
     if (!ours) return answer(403, { error: 'This relay does not serve this origin.' })
     if (shelf) return kept.handle(request, client, { network: networkOf(client.address), answer, cors })
+    if (people) return listed.handle(request, client, { answer })
 
     const at = now()
     const network = networkOf(client.address)
@@ -309,5 +321,5 @@ export function relay(config) {
       messages = await handed(box)
     }
     return answer(200, { messages, now: now(), next: box.next })
-  }, { tidy, ...(kept && { tidyStore: kept.tidy, stores: kept.ids }) })
+  }, { tidy, ...(kept && { tidyStore: kept.tidy, stores: kept.ids }), ...(listed && { tidyPeople: listed.tidy }) })
 }

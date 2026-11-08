@@ -103,11 +103,15 @@ test("the gateway's and the relay's configs take what their servers read", async
   assert.deepEqual(Object.keys(schema.properties.gateway.properties.config.properties), Object.keys(gateway.properties).filter((key) => key !== '$schema'))
   assert.deepEqual(Object.keys(schema.properties.relay.properties.config.properties.limits.properties), Object.keys(LIMITS))
   assert.deepEqual(Object.keys(schema.properties.relay.properties.config.properties.stores.properties), Object.keys(STORE))
+  assert.deepEqual(Object.keys(schema.properties.relay.properties.config.properties.issuers.items.properties), ['issuer', 'audience', 'jwks', 'groups', 'guest'])
 })
 
-test('the NetworkPolicy keeps the gateway from private and link-local addresses, and the others from everything', () => {
+test('the NetworkPolicy keeps the gateway from private and link-local addresses, the relay too, over HTTPS alone, where it lists the organisation’s people, and the others from everything', () => {
   const policy = templates['networkpolicy.yaml']
   for (const range of ['10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16', '100.64.0.0/10', '169.254.0.0/16', 'fc00::/7', 'fe80::/10']) assert.ok(policy.includes(`- ${range}`), range)
+  assert.match(policy, /\$lists := and \(eq \$component "relay"\) \$values\.config\.issuers/)
+  assert.match(policy, /if or \(eq \$component "gateway"\) \$lists/)
+  assert.match(policy, /if eq \$component "gateway" }}\n\s+- port: 80/, 'HTTP for the gateway alone')
   assert.match(policy, /egress: \[\]/)
   assert.match(policy, /policy-group\.network\.openshift\.io\/ingress/)
 })

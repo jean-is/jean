@@ -5,6 +5,8 @@
 // RELAY_PROXIED=1 takes the address from the proxy in front, as the share host does (host/serve.js).
 // Its config may name `recordKey`, a public P-256 key (JWK), to which each record is sealed, as the
 // share host's are: `node host/serve.js keys` makes a pair, and `node host/serve.js open` reads them.
+// Where it lists the organisation's people (`issuers`, colleagues.js), `node relay/serve.js forget <account>`
+// takes a leaver off the list at once, the relay running or not.
 import { createServer } from 'node:http'
 import { appendFile, mkdir, readdir, readFile, rename, rm, stat, statfs, writeFile } from 'node:fs/promises'
 import { randomUUID } from 'node:crypto'
@@ -17,17 +19,21 @@ const DAY = 86_400_000
 
 /**
  * A folder as the relay's store: each mailbox's file, its messages in a folder beside it; each person's store in a folder of its own,
- * its file, its objects' versions in o/ and its parts in b/; and a file of records a day, sealed when there is a key. Once a day,
- * what is past its time goes: a message past its days, a mailbox nobody opened or read for its idle days, what a store no longer
- * keeps (store.js), a part's upload cut short, a record past a year.
+ * its file, its objects' versions in o/ and its parts in b/; one file for each colleague listed, in people/, read again once the folder
+ * changed; and a file of records a day, sealed when there is a key. Once a day, what is past its time goes: a message past its days, a
+ * mailbox nobody opened or read for its idle days, what a store no longer keeps (store.js), a listing lapsed, a part's upload cut
+ * short, a record past a year.
  * @param {string} dir @param {CryptoKey | null} recordKey
- * @returns {import('./relay.js').Store & import('./store.js').Backend & { free(): Promise<number>,
- *   sweep(handle: { tidy(id: string, at: number): Promise<void>, tidyStore?(sid: string, at: number): Promise<void> }, now?: number): Promise<void> }}
+ * @returns {import('./relay.js').Store & import('./store.js').Backend & import('./colleagues.js').Backend & { free(): Promise<number>, forget(account: string): Promise<number>,
+ *   sweep(handle: { tidy(id: string, at: number): Promise<void>, tidyStore?(sid: string, at: number): Promise<void>, tidyPeople?(at: number): Promise<void> }, now?: number): Promise<void> }}
  */
 export function folder(dir, recordKey) {
   const boxes = join(dir, 'boxes')
   const records = join(dir, 'records')
   const shelf = join(dir, 'stores')
+  const people = join(dir, 'people')
+  /** The list as last read, and the folder's time then: a file written or removed, by the relay or by forget, changes it. */
+  let listed = { at: -1, entries: /** @type {import('./colleagues.js').Entry[]} */ ([]) }
   /** @param {string} sid @param {string[]} rest */
   const of = (sid, ...rest) => join(shelf, sid, ...rest)
   /** @param {string} id */
@@ -99,15 +105,34 @@ export function folder(dir, recordKey) {
       return out
     },
     dropPart: (sid, hash) => rm(of(sid, 'b', hash), { force: true }),
+    async entries() {
+      const at = (await stat(people).catch(() => null))?.mtimeMs ?? -1
+      if (at !== listed.at) {
+        const names = (await readdir(people).catch(() => [])).filter((name) => name.endsWith('.json'))
+        listed = { at, entries: (await Promise.all(names.map((name) => json(join(people, name))))).filter(Boolean) }
+      }
+      return listed.entries
+    },
+    async saveEntry(entry) {
+      await mkdir(people, { recursive: true })
+      await write(join(people, `${entry.id}.json`), JSON.stringify(entry))
+    },
+    dropEntry: (id) => rm(join(people, `${id}.json`), { force: true }),
+    async forget(account) {
+      const gone = (await this.entries()).filter((entry) => entry.account.toLowerCase() === account.toLowerCase())
+      for (const entry of gone) await this.dropEntry(entry.id)
+      return gone.length
+    },
     counts: () => json(join(dir, 'counts.json')).then((counts) => counts ?? {}),
     async saveCounts(counts) {
       await mkdir(dir, { recursive: true })
       await write(join(dir, 'counts.json'), JSON.stringify(counts))
     },
     // Each mailbox and store tidied in its turn (relay.js), so that a read or a message meanwhile is never undone.
-    async sweep({ tidy, tidyStore }, now = Date.now()) {
+    async sweep({ tidy, tidyStore, tidyPeople }, now = Date.now()) {
       for (const name of await readdir(boxes).catch(() => [])) if (name.endsWith('.json')) await tidy(name.slice(0, -5), now)
       if (tidyStore) for (const sid of await this.stores()) await tidyStore(sid, now)
+      await tidyPeople?.(now)
       for (const name of await readdir(records).catch(() => [])) if (Date.parse(name.slice(0, 10)) + 366 * DAY < now) await rm(join(records, name), { force: true })
     },
   }
@@ -115,18 +140,19 @@ export function folder(dir, recordKey) {
 
 /** @param {string[]} args */
 export async function main(args = []) {
-  if (args.length) throw new Error('node relay/serve.js takes no command; node host/serve.js keys makes a pair for the records, and open reads them')
   const config = JSON.parse(process.env.RELAY_CONFIG ?? '{}')
   const dir = process.env.RELAY_DIR ?? 'mailboxes'
+  if (args[0] === 'forget' && args[1]) return console.log(`${await folder(dir, null).forget(args[1])} listing(s) of ${args[1]} taken off.`)
+  if (args.length) throw new Error('node relay/serve.js takes one command, forget <account>; node host/serve.js keys makes a pair for the records, and open reads them')
   const recordKey = config.recordKey ? await crypto.subtle.importKey('jwk', config.recordKey, { name: 'ECDH', namedCurve: 'P-256' }, false, []) : null
   const limits = { ...LIMITS, ...config.limits }
   const store = folder(dir, recordKey)
   const PORT = Number(process.env.PORT) || 8791
   const HOST = process.env.HOST ?? '127.0.0.1'
-  const handle = relay({ origins: config.origins, limits, stores: config.stores, store })
+  const handle = relay({ origins: config.origins, limits, stores: config.stores, issuers: config.issuers, store })
   // Answering first: a sweep through many stores could outlast the check that a new release answers.
   stopping(createServer(listener(handle, process.env.RELAY_PROXIED === '1')))
-    .listen(PORT, HOST, () => console.log(`Relay on http://${HOST}:${PORT}/, keeping mailboxes${config.stores ? ' and stores' : ''} in ${dir}`))
+    .listen(PORT, HOST, () => console.log(`Relay on http://${HOST}:${PORT}/, keeping mailboxes${config.stores ? ', stores' : ''}${config.issuers?.length ? ', the organisation’s people' : ''} in ${dir}`))
   await store.sweep(handle)
   setInterval(() => store.sweep(handle).catch(console.error), DAY).unref()
 }

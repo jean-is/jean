@@ -7,6 +7,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { relay, LIMITS } from '../relay/relay.js'
 import { folder } from '../relay/serve.js'
+import { PEOPLE } from '../relay/colleagues.js'
 
 /** @param {Uint8Array} bytes */
 const base64url = (bytes) => Buffer.from(bytes).toString('base64url')
@@ -17,14 +18,18 @@ async function mailbox() {
   return { token, id }
 }
 
-/** A store in memory, its records kept to look at. @returns {import('../relay/relay.js').Store & { records: any[], bodies: Map<string, Uint8Array>, boxes: Map<string, any>, room: number }} */
+/** A store in memory, its records kept to look at. @returns {import('../relay/relay.js').Store & { records: any[], bodies: Map<string, Uint8Array>, boxes: Map<string, any>, people: Map<string, any>, room: number }} */
 function memory() {
   const boxes = new Map()
   const bodies = new Map()
+  const people = new Map()
   /** @type {any[]} */
   const records = []
   return {
-    boxes, bodies, records, room: Infinity,
+    boxes, bodies, people, records, room: Infinity,
+    entries: async () => structuredClone([...people.values()]),
+    saveEntry: async (entry) => { people.set(entry.id, structuredClone(entry)) },
+    dropEntry: async (id) => { people.delete(id) },
     box: async (id) => structuredClone(boxes.get(id) ?? null),
     save: async (id, box) => { boxes.set(id, structuredClone(box)) },
     add: async (id, seq, body) => { bodies.set(`${id}/${seq}`, body) },
@@ -448,4 +453,224 @@ test('a message the store fails to keep gives its bytes back to what its network
   await send(box.id, 'x'.repeat(60)).catch(() => {})
   store.add = add
   assert.equal((await send(box.id, 'x'.repeat(60))).status, 201)
+})
+
+// ─── Colleagues (D731) ───────────────────────────────────────────────────────
+
+const ISSUER = 'https://login.acme.example/tenant-1/v2.0'
+const AUDIENCE = 'jean-at-acme'
+const DAY = 86_400_000
+/** @param {string | object} value */
+const encoded = (value) => Buffer.from(typeof value === 'string' ? value : JSON.stringify(value)).toString('base64url')
+
+/**
+ * An organisation's identity provider on a clock: an ES256 key and an RS256 one, its discovery and keys at their addresses, each fetch
+ * counted, and ID tokens it signs, `claims` over Ana's.
+ * @param {{ at: number }} clock
+ */
+async function provider(clock, issuer = ISSUER) {
+  const es = await crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, true, ['sign', 'verify'])
+  const rs = await crypto.subtle.generateKey({ name: 'RSASSA-PKCS1-v1_5', modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: 'SHA-256' }, true, ['sign', 'verify'])
+  const state = {
+    keys: [{ ...await crypto.subtle.exportKey('jwk', es.publicKey), kid: 'es-1', use: 'sig' }, { ...await crypto.subtle.exportKey('jwk', rs.publicKey), kid: 'rs-1', alg: 'RS256' }],
+    /** @type {string[]} */ fetched: [],
+    reachable: true,
+  }
+  /** @param {RequestInfo | URL} url */
+  const fetch = async (url) => {
+    state.fetched.push(String(url))
+    if (!state.reachable) throw new TypeError('fetch failed')
+    if (String(url) === `${issuer}/.well-known/openid-configuration`) return Response.json({ issuer, jwks_uri: `${issuer.replace('/v2.0', '')}/discovery/keys` })
+    if (String(url) === `${issuer.replace('/v2.0', '')}/discovery/keys`) return Response.json({ keys: state.keys })
+    return new Response('{}', { status: 404 })
+  }
+  /** @param {Record<string, unknown>} [claims] @param {{ alg?: string, kid?: string, key?: CryptoKey }} [how] */
+  const sign = async (claims = {}, { alg = 'ES256', kid = alg === 'RS256' ? 'rs-1' : 'es-1', key } = {}) => {
+    const now = Math.floor(clock.at / 1000)
+    const data = `${encoded({ alg, kid, typ: 'JWT' })}.${encoded({ iss: issuer, aud: AUDIENCE, sub: 'sub-ana', iat: now, nbf: now, exp: now + 3600, preferred_username: 'ana@acme.example', name: 'Ana Martín', ...claims })}`
+    const bytes = new TextEncoder().encode(data)
+    const signature = alg === 'none' ? new ArrayBuffer(0)
+      : alg === 'HS256' ? await crypto.subtle.sign('HMAC', await crypto.subtle.importKey('raw', new TextEncoder().encode('a shared secret'), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']), bytes)
+        : alg === 'RS256' ? await crypto.subtle.sign('RSASSA-PKCS1-v1_5', key ?? rs.privateKey, bytes) : await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, key ?? es.privateKey, bytes)
+    return `${data}.${Buffer.from(signature).toString('base64url')}`
+  }
+  return { state, fetch, sign, es, rs }
+}
+
+/** A profile's public key, as People's person keeps it. */
+const profileKey = async () => (({ kty, crv, x, y }) => ({ kty, crv, x, y }))(await crypto.subtle.exportKey('jwk', (await crypto.subtle.generateKey({ name: 'ECDH', namedCurve: 'P-256' }, true, ['deriveBits'])).publicKey))
+
+/** A relay that lists the organisation's people, on a clock, with its provider; and a way to list a mailbox, and to search. @param {Partial<import('../relay/relay.js').Config>} [config] */
+async function listingRelay(config = {}) {
+  const clock = { at: Date.parse('2026-11-09T10:00:00Z') }
+  const idp = await provider(clock)
+  const on = relayOn({ issuers: [{ issuer: ISSUER, audience: AUDIENCE }], fetch: idp.fetch, now: () => clock.at, ...config })
+  /** A mailbox opened, its token and id. */
+  const opened = async () => { const box = await mailbox(); await on.open(box.id, box.token); return box }
+  /** @param {{ id: string, token: string }} box @param {string} proof @param {object} [key] @param {object} [more] */
+  const list = async (box, proof, key, more = {}) => on.ask(`/v1/people/${box.id}`, { method: 'PUT', token: box.token, body: JSON.stringify({ proof, key: key ?? await profileKey(), ...more }) })
+  /** @param {{ token: string }} box @param {string} query */
+  const search = async (box, query) => { const response = await on.ask(`/v1/people?${query}`, { token: box.token }); return { status: response.status, people: response.ok ? (await response.json()).people : [] } }
+  return { ...on, clock, idp, opened, list, search }
+}
+
+test('an organisation’s relay lists whom its sign-in names, the newest key winning, for listed colleagues to find; the proof itself is never kept', async () => {
+  const { store, ask, clock, idp, opened, list, search } = await listingRelay()
+  assert.deepEqual((await (await ask('/')).json()).issuers, [ISSUER])
+  const [ana, bob] = [await opened(), await opened()]
+  const anaKey = await profileKey()
+  const proof = await idp.sign()
+  const listed = await list(ana, proof, anaKey)
+  assert.equal(listed.status, 201)
+  assert.deepEqual(await listed.json(), { name: 'Ana Martín', account: 'ana@acme.example' })
+  assert.equal((await search(bob, 'q=ana')).status, 403, 'only someone listed searches')
+  assert.equal((await list(bob, await idp.sign({ sub: 'sub-bob', name: 'Bob Dupont', email: 'bob@acme.example', preferred_username: 'bdupont@acme.example' }, { alg: 'RS256' }))).status, 201, 'RS256 too; the email first')
+  const found = await search(bob, 'q=ana')
+  assert.equal(found.status, 200)
+  assert.deepEqual(found.people, [{ name: 'Ana Martín', account: 'ana@acme.example', mailbox: ana.id, key: anaKey }])
+  assert.deepEqual((await search(bob, 'q=martin')).people.map((one) => one.name), ['Ana Martín'], 'accents aside')
+  assert.deepEqual((await search(ana, 'q=bob%20dup')).people.map((one) => one.account), ['bob@acme.example'], 'every word')
+  assert.deepEqual((await search(bob, 'account=ANA%40acme.example')).people.map((one) => one.mailbox), [ana.id])
+  assert.deepEqual((await search(bob, `mailbox=${ana.id}`)).people.map((one) => one.name), ['Ana Martín'])
+  assert.deepEqual((await search(bob, 'account=carol%40acme.example')).people, [])
+  // Her key turned: the same person, a new key, the entry replaced.
+  clock.at += 60_000
+  const newer = await profileKey()
+  assert.equal((await list(ana, await idp.sign(), newer)).status, 200)
+  assert.deepEqual((await search(bob, 'q=ana')).people.map((one) => one.key), [newer])
+  // And a new mailbox with it: the old one is off the list and searches no more.
+  const moved = await opened()
+  assert.equal((await list(moved, await idp.sign(), newer)).status, 200)
+  assert.deepEqual((await search(bob, 'q=ana')).people.map((one) => one.mailbox), [moved.id])
+  assert.equal((await search(ana, 'q=bob')).status, 403)
+  assert.equal(store.people.size, 2)
+  const kept = JSON.stringify([...store.people.values()])
+  assert.ok(!kept.includes(proof.split('.')[2]) && !kept.includes('"proof"'), 'the proof goes')
+  assert.deepEqual(store.records.filter((one) => one.operation === 'list').length, 4)
+})
+
+test('a proof is refused unless the organisation signed it, for Jean, now: issuer, audience, its dates, its algorithm and key, an account', async () => {
+  const { store, clock, idp, opened, list } = await listingRelay()
+  const box = await opened()
+  const other = await crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, true, ['sign'])
+  const now = Math.floor(clock.at / 1000)
+  for (const [why, proof] of /** @type {[string, string][]} */ ([
+    ['another issuer', await idp.sign({ iss: 'https://login.other.example/v2.0' })],
+    ['another audience', await idp.sign({ aud: 'someone-else' })],
+    ['two audiences, no azp', await idp.sign({ aud: [AUDIENCE, 'api://gateway'] })],
+    ['two audiences, another azp', await idp.sign({ aud: [AUDIENCE, 'api://gateway'], azp: 'api://gateway' })],
+    ['another azp', await idp.sign({ azp: 'someone-else' })],
+    ['expired past the minute', await idp.sign({ exp: now - 61 })],
+    ['no expiry', await idp.sign({ exp: undefined })],
+    ['not yet', await idp.sign({ nbf: now + 120 })],
+    ['issued ahead', await idp.sign({ iat: now + 120 })],
+    ['none', await idp.sign({}, { alg: 'none' })],
+    ['HS256', await idp.sign({}, { alg: 'HS256' })],
+    ['an unknown kid', await idp.sign({}, { kid: 'es-9' })],
+    ['another key under its kid', await idp.sign({}, { key: other.privateKey })],
+    ['the ES256 kid for RS256', await idp.sign({}, { alg: 'RS256', kid: 'es-1' })],
+    ['no account', await idp.sign({ preferred_username: undefined })],
+    ['no subject', await idp.sign({ sub: undefined })],
+    ['no token at all', 'not.a.token'],
+  ])) assert.equal((await list(box, proof)).status, 403, why)
+  assert.equal(store.people.size, 0)
+  // Within the minute's leeway, and for two audiences where Jean is the one it was given to.
+  assert.equal((await list(box, await idp.sign({ exp: now - 30 }))).status, 201)
+  assert.equal((await list(box, await idp.sign({ aud: [AUDIENCE, 'api://gateway'], azp: AUDIENCE }))).status, 200)
+})
+
+test('the issuer’s keys are kept a day and fetched again for a kid it doesn’t know at most every five minutes; keys named in the configuration are never fetched', async () => {
+  const { clock, idp, opened, list } = await listingRelay()
+  const box = await opened()
+  assert.equal((await list(box, await idp.sign())).status, 201)
+  assert.deepEqual(idp.state.fetched, [`${ISSUER}/.well-known/openid-configuration`, 'https://login.acme.example/tenant-1/discovery/keys'])
+  assert.equal((await list(box, await idp.sign({}, { alg: 'RS256' }))).status, 200)
+  assert.equal(idp.state.fetched.length, 2, 'kept')
+  // The provider rolls its key: a minute after the last fetch, not fetched again; five minutes on, fetched for the kid it lacks.
+  const rolled = await crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, true, ['sign', 'verify'])
+  idp.state.keys.push({ ...await crypto.subtle.exportKey('jwk', rolled.publicKey), kid: 'es-2' })
+  clock.at += 60_000
+  assert.equal((await list(box, await idp.sign({}, { kid: 'es-2', key: rolled.privateKey }))).status, 403)
+  assert.equal(idp.state.fetched.length, 2, 'not within five minutes of the last fetch')
+  clock.at += 5 * 60_000
+  assert.equal((await list(box, await idp.sign({}, { kid: 'es-3', key: rolled.privateKey }))).status, 403)
+  assert.equal(idp.state.fetched.length, 4, 'fetched again for a kid it lacked')
+  assert.equal((await list(box, await idp.sign({}, { kid: 'es-2', key: rolled.privateKey }))).status, 200, 'the rolled key came with it')
+  assert.equal((await list(box, await idp.sign({}, { kid: 'es-3', key: rolled.privateKey }))).status, 403)
+  assert.equal(idp.state.fetched.length, 4)
+  // A day on, fetched again; out of reach, nothing is listed and the relay says why.
+  clock.at += DAY
+  idp.state.reachable = false
+  const unreachable = await list(box, await idp.sign())
+  assert.equal(unreachable.status, 503)
+  // Named in the configuration, as a set or at an address of their own (Entra's for an app with claims mapping).
+  const set = await listingRelay()
+  const inline = await listingRelay({ issuers: [{ issuer: ISSUER, audience: AUDIENCE, jwks: { keys: set.idp.state.keys } }], fetch: set.idp.fetch })
+  assert.equal((await inline.list(await inline.opened(), await set.idp.sign())).status, 201)
+  assert.deepEqual(set.idp.state.fetched, [])
+  const at = await listingRelay({ issuers: [{ issuer: ISSUER, audience: AUDIENCE, jwks: 'https://login.acme.example/tenant-1/discovery/keys?appid=jean-at-acme' }] })
+  await at.list(await at.opened(), await at.idp.sign())
+  assert.deepEqual(at.idp.state.fetched, ['https://login.acme.example/tenant-1/discovery/keys?appid=jean-at-acme'])
+})
+
+test('only a listed mailbox searches the list: three letters at least, ten people at most, sixty searches an hour', async () => {
+  const { ask, clock, idp, opened, list, search } = await listingRelay()
+  const ana = await opened()
+  await list(ana, await idp.sign())
+  for (let n = 1; n <= 12; n++) await list(await opened(), await idp.sign({ sub: `sub-${n}`, name: `Colleague ${String(n).padStart(2, '0')}`, preferred_username: `c${n}@acme.example` }))
+  const found = await search(ana, 'q=colleague')
+  assert.equal(found.people.length, PEOPLE.results)
+  assert.deepEqual(found.people.slice(0, 2).map((one) => one.name), ['Colleague 01', 'Colleague 02'], 'by name')
+  assert.equal((await search(ana, 'q=co')).status, 400)
+  assert.equal((await search(ana, 'q=%20%20c%20o')).status, 400)
+  assert.equal((await ask('/v1/people?q=colleague')).status, 401)
+  assert.equal((await search(await opened(), 'q=colleague')).status, 403)
+  for (let n = 1; n < PEOPLE.searches; n++) await search(ana, 'q=colleague')
+  assert.equal((await search(ana, 'q=colleague')).status, 429)
+  clock.at += 3_600_000
+  // Its own listing lapsing meanwhile is a month away: an hour on, it searches again.
+  assert.equal((await search(ana, 'q=colleague')).status, 200)
+})
+
+test('a listing lapses a month after its last proof; off the list, by its owner or by forget, nobody finds it', async () => {
+  const { store, handle, clock, idp, opened, list, search, ask } = await listingRelay()
+  const [ana, bob] = [await opened(), await opened()]
+  await list(ana, await idp.sign())
+  await list(bob, await idp.sign({ sub: 'sub-bob', name: 'Bob Dupont', preferred_username: 'bob@acme.example' }))
+  clock.at += (PEOPLE.lapse + 1) * DAY
+  await list(bob, await idp.sign({ sub: 'sub-bob', name: 'Bob Dupont', preferred_username: 'bob@acme.example' }))
+  assert.deepEqual((await search(bob, 'q=ana')).people, [], 'lapsed')
+  await /** @type {any} */ (handle).tidyPeople(clock.at)
+  assert.deepEqual([...store.people.values()].map((one) => one.account), ['bob@acme.example'])
+  assert.equal((await ask(`/v1/people/${bob.id}`, { method: 'DELETE', token: ana.token })).status, 403)
+  assert.equal((await ask(`/v1/people/${bob.id}`, { method: 'DELETE', token: bob.token })).status, 200)
+  assert.equal(store.people.size, 0)
+  // The folder keeps one file a person, and forgets a leaver while the relay runs.
+  const dir = await mkdtemp(join(tmpdir(), 'jean-relay-'))
+  try {
+    const kept = folder(dir, null)
+    await kept.saveEntry(/** @type {any} */ ({ id: 'a', account: 'Ana@acme.example', proved: 1 }))
+    await kept.saveEntry(/** @type {any} */ ({ id: 'b', account: 'bob@acme.example', proved: 1 }))
+    assert.equal((await kept.entries()).length, 2)
+    assert.equal(await kept.forget('ana@ACME.example'), 1)
+    assert.deepEqual((await kept.entries()).map((one) => one.id), ['b'])
+  } finally {
+    await rm(dir, { recursive: true, force: true })
+  }
+})
+
+test('listing needs the mailbox open with its token, a P-256 key and a proof of a few kilobytes; a relay that names no issuer lists nobody', async () => {
+  const { ask, idp, opened, list } = await listingRelay()
+  const box = await mailbox()
+  assert.equal((await list(box, await idp.sign())).status, 404, 'not open')
+  const open = await opened()
+  assert.equal((await list({ id: open.id, token: box.token }, await idp.sign())).status, 403, 'another token')
+  assert.equal((await ask(`/v1/people/${open.id}`, { method: 'PUT', body: '{}' })).status, 401)
+  assert.equal((await list(open, await idp.sign(), { kty: 'RSA', n: 'x', e: 'AQAB' })).status, 400)
+  assert.equal((await list(open, await idp.sign(), { kty: 'EC', crv: 'P-256', x: 'A'.repeat(43), y: 'A'.repeat(43) })).status, 400, 'not on the curve')
+  assert.equal((await list(open, await idp.sign(), undefined, { chain: ['x'.repeat(PEOPLE.body)] })).status, 413)
+  assert.equal((await ask(`/v1/people/${open.id}`, { method: 'PUT', token: open.token, origin: 'https://elsewhere.example', body: '{}' })).status, 403)
+  const none = relayOn()
+  assert.equal((await (await none.ask('/')).json()).issuers, undefined)
+  assert.equal((await none.ask('/v1/people?q=ana', { token: open.token })).status, 404)
 })
