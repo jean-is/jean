@@ -1,6 +1,13 @@
 {
   "people.line": "Mutanen da su ma ke amfani da {name}, waɗanda kake aika musu ɗawainiyoyi da abubuwan da aka ƙirƙira a {name}, kuma suke mayar maka da amsoshinsu. Su kaɗai ke iya buɗe abin da ka aika musu.",
   "people.add": "Ƙara mutum",
+  "people.find": "Nemo abokin aiki",
+  "people.search": "Bincika",
+  "people.nobody": "Babu wani mai wannan suna a ƙungiyarka da ke amfani da {name} tukuna.",
+  "people.keep": "Ƙara",
+  "people.kept": "An ƙara",
+  "people.newDevice": "Suna rubuto daga sabuwar na'ura",
+  "people.trust": "Amince da ita",
   "people.who": "Don wa ne wannan?",
   "people.side": "Nuna lambar da za a duba",
   "people.apart": "Aika hanyar haɗi",

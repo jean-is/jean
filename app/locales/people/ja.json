@@ -1,6 +1,13 @@
 {
   "people.line": "{name} を使っている人たちです。タスクや {name} が作ったものを送って、返事を受け取れます。送ったものを開けるのは、受け取った人だけです。",
   "people.add": "人を追加",
+  "people.find": "同僚を探す",
+  "people.search": "検索",
+  "people.nobody": "組織内で {name} を使っている人の中に、その名前の人はまだいません。",
+  "people.keep": "追加",
+  "people.kept": "追加済み",
+  "people.newDevice": "新しい端末からのメッセージがあります",
+  "people.trust": "信頼する",
   "people.who": "誰宛てですか？",
   "people.side": "読み取り用のコードを表示",
   "people.apart": "リンクを送る",

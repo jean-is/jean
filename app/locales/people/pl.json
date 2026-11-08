@@ -1,6 +1,13 @@
 {
   "people.line": "Osoby, które też korzystają z aplikacji {name}: wysyłasz im zadania i to, co w niej powstało, a one odsyłają ci swoje odpowiedzi. Tylko one mogą otworzyć to, co im wysyłasz.",
   "people.add": "Dodaj osobę",
+  "people.find": "Szukaj wśród współpracowników",
+  "people.search": "Szukaj",
+  "people.nobody": "Nikt w twojej organizacji, kto tak się nazywa, nie korzysta jeszcze z aplikacji {name}.",
+  "people.keep": "Dodaj",
+  "people.kept": "Dodano",
+  "people.newDevice": "Pisze z nowego urządzenia",
+  "people.trust": "Zaufaj urządzeniu",
   "people.who": "Dla kogo to jest?",
   "people.side": "Pokaż kod do zeskanowania",
   "people.apart": "Wyślij link",

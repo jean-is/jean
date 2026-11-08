@@ -1,6 +1,13 @@
 {
   "people.line": "Personer som också använder {name}: du skickar dem uppgifter och det som {name} skapat, och får deras svar tillbaka. Bara de kan öppna det du skickar dem.",
   "people.add": "Lägg till en person",
+  "people.find": "Hitta en kollega",
+  "people.search": "Sök",
+  "people.nobody": "Ingen med det namnet i din organisation använder {name} än.",
+  "people.keep": "Lägg till",
+  "people.kept": "Tillagd",
+  "people.newDevice": "Skriver från en ny enhet",
+  "people.trust": "Lita på enheten",
   "people.who": "Vem är det till?",
   "people.side": "Visa en kod att skanna",
   "people.apart": "Skicka en länk",

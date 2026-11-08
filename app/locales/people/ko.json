@@ -1,6 +1,13 @@
 {
   "people.line": "{name}도 쓰는 사람들이에요. 작업이나 {name}에서 만든 것을 보내고, 답을 돌려받을 수 있어요. 보낸 것은 받은 사람만 열 수 있어요.",
   "people.add": "사람 추가",
+  "people.find": "동료 찾기",
+  "people.search": "검색",
+  "people.nobody": "조직에서 {name}을(를) 쓰는 사람 중에 그런 이름은 아직 없어요.",
+  "people.keep": "추가",
+  "people.kept": "추가됨",
+  "people.newDevice": "새 기기에서 보낸 메시지가 있어요",
+  "people.trust": "신뢰하기",
   "people.who": "누구에게 보내나요?",
   "people.side": "스캔할 코드 보여 주기",
   "people.apart": "링크 보내기",

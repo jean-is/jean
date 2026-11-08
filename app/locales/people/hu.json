@@ -1,6 +1,13 @@
 {
   "people.line": "Azok, akik szintén a(z) {name} alkalmazást használják: feladatokat és a(z) {name} által készített dolgokat küldesz nekik, ők pedig visszaküldik a válaszaikat. Csak ők nyithatják meg, amit küldesz nekik.",
   "people.add": "Személy hozzáadása",
+  "people.find": "Munkatárs keresése",
+  "people.search": "Keresés",
+  "people.nobody": "A szervezetedben még nincs ilyen nevű személy, aki a(z) {name} alkalmazást használja.",
+  "people.keep": "Hozzáadás",
+  "people.kept": "Hozzáadva",
+  "people.newDevice": "Új eszközről ír",
+  "people.trust": "Megbízom benne",
   "people.who": "Kinek szól?",
   "people.side": "Beolvasandó kód megjelenítése",
   "people.apart": "Link küldése",

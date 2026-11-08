@@ -1,6 +1,13 @@
 {
   "people.line": "The people you send tasks and what {name} made to, who also use {name}, and get their answers back from. Only they can open what you send them.",
   "people.add": "Add a person",
+  "people.find": "Find a colleague",
+  "people.search": "Search",
+  "people.nobody": "No one by that name at your organisation uses {name} yet.",
+  "people.keep": "Add",
+  "people.kept": "Added",
+  "people.newDevice": "Writes from a new device",
+  "people.trust": "Trust it",
   "people.who": "Who is it for?",
   "people.side": "Show a code to scan",
   "people.apart": "Send a link",

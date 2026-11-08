@@ -1,6 +1,13 @@
 {
   "people.line": "Le persone che usano anche {name}, a cui invii attività e ciò che {name} ha creato, e che ti rimandano le loro risposte. Solo loro possono aprire ciò che invii loro.",
   "people.add": "Aggiungi una persona",
+  "people.find": "Cerca tra i colleghi",
+  "people.search": "Cerca",
+  "people.nobody": "Nessuno con questo nome nella tua organizzazione usa ancora {name}.",
+  "people.keep": "Aggiungi",
+  "people.kept": "Tra le tue persone",
+  "people.newDevice": "Scrive da un nuovo dispositivo",
+  "people.trust": "Fidati del dispositivo",
   "people.who": "Per chi è?",
   "people.side": "Mostra un codice da inquadrare",
   "people.apart": "Invia un link",

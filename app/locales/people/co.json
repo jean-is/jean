@@ -1,6 +1,13 @@
 {
   "people.line": "E persone chì impieganu dinù {name} : li mandate compiti è ciò chì {name} hà fattu, è vi rimandanu e so risposte. Solu elle ponu apre ciò ch’è vo li mandate.",
   "people.add": "Aghjunghje una persona",
+  "people.find": "Truvà culleghi",
+  "people.search": "Circà",
+  "people.nobody": "Nimu cù stu nome in a vostra urganizazione ùn impiega ancu {name}.",
+  "people.keep": "Aghjunghje",
+  "people.kept": "Persona aghjunta",
+  "people.newDevice": "Vi scrive da un apparechju novu",
+  "people.trust": "Fidassi d’ellu",
   "people.who": "Per quale hè l’invitu ?",
   "people.side": "Mustrà un codice à scannà",
   "people.apart": "Mandà un ligame",

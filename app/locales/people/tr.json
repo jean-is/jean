@@ -1,6 +1,13 @@
 {
   "people.line": "Görevleri ve {name} uygulamasının yaptıklarını gönderdiğin, yanıtlarını geri aldığın, {name} uygulamasını kullanan kişiler. Gönderdiklerini yalnızca onlar açabilir.",
   "people.add": "Kişi ekle",
+  "people.find": "İş arkadaşı bul",
+  "people.search": "Ara",
+  "people.nobody": "Kuruluşunda {name} uygulamasını kullananlar arasında henüz bu adda kimse yok.",
+  "people.keep": "Ekle",
+  "people.kept": "Eklendi",
+  "people.newDevice": "Yeni bir cihazdan yazıyor",
+  "people.trust": "Cihaza güven",
   "people.who": "Kimin için?",
   "people.side": "Taranacak bir kod göster",
   "people.apart": "Bağlantı gönder",

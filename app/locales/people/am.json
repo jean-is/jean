@@ -1,6 +1,13 @@
 {
   "people.line": "{name}ንም የሚጠቀሙ ሰዎች፦ ተግባሮችንና በ{name} የተሠራውን ይልኩላቸዋል፣ መልሳቸውንም ይቀበላሉ። የሚልኩላቸውን መክፈት የሚችሉት እነሱ ብቻ ናቸው።",
   "people.add": "ሰው ያክሉ",
+  "people.find": "የሥራ ባልደረባ ይፈልጉ",
+  "people.search": "ፈልግ",
+  "people.nobody": "በድርጅትዎ ውስጥ በዚህ ስም {name}ን የሚጠቀም ሰው እስካሁን የለም።",
+  "people.keep": "አክል",
+  "people.kept": "አክለዋል",
+  "people.newDevice": "ከአዲስ መሣሪያ መልእክት ደርሷል",
+  "people.trust": "እመነው",
   "people.who": "ግብዣው ለማን ነው?",
   "people.side": "የሚቃኝ ኮድ ያሳዩ",
   "people.apart": "አገናኝ ይላኩ",

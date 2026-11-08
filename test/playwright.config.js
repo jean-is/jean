@@ -6,6 +6,7 @@
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { defineConfig, devices } from '@playwright/test'
+import { ISSUER, JWKS, POLICY } from './fixtures/fake-issuer.js'
 
 const APP = 4180
 const BRAIN = 4181
@@ -20,7 +21,7 @@ const RELAY = 4187
 // specs check what Jean decides, the same JavaScript in every engine (protocols, policy, offers, skills, routines, the site's
 // pages through axe), so Chromium alone runs them; discover.spec.js still loads every capability's modules in WebKit. And a
 // language's run is Chromium's alone: a language changes the words and the layout, which are style sheets, not the engine's logic.
-const CHROMIUM_ONLY = ['out', 'people', 'about', 'approvals', 'ask', 'audit', 'authority', 'away', 'compact', 'compare', 'delegate', 'demo', 'dlp', 'find', 'flows', 'google', 'session',
+const CHROMIUM_ONLY = ['out', 'people', 'colleagues', 'about', 'approvals', 'ask', 'audit', 'authority', 'away', 'compact', 'compare', 'delegate', 'demo', 'dlp', 'find', 'flows', 'google', 'session',
   'guards', 'help', 'learn', 'lists', 'meaning', 'microsoft', 'notifications', 'panes', 'plan', 'policy', 'reach', 'remember', 'retention', 'signin', 'site', 'steer',
   'thinking', 'you']
 const RELAYED = { origins: [`http://127.0.0.1:${APP}`], hosts: ['127.0.0.1'],
@@ -64,7 +65,9 @@ export default defineConfig({
     // The relay (D45 · D226), for Jean's origin by either name, keeping its mailboxes in a folder of the run's (test/devices.spec.js). Every
     // device of every test opens mailboxes from this one address, past the hour's limit a network has.
     { command: 'node relay/serve.js', cwd: '..', port: RELAY, reuseExistingServer: false,
-      env: { PORT: String(RELAY), RELAY_DIR: join(tmpdir(), `jean-mailboxes-${process.pid}`), RELAY_CONFIG: JSON.stringify({ origins: [`http://127.0.0.1:${APP}`, `http://localhost:${APP}`], limits: { opens: 10_000 }, stores: { made: 10_000 } }) } },
+      env: { PORT: String(RELAY), RELAY_DIR: join(tmpdir(), `jean-mailboxes-${process.pid}`), RELAY_CONFIG: JSON.stringify({ origins: [`http://127.0.0.1:${APP}`, `http://localhost:${APP}`], limits: { opens: 10_000 }, stores: { made: 10_000 },
+        // The fake organisation's people, by the ID tokens its sign-in signs (test/colleagues.spec.js, D731).
+        issuers: [{ issuer: ISSUER, audience: POLICY.signIn.clientId, jwks: JWKS }] }) } },
     // Jean as jean.is's deploy has it, its page under the first screen and its pages in other languages (test/home.spec.js, D397).
     { command: 'node scripts/serve.js --home', cwd: '..', port: HOME, env: { PORT: String(HOME) }, reuseExistingServer: false },
     // Jean again, each page's policy also a report-only header that says what it refused (test/csp.spec.js).

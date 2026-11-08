@@ -11,7 +11,7 @@ import { icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { t, tParts, intlLocales } from '../../core/i18n.js'
 import { BRAND } from '../../brand.js'
-import { inviting, accepting, people, invitations, invite, confirm as right, stopInvite, accept, stopAccept, rename, remove } from './people.js'
+import { inviting, accepting, groups, invitations, invite, confirm as right, stopInvite, accept, stopAccept, rename, remove, colleagues, finding, findColleagues, addColleague, trustColleague } from './people.js'
 
 await styleSheet(new URL('../../ui/data-pages.css', import.meta.url))
 
@@ -73,14 +73,26 @@ function step() {
   return null
 }
 
-/** At rest: the people met, the invitations waiting here, and Add a person. */
+/** At work, colleagues found on the organisation's list by a few words, each kept with Add (D731). */
+function finder() {
+  const now = finding.value, kept = new Set(groups.value.map((one) => one.account))
+  return html`<form class="stack" role="search" @submit=${(/** @type {SubmitEvent} */ e) => { e.preventDefault(); findColleagues(valueIn(e, 'q')) }}><label for="people-find">${t('people.find')}</label>
+    <div class="people-field"><input id="people-find" name="q" type="search" required minlength="3" dir="auto" autocomplete="off" @keydown=${composing}><button class="button">${t('people.search')}</button></div></form>
+    <p class="hint" role="status">${now.wrong ? t('people.why.relay', { name: BRAND.name }) : now.found && !now.found.length ? t('people.nobody', { name: BRAND.name }) : ''}</p>
+    ${now.found?.length ? html`<ul class="list">${now.found.map((one) => html`<li><span class="item-text"><strong dir="auto">${one.name}</strong><small dir="ltr">${one.account}</small></span>
+      <button class="button subtle" ?disabled=${kept.has(one.account)} @click=${() => addColleague(one)}>${t(kept.has(one.account) ? 'people.kept' : 'people.keep')}</button></li>`)}</ul>` : nothing}`
+}
+
+/** At rest: colleagues to find at work, the people met, the invitations waiting here, and Add a person. */
 function rest() {
   const date = new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'medium' })
-  const list = [...people.value].sort((x, y) => x.name.localeCompare(y.name, intlLocales()))
-  return html`${list.length ? html`<ul class="list">${list.map((one) => html`<li>${renaming.value === one.fp
-      ? html`<form class="people-field" @submit=${(/** @type {SubmitEvent} */ e) => { e.preventDefault(); rename(one.fp, valueIn(e, 'name') || one.name).then(() => { renaming.value = '' }) }}>
+  const list = [...groups.value].sort((x, y) => x.name.localeCompare(y.name, intlLocales()))
+  return html`${colleagues ? finder() : nothing}${list.length ? html`<ul class="list">${list.map((one) => html`<li>${renaming.value === one.fp
+      ? html`<form class="people-field" @submit=${(/** @type {SubmitEvent} */ e) => { e.preventDefault(); rename(one.fps, valueIn(e, 'name') || one.name).then(() => { renaming.value = '' }) }}>
           <input name="name" required maxlength="80" dir="auto" title=${t('people.rename')} .value=${one.name} @keydown=${composing}><button class="button">${t('people.save')}</button></form>`
-      : html`<span class="item-text"><strong dir="auto">${one.name}</strong><small>${one.again ? t('people.again') : one.waiting ? t('people.answer', { name: one.name }) : tParts('people.calls', { name: named(one.said) })}</small></span>
+      : html`<span class="item-text"><strong dir="auto">${one.name}</strong><small>${one.asking ? t('people.newDevice') : one.again ? t('people.again') : one.waiting ? t('people.answer', { name: one.name })
+          : one.account ? html`<span dir="ltr">${one.account}</span>` : tParts('people.calls', { name: named(one.said) })}</small></span>
+        ${one.asking && one.account ? html`<button class="button subtle" @click=${() => trustColleague(String(one.account))}>${t('people.trust')}</button>` : nothing}
         <button class="button subtle" @click=${() => { renaming.value = one.fp }}>${t('people.rename')}</button>
         <button class="button subtle danger" @click=${() => confirmRemove(one)}>${t('action.remove')}</button>`}</li>`)}</ul>` : nothing}
     ${invitations.value.length ? html`<h3>${t('people.invitations')}</h3><ul class="list">${invitations.value.map((one) => html`<li>${one.code
@@ -90,8 +102,8 @@ function rest() {
     <div class="row"><button id="people-add" class="button primary" @click=${() => { inviting.value = { step: 'name' } }}>${icons.plus} ${t('people.add')}</button></div>`
 }
 
-/** Remove, asked first: what came from them stays. @param {{ fp: string, name: string }} one */
-const confirmRemove = (one) => confirm(t('people.remove', { name: one.name })) && remove(one.fp)
+/** Remove, asked first: what came from them stays. @param {{ fps: string[], name: string }} one */
+const confirmRemove = (one) => confirm(t('people.remove', { name: one.name })) && remove(one.fps)
 
 // A step that changes takes the keyboard to what it asks for now: a field, its title, its first button, or Add a person.
 let was = ''

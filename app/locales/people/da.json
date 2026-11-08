@@ -1,6 +1,13 @@
 {
   "people.line": "Personer, der også bruger {name}: du sender dem opgaver og det, {name} har lavet, og får deres svar tilbage. Kun de kan åbne det, du sender dem.",
   "people.add": "Tilføj en person",
+  "people.find": "Find en kollega",
+  "people.search": "Søg",
+  "people.nobody": "Ingen med det navn i din organisation bruger {name} endnu.",
+  "people.keep": "Tilføj",
+  "people.kept": "Tilføjet",
+  "people.newDevice": "Skriver fra en ny enhed",
+  "people.trust": "Stol på den",
   "people.who": "Hvem er invitationen til?",
   "people.side": "Vis en kode, der skal scannes",
   "people.apart": "Send et link",

@@ -19,8 +19,10 @@ import { linkOf, parseLink, pairingBox, sealHello, openHello, sealNonce, openNon
  */
 /**
  * Someone met, as `people:<fp>` keeps them: their key, the name they gave themselves, how they were met, when, where they read once they
- * answered; their key before a turn; which of this profile's keys they took; whether they are to be met again.
- * @typedef {{ format: 1, key: JsonWebKey, said: string, met: 'side' | 'link', at: number, mailbox?: string, waiting?: true, before?: JsonWebKey, took?: string, again?: true }} Met
+ * answered; their key before a turn; which of this profile's keys they took; whether they are to be met again. A colleague found on the
+ * organisation's list (./colleagues.js) has a record for each device, its account theirs, one held until the person trusts it `asking`.
+ * @typedef {{ format: 1, key: JsonWebKey, said: string, met: 'side' | 'link' | 'organisation', at: number, mailbox?: string, waiting?: true, before?: JsonWebKey, took?: string, again?: true,
+ *   account?: string, asking?: true }} Met
  */
 /** B's hello as A read it. @typedef {{ key: JsonWebKey, mailbox: string, name: string, commit: string }} Hello */
 /** An invitation under way on the device that made it (`invite:<id>`): its secret, who it is for, which way, when, the tries left, and what came. @typedef {{ id: string, s: string, name: string, way: 'side' | 'link', at: number, tries: number, said?: string, hello?: Hello, nA?: string, code?: string }} Invite */
@@ -69,8 +71,10 @@ const same = (a, b) => a.x === b.x && a.y === b.y
 /** A letter to someone met and, until they took this profile's key since its turn, the chain to it, sealed from the key they knew. @param {Context} ctx @param {Person} me @param {Met} one @param {string} kind @param {object} body */
 async function letterTo(ctx, me, one, kind, body) {
   const [bytes, was] = [await letter(me, one.key, kind, body, ctx), me.old?.at(-1)]
-  if (!me.chain || !was || one.took === await fingerprintOf(me.public)) return bytes
-  return encoder.encode(JSON.stringify({ ...JSON.parse(decoder.decode(bytes)), chain: decoder.decode(await envelope(was, one.key, me.chain)) }))
+  // To a colleague, where this device reads, which their Jean looks up on the organisation's list the first time (./colleagues.js).
+  const sent = { ...JSON.parse(decoder.decode(bytes)), ...(one.met === 'organisation' && { mailbox: me.mailbox }) }
+  if (me.chain && was && one.took !== await fingerprintOf(me.public)) sent.chain = decoder.decode(await envelope(was, one.key, me.chain))
+  return encoder.encode(JSON.stringify(sent))
 }
 /** What came, opened with this profile's key or one it had before a turn, from one of the keys given; null otherwise. @param {Person} me @param {JsonWebKey[]} keys @param {Uint8Array} bytes */
 async function openAny(me, keys, bytes) {
@@ -238,7 +242,7 @@ export async function arrivalsOf(ctx) {
   const opened = await Promise.all((await kept(ctx)).map(async ({ name, from, box }) => {
     const one = people.find((person) => person.fp === from)
     const { value } = (one && await openAny(me, [one.key, ...(one.before ? [one.before] : [])], bytesOf(box))) ?? {}
-    return one && (value?.kind === 'send' || value?.kind === 'reply') && `${value.id}.json` === name ? [{ id: value.id, kind: value.kind, from, name: one.name, at: Number(value.at) || 0, title: String(value.body?.title ?? '').slice(0, 200),
+    return one && !one.asking && (value?.kind === 'send' || value?.kind === 'reply') && `${value.id}.json` === name ? [{ id: value.id, kind: value.kind, from, name: one.name, at: Number(value.at) || 0, title: String(value.body?.title ?? '').slice(0, 200),
       words: String(value.body?.words ?? '').slice(0, 280), value: value.body?.value ?? {}, ...(value.body?.thread && { thread: value.body.thread }) }] : []
   }))
   return opened.flat().sort((a, b) => a.at - b.at)
@@ -252,7 +256,7 @@ export async function arrivalsOf(ctx) {
 export async function sendTo(ctx, fp, body, kind = 'send') {
   const [me, held] = [await personOf(ctx), await ctx.get(metId(fp))]
   const one = held ? /** @type {Met} */ (JSON.parse(held)) : null
-  if (!one?.mailbox || one.again) refuse(one?.again ? 'again' : one ? 'waiting' : 'gone')
+  if (!one?.mailbox || one.again || one.asking) refuse(one?.again || one?.asking ? 'again' : one ? 'waiting' : 'gone')
   const bytes = await letterTo(ctx, me, one, kind, body)
   if (bytes.length > LIMIT) refuse('large')
   await send(ctx.base, one.mailbox, bytes).catch((error) => refuse(error?.status === 404 ? 'gone' : error?.status === 413 ? 'large' : 'relay'))

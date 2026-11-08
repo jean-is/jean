@@ -1,6 +1,13 @@
 {
   "people.line": "De mensen die ook {name} gebruiken, naar wie je taken stuurt en wat {name} maakte, en van wie je hun antwoorden terugkrijgt. Alleen zij kunnen openen wat je hun stuurt.",
   "people.add": "Persoon toevoegen",
+  "people.find": "Collega zoeken",
+  "people.search": "Zoeken",
+  "people.nobody": "Nog niemand met die naam in je organisatie gebruikt {name}.",
+  "people.keep": "Toevoegen",
+  "people.kept": "Toegevoegd",
+  "people.newDevice": "Schrijft vanaf een nieuw apparaat",
+  "people.trust": "Vertrouwen",
   "people.who": "Voor wie is het?",
   "people.side": "Code tonen om te scannen",
   "people.apart": "Link sturen",

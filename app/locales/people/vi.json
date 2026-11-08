@@ -1,6 +1,13 @@
 {
   "people.line": "Những người cũng dùng {name}: bạn gửi cho họ nhiệm vụ và những gì {name} đã làm, rồi nhận lại câu trả lời. Chỉ họ mới mở được những gì bạn gửi cho họ.",
   "people.add": "Thêm một người",
+  "people.find": "Tìm đồng nghiệp",
+  "people.search": "Tìm kiếm",
+  "people.nobody": "Trong tổ chức của bạn chưa có ai tên như vậy dùng {name}.",
+  "people.keep": "Thêm",
+  "people.kept": "Đã thêm",
+  "people.newDevice": "Đang nhắn từ một thiết bị mới",
+  "people.trust": "Tin cậy thiết bị này",
   "people.who": "Dành cho ai?",
   "people.side": "Hiện mã để quét",
   "people.apart": "Gửi đường liên kết",

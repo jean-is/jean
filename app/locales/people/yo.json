@@ -1,6 +1,13 @@
 {
   "people.line": "Àwọn ènìyàn tí wọ́n náà ń lo {name}, tí ẹ ń fi iṣẹ́ àti ohun tí {name} ṣe ránṣẹ́ sí, tí ẹ sì ń gba ìdáhùn wọn padà. Àwọn nìkan ló lè ṣí ohun tí ẹ fi ránṣẹ́ sí wọn.",
   "people.add": "Ṣàfikún ènìyàn kan",
+  "people.find": "Wá alábàáṣiṣẹ́pọ̀ kan",
+  "people.search": "Ṣàwárí",
+  "people.nobody": "Kò tíì sí ẹnikẹ́ni tó ń jẹ́ orúkọ yẹn ní àjọ yín tó ń lo {name}.",
+  "people.keep": "Ṣàfikún",
+  "people.kept": "A ti ṣàfikún rẹ̀",
+  "people.newDevice": "Ó ń kọ̀wé láti orí ẹ̀rọ tuntun kan",
+  "people.trust": "Gbẹ́kẹ̀lé ẹ̀rọ náà",
   "people.who": "Fún ta ni?",
   "people.side": "Fi kóòdù kan hàn fún kámẹ́rà",
   "people.apart": "Fi ìjápọ̀ kan ránṣẹ́",

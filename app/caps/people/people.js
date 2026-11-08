@@ -24,6 +24,7 @@ import { serviceURL } from '../../core/settings.js'
 import { parseLink, pairingBox } from '../devices/pair.js'
 import { base64url, bytesOf, random } from '../share/seal.js'
 import { personOf, peopleOf, invite as invited, heardHello, heardReveal, confirmed, ended, accept as accepted, heardNonce, heardMet, dropped, received, forget, tidy, nameId, arrivalsOf, sendTo, ARRIVALS, LIMIT, turn } from './flow.js'
+import * as colleague from './colleagues.js'
 
 /** @typedef {import('./flow.js').Invite} Invite */
 /** @typedef {import('./flow.js').Met} Met */
@@ -45,13 +46,18 @@ export const [inviting, accepting] = [signal(/** @type {Inviting} */ ({ step: 'i
 export const [people, invitations] = [signal(/** @type {Awaited<ReturnType<typeof peopleOf>>} */ ([])), signal(/** @type {Invite[]} */ ([]))]
 /** What came from the people met and waits, and what was put off here till Jean opens again. */
 export const [arrivals, later] = [signal(/** @type {Awaited<ReturnType<typeof arrivalsOf>>} */ ([])), signal(/** @type {Set<string>} */ (new Set()))]
+/** The people met as one each, a colleague's devices together by their account (D731), with whom of each can be sent to and whether one of theirs is held. */
+export const groups = computed(() => [...people.value.reduce((all, one) => all.set(one.account ?? one.fp, [...all.get(one.account ?? one.fp) ?? [], one]), /** @type {Map<string, typeof people.value>} */ (new Map())).values()]
+  .map((all) => ({ ...all[0], fps: all.map((one) => one.fp), asking: all.some((one) => one.asking), able: all.filter((one) => !one.waiting && !one.again && !one.asking).map((one) => one.fp) })))
+/** Colleagues found on the organisation's list: what was asked, who came of it, and whether it went wrong. @type {import('@preact/signals-core').Signal<{ asked: string, found?: import('./colleagues.js').Listed[], wrong?: boolean }>} */
+export const finding = signal({ asked: '' })
 
 await Promise.all([useStrings('people'), styleSheet(new URL('people.css', import.meta.url))])
 /** Whether this is a child's profile, which meets no one. */
 const child = Boolean(JSON.parse(await app.fs.read(VAULT) ?? 'null')?.parent)
 const relayOf = () => String(serviceURL('relay', app.settings.peek(), app.policy) ?? '').replace(/^(.+?)\/?$/, '$1/')
 /** Whether the organisation's own relay lists the people its sign-in names (D731), where policy signs in: People is there only then. */
-const colleagues = Boolean(app.policy.signIn && relayOf()) && await (await import('./colleagues.js')).lists(relayOf(), String(app.policy.signIn?.issuer))
+export const colleagues = Boolean(app.policy.signIn && relayOf()) && await colleague.lists(relayOf(), String(app.policy.signIn?.issuer))
 /** Whether this Jean meets people: it pairs devices, or its organisation's relay lists colleagues; and policy lets it share. */
 export const offered = () => (pairs() || colleagues) && !child && app.policy.rules?.share !== 'never'
 /** Whether an answer is being written: nothing is read from the relay meanwhile but what the person asks for (caps/receipt). */
@@ -94,7 +100,11 @@ async function watch() {
   const person = await me()
   if (colleagues) listOn(person).catch(warn)
   const stop = listen({ base, token: person.token, lock: mine('app-people'), quiet: answering, onMessages: async (messages) => {
-    for (const { bytes } of messages) if ((await received(ctx, bytes).catch(() => null))?.kind) await refresh()
+    for (const { bytes } of messages) {
+      // A colleague who writes first is looked up on the list (D731).
+      if (colleagues) await colleague.introduced(ctx, person, bytes).catch(warn)
+      if ((await received(ctx, bytes).catch(() => null))?.kind) await refresh()
+    }
   } })
   controller.signal.addEventListener('abort', stop)
   for (const [id, value] of Object.entries(await ctx.all())) {
@@ -141,8 +151,19 @@ async function answer(ctx, one, signal) {
 async function listOn(person) {
   const [kept, at] = [mine('app.listed'), Date.now()], last = JSON.parse(localStorage.getItem(kept) ?? 'null')
   const proof = last?.mailbox === person.mailbox && at - last.at < 864e5 ? null : await (await import('../signin/signin.js')).idToken()
-  if (proof) await (await import('./colleagues.js')).listed(relayOf(), person, proof).then(() => localStorage.setItem(kept, JSON.stringify({ mailbox: person.mailbox, at })))
+  if (proof) await colleague.listed(relayOf(), person, proof).then(() => localStorage.setItem(kept, JSON.stringify({ mailbox: person.mailbox, at })))
 }
+
+/** Colleagues found by a few words, three letters at least. @param {string} asked */
+export async function findColleagues(asked) {
+  finding.value = { asked }
+  const found = await colleague.find(relayOf(), await me(), new URLSearchParams({ q: asked }).toString()).catch(() => null)
+  if (finding.peek().asked === asked) finding.value = found ? { asked, found } : { asked, wrong: true }
+}
+/** A colleague found kept, each of their devices pinned. @param {import('./colleagues.js').Listed} one */
+export const addColleague = async (one) => { await colleague.keep(await contextOf(), one); await refresh() }
+/** A colleague's held devices trusted. @param {string} account */
+export const trustColleague = async (account) => { await colleague.trust(await contextOf(), account); await refresh() }
 
 // ─── What the page does ──────────────────────────────────────────────────────
 
@@ -187,10 +208,10 @@ export async function stopAccept() {
   await watch()
 }
 
-/** What this person calls someone met, changed. @param {string} fp @param {string} name */
-export const rename = async (fp, name) => { await setSecrets(app.fs, { [nameId(fp)]: name.trim().slice(0, 80) }); await refresh() }
-/** Someone forgotten, on every device of the person, and told so. @param {string} fp */
-export const remove = async (fp) => { await forget(await contextOf(), fp); await refresh() }
+/** What this person calls someone met, changed, each device of a colleague's. @param {string[]} fps @param {string} name */
+export const rename = async (fps, name) => { await setSecrets(app.fs, Object.fromEntries(fps.map((fp) => [nameId(fp), name.trim().slice(0, 80)]))); await refresh() }
+/** Someone forgotten, on every device of the person, and told so, on each device of a colleague's. @param {string[]} fps */
+export const remove = async (fps) => { const ctx = await contextOf(); for (const fp of fps) await forget(ctx, fp); await refresh() }
 
 /** The link that came (`#/meet/…`, the router's), asked about on People's page, refused there where this Jean meets no one. */
 export function fromAddress() {
@@ -215,17 +236,21 @@ export async function turned() {
 const quiet = () => new Promise((done) => { const stop = effect(() => { if (!answering.value) { done(undefined); queueMicrotask(() => stop()) } }) })
 
 /**
- * Sends a task, or one thing it made, to someone met, with what Jean read for a task when the person says so and a few words of theirs; the
- * task keeps that it went, which an answer back follows (D727). During an answer only for send_to, whose answer then counts it. Its size.
- * An answer back (`back`, the thread a task someone sent opens) holds only what came after it, or after the last answer.
- * @param {string} fp @param {import('../share/value.js').What} what @param {{ reading?: boolean, words?: string, back?: { task: string, id: string } }} [options] @param {boolean} [during]
+ * Sends a task, or one thing it made, to someone met, each device of a colleague's that takes it, with what Jean read for a task when the
+ * person says so and a few words of theirs; the task keeps that it went, which an answer back follows (D727). During an answer only for
+ * send_to, whose answer then counts it. Its size. An answer back (`back`, the thread a task someone sent opens) holds only what came after
+ * it, or after the last answer.
+ * @param {string[]} fps @param {import('../share/value.js').What} what @param {{ reading?: boolean, words?: string, back?: { task: string, id: string } }} [options] @param {boolean} [during]
  */
-export async function sendIt(fp, what, { reading = false, words = '', back } = {}, during = false) {
+export async function sendIt(fps, what, { reading = false, words = '', back } = {}, during = false) {
   if (!during) await quiet()
   const value = await (await import('../share/value.js')).valueOf(app.fs, what, { reading, lang: locale.peek(), aFile: t('people.aFile'), since: Boolean(back) })
-  const thread = back ?? { task: what.path.slice(-32, -6), id: base64url(random(16)) }
-  const size = await sendTo(await contextOf(), fp, { title: what.title, words: words.trim().slice(0, 280), value, thread }, back ? 'reply' : 'send')
-  await keepRecords(what.path, [metaRecord(app.deviceId, { sent: { to: fp, thread } })], !during)
+  const [thread, ctx, went] = [back ?? { task: what.path.slice(-32, -6), id: base64url(random(16)) }, await contextOf(), /** @type {string[]} */ ([])]
+  let [size, failed] = [0, /** @type {unknown} */ (null)]
+  // A device of a colleague's gone is passed over while another takes it.
+  for (const fp of fps) await sendTo(ctx, fp, { title: what.title, words: words.trim().slice(0, 280), value, thread }, back ? 'reply' : 'send').then((sent) => { size = sent; went.push(fp) }, (error) => { failed ??= error })
+  if (!went.length) throw failed
+  await keepRecords(what.path, went.map((fp) => metaRecord(app.deviceId, { sent: { to: fp, thread } })), !during)
   act('people.send', { task: what.path, kind: back ? 'reply' : what.item ? 'item' : 'task', size })
   return size
 }
@@ -248,12 +273,13 @@ const recordsOf = (file) => file.split('\n').flatMap((line) => { try { return [J
 /** Sent to whom was picked, with the words written: said so, or why not. @param {SubmitEvent} event */
 async function submit(event) {
   event.preventDefault()
-  const [now, form] = [sending.peek(), new FormData(/** @type {HTMLFormElement} */ (event.target))], one = people.peek().find((person) => person.fp === form.get('to'))
+  const [now, form] = [sending.peek(), new FormData(/** @type {HTMLFormElement} */ (event.target))], one = groups.peek().find((person) => person.fp === form.get('to'))
   if (!now || !one || now.busy) return
   sending.value = { ...now, busy: true, wrong: '' }
   try {
-    const back = threadOf(now.what)
-    await sendIt(one.fp, now.what, { reading: now.reading, words: String(form.get('words') ?? ''), back: back?.fp === one.fp ? back.thread : undefined })
+    // An answer back goes to the device that sent the task, which alone holds its thread.
+    const back = threadOf(now.what), mine = back && one.fps.includes(back.fp)
+    await sendIt(mine ? [back.fp] : one.able, now.what, { reading: now.reading, words: String(form.get('words') ?? ''), back: mine ? back.thread : undefined })
     sending.value = { ...now, busy: false, said: t('people.sentTo', { name: one.name }) }
   } catch (/** @type {any} */ error) {
     sending.value = { ...now, busy: false, wrong: t(`people.why.${error?.reason === 'waiting' || error?.reason === 'large' ? error.reason : 'unreached'}`, { name: BRAND.name }) }
@@ -271,12 +297,12 @@ const add = () => import('../../ui/dialogs.js').then((dialogs) => { inviting.val
 function pane(what) {
   if (sending.peek()?.what !== what) queueMicrotask(() => { if (sending.peek()?.what !== what) measure(what, false) })
   // The person a task came from first, for an answer back; else the first who can be sent to: answered, and not to meet again.
-  const now = sending.value?.what === what ? sending.value : null, back = threadOf(what), able = (/** @type {Met} */ one) => !one.waiting && !one.again
-  const first = people.value.find((one) => able(one) && one.fp === back?.fp) ?? people.value.find(able)
+  const now = sending.value?.what === what ? sending.value : null, back = threadOf(what), able = (/** @type {{ able: string[] }} */ one) => one.able.length > 0
+  const first = groups.value.find((one) => able(one) && one.fps.includes(back?.fp ?? '')) ?? groups.value.find(able)
   const records = now?.value ? recordsOf(now.value.file) : [], total = now?.value ? JSON.stringify(now.value).length : 0
   const files = filesIn(records).flatMap(({ uri, name }) => ((data) => (data ? [{ name, size: Math.floor((data.length - data.indexOf(',') - 1) * 0.75) }] : []))(now?.value?.files[uri] ?? ''))
   return html`<section>${now?.said ? nothing : html`<form id="people-send" class="stack people-pane" @submit=${submit}>
-      <fieldset><legend>${t('people.toWhom')}</legend>${people.value.map((one) => html`<label class="row" for=${`people-to-${one.fp}`}>
+      <fieldset><legend>${t('people.toWhom')}</legend>${groups.value.map((one) => html`<label class="row" for=${`people-to-${one.fp}`}>
         <input id=${`people-to-${one.fp}`} type="radio" name="to" value=${one.fp} ?disabled=${!able(one)} ?checked=${one === first} required><bdi>${one.name}</bdi>
         ${one.waiting ? html`<small class="muted">${t('people.answer')}</small>` : nothing}</label>`)}
         <button type="button" class="button subtle" @click=${add}>${icons.plus} ${t('people.add')}</button></fieldset>
@@ -293,7 +319,7 @@ function pane(what) {
 
 /** Whom a task went to, as the person calls them, for the Share at its top: its `sent` records'. @param {unknown[]} records */
 const went = (records) => {
-  const names = [...new Set(records.flatMap((record) => /** @type {any} */ (record).meta?.sent?.to ?? []))].flatMap((fp) => people.value.find((one) => one.fp === fp)?.name ?? [])
+  const names = [...new Set(records.flatMap((record) => /** @type {any} */ (record).meta?.sent?.to ?? []).flatMap((fp) => people.value.find((one) => one.fp === fp)?.name ?? []))]
   return names.length ? t('people.sentTo', { name: new Intl.ListFormat(intlLocales()).format(names) }) : ''
 }
 
@@ -334,7 +360,7 @@ const sendTool = {
   kind: 'other',
   title: (args) => (args?.file ? `Send ${args.file} to ${args?.person ?? ''}` : `Send this task to ${args?.person ?? ''}`),
   run: async (args, ctx) => {
-    const [asked, met] = [String(args?.person ?? '').trim().toLowerCase(), people.peek().filter((one) => !one.waiting)]
+    const [asked, met] = [String(args?.person ?? '').trim().toLowerCase(), groups.peek().filter((one) => one.able.length)]
     const exact = met.filter((one) => one.name.toLowerCase() === asked), found = exact.length ? exact : met.filter((one) => asked && one.name.toLowerCase().includes(asked))
     if (found.length !== 1) throw new Error(`${found.length ? 'More than one' : 'No one'} of the user's people is named so. They are: ${met.map((one) => one.name).join(', ') || 'none yet'}.`)
     const task = conversationOf(ctx.signal)
@@ -342,7 +368,7 @@ const sendTool = {
     const file = args?.file ? filesMade(callsIn(task.records)).findLast((one) => one.name === args.file) : null
     if (args?.file && !file) throw new Error(`This task made no file named ${args.file}.`)
     const title = app.conversations.peek().find((one) => one.path === task.path)?.title ?? ''
-    await sendIt(found[0].fp, { path: task.path, title, ...(file && { item: { text: '', files: [file] } }) }, { words: String(args?.words ?? '') }, true)
+    await sendIt(found[0].able, { path: task.path, title, ...(file && { item: { text: '', files: [file] } }) }, { words: String(args?.words ?? '') }, true)
     return `Sent to ${found[0].name}. They have a week to open it.`
   },
 }

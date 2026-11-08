@@ -1,6 +1,13 @@
 {
   "people.line": "也在用 {name} 的人：你把任務和 {name} 做出的東西傳給他們，並收回他們的回答。只有他們能開啟你傳送的內容。",
   "people.add": "新增聯絡人",
+  "people.find": "尋找同事",
+  "people.search": "搜尋",
+  "people.nobody": "你所在的組織裡還沒有叫這個名字的人在用 {name}。",
+  "people.keep": "新增",
+  "people.kept": "已新增",
+  "people.newDevice": "從新裝置傳來訊息",
+  "people.trust": "信任這台裝置",
   "people.who": "這是給誰的？",
   "people.side": "顯示 QR 碼供掃描",
   "people.apart": "傳送連結",

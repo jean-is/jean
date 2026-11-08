@@ -1,6 +1,13 @@
 {
   "people.line": "也在用 {name} 的人：你把任务和 {name} 做出的东西发给他们，并收回他们的回答。只有他们能打开你发送的内容。",
   "people.add": "添加联系人",
+  "people.find": "查找同事",
+  "people.search": "搜索",
+  "people.nobody": "你所在的组织里还没有叫这个名字的人在用 {name}。",
+  "people.keep": "添加",
+  "people.kept": "已添加",
+  "people.newDevice": "从新设备发来消息",
+  "people.trust": "信任这台设备",
   "people.who": "这是给谁的？",
   "people.side": "显示二维码供扫描",
   "people.apart": "发送链接",

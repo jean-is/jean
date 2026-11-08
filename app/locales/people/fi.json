@@ -1,6 +1,13 @@
 {
   "people.line": "Ihmiset, jotka käyttävät myös sovellusta {name}: lähetät heille tehtäviä ja sitä, mitä {name} teki, ja saat heidän vastauksensa takaisin. Vain he voivat avata sen, mitä heille lähetät.",
   "people.add": "Lisää henkilö",
+  "people.find": "Etsi työtoveria",
+  "people.search": "Hae",
+  "people.nobody": "Kukaan tämänniminen organisaatiossasi ei vielä käytä sovellusta {name}.",
+  "people.keep": "Lisää",
+  "people.kept": "Lisätty",
+  "people.newDevice": "Kirjoittaa uudelta laitteelta",
+  "people.trust": "Luota siihen",
   "people.who": "Kenelle kutsu on?",
   "people.side": "Näytä skannattava koodi",
   "people.apart": "Lähetä linkki",

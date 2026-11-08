@@ -1,6 +1,13 @@
 {
   "people.line": "Ang mga taong gumagamit din ng {name}, na pinapadalhan mo ng mga gawain at ng mga ginawa ni {name}, at pinanggagalingan ng mga sagot nila. Sila lang ang makakabukas ng ipinapadala mo sa kanila.",
   "people.add": "Magdagdag ng tao",
+  "people.find": "Maghanap ng katrabaho",
+  "people.search": "Hanapin",
+  "people.nobody": "Wala pang may ganyang pangalan sa organisasyon mo na gumagamit ng {name}.",
+  "people.keep": "Idagdag",
+  "people.kept": "Naidagdag na",
+  "people.newDevice": "Sumusulat mula sa bagong device",
+  "people.trust": "Pagkatiwalaan ito",
   "people.who": "Para kanino ito?",
   "people.side": "Magpakita ng code na ii-scan",
   "people.apart": "Magpadala ng link",

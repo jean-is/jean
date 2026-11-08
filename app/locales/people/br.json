@@ -1,6 +1,13 @@
 {
   "people.line": "An dud a implij {name} ivez : kas a rit dezho trevelloù hag ar pezh a zo bet graet gant {name}, ha resev a rit o respontoù en-dro. Int hepken a c’hall digeriñ ar pezh a gasit dezho.",
   "people.add": "Ouzhpennañ un den",
+  "people.find": "Kavout kenlabourerien",
+  "people.search": "Klask",
+  "people.nobody": "Den ebet gant an anv-se en hoc’h aozadur n’implij {name} c’hoazh.",
+  "people.keep": "Ouzhpennañ",
+  "people.kept": "Ouzhpennet",
+  "people.newDevice": "Skrivañ a ra diwar un trevnad nevez",
+  "people.trust": "Fiziout ennañ",
   "people.who": "Evit piv eo ar bedadenn ?",
   "people.side": "Diskouez ur c’hod da skanañ",
   "people.apart": "Kas ul liamm",

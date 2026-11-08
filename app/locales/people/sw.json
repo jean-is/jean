@@ -1,6 +1,13 @@
 {
   "people.line": "Watu wanaotumia {name} pia, unaowatumia kazi na alichotengeneza {name}, na kupokea majibu yao. Ni wao pekee wanaoweza kufungua unachowatumia.",
   "people.add": "Ongeza mtu",
+  "people.find": "Tafuta mfanyakazi mwenzako",
+  "people.search": "Tafuta",
+  "people.nobody": "Bado hakuna mtu mwenye jina hilo katika shirika lako anayetumia {name}.",
+  "people.keep": "Ongeza",
+  "people.kept": "Ameongezwa",
+  "people.newDevice": "Anaandika kutoka kwenye kifaa kipya",
+  "people.trust": "Amini kifaa hiki",
   "people.who": "Ni kwa ajili ya nani?",
   "people.side": "Onyesha msimbo wa kuchanganua",
   "people.apart": "Tuma kiungo",

@@ -9,7 +9,7 @@ import { bytesOf } from '../app/caps/share/seal.js'
 import { pairingBox, codeOf, envelope } from '../app/caps/devices/pair.js'
 import { memoryFS } from '../app/core/fs.js'
 import { personOf, peopleOf, invite, heardHello, heardReveal, confirmed, accept, heardNonce, heardMet, received, forget, tidy, metId, nameId, WEEK, sendTo, arrivalsOf, ARRIVALS, turn, letter, madePerson } from '../app/caps/people/flow.js'
-import { lists, listed } from '../app/caps/people/colleagues.js'
+import { lists, listed, find, keep, introduced, trust } from '../app/caps/people/colleagues.js'
 import { ISSUER, JWKS, POLICY, idTokenOf } from './fixtures/fake-issuer.js'
 
 const [JEAN, BASE] = ['https://jean.example', 'https://relay.example/']
@@ -242,4 +242,49 @@ test('where the organisation’s relay lists its people, a person is listed ther
   assert.deepEqual(found.people.map((/** @type {any} */ one) => [one.account, one.devices.map((/** @type {any} */ device) => device.mailbox).sort()]), [['bob@acme.example', [laptop.mailbox, phone.mailbox].sort()]])
   assert.deepEqual(found.people[0].devices.find((/** @type {any} */ device) => device.mailbox === phone.mailbox).key, (({ kty, crv, x, y }) => ({ kty, crv, x, y }))(phone.public))
   await assert.rejects(listed(BASE, ana, await idTokenOf({ aud: 'someone-else' })), (/** @type {any} */ error) => error.status === 403)
+})
+
+test('a colleague found is kept with each device pinned; their first letter is taken through the list, a new device of someone kept held until trusted (D731)', async () => {
+  relayed({ issuers: [{ issuer: ISSUER, audience: POLICY.signIn.clientId, jwks: JWKS }] })
+  const [ana, bobLaptop, bobPhone] = [profile('Ana'), profile('Bob'), profile('Bob')]
+  const bob = { sub: 'sub-bob', name: 'Bob Dupont', preferred_username: 'bob@acme.example' }
+  await listed(BASE, await personOf(ana), await idTokenOf())
+  await listed(BASE, await personOf(bobLaptop), await idTokenOf(bob))
+  await listed(BASE, await personOf(bobPhone), await idTokenOf(bob))
+  const [found] = await find(BASE, await personOf(ana), 'q=dupont')
+  await keep(ana, found)
+  const kept = await peopleOf(ana)
+  assert.deepEqual(kept.map((one) => [one.name, one.met, one.account]), [['Bob Dupont', 'organisation', 'bob@acme.example'], ['Bob Dupont', 'organisation', 'bob@acme.example']])
+  // Ana sends to each of his devices; the first time, his Jean looks her up by the mailbox her letter gives, and keeps her with hers.
+  for (const one of kept) await sendTo(ana, one.fp, { title: 'Budget 2027', words: '', value: { file: '' } })
+  for (const device of [bobLaptop, bobPhone]) {
+    const [bytes] = (await read(BASE, (await personOf(device)).token)).messages.map((one) => one.bytes)
+    assert.equal(await introduced(device, await personOf(device), bytes), true)
+    assert.equal(await introduced(device, await personOf(device), bytes), false, 'known now')
+    assert.equal((await received(device, bytes))?.kind, 'send')
+    assert.deepEqual((await arrivalsOf(device)).map((one) => [one.name, one.title]), [['Ana Martín', 'Budget 2027']])
+  }
+  // A letter from a key the list doesn't name at the mailbox it gives is taken by no one.
+  const stranger = await madePerson()
+  const forged = new TextEncoder().encode(JSON.stringify({ ...JSON.parse(new TextDecoder().decode(await letter(stranger, (await personOf(bobPhone)).public, 'send', {}, ana))), mailbox: (await personOf(ana)).mailbox }))
+  assert.equal(await introduced(bobPhone, await personOf(bobPhone), forged), false)
+  // Ana on a new device: Bob's phone holds it, nothing it sends shows, until he trusts it.
+  const tablet = profile('Ana')
+  await listed(BASE, await personOf(tablet), await idTokenOf())
+  const [bobAgain] = await find(BASE, await personOf(tablet), 'account=bob%40acme.example')
+  await keep(tablet, bobAgain)
+  const phoneFp = await fingerprintOf((await personOf(bobPhone)).public)
+  await sendTo(tablet, phoneFp, { title: 'From my tablet', words: '', value: { file: '' } })
+  const { messages } = await read(BASE, (await personOf(bobPhone)).token)
+  const bytes = messages.at(-1)?.bytes ?? new Uint8Array()
+  assert.equal(await introduced(bobPhone, await personOf(bobPhone), bytes), true)
+  assert.equal((await peopleOf(bobPhone)).filter((one) => one.asking).length, 1)
+  await received(bobPhone, bytes)
+  assert.deepEqual((await arrivalsOf(bobPhone)).map((one) => one.title), ['Budget 2027'], 'held')
+  await assert.rejects(sendTo(bobPhone, await fingerprintOf((await personOf(tablet)).public), { title: 'x', words: '', value: {} }), (/** @type {any} */ error) => error.reason === 'again')
+  await trust(bobPhone, 'ana@acme.example')
+  assert.deepEqual((await arrivalsOf(bobPhone)).map((one) => one.title).sort(), ['Budget 2027', 'From my tablet'])
+  // One of his devices no longer listed: kept again, Ana keeps the other alone.
+  await keep(ana, { ...found, devices: found.devices.slice(0, 1) })
+  assert.deepEqual((await peopleOf(ana)).map((one) => one.mailbox), [found.devices[0].mailbox])
 })

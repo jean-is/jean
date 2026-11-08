@@ -1,6 +1,13 @@
 {
   "people.line": "Las personas que también usan {name}, a quienes envías tareas y lo que {name} hizo, y que te devuelven sus respuestas. Solo ellas pueden abrir lo que les envías.",
   "people.add": "Añadir una persona",
+  "people.find": "Encontrar colegas",
+  "people.search": "Buscar",
+  "people.nobody": "Nadie con ese nombre en tu organización usa {name} todavía.",
+  "people.keep": "Añadir",
+  "people.kept": "Persona añadida",
+  "people.newDevice": "Te escribe desde un dispositivo nuevo",
+  "people.trust": "Confiar en él",
   "people.who": "¿Para quién es la invitación?",
   "people.side": "Mostrar un código para escanear",
   "people.apart": "Enviar un enlace",

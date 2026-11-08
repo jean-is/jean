@@ -1,6 +1,13 @@
 {
   "people.line": "Ľudia, ktorí tiež používajú aplikáciu {name}: posielate im úlohy a to, čo aplikácia {name} vytvorila, a dostávate od nich odpovede. Otvoriť to, čo im pošlete, môžu len oni.",
   "people.add": "Pridať osobu",
+  "people.find": "Nájsť niekoho z vašej organizácie",
+  "people.search": "Hľadať",
+  "people.nobody": "Vo vašej organizácii zatiaľ nikto s týmto menom nepoužíva aplikáciu {name}.",
+  "people.keep": "Pridať",
+  "people.kept": "Pridané",
+  "people.newDevice": "Píše z nového zariadenia",
+  "people.trust": "Dôverovať zariadeniu",
   "people.who": "Pre koho je to?",
   "people.side": "Ukázať kód na naskenovanie",
   "people.apart": "Poslať odkaz",

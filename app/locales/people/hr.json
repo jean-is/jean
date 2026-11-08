@@ -1,6 +1,13 @@
 {
   "people.line": "Osobe koje također koriste aplikaciju {name}: šaljete im zadatke i ono što je u njoj izrađeno, a one vam vraćaju svoje odgovore. Samo one mogu otvoriti ono što im pošaljete.",
   "people.add": "Dodaj osobu",
+  "people.find": "Traži među kolegama",
+  "people.search": "Traži",
+  "people.nobody": "Nitko s tim imenom u vašoj organizaciji još ne koristi aplikaciju {name}.",
+  "people.keep": "Dodaj",
+  "people.kept": "Dodano",
+  "people.newDevice": "Piše s novog uređaja",
+  "people.trust": "Vjeruj uređaju",
   "people.who": "Za koga je?",
   "people.side": "Prikaži kod za skeniranje",
   "people.apart": "Pošalji poveznicu",
