@@ -43,10 +43,11 @@ import { MANIFEST } from './store-fs.js'
 
 /** What policy names that crossing() leaves out: the organisation's brains, which hold its tokens. @typedef {{ brains?: { id: string }[] }} Policy */
 
-/** The secret that holds this device's identity, which never crosses. */
-export const SECRET = 'device'
-/** The secret that holds the devices this profile knows: in .secrets/, which neither Sync nor a backup carries, so nobody writes a device in. */
-export const DEVICES = 'devices'
+/**
+ * The secret that holds this device's identity, which never crosses, and the one that holds the devices this profile knows: in .secrets/,
+ * which neither Sync nor a backup carries, so nobody writes a device in.
+ */
+export const [SECRET, DEVICES] = ['device', 'devices']
 /** The times of what follows, this device's own: in a folder Sync and backups leave out (caps/sync/mirror.js, caps/backup/archive.js). */
 export const TIMES = '.devices/follows.json'
 /** The secret that holds the store's keys (./store.js, D721), and what this device knows of a store, dropped with them: the round's base and the manifest. */
@@ -59,9 +60,6 @@ export const PROFILE = /^profiles\/[0-9A-HJKMNP-TV-Z]{26}-[a-z0-9-]{1,64}$/
 const PROJECT = /^projects\/[0-9A-HJKMNP-TV-Z]{26}-[a-z0-9-]{1,64}\/project\.md$/
 /** A week; how far ahead of this device's clock another's time may be, a minute, and no more, so that no time from the future wins for good. */
 const [WEEK, SOON] = [7 * 86_400_000, 60_000]
-
-/** The one secret the Computer's machine keeps for its bridge (caps/machine/machine.js). */
-const BRIDGE = 'computer-bridge'
 
 /** @param {string} line */
 const parsed = (line) => { try { return JSON.parse(line) } catch { return null } }
@@ -108,9 +106,7 @@ export const recordFor = ({ id, public: key, mailbox }, name, now, addedBy) => /
 
 /** Every device the profile knows, removed ones too, one record each. @param {FS} fs @returns {Promise<Device[]>} */
 export async function listOf(fs) {
-  /** @type {unknown} */
-  let list = []
-  try { list = JSON.parse(await getSecret(fs, DEVICES) ?? '[]') } catch {}
+  const list = await getSecret(fs, DEVICES).then((text) => JSON.parse(text ?? '[]')).catch(() => [])
   const records = Array.isArray(list) ? list.map(recordOf).filter((one) => one !== null) : []
   return records.filter((one, i) => records.findIndex((other) => other.id === one.id) === i)
 }
@@ -122,13 +118,11 @@ export const recordsOf = async (fs) => (await listOf(fs)).filter((one) => !one.r
  * The list of devices changed, one change at a time across tabs where there are locks: `edit` gives the new list, or null for none.
  * Whether it changed. @param {FS} fs @param {(list: Device[]) => Device[] | null} edit @param {Context['lock']} [lock] @returns {Promise<boolean>}
  */
-export function changeList(fs, edit, lock) {
-  return locked({ lock }, LISTING, async () => {
-    const next = edit(await listOf(fs))
-    if (next) await setSecret(fs, DEVICES, JSON.stringify(next))
-    return Boolean(next)
-  })
-}
+export const changeList = (fs, edit, lock) => locked({ lock }, LISTING, async () => {
+  const next = edit(await listOf(fs))
+  if (next) await setSecret(fs, DEVICES, JSON.stringify(next))
+  return Boolean(next)
+})
 
 /** A device added. @param {FS} fs @param {Device} record @param {Context['lock']} [lock] */
 export const writeRecord = (fs, record, lock) => changeList(fs, (list) => [...list.filter((one) => one.id !== record.id), record], lock)
@@ -148,8 +142,7 @@ export const writeOwn = (fs, record, lock) => changeList(fs, (list) => [...list.
  */
 export function mergeLists(mine, theirs, own, from) {
   if (!Array.isArray(theirs)) return null
-  const records = theirs.map(recordOf)
-  const out = [...mine]
+  const [records, out] = [theirs.map(recordOf), [...mine]]
   const removed = (/** @type {string | undefined} */ id) => [...out, ...records].some((one) => one?.id === id && one?.removedAt)
   for (const one of records) {
     if (!one || one.id === own) continue
@@ -166,9 +159,6 @@ export function mergeLists(mine, theirs, own, from) {
  * place, the device that removed it. @param {FS} fs @param {JsonWebKey} key
  */
 export const inPlace = async (fs, key) => !(await getSecret(fs, SECRET)) && (await recordsOf(fs)).some((one) => sameKey(one.key, key))
-
-/** The devices another of this profile's lists, merged into this one's; whether that changed it. @param {Context} ctx @param {unknown} records @param {string} from */
-export const listed = (ctx, records, from) => changeList(ctx.fs, (list) => mergeLists(list, records, ctx.me.id, from), ctx.lock)
 
 /** The other devices, none removed. @param {Context} ctx */
 const othersOf = async (ctx) => (await recordsOf(ctx.fs)).filter((one) => one.id !== ctx.me.id)
@@ -217,8 +207,7 @@ const crossingIds = async (settings, keys, policy) => Object.keys(await keysOf(m
 async function unkinded(fs, before, after, policy, stamps = {}) {
   const was = await keysOf(fs, before, policy)
   let again = false
-  for (const [id, value] of Object.entries(await keysOf(fs, after, policy))) {
-    if (Object.hasOwn(was, id)) continue
+  for (const [id, value] of Object.entries(await keysOf(fs, after, policy)).filter(([id]) => !Object.hasOwn(was, id))) {
     if (stamps[id]?.hash === await hashOf(value)) again = true
     else await deleteSecret(fs, id)
   }
@@ -264,8 +253,7 @@ async function takeKeys(fs, keys, settings, times, limit, policy, records = {}) 
   const all = /** @type {[string, { value?: unknown, at: number, gone?: unknown }][]} */ (Object.entries(keys).flatMap(([id, one]) => (timeOf(one?.at, limit) !== null
     && (one.gone === true || typeof one.value === 'string') ? [[id, { ...one, at: timeOf(one.at, limit) }]] : [])))
   const held = Object.fromEntries(all.map(([id, one]) => [id, one.gone === true ? '' : /** @type {string} */ (one.value)]))
-  const here = new Set((await Promise.all(settings.map((one) => crossingIds(one, held, policy)))).flat())
-  const now = await keysOf(fs, /** @type {Settings} */ (settings.at(-1)), policy)
+  const [here, now] = [new Set((await Promise.all(settings.map((one) => crossingIds(one, held, policy)))).flat()), await keysOf(fs, /** @type {Settings} */ (settings.at(-1)), policy)]
   for (const [id, one] of all) {
     const [at, value] = [/** @type {number} */ (one.at), one.gone === true ? null : /** @type {string} */ (one.value)]
     const hash = value === null ? null : await hashOf(value)
@@ -286,6 +274,8 @@ async function takeKeys(fs, keys, settings, times, limit, policy, records = {}) 
 const followsOf = (fs) => readJSON(fs, TIMES, {})
 /** follows.json written again over itself with what changed, a value undefined dropped. @param {FS} fs @param {Follows} next */
 const keep = async (fs, next) => writeJSON(fs, TIMES, { format: 1, ...await followsOf(fs), ...next })
+/** follows.json as it is, handed to `run`, one tab at a time. @template T @param {Pick<Context, 'fs' | 'lock'>} ctx @param {(kept: Follows) => Promise<T>} run @returns {Promise<T>} */
+const follows = (ctx, run) => locked(ctx, FOLLOWING, async () => run(await followsOf(ctx.fs)))
 /**
  * The times this device kept, none later than its clock and a minute, so that one stamped while its clock ran ahead wins no longer
  * than that, here or elsewhere. @param {Follows} kept @param {number} limit @returns {Follows}
@@ -293,17 +283,16 @@ const keep = async (fs, next) => writeJSON(fs, TIMES, { format: 1, ...await foll
 const capped = (kept, limit) => ({ ...kept, fields: Object.fromEntries(Object.entries(kept.fields ?? {}).map(([id, at]) => [id, Math.min(at, limit)])),
   ...Object.fromEntries(/** @type {const} */ (['brains', 'connections', 'keys']).map((part) => [part, kept[part] && Object.fromEntries(Object.entries(kept[part] ?? {}).map(([id, one]) => [id, { ...one, at: Math.min(one.at, limit) }]))])) })
 /** A removal no longer owed. @param {Context} ctx @param {string} id */
-const forgive = (ctx, id) => locked(ctx, FOLLOWING, async () => { const { [id]: _, ...owe } = (await followsOf(ctx.fs)).owe ?? {}; await keep(ctx.fs, { owe }) })
+const forgive = (ctx, id) => follows(ctx, async (kept) => { const { [id]: _, ...owe } = kept.owe ?? {}; await keep(ctx.fs, { owe }) })
 /** Projects this device had, by folder, which refill() won't bring back once deleted. @param {Pick<Context, 'fs' | 'lock'>} ctx @param {string[]} names */
-const hadToo = (ctx, names) => locked(ctx, FOLLOWING, async () => keep(ctx.fs, { had: [...new Set([...(await followsOf(ctx.fs)).had ?? [], ...names])] }))
+const hadToo = (ctx, names) => follows(ctx, (kept) => keep(ctx.fs, { had: [...new Set([...kept.had ?? [], ...names])] }))
 /** A mark never made before: later than the last, waiting or sent, whatever the clock says. @param {Context} ctx @param {Follows} kept */
 const fresh = (ctx, kept) => Math.max(ctx.now(), Math.max(kept.pending ?? 0, kept.sentFor ?? 0) + 1)
 /**
  * Something waits to reach every device: marked before anything goes, anew each time, so that only the share that took it clears it;
  * with the removals a list about to be written owes, so that a tab closed between leaves both to go. @param {Context} ctx @param {Record<string, boolean>} [owed]
  */
-export const mark = (ctx, owed = {}) => locked(ctx, FOLLOWING, async () => {
-  const kept = await followsOf(ctx.fs)
+export const mark = (ctx, owed = {}) => follows(ctx, async (kept) => {
   const pending = fresh(ctx, kept)
   await keep(ctx.fs, { pending, owe: { ...kept.owe, ...owed } })
   return pending
@@ -320,34 +309,24 @@ async function stamped(ctx, kept) {
   const [state, values] = [following(settings), await keysOf(ctx.fs, settings, ctx.policy)]
   // Kept on this device, who answers is its own: as it was last seen, never stamped, so that nothing chosen meanwhile goes later.
   if (settings.cloud === false) Object.assign(state, { auto: own.seen?.auto, activeBrain: own.seen?.activeBrain })
-  const times = { ...stamp(own.seen ?? state, state, own, ctx.now()), keys: await stampKeys(ctx.fs, values, own.keys, ctx.now(), !own.seen || !own.keys) }
-  return { settings, state, values, times }
+  return { settings, state, values, times: { ...stamp(own.seen ?? state, state, own, ctx.now()), keys: await stampKeys(ctx.fs, values, own.keys, ctx.now(), !own.seen || !own.keys) } }
 }
 
 /**
- * What this device sends the others of its state: settings as a snapshot, the keys with their times, and the devices it knows; kept on this
- * device (`cloud` false), never its own Auto or brain chosen, which would turn the others' choice back. @param {Context} ctx
- * @param {Settings} settings @param {Partial<Settings>} state @param {Record<string, string>} values @param {Follows} times
+ * What changed here since this device last looked, settings and keys, stamped now and saved: the message that sends this device's state
+ * (settings as a snapshot, the keys with their times, and the devices it knows; kept on this device, `cloud` false, never its own Auto or
+ * brain chosen, which would turn the others' choice back), whether anything had changed, and when the newest change not yet sent was
+ * stamped, or, `marking`, a fresh mark, in the same turn, so that nothing stamped meanwhile is cleared unsent. Run as soon as settings or
+ * keys change, by the tabs that notice, over settings.json and the keys as they are. @param {Context} ctx @param {boolean} [marking]
  */
-async function messageOf(ctx, settings, state, values, times) {
-  const snapshot = snapshotOf(state, times)
-  if (settings.cloud === false) for (const name of ['auto', 'activeBrain']) delete snapshot.fields[name]
-  return { kind: 'settings', snapshot, keys: keysOut(values, times.keys), devices: await listOf(ctx.fs), store: await storeOf(ctx.fs) }
-}
-
-/**
- * What changed here since this device last looked, settings and keys, stamped now and saved: the message that sends this device's state,
- * whether anything had changed, and when the newest change not yet sent was stamped, or, `marking`, a fresh mark, in the same turn, so
- * that nothing stamped meanwhile is cleared unsent. Run as soon as settings or keys change, by the tabs that notice, over settings.json
- * and the keys as they are. @param {Context} ctx @param {boolean} [marking]
- */
-export const look = (ctx, marking = false) => locked(ctx, FOLLOWING, async () => {
-  const kept = await followsOf(ctx.fs)
+export const look = (ctx, marking = false) => follows(ctx, async (kept) => {
   const { settings, state, values, times } = await stamped(ctx, kept)
   const changed = changedFrom(times, kept)
   const pending = marking || changed ? fresh(ctx, kept) : kept.pending
   if (changed || marking || !kept.seen || !kept.keys) await keep(ctx.fs, { ...times, seen: state, pending })
-  return { value: await messageOf(ctx, settings, state, values, times), changed, pending }
+  const snapshot = snapshotOf(state, times)
+  if (settings.cloud === false) for (const name of ['auto', 'activeBrain']) delete snapshot.fields[name]
+  return { value: { kind: 'settings', snapshot, keys: keysOut(values, times.keys), devices: await listOf(ctx.fs), store: await storeOf(ctx.fs) }, changed, pending }
 })
 
 /**
@@ -376,11 +355,8 @@ export async function share(ctx, all = true, notices = true) {
     if (to && !(told && (notices || !posted.includes(id)) && await ctx.send(to, { kind: 'removed', erase, devices: value.devices }).then(() => { now.push(id); return false }, (/** @type {any} */ error) => error?.status === 404))) failed.push(to)
     else await forgive(ctx, id)
   }
-  await locked(ctx, FOLLOWING, async () => {
-    const kept = await followsOf(ctx.fs)
-    await keep(ctx.fs, { unreached: failed.map((one) => one.id), sentFor: pending, posted: [...new Set([...posted, ...now])].filter((id) => Object.hasOwn(kept.owe ?? {}, id)),
-      pending: told && kept.pending === pending ? undefined : kept.pending })
-  })
+  await follows(ctx, (kept) => keep(ctx.fs, { unreached: failed.map((one) => one.id), sentFor: pending, posted: [...new Set([...posted, ...now])].filter((id) => Object.hasOwn(kept.owe ?? {}, id)),
+    pending: told && kept.pending === pending ? undefined : kept.pending }))
   return failed
 }
 
@@ -392,8 +368,7 @@ export const unreached = async (fs, from) => ((await followsOf(fs)).unreached ??
  * and what came is saved with its times, never stamped or sent again. Whether something had changed here, which then goes on to the others.
  * @param {Context} ctx @param {Snapshot} snapshot @param {unknown} keys
  */
-export const settle = (ctx, snapshot, keys) => locked(ctx, FOLLOWING, async () => {
-  const kept = await followsOf(ctx.fs)
+export const settle = (ctx, snapshot, keys) => follows(ctx, async (kept) => {
   const limit = ctx.now() + SOON
   const round = async () => ((now) => ({ ...now, before: now.times, ...merged(now.settings, now.times, snapshot, limit) }))(await stamped(ctx, kept))
   let next = await round()
@@ -404,8 +379,7 @@ export const settle = (ctx, snapshot, keys) => locked(ctx, FOLLOWING, async () =
   if (patch.unlocked?.length === settings.unlocked.length) delete patch.unlocked
   if (Object.keys(patch).length) await ctx.change(patch)
   const after = /** @type {Settings} */ ({ ...settings, ...patch })
-  const again = await unkinded(ctx.fs, settings, after, ctx.policy, before.keys)
-  const stamps = { ...before.keys }
+  const [again, stamps] = [await unkinded(ctx.fs, settings, after, ctx.policy, before.keys), { ...before.keys }]
   const ours = await takeKeys(ctx.fs, keys, [settings, after], stamps, limit, ctx.policy, { ...times.brains, ...times.connections }) || again || changedFrom(before, kept)
   // Kept on this device, who answers is seen as stamped() holds it, so that letting messages go again stamps nothing kept meanwhile.
   const seen = { ...following(after), ...(after.cloud === false && { auto: state.auto, activeBrain: state.activeBrain }) }
@@ -414,17 +388,10 @@ export const settle = (ctx, snapshot, keys) => locked(ctx, FOLLOWING, async () =
 })
 
 /** Another device heard from at `at`, the relay's time of its message, never this device's clock, so that nothing it took is capped below it. @param {Context} ctx @param {number} at */
-const hear = (ctx, at) => locked(ctx, FOLLOWING, async () => {
-  if (at > ((await followsOf(ctx.fs)).heard ?? 0)) await keep(ctx.fs, { heard: at })
-})
+const hear = (ctx, at) => follows(ctx, async (kept) => { if (at > (kept.heard ?? 0)) await keep(ctx.fs, { heard: at }) })
 
 /** Whether nothing came from the others for a week, which asking them answers; asked, it waits another week, `heard` left as it is. @param {Context} ctx */
-export const quiet = (ctx) => locked(ctx, FOLLOWING, async () => {
-  const kept = await followsOf(ctx.fs)
-  if (ctx.now() - Math.max(kept.heard ?? 0, kept.asked ?? 0) <= WEEK) return false
-  await keep(ctx.fs, { asked: ctx.now() })
-  return true
-})
+export const quiet = (ctx) => follows(ctx, async (kept) => (ctx.now() - Math.max(kept.heard ?? 0, kept.asked ?? 0) <= WEEK ? false : keep(ctx.fs, { asked: ctx.now() }).then(() => true)))
 
 // ─── Pairing: the bundle, and B's new profile ────────────────────────────────
 
@@ -466,7 +433,8 @@ export async function adopt(fs, bundle, { settings, catalogue, me, now, secretOf
   // Your devices, and the Lock where the profile left beside it has one, so that the new one opens on it (adoptHere() in ./devices.js).
   const next = /** @type {Settings} */ ({ ...base, ...patch, unlocked: [...new Set([...(patch.unlocked ?? base.unlocked).filter((id) => base.unlocked.includes(id) || fits(id, catalogue)), 'devices', ...(lock ? ['lock'] : [])])] })
   await saveSettings(fs, next)
-  for (const id of [...base.brains.map((brain) => brain.id), ...(base.connections ?? []).map((connection) => connection.id), ...(base.unlocked.includes('machine') ? [BRIDGE] : [])]) {
+  // With the one secret the Computer's machine keeps for its bridge (caps/machine/machine.js).
+  for (const id of [...base.brains.map((brain) => brain.id), ...(base.connections ?? []).map((connection) => connection.id), ...(base.unlocked.includes('machine') ? ['computer-bridge'] : [])]) {
     const value = await secretOf(id)
     if (typeof value === 'string' && await getSecret(fs, id) !== value) await setSecret(fs, id, value)
   }
@@ -516,8 +484,8 @@ export async function untouched(fs) {
   // connection, and no lock: its vault holds first run's device slot alone.
   if (Object.entries(all.rules ?? {}).some(([kind, rule]) => rule !== (DEFAULT_RULES[kind] ?? 'ask')) || all.brains.some((/** @type {{ api: string }} */ one) => one.api !== 'device') || all.connections?.length
     || ['services', 'pages', 'meet', 'films', 'computer', 'forget', 'limit'].some((name) => set(all[name]) !== set(/** @type {Record<string, any>} */ (DEFAULT_SETTINGS)[name]))) return false
-  if ((await readJSON(fs, VAULT, {})).slots?.some((/** @type {{ kind: string }} */ slot) => slot.kind !== 'device')) return false
-  if (Object.keys(await readJSON(fs, '.secrets/keys.json', {})).some((id) => id !== SECRET && id !== DEVICES)) return false
+  if ((await readJSON(fs, VAULT, {})).slots?.some((/** @type {{ kind: string }} */ slot) => slot.kind !== 'device')
+    || Object.keys(await readJSON(fs, '.secrets/keys.json', {})).some((id) => id !== SECRET && id !== DEVICES)) return false
   // Paired, or once was: its devices still list it, and it may owe one its removal.
   const me = JSON.parse(await getSecret(fs, SECRET) ?? 'null')?.id
   if ((await listOf(fs)).some((one) => one.id !== me)) return false
@@ -550,11 +518,9 @@ export async function taskOf(fs, path) {
   if (parseFrontMatter(project).data.cloud === false) return 'kept'
   /** @type {Record<string, string>} */
   const files = {}
-  for (const { uri } of filesIn(text.split('\n').map(parsed).filter(Boolean))) {
-    for (const one of [uri, ...(/^files\/sha256-/.test(uri) ? ['.md', '.meta.json'].map((end) => uri.replace(/\.[^./]+$/, end)) : [])]) {
-      const bytes = inside(one) ? await fs.readBytes(`${dir}/${one}`) : null
-      if (bytes) files[one] = encode(bytes)
-    }
+  for (const one of filesIn(text.split('\n').map(parsed).filter(Boolean)).flatMap(({ uri }) => [uri, ...(/^files\/sha256-/.test(uri) ? ['.md', '.meta.json'].map((end) => uri.replace(/\.[^./]+$/, end)) : [])]).filter(inside)) {
+    const bytes = await fs.readBytes(`${dir}/${one}`)
+    if (bytes) files[one] = encode(bytes)
   }
   return { kind: 'task', project: { path: `${dir}/project.md`, text: project }, task: { path, text }, files }
 }
@@ -610,17 +576,13 @@ export async function receive(ctx, from, value, at = ctx.now()) {
   const kind = value?.kind
   // A list that changed this one goes on to the others with this device's state, as what changed here does, until every one has it; a
   // device it newly lists as removed is owed the removal by this one too, since that device may not know the one that removed it,
-  // owed before the list is written, so that a tab closed between leaves it owed.
-  const [records, list] = [kind === 'devices' ? value.records : value?.devices, await listOf(ctx.fs)]
-  const lists = ['devices', 'settings', 'removed'].includes(kind)
+  // owed before the list is written, so that a tab closed between leaves it owed; then the list it sent merged into this one's.
+  const [records, list, lists] = [kind === 'devices' ? value.records : value?.devices, await listOf(ctx.fs), ['devices', 'settings', 'removed'].includes(kind)]
   const next = lists && mergeLists(list, records, ctx.me.id, from.id)
   if (next) await mark(ctx, Object.fromEntries(next.filter((one) => one.removedAt && !list.find((held) => held.id === one.id)?.removedAt).map((one) => [one.id, Boolean(one.erase)])))
-  const changed = lists && await listed(ctx, records, from.id)
+  const changed = lists && await changeList(ctx.fs, (held) => mergeLists(held, records, ctx.me.id, from.id), ctx.lock)
   if (await (kind === 'settings' && settle(ctx, value.snapshot ?? {}, value.keys)) || changed) await share(ctx)
-  if (kind === 'ask') {
-    const { value: mine, changed, pending } = await look(ctx)
-    await (changed || pending ? share(ctx) : ctx.send(from, mine))
-  }
+  if (kind === 'ask') await look(ctx).then(({ value: mine, changed, pending }) => (changed || pending ? share(ctx) : ctx.send(from, mine)))
   if (kind === 'task') return ((arrived) => arrived && known(ctx, arrived.path).then(() => ({ arrived })))(await locked(ctx, ARRIVING, () => arrive(ctx.fs, value)))
   return kind === 'removed' ? { removed: { erase: value.erase === true } } : null
 }
@@ -665,7 +627,7 @@ export async function back(ctx, from, value) {
   // Owed again; marked only while what waits, the list removing it among it, hasn't reached every device it has, so it goes first.
   const [{ pending, unreached = [] }, had] = [await followsOf(ctx.fs), (await recordsOf(ctx.fs)).map((one) => one.id)]
   const owed = { [from.id]: Boolean(from.erase) }
-  await (pending || unreached.some((id) => had.includes(id)) ? mark(ctx, owed) : locked(ctx, FOLLOWING, async () => keep(ctx.fs, { owe: { ...(await followsOf(ctx.fs)).owe, ...owed } })))
+  await (pending || unreached.some((id) => had.includes(id)) ? mark(ctx, owed) : follows(ctx, (kept) => keep(ctx.fs, { owe: { ...kept.owe, ...owed } })))
   return true
 }
 
@@ -687,10 +649,8 @@ export const alone = (fs, by, now, as, lock) => locked({ lock }, LISTING, async 
   const [live, projects] = [(await recordsOf(fs)).filter((one) => one.id !== by).map((one) => one.id), (await fs.list('projects')).map(({ name }) => name)]
   // Those it has now, and, run again for the same removal, those it had then; removed as another identity since, only those it has
   // now. Under the times' own lock too, so that a share meanwhile never writes over them.
-  await locked({ lock }, FOLLOWING, async () => {
-    const kept = await followsOf(fs)
-    await keep(fs, { left: [...new Set([...(kept.leftAs === as ? kept.left ?? [] : []), ...live])], leftAs: as, had: [...new Set([...kept.had ?? [], ...projects])] })
-  })
+  await follows({ fs, lock }, (kept) => keep(fs, { left: [...new Set([...(kept.leftAs === as ? kept.left ?? [] : []), ...live])], leftAs: as,
+    had: [...new Set([...kept.had ?? [], ...projects])] }))
   // Its identity gone, the store's keys with it, and the others marked removed in one write, never one without the other. What it
   // knew of the store goes, but the versions Markdown merges from, so that joined again its words meet the others' (D721).
   const removedAt = new Date(now).toISOString()

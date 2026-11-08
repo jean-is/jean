@@ -13,8 +13,7 @@ const idOf = async (token) => base64url(new Uint8Array(await crypto.subtle.diges
 /** @typedef {{ seq: number, at: number, bytes: Uint8Array }} Message */
 
 /** Seconds a read waits on the relay for something to come; the longest pause after failures, in milliseconds. */
-const WAIT = 25
-const LONGEST = 60_000
+const [WAIT, LONGEST] = [25, 60_000]
 
 /** The relay's answer, or an Error with its status (404, 409, 413, 429, 507…) when it refuses. @param {string} url @param {RequestInit} [init] */
 async function ask(url, init) {
@@ -35,9 +34,7 @@ export async function mailbox() {
 }
 
 /** Opens a mailbox, or keeps it open; `once`, it takes one message, then refuses (409). @param {string} base @param {string} token @param {{ once?: boolean }} [options] */
-export async function open(base, token, { once = false } = {}) {
-  await ask(await addressOf(base, token), bearer(token, { method: 'PUT', ...(once && { body: '{"once":true}' }) }))
-}
+export const open = async (base, token, { once = false } = {}) => { await ask(await addressOf(base, token), bearer(token, { method: 'PUT', ...(once && { body: '{"once":true}' }) })) }
 
 /** Leaves bytes in a mailbox, and gives their number there. @param {string} base @param {string} id @param {Uint8Array} bytes @returns {Promise<number>} */
 export const send = async (base, id, bytes) => (await (await ask(`${base}v1/m/${id}`, { method: 'POST', body: /** @type {BodyInit} */ (bytes) })).json()).seq
@@ -59,9 +56,7 @@ export async function read(base, token, { after = 0, wait = 0, signal } = {}) {
 }
 
 /** Removes a mailbox and all it holds. @param {string} base @param {string} token */
-export async function remove(base, token) {
-  await ask(await addressOf(base, token), bearer(token, { method: 'DELETE' }))
-}
+export const remove = async (base, token) => { await ask(await addressOf(base, token), bearer(token, { method: 'DELETE' })) }
 
 /** The next message of a mailbox, and done() to tell the relay it was read. @typedef {(() => Promise<Uint8Array>) & { done: () => Promise<unknown> }} Reader */
 
@@ -104,15 +99,11 @@ export function reader(base, token, signal, clock) {
  *   quiet?: { peek: () => boolean, subscribe: (heard: (on: boolean) => void) => () => void } }} options
  */
 export function listen({ base, token, lock, onMessages, clock, lost = open, quiet }) {
-  const page = globalThis.document
-  const locks = globalThis.navigator?.locks
-  let stopped = false
-  let after = 0
-  /** This tab's reading, which Jean hidden, another tab taking the lock or stop() ends. @type {AbortController | undefined} */
-  let held
-  /** One reading at a time: the last one's batch handled before the next reads. */
-  let turn = Promise.resolve()
-  let wake = () => {}
+  const [page, locks] = [globalThis.document, globalThis.navigator?.locks]
+  /** Whether stop() ran, the number of the last message read, and this tab's reading, which Jean hidden, another tab taking the lock or stop() ends. */
+  let [stopped, after, held] = [false, 0, /** @type {AbortController | undefined} */ (undefined)]
+  /** One reading at a time, the last one's batch handled before the next reads; and what ends the pause under way, back online. */
+  let [turn, wake] = [Promise.resolve(), () => {}]
   /** @param {number} ms @param {AbortSignal} signal */
   const rest = (ms, signal) => new Promise((resolve) => {
     const done = () => { clearTimeout(timer); signal.removeEventListener('abort', done); resolve(undefined) }
@@ -150,16 +141,9 @@ export function listen({ base, token, lock, onMessages, clock, lost = open, quie
     if (locks) locks.request(lock, steal ? { steal: true } : { signal: mine.signal }, run).catch(() => { mine.abort(); if (held === mine) hold(false) })
     else run()
   }
-  const seen = () => (page?.visibilityState === 'hidden' ? held?.abort() : hold())
-  const online = () => wake()
+  const [seen, online] = [() => (page?.visibilityState === 'hidden' ? held?.abort() : hold()), () => wake()]
   page?.addEventListener('visibilitychange', seen)
   globalThis.addEventListener?.('online', online)
   const unquiet = quiet?.subscribe((on) => (on ? held?.abort() : hold())) ?? (hold(), undefined)
-  return () => {
-    stopped = true
-    unquiet?.()
-    held?.abort()
-    page?.removeEventListener('visibilitychange', seen)
-    globalThis.removeEventListener?.('online', online)
-  }
+  return () => { stopped = true; unquiet?.(); held?.abort(); page?.removeEventListener('visibilitychange', seen); globalThis.removeEventListener?.('online', online) }
 }

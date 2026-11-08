@@ -9,8 +9,7 @@ import { fingerprintOf, openBox, sealBox } from '../../ui/seal.js'
 
 /** A device's keys, as boxPair() gives them: the private half and the public one, both JWK. @typedef {{ key: JsonWebKey, public: JsonWebKey }} Pair */
 
-const encoder = new TextEncoder()
-const decoder = new TextDecoder()
+const [encoder, decoder] = [new TextEncoder(), new TextDecoder()]
 /** @type {(message: string) => never} */
 const refuse = (message) => { throw new Error(message) }
 /** Whether a text is base64url this long, written the one way its bytes are. @param {unknown} text @param {number} length */
@@ -23,8 +22,7 @@ const commitOf = async (nonce) => base64url(await digestOf(bytesOf(nonce)))
 async function publicOf(key) {
   if (key?.kty !== 'EC' || key.crv !== 'P-256' || !exact(key.x, 43) || !exact(key.y, 43) || 'd' in key) refuse('This isn’t a device’s public key.')
   const only = { kty: 'EC', crv: 'P-256', x: key.x, y: key.y }
-  await fingerprintOf(only).catch(() => refuse('This isn’t a device’s public key.'))
-  return only
+  return fingerprintOf(only).then(() => only, () => refuse('This isn’t a device’s public key.'))
 }
 
 // ─── The link and the pairing mailbox ────────────────────────────────────────
@@ -119,8 +117,7 @@ function digitOf(char) {
 /** Whether what the person typed is the code, in any script's digits, spaces and dashes aside, compared without stopping early. @param {string} typed @param {string} code */
 export function sameCode(typed, code) {
   const digits = [...typed.replace(/[\s-]/g, '')]
-  if (digits.length !== code.length || !digits.every((char) => /\p{Nd}/u.test(char))) return false
-  return digits.reduce((differ, char, i) => differ | (digitOf(char) ^ (code.charCodeAt(i) - 48)), 0) === 0
+  return digits.length === code.length && digits.every((char) => /\p{Nd}/u.test(char)) && digits.reduce((differ, char, i) => differ | (digitOf(char) ^ (code.charCodeAt(i) - 48)), 0) === 0
 }
 
 // ─── Envelopes, once paired ──────────────────────────────────────────────────

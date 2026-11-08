@@ -49,11 +49,9 @@ import { SECRET, STORE, LIMIT, ULID, PROFILE, deviceName, recordOf, recordFor, r
  *   answers?: import('../../ui/relay.js').Reader, agree?: () => void, leave?: () => Promise<unknown> }} Flow
  */
 
-export const adding = signal(/** @type {Adding} */ ({ step: 'idle' }))
-export const joining = signal(/** @type {Joining} */ ({ step: 'idle' }))
+export const [adding, joining] = [signal(/** @type {Adding} */ ({ step: 'idle' })), signal(/** @type {Joining} */ ({ step: 'idle' }))]
 /** The devices this profile knows, this one among them, and this one's id, '' until it has one. */
-export const devices = signal(/** @type {Device[]} */ ([]))
-export const own = signal('')
+export const [devices, own] = [signal(/** @type {Device[]} */ ([])), signal('')]
 /** Whether this device holds a store it can use, and how the store stands, once its rounds started (./store.js). */
 export const stored = signal(false)
 const kept = signal(/** @type {typeof import('./store.js').state | null} */ (null))
@@ -165,11 +163,8 @@ async function heard(ctx, messages) {
     // A device the last share didn't reach writes: what waits goes to it now.
     if (await unreached(app.fs, from.id)) later(ctx)
     if (done && 'removed' in done) removals.push({ ...done.removed, by: from.id })
-    if (done && 'arrived' in done) {
-      const { path, title } = done.arrived
-      await Promise.all([refreshProjects(), refreshConversations()])
-      notify(t('devices.from', { device: from.name, title: title || t('conversation.untitled') }), { label: t('devices.openTask'), run: () => openTask(path) })
-    }
+    if (done && 'arrived' in done) await Promise.all([refreshProjects(), refreshConversations()])
+      .then(() => notify(t('devices.from', { device: from.name, title: done.arrived.title || t('conversation.untitled') }), { label: t('devices.openTask'), run: () => openTask(done.arrived.path) }))
   }
   if (removals.length) return removed(await firstOf(app.fs, removals), ctx.me.id)
   await again(ctx)
@@ -269,8 +264,7 @@ export async function start() {
     one.boxes.push(pairing.token, answers.token)
     await Promise.all([open(base, pairing.token, { once: true }), open(base, answers.token)])
     // The desktop app's 127.0.0.1 is no address another device reaches, and its web copy's isn't known: the link is pasted there.
-    const address = (await host) ? '' : location.origin + location.pathname
-    const fpA = await fingerprintOf(me.public)
+    const [address, fpA] = [(await host) ? '' : location.origin + location.pathname, await fingerprintOf(me.public)]
     adding.value = { step: 'waiting', link: linkOf(address, s, fpA), address }
     const hello = await openHello(s, await reader(base, pairing.token, one.controller.signal, clocked)())
     const nonce = await sealNonce(s, { key: me.public, mailbox: answers.id })
@@ -308,15 +302,14 @@ export async function confirm(typed) {
   const { me, hello } = one
   adding.value = { step: 'sending', name: hello.name }
   try {
-    const ctx = await contextOf(me)
-    const you = recordFor({ id: ulid(), public: hello.key, mailbox: hello.mailbox }, hello.name, now(), me.id)
+    const [ctx, you] = [await contextOf(me), recordFor({ id: ulid(), public: hello.key, mailbox: hello.mailbox }, hello.name, now(), me.id)]
     const kept = JSON.parse(await app.fs.read(VAULT) ?? '{}')
     const bundle = await bundleOf(ctx, { dir: here(), name: kept.name ?? '', ...(kept.colour && { colour: kept.colour }) }, you)
     await send(relayOf(), hello.mailbox, await envelope(me, hello.key, bundle))
     // B shows what came and asks before it opens it: only then is it one of this profile's devices, which B waits to hear before it
     // makes anything. Then every device has the list, B too, whose mailbox, read in order, holds it before anything a device removed
     // meanwhile may send; one that didn't take it gets it again (share()).
-    const joined = await answerOf(one.answers, me, hello.key)
+    const joined = await nextFrom(one.answers, me, hello.key, (value) => value?.kind === 'joined' || value?.kind === 'left')
     if (joined.kind !== 'joined') throw Object.assign(new Error('The other device didn’t open it.'), { reason: 'gone' })
     if ((await identity(false))?.id !== me.id) throw new Error('This device was removed meanwhile.')
     await writeRecord(app.fs, you, locked)
@@ -334,11 +327,15 @@ export async function confirm(typed) {
   return true
 }
 
-/** What B said of the bundle, from B's key alone: opened, with its store token's SHA-256, or left. @param {import('../../ui/relay.js').Reader} next @param {Identity} me @param {JsonWebKey} key B's */
-async function answerOf(next, me, key) {
+/**
+ * The next message from this key alone that `take` keeps, or throws on: what B said of the bundle (opened, with its store token's
+ * SHA-256, or left), or what A sent. @param {import('../../ui/relay.js').Reader} next @param {Identity} me @param {JsonWebKey} key
+ * @param {(value: any) => boolean} take @returns {Promise<any>}
+ */
+async function nextFrom(next, me, key, take) {
   for (;;) {
     const value = (await openEnvelope(me, [key], await next()).catch(() => null))?.value
-    if (value?.kind === 'joined' || value?.kind === 'left') return value
+    if (take(value)) return value
   }
 }
 
@@ -350,8 +347,7 @@ async function answerOf(next, me, key) {
  * @param {string | { s: Uint8Array, fpA: string } | null} link a link, or what parseLink() gave
  */
 export async function join(link) {
-  const got = typeof link === 'string' ? parseLink(link) : link
-  const base = relayOf()
+  const [got, base] = [typeof link === 'string' ? parseLink(link) : link, relayOf()]
   const reason = !got ? 'link' : child ? 'child' : !base || app.policy.signIn ? 'relay' : !app.whole ? 'storage' : null
   if (!got || reason) { cancel(); joining.value = { step: 'failed', reason: reason ?? 'link' }; return }
   const one = begin()
@@ -369,13 +365,10 @@ export async function join(link) {
     await send(base, nonce.mailbox, await sealReveal(got.s, hello.nB))
     joining.value = { step: 'code', code: await codeOf({ s: got.s, fpA: got.fpA, keyB: me.public, mailboxB: me.mailbox, nA: nonce.nA, nB: hello.nB }) }
     /** The next message of this kind from A's key alone; A's refusal ends the pairing. @param {string} kind @returns {Promise<any>} */
-    const fromA = async (kind) => {
-      for (;;) {
-        const value = (await openEnvelope(me, [nonce.key], await next()).catch(() => null))?.value
-        if (value?.kind === 'refused') throw Object.assign(new Error('The other device stopped adding this one.'), { reason: value.reason === 'gone' ? 'gone' : 'tries' })
-        if (value?.kind === kind && (kind !== 'bundle' || ULID.test(value.you))) return value
-      }
-    }
+    const fromA = (kind) => nextFrom(next, me, nonce.key, (value) => {
+      if (value?.kind === 'refused') throw Object.assign(new Error('The other device stopped adding this one.'), { reason: value.reason === 'gone' ? 'gone' : 'tries' })
+      return value?.kind === kind && (kind !== 'bundle' || ULID.test(value.you))
+    })
     const bundle = await fromA('bundle')
     // From here, A hears whether its bundle was opened: left, when the person cancels or it can't be taken.
     one.leave = async () => send(base, nonce.mailbox, await envelope(me, nonce.key, { kind: 'left' }))
@@ -383,10 +376,7 @@ export async function join(link) {
     await next.done()
     const from = (Array.isArray(bundle.devices) ? bundle.devices : []).map(recordOf).find((/** @type {Device | null} */ record) => record && sameKey(record.key, nonce.key))
     joining.value = { step: 'trust', profile: bundle.profile.name || BRAND.name, device: from?.name ?? '' }
-    await new Promise((resolve, reject) => {
-      one.agree = () => resolve(undefined)
-      one.controller.signal.addEventListener('abort', () => reject(one.controller.signal.reason), { once: true })
-    })
+    await new Promise((resolve, reject) => { one.agree = () => resolve(undefined); one.controller.signal.addEventListener('abort', () => reject(one.controller.signal.reason), { once: true }) })
     // A told, which keeps B, then says so: only then is anything made here. Gone meanwhile (Cancel there, its tab closed), B goes on
     // waiting, and says so, until the person cancels here.
     joining.value = { step: 'waiting' }
@@ -543,10 +533,7 @@ if (offered()) {
   // Back online, or in sight again, what waits goes.
   addEventListener('online', () => noticed(true).catch(warn))
   document.addEventListener('visibilitychange', () => document.visibilityState === 'visible' && noticed(true).catch(warn))
-  effect(() => {
-    void app.settings.value
-    noticed().catch(warn)
-  })
+  effect(() => { void app.settings.value; noticed().catch(warn) })
   refresh()
   listening().catch(warn)
 }
