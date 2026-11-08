@@ -137,7 +137,7 @@ export function where(item, keep) {
 const picked = signal('')
 /** The language menu: of those offered, the browser's languages first, in its order, then the others. */
 function languageOptions() {
-  const option = (/** @type {string} */ code) => html`<option value=${code} lang=${code} dir=${dir(code)} ?selected=${code === (picked.value || locale.value)}>${languageName(code)}</option>`
+  const option = (/** @type {string} */ code) => html`<option value=${code} lang=${code} dir=${dir(code)} translate="no" ?selected=${code === (picked.value || locale.value)}>${languageName(code)}</option>`
   const yours = preferredLocales(offeredLocales(), navigator.languages)
   if (!yours.length) return offeredLocales().map(option)
   return html`<optgroup label=${t('settings.languagesYours')}>${yours.map(option)}</optgroup>

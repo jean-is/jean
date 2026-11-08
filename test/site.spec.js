@@ -56,6 +56,20 @@ for (const [name, page] of await sitePages()) {
   }
 }
 
+test('a page the browser translates into a language it has comes in that language’s own words instead, and from there into another (D723)', async ({ page }) => {
+  // As Chrome marks a page it translates: the language it translates into, and its direction.
+  const translate = (/** @type {string} */ lang, /** @type {string} */ dir) => page.evaluate(([lang, dir]) => { document.documentElement.classList.add(`translated-${dir}`); document.documentElement.lang = lang }, [lang, dir])
+  await page.goto(`${JEAN_IS}watch`)
+  await translate('ar', 'rtl')
+  await expect.poll(() => new URL(page.url()).pathname).toBe('/ar/watch')
+  await page.waitForLoadState()
+  await expect(page.locator('html')).toHaveAttribute('dir', 'rtl')
+  await expect(page.locator('html')).not.toHaveClass(/translated/)
+  await translate('ja', 'ltr')
+  await expect.poll(() => new URL(page.url()).pathname).toBe('/ja/watch')
+  await expect(page.locator('html')).toHaveAttribute('lang', 'ja')
+})
+
 test.describe('in a Korean browser', () => {
   test.use({ locale: 'ko-KR' })
 

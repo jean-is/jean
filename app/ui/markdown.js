@@ -73,7 +73,7 @@ function block(token) {
   switch (token.type) {
     case 'heading': return heading(token.depth, inline(token.tokens))
     case 'paragraph': return html`<p>${inline(token.tokens)}</p>`
-    case 'code': return opening(token) ? nothing : token.lang === 'math' ? formula({ text: token.text, block: true }) : /^(la)?tex$/i.test(token.lang) ? latex(token) : widget(token) ?? html`<pre dir="ltr" tabindex="0"><code>${token.text}</code></pre>`
+    case 'code': return opening(token) ? nothing : token.lang === 'math' ? formula({ text: token.text, block: true }) : /^(la)?tex$/i.test(token.lang) ? latex(token) : widget(token) ?? html`<pre dir="ltr" tabindex="0" translate="no"><code>${token.text}</code></pre>`
     case 'blockquote': return shape(token) ?? html`<blockquote>${blocks(token.tokens)}</blockquote>`
     case 'list': return shape(token) ?? list(token)
     case 'table': return shape(token) ?? table(token)
@@ -136,7 +136,7 @@ export function inline(tokens = []) {
       case 'strong': return html`<strong>${inline(token.tokens)}</strong>`
       case 'em': return html`<em>${inline(token.tokens)}</em>`
       case 'del': return html`<del>${inline(token.tokens)}</del>`
-      case 'codespan': return html`<code>${decode(token.text)}</code>`
+      case 'codespan': return html`<code translate="no">${decode(token.text)}</code>`
       case 'br': return html`<br>`
       case 'link': return safeHref(token.href)
         ? html`<a href=${token.href} target="_blank" rel="noopener noreferrer">${inline(token.tokens)}</a>`

@@ -16,7 +16,7 @@ import { join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { dir, languageName, preferredLocales } from '../app/core/i18n.js'
 import { icons as GLYPHS } from '../app/ui/menu-icons.js'
-import { yoursFirst } from '../app/ui/yours.js'
+import { untranslated, yoursFirst } from '../app/ui/yours.js'
 import { xml } from '../scripts/desktop.js'
 import { SHARE, cardOf } from '../scripts/manifest.js'
 import { ownSite } from '../scripts/seo.js'
@@ -296,7 +296,8 @@ export const pictureOf = (kit) => (kit.base !== null && ownSite(kit.base, kit.br
 function written (page, kit, root, sheet) {
   // The homepage is a part of the app, whose router owns the address: a link to a heading would lead nowhere there.
   if (page.document) return page.document(kit, page.main(kit))
-  const main = anchored(page.main(kit), kit.say('anchor'))
+  // Code and addresses stay as written when the browser translates the rest.
+  const main = anchored(page.main(kit), kit.say('anchor')).replaceAll('<code>', '<code translate="no">')
   const up = kit.site('')
   const { script, hash } = themeFor(root, up === './' ? '' : up)
   // What it runs after the foot: its menu of languages' script, then its own.
@@ -345,7 +346,7 @@ function top (kit, page) {
   const link = (/** @type {string} */ code) => /* html */ `href="${kit.site(page.addresses[code])}" hreflang="${code}"${code === kit.lang ? ' aria-current="page"' : ''}`
   return /* html */ `<a class="site-skip" href="#main">${kit.say('skip')}</a>
 <header class="site-top">
-  <a class="wordmark" href="${kit.start}">${WAVE}<span dir="ltr">${xml(kit.brand.name)}</span></a>${kit.has('for') ? /* html */ `<span class="site-for">${kit.say('for')}</span>` : ''}
+  <a class="wordmark" href="${kit.start}">${WAVE}<span dir="ltr" translate="no">${xml(kit.brand.name)}</span></a>${kit.has('for') ? /* html */ `<span class="site-for">${kit.say('for')}</span>` : ''}
   ${languageMenu(kit, kit.languages, link)}
   <a class="button" href="${kit.start}">${kit.say('open')}</a>
 </header>`
@@ -359,14 +360,21 @@ function top (kit, page) {
  * @param {Kit} kit @param {string[]} codes  in order @param {(code: string) => string} link  its link's attributes, its address first, aria-current on the one in use
  */
 export function languageMenu (kit, codes, link) {
-  return /* html */ `<div class="site-languages"><button type="button" popovertarget="site-languages">${ICONS.language}<span class="visually-hidden">${kit.app('settings.language')} </span><span lang="${kit.lang}" dir="${kit.dir}">${xml(languageName(kit.lang))}</span>${ICONS.down}</button>
-    <div id="site-languages" class="menu" popover><ul>${codes.map((code) => /* html */ `
+  return /* html */ `<div class="site-languages"><button type="button" popovertarget="site-languages">${ICONS.language}<span class="visually-hidden">${kit.app('settings.language')} </span><span lang="${kit.lang}" dir="${kit.dir}" translate="no">${xml(languageName(kit.lang))}</span>${ICONS.down}</button>
+    <div id="site-languages" class="menu" translate="no" popover><ul>${codes.map((code) => /* html */ `
       <li><a ${link(code)} lang="${code}"><span dir="${dir(code)}">${xml(languageName(code))}</span>${ICONS.check}</a></li>`).join('')}
     </ul></div></div>`
 }
 
-/** What every page runs for its menu of languages: the reader's first, by the app's own functions as they are written (ui/yours.js). */
-export const MENU = `(() => {\n${preferredLocales}\n${yoursFirst}\nfor (const list of document.querySelectorAll('#site-languages > ul')) yoursFirst(list, navigator.languages)\n})()`
+/**
+ * What every page runs for its menu of languages, by the app's own functions as they are written (ui/yours.js): the
+ * reader's first, and the page in a language it has, from its link, once the browser translates it into that language.
+ */
+export const MENU = `(() => {\n${preferredLocales}\n${yoursFirst}\n${untranslated}
+for (const list of document.querySelectorAll('#site-languages > ul')) yoursFirst(list, navigator.languages)
+const links = [...document.querySelectorAll('#site-languages a[hreflang]')], own = document.documentElement.lang
+untranslated(() => links.map((link) => link.hreflang), () => own, (code) => location.replace(links.find((link) => link.hreflang === code).href))
+})()`
 
 /**
  * The foot every page ends with, the same on each: the name, what Jean is and where it's made, with the homepage's

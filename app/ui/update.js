@@ -5,9 +5,10 @@
 // the new one is drawn as it was, and nothing moves (D138). A page not used yet, the one tab of
 // Jean, lets it in on its own, as a reload asks for the newest. A capability turned off, here or in
 // another tab, goes the same way, since its module can't be unloaded either (D433), and so does a
-// tab whose version another tab let a new one replace. Loaded after the first paint.
+// tab whose version another tab let a new one replace, and one the browser translates into a language Jean has, in it
+// (D723), since the browser's words replace the text Jean's elements write to. Loaded after the first paint.
 import { effect } from '@preact/signals-core'
-import { app, chipLabel, decisionsHere } from './state.js'
+import { app, chipLabel, decisionsHere, effective, offeredLocales, setLocale } from './state.js'
 import { BRAND } from '../brand.js'
 import { shown } from './creations.js'
 import { titleOf } from '../core/events.js'
@@ -16,6 +17,7 @@ import { loaded } from './caps.js'
 import { LOOKS } from './looks.js'
 import { scriptURL } from './trusted.js'
 import { settle, working } from './curtain.js'
+import { untranslated } from './yours.js'
 // Its toast, and every other, swiped aside.
 import './swipe.js'
 
@@ -28,6 +30,8 @@ let updating = false, touched = false
 for (const type of ['pointerdown', 'keydown']) addEventListener(type, () => { touched = true }, { capture: true, once: true, passive: true })
 // A capability turned off is denied as the page begins (ui/app.js), so one loaded here was turned off since.
 effect(() => { if (!updating && !working() && app.settings.value.off?.some((id) => loaded.peek().has(id))) { updating = true; leave() } })
+// Not where the language can't change or be kept (policy's, a page without storage): the page would come back translated.
+untranslated(() => (app.ephemeral.peek() || effective.peek().locked.has('locale') ? [] : offeredLocales()), () => locale.peek(), (code) => setLocale(code).then(() => effect(() => { if (!updating && !working()) { updating = true; leave() } })))
 
 // The window's title says what the page is: search, Creations, a task's name, or the first screen's; Settings says its section (ui/dialogs.js).
 const home = document.title, first = locale.peek()

@@ -239,7 +239,7 @@ export const choices = (title, ...groups) => html`<button type="button" class="b
   ${groups.filter((rows) => rows.length).map((rows) => html`<hr><ul>${rows}</ul>`)}`
 
 /** One choice: picked, it applies at once and the menu stays on its page (D153). @param {boolean} current @param {() => unknown} pick @param {unknown} label @param {string} [lang] */
-const choice = (current, pick, label, lang) => html`<li><button type="button" lang=${lang ?? nothing} aria-current=${current ? 'true' : 'false'}
+const choice = (current, pick, label, lang) => html`<li><button type="button" lang=${lang ?? nothing} translate=${lang ? 'no' : nothing} aria-current=${current ? 'true' : 'false'}
   @click=${pick}>${lang ? html`<span dir=${dir(lang)}>${label}</span>` : label}${current ? icons.check : nothing}</button></li>`
 
 /** The languages offered, the browser's first, each in its own words. */

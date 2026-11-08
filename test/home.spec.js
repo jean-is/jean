@@ -233,6 +233,26 @@ test('one tile is active at all times, the filter’s mark slides to its choice,
   }
 })
 
+test('translated by the browser into a language Jean has, the app speaks it itself, on a new page, and into one it lacks, it stays translated (D723)', async ({ page, browserName }) => {
+  test.skip(browserName === 'webkit', 'Playwright’s WebKit keeps no setting over a reload, so Jean leaves the page translated there')
+  // As Chrome marks a page it translates: the language it translates into, and its direction.
+  const translate = (/** @type {string} */ lang, /** @type {string} */ dir) => page.evaluate(([lang, dir]) => { document.documentElement.classList.add(`translated-${dir}`); document.documentElement.lang = lang }, [lang, dir])
+  await page.goto(`${JEAN_IS}ja`)
+  await expect(shown(page, 'ja')).toBeVisible()
+  await page.evaluate(() => { /** @type {any} */ (window).stayed = true })
+  // Punjabi, which Jean lacks: the browser's words, on the same page.
+  await translate('pa', 'ltr')
+  await expect(page.locator('html')).toHaveAttribute('lang', 'pa')
+  await translate('ar', 'rtl')
+  await expect(shown(page, 'ar')).toBeVisible()
+  await expect(page.locator('html')).toHaveAttribute('dir', 'rtl')
+  await expect(page.locator('html')).not.toHaveClass(/translated/)
+  await expect.poll(() => new URL(page.url()).pathname).toBe('/ar')
+  expect(await page.evaluate(() => /** @type {any} */ (window).stayed)).toBeUndefined()
+  // Kept, as the person's own pick would be.
+  expect(await page.evaluate(async () => JSON.parse(await (await import('/ui/state.js')).app.fs.read('settings.json') ?? '{}').locale)).toBe('ar')
+})
+
 test.describe('in a Japanese browser', () => {
   test.use({ locale: 'ja-JP' })
 

@@ -38,7 +38,7 @@ class Shell extends Element {
         <button class="icon-button sidebar-toggle" @click=${toggleSidebar} aria-expanded=${app.wide.value ? String(open) : nothing} aria-keyshortcuts=${SHORTCUTS.sidebar}
           aria-label=${t(open ? 'sidebar.close' : 'sidebar.open')}>${icons.sidebar}</button>
         ${loaded.value.has('projects') ? html`<app-projects></app-projects>`
-          : html`<button class="wordmark" @click=${() => turnPage(newConversation)} title=${t('action.new')} aria-keyshortcuts=${SHORTCUTS.new}><app-persona></app-persona><span dir=${/[\u0590-\u08FF]/.test(assistantName()) ? 'rtl' : 'ltr'}>${assistantName()}</span></button>`}
+          : html`<button class="wordmark" @click=${() => turnPage(newConversation)} title=${t('action.new')} aria-keyshortcuts=${SHORTCUTS.new}><app-persona></app-persona><span dir=${/[\u0590-\u08FF]/.test(assistantName()) ? 'rtl' : 'ltr'} translate="no">${assistantName()}</span></button>`}
         ${findButton()}${open ? nothing : views}
       </header>
       ${open ? html`<app-inbox role="complementary" aria-label=${t('history.title')}></app-inbox>${views}` : nothing}
