@@ -1,0 +1,49 @@
+{
+  "title": "{name} sur tous vos appareils : téléphone, tablette, autre ordinateur",
+  "description": "Ajoutez votre téléphone ou un autre ordinateur avec un QR code et six chiffres : cerveaux, réglages, tâches et fichiers suivent, scellés pour eux seuls.",
+  "h1": "Utiliser {name} sur tous vos appareils",
+  "works": "Tous les navigateurs",
+  "answer": "Ouvrez {settings} › {devices} et appuyez sur {add}. Sur l’autre appareil, scannez le code ou ouvrez le lien affiché, puis tapez sur le premier appareil les six chiffres que l’autre affiche. Vos cerveaux, vos réglages et vos projets y arrivent, et vos tâches et vos fichiers suivent, scellés pour que seuls vos appareils puissent les ouvrir.",
+  "steps.title": "Ajouter un appareil",
+  "steps": [
+    "Sur l’appareil que vous utilisez déjà, ouvrez {settings}, depuis le menu à votre nom (ou « Vous »), au pied de la liste des tâches, puis {devices}. Pas encore là ? Activez {devices} dans {settings} › {capabilities}.",
+    "Appuyez sur {add}. Un QR code et un lien s’affichent.",
+    "Sur le nouvel appareil, visez le code avec l’appareil photo, ou ouvrez-y le lien, puis appuyez sur {bring}. Sur le premier écran de {name}, là-bas, vous pouvez aussi appuyer sur {bring}, coller le lien et appuyer sur {join}.",
+    "Le nouvel appareil affiche alors six chiffres. Tapez-les sur le premier appareil : ils partent dès le sixième, et vous avez trois essais. Si un verrou protège {name} sur cet appareil, déverrouillez d’abord.",
+    "De retour sur le nouvel appareil, vérifiez le nom et l’appareil d’origine sous {yours}, puis appuyez sur {mine}. Votre {name} s’y ouvre, et le premier appareil indique que l’ajout est fait."
+  ],
+  "good": [
+    "Ce qui suit : vos cerveaux avec leurs clés, les clés de vos connexions et de vos services de recherche, vos réglages et vos projets. Vos tâches, fichiers, documents, mémoire, compétences et routines suivent aussi, en quelques secondes pendant que {name} tourne sur les deux appareils. Ensuite, une modification faite sur l’un arrive sur les autres un instant plus tard.",
+    "Si la page {devices} indique qu’une tâche reste là où vous l’avez faite, envoyez-la depuis le menu ⋮ de la tâche, avec « Envoyer à » et le nom de l’appareil.",
+    "Chaque appareil garde son propre thème, son dossier synchronisé, ses cerveaux téléchargés, ses connexions aux services et son verrou ; un projet que vous gardez sur un appareil y reste.",
+    "Tout passe scellé d’un appareil à l’autre, pour que seuls vos appareils puissent le lire. Vos appareils partagent 1 Go ; la page {devices} montre la place utilisée, et une fois tout plein, ce qui est nouveau reste sur l’appareil où il a été fait.",
+    "Sur un iPhone ou un iPad, le lien ouvert dans Safari propose d’abord d’ajouter {name} à l’écran d’accueil, qui garde ses fichiers à part de ceux de Safari : faites l’ajout, ouvrez l’icône depuis l’écran d’accueil et collez le lien dans la zone de saisie, ou appuyez sur {safari}.",
+    "L’application de bureau n’affiche pas de QR code : copiez son lien et ouvrez-le sur l’autre appareil.",
+    "Si le nouvel appareil a déjà {name}, ouvrez-y {devices}, appuyez sur {other} et collez le lien ; ce qu’il contenait y reste, dans un profil à part.",
+    "Pour retirer un appareil, perdu ou plus utilisé, appuyez sur {remove} sur sa carte dans {devices}. La case {erase} est cochée d’office : l’appareil est vidé de {name} à sa prochaine ouverture, et dans tous les cas il ne reçoit plus rien dès maintenant. Viennent ensuite les clés qu’il peut encore détenir, à remplacer chacune là où vous l’avez créée, et les sites qu’il pourrait encore modifier, à protéger chacun par un nouveau code de récupération.",
+    "Pas dans le profil d’un enfant, ni dans une copie de {name} où votre organisation vous connecte."
+  ],
+  "fixes": [
+    [
+      "Le lien a déjà servi",
+      "Un lien ajoute un seul appareil. Sur le premier, appuyez de nouveau sur {add} pour en avoir un nouveau."
+    ],
+    [
+      "Les chiffres ne correspondent pas",
+      "Tapez sur le premier appareil les six chiffres que montre le nouveau. Après trois essais erronés, l’ajout s’arrête, par sécurité : recommencez avec {add}."
+    ],
+    [
+      "Le nouvel appareil ne peut pas garder les fichiers de {name}",
+      "C’est une fenêtre privée. Ouvrez le lien dans une fenêtre ordinaire."
+    ],
+    [
+      "Un appareil n’a pas été vu depuis deux semaines",
+      "Il n’a pas ouvert {name} depuis. Si vous ne l’utilisez plus, retirez-le dans {devices}."
+    ],
+    [
+      "{yours} montre un nom que vous ne connaissez pas",
+      "Appuyez sur {stop}. Ne dites oui que si vous venez vous-même d’appuyer sur {add} sur votre autre appareil."
+    ]
+  ],
+  "ask": "Lesquels de mes appareils ont mes affaires, et comment ajouter mon téléphone ?"
+}

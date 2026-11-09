@@ -86,7 +86,7 @@ test('an article leads to the one before it and the one after it in its moment, 
   await page.goto(`${JEAN_IS}help/my-tasks-are-gone`)
   await expect(page.getByRole('navigation', { name: 'Fix a problem, 4 of 4' }).getByRole('link')).toHaveText(['PreviousYour plan stopped answering'])
   await page.goto(`${JEAN_IS}help/what-jean-can-do`)
-  await expect(page.getByRole('navigation', { name: 'Go further, 1 of 2' }).getByRole('link')).toHaveText(['NextHow skills work'])
+  await expect(page.getByRole('navigation', { name: 'Go further, 1 of 4' }).getByRole('link')).toHaveText(['NextSend a task to someone'])
   await page.goto(`${JEAN_IS}fr/aide/votre-premiere-tache`)
   await expect(page.getByRole('navigation', { name: 'Commencer, 2 sur 4' }).getByRole('link')).toHaveText(['PrécédentQu’est-ce que Jean ?', 'SuivantJean est-il gratuit ?'])
 })

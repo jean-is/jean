@@ -1,0 +1,44 @@
+{
+  "title": "Send a task to someone who uses {name}, and get their answer back",
+  "description": "Add a person once, side by side or with a link and six digits, then send them a task or what {name} made, sealed so that only they can open it.",
+  "h1": "Send a task to someone",
+  "works": "Every browser",
+  "answer": "Add the person once in {settings} › {people}, side by side or with a link and six digits. Then, in {shareMenu}, choose {only} and send them a task or what {name} made: only they can open it, and their answer comes back into the same task.",
+  "steps.title": "Add a person, then send",
+  "steps": [
+    "Open {settings}, from the menu with your name (or “You”), at the foot of the task list, then {people}. Not there yet? Turn {people} on in {settings} › {capabilities}, or say in a task that you’d like to send something to someone.",
+    "Press {add} and type their name under {who}. Side by side, press {side}: they point their phone’s camera at the code, which works while it stays on your screen. Apart, press {apart} and send them the link the way you send them anything else: it works for a week.",
+    "On their side, {name} asks {from}: they type your name and press {accept}. Their screen then shows six digits, which they show you, or send back the way the link came.",
+    "Type those six digits on your screen and press {confirm}. You have three tries. If you closed {name} meanwhile, the digits are asked for under {invitations} when you open it again.",
+    "To send a task, press {shareMenu}, at the top of the task or in its ⋮ menu; under something {name} made, it is beside {copy}. Under {whoCan}, choose {only}, then the person.",
+    "Turn on {reading} to send the files {name} read too, add a note under {words} if you like, check what goes and its size, and press {send}. They have a week to open it."
+  ],
+  "good": [
+    "What you send comes to them as a card above the conversation, on each of their devices, with {open} and {notNow}. Opened, it is a task of theirs that says it is from you: your requests stay yours, never theirs, and {name} asks them before sending anything out from it.",
+    "To answer, they choose “Send back to” and your name, in that task’s ⋮ menu: only what they added goes. Their answer comes to you as a card; {takeIn} adds it to the task you sent, after a line from them.",
+    "Only people added this way can be sent anything, and only they can open it: the six digits make sure the person is who you think. Each shows by the name you gave them, beside the name they give themselves; {rename} changes yours.",
+    "To remove someone, press {remove} beside their name in {people}. What they sent you stays yours.",
+    "The people you added follow you on your other devices. If you remove one of your devices, they get your new key by themselves; anyone marked “To meet again” is added again with the six digits.",
+    "At work, you may find your colleagues in {people} with {find}, then {keep}. For someone not there yet, press {inviteMail}: your own mail app opens with an email to them. Your organisation may also add people from its list alone; {add} then isn’t there.",
+    "Not in a child’s profile. To work on the same thing at once rather than send a copy, see {together}."
+  ],
+  "fixes": [
+    [
+      "The digits don’t match",
+      "Type the six digits shown on their screen, not on yours. After three wrong tries it stops, to be safe: start again with {add}."
+    ],
+    [
+      "It’s too large to send",
+      "Up to 25 MB goes at once. Turn off {reading}, or send one part."
+    ],
+    [
+      "The invitation was already used, or ran out",
+      "A link adds one person, for a week. Press {add} for a new one."
+    ],
+    [
+      "You can’t choose them yet",
+      "They haven’t answered yet. Once they do, you can send them things."
+    ]
+  ],
+  "ask": "Who can I send this task to, and how do I add someone?"
+}

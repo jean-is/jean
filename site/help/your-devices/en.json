@@ -1,0 +1,49 @@
+{
+  "title": "Use {name} on all your devices: phone, tablet, another computer",
+  "description": "Add your phone or another computer with a QR code and six digits: your brains, settings, tasks and files follow, sealed so only your devices read them.",
+  "h1": "Use {name} on all your devices",
+  "works": "Every browser",
+  "answer": "Open {settings} › {devices} and press {add}. On the other device, scan the code or open the link it shows, then type on the first device the six digits the other one shows. Your brains, settings and projects go there, and your tasks and files follow, sealed so that only your devices can open them.",
+  "steps.title": "Add a device",
+  "steps": [
+    "On the device you already use, open {settings}, from the menu with your name (or “You”), at the foot of the task list, then {devices}. Not there yet? Turn {devices} on in {settings} › {capabilities}.",
+    "Press {add}. It shows a QR code and a link.",
+    "On the new device, point its camera at the code, or open the link there, then press {bring}. On {name}’s first screen there, you can also press {bring}, paste the link and press {join}.",
+    "The new device then shows six digits. Type them on the first device: they go as you type the sixth, and you have three tries. If {name} has a lock there, it asks you to unlock it first.",
+    "Back on the new device, check the name and the device it came from, under {yours}, then press {mine}. Your {name} opens there, and the first device says it is added."
+  ],
+  "good": [
+    "What follows: your brains with their keys, the keys of your connections and search services, your settings and your projects. Your tasks, files, documents, memory, skills and routines follow too, within seconds while {name} runs on both. After that, a change made on one reaches the others a moment later.",
+    "If {devices} says a task stays where you did it, send one over from the task’s ⋮ menu, with “Send to” and the device’s name.",
+    "Each device keeps its own theme, synced folder, downloaded brains, sign-ins to services and lock; a project you keep on one device stays there.",
+    "Everything goes sealed from one device to another, so that only your devices can read it. Your devices share 1 GB; {devices} shows how much is used, and once it is full, what is new stays on the device it was made on.",
+    "On an iPhone or iPad, the link opened in Safari first offers to add {name} to the Home Screen, which keeps its files apart from Safari’s: add it, open it from the Home Screen and paste the link in its box, or press {safari}.",
+    "The desktop app shows no QR code: copy its link and open it on the other device.",
+    "If the new device already has {name}, open {devices} there, press {other} and paste the link; what it held stays there, in a profile of its own.",
+    "To remove a device, lost or no longer used, press {remove} on its card in {devices}. {erase} is ticked: the device is emptied of {name} the next time it opens, and either way it gets nothing more from now on. Then come the keys it may still hold, to replace each where you made it, and the sites it could still change, each to protect with a new recovery code.",
+    "Not in a child’s profile, nor in a copy of {name} that your organisation signs you in to."
+  ],
+  "fixes": [
+    [
+      "The link was already used",
+      "A link adds one device. On the first device, press {add} again for a new one."
+    ],
+    [
+      "The digits don’t match",
+      "Type on the first device the six digits the new one shows. After three wrong tries, adding stops, to be safe: start again with {add}."
+    ],
+    [
+      "The new device can’t keep {name}’s files",
+      "It is a private window. Open the link in an ordinary window."
+    ],
+    [
+      "A device hasn’t been seen for two weeks",
+      "It hasn’t opened {name} since. If you no longer use it, remove it in {devices}."
+    ],
+    [
+      "{yours} shows a name you don’t know",
+      "Press {stop}. Only say yes if you just pressed {add} yourself on your other device."
+    ]
+  ],
+  "ask": "Which of my devices have my things, and how do I add my phone?"
+}
