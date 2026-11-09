@@ -14,6 +14,7 @@
   "together.copyLink": "Copiați linkul",
   "together.people": "Persoane din această colecție",
   "together.peopleTask": "Persoane din această sarcină",
+  "together.peopleDoc": "Persoane din acest document",
   "together.here": "Aici acum: {names}",
   "together.you": "(dvs.)",
   "together.hereNow": "Aici acum",
@@ -40,5 +41,18 @@
   "together.noPlace": "Lucrul împreună la ceva nu este disponibil aici.",
   "together.inside": "Organizația dvs. adaugă persoane din lista sa. Cereți o invitație pe nume.",
   "together.gone": "Acest link nu mai deschide nimic. Cereți unul nou celui care l-a trimis.",
-  "together.waiting": "Cererea dvs. urmează după răspunsul pentru {name}."
+  "together.waiting": "Cererea dvs. urmează după răspunsul pentru {name}.",
+  "together.ask": "Întrebați asistentul {name} al acestei persoane",
+  "together.what": "Ce să răspundă asistentul persoanei {name}?",
+  "together.send": "Trimiteți",
+  "together.sentAsk": "Întrebarea a fost trimisă. Persoana decide dacă răspunde propriul asistent.",
+  "together.asked": "{person} întreabă asistentul dvs. {name}:",
+  "together.letAnswer": "Lăsați {name} să răspundă",
+  "together.relayed": "{person} întreabă: {text}",
+  "together.mine": "Doar pe dispozitivele mele",
+  "together.mineSays": "Rămâne la fel pe fiecare dintre dispozitivele dvs. pe măsură ce se schimbă, fără link și fără nimeni altcineva.",
+  "together.peopleDeck": "Persoane din aceste slide-uri",
+  "together.peopleProject": "Persoane din acest proiect",
+  "together.project": "Lucrați împreună la acest proiect",
+  "together.projectSays": "Documentele, colecțiile, slide-urile, designurile și fișierele lui rămân la fel pentru toți cei din proiect. Sarcinile fiecărei persoane și ce reține {name} pentru ea rămân doar ale ei."
 }

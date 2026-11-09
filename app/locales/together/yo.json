@@ -14,6 +14,7 @@
   "together.copyLink": "Da ìjápọ̀ kọ",
   "together.people": "Àwọn ènìyàn nínú àkójọpọ̀ yìí",
   "together.peopleTask": "Àwọn ènìyàn nínú iṣẹ́ yìí",
+  "together.peopleDoc": "Àwọn ènìyàn nínú ìwé yìí",
   "together.here": "Níbí báyìí: {names}",
   "together.you": "(ẹ̀yin)",
   "together.hereNow": "Níbí báyìí",
@@ -40,5 +41,18 @@
   "together.noPlace": "Ṣíṣiṣẹ́ papọ̀ kò ṣeé ṣe níbí.",
   "together.inside": "Àjọ yín máa ń ṣàfikún àwọn èèyàn láti inú àkọsílẹ̀ rẹ̀. Ẹ béèrè kí wọ́n pè yín pẹ̀lú orúkọ yín.",
   "together.gone": "Ìjápọ̀ yìí kò ṣí nǹkankan mọ́. Ẹ béèrè tuntun lọ́wọ́ ẹni tó fi ránṣẹ́.",
-  "together.waiting": "Ìbéèrè yín yóò tẹ̀lé ìdáhùn tí a ń fún {name}."
+  "together.waiting": "Ìbéèrè yín yóò tẹ̀lé ìdáhùn tí a ń fún {name}.",
+  "together.ask": "Béèrè lọ́wọ́ {name} tiwọn",
+  "together.what": "Kí ni kí olùrànlọ́wọ́ {name} dáhùn?",
+  "together.send": "Fi ránṣẹ́",
+  "together.sentAsk": "A ti fi ìbéèrè ránṣẹ́. Àwọn ni yóò pinnu bóyá olùrànlọ́wọ́ tiwọn yóò dáhùn.",
+  "together.asked": "{person} ń béèrè lọ́wọ́ {name} yín:",
+  "together.letAnswer": "Jẹ́ kí {name} dáhùn",
+  "together.relayed": "{person} ń béèrè: {text}",
+  "together.mine": "Lórí àwọn ẹ̀rọ mi nìkan",
+  "together.mineSays": "Àyípadà kọ̀ọ̀kan máa ń dé gbogbo ẹ̀rọ yín, láìsí ìjápọ̀ àti láìsí ẹlòmíràn.",
+  "together.peopleDeck": "Àwọn ènìyàn nínú síláìdì yìí",
+  "together.peopleProject": "Àwọn ènìyàn nínú iṣẹ́ àkànṣe yìí",
+  "together.project": "Ṣiṣẹ́ papọ̀ lórí iṣẹ́ àkànṣe yìí",
+  "together.projectSays": "Àwọn ìwé rẹ̀, àwọn àkójọpọ̀ rẹ̀, síláìdì, àwọn àwòṣe àti àwọn fáìlì rẹ̀ máa ń jẹ́ bákan náà fún gbogbo ẹni tó wà nínú rẹ̀. Àwọn iṣẹ́ ẹnìkọ̀ọ̀kan, àti ohun tí {name} ń rántí fún wọn, máa ń jẹ́ tiwọn."
 }

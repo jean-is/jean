@@ -14,6 +14,7 @@
   "together.copyLink": "링크 복사",
   "together.people": "이 컬렉션의 사람들",
   "together.peopleTask": "이 작업의 사람들",
+  "together.peopleDoc": "이 문서의 사람들",
   "together.here": "지금 여기 있는 사람: {names}",
   "together.you": "(나)",
   "together.hereNow": "지금 여기 있음",
@@ -40,5 +41,18 @@
   "together.noPlace": "여기서는 함께 작업하기를 쓸 수 없어요.",
   "together.inside": "조직에서는 조직 목록에서 사람을 추가해요. 이름으로 초대해 달라고 요청하세요.",
   "together.gone": "이 링크로는 더 이상 아무것도 열 수 없어요. 보낸 사람에게 새 링크를 요청하세요.",
-  "together.waiting": "{name}에게 답변을 마치면 내 요청 차례예요."
+  "together.waiting": "{name}에게 답변을 마치면 내 요청 차례예요.",
+  "together.ask": "이 사람의 {name}에게 묻기",
+  "together.what": "{name}의 어시스턴트가 뭐라고 답하면 될까요?",
+  "together.send": "보내기",
+  "together.sentAsk": "질문을 보냈어요. 자기 어시스턴트가 답할지는 상대방이 정해요.",
+  "together.asked": "{person}이(가) 내 {name}에게 물었어요:",
+  "together.letAnswer": "{name}에게 답변 맡기기",
+  "together.relayed": "{person}의 질문: {text}",
+  "together.mine": "내 기기에서만",
+  "together.mineSays": "바뀔 때마다 내 모든 기기에서 똑같이 유지돼요. 링크도, 다른 사람도 없어요.",
+  "together.peopleDeck": "이 슬라이드의 사람들",
+  "together.peopleProject": "이 프로젝트의 사람들",
+  "together.project": "이 프로젝트를 함께 작업하기",
+  "together.projectSays": "문서, 컬렉션, 슬라이드, 디자인, 파일은 참여한 모두에게 똑같이 유지돼요. 각자의 작업과 {name}이(가) 그 사람을 위해 기억하는 내용은 각자의 것으로 남아요."
 }

@@ -14,6 +14,7 @@
   "together.copyLink": "Link másolása",
   "together.people": "Személyek ebben a gyűjteményben",
   "together.peopleTask": "Személyek ebben a feladatban",
+  "together.peopleDoc": "Személyek ebben a dokumentumban",
   "together.here": "Most itt: {names}",
   "together.you": "(te)",
   "together.hereNow": "Most itt",
@@ -40,5 +41,18 @@
   "together.noPlace": "Itt nem lehet közösen dolgozni semmin.",
   "together.inside": "A szervezeted a saját listájáról ad hozzá személyeket. Kérd, hogy név szerint hívjanak meg.",
   "together.gone": "Ez a link már nem nyit meg semmit. Kérj újat attól, aki küldte.",
-  "together.waiting": "A kérésed azután következik, hogy {name} megkapta a választ."
+  "together.waiting": "A kérésed azután következik, hogy {name} megkapta a választ.",
+  "together.ask": "Kérdés az ő {name} asszisztenséhez",
+  "together.what": "Mit válaszoljon {name} asszisztense?",
+  "together.send": "Küldés",
+  "together.sentAsk": "Kérdés elküldve. Ő dönti el, hogy a saját asszisztense válaszol-e.",
+  "together.asked": "{person} kérdezi a(z) {name} asszisztensedet:",
+  "together.letAnswer": "Hadd válaszoljon a(z) {name}",
+  "together.relayed": "{person} kérdezi: {text}",
+  "together.mine": "Csak a saját eszközeimen",
+  "together.mineSays": "Minden módosítás eljut az összes eszközödre, link nélkül, és senki máshoz nem.",
+  "together.peopleDeck": "Személyek ezekben a diákban",
+  "together.peopleProject": "Személyek ebben a projektben",
+  "together.project": "Közös munka ezen a projekten",
+  "together.projectSays": "Dokumentumai, gyűjteményei, diái, tervei és fájljai mindenkinek ugyanazok, aki benne van. Mindenki feladatai, és amit a(z) {name} neki megjegyez, csak az övéi maradnak."
 }

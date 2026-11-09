@@ -14,6 +14,7 @@
   "together.copyLink": "複製連結",
   "together.people": "此合集中的人",
   "together.peopleTask": "此任務中的人",
+  "together.peopleDoc": "此文件中的人",
   "together.here": "正在這裡：{names}",
   "together.you": "（你）",
   "together.hereNow": "正在這裡",
@@ -40,5 +41,18 @@
   "together.noPlace": "這裡無法一起協作。",
   "together.inside": "你的組織從其名單中新增人員。請對方依名字邀請你。",
   "together.gone": "這個連結已無法開啟任何內容。請向傳送者索取新連結。",
-  "together.waiting": "你的請求會排在給 {name} 的回答之後。"
+  "together.waiting": "你的請求會排在給 {name} 的回答之後。",
+  "together.ask": "問對方的 {name}",
+  "together.what": "{name} 的助理應該回答什麼？",
+  "together.send": "傳送",
+  "together.sentAsk": "問題已傳送。由對方決定是否讓自己的助理回答。",
+  "together.asked": "{person} 向你的 {name} 提問：",
+  "together.letAnswer": "讓 {name} 回答",
+  "together.relayed": "{person} 問：{text}",
+  "together.mine": "僅在我的裝置上",
+  "together.mineSays": "每次修改後，你的每台裝置都保持一致，不需要連結，也不涉及其他人。",
+  "together.peopleDeck": "此投影片中的人",
+  "together.peopleProject": "此專案中的人",
+  "together.project": "在此專案中一起協作",
+  "together.projectSays": "其中的文件、合集、投影片、設計和檔案對專案裡的每個人都保持一致。每個人的任務，以及 {name} 為其記住的內容，仍歸各自所有。"
 }

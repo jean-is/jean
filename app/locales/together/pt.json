@@ -14,6 +14,7 @@
   "together.copyLink": "Copiar ligação",
   "together.people": "Pessoas nesta coleção",
   "together.peopleTask": "Pessoas nesta tarefa",
+  "together.peopleDoc": "Pessoas neste documento",
   "together.here": "Aqui agora: {names}",
   "together.you": "(tu)",
   "together.hereNow": "Aqui agora",
@@ -40,5 +41,18 @@
   "together.noPlace": "Aqui não é possível trabalhar em conjunto.",
   "together.inside": "A tua organização adiciona pessoas a partir da lista dela. Pede que te convidem pelo nome.",
   "together.gone": "Esta ligação já não abre nada. Pede uma nova a quem ta enviou.",
-  "together.waiting": "O teu pedido segue depois da resposta a {name}."
+  "together.waiting": "O teu pedido segue depois da resposta a {name}.",
+  "together.ask": "Perguntar ao seu assistente {name}",
+  "together.what": "O que deve responder o assistente de {name}?",
+  "together.send": "Enviar",
+  "together.sentAsk": "Pergunta enviada. Essa pessoa decide se o seu próprio assistente responde.",
+  "together.asked": "{person} pergunta ao teu assistente {name}:",
+  "together.letAnswer": "Deixar {name} responder",
+  "together.relayed": "{person} pergunta: {text}",
+  "together.mine": "Só nos meus dispositivos",
+  "together.mineSays": "Mantém-se igual em cada um dos teus dispositivos à medida que muda, sem ligação e sem mais ninguém.",
+  "together.peopleDeck": "Pessoas nestes diapositivos",
+  "together.peopleProject": "Pessoas neste projeto",
+  "together.project": "Trabalhar em conjunto neste projeto",
+  "together.projectSays": "Os seus documentos, coleções, diapositivos, designs e ficheiros mantêm-se iguais para todas as pessoas do projeto. As tarefas de cada pessoa, e o que {name} memoriza para ela, pertencem só a ela."
 }

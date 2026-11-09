@@ -14,6 +14,7 @@
   "together.copyLink": "Salin pautan",
   "together.people": "Orang dalam koleksi ini",
   "together.peopleTask": "Orang dalam tugasan ini",
+  "together.peopleDoc": "Orang dalam dokumen ini",
   "together.here": "Ada di sini: {names}",
   "together.you": "(anda)",
   "together.hereNow": "Ada di sini",
@@ -40,5 +41,18 @@
   "together.noPlace": "Mengerjakan sesuatu bersama tidak tersedia di sini.",
   "together.inside": "Organisasi anda menambah orang daripada senarainya. Minta dijemput mengikut nama.",
   "together.gone": "Pautan ini tidak lagi membuka apa-apa. Minta pautan baharu daripada orang yang menghantarnya.",
-  "together.waiting": "Permintaan anda menyusul selepas jawapan untuk {name}."
+  "together.waiting": "Permintaan anda menyusul selepas jawapan untuk {name}.",
+  "together.ask": "Tanya {name} miliknya",
+  "together.what": "Apakah yang patut dijawab oleh pembantu {name}?",
+  "together.send": "Hantar",
+  "together.sentAsk": "Soalan dihantar. Dia yang memutuskan sama ada pembantunya sendiri akan menjawab.",
+  "together.asked": "{person} bertanya kepada {name} anda:",
+  "together.letAnswer": "Biar {name} menjawab",
+  "together.relayed": "{person} bertanya: {text}",
+  "together.mine": "Hanya pada peranti saya",
+  "together.mineSays": "Setiap perubahan sampai ke setiap peranti anda, tanpa pautan dan tanpa orang lain.",
+  "together.peopleDeck": "Orang dalam slaid ini",
+  "together.peopleProject": "Orang dalam projek ini",
+  "together.project": "Kerjakan projek ini bersama",
+  "together.projectSays": "Dokumen, koleksi, slaid, reka bentuk dan failnya kekal sama bagi semua orang di dalamnya. Tugasan setiap orang, dan apa yang diingati {name} untuk mereka, kekal milik masing-masing."
 }

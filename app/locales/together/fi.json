@@ -14,6 +14,7 @@
   "together.copyLink": "Kopioi linkki",
   "together.people": "Tämän kokoelman ihmiset",
   "together.peopleTask": "Tämän tehtävän ihmiset",
+  "together.peopleDoc": "Tämän asiakirjan ihmiset",
   "together.here": "Paikalla nyt: {names}",
   "together.you": "(sinä)",
   "together.hereNow": "Paikalla nyt",
@@ -40,5 +41,18 @@
   "together.noPlace": "Yhteistyö ei ole käytettävissä täällä.",
   "together.inside": "Organisaatiosi lisää henkilöt omasta luettelostaan. Pyydä, että sinut kutsutaan nimellä.",
   "together.gone": "Tämä linkki ei enää avaa mitään. Pyydä lähettäjältä uusi.",
-  "together.waiting": "Pyyntösi on vuorossa, kun {name} on saanut vastauksen."
+  "together.waiting": "Pyyntösi on vuorossa, kun {name} on saanut vastauksen.",
+  "together.ask": "Kysy hänen {name}-avustajaltaan",
+  "together.what": "Mitä henkilön {name} avustajan pitäisi vastata?",
+  "together.send": "Lähetä",
+  "together.sentAsk": "Kysymys lähetetty. Hän päättää, vastaako hänen oma avustajansa.",
+  "together.asked": "{person} kysyy {name}-avustajaltasi:",
+  "together.letAnswer": "Anna {name}-avustajan vastata",
+  "together.relayed": "{person} kysyy: {text}",
+  "together.mine": "Vain omilla laitteillani",
+  "together.mineSays": "Pysyy samana jokaisella laitteellasi sitä mukaa kuin se muuttuu, ilman linkkiä ja ilman muita.",
+  "together.peopleDeck": "Näiden diojen ihmiset",
+  "together.peopleProject": "Tämän projektin ihmiset",
+  "together.project": "Työstä tätä projektia yhdessä",
+  "together.projectSays": "Sen asiakirjat, kokoelmat, diat, suunnitelmat ja tiedostot pysyvät samoina kaikille projektissa mukana oleville. Jokaisen tehtävät ja se, mitä {name} muistaa hänen puolestaan, pysyvät hänen ominaan."
 }

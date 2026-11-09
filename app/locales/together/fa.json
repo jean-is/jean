@@ -14,6 +14,7 @@
   "together.copyLink": "رونوشت پیوند",
   "together.people": "افراد این مجموعه",
   "together.peopleTask": "افراد این کار",
+  "together.peopleDoc": "افراد این سند",
   "together.here": "الان اینجا: {names}",
   "together.you": "(شما)",
   "together.hereNow": "الان اینجا",
@@ -40,5 +41,18 @@
   "together.noPlace": "همکاری اینجا در دسترس نیست.",
   "together.inside": "سازمان شما افراد را از فهرست خودش اضافه می‌کند. بخواهید که با نامتان دعوتتان کنند.",
   "together.gone": "این پیوند دیگر چیزی را باز نمی‌کند. از کسی که آن را فرستاده، پیوند تازه‌ای بخواهید.",
-  "together.waiting": "نوبت درخواست شما بعد از پاسخ به {name} می‌رسد."
+  "together.waiting": "نوبت درخواست شما بعد از پاسخ به {name} می‌رسد.",
+  "together.ask": "پرسیدن از {name} این شخص",
+  "together.what": "دستیار {name} چه پاسخی بدهد؟",
+  "together.send": "ارسال",
+  "together.sentAsk": "پرسش فرستاده شد. خودش تصمیم می‌گیرد که دستیار خودش پاسخ بدهد یا نه.",
+  "together.asked": "{person} از {name} شما می‌پرسد:",
+  "together.letAnswer": "بگذارید {name} پاسخ دهد",
+  "together.relayed": "{person} می‌پرسد: {text}",
+  "together.mine": "فقط روی دستگاه‌های من",
+  "together.mineSays": "هر تغییر به همهٔ دستگاه‌های شما می‌رسد، بدون پیوند و بدون هیچ کس دیگر.",
+  "together.peopleDeck": "افراد این اسلایدها",
+  "together.peopleProject": "افراد این پروژه",
+  "together.project": "همکاری روی این پروژه",
+  "together.projectSays": "سندها، مجموعه‌ها، اسلایدها، طرح‌ها و فایل‌های آن برای همهٔ افراد پروژه یکسان می‌ماند. کارهای هر کس، و آنچه {name} برایش به خاطر می‌سپارد، مال خودش می‌ماند."
 }

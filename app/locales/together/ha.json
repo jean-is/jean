@@ -14,6 +14,7 @@
   "together.copyLink": "Kwafi hanyar haɗi",
   "together.people": "Mutanen da ke cikin wannan kundi",
   "together.peopleTask": "Mutanen da ke cikin wannan ɗawainiya",
+  "together.peopleDoc": "Mutanen da ke cikin wannan takarda",
   "together.here": "A nan yanzu: {names}",
   "together.you": "(kai)",
   "together.hereNow": "A nan yanzu",
@@ -40,5 +41,18 @@
   "together.noPlace": "Ba a iya yin aiki tare a nan.",
   "together.inside": "Ƙungiyarka tana ƙara mutane ne daga jerinta. Roƙi a gayyace ka da sunanka.",
   "together.gone": "Wannan hanyar haɗin ba ta buɗe komai kuma. Roƙi sabuwa daga wanda ya aiko ta.",
-  "together.waiting": "Buƙatarka za ta zo bayan amsar da ake bai wa {name}."
+  "together.waiting": "Buƙatarka za ta zo bayan amsar da ake bai wa {name}.",
+  "together.ask": "Tambayi mataimakinsu, {name}",
+  "together.what": "Me mataimakin {name} zai amsa?",
+  "together.send": "Aika",
+  "together.sentAsk": "An aika tambayar. Su ne za su yanke shawara ko mataimakinsu zai amsa.",
+  "together.asked": "{person} na tambayar mataimakinka, {name}:",
+  "together.letAnswer": "Bar amsar ga {name}",
+  "together.relayed": "{person} na tambaya: {text}",
+  "together.mine": "A na’urorina kawai",
+  "together.mineSays": "Kowane canji na isa ga kowace na’urarka, ba tare da hanyar haɗi ba, ba kuma tare da wani ba.",
+  "together.peopleDeck": "Mutanen da ke cikin waɗannan silaidi",
+  "together.peopleProject": "Mutanen da ke cikin wannan aiki",
+  "together.project": "Yi aiki tare a kan wannan aikin",
+  "together.projectSays": "Takardunsa, kundayensa, silaidinsa, zane-zanensa da fayilolinsa suna zama iri ɗaya ga kowa da ke cikinsa. Ɗawainiyoyin kowane mutum, da abin da {name} ke tunawa dominsu, suna zama nasu."
 }

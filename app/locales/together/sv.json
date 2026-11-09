@@ -14,6 +14,7 @@
   "together.copyLink": "Kopiera länk",
   "together.people": "Personer i den här samlingen",
   "together.peopleTask": "Personer i den här uppgiften",
+  "together.peopleDoc": "Personer i det här dokumentet",
   "together.here": "Här nu: {names}",
   "together.you": "(du)",
   "together.hereNow": "Här nu",
@@ -40,5 +41,18 @@
   "together.noPlace": "Det går inte att arbeta tillsammans på något här.",
   "together.inside": "Din organisation lägger till personer från sin lista. Be om att bli inbjuden med namn.",
   "together.gone": "Den här länken öppnar inte längre något. Be den som skickade den om en ny.",
-  "together.waiting": "Din förfrågan kommer efter svaret till {name}."
+  "together.waiting": "Din förfrågan kommer efter svaret till {name}.",
+  "together.ask": "Fråga personens {name}",
+  "together.what": "Vad ska assistenten hos {name} svara?",
+  "together.send": "Skicka",
+  "together.sentAsk": "Frågan är skickad. Personen avgör själv om den egna assistenten svarar.",
+  "together.asked": "{person} frågar din assistent {name}:",
+  "together.letAnswer": "Låt {name} svara",
+  "together.relayed": "{person} frågar: {text}",
+  "together.mine": "Bara på mina enheter",
+  "together.mineSays": "Varje ändring når var och en av dina enheter, utan länk och utan någon annan.",
+  "together.peopleDeck": "Personer i det här bildspelet",
+  "together.peopleProject": "Personer i det här projektet",
+  "together.project": "Arbeta tillsammans i det här projektet",
+  "together.projectSays": "Dess dokument, samlingar, bildspel, designer och filer är desamma för alla i projektet. Varje persons uppgifter, och det {name} minns åt personen, förblir personens egna."
 }

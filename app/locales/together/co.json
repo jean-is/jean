@@ -14,6 +14,7 @@
   "together.copyLink": "Cupià u ligame",
   "together.people": "E persone di sta cullezzione",
   "together.peopleTask": "E persone di stu compitu",
+  "together.peopleDoc": "E persone di stu ducumentu",
   "together.here": "Quì avà : {names}",
   "together.you": "(voi)",
   "together.hereNow": "Quì avà",
@@ -40,5 +41,18 @@
   "together.noPlace": "Travaglià inseme ùn hè micca dispunibule quì.",
   "together.inside": "A vostra urganizazione aghjusta e persone da a so lista. Dumandate ch’omu vi inviti pè u vostru nome.",
   "together.gone": "Stu ligame ùn apre più nunda. Dumandatene unu novu à quellu chì l’hà mandatu.",
-  "together.waiting": "A vostra dumanda vene dopu à a risposta à {name}."
+  "together.waiting": "A vostra dumanda vene dopu à a risposta à {name}.",
+  "together.ask": "Dumandà à u so assistente {name}",
+  "together.what": "Chì deve risponde l’assistente di {name} ?",
+  "together.send": "Mandà",
+  "together.sentAsk": "Dumanda mandata. Sta persona decide s’ellu risponde u so propiu assistente.",
+  "together.asked": "{person} dumanda à u vostru assistente {name} :",
+  "together.letAnswer": "Lascià risponde {name}",
+  "together.relayed": "{person} dumanda : {text}",
+  "together.mine": "Solu nant’à i mo apparechji",
+  "together.mineSays": "Ogni cambiamentu ghjunghje nant’à ognunu di i vostri apparechji, senza ligame è senza nimu altru.",
+  "together.peopleDeck": "E persone di ste diapò",
+  "together.peopleProject": "E persone di stu prughjettu",
+  "together.project": "Travaglià inseme nant’à stu prughjettu",
+  "together.projectSays": "I so ducumenti, cullezzioni, diapò, visuali è schedarii fermanu listessi per tutti in u prughjettu. I compiti di ognunu, è ciò chì {name} tene à mente per ognunu, fermanu i soi."
 }

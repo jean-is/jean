@@ -14,6 +14,7 @@
   "together.copyLink": "Link kopiëren",
   "together.people": "Mensen in deze verzameling",
   "together.peopleTask": "Mensen in deze taak",
+  "together.peopleDoc": "Mensen in dit document",
   "together.here": "Nu hier: {names}",
   "together.you": "(jij)",
   "together.hereNow": "Nu hier",
@@ -40,5 +41,18 @@
   "together.noPlace": "Samen aan iets werken kan hier niet.",
   "together.inside": "Je organisatie voegt mensen toe vanuit haar lijst. Vraag of je op naam wordt uitgenodigd.",
   "together.gone": "Deze link opent niets meer. Vraag wie hem stuurde om een nieuwe.",
-  "together.waiting": "Je vraag is aan de beurt zodra {name} antwoord heeft gekregen."
+  "together.waiting": "Je vraag is aan de beurt zodra {name} antwoord heeft gekregen.",
+  "together.ask": "Vragen aan {name} van deze persoon",
+  "together.what": "Wat moet de assistent van {name} antwoorden?",
+  "together.send": "Versturen",
+  "together.sentAsk": "Vraag verstuurd. Die persoon beslist zelf of de eigen assistent antwoordt.",
+  "together.asked": "{person} vraagt je {name}:",
+  "together.letAnswer": "{name} laten antwoorden",
+  "together.relayed": "{person} vraagt: {text}",
+  "together.mine": "Alleen op mijn apparaten",
+  "together.mineSays": "Blijft bij elke wijziging gelijk op elk van je apparaten, zonder link en zonder iemand anders.",
+  "together.peopleDeck": "Mensen in deze dia’s",
+  "together.peopleProject": "Mensen in dit project",
+  "together.project": "Samen aan dit project werken",
+  "together.projectSays": "De documenten, verzamelingen, dia’s, ontwerpen en bestanden van het project blijven voor iedereen erin gelijk. Ieders taken, en wat {name} voor ieder onthoudt, blijven persoonlijk."
 }

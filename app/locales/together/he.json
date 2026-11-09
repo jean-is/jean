@@ -14,6 +14,7 @@
   "together.copyLink": "העתקת הקישור",
   "together.people": "אנשים באוסף הזה",
   "together.peopleTask": "אנשים במשימה הזו",
+  "together.peopleDoc": "אנשים במסמך הזה",
   "together.here": "כאן עכשיו: {names}",
   "together.you": "(אני)",
   "together.hereNow": "כאן עכשיו",
@@ -40,5 +41,18 @@
   "together.noPlace": "עבודה משותפת לא זמינה כאן.",
   "together.inside": "הארגון שלך מוסיף אנשים מהרשימה שלו. אפשר לבקש הזמנה לפי שם.",
   "together.gone": "הקישור הזה כבר לא פותח כלום. אפשר לבקש קישור חדש ממי ששלח אותו.",
-  "together.waiting": "הבקשה שלך תבוא אחרי התשובה ל־{name}."
+  "together.waiting": "הבקשה שלך תבוא אחרי התשובה ל־{name}.",
+  "together.ask": "שאלה ל־{name} של האדם הזה",
+  "together.what": "מה העוזר של {name} צריך לענות?",
+  "together.send": "שליחה",
+  "together.sentAsk": "השאלה נשלחה. ההחלטה אם לתת לעוזר לענות נשארת בידי מי שנשאל.",
+  "together.asked": "שאלה מ־{person} ל־{name} שלך:",
+  "together.letAnswer": "לתת ל־{name} לענות",
+  "together.relayed": "שאלה מ־{person}: {text}",
+  "together.mine": "רק במכשירים שלי",
+  "together.mineSays": "כל שינוי מגיע לכל אחד מהמכשירים שלך, בלי קישור ובלי אף אחד אחר.",
+  "together.peopleDeck": "אנשים בשקופיות האלה",
+  "together.peopleProject": "אנשים בפרויקט הזה",
+  "together.project": "עבודה משותפת על הפרויקט הזה",
+  "together.projectSays": "המסמכים, האוספים, השקופיות, העיצובים והקבצים שלו נשארים זהים לכל מי שבפרויקט. המשימות של כל אחד, ומה שנשמר בזיכרון של {name} עבורו, נשארים שלו."
 }

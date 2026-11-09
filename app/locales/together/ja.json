@@ -14,6 +14,7 @@
   "together.copyLink": "リンクをコピー",
   "together.people": "このコレクションの参加者",
   "together.peopleTask": "このタスクの参加者",
+  "together.peopleDoc": "このドキュメントの参加者",
   "together.here": "いま開いている人：{names}",
   "together.you": "（あなた）",
   "together.hereNow": "いま開いている",
@@ -40,5 +41,18 @@
   "together.noPlace": "ここでは一緒に作業する機能を使えません。",
   "together.inside": "組織では、人は組織のリストから追加します。名前で招待してもらうよう頼んでください。",
   "together.gone": "このリンクではもう何も開けません。送ってくれた人に新しいリンクを頼んでください。",
-  "together.waiting": "{name} への回答が終わると、あなたの依頼の番です。"
+  "together.waiting": "{name} への回答が終わると、あなたの依頼の番です。",
+  "together.ask": "この人の {name} に聞く",
+  "together.what": "{name} のアシスタントは何と答えればよいですか？",
+  "together.send": "送信",
+  "together.sentAsk": "質問を送りました。自分のアシスタントに答えさせるかは、相手が決めます。",
+  "together.asked": "{person} からあなたの {name} への質問：",
+  "together.letAnswer": "{name} に答えてもらう",
+  "together.relayed": "{person} からの質問：{text}",
+  "together.mine": "自分の端末だけ",
+  "together.mineSays": "変更するたびに、あなたのどの端末でも同じ内容に保たれます。リンクは作らず、ほかの人は加わりません。",
+  "together.peopleDeck": "このスライドの参加者",
+  "together.peopleProject": "このプロジェクトの参加者",
+  "together.project": "このプロジェクトで一緒に作業する",
+  "together.projectSays": "ドキュメント、コレクション、スライド、デザイン、ファイルは、参加者全員で同じものになります。各自のタスクと、{name} がその人のために覚えていることは、その人だけのものです。"
 }

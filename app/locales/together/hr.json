@@ -14,6 +14,7 @@
   "together.copyLink": "Kopiraj poveznicu",
   "together.people": "Osobe u ovoj zbirci",
   "together.peopleTask": "Osobe u ovom zadatku",
+  "together.peopleDoc": "Osobe u ovom dokumentu",
   "together.here": "Sada ovdje: {names}",
   "together.you": "(vi)",
   "together.hereNow": "Sada ovdje",
@@ -40,5 +41,18 @@
   "together.noPlace": "Zajednički rad ovdje nije dostupan.",
   "together.inside": "Vaša organizacija dodaje osobe sa svojeg popisa. Zatražite pozivnicu po imenu.",
   "together.gone": "Ova poveznica više ništa ne otvara. Zatražite novu od osobe koja ju je poslala.",
-  "together.waiting": "Vaš zahtjev dolazi na red kad {name} dobije odgovor."
+  "together.waiting": "Vaš zahtjev dolazi na red kad {name} dobije odgovor.",
+  "together.ask": "Pitaj asistenta {name} te osobe",
+  "together.what": "Što treba odgovoriti asistent osobe {name}?",
+  "together.send": "Pošalji",
+  "together.sentAsk": "Pitanje je poslano. Ta osoba odlučuje hoće li odgovoriti njezin vlastiti asistent.",
+  "together.asked": "{person} pita vašeg asistenta {name}:",
+  "together.letAnswer": "Neka {name} odgovori",
+  "together.relayed": "{person} pita: {text}",
+  "together.mine": "Samo na mojim uređajima",
+  "together.mineSays": "Svaka promjena stiže na svaki vaš uređaj, bez poveznice i bez ikoga drugog.",
+  "together.peopleDeck": "Osobe u ovim slajdovima",
+  "together.peopleProject": "Osobe u ovom projektu",
+  "together.project": "Zajednički rad na ovom projektu",
+  "together.projectSays": "Njegovi dokumenti, zbirke, slajdovi, dizajni i datoteke ostaju isti za sve u projektu. Zadaci svake osobe i ono što {name} za nju pamti ostaju samo njezini."
 }

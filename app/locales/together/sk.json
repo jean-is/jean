@@ -14,6 +14,7 @@
   "together.copyLink": "Kopírovať odkaz",
   "together.people": "Ľudia v tejto zbierke",
   "together.peopleTask": "Ľudia v tejto úlohe",
+  "together.peopleDoc": "Ľudia v tomto dokumente",
   "together.here": "Práve tu: {names}",
   "together.you": "(vy)",
   "together.hereNow": "Práve tu",
@@ -40,5 +41,18 @@
   "together.noPlace": "Spoločná práca tu nie je dostupná.",
   "together.inside": "Vaša organizácia pridáva ľudí zo svojho zoznamu. Požiadajte, aby vás pozvali podľa mena.",
   "together.gone": "Tento odkaz už nič neotvára. Požiadajte toho, kto ho poslal, o nový.",
-  "together.waiting": "Vaša požiadavka príde na rad, keď {name} dostane odpoveď."
+  "together.waiting": "Vaša požiadavka príde na rad, keď {name} dostane odpoveď.",
+  "together.ask": "Opýtať sa asistenta {name} tejto osoby",
+  "together.what": "Čo má odpovedať asistent osoby {name}?",
+  "together.send": "Odoslať",
+  "together.sentAsk": "Otázka je odoslaná. Táto osoba rozhodne, či odpovie jej vlastný asistent.",
+  "together.asked": "{person} sa pýta vášho asistenta {name}:",
+  "together.letAnswer": "Nechať odpovedať asistenta {name}",
+  "together.relayed": "{person} sa pýta: {text}",
+  "together.mine": "Len na mojich zariadeniach",
+  "together.mineSays": "Každá zmena sa dostane do každého z vašich zariadení, bez odkazu a bez nikoho ďalšieho.",
+  "together.peopleDeck": "Ľudia v týchto slajdoch",
+  "together.peopleProject": "Ľudia v tomto projekte",
+  "together.project": "Pracovať spolu na tomto projekte",
+  "together.projectSays": "Jeho dokumenty, zbierky, slajdy, návrhy a súbory sú pre všetkých v projekte rovnaké. Úlohy každej osoby a to, čo si pre ňu {name} pamätá, zostávajú len jej."
 }

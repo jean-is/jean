@@ -149,6 +149,7 @@ class ProjectDialog extends Element {
         <section class="stack">
           <label class="setting" for="project-local">${t('projects.local')}<input id="project-local" type="checkbox" class="switch" role="switch" name="local" .checked=${project?.data.cloud === false}></label>
           ${project && loaded.value.has('folders') ? html`<app-folder-field .project=${project}></app-folder-field>` : nothing}
+          ${project ? slots('project').map((one) => one.draw(project)) : nothing}
           ${project?.dir === app.projectDir && slots('look').length ? html`<button type="button" class="button subtle" @click=${() => openSettings('appearance/kit-project')}>${icons.palette} ${t('projects.kit')}</button>` : nothing}
         </section>
       </form>`)}

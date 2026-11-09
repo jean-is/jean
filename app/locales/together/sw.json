@@ -14,6 +14,7 @@
   "together.copyLink": "Nakili kiungo",
   "together.people": "Watu katika mkusanyiko huu",
   "together.peopleTask": "Watu katika kazi hii",
+  "together.peopleDoc": "Watu katika hati hii",
   "together.here": "Hapa sasa: {names}",
   "together.you": "(wewe)",
   "together.hereNow": "Yupo sasa",
@@ -40,5 +41,18 @@
   "together.noPlace": "Kufanya kazi pamoja hakupatikani hapa.",
   "together.inside": "Shirika lako huongeza watu kutoka kwenye orodha yake. Omba ualikwe kwa jina lako.",
   "together.gone": "Kiungo hiki hakifungui kitu tena. Mwombe aliyekutumia kiungo kipya.",
-  "together.waiting": "Ombi lako litafuata baada ya {name} kupata jibu."
+  "together.waiting": "Ombi lako litafuata baada ya {name} kupata jibu.",
+  "together.ask": "Muulize {name} wake",
+  "together.what": "Msaidizi wa {name} ajibu nini?",
+  "together.send": "Tuma",
+  "together.sentAsk": "Swali limetumwa. Yeye ndiye ataamua kama msaidizi wake mwenyewe atajibu.",
+  "together.asked": "{person} anauliza {name} wako:",
+  "together.letAnswer": "Mwache {name} ajibu",
+  "together.relayed": "{person} anauliza: {text}",
+  "together.mine": "Kwenye vifaa vyangu tu",
+  "together.mineSays": "Kila badiliko linafika kwenye kila kifaa chako, bila kiungo na bila mtu mwingine.",
+  "together.peopleDeck": "Watu katika slaidi hizi",
+  "together.peopleProject": "Watu katika mradi huu",
+  "together.project": "Fanya kazi pamoja kwenye mradi huu",
+  "together.projectSays": "Hati, mikusanyiko, slaidi, miundo na faili zake hubaki vilevile kwa kila mtu aliye ndani yake. Kazi za kila mtu, na kile {name} anachokumbuka kwa ajili yake, hubaki vyake peke yake."
 }

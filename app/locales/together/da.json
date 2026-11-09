@@ -14,6 +14,7 @@
   "together.copyLink": "Kopiér link",
   "together.people": "Personer i denne samling",
   "together.peopleTask": "Personer i denne opgave",
+  "together.peopleDoc": "Personer i dette dokument",
   "together.here": "Her nu: {names}",
   "together.you": "(dig)",
   "together.hereNow": "Her nu",
@@ -40,5 +41,18 @@
   "together.noPlace": "Samarbejde er ikke tilgængeligt her.",
   "together.inside": "Din organisation tilføjer personer fra sin liste. Bed om at blive inviteret ved navn.",
   "together.gone": "Dette link åbner ikke længere noget. Bed den, der sendte det, om et nyt.",
-  "together.waiting": "Din forespørgsel kommer efter svaret til {name}."
+  "together.waiting": "Din forespørgsel kommer efter svaret til {name}.",
+  "together.ask": "Spørg personens {name}",
+  "together.what": "Hvad skal assistenten hos {name} svare?",
+  "together.send": "Send",
+  "together.sentAsk": "Spørgsmålet er sendt. Personen afgør selv, om vedkommendes egen assistent svarer.",
+  "together.asked": "{person} spørger din assistent {name}:",
+  "together.letAnswer": "Lad {name} svare",
+  "together.relayed": "{person} spørger: {text}",
+  "together.mine": "Kun på mine enheder",
+  "together.mineSays": "Hver ændring når frem til hver af dine enheder, uden link og uden andre.",
+  "together.peopleDeck": "Personer i disse dias",
+  "together.peopleProject": "Personer i dette projekt",
+  "together.project": "Arbejd sammen på dette projekt",
+  "together.projectSays": "Dets dokumenter, samlinger, dias, designs og filer er de samme for alle i projektet. Hver persons opgaver, og det, {name} husker for vedkommende, forbliver vedkommendes egne."
 }

@@ -14,6 +14,7 @@
   "together.copyLink": "คัดลอกลิงก์",
   "together.people": "ผู้คนในคอลเลกชันนี้",
   "together.peopleTask": "ผู้คนในงานนี้",
+  "together.peopleDoc": "ผู้คนในเอกสารนี้",
   "together.here": "อยู่ที่นี่ตอนนี้: {names}",
   "together.you": "(คุณ)",
   "together.hereNow": "อยู่ที่นี่ตอนนี้",
@@ -40,5 +41,18 @@
   "together.noPlace": "ที่นี่ใช้การทำงานร่วมกันไม่ได้",
   "together.inside": "องค์กรของคุณเพิ่มบุคคลจากรายชื่อขององค์กร ขอให้มีคนเชิญคุณโดยระบุชื่อ",
   "together.gone": "ลิงก์นี้เปิดอะไรไม่ได้แล้ว ขอลิงก์ใหม่จากผู้ที่ส่งมา",
-  "together.waiting": "คำขอของคุณจะต่อคิวหลังคำตอบสำหรับ {name}"
+  "together.waiting": "คำขอของคุณจะต่อคิวหลังคำตอบสำหรับ {name}",
+  "together.ask": "ถาม {name} ของคนนี้",
+  "together.what": "ผู้ช่วยของ {name} ควรตอบว่าอะไร",
+  "together.send": "ส่ง",
+  "together.sentAsk": "ส่งคำถามแล้ว ผู้นั้นจะตัดสินใจเองว่าจะให้ผู้ช่วยของตัวเองตอบหรือไม่",
+  "together.asked": "{person} ถาม {name} ของคุณ:",
+  "together.letAnswer": "ให้ {name} ตอบ",
+  "together.relayed": "{person} ถาม: {text}",
+  "together.mine": "เฉพาะในอุปกรณ์ของฉัน",
+  "together.mineSays": "ทุกการแก้ไขจะไปถึงอุปกรณ์ทุกเครื่องของคุณ โดยไม่มีลิงก์และไม่มีใครอื่น",
+  "together.peopleDeck": "ผู้คนในสไลด์ชุดนี้",
+  "together.peopleProject": "ผู้คนในโปรเจกต์นี้",
+  "together.project": "ทำงานร่วมกันในโปรเจกต์นี้",
+  "together.projectSays": "เอกสาร คอลเลกชัน สไลด์ งานออกแบบ และไฟล์ของโปรเจกต์นี้จะเหมือนกันสำหรับทุกคนในโปรเจกต์ ส่วนงานของแต่ละคน และสิ่งที่ {name} จำไว้ให้แต่ละคน จะเป็นของคนนั้นเอง"
 }

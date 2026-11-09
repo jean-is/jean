@@ -14,6 +14,7 @@
   "together.copyLink": "نسخ الرابط",
   "together.people": "الأشخاص في هذه المجموعة",
   "together.peopleTask": "الأشخاص في هذه المهمة",
+  "together.peopleDoc": "الأشخاص في هذا المستند",
   "together.here": "هنا الآن: {names}",
   "together.you": "(أنت)",
   "together.hereNow": "هنا الآن",
@@ -40,5 +41,18 @@
   "together.noPlace": "العمل المشترك غير متاح هنا.",
   "together.inside": "تضيف مؤسستك الأشخاص من قائمتها. اطلب أن تُدعى بالاسم.",
   "together.gone": "هذا الرابط لم يعد يفتح شيئًا. اطلب رابطًا جديدًا ممن أرسله.",
-  "together.waiting": "يأتي دور طلبك بعد الإجابة عن طلب {name}."
+  "together.waiting": "يأتي دور طلبك بعد الإجابة عن طلب {name}.",
+  "together.ask": "طرح سؤال على {name} لدى هذا الشخص",
+  "together.what": "ماذا ينبغي أن يجيب مساعد {name}؟",
+  "together.send": "إرسال",
+  "together.sentAsk": "أُرسل السؤال. للطرف الآخر أن يقرّر إن كان مساعده سيجيب.",
+  "together.asked": "سؤال من {person} إلى {name} لديك:",
+  "together.letAnswer": "السماح لـ{name} بالإجابة",
+  "together.relayed": "سؤال من {person}: {text}",
+  "together.mine": "على أجهزتي فقط",
+  "together.mineSays": "يصل كل تغيير إلى كل جهاز من أجهزتك، بلا رابط ولا أحد غيرك.",
+  "together.peopleDeck": "الأشخاص في هذه الشرائح",
+  "together.peopleProject": "الأشخاص في هذا المشروع",
+  "together.project": "العمل معًا على هذا المشروع",
+  "together.projectSays": "تبقى مستنداته ومجموعاته وشرائحه وتصاميمه وملفاته نفسها لكل من فيه. أما مهام كل شخص، وما تحفظه ذاكرة {name} له، فتبقى خاصة به."
 }

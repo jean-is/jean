@@ -10,22 +10,25 @@ import { app } from '../../ui/state.js'
 import { mine } from '../../ui/opfs.js'
 import { useStrings } from '../../core/i18n.js'
 import { apart } from '../sync/mirror.js'
-import { circles, circleOf, circleAt, follow, all, here, join, turn, done, holding, memberName } from './engine.js'
+import { circles, starting, circleOf, circleAt, follow, all, apartOf, here, join, turn, done, holding, memberName } from './engine.js'
 import { posting, viewed, after } from './task.js'
-import { how, faces, taskFaces, asked } from './page.js'
+import { how, faces, taskFaces, asked, askCard, projectButton } from './page.js'
+import { asking } from './engine.js'
 
 await useStrings('together')
 
 /** @type {(() => void) | null} */
 let release = null
 /** Every circle followed, from this tab alone while it is in sight: it takes them from another that had them. */
+const run = async () => { for (const [id, kept] of await all()) if (!circles.peek().has(id) && !starting.has(id)) follow(id, kept).catch((error) => console.warn('Together', error)) }
 async function wake() {
   if (document.hidden || release) return
-  const run = async () => { for (const [id, kept] of await all()) if (!circles.peek().has(id)) follow(id, kept).catch((error) => console.warn('Together', error)) }
   if (!navigator.locks) return run()
   navigator.locks.request(mine('app-together'), { steal: true }, () => new Promise((resolve) => { release = () => resolve(undefined); run() }))
     .catch(() => {}).finally(() => { release = null; for (const live of circles.peek().values()) { live.stop(); live.unwatch?.() } circles.value = new Map() })
 }
+// A circle that came from another of the person's devices (D700) is followed once its key is here, by the tab that follows the others.
+app.fs.watch?.((path) => { if (path === '.secrets/keys.json' && (release || !navigator.locks) && !document.hidden) run() }, { all: true })
 document.addEventListener('visibilitychange', () => (document.hidden ? setTimeout(() => { if (document.hidden) release?.() }, 30_000) : wake()))
 setInterval(() => { if (!document.hidden) for (const live of circles.peek().values()) here(live) }, 20_000)
 // The baton held every 30 seconds while this person's answer runs, passed on once it ends, and what came meanwhile written after it.
@@ -36,7 +39,7 @@ effect(() => {
   after()
 })
 // Sync and the store carry none of what is worked on together, from the first round on (caps/sync/mirror.js).
-for (const [, kept] of await all()) if (kept.place) apart.add(`${kept.place.dir}/${kept.place.folder}`)
+for (const [, kept] of await all()) for (const place of apartOf(kept)) apart.add(place)
 wake()
 
 /** A #/join/ link: one question, the name the others see (./page.js). */
@@ -69,4 +72,8 @@ register({ id: 'together',
   dialog: { at: 2, draw: () => html`<app-together-dialog></app-together-dialog>` },
   // A task's faces in the room's head, beside Share.
   views: { at: 4, draw: taskFaces },
+  // A project's own dialog: working on all of it together.
+  project: { at: 0, draw: projectButton },
+  // What others asked this person's Jean, above the conversation (D734).
+  above: { at: 3, draw: () => asking.value.map(askCard) },
 } })

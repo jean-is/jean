@@ -14,6 +14,7 @@
   "together.copyLink": "Kopyahin ang link",
   "together.people": "Mga tao sa koleksiyong ito",
   "together.peopleTask": "Mga tao sa gawaing ito",
+  "together.peopleDoc": "Mga tao sa dokumentong ito",
   "together.here": "Narito ngayon: {names}",
   "together.you": "(ikaw)",
   "together.hereNow": "Narito ngayon",
@@ -40,5 +41,18 @@
   "together.noPlace": "Hindi available dito ang pagtutulungan.",
   "together.inside": "Nagdadagdag ang organisasyon mo ng mga tao mula sa listahan nito. Hilingin na imbitahan ka ayon sa pangalan.",
   "together.gone": "Wala nang binubuksan ang link na ito. Humingi ng bago sa nagpadala nito.",
-  "together.waiting": "Susunod ang hiling mo kapag nasagot na si {name}."
+  "together.waiting": "Susunod ang hiling mo kapag nasagot na si {name}.",
+  "together.ask": "Tanungin ang {name} niya",
+  "together.what": "Ano ang dapat isagot ng assistant ni {name}?",
+  "together.send": "Ipadala",
+  "together.sentAsk": "Naipadala na ang tanong. Siya ang magpapasya kung sasagot ang sarili niyang assistant.",
+  "together.asked": "Tanong ni {person} sa {name} mo:",
+  "together.letAnswer": "Hayaang sumagot ang {name}",
+  "together.relayed": "Tanong ni {person}: {text}",
+  "together.mine": "Sa mga device ko lang",
+  "together.mineSays": "Nakakarating ang bawat pagbabago sa bawat device mo, nang walang link at walang ibang tao.",
+  "together.peopleDeck": "Mga tao sa mga slide na ito",
+  "together.peopleProject": "Mga tao sa proyektong ito",
+  "together.project": "Gawin nang magkasama ang proyektong ito",
+  "together.projectSays": "Pareho para sa lahat ng kasali ang mga dokumento, koleksiyon, slide, disenyo, at file nito. Sa bawat isa ang sarili niyang mga gawain, at ang natatandaan ng {name} para sa kanya."
 }

@@ -49,7 +49,7 @@ test('Ana and Bob work on a collection together: a link and a name, each one’s
   await sharing.getByText('Work on it together', { exact: true }).click()
   await expect(sharing.getByLabel('Anyone with the link')).toHaveValue('edit')
   await sharing.getByRole('button', { name: 'Start' }).click()
-  const link = await sharing.getByTitle('Link').inputValue()
+  const link = await sharing.getByTitle('Link', { exact: true }).inputValue()
   expect(link).toMatch(/^http:\/\/127\.0\.0\.1:4180\/#\/join\/[\w-]{22}\.0\.[\w-]{43}\.[\w-]{43}\.[\w-]{43}$/)
   await sharing.getByRole('button', { name: 'Close' }).click()
 
@@ -100,7 +100,7 @@ test('Ana and Bob work on a task together: each request answered by its own pers
   const sharing = ana.locator('app-share-dialog dialog[open]')
   await sharing.getByText('Work on it together', { exact: true }).click()
   await sharing.getByRole('button', { name: 'Start' }).click()
-  const link = await sharing.getByTitle('Link').inputValue()
+  const link = await sharing.getByTitle('Link', { exact: true }).inputValue()
   await sharing.getByRole('button', { name: 'Close' }).click()
 
   // Bob joins: Ana's request and her Jean's answer are his to read, from Ana, without actions of his.
@@ -126,4 +126,200 @@ test('Ana and Bob work on a task together: each request answered by its own pers
   await expect(ana.locator('.turn .since')).toContainText('From Bob')
   await expect(ana.locator('.msg-user')).toHaveText(['Plan a weekend in Lisbon', 'Which museums open on Sunday?'])
   await answered(ana, 2)
+})
+
+test('Ana and Bob write one document together: each one’s words reach the other’s copy, merged where both wrote', async ({ browser }) => {
+  const [ana, bob] = await Promise.all([person(browser, 'Ana'), person(browser, 'Bob')])
+  const path = 'documents/01JAQXDOC0000000000000000L-lisbon.md'
+  await ana.evaluate(async (path) => {
+    const [{ app }, { unlock }] = await Promise.all([import('/ui/state.js'), import('/ui/caps.js')])
+    await unlock('documents')
+    await unlock('share')
+    await app.fs.write(`${app.projectDir}/${path}`, '---\nformat: 1\nname: Lisbon\nauthor: user\n---\n# Lisbon\n\nFriday: land at 20:15.\n')
+    ;(await import('/ui/preview.js')).preview({ uri: path, name: 'Lisbon.md', title: 'Lisbon', mimeType: 'text/markdown' })
+    await (await import('/caps/share/share.js')).openShare({ path: `${app.projectDir}/conversations/`, title: 'Lisbon', item: { text: '' }, thing: { kind: 'document', uri: path } }, null)
+  }, path)
+  const sharing = ana.locator('app-share-dialog dialog[open]')
+  await sharing.getByText('Work on it together', { exact: true }).click()
+  await sharing.getByRole('button', { name: 'Start' }).click()
+  const link = await sharing.getByTitle('Link', { exact: true }).inputValue()
+  await sharing.getByRole('button', { name: 'Close' }).click()
+
+  await bob.goto(link)
+  const joining = bob.locator('app-together-dialog dialog[open]')
+  await joining.getByLabel('Your name, as the others will see it').fill('Bob')
+  await joining.getByRole('button', { name: 'Join' }).click()
+  await expect(bob.locator('#doc')).toContainText('Friday: land at 20:15.')
+
+  /** A document's text as a copy keeps it. @param {Page} page */
+  const text = (page) => page.evaluate(async (path) => { const { app } = await import('/ui/state.js'); return (await app.fs.read(`${app.projectDir}/${path}`)) ?? '' }, path)
+  /** A line added at the end of the document, as the person types it, its editor saving it. @param {Page} page @param {string} line */
+  const write = (page, line) => page.evaluate(async ([path, line]) => {
+    const { app } = await import('/ui/state.js')
+    const now = (await app.fs.read(`${app.projectDir}/${path}`)) ?? ''
+    await app.fs.write(`${app.projectDir}/${path}`, `${now.trimEnd()}\n\n${line}\n`)
+  }, [path, line])
+  await write(bob, 'Saturday: the castle in the morning.')
+  await expect.poll(() => text(ana)).toContain('Saturday: the castle in the morning.')
+  await expect(ana.locator('#doc')).toContainText('Saturday: the castle in the morning.')
+  await write(ana, 'Sunday: Sintra.')
+  await expect.poll(() => text(bob)).toContain('Sunday: Sintra.')
+  expect(await text(bob)).toContain('Saturday: the castle in the morning.')
+})
+
+test('Bob asks Ana’s Jean in their shared task: Ana is asked first, then her own Jean answers, which Bob reads', async ({ browser }) => {
+  const [ana, bob] = await Promise.all([person(browser, 'Ana'), person(browser, 'Bob')])
+  await Promise.all([connectFakeBrain(ana), connectFakeBrain(bob)])
+  await ask(ana, 'Plan a weekend in Lisbon')
+  await answered(ana)
+  await ana.evaluate(async () => {
+    const [{ app }, { unlock }] = await Promise.all([import('/ui/state.js'), import('/ui/caps.js')])
+    await unlock('share')
+    await (await import('/caps/share/share.js')).openShare({ path: String(app.current.value?.path), title: 'Lisbon' }, null)
+  })
+  const sharing = ana.locator('app-share-dialog dialog[open]')
+  await sharing.getByText('Work on it together', { exact: true }).click()
+  await sharing.getByRole('button', { name: 'Start' }).click()
+  const link = await sharing.getByTitle('Link', { exact: true }).inputValue()
+  await sharing.getByRole('button', { name: 'Close' }).click()
+  await bob.goto(link)
+  const joining = bob.locator('app-together-dialog dialog[open]')
+  await joining.getByLabel('Your name, as the others will see it').fill('Bob')
+  await joining.getByRole('button', { name: 'Join' }).click()
+  await expect(bob.locator('.msg-user')).toHaveText(['Plan a weekend in Lisbon'])
+
+  // Bob asks Ana's Jean from People in this task.
+  await bob.evaluate(async () => {
+    const [{ circles }, { shown }, { app }] = await Promise.all([import('/caps/together/engine.js'), import('/caps/together/page.js'), import('/ui/state.js')])
+    shown.value = [...circles.value.keys()][0]
+    app.dialog.value = 'together'
+  })
+  const people = bob.locator('app-together-dialog dialog[open]')
+  await people.getByRole('button', { name: 'Ask their Jean' }).click()
+  await people.getByLabel('What should Ana’s assistant answer?').fill('Is Ana free on Saturday morning?')
+  await people.getByRole('button', { name: 'Send' }).click()
+
+  // Ana is asked first; then her own Jean answers, in the task, and Bob reads it.
+  const card = ana.locator('aside.offer', { hasText: 'Bob asks your Jean:' })
+  await expect(card).toContainText('Is Ana free on Saturday morning?')
+  await card.getByRole('button', { name: 'Let Jean answer' }).click()
+  await answered(ana, 2)
+  await expect(ana.locator('.msg-user').last()).toHaveText('Bob asks: Is Ana free on Saturday morning?')
+  await expect(bob.locator('.msg-user').last()).toHaveText('Bob asks: Is Ana free on Saturday morning?')
+  await answered(bob, 2)
+})
+
+test('Ana keeps a collection in step on her own two devices: no link, nobody else, each one’s rows reaching the other', async ({ browser }) => {
+  const [laptop, phone] = await Promise.all([person(browser, 'Ana'), person(browser, 'Ana')])
+  const folder = await expenses(laptop)
+  await laptop.evaluate(async (folder) => {
+    const { app } = await import('/ui/state.js')
+    await (await import('/caps/share/share.js')).openShare({ path: `${app.projectDir}/conversations/`, title: 'Expenses', item: { text: '' }, thing: { kind: 'collection', uri: folder } }, null)
+  }, folder)
+  const sharing = laptop.locator('app-share-dialog dialog[open]')
+  await sharing.getByText('Work on it together', { exact: true }).click()
+  await sharing.getByRole('button', { name: 'Only on my devices' }).click()
+  await expect(sharing.getByText('Nobody else has joined yet.')).toBeVisible()
+  await expect(sharing.getByTitle('Link', { exact: true })).toHaveCount(0)
+
+  // Her keys reach the phone as Your devices carries them (D700): her person and the circle, the phone's project standing in for the
+  // laptop's, which pairing writes under its own name. The phone follows the circle as soon as its key is there.
+  const keys = await laptop.evaluate(async () => {
+    const { app } = await import('/ui/state.js')
+    return { ...await (await import('/ui/secrets.js')).secretsWhere(app.fs, (id) => id === 'person' || id.startsWith('circle:')), dir: app.projectDir }
+  })
+  await phone.evaluate(async ({ dir, ...keys }) => {
+    const [{ app }, { unlock }, { setSecrets }] = await Promise.all([import('/ui/state.js'), import('/ui/caps.js'), import('/ui/secrets.js')])
+    await unlock('tables')
+    await unlock('together')
+    await setSecrets(app.fs, Object.fromEntries(Object.entries(keys).map(([id, text]) => [id, id === 'person' ? text : text.replaceAll(JSON.stringify(dir), JSON.stringify(app.projectDir))])))
+  }, keys)
+  await expect.poll(() => items(phone, folder)).toEqual(['Flat', 'Flights'])
+  await add(phone, folder, 'Taxi')
+  await expect.poll(() => items(laptop, folder)).toEqual(['Flat', 'Flights', 'Taxi'])
+  await add(laptop, folder, 'Museum')
+  await expect.poll(() => items(phone, folder)).toEqual(['Flat', 'Flights', 'Museum', 'Taxi'])
+})
+
+test('Ana and Bob make one deck together: a slide each reaches the other’s copy, and Ana’s open deck takes Bob’s in', async ({ browser }) => {
+  const [ana, bob] = await Promise.all([person(browser, 'Ana'), person(browser, 'Bob')])
+  const path = 'decks/01JAQXDECK000000000000000-lisbon.deck.html'
+  /** The deck's Markdown as a copy keeps it. @param {Page} page */
+  const source = (page) => page.evaluate(async (path) => (await (await import('/caps/skills/decks.js')).load(path))?.source ?? '', path)
+  /** A slide added at the end, as the deck's pane writes a change. @param {Page} page @param {string} slide */
+  const add = (page, slide) => page.evaluate(async ([path, slide]) => {
+    const [{ app }, decks] = await Promise.all([import('/ui/state.js'), import('/caps/skills/decks.js')])
+    const one = await decks.load(path)
+    await decks.rewrite(path, `${one?.source.trimEnd()}\n\n---\n\n${slide}\n`, 'Lisbon', app.projectDir)
+  }, [path, slide])
+  await ana.evaluate(async (path) => {
+    const [{ app }, { unlock }, decks] = await Promise.all([import('/ui/state.js'), import('/ui/caps.js'), import('/caps/skills/decks.js')])
+    await unlock('skills')
+    await unlock('share')
+    await decks.rewrite(path, '# Lisbon\n\n---\n\n# Friday\n\nLand at 20:15.\n', 'Lisbon', app.projectDir)
+    await (await import('/ui/preview.js')).preview({ uri: path, name: 'Lisbon', title: 'Lisbon', mimeType: 'text/html' })
+    await (await import('/caps/share/share.js')).openShare({ path: `${app.projectDir}/conversations/`, title: 'Lisbon', item: { text: '' }, thing: { kind: 'deck', uri: path } }, null)
+  }, path)
+  const sharing = ana.locator('app-share-dialog dialog[open]')
+  await sharing.getByText('Work on it together', { exact: true }).click()
+  await sharing.getByRole('button', { name: 'Start' }).click()
+  const link = await sharing.getByTitle('Link', { exact: true }).inputValue()
+  await sharing.getByRole('button', { name: 'Close' }).click()
+
+  await bob.goto(link)
+  const joining = bob.locator('app-together-dialog dialog[open]')
+  await joining.getByLabel('Your name, as the others will see it').fill('Bob')
+  await joining.getByRole('button', { name: 'Join' }).click()
+  await expect.poll(() => source(bob)).toContain('Land at 20:15.')
+  await expect(bob.locator('aside.pane.preview app-slides')).toBeAttached()
+
+  await add(bob, '# Saturday\n\nThe castle in the morning.')
+  await expect.poll(() => source(ana)).toContain('The castle in the morning.')
+  await expect.poll(() => ana.evaluate(() => /** @type {any} */ (document.querySelector('aside.pane.preview app-slides'))?.file?.source ?? '')).toContain('The castle in the morning.')
+  await add(ana, '# Sunday\n\nSintra.')
+  await expect.poll(() => source(bob)).toContain('Sintra.')
+  expect(await source(bob)).toContain('The castle in the morning.')
+})
+
+test('Ana and Bob work on a whole project together: its documents reach each other’s copy, and Ana’s tasks stay hers', async ({ browser }) => {
+  const [ana, bob] = await Promise.all([person(browser, 'Ana'), person(browser, 'Bob')])
+  const plan = 'documents/01JAQXDOC0000000000000000P-plan.md', task = 'conversations/01JAQXTASK000000000000000Z.jsonl'
+  const dir = await ana.evaluate(async ([plan, task]) => {
+    const [{ app, refreshProjects }, { createProject }, { unlock }] = await Promise.all([import('/ui/state.js'), import('/core/settings.js'), import('/ui/caps.js')])
+    await unlock('projects')
+    await unlock('together')
+    const dir = await createProject(app.fs, { name: 'Lisbon trip', by: 'user' })
+    await app.fs.write(`${dir}/${plan}`, '---\nformat: 1\nname: Plan\nauthor: user\n---\n# Plan\n\nFriday: land at 20:15.\n')
+    await app.fs.write(`${dir}/${task}`, `${JSON.stringify({ format: 1, kind: 'conversation', id: '01JAQXTASK000000000000000Z' })}\n`)
+    await refreshProjects()
+    ;(await import('/caps/projects/projects.js')).editProject(app.projects.peek().find((one) => one.dir === dir))
+    return dir
+  }, [plan, task])
+  await ana.locator('app-project-dialog dialog[open]').getByRole('button', { name: 'Work on this project together' }).click()
+  const together = ana.locator('app-together-dialog dialog[open]')
+  await expect(together.getByText('Its documents, collections, slides, designs and files stay the same for everyone in it.', { exact: false })).toBeVisible()
+  await together.getByRole('button', { name: 'Start' }).click()
+  await expect(together.getByRole('heading', { name: 'People in this project' })).toBeVisible()
+  const link = await ana.evaluate(async (dir) => { const engine = await import('/caps/together/engine.js'); return engine.linkFor(/** @type {any} */ (engine.circleAt(dir))) }, dir)
+
+  // Bob joins: the project is his too, with its document, and none of Ana's tasks.
+  await bob.goto(link)
+  const joining = bob.locator('app-together-dialog dialog[open]')
+  await joining.getByLabel('Your name, as the others will see it').fill('Bob')
+  await joining.getByRole('button', { name: 'Join' }).click()
+  await expect.poll(() => bob.evaluate(async () => (await import('/ui/state.js')).app.projectDir)).toBe(dir)
+  /** A file of the project as a copy keeps it. @param {Page} page @param {string} path */
+  const read = (page, path) => page.evaluate(async ([dir, path]) => (await (await import('/ui/state.js')).app.fs.read(`${dir}/${path}`)) ?? '', [dir, path])
+  await expect.poll(() => read(bob, plan)).toContain('Friday: land at 20:15.')
+  expect(await read(bob, task)).toBe('')
+  await expect(bob.locator('app-projects')).toContainText('Lisbon trip')
+
+  // Each one's words reach the other's copy, and a document Bob makes reaches Ana.
+  await bob.evaluate(async ([dir, plan]) => {
+    const { app } = await import('/ui/state.js')
+    await app.fs.write(`${dir}/${plan}`, `${((await app.fs.read(`${dir}/${plan}`)) ?? '').trimEnd()}\n\nSaturday: the castle.\n`)
+    await app.fs.write(`${dir}/documents/01JAQXDOC0000000000000000B-food.md`, '---\nformat: 1\nname: Food\nauthor: user\n---\n# Food\n\nPastéis de nata.\n')
+  }, [dir, plan])
+  await expect.poll(() => read(ana, plan)).toContain('Saturday: the castle.')
+  await expect.poll(() => read(ana, 'documents/01JAQXDOC0000000000000000B-food.md')).toContain('Pastéis de nata.')
 })

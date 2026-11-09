@@ -14,6 +14,7 @@
   "together.copyLink": "Bağlantıyı kopyala",
   "together.people": "Bu koleksiyondaki kişiler",
   "together.peopleTask": "Bu görevdeki kişiler",
+  "together.peopleDoc": "Bu belgedeki kişiler",
   "together.here": "Şu an burada: {names}",
   "together.you": "(sen)",
   "together.hereNow": "Şu an burada",
@@ -40,5 +41,18 @@
   "together.noPlace": "Bir şey üzerinde birlikte çalışmak burada kullanılamıyor.",
   "together.inside": "Kuruluşun kişileri kendi listesinden ekliyor. Adınla davet edilmeyi iste.",
   "together.gone": "Bu bağlantı artık hiçbir şeyi açmıyor. Gönderen kişiden yenisini iste.",
-  "together.waiting": "İsteğinin sırası, {name} yanıtını aldıktan sonra gelir."
+  "together.waiting": "İsteğinin sırası, {name} yanıtını aldıktan sonra gelir.",
+  "together.ask": "Kişinin {name} asistanına sor",
+  "together.what": "{name} adlı kişinin asistanı ne yanıt versin?",
+  "together.send": "Gönder",
+  "together.sentAsk": "Soru gönderildi. Kendi asistanının yanıt verip vermeyeceğine o karar verir.",
+  "together.asked": "{person}, senin {name} asistanına soruyor:",
+  "together.letAnswer": "{name} yanıt versin",
+  "together.relayed": "{person} soruyor: {text}",
+  "together.mine": "Yalnızca cihazlarımda",
+  "together.mineSays": "Her değişiklik, bağlantı olmadan ve başka kimseye gitmeden cihazlarının her birine ulaşır.",
+  "together.peopleDeck": "Bu slaytlardaki kişiler",
+  "together.peopleProject": "Bu projedeki kişiler",
+  "together.project": "Bu proje üzerinde birlikte çalış",
+  "together.projectSays": "Belgeleri, koleksiyonları, slaytları, tasarımları ve dosyaları projedeki herkes için aynı kalır. Her kişinin görevleri ve {name} uygulamasının o kişi için hatırladıkları, kişinin kendisine ait kalır."
 }

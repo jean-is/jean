@@ -14,6 +14,7 @@
   "together.copyLink": "लिंक कॉपी करें",
   "together.people": "इस संग्रह के लोग",
   "together.peopleTask": "इस कार्य के लोग",
+  "together.peopleDoc": "इस दस्तावेज़ के लोग",
   "together.here": "अभी यहाँ: {names}",
   "together.you": "(आप)",
   "together.hereNow": "अभी यहाँ",
@@ -40,5 +41,18 @@
   "together.noPlace": "यहाँ साथ मिलकर काम करने की सुविधा उपलब्ध नहीं है।",
   "together.inside": "आपका संगठन अपनी सूची से लोगों को जोड़ता है। नाम से आमंत्रण माँगें।",
   "together.gone": "यह लिंक अब कुछ नहीं खोलता। जिसने भेजा था, उससे नया माँगें।",
-  "together.waiting": "आपके अनुरोध की बारी {name} को जवाब मिलने के बाद आएगी।"
+  "together.waiting": "आपके अनुरोध की बारी {name} को जवाब मिलने के बाद आएगी।",
+  "together.ask": "इस व्यक्ति के असिस्टेंट {name} से पूछें",
+  "together.what": "{name} के असिस्टेंट को क्या जवाब देना चाहिए?",
+  "together.send": "भेजें",
+  "together.sentAsk": "सवाल भेज दिया गया। उनका अपना असिस्टेंट जवाब दे या नहीं, यह वही तय करेंगे।",
+  "together.asked": "{person} आपके असिस्टेंट {name} से पूछ रहे हैं:",
+  "together.letAnswer": "{name} को जवाब देने दें",
+  "together.relayed": "{person} का सवाल: {text}",
+  "together.mine": "सिर्फ़ मेरे डिवाइस पर",
+  "together.mineSays": "हर बदलाव आपके हर डिवाइस तक पहुँचता है, बिना लिंक के और किसी और के बिना।",
+  "together.peopleDeck": "इन स्लाइड के लोग",
+  "together.peopleProject": "इस प्रोजेक्ट के लोग",
+  "together.project": "इस प्रोजेक्ट पर साथ मिलकर काम करें",
+  "together.projectSays": "इसके दस्तावेज़, संग्रह, स्लाइड, डिज़ाइन और फ़ाइलें इसमें शामिल हर किसी के लिए एक जैसी रहती हैं। हर व्यक्ति के कार्य, और {name} की याददाश्त में उसके लिए रखी गई बातें, उसी की रहती हैं।"
 }

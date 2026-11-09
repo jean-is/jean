@@ -102,7 +102,7 @@ export async function claim(there, { by, now = new Date() }) {
  * @returns {Promise<string[]>} the paths that came in here
  */
 export async function syncRound(here, there, { cache = BASE.slice(0, -5), carry: given = carried, busy = () => false, removing = (_, act) => act().then(() => true) } = {}) {
-  const carry = (/** @type {string} */ path) => given(path) && ![...apart].some((place) => path.startsWith(`${place}/`))
+  const carry = (/** @type {string} */ path) => given(path) && ![...apart].some((place) => path === place || path.startsWith(`${place}/`))
   /** @type {Base} */
   let base = (await readJSON(here, `${cache}.json`, null))?.files ?? {}
   const had = (/** @type {string} */ path) => `${cache}/${path}`

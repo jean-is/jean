@@ -14,6 +14,7 @@
   "together.copyLink": "Eilañ al liamm",
   "together.people": "An dud en dastumad-mañ",
   "together.peopleTask": "An dud en drevell-mañ",
+  "together.peopleDoc": "An dud en teul-mañ",
   "together.here": "Amañ bremañ : {names}",
   "together.you": "(c’hwi)",
   "together.hereNow": "Amañ bremañ",
@@ -40,5 +41,18 @@
   "together.noPlace": "N’haller ket labourat asambles amañ.",
   "together.inside": "Ho aozadur a ouzhpenn tud diwar e roll. Goulennit bezañ pedet dre hoc’h anv.",
   "together.gone": "Al liamm-mañ ne zigor netra ken. Goulennit unan nevez ouzh an hini en deus e gaset.",
-  "together.waiting": "Ho koulenn a zeuio goude ar respont da {name}."
+  "together.waiting": "Ho koulenn a zeuio goude ar respont da {name}.",
+  "together.ask": "Goulenn ouzh {name} an den-mañ",
+  "together.what": "Petra a zlefe respont skoazeller {name} ?",
+  "together.send": "Kas",
+  "together.sentAsk": "Kaset eo ar goulenn. Dezho da zivizout ha respont a ray o skoazeller o-unan.",
+  "together.asked": "{person} a c’houlenn ouzh ho {name} :",
+  "together.letAnswer": "Lezel {name} da respont",
+  "together.relayed": "{person} a c’houlenn : {text}",
+  "together.mine": "War ma zrevnadoù hepken",
+  "together.mineSays": "Heñvel war pep hini eus ho trevnadoù a-feur ma vez kemmet, hep liamm na den all ebet.",
+  "together.peopleDeck": "An dud en treyonennoù-mañ",
+  "together.peopleProject": "An dud er raktres-mañ",
+  "together.project": "Labourat asambles war ar raktres-mañ",
+  "together.projectSays": "E deulioù, e zastumadoù, e dreyonennoù, e dresoù hag e restroù a chom heñvel evit an holl er raktres. Trevelloù pep hini, hag ar pezh a zalc’h {name} soñj evitañ, a chom dezhañ e-unan."
 }

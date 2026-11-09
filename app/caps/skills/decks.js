@@ -67,6 +67,10 @@ async function update(path, change, dir) {
   return one
 }
 
+/** A deck's Markdown from someone it is worked on with (caps/together, D733), over its page, or a page made where there is none. @param {string} path @param {string} source @param {string} name @param {string} dir */
+export const rewrite = async (path, source, name, dir) => (await update(path, (now) => ({ ...now, source }), dir))
+  ?? write({ dir, path, name, source, theirs: null, meta: { author: 'user', created: new Date().toISOString(), changed: new Date().toISOString() } })
+
 /** Open beside the task, when it is on screen. @param {One} one @param {boolean} [asked] by the person, not kept from an answer */
 const open = (one, asked) => import('../../ui/preview.js').then(({ preview }) => preview({ uri: one.path, name: one.name, title: one.name, mimeType: 'text/html' }, asked))
 

@@ -8,7 +8,7 @@
 import { signal } from '@preact/signals-core'
 import { contributions } from '../../ui/caps.js'
 import { fire } from '../../core/hooks.js'
-import { app, notify, refreshConversations, openConversation } from '../../ui/state.js'
+import { app, notify, refreshConversations, openConversation, refreshProjects, enterProject } from '../../ui/state.js'
 import { mine } from '../../ui/opfs.js'
 import { getSecret, setSecrets, secretsWhere } from '../../ui/secrets.js'
 import { serviceURL } from '../../core/settings.js'
@@ -22,13 +22,16 @@ import * as circle from './circle.js'
 import * as journal from './journal.js'
 import * as collection from './collection.js'
 import * as task from './task.js'
+import * as document from './document.js'
+import * as project from './project.js'
 
 /** What each kind adds (D733): its changes, how they apply, its seed. */
-const bindings = { collection, task }
+const bindings = { collection, task, document, deck: document, project }
+/** @typedef {keyof typeof bindings} Kind */
 
 /**
  * A circle as the secret keeps it. `links` whether a link may join; `role` what a link gives, editing or viewing.
- * @typedef {{ format: 1, relay: string, kind: 'collection' | 'task', place: import('./collection.js').Place | null, title: string, owner: string, ownerHash: string, ownerToken?: string,
+ * @typedef {{ format: 1, relay: string, kind: Kind, place: import('./collection.js').Place | null, title: string, owner: string, ownerHash: string, ownerToken?: string,
  *   epoch: number, keys: Record<string, string>, read: string, write?: string, links: boolean, role?: 'edit' | 'view' }} Kept
  * A circle followed: who is in, what the journal holds of the thing, this device's counter, who is here, and how to stop.
  * @typedef {{ id: string, kept: Kept, me: string, state: circle.State, held: import('./collection.js').Held, n: number, members: Set<string>,
@@ -38,6 +41,10 @@ const bindings = { collection, task }
 
 /** The circles followed here, by journal. */
 export const circles = signal(/** @type {Map<string, Live>} */ (new Map()))
+/** Circles being started here, not yet in `circles`: a key that comes meanwhile starts nothing twice. */
+export const starting = new Set()
+/** What others asked this person's Jean in a task worked on together, waiting for them to let it answer (D734). */
+export const asking = signal(/** @type {{ id: string, circle: string, from: string, text: string }[]} */ ([]))
 const changed = () => { circles.value = new Map(circles.peek()) }
 const ctx = { get: (/** @type {string} */ id) => getSecret(app.fs, id), set: (/** @type {Record<string, string | null>} */ values) => setSecrets(app.fs, values),
   alone: (/** @type {() => Promise<any>} */ run) => navigator.locks?.request(mine('app-person-made'), run) ?? run() }
@@ -101,17 +108,21 @@ async function taken(live, sealed, at) {
   const body = change.body?.parts && !circle.isMembership(change) ? await assembled(live, change.body.parts, opened.epoch) : change.body
   if (change.kind === 'begin' && typeof body.ownerHash === 'string' && !live.kept.ownerHash) live.kept.ownerHash = body.ownerHash
   // What the circle shares, as its owner began it: a link doesn't say.
-  if (change.kind === 'begin' && (body.kind === 'task' || body.kind === 'collection')) live.kept.kind = body.kind
+  if (change.kind === 'begin' && Object.hasOwn(bindings, body.kind)) live.kept.kind = body.kind
   if (change.kind === 'seed') {
     for (const one of Array.isArray(body.members) ? body.members : []) await taken(live, decode(one), at)
     if (!live.kept.place && body.content?.table?.id) live.kept.place = { dir: app.projectDir, folder: folderOf(body.content.table) }
     if (!live.kept.place && /^[0-9A-HJKMNP-TV-Z]{26}$/.test(String(body.content?.id))) live.kept.place = { dir: app.projectDir, folder: `conversations/${body.content.id}.jsonl` }
+    if (!live.kept.place && /^(documents\/[^/]+\.md|decks\/[^/]+\.deck\.html)$/.test(String(body.content?.doc))) live.kept.place = { dir: app.projectDir, folder: body.content.doc }
+    if (!live.kept.place && /^[0-9A-HJKMNP-TV-Z]{26}-[a-z0-9-]+$/.test(String(body.content?.project?.folder))) live.kept.place = { dir: 'projects', folder: body.content.project.folder }
     if (!live.kept.title && typeof body.content?.title === 'string') live.kept.title = body.content.title
   }
   if ((change.kind === 'seed' ? body.content : change.kind === 'change' && body) && live.kept.place) {
     await bindingOf(live.kept).take(live.kept.place, change.kind === 'seed' ? body.content : body, live.held, { me: live.me, names: (fp) => nameIn(live, fp) })
   }
   if (change.kind === 'moved' && change.member !== live.me) await moved(live, body)
+  // Someone asks this person's Jean: a card, until they let it answer or put it off.
+  if (change.kind === 'ask' && body.to === live.me && typeof body.text === 'string' && live.settled) asking.value = [...asking.peek(), { id: `${live.id}:${change.member}:${change.n}`, circle: live.id, from: nameIn(live, change.member), text: body.text.slice(0, 2000) }]
   if ((change.kind === 'remove' || change.kind === 'block') && body.fp === live.me) return ended(live, 'removed')
   if (live.settled) watching(live)
   if (change.kind === 'join' && change.member === live.me && live.settled) here(live)
@@ -124,7 +135,7 @@ async function ended(live, how) {
   live.stop()
   live.unwatch?.()
   circles.peek().delete(live.id)
-  if (live.kept.place) apart.delete(`${live.kept.place.dir}/${live.kept.place.folder}`)
+  for (const place of apartOf(live.kept)) apart.delete(place)
   await save(live.id, null)
   await app.fs.remove(cache(live.id)).catch(() => {})
   notify(t(how === 'removed' ? 'together.removed' : 'together.stopped', { title: live.kept.title }))
@@ -152,6 +163,7 @@ async function moved(live, body) {
  * @param {string} id @param {Kept} kept @param {Live['joining']} [joining]
  */
 export async function follow(id, kept, joining) {
+  starting.add(id)
   const person = await me()
   const saved = JSON.parse(await app.fs.read(cache(id)) ?? '{}')
   /** @type {() => void} */
@@ -163,6 +175,7 @@ export async function follow(id, kept, joining) {
     members: new Set(saved.members ?? []), here: new Map(), ready, caught, stop: () => control.abort(), joining, baton: { holder: null, at: 0, queue: [] }, waits: new Map() }
   circles.peek().get(id)?.stop()
   circles.peek().set(id, live)
+  starting.delete(id)
   changed()
   journal.follow({ ...whereOf(live), after: 0, signal: control.signal,
     onChange: (line, bytes) => taken(live, bytes, line.at),
@@ -193,17 +206,24 @@ async function settled(live) {
   if (!kept.place) return
   kept.title = await bindingOf(kept).titleOf(kept.place) || kept.title
   await save(live.id, kept)
-  apart.add(`${kept.place.dir}/${kept.place.folder}`)
+  for (const place of apartOf(kept)) apart.add(place)
   watching(live)
   here(live)
   if (joining) {
     delete live.joining
-    if (kept.kind === 'task') {
+    if (kept.kind === 'project') {
+      // A project of their own now, so projects are theirs too.
+      await (await import('../../ui/caps.js')).unlock('projects')
+      await refreshProjects()
+      const made = app.projects.peek().find((one) => one.dir === `projects/${kept.place?.folder}`)
+      if (made) await enterProject(made)
+    } else if (kept.kind === 'task') {
       await refreshConversations()
       if (kept.place.dir === app.projectDir) await openConversation(`${kept.place.dir}/${kept.place.folder}`)
     } else {
-      const [{ unlock }, { metaOf }, { preview }] = await Promise.all([import('../../ui/caps.js'), import('../tables/tables.js'), import('../../ui/preview.js')])
-      await unlock('tables')
+      const [cap, file] = /** @type {Record<string, string[]>} */ ({ document: ['documents', 'documents/documents'], deck: ['skills', 'skills/decks'] })[kept.kind] ?? ['tables', 'tables/tables']
+      const [{ unlock }, { metaOf }, { preview }] = await Promise.all([import('../../ui/caps.js'), import(`../${file}.js`), import('../../ui/preview.js')])
+      await unlock(cap)
       const meta = await metaOf(kept.place.folder)
       if (meta) preview({ uri: kept.place.folder, ...meta })
     }
@@ -238,9 +258,9 @@ export const holding = (live) => (live.baton.holder === live.me ? post(live, 'ho
 
 /**
  * Starts working together on a collection: its journal made, its circle begun with the owner's key, and its seed, the collection as it
- * is, posted for whoever joins. @param {import('./collection.js').Place} place @param {{ links: boolean, role: 'edit' | 'view', kind?: 'collection' | 'task' }} choice
+ * is, posted for whoever joins. @param {import('./collection.js').Place} place @param {{ links: boolean, role: 'edit' | 'view', kind?: Kind }} choice
  */
-export async function begin(place, { links, role, kind = 'collection' }) {
+export async function begin(place, { links, role, kind = /** @type {Kind} */ ('collection') }) {
   const relay = relayOf()
   if (!relay || !(await journal.keeps(relay))) throw new Error(t('together.noPlace'))
   if (links && !(await linked())) throw new Error(t('together.inside'))
@@ -264,7 +284,7 @@ const nameOf = async () => String(JSON.parse(await app.fs.read('.secrets/vault.j
 /** A link to join, for anyone holding it: the owner's alone (./circle.js `linkOf`), to edit or to view as they chose. @param {Live} live */
 export const linkFor = ({ kept }) => `${location.origin}${location.pathname}#/join/${circle.linkOf({ owner: kept.owner, epoch: kept.epoch, read: kept.read, key: decode(kept.keys[kept.epoch]), ...(kept.role !== 'view' && { write: kept.write }) })}`
 
-/** Joins from a link or an invitation: follows the journal, and once caught up says so and opens the thing. @param {string} text @param {{ name: string, invite?: object, kind?: 'collection' | 'task' }} joining */
+/** Joins from a link or an invitation: follows the journal, and once caught up says so and opens the thing. @param {string} text @param {{ name: string, invite?: object, kind?: Kind }} joining */
 export async function join(text, joining) {
   const link = circle.fromLink(text)
   const relay = relayOf()
@@ -273,7 +293,7 @@ export async function join(text, joining) {
   const id = await journal.journalOf(link.read)
   if (circles.peek().has(id)) return circles.peek().get(id)
   /** @type {Kept} */
-  const kept = { format: 1, relay, kind: /** @type {'collection' | 'task'} */ (joining.kind ?? 'collection'), place: null, title: '', owner: link.owner, ownerHash: '', epoch: link.epoch, keys: { [link.epoch]: encode(link.key) }, read: link.read, ...(link.write && { write: link.write }), links: true }
+  const kept = { format: 1, relay, kind: /** @type {Kind} */ (joining.kind ?? 'collection'), place: null, title: '', owner: link.owner, ownerHash: '', epoch: link.epoch, keys: { [link.epoch]: encode(link.key) }, read: link.read, ...(link.write && { write: link.write }), links: true }
   await save(id, kept)
   return follow(id, kept, joining)
 }
@@ -307,6 +327,9 @@ export async function move(live, leaving) {
   if (content) await post(moving, 'seed', { members: [encode(begun)], content }, { seed: true })
 }
 
+/** Another member's Jean asked something, which they let it answer or not (D226, D734). @param {Live} live @param {string} to @param {string} text */
+export const ask = (live, to, text) => post(live, 'ask', { to, text })
+
 /** Leaves, or, for its owner, stops working together: everyone keeps their copy. @param {Live} live */
 export async function stop(live) {
   if (live.kept.ownerToken) await journal.end(whereOf(live), live.kept.ownerToken, 'delete').catch(() => {})
@@ -327,10 +350,12 @@ export const hereNow = (live) => new Set([...live.here].filter(([, at]) => Date.
 /** The circle a collection is in here, if any. @param {string} folder */
 export const circleOf = (folder) => [...circles.value.values()].find((live) => live.kept.place?.folder === folder && live.kept.place.dir === app.projectDir) ?? null
 /** The circle a file is in, by its path, as a task's is. @param {string} path */
-export const circleAt = (path) => [...circles.peek().values()].find((live) => live.kept.place && `${live.kept.place.dir}/${live.kept.place.folder}` === path) ?? null
+export const circleAt = (path) => [...circles.value.values()].find((live) => live.kept.place && `${live.kept.place.dir}/${live.kept.place.folder}` === path) ?? null
 /** A member's name in any circle followed here: the room's line over another's turn (ui/chat.js). @param {string} fp */
 export const memberName = (fp) => [...circles.peek().values()].map((live) => nameIn(live, fp)).find(Boolean) ?? ''
 
+/** What Sync and the store leave out of a circle's thing: the thing, or a project's folders that go (caps/sync/mirror.js). @param {Kept} kept */
+export const apartOf = ({ kind, place }) => (place ? (kind === 'project' ? project.FOLDERS : ['']).map((one) => `${place.dir}/${place.folder}${one && `/${one}`}`) : [])
 /** Every circle kept here. */
 export const all = async () => Object.entries(await secretsWhere(app.fs, (id) => id.startsWith('circle:'))).map(([id, text]) => /** @type {[string, Kept]} */ ([id.slice(7), JSON.parse(text)]))
 /** This person's key, signing their invitations. */

@@ -14,6 +14,7 @@
   "together.copyLink": "Copy link",
   "together.people": "People in this collection",
   "together.peopleTask": "People in this task",
+  "together.peopleDoc": "People in this document",
   "together.here": "Here now: {names}",
   "together.you": "(you)",
   "together.hereNow": "Here now",
@@ -40,5 +41,18 @@
   "together.noPlace": "Working on something together isn’t available here.",
   "together.inside": "Your organisation adds people from its list. Ask to be invited by name.",
   "together.gone": "This link no longer opens anything. Ask whoever sent it for a new one.",
-  "together.waiting": "Your request goes after {name}’s answer."
+  "together.waiting": "Your request goes after {name}’s answer.",
+  "together.ask": "Ask their {name}",
+  "together.what": "What should {name}’s assistant answer?",
+  "together.send": "Send",
+  "together.sentAsk": "Asked. They decide whether their own assistant answers.",
+  "together.asked": "{person} asks your {name}:",
+  "together.letAnswer": "Let {name} answer",
+  "together.relayed": "{person} asks: {text}",
+  "together.mine": "Only on my devices",
+  "together.mineSays": "Kept in step on each of your devices as it changes, with no link and nobody else.",
+  "together.peopleDeck": "People in these slides",
+  "together.peopleProject": "People in this project",
+  "together.project": "Work on this project together",
+  "together.projectSays": "Its documents, collections, slides, designs and files stay the same for everyone in it. Each person’s tasks, and what {name} remembers for them, stay their own."
 }

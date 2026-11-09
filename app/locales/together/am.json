@@ -14,6 +14,7 @@
   "together.copyLink": "አገናኝ ቅዳ",
   "together.people": "በዚህ ስብስብ ውስጥ ያሉ ሰዎች",
   "together.peopleTask": "በዚህ ተግባር ውስጥ ያሉ ሰዎች",
+  "together.peopleDoc": "በዚህ ሰነድ ውስጥ ያሉ ሰዎች",
   "together.here": "አሁን እዚህ፦ {names}",
   "together.you": "(እርስዎ)",
   "together.hereNow": "አሁን እዚህ",
@@ -40,5 +41,18 @@
   "together.noPlace": "አብሮ መሥራት እዚህ አይገኝም።",
   "together.inside": "ድርጅትዎ ሰዎችን የሚያክለው ከዝርዝሩ ነው። በስምዎ እንዲጋበዙ ይጠይቁ።",
   "together.gone": "ይህ አገናኝ ከእንግዲህ ምንም አይከፍትም። የላከልዎትን ሰው አዲስ አገናኝ ይጠይቁ።",
-  "together.waiting": "{name} ለጠየቁት መልስ ከተሰጠ በኋላ የጥያቄዎ ተራ ይደርሳል።"
+  "together.waiting": "{name} ለጠየቁት መልስ ከተሰጠ በኋላ የጥያቄዎ ተራ ይደርሳል።",
+  "together.ask": "የዚህን ሰው {name} ይጠይቁ",
+  "together.what": "የ{name} ረዳት ምን ይመልስ?",
+  "together.send": "ይላኩ",
+  "together.sentAsk": "ጥያቄው ተልኳል። የራሳቸው ረዳት ይመልስ እንደሆነ እነሱ ይወስናሉ።",
+  "together.asked": "{person} የእርስዎን {name} ይጠይቃሉ፦",
+  "together.letAnswer": "መልሱን ለ{name} ይተዉ",
+  "together.relayed": "{person} ይጠይቃሉ፦ {text}",
+  "together.mine": "በእኔ መሣሪያዎች ላይ ብቻ",
+  "together.mineSays": "እያንዳንዱ ለውጥ ያለ አገናኝ እና ያለ ሌላ ሰው ወደ እያንዳንዱ መሣሪያዎ ይደርሳል።",
+  "together.peopleDeck": "በእነዚህ ስላይዶች ውስጥ ያሉ ሰዎች",
+  "together.peopleProject": "በዚህ ፕሮጀክት ውስጥ ያሉ ሰዎች",
+  "together.project": "በዚህ ፕሮጀክት ላይ አብረው ይሥሩ",
+  "together.projectSays": "ሰነዶቹ፣ ስብስቦቹ፣ ስላይዶቹ፣ ንድፎቹ እና ፋይሎቹ በውስጡ ላለ ሁሉ አንድ ዓይነት ሆነው ይቆያሉ። የእያንዳንዱ ሰው ተግባራት፣ እና በ{name} ትውስታ ውስጥ ለእነሱ የተያዘው፣ የራሳቸው ሆነው ይቆያሉ።"
 }

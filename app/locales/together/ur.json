@@ -14,6 +14,7 @@
   "together.copyLink": "لنک کاپی کریں",
   "together.people": "اس مجموعے کے لوگ",
   "together.peopleTask": "اس کام کے لوگ",
+  "together.peopleDoc": "اس دستاویز کے لوگ",
   "together.here": "ابھی یہاں: {names}",
   "together.you": "(آپ)",
   "together.hereNow": "ابھی یہاں",
@@ -40,5 +41,18 @@
   "together.noPlace": "یہاں کسی چیز پر مل کر کام کرنا دستیاب نہیں۔",
   "together.inside": "آپ کا ادارہ لوگوں کو اپنی فہرست سے شامل کرتا ہے۔ آپ کو نام سے مدعو کرنے کو کہیں۔",
   "together.gone": "یہ لنک اب کچھ نہیں کھولتا۔ جس نے بھیجا اس سے نیا مانگیں۔",
-  "together.waiting": "آپ کی درخواست کی باری {name} کو جواب ملنے کے بعد آئے گی۔"
+  "together.waiting": "آپ کی درخواست کی باری {name} کو جواب ملنے کے بعد آئے گی۔",
+  "together.ask": "اس شخص کے اسسٹنٹ {name} سے پوچھیں",
+  "together.what": "{name} کے اسسٹنٹ کو کیا جواب دینا چاہیے؟",
+  "together.send": "بھیجیں",
+  "together.sentAsk": "سوال بھیج دیا گیا۔ ان کا اپنا اسسٹنٹ جواب دے یا نہیں، یہ وہی طے کریں گے۔",
+  "together.asked": "{person} آپ کے اسسٹنٹ {name} سے پوچھ رہے ہیں:",
+  "together.letAnswer": "{name} کو جواب دینے دیں",
+  "together.relayed": "{person} کا سوال: {text}",
+  "together.mine": "صرف میرے آلات پر",
+  "together.mineSays": "ہر تبدیلی آپ کے ہر آلے تک پہنچتی ہے، بغیر لنک کے اور کسی اور کے بغیر۔",
+  "together.peopleDeck": "ان سلائیڈز کے لوگ",
+  "together.peopleProject": "اس پروجیکٹ کے لوگ",
+  "together.project": "اس پروجیکٹ پر مل کر کام کریں",
+  "together.projectSays": "اس کی دستاویزات، مجموعے، سلائیڈز، ڈیزائن اور فائلیں اس میں شامل ہر ایک کے لیے ایک جیسی رہتی ہیں۔ ہر شخص کے کام، اور {name} کی یادداشت میں اس کے لیے رکھی گئی باتیں، اسی کی رہتی ہیں۔"
 }

@@ -14,6 +14,7 @@
   "together.copyLink": "Sao chép đường liên kết",
   "together.people": "Mọi người trong bộ sưu tập này",
   "together.peopleTask": "Mọi người trong nhiệm vụ này",
+  "together.peopleDoc": "Mọi người trong tài liệu này",
   "together.here": "Đang ở đây: {names}",
   "together.you": "(bạn)",
   "together.hereNow": "Đang ở đây",
@@ -40,5 +41,18 @@
   "together.noPlace": "Không thể cùng làm việc ở đây.",
   "together.inside": "Tổ chức của bạn thêm mọi người từ danh sách của tổ chức. Hãy đề nghị được mời theo tên.",
   "together.gone": "Đường liên kết này không còn mở được gì nữa. Hãy xin đường liên kết mới từ người đã gửi.",
-  "together.waiting": "Yêu cầu của bạn sẽ đến lượt sau câu trả lời cho {name}."
+  "together.waiting": "Yêu cầu của bạn sẽ đến lượt sau câu trả lời cho {name}.",
+  "together.ask": "Hỏi {name} của người này",
+  "together.what": "Trợ lý của {name} nên trả lời gì?",
+  "together.send": "Gửi",
+  "together.sentAsk": "Đã gửi câu hỏi. Người đó tự quyết định có để trợ lý của mình trả lời hay không.",
+  "together.asked": "{person} hỏi {name} của bạn:",
+  "together.letAnswer": "Để {name} trả lời",
+  "together.relayed": "{person} hỏi: {text}",
+  "together.mine": "Chỉ trên thiết bị của tôi",
+  "together.mineSays": "Mỗi thay đổi đều đến từng thiết bị của bạn, không cần đường liên kết và không có ai khác.",
+  "together.peopleDeck": "Mọi người trong bộ trang chiếu này",
+  "together.peopleProject": "Mọi người trong dự án này",
+  "together.project": "Cùng làm việc trong dự án này",
+  "together.projectSays": "Tài liệu, bộ sưu tập, trang chiếu, bản thiết kế và tệp của dự án luôn giống nhau với mọi người trong đó. Nhiệm vụ của mỗi người, cùng những gì {name} ghi nhớ cho họ, vẫn là của riêng họ."
 }

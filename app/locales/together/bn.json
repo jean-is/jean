@@ -14,6 +14,7 @@
   "together.copyLink": "লিংক কপি করুন",
   "together.people": "এই সংগ্রহের লোকজন",
   "together.peopleTask": "এই কাজের লোকজন",
+  "together.peopleDoc": "এই নথির লোকজন",
   "together.here": "এখন এখানে: {names}",
   "together.you": "(আপনি)",
   "together.hereNow": "এখন এখানে",
@@ -40,5 +41,18 @@
   "together.noPlace": "একসঙ্গে কাজ করার সুবিধা এখানে নেই।",
   "together.inside": "আপনার প্রতিষ্ঠান তাদের তালিকা থেকে লোক যোগ করে। নাম ধরে আপনাকে আমন্ত্রণ জানাতে বলুন।",
   "together.gone": "এই লিংকটি আর কিছু খোলে না। যিনি পাঠিয়েছেন, তাঁর কাছে নতুন একটি চান।",
-  "together.waiting": "{name}-কে উত্তর দেওয়ার পরে আপনার অনুরোধের পালা আসবে।"
+  "together.waiting": "{name}-কে উত্তর দেওয়ার পরে আপনার অনুরোধের পালা আসবে।",
+  "together.ask": "এই ব্যক্তির {name}-কে জিজ্ঞাসা করুন",
+  "together.what": "{name}-এর সহকারী কী উত্তর দেবে?",
+  "together.send": "পাঠান",
+  "together.sentAsk": "প্রশ্ন পাঠানো হয়েছে। তাঁর নিজের সহকারী উত্তর দেবে কি না, তা তিনিই ঠিক করবেন।",
+  "together.asked": "{person} আপনার {name}-কে জিজ্ঞাসা করছেন:",
+  "together.letAnswer": "{name}-কে উত্তর দিতে দিন",
+  "together.relayed": "{person} জিজ্ঞাসা করছেন: {text}",
+  "together.mine": "শুধু আমার ডিভাইসগুলোতে",
+  "together.mineSays": "প্রতিটি পরিবর্তন আপনার প্রতিটি ডিভাইসে পৌঁছে যায়, কোনো লিংক ছাড়াই, আর কারও কাছে নয়।",
+  "together.peopleDeck": "এই স্লাইডগুলোর লোকজন",
+  "together.peopleProject": "এই প্রকল্পের লোকজন",
+  "together.project": "এই প্রকল্পে একসঙ্গে কাজ করুন",
+  "together.projectSays": "এর নথি, সংগ্রহ, স্লাইড, ডিজাইন আর ফাইল এতে থাকা সবার জন্য একই থাকে। প্রত্যেকের কাজ, আর {name} তাঁর জন্য যা মনে রাখে, তাঁর নিজেরই থাকে।"
 }
