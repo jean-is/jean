@@ -93,6 +93,16 @@ self.addEventListener('message', (event) => {
   }
 })
 
+// A nudge from the relay (D736): something came for the person while no Jean was on screen, which would read its mailbox itself. It
+// holds nothing; its words are those the page left, in the person's language (caps/people). A tap opens Jean.
+self.addEventListener('push', (event) => {
+  event.waitUntil((async () => {
+    if ((await self.clients.matchAll({ type: 'window' })).some((client) => client.visibilityState === 'visible')) return
+    const words = await (await (await caches.open('app-push')).match(url('push.json')))?.json().catch(() => null)
+    await self.registration.showNotification(words?.title ?? new URL(self.registration.scope).host, { body: words?.body ?? '', lang: words?.lang, dir: words?.dir, tag: 'app-nudge', icon: url('icons/icon-192.png'), data: { hash: '' } })
+  })())
+})
+
 // A notification the page couldn't show itself (Android's browsers): a tap brings Jean back, on its task.
 self.addEventListener('notificationclick', (event) => {
   event.notification.close()

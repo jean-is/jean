@@ -87,5 +87,6 @@
   "people.why.inside": "Organisaatiosi lisää henkilöt omasta luettelostaan. Etsi heidät sen sijaan nimellä.",
   "people.why.broken": "Jokin meni vikaan. Yritä uudelleen.",
   "people.invites": "{name} kutsuu sinut työstämään kokoelmaa ”{title}” yhdessä",
-  "people.join": "Liity"
+  "people.join": "Liity",
+  "people.nudge": "Sinulle tuli jotain. Avaa {name} nähdäksesi sen."
 }

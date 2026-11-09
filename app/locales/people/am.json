@@ -87,5 +87,6 @@
   "people.why.inside": "ድርጅትዎ ሰዎችን የሚያክለው ከዝርዝሩ ነው። በምትኩ በስማቸው ይፈልጓቸው።",
   "people.why.broken": "የሆነ ችግር ተፈጥሯል። እንደገና ይሞክሩ።",
   "people.invites": "{name} በ“{title}” ላይ አብረው እንዲሠሩ ጋብዘውዎታል",
-  "people.join": "ይቀላቀሉ"
+  "people.join": "ይቀላቀሉ",
+  "people.nudge": "የሆነ ነገር ደርሶልዎታል። ለማየት {name}ን ይክፈቱ።"
 }

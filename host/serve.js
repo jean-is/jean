@@ -138,7 +138,10 @@ export const listener = (handle, proxied) => async (req, res) => {
   const headers = new Headers(Object.entries(req.headers).flatMap(([name, value]) => (typeof value === 'string' ? [[name, value]] : [])))
   const url = new URL(req.url ?? '/', `http://${req.headers.host ?? '127.0.0.1'}`)
   const body = req.method === 'GET' || req.method === 'HEAD' ? undefined : /** @type {ReadableStream} */ (Readable.toWeb(req))
-  const request = new Request(url, { method: req.method, headers, body, duplex: 'half' })
+  // Aborted once the client goes, so that a read waiting for it ends at once (relay/relay.js).
+  const left = new AbortController()
+  res.on('close', () => left.abort())
+  const request = new Request(url, { method: req.method, headers, body, duplex: 'half', signal: left.signal })
   const forwarded = proxied ? headers.get('x-forwarded-for')?.split(',').at(-1)?.trim() : ''
   const client = { address: forwarded || req.socket.remoteAddress || '', port: Number((proxied && headers.get('x-client-port')) || req.socket.remotePort || 0), protocol: `HTTP/${req.httpVersion}` }
   const response = await handle(request, client).catch((error) => { console.error(error); return Response.json({ error: 'Something went wrong.' }, { status: 500 }) })

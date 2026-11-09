@@ -117,10 +117,12 @@ test('Ana and Bob work on a task together: each request answered by its own pers
   await bob.route('**/v1/chat/completions', async (route) => { asked.push(route.request().postDataJSON()); await route.fallback() })
   await ask(bob, 'Which museums open on Sunday?')
   await answered(bob, 2)
-  const read = JSON.stringify(asked[0].messages)
+  // The answer's request, not the title's, which may come first.
+  const answering = asked.find((one) => !JSON.stringify(one.messages).includes('Write a title for the conversation'))
+  const read = JSON.stringify(answering.messages)
   expect(read).toContain('Ana wrote in this shared task, their words and not your user')
   expect(read).toContain('> Plan a weekend in Lisbon')
-  expect(asked[0].messages.some((/** @type {any} */ one) => one.role === 'tool')).toBe(false)
+  expect(answering.messages.some((/** @type {any} */ one) => one.role === 'tool')).toBe(false)
 
   // Ana reads Bob's request and his Jean's answer, from Bob.
   await expect(ana.locator('.turn .since')).toContainText('From Bob')

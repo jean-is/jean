@@ -89,5 +89,6 @@
   "people.why.inside": "La tua organizzazione aggiunge le persone dal suo elenco. Cercale invece per nome.",
   "people.why.broken": "Qualcosa è andato storto. Riprova.",
   "people.invites": "{name} ti invita a lavorare insieme su «{title}»",
-  "people.join": "Partecipa"
+  "people.join": "Partecipa",
+  "people.nudge": "È arrivato qualcosa per te. Apri {name} per vederlo."
 }

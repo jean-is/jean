@@ -87,5 +87,6 @@
   "people.why.inside": "A szervezeted a saját listájáról ad hozzá személyeket. Inkább név szerint keresd meg őket.",
   "people.why.broken": "Valami hiba történt. Próbáld újra.",
   "people.invites": "{name} meghív, hogy közösen dolgozzatok ezen: „{title}”",
-  "people.join": "Csatlakozás"
+  "people.join": "Csatlakozás",
+  "people.nudge": "Érkezett neked valami. Nyisd meg a(z) {name} alkalmazást, hogy lásd."
 }

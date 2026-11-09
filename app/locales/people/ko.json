@@ -85,5 +85,6 @@
   "people.why.inside": "조직에서는 조직 목록에서 사람을 추가해요. 대신 이름으로 찾아보세요.",
   "people.why.broken": "문제가 발생했어요. 다시 시도하세요.",
   "people.invites": "{name}이(가) ‘{title}’을(를) 함께 작업하자고 초대했어요",
-  "people.join": "참여"
+  "people.join": "참여",
+  "people.nudge": "새로 받은 게 있어요. {name}을(를) 열어 확인해 보세요."
 }

@@ -15,7 +15,7 @@ import { mine } from '../../ui/opfs.js'
 import { host } from '../../ui/host.js'
 import { lazyPage } from '../../ui/lazy-page.js'
 import { icons } from '../../ui/menu-icons.js'
-import { t, tParts, useStrings, locale, intlLocales, formatBytes } from '../../core/i18n.js'
+import { t, tParts, useStrings, locale, intlLocales, formatBytes, dir } from '../../core/i18n.js'
 import { BRAND } from '../../brand.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { getSecret, setSecrets, secretsWhere } from '../../ui/secrets.js'
@@ -23,7 +23,7 @@ import { VAULT } from '../../ui/seal.js'
 import { listen, reader } from '../../ui/relay.js'
 import { serviceURL } from '../../core/settings.js'
 import { parseLink } from '../devices/pair.js'
-import { base64url, random } from '../share/seal.js'
+import { base64url, bytesOf, random } from '../share/seal.js'
 import { personOf, peopleOf, boxesOf, invite as invited, heardHello, heardReveal, confirmed, ended, accept as accepted, heardNonce, heardMet, dropped, received, forget, tidy, nameId, arrivalsOf, sendTo, ARRIVALS, LIMIT, turn } from './flow.js'
 import * as colleague from './colleagues.js'
 
@@ -104,6 +104,7 @@ async function watch() {
   if ((await me()).pending) await locked('app-person', async () => turn(ctx)).catch(warn)
   const person = await me()
   if (colleagues) listOn(person).catch(warn)
+  nudged(base, person).catch(warn)
   const stop = listen({ base, token: person.token, lock: mine('app-people'), quiet: answering, onMessages: async (messages) => {
     for (const { bytes } of messages) {
       // A colleague who writes first is looked up on the list (D731).
@@ -119,6 +120,24 @@ async function watch() {
     if (id.startsWith('accept:')) answer(ctx, JSON.parse(value), controller.signal)
   }
   await refresh()
+}
+
+/**
+ * Nudged when something comes while Jean is closed (D736): where the browser may tell the person (Notifications on) and the relay sends
+ * nudges, this device's push subscription is kept beside the person mailbox; turned off, it is taken off. A nudge holds nothing: the
+ * service worker says something came, in the words left here in the person's language (sw.js). @param {string} base @param {import('./flow.js').Person} person
+ */
+async function nudged(base, person) {
+  const registration = await navigator.serviceWorker?.getRegistration(), on = Notification.permission === 'granted' && app.settings.peek().notifications !== false
+  const key = registration?.pushManager && (await (await fetch(base)).json()).push, had = key && await registration.pushManager.getSubscription()
+  if (!key || (!on && !had)) return
+  if (on) await (await caches.open('app-push')).put(new URL('push.json', registration.scope), Response.json({ title: BRAND.name, body: t('people.nudge', { name: BRAND.name }), lang: locale.peek(), dir: dir() }))
+  const subscription = on ? had || await registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: bytesOf(key) }) : had
+  const asked = (/** @type {string} */ path, /** @type {string} */ method, body = '') => fetch(`${base}v1/m/${person.mailbox}${path}`, { method, headers: { authorization: `Bearer ${person.token}` }, body })
+  // Open already, or opened now, as reading it opens it.
+  await asked('', 'PUT')
+  await asked('/push', on ? 'PUT' : 'DELETE', JSON.stringify({ endpoint: subscription.endpoint }))
+  if (!on) await subscription.unsubscribe()
 }
 
 /** An invitation's mailboxes read: Bob's hello, then his reveal, then the digits to type, which the page asks for. @param {import('./flow.js').Context} ctx @param {Invite} one @param {AbortSignal} signal */

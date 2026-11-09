@@ -87,5 +87,6 @@
   "people.why.inside": "Nagdadagdag ang organisasyon mo ng mga tao mula sa listahan nito. Hanapin na lang sila ayon sa pangalan.",
   "people.why.broken": "May nagkaproblema. Subukang muli.",
   "people.invites": "Iniimbitahan ka ni {name} na sabay ninyong gawin ang “{title}”",
-  "people.join": "Sumali"
+  "people.join": "Sumali",
+  "people.nudge": "May dumating para sa iyo. Buksan ang {name} para makita ito."
 }

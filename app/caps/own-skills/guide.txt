@@ -156,7 +156,7 @@ Once on, each sentence that cites a source is checked against it after the answe
 A routine of its own, {cap.since.name} in {settings.title} › {cap.routines.name}: opening the app after 8 hours or more, a short brief of what is new in the connected services comes in a task of its own. It only reads; its page changes its request or brain, or turns it off.
 
 ## notifications
-Once the browser allows it, a task done while the user is in another tab or app, or waiting for their answer, shows a notification with its title, never its content. {settings.title} › {settings.general} turns them off.
+Once the browser allows it, a task done while the user is in another tab or app, or waiting for their answer, shows a notification with its title, never its content; where the user has {cap.people.name}, one also says when something came for them while Jean was closed, never what or from whom. {settings.title} › {settings.general} turns them off.
 
 ## names
 From the project's name in the header, its dialog gives its assistant a name and a few words on how to be.

@@ -93,5 +93,6 @@
   "people.why.inside": "Ho aozadur a ouzhpenn tud diwar e roll. Klaskit anezho dre o anv kentoc’h.",
   "people.why.broken": "Un dra bennak a zo aet a-dreuz. Klaskit en-dro.",
   "people.invites": "{name} a bed ac’hanoc’h da labourat asambles war « {title} »",
-  "people.join": "Dont e-barzh"
+  "people.join": "Dont e-barzh",
+  "people.nudge": "Un dra bennak a zo erruet evidoc’h. Digorit {name} evit e welet."
 }

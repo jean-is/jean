@@ -85,5 +85,6 @@
   "people.why.inside": "Àjọ yín máa ń ṣàfikún àwọn èèyàn láti inú àkọsílẹ̀ rẹ̀. Dípò bẹ́ẹ̀, ẹ wá wọn pẹ̀lú orúkọ wọn.",
   "people.why.broken": "Nǹkan kan kò lọ dáadáa. Ẹ gbìyànjú lẹ́ẹ̀kan sí i.",
   "people.invites": "{name} ń pè yín láti jọ ṣiṣẹ́ lórí “{title}”",
-  "people.join": "Dara pọ̀"
+  "people.join": "Dara pọ̀",
+  "people.nudge": "Nǹkan kan ti dé fún yín. Ẹ ṣí {name} láti rí i."
 }

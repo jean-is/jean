@@ -188,3 +188,34 @@ test('someone removed from People goes from both sides', async ({ browser }) => 
   await expect.poll(() => peopleOf(ana)).toEqual([])
   await expect.poll(() => peopleOf(bob)).toEqual([])
 })
+
+test('a closed Jean is nudged when something comes for its person (D736): its device kept beside the person mailbox, nothing in the nudge', async ({ browser }) => {
+  const context = await browser.newContext({ serviceWorkers: 'allow' })
+  // The browser's answer, which headless Chromium never gives, and its push service, which the fake mail's stands in for.
+  await context.addInitScript(() => {
+    Object.defineProperty(Notification, 'permission', { get: () => 'granted' })
+    PushManager.prototype.getSubscription = async () => null
+    PushManager.prototype.subscribe = async () => /** @type {any} */ ({ endpoint: 'http://127.0.0.1:4182/push/bobs-phone', unsubscribe: async () => true })
+  })
+  const bob = await context.newPage()
+  await start(bob)
+  await bob.evaluate(async (relay) => {
+    const { app, updateSettings } = await import('/ui/state.js')
+    await updateSettings({ urls: { ...app.settings.value.urls, relay }, name: 'Bob' })
+    await navigator.serviceWorker.ready
+  }, RELAY_URL)
+  const subscribed = bob.waitForResponse((response) => response.url().endsWith('/push') && response.request().method() === 'PUT')
+  await bob.evaluate(async () => { await (await import('/ui/caps.js')).unlock('people') })
+  expect((await subscribed).status()).toBe(200)
+  const mailbox = await bob.evaluate(async () => JSON.parse(String(await (await import('/ui/secrets.js')).getSecret((await import('/ui/state.js')).app.fs, 'person'))).mailbox)
+  expect(await bob.evaluate(async () => (await (await (await caches.open('app-push')).match(new URL('push.json', (await navigator.serviceWorker.ready).scope)))?.json())?.body))
+    .toBe('Something came for you. Open Jean to see it.')
+
+  // Bob's Jean closed, a letter comes: his phone is nudged, with nothing but the relay's signature.
+  await bob.close()
+  const nudges = () => fetch('http://127.0.0.1:4182/push/bobs-phone').then((response) => response.json())
+  expect(await nudges()).toEqual([])
+  const sent = await fetch(`${RELAY_URL}v1/m/${mailbox}`, { method: 'POST', headers: { origin: 'http://127.0.0.1:4180' }, body: 'sealed' })
+  expect(sent.status).toBe(201)
+  await expect.poll(nudges).toEqual([expect.stringMatching(/^vapid t=[\w-]+\.[\w-]+\.[\w-]+, k=[\w-]{87}$/)])
+})

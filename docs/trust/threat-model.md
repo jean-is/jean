@@ -23,7 +23,7 @@ Jean is static files served from one address. It runs in the person's browser ta
 - **Code Jean runs:** scripts a brain wrote, pages in answers, extensions.
 - **A malicious site** in Jean's browser pane.
 - **Someone with the device:** a lost laptop, a shared computer, another profile.
-- **A service on the way:** a brain's provider, the gateway, the share host, the relay between the person's devices, a connected service, the network.
+- **A service on the way:** a brain's provider, the gateway, the share host, the relay between the person's devices, a browser's push service it nudges (D736), a connected service, the network.
 - **Whoever serves Jean's files,** or a package Jean is built from.
 - **The person themself,** getting around their organisation's policy.
 

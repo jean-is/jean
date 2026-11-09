@@ -85,5 +85,6 @@
   "people.why.inside": "Organisasi anda menambah orang daripada senarainya. Sebaliknya, cari mereka mengikut nama.",
   "people.why.broken": "Ada sesuatu yang tidak kena. Cuba lagi.",
   "people.invites": "{name} menjemput anda untuk mengerjakan “{title}” bersama",
-  "people.join": "Sertai"
+  "people.join": "Sertai",
+  "people.nudge": "Ada sesuatu untuk anda. Buka {name} untuk melihatnya."
 }

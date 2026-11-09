@@ -699,3 +699,68 @@ test('listing needs the mailbox open with its token, a P-256 key and a proof of 
   assert.equal((await (await none.ask('/')).json()).issuers, undefined)
   assert.equal((await none.ask('/v1/people?q=ana', { token: open.token })).status, 404)
 })
+
+test('a mailbox nudges its devices when a message comes (D736): no payload, signed with the relay’s VAPID key, once in a while, never while read, nowhere the configuration doesn’t name', async () => {
+  const { vapid } = await import('../relay/relay.js')
+  const keys = await vapid()
+  /** @type {{ url: string, init: RequestInit }[]} */
+  const sent = []
+  let gone = false
+  let clock = Date.parse('2026-11-10T08:00:00Z')
+  const { ask, open, send, read, store } = relayOn({ now: () => clock, push: { ...keys, subject: 'mailto:relay@jean.example', hosts: ['push.example', '*.notify.example'] },
+    fetch: /** @type {typeof fetch} */ (async (url, init = {}) => { sent.push({ url: String(url), init }); return new Response(null, { status: gone ? 410 : 201 }) }) })
+  assert.equal((await (await ask('/')).json()).push, keys.publicKey, 'the page subscribes with the relay’s key')
+  const box = await mailbox()
+  await open(box.id, box.token)
+  const subscribe = (/** @type {string} */ endpoint, method = 'PUT', token = box.token) => ask(`/v1/m/${box.id}/push`, { method, token, body: JSON.stringify({ endpoint }) })
+  assert.equal((await subscribe('https://push.example/send/abc', 'PUT', (await mailbox()).token)).status, 403)
+  assert.equal((await subscribe('https://elsewhere.example/send/abc')).status, 400, 'a host the configuration doesn’t name')
+  assert.equal((await subscribe('http://push.example/send/abc')).status, 400, 'https only')
+  assert.equal((await subscribe('https://push.example/send/phone')).status, 200)
+  assert.equal((await subscribe('https://wns2.notify.example/w/?token=laptop')).status, 200)
+  assert.deepEqual(store.records.filter((one) => one.operation === 'push').length, 2)
+
+  await send(box.id, 'sealed')
+  await new Promise((resolve) => setTimeout(resolve, 10))
+  sent.sort((a, b) => a.url.localeCompare(b.url))
+  assert.deepEqual(sent.map((one) => one.url), ['https://push.example/send/phone', 'https://wns2.notify.example/w/?token=laptop'])
+  const headers = new Headers(sent[0].init.headers)
+  assert.equal(sent[0].init.body, undefined, 'a nudge holds nothing')
+  assert.equal(headers.get('ttl'), '604800')
+  const [, jwt, k] = /** @type {RegExpMatchArray} */ (/^vapid t=([\w-]+\.[\w-]+\.[\w-]+), k=([\w-]+)$/.exec(headers.get('authorization') ?? ''))
+  assert.equal(k, keys.publicKey)
+  const [head, claims, signature] = jwt.split('.')
+  assert.deepEqual(JSON.parse(Buffer.from(claims, 'base64url').toString()), { aud: 'https://push.example', exp: clock / 1000 + 12 * 3600, sub: 'mailto:relay@jean.example' })
+  const key = await crypto.subtle.importKey('raw', Buffer.from(keys.publicKey, 'base64url'), { name: 'ECDSA', namedCurve: 'P-256' }, false, ['verify'])
+  assert.ok(await crypto.subtle.verify({ name: 'ECDSA', hash: 'SHA-256' }, key, Buffer.from(signature, 'base64url'), new TextEncoder().encode(`${head}.${claims}`)), 'signed with the relay’s key')
+
+  // Once in ten minutes at most; then those their service forgot are taken off.
+  await send(box.id, 'sealed again')
+  assert.equal(sent.length, 2)
+  clock += 10 * 60_000
+  gone = true
+  await send(box.id, 'later')
+  await new Promise((resolve) => setTimeout(resolve, 10))
+  assert.equal(sent.length, 4)
+  assert.deepEqual(store.boxes.get(box.id).push, [])
+
+  // Never while one of its devices is reading it.
+  gone = false
+  await subscribe('https://push.example/send/phone')
+  clock += 10 * 60_000
+  const reading = read(box.id, box.token, '?after=3&wait=5')
+  await new Promise((resolve) => setTimeout(resolve, 10))
+  await send(box.id, 'while read')
+  assert.equal((await reading).body.messages.length, 1)
+  assert.equal(sent.length, 4)
+  assert.equal((await subscribe('https://push.example/send/phone', 'DELETE')).status, 200)
+  assert.deepEqual(store.boxes.get(box.id).push, [])
+})
+
+test('a relay without a VAPID key nudges nothing and says so', async () => {
+  const { ask, open } = relayOn()
+  const box = await mailbox()
+  await open(box.id, box.token)
+  assert.equal((await (await ask('/')).json()).push, undefined)
+  assert.equal((await ask(`/v1/m/${box.id}/push`, { method: 'PUT', token: box.token, body: JSON.stringify({ endpoint: 'https://push.example/x' }) })).status, 404)
+})

@@ -87,5 +87,6 @@
   "people.why.inside": "Je organisatie voegt mensen toe vanuit haar lijst. Zoek ze in plaats daarvan op naam.",
   "people.why.broken": "Er ging iets mis. Probeer het opnieuw.",
   "people.invites": "{name} nodigt je uit om samen aan ‘{title}’ te werken",
-  "people.join": "Meedoen"
+  "people.join": "Meedoen",
+  "people.nudge": "Er is iets voor je binnengekomen. Open {name} om het te zien."
 }

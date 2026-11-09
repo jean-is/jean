@@ -17,6 +17,7 @@
 //   /rows/mcp      a table, no sign-in, whose one tool takes a strict union and answers at length
 //   /wiki/{lang}/w/api.php   a few pages in the shape of Wikipedia's search API
 //   /kiwix/        a Kiwix server, as test/fixtures/kiwix.js answers
+//   /push/{device}  a push service, as a browser's is (D736): a relay's nudge is kept with its Authorization, which GET /push/{device} gives
 //   /.well-known/agent-skills/index.json   a skills discovery index (D121): a SKILL.md, an archive
 //                  with a file beside its steps, one whose digest is wrong, and one holding a script
 import { createServer } from 'node:http'
@@ -119,6 +120,8 @@ export function createFakeMail() {
   const tokens = new Set(['test-token'])
   /** @type {Set<string>} */
   const sessions = new Set()
+  /** Nudges each device was sent, their Authorization. @type {Map<string, string[]>} */
+  const nudges = new Map()
   /** @type {string[]} what came in, for tests: method, path and headers that matter */
   const log = []
 
@@ -140,6 +143,11 @@ export function createFakeMail() {
     for await (const chunk of req) body += chunk
     const json = (/** @type {number} */ status, /** @type {any} */ value, headers = {}) => res.writeHead(status, { 'content-type': 'application/json', ...headers }).end(JSON.stringify(value))
     log.push(`${req.method} ${url.pathname} ${req.headers['mcp-method'] ?? ''} ${req.headers['mcp-param-email'] ?? ''}${req.headers.origin ? ` from ${req.headers.origin}` : ''}`.trim())
+
+    // ─── A push service ───
+    const device = /^\/push\/([\w-]+)$/.exec(url.pathname)?.[1]
+    if (device && req.method === 'POST') { nudges.set(device, [...nudges.get(device) ?? [], String(req.headers.authorization ?? '')]); return res.writeHead(201).end() }
+    if (device) return json(200, nudges.get(device) ?? [])
 
     // ─── Skills from elsewhere ───
     if (url.pathname === '/.well-known/agent-skills/index.json') return json(200, INDEX)

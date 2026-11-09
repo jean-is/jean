@@ -95,5 +95,6 @@
   "people.why.inside": "تضيف مؤسستك الأشخاص من قائمتها. ابحث عنهم بالاسم بدلًا من ذلك.",
   "people.why.broken": "حدث خطأ ما. حاول مرة أخرى.",
   "people.invites": "دعوة من {name} للعمل معًا على «{title}»",
-  "people.join": "انضمام"
+  "people.join": "انضمام",
+  "people.nudge": "وصلك شيء. يمكنك فتح {name} لرؤيته."
 }

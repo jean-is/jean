@@ -85,5 +85,6 @@
   "people.why.inside": "你的组织从其名单中添加人员。请改为按名字查找。",
   "people.why.broken": "出了点问题。请重试。",
   "people.invites": "{name} 邀请你一起处理“{title}”",
-  "people.join": "加入"
+  "people.join": "加入",
+  "people.nudge": "有东西发给你了。打开 {name} 查看。"
 }

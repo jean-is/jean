@@ -7,6 +7,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { defineConfig, devices } from '@playwright/test'
 import { ISSUER, JWKS, POLICY } from './fixtures/fake-issuer.js'
+import { vapid } from '../relay/relay.js'
 
 const APP = 4180
 const BRAIN = 4181
@@ -67,7 +68,9 @@ export default defineConfig({
     { command: 'node relay/serve.js', cwd: '..', port: RELAY, reuseExistingServer: false,
       env: { PORT: String(RELAY), RELAY_DIR: join(tmpdir(), `jean-mailboxes-${process.pid}`), RELAY_CONFIG: JSON.stringify({ origins: [`http://127.0.0.1:${APP}`, `http://localhost:${APP}`], limits: { opens: 10_000 }, stores: { made: 10_000 }, journals: { opens: 10_000 },
         // The fake organisation's people, by the ID tokens its sign-in signs (test/colleagues.spec.js, D731).
-        issuers: [{ issuer: ISSUER, audience: POLICY.signIn.clientId, jwks: JWKS }] }) } },
+        issuers: [{ issuer: ISSUER, audience: POLICY.signIn.clientId, jwks: JWKS }],
+        // Nudges, to the fake mail's push service (test/people.spec.js, D736).
+        push: { ...await vapid(), subject: 'mailto:relay@jean.example', hosts: [`127.0.0.1:${MAIL}`], every: 0 } }) } },
     // Jean as jean.is's deploy has it, its page under the first screen and its pages in other languages (test/home.spec.js, D397).
     { command: 'node scripts/serve.js --home', cwd: '..', port: HOME, env: { PORT: String(HOME) }, reuseExistingServer: false },
     // Jean again, each page's policy also a report-only header that says what it refused (test/csp.spec.js).

@@ -8,7 +8,7 @@
 // The mailbox's own ceiling, a few networks' worth, holds only against a network at or past its fair share;
 // one under it takes the room of the oldest message of the network furthest past its own, if any is.
 //
-//   GET    /                    what it keeps: { format: 1, message, days, store?, journals?, issuers? }, store its { quota, part, devices } where
+//   GET    /                    what it keeps: { format: 1, message, days, store?, journals?, issuers?, push? }, push the VAPID key's public point, store its { quota, part, devices } where
 //                               it keeps stores, journals their { change, part, days } where it keeps them, issuers those whose people it lists
 //   PUT    /v1/m/<id>           opens a mailbox: Authorization: Bearer <token>, whose SHA-256 the id is the start of;
 //                               { "once": true } as its body takes one message, then refuses (409)
@@ -20,6 +20,8 @@
 //                               message's number; a seq at or above it, a reader's from before a rollback, reads from the start
 //   GET    /v1/m/<id>/<seq>     with the token: a large message's bytes
 //   DELETE /v1/m/<id>           with the token: the mailbox and all it holds
+//   PUT    /v1/m/<id>/push      with the token: { endpoint }, a device's push subscription, nudged when a message comes (below)
+//   DELETE /v1/m/<id>/push      with the token: { endpoint }, taken off
 //   …      /v1/s/<sid>…         a person's store, where its configuration has `stores` (store.js)
 //   …      /v1/j/<id>…          what people work on together, where its configuration has `journals` (journal.js)
 //   …      /v1/people…          the organisation's people, where its configuration has `issuers` (colleagues.js)
@@ -30,6 +32,10 @@
 //   stores   any of store.js's STORE, {} for them all, to keep stores: none are kept without it
 //   journals any of journal.js's JOURNAL, {} for them all, to keep journals: none are kept without it
 //   issuers  the organisation's sign-ins whose people it lists (colleagues.js): none are listed without it
+//   push     { publicKey, privateKey, subject, hosts, every?, devices? } to nudge closed Jeans: the VAPID key's public point and private
+//            scalar in base64url (`node relay/serve.js vapid` makes a pair), a mailto: or https: address the push services may write to,
+//            and their hosts (`*.` for a domain's), e.g. fcm.googleapis.com, updates.push.services.mozilla.com, web.push.apple.com and
+//            *.notify.windows.com: none are sent without it
 //
 // Web-standard (fetch, Request, Response, Web Crypto): what it keeps goes through a store, a folder on Node (serve.js).
 import { base64url, hashOf, idOf, networkOf, within } from '../host/host.js'
@@ -58,21 +64,85 @@ export const LIMITS = Object.freeze({
   /** Bytes of disk under which no message is taken. */
   free: 1_000_000_000,
 })
+// Nudges (D736): where its configuration has `push`, the relay wakes a person's closed Jean when a message comes to a mailbox whose
+// devices asked for it, through each browser's own push service (Web Push, RFC 8030), signed with the relay's VAPID key (RFC 8292).
+// A nudge holds nothing: no payload, so nothing to seal, and the service worker says only that something came, in words the page left
+// it. One per mailbox in `every` minutes at most, and none while one of its devices is reading it. A device's endpoint is its browser's
+// address at its push service, which the configuration's `hosts` must name, so that the relay posts nowhere else.
+export const PUSH = Object.freeze({
+  /** Minutes between two nudges to one mailbox; devices that may ask for one each. */
+  every: 10,
+  devices: 8,
+})
+
+/** @typedef {{ publicKey: string, privateKey: string, subject: string, hosts: string[], every?: number, devices?: number }} PushConfig */
+/** @typedef {{ endpoint: string, at: number }} Device */
+
+const bytesOf = (/** @type {string} */ text) => Uint8Array.from(atob(text.replace(/-/g, '+').replace(/_/g, '/')), (char) => char.charCodeAt(0))
+const encoded = (/** @type {object} */ value) => base64url(new TextEncoder().encode(JSON.stringify(value)))
+
+/** A new VAPID key pair, for the configuration. */
+export async function vapid() {
+  const pair = /** @type {CryptoKeyPair} */ (await crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, true, ['sign', 'verify']))
+  const jwk = await crypto.subtle.exportKey('jwk', pair.privateKey)
+  return { publicKey: base64url(new Uint8Array(await crypto.subtle.exportKey('raw', pair.publicKey))), privateKey: /** @type {string} */ (jwk.d) }
+}
+
+/** @param {PushConfig} config @param {{ fetch: typeof globalThis.fetch, now: () => number }} io */
+export function nudges(config, { fetch: post, now }) {
+  const limits = { ...PUSH, ...config }
+  const point = bytesOf(config.publicKey)
+  const key = crypto.subtle.importKey('jwk', { kty: 'EC', crv: 'P-256', x: base64url(point.slice(1, 33)), y: base64url(point.slice(33)), d: config.privateKey }, { name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign'])
+  /** The Authorization a push service takes from this relay, for its origin, good 12 hours. @param {string} audience */
+  const signed = async (audience) => {
+    const unsigned = `${encoded({ typ: 'JWT', alg: 'ES256' })}.${encoded({ aud: audience, exp: Math.floor(now() / 1000) + 12 * 3600, sub: config.subject })}`
+    const signature = new Uint8Array(await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, await key, new TextEncoder().encode(unsigned)))
+    return `vapid t=${unsigned}.${base64url(signature)}, k=${config.publicKey}`
+  }
+  return {
+    publicKey: config.publicKey,
+    /** An endpoint at a push service the configuration names: https, or this computer's for tests. @param {unknown} endpoint */
+    allowed(endpoint) {
+      if (typeof endpoint !== 'string' || endpoint.length > 1000) return false
+      try {
+        const url = new URL(endpoint)
+        return (url.protocol === 'https:' || (url.protocol === 'http:' && ['127.0.0.1', 'localhost'].includes(url.hostname)))
+          && config.hosts.some((host) => (host.startsWith('*.') ? url.hostname.endsWith(host.slice(1)) : url.host === host))
+      } catch { return false }
+    },
+    /** Devices with this one added, or taken off, the newest kept. @param {Device[]} devices @param {string} endpoint @param {boolean} adding */
+    listed: (devices, endpoint, adding) => [...devices.filter((one) => one.endpoint !== endpoint), ...(adding ? [{ endpoint, at: now() }] : [])].slice(-limits.devices),
+    /** Whether a mailbox last nudged then may be nudged now. @param {number | undefined} last */
+    due: (last) => now() - (last ?? 0) >= limits.every * 60_000,
+    /**
+     * Each device nudged, at once; the endpoints their push service says are gone. A week's TTL, as long as a message stays.
+     * @param {Device[]} devices @returns {Promise<string[]>}
+     */
+    async send(devices) {
+      const gone = await Promise.all(devices.map(async ({ endpoint }) => {
+        const response = await post(endpoint, { method: 'POST', headers: { ttl: '604800', urgency: 'normal', authorization: await signed(new URL(endpoint).origin) } }).catch(() => null)
+        return response && [404, 410].includes(response.status) ? endpoint : ''
+      }))
+      return gone.filter(Boolean)
+    },
+  }
+}
+
 /** Seconds a read waits at most. */
 const WAIT = 25
 const HOUR = 3_600_000
 const DAY = 86_400_000
-const PATH = /^\/v1\/m\/([\w-]{22})(?:\/(\d{1,9}))?$/
+const PATH = /^\/v1\/m\/([\w-]{22})(?:\/(\d{1,9}|push))?$/
 
 /**
  * A mailbox as the store keeps it: its token's hash, whether it takes one message (and took it), the next message's number,
- * where its messages are, and when it was last opened or read.
- * @typedef {{ format: 1, token: string, once?: true, used?: true, next: number, messages: Entry[], touched: number }} Box
+ * where its messages are, when it was last opened or read, and the devices it nudges, last when.
+ * @typedef {{ format: 1, token: string, once?: true, used?: true, next: number, messages: Entry[], touched: number, push?: Device[], nudged?: number }} Box
  * @typedef {{ seq: number, at: number, size: number, net?: string }} Entry
  * @typedef {{ box(id: string): Promise<Box | null>, save(id: string, box: Box): Promise<void>, add(id: string, seq: number, body: Uint8Array): Promise<void>,
  *   read(id: string, seq: number): Promise<Uint8Array | null>, drop(id: string, seqs: number[]): Promise<void>, remove(id: string): Promise<void>,
  *   record(text: string): Promise<void>, free?(): Promise<number> } & Partial<import('./store.js').Backend> & Partial<import('./journal.js').Backend> & Partial<import('./colleagues.js').Backend>} Store
- * @typedef {{ origins?: string[], limits?: Partial<typeof LIMITS>, stores?: Partial<typeof STORE>, journals?: Partial<typeof JOURNAL>, issuers?: import('./colleagues.js').Issuer[], store?: Store, now?: () => number,
+ * @typedef {{ origins?: string[], limits?: Partial<typeof LIMITS>, stores?: Partial<typeof STORE>, journals?: Partial<typeof JOURNAL>, issuers?: import('./colleagues.js').Issuer[], push?: PushConfig, store?: Store, now?: () => number,
  *   fetch?: typeof fetch }} Config  fetch: what reads an issuer's keys
  * @typedef {import('../host/host.js').Client} Client
  */
@@ -131,6 +201,9 @@ export function relay(config) {
   const listed = config.issuers?.length && store?.entries ? colleagues({ backend: /** @type {import('./colleagues.js').Backend} */ (store), issuers: config.issuers, fetch: config.fetch ?? fetch, now, inTurn,
     record: (text) => store.record(text), owns: async (id, hash) => ((box) => (box ? box.token === hash : null))(await store.box(id)) }) : null
 
+  // Nudges for closed Jeans, where the configuration has a VAPID key.
+  const nudger = config.push ? nudges(config.push, { fetch: config.fetch ?? fetch, now }) : null
+
   return Object.assign(async (/** @type {Request} */ request, /** @type {Client} */ client = { address: '', port: 0 }) => {
     const url = new URL(request.url)
     const origin = request.headers.get('origin') ?? ''
@@ -147,7 +220,7 @@ export function relay(config) {
     const reading = request.method === 'GET' || request.method === 'HEAD'
     if (url.pathname === '/' && reading) {
       return answer(200, { format: 1, message: limits.message, days: limits.days, ...(kept && { store: { quota: shelves.quota, part: shelves.part, devices: shelves.devices } }),
-        ...(book && { journals: { change: pages.change, part: pages.part, days: pages.days } }), ...(listed && { issuers: listed.issuers }) })
+        ...(book && { journals: { change: pages.change, part: pages.part, days: pages.days } }), ...(listed && { issuers: listed.issuers }), ...(nudger && { push: nudger.publicKey }) })
     }
     const [, id, seq] = PATH.exec(url.pathname) ?? []
     const shelf = kept && url.pathname.startsWith('/v1/s/')
@@ -177,7 +250,7 @@ export function relay(config) {
     const token = /^Bearer ([\w-]{43})$/.exec(request.headers.get('authorization') ?? '')?.[1]
     const owner = Boolean(token) && await idOf(/** @type {string} */ (token)) === id
     const hash = token ? await hashOf(token) : ''
-    /** A change, with where it came from, as French law asks of a host; never a read. @param {'open' | 'message' | 'delete'} operation */
+    /** A change, with where it came from, as French law asks of a host; never a read. @param {'open' | 'message' | 'delete' | 'push'} operation */
     const record = (operation) => store?.record(JSON.stringify({ at: new Date(at).toISOString(), address: client.address, port: client.port, protocol: client.protocol ?? '', id, operation }))
 
     if (request.method === 'POST' && !seq) {
@@ -221,7 +294,11 @@ export function relay(config) {
         const sent = box.next
         box.next += 1
         if (box.once) box.used = true
+        // Its devices nudged, unless one is reading it now, once in `every` minutes at most; those their push service forgot, taken off.
+        const nudging = nudger && box.push?.length && !waiting.get(id)?.size && nudger.due(box.nudged) ? box.push : null
+        if (nudging) box.nudged = at
         await store?.save(id, box)
+        if (nudging) nudger?.send(nudging).then((gone) => void (gone.length && inTurn(id, async () => { const held = await store?.box(id); if (held) await store?.save(id, { ...held, push: held.push?.filter((one) => !gone.includes(one.endpoint)) }) })))
         taken.set(`${id} ${net}`, { from: hour.from, count: hour.count + 1 })
         taken.set(id, { from: all.from, count: all.count + 1 })
         await record('message')
@@ -237,6 +314,23 @@ export function relay(config) {
     // The rest is the mailbox's own, with its token.
     if (!token) return answer(401, { error: 'This mailbox’s token is needed.' })
     if (!owner) return answer(403, { error: 'This mailbox is someone else’s.' })
+
+    if (seq === 'push') {
+      if (!nudger) return answer(404, { error: 'This relay sends no nudges.' })
+      if (request.method !== 'PUT' && request.method !== 'DELETE') return answer(405, { error: 'Not here.' })
+      /** @type {unknown} */
+      let endpoint
+      try { endpoint = JSON.parse(new TextDecoder().decode(await within(request, 2_000) ?? new Uint8Array())).endpoint } catch {}
+      if (!nudger.allowed(endpoint)) return answer(400, { error: 'This relay sends nothing to that push service.' })
+      return inTurn(id, async () => {
+        const box = await store?.box(id)
+        if (!box) return answer(404, { error: 'No mailbox is open here.' })
+        if (box.token !== hash) return answer(403, { error: 'This mailbox is someone else’s.' })
+        await store?.save(id, { ...box, push: nudger.listed(box.push ?? [], /** @type {string} */ (endpoint), request.method === 'PUT'), touched: at })
+        if (request.method === 'PUT') await record('push')
+        return answer(200, {})
+      })
+    }
 
     if (request.method === 'PUT' && !seq) {
       /** @type {{ once?: unknown }} */
@@ -325,6 +419,8 @@ export function relay(config) {
         }
         const timer = setTimeout(done, wait * 1000)
         set.add(done)
+        // A device gone, its tab closed, reads no more: it no longer holds back a nudge.
+        request.signal?.addEventListener('abort', done, { once: true })
       })
       box = await store?.box(id) ?? { ...box, messages: [] }
       messages = await handed(box)

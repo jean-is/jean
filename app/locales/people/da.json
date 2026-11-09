@@ -87,5 +87,6 @@
   "people.why.inside": "Din organisation tilføjer personer fra sin liste. Find dem i stedet ved navn.",
   "people.why.broken": "Noget gik galt. Prøv igen.",
   "people.invites": "{name} inviterer dig til at arbejde sammen på “{title}”",
-  "people.join": "Deltag"
+  "people.join": "Deltag",
+  "people.nudge": "Der er kommet noget til dig. Åbn {name} for at se det."
 }

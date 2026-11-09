@@ -89,5 +89,6 @@
   "people.why.inside": "Vaša organizacija dodaje osobe sa svojeg popisa. Umjesto toga potražite ih po imenu.",
   "people.why.broken": "Nešto je pošlo po zlu. Pokušajte ponovno.",
   "people.invites": "Osoba {name} poziva vas da zajedno radite na „{title}“",
-  "people.join": "Pridruži se"
+  "people.join": "Pridruži se",
+  "people.nudge": "Nešto je stiglo za vas. Otvorite aplikaciju {name} i pogledajte."
 }

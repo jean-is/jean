@@ -13,7 +13,7 @@ import { randomUUID } from 'node:crypto'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { listener, sealRecord, stopping } from '../host/serve.js'
-import { relay, LIMITS } from './relay.js'
+import { relay, vapid, LIMITS } from './relay.js'
 
 const DAY = 86_400_000
 
@@ -169,14 +169,15 @@ export function folder(dir, recordKey) {
 export async function main(args = []) {
   const config = JSON.parse(process.env.RELAY_CONFIG ?? '{}')
   const dir = process.env.RELAY_DIR ?? 'mailboxes'
+  if (args[0] === 'vapid') return console.log(JSON.stringify(await vapid()))
   if (args[0] === 'forget' && args[1]) return console.log(`${await folder(dir, null).forget(args[1])} listing(s) of ${args[1]} taken off.`)
-  if (args.length) throw new Error('node relay/serve.js takes one command, forget <account>; node host/serve.js keys makes a pair for the records, and open reads them')
+  if (args.length) throw new Error('node relay/serve.js takes one command, forget <account> or vapid (a key pair for nudges); node host/serve.js keys makes a pair for the records, and open reads them')
   const recordKey = config.recordKey ? await crypto.subtle.importKey('jwk', config.recordKey, { name: 'ECDH', namedCurve: 'P-256' }, false, []) : null
   const limits = { ...LIMITS, ...config.limits }
   const store = folder(dir, recordKey)
   const PORT = Number(process.env.PORT) || 8791
   const HOST = process.env.HOST ?? '127.0.0.1'
-  const handle = relay({ origins: config.origins, limits, stores: config.stores, journals: config.journals, issuers: config.issuers, store })
+  const handle = relay({ origins: config.origins, limits, stores: config.stores, journals: config.journals, issuers: config.issuers, push: config.push, store })
   // Answering first: a sweep through many stores could outlast the check that a new release answers.
   stopping(createServer(listener(handle, process.env.RELAY_PROXIED === '1')))
     .listen(PORT, HOST, () => console.log(`Relay on http://${HOST}:${PORT}/, keeping mailboxes${config.stores ? ', stores' : ''}${config.journals ? ', journals' : ''}${config.issuers?.length ? ', the organisation’s people' : ''} in ${dir}`))

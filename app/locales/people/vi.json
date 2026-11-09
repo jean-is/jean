@@ -85,5 +85,6 @@
   "people.why.inside": "Tổ chức của bạn thêm mọi người từ danh sách của tổ chức. Thay vào đó, hãy tìm họ theo tên.",
   "people.why.broken": "Đã có lỗi xảy ra. Hãy thử lại.",
   "people.invites": "{name} mời bạn cùng làm việc trên “{title}”",
-  "people.join": "Tham gia"
+  "people.join": "Tham gia",
+  "people.nudge": "Có thứ được gửi đến cho bạn. Mở {name} để xem."
 }

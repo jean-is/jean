@@ -89,5 +89,6 @@
   "people.why.inside": "Organizația dvs. adaugă persoane din lista sa. Căutați-le mai degrabă după nume.",
   "people.why.broken": "Ceva n-a mers bine. Încercați din nou.",
   "people.invites": "{name} vă invită să lucrați împreună la „{title}”",
-  "people.join": "Alăturați-vă"
+  "people.join": "Alăturați-vă",
+  "people.nudge": "A sosit ceva pentru dvs. Deschideți {name} ca să-l vedeți."
 }

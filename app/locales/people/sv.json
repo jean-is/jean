@@ -87,5 +87,6 @@
   "people.why.inside": "Din organisation lägger till personer från sin lista. Sök efter dem med namn i stället.",
   "people.why.broken": "Något gick fel. Försök igen.",
   "people.invites": "{name} bjuder in dig att arbeta tillsammans med ”{title}”",
-  "people.join": "Gå med"
+  "people.join": "Gå med",
+  "people.nudge": "Något har kommit till dig. Öppna {name} för att se det."
 }

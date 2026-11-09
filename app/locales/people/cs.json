@@ -91,5 +91,6 @@
   "people.why.inside": "Vaše organizace přidává lidi ze svého seznamu. Najděte je raději podle jména.",
   "people.why.broken": "Něco se pokazilo. Zkuste to znovu.",
   "people.invites": "Osoba {name} vás zve ke společné práci na sbírce „{title}“",
-  "people.join": "Připojit se"
+  "people.join": "Připojit se",
+  "people.nudge": "Něco pro vás přišlo. Otevřete aplikaci {name} a podívejte se."
 }

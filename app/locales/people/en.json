@@ -87,5 +87,6 @@
   "people.why.inside": "Your organisation adds people from its list. Find them by name instead.",
   "people.why.broken": "Something went wrong. Try again.",
   "people.invites": "{name} invites you to work on “{title}” together",
-  "people.join": "Join"
+  "people.join": "Join",
+  "people.nudge": "Something came for you. Open {name} to see it."
 }
