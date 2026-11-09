@@ -85,5 +85,7 @@
   "people.why.child": "Das Profil eines Kindes fügt keine Personen hinzu.",
   "people.why.refused": "Deine Organisation lässt dich diese Person nicht erreichen.",
   "people.why.inside": "Deine Organisation fügt Personen aus ihrer Liste hinzu. Suche sie stattdessen nach Namen.",
-  "people.why.broken": "Etwas ist schiefgelaufen. Versuche es erneut."
+  "people.why.broken": "Etwas ist schiefgelaufen. Versuche es erneut.",
+  "people.invites": "{name} lädt dich ein, gemeinsam an „{title}“ zu arbeiten",
+  "people.join": "Mitmachen"
 }

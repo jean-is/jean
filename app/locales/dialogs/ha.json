@@ -24,6 +24,7 @@
   "cap.sync.text": "Ana ajiye ɗawainiyoyinka, fayilolinka da tunawa iri ɗaya a sauran kwamfutocinka, ta hanyar fayil ɗin ajiya da OneDrive, Dropbox, iCloud Drive ko Google Drive ke daidaitawa.",
   "cap.devices.text": "{name} a wayarka ko wata kwamfuta ma, tare da ƙwaƙwalwarka, saitunanka da ayyukanka, an rufe su ta yadda na'urorinka kaɗai ke iya karanta su. Ɗawainiya na tafiya daga ɗaya zuwa wata idan ka aika ta.",
   "cap.people.text": "Aika ɗawainiya, ko abin da aka ƙirƙira a {name}, ga wani mai amfani da {name}, a rufe ta yadda su kaɗai ke iya buɗe shi, ka kuma sami amsarsu a cikin ɗawainiyar.",
+  "cap.together.text": "Yi aiki a kan kundi tare da wasu mutane a lokaci ɗaya: kowa na ganin canje-canjen sauran yayin da suke zuwa, kuma kowa na riƙe kwafinsa.",
   "cap.lock.text": "Ɗawainiyoyinka, fayilolinka da makullanka suna buɗewa ne kawai da maɓallin shigarka ko kalmar sirrinka.",
   "cap.brain-local.text": "Na sirri, kyauta kuma ba tare da intanet ba: ƙwaƙwalwar da ke aiki a kan wannan kwamfuta, idan tana da ƙarfi isasshe.",
   "collection.count": {
@@ -62,6 +63,7 @@
   "cap.sync.hint": "Ambaci cewa kana amfani da wata kwamfuta ma.",
   "cap.devices.hint": "Ambaci cewa kana son wannan a wayarka ko wata kwamfuta, ko ka kunna shi a nan.",
   "cap.people.hint": "Ambaci cewa kana son aika wani abu ga wani, ko ka kunna shi a nan.",
+  "cap.together.hint": "A cikin Raba, zaɓi Yi aiki tare.",
   "cap.lock.hint": "Haɗa wani sabis, ko fara ɗawainiya goma.",
   "cap.brain-local.hint": "Zaɓi ƙwaƙwalwar da ke aiki a wannan na’ura.",
   "cap.memory.text": "Ana tuna abubuwan dindindin da ka ambata: abubuwan da kake so, gaskiya, gyare-gyare. Za ka iya gani da canza duka.",

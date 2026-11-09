@@ -87,5 +87,7 @@
   "people.why.child": "O perfil de uma criança não adiciona pessoas.",
   "people.why.refused": "A tua organização não te permite contactar esta pessoa.",
   "people.why.inside": "A tua organização adiciona pessoas a partir da lista dela. Em vez disso, procura-as pelo nome.",
-  "people.why.broken": "Algo correu mal. Tenta de novo."
+  "people.why.broken": "Algo correu mal. Tenta de novo.",
+  "people.invites": "{name} convida-te a trabalhar em conjunto em «{title}»",
+  "people.join": "Participar"
 }

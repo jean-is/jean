@@ -24,6 +24,7 @@
   "cap.sync.text": "Pitää tehtäväsi, tiedostosi ja muistisi samoina muilla tietokoneillasi kansion kautta, jota OneDrive, Dropbox, iCloud Drive tai Google Drive synkronoi.",
   "cap.devices.text": "{name} myös puhelimessasi tai toisella tietokoneella aivojesi, asetustesi ja projektiesi kanssa, sinetöitynä niin, että vain laitteesi voivat lukea ne. Tehtävä siirtyy laitteelta toiselle, kun lähetät sen.",
   "cap.people.text": "Lähetä tehtävä tai se, mitä {name} teki, jollekulle, joka käyttää myös sovellusta {name}, sinetöitynä niin, että vain hän voi avata sen, ja saa vastaus takaisin samaan tehtävään.",
+  "cap.together.text": "Työstä kokoelmaa muiden kanssa samaan aikaan: jokainen näkee muiden muutokset sitä mukaa kuin ne tulevat ja pitää oman kopionsa.",
   "cap.lock.text": "Tehtäväsi, tiedostosi ja avaimesi aukeavat vain pääsyavaimellasi tai salasanallasi.",
   "cap.brain-local.text": "Yksityiset, ilmaiset ja offline: aivot, jotka toimivat tällä tietokoneella, jos se on riittävän tehokas.",
   "collection.count": {
@@ -62,6 +63,7 @@
   "cap.sync.hint": "Mainitse, että käytät myös toista tietokonetta.",
   "cap.devices.hint": "Mainitse, että haluaisit tämän myös puhelimeesi tai toiselle tietokoneelle, tai ota se käyttöön täällä.",
   "cap.people.hint": "Mainitse, että haluaisit lähettää jotain jollekulle, tai ota se käyttöön täällä.",
+  "cap.together.hint": "Valitse Jaa-ikkunassa Työstä yhdessä.",
   "cap.lock.hint": "Yhdistä palvelu tai aloita kymmenen tehtävää.",
   "cap.brain-local.hint": "Valitse aivot, jotka toimivat tällä laitteella.",
   "cap.memory.text": "{name} muistaa mainitsemasi pysyvät asiat, kuten mieltymykset, tosiasiat ja korjaukset. Voit nähdä ja muuttaa kaiken.",

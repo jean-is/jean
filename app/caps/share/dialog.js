@@ -2,13 +2,17 @@
 // choice shows where both can. A link: a password or none, a card for each saying what it means, the password chosen in its own before
 // the link is made; for how long, each length with the day it ends; for a task, what goes. Once shared, the link or its QR code, a
 // password just chosen, shown this once, and the choices folded into one line, opened to change them under the same link or to stop
-// sharing. Loaded when it first opens.
+// sharing. What can be worked on together, where a relay is named, is asked how too: a copy, or working on it together, whose pane
+// Together draws once that choice unlocks it (caps/together, D733). Loaded when it first opens.
 import { html, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { syncDialog, closed, backdrop, head } from '../../ui/dialogs.js'
 import { t, intlLocales } from '../../core/i18n.js'
 import { BRAND } from '../../brand.js'
+import { app } from '../../ui/state.js'
+import { slots, unlock, isDenied } from '../../ui/caps.js'
+import { serviceURL } from '../../core/settings.js'
 import { icons } from '../../ui/menu-icons.js'
 import { codeOf } from '../../ui/qr.js'
 import { sharing, shares, shareOf, linkFor, here, create, update, stop, failed, allowed, audiences } from './share.js'
@@ -30,6 +34,10 @@ const [mine, working, coded, copied] = /** @type {const} */ ([signal(true), sign
 const told = signal(/** @type {{ id: string, word: string } | null} */ (null))
 /** The audience picked other than a link, People's; none for a link, or the first other where no link can be made. */
 const to = signal(/** @type {import('../../ui/caps.js').Slot | null} */ (null))
+/** Whether working on it together is chosen, rather than a copy. */
+const together = signal(false)
+/** Whether what is shared can be worked on together here: a relay named, and not in a child's profile (D389). @param {import('./share.js').What | null} what */
+const jointly = (what) => Boolean(what?.thing && serviceURL('relay', app.settings.peek(), app.policy) && !app.policy.child && !isDenied('together'))
 /** The dialog opened on an audience: People's for an answer back, none for a link. @param {import('../../ui/caps.js').Slot | null} slot */
 export const toward = (slot) => { to.value = slot }
 
@@ -50,7 +58,7 @@ function reset(what) {
   mine.value = true; coded.value = false
   if (share) here(share).then((yes) => { if (sharing.peek() === what) mine.value = yes })
 }
-effect(() => { reset(sharing.value); told.value = null; to.value = null })
+effect(() => { reset(sharing.value); told.value = null; to.value = null; together.value = false })
 
 /** Makes the link, or changes the one made: its password kept, a new one, or none. @param {SubmitEvent} event */
 async function submit(event) {
@@ -84,6 +92,9 @@ class ShareDialog extends Element {
       ${what ? html`<p class="lede" dir="auto">${what.title || t('conversation.untitled')}</p>` : nothing}
       ${allowed() && others.length ? html`<div class="share-pick share-to" role="radiogroup" aria-label=${t('share.who')}>${[null, ...others].map((one, i) => html`<label for=${`share-to-${i}`}>
         <input id=${`share-to-${i}`} type="radio" name="to" .checked=${other === one} @change=${() => { to.value = one }}>${one ? one.label() : t('share.anyone')}</label>`)}</div>` : nothing}
+      ${jointly(what) ? html`<div class="share-pick" role="radiogroup" aria-label=${t('share.how')}>${[false, true].map((both) => html`<label for=${`share-how-${both}`}>
+        <input id=${`share-how-${both}`} type="radio" name="how" .checked=${together.value === both} @change=${() => { together.value = both; if (both) unlock('together') }}>${t(both ? 'share.together' : 'share.copy')}</label>`)}</div>` : nothing}
+      ${together.value && jointly(what) ? slots('how').map((part) => part.draw(what, other)) : html`
       ${other ? (what && other.draw(what)) : html`${share ? html`<section class="stack">${live ? html`<div class="share-pick" role="radiogroup" aria-label=${t('share.title')}>${[false, true].map((code) => html`<label for=${`shown-${code}`}><input id=${`shown-${code}`} type="radio" name="shown" .checked=${coded.value === code} @change=${() => { coded.value = code }}>${t(code ? 'share.qr' : 'share.link')}</label>`)}</div>`
             : html`<p>${t('share.ended', { date: day(share.expires) })}</p>`}
           ${(live && coded.value && drawn(codeOf(link))) || html`<div class="share-field">
@@ -108,7 +119,7 @@ class ShareDialog extends Element {
       ${share && !mine.value ? nothing : html`<footer class="dialog-foot">${share ? html`<button class="button subtle danger" @click=${() => stop(share)}>${t('share.stop')}</button>` : nothing}
           ${share && !open ? ('share' in navigator ? html`<button class="button" @click=${() => navigator.share({ title: what?.title, url: link }).catch(() => {})}>${icons.share} ${t('share.send')}</button>` : nothing)
             : html`<button class="button primary" form="share-form" ?disabled=${working.value}>${icons.share} ${t(working.value ? 'share.sealing' : share ? 'share.update' : 'share.create')}</button>`}
-        </footer>`}`}
+        </footer>`}`}`}
     </dialog>`
   }
 

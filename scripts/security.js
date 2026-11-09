@@ -93,7 +93,7 @@ export function codeOf(text, strings = false) {
 }
 
 /** Paths where randomness guards something. */
-const GUARDED = /^(app\/ee\/|app\/ui\/(seal|secrets|storage-worker)\.js|app\/caps\/(share|lock|connections|signin|receipt|devices|people)\/|app\/core\/oauth\.js|host\/|relay\/|requests\/|gateway\/)/
+const GUARDED = /^(app\/ee\/|app\/ui\/(seal|secrets|storage-worker)\.js|app\/caps\/(share|lock|connections|signin|receipt|devices|people|together)\/|app\/core\/oauth\.js|host\/|relay\/|requests\/|gateway\/)/
 
 /**
  * What a module does against the rules, each a pattern on its code, or on its code with its strings where a string is what's wrong.
@@ -124,8 +124,9 @@ const RULES = [
   { rule: 'secrets-crossing', strings: /\bimport\s*(?:\{[^}]*\bcrossing\b[^}]*\}|\*\s*as\s+[\w$]+)\s*from\s*['"][^'"]*\/secrets\.js['"]/g, where: /^app\/(?!caps\/devices\/)/ },
   { rule: 'secrets-crossing', strings: /\bimport\(\s*['"][^'"]*\/secrets\.js['"]\s*\)[^\n]*\bcrossing\b|\{[^}]*\bcrossing\b[^}]*\}[^\n]*\bimport\(\s*['"][^'"]*\/secrets\.js['"]/g, where: /^app\/(?!caps\/devices\/)/ },
   // The store's keys (D721), which open every file the person's devices keep in common, are theirs alone too.
-  // Reading every secret whose id passes a test is People's, for the people it met (D727), and no one else's.
-  { rule: 'secrets-where', strings: /\bsecretsWhere\b/g, where: /^app\/(?!caps\/people\/|ui\/secrets\.js)/ },
+  // Reading every secret whose id passes a test is People's, for the people it met (D727), and Together's, for the circles kept (D733);
+  // no one else's.
+  { rule: 'secrets-where', strings: /\bsecretsWhere\b/g, where: /^app\/(?!caps\/people\/|caps\/together\/engine\.js|ui\/secrets\.js)/ },
   { rule: 'secrets-store', strings: /\b(?:get|set|delete)Secrets?\([^)\n]*['"]store['"]|\bSTORE\b[^\n]*\bfrom\s*['"][^'"]*\/devices\/flow\.js['"]/g, where: /^app\/(?!caps\/devices\/)/ },
   // No cookie, for tracking or anything else (D725): nothing of Jean's writes, reads, passes on or sends one.
   { rule: 'cookie', code: /\b(?:document\.cookie|cookieStore|getSetCookie|headers\.cookie)\b/g },

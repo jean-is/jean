@@ -59,7 +59,7 @@ export const getSecret = async (fs, id) => (await readJSON(fs, FILE, {}))[id] ??
 /**
  * The secrets that go to the person's other devices (D700), chosen by what each is, never by its id alone, since a brain's
  * id holds a key typed, the bridge's for a plan, or the organisation's token (oidc): a cloud brain's key, a connection's that
- * takes one, search services', a published site's (D720), and this profile as a person with the people it met (D727). A sign-in's, a connection's tokens (they rotate), the bridge's, the Computer's registries' (which go
+ * takes one, search services', a published site's (D720), this profile as a person with the people it met (D727), and what they work on together (D733). A sign-in's, a connection's tokens (they rotate), the bridge's, the Computer's registries' (which go
  * only to the address typed with them, on that device), an authority's seal, shares', this device's own, an organisation's brains'
  * (`policy.brains`, which settings.json doesn't hold), any id this doesn't know and any value that isn't typed() stay. Only
  * caps/devices/ reads it (scripts/security.js).
@@ -71,7 +71,7 @@ export async function crossing(fs, settings, policy = {}) {
   const brains = new Set(settings.brains.filter((brain) => ULID.test(brain.id) && !/^(claudecode|copilot|chatgpt)$/.test(brain.provider) && brain.auth !== 'oidc' && !isLocal(brain)).map((brain) => brain.id))
   const keyed = new Set((settings.connections ?? []).filter((connection) => ULID.test(connection.id) && connection.auth === 'key').map((connection) => connection.id))
   const all = /** @type {Record<string, string>} */ (await readJSON(fs, FILE, {}))
-  return Object.fromEntries(Object.entries(all).filter(([id, value]) => /^(person$|people:)/.test(id) || (typed(id, value) && !OWN.includes(id) && !theirs.has(id) && (brains.has(id) || keyed.has(id) || /^(search|site):/.test(id)))))
+  return Object.fromEntries(Object.entries(all).filter(([id, value]) => /^(person$|people:|circle:)/.test(id) || (typed(id, value) && !OWN.includes(id) && !theirs.has(id) && (brains.has(id) || keyed.has(id) || /^(search|site):/.test(id)))))
 }
 
 /**

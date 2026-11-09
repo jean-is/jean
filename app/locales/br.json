@@ -319,6 +319,7 @@
   "cap.devices.offer": "Kaout hoc’h empennoù, hoc’h arventennoù hag ho raktresoù war ho pellgomzer pe war un urzhiataer all ivez ? Ouzhpennañ a rit anezhañ gant ur c’hod QR ha c’hwec’h sifr.",
   "cap.people.name": "Tud",
   "cap.people.offer": "Kas an dra-mañ da unan bennak a implij {name} ivez, ha kaout ar respont en-dro ?",
+  "cap.together.name": "Labourat asambles",
   "cap.lock.name": "Prenn",
   "cap.lock.offer": "Prennañ ho trevelloù, ho restroù hag hoc’h alc’hwezioù, evit ma c’hallfec’h o digeriñ war an trevnad-mañ hepken ?",
   "cap.lock.yes": "Lakaat ur prenn",

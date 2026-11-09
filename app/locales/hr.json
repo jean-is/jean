@@ -309,6 +309,7 @@
   "cap.devices.offer": "Imati mozgove, postavke i projekte i na telefonu ili drugom računalu? Uređaj dodajete pomoću QR koda i šest znamenki.",
   "cap.people.name": "Osobe",
   "cap.people.offer": "Poslati ovo nekome tko također koristi aplikaciju {name} i dobiti odgovor?",
+  "cap.together.name": "Zajednički rad",
   "cap.lock.name": "Zaključavanje",
   "cap.lock.offer": "Zaključati zadatke, datoteke i ključeve, tako da ih samo vi možete otvoriti na ovom uređaju?",
   "cap.lock.yes": "Postavi zaključavanje",

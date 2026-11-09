@@ -85,5 +85,7 @@
   "people.why.child": "Bayanin martabar yaro ba ya ƙara mutane.",
   "people.why.refused": "Ƙungiyarka ba ta bar ka ka isa ga wannan mutum ba.",
   "people.why.inside": "Ƙungiyarka tana ƙara mutane ne daga jerinta. Maimakon haka, nemo su da sunansu.",
-  "people.why.broken": "Wani abu ya ɓaci. Sake gwadawa."
+  "people.why.broken": "Wani abu ya ɓaci. Sake gwadawa.",
+  "people.invites": "{name} na gayyatarka ku yi aiki tare a kan “{title}”",
+  "people.join": "Shiga"
 }

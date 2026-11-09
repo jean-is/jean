@@ -83,5 +83,7 @@
   "people.why.child": "孩子的個人檔案不能新增聯絡人。",
   "people.why.refused": "你的組織不允許你聯絡此人。",
   "people.why.inside": "你的組織從其名單中新增人員。請改為依名字尋找。",
-  "people.why.broken": "發生問題。請重試。"
+  "people.why.broken": "發生問題。請重試。",
+  "people.invites": "{name} 邀請你一起處理「{title}」",
+  "people.join": "加入"
 }

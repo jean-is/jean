@@ -85,5 +85,7 @@
   "people.why.child": "Gyerek profiljában nem lehet személyeket hozzáadni.",
   "people.why.refused": "A szervezeted nem engedi, hogy elérd ezt a személyt.",
   "people.why.inside": "A szervezeted a saját listájáról ad hozzá személyeket. Inkább név szerint keresd meg őket.",
-  "people.why.broken": "Valami hiba történt. Próbáld újra."
+  "people.why.broken": "Valami hiba történt. Próbáld újra.",
+  "people.invites": "{name} meghív, hogy közösen dolgozzatok ezen: „{title}”",
+  "people.join": "Csatlakozás"
 }

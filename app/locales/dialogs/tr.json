@@ -24,6 +24,7 @@
   "cap.sync.text": "Görevlerini, dosyalarını ve hafızayı diğer bilgisayarlarında aynı tutar; bunu OneDrive, Dropbox, iCloud Drive veya Google Drive’ın eşitlediği bir klasörle yapar.",
   "cap.devices.text": "{name} telefonunda ya da başka bir bilgisayarda da olur; beyinlerin, ayarların ve projelerin, yalnızca senin cihazlarının okuyabileceği şekilde mühürlenerek gelir. Bir görev, sen gönderdiğinde bir cihazdan diğerine geçer.",
   "cap.people.text": "Bir görevi ya da {name} uygulamasının yaptığını, {name} uygulamasını kullanan birine, yalnızca onun açabileceği şekilde mühürlenmiş olarak gönder ve yanıtını aynı görevde al.",
+  "cap.together.text": "Bir koleksiyon üzerinde başkalarıyla aynı anda çalış; herkes diğerlerinin değişikliklerini geldikçe görür ve kendi kopyasını saklar.",
   "cap.lock.text": "Görevlerin, dosyaların ve anahtarların yalnızca geçiş anahtarınla ya da şifrenle açılır.",
   "cap.brain-local.text": "Gizli, ücretsiz ve çevrimdışı: yeterince güçlüyse bu bilgisayarda çalışan bir beyin.",
   "collection.count": {
@@ -62,6 +63,7 @@
   "cap.sync.hint": "Başka bir bilgisayar da kullandığından bahset.",
   "cap.devices.hint": "Bunu telefonunda ya da başka bir bilgisayarda da istediğinden bahset ya da burada aç.",
   "cap.people.hint": "Birine bir şey göndermek istediğinden bahset ya da burada aç.",
+  "cap.together.hint": "Paylaş’ta Birlikte çalış’ı seç.",
   "cap.lock.hint": "Bir hizmet bağla ya da on görev başlat.",
   "cap.brain-local.hint": "Bu cihazda çalışan beyni seç.",
   "cap.memory.text": "{name}, bahsettiğin kalıcı şeyleri hatırlar: tercihler, bilgiler, düzeltmeler. Hepsini görebilir ve değiştirebilirsin.",

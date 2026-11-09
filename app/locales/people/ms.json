@@ -83,5 +83,7 @@
   "people.why.child": "Profil kanak-kanak tidak menambah orang.",
   "people.why.refused": "Organisasi anda tidak membenarkan anda menghubungi orang ini.",
   "people.why.inside": "Organisasi anda menambah orang daripada senarainya. Sebaliknya, cari mereka mengikut nama.",
-  "people.why.broken": "Ada sesuatu yang tidak kena. Cuba lagi."
+  "people.why.broken": "Ada sesuatu yang tidak kena. Cuba lagi.",
+  "people.invites": "{name} menjemput anda untuk mengerjakan “{title}” bersama",
+  "people.join": "Sertai"
 }

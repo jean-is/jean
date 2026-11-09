@@ -304,6 +304,7 @@
   "cap.devices.offer": "Deine Gehirne, Einstellungen und Projekte auch auf deinem Handy oder einem anderen Computer haben? Du fügst das Gerät mit einem QR-Code und sechs Ziffern hinzu.",
   "cap.people.name": "Personen",
   "cap.people.offer": "Das an jemanden schicken, der auch {name} nutzt, und die Antwort zurückbekommen?",
+  "cap.together.name": "Gemeinsam arbeiten",
   "cap.lock.name": "Sperre",
   "cap.lock.offer": "Deine Aufgaben, Dateien und Schlüssel sperren, damit nur du sie auf diesem Gerät öffnen kannst?",
   "cap.lock.yes": "Sperre einrichten",

@@ -375,8 +375,20 @@ async function answered(one) {
   return ''
 }
 
+/** A letter to someone met, as Together sends its invitations (caps/together). @param {string} fp @param {object} body @param {'together'} kind */
+export const tell = async (fp, body, kind) => sendTo(await contextOf(), fp, body, kind)
+/** An invitation joined, as the name this person gives themselves, and gone from what waits. @param {Awaited<ReturnType<typeof arrivalsOf>>[number]} one */
+async function joinedCircle(one) {
+  if (!(await unlock('together'))) return
+  await (await import('../together/together.js')).joinInvite(one, await (await contextOf()).said())
+  await app.fs.remove(`${ARRIVALS}/${one.id}.json`)
+  await refresh()
+}
+
 /** The card of what came, above the conversation on each of the person's devices: who sent what, their words, Open and Not now. @param {Awaited<ReturnType<typeof arrivalsOf>>[number]} one */
-const card = (one) => html`<aside class="offer people-card" role="note"><p>${tParts(one.kind === 'reply' ? 'people.answered' : 'people.came', { name: html`<bdi>${one.name}</bdi>`, title: html`<bdi>${one.title || t('conversation.untitled')}</bdi>` })}</p>
+const card = (one) => one.kind === 'together' ? html`<aside class="offer people-card" role="note"><p>${tParts('people.invites', { name: html`<bdi>${one.name}</bdi>`, title: html`<bdi>${one.title}</bdi>` })}</p>
+  <div class="row"><button class="button primary" @click=${() => joinedCircle(one).catch(warn)}>${t('people.join')}</button>
+  <button class="button subtle" @click=${() => { later.value = new Set([...later.peek(), one.id]) }}>${t('people.notNow')}</button></div></aside>` : html`<aside class="offer people-card" role="note"><p>${tParts(one.kind === 'reply' ? 'people.answered' : 'people.came', { name: html`<bdi>${one.name}</bdi>`, title: html`<bdi>${one.title || t('conversation.untitled')}</bdi>` })}</p>
   ${one.words ? html`<p dir="auto">${one.words}</p>` : nothing}<div class="row"><button class="button primary" @click=${() => openArrival(one).catch(warn)}>${t(one.kind === 'reply' ? 'people.takeIn' : 'people.open')}</button>
   <button class="button subtle" @click=${() => { later.value = new Set([...later.peek(), one.id]) }}>${t('people.notNow')}</button></div></aside>`
 

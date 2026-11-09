@@ -83,5 +83,7 @@
   "people.why.child": "Profil anak tidak bisa menambah orang.",
   "people.why.refused": "Organisasi Anda tidak mengizinkan Anda menghubungi orang ini.",
   "people.why.inside": "Organisasi Anda menambahkan orang dari daftarnya. Sebagai gantinya, cari mereka berdasarkan nama.",
-  "people.why.broken": "Terjadi kesalahan. Coba lagi."
+  "people.why.broken": "Terjadi kesalahan. Coba lagi.",
+  "people.invites": "{name} mengajak Anda mengerjakan “{title}” bersama",
+  "people.join": "Gabung"
 }

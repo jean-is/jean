@@ -24,6 +24,7 @@
   "cap.sync.text": "Hält deine Aufgaben, Dateien und das Gedächtnis auf deinen anderen Computern gleich, über einen Ordner, den OneDrive, Dropbox, iCloud Drive oder Google Drive synchronisiert.",
   "cap.devices.text": "{name} auch auf deinem Handy oder einem anderen Computer, mit deinen Gehirnen, Einstellungen und Projekten, so versiegelt, dass nur deine Geräte sie lesen. Eine Aufgabe geht von einem zum anderen, wenn du sie schickst.",
   "cap.people.text": "Schick eine Aufgabe oder etwas, das {name} gemacht hat, an jemanden, der auch {name} nutzt, so versiegelt, dass nur diese Person es öffnen kann, und bekomm die Antwort in derselben Aufgabe zurück.",
+  "cap.together.text": "Arbeite gleichzeitig mit anderen an einer Sammlung: Alle sehen die Änderungen der anderen, sobald sie kommen, und behalten ihre eigene Kopie.",
   "cap.lock.text": "Deine Aufgaben, Dateien und Schlüssel öffnen sich nur mit deinem Passkey oder Passwort.",
   "cap.brain-local.text": "Privat, kostenlos und offline: ein Gehirn, das auf diesem Computer läuft, wenn er leistungsstark genug ist.",
   "collection.count": {
@@ -62,6 +63,7 @@
   "cap.sync.hint": "Erwähne, dass du auch einen anderen Computer nutzt.",
   "cap.devices.hint": "Erwähne, dass du das gern auf deinem Handy oder einem anderen Computer hättest, oder schalte es hier ein.",
   "cap.people.hint": "Erwähne, dass du gern etwas an jemanden schicken möchtest, oder schalte es hier ein.",
+  "cap.together.hint": "Wähle unter Teilen die Option Gemeinsam daran arbeiten.",
   "cap.lock.hint": "Verbinde einen Dienst oder beginne zehn Aufgaben.",
   "cap.brain-local.hint": "Wähle das Gehirn, das auf diesem Gerät läuft.",
   "cap.memory.text": "{name} merkt sich Dauerhaftes, das du erwähnst: Vorlieben, Fakten, Korrekturen. Du kannst alles sehen und ändern.",

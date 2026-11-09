@@ -24,6 +24,7 @@
   "cap.sync.text": "Utrzymuje twoje zadania, pliki i pamięć takie same na innych twoich komputerach, przez folder synchronizowany przez OneDrive, Dropbox, iCloud Drive lub Google Drive.",
   "cap.devices.text": "{name} także na telefonie lub innym komputerze, z twoimi mózgami, ustawieniami i projektami, zapieczętowanymi tak, że odczytać je mogą tylko twoje urządzenia. Zadanie przechodzi z jednego na drugie, gdy je wyślesz.",
   "cap.people.text": "Wyślij zadanie albo to, co powstało w aplikacji {name}, komuś, kto też z niej korzysta, z pieczęcią, którą może otworzyć tylko ta osoba, i dostań odpowiedź w tym samym zadaniu.",
+  "cap.together.text": "Pracuj nad kolekcją z innymi osobami w tym samym czasie: każdy widzi zmiany innych na bieżąco i ma własną kopię.",
   "cap.lock.text": "Twoje zadania, pliki i klucze otwierają się tylko twoim kluczem dostępu lub hasłem.",
   "cap.brain-local.text": "Prywatnie, za darmo i bez internetu: mózg działający na tym komputerze, jeśli jest wystarczająco mocny.",
   "collection.count": {
@@ -64,6 +65,7 @@
   "cap.sync.hint": "Wspomnij, że używasz też innego komputera.",
   "cap.devices.hint": "Wspomnij, że chcesz mieć to na telefonie lub innym komputerze, albo włącz to tutaj.",
   "cap.people.hint": "Wspomnij, że chcesz coś komuś wysłać, albo włącz to tutaj.",
+  "cap.together.hint": "W oknie Udostępnij wybierz Pracuj nad tym wspólnie.",
   "cap.lock.hint": "Połącz usługę albo rozpocznij dziesięć zadań.",
   "cap.brain-local.hint": "Wybierz mózg, który działa na tym urządzeniu.",
   "cap.memory.text": "{name} zapamiętuje trwałe rzeczy, o których wspominasz: preferencje, fakty, poprawki. Wszystko możesz zobaczyć i zmienić.",

@@ -24,6 +24,7 @@
   "cap.sync.text": "Mirout a ra an hevelep trevelloù, restroù ha memor war hoc’h urzhiataerioù all, dre un teuliad goubredet gant OneDrive, Dropbox, iCloud Drive pe Google Drive.",
   "cap.devices.text": "{name} war ho pellgomzer pe war un urzhiataer all ivez, gant hoc’h empennoù, hoc’h arventennoù hag ho raktresoù, siellet evit na vefent lennet nemet gant ho trevnadoù. Ur drevell a dremen eus unan d’egile pa gasit anezhi.",
   "cap.people.text": "Kasit un drevell, pe ar pezh a zo bet graet gant {name}, da unan bennak a implij {name} ivez : siellet eo evit na vefe digoret nemet gant an den-se, hag ar respont a zeu en-dro en hevelep trevell.",
+  "cap.together.text": "Labourit war un dastumad gant tud all war un dro, pep hini o welet kemmoù ar re all kerkent ha ma tegouezhont hag o virout e eilskouerenn e-unan.",
   "cap.lock.text": "Ho trevelloù, ho restroù hag hoc’h alc’hwezioù ne zigoront nemet gant hoc’h alc’hwez-tremen pe ho ker-tremen.",
   "cap.brain-local.text": "Prevez, digoust hag ezlinenn : un empenn a red war an urzhiataer-mañ, mar bez galloudek a-walc’h.",
   "collection.count": {
@@ -65,6 +66,7 @@
   "cap.sync.hint": "Menegit e implijit un urzhiataer all ivez.",
   "cap.devices.hint": "Menegit e karfec’h kaout an dra-mañ war ho pellgomzer pe war un urzhiataer all, pe gweredekait anezhañ amañ.",
   "cap.people.hint": "Menegit e karfec’h kas un dra bennak da unan bennak, pe gweredekait anezhañ amañ.",
+  "cap.together.hint": "E Rannañ, dibabit Labourat warnañ asambles.",
   "cap.lock.hint": "Kevreit ur servij, pe krogit gant dek trevell.",
   "cap.brain-local.hint": "Dibabit an empenn a red war an trevnad-mañ.",
   "cap.memory.text": "{name} a zalc’h soñj eus an traoù padus a venegit, evel dibaboù, fedoù ha reizhadennoù. Gallout a rit gwelout ha kemmañ pep tra.",

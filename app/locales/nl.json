@@ -304,6 +304,7 @@
   "cap.devices.offer": "Je breinen, instellingen en projecten ook op je telefoon of een andere computer? Je voegt het apparaat toe met een QR-code en zes cijfers.",
   "cap.people.name": "Mensen",
   "cap.people.offer": "Dit naar iemand sturen die ook {name} gebruikt, en het antwoord terugkrijgen?",
+  "cap.together.name": "Samenwerken",
   "cap.lock.name": "Slot",
   "cap.lock.offer": "Je taken, bestanden en sleutels op slot doen, zodat alleen jij ze op dit apparaat kunt openen?",
   "cap.lock.yes": "Slot instellen",

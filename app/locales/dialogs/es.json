@@ -24,6 +24,7 @@
   "cap.sync.text": "Mantiene tus tareas, tus archivos y la memoria iguales en tus otras computadoras, mediante una carpeta que sincroniza OneDrive, Dropbox, iCloud Drive o Google Drive.",
   "cap.devices.text": "{name} también en tu teléfono o en otra computadora, con tus cerebros, ajustes y proyectos, sellados para que solo tus dispositivos puedan leerlos. Una tarea pasa de uno a otro cuando la envías.",
   "cap.people.text": "Envía una tarea, o lo que {name} hizo, a alguien que también usa {name}: va sellado para que solo esa persona pueda abrirlo, y su respuesta vuelve en la misma tarea.",
+  "cap.together.text": "Trabaja en una colección con otras personas al mismo tiempo: cada una ve los cambios de las demás a medida que llegan y guarda su propia copia.",
   "cap.lock.text": "Tus tareas, archivos y claves solo se abren con tu llave de acceso o tu contraseña.",
   "cap.brain-local.text": "Privado, gratuito y sin conexión: un cerebro que funciona en esta computadora, si es lo bastante potente.",
   "collection.count": {
@@ -63,6 +64,7 @@
   "cap.sync.hint": "Menciona que también usas otra computadora.",
   "cap.devices.hint": "Menciona que te gustaría tener esto en tu teléfono o en otra computadora, o actívalo aquí.",
   "cap.people.hint": "Menciona que te gustaría enviar algo a alguien, o actívalo aquí.",
+  "cap.together.hint": "En Compartir, elige Trabajar en equipo.",
   "cap.lock.hint": "Conecta un servicio o empieza diez tareas.",
   "cap.brain-local.hint": "Elige el cerebro que funciona en este dispositivo.",
   "cap.memory.text": "{name} recuerda lo duradero que mencionas: preferencias, datos, correcciones. Puedes verlo y cambiarlo todo.",

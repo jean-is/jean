@@ -85,5 +85,7 @@
   "people.why.child": "Et barns profil tilføjer ikke personer.",
   "people.why.refused": "Din organisation lader dig ikke nå denne person.",
   "people.why.inside": "Din organisation tilføjer personer fra sin liste. Find dem i stedet ved navn.",
-  "people.why.broken": "Noget gik galt. Prøv igen."
+  "people.why.broken": "Noget gik galt. Prøv igen.",
+  "people.invites": "{name} inviterer dig til at arbejde sammen på “{title}”",
+  "people.join": "Deltag"
 }

@@ -16,7 +16,8 @@ import { bytesOf } from './seal.js'
  * What is shared or sent: a task, or one thing of it on its own, drawn as an answer of its own: an answer with the files it made, a
  * block of one (a page, a chart, a deck) or a picture it made.
  * @typedef {{ text: string, files?: import('../../core/events.js').MadeFile[] } | { picture: import('../../core/events.js').MadeFile, description: string }} Item
- * @typedef {{ path: string, title: string, item?: Item }} What
+ * A thing that can be worked on together (caps/together, D733): its kind, and its place in the project.
+ * @typedef {{ path: string, title: string, item?: Item, thing?: { kind: 'collection', uri: string } }} What
  * @typedef {{ format: 1, kind: 'task' | 'item', lang: string, title: string, file: string, files: Record<string, string>, certificates: string[], drawing?: unknown }} Value
  */
 

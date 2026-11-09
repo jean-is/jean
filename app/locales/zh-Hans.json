@@ -299,6 +299,7 @@
   "cap.devices.offer": "让你的大脑、设置和项目在手机或另一台电脑上也能用？用二维码和六位数字就能添加。",
   "cap.people.name": "联系人",
   "cap.people.offer": "把这个发给也在用 {name} 的人，并收回对方的回答？",
+  "cap.together.name": "协作",
   "cap.lock.name": "锁定",
   "cap.lock.offer": "要锁定你的任务、文件和密钥，让这台设备上只有你能打开吗？",
   "cap.lock.yes": "设置锁定",

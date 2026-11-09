@@ -48,6 +48,7 @@ The UI never says "agent", "model", "MCP" or "token".
 | Add-on, mod, plugin | Extension (D296, D552) |
 | A page or small tool Jean wrote in an answer | App, under Creations (D553) |
 | Account, user | Profile (D228); a child's is "set by a parent" (D389), never an account |
+| Working on one thing at once with other people (Together) | Work on it together; its members are People in this collection; an assistant's answer is "{assistant} · {person}", never a possessive (D733, D734) |
 
 These are i18n strings, so the UI words can change later at no cost. Folder names on disk are permanent and must be settled before launch.
 

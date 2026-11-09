@@ -40,6 +40,8 @@ const KINDS = /** @type {Record<string, Record<string, boolean>>} */ ({
   device: { device: false, devices: false, store: false },
   // This profile as a person and the people it met, whatever they hold; an invitation or an acceptance under way stays (D727).
   person: { person: true, 'people:AAAAAAAAAAAAAAAAAAAAAA': true, 'people:AAAAAAAAAAAAAAAAAAAAAA:name': true, 'invite:x': false, 'accept:x': false },
+  // What the person works on together, its keys and tokens, follows their devices, which follow its journal themselves (D733).
+  circle: { 'circle:AAAAAAAAAAAAAAAAAAAAAA': true },
   unknown: { 'something-new': false },
 })
 /** What each is, as the code writes it where that isn't a key typed: a search service's key and engine (web-search.js), tokens, the bridge's port and key. */
@@ -87,10 +89,10 @@ test('the secrets that cross are chosen by their kind: a typed brain key, a conn
   assert.deepEqual(await crossing(memoryFS(), settings), {})
   // Nor does a brain or a connection named as this device's own secrets are: they never cross.
   const named = /** @type {any} */ ({ brains: [brain('device', 'openai', 'https://api.openai.com/v1'), brain('devices', 'openai', 'https://api.openai.com/v1')], connections: [{ id: 'device', name: 'D', url: 'https://d.example/', auth: 'key' }] })
-  assert.deepEqual(Object.keys(await crossing(fs, named)).sort(), ['people:AAAAAAAAAAAAAAAAAAAAAA', 'people:AAAAAAAAAAAAAAAAAAAAAA:name', 'person', 'search:brave', 'site:01JSITE0000000000000000000'])
+  assert.deepEqual(Object.keys(await crossing(fs, named)).sort(), ['circle:AAAAAAAAAAAAAAAAAAAAAA', 'people:AAAAAAAAAAAAAAAAAAAAAA', 'people:AAAAAAAAAAAAAAAAAAAAAA:name', 'person', 'search:brave', 'site:01JSITE0000000000000000000'])
   // Nor a brain or a connection under an id Jean doesn't give, as a secret that stays has.
   const stays = /** @type {any} */ ({ brains: ['signin', 'computer-bridge', 'seal-authority'].map((id) => brain(id, 'openai', 'https://api.openai.com/v1')), connections: [{ id: 'share:01J', name: 'S', url: 'https://s.example/', auth: 'key' }] })
-  assert.deepEqual(Object.keys(await crossing(fs, stays)).sort(), ['people:AAAAAAAAAAAAAAAAAAAAAA', 'people:AAAAAAAAAAAAAAAAAAAAAA:name', 'person', 'search:brave', 'site:01JSITE0000000000000000000'])
+  assert.deepEqual(Object.keys(await crossing(fs, stays)).sort(), ['circle:AAAAAAAAAAAAAAAAAAAAAA', 'people:AAAAAAAAAAAAAAAAAAAAAA', 'people:AAAAAAAAAAAAAAAAAAAAAA:name', 'person', 'search:brave', 'site:01JSITE0000000000000000000'])
   // Nor a brain named as one of the organisation's, whose token its sign-in keeps under that id (policy.brains).
   assert.equal((await crossing(fs, settings, { brains: [{ id: 'TYPED000000000000000000000' }] })).TYPED000000000000000000000, undefined)
 })

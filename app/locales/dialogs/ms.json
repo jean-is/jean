@@ -24,6 +24,7 @@
   "cap.sync.text": "Mengekalkan tugasan, fail dan memori anda sama pada komputer anda yang lain, melalui folder yang disegerakkan oleh OneDrive, Dropbox, iCloud Drive atau Google Drive.",
   "cap.devices.text": "{name} juga pada telefon atau komputer lain, bersama otak, tetapan dan projek anda, dimeterai supaya hanya peranti anda yang dapat membacanya. Tugasan berpindah dari satu peranti ke peranti lain apabila anda menghantarnya.",
   "cap.people.text": "Hantar tugasan, atau hasil buatan {name}, kepada seseorang yang turut menggunakan {name}, dimeterai supaya hanya dia yang dapat membukanya, dan terima jawapannya dalam tugasan yang sama.",
+  "cap.together.text": "Kerjakan koleksi bersama orang lain pada masa yang sama: setiap orang melihat perubahan orang lain sebaik sahaja tiba dan menyimpan salinan sendiri.",
   "cap.lock.text": "Tugasan, fail dan kunci API anda hanya terbuka dengan kunci laluan atau kata laluan anda.",
   "cap.brain-local.text": "Peribadi, percuma dan di luar talian: otak yang berjalan pada komputer ini, jika cukup berkuasa.",
   "collection.count": {
@@ -61,6 +62,7 @@
   "cap.sync.hint": "Sebutkan bahawa anda juga menggunakan komputer lain.",
   "cap.devices.hint": "Sebutkan bahawa anda mahu ini pada telefon atau komputer lain, atau hidupkan di sini.",
   "cap.people.hint": "Sebutkan bahawa anda mahu menghantar sesuatu kepada seseorang, atau hidupkan di sini.",
+  "cap.together.hint": "Dalam Kongsi, pilih Kerjakan bersama.",
   "cap.lock.hint": "Sambungkan perkhidmatan, atau mulakan sepuluh tugasan.",
   "cap.brain-local.hint": "Pilih otak yang berjalan pada peranti ini.",
   "cap.memory.text": "{name} mengingati perkara berkekalan yang anda sebut: pilihan, fakta, pembetulan. Anda boleh melihat dan mengubah semuanya.",

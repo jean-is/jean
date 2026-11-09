@@ -299,6 +299,7 @@
   "cap.devices.offer": "Mahu otak, tetapan dan projek anda ada juga pada telefon atau komputer lain? Anda menambahnya dengan kod QR dan enam digit.",
   "cap.people.name": "Orang",
   "cap.people.offer": "Hantar ini kepada seseorang yang turut menggunakan {name}, dan terima jawapannya?",
+  "cap.together.name": "Bekerja bersama",
   "cap.lock.name": "Kunci",
   "cap.lock.offer": "Kunci tugasan, fail dan kunci API anda, supaya hanya anda boleh membukanya pada peranti ini?",
   "cap.lock.yes": "Pasang kunci",

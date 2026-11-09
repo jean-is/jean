@@ -299,6 +299,7 @@
   "cap.devices.offer": "Có cả bộ não, cài đặt và dự án của bạn trên điện thoại hoặc một máy tính khác? Bạn thêm thiết bị bằng mã QR và sáu chữ số.",
   "cap.people.name": "Mọi người",
   "cap.people.offer": "Gửi mục này cho một người cũng dùng {name}, rồi nhận lại câu trả lời?",
+  "cap.together.name": "Làm việc cùng nhau",
   "cap.lock.name": "Khóa",
   "cap.lock.offer": "Khóa các nhiệm vụ, tệp và khóa API của bạn, để chỉ bạn mở được chúng trên thiết bị này?",
   "cap.lock.yes": "Đặt khóa",

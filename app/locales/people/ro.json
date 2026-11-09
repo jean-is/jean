@@ -87,5 +87,7 @@
   "people.why.child": "Profilul unui copil nu adaugă persoane.",
   "people.why.refused": "Organizația dvs. nu vă permite să contactați această persoană.",
   "people.why.inside": "Organizația dvs. adaugă persoane din lista sa. Căutați-le mai degrabă după nume.",
-  "people.why.broken": "Ceva n-a mers bine. Încercați din nou."
+  "people.why.broken": "Ceva n-a mers bine. Încercați din nou.",
+  "people.invites": "{name} vă invită să lucrați împreună la „{title}”",
+  "people.join": "Alăturați-vă"
 }

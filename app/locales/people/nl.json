@@ -85,5 +85,7 @@
   "people.why.child": "In het profiel van een kind kun je geen mensen toevoegen.",
   "people.why.refused": "Je organisatie laat je deze persoon niet bereiken.",
   "people.why.inside": "Je organisatie voegt mensen toe vanuit haar lijst. Zoek ze in plaats daarvan op naam.",
-  "people.why.broken": "Er ging iets mis. Probeer het opnieuw."
+  "people.why.broken": "Er ging iets mis. Probeer het opnieuw.",
+  "people.invites": "{name} nodigt je uit om samen aan ‘{title}’ te werken",
+  "people.join": "Meedoen"
 }

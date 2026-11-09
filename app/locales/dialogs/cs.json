@@ -24,6 +24,7 @@
   "cap.sync.text": "Udržuje vaše úkoly, soubory a paměť stejné na vašich dalších počítačích, přes složku, kterou synchronizuje OneDrive, Dropbox, iCloud Drive nebo Disk Google.",
   "cap.devices.text": "{name} i v telefonu nebo na jiném počítači, s vašimi mozky, nastavením a projekty, zapečetěnými tak, že je přečtou jen vaše zařízení. Úkol přejde z jednoho do druhého, když ho pošlete.",
   "cap.people.text": "Pošlete úkol nebo to, co aplikace {name} vytvořila, někomu, kdo také používá aplikaci {name}, zapečetěné tak, že to otevře jen tato osoba, a odpověď dostanete zpět ve stejném úkolu.",
+  "cap.together.text": "Pracujte na sbírce s dalšími lidmi ve stejnou chvíli: každý vidí změny ostatních, jak přicházejí, a má vlastní kopii.",
   "cap.lock.text": "Vaše úkoly, soubory a klíče se otevřou jen vaším přístupovým klíčem nebo heslem.",
   "cap.brain-local.text": "Soukromý, zdarma a offline: mozek, který běží v tomto počítači, pokud je dost výkonný.",
   "collection.count": {
@@ -64,6 +65,7 @@
   "cap.sync.hint": "Zmiňte, že používáte i jiný počítač.",
   "cap.devices.hint": "Zmiňte, že to chcete mít i v telefonu nebo na jiném počítači, nebo to zapněte tady.",
   "cap.people.hint": "Zmiňte, že chcete něco někomu poslat, nebo to zapněte tady.",
+  "cap.together.hint": "V okně Sdílet zvolte Pracovat na tom společně.",
   "cap.lock.hint": "Připojte službu nebo začněte deset úkolů.",
   "cap.brain-local.hint": "Vyberte mozek, který běží v tomto zařízení.",
   "cap.memory.text": "{name} si pamatuje trvalé věci, které zmíníte, jako preference, fakta a opravy. Vše můžete vidět a měnit.",

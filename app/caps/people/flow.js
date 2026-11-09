@@ -244,7 +244,7 @@ export async function received(ctx, bytes) {
   // Removed by them: forgotten here too, unless what says so is older than this record of them, as a relay giving it again would be.
   if (kind === 'gone' && Number(opened.value.at) >= from.at) await ctx.set({ [metId(from.fp)]: null, [nameId(from.fp)]: null })
   // What the organisation keeps from this person isn't kept (ee/, D732).
-  if ((kind === 'send' || kind === 'reply') && typeof id === 'string' && ULID.test(id) && !(await checked(ctx, { action: 'open', person: someone(from) })).refuse) await keep(ctx, from.fp, id, bytes)
+  if (['send', 'reply', 'together'].includes(kind) && typeof id === 'string' && ULID.test(id) && !(await checked(ctx, { action: 'open', person: someone(from) })).refuse) await keep(ctx, from.fp, id, bytes)
   return { kind, from: from.fp, body, id }
 }
 
@@ -261,15 +261,16 @@ async function keep(ctx, fp, id, bytes) {
 /**
  * What waits, opened with this profile's key: each with who sent it, as this person calls them, its title, their words and its value. One that
  * doesn't open here (from someone forgotten, or kept by a folder this device shares without being paired) is passed over, never deleted.
- * @param {Context} ctx @returns {Promise<{ id: string, kind: 'send' | 'reply', from: string, name: string, at: number, title: string, words: string, value: any, thread?: { task: string, id: string } }[]>}
+ * An invitation to work on something together (caps/together, D733) comes as one too, its value the link and the invitation.
+ * @param {Context} ctx @returns {Promise<{ id: string, kind: 'send' | 'reply' | 'together', from: string, name: string, at: number, title: string, words: string, value: any, thread?: { task: string, id: string } }[]>}
  */
 export async function arrivalsOf(ctx) {
   const [me, people] = [await personOf(ctx), await peopleOf(ctx)]
   const opened = await Promise.all((await kept(ctx)).map(async ({ name, from, box }) => {
     const one = people.find((person) => person.fp === from)
     const { value } = (one && await openAny(me, [one.key, ...(one.before ? [one.before] : [])], bytesOf(box))) ?? {}
-    return one && !one.asking && (value?.kind === 'send' || value?.kind === 'reply') && `${value.id}.json` === name ? [{ id: value.id, kind: value.kind, from, name: one.name, at: Number(value.at) || 0, title: String(value.body?.title ?? '').slice(0, 200),
-      words: String(value.body?.words ?? '').slice(0, 280), value: value.body?.value ?? {}, ...(value.body?.thread && { thread: value.body.thread }) }] : []
+    return one && !one.asking && ['send', 'reply', 'together'].includes(value?.kind) && `${value.id}.json` === name ? [{ id: value.id, kind: value.kind, from, name: one.name, at: Number(value.at) || 0, title: String(value.body?.title ?? '').slice(0, 200),
+      words: String(value.body?.words ?? '').slice(0, 280), value: value.kind === 'together' ? { link: String(value.body?.link ?? ''), invite: value.body?.invite } : value.body?.value ?? {}, ...(value.body?.thread && { thread: value.body.thread }) }] : []
   }))
   return opened.flat().sort((a, b) => a.at - b.at)
 }
@@ -278,7 +279,7 @@ export async function arrivalsOf(ctx) {
  * A value sent to someone met, or an answer back on the thread they sent, sealed to them and posted where they read: refused for someone who
  * never answered, gone, kept from the person by their organisation, or past what the relay carries; or, `joined`, word to a colleague who invited the person that they use Jean now
  * (./colleagues.js). Its size. @param {Context} ctx @param {string} fp
- * @param {{ title: string, words: string, value: object, thread: { task: string, id: string } } | {}} body @param {'send' | 'reply' | 'joined'} [kind]
+ * @param {{ title: string, words: string, value: object, thread: { task: string, id: string } } | {}} body @param {'send' | 'reply' | 'joined' | 'together'} [kind]
  */
 export async function sendTo(ctx, fp, body, kind = 'send') {
   const [me, one] = [await personOf(ctx), await metOf(ctx, fp)]

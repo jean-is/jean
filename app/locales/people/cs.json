@@ -89,5 +89,7 @@
   "people.why.child": "Profil dítěte lidi nepřidává.",
   "people.why.refused": "Vaše organizace vám nedovoluje tohoto člověka kontaktovat.",
   "people.why.inside": "Vaše organizace přidává lidi ze svého seznamu. Najděte je raději podle jména.",
-  "people.why.broken": "Něco se pokazilo. Zkuste to znovu."
+  "people.why.broken": "Něco se pokazilo. Zkuste to znovu.",
+  "people.invites": "Osoba {name} vás zve ke společné práci na sbírce „{title}“",
+  "people.join": "Připojit se"
 }

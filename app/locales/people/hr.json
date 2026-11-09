@@ -87,5 +87,7 @@
   "people.why.child": "U profilu djeteta ne mogu se dodavati osobe.",
   "people.why.refused": "Vaša organizacija ne dopušta vam kontakt s ovom osobom.",
   "people.why.inside": "Vaša organizacija dodaje osobe sa svojeg popisa. Umjesto toga potražite ih po imenu.",
-  "people.why.broken": "Nešto je pošlo po zlu. Pokušajte ponovno."
+  "people.why.broken": "Nešto je pošlo po zlu. Pokušajte ponovno.",
+  "people.invites": "Osoba {name} poziva vas da zajedno radite na „{title}“",
+  "people.join": "Pridruži se"
 }

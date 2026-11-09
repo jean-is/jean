@@ -85,5 +85,7 @@
   "people.why.child": "Wasifu wa mtoto hauwezi kuongeza watu.",
   "people.why.refused": "Shirika lako halikuruhusu kumfikia mtu huyu.",
   "people.why.inside": "Shirika lako huongeza watu kutoka kwenye orodha yake. Badala yake, watafute kwa majina yao.",
-  "people.why.broken": "Kuna hitilafu. Jaribu tena."
+  "people.why.broken": "Kuna hitilafu. Jaribu tena.",
+  "people.invites": "{name} anakualika mfanye kazi pamoja kwenye “{title}”",
+  "people.join": "Jiunge"
 }

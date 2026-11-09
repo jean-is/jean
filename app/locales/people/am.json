@@ -85,5 +85,7 @@
   "people.why.child": "የልጅ መገለጫ ሰዎችን አያክልም።",
   "people.why.refused": "ድርጅትዎ ይህን ሰው እንዲያገኙ አይፈቅድልዎትም።",
   "people.why.inside": "ድርጅትዎ ሰዎችን የሚያክለው ከዝርዝሩ ነው። በምትኩ በስማቸው ይፈልጓቸው።",
-  "people.why.broken": "የሆነ ችግር ተፈጥሯል። እንደገና ይሞክሩ።"
+  "people.why.broken": "የሆነ ችግር ተፈጥሯል። እንደገና ይሞክሩ።",
+  "people.invites": "{name} በ“{title}” ላይ አብረው እንዲሠሩ ጋብዘውዎታል",
+  "people.join": "ይቀላቀሉ"
 }

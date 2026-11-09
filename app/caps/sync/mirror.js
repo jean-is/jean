@@ -22,6 +22,8 @@ export const MARK = 'mirror.json'
 /** The base, which a round reads and writes; lost, the next round takes nothing as deleted. */
 export const BASE = '.cache/sync.json'
 
+/** What people work on together (caps/together, D733): their journals keep it the same everywhere, so no round carries it. @type {Set<string>} */
+export const apart = new Set()
 /** What a mirror carries: not keys, caches or this device's settings, nor what drives and systems leave in a folder. @param {string} path */
 export const carried = (path) => path !== MARK && path !== 'settings.json' && !/(^|\/)(\.|~\$)|\\|\.tmp$|(^|\/)(desktop\.ini|Thumbs\.db|Icon\r)$/.test(path)
 
@@ -99,7 +101,8 @@ export async function claim(there, { by, now = new Date() }) {
  *   removing?: (removals: { task: string, records: Envelope[], all: boolean }[], act: () => Promise<unknown>) => Promise<boolean> }} [options]
  * @returns {Promise<string[]>} the paths that came in here
  */
-export async function syncRound(here, there, { cache = BASE.slice(0, -5), carry = carried, busy = () => false, removing = (_, act) => act().then(() => true) } = {}) {
+export async function syncRound(here, there, { cache = BASE.slice(0, -5), carry: given = carried, busy = () => false, removing = (_, act) => act().then(() => true) } = {}) {
+  const carry = (/** @type {string} */ path) => given(path) && ![...apart].some((place) => path.startsWith(`${place}/`))
   /** @type {Base} */
   let base = (await readJSON(here, `${cache}.json`, null))?.files ?? {}
   const had = (/** @type {string} */ path) => `${cache}/${path}`

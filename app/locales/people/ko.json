@@ -83,5 +83,7 @@
   "people.why.child": "어린이 프로필에서는 사람을 추가할 수 없어요.",
   "people.why.refused": "조직에서 이 사람에게 연락하는 것을 허용하지 않아요.",
   "people.why.inside": "조직에서는 조직 목록에서 사람을 추가해요. 대신 이름으로 찾아보세요.",
-  "people.why.broken": "문제가 발생했어요. 다시 시도하세요."
+  "people.why.broken": "문제가 발생했어요. 다시 시도하세요.",
+  "people.invites": "{name}이(가) ‘{title}’을(를) 함께 작업하자고 초대했어요",
+  "people.join": "참여"
 }

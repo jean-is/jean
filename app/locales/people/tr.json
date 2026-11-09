@@ -85,5 +85,7 @@
   "people.why.child": "Bir çocuğun profili kişi ekleyemez.",
   "people.why.refused": "Kuruluşun bu kişiye ulaşmana izin vermiyor.",
   "people.why.inside": "Kuruluşun kişileri kendi listesinden ekliyor. Bunun yerine onları adıyla ara.",
-  "people.why.broken": "Bir şeyler ters gitti. Tekrar dene."
+  "people.why.broken": "Bir şeyler ters gitti. Tekrar dene.",
+  "people.invites": "{name} seni “{title}” üzerinde birlikte çalışmaya davet ediyor",
+  "people.join": "Katıl"
 }

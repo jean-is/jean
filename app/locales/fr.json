@@ -309,6 +309,7 @@
   "cap.devices.offer": "Avoir vos cerveaux, vos réglages et vos projets aussi sur votre téléphone ou un autre ordinateur ? Vous l’ajoutez avec un QR code et six chiffres.",
   "cap.people.name": "Personnes",
   "cap.people.offer": "Envoyer ceci à quelqu’un qui utilise aussi {name}, et recevoir sa réponse ?",
+  "cap.together.name": "Travail à plusieurs",
   "cap.lock.name": "Verrou",
   "cap.lock.offer": "Verrouiller vos tâches, fichiers et clés, pour que vous seul puissiez les ouvrir sur cet appareil ?",
   "cap.lock.yes": "Poser un verrou",

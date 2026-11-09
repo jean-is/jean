@@ -24,6 +24,7 @@
   "cap.sync.text": "Păstrează sarcinile, fișierele și memoria dvs. la fel pe celelalte computere, printr-un dosar pe care îl sincronizează OneDrive, Dropbox, iCloud Drive sau Google Drive.",
   "cap.devices.text": "{name} și pe telefon sau pe alt computer, cu creierele, setările și proiectele dvs., sigilate astfel încât doar dispozitivele dvs. să le poată citi. O sarcină trece de pe unul pe altul când o trimiteți.",
   "cap.people.text": "Trimiteți o sarcină, sau ce a creat {name}, unei persoane care folosește și ea {name}, sub un sigiliu pe care doar acea persoană îl poate deschide, și primiți răspunsul în aceeași sarcină.",
+  "cap.together.text": "Lucrați la o colecție cu alte persoane în același timp: fiecare vede schimbările celorlalți pe măsură ce apar și își păstrează propria copie.",
   "cap.lock.text": "Sarcinile, fișierele și cheile dvs. se deschid doar cu cheia de acces sau parola dvs.",
   "cap.brain-local.text": "Privat, gratuit și offline: un creier care rulează pe acest computer, dacă este destul de puternic.",
   "collection.count": {
@@ -63,6 +64,7 @@
   "cap.sync.hint": "Menționați că folosiți și un alt computer.",
   "cap.devices.hint": "Menționați că v-ar plăcea să aveți asta pe telefon sau pe alt computer, sau activați funcția aici.",
   "cap.people.hint": "Menționați că ați vrea să trimiteți ceva cuiva, sau activați funcția aici.",
+  "cap.together.hint": "În Partajați, alegeți Lucrați împreună.",
   "cap.lock.hint": "Conectați un serviciu sau începeți zece sarcini.",
   "cap.brain-local.hint": "Alegeți creierul care rulează pe acest dispozitiv.",
   "cap.memory.text": "{name} își amintește lucrurile durabile pe care le menționați, cum ar fi preferințe, fapte și corecturi. Puteți vedea și schimba totul.",

@@ -85,5 +85,7 @@
   "people.why.child": "Ett barns profil kan inte lägga till personer.",
   "people.why.refused": "Din organisation låter dig inte nå den här personen.",
   "people.why.inside": "Din organisation lägger till personer från sin lista. Sök efter dem med namn i stället.",
-  "people.why.broken": "Något gick fel. Försök igen."
+  "people.why.broken": "Något gick fel. Försök igen.",
+  "people.invites": "{name} bjuder in dig att arbeta tillsammans med ”{title}”",
+  "people.join": "Gå med"
 }

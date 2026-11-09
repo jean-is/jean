@@ -314,6 +314,7 @@
   "cap.devices.offer": "Mieć twoje mózgi, ustawienia i projekty także na telefonie lub innym komputerze? Urządzenie dodajesz kodem QR i sześcioma cyframi.",
   "cap.people.name": "Osoby",
   "cap.people.offer": "Wysłać to komuś, kto też korzysta z aplikacji {name}, i dostać odpowiedź?",
+  "cap.together.name": "Wspólna praca",
   "cap.lock.name": "Blokada",
   "cap.lock.offer": "Zablokować twoje zadania, pliki i klucze, żeby tylko ty mógł je otworzyć na tym urządzeniu?",
   "cap.lock.yes": "Ustaw blokadę",

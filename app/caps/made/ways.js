@@ -29,7 +29,7 @@ export const documentWays = (file, { name, head, editor }, pane) => ({
 export function collectionWays(file) {
   const rows = () => withRows(`\`\`\`table\n${file.uri}\n\`\`\``), made = async (/** @type {'xlsx' | 'csv'} */ kind) => /** @type {NonNullable<Awaited<ReturnType<typeof import('../tables/tables.js').workbook>>>} */ (await (await import('../tables/tables.js')).workbook(file.uri, kind))
   const down = (/** @type {'xlsx' | 'csv'} */ kind) => async () => { const { name, mimeType, bytes } = await made(kind); save(new Blob([/** @type {BlobPart} */ (bytes)], { type: mimeType }), name) }
-  return { share: async () => ({ text: await rows() }),
+  return { share: async () => ({ text: await rows() }), thing: { kind: /** @type {const} */ ('collection'), uri: file.uri },
     send: { file: `${file.title}.csv`, type: 'text/csv', make: async () => { const { name, bytes } = await made('csv'); return { title: file.title, files: [new File([/** @type {BlobPart} */ (bytes)], name, { type: 'text/csv' })] } } },
     copy: { id: 'copy', run: async () => copyRich(await rows()) },
     files: [{ id: 'xlsx', glyph: icons.table, label: t('made.out.excel'), run: down('xlsx') }, { id: 'csv', glyph: icons.download, label: t('made.out.csv'), run: down('csv') }],

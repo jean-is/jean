@@ -314,6 +314,7 @@
   "cap.devices.offer": "Mít vaše mozky, nastavení a projekty i v telefonu nebo na jiném počítači? Zařízení přidáte pomocí QR kódu a šesti číslic.",
   "cap.people.name": "Lidé",
   "cap.people.offer": "Poslat to někomu, kdo také používá aplikaci {name}, a dostat zpět odpověď?",
+  "cap.together.name": "Společná práce",
   "cap.lock.name": "Zámek",
   "cap.lock.offer": "Zamknout vaše úkoly, soubory a klíče, aby je v tomto zařízení mohli otevřít jen vy?",
   "cap.lock.yes": "Nastavit zámek",

@@ -21,7 +21,8 @@ await useStrings('out')
 /**
  * What a kind can do. first: what to do before any of it (a design's marks); share: what a link holds (Share's `Item`); publish: a way online of its own (a site's, D720); send: what the system's
  * sheet is given, with the file's name and type this browser is asked about.
- * @typedef {{ first?: Way, share?: () => unknown, publish?: Way, send?: { file?: string, type?: string, make: () => Promise<ShareData> }, copy?: Way, files: Way[], print?: Way, kit?: boolean }} Ways
+ * @typedef {{ first?: Way, share?: () => unknown, publish?: Way, send?: { file?: string, type?: string, make: () => Promise<ShareData> }, copy?: Way, files: Way[], print?: Way, kit?: boolean,
+ *   thing?: { kind: 'collection', uri: string } }} Ways  thing: what can be worked on together, which Share asks how (caps/together, D733)
  */
 
 /** @typedef {import('./preview.js').Shown} Shown */
@@ -64,7 +65,7 @@ export function outButton(file, ways) {
   const { send, share, publish, first, copy, files, print, kit } = ways, menu = `out-${file.uri}`, linked = share && loaded.value.has('share')
   const sends = send && navigator.canShare?.(send.file ? { files: [new File([''], send.file, { type: send.type })] } : { text: 'a' })
   const row = (/** @type {Way} */ way) => html`<li><button type="button" popovertarget=${menu} popovertargetaction="hide" @click=${(/** @type {Event} */ event) => take(file, way, event.currentTarget)}>${way.glyph}<span dir="auto">${way.label}</span></button></li>`
-  const to = /** @type {Way[]} */ ([...(publish ? [publish] : []), ...(linked ? [{ id: '', glyph: icons.share, label: t('out.share'), run: async (/** @type {EventTarget | null} */ from) => (await import('../caps/share/share.js')).openShare({ path: app.current.peek()?.path ?? `${app.projectDir}/conversations/`, title: file.title, item: /** @type {import('../caps/share/share.js').Item} */ (await share()) }, from) }] : []),
+  const to = /** @type {Way[]} */ ([...(publish ? [publish] : []), ...(linked ? [{ id: '', glyph: icons.share, label: t('out.share'), run: async (/** @type {EventTarget | null} */ from) => (await import('../caps/share/share.js')).openShare({ path: app.current.peek()?.path ?? `${app.projectDir}/conversations/`, title: file.title, item: /** @type {import('../caps/share/share.js').Item} */ (await share()), ...(ways.thing && { thing: ways.thing }) }, from) }] : []),
     ...(sends ? [{ id: 'share', glyph: icons.send, label: t('out.send'), run: async () => navigator.share(await (ready ?? send.make())) }] : []), ...(copy ? [{ glyph: icons.copy, label: t('action.copy'), ...copy }] : [])])
   const paper = print ? [{ glyph: icons.print, label: t('out.print'), ...print }] : [], every = [...to, ...files, ...paper], shares = linked || sends || publish
   if (every.length === 1 && !first && !kit) return html`<button class="icon-button" aria-label=${t('out.name', { name: file.name })} @click=${() => take(file, every[0])}>${icons.download}</button>`

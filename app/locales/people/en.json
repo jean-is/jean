@@ -85,5 +85,7 @@
   "people.why.child": "A child’s profile doesn’t add people.",
   "people.why.refused": "Your organisation doesn’t let you reach this person.",
   "people.why.inside": "Your organisation adds people from its list. Find them by name instead.",
-  "people.why.broken": "Something went wrong. Try again."
+  "people.why.broken": "Something went wrong. Try again.",
+  "people.invites": "{name} invites you to work on “{title}” together",
+  "people.join": "Join"
 }

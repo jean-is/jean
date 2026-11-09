@@ -24,6 +24,7 @@
   "cap.sync.text": "Giữ các nhiệm vụ, tệp và trí nhớ của bạn giống nhau trên các máy tính khác, qua một thư mục được OneDrive, Dropbox, iCloud Drive hoặc Google Drive đồng bộ.",
   "cap.devices.text": "{name} có cả trên điện thoại hoặc một máy tính khác của bạn, cùng với bộ não, cài đặt và dự án, được niêm phong để chỉ các thiết bị của bạn đọc được. Một nhiệm vụ đi từ thiết bị này sang thiết bị khác khi bạn gửi nó.",
   "cap.people.text": "Gửi một nhiệm vụ, hoặc những gì {name} đã làm, cho một người cũng dùng {name}, được niêm phong để chỉ người đó mở được, rồi nhận câu trả lời ngay trong nhiệm vụ đó.",
+  "cap.together.text": "Cùng làm việc trên một bộ sưu tập với người khác vào cùng một lúc, mỗi người thấy thay đổi của người khác ngay khi có và giữ bản sao riêng của mình.",
   "cap.lock.text": "Các nhiệm vụ, tệp và khóa API của bạn chỉ mở được bằng khóa truy cập hoặc mật khẩu của bạn.",
   "cap.brain-local.text": "Riêng tư, miễn phí và ngoại tuyến: một bộ não chạy trên máy tính này, nếu máy đủ mạnh.",
   "collection.count": {
@@ -61,6 +62,7 @@
   "cap.sync.hint": "Nhắc rằng bạn cũng dùng một máy tính khác.",
   "cap.devices.hint": "Nhắc rằng bạn muốn dùng điều này trên điện thoại hoặc một máy tính khác, hoặc bật nó ở đây.",
   "cap.people.hint": "Nhắc rằng bạn muốn gửi gì đó cho ai đó, hoặc bật nó ở đây.",
+  "cap.together.hint": "Trong Chia sẻ, chọn Cùng làm việc.",
   "cap.lock.hint": "Kết nối một dịch vụ, hoặc bắt đầu mười nhiệm vụ.",
   "cap.brain-local.hint": "Chọn bộ não chạy trên thiết bị này.",
   "cap.memory.text": "{name} ghi nhớ những điều lâu dài bạn nhắc đến: sở thích, sự thật, chỉnh sửa. Bạn có thể xem và thay đổi tất cả.",

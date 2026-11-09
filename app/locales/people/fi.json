@@ -85,5 +85,7 @@
   "people.why.child": "Lapsen profiili ei lisää henkilöitä.",
   "people.why.refused": "Organisaatiosi ei anna sinun tavoittaa tätä henkilöä.",
   "people.why.inside": "Organisaatiosi lisää henkilöt omasta luettelostaan. Etsi heidät sen sijaan nimellä.",
-  "people.why.broken": "Jokin meni vikaan. Yritä uudelleen."
+  "people.why.broken": "Jokin meni vikaan. Yritä uudelleen.",
+  "people.invites": "{name} kutsuu sinut työstämään kokoelmaa ”{title}” yhdessä",
+  "people.join": "Liity"
 }

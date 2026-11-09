@@ -91,5 +91,7 @@
   "people.why.child": "Profil ur bugel n’ouzhpenn ket tud.",
   "people.why.refused": "Ho aozadur ne ro ket an aotre deoc’h da dizhout an den-mañ.",
   "people.why.inside": "Ho aozadur a ouzhpenn tud diwar e roll. Klaskit anezho dre o anv kentoc’h.",
-  "people.why.broken": "Un dra bennak a zo aet a-dreuz. Klaskit en-dro."
+  "people.why.broken": "Un dra bennak a zo aet a-dreuz. Klaskit en-dro.",
+  "people.invites": "{name} a bed ac’hanoc’h da labourat asambles war « {title} »",
+  "people.join": "Dont e-barzh"
 }

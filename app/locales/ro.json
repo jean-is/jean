@@ -309,6 +309,7 @@
   "cap.devices.offer": "Vreți creierele, setările și proiectele dvs. și pe telefon sau pe alt computer? Îl adăugați cu un cod QR și șase cifre.",
   "cap.people.name": "Persoane",
   "cap.people.offer": "Trimiteți asta unei persoane care folosește și ea {name} și primiți răspunsul?",
+  "cap.together.name": "Lucru împreună",
   "cap.lock.name": "Blocare",
   "cap.lock.offer": "Blocați sarcinile, fișierele și cheile, ca doar dvs. să le puteți deschide pe acest dispozitiv?",
   "cap.lock.yes": "Setați o blocare",

@@ -304,6 +304,7 @@
   "cap.devices.offer": "Uwe na akili, mipangilio na miradi yako kwenye simu yako au kompyuta nyingine pia? Unaongeza kifaa kwa msimbo wa QR na tarakimu sita.",
   "cap.people.name": "Watu",
   "cap.people.offer": "Utume hiki kwa mtu anayetumia {name} pia, na upokee jibu lake?",
+  "cap.together.name": "Kufanya kazi pamoja",
   "cap.lock.name": "Kufuli",
   "cap.lock.offer": "Ufunge kazi, faili na funguo zako, ili wewe tu uweze kuzifungua kwenye kifaa hiki?",
   "cap.lock.yes": "Weka kufuli",

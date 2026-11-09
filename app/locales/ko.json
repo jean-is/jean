@@ -299,6 +299,7 @@
   "cap.devices.offer": "두뇌, 설정, 프로젝트를 휴대폰이나 다른 컴퓨터에서도 쓸까요? QR 코드와 여섯 자리 숫자로 추가하면 돼요.",
   "cap.people.name": "연락처",
   "cap.people.offer": "{name}도 쓰는 사람에게 이걸 보내고 답을 받아 볼까요?",
+  "cap.together.name": "함께 작업하기",
   "cap.lock.name": "잠금",
   "cap.lock.offer": "작업, 파일, 키를 잠가서 이 기기에서 나만 열 수 있게 할까요?",
   "cap.lock.yes": "잠금 설정",

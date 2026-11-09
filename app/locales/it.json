@@ -309,6 +309,7 @@
   "cap.devices.offer": "Avere i tuoi cervelli, le impostazioni e i progetti anche sul telefono o su un altro computer? Lo aggiungi con un codice QR e sei cifre.",
   "cap.people.name": "Persone",
   "cap.people.offer": "Inviare questo a qualcuno che usa anche {name}, e ricevere la sua risposta?",
+  "cap.together.name": "Lavorare insieme",
   "cap.lock.name": "Blocco",
   "cap.lock.offer": "Bloccare le tue attività, i file e le chiavi, così che solo tu possa aprirli su questo dispositivo?",
   "cap.lock.yes": "Imposta un blocco",

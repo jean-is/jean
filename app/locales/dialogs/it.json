@@ -24,6 +24,7 @@
   "cap.sync.text": "Mantiene le tue attività, i tuoi file e la memoria uguali sugli altri tuoi computer, tramite una cartella che OneDrive, Dropbox, iCloud Drive o Google Drive sincronizza.",
   "cap.devices.text": "{name} anche sul tuo telefono o su un altro computer, con i tuoi cervelli, le impostazioni e i progetti, sigillati in modo che solo i tuoi dispositivi possano leggerli. Un’attività passa dall’uno all’altro quando la invii.",
   "cap.people.text": "Invia un’attività, o ciò che {name} ha creato, a qualcuno che usa anche {name}, con un sigillo che solo quella persona può aprire, e ricevi la sua risposta nella stessa attività.",
+  "cap.together.text": "Lavora su una raccolta con altre persone nello stesso momento: ognuno vede le modifiche degli altri man mano che arrivano e tiene la propria copia.",
   "cap.lock.text": "Le tue attività, i file e le chiavi si aprono solo con la tua passkey o la tua password.",
   "cap.brain-local.text": "Privato, gratuito e offline: un cervello che gira su questo computer, se è abbastanza potente.",
   "collection.count": {
@@ -63,6 +64,7 @@
   "cap.sync.hint": "Accenna al fatto che usi anche un altro computer.",
   "cap.devices.hint": "Accenna al fatto che lo vorresti sul telefono o su un altro computer, oppure attivalo qui.",
   "cap.people.hint": "Accenna al fatto che vorresti inviare qualcosa a qualcuno, oppure attivalo qui.",
+  "cap.together.hint": "In Condividi, scegli Lavoraci insieme.",
   "cap.lock.hint": "Collega un servizio o inizia dieci attività.",
   "cap.brain-local.hint": "Scegli il cervello che funziona su questo dispositivo.",
   "cap.memory.text": "{name} ricorda le cose durature che menzioni: preferenze, fatti, correzioni. Puoi vedere e cambiare tutto.",
