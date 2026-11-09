@@ -20,17 +20,28 @@ import { linkOf, parseLink, pairingBox, sealHello, openHello, sealNonce, openNon
 /**
  * Someone met, as `people:<fp>` keeps them: their key, the name they gave themselves, how they were met, when, where they read once they
  * answered; their key before a turn; which of this profile's keys they took; whether they are to be met again. A colleague found on the
- * organisation's list (./colleagues.js) has a record for each device, its account theirs, one held until the person trusts it `asking`.
+ * organisation's list (./colleagues.js) has a record for each device, its account theirs, one held until the person trusts it `asking`, with
+ * what the list gives: their groups and roles, whether a guest, and the certificate of the device's key (ee/, D732).
  * @typedef {{ format: 1, key: JsonWebKey, said: string, met: 'side' | 'link' | 'organisation', at: number, mailbox?: string, waiting?: true, before?: JsonWebKey, took?: string, again?: true,
- *   account?: string, asking?: true }} Met
+ *   account?: string, asking?: true, groups?: string[] | null, guest?: true, chain?: string[] }} Met
  */
 /** B's hello as A read it. @typedef {{ key: JsonWebKey, mailbox: string, name: string, commit: string }} Hello */
 /** An invitation under way on the device that made it (`invite:<id>`): its secret, who it is for, which way, when, the tries left, and what came. @typedef {{ id: string, s: string, name: string, way: 'side' | 'link', at: number, tries: number, said?: string, hello?: Hello, nA?: string, code?: string }} Invite */
 /** An acceptance under way on the device that made it (`accept:<id>`): the link's secret and key, its reply mailbox, who it came from, and what came. @typedef {{ id: string, s: string, fpA: string, token: string, name: string, said: string, nB: string, at: number, key?: JsonWebKey, theirs?: string, code?: string }} Accept */
 /**
  * What the meeting needs of the app: the secrets, the profile's files, the relay's address, this Jean's web address ('' in the desktop app),
- * the clock, and the name this profile gives itself. @typedef {{ get: (id: string) => Promise<string | null>, set: (values: Record<string, string | null>) => Promise<unknown>,
- *   all: () => Promise<Record<string, string>>, fs: import('../../core/types.js').FS, base: string, address: string, now: () => number, said: () => Promise<string> }} Context
+ * the clock, the name this profile gives itself, and the organisation's word on what People does (`person.check`, ee/, D732), which lets
+ * all through where it has none. @typedef {{ get: (id: string) => Promise<string | null>, set: (values: Record<string, string | null>) => Promise<unknown>,
+ *   all: () => Promise<Record<string, string>>, fs: import('../../core/types.js').FS, base: string, address: string, now: () => number, said: () => Promise<string>,
+ *   check?: (e: Check) => Promise<Check & { refuse?: string }> }} Context
+ */
+/**
+ * What People asks the organisation's controls (ee/, D732) before a meeting, before someone is found, kept, sent to or heard, and before
+ * this device is listed, with the profile key as it signs a certificate's request: the event as they let it through, the devices of
+ * someone they vouch for, the listing's certificate, or a refusal. @typedef {{ action: 'meet' | 'find' | 'add' | 'send' | 'open' | 'list', person?: Someone,
+ *   keys?: CryptoKeyPair, proof?: string, chain?: string[] }} Check
+ * Someone as the controls see them: a colleague as the list gives them, or someone met, with their device.
+ * @typedef {{ name: string, account?: string, met: Met['met'], groups?: string[] | null, guest?: true, devices: { key: JsonWebKey, mailbox?: string, chain?: string[] }[] }} Someone
  */
 
 export const PERSON = 'person'
@@ -44,6 +55,11 @@ const ULID = /^[0-9A-HJKMNP-TV-Z]{26}$/
 export const metId = (fp) => `people:${fp}`
 /** @param {string} fp */
 export const nameId = (fp) => `people:${fp}:name`
+/** The controls' word on what People does. @param {Context} ctx @param {Check} e */
+export const checked = (ctx, e) => ctx.check?.(e) ?? Promise.resolve(/** @type {Check & { refuse?: string }} */ (e))
+/** Someone met as the controls see them. @param {Met} one @returns {Someone} */
+const someone = ({ said, met, account, groups, guest, key, mailbox, chain }) => ({ name: said, met, ...(account && { account }), ...(groups !== undefined && { groups }), ...(guest && { guest }),
+  devices: [{ key, ...(mailbox && { mailbox }), ...(chain && { chain }) }] })
 /** What went wrong, and why, as the page says it. @type {(reason: string) => never} */
 const refuse = (reason) => { throw Object.assign(new Error(`The meeting stopped: ${reason}.`), { reason }) }
 
@@ -218,7 +234,8 @@ export async function received(ctx, bytes) {
   if (kind === 'took' && body.key === await fingerprintOf(me.public)) await update(ctx, from, { took: body.key })
   // Removed by them: forgotten here too, unless what says so is older than this record of them, as a relay giving it again would be.
   if (kind === 'gone' && Number(opened.value.at) >= from.at) await ctx.set({ [metId(from.fp)]: null, [nameId(from.fp)]: null })
-  if ((kind === 'send' || kind === 'reply') && typeof id === 'string' && ULID.test(id)) await keep(ctx, from.fp, id, bytes)
+  // What the organisation keeps from this person isn't kept (ee/, D732).
+  if ((kind === 'send' || kind === 'reply') && typeof id === 'string' && ULID.test(id) && !(await checked(ctx, { action: 'open', person: someone(from) })).refuse) await keep(ctx, from.fp, id, bytes)
   return { kind, from: from.fp, body, id }
 }
 
@@ -250,7 +267,7 @@ export async function arrivalsOf(ctx) {
 
 /**
  * A value sent to someone met, or an answer back on the thread they sent, sealed to them and posted where they read: refused for someone who
- * never answered, gone, or past what the relay carries; or, `joined`, word to a colleague who invited the person that they use Jean now
+ * never answered, gone, kept from the person by their organisation, or past what the relay carries; or, `joined`, word to a colleague who invited the person that they use Jean now
  * (./colleagues.js). Its size. @param {Context} ctx @param {string} fp
  * @param {{ title: string, words: string, value: object, thread: { task: string, id: string } } | {}} body @param {'send' | 'reply' | 'joined'} [kind]
  */
@@ -258,6 +275,7 @@ export async function sendTo(ctx, fp, body, kind = 'send') {
   const [me, held] = [await personOf(ctx), await ctx.get(metId(fp))]
   const one = held ? /** @type {Met} */ (JSON.parse(held)) : null
   if (!one?.mailbox || one.again || one.asking) refuse(one?.again || one?.asking ? 'again' : one ? 'waiting' : 'gone')
+  if ((await checked(ctx, { action: 'send', person: someone(one) })).refuse) refuse('refused')
   const bytes = await letterTo(ctx, me, one, kind, body)
   if (bytes.length > LIMIT) refuse('large')
   await send(ctx.base, one.mailbox, bytes).catch((error) => refuse(error?.status === 404 ? 'gone' : error?.status === 413 ? 'large' : 'relay'))

@@ -8,6 +8,7 @@
   "people.kept": "추가됨",
   "people.newDevice": "새 기기에서 보낸 메시지가 있어요",
   "people.trust": "신뢰하기",
+  "people.guest": "게스트 계정",
   "people.inviteMail": "이메일로 초대하기",
   "people.mailSubject": "{name}에서 서로 작업을 주고받아요",
   "people.mailBody": "회사에서 {name}을(를) 쓰고 있는데, 이걸로 서로 작업을 주고받을 수 있어요. 이 링크를 열고 회사 계정으로 로그인해 주세요: {link}",
@@ -80,5 +81,7 @@
   "people.why.tries": "세 번 틀려서 안전을 위해 초대를 멈췄어요. 다시 시작하세요.",
   "people.why.relay": "지금은 연결할 수 없어요. 연결 상태를 확인하고 다시 시도하세요.",
   "people.why.child": "어린이 프로필에서는 사람을 추가할 수 없어요.",
+  "people.why.refused": "조직에서 이 사람에게 연락하는 것을 허용하지 않아요.",
+  "people.why.inside": "조직에서는 조직 목록에서 사람을 추가해요. 대신 이름으로 찾아보세요.",
   "people.why.broken": "문제가 발생했어요. 다시 시도하세요."
 }

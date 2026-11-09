@@ -8,6 +8,7 @@
   "people.kept": "Ditambah",
   "people.newDevice": "Menulis daripada peranti baharu",
   "people.trust": "Percayai",
+  "people.guest": "Akaun tetamu",
   "people.inviteMail": "Jemput melalui e-mel",
   "people.mailSubject": "Mari saling menghantar tugasan melalui {name}",
   "people.mailBody": "Saya menggunakan {name} di tempat kerja, dan kita boleh saling menghantar tugasan dengannya. Buka pautan ini dan log masuk dengan akaun kerja anda: {link}",
@@ -80,5 +81,7 @@
   "people.why.tries": "Tiga cubaan salah: demi keselamatan, jemputan dihentikan. Mulakan semula.",
   "people.why.relay": "Ini tidak dapat dicapai sekarang. Semak sambungan dan cuba lagi.",
   "people.why.child": "Profil kanak-kanak tidak menambah orang.",
+  "people.why.refused": "Organisasi anda tidak membenarkan anda menghubungi orang ini.",
+  "people.why.inside": "Organisasi anda menambah orang daripada senarainya. Sebaliknya, cari mereka mengikut nama.",
   "people.why.broken": "Ada sesuatu yang tidak kena. Cuba lagi."
 }

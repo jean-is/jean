@@ -120,16 +120,12 @@ function qualified(cert) {
 const filter = async (all, keep) => (await Promise.all(all.map(async (one) => ((await keep(one)) ? [one] : [])))).flat()
 
 /**
- * Whether the organisation's anchors vouch for a sealed certificate's key at the time it says it was sealed, and
- * whether what it keeps shows each certificate on the way unrevoked then: `trusted`, `unchecked` (it doesn't show
- * that), `revoked`, or `untrusted`, with the anchor's name, or the certificate's issuer's; `qualified` when trusted,
- * its certificate says it is an EU qualified seal, and the anchor's list doesn't say its authority certifies no seals.
- * @param {Sealed} sealed @param {Anchor[]} anchors @param {Date} at @returns {Promise<Verdict>}
+ * The anchor that vouches for a certificate at a time, and the certificates on the way to it: its chain from those given, as
+ * far as it goes, up to the first that is an anchor or that an anchor issued, each valid then; null where none does. A sealed
+ * certificate's (verdict()) and a colleague's (D732). @param {Parts} leaf @param {Parts[]} given @param {Anchor[]} anchors @param {Date} at
+ * @returns {Promise<{ anchor: Anchor, vouched: Parts[] } | null>}
  */
-export async function verdict(sealed, anchors, at) {
-  const { values, certificates: [leaf, ...given] } = carried(sealed)
-  if (!leaf) return { status: 'untrusted', name: '' }
-  // The chain as far as it goes, up to the first that is an anchor, or that an anchor issued.
+export async function vouching(leaf, given, anchors, at) {
   const chain = await chainOf(leaf, given)
   /** @type {Anchor | undefined} */
   let anchor
@@ -141,7 +137,22 @@ export async function verdict(sealed, anchors, at) {
     if (anchor) break
   }
   const valid = (/** @type {Parts} */ one) => one.from <= at && at <= one.until
-  if (!anchor || ![...vouched, anchor].every(valid)) return { status: 'untrusted', name: nameOf(leaf.issuer) }
+  return anchor && [...vouched, anchor].every(valid) ? { anchor, vouched } : null
+}
+
+/**
+ * Whether the organisation's anchors vouch for a sealed certificate's key at the time it says it was sealed, and
+ * whether what it keeps shows each certificate on the way unrevoked then: `trusted`, `unchecked` (it doesn't show
+ * that), `revoked`, or `untrusted`, with the anchor's name, or the certificate's issuer's; `qualified` when trusted,
+ * its certificate says it is an EU qualified seal, and the anchor's list doesn't say its authority certifies no seals.
+ * @param {Sealed} sealed @param {Anchor[]} anchors @param {Date} at @returns {Promise<Verdict>}
+ */
+export async function verdict(sealed, anchors, at) {
+  const { values, certificates: [leaf, ...given] } = carried(sealed)
+  if (!leaf) return { status: 'untrusted', name: '' }
+  const found = await vouching(leaf, given, anchors, at)
+  if (!found) return { status: 'untrusted', name: nameOf(leaf.issuer) }
+  const { anchor, vouched } = found
   const name = nameOf(anchor.subject)
   // Each up to the anchor, by its issuer: the next, or the anchor.
   const revocations = values('rVals')

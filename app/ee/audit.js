@@ -17,7 +17,7 @@ import { t, useStrings } from '../core/i18n.js'
 import { deviceKey } from '../ui/secrets.js'
 import { tracer, exporter, profileOf } from './otlp.js'
 import { chain, signer } from './chain.js'
-import { check, person } from './person.js'
+import { check, person, others } from './person.js'
 
 /** @typedef {import('../caps/signin/signin.js').SignIn} SignIn */
 
@@ -65,7 +65,7 @@ export async function start(audit) {
     hooks: [
       { on: 'record', tier: 'policy', run: (e, next) => { follow.record(e); return next(e) } },
       { on: 'turn.end', tier: 'policy', run: (e, next) => { follow.end(e); return next(e) } },
-      { on: 'act', tier: 'policy', run: (e, next) => { follow.act(e); return next(e) } },
+      { on: 'act', tier: 'policy', run: async (e, next) => { follow.act(await others(audit, e)); return next(e) } },
     ],
     // What the organisation receives, and how it names the person (D427).
     slots: { organization: { at: 2, draw: () => {

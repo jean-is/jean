@@ -8,6 +8,7 @@
   "people.kept": "Hinzugefügt",
   "people.newDevice": "Schreibt von einem neuen Gerät",
   "people.trust": "Gerät vertrauen",
+  "people.guest": "Gastkonto",
   "people.inviteMail": "Per E-Mail einladen",
   "people.mailSubject": "Schicken wir uns gegenseitig Aufgaben über {name}",
   "people.mailBody": "Ich nutze {name} bei der Arbeit, und wir könnten uns darüber gegenseitig Aufgaben schicken. Öffne diesen Link und melde dich mit deinem Arbeitskonto an: {link}",
@@ -82,5 +83,7 @@
   "people.why.tries": "Drei falsche Versuche: Das Hinzufügen wurde sicherheitshalber gestoppt. Fang noch einmal an.",
   "people.why.relay": "Das ist gerade nicht erreichbar. Prüfe die Verbindung und versuche es erneut.",
   "people.why.child": "Das Profil eines Kindes fügt keine Personen hinzu.",
+  "people.why.refused": "Deine Organisation lässt dich diese Person nicht erreichen.",
+  "people.why.inside": "Deine Organisation fügt Personen aus ihrer Liste hinzu. Suche sie stattdessen nach Namen.",
   "people.why.broken": "Etwas ist schiefgelaufen. Versuche es erneut."
 }

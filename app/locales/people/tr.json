@@ -8,6 +8,7 @@
   "people.kept": "Eklendi",
   "people.newDevice": "Yeni bir cihazdan yazıyor",
   "people.trust": "Cihaza güven",
+  "people.guest": "Misafir hesabı",
   "people.inviteMail": "E-postayla davet et",
   "people.mailSubject": "{name} uygulamasıyla birbirimize görev gönderelim",
   "people.mailBody": "İş yerinde {name} uygulamasını kullanıyorum; onunla birbirimize görev gönderebiliriz. Bu bağlantıya gidip iş hesabınla oturum aç: {link}",
@@ -82,5 +83,7 @@
   "people.why.tries": "Üç yanlış deneme: güvenlik için durduruldu. Yeniden başla.",
   "people.why.relay": "Şu an ulaşılamıyor. İnternet bağlantını kontrol edip yeniden dene.",
   "people.why.child": "Bir çocuğun profili kişi ekleyemez.",
+  "people.why.refused": "Kuruluşun bu kişiye ulaşmana izin vermiyor.",
+  "people.why.inside": "Kuruluşun kişileri kendi listesinden ekliyor. Bunun yerine onları adıyla ara.",
   "people.why.broken": "Bir şeyler ters gitti. Tekrar dene."
 }

@@ -416,10 +416,10 @@
         "deck": {
           "$ref": "#/$defs/link"
         },
-        "render": {
+        "sounds": {
           "$ref": "#/$defs/link"
         },
-        "sounds": {
+        "render": {
           "$ref": "#/$defs/link"
         },
         "brave": {
@@ -849,6 +849,32 @@
       "items": {
         "type": "string"
       }
+    },
+    "colleagues": {
+      "type": "object",
+      "properties": {
+        "certify": {
+          "type": "boolean"
+        },
+        "apart": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "inside": {
+          "type": "boolean"
+        },
+        "guests": {
+          "enum": [
+            "refuse"
+          ]
+        }
+      },
+      "additionalProperties": false
     },
     "groups": {
       "type": "array",
@@ -1594,7 +1620,7 @@
                       }
                     ]
                   },
-                  "render": {
+                  "sounds": {
                     "anyOf": [
                       {
                         "$ref": "#/$defs/link"
@@ -1604,7 +1630,7 @@
                       }
                     ]
                   },
-                  "sounds": {
+                  "render": {
                     "anyOf": [
                       {
                         "$ref": "#/$defs/link"
@@ -2366,6 +2392,51 @@
                     "null"
                   ]
                 }
+              },
+              "colleagues": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "certify": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "apart": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "items": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "inside": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "guests": {
+                    "enum": [
+                      "refuse",
+                      null
+                    ]
+                  }
+                },
+                "additionalProperties": false
               }
             },
             "additionalProperties": false

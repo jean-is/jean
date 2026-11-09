@@ -8,6 +8,7 @@
   "people.kept": "Tilføjet",
   "people.newDevice": "Skriver fra en ny enhed",
   "people.trust": "Stol på den",
+  "people.guest": "Gæstekonto",
   "people.inviteMail": "Invitér pr. e-mail",
   "people.mailSubject": "Lad os sende hinanden opgaver med {name}",
   "people.mailBody": "Jeg bruger {name} på arbejdet, og på den måde kunne vi sende hinanden opgaver. Åbn dette link, og log ind med din arbejdskonto: {link}",
@@ -82,5 +83,7 @@
   "people.why.tries": "Tre forkerte forsøg: det blev stoppet for en sikkerheds skyld. Start forfra.",
   "people.why.relay": "Det kan ikke nås lige nu. Tjek forbindelsen, og prøv igen.",
   "people.why.child": "Et barns profil tilføjer ikke personer.",
+  "people.why.refused": "Din organisation lader dig ikke nå denne person.",
+  "people.why.inside": "Din organisation tilføjer personer fra sin liste. Find dem i stedet ved navn.",
   "people.why.broken": "Noget gik galt. Prøv igen."
 }

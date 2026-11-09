@@ -8,6 +8,7 @@
   "people.kept": "Na tua lista",
   "people.newDevice": "Escreve de um novo dispositivo",
   "people.trust": "Confiar no dispositivo",
+  "people.guest": "Conta de convidado",
   "people.inviteMail": "Convidar por e-mail",
   "people.mailSubject": "Vamos trocar tarefas com {name}",
   "people.mailBody": "Uso {name} no trabalho e assim podíamos trocar tarefas. Abre esta ligação e inicia sessão com a tua conta do trabalho: {link}",
@@ -84,5 +85,7 @@
   "people.why.tries": "Três tentativas erradas: por segurança, o convite parou. Começa de novo.",
   "people.why.relay": "Neste momento não é possível estabelecer contacto. Verifica se tens internet e tenta de novo.",
   "people.why.child": "O perfil de uma criança não adiciona pessoas.",
+  "people.why.refused": "A tua organização não te permite contactar esta pessoa.",
+  "people.why.inside": "A tua organização adiciona pessoas a partir da lista dela. Em vez disso, procura-as pelo nome.",
   "people.why.broken": "Algo correu mal. Tenta de novo."
 }

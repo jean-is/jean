@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Warehouse SAS
 // SPDX-License-Identifier: Elastic-2.0
 
-// The organisation's authority certifies the key this device seals with (D434), through its EST service (RFC 7030,
+// The organisation's authority certifies the key this device seals with (D434), or a profile's key for colleagues (D732), through its EST service (RFC 7030,
 // as RFC 8951 clarifies it): a PKCS#10 request (RFC 2986) for that key, signed by it, which never leaves the device,
 // sent to `simpleenroll`, and the certificate the authority answers with, its chain from the answer or from
 // `cacerts`. Pure, given how to send, so it is tested under node --test.
@@ -14,12 +14,14 @@ const extension = (id, value, critical = false) => seq(oid(id), ...(critical ? [
 
 /**
  * A PKCS#10 request for the seal's key, named by its thumbprint, as its own certificate is, and asking for what that
- * certificate says: signatures that commit to what they sign, on documents (RFC 9336). The authority's profile
- * decides what it grants, its subject first. @param {CryptoKeyPair} keys @param {string} thumbprint
+ * certificate says: signatures that commit to what they sign, on documents (RFC 9336). Or, `email` given, for a profile's
+ * key (D732): agreeing keys, for that account, its rfc822Name. The authority's profile decides what it grants, its subject
+ * first. @param {CryptoKeyPair} keys @param {string} thumbprint @param {string} [email]
  */
-export async function request(keys, thumbprint) {
+export async function request(keys, thumbprint, email) {
   const spki = new Uint8Array(await crypto.subtle.exportKey('spki', keys.publicKey))
-  const asked = seq(extension('2.5.29.15', bits(Uint8Array.of(0xc0), 6), true), extension('2.5.29.37', seq(oid('1.3.6.1.5.5.7.3.36'))))
+  const asked = email ? seq(extension('2.5.29.15', bits(Uint8Array.of(0x08), 3), true), extension('2.5.29.17', seq(tlv(0x81, encoder.encode(email)))))
+    : seq(extension('2.5.29.15', bits(Uint8Array.of(0xc0), 6), true), extension('2.5.29.37', seq(oid('1.3.6.1.5.5.7.3.36'))))
   const subject = seq(tlv(0x31, seq(oid('2.5.4.3'), tlv(0x0c, encoder.encode(thumbprint)))))
   const info = seq(int(Uint8Array.of(0)), subject, spki, tlv(0xa0, seq(oid('1.2.840.113549.1.9.14'), tlv(0x31, asked))))
   const signature = new Uint8Array(await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, keys.privateKey, /** @type {BufferSource} */ (info)))
@@ -27,15 +29,15 @@ export async function request(keys, thumbprint) {
 }
 
 /**
- * Has an EST service certify the seal's key: its certificate, then its chain as far as the answer, or else the
- * service's CA certificates, give it, leaf first. Throws, saying why, when the service refuses, or certifies
- * another key. @param {{ est: string, keys: CryptoKeyPair, thumbprint: string, headers?: Record<string, string>,
+ * Has an EST service certify the seal's key, or a profile's for an account (`email`): its certificate, then its chain as
+ * far as the answer, or else the service's CA certificates, give it, leaf first. Throws, saying why, when the service
+ * refuses, or certifies another key. @param {{ est: string, keys: CryptoKeyPair, thumbprint: string, email?: string, headers?: Record<string, string>,
  * send: (address: string, init: RequestInit) => Promise<Response> }} at @returns {Promise<Uint8Array[]>}
  */
-export async function enroll({ est, keys, thumbprint, headers = {}, send }) {
+export async function enroll({ est, keys, thumbprint, email, headers = {}, send }) {
   const base = est.replace(/\/+$/, '')
   // In lines of 64, as MIME's base64 is: libest, Cisco's reference service, refuses one line with no break at its end.
-  const answer = await send(`${base}/simpleenroll`, { method: 'POST', headers: { ...headers, 'content-type': 'application/pkcs10' }, body: base64(await request(keys, thumbprint)).replace(/.{1,64}/g, '$&\n') })
+  const answer = await send(`${base}/simpleenroll`, { method: 'POST', headers: { ...headers, 'content-type': 'application/pkcs10' }, body: base64(await request(keys, thumbprint, email)).replace(/.{1,64}/g, '$&\n') })
   if (!answer.ok) throw new Error(`${base}/simpleenroll: HTTP ${answer.status}`)
   const given = certificatesIn(new Uint8Array(await answer.arrayBuffer())).map(parts)
   const spki = new Uint8Array(await crypto.subtle.exportKey('spki', keys.publicKey))

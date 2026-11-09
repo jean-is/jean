@@ -8,6 +8,7 @@
   "people.kept": "Tillagd",
   "people.newDevice": "Skriver från en ny enhet",
   "people.trust": "Lita på enheten",
+  "people.guest": "Gästkonto",
   "people.inviteMail": "Bjud in via mejl",
   "people.mailSubject": "Låt oss skicka uppgifter till varandra med {name}",
   "people.mailBody": "Jag använder {name} på jobbet, och på så sätt skulle vi kunna skicka uppgifter till varandra. Öppna den här länken och logga in med ditt jobbkonto: {link}",
@@ -82,5 +83,7 @@
   "people.why.tries": "Tre felaktiga försök: inbjudan stoppades för säkerhets skull. Börja om.",
   "people.why.relay": "Det går inte att nå fram just nu. Kontrollera anslutningen och försök igen.",
   "people.why.child": "Ett barns profil kan inte lägga till personer.",
+  "people.why.refused": "Din organisation låter dig inte nå den här personen.",
+  "people.why.inside": "Din organisation lägger till personer från sin lista. Sök efter dem med namn i stället.",
   "people.why.broken": "Något gick fel. Försök igen."
 }

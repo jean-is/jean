@@ -8,6 +8,7 @@
   "people.kept": "Added",
   "people.newDevice": "Writes from a new device",
   "people.trust": "Trust it",
+  "people.guest": "Guest account",
   "people.inviteMail": "Invite them by email",
   "people.mailSubject": "Let’s send each other tasks with {name}",
   "people.mailBody": "I use {name} at work, and we could send each other tasks with it. Open this link and sign in with your work account: {link}",
@@ -82,5 +83,7 @@
   "people.why.tries": "Three wrong tries: it stopped, to be safe. Start again.",
   "people.why.relay": "This can’t be reached right now. Check the connection and try again.",
   "people.why.child": "A child’s profile doesn’t add people.",
+  "people.why.refused": "Your organisation doesn’t let you reach this person.",
+  "people.why.inside": "Your organisation adds people from its list. Find them by name instead.",
   "people.why.broken": "Something went wrong. Try again."
 }

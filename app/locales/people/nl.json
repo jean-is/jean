@@ -8,6 +8,7 @@
   "people.kept": "Toegevoegd",
   "people.newDevice": "Schrijft vanaf een nieuw apparaat",
   "people.trust": "Vertrouwen",
+  "people.guest": "Gastaccount",
   "people.inviteMail": "Uitnodigen per e-mail",
   "people.mailSubject": "Laten we elkaar taken sturen via {name}",
   "people.mailBody": "Ik gebruik {name} op het werk, en we zouden elkaar er taken mee kunnen sturen. Open deze link en meld je aan met je werkaccount: {link}",
@@ -82,5 +83,7 @@
   "people.why.tries": "Drie verkeerde pogingen: de uitnodiging is voor de zekerheid gestopt. Begin opnieuw.",
   "people.why.relay": "Dit is nu niet bereikbaar. Controleer de verbinding en probeer het opnieuw.",
   "people.why.child": "In het profiel van een kind kun je geen mensen toevoegen.",
+  "people.why.refused": "Je organisatie laat je deze persoon niet bereiken.",
+  "people.why.inside": "Je organisatie voegt mensen toe vanuit haar lijst. Zoek ze in plaats daarvan op naam.",
   "people.why.broken": "Er ging iets mis. Probeer het opnieuw."
 }

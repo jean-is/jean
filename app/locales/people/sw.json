@@ -8,6 +8,7 @@
   "people.kept": "Ameongezwa",
   "people.newDevice": "Anaandika kutoka kwenye kifaa kipya",
   "people.trust": "Amini kifaa hiki",
+  "people.guest": "Akaunti ya mgeni",
   "people.inviteMail": "Alika kwa barua pepe",
   "people.mailSubject": "Tutumiane kazi kupitia {name}",
   "people.mailBody": "Ninatumia {name} kazini, na kwa njia hiyo tunaweza kutumiana kazi. Fungua kiungo hiki kisha uingie kwa akaunti yako ya kazi: {link}",
@@ -82,5 +83,7 @@
   "people.why.tries": "Majaribio matatu yasiyo sahihi: mwaliko umesimamishwa, kwa usalama. Anza tena.",
   "people.why.relay": "Haiwezi kufikiwa kwa sasa. Angalia muunganisho na ujaribu tena.",
   "people.why.child": "Wasifu wa mtoto hauwezi kuongeza watu.",
+  "people.why.refused": "Shirika lako halikuruhusu kumfikia mtu huyu.",
+  "people.why.inside": "Shirika lako huongeza watu kutoka kwenye orodha yake. Badala yake, watafute kwa majina yao.",
   "people.why.broken": "Kuna hitilafu. Jaribu tena."
 }

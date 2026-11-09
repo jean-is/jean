@@ -8,6 +8,7 @@
   "people.kept": "Ouzhpennet",
   "people.newDevice": "Skrivañ a ra diwar un trevnad nevez",
   "people.trust": "Fiziout ennañ",
+  "people.guest": "Kont kouviad",
   "people.inviteMail": "Pediñ dre bostel",
   "people.mailSubject": "Eskemmomp trevelloù dre {name}",
   "people.mailBody": "Implijout a ran {name} el labour, ha gant se e c’hallfemp eskemm trevelloù. Digorit al liamm-mañ ha kevreit gant ho kont labour : {link}",
@@ -88,5 +89,7 @@
   "people.why.tries": "Tri esae fall : paouezet eo an ouzhpennañ, evit surentez. Adkregit.",
   "people.why.relay": "N’haller ket tizhout an dra-se evit poent. Gwiriit ar c’hevreadur ha klaskit en-dro.",
   "people.why.child": "Profil ur bugel n’ouzhpenn ket tud.",
+  "people.why.refused": "Ho aozadur ne ro ket an aotre deoc’h da dizhout an den-mañ.",
+  "people.why.inside": "Ho aozadur a ouzhpenn tud diwar e roll. Klaskit anezho dre o anv kentoc’h.",
   "people.why.broken": "Un dra bennak a zo aet a-dreuz. Klaskit en-dro."
 }

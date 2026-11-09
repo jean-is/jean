@@ -8,6 +8,7 @@
   "people.kept": "Persona aghjunta",
   "people.newDevice": "Vi scrive da un apparechju novu",
   "people.trust": "Fidassi d’ellu",
+  "people.guest": "Contu d’invitatu",
   "people.inviteMail": "Invità per posta elettronica",
   "people.mailSubject": "Mandemuci compiti cù {name}",
   "people.mailBody": "Impiegu {name} à u travagliu, è cusì ci pudemu mandà compiti. Aprite stu ligame è cunnettitevi cù u vostru contu di travagliu : {link}",
@@ -84,5 +85,7 @@
   "people.why.tries": "Trè tentativi sbagliati : l’aghjunta s’hè piantata, per sicurezza. Ricuminciate.",
   "people.why.relay": "Per avà, ùn si pò ghjunghje. Verificate a cunnessione è pruvate torna.",
   "people.why.child": "U prufilu d’un zitellu ùn aghjunghje micca persone.",
+  "people.why.refused": "A vostra urganizazione ùn vi permette micca di ghjunghje sta persona.",
+  "people.why.inside": "A vostra urganizazione aghjusta e persone da a so lista. Circatele piuttostu pè u so nome.",
   "people.why.broken": "Qualcosa ùn hà micca funziunatu. Pruvate torna."
 }

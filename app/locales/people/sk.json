@@ -8,6 +8,7 @@
   "people.kept": "Pridané",
   "people.newDevice": "Píše z nového zariadenia",
   "people.trust": "Dôverovať zariadeniu",
+  "people.guest": "Účet hosťa",
   "people.inviteMail": "Pozvať e-mailom",
   "people.mailSubject": "Posielajme si úlohy v aplikácii {name}",
   "people.mailBody": "V práci používam aplikáciu {name} a môžeme si v nej navzájom posielať úlohy. Otvorte tento odkaz a prihláste sa svojím pracovným účtom: {link}",
@@ -86,5 +87,7 @@
   "people.why.tries": "Tri chybné pokusy: pridávanie sa pre istotu zastavilo. Začnite znova.",
   "people.why.relay": "Spojenie sa teraz nedá nadviazať. Skontrolujte pripojenie a skúste to znova.",
   "people.why.child": "V profile dieťaťa sa ľudia nepridávajú.",
+  "people.why.refused": "Vaša organizácia vám nedovoľuje kontaktovať tohto človeka.",
+  "people.why.inside": "Vaša organizácia pridáva ľudí zo svojho zoznamu. Radšej ich vyhľadajte podľa mena.",
   "people.why.broken": "Niečo sa pokazilo. Skúste to znova."
 }

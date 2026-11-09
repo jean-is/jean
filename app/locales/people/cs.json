@@ -8,6 +8,7 @@
   "people.kept": "Přidáno",
   "people.newDevice": "Píše z nového zařízení",
   "people.trust": "Důvěřovat mu",
+  "people.guest": "Účet hosta",
   "people.inviteMail": "Pozvat e-mailem",
   "people.mailSubject": "Posílejme si úkoly přes aplikaci {name}",
   "people.mailBody": "V práci používám aplikaci {name} a můžeme si přes ni navzájem posílat úkoly. Otevřete tento odkaz a přihlaste se svým pracovním účtem: {link}",
@@ -86,5 +87,7 @@
   "people.why.tries": "Tři chybné pokusy: přidávání se pro jistotu zastavilo. Začněte znovu.",
   "people.why.relay": "Teď se nelze spojit. Zkontrolujte připojení a zkuste to znovu.",
   "people.why.child": "Profil dítěte lidi nepřidává.",
+  "people.why.refused": "Vaše organizace vám nedovoluje tohoto člověka kontaktovat.",
+  "people.why.inside": "Vaše organizace přidává lidi ze svého seznamu. Najděte je raději podle jména.",
   "people.why.broken": "Něco se pokazilo. Zkuste to znovu."
 }

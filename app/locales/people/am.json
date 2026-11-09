@@ -8,6 +8,7 @@
   "people.kept": "አክለዋል",
   "people.newDevice": "ከአዲስ መሣሪያ መልእክት ደርሷል",
   "people.trust": "እመነው",
+  "people.guest": "የእንግዳ መለያ",
   "people.inviteMail": "በኢሜይል ይጋብዙ",
   "people.mailSubject": "በ{name} በኩል ተግባሮችን እንለዋወጥ",
   "people.mailBody": "በሥራ ቦታ {name}ን እጠቀማለሁ፤ አብረን ተግባሮችን መለዋወጥ እንችላለን። ይህን አገናኝ ከፍተው በሥራ መለያዎ ይግቡ፦ {link}",
@@ -82,5 +83,7 @@
   "people.why.tries": "ሦስት የተሳሳቱ ሙከራዎች፦ ለደህንነት ሲባል ማከሉ ቆሟል። እንደገና ይጀምሩ።",
   "people.why.relay": "አሁን መድረስ አይቻልም። ግንኙነቱን ይፈትሹና እንደገና ይሞክሩ።",
   "people.why.child": "የልጅ መገለጫ ሰዎችን አያክልም።",
+  "people.why.refused": "ድርጅትዎ ይህን ሰው እንዲያገኙ አይፈቅድልዎትም።",
+  "people.why.inside": "ድርጅትዎ ሰዎችን የሚያክለው ከዝርዝሩ ነው። በምትኩ በስማቸው ይፈልጓቸው።",
   "people.why.broken": "የሆነ ችግር ተፈጥሯል። እንደገና ይሞክሩ።"
 }

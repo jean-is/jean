@@ -8,6 +8,7 @@
   "people.kept": "În lista dvs.",
   "people.newDevice": "Scrie de pe un dispozitiv nou",
   "people.trust": "Acordați încredere",
+  "people.guest": "Cont de invitat",
   "people.inviteMail": "Invitați prin e-mail",
   "people.mailSubject": "Să ne trimitem sarcini prin {name}",
   "people.mailBody": "Folosesc {name} la serviciu și așa ne-am putea trimite sarcini. Deschideți acest link și conectați-vă cu contul dvs. de serviciu: {link}",
@@ -84,5 +85,7 @@
   "people.why.tries": "Trei încercări greșite: din motive de siguranță, invitația s-a oprit. Începeți din nou.",
   "people.why.relay": "Nu se poate stabili legătura acum. Verificați conexiunea și încercați din nou.",
   "people.why.child": "Profilul unui copil nu adaugă persoane.",
+  "people.why.refused": "Organizația dvs. nu vă permite să contactați această persoană.",
+  "people.why.inside": "Organizația dvs. adaugă persoane din lista sa. Căutați-le mai degrabă după nume.",
   "people.why.broken": "Ceva n-a mers bine. Încercați din nou."
 }

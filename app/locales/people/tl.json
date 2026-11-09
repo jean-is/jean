@@ -8,6 +8,7 @@
   "people.kept": "Naidagdag na",
   "people.newDevice": "Sumusulat mula sa bagong device",
   "people.trust": "Pagkatiwalaan ito",
+  "people.guest": "Account ng bisita",
   "people.inviteMail": "Mag-imbita gamit ang email",
   "people.mailSubject": "Magpadala tayo ng mga gawain sa isa’t isa gamit ang {name}",
   "people.mailBody": "Gumagamit ako ng {name} sa trabaho, at magagamit natin ito para magpadala ng mga gawain sa isa’t isa. Buksan mo ang link na ito at mag-sign in gamit ang account mo sa trabaho: {link}",
@@ -82,5 +83,7 @@
   "people.why.tries": "Tatlong maling subok: itinigil ito, para sigurado. Magsimulang muli.",
   "people.why.relay": "Hindi ito maabot ngayon. Tingnan ang koneksyon at subukang muli.",
   "people.why.child": "Hindi nakapagdaragdag ng mga tao ang profile ng isang bata.",
+  "people.why.refused": "Hindi ka pinapayagan ng organisasyon mo na maabot ang taong ito.",
+  "people.why.inside": "Nagdadagdag ang organisasyon mo ng mga tao mula sa listahan nito. Hanapin na lang sila ayon sa pangalan.",
   "people.why.broken": "May nagkaproblema. Subukang muli."
 }

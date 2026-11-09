@@ -5,22 +5,27 @@
 import { test, expect } from '@playwright/test'
 import { start, openSettings, closeSettings, openTasks, withPolicy, RELAY_URL } from './helpers.js'
 import { POLICY, fakeIssuer, fakeGateway } from './fixtures/fake-issuer.js'
+import { authority, issue, requested, certsOnly } from './fixtures/ca.js'
 
 /** @typedef {import('@playwright/test').Page} Page */
 
-/** Signed in to the organisation, whose policy names its relay and has People ahead, as IT turns colleagues on. @param {import('@playwright/test').Browser} browser @param {Record<string, unknown>} [claims] */
-async function colleague(browser, claims = {}, lang = 'en') {
+/**
+ * Signed in to the organisation, whose policy names its relay and has People ahead, as IT turns colleagues on, with `more` of it.
+ * @param {import('@playwright/test').Browser} browser @param {Record<string, unknown>} [claims] @param {Record<string, unknown>} [more] @param {(page: Page) => Promise<void>} [routes]
+ */
+async function colleague(browser, claims = {}, lang = 'en', more = {}, routes = async () => {}) {
   const page = await (await browser.newContext()).newPage()
   const issuer = await fakeIssuer(page, { claims })
   await fakeGateway(page, issuer)
-  await withPolicy(page, { ...POLICY, urls: { relay: RELAY_URL }, capabilities: { preUnlock: ['people'] } })
+  await routes(page)
+  await withPolicy(page, { ...POLICY, urls: { relay: RELAY_URL }, capabilities: { preUnlock: ['people'] }, ...more })
   await start(page, lang)
   // Listed on the relay, as each start lists the device.
   await expect.poll(() => page.evaluate(async () => (await import('/ui/opfs.js')).mine('app.listed')).then((key) => page.evaluate((one) => localStorage.getItem(one), key))).not.toBeNull()
   return page
 }
 /** Ana and Bob, as the organisation names them, their own in each run: the relay keeps who it listed for the whole run. */
-const named = () => ((run) => ({ ana: { sub: `sub-ana-${run}`, preferred_username: `ana.${run}@acme.example` }, bob: { sub: `sub-bob-${run}`, name: 'Bob Dupont', preferred_username: `bob.${run}@acme.example` } }))(`${test.info().workerIndex}-${test.info().repeatEachIndex}-${Date.now()}`)
+const named = () => ((run) => ({ run, ana: { sub: `sub-ana-${run}`, preferred_username: `ana.${run}@acme.example` }, bob: { sub: `sub-bob-${run}`, name: 'Bob Dupont', preferred_username: `bob.${run}@acme.example` } }))(`${test.info().workerIndex}-${test.info().repeatEachIndex}-${Date.now()}`)
 /** The people a Jean keeps, as People shows them, a colleague's devices as one. @param {Page} page */
 const groupsOf = (page) => page.evaluate(async () => (await import('/caps/people/people.js')).groups.value.map(({ name, account, fps, asking }) => ({ name, account, devices: fps.length, asking })))
 
@@ -106,4 +111,51 @@ test('the colleague finder reads in Arabic and Japanese', async ({ browser }) =>
     await expect(page.locator('app-settings dialog[open] .people-flow p.hint[role="status"]')).not.toBeEmpty()
     await page.context().close()
   }
+})
+
+const CORS = { 'access-control-allow-origin': '*', 'access-control-allow-headers': 'authorization, content-type', 'access-control-allow-methods': 'GET, POST' }
+const root = await authority('Acme Root CA')
+const issuing = await authority('Acme Issuing CA', { issuer: root })
+/** @param {Uint8Array} der */
+const base64 = (der) => Buffer.from(der).toString('base64')
+/**
+ * The organisation's EST service as the page's routes: each key it is asked for certified, for the account its request names, which a real
+ * one takes from who asks; or, `refusing`, none. @param {boolean} [refusing] @returns {(page: Page) => Promise<void>}
+ */
+const authorityAt = (refusing = false) => (page) => page.route('https://ca.fake.example/**', async (route) => {
+  const request = route.request()
+  if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: CORS })
+  if (request.url().endsWith('/cacerts')) return route.fulfill({ headers: CORS, body: base64(certsOnly([issuing.certificate, root.certificate])) })
+  if (refusing) return route.fulfill({ status: 401, headers: CORS })
+  const { spki, email } = await requested(Buffer.from(request.postData() ?? '', 'base64'))
+  return route.fulfill({ headers: { ...CORS, 'content-type': 'application/pkcs7-mime; smime-type=certs-only' }, body: base64(certsOnly([await issue({ spki, subject: 'Profile', issuer: issuing, email })])) })
+})
+/** The organisation's controls (ee/, D732): keys its authority certifies, and trading kept apart from research. */
+const CONTROLS = { seal: { est: 'https://ca.fake.example/.well-known/est', auth: 'oidc' }, trust: [base64(root.certificate)], colleagues: { certify: true, apart: [['g-trading', 'g-research']] } }
+
+test('with the organisation’s controls, a colleague is found only with a key its authority certified, groups kept apart neither find nor reach each other, and people come from the list alone', async ({ browser }) => {
+  const who = named(), [carol, dan] = ['carol', 'dan'].map((one) => ({ sub: `${who.bob.sub}-${one}`, name: `${one[0].toUpperCase()}${one.slice(1)} Petit`, preferred_username: who.bob.preferred_username.replace('bob', one) }))
+  const [ana, , carols] = await Promise.all([
+    colleague(browser, { ...who.ana, groups: ['g-trading'] }, 'en', CONTROLS, authorityAt()),
+    colleague(browser, { ...who.bob, groups: ['g-trading'] }, 'en', CONTROLS, authorityAt()),
+    colleague(browser, { ...carol, groups: ['g-research'] }, 'en', CONTROLS, authorityAt()),
+    // Dan's authority refuses him: listed with no certificate.
+    colleague(browser, { ...dan, groups: ['g-trading'] }, 'en', CONTROLS, authorityAt(true)),
+  ])
+  const settings = await openSettings(ana, 'People')
+  await expect(settings.getByRole('button', { name: 'Add a person' }), 'people from the list alone').toHaveCount(0)
+  await settings.getByLabel('Find a colleague').fill(who.run)
+  await settings.getByRole('button', { name: 'Search' }).click()
+  const found = settings.getByRole('listitem').filter({ hasText: who.bob.preferred_username })
+  await expect(found).toContainText('Bob Dupont')
+  await expect(settings.getByRole('listitem').filter({ hasText: carol.preferred_username }), 'in a group kept apart').toHaveCount(0)
+  await expect(settings.getByRole('listitem').filter({ hasText: dan.preferred_username }), 'his key uncertified').toHaveCount(0)
+  await found.getByRole('button', { name: 'Add', exact: true }).click()
+  await expect.poll(() => groupsOf(ana)).toEqual([{ name: 'Bob Dupont', account: who.bob.preferred_username, devices: 1, asking: false }])
+  // Carol finds neither of them, from her side.
+  const hers = await openSettings(carols, 'People')
+  await hers.getByLabel('Find a colleague').fill(who.run)
+  await hers.getByRole('button', { name: 'Search' }).click()
+  await expect(hers.getByText('No one by that name at your organisation uses Jean yet.')).toBeVisible()
+  await expect(hers.getByRole('listitem').filter({ hasText: who.ana.preferred_username })).toHaveCount(0)
 })

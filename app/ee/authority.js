@@ -37,18 +37,23 @@ let asking = null
 let remote = null
 let told = false
 
+const receipt = () => import('../caps/receipt/receipt.js')
+/** From the browser, else through the gateway, as witnesses are reached. @param {string} address @param {RequestInit} init */
+const send = async (address, init) => (await receipt()).reach(address, init)
+/**
+ * How the service is asked, the seal's or a profile's key's (colleagues.js): with the organisation's sign-in's token, fresh each time, or
+ * what the browser holds for it (a TLS client certificate). @param {Policy} seal @returns {(address: string, init: RequestInit) => Promise<Response>}
+ */
+export const reaching = (seal) => async (address, init) => {
+  const headers = new Headers(init.headers)
+  if (seal.auth === 'oidc') headers.set('authorization', `Bearer ${await (await import('../caps/signin/signin.js')).token()}`)
+  return send(address, { ...init, headers, ...(seal.auth === 'tls' && { credentials: /** @type {const} */ ('include') }) })
+}
+
 /** @param {Policy} seal */
 export async function start(seal) {
   await useStrings('enterprise')
-  const receipt = () => import('../caps/receipt/receipt.js')
-  /** From the browser, else through the gateway, as witnesses are reached. @param {string} address @param {RequestInit} init */
-  const send = async (address, init) => (await receipt()).reach(address, init)
-  /** To the service: with the organisation's sign-in's token, fresh each time, or what the browser holds for it (a TLS client certificate). @param {string} address @param {RequestInit} init */
-  const asked = async (address, init) => {
-    const headers = new Headers(init.headers)
-    if (seal.auth === 'oidc') headers.set('authorization', `Bearer ${await (await import('../caps/signin/signin.js')).token()}`)
-    return send(address, { ...init, headers, ...(seal.auth === 'tls' && { credentials: /** @type {const} */ ('include') }) })
-  }
+  const asked = reaching(seal)
 
   /** The chain kept for this key from this service, unless it ends soon; else a new one, or the kept one while it lasts. @param {CryptoKeyPair} keys */
   async function certified(keys) {

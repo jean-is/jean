@@ -8,6 +8,7 @@
   "people.kept": "追加済み",
   "people.newDevice": "新しい端末からのメッセージがあります",
   "people.trust": "信頼する",
+  "people.guest": "ゲストアカウント",
   "people.inviteMail": "メールで招待する",
   "people.mailSubject": "{name} でタスクを送り合いませんか",
   "people.mailBody": "仕事で {name} を使っています。一緒に使えば、お互いにタスクを送り合えます。このリンクを開いて、仕事用のアカウントでサインインしてください：{link}",
@@ -80,5 +81,7 @@
   "people.why.tries": "3 回間違えたため、安全のために招待を止めました。最初からやり直してください。",
   "people.why.relay": "今はつながりません。接続を確認して、もう一度お試しください。",
   "people.why.child": "子どものプロフィールでは人を追加できません。",
+  "people.why.refused": "組織の設定により、この人には連絡できません。",
+  "people.why.inside": "組織では、人は組織のリストから追加します。代わりに名前で探してください。",
   "people.why.broken": "問題が発生しました。もう一度お試しください。"
 }

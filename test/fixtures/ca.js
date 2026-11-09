@@ -3,7 +3,7 @@
 // responder it certified for that, and CRLs (RFC 5280); and a qualified provider's CSC API (v2), which holds its key
 // and signs the SHA-256 it is given (D436). Web Crypto, der.js and Node's Buffer, so the unit tests and the browser
 // tests' routes share it.
-import { tlv, seq, int, oid, bits, octets, derSignature, read, children, raw, valueOf } from '../../app/caps/receipt/der.js'
+import { tlv, seq, int, oid, bits, octets, derSignature, read, children, raw, valueOf, dottedOf } from '../../app/caps/receipt/der.js'
 
 const P256 = { name: 'ECDSA', namedCurve: 'P-256' }
 const SIGNING = { name: 'ECDSA', hash: 'SHA-256' }
@@ -32,12 +32,13 @@ export const QUALIFIED = /** @type {[string, string[]?][]} */ ([['0.4.0.1862.1.1
 
 /**
  * A certificate for a key, issued by an authority or by itself: an authority's, a responder's or a seal's, saying
- * where to ask whether it was revoked, where its issuer's certificate is (`caIssuers`), and with `statements` what
- * it says it is (QCStatements: each one's OID, and the OIDs it lists). @param {{ spki: Uint8Array, subject: string, country?: string,
+ * where to ask whether it was revoked, where its issuer's certificate is (`caIssuers`), with `statements` what
+ * it says it is (QCStatements: each one's OID, and the OIDs it lists), and with `email` whose it is (a profile's key, D732).
+ * @param {{ spki: Uint8Array, subject: string, country?: string,
  * issuer?: Authority, key?: CryptoKey, ca?: boolean, ocsp?: string, caIssuers?: string, crl?: string, usages?: string[],
- * statements?: [string, string[]?][], from?: Date, until?: Date, serial?: number }} given
+ * statements?: [string, string[]?][], email?: string, from?: Date, until?: Date, serial?: number }} given
  */
-export async function issue({ spki, subject, country, issuer, key, ca = false, ocsp, caIssuers, crl, usages = [], statements = [], from = new Date('2026-01-01T00:00:00Z'), until = new Date('2030-01-01T00:00:00Z'), serial = serials++ }) {
+export async function issue({ spki, subject, country, issuer, key, ca = false, ocsp, caIssuers, crl, usages = [], statements = [], email, from = new Date('2026-01-01T00:00:00Z'), until = new Date('2030-01-01T00:00:00Z'), serial = serials++ }) {
   // Authority Information Access: its OCSP responder, and its CA Issuers address.
   const access = [...(ocsp ? [seq(oid('1.3.6.1.5.5.7.48.1'), uri(ocsp))] : []), ...(caIssuers ? [seq(oid('1.3.6.1.5.5.7.48.2'), uri(caIssuers))] : [])]
   const extensions = [
@@ -47,6 +48,7 @@ export async function issue({ spki, subject, country, issuer, key, ca = false, o
     ...(access.length ? [extension('1.3.6.1.5.5.7.1.1', seq(...access))] : []),
     ...(crl ? [extension('2.5.29.31', seq(seq(tlv(0xa0, tlv(0xa0, uri(crl))))))] : []),
     ...(statements.length ? [extension('1.3.6.1.5.5.7.1.3', seq(...statements.map(([id, listed]) => seq(oid(id), ...(listed ? [seq(...listed.map(oid))] : [])))))] : []),
+    ...(email ? [extension('2.5.29.17', seq(tlv(0x81, encode(email))))] : []),
   ]
   const tbs = seq(tlv(0xa0, int(Uint8Array.of(2))), int(Uint8Array.of(serial >> 8, serial & 255)), ECDSA_SHA256, issuer?.name ?? named(subject, country),
     seq(utc(from), utc(until)), named(subject, country), spki, tlv(0xa3, seq(...extensions)))
@@ -67,14 +69,21 @@ export async function responder(issuer) {
   return { keys, spki, name: named('Acme OCSP'), certificate: await issue({ spki, subject: 'Acme OCSP', issuer, usages: ['1.3.6.1.5.5.7.3.9'] }) }
 }
 
-/** The key a PKCS#10 request asks to certify, and whether it signed the request. @param {Uint8Array} der */
+/**
+ * The key a PKCS#10 request asks to certify, whether it signed the request, and the account it asks to be named for, its
+ * rfc822Name, which a real authority takes from whoever it knows asks (D732). @param {Uint8Array} der
+ */
 export async function requested(der) {
   const [info, , signature] = children(read(der))
-  const [, , spki] = children(info)
+  const [, , spki, attributes] = children(info)
   const key = await crypto.subtle.importKey('spki', raw(spki), P256, true, ['verify'])
   const [r, s] = children(read(valueOf(signature).subarray(1))).map((part) => valueOf(part).slice(-32))
   const pad = (/** @type {Uint8Array} */ half) => Uint8Array.from([...new Uint8Array(32 - half.length), ...half])
-  return { spki: raw(spki).slice(), signed: await crypto.subtle.verify(SIGNING, key, Uint8Array.from([...pad(r), ...pad(s)]), raw(info)) }
+  // The extensions it asks for (PKCS #9's extensionRequest), its subject's alternative names among them.
+  const extensions = (attributes ? children(attributes) : []).flatMap((attribute) => children(children(children(attribute)[1])[0]))
+  const names = extensions.find((extension) => dottedOf(children(extension)[0]) === '2.5.29.17')
+  const email = names && children(read(valueOf(/** @type {any} */ (children(names).at(-1))))).filter((node) => node.tag === 0x81).map((node) => new TextDecoder().decode(valueOf(node)))[0]
+  return { spki: raw(spki).slice(), signed: await crypto.subtle.verify(SIGNING, key, Uint8Array.from([...pad(r), ...pad(s)]), raw(info)), ...(email && { email }) }
 }
 
 /** An EST certs-only answer: a PKCS#7 SignedData with no signer. @param {Uint8Array[]} certificates */

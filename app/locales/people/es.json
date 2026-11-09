@@ -8,6 +8,7 @@
   "people.kept": "Persona añadida",
   "people.newDevice": "Te escribe desde un dispositivo nuevo",
   "people.trust": "Confiar en él",
+  "people.guest": "Cuenta de invitado",
   "people.inviteMail": "Invitar por correo",
   "people.mailSubject": "Enviémonos tareas con {name}",
   "people.mailBody": "Uso {name} en el trabajo y así podríamos enviarnos tareas. Abre este enlace e inicia sesión con tu cuenta del trabajo: {link}",
@@ -84,5 +85,7 @@
   "people.why.tries": "Tres intentos fallidos: por seguridad, se detuvo. Empieza de nuevo.",
   "people.why.relay": "No se puede conectar ahora mismo. Revisa la conexión e inténtalo de nuevo.",
   "people.why.child": "El perfil de un niño no añade personas.",
+  "people.why.refused": "Tu organización no te permite contactar con esta persona.",
+  "people.why.inside": "Tu organización añade a las personas desde su lista. Búscalas por su nombre.",
   "people.why.broken": "Algo salió mal. Vuelve a intentarlo."
 }

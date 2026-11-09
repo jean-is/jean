@@ -5,7 +5,8 @@
 // this draws. The steps are pure in ./flow.js, on pairing's exchange.
 import { html, nothing } from 'lit-html'
 import { signal, computed, effect } from '@preact/signals-core'
-import { register, unlock } from '../../ui/caps.js'
+import { register, unlock, contributions } from '../../ui/caps.js'
+import { fire } from '../../core/hooks.js'
 import { app, pairs, refreshConversations, openConversation, conversationOf, keepRecords, notify } from '../../ui/state.js'
 import { act } from '../../ui/acts.js'
 import { callsIn, filesMade, metaRecord, requestsOf } from '../../core/events.js'
@@ -29,7 +30,7 @@ import * as colleague from './colleagues.js'
 /** @typedef {import('./flow.js').Invite} Invite */
 /** @typedef {import('./flow.js').Met} Met */
 /** @typedef {import('./flow.js').Accept} Accept */
-/** Why a meeting stopped. @typedef {'link' | 'used' | 'gone' | 'self' | 'known' | 'tries' | 'relay' | 'child' | 'broken'} Reason */
+/** Why a meeting stopped. @typedef {'link' | 'used' | 'gone' | 'self' | 'known' | 'tries' | 'relay' | 'child' | 'broken' | 'inside' | 'refused'} Reason */
 /**
  * Inviting, on Ana's device: who it is for being asked, the link to show or send, the digits to type and the tries left, done; or why it
  * stopped. @typedef {{ step: 'idle' | 'name' } | { step: 'waiting', id: string, name: string, link: string, way: 'side' | 'link' } | { step: 'code', id: string, name: string, left: number }
@@ -60,6 +61,10 @@ const relayOf = () => String(serviceURL('relay', app.settings.peek(), app.policy
 export const colleagues = Boolean(app.policy.signIn && relayOf()) && await colleague.lists(relayOf(), String(app.policy.signIn?.issuer))
 /** Whether this Jean meets people: it pairs devices, or its organisation's relay lists colleagues; and policy lets it share. */
 export const offered = () => (pairs() || colleagues) && !child && app.policy.rules?.share !== 'never'
+/** The organisation's word on what People does (ee/, D732), hooks on `person.check`: the event as they let it through, or a refusal. @param {import('./flow.js').Check} e */
+const check = (e) => fire(contributions().hooks, 'person.check', e, (/** @type {import('./flow.js').Check} */ passed) => passed)
+/** Whether people are met by a code or a link here, beside those the organisation's list gives. */
+export const meets = !(await check({ action: 'meet' })).refuse
 /** Whether an answer is being written: nothing is read from the relay meanwhile but what the person asks for (caps/receipt). */
 const answering = computed(() => app.running.value.length > 0)
 /** @template T @param {string} name @param {() => Promise<T>} run @returns {Promise<T>} */
@@ -70,7 +75,7 @@ const warn = (error) => console.warn('People', error)
 /** What ./flow.js meets with, for this profile. @returns {Promise<import('./flow.js').Context>} */
 const contextOf = async () => ({
   get: (id) => getSecret(app.fs, id), set: (values) => setSecrets(app.fs, values), all: () => secretsWhere(app.fs, (id) => /^(people:|invite:|accept:)/.test(id)),
-  fs: app.fs, base: relayOf(), address: (await host) ? '' : location.origin + location.pathname, now: () => Date.now(),
+  fs: app.fs, base: relayOf(), address: (await host) ? '' : location.origin + location.pathname, now: () => Date.now(), check,
   said: async () => String(JSON.parse(await app.fs.read(VAULT) ?? '{}').name ?? '') || app.settings.peek().name || '' })
 /** This profile as a person, made one tab at a time where it has none. */
 const me = async () => locked('app-person', async () => personOf(await contextOf()))
@@ -153,17 +158,19 @@ async function answer(ctx, one, signal) {
 async function listOn(person, now = false) {
   const [kept, at] = [mine('app.listed'), Date.now()], last = JSON.parse(localStorage.getItem(kept) ?? 'null')
   const proof = !now && last?.mailbox === person.mailbox && at - last.at < 864e5 ? null : await (await import('../signin/signin.js')).idToken()
-  if (proof) await colleague.listed(relayOf(), person, proof).then(() => localStorage.setItem(kept, JSON.stringify({ mailbox: person.mailbox, at })))
+  if (proof) await colleague.listed(await contextOf(), person, proof).then(() => localStorage.setItem(kept, JSON.stringify({ mailbox: person.mailbox, at })))
 }
 
 /** Colleagues found by a few words, three letters at least. @param {string} asked */
 export async function findColleagues(asked) {
   finding.value = { asked }
-  const person = await me(), found = await colleague.find(relayOf(), person, new URLSearchParams({ q: asked }).toString()).catch(() => null)
+  const [person, ctx] = [await me(), await contextOf()], all = await colleague.find(relayOf(), person, new URLSearchParams({ q: asked }).toString()).catch(() => null)
+  // Not this person, and only those the organisation lets them reach (ee/, D732).
+  const found = all && (await Promise.all(all.filter((one) => !one.devices.some((device) => device.mailbox === person.mailbox)).map((one) => colleague.vetted(ctx, 'find', one)))).filter((one) => one !== null)
   if (finding.peek().asked === asked) finding.value = found ? { asked, found, link: `${location.origin}${location.pathname}#/meet/${person.mailbox}` } : { asked, wrong: true }
 }
 /** A colleague found kept, each of their devices pinned. @param {import('./colleagues.js').Listed} one */
-export const addColleague = async (one) => { await colleague.keep(await contextOf(), one); await refresh() }
+export const addColleague = async (one) => { await colleague.keep(await contextOf(), one).catch(warn); await refresh() }
 /** A colleague's held devices trusted. @param {string} account */
 export const trustColleague = async (account) => { await colleague.trust(await contextOf(), account); await refresh() }
 
@@ -172,6 +179,7 @@ export const trustColleague = async (account) => { await colleague.trust(await c
 /** Invites someone, as this person names them, by a code to show beside them or a link to send. @param {string} name @param {'side' | 'link'} way */
 export async function invite(name, way) {
   try {
+    if (!meets) throw Object.assign(new Error('The organisation adds people from its list alone.'), { reason: 'inside' })
     const { invite: one, link } = await invited(await contextOf(), { name, way })
     inviting.value = { step: 'waiting', id: one.id, name, link, way }
     await watch()
@@ -236,7 +244,7 @@ export function fromAddress() {
   const [link, mailbox] = [location.href, /^#\/meet\/([\w-]{22})$/.exec(location.hash)?.[1]]
   history.replaceState(null, '', `${location.pathname}#/settings/people`)
   if (colleagues && mailbox) return void joined(mailbox).catch((error) => { warn(error); accepting.value = { step: 'failed', reason: reasonOf(error) } })
-  accepting.value = !offered() ? { step: 'failed', reason: child ? 'child' : 'relay' } : parseLink(link, 'meet') ? { step: 'ask', link } : { step: 'failed', reason: 'link' }
+  accepting.value = !offered() ? { step: 'failed', reason: child ? 'child' : 'relay' } : !meets ? { step: 'failed', reason: 'inside' } : parseLink(link, 'meet') ? { step: 'ask', link } : { step: 'failed', reason: 'link' }
 }
 
 /**
@@ -270,7 +278,7 @@ export async function sendIt(fps, what, { reading = false, words = '', back } = 
   for (const fp of fps) await sendTo(ctx, fp, { title: what.title, words: words.trim().slice(0, 280), value, thread }, back ? 'reply' : 'send').then((sent) => { size = sent; went.push(fp) }, (error) => { failed ??= error })
   if (!went.length) throw failed
   await keepRecords(what.path, went.map((fp) => metaRecord(app.deviceId, { sent: { to: fp, thread } })), !during)
-  act('people.send', { task: what.path, kind: back ? 'reply' : what.item ? 'item' : 'task', size })
+  act('people.send', { task: what.path, kind: back ? 'reply' : what.item ? 'item' : 'task', size, ...accountOf(went[0], 'to') })
   return size
 }
 
@@ -301,7 +309,7 @@ async function submit(event) {
     await sendIt(mine ? [back.fp] : one.able, now.what, { reading: now.reading, words: String(form.get('words') ?? ''), back: mine ? back.thread : undefined })
     sending.value = { ...now, busy: false, said: t('people.sentTo', { name: one.name }) }
   } catch (/** @type {any} */ error) {
-    sending.value = { ...now, busy: false, wrong: t(`people.why.${error?.reason === 'waiting' || error?.reason === 'large' ? error.reason : 'unreached'}`, { name: BRAND.name }) }
+    sending.value = { ...now, busy: false, wrong: t(`people.why.${['waiting', 'large', 'refused'].includes(error?.reason) ? error.reason : 'unreached'}`, { name: BRAND.name }) }
   }
 }
 
@@ -324,7 +332,7 @@ function pane(what) {
       <fieldset><legend>${t('people.toWhom')}</legend>${groups.value.map((one) => html`<label class="row" for=${`people-to-${one.fp}`}>
         <input id=${`people-to-${one.fp}`} type="radio" name="to" value=${one.fp} ?disabled=${!able(one)} ?checked=${one === first} required><bdi>${one.name}</bdi>
         ${one.waiting ? html`<small class="muted">${t('people.answer')}</small>` : nothing}</label>`)}
-        <button type="button" class="button subtle" @click=${add}>${icons.plus} ${t('people.add')}</button></fieldset>
+        ${meets ? html`<button type="button" class="button subtle" @click=${add}>${icons.plus} ${t('people.add')}</button>` : nothing}</fieldset>
       ${what.item ? nothing : html`<label class="setting" for="people-read">${t('people.reading', { name: BRAND.name })}<input id="people-read" type="checkbox" class="switch" role="switch"
         .checked=${now?.reading ?? false} @change=${(/** @type {Event} */ e) => measure(what, /** @type {HTMLInputElement} */ (e.target).checked)}></label>`}
       <label for="people-words">${t('people.words')}</label><textarea id="people-words" name="words" rows="2" maxlength="280" dir="auto"></textarea>
@@ -336,6 +344,8 @@ function pane(what) {
       : html`<button class="button primary" form="people-send" ?disabled=${!now?.value || now.busy || total > LIMIT || !first}>${icons.people} ${t('people.go')}</button>`}</footer>`
 }
 
+/** A colleague's account, for the audit export (ee/): as `to` or `from`, or nothing for someone met another way. @param {string} fp @param {'to' | 'from'} as */
+const accountOf = (fp, as) => ((account) => (account ? { [as]: account } : {}))(people.peek().find((one) => one.fp === fp)?.account)
 /** Whom a task went to, as the person calls them, for the Share at its top: its `sent` records'. @param {unknown[]} records */
 const went = (records) => {
   const names = [...new Set(records.flatMap((record) => /** @type {any} */ (record).meta?.sent?.to ?? []).flatMap((fp) => people.value.find((one) => one.fp === fp)?.name ?? []))]
@@ -348,6 +358,7 @@ export async function openArrival(one) {
   const options = { by: app.deviceId, aFile: t('people.aFile'), words: one.words, from: { from: one.from, person: one.from, id: one.id, ...(one.thread && { thread: one.thread }) } }
   const path = into ? (await takeInto(app.fs, into, one.value, options), into) : (await takeIn(app.fs, one.value, { ...options, projectDir: app.projectDir })).path
   await app.fs.remove(`${ARRIVALS}/${one.id}.json`)
+  act('people.open', { task: path, kind: one.kind, ...accountOf(one.from, 'from') })
   await Promise.all([refreshConversations(), refresh()])
   // In the project on screen it opens there, read again even where it was open; in another, by its address.
   if (path.startsWith(`${app.projectDir}/`)) await openConversation(path)

@@ -8,6 +8,7 @@
   "people.kept": "Dodano",
   "people.newDevice": "Piše s novog uređaja",
   "people.trust": "Vjeruj uređaju",
+  "people.guest": "Račun gosta",
   "people.inviteMail": "Pozovi e-poštom",
   "people.mailSubject": "Šaljimo jedno drugome zadatke u aplikaciji {name}",
   "people.mailBody": "Na poslu koristim aplikaciju {name} i u njoj možemo jedno drugome slati zadatke. Otvorite ovu poveznicu i prijavite se svojim poslovnim računom: {link}",
@@ -84,5 +85,7 @@
   "people.why.tries": "Tri pogrešna pokušaja: pozivnica je zaustavljena, radi sigurnosti. Počnite ispočetka.",
   "people.why.relay": "Ovo trenutačno nije dostupno. Provjerite vezu i pokušajte ponovno.",
   "people.why.child": "U profilu djeteta ne mogu se dodavati osobe.",
+  "people.why.refused": "Vaša organizacija ne dopušta vam kontakt s ovom osobom.",
+  "people.why.inside": "Vaša organizacija dodaje osobe sa svojeg popisa. Umjesto toga potražite ih po imenu.",
   "people.why.broken": "Nešto je pošlo po zlu. Pokušajte ponovno."
 }

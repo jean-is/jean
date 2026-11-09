@@ -35,6 +35,7 @@ const KINDS = /** @type {Record<string, Record<string, boolean>>} */ ({
   'computer-bridge': { 'computer-bridge': false },
   signin: { signin: false, 'signin:audit': false },
   'seal-authority': { 'seal-authority': false },
+  'colleague-certificate': { 'colleague-certificate': false }, // the profile key's certificate, which names a key no other device holds (D732)
   share: { 'share:01J': false },
   device: { device: false, devices: false, store: false },
   // This profile as a person and the people it met, whatever they hold; an invitation or an acceptance under way stays (D727).
@@ -65,6 +66,7 @@ const KNOWN = /** @type {Record<string, string>} */ ({
   'app/caps/share/share.js `share:${share.id}`': 'share',
   'app/caps/share/share.js `share:${now.id}`': 'share',
   'app/ee/authority.js KEPT': 'seal-authority',
+  'app/ee/colleagues.js KEPT': 'colleague-certificate',
   'app/caps/devices/devices.js SECRET': 'device', // this device's identity in the profile
   'app/caps/devices/store.js STORE': 'device', // the store's keys (D721), which open what the person's devices keep in common
   'app/caps/devices/flow.js DEVICES': 'device', // the devices the profile knows, removed ones too

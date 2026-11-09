@@ -11,7 +11,7 @@ import { icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { t, tParts, intlLocales } from '../../core/i18n.js'
 import { BRAND } from '../../brand.js'
-import { inviting, accepting, groups, invitations, invite, confirm as right, stopInvite, accept, stopAccept, rename, remove, colleagues, finding, findColleagues, addColleague, trustColleague } from './people.js'
+import { inviting, accepting, groups, invitations, invite, confirm as right, stopInvite, accept, stopAccept, rename, remove, colleagues, meets, finding, findColleagues, addColleague, trustColleague } from './people.js'
 
 await styleSheet(new URL('../../ui/data-pages.css', import.meta.url))
 
@@ -29,6 +29,8 @@ const quit = (act, label = 'people.cancel') => html`<button class="button subtle
 const composing = (e) => { if (e.isComposing && e.key === 'Enter') e.preventDefault() }
 /** A form's one field, by name. @param {Event} e @param {string} name */
 const valueIn = (e, name) => String(new FormData(/** @type {HTMLFormElement} */ (e.target)).get(name) ?? '').trim()
+/** A colleague's account, and Guest where the organisation's list calls them one. @param {{ account?: string, guest?: true }} one */
+const account = (one) => html`<span dir="ltr">${one.account}</span>${one.guest ? html` · ${t('people.guest')}` : nothing}`
 /** The link, to copy. @param {string} link */
 const field = (link) => html`<div class="people-field"><input readonly dir="ltr" title=${t('people.link')} .value=${link} @focus=${(/** @type {Event} */ e) => /** @type {HTMLInputElement} */ (e.target).select()}>
   <button class="button" @click=${() => navigator.clipboard.writeText(link).then(() => notify(t('toast.copied')))}>${icons.copy} ${t('people.copy')}</button></div>`
@@ -83,11 +85,11 @@ function finder() {
     <div class="people-field"><input id="people-find" name="q" type="search" required minlength="3" dir="auto" autocomplete="off" @keydown=${composing}><button class="button">${t('people.search')}</button></div></form>
     <p class="hint" role="status">${now.wrong ? t('people.why.relay', { name: BRAND.name }) : now.found && !now.found.length ? t('people.nobody', { name: BRAND.name }) : ''}</p>
     ${now.found && !now.found.length && now.link ? html`<div class="row"><a class="button" href=${mailTo(now.asked, now.link)}>${icons.share} ${t('people.inviteMail')}</a></div>` : nothing}
-    ${now.found?.length ? html`<ul class="list">${now.found.map((one) => html`<li><span class="item-text"><strong dir="auto">${one.name}</strong><small dir="ltr">${one.account}</small></span>
+    ${now.found?.length ? html`<ul class="list">${now.found.map((one) => html`<li><span class="item-text"><strong dir="auto">${one.name}</strong><small>${account(one)}</small></span>
       <button class="button subtle" ?disabled=${kept.has(one.account)} @click=${() => addColleague(one)}>${t(kept.has(one.account) ? 'people.kept' : 'people.keep')}</button></li>`)}</ul>` : nothing}`
 }
 
-/** At rest: colleagues to find at work, the people met, the invitations waiting here, and Add a person. */
+/** At rest: colleagues to find at work, the people met, the invitations waiting here, and Add a person, unless the organisation adds people from its list alone. */
 function rest() {
   const date = new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'medium' })
   const list = [...groups.value].sort((x, y) => x.name.localeCompare(y.name, intlLocales()))
@@ -95,7 +97,7 @@ function rest() {
       ? html`<form class="people-field" @submit=${(/** @type {SubmitEvent} */ e) => { e.preventDefault(); rename(one.fps, valueIn(e, 'name') || one.name).then(() => { renaming.value = '' }) }}>
           <input name="name" required maxlength="80" dir="auto" title=${t('people.rename')} .value=${one.name} @keydown=${composing}><button class="button">${t('people.save')}</button></form>`
       : html`<span class="item-text"><strong dir="auto">${one.name}</strong><small>${one.asking ? t('people.newDevice') : one.again ? t('people.again') : one.waiting ? t('people.answer', { name: one.name })
-          : one.account ? html`<span dir="ltr">${one.account}</span>` : tParts('people.calls', { name: named(one.said) })}</small></span>
+          : one.account ? account(one) : tParts('people.calls', { name: named(one.said) })}</small></span>
         ${one.asking && one.account ? html`<button class="button subtle" @click=${() => trustColleague(String(one.account))}>${t('people.trust')}</button>` : nothing}
         <button class="button subtle" @click=${() => { renaming.value = one.fp }}>${t('people.rename')}</button>
         <button class="button subtle danger" @click=${() => confirmRemove(one)}>${t('action.remove')}</button>`}</li>`)}</ul>` : nothing}
@@ -103,7 +105,7 @@ function rest() {
       ? digits(one.id, t('people.accepted', { name: one.name }))
       : html`<span class="item-text"><strong dir="auto">${one.name}</strong><small>${t('people.sent', { date: date.format(new Date(one.at)) })}</small></span>`}
       <button class="button subtle" @click=${() => stopInvite(one.id)}>${t('people.cancel')}</button></li>`)}</ul>` : nothing}
-    <div class="row"><button id="people-add" class="button primary" @click=${() => { inviting.value = { step: 'name' } }}>${icons.plus} ${t('people.add')}</button></div>`
+    ${meets ? html`<div class="row"><button id="people-add" class="button primary" @click=${() => { inviting.value = { step: 'name' } }}>${icons.plus} ${t('people.add')}</button></div>` : nothing}`
 }
 
 /** Remove, asked first: what came from them stays. @param {{ fps: string[], name: string }} one */

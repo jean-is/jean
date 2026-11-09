@@ -8,6 +8,7 @@
   "people.kept": "Ajout effectué",
   "people.newDevice": "Vous écrit depuis un nouvel appareil",
   "people.trust": "Faire confiance à l’appareil",
+  "people.guest": "Compte invité",
   "people.inviteMail": "Inviter par courriel",
   "people.mailSubject": "Envoyons-nous des tâches avec {name}",
   "people.mailBody": "J’utilise {name} au travail, et nous pourrions nous en servir pour nous envoyer des tâches. Ouvrez ce lien et connectez-vous avec votre compte professionnel : {link}",
@@ -84,5 +85,7 @@
   "people.why.tries": "Trois essais erronés : l’ajout s’est arrêté, par sécurité. Recommencez.",
   "people.why.relay": "Injoignable pour le moment. Vérifiez la connexion et réessayez.",
   "people.why.child": "Le profil d’un enfant n’ajoute pas de personnes.",
+  "people.why.refused": "Votre organisation ne vous permet pas de joindre cette personne.",
+  "people.why.inside": "Votre organisation ajoute les personnes depuis sa liste. Cherchez-les plutôt par leur nom.",
   "people.why.broken": "Un problème est survenu. Réessayez."
 }

@@ -8,6 +8,7 @@
   "people.kept": "A ti ṣàfikún rẹ̀",
   "people.newDevice": "Ó ń kọ̀wé láti orí ẹ̀rọ tuntun kan",
   "people.trust": "Gbẹ́kẹ̀lé ẹ̀rọ náà",
+  "people.guest": "Àkáǹtì àlejò",
   "people.inviteMail": "Fi ìpè ránṣẹ́ nípasẹ̀ ímeèlì",
   "people.mailSubject": "Ẹ jẹ́ ká máa fi iṣẹ́ ránṣẹ́ sí ara wa pẹ̀lú {name}",
   "people.mailBody": "Mo ń lo {name} níbi iṣẹ́, a sì lè máa fi iṣẹ́ ránṣẹ́ sí ara wa pẹ̀lú rẹ̀. Ẹ ṣí ìjápọ̀ yìí, kí ẹ sì wọlé pẹ̀lú àkáǹtì iṣẹ́ yín: {link}",
@@ -80,5 +81,7 @@
   "people.why.tries": "Ìgbìyànjú mẹ́ta tí kò tọ̀nà: ó ti dúró, fún ààbò. Ẹ tún bẹ̀rẹ̀.",
   "people.why.relay": "A kò lè dé ibẹ̀ báyìí. Ẹ ṣàyẹ̀wò ìsopọ̀ náà kí ẹ sì tún gbìyànjú.",
   "people.why.child": "Profaili ọmọdé kò lè ṣàfikún ènìyàn.",
+  "people.why.refused": "Àjọ yín kò gbà yín láàyè láti kàn sí ẹni yìí.",
+  "people.why.inside": "Àjọ yín máa ń ṣàfikún àwọn èèyàn láti inú àkọsílẹ̀ rẹ̀. Dípò bẹ́ẹ̀, ẹ wá wọn pẹ̀lú orúkọ wọn.",
   "people.why.broken": "Nǹkan kan kò lọ dáadáa. Ẹ gbìyànjú lẹ́ẹ̀kan sí i."
 }

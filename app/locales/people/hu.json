@@ -8,6 +8,7 @@
   "people.kept": "Hozzáadva",
   "people.newDevice": "Új eszközről ír",
   "people.trust": "Megbízom benne",
+  "people.guest": "Vendégfiók",
   "people.inviteMail": "Meghívás e-mailben",
   "people.mailSubject": "Küldjünk egymásnak feladatokat a(z) {name} alkalmazással",
   "people.mailBody": "A munkahelyemen a(z) {name} alkalmazást használom, és ezzel küldhetnénk egymásnak feladatokat. Nyisd meg ezt a linket, és jelentkezz be a munkahelyi fiókoddal: {link}",
@@ -82,5 +83,7 @@
   "people.why.tries": "Három rossz próbálkozás: a meghívó a biztonság kedvéért leállt. Kezdd újra.",
   "people.why.relay": "Ez most nem érhető el. Ellenőrizd a kapcsolatot, és próbáld újra.",
   "people.why.child": "Gyerek profiljában nem lehet személyeket hozzáadni.",
+  "people.why.refused": "A szervezeted nem engedi, hogy elérd ezt a személyt.",
+  "people.why.inside": "A szervezeted a saját listájáról ad hozzá személyeket. Inkább név szerint keresd meg őket.",
   "people.why.broken": "Valami hiba történt. Próbáld újra."
 }

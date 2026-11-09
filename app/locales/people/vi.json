@@ -8,6 +8,7 @@
   "people.kept": "Đã thêm",
   "people.newDevice": "Đang nhắn từ một thiết bị mới",
   "people.trust": "Tin cậy thiết bị này",
+  "people.guest": "Tài khoản khách",
   "people.inviteMail": "Mời qua email",
   "people.mailSubject": "Cùng gửi nhiệm vụ cho nhau bằng {name} nhé",
   "people.mailBody": "Tôi dùng {name} ở chỗ làm, và chúng ta có thể dùng nó để gửi nhiệm vụ cho nhau. Hãy mở đường liên kết này và đăng nhập bằng tài khoản công việc của bạn: {link}",
@@ -80,5 +81,7 @@
   "people.why.tries": "Sai ba lần: lời mời đã dừng lại để đảm bảo an toàn. Hãy bắt đầu lại.",
   "people.why.relay": "Hiện không thể kết nối. Hãy kiểm tra kết nối và thử lại.",
   "people.why.child": "Hồ sơ của trẻ không thể thêm người.",
+  "people.why.refused": "Tổ chức của bạn không cho phép bạn liên hệ với người này.",
+  "people.why.inside": "Tổ chức của bạn thêm mọi người từ danh sách của tổ chức. Thay vào đó, hãy tìm họ theo tên.",
   "people.why.broken": "Đã có lỗi xảy ra. Hãy thử lại."
 }

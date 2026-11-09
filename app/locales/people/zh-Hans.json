@@ -8,6 +8,7 @@
   "people.kept": "已添加",
   "people.newDevice": "从新设备发来消息",
   "people.trust": "信任这台设备",
+  "people.guest": "访客账户",
   "people.inviteMail": "通过邮件邀请",
   "people.mailSubject": "一起用 {name} 互相发送任务吧",
   "people.mailBody": "我工作中在用 {name}，一起用的话就能互相发送任务。打开这个链接，用你的工作账号登录：{link}",
@@ -80,5 +81,7 @@
   "people.why.tries": "已经错了三次：为了安全，已停止。请重新开始。",
   "people.why.relay": "现在联系不上。请检查网络连接后重试。",
   "people.why.child": "孩子的个人资料不能添加联系人。",
+  "people.why.refused": "你的组织不允许你联系此人。",
+  "people.why.inside": "你的组织从其名单中添加人员。请改为按名字查找。",
   "people.why.broken": "出了点问题。请重试。"
 }

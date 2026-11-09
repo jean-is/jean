@@ -554,6 +554,21 @@ test('an organisation’s relay lists whom its sign-in names, each of their devi
   assert.deepEqual(store.records.filter((one) => one.operation === 'list').length, 5)
 })
 
+test('a colleague’s groups and app roles are listed as the sign-in reads them, none when their token has none, unknown when it had more than it holds; a guest as the issuer says (D732)', async () => {
+  const { opened, list, search, idp } = await listingRelay({ issuers: [{ issuer: ISSUER, audience: AUDIENCE, groups: 'teams' }] })
+  const [ana, bob, carol, dan] = [await opened(), await opened(), await opened(), await opened()]
+  await list(ana, await idp.sign())
+  assert.deepEqual(await (await list(bob, await idp.sign({ sub: 'sub-bob', name: 'Bob Dupont', preferred_username: 'bob@acme.example', teams: ['g-research', 7], roles: ['Jean.Reader'], groups: ['not this claim'] }))).json(),
+    { name: 'Bob Dupont', account: 'bob@acme.example', groups: ['g-research', 'Jean.Reader'] }, 'the claim the issuer names, and the roles')
+  await list(carol, await idp.sign({ sub: 'sub-carol', preferred_username: 'carol@acme.example', _claim_names: { teams: 'src1' }, _claim_sources: { src1: { endpoint: 'https://graph.example/' } } }))
+  await list(dan, await idp.sign({ sub: 'sub-dan', preferred_username: 'dan@partner.example', acct: 1 }))
+  const people = Object.fromEntries((await search(ana, 'q=example')).people.map((one) => [one.account, one]))
+  assert.deepEqual(people['bob@acme.example'].groups, ['g-research', 'Jean.Reader'])
+  assert.equal(people['carol@acme.example'].groups, null, 'more than her token held')
+  assert.equal('groups' in people['ana@acme.example'], false, 'none')
+  assert.deepEqual([people['dan@partner.example'].guest, people['ana@acme.example'].guest], [true, undefined])
+})
+
 test('a proof is refused unless the organisation signed it, for Jean, now: issuer, audience, its dates, its algorithm and key, an account', async () => {
   const { store, clock, idp, opened, list } = await listingRelay()
   const box = await opened()

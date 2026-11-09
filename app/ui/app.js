@@ -61,7 +61,7 @@ async function start() {
   await useLocale(effective.value.settings.locale ?? pickLocale(offeredLocales(), asked ? [asked] : navigator.languages))
   // The organisation's sign-in (D385), then ee/ (D139).
   if (app.policy.signIn) await import('../caps/signin/signin.js').then((m) => m.start(), console.warn)
-  if (['key', 'audit', 'retention', 'groups', 'jurisdictions', 'seal', 'trust', 'dlp', 'session'].some((part) => part in app.policy)) await import('../caps/enterprise/enterprise.js').then((m) => m.start(), console.warn)
+  if ('key audit retention groups jurisdictions seal trust dlp session colleagues'.split(' ').some((part) => part in app.policy)) await import('../caps/enterprise/enterprise.js').then((m) => m.start(), console.warn)
 
   const root = document.documentElement
   effect(() => {

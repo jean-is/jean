@@ -8,6 +8,7 @@
   "people.kept": "Tra le tue persone",
   "people.newDevice": "Scrive da un nuovo dispositivo",
   "people.trust": "Fidati del dispositivo",
+  "people.guest": "Account ospite",
   "people.inviteMail": "Invita via email",
   "people.mailSubject": "Inviamoci attività tramite {name}",
   "people.mailBody": "Uso {name} al lavoro e così potremmo inviarci attività a vicenda. Apri questo link e accedi con il tuo account di lavoro: {link}",
@@ -84,5 +85,7 @@
   "people.why.tries": "Tre tentativi sbagliati: per sicurezza, l’invito è stato fermato. Ricomincia.",
   "people.why.relay": "Al momento non è possibile collegarsi. Controlla la connessione e riprova.",
   "people.why.child": "Il profilo di un bambino non aggiunge persone.",
+  "people.why.refused": "La tua organizzazione non ti permette di contattare questa persona.",
+  "people.why.inside": "La tua organizzazione aggiunge le persone dal suo elenco. Cercale invece per nome.",
   "people.why.broken": "Qualcosa è andato storto. Riprova."
 }

@@ -8,6 +8,7 @@
   "people.kept": "Ditambahkan",
   "people.newDevice": "Menulis dari perangkat baru",
   "people.trust": "Percayai",
+  "people.guest": "Akun tamu",
   "people.inviteMail": "Undang lewat email",
   "people.mailSubject": "Mari saling mengirim tugas lewat {name}",
   "people.mailBody": "Saya memakai {name} untuk bekerja, dan kita bisa saling mengirim tugas dengannya. Buka tautan ini lalu masuk dengan akun kerja Anda: {link}",
@@ -80,5 +81,7 @@
   "people.why.tries": "Tiga kali salah: demi keamanan, undangan dihentikan. Mulai lagi.",
   "people.why.relay": "Saat ini tidak bisa dijangkau. Periksa koneksi lalu coba lagi.",
   "people.why.child": "Profil anak tidak bisa menambah orang.",
+  "people.why.refused": "Organisasi Anda tidak mengizinkan Anda menghubungi orang ini.",
+  "people.why.inside": "Organisasi Anda menambahkan orang dari daftarnya. Sebagai gantinya, cari mereka berdasarkan nama.",
   "people.why.broken": "Terjadi kesalahan. Coba lagi."
 }

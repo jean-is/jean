@@ -6,7 +6,8 @@
 // its person with the last, and `node relay/serve.js forget <account>` takes a leaver off at once.
 //
 //   PUT    /v1/people/<id>      Authorization: Bearer <the mailbox's token>, { proof: <ID token>, key: <P-256 public JWK>, chain?: string[] }:
-//                               lists the mailbox among its owner's devices under that key: { name, account, guest?, groups? }; 201 the
+//                               lists the mailbox among its owner's devices under that key: { name, account, guest?, groups? }, groups
+//                               null where the token had more than it holds; 201 the
 //                               first time it is listed for them
 //   DELETE /v1/people/<id>      with the token: that device off the list
 //   GET    /v1/people?q=<words> with a listed device's token: up to 10 people whose name or account holds every word, by name, each
@@ -17,7 +18,8 @@
 // Its configuration, `issuers` in RELAY_CONFIG: [{ issuer, audience, jwks?, groups?, guest? }], `issuer` exactly as its tokens name
 // it, `audience` Jean's client id there, `jwks` its keys, a JWK Set or the address of one, where its discovery's aren't those (Entra,
 // for an app with claims mapping: …/discovery/v2.0/keys?appid=<client id>), `groups` the claim that lists a person's groups
-// ('groups'), `guest` true where everyone it names is a guest, as Entra's `acct` of 1 says of one.
+// ('groups'), kept with their app roles as the sign-in reads them (D429), `guest` true where everyone it names is a guest, as
+// Entra's `acct` of 1 says of one.
 //
 // Web-standard (fetch, Web Crypto): the list goes through the relay's store, a folder of one file a person on Node (serve.js).
 import { hashOf, idOf, within } from '../host/host.js'
@@ -47,8 +49,8 @@ const ALGORITHMS = /** @type {const} */ ({ ES256: { name: 'ECDSA', namedCurve: '
 /**
  * A key of an issuer's, by its kid. @typedef {JsonWebKey & { kid?: string }} Key
  * An issuer as the configuration names it. @typedef {{ issuer: string, audience: string, jwks?: { keys: Key[] } | string, groups?: string, guest?: boolean }} Issuer
- * Someone listed: a hash of issuer and subject, the name and account the newest token gave, their groups, whether a guest, and their devices.
- * @typedef {{ format: 1, id: string, name: string, account: string, groups?: string[], guest?: true, devices: Device[] }} Entry
+ * Someone listed: a hash of issuer and subject, the name and account the newest token gave, their groups and roles (null: more than it
+ * held), whether a guest, and their devices. @typedef {{ format: 1, id: string, name: string, account: string, groups?: string[] | null, guest?: true, devices: Device[] }} Entry
  * A device of theirs: its person mailbox and profile key, what an organisation's authority certified of the key (ee/), when last proved.
  * @typedef {{ mailbox: string, key: JsonWebKey, chain?: string[], proved: number }} Device
  * The list as the relay's store keeps it, `entries` read only. @typedef {{ entries(): Promise<Entry[]>, saveEntry(entry: Entry): Promise<void>, dropEntry(id: string): Promise<void> }} Backend
@@ -62,7 +64,7 @@ const objectOf = (part) => { try { const value = JSON.parse(new TextDecoder().de
 const folded = (text) => text.normalize('NFKD').replace(/\p{M}/gu, '').toLowerCase()
 /** What a colleague sees of someone listed, their devices the newest first. @param {Entry} entry */
 const shown = ({ name, account, devices, groups, guest }) => ({ name, account, devices: devices.toSorted((a, b) => b.proved - a.proved).map(({ mailbox, key, chain }) => ({ mailbox, key, ...(chain && { chain }) })),
-  ...(groups && { groups }), ...(guest && { guest }) })
+  ...(groups !== undefined && { groups }), ...(guest && { guest }) })
 /** A P-256 public key, its curve's point, or null. @param {any} key @returns {Promise<JsonWebKey | null>} */
 async function pointOf(key) {
   if (key?.kty !== 'EC' || key.crv !== 'P-256' || !/^[\w-]{43}$/.test(key.x) || !/^[\w-]{43}$/.test(key.y)) return null
@@ -138,10 +140,12 @@ export function colleagues({ backend, issuers, fetch, now, inTurn, record, owns 
     const ok = await crypto.subtle.importKey('jwk', header.alg === 'ES256' ? { kty: 'EC', crv: jwk.crv, x: jwk.x, y: jwk.y } : { kty: 'RSA', n: jwk.n, e: jwk.e }, algorithm, false, ['verify'])
       .then((key) => crypto.subtle.verify(algorithm, key, decoded(signature), new TextEncoder().encode(`${head}.${body}`)), () => false)
     if (!ok) return null
-    const groups = claims[issuer.groups ?? 'groups']
+    // Its groups and app roles, as the sign-in reads them (D429), or null where the token had more than it holds (Entra's overage).
+    const claim = issuer.groups ?? 'groups'
+    const groups = claims.hasgroups || claims._claim_names?.[claim] ? null : [claims[claim], claims.roles].flat().filter((one) => typeof one === 'string' && one.length <= 256).slice(0, 500)
     return {
       id: await hashOf(`${claims.iss}\n${claims.sub}`), account, name: typeof claims.name === 'string' && claims.name.trim() ? claims.name.trim().slice(0, 200) : account,
-      ...(Array.isArray(groups) && groups.every((one) => typeof one === 'string' && one.length <= 256) && { groups: groups.slice(0, 500) }),
+      ...((!groups || groups.length) && { groups }),
       ...((issuer.guest || claims.acct === 1) && { guest: /** @type {const} */ (true) }),
     }
   }
@@ -216,9 +220,9 @@ export function colleagues({ backend, issuers, fetch, now, inTurn, record, owns 
       const was = all.find((entry) => entry.id === who.id)
       const devices = [{ mailbox: id, key, ...(Array.isArray(chain) && { chain }), proved: now() }, ...(was?.devices ?? []).filter((one) => one.mailbox !== id)]
       const { groups, guest, ...named } = who
-      await backend.saveEntry({ format: 1, ...named, ...(groups && { groups }), ...(guest && { guest }), devices: devices.sort((a, b) => b.proved - a.proved).slice(0, PEOPLE.devices) })
+      await backend.saveEntry({ format: 1, ...named, ...(groups !== undefined && { groups }), ...(guest && { guest }), devices: devices.sort((a, b) => b.proved - a.proved).slice(0, PEOPLE.devices) })
       await noted('list')
-      return answer(was && reads(was, id) ? 200 : 201, { name: who.name, account: who.account, ...(guest && { guest }), ...(groups && { groups }) })
+      return answer(was && reads(was, id) ? 200 : 201, { name: who.name, account: who.account, ...(guest && { guest }), ...(groups !== undefined && { groups }) })
     })
   }
 

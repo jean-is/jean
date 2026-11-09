@@ -8,6 +8,7 @@
   "people.kept": "Dodano",
   "people.newDevice": "Pisze z nowego urządzenia",
   "people.trust": "Zaufaj urządzeniu",
+  "people.guest": "Konto gościa",
   "people.inviteMail": "Zaproś e-mailem",
   "people.mailSubject": "Wysyłajmy sobie zadania w aplikacji {name}",
   "people.mailBody": "W pracy korzystam z aplikacji {name} i możemy wysyłać sobie w niej zadania. Otwórz ten link i zaloguj się swoim kontem służbowym: {link}",
@@ -86,5 +87,7 @@
   "people.why.tries": "Trzy błędne próby: dla bezpieczeństwa zaproszenie zostało zatrzymane. Zacznij od nowa.",
   "people.why.relay": "Nie można się teraz połączyć. Sprawdź połączenie i spróbuj ponownie.",
   "people.why.child": "W profilu dziecka nie można dodawać osób.",
+  "people.why.refused": "Twoja organizacja nie pozwala ci skontaktować się z tą osobą.",
+  "people.why.inside": "Twoja organizacja dodaje osoby ze swojej listy. Zamiast tego wyszukaj je po imieniu i nazwisku.",
   "people.why.broken": "Coś poszło nie tak. Spróbuj ponownie."
 }

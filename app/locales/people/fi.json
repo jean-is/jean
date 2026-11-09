@@ -8,6 +8,7 @@
   "people.kept": "Lisätty",
   "people.newDevice": "Kirjoittaa uudelta laitteelta",
   "people.trust": "Luota siihen",
+  "people.guest": "Vierastili",
   "people.inviteMail": "Kutsu sähköpostilla",
   "people.mailSubject": "Lähetetään toisillemme tehtäviä sovelluksella {name}",
   "people.mailBody": "Käytän töissä sovellusta {name}, ja voisimme lähettää sillä toisillemme tehtäviä. Avaa tämä linkki ja kirjaudu työtililläsi: {link}",
@@ -82,5 +83,7 @@
   "people.why.tries": "Kolme väärää yritystä: lisääminen keskeytettiin varmuuden vuoksi. Aloita alusta.",
   "people.why.relay": "Tähän ei saada nyt yhteyttä. Tarkista verkkoyhteys ja yritä uudelleen.",
   "people.why.child": "Lapsen profiili ei lisää henkilöitä.",
+  "people.why.refused": "Organisaatiosi ei anna sinun tavoittaa tätä henkilöä.",
+  "people.why.inside": "Organisaatiosi lisää henkilöt omasta luettelostaan. Etsi heidät sen sijaan nimellä.",
   "people.why.broken": "Jokin meni vikaan. Yritä uudelleen."
 }

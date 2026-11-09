@@ -6,7 +6,8 @@
 // random, made on the device, and in no file that leaves it, where the device's id is every record's
 // author, in shares, backups and Sync. With `audit.trustee`, a public key whose private half whoever the
 // organisation's agreement names holds, the account comes too, sealed for them as a compact JWE
-// (RFC 7516, ECDH-ES and A256GCM, RFC 7518), which any JOSE tool opens and no one else can.
+// (RFC 7516, ECDH-ES and A256GCM, RFC 7518), which any JOSE tool opens and no one else can. A colleague
+// a task went to or came from (D732) is named as the person is: their account, sealed so, or not at all.
 // Host-agnostic: Web Crypto, tested under node --test.
 
 /** @typedef {{ kty: 'EC', crv: 'P-256', x: string, y: string, kid?: string }} Trustee */
@@ -60,4 +61,14 @@ export async function person({ person, trustee }, { account, device, profile }) 
   const named = account ? { [account.includes('@') ? 'user.email' : 'user.name']: account } : {}
   if (person !== 'pseudonym') return { 'device.id': device, 'jean.profile.id': profile, ...named }
   return { 'jean.profile.id': profile, ...(trustee && account && { 'jean.user.sealed': await seal(trustee, JSON.stringify(named)) }) }
+}
+
+/**
+ * The colleagues an act names (`to`, `from`: an account, D732), as policy's `audit` names the person: as they are, or sealed for the
+ * trustee under a pseudonym, without one left out. @param {{ person?: string, trustee?: Trustee }} audit @param {Record<string, unknown>} e
+ */
+export async function others({ person, trustee }, e) {
+  if (person !== 'pseudonym') return e
+  const named = await Promise.all(['to', 'from'].filter((key) => typeof e[key] === 'string').map(async (key) => [key, trustee ? await seal(trustee, String(e[key])) : undefined]))
+  return { ...e, ...Object.fromEntries(named) }
 }

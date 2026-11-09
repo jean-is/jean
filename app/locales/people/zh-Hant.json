@@ -8,6 +8,7 @@
   "people.kept": "已新增",
   "people.newDevice": "從新裝置傳來訊息",
   "people.trust": "信任這台裝置",
+  "people.guest": "訪客帳戶",
   "people.inviteMail": "透過電子郵件邀請",
   "people.mailSubject": "一起用 {name} 互相傳送任務吧",
   "people.mailBody": "我工作上在用 {name}，一起用的話就能互相傳送任務。開啟這個連結，用你的工作帳號登入：{link}",
@@ -80,5 +81,7 @@
   "people.why.tries": "已經錯了三次：為了安全，已停止。請重新開始。",
   "people.why.relay": "目前無法連線。請檢查網路連線後重試。",
   "people.why.child": "孩子的個人檔案不能新增聯絡人。",
+  "people.why.refused": "你的組織不允許你聯絡此人。",
+  "people.why.inside": "你的組織從其名單中新增人員。請改為依名字尋找。",
   "people.why.broken": "發生問題。請重試。"
 }

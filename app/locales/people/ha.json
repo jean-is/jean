@@ -8,6 +8,7 @@
   "people.kept": "An ƙara",
   "people.newDevice": "Suna rubuto daga sabuwar na'ura",
   "people.trust": "Amince da ita",
+  "people.guest": "Asusun baƙo",
   "people.inviteMail": "Aika gayyata ta imel",
   "people.mailSubject": "Mu riƙa aika wa juna ɗawainiyoyi ta {name}",
   "people.mailBody": "Ina amfani da {name} a wurin aiki, kuma ta haka za mu iya aika wa juna ɗawainiyoyi. Ku buɗe wannan hanyar haɗin, ku shiga da asusun aikinku: {link}",
@@ -82,5 +83,7 @@
   "people.why.tries": "Gwaje-gwaje uku marasa daidai: an dakatar da gayyatar, don tsaro. Sake farawa.",
   "people.why.relay": "Ba za a iya kai wa wurin ba a yanzu. Duba haɗin ka sake gwadawa.",
   "people.why.child": "Bayanin martabar yaro ba ya ƙara mutane.",
+  "people.why.refused": "Ƙungiyarka ba ta bar ka ka isa ga wannan mutum ba.",
+  "people.why.inside": "Ƙungiyarka tana ƙara mutane ne daga jerinta. Maimakon haka, nemo su da sunansu.",
   "people.why.broken": "Wani abu ya ɓaci. Sake gwadawa."
 }
