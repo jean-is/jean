@@ -125,6 +125,14 @@ test('a page’s date moves only when what it says does: its words, title, links
     page.replace('</head>', '<script type="application/ld+json">{"name":"Jean"}</script></head>')]) assert.notEqual(wordsOf(changed), wordsOf(page))
 })
 
+test('the site’s top and foot, the same on every page, move no page’s date: only what its main says does', () => {
+  const page = pageAt('https://example.org/help').replace('<body><p>Hello</p></body>',
+    /* html */ '<body><header class="site-top"><a href="./">Jean</a></header><main id="main"><p>Hello</p></main><footer class="site-foot"><a href="privacy">Privacy</a></footer></body>')
+  assert.equal(wordsOf(page.replace('</footer>', /* html */ '<p>No tracking cookies, ever.</p><a href="fr">Français</a></footer>')), wordsOf(page))
+  assert.equal(wordsOf(page.replace('</header>', /* html */ '<a href="ja">日本語</a></header>')), wordsOf(page))
+  for (const changed of [page.replace('<p>Hello</p>', '<p>Hello there</p>'), page.replace('<p>Hello</p>', /* html */ '<p><a href="family">Hello</a></p>')]) assert.notEqual(wordsOf(changed), wordsOf(page))
+})
+
 test('each page keeps the live site’s date while it says the same, and takes the build’s when it changed or is new; the live site unread, no dates', async () => {
   const base = 'https://example.org/'
   const now = new Date('2026-10-19T18:30:00.123Z')

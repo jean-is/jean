@@ -140,11 +140,13 @@ export function listedPages (base, pages) {
 
 /**
  * What a page says to a reader and a search engine, whose change moves its date in the sitemap: its
- * title, description, robots and language links, schema.org data, the links in it and its text, but
- * not its style, scripts or the app's files it names. @param {string} html
+ * title, description, robots and language links, schema.org data, the links in its main and its text,
+ * but not its style, scripts, the app's files it names, or the site's top and foot, the same on every
+ * page, which search engines stop trusting a sitemap's dates for. @param {string} html
  */
 export function wordsOf (html) {
-  const [head, body = ''] = html.split('</head>')
+  const [head, page = ''] = html.split('</head>')
+  const body = /<main\b[^>]*>([\s\S]*)<\/main>/.exec(page)?.[1] ?? page
   return [
     /<title>([^<]*)<\/title>/.exec(head)?.[1] ?? '',
     ...[...head.matchAll(/<meta name="(?:description|robots)" content="[^"]*">|<link rel="(?:canonical|alternate)"[^>]*>/g)].map(([tag]) => tag),
