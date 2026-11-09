@@ -129,7 +129,7 @@ export function homeOf (kit, { sample = SAMPLE, saved = savingsAnswer() } = {}) 
         <p class="home-door-name">${say(`${key}.name`)}</p>
         <p class="home-door-why">${say(`${key}.why`)}</p>
         <h3 id="home-${id}-title" class="home-door-title">${say(`${key}.title`)}</h3>
-        ${body}
+        <div class="home-door-body">${body}</div>
       </article>`
   // A way on, or a list of them.
   const go = (/** @type {Array<[string, string]>} */ links) => {
