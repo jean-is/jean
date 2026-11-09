@@ -128,7 +128,9 @@ It keeps people's stores (D721), each person's files sealed so it can't read the
 RELAY_CONFIG='{"origins":["https://jean.corp.example"],"stores":{"made":500,"sent":100000000000}}'
 ```
 
-The relay keeps its mailboxes, and its stores, in the volume at `/data`. Give it an HTTPS address of its own, such as `https://relay.corp.example`. Behind a reverse proxy, set `RELAY_PROXIED=1` and have the proxy send the visitor's address as the last `X-Forwarded-For` entry and its port as `X-Client-Port` (Caddy: `header_up X-Client-Port {remote_port}`, as [Jean's own server](../server/Caddyfile) does), so that limits and records name each visitor rather than the proxy. Then name it in the policy; with none named, there is none:
+It keeps journals (D733), what people work on together, sealed so it can't read them, only with `journals`, any of [journal.js](../../relay/journal.js)'s `JOURNAL`. A journal's readers hold a stream open for minutes, so a proxy in front passes it on as it comes (Caddy: `flush_interval -1`); where one holds it back, Jean polls instead.
+
+The relay keeps its mailboxes, its stores and its journals in the volume at `/data`. Give it an HTTPS address of its own, such as `https://relay.corp.example`. Behind a reverse proxy, set `RELAY_PROXIED=1` and have the proxy send the visitor's address as the last `X-Forwarded-For` entry and its port as `X-Client-Port` (Caddy: `header_up X-Client-Port {remote_port}`, as [Jean's own server](../server/Caddyfile) does), so that limits and records name each visitor rather than the proxy. Then name it in the policy; with none named, there is none:
 
 ```json
 { "urls": { "relay": "https://relay.corp.example/" } }

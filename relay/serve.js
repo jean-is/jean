@@ -1,7 +1,7 @@
 // Runs the relay (relay.js, D45 · D226) on Node 22 or later, with nothing to install:
 //   RELAY_CONFIG='{"origins":["https://jean.example"]}' node relay/serve.js
 // PORT (8791 by default) and HOST (127.0.0.1; 0.0.0.0 to answer other machines) say where it listens,
-// RELAY_DIR (./mailboxes by default) where it keeps mailboxes, people's stores and the records of changes, and
+// RELAY_DIR (./mailboxes by default) where it keeps mailboxes, people's stores, journals and the records of changes, and
 // RELAY_PROXIED=1 takes the address from the proxy in front, as the share host does (host/serve.js).
 // Its config may name `recordKey`, a public P-256 key (JWK), to which each record is sealed, as the
 // share host's are: `node host/serve.js keys` makes a pair, and `node host/serve.js open` reads them.
@@ -19,23 +19,27 @@ const DAY = 86_400_000
 
 /**
  * A folder as the relay's store: each mailbox's file, its messages in a folder beside it; each person's store in a folder of its own,
- * its file, its objects' versions in o/ and its parts in b/; one file for each colleague listed, in people/, read again once the folder
- * changed; and a file of records a day, sealed when there is a key. Once a day, what is past its time goes: a message past its days, a
- * mailbox nobody opened or read for its idle days, what a store no longer keeps (store.js), a listing lapsed, a part's upload cut
- * short, a record past a year.
+ * its file, its objects' versions in o/ and its parts in b/; each journal in a folder of its own, its file, its changes in c/ and its
+ * parts in p/; one file for each colleague listed, in people/, read again once the folder changed; and a file of records a day, sealed
+ * when there is a key. Once a day, what is past its time goes: a message past its days, a mailbox nobody opened or read for its idle
+ * days, what a store or a journal no longer keeps (store.js, journal.js), a listing lapsed, a part's upload cut short, a record past a year.
  * @param {string} dir @param {CryptoKey | null} recordKey
- * @returns {import('./relay.js').Store & import('./store.js').Backend & import('./colleagues.js').Backend & { free(): Promise<number>, forget(account: string): Promise<number>,
- *   sweep(handle: { tidy(id: string, at: number): Promise<void>, tidyStore?(sid: string, at: number): Promise<void>, tidyPeople?(at: number): Promise<void> }, now?: number): Promise<void> }}
+ * @returns {import('./relay.js').Store & import('./store.js').Backend & import('./journal.js').Backend & import('./colleagues.js').Backend & { free(): Promise<number>,
+ *   forget(account: string): Promise<number>, sweep(handle: { tidy(id: string, at: number): Promise<void>, tidyStore?(sid: string, at: number): Promise<void>,
+ *   tidyJournal?(id: string, at: number): Promise<void>, tidyPeople?(at: number): Promise<void> }, now?: number): Promise<void> }}
  */
 export function folder(dir, recordKey) {
   const boxes = join(dir, 'boxes')
   const records = join(dir, 'records')
   const shelf = join(dir, 'stores')
   const people = join(dir, 'people')
+  const pages = join(dir, 'journals')
   /** The list as last read, and the folder's time then: a file written or removed, by the relay or by forget, changes it. */
   let listed = { at: -1, entries: /** @type {import('./colleagues.js').Entry[]} */ ([]) }
   /** @param {string} sid @param {string[]} rest */
   const of = (sid, ...rest) => join(shelf, sid, ...rest)
+  /** @param {string} id @param {string[]} rest */
+  const page = (id, ...rest) => join(pages, id, ...rest)
   /** @param {string} id */
   const at = (id) => join(boxes, id)
   /** @param {string} path */
@@ -105,6 +109,28 @@ export function folder(dir, recordKey) {
       return out
     },
     dropPart: (sid, hash) => rm(of(sid, 'b', hash), { force: true }),
+    journal: (id) => json(page(id, 'journal.json')),
+    async saveJournal(id, meta) {
+      await mkdir(page(id), { recursive: true })
+      await write(page(id, 'journal.json'), JSON.stringify(meta))
+    },
+    removeJournal: (id) => rm(page(id), { recursive: true, force: true }),
+    journalIds: async () => (await readdir(pages).catch(() => [])).filter((name) => /^[\w-]{22}$/.test(name)),
+    async addChange(id, seq, bytes) {
+      await mkdir(page(id, 'c'), { recursive: true })
+      await write(page(id, 'c', String(seq)), bytes)
+    },
+    change: (id, seq) => readFile(page(id, 'c', String(seq))).then((bytes) => new Uint8Array(bytes), () => null),
+    dropChange: (id, seq) => rm(page(id, 'c', String(seq)), { force: true }),
+    // Each upload under a name of its own, as a store's parts are.
+    async addJournalPart(id, hash, bytes) {
+      await mkdir(page(id, 'p'), { recursive: true })
+      const part = page(id, 'p', `${hash}.${randomUUID()}.part`)
+      await writeFile(part, bytes)
+      await rename(part, page(id, 'p', hash))
+    },
+    journalPart: (id, hash) => readFile(page(id, 'p', hash)).then((bytes) => new Uint8Array(bytes), () => null),
+    dropJournalPart: (id, hash) => rm(page(id, 'p', hash), { force: true }),
     async entries() {
       const at = (await stat(people).catch(() => null))?.mtimeMs ?? -1
       if (at !== listed.at) {
@@ -128,10 +154,11 @@ export function folder(dir, recordKey) {
       await mkdir(dir, { recursive: true })
       await write(join(dir, 'counts.json'), JSON.stringify(counts))
     },
-    // Each mailbox and store tidied in its turn (relay.js), so that a read or a message meanwhile is never undone.
-    async sweep({ tidy, tidyStore, tidyPeople }, now = Date.now()) {
+    // Each mailbox, store and journal tidied in its turn (relay.js), so that a read or a message meanwhile is never undone.
+    async sweep({ tidy, tidyStore, tidyJournal, tidyPeople }, now = Date.now()) {
       for (const name of await readdir(boxes).catch(() => [])) if (name.endsWith('.json')) await tidy(name.slice(0, -5), now)
       if (tidyStore) for (const sid of await this.stores()) await tidyStore(sid, now)
+      if (tidyJournal) for (const id of await this.journalIds()) await tidyJournal(id, now)
       await tidyPeople?.(now)
       for (const name of await readdir(records).catch(() => [])) if (Date.parse(name.slice(0, 10)) + 366 * DAY < now) await rm(join(records, name), { force: true })
     },
@@ -149,10 +176,10 @@ export async function main(args = []) {
   const store = folder(dir, recordKey)
   const PORT = Number(process.env.PORT) || 8791
   const HOST = process.env.HOST ?? '127.0.0.1'
-  const handle = relay({ origins: config.origins, limits, stores: config.stores, issuers: config.issuers, store })
+  const handle = relay({ origins: config.origins, limits, stores: config.stores, journals: config.journals, issuers: config.issuers, store })
   // Answering first: a sweep through many stores could outlast the check that a new release answers.
   stopping(createServer(listener(handle, process.env.RELAY_PROXIED === '1')))
-    .listen(PORT, HOST, () => console.log(`Relay on http://${HOST}:${PORT}/, keeping mailboxes${config.stores ? ', stores' : ''}${config.issuers?.length ? ', the organisation’s people' : ''} in ${dir}`))
+    .listen(PORT, HOST, () => console.log(`Relay on http://${HOST}:${PORT}/, keeping mailboxes${config.stores ? ', stores' : ''}${config.journals ? ', journals' : ''}${config.issuers?.length ? ', the organisation’s people' : ''} in ${dir}`))
   await store.sweep(handle)
   setInterval(() => store.sweep(handle).catch(console.error), DAY).unref()
 }

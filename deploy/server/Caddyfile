@@ -39,6 +39,8 @@ relay.jean.is {
 	import no-cookies
 	reverse_proxy relay:8791 {
 		header_up X-Client-Port {remote_port}
+		# A journal's stream (relay/journal.js) reaches its readers line by line.
+		flush_interval -1
 	}
 }
 

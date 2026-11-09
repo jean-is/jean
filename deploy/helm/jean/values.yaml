@@ -145,6 +145,7 @@ relay:
     pullPolicy: IfNotPresent
   # RELAY_CONFIG: origins (Jean's address by default; without one it refuses everyone), limits (any of LIMITS in
   # relay/relay.js), stores (any of STORE in relay/store.js, {} for them all, to keep people's stores: none without it),
+  # journals (any of JOURNAL in relay/journal.js, {} for them all, to keep what people work on together: none without it),
   # issuers (the organisation's sign-ins whose people it lists, [{ issuer, audience }], relay/colleagues.js; with networkPolicy
   # on, the relay then reaches public addresses over HTTPS, for their keys) and recordKey, the public half of the key its
   # records are sealed to (node host/serve.js keys).

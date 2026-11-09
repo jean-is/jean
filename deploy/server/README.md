@@ -87,7 +87,15 @@ The relay keeps people's stores (D721, up to 1 GB each) only once `relay.env` sa
 4. `docker compose up -d --force-recreate relay`; `GET https://relay.jean.is/` then shows `store`.
 5. Only then jean.is's `POLICY` names `urls.relay`, in a deploy whose e2e passes.
 
-`update.sh` takes the code without `relay/colleagues.js`, or without it and `relay/store.js`, so that a job from before them, run again, still deploys. A module the services gain goes into its `expected` and into CI's `git archive` together (`test/deploy.test.js`), and the server's `/srv/jean/update` is replaced before the push that sends it, since CI can't change it.
+## Turning journals on
+
+The relay keeps journals, what people work on together (D733), only once `relay.env` says so. In this order:
+
+1. The privacy policy, the terms and *Where your files go*, in English and French at least, naming them: changes sealed on people's devices, which the relay can't read, kept 7 days after the last; a tombstone of the tokens' hashes, 90 days; the records.
+2. In `relay.env`, `"journals":{}`, which takes every default (`JOURNAL` in `relay/journal.js`).
+3. `docker compose up -d --force-recreate relay`; `GET https://relay.jean.is/` then shows `journals`.
+
+`update.sh` takes the code without `relay/journal.js`, without it and `relay/colleagues.js`, or without those and `relay/store.js`, so that a job from before them, run again, still deploys. A module the services gain goes into its `expected` and into CI's `git archive` together (`test/deploy.test.js`), and the server's `/srv/jean/update` is replaced before the push that sends it, since CI can't change it.
 
 ## Moving from another server
 

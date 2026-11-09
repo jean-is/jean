@@ -8,9 +8,9 @@
 set -eu
 cd /srv/jean
 services='gateway share requests relay'
-expected='gateway/gateway.js gateway/serve.js host/host.js host/package.json host/serve.js host/sites.js host/viewer.json relay/colleagues.js relay/relay.js relay/serve.js relay/store.js requests/requests.js requests/serve.js'
-# A commit from before the relay listed colleagues sends no relay/colleagues.js, and one from before it kept stores no relay/store.js
-# either: taken too, so that a job run again, or a revert, still deploys.
+expected='gateway/gateway.js gateway/serve.js host/host.js host/package.json host/serve.js host/sites.js host/viewer.json relay/colleagues.js relay/journal.js relay/relay.js relay/serve.js relay/store.js requests/requests.js requests/serve.js'
+# A commit from before the relay kept journals sends no relay/journal.js, one from before it listed colleagues no relay/colleagues.js
+# either, and one from before it kept stores no relay/store.js: taken too, so that a job run again, or a revert, still deploys.
 without () { printf '%s\n' $expected | grep -vxE "$1" | sort | tr '\n' ' '; }
 
 new=$(mktemp -d /srv/jean/code.new.XXXXXX)
@@ -18,7 +18,7 @@ trap 'rm -rf "$new"' EXIT
 tar -C "$new" --no-same-owner --no-same-permissions -xf -
 found=$(cd "$new" && find . -type f | sed 's|^\./||' | sort | tr '\n' ' ')
 want=$(printf '%s\n' $expected | sort | tr '\n' ' ')
-[ "$found" = "$want" ] || [ "$found" = "$(without 'relay/colleagues.js')" ] || [ "$found" = "$(without 'relay/(colleagues|store).js')" ] || { echo "update: the code sent holds $found, not $want" >&2; exit 1; }
+[ "$found" = "$want" ] || [ "$found" = "$(without 'relay/journal.js')" ] || [ "$found" = "$(without 'relay/(colleagues|journal).js')" ] || [ "$found" = "$(without 'relay/(colleagues|journal|store).js')" ] || { echo "update: the code sent holds $found, not $want" >&2; exit 1; }
 printf '{"type":"module"}\n' > "$new/package.json"
 chmod -R u=rwX,go=rX "$new"
 

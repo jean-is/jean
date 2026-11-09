@@ -307,7 +307,7 @@ jobs:
           npm run host
           mkdir -p stage/host ~/.ssh
           cp dist/host/host.js dist/host/serve.js dist/host/sites.js dist/host/viewer.json dist/host/package.json stage/host/
-          git archive HEAD gateway/gateway.js gateway/serve.js relay/colleagues.js relay/relay.js relay/serve.js relay/store.js requests/requests.js requests/serve.js | tar -x -C stage
+          git archive HEAD gateway/gateway.js gateway/serve.js relay/colleagues.js relay/journal.js relay/relay.js relay/serve.js relay/store.js requests/requests.js requests/serve.js | tar -x -C stage
           printf '%s\n' "$SERVER_HOST_KEYS" > ~/.ssh/known_hosts
           install -m 600 /dev/null ~/.ssh/deploy && printf '%s\n' "$SERVER_KEY" > ~/.ssh/deploy
           tar -C stage -cf - gateway host relay requests | ssh -T -i ~/.ssh/deploy -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o ServerAliveInterval=15 -o ServerAliveCountMax=8 "$SERVER"

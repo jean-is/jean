@@ -18,11 +18,12 @@ describe('deploy', () => {
     const modules = (await Promise.all(['gateway', 'relay', 'requests'].map(async (dir) => (await readdir(dir)).filter((name) => name.endsWith('.js')).map((name) => `${dir}/${name}`)))).flat()
     assert.deepEqual(archived.toSorted(), modules.toSorted(), 'CI sends each module of the gateway, the relay and the request service')
     assert.deepEqual([...archived, ...copied].toSorted(), expected.toSorted(), 'the update script expects what CI sends')
-    // Its own `without`, as the server runs it, for what commits from before the colleagues, and before the stores, sent.
+    // Its own `without`, as the server runs it, for what commits from before the journals, the colleagues and the stores sent.
     const without = (/** @type {string} */ pattern) => execFileSync('sh', ['-c', `${/^expected=.*$/m.exec(update)?.[0]}\n${/^without \(\).*$/m.exec(update)?.[0]}\nwithout '${pattern}'`]).toString().trim().split(' ').toSorted()
-    assert.deepEqual(without('relay/colleagues.js'), expected.filter((one) => one !== 'relay/colleagues.js').toSorted())
-    assert.deepEqual(without('relay/(colleagues|store).js'), expected.filter((one) => !/^relay\/(colleagues|store)\.js$/.test(one)).toSorted())
-    assert.match(update, /\[ "\$found" = "\$\(without 'relay\/colleagues\.js'\)" \] \|\| \[ "\$found" = "\$\(without 'relay\/\(colleagues\|store\)\.js'\)" \]/)
+    assert.deepEqual(without('relay/journal.js'), expected.filter((one) => one !== 'relay/journal.js').toSorted())
+    assert.deepEqual(without('relay/(colleagues|journal).js'), expected.filter((one) => !/^relay\/(colleagues|journal)\.js$/.test(one)).toSorted())
+    assert.deepEqual(without('relay/(colleagues|journal|store).js'), expected.filter((one) => !/^relay\/(colleagues|journal|store)\.js$/.test(one)).toSorted())
+    assert.match(update, /\[ "\$found" = "\$\(without 'relay\/journal\.js'\)" \] \|\| \[ "\$found" = "\$\(without 'relay\/\(colleagues\|journal\)\.js'\)" \] \|\| \[ "\$found" = "\$\(without 'relay\/\(colleagues\|journal\|store\)\.js'\)" \]/)
   })
 
   it('reads the server and its folder from DEPLOY_TO, as rsync writes them', () => {

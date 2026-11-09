@@ -172,6 +172,32 @@
                 "free": { "type": "integer", "minimum": 0 }
               }
             },
+            "journals": {
+              "type": "object",
+              "description": "Any of JOURNAL in relay/journal.js, {} for them all: without it, the relay keeps nothing people work on together (D733)",
+              "additionalProperties": false,
+              "properties": {
+                "change": { "type": "integer", "minimum": 1 },
+                "part": { "type": "integer", "minimum": 1 },
+                "fleeting": { "type": "integer", "minimum": 1 },
+                "bytes": { "type": "integer", "minimum": 1 },
+                "days": { "type": "integer", "minimum": 1 },
+                "tombstones": { "type": "integer", "minimum": 1 },
+                "settle": { "type": "integer", "minimum": 0 },
+                "perMinute": { "type": "integer", "minimum": 1 },
+                "fleetingPerSecond": { "type": "integer", "minimum": 1 },
+                "fleetingPerNetwork": { "type": "integer", "minimum": 1 },
+                "streams": { "type": "integer", "minimum": 1 },
+                "streamsPerNetwork": { "type": "integer", "minimum": 1 },
+                "stream": { "type": "integer", "minimum": 1 },
+                "beat": { "type": "integer", "minimum": 1 },
+                "wait": { "type": "integer", "minimum": 0 },
+                "opens": { "type": "integer", "minimum": 1 },
+                "sent": { "type": "integer", "minimum": 1 },
+                "orphans": { "type": "integer", "minimum": 1 },
+                "free": { "type": "integer", "minimum": 0 }
+              }
+            },
             "issuers": {
               "type": "array",
               "description": "The organisation's sign-ins whose people it lists, for colleagues to find each other (relay/colleagues.js, D731): the relay then reaches each one's discovery and keys over HTTPS",

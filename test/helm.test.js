@@ -5,6 +5,7 @@ import assert from 'node:assert/strict'
 import { readdir, readFile } from 'node:fs/promises'
 import { LIMITS } from '../relay/relay.js'
 import { STORE } from '../relay/store.js'
+import { JOURNAL } from '../relay/journal.js'
 
 const CHART = new URL('../deploy/helm/jean/', import.meta.url)
 const read = (/** @type {string} */ path) => readFile(new URL(path, CHART), 'utf8')
@@ -103,6 +104,7 @@ test("the gateway's and the relay's configs take what their servers read", async
   assert.deepEqual(Object.keys(schema.properties.gateway.properties.config.properties), Object.keys(gateway.properties).filter((key) => key !== '$schema'))
   assert.deepEqual(Object.keys(schema.properties.relay.properties.config.properties.limits.properties), Object.keys(LIMITS))
   assert.deepEqual(Object.keys(schema.properties.relay.properties.config.properties.stores.properties), Object.keys(STORE))
+  assert.deepEqual(Object.keys(schema.properties.relay.properties.config.properties.journals.properties), Object.keys(JOURNAL))
   assert.deepEqual(Object.keys(schema.properties.relay.properties.config.properties.issuers.items.properties), ['issuer', 'audience', 'jwks', 'groups', 'guest'])
 })
 

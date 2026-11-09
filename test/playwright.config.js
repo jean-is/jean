@@ -65,7 +65,7 @@ export default defineConfig({
     // The relay (D45 · D226), for Jean's origin by either name, keeping its mailboxes in a folder of the run's (test/devices.spec.js). Every
     // device of every test opens mailboxes from this one address, past the hour's limit a network has.
     { command: 'node relay/serve.js', cwd: '..', port: RELAY, reuseExistingServer: false,
-      env: { PORT: String(RELAY), RELAY_DIR: join(tmpdir(), `jean-mailboxes-${process.pid}`), RELAY_CONFIG: JSON.stringify({ origins: [`http://127.0.0.1:${APP}`, `http://localhost:${APP}`], limits: { opens: 10_000 }, stores: { made: 10_000 },
+      env: { PORT: String(RELAY), RELAY_DIR: join(tmpdir(), `jean-mailboxes-${process.pid}`), RELAY_CONFIG: JSON.stringify({ origins: [`http://127.0.0.1:${APP}`, `http://localhost:${APP}`], limits: { opens: 10_000 }, stores: { made: 10_000 }, journals: { opens: 10_000 },
         // The fake organisation's people, by the ID tokens its sign-in signs (test/colleagues.spec.js, D731).
         issuers: [{ issuer: ISSUER, audience: POLICY.signIn.clientId, jwks: JWKS }] }) } },
     // Jean as jean.is's deploy has it, its page under the first screen and its pages in other languages (test/home.spec.js, D397).
