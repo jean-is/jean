@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
-import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises'
+import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises'
+import { execFileSync } from 'node:child_process'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, it } from 'node:test'
@@ -9,6 +10,21 @@ import { ACTION, RELEASES, deployToBunny, objectOf, oldReleases, rulesFor, typeO
 import { KEEP, parseTarget, releaseName, remote, staged, unpublished, whenPublic } from '../scripts/deploy.js'
 
 describe('deploy', () => {
+  it('sends Jean’s server every module its services have, which its update script expects, taking what older commits sent too', async () => {
+    const [ci, update] = await Promise.all([readFile('.github/workflows/ci.yml', 'utf8'), readFile('deploy/server/update.sh', 'utf8')])
+    const archived = String(/git archive HEAD ([^|]+)\|/.exec(ci)?.[1]).trim().split(/\s+/)
+    const copied = String(/cp ((?:dist\/host\/\S+ )+)stage\/host\//.exec(ci)?.[1]).trim().split(/\s+/).map((one) => one.replace(/^dist\//, ''))
+    const expected = String(/^expected='([^']+)'/m.exec(update)?.[1]).split(' ')
+    const modules = (await Promise.all(['gateway', 'relay', 'requests'].map(async (dir) => (await readdir(dir)).filter((name) => name.endsWith('.js')).map((name) => `${dir}/${name}`)))).flat()
+    assert.deepEqual(archived.toSorted(), modules.toSorted(), 'CI sends each module of the gateway, the relay and the request service')
+    assert.deepEqual([...archived, ...copied].toSorted(), expected.toSorted(), 'the update script expects what CI sends')
+    // Its own `without`, as the server runs it, for what commits from before the colleagues, and before the stores, sent.
+    const without = (/** @type {string} */ pattern) => execFileSync('sh', ['-c', `${/^expected=.*$/m.exec(update)?.[0]}\n${/^without \(\).*$/m.exec(update)?.[0]}\nwithout '${pattern}'`]).toString().trim().split(' ').toSorted()
+    assert.deepEqual(without('relay/colleagues.js'), expected.filter((one) => one !== 'relay/colleagues.js').toSorted())
+    assert.deepEqual(without('relay/(colleagues|store).js'), expected.filter((one) => !/^relay\/(colleagues|store)\.js$/.test(one)).toSorted())
+    assert.match(update, /\[ "\$found" = "\$\(without 'relay\/colleagues\.js'\)" \] \|\| \[ "\$found" = "\$\(without 'relay\/\(colleagues\|store\)\.js'\)" \]/)
+  })
+
   it('reads the server and its folder from DEPLOY_TO, as rsync writes them', () => {
     assert.deepEqual(parseTarget('myserver:/srv/jean'), { host: 'myserver', folder: '/srv/jean' })
     assert.deepEqual(parseTarget('me@example.org:/apps/jean/site/'), { host: 'me@example.org', folder: '/apps/jean/site' })

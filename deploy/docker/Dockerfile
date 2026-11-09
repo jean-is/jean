@@ -91,7 +91,7 @@ CMD ["node", "--permission", "--allow-net", "--allow-fs-read=/app/", "--disallow
 FROM --platform=$BUILDPLATFORM node:26-alpine@sha256:8996bb5821d62a8fd9bb27c1cb07462f3fdce6e47d640c6a881ead0b064ce216 AS relay-data
 RUN mkdir /data
 
-# The relay: its two modules and the two of the share host's it uses, and Node, nothing to install, configured
+# The relay: its modules and the two of the share host's it uses, and Node, nothing to install, configured
 # by RELAY_CONFIG. It keeps its mailboxes in /data, the user it runs as and group 0's, so that a volume Docker makes
 # there starts as theirs, and whichever user OpenShift picks, always in group 0, writes there too. Under Node's
 # permission model it writes nowhere else.

@@ -87,7 +87,7 @@ The relay keeps people's stores (D721, up to 1 GB each) only once `relay.env` sa
 4. `docker compose up -d --force-recreate relay`; `GET https://relay.jean.is/` then shows `store`.
 5. Only then jean.is's `POLICY` names `urls.relay`, in a deploy whose e2e passes.
 
-`update.sh` takes the code with or without `relay/store.js`, so that a job from before the store, run again, still deploys.
+`update.sh` takes the code without `relay/colleagues.js`, or without it and `relay/store.js`, so that a job from before them, run again, still deploys. A module the services gain goes into its `expected` and into CI's `git archive` together (`test/deploy.test.js`), and the server's `/srv/jean/update` is replaced before the push that sends it, since CI can't change it.
 
 ## Moving from another server
 
