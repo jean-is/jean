@@ -13,6 +13,7 @@
   "together.link": "Bağlantı",
   "together.copyLink": "Bağlantıyı kopyala",
   "together.people": "Bu koleksiyondaki kişiler",
+  "together.peopleTask": "Bu görevdeki kişiler",
   "together.here": "Şu an burada: {names}",
   "together.you": "(sen)",
   "together.hereNow": "Şu an burada",
@@ -38,5 +39,6 @@
   "together.stopped": "“{title}” üzerinde birlikte çalışma sona erdi. Kopyan sende kalır.",
   "together.noPlace": "Bir şey üzerinde birlikte çalışmak burada kullanılamıyor.",
   "together.inside": "Kuruluşun kişileri kendi listesinden ekliyor. Adınla davet edilmeyi iste.",
-  "together.gone": "Bu bağlantı artık hiçbir şeyi açmıyor. Gönderen kişiden yenisini iste."
+  "together.gone": "Bu bağlantı artık hiçbir şeyi açmıyor. Gönderen kişiden yenisini iste.",
+  "together.waiting": "İsteğinin sırası, {name} yanıtını aldıktan sonra gelir."
 }

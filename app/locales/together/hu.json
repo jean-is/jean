@@ -13,6 +13,7 @@
   "together.link": "Link",
   "together.copyLink": "Link másolása",
   "together.people": "Személyek ebben a gyűjteményben",
+  "together.peopleTask": "Személyek ebben a feladatban",
   "together.here": "Most itt: {names}",
   "together.you": "(te)",
   "together.hereNow": "Most itt",
@@ -38,5 +39,6 @@
   "together.stopped": "Véget ért a közös munka ezen: „{title}”. A másolatod a tiéd marad.",
   "together.noPlace": "Itt nem lehet közösen dolgozni semmin.",
   "together.inside": "A szervezeted a saját listájáról ad hozzá személyeket. Kérd, hogy név szerint hívjanak meg.",
-  "together.gone": "Ez a link már nem nyit meg semmit. Kérj újat attól, aki küldte."
+  "together.gone": "Ez a link már nem nyit meg semmit. Kérj újat attól, aki küldte.",
+  "together.waiting": "A kérésed azután következik, hogy {name} megkapta a választ."
 }

@@ -13,6 +13,7 @@
   "together.link": "קישור",
   "together.copyLink": "העתקת הקישור",
   "together.people": "אנשים באוסף הזה",
+  "together.peopleTask": "אנשים במשימה הזו",
   "together.here": "כאן עכשיו: {names}",
   "together.you": "(אני)",
   "together.hereNow": "כאן עכשיו",
@@ -38,5 +39,6 @@
   "together.stopped": "העבודה המשותפת על “{title}” הסתיימה. העותק שלך נשאר שלך.",
   "together.noPlace": "עבודה משותפת לא זמינה כאן.",
   "together.inside": "הארגון שלך מוסיף אנשים מהרשימה שלו. אפשר לבקש הזמנה לפי שם.",
-  "together.gone": "הקישור הזה כבר לא פותח כלום. אפשר לבקש קישור חדש ממי ששלח אותו."
+  "together.gone": "הקישור הזה כבר לא פותח כלום. אפשר לבקש קישור חדש ממי ששלח אותו.",
+  "together.waiting": "הבקשה שלך תבוא אחרי התשובה ל־{name}."
 }

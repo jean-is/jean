@@ -13,6 +13,7 @@
   "together.link": "Kiungo",
   "together.copyLink": "Nakili kiungo",
   "together.people": "Watu katika mkusanyiko huu",
+  "together.peopleTask": "Watu katika kazi hii",
   "together.here": "Hapa sasa: {names}",
   "together.you": "(wewe)",
   "together.hereNow": "Yupo sasa",
@@ -38,5 +39,6 @@
   "together.stopped": "Kufanya kazi pamoja kwenye “{title}” kumesimamishwa. Nakala yako inabaki yako.",
   "together.noPlace": "Kufanya kazi pamoja hakupatikani hapa.",
   "together.inside": "Shirika lako huongeza watu kutoka kwenye orodha yake. Omba ualikwe kwa jina lako.",
-  "together.gone": "Kiungo hiki hakifungui kitu tena. Mwombe aliyekutumia kiungo kipya."
+  "together.gone": "Kiungo hiki hakifungui kitu tena. Mwombe aliyekutumia kiungo kipya.",
+  "together.waiting": "Ombi lako litafuata baada ya {name} kupata jibu."
 }

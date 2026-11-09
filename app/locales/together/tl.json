@@ -13,6 +13,7 @@
   "together.link": "Link",
   "together.copyLink": "Kopyahin ang link",
   "together.people": "Mga tao sa koleksiyong ito",
+  "together.peopleTask": "Mga tao sa gawaing ito",
   "together.here": "Narito ngayon: {names}",
   "together.you": "(ikaw)",
   "together.hereNow": "Narito ngayon",
@@ -38,5 +39,6 @@
   "together.stopped": "Itinigil na ang pagtutulungan sa “{title}”. Sa iyo pa rin ang kopya mo.",
   "together.noPlace": "Hindi available dito ang pagtutulungan.",
   "together.inside": "Nagdadagdag ang organisasyon mo ng mga tao mula sa listahan nito. Hilingin na imbitahan ka ayon sa pangalan.",
-  "together.gone": "Wala nang binubuksan ang link na ito. Humingi ng bago sa nagpadala nito."
+  "together.gone": "Wala nang binubuksan ang link na ito. Humingi ng bago sa nagpadala nito.",
+  "together.waiting": "Susunod ang hiling mo kapag nasagot na si {name}."
 }

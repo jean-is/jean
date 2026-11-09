@@ -13,6 +13,7 @@
   "together.link": "Poveznica",
   "together.copyLink": "Kopiraj poveznicu",
   "together.people": "Osobe u ovoj zbirci",
+  "together.peopleTask": "Osobe u ovom zadatku",
   "together.here": "Sada ovdje: {names}",
   "together.you": "(vi)",
   "together.hereNow": "Sada ovdje",
@@ -38,5 +39,6 @@
   "together.stopped": "Zajednički rad na zbirci „{title}“ je završen. Vaša kopija ostaje vaša.",
   "together.noPlace": "Zajednički rad ovdje nije dostupan.",
   "together.inside": "Vaša organizacija dodaje osobe sa svojeg popisa. Zatražite pozivnicu po imenu.",
-  "together.gone": "Ova poveznica više ništa ne otvara. Zatražite novu od osobe koja ju je poslala."
+  "together.gone": "Ova poveznica više ništa ne otvara. Zatražite novu od osobe koja ju je poslala.",
+  "together.waiting": "Vaš zahtjev dolazi na red kad {name} dobije odgovor."
 }

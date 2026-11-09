@@ -13,6 +13,7 @@
   "together.link": "Link",
   "together.copyLink": "Copiați linkul",
   "together.people": "Persoane din această colecție",
+  "together.peopleTask": "Persoane din această sarcină",
   "together.here": "Aici acum: {names}",
   "together.you": "(dvs.)",
   "together.hereNow": "Aici acum",
@@ -38,5 +39,6 @@
   "together.stopped": "Lucrul împreună la „{title}” s-a oprit. Copia dvs. rămâne a dvs.",
   "together.noPlace": "Lucrul împreună la ceva nu este disponibil aici.",
   "together.inside": "Organizația dvs. adaugă persoane din lista sa. Cereți o invitație pe nume.",
-  "together.gone": "Acest link nu mai deschide nimic. Cereți unul nou celui care l-a trimis."
+  "together.gone": "Acest link nu mai deschide nimic. Cereți unul nou celui care l-a trimis.",
+  "together.waiting": "Cererea dvs. urmează după răspunsul pentru {name}."
 }

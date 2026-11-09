@@ -13,6 +13,7 @@
   "together.link": "Link",
   "together.copyLink": "Link kopiëren",
   "together.people": "Mensen in deze verzameling",
+  "together.peopleTask": "Mensen in deze taak",
   "together.here": "Nu hier: {names}",
   "together.you": "(jij)",
   "together.hereNow": "Nu hier",
@@ -38,5 +39,6 @@
   "together.stopped": "Het samenwerken aan ‘{title}’ is gestopt. Je kopie blijft van jou.",
   "together.noPlace": "Samen aan iets werken kan hier niet.",
   "together.inside": "Je organisatie voegt mensen toe vanuit haar lijst. Vraag of je op naam wordt uitgenodigd.",
-  "together.gone": "Deze link opent niets meer. Vraag wie hem stuurde om een nieuwe."
+  "together.gone": "Deze link opent niets meer. Vraag wie hem stuurde om een nieuwe.",
+  "together.waiting": "Je vraag is aan de beurt zodra {name} antwoord heeft gekregen."
 }

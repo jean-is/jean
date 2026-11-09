@@ -13,6 +13,7 @@
   "together.link": "链接",
   "together.copyLink": "复制链接",
   "together.people": "此合集中的人",
+  "together.peopleTask": "此任务中的人",
   "together.here": "正在这里：{names}",
   "together.you": "（你）",
   "together.hereNow": "正在这里",
@@ -38,5 +39,6 @@
   "together.stopped": "“{title}”的协作已停止。你的副本仍归你所有。",
   "together.noPlace": "这里无法一起协作。",
   "together.inside": "你的组织从其名单中添加人员。请让对方按名字邀请你。",
-  "together.gone": "这个链接已打不开任何内容。请向发送者索取新链接。"
+  "together.gone": "这个链接已打不开任何内容。请向发送者索取新链接。",
+  "together.waiting": "你的请求会排在给 {name} 的回答之后。"
 }

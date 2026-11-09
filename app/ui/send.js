@@ -318,6 +318,8 @@ async function request(text, { boost = 0, notes = [], call, files = app.attachme
     // What it keeps from the start, like the folder it starts on (D149).
     await fire(contributions().hooks, 'task.start', { task: created.path, id: created.id }, () => {})
   }
+  // In a task worked on together, one answer at a time: the request waits its turn before it is written (caps/together, D734).
+  await fire(contributions().hooks, 'task.turn', { task: current.path }, () => {})
   await keepRecords(current.path, added)
   // Listed at once, to come back to; the room's first as the page turns below, the drawer it opens with it (D369).
   const first = !current.records.length && !app.conversations.value.length
@@ -561,8 +563,10 @@ async function runAgent(conversation, brain, meta, call, after, held) {
     const frozen = frozenPrompt(sent)
     // A turn the page closed on while it waited for the user goes on from there, asking again (D212); one that is a single call starts on it.
     const one = call && { id: `call-${Date.now().toString(36)}`, ...call }
-    const resume = one ? { step: 0, calls: [one] } : after === undefined ? unanswered(sent) : { step: after, calls: [] }
-    const messages = toChatMessages(sent, await documents(sent, brain), resume)
+    // What the brain reads of a task worked on together: others' words quoted, their activity left out (caps/together, D734).
+    const viewed = slots('view').reduce((records, part) => part.records(records, path), sent)
+    const resume = one ? { step: 0, calls: [one] } : after === undefined ? unanswered(viewed) : { step: after, calls: [] }
+    const messages = toChatMessages(viewed, await documents(sent, brain), resume)
     // The device's brain answers its steps itself, through its turn.step hook.
     if (brain.api === 'device') await unlock('brain-local')
     // What the brain last read and wrote says how full its window is, unless a summary came since. Compaction comes in once

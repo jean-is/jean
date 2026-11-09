@@ -13,6 +13,7 @@
   "together.link": "링크",
   "together.copyLink": "링크 복사",
   "together.people": "이 컬렉션의 사람들",
+  "together.peopleTask": "이 작업의 사람들",
   "together.here": "지금 여기 있는 사람: {names}",
   "together.you": "(나)",
   "together.hereNow": "지금 여기 있음",
@@ -38,5 +39,6 @@
   "together.stopped": "‘{title}’ 함께 작업이 끝났어요. 내 사본은 그대로 내 것으로 남아요.",
   "together.noPlace": "여기서는 함께 작업하기를 쓸 수 없어요.",
   "together.inside": "조직에서는 조직 목록에서 사람을 추가해요. 이름으로 초대해 달라고 요청하세요.",
-  "together.gone": "이 링크로는 더 이상 아무것도 열 수 없어요. 보낸 사람에게 새 링크를 요청하세요."
+  "together.gone": "이 링크로는 더 이상 아무것도 열 수 없어요. 보낸 사람에게 새 링크를 요청하세요.",
+  "together.waiting": "{name}에게 답변을 마치면 내 요청 차례예요."
 }

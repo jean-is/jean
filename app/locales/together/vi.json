@@ -13,6 +13,7 @@
   "together.link": "Đường liên kết",
   "together.copyLink": "Sao chép đường liên kết",
   "together.people": "Mọi người trong bộ sưu tập này",
+  "together.peopleTask": "Mọi người trong nhiệm vụ này",
   "together.here": "Đang ở đây: {names}",
   "together.you": "(bạn)",
   "together.hereNow": "Đang ở đây",
@@ -38,5 +39,6 @@
   "together.stopped": "Đã dừng cùng làm việc trên “{title}”. Bản sao của bạn vẫn là của bạn.",
   "together.noPlace": "Không thể cùng làm việc ở đây.",
   "together.inside": "Tổ chức của bạn thêm mọi người từ danh sách của tổ chức. Hãy đề nghị được mời theo tên.",
-  "together.gone": "Đường liên kết này không còn mở được gì nữa. Hãy xin đường liên kết mới từ người đã gửi."
+  "together.gone": "Đường liên kết này không còn mở được gì nữa. Hãy xin đường liên kết mới từ người đã gửi.",
+  "together.waiting": "Yêu cầu của bạn sẽ đến lượt sau câu trả lời cho {name}."
 }

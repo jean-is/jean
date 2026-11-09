@@ -17,7 +17,7 @@ import { bytesOf } from './seal.js'
  * block of one (a page, a chart, a deck) or a picture it made.
  * @typedef {{ text: string, files?: import('../../core/events.js').MadeFile[] } | { picture: import('../../core/events.js').MadeFile, description: string }} Item
  * A thing that can be worked on together (caps/together, D733): its kind, and its place in the project.
- * @typedef {{ path: string, title: string, item?: Item, thing?: { kind: 'collection', uri: string } }} What
+ * @typedef {{ path: string, title: string, item?: Item, thing?: { kind: 'collection' | 'task', uri: string } }} What
  * @typedef {{ format: 1, kind: 'task' | 'item', lang: string, title: string, file: string, files: Record<string, string>, certificates: string[], drawing?: unknown }} Value
  */
 

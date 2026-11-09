@@ -13,6 +13,7 @@
   "together.link": "Linkki",
   "together.copyLink": "Kopioi linkki",
   "together.people": "Tämän kokoelman ihmiset",
+  "together.peopleTask": "Tämän tehtävän ihmiset",
   "together.here": "Paikalla nyt: {names}",
   "together.you": "(sinä)",
   "together.hereNow": "Paikalla nyt",
@@ -38,5 +39,6 @@
   "together.stopped": "Yhteistyö kokoelmassa ”{title}” päättyi. Kopiosi pysyy sinulla.",
   "together.noPlace": "Yhteistyö ei ole käytettävissä täällä.",
   "together.inside": "Organisaatiosi lisää henkilöt omasta luettelostaan. Pyydä, että sinut kutsutaan nimellä.",
-  "together.gone": "Tämä linkki ei enää avaa mitään. Pyydä lähettäjältä uusi."
+  "together.gone": "Tämä linkki ei enää avaa mitään. Pyydä lähettäjältä uusi.",
+  "together.waiting": "Pyyntösi on vuorossa, kun {name} on saanut vastauksen."
 }

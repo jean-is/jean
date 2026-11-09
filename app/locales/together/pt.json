@@ -13,6 +13,7 @@
   "together.link": "Ligação",
   "together.copyLink": "Copiar ligação",
   "together.people": "Pessoas nesta coleção",
+  "together.peopleTask": "Pessoas nesta tarefa",
   "together.here": "Aqui agora: {names}",
   "together.you": "(tu)",
   "together.hereNow": "Aqui agora",
@@ -38,5 +39,6 @@
   "together.stopped": "O trabalho em conjunto em «{title}» terminou. A tua cópia continua a ser tua.",
   "together.noPlace": "Aqui não é possível trabalhar em conjunto.",
   "together.inside": "A tua organização adiciona pessoas a partir da lista dela. Pede que te convidem pelo nome.",
-  "together.gone": "Esta ligação já não abre nada. Pede uma nova a quem ta enviou."
+  "together.gone": "Esta ligação já não abre nada. Pede uma nova a quem ta enviou.",
+  "together.waiting": "O teu pedido segue depois da resposta a {name}."
 }

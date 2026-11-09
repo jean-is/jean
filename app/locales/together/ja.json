@@ -13,6 +13,7 @@
   "together.link": "リンク",
   "together.copyLink": "リンクをコピー",
   "together.people": "このコレクションの参加者",
+  "together.peopleTask": "このタスクの参加者",
   "together.here": "いま開いている人：{names}",
   "together.you": "（あなた）",
   "together.hereNow": "いま開いている",
@@ -38,5 +39,6 @@
   "together.stopped": "「{title}」での共同作業は終わりました。あなたのコピーは、あなたのもののまま残ります。",
   "together.noPlace": "ここでは一緒に作業する機能を使えません。",
   "together.inside": "組織では、人は組織のリストから追加します。名前で招待してもらうよう頼んでください。",
-  "together.gone": "このリンクではもう何も開けません。送ってくれた人に新しいリンクを頼んでください。"
+  "together.gone": "このリンクではもう何も開けません。送ってくれた人に新しいリンクを頼んでください。",
+  "together.waiting": "{name} への回答が終わると、あなたの依頼の番です。"
 }

@@ -13,7 +13,7 @@ import { icons } from '../../ui/menu-icons.js'
 import { t, intlLocales } from '../../core/i18n.js'
 import { decode } from '../../ui/seal.js'
 import { membersOf, linkOf, invitation } from './circle.js'
-import { circles, circleOf, begin, join, linkFor, set, move, stop, hereNow, key } from './engine.js'
+import { circles, circleOf, circleAt, begin, join, linkFor, set, move, stop, hereNow, key } from './engine.js'
 
 /** The circle People in this… shows, the newcomer a link brought, and whether something is being done. */
 export const shown = signal(/** @type {string | null} */ (null))
@@ -33,11 +33,13 @@ const copy = (/** @type {string} */ text) => navigator.clipboard.writeText(text)
 
 /**
  * Share's pane when working together is chosen (caps/share/dialog.js): with the link, its role and Start; with the people chosen, those
- * to invite; once working together, the link to copy and People in this collection. @param {{ thing?: { kind: string, uri: string }, title: string }} what
+ * to invite; once working together, the link to copy and People in this collection. @param {{ thing?: { kind: 'collection' | 'task', uri: string }, title: string }} what
  * @param {{ label(): string } | null} to People's audience, or none for a link
  */
 export function how(what, to) {
-  const folder = what.thing?.uri ?? ''
+  const kind = what.thing?.kind ?? 'collection', uri = what.thing?.uri ?? ''
+  // A task is named by its path, a collection by its folder in the project.
+  const folder = kind === 'task' ? uri.slice(app.projectDir.length + 1) : uri
   const live = circleOf(folder)
   if (live) {
     const others = membersOf(live.state).filter((one) => one.fp !== live.me)
@@ -45,10 +47,10 @@ export function how(what, to) {
       ${live.kept.links && live.kept.ownerToken ? html`<div class="share-field"><input class="share-link" readonly dir="ltr" title=${t('together.link')} .value=${linkFor(live)}>
         <button class="button primary" @click=${() => copy(linkFor(live))}>${icons.copy} ${t('together.copyLink')}</button></div>` : nothing}
       ${to ? invite(live, what.title) : nothing}
-      <button class="button" @click=${() => { shown.value = live.id; app.dialog.value = 'together' }}>${icons.people} ${t('together.people')}</button></section>`
+      <button class="button" @click=${() => { shown.value = live.id; app.dialog.value = 'together' }}>${icons.people} ${peopleIn(live)}</button></section>`
   }
   const start = (/** @type {boolean} */ links) => doing(async () => {
-    const started = await begin({ dir: app.projectDir, folder }, { links, role: role.peek() })
+    const started = await begin({ dir: app.projectDir, folder }, { links, role: role.peek(), kind })
     if (!links) await sent(started, what.title)
   })
   return html`<section class="stack"><p class="hint">${t('together.says')}</p>
@@ -57,6 +59,11 @@ export function how(what, to) {
     <p class="hint">${t('together.days')}</p>
     <footer class="dialog-foot"><button class="button primary" ?disabled=${busy.value || (to !== null && !chosen.value.size)} @click=${() => start(!to)}>${icons.people} ${t(to ? 'together.invite' : 'together.start')}</button></footer></section>`
 }
+
+/** People in this task, or in this collection. @param {import('./engine.js').Live} live */
+const peopleIn = (live) => t(live.kept.kind === 'task' ? 'together.peopleTask' : 'together.people')
+/** The faces of a task worked on together, in the room's head, beside Share. @param {{ path: string } | null} current */
+export const taskFaces = (current) => ((live) => (live ? faces(live) : nothing))(current?.path ? circleAt(current.path) : null)
 
 /** The people met, to invite, each ticked or not (caps/people). */
 function people() {
@@ -82,7 +89,7 @@ async function sent(live, title) {
 /** The faces of those here now, in the head of the thing's pane, opening People in this collection. @param {import('./engine.js').Live} live */
 export function faces(live) {
   const here = hereNow(live), others = membersOf(live.state).filter((one) => one.fp !== live.me), now = others.filter((one) => here.has(one.fp))
-  return html`<button class="icon-button together-faces" aria-label=${now.length ? t('together.here', { names: names(now.map((one) => one.name)) }) : t('together.people')}
+  return html`<button class="icon-button together-faces" aria-label=${now.length ? t('together.here', { names: names(now.map((one) => one.name)) }) : peopleIn(live)}
     @click=${() => { shown.value = live.id; app.dialog.value = 'together' }}>${(now.length ? now : others).slice(0, 3).map(avatar)}${others.length ? nothing : icons.people}</button>`
 }
 
@@ -99,7 +106,7 @@ class TogetherDialog extends Element {
     const live = shown.value ? circles.value.get(shown.value) : null
     const owner = Boolean(live?.kept.ownerToken)
     return html`<dialog class="sheet together-dialog" @close=${closed('together')} @click=${backdrop}>
-      ${asked.value ? this.joining(asked.value.link) : live ? html`${head(t('together.people'))}<p class="lede" dir="auto">${live.kept.title}</p>
+      ${asked.value ? this.joining(asked.value.link) : live ? html`${head(peopleIn(live))}<p class="lede" dir="auto">${live.kept.title}</p>
         <ul class="list">${membersOf(live.state).map((one) => row(live, one, owner))}</ul>
         ${owner && live.kept.links ? html`<p class="hint">${t('together.moves')}</p><div class="row"><button class="button" @click=${() => copy(linkFor(live))}>${icons.copy} ${t('together.copyLink')}</button>
           <button class="button subtle" @click=${() => doing(() => move(live, []))}>${t('together.linkOff')}</button></div>` : nothing}

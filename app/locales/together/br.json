@@ -13,6 +13,7 @@
   "together.link": "Liamm",
   "together.copyLink": "Eilañ al liamm",
   "together.people": "An dud en dastumad-mañ",
+  "together.peopleTask": "An dud en drevell-mañ",
   "together.here": "Amañ bremañ : {names}",
   "together.you": "(c’hwi)",
   "together.hereNow": "Amañ bremañ",
@@ -38,5 +39,6 @@
   "together.stopped": "Echu eo al labour asambles war « {title} ». Hoc’h eilskouerenn a chom deoc’h.",
   "together.noPlace": "N’haller ket labourat asambles amañ.",
   "together.inside": "Ho aozadur a ouzhpenn tud diwar e roll. Goulennit bezañ pedet dre hoc’h anv.",
-  "together.gone": "Al liamm-mañ ne zigor netra ken. Goulennit unan nevez ouzh an hini en deus e gaset."
+  "together.gone": "Al liamm-mañ ne zigor netra ken. Goulennit unan nevez ouzh an hini en deus e gaset.",
+  "together.waiting": "Ho koulenn a zeuio goude ar respont da {name}."
 }

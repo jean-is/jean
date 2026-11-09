@@ -36,8 +36,10 @@ const told = signal(/** @type {{ id: string, word: string } | null} */ (null))
 const to = signal(/** @type {import('../../ui/caps.js').Slot | null} */ (null))
 /** Whether working on it together is chosen, rather than a copy. */
 const together = signal(false)
+/** What can be worked on together: a thing its pane names, or a task, shared whole. @param {import('./share.js').What | null} what */
+const thingOf = (what) => what?.thing ?? (what && !what.item ? { kind: /** @type {const} */ ('task'), uri: what.path } : null)
 /** Whether what is shared can be worked on together here: a relay named, and not in a child's profile (D389). @param {import('./share.js').What | null} what */
-const jointly = (what) => Boolean(what?.thing && serviceURL('relay', app.settings.peek(), app.policy) && !app.policy.child && !isDenied('together'))
+const jointly = (what) => Boolean(thingOf(what) && serviceURL('relay', app.settings.peek(), app.policy) && !app.policy.child && !isDenied('together'))
 /** The dialog opened on an audience: People's for an answer back, none for a link. @param {import('../../ui/caps.js').Slot | null} slot */
 export const toward = (slot) => { to.value = slot }
 
@@ -94,7 +96,7 @@ class ShareDialog extends Element {
         <input id=${`share-to-${i}`} type="radio" name="to" .checked=${other === one} @change=${() => { to.value = one }}>${one ? one.label() : t('share.anyone')}</label>`)}</div>` : nothing}
       ${jointly(what) ? html`<div class="share-pick" role="radiogroup" aria-label=${t('share.how')}>${[false, true].map((both) => html`<label for=${`share-how-${both}`}>
         <input id=${`share-how-${both}`} type="radio" name="how" .checked=${together.value === both} @change=${() => { together.value = both; if (both) unlock('together') }}>${t(both ? 'share.together' : 'share.copy')}</label>`)}</div>` : nothing}
-      ${together.value && jointly(what) ? slots('how').map((part) => part.draw(what, other)) : html`
+      ${together.value && jointly(what) ? slots('how').map((part) => part.draw({ ...what, thing: thingOf(what) }, other)) : html`
       ${other ? (what && other.draw(what)) : html`${share ? html`<section class="stack">${live ? html`<div class="share-pick" role="radiogroup" aria-label=${t('share.title')}>${[false, true].map((code) => html`<label for=${`shown-${code}`}><input id=${`shown-${code}`} type="radio" name="shown" .checked=${coded.value === code} @change=${() => { coded.value = code }}>${t(code ? 'share.qr' : 'share.link')}</label>`)}</div>`
             : html`<p>${t('share.ended', { date: day(share.expires) })}</p>`}
           ${(live && coded.value && drawn(codeOf(link))) || html`<div class="share-field">

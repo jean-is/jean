@@ -13,6 +13,7 @@
   "together.link": "Ìjápọ̀",
   "together.copyLink": "Da ìjápọ̀ kọ",
   "together.people": "Àwọn ènìyàn nínú àkójọpọ̀ yìí",
+  "together.peopleTask": "Àwọn ènìyàn nínú iṣẹ́ yìí",
   "together.here": "Níbí báyìí: {names}",
   "together.you": "(ẹ̀yin)",
   "together.hereNow": "Níbí báyìí",
@@ -38,5 +39,6 @@
   "together.stopped": "Ṣíṣiṣẹ́ papọ̀ lórí “{title}” ti dúró. Ẹ̀dà yín ṣì jẹ́ tiyín.",
   "together.noPlace": "Ṣíṣiṣẹ́ papọ̀ kò ṣeé ṣe níbí.",
   "together.inside": "Àjọ yín máa ń ṣàfikún àwọn èèyàn láti inú àkọsílẹ̀ rẹ̀. Ẹ béèrè kí wọ́n pè yín pẹ̀lú orúkọ yín.",
-  "together.gone": "Ìjápọ̀ yìí kò ṣí nǹkankan mọ́. Ẹ béèrè tuntun lọ́wọ́ ẹni tó fi ránṣẹ́."
+  "together.gone": "Ìjápọ̀ yìí kò ṣí nǹkankan mọ́. Ẹ béèrè tuntun lọ́wọ́ ẹni tó fi ránṣẹ́.",
+  "together.waiting": "Ìbéèrè yín yóò tẹ̀lé ìdáhùn tí a ń fún {name}."
 }

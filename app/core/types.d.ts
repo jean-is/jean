@@ -218,7 +218,7 @@ export type SystemNoteData =
   /** the site on show beside the conversation, its page on show as it is now (D720) */
   | { kind: 'site', uri: string }
   /** what follows came from someone else's Jean, shared through the host named (D361) or sent by a person met, and where the user's own requests start again (end) */
-  | { kind: 'shared', from?: string, person?: string, thread?: { task: string, id: string }, id?: string, end?: true }
+  | { kind: 'shared', from?: string, person?: string, name?: string, thread?: { task: string, id: string }, id?: string, end?: true }
   /** Intuition read a danger in a child's message, told to their parent unless it is at home (D228) */
   | { kind: 'concern', concern: string }
 

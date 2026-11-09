@@ -13,6 +13,7 @@
   "together.link": "الرابط",
   "together.copyLink": "نسخ الرابط",
   "together.people": "الأشخاص في هذه المجموعة",
+  "together.peopleTask": "الأشخاص في هذه المهمة",
   "together.here": "هنا الآن: {names}",
   "together.you": "(أنت)",
   "together.hereNow": "هنا الآن",
@@ -38,5 +39,6 @@
   "together.stopped": "توقف العمل المشترك على «{title}». تبقى نسختك لك.",
   "together.noPlace": "العمل المشترك غير متاح هنا.",
   "together.inside": "تضيف مؤسستك الأشخاص من قائمتها. اطلب أن تُدعى بالاسم.",
-  "together.gone": "هذا الرابط لم يعد يفتح شيئًا. اطلب رابطًا جديدًا ممن أرسله."
+  "together.gone": "هذا الرابط لم يعد يفتح شيئًا. اطلب رابطًا جديدًا ممن أرسله.",
+  "together.waiting": "يأتي دور طلبك بعد الإجابة عن طلب {name}."
 }

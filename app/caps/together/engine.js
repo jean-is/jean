@@ -8,7 +8,7 @@
 import { signal } from '@preact/signals-core'
 import { contributions } from '../../ui/caps.js'
 import { fire } from '../../core/hooks.js'
-import { app, notify } from '../../ui/state.js'
+import { app, notify, refreshConversations, openConversation } from '../../ui/state.js'
 import { mine } from '../../ui/opfs.js'
 import { getSecret, setSecrets, secretsWhere } from '../../ui/secrets.js'
 import { serviceURL } from '../../core/settings.js'
@@ -21,14 +21,19 @@ import { folderOf } from '../tables/table.js'
 import * as circle from './circle.js'
 import * as journal from './journal.js'
 import * as collection from './collection.js'
+import * as task from './task.js'
+
+/** What each kind adds (D733): its changes, how they apply, its seed. */
+const bindings = { collection, task }
 
 /**
  * A circle as the secret keeps it. `links` whether a link may join; `role` what a link gives, editing or viewing.
- * @typedef {{ format: 1, relay: string, kind: 'collection', place: import('./collection.js').Place | null, title: string, owner: string, ownerHash: string, ownerToken?: string,
+ * @typedef {{ format: 1, relay: string, kind: 'collection' | 'task', place: import('./collection.js').Place | null, title: string, owner: string, ownerHash: string, ownerToken?: string,
  *   epoch: number, keys: Record<string, string>, read: string, write?: string, links: boolean, role?: 'edit' | 'view' }} Kept
  * A circle followed: who is in, what the journal holds of the thing, this device's counter, who is here, and how to stop.
  * @typedef {{ id: string, kept: Kept, me: string, state: circle.State, held: import('./collection.js').Held, n: number, members: Set<string>,
- *   here: Map<string, number>, ready: Promise<void>, caught: () => void, settled?: true, stop: () => void, unwatch?: () => void, joining?: { name: string, invite?: object } }} Live
+ *   here: Map<string, number>, ready: Promise<void>, caught: () => void, settled?: true, stop: () => void, unwatch?: () => void, joining?: { name: string, invite?: object },
+ *   baton: { holder: string | null, at: number, queue: string[] }, waits: Map<string, () => void> }} Live
  */
 
 /** The circles followed here, by journal. */
@@ -66,20 +71,46 @@ async function post(live, kind, body, { seed = false } = {}) {
 /** A body that went as parts, put back together. @param {Live} live @param {string[]} parts @param {number} epoch */
 const assembled = async (live, parts, epoch) => JSON.parse(new TextDecoder().decode(new Uint8Array((await Promise.all(parts.map(async (name) => [...await circle.openPart(live.id, epoch, decode(live.kept.keys[epoch]), await journal.getPart(whereOf(live), name))]))).flat())))
 
-/** A change of the journal, taken as every copy takes it. @param {Live} live @param {Uint8Array} sealed */
-async function taken(live, sealed) {
+/** A member's name, as the journal gives it. @param {Live} live @param {string} fp */
+const nameIn = (live, fp) => live.state.members[fp]?.name ?? ''
+/** The binding of a circle's kind. @param {Kept} kept */
+const bindingOf = (kept) => bindings[kept.kind]
+
+/**
+ * The baton (D733): one at a time does what only one may, answering a task. The first `take` after the last `release`, in the journal's
+ * order, holds it, the later ones waiting their turn; `hold` keeps it, and a holder silent for 90 seconds by the relay's clock loses it at
+ * the next change anyone posts, as every copy decides alike. @param {Live} live @param {import('./circle.js').Change} change @param {number} at
+ */
+function passed(live, change, at) {
+  const baton = live.baton
+  if (baton.holder && at - baton.at > 90_000) Object.assign(baton, { holder: baton.queue.shift() ?? null, at })
+  if (change.kind === 'take') { if (!baton.holder) Object.assign(baton, { holder: change.member, at }); else if (baton.holder !== change.member && !baton.queue.includes(change.member)) baton.queue.push(change.member) }
+  if (change.kind === 'hold' && baton.holder === change.member) baton.at = at
+  if (change.kind === 'release' && baton.holder === change.member) Object.assign(baton, { holder: baton.queue.shift() ?? null, at })
+  if (baton.holder) live.waits.get(baton.holder)?.()
+}
+
+/** A change of the journal, taken as every copy takes it. @param {Live} live @param {Uint8Array} sealed @param {number} at the relay's time */
+async function taken(live, sealed, at) {
   const opened = await circle.openChange(live.id, keysOf(live.kept), sealed)
   if (opened?.change.member === live.me && opened.change.device === app.deviceId) live.n = Math.max(live.n, opened.change.n)
   const change = await circle.take(live.state, live.id, opened)
   if (!change || !opened) return
+  passed(live, change, at)
   if (circle.isMembership(change)) live.members.add(encode(sealed))
   const body = change.body?.parts && !circle.isMembership(change) ? await assembled(live, change.body.parts, opened.epoch) : change.body
   if (change.kind === 'begin' && typeof body.ownerHash === 'string' && !live.kept.ownerHash) live.kept.ownerHash = body.ownerHash
+  // What the circle shares, as its owner began it: a link doesn't say.
+  if (change.kind === 'begin' && (body.kind === 'task' || body.kind === 'collection')) live.kept.kind = body.kind
   if (change.kind === 'seed') {
-    for (const one of Array.isArray(body.members) ? body.members : []) await taken(live, decode(one))
+    for (const one of Array.isArray(body.members) ? body.members : []) await taken(live, decode(one), at)
     if (!live.kept.place && body.content?.table?.id) live.kept.place = { dir: app.projectDir, folder: folderOf(body.content.table) }
+    if (!live.kept.place && /^[0-9A-HJKMNP-TV-Z]{26}$/.test(String(body.content?.id))) live.kept.place = { dir: app.projectDir, folder: `conversations/${body.content.id}.jsonl` }
+    if (!live.kept.title && typeof body.content?.title === 'string') live.kept.title = body.content.title
   }
-  if ((change.kind === 'seed' ? body.content : change.kind === 'change' && body) && live.kept.place) await collection.take(live.kept.place, change.kind === 'seed' ? body.content : body, live.held)
+  if ((change.kind === 'seed' ? body.content : change.kind === 'change' && body) && live.kept.place) {
+    await bindingOf(live.kept).take(live.kept.place, change.kind === 'seed' ? body.content : body, live.held, { me: live.me, names: (fp) => nameIn(live, fp) })
+  }
   if (change.kind === 'moved' && change.member !== live.me) await moved(live, body)
   if ((change.kind === 'remove' || change.kind === 'block') && body.fp === live.me) return ended(live, 'removed')
   if (live.settled) watching(live)
@@ -129,12 +160,12 @@ export async function follow(id, kept, joining) {
   const control = new AbortController()
   /** @type {Live} */
   const live = { id, kept, me: await fingerprintOf(person.public), state: circle.begun(kept.owner), held: { lines: new Set(), table: '' }, n: Number(saved.n) || 0,
-    members: new Set(saved.members ?? []), here: new Map(), ready, caught, stop: () => control.abort(), joining }
+    members: new Set(saved.members ?? []), here: new Map(), ready, caught, stop: () => control.abort(), joining, baton: { holder: null, at: 0, queue: [] }, waits: new Map() }
   circles.peek().get(id)?.stop()
   circles.peek().set(id, live)
   changed()
   journal.follow({ ...whereOf(live), after: 0, signal: control.signal,
-    onChange: (_, bytes) => taken(live, bytes),
+    onChange: (line, bytes) => taken(live, bytes, line.at),
     onFleeting: async (bytes) => { const said = await circle.heard(live.state, id, await circle.openChange(id, keysOf(live.kept), bytes)); if (said) { live.here.set(said.member, Date.now()); changed() } },
     onCaught: () => settled(live),
     onEnd: async (how) => {
@@ -144,7 +175,7 @@ export async function follow(id, kept, joining) {
       if ((await journal.create(whereOf(live), live.kept.ownerHash)) === 'made' && live.kept.place) {
         follow(id, live.kept)
         const again = /** @type {Live} */ (circles.peek().get(id))
-        await post(again, 'seed', { members: [...live.members], content: await collection.seedOf(live.kept.place) }, { seed: true })
+        await post(again, 'seed', { members: [...live.members], content: await seedOf(again) }, { seed: true })
       } else follow(id, live.kept)
     } })
   return live
@@ -160,29 +191,56 @@ async function settled(live) {
     await post(live, 'join', { key: person.public, name: joining.name.slice(0, 80), how: joining.invite ? 'invite' : 'link', ...(joining.invite && { invite: joining.invite }), mailbox: person.mailbox })
   }
   if (!kept.place) return
-  kept.title = await collection.titleOf(kept.place) || kept.title
+  kept.title = await bindingOf(kept).titleOf(kept.place) || kept.title
   await save(live.id, kept)
   apart.add(`${kept.place.dir}/${kept.place.folder}`)
   watching(live)
   here(live)
   if (joining) {
     delete live.joining
-    const [{ unlock }, { metaOf }, { preview }] = await Promise.all([import('../../ui/caps.js'), import('../tables/tables.js'), import('../../ui/preview.js')])
-    await unlock('tables')
-    const meta = await metaOf(kept.place.folder)
-    if (meta) preview({ uri: kept.place.folder, ...meta })
+    if (kept.kind === 'task') {
+      await refreshConversations()
+      if (kept.place.dir === app.projectDir) await openConversation(`${kept.place.dir}/${kept.place.folder}`)
+    } else {
+      const [{ unlock }, { metaOf }, { preview }] = await Promise.all([import('../../ui/caps.js'), import('../tables/tables.js'), import('../../ui/preview.js')])
+      await unlock('tables')
+      const meta = await metaOf(kept.place.folder)
+      if (meta) preview({ uri: kept.place.folder, ...meta })
+    }
   }
   changed()
 }
 
-/** What changes here goes, once this person is in and may write. @param {Live} live */
-const watching = (live) => { if (live.state.members[live.me] && live.kept.write && live.kept.place) live.unwatch ??= collection.watch(live.kept.place, live.held, (body) => post(live, 'change', body)) }
+/** What changes here goes, once this person is in and may write: a task's records named as theirs. @param {Live} live */
+const watching = (live) => {
+  if (!live.state.members[live.me] || !live.kept.write || !live.kept.place) return
+  live.unwatch ??= bindingOf(live.kept).watch(live.kept.place, live.held, (/** @type {any} */ body) => post(live, 'change', body.records ? { records: body.records.map((/** @type {any} */ one) => ({ ...one, who: { fp: live.me } })) } : body))
+}
+/** All of a circle's thing, for a seed, a task's records named as their writer's, this person's where nobody is. @param {Live} live */
+const seedOf = async (live) => {
+  const content = await bindingOf(live.kept).seedOf(/** @type {any} */ (live.kept.place))
+  return 'records' in content ? { ...content, records: content.records.map((one) => ({ ...one, who: one.who ?? { fp: live.me } })) } : content
+}
+
+/** The baton for this task: taken, then waited for, until it's this person's turn. @param {Live} live */
+export async function turn(live) {
+  if (live.baton.holder === live.me) return
+  const mine = new Promise((resolve) => live.waits.set(live.me, () => resolve(undefined)))
+  await post(live, 'take', {})
+  if (live.baton.holder && live.baton.holder !== live.me) notify(t('together.waiting', { name: nameIn(live, live.baton.holder) }))
+  await mine
+  live.waits.delete(live.me)
+}
+/** The baton passed on, once this person's answer ended; held meanwhile every 30 seconds. @param {Live} live */
+export const done = (live) => (live.baton.holder === live.me ? post(live, 'release', {}).catch(() => {}) : undefined)
+/** @param {Live} live */
+export const holding = (live) => (live.baton.holder === live.me ? post(live, 'hold', {}).catch(() => {}) : undefined)
 
 /**
  * Starts working together on a collection: its journal made, its circle begun with the owner's key, and its seed, the collection as it
- * is, posted for whoever joins. @param {import('./collection.js').Place} place @param {{ links: boolean, role: 'edit' | 'view' }} choice
+ * is, posted for whoever joins. @param {import('./collection.js').Place} place @param {{ links: boolean, role: 'edit' | 'view', kind?: 'collection' | 'task' }} choice
  */
-export async function begin(place, { links, role }) {
+export async function begin(place, { links, role, kind = 'collection' }) {
   const relay = relayOf()
   if (!relay || !(await journal.keeps(relay))) throw new Error(t('together.noPlace'))
   if (links && !(await linked())) throw new Error(t('together.inside'))
@@ -190,12 +248,12 @@ export async function begin(place, { links, role }) {
   const [id, ownerHash, owner] = [await journal.journalOf(read), await hashOf(ownerToken), await fingerprintOf(person.public)]
   await journal.create({ base: relay, id, read, write }, ownerHash)
   /** @type {Kept} */
-  const kept = { format: 1, relay, kind: 'collection', place, title: await collection.titleOf(place), owner, ownerHash, ownerToken, epoch: 0, keys: { 0: encode(key) }, read, write, links, role }
+  const kept = { format: 1, relay, kind, place, title: await bindings[kind].titleOf(place), owner, ownerHash, ownerToken, epoch: 0, keys: { 0: encode(key) }, read, write, links, role }
   await save(id, kept)
-  const [live, content] = [await follow(id, kept), await collection.seedOf(place)]
+  const live = await follow(id, kept), content = await seedOf(live)
   // What the seed holds is the journal's already, so that nothing of it goes again as a change.
-  collection.hold(live.held, content)
-  const begun = await post(live, 'begin', { key: person.public, name: await nameOf(), links, ownerHash, mailbox: person.mailbox })
+  bindingOf(kept).hold(live.held, /** @type {any} */ (content))
+  const begun = await post(live, 'begin', { key: person.public, name: await nameOf(), kind, links, ownerHash, mailbox: person.mailbox })
   await post(live, 'seed', { members: [encode(begun)], content }, { seed: true })
   return live
 }
@@ -206,7 +264,7 @@ const nameOf = async () => String(JSON.parse(await app.fs.read('.secrets/vault.j
 /** A link to join, for anyone holding it: the owner's alone (./circle.js `linkOf`), to edit or to view as they chose. @param {Live} live */
 export const linkFor = ({ kept }) => `${location.origin}${location.pathname}#/join/${circle.linkOf({ owner: kept.owner, epoch: kept.epoch, read: kept.read, key: decode(kept.keys[kept.epoch]), ...(kept.role !== 'view' && { write: kept.write }) })}`
 
-/** Joins from a link or an invitation: follows the journal, and once caught up says so and opens the thing. @param {string} text @param {{ name: string, invite?: object }} joining */
+/** Joins from a link or an invitation: follows the journal, and once caught up says so and opens the thing. @param {string} text @param {{ name: string, invite?: object, kind?: 'collection' | 'task' }} joining */
 export async function join(text, joining) {
   const link = circle.fromLink(text)
   const relay = relayOf()
@@ -215,7 +273,7 @@ export async function join(text, joining) {
   const id = await journal.journalOf(link.read)
   if (circles.peek().has(id)) return circles.peek().get(id)
   /** @type {Kept} */
-  const kept = { format: 1, relay, kind: 'collection', place: null, title: '', owner: link.owner, ownerHash: '', epoch: link.epoch, keys: { [link.epoch]: encode(link.key) }, read: link.read, ...(link.write && { write: link.write }), links: true }
+  const kept = { format: 1, relay, kind: /** @type {'collection' | 'task'} */ (joining.kind ?? 'collection'), place: null, title: '', owner: link.owner, ownerHash: '', epoch: link.epoch, keys: { [link.epoch]: encode(link.key) }, read: link.read, ...(link.write && { write: link.write }), links: true }
   await save(id, kept)
   return follow(id, kept, joining)
 }
@@ -242,10 +300,10 @@ export async function move(live, leaving) {
   await save(live.id, null)
   await save(id, kept)
   const moving = await follow(id, kept)
-  const content = kept.place && await collection.seedOf(kept.place)
-  if (content) collection.hold(moving.held, content)
+  const content = kept.place && await seedOf(moving)
+  if (content) bindingOf(kept).hold(moving.held, /** @type {any} */ (content))
   const members = circle.membersOf(live.state).filter((one) => !leaving.includes(one.fp) && one.fp !== live.me).map(({ fp, key: theirs, name, role, colour, how, mailbox }) => ({ fp, key: theirs, name, role, colour, how, mailbox }))
-  const begun = await post(moving, 'begin', { key: person.public, name: await nameOf(), links: next.links, ownerHash: kept.ownerHash, mailbox: person.mailbox, members })
+  const begun = await post(moving, 'begin', { key: person.public, name: await nameOf(), kind: kept.kind, links: next.links, ownerHash: kept.ownerHash, mailbox: person.mailbox, members })
   if (content) await post(moving, 'seed', { members: [encode(begun)], content }, { seed: true })
 }
 
@@ -268,6 +326,10 @@ export const hereNow = (live) => new Set([...live.here].filter(([, at]) => Date.
 
 /** The circle a collection is in here, if any. @param {string} folder */
 export const circleOf = (folder) => [...circles.value.values()].find((live) => live.kept.place?.folder === folder && live.kept.place.dir === app.projectDir) ?? null
+/** The circle a file is in, by its path, as a task's is. @param {string} path */
+export const circleAt = (path) => [...circles.peek().values()].find((live) => live.kept.place && `${live.kept.place.dir}/${live.kept.place.folder}` === path) ?? null
+/** A member's name in any circle followed here: the room's line over another's turn (ui/chat.js). @param {string} fp */
+export const memberName = (fp) => [...circles.peek().values()].map((live) => nameIn(live, fp)).find(Boolean) ?? ''
 
 /** Every circle kept here. */
 export const all = async () => Object.entries(await secretsWhere(app.fs, (id) => id.startsWith('circle:'))).map(([id, text]) => /** @type {[string, Kept]} */ ([id.slice(7), JSON.parse(text)]))

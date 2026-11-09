@@ -13,6 +13,7 @@
   "together.link": "Odkaz",
   "together.copyLink": "Kopírovať odkaz",
   "together.people": "Ľudia v tejto zbierke",
+  "together.peopleTask": "Ľudia v tejto úlohe",
   "together.here": "Práve tu: {names}",
   "together.you": "(vy)",
   "together.hereNow": "Práve tu",
@@ -38,5 +39,6 @@
   "together.stopped": "Spoločná práca na zbierke „{title}“ sa skončila. Vaša kópia zostáva vaša.",
   "together.noPlace": "Spoločná práca tu nie je dostupná.",
   "together.inside": "Vaša organizácia pridáva ľudí zo svojho zoznamu. Požiadajte, aby vás pozvali podľa mena.",
-  "together.gone": "Tento odkaz už nič neotvára. Požiadajte toho, kto ho poslal, o nový."
+  "together.gone": "Tento odkaz už nič neotvára. Požiadajte toho, kto ho poslal, o nový.",
+  "together.waiting": "Vaša požiadavka príde na rad, keď {name} dostane odpoveď."
 }

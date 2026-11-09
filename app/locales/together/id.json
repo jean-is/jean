@@ -13,6 +13,7 @@
   "together.link": "Tautan",
   "together.copyLink": "Salin tautan",
   "together.people": "Orang di koleksi ini",
+  "together.peopleTask": "Orang di tugas ini",
   "together.here": "Sedang di sini: {names}",
   "together.you": "(Anda)",
   "together.hereNow": "Sedang di sini",
@@ -38,5 +39,6 @@
   "together.stopped": "Kerja bersama di “{title}” sudah berhenti. Salinan Anda tetap milik Anda.",
   "together.noPlace": "Mengerjakan sesuatu bersama tidak tersedia di sini.",
   "together.inside": "Organisasi Anda menambahkan orang dari daftarnya. Mintalah diundang berdasarkan nama.",
-  "together.gone": "Tautan ini tidak membuka apa pun lagi. Mintalah tautan baru kepada yang mengirimnya."
+  "together.gone": "Tautan ini tidak membuka apa pun lagi. Mintalah tautan baru kepada yang mengirimnya.",
+  "together.waiting": "Permintaan Anda menyusul setelah jawaban untuk {name}."
 }

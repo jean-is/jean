@@ -13,6 +13,7 @@
   "together.link": "Link",
   "together.copyLink": "Kopiér link",
   "together.people": "Personer i denne samling",
+  "together.peopleTask": "Personer i denne opgave",
   "together.here": "Her nu: {names}",
   "together.you": "(dig)",
   "together.hereNow": "Her nu",
@@ -38,5 +39,6 @@
   "together.stopped": "Samarbejdet om “{title}” er stoppet. Din kopi forbliver din.",
   "together.noPlace": "Samarbejde er ikke tilgængeligt her.",
   "together.inside": "Din organisation tilføjer personer fra sin liste. Bed om at blive inviteret ved navn.",
-  "together.gone": "Dette link åbner ikke længere noget. Bed den, der sendte det, om et nyt."
+  "together.gone": "Dette link åbner ikke længere noget. Bed den, der sendte det, om et nyt.",
+  "together.waiting": "Din forespørgsel kommer efter svaret til {name}."
 }

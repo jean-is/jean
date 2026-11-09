@@ -13,6 +13,7 @@
   "together.link": "Ligame",
   "together.copyLink": "Cupià u ligame",
   "together.people": "E persone di sta cullezzione",
+  "together.peopleTask": "E persone di stu compitu",
   "together.here": "Quì avà : {names}",
   "together.you": "(voi)",
   "together.hereNow": "Quì avà",
@@ -38,5 +39,6 @@
   "together.stopped": "U travagliu inseme nant’à « {title} » hè finitu. A vostra copia ferma a vostra.",
   "together.noPlace": "Travaglià inseme ùn hè micca dispunibule quì.",
   "together.inside": "A vostra urganizazione aghjusta e persone da a so lista. Dumandate ch’omu vi inviti pè u vostru nome.",
-  "together.gone": "Stu ligame ùn apre più nunda. Dumandatene unu novu à quellu chì l’hà mandatu."
+  "together.gone": "Stu ligame ùn apre più nunda. Dumandatene unu novu à quellu chì l’hà mandatu.",
+  "together.waiting": "A vostra dumanda vene dopu à a risposta à {name}."
 }

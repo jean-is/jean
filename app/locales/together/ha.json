@@ -13,6 +13,7 @@
   "together.link": "Hanyar haɗi",
   "together.copyLink": "Kwafi hanyar haɗi",
   "together.people": "Mutanen da ke cikin wannan kundi",
+  "together.peopleTask": "Mutanen da ke cikin wannan ɗawainiya",
   "together.here": "A nan yanzu: {names}",
   "together.you": "(kai)",
   "together.hereNow": "A nan yanzu",
@@ -38,5 +39,6 @@
   "together.stopped": "An daina aiki tare a kan “{title}”. Kwafinka zai ci gaba da zama naka.",
   "together.noPlace": "Ba a iya yin aiki tare a nan.",
   "together.inside": "Ƙungiyarka tana ƙara mutane ne daga jerinta. Roƙi a gayyace ka da sunanka.",
-  "together.gone": "Wannan hanyar haɗin ba ta buɗe komai kuma. Roƙi sabuwa daga wanda ya aiko ta."
+  "together.gone": "Wannan hanyar haɗin ba ta buɗe komai kuma. Roƙi sabuwa daga wanda ya aiko ta.",
+  "together.waiting": "Buƙatarka za ta zo bayan amsar da ake bai wa {name}."
 }

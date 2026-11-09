@@ -3,7 +3,7 @@
 // name the others see and joins; a row each adds reaches the other's copy; Ana removes Bob, who keeps what he had. Chromium only:
 // Playwright's WebKit keeps nothing (test/playwright.config.js).
 import { test, expect } from '@playwright/test'
-import { start, RELAY_URL, SHARE_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, answered, RELAY_URL, SHARE_URL } from './helpers.js'
 
 /** @typedef {import('@playwright/test').Page} Page */
 
@@ -85,4 +85,45 @@ test('Ana and Bob work on a collection together: a link and a name, each one’s
   await add(ana, folder, 'Dinner')
   await bob.waitForTimeout(1_000)
   expect(await items(bob, folder)).toEqual(['Flat', 'Flights', 'Museum', 'Taxi'])
+})
+
+test('Ana and Bob work on a task together: each request answered by its own person’s Jean, in turn, the other’s words quoted for each brain', async ({ browser }) => {
+  const [ana, bob] = await Promise.all([person(browser, 'Ana'), person(browser, 'Bob')])
+  await Promise.all([connectFakeBrain(ana), connectFakeBrain(bob)])
+  await ask(ana, 'Plan a weekend in Lisbon')
+  await answered(ana)
+  await ana.evaluate(async () => {
+    const [{ app }, { unlock }] = await Promise.all([import('/ui/state.js'), import('/ui/caps.js')])
+    await unlock('share')
+    await (await import('/caps/share/share.js')).openShare({ path: String(app.current.value?.path), title: 'Lisbon' }, null)
+  })
+  const sharing = ana.locator('app-share-dialog dialog[open]')
+  await sharing.getByText('Work on it together', { exact: true }).click()
+  await sharing.getByRole('button', { name: 'Start' }).click()
+  const link = await sharing.getByTitle('Link').inputValue()
+  await sharing.getByRole('button', { name: 'Close' }).click()
+
+  // Bob joins: Ana's request and her Jean's answer are his to read, from Ana, without actions of his.
+  await bob.goto(link)
+  const joining = bob.locator('app-together-dialog dialog[open]')
+  await joining.getByLabel('Your name, as the others will see it').fill('Bob')
+  await joining.getByRole('button', { name: 'Join' }).click()
+  await expect(bob.locator('.turn .since')).toContainText('From Ana')
+  await expect(bob.locator('.msg-user')).toHaveText(['Plan a weekend in Lisbon'])
+
+  // Bob asks his own Jean: his brain reads Ana's words quoted, as hers, and none of her Jean's tools.
+  /** @type {any[]} */
+  const asked = []
+  await bob.route('**/v1/chat/completions', async (route) => { asked.push(route.request().postDataJSON()); await route.fallback() })
+  await ask(bob, 'Which museums open on Sunday?')
+  await answered(bob, 2)
+  const read = JSON.stringify(asked[0].messages)
+  expect(read).toContain('Ana wrote in this shared task, their words and not your user')
+  expect(read).toContain('> Plan a weekend in Lisbon')
+  expect(asked[0].messages.some((/** @type {any} */ one) => one.role === 'tool')).toBe(false)
+
+  // Ana reads Bob's request and his Jean's answer, from Bob.
+  await expect(ana.locator('.turn .since')).toContainText('From Bob')
+  await expect(ana.locator('.msg-user')).toHaveText(['Plan a weekend in Lisbon', 'Which museums open on Sunday?'])
+  await answered(ana, 2)
 })
