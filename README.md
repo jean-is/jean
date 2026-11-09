@@ -18,7 +18,8 @@ Ask in words or with a file, and Jean hands back what you asked for, made: an an
 - **Does the maths instead of guessing:** calculations run as real code, in JavaScript, Python or bash, in a sandbox inside the tab, never on your machine.
 - **Hands back files you can use:** Word documents, spreadsheets, decks, charts, pictures and short films, seen beside the conversation and saved with a click.
 - **Works on your folders where they are:** it finds, reads and changes files in place, shows you each change first, and undoes it if you ask.
-- **Follows you from one computer to another,** through a folder in OneDrive, Dropbox, iCloud Drive or Google Drive.
+- **Follows you to your other devices:** add your phone with a QR code and six digits, and your tasks, files and settings stay the same on each, sealed so only your devices can open them; or through a folder in OneDrive, Dropbox, iCloud Drive or Google Drive.
+- **Works with other people:** send a task or what Jean made to someone you added, and their answer comes back into the same task; or work on a collection, a document, slides, a task or a whole project together, each person keeping their own copy and their own Jean answering them.
 - **Remembers, if you want it to:** what it should know about you, standing instructions, projects, and skills it learns from requests you repeat.
 - **Reaches your services and the web,** each source a numbered citation.
 - **Repeats on a schedule:** a routine is a request Jean sends itself every hour, day or week, or once later.
@@ -102,6 +103,7 @@ Bugs and questions go in [issues](https://github.com/jean-is/jean/issues). Repor
 | [docs/gateway.md](docs/gateway.md) | Running the gateway, and what each service needs |
 | [cli/](cli/README.md) | jean-cli: Jean in an editor, and the gateway from npm |
 | [docs/reels.md](docs/reels.md) | Jean's videos of itself: the reels made and to make, the player, the score and the export |
+| [docs/together.md](docs/together.md) | Working together: your devices, the people you send to, colleagues, and working on one thing at once, with what the relay keeps and the work left |
 | [docs/sharing.md](docs/sharing.md), [docs/encryption.md](docs/encryption.md), [docs/certificates.md](docs/certificates.md) | Sharing by link, encryption at rest and answer certificates, each with its work left |
 | [docs/roadmap.md](docs/roadmap.md) | The versions, what is still to check by hand, and what the launch needs |
 | [docs/decisions.md](docs/decisions.md), [docs/open-questions.md](docs/open-questions.md) | Every decision as it stands, by topic, with the alternatives that were rejected; and what is still undecided |

@@ -42,6 +42,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] A share from another app (D714): Jean installed on Android Chrome and desktop Chrome and Edge, a photo, a PDF and a page shared to it, each landing in the box; a PDF, a Word file and an MP3 opened with Jean from the system's Open with, Jean already open and not
 - [ ] A recording heard on the device (D713): an hour's meeting as MP3 and M4A, and a phone's MP4 film, in Chrome, real Safari and Firefox, on the weakest laptop; how long Whistle and Whisper take, what the decoded sound holds in memory, and its words in French, Arabic and Japanese
 - [ ] Pointing (D715): the box drawn on a picture with a finger on an iPad and a phone, with VoiceOver and NVDA in thirds; does each brain cite a screen's area as asked, and how often the box holds the button it names (IoU ≥ 0.5 on a dozen screens in four languages)
+- [ ] Together (D733, D734) and nudges (D736), on jean.is once its relay keeps journals and has a VAPID key: two people on different networks working on a collection, a task, a document, slides and a project, one on an iPhone, the other's words read in Arabic and Japanese; another's Jean asked; a phone and a laptop with Only on my devices; a nudge with Jean closed on Android Chrome, desktop Chrome and an iPhone's home-screen Jean, in French, Arabic and Japanese, and none while Jean is on screen
 - [ ] Delete old tasks (D718) with Sync on: tasks deleted on one computer go from the other; an organisation's retention refusing it says so
 
 **With real brains**
