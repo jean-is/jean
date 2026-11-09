@@ -73,12 +73,16 @@ function step() {
   return null
 }
 
-/** At work, colleagues found on the organisation's list by a few words, each kept with Add (D731). */
+/** An invitation from the person's own mail, to the address searched for when it is one, which their link brings in once they sign in. @param {string} asked @param {string} link */
+const mailTo = (asked, link) => `mailto:${/^[^\s@]+@[^\s@]+$/.test(asked) ? encodeURIComponent(asked) : ''}?subject=${encodeURIComponent(t('people.mailSubject', { name: BRAND.name }))}&body=${encodeURIComponent(t('people.mailBody', { name: BRAND.name, link }))}`
+
+/** At work, colleagues found on the organisation's list by a few words, each kept with Add, and someone not on it invited by email (D731). */
 function finder() {
   const now = finding.value, kept = new Set(groups.value.map((one) => one.account))
   return html`<form class="stack" role="search" @submit=${(/** @type {SubmitEvent} */ e) => { e.preventDefault(); findColleagues(valueIn(e, 'q')) }}><label for="people-find">${t('people.find')}</label>
     <div class="people-field"><input id="people-find" name="q" type="search" required minlength="3" dir="auto" autocomplete="off" @keydown=${composing}><button class="button">${t('people.search')}</button></div></form>
     <p class="hint" role="status">${now.wrong ? t('people.why.relay', { name: BRAND.name }) : now.found && !now.found.length ? t('people.nobody', { name: BRAND.name }) : ''}</p>
+    ${now.found && !now.found.length && now.link ? html`<div class="row"><a class="button" href=${mailTo(now.asked, now.link)}>${icons.share} ${t('people.inviteMail')}</a></div>` : nothing}
     ${now.found?.length ? html`<ul class="list">${now.found.map((one) => html`<li><span class="item-text"><strong dir="auto">${one.name}</strong><small dir="ltr">${one.account}</small></span>
       <button class="button subtle" ?disabled=${kept.has(one.account)} @click=${() => addColleague(one)}>${t(kept.has(one.account) ? 'people.kept' : 'people.keep')}</button></li>`)}</ul>` : nothing}`
 }

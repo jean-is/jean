@@ -71,6 +71,29 @@ test('at work, a colleague found on the organisation’s list is added with no m
   await expect(bob.locator('.msg-user')).toHaveText('Draft the budget')
 })
 
+test('at work, a colleague not on the list is invited from the person’s own mail; signed in from its link, each has the other', async ({ browser }) => {
+  const who = named(), carol = { sub: `${who.bob.sub}-carol`, name: 'Carol Petit', preferred_username: who.bob.preferred_username.replace('bob', 'carol') }
+  const ana = await colleague(browser, who.ana)
+  const settings = await openSettings(ana, 'People')
+  await settings.getByLabel('Find a colleague').fill(carol.preferred_username)
+  await settings.getByRole('button', { name: 'Search' }).click()
+  // An email from her own mail app, to the address she searched for, with a link that brings Carol in.
+  const mail = new URL(String(await settings.getByRole('link', { name: 'Invite them by email' }).getAttribute('href')))
+  expect([mail.protocol, decodeURIComponent(mail.pathname), mail.searchParams.get('subject')]).toEqual(['mailto:', carol.preferred_username, 'Let’s send each other tasks with Jean'])
+  const link = String(/https?:\/\/\S+/.exec(mail.searchParams.get('body') ?? '')?.[0])
+  expect(link).toMatch(/#\/meet\/[\w-]{22}$/)
+  // Carol opens it at her first visit, signs in to the organisation, and comes back to it.
+  const page = await (await browser.newContext()).newPage()
+  await fakeGateway(page, await fakeIssuer(page, { claims: carol }))
+  await withPolicy(page, { ...POLICY, urls: { relay: RELAY_URL }, capabilities: { preUnlock: ['people'] } })
+  await page.goto(link)
+  await expect(page.locator('app-settings dialog[open]')).toContainText('Ana Martín is in your people now. You can send each other tasks.')
+  // Ana's Jean takes her first letter through the list, and says so.
+  await expect(ana.getByText('Carol Petit uses Jean now. You can send each other tasks.')).toBeVisible()
+  await expect.poll(() => groupsOf(ana)).toEqual([{ name: 'Carol Petit', account: carol.preferred_username, devices: 1, asking: false }])
+  await expect.poll(() => groupsOf(page)).toEqual([{ name: 'Ana Martín', account: who.ana.preferred_username, devices: 1, asking: false }])
+})
+
 test('the colleague finder reads in Arabic and Japanese', async ({ browser }) => {
   for (const lang of ['ar', 'ja']) {
     const page = await colleague(browser, named().ana, lang)

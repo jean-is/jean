@@ -6,7 +6,7 @@
 import { html, nothing } from 'lit-html'
 import { signal, computed, effect } from '@preact/signals-core'
 import { register, unlock } from '../../ui/caps.js'
-import { app, pairs, refreshConversations, openConversation, conversationOf, keepRecords } from '../../ui/state.js'
+import { app, pairs, refreshConversations, openConversation, conversationOf, keepRecords, notify } from '../../ui/state.js'
 import { act } from '../../ui/acts.js'
 import { callsIn, filesMade, metaRecord, requestsOf } from '../../core/events.js'
 import { filesIn } from '../../ui/export.js'
@@ -49,7 +49,7 @@ export const [arrivals, later] = [signal(/** @type {Awaited<ReturnType<typeof ar
 /** The people met as one each, a colleague's devices together by their account (D731), with whom of each can be sent to and whether one of theirs is held. */
 export const groups = computed(() => [...people.value.reduce((all, one) => all.set(one.account ?? one.fp, [...all.get(one.account ?? one.fp) ?? [], one]), /** @type {Map<string, typeof people.value>} */ (new Map())).values()]
   .map((all) => ({ ...all[0], fps: all.map((one) => one.fp), asking: all.some((one) => one.asking), able: all.filter((one) => !one.waiting && !one.again && !one.asking).map((one) => one.fp) })))
-/** Colleagues found on the organisation's list: what was asked, who came of it, and whether it went wrong. @type {import('@preact/signals-core').Signal<{ asked: string, found?: import('./colleagues.js').Listed[], wrong?: boolean }>} */
+/** Colleagues found on the organisation's list: what was asked, who came of it, the link that invites someone not on it, and whether it went wrong. @type {import('@preact/signals-core').Signal<{ asked: string, found?: import('./colleagues.js').Listed[], link?: string, wrong?: boolean }>} */
 export const finding = signal({ asked: '' })
 
 await Promise.all([useStrings('people'), styleSheet(new URL('people.css', import.meta.url))])
@@ -103,7 +103,9 @@ async function watch() {
     for (const { bytes } of messages) {
       // A colleague who writes first is looked up on the list (D731).
       if (colleagues) await colleague.introduced(ctx, person, bytes).catch(warn)
-      if ((await received(ctx, bytes).catch(() => null))?.kind) await refresh()
+      const got = await received(ctx, bytes).catch(() => null)
+      if (got?.kind) await refresh()
+      if (got?.kind === 'joined') notify(t('people.joined', { name: people.peek().find((one) => one.fp === got.from)?.name ?? '', app: BRAND.name }))
     }
   } })
   controller.signal.addEventListener('abort', stop)
@@ -147,18 +149,18 @@ async function answer(ctx, one, signal) {
   }
 }
 
-/** Listed among colleagues on the organisation's relay, at most daily and as soon as the person mailbox changed (D731). @param {import('./flow.js').Person} person */
-async function listOn(person) {
+/** Listed among colleagues on the organisation's relay, at most daily, as soon as the person mailbox changed, or now (D731). @param {import('./flow.js').Person} person */
+async function listOn(person, now = false) {
   const [kept, at] = [mine('app.listed'), Date.now()], last = JSON.parse(localStorage.getItem(kept) ?? 'null')
-  const proof = last?.mailbox === person.mailbox && at - last.at < 864e5 ? null : await (await import('../signin/signin.js')).idToken()
+  const proof = !now && last?.mailbox === person.mailbox && at - last.at < 864e5 ? null : await (await import('../signin/signin.js')).idToken()
   if (proof) await colleague.listed(relayOf(), person, proof).then(() => localStorage.setItem(kept, JSON.stringify({ mailbox: person.mailbox, at })))
 }
 
 /** Colleagues found by a few words, three letters at least. @param {string} asked */
 export async function findColleagues(asked) {
   finding.value = { asked }
-  const found = await colleague.find(relayOf(), await me(), new URLSearchParams({ q: asked }).toString()).catch(() => null)
-  if (finding.peek().asked === asked) finding.value = found ? { asked, found } : { asked, wrong: true }
+  const person = await me(), found = await colleague.find(relayOf(), person, new URLSearchParams({ q: asked }).toString()).catch(() => null)
+  if (finding.peek().asked === asked) finding.value = found ? { asked, found, link: `${location.origin}${location.pathname}#/meet/${person.mailbox}` } : { asked, wrong: true }
 }
 /** A colleague found kept, each of their devices pinned. @param {import('./colleagues.js').Listed} one */
 export const addColleague = async (one) => { await colleague.keep(await contextOf(), one); await refresh() }
@@ -213,10 +215,27 @@ export const rename = async (fps, name) => { await setSecrets(app.fs, Object.fro
 /** Someone forgotten, on every device of the person, and told so, on each device of a colleague's. @param {string[]} fps */
 export const remove = async (fps) => { const ctx = await contextOf(); for (const fp of fps) await forget(ctx, fp); await refresh() }
 
-/** The link that came (`#/meet/…`, the router's), asked about on People's page, refused there where this Jean meets no one. */
+/**
+ * A colleague's invitation, `#/meet/<their person mailbox>` (D731): its sender looked up on the list once this device is listed, kept as a
+ * colleague found is, and told on each of their devices that the person uses Jean now. @param {string} mailbox
+ */
+async function joined(mailbox) {
+  accepting.value = { step: 'waiting' }
+  const [ctx, person] = [await contextOf(), await me()]
+  await listOn(person, true)
+  const [one] = await colleague.find(relayOf(), person, `mailbox=${mailbox}`)
+  if (!one) throw Object.assign(new Error('No one at the organisation reads there.'), { reason: 'link' })
+  await colleague.keep(ctx, one)
+  await refresh()
+  for (const fp of groups.peek().find((group) => group.account === one.account)?.able ?? []) await sendTo(ctx, fp, {}, 'joined').catch(warn)
+  accepting.value = { step: 'done', name: one.name }
+}
+
+/** The link that came (`#/meet/…`, the router's), asked about on People's page, refused there where this Jean meets no one; a colleague's taken at once. */
 export function fromAddress() {
-  const link = location.href
+  const [link, mailbox] = [location.href, /^#\/meet\/([\w-]{22})$/.exec(location.hash)?.[1]]
   history.replaceState(null, '', `${location.pathname}#/settings/people`)
+  if (colleagues && mailbox) return void joined(mailbox).catch((error) => { warn(error); accepting.value = { step: 'failed', reason: reasonOf(error) } })
   accepting.value = !offered() ? { step: 'failed', reason: child ? 'child' : 'relay' } : parseLink(link, 'meet') ? { step: 'ask', link } : { step: 'failed', reason: 'link' }
 }
 

@@ -250,8 +250,9 @@ export async function arrivalsOf(ctx) {
 
 /**
  * A value sent to someone met, or an answer back on the thread they sent, sealed to them and posted where they read: refused for someone who
- * never answered, gone, or past what the relay carries. Its size. @param {Context} ctx @param {string} fp
- * @param {{ title: string, words: string, value: object, thread: { task: string, id: string } }} body @param {'send' | 'reply'} [kind]
+ * never answered, gone, or past what the relay carries; or, `joined`, word to a colleague who invited the person that they use Jean now
+ * (./colleagues.js). Its size. @param {Context} ctx @param {string} fp
+ * @param {{ title: string, words: string, value: object, thread: { task: string, id: string } } | {}} body @param {'send' | 'reply' | 'joined'} [kind]
  */
 export async function sendTo(ctx, fp, body, kind = 'send') {
   const [me, held] = [await personOf(ctx), await ctx.get(metId(fp))]

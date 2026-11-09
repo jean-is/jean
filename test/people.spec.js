@@ -146,7 +146,7 @@ test('an answer goes back on its thread: only what Bob added, from his task’s 
       envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: 'Here is the plan.' } }, 0)])
     await refreshConversations()
     await openConversation(path)
-    await sendIt(people.value[0].fp, { path, title: 'Plan the trip' })
+    await sendIt([people.value[0].fp], { path, title: 'Plan the trip' })
     return path
   })
   await bob.locator('.people-card').getByRole('button', { name: 'Open' }).click()
