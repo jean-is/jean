@@ -3,7 +3,7 @@
 // before it starts and again before the profile that came opens; once paired, each device listens on its mailbox for the devices the
 // profile knows, settings and keys that follow the person, a task handed over, or its own removal. The steps are pure in ./pair.js, what
 // crosses in ./bundle.js, and what a device keeps and does with what comes in ./flow.js.
-import { html, nothing } from 'lit-html'
+import { html, svg, nothing, render } from 'lit-html'
 import { signal, effect, computed } from '@preact/signals-core'
 import { register, unlock } from '../../ui/caps.js'
 import { app, changeSettings, rememberUnlocked, refreshConversations, refreshProjects, brainLabel, notify, pairs } from '../../ui/state.js'
@@ -12,7 +12,7 @@ import { host } from '../../ui/host.js'
 import { handheld } from '../../ui/model.js'
 import { lazyPage } from '../../ui/lazy-page.js'
 import { styleSheet } from '../../ui/sheet.js'
-import { icons } from '../../ui/menu-icons.js'
+import { icon, icons } from '../../ui/menu-icons.js'
 import { ghost } from '../../ui/map.js'
 import { t, useStrings, useLocale, relativeTime, intlLocales } from '../../core/i18n.js'
 import { switchTo, initialOf, whoOf } from '../../ui/curtain.js'
@@ -62,6 +62,8 @@ export const quietOf = (/** @type {Device} */ one) => Date.now() - Math.max(seen
 export const lastSeen = (one) => (seen.value[one.id] ? t('devices.seen', { when: relativeTime(Math.min(seen.value[one.id], Date.now())) }) : t('devices.added', { date: new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'medium' }).format(new Date(one.createdAt)) }))
 /** A device's picture, from the system its name reads (./flow.js's deviceName()): a phone, a tablet, or a computer. @param {string} name */
 export const kindOf = (name) => (/^(iPhone|Android)\b/.test(name) ? icons.phone : /^iPad\b/.test(name) ? icons.tablet : icons.computer)
+/** Join another device: an arrow going into a phone through its open side, the one a line starts on. */
+export const joinIcon = icon(svg`<path d="M11.5 6.5v-1A2.5 2.5 0 0 1 14 3h4.5A2.5 2.5 0 0 1 21 5.5v13a2.5 2.5 0 0 1-2.5 2.5H14a2.5 2.5 0 0 1-2.5-2.5v-1M15 18h2.5M3 12h11.5M11 8.5l3.5 3.5-3.5 3.5"/>`, 'flip-rtl')
 const kept = signal(/** @type {typeof import('./store.js').state | null} */ (null))
 /** The store's module, its state followed here once it is loaded, whichever way: rounds started, a device admitted, a message heard. */
 const storeOf = () => import('./store.js').then((store) => { kept.value = store.state; return store })
@@ -514,11 +516,37 @@ const others = () => devices.value.filter((one) => one.id !== own.value)
 /** What Your data says of them: what the store wants a look for, as Your devices says it, else the first device two weeks unheard, its name set apart. */
 const said = () => ((now, quiet) => (trouble() ? t(`devices.store.${now.gone ? 'gone' : now.room ? 'room' : now.unreached ? 'unreached' : 'full'}`)
   : quiet && t('devices.lastSeen', { device: `\u2068${quiet.name}\u2069`, when: relativeTime(Math.min(seen.value[quiet.id] ?? Date.parse(quiet.createdAt), Date.now())) })))(kept.value?.value ?? {}, others().find(quietOf))
-/** Your devices opened, then what comes next there (Add a device's first step). @param {() => unknown} [then] */
-const opening = (then) => import('../../ui/dialogs.js').then((dialogs) => { dialogs.openSettings('devices'); then?.() })
+/** Your devices opened, then what comes next there (Add a device's first step, or its page for joining). @param {(dialogs: typeof import('../../ui/dialogs.js')) => unknown} [then] */
+const opening = (then) => import('../../ui/dialogs.js').then((dialogs) => { dialogs.openSettings('devices'); then?.(dialogs) })
 /** The person's other devices on a map (ui/map.js), past two a second standing for the rest, moving while the store keeps them in step; while this one is alone, the one to add. */
 export const places = () => ((rest, flow) => (!rest.length ? (app.ephemeral.value ? undefined : ghost(() => opening(start))) : (rest.length > 2 ? [rest[0], null] : rest).map((one) => /** @type {import('../../ui/map.js').Place} */ (one
   ? { side: 'end', icon: kindOf(one.name), name: one.name, sub: lastSeen(one), state: quietOf(one) ? 'wait' : 'ok', flow } : { side: 'end', icon: icons.devices, name: t('devices.more', { count: rest.length - 1 }), flow }))))(others(), stored.value && Boolean(kept.value?.value.at) && !trouble())
+
+/** Each time the popover opens, for its times to be now's. */
+const popped = signal(0)
+/**
+ * What Your devices' icon opens, over the person's row as their menu is (D729). Paired: how the devices stand, this one first, past four the
+ * rest as a count, a device two weeks unheard as a state that waits; under the title, what the store wants a look for, that it syncs, or
+ * when it last did. Alone: what pairing brings, drawn, this device and the one to add, in the page's own words. Then Add a device, and Your
+ * devices, or, alone, Join another device, which leads to its page for joining. @param {'drawer' | 'list'} where
+ */
+function pop(where) {
+  void popped.value
+  const [id, now, list] = [`devices-${where}`, kept.value?.value ?? {}, [...devices.value].sort((x, y) => Number(y.id === own.value) - Number(x.id === own.value))]
+  const [alone, shown, state] = [list.length < 2, list.length > 4 ? list.slice(0, 3) : list, trouble() ? 'is-trouble' : now.moving ? 'is-moving' : '']
+  const line = trouble() ? said() : now.moving ? t('devices.moving') : stored.value && now.at ? t('devices.store.synced', { when: relativeTime(Math.min(now.at, Date.now())) }) : ''
+  const go = (/** @type {unknown} */ icon, /** @type {string} */ label, /** @type {() => unknown} */ act) => html`<li><button type="button" popovertarget=${id} popovertargetaction="hide" @click=${act}>${icon}${label}</button></li>`
+  return html`<div id=${id} class="menu devices-menu" popover role="dialog" aria-labelledby=${`${id}-title`} @beforetoggle=${(/** @type {ToggleEvent} */ e) => { if (e.newState === 'open') popped.value++ }}
+    @toggle=${(/** @type {ToggleEvent} */ e) => e.newState === 'open' && /** @type {HTMLElement} */ (e.target).querySelector('button')?.focus()}>${alone
+      ? html`<div class="devices-pitch"><span class="devices-drawing" aria-hidden="true"><span>${handheld() ? icons.phone : icons.computer}</span><span>${handheld() ? icons.computer : icons.phone}</span></span>
+        <strong id=${`${id}-title`}>${t('cap.devices.name')}</strong><p>${t(stored.value ? 'devices.lineStore' : 'devices.line')}</p></div>`
+      : html`<div class="devices-head"><strong id=${`${id}-title`}>${t('cap.devices.name')}</strong>${line ? html`<small class=${state}>${line}</small>` : nothing}</div>
+        <ul class="devices-list">${shown.map((one) => html`<li class=${one.id === own.value ? 'is-here' : ''}>${kindOf(one.name)}<span><strong dir="auto">${one.name}</strong>
+          <small class=${one.id !== own.value && quietOf(one) ? 'is-wait' : ''}>${one.id === own.value ? t('devices.this') : lastSeen(one)}</small></span></li>`)}
+        ${shown.length < list.length ? html`<li>${icons.devices}<span><small>${t('devices.more', { count: list.length - shown.length })}</small></span></li>` : nothing}</ul>`}
+    <hr><ul>${go(icons.plus, t('devices.add'), () => opening(start))}${alone ? go(joinIcon, t('devices.joinOther'), () => opening((dialogs) => dialogs.goPage('devices', 'join')))
+      : go(icons.devices, t('devices.see'), () => opening())}</ul></div>`
+}
 
 /** A task handed to another device, and how it went, said. @param {string} path @param {Device} to */
 const handOver = (path, to) => sendTask(path, to.id).then((said) => notify(t(`devices.task.${said}`, { device: to.name }), said === 'sent' ? undefined : { alert: true }),
@@ -546,19 +574,21 @@ if (offered()) {
       live.find((device) => device.id === id) ?? [...live].sort((x, y) => (x.id < y.id ? -1 : 1))[0]))(devices.value) },
     // A project switched to kept on this device leaves the store, where there is one, asked first (caps/projects).
     keep: { at: 1, draw: () => null, on: () => stored.value, keep: (/** @type {string} */ dir) => import('./store.js').then((store) => store.withdraw(dir)) },
-    // In the person's menu (D729), Your devices: syncing while bytes go up or come down, or needing a look when the store does (full, gone,
-    // this device out of room, the relay out of reach), its page saying what; once paired, how many there are.
-    profile: { at: 1, draw: (/** @type {string} */ menu) => html`<button type="button" popovertarget=${menu} popovertargetaction="hide" @click=${() => opening()}>${icons.devices}${t(kept.value?.value.moving ? 'devices.syncing' : trouble() ? 'devices.trouble' : 'cap.devices.name')}
-      ${devices.value.length > 1 ? html`<span class="menu-value">${new Intl.NumberFormat(intlLocales()).format(devices.value.length)}</span>` : nothing}</button>` },
+    // At the end of the person's row, at the drawer's foot (D729), Your devices by its icon: breathing while bytes go up or come down, with a
+    // dot while the store wants a look (full, gone, this device out of room, the relay out of reach), its tip saying so; it opens pop().
+    foot: { at: 1, draw: (/** @type {'drawer' | 'list'} */ where) => { const [moving, wants] = [kept.value?.value.moving, trouble()]
+      return html`<button type="button" class="icon-button subtle${moving ? ' devices-syncing' : ''}${wants ? ' devices-trouble' : ''}" popovertarget=${`devices-${where}`}
+        aria-label=${t(moving ? 'devices.syncing' : wants ? 'devices.trouble' : 'cap.devices.name')}>${icons.devices}</button>` } },
   } })
+  // What it opens, for each place the row is drawn, outside the row as the person's menu is, so that no look takes it for the drawer's.
+  const pops = document.body.appendChild(Object.assign(document.createElement('div'), { className: 'devices-pops' }))
+  effect(() => { render(html`${pop('drawer')}${pop('list')}`, pops) })
   // The keys, where this device's identity and the devices it knows are kept too, changed in any tab, this one's as well.
   app.fs.watch?.((path) => { if (path === '.secrets/keys.json') { refresh(); noticed().catch(warn) } }, { all: true })
   // Back online, or in sight again, what waits goes.
   addEventListener('online', () => noticed(true).catch(warn))
   document.addEventListener('visibilitychange', () => document.visibilityState === 'visible' && noticed(true).catch(warn))
   effect(() => { void app.settings.value; noticed().catch(warn) })
-  // A dot on the person's initial while the store wants a look (./devices.css), which their menu's row says in words.
-  effect(() => { document.documentElement.toggleAttribute('data-devices-trouble', trouble()) })
   refresh()
   listening().catch(warn)
 }

@@ -222,11 +222,17 @@ test('a device added: six digits typed on the one that has the Jean, and the oth
   await settings.getByRole('button', { name: 'Done' }).click()
   await expect(settings.locator('.devices-cards > li')).toHaveCount(2)
   await expect(settings.locator('.devices-cards > li').first()).toContainText('This device, added')
-  // B's, from the person's menu, where its row counts them, no icon left at the row's end (D729).
-  await expect((await openTasks(b)).locator('.profile > .icon-button')).toHaveCount(0)
-  const menu = await openProfile(b)
-  await expect(menu.getByRole('button', { name: /^Your devices/ })).toHaveText(/^Your devices\s*2$/)
-  await menu.getByRole('button', { name: /^Your devices/ }).click()
+  // B's, from its icon at the end of the person's row, whose popover lists both, this one first, the person's menu no longer holding it (D729).
+  await expect((await openProfile(b)).getByRole('button', { name: /^Your devices/ })).toHaveCount(0)
+  await b.keyboard.press('Escape')
+  await (await openTasks(b)).locator('.profile').getByRole('button', { name: 'Your devices' }).click()
+  const pop = b.getByRole('dialog', { name: 'Your devices' })
+  await expect(pop.locator('.devices-list > li')).toHaveCount(2)
+  await expect(pop.locator('.devices-list > li').first()).toHaveText(/This device$/)
+  await expect(pop.locator('.devices-list > li').last().locator('small')).toHaveText(/^(Seen|Added) /)
+  await expect(pop.getByRole('button', { name: 'Add a device' })).toBeFocused()
+  await pop.getByRole('button', { name: 'See your devices' }).click()
+  await expect(pop).toBeHidden()
   const there = b.locator('app-settings dialog[open]')
   await expect(there.locator('.data-head h2')).toHaveText('Your devices')
   await expect(there.locator('.devices-cards > li')).toHaveCount(2)
@@ -537,7 +543,7 @@ test('a link opened does nothing until Bring it here, and the profile that comes
   await expect(flow.locator('.devices-digits')).toHaveCount(0)
   // Cancelled, nothing was sent: the same link, pasted later in the page for joining, which B, alone, leads to, and joined, still works.
   await flow.getByRole('button', { name: 'Cancel' }).click()
-  await b.locator('app-settings').getByRole('button', { name: 'Bring Jean here from another device' }).click()
+  await b.locator('app-settings').getByRole('button', { name: 'Join another device' }).click()
   await expect(b.locator('app-settings .data-head h2')).toBeFocused()
   await expect(b.locator('app-settings .data-head h2')).toHaveText('Bring your Jean here')
   await expect(b).toHaveURL(/#\/settings\/devices\/join$/)
@@ -743,26 +749,29 @@ test('a task made on one device shows on the other through the store, and the re
   await b.context().close()
 })
 
-test('what one device sends reaches the other without waiting for its minute, told by its mailbox, whose Your devices row says it syncs meanwhile, and says when it last synced', async ({ page, browser }) => {
+test('what one device sends reaches the other without waiting for its minute, told by its mailbox, whose Your devices breathes meanwhile, and says when it last synced', async ({ page, browser }) => {
   await deviceA(page)
   const b = await device(browser)
   // B's round every minute never comes, from the page the pairing opens on: what A sends reaches it only by being told.
   await b.context().addInitScript(() => { const every = setInterval; Object.assign(window, { setInterval: (/** @type {() => void} */ run, /** @type {number} */ ms) => (ms === 60_000 ? 0 : every(run, ms)) }) })
   await pair(page, b)
   await closeSettings(page)
-  // The person's menu holds its row whether or not it is open (D729).
-  const row = (await openTasks(b)).locator('.profile-menu').getByRole('button', { name: /^Your devices/, includeHidden: true })
-  await expect(row).toHaveText(/^Your devices\s*2$/)
+  const icon = (await openTasks(b)).locator('.profile').getByRole('button', { name: /^Your devices/ })
+  await expect(icon).toHaveAccessibleName('Your devices')
   // B's rounds as it opened, and those the files they brought called for, over: from here, only being told brings it another.
   await expect.poll(() => b.evaluate(async () => Date.now() - ((await import('/caps/devices/store.js')).state.value.at ?? Date.now())), { timeout: 30_000 }).toBeGreaterThan(4_000)
-  await b.evaluate(() => new MutationObserver(() => { if ([...document.querySelectorAll('.profile-menu button')].some((one) => one.textContent?.includes('Your devices · syncing'))) Object.assign(window, { breathed: true }) })
-    .observe(document.body, { subtree: true, childList: true, characterData: true }))
+  await b.evaluate(() => new MutationObserver(() => { if (document.querySelector('.profile .devices-syncing[aria-label="Your devices · syncing"]')) Object.assign(window, { breathed: true }) })
+    .observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ['class'] }))
   const path = await taskOn(page, TITLE, 'Plan my trip to Lyon by the sea')
   await expect.poll(async () => { await storeRound(page); return inStore(page) }, { timeout: 20_000 }).toContain(path)
   // Told at once, or 30 seconds after A last told it, when A's own first round, which sent all it had, told it then.
   await expect.poll(() => read(b, path), { timeout: 40_000 }).toBe(await read(page, path))
   expect(await b.evaluate(() => /** @type {any} */ (window).breathed)).toBe(true)
-  await expect(row).toHaveText(/^Your devices\s*2$/)
+  await expect(icon).toHaveAccessibleName('Your devices')
+  // Its popover says when, under its title, as its page does.
+  await icon.click()
+  await expect(b.getByRole('dialog', { name: 'Your devices' }).locator('.devices-head small')).toHaveText(/^Last synced: /)
+  await b.keyboard.press('Escape')
   await expect((await devicesPage(b)).locator('.devices-synced')).toHaveText(/^Last synced: /)
   await b.context().close()
 })
@@ -894,7 +903,7 @@ test('where nothing is kept, a device is neither added nor joined, and the page 
   await settings.getByRole('button', { name: 'Add a device' }).click()
   await expect(settings.locator('.devices-wrong')).toHaveText('This browser can’t keep Jean’s files here, in a private window for instance.')
   await settings.locator('.devices-actions').getByRole('button', { name: 'Close' }).click()
-  await settings.getByRole('button', { name: 'Bring Jean here from another device' }).click()
+  await settings.getByRole('button', { name: 'Join another device' }).click()
   await settings.getByRole('textbox', { name: 'A link from your other device' }).fill(`http://127.0.0.1:4180/#/pair/${'A'.repeat(43)}.${'A'.repeat(22)}`)
   await settings.getByRole('button', { name: 'Join' }).click()
   await expect(settings.locator('.devices-wrong')).toHaveText('This browser can’t keep Jean’s files here, in a private window for instance.')
@@ -912,7 +921,8 @@ test('a fresh Jean offers, from its welcome, to bring Jean from another device, 
   await expect(b).toHaveURL(/#\/settings\/devices\/join$/)
   // Back on Your devices, the keyboard on what led to the page; no row of it left in Your data, whose line offers to add a device.
   await settings.locator('.back').click()
-  await expect(settings.getByRole('button', { name: 'Bring Jean here from another device' })).toBeFocused()
+  await expect(settings.getByRole('button', { name: 'Join another device' })).toBeFocused()
+  await expect(settings.locator('.row:has(#devices-add) > .button[data-page="join"] svg')).toBeVisible()
   await taskOn(b, TITLE, 'Plan my trip to Lyon by the sea')
   await settings.locator('.settings-nav button', { hasText: 'Your data' }).click()
   await expect(settings.locator('.lede strong')).toHaveText('It is only here: nothing is backed up yet.')
@@ -924,6 +934,15 @@ test('a fresh Jean offers, from its welcome, to bring Jean from another device, 
   // Found now, and the room holding a task, the welcome no longer offers it.
   await closeSettings(b)
   await expect(line).toHaveCount(0)
+  // While this device is alone, the icon at the end of the person's row opens what pairing brings, the keyboard on Add a device (D729).
+  await (await openTasks(b)).locator('.profile').getByRole('button', { name: 'Your devices' }).click()
+  const pop = b.getByRole('dialog', { name: 'Your devices' })
+  await expect(pop.locator('.devices-pitch p')).toHaveText('Your brains, settings and projects on all your devices. A task stays where you did it, unless you send it over.')
+  await expect(pop.getByRole('button', { name: 'Add a device' })).toBeFocused()
+  await pop.getByRole('button', { name: 'Join another device' }).click()
+  await expect(pop).toBeHidden()
+  await expect(settings.locator('.data-head h2')).toHaveText('Bring your Jean here')
+  await expect(b).toHaveURL(/#\/settings\/devices\/join$/)
   await b.context().close()
 })
 
@@ -952,5 +971,9 @@ test('Your data draws where things are: a dashed phone, before Your devices is f
   await later.locator('.data-fix').getByRole('button', { name: 'See your devices' }).click()
   await expect(later.locator('.data-head h2')).toHaveText('Your devices')
   await expect(later.locator('.devices-cards > li').nth(1).locator('small.is-wait')).toBeVisible()
+  // The icon's popover marks it so too.
+  await closeSettings(page)
+  await (await openTasks(page)).locator('.profile').getByRole('button', { name: 'Your devices' }).click()
+  await expect(page.getByRole('dialog', { name: 'Your devices' }).locator('.devices-list > li').nth(1).locator('small.is-wait')).toBeVisible()
   await b.context().close()
 })

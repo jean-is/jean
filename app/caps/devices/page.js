@@ -17,7 +17,7 @@ import { map } from '../../ui/map.js'
 import { initialOf } from '../../ui/curtain.js'
 import { t, tParts, intlLocales, formatBytes, relativeTime } from '../../core/i18n.js'
 import { BRAND } from '../../brand.js'
-import { adding, joining, devices, own, stored, start, passed, confirm, cancel, join, trusted, removeDevice, kindOf, lastSeen, quietOf, places } from './devices.js'
+import { adding, joining, devices, own, stored, start, passed, confirm, cancel, join, trusted, removeDevice, kindOf, joinIcon, lastSeen, quietOf, places } from './devices.js'
 import { state as store, again } from './store.js'
 
 // The head and the back button Your data's pages have.
@@ -92,15 +92,15 @@ function step() {
 
 /**
  * At rest: the devices as cards, this one first, a device two weeks unheard as a state that waits; what they keep in common and what each
- * keeps; Add a device, and, while this one is alone, the way to its page for joining another instead.
+ * keeps; Add a device, and beside it, while this one is alone, Join another device, which leads to its page for joining.
  */
 function rest() {
   const list = [...devices.value].sort((x, y) => Number(y.id === own.value) - Number(x.id === own.value))
   return html`${list.length ? html`<ul class="devices-cards">${list.map((one) => html`<li class=${one.id === own.value ? 'is-here' : ''}>${kindOf(one.name)}<strong dir="auto">${one.name}</strong>
       ${one.id === own.value ? html`<small>${t('devices.here', { date: new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'medium' }).format(new Date(one.createdAt)) })}</small>`
         : html`<small class=${quietOf(one) ? 'data-state is-wait' : ''}>${lastSeen(one)}</small><button class="button subtle danger" @click=${() => ask(one)}>${t('action.remove')}</button>`}</li>`)}</ul>` : nothing}
-    ${common()}<p class="hint">${t('devices.own')}</p><div class="row"><button id="devices-add" class="button primary" @click=${start}>${icons.plus} ${t('devices.add')}</button></div>
-    ${list.length > 1 ? nothing : html`<p><button class="link-button" data-page="join" @click=${() => goPage('devices', 'join')}>${t('devices.bring', { name: BRAND.name })}</button></p>`}`
+    ${common()}<p class="hint">${t('devices.own')}</p><div class="row"><button id="devices-add" class="button primary" @click=${start}>${icons.plus} ${t('devices.add')}</button>
+      ${list.length > 1 ? nothing : html`<button class="button" data-page="join" @click=${() => goPage('devices', 'join')}>${joinIcon} ${t('devices.joinOther')}</button>`}</div>`
 }
 
 /** devices/join, on the new device: the field the other device's link is pasted in, its title and its line saying where that link comes from. */

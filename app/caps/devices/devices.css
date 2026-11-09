@@ -4,10 +4,25 @@
 .devices-qr { display: block; inline-size: min(100%, 14rem); margin-inline: auto; border-radius: 0.6rem; background: white; fill: black; forced-color-adjust: none; }
 .devices-field { display: flex; align-items: center; gap: 0.5rem; } .devices-field input { flex: 1; min-inline-size: 0; font: 0.875rem var(--mono); }
 .devices-digits { text-align: center; font: 600 2.5rem/1.2 var(--mono); letter-spacing: 0.1em; user-select: all; } .devices-flow .devices-type { box-sizing: content-box; inline-size: 12ch; padding-inline: 0.5ch 0; font: 600 1.5rem var(--mono); letter-spacing: 1ch; background: repeating-linear-gradient(90deg, transparent 0 0.2ch, var(--line) 0.2ch 1.8ch, transparent 1.8ch 2ch); }
-/* A dot on the person's initial at the drawer's foot while the store wants a look (D729), which their menu's Your devices row says. */
-:root[data-devices-trouble] .profile-button .avatar { position: relative; }
-:root[data-devices-trouble] .profile-button .avatar::after { content: ''; position: absolute; inset-block-start: -0.1rem; inset-inline-end: -0.1rem; inline-size: 0.5rem; block-size: 0.5rem; border-radius: 50%; background: var(--danger); box-shadow: 0 0 0 2px var(--room); }
-@media (forced-colors: active) { :root[data-devices-trouble] .profile-button .avatar::after { background: CanvasText; } }
+/* Its icon at the end of the person's row (D729): syncing, it breathes, in the ink's own colour where motion is reduced; the store wanting a look, a dot at its corner. */
+.icon-button.devices-syncing { color: var(--ink); } .devices-syncing svg, .devices-head .is-moving::before { animation: waits 1.6s ease-in-out infinite var(--loops, running); }
+.devices-trouble { position: relative; } .devices-trouble::after { content: ''; position: absolute; inset-block-start: 0.3rem; inset-inline-end: 0.3rem; inline-size: 0.45rem; block-size: 0.45rem; border-radius: 50%; background: var(--danger); }
+/* What it opens, as wide as the row it stands over, as the person's menu: a title and how things stand, lined up with the rows under them, which
+   wrap; a device two weeks unheard as a state that waits. Alone, centred, two discs, this device's in the flame, the one to add dashed, a dashed line between. */
+.devices-pops { display: contents; } #devices-drawer { position-anchor: --profile-drawer; } #devices-list { position-anchor: --profile-list; }
+.devices-menu { box-sizing: border-box; inline-size: 17rem; inline-size: max(15rem, anchor-size(inline)); max-inline-size: calc(100vw - 1rem); max-block-size: min(70dvh, 34rem); overflow-y: auto; } .devices-menu li > button { white-space: normal; }
+@supports not (anchor-name: --add) { .devices-menu { inset: auto auto 4.5rem; inset-inline-start: 0.75rem; margin: 0; } }
+.devices-head, .devices-pitch { display: flex; flex-direction: column; gap: 0.1rem; padding: 0.5rem 0.75rem 0.3rem; line-height: 1.35; } .devices-pitch { align-items: center; padding-block-start: 0.65rem; text-align: center; }
+.devices-pitch p { margin: 0.2rem 0 0.15rem; color: var(--ink-soft); font-size: 0.85rem; text-wrap: pretty; }
+.devices-menu small { color: var(--ink-soft); font-size: 0.8rem; } .devices-head .is-trouble { color: var(--danger); }
+.devices-head .is-moving::before { content: ''; display: inline-block; inline-size: 0.45rem; block-size: 0.45rem; margin-inline-end: 0.4rem; border-radius: 50%; background: var(--flame); }
+.devices-list > li { display: flex; align-items: center; gap: 0.7rem; padding: 0.35rem 0.75rem; } .devices-list span { display: flex; flex-direction: column; align-items: start; min-inline-size: 0; line-height: 1.3; overflow-wrap: anywhere; } .devices-list strong { font-size: 0.9rem; font-weight: 500; }
+.devices-list .is-here > .icon { color: var(--flame); } .devices-list .is-wait { padding-inline: 0.4rem; border-radius: 999px; background: var(--wait, oklch(from var(--flame) l c h / 0.14)); box-shadow: inset 0 0 0 1px var(--wait-line, oklch(from var(--flame) l c h / 0.45)); color: var(--ink); }
+.devices-drawing { display: flex; justify-content: center; gap: 3.5rem; margin-block: 0.35rem 0.6rem; } .devices-drawing .icon { inline-size: 1.35rem; block-size: 1.35rem; }
+.devices-drawing > span { position: relative; display: grid; place-items: center; inline-size: 2.75rem; block-size: 2.75rem; border: 1.5px solid var(--flame); border-radius: 50%; background: oklch(from var(--flame) l c h / 0.14); }
+.devices-drawing > span + span { border-style: dashed; background: none; } .devices-drawing > span + span > .icon { color: var(--flame); }
+.devices-drawing > span + span::before { content: ''; position: absolute; inset-block-start: 50%; inset-inline-end: calc(100% + 0.35rem); inline-size: 2.8rem; border-block-start: 2px dashed var(--line-strong); }
+@media (forced-colors: active) { .devices-trouble::after, .devices-head .is-moving::before { background: CanvasText; } .devices-list .is-wait { border: 1px solid CanvasText; } }
 /* The devices as cards (D728): the picture of its kind, its name, how it stands, Remove at its foot; this one ringed in the flame. */
 .devices-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 9.5rem), 1fr)); gap: 0.6rem; margin: 0; padding: 0; list-style: none; }
 .devices-cards > li { --glyph: 1.75rem; display: flex; flex-direction: column; align-items: start; gap: 0.3rem; padding: 0.85rem; border: 1px solid var(--line-strong); border-radius: 1rem; overflow-wrap: anywhere; }
