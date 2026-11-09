@@ -348,3 +348,13 @@ test('the organisation’s controls (ee/, D732) hear each step: the listing carr
   assert.deepEqual(await arrivalsOf(ana), [], 'heard, not kept')
   assert.deepEqual([...new Set(heard)].sort(), ['add', 'find', 'list', 'open', 'send'])
 })
+
+test('this profile is made a person once, even by two calls at once, its context running them alone: the one a listing names is the one kept', async () => {
+  let queue = Promise.resolve()
+  /** One at a time, as a Web Lock runs them across tabs. @template T @param {() => Promise<T>} run @returns {Promise<T>} */
+  const alone = (run) => { const turn = queue.then(run); queue = turn.then(() => {}, () => {}); return turn }
+  const ana = { ...profile('Ana'), alone }
+  const [one, two] = await Promise.all([personOf(ana), personOf(ana)])
+  assert.equal(one.mailbox, two.mailbox)
+  assert.equal(JSON.parse(ana.secrets.person).mailbox, one.mailbox)
+})

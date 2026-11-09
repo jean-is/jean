@@ -30,10 +30,10 @@ import { linkOf, parseLink, pairingBox, sealHello, openHello, sealNonce, openNon
 /** An acceptance under way on the device that made it (`accept:<id>`): the link's secret and key, its reply mailbox, who it came from, and what came. @typedef {{ id: string, s: string, fpA: string, token: string, name: string, said: string, nB: string, at: number, key?: JsonWebKey, theirs?: string, code?: string }} Accept */
 /**
  * What the meeting needs of the app: the secrets, the profile's files, the relay's address, this Jean's web address ('' in the desktop app),
- * the clock, the name this profile gives itself, and the organisation's word on what People does (`person.check`, ee/, D732), which lets
- * all through where it has none. @typedef {{ get: (id: string) => Promise<string | null>, set: (values: Record<string, string | null>) => Promise<unknown>,
+ * the clock, the name this profile gives itself, the organisation's word on what People does (`person.check`, ee/, D732), which lets
+ * all through where it has none, and how a task runs alone across the profile's tabs. @typedef {{ get: (id: string) => Promise<string | null>, set: (values: Record<string, string | null>) => Promise<unknown>,
  *   all: () => Promise<Record<string, string>>, fs: import('../../core/types.js').FS, base: string, address: string, now: () => number, said: () => Promise<string>,
- *   check?: (e: Check) => Promise<Check & { refuse?: string }> }} Context
+ *   check?: (e: Check) => Promise<Check & { refuse?: string }>, alone?: <T>(run: () => Promise<T>) => Promise<T> }} Context
  */
 /**
  * What People asks the organisation's controls (ee/, D732) before a meeting, before someone is found, kept, sent to or heard, and before
@@ -65,13 +65,20 @@ const refuse = (reason) => { throw Object.assign(new Error(`The meeting stopped:
 
 /** A person made: a key pair and a mailbox not yet opened, which reading it opens. */
 export const madePerson = async () => ((box) => ({ ...box.pair, token: box.token, mailbox: box.id }))({ pair: await boxPair(), ...await mailbox() })
-/** This profile as a person, made where it has none. @param {Context} ctx @returns {Promise<Person>} */
+/**
+ * This profile as a person, made where it has none: one call at a time, the context's `alone`, which reads again first, so that two at once
+ * (People's own and a refresh a secret written meanwhile starts) never make two, the one lost being the one a listing named. @param {Context} ctx @returns {Promise<Person>}
+ */
 export async function personOf(ctx) {
   const kept = await ctx.get(PERSON)
   if (kept) return JSON.parse(kept)
-  const made = await madePerson()
-  await ctx.set({ [PERSON]: JSON.stringify(made) })
-  return made
+  return (ctx.alone ?? ((run) => run()))(async () => {
+    const again = await ctx.get(PERSON)
+    if (again) return /** @type {Person} */ (JSON.parse(again))
+    const made = await madePerson()
+    await ctx.set({ [PERSON]: JSON.stringify(made) })
+    return made
+  })
 }
 
 /** The people met, by fingerprint, with what this person calls each. @param {Context} ctx @returns {Promise<(Met & { fp: string, name: string })[]>} */

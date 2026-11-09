@@ -75,7 +75,7 @@ const warn = (error) => console.warn('People', error)
 /** What ./flow.js meets with, for this profile. @returns {Promise<import('./flow.js').Context>} */
 const contextOf = async () => ({
   get: (id) => getSecret(app.fs, id), set: (values) => setSecrets(app.fs, values), all: () => secretsWhere(app.fs, (id) => /^(people:|invite:|accept:)/.test(id)),
-  fs: app.fs, base: relayOf(), address: (await host) ? '' : location.origin + location.pathname, now: () => Date.now(), check,
+  fs: app.fs, base: relayOf(), address: (await host) ? '' : location.origin + location.pathname, now: () => Date.now(), check, alone: (run) => locked('app-person-made', run),
   said: async () => String(JSON.parse(await app.fs.read(VAULT) ?? '{}').name ?? '') || app.settings.peek().name || '' })
 /** This profile as a person, made one tab at a time where it has none. */
 const me = async () => locked('app-person', async () => personOf(await contextOf()))
