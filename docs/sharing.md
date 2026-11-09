@@ -49,18 +49,9 @@ GitHub moved Pages to github.io in 2013 for this reason.
 |---|---|---|
 | Continue with Jean | Built | The shared task becomes the recipient's, after a note that it is someone else's, with Jean's own skills for the charts, scores and decks it holds (D378) |
 | Update the link | Built | From *Share…* again, which opens on the link made, its choices to change; by hand in Settings › Your data, or after each answer |
-| Replies back | Later | Someone sent a task over the relay answers back into it (D45 · D226); a link's readers answer later |
-| A shared project | Later, with D227 | A project synced to a shared folder of a drive. One file per ULID, `author` on each and append-only conversations were made for it |
-| Working live together | Dropped (D45) | The use cases below |
-
-| Live use case | What people already do |
-|---|---|
-| Two people steering one task in a meeting | Share a screen in the call |
-| A tutor following a student's task | Screen sharing, or the student sends the link |
-| Helping a relative set Jean up | Screen sharing or a phone call. A live remote is also how scams work ("let me connect your bank") |
-| Co-writing a document Jean made | Word or Docs, through the folder OneDrive or Drive already syncs |
-| A family asking one Jean together | A group chat; taking turns is enough |
-| Following a long task from a phone | One person: D227's phone remote |
+| Replies back | Built (D727) | Someone sent a task over the relay answers back into it; a link's readers answer later |
+| A shared project | Later, with D733 | One circle for a whole project. One file per ULID, `author` on each and append-only conversations were made for it |
+| Working on it together | Decided (D733 · D734) | *Share…* asks how: a copy, as above, or a task, document or collection worked on together, each person's own Jean answering them |
 
 ## Limits
 
