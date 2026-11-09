@@ -22,9 +22,9 @@ import { getSecret, setSecrets, secretsWhere } from '../../ui/secrets.js'
 import { VAULT } from '../../ui/seal.js'
 import { listen, reader } from '../../ui/relay.js'
 import { serviceURL } from '../../core/settings.js'
-import { parseLink, pairingBox } from '../devices/pair.js'
-import { base64url, bytesOf, random } from '../share/seal.js'
-import { personOf, peopleOf, invite as invited, heardHello, heardReveal, confirmed, ended, accept as accepted, heardNonce, heardMet, dropped, received, forget, tidy, nameId, arrivalsOf, sendTo, ARRIVALS, LIMIT, turn } from './flow.js'
+import { parseLink } from '../devices/pair.js'
+import { base64url, random } from '../share/seal.js'
+import { personOf, peopleOf, boxesOf, invite as invited, heardHello, heardReveal, confirmed, ended, accept as accepted, heardNonce, heardMet, dropped, received, forget, tidy, nameId, arrivalsOf, sendTo, ARRIVALS, LIMIT, turn } from './flow.js'
 import * as colleague from './colleagues.js'
 
 /** @typedef {import('./flow.js').Invite} Invite */
@@ -123,7 +123,7 @@ async function watch() {
 
 /** An invitation's mailboxes read: Bob's hello, then his reveal, then the digits to type, which the page asks for. @param {import('./flow.js').Context} ctx @param {Invite} one @param {AbortSignal} signal */
 async function follow(ctx, one, signal) {
-  const [meet, back] = await Promise.all([pairingBox(bytesOf(one.s), 'meet'), pairingBox(bytesOf(one.s), 'meet-back')])
+  const [meet, back] = await boxesOf(one.s)
   try {
     if (!one.hello) one = await heardHello(ctx, one, await reader(ctx.base, meet.token, signal)())
     if (!one.code) one = await heardReveal(ctx, one, await reader(ctx.base, back.token, signal)())
@@ -303,14 +303,11 @@ async function submit(event) {
   const [now, form] = [sending.peek(), new FormData(/** @type {HTMLFormElement} */ (event.target))], one = groups.peek().find((person) => person.fp === form.get('to'))
   if (!now || !one || now.busy) return
   sending.value = { ...now, busy: true, wrong: '' }
-  try {
-    // An answer back goes to the device that sent the task, which alone holds its thread.
-    const back = threadOf(now.what), mine = back && one.fps.includes(back.fp)
-    await sendIt(mine ? [back.fp] : one.able, now.what, { reading: now.reading, words: String(form.get('words') ?? ''), back: mine ? back.thread : undefined })
-    sending.value = { ...now, busy: false, said: t('people.sentTo', { name: one.name }) }
-  } catch (/** @type {any} */ error) {
-    sending.value = { ...now, busy: false, wrong: t(`people.why.${['waiting', 'large', 'refused'].includes(error?.reason) ? error.reason : 'unreached'}`, { name: BRAND.name }) }
-  }
+  // An answer back goes to the device that sent the task, which alone holds its thread.
+  const back = threadOf(now.what), mine = back && one.fps.includes(back.fp)
+  const done = await sendIt(mine ? [back.fp] : one.able, now.what, { reading: now.reading, words: String(form.get('words') ?? ''), back: mine ? back.thread : undefined }).then(() => ({ said: t('people.sentTo', { name: one.name }) }),
+    (/** @type {any} */ error) => ({ wrong: t(`people.why.${['waiting', 'large', 'refused'].includes(error?.reason) ? error.reason : 'unreached'}`, { name: BRAND.name }) }))
+  sending.value = { ...now, busy: false, ...done }
 }
 
 /** Add a person, from the pane: People's page, asking who it is for. */
@@ -397,8 +394,7 @@ const sendTool = {
     if (!task) throw new Error('There is no task to send.')
     const file = args?.file ? filesMade(callsIn(task.records)).findLast((one) => one.name === args.file) : null
     if (args?.file && !file) throw new Error(`This task made no file named ${args.file}.`)
-    const title = app.conversations.peek().find((one) => one.path === task.path)?.title ?? ''
-    await sendIt(found[0].able, { path: task.path, title, ...(file && { item: { text: '', files: [file] } }) }, { words: String(args?.words ?? '') }, true)
+    await sendIt(found[0].able, { path: task.path, title: app.conversations.peek().find((one) => one.path === task.path)?.title ?? '', ...(file && { item: { text: '', files: [file] } }) }, { words: String(args?.words ?? '') }, true)
     return `Sent to ${found[0].name}. They have a week to open it.`
   },
 }

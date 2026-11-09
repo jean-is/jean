@@ -61,16 +61,12 @@ async function submit(event) {
   const { closed: closing, word, changing, days, read, keep } = choices.peek()
   const password = !closing ? '' : share?.password && !changing ? undefined : word
   working.value = true
-  try {
-    const chosen = { days, read, keep: keep && !what.item }
-    const now = share ? await update(share, { ...chosen, password, title: what.title }) : await create(what, { ...chosen, password })
-    if (now && password !== undefined) told.value = password ? { id: now.id, word: password } : null
-    if (now && share) reset(what)
-  } catch (error) {
-    failed(error)
-  } finally {
-    working.value = false
-  }
+  const chosen = { days, read, keep: keep && !what.item }
+  // A change says what went wrong itself (update()).
+  const now = share ? await update(share, { ...chosen, password, title: what.title }) : await create(what, { ...chosen, password }).catch((error) => void failed(error))
+  working.value = false
+  if (now && password !== undefined) told.value = password ? { id: now.id, word: password } : null
+  if (now && share) reset(what)
 }
 
 class ShareDialog extends Element {

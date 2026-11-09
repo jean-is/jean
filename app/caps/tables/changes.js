@@ -8,6 +8,7 @@
 // their stamp; undo writes the values from before an author's latest change, not past a compacted
 // mark, which a file compacted later starts with. Pure, so Node's tests run it.
 import { canonical, TIME } from './table.js'
+import { parseLine } from '../../core/conversations.js'
 
 /** @typedef {{ row: string, set?: Record<string, unknown>, delete?: boolean, at: string, by: string, why?: string, undoes?: string }} Change */
 /** Where a file was compacted: undo stops there. @typedef {{ compacted: string }} Mark */
@@ -26,18 +27,7 @@ const isLine = (line) => Boolean(line) && typeof line === 'object' && (typeof li
     && (line.delete === undefined || typeof line.delete === 'boolean'))
 
 /** A changes.jsonl's lines; a half-written last line, after a crash, and what isn't a change are left out. @param {string} text @returns {Line[]} */
-export function parseChanges(text) {
-  /** @type {Line[]} */
-  const lines = []
-  for (const raw of text.split('\n')) {
-    if (!raw.trim()) continue
-    try {
-      const line = JSON.parse(raw)
-      if (isLine(line)) lines.push(line)
-    } catch {}
-  }
-  return lines
-}
+export const parseChanges = (text) => text.split('\n').map(parseLine).filter(isLine)
 
 /** @param {Line[]} lines */
 export const stringifyChanges = (lines) => lines.map((line) => `${JSON.stringify(line)}\n`).join('')
@@ -100,16 +90,11 @@ const isGone = (row) => row.gone?.value === true && !(row.changed && row.changed
  * @param {Line[]} lines @param {{ deleted?: boolean }} [options] @returns {Row[]}
  */
 export function fold(lines, { deleted = false } = {}) {
-  /** @type {Row[]} */
-  const rows = []
-  for (const [id, row] of winners(lines)) {
-    const gone = isGone(row)
-    if (gone && !deleted) continue
+  return [...winners(lines)].filter(([, row]) => deleted || !isGone(row)).map(([id, row]) => {
     const cells = Object.fromEntries([...row.cells].filter(([, candidate]) => candidate.value !== null).map(([key, candidate]) => [key, candidate.value]))
     const stamps = Object.fromEntries([...row.cells].map(([key, { at, by }]) => [key, { at, by }]))
-    rows.push({ id, cells, stamps, created: row.created, changed: row.changed ?? row.created, ...(gone && row.gone ? { deleted: { at: row.gone.at, by: row.gone.by } } : {}) })
-  }
-  return rows.sort((a, b) => (before(a.created, b.created) ? -1 : before(b.created, a.created) ? 1 : a.id < b.id ? -1 : 1))
+    return { id, cells, stamps, created: row.created, changed: row.changed ?? row.created, ...(isGone(row) && row.gone ? { deleted: { at: row.gone.at, by: row.gone.by } } : {}) }
+  }).sort((a, b) => (before(a.created, b.created) ? -1 : before(b.created, a.created) ? 1 : a.id < b.id ? -1 : 1))
 }
 
 /** Lines in the file's order: marks first, then by time, author and text. @param {Line} a @param {Line} b */
@@ -123,10 +108,8 @@ const lineOrder = (a, b) => {
  * @param {Line[]} a @param {Line[]} b @returns {Line[]}
  */
 export function merge(a, b) {
-  /** @type {Map<string, Line>} */
-  const lines = new Map()
-  for (const line of [...a, ...b]) if (!lines.has(canonical(line))) lines.set(canonical(line), line)
-  return [...lines.values()].sort(lineOrder)
+  // Reversed, since a Map keeps the last line given for each: the first of each, as either side gave it.
+  return [...new Map([...a, ...b].reverse().map((line) => /** @type {const} */ ([canonical(line), line]))).values()].sort(lineOrder)
 }
 
 /**

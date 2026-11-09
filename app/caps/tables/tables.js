@@ -168,8 +168,8 @@ export async function change(one, edits, by, why, undoable = by === 'user') {
   if (!ready.length) return []
   const lines = stamp(one.lines, ready, { by, why })
   const more = grown(table, ready.map((edit) => edit.set ?? {}), lines[0].at)
-  await written(one)
-  if (more) await writeTable(one, more)
+  // A draft's files written first, with its columns grown where a select took new choices.
+  await (more ? writeTable(one, more) : written(one))
   await app.fs.append(`${one.dir}/${one.folder}/changes.jsonl`, stringifyChanges(lines))
   // Undone, a row made goes, one deleted comes back and each cell set is as it was.
   const was = new Map(fold(one.lines, { deleted: true }).map((row) => [row.id, row]))
@@ -272,10 +272,9 @@ async function copy({ path }, name) {
 
 /** The user's new table: a column for each row's name and one empty row. */
 const untitled = () => createTable({ name: t('tables.untitled'), columns: [{ name: t('tables.nameColumn'), type: 'text' }] }, { id: ulid(), author: 'user', at: new Date().toISOString() })
-const empty = () => made(untitled(), [{ row: ulid(), set: {} }])
 /** One from a document's "/", its place for the document to hold. */
 export async function blank() {
-  const { folder } = await empty()
+  const { folder } = await made(untitled(), [{ row: ulid(), set: {} }])
   fresh.add(folder)
   return folder
 }
@@ -335,13 +334,12 @@ export async function gridIn(folder) {
  */
 export async function kept(dir = app.projectDir) {
   const all = await Promise.all((await folders(dir)).map((folder) => load(folder, dir).catch(() => null)))
-  const cell = (/** @type {unknown} */ value) => (Array.isArray(value) ? value.join(', ') : value === true ? '✓' : value === false || value == null ? '' : String(value))
+  /** A cell as text, a relation's the name of its row. @param {Loaded} one @param {Row} row @param {Property} property */
+  const cell = (one, row, property) => ((value) => (Array.isArray(value) ? value.join(', ') : value === true ? '✓' : value === false || value == null ? '' : String(value)))(property.type === 'relation' ? valueOf(row, property, one.names) : row.cells[property.id])
   return all.flatMap((one) => (one ? [{ path: one.folder, name: one.table.name, changed: one.lines.reduce((latest, line) => ('at' in line && line.at > latest ? line.at : latest), one.table.changed), created: one.table.created, pinned: one.table.pinned === true,
-    grid: ((heads) => [heads.map((property) => property.name), ...one.rows.slice(0, 6).map((row) => heads.map((property) => cell(property.type === 'relation' ? valueOf(row, property, one.names) : row.cells[property.id])))])(one.table.properties.filter((property) => !property.deleted).slice(0, 4)),
-    link: /** @type {import('../../core/types.js').ResourceLink} */ ({ type: 'resource_link', uri: one.folder, name: one.table.name, title: one.table.name }), text: ((columns) => [columns.map((property) => property.name).join(', '), ...one.rows.map((row) => columns.flatMap((property) => {
-      const value = cell(property.type === 'relation' ? valueOf(row, property, one.names) : row.cells[property.id])
-      return value ? [`${property.name}: ${value}`] : []
-    }).join('; '))].join('\n'))(one.table.properties.filter((property) => !property.deleted)) }] : []))
+    grid: ((heads) => [heads.map((property) => property.name), ...one.rows.slice(0, 6).map((row) => heads.map((property) => cell(one, row, property)))])(one.table.properties.filter((property) => !property.deleted).slice(0, 4)),
+    link: /** @type {import('../../core/types.js').ResourceLink} */ ({ type: 'resource_link', uri: one.folder, name: one.table.name, title: one.table.name }), text: ((columns) => [columns.map((property) => property.name).join(', '),
+      ...one.rows.map((row) => columns.flatMap((property) => [cell(one, row, property)].filter(Boolean).map((value) => `${property.name}: ${value}`)).join('; '))].join('\n'))(one.table.properties.filter((property) => !property.deleted)) }] : []))
 }
 
 /** What an address names: a table by its name, a workbook once it downloads. @param {string} folder */
@@ -365,8 +363,7 @@ export async function editor(file, holds) {
 /** A table, beside the conversation, once it is on show. @param {Loaded} one */
 async function open(one) {
   if (shown.peek()?.folder === one.folder) return
-  const meta = await metaOf(one.folder)
-  ;(await import('../../ui/preview.js')).preview({ uri: one.folder, name: meta?.name ?? one.table.name, title: one.table.name })
+  ;(await import('../../ui/preview.js')).preview({ uri: one.folder, name: (await metaOf(one.folder))?.name ?? one.table.name, title: one.table.name })
   for (let wait = 0; wait < 100 && shown.peek()?.folder !== one.folder; wait++) await new Promise((resolve) => setTimeout(resolve, 50))
 }
 

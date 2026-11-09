@@ -144,8 +144,7 @@ class Pane extends Element {
     if (/^(games|sites)\//.test(file?.uri ?? '')) return
     if (!data?.cell || !file) return savePage(data, rights.peek().allows.downloads)
     changeCell(data.cell, source, { name: file.name, said: 'beside the task', read: () => app.fs.readBytes(`${app.projectDir}/${this.#copy.peek()}`), keep: async (bytes, at) => {
-      const pages = (await (await import('../caps/files/extract.js')).extractPages(file.name, bytes)) ?? []
-      const link = await addFile(app.fs, { projectDir: app.projectDir, name: file.name, mimeType: file.mimeType, bytes, pages, by: app.deviceId })
+      const link = await addFile(app.fs, { projectDir: app.projectDir, name: file.name, mimeType: file.mimeType, bytes, pages: (await (await import('../caps/files/extract.js')).extractPages(file.name, bytes)) ?? [], by: app.deviceId })
       where = { uri: link.uri, at }
       return { was: file.uri, uri: link.uri }
     } })

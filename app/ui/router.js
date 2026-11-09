@@ -16,8 +16,7 @@ const DRAFTS = 'app.drafts'
 /** The project and conversation an address names (null for the home project, or a new conversation). @param {string} hash */
 export function placeIn(hash) {
   const [, project = '', conversation = ''] = ADDRESS.exec(hash) ?? []
-  const valid = (/** @type {string} */ id) => (ULID.test(id) ? id : null)
-  return { project: valid(project), conversation: valid(conversation) }
+  return { project: ULID.test(project) ? project : null, conversation: ULID.test(conversation) ? conversation : null }
 }
 
 /** @param {string} hash @returns {string | null} the section of Settings open over the place */
@@ -55,10 +54,7 @@ async function follow(windows = true, hash = location.hash) {
     const projects = app.projects.value
     const project = projects.find((candidate) => candidate.id === id) ?? projects.find((candidate) => candidate.data.default === true)
     if (project) await enterProject(project)
-    if (conversation && conversation !== app.current.value?.id) {
-      const known = app.conversations.value.find((item) => item.id === conversation)
-      await openConversation(known?.path ?? join(app.projectDir, 'conversations', `${conversation}.jsonl`)).catch(console.warn)
-    }
+    if (conversation && conversation !== app.current.value?.id) await openConversation(app.conversations.value.find((item) => item.id === conversation)?.path ?? join(app.projectDir, 'conversations', `${conversation}.jsonl`)).catch(console.warn)
     if ((app.current.value?.id ?? null) !== conversation) newConversation()
     const section = settingsIn(hash)
     if (section) app.section.value = section
@@ -139,8 +135,7 @@ export async function startRouter() {
     const draft = app.draft.value
     if (where !== shown) {
       shown = where
-      const restored = drafts()[where] ?? ''
-      if (restored !== draft) app.draft.value = restored
+      app.draft.value = drafts()[where] ?? ''
       return
     }
     const all = drafts()

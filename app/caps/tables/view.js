@@ -98,10 +98,9 @@ export function view(holds, source = shown) {
   let reached = -1
   /** The bar's arrows: the keyboard to the field of the cell Jean changed after or before the last one gone to. @param {1 | -1} step */
   const go = (step) => {
-    const fields = [...box.querySelectorAll('.is-jean :is(input, select)')]
+    const fields = /** @type {HTMLElement[]} */ ([...box.querySelectorAll('.is-jean :is(input, select)')])
     reached = reached < 0 ? (step > 0 ? 0 : fields.length - 1) : (reached + step + fields.length) % fields.length
-    const field = /** @type {HTMLElement | undefined} */ (fields[reached])
-    field?.focus()
+    fields[reached]?.focus()
   }
   holds.push(effect(() => {
     render(draw(source.value, state, go), box)
@@ -133,16 +132,12 @@ export function view(holds, source = shown) {
  * A change the user makes, whether it was; one a column refuses is said, and its field shows the cell as it is again.
  * @param {Loaded} one @param {{ row?: string, set?: Record<string, unknown>, delete?: boolean }} edit @param {Event} [event]
  */
-async function edit(one, edit, event) {
-  try {
-    return Boolean(await change(one, [edit], 'user'))
-  } catch {
-    notify(t('tables.wrong'), { alert: true })
-    await reread(one)
-    event?.target instanceof HTMLElement && event.target.blur()
-    return false
-  }
-}
+const edit = (one, edit, event) => change(one, [edit], 'user').then(Boolean, async () => {
+  notify(t('tables.wrong'), { alert: true })
+  await reread(one)
+  event?.target instanceof HTMLElement && event.target.blur()
+  return false
+})
 
 /** A menu closes as the keyboard leaves it, so what has focus is never under it. @param {FocusEvent} event */
 const leaving = ({ currentTarget, relatedTarget }) => { const box = /** @type {HTMLElement} */ (currentTarget); if (relatedTarget && !box.contains(/** @type {Node} */ (relatedTarget)) && box.matches(':popover-open')) box.hidePopover() }
@@ -274,14 +269,19 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
   }
   /** No line where a dragged row would go any more. */
   const left = () => { for (const row of box.querySelectorAll('[data-drop]')) delete /** @type {HTMLElement} */ (row).dataset.drop }
-  /** Where a row dragged over this one goes: before it over its first half, after it over the other, a line showing which. @param {DragEvent} event */
-  const over = (event) => {
-    if (!event.dataTransfer?.types.includes('text/x-row')) return
+  /**
+   * Where a row or a column dragged over this one goes, by what is dragged: before it over the half `first` says, after it over the other,
+   * a line showing which. @param {string} kind @param {(event: DragEvent, bounds: DOMRect, at: HTMLElement) => boolean} first
+   */
+  const hover = (kind, first) => (/** @type {DragEvent} */ event) => {
+    if (!event.dataTransfer?.types.includes(kind)) return
     event.preventDefault()
-    const row = /** @type {HTMLElement} */ (event.currentTarget), { top, height } = row.getBoundingClientRect()
-    if (!row.dataset.drop) left()
-    row.dataset.drop = event.clientY < top + height / 2 ? 'before' : 'after'
+    const at = /** @type {HTMLElement} */ (event.currentTarget), before = first(event, at.getBoundingClientRect(), at)
+    if (!at.dataset.drop) left()
+    at.dataset.drop = before ? 'before' : 'after'
   }
+  /** A row dragged over this one: before it over its first half. */
+  const over = hover('text/x-row', (event, { top, height }) => event.clientY < top + height / 2)
   /** Its handle dragged, the row goes with the pointer. @param {DragEvent} event @param {string} id */
   const lift = (event, id) => {
     const row = /** @type {HTMLElement} */ (/** @type {HTMLElement} */ (event.currentTarget).closest('tr')), { left: x, top: y } = row.getBoundingClientRect()
@@ -298,15 +298,8 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
     notify(t('tables.rowDeleted', { name: textOf(row, title) || t('tables.unnamed') }), { label: t('memory.undo'), run: () => load(one.folder, one.dir).then((now) => now && change(now, [{ row: row.id, delete: false }], 'user')) })
     requestAnimationFrame(() => { const all = box.querySelectorAll('tbody .table-grip button'); /** @type {HTMLElement | null} */ (all[Math.min(i, all.length - 1)] ?? box.querySelector('.table-add'))?.focus() })
   }
-  /** Where a column dragged over this head goes: before it over the half its line starts in, after it over the other, a line showing which; taken on
-   * entering too, as WebKit asks of a place to drop. @param {DragEvent} event */
-  const aside = (event) => {
-    if (!event.dataTransfer?.types.includes('text/x-column')) return
-    event.preventDefault()
-    const th = /** @type {HTMLElement} */ (event.currentTarget), { left: x, width } = th.getBoundingClientRect()
-    if (!th.dataset.drop) left()
-    th.dataset.drop = (event.clientX < x + width / 2) !== (getComputedStyle(th).direction === 'rtl') ? 'before' : 'after'
-  }
+  /** A column dragged over this head: before it over the half its line starts in; taken on entering too, as WebKit asks of a place to drop. */
+  const aside = hover('text/x-column', (event, { left: x, width }, th) => (event.clientX < x + width / 2) !== (getComputedStyle(th).direction === 'rtl'))
   /** A column moved before or after another. @param {string} id @param {string} to @param {boolean} after */
   const shift = (id, to, after) => to !== id && shape(one, { move: { id, to, after } })
   /** A row or a column dropped here, moved to the side of this one its line showed. @param {string} kind @param {(id: string, to: string, after: boolean) => unknown} go */
@@ -464,16 +457,15 @@ function cell(one, row, property, state) {
   const value = valueOf(row, property)
   const set = (/** @type {unknown} */ next, /** @type {Event} */ event) => edit(one, { row: row.id, set: { [property.id]: next } }, event)
   const read = (/** @type {Event} */ event) => /** @type {HTMLInputElement} */ (event.target)
-  const label = property.name
   switch (property.type) {
-    case 'checkbox': return html`<input type="checkbox" title=${label} .checked=${live(value === true)} @change=${(/** @type {Event} */ e) => set(read(e).checked, e)}>`
-    case 'number': return html`<input type="number" step="any" title=${label} .value=${live(value === null ? '' : String(value))}
+    case 'checkbox': return html`<input type="checkbox" title=${property.name} .checked=${live(value === true)} @change=${(/** @type {Event} */ e) => set(read(e).checked, e)}>`
+    case 'number': return html`<input type="number" step="any" title=${property.name} .value=${live(value === null ? '' : String(value))}
       @change=${(/** @type {Event} */ e) => set(read(e).value === '' ? null : read(e).valueAsNumber, e)}>`
-    case 'date': return html`<input type="date" title=${label} .value=${live(String(value ?? '').slice(0, 10))} @change=${(/** @type {Event} */ e) => set(read(e).value || null, e)}>`
+    case 'date': return html`<input type="date" title=${property.name} .value=${live(String(value ?? '').slice(0, 10))} @change=${(/** @type {Event} */ e) => set(read(e).value || null, e)}>`
     case 'status':
     case 'relation':
     case 'select': return choice(one, row, property)
-    case 'multi-select': return html`<input dir="auto" title=${label} .value=${live(Array.isArray(value) ? value.join(', ') : '')}
+    case 'multi-select': return html`<input dir="auto" title=${property.name} .value=${live(Array.isArray(value) ? value.join(', ') : '')}
       @change=${(/** @type {Event} */ e) => set(read(e).value.split(/[,،、]/).map((one) => one.trim()).filter(Boolean), e)}>`
     case 'formula': return html`<span dir="auto" data-formula=${property.id}>${said(row, property, one.names)}</span>`
     case 'files':
@@ -487,7 +479,7 @@ function cell(one, row, property, state) {
       const key = `${row.id} ${property.id}`, typed = state.refused.value.get(key), refused = (/** @type {string} */ text) => Boolean(text.trim() && checkCell(property, text.trim()))
       const hold = (/** @type {string} */ text = '', all = new Map(state.refused.peek())) => { if (text) all.set(key, text); else all.delete(key); state.refused.value = all }
       const wrong = typed !== undefined && refused(typed), help = `${state.id}-${row.id}-${property.id}`
-      return html`<input dir="auto" type=${({ link: 'url', email: 'email', phone: 'tel' })[/** @type {string} */ (property.type)] ?? 'text'} title=${label}
+      return html`<input dir="auto" type=${({ link: 'url', email: 'email', phone: 'tel' })[/** @type {string} */ (property.type)] ?? 'text'} title=${property.name}
         aria-invalid=${wrong ? 'true' : nothing} aria-describedby=${wrong ? help : nothing} .value=${live(typed ?? textOf(row, property))}
         @keydown=${(/** @type {KeyboardEvent} */ e) => { if (e.isComposing) return; if (e.key === 'Enter' && refused(read(e).value)) { e.preventDefault(); e.stopPropagation(); hold(read(e).value) } else if (e.key === 'Escape' && typed !== undefined) { before.set(read(e), textOf(row, property)); hold() } }}
         @change=${async (/** @type {Event} */ e) => { const text = read(e).value; hold(text); if (!refused(text)) { await set(text.trim() || null, e); hold() } }}>${wrong ? html`<p id=${help} class="table-wrong" role="alert" dir="auto" ${ref(seen)}>${t(`tables.form.${property.type}`)}</p>` : nothing}`

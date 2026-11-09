@@ -7,7 +7,7 @@
 // state: node --test runs it against the relay.
 import { ask, open } from '../../ui/relay.js'
 import { fingerprintOf } from '../../ui/seal.js'
-import { checked, metId, nameId, peopleOf } from './flow.js'
+import { checked, metId, nameId, peopleOf, parsed } from './flow.js'
 
 /** @typedef {import('./flow.js').Person} Person */
 /** @typedef {import('./flow.js').Context} Context */
@@ -66,9 +66,7 @@ export async function keep(ctx, found) {
  * @param {Context} ctx @param {Person} person @param {Uint8Array} bytes
  */
 export async function introduced(ctx, person, bytes) {
-  /** @type {any} */
-  let sent = {}
-  try { sent = JSON.parse(new TextDecoder().decode(bytes)) } catch {}
+  const sent = parsed(bytes)
   if (typeof sent?.from !== 'string' || typeof sent.mailbox !== 'string' || await ctx.get(metId(sent.from))) return false
   const [one] = await find(ctx.base, person, `mailbox=${encodeURIComponent(sent.mailbox)}`)
   const device = one?.devices.find((each) => each.mailbox === sent.mailbox)
@@ -76,8 +74,7 @@ export async function introduced(ctx, person, bytes) {
   const known = (await peopleOf(ctx)).find((other) => other.account === one.account)
   if (!known) return keep(ctx, one).then(() => true, () => false)
   if (!(await vetted(ctx, 'add', { ...one, devices: [device] }))) return false
-  await ctx.set({ [metId(sent.from)]: metOf({ ...one, name: known.said }, device, ctx.now(), { asking: true }), [nameId(sent.from)]: known.name })
-  return true
+  return ctx.set({ [metId(sent.from)]: metOf({ ...one, name: known.said }, device, ctx.now(), { asking: true }), [nameId(sent.from)]: known.name }).then(() => true)
 }
 
 /** Each held device of a colleague's trusted. @param {Context} ctx @param {string} account */

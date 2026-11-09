@@ -46,8 +46,8 @@ export const isSealed = (bytes) => bytes.length >= HEADER && MAGIC.every((byte, 
  */
 export async function seal(vault, id, path, bytes) {
   const head = new Uint8Array(HEADER)
-  head.set(MAGIC)
-  head[5] = 1
+  // The magic, then the format's version.
+  head.set([...MAGIC, 1])
   head.set(id, 8)
   head.set(crypto.getRandomValues(new Uint8Array(16)), 16)
   return join([head, await records(vault, head, path, bytes)])
@@ -87,9 +87,8 @@ export async function open(vault, id, path, bytes) {
     found.push([bytes.subarray(at + 4, at + 16), bytes.subarray(at + 16, end)])
     at = end
   }
-  const plain = await Promise.all(found.map(([iv, sealed], i) => subtle.decrypt({ name: 'AES-GCM', iv: /** @type {BufferSource} */ (iv), additionalData: data }, key, /** @type {BufferSource} */ (sealed)).then(
-    (bytes) => new Uint8Array(bytes), (error) => { if (i < found.length - 1) throw damaged(); return new Uint8Array() })))
-  return join(plain)
+  return join(await Promise.all(found.map(([iv, sealed], i) => subtle.decrypt({ name: 'AES-GCM', iv: /** @type {BufferSource} */ (iv), additionalData: data }, key, /** @type {BufferSource} */ (sealed)).then(
+    (bytes) => new Uint8Array(bytes), (error) => { if (i < found.length - 1) throw damaged(); return new Uint8Array() }))))
 }
 
 // ─── Slots ───────────────────────────────────────────────────────────────────
@@ -120,11 +119,9 @@ export const ITERATIONS = 600_000
  */
 export async function slotKey(slot, secret) {
   const salt = decode(slot.salt ?? '')
-  if (typeof secret === 'string') {
-    const base = await subtle.importKey('raw', encoder.encode(secret), 'PBKDF2', false, ['deriveKey'])
-    return subtle.deriveKey({ name: 'PBKDF2', hash: 'SHA-256', salt, iterations: slot.iterations ?? ITERATIONS }, base, AES, false, ['encrypt', 'decrypt'])
-  }
-  return subtle.deriveKey(hkdf(salt, slot.kind), await subtle.importKey('raw', /** @type {BufferSource} */ (secret), 'HKDF', false, ['deriveKey']), AES, false, ['encrypt', 'decrypt'])
+  const password = typeof secret === 'string'
+  const base = await subtle.importKey('raw', password ? encoder.encode(secret) : /** @type {BufferSource} */ (secret), password ? 'PBKDF2' : 'HKDF', false, ['deriveKey'])
+  return subtle.deriveKey(password ? { name: 'PBKDF2', hash: 'SHA-256', salt, iterations: slot.iterations ?? ITERATIONS } : hkdf(salt, slot.kind), base, AES, false, ['encrypt', 'decrypt'])
 }
 
 /**
@@ -145,20 +142,18 @@ export const unseal = async (slot, key) => new Uint8Array(await subtle.decrypt({
  * none, or it can't be made or forgotten; a read that fails rejects, since the key may well be there,
  * and a vault it opens must not look lost for good. @param {'get' | 'make' | 'forget'} what @param {string} root @returns {Promise<CryptoKey | null>}
  */
-export function deviceKey(what, root) {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open('app-keys', 1)
-    request.onupgradeneeded = () => request.result.createObjectStore('keys')
-    request.onerror = () => (what === 'get' ? reject(request.error) : resolve(null))
-    request.onsuccess = async () => {
-      const key = what === 'make' ? await subtle.generateKey(AES, false, ['encrypt', 'decrypt']) : null
-      const store = request.result.transaction('keys', what === 'get' ? 'readonly' : 'readwrite').objectStore('keys')
-      const asked = what === 'get' ? store.get(root) : what === 'make' ? store.put(key, root) : store.delete(root)
-      asked.onsuccess = () => resolve(what === 'get' ? asked.result ?? null : key)
-      asked.onerror = () => (what === 'get' ? reject(asked.error) : resolve(null))
-    }
-  })
-}
+export const deviceKey = (what, root) => new Promise((resolve, reject) => {
+  const request = indexedDB.open('app-keys', 1)
+  request.onupgradeneeded = () => request.result.createObjectStore('keys')
+  request.onerror = () => (what === 'get' ? reject(request.error) : resolve(null))
+  request.onsuccess = async () => {
+    const key = what === 'make' ? await subtle.generateKey(AES, false, ['encrypt', 'decrypt']) : null
+    const store = request.result.transaction('keys', what === 'get' ? 'readonly' : 'readwrite').objectStore('keys')
+    const asked = what === 'get' ? store.get(root) : what === 'make' ? store.put(key, root) : store.delete(root)
+    asked.onsuccess = () => resolve(what === 'get' ? asked.result ?? null : key)
+    asked.onerror = () => (what === 'get' ? reject(asked.error) : resolve(null))
+  }
+})
 
 // ─── From one key to another ─────────────────────────────────────────────────
 

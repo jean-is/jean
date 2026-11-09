@@ -55,6 +55,8 @@ const ULID = /^[0-9A-HJKMNP-TV-Z]{26}$/
 export const metId = (fp) => `people:${fp}`
 /** @param {string} fp */
 export const nameId = (fp) => `people:${fp}:name`
+/** Someone met, as kept; null for no one. @param {Context} ctx @param {string} fp @returns {Promise<Met | null>} */
+const metOf = async (ctx, fp) => JSON.parse(await ctx.get(metId(fp)) || 'null')
 /** The controls' word on what People does. @param {Context} ctx @param {Check} e */
 export const checked = (ctx, e) => ctx.check?.(e) ?? Promise.resolve(/** @type {Check & { refuse?: string }} */ (e))
 /** Someone met as the controls see them. @param {Met} one @returns {Someone} */
@@ -89,6 +91,8 @@ export async function peopleOf(ctx) {
 /** A value from this profile to someone met, as the relay carries it. @param {Person} me @param {JsonWebKey} to @param {string} kind @param {object} body @param {Context} ctx */
 export const letter = (me, to, kind, body, ctx) => envelope(me, to, { format: 1, kind, id: ulid(), at: ctx.now(), body })
 const [encoder, decoder] = [new TextEncoder(), new TextDecoder()]
+/** What came, read as JSON; nothing when it isn't. @param {Uint8Array} bytes @returns {any} */
+export const parsed = (bytes) => { try { return JSON.parse(decoder.decode(bytes)) } catch { return {} } }
 /** @param {JsonWebKey} a @param {JsonWebKey} b */
 const same = (a, b) => a.x === b.x && a.y === b.y
 /** A letter to someone met and, until they took this profile's key since its turn, the chain to it, sealed from the key they knew. @param {Context} ctx @param {Person} me @param {Met} one @param {string} kind @param {object} body */
@@ -112,7 +116,7 @@ const update = (ctx, { fp, name, ...kept }, change) => ctx.set({ [metId(fp)]: JS
 /** Saved as it goes, so that a tab closed meanwhile leaves the next to read on. @template {Invite | Accept} T @param {Context} ctx @param {'invite' | 'accept'} kind @param {T} one @returns {Promise<T>} */
 const save = async (ctx, kind, one) => { await ctx.set({ [`${kind}:${one.id}`]: JSON.stringify(one) }); return one }
 /** The two mailboxes drawn from an invitation's secret: the hello's, opened once, and the reveal's. @param {string} s */
-const boxesOf = (s) => Promise.all([pairingBox(bytesOf(s), 'meet'), pairingBox(bytesOf(s), 'meet-back')])
+export const boxesOf = (s) => Promise.all([pairingBox(bytesOf(s), 'meet'), pairingBox(bytesOf(s), 'meet-back')])
 
 /**
  * Invites someone, named as this person calls them: the two mailboxes opened, the invitation kept on this device, and the link.
@@ -209,7 +213,7 @@ export async function heardMet(ctx, one, bytes) {
   const me = await personOf(ctx)
   if (!one.key) refuse('broken')
   const { value } = await openEnvelope(me, [one.key], bytes)
-  await Promise.all([remove(ctx.base, one.token).catch(() => {}), ctx.set({ [`accept:${one.id}`]: null })])
+  await dropped(ctx, one)
   if (value?.kind !== 'met' || typeof value.body?.mailbox !== 'string') refuse(value?.kind === 'refused' ? 'tries' : 'broken')
   /** @type {Met} */
   const met = { format: 1, key: one.key, said: String(value.body.said ?? one.theirs ?? '').slice(0, 80), met: value.body.way === 'side' ? 'side' : 'link', at: ctx.now(), mailbox: value.body.mailbox }
@@ -229,9 +233,7 @@ export const dropped = (ctx, one) => Promise.all([remove(ctx.base, one.token).ca
  */
 export async function received(ctx, bytes) {
   const me = await personOf(ctx)
-  /** @type {any} */
-  let sent = {}
-  try { sent = JSON.parse(decoder.decode(bytes)) } catch {}
+  const sent = parsed(bytes)
   if (typeof sent?.chain === 'string') await chained(ctx, me, encoder.encode(sent.chain))
   const people = await peopleOf(ctx), opened = await openAny(me, people.map((one) => one.key), bytes)
   const from = opened && people.find((one) => same(one.key, opened.from))
@@ -279,8 +281,7 @@ export async function arrivalsOf(ctx) {
  * @param {{ title: string, words: string, value: object, thread: { task: string, id: string } } | {}} body @param {'send' | 'reply' | 'joined'} [kind]
  */
 export async function sendTo(ctx, fp, body, kind = 'send') {
-  const [me, held] = [await personOf(ctx), await ctx.get(metId(fp))]
-  const one = held ? /** @type {Met} */ (JSON.parse(held)) : null
+  const [me, one] = [await personOf(ctx), await metOf(ctx, fp)]
   if (!one?.mailbox || one.again || one.asking) refuse(one?.again || one?.asking ? 'again' : one ? 'waiting' : 'gone')
   if ((await checked(ctx, { action: 'send', person: someone(one) })).refuse) refuse('refused')
   const bytes = await letterTo(ctx, me, one, kind, body)
@@ -291,18 +292,16 @@ export async function sendTo(ctx, fp, body, kind = 'send') {
 
 /** Someone forgotten here and on the person's other devices, told where they read. @param {Context} ctx @param {string} fp */
 export async function forget(ctx, fp) {
-  const [me, kept] = [await personOf(ctx), await ctx.get(metId(fp))]
-  const one = kept ? /** @type {Met} */ (JSON.parse(kept)) : null
+  const [me, one] = [await personOf(ctx), await metOf(ctx, fp)]
   if (one?.mailbox) await send(ctx.base, one.mailbox, await letterTo(ctx, me, one, 'gone', {})).catch(() => {})
   await ctx.set({ [metId(fp)]: null, [nameId(fp)]: null })
 }
 
 /** What a week left behind: invitations and acceptances older than that, gone with their mailboxes; and those who never answered, forgotten. @param {Context} ctx */
 export async function tidy(ctx) {
-  const all = await ctx.all(), old = (/** @type {{ at: number }} */ one) => ctx.now() - one.at > WEEK
-  for (const [id, value] of Object.entries(all)) {
+  for (const [id, value] of Object.entries(await ctx.all())) {
     const one = /^(invite:|accept:|people:[\w-]{22}$)/.test(id) ? JSON.parse(value) : null
-    if (!one || !old(one)) continue
+    if (!one || !(ctx.now() - one.at > WEEK)) continue
     if (id.startsWith('invite:')) await ended(ctx, one)
     else if (id.startsWith('accept:')) await dropped(ctx, one)
     else if (one.waiting) await ctx.set({ [id]: null, [`${id}:name`]: null })
@@ -341,7 +340,6 @@ async function chained(ctx, me, bytes) {
     if (!fresh) return
     if (!same(key, one.key) && !same(opened.from, one.key)) return update(ctx, one, { again: true })
     if (!same(key, one.key)) await update(ctx, one, { key, before: one.key, mailbox: chain.mailbox, at: ctx.now() })
-    await send(ctx.base, chain.mailbox, await letterTo(ctx, me, { ...one, key }, 'took', { key: fresh })).catch(() => {})
-    return
+    return send(ctx.base, chain.mailbox, await letterTo(ctx, me, { ...one, key }, 'took', { key: fresh })).catch(() => {})
   }
 }

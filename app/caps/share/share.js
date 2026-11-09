@@ -14,7 +14,7 @@ import { lex, WIDGETS, PAGES } from '../../ui/markdown.js'
 import { app, notify, showError, refreshConversations, openConversation, SHORTCUTS } from '../../ui/state.js'
 import { serviceURL } from '../../core/settings.js'
 import { t, useStrings, locale, intlLocales } from '../../core/i18n.js'
-import { join } from '../../core/fs.js'
+import { join, readJSON } from '../../core/fs.js'
 import { foldTurns } from '../../core/events.js'
 import { BRAND } from '../../brand.js'
 import { ulid } from '../../core/ulid.js'
@@ -80,8 +80,7 @@ export const failed = (error) => (error instanceof Said ? notify(error.message, 
 
 /** The shares kept here. */
 async function read() {
-  const files = (await app.fs.list(DIR)).filter((entry) => entry.name.endsWith('.json'))
-  const all = /** @type {(Share | Received)[]} */ ((await Promise.all(files.map((entry) => app.fs.read(join(DIR, entry.name)).then((text) => JSON.parse(text ?? '')).catch(() => null))))
+  const all = /** @type {(Share | Received)[]} */ ((await Promise.all((await app.fs.list(DIR)).filter((entry) => entry.name.endsWith('.json')).map((entry) => readJSON(app.fs, join(DIR, entry.name)).catch(() => null))))
     .filter(Boolean).sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1)))
   shares.value = /** @type {Share[]} */ (all.filter((one) => one.kind === 'share'))
   received.value = /** @type {Received[]} */ (all.filter((one) => one.kind === 'received'))
@@ -155,20 +154,16 @@ const inTurn = (task) => { const run = queue.then(task); queue = run.catch(() =>
 export const update = (share, { quiet = false, password, ...choices } = {}) => inTurn(async () => {
   const now = shares.peek().find((one) => one.id === share.id)
   if (!now) return
-  try {
-    const { token, material } = await kept(now)
-    const made = password === undefined ? material : await materialOf(bytesOf(now.secret), bytesOf(now.salt), password || undefined)
-    const changed = { ...now, ...choices, password: password === undefined ? now.password : Boolean(password), updatedAt: new Date().toISOString() }
-    changed.expires = await upload(changed, made, token)
-    if (password !== undefined) await setSecret(app.fs, `share:${now.id}`, JSON.stringify({ token, ...(password && { material: base64url(made) }) }))
-    await app.fs.write(fileOf(now.id), `${JSON.stringify(changed, null, 2)}\n`)
-    shares.value = shares.peek().map((one) => (one.id === now.id ? changed : one))
-    if (!quiet) notify(t('share.updated'))
-    return changed
-  } catch (error) {
-    if (!quiet) failed(error)
-  }
-})
+  const { token, material } = await kept(now)
+  const made = password === undefined ? material : await materialOf(bytesOf(now.secret), bytesOf(now.salt), password || undefined)
+  const changed = { ...now, ...choices, password: password === undefined ? now.password : Boolean(password), updatedAt: new Date().toISOString() }
+  changed.expires = await upload(changed, made, token)
+  if (password !== undefined) await setSecret(app.fs, `share:${now.id}`, JSON.stringify({ token, ...(password && { material: base64url(made) }) }))
+  await app.fs.write(fileOf(now.id), `${JSON.stringify(changed, null, 2)}\n`)
+  shares.value = shares.peek().map((one) => (one.id === now.id ? changed : one))
+  if (!quiet) notify(t('share.updated'))
+  return changed
+}).catch((error) => { if (!quiet) failed(error) })
 
 /**
  * Stops sharing it, once the user says so: the host forgets it, then Jean does, never before. Without
@@ -222,10 +217,8 @@ export async function bringIn(remote, text) {
     const material = bytesOf(text)
     const address = new URL(`v1/${remote}`, hostOf())
     let response = await fetch(address)
-    if (response.status === 401) {
-      const { salt } = await response.json()
-      response = await fetch(address, { headers: { authorization: `Share ${(await keysOf(material, bytesOf(String(salt)))).access}` } })
-    }
+    // A password's share gives its salt first.
+    if (response.status === 401) response = await fetch(address, { headers: { authorization: `Share ${(await keysOf(material, bytesOf(String((await response.json()).salt)))).access}` } })
     if (!response.ok) throw new Error(String(response.status))
     const value = await openValue(new Uint8Array(await response.arrayBuffer()), material)
     const at = new Date().toISOString(), { path, records } = await takeIn(app.fs, value, { projectDir: app.projectDir, by: app.deviceId, aFile: t('share.aFile'), from: { from: new URL(hostOf()).host } })
@@ -251,8 +244,7 @@ export async function fromAddress() {
   const [, remote = '', text = ''] = /^#\/shared\/([\w-]+)\/([\w-]+)$/.exec(location.hash) ?? []
   history.replaceState(null, '', `${location.pathname}#/`)
   await bringIn(remote, text)
-  const { hashFor } = await import('../../ui/router.js')
-  history.replaceState(null, '', location.pathname + hashFor(app.project.value, app.current.value?.id ?? null))
+  history.replaceState(null, '', location.pathname + (await import('../../ui/router.js')).hashFor(app.project.value, app.current.value?.id ?? null))
 }
 
 // ─── Settings › Your data ────────────────────────────────────────────────────
