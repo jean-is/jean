@@ -40,18 +40,24 @@ jobs:
       - run: npm run check
 
   # Every package as the registry signed it, no known high or critical advisory, and the bill of
-  # materials of what ships, CycloneDX, kept with the run.
+  # materials of what ships, CycloneDX, kept with the run, named by the version git gives (D735): npm sbom refuses a
+  # package.json without one.
   audit:
     runs-on: ubuntu-24.04
     container: mcr.microsoft.com/playwright:v1.64.1-noble
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          fetch-depth: 0
+      # The checkout trusts the folder, which another user owns in the container, only for its own step.
+      - run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: .nvmrc
       - run: npm ci --no-audit --no-fund
       - run: npm audit signatures
       - run: npm audit --audit-level=high
+      - run: npm pkg set version="$(node scripts/version.js)"
       - run: npm sbom --omit=dev --sbom-format cyclonedx > sbom.cdx.json
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
@@ -370,6 +376,8 @@ jobs:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
           fetch-depth: 0
+      # The checkout trusts the folder, which another user owns in the container, only for its own step.
+      - run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: .nvmrc
