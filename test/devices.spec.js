@@ -979,6 +979,8 @@ test('Your data draws where things are: a dashed phone, before Your devices is f
 })
 
 test('Share offers Your devices beside the people met: ticked, Send a copy hands the task to each other device', async ({ page, browser }) => {
+  const errors = /** @type {string[]} */ ([])
+  page.on('console', (message) => { if (message.type() === 'error') errors.push(message.text()) })
   await deviceA(page)
   const b = await device(browser)
   await pair(page, b)
@@ -1004,6 +1006,9 @@ test('Share offers Your devices beside the people met: ticked, Send a copy hands
   await dialog.getByRole('button', { name: 'Send a copy' }).click()
   await expect(page.locator('.toast')).toContainText(`Sent to ${theirs}.`)
   await expect(b.locator('.toast', { hasText: `From ${mine}: ${TITLE}` })).toBeVisible()
-  expect(path).toMatch(/conversations\/[0-9A-HJKMNP-TV-Z]{26}\.jsonl$/)
+  // The task open in the room, its Share at the top asks each audience whom it went to: Your devices says nothing, and nothing breaks.
+  await page.evaluate(async (path) => (await import('/ui/state.js')).openConversation(path), path)
+  await expect(page.locator('.views .share-top')).toBeVisible()
+  expect(errors.filter((text) => text.includes('Capability'))).toEqual([])
   await b.context().close()
 })

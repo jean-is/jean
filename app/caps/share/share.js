@@ -263,7 +263,7 @@ const [locked, sent] = [icon(svg`<path d="M8.5 9.5H7A2.5 2.5 0 0 0 4.5 12v5.5A2.
  */
 function state({ path, records }) {
   const share = shareOf({ path, title: '' }), live = share && Date.parse(share.expires) > Date.now()
-  const went = live ? '' : audiences().map((one) => one.went(records)).find(Boolean)
+  const went = live ? '' : audiences().map((one) => one.went?.(records)).find(Boolean)
   const act = (/** @type {Event} */ event) => openShare({ path, title: app.conversations.value.find((one) => one.path === path)?.title ?? '' }, event.currentTarget)
   return html`<button class="icon-button share-top ${live ? 'share-state' : ''}" @click=${act} aria-keyshortcuts=${SHORTCUTS.share}
     aria-label=${live ? t('share.sharedUntil', { date: new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'medium' }).format(new Date(share.expires)) }) : went || t('share.menu')}>${
