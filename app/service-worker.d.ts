@@ -12,4 +12,5 @@ interface WorkerGlobalScopeEventMap {
   fetch: FetchEvent
   message: ExtendableMessageEvent
   notificationclick: NotificationEvent
+  push: ExtendableEvent
 }
