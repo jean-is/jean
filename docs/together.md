@@ -64,7 +64,7 @@ The [DPIA](trust/dpia.md) has each row with who receives what, and the [threat m
   - Inside a shared project, Share's pane for one of its things says nothing of the project; a project's invitations through People.
   - A deck open in a tab other than the one following the circle takes the others' slides only when opened again.
   - Handing a circle over to another owner.
-- **Nudges:** the service worker's notification in a real browser (headless Chromium never grants notifications); on an iPhone, only a Jean on the home screen gets them. Before jean.is's relay has a VAPID key, its privacy policy and *Where your files go* name the push services.
+- **Nudges:** the service worker's notification in a real browser (headless Chromium never grants notifications); on an iPhone, only a Jean on the home screen gets them.
 - **The store:** files fetched only when opened, and Dropbox's own API as a store.
 - **People:** replies to a shared document or table, sealed to the sender to merge (D477); requests between people's Jeans (D226); the phone as a remote of a running Jean.
 - **By hand:** the roadmap's checklist has a line for each.
