@@ -53,8 +53,6 @@
   "people.cancel": "منسوخ کریں",
   "people.ok": "ہو گیا",
   "people.close": "بند کریں",
-  "people.only": "صرف آپ کے چنے ہوئے لوگ",
-  "people.toWhom": "کس کو",
   "people.reading": "{name} کے پڑھے ہوئے مواد کے ساتھ",
   "people.words": "ان کے لیے چند الفاظ",
   "people.asked": {
@@ -64,7 +62,6 @@
   "people.size": "ایک بار میں بھیجے جا سکنے والے {limit} میں سے {size}",
   "people.measuring": "کیا بھیجا جائے گا، یہ دیکھا جا رہا ہے…",
   "people.opens": "ان کے پاس اسے کھولنے کے لیے ایک ہفتہ ہے۔",
-  "people.go": "بھیجیں",
   "people.sentTo": "{name} کو بھیج دیا گیا۔",
   "people.came": "{name} نے آپ کو “{title}” بھیجا",
   "people.open": "کھولیں",

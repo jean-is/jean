@@ -52,8 +52,6 @@
   "people.cancel": "Fagilé",
   "people.ok": "Ó ti parí",
   "people.close": "Pa dé",
-  "people.only": "Àwọn ẹni tí ẹ yàn nìkan",
-  "people.toWhom": "Ẹni tí yóò gbà á",
   "people.reading": "Pẹ̀lú ohun tí {name} kà",
   "people.words": "Ọ̀rọ̀ díẹ̀ fún wọn",
   "people.asked": {
@@ -62,7 +60,6 @@
   "people.size": "{size}, nínú {limit} tí a lè fi ránṣẹ́ lẹ́ẹ̀kan ṣoṣo",
   "people.measuring": "Ó ń wo ohun tí a ó fi ránṣẹ́…",
   "people.opens": "Wọ́n ní ọ̀sẹ̀ kan láti ṣí i.",
-  "people.go": "Fi ránṣẹ́",
   "people.sentTo": "A ti fi ránṣẹ́ sí {name}.",
   "people.came": "{name} ti fi “{title}” ránṣẹ́ sí yín",
   "people.open": "Ṣí i",

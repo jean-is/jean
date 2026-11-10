@@ -21,9 +21,9 @@ Jean on all of a person's devices, and with other people, without a server that 
 |---|---|---|---|
 | Your devices | Settings › Your devices › Add a device: a QR code or a link, six digits typed on the first device; settings and keys follow | Mailboxes, sealed device to device | D700 |
 | The store | Tasks, files and memory the same on every device, Sync's merges | The relay's stores, sealed under keys only the person's devices hold | D227 · D721 |
-| People | Settings › People › Add a person (side by side, or a link and six digits back); Send to…; answers back into the task | The person mailbox, sealed person to person | D727 |
+| People | Settings › People › Add a person (side by side, or a link and six digits back); Share › tick them › Send a copy; answers back into the task | The person mailbox, sealed person to person | D727 |
 | Colleagues | Colleagues under *At <organisation>* in Send to…, with no meeting | The organisation's own relay, listing people by their checked ID token; `ee/`'s controls | D731 · D732 |
-| Together | Share › Work on it together: a link (Can edit, Can view) or people met; faces of who is here; People in this…; Only on my devices; a project's Work on this project together | Journals: each change signed by its member and sealed under the circle's key | D733 · D734 |
+| Together | Share › tick people › Work on it together, or Copy an invitation link instead; faces of who is here; People in this…; Your devices ticked alone; a project's Work on this project together | Journals: each change signed by its member and sealed under the circle's key | D733 · D734 |
 | Nudges | A notification, with Jean closed, that something came, never what or from whom | Web Push with no payload, signed by the relay | D736 |
 
 Together binds what each kind of thing's changes are:

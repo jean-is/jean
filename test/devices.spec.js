@@ -977,3 +977,33 @@ test('Your data draws where things are: a dashed phone, before Your devices is f
   await expect(page.getByRole('dialog', { name: 'Your devices' }).locator('.devices-list > li').nth(1).locator('small.is-wait')).toBeVisible()
   await b.context().close()
 })
+
+test('Share offers Your devices beside the people met: ticked, Send a copy hands the task to each other device', async ({ page, browser }) => {
+  await deviceA(page)
+  const b = await device(browser)
+  await pair(page, b)
+  await closeSettings(page)
+  const path = await page.evaluate(async (title) => {
+    const [{ app, refreshConversations }, { createConversation, appendRecords }, { metaRecord, userRecord }, { unlock }] = await Promise.all([
+      import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js'), import('/ui/caps.js')])
+    const { path } = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })
+    await appendRecords(app.fs, path, [metaRecord(app.deviceId, { title }), userRecord('Plan my trip to Lyon', app.deviceId)])
+    await refreshConversations()
+    await unlock('share')
+    await (await import('/caps/share/share.js')).openShare({ path, title }, null)
+    return path
+  }, TITLE)
+  const [mine, theirs] = await page.evaluate(async () => {
+    const { devices, own } = await import('/caps/devices/devices.js')
+    return [devices.value.find((one) => one.id === own.value)?.name, devices.value.find((one) => one.id !== own.value)?.name]
+  })
+  const dialog = page.locator('app-share-dialog dialog[open]')
+  const yours = dialog.getByRole('checkbox', { name: `Your devices ${theirs}` })
+  await expect(yours).not.toBeChecked()
+  await yours.check()
+  await dialog.getByRole('button', { name: 'Send a copy' }).click()
+  await expect(page.locator('.toast')).toContainText(`Sent to ${theirs}.`)
+  await expect(b.locator('.toast', { hasText: `From ${mine}: ${TITLE}` })).toBeVisible()
+  expect(path).toMatch(/conversations\/[0-9A-HJKMNP-TV-Z]{26}\.jsonl$/)
+  await b.context().close()
+})

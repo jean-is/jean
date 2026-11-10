@@ -14,7 +14,7 @@
   ],
   "good": [
     "What follows: your brains with their keys, the keys of your connections and search services, your settings and your projects. Your tasks, files, documents, memory, skills and routines follow too, within seconds while {name} runs on both. After that, a change made on one reaches the others a moment later.",
-    "If {devices} says a task stays where you did it, send one over from the task’s ⋮ menu, with “Send to” and the device’s name.",
+    "If {devices} says a task stays where you did it, send it over: in {share}, tick {devices} and press {sendCopy}, or choose “Send to” and a device’s name in the task’s ⋮ menu.",
     "Each device keeps its own theme, synced folder, downloaded brains, sign-ins to services and lock; a project you keep on one device stays there.",
     "Everything goes sealed from one device to another, so that only your devices can read it. Your devices share 1 GB; {devices} shows how much is used, and once it is full, what is new stays on the device it was made on.",
     "On an iPhone or iPad, the link opened in Safari first offers to add {name} to the Home Screen, which keeps its files apart from Safari’s: add it, open it from the Home Screen and paste the link in its box, or press {safari}.",

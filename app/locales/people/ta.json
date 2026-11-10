@@ -53,8 +53,6 @@
   "people.cancel": "ரத்துசெய்",
   "people.ok": "முடிந்தது",
   "people.close": "மூடு",
-  "people.only": "நீங்கள் தேர்ந்தெடுக்கும் நபர்கள் மட்டும்",
-  "people.toWhom": "பெறுநர்",
   "people.reading": "{name} படித்தவற்றுடன்",
   "people.words": "அவருக்குச் சில வார்த்தைகள்",
   "people.asked": {
@@ -64,7 +62,6 @@
   "people.size": "ஒரே முறையில் அனுப்பக்கூடிய {limit}-இல் {size}",
   "people.measuring": "அனுப்பப்படுவதைக் கணக்கிடுகிறது…",
   "people.opens": "இதைத் திறக்க அவருக்கு ஒரு வாரம் உள்ளது.",
-  "people.go": "அனுப்பு",
   "people.sentTo": "{name}-க்கு அனுப்பப்பட்டது.",
   "people.came": "{name} உங்களுக்கு “{title}” என்பதை அனுப்பியுள்ளார்",
   "people.open": "திற",

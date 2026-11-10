@@ -52,8 +52,6 @@
   "people.cancel": "キャンセル",
   "people.ok": "完了",
   "people.close": "閉じる",
-  "people.only": "選んだ人だけ",
-  "people.toWhom": "送り先",
   "people.reading": "{name} が読んだものも含める",
   "people.words": "相手へのひとこと",
   "people.asked": {
@@ -62,7 +60,6 @@
   "people.size": "{size}（一度に送れるのは {limit} まで）",
   "people.measuring": "送る内容を確認しています…",
   "people.opens": "相手が開ける期限は 1 週間です。",
-  "people.go": "送る",
   "people.sentTo": "{name} に送りました。",
   "people.came": "{name} から「{title}」が届きました",
   "people.open": "開く",

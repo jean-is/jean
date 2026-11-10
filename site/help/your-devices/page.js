@@ -13,6 +13,7 @@ export default helpArticle({
   names: {
     settings: 'settings.title', devices: 'cap.devices.name', capabilities: 'settings.capabilities', add: 'devices.add', bring: 'welcome.bring', join: 'devices.join',
     yours: 'devices.yours', mine: 'devices.mine', stop: 'devices.stop', remove: 'action.remove', erase: 'devices.erase', safari: 'devices.inSafari', other: 'devices.joinOther',
+    share: 'share.title', sendCopy: 'share.copy',
   },
   steps: [{}, {}, {}, {}, {}],
   also: ['where-kept', 'back-up', 'together'],

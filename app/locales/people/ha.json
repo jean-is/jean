@@ -53,8 +53,6 @@
   "people.cancel": "Soke",
   "people.ok": "An gama",
   "people.close": "Rufe",
-  "people.only": "Sai mutanen da ka zaɓa",
-  "people.toWhom": "Zuwa ga",
   "people.reading": "Tare da abin da aka karanta",
   "people.words": "Kalmomi kaɗan gare su",
   "people.asked": {
@@ -64,7 +62,6 @@
   "people.size": "{size}, daga cikin {limit} da za a iya aikawa a lokaci ɗaya",
   "people.measuring": "Ana duba abin da zai tafi…",
   "people.opens": "Suna da mako ɗaya don su buɗe shi.",
-  "people.go": "Aika",
   "people.sentTo": "An aika wa {name}.",
   "people.came": "An aiko maka “{title}” daga wurin {name}",
   "people.open": "Buɗe",

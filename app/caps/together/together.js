@@ -12,7 +12,7 @@ import { useStrings } from '../../core/i18n.js'
 import { apart } from '../sync/mirror.js'
 import { circles, starting, circleOf, circleAt, follow, all, apartOf, here, join, turn, done, holding, memberName } from './engine.js'
 import { posting, viewed, after } from './task.js'
-import { how, faces, taskFaces, asked, askCard, projectButton } from './page.js'
+import { how, start, faces, taskFaces, asked, askCard, projectButton } from './page.js'
 import { asking } from './engine.js'
 
 await useStrings('together')
@@ -65,8 +65,8 @@ register({ id: 'together',
   view: { at: 0, draw: () => nothing, records: (/** @type {any[]} */ records, /** @type {string} */ path) => (circleAt(path) ? viewed(records, memberName) : records) },
   // The room's line over another's turn names them as the circle does, else as People does (ui/chat.js).
   came: { at: 0, draw: () => nothing, name: (/** @type {string} */ fp) => memberName(fp) || (slots('came').find((one) => one.at > 0)?.name(fp) ?? '') },
-  // Share's second question, how, for what can be worked on together (caps/share/dialog.js).
-  how: { at: 1, draw: how },
+  // In Share, for what can be worked on together (caps/share/dialog.js): its line once it is, and the verbs' start.
+  how: { at: 1, draw: how, start },
   // The faces of who is in, at the head of a collection's pane worked on together.
   head: { at: 0, draw: (/** @type {{ uri: string }} */ file) => ((live) => (live ? faces(live) : null))(circleOf(file.uri)) },
   dialog: { at: 2, draw: () => html`<app-together-dialog></app-together-dialog>` },

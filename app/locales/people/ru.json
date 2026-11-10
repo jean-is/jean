@@ -55,8 +55,6 @@
   "people.cancel": "Отмена",
   "people.ok": "Готово",
   "people.close": "Закрыть",
-  "people.only": "Только выбранные вами люди",
-  "people.toWhom": "Кому",
   "people.reading": "Вместе с прочитанным",
   "people.words": "Несколько слов от вас",
   "people.asked": {
@@ -68,7 +66,6 @@
   "people.size": "{size} из {limit}, которые можно отправить за раз",
   "people.measuring": "Подсчёт того, что будет отправлено…",
   "people.opens": "Открыть можно в течение недели.",
-  "people.go": "Отправить",
   "people.sentTo": "Отправлено. Получатель: {name}.",
   "people.came": "{name} отправляет вам «{title}»",
   "people.open": "Открыть",

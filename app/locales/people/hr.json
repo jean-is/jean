@@ -54,8 +54,6 @@
   "people.cancel": "Odustani",
   "people.ok": "Gotovo",
   "people.close": "Zatvori",
-  "people.only": "Samo osobe koje odaberete",
-  "people.toWhom": "Kome",
   "people.reading": "S onim što je aplikacija {name} pročitala",
   "people.words": "Nekoliko riječi za tu osobu",
   "people.asked": {
@@ -66,7 +64,6 @@
   "people.size": "{size}, od {limit} koliko se može poslati odjednom",
   "people.measuring": "Provjerava se što će se poslati…",
   "people.opens": "Ta osoba ima tjedan dana da to otvori.",
-  "people.go": "Pošalji",
   "people.sentTo": "Poslano osobi {name}.",
   "people.came": "Osoba {name} poslala vam je „{title}“",
   "people.open": "Otvori",

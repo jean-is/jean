@@ -57,8 +57,6 @@
   "people.cancel": "إلغاء",
   "people.ok": "تم",
   "people.close": "إغلاق",
-  "people.only": "الأشخاص الذين تختارهم فقط",
-  "people.toWhom": "إلى",
   "people.reading": "مع ما قُرئ في {name}",
   "people.words": "بضع كلمات مرفقة",
   "people.asked": {
@@ -72,7 +70,6 @@
   "people.size": "{size}، من أصل {limit} يمكن إرسالها دفعة واحدة",
   "people.measuring": "جارٍ حساب ما سيُرسَل…",
   "people.opens": "يمكن فتحه خلال أسبوع.",
-  "people.go": "إرسال",
   "people.sentTo": "تم الإرسال إلى {name}.",
   "people.came": "وصلك من {name}: «{title}»",
   "people.open": "فتح",

@@ -53,8 +53,6 @@
   "people.cancel": "Отказ",
   "people.ok": "Готово",
   "people.close": "Затвори",
-  "people.only": "Само хората, които изберете",
-  "people.toWhom": "До",
   "people.reading": "С прочетеното от {name}",
   "people.words": "Няколко думи към човека",
   "people.asked": {
@@ -64,7 +62,6 @@
   "people.size": "{size} от {limit}, които могат да се изпратят наведнъж",
   "people.measuring": "Изчислява се какво ще се изпрати…",
   "people.opens": "Човекът има една седмица да го отвори.",
-  "people.go": "Изпрати",
   "people.sentTo": "Изпратено на {name}.",
   "people.came": "{name} ви изпрати „{title}“",
   "people.open": "Отвори",

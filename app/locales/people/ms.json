@@ -52,8 +52,6 @@
   "people.cancel": "Batal",
   "people.ok": "Selesai",
   "people.close": "Tutup",
-  "people.only": "Hanya orang yang anda pilih",
-  "people.toWhom": "Kepada",
   "people.reading": "Dengan apa yang dibaca oleh {name}",
   "people.words": "Beberapa patah kata untuknya",
   "people.asked": {
@@ -62,7 +60,6 @@
   "people.size": "{size}, daripada {limit} yang boleh dihantar sekali gus",
   "people.measuring": "Melihat apa yang akan dihantar…",
   "people.opens": "Dia ada masa seminggu untuk membukanya.",
-  "people.go": "Hantar",
   "people.sentTo": "Dihantar kepada {name}.",
   "people.came": "{name} menghantar “{title}” kepada anda",
   "people.open": "Buka",

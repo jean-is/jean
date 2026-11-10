@@ -52,8 +52,6 @@
   "people.cancel": "取消",
   "people.ok": "完成",
   "people.close": "关闭",
-  "people.only": "仅限你选择的人",
-  "people.toWhom": "收件人",
   "people.reading": "连同 {name} 读过的内容",
   "people.words": "给对方留几句话",
   "people.asked": {
@@ -62,7 +60,6 @@
   "people.size": "{size}，一次最多可发送 {limit}",
   "people.measuring": "正在计算要发送的内容…",
   "people.opens": "对方有一周时间打开。",
-  "people.go": "发送",
   "people.sentTo": "已发送给 {name}。",
   "people.came": "{name} 给你发来了“{title}”",
   "people.open": "打开",

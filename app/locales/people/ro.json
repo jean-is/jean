@@ -54,8 +54,6 @@
   "people.cancel": "Anulați",
   "people.ok": "Gata",
   "people.close": "Închideți",
-  "people.only": "Doar persoanele pe care le alegeți",
-  "people.toWhom": "Către",
   "people.reading": "Cu ce a citit {name}",
   "people.words": "Câteva cuvinte pentru această persoană",
   "people.asked": {
@@ -66,7 +64,6 @@
   "people.size": "{size}, din {limit} cât se poate trimite deodată",
   "people.measuring": "Se verifică ce se trimite…",
   "people.opens": "Persoana are o săptămână să-l deschidă.",
-  "people.go": "Trimiteți",
   "people.sentTo": "Trimis către {name}.",
   "people.came": "{name} v-a trimis „{title}”",
   "people.open": "Deschideți",

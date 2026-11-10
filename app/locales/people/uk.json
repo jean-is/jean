@@ -55,8 +55,6 @@
   "people.cancel": "Скасувати",
   "people.ok": "Готово",
   "people.close": "Закрити",
-  "people.only": "Лише вибрані вами люди",
-  "people.toWhom": "Кому",
   "people.reading": "Разом із прочитаним",
   "people.words": "Кілька слів від вас",
   "people.asked": {
@@ -68,7 +66,6 @@
   "people.size": "{size} із {limit}, які можна надіслати за раз",
   "people.measuring": "Підрахунок того, що буде надіслано…",
   "people.opens": "Відкрити можна протягом тижня.",
-  "people.go": "Надіслати",
   "people.sentTo": "Надіслано. Отримувач: {name}.",
   "people.came": "{name} надсилає вам «{title}»",
   "people.open": "Відкрити",

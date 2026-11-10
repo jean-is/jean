@@ -54,8 +54,6 @@
   "people.cancel": "Cancelar",
   "people.ok": "Listo",
   "people.close": "Cerrar",
-  "people.only": "Solo las personas que elijas",
-  "people.toWhom": "Para",
   "people.reading": "Con lo que {name} leyó",
   "people.words": "Unas palabras para esa persona",
   "people.asked": {
@@ -66,7 +64,6 @@
   "people.size": "{size}, de los {limit} que pueden enviarse de una vez",
   "people.measuring": "Calculando lo que se envía…",
   "people.opens": "Tiene una semana para abrirlo.",
-  "people.go": "Enviar",
   "people.sentTo": "Enviado a {name}.",
   "people.came": "{name} te envió «{title}»",
   "people.open": "Abrir",

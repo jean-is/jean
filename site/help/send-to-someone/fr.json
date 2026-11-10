@@ -3,20 +3,21 @@
   "description": "Ajoutez une personne une fois, côte à côte ou par un lien et six chiffres, puis envoyez-lui une tâche ou ce que {name} a fait, scellé pour elle seule.",
   "h1": "Envoyer une tâche à quelqu’un",
   "works": "Tous les navigateurs",
-  "answer": "Ajoutez la personne une fois dans {settings} › {people}, côte à côte ou par un lien et six chiffres. Puis, dans {shareMenu}, choisissez {only} et envoyez-lui une tâche ou ce que {name} a fait : elle seule peut l’ouvrir, et sa réponse revient dans la même tâche.",
+  "answer": "Ajoutez la personne une fois dans {settings} › {people}, côte à côte ou par un lien et six chiffres. Puis, dans {shareMenu}, cochez-la et appuyez sur {sendCopy} pour lui envoyer une tâche ou ce que {name} a fait : elle seule peut l’ouvrir, et sa réponse revient dans la même tâche.",
   "steps.title": "Ajouter une personne, puis envoyer",
   "steps": [
     "Ouvrez {settings}, depuis le menu à votre nom (ou « Vous »), au pied de la liste des tâches, puis {people}. Pas encore là ? Activez {people} dans {settings} › {capabilities}, ou dites dans une tâche que vous aimeriez envoyer quelque chose à quelqu’un.",
     "Appuyez sur {add} et tapez son nom sous {who}. Côte à côte, appuyez sur {side} : la personne vise le code avec l’appareil photo de son téléphone, tant qu’il reste affiché chez vous. À distance, appuyez sur {apart} et envoyez-lui le lien comme vous lui envoyez tout le reste : il reste valable une semaine.",
     "Chez la personne, {name} demande {from} : elle tape votre nom et appuie sur {accept}. Son écran affiche alors six chiffres, qu’elle vous montre, ou vous renvoie par le même chemin que le lien.",
     "Tapez ces six chiffres sur votre écran et appuyez sur {confirm}. Vous avez trois essais. Si vous avez fermé {name} entre-temps, les chiffres vous sont demandés sous {invitations} à la prochaine ouverture.",
-    "Pour envoyer une tâche, appuyez sur {shareMenu}, en haut de la tâche ou dans son menu ⋮ ; sous ce que {name} a fait, c’est à côté de {copy}. Sous {whoCan}, choisissez {only}, puis la personne.",
-    "Activez {reading} pour envoyer aussi les fichiers que {name} a lus, ajoutez un mot sous {words} si vous voulez, vérifiez ce qui part et sa taille, et appuyez sur {send}. La personne a une semaine pour l’ouvrir."
+    "Pour envoyer une tâche, appuyez sur {shareMenu}, en haut de la tâche ou dans son menu ⋮ ; sous ce que {name} a fait, c’est à côté de {copy}. Dans {share}, cochez la personne ; pas encore dans la liste ? {add} est juste en dessous.",
+    "Activez {reading} pour envoyer aussi les fichiers que {name} a lus, ajoutez un mot sous {words} si vous voulez, vérifiez ce qui part et sa taille, et appuyez sur {sendCopy}. La personne a une semaine pour l’ouvrir."
   ],
   "good": [
     "Ce que vous envoyez lui arrive sous forme de carte au-dessus de la conversation, sur chacun de ses appareils, avec {open} et {notNow}. Une fois ouvert, c’est une tâche à elle qui dit qu’elle vient de vous : vos demandes restent les vôtres, jamais les siennes, et {name} lui demande son accord avant d’envoyer quoi que ce soit au-dehors depuis cette tâche.",
-    "Pour répondre, elle choisit « Renvoyer à » suivi de votre nom, dans le menu ⋮ de cette tâche : seul ce qu’elle a ajouté part. Sa réponse vous arrive sous forme de carte ; {takeIn} l’ajoute à la tâche que vous aviez envoyée, après une ligne de sa part.",
+    "Pour répondre, elle choisit « Renvoyer à » suivi de votre nom, dans le menu ⋮ de cette tâche : {share} s’ouvre avec votre nom coché, et seul ce qu’elle a ajouté part. Sa réponse vous arrive sous forme de carte ; {takeIn} l’ajoute à la tâche que vous aviez envoyée, après une ligne de sa part.",
     "On ne peut rien envoyer qu’aux personnes ajoutées ainsi, et elles seules peuvent l’ouvrir : les six chiffres garantissent que c’est bien la personne que vous pensez. Chacune apparaît sous le nom que vous lui donnez, à côté de celui qu’elle se donne ; {rename} change le vôtre.",
+    "Pour un lien que n’importe qui peut lire dans un navigateur, même sans {name}, passez plutôt par {publish}, l’autre onglet.",
     "Pour retirer quelqu’un, appuyez sur {remove} à côté de son nom dans {people}. Ce que cette personne vous a envoyé reste à vous.",
     "Les personnes ajoutées vous suivent sur vos autres appareils. Si vous retirez l’un de vos appareils, elles reçoivent votre nouvelle clé d’elles-mêmes ; une personne marquée « À rencontrer de nouveau » s’ajoute de nouveau avec les six chiffres.",
     "Au travail, vous pouvez trouver vos collègues dans {people} avec {find}, puis {keep}. Pour une personne qui n’y est pas encore, appuyez sur {inviteMail} : votre messagerie s’ouvre avec un e-mail pour elle. Votre organisation peut aussi n’ajouter les personnes que depuis sa liste ; {add} n’est alors pas là.",
@@ -37,7 +38,7 @@
     ],
     [
       "Vous ne pouvez pas encore choisir la personne",
-      "Elle n’a pas encore répondu. Dès qu’elle l’aura fait, vous pourrez lui envoyer des choses."
+      "Elle n’a pas encore répondu : {waiting} s’affiche à côté de son nom. Dès qu’elle l’aura fait, vous pourrez lui envoyer des choses."
     ]
   ],
   "ask": "À qui puis-je envoyer cette tâche, et comment ajouter quelqu’un ?"

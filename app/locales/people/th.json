@@ -52,8 +52,6 @@
   "people.cancel": "ยกเลิก",
   "people.ok": "เสร็จ",
   "people.close": "ปิด",
-  "people.only": "เฉพาะคนที่เลือก",
-  "people.toWhom": "ถึง",
   "people.reading": "พร้อมสิ่งที่ {name} อ่าน",
   "people.words": "ข้อความสั้นๆ ถึงอีกฝ่าย",
   "people.asked": {
@@ -62,7 +60,6 @@
   "people.size": "{size} จาก {limit} ที่ส่งได้ในครั้งเดียว",
   "people.measuring": "กำลังดูว่าจะส่งอะไรบ้าง…",
   "people.opens": "อีกฝ่ายมีเวลาหนึ่งสัปดาห์ในการเปิด",
-  "people.go": "ส่ง",
   "people.sentTo": "ส่งให้ {name} แล้ว",
   "people.came": "{name} ส่ง “{title}” ให้คุณ",
   "people.open": "เปิด",

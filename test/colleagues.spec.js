@@ -63,10 +63,10 @@ test('at work, a colleague found on the organisation’s list is added with no m
   await row.getByRole('button', { name: 'More options' }).click()
   await row.getByRole('button', { name: 'Share…' }).click()
   const dialog = ana.locator('app-share-dialog dialog[open]')
-  await expect(dialog.getByRole('radio', { name: 'Bob Dupont' })).toBeChecked()
-  await dialog.getByRole('button', { name: 'Send' }).click()
+  await dialog.getByRole('checkbox', { name: 'Bob Dupont' }).check()
+  await dialog.getByRole('button', { name: 'Send a copy' }).click()
   await expect(dialog.locator('p[role="status"]')).toHaveText('Sent to Bob Dupont.')
-  await dialog.getByRole('button', { name: 'Done' }).click()
+  await dialog.locator('.dialog-head').getByRole('button', { name: 'Close' }).click()
 
   // Bob never added Ana: his Jean looked her up by the mailbox her letter gave, kept her as the list names her, and shows what she sent.
   const card = bob.locator('.people-card')

@@ -51,7 +51,7 @@ GitHub moved Pages to github.io in 2013 for this reason.
 | Update the link | Built | From *Share…* again, which opens on the link made, its choices to change; by hand in Settings › Your data, or after each answer |
 | Replies back | Built (D727) | Someone sent a task over the relay answers back into it; a link's readers answer later |
 | A shared project | Later, with D733 | One circle for a whole project. One file per ULID, `author` on each and append-only conversations were made for it |
-| Working on it together | Decided (D733 · D734) | *Share…* asks how: a copy, as above, or a task, document or collection worked on together, each person's own Jean answering them |
+| Working on it together | Decided (D733 · D734) | *Share…* has two tabs: *Share*, to people chosen, as a copy or a task, document, deck, collection or project worked on together, each person's own Jean answering them; and *Publish*, the link above |
 
 ## Limits
 

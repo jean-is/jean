@@ -53,8 +53,6 @@
   "people.cancel": "ይቅር",
   "people.ok": "ተጠናቋል",
   "people.close": "ይዝጉ",
-  "people.only": "እርስዎ የመረጧቸው ሰዎች ብቻ",
-  "people.toWhom": "ተቀባይ",
   "people.reading": "ከተነበበው ጋር",
   "people.words": "ለእነሱ ጥቂት ቃላት",
   "people.asked": {
@@ -64,7 +62,6 @@
   "people.size": "{size}፣ በአንድ ጊዜ ሊላክ ከሚችለው {limit} ውስጥ",
   "people.measuring": "የሚላከውን በማስላት ላይ…",
   "people.opens": "ለመክፈት አንድ ሳምንት አላቸው።",
-  "people.go": "ላክ",
   "people.sentTo": "ለ{name} ተልኳል።",
   "people.came": "{name} “{title}”ን ልከውልዎታል",
   "people.open": "ክፈት",

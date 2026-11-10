@@ -74,20 +74,24 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   await row.getByRole('button', { name: 'Share…' }).click()
   const dialog = page.locator('app-share-dialog dialog[open]')
   await expect(dialog).toContainText('Its answers’ certificates go with it.')
-  // Anyone with the link, the one audience without People: a password or none, a card for each saying what it means, and for how long,
-  // each length with the day it would end.
-  await expect(dialog.getByRole('radiogroup', { name: 'Who can open it' })).toHaveCount(0)
-  await expect(dialog.getByRole('radio', { name: /^No password The simplest/ })).toBeChecked()
+  // Publish alone, without People or a relay, so no tabs: what it means, its choices on one line, opened by Change: no password, and for
+  // how long, each length with the day it would end.
+  await expect(dialog.getByRole('tab')).toHaveCount(0)
+  await expect(dialog.locator('.dialog-head h2')).toHaveText('Share Plan the week')
+  await expect(dialog).toContainText('A copy anyone with the link can read, in any browser, without Jean.')
+  await dialog.getByRole('button', { name: 'No password · 30 days · as it is now Change' }).click()
+  await expect(dialog.getByRole('switch', { name: 'With a password' })).not.toBeChecked()
   await expect(dialog.getByRole('radio', { name: /^30 days Until .+ \d{4}$/ })).toBeChecked()
   await expect(dialog.getByRole('radio', { name: /^A year Until / })).not.toBeChecked()
-  await dialog.getByRole('button', { name: 'Create link' }).click()
+  await dialog.getByRole('button', { name: 'Publish link' }).click()
   const link = await dialog.locator('input.share-link').inputValue()
   expect(link).toMatch(/^http:\/\/127\.0\.0\.1:4185\/[\w-]{22}#[\w-]{43}$/)
-  // Shared, its choices folded into one line: who opens it and until when.
-  await expect(dialog.getByRole('button', { name: /^Anyone with the link · Until .+ Change$/ })).toHaveAttribute('aria-expanded', 'false')
-  await expect(dialog.getByRole('button', { name: 'Create link' })).toHaveCount(0)
-  // Its QR code, the choice beside the link, large in its place, for a phone's camera: lean-qr's for the link, dark on light.
-  await dialog.getByRole('radio', { name: 'QR code', exact: true }).check()
+  // Published, said so, its choices folded into one line again: no password, until when, as it is now.
+  await expect(dialog.locator('.share-says')).toHaveText(/^Published\. Anyone with the link can read it until /)
+  await expect(dialog.getByRole('button', { name: /^No password · Until .+ · as it is now Change$/ })).toHaveAttribute('aria-expanded', 'false')
+  await expect(dialog.getByRole('button', { name: 'Publish link' })).toHaveCount(0)
+  // Its QR code, a button beside the link, large in its place, for a phone's camera: lean-qr's for the link, dark on light.
+  await dialog.getByRole('button', { name: 'QR code', exact: true }).click()
   const code = dialog.getByRole('img', { name: 'The link as a QR code, to open it with a phone’s camera' })
   const square = await code.boundingBox()
   expect(square && [square.width === square.height, square.width >= 190]).toEqual([true, true])
@@ -160,11 +164,10 @@ test('a task shared by link opens in the host’s viewer, with its password, and
     const [button, box] = await Promise.all([state.boundingBox(), dialog.boundingBox()])
     expect(button && box && [Math.round(box.y - button.y - button.height), Math.round(box.x + box.width - button.x - button.width)]).toEqual([8, 0])
   }).toPass()
-  // The choices, opened from their line: a password, offered in its card before it applies and drawn again on asking, and a year.
-  await expect(dialog.getByRole('radio', { name: 'Link', exact: true })).toBeChecked()
-  await dialog.getByRole('button', { name: /^Anyone with the link · Until / }).click()
-  await expect(dialog.getByRole('radio', { name: /^No password / })).toBeChecked()
-  await dialog.getByRole('radio', { name: /^With a password They also need/ }).check()
+  // The choices, opened from their line: a password, offered as it is switched on and drawn again on asking, and a year.
+  await dialog.getByRole('button', { name: /^No password · Until / }).click()
+  await expect(dialog.getByRole('switch', { name: 'With a password' })).not.toBeChecked()
+  await dialog.getByRole('switch', { name: 'With a password' }).check()
   const first = await dialog.getByLabel('Password', { exact: true }).inputValue()
   expect(first).toMatch(/^[a-km-z2-9]{4}-[a-km-z2-9]{4}-[a-km-z2-9]{4}$/)
   await dialog.getByRole('button', { name: 'Another password' }).click()
@@ -177,7 +180,7 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   await expect(dialog).toContainText('Shown only now. Send it another way than the link.')
   await expect(dialog.getByRole('button', { name: /^With a password · Until / })).toHaveAttribute('aria-expanded', 'false')
   await expect(dialog.locator('input.share-link')).toHaveValue(link)
-  await dialog.getByRole('radio', { name: 'QR code', exact: true }).check()
+  await dialog.getByRole('button', { name: 'QR code', exact: true }).click()
   await expect(dialog.locator('.share-password')).toHaveText(password)
   await close()
   // Opened again, on the link: the choices made, the password kept unless changed, and never shown again.
@@ -185,7 +188,7 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   await expect(dialog.locator('input.share-link')).toHaveValue(link)
   await expect(dialog.locator('.share-password')).toHaveCount(0)
   await dialog.getByRole('button', { name: /^With a password · Until / }).click()
-  await expect(dialog.getByRole('radio', { name: /^With a password / })).toBeChecked()
+  await expect(dialog.getByRole('switch', { name: 'With a password' })).toBeChecked()
   await expect(dialog.getByRole('radio', { name: /^A year Until / })).toBeChecked()
   await expect(dialog).toContainText('It isn’t kept, so it can’t be shown again.')
   await expect(dialog.getByRole('button', { name: 'Change the password' })).toBeVisible()
@@ -229,7 +232,7 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   await expect(settings.locator('.keyboard > div', { hasText: 'Sharing' }).locator('kbd')).toHaveText(/^(⌘⇧U|Ctrl\+Shift\+U)$/)
   await settings.locator('.settings-nav button', { hasText: 'Privacy' }).click()
   // Its row says how many are open and when the next ends; its page lists them.
-  await expect(settings.locator('[data-part="links"]')).toContainText(/Shared links\s*1 open · it ends on /)
+  await expect(settings.locator('[data-part="links"]')).toContainText(/Published links\s*1 open · it ends on /)
   await settings.locator('[data-part="links"]').click()
   await expect(settings.locator('.share-list li')).toHaveCount(1)
   await closeSettings(page)
@@ -237,8 +240,8 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   // Stopped from the dialog of the task it shares: the link no longer opens, and the dialog offers a new one.
   await page.evaluate(async (path) => (await import('/caps/share/share.js')).openShare({ path, title: 'Plan the week' }), path)
   page.once('dialog', (asked) => asked.accept())
-  await dialog.getByRole('button', { name: 'Stop sharing' }).click()
-  await expect(dialog.getByRole('button', { name: 'Create link' })).toBeVisible()
+  await dialog.getByRole('button', { name: 'Stop publishing' }).click()
+  await expect(dialog.getByRole('button', { name: 'Publish link' })).toBeVisible()
   await expect(dialog.locator('input.share-link')).toHaveCount(0)
   const after = await context.newPage()
   await after.goto(link)
@@ -262,14 +265,14 @@ test('a link that can’t be made or updated says why, in sharing’s own words'
   const host = `${SHARE_URL}v1/*`
   // Refused by the host as too big, then not reached at all.
   await page.route(host, async (route) => (route.request().method() === 'PUT' ? route.fulfill({ response: await route.fetch(), status: 413 }) : route.continue()))
-  await dialog.getByRole('button', { name: 'Create link' }).click()
+  await dialog.getByRole('button', { name: 'Publish link' }).click()
   await expect(page.getByText('This is too big to share: a link holds 10 MB at most.')).toBeVisible()
   await page.unroute(host)
   await page.route(host, (route) => (route.request().method() === 'PUT' ? route.abort() : route.continue()))
-  await dialog.getByRole('button', { name: 'Create link' }).click()
+  await dialog.getByRole('button', { name: 'Publish link' }).click()
   await expect(page.getByText('This couldn’t be reached. Check your connection and try again.')).toBeVisible()
   await page.unroute(host)
-  await dialog.getByRole('button', { name: 'Create link' }).click()
+  await dialog.getByRole('button', { name: 'Publish link' }).click()
   await expect(dialog.locator('input.share-link')).toHaveValue(/#/)
   await close()
   // On a device without its write token, the dialog shows the link and says why it can't be changed there.
@@ -288,7 +291,7 @@ test('a link that can’t be made or updated says why, in sharing’s own words'
   await settings.locator('.share-list li').getByRole('button', { name: 'Update' }).click()
   await expect(settings.getByText('This link was made on another device: only that one can change it.')).toBeVisible()
   page.once('dialog', (asked) => asked.accept())
-  await settings.locator('.share-list li').getByRole('button', { name: 'Stop sharing' }).click()
+  await settings.locator('.share-list li').getByRole('button', { name: 'Stop publishing' }).click()
   await expect(settings.locator('.share-list li')).toHaveCount(1)
 })
 

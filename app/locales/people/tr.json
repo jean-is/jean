@@ -53,8 +53,6 @@
   "people.cancel": "İptal",
   "people.ok": "Bitti",
   "people.close": "Kapat",
-  "people.only": "Yalnızca seçtiğin kişiler",
-  "people.toWhom": "Kime",
   "people.reading": "{name} uygulamasının okuduklarıyla birlikte",
   "people.words": "Karşı tarafa birkaç söz",
   "people.asked": {
@@ -64,7 +62,6 @@
   "people.size": "{size}; bir seferde en çok {limit} gönderilebilir",
   "people.measuring": "Gönderilecekler hesaplanıyor…",
   "people.opens": "Karşı tarafın açmak için bir haftası var.",
-  "people.go": "Gönder",
   "people.sentTo": "{name} adlı kişiye gönderildi.",
   "people.came": "{name} sana bunu gönderdi: “{title}”",
   "people.open": "Aç",

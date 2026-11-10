@@ -569,6 +569,11 @@ if (offered()) {
     task: { at: 2, draw: (/** @type {{ path: string }} */ item, /** @type {(icon: unknown, label: string, act: () => unknown) => unknown} */ action) =>
       (app.projects.value.find((one) => item.path.startsWith(`${one.dir}/`))?.data.cloud === false ? []
         : devices.value.filter((one) => one.id !== own.value).map((one) => action(icons.devices, t('devices.send', { device: one.name }), () => handOver(item.path, one)))) },
+    // In Share, Your devices beside the people met (caps/share/dialog.js, D700): a task handed to each of them as a copy, or anything that can
+    // be worked on together, on them alone, whom the circle's key reaches.
+    audience: { at: 2, when: () => others().length > 0, draw: () => nothing, copy: (/** @type {{ path: string, item?: unknown }} */ what) => what.item || Promise.all(others().map((one) => handOver(what.path, one))),
+      who: (/** @type {{ path: string, item?: unknown, thing?: unknown }} */ what) => [{ id: 'devices', name: t('cap.devices.name'), note: new Intl.ListFormat(intlLocales()).format(others().map((one) => one.name)),
+        able: (!what.item || Boolean(what.thing)) && app.projects.value.find((one) => what.path.startsWith(`${one.dir}/`))?.data.cloud !== false }] },
     // A routine on a schedule runs on one of the person's devices: the one it names while they have it, else the first; its name where it isn't this one.
     runs: { at: 1, draw: () => null, here: () => own.value || undefined, elsewhere: (/** @type {string | undefined} */ id) => ((live) => ((one) => (live.length > 1 && one.id !== own.value ? one.name : ''))(
       live.find((device) => device.id === id) ?? [...live].sort((x, y) => (x.id < y.id ? -1 : 1))[0]))(devices.value) },

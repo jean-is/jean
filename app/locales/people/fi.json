@@ -53,8 +53,6 @@
   "people.cancel": "Peruuta",
   "people.ok": "Valmis",
   "people.close": "Sulje",
-  "people.only": "Vain valitsemasi henkilöt",
-  "people.toWhom": "Vastaanottaja",
   "people.reading": "Mukana se, mitä {name} luki",
   "people.words": "Muutama sana hänelle",
   "people.asked": {
@@ -64,7 +62,6 @@
   "people.size": "{size}, kerralla voi lähettää enintään {limit}",
   "people.measuring": "Katsotaan, mitä lähtee…",
   "people.opens": "Hänellä on viikko aikaa avata se.",
-  "people.go": "Lähetä",
   "people.sentTo": "Lähetetty henkilölle {name}.",
   "people.came": "{name} lähetti sinulle ”{title}”",
   "people.open": "Avaa",

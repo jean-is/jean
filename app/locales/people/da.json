@@ -53,8 +53,6 @@
   "people.cancel": "Annuller",
   "people.ok": "Færdig",
   "people.close": "Luk",
-  "people.only": "Kun de personer, du vælger",
-  "people.toWhom": "Til",
   "people.reading": "Med det, {name} læste",
   "people.words": "Et par ord til vedkommende",
   "people.asked": {
@@ -64,7 +62,6 @@
   "people.size": "{size} af de {limit}, der kan sendes ad gangen",
   "people.measuring": "Beregner, hvad der sendes…",
   "people.opens": "Vedkommende har en uge til at åbne det.",
-  "people.go": "Send",
   "people.sentTo": "Sendt til {name}.",
   "people.came": "{name} har sendt dig “{title}”",
   "people.open": "Åbn",

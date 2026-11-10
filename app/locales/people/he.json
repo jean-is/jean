@@ -54,8 +54,6 @@
   "people.cancel": "ביטול",
   "people.ok": "סיום",
   "people.close": "סגירה",
-  "people.only": "רק האנשים שנבחרו",
-  "people.toWhom": "אל",
   "people.reading": "עם מה שנקרא",
   "people.words": "כמה מילים לצד השני",
   "people.asked": {
@@ -66,7 +64,6 @@
   "people.size": "{size}, מתוך {limit} שאפשר לשלוח בבת אחת",
   "people.measuring": "בודקים מה יישלח…",
   "people.opens": "לצד השני יש שבוע לפתוח את זה.",
-  "people.go": "שליחה",
   "people.sentTo": "נשלח ל־{name}.",
   "people.came": "נשלח אליך מ־{name}: “{title}”",
   "people.open": "פתיחה",

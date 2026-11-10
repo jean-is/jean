@@ -53,8 +53,6 @@
   "people.cancel": "Mégse",
   "people.ok": "Kész",
   "people.close": "Bezárás",
-  "people.only": "Csak az általad választott személyek",
-  "people.toWhom": "Címzett",
   "people.reading": "Azzal együtt, amit {name} olvasott",
   "people.words": "Néhány szó neki",
   "people.asked": {
@@ -64,7 +62,6 @@
   "people.size": "{size}, az egyszerre elküldhető {limit} közül",
   "people.measuring": "Annak felmérése, mi megy el…",
   "people.opens": "Egy hete van, hogy megnyissa.",
-  "people.go": "Küldés",
   "people.sentTo": "Elküldve neki: {name}.",
   "people.came": "{name} elküldte neked: „{title}”",
   "people.open": "Megnyitás",

@@ -53,8 +53,6 @@
   "people.cancel": "రద్దు చేయి",
   "people.ok": "పూర్తయింది",
   "people.close": "మూసివేయి",
-  "people.only": "మీరు ఎంచుకున్న వ్యక్తులు మాత్రమే",
-  "people.toWhom": "ఎవరికి",
   "people.reading": "{name} చదివినవాటితో",
   "people.words": "వారికి కొన్ని మాటలు",
   "people.asked": {
@@ -64,7 +62,6 @@
   "people.size": "ఒకేసారి పంపగలిగే {limit}లో {size}",
   "people.measuring": "పంపేవాటిని లెక్కిస్తోంది…",
   "people.opens": "దీన్ని తెరవడానికి వారికి ఒక వారం ఉంది.",
-  "people.go": "పంపు",
   "people.sentTo": "{name}కు పంపబడింది.",
   "people.came": "{name} మీకు “{title}” పంపారు",
   "people.open": "తెరువు",

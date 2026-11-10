@@ -46,9 +46,9 @@ test('Ana and Bob work on a collection together: a link and a name, each one’s
     await (await import('/caps/share/share.js')).openShare({ path: `${app.projectDir}/conversations/`, title: 'Expenses', item: { text: '' }, thing: { kind: 'collection', uri: folder } }, null)
   }, folder)
   const sharing = ana.locator('app-share-dialog dialog[open]')
-  await sharing.getByText('Work on it together', { exact: true }).click()
-  await expect(sharing.getByLabel('Anyone with the link')).toHaveValue('edit')
-  await sharing.getByRole('button', { name: 'Start' }).click()
+  // Share's tab, first: a link that invites anyone, to edit, copied and shown.
+  await expect(sharing.getByRole('tab', { name: 'Share' })).toHaveAttribute('aria-selected', 'true')
+  await sharing.getByRole('button', { name: 'Copy an invitation link instead' }).click()
   const link = await sharing.getByTitle('Link', { exact: true }).inputValue()
   expect(link).toMatch(/^http:\/\/127\.0\.0\.1:4180\/#\/join\/[\w-]{22}\.0\.[\w-]{43}\.[\w-]{43}\.[\w-]{43}$/)
   await sharing.getByRole('button', { name: 'Close' }).click()
@@ -98,8 +98,7 @@ test('Ana and Bob work on a task together: each request answered by its own pers
     await (await import('/caps/share/share.js')).openShare({ path: String(app.current.value?.path), title: 'Lisbon' }, null)
   })
   const sharing = ana.locator('app-share-dialog dialog[open]')
-  await sharing.getByText('Work on it together', { exact: true }).click()
-  await sharing.getByRole('button', { name: 'Start' }).click()
+  await sharing.getByRole('button', { name: 'Copy an invitation link instead' }).click()
   const link = await sharing.getByTitle('Link', { exact: true }).inputValue()
   await sharing.getByRole('button', { name: 'Close' }).click()
 
@@ -142,8 +141,7 @@ test('Ana and Bob write one document together: each one’s words reach the othe
     await (await import('/caps/share/share.js')).openShare({ path: `${app.projectDir}/conversations/`, title: 'Lisbon', item: { text: '' }, thing: { kind: 'document', uri: path } }, null)
   }, path)
   const sharing = ana.locator('app-share-dialog dialog[open]')
-  await sharing.getByText('Work on it together', { exact: true }).click()
-  await sharing.getByRole('button', { name: 'Start' }).click()
+  await sharing.getByRole('button', { name: 'Copy an invitation link instead' }).click()
   const link = await sharing.getByTitle('Link', { exact: true }).inputValue()
   await sharing.getByRole('button', { name: 'Close' }).click()
 
@@ -180,8 +178,7 @@ test('Bob asks Ana’s Jean in their shared task: Ana is asked first, then her o
     await (await import('/caps/share/share.js')).openShare({ path: String(app.current.value?.path), title: 'Lisbon' }, null)
   })
   const sharing = ana.locator('app-share-dialog dialog[open]')
-  await sharing.getByText('Work on it together', { exact: true }).click()
-  await sharing.getByRole('button', { name: 'Start' }).click()
+  await sharing.getByRole('button', { name: 'Copy an invitation link instead' }).click()
   const link = await sharing.getByTitle('Link', { exact: true }).inputValue()
   await sharing.getByRole('button', { name: 'Close' }).click()
   await bob.goto(link)
@@ -219,8 +216,12 @@ test('Ana keeps a collection in step on her own two devices: no link, nobody els
     await (await import('/caps/share/share.js')).openShare({ path: `${app.projectDir}/conversations/`, title: 'Expenses', item: { text: '' }, thing: { kind: 'collection', uri: folder } }, null)
   }, folder)
   const sharing = laptop.locator('app-share-dialog dialog[open]')
-  await sharing.getByText('Work on it together', { exact: true }).click()
-  await sharing.getByRole('button', { name: 'Only on my devices' }).click()
+  // Your devices ticked and Work on it together, as Share does where the laptop has other devices (the laptop here has none paired):
+  // a circle nobody is invited to, with no link.
+  await laptop.evaluate(async (folder) => {
+    await (await import('/ui/caps.js')).unlock('together')
+    await (await import('/caps/together/page.js')).start({ thing: { kind: 'collection', uri: folder }, title: 'Expenses' }, [], false)
+  }, folder)
   await expect(sharing.getByText('Nobody else has joined yet.')).toBeVisible()
   await expect(sharing.getByTitle('Link', { exact: true })).toHaveCount(0)
 
@@ -263,8 +264,7 @@ test('Ana and Bob make one deck together: a slide each reaches the other’s cop
     await (await import('/caps/share/share.js')).openShare({ path: `${app.projectDir}/conversations/`, title: 'Lisbon', item: { text: '' }, thing: { kind: 'deck', uri: path } }, null)
   }, path)
   const sharing = ana.locator('app-share-dialog dialog[open]')
-  await sharing.getByText('Work on it together', { exact: true }).click()
-  await sharing.getByRole('button', { name: 'Start' }).click()
+  await sharing.getByRole('button', { name: 'Copy an invitation link instead' }).click()
   const link = await sharing.getByTitle('Link', { exact: true }).inputValue()
   await sharing.getByRole('button', { name: 'Close' }).click()
 

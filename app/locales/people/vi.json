@@ -52,8 +52,6 @@
   "people.cancel": "Hủy",
   "people.ok": "Xong",
   "people.close": "Đóng",
-  "people.only": "Chỉ những người bạn chọn",
-  "people.toWhom": "Người nhận",
   "people.reading": "Kèm những gì {name} đã đọc",
   "people.words": "Vài lời gửi người đó",
   "people.asked": {
@@ -62,7 +60,6 @@
   "people.size": "{size} trong số {limit} có thể gửi một lần",
   "people.measuring": "Đang xem những gì sẽ được gửi…",
   "people.opens": "Người đó có một tuần để mở.",
-  "people.go": "Gửi",
   "people.sentTo": "Đã gửi cho {name}.",
   "people.came": "{name} đã gửi cho bạn “{title}”",
   "people.open": "Mở",

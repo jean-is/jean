@@ -3,22 +3,22 @@
   "description": "Work on a collection, a task, a document or slides with other people at once, each seeing the others’ changes and keeping their own copy.",
   "h1": "Work on something together",
   "works": "Every browser",
-  "answer": "When you share a collection, a task, a document or slides, choose {together}. Send the link, or invite people you’ve added in {people}: each change anyone makes reaches the others as it’s made, and everyone keeps their own copy, in their own {name}.",
+  "answer": "When you share a collection, a task, a document or slides, tick people you’ve added in {people}, then press {together}; or press {inviteLink} for a link anyone can join. Each change anyone makes reaches the others as it’s made, and everyone keeps their own copy, in their own {name}.",
   "steps.title": "Start working on something together",
   "steps": [
     "Open what you want to work on. For a task, press {shareMenu}, at the top of the task or in its ⋮ menu. For a collection, a document or slides open beside the task, press the button just before {close}, then {outShare}.",
-    "Under {how}, choose {together}.",
-    "To work with anyone who has the link: beside {anyone}, choose {edit} or {view}, then press {start}. Then press {copyLink}, and send the link the way you send anything: a message, an email.",
-    "To invite only people you’ve added in {people} ({meet}): under {who}, choose {only}, tick each person, then press {invite}. Each gets a card with {join}, and has a week to join.",
+    "In {share}, tick each person to work with, among the people you’ve added in {people} ({meet}), then press {together}. Each gets a card with {join}, and has a week to join.",
+    "Or, for a link anyone can join, press {inviteLink}: the link is copied, to send the way you send anything, a message or an email. Whoever opens it can edit at first; you can change each person’s role afterwards.",
     "The person who opens the link answers one question: {yourName}. Then {join}: it opens in {name} on their side, in a copy of their own. Nothing to install, no account.",
-    "From then on, the faces at the top show who is here now. Press them to open {inCollection}, {inTask}, {inDoc} or {inDeck}: who is in, how each person came, and who is here."
+    "From then on, {share} says who you work on it with, and has the link with {copyLink}, if there is one. The faces at the top show who is here now; press them to open {inCollection}, {inTask}, {inDoc} or {inDeck}: who is in, how each person came, and who is here."
   ],
   "good": [
     "In {inCollection}, and the same for a task, a document or slides, the person who started it gives each person {edit} or {view}, presses {block}, or {remove}: everyone else moves along by themselves, and the person removed keeps what they had. {linkOff} does the same, removing no one; only people who haven’t joined yet then need a new link. {stop} ends it for everyone; anyone else can press {leave}.",
     "In a task worked on together, each request is answered by the {name} of the person who made it, with their own brain, keys and approvals, one answer at a time: a request sent while someone else’s is answered waits its turn. What the others wrote reaches your {name} as their words, never as your request.",
     "To ask another person’s {name} something, press {ask} beside their name in {inTask}. They see it first, as a card, and their {name} answers only if they press {letAnswer}.",
+    "To keep something the same on each of your own devices as it changes, with no link and nobody else, tick {devices} in {share}, then press {together}: see {onDevices}.",
     "A whole project can be worked on together too: in the project’s {projectSettings}, press {project}. Its documents, collections, slides, designs and files stay the same for everyone in it, while each person’s tasks, and what {name} remembers for them, stay their own.",
-    "{mine}, beside {start}, keeps what you share the same on each of your own devices as it changes, with no link and nobody else: see {devices}.",
+    "{publish}, the other tab, is something else: a read-only copy that anyone with the link can read in any browser, without {name}. Nobody works on it with you.",
     "Everyone keeps their own copy, whatever happens. Changes wait 7 days for someone away, sealed so that only the people in it can read them; after 7 days with no change, the first person back starts again from their copy.",
     "Not in a child’s profile. At work, your organisation may let people in only from its list: then ask to be invited by name, since a link doesn’t open it."
   ],
@@ -26,6 +26,10 @@
     [
       "You don’t see {together}",
       "It isn’t there in a child’s profile, nor in a copy of {name} your organisation set up without it. Elsewhere, it shows when you share a collection, a task, a document or slides, not a single answer or a file."
+    ],
+    [
+      "{together} can’t be pressed",
+      "Tick someone first: a person, or {devices}. For a link instead, press {inviteLink}."
     ],
     [
       "The link no longer opens anything",

@@ -52,8 +52,6 @@
   "people.cancel": "取消",
   "people.ok": "完成",
   "people.close": "關閉",
-  "people.only": "僅限你選擇的人",
-  "people.toWhom": "收件人",
   "people.reading": "連同 {name} 讀過的內容",
   "people.words": "給對方留幾句話",
   "people.asked": {
@@ -62,7 +60,6 @@
   "people.size": "{size}，一次最多可傳送 {limit}",
   "people.measuring": "正在計算要傳送的內容…",
   "people.opens": "對方有一週時間開啟。",
-  "people.go": "傳送",
   "people.sentTo": "已傳送給 {name}。",
   "people.came": "{name} 傳給你「{title}」",
   "people.open": "開啟",

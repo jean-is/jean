@@ -324,7 +324,7 @@ test('beside the task, the pane’s button sends a tune to an app here, saves it
     await unlock('share')
   }, SHARE_URL)
   await save.click()
-  await expect(menu.locator('button')).toHaveText(['Share a link…', 'Send to an app…', 'Copy', 'MIDI file', 'ABC file', 'Print or save as PDF'])
+  await expect(menu.locator('button')).toHaveText(['Share…', 'Send to an app…', 'Copy', 'MIDI file', 'ABC file', 'Print or save as PDF'])
   await menu.getByRole('button', { name: /^Share/ }).click()
   await expect(page.locator('app-share-dialog dialog')).toBeVisible()
   expect(await page.evaluate(async () => (await import('/caps/share/share.js')).sharing.value?.item)).toEqual({ text: expect.stringMatching(/^```abc\nX:1\nT:The Legacy Jig\n[^]*\n```$/) })

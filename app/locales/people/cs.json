@@ -55,8 +55,6 @@
   "people.cancel": "Zrušit",
   "people.ok": "Hotovo",
   "people.close": "Zavřít",
-  "people.only": "Jen vybraní lidé",
-  "people.toWhom": "Komu",
   "people.reading": "S tím, co aplikace {name} četla",
   "people.words": "Pár slov pro tuto osobu",
   "people.asked": {
@@ -68,7 +66,6 @@
   "people.size": "{size} z {limit}, které lze poslat najednou",
   "people.measuring": "Zjišťuje se, co se pošle…",
   "people.opens": "Na otevření má týden.",
-  "people.go": "Poslat",
   "people.sentTo": "Posláno osobě {name}.",
   "people.came": "Osoba {name} vám posílá „{title}“",
   "people.open": "Otevřít",

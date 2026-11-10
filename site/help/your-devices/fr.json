@@ -14,7 +14,7 @@
   ],
   "good": [
     "Ce qui suit : vos cerveaux avec leurs clés, les clés de vos connexions et de vos services de recherche, vos réglages et vos projets. Vos tâches, fichiers, documents, mémoire, compétences et routines suivent aussi, en quelques secondes pendant que {name} tourne sur les deux appareils. Ensuite, une modification faite sur l’un arrive sur les autres un instant plus tard.",
-    "Si la page {devices} indique qu’une tâche reste là où vous l’avez faite, envoyez-la depuis le menu ⋮ de la tâche, avec « Envoyer à » et le nom de l’appareil.",
+    "Si la page {devices} indique qu’une tâche reste là où vous l’avez faite, envoyez-la : dans {share}, cochez {devices} et appuyez sur {sendCopy}, ou choisissez « Envoyer à » et le nom d’un appareil dans le menu ⋮ de la tâche.",
     "Chaque appareil garde son propre thème, son dossier synchronisé, ses cerveaux téléchargés, ses connexions aux services et son verrou ; un projet que vous gardez sur un appareil y reste.",
     "Tout passe scellé d’un appareil à l’autre, pour que seuls vos appareils puissent le lire. Vos appareils partagent 1 Go ; la page {devices} montre la place utilisée, et une fois tout plein, ce qui est nouveau reste sur l’appareil où il a été fait.",
     "Sur un iPhone ou un iPad, le lien ouvert dans Safari propose d’abord d’ajouter {name} à l’écran d’accueil, qui garde ses fichiers à part de ceux de Safari : faites l’ajout, ouvrez l’icône depuis l’écran d’accueil et collez le lien dans la zone de saisie, ou appuyez sur {safari}.",

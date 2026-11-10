@@ -53,8 +53,6 @@
   "people.cancel": "Annuleren",
   "people.ok": "Klaar",
   "people.close": "Sluiten",
-  "people.only": "Alleen mensen die je kiest",
-  "people.toWhom": "Aan",
   "people.reading": "Met wat {name} las",
   "people.words": "Een paar woorden voor de ander",
   "people.asked": {
@@ -64,7 +62,6 @@
   "people.size": "{size}, van de {limit} die in één keer mee kan",
   "people.measuring": "Bekijken wat er meegaat…",
   "people.opens": "De ander heeft een week om het te openen.",
-  "people.go": "Versturen",
   "people.sentTo": "Verstuurd naar {name}.",
   "people.came": "{name} heeft je ‘{title}’ gestuurd",
   "people.open": "Openen",

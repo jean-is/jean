@@ -53,8 +53,6 @@
   "people.cancel": "Kanselahin",
   "people.ok": "Tapos na",
   "people.close": "Isara",
-  "people.only": "Ang mga taong pipiliin mo lang",
-  "people.toWhom": "Para kay",
   "people.reading": "Kasama ang binasa ni {name}",
   "people.words": "Ilang salita para sa kanila",
   "people.asked": {
@@ -64,7 +62,6 @@
   "people.size": "{size} sa {limit} na maipapadala nang minsanan",
   "people.measuring": "Tinitingnan kung ano ang maipapadala…",
   "people.opens": "May isang linggo sila para buksan ito.",
-  "people.go": "Ipadala",
   "people.sentTo": "Naipadala na kay {name}.",
   "people.came": "Ipinadala sa iyo ni {name} ang “{title}”",
   "people.open": "Buksan",

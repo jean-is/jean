@@ -7,7 +7,6 @@ import { signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { syncDialog, closed, backdrop, head } from '../../ui/dialogs.js'
 import { app, notify, showError } from '../../ui/state.js'
-import { loaded } from '../../ui/caps.js'
 import { COLOURS } from '../../ui/touches.js'
 import { icons } from '../../ui/menu-icons.js'
 import { t, intlLocales } from '../../core/i18n.js'
@@ -24,10 +23,8 @@ const starting = signal(/** @type {{ thing: { kind: 'project', uri: string }, ti
 /** In a project's dialog: Work on this project together, or People in this project once it is. @param {import('../../core/settings.js').Project} project */
 export const projectButton = (project) => html`<button type="button" class="button subtle" @click=${() => { const live = circleAt(project.dir); [shown.value, starting.value] = live ? [live.id, null] : [null, { thing: { kind: 'project', uri: project.dir }, title: String(project.data.name) }]; app.dialog.value = 'together' }}>${icons.people} ${t(circleAt(project.dir) ? 'together.peopleProject' : 'together.project')}</button>`
 const busy = signal(false)
-/** What a link gives when it's made, and who to invite. */
-const [role, chosen] = [signal(/** @type {'edit' | 'view'} */ ('edit')), signal(/** @type {Set<string>} */ (new Set()))]
-/** The people met (caps/people), once People's pane is asked for: only where People is loaded is there an audience to choose. */
-const met = signal(/** @type {import('@preact/signals-core').Signal<{ fp: string, name: string }[]> | null} */ (null))
+/** What a project's link gives when it's made. */
+const role = signal(/** @type {'edit' | 'view'} */ ('edit'))
 
 /** A member's initial in their colour. @param {import('./circle.js').Member} one */
 const avatar = (one) => html`<span class="avatar" aria-hidden="true" ${ref((element) => /** @type {HTMLElement | undefined} */ (element)?.style.setProperty('--badge', COLOURS[1 + (one.colour % 7)][1]))}>${[...one.name.trim()][0]?.toLocaleUpperCase() ?? '?'}</span>`
@@ -36,34 +33,42 @@ const doing = async (run) => { if (busy.peek()) return; busy.value = true; try {
 const names = (/** @type {string[]} */ list) => new Intl.ListFormat(intlLocales(), { type: 'conjunction' }).format(list)
 const copy = (/** @type {string} */ text) => navigator.clipboard.writeText(text).then(() => notify(t('toast.copied')))
 
+/** Where a thing is: a task and a project by their path, anything else by its folder in the project. @param {{ kind: import('./engine.js').Kind, uri: string }} thing */
+const placeOf = ({ kind, uri }) => (kind === 'project' ? { dir: 'projects', folder: uri.slice(9) } : { dir: app.projectDir, folder: kind === 'task' ? uri.slice(app.projectDir.length + 1) : uri })
+
 /**
- * Share's pane when working together is chosen (caps/share/dialog.js): with the link, its role and Start; with the people chosen, those
- * to invite; once working together, the link to copy and People in this collection. @param {{ thing?: { kind: import('./engine.js').Kind, uri: string }, title: string }} what
- * @param {{ label(): string } | null} to People's audience, or none for a link
+ * Once it is worked on together, Share's line (caps/share/dialog.js): with whom, the link to copy, People in this…; for a project not yet,
+ * its dialog's start: the link's role, Start, or Only on my devices. @param {{ thing?: { kind: import('./engine.js').Kind, uri: string }, title: string }} what
  */
-export function how(what, to) {
-  const kind = what.thing?.kind ?? 'collection', uri = what.thing?.uri ?? ''
-  // A task and a project are named by their path, anything else by its folder in the project.
-  const place = kind === 'project' ? { dir: 'projects', folder: uri.slice(9) } : { dir: app.projectDir, folder: kind === 'task' ? uri.slice(app.projectDir.length + 1) : uri }
-  const live = circleAt(`${place.dir}/${place.folder}`)
+export function how(what) {
+  const kind = what.thing?.kind ?? 'collection', place = placeOf({ kind, uri: what.thing?.uri ?? '' }), live = circleAt(`${place.dir}/${place.folder}`)
   if (live) {
     const others = membersOf(live.state).filter((one) => one.fp !== live.me)
     return html`<section class="stack"><p>${others.length ? t('together.with', { names: names(others.map((one) => one.name)) }) : t('together.alone')}</p>
       ${live.kept.links && live.kept.ownerToken ? html`<div class="share-field"><input class="share-link" readonly dir="ltr" title=${t('together.link')} .value=${linkFor(live)}>
         <button class="button primary" @click=${() => copy(linkFor(live))}>${icons.copy} ${t('together.copyLink')}</button></div>` : nothing}
-      ${to ? invite(live, what.title) : nothing}
       <button class="button" @click=${() => { shown.value = live.id; app.dialog.value = 'together' }}>${icons.people} ${peopleIn(live)}</button></section>`
   }
-  const start = (/** @type {boolean} */ links) => doing(async () => {
-    const started = await begin(place, { links, role: role.peek(), kind })
-    if (!links) await sent(started, what.title)
-  })
-  return html`<section class="stack"><p class="hint">${t('together.says')}</p>${kind === 'project' ? html`<p class="hint">${t('together.projectSays', { name: BRAND.name })}</p>` : nothing}
-    ${to ? people() : html`<label class="setting" for="together-role">${t('together.anyone')}<select id="together-role" @change=${(/** @type {Event} */ event) => { role.value = /** @type {any} */ (event.target).value }}>
-      <option value="edit" ?selected=${role.value === 'edit'}>${t('together.canEdit')}</option><option value="view" ?selected=${role.value === 'view'}>${t('together.canView')}</option></select></label>`}
+  if (kind !== 'project') return nothing
+  return html`<section class="stack"><p class="hint">${t('together.says')}</p><p class="hint">${t('together.projectSays', { name: BRAND.name })}</p>
+    <label class="setting" for="together-role">${t('together.anyone')}<select id="together-role" @change=${(/** @type {Event} */ event) => { role.value = /** @type {any} */ (event.target).value }}>
+      <option value="edit" ?selected=${role.value === 'edit'}>${t('together.canEdit')}</option><option value="view" ?selected=${role.value === 'view'}>${t('together.canView')}</option></select></label>
     <p class="hint">${t('together.days')}</p>
     <footer class="dialog-foot"><button class="button subtle" ?disabled=${busy.value} title=${t('together.mineSays')} @click=${() => doing(() => begin(place, { links: false, role: 'edit', kind }))}>${t('together.mine')}</button>
-      <button class="button primary" ?disabled=${busy.value || (to !== null && !chosen.value.size)} @click=${() => start(!to)}>${icons.people} ${t(to ? 'together.invite' : 'together.start')}</button></footer></section>`
+      <button class="button primary" ?disabled=${busy.value} @click=${() => doing(() => begin(place, { links: true, role: role.peek(), kind }))}>${icons.people} ${t('together.start')}</button></footer></section>`
+}
+
+/**
+ * Share's verbs (caps/share/dialog.js): worked on together, begun here or the circle it is in, those ticked invited; or a link that invites
+ * anyone, copied, where its owner's circle has one, else People in this… opened. @param {{ thing: { kind: import('./engine.js').Kind, uri: string }, title: string }} what
+ * @param {string[]} fps those ticked, by fingerprint; none for the person's own devices alone, whom its key reaches @param {boolean} links
+ */
+export async function start(what, fps, links) {
+  const place = placeOf(what.thing), live = circleAt(`${place.dir}/${place.folder}`) ?? await begin(place, { links, role: 'edit', kind: what.thing.kind })
+  if (fps.length) await sent(live, what.title, fps)
+  // Copied where the clipboard lets it; the line shows the link all the same.
+  if (links && live.kept.links && live.kept.ownerToken) copy(linkFor(live)).catch(() => {})
+  else if (links) [shown.value, app.dialog.value] = [live.id, 'together']
 }
 
 /** People in this task, or in this collection. @param {import('./engine.js').Live} live */
@@ -71,24 +76,11 @@ const peopleIn = (live) => t(live.kept.kind === 'task' ? 'together.peopleTask' :
 /** The faces of a task worked on together, in the room's head, beside Share. @param {{ path: string } | null} current */
 export const taskFaces = (current) => ((live) => (live ? faces(live) : nothing))(current?.path ? circleAt(current.path) : null)
 
-/** The people met, to invite, each ticked or not (caps/people). */
-function people() {
-  if (!loaded.value.has('people')) return nothing
-  if (!met.value) import('../people/people.js').then((module) => { met.value = module.people })
-  return html`<fieldset><legend>${t('together.whom')}</legend><ul class="list">${(met.value?.value ?? []).map((one) => html`<li><label class="row" for=${`together-${one.fp}`}>
-    <input id=${`together-${one.fp}`} type="checkbox" .checked=${chosen.value.has(one.fp)} @change=${(/** @type {Event} */ event) => { const next = new Set(chosen.peek()); if (/** @type {HTMLInputElement} */ (event.target).checked) next.add(one.fp); else next.delete(one.fp); chosen.value = next }}>
-    <bdi>${one.name}</bdi></label></li>`)}</ul></fieldset>`
-}
-
-/** Those chosen invited to a circle begun or under way. @param {import('./engine.js').Live} live @param {string} title */
-const invite = (live, title) => html`${people()}<footer class="dialog-foot"><button class="button primary" ?disabled=${busy.value || !chosen.value.size} @click=${() => doing(() => sent(live, title))}>${icons.people} ${t('together.invite')}</button></footer>`
-
-/** Each person chosen sent an invitation, good for their key alone, through People's letters. @param {import('./engine.js').Live} live @param {string} title */
-async function sent(live, title) {
+/** Each person ticked sent an invitation, good for their key alone, through People's letters. @param {import('./engine.js').Live} live @param {string} title @param {string[]} fps */
+async function sent(live, title, fps) {
   const { tell } = await import('../people/people.js')
   const link = linkOf({ owner: live.kept.owner, epoch: live.kept.epoch, read: live.kept.read, key: decode(live.kept.keys[live.kept.epoch]), ...(live.kept.write && { write: live.kept.write }) })
-  for (const fp of chosen.peek()) await tell(fp, { title, kind: live.kept.kind, link, invite: await invitation(live.id, await key(), fp) }, 'together')
-  chosen.value = new Set()
+  for (const fp of fps) await tell(fp, { title, kind: live.kept.kind, link, invite: await invitation(live.id, await key(), fp) }, 'together')
   notify(t('together.invited'))
 }
 
@@ -137,7 +129,7 @@ class TogetherDialog extends Element {
     const live = shown.value ? circles.value.get(shown.value) : starting.value ? circleAt(starting.value.thing.uri) : null
     const owner = Boolean(live?.kept.ownerToken)
     return html`<dialog class="sheet together-dialog" @close=${closed('together')} @click=${backdrop}>
-      ${asked.value ? this.joining(asked.value.link) : starting.value && !live ? html`${head(t('together.project'))}<p class="lede" dir="auto">${starting.value.title}</p>${how(starting.value, null)}` : live ? html`${head(peopleIn(live))}<p class="lede" dir="auto">${live.kept.title}</p>
+      ${asked.value ? this.joining(asked.value.link) : starting.value && !live ? html`${head(t('together.project'))}<p class="lede" dir="auto">${starting.value.title}</p>${how(starting.value)}` : live ? html`${head(peopleIn(live))}<p class="lede" dir="auto">${live.kept.title}</p>
         <ul class="list">${membersOf(live.state).map((one) => row(live, one, owner))}</ul>${question.value ? asks(live, question.value) : nothing}
         ${owner && live.kept.links ? html`<p class="hint">${t('together.moves')}</p><div class="row"><button class="button" @click=${() => copy(linkFor(live))}>${icons.copy} ${t('together.copyLink')}</button>
           <button class="button subtle" @click=${() => doing(() => move(live, []))}>${t('together.linkOff')}</button></div>` : nothing}

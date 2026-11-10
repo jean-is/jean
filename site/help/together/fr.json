@@ -3,22 +3,22 @@
   "description": "Travaillez à plusieurs en même temps sur une collection, une tâche, un document ou des diapos : chaque personne voit les modifications et garde sa copie.",
   "h1": "Travailler ensemble",
   "works": "Tous les navigateurs",
-  "answer": "Quand vous partagez une collection, une tâche, un document ou des diapos, choisissez {together}. Envoyez le lien, ou invitez des personnes ajoutées dans {people} : chaque modification arrive chez les autres dès qu’elle est faite, et chaque personne garde sa propre copie, dans {name}, chez elle.",
+  "answer": "Quand vous partagez une collection, une tâche, un document ou des diapos, cochez des personnes ajoutées dans {people}, puis appuyez sur {together} ; ou appuyez sur {inviteLink} pour un lien que tout le monde peut rejoindre. Chaque modification arrive chez les autres dès qu’elle est faite, et chaque personne garde sa propre copie, dans {name}, chez elle.",
   "steps.title": "Commencer à travailler ensemble",
   "steps": [
     "Ouvrez ce sur quoi vous voulez travailler. Pour une tâche, appuyez sur {shareMenu}, en haut de la tâche ou dans son menu ⋮. Pour une collection, un document ou des diapos ouverts à côté de la tâche, appuyez sur le bouton juste avant {close}, puis sur {outShare}.",
-    "Sous {how}, choisissez {together}.",
-    "Pour travailler avec toute personne qui a le lien : à côté de {anyone}, choisissez {edit} ou {view}, puis appuyez sur {start}. Appuyez ensuite sur {copyLink}, et envoyez le lien comme vous envoyez n’importe quoi : un message, un e-mail.",
-    "Pour inviter seulement des personnes ajoutées dans {people} ({meet}) : sous {who}, choisissez {only}, cochez chaque personne, puis appuyez sur {invite}. Chacune reçoit une carte avec {join}, et a une semaine pour rejoindre.",
+    "Dans {share}, cochez chaque personne avec qui travailler, parmi celles ajoutées dans {people} ({meet}), puis appuyez sur {together}. Chacune reçoit une carte avec {join}, et a une semaine pour rejoindre.",
+    "Ou, pour un lien que tout le monde peut rejoindre, appuyez sur {inviteLink} : le lien est copié, à envoyer comme vous envoyez n’importe quoi, un message ou un e-mail. La personne qui l’ouvre peut modifier au début ; vous pourrez changer le rôle de chaque personne ensuite.",
     "La personne qui ouvre le lien répond à une seule question : {yourName}. Puis {join} : tout s’ouvre dans {name}, chez elle, dans une copie qui lui appartient. Rien à installer, aucun compte.",
-    "Ensuite, les visages en haut montrent qui est là en ce moment. Appuyez dessus pour ouvrir {inCollection}, {inTask}, {inDoc} ou {inDeck} : qui en fait partie, comment chaque personne est arrivée, et qui est là."
+    "Ensuite, {share} indique avec qui vous y travaillez, et donne le lien avec {copyLink}, s’il y en a un. Les visages en haut montrent qui est là en ce moment ; appuyez dessus pour ouvrir {inCollection}, {inTask}, {inDoc} ou {inDeck} : qui en fait partie, comment chaque personne est arrivée, et qui est là."
   ],
   "good": [
     "Dans {inCollection}, et de même pour une tâche, un document ou des diapos, la personne qui a commencé donne à chaque personne {edit} ou {view}, appuie sur {block}, ou sur {remove} : les autres personnes suivent automatiquement, et la personne retirée garde ce qu’elle avait. {linkOff} fait de même, sans retirer personne ; seules les personnes qui n’ont pas encore rejoint ont alors besoin d’un nouveau lien. {stop} y met fin pour tout le monde ; les autres peuvent appuyer sur {leave}.",
     "Dans une tâche faite ensemble, chaque demande reçoit la réponse de l’assistant {name} de la personne qui l’a faite, avec son propre cerveau, ses clés et ses autorisations, une réponse à la fois : une demande envoyée pendant qu’une autre reçoit sa réponse attend son tour. Ce que les autres ont écrit arrive à votre {name} comme leurs mots, jamais comme votre demande.",
     "Pour poser une question à l’assistant {name} d’une autre personne, appuyez sur {ask} à côté de son nom dans {inTask}. Cette personne la voit d’abord, sous forme de carte, et son assistant ne répond que si elle appuie sur {letAnswer}.",
+    "Pour garder quelque chose à jour sur chacun de vos appareils, à chaque modification, sans lien ni personne d’autre, cochez {devices} dans {share}, puis appuyez sur {together} : voir {onDevices}.",
     "Un projet entier peut aussi se faire à plusieurs : dans {projectSettings}, appuyez sur {project}. Ses documents, collections, diapos, visuels et fichiers restent les mêmes pour tout le monde dans le projet, et les tâches de chaque personne, comme ce que {name} retient pour elle, restent les siennes.",
-    "{mine}, à côté de {start}, garde ce que vous partagez à jour sur chacun de vos appareils, à chaque modification, sans lien ni personne d’autre : voir {devices}.",
+    "{publish}, l’autre onglet, est autre chose : une copie en lecture seule que toute personne ayant le lien peut lire dans un navigateur, sans {name}. Personne n’y travaille avec vous.",
     "Chaque personne garde sa propre copie, quoi qu’il arrive. Les modifications attendent 7 jours une personne absente, scellées pour que seules les personnes concernées puissent les lire ; après 7 jours sans modification, la première personne qui revient repart de sa copie.",
     "Pas dans le profil d’un enfant. Au travail, votre organisation peut n’accepter que les personnes de sa liste : demandez alors qu’on vous invite par votre nom, car un lien ne suffit pas."
   ],
@@ -26,6 +26,10 @@
     [
       "Vous ne voyez pas {together}",
       "Ce n’est pas proposé dans le profil d’un enfant, ni dans une copie de {name} que votre organisation a configurée sans. Ailleurs, cela apparaît quand vous partagez une collection, une tâche, un document ou des diapos, pas une seule réponse ni un fichier."
+    ],
+    [
+      "{together} ne s’active pas",
+      "Cochez d’abord quelqu’un : une personne, ou {devices}. Pour un lien à la place, appuyez sur {inviteLink}."
     ],
     [
       "Le lien n’ouvre plus rien",

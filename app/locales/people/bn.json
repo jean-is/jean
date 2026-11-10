@@ -53,8 +53,6 @@
   "people.cancel": "বাতিল",
   "people.ok": "সম্পন্ন",
   "people.close": "বন্ধ করুন",
-  "people.only": "শুধু আপনার বেছে নেওয়া মানুষ",
-  "people.toWhom": "প্রাপক",
   "people.reading": "যা পড়া হয়েছে তা-সহ",
   "people.words": "তাঁর জন্য কয়েকটি কথা",
   "people.asked": {
@@ -64,7 +62,6 @@
   "people.size": "{size}, একবারে সর্বোচ্চ {limit} পাঠানো যায়",
   "people.measuring": "কী কী যাবে দেখা হচ্ছে…",
   "people.opens": "এটি খোলার জন্য তাঁর হাতে এক সপ্তাহ আছে।",
-  "people.go": "পাঠান",
   "people.sentTo": "{name}-কে পাঠানো হয়েছে।",
   "people.came": "{name} আপনাকে “{title}” পাঠিয়েছেন",
   "people.open": "খুলুন",

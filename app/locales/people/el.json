@@ -53,8 +53,6 @@
   "people.cancel": "Ακύρωση",
   "people.ok": "Τέλος",
   "people.close": "Κλείσιμο",
-  "people.only": "Μόνο όσοι επιλέξετε",
-  "people.toWhom": "Προς",
   "people.reading": "Μαζί με ό,τι διάβασε η εφαρμογή {name}",
   "people.words": "Λίγα λόγια για το άτομο",
   "people.asked": {
@@ -64,7 +62,6 @@
   "people.size": "{size}, από τα {limit} που μπορούν να σταλούν μονομιάς",
   "people.measuring": "Υπολογισμός όσων θα σταλούν…",
   "people.opens": "Το άτομο έχει μία εβδομάδα για να το ανοίξει.",
-  "people.go": "Αποστολή",
   "people.sentTo": "Στάλθηκε στο άτομο {name}.",
   "people.came": "Το άτομο {name} σας έστειλε «{title}»",
   "people.open": "Άνοιγμα",

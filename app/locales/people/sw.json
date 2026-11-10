@@ -53,8 +53,6 @@
   "people.cancel": "Ghairi",
   "people.ok": "Imekamilika",
   "people.close": "Funga",
-  "people.only": "Watu unaowachagua tu",
-  "people.toWhom": "Kwa",
   "people.reading": "Pamoja na alichosoma {name}",
   "people.words": "Maneno machache kwa ajili yake",
   "people.asked": {
@@ -64,7 +62,6 @@
   "people.size": "{size}, kati ya {limit} unazoweza kutuma kwa mara moja",
   "people.measuring": "Inaangalia kitakachotumwa…",
   "people.opens": "Ana wiki moja kukifungua.",
-  "people.go": "Tuma",
   "people.sentTo": "Imetumwa kwa {name}.",
   "people.came": "{name} amekutumia “{title}”",
   "people.open": "Fungua",

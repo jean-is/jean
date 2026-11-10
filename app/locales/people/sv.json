@@ -53,8 +53,6 @@
   "people.cancel": "Avbryt",
   "people.ok": "Klar",
   "people.close": "Stäng",
-  "people.only": "Bara personer du väljer",
-  "people.toWhom": "Till",
   "people.reading": "Med det {name} läste",
   "people.words": "Några ord till personen",
   "people.asked": {
@@ -64,7 +62,6 @@
   "people.size": "{size} av de {limit} som kan skickas på en gång",
   "people.measuring": "Räknar ut vad som skickas…",
   "people.opens": "Personen har en vecka på sig att öppna det.",
-  "people.go": "Skicka",
   "people.sentTo": "Skickat till {name}.",
   "people.came": "{name} skickade ”{title}” till dig",
   "people.open": "Öppna",

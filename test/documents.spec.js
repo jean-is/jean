@@ -2111,7 +2111,7 @@ test.describe('the title and the pane', () => {
     await caretAt(page, 'First.', 6)
     await page.keyboard.type(' Second.')
     await page.locator('app-preview .pane-head > [popovertarget^="out-"]').click()
-    await page.locator('app-preview .out-menu').getByRole('button', { name: /^Share a link…/ }).click()
+    await page.locator('app-preview .out-menu').getByRole('button', { name: /^Share…/ }).click()
     await expect(page.locator('app-share-dialog dialog[open]')).toBeVisible()
     expect(await page.evaluate(async () => (await import('/caps/share/share.js')).sharing.value?.item)).toEqual({ text: '# Notes\n\nFirst. Second.\n' })
   })

@@ -316,48 +316,49 @@ const threadOf = (what) => (app.current.peek()?.path === what.path ? app.current
 /** A JSONL's records, those that read. @param {string} file */
 const recordsOf = (file) => file.split('\n').flatMap((line) => { try { return [JSON.parse(line)] } catch { return [] } })
 
-/** Sent to whom was picked, with the words written: said so, or why not. @param {SubmitEvent} event */
-async function submit(event) {
-  event.preventDefault()
-  const [now, form] = [sending.peek(), new FormData(/** @type {HTMLFormElement} */ (event.target))], one = groups.peek().find((person) => person.fp === form.get('to'))
-  if (!now || !one || now.busy) return
+/** The words written for those it goes to, which the dialog's field keeps as they are typed. */
+let words = ''
+/**
+ * A copy sent to those ticked in share's dialog, with the words written, each person's own way: an answer back to the device that sent the
+ * task, which alone holds its thread; said so, or why not. @param {What} what @param {string[]} ids those ticked, by fingerprint
+ */
+async function copyTo(what, ids) {
+  const now = sending.peek(), back = threadOf(what), chosen = groups.peek().filter((one) => ids.includes(one.fp))
+  if (!now?.value || now.busy) return
   sending.value = { ...now, busy: true, wrong: '' }
-  // An answer back goes to the device that sent the task, which alone holds its thread.
-  const back = threadOf(now.what), mine = back && one.fps.includes(back.fp)
-  const done = await sendIt(mine ? [back.fp] : one.able, now.what, { reading: now.reading, words: String(form.get('words') ?? ''), back: mine ? back.thread : undefined }).then(() => ({ said: t('people.sentTo', { name: one.name }) }),
-    (/** @type {any} */ error) => ({ wrong: t(`people.why.${['waiting', 'large', 'refused'].includes(error?.reason) ? error.reason : 'unreached'}`, { name: BRAND.name }) }))
+  const done = await Promise.all(chosen.map((one) => (back && one.fps.includes(back.fp) ? sendIt([back.fp], what, { reading: now.reading, words, back: back.thread }) : sendIt(one.able, what, { reading: now.reading, words }))))
+    .then(() => ({ said: t('people.sentTo', { name: new Intl.ListFormat(intlLocales()).format(chosen.map((one) => one.name)) }) }),
+      (/** @type {any} */ error) => ({ wrong: t(`people.why.${['waiting', 'large', 'refused'].includes(error?.reason) ? error.reason : 'unreached'}`, { name: BRAND.name }) }))
   sending.value = { ...now, busy: false, ...done }
 }
 
-/** Add a person, from the pane: People's page, asking who it is for. */
+/** Add a person, from the dialog: People's page, asking who it is for. */
 const add = () => import('../../ui/dialogs.js').then((dialogs) => { inviting.value = { step: 'name' }; return dialogs.openSettings('people') })
 
+/** The people met, for share's list: those who haven't answered yet, or are to meet again, not to tick. */
+const who = () => groups.value.map((one) => ({ id: one.fp, name: one.name, able: one.able.length > 0, fps: one.able, ...(one.waiting && { note: t('people.answer') }) }))
+/** Ticked first: the person a task came from, for an answer back. @param {What} what */
+const first = (what) => ((back) => groups.peek().filter((one) => one.able.length && one.fps.includes(back?.fp ?? '')).map((one) => one.fp))(threadOf(what))
+
 /**
- * Only people chosen, in share's dialog: to whom, those who answered (the others waiting), Add a person; with what Jean read for a whole
- * task, a few words, what goes (its requests and answers, each file and its size) and the total against what the relay carries; they have
- * a week to open it. Measured again whenever the dialog opens on something. @param {What} what
+ * What goes, in share's dialog, under who: Add a person; with what Jean read for a whole task, a few words, what goes (its requests and
+ * answers, each file and its size) and the total against what the relay carries; they have a week to open it. Measured again whenever the
+ * dialog opens on something. @param {What} what
  */
-function pane(what) {
-  if (sending.peek()?.what !== what) queueMicrotask(() => { if (sending.peek()?.what !== what) measure(what, false) })
-  // The person a task came from first, for an answer back; else the first who can be sent to: answered, and not to meet again.
-  const now = sending.value?.what === what ? sending.value : null, back = threadOf(what), able = (/** @type {{ able: string[] }} */ one) => one.able.length > 0
-  const first = groups.value.find((one) => able(one) && one.fps.includes(back?.fp ?? '')) ?? groups.value.find(able)
+function goes(what) {
+  // Nobody met yet: only the way to meet someone.
+  if (!groups.value.length) return meets ? html`<button type="button" class="button subtle people-add" @click=${add}>${icons.plus} ${t('people.add')}</button>` : nothing
+  if (sending.peek()?.what !== what) queueMicrotask(() => { if (sending.peek()?.what !== what) { words = ''; measure(what, false) } })
+  const now = sending.value?.what === what ? sending.value : null
   const records = now?.value ? recordsOf(now.value.file) : [], total = now?.value ? JSON.stringify(now.value).length : 0
   const files = filesIn(records).flatMap(({ uri, name }) => ((data) => (data ? [{ name, size: Math.floor((data.length - data.indexOf(',') - 1) * 0.75) }] : []))(now?.value?.files[uri] ?? ''))
-  return html`<section>${now?.said ? nothing : html`<form id="people-send" class="stack people-pane" @submit=${submit}>
-      <fieldset><legend>${t('people.toWhom')}</legend>${groups.value.map((one) => html`<label class="row" for=${`people-to-${one.fp}`}>
-        <input id=${`people-to-${one.fp}`} type="radio" name="to" value=${one.fp} ?disabled=${!able(one)} ?checked=${one === first} required><bdi>${one.name}</bdi>
-        ${one.waiting ? html`<small class="muted">${t('people.answer')}</small>` : nothing}</label>`)}
-        ${meets ? html`<button type="button" class="button subtle" @click=${add}>${icons.plus} ${t('people.add')}</button>` : nothing}</fieldset>
-      ${what.item ? nothing : html`<label class="setting" for="people-read">${t('people.reading', { name: BRAND.name })}<input id="people-read" type="checkbox" class="switch" role="switch"
-        .checked=${now?.reading ?? false} @change=${(/** @type {Event} */ e) => measure(what, /** @type {HTMLInputElement} */ (e.target).checked)}></label>`}
-      <label for="people-words">${t('people.words')}</label><textarea id="people-words" name="words" rows="2" maxlength="280" dir="auto"></textarea>
-      <p class="hint">${!now?.value ? t('people.measuring') : html`${what.item ? nothing : html`${t('people.asked', { count: requestsOf(records).length })} · `}${t('people.size', { size: formatBytes(total), limit: formatBytes(LIMIT) })}`}</p>
-      ${files.length ? html`<ul class="people-files">${files.map((file) => html`<li><bdi>${file.name}</bdi> · ${formatBytes(file.size)}</li>`)}</ul>` : nothing}
-      <p class="hint">${t('people.opens')}</p></form>`}
-    <p role="status">${now?.said ?? ''}</p><p class="people-wrong" role="alert">${now?.wrong ?? ''}</p></section>
-    <footer class="dialog-foot">${now?.said ? html`<button class="button primary" @click=${() => { app.dialog.value = null }}>${t('people.ok')}</button>`
-      : html`<button class="button primary" form="people-send" ?disabled=${!now?.value || now.busy || total > LIMIT || !first}>${icons.people} ${t('people.go')}</button>`}</footer>`
+  return html`<div class="stack people-pane">${meets ? html`<button type="button" class="button subtle people-add" @click=${add}>${icons.plus} ${t('people.add')}</button>` : nothing}
+    ${what.item ? nothing : html`<label class="setting" for="people-read">${t('people.reading', { name: BRAND.name })}<input id="people-read" type="checkbox" class="switch" role="switch"
+      .checked=${now?.reading ?? false} @change=${(/** @type {Event} */ e) => measure(what, /** @type {HTMLInputElement} */ (e.target).checked)}></label>`}
+    <label for="people-words">${t('people.words')}</label><textarea id="people-words" rows="2" maxlength="280" dir="auto" @input=${(/** @type {Event} */ e) => { words = /** @type {HTMLTextAreaElement} */ (e.target).value }}></textarea>
+    <p class="hint">${!now?.value ? t('people.measuring') : html`${what.item ? nothing : html`${t('people.asked', { count: requestsOf(records).length })} · `}${t('people.size', { size: formatBytes(total), limit: formatBytes(LIMIT) })}`}</p>
+    ${files.length ? html`<ul class="people-files">${files.map((file) => html`<li><bdi>${file.name}</bdi> · ${formatBytes(file.size)}</li>`)}</ul>` : nothing}
+    <p class="hint">${t('people.opens')}</p><p role="status">${now?.said ?? ''}</p><p class="people-wrong" role="alert">${now?.wrong ?? ''}</p></div>`
 }
 
 /** A colleague's account, for the audit export (ee/): as `to` or `from`, or nothing for someone met another way. @param {string} fp @param {'to' | 'from'} as */
@@ -439,7 +440,7 @@ register({ id: 'people', tools: [sendTool], lines: [{ name: 'send_to', line: "se
   task: { at: 3, draw: (/** @type {{ path: string, title: string }} */ item, /** @type {(icon: unknown, label: string, act: () => unknown) => unknown} */ action) => ((back) => (back
     ? action(icons.people, t('people.back', { name: people.value.find((one) => one.fp === back.fp)?.name ?? '' }), () => import('../share/share.js').then((share) => share.openShare(item, null, true))) : []))(threadOf(item)) },
   // Only people chosen, share's dialog's second audience (caps/share/dialog.js), and whom a task went to, which its Share at the top says.
-  audience: { at: 1, when: offered, label: () => t('people.only'), draw: pane, went },
+  audience: { at: 1, when: offered, who, first, draw: goes, copy: copyTo, went },
   // The room's line over what someone sent names them as the person does (ui/chat.js).
   came: { at: 1, draw: () => nothing, name: (/** @type {string} */ fp) => people.value.find((one) => one.fp === fp)?.name ?? '' },
 } })
