@@ -653,6 +653,8 @@ test('a design system: Jean\'s own and a project\'s, its colours written or pick
   const here = await page.evaluate(async () => (await import('/ui/state.js')).app.projectDir)
   await expect.poll(async () => (await kit(`${here}/kit.json`))?.tokens?.primary).toBe('#b45309')
   await page.keyboard.press('Escape')
+  // Its cover as a kit's own layout has it, the logo small.
+  await page.evaluate(async (dir) => { const { keepKit, kitFile } = await import('/ui/kit.js'), kit = await kitFile(dir); await keepKit(dir, { ...kit, layouts: { ...kit?.layouts, cover: { logo: 'small' } } }) }, here)
   // A deck made now is drawn with them: the project's colour, Jean's logo and the template's layouts, kept in its file.
   await ask(page, 'Make slides about the new oven')
   await answered(page)
@@ -662,6 +664,12 @@ test('a design system: Jean\'s own and a project\'s, its colours written or pick
   expect(copy.layouts).toMatchObject({ image: false, 'side-by-side': { slots: ['default', 'left', 'right'], art: Object.keys(brought?.pictures ?? {}) } })
   expect(copy.pictures).toEqual(brought?.pictures)
   await expect(page.locator('app-preview app-slides.beside .deck-slide.is-shown .deck-logo').first()).toBeAttached()
+  // On its card among the creations, its first slide with the logo in its corner, never the logo alone over the slide.
+  await (await openTasks(page)).getByRole('button', { name: 'Creations', exact: true }).click()
+  const slide = page.locator('app-creations .creation-preview .deck-slide.is-shown')
+  await expect(slide).toContainText('oven')
+  await expect(slide.locator('.deck-logo').first()).toHaveAttribute('data-size', 'small')
+  await expect.poll(() => slide.evaluate((one) => { const mark = [...one.querySelectorAll('.deck-logo')].find((each) => getComputedStyle(each).display !== 'none'); return mark ? mark.getBoundingClientRect().height / one.getBoundingClientRect().height : 1 })).toBeLessThan(0.2)
 })
 
 test('a copy of Jean\'s own skill added before follows Jean: written again as the directory has it now, kept off if it was', async ({ page }) => {
