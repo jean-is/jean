@@ -196,10 +196,15 @@ test('a site goes online at a name of its own, asked first, its recovery code sh
   await expect(code).toHaveText(/^([0-9A-F]{4}-){7}[0-9A-F]{4}$/)
   const recovery = await code.textContent()
   expect(sent.map((url) => url.slice(url.lastIndexOf('/') + 1)).sort()).toEqual(['index.html', 'prices.html', 'style.css'])
+  // Online first, its address over the code, which waits apart until the person says it is kept.
+  await expect(dialog.locator('.site-state')).toHaveText('The site is online.')
+  await expect(dialog.getByTitle('Address')).toHaveValue(address)
   await expect(dialog.getByRole('button', { name: 'Done' })).toBeDisabled()
   await dialog.getByLabel('I’ve kept it somewhere safe').check()
   await dialog.getByRole('button', { name: 'Done' }).click()
-  await expect(dialog.getByRole('link', { name: address })).toBeVisible()
+  // Then how it stands, a dot while it is online, over its address to copy, or to open as visitors will.
+  await expect(dialog.locator('.site-state.is-live')).toContainText('Online until')
+  await expect(dialog.getByRole('link', { name: `Open ${address.replace(/^https?:\/\/|\/$/g, '')}` })).toHaveAttribute('href', address)
   await expect(dialog).toContainText('Nothing changed since it was published.')
   await expect(dialog.getByRole('status').last()).toHaveText('The site is online.')
   const kept = await page.evaluate(async (place) => {

@@ -341,18 +341,19 @@ const who = () => groups.value.map((one) => ({ id: one.fp, name: one.name, able:
 const first = (what) => ((back) => groups.peek().filter((one) => one.able.length && one.fps.includes(back?.fp ?? '')).map((one) => one.fp))(threadOf(what))
 
 /**
- * What goes, in share's dialog, under who: Add a person; with what Jean read for a whole task, a few words, what goes (its requests and
- * answers, each file and its size) and the total against what the relay carries; they have a week to open it. Measured again whenever the
- * dialog opens on something. @param {What} what
+ * What goes, in share's dialog, under who: Add a person; once someone is ticked, with what Jean read for a whole task, a few words, what goes
+ * (its requests and answers, each file and its size) and the total against what the relay carries; they have a week to open it. Measured
+ * again whenever the dialog opens on something. @param {What} what @param {boolean} chosen whether anyone is ticked
  */
-function goes(what) {
-  // Nobody met yet: only the way to meet someone.
-  if (!groups.value.length) return meets ? html`<button type="button" class="button subtle people-add" @click=${add}>${icons.plus} ${t('people.add')}</button>` : nothing
-  if (sending.peek()?.what !== what) queueMicrotask(() => { if (sending.peek()?.what !== what) { words = ''; measure(what, false) } })
+function goes(what, chosen) {
+  const adding = meets ? html`<button type="button" class="button subtle people-add" @click=${add}>${icons.plus} ${t('people.add')}</button>` : nothing
+  if (groups.value.length && sending.peek()?.what !== what) queueMicrotask(() => { if (sending.peek()?.what !== what) { words = ''; measure(what, false) } })
+  // Nobody met yet, or nobody ticked: only the way to meet someone.
+  if (!groups.value.length || !chosen) return adding
   const now = sending.value?.what === what ? sending.value : null
   const records = now?.value ? recordsOf(now.value.file) : [], total = now?.value ? JSON.stringify(now.value).length : 0
   const files = filesIn(records).flatMap(({ uri, name }) => ((data) => (data ? [{ name, size: Math.floor((data.length - data.indexOf(',') - 1) * 0.75) }] : []))(now?.value?.files[uri] ?? ''))
-  return html`<div class="stack people-pane">${meets ? html`<button type="button" class="button subtle people-add" @click=${add}>${icons.plus} ${t('people.add')}</button>` : nothing}
+  return html`<div class="stack people-pane">${adding}
     ${what.item ? nothing : html`<label class="setting" for="people-read">${t('people.reading', { name: BRAND.name })}<input id="people-read" type="checkbox" class="switch" role="switch"
       .checked=${now?.reading ?? false} @change=${(/** @type {Event} */ e) => measure(what, /** @type {HTMLInputElement} */ (e.target).checked)}></label>`}
     <label for="people-words">${t('people.words')}</label><textarea id="people-words" rows="2" maxlength="280" dir="auto" @input=${(/** @type {Event} */ e) => { words = /** @type {HTMLTextAreaElement} */ (e.target).value }}></textarea>

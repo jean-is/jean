@@ -37,10 +37,10 @@ async function meetBeside(ana, bob) {
   const there = bob.locator('app-settings dialog[open]')
   await there.getByLabel('Who sent you this?').fill('Ana')
   await there.getByRole('button', { name: 'Accept' }).click()
-  const digits = there.locator('.people-digits')
+  const digits = there.locator('.digits')
   await expect(digits).toHaveText(/^\d{3} \d{3}$/)
+  // Typed as Bob's screen shows them, a space between the halves: they go at the sixth digit, without Add.
   await settings.getByLabel('The six digits Bob from the bakery shows you or sends back').fill(String(await digits.textContent()))
-  await settings.getByRole('button', { name: 'Add' }).click()
   await expect.poll(() => peopleOf(ana)).toEqual([{ name: 'Bob from the bakery', said: 'Bob', waiting: false, reads: true }])
   await expect.poll(() => peopleOf(bob)).toEqual([{ name: 'Ana', said: 'Ana', waiting: false, reads: true }])
   await settings.getByRole('button', { name: 'Done' }).click()
@@ -63,22 +63,24 @@ test('two people meet side by side: Bob’s six digits typed on Ana’s Jean, th
   await bob.goto(link)
   const there = bob.locator('app-settings dialog[open]')
   await expect(there.getByText('Someone invites you to send each other tasks with Jean.')).toBeVisible()
+  await expect(there.getByLabel('Who sent you this?')).toBeFocused()
   await there.getByLabel('Who sent you this?').fill('Ana')
   await there.getByRole('button', { name: 'Accept' }).click()
-  const digits = there.locator('.people-digits')
+  const digits = there.locator('.digits')
   await expect(digits).toHaveText(/^\d{3} \d{3}$/)
   await expect(there.getByText('Calls themselves Ana')).toBeVisible()
 
   // Typed on Ana's Jean: Bob is in her people, waiting for his answer, which comes from his Jean on its own.
+  await expect(settings.getByLabel('The six digits Bob from the bakery shows you or sends back')).toBeFocused()
   await settings.getByLabel('The six digits Bob from the bakery shows you or sends back').fill(String(await digits.textContent()))
-  await settings.getByRole('button', { name: 'Add' }).click()
   await expect(settings.locator('.people-said')).toHaveText('Bob from the bakery is in your people. Once they answer, you can send each other tasks.')
   await expect(there.locator('.people-said')).toHaveText('Ana is in your people now. You can send each other tasks.')
   await expect.poll(() => peopleOf(ana)).toEqual([{ name: 'Bob from the bakery', said: 'Bob', waiting: false, reads: true }])
   expect(await peopleOf(bob)).toEqual([{ name: 'Ana', said: 'Ana', waiting: false, reads: true }])
   await settings.getByRole('button', { name: 'Done' }).click()
-  await expect(settings.locator('.people-flow .list li')).toContainText(['Bob from the bakery'])
-  await expect(settings.locator('.people-flow .list li')).toContainText(['Calls themselves Bob'])
+  // His initial beside the name Ana gave him, which holds the one he gives himself, so it isn't said again.
+  await expect(settings.locator('.people-flow .list li')).toContainText(['BBob from the bakery'])
+  await expect(settings.locator('.people-flow .list li')).not.toContainText('Calls themselves')
 })
 
 test('a task shared from its menu with only the people chosen: what goes shown first, then a card on their Jean, which opens it as theirs, from Ana', async ({ browser }) => {

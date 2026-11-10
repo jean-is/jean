@@ -113,7 +113,7 @@ async function exchange(a, b) {
   }, link)).toEqual([true, true, 'rgb(255, 255, 255)'])
   await b.goto(link)
   await joinThere(b)
-  const digits = b.locator('app-settings .devices-digits')
+  const digits = b.locator('app-settings .digits')
   await expect(digits).toHaveText(/^\d{3} \d{3}$/)
   // The link leaves no trace in the address.
   await expect(b).toHaveURL(/#\/settings\/devices$/)
@@ -267,7 +267,7 @@ test('three wrong codes end the adding, on both devices', async ({ page, browser
   await expect(settings.getByLabel(/^The six digits .+ shows$/)).toHaveCount(0)
   // B hears it, rather than waiting for a profile that won't come.
   await expect(b.locator('app-settings .devices-wrong')).toHaveText(said)
-  await expect(b.locator('app-settings .devices-digits')).toHaveCount(0)
+  await expect(b.locator('app-settings .digits')).toHaveCount(0)
   expect(await here(b)).not.toBe(await here(page))
   await settings.locator('.devices-actions').getByRole('button', { name: 'Close' }).click()
   await expect(settings.getByRole('button', { name: 'Add a device' })).toBeFocused()
@@ -278,10 +278,11 @@ test('Cancel on the device that has the Jean, once the other shows its digits, e
   await deviceA(page)
   const b = await device(browser)
   const { settings } = await exchange(page, b)
-  await settings.locator('.devices-actions').getByRole('button', { name: 'Cancel' }).click()
+  // Beside Add, under the six digits' boxes.
+  await settings.locator('.devices-flow').getByRole('button', { name: 'Cancel' }).click()
   await expect(settings.getByRole('button', { name: 'Add a device' })).toBeFocused()
   await expect(b.locator('app-settings .devices-wrong')).toHaveText('Your other device stopped adding this one. Start again there.')
-  await expect(b.locator('app-settings .devices-digits')).toHaveCount(0)
+  await expect(b.locator('app-settings .digits')).toHaveCount(0)
   await b.context().close()
 })
 
@@ -301,9 +302,9 @@ test('a second device opening the same link hears it was already used', async ({
   const there = c.locator('app-settings dialog[open]')
   await there.getByRole('button', { name: 'Bring it here' }).click()
   await expect(there.locator('.devices-wrong')).toHaveText('This link was already used. On your other device, choose Add a device again for a new one.')
-  await expect(c.locator('app-settings .devices-digits')).toHaveCount(0)
+  await expect(c.locator('app-settings .digits')).toHaveCount(0)
   // B's adding goes on.
-  await expect(b.locator('app-settings .devices-digits')).toHaveText(/^\d{3} \d{3}$/)
+  await expect(b.locator('app-settings .digits')).toHaveText(/^\d{3} \d{3}$/)
   await Promise.all([b, c].map((one) => one.context().close()))
 })
 
@@ -516,7 +517,7 @@ test('a locked profile asks for its lock before the six digits', async ({ page, 
   const link = await settings.getByRole('textbox', { name: 'The link to open on your other device' }).inputValue()
   await b.goto(link)
   await joinThere(b)
-  const digits = b.locator('app-settings .devices-digits')
+  const digits = b.locator('app-settings .digits')
   await expect(digits).toHaveText(/^\d{3} \d{3}$/)
   // The lock first, with no field for the digits yet.
   await expect(settings.getByRole('heading', { name: /^Unlock to add .+$/ })).toBeVisible()
@@ -549,7 +550,7 @@ test('a link opened does nothing until Bring it here, and the profile that comes
   // Nothing goes from B until Bring it here: A still waits, B shows no digits.
   await b.waitForTimeout(1500)
   await expect(settings.locator('.devices-said')).toHaveText('Waiting for your other device…')
-  await expect(flow.locator('.devices-digits')).toHaveCount(0)
+  await expect(flow.locator('.digits')).toHaveCount(0)
   // Cancelled, nothing was sent: the same link, pasted later in the page for joining, which B, alone, leads to, and joined, still works.
   await flow.getByRole('button', { name: 'Cancel' }).click()
   await b.locator('app-settings').getByRole('button', { name: 'Join another device' }).click()
@@ -558,7 +559,7 @@ test('a link opened does nothing until Bring it here, and the profile that comes
   await expect(b).toHaveURL(/#\/settings\/devices\/join$/)
   await flow.getByRole('textbox', { name: 'A link from your other device' }).fill(link)
   await flow.getByRole('button', { name: 'Join' }).click()
-  const digits = flow.locator('.devices-digits')
+  const digits = flow.locator('.digits')
   await expect(digits).toHaveText(/^\d{3} \d{3}$/)
   await typeCode(settings, String(await digits.textContent()).replace(' ', ''))
   await sent(settings, page)
@@ -588,7 +589,8 @@ test('Cancel on the device that has the Jean while the other asks: Join there th
   await typeCode(settings, code)
   await sent(settings, page)
   await expect(b.locator('app-settings .devices-flow').getByRole('heading')).toHaveText('Is this yours?')
-  await settings.locator('.devices-actions').getByRole('button', { name: 'Cancel' }).click()
+  // Beside Add, under the six digits' boxes.
+  await settings.locator('.devices-flow').getByRole('button', { name: 'Cancel' }).click()
   await expect(settings.getByRole('button', { name: 'Add a device' })).toBeFocused()
   await b.locator('app-settings .devices-flow').getByRole('button', { name: 'Yes, it’s mine' }).click()
   await expect(b.locator('app-settings .devices-wrong')).toHaveText('Your other device stopped adding this one. Start again there.')
@@ -616,15 +618,15 @@ for (const lang of ['ar', 'ja']) {
     await expect(flow.getByRole('button')).toHaveText([words['welcome.bring'], words['devices.cancel']])
     expect(await fits()).toEqual([true, true])
     await flow.getByRole('button', { name: words['welcome.bring'] }).click()
-    await expect(flow.locator('.devices-digits')).toHaveText(/^\d{3} \d{3}$/)
+    await expect(flow.locator('.digits')).toHaveText(/^\d{3} \d{3}$/)
     await expect(b.locator('html')).toHaveAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr')
     await expect(flow.getByRole('heading')).toHaveText(words['devices.typeThere'])
     await expect(flow.getByRole('button')).toHaveText(words['devices.cancel'])
     // The digits read left to right, in Latin digits, whatever the language around them.
-    await expect(flow.locator('.devices-digits')).toHaveAttribute('dir', 'ltr')
+    await expect(flow.locator('.digits')).toHaveAttribute('dir', 'ltr')
     expect(await fits()).toEqual([true, true])
     // The profile that came as a card, the device it came from set apart in a line that reads the page's way.
-    await typeCode(settings, String(await flow.locator('.devices-digits').textContent()).replace(' ', ''))
+    await typeCode(settings, String(await flow.locator('.digits').textContent()).replace(' ', ''))
     await expect(flow.getByRole('heading')).toHaveText(words['devices.yours'])
     await expect(flow.locator('.devices-who small bdi')).toHaveCount(1)
     await expect(flow.locator('.devices-who small')).not.toHaveAttribute('dir', /./)

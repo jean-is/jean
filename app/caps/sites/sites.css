@@ -8,12 +8,9 @@ app-site[data-width='phone'] iframe { max-inline-size: 390px; }
 app-site[data-width='tablet'] iframe { max-inline-size: 768px; }
 .site-test { position: fixed; inset-block-start: 0; inset-inline-start: 0; block-size: 800px; clip-path: inset(50%); pointer-events: none; }
 .site-test iframe { inline-size: 100%; block-size: 100%; border: 0; }
-/* Publishing (publish.js): the name between the address's two parts, the address once online, the recovery code. */
-.site-publish .site-name { display: flex; align-items: center; gap: 0.25rem; }
-.site-publish .site-name input { flex: 1; min-inline-size: 0; }
-.site-publish .site-out { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
-.site-publish .site-out a, .site-publish .site-code { overflow-wrap: anywhere; }
-.site-publish .site-code { font-size: 1.125rem; letter-spacing: 0.05em; }
-.site-publish .site-kept { display: flex; align-items: center; gap: 0.5rem; }
-.site-publish .site-told:empty { margin: 0; }
-.site-publish .button:disabled { opacity: 0.5; cursor: default; }
+/* Publishing (publish.js), as Share's Publish is: the name in the box of the address it makes, over every look's fields, said free with a tick or taken in the danger's
+   colour; once online, how it stands, over its address; the recovery code apart, on what waits for the person. */
+.site-publish { line-height: 1.45; } .site-publish .site-name { display: flex; align-items: center; padding-inline: 0.9rem; border: 1px solid var(--line-strong); border-radius: 0.9rem; color: var(--ink-soft); font-size: 0.94rem; }
+.site-publish .site-name:focus-within { outline: 2px solid var(--flame); outline-offset: 1px; } :root .sheet.site-publish .site-name input { flex: 1; min-inline-size: 0; padding: 0.65rem 0; border: 0; outline: 0; background: none; color: var(--ink); }
+.site-publish #publish-said { display: flex; align-items: center; gap: 0.3rem; min-block-size: 1.2em; } .site-publish .is-free .icon { color: var(--flame); } .site-publish .is-taken { color: var(--danger); } .site-publish .site-state { margin: 0; font-weight: 600; }
+.site-publish .site-code { flex: 1; font: 1.05rem var(--mono); letter-spacing: 0.04em; overflow-wrap: anywhere; } .site-publish .site-kept { display: flex; align-items: center; gap: 0.5rem; } .site-publish .site-told:empty { margin: 0; } .site-publish .dialog-foot > .link-button { margin-inline-end: auto; }

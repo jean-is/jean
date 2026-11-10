@@ -2,10 +2,10 @@
 // audiences give (People's people met, Your devices; D727, D700), then the verb, Send a copy, or Work on it together, which Together starts
 // once that unlocks it, or a link that invites anyone (caps/together, D733); what goes, each audience's own. Publish: a copy anyone with the
 // link reads, its choices folded into one line opened by Change (a password, for how long, kept up to date, with what Jean read), then
-// Publish link; once published, the link with its QR code, Send… and Copy link, the password just chosen shown this once, the same line,
-// and Stop publishing. Loaded when it first opens.
+// Publish link; once published, the link with its QR code, Send…, Open and Copy link, the password just chosen shown this once, the same
+// line, and Stop publishing. Loaded when it first opens.
 import { html, svg, nothing } from 'lit-html'
-import { signal, effect } from '@preact/signals-core'
+import { signal, effect, untracked } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { syncDialog, closed, backdrop, head } from '../../ui/dialogs.js'
 import { t, intlLocales } from '../../core/i18n.js'
@@ -14,7 +14,8 @@ import { app } from '../../ui/state.js'
 import { slots, unlock, isDenied } from '../../ui/caps.js'
 import { serviceURL } from '../../core/settings.js'
 import { icon, icons } from '../../ui/menu-icons.js'
-import { codeOf } from '../../ui/qr.js'
+import { qrOf, linkField, copyText, copied } from '../../ui/qr.js'
+import { initialOf } from '../../ui/curtain.js'
 import { sharing, shares, shareOf, linkFor, here, create, update, stop, failed, allowed, audiences } from './share.js'
 
 /** The link shown as a QR code instead. */
@@ -30,8 +31,8 @@ const offered = () => Array.from(crypto.getRandomValues(new Uint8Array(12)), (by
  * @typedef {{ closed: boolean, word: string, changing: boolean, days: number, read: boolean, keep: boolean, open: boolean }} Choices
  */
 const choices = signal(/** @type {Choices} */ ({ closed: false, word: '', changing: false, days: 30, read: false, keep: false, open: false }))
-/** Whether this device can change the share shown, whether a link is being sealed, whether its QR code shows in place of the link, and what was just copied. */
-const [mine, working, coded, copied] = /** @type {const} */ ([signal(true), signal(false), signal(false), signal('')])
+/** Whether this device can change the share shown, whether a link is being sealed, and whether its QR code shows in place of the link. */
+const [mine, working, coded] = /** @type {const} */ ([signal(true), signal(false), signal(false)])
 /** The password just chosen for a share, which only this dialog ever shows, until it opens again. */
 const told = signal(/** @type {{ id: string, word: string } | null} */ (null))
 /** Someone an audience gives Share's list, its fingerprints to invite where it has some. @typedef {{ id: string, name: string, note?: string, able: boolean, fps?: string[] }} Who */
@@ -50,8 +51,6 @@ export const toward = (slot) => { tab.value = 'share'; picked.value = new Set(sl
 const take = (pick) => (/** @type {Event} */ event) => { choices.value = { ...choices.peek(), ...pick(/** @type {HTMLInputElement} */ (event.target)) } }
 /** A day in words: the one a share ends, or one a length chosen now would end. @param {number | string} when @param {'long' | 'medium'} [dateStyle] */
 const day = (when, dateStyle = /** @type {'long' | 'medium'} */ ('long')) => new Intl.DateTimeFormat(intlLocales(), { dateStyle }).format(new Date(when))
-/** Copies the link or the password, whose button says so for two seconds. @param {string} text @param {string} which */
-const copy = (text, which) => navigator.clipboard.writeText(text).then(() => { copied.value = which; setTimeout(() => { if (copied.peek() === which) copied.value = '' }, 2000) })
 
 /** The choices the link of what is shared was made with, folded unless it no longer opens, or a new link's; Publish shown for a link made, else Share. @param {import('./share.js').What | null} what */
 function reset(what) {
@@ -64,7 +63,8 @@ function reset(what) {
   picked.value = new Set(audiences().flatMap((one) => one.first?.(what) ?? []))
   if (share) here(share).then((yes) => { if (sharing.peek() === what) mine.value = yes })
 }
-effect(() => reset(sharing.value))
+// Only what is shared resets it: a capability loading or registering again meanwhile (Together's, as it starts) leaves the dialog where it is.
+effect(() => { const what = sharing.value; untracked(() => reset(what)) })
 
 /** Makes the link, or changes the one made: its password kept, a new one, or none. @param {SubmitEvent} event */
 async function submit(event) {
@@ -97,8 +97,8 @@ function shareTab(what) {
   const toggle = (/** @type {string} */ id) => { const next = new Set(picked.peek()); if (!next.delete(id)) next.add(id); picked.value = next }
   return html`<p class="share-says">${t('share.shareSays', { name: BRAND.name })}</p>${both ? slots('how').map((part) => part.draw({ ...what, thing: thingOf(what) })) : nothing}
     ${list.length ? html`<ul class="share-who">${list.map((/** @type {Who} */ who) => html`<li><label for=${`share-who-${who.id}`}><input id=${`share-who-${who.id}`} type="checkbox" ?disabled=${!who.able}
-      .checked=${ticked.has(who.id)} @change=${() => toggle(who.id)}><span class="item-text"><bdi>${who.name}</bdi>${who.note ? html`<small>${who.note}</small>` : nothing}</span></label></li>`)}</ul>` : nothing}
-    ${audiences().map((one) => one.draw(what))}
+      .checked=${ticked.has(who.id)} @change=${() => toggle(who.id)}><span class="avatar" aria-hidden="true">${initialOf(who.name)}</span><span class="item-text"><bdi>${who.name}</bdi>${who.note ? html`<small>${who.note}</small>` : nothing}</span></label></li>`)}</ul>` : nothing}
+    ${audiences().map((one) => one.draw(what, ticked.size > 0))}
     ${list.length ? html`<footer class="dialog-foot share-verbs"><button class="button" ?disabled=${!ticked.size} @click=${() => go(what, 'copy')}>${t('share.copy')}</button>
       ${both ? html`<button class="button primary" ?disabled=${!ticked.size} @click=${() => go(what, 'together')}>${icons.people} ${t('share.together')}</button>` : nothing}</footer>` : nothing}
     ${both ? html`<button class="share-text" @click=${() => go(what, 'link')}>${t('share.inviteLink')}</button>` : nothing}`
@@ -108,16 +108,15 @@ function shareTab(what) {
 function publishTab(what) {
   const share = shareOf(what), link = share ? linkFor(share) : '', live = Boolean(share) && Date.parse(share?.expires ?? '') > Date.now()
   const word = share && told.value?.id === share.id ? told.value.word : '', { closed: closing, changing, days, read, keep, open } = choices.value
-  const done = (/** @type {string} */ which) => (copied.value === which ? icons.check : icons.copy), code = live && coded.value && codeOf(link)
+  const code = live && coded.value && qrOf(link, t('share.code'))
   const line = [t((share ? share.password : closing) ? 'share.withPassword' : 'share.bare'), share ? t('share.until', { date: day(share.expires, 'medium') }) : t(days === 30 ? 'share.for30' : 'share.forYear'), t((share ? share.keep : keep) ? 'share.keptShort' : 'share.asNow')].join(' · ')
   return html`<p class="share-says" role=${share ? 'status' : nothing}>${!share ? t('share.publishSays', { name: BRAND.name }) : live ? t('share.published', { date: day(share.expires) }) : t('share.ended', { date: day(share.expires) })}</p>
-    ${!live ? nothing : code ? html`<button class="share-code-box" aria-label=${t('share.link')} @click=${() => { coded.value = false }}><svg class="share-code" role="img" aria-label=${t('share.code')} viewBox="-4 -4 ${code.size + 8} ${code.size + 8}"><path d=${code.d}/></svg></button><p class="share-point">${t('share.point')}</p>`
-      : html`<div class="share-field"><input class="share-link" readonly dir="ltr" title=${t('share.link')} .value=${link} @focus=${(/** @type {Event} */ event) => /** @type {HTMLInputElement} */ (event.target).select()}>
-        <button class="icon-button" aria-label=${t('share.qr')} @click=${() => { coded.value = true }}>${qr}</button>
+    ${!live ? nothing : code ? html`<button class="share-code-box" aria-label=${t('share.link')} @click=${() => { coded.value = false }}>${code}</button><p class="share-point">${t('share.point')}</p>`
+      : linkField(link, t('share.link'), t('share.copyLink'), html`<button class="icon-button" aria-label=${t('share.qr')} @click=${() => { coded.value = true }}>${qr}</button>
         ${'share' in navigator ? html`<button class="icon-button" aria-label=${t('share.send')} @click=${() => navigator.share({ title: what.title, url: link }).catch(() => {})}>${icons.share}</button>` : nothing}
-        <button class="button primary" @click=${() => copy(link, 'link')}>${done('link')} <span aria-live="polite">${t(copied.value === 'link' ? 'toast.copied' : 'share.copyLink')}</span></button></div>`}
-    ${word ? html`<div class="share-told"><span>${t('share.password')}</span><code class="share-password" dir="ltr">${word}</code>
-      <button class="icon-button" aria-label=${t('share.copyPassword')} @click=${() => copy(word, 'word')}>${done('word')}</button><small>${t('share.apart')}</small></div>` : nothing}
+        <a class="icon-button" href=${link} target="_blank" rel="noopener" aria-label=${t('sources.open', { name: what.title || t('conversation.untitled') })}>${icons.external}</a>`)}
+    ${word ? html`<div class="apart"><span>${t('share.password')}</span><code class="share-password" dir="ltr">${word}</code>
+      <button class="icon-button" aria-label=${t('share.copyPassword')} @click=${() => copyText(word)}>${copied.value === word ? icons.check : icons.copy}</button><small>${t('share.apart')}</small></div>` : nothing}
     ${share && !mine.value ? html`<p class="hint">${t('share.notHere')}</p>` : html`<form id="share-form" class="stack" @submit=${submit}>
       <button type="button" class="share-sum" aria-expanded=${String(open)} @click=${take(() => ({ open: !open }))}>${(share ? share.password : closing) ? icons.lock : icons.globe}<span>${line}</span> ${t('share.change')} ${icons.chevron}</button>
       ${open ? html`<label class="setting" for="share-closed">${t('share.withPassword')}<input id="share-closed" type="checkbox" class="switch" role="switch" .checked=${closing} @change=${take((field) => ({ closed: field.checked, word: offered() }))}></label>

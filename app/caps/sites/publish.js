@@ -1,9 +1,9 @@
-// Publishing a site (D720): Publish… in its pane's one button out opens this dialog, loaded then, where the share host says it
-// publishes sites. A name, Jean's suggestion from the site's name at first, said free or taken by the host as it is typed; what
-// publishing means; then the site's list, and only the files the host lacks. A site's first publish makes its secret, kept among
-// the secrets (never in a backup, export or share) and shown once as its recovery code, which brings it to another device. Once
-// published: its address, until when, what changed, a new recovery code, Publish again and Take it offline. Asked each time:
-// nothing goes before the person presses Publish.
+// Publishing a site (D720), or a page as a site of one page: Publish… in its pane's one button out opens this dialog, loaded then, where
+// the share host says it publishes sites. What publishing means; a name, Jean's suggestion from the site's name at first, in the address
+// it makes, said free or taken by the host as it is typed; then the site's list, and only the files the host lacks. A site's first
+// publish makes its secret, kept among the secrets (never in a backup, export or share) and shown once as its recovery code, apart, which
+// brings it to another device. Once published: until when, its address to copy or open as Share's link is, what changed, a new recovery
+// code, Publish again and Take it offline. Asked each time: nothing goes before the person presses Publish.
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
@@ -11,6 +11,7 @@ import { syncDialog, closed, backdrop, head } from '../../ui/dialogs.js'
 import { app, notify } from '../../ui/state.js'
 import { getSecret, setSecret } from '../../ui/secrets.js'
 import { icons } from '../../ui/menu-icons.js'
+import { linkField, copyButton } from '../../ui/qr.js'
 import { t, intlLocales } from '../../core/i18n.js'
 import { slug } from '../../core/settings.js'
 import { TYPES, codeOf, secretOf, tokenOf } from './file.js'
@@ -23,8 +24,8 @@ import { load, remember, hostOf } from './sites.js'
 const site = signal(/** @type {Shown | null} */ (null))
 /** The name typed, what the host says of it, the recovery code typed (null while its field is closed), the code just made, whether it was kept. */
 const [name, said, typed, made, kept] = [signal(''), signal(/** @type {{ state: string, why?: string }} */ ({ state: '' })), signal(/** @type {string | null} */ (null)), signal(''), signal(false)]
-/** The files sent so far while publishing, what the dialog last said, what was just copied. */
-const [working, told, copied, renewing] = [signal(/** @type {{ done: number, count: number } | null} */ (null)), signal(/** @type {{ text: string, alert?: boolean }} */ ({ text: '' })), signal(''), signal(false)]
+/** The files sent so far while publishing, what the dialog last said, whether a new recovery code is being made. */
+const [working, told, renewing] = [signal(/** @type {{ done: number, count: number } | null} */ (null)), signal(/** @type {{ text: string, alert?: boolean }} */ ({ text: '' })), signal(false)]
 
 const SHAPE = /^[a-z0-9][a-z0-9-]{1,38}[a-z0-9]$/
 /** Where a site's secret is kept: its folder's ULID. @param {string} path */
@@ -123,8 +124,6 @@ async function renew() {
   site.value = { ...one, secret: codeOf(secret) }; made.value = codeOf(secret); kept.value = false; told.value = { text: t('sites.newCodeMade') }
 }
 
-/** Copies the address or the code, whose button says so for two seconds. @param {string} text @param {string} which */
-const copy = (text, which) => navigator.clipboard.writeText(text).then(() => { copied.value = which; setTimeout(() => { if (copied.peek() === which) copied.value = '' }, 2000) })
 /** What the host said of the name typed, in words. */
 const nameSaid = () => ({ free: t('sites.free'), taken: t(typed.value ? 'sites.wrongCode' : 'sites.taken'), refused: t(said.value.why === 'shape' ? 'sites.shape' : 'sites.held') })[said.value.state] ?? ''
 
@@ -136,31 +135,29 @@ class PublishDialog extends Element {
     const changed = out ? new Set([...Object.keys(one.hashes), ...Object.keys(out.files)].filter((path) => one.hashes[path] !== out.files[path])).size : 0
     const forms = [...one.files].some(([path, bytes]) => path.endsWith('.html') && /<form\b/i.test(new TextDecoder().decode(bytes)))
     const [before, after] = one.offer.address.replace(/^https?:\/\//, '').split('{name}')
-    const done = (/** @type {string} */ which) => (copied.value === which ? icons.check : icons.copy)
+    const state = said.value.state, free = state === 'free' || state === 'yours'
+    // Where it is online, to copy or open, as Share's link is.
+    const address = out && linkField(out.address, t('sites.address'), t('action.copy'), html`<a class="icon-button" href=${out.address} target="_blank" rel="noopener" aria-label=${t('sources.open', { name: out.address.replace(/^https?:\/\/|\/$/g, '') })}>${icons.external}</a>`)
     const code = html`<label for="publish-code">${t('sites.code')}</label><input id="publish-code" dir="ltr" autocomplete="off" spellcheck="false" aria-describedby="publish-code-shape"
       .value=${typed.value ?? ''} @input=${(/** @type {Event} */ event) => { typed.value = /** @type {HTMLInputElement} */ (event.target).value; if (!out) pick(name.peek()) }}><small id="publish-code-shape">${t('sites.codeShape')}</small>`
     const ready = !step && (out ? mine && (changed > 0 || !live || !one.secret) : (said.value.state === 'free' || said.value.state === 'yours') && (!typed.value || mine))
     return html`<dialog class="sheet site-publish" @close=${closed('publish')} @click=${backdrop}>
       ${head(t('sites.publishTitle', { name: one.record.name }))}
-      ${made.value ? html`<section class="stack"><p>${t('sites.keep')}</p><code class="site-code" dir="ltr">${made.value}</code>
-          <button class="button" @click=${() => copy(made.value, 'code')}>${done('code')} <span aria-live="polite">${t(copied.value === 'code' ? 'toast.copied' : 'sites.copyCode')}</span></button>
+      ${made.value ? html`<section class="stack"><p class="site-state">${told.value.text}</p>${address}
+          <div class="apart"><span>${t('sites.code')}</span><code class="site-code" dir="ltr">${made.value}</code>${copyButton(made.value, t('sites.copyCode'))}<small>${t('sites.keep')}</small></div>
           <label class="site-kept" for="publish-kept"><input id="publish-kept" type="checkbox" .checked=${kept.value} @change=${(/** @type {Event} */ event) => { kept.value = /** @type {HTMLInputElement} */ (event.target).checked }}>${t('sites.kept')}</label></section>`
-        : out ? html`<section class="stack"><div class="site-out"><a href=${out.address} target="_blank" rel="noopener" dir="ltr">${out.address}</a>
-            <button class="button" @click=${() => copy(out.address, 'address')}>${done('address')} <span aria-live="polite">${t(copied.value === 'address' ? 'toast.copied' : 'action.copy')}</span></button></div>
-          <p>${t(live ? 'sites.online' : 'sites.ended', { date: day(out.expires) })}</p>
-          ${one.secret ? html`<p>${changed ? t('sites.changed', { count: changed }) : t('sites.same')}</p>
-            <button type="button" class="button subtle" ?disabled=${renewing.value || Boolean(step)} @click=${renew}>${t('sites.newCode')}</button>` : html`<p>${t('sites.elsewhere')}</p>${code}`}</section>`
+        : out ? html`<section class="stack"><p class=${live ? 'site-state is-live' : 'site-state'}>${t(live ? 'sites.online' : 'sites.ended', { date: day(out.expires) })}</p>${address}
+          ${one.secret ? html`<p class="hint">${changed ? t('sites.changed', { count: changed }) : t('sites.same')} <button type="button" class="link-button" ?disabled=${renewing.value || Boolean(step)} @click=${renew}>${t('sites.newCode')}</button></p>`
+            : html`<p>${t('sites.elsewhere')}</p>${code}`}</section>`
         : html`<form id="publish-form" class="stack" @submit=${(/** @type {Event} */ event) => { event.preventDefault(); if (ready) publish() }}>
-          <label for="publish-name">${t('sites.address')}</label>
+          <p class="hint">${t('sites.public')} ${t('sites.year')}</p><label for="publish-name">${t('sites.address')}</label>
           <span class="site-name" dir="ltr"><span aria-hidden="true">${before}</span><input id="publish-name" autocomplete="off" spellcheck="false" maxlength="40" aria-describedby="publish-said"
             .value=${name.value} @input=${(/** @type {Event} */ event) => pick(/** @type {HTMLInputElement} */ (event.target).value.toLowerCase())}><span aria-hidden="true">${after.replace(/\/$/, '')}</span></span>
-          <small id="publish-said" role="status">${nameSaid()}</small>
-          ${typed.value === null ? html`<button type="button" class="button subtle" @click=${() => { typed.value = '' }}>${t('sites.haveCode')}</button>` : code}
-          <p class="hint">${t('sites.public')} ${t('sites.year')}</p></form>`}
+          <small id="publish-said" role="status" class=${free ? 'is-free' : state ? 'is-taken' : ''}>${free && nameSaid() ? icons.check : nothing}${nameSaid()}</small>${typed.value === null ? nothing : code}</form>`}
       ${forms && !made.value ? html`<p class="hint">${t('sites.formWaits')}</p>` : nothing}
-      <p class="site-told" role="status">${told.value.alert ? '' : told.value.text}</p><p class="site-told" role="alert">${told.value.alert ? told.value.text : ''}</p>
+      <p class="visually-hidden" role="status">${told.value.alert ? '' : told.value.text}</p><p class="site-told" role="alert">${told.value.alert ? told.value.text : ''}</p>
       <footer class="dialog-foot">${made.value ? html`<button class="button primary" ?disabled=${!kept.value} @click=${() => { made.value = '' }}>${t('sites.done')}</button>`
-        : html`${out && live && mine ? html`<button class="button subtle danger" @click=${offline}>${t('sites.offline')}</button>` : nothing}
+        : html`${out && live && mine ? html`<button class="button subtle danger" @click=${offline}>${t('sites.offline')}</button>` : !out && typed.value === null ? html`<button type="button" class="link-button" @click=${() => { typed.value = '' }}>${t('sites.haveCode')}</button>` : nothing}
           <button class="button primary" ?disabled=${!ready} @click=${() => (out ? publish() : null)} form=${out ? nothing : 'publish-form'}>${icons.globe}
             ${step ? t('sites.publishing', { done: step.done, count: step.count }) : t(out ? 'sites.again' : 'sites.go')}</button>`}</footer>
     </dialog>`

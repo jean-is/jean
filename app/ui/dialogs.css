@@ -230,6 +230,14 @@ input.switch:disabled { cursor: not-allowed; opacity: 0.6; }
 .sites .icon-button { inline-size: 1.4rem; block-size: 1.4rem; padding: 0.2rem; }
 .sites input { flex: 1; min-inline-size: 10rem; inline-size: auto; }
 :is(.sites input, .address)[aria-invalid='true'] { color: var(--danger); text-decoration: underline wavy var(--danger); }
+/* A button that can't yet act looks it, wherever it is; a link that goes out (ui/qr.js): in its box with its buttons, over every look's fields, on a phone on a line of its own; its QR code
+   dark on light in every look and in forced colours, as cameras read it; a password or a recovery code kept apart, on what waits for the person; six digits
+   shown, or typed in six boxes; a dot for what is online, breathing while a step waits on someone else. */
+.button:disabled { opacity: 0.5; cursor: default; } .button.primary:disabled:hover { background: var(--flame); } :is(.waits, .is-live)::before { content: ''; display: inline-block; inline-size: 0.45rem; block-size: 0.45rem; margin-inline-end: 0.5rem; border-radius: 50%; background: var(--flame); } .waits::before { animation: waits 1.6s ease-in-out infinite var(--loops, running); }
+.link-field { display: flex; align-items: center; gap: 0.4rem; padding: 0.25rem; padding-inline-start: 0.9rem; border: 1px solid var(--line-strong); border-radius: 0.9rem; } :root .sheet .link-field > input:read-only { flex: 1; min-inline-size: 0; padding: 0; border: 0; outline: 0; background: none; font: 0.875rem var(--mono); } .link-field:has(> input:focus-visible) { outline: 2px solid var(--flame); outline-offset: 1px; } .link-field .button { min-block-size: 2.5rem; }
+@media (max-width: 40rem) { .link-field { flex-wrap: wrap; padding-block: 0.6rem 0.25rem; } :root .sheet .link-field > input:read-only { flex-basis: 100%; } .link-field > .button { margin-inline-start: auto; } }
+.qr { display: block; inline-size: min(100%, 15rem); margin-inline: auto; border-radius: 0.6rem; background: white; fill: black; forced-color-adjust: none; } .digits { margin: 0; text-align: center; font: 600 2.5rem/1.2 var(--mono); letter-spacing: 0.1em; user-select: all; } .apart { display: flex; flex-wrap: wrap; align-items: center; gap: 0 0.5rem; padding: 0.5rem; padding-inline-start: 0.9rem; border: 1px solid var(--wait-line, oklch(from var(--flame) l c h / 0.5)); border-radius: 0.9rem; background: var(--wait, oklch(from var(--flame) l c h / 0.08)); } .apart > :is(span, small) { flex-basis: 100%; color: var(--ink-soft); font-size: 0.8rem; }
+input.digits-type { box-sizing: content-box; inline-size: 12ch; padding-inline: 0.5ch 0; font: 600 1.5rem var(--mono); letter-spacing: 1ch; background: repeating-linear-gradient(90deg, transparent 0 0.2ch, var(--line) 0.2ch 1.8ch, transparent 1.8ch 2ch); } @media (forced-colors: active) { :is(.waits, .is-live)::before { background: CanvasText; } }
 
 /* ─── Projects ──────────────────────────────────────────────────────────── */
 

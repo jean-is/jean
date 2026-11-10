@@ -11,6 +11,7 @@ import { COLOURS } from '../../ui/touches.js'
 import { icons } from '../../ui/menu-icons.js'
 import { t, intlLocales } from '../../core/i18n.js'
 import { decode } from '../../ui/seal.js'
+import { linkField, copyButton, copyText } from '../../ui/qr.js'
 import { membersOf, linkOf, invitation } from './circle.js'
 import { circles, circleAt, begin, join, linkFor, set, move, stop, hereNow, key, ask, asking } from './engine.js'
 import { BRAND } from '../../brand.js'
@@ -31,7 +32,6 @@ const avatar = (one) => html`<span class="avatar" aria-hidden="true" ${ref((elem
 /** Something done, its failure said, never done twice at once. @param {() => Promise<unknown>} run */
 const doing = async (run) => { if (busy.peek()) return; busy.value = true; try { await run() } catch (error) { showError(error) } finally { busy.value = false } }
 const names = (/** @type {string[]} */ list) => new Intl.ListFormat(intlLocales(), { type: 'conjunction' }).format(list)
-const copy = (/** @type {string} */ text) => navigator.clipboard.writeText(text).then(() => notify(t('toast.copied')))
 
 /** Where a thing is: a task and a project by their path, anything else by its folder in the project. @param {{ kind: import('./engine.js').Kind, uri: string }} thing */
 const placeOf = ({ kind, uri }) => (kind === 'project' ? { dir: 'projects', folder: uri.slice(9) } : { dir: app.projectDir, folder: kind === 'task' ? uri.slice(app.projectDir.length + 1) : uri })
@@ -45,8 +45,7 @@ export function how(what) {
   if (live) {
     const others = membersOf(live.state).filter((one) => one.fp !== live.me)
     return html`<section class="stack"><p>${others.length ? t('together.with', { names: names(others.map((one) => one.name)) }) : t('together.alone')}</p>
-      ${live.kept.links && live.kept.ownerToken ? html`<div class="share-field"><input class="share-link" readonly dir="ltr" title=${t('together.link')} .value=${linkFor(live)}>
-        <button class="button primary" @click=${() => copy(linkFor(live))}>${icons.copy} ${t('together.copyLink')}</button></div>` : nothing}
+      ${live.kept.links && live.kept.ownerToken ? linkField(linkFor(live), t('together.link'), t('together.copyLink')) : nothing}
       <button class="button" @click=${() => { shown.value = live.id; app.dialog.value = 'together' }}>${icons.people} ${peopleIn(live)}</button></section>`
   }
   if (kind !== 'project') return nothing
@@ -67,7 +66,7 @@ export async function start(what, fps, links) {
   const place = placeOf(what.thing), live = circleAt(`${place.dir}/${place.folder}`) ?? await begin(place, { links, role: 'edit', kind: what.thing.kind })
   if (fps.length) await sent(live, what.title, fps)
   // Copied where the clipboard lets it; the line shows the link all the same.
-  if (links && live.kept.links && live.kept.ownerToken) copy(linkFor(live)).catch(() => {})
+  if (links && live.kept.links && live.kept.ownerToken) copyText(linkFor(live)).catch(() => {})
   else if (links) [shown.value, app.dialog.value] = [live.id, 'together']
 }
 
@@ -131,7 +130,7 @@ class TogetherDialog extends Element {
     return html`<dialog class="sheet together-dialog" @close=${closed('together')} @click=${backdrop}>
       ${asked.value ? this.joining(asked.value.link) : starting.value && !live ? html`${head(t('together.project'))}<p class="lede" dir="auto">${starting.value.title}</p>${how(starting.value)}` : live ? html`${head(peopleIn(live))}<p class="lede" dir="auto">${live.kept.title}</p>
         <ul class="list">${membersOf(live.state).map((one) => row(live, one, owner))}</ul>${question.value ? asks(live, question.value) : nothing}
-        ${owner && live.kept.links ? html`<p class="hint">${t('together.moves')}</p><div class="row"><button class="button" @click=${() => copy(linkFor(live))}>${icons.copy} ${t('together.copyLink')}</button>
+        ${owner && live.kept.links ? html`<p class="hint">${t('together.moves')}</p><div class="row">${copyButton(linkFor(live), t('together.copyLink'))}
           <button class="button subtle" @click=${() => doing(() => move(live, []))}>${t('together.linkOff')}</button></div>` : nothing}
         <footer class="dialog-foot"><button class="button subtle danger" ?disabled=${busy.value} @click=${() => doing(async () => { await stop(live); app.dialog.value = null })}>${t(owner ? 'together.stop' : 'together.leave')}</button></footer>` : nothing}
     </dialog>`

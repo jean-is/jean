@@ -3,10 +3,11 @@
 // it is for, then a code to show beside them or a link to send them, the digits, done. On the invited side, the link that came, asked who
 // sent it, then the digits to show or send back, done. Loaded the first time it shows.
 import { html, nothing } from 'lit-html'
-import { signal, effect } from '@preact/signals-core'
-import { notify } from '../../ui/state.js'
+import { signal } from '@preact/signals-core'
 import { sectionOpen } from '../../ui/dialogs.js'
-import { codeOf } from '../../ui/qr.js'
+import { qrOf, linkField, composing, digitsOf, sixDigits } from '../../ui/qr.js'
+import { follow } from '../../ui/rail.js'
+import { initialOf } from '../../ui/curtain.js'
 import { icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { t, tParts, intlLocales } from '../../core/i18n.js'
@@ -15,7 +16,7 @@ import { inviting, accepting, groups, invitations, invite, confirm as right, sto
 
 await styleSheet(new URL('../../ui/data-pages.css', import.meta.url))
 
-/** What a step shows, its buttons, and what it says as it comes, or what went wrong. @typedef {{ body?: unknown, buttons?: unknown, said?: string, wrong?: string }} Step */
+/** What a step shows, its buttons, what it says as it comes, waiting on the other person, or what went wrong. @typedef {{ body?: unknown, buttons?: unknown, said?: string, waits?: boolean, wrong?: string }} Step */
 
 /** The person whose name is being changed, by fingerprint. */
 const renaming = signal('')
@@ -24,27 +25,13 @@ const named = (name) => html`<bdi>${name}</bdi>`
 /** @param {...unknown} buttons */
 const row = (...buttons) => html`<div class="row people-actions">${buttons}</div>`
 /** @param {() => unknown} act @param {string} [label] */
-const quit = (act, label = 'people.cancel') => html`<button class="button subtle" @click=${act}>${t(label)}</button>`
-/** Enter while an IME composes ends the word, never sends. @param {KeyboardEvent} e */
-const composing = (e) => { if (e.isComposing && e.key === 'Enter') e.preventDefault() }
+const quit = (act, label = 'people.cancel', kind = 'button subtle') => html`<button class=${kind} @click=${act}>${t(label)}</button>`
 /** A form's one field, by name. @param {Event} e @param {string} name */
 const valueIn = (e, name) => String(new FormData(/** @type {HTMLFormElement} */ (e.target)).get(name) ?? '').trim()
 /** A colleague's account, and Guest where the organisation's list calls them one. @param {{ account?: string, guest?: true }} one */
 const account = (one) => html`<span dir="ltr">${one.account}</span>${one.guest ? html` · ${t('people.guest')}` : nothing}`
-/** The link, to copy. @param {string} link */
-const field = (link) => html`<div class="people-field"><input readonly dir="ltr" title=${t('people.link')} .value=${link} @focus=${(/** @type {Event} */ e) => /** @type {HTMLInputElement} */ (e.target).select()}>
-  <button class="button" @click=${() => navigator.clipboard.writeText(link).then(() => notify(t('toast.copied')))}>${icons.copy} ${t('people.copy')}</button></div>`
-
-/** The six digits typed for an invitation: wrong, selected to type again. @param {string} id @param {SubmitEvent} event */
-async function typed(id, event) {
-  event.preventDefault()
-  const input = /** @type {HTMLInputElement} */ (/** @type {HTMLFormElement} */ (event.target).elements.namedItem('code'))
-  if (!(await right(id, input.value))) input.select()
-}
-/** The form the digits are typed in. @param {string} id @param {string} label */
-const digits = (id, label) => html`<form class="stack" @submit=${(/** @type {SubmitEvent} */ e) => typed(id, e)}><label for=${`people-code-${id}`}>${label}</label>
-  <input id=${`people-code-${id}`} class="people-type" name="code" inputmode="numeric" autocomplete="one-time-code" spellcheck="false" dir="ltr" required @keydown=${composing}>
-  <div class="row"><button class="button primary">${t('people.confirm')}</button></div></form>`
+/** The six digits typed for an invitation, in six boxes, Cancel or another button beside Add. @param {string} id @param {string} label @param {...unknown} also */
+const digits = (id, label, ...also) => sixDigits(`people-code-${id}`, label, t('people.confirm'), (code) => right(id, code), nothing, ...also)
 
 /** The step under way, inviting or accepting, or none. @returns {Step | null} */
 function step() {
@@ -53,24 +40,20 @@ function step() {
       <h3 tabindex="-1">${t('people.invited', { name })}</h3><label for="people-from">${t('people.from')}</label>
       <input id="people-from" name="name" required maxlength="80" dir="auto" autocomplete="off" @keydown=${composing}><p class="hint">${t('people.seen')}</p></form>`,
     buttons: row(html`<button class="button primary" form="people-accept">${t('people.accept')}</button>`, quit(stopAccept, 'people.notNow')) }
-  if (b.step === 'waiting') return { said: t('people.accepting'), buttons: row(quit(stopAccept)) }
-  if (b.step === 'code') return { body: html`<h3 tabindex="-1">${t('people.showCode')}</h3><p class="people-digits" dir="ltr">${b.code.slice(0, 3)} ${b.code.slice(3)}</p>
+  if (b.step === 'waiting') return { said: t('people.accepting'), waits: true, buttons: row(quit(stopAccept)) }
+  if (b.step === 'code') return { body: html`<h3 tabindex="-1">${t('people.showCode')}</h3>${digitsOf(b.code)}
       ${b.theirs ? html`<p>${tParts('people.calls', { name: named(b.theirs) })}</p>` : nothing}`, buttons: row(quit(stopAccept)) }
-  if (b.step === 'done') return { said: t('people.metThem', { name: b.name }), buttons: row(quit(() => { accepting.value = { step: 'idle' } }, 'people.ok')) }
+  if (b.step === 'done') return { said: t('people.metThem', { name: b.name }), buttons: row(quit(() => { accepting.value = { step: 'idle' } }, 'people.ok', 'button primary')) }
   if (b.step === 'failed') return { wrong: t(`people.why.${b.reason}`, { name }), buttons: row(quit(() => { accepting.value = { step: 'idle' } }, 'people.close')) }
   if (a.step === 'name') return { body: html`<form class="stack" id="people-who" @submit=${(/** @type {SubmitEvent} */ e) => { e.preventDefault(); invite(valueIn(e, 'name'), /** @type {any} */ (e).submitter?.value === 'link' ? 'link' : 'side') }}>
       <label for="people-who-name">${t('people.who')}</label><input id="people-who-name" name="name" required maxlength="80" dir="auto" autocomplete="off" @keydown=${composing}></form>`,
     buttons: row(html`<button class="button primary" form="people-who" value="side">${t('people.side')}</button>`, html`<button class="button" form="people-who" value="link">${t('people.apart')}</button>`, quit(() => stopInvite())) }
-  if (a.step === 'waiting') {
-    const code = a.way === 'side' && a.link.startsWith('http') ? codeOf(a.link) : null
-    return { body: html`<h3 tabindex="-1">${t(a.way === 'side' ? 'people.scan' : 'people.send', { name: a.name })}</h3>
-      ${code ? html`<svg class="people-qr" role="img" aria-label=${t('people.qr')} viewBox="-4 -4 ${code.size + 8} ${code.size + 8}"><path d=${code.d}/></svg>` : nothing}
-      <p>${t(a.way === 'side' ? 'people.point' : 'people.week')}</p>${field(a.link)}`, said: t('people.waiting'),
-    buttons: row(a.way === 'link' && 'share' in navigator ? html`<button class="button" @click=${() => navigator.share({ url: a.link }).catch(() => {})}>${icons.share} ${t('people.share')}</button>` : nothing,
-      a.way === 'link' ? quit(() => stopInvite(), 'people.later') : nothing, quit(() => stopInvite(a.id))) }
-  }
-  if (a.step === 'code') return { body: digits(a.id, t('people.typeCode', { name: a.name })), wrong: a.left < 3 ? t('people.wrong', { count: a.left }) : '', buttons: row(quit(() => stopInvite(a.id))) }
-  if (a.step === 'done') return { said: t('people.added', { name: a.name }), buttons: row(quit(() => { inviting.value = { step: 'idle' } }, 'people.ok')) }
+  // The invitation as a QR code to scan beside them, or its link to send, through the system's sheet where there is one.
+  if (a.step === 'waiting') return { body: html`<h3 tabindex="-1">${t(a.way === 'side' ? 'people.scan' : 'people.send', { name: a.name })}</h3>${a.way === 'side' && a.link.startsWith('http') ? qrOf(a.link, t('people.qr')) : nothing}
+      <p>${t(a.way === 'side' ? 'people.point' : 'people.week')}</p>${linkField(a.link, t('people.link'), t('people.copy'), a.way === 'link' && 'share' in navigator ? html`<button class="icon-button" aria-label=${t('people.share')}
+        @click=${() => navigator.share({ url: a.link }).catch(() => {})}>${icons.share}</button>` : nothing)}`, said: t('people.waiting'), waits: true, buttons: row(a.way === 'link' ? quit(() => stopInvite(), 'people.later') : nothing, quit(() => stopInvite(a.id))) }
+  if (a.step === 'code') return { body: digits(a.id, t('people.typeCode', { name: a.name }), quit(() => stopInvite(a.id))), wrong: a.left < 3 ? t('people.wrong', { count: a.left }) : '' }
+  if (a.step === 'done') return { said: t('people.added', { name: a.name }), buttons: row(quit(() => { inviting.value = { step: 'idle' } }, 'people.ok', 'button primary')) }
   if (a.step === 'failed') return { wrong: t(`people.why.${a.reason}`, { name }), buttons: row(quit(() => { inviting.value = { step: 'idle' } }, 'people.close')) }
   return null
 }
@@ -96,8 +79,8 @@ function rest() {
   return html`${colleagues ? finder() : nothing}${list.length ? html`<ul class="list">${list.map((one) => html`<li>${renaming.value === one.fp
       ? html`<form class="people-field" @submit=${(/** @type {SubmitEvent} */ e) => { e.preventDefault(); rename(one.fps, valueIn(e, 'name') || one.name).then(() => { renaming.value = '' }) }}>
           <input name="name" required maxlength="80" dir="auto" title=${t('people.rename')} .value=${one.name} @keydown=${composing}><button class="button">${t('people.save')}</button></form>`
-      : html`<span class="item-text"><strong dir="auto">${one.name}</strong><small>${one.asking ? t('people.newDevice') : one.again ? t('people.again') : one.waiting ? t('people.answer', { name: one.name })
-          : one.account ? account(one) : tParts('people.calls', { name: named(one.said) })}</small></span>
+      : html`<span class="avatar" aria-hidden="true">${initialOf(one.name)}</span><span class="item-text"><strong dir="auto">${one.name}</strong>${((sub) => (sub ? html`<small>${sub}</small>` : nothing))(one.asking
+          ? t('people.newDevice') : one.again ? t('people.again') : one.waiting ? t('people.answer', { name: one.name }) : one.account ? account(one) : alias(one) && tParts('people.calls', { name: named(one.said) }))}</span>
         ${one.asking && one.account ? html`<button class="button subtle" @click=${() => trustColleague(String(one.account))}>${t('people.trust')}</button>` : nothing}
         <button class="button subtle" @click=${() => { renaming.value = one.fp }}>${t('people.rename')}</button>
         <button class="button subtle danger" @click=${() => confirmRemove(one)}>${t('action.remove')}</button>`}</li>`)}</ul>` : nothing}
@@ -108,22 +91,18 @@ function rest() {
     ${meets ? html`<div class="row"><button id="people-add" class="button primary" @click=${() => { inviting.value = { step: 'name' } }}>${icons.plus} ${t('people.add')}</button></div>` : nothing}`
 }
 
+/** Whether the name they give themselves says more than the one they are known by here, as it does when someone else accepted the invitation. @param {{ name: string, said: string }} one */
+const alias = ({ name, said }) => Boolean(said.trim()) && !name.toLocaleLowerCase().includes(said.trim().toLocaleLowerCase())
 /** Remove, asked first: what came from them stays. @param {{ fps: string[], name: string }} one */
 const confirmRemove = (one) => confirm(t('people.remove', { name: one.name })) && remove(one.fps)
 
-// A step that changes takes the keyboard to what it asks for now: a field, its title, its first button, or Add a person.
-let was = ''
-effect(() => {
-  const now = `${inviting.value.step} ${accepting.value.step}`
-  if (was && now !== was) requestAnimationFrame(() => sectionOpen() === 'people' && /** @type {HTMLElement | null} */ (document.querySelector('.people-flow input:not([readonly])')
-    ?? document.querySelector('.people-flow h3') ?? document.querySelector('.people-actions .button') ?? document.getElementById('people-add'))?.focus())
-  was = now
-})
+// A step takes the keyboard to what it asks for now: a field, its title, its first button, or Add a person.
+follow(() => `${inviting.value.step} ${accepting.value.step}`, () => sectionOpen() === 'people', ['.people-flow input:not([readonly])', '.people-flow h3', '.people-actions .button', '#people-add'])
 
 /** People: its head, then the step under way or the people at rest; what a step says, then its buttons. */
 export function section() {
   const now = step()
   return html`<header class="data-head"><div><h2 tabindex="-1">${t('cap.people.name')}</h2><p class="lede">${t('people.line', { name: BRAND.name })}</p></div></header>
     <div class="people-flow">${now ? now.body : rest()}
-    <p class="people-said" role="status">${now?.said ?? ''}</p><p class="people-wrong" role="alert">${now?.wrong ?? ''}</p>${now?.buttons ?? nothing}</div>`
+    <p class=${now?.waits ? 'people-said waits' : 'people-said'} role="status">${now?.said ?? ''}</p><p class="people-wrong" role="alert">${now?.wrong ?? ''}</p>${now?.buttons ?? nothing}</div>`
 }

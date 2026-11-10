@@ -84,7 +84,7 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   await expect(dialog.getByRole('radio', { name: /^30 days Until .+ \d{4}$/ })).toBeChecked()
   await expect(dialog.getByRole('radio', { name: /^A year Until / })).not.toBeChecked()
   await dialog.getByRole('button', { name: 'Publish link' }).click()
-  const link = await dialog.locator('input.share-link').inputValue()
+  const link = await dialog.locator('.link-field input').inputValue()
   expect(link).toMatch(/^http:\/\/127\.0\.0\.1:4185\/[\w-]{22}#[\w-]{43}$/)
   // Published, said so, its choices folded into one line again: no password, until when, as it is now.
   await expect(dialog.locator('.share-says')).toHaveText(/^Published\. Anyone with the link can read it until /)
@@ -95,7 +95,7 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   const code = dialog.getByRole('img', { name: 'The link as a QR code, to open it with a phone’s camera' })
   const square = await code.boundingBox()
   expect(square && [square.width === square.height, square.width >= 190]).toEqual([true, true])
-  await expect(dialog.locator('input.share-link')).toHaveCount(0)
+  await expect(dialog.locator('.link-field input')).toHaveCount(0)
   await expect(dialog).toContainText('Point a phone’s camera at it.')
   expect(await code.evaluate(async (svg, link) => {
     const { size, get } = (await import('/vendor/lean-qr/lean-qr.mjs')).generate(link)
@@ -158,7 +158,7 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   await expect(share.locator('kbd')).toHaveText(/^(⌘⇧U|Ctrl\+Shift\+U)$/)
   await page.keyboard.press('Escape')
   await page.keyboard.press('ControlOrMeta+Shift+KeyU')
-  await expect(dialog.locator('input.share-link')).toHaveValue(link)
+  await expect(dialog.locator('.link-field input')).toHaveValue(link)
   // On a wide window, under the task's own Share at its top, ending where it ends.
   await expect(async () => {
     const [button, box] = await Promise.all([state.boundingBox(), dialog.boundingBox()])
@@ -179,13 +179,13 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   await expect(dialog.locator('.share-password')).toHaveText(password)
   await expect(dialog).toContainText('Shown only now. Send it another way than the link.')
   await expect(dialog.getByRole('button', { name: /^With a password · Until / })).toHaveAttribute('aria-expanded', 'false')
-  await expect(dialog.locator('input.share-link')).toHaveValue(link)
+  await expect(dialog.locator('.link-field input')).toHaveValue(link)
   await dialog.getByRole('button', { name: 'QR code', exact: true }).click()
   await expect(dialog.locator('.share-password')).toHaveText(password)
   await close()
   // Opened again, on the link: the choices made, the password kept unless changed, and never shown again.
   await state.click()
-  await expect(dialog.locator('input.share-link')).toHaveValue(link)
+  await expect(dialog.locator('.link-field input')).toHaveValue(link)
   await expect(dialog.locator('.share-password')).toHaveCount(0)
   await dialog.getByRole('button', { name: /^With a password · Until / }).click()
   await expect(dialog.getByRole('switch', { name: 'With a password' })).toBeChecked()
@@ -242,7 +242,7 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   page.once('dialog', (asked) => asked.accept())
   await dialog.getByRole('button', { name: 'Stop publishing' }).click()
   await expect(dialog.getByRole('button', { name: 'Publish link' })).toBeVisible()
-  await expect(dialog.locator('input.share-link')).toHaveCount(0)
+  await expect(dialog.locator('.link-field input')).toHaveCount(0)
   const after = await context.newPage()
   await after.goto(link)
   await expect(after.getByText('This is no longer shared.')).toBeVisible()
@@ -273,7 +273,7 @@ test('a link that can’t be made or updated says why, in sharing’s own words'
   await expect(page.getByText('This couldn’t be reached. Check your connection and try again.')).toBeVisible()
   await page.unroute(host)
   await dialog.getByRole('button', { name: 'Publish link' }).click()
-  await expect(dialog.locator('input.share-link')).toHaveValue(/#/)
+  await expect(dialog.locator('.link-field input')).toHaveValue(/#/)
   await close()
   // On a device without its write token, the dialog shows the link and says why it can't be changed there.
   await page.evaluate(async () => {
@@ -282,7 +282,7 @@ test('a link that can’t be made or updated says why, in sharing’s own words'
   })
   await page.evaluate(async (path) => (await import('/caps/share/share.js')).openShare({ path, title: 'Plan the week' }), path)
   await expect(dialog).toContainText('This link was made on another device: only that one can change it.')
-  await expect(dialog.locator('input.share-link')).toHaveValue(/#/)
+  await expect(dialog.locator('.link-field input')).toHaveValue(/#/)
   await expect(dialog.getByRole('button', { name: 'Update' })).toHaveCount(0)
   await close()
   // Nor does Privacy: neither updated nor said to be stopped, it stays listed, as it still opens.

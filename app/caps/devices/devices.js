@@ -522,6 +522,8 @@ const opening = (then) => import('../../ui/dialogs.js').then((dialogs) => { dial
 export const places = () => ((rest, flow) => (!rest.length ? (app.ephemeral.value ? undefined : ghost(() => opening(start))) : (rest.length > 2 ? [rest[0], null] : rest).map((one) => /** @type {import('../../ui/map.js').Place} */ (one
   ? { side: 'end', icon: kindOf(one.name), name: one.name, sub: lastSeen(one), state: quietOf(one) ? 'wait' : 'ok', flow } : { side: 'end', icon: icons.devices, name: t('devices.more', { count: rest.length - 1 }), flow }))))(others(), stored.value && Boolean(kept.value?.value.at) && !trouble())
 
+/** What pairing brings, drawn: this device, ringed in the flame, and the one to add, dashed, a dashed line between. */
+export const drawing = () => html`<span class="devices-drawing" aria-hidden="true"><span>${handheld() ? icons.phone : icons.computer}</span><span>${handheld() ? icons.computer : icons.phone}</span></span>`
 /** Each time the popover opens, for its times to be now's. */
 const popped = signal(0)
 /**
@@ -538,7 +540,7 @@ function pop(where) {
   const go = (/** @type {unknown} */ icon, /** @type {string} */ label, /** @type {() => unknown} */ act) => html`<li><button type="button" popovertarget=${id} popovertargetaction="hide" @click=${act}>${icon}${label}</button></li>`
   return html`<div id=${id} class="menu devices-menu" popover role="dialog" aria-labelledby=${`${id}-title`} @beforetoggle=${(/** @type {ToggleEvent} */ e) => { if (e.newState === 'open') popped.value++ }}
     @toggle=${(/** @type {ToggleEvent} */ e) => e.newState === 'open' && /** @type {HTMLElement} */ (e.target).querySelector('button')?.focus()}>${alone
-      ? html`<div class="devices-pitch"><span class="devices-drawing" aria-hidden="true"><span>${handheld() ? icons.phone : icons.computer}</span><span>${handheld() ? icons.computer : icons.phone}</span></span>
+      ? html`<div class="devices-pitch">${drawing()}
         <strong id=${`${id}-title`}>${t('cap.devices.name')}</strong><p>${t(stored.value ? 'devices.lineStore' : 'devices.line')}</p></div>`
       : html`<div class="devices-head"><strong id=${`${id}-title`}>${t('cap.devices.name')}</strong>${line ? html`<small class=${state}>${line}</small>` : nothing}</div>
         <ul class="devices-list">${shown.map((one) => html`<li class=${one.id === own.value ? 'is-here' : ''}>${kindOf(one.name)}<span><strong dir="auto">${one.name}</strong>

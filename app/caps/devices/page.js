@@ -5,26 +5,26 @@
 // device, pasted there, in the box or opened, joined in the same place once the person chooses Bring it here, its six digits shown to type
 // there, then the profile that came and the device it came from, as a card, opened only on Yes, it's mine. Loaded the first time it shows.
 import { html, nothing } from 'lit-html'
-import { signal, effect } from '@preact/signals-core'
-import { app, notify } from '../../ui/state.js'
+import { signal } from '@preact/signals-core'
+import { app } from '../../ui/state.js'
 import { sectionOpen, pageOpen, goPage } from '../../ui/dialogs.js'
 import { handheld } from '../../ui/model.js'
-import { codeOf } from '../../ui/qr.js'
+import { qrOf, linkField, composing, digitsOf, sixDigits } from '../../ui/qr.js'
 import { icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
-import { rail } from '../../ui/rail.js'
+import { rail, follow } from '../../ui/rail.js'
 import { map } from '../../ui/map.js'
 import { initialOf } from '../../ui/curtain.js'
 import { t, tParts, intlLocales, formatBytes, relativeTime } from '../../core/i18n.js'
 import { BRAND } from '../../brand.js'
-import { adding, joining, devices, own, stored, start, passed, confirm, cancel, join, trusted, removeDevice, kindOf, joinIcon, lastSeen, quietOf, places } from './devices.js'
+import { adding, joining, devices, own, stored, drawing, start, passed, confirm, cancel, join, trusted, removeDevice, kindOf, joinIcon, lastSeen, quietOf, places } from './devices.js'
 import { state as store, again } from './store.js'
 
 // The head and the back button Your data's pages have.
 await styleSheet(new URL('../../ui/data-pages.css', import.meta.url))
 
 /** @typedef {import('./flow.js').Device} Device */
-/** Which of the three steps it is, what it shows, its buttons, and what it says as it comes, or what went wrong. @typedef {{ at?: number, body?: unknown, buttons?: unknown, said?: string, wrong?: string }} Step */
+/** Which of the three steps it is, what it shows, its buttons, what it says as it comes, waiting on the other device, or what went wrong. @typedef {{ at?: number, body?: unknown, buttons?: unknown, said?: string, waits?: boolean, wrong?: string }} Step */
 
 /**
  * The device Remove was pressed on, whether Jean is erased from it, while it goes, once gone the keys it may hold, by where each was made,
@@ -34,25 +34,14 @@ const removing = signal(/** @type {{ device: Device, erase: boolean, busy?: bool
 /** The lock's ways in, loaded when adding asks for them. */
 const lock = signal(/** @type {typeof import('../lock/lock.js') | null} */ (null))
 
-/** A link for the other device, to copy. @param {string} link */
-const field = (link) => html`<div class="devices-field"><input readonly dir="ltr" title=${t('devices.link')} .value=${link} @focus=${(/** @type {Event} */ e) => /** @type {HTMLInputElement} */ (e.target).select()}>
-  <button class="button" @click=${() => navigator.clipboard.writeText(link).then(() => notify(t('toast.copied')))}>${icons.copy} ${t('devices.copy')}</button></div>`
+/** A link for the other device, to copy. @param {string} link @param {...unknown} also */
+const field = (link, ...also) => linkField(link, t('devices.link'), t('devices.copy'), ...also)
 /** @param {...unknown} buttons */
 const row = (...buttons) => html`<div class="row devices-actions">${buttons}</div>`
-const quit = (/** @type {string} */ label = 'devices.cancel') => html`<button class="button subtle" @click=${cancel}>${t(label)}</button>`
-/** Enter while an IME composes ends the word, never sends. @param {KeyboardEvent} e */
-const composing = (e) => { if (e.isComposing && e.key === 'Enter') e.preventDefault() }
+const quit = (label = 'devices.cancel', kind = 'button subtle') => html`<button class=${kind} @click=${cancel}>${t(label)}</button>`
 /** A name a person or a device gave, set apart in a sentence of Jean's, whichever way it reads. @param {string} name */
 const named = (name) => html`<bdi>${name}</bdi>`
 
-/** Only digits, six at most, sent at the sixth unless an IME composes. @param {InputEvent} e */
-const digitsIn = (e) => { const box = /** @type {HTMLInputElement} */ (e.target); box.value = box.value.replace(/\D/g, '').slice(0, 6); if (box.value.length === 6 && !e.isComposing) box.form?.requestSubmit() }
-/** The six digits typed on this device: wrong, selected to type again. @param {SubmitEvent} event */
-async function typed(event) {
-  event.preventDefault()
-  const input = /** @type {HTMLInputElement} */ (/** @type {HTMLFormElement} */ (event.target).elements.namedItem('code'))
-  if (!(await confirm(input.value))) input.select()
-}
 
 /** The step under way, adding on this device or joining another, or none. @returns {Step | null} */
 function step() {
@@ -61,45 +50,39 @@ function step() {
     buttons: row(html`<button class="button" @click=${() => { joining.value = { step: 'ask', link: b.link } }}>${t('devices.inSafari')}</button>`, quit()) }
   const asked = html`<h3 tabindex="-1">${t('devices.askTitle', { name })}</h3><p>${t('devices.coming', { name })}</p>`
   if (b.step === 'ask') return { at: 0, body: asked, buttons: row(html`<button class="button primary" @click=${() => join(b.link)}>${t('welcome.bring')}</button>`, quit()) }
-  if (b.step === 'waiting') return { at: 0, body: asked, said: t('devices.joining'), buttons: row(quit()) }
-  if (b.step === 'code') return { at: 1, body: html`<h3 tabindex="-1">${t('devices.typeThere')}</h3><p class="devices-digits" dir="ltr">${b.code.slice(0, 3)} ${b.code.slice(3)}</p>`, buttons: row(quit()) }
+  if (b.step === 'waiting') return { at: 0, body: asked, said: t('devices.joining'), waits: true, buttons: row(quit()) }
+  if (b.step === 'code') return { at: 1, body: html`<h3 tabindex="-1">${t('devices.typeThere')}</h3>${digitsOf(b.code)}`, buttons: row(quit()) }
   // The profile that came as a card, its initial and its name, and the device it came from; Yes, it's mine opens it.
   if (b.step === 'trust') return { at: 1, body: html`<h3 tabindex="-1">${t('devices.yours')}</h3><div class="devices-who"><span class="avatar" aria-hidden="true">${initialOf(b.profile)}</span>
       <strong dir="auto">${b.profile}</strong><small>${tParts('devices.fromDevice', { device: named(b.device) })}</small></div><p class="hint">${t('devices.trustHint')}</p>`,
     buttons: row(html`<button class="button primary" @click=${trusted}>${t('devices.mine')}</button>`, quit('devices.stop')) }
-  if (b.step === 'adopting' || b.step === 'done') return { at: 2, said: t(b.step === 'done' ? 'devices.joined' : 'devices.adopting', { name }) }
+  if (b.step === 'adopting' || b.step === 'done') return { at: 2, said: t(b.step === 'done' ? 'devices.joined' : 'devices.adopting', { name }), waits: true }
   if (b.step === 'failed') return { wrong: t(`devices.why.${b.reason}`, { name }), buttons: row(quit('devices.close')) }
-  if (a.step === 'waiting') {
-    const code = a.address ? codeOf(a.link) : null
-    return { at: 0, body: html`<h3 tabindex="-1">${t('devices.open')}</h3>
-      ${code ? html`<svg class="devices-qr" role="img" aria-label=${t('devices.qr')} viewBox="-4 -4 ${code.size + 8} ${code.size + 8}"><path d=${code.d}/></svg>` : nothing}
-      <p>${a.address ? t('devices.point') : t('devices.pasteThere', { name })}</p>${field(a.link)}`, said: t('devices.waiting'),
-    buttons: row(handheld() && 'share' in navigator ? html`<button class="button" @click=${() => navigator.share({ url: a.link }).catch(() => {})}>${icons.share} ${t('devices.share')}</button>` : nothing, quit()) }
-  }
+  // Its link as a QR code for the other device's camera, and the link itself, sent through the system's sheet from a phone or a tablet.
+  if (a.step === 'waiting') return { at: 0, body: html`<h3 tabindex="-1">${t('devices.open')}</h3>${a.address ? qrOf(a.link, t('devices.qr')) : nothing}<p>${a.address ? t('devices.point') : t('devices.pasteThere', { name })}</p>
+      ${field(a.link, handheld() && 'share' in navigator ? html`<button class="icon-button" aria-label=${t('devices.share')} @click=${() => navigator.share({ url: a.link }).catch(() => {})}>${icons.share}</button>` : nothing)}`, said: t('devices.waiting'), waits: true, buttons: row(quit()) }
   if (a.step === 'lock') return { at: 1, body: html`<h3 tabindex="-1">${t('devices.unlock', { device: a.name })}</h3>${lock.value?.ways(passed) ?? (import('../lock/lock.js').then((module) => { lock.value = module }), nothing)}`, buttons: row(quit()) }
-  if (a.step === 'code') return { at: 1, body: html`<form class="stack" @submit=${typed}><label for="devices-code">${t('devices.typeCode', { device: a.name })}</label>
-      <input id="devices-code" class="devices-type" name="code" inputmode="numeric" autocomplete="one-time-code" spellcheck="false" dir="ltr" required aria-describedby="devices-wrong devices-hint" @keydown=${composing} @input=${digitsIn}>
-      <p class="hint" id="devices-hint">${t('devices.codeHint')}</p><div class="row"><button class="button primary">${t('devices.confirm')}</button></div></form>`,
-    wrong: a.left < 3 ? t('devices.wrong', { count: a.left }) : '', buttons: row(quit()) }
+  if (a.step === 'code') return { at: 1, body: sixDigits('devices-code', t('devices.typeCode', { device: a.name }), t('devices.confirm'), confirm, html`<p class="hint" id="devices-code-hint">${t('devices.codeHint')}</p>`, quit()),
+    wrong: a.left < 3 ? t('devices.wrong', { count: a.left }) : '' }
   // Until the new device says it opened what came, which waits on the person there.
-  if (a.step === 'sending') return { at: 1, said: t('devices.sending', { device: a.name }), buttons: row(quit()) }
+  if (a.step === 'sending') return { at: 1, said: t('devices.sending', { device: a.name }), waits: true, buttons: row(quit()) }
   // Done, on the map the device just added joins.
   if (a.step === 'done') return { at: 2, body: ((mine) => mine && map(t('cap.devices.name'), { icon: kindOf(mine.name), name: mine.name }, [places() ?? []].flat()))(devices.value.find((one) => one.id === own.value)),
-    said: t('devices.done', { device: a.name }), buttons: row(quit('devices.ok')) }
+    said: t('devices.done', { device: a.name }), buttons: row(quit('devices.ok', 'button primary')) }
   if (a.step === 'failed') return { wrong: t(`devices.why.${a.reason}`, { name }), buttons: row(html`<button class="button" @click=${start}>${t('devices.again')}</button>`, quit('devices.close')) }
   return null
 }
 
 /**
- * At rest: the devices as cards, this one first, a device two weeks unheard as a state that waits; what they keep in common and what each
- * keeps; Add a device, and beside it, while this one is alone, Join another device, which leads to its page for joining.
+ * At rest: the devices as cards, this one first, a device two weeks unheard as a state that waits, or, while this one is alone, what adding
+ * one brings, drawn; what they keep in common and what each keeps; Add a device, and beside it, alone, Join another device, which leads to its page for joining.
  */
 function rest() {
   const list = [...devices.value].sort((x, y) => Number(y.id === own.value) - Number(x.id === own.value))
   return html`${list.length ? html`<ul class="devices-cards">${list.map((one) => html`<li class=${one.id === own.value ? 'is-here' : ''}>${kindOf(one.name)}<strong dir="auto">${one.name}</strong>
       ${one.id === own.value ? html`<small>${t('devices.here', { date: new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'medium' }).format(new Date(one.createdAt)) })}</small>`
         : html`<small class=${quietOf(one) ? 'data-state is-wait' : ''}>${lastSeen(one)}</small><button class="button subtle danger" @click=${() => ask(one)}>${t('action.remove')}</button>`}</li>`)}</ul>` : nothing}
-    ${common()}<p class="hint">${t('devices.own')}</p><div class="row"><button id="devices-add" class="button primary" @click=${start}>${icons.plus} ${t('devices.add')}</button>
+    ${list.length < 2 ? drawing() : nothing}${common()}<p class="hint">${t('devices.own')}</p><div class="row"><button id="devices-add" class="button primary" @click=${start}>${icons.plus} ${t('devices.add')}</button>
       ${list.length > 1 ? nothing : html`<button class="button" data-page="join" @click=${() => goPage('devices', 'join')}>${joinIcon} ${t('devices.joinOther')}</button>`}</div>`
 }
 
@@ -165,14 +148,8 @@ function asking() {
   </dialog>`
 }
 
-// A step that changes takes the keyboard to what it asks for now: the six digits' field, its title, its first button, or Add a device.
-let was = ''
-effect(() => {
-  const now = `${adding.value.step} ${joining.value.step}`
-  if (was && now !== was) requestAnimationFrame(() => sectionOpen() === 'devices' && /** @type {HTMLElement | null} */ (document.querySelector('.devices-type')
-    ?? document.querySelector('.devices-flow h3') ?? document.querySelector('.devices-actions .button') ?? document.getElementById('devices-add'))?.focus())
-  was = now
-})
+// A step takes the keyboard to what it asks for now: the six digits' field, its title, its first button, or Add a device.
+follow(() => `${adding.value.step} ${joining.value.step}`, () => sectionOpen() === 'devices', ['.devices-flow .digits-type', '.devices-flow h3', '.devices-actions .button', '#devices-add'])
 
 /** Your devices: its head, then the step under way, its page for joining, or the devices at rest; what a step says, then its buttons. */
 export function section() {
@@ -180,5 +157,5 @@ export function section() {
   return html`${joins ? html`<button class="back button subtle" @click=${() => goPage('devices', '')}>${icons.back} ${t('cap.devices.name')}</button>` : nothing}<header class="data-head"><div><h2 tabindex="-1">${t(joins ? 'devices.joinTitle' : 'cap.devices.name', { name })}</h2>
       <p class="lede" id="devices-line">${t(joins ? 'devices.joinText' : stored.value ? 'devices.lineStore' : 'devices.line', { name, place: `${t('settings.title')} › ${t('cap.devices.name')}`, case: `${t('settings.title')} › ${t('settings.capabilities')}` })}</p></div></header>
     <div class="devices-flow">${now?.at === undefined ? nothing : rail(t('devices.adding'), [t('devices.step.show'), t('devices.step.match'), t('devices.step.done')], now.at, now.at === 2)}${now ? now.body : joins ? pasting() : rest()}
-    <p class="devices-said" role="status">${now?.said ?? ''}</p><p class="devices-wrong" id="devices-wrong" role="alert">${now?.wrong ?? ''}</p>${now?.buttons ?? nothing}</div>${asking()}`
+    <p class=${now?.waits ? 'devices-said waits' : 'devices-said'} role="status">${now?.said ?? ''}</p><p class="devices-wrong" id="devices-code-wrong" role="alert">${now?.wrong ?? ''}</p>${now?.buttons ?? nothing}</div>${asking()}`
 }
