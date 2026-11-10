@@ -19,14 +19,15 @@ export const SOUNDS = 'https://cdn.jsdelivr.net/npm/@jean-is/sounds@{version}/'
 
 /**
  * How the viewer loads: from the render package at this Jean's version, its modules by their hashes,
- * and where shares' own versions are. @param {string} [render] @param {string} [sounds]
+ * where shares' own versions are, and the card a link to a share shows (npm run cards). @param {string} [render] @param {string} [sounds]
  */
 export async function viewerOf(render = RENDER, sounds = SOUNDS) {
   const listing = JSON.parse(await readFile(join(APP, 'capabilities.json'), 'utf8')).render
   if (!listing?.viewer) throw new Error('host: capabilities.json lists no viewer; run npm run build first')
   const { imports } = parseImportMap(await readFile(join(APP, 'index.html'), 'utf8'))
   const reader = readerAt(render.replace('{version}', listing.version), { render: { ...listing, entry: listing.viewer }, imports, settings: {} })
-  return { base: reader.base, entry: reader.entry, imports: reader.imports, integrity: reader.integrity, render, sounds }
+  const card = (await readFile(join(ROOT, 'host', 'card.png'))).toString('base64')
+  return { base: reader.base, entry: reader.entry, imports: reader.imports, integrity: reader.integrity, card, render, sounds }
 }
 
 async function main() {

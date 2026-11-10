@@ -1,5 +1,6 @@
 // Draws the pictures a link to the brand's own site shows, one per language of its homepage (D682): the name on a
-// browser tab, as Jean is one, with that page's promise under it, at Open Graph's size. No word sits on the sunflower
+// browser tab, as Jean is one, with that page's promise under it, at Open Graph's size. And the one a link to a share
+// shows, the same for every share: a link, with no word and no name (host/card.png, D361). No word sits on the sunflower
 // (docs/design.md). Each PNG records the hash of the page it was drawn from, so the tests notice when a promise, a face or
 // this drawing changes and the PNGs don't. What the display face can't write comes from the system's faces, as the
 // site's titles do, so the pictures are this machine's, as the screenshots are.
@@ -10,6 +11,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { BRAND } from '../app/brand.js'
+import { CARD } from '../host/host.js'
 import { dir } from '../app/core/i18n.js'
 import { ICONS, languagesOf, wordsOf, xml } from '../site/site.js'
 import { recordSource } from './icons.js'
@@ -67,16 +69,41 @@ function pageOf ({ lang, promise, name, width, height, display, sans, favicon })
 <p class="words">${linesOf(promise).map((line) => /* html */ `<span>${xml(line)}</span>`).join('')}</p></html>`
 }
 
-/** Every card as it should be drawn: its address in app/, its size, its page, and what the PNG records it came from. */
-export async function cards () {
+/** What every card is drawn with: the display face, the mark, the site's sans. */
+async function faces () {
   const [display, favicon, style] = await Promise.all([readFile(join(APP, 'fonts/display.woff2')), readFile(join(APP, 'icons/favicon.svg')), readFile(join(APP, 'ui/style.css'), 'utf8')])
   const sans = /--sans:\s*([^;]+);/.exec(style)?.[1]
   if (!sans) throw new Error('app/ui/style.css has no --sans')
+  return { display: display.toString('base64'), favicon: favicon.toString('base64'), sans }
+}
+
+/** Where the share host's card is kept: `npm run host` puts it in the viewer the host is given (D361). */
+export const HOST_CARD = fileURLToPath(new URL('../host/card.png', import.meta.url))
+
+/**
+ * The card a link to a share shows, the same for every share and every host, since the host can't read one: a link, with
+ * no word to translate and no name.
+ */
+export async function hostCard () {
+  const { width, height } = CARD
+  const page = /* html */ `<!doctype html>
+<html><meta charset="utf-8"><style>* { margin: 0; } html, body { width: ${width}px; height: ${height}px; background: ${INK}; overflow: hidden; } svg { display: block; }</style>
+<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(${width / 2 - 132} ${height / 2 - 132}) scale(11)" fill="none" stroke="${PAPER}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10 13.5a3.5 3.5 0 0 0 4.95 0l3.54-3.54a3.5 3.5 0 0 0-4.95-4.95l-1.06 1.06M14 10.5a3.5 3.5 0 0 0-4.95 0l-3.54 3.54a3.5 3.5 0 0 0 4.95 4.95l1.06-1.06"/>
+  </g>
+</svg></html>`
+  return { ...CARD, lang: 'share', file: HOST_CARD, page, source: `scripts/cards.js sha256:${createHash('sha256').update(page).digest('hex')}` }
+}
+
+/** Every card as it should be drawn: its address in app/, its size, its page, and what the PNG records it came from. */
+export async function cards () {
+  const { display, favicon, sans } = await faces()
   return Promise.all((await languagesOf('home')).map(async (lang) => {
     const { promise } = /** @type {{ promise: string }} */ (await wordsOf('home', lang))
     const card = cardOf(lang, promise, BRAND)
-    const page = pageOf({ lang, promise, name: BRAND.name, width: card.width, height: card.height, display: display.toString('base64'), sans, favicon: favicon.toString('base64') })
-    return { ...card, lang, page, source: `scripts/cards.js sha256:${createHash('sha256').update(page).digest('hex')}` }
+    const page = pageOf({ lang, promise, name: BRAND.name, width: card.width, height: card.height, display, sans, favicon })
+    return { ...card, lang, file: join(APP, card.src), page, source: `scripts/cards.js sha256:${createHash('sha256').update(page).digest('hex')}` }
   }))
 }
 
@@ -84,19 +111,20 @@ async function main () {
   const { chromium } = await import('@playwright/test')
   const browser = await chromium.launch()
   try {
-    for (const { src, width, height, lang, page: html, source } of await cards()) {
+    for (const { file, width, height, lang, page: html, source } of [...await cards(), await hostCard()]) {
       const page = await browser.newPage({ viewport: { width, height } })
       await page.setContent(html)
       await page.evaluate(() => document.fonts.ready.then(() => true))
       const size = await page.evaluate(([largest, room]) => {
-        const words = /** @type {HTMLElement} */ (document.querySelector('.words'))
+        const words = /** @type {HTMLElement | null} */ (document.querySelector('.words'))
+        if (!words) return 0
         const fitted = Math.min(largest, Math.floor(largest * room / Math.max(...[...words.children].map((line) => line.getBoundingClientRect().width))))
         words.style.fontSize = `${fitted}px`
         return fitted
       }, [LARGEST, width - 2 * TAB.start])
       const png = recordSource(await page.screenshot({ type: 'png' }), source)
-      await mkdir(dirname(join(APP, src)), { recursive: true })
-      await writeFile(join(APP, src), png)
+      await mkdir(dirname(file), { recursive: true })
+      await writeFile(file, png)
       await page.close()
       console.log(`cards: ${lang}, words at ${size}px, ${Math.round(png.length / 1024)} KB`)
     }

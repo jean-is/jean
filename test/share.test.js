@@ -270,16 +270,44 @@ test('the viewer is the same page for every share, unindexed, and draws in an op
   const page = await ask(`/${base64url(random(16))}`)
   assert.equal(page.status, 200)
   assert.equal((await ask(`/${base64url(random(16))}`, { method: 'HEAD' })).status, 200)
-  assert.equal(page.headers.get('x-robots-tag'), 'noindex')
+  // No search engine keeps a share or follows its links, by the header and in the page.
+  assert.equal(page.headers.get('x-robots-tag'), 'noindex, nofollow')
   const policy = String(page.headers.get('content-security-policy'))
   assert.match(policy, /script-src https:\/\/cdn\.example 'sha256-/)
   assert.match(policy, /frame-ancestors 'none'/)
   const text = await page.text()
   assert.match(text, /<script type="module" src="https:\/\/cdn\.example\/npm\/r@1\/caps\/share\/view\.js" integrity="sha384-abc"/)
   assert.match(text, /"app":"https:\/\/jean\.example\/"/)
+  assert.match(text, /<meta name="robots" content="noindex, nofollow">/)
+  // Where a link is posted, it shows the host's name, the same for every share; no picture without a card.
+  assert.match(text, /<meta property="og:title" content="Jean">/)
+  assert.match(text, /<meta name="twitter:card" content="summary">/)
+  assert.doesNotMatch(text, /og:image/)
+  assert.equal((await ask('/card.png')).status, 404)
   const frame = await ask('/frame')
   assert.match(String(frame.headers.get('content-security-policy')), /^sandbox allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox;/)
   assert.doesNotMatch(String(frame.headers.get('content-security-policy')), /allow-same-origin|allow-downloads/)
+})
+
+test('a link to a share shows the host\'s card, whatever its name, from where shares open', async () => {
+  const png = Uint8Array.of(137, 80, 78, 71, 13, 10, 26, 10)
+  const viewer = { ...VIEWER, card: btoa(String.fromCharCode(...png)) }
+  const { ask } = hostOn({ viewer })
+  const text = await (await ask(`/${base64url(random(16))}`)).text()
+  assert.match(text, /<meta property="og:image" content="https:\/\/hst\.example\/card\.png">/)
+  assert.match(text, /<meta property="og:image:width" content="1200">/)
+  assert.match(text, /<meta name="twitter:card" content="summary_large_image">/)
+  const card = await ask('/card.png')
+  assert.equal(card.headers.get('content-type'), 'image/png')
+  assert.equal(card.headers.get('x-robots-tag'), 'noindex')
+  assert.deepEqual(new Uint8Array(await card.arrayBuffer()), png)
+  // Under the path shares open at, the card is there too.
+  const under = host({ viewer, shares: 'https://hst.example/s/', store: memory() })
+  assert.match(await (await under(new Request(`https://hst.example/s/${base64url(random(16))}`))).text(), /og:image" content="https:\/\/hst\.example\/s\/card\.png"/)
+  assert.equal((await under(new Request('https://hst.example/s/card.png'))).status, 200)
+  const other = await (await hostOn({ viewer, name: 'Acme' }).ask(`/${base64url(random(16))}`)).text()
+  assert.match(other, /<meta property="og:title" content="Acme">/)
+  assert.match(other, /og:image/)
 })
 
 test('a folder keeps shares and records, sealed to a key only its private half opens, and sweeps what ended', async () => {

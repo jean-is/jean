@@ -8,7 +8,7 @@ import { after, describe, it } from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { brief } from '../scripts/budgets.js'
 import { countLoc } from '../scripts/loc.js'
-import { cards, linesOf } from '../scripts/cards.js'
+import { cards, hostCard, linesOf } from '../scripts/cards.js'
 import { describePng, PNGS, recordSource, sourceOf } from '../scripts/icons.js'
 import { jpegSize, webpSize } from '../scripts/screenshots.js'
 import { LOCALES } from '../app/core/i18n.js'
@@ -399,6 +399,11 @@ describe('manifest: screenshots', () => {
     const drawn = await cards()
     assert.ok(drawn.some((card) => card.lang === 'en') && drawn.some((card) => card.lang === 'fr'))
     for (const { src, width, height, source } of drawn) assert.deepEqual(describePng(await read(src)), { width, height, source }, `${src} is stale: run \`npm run cards\``)
+  })
+
+  it('draws the card a link to a share shows as it is drawn now', async () => {
+    const { file, width, height, source } = await hostCard()
+    assert.deepEqual(describePng(await readFile(file)), { width, height, source }, 'host/card.png is stale: run `npm run cards`')
   })
 
   it('breaks a card\'s promise after its first comma, whichever a language writes', () => {

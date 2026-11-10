@@ -5,6 +5,7 @@
 //
 //   GET    /                 what it keeps: { format: 1, limit, days }
 //   GET    /<id>             the viewer, the same page for every share
+//   GET    /card.png         the picture a link to a share shows where it is posted, the same for every share, when the viewer holds one
 //   GET    /frame            where a share is drawn: a page whose own policy makes it an opaque origin, which writes the page it is sent
 //   GET    /v1/<id>          the sealed copy. A password's asks for its proof (Authorization: Share <proof>), and answers 401 { salt } without it
 //   PUT    /v1/<id>          keeps it, a new one or a change: Authorization: Bearer <write token>, whose SHA-256 the id is the start of, Share-Days: 30 or 365,
@@ -49,7 +50,7 @@ const ID = /^\/(?:v1\/)?([\w-]{22})(\/report)?$/
  * @typedef {{ format: 1, salt: string, token: string, proof?: string, expires: string, size: number, tries?: { from: number, count: number }, removed?: string }} Meta
  * @typedef {{ meta(id: string): Promise<Meta | null>, body(id: string): Promise<Uint8Array | null>, put(id: string, meta: Meta, body?: Uint8Array): Promise<void>,
  *   remove(id: string): Promise<void>, report(text: string): Promise<void>, record(text: string): Promise<void> } & Partial<Omit<import('./sites.js').Names, 'report' | 'record'>>} Store
- * @typedef {{ origins?: string[], viewer?: { base: string, entry: string, imports: Record<string, string>, integrity: Record<string, string> }, render?: string, sounds?: string,
+ * @typedef {{ origins?: string[], viewer?: { base: string, entry: string, imports: Record<string, string>, integrity: Record<string, string>, card?: string }, render?: string, sounds?: string,
  *   maps?: Record<string, string>, app?: string, legal?: string, name?: string, shares?: string, sites?: import('./sites.js').Config, files?: import('./sites.js').Files, alert?: string }} Config
  * Where a request came from, as the server saw it.
  * @typedef {{ address: string, port: number, protocol?: string }} Client
@@ -85,6 +86,9 @@ export async function within(request, limit) {
   return new Uint8Array(await new Blob(parts).arrayBuffer())
 }
 
+/** The size of the card a link to a share shows where it is posted (scripts/cards.js), Open Graph's: a picture with no word and no name. */
+export const CARD = { width: 1200, height: 630 }
+
 /**
  * The frame's page: a relay that writes the page the viewer sends it, once, as preview.html does in
  * Jean (D126). Its own policy sandboxes it, so whoever opens it, it is an opaque origin.
@@ -98,14 +102,23 @@ export function host(config) {
   // What the viewer reads of the host: where shares' packages are, the map service, where Open in my Jean opens, the legal notice.
   const shown = block({ render: config.render, sounds: config.sounds, maps: config.maps, app: config.app, legal: config.legal, name })
   const importMap = viewer && block({ imports: viewer.imports, integrity: viewer.integrity })
-  const viewerPage = viewer && /* html */ `<!doctype html>
+  const card = viewer?.card ? Uint8Array.from(atob(viewer.card), (byte) => byte.charCodeAt(0)) : null
+  /** The viewer, and what a link to it shows where it is posted: the host's name and the card, nothing to translate. No search engine keeps it or follows its links. @param {string} picture the card's address */
+  const viewerPage = (picture) => viewer && /* html */ `<!doctype html>
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex">
+<meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
 <title>${escape(name)}</title>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="${escape(name)}">
 <meta property="og:title" content="${escape(name)}">
+${card ? /* html */ `<meta property="og:image" content="${escape(picture)}">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="${CARD.width}">
+<meta property="og:image:height" content="${CARD.height}">
+<meta name="twitter:card" content="summary_large_image">` : /* html */ `<meta name="twitter:card" content="summary">`}
 <script type="application/json" id="host">${shown}</script>
 <script type="importmap">${importMap}</script>
 <script type="module" src="${escape(viewer.entry)}" integrity="${escape(viewer.integrity[viewer.entry] ?? '')}" crossorigin="anonymous"></script>
@@ -162,12 +175,13 @@ export function host(config) {
       : answer(200, { format: 1, limit: LIMIT, days: DAYS, ...(sites && config.sites && { sites: { address: config.sites.address, limit: SITE.site, file: SITE.file, files: SITE.files, days: SITE.days, ...config.sites.limits } }) })
     if (url.pathname === '/report' && reading) return page(false)
     if (url.pathname === '/frame' && reading) return new Response(RELAY, { headers: { 'content-type': 'text/html; charset=utf-8', 'content-security-policy': framed, 'x-content-type-options': 'nosniff', 'cache-control': 'public, max-age=3600' } })
+    if (url.pathname === '/card.png' && reading && card) return new Response(card, { headers: { 'content-type': 'image/png', 'x-content-type-options': 'nosniff', 'x-robots-tag': 'noindex', 'cache-control': 'public, max-age=86400' } })
     const [, id, report] = ID.exec(url.pathname) ?? []
     if (!id && url.pathname !== '/report' && !(sites && url.pathname.startsWith('/v1/sites/'))) return answer(404, { error: 'Nothing is here.' })
     if (id && !url.pathname.startsWith('/v1/')) {
       if (shares && !under && reading) return new Response(null, { status: 301, headers: { location: new URL(id, shares).href, 'cache-control': 'public, max-age=86400' } })
       if (!reading || !viewer) return answer(404, { error: 'Nothing is here.' })
-      return new Response(viewerPage, { headers: { 'content-type': 'text/html; charset=utf-8', 'content-security-policy': await policy, 'x-content-type-options': 'nosniff', 'x-robots-tag': 'noindex', 'referrer-policy': 'no-referrer', 'cache-control': 'public, max-age=300' } })
+      return new Response(viewerPage(new URL('card.png', shares ?? new URL('/', request.url)).href), { headers: { 'content-type': 'text/html; charset=utf-8', 'content-security-policy': await policy, 'x-content-type-options': 'nosniff', 'x-robots-tag': 'noindex, nofollow', 'referrer-policy': 'no-referrer', 'cache-control': 'public, max-age=300' } })
     }
 
     const now = Date.now()
