@@ -31,6 +31,8 @@ export const TYPES = /** @type {Record<string, string>} */ ({
 export const PAGES = ['privacy', 'terms', 'files', 'check', 'fr/privacy', 'fr/terms', 'fr/files']
 
 const RULE = new Set(['allow', 'ask', 'never'])
+/** Web search's sources and services, as policy's `searches` names them (D271, D671). */
+export const SEARCHES = ['wikipedia', 'vikidia', 'kiwix', 'brave', 'tavily', 'google', 'kagi']
 const LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])$/
 
 /**
@@ -60,7 +62,8 @@ export const SCHEMA = {
   directory: [{ 'id!': 'text', '*': 'any' }],
   skills: { sources: ['address'], only: 'flag' },
   extensions: { ready: ['address'] },
-  searches: ['text'],
+  // on: the sources on and no others, locked; deny: those never on, `brain` the brain's own search.
+  searches: { on: [new Set(SEARCHES)], deny: [new Set([...SEARCHES, 'brain'])] },
   pages: { scripts: 'flag', fullscreen: 'flag', downloads: 'flag', web: 'flag', network: 'flag', maps: 'flag', sites: ['text'] },
   mapStyles: { light: 'address', dark: 'address' },
   computer: { internet: new Set(['ask', 'any', 'off']), sites: ['text'], relay: 'text', timeMs: 'number', limitMB: 'number', workspaceMB: 'number', registries: { pyodide: 'address', pypi: 'address', npm: 'address' } },

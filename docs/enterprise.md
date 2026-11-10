@@ -101,6 +101,7 @@ Settings resolve as **defaults ← user ← policy**. Policy wins, and locked fi
   "urls": { "modelWeights": "https://mirror.corp.example/hf/", "wikipedia": "https://wiki.corp.example/{lang}/w/api.php", "npm": "https://artifactory.corp.example/api/npm/npm/", "share": "https://share.corp.example/", "gateway": "https://gateway.corp.example/", "privacy": "https://intranet.corp.example/jean/privacy", "terms": "" },
   "connections": [{ "id": "crm", "name": "CRM", "url": "https://mcp.crm.corp.example/mcp", "auth": "oauth" }, { "id": "wiki", "name": "Wiki", "url": "https://ai.corp.example/wiki/mcp", "auth": "oidc" }],
   "skills": { "sources": ["https://skills.corp.example"], "only": true },
+  "searches": { "deny": ["brave", "kagi", "brain"] },
   "extensions": { "ready": ["https://extensions.corp.example/expenses/"] },
   "directory": [{ "id": "microsoft-365", "clientId": "4f1c…" }, { "id": "servicenow", "url": "https://acme.service-now.com/sncapps/mcp-server/mcp/sn_mcp_server_default", "clientId": "9b2e…" }, { "id": "figma", "hidden": true }],
   "images": { "openai": ["gpt-image-1"] },
@@ -120,6 +121,8 @@ Settings resolve as **defaults ← user ← policy**. Policy wins, and locked fi
 ```
 
 Policy brains are the only brains, chosen among by Auto or by hand, and Settings says they are set by the organisation. A policy brain with `"trains": false`, because the organisation's contract with its service rules out training on what it is sent, may read what Google's services bring in, which goes only to such brains (D440).
+
+Web search is set source by source in `searches`, by the ids `wikipedia`, `vikidia`, `kiwix` (the offline library), `brave`, `tavily`, `google` and `kagi`. `deny` lists those people never have, which Settings doesn't show, and leaves the others theirs to turn on or off; `brain` there refuses the search a brain's provider runs itself, so Wikipedia answers in its place. `on` lists those that are on, every other off, and locks the switches: `{ "on": ["wikipedia", "kiwix"] }` with `urls.kiwix` searches Wikipedia and the organisation's library, nothing else. A search service still needs each person's own key. A connection that searches the web is a connection, kept or hidden in `directory`, and denying the capability `web-search` leaves none of it.
 
 A policy that signs in, names the brains or holds a key makes the copy an organisation's, where Add a profile makes only grown-ups' profiles: a child's, set by a parent, is for jean.is and copies of one's own (D389).
 

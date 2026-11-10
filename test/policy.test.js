@@ -6,7 +6,9 @@ import { readdir, readFile } from 'node:fs/promises'
 import { createHash } from 'node:crypto'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { SCHEMA, checkPolicy, policiesOf, allows } from '../app/caps/policy/checks.js'
+import { SCHEMA, SEARCHES, checkPolicy, policiesOf, allows } from '../app/caps/policy/checks.js'
+import { SOURCES } from '../app/caps/web-search/sources.js'
+import { SERVICES } from '../app/caps/web-search/services.js'
 import { LOCALES } from '../app/core/i18n.js'
 import { LOOKS } from '../app/ui/looks.js'
 
@@ -22,6 +24,14 @@ test('every part of policy.json that Jean’s code reads is one the check knows'
       if (!others.has(name)) assert.ok(name in SCHEMA, `${entry.name} reads policy.${name}, which checks.js doesn't know`)
     }
   }
+})
+
+test('policy’s searches names web search’s sources and services, on or refused, and the brain’s own search to refuse (D271, D671)', () => {
+  assert.deepEqual(SEARCHES, [...SOURCES, ...Object.keys(SERVICES)])
+  assert.deepEqual(checkPolicy({ searches: { on: ['wikipedia', 'kiwix'], deny: ['brave', 'brain'] } }).problems, [])
+  assert.deepEqual(checkPolicy({ searches: { on: ['brain'], deny: ['braves'], denny: [] } }).problems, [
+    ['searches.on[0]', 'oneOf', SEARCHES], ['searches.deny[0]', 'oneOf', [...SEARCHES, 'brain']], ['searches.denny', 'unread', 'deny']])
+  assert.deepEqual(checkPolicy({ searches: ['wikipedia'] }).problems, [['searches', 'object']])
 })
 
 test('a policy’s typos, wrong values, missing parts and plain-http addresses are found, with the addresses it names', () => {

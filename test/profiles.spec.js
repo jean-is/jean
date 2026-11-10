@@ -333,7 +333,7 @@ test('a child’s profile: set by a parent, opened with their password under 13,
   await unlockIn(lock)
   await expect.poll(() => here(page)).toMatch(/-lea$/)
   const policy = await page.evaluate(async () => (await import('/ui/state.js')).app.policy)
-  expect(policy).toMatchObject({ child: true, searches: ['vikidia'], brains: [] })
+  expect(policy).toMatchObject({ child: true, searches: { on: ['vikidia'] }, brains: [] })
   expect(policy.instructions).toContain('never write work that is theirs to do')
   const told = page.locator('aside.offer', { hasText: 'your parent is told that a concern came up' })
   await told.getByRole('button', { name: 'I understand' }).click()
@@ -471,7 +471,7 @@ test('a child’s profile: set by a parent, opened with their password under 13,
   await (await openOthers(page)).locator('.profile-switch', { hasText: 'Léa' }).click()
   await unlockIn(page.locator('main.lock'))
   await expect.poll(() => here(page)).toMatch(/-lea$/)
-  expect(await page.evaluate(async () => (await import('/ui/state.js')).app.policy.searches)).toEqual(['vikidia', 'wikipedia'])
+  expect(await page.evaluate(async () => (await import('/ui/state.js')).app.policy.searches)).toEqual({ on: ['vikidia', 'wikipedia'] })
 })
 
 test('a child’s lock screen offers neither a new profile nor deleting; a parent’s adds a profile but deletes nothing, and neither can be removed from that one (D371)', async ({ page }) => {

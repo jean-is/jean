@@ -39,8 +39,12 @@ function numbered(pages, ctx) {
   return pages.map((page, i) => `Source [${numbers[i]}]: ${page.title} (${page.url})\n${page.picture ? `Picture: ${page.picture}\n` : ''}${page.extract}`).join('\n\n')
 }
 
-/** The sources on: the organisation's, else the user's, else Wikipedia alone. */
-const on = computed(() => /** @type {(SourceId | ServiceId)[]} */ (app.policy.searches ?? app.settings.value.searches ?? ['wikipedia']))
+/** Whether the organisation refuses a source, or the brain's own search (`brain`): policy's `searches.deny`. @param {string} id */
+const denied = (id) => Boolean(app.policy.searches?.deny?.includes(id))
+/** Whether the organisation, or a parent, chose the sources, which locks them: policy's `searches.on`. */
+const locked = () => app.policy.searches?.on !== undefined
+/** The sources on: the organisation's, else the user's, else Wikipedia alone, without those it refuses. */
+const on = computed(() => /** @type {(SourceId | ServiceId)[]} */ (app.policy.searches?.on ?? app.settings.value.searches ?? ['wikipedia']).filter((id) => !denied(id)))
 /** A service's address: its own, unless settings or policy name another. @param {ServiceId} id */
 const addressOf = (id) => /** @type {Record<string, string>} */ ({ ...app.settings.value.urls, ...app.policy.urls })[id] ?? SERVICES[id].address
 /** Each source on, at its address: the library only once it has one. */
@@ -67,8 +71,8 @@ function searchTool(sources) {
         properties: { query: { type: 'string' }, language: { type: 'string', description: 'A language code, e.g. "fr". Default: the user’s.' } },
         required: ['query'],
       },
-      // The brain's own search, while Wikipedia from the web is all there is (or nothing is on).
-      ...(sources.every(({ id, address }) => id === 'wikipedia' && !isKiwix(address)) && { native: /** @type {const} */ ('web_search') }),
+      // The brain's own search, while Wikipedia from the web is all there is (or nothing is on), unless the organisation refuses it.
+      ...(!denied('brain') && sources.every(({ id, address }) => id === 'wikipedia' && !isKiwix(address)) && { native: /** @type {const} */ ('web_search') }),
     },
     kind: 'search',
     title: (args) => `Search the web: ${args?.query ?? ''}`,
@@ -234,7 +238,7 @@ function go(to) {
 }
 
 /** Whether a brain searches the web itself, its provider's own search declared in place of web_search (D91). @param {BrainConfig | null | undefined} brain */
-const searchesItself = (brain) => Boolean(brain && !isLocal(brain) && cloudAllowed() && (brain.api === 'anthropic' || brain.provider === 'openrouter'))
+const searchesItself = (brain) => Boolean(brain && !denied('brain') && !isLocal(brain) && cloudAllowed() && (brain.api === 'anthropic' || brain.provider === 'openrouter'))
 
 /**
  * Who searches where, in whole sentences, for the brains here: the brain that answers (Auto's in the cloud) by
@@ -285,8 +289,8 @@ function libraryRow() {
 /** Whether a service can be reached from here: from the browser, or by a gateway that relays to it. @param {ServiceId} id */
 const reached = (id) => !relayed(id, addressOf(id)) || !relays.value || covers(relays.value, new URL(addressOf(id)))
 
-/** The services offered: none for a child, or where Connections are refused; those the organisation chose, if it chose. */
-const offered = () => (app.policy.child || isDenied('connections') ? [] : SERVICE_IDS.filter((id) => app.policy.searches === undefined || on.value.includes(id)))
+/** The services offered: none for a child, or where Connections are refused; those the organisation chose, if it chose, and none it refuses. */
+const offered = () => (app.policy.child || isDenied('connections') ? [] : SERVICE_IDS.filter((id) => !denied(id) && (!locked() || on.value.includes(id))))
 
 /** A service's row, which opens its page, and how it stands in a word. @param {ServiceId} id */
 function keyedRow(id) {
@@ -323,19 +327,18 @@ const lockedBy = () => html`<p class="muted">${icons.lock} ${t(app.policy.child 
  * Settings › Web search (D271): its title with web search's own switch, the one in + (D304), and who searches
  * where, a sentence a line; Where to look, Wikipedia's and Vikidia's switches, and the offline library's row and each
  * search service's, which open their pages; then the connections that search the web, and those Jean knows, a click away.
- * The organisation, or a parent, may have chosen the sources.
+ * The organisation, or a parent, may have chosen the sources, or refused some, which aren't shown.
  */
 function panel() {
   const page = app.section.value.split('/')[1] ?? ''
-  if (page === 'library') return libraryPage()
-  if (isService(page)) return keyedPage(page)
-  const locked = app.policy.searches !== undefined
+  if (page === 'library' && !denied('kiwix')) return libraryPage()
+  if (isService(page) && offered().includes(page)) return keyedPage(page)
   const offers = isDenied('connections') ? [] : searchers(known(app.policy), [...(app.policy.connections ?? []), ...(effective.value.settings.connections ?? [])])
   const services = [...searches().map(serviceRow), ...offers.map(offerRow)]
   return html`<header class="general-head"><div><h2 id="search-title">${t('cap.web-search.name')}</h2><p class="lede">${where().map((line, i) => html`${i ? html`<br>` : nothing}${line}`)}</p></div>
       <input type="checkbox" class="switch" role="switch" aria-labelledby="search-title" .checked=${!off.value} @change=${() => updateSettings({ search: off.peek() })}></header>
-    <section><h3>${t('search.where')}</h3><ul class="list general">${sourceRow('wikipedia', locked)}${sourceRow('vikidia', locked)}${app.policy.child ? nothing : libraryRow()}${offered().map(keyedRow)}</ul>
-      ${locked ? lockedBy() : nothing}</section>
+    <section><h3>${t('search.where')}</h3><ul class="list general">${/** @type {const} */ (['wikipedia', 'vikidia']).filter((id) => !denied(id)).map((id) => sourceRow(id, locked()))}${app.policy.child || denied('kiwix') ? nothing : libraryRow()}${offered().map(keyedRow)}</ul>
+      ${locked() ? lockedBy() : nothing}</section>
     ${services.length ? html`<section><h3>${t('search.services')}</h3><ul class="list general">${services}</ul></section>` : nothing}
     <p class="hint">${t('search.also')}</p>`
 }
@@ -348,10 +351,9 @@ function panel() {
 function keyedPage(id) {
   const { name, logo, keys, engine } = SERVICES[id]
   const has = keyed.value.includes(id)
-  const locked = app.policy.searches !== undefined
   return html`<button class="back button subtle" @click=${() => go('')}>${icons.back} ${t('cap.web-search.name')}</button>
     <header class="general-head"><div><h2 id="source-title" tabindex="-1"><bdi>${name}</bdi></h2><p class="lede">${t('search.service.text', { service: name })}</p></div>${mark(name, logoAt(logo))}
-      <input type="checkbox" class="switch" role="switch" aria-labelledby="source-title" .checked=${on.value.includes(id)} ?disabled=${locked || (!has && !on.value.includes(id))} @change=${switched((value) => turn(id, value))}></header>
+      <input type="checkbox" class="switch" role="switch" aria-labelledby="source-title" .checked=${on.value.includes(id)} ?disabled=${locked() || (!has && !on.value.includes(id))} @change=${switched((value) => turn(id, value))}></header>
     ${id === 'google' ? html`<p class="hint">${t('search.google.closing', { date: new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'long' }).format(GOOGLE_ENDS) })}</p>` : nothing}
     ${!reached(id) ? html`<p class="hint">${t('search.noGateway', { service: name, connections: t('cap.connections.name') })}</p>
         <div class="row"><button class="button" @click=${async () => { if (await unlock('connections')) app.section.value = 'connections/later' }}>${t('cap.connections.name')}</button></div>`
@@ -362,7 +364,7 @@ function keyedPage(id) {
     </form>
     ${failure.value ? html`<p class="status is-error" role="alert">${t(`search.${failure.value}`, { service: name })}</p>` : nothing}
     ${keys ? html`<p class="hint"><a class="link-button" href=${keys} target="_blank" rel="noopener noreferrer">${t('search.getKey', { service: name })} ${icons.external}</a></p>` : nothing}`}
-    ${locked ? lockedBy() : nothing}`
+    ${locked() ? lockedBy() : nothing}`
 }
 
 /**
@@ -376,7 +378,7 @@ function libraryPage() {
   const reason = failure.value ?? (shelf?.failed ? (insecure(saved) ? 'insecure' : 'failed') : null)
   return html`<button class="back button subtle" @click=${() => go('')}>${icons.back} ${t('cap.web-search.name')}</button>
     <header class="general-head"><div><h2 id="source-title" tabindex="-1">${t('search.library')}</h2><p class="lede">${t('search.library.text')}</p></div>
-      <input type="checkbox" class="switch" role="switch" aria-labelledby="source-title" .checked=${on.value.includes('kiwix')} ?disabled=${app.policy.searches !== undefined}
+      <input type="checkbox" class="switch" role="switch" aria-labelledby="source-title" .checked=${on.value.includes('kiwix')} ?disabled=${locked()}
         @change=${switched((value) => turn('kiwix', value))}></header>
     <form class="stack" @submit=${connect}>
       <label for="search-address">${t('search.address')}<input id="search-address" name="address" type="url" required dir="ltr" placeholder="http://localhost:8080" autocomplete="off" spellcheck="false" .value=${saved} ?disabled=${fixed}></label>

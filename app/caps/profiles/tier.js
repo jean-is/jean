@@ -84,7 +84,7 @@ export function asPolicy(tier, policy, line) {
     '- Help with their schoolwork by explaining and giving hints; never write work that is theirs to do.',
     `- When they tell of self-harm, abuse or another danger, answer with care, say where to find help (${line}), and urge them to tell a trusted adult.`,
     ...chosen.filter(([, words]) => words.length).map(([choice, words]) => `- ${say[/** @type {Choice} */ (choice)]}: ${/** @type {string[]} */ (words).join('; ')}.`)].join('\n')
-  return { searches: tier.searches, pictureCheck: STRICTEST, ...(tier.brains && { brains: tier.brains }), ...policy, child: true, rules: { ...DEFAULT_RULES, ...tier.rules, ...policy.rules },
+  return { searches: { on: tier.searches }, pictureCheck: STRICTEST, ...(tier.brains && { brains: tier.brains }), ...policy, child: true, rules: { ...DEFAULT_RULES, ...tier.rules, ...policy.rules },
     capabilities: { ...policy.capabilities, deny: [...tier.capabilities.deny, ...policy.capabilities?.deny ?? []], preUnlock: ['web-search', 'reflexes', ...policy.capabilities?.preUnlock ?? []] },
     instructions: [instructions, policy.instructions].filter(Boolean).join('\n\n') }
 }

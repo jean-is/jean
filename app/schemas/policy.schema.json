@@ -548,10 +548,39 @@
       "additionalProperties": false
     },
     "searches": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
+      "type": "object",
+      "properties": {
+        "on": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "wikipedia",
+              "vikidia",
+              "kiwix",
+              "brave",
+              "tavily",
+              "google",
+              "kagi"
+            ]
+          }
+        },
+        "deny": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "wikipedia",
+              "vikidia",
+              "kiwix",
+              "brave",
+              "tavily",
+              "google",
+              "kagi",
+              "brain"
+            ]
+          }
+        }
+      },
+      "additionalProperties": false
     },
     "pages": {
       "type": "object",
@@ -1850,15 +1879,49 @@
               },
               "searches": {
                 "type": [
-                  "array",
+                  "object",
                   "null"
                 ],
-                "items": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                }
+                "properties": {
+                  "on": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "enum": [
+                        "wikipedia",
+                        "vikidia",
+                        "kiwix",
+                        "brave",
+                        "tavily",
+                        "google",
+                        "kagi",
+                        null
+                      ]
+                    }
+                  },
+                  "deny": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "enum": [
+                        "wikipedia",
+                        "vikidia",
+                        "kiwix",
+                        "brave",
+                        "tavily",
+                        "google",
+                        "kagi",
+                        "brain",
+                        null
+                      ]
+                    }
+                  }
+                },
+                "additionalProperties": false
               },
               "pages": {
                 "type": [

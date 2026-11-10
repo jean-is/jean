@@ -667,7 +667,7 @@ test('a service that refuses browsers says so until a gateway reaches it, then g
 })
 
 test('an organisation’s sources leave only the services it names, locked (D671)', async ({ page }) => {
-  await withPolicy(page, { searches: ['wikipedia', 'tavily'] })
+  await withPolicy(page, { searches: { on: ['wikipedia', 'tavily'] } })
   await start(page)
   await turnOn(page, 'Web search')
   await openFromCase(page)
@@ -676,6 +676,25 @@ test('an organisation’s sources leave only the services it names, locked (D671
   await settings.getByRole('button', { name: /^Tavily/ }).click()
   await expect(settings.getByRole('switch', { name: 'Tavily' })).toBeDisabled()
   await expect(settings.getByText('Set by your organization')).toBeVisible()
+})
+
+test('an organisation refuses sources by name, the brain’s own search among them, and leaves the others to the person (D271, D671)', async ({ page }) => {
+  await withPolicy(page, { searches: { deny: ['vikidia', 'brave', 'kiwix', 'brain'] } })
+  await start(page)
+  await turnOn(page, 'Web search')
+  expect(await webSearch(page), 'Wikipedia, never the brain’s own search').toEqual({ native: null, description: 'Search the web (Wikipedia, in any language) for facts the conversation does not hold. Results are numbered sources to cite.' })
+  await openFromCase(page)
+  const settings = page.locator('app-settings dialog[open]')
+  await expect(settings.locator('.lede')).toHaveText('Every brain looks in Wikipedia.')
+  // What it refuses isn't shown, nor reached by its address; the rest is the person's to turn on or off.
+  await expect(settings.getByRole('button', { name: /^Tavily/ })).toBeVisible()
+  for (const name of ['Vikidia', 'Brave Search', 'Offline library']) await expect(settings.getByText(name, { exact: true })).toHaveCount(0)
+  await page.evaluate(async () => { (await import('/ui/state.js')).app.section.value = 'web-search/brave' })
+  await expect(settings.getByRole('switch', { name: 'Wikipedia' })).toBeEnabled()
+  await expect(settings.getByText('Set by your organization')).toHaveCount(0)
+  // One the person had on before it was refused is off.
+  await page.evaluate(async () => (await import('/ui/state.js')).updateSettings({ searches: ['vikidia'] }))
+  await expect(settings.locator('.lede')).toHaveText('A brain that can’t search the web itself has nowhere to look.')
 })
 
 for (const [who, policy] of /** @type {const} */ ([['with Connections refused', { capabilities: { deny: ['connections'] } }], ['for a child', { child: true }]])) {
