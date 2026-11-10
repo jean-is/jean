@@ -295,6 +295,26 @@ test('a link that can’t be made or updated says why, in sharing’s own words'
   await expect(settings.locator('.share-list li')).toHaveCount(1)
 })
 
+test('right to left, a switch is off with its knob at its start, the right, and on with it at its end', async ({ page }) => {
+  await start(page, 'ar')
+  await page.evaluate(async (host) => {
+    const [{ app, updateSettings }, { createConversation, appendRecords }, { metaRecord }] = await Promise.all([import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js')])
+    await updateSettings({ urls: { ...app.settings.value.urls, share: host } })
+    const { path } = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })
+    await appendRecords(app.fs, path, [metaRecord(app.deviceId, { title: 'Plan the week' })])
+    await (await import('/caps/share/share.js')).openShare({ path, title: 'Plan the week' })
+  }, SHARE_URL)
+  const dialog = page.locator('app-share-dialog dialog[open]')
+  await dialog.locator('.share-sum').click()
+  const switches = dialog.getByRole('switch')
+  await expect(switches).toHaveCount(3)
+  // The half of its track the knob's middle is drawn in.
+  const knobs = () => switches.evaluateAll((all) => all.map((input) => ((knob) => parseFloat(knob.left) + (parseFloat(knob.translate) || 0) + parseFloat(knob.width) / 2 > input.clientWidth / 2 ? 'right' : 'left')(getComputedStyle(input, '::before'))))
+  await expect.poll(knobs).toEqual(['right', 'right', 'right'])
+  for (const one of await switches.all()) await one.check()
+  await expect.poll(knobs).toEqual(['left', 'left', 'left'])
+})
+
 test('a task brought in draws what its answers hold: a page on sight, a chart and a score with Jean’s own skills that declare them (D378)', async ({ page }) => {
   await start(page)
   const hash = await page.evaluate(async (host) => {
