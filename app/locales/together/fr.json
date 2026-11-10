@@ -27,7 +27,7 @@
   "together.linkOff": "Désactiver le lien",
   "together.stop": "Arrêter le travail à plusieurs",
   "together.leave": "Quitter",
-  "together.joinTitle": "Y travailler ensemble",
+  "together.joinTitle": "Collaborer",
   "together.yourName": "Votre nom, tel que les autres le verront",
   "together.newcomer": "Rien à installer, aucun compte. Tout le monde garde sa propre copie, sur son propre appareil.",
   "together.notNow": "Pas maintenant",
@@ -51,6 +51,6 @@
   "together.mineSays": "Reste à jour sur chacun de vos appareils à chaque modification, sans lien ni personne d’autre.",
   "together.peopleDeck": "Personnes de ces diapos",
   "together.peopleProject": "Personnes de ce projet",
-  "together.project": "Travailler ensemble sur ce projet",
+  "together.project": "Collaborer sur ce projet",
   "together.projectSays": "Ses documents, collections, diapos, visuels et fichiers restent les mêmes pour tout le monde dans le projet. Les tâches de chaque personne, et ce que {name} retient pour elle, n’appartiennent qu’à elle."
 }

@@ -64,7 +64,7 @@
   "cap.sync.hint": "Mentionnez que vous utilisez aussi un autre ordinateur.",
   "cap.devices.hint": "Mentionnez que vous aimeriez avoir ceci sur votre téléphone ou un autre ordinateur, ou activez-le ici.",
   "cap.people.hint": "Mentionnez que vous aimeriez envoyer quelque chose à quelqu’un, ou activez-le ici.",
-  "cap.together.hint": "Dans Partager, choisissez Y travailler ensemble.",
+  "cap.together.hint": "Dans Partager, choisissez Collaborer.",
   "cap.lock.hint": "Connectez un service, ou commencez dix tâches.",
   "cap.brain-local.hint": "Choisissez le cerveau qui fonctionne sur cet appareil.",
   "cap.memory.text": "{name} retient ce que vous mentionnez de durable : préférences, faits, corrections. Vous pouvez tout voir et tout modifier.",

@@ -91,7 +91,7 @@
   "people.why.refused": "Votre organisation ne vous permet pas de joindre cette personne.",
   "people.why.inside": "Votre organisation ajoute les personnes depuis sa liste. Cherchez-les plutôt par leur nom.",
   "people.why.broken": "Un problème est survenu. Réessayez.",
-  "people.invites": "{name} vous invite à travailler ensemble sur « {title} »",
+  "people.invites": "{name} vous invite à collaborer sur « {title} »",
   "people.join": "Rejoindre",
   "people.nudge": "Vous avez reçu quelque chose. Ouvrez {name} pour le voir."
 }
