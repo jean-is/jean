@@ -295,7 +295,7 @@ test('a link that can’t be made or updated says why, in sharing’s own words'
   await expect(settings.locator('.share-list li')).toHaveCount(1)
 })
 
-test('right to left, a switch is off with its knob at its start, the right, and on with it at its end', async ({ page }) => {
+test('right to left, a switch is off with its knob at its start, the right, and on with it at its end, filled in forced colours too', async ({ page, browserName }) => {
   await start(page, 'ar')
   await page.evaluate(async (host) => {
     const [{ app, updateSettings }, { createConversation, appendRecords }, { metaRecord }] = await Promise.all([import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js')])
@@ -313,6 +313,16 @@ test('right to left, a switch is off with its knob at its start, the right, and 
   await expect.poll(knobs).toEqual(['right', 'right', 'right'])
   for (const one of await switches.all()) await one.check()
   await expect.poll(knobs).toEqual(['left', 'left', 'left'])
+  // In forced colours, which WebKit doesn't emulate, a switch on is filled with the highlight, in Tilde too, its knob in the highlight's text.
+  if (browserName !== 'chromium') return
+  await page.emulateMedia({ forcedColors: 'active' })
+  await switches.first().uncheck()
+  await expect.poll(() => switches.evaluateAll(([off, on]) => {
+    const colour = (/** @type {Element} */ of, /** @type {string} */ part = '') => getComputedStyle(of, part).backgroundColor
+    // A colour by the system's name when it is that one's, as the page resolves it.
+    const is = (/** @type {string} */ value, /** @type {string} */ name) => ((probe) => { probe.style.backgroundColor = name; const named = colour(probe) === value; probe.remove(); return named ? name : value })(document.body.appendChild(document.createElement('i')))
+    return { off: [is(colour(off), 'Canvas'), is(colour(off, '::before'), 'ButtonText')], on: [is(colour(on), 'Highlight'), is(colour(on, '::before'), 'HighlightText')] }
+  })).toEqual({ off: ['Canvas', 'ButtonText'], on: ['Highlight', 'HighlightText'] })
 })
 
 test('a task brought in draws what its answers hold: a page on sight, a chart and a score with Jean’s own skills that declare them (D378)', async ({ page }) => {

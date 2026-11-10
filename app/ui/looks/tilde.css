@@ -55,7 +55,7 @@
 :root[data-look='tilde'] :is(.history-list li.is-current, .settings-nav button[aria-current='page'], .menu :is(button, a):hover) { background: var(--current); color: var(--ink); }
 :root[data-look='tilde'] .history-list li.is-current .icon-button { color: var(--ink-soft); }
 :root[data-look='tilde'] :is(.place, .sidebar-settings, .settings-nav) .icon { color: var(--ink-soft); }
-:root[data-look='tilde'] input.switch:checked { background: var(--fill); }
+:root[data-look='tilde'] input.switch { --switch-on: var(--fill); }
 
 /* What waits for the user, on a pale yellow (a deep one by night). */
 :root[data-look='tilde'] :is(.approval, .offer) { border-color: var(--wait-line); background: var(--wait); }

@@ -216,7 +216,7 @@ label.item, .list summary { cursor: pointer; }
 /* A switch, for what is on or off; off, its track is as dark as a hint, so it shows at 3:1. */
 input.switch { appearance: none; position: relative; flex: none; inline-size: 2.6rem; block-size: 1.5rem; margin: 0; border-radius: 999px; background: var(--ink-faint); cursor: pointer; transition: background-color 0.2s; }
 input.switch::before { content: ''; position: absolute; inset-block: 0.15rem; inset-inline-start: 0.15rem; aspect-ratio: 1; border-radius: 50%; background: oklch(1 0 0); box-shadow: 0 1px 3px oklch(0 0 0 / 0.35); transition: translate 0.2s var(--ease); }
-input.switch:checked { background: var(--flame); }
+input.switch:checked { background: var(--switch-on, var(--flame)); }
 input.switch:checked::before { translate: 1.1rem; }
 :dir(rtl) input.switch:checked::before { translate: -1.1rem; }
 input.switch:focus-visible { outline: 2px solid var(--flame); outline-offset: 2px; }
@@ -383,7 +383,7 @@ input[type='range'] { padding: 0; border: 0; background: none; accent-color: var
 @media (forced-colors: active) {
   :root .segmented input:checked + span { forced-color-adjust: none; color: HighlightText; } .segmented::before { forced-color-adjust: none; background: Highlight; }
   @supports not (anchor-name: --chosen) { :root .segmented input:checked + span { background: Highlight; } }
-  input.switch { border: 1px solid ButtonText; } input.switch::before { background: ButtonText; } input.switch:checked { background: Highlight; }
+  input.switch { border: 1px solid ButtonText; } input.switch::before { background: ButtonText; } input.switch:checked { background: Highlight; } input.switch:checked::before { background: HighlightText; }
   .swatch:has(input:checked), .look:has(input:checked) { border: 2px solid Highlight; }
   .data-state { border: 1px solid CanvasText; }
 }
