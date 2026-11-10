@@ -43,7 +43,9 @@ test('asked what it can do, Jean reads where each thing stands for this person, 
 })
 
 test("Settings › General says at its foot which version this is and when it was made, and so does Jean, asked", async ({ page }) => {
-  const { version } = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'))
+  // The version the build read from git (D735), which needs the whole history: CI's checkout takes it.
+  const { version } = JSON.parse(readFileSync(new URL('../app/capabilities.json', import.meta.url), 'utf8')).release
+  expect(version, 'the build names a version').toMatch(/^\d+\.\d+\.\d+$/)
   await start(page)
   const settings = await openSettings(page)
   const foot = settings.locator('.settings-panel p.version')
@@ -88,6 +90,6 @@ for (const lang of ['ar', 'ja']) {
     await expect(answer).toContainText(`${said['settings.keyboard']}, as this keyboard writes them: ${said['action.new']} `)
     await expect(answer).toContainText(`files (not found yet, found by: ${said['cap.files.hint']})`)
     await expect(answer).toHaveAttribute('dir', 'auto')
-    await expect(answer).toContainText(said['settings.version'].replace('{name}', 'Jean').replace('{version}', JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')).version).split('{date}')[0])
+    await expect(answer).toContainText(said['settings.version'].replace('{name}', 'Jean').replace('{version}', JSON.parse(readFileSync(new URL('../app/capabilities.json', import.meta.url), 'utf8')).release.version).split('{date}')[0])
   })
 }

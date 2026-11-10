@@ -2,9 +2,9 @@ apiVersion: v2
 name: jean
 description: Jean, and its gateway and relay when asked for, on Kubernetes or OpenShift under restricted security (D232 · D702).
 type: application
-# package.json's version, which test/helm.test.js holds; CI publishes the chart with it.
-version: 0.8.0
-# The images' tag. CI sets a version tag's number when it publishes the chart; edge follows main.
+# None in git (D735): CI publishes the chart with the version its run releases, which test/helm.test.js holds.
+version: 0.0.0
+# The images' tag. CI sets the version it releases when it publishes the chart; edge follows main.
 appVersion: edge
 kubeVersion: ">=1.25.0-0"
 home: https://jean.is

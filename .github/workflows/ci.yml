@@ -1,9 +1,9 @@
 # Jean's CI on GitHub, as .gitlab-ci.yml is on GitLab: budgets, types and tests (npm run check), the
 # packages' audit, and the smoke tests in Chromium and WebKit against the fake brain (npm run e2e).
 # The jobs run side by side; going over a budget fails the run (AGENTS.md), and so does a known high
-# or critical advisory, in a package or in a container image. Once all of them pass, a push to main or a version's tag
-# publishes the container images to the repository's packages, signed, a version's tag the Helm chart too, and a push
-# to main deploys jean.is and Jean's server
+# or critical advisory, in a package or in a container image. Once all of them pass, a push to main gets its version,
+# tagged when it asks for a new one (D735); then the container images go to the repository's packages, signed, a new
+# version's Helm chart too, and jean.is and Jean's server are deployed
 # (D320 · D659), which only GitHub does. The image's browsers match the
 # pinned @playwright/test: change both together, here and in .gitlab-ci.yml. The runners are Ubuntu
 # 24.04, as the image is (noble), never ubuntu-latest, which moves under the run. An action is named by its commit, which
@@ -17,7 +17,6 @@ name: CI
 on:
   push:
     branches: [main]
-    tags: ['v*']
   pull_request:
 
 permissions:
@@ -151,13 +150,46 @@ jobs:
           kubectl -n jean get pods -o wide || true
           kubectl -n jean logs -l app.kubernetes.io/instance=jean --all-containers --tail 40 --prefix || true
 
+  # The version this push makes (D735): the newest version's tag, raised once by the most the commits since ask, as
+  # their gitmojis say (scripts/version.js), tagged on the commit once what gates the deploy has passed. A push that asks
+  # for none, of docs or tests alone, keeps the version before, which its deploy names. A tag pushed with the run's own
+  # token starts no run, so this one publishes what a new version brings, the images' tags and the chart. One run tags at
+  # a time; an older push's, finishing after a newer one, finds its version taken and tags nothing.
+  release:
+    needs: [check, audit, e2e]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    concurrency:
+      group: release
+      cancel-in-progress: false
+    permissions:
+      contents: write
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      release: ${{ steps.version.outputs.release }}
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version-file: .nvmrc
+      - id: version
+        run: node scripts/version.js --tag >> "$GITHUB_OUTPUT"
+        env:
+          GIT_COMMITTER_NAME: 'github-actions[bot]'
+          GIT_COMMITTER_EMAIL: '41898282+github-actions[bot]@users.noreply.github.com'
+      - run: if [ -n "$RELEASE" ]; then git push origin "refs/tags/v$RELEASE"; fi
+        env:
+          RELEASE: ${{ steps.version.outputs.release }}
+
   # The three container images (D232) in the repository's packages on ghcr.io, pushed with the run's own
-  # token: main as edge and sha-<commit>, a version's tag (v0.9) as 0.9 and latest. For amd64
+  # token: main as edge and sha-<commit>, and a version the run releases as 0.10.0, 0.10 and latest. For amd64
   # and arm64, the Dockerfile building Jean's files once, on the runner's own platform, each image with
   # its build's provenance and its bill of materials, and signed by this workflow's own identity, keyless, through
   # Sigstore, so that a cluster's admission policy can refuse any image this workflow didn't push (deploy/docker/README.md).
   images:
-    needs: [check, audit, e2e, containers]
+    needs: [check, audit, e2e, containers, release]
     if: github.event_name == 'push'
     runs-on: ubuntu-24.04
     permissions:
@@ -200,7 +232,8 @@ jobs:
           tags: |
             type=edge,branch=main
             type=sha
-            type=match,pattern=v(.*),group=1
+            type=semver,pattern={{version}},value=${{ needs.release.outputs.release }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ needs.release.outputs.release }}
           labels: |
             org.opencontainers.image.title=${{ matrix.image }}
             org.opencontainers.image.description=${{ matrix.description }}
@@ -221,6 +254,7 @@ jobs:
           file: deploy/docker/Dockerfile
           target: ${{ matrix.target }}
           platforms: linux/amd64,linux/arm64
+          build-args: VERSION=${{ needs.release.outputs.version }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -237,11 +271,11 @@ jobs:
           IMAGE: ${{ matrix.image }}
           DIGEST: ${{ steps.build.outputs.digest }}
 
-  # The chart (deploy/helm/jean) for a version's tag, beside the images as an OCI artifact: v0.9 as 0.9.0, its images'
-  # tag 0.9, signed as they are.
+  # The chart (deploy/helm/jean) of a version the run releases, beside the images as an OCI artifact, named by that
+  # version as its images are, signed as they are.
   chart:
-    needs: [images]
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    needs: [images, release]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -251,16 +285,16 @@ jobs:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
       - uses: sigstore/cosign-installer@756fe2d284c7292c4e9b62c8a28f1e5629c59532 # v4.1.3
       - run: |
-          tag=${GITHUB_REF_NAME#v}
-          case $tag in *.*.*) version=$tag ;; *) version=$tag.0 ;; esac
-          helm package deploy/helm/jean --version "$version" --app-version "$tag" --destination chart
+          if [ -z "$RELEASE" ]; then echo "This push releases no version."; exit 0; fi
+          helm package deploy/helm/jean --version "$RELEASE" --app-version "$RELEASE" --destination chart
           printf '%s' "$TOKEN" | helm registry login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
-          digest=$(helm push "chart/jean-$version.tgz" "oci://ghcr.io/$OWNER/charts" 2>&1 | tee /dev/stderr | sed -n 's/^Digest: //p')
+          digest=$(helm push "chart/jean-$RELEASE.tgz" "oci://ghcr.io/$OWNER/charts" 2>&1 | tee /dev/stderr | sed -n 's/^Digest: //p')
           printf '%s' "$TOKEN" | cosign login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
           cosign sign --yes "ghcr.io/$OWNER/charts/jean@$digest"
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OWNER: ${{ github.repository_owner }}
+          RELEASE: ${{ needs.release.outputs.release }}
 
   # The commit pushed to main, live (D320 · D659): jean.is on Bunny with npm run deploy, which first
   # publishes the render package it names, through npm's trusted publishing (no token: npm checks this
@@ -269,9 +303,10 @@ jobs:
   # may run nothing but the server's update script (deploy/server/update.sh). Everything that names a
   # place or opens one comes from the environment jean.is, which only main can use: its variables
   # DEPLOY_TO, BUNNY_PULL_ZONE, POLICY, ADDRESS, KEYS, SERVER (user@address) and SERVER_HOST_KEYS (its
-  # known_hosts lines), and its secrets BUNNY_STORAGE_KEY, BUNNY_API_KEY and SERVER_KEY.
+  # known_hosts lines), and its secrets BUNNY_STORAGE_KEY, BUNNY_API_KEY and SERVER_KEY. Both builds name the version the
+  # release job gave, as the render package published and the share host's viewer must alike.
   deploy:
-    needs: [check, audit, e2e]
+    needs: [check, audit, e2e, release]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     environment: jean.is
@@ -291,6 +326,7 @@ jobs:
       - name: jean.is on Bunny
         run: npm run deploy
         env:
+          VERSION: ${{ needs.release.outputs.version }}
           DEPLOY_TO: ${{ vars.DEPLOY_TO }}
           BUNNY_PULL_ZONE: ${{ vars.BUNNY_PULL_ZONE }}
           BUNNY_STORAGE_KEY: ${{ secrets.BUNNY_STORAGE_KEY }}
@@ -312,6 +348,7 @@ jobs:
           install -m 600 /dev/null ~/.ssh/deploy && printf '%s\n' "$SERVER_KEY" > ~/.ssh/deploy
           tar -C stage -cf - gateway host relay requests | ssh -T -i ~/.ssh/deploy -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o ServerAliveInterval=15 -o ServerAliveCountMax=8 "$SERVER"
         env:
+          VERSION: ${{ needs.release.outputs.version }}
           SERVER: ${{ vars.SERVER }}
           SERVER_HOST_KEYS: ${{ vars.SERVER_HOST_KEYS }}
           SERVER_KEY: ${{ secrets.SERVER_KEY }}
@@ -329,7 +366,10 @@ jobs:
         project: [chromium, webkit]
         shard: [1, 2, 3]
     steps:
+      # The whole history and its tags, from which the build reads the version Settings › General names (D735).
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: .nvmrc

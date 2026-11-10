@@ -16,6 +16,9 @@ WORKDIR /src
 COPY package.json package-lock.json ./
 RUN npm ci --ignore-scripts --no-audit --no-fund
 COPY . .
+# Jean's version, which git gives (D735) and a build here, without the history, can't read: CI passes its run's
+# (--build-arg VERSION=0.10.0). Without it, Settings › General names none.
+ARG VERSION
 # Jean reads the policy.json beside index.html (docs/enterprise.md): an empty one, until the
 # organisation mounts its own over it. Then dist/web/, what a web deploy serves, into /site, without
 # its gzip copies: nginx sends the brotli ones, and gzips as it goes for a browser that takes no brotli.

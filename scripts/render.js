@@ -9,6 +9,7 @@ import { existsSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { extractStaticImports, parseImportMap, resolveSpecifier } from './graph.js'
+import { versionOf } from './version.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const APP = join(ROOT, 'app')
@@ -90,8 +91,7 @@ export async function renderListing(root, read) {
   const files = await renderModules(read)
   const hash = createHash('sha256')
   for (const path of await renderFiles(root, files)) hash.update(`${path}\0`).update(await readFile(join(root, path)))
-  const { version } = JSON.parse(await readFile(join(root, '..', 'package.json'), 'utf8'))
-  return { version: `${version}-r${hash.digest('hex').slice(0, 12)}`, entry: ENTRY, viewer: VIEWER, files, map: STAND_INS }
+  return { version: `${versionOf({ root: join(root, '..') }) ?? '0.0.0'}-r${hash.digest('hex').slice(0, 12)}`, entry: ENTRY, viewer: VIEWER, files, map: STAND_INS }
 }
 
 async function main() {

@@ -93,7 +93,7 @@ The same two helpers in `_helpers.tpl` write it for the three, so none can drift
 
 ### Signed images only
 
-CI signs each image, and the chart, keyless: the signature carries the identity of the workflow that built it, `https://github.com/jean-is/jean/.github/workflows/ci.yml@refs/heads/main` or `…@refs/tags/v…`, from the issuer `https://token.actions.githubusercontent.com`, recorded in Sigstore's public log. OpenShift's own `ClusterImagePolicy` (`config.openshift.io/v1`) matches only a certificate issued to an email address, so it can't check that identity. Sigstore's policy controller can, on OpenShift or any cluster, in the namespaces labelled `policy.sigstore.dev/include: "true"`:
+CI signs each image, and the chart, keyless: the signature carries the identity of the workflow that built it, `https://github.com/jean-is/jean/.github/workflows/ci.yml@refs/heads/main`, from the issuer `https://token.actions.githubusercontent.com`, recorded in Sigstore's public log. OpenShift's own `ClusterImagePolicy` (`config.openshift.io/v1`) matches only a certificate issued to an email address, so it can't check that identity. Sigstore's policy controller can, on OpenShift or any cluster, in the namespaces labelled `policy.sigstore.dev/include: "true"`:
 
 ```yaml
 apiVersion: policy.sigstore.dev/v1beta1
@@ -108,7 +108,7 @@ spec:
         url: https://fulcio.sigstore.dev
         identities:
           - issuer: https://token.actions.githubusercontent.com
-            subjectRegExp: '^https://github\.com/jean-is/jean/\.github/workflows/ci\.yml@refs/(heads/main|tags/v.*)$'
+            subjectRegExp: '^https://github\.com/jean-is/jean/\.github/workflows/ci\.yml@refs/heads/main$'
       ctlog:
         url: https://rekor.sigstore.dev
 ```

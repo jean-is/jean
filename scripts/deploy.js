@@ -9,12 +9,13 @@
 // DEPLOY_TO=bunny:<storage zone> puts the release on Bunny CDN instead, as jean.is is served (bunny.js).
 // Usage: DEPLOY_TO=host:/path npm run deploy [-- <commit>]     (HEAD by default)
 import { execFileSync, spawn } from 'node:child_process'
-import { mkdir, mkdtemp, readFile, rm } from 'node:fs/promises'
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { deployToBunny, zoneOf } from './bunny.js'
 import { NAME } from './render.js'
+import { versionOf } from './version.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 
@@ -112,7 +113,8 @@ export const commitOf = (name = 'HEAD') => execFileSync('git', ['-C', ROOT, 'rev
  * A commit built as git has it, never with the working tree's changes, and only with the packages its
  * lockfile names: `npm run build:web` in `<work>/jean`, which it returns. Its compressed copies come
  * from this checkout's cache when one reads back as its file, so only the files that changed are compressed.
- * Settings › General dates it by the commit.
+ * Settings › General dates it by the commit, and names its version, which git gives (VERSION in CI, D735) and the
+ * copy's package.json carries, for everything built there and the bill of materials.
  * @param {string} commit @param {string} work
  */
 export async function build (commit, work) {
@@ -121,6 +123,10 @@ export async function build (commit, work) {
   await mkdir(source)
   run('tar', ['-xf', join(work, 'jean.tar'), '-C', source])
   run('npm', ['ci', '--ignore-scripts', '--no-audit', '--no-fund'], source)
+  const version = versionOf({ commit })
+  if (!version) throw new Error(`nothing tells ${commit}'s version: git's history and tags, or VERSION (D735)`)
+  const manifest = JSON.parse(await readFile(join(source, 'package.json'), 'utf8'))
+  await writeFile(join(source, 'package.json'), `${JSON.stringify({ ...manifest, version }, null, 2)}\n`)
   const epoch = execFileSync('git', ['-C', ROOT, 'log', '-1', '--format=%ct', commit], { encoding: 'utf8' }).trim()
   run('npm', ['run', 'build:web'], source, { ...process.env, SOURCE_DATE_EPOCH: epoch, WEB_CACHE: process.env.WEB_CACHE ?? join(ROOT, 'node_modules', '.cache', 'web') })
   return source

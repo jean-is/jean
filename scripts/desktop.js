@@ -12,6 +12,7 @@ import { copyFile, lstat, mkdir, readdir, readFile, rename, rm, stat, symlink, w
 import { dirname, join, relative } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { isShipped, stampedWorker, walk } from './manifest.js'
+import { versionOf } from './version.js'
 import { PAGES } from '../app/caps/policy/checks.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
@@ -413,7 +414,8 @@ async function main (argv) {
   if (target && target !== 'dmg') throw new Error(`unknown target ${target}: the one there is is dmg`)
   if (target === 'dmg' && process.platform !== 'darwin') throw new Error('a disk image is made on a Mac, with its own tools')
   const { BRAND } = await import(pathToFileURL(join(APP, 'brand.js')).href)
-  const { version } = JSON.parse(await readFile(join(ROOT, 'package.json'), 'utf8'))
+  const version = versionOf()
+  if (!version) throw new Error("nothing here tells Jean's version: git's history and tags, or VERSION (D735)")
   const description = /<meta name="description" content="([^"]*)">/.exec(await readFile(join(APP, 'index.html'), 'utf8'))?.[1]
   const copyright = /^Copyright .+$/m.exec(await readFile(join(ROOT, 'LICENSE'), 'utf8'))?.[0]
   await mkdir(WORK, { recursive: true })

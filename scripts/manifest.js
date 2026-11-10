@@ -13,6 +13,7 @@ import { LOCALES, dir } from '../app/core/i18n.js'
 import { FIRST_REQUEST, AT_START } from '../app/ui/caps.js'
 import { extractStaticImports, moduleGraph, parseImportMap, resolveSpecifier } from './graph.js'
 import { ENTRY as READER, renderListing } from './render.js'
+import { versionOf } from './version.js'
 
 /** The folder a deploy serves (D243): every path here is relative to it. */
 const APP = fileURLToPath(new URL('../app', import.meta.url))
@@ -368,10 +369,11 @@ export async function plan (root = APP) {
   const listing = await readOrNull(root, READER) ? await renderListing(root, text) : null
   const render = listing && { ...listing, integrity: Object.fromEntries(listing.files.map((path) => [path, integrity[path]])) }
   const licence = await readOrNull(join(root, '..'), 'LICENSE')
-  const [listed, pkg] = await Promise.all([readOrNull(root, 'capabilities.json'), readOrNull(join(root, '..'), 'package.json')])
+  const listed = await readOrNull(root, 'capabilities.json')
   // A listing cut short by a write that never finished dates the files now.
   const before = (() => { try { return JSON.parse(listed?.toString('utf8') ?? 'null') } catch { return null } })()
-  const release = { version: pkg ? JSON.parse(pkg.toString('utf8')).version : undefined, date: releaseDate(version, before) }
+  // Jean's version by semver, from git (D735): none where nothing tells it, and Settings › General then names none.
+  const release = { version: versionOf({ root: join(root, '..') }) ?? undefined, date: releaseDate(version, before) }
   return {
     version,
     files: shell.length + locales.length + capabilityFiles.length,

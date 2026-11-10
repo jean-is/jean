@@ -18,7 +18,7 @@ The images are ready-made in the repository's packages, for `linux/amd64` and `l
 docker run -d -p 8080:8080 ghcr.io/jean-is/jean:latest
 ```
 
-`latest` and a version's number, like `0.9`, are the versions tagged; `edge` follows `main`, and `sha-` followed by a commit's first seven characters is that commit. The gateway is `ghcr.io/jean-is/jean-gateway`, with the same tags, and the relay `ghcr.io/jean-is/jean-relay`, `edge` and `sha-` from `main` until the next version tagged gives it `latest` and a number. Each image carries its build's provenance and its bill of materials, which `docker buildx imagetools inspect` shows with `--format '{{ json .Provenance }}'` or `'{{ json .SBOM }}'`.
+`latest` and a version's numbers, like `0.10.0` and `0.10`, are the versions CI released, each as a push to `main` asked for one ([architecture.md](../../docs/architecture.md#deploying)); `edge` follows `main`, and `sha-` followed by a commit's first seven characters is that commit. The gateway is `ghcr.io/jean-is/jean-gateway`, with the same tags, and the relay `ghcr.io/jean-is/jean-relay`, `edge` and `sha-` from `main` until the next version gives it `latest` and its numbers. Each image carries its build's provenance and its bill of materials, which `docker buildx imagetools inspect` shows with `--format '{{ json .Provenance }}'` or `'{{ json .SBOM }}'`.
 
 To build them yourself, use a checkout of the version you deploy: the image takes the folder as it is, uncommitted changes included. From this folder:
 
@@ -173,7 +173,7 @@ Pull the new version, or build again from it, and replace the container. Each op
 CI signs each image it publishes, keyless with Sigstore: the signature carries the identity of the workflow that built it, from GitHub's issuer, recorded in Sigstore's public log. cosign checks it:
 
 ```bash
-cosign verify ghcr.io/jean-is/jean:edge --certificate-identity-regexp '^https://github\.com/jean-is/jean/\.github/workflows/ci\.yml@refs/(heads/main|tags/v.*)$' --certificate-oidc-issuer https://token.actions.githubusercontent.com
+cosign verify ghcr.io/jean-is/jean:edge --certificate-identity-regexp '^https://github\.com/jean-is/jean/\.github/workflows/ci\.yml@refs/heads/main$' --certificate-oidc-issuer https://token.actions.githubusercontent.com
 ```
 
 The same goes for `jean-gateway`, `jean-relay` and the chart, `ghcr.io/jean-is/charts/jean`. An admission policy can refuse any image without it ([the chart's README](../helm/jean/README.md#signed-images-only)).

@@ -2,9 +2,11 @@
 // replayed here as it is written. A job runs in the image it names, or with none in that image standing in for GitHub's
 // Ubuntu 24.04 runner, Jean's own Node over it as setup-node puts it and `npm ci` done once per lockfile in the image's
 // layer; a job that drives Docker, kind or helm runs here, in a clean copy of its own. Each starts from a clean copy of the
-// commit, as GitHub's checkout does, and they run side by side as far as Docker's processors and memory go, after what they
-// need. A job that runs only on a push, to publish, is rehearsed: built, never pushed, signed or deployed. A line that names
-// a secret or a variable of the environment, or reaches out (npm publish, helm push, cosign, ssh…), is skipped and said, and
+// commit, as GitHub's checkout does (with the whole history and every tag, this repository's, for fetch-depth 0), and they
+// run side by side as far as Docker's processors and memory go, after what they need, reading what those gave
+// (needs.<job>.outputs, from what their steps wrote to $GITHUB_OUTPUT). A job that runs only on a push, to publish, is
+// rehearsed: built and tagged, never pushed, signed or deployed. A line that names a secret or a variable of the
+// environment, or reaches out (git push, npm publish, helm push, cosign, ssh…), is skipped and said, and
 // `npm run deploy` becomes the build it starts with. An action, a condition or a key this file can't replay stops the run
 // before anything starts, and test/ci.test.js holds every workflow to that in npm test.
 // It needs Docker (OrbStack on a Mac); the containers job helm, kind and kubectl; CodeQL's job the codeql CLI, or it is
@@ -17,7 +19,7 @@
 //   --list      the jobs, where each runs and how each step is replayed, without running any
 import { execFileSync, spawn } from 'node:child_process'
 import { createWriteStream, existsSync, readFileSync, readdirSync } from 'node:fs'
-import { cp, mkdir, rm, writeFile } from 'node:fs/promises'
+import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { arch } from 'node:os'
 import { join, relative } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
@@ -32,6 +34,8 @@ const RUNNER = { label: 'ubuntu-24.04', workers: 2 }
 export const TRIVY = { action: '38b337fff0a2f984d5be173c99e3f633438167ec', image: 'aquasec/trivy:0.76.2@sha256:8f6bb947dbc528902e11f2f5be52f7b519f6a39d5d148f41166f2040499768fb' }
 /** The buildx builder setup-buildx-action makes: BuildKit in a container of its own, which builds for several platforms. */
 const BUILDER = 'jean-ci'
+/** Where a container finds this repository, read-only, to fetch the whole history from. */
+const ORIGIN = '/origin.git'
 /** What a job takes of Docker's machine, processors and GB, by its id: the scheduler's measure, and a container's limits. */
 const SIZES = /** @type {Record<string, [number, number]>} */ ({ e2e: [2, 2.5], check: [4, 4], containers: [4, 6], images: [4, 4], analyze: [4, 6] })
 /** Which jobs go first: the longest. */
@@ -43,6 +47,7 @@ const FIRST = ['e2e', 'containers', 'check', 'analyze']
  * @type {[RegExp, string, string][]}
  */
 export const OUTWARD = [
+  [/\bgit push\b/, '', 'pushes to GitHub'],
   [/\bnpm run deploy\b/, 'npm run build:web', 'npm run deploy publishes the render package and uploads the site: here, the build it starts with'],
   [/\b(?:npm|pnpm|yarn) publish\b/, '', 'publishes to npm'],
   [/\bhelm (?:push|registry login)\b/, '', 'pushes to a registry'],
@@ -156,11 +161,13 @@ export function parse (text) {
 // Expressions
 
 /** What a job's `${{ github.… }}` reads here. @typedef {{ ref: string, ref_name: string, sha: string, actor: string, repository: string, repository_owner: string, event_name: string }} GitHub */
-/** @typedef {{ matrix: Record<string, string>, github: GitHub, steps: Record<string, { outputs: Record<string, string> }> | null }} Context */
+/** @typedef {Record<string, { outputs: Record<string, string> }>} Outputs */
+/** @typedef {{ matrix: Record<string, string>, github: GitHub, steps: Outputs | null, needs: Outputs | null }} Context */
 
 /**
- * `${{ … }}` in a value, read in a context: a path (matrix.shard, github.ref, steps.meta.outputs.tags), nothing more. A
- * secret or a variable of the environment is empty here. With no steps yet (planning), a step's output stays as written.
+ * `${{ … }}` in a value, read in a context: a path (matrix.shard, github.ref, steps.meta.outputs.tags,
+ * needs.release.outputs.version), nothing more. A secret or a variable of the environment is empty here. With no steps
+ * or jobs run yet (planning), their outputs stay as written.
  * @param {string} text @param {Context} context
  */
 export function substitute (text, context) {
@@ -168,12 +175,12 @@ export function substitute (text, context) {
     if (!/^[\w-]+(?:\.[\w-]+)+$/.test(expression)) throw new Error(`can't read \${{ ${expression} }} here`)
     const [scope, ...path] = expression.split('.')
     if (scope === 'secrets' || scope === 'vars') return ''
-    if (scope === 'steps' && !context.steps) return whole
+    if ((scope === 'steps' || scope === 'needs') && !context[scope]) return whole
     /** @type {any} */
-    let value = /** @type {Record<string, any>} */ ({ matrix: context.matrix, github: context.github, steps: context.steps })[scope]
+    let value = /** @type {Record<string, any>} */ ({ matrix: context.matrix, github: context.github, steps: context.steps, needs: context.needs })[scope]
     for (const key of path) value = value?.[key]
-    // A step's output it didn't set is empty, as on GitHub (a build that pushed nothing has no digest).
-    if (value === undefined && scope === 'steps') return ''
+    // An output nothing set is empty, as on GitHub (a build that pushed nothing has no digest, a push no release).
+    if (value === undefined && (scope === 'steps' || scope === 'needs')) return ''
     if (value === undefined) throw new Error(`\${{ ${expression} }} is nothing here`)
     return String(value)
   })
@@ -183,14 +190,33 @@ export function substitute (text, context) {
 const STATUS = /** @type {Record<string, (failed: boolean) => boolean>} */ ({ 'success()': (failed) => !failed, 'failure()': (failed) => failed, 'always()': () => true, '!cancelled()': () => true })
 
 /**
- * When a job runs, from its `if:`: always, or only on a push (to main, or of a version's tag), to publish.
- * @param {string | undefined} condition @returns {'always' | 'push' | 'tag'}
+ * When a job runs, from its `if:`: always, or only on a push (to main), to publish.
+ * @param {string | undefined} condition @returns {'always' | 'push'}
  */
 export function when (condition) {
   if (!condition) return 'always'
-  const match = /^github\.event_name == 'push'(?: && (github\.ref == 'refs\/heads\/main'|startsWith\(github\.ref, 'refs\/tags\/v'\)))?$/.exec(condition)
-  if (!match) throw new Error(`can't tell when it runs: if: ${condition}`)
-  return match[1]?.startsWith('startsWith') ? 'tag' : 'push'
+  if (!/^github\.event_name == 'push'(?: && github\.ref == 'refs\/heads\/main')?$/.test(condition)) throw new Error(`can't tell when it runs: if: ${condition}`)
+  return 'push'
+}
+
+/**
+ * What a step wrote to $GITHUB_OUTPUT, as GitHub reads it: `name=value` lines, and `name<<END` … `END` for many lines.
+ * @param {string} text @returns {Record<string, string>}
+ */
+export function outputs (text) {
+  /** @type {Record<string, string>} */
+  const found = {}
+  const lines = text.split('\n')
+  for (let i = 0; i < lines.length; i++) {
+    const many = /^([\w-]+)<<(.+)$/.exec(lines[i])
+    if (many) {
+      const end = lines.indexOf(many[2], i + 1)
+      if (end < 0) throw new Error(`$GITHUB_OUTPUT: ${many[1]} never ends with ${many[2]}`)
+      found[many[1]] = lines.slice(i + 1, end).join('\n')
+      i = end
+    } else if (lines[i].includes('=')) found[lines[i].slice(0, lines[i].indexOf('='))] = lines[i].slice(lines[i].indexOf('=') + 1)
+  }
+  return found
 }
 
 /**
@@ -231,7 +257,7 @@ export const adjust = (script) => script.replace(/^\s*npm run e2e\b.*$/gm, (line
 
 // Actions
 
-/** @typedef {{ cwd: string, sh: (script: string, env?: Record<string, string>, minutes?: number) => Promise<number>, copyOut: (path: string, to: string) => Promise<number>, log: (text: string) => void, slug: string, host: boolean, state: Record<string, string> }} Job */
+/** @typedef {{ cwd: string, sh: (script: string, env?: Record<string, string>, minutes?: number) => Promise<number>, copyOut: (path: string, to: string) => Promise<number>, read: (path: string) => Promise<string>, log: (text: string) => void, slug: string, host: boolean, state: Record<string, string> }} Job */
 /** @typedef {{ inputs: string[], host?: boolean, skip?: string, run?: (job: Job, inputs: Record<string, string>, context: Context, step: { id?: string }) => Promise<number> }} Action */
 
 /** Lines of an input, as actions read a list: one per line or comma, blanks dropped. @param {string | undefined} value */
@@ -239,7 +265,16 @@ const list = (value) => (value ?? '').split(/[\n,]/).map((one) => one.trim()).fi
 
 /** Every action the workflows use, by name, as replayed here. @type {Record<string, Action>} */
 export const ACTIONS = {
-  'actions/checkout': { inputs: [], run: async (job) => { job.log('the run’s copy of the commit\n'); return 0 } },
+  'actions/checkout': {
+    inputs: ['fetch-depth'],
+    run: async (job, inputs) => {
+      const depth = inputs['fetch-depth'] ?? '1'
+      if (depth === '1') { job.log('the run’s copy of the commit\n'); return 0 }
+      if (depth !== '0') { job.log(`fetch-depth ${depth}, which this runner doesn't replay: 1 or 0\n`); return 1 }
+      job.log('the run’s copy of the commit, with the whole history and every tag of this repository’s\n')
+      return job.sh(`git -c safe.directory='*' fetch --quiet --unshallow --tags '${job.host ? origin() : ORIGIN}'`)
+    },
+  },
   'actions/setup-node': {
     inputs: ['node-version-file'],
     run: async (job, inputs) => {
@@ -265,7 +300,7 @@ export const ACTIONS = {
     run: (job) => job.sh(`docker buildx inspect ${BUILDER} >/dev/null 2>&1 || docker buildx create --name ${BUILDER} --driver docker-container --bootstrap || docker buildx inspect ${BUILDER} >/dev/null`),
   },
   'docker/build-push-action': {
-    inputs: ['context', 'file', 'target', 'platforms', 'load', 'push', 'tags', 'labels', 'annotations', 'provenance', 'sbom', 'cache-from', 'cache-to'],
+    inputs: ['context', 'file', 'target', 'platforms', 'build-args', 'load', 'push', 'tags', 'labels', 'annotations', 'provenance', 'sbom', 'cache-from', 'cache-to'],
     host: true,
     run: (job, inputs) => {
       const quote = (/** @type {string} */ text) => `'${text.replaceAll("'", "'\\''")}'`
@@ -273,6 +308,7 @@ export const ACTIONS = {
       if (inputs.file) args.push(`--file ${quote(inputs.file)}`)
       if (inputs.target) args.push(`--target ${quote(inputs.target)}`)
       if (inputs.platforms) args.push(`--platform ${quote(inputs.platforms)}`)
+      for (const arg of (inputs['build-args'] ?? '').split('\n').filter(Boolean)) args.push(`--build-arg ${quote(arg)}`)
       if (inputs.load === 'true') args.push('--load')
       for (const tag of list(inputs.tags)) args.push(`--tag ${quote(tag)}`)
       for (const label of (inputs.labels ?? '').split('\n').filter(Boolean)) args.push(`--label ${quote(label)}`)
@@ -336,9 +372,9 @@ export const ACTIONS = {
 // Plans
 
 /** @typedef {{ name: string, if: string, minutes?: number, env: Record<string, string>, id?: string, action?: string, inputs?: Record<string, string>, script?: string, skipped: string[], install?: boolean }} Step */
-/** @typedef {{ key: string, name: string, slug: string, workflow: string, job: string, matrix: Record<string, string>, needs: string[], when: 'always' | 'push' | 'tag', host: boolean, image: string | null, steps: Step[], cpus: number, memory: number, minutes?: number, tools: string[] }} Run */
+/** @typedef {{ key: string, name: string, slug: string, workflow: string, job: string, matrix: Record<string, string>, needs: string[], when: 'always' | 'push', host: boolean, image: string | null, steps: Step[], outputs: Record<string, string>, cpus: number, memory: number, minutes?: number, tools: string[] }} Run */
 
-const JOB_KEYS = ['name', 'runs-on', 'container', 'steps', 'strategy', 'needs', 'if', 'permissions', 'environment', 'concurrency', 'timeout-minutes']
+const JOB_KEYS = ['name', 'runs-on', 'container', 'steps', 'strategy', 'needs', 'if', 'permissions', 'environment', 'concurrency', 'timeout-minutes', 'outputs']
 const STEP_KEYS = ['name', 'id', 'uses', 'run', 'with', 'env', 'if', 'timeout-minutes']
 /** Commands a job on this machine calls, which must be here. */
 const TOOLS = ['helm', 'kind', 'kubectl', 'docker', 'codeql']
@@ -357,14 +393,15 @@ export function combinations (matrix) {
 }
 
 /**
- * What `${{ github.… }}` reads in a run: a job that publishes reads the push it publishes on, main or a version's tag.
+ * What `${{ github.… }}` reads in a run: a job that publishes reads the push to main it publishes on.
  * @param {Run} run @param {GitHub} github @returns {GitHub}
  */
 export function githubOf (run, github) {
-  if (run.when === 'always') return github
-  const ref = run.when === 'tag' ? `refs/tags/v${JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8')).version}` : 'refs/heads/main'
-  return { ...github, ref, ref_name: ref.replace(/^refs\/(?:heads|tags)\//, ''), event_name: 'push' }
+  return run.when === 'always' ? github : { ...github, ref: 'refs/heads/main', ref_name: 'main', event_name: 'push' }
 }
+
+/** This repository's own git folder, which a worktree's shares, to fetch the whole history from. */
+const origin = () => git('rev-parse', '--path-format=absolute', '--git-common-dir')
 
 /**
  * Every run of a workflow's jobs, a matrix's combinations each its own, with how each step is replayed here. Throws for
@@ -383,14 +420,19 @@ export function plan (workflow, document) {
     if (job.container && typeof job.container !== 'string') throw new Error(`${where}: a container with options, which this runner doesn't replay`)
     const image = job.container ?? null
     const runs = when(job.if)
+    const needs = [job.needs ?? []].flat()
     return combinations(job.strategy?.matrix).map((matrix) => {
       const values = Object.values(matrix)
       // A run's name: its matrix's short values, as GitHub's, or an `include`'s first, which names it.
       const short = (job.strategy?.matrix?.include ? values.slice(0, 1) : values).filter((value) => value && /^[\w.-]{1,24}$/.test(value))
       /** @type {Context} */
-      const scope = { matrix, github, steps: null }
+      const scope = { matrix, github, steps: null, needs: null }
       // Read now, so that what this runner can't read stops it before anything runs; read again as the run goes.
-      const check = (/** @type {string} */ text) => { substitute(text, scope); return text }
+      const check = (/** @type {string} */ text) => {
+        substitute(text, scope)
+        for (const [, other] of text.matchAll(/\$\{\{\s*needs\.([\w-]+)\./g)) if (!needs.includes(other)) throw new Error(`${where}: needs.${other}, a job it doesn't need`)
+        return text
+      }
       /** @type {Step[]} */
       const steps = (job.steps ?? []).map((/** @type {any} */ step, /** @type {number} */ n) => {
         const label = `${where}, step ${n + 1}`
@@ -424,8 +466,8 @@ export function plan (workflow, document) {
       const [cpus, memory] = SIZES[id] ?? [2, 2]
       return {
         key: [id, ...short].join(':'), name: short.length ? `${id} (${short.join(', ')})` : id,
-        slug: [id, ...short].join('-').replace(/[^\w.-]/g, '-'), workflow, job: id, matrix, needs: [job.needs ?? []].flat(), when: runs, host, image,
-        steps, cpus, memory, minutes: job['timeout-minutes'] ? Number(job['timeout-minutes']) : undefined,
+        slug: [id, ...short].join('-').replace(/[^\w.-]/g, '-'), workflow, job: id, matrix, needs, when: runs, host, image,
+        steps, outputs: Object.fromEntries(Object.entries(job.outputs ?? {}).map(([key, value]) => [key, check(String(value))])), cpus, memory, minutes: job['timeout-minutes'] ? Number(job['timeout-minutes']) : undefined,
         tools: host ? TOOLS.filter((tool) => calls(tool).test(text) || (tool === 'codeql' && text.includes('codeql-action')) || (tool === 'docker' && /docker\/|trivy/.test(text))) : [],
       }
     })
@@ -542,12 +584,13 @@ async function place (run, shared, log) {
     quiet('docker', ['rm', '-f', name])
     const flags = Object.entries(env).flatMap(([key, value]) => ['-e', `${key}=${value}`])
     const image = shared.image[/** @type {string} */ (run.image)]
-    if (await sh('docker', ['run', '-d', '--init', '--name', name, '--platform', shared.platform, '--cpus', String(run.cpus), '--memory', `${run.memory * 2}g`, ...flags, '-e', 'GITHUB_WORKSPACE=/work', image, 'sleep', 'infinity'], log)) throw new Error(`${name} didn't start`)
+    if (await sh('docker', ['run', '-d', '--init', '--name', name, '--platform', shared.platform, '--cpus', String(run.cpus), '--memory', `${run.memory * 2}g`, ...flags, '-e', 'GITHUB_WORKSPACE=/work', '-v', `${origin()}:${ORIGIN}:ro`, image, 'sleep', 'infinity'], log)) throw new Error(`${name} didn't start`)
     live.containers.add(name)
     return {
       cwd: '/work', slug: run.slug, host: false, state: {}, log,
       sh: (script, extra = {}, minutes) => sh('docker', ['exec', '-w', '/work', ...Object.entries(extra).flatMap(([key, value]) => ['-e', `${key}=${value}`]), name, 'bash', '-e', '-c', script], log, { minutes }),
       copyOut: (path, to) => sh('docker', ['cp', `${name}:/work/${path}`, to], log),
+      read: async (path) => quiet('docker', ['exec', name, 'cat', path]) ?? '',
       close: async (failed) => {
         if (failed && shared.keep) { log(`\nkept: docker exec -it ${name} bash, then docker rm -f ${name}\n`); return }
         quiet('docker', ['rm', '-f', name]); live.containers.delete(name)
@@ -563,6 +606,7 @@ async function place (run, shared, log) {
     cwd, slug: run.slug, host: true, state: {}, log,
     sh: (script, extra = {}, minutes) => { if (/\bkind create\b/.test(script)) live.clusters.set(cluster, kubeconfig); return sh('bash', ['-e', '-c', script], log, { cwd, env: { ...hostEnv, ...extra }, minutes }) },
     copyOut: (path, to) => cp(join(cwd, path), join(to, path.replace(/\/$/, '').split('/').at(-1) ?? path), { recursive: true }).then(() => 0, (error) => { log(`${error.message}\n`); return 1 }),
+    read: (path) => readFile(path, 'utf8').catch(() => ''),
     close: async (failed) => {
       if (!live.clusters.has(cluster)) return
       if (failed && shared.keep) { log(`\nkept: kubectl --kubeconfig ${relative(ROOT, kubeconfig)} get pods -A, then kind delete cluster --name ${cluster}\n`); return }
@@ -573,10 +617,11 @@ async function place (run, shared, log) {
 
 /**
  * A run, step by step, as GitHub's runner takes it: a step that fails fails the job, and the steps after it run only if
- * their `if:` asks for a failure.
- * @param {Run} run @param {Shared} shared @returns {Promise<{ failed: string | null, skipped: string[] }>}
+ * their `if:` asks for a failure. Its outputs are read from its steps' once they ran.
+ * @param {Run} run @param {Shared} shared @param {Outputs} needs  what the jobs it needs gave
+ * @returns {Promise<{ failed: string | null, skipped: string[], outputs: Record<string, string> }>}
  */
-async function execute (run, shared) {
+async function execute (run, shared, needs) {
   const stream = createWriteStream(join(OUT, `${run.slug}.log`))
   const log = (/** @type {string} */ text) => { stream.write(text) }
   /** @type {string | null} */
@@ -588,11 +633,11 @@ async function execute (run, shared) {
   } catch (error) {
     log(`${/** @type {Error} */ (error).message}\n`)
     stream.end()
-    return { failed: 'its place to run', skipped }
+    return { failed: 'its place to run', skipped, outputs: {} }
   }
   /** @type {Context} */
-  const context = { matrix: run.matrix, github: githubOf(run, shared.github), steps: {} }
-  for (const step of run.steps) {
+  const context = { matrix: run.matrix, github: githubOf(run, shared.github), steps: {}, needs }
+  for (const [n, step] of run.steps.entries()) {
     if (!STATUS[step.if](Boolean(failed))) continue
     log(`\n▶ ${step.name}\n`)
     for (const line of step.skipped) log(`↷ skipped here: ${line}\n`)
@@ -604,13 +649,18 @@ async function execute (run, shared) {
         const inputs = Object.fromEntries(Object.entries(step.inputs ?? {}).map(([key, value]) => [key, substitute(value, context)]))
         code = action.run ? await action.run(job, inputs, context, step) : 0
       } else if (step.install && !run.host && step.script?.trim() === shared.install) log('done in the image’s layer, from the same lockfile\n')
-      else code = await job.sh(substitute(/** @type {string} */ (step.script), context), Object.fromEntries(Object.entries(step.env).map(([key, value]) => [key, substitute(value, context)])), step.minutes ?? run.minutes)
+      else {
+        // Each step its own $GITHUB_OUTPUT, as on GitHub, what it wrote there its outputs.
+        const file = job.host ? join(OUT, 'work', `${run.slug}.${n}.output`) : `/tmp/github-output-${n}`
+        code = await job.sh(substitute(/** @type {string} */ (step.script), context), { ...Object.fromEntries(Object.entries(step.env).map(([key, value]) => [key, substitute(value, context)])), GITHUB_OUTPUT: file }, step.minutes ?? run.minutes)
+        if (step.id && context.steps) context.steps[step.id] = { outputs: outputs(await job.read(file)) }
+      }
     } catch (error) { log(`${/** @type {Error} */ (error).stack}\n`); code = 1 }
     if (code) { log(`✘ ${step.name}: exit ${code}\n`); failed ??= step.name }
   }
   await job.close(Boolean(failed))
   await new Promise((resolve) => stream.end(resolve))
-  return { failed, skipped }
+  return { failed, skipped, outputs: Object.fromEntries(Object.entries(run.outputs).map(([key, value]) => [key, substitute(value, context)])) }
 }
 
 /** @param {number} ms */
@@ -734,7 +784,14 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   stream.end()
 
   const info = /** @type {string} */ (quiet('docker', ['info', '--format', '{{.NCPU}} {{.MemTotal}}'])).split(' ').map(Number)
-  const results = await schedule(runnable, { cpus: info[0], memory: info[1] / 2 ** 30 }, (run) => (blocked.includes(run) ? Promise.resolve({ failed: `needs ${run.tools.filter((tool) => missing.includes(tool)).join(', ')} here`, skipped: [] }) : execute(run, shared)))
+  /** @type {Outputs} */
+  const given = {}
+  const results = await schedule(runnable, { cpus: info[0], memory: info[1] / 2 ** 30 }, async (run) => {
+    if (blocked.includes(run)) return { failed: `needs ${run.tools.filter((tool) => missing.includes(tool)).join(', ')} here`, skipped: [] }
+    const result = await execute(run, shared, Object.fromEntries(run.needs.map((other) => [other, given[other] ?? { outputs: {} }])))
+    given[run.job] = { outputs: { ...given[run.job]?.outputs, ...result.outputs } }
+    return result
+  })
 
   console.log('')
   let failures = 0

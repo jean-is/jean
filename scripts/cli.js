@@ -8,6 +8,7 @@ import { chmod, copyFile, mkdir, readFile, readdir, rm, writeFile } from 'node:f
 import { dirname, join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { moduleGraph } from './graph.js'
+import { versionOf } from './version.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const OUT = join(ROOT, 'dist', 'cli')
@@ -29,6 +30,8 @@ export async function packageFiles (root) {
 
 async function main () {
   const root = JSON.parse(await readFile(join(ROOT, 'package.json'), 'utf8'))
+  const version = versionOf()
+  if (!version) throw new Error("nothing here tells Jean's version: git's history and tags, or VERSION (D735)")
   const files = await packageFiles(ROOT)
   await rm(OUT, { recursive: true, force: true })
   for (const path of files) {
@@ -39,7 +42,7 @@ async function main () {
   await chmod(join(OUT, 'cli', 'main.js'), 0o755)
   const manifest = {
     name: 'jean-cli',
-    version: root.version,
+    version,
     description: 'Jean in your editor, through ACP, on the folder Sync keeps; and the gateway, for the services a browser can’t reach.',
     license: root.license,
     type: 'module',
@@ -48,7 +51,7 @@ async function main () {
     dependencies: Object.fromEntries(DEPENDENCIES.map((name) => [name, root.dependencies[name]])),
   }
   await writeFile(join(OUT, 'package.json'), `${JSON.stringify(manifest, null, 2)}\n`)
-  console.log(`dist/cli: jean-cli ${root.version}, ${files.length + 2} files`)
+  console.log(`dist/cli: jean-cli ${version}, ${files.length + 2} files`)
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) await main()

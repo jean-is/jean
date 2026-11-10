@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { describe, it } from 'node:test'
-import { ACTIONS, OUTWARD, TRIVY, adjust, combinations, parse, plan, rehearse, schedule, substitute, when, workflows } from '../scripts/ci.js'
+import { ACTIONS, OUTWARD, TRIVY, adjust, combinations, outputs, parse, plan, rehearse, schedule, substitute, when, workflows } from '../scripts/ci.js'
 
 const CI = readFileSync(new URL('../.github/workflows/ci.yml', import.meta.url), 'utf8')
 /** @type {import('../scripts/ci.js').GitHub} */
@@ -63,6 +63,17 @@ describe('the jobs, as replayed here', () => {
     }
   })
 
+  it('gives the version the release job tags to what publishes it, a tag pushed only on GitHub (D735)', () => {
+    const release = /** @type {import('../scripts/ci.js').Run} */ (runs.find((run) => run.job === 'release'))
+    assert.equal(release.when, 'push')
+    assert.deepEqual(release.outputs, { version: '${{ steps.version.outputs.version }}', release: '${{ steps.version.outputs.release }}' })
+    assert.deepEqual(release.steps[0].inputs, { 'fetch-depth': '0' })
+    assert.ok(release.steps.some((step) => step.id === 'version' && step.script === 'node scripts/version.js --tag >> "$GITHUB_OUTPUT"'))
+    assert.ok(release.steps.some((step) => step.skipped.some((line) => /git push origin/.test(line))), 'the tag goes to GitHub from GitHub alone')
+    for (const job of ['images', 'chart', 'deploy']) assert.ok(runs.filter((run) => run.job === job).every((run) => run.needs.includes('release')), job)
+    assert.deepEqual(runs.filter((run) => run.job === 'e2e').map((run) => run.steps[0].inputs?.['fetch-depth']), ['0', '0', '0', '0', '0', '0'], 'the build names the version Settings shows')
+  })
+
   it('drives Docker, kind and helm here, and the rest in a container', () => {
     const where = Object.fromEntries(runs.map((run) => [run.key, run.host]))
     assert.equal(where.containers, true)
@@ -86,7 +97,7 @@ describe('the jobs, as replayed here', () => {
     assert.equal(deploy.when, 'push')
     assert.ok(deploy.steps.some((step) => step.script === 'npm run build:web'))
     assert.ok(deploy.steps.every((step) => !('BUNNY_API_KEY' in step.env)), 'a secret is unset here, not empty')
-    assert.equal(runs.find((run) => run.job === 'chart')?.when, 'tag')
+    assert.equal(runs.find((run) => run.job === 'chart')?.when, 'push')
     assert.ok(runs.filter((run) => run.job === 'images').every((run) => run.steps.some((step) => step.action === 'docker/login-action' && step.skipped.length)))
   })
 
@@ -113,7 +124,8 @@ describe('what the runner can’t replay', () => {
 
   it('stops it before anything runs', () => {
     assert.throws(() => plan('x.yml', job({}, [{ uses: 'someone/else@v1' }])), /an action this runner doesn't replay/)
-    assert.throws(() => plan('x.yml', job({}, [{ uses: 'actions/checkout@v5', with: { 'fetch-depth': '0' } }])), /with fetch-depth/)
+    assert.throws(() => plan('x.yml', job({}, [{ uses: 'actions/checkout@v5', with: { ref: 'other' } }])), /with ref/)
+    assert.throws(() => plan('x.yml', job({}, [{ run: 'echo ${{ needs.release.outputs.version }}' }])), /needs\.release, a job it doesn't need/)
     assert.throws(() => plan('x.yml', job({}, [{ run: 'echo', if: "github.actor == 'me'" }])), /if: github.actor/)
     assert.throws(() => plan('x.yml', job({}, [{ run: 'echo ${{ github.event.pull_request.title }}' }])), /is nothing here/)
     assert.throws(() => plan('x.yml', job({}, [{ run: 'echo ${{ toJSON(github) }}' }])), /can't read/)
@@ -127,7 +139,7 @@ describe('what the runner can’t replay', () => {
     assert.equal(when(undefined), 'always')
     assert.equal(when("github.event_name == 'push'"), 'push')
     assert.equal(when("github.event_name == 'push' && github.ref == 'refs/heads/main'"), 'push')
-    assert.equal(when("github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')"), 'tag')
+    assert.throws(() => when("github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')"), /can't tell when it runs/, 'CI alone makes a version, on main')
   })
 })
 
@@ -151,6 +163,14 @@ describe('a step’s shell', () => {
     assert.equal(substitute('${{ steps.meta.outputs.tags }}', { ...context, steps: null }), '${{ steps.meta.outputs.tags }}')
     assert.equal(substitute('[${{ steps.build.outputs.digest }}]', context), '[]')
     assert.throws(() => substitute("${{ matrix.shard == '2' }}", context))
+    const needs = { release: { outputs: { version: '0.10.0', release: '' } } }
+    assert.equal(substitute('${{ needs.release.outputs.version }}/[${{ needs.release.outputs.release }}]', { ...context, needs }), '0.10.0/[]')
+    assert.equal(substitute('${{ needs.release.outputs.version }}', { ...context, needs: null }), '${{ needs.release.outputs.version }}')
+  })
+
+  it('reads what a step wrote to $GITHUB_OUTPUT, as GitHub does', () => {
+    assert.deepEqual(outputs('version=0.10.0\nrelease=\nnotes<<END\na=b\nc\nEND\n'), { version: '0.10.0', release: '', notes: 'a=b\nc' })
+    assert.throws(() => outputs('notes<<END\na'), /never ends/)
   })
 })
 

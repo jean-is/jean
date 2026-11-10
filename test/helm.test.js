@@ -38,10 +38,10 @@ const at = (path) => {
   return node
 }
 
-test("the chart's version is package.json's", async () => {
-  const { version } = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'))
-  assert.equal(/^version: (.+)$/m.exec(await read('Chart.yaml'))?.[1], version)
+test("the chart's version is the release's, which CI sets, git holding none (D735)", async () => {
+  assert.match(await read('Chart.yaml'), /^version: 0\.0\.0$/m)
   assert.match(await read('Chart.yaml'), /^appVersion: edge$/m, 'CI sets the tag it publishes')
+  assert.match(await readFile(new URL('../.github/workflows/ci.yml', import.meta.url), 'utf8'), /helm package deploy\/helm\/jean --version "\$RELEASE" --app-version "\$RELEASE"/)
 })
 
 test('every pod takes the shared pod and container security, probes and stop', () => {

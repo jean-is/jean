@@ -88,7 +88,7 @@ The prompt and the declared tools are frozen for the life of a conversation. Cha
 - Docs describe Jean as it is now; history lives in git. No "as built in 0.x", "since Dnnn" or "until Dnnn" asides, no changelog, no budget snapshots (`npm run budgets` prints them).
 - A decision goes into [docs/decisions.md](docs/decisions.md) only when it binds, as its header says: short (what, why, what was rejected), merged with the entries it amends, under the section it belongs to. How a feature works goes into architecture.md or product.md, once. A budget raise takes no number.
 - The roadmap keeps one line per version and one checklist of what is still to check by hand.
-- A commit's first line is one short sentence, its gitmoji first; the story goes in the body, after a blank line, since every `git log --oneline` and every new session reads first lines.
+- A commit's first line is one short sentence, its gitmoji first; the story goes in the body, after a blank line, since every `git log --oneline` and every new session reads first lines. The gitmoji grades the version the push makes (D735): `:sparkles:` a minor, a fix or a change people see (`:bug:`, `:lipstick:`, `:speech_balloon:`…) a patch, docs, tests and tidying nothing; so it says what the change is, never more.
 
 ## Testing
 
@@ -110,6 +110,7 @@ npm run dev:home     # npm start, with every page of site/ as jean.is has them: 
 npm run build   # copy runtimes into app/vendor/, regenerate the manifest
 npm run build:web  # build, then dist/web/: what a web deploy serves, Jean's own code minified, each file beside itself in brotli and gzip (D318); POLICY='{…}' adds the site's policy.json (D344), ADDRESS=https://…/ its opensearch.xml and what search engines and shared links read
 npm run deploy  # build:web from a commit in git, never the working tree, then the render package on npm if it lacks that version (D321), then a new release on DEPLOY_TO (host:/path) over SSH, switched to at once (D320), or on Bunny CDN as jean.is is (bunny:<zone>, its keys in BUNNY_*; D634); CI runs it for every push to main once check, audit and every part of e2e pass (D659)
+npm run version # the version HEAD has, or will have once CI tags it: the newest vMAJOR.MINOR.PATCH, raised by the gitmojis of the commits since (D735)
 npm run release # build a commit from git as deploy does, then dist/release/: the zip and bill of materials an organisation deploys without building, their SHA256SUMS signed with RELEASE_KEY and checked against docs/trust/allowed_signers (D419)
 npm run tenant -- add <host> --policy <file>  # a copy Warehouse SAS hosts at an organisation's address: its policy checked as policy.html would there, then dist/tenants/ for the server's Caddy (TENANTS=<registry.json>; remove, list, write; D456)
 npm run render  # build, then the package that draws a task saved as a web page, and a share’s viewer, in dist/render/, for npm publish ./dist/render (D305)
