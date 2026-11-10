@@ -39,8 +39,10 @@ const told = signal(/** @type {{ id: string, word: string } | null} */ (null))
 const [tab, picked] = [signal(/** @type {'share' | 'publish'} */ ('share')), signal(/** @type {Set<string>} */ (new Set()))]
 /** What can be worked on together: a thing its pane names, or a task, shared whole. @param {import('./share.js').What | null} what */
 const thingOf = (what) => what?.thing ?? (what && !what.item ? { kind: /** @type {const} */ ('task'), uri: what.path } : null)
-/** Whether what is shared can be worked on together here: a relay named, and not in a child's profile (D389). @param {import('./share.js').What | null} what */
-const jointly = (what) => Boolean(thingOf(what) && serviceURL('relay', app.settings.peek(), app.policy) && !app.policy.child && !isDenied('together'))
+/** Whether the relay named keeps what people work on together, as its root says (relay/journal.js), asked once for each relay. */
+const [keeps, asked] = [signal(false), { relay: '' }]
+/** Whether what is shared can be worked on together here: a relay named that keeps journals, and not in a child's profile (D389). @param {import('./share.js').What | null} what */
+const jointly = (what) => Boolean(thingOf(what) && keeps.value && !app.policy.child && !isDenied('together'))
 /** The dialog opened on Share, for an answer back, its person ticked (People's `first`). @param {import('../../ui/caps.js').Slot | null} slot */
 export const toward = (slot) => { tab.value = 'share'; picked.value = new Set(slot?.first?.(sharing.peek()) ?? []) }
 
@@ -56,6 +58,8 @@ function reset(what) {
   const share = what && shareOf(what, shares.peek())
   choices.value = { closed: Boolean(share?.password), word: offered(), changing: false, days: share?.days ?? 30, read: share?.read ?? false, keep: share?.keep ?? false, open: Boolean(share) && Date.parse(share?.expires ?? '') < Date.now() }
   mine.value = true; coded.value = false; told.value = null
+  const relay = String(serviceURL('relay', app.settings.peek(), app.policy) ?? '')
+  if (relay !== asked.relay) { asked.relay = relay; keeps.value = false; if (relay) fetch(relay).then((answer) => answer.json()).then((root) => { keeps.value = Boolean(root?.journals) }, () => {}) }
   tab.value = share ? 'publish' : 'share'
   picked.value = new Set(audiences().flatMap((one) => one.first?.(what) ?? []))
   if (share) here(share).then((yes) => { if (sharing.peek() === what) mine.value = yes })

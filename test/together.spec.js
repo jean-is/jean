@@ -325,3 +325,19 @@ test('Ana and Bob work on a whole project together: its documents reach each oth
   await expect.poll(() => read(ana, plan)).toContain('Saturday: the castle.')
   await expect.poll(() => read(ana, 'documents/01JAQXDOC0000000000000000B-food.md')).toContain('Pastéis de nata.')
 })
+
+test('where the relay keeps no journals, Share offers no working together: with nobody met, Publish alone, without tabs', async ({ browser }) => {
+  const ana = await person(browser, 'Ana')
+  // A relay as jean.is's was before its configuration kept journals: its root names none.
+  await ana.route(RELAY_URL, (route) => route.fulfill({ json: { format: 1, message: 25_000_000, days: 7 }, headers: { 'access-control-allow-origin': '*' } }))
+  const folder = await expenses(ana)
+  await ana.evaluate(async (folder) => {
+    const { app } = await import('/ui/state.js')
+    await (await import('/caps/share/share.js')).openShare({ path: `${app.projectDir}/conversations/`, title: 'Expenses', item: { text: '' }, thing: { kind: 'collection', uri: folder } }, null)
+  }, folder)
+  const sharing = ana.locator('app-share-dialog dialog[open]')
+  await expect(sharing.getByRole('button', { name: 'Publish link' })).toBeVisible()
+  await expect(sharing.getByRole('tab')).toHaveCount(0)
+  await expect(sharing.getByRole('button', { name: 'Copy an invitation link instead' })).toHaveCount(0)
+  await expect(sharing.getByRole('button', { name: 'Work on it together' })).toHaveCount(0)
+})
