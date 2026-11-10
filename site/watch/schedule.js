@@ -10,10 +10,9 @@ import { PACE, beats, exchanges } from '#app/ui/replay.js'
 /**
  * A stop of a reel's task: a guided tour's stop (app/caps/tour/tour.js), timed, with what a reel adds.
  * at: a line of the task's file, just before it plays; a call's id, as it starts; `ask:<call's id>`, while its
- * approval waits; or `end`. on: what it points at, a selector in the replay, its last match that shows. zoom: the
- * camera frames it, as much as fits (true) or by this much. click: the pointer clicks it as the stop goes on.
- * say: the caption. go: how long it holds the replay, in milliseconds.
- * @typedef {{ at: number | string, on?: string, say?: string, go: number, zoom?: boolean | number, click?: boolean }} Stop
+ * approval waits; or `end`. on: what it points at, a selector in the replay, its last match that shows. click: the
+ * pointer clicks it as the stop goes on. say: the caption. go: how long it holds the replay, in milliseconds.
+ * @typedef {{ at: number | string, on?: string, say?: string, go: number, click?: boolean }} Stop
  */
 
 /**

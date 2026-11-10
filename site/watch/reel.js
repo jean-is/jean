@@ -2,9 +2,10 @@
 // page of the site or alone. A reel is scenes end to end (schedule.js): cards it draws, and tasks Jean did, each
 // played again by demo.html in a frame (D457), whose waits and stops demo.js asks this player for (window.reel.lend).
 // Everything shown or heard is a function of one clock, the reel's time: pause, seek, speed, a language changed
-// halfway and a frame-exact export (scripts/reel.js) are the same mechanism. Going back in a task loads its frame
+// halfway and the README's animation, drawn frame by frame (scripts/reel.js), are the same mechanism. Going back in a task loads its frame
 // again and plays it at once up to where the reel is, behind the one shown, then shows it: nothing blinks.
-// The stage (1280 × 720) is scaled to its frame; captions and controls are not, so they read at any size.
+// The stage (1280 × 720) is scaled to its frame as a video is: what is said on one side, large, Jean in its window
+// beside it, magnified; the controls are sized by the player.
 import { words } from '#app/ui/replay.js'
 import { reelTime, steps, taskTime } from './schedule.js'
 import { Score } from './score.js'
@@ -12,16 +13,12 @@ import { Score } from './score.js'
 /** @import { Card, Hold, Scene, Stop, Task, TaskTime } from './schedule.js' */
 
 const STAGE = { width: 1280, height: 720 }
-/** The window the conversation plays in, on the stage, its bar on top. */
-const WINDOW = { x: 96, y: 36, width: 1088, height: 628, bar: 40 }
-const VIEW = { x: WINDOW.x, y: WINDOW.y + WINDOW.bar, width: WINDOW.width, height: WINDOW.height - WINDOW.bar }
+/** What the window shows of the conversation, under its bar (reel.css). */
+const VIEW = { width: 732, height: 630 }
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 2]
-/** How much the conversation is magnified in the window: laid out at 870 pixels, it fills 1088 (reel.css). */
-const LENS = 1.25
-/** The stage above a caption, where the camera frames what a stop points at. */
-const ROOM = STAGE.height - 200
-/** How long the camera takes to frame what a stop names, and the pointer to get there, in the reel's milliseconds. */
-const MOVE = 900
+/** How much the conversation is magnified in the window: laid out at 523 pixels, as on a phone, it fills 732 (reel.css). */
+const LENS = 1.4
+/** How long the conversation takes to scroll to what a stop names, and the pointer to get there, in the reel's milliseconds. */
 const POINT = 750
 /** What an approval's stop points at and the reel clicks: Allow once, on its card (app/ui/chat.js). */
 const ALLOW = '.approval .approval-actions .button.primary'
@@ -31,6 +28,8 @@ const root = document.documentElement
 const name = params.get('reel') ?? 'jean'
 const exporting = params.has('export')
 const still = matchMedia('(prefers-reduced-motion: reduce)').matches
+/** Whether scenes cut from one to the next rather than fade: with less motion asked for, and in the README's animation, whose every changed pixel is kept as it is. */
+const cuts = still || exporting
 
 // ─── Small helpers ───────────────────────────────────────────────────────────
 
@@ -157,7 +156,7 @@ class Frame {
     this.asked = false
     const at = new URLSearchParams({ src: this.scene.src, lang: reel.lang, theme: root.dataset.theme ?? 'light', look: root.dataset.look ?? 'tilde' })
     this.element = h('iframe', { class: 'reel-frame', src: `demo.html#${at}`, title: '', tabindex: -1, 'aria-hidden': 'true', inert: true })
-    view.append(this.element)
+    view.insertBefore(this.element, ring)
   }
 
   /**
@@ -275,19 +274,21 @@ let score = null
 
 const main = /** @type {HTMLElement} */ (document.getElementById('main'))
 const stage = h('div', { class: 'reel-stage' })
-const world = h('div', { class: 'reel-world', 'aria-hidden': 'true' })
-const win = h('div', { class: 'reel-window' })
+const win = h('div', { class: 'reel-window', 'aria-hidden': 'true' })
 const view = h('div', { class: 'reel-view' })
 const ring = h('div', { class: 'reel-ring' })
 const pointer = h('div', { class: 'reel-pointer' }, icon('pointer'))
 const ripple = h('div', { class: 'reel-ripple' })
 const address = h('span', { class: 'reel-address' }, icon('lock'), h('span'))
-win.append(h('div', { class: 'reel-bar' }, h('span', { class: 'reel-dots' }, h('i'), h('i'), h('i')), address), view, ring, ripple, pointer)
-world.append(win)
+view.append(ring, ripple, pointer)
+win.append(h('div', { class: 'reel-bar' }, h('span', { class: 'reel-dots' }, h('i'), h('i'), h('i')), address), view)
+/** Beside the window: the chapter, and what each stop says, which stays while Jean goes on. */
+const part = h('span', { dir: 'auto' })
+const caption = h('p', { class: 'reel-caption' })
+const side = h('div', { class: 'reel-side', 'aria-hidden': 'true' }, h('p', { class: 'reel-part' }, icon('wave'), part), caption)
 const cards = h('div', { class: 'reel-cards' })
-stage.append(h('div', { class: 'reel-backdrop', 'aria-hidden': 'true' }, icon('wave')), world, cards)
+stage.append(h('div', { class: 'reel-backdrop', 'aria-hidden': 'true' }, icon('wave')), side, win, cards)
 
-const caption = h('p', { class: 'reel-caption', 'aria-hidden': 'true' }, h('span', { dir: 'auto' }))
 /** What a screen reader hears: each caption and each card's words, as they come. */
 const spoken = h('p', { class: 'reel-spoken', 'aria-live': 'polite' })
 const big = h('button', { class: 'reel-big', type: 'button' }, icon('play'))
@@ -305,7 +306,7 @@ const languages = h('div', { class: 'reel-menu', id: 'reel-languages', popover: 
 const controls = h('div', { class: 'reel-controls' },
   h('div', { class: 'reel-track' }, marks, seek),
   h('div', { class: 'reel-row' }, toggle, sound, clock, chapter, speed, language, full))
-main.append(stage, caption, spoken, big, controls, speeds, languages)
+main.append(stage, spoken, big, controls, speeds, languages)
 if (exporting) main.dataset.export = ''
 
 /** The stage scaled to its frame, as a video is: the same picture at any size. */
@@ -359,13 +360,14 @@ function drawCard (card) {
     element.append(wave)
     pieces.push({ element: wave, at: 120, kind: 'draw' })
   }
-  element.append(h('p', { class: card.look === 'open' ? 'reel-name' : 'reel-title', 'aria-hidden': 'true' }, rising(card.title, card.look === 'open' ? 650 : 250, pieces, 90)))
-  if (card.line) element.append(h('p', { class: 'reel-line', 'aria-hidden': 'true' }, rising(card.line, card.look === 'open' ? 1300 : 900, pieces, 45)))
+  // The first card's name is there from the first moment, so a reel never starts on an empty picture.
+  element.append(h('p', { class: card.look === 'open' ? 'reel-name' : 'reel-title', 'aria-hidden': 'true' }, rising(card.title, card.look === 'open' ? -1000 : 250, pieces, 90)))
+  if (card.line) element.append(h('p', { class: 'reel-line', 'aria-hidden': 'true' }, rising(card.line, card.look === 'open' ? 1100 : 900, pieces, 45)))
   if (card.facts) {
     const list = h('ul', { class: 'reel-facts', 'aria-hidden': 'true' })
     card.facts.forEach((fact, i) => {
       const tick = icon('tick')
-      const at = 700 + i * 650
+      const at = 600 + i * 900
       list.append(h('li', {}, tick, rising(fact, at, pieces, 35)))
       pieces.push({ element: tick, at: at + 150, kind: 'draw' })
     })
@@ -456,55 +458,6 @@ function boxOf (element) {
   return { x: box.left * LENS, y: box.top * LENS, width: box.width * LENS, height: box.height * LENS }
 }
 
-/** @typedef {{ scale: number, x: number, y: number }} Shot  the camera: how much it zooms, and the stage's point it centres */
-const WIDE = { scale: 1, x: STAGE.width / 2, y: STAGE.height / 2 }
-
-/** What a stop frames, from what it points at: centred, as large as fits or as it says, never past the window's edge. @param {Stop} stop @param {Frame} frame @returns {Shot} */
-function shotOf (stop, frame) {
-  const target = frame.find(stop.on)
-  if (!target) return WIDE
-  const box = boxOf(target)
-  const pad = 40
-  const fits = Math.min((STAGE.width * 0.84) / (box.width + pad), (ROOM * 0.9) / (box.height + pad))
-  // As close as fits, or a little further back than the window for what is taller than the room above the caption.
-  const scale = typeof stop.zoom === 'number' ? stop.zoom : clamp(fits, 0.82, 1.7)
-  // In the middle of the room above the caption, so a caption under it hides nothing.
-  const [x, y] = [VIEW.x + box.x + box.width / 2, VIEW.y + box.y + box.height / 2 + (STAGE.height - ROOM) / 2 / scale]
-  const [halfW, halfH] = [STAGE.width / 2 / scale, STAGE.height / 2 / scale]
-  const edge = 0
-  // Closer than the window, never past its edges; further back, centred on what it frames.
-  if (scale < 1) return { scale, x: STAGE.width / 2, y }
-  return {
-    scale,
-    x: clamp(x, Math.min(WINDOW.x - edge + halfW, STAGE.width / 2), Math.max(WINDOW.x + WINDOW.width + edge - halfW, STAGE.width / 2)),
-    y: clamp(y, Math.min(WINDOW.y - edge + halfH, STAGE.height / 2), Math.max(WINDOW.y + WINDOW.height + edge - halfH, STAGE.height / 2)),
-  }
-}
-
-/** Between two shots, the zoom moving as the eye reads it, by its logarithm. @param {Shot} a @param {Shot} b @param {number} p */
-const between = (a, b, p) => ({ scale: Math.exp(lerp(Math.log(a.scale), Math.log(b.scale), p)), x: lerp(a.x, b.x, p), y: lerp(a.y, b.y, p) })
-
-/**
- * The camera in a task at a moment of its scene: each stop that zooms frames what it points at from its start, and
- * once it ends goes back wide, unless the next one zooms straight after, the camera gliding from one to the other.
- * @param {Hold[]} holds @param {Frame} frame @param {number} u
- */
-function cameraAt (holds, frame, u) {
-  const shots = holds.filter(({ stop }) => stop.zoom && stop.on)
-  /** @type {Array<{ at: number, stop: Stop | null }>} */
-  const keys = []
-  shots.forEach((shot, i) => {
-    keys.push({ at: shot.start, stop: shot.stop })
-    const next = shots[i + 1]
-    if (!next || next.start - shot.end > 300) keys.push({ at: shot.end, stop: null })
-  })
-  const k = keys.findLastIndex((key) => key.at <= u)
-  if (k < 0) return WIDE
-  const to = keys[k].stop ? shotOf(/** @type {Stop} */ (keys[k].stop), frame) : WIDE
-  const from = k && keys[k - 1].stop ? shotOf(/** @type {Stop} */ (keys[k - 1].stop), frame) : WIDE
-  return still ? to : between(from, to, easeInOut(clamp((u - keys[k].at) / MOVE)))
-}
-
 /**
  * Where the conversation is scrolled while a stop points: its end, as Jean keeps it while it writes, or what the stop
  * points at in view, glided to as the stop starts and back as the stops pointing one after the other end.
@@ -518,12 +471,12 @@ function scrollAt (holds, frame, u) {
   const pointing = holds.filter(({ stop }) => stop.on)
   const i = pointing.findIndex((hold) => hold.start <= u && u < hold.end)
   if (i < 0) return
-  /** Where what a stop points at is in view, a margin round it and room for the caption under it. @param {Hold} hold */
+  /** Where what a stop points at is in view, a margin round it. @param {Hold} hold */
   const need = (hold) => {
     const target = frame.find(hold.stop.on)
     if (!target) return bottom
     const box = target.getBoundingClientRect()
-    const [top, end] = [box.top + page.scrollTop - 24, box.bottom + page.scrollTop + 120]
+    const [top, end] = [box.top + page.scrollTop - 24, box.bottom + page.scrollTop + 24]
     const y = Math.min(Math.max(page.scrollTop, end - page.clientHeight), top)
     return clamp(y, 0, bottom)
   }
@@ -567,7 +520,7 @@ function pointerAt (holds, frame, u, clicks) {
   return { x, y, shown, press, rippled: near !== undefined && near >= 0 ? near / 500 : -1 }
 }
 
-/** What shows at the reel's time: the scene, its card or its task's frame, the camera, the pointer and the caption. */
+/** What shows at the reel's time: the scene, its card or its task's frame, the pointer and what is said. */
 function draw () {
   const at = poster ?? time
   const i = sceneAt(at)
@@ -580,7 +533,7 @@ function draw () {
     if (k !== i) continue
     card.element.toggleAttribute('inert', at < reel.length && Boolean(after))
     const leaving = after ? clamp((scene.end - at) / 450) : 1
-    card.element.style.opacity = String(still ? Number(leaving > 0) : easeOut(leaving))
+    card.element.style.opacity = String(cuts ? Number(leaving > 0) : easeOut(leaving))
     for (const piece of card.pieces) {
       const p = still ? 1 : easeOut(clamp((u - piece.at) / (piece.kind === 'draw' ? 1300 : 700)))
       if (piece.kind === 'draw') {
@@ -593,57 +546,64 @@ function draw () {
       }
     }
   }
-  // The window: it rises in after a card and fades out before one; between tasks, it stays and their frames cross.
+  // The window and what is said beside it: they rise in after a card and fade out before one; between tasks, they
+  // stay and the frames cross.
   const task = scene.kind === 'task'
-  win.hidden = !task
+  win.hidden = side.hidden = !task
   const frame = task ? shown.get(i) : undefined
-  for (const [k, other] of shown) other.element.style.opacity = '0'
+  for (const other of shown.values()) other.element.style.opacity = '0'
   if (!task || !frame) {
     ring.style.opacity = pointer.style.opacity = '0'
-    caption.style.opacity = '0'
-    world.style.transform = ''
     speak(scene.kind === 'card' ? [scene.title, scene.line, ...scene.facts ?? []].filter(Boolean).join(' ') : '')
     return
   }
-  const enter = before?.kind === 'task' || still ? 1 : easeOut(clamp(u / 800))
-  const leave = after?.kind === 'task' || !after || still ? 1 : easeOut(clamp((scene.end - at) / 500))
-  win.style.opacity = String(Math.min(enter, leave))
+  const enter = before?.kind === 'task' || cuts ? 1 : easeOut(clamp(u / 800))
+  const leave = after?.kind === 'task' || !after || cuts ? 1 : easeOut(clamp((scene.end - at) / 500))
+  win.style.opacity = side.style.opacity = String(Math.min(enter, leave))
   win.style.translate = `0 ${((1 - enter) * 40).toFixed(1)}px`
-  win.style.scale = String(0.96 + 0.04 * Math.min(enter, 1) - 0.02 * (1 - leave))
-  const crossIn = before?.kind === 'task' && !still ? clamp(u / 450) : 1
-  const crossOut = after?.kind === 'task' && !still ? clamp((scene.end - at) / 350) : 1
+  const crossIn = before?.kind === 'task' && !cuts ? clamp(u / 450) : 1
+  const crossOut = after?.kind === 'task' && !cuts ? clamp((scene.end - at) / 350) : 1
   frame.element.style.opacity = String(Math.min(crossIn, crossOut))
+  if (part.textContent !== scene.chapter) part.textContent = scene.chapter
   const holds = /** @type {TaskTime} */ (reel.tasks[i]).holds
-  // The conversation scrolled to what a stop points at, then the camera, the ring round it, the pointer.
+  // The conversation scrolled to what a stop points at, then the ring round it and the pointer.
   scrollAt(holds, frame, u)
-  const shot = cameraAt(holds, frame, u)
-  world.style.transform = `translate(${(STAGE.width / 2 - shot.scale * shot.x).toFixed(2)}px, ${(STAGE.height / 2 - shot.scale * shot.y).toFixed(2)}px) scale(${shot.scale.toFixed(4)})`
   const hold = holds.find((one) => one.start <= u && u < one.end)
   const target = hold?.stop.on ? frame.find(hold.stop.on) : null
   if (hold && target) {
     const box = boxOf(target)
-    // The caption goes to the top while what its stop points at sits low, under it once the camera has settled.
-    const settled = hold.stop.zoom ? shotOf(hold.stop, frame) : WIDE
-    caption.classList.toggle('is-top', (VIEW.y + box.y + box.height / 2 - settled.y) * settled.scale + STAGE.height / 2 > ROOM - 20)
     const p = clamp((u - hold.start - POINT * 0.6) / 250) * clamp((hold.end - u) / 200)
-    Object.assign(ring.style, { opacity: String(still ? Number(p > 0) : p), translate: `${box.x + VIEW.x - WINDOW.x - 6}px ${box.y + VIEW.y - WINDOW.y - 6}px`, width: `${box.width + 12}px`, height: `${box.height + 12}px` })
+    Object.assign(ring.style, { opacity: String(still ? Number(p > 0) : p), translate: `${box.x - 6}px ${box.y - 6}px`, width: `${box.width + 12}px`, height: `${box.height + 12}px` })
   } else ring.style.opacity = '0'
   const clicks = [...holds.filter(({ stop }) => stop.click).map(({ end }) => ({ at: end })), ...reel.tasks[i]?.asks.map(({ time: when }) => ({ at: when })) ?? []]
   const hand = pointerAt(holds, frame, u, clicks)
   pointer.style.opacity = String(hand.shown * Math.min(leave, crossOut))
-  pointer.style.translate = `${(hand.x + VIEW.x - WINDOW.x).toFixed(1)}px ${(hand.y + VIEW.y - WINDOW.y).toFixed(1)}px`
+  pointer.style.translate = `${hand.x.toFixed(1)}px ${hand.y.toFixed(1)}px`
   pointer.style.scale = String(1 - 0.16 * hand.press)
   ripple.style.translate = pointer.style.translate
   ripple.style.opacity = String(hand.rippled >= 0 ? (1 - hand.rippled) * 0.7 : 0)
   ripple.style.scale = String(0.3 + Math.max(hand.rippled, 0) * 1.4)
-  // The caption: each stop's words, rising in as it starts and fading as it ends.
-  const said = hold?.stop.say ?? ''
-  const shownFor = hold ? Math.min(clamp((u - hold.start) / 260), clamp((hold.end - u) / 200)) : 0
-  if (/** @type {HTMLElement} */ (caption.firstElementChild).textContent !== said) /** @type {HTMLElement} */ (caption.firstElementChild).textContent = said
-  caption.style.opacity = String(said ? (still ? 1 : easeOut(shownFor)) : 0)
-  caption.style.translate = `0 ${still ? 0 : ((1 - easeOut(shownFor)) * 0.4).toFixed(3)}em`
-  speak(said)
+  // What is said: the words of the last stop reached, rising one after the other, there until the next stop's.
+  const told = holds.findLast((one) => one.stop.say && one.start <= u)
+  if (told !== telling.hold) {
+    telling.hold = told
+    telling.pieces = []
+    const text = told?.stop.say ?? ''
+    // Smaller as it has more to say, a character of Chinese, Japanese or Korean counting for two.
+    const weight = [...text].reduce((sum, c) => sum + (/[\u3040-\u30ff\u3400-\u9fff\uac00-\ud7af]/.test(c) ? 2 : 1), 0)
+    caption.style.fontSize = `${Math.round(lerp(46, 31, clamp((weight - 45) / 70)))}px`
+    caption.replaceChildren(text ? rising(text, 0, telling.pieces, 40) : '')
+  }
+  for (const piece of telling.pieces) {
+    const p = still || !told ? 1 : easeOut(clamp((u - told.start - piece.at) / 500))
+    piece.element.style.opacity = String(p)
+    piece.element.style.translate = `0 ${((1 - p) * 0.3).toFixed(3)}em`
+  }
+  speak(told?.stop.say ?? '')
 }
+
+/** The stop whose words show beside the window, and their pieces. @type {{ hold: Hold | undefined, pieces: Piece[] }} */
+const telling = { hold: undefined, pieces: [] }
 
 let said = ''
 /** Words for a screen reader, once each time they change. @param {string} words */
@@ -951,8 +911,6 @@ shared.reel = {
   },
   /** Plays from the start for an export, its clock Playwright's. */
   record () { playing = true; last = performance.now() },
-  /** The score, rendered for the reel's length, as a WAV file in base64. */
-  async audio () { return new Score(scoreOf(reel)).wav() },
 }
 
 reel = await load(params.get('lang') ?? 'en')

@@ -1,6 +1,6 @@
 // Jean's reels (D687, docs/reels.md): what each one plays, as the page that plays them (site/watch/page.js) writes it
 // in each of its languages, from its words: cards, and tasks written as the site's demos are (site/demo.js), each
-// with its stops. A stop holds as long as its caption takes to read in its language. The sample spreadsheet's
+// with its stops. A stop holds the replay as long as its caption takes to read in its language. The sample spreadsheet's
 // figures are the /excel page's, worked out from app/caps/files/sales.csv, never typed in.
 import { languageName, dir } from '../../app/core/i18n.js'
 import { demoFiles } from '../demo.js'
@@ -30,12 +30,12 @@ export const ON = {
 const PLAYER = ['play', 'pause', 'again', 'mute', 'unmute', 'speed', 'times', 'language', 'full', 'leave', 'seek', 'time', 'chapter', 'player']
 
 /**
- * How long a caption holds: long enough to read twice over, a character of Chinese, Japanese or Korean counting for
- * more than a Latin letter. @param {string} say
+ * How long a caption holds the replay: long enough to read once, since its words stay beside the window while Jean
+ * goes on; a character of Chinese, Japanese or Korean counts for more than a Latin letter. @param {string} say
  */
 export function reading (say) {
   const weight = [...say].reduce((sum, c) => sum + (/[぀-ヿ㐀-鿿가-힯]/.test(c) ? 2.6 : 1), 0)
-  return Math.round(Math.min(6800, Math.max(2600, 1300 + 50 * weight)) / 100) * 100
+  return Math.round(Math.min(5600, Math.max(2200, 900 + 40 * weight)) / 100) * 100
 }
 
 /** A stop that says something, held as long as it takes to read. @param {Omit<Stop, 'go'> & { say: string, go?: number }} stop @returns {Stop} */
@@ -58,26 +58,26 @@ function scenesOf (kit, name) {
     return Object.keys(written)[0]
   }
   /** The name and the promise, as the homepage says it. @returns {Scene} */
-  const open = () => ({ kind: 'card', look: 'open', chapter: kit.brand.name, hold: 4600, title: kit.brand.name, line: kit.from('home').text('promise') })
+  const open = () => ({ kind: 'card', look: 'open', chapter: kit.brand.name, hold: 3800, title: kit.brand.name, line: kit.from('home').text('promise') })
   /** @param {string} key @returns {Scene} */
-  const end = (key, href = kit.start) => ({ kind: 'card', look: 'end', chapter: text(`${key}.chapter`), hold: 5400, title: text(`${key}.title`), line: text(`${key}.line`), cta: { text: text(`${key}.cta`), href } })
+  const end = (key, href = kit.start) => ({ kind: 'card', look: 'end', chapter: text(`${key}.chapter`), hold: 4600, title: text(`${key}.title`), line: text(`${key}.line`), cta: { text: text(`${key}.cta`), href } })
   /** @param {string} key @returns {Scene} */
-  const titled = (key) => ({ kind: 'card', look: 'title', chapter: text(`${key}.chapter`), hold: 4200, title: text(`${key}.title`), line: text(`${key}.line`) })
+  const titled = (key) => ({ kind: 'card', look: 'title', chapter: text(`${key}.chapter`), hold: 3600, title: text(`${key}.title`), line: text(`${key}.line`) })
   switch (name) {
     case 'jean': return {
       scenes: [
         open(),
         { kind: 'task', chapter: text('chart.chapter'), src: task('chart', chart(kit)), tail: 1600, stops: [
           said({ at: 'brain-0', on: ON.file, say: text('chart.say.ask') }),
-          said({ at: 'call-1', on: ON.program, zoom: true, say: text('chart.say.program') }),
-          said({ at: 'end', on: ON.chart, zoom: true, say: text('chart.say.made') }),
+          said({ at: 'call-1', on: ON.program, say: text('chart.say.program') }),
+          said({ at: 'end', on: ON.chart, say: text('chart.say.made') }),
         ] },
         { kind: 'task', chapter: text('letter.chapter'), src: task('letter', { asked: text('letter.ask'), brain: text('letter.brain'), answer: text('letter.answer') }), tail: 1400, stops: [
           said({ at: 'brain-0', on: ON.request, say: text('letter.say.any') }),
-          said({ at: 'end', on: ON.answered, zoom: true, say: text('letter.say.where') }),
+          said({ at: 'end', on: ON.answered, say: text('letter.say.where') }),
         ] },
         { kind: 'task', chapter: text('minutes.chapter'), src: task('minutes', minutes(kit, text)), tail: 1400, stops: [
-          said({ at: 'ask:call-1', on: ON.allow, zoom: 1.5, say: text('minutes.say.asks') }),
+          said({ at: 'ask:call-1', on: ON.allow, say: text('minutes.say.asks') }),
         ] },
         { kind: 'card', look: 'facts', chapter: text('keep.chapter'), hold: 6200, title: text('keep.title'), facts: kit.texts(`${name}.keep.facts`) },
         end('end'),
@@ -93,8 +93,8 @@ function scenesOf (kit, name) {
             said({ at: 'brain-0', on: ON.file, say: text('task.say.file', { months: count.format(MONTHS.length), products: count.format(PRODUCTS.length) }) }),
             said({ at: 'brain-0', on: ON.request, say: text('task.say.ask') }),
             said({ at: 'brain-0', on: ON.brain, say: text('task.say.brain') }),
-            said({ at: 'call-1', on: ON.program, zoom: true, say: text('task.say.program') }),
-            said({ at: 'end', on: ON.chart, zoom: true, say: text('task.say.chart') }),
+            said({ at: 'call-1', on: ON.program, say: text('task.say.program') }),
+            said({ at: 'end', on: ON.chart, say: text('task.say.chart') }),
             said({ at: 'end', on: ON.data, click: true, say: text('task.say.data') }),
             said({ at: 'end', on: ON.read, say: text('task.say.read') }),
           ] },
@@ -108,8 +108,8 @@ function scenesOf (kit, name) {
         titled('open'),
         { kind: 'task', chapter: text('task.chapter'), src: task('task', minutes(kit, text)), tail: 1600, stops: [
           said({ at: 'brain-0', on: ON.request, say: text('task.say.ask') }),
-          said({ at: 'ask:call-1', on: ON.card, zoom: true, say: text('task.say.card') }),
-          said({ at: 'ask:call-1', on: ON.allow, zoom: 1.6, say: text('task.say.allow') }),
+          said({ at: 'ask:call-1', on: ON.card, say: text('task.say.card') }),
+          said({ at: 'ask:call-1', on: ON.allow, say: text('task.say.allow') }),
         ] },
         { kind: 'card', look: 'facts', chapter: text('rules.chapter'), hold: 6600, title: text('rules.title'), facts: kit.texts(`${name}.rules.facts`) },
       ],
@@ -121,7 +121,7 @@ function scenesOf (kit, name) {
         { kind: 'task', chapter: text('task.chapter'), src: task('task', { asked: text('task.ask'), brain: shared('brain'), answer: text('task.answer') }), tail: 1600, stops: [
           said({ at: 'brain-0', on: ON.request, say: text('task.say.ask') }),
           said({ at: 'brain-0', on: ON.brain, say: text('task.say.brain') }),
-          said({ at: 'end', on: ON.aloud, zoom: true, say: text('task.say.aloud') }),
+          said({ at: 'end', on: ON.aloud, say: text('task.say.aloud') }),
         ] },
         end('end'),
       ],

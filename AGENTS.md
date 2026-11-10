@@ -114,7 +114,7 @@ npm run version # the version HEAD has, or will have once CI tags it: the newest
 npm run release # build a commit from git as deploy does, then dist/release/: the zip and bill of materials an organisation deploys without building, their SHA256SUMS signed with RELEASE_KEY and checked against docs/trust/allowed_signers (D419)
 npm run tenant -- add <host> --policy <file>  # a copy Warehouse SAS hosts at an organisation's address: its policy checked as policy.html would there, then dist/tenants/ for the server's Caddy (TENANTS=<registry.json>; remove, list, write; D456)
 npm run render  # build, then the package that draws a task saved as a web page, and a share’s viewer, in dist/render/, for npm publish ./dist/render (D305)
-npm run reel -- <name>  # build, then one of Jean's reels as a video, frame by frame: dist/reels/<name>.<lang>.mp4 and an animated preview, its score's loudness measured (D687); --lang, --theme light|dark, --size 1920x1080, --fps 30; needs ffmpeg
+npm run reel -- <name>  # build, then one of Jean's reels as the README's silent animation, frame by frame: dist/reels/<name>.<lang>.webp (D687); --lang, --theme light|dark, --width 880, --fps 12; needs img2webp (brew install webp)
 npm run host    # build, then the share host in dist/host/, its viewer from the render package of this version (D361)
 npm run sounds -- <MuseScore's share/sound>  # the instruments scores play, MS Basic's, as a package in dist/sounds/, for npm publish ./dist/sounds (D338)
 npm run build:desktop  # build, then the desktop apps for macOS, Windows and Linux in dist/desktop/, with Neutralino (D155)

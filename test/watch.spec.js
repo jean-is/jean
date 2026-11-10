@@ -1,7 +1,7 @@
 // Jean's reels (D687, docs/reels.md), on jean.is's site as build:web makes it: a reel plays Jean's own conversation,
 // demo.js asking the reel for every wait and moment its plan foresaw and no other; it pauses, seeks by chapter, plays
 // faster, mutes and goes on in another language, each remembered or said; its captions reach a screen reader; and
-// /watch frames each reel in its language. In English, Arabic and Japanese.
+// /watch frames each reel in its language, and scrolls under the wheel over one. In English, Arabic and Japanese.
 import { readFile } from 'node:fs/promises'
 import { test, expect } from '@playwright/test'
 
@@ -104,4 +104,18 @@ test('/watch frames each reel’s player in its language, full screen allowed (e
   await expect(frames).toHaveCount(4)
   for (const frame of await frames.all()) await expect(frame).toHaveAttribute('allow', /fullscreen/)
   await expect(page.frameLocator('.wch-player iframe >> nth=0').locator('.reel-big')).toHaveText('Play')
+})
+
+test('the wheel over a reel scrolls the page that frames it, before it plays and while it does (en)', async ({ page }) => {
+  await page.goto(`${JEAN_IS}watch`)
+  const player = page.frameLocator('.wch-player iframe >> nth=0')
+  await expect(player.locator('main.reel')).toHaveAttribute('data-state', 'ready')
+  const box = /** @type {{ x: number, y: number, width: number, height: number }} */ (await page.locator('.wch-player').first().boundingBox())
+  await page.mouse.move(box.x + box.width * 0.7, box.y + box.height * 0.5)
+  await page.mouse.wheel(0, 150)
+  await expect.poll(() => page.evaluate(() => scrollY)).toBe(150)
+  await player.locator('.reel-big').click()
+  await expect(player.locator('main.reel')).toHaveAttribute('data-state', 'playing')
+  await page.mouse.wheel(0, 150)
+  await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(150)
 })

@@ -1,7 +1,7 @@
 // The reels' score (D687, docs/reels.md#sound): music written here as code and played by Web Audio, so a reel's
 // sound is Jean's own to give (MIT): no recording, no sample, nobody's licence. compose() writes the notes for a
-// reel's plan, the same for a seed every time, which an export relies on; Score plays them live, tied to the reel's
-// time (paused, sought, faster or slower with it), or renders them offline for an export (wav()).
+// reel's plan, the same for a seed every time; Score plays them, tied to the reel's time (paused, sought, faster or
+// slower with it).
 // In D major at 88 beats a minute, eight bars that turn: a soft pad, an electric piano by frequency modulation, a
 // round bass, a light kick, rim and shaker, in a room's reverb. Pad and piano alone on the first card, bass and
 // shaker with the tasks, kick and rim from the second, then the last card resolves on D and rings out with the reel.
@@ -410,52 +410,4 @@ export class Score {
     if (!muted && !this.ctx && this.playing && time !== undefined) return this.start(time)
     if (this.ctx && this.mix) this.mix.out.gain.setTargetAtTime(muted ? 0 : 1, this.ctx.currentTime, 0.03)
   }
-
-  /** The whole score rendered offline, for an export: a 16-bit stereo WAV at 48 kHz, in base64. */
-  async wav () {
-    const rate = 48_000
-    const ctx = new OfflineAudioContext(2, Math.ceil((this.plan.length / 1000) * rate), rate)
-    const mix = desk(ctx)
-    const node = ctx.createGain()
-    node.connect(mix.out)
-    for (const note of this.notes) sound(ctx, mix, node, note, note.at / 1000, 1)
-    node.gain.setValueAtTime(0, 0)
-    node.gain.linearRampToValueAtTime(1, FADE.in / 1000)
-    node.gain.setValueAtTime(1, (this.plan.length - FADE.out) / 1000)
-    node.gain.linearRampToValueAtTime(0, this.plan.length / 1000)
-    const buffer = await ctx.startRendering()
-    return base64(encode(buffer))
-  }
-}
-
-/** An audio buffer as a 16-bit PCM WAV file. @param {AudioBuffer} buffer */
-export function encode (buffer) {
-  const channels = buffer.numberOfChannels
-  const frames = buffer.length
-  const bytes = new DataView(new ArrayBuffer(44 + frames * channels * 2))
-  const text = (/** @type {number} */ at, /** @type {string} */ word) => [...word].forEach((c, i) => bytes.setUint8(at + i, c.charCodeAt(0)))
-  text(0, 'RIFF')
-  bytes.setUint32(4, 36 + frames * channels * 2, true)
-  text(8, 'WAVEfmt ')
-  bytes.setUint32(16, 16, true)
-  bytes.setUint16(20, 1, true)
-  bytes.setUint16(22, channels, true)
-  bytes.setUint32(24, buffer.sampleRate, true)
-  bytes.setUint32(28, buffer.sampleRate * channels * 2, true)
-  bytes.setUint16(32, channels * 2, true)
-  bytes.setUint16(34, 16, true)
-  text(36, 'data')
-  bytes.setUint32(40, frames * channels * 2, true)
-  const data = Array.from({ length: channels }, (_, c) => buffer.getChannelData(c))
-  for (let i = 0, at = 44; i < frames; i++) {
-    for (let c = 0; c < channels; c++, at += 2) bytes.setInt16(at, Math.max(-1, Math.min(1, data[c][i])) * 0x7fff, true)
-  }
-  return new Uint8Array(bytes.buffer)
-}
-
-/** Bytes in base64, a chunk at a time. @param {Uint8Array} bytes */
-function base64 (bytes) {
-  let out = ''
-  for (let i = 0; i < bytes.length; i += 0x8000) out += String.fromCharCode(...bytes.subarray(i, i + 0x8000))
-  return btoa(out)
 }

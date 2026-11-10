@@ -12,7 +12,7 @@ import { GROWTH } from '../site/excel/page.js'
 import { buildSite } from '../site/site.js'
 import { MONTHLY, NAMES, ON, reading } from '../site/watch/reels.js'
 import { reelTime, steps, taskTime } from '../site/watch/schedule.js'
-import { compose, encode, energy, random } from '../site/watch/score.js'
+import { compose, energy, random } from '../site/watch/score.js'
 
 const lines = (await readFile(new URL('./fixtures/demo.jsonl', import.meta.url), 'utf8')).trim().split('\n').map((line) => JSON.parse(line))
 const lineOf = (/** @type {any} */ record) => lines.indexOf(record) + 1
@@ -59,8 +59,8 @@ test('scenes are laid end to end, and a caption holds as long as it takes to rea
   const { scenes, length } = reelTime([{ n: 1 }, { n: 2 }, { n: 3 }], (scene) => scene.n * 1000)
   assert.deepEqual(scenes.map(({ start, end }) => [start, end]), [[0, 1000], [1000, 3000], [3000, 6000]])
   assert.equal(length, 6000)
-  assert.equal(reading('Short.'), 2600)
-  assert.equal(reading('x'.repeat(500)), 6800)
+  assert.equal(reading('Short.'), 2200)
+  assert.equal(reading('x'.repeat(500)), 5600)
   assert.ok(reading('あ'.repeat(30)) > reading('a'.repeat(30)))
 })
 
@@ -89,15 +89,6 @@ test('the score is the same for a seed and another for another, fuller as the re
   assert.deepEqual(notes.filter((note) => note.part === 'air').map((note) => note.at), [3750, 17_750, 33_750])
   // Its randomness is seeded, the same each time.
   assert.deepEqual([random(7)(), random(7)()], [random(7)(), random(7)()])
-})
-
-test('an export’s sound is a 16-bit PCM WAV, each channel interleaved', () => {
-  const samples = [new Float32Array([0, 1, -1]), new Float32Array([0.5, -0.5, 2])]
-  const wav = encode(/** @type {AudioBuffer} */ (/** @type {unknown} */ ({ numberOfChannels: 2, length: 3, sampleRate: 48_000, getChannelData: (/** @type {number} */ c) => samples[c] })))
-  const view = new DataView(wav.buffer)
-  assert.equal(new TextDecoder().decode(wav.subarray(0, 4)) + new TextDecoder().decode(wav.subarray(8, 12)), 'RIFFWAVE')
-  assert.deepEqual([view.getUint16(22, true), view.getUint32(24, true), view.getUint16(34, true), view.getUint32(40, true)], [2, 48_000, 16, 12])
-  assert.deepEqual([0, 1, 2, 3, 4, 5].map((i) => view.getInt16(44 + i * 2, true)), [0, 16383, 32767, -16383, -32767, 32767])
 })
 
 test('/watch writes the player: a document of its own, out of search results, running demo.html’s first line, its import map and its own code', async () => {
