@@ -23,7 +23,7 @@
 //   PUT    /v1/m/<id>/push      with the token: { endpoint }, a device's push subscription, nudged when a message comes (below)
 //   DELETE /v1/m/<id>/push      with the token: { endpoint }, taken off
 //   …      /v1/s/<sid>…         a person's store, where its configuration has `stores` (store.js)
-//   …      /v1/j/<id>…          what people work on together, where its configuration has `journals` (journal.js)
+//   …      /v1/j…               what people work on together, where its configuration has `journals` (journal.js)
 //   …      /v1/people…          the organisation's people, where its configuration has `issuers` (colleagues.js)
 //
 // Its configuration, a JSON object in RELAY_CONFIG:
@@ -224,7 +224,7 @@ export function relay(config) {
     }
     const [, id, seq] = PATH.exec(url.pathname) ?? []
     const shelf = kept && url.pathname.startsWith('/v1/s/')
-    const page = book && url.pathname.startsWith('/v1/j/')
+    const page = book && /^\/v1\/j(\/|$)/.test(url.pathname)
     const people = listed && listed.handles(url.pathname)
     if (!id && !shelf && !page && !people) return answer(404, { error: 'Nothing is here.' })
     // Only the Jeans it serves, which a browser always names.

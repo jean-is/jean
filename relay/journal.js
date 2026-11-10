@@ -15,13 +15,15 @@
 //                                       marks a seed, Journal-Parts the parts it names, by their SHA-256, comma-separated
 //   PUT    /v1/j/<id>/p/<sha256>        Write: a sealed part of at most `part` bytes, named by its SHA-256
 //   GET    /v1/j/<id>/p/<sha256>        Bearer <read>: a part's bytes
-//   GET    /v1/j/<id>?after=<seq>       Bearer <read>: NDJSON, { now, next } first, then each change after seq, { seq, at, body, seed?,
-//                                       parts? }, then each change and fleeting message as it comes, { fleeting, at }, and { now }
-//                                       every `beat` seconds; it ends after `stream` seconds, or with { deleted }, { moved } or
-//                                       { expired }. A seq at or past the next reads from the start
-//   GET    /v1/j/<id>?after=<seq>&wait=<seconds>
-//                                       the same as one long poll, for networks whose proxies hold a stream back: { changes, now,
-//                                       next, moved? }, waiting up to 25 seconds for one
+//   POST   /v1/j                        [{ read, after }], 64 at most: the journals read together, over one connection (D737).
+//                                       NDJSON, { now } first; for each journal, { id, next } and each change after `after`, { id, seq,
+//                                       at, body, seed?, parts? }, or { id, gone }, { id, expired } or { id, deleted } at once; then
+//                                       each change and fleeting message as it comes, { id, fleeting, at }, a journal's end, { id,
+//                                       deleted }, { id, moved } or { id, expired }, and { now } every `beat` seconds. A journal past
+//                                       its readers is left out, { id, busy }. It ends after `stream` seconds; an `after` at or past
+//                                       a journal's next reads it from the start
+//   POST   /v1/j?wait=<seconds>         the same as one long poll, for networks whose proxies hold a stream back: it ends once a change
+//                                       or an end is sent, at once when the journals hold one, or after up to 25 seconds
 //   POST   /v1/j/<id>/fleeting          Write: at most `fleeting` bytes, passed to the open streams, never kept: 202
 //   DELETE /v1/j/<id>                   Authorization: Owner <owner>: all it holds, a tombstone left
 //   POST   /v1/j/<id>/moved             Owner: posts refused from then on, its last change, the owner's `moved`, kept readable
@@ -62,8 +64,9 @@ const HOUR = 3_600_000
 const DAY = 86_400_000
 const PATH = /^\/v1\/j\/([\w-]{22})(?:\/(?:p\/([\w-]{43})|(fleeting|moved)))?$/
 const HASH = /^[\w-]{43}$/
-/** Parts a change names at most. */
+/** Parts a change names at most; journals one read names at most, as Jean reads them (app/caps/together/journal.js). */
 const PARTS = 1_024
+const FOLLOWS = 64
 
 /**
  * A journal as the backend keeps it: its write and owner tokens' hashes; open, expired, deleted or moved; the next change's number;
@@ -104,6 +107,16 @@ export function journals({ backend, limits, now, inTurn, record, free }) {
     if (at - one.day >= DAY) Object.assign(one, { day: at, sent: 0 })
     counts.set(network, one)
     return one
+  }
+  /** Who has a journal open now, looked up each time: a reader leaving can empty and drop the set. @param {string} id */
+  const readers = (id) => [...open.get(id) ?? []]
+  /** @param {string} id @param {Listener} listener */
+  const join = (id, listener) => open.set(id, (open.get(id) ?? new Set()).add(listener))
+  /** @param {string} id @param {Listener} listener */
+  const leave = (id, listener) => {
+    const set = open.get(id)
+    set?.delete(listener)
+    if (set && !set.size) open.delete(id)
   }
   /** A line for every open reader of a journal. @param {string} id @param {Record<string, unknown>} line */
   const tell = (id, line) => { for (const one of open.get(id) ?? []) one.push(line) }
@@ -147,9 +160,109 @@ export function journals({ backend, limits, now, inTurn, record, free }) {
     close(id, { [state]: true })
   }
 
+  /**
+   * Journals read together, over one connection (D737): each journal's lines named by its id, the clock's alone; a long poll with `wait`.
+   * @param {Request} request @param {URL} url @param {string} network @param {{ answer: (status: number, body?: object) => Response, cors: Headers }} context
+   */
+  async function read(request, url, network, { answer, cors }) {
+    if (request.method !== 'POST') return answer(405, { error: 'Not here.' })
+    /** @type {any} */
+    let asked = null
+    try { asked = JSON.parse(new TextDecoder().decode(await within(request, 100 * FOLLOWS) ?? new Uint8Array())) } catch {}
+    if (!Array.isArray(asked) || !asked.length || asked.length > FOLLOWS || !asked.every((one) => HASH.test(one?.read))) {
+      return answer(400, { error: 'A read names journals by their read tokens.' })
+    }
+    /** Each journal once, by the id its read token names, and the number it is read after. @type {Map<string, number>} */
+    const wanted = new Map()
+    for (const one of asked) wanted.set(await idOf(one.read), Math.max(0, Math.floor(Number(one.after) || 0)))
+    const polling = url.searchParams.has('wait')
+    const encoder = new TextEncoder()
+    /** This stream's reader of each journal it holds. @type {Map<string, Listener>} */
+    const held = new Map()
+    /** @type {ReturnType<typeof setInterval> | undefined} */
+    let beat
+    /** @type {ReturnType<typeof setTimeout> | undefined} */
+    let timer
+    let [closed, caught, news] = [false, false, false]
+    const stop = () => {
+      closed = true
+      clearInterval(beat)
+      clearTimeout(timer)
+      for (const [id, listener] of held) leave(id, listener)
+      held.clear()
+    }
+    const body = new ReadableStream({
+      async start(controller) {
+        const send = (/** @type {Record<string, unknown>} */ line) => { if (!closed) controller.enqueue(encoder.encode(`${JSON.stringify(line)}\n`)) }
+        const finish = () => { if (!closed) { stop(); controller.close() } }
+        /** A change or an end sent: a long poll's answer, once every journal is read up to now. */
+        const told = () => { news = true; if (polling && caught) finish() }
+        send({ now: now() })
+        try { await reading(send, told, finish) } catch (error) { stop(); return controller.error(error) }
+        caught = true
+        if (polling && news) return finish()
+        if (!polling) beat = setInterval(() => send({ now: now() }), limits.beat * 1_000)
+        timer = setTimeout(finish, (polling ? Math.min(limits.wait, Math.max(0, Number(url.searchParams.get('wait')) || 0)) : limits.stream) * 1_000)
+      },
+      cancel() { stop() },
+    })
+    /**
+     * Each journal joined, then read up to now; one past its readers left out.
+     * @param {(line: Record<string, unknown>) => void} send @param {() => void} told @param {() => void} finish
+     */
+    async function reading(send, told, finish) {
+      for (const [id, from] of wanted) {
+        if (closed) return
+        // One network's oldest goes first, as a reconnect leaves one behind; past the journal's own, this one is left out.
+        const theirs = readers(id).filter((one) => one.network === network)
+        if (theirs.length >= limits.streamsPerNetwork) theirs[0].end()
+        if (readers(id).length >= limits.streams) { send({ id, busy: true }); continue }
+        // What comes while what came before is read waits its turn, so that nothing is sent twice or out of order.
+        /** @type {Record<string, unknown>[]} */
+        const waiting = []
+        let last = 0
+        /** @type {Listener} */
+        const listener = { network, push: (line) => waiting.push(line),
+          // A journal's end leaves the others going; with no line, the reader is ended, as the oldest of its network.
+          end: (line) => {
+            if (held.get(id) !== listener) return
+            if (!line) return finish()
+            send({ id, ...line })
+            held.delete(id)
+            leave(id, listener)
+            told()
+          } }
+        held.set(id, listener)
+        join(id, listener)
+        const meta = await backend.journal(id)
+        if (closed) return
+        if (!meta || meta.state === 'expired' || meta.state === 'deleted') { listener.end({ [meta?.state ?? 'gone']: true }); continue }
+        const after = from >= meta.next ? 0 : from
+        send({ id, next: meta.next })
+        last = after
+        for (const entry of meta.changes.filter((one) => one.seq > after)) {
+          const line = await lineOf(id, entry)
+          if (line) { send({ id, ...line }); news = true }
+          last = entry.seq
+        }
+        listener.push = (line) => {
+          if (typeof line.seq === 'number') { if (line.seq <= last) return; last = line.seq }
+          send({ id, ...line })
+          if (typeof line.seq === 'number') told()
+        }
+        for (const line of waiting.splice(0)) listener.push(line)
+        if (meta.state === 'moved') listener.end({ moved: true })
+      }
+    }
+    cors.set('content-type', 'application/x-ndjson')
+    cors.set('x-accel-buffering', 'no')
+    return new Response(body, { headers: cors })
+  }
+
   /** @param {Request} request @param {import('../host/host.js').Client} client @param {{ network: string, answer: (status: number, body?: object) => Response, cors: Headers }} context */
   async function handle(request, client, { network, answer, cors }) {
     const url = new URL(request.url)
+    if (url.pathname === '/v1/j') return read(request, url, network, { answer, cors })
     const [, id, part, action] = PATH.exec(url.pathname) ?? []
     if (!id) return answer(404, { error: 'Nothing is here.' })
     const at = now()
@@ -310,98 +423,14 @@ export function journals({ backend, limits, now, inTurn, record, free }) {
       })
     }
 
-    if (!reading) return answer(405, { error: 'Not here.' })
+    if (!reading || !part) return answer(405, { error: 'Not here.' })
     const meta = await backend.journal(id)
     if (!meta || meta.state === 'expired') return answer(404, { error: meta ? 'This journal expired.' : 'No journal is here.', ...(meta && { expired: true }) })
     if (meta.state === 'deleted') return answer(410, { error: 'This journal was stopped.', deleted: true })
-
-    if (part) {
-      const bytes = meta.parts[part] ? await backend.journalPart(id, part) : null
-      if (!bytes) return answer(404, { error: 'This part is gone.' })
-      cors.set('content-type', 'application/octet-stream')
-      return new Response(/** @type {BodyInit} */ (bytes), { headers: cors })
-    }
-
-    let after = Math.max(0, Math.floor(Number(url.searchParams.get('after')) || 0))
-    if (after >= meta.next) after = 0
-    /** Who has it open now, looked up each time: a reader leaving can empty and drop the set. */
-    const readers = () => [...open.get(id) ?? []]
-    /** @param {Listener} listener */
-    const join = (listener) => open.set(id, (open.get(id) ?? new Set()).add(listener))
-    /** @param {Listener} listener */
-    const leave = (listener) => {
-      const set = open.get(id)
-      set?.delete(listener)
-      if (set && !set.size) open.delete(id)
-    }
-
-    // One long poll: what came after, or the first change to come within its wait.
-    if (url.searchParams.has('wait')) {
-      const wait = Math.min(limits.wait, Math.max(0, Number(url.searchParams.get('wait')) || 0))
-      const lines = async (/** @type {Meta} */ held) => (await Promise.all(held.changes.filter((entry) => entry.seq > after).map((entry) => lineOf(id, entry)))).filter(Boolean)
-      let [held, changes] = [meta, await lines(meta)]
-      if (!changes.length && wait > 0 && meta.state === 'open') {
-        await new Promise((resolve) => {
-          /** @type {Listener} */
-          const listener = { network, push: (line) => { if (line.seq) done() }, end: () => done() }
-          const done = () => { clearTimeout(timer); leave(listener); resolve(undefined) }
-          const timer = setTimeout(done, wait * 1_000)
-          join(listener)
-        })
-        held = await backend.journal(id) ?? meta
-        changes = await lines(held)
-      }
-      return answer(200, { changes, now: now(), next: held.next, ...(held.state === 'moved' && { moved: true }) })
-    }
-
-    // A stream: one network's oldest goes first, as a reconnect leaves one behind; past the journal's own, refused.
-    const theirs = readers().filter((one) => one.network === network)
-    if (theirs.length >= limits.streamsPerNetwork) theirs[0].end()
-    if (readers().length >= limits.streams) return answer(429, { error: 'Too many readers. Try again later.' })
-    const encoder = new TextEncoder()
-    /** @type {ReturnType<typeof setInterval> | undefined} */
-    let beat
-    /** @type {ReturnType<typeof setTimeout> | undefined} */
-    let timer
-    let closed = false
-    /** @type {Listener} */
-    const listener = { network, push: () => {}, end: () => {} }
-    const stop = () => { closed = true; clearInterval(beat); clearTimeout(timer); leave(listener) }
-    join(listener)
-    const body = new ReadableStream({
-      async start(controller) {
-        const send = (/** @type {Record<string, unknown>} */ line) => { if (!closed) controller.enqueue(encoder.encode(`${JSON.stringify(line)}\n`)) }
-        listener.end = (line) => {
-          if (closed) return
-          if (line) send(line)
-          stop()
-          controller.close()
-        }
-        // What comes while what came before is read waits its turn, so that nothing is sent twice or out of order.
-        /** @type {Record<string, unknown>[]} */
-        const waiting = []
-        let last = after
-        listener.push = (line) => waiting.push(line)
-        send({ now: now(), next: meta.next })
-        for (const entry of meta.changes.filter((one) => one.seq > after)) {
-          const line = await lineOf(id, entry)
-          if (line) send(line)
-          last = entry.seq
-        }
-        listener.push = (line) => {
-          if (typeof line.seq === 'number') { if (line.seq <= last) return; last = line.seq }
-          send(line)
-        }
-        for (const line of waiting.splice(0)) listener.push(line)
-        if (meta.state === 'moved') return listener.end({ moved: true })
-        beat = setInterval(() => send({ now: now() }), limits.beat * 1_000)
-        timer = setTimeout(() => listener.end(), limits.stream * 1_000)
-      },
-      cancel() { stop() },
-    })
-    cors.set('content-type', 'application/x-ndjson')
-    cors.set('x-accel-buffering', 'no')
-    return new Response(body, { headers: cors })
+    const bytes = meta.parts[part] ? await backend.journalPart(id, part) : null
+    if (!bytes) return answer(404, { error: 'This part is gone.' })
+    cors.set('content-type', 'application/octet-stream')
+    return new Response(/** @type {BodyInit} */ (bytes), { headers: cors })
   }
 
   /**

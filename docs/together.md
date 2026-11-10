@@ -2,7 +2,7 @@
 
 Jean on all of a person's devices, and with other people, without a server that reads: what holds it together, the choices behind it, and the work left, written so that another agent can pick it up.
 - **How it works:** [architecture.md](architecture.md): [the relay](architecture.md#the-relay), [your devices](architecture.md#your-devices), [People](architecture.md#people), [Together](architecture.md#together).
-- **Why:** [decisions.md](decisions.md): D45 · D226 · D477 (the relay), D700 (pairing carries keys), D227 · D721 (the store), D727 (People), D731 · D732 (colleagues), D733 · D734 (Together), D736 (nudges).
+- **Why:** [decisions.md](decisions.md): D45 · D226 · D477 (the relay), D700 (pairing carries keys), D227 · D721 (the store), D727 (People), D731 · D732 (colleagues), D733 · D734 · D737 (Together), D736 (nudges).
 - **For the person:** the help articles [Work on something together](../site/help/together/), [On all your devices](../site/help/your-devices/) and [Send a task to someone](../site/help/send-to-someone/).
 
 ## Principles
@@ -50,6 +50,7 @@ The [DPIA](trust/dpia.md) has each row with who receives what, and the [threat m
 - **jean.is:** relay.jean.is, deployed with the rest by CI ([deploy/server/](../deploy/server/README.md)); what its configuration holds is the owner's, on the server.
 - **An organisation:** the relay's image or the Helm chart ([architecture.md](architecture.md#deploying)), named in its policy's `urls.relay`.
 - **Development:** `npm run dev` serves a relay on 8791 with stores and journals; the browser tests run one on 4187 with nudges to the fake mail's push service.
+- **Connections:** a tab follows every journal of its circles over one connection to the relay (D737), beside Your devices' and People's long polls. A relay without TLS speaks HTTP/1.1, over which a browser opens six connections to it: development's, the browser tests', one an organisation runs without TLS. relay.jean.is speaks HTTP/2, many requests over one connection.
 
 ## The work left
 

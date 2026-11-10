@@ -63,9 +63,15 @@ function relayOn(journals = {}) {
   const open = async (t) => ask(`/v1/j/${t.id}`, { method: 'PUT', body: JSON.stringify({ owner: await sha(t.owner) }), headers: { authorization: `Bearer ${t.read}`, 'journal-write': t.write } })
   /** @param {Awaited<ReturnType<typeof tokens>>} t @param {string | Uint8Array} body @param {Record<string, string> & { client?: typeof CLIENT }} [headers] */
   const post = (t, body, { client, ...headers } = {}) => ask(`/v1/j/${t.id}`, { method: 'POST', body: /** @type {BodyInit} */ (body), client, headers: { authorization: `Write ${t.write}`, ...headers } })
-  /** @param {Awaited<ReturnType<typeof tokens>>} t @param {string} [query] */
-  const poll = async (t, query = '?after=0&wait=0') => { const response = await ask(`/v1/j/${t.id}${query}`, { headers: { authorization: `Bearer ${t.read}` } }); return { status: response.status, body: await response.json() } }
-  return { store, clock, handle, ask, open, post, poll }
+  /** Journals read together (D737), each after `after`: a stream, or a long poll with `wait`. @param {Awaited<ReturnType<typeof tokens>>[]} ts @param {{ after?: number, wait?: number, client?: typeof CLIENT, origin?: string }} [options] */
+  const read = (ts, { after = 0, wait, ...init } = {}) => ask(`/v1/j${wait === undefined ? '' : `?wait=${wait}`}`, { method: 'POST', body: JSON.stringify(ts.map((t) => ({ read: t.read, after }))), ...init })
+  /** One journal read once: its changes after a point, its next number, and how it ended, if it did. @param {Awaited<ReturnType<typeof tokens>>} t @param {number} [after] @param {number} [wait] */
+  const poll = async (t, after = 0, wait = 0) => {
+    const got = (await lines(await read([t], { after, wait }))).filter((one) => one.id === t.id)
+    const { id: _, ...ended } = got.find((one) => one.expired || one.deleted || one.moved || one.gone) ?? {}
+    return { changes: got.filter((one) => one.seq), next: got.find((one) => one.next)?.next, ended: _ && ended }
+  }
+  return { store, clock, handle, ask, open, post, read, poll }
 }
 
 /** The lines a stream sends until `until` says enough, or it ends. @param {Response} response @param {(lines: any[]) => boolean} [until] */
@@ -90,6 +96,7 @@ test('without `journals` in its configuration the relay keeps none, and says so 
   const handle = relay({ origins: [JEAN], store: /** @type {any} */ (memory()) })
   const t = await tokens()
   assert.equal((await handle(new Request(`https://relay.example/v1/j/${t.id}`, { method: 'PUT', headers: { origin: JEAN, authorization: `Bearer ${t.read}`, 'journal-write': t.write } }))).status, 404)
+  assert.equal((await handle(new Request('https://relay.example/v1/j', { method: 'POST', body: '[]', headers: { origin: JEAN } }))).status, 404)
   assert.equal((await (await handle(new Request('https://relay.example/'))).json()).journals, undefined)
   const { ask } = relayOn()
   assert.deepEqual((await (await ask('/')).json()).journals, { change: JOURNAL.change, part: JOURNAL.part, days: JOURNAL.days })
@@ -107,10 +114,8 @@ test('three tokens: the read token names it and reads, the write token creates a
   const sent = await post(t, 'sealed')
   assert.equal(sent.status, 201)
   assert.deepEqual(Object.keys(await sent.json()).sort(), ['at', 'seq'])
-  assert.equal((await poll(other)).status, 404)
-  const read = await poll(t)
-  assert.equal(read.status, 200)
-  assert.deepEqual(read.body.changes.map((/** @type {any} */ one) => [one.seq, text(one.body)]), [[1, 'sealed']])
+  assert.deepEqual((await poll(other)).ended, { gone: true }, 'another journal, never made, reads as none')
+  assert.deepEqual((await poll(t)).changes.map((/** @type {any} */ one) => [one.seq, text(one.body)]), [[1, 'sealed']])
   assert.equal((await ask(`/v1/j/${t.id}`, { method: 'DELETE', headers: { authorization: `Owner ${t.write}` } })).status, 403, 'the write token deletes nothing')
   const kept = JSON.stringify([...store.journals.values()])
   for (const one of [t.read, t.write, t.owner]) assert.ok(!kept.includes(one), 'tokens are kept as hashes, never as they are')
@@ -130,57 +135,105 @@ test('changes are numbered in order; a read gives what came after a point, and o
   const t = await tokens()
   await open(t)
   for (const word of ['one', 'two', 'three']) assert.equal((await post(t, word)).status, 201)
-  assert.deepEqual((await poll(t, '?after=1&wait=0')).body.changes.map((/** @type {any} */ one) => text(one.body)), ['two', 'three'])
-  const later = await poll(t, '?after=99&wait=0')
-  assert.deepEqual(later.body.changes.map((/** @type {any} */ one) => one.seq), [1, 2, 3])
-  assert.equal(later.body.next, 4)
+  assert.deepEqual((await poll(t, 1)).changes.map((/** @type {any} */ one) => text(one.body)), ['two', 'three'])
+  const later = await poll(t, 99)
+  assert.deepEqual(later.changes.map((/** @type {any} */ one) => one.seq), [1, 2, 3])
+  assert.equal(later.next, 4)
   // Unlike a mailbox, reading takes nothing away: every member reads all of it.
-  assert.equal((await poll(t)).body.changes.length, 3)
+  assert.equal((await poll(t)).changes.length, 3)
 })
 
-test('the stream sends what came after a point, then each change and fleeting message as it comes, the relay’s clock now and then, and ends', async () => {
-  const { open, post, ask } = relayOn({ stream: 1, beat: 0.2 })
-  const t = await tokens()
+test('one stream reads several journals: what came after each one’s point, then each change and fleeting message as it comes, named by its journal, the clock now and then', async () => {
+  const { open, post, ask, read } = relayOn({ stream: 1, beat: 0.2 })
+  const [t, u] = [await tokens(), await tokens()]
   await open(t)
+  await open(u)
   await post(t, 'before', { 'journal-seed': '1' })
-  const response = await ask(`/v1/j/${t.id}?after=0`, { headers: { authorization: `Bearer ${t.read}` } })
+  await post(u, 'u one')
+  await post(u, 'u two')
+  const response = await read([t, u])
   assert.equal(response.status, 200)
   assert.equal(response.headers.get('content-type'), 'application/x-ndjson')
-  const read = lines(response)
+  const all = lines(response)
   await new Promise((resolve) => setTimeout(resolve, 50))
   await post(t, 'during')
-  await ask(`/v1/j/${t.id}/fleeting`, { method: 'POST', body: 'here', headers: { authorization: `Write ${t.write}` } })
-  const all = await read
-  assert.ok(all[0].now && all[0].next === 2, 'first, the relay’s clock and the next number')
-  assert.deepEqual(all.filter((one) => one.seq).map((one) => [one.seq, text(one.body), Boolean(one.seed)]), [[1, 'before', true], [2, 'during', false]])
-  assert.deepEqual(all.filter((one) => one.fleeting).map((one) => text(one.fleeting)), ['here'])
-  assert.ok(all.filter((one) => one.now).length >= 3, 'its clock every beat, so that a proxy holding the stream back is noticed')
+  await post(u, 'u three')
+  await ask(`/v1/j/${u.id}/fleeting`, { method: 'POST', body: 'here', headers: { authorization: `Write ${u.write}` } })
+  const got = await all
+  assert.ok(got[0].now && !got[0].id, 'first, the relay’s clock')
+  assert.deepEqual(got.filter((one) => one.next).map((one) => [one.id, one.next]), [[t.id, 2], [u.id, 3]], 'each journal’s next number, before its changes')
+  assert.deepEqual(got.filter((one) => one.seq).map((one) => [one.id, one.seq, text(one.body), Boolean(one.seed)]),
+    [[t.id, 1, 'before', true], [u.id, 1, 'u one', false], [u.id, 2, 'u two', false], [t.id, 2, 'during', false], [u.id, 3, 'u three', false]])
+  assert.deepEqual(got.filter((one) => one.fleeting).map((one) => [one.id, text(one.fleeting)]), [[u.id, 'here']])
+  assert.ok(got.filter((one) => one.now && !one.id).length >= 3, 'its clock every beat, so that a proxy holding the stream back is noticed')
+  // Each read from its own point: the second journal after its first change.
+  const after = await lines(await ask('/v1/j?wait=0', { method: 'POST', body: JSON.stringify([{ read: t.read, after: 2 }, { read: u.read, after: 2 }]) }))
+  assert.deepEqual(after.filter((one) => one.seq).map((one) => [one.id, one.seq]), [[u.id, 3]])
+})
+
+test('a journal not there, expired or deleted says so at once in the stream, and one that ends leaves the others going', async () => {
+  const { open, post, ask, read, handle, clock } = relayOn({ stream: 5 })
+  const [kept, missing, expired, deleted, ending] = [await tokens(), await tokens(), await tokens(), await tokens(), await tokens()]
+  for (const one of [kept, expired, deleted, ending]) await open(one)
+  clock.at += 8 * DAY
+  await handle.tidyJournal?.(expired.id, clock.at)
+  await post(kept, 'kept open')
+  await ask(`/v1/j/${deleted.id}`, { method: 'DELETE', headers: { authorization: `Owner ${deleted.owner}` } })
+  await post(ending, 'one')
+  const all = lines(await read([kept, missing, expired, deleted, ending]), (got) => got.some((one) => one.seq && one.id === kept.id && text(one.body) === 'after'))
+  await new Promise((resolve) => setTimeout(resolve, 50))
+  await ask(`/v1/j/${ending.id}`, { method: 'DELETE', headers: { authorization: `Owner ${ending.owner}` } })
+  await post(kept, 'after')
+  const got = await all
+  assert.deepEqual(got.filter((one) => one.gone || one.expired || one.deleted).map((one) => [one.id, Object.keys(one).filter((key) => key !== 'id')[0]]),
+    [[missing.id, 'gone'], [expired.id, 'expired'], [deleted.id, 'deleted'], [ending.id, 'deleted']])
+  assert.deepEqual(got.filter((one) => one.seq).map((one) => [one.id, text(one.body)]), [[kept.id, 'kept open'], [ending.id, 'one'], [kept.id, 'after']])
 })
 
 test('a fleeting message reaches every open stream and is never kept; it takes the write token', async () => {
-  const { open, ask, poll } = relayOn({ stream: 1 })
+  const { open, ask, read, poll } = relayOn({ stream: 1 })
   const t = await tokens()
   await open(t)
   const headers = { authorization: `Bearer ${t.read}` }
-  const reads = [lines(await ask(`/v1/j/${t.id}?after=0`, { headers }), (got) => got.some((one) => one.fleeting)),
-    lines(await ask(`/v1/j/${t.id}?after=0`, { headers, client: { ...CLIENT, address: '198.51.100.9' } }), (got) => got.some((one) => one.fleeting))]
+  const reads = [lines(await read([t]), (got) => got.some((one) => one.fleeting)),
+    lines(await read([t], { client: { ...CLIENT, address: '198.51.100.9' } }), (got) => got.some((one) => one.fleeting))]
   await new Promise((resolve) => setTimeout(resolve, 50))
   assert.equal((await ask(`/v1/j/${t.id}/fleeting`, { method: 'POST', body: 'hi', headers })).status, 401, 'a link to view says nothing')
   assert.equal((await ask(`/v1/j/${t.id}/fleeting`, { method: 'POST', body: 'hi', headers: { authorization: `Write ${t.write}` } })).status, 202)
   for (const got of await Promise.all(reads)) assert.deepEqual(got.filter((one) => one.fleeting).map((one) => text(one.fleeting)), ['hi'])
-  assert.deepEqual((await poll(t)).body.changes, [])
+  assert.deepEqual((await poll(t)).changes, [])
 })
 
-test('a long poll waits for a change, for networks whose proxies hold a stream back', async () => {
-  const { open, post, poll, clock } = relayOn()
+test('a long poll, for networks whose proxies hold a stream back: what came at once, or the first change to come in any of its journals within its wait', async () => {
+  const { open, post, read } = relayOn()
+  const [t, u] = [await tokens(), await tokens()]
+  await open(t)
+  await open(u)
+  const started = Date.now()
+  const waiting = lines(await read([t, u], { wait: 5 }))
+  await new Promise((resolve) => setTimeout(resolve, 50))
+  await post(u, 'came')
+  const got = await waiting
+  assert.ok(Date.now() - started < 1_000, 'answered as the change came')
+  assert.deepEqual(got.filter((one) => one.seq).map((one) => [one.id, text(one.body)]), [[u.id, 'came']])
+  await post(t, 'waiting already')
+  const now = await lines(await read([t, u], { after: 0, wait: 5 }))
+  assert.deepEqual(now.filter((one) => one.seq).map((one) => text(one.body)), ['waiting already', 'came'], 'what came after each point, at once')
+})
+
+test('a read is a POST of at most 64 read tokens, each journal once; a journal itself is never read with GET', async () => {
+  const { open, ask, read } = relayOn()
   const t = await tokens()
   await open(t)
-  const waiting = poll(t, '?after=0&wait=5')
-  await new Promise((resolve) => setTimeout(resolve, 50))
-  await post(t, 'came')
-  const got = await waiting
-  assert.deepEqual(got.body.changes.map((/** @type {any} */ one) => text(one.body)), ['came'])
-  assert.equal(got.body.now, clock.at)
+  for (const body of ['', 'not json', '[]', '{}', JSON.stringify([{ read: 'short' }]), JSON.stringify([{ after: 0 }])]) {
+    assert.equal((await ask('/v1/j', { method: 'POST', body })).status, 400, body)
+  }
+  assert.equal((await read(await Promise.all(Array.from({ length: 65 }, tokens)), { wait: 0 })).status, 400, 'past 64')
+  assert.equal((await read(await Promise.all(Array.from({ length: 64 }, tokens)), { wait: 0 })).status, 200)
+  const twice = await lines(await read([t, t], { wait: 0 }))
+  assert.equal(twice.filter((one) => one.next).length, 1, 'a journal named twice is read once')
+  assert.equal((await ask(`/v1/j/${t.id}?after=0`, { headers: { authorization: `Bearer ${t.read}` } })).status, 405)
+  assert.equal((await ask('/v1/j', { headers: { authorization: `Bearer ${t.read}` } })).status, 405)
 })
 
 test('parts: named by the SHA-256 of their sealed bytes, read with the read token; a change names only parts that are there', async () => {
@@ -206,12 +259,10 @@ test('it expires 7 days after its last change: a tombstone keeps its tokens’ h
   await post(t, 'two')
   clock.at += 6 * DAY
   await handle.tidyJournal?.(t.id, clock.at)
-  assert.equal((await poll(t)).body.changes.length, 2, 'within its days, all stays')
+  assert.equal((await poll(t)).changes.length, 2, 'within its days, all stays')
   clock.at += 2 * DAY
   await handle.tidyJournal?.(t.id, clock.at)
-  const expired = await poll(t)
-  assert.equal(expired.status, 404)
-  assert.equal(expired.body.expired, true, 'a member knows to start it again, from their copy')
+  assert.deepEqual((await poll(t)).ended, { expired: true }, 'a member knows to start it again, from their copy')
   assert.equal(store.changes.size, 0)
   assert.equal((await post(t, 'late')).status, 404)
   assert.equal((await ask(`/v1/j/${t.id}`, { method: 'PUT', body: '{}', headers: { authorization: `Bearer ${t.read}`, 'journal-write': token() } })).status, 403, 'a removed member’s junk never takes it')
@@ -224,15 +275,15 @@ test('it expires 7 days after its last change: a tombstone keeps its tokens’ h
 })
 
 test('deleted by its owner: nothing more, its streams told; moved: posts refused, the last change, the owner’s `moved`, readable 90 days', async () => {
-  const { open, post, poll, ask, handle, clock, store } = relayOn({ stream: 5 })
+  const { open, post, poll, ask, read, handle, clock, store } = relayOn({ stream: 5 })
   const deleted = await tokens()
   await open(deleted)
   await post(deleted, 'one')
-  const stream = lines(await ask(`/v1/j/${deleted.id}?after=0`, { headers: { authorization: `Bearer ${deleted.read}` } }))
+  const stream = lines(await read([deleted]), (got) => got.some((one) => one.deleted))
   await new Promise((resolve) => setTimeout(resolve, 50))
   assert.equal((await ask(`/v1/j/${deleted.id}`, { method: 'DELETE', headers: { authorization: `Owner ${deleted.owner}` } })).status, 200)
-  assert.ok((await stream).some((one) => one.deleted), 'an open stream is told, and ends')
-  assert.equal((await poll(deleted)).status, 410)
+  assert.ok((await stream).some((one) => one.deleted && one.id === deleted.id), 'an open stream is told')
+  assert.deepEqual((await poll(deleted)).ended, { deleted: true })
   assert.equal((await open(deleted)).status, 410, 'stopped: nobody starts it again')
   assert.equal((await post(deleted, 'two')).status, 410)
 
@@ -243,14 +294,13 @@ test('deleted by its owner: nothing more, its streams told; moved: posts refused
   assert.equal((await ask(`/v1/j/${moved.id}/moved`, { method: 'POST', headers: { authorization: `Write ${moved.write}` } })).status, 403, 'the owner alone')
   assert.equal((await ask(`/v1/j/${moved.id}/moved`, { method: 'POST', headers: { authorization: `Owner ${moved.owner}` } })).status, 200)
   assert.equal((await post(moved, 'after')).status, 410)
-  const read = await poll(moved)
-  assert.equal(read.status, 200)
-  assert.equal(read.body.moved, true)
-  assert.deepEqual(read.body.changes.map((/** @type {any} */ one) => text(one.body)), ['moved, sealed to each member left'], 'a member back after weeks finds where everyone went')
+  const last = await poll(moved)
+  assert.deepEqual(last.ended, { moved: true })
+  assert.deepEqual(last.changes.map((/** @type {any} */ one) => text(one.body)), ['moved, sealed to each member left'], 'a member back after weeks finds where everyone went')
   assert.equal(store.changes.size, 1)
   clock.at += 91 * DAY
   await handle.tidyJournal?.(moved.id, clock.at)
-  assert.equal((await poll(moved)).status, 404)
+  assert.deepEqual((await poll(moved)).ended, { gone: true })
 })
 
 test('trimming: past its days or its bytes, what came before the newest seed ten minutes old goes, with the parts only those changes named', async () => {
@@ -266,11 +316,11 @@ test('trimming: past its days or its bytes, what came before the newest seed ten
   await post(t, 'after the seed')
   clock.at += 2 * DAY
   await handle.tidyJournal?.(t.id, clock.at)
-  assert.equal((await poll(t)).body.changes.length, 3, 'within 7 days nothing goes: a locked phone catches up from the changes')
+  assert.equal((await poll(t)).changes.length, 3, 'within 7 days nothing goes: a locked phone catches up from the changes')
   clock.at += 6 * DAY - 60_000
   await post(t, 'keeps it open')
   await handle.tidyJournal?.(t.id, clock.at)
-  assert.deepEqual((await poll(t)).body.changes.map((/** @type {any} */ one) => text(one.body)), ['seed', 'after the seed', 'keeps it open'])
+  assert.deepEqual((await poll(t)).changes.map((/** @type {any} */ one) => text(one.body)), ['seed', 'after the seed', 'keeps it open'])
   assert.equal(store.parts.size, 0, 'the part only the trimmed change named goes with it')
   // Past its bytes: before the newest seed ten minutes old, all goes at once; with nothing before one to let go, the journal is full.
   const big = 'x'.repeat(9_000)
@@ -280,11 +330,11 @@ test('trimming: past its days or its bytes, what came before the newest seed ten
   await post(t, 'seed two', { 'journal-seed': '1' })
   clock.at += 11 * 60_000
   assert.equal((await post(t, big)).status, 201)
-  assert.deepEqual((await poll(t)).body.changes.map((/** @type {any} */ one) => text(one.body).slice(0, 8)), ['seed two', big.slice(0, 8)])
+  assert.deepEqual((await poll(t)).changes.map((/** @type {any} */ one) => text(one.body).slice(0, 8)), ['seed two', big.slice(0, 8)])
 })
 
 test('the limits: a change’s size, changes a minute, fleeting messages a second, streams, journals a network opens, bytes a day, the disk', async () => {
-  const { open, post, ask, store } = relayOn({ change: 100, perMinute: 3, fleetingPerSecond: 3, fleetingPerNetwork: 2, streams: 2, streamsPerNetwork: 1, opens: 2, sent: 1_000 })
+  const { open, post, ask, read, store } = relayOn({ change: 100, perMinute: 3, fleetingPerSecond: 3, fleetingPerNetwork: 2, streams: 2, streamsPerNetwork: 1, opens: 2, sent: 1_000 })
   const t = await tokens()
   await open(t)
   assert.equal((await post(t, 'x'.repeat(101))).status, 413)
@@ -293,15 +343,14 @@ test('the limits: a change’s size, changes a minute, fleeting messages a secon
   const fleeting = (/** @type {string} */ address) => ask(`/v1/j/${t.id}/fleeting`, { method: 'POST', body: 'f', client: { ...CLIENT, address }, headers: { authorization: `Write ${t.write}` } })
   assert.deepEqual([(await fleeting('192.0.2.1')).status, (await fleeting('192.0.2.1')).status, (await fleeting('192.0.2.1')).status], [202, 202, 429], 'a network’s share')
   assert.deepEqual([(await fleeting('192.0.2.2')).status, (await fleeting('192.0.2.3')).status], [202, 429], 'the journal’s')
-  const headers = { authorization: `Bearer ${t.read}` }
-  const first = await ask(`/v1/j/${t.id}?after=0`, { headers })
-  const second = await ask(`/v1/j/${t.id}?after=0`, { headers })
+  const first = await read([t])
+  const second = await read([t])
   assert.equal(second.status, 200, 'the same network again: its older stream ends, as a reconnect leaves one behind')
   const ended = await lines(first)
   assert.ok(ended.length >= 1)
-  const third = await ask(`/v1/j/${t.id}?after=0`, { headers, client: { ...CLIENT, address: '198.51.100.1' } })
-  assert.equal(third.status, 200)
-  assert.equal((await ask(`/v1/j/${t.id}?after=0`, { headers, client: { ...CLIENT, address: '198.51.100.2' } })).status, 429, 'the journal’s streams')
+  const third = await read([t], { client: { ...CLIENT, address: '198.51.100.1' } })
+  const fourth = await lines(await read([t], { client: { ...CLIENT, address: '198.51.100.2' } }), (got) => got.some((one) => one.busy))
+  assert.deepEqual(fourth.filter((one) => one.id), [{ id: t.id, busy: true }], 'the journal’s streams: left out of this one, read when it is opened again')
   for (const response of [second, third]) await response.body?.cancel()
   assert.equal((await open(await tokens())).status, 201)
   assert.equal((await open(await tokens())).status, 429, 'journals a network opens in an hour')
@@ -318,7 +367,7 @@ test('the limits: a change’s size, changes a minute, fleeting messages a secon
 test('only the Jeans it serves; the preflight allows its headers; each write recorded with its address once an hour, no read ever', async () => {
   const { open, post, poll, ask, store } = relayOn()
   const t = await tokens()
-  assert.equal((await ask(`/v1/j/${t.id}?after=0&wait=0`, { origin: 'https://elsewhere.example', headers: { authorization: `Bearer ${t.read}` } })).status, 403)
+  assert.equal((await ask('/v1/j?wait=0', { method: 'POST', origin: 'https://elsewhere.example', body: JSON.stringify([{ read: t.read, after: 0 }]) })).status, 403)
   const preflight = await ask(`/v1/j/${t.id}`, { method: 'OPTIONS' })
   for (const header of ['journal-write', 'journal-seed', 'journal-parts']) assert.ok(preflight.headers.get('access-control-allow-headers')?.includes(header))
   await open(t)
@@ -342,8 +391,8 @@ test('the folder keeps journals, their changes and parts, and the daily sweep ex
     await ask(`/v1/j/${t.id}/p/${await sha(bytes)}`, { method: 'PUT', body: bytes, headers: { authorization: `Write ${t.write}` } })
     assert.equal((await ask(`/v1/j/${t.id}`, { method: 'POST', body: 'kept', headers: { authorization: `Write ${t.write}`, 'journal-parts': await sha(bytes) } })).status, 201)
     const again = relay({ origins: [JEAN], store: folder(dir, null), journals: {}, now: () => clock.at })
-    const read = await (await again(new Request(`https://relay.example/v1/j/${t.id}?after=0&wait=0`, { headers: { origin: JEAN, authorization: `Bearer ${t.read}` } }), CLIENT)).json()
-    assert.deepEqual(read.changes.map((/** @type {any} */ one) => text(one.body)), ['kept'], 'what it kept outlives the process')
+    const read = await lines(await again(new Request('https://relay.example/v1/j?wait=0', { method: 'POST', body: JSON.stringify([{ read: t.read, after: 0 }]), headers: { origin: JEAN } }), CLIENT))
+    assert.deepEqual(read.filter((one) => one.seq).map((one) => text(one.body)), ['kept'], 'what it kept outlives the process')
     await store.sweep(handle, at + 8 * DAY)
     assert.equal((await store.journal(t.id))?.state, 'expired')
     assert.equal(await store.change(t.id, 1), null)
