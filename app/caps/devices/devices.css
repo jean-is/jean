@@ -9,7 +9,7 @@
 .devices-trouble { position: relative; } .devices-trouble::after { content: ''; position: absolute; inset-block-start: 0.3rem; inset-inline-end: 0.3rem; inline-size: 0.45rem; block-size: 0.45rem; border-radius: 50%; background: var(--danger); }
 /* What it opens, as wide as the row it stands over, as the person's menu: a title and how things stand, lined up with the rows under them, which
    wrap; a device two weeks unheard as a state that waits. Alone, centred, two discs, this device's in the flame, the one to add dashed, a dashed line between. */
-.devices-pops { display: contents; } #devices-drawer { position-anchor: --profile-drawer; } #devices-list { position-anchor: --profile-list; }
+#devices-drawer { position-anchor: --profile-drawer; } #devices-list { position-anchor: --profile-list; }
 .devices-menu { box-sizing: border-box; inline-size: 17rem; inline-size: max(15rem, anchor-size(inline)); max-inline-size: calc(100vw - 1rem); max-block-size: min(70dvh, 34rem); overflow-y: auto; } .devices-menu li > button { white-space: normal; }
 @supports not (anchor-name: --add) { .devices-menu { inset: auto auto 4.5rem; inset-inline-start: 0.75rem; margin: 0; } }
 .devices-head, .devices-pitch { display: flex; flex-direction: column; gap: 0.1rem; padding: 0.5rem 0.75rem 0.3rem; line-height: 1.35; } .devices-pitch { align-items: center; padding-block-start: 0.65rem; text-align: center; }

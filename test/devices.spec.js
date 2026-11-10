@@ -238,6 +238,15 @@ test('a device added: six digits typed on the one that has the Jean, and the oth
   await expect(there.locator('.devices-cards > li')).toHaveCount(2)
   await expect(there.locator('.devices-cards > li').first()).toContainText('This device, added')
   await expect(there.locator('.devices-cards > li').last().locator('small')).toHaveText(/^(Seen|Added) /)
+  // On a narrow window, the drawer over the conversation is modal, which leaves nothing outside it to reach: the popover is in it, the pointer reaching its rows.
+  await closeSettings(b)
+  await b.setViewportSize({ width: 700, height: 800 })
+  const drawer = await openTasks(b)
+  await drawer.locator('.profile').getByRole('button', { name: 'Your devices' }).click()
+  const narrow = b.getByRole('dialog', { name: 'Your devices' })
+  await expect(narrow.getByRole('button', { name: 'Add a device' })).toBeFocused()
+  await narrow.getByRole('button', { name: 'See your devices' }).click()
+  await expect(there.locator('.data-head h2')).toHaveText('Your devices')
   await b.context().close()
 })
 
