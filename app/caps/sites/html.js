@@ -9,7 +9,7 @@ const TOKEN = /<!--[\s\S]*?-->|<!doctype[^>]*>|<(script|style)\b([^>]*)>([\s\S]*
 const ATTRIBUTE = /([^\s"'>/=]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+)))?/g
 
 /** Text as HTML writes it, read back. @param {string} text */
-const unescape = (text) => text.replace(/&(#x[\da-f]+|#\d+|amp|lt|gt|quot|apos|nbsp);/gi, (whole, name) => {
+export const unescape = (text) => text.replace(/&(#x[\da-f]+|#\d+|amp|lt|gt|quot|apos|nbsp);/gi, (whole, name) => {
   const lower = name.toLowerCase()
   if (lower.startsWith('#x')) return String.fromCodePoint(parseInt(lower.slice(2), 16))
   if (lower.startsWith('#')) return String.fromCodePoint(Number(lower.slice(1)))

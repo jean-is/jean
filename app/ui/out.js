@@ -1,6 +1,7 @@
 // How what a pane shows leaves Jean (D683), the same for a document, a collection, a deck, a design, a tune, a game, an app, a picture,
 // a film or any other file: one button in its head, just before Close, whose menu goes in one order, as an answer's does: to someone
-// (Share, a link; Send to an app, the system's sheet; Copy), as a file (Download, the format most people want first, its own file last),
+// (Publish, online at a name of its own, for a site or any page on its own; Share, a link; Send to an app, the system's sheet; Copy), as a
+// file (Download, the format most people want first, its own file last),
 // on paper (Print, or save as PDF, which ⌘P does in the pane too), then the way to the design system for what wears one. What a kind has
 // no use for, or this browser or this Jean hasn't, isn't there, and one way alone is the button itself. A kind says what it can do
 // through its `out` slot: `of(file)` whether it is its own, `load()` the module whose `ways(file, pane)` says so, read as a pane first draws one.
@@ -8,7 +9,7 @@ import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { app, notify } from './state.js'
 import { act } from './acts.js'
-import { loaded, slots } from './caps.js'
+import { loaded, slots, unlock, isDenied } from './caps.js'
 import { icons } from './menu-icons.js'
 import { t, useStrings } from '../core/i18n.js'
 
@@ -19,9 +20,9 @@ await useStrings('out')
  * @typedef {{ id: string, glyph?: unknown, label?: string, run: (from: EventTarget | null) => unknown }} Way
  */
 /**
- * What a kind can do. first: what to do before any of it (a design's marks); share: what a link holds (Share's `Item`); publish: a way online of its own (a site's, D720); send: what the system's
- * sheet is given, with the file's name and type this browser is asked about.
- * @typedef {{ first?: Way, share?: () => unknown, publish?: Way, send?: { file?: string, type?: string, make: () => Promise<ShareData> }, copy?: Way, files: Way[], print?: Way, kit?: boolean,
+ * What a kind can do. first: what to do before any of it (a design's marks); share: what a link holds (Share's `Item`); publish: a way online of its own (a site's, D720); page: the page on
+ * its own it is, which goes online as a site of one page where the share host publishes sites; send: what the system's sheet is given, with the file's name and type this browser is asked about.
+ * @typedef {{ first?: Way, share?: () => unknown, publish?: Way, page?: () => Promise<BlobPart>, send?: { file?: string, type?: string, make: () => Promise<ShareData> }, copy?: Way, files: Way[], print?: Way, kit?: boolean,
  *   thing?: { kind: 'collection' | 'document' | 'deck', uri: string } }} Ways  thing: what can be worked on together, which Share asks how (caps/together, D733)
  */
 
@@ -53,6 +54,11 @@ export function printKey(event, file, ways) {
   if ((event.metaKey || event.ctrlKey) && !event.shiftKey && event.key === 'p' && ways?.print) (event.preventDefault(), take(file, ways.print))
 }
 
+/** Whether the share host publishes sites, asked once a pane shows a page on its own (caps/sites/offer.js), which Sites isn't loaded for. */
+const online = signal(/** @type {boolean | null} */ (null))
+/** A page's Publish…: Sites found, and the page a site of one page in its dialog. @param {Shown} file @param {() => Promise<BlobPart>} page @returns {Way} */
+const publishing = (file, page) => ({ id: '', glyph: icons.globe, label: t('out.publish'), run: async () => (await unlock('sites')) && (await import('../caps/sites/sites.js')).publishPage(file, await page()) })
+
 /** What the system's sheet will send, made as the menu opens, so that it is there within the click the sheet needs. @type {Promise<ShareData> | null} */
 let ready = null
 
@@ -62,7 +68,9 @@ const toKit = async () => { const [{ openSettings }, { projectKit }] = await Pro
 /** The button and its menu, or the button alone. @param {Shown} file @param {Ways | null} ways */
 export function outButton(file, ways) {
   if (!ways) return nothing
-  const { send, share, publish, first, copy, files, print, kit } = ways, menu = `out-${file.uri}`, linked = share && loaded.value.has('share')
+  const { send, share, first, copy, files, print, kit, page } = ways, menu = `out-${file.uri}`, linked = share && loaded.value.has('share')
+  if (page && online.peek() === null && !isDenied('sites')) (online.value = false, import('../caps/sites/offer.js').then(({ offered }) => offered()).then((offer) => { online.value = Boolean(offer) }))
+  const publish = ways.publish ?? (page && online.value ? publishing(file, page) : undefined)
   const sends = send && navigator.canShare?.(send.file ? { files: [new File([''], send.file, { type: send.type })] } : { text: 'a' })
   const row = (/** @type {Way} */ way) => html`<li><button type="button" popovertarget=${menu} popovertargetaction="hide" @click=${(/** @type {Event} */ event) => take(file, way, event.currentTarget)}>${way.glyph}<span dir="auto">${way.label}</span></button></li>`
   const to = /** @type {Way[]} */ ([...(publish ? [publish] : []), ...(linked ? [{ id: '', glyph: icons.share, label: t('out.share'), run: async (/** @type {EventTarget | null} */ from) => (await import('../caps/share/share.js')).openShare({ path: app.current.peek()?.path ?? `${app.projectDir}/conversations/`, title: file.title, item: /** @type {import('../caps/share/share.js').Item} */ (await share()), ...(ways.thing && { thing: ways.thing }) }, from) }] : []),

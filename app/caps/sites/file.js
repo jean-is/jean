@@ -1,11 +1,13 @@
 // A site (D720) is a folder of the project, `sites/<ulid>-<slug>`, named once and never renamed: its pages, style sheets,
 // scripts, drawings and pictures at their own paths in it, and site.json, its record: its format, name, author, times, whether
 // it is pinned, the task it came from, its files, its last check and where it was published, and what publishing draws from the
-// secret kept for it: its token and its recovery code. Pure: node tests run it.
+// secret kept for it: its token and its recovery code; and a page on its own made a site of one page. Pure: node tests run it.
+import { unescape } from './html.js'
 
 /**
- * What site.json holds; `published`, where it went online (./publish.js): the host, the name, its address, until when, when, and its files' hashes.
- * @typedef {{ format: number, name: string, author: string, created: string, changed: string, pinned?: boolean, source: string, files: string[], text?: string, check?: { problems: string[], fill: string[], at: string },
+ * What site.json holds; `page`, the page on its own it is made from again each time it is published (sited()); `published`, where it went
+ * online (./publish.js): the host, the name, its address, until when, when, and its files' hashes.
+ * @typedef {{ format: number, name: string, author: string, created: string, changed: string, pinned?: boolean, source: string, page?: string, files: string[], text?: string, check?: { problems: string[], fill: string[], at: string },
  *   published?: { host: string, name: string, address: string, expires: string, at: string, files: Record<string, string> } }} SiteRecord
  */
 
@@ -51,4 +53,25 @@ export async function tokenOf(secret) {
   const key = await crypto.subtle.importKey('raw', /** @type {BufferSource} */ (secret), 'HKDF', false, ['deriveBits'])
   const bits = new Uint8Array(await crypto.subtle.deriveBits({ name: 'HKDF', hash: 'SHA-256', salt: new Uint8Array(), info: new TextEncoder().encode('site write token') }, key, 256))
   return btoa(String.fromCharCode(...bits)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+}
+
+/** An opening tag, as ./html.js reads one, and one of its on…="" attributes: the event, and what it runs as the page writes it. */
+const [TAG, HANDLER] = [/<([a-zA-Z][\w-]*)((?:\s+[^\s"'>/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s"'=<>`]+))?)*)\s*(\/?)>/g, /\s+on([a-z]{3,})\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/gi]
+/**
+ * A page on its own (a file, an app, a game, a deck) as the files of a site, for the host, which runs only a site's own files: each script
+ * inside it in a file of its own, in its place, and what its on…="" attributes do in one more, run once the page is read; its data, its
+ * styles and the rest as they were. @param {string} page @returns {Map<string, string>}
+ */
+export function sited(page) {
+  let [files, runs, marked] = [new Map(), /** @type {string[]} */ ([]), 0], html = page.replace(/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi, (whole, attrs, code) => {
+    const type = /(?:^|\s)type\s*=\s*["']?([^"'\s>]+)/i.exec(attrs)?.[1].toLowerCase() ?? ''
+    if (/(?:^|\s)src\s*=/i.test(attrs) || !code.trim() || !/^(module|text\/javascript|application\/javascript)?$/.test(type)) return whole
+    files.set(`script-${files.size + 1}.js`, code)
+    return `<script src="script-${files.size}.js"${type === 'module' ? ' type="module"' : ''}></script>`
+  }).replace(TAG, (whole, name, attrs, end) => {
+    const found = [...attrs.matchAll(HANDLER)], at = found.length ? ++marked : 0; for (const [, event, a, b, c] of found) runs.push(`document.querySelector('[data-on="${at}"]').addEventListener('${event.toLowerCase()}', function (event) {\n${unescape(a ?? b ?? c ?? '')}\n})`)
+    return found.length ? `<${name}${attrs.replace(HANDLER, '')} data-on="${at}"${end}>` : whole
+  })
+  if (runs.length) (files.set('on.js', runs.join('\n')), (html = /<\/body\s*>/i.test(html) ? html.replace(/<\/body\s*>/i, '<script src="on.js"></script>$&') : `${html}<script src="on.js"></script>`))
+  return files.set('index.html', html)
 }

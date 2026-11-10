@@ -278,3 +278,59 @@ test('a site goes online at a name of its own, asked first, its recovery code sh
   const gone = await context.newPage()
   expect((await gone.goto(address))?.status()).toBe(404)
 })
+
+test('a page on its own goes online from its pane as a site of one page, its script and its on…="" in files of their own as the host runs them, made again from the page each time (D720)', async ({ page, context, browserName }) => {
+  const name = `hours-${browserName}-${test.info().retry}-${test.info().repeatEachIndex}`, address = `http://${name}.localhost:4185/`
+  // A page Jean wrote in a task, as a file: a script inside it, and a button's onclick.
+  await start(page)
+  await page.evaluate(async (host) => {
+    const [{ app, updateSettings, refreshConversations, openConversation }, { createConversation, appendRecords }, { metaRecord, userRecord, envelope }, { addFile }] = await Promise.all([
+      import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js'), import('/core/files.js')])
+    await updateSettings({ urls: { ...app.settings.value.urls, share: host } })
+    const { path } = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })
+    const bytes = new TextEncoder().encode('<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Opening hours</title><script>const opens = 7</script></head><body><h1>Opening hours</h1><button onclick="document.querySelector(&quot;output&quot;).textContent = `From ${opens}`">When?</button><output></output></body></html>')
+    const made = await addFile(app.fs, { projectDir: app.projectDir, name: 'Opening hours.html', mimeType: 'text/html', bytes, pages: [], by: 'jean' })
+    await appendRecords(app.fs, path, [metaRecord(app.deviceId, { title: 'Our hours' }), userRecord('Make a page of our opening hours', app.deviceId),
+      envelope('jean', { sessionUpdate: 'tool_call', toolCallId: 'c1', title: 'Writing', kind: 'edit', status: 'completed', _meta: { file: { ...made, size: bytes.length } } }, 0),
+      envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: 'Here is the page.' } }, 0)])
+    await refreshConversations()
+    await openConversation(path)
+  }, SHARE_URL)
+  await page.locator('.msg-jean').getByRole('button', { name: 'Open Opening hours.html' }).click()
+  const pane = page.locator('app-preview'), dialog = page.locator('dialog.site-publish')
+  const publishing = async () => {
+    await pane.getByRole('button', { name: 'Share or download' }).click()
+    await page.getByRole('button', { name: 'Publish…' }).click()
+    await expect(dialog).toBeVisible()
+  }
+
+  // Publish… where the host publishes sites, its name from the page's, as a site's would be.
+  await publishing()
+  await expect(dialog.getByRole('heading')).toHaveText('Publish Opening hours')
+  await expect(dialog.getByLabel('Address')).toHaveValue('opening-hours')
+  await dialog.getByLabel('Address').fill(name)
+  await expect(dialog.locator('#publish-said')).toHaveText('This address is free.')
+  await dialog.getByRole('button', { name: 'Publish', exact: true }).click()
+  await dialog.getByLabel('I’ve kept it somewhere safe').check()
+  await dialog.getByRole('button', { name: 'Done' }).click()
+  await expect(dialog.locator('.site-state.is-live')).toContainText('Online until')
+  const record = await page.evaluate(async () => {
+    const { app } = await import('/ui/state.js'), [site] = (await app.fs.list(`${app.projectDir}/sites`)).map(({ name }) => name)
+    return JSON.parse((await app.fs.read(`${app.projectDir}/sites/${site}/site.json`)) ?? '{}')
+  })
+  expect(record).toMatchObject({ name: 'Opening hours', files: ['script-1.js', 'on.js', 'index.html'], published: { name, address } })
+  expect(record.page).toMatch(/^files\//)
+
+  // Online, under the host's policy, which runs only the site's own files: its button works.
+  await throughHost(context)
+  const visit = await context.newPage()
+  await visit.goto(address)
+  await visit.getByRole('button', { name: 'When?' }).click()
+  await expect(visit.locator('output')).toHaveText('From 7')
+  await visit.close()
+
+  // Pressed again, the site is made again from the page: nothing changed.
+  await dialog.locator('.dialog-head').getByRole('button', { name: 'Close' }).click()
+  await publishing()
+  await expect(dialog).toContainText('Nothing changed since it was published.')
+})

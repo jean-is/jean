@@ -15,7 +15,8 @@ import { linkField, copyButton } from '../../ui/qr.js'
 import { t, intlLocales } from '../../core/i18n.js'
 import { slug } from '../../core/settings.js'
 import { TYPES, codeOf, secretOf, tokenOf } from './file.js'
-import { load, remember, hostOf } from './sites.js'
+import { load, remember } from './sites.js'
+import { hostOf } from './offer.js'
 
 /**
  * The site in the dialog: its record and files, their hashes, the share host and what it offers, and its secret here, if any.

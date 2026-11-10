@@ -57,7 +57,7 @@ export const bytesOf = async (path) => new TextEncoder().encode(await (await imp
  * What a game can do (ui/out.js): a link and the system's sheet give it as a page of its own, Download its file too, and paper its picture and its words.
  * @param {{ uri: string, name: string, title: string }} file @returns {import('../../ui/out.js').Ways}
  */
-const ways = (file) => ({ share: async () => ({ text: (await load(file.uri))?.card ?? '', files: [{ uri: file.uri, name: file.name, mimeType: 'text/html' }] }),
+const ways = (file) => ({ share: async () => ({ text: (await load(file.uri))?.card ?? '', files: [{ uri: file.uri, name: file.name, mimeType: 'text/html' }] }), page: () => bytesOf(file.uri),
   send: { file: `${file.title}.html`, type: 'text/html', make: async () => ({ title: file.title, files: [new File([await bytesOf(file.uri)], `${file.title}.html`, { type: 'text/html' })] }) },
   files: [{ id: '', glyph: icons.download, label: t('out.webPage'), run: async () => (await import('../../ui/preview.js')).download(file) }],
   print: { id: 'print', run: async () => { const one = await load(file.uri); if (one) await (await import('../made/paper.js')).printDrawn(html`<h1 dir="auto">${one.name}</h1>${one.picture ? html`<img src=${one.picture} alt="">` : nothing}<p dir="auto">${one.card}</p>`) } } })

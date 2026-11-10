@@ -28,7 +28,7 @@ async function print(view, resolve) {
 /** What a deck can do (ui/out.js): the one in this pane, as it is on show when pressed. @param {{ uri: string, name: string }} file @param {Element} pane @returns {import('../../ui/out.js').Ways | null} */
 export function ways(file, pane) {
   const shown = () => /** @type {NonNullable<ReturnType<typeof here>>} */ (here(pane)), page = async () => /** @type {BlobPart} */ (await (await import('../skills/decks.js')).bytesOf(file.uri, shown().view.source)), named = `${file.name}.deck.html`
-  return { share: () => ({ text: `\`\`\`\`deck\n${shown().view.source}\n\`\`\`\`` }), thing: { kind: /** @type {const} */ ('deck'), uri: file.uri },
+  return { share: () => ({ text: `\`\`\`\`deck\n${shown().view.source}\n\`\`\`\`` }), thing: { kind: /** @type {const} */ ('deck'), uri: file.uri }, page,
     send: { file: named, type: 'text/html', make: async () => ({ title: file.name, files: [new File([await page()], named, { type: 'text/html' })] }) },
     copy: { id: 'copy', label: t('slides.out.copy'), run: () => copyDrawing(shown().view.source, shown().picture()).then(() => notify(t('toast.copied'))) },
     files: [{ id: 'pptx', glyph: icons.slides, label: t('slides.out.pptx'), run: async () => {

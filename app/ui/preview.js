@@ -209,12 +209,13 @@ export async function fileBytes(file, at = panes.get(file.uri)?.copy() || file.u
 }
 
 /**
- * What any other file can do (./out.js): a link to it, a picture as a picture; the system's sheet; its file as it is; and on paper, a picture alone.
+ * What any other file can do (./out.js): online, a page on its own; a link to it, a picture as a picture; the system's sheet; its file as it is;
+ * and on paper, a picture alone.
  * @param {Shown} file @param {string} uri where what it holds now is (D229) @returns {import('./out.js').Ways}
  */
 function fileWays(file, uri) {
   const type = file.mimeType ?? '', held = { uri, name: file.name, mimeType: type }, picture = /^image\//.test(type)
-  return { share: () => (picture ? { picture: held, description: file.title } : { text: file.title, files: [held] }),
+  return { share: () => (picture ? { picture: held, description: file.title } : { text: file.title, files: [held] }), ...((type === 'text/html' || /\.html?$/i.test(file.name)) && { page: async () => /** @type {BlobPart} */ ((await fileBytes(file)).bytes ?? '') }),
     send: { file: file.name, type, make: async () => ({ title: file.title, files: [new File([/** @type {BlobPart} */ ((await fileBytes(file)).bytes)], file.name, { type })] }) },
     files: [{ id: '', glyph: icons.download, label: file.name, run: () => download(file) }],
     ...(picture && { print: { id: 'print', run: async () => { await import('./shown.js'); await (await import('../caps/made/paper.js')).printDrawn(html`<app-shared uri=${uri} type=${type}></app-shared>`) } } }) }

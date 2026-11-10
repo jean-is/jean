@@ -1,5 +1,5 @@
 // How what a pane shows leaves Jean (D683): one button just before Close, whose menu goes in one order, whatever opens there: to someone
-// (Share, Send to an app, Copy), as a file (Download, the format most want first, its own file last), on paper, then the design system
+// (Publish, for a page on its own where the share host publishes sites, Share, Send to an app, Copy), as a file (Download, the format most want first, its own file last), on paper, then the design system
 // for what wears one. What a browser or this Jean can't do isn't there, and one way alone is the button itself. Each kind's own files
 // and prints are tested with it (documents, tables, slides, designs, scores, games).
 import { test, expect } from '@playwright/test'
@@ -138,7 +138,7 @@ test('a game: a link and the sheet give its page, its file downloads, and paper 
   }, place)
   const pane = page.locator('app-preview:has(app-game)')
   await pane.locator(BUTTON).click()
-  await expect(pane.locator('.out-menu button')).toHaveText(['Share…', 'Send to an app…', 'Web page', 'Print or save as PDF'])
+  await expect(pane.locator('.out-menu button')).toHaveText(['Publish…', 'Share…', 'Send to an app…', 'Web page', 'Print or save as PDF'])
   await page.keyboard.press('Escape')
   await pick(pane, /^Print or save as PDF/)
   await onPaper(page, async (sheet) => { await expect(sheet.locator('h1')).toHaveText('Star'); await expect(sheet.locator('p')).toHaveText('Catch the stars.') })
@@ -167,7 +167,7 @@ test('an app: a link holds its block, its page downloads, and paper has it as it
   await expect(pane.locator('iframe')).toBeVisible()
   await pane.locator(BUTTON).click()
   const menu = pane.locator('.out-menu')
-  await expect(menu.locator('button')).toHaveText(['Share…', 'Send to an app…', 'Web page', 'Print or save as PDF'])
+  await expect(menu.locator('button')).toHaveText(['Publish…', 'Share…', 'Send to an app…', 'Web page', 'Print or save as PDF'])
   const [file] = await Promise.all([page.waitForEvent('download'), menu.getByRole('button', { name: /^Web page/ }).click()])
   expect(file.suggestedFilename()).toBe('Tips.html')
   await pick(pane, /^Print or save as PDF/)
@@ -214,7 +214,7 @@ test('a deck: the slide on show copied, its file to the sheet, and a link that h
   const pane = page.locator('app-preview:has(app-slides)')
   await expect(pane.locator('.deck-slide.is-shown')).toBeVisible()
   await pane.locator(BUTTON).click()
-  await expect(pane.locator('.out-menu button')).toHaveText(['Share…', 'Send to an app…', 'Copy this slide', 'PowerPoint', 'Web page', 'Print or save as PDF', 'Design system'])
+  await expect(pane.locator('.out-menu button')).toHaveText(['Publish…', 'Share…', 'Send to an app…', 'Copy this slide', 'PowerPoint', 'Web page', 'Print or save as PDF', 'Design system'])
   await pane.locator('.out-menu').getByRole('button', { name: /^Copy/ }).click()
   await expect(page.locator('.toast').last()).toContainText('Copied')
   expect((await copied(page)).kinds).toEqual(['image/png', 'text/plain'])

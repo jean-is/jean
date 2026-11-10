@@ -3,7 +3,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { checkFiles, told } from '../app/caps/sites/check.js'
-import { pathIn, changed, reach, PLACE } from '../app/caps/sites/file.js'
+import { pathIn, changed, reach, PLACE, sited } from '../app/caps/sites/file.js'
 import { LINES, SITE, CHANGE } from '../app/caps/sites/tool.js'
 
 const encode = (/** @type {string} */ text) => new TextEncoder().encode(text)
@@ -83,6 +83,26 @@ test('a change by exact passages: each found once in its file, or nothing change
   assert.ok('error' in failed)
   assert.match(failed.error, /index\.html: the passage "Bread" is found 2 times, not once; about\.html isn't in the site/)
   assert.match(failed.error, /^Nothing changed/)
+})
+
+test('a page on its own as a site the host runs: its scripts in files of their own, what its on…="" do in one more, its data and its styles left in', () => {
+  const page = /* html */ `<!doctype html><html lang="fr"><head><title>Pain</title><style>b { color: red }</style><script type="application/json" id="d">{"a":1}</script>
+<script>let loaves = 3</script><script type="module">import './x.js'</script><script src="kept.js"></script></head>
+<body><button onclick="loaves++; show(&quot;pain&quot;)" class="go">+</button><input onInput='say(this.value)'><img src="a.png"/></body></html>`
+  const files = sited(page)
+  assert.deepEqual([...files.keys()], ['script-1.js', 'script-2.js', 'on.js', 'index.html'])
+  assert.equal(files.get('script-1.js'), 'let loaves = 3')
+  assert.equal(files.get('script-2.js'), "import './x.js'")
+  const index = String(files.get('index.html'))
+  assert.match(index, /<script src="script-1\.js"><\/script><script src="script-2\.js" type="module"><\/script><script src="kept\.js"><\/script>/)
+  assert.match(index, /<script type="application\/json" id="d">\{"a":1\}<\/script>/)
+  assert.match(index, /<style>b \{ color: red \}<\/style>/)
+  assert.match(index, /<button class="go" data-on="1">\+<\/button><input data-on="2"><img src="a\.png"\/><script src="on\.js"><\/script><\/body>/)
+  assert.doesNotMatch(index, /on(click|input)=/i)
+  assert.equal(files.get('on.js'), `document.querySelector('[data-on="1"]').addEventListener('click', function (event) {\nloaves++; show("pain")\n})\n`
+    + `document.querySelector('[data-on="2"]').addEventListener('input', function (event) {\nsay(this.value)\n})`)
+  // A page with nothing inside to move is the same page.
+  assert.deepEqual([...sited('<p>Hi</p>')], [['index.html', '<p>Hi</p>']])
 })
 
 test('what the brain is given: a line each within 40 tokens, schemas within 400', () => {

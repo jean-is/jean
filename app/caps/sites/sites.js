@@ -3,8 +3,9 @@
 // checks it, from its files (./check.js) and as its pages show at a phone's and a computer's width (./frame.js), and tells the
 // brain what to fix before it is shown. A site opens beside the task at a phone's, a tablet's or a computer's width, its links leading
 // to its other pages, and leaves as a zip of its files, or goes online at a name of its own where the share host publishes
-// sites (./publish.js). Among the creations once the project holds one; until then its card to start one. Found by its skill,
-// which brings it (D401); nothing of it shows before.
+// sites (./publish.js). A page on its own (a file, an app, a game, a deck) goes online the same way, as a site of one page made from it
+// (publishPage). Among the creations once the project holds one; until then its card to start one. Found by its skill, which brings it
+// (D401), or by a page's Publish…; nothing of it shows before.
 import { html, svg } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { app, conversationOf } from '../../ui/state.js'
@@ -17,9 +18,10 @@ import { noteRecord } from '../../core/events.js'
 import { taskFiles, fileNamed } from '../../core/files.js'
 import { writeZip } from '../../core/zip.js'
 import { ulid } from '../../core/ulid.js'
-import { slug, serviceURL } from '../../core/settings.js'
+import { slug } from '../../core/settings.js'
 import { t, useStrings } from '../../core/i18n.js'
-import { PLACE, RECORD, pathIn, changed } from './file.js'
+import { PLACE, RECORD, pathIn, changed, sited } from './file.js'
+import { offered } from './offer.js'
 import { checkFiles, told } from './check.js'
 import { LINES, SITE, CHANGE } from './tool.js'
 import { shown, pageOf } from './frame.js'
@@ -55,15 +57,6 @@ async function write(one, before = []) {
 const update = async (path, change) => { const one = await load(path); if (one) await write({ ...one, record: change({ ...one.record, changed: new Date().toISOString() }) }) }
 /** A site's record with what was published, its files untouched. @param {string} path @param {SiteRecord['published']} published */
 export const remember = async (path, published) => { const record = await recordOf(path); if (record) await app.fs.write(`${app.projectDir}/${path}/${RECORD}`, JSON.stringify({ ...record, published }, null, 1)) }
-/** The share host, which publishes sites too where it says so, or '' where policy names none or says never. */
-export const hostOf = () => (app.policy.rules?.share === 'never' ? '' : String(serviceURL('share', app.settings.value, app.policy) ?? ''))
-/** What the host offers for sites, asked once a host: the address a name makes, or null. @type {Map<string, Promise<{ address: string } | null>>} */
-const offers = new Map()
-const offered = (host = hostOf()) => {
-  if (!host) return Promise.resolve(null)
-  if (!offers.has(host)) offers.set(host, fetch(host).then((response) => response.json()).then((told) => (typeof told?.sites?.address === 'string' ? told.sites : null), () => null))
-  return /** @type {Promise<{ address: string } | null>} */ (offers.get(host))
-}
 /** What its first page says it is. @param {Map<string, Uint8Array>} files */
 const describe = (files) => /<meta\s+name=["']description["']\s+content=["']([^"']*)/i.exec(new TextDecoder().decode(files.get('index.html') ?? new Uint8Array()))?.[1] ?? ''
 
@@ -80,6 +73,20 @@ export const metaOf = async (path) => ((record) => record && { name: record.name
 export const bytesOf = async (path) => ((one) => (one ? pageOf(one.files, 'index.html').then((page) => new TextEncoder().encode(page)) : null))(await load(path))
 /** Its view in its pane. @param {{ uri: string }} file */
 export const editor = async ({ uri }) => ((one) => one && html`<app-site class="beside" .site=${{ path: one.path, name: one.record.name, files: one.files }}></app-site>`)(await load(uri))
+/**
+ * A page on its own published as a site of one page: the site made from it the first time, under its name, its files made again from it
+ * each time (./file.js's sited()), so that the dialog says what changed since; then Publish's dialog. @param {{ uri: string, title: string }} file @param {BlobPart} page
+ */
+export async function publishPage(file, page) {
+  const [offer, places] = await Promise.all([offered(), app.fs.list(`${app.projectDir}/sites`)]), now = new Date().toISOString(), name = file.title.replace(/\.html?$/i, '') || 'Page'
+  if (!offer) return
+  const found = (await Promise.all(places.map(async ({ kind, name: folder }) => (kind === 'directory' && (await recordOf(`sites/${folder}`).catch(() => null))?.page === file.uri ? `sites/${folder}` : '')))).find(Boolean)
+  const [one, files] = [found ? await load(found) : null, new Map([...sited(await new Blob([page]).text())].map(([path, text]) => [path, new TextEncoder().encode(text)]))], path = one?.path ?? `sites/${ulid()}-${slug(name) || 'page'}`
+  if (!one || files.size !== one.files.size || [...files].some(([at, bytes]) => String(one.files.get(at)) !== String(bytes))) await write(one ? { ...one, files, record: { ...one.record, changed: now } }
+    : { dir: app.projectDir, path, files, record: { format: 1, name, author: app.deviceId, created: now, changed: now, source: app.current.peek()?.path ?? '', page: file.uri, files: [] } }, one ? [...one.files.keys()] : [])
+  join(app.projectDir), reread()
+  await (await import('./publish.js')).openPublish(path, offer)
+}
 /** Open beside the task. @param {One} one */
 const open = (one) => import('../../ui/preview.js').then(({ preview }) => preview({ uri: one.path, name: one.record.name, title: one.record.name, mimeType: 'text/html' }))
 /** What a site can do (ui/out.js): go online, where the host offers it, or leave as a zip of its files. @param {{ uri: string }} file @param {{ address: string } | null} offer @returns {import('../../ui/out.js').Ways} */
