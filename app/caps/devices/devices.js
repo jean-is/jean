@@ -3,7 +3,7 @@
 // before it starts and again before the profile that came opens; once paired, each device listens on its mailbox for the devices the
 // profile knows, settings and keys that follow the person, a task handed over, or its own removal. The steps are pure in ./pair.js, what
 // crosses in ./bundle.js, and what a device keeps and does with what comes in ./flow.js.
-import { html, svg, nothing, render } from 'lit-html'
+import { html, svg, nothing } from 'lit-html'
 import { signal, effect, computed } from '@preact/signals-core'
 import { register, unlock } from '../../ui/caps.js'
 import { app, changeSettings, rememberUnlocked, refreshConversations, refreshProjects, brainLabel, notify, pairs } from '../../ui/state.js'
@@ -580,14 +580,12 @@ if (offered()) {
     // A project switched to kept on this device leaves the store, where there is one, asked first (caps/projects).
     keep: { at: 1, draw: () => null, on: () => stored.value, keep: (/** @type {string} */ dir) => import('./store.js').then((store) => store.withdraw(dir)) },
     // At the end of the person's row, at the drawer's foot (D729), Your devices by its icon: breathing while bytes go up or come down, with a
-    // dot while the store wants a look (full, gone, this device out of room, the relay out of reach), its tip saying so; it opens pop().
-    foot: { at: 1, draw: (/** @type {'drawer' | 'list'} */ where) => { const [moving, wants] = [kept.value?.value.moving, trouble()]
+    // dot while the store wants a look (full, gone, this device out of room, the relay out of reach), its tip saying so; it opens pop(),
+    // which the row draws after the person's menu, in the drawer as they are (ui/inbox.js).
+    foot: { at: 1, pop, draw: (/** @type {'drawer' | 'list'} */ where) => { const [moving, wants] = [kept.value?.value.moving, trouble()]
       return html`<button type="button" class="icon-button subtle${moving ? ' devices-syncing' : ''}${wants ? ' devices-trouble' : ''}" popovertarget=${`devices-${where}`}
         aria-label=${t(moving ? 'devices.syncing' : wants ? 'devices.trouble' : 'cap.devices.name')}>${icons.devices}</button>` } },
   } })
-  // What it opens, for each place the row is drawn, outside the row as the person's menu is, so that no look takes it for the drawer's.
-  const pops = document.body.appendChild(Object.assign(document.createElement('div'), { className: 'devices-pops' }))
-  effect(() => { render(html`${pop('drawer')}${pop('list')}`, pops) })
   // The keys, where this device's identity and the devices it knows are kept too, changed in any tab, this one's as well.
   app.fs.watch?.((path) => { if (path === '.secrets/keys.json') { refresh(); noticed().catch(warn) } }, { all: true })
   // Back online, or in sight again, what waits goes.

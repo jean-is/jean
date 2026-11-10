@@ -287,7 +287,8 @@ const once = { capture: true, handleEvent: (/** @type {MouseEvent} */ event) => 
  * gives (the profile's, then what the account they signed in with calls them), or "You" until one is
  * known, opening a menu above them.
  * It goes back to its actions once closed. At the row's end, what capabilities' `foot` slot draws, given where: an icon button each, which
- * may open a popover of its own, the row being no button.
+ * may open a popover of its own, the row being no button. Its `pop` draws that popover after the person's menu: outside the row, so that no
+ * look takes it for the row's, and inside the drawer, a modal dialog, which leaves what is outside it out of reach.
  * @param {'drawer' | 'list'} where
  */
 export function profileEntry(where) {
@@ -301,7 +302,8 @@ export function profileEntry(where) {
     <div id=${id} class="menu profile-menu" popover @keydown=${walk} @click=${once} @toggle=${(/** @type {ToggleEvent} */ e) => {
       if (e.newState === 'open') /** @type {HTMLElement | null} */ (/** @type {HTMLElement} */ (e.target).querySelector('[aria-current="true"]') ?? /** @type {HTMLElement} */ (e.target).querySelector('button'))?.focus()
       if (e.newState === 'closed' && !document.querySelector('.profile-menu:popover-open')) page.value = 'actions'
-    }}>${shown === 'languages' ? languages() : shown === 'profiles' ? slots('profiles').map((part) => part.page(id)) : actions(id)}</div>`
+    }}>${shown === 'languages' ? languages() : shown === 'profiles' ? slots('profiles').map((part) => part.page(id)) : actions(id)}</div>
+    ${slots('foot').map((part) => part.pop?.(where))}`
 }
 
 class Inbox extends Element {
