@@ -38,8 +38,8 @@ import * as colleague from './colleagues.js'
  */
 /**
  * Accepting, on Bob's: a link that came, Accept asked for with who sent it; waiting for Ana; the digits to show and the name she gives
- * herself; done; or why it stopped. @typedef {{ step: 'idle' | 'waiting' } | { step: 'ask', link: string } | { step: 'code', code: string, theirs: string }
- *   | { step: 'done', name: string } | { step: 'failed', reason: Reason }} Accepting
+ * herself; done, by a colleague's mail without digits; or why it stopped. @typedef {{ step: 'idle' | 'waiting', mail?: true } | { step: 'ask', link: string }
+ *   | { step: 'code', code: string, theirs: string } | { step: 'done', name: string, mail?: true } | { step: 'failed', reason: Reason }} Accepting
  */
 
 export const [inviting, accepting] = [signal(/** @type {Inviting} */ ({ step: 'idle' })), signal(/** @type {Accepting} */ ({ step: 'idle' }))]
@@ -247,7 +247,7 @@ export const remove = async (fps) => { const ctx = await contextOf(); for (const
  * colleague found is, and told on each of their devices that the person uses Jean now. @param {string} mailbox
  */
 async function joined(mailbox) {
-  accepting.value = { step: 'waiting' }
+  accepting.value = { step: 'waiting', mail: true }
   const [ctx, person] = [await contextOf(), await me()]
   await listOn(person, true)
   const [one] = await colleague.find(relayOf(), person, `mailbox=${mailbox}`)
@@ -255,7 +255,7 @@ async function joined(mailbox) {
   await colleague.keep(ctx, one)
   await refresh()
   for (const fp of groups.peek().find((group) => group.account === one.account)?.able ?? []) await sendTo(ctx, fp, {}, 'joined').catch(warn)
-  accepting.value = { step: 'done', name: one.name }
+  accepting.value = { step: 'done', name: one.name, mail: true }
 }
 
 /** The link that came (`#/meet/…`, the router's), asked about on People's page, refused there where this Jean meets no one; a colleague's taken at once. */

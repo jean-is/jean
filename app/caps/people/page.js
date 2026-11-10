@@ -1,12 +1,13 @@
 // People (D727), a section of Settings: the people met, each as this person calls them, the name they give themselves beside it, Rename
-// and Remove; the invitations this device sent that wait, with the six digits to type once someone accepted one; Add a person, asked who
-// it is for, then a code to show beside them or a link to send them, the digits, done. On the invited side, the link that came, asked who
-// sent it, then the digits to show or send back, done. Loaded the first time it shows.
+// and Remove, or, with no one yet, the two ways to meet; the invitations this device sent that wait, with the six digits to type once
+// someone accepted one; Add a person, asked the name they are known by, then a code to show beside them or a link to send them, the
+// digits, done. On the invited side, the link that came, asked who sent it, then the digits to show or send back, done. Both sides show
+// where they are under the same three steps. Loaded the first time it shows.
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { sectionOpen } from '../../ui/dialogs.js'
 import { qrOf, linkField, composing, digitsOf, sixDigits } from '../../ui/qr.js'
-import { follow } from '../../ui/rail.js'
+import { rail, follow } from '../../ui/rail.js'
 import { initialOf } from '../../ui/curtain.js'
 import { icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
@@ -16,12 +17,10 @@ import { inviting, accepting, groups, invitations, invite, confirm as right, sto
 
 await styleSheet(new URL('../../ui/data-pages.css', import.meta.url))
 
-/** What a step shows, its buttons, what it says as it comes, waiting on the other person, or what went wrong. @typedef {{ body?: unknown, buttons?: unknown, said?: string, waits?: boolean, wrong?: string }} Step */
+/** Which of the three steps both people name it is, what it shows, its buttons, what it says as it comes, waiting on the other person, or what went wrong. @typedef {{ at?: number, body?: unknown, buttons?: unknown, said?: string, waits?: boolean, wrong?: string }} Step */
 
 /** The person whose name is being changed, by fingerprint. */
 const renaming = signal('')
-/** A name a person gave, set apart in a sentence of Jean's, whichever way it reads. @param {string} name */
-const named = (name) => html`<bdi>${name}</bdi>`
 /** @param {...unknown} buttons */
 const row = (...buttons) => html`<div class="row people-actions">${buttons}</div>`
 /** @param {() => unknown} act @param {string} [label] */
@@ -36,24 +35,25 @@ const digits = (id, label, ...also) => sixDigits(`people-code-${id}`, label, t('
 /** The step under way, inviting or accepting, or none. @returns {Step | null} */
 function step() {
   const [a, b, name] = [inviting.value, accepting.value, BRAND.name]
-  if (b.step === 'ask') return { body: html`<form class="stack" id="people-accept" @submit=${(/** @type {SubmitEvent} */ e) => { e.preventDefault(); accept(b.link, valueIn(e, 'name')) }}>
+  if (b.step === 'ask') return { at: 0, body: html`<form class="stack" id="people-accept" @submit=${(/** @type {SubmitEvent} */ e) => { e.preventDefault(); accept(b.link, valueIn(e, 'name')) }}>
       <h3 tabindex="-1">${t('people.invited', { name })}</h3><label for="people-from">${t('people.from')}</label>
       <input id="people-from" name="name" required maxlength="80" dir="auto" autocomplete="off" @keydown=${composing}><p class="hint">${t('people.seen')}</p></form>`,
     buttons: row(html`<button class="button primary" form="people-accept">${t('people.accept')}</button>`, quit(stopAccept, 'people.notNow')) }
-  if (b.step === 'waiting') return { said: t('people.accepting'), waits: true, buttons: row(quit(stopAccept)) }
-  if (b.step === 'code') return { body: html`<h3 tabindex="-1">${t('people.showCode')}</h3>${digitsOf(b.code)}
-      ${b.theirs ? html`<p>${tParts('people.calls', { name: named(b.theirs) })}</p>` : nothing}`, buttons: row(quit(stopAccept)) }
-  if (b.step === 'done') return { said: t('people.metThem', { name: b.name }), buttons: row(quit(() => { accepting.value = { step: 'idle' } }, 'people.ok', 'button primary')) }
+  if (b.step === 'waiting') return { at: b.mail ? undefined : 0, said: t('people.accepting'), waits: true, buttons: row(quit(stopAccept)) }
+  if (b.step === 'code') return { at: 1, body: html`<h3 tabindex="-1">${t('people.showCode')}</h3>${digitsOf(b.code)}
+      ${b.theirs ? html`<p>${tParts('people.calls', { name: html`<bdi>${b.theirs}</bdi>` })}</p>` : nothing}`, buttons: row(quit(stopAccept)) }
+  if (b.step === 'done') return { at: b.mail ? undefined : 2, said: t('people.metThem', { name: b.name }), buttons: row(quit(() => { accepting.value = { step: 'idle' } }, 'people.ok', 'button primary')) }
   if (b.step === 'failed') return { wrong: t(`people.why.${b.reason}`, { name }), buttons: row(quit(() => { accepting.value = { step: 'idle' } }, 'people.close')) }
-  if (a.step === 'name') return { body: html`<form class="stack" id="people-who" @submit=${(/** @type {SubmitEvent} */ e) => { e.preventDefault(); invite(valueIn(e, 'name'), /** @type {any} */ (e).submitter?.value === 'link' ? 'link' : 'side') }}>
+  if (a.step === 'name') return { at: 0, body: html`<form class="stack" id="people-who" @submit=${(/** @type {SubmitEvent} */ e) => { e.preventDefault(); invite(valueIn(e, 'name'), /** @type {any} */ (e).submitter?.value === 'link' ? 'link' : 'side') }}>
       <label for="people-who-name">${t('people.who')}</label><input id="people-who-name" name="name" required maxlength="80" dir="auto" autocomplete="off" @keydown=${composing}></form>`,
-    buttons: row(html`<button class="button primary" form="people-who" value="side">${t('people.side')}</button>`, html`<button class="button" form="people-who" value="link">${t('people.apart')}</button>`, quit(() => stopInvite())) }
+    buttons: html`${row(html`<button class="button primary" form="people-who" value="side" aria-describedby="people-ways">${t('people.side')}</button>`,
+      html`<button class="button" form="people-who" value="link" aria-describedby="people-ways">${t('people.apart')}</button>`, quit(() => stopInvite()))}<p class="hint" id="people-ways">${t('people.ways')}</p>` }
   // The invitation as a QR code to scan beside them, or its link to send, through the system's sheet where there is one.
-  if (a.step === 'waiting') return { body: html`<h3 tabindex="-1">${t(a.way === 'side' ? 'people.scan' : 'people.send', { name: a.name })}</h3>${a.way === 'side' && a.link.startsWith('http') ? qrOf(a.link, t('people.qr')) : nothing}
+  if (a.step === 'waiting') return { at: 0, body: html`<h3 tabindex="-1">${t(a.way === 'side' ? 'people.scan' : 'people.send', { name: a.name })}</h3>${a.way === 'side' && a.link.startsWith('http') ? qrOf(a.link, t('people.qr')) : nothing}
       <p>${t(a.way === 'side' ? 'people.point' : 'people.week')}</p>${linkField(a.link, t('people.link'), t('people.copy'), a.way === 'link' && 'share' in navigator ? html`<button class="icon-button" aria-label=${t('people.share')}
         @click=${() => navigator.share({ url: a.link }).catch(() => {})}>${icons.share}</button>` : nothing)}`, said: t('people.waiting'), waits: true, buttons: row(a.way === 'link' ? quit(() => stopInvite(), 'people.later') : nothing, quit(() => stopInvite(a.id))) }
-  if (a.step === 'code') return { body: digits(a.id, t('people.typeCode', { name: a.name }), quit(() => stopInvite(a.id))), wrong: a.left < 3 ? t('people.wrong', { count: a.left }) : '' }
-  if (a.step === 'done') return { said: t('people.added', { name: a.name }), buttons: row(quit(() => { inviting.value = { step: 'idle' } }, 'people.ok', 'button primary')) }
+  if (a.step === 'code') return { at: 1, body: digits(a.id, t('people.typeCode', { name: a.name }), quit(() => stopInvite(a.id))), wrong: a.left < 3 ? t('people.wrong', { count: a.left }) : '' }
+  if (a.step === 'done') return { at: 2, said: t('people.added', { name: a.name }), buttons: row(quit(() => { inviting.value = { step: 'idle' } }, 'people.ok', 'button primary')) }
   if (a.step === 'failed') return { wrong: t(`people.why.${a.reason}`, { name }), buttons: row(quit(() => { inviting.value = { step: 'idle' } }, 'people.close')) }
   return null
 }
@@ -72,7 +72,7 @@ function finder() {
       <button class="button subtle" ?disabled=${kept.has(one.account)} @click=${() => addColleague(one)}>${t(kept.has(one.account) ? 'people.kept' : 'people.keep')}</button></li>`)}</ul>` : nothing}`
 }
 
-/** At rest: colleagues to find at work, the people met, the invitations waiting here, and Add a person, unless the organisation adds people from its list alone. */
+/** At rest: colleagues to find at work, the people met, the invitations waiting here, and Add a person, after the two ways to meet while there is no one, unless the organisation adds people from its list alone. */
 function rest() {
   const date = new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'medium' })
   const list = [...groups.value].sort((x, y) => x.name.localeCompare(y.name, intlLocales()))
@@ -80,21 +80,19 @@ function rest() {
       ? html`<form class="people-field" @submit=${(/** @type {SubmitEvent} */ e) => { e.preventDefault(); rename(one.fps, valueIn(e, 'name') || one.name).then(() => { renaming.value = '' }) }}>
           <input name="name" required maxlength="80" dir="auto" title=${t('people.rename')} .value=${one.name} @keydown=${composing}><button class="button">${t('people.save')}</button></form>`
       : html`<span class="avatar" aria-hidden="true">${initialOf(one.name)}</span><span class="item-text"><strong dir="auto">${one.name}</strong>${((sub) => (sub ? html`<small>${sub}</small>` : nothing))(one.asking
-          ? t('people.newDevice') : one.again ? t('people.again') : one.waiting ? t('people.answer', { name: one.name }) : one.account ? account(one) : alias(one) && tParts('people.calls', { name: named(one.said) }))}</span>
+          ? t('people.newDevice') : one.again ? t('people.again') : one.waiting ? t('people.answer', { name: one.name }) : one.account ? account(one) : alias(one) && tParts('people.calls', { name: html`<bdi>${one.said}</bdi>` }))}</span>
         ${one.asking && one.account ? html`<button class="button subtle" @click=${() => trustColleague(String(one.account))}>${t('people.trust')}</button>` : nothing}
         <button class="button subtle" @click=${() => { renaming.value = one.fp }}>${t('people.rename')}</button>
-        <button class="button subtle danger" @click=${() => confirmRemove(one)}>${t('action.remove')}</button>`}</li>`)}</ul>` : nothing}
+        <button class="button subtle danger" @click=${() => confirm(t('people.remove', { name: one.name })) && remove(one.fps)}>${t('action.remove')}</button>`}</li>`)}</ul>` : nothing}
     ${invitations.value.length ? html`<h3>${t('people.invitations')}</h3><ul class="list">${invitations.value.map((one) => html`<li>${one.code
       ? digits(one.id, t('people.accepted', { name: one.name }))
       : html`<span class="item-text"><strong dir="auto">${one.name}</strong><small>${t('people.sent', { date: date.format(new Date(one.at)) })}</small></span>`}
       <button class="button subtle" @click=${() => stopInvite(one.id)}>${t('people.cancel')}</button></li>`)}</ul>` : nothing}
-    ${meets ? html`<div class="row"><button id="people-add" class="button primary" @click=${() => { inviting.value = { step: 'name' } }}>${icons.plus} ${t('people.add')}</button></div>` : nothing}`
+    ${meets ? html`${list.length || invitations.value.length ? nothing : html`<p class="hint">${t('people.none')}</p>`}<div class="row"><button id="people-add" class="button primary" @click=${() => { inviting.value = { step: 'name' } }}>${icons.plus} ${t('people.add')}</button></div>` : nothing}`
 }
 
 /** Whether the name they give themselves says more than the one they are known by here, as it does when someone else accepted the invitation. @param {{ name: string, said: string }} one */
 const alias = ({ name, said }) => Boolean(said.trim()) && !name.toLocaleLowerCase().includes(said.trim().toLocaleLowerCase())
-/** Remove, asked first: what came from them stays. @param {{ fps: string[], name: string }} one */
-const confirmRemove = (one) => confirm(t('people.remove', { name: one.name })) && remove(one.fps)
 
 // A step takes the keyboard to what it asks for now: a field, its title, its first button, or Add a person.
 follow(() => `${inviting.value.step} ${accepting.value.step}`, () => sectionOpen() === 'people', ['.people-flow input:not([readonly])', '.people-flow h3', '.people-actions .button', '#people-add'])
@@ -103,6 +101,7 @@ follow(() => `${inviting.value.step} ${accepting.value.step}`, () => sectionOpen
 export function section() {
   const now = step()
   return html`<header class="data-head"><div><h2 tabindex="-1">${t('cap.people.name')}</h2><p class="lede">${t('people.line', { name: BRAND.name })}</p></div></header>
-    <div class="people-flow">${now ? now.body : rest()}
+    <div class="people-flow">${now?.at === undefined ? nothing : rail(t('people.adding'), [t('people.step.invite'), t('people.step.match'), t('people.step.done')], now.at, now.at === 2)}
+    ${now ? now.body : rest()}
     <p class=${now?.waits ? 'people-said waits' : 'people-said'} role="status">${now?.said ?? ''}</p><p class="people-wrong" role="alert">${now?.wrong ?? ''}</p>${now?.buttons ?? nothing}</div>`
 }

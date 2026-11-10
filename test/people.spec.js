@@ -1,7 +1,8 @@
-// People (D727): two people, each in a browser context of their own, so their own storage, meet through the relay (relay/, D45). Ana
-// invites from Settings › People, by a code to scan beside her; Bob opens the link, says who sent it and accepts; the six digits his
-// screen shows are typed on Ana's; then each has the other, Ana's Jean naming Bob as she did, and where each reads. Chromium only:
-// Playwright's WebKit keeps nothing, where no one is kept (test/playwright.config.js).
+// People (D727): two people, each in a browser context of their own, so their own storage, meet through the relay (relay/, D45). Ana,
+// told the two ways while she has no one, invites from Settings › People, by a code to scan beside her; Bob opens the link, says who sent
+// it and accepts; the six digits his screen shows are typed on Ana's; then each has the other, Ana's Jean naming Bob as she did, and where
+// each reads. Both screens show the same three steps on the way. Chromium only: Playwright's WebKit keeps nothing, where no one is kept
+// (test/playwright.config.js).
 import { test, expect } from '@playwright/test'
 import { start, openSettings, closeSettings, openTasks, RELAY_URL, SHARE_URL } from './helpers.js'
 
@@ -31,7 +32,7 @@ const peopleOf = (page) => page.evaluate(async () => (await import('/caps/people
 async function meetBeside(ana, bob) {
   const settings = await peoplePage(ana)
   await settings.getByRole('button', { name: 'Add a person' }).click()
-  await settings.getByLabel('Who is it for?').fill('Bob from the bakery')
+  await settings.getByLabel('The name you know them by').fill('Bob from the bakery')
   await settings.getByRole('button', { name: 'Show a code to scan' }).click()
   await bob.goto(await settings.getByTitle('The invitation’s link').inputValue())
   const there = bob.locator('app-settings dialog[open]')
@@ -52,8 +53,16 @@ async function meetBeside(ana, bob) {
 test('two people meet side by side: Bob’s six digits typed on Ana’s Jean, then each has the other', async ({ browser }) => {
   const [ana, bob] = await Promise.all([person(browser, 'Ana'), person(browser, 'Bob')])
   const settings = await peoplePage(ana)
+  const none = settings.getByText('No one yet. Add someone beside you with a code they scan, or someone elsewhere with a link.')
+  await expect(none).toBeVisible()
   await settings.getByRole('button', { name: 'Add a person' }).click()
-  await settings.getByLabel('Who is it for?').fill('Bob from the bakery')
+  // The same three steps on both screens, the first under way; the field says what to type, and each way says when it fits.
+  const steps = (/** @type {import('@playwright/test').Locator} */ at) => at.getByRole('list', { name: 'Adding a person' })
+  await expect(steps(settings).getByRole('listitem')).toHaveText(['Invitation', 'Match the digits', 'Done'])
+  await expect(steps(settings).locator('[aria-current="step"]')).toHaveText('Invitation')
+  await expect(settings.getByLabel('The name you know them by')).toBeFocused()
+  for (const name of ['Show a code to scan', 'Send a link']) await expect(settings.getByRole('button', { name })).toHaveAccessibleDescription('A code when they’re beside you, a link when they’re elsewhere.')
+  await settings.getByLabel('The name you know them by').fill('Bob from the bakery')
   await settings.getByRole('button', { name: 'Show a code to scan' }).click()
   await expect(settings.getByRole('img', { name: 'The invitation as a QR code, for their phone’s camera' })).toBeVisible()
   const link = await settings.getByTitle('The invitation’s link').inputValue()
@@ -64,23 +73,33 @@ test('two people meet side by side: Bob’s six digits typed on Ana’s Jean, th
   const there = bob.locator('app-settings dialog[open]')
   await expect(there.getByText('Someone invites you to send each other tasks with Jean.')).toBeVisible()
   await expect(there.getByLabel('Who sent you this?')).toBeFocused()
+  await expect(steps(there).locator('[aria-current="step"]')).toHaveText('Invitation')
   await there.getByLabel('Who sent you this?').fill('Ana')
   await there.getByRole('button', { name: 'Accept' }).click()
   const digits = there.locator('.digits')
   await expect(digits).toHaveText(/^\d{3} \d{3}$/)
   await expect(there.getByText('Calls themselves Ana')).toBeVisible()
+  await expect(steps(there).locator('[aria-current="step"]')).toHaveText('Match the digits')
 
   // Typed on Ana's Jean: Bob is in her people, waiting for his answer, which comes from his Jean on its own.
   await expect(settings.getByLabel('The six digits Bob from the bakery shows you or sends back')).toBeFocused()
+  await expect(steps(settings).locator('[aria-current="step"]')).toHaveText('Match the digits')
   await settings.getByLabel('The six digits Bob from the bakery shows you or sends back').fill(String(await digits.textContent()))
   await expect(settings.locator('.people-said')).toHaveText('Bob from the bakery is in your people. Once they answer, you can send each other tasks.')
   await expect(there.locator('.people-said')).toHaveText('Ana is in your people now. You can send each other tasks.')
+  // Done on both: every step ticked, none under way.
+  for (const at of [settings, there]) {
+    await expect(steps(at).locator('.is-done')).toHaveCount(3)
+    await expect(steps(at).locator('[aria-current]')).toHaveCount(0)
+  }
   await expect.poll(() => peopleOf(ana)).toEqual([{ name: 'Bob from the bakery', said: 'Bob', waiting: false, reads: true }])
   expect(await peopleOf(bob)).toEqual([{ name: 'Ana', said: 'Ana', waiting: false, reads: true }])
   await settings.getByRole('button', { name: 'Done' }).click()
   // His initial beside the name Ana gave him, which holds the one he gives himself, so it isn't said again.
   await expect(settings.locator('.people-flow .list li')).toContainText(['BBob from the bakery'])
   await expect(settings.locator('.people-flow .list li')).not.toContainText('Calls themselves')
+  await expect(none).toHaveCount(0)
+  await expect(steps(settings)).toHaveCount(0)
 })
 
 test('a task shared from its menu with only the people chosen: what goes shown first, then a card on their Jean, which opens it as theirs, from Ana', async ({ browser }) => {
