@@ -138,7 +138,8 @@ async function ended(live, how) {
   for (const place of apartOf(live.kept)) apart.delete(place)
   await save(live.id, null)
   await app.fs.remove(cache(live.id)).catch(() => {})
-  notify(t(how === 'removed' ? 'together.removed' : 'together.stopped', { title: live.kept.title }))
+  // A link that never opened anything has no title to name.
+  notify(live.kept.title ? t(how === 'removed' ? 'together.removed' : 'together.stopped', { title: live.kept.title }) : t('together.gone'))
   changed()
 }
 
@@ -182,7 +183,8 @@ export async function follow(id, kept, joining) {
     onFleeting: async (bytes) => { const said = await circle.heard(live.state, id, await circle.openChange(id, keysOf(live.kept), bytes)); if (said) { live.here.set(said.member, Date.now()); changed() } },
     onCaught: () => settled(live),
     onEnd: async (how) => {
-      if (how.deleted) return ended(live, 'stopped')
+      // Deleted, or gone from the relay after its days: nothing more comes of it, and nothing posted would ever go.
+      if (how.deleted || how.gone) return ended(live, 'stopped')
       if (!how.expired || !live.kept.write) return
       // Expired: made again, the first to come back posting a seed from their copy; another member reads it and merges theirs in.
       if ((await journal.create(whereOf(live), live.kept.ownerHash)) === 'made' && live.kept.place) {
@@ -302,12 +304,13 @@ export async function join(text, joining) {
 export const set = (live, fp, what) => post(live, what === 'block' ? 'block' : 'role', what === 'block' ? { fp } : { fp, role: what })
 
 /**
- * The owner's: everyone left moved to the next journal, with a key the removed can't open; with no one removed, the link turned off.
- * @param {Live} live @param {string[]} leaving
+ * The owner's: everyone left moved to the next journal, with a key the removed can't open; with no one removed, the link turned off,
+ * or on where `links` asks. @param {Live} live @param {string[]} leaving @param {boolean} [links] @returns {Promise<Live>} the circle moved to
  */
-export async function move(live, leaving) {
+export async function move(live, leaving, links = leaving.length > 0 && live.kept.links) {
+  if (links && !live.kept.links && !(await linked())) throw new Error(t('together.inside'))
   const [person, read, write, key, epoch] = [await me(), token(), token(), random(32), live.kept.epoch + 1]
-  const next = { epoch, read, write, key: encode(key), links: leaving.length > 0 && live.kept.links }
+  const next = { epoch, read, write, key: encode(key), links }
   await post(live, 'moved', { envelopes: Object.fromEntries(await Promise.all(circle.membersOf(live.state).filter((one) => !leaving.includes(one.fp) && one.fp !== live.me)
     .map(async (one) => [one.fp, await sealFor(one.key, one.role === 'viewer' ? { ...next, write: undefined } : next)]))) })
   const id = await journal.journalOf(read)
@@ -325,6 +328,7 @@ export async function move(live, leaving) {
   const members = circle.membersOf(live.state).filter((one) => !leaving.includes(one.fp) && one.fp !== live.me).map(({ fp, key: theirs, name, role, colour, how, mailbox }) => ({ fp, key: theirs, name, role, colour, how, mailbox }))
   const begun = await post(moving, 'begin', { key: person.public, name: await nameOf(), kind: kept.kind, links: next.links, ownerHash: kept.ownerHash, mailbox: person.mailbox, members })
   if (content) await post(moving, 'seed', { members: [encode(begun)], content }, { seed: true })
+  return moving
 }
 
 /** Another member's Jean asked something, which they let it answer or not (D226, D734). @param {Live} live @param {string} to @param {string} text */

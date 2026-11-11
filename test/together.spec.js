@@ -326,6 +326,62 @@ test('Ana and Bob work on a whole project together: its documents reach each oth
   await expect.poll(() => read(ana, 'documents/01JAQXDOC0000000000000000B-food.md')).toContain('Pastéis de nata.')
 })
 
+/** Share opened on Expenses, worked on together or not yet; its dialog. @param {Page} page @param {string} folder */
+async function shareExpenses(page, folder) {
+  await page.evaluate(async (folder) => {
+    const { app } = await import('/ui/state.js')
+    await (await import('/caps/share/share.js')).openShare({ path: `${app.projectDir}/conversations/`, title: 'Expenses', item: { text: '' }, thing: { kind: 'collection', uri: folder } }, null)
+  }, folder)
+  return page.locator('app-share-dialog dialog[open]')
+}
+
+test('Ana turns the link off and People still shows her; Share’s invitation link turns it on again, and Bob joins with it', async ({ browser }) => {
+  const [ana, bob] = await Promise.all([person(browser, 'Ana'), person(browser, 'Bob')])
+  const folder = await expenses(ana)
+  let sharing = await shareExpenses(ana, folder)
+  await sharing.getByRole('button', { name: 'Copy an invitation link instead' }).click()
+  const first = await sharing.getByTitle('Link', { exact: true }).inputValue()
+  await sharing.getByRole('button', { name: 'People in this collection' }).click()
+  const people = ana.locator('app-together-dialog dialog[open]')
+  await people.getByRole('button', { name: 'Turn the link off' }).click()
+  // The circle everyone moved to, Ana in it, with no link to copy.
+  await expect(people.getByRole('button', { name: 'Copy link' })).toHaveCount(0)
+  await expect(people.locator('li')).toHaveText([/Ana \(you\)/])
+  await people.getByRole('button', { name: 'Close' }).click()
+
+  // Asked for a link again, Share gives a new one rather than People with none.
+  sharing = await shareExpenses(ana, folder)
+  await sharing.getByRole('button', { name: 'Copy an invitation link instead' }).click()
+  const link = await sharing.getByTitle('Link', { exact: true }).inputValue()
+  expect(link).not.toBe(first)
+  await expect(ana.locator('app-together-dialog dialog[open]')).toHaveCount(0)
+  await bob.goto(link)
+  const joining = bob.locator('app-together-dialog dialog[open]')
+  await joining.getByLabel('Your name, as the others will see it').fill('Bob')
+  await joining.getByRole('button', { name: 'Join' }).click()
+  await expect.poll(() => items(bob, folder)).toEqual(['Flat', 'Flights'])
+})
+
+test('a circle whose journal the relay no longer has ends here, and Share’s invitation link starts working together again', async ({ browser }) => {
+  const ana = await person(browser, 'Ana')
+  const folder = await expenses(ana)
+  // Expenses kept in step on Ana's devices alone, in a journal the relay doesn't have (its folder wiped, or past its days), followed as Together starts.
+  await ana.evaluate(async ([folder, relay]) => {
+    const [{ app }, { setSecrets }, { base64url, random }, { encode }, { journalOf }, { unlock }] = await Promise.all([import('/ui/state.js'), import('/ui/secrets.js'),
+      import('/caps/share/seal.js'), import('/ui/seal.js'), import('/caps/together/journal.js'), import('/ui/caps.js')])
+    const read = base64url(random(32))
+    const kept = { format: 1, relay, kind: 'collection', place: { dir: app.projectDir, folder }, title: 'Expenses', owner: 'A'.repeat(22), ownerHash: '', ownerToken: base64url(random(32)),
+      epoch: 0, keys: { 0: encode(random(32)) }, read, write: base64url(random(32)), links: false, role: 'edit' }
+    await setSecrets(app.fs, { [`circle:${await journalOf(read)}`]: JSON.stringify(kept) })
+    await unlock('together')
+  }, [folder, RELAY_URL])
+  await expect(ana.locator('app-toasts')).toContainText('Working together on “Expenses” stopped. Your copy stays yours.')
+  await expect.poll(() => ana.evaluate(async () => Object.keys(await (await import('/ui/secrets.js')).secretsWhere((await import('/ui/state.js')).app.fs, (id) => id.startsWith('circle:'))).length)).toBe(0)
+  const sharing = await shareExpenses(ana, folder)
+  await sharing.getByRole('button', { name: 'Copy an invitation link instead' }).click()
+  await expect(sharing.getByTitle('Link', { exact: true })).toHaveValue(/#\/join\//)
+})
+
 test('where the relay keeps no journals, Share offers no working together: with nobody met, Publish alone, without tabs', async ({ browser }) => {
   const ana = await person(browser, 'Ana')
   // A relay as jean.is's was before its configuration kept journals: its root names none.

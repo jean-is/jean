@@ -32,6 +32,8 @@ const avatar = (one) => html`<span class="avatar" aria-hidden="true" ${ref((elem
 /** Something done, its failure said, never done twice at once. @param {() => Promise<unknown>} run */
 const doing = async (run) => { if (busy.peek()) return; busy.value = true; try { await run() } catch (error) { showError(error) } finally { busy.value = false } }
 const names = (/** @type {string[]} */ list) => new Intl.ListFormat(intlLocales(), { type: 'conjunction' }).format(list)
+/** Everyone left moved to the next journal, which People in this… shows from then on. @param {import('./engine.js').Live} live @param {string[]} leaving */
+const moving = (live, leaving) => doing(async () => { shown.value = (await move(live, leaving)).id })
 
 /** Where a thing is: a task and a project by their path, anything else by its folder in the project. @param {{ kind: import('./engine.js').Kind, uri: string }} thing */
 const placeOf = ({ kind, uri }) => (kind === 'project' ? { dir: 'projects', folder: uri.slice(9) } : { dir: app.projectDir, folder: kind === 'task' ? uri.slice(app.projectDir.length + 1) : uri })
@@ -59,11 +61,15 @@ export function how(what) {
 
 /**
  * Share's verbs (caps/share/dialog.js): worked on together, begun here or the circle it is in, those ticked invited; or a link that invites
- * anyone, copied, where its owner's circle has one, else People in this… opened. @param {{ thing: { kind: import('./engine.js').Kind, uri: string }, title: string }} what
+ * anyone, copied, where its owner's circle has one, or moves to one that has, else People in this… opened.
+ * @param {{ thing: { kind: import('./engine.js').Kind, uri: string }, title: string }} what
  * @param {string[]} fps those ticked, by fingerprint; none for the person's own devices alone, whom its key reaches @param {boolean} links
  */
 export async function start(what, fps, links) {
-  const place = placeOf(what.thing), live = circleAt(`${place.dir}/${place.folder}`) ?? await begin(place, { links, role: 'edit', kind: what.thing.kind })
+  const place = placeOf(what.thing)
+  let live = circleAt(`${place.dir}/${place.folder}`) ?? await begin(place, { links, role: 'edit', kind: what.thing.kind })
+  // Begun with no link (those chosen, or only the person's devices), or the link turned off: its owner turns it on, invitations then going to where everyone is.
+  if (links && !live.kept.links && live.kept.ownerToken) live = await move(live, [], true)
   if (fps.length) await sent(live, what.title, fps)
   // Copied where the clipboard lets it; the line shows the link all the same.
   if (links && live.kept.links && live.kept.ownerToken) copyText(linkFor(live)).catch(() => {})
@@ -96,7 +102,7 @@ const row = (live, one, owner) => html`<li>${avatar(one)}<span class="item-text"
   ${owner && one.fp !== live.me ? html`<select aria-label=${t('together.role', { name: one.name })} title=${t('together.role', { name: one.name })} @change=${(/** @type {Event} */ event) => doing(() => set(live, one.fp, /** @type {any} */ (event.target).value))}>
       <option value="editor" ?selected=${one.role === 'editor'}>${t('together.canEdit')}</option><option value="viewer" ?selected=${one.role === 'viewer'}>${t('together.canView')}</option></select>
     ${one.blocked ? nothing : html`<button class="button subtle" @click=${() => doing(() => set(live, one.fp, 'block'))}>${t('together.block')}</button>`}
-    <button class="button subtle danger" @click=${() => doing(() => move(live, [one.fp]))}>${t('together.remove')}</button>` : nothing}
+    <button class="button subtle danger" @click=${() => moving(live, [one.fp])}>${t('together.remove')}</button>` : nothing}
   ${live.kept.kind === 'task' && one.fp !== live.me && !one.gone ? html`<button class="button subtle" @click=${() => { asked.value = null; question.value = one.fp }}>${t('together.ask', { name: BRAND.name })}</button>` : nothing}</li>`
 
 /** Whom this person asks, in People in this task, and what. */
@@ -131,7 +137,7 @@ class TogetherDialog extends Element {
       ${asked.value ? this.joining(asked.value.link) : starting.value && !live ? html`${head(t('together.project'))}<p class="lede" dir="auto">${starting.value.title}</p>${how(starting.value)}` : live ? html`${head(peopleIn(live))}<p class="lede" dir="auto">${live.kept.title}</p>
         <ul class="list">${membersOf(live.state).map((one) => row(live, one, owner))}</ul>${question.value ? asks(live, question.value) : nothing}
         ${owner && live.kept.links ? html`<p class="hint">${t('together.moves')}</p><div class="row">${copyButton(linkFor(live), t('together.copyLink'))}
-          <button class="button subtle" @click=${() => doing(() => move(live, []))}>${t('together.linkOff')}</button></div>` : nothing}
+          <button class="button subtle" @click=${() => moving(live, [])}>${t('together.linkOff')}</button></div>` : nothing}
         <footer class="dialog-foot"><button class="button subtle danger" ?disabled=${busy.value} @click=${() => doing(async () => { await stop(live); app.dialog.value = null })}>${t(owner ? 'together.stop' : 'together.leave')}</button></footer>` : nothing}
     </dialog>`
   }
