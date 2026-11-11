@@ -6,5 +6,6 @@
   "files.askJean": "Goulenn ouzh {name}",
   "files.pointed": "O poentañ war « {words} » : goulennit er voest kemennadenn",
   "files.noSpeech": "Komz ebet klevet ennañ",
-  "files.area": "Diskouez ul lodenn : riklit war ar skeudenn, pe implijit ar biroù"
+  "files.area": "Diskouez ul lodenn : riklit war ar skeudenn, pe implijit ar biroù",
+  "files.lookProposed": "Ur garta grafek savet diwar ar pezh ho peus rannet a c’hortoz ma asantfec’h pe ma nac’hfec’h anezhi."
 }

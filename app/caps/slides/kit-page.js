@@ -4,7 +4,8 @@
 // the user's own fonts), its corners, its logo and the one for dark paper with their corner, and its layouts, deck's own on or
 // off and the user's own as a grid of named slots with how its words sit, those that only slides show saying so. A kit, a PowerPoint template or an Office theme is
 // brought in, a template's layouts with their art (D606), the kit saved as a file or as design tokens (deck's template module,
-// loaded then). Each change is kept at once. Opened by its slot (./kit-slot.js), which
+// loaded then). Each change is kept at once. A kit proposed from the person's material, here or by Jean in a task (D740, ./brand.js),
+// is drawn in the previews until they accept or reject it. Opened by its slot (./kit-slot.js), which
 // Appearance draws under its back button (ui/look-page.js): a saved task's page, which carries Slides, never reaches Settings.
 import { html, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
@@ -12,10 +13,10 @@ import { ref } from 'lit-html/directives/ref.js'
 import { signal } from '@preact/signals-core'
 import { createDeck, mergeKits, layoutOf, logoOf, labelOf, tokensFrom, rgbOf, CORNERS, STANDARD } from '@codename/deck'
 import { app, theme } from '../../ui/state.js'
-import { kitFile, keepKit, hexOf, paperOf } from '../../ui/kit.js'
+import { kitFile, keepKit, hexOf, paperOf, proposedPath } from '../../ui/kit.js'
 import { save } from '../../ui/save.js'
 import { icons } from '../../ui/menu-icons.js'
-import { t, locale, dir, useStrings } from '../../core/i18n.js'
+import { t, locale, dir, useStrings, intlLocales } from '../../core/i18n.js'
 import { jeanKit, copyOf, withNames, words } from './kit.js'
 import { sampleDeck } from './kit-sample.js'
 import { facesOf } from '../made/paper.js'
@@ -26,7 +27,7 @@ await Promise.all([useStrings('slides'), styleSheet(new URL('../../vendor/deck/d
 /** One of deck's layouts. @typedef {ReturnType<typeof mergeKits>['kit']['layouts'][string]} Layout */
 /** @typedef {{ name?: string, tokens: Record<string, any>, layouts: Record<string, any>, pictures?: Record<string, string> }} Own */
 /** The kit open: its place (null, the person's) and as its file holds it; a layout being made or changed ('+' a new one); what the page says; colours written that deck doesn't read, by field. */
-const open = signal(/** @type {{ dir: string | null, kit: Own } | null} */ (null))
+const open = signal(/** @type {{ dir: string | null, kit: Own, proposed: { name: string, from: string[], tokens: Record<string, any> } | null } | null} */ (null))
 const making = signal('')
 const said = signal('')
 const typed = signal(/** @type {Record<string, string>} */ ({}))
@@ -43,7 +44,7 @@ const whose = () => (pageOpen() === 'kit-project' ? app.projectDir : null)
 /** Its file, read again as the page opens on another. */
 function read() {
   const place = whose()
-  if (open.peek()?.dir !== place) void kitFile(place).then((kit) => { open.value = { dir: place, kit: { tokens: {}, layouts: {}, ...structuredClone(kit ?? {}) } } })
+  if (open.peek()?.dir !== place) void Promise.all([kitFile(place), app.fs.read(proposedPath(place)).catch(() => null)]).then(([kit, proposed]) => { open.value = { dir: place, kit: { tokens: {}, layouts: {}, ...structuredClone(kit ?? {}) }, proposed: proposed ? JSON.parse(proposed) : null } })
   return open.value?.dir === place ? open.value.kit : null
 }
 /** A change to the kit, kept at once, with the pictures its layouts' art still draws. @param {(kit: Own) => void} how */
@@ -53,7 +54,7 @@ function change(how) {
   const kit = structuredClone(now.kit)
   how(kit)
   if (kit.pictures) kit.pictures = Object.fromEntries(Object.entries(kit.pictures).filter(([name]) => Object.values(kit.layouts).some((layout) => layout?.art?.includes(name))))
-  open.value = { dir: now.dir, kit }
+  open.value = { ...now, kit }
   said.value = ''
   void keepKit(now.dir, kit)
 }
@@ -97,6 +98,29 @@ async function bring(event) {
   } catch {
     said.value = t('slides.kit.notKit')
   }
+}
+
+/** A kit proposed from the person's logo, guide or screenshot, waiting beside the kit open for them to accept or reject it. @param {Event} event */
+async function propose(event) {
+  const files = [.../** @type {HTMLInputElement} */ (event.target).files ?? []], place = open.peek()?.dir ?? null
+  if (!files.length) return
+  said.value = t('slides.kit.reading')
+  try {
+    const proposed = await (await import('./brand.js')).proposal(await Promise.all(files.map(async (file) => ({ name: file.name, bytes: new Uint8Array(await file.arrayBuffer()) }))))
+    await app.fs.write(proposedPath(place), JSON.stringify(proposed))
+    if (open.peek()?.dir === place) open.value = { .../** @type {NonNullable<typeof open.value>} */ (open.peek()), proposed }
+    said.value = ''
+  } catch {
+    said.value = t('slides.kit.noLook')
+  }
+}
+/** The kit proposed, accepted over the kit open (its tokens over the kit's, its name if the kit has none) or rejected, and let go. @param {boolean} accepted */
+function decide(accepted) {
+  const now = open.peek(), proposed = now?.proposed
+  if (!now || !proposed) return
+  open.value = { ...now, proposed: null }
+  void app.fs.remove(proposedPath(now.dir)).catch(() => {})
+  if (accepted) change((kit) => Object.assign(kit, { name: kit.name || proposed.name, tokens: { ...kit.tokens, ...proposed.tokens } }))
 }
 
 /** The kit open as a file, or its tokens as the W3C's design tokens. @param {boolean} tokens */
@@ -204,18 +228,23 @@ function layouts(kit) {
 
 /** The page. */
 export function page() {
-  const kit = read(), project = app.project.value
+  const kit = read(), project = app.project.value, proposed = open.value?.proposed
   if (!kit) return nothing
+  // What the previews draw: the kit proposed over the kit, while it waits.
+  const look = proposed ? { ...kit, tokens: { ...kit.tokens, ...proposed.tokens } } : kit
   const tokens = kit.tokens, night = tokens.dark ?? {}, fonts = tokens.fonts
-  const file = (/** @type {string} */ id, /** @type {string} */ label, /** @type {string} */ accept, /** @type {(event: Event) => void} */ picked) => html`<label class="button kit-file" for=${id}>${label}<input id=${id} type="file" class="visually-hidden" accept=${accept} @change=${picked}></label>`
+  const file = (/** @type {string} */ id, /** @type {string} */ label, /** @type {string} */ accept, /** @type {(event: Event) => void} */ picked, many = false) => html`<label class="button kit-file" for=${id}>${label}<input id=${id} type="file" class="visually-hidden" accept=${accept} ?multiple=${many} @change=${picked}></label>`
   return html`<header class="look-head"><h2 tabindex="-1">${t('slides.kit.title')}</h2>${Object.keys(tokens).length || Object.keys(kit.layouts).length
       ? html`<button class="button subtle" @click=${() => change((next) => { next.tokens = {}; next.layouts = {}; delete next.name; typed.value = {} })}>${t('slides.kit.startOver')}</button>` : nothing}</header>
     <p class="lede">${t('slides.kit.text')}</p>
+    <p>${file('kit-propose', t('slides.kit.propose'), 'image/png,image/jpeg,image/gif,image/webp,image/svg+xml,.pdf,.docx', (e) => void propose(e), true)}</p>
     ${project.data.default === true ? nothing : html`<span class="segmented" role="radiogroup" aria-label=${t('slides.kit.title')}>
       ${[['kit', t('slides.kit.everywhere')], ['kit-project', t('slides.kit.project', { project: String(project.data.name ?? '') })]].map(([page, label]) => html`<label for=${`whose-${page}`}>
         <input id=${`whose-${page}`} type="radio" name="kit-whose" .checked=${live(pageOpen() === page)} @change=${() => pageOpen(page)}><span>${label}</span></label>`)}</span>`}
-    <div class="kit-previews"><div class="kit-preview" ${ref((box) => void preview(box, kit))}></div>
-      <figure><div class="kit-sheet" aria-hidden="true" ${ref((box) => void sheet(box, kit))}><img hidden alt=""><b>${t('slides.kit.title')}</b><p>${t('slides.kit.sample')}</p><blockquote>${t('slides.kit.sample')}</blockquote><table><tr><th>${t('slides.kit.name')}</th><th>${t('slides.kit.words')}</th></tr></table></div>
+    ${proposed ? html`<section class="kit-proposed"><p role="status"><strong>${t('slides.kit.proposed', { from: new Intl.ListFormat(intlLocales(), { type: 'conjunction' }).format(proposed.from) })}</strong> ${t('slides.kit.proposedText')}</p>
+      <span class="row"><button type="button" class="button primary" @click=${() => decide(true)}>${t('slides.kit.accept')}</button><button type="button" class="button" @click=${() => decide(false)}>${t('slides.kit.reject')}</button></span></section>` : nothing}
+    <div class="kit-previews"><div class="kit-preview" ${ref((box) => void preview(box, look))}></div>
+      <figure><div class="kit-sheet" aria-hidden="true" ${ref((box) => void sheet(box, look))}><img hidden alt=""><b>${t('slides.kit.title')}</b><p>${t('slides.kit.sample')}</p><blockquote>${t('slides.kit.sample')}</blockquote><table><tr><th>${t('slides.kit.name')}</th><th>${t('slides.kit.words')}</th></tr></table></div>
         <figcaption class="hint">${t('slides.kit.onPaper')}</figcaption></figure></div>
     ${said.value ? html`<p class="hint" role="status">${said.value}</p>` : nothing}
     <section><h3>${t('slides.kit.colours')}</h3><ul class="list">${COLOURS.map((key) => colour(kit, key, false))}</ul><p class="hint">${t('slides.kit.paperHint')}</p>

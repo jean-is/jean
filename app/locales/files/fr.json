@@ -6,5 +6,6 @@
   "files.askJean": "Demander à {name}",
   "files.pointed": "Vous désignez « {words} » : posez votre question dans la zone de saisie",
   "files.noSpeech": "Aucune parole entendue",
-  "files.area": "Montrer une partie : faites glisser sur l’image, ou utilisez les flèches"
+  "files.area": "Montrer une partie : faites glisser sur l’image, ou utilisez les flèches",
+  "files.lookProposed": "Une charte graphique tirée de ce que vous avez partagé attend que vous l’acceptiez ou la refusiez."
 }

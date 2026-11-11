@@ -6,5 +6,6 @@
   "files.askJean": "{name} vragen",
   "files.pointed": "Je wijst „{words}” aan: vraag het in het vak",
   "files.noSpeech": "Geen spraak gehoord",
-  "files.area": "Wijs een deel aan: sleep over de afbeelding of gebruik de pijltjestoetsen"
+  "files.area": "Wijs een deel aan: sleep over de afbeelding of gebruik de pijltjestoetsen",
+  "files.lookProposed": "Een ontwerpsysteem uit wat je hebt gedeeld wacht tot je het accepteert of weigert."
 }

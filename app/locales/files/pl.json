@@ -6,5 +6,6 @@
   "files.askJean": "Zapytaj: {name}",
   "files.pointed": "Wskazano: „{words}”. Zapytaj w polu",
   "files.noSpeech": "Nie słychać w nim mowy",
-  "files.area": "Wskaż fragment: przeciągnij po obrazie lub użyj strzałek"
+  "files.area": "Wskaż fragment: przeciągnij po obrazie lub użyj strzałek",
+  "files.lookProposed": "System projektowy z udostępnionych materiałów czeka, aż go zaakceptujesz lub odrzucisz."
 }

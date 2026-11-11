@@ -6,5 +6,6 @@
   "files.askJean": "Ask {name}",
   "files.pointed": "Pointing at “{words}”: ask in the box",
   "files.noSpeech": "No speech heard in it",
-  "files.area": "Point at a part: drag over the picture, or use the arrow keys"
+  "files.area": "Point at a part: drag over the picture, or use the arrow keys",
+  "files.lookProposed": "A design system from what you shared is waiting for you to accept or reject it."
 }

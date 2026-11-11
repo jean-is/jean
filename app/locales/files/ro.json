@@ -6,5 +6,6 @@
   "files.askJean": "Întrebați {name}",
   "files.pointed": "Ați arătat „{words}”: întrebați în casetă",
   "files.noSpeech": "Nu se aude vorbire",
-  "files.area": "Arată o parte: trage peste imagine sau folosește săgețile"
+  "files.area": "Arată o parte: trage peste imagine sau folosește săgețile",
+  "files.lookProposed": "O identitate vizuală din ce ați partajat așteaptă să o acceptați sau să o respingeți."
 }

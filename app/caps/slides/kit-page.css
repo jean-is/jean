@@ -1,4 +1,4 @@
-/* Settings › Appearance › Design system (D602, D664): a deck drawn with the kit and a page of paper, then its colours, type, logo, layouts and files. */
+/* Settings › Appearance › Design system (D602, D664): a deck drawn with the kit and a page of paper, a kit proposed over them (D740), then its colours, type, logo, layouts and files. */
 .kit-previews { display: grid; grid-template-columns: minmax(0, 1fr) minmax(8rem, 11rem); gap: 1rem; align-items: start; margin-block: 1rem; } .kit-previews figure { margin: 0; }
 @media (max-width: 40rem) { .kit-previews { grid-template-columns: minmax(0, 1fr); } .kit-previews figure { max-inline-size: 11rem; } }
 .kit-sheet { aspect-ratio: 1 / 1.414; padding: 0.9rem; overflow: hidden; border: 1px solid var(--line-strong); border-radius: 0.2rem; background: #fff; color: var(--sheet-ink, #111); font: 0.625rem/1.45 var(--sheet-body, var(--sans)); color-scheme: light; }
@@ -20,3 +20,4 @@
 .kit-field :is(textarea, input[dir="ltr"]) { font-family: var(--mono); }
 .kit-check { display: flex; align-items: center; gap: 0.5rem; }
 .kit-files { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-block-start: 1rem; }
+.kit-proposed { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.6rem 1rem; margin-block: 1rem 0; padding: 0.8rem 1rem; border: 1px solid var(--line-strong); border-radius: 0.8rem; } .kit-proposed p { flex: 1 1 16rem; margin: 0; }

@@ -6,5 +6,6 @@
   "files.askJean": "Opýtať sa aplikácie {name}",
   "files.pointed": "Ukázané: „{words}“. Opýtajte sa v poli",
   "files.noSpeech": "Nie je v tom počuť reč",
-  "files.area": "Ukážte na časť: potiahnite cez obrázok alebo použite šípky"
+  "files.area": "Ukážte na časť: potiahnite cez obrázok alebo použite šípky",
+  "files.lookProposed": "Dizajnový systém zo zdieľaných súborov čaká, kým ho prijmete alebo odmietnete."
 }

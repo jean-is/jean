@@ -6,5 +6,6 @@
   "files.askJean": "Muulize {name}",
   "files.pointed": "Umeonyesha: “{words}”. Uliza kwenye kisanduku",
   "files.noSpeech": "Hakuna sauti ya mazungumzo iliyosikika",
-  "files.area": "Onyesha sehemu: buruta juu ya picha, au tumia vitufe vya mishale"
+  "files.area": "Onyesha sehemu: buruta juu ya picha, au tumia vitufe vya mishale",
+  "files.lookProposed": "Mfumo wa usanifu kutoka ulichoshiriki unasubiri uukubali au uukatae."
 }

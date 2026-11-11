@@ -6,5 +6,6 @@
   "files.askJean": "Chiedi a {name}",
   "files.pointed": "Stai indicando «{words}»: chiedi nella casella",
   "files.noSpeech": "Nessuna voce sentita",
-  "files.area": "Indica una parte: trascina sull’immagine o usa le frecce"
+  "files.area": "Indica una parte: trascina sull’immagine o usa le frecce",
+  "files.lookProposed": "Un sistema di design da ciò che hai condiviso aspetta che tu lo accetti o lo rifiuti."
 }

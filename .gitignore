@@ -31,6 +31,7 @@ test/designs/.cache/
 # The game evals’ runs: each game, its conversation and a picture of it (npm run games)
 test/games/.cache/
 test/sites/.cache/
+test/brands/.cache/
 # How the film weights were made: weights as downloaded, graphs exported, the reference’s films, TAEHV’s code as fetched,
 # and the Python environment (spikes/films/)
 spikes/films/downloads

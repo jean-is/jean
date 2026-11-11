@@ -6,5 +6,6 @@
   "files.askJean": "Hỏi {name}",
   "files.pointed": "Đã chỉ vào: “{words}”. Hãy hỏi trong ô",
   "files.noSpeech": "Không nghe thấy lời nói",
-  "files.area": "Chỉ vào một phần: kéo trên ảnh, hoặc dùng các phím mũi tên"
+  "files.area": "Chỉ vào một phần: kéo trên ảnh, hoặc dùng các phím mũi tên",
+  "files.lookProposed": "Một hệ thống thiết kế từ những gì bạn đã chia sẻ đang chờ bạn chấp nhận hoặc từ chối."
 }

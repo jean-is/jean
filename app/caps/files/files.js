@@ -1,15 +1,17 @@
 // Files: the user drops, pastes or picks files, or captures their screen; Jean extracts their
 // text, keeps the original in the project's library, and the next message links to them.
 // Pictures have no text, nor do scans: brains that can see are shown them. Adds `read`, for
-// pages that didn't fit in the message, and `search_files`; both reach every file of the project (D24), and its documents and collections.
+// pages that didn't fit in the message, and `search_files`; both reach every file of the project (D24), and its documents and collections;
+// and `brand_look`, a design system proposed from the person's logo, brand guide or screenshot (D740), waiting for them on its page.
 import { effect } from '@preact/signals-core'
 import { register, loaded, unlock, isDenied } from '../../ui/caps.js'
 import { app, effective, currentFiles, conversationOf, warm, notify } from '../../ui/state.js'
+import { proposedPath } from '../../ui/kit.js'
 import { rememberText } from '../../ui/send.js'
 import { library } from '../../ui/complete.js'
 import { all } from '../../ui/creations.js'
 import { searchTool } from './search.js'
-import { addFile, readTool, fileText, splitPages } from '../../core/files.js'
+import { addFile, readTool, fileText, splitPages, fileNamed } from '../../core/files.js'
 import { isPicture, latestOf, noteRecord } from '../../core/events.js'
 import { readZip } from '../../core/zip.js'
 import { extractPages, paginate } from './extract.js'
@@ -66,6 +68,24 @@ const fileTool = {
   },
 }
 
+/** A design system proposed from what the person shared (caps/slides/brand.js), waiting beside the kit of the task's project, or theirs, until they accept or reject it. @type {import('../../core/loop.js').Tool} */
+const lookTool = {
+  spec: { name: 'brand_look', description: "Propose the user's design system from their logo, brand guide (PDF or Word) or a screenshot of their site: its colours, made readable, its faces and its logo. They accept or reject it in Settings; nothing wears it before.",
+    parameters: { type: 'object', properties: { files: { type: 'array', items: { type: 'string' }, description: 'The names of the files, as shown in the conversation' }, name: { type: 'string', description: "The brand's name" } }, required: ['files'] } },
+  kind: 'edit',
+  title: (args) => `Propose a design system from ${[args?.files ?? []].flat().join(', ')}`,
+  run: async (args, ctx) => {
+    const links = [args?.files ?? []].flat().map((name) => fileNamed(filesNow(ctx.signal), String(name))).filter((link) => link !== undefined), dir = app.project.peek().data.default === true ? null : app.projectDir
+    if (!links.length) throw new Error(`No file named ${[args?.files].flat().join(', ')}. Files: ${currentFiles(ctx.signal).map((f) => f.name).join(', ') || 'none'}.`)
+    const kit = await (await import('../slides/brand.js')).proposal(await Promise.all(links.map(async (link) => ({ name: link.name, bytes: (await app.fs.readBytes(`${app.projectDir}/${link.uri}`)) ?? new Uint8Array() }))), args?.name ? String(args.name) : undefined)
+    await app.fs.write(proposedPath(dir), JSON.stringify(kit))
+    // The design system's page is Slides', loaded for this visit: once Documents or Collections is found, it is there each time.
+    await Promise.all([useStrings('files'), unlock('slides')])
+    notify(t('files.lookProposed'), { label: t('skills.open'), run: () => import('../../ui/dialogs.js').then((dialogs) => dialogs.openSettings(`appearance/${dir === null ? 'kit' : 'kit-project'}`)) })
+    return `Proposed, waiting in Settings › Appearance › Design system for the user to accept or reject: ${JSON.stringify({ ...kit.tokens, logo: kit.tokens.logo ? 'from the material' : undefined })}`
+  },
+}
+
 /** search_files by meaning too, once meaning search is on (D302). @type {Parameters<typeof searchTool>[0]['meaning']} */
 const meaning = async (query, links) => (loaded.value.has('meaning') ? (await import('../meaning/meaning.js')).rank(query, links) : null)
 /** When words find nothing: meaning search might, where it runs (WebGPU), if the user hasn't turned it down. */
@@ -79,8 +99,8 @@ export const point = (one) => { pointed = one }
 register({
   id: 'files',
   slots: { modes: { at: 12, draw: () => null, notes: () => { const one = pointed?.task === app.current.peek()?.path ? pointed : null; pointed = null; return one ? [noteRecord(one.text, { kind: 'passage', uri: one.uri })] : [] } } },
-  tools: [readTool({ fs: app.fs, projectDir: () => app.projectDir, files: reachable, words }), searchTool({ fs: app.fs, projectDir: () => app.projectDir, files: reachable, words, meaning, unfound }), fileTool],
-  lines: [{ name: 'read', line: 'read pages of a file' }, { name: 'search_files', line: 'find what the project’s files say' }],
+  tools: [readTool({ fs: app.fs, projectDir: () => app.projectDir, files: reachable, words }), searchTool({ fs: app.fs, projectDir: () => app.projectDir, files: reachable, words, meaning, unfound }), fileTool, lookTool],
+  lines: [{ name: 'read', line: 'read pages of a file' }, { name: 'search_files', line: 'find what the project’s files say' }, { name: 'brand_look', line: 'propose the user’s design system from their logo, brand guide or screenshot, for them to accept' }],
   rules: ['Shared files are in the message, sometimes only some pages: read the others, search_files any file of the project. Cite a passage as [n: "its exact words"], n its source number, not a page.'],
 })
 

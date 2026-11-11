@@ -6,5 +6,6 @@
   "files.askJean": "問 {name}",
   "files.pointed": "指著「{words}」：在訊息框提問",
   "files.noSpeech": "裡面沒有聽到說話聲",
-  "files.area": "指出一部分：在圖片上拖曳，或使用方向鍵"
+  "files.area": "指出一部分：在圖片上拖曳，或使用方向鍵",
+  "files.lookProposed": "根據你分享的內容產生的設計系統正在等你接受或拒絕。"
 }

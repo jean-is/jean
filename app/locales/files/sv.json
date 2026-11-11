@@ -6,5 +6,6 @@
   "files.askJean": "Fråga {name}",
   "files.pointed": "Du pekar på ”{words}”: fråga i rutan",
   "files.noSpeech": "Inget tal hördes",
-  "files.area": "Peka på en del: dra över bilden eller använd piltangenterna"
+  "files.area": "Peka på en del: dra över bilden eller använd piltangenterna",
+  "files.lookProposed": "Ett designsystem utifrån det du delade väntar på att du godtar eller avvisar det."
 }

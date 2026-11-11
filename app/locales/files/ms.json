@@ -6,5 +6,6 @@
   "files.askJean": "Tanya {name}",
   "files.pointed": "Ditunjuk: “{words}”. Tanya dalam kotak",
   "files.noSpeech": "Tiada pertuturan didengari",
-  "files.area": "Tunjuk satu bahagian: seret di atas gambar, atau guna kekunci anak panah"
+  "files.area": "Tunjuk satu bahagian: seret di atas gambar, atau guna kekunci anak panah",
+  "files.lookProposed": "Sistem reka bentuk daripada apa yang anda kongsi sedang menunggu anda menerima atau menolaknya."
 }

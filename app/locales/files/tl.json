@@ -6,5 +6,6 @@
   "files.askJean": "Itanong kay {name}",
   "files.pointed": "Itinuro mo: “{words}”. Magtanong sa kahon",
   "files.noSpeech": "Walang narinig na pananalita",
-  "files.area": "Ituro ang isang bahagi: i-drag sa larawan, o gamitin ang mga arrow key"
+  "files.area": "Ituro ang isang bahagi: i-drag sa larawan, o gamitin ang mga arrow key",
+  "files.lookProposed": "May sistema ng disenyo mula sa ibinahagi mo na naghihintay na tanggapin o tanggihan mo."
 }

@@ -6,5 +6,6 @@
   "files.askJean": "Spørg {name}",
   "files.pointed": "Du peger på »{words}«: spørg i feltet",
   "files.noSpeech": "Ingen tale hørt i den",
-  "files.area": "Peg på en del: træk hen over billedet, eller brug piletasterne"
+  "files.area": "Peg på en del: træk hen over billedet, eller brug piletasterne",
+  "files.lookProposed": "Et designsystem ud fra det, du har delt, venter på, at du godkender eller afviser det."
 }

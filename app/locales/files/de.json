@@ -6,5 +6,6 @@
   "files.askJean": "{name} fragen",
   "files.pointed": "„{words}“ ausgewählt: Frag im Feld",
   "files.noSpeech": "Keine Sprache darin zu hören",
-  "files.area": "Auf einen Teil zeigen: über das Bild ziehen oder die Pfeiltasten nutzen"
+  "files.area": "Auf einen Teil zeigen: über das Bild ziehen oder die Pfeiltasten nutzen",
+  "files.lookProposed": "Ein Gestaltungssystem aus deinen geteilten Dateien wartet darauf, dass du es annimmst oder ablehnst."
 }

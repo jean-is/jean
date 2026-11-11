@@ -6,5 +6,6 @@
   "files.askJean": "Kérdezd: {name}",
   "files.pointed": "Kijelölve: „{words}”. Kérdezz a mezőben",
   "files.noSpeech": "Nem hallatszik benne beszéd",
-  "files.area": "Mutass egy részre: húzd át a képen, vagy használd a nyilakat"
+  "files.area": "Mutass egy részre: húzd át a képen, vagy használd a nyilakat",
+  "files.lookProposed": "A megosztott anyagaidból készült arculat arra vár, hogy elfogadd vagy elutasítsd."
 }

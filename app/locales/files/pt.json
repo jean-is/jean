@@ -6,5 +6,6 @@
   "files.askJean": "Perguntar a {name}",
   "files.pointed": "A apontar para «{words}»: pergunta na caixa",
   "files.noSpeech": "Não se ouve fala",
-  "files.area": "Aponte uma parte: arraste sobre a imagem ou use as setas"
+  "files.area": "Aponte uma parte: arraste sobre a imagem ou use as setas",
+  "files.lookProposed": "Um sistema de design a partir do que partilhaste aguarda que o aceites ou rejeites."
 }

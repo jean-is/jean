@@ -6,5 +6,6 @@
   "files.askJean": "{name} uygulamasına sor",
   "files.pointed": "Gösterilen: “{words}”. Kutuya sor",
   "files.noSpeech": "İçinde konuşma duyulmadı",
-  "files.area": "Bir parçayı gösterin: resmin üzerinde sürükleyin ya da ok tuşlarını kullanın"
+  "files.area": "Bir parçayı gösterin: resmin üzerinde sürükleyin ya da ok tuşlarını kullanın",
+  "files.lookProposed": "Paylaştıklarından çıkan bir tasarım sistemi kabul etmeni ya da reddetmeni bekliyor."
 }

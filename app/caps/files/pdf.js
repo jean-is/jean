@@ -25,8 +25,8 @@ function pdfjs() {
 /** pdf.js's words of a page, laid over it to select (D690). */
 export const textLayer = async () => (await pdfjs()).TextLayer
 
-/** A PDF, opened: its text is read here, its pages drawn where a file shows (ui/view.js, D126). @param {Uint8Array} bytes */
-export async function openPdf(bytes) {
+/** A PDF, opened: its text is read here, its pages drawn where a file shows (ui/view.js, D126); `more`, pdf.js's options besides (a face's own name, D740). @param {Uint8Array} bytes @param {object} [more] */
+export async function openPdf(bytes, more = {}) {
   return (await pdfjs()).getDocument({
     data: bytes.slice(), // the buffer is transferred to the worker
     cMapUrl: new URL('cmaps/', BASE).href,
@@ -38,15 +38,16 @@ export async function openPdf(bytes) {
     isEvalSupported: false,
     disableFontFace: true,
     useSystemFonts: false,
+    ...more,
   })
 }
 
 /**
  * What `read` makes of each page of a PDF, the first `count`, in turn; the PDF is let go after.
- * @template T @param {Uint8Array} bytes @param {(page: any) => Promise<T>} read @returns {Promise<T[]>}
+ * @template T @param {Uint8Array} bytes @param {(page: any) => Promise<T>} read @param {object} [more] pdf.js's options besides @returns {Promise<T[]>}
  */
-export async function eachPage(bytes, read, count = Infinity) {
-  const task = await openPdf(bytes)
+export async function eachPage(bytes, read, count = Infinity, more = {}) {
+  const task = await openPdf(bytes, more)
   const out = []
   try {
     const doc = await task.promise

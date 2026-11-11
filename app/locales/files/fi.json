@@ -6,5 +6,6 @@
   "files.askJean": "Kysy: {name}",
   "files.pointed": "Osoitettu: ”{words}”. Kysy kentässä",
   "files.noSpeech": "Puhetta ei kuulunut",
-  "files.area": "Osoita osaa: vedä kuvan yli tai käytä nuolinäppäimiä"
+  "files.area": "Osoita osaa: vedä kuvan yli tai käytä nuolinäppäimiä",
+  "files.lookProposed": "Jakamistasi tiedostoista tehty suunnittelujärjestelmä odottaa, että hyväksyt tai hylkäät sen."
 }

@@ -34,6 +34,9 @@ const read = (path) => files.get(path) ?? /** @type {Promise<Kit | null>} */ (fi
 /** Where a kit is kept: the person's at the root of their files, a project's in its folder. @param {string | null} dir null for the person's */
 export const kitPath = (dir) => (dir === null ? 'kit.json' : `${dir}/kit.json`)
 
+/** Where a kit proposed from the person's material waits beside the one it would change, until they accept or reject it (D740). @param {string | null} dir null for the person's */
+export const proposedPath = (dir) => kitPath(dir).replace(/kit\.json$/, '.suggested/kit.json')
+
 /** A kit as its file holds it, or none, as in a saved task's page. @param {string | null} dir null for the person's */
 export const kitFile = async (dir) => (app.fs ? read(kitPath(dir)) : null)
 

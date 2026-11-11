@@ -53,6 +53,7 @@
     "tutor": "npm run build && node scripts/tutor.js",
     "games": "npm run build && node scripts/games.js",
     "sites": "node scripts/sites.js",
+    "brands": "node scripts/brands.js",
     "concepts": "node scripts/concepts.js",
     "schemas": "node scripts/schemas.js",
     "documents": "node scripts/documents.js",
