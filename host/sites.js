@@ -265,7 +265,7 @@ export function publishing(config, names, files) {
         if (!next) {
           const today = claims.get(network)
           const count = today && now - today.from < DAY ? today : { from: now, count: 0 }
-          if (++count.count > limits.claims) return answer(429, { error: 'Too many new names today. Try again tomorrow.' })
+          if (++count.count > limits.claims) return answer(429, { error: 'Too many new names today. Try again tomorrow.', why: 'names' })
           claims.set(network, count)
           next = { format: 1, token: tokenHash, state: 'claimed', expires: new Date(now + DAY).toISOString(), files: {} }
         }

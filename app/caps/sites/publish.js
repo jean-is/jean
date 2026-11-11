@@ -14,7 +14,7 @@ import { icons } from '../../ui/menu-icons.js'
 import { linkField, copyButton } from '../../ui/qr.js'
 import { t, intlLocales } from '../../core/i18n.js'
 import { slug } from '../../core/settings.js'
-import { TYPES, codeOf, secretOf, tokenOf } from './file.js'
+import { TYPES, codeOf, secretOf, tokenOf, failedOf } from './file.js'
 import { load, remember } from './sites.js'
 import { hostOf } from './offer.js'
 
@@ -73,12 +73,12 @@ async function publish() {
   try {
     // A secret made here is kept before the name is claimed, so that no claim outlives what holds it; one typed, once the host took it.
     if (fresh && !code) await setSecret(app.fs, keyOf(one.path), codeOf(secret))
-    const list = () => ask(name.peek(), { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ files: one.hashes }) }, token).then((response) => (response.ok ? response.json() : Promise.reject(new Error(String(response.status)))))
+    const list = () => ask(name.peek(), { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ files: one.hashes }) }, token).then((response) => (response.ok ? response.json() : Promise.reject(response)))
     let answer = await list()
     working.value = { done: 0, count: answer.need?.length ?? 0 }
     for (const path of answer.need ?? []) {
       const response = await ask(`${name.peek()}/${path.split('/').map(encodeURIComponent).join('/')}`, { method: 'PUT', headers: { 'content-type': TYPES[path.toLowerCase().split('.').pop() ?? ''] }, body: /** @type {BodyInit} */ (one.files.get(path)) }, token)
-      if (!response.ok) throw new Error(String(response.status))
+      if (!response.ok) throw response
       working.value = { done: (working.peek()?.done ?? 0) + 1, count: answer.need.length }
     }
     if (answer.need?.length) answer = await list()
@@ -90,8 +90,9 @@ async function publish() {
     if (!code && (fresh || !one.record.published)) made.value = codeOf(secret), kept.value = false
     told.value = { text: t('sites.published') }
   } catch (error) {
+    // The host's answer, which says why, or what fetch threw, when none came.
     console.warn(error)
-    told.value = { text: t(code && String(/** @type {Error} */ (error).message) === '403' ? 'sites.wrongCode' : 'sites.failed'), alert: true }
+    told.value = { text: t(await failedOf(error, Boolean(code))), alert: true }
   } finally {
     working.value = null
   }

@@ -71,6 +71,13 @@ export async function tokenOf(secret) {
   const bits = new Uint8Array(await crypto.subtle.deriveBits({ name: 'HKDF', hash: 'SHA-256', salt: new Uint8Array(), info: new TextEncoder().encode('site write token') }, key, 256))
   return btoa(String.fromCharCode(...bits)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
 }
+/**
+ * What a publish that failed says, by the host's answer if one came (host/sites.js): a recovery code typed that isn't the name's, a file or
+ * the site too big, the day's new names from here all taken, too much sent this hour; or, with no answer, the connection.
+ * @param {unknown} error what the publish threw: the host's answer, or what fetch threw @param {boolean} [code] whether a recovery code was typed
+ */
+export const failedOf = async (error, code = false) => (!(error instanceof Response) ? 'sites.failed' : error.status === 403 && code ? 'sites.wrongCode' : error.status === 413 ? 'sites.tooBig'
+  : error.status !== 429 ? 'sites.failed' : (await error.json().catch(() => ({}))).why === 'names' ? 'sites.names' : 'sites.busy')
 
 /** An opening tag, as ./html.js reads one, and one of its on…="" attributes: the event, and what it runs as the page writes it. */
 const [TAG, HANDLER] = [/<([a-zA-Z][\w-]*)((?:\s+[^\s"'>/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s"'=<>`]+))?)*)\s*(\/?)>/g, /\s+on([a-z]{3,})\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/gi]

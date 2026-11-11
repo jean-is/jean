@@ -298,6 +298,12 @@ for (const [lang, width, phone] of [['ar', 'العرض', 'هاتف'], ['ja', '�
     await expect(dialog.getByLabel(words['sites.address'])).toHaveValue('atelier-nord')
     await dialog.getByLabel(words['sites.address']).fill(`atelier-nord-${lang}`)
     await expect(dialog.locator('#publish-said')).toHaveText(words['sites.free'])
+    // The host's word that today's new names from here are taken, in the user's words in the dialog's alert: its list answered in the page,
+    // not by the host, whose limit a run of this file never reaches (test/playwright.config.js; the limit itself: test/publish.test.js).
+    await page.evaluate((name) => { const sent = window.fetch; window.fetch = (input, init) => (String(input).endsWith(`/v1/sites/${name}`) && init?.method === 'POST'
+      ? Promise.resolve(new Response(JSON.stringify({ error: 'Too many new names today. Try again tomorrow.', why: 'names' }), { status: 429 })) : sent(input, init)) }, `atelier-nord-${lang}`)
+    await dialog.getByRole('button', { name: words['sites.go'], exact: true }).click()
+    await expect(dialog.getByRole('alert')).toHaveText(words['sites.names'])
   })
 }
 
@@ -460,6 +466,15 @@ test('a site goes online at a name of its own, asked first, its recovery code sh
   await dialog.getByLabel('I’ve kept it somewhere safe').check()
   await dialog.getByRole('button', { name: 'Done' }).click()
   await expect(dialog).toContainText('Nothing changed since it was published.')
+
+  // A picture over what the host takes in a file: the alert says the site is too big and how to make it fit, never to check the connection.
+  await page.evaluate(async (place) => { const { app } = await import('/ui/state.js'), at = `${app.projectDir}/${place}`, record = JSON.parse(String(await app.fs.read(`${at}/site.json`)))
+    await app.fs.writeBytes(`${at}/oven.png`, new Uint8Array(10_000_001)); await app.fs.write(`${at}/site.json`, JSON.stringify({ ...record, files: [...record.files, 'oven.png'] })) }, place)
+  await dialog.locator('.dialog-head').getByRole('button', { name: 'Close' }).click()
+  await publishing()
+  await expect(dialog).toContainText('1 file changed since it was published.')
+  await dialog.getByRole('button', { name: 'Publish again' }).click()
+  await expect(dialog.getByRole('alert')).toHaveText('The site is too big to publish. Make its pictures smaller, or use fewer, and try again.')
 
   // Taken offline, once the person says so: its address answers nothing more.
   page.once('dialog', (asked) => asked.accept())

@@ -8,7 +8,7 @@ import { join } from 'node:path'
 import { host, base64url } from '../host/host.js'
 import { folder, siteFiles } from '../host/serve.js'
 import { refused, fileAt, cleanAt, tidy, siteAt, serveSite, sweepSites, takeDown, bunny, digest, unfit, HEADERS, TYPES, GONE } from '../host/sites.js'
-import { TYPES as JEANS, tokenOf, codeOf, secretOf } from '../app/caps/sites/file.js'
+import { TYPES as JEANS, tokenOf, codeOf, secretOf, failedOf } from '../app/caps/sites/file.js'
 
 const JEAN = 'https://jean.example'
 const CLIENT = { address: '203.0.113.7', port: 51234, protocol: 'HTTP/1.1' }
@@ -115,6 +115,24 @@ test('the host refuses a page that asks for a password or a card, a list without
   // Five new names a day from one network; the sixth waits.
   for (const n of [1, 2, 3, 4]) assert.equal((await publish(on, `bakery-${n}`, token(), PAGES)).first.status, 200)
   assert.equal((await publish(on, 'bakery-5', token(), PAGES)).first.status, 429)
+})
+
+test('a publish refused says why in the person’s words, from the host’s answer: too big, the day’s new names taken, too much this hour; the connection only when none came', async () => {
+  const on = hostOn({ sites: { address: ADDRESS, limits: { file: 100, claims: 1 } } }), mine = token()
+  await on.ask('/v1/sites/lyon-bakery', { method: 'POST', token: mine, body: JSON.stringify({ files: (await siteOf({ ...PAGES, 'style.css': 'x'.repeat(101) })).list }) })
+  const big = await on.ask('/v1/sites/lyon-bakery/style.css', { method: 'PUT', token: mine, body: 'x'.repeat(101) })
+  assert.deepEqual([big.status, await failedOf(big)], [413, 'sites.tooBig'])
+  // Five new names a day from one network, one here: the next waits for tomorrow, which the host says apart from changes too many this hour.
+  const names = (await publish(on, 'other-bakery', token(), PAGES)).first
+  assert.deepEqual([names.status, await failedOf(names)], [429, 'sites.names'])
+  // Someone else's name, for a recovery code typed that isn't its own; without one, the name was taken meanwhile, as other failures are said.
+  const theirs = (await publish(on, 'lyon-bakery', token(), PAGES)).first
+  assert.deepEqual([theirs.status, await failedOf(theirs, true), await failedOf(theirs)], [403, 'sites.wrongCode', 'sites.failed'])
+  let busy = new Response()
+  for (let n = 0; n < 70 && busy.status !== 429; n++) busy = await on.ask('/v1/sites/lyon-bakery', { method: 'POST', token: mine, body: '{}' })
+  assert.deepEqual([busy.status, await failedOf(busy)], [429, 'sites.busy'])
+  // No answer at all: the connection, the one case it says to check.
+  assert.equal(await failedOf(new TypeError('Failed to fetch')), 'sites.failed')
 })
 
 test('taken offline, a name waits a year for its token alone, then anyone may have it; a claim never published lapses in a day', async () => {
