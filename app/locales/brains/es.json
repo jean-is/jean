@@ -26,6 +26,7 @@
   "brain.claude.text": "Responde con tu plan Claude Pro o Max, a través de Claude Code, instalado y con sesión iniciada en esta computadora. Pasa por «{computer}», que Conectar inicia si no está en marcha.",
   "brain.claude.missing": "Claude Code no está instalado o no tiene la sesión iniciada en esta computadora. Escribe claude en una terminal para iniciar sesión y vuelve a conectar.",
   "brain.claude.restart": "«{computer}» sigue con una versión anterior. Detenlo (Ctrl+C en su terminal, o cierra la aplicación), vuelve a iniciarlo y conecta de nuevo.",
+  "brain.plan.start": "«{computer}» aún no está en marcha. En cuanto lo esté, la conexión termina sola.",
   "brain.copilot.title": "Usa tu plan de Copilot",
   "brain.copilot.text": "Responde con tu plan de GitHub Copilot, a través de Copilot CLI, instalado y con sesión iniciada en esta computadora. Pasa por «{computer}», que Conectar inicia si no está en marcha.",
   "brain.copilot.missing": "Copilot CLI no está instalado o no tiene la sesión iniciada en esta computadora. Escribe copilot en una terminal y luego /login para iniciar sesión, y vuelve a conectar.",

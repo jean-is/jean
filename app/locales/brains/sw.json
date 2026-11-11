@@ -26,6 +26,7 @@
   "brain.claude.text": "Hujibu kwa mpango wako wa Claude Pro au Max, kupitia Claude Code iliyosakinishwa na kuingia kwenye kompyuta hii. Hupitia “{computer}”, ambayo Unganisha huifungua ikiwa imezimwa.",
   "brain.claude.missing": "Claude Code haijasakinishwa au haijaingia kwenye kompyuta hii. Andika claude kwenye terminal ili kuingia, kisha unganisha tena.",
   "brain.claude.restart": "“{computer}” bado inaendesha toleo la awali. Isimamishe (Ctrl+C kwenye terminal yake, au funga programu), iwashe tena, kisha unganisha tena.",
+  "brain.plan.start": "“{computer}” bado haifanyi kazi. Mara itakapoanza, muunganisho utakamilika wenyewe.",
   "brain.copilot.title": "Tumia mpango wako wa Copilot",
   "brain.copilot.text": "Hujibu kwa mpango wako wa GitHub Copilot, kupitia Copilot CLI iliyosakinishwa na kuingia kwenye kompyuta hii. Hupitia “{computer}”, ambayo Unganisha huifungua ikiwa imezimwa.",
   "brain.copilot.missing": "Copilot CLI haijasakinishwa au haijaingia kwenye kompyuta hii. Andika copilot kwenye terminal, kisha /login ili kuingia, na uunganishe tena.",

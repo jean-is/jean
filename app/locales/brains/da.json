@@ -26,6 +26,7 @@
   "brain.claude.text": "Svarer med dit Claude Pro- eller Max-abonnement via Claude Code, installeret og logget ind på denne computer. Det går gennem “{computer}”, som Forbind åbner, hvis det er slukket.",
   "brain.claude.missing": "Claude Code er ikke installeret eller logget ind på denne computer. Skriv claude i en terminal for at logge ind, og forbind så igen.",
   "brain.claude.restart": "“{computer}” kører stadig en ældre version. Stop det (Ctrl+C i dets terminal, eller afslut appen), start det igen, og forbind så igen.",
+  "brain.plan.start": "“{computer}” kører ikke endnu. Så snart det kører, bliver forbindelsen færdig af sig selv.",
   "brain.copilot.title": "Brug dit Copilot-abonnement",
   "brain.copilot.text": "Svarer med dit GitHub Copilot-abonnement via Copilot CLI, installeret og logget ind på denne computer. Det går gennem “{computer}”, som Forbind åbner, hvis det er slukket.",
   "brain.copilot.missing": "Copilot CLI er ikke installeret eller logget ind på denne computer. Skriv copilot i en terminal, så /login for at logge ind, og forbind igen.",

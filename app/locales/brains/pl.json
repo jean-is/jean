@@ -26,6 +26,7 @@
   "brain.claude.text": "Odpowiada w ramach twojego planu Claude Pro lub Max, przez Claude Code zainstalowany i zalogowany na tym komputerze. Działa przez „{computer}”, które Połącz otwiera, jeśli jest wyłączone.",
   "brain.claude.missing": "Claude Code nie jest zainstalowany albo nie jest zalogowany na tym komputerze. Wpisz claude w terminalu, aby się zalogować, a potem połącz ponownie.",
   "brain.claude.restart": "„{computer}” działa jeszcze we wcześniejszej wersji. Zatrzymaj je (Ctrl+C w jego terminalu albo zamknij aplikację), uruchom ponownie, a potem połącz jeszcze raz.",
+  "brain.plan.start": "„{computer}” jeszcze nie działa. Gdy tylko zacznie działać, połączenie dokończy się samo.",
   "brain.copilot.title": "Użyj swojego planu Copilot",
   "brain.copilot.text": "Odpowiada w ramach twojego planu GitHub Copilot, przez Copilot CLI zainstalowany i zalogowany na tym komputerze. Działa przez „{computer}”, które Połącz otwiera, jeśli jest wyłączone.",
   "brain.copilot.missing": "Copilot CLI nie jest zainstalowany albo nie jest zalogowany na tym komputerze. Wpisz copilot w terminalu, a potem /login, aby się zalogować, i połącz ponownie.",

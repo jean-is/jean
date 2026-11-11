@@ -26,6 +26,7 @@
   "brain.claude.text": "Risponde cù u vostru abbunamentu Claude Pro o Max, per mezu di Claude Code, installatu è cunnessu nant’à st’urdinatore. Passa per « {computer} », chì Cunnette lancia s’ellu ùn gira micca.",
   "brain.claude.missing": "Claude Code ùn hè micca installatu o cunnessu nant’à st’urdinatore. Scrivite claude in un terminale per cunnettevi, po cunnettite torna.",
   "brain.claude.restart": "« {computer} » face sempre girà una versione più vechja. Piantatelu (Ctrl+C in u so terminale, o escite da l’appiecazione) è lanciatelu torna, po cunnettite torna.",
+  "brain.plan.start": "« {computer} » ùn gira ancu. Appena ch’ellu gira, a cunnessione si compie da per ella.",
   "brain.copilot.title": "Impiegà u vostru abbunamentu Copilot",
   "brain.copilot.text": "Risponde cù u vostru abbunamentu GitHub Copilot, per mezu di Copilot CLI, installatu è cunnessu nant’à st’urdinatore. Passa per « {computer} », chì Cunnette lancia s’ellu ùn gira micca.",
   "brain.copilot.missing": "Copilot CLI ùn hè micca installatu o cunnessu nant’à st’urdinatore. Scrivite copilot in un terminale, po /login per cunnettevi, è cunnettite torna.",

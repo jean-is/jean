@@ -26,6 +26,7 @@
   "brain.claude.text": "Antwoordt met je Claude Pro- of Max-abonnement, via Claude Code, geïnstalleerd en ingelogd op deze computer. Dat loopt via ‘{computer}’, dat Verbinden opent als het uit staat.",
   "brain.claude.missing": "Claude Code is niet geïnstalleerd of niet ingelogd op deze computer. Typ claude in een terminal om in te loggen en verbind daarna opnieuw.",
   "brain.claude.restart": "‘{computer}’ draait nog een eerdere versie. Stop het (Ctrl+C in de terminal, of sluit de app), start het opnieuw en verbind daarna opnieuw.",
+  "brain.plan.start": "‘{computer}’ staat nog uit. Zodra het aan staat, wordt de verbinding vanzelf afgerond.",
   "brain.copilot.title": "Je Copilot-abonnement gebruiken",
   "brain.copilot.text": "Antwoordt met je GitHub Copilot-abonnement, via Copilot CLI, geïnstalleerd en ingelogd op deze computer. Dat loopt via ‘{computer}’, dat Verbinden opent als het uit staat.",
   "brain.copilot.missing": "Copilot CLI is niet geïnstalleerd of niet ingelogd op deze computer. Typ copilot in een terminal en daarna /login om in te loggen, en verbind opnieuw.",

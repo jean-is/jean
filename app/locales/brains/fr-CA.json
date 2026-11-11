@@ -26,6 +26,7 @@
   "brain.claude.text": "Répond avec votre forfait Claude Pro ou Max, via Claude Code, installé et connecté sur cet ordinateur. Cela passe par « {computer} », que Connecter lance s’il ne tourne pas.",
   "brain.claude.missing": "Claude Code n’est pas installé ou pas connecté sur cet ordinateur. Tapez claude dans un terminal pour vous connecter, puis cliquez de nouveau sur Connecter.",
   "brain.claude.restart": "« {computer} » tourne encore dans une version antérieure. Arrêtez-le (Ctrl+C dans son terminal, ou quittez l’app), relancez-le, puis cliquez de nouveau sur Connecter.",
+  "brain.plan.start": "« {computer} » ne tourne pas encore. Dès qu’il tourne, la connexion se termine toute seule.",
   "brain.copilot.title": "Utiliser votre forfait Copilot",
   "brain.copilot.text": "Répond avec votre forfait GitHub Copilot, via Copilot CLI, installé et connecté sur cet ordinateur. Cela passe par « {computer} », que Connecter lance s’il ne tourne pas.",
   "brain.copilot.missing": "Copilot CLI n’est pas installé ou pas connecté sur cet ordinateur. Tapez copilot dans un terminal, puis /login pour vous connecter, et cliquez de nouveau sur Connecter.",

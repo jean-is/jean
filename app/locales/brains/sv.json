@@ -26,6 +26,7 @@
   "brain.claude.text": "Svarar med din Claude Pro- eller Max-plan, via Claude Code, installerat och inloggat på den här datorn. Det går via ”{computer}”, som Anslut öppnar om det är avstängt.",
   "brain.claude.missing": "Claude Code är inte installerat eller inloggat på den här datorn. Skriv claude i en terminal för att logga in, och anslut sedan igen.",
   "brain.claude.restart": "”{computer}” kör fortfarande en äldre version. Stoppa det (Ctrl+C i dess terminal, eller avsluta appen) och starta det igen, och anslut sedan igen.",
+  "brain.plan.start": "”{computer}” är inte igång än. Så fort det är igång blir anslutningen klar av sig själv.",
   "brain.copilot.title": "Använd din Copilot-plan",
   "brain.copilot.text": "Svarar med din GitHub Copilot-plan, via Copilot CLI, installerat och inloggat på den här datorn. Det går via ”{computer}”, som Anslut öppnar om det är avstängt.",
   "brain.copilot.missing": "Copilot CLI är inte installerat eller inloggat på den här datorn. Skriv copilot i en terminal, sedan /login för att logga in, och anslut igen.",

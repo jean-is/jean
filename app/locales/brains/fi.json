@@ -26,6 +26,7 @@
   "brain.claude.text": "Vastaa Claude Pro- tai Max-tilauksellasi Claude Coden kautta, joka on asennettu ja kirjautunut tällä tietokoneella. Se kulkee tämän kautta: ”{computer}”; Yhdistä avaa sen, jos se on suljettu.",
   "brain.claude.missing": "Claude Code ei ole asennettu tai kirjautunut tällä tietokoneella. Kirjoita päätteeseen claude kirjautuaksesi ja yhdistä sitten uudelleen.",
   "brain.claude.restart": "”{computer}” käyttää yhä vanhempaa versiota. Pysäytä se (Ctrl+C sen päätteessä tai sulje sovellus), käynnistä se uudelleen ja yhdistä sitten uudelleen.",
+  "brain.plan.start": "”{computer}” ei ole vielä käynnissä. Kun se käynnistyy, yhteys valmistuu itsestään.",
   "brain.copilot.title": "Käytä Copilot-tilaustasi",
   "brain.copilot.text": "Vastaa GitHub Copilot -tilauksellasi Copilot CLI:n kautta, joka on asennettu ja kirjautunut tällä tietokoneella. Se kulkee tämän kautta: ”{computer}”; Yhdistä avaa sen, jos se on suljettu.",
   "brain.copilot.missing": "Copilot CLI ei ole asennettu tai kirjautunut tällä tietokoneella. Kirjoita päätteeseen copilot, sitten /login kirjautuaksesi, ja yhdistä uudelleen.",

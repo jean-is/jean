@@ -26,6 +26,7 @@
   "brain.claude.text": "עונה במסגרת מינוי Claude Pro או Max שלך, דרך Claude Code שמותקן ומחובר במחשב הזה. זה עובר דרך „{computer}”, ש„חיבור” פותח אם הוא כבוי.",
   "brain.claude.missing": "Claude Code לא מותקן או לא מחובר במחשב הזה. יש להקליד claude במסוף כדי להתחבר, ואז לחבר שוב.",
   "brain.claude.restart": "„{computer}” עדיין רץ בגרסה קודמת. יש לעצור אותו (Ctrl+C במסוף שלו, או לצאת מהאפליקציה), להפעיל אותו מחדש ואז לחבר שוב.",
+  "brain.plan.start": "„{computer}” עדיין לא פועל. ברגע שיפעל, החיבור יושלם מעצמו.",
   "brain.copilot.title": "שימוש במינוי Copilot שלך",
   "brain.copilot.text": "עונה במסגרת מינוי GitHub Copilot שלך, דרך Copilot CLI שמותקן ומחובר במחשב הזה. זה עובר דרך „{computer}”, ש„חיבור” פותח אם הוא כבוי.",
   "brain.copilot.missing": "Copilot CLI לא מותקן או לא מחובר במחשב הזה. יש להקליד copilot במסוף ואז ‎/login כדי להתחבר, ואז לחבר שוב.",

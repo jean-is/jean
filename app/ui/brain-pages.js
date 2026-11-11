@@ -5,7 +5,7 @@
 // or the first brain's ways (caps/first); its strings are a part of their own (locales/brains/).
 import { html, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
-import { signal, effect } from '@preact/signals-core'
+import { signal, effect, untracked } from '@preact/signals-core'
 import { app, effective, activeBrain, brainsHere, updateSettings, cloudAllowed, showError, notify, sitePage } from './state.js'
 import { connectBrain, continueWithBrain, addBrain, removeBrain, useBrain, setVersion, setEffort, keepBrain, startOpenRouter, leave, keepOnDevice } from './brains.js'
 import { isLocal, TIERS } from './auto.js'
@@ -114,7 +114,7 @@ const localAddress = signal(PROVIDERS.ollama.baseURL)
 
 /**
  * Connects a brain from one of the ways, which says how it went. Connected, the way closes and
- * Settings with it; refused, the error names the service, or the address's host for another.
+ * Settings with it, and a toast says so; refused, the error names the service, or the address's host for another.
  * @param {string} way @param {string} name @param {() => Promise<unknown>} task
  */
 async function attempt(way, name, task) {
@@ -123,6 +123,7 @@ async function attempt(way, name, task) {
     await task()
     status.value = null
     document.querySelector('details.way[open]')?.removeAttribute('open')
+    notify(t('brain.connected'))
     continueWithBrain()
   } catch (error) {
     const code = /** @type {{ code?: string } | null | undefined} */ (error)?.code ?? 'unknown'
@@ -151,9 +152,14 @@ function connectLocal(event) {
 /** The plans' ways, by the brain each adds (D235, D262). */
 const PLANNED = /** @type {const} */ ({ claude: 'claudecode', copilot: 'copilot', chatgpt: 'chatgpt' })
 
+/** The plan whose Connect waits for This computer, which isn't running: its way shows how to start it, and connects by itself once it runs. */
+const starting = signal(/** @type {{ id: keyof typeof PLANNED, machine: typeof import('../caps/machine/machine.js') } | null} */ (null))
+effect(() => { const wait = starting.value; if (wait?.machine.bridge.value.on) untracked(() => connectPlan(wait.id)) })
+
 /**
- * A plan's brain, through This computer (D235, D262): turned on first, in Settings › Computer. Claude Code and
- * Copilot are the user's own, signed in on it; ChatGPT is signed in to first, the page going there and back.
+ * A plan's brain, through This computer (D235, D262), started first from the plan's own way, which goes on by itself
+ * once it runs. Claude Code and Copilot are the user's own, signed in on it; ChatGPT is signed in to first, the page
+ * going there and back.
  * @param {keyof typeof PLANNED} id
  */
 async function connectPlan(id) {
@@ -163,8 +169,9 @@ async function connectPlan(id) {
   const found = machine && await machine.plan(provider)
   if (machine && found && !found.ready && !found.old && id === 'chatgpt') return machine.chatgptSignIn().then(leave, () => { status.value = { way: id, kind: 'error', message: t('brain.chatgpt.failed') } })
   status.value = found && !found.ready ? { way: id, kind: 'error', message: t(found.old ? 'brain.claude.restart' : `brain.${id}.missing`, { computer: t('cap.machine.name') }) } : null
-  if (!found) machine ? machine.show() : openSettings('computer')
-  else if (found.ready) attempt(id, t(`provider.${provider}`), () => connectBrain({ provider, baseURL: found.baseURL, apiKey: found.apiKey }))
+  starting.value = machine && !found ? { id, machine } : null
+  if (!machine) openSettings('computer')
+  else if (found && found.ready) attempt(id, t(`provider.${provider}`), () => connectBrain({ provider, baseURL: found.baseURL, apiKey: found.apiKey }))
 }
 
 /** Back from ChatGPT's sign-in (D262): its way's page, connecting, or saying why it can't. @param {string} outcome signed-in, declined or failed */
@@ -253,7 +260,7 @@ function waysOf(all) {
   return [
     ...(isDenied('machine') ? [] : /** @type {(keyof typeof PLANNED)[]} */ (['claude', 'chatgpt', 'copilot']).map((id) => ({ id, group: 'paid', icon: icons.terminal, title: t(`brain.${id}.title`), needs: t(`provider.${PLANNED[id]}`), body: html`
       <p>${t(`brain.${id}.text`, { computer: t('cap.machine.name') })}</p>
-      <div class="row"><button class="button primary" ?disabled=${busy} @click=${() => connectPlan(id)}>${t(id === 'chatgpt' ? 'brain.chatgpt.action' : 'brain.connect')}</button></div>` }))),
+      <div class="row"><button class="button primary" ?disabled=${busy} @click=${() => connectPlan(id)}>${t(id === 'chatgpt' ? 'brain.chatgpt.action' : 'brain.connect')}</button></div><div role="status">${starting.value?.id === id ? html`<p>${t('brain.plan.start', { computer: t('cap.machine.name') })}</p>` : nothing}</div>${starting.value?.id === id ? starting.value.machine.starter() : nothing}` }))),
     { id: 'key', group: 'keyed', icon: icons.key, title: t('brain.key.title'), needs: providers(KEYED), body: html`
       <p>${t('brain.key.text')}</p>
       <form class="stack" @submit=${connectKey}><p class="muted small" id="brain-key-required">${t('brain.required')}</p>
@@ -302,7 +309,7 @@ const WAYS = ['claude', 'chatgpt', 'copilot', 'key', 'device', 'quick', 'local']
 const reply = (id) => (status.value?.way === id ? html`<p class="status is-${status.value.kind}" role=${status.value.kind === 'error' ? 'alert' : 'status'}>${status.value.message}</p>` : nothing)
 
 /** The ways the first brain's step offers to whoever already pays for a brain or has a key, one open at a time (caps/first). */
-export const ways = () => html`<ul class="list ways">${waysOf(false).map(({ id, icon, title, needs, body }) => html`<li><details name="brain-way" class="way is-${id}" ?open=${status.value?.way === id}>
+export const ways = () => html`<ul class="list ways">${waysOf(false).map(({ id, icon, title, needs, body }) => html`<li><details name="brain-way" class="way is-${id}" ?open=${status.value?.way === id || starting.value?.id === id}>
   <summary><span class="item-icon">${icon}</span><span class="item-text"><strong>${title}</strong><small>${needs}</small></span>${icons.chevron}</summary>
   <div class="item-body">${body}${reply(id)}</div>
 </details></li>`)}</ul>`
@@ -504,5 +511,6 @@ effect(() => {
   if (here && !inside && navigator.onLine) for (const brain of effective.peek().settings.brains) if (brain.api !== 'device') ask(brain)
   if (here) checkDevice()
   else if (status.peek()?.kind === 'error') status.value = null
+  if (!here) starting.value = null
   inside = here
 })

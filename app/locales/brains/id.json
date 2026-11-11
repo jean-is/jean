@@ -26,6 +26,7 @@
   "brain.claude.text": "Menjawab dengan paket Claude Pro atau Max Anda, melalui Claude Code yang terpasang dan sudah masuk di komputer ini. Ini berjalan lewat “{computer}”, yang dibuka oleh Hubungkan jika sedang mati.",
   "brain.claude.missing": "Claude Code belum terpasang atau belum masuk di komputer ini. Ketik claude di terminal untuk masuk, lalu hubungkan lagi.",
   "brain.claude.restart": "“{computer}” masih berjalan dengan versi sebelumnya. Hentikan (Ctrl+C di terminalnya, atau tutup aplikasinya), jalankan lagi, lalu hubungkan lagi.",
+  "brain.plan.start": "“{computer}” belum berjalan. Begitu berjalan, sambungan selesai dengan sendirinya.",
   "brain.copilot.title": "Gunakan paket Copilot Anda",
   "brain.copilot.text": "Menjawab dengan paket GitHub Copilot Anda, melalui Copilot CLI yang terpasang dan sudah masuk di komputer ini. Ini berjalan lewat “{computer}”, yang dibuka oleh Hubungkan jika sedang mati.",
   "brain.copilot.missing": "Copilot CLI belum terpasang atau belum masuk di komputer ini. Ketik copilot di terminal, lalu /login untuk masuk, kemudian hubungkan lagi.",

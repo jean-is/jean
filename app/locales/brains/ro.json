@@ -26,6 +26,7 @@
   "brain.claude.text": "Răspunde cu abonamentul dvs. Claude Pro sau Max, prin Claude Code, instalat și conectat pe acest computer. Trece prin „{computer}”, pe care Conectați îl deschide dacă este oprit.",
   "brain.claude.missing": "Claude Code nu este instalat sau conectat pe acest computer. Tastați claude într-un terminal pentru a vă conecta, apoi conectați-vă din nou.",
   "brain.claude.restart": "„{computer}” rulează încă o versiune mai veche. Opriți-l (Ctrl+C în terminalul lui sau închideți aplicația) și porniți-l din nou, apoi conectați-vă din nou.",
+  "brain.plan.start": "„{computer}” nu rulează încă. De îndată ce rulează, conectarea se încheie singură.",
   "brain.copilot.title": "Folosiți abonamentul Copilot",
   "brain.copilot.text": "Răspunde cu abonamentul dvs. GitHub Copilot, prin Copilot CLI, instalat și conectat pe acest computer. Trece prin „{computer}”, pe care Conectați îl deschide dacă este oprit.",
   "brain.copilot.missing": "Copilot CLI nu este instalat sau conectat pe acest computer. Tastați copilot într-un terminal, apoi /login pentru a vă conecta, și conectați-vă din nou.",

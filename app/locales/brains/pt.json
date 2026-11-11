@@ -26,6 +26,7 @@
   "brain.claude.text": "Responde com o teu plano Claude Pro ou Max, através do Claude Code, instalado e com sessão iniciada neste computador. Passa por «{computer}», que Ligar inicia se não estiver a correr.",
   "brain.claude.missing": "O Claude Code não está instalado ou não tem sessão iniciada neste computador. Escreve claude num terminal para iniciar sessão e depois liga de novo.",
   "brain.claude.restart": "«{computer}» ainda está a correr uma versão anterior. Para-o (Ctrl+C no terminal dele, ou sai da aplicação), inicia-o de novo e depois liga outra vez.",
+  "brain.plan.start": "«{computer}» ainda não está a correr. Assim que estiver, a ligação conclui-se sozinha.",
   "brain.copilot.title": "Usa o teu plano Copilot",
   "brain.copilot.text": "Responde com o teu plano GitHub Copilot, através do Copilot CLI, instalado e com sessão iniciada neste computador. Passa por «{computer}», que Ligar inicia se não estiver a correr.",
   "brain.copilot.missing": "O Copilot CLI não está instalado ou não tem sessão iniciada neste computador. Escreve copilot num terminal e depois /login para iniciar sessão, e liga de novo.",

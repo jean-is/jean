@@ -26,6 +26,7 @@
   "brain.claude.text": "A Claude Pro vagy Max előfizetéseddel válaszol, a Claude Code-on keresztül, amely telepítve és bejelentkezve van ezen a számítógépen. Ezen keresztül megy: „{computer}”; a Csatlakozás megnyitja, ha ki van kapcsolva.",
   "brain.claude.missing": "A Claude Code nincs telepítve vagy bejelentkezve ezen a számítógépen. Írd be egy terminálba, hogy claude, jelentkezz be, majd csatlakozz újra.",
   "brain.claude.restart": "Még egy korábbi verzió fut: „{computer}”. Állítsd le (Ctrl+C a termináljában, vagy lépj ki az alkalmazásból), indítsd újra, majd csatlakozz újra.",
+  "brain.plan.start": "A(z) „{computer}” még nem fut. Amint fut, a csatlakozás magától befejeződik.",
   "brain.copilot.title": "A Copilot-előfizetésed használata",
   "brain.copilot.text": "A GitHub Copilot-előfizetéseddel válaszol, a Copilot CLI-n keresztül, amely telepítve és bejelentkezve van ezen a számítógépen. Ezen keresztül megy: „{computer}”; a Csatlakozás megnyitja, ha ki van kapcsolva.",
   "brain.copilot.missing": "A Copilot CLI nincs telepítve vagy bejelentkezve ezen a számítógépen. Írd be egy terminálba, hogy copilot, majd /login a bejelentkezéshez, és csatlakozz újra.",

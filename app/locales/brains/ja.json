@@ -26,6 +26,7 @@
   "brain.claude.text": "Claude Pro または Max のプランで答えます。このコンピューターにインストールしてサインイン済みの Claude Code を通し、「{computer}」を経由します。動いていなければ、「接続」で起動します。",
   "brain.claude.missing": "このコンピューターに Claude Code がインストールされていないか、サインインしていません。ターミナルで claude と入力してサインインし、もう一度接続してください。",
   "brain.claude.restart": "「{computer}」は以前のバージョンのまま動いています。止めて（そのターミナルで Ctrl+C、またはアプリを終了）、起動し直してから、もう一度接続してください。",
+  "brain.plan.start": "「{computer}」はまだ動いていません。動き始めると、接続は自動で完了します。",
   "brain.copilot.title": "Copilot のプランを使う",
   "brain.copilot.text": "GitHub Copilot のプランで答えます。このコンピューターにインストールしてサインイン済みの Copilot CLI を通し、「{computer}」を経由します。動いていなければ、「接続」で起動します。",
   "brain.copilot.missing": "このコンピューターに Copilot CLI がインストールされていないか、サインインしていません。ターミナルで copilot と入力し、/login でサインインしてから、もう一度接続してください。",

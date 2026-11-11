@@ -26,6 +26,7 @@
   "brain.claude.text": "Odgovara s vašom pretplatom Claude Pro ili Max, putem Claude Codea, instaliranog i prijavljenog na ovom računalu. Ide preko programa „{computer}“, koji Poveži otvara ako je isključen.",
   "brain.claude.missing": "Claude Code nije instaliran ili prijavljen na ovom računalu. Upišite claude u terminal za prijavu, zatim se ponovno povežite.",
   "brain.claude.restart": "Program „{computer}“ još pokreće stariju verziju. Zaustavite ga (Ctrl+C u njegovu terminalu ili zatvorite aplikaciju) i ponovno pokrenite, zatim se ponovno povežite.",
+  "brain.plan.start": "„{computer}“ još ne radi. Čim proradi, povezivanje se dovršava samo.",
   "brain.copilot.title": "Upotrijebite svoju pretplatu na Copilot",
   "brain.copilot.text": "Odgovara s vašom pretplatom na GitHub Copilot, putem Copilot CLI-ja, instaliranog i prijavljenog na ovom računalu. Ide preko programa „{computer}“, koji Poveži otvara ako je isključen.",
   "brain.copilot.missing": "Copilot CLI nije instaliran ili prijavljen na ovom računalu. Upišite copilot u terminal, zatim /login za prijavu, i ponovno se povežite.",

@@ -26,6 +26,7 @@
   "brain.claude.text": "Odpovídá s vaším předplatným Claude Pro nebo Max, přes Claude Code nainstalovaný a přihlášený v tomto počítači. Jde to přes „{computer}“, který Připojit otevře, pokud je vypnutý.",
   "brain.claude.missing": "Claude Code není v tomto počítači nainstalovaný nebo přihlášený. Napište claude do terminálu, přihlaste se a pak se připojte znovu.",
   "brain.claude.restart": "„{computer}“ stále běží ve starší verzi. Zastavte ho (Ctrl+C v jeho terminálu nebo ukončete aplikaci), spusťte ho znovu a pak se připojte znovu.",
+  "brain.plan.start": "„{computer}“ ještě neběží. Jakmile poběží, připojení se dokončí samo.",
   "brain.copilot.title": "Použít předplatné Copilot",
   "brain.copilot.text": "Odpovídá s vaším předplatným GitHub Copilot, přes Copilot CLI nainstalované a přihlášené v tomto počítači. Jde to přes „{computer}“, který Připojit otevře, pokud je vypnutý.",
   "brain.copilot.missing": "Copilot CLI není v tomto počítači nainstalované nebo přihlášené. Napište copilot do terminálu, pak /login pro přihlášení a připojte se znovu.",

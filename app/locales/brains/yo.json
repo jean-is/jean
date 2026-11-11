@@ -26,6 +26,7 @@
   "brain.claude.text": "Ó ń dáhùn pẹ̀lú ètò Claude Pro tàbí Max yín, nípasẹ̀ Claude Code tí a ti fi sórí kọ̀ǹpútà yìí tí ẹ sì ti wọlé sí. Ó ń gba “{computer}” kọjá, èyí tí So pọ̀ máa ṣí bí ó bá wà ní pípa.",
   "brain.claude.missing": "A kò tíì fi Claude Code sórí kọ̀ǹpútà yìí, tàbí ẹ kò tíì wọlé. Tẹ claude sínú terminal láti wọlé, lẹ́yìn náà ẹ tún so pọ̀.",
   "brain.claude.restart": "“{computer}” ṣì ń lo ẹ̀dà àtijọ́. Ẹ dá a dúró (Ctrl+C nínú terminal rẹ̀, tàbí ẹ pa áàpù náà), ẹ tún bẹ̀rẹ̀ rẹ̀, lẹ́yìn náà ẹ tún so pọ̀.",
+  "brain.plan.start": "“{computer}” kò tíì ń ṣiṣẹ́. Ní kété tí ó bá bẹ̀rẹ̀, ìsopọ̀ náà yóò parí fúnra rẹ̀.",
   "brain.copilot.title": "Lo ètò Copilot yín",
   "brain.copilot.text": "Ó ń dáhùn pẹ̀lú ètò GitHub Copilot yín, nípasẹ̀ Copilot CLI tí a ti fi sórí kọ̀ǹpútà yìí tí ẹ sì ti wọlé sí. Ó ń gba “{computer}” kọjá, èyí tí So pọ̀ máa ṣí bí ó bá wà ní pípa.",
   "brain.copilot.missing": "A kò tíì fi Copilot CLI sórí kọ̀ǹpútà yìí, tàbí ẹ kò tíì wọlé. Tẹ copilot sínú terminal, lẹ́yìn náà tẹ /login láti wọlé, kí ẹ sì tún so pọ̀.",

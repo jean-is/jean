@@ -26,6 +26,7 @@
   "brain.claude.text": "Sumasagot gamit ang Claude Pro o Max plan mo, sa pamamagitan ng Claude Code na naka-install at naka-sign in sa computer na ito. Dumadaan ito sa “{computer}”, na binubuksan ng Ikonekta kung naka-off.",
   "brain.claude.missing": "Hindi naka-install o hindi naka-sign in ang Claude Code sa computer na ito. I-type ang claude sa isang terminal para mag-sign in, saka ikonekta ulit.",
   "brain.claude.restart": "Lumang bersyon pa ang tumatakbong “{computer}”. Ihinto ito (Ctrl+C sa terminal nito, o isara ang app), patakbuhin ulit, saka ikonekta ulit.",
+  "brain.plan.start": "Hindi pa tumatakbo ang “{computer}”. Kapag tumakbo na ito, kusang matatapos ang pagkonekta.",
   "brain.copilot.title": "Gamitin ang Copilot plan mo",
   "brain.copilot.text": "Sumasagot gamit ang GitHub Copilot plan mo, sa pamamagitan ng Copilot CLI na naka-install at naka-sign in sa computer na ito. Dumadaan ito sa “{computer}”, na binubuksan ng Ikonekta kung naka-off.",
   "brain.copilot.missing": "Hindi naka-install o hindi naka-sign in ang Copilot CLI sa computer na ito. I-type ang copilot sa isang terminal, saka /login para mag-sign in, at ikonekta ulit.",

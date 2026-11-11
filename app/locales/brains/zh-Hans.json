@@ -26,6 +26,7 @@
   "brain.claude.text": "用你的 Claude Pro 或 Max 套餐回答，通过这台电脑上已安装并登录的 Claude Code。它经由“{computer}”运行；如果它没在运行，“连接”会启动它。",
   "brain.claude.missing": "这台电脑上没有安装 Claude Code，或尚未登录。在终端中输入 claude 登录，然后再次连接。",
   "brain.claude.restart": "“{computer}”仍在运行旧版本。请停止它（在其终端中按 Ctrl+C，或退出应用），重新启动后再次连接。",
+  "brain.plan.start": "“{computer}”还没在运行。它一运行，连接就会自动完成。",
   "brain.copilot.title": "使用你的 Copilot 套餐",
   "brain.copilot.text": "用你的 GitHub Copilot 套餐回答，通过这台电脑上已安装并登录的 Copilot CLI。它经由“{computer}”运行；如果它没在运行，“连接”会启动它。",
   "brain.copilot.missing": "这台电脑上没有安装 Copilot CLI，或尚未登录。在终端中输入 copilot，再输入 /login 登录，然后再次连接。",

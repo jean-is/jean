@@ -26,6 +26,7 @@
   "brain.claude.text": "Answers with your Claude Pro or Max plan, through Claude Code, installed and signed in on this computer. It goes through “{computer}”, which Connect starts if it isn’t running.",
   "brain.claude.missing": "Claude Code isn’t installed or signed in on this computer. Type claude in a terminal to sign in, then connect again.",
   "brain.claude.restart": "“{computer}” is still running an earlier version. Stop it (Ctrl+C in its terminal, or quit the app) and start it again, then connect again.",
+  "brain.plan.start": "“{computer}” isn’t running yet. Once it runs, the connection finishes by itself.",
   "brain.copilot.title": "Use your Copilot plan",
   "brain.copilot.text": "Answers with your GitHub Copilot plan, through Copilot CLI, installed and signed in on this computer. It goes through “{computer}”, which Connect starts if it isn’t running.",
   "brain.copilot.missing": "Copilot CLI isn’t installed or signed in on this computer. Type copilot in a terminal, then /login to sign in, and connect again.",

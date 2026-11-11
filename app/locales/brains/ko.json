@@ -26,6 +26,7 @@
   "brain.claude.text": "Claude Pro 또는 Max 요금제로 답해요. 이 컴퓨터에 설치해 로그인한 Claude Code를 거치고, ‘{computer}’를 통해 연결돼요. 실행 중이 아니면 ‘연결’이 시작해 줘요.",
   "brain.claude.missing": "이 컴퓨터에 Claude Code가 설치되어 있지 않거나 로그인되어 있지 않아요. 터미널에서 claude를 입력해 로그인한 뒤 다시 연결하세요.",
   "brain.claude.restart": "‘{computer}’가 아직 이전 버전으로 실행 중이에요. 중지한 뒤(터미널에서 Ctrl+C, 또는 앱 종료) 다시 시작하고 다시 연결하세요.",
+  "brain.plan.start": "‘{computer}’이(가) 아직 실행 중이 아니에요. 실행되면 연결이 알아서 마무리돼요.",
   "brain.copilot.title": "내 Copilot 요금제 사용",
   "brain.copilot.text": "GitHub Copilot 요금제로 답해요. 이 컴퓨터에 설치해 로그인한 Copilot CLI를 거치고, ‘{computer}’를 통해 연결돼요. 실행 중이 아니면 ‘연결’이 시작해 줘요.",
   "brain.copilot.missing": "이 컴퓨터에 Copilot CLI가 설치되어 있지 않거나 로그인되어 있지 않아요. 터미널에서 copilot을 입력하고 /login으로 로그인한 뒤 다시 연결하세요.",

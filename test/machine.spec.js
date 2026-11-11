@@ -142,18 +142,17 @@ test('the user’s Claude plan answers, through Claude Code on this computer', a
   await settings.locator('[data-brain="claude"]').click()
   const way = settings.locator('.brain-way')
   await expect(way).toContainText('Claude Pro or Max')
-  // This computer is off: Connect opens its page in Settings › Computer, with the line.
+  // This computer is off: Connect says so and shows its line there, under the plan, never on another page.
   await way.getByRole('button', { name: 'Connect' }).click()
-  const part = settings.locator('.machine')
-  await expect(part.locator('.machine-steps')).toContainText('Paste this line there')
+  await expect(way.locator('div[role="status"]')).toHaveText('“This computer” isn’t running yet. Once it runs, the connection finishes by itself.')
+  await expect(way.locator('.machine-steps')).toContainText('Paste this line there')
+  await expect(page).toHaveURL(/#\/settings\/brains\/claude$/)
   const line = await pasted(page)
   const bridge = spawn('bash', ['-c', line], { cwd: disk, stdio: 'ignore', detached: true, env: { ...process.env, PATH: `${bin}:${process.env.PATH}` } })
   try {
-    await expect(settings.locator('.settings-panel')).toContainText('run their commands on this computer', { timeout: 15_000 })
-    await settings.locator('.settings-nav button', { hasText: 'Brains' }).click()
-    await settings.locator('[data-brain="claude"]').click()
-    await way.getByRole('button', { name: 'Connect' }).click()
-    await expect(settings).toBeHidden()
+    // The line run, the plan connects by itself: nothing more to press, and a word that it worked.
+    await expect(settings).toBeHidden({ timeout: 20_000 })
+    await expect(page.locator('[role="status"] .toast')).toContainText('Brain connected')
     // Claude Code runs here, but answers from Anthropic's: a brain in the cloud, never a private one.
     await expect((await openSettings(page, 'Brains')).locator('.brain-rows button', { hasText: 'Claude Code' })).toContainText('In the cloud')
     await closeSettings(page)
@@ -188,11 +187,8 @@ test('the user’s Copilot plan answers, through Copilot on this computer', asyn
   const line = await pasted(page)
   const bridge = spawn('bash', ['-c', line], { cwd: disk, stdio: 'ignore', detached: true, env: { ...process.env, PATH: `${bin}:${process.env.PATH}` } })
   try {
-    await expect(settings.locator('.settings-panel')).toContainText('run their commands on this computer', { timeout: 15_000 })
-    await settings.locator('.settings-nav button', { hasText: 'Brains' }).click()
-    await settings.locator('[data-brain="copilot"]').click()
-    await way.getByRole('button', { name: 'Connect' }).click()
-    await expect(settings).toBeHidden()
+    await expect(settings).toBeHidden({ timeout: 20_000 })
+    await expect(page.locator('[role="status"] .toast')).toContainText('Brain connected')
     await expect((await openSettings(page, 'Brains')).locator('.brain-rows button', { hasText: 'GitHub Copilot' })).toContainText('In the cloud')
     await closeSettings(page)
     await ask(page, 'hello there')

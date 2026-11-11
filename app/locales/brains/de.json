@@ -26,6 +26,7 @@
   "brain.claude.text": "Antwortet mit deinem Claude-Pro- oder -Max-Abo, über Claude Code, installiert und angemeldet auf diesem Computer. Das läuft über „{computer}“, das Verbinden startet, falls es nicht läuft.",
   "brain.claude.missing": "Claude Code ist auf diesem Computer nicht installiert oder nicht angemeldet. Tippe claude in ein Terminal, um dich anzumelden, und verbinde dann erneut.",
   "brain.claude.restart": "„{computer}“ läuft noch in einer älteren Version. Beende es (Strg+C in seinem Terminal oder die App schließen), starte es neu und verbinde dann erneut.",
+  "brain.plan.start": "„{computer}“ läuft noch nicht. Sobald es läuft, wird die Verbindung von selbst fertig.",
   "brain.copilot.title": "Dein Copilot-Abo nutzen",
   "brain.copilot.text": "Antwortet mit deinem GitHub-Copilot-Abo, über Copilot CLI, installiert und angemeldet auf diesem Computer. Das läuft über „{computer}“, das Verbinden startet, falls es nicht läuft.",
   "brain.copilot.missing": "Copilot CLI ist auf diesem Computer nicht installiert oder nicht angemeldet. Tippe copilot in ein Terminal und dann /login, um dich anzumelden, und verbinde dann erneut.",

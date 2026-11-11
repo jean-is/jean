@@ -206,12 +206,10 @@ let watching
 
 /** Until the bridge answers, while its page shows: looked for every two seconds. */
 function watch() {
-  if (watching) return
-  watching = setInterval(async () => {
-    if (!document.querySelector('.machine') || (await find(true)).on) {
-      clearInterval(watching)
-      watching = undefined
-    }
+  watching ??= setInterval(async () => {
+    if (document.querySelector('.machine') && !(await find(true)).on) return
+    clearInterval(watching)
+    watching = undefined
   }, 2000)
 }
 
@@ -268,7 +266,10 @@ export function page() {
   }
 }
 
-/** Settings › Computer on This computer's page: from its offer, Brains' Connect and its trophy. */
+/** What starts the bridge, under a plan's Connect in Brains, which waits for it: the steps and their line, or the desktop app's Choose a folder, and why it didn't start. */
+export const starter = () => html`${inApp.value && failed.value ? html`<p class="status is-error" role="alert">${t('machine.failed')}</p>` : nothing}${page().draw()}${bridge.value.on ? nothing : page().end}`
+
+/** Settings › Computer on This computer's page: from its offer and its trophy. */
 export function show() {
   app.section.value = 'computer/machine'
   app.dialog.value = 'settings'

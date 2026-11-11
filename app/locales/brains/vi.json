@@ -26,6 +26,7 @@
   "brain.claude.text": "Trả lời bằng gói Claude Pro hoặc Max của bạn, qua Claude Code đã cài và đăng nhập trên máy tính này. Việc này đi qua “{computer}”, mà Kết nối sẽ mở nếu nó đang tắt.",
   "brain.claude.missing": "Claude Code chưa được cài hoặc chưa đăng nhập trên máy tính này. Gõ claude trong một cửa sổ terminal để đăng nhập, rồi kết nối lại.",
   "brain.claude.restart": "“{computer}” vẫn đang chạy phiên bản cũ. Hãy dừng nó (Ctrl+C trong terminal của nó, hoặc thoát ứng dụng), khởi động lại, rồi kết nối lại.",
+  "brain.plan.start": "“{computer}” chưa chạy. Ngay khi nó chạy, việc kết nối sẽ tự hoàn tất.",
   "brain.copilot.title": "Dùng gói Copilot của bạn",
   "brain.copilot.text": "Trả lời bằng gói GitHub Copilot của bạn, qua Copilot CLI đã cài và đăng nhập trên máy tính này. Việc này đi qua “{computer}”, mà Kết nối sẽ mở nếu nó đang tắt.",
   "brain.copilot.missing": "Copilot CLI chưa được cài hoặc chưa đăng nhập trên máy tính này. Gõ copilot trong một cửa sổ terminal, rồi /login để đăng nhập, sau đó kết nối lại.",

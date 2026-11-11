@@ -26,6 +26,7 @@
   "brain.claude.text": "Risponde con il tuo piano Claude Pro o Max, tramite Claude Code, installato e con accesso effettuato su questo computer. Passa per «{computer}», che Connetti avvia se non è in esecuzione.",
   "brain.claude.missing": "Claude Code non è installato o non ha l’accesso effettuato su questo computer. Scrivi claude in un terminale per accedere, poi connetti di nuovo.",
   "brain.claude.restart": "«{computer}» usa ancora una versione precedente. Fermalo (Ctrl+C nel suo terminale, o chiudi l’app), riavvialo e poi connetti di nuovo.",
+  "brain.plan.start": "«{computer}» non è ancora in esecuzione. Appena lo è, la connessione si completa da sola.",
   "brain.copilot.title": "Usa il tuo piano Copilot",
   "brain.copilot.text": "Risponde con il tuo piano GitHub Copilot, tramite Copilot CLI, installato e con accesso effettuato su questo computer. Passa per «{computer}», che Connetti avvia se non è in esecuzione.",
   "brain.copilot.missing": "Copilot CLI non è installato o non ha l’accesso effettuato su questo computer. Scrivi copilot in un terminale, poi /login per accedere, e connetti di nuovo.",
