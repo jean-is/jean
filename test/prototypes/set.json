@@ -1,0 +1,103 @@
+{
+  "format": 1,
+  "$comment": "What a person asks for, a prototype of an app or a flow, in English, French, Arabic and Japanese (npm run prototypes). Each brief is followed in the same task by its change. pay: the brief has a payment, where the judge says whether it is shown as a demo.",
+  "briefs": {
+    "leave": {
+      "en": "A clickable prototype of a leave request for our intranet: the employee picks the dates and the type of leave, sends it, and the manager approves or refuses it. I want to show it to HR next week.",
+      "fr": "Une maquette cliquable d'une demande de congés pour notre intranet : le salarié choisit les dates et le type de congé, l'envoie, et son manager l'accepte ou la refuse. Je veux la montrer aux RH la semaine prochaine.",
+      "ar": "نموذج أولي قابل للنقر لطلب إجازة على شبكتنا الداخلية: يختار الموظف التواريخ ونوع الإجازة ويرسل الطلب، ثم يوافق عليه المدير أو يرفضه. أريد أن أعرضه على الموارد البشرية الأسبوع المقبل.",
+      "ja": "社内イントラネット用の休暇申請のクリックできるプロトタイプを作って。社員が日付と休暇の種類を選んで申請し、上司が承認か却下をする流れ。来週人事に見せたい。",
+      "change": {
+        "en": "Add a step where the employee can attach a document, such as a doctor's note.",
+        "fr": "Ajoute une étape où le salarié peut joindre un document, comme un certificat médical.",
+        "ar": "أضف خطوة يمكن فيها للموظف إرفاق مستند، مثل شهادة طبية.",
+        "ja": "診断書などの書類を添付できるステップを追加して。"
+      }
+    },
+    "salon": {
+      "en": "Show me what a booking app for my hair salon could look like on a phone: clients choose a service, a hairdresser and a time, then confirm. Something I can click through.",
+      "fr": "Montre-moi à quoi pourrait ressembler une appli de réservation pour mon salon de coiffure sur téléphone : le client choisit une prestation, un coiffeur et un horaire, puis confirme. Quelque chose sur quoi je peux cliquer.",
+      "ar": "أرني كيف يمكن أن يبدو تطبيق حجز لصالون تصفيف الشعر الخاص بي على الهاتف: يختار العميل الخدمة والمصفف والموعد، ثم يؤكد. شيء يمكنني النقر عليه.",
+      "ja": "私の美容室の予約アプリがスマホでどんな感じになるか見せて。お客さんがメニュー、美容師、時間を選んで確定する流れで、実際にタップして試せるものがいい。",
+      "change": {
+        "en": "Let clients add a second service to the same visit, and show the total price before they confirm.",
+        "fr": "Permets d'ajouter une deuxième prestation au même rendez-vous, et affiche le prix total avant la confirmation.",
+        "ar": "اسمح للعملاء بإضافة خدمة ثانية إلى الزيارة نفسها، واعرض السعر الإجمالي قبل التأكيد.",
+        "ja": "同じ来店で2つ目のメニューを追加できるようにして、確定前に合計金額を表示して。"
+      }
+    },
+    "volunteers": {
+      "en": "A prototype of how new volunteers join our food bank: they sign up, say when they're available, read our few rules, and get a welcome screen.",
+      "fr": "Un prototype du parcours d'inscription des nouveaux bénévoles de notre banque alimentaire : ils s'inscrivent, disent quand ils sont disponibles, lisent nos quelques règles et arrivent sur un écran de bienvenue.",
+      "ar": "نموذج أولي لطريقة انضمام المتطوعين الجدد إلى بنك الطعام لدينا: يسجّلون، ويحددون أوقات تفرغهم، ويقرؤون قواعدنا القليلة، ثم تظهر لهم شاشة ترحيب.",
+      "ja": "フードバンクに新しいボランティアが参加する流れのプロトタイプを作って。登録して、参加できる日時を入れて、簡単なルールを読んで、最後に歓迎の画面が出る。",
+      "change": {
+        "en": "Add a screen where they choose the teams they'd like to join: sorting, distribution or driving.",
+        "fr": "Ajoute un écran où ils choisissent les équipes qu'ils aimeraient rejoindre : tri, distribution ou chauffeur.",
+        "ar": "أضف شاشة يختارون فيها الفرق التي يرغبون في الانضمام إليها: الفرز أو التوزيع أو القيادة.",
+        "ja": "仕分け、配布、運転の中から参加したいチームを選ぶ画面を追加して。"
+      }
+    },
+    "school": {
+      "en": "Mock up an app for the parents at our primary school: the school's news, this week's canteen menu, reporting a child's absence, and messages with the teacher.",
+      "fr": "Fais une maquette d'appli pour les parents de notre école primaire : les actualités de l'école, le menu de la cantine de la semaine, signaler une absence, et les messages avec l'enseignant.",
+      "ar": "صمّم نموذجًا لتطبيق لأولياء أمور تلاميذ مدرستنا الابتدائية: أخبار المدرسة، وقائمة طعام المقصف لهذا الأسبوع، والإبلاغ عن غياب الطفل، والرسائل مع المعلّم.",
+      "ja": "うちの小学校の保護者向けアプリのモックアップを作って。学校からのお知らせ、今週の給食の献立、欠席連絡、先生とのメッセージ。",
+      "change": {
+        "en": "Add a calendar of school events that parents reach from the home screen.",
+        "fr": "Ajoute un calendrier des événements de l'école, accessible depuis l'écran d'accueil.",
+        "ar": "أضف تقويمًا لفعاليات المدرسة يصل إليه أولياء الأمور من الشاشة الرئيسية.",
+        "ja": "ホーム画面から開ける学校行事のカレンダーを追加して。"
+      }
+    },
+    "dashboard": {
+      "en": "A clickable mockup of a sales dashboard for our regional managers: totals by region, click a region to see its shops, then a shop to see its month. Sample figures are fine.",
+      "fr": "Une maquette cliquable d'un tableau de bord des ventes pour nos responsables régionaux : les totaux par région, un clic sur une région pour voir ses magasins, puis sur un magasin pour voir son mois. Des chiffres d'exemple suffisent.",
+      "ar": "نموذج قابل للنقر للوحة متابعة المبيعات لمديرينا الإقليميين: الإجماليات حسب المنطقة، ثم النقر على منطقة لرؤية متاجرها، ثم على متجر لرؤية شهره. أرقام تجريبية تكفي.",
+      "ja": "エリアマネージャー向けの売上ダッシュボードのクリックできるモックアップを作って。地域別の合計、地域をクリックするとその店舗一覧、店舗をクリックするとその月の詳細。数字はサンプルでいい。",
+      "change": {
+        "en": "Add a month picker that changes the figures on every screen.",
+        "fr": "Ajoute un choix du mois qui change les chiffres sur tous les écrans.",
+        "ar": "أضف اختيارًا للشهر يغيّر الأرقام في كل الشاشات.",
+        "ja": "すべての画面の数字が変わる月の選択を追加して。"
+      }
+    },
+    "checkout": {
+      "pay": true,
+      "en": "A clickable demo of the checkout for my SaaS idea, an appointment tool for therapists: choose a plan, enter the practice's details, pay, and land on a welcome screen. It's for investors.",
+      "fr": "Une démo cliquable du parcours de paiement pour mon idée de SaaS, un outil de prise de rendez-vous pour les thérapeutes : choisir une formule, saisir les informations du cabinet, payer, et arriver sur un écran de bienvenue. C'est pour des investisseurs.",
+      "ar": "عرض توضيحي قابل للنقر لمسار الدفع في فكرتي لخدمة SaaS، أداة لحجز المواعيد للمعالجين النفسيين: اختيار الباقة، وإدخال بيانات العيادة، والدفع، ثم الوصول إلى شاشة ترحيب. إنه للمستثمرين.",
+      "ja": "セラピスト向け予約ツールという私のSaaSのアイデアで、購入までの流れをクリックで試せるデモを作って。プランを選び、院の情報を入力し、支払いをして、ようこそ画面に着く。投資家向け。",
+      "change": {
+        "en": "Add a yearly option with two months free on the plans screen.",
+        "fr": "Ajoute une option annuelle avec deux mois offerts sur l'écran des formules.",
+        "ar": "أضف خيارًا سنويًا مع شهرين مجانًا في شاشة الباقات.",
+        "ja": "プラン画面に2か月分無料の年払いオプションを追加して。"
+      }
+    },
+    "survey": {
+      "en": "A prototype of a short satisfaction survey for visitors to our town hall, one question per screen, with a thank-you screen at the end.",
+      "fr": "Un prototype d'un court questionnaire de satisfaction pour les usagers de notre mairie, une question par écran, avec un écran de remerciement à la fin.",
+      "ar": "نموذج أولي لاستبيان رضا قصير لزوار مبنى بلديتنا، سؤال واحد في كل شاشة، مع شاشة شكر في النهاية.",
+      "ja": "市役所の来庁者向けの短い満足度アンケートのプロトタイプを作って。1画面に1問で、最後にお礼の画面。",
+      "change": {
+        "en": "Add a question asking whether they had an appointment, and only ask how long they waited to those who didn't.",
+        "fr": "Ajoute une question pour savoir s'ils avaient rendez-vous, et ne demande combien de temps ils ont attendu qu'à ceux qui n'en avaient pas.",
+        "ar": "أضف سؤالًا عمّا إذا كان لديهم موعد، ولا تسأل عن مدة الانتظار إلا من لم يكن لديه موعد.",
+        "ja": "予約があったかどうかを聞く質問を追加して、予約がなかった人にだけ待ち時間を聞くようにして。"
+      }
+    },
+    "tools": {
+      "en": "I have an idea for a phone app where neighbours lend each other tools. Make a prototype: browse what's nearby, see a tool, ask to borrow it, and chat with its owner.",
+      "fr": "J'ai une idée d'appli mobile où les voisins se prêtent des outils. Fais-en un prototype : voir ce qu'il y a autour de soi, voir un outil, demander à l'emprunter, et discuter avec son propriétaire.",
+      "ar": "لدي فكرة لتطبيق هاتف يتبادل فيه الجيران إعارة الأدوات. اصنع نموذجًا أوليًا: تصفّح ما هو متاح بالقرب، وعرض أداة، وطلب استعارتها، والدردشة مع صاحبها.",
+      "ja": "ご近所同士で工具を貸し借りするスマホアプリのアイデアがあるの。プロトタイプを作って。近くにある物を見る、工具の詳細を見る、借りたいと頼む、持ち主とチャットする。",
+      "change": {
+        "en": "Add a profile screen with the tools I lend and the ratings I've received.",
+        "fr": "Ajoute un écran de profil avec les outils que je prête et les notes que j'ai reçues.",
+        "ar": "أضف شاشة للملف الشخصي تعرض الأدوات التي أعيرها والتقييمات التي حصلت عليها.",
+        "ja": "私が貸している工具と、もらった評価が見られるプロフィール画面を追加して。"
+      }
+    }
+  }
+}

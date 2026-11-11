@@ -134,6 +134,7 @@ npm run tutor     # measure how often a brain gives the answer to a child's work
 npm run games     # measure how often a brain makes a game that plays clean, unguided, from briefs in four languages, in Jean's own page (BRAIN=<provider>:<model>, JUDGE=<provider>:<model>, -- --write)
 npm run brands    # a design system proposed from brand material (D740): eight brands made up in four languages, as a logo, a guide and a screenshot, checked at AA and against their colours and faces, then judged (JUDGE=…, -- --write)
 npm run sites     # how often a brain makes a site that passes its check and a judge would put online (D720), with the skill "Make a site", from briefs in four languages (BRAIN=…, JUDGE=…, -- --write, -- --judge to judge kept runs again)
+npm run prototypes  # how often a brain makes a clickable prototype of several pages whose flow works (a canvas for prototypes, phase 0), from briefs in four languages, every control pressed in Chromium (BRAIN=…, JUDGE=…, -- --write, -- --judge, -- --report)
 npm run concepts  # read the picture check's words into app/caps/pictures/concepts.json, after changing one (D280)
 npm run schemas   # write app/schemas/policy.schema.json again from what policy.html checks, after changing SCHEMA (D415)
 npm run masks     # measure the names model of masked requests in Jean's own worker, on an annotated set in eight languages (-- --speed, -- --write; weights fetched once into test/masks/.cache/)
