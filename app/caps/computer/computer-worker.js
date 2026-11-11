@@ -32,7 +32,7 @@ const SERVER_MODULES = /^(node:)?(http|https|http2|net)$|^express$/
 const OWN = /^(?:node:)?(path|fs|fs\/promises|os|util|events|process|buffer)$/
 const NODE = /^node:|^(assert|child_process|crypto|readline|stream|string_decoder|timers|tty|url|vm|worker_threads|zlib)(\/|$)/
 /** Why it can't, and what does instead. @param {string} name */
-const noServer = (name) => `${name}: nothing can listen on a port here, so no server runs. Write the web page in /workspace, its scripts (plain JavaScript, as nothing builds them) and styles inside it, and it opens beside the conversation by itself.\n`
+const noServer = (name) => `${name}: nothing can listen on a port here, so no server runs. Write the web page in /workspace, its scripts plain JavaScript (or bundled into one file by a script of yours in node) and styles inside it, and it opens beside the conversation by itself.\n`
 
 /** The engines, once loaded: `shell` (just-bash and fflate), `quickjs`, `pyodide`. @type {Record<string, any>} */
 const engines = {}
@@ -445,7 +445,7 @@ async function tarCommand(args, ctx) {
 /** A version's numbers; a missing or wild one (x, *) as NaN. @param {string} version */
 const numbers = (version) => version.replace(/^[v=\s]+/, '').split(/[-+]/)[0].split('.').slice(0, 3).map((part) => (/^\d+$/.test(part) ? Number(part) : NaN))
 
-/** Whether a version is in a range of npm's: exact, x, ^, ~, comparisons, and their unions with ||. @param {string} version @param {string} [range] */
+/** Whether a version is in a range of npm's: exact, x, ^, ~, comparisons (">= 3.1.0 < 4" too), and their unions with ||. @param {string} version @param {string} [range] */
 function satisfies(version, range = '*') {
   if (/-/.test(version.split('+')[0]) && !range.includes('-')) return false
   const v = numbers(version)
@@ -453,7 +453,7 @@ function satisfies(version, range = '*') {
     for (let i = 0; i < 3; i++) if ((v[i] || 0) !== (base[i] || 0)) return Math.sign((v[i] || 0) - (base[i] || 0))
     return 0
   }
-  return String(range).split('||').some((part) => part.trim().split(/\s+/).every((comparator) => {
+  return String(range).replace(/(\^|~|[<>]=?|=)\s+/g, '$1').split('||').some((part) => part.trim().split(/\s+/).every((comparator) => {
     if (!comparator || /^(\*|x|latest)$/i.test(comparator)) return true
     const [, op = '', rest = ''] = /^(\^|~|>=|<=|>|<|=)?(.*)$/.exec(comparator) ?? []
     const given = numbers(rest)

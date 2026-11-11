@@ -310,7 +310,8 @@ test('npm install from the registry Settings name, then node requires and import
   const packages = [
     // As cowsay does: its cows are files beside its code, read at once through path and fs.
     pack('moo', '1.0.0', { 'lib/cows.js': "const path = require('path')\nconst fs = require('fs')\nexports.say = (text) => fs.readFileSync(path.join(__dirname, '/../cows', 'default') + '.cow', 'utf-8').replace('$text', text)\nexports.list = () => fs.readdirSync(path.join(__dirname, '../cows')).map((cow) => path.basename(cow, '.cow'))\n", 'package.json': JSON.stringify({ main: './lib/cows' }), 'cows/default.cow': '< $text >\n  moo\n', 'cows/fox.cow': 'fox' }),
-    pack('greet', '1.2.0', { 'package.json': JSON.stringify({ main: 'lib/index.js', dependencies: { shout: '^2.0.0' } }), 'lib/index.js': "const shout = require('shout')\nmodule.exports = (name) => shout('hello ' + name)\n" }),
+    // Its range spaced as some packages write theirs (thenify-all's ">= 3.1.0 < 4").
+    pack('greet', '1.2.0', { 'package.json': JSON.stringify({ main: 'lib/index.js', dependencies: { shout: '>= 2.0.0 < 3' } }), 'lib/index.js': "const shout = require('shout')\nmodule.exports = (name) => shout('hello ' + name)\n" }),
     pack('shout', '2.1.0', { 'index.js': "module.exports = (text) => text.toUpperCase() + '!'\n" }),
     pack('esm-hi', '3.0.0', { 'package.json': JSON.stringify({ type: 'module', exports: { '.': { import: './hi.js' } } }), 'hi.js': "export const hi = () => 'hi from a module'\n" }),
   ]

@@ -377,8 +377,8 @@ const bashTool = {
     description: [
       "Run a command on your computer: bash, in a sandbox in this tab, never the user's machine.",
       "/workspace holds the conversation's folder, or the project's workspace when it has none, and what commands change there is kept (in the user's folder, once they agree); /home/user and /tmp last until the tab closes. A file the user shared is not in /workspace: python's or javascript's await file(name) reads it.",
-      'Most commands are there (ls, cat, grep, sed, awk, jq, find, sort, diff, gzip, curl…), with python3, pip install and node (JavaScript).',
-      'A web page, a picture or a PDF you make in /workspace opens beside the conversation for the user, as written: nothing builds a page, so its scripts are plain JavaScript, without JSX, TypeScript or npm packages. A chart is best a small HTML page with inline SVG.',
+      'Most commands are there (ls, cat, grep, sed, awk, jq, find, sort, diff, gzip, curl…), with python3 and pip install, node (JavaScript) and npm install.',
+      'A web page, a picture or a PDF you make in /workspace opens beside the conversation for the user, as written, without node_modules: JSX, TypeScript and npm packages reach a page once your own script in node has bundled them into one plain file, with sucrase for JSX and TypeScript. A chart is best a small HTML page with inline SVG.',
       'The internet works as Settings › Computer allows; the user is asked first for a new site. The shell keeps its directory and variables between commands.',
     ].join(' '),
     parameters: { type: 'object', properties: { command: { type: 'string', description: 'The command, or several lines of them' } }, required: ['command'] },
