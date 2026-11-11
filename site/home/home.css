@@ -32,7 +32,7 @@ body:has(> .home:not([hidden])) app-composer > :is(p, footer) { visibility: hidd
 /* While the page shows, it is the main content, its own <main> (ui/home.js), and the app's room holds the first screen in a
    <div class="main"> (ui/shell.js), drawn as the app draws its <main>, in every look; the page's <main> is never drawn so. */
 :root body > .home[lang] > main { display: block; inline-size: auto; margin: 0; padding: 0; border: 0; background: none; box-shadow: none; view-transition-name: none; }
-:where(.here) > .main { flex: 1; display: flex; flex-direction: column; inline-size: var(--column); margin-inline: auto; padding-block-end: 2rem; }
+:where(.here) > .main { flex: 1 1 0; display: flex; flex-direction: column; inline-size: var(--column); margin-inline: auto; padding-block-end: 2rem; }
 :where(:root[data-sidebar] .here) > .main { padding-block-start: 1.5rem; }
 :where(:root[data-sidebar] app-shell:has(> .views button) .here, :root:is([data-look='human'], [data-look='tilde'])[data-sidebar] .here) > .main { padding-block-start: 0; }
 :where(:root[data-look='classic'] .here) > .main { margin-block: 0.75rem; padding: 2.4rem 1.25rem 1.25rem; background: var(--title) 3px 3px / calc(100% - 6px) 1.6rem no-repeat, var(--room); box-shadow: var(--raised); }
