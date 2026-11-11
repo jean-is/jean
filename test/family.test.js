@@ -23,7 +23,7 @@ test('it is at /family in English, /fr/famille in French and /ko/family in Korea
 test('the app’s own words it repeats are there in every language with a page', async () => {
   for (const lang of Object.keys(page.addresses)) {
     const words = await appWords(lang)
-    for (const key of ['profiles.tier', 'profiles.concern', 'profiles.choice.later', 'profiles.topic.death', 'profiles.shared', 'composer.ai', 'first.free', 'profiles.add']) assert.ok(words[key], `${lang}: ${key}`)
+    for (const key of ['profiles.tier', 'profiles.concern', 'profiles.never', 'profiles.choice.later', 'profiles.topic.frightening', 'profiles.time', 'profiles.forChild', 'composer.ai', 'profiles.add']) assert.ok(words[key], `${lang}: ${key}`)
   }
 })
 
@@ -42,7 +42,7 @@ test('its gate passed, it says how a child learns, Jean only helping, with the m
     assert.doesNotMatch(html.replace(/<script>[^<]*<\/script>/g, ''), /\{\w+\}/, 'every {param} filled, its scripts aside')
     assert.equal(html.match(/<ol class="fam-steps">(.*?)<\/ol>/)?.[1].match(/<li>/g)?.length, 3, `${address}: three steps`)
     assert.equal(html.match(/<ol class="fam-ladder">(.*?)<\/ol>/)?.[1].match(/<li>/g)?.length, 4, `${address}: four rungs`)
-    assert.match(html, /<p class="fam-measure">[^<]+<a href="#fam-learn">/)
+    assert.match(html, /<section id="fam-learns"[^]*<ol class="fam-steps">[^]*<section id="fam-alone"[^]*<ol class="fam-ladder">/, `${address}: the steps where the child learns, the rungs where Jean stops`)
     if (rows.length) for (const row of rows) assert.ok(html.includes(/* html */ `<bdi>${row.brain}</bdi>`), `${address}: ${row.brain}`)
     else assert.doesNotMatch(html, /<table class="fam-table">/)
   }

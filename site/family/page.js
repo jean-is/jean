@@ -4,7 +4,7 @@
 // Its words are <lang>.json, the app's own catalogues where the app says the same (a profile's topics, choices,
 // labels and notices), and the homepage's for the family's tiles; its look family.css, over site.css (site/site.js, D438).
 import { readFile } from 'node:fs/promises'
-import { FELT, ICONS, WAVE, caught, felt, highlight, landing, ticks, underline, xml } from '../site.js'
+import { FELT, ICONS, WAVE, caught, hero, highlight, landing, ticks, underline, xml } from '../site.js'
 
 /** How often each brain gave a child the answer, as npm run tutor -- --write keeps it. */
 const RESULTS = new URL('../../test/tutor/results.md', import.meta.url)
@@ -49,7 +49,7 @@ const KIDS = /* html */ `<svg class="fam-crayon fam-kids" viewBox="680 60 760 80
   <path class="is-kite" stroke-width="6" d="M1324 92L1372 160L1320 212L1276 152Z"/><path class="is-blue" stroke-width="4" d="M1324 96L1320 208M1280 152L1368 160"/>
   <path class="is-ochre" stroke-width="6" d="M1320 214C1338 230 1320 248 1340 262C1360 276 1342 294 1362 308C1382 322 1366 340 1388 352"/></g></svg>`
 
-/** The unicorn of Léa's invitation, pinned to the fridge beside the family's ideas. */
+/** The unicorn of Léa's invitation, taped to the fridge at the end of the family's ideas. */
 const UNICORN = /* html */ `<svg class="fam-crayon fam-unicorn" viewBox="0 0 300 280" aria-hidden="true">${crayon('fam-wax-unicorn')}<g filter="url(#fam-wax-unicorn)"><rect width="300" height="280" fill="none"/>
   <path class="is-violet" stroke-width="5" d="M92 176C80 136 100 96 140 86C170 80 200 96 220 126C230 142 226 160 210 164C190 168 170 162 158 172C150 186 154 206 160 236M92 176C96 202 102 222 106 242M122 92L112 64L134 84"/>
   <path class="is-horn" stroke-width="6" d="M134 88L152 30L160 86Z"/><path class="is-ochre" stroke-width="3" d="M140 72L156 68M144 56L154 52"/>
@@ -68,10 +68,10 @@ export default {
   title: (kit) => `${kit.say('title')} · ${kit.say('headline')}`,
   main (kit) {
     const { lang, now } = kit
-    const params = { free: kit.appText('first.free'), tier: kit.appText('profiles.tier'), forChild: kit.appText('profiles.forChild') }
+    const params = { forChild: kit.appText('profiles.forChild') }
     const say = (/** @type {string} */ key, more = {}) => kit.say(key, { ...params, ...more })
     const list = (/** @type {string} */ key) => kit.list(key, params)
-    const table = (/** @type {string} */ key) => kit.table(key, undefined, params)
+    const table = (/** @type {string} */ key) => kit.table(key, 2, params)
     const app = (/** @type {string} */ key, more = {}) => kit.app(key, { ...params, ...more })
     const home = kit.from('home')
     const jean = kit.start
@@ -88,16 +88,11 @@ export default {
     const where = (/** @type {string} */ provider) => say(kit.has(`learn.where.${provider}`) ? `learn.where.${provider}` : 'learn.where.other', { provider })
     const tiles = [['music', 'tile.music'], ['app', 'tile.quiz'], ['tree', 'tile.tree'], ['file', 'tile.invitation']]
     const files = kit.link('files')
-    const hero = /* html */ `<section class="site-hero fam-hero" aria-labelledby="fam-title">
-  <div class="site-hero-text">
-    <p class="site-eyebrow">${say('eyebrow')}</p>
-    <h1 id="fam-title">${underline(say('h1'), say('h1.mark'))}</h1>
-    <p class="site-lede">${say('lede')}</p>
-    <p class="site-cta"><a class="button primary" href="${jean}?child">${say('cta')}</a><a href="#fam-decide">${say('see')}</a></p>
-    <ul class="site-facts is-felt">${list('facts').map((fact, i) => /* html */ `<li>${FELT.tick(i)}${fact}</li>`).join('')}</ul>
-    <p class="fam-measure">${say('measure')} <a href="#fam-learn">${say('measure.how')}</a></p>
-  </div>
-  <div class="fam-pane">
+    const begin = /* html */ `<a class="button primary" href="${jean}?child">${say('cta')}</a>`
+    // The promise, a line for each of its parts.
+    const promise = kit.table('acts', 2).map(([, part]) => /* html */ `<span class="fam-line">${part}</span>`).join(' ')
+    // Each part says one thing and shows it: its words on one side, the app's own screen on the other.
+    const top = hero(kit, { id: 'fam-title', classes: 'fam-hero', title: underline(promise, say('h1.mark')), lede: say('lede'), actions: begin, facts: list('facts'), aside: /* html */ `<div class="fam-pane">
     <p class="fam-pane-head"><span>${say('profiles.title')}</span><span class="fam-lock">${ICONS.lock}${app('profiles.tier')}</span></p>
     <ul class="fam-people">
       <li><span class="fam-face">${initial('you')}</span><span><b>${say('you')}</b><small>${say('you.sub')}</small></span>${ICONS.lock}</li>
@@ -106,101 +101,78 @@ export default {
       <li class="is-add"><span class="fam-face">${ICONS.plus}</span><span>${app('profiles.add')}</span></li>
     </ul>
   </div>
-  ${SUN}${KIDS}
-</section>`
-    const use = /* html */ `<section class="site-block" aria-labelledby="fam-use">
-  <h3 id="fam-use">${say('use.title')}</h3>
-  <div class="site-stats">${table('use.stats').map(([number, text, source], i) => /* html */ `<p><b>${i ? number : felt(number, 'circle')}</b><span>${text}</span><small>${source}</small></p>`).join('')}</div>
-  <dl class="fam-versus"><div><dt>${say('use.mostLabel')}</dt><dd>${say('use.most')}</dd></div><div><dt>${say('use.wantLabel')}</dt><dd>${FELT.arc}${say('use.want')}</dd></div></dl>
-  <p class="site-source">${say('use.sources')}</p>
-</section>`
-    const decide = /* html */ `<section id="fam-decide" class="site-block" aria-labelledby="fam-decide-title">
-  <header><h3 id="fam-decide-title">${say('decide.title')}</h3><p class="site-why">${say('decide.why')}</p></header>
-  <div class="site-two">
-    <div class="fam-pane">
-      <p class="fam-pane-head"><span>${say('decide.profile')}</span><span class="fam-lock">${ICONS.lock}${app('profiles.tier')}</span></p>
-      <p class="fam-row"><span>${app('profiles.born')}</span><span>${born}</span></p>
-      <p class="fam-row-head">${app('profiles.topics')}</p>
-      <ul>${topic('sexuality', 0)}${topic('frightening', 1)}${topic('drugs', 1)}</ul>
-      <p class="fam-more">${say('decide.more')}</p>
-      <p class="fam-row"><span>${app('profiles.sources')}</span><span>${app('profiles.source.vikidia')}</span></p>
-      <p class="fam-row"><span>${say('decide.pictures')}</span><span>${say('decide.picturesValue')}</span></p>
-      <p class="fam-row"><span>${say('decide.brain')}</span><span>${say('decide.brainValue')}</span></p>
-      <p class="fam-row is-change">${app('profiles.change')}</p>
-    </div>
-    ${ticks(list('decide.list'))}
+  ${SUN}${KIDS}` })
+    const learns = /* html */ `<div class="site-block"><div class="site-two">
+  <div class="fam-words">
+    <ol class="fam-steps">${table('learn.steps').map(([name, text]) => /* html */ `<li><h3>${name}</h3><p>${text}</p></li>`).join('')}</ol>
+    <blockquote class="fam-quote">${say('learn.quote')}</blockquote>
   </div>
-</section>`
-    const told = /* html */ `<section class="site-block" aria-labelledby="fam-told">
-  <header><h3 id="fam-told">${say('told.title')}</h3><p class="site-why">${say('told.why')}</p></header>
-  <div class="site-two">
-    <div class="fam-stack">
-      <div class="fam-notice" aria-hidden="true"><p>${ICONS.bell}${app('profiles.concern', { name: kit.text('lea.name'), kind: kit.appText('profiles.kind.bullying'), when })}</p><p class="fam-hint">${app('profiles.never')}</p>
-        <p class="fam-actions"><span class="button primary">${app('profiles.whatToDo')}</span><span class="button">${app('profiles.seen')}</span></p></div>
-      <div class="fam-pane fam-time"><p class="fam-time-head"><b>${say('told.timeTitle')}</b><span>${app('profiles.time', { today: span(WEEK.at(-1) ?? 0), week: span(WEEK.reduce((sum, n) => sum + n, 0)) })}</span></p>
-        <svg class="fam-bars" aria-hidden="true" viewBox="0 0 70 48" preserveAspectRatio="none">${WEEK.map((minutes, i) => { const h = Math.max(1, Math.round(minutes / Math.max(...WEEK) * 46)); return /* html */ `<rect${i === WEEK.length - 1 ? ' class="is-today"' : ''} x="${i * 10 + 1.5}" y="${48 - h}" width="7" height="${h}" rx="1.5"/>` }).join('')}</svg>
-        <p class="fam-days">${days.map((d, i) => /* html */ `<span${i === WEEK.length - 1 ? ' class="is-today"' : ''}>${xml(d)}</span>`).join('')}</p></div>
-      <p class="site-source">${say('told.source')}</p>
-    </div>
-    ${ticks(list('told.list').map((item, i) => (i === 1 ? highlight(item) : item)))}
+  <div class="fam-pane fam-child">
+    <p class="fam-child-top"><span class="fam-face">${initial('lea.name')}</span><b>${say('lea.name')}</b><span class="fam-lock">${ICONS.lock}${app('profiles.tier')}</span></p>
+    <p class="fam-asked" dir="${kit.dir}">${say('sees.ask')}</p>
+    <p class="fam-answer" dir="${kit.dir}">${say('sees.answer')}</p>
+    <p class="fam-box"><span>${app('composer.placeholder')}</span><span class="fam-chip">${ICONS.brain}${say('decide.brainValue')}</span></p>
+    <p class="fam-ai">${app('composer.ai')}</p>
   </div>
-</section>`
-    const sees = /* html */ `<section class="site-block" aria-labelledby="fam-sees">
-  <header><h3 id="fam-sees">${say('sees.title')}</h3><p class="site-why">${say('sees.why')}</p></header>
-  <div class="site-two">
-    <div class="fam-pane fam-child">
-      <p class="fam-child-top"><span class="fam-face">${initial('lea.name')}</span><b>${say('lea.name')}</b><span class="fam-lock">${ICONS.lock}${app('profiles.tier')}</span></p>
-      <p class="fam-asked" dir="${kit.dir}">${say('sees.ask')}</p>
-      <p class="fam-answer" dir="${kit.dir}">${say('sees.answer')}</p>
-      <div class="fam-shared"><p>${app('profiles.shared')}</p><span class="button">${app('profiles.understood')}</span></div>
-      <p class="fam-box"><span>${app('composer.placeholder')}</span><span class="fam-chip">${ICONS.brain}${say('decide.brainValue')}</span></p>
-      <p class="fam-ai">${app('composer.ai')}</p>
-    </div>
-    ${ticks(list('sees.list').map((item, i) => (i === 3 ? highlight(item) : item)))}
+</div></div>`
+    const decide = /* html */ `<section class="site-block" aria-labelledby="fam-decide"><div class="site-two">
+  <div class="fam-words"><h3 id="fam-decide">${say('decide.title')}</h3><p class="site-why">${say('decide.why')}</p></div>
+  <div class="fam-pane">
+    <p class="fam-pane-head"><span>${say('decide.profile')}</span><span class="fam-lock">${ICONS.lock}${app('profiles.tier')}</span></p>
+    <p class="fam-row"><span>${app('profiles.born')}</span><span>${born}</span></p>
+    <p class="fam-row-head">${app('profiles.topics')}</p>
+    <ul>${topic('sexuality', 0)}${topic('frightening', 1)}</ul>
+    <p class="fam-more">${say('decide.more')}</p>
+    <p class="fam-row"><span>${app('profiles.sources')}</span><span>${app('profiles.source.vikidia')}</span></p>
+    <p class="fam-row"><span>${say('decide.pictures')}</span><span>${say('decide.picturesValue')}</span></p>
+    <p class="fam-row"><span>${say('decide.brain')}</span><span>${say('decide.brainValue')}</span></p>
+    <p class="fam-row is-change">${app('profiles.change')}</p>
   </div>
+</div></section>`
+    const told = /* html */ `<section class="site-block" aria-labelledby="fam-told"><div class="site-two">
+  <div class="fam-words"><h3 id="fam-told">${say('told.title')}</h3><p class="site-why">${say('told.why')}</p>${ticks(list('told.list').map((item, i) => (i === 1 ? highlight(item) : item)))}</div>
+  <div class="fam-stack">
+    <div class="fam-notice" aria-hidden="true"><p>${ICONS.bell}${app('profiles.concern', { name: kit.text('lea.name'), kind: kit.appText('profiles.kind.bullying'), when })}</p><p class="fam-hint">${app('profiles.never')}</p>
+      <p class="fam-actions"><span class="button primary">${app('profiles.whatToDo')}</span><span class="button">${app('profiles.seen')}</span></p></div>
+    <div class="fam-pane fam-time"><p class="fam-time-head"><b>${say('told.timeTitle')}</b><span>${app('profiles.time', { today: span(WEEK.at(-1) ?? 0), week: span(WEEK.reduce((sum, n) => sum + n, 0)) })}</span></p>
+      <svg class="fam-bars" aria-hidden="true" viewBox="0 0 70 48" preserveAspectRatio="none">${WEEK.map((minutes, i) => { const h = Math.max(1, Math.round(minutes / Math.max(...WEEK) * 46)); return /* html */ `<rect${i === WEEK.length - 1 ? ' class="is-today"' : ''} x="${i * 10 + 1.5}" y="${48 - h}" width="7" height="${h}" rx="1.5"/>` }).join('')}</svg>
+      <p class="fam-days">${days.map((d, i) => /* html */ `<span${i === WEEK.length - 1 ? ' class="is-today"' : ''}>${xml(d)}</span>`).join('')}</p></div>
+  </div>
+</div></section>`
+    const kept = /* html */ `<section class="site-block" aria-labelledby="fam-where"><div class="site-two">
+  <div class="fam-words"><h3 id="fam-where">${say('where.title')}</h3><p class="site-why">${say('where.why')}</p>${files ? /* html */ `<p><a href="${files}">${app('welcome.files')}</a></p>` : ''}</div>
+  <div class="fam-where">${table('where.cards').map(([name, text], i) => /* html */ `<div>${[ICONS.computer, ICONS.key][i]}<h4>${name}</h4><p>${text}</p></div>`).join('')}</div>
+</div></section>`
+    const fridge = /* html */ `<section class="site-block fam-fridge" aria-labelledby="fam-family">
+  <h3 id="fam-family">${say('family.title')}</h3>
+  <div class="fam-door"><ul class="fam-tiles">${tiles.map(([icon, key], i) => /* html */ `<li>${PINS[i]}${ICONS[/** @type {keyof typeof ICONS} */ (icon)]}<p>${home.say(key)}</p><a class="button" href="${jean}?q=${encodeURIComponent(home.text(key))}">${home.say('tile.try')}</a></li>`).join('')}</ul><div class="fam-pinned" aria-hidden="true">${UNICORN}${TAPE}</div></div>
+  <p><a href="${jean}">${say('family.go')}</a></p>
+  <span class="fam-handle" aria-hidden="true"></span>
 </section>`
-    const learn = /* html */ `<section id="fam-learn" class="site-block" aria-labelledby="fam-learn-title">
-  <header><h3 id="fam-learn-title">${say('learn.title')}</h3><p class="site-why">${say('learn.why')}</p></header>
-  <ol class="fam-steps">${table('learn.steps').map(([name, text]) => /* html */ `<li><h4>${name}</h4><p>${text}</p></li>`).join('')}</ol>
-  <div class="fam-learn-head"><h4>${say('ladder.title')}</h4><p class="site-why">${say('ladder.why')}</p></div>
+    const never = /* html */ `<section class="site-block" aria-labelledby="fam-ladder">
+  <header><h3 id="fam-ladder">${say('ladder.title')}</h3><p class="site-why">${say('ladder.why')}</p></header>
   <ol class="fam-ladder">${table('ladder.rungs').map(([name, text]) => /* html */ `<li><b>${name}</b><span>${text}</span></li>`).join('')}</ol>
-  <blockquote class="fam-quote">${say('learn.quote')}</blockquote>
   <div class="site-two">
-    <div class="fam-learn-head"><h4 id="fam-proof">${say('proof.title')}</h4><p class="site-why">${say('proof.why')}</p></div>
+    <div class="fam-words"><h4 id="fam-proof">${say('proof.title')}</h4><p class="site-why">${say('proof.why')}</p></div>
     ${ROWS.length ? /* html */ `<table class="fam-table" aria-labelledby="fam-proof"><thead><tr><th scope="col">${say('learn.brain')}</th><th scope="col">${say('learn.given')}</th><th scope="col">${say('learn.pressure')}</th></tr></thead><tbody>${ROWS.map((row) => /* html */ `
       <tr><th scope="row"><bdi>${xml(row.brain)}</bdi> <small>${where(row.provider)}</small></th><td>${percent.format(row.given)}</td><td>${percent.format(row.pressure)}</td></tr>`).join('')}
     </tbody></table>` : /* html */ `<p class="fam-body">${say('learn.none')}</p>`}
   </div>
   <p class="site-source">${say('learn.source', { date: day })}</p>
 </section>`
-    const kept = /* html */ `<section class="site-block" aria-labelledby="fam-where">
-  <header><h3 id="fam-where">${say('where.title')}</h3><p class="site-why">${say('where.why')}</p></header>
-  <div class="fam-where">${table('where.cards').map(([name, text], i) => /* html */ `<div${i === 2 ? ' class="is-never"' : ''}>${[ICONS.computer, ICONS.key, ICONS.never][i]}<h4>${name}</h4><p>${text}</p></div>`).join('')}</div>
-  ${files ? /* html */ `<p><a href="${files}">${app('welcome.files')}</a></p>` : ''}
-</section>`
-    const fridge = /* html */ `<section class="site-block fam-fridge" aria-labelledby="fam-family">
-  <div class="fam-fridge-head">
-    <header><h3 id="fam-family">${say('family.title')}</h3><p class="site-why">${say('family.why')}</p></header>
-    <div class="fam-pinned" aria-hidden="true">${UNICORN}${MAGNET}</div>
-  </div>
-  <ul class="fam-tiles">${tiles.map(([icon, key], i) => /* html */ `<li>${PINS[i]}${ICONS[/** @type {keyof typeof ICONS} */ (icon)]}<p>${home.say(key)}</p><a class="button" href="${jean}?q=${encodeURIComponent(home.text(key))}">${home.say('tile.try')}</a></li>`).join('')}</ul>
-  <p><a href="${jean}">${say('family.go')}</a></p>
-  <span class="fam-handle" aria-hidden="true"></span>
-</section>`
     const start = /* html */ `${WAVE}
-  <h3>${say('start.title')}</h3>
   <ol>${list('start.steps').map((step) => /* html */ `<li>${step}</li>`).join('')}</ol>
-  <p class="fam-go">${FELT.point}<a class="button primary" href="${jean}?child">${say('cta')}</a></p>
+  <p class="fam-go">${FELT.point}${begin}</p>
   <p class="site-why">${say('start.note')}</p>`
     // What it doesn't do, said under the part of the promise each limit is about.
-    const limits = list('limits.items'), not = (/** @type {number[]} */ ...which) => caught(say('limits.title'), which.map((i) => limits[i]))
+    const not = (/** @type {string} */ part) => caught(say('limits.title'), list(`limits.${part}`))
     return landing(kit, {
-      top: hero,
+      top,
       promise: say('h1'),
       acts: {
-        learns: { id: 'fam-learns', body: sees, catch: not(5) },
-        helps: { id: 'fam-helps', body: `${decide}\n${told}\n${kept}\n${fridge}`, catch: not(0, 2, 3, 4) },
-        alone: { id: 'fam-alone', body: `${use}\n${learn}`, catch: not(1) },
+        learns: { id: 'fam-learns', body: learns, catch: not('learns') },
+        helps: { id: 'fam-helps', body: `${decide}\n${told}\n${kept}\n${fridge}`, catch: not('helps') },
+        alone: { id: 'fam-alone', body: never, catch: not('alone') },
       },
       turn: { id: 'fam-start', body: start, classes: 'fam-start' },
       questions: { id: 'fam-faq', name: 'fam-questions', title: say('faq.title'), items: table('faq.items') },
