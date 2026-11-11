@@ -19,7 +19,7 @@
 .fam-people li { display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem 1.1rem; border-block-end: 1px solid var(--line); }
 .fam-people li:last-child { border-block-end: 0; }
 .fam-face { display: grid; place-items: center; inline-size: 2.2rem; block-size: 2.2rem; flex: none; border-radius: 50%; background: var(--room-2); font-style: normal; font-weight: 600; font-size: 0.9rem; }
-.fam-people span { display: flex; flex-direction: column; flex: 1; min-inline-size: 0; line-height: 1.35; }
+.fam-people .fam-face + span { display: flex; flex-direction: column; flex: 1; min-inline-size: 0; line-height: 1.35; }
 .fam-people small { color: var(--ink-soft); font-size: 0.8125rem; }
 .fam-people li > .icon { color: var(--ink-faint); }
 .fam-people .is-add { color: var(--ink-soft); font-size: 0.9rem; }
