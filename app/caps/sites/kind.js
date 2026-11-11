@@ -44,6 +44,7 @@ import { lookHere, hexOf } from '../../ui/kit.js'
  * @property {(one: One, look: import('./look.js').Look | null, said: string[], signal?: AbortSignal) => Promise<Checked>} check
  * @property {(report: Checked, at: { name: string, place: string }) => string} told
  * @property {(shown: Shown, one: One) => unknown} view  its pane
+ * @property {(args: any) => Partial<SiteRecord>} [more]  what a call that makes one adds to its record (Prototypes' shape)
  */
 
 /** A kind's machinery. @param {Kind} kind */
@@ -212,8 +213,8 @@ export function folderKind(kind) {
       const files = new Map(await Promise.all(list.map((/** @type {any} */ file) => fileOf(file, ctx)))), path = before?.path ?? `${folder}/${ulid()}-${slug(name) || noun}`, wait = Boolean(before) && waits(ctx, path)
       if (!before && ctx.signal) making.set(ctx.signal, (making.get(ctx.signal) ?? new Set()).add(path))
       const theirs = wait ? await load(waitingOf(path)) : null
-      return checked(before ? { ...before, files, record: { ...(theirs ?? before).record, name, changed: now } } : { dir: app.projectDir, path, files,
-        record: { format: 1, name, author: 'jean', created: now, changed: now, source: conversationOf(ctx.signal)?.path ?? '', files: [] } }, ctx, before ? 'Replaced.' : 'Made.',
+      return checked(before ? { ...before, files, record: { ...(theirs ?? before).record, name, changed: now, ...kind.more?.(args) } } : { dir: app.projectDir, path, files,
+        record: { format: 1, name, author: 'jean', created: now, changed: now, source: conversationOf(ctx.signal)?.path ?? '', files: [], ...kind.more?.(args) } }, ctx, before ? 'Replaced.' : 'Made.',
       [...((wait ? theirs : before)?.files.keys() ?? [])], args?.look, wait)
     },
   }

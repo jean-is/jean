@@ -1,8 +1,9 @@
 // Prototypes (D742): the check from a prototype's files (app/caps/prototypes/check.js), which npm run prototypes measures brains
-// with too: Sites' check less what only a site for strangers needs, and a prototype's own rules; the tools as declared.
+// with too: Sites' check less what only a site for strangers needs, and a prototype's own rules; how its pages lie and what each is
+// called, from what pressing through found; the tools as declared.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { checkScreens, told, flows } from '../app/caps/prototypes/check.js'
+import { checkScreens, told, flows, stepsOf, named } from '../app/caps/prototypes/check.js'
 import { LINES, PROTOTYPE, CHANGE } from '../app/caps/prototypes/tool.js'
 import { ownSkills } from './prototypes/tools.js'
 
@@ -50,9 +51,36 @@ test('one screen alone is no prototype, and the report says how far pressing thr
   assert.equal(flows({ ...report, problems: [], flow: { screens: ['index.html', 'x.html'], reached: ['index.html'], followed: 0, pressed: 3, dead: [], unsure: 0, leads: [], errors: 0 } }), false)
 })
 
-test('the tools are declared as a site’s are, with the draft skill among Jean’s own', async () => {
+test('its pages lie in steps from the first, a page that only leads back after those that go on, those nothing reaches last, each leading on further along', () => {
+  const pages = ['add.html', 'confirm.html', 'done.html', 'index.html', 'lost.html', 'time.html']
+  const flow = { screens: pages, reached: ['index.html', 'time.html', 'confirm.html', 'add.html', 'done.html'], followed: 6, pressed: 1, dead: [], unsure: 0, errors: 0,
+    leads: /** @type {[string, string[]][]} */ ([['index.html', ['time.html']], ['time.html', ['index.html', 'confirm.html']], ['confirm.html', ['time.html', 'add.html', 'done.html']], ['add.html', ['confirm.html']], ['done.html', ['index.html']]]),
+    by: /** @type {Record<string, [string, string]>} */ ({ 'time.html': ['index.html', 'Cut'], 'confirm.html': ['time.html', 'Continue'], 'add.html': ['confirm.html', 'Add a service'], 'done.html': ['confirm.html', 'Confirm'] }) }
+  const { steps, on, by } = stepsOf(pages, flow)
+  assert.deepEqual(steps, [['index.html'], ['time.html'], ['confirm.html'], ['done.html', 'add.html'], ['lost.html']])
+  assert.deepEqual(on('confirm.html'), ['add.html', 'done.html'])
+  assert.deepEqual([on('time.html'), on('add.html'), on('done.html')], [['confirm.html'], [], []])
+  assert.deepEqual(by['done.html'], ['confirm.html', 'Confirm'])
+  // Before pressing through says anything: the first page, then the others.
+  assert.deepEqual(stepsOf(['b.html', 'index.html', 'a.html']).steps, [['index.html'], ['a.html', 'b.html']])
+})
+
+test('a page is called by its title less what every title shares before or after a separator', () => {
+  assert.deepEqual(named(['Maison Léa · Book · Service', 'Maison Léa · Book · Second service', 'Maison Léa · Book · Done']), ['Service', 'Second service', 'Done'])
+  assert.deepEqual(named(['Time · Maison Léa', 'Confirm · Maison Léa']), ['Time', 'Confirm'])
+  assert.deepEqual(named(['طلب إجازة · طلباتي', 'طلب إجازة · طلب جديد']), ['طلباتي', 'طلب جديد'])
+  // Words that only begin or end alike keep their letters; one title alone keeps its last part; a title that is all the others share stays whole.
+  assert.deepEqual(named(['Booking', 'Booked']), ['Booking', 'Booked'])
+  assert.deepEqual(named(['Step 1: Service', 'Step 2: Time']), ['Step 1: Service', 'Step 2: Time'])
+  assert.deepEqual(named(['Salon · Services']), ['Services'])
+  assert.deepEqual(named(['Salon', 'Salon · Time']), ['Salon', 'Salon · Time'])
+  assert.deepEqual(named([]), [])
+})
+
+test('the tools are declared as a site’s are, a prototype saying its shape, with the draft skill among Jean’s own', async () => {
   assert.deepEqual(LINES.map((line) => line.name), ['prototype', 'prototype_change'])
   assert.deepEqual(PROTOTYPE.parameters.required, ['name', 'files'])
+  assert.deepEqual(/** @type {any} */ (PROTOTYPE.parameters).properties.shape.enum, ['phone', 'computer'])
   assert.deepEqual(CHANGE.parameters.required, ['prototype'])
   assert.ok((await ownSkills()).includes('prototype') && (await ownSkills()).includes('site'))
 })

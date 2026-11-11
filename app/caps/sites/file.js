@@ -6,9 +6,10 @@ import { unescape } from './html.js'
 
 /**
  * What site.json holds; `page`, the page on its own it is made from again each time it is published (sited()); `published`, where it went
- * online (./publish.js): the host, the name, its address, until when, when, and its files' hashes; `look`, the look it wears (./look.js), and the brain's or the user's colours.
+ * online (./publish.js): the host, the name, its address, until when, when, and its files' hashes; `look`, the look it wears (./look.js), and the brain's or the user's colours;
+ * `shape`, what a prototype is made for, a phone or a computer (D742).
  * @typedef {{ format: number, name: string, author: string, created: string, changed: string, pinned?: boolean, source: string, page?: string, files: string[], text?: string, check?: { problems: string[], fill: string[], flow?: import("../prototypes/check.js").Flow, at: string },
- *   look?: { id: string, voice: string, own?: import('./look.js').Own },
+ *   look?: { id: string, voice: string, own?: import('./look.js').Own }, shape?: 'phone' | 'computer',
  *   published?: { host: string, name: string, address: string, expires: string, at: string, files: Record<string, string> } }} SiteRecord
  */
 

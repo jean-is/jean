@@ -4,14 +4,16 @@
 // what overflows, a band below its foot, a picture that won't show, a script's errors, and words whose contrast is too low. Beside
 // the task, <app-site> shows the site at a phone's, a tablet's or a computer's width, its links leading to its other pages; its words
 // retyped in place and its parts pointed at for the brain by Jean's own script in its frame (./hand.js, D741), and the brain's
-// version, while one waits, with Before, Reject and Accept.
-import { html, nothing, render } from 'lit-html'
+// version, while one waits, with Before, Reject and Accept. A prototype's pane is one too (D742): its bar led by what the prototype gives, its
+// looks behind one button, the pages it left kept to go back to, and what can be pressed outlined when a press lands on nothing.
+import { html, svg, nothing, render } from 'lit-html'
 import { ref } from 'lit-html/directives/ref.js'
 import { computed, effect, untracked } from '@preact/signals-core'
 import { app, effective, notify, assistantName } from '../../ui/state.js'
 import { pageRights, pagePolicy, pageAllow, PAGE_SANDBOX } from '../../ui/csp.js'
 import { memoryFS } from '../../core/fs.js'
 import { t, locale } from '../../core/i18n.js'
+import { icon, icons } from '../../ui/menu-icons.js'
 import { sitePage, SITE } from '../folders/site.js'
 import { reach } from './file.js'
 import { WIDTHS } from './check.js'
@@ -22,12 +24,17 @@ import { LOOK, cssOf } from './look.js'
 /**
  * A site on show, and the brain's with its looks, the one it wears and what picking one does; while the brain's version waits, the
  * person's files as `mine` and what accepting or rejecting it does; words retyped, the site's files after, or null when they can't be;
- * Ask Jean; the frame's name, when it isn't a site's. @typedef {{ path: string, name: string, files: Map<string, Uint8Array>, label?: string, looks?: Look[], look?: Look, pick?: (look: Look) => unknown,
+ * Ask Jean; the frame's name, when it isn't a site's; and a prototype's: the shape it was made for, what leads its bar and ends it, what a press on
+ * nothing says, and what its own look is called. @typedef {{ path: string, name: string, files: Map<string, Uint8Array>, label?: string, looks?: Look[], look?: Look, pick?: (look: Look) => unknown,
  *   mine?: Map<string, Uint8Array>, decide?: (yes: boolean) => unknown, retype?: (page: string, changes: { old: string, new: string }[]) => Promise<Map<string, Uint8Array> | null>,
- *   ask?: (asked: { site: Shown, page: string, pointed: Pointed | null }) => unknown }} Shown
+ *   ask?: (asked: { site: Shown, page: string, pointed: Pointed | null }) => unknown, shape?: 'phone' | 'computer', lead?: (view: HTMLElement, last?: boolean) => unknown, hint?: string, own?: string }} Shown
  */
 
 const FRAME = new URL('../../preview.html', import.meta.url).href
+/** An arrow that points: Point at a part, where its button is its drawing. */
+const POINT = icon(svg`<path d="M6 4l12 6-5 2-2 5z"/>`, 'flip-rtl')
+/** A look's paper, ink and accent, on its swatch. @param {Look} look */
+const colours = ({ day }) => ref((swatch) => swatch instanceof HTMLElement && Object.entries({ '--swatch-paper': day.paper, '--swatch-ink': day.ink, '--swatch-accent': day.accent }).forEach(([name, value]) => swatch.style.setProperty(name, value)))
 /** Jean's own script, ahead of the page on show in the pane (./hand.js). */
 const HAND = fetch(new URL('hand.js', import.meta.url)).then((response) => response.text()).then((code) => `<script>${code}</script>`, () => '')
 /**
@@ -115,14 +122,19 @@ customElements.define('app-site', class extends HTMLElement {
   #stop = () => {}
   /**
    * Retyping, pointing or neither (./hand.js); the part pointed at; the person's version on show while the brain's waits; what the pane
-   * gave last, which lit gives again each time the pane is drawn, as it does any object: no reason to load its frame again.
+   * gave last, which lit gives again each time the pane is drawn, as it does any object: no reason to load its frame again; the pages it left,
+   * each with its address, to go back to; whether a press on nothing was said.
    */
-  #hand = ''; #pointed = /** @type {Pointed | null} */ (null); #before = false; #given = /** @type {Shown | null} */ (null)
+  #hand = ''; #pointed = /** @type {Pointed | null} */ (null); #before = false; #given = /** @type {Shown | null} */ (null); #trail = /** @type {[string, string][]} */ ([]); #hinted = false
   set site(site) {
-    if (site !== this.#given) site?.path !== this.#site?.path && ((this.#page = 'index.html'), (this.#search = ''), (this.#hand = ''), (this.#pointed = null)), (this.#given = this.#site = site), (this.#before = false), this.isConnected && this.draw()
+    if (site !== this.#given) site?.path !== this.#site?.path && ((this.#page = 'index.html'), (this.#search = ''), (this.#hand = ''), (this.#pointed = null), (this.#trail = []), (this.#width = site?.shape ?? 'computer')), (this.#given = this.#site = site), (this.#before = false), this.isConnected && this.draw()
   }
-  /** Another of its pages on show, at the address given. @param {string} page @param {string} [search] */
-  go(page, search = '') { this.#page = page; this.#search = search; this.#pointed = null; this.draw(); this.dispatchEvent(new Event('input', { bubbles: true })) }
+  /** Another of its pages on show, at the address given, the one it leaves kept unless it goes back. @param {string} page @param {string} [search] @param {boolean} [back] */
+  go(page, search = '', back = false) { back || this.#trail.push([this.#page, this.#search]); this.#page = page; this.#search = search; this.#pointed = null; this.draw(); this.dispatchEvent(new Event('input', { bubbles: true })) }
+  /** The page it left last, or its first page with nothing chosen. @param {boolean} [first] */
+  back(first = false) { this.go(...(/** @type {[string, string]} */ ((first ? (this.#trail = []) : this.#trail).pop() ?? ['index.html', ''])), true) }
+  /** How many pages back it can go. */
+  get went() { return this.#trail.length }
   get site() { return this.#site }
   /** The page on show, for the note a message comes with. */
   get page() { return this.#page }
@@ -144,7 +156,7 @@ customElements.define('app-site', class extends HTMLElement {
   /** A look worn: the page on show again in it, its frame reloaded and the radios left as they are, then kept. @param {Look} look */
   wear(look) {
     const site = this.#site
-    if (site) (this.#site = { ...site, look, files: new Map(site.files).set(LOOK, new TextEncoder().encode(cssOf(look))) }), this.querySelector('.site-view iframe')?.setAttribute('src', FRAME), site.pick?.(look)
+    if (site) (this.#site = { ...site, look, files: new Map(site.files).set(LOOK, new TextEncoder().encode(cssOf(look))) }), this.querySelector('.site-view iframe')?.setAttribute('src', FRAME), site.pick?.(look), this.bar()
   }
 
   /** Retyping, pointing or neither, the frame told and the bar drawn again; leaving pointing forgets the part. @param {string} hand */
@@ -153,7 +165,13 @@ customElements.define('app-site', class extends HTMLElement {
     this.#frame?.postMessage({ hand: this.#does }, '*'), this.bar()
   }
 
-  /** Its looks (D739), each a radio with its colours, its bar; the page on show in a frame as wide as the one picked. */
+  /** Its looks (D739), each a radio with its colours: side by side, or a prototype's as the rows of its button's menu. @param {Shown} site */
+  #looks(site) {
+    return site.looks ? html`<span class=${site.lead ? 'site-looks' : 'segmented site-looks'} role="radiogroup" aria-label=${t('sites.looks')}>${site.looks.map((look, i) => html`<label for=${`${this.#id}-look-${i}`}><input id=${`${this.#id}-look-${i}`}
+      type="radio" name=${`${this.#id}-look`} .checked=${look === site.look} @change=${() => this.wear(look)}><span><i class="site-swatch" aria-hidden="true" ${colours(look)}></i>${(look.id === 'own' && site.own) || t(`sites.palette.${look.id}`)}</span></label>`)}</span>` : nothing
+  }
+
+  /** Its looks, above its bar unless the bar holds them; its bar; the page on show in a frame as wide as the one picked. */
   draw() {
     const site = this.#site, { allows } = rights.peek()
     if (!site) return
@@ -161,19 +179,17 @@ customElements.define('app-site', class extends HTMLElement {
     const begin = async (/** @type {Event} */ event) => {
       const frame = /** @type {HTMLIFrameElement} */ (event.target).contentWindow, now = this.#site ?? site, scripts = rights.peek().allows.scripts
       frame?.postMessage({ page: (scripts ? ahead(this.#search) + await HAND : '') + await pageOf(this.#before && now.mine ? now.mine : now.files, this.#page), policy: policy() }, '*')
-      if (scripts) frame?.postMessage({ hand: this.#does, at: this.pointed?.place ?? '' }, '*')
+      if (scripts) frame?.postMessage({ hand: this.#does, at: this.pointed?.place ?? '', hint: !!now.hint }, '*')
     }
-    const colours = (/** @type {Look} */ { day }) => ref((swatch) => swatch instanceof HTMLElement && Object.entries({ '--swatch-paper': day.paper, '--swatch-ink': day.ink, '--swatch-accent': day.accent }).forEach(([name, value]) => swatch.style.setProperty(name, value)))
     render(nothing, this)
-    render(html`${site.looks ? html`<span class="segmented site-looks" role="radiogroup" aria-label=${t('sites.looks')}>${site.looks.map((look, i) => html`<label for=${`${this.#id}-look-${i}`}><input id=${`${this.#id}-look-${i}`}
-      type="radio" name=${`${this.#id}-look`} .checked=${look === site.look} @change=${() => this.wear(look)}><span><i class="site-swatch" aria-hidden="true" ${colours(look)}></i>${t(`sites.palette.${look.id}`)}</span></label>`)}</span>` : nothing}
+    render(html`${site.lead ? nothing : this.#looks(site)}
       <div class="site-bar"></div><div class="site-view"><iframe sandbox=${PAGE_SANDBOX} allow=${pageAllow(allows)} src=${FRAME} title=${site.label ?? t('sites.frame', { name: site.name })} @load=${begin}></iframe></div>`, this)
     this.bar()
     if (refocus === site.path && !site.mine) (refocus = ''), /** @type {HTMLElement | null} */ (this.querySelector('.site-hand button'))?.focus()
   }
 
   /**
-   * Its widths, retyping and pointing where pages may run a script, which they need, the brain's version waiting with Before, Reject and
+   * What leads a prototype's bar, its widths, a prototype's as drawings, its looks behind one button, what ends its bar, retyping and pointing where pages may run a script, which they need, the brain's version waiting with Before, Reject and
    * Accept, and what retyping or pointing does now, or the part pointed at with Ask Jean.
    */
   bar() {
@@ -181,11 +197,12 @@ customElements.define('app-site', class extends HTMLElement {
     if (!site || !at) return
     const name = assistantName(), pointed = this.pointed, decide = (/** @type {boolean} */ yes) => { refocus = site.path; site.decide?.(yes) }
     const pick = (/** @type {string} */ width) => { this.#width = width; this.dataset.width = width }
-    const toggle = (/** @type {string} */ hand) => html`<button type="button" class="button subtle" aria-pressed=${String(this.#hand === hand)} @click=${() => this.use(this.#hand === hand ? '' : hand)}>${t(`sites.${hand}`)}</button>`
+    const toggle = (/** @type {string} */ hand, /** @type {unknown} */ glyph) => html`<button type="button" class="button subtle" aria-label=${site.lead ? t(`sites.${hand}`) : nothing} aria-pressed=${String(this.#hand === hand)} @click=${() => this.use(this.#hand === hand ? '' : hand)}>${site.lead ? glyph : nothing}<span>${t(`sites.${hand}`)}</span></button>`
     const before = () => { this.#before = !this.#before; this.querySelector('.site-view iframe')?.setAttribute('src', FRAME); this.bar() }
-    render(html`<span class="segmented site-widths" role="radiogroup" aria-label=${t('sites.width')}>${['phone', 'tablet', 'computer'].map((width) => html`<label for=${`${this.#id}-${width}`}><input id=${`${this.#id}-${width}`}
-      type="radio" name=${this.#id} .checked=${width === this.#width} @change=${() => pick(width)}><span>${t(`sites.${width}`)}</span></label>`)}</span>
-      ${rights.peek().allows.scripts ? html`<span class="site-hand">${site.mine ? nothing : toggle('edit')}${toggle('point')}</span>` : nothing}
+    render(html`${site.lead?.(this) ?? nothing}<span class="segmented site-widths" role="radiogroup" aria-label=${t('sites.width')}>${(site.shape ? ['phone', 'computer'] : ['phone', 'tablet', 'computer']).map((width) => html`<label for=${`${this.#id}-${width}`} title=${site.lead ? t(`sites.${width}`) : nothing}><input id=${`${this.#id}-${width}`}
+      type="radio" name=${this.#id} title=${site.lead ? t(`sites.${width}`) : nothing} .checked=${width === this.#width} @change=${() => pick(width)}><span>${site.lead ? /** @type {any} */ (icons)[width] : t(`sites.${width}`)}</span></label>`)}</span>
+      ${site.lead && site.looks ? html`<button type="button" class="icon-button subtle" popovertarget=${`${this.#id}-looks`} aria-label=${t('sites.looks')}><i class="site-swatch" aria-hidden="true" ${colours(site.look ?? site.looks[0])}></i></button><div id=${`${this.#id}-looks`} class="menu site-fold" popover>${this.#looks(site)}</div>` : nothing}
+      ${rights.peek().allows.scripts ? html`<span class="site-hand">${site.mine ? nothing : toggle('edit', icons.compose)}${toggle('point', POINT)}</span>` : nothing}${site.mine ? nothing : site.lead?.(this, true) ?? nothing}
       ${site.mine ? html`<p class="site-jean"><span>${t('sites.jean', { name })}</span><button type="button" class="button subtle" aria-pressed=${String(this.#before)} @click=${before}>${t('sites.before')}</button>
         <button type="button" class="button" @click=${() => decide(false)}>${t('sites.reject')}</button><button type="button" class="button primary" @click=${() => decide(true)}>${t('sites.accept')}</button></p>` : nothing}
       <div class="site-said"><p role="status">${this.#does === 'edit' ? t('sites.editing') : this.#does !== 'point' ? '' : !pointed ? t('sites.pointing', { name }) : pointed.words ? html`<q dir="auto">${pointed.words.length > 80 ? `${pointed.words.slice(0, 80)}…` : pointed.words}</q>` : t('sites.part')}</p>
@@ -193,7 +210,7 @@ customElements.define('app-site', class extends HTMLElement {
   }
 
   /**
-   * What its frame says: a link its page followed, another of its pages shown here, or another site, in a tab of its own; words retyped,
+   * What its frame says: a press that landed on nothing, said once; a link its page followed, another of its pages shown here, or another site, in a tab of its own; words retyped,
    * kept in its files or put back, said either way; markup a key took away, put back; a part pointed at. Untrusted, since the page's
    * own script could say the same: words only while retyping, each a passage its page has once, a part only while pointing.
    * @param {MessageEvent} event
@@ -206,7 +223,8 @@ customElements.define('app-site', class extends HTMLElement {
       const base = new URL(page, SITE), to = new URL(data.open, base), found = to.origin === base.origin ? reach(site.files, decodeURIComponent(to.pathname.slice(1))) : null
       if (found?.endsWith('.html')) this.go(found, to.search)
       else if (!found && /^https?:$/.test(to.protocol)) open(to.href, '_blank', 'noopener')
-    } else if (does === 'edit' && data.refused === true) notify(t('sites.onlyWords'), { alert: true })
+    } else if (data.nothing === true && site.hint) { if (!this.#hinted) (this.#hinted = true), notify(site.hint) }
+    else if (does === 'edit' && data.refused === true) notify(t('sites.onlyWords'), { alert: true })
     else if (does === 'edit' && Number.isInteger(data.edited?.id) && Array.isArray(changes) && changes.length && changes.length <= 20 && changes.every((one) => typeof one?.old === 'string' && typeof one?.new === 'string')) {
       const files = await site.retype?.(page, changes.map((one) => ({ old: one.old, new: one.new })))
       if (files && this.#site?.path === site.path) this.#site = { ...this.#site, files }

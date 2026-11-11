@@ -1,11 +1,15 @@
 // The check of a prototype (D742) from its files: a site's (../sites/check.js) less what only a site for strangers needs (a description,
 // a card, a header and a foot, forms its host receives), and a prototype's own rules: a page per step, nothing kept but the address, no
-// alert(). What pressing its controls finds (./press.js) joins it: the pages nobody reaches, the controls that do nothing. Pure: node tests
-// run it, and npm run prototypes measures brains with it.
+// alert(). What pressing its controls finds (./press.js) joins it: the pages nobody reaches, the controls that do nothing; and from it, how
+// its pages lie in steps and what each is called (./board.js). Pure: node tests run it, and npm run prototypes measures brains with it.
 import { checkFiles } from '../sites/check.js'
 import { parse, elements } from '../sites/html.js'
 
-/** What pressing every control from the first page found: each page reached, where each leads, the controls that did nothing. @typedef {{ screens: string[], reached: string[], followed: number, pressed: number, dead: string[], unsure: number, leads: [string, string[]][], errors: number }} Flow */
+/**
+ * What pressing every control from the first page found: each page reached, where each leads, the controls that did nothing; the address each
+ * page was first reached at, and the page and the control that first led to it.
+ * @typedef {{ screens: string[], reached: string[], followed: number, pressed: number, dead: string[], unsure: number, leads: [string, string[]][], errors: number, at?: Record<string, string>, by?: Record<string, [string, string]> }} Flow
+ */
 /** @typedef {import('../sites/check.js').Report & { flow?: Flow }} Report */
 
 /** What only a site for strangers needs, which a prototype's pages don't. */
@@ -38,6 +42,28 @@ export function checkScreens(files) {
     }
   }
   return { ...found, problems: [...new Set(problems)] }
+}
+
+/**
+ * How its pages lie: in steps from the first page, in the order pressing through reached them, a page that only leads back where it came
+ * from after those that go on, the pages nothing reaches last; and where each leads on, further along. @param {string[]} pages @param {Flow} [flow]
+ */
+export function stepsOf(pages, flow) {
+  const order = [...(flow?.reached ?? []), ...[...pages].sort()].filter((path, i, all) => pages.includes(path) && all.indexOf(path) === i)
+  const leads = new Map(flow?.leads ?? []), by = flow?.by ?? {}, depth = new Map([['index.html', 0]]), queue = ['index.html']
+  for (let page; (page = queue.shift());) for (const to of leads.get(page) ?? []) if (!depth.has(to)) depth.set(to, /** @type {number} */ (depth.get(page)) + 1), queue.push(to)
+  const last = Math.max(...depth.values()) + 1, at = (/** @type {string} */ page) => depth.get(page) ?? last, steps = /** @type {string[][]} */ ([]),
+    on = (/** @type {string} */ page) => (leads.get(page) ?? []).filter((to) => at(to) > at(page) && pages.includes(to)), aside = (/** @type {string} */ page) => +(!on(page).length && !!leads.get(page)?.includes(by[page]?.[0]))
+  for (const page of order.sort((a, b) => aside(a) - aside(b))) (steps[at(page)] ??= []).push(page)
+  return { steps: steps.filter(Boolean), on, by }
+}
+
+/** Its pages' names: each title less what they all share before or after a separator, the prototype's own name. @param {string[]} titles */
+export function named(titles) {
+  const same = (/** @type {string[]} */ all) => all.reduce((a, b) => { let i = 0; while (i < a.length && a[i] === b[i]) i++; return a.slice(0, i) }, all[0] ?? '')
+  const turned = (/** @type {string} */ text) => text.split('').reverse().join(''), head = /^.*[·|:–—-]\s+/s.exec(same(titles))?.[0].length ?? 0, rest = titles.map((title) => title.slice(head))
+  const tail = /^.*\s[·|:–—-]\s*/s.exec(same(rest.map(turned)))?.[0].length ?? 0
+  return rest.map((name, i) => name.slice(0, name.length - tail).trim() || titles[i])
 }
 
 /** Whether its flow works: every page reached from the first, no control that does nothing, no script failing. @param {Report} report */
