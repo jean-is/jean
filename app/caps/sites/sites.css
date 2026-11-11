@@ -1,7 +1,6 @@
 /* Sites (D720): a site fills its pane under its widths, its frame as wide as the one picked, centred; a check's frames are laid out at
    each width and never seen. */
 app-site { display: flex; flex-direction: column; block-size: 100%; min-block-size: 16rem; }
-app-site .site-widths { align-self: center; margin-block: 0.5rem; }
 app-site .site-view { flex: 1; display: flex; justify-content: center; overflow: auto; background: var(--line); }
 app-site iframe { display: block; inline-size: 100%; block-size: 100%; min-block-size: 16rem; border: 0; background: #fff; }
 app-site[data-width='phone'] iframe { max-inline-size: 390px; }
@@ -17,3 +16,9 @@ app-site[data-width='tablet'] iframe { max-inline-size: 768px; }
 /* Its looks (D739): each a radio with a swatch of its paper, ink and accent, beside its name, over the widths; they wrap on a phone. */
 app-site .site-looks { align-self: center; margin-block-start: 0.5rem; justify-content: center; } app-site .site-looks span { display: flex; align-items: center; gap: 0.4rem; }
 app-site .site-swatch { flex: none; inline-size: 1.1rem; block-size: 1.1rem; border-radius: 50%; border: 0.3rem solid var(--swatch-accent); background: radial-gradient(circle, var(--swatch-ink) 0 30%, var(--swatch-paper) 32%); box-shadow: 0 0 0 1px var(--line-strong); }
+/* Its bar (D741): its widths, Edit words and Point at a part, the brain's version waiting with Before, Reject and Accept, then what retyping or
+   pointing does, or the part pointed at with Ask Jean; all of it wraps on a phone. */
+app-site .site-bar { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 0.4rem 0.75rem; margin-block: 0.5rem; padding-inline: 0.5rem; }
+app-site :is(.site-hand, .site-jean, .site-said) { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.4rem; margin: 0; }
+app-site .site-said { flex-basis: 100%; color: var(--ink-soft); font-size: 0.9rem; text-align: center; } app-site .site-said p { margin: 0; } app-site .site-bar [aria-pressed='true'] { background: var(--line); color: var(--ink); }
+@media (forced-colors: active) { app-site .site-bar [aria-pressed='true'] { background: Highlight; color: HighlightText; } }

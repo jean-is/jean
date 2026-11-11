@@ -1,9 +1,10 @@
 // Sites (D720): a site's paths and changes, what the brain is given, and its check from its files, which npm run sites measures
-// brains with too; its looks (D739), each readable by day and by night, and the colours the brain writes put as their properties.
+// brains with too; its looks (D739), each readable by day and by night, and the colours the brain writes put as their properties; words
+// retyped in place (D741), each the one text of its page that read so, written as text.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { checkFiles, told } from '../app/caps/sites/check.js'
-import { pathIn, changed, reach, PLACE, sited } from '../app/caps/sites/file.js'
+import { pathIn, changed, reach, PLACE, sited, retyped, waitingOf } from '../app/caps/sites/file.js'
 import { LINES, SITE, CHANGE } from '../app/caps/sites/tool.js'
 import { LOOK, FACES, dealt, lookOf, ownLook, projectLook, cssOf, worn, saidOf } from '../app/caps/sites/look.js'
 import { contrast } from '../app/ui/colour.js'
@@ -193,4 +194,29 @@ test('a site wears its look: look.css linked from each page, its colours put as 
   // Worn again, nothing more is put.
   assert.deepEqual(worn(out.files, look).put, [])
   assert.deepEqual(SITE.parameters.properties.look, CHANGE.parameters.properties.look)
+})
+
+test('words retyped in place are the one text of the page that read so, written as text, never markup (D741)', () => {
+  const html = '<h1>Bread &amp; cakes</h1>\n<p>Open <strong>every</strong> day.</p><nav><a href="a.html">Home</a></nav><footer><a href="a.html">Home</a> &copy; 2026</footer><p title="Fresh">Fresh</p>'
+  // A text whole, its tags' ends with it, as HTML writes it; what is typed written as text.
+  assert.deepEqual(retyped(html, 'Bread & cakes', 'Bread, cakes & <tea>'), { old: '>Bread &amp; cakes<', new: '>Bread, cakes &amp; &lt;tea&gt;<' })
+  assert.deepEqual(retyped(html, 'Open ', 'Come '), { old: '>Open <', new: '>Come <' })
+  // An attribute is no text, and a name its page writes twice, or one it can't read, is refused.
+  assert.deepEqual(retyped(html, 'Fresh', 'Warm'), { old: '>Fresh<', new: '>Warm<' })
+  assert.equal(retyped(html, 'Home', 'Start'), null)
+  assert.equal(retyped(html, ' © 2026', ' © 2027'), null)
+  // Words nobody wrote, none left, or a control character, nothing.
+  assert.equal(retyped(html, 'Elsewhere', 'Here'), null)
+  assert.equal(retyped(html, 'Fresh', '  '), null)
+  assert.equal(retyped(html, 'Fresh', 'War\u0000m'), null)
+  // A space the browser kept from collapsing is a space, a no-break space of the page's own kept.
+  assert.deepEqual(retyped(html, 'Fresh', 'Warm\u00a0'), { old: '>Fresh<', new: '>Warm <' })
+  assert.deepEqual(retyped('<p>Prix&nbsp;: 3 €</p>', 'Prix\u00a0: 3 €', 'Prix\u00a0: 4 €'), { old: '>Prix&nbsp;: 3 €<', new: '>Prix\u00a0: 4 €<' })
+  // Right to left, as typed.
+  assert.deepEqual(retyped('<h1 dir="rtl">خبز كل صباح</h1>', 'خبز كل صباح', 'خبز طازج كل صباح'), { old: '>خبز كل صباح<', new: '>خبز طازج كل صباح<' })
+  // As site_change applies it, found once.
+  const files = new Map([['index.html', encode(html)]]), done = changed(files, [{ path: 'index.html', ...retyped(html, 'Bread & cakes', 'Bread') }])
+  assert.ok('files' in done && new TextDecoder().decode(done.files.get('index.html')).startsWith('<h1>Bread</h1>'))
+  assert.equal(waitingOf('sites/01J-fournil'), 'sites/.suggested/01J-fournil')
+  assert.ok(!PLACE.test(waitingOf('sites/01J-fournil')))
 })

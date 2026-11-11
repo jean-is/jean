@@ -5,10 +5,12 @@
 // to its other pages, and leaves as a zip of its files, or goes online at a name of its own where the share host publishes
 // sites (./publish.js). A page on its own (a file, an app, a game, a deck) goes online the same way, as a site of one page made from it
 // (publishPage). Among the creations once the project holds one; until then its card to start one. Found by its skill, which brings it
-// (D401), or by a page's Publish…; nothing of it shows before.
+// (D401), or by a page's Publish…; nothing of it shows before. Its words are retyped in place and its parts pointed at for the brain in its
+// pane (./hand.js, D741); what the brain changes after the turn it made the site waits as its version, `sites/.suggested/<ulid>-<slug>`,
+// for the person to accept or reject (D505).
 import { html, svg } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
-import { app, conversationOf } from '../../ui/state.js'
+import { app, conversationOf, notify } from '../../ui/state.js'
 import { register, unlock } from '../../ui/caps.js'
 import { icon, icons } from '../../ui/menu-icons.js'
 import { ask, reread, page } from '../../ui/creations.js'
@@ -20,7 +22,7 @@ import { writeZip } from '../../core/zip.js'
 import { ulid } from '../../core/ulid.js'
 import { slug } from '../../core/settings.js'
 import { t, useStrings } from '../../core/i18n.js'
-import { PLACE, RECORD, pathIn, changed, sited } from './file.js'
+import { PLACE, RECORD, pathIn, changed, sited, waitingOf, retyped } from './file.js'
 import { offered } from './offer.js'
 import { checkFiles, told } from './check.js'
 import { LINES, SITE, CHANGE } from './tool.js'
@@ -39,8 +41,8 @@ const GLYPH = icon(svg`<path d="M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0
 /** Its skill in the room, as reading it would bring it (D401). */
 const skill = async () => { if (await unlock('skills')) await (await import('../skills/skills.js')).bring(['site']).catch(console.warn) }
 
-/** A site's record; null when there is none. @param {string} path @param {string} [dir] @returns {Promise<SiteRecord | null>} */
-const recordOf = async (path, dir = app.projectDir) => (PLACE.test(path) ? ((record) => (record?.format ? record : null))(JSON.parse((await app.fs.read(`${dir}/${path}/${RECORD}`).catch(() => null)) ?? 'null')) : null)
+/** A site's record, or its waiting version's; null when there is none. @param {string} path @param {string} [dir] @returns {Promise<SiteRecord | null>} */
+const recordOf = async (path, dir = app.projectDir) => (PLACE.test(path.replace(/^sites\/\.suggested\//, 'sites/')) ? ((record) => (record?.format ? record : null))(JSON.parse((await app.fs.read(`${dir}/${path}/${RECORD}`).catch(() => null)) ?? 'null')) : null)
 /** A site of a project and its files; null when there is none. @param {string} path @param {string} [dir] @returns {Promise<One | null>} */
 export async function load(path, dir = app.projectDir) {
   const record = await recordOf(path, dir).catch(() => null)
@@ -55,6 +57,10 @@ async function write(one, before = []) {
   for (const file of before) if (!one.files.has(file)) await app.fs.remove(`${one.dir}/${one.path}/${file}`)
   await app.fs.write(`${one.dir}/${one.path}/${RECORD}`, JSON.stringify({ ...one.record, files: [...one.files.keys()] }, null, 1))
 }
+/** What is written of a site, each after the one before, so that none is lost under another however fast they come. */
+let writing = /** @type {Promise<unknown>} */ (Promise.resolve())
+/** @template T @param {() => Promise<T>} work */
+const serial = (work) => { const done = writing.then(work); writing = done.catch(() => {}); return done }
 /** A site's record changed as it is now. @param {string} path @param {(record: SiteRecord) => SiteRecord} change */
 const update = async (path, change) => { const one = await load(path); if (one) await write({ ...one, record: change({ ...one.record, changed: new Date().toISOString() }) }) }
 /** A site's record with what was published, its files untouched. @param {string} path @param {SiteRecord['published']} published */
@@ -87,12 +93,50 @@ export const bytesOf = async (path) => ((one) => (one ? pageOf(one.files, 'index
  * @returns {Promise<unknown>}
  */
 export async function editor({ uri }) {
-  const one = await load(uri), deal = one?.record.look && await looksOf(one)
-  // Each pick after the one before, so that look.css and site.json agree however fast the arrows go.
-  let picking = /** @type {Promise<unknown>} */ (Promise.resolve())
-  const pick = (/** @type {import('./look.js').Look} */ look) => (picking = picking.then(() => load(uri)).then((now) => now && write({ ...now, files: new Map(now.files).set(LOOK, new TextEncoder().encode(cssOf(look))),
-    record: { ...now.record, look: { ...now.record.look, id: look.id, voice: look.voice } } })).catch(console.warn))
-  return one && html`<app-site class="beside" .site=${{ path: one.path, name: one.record.name, files: one.files, ...(deal && { looks: deal.looks, look: deal.look, pick }) }}></app-site>`
+  const one = await load(uri), theirs = one && await load(waitingOf(uri)), shown = theirs ?? one, deal = shown?.record.look && await looksOf({ ...shown, path: uri })
+  // A pick is the person's: the brain's version waiting wears it too.
+  const pick = (/** @type {import('./look.js').Look} */ look) => serial(async () => { for (const now of await Promise.all([load(uri), load(waitingOf(uri))])) if (now) await write({ ...now, files: new Map(now.files).set(LOOK, new TextEncoder().encode(cssOf(look))),
+    record: { ...now.record, look: { ...now.record.look, id: look.id, voice: look.voice } } }) }).catch(console.warn)
+  return one && shown && html`<app-site class="beside" .site=${{ path: one.path, name: one.record.name, files: shown.files, ...(theirs && { mine: one.files, decide: (/** @type {boolean} */ yes) => decide(uri, yes) }),
+    retype: (/** @type {string} */ page, /** @type {{ old: string, new: string }[]} */ changes) => retype(uri, page, changes), ask: askJean, ...(deal && { looks: deal.looks, look: deal.look, pick }) }}></app-site>`
+}
+
+/**
+ * Words the person retyped in its frame (D741): each the one text of the page that read so, changed as `site_change` changes a passage,
+ * written, then checked again; the site's files after, or null when any can't be, nothing changed then. @param {string} path @param {string} page
+ * @param {{ old: string, new: string }[]} changes @returns {Promise<Map<string, Uint8Array> | null>}
+ */
+const retype = (path, page, changes) => serial(async () => {
+  const one = await load(path), text = new TextDecoder().decode(one?.files.get(page) ?? new Uint8Array()), passages = changes.map((change) => retyped(text, change.old, change.new))
+  const done = one && passages.every(Boolean) && changed(one.files, passages.map((passage) => ({ path: page, ...passage })))
+  return !done || 'error' in done ? null : (await write({ ...one, files: done.files, record: { ...one.record, changed: new Date().toISOString() } }), recheck(path), done.files)
+}).catch((error) => (console.warn(error), null))
+
+/** A check of a site the person changed, under way, and the site changed since, which is checked once it ends. */
+let checking = /** @type {Promise<void> | null} */ (null), next = ''
+/** A site checked again after the person changed it, in its look of now, one check at a time. @param {string} path */
+function recheck(path) {
+  next = path
+  checking ??= (async () => { for (let at = next; at; at = next) { next = ''; const one = await load(at); if (one) await check(one, (await looksOf(one)).look, []) } })().catch(console.warn).finally(() => { checking = null })
+}
+
+/** The brain's version accepted, the site its files and its check from now on, or rejected; either way, no longer waiting (D505). @param {string} path @param {boolean} yes */
+const decide = (path, yes) => void serial(async () => {
+  const [one, theirs] = await Promise.all([load(path), load(waitingOf(path))])
+  if (one && theirs && yes) await write({ ...one, files: theirs.files, record: { ...one.record, look: theirs.record.look, text: theirs.record.text, check: theirs.record.check, changed: new Date().toISOString() } }, [...one.files.keys()])
+  await app.fs.remove(`${app.projectDir}/${waitingOf(path)}`), notify(t(yes ? 'sites.accepted' : 'sites.rejected'), { quiet: true })
+  if (one) reread(), await open(one)
+}).catch(console.warn)
+
+/** A site whose pane made way for the box, its page and the part pointed at there, and the task, whose next message alone still says them. @type {{ site: import('./frame.js').Shown, page: string, pointed: import('./frame.js').Pointed | null, task?: string } | null} */
+let asked = null
+/**
+ * Ask Jean (D741), as Designs' does: the part pointed at, which the brain hears of with the next message, said in a toast, and the box;
+ * where the pane covers the conversation, it makes way for the box first. @param {{ site: import('./frame.js').Shown, page: string, pointed: import('./frame.js').Pointed | null }} pointed
+ */
+async function askJean(pointed) {
+  if (document.documentElement.dataset.dock === 'over') (asked = { ...pointed, task: app.current.peek()?.path }), (await import('../../ui/preview.js')).unshow(pointed.site.path)
+  document.getElementById('prompt')?.focus(), notify(t('sites.pointed'))
 }
 /**
  * A page on its own published as a site of one page: the site made from it the first time, under its name, its files made again from it
@@ -131,24 +175,38 @@ async function fileOf(file, ctx) {
 }
 
 /**
- * What a call makes of a site: dressed in its look, written, shown, checked, and said. @param {One} given @param {import('../../core/loop.js').ToolContext} ctx @param {string} done
- * @param {string[]} before @param {import('./look.js').Own} [colours] the brain's or the user's
+ * A site checked, from its files and as its pages show, by day and by night alike, whichever the device prefers; what it found kept in
+ * its record. @param {One} one @param {import('./look.js').Look | null} look @param {string[]} said @param {AbortSignal} [signal]
  */
-async function checked(given, ctx, done, before, colours) {
+async function check(one, look, said, signal) {
+  const report = checkFiles(one.files), as = (/** @type {'day' | 'night'} */ when) => look && new Map(one.files).set(LOOK, new TextEncoder().encode(cssOf({ ...look, day: look[when], night: look[when] })))
+  report.problems = [...new Set([...report.problems, ...said, ...await shown(as('day') || one.files, report.pages, signal, as('night') || undefined)])]
+  await serial(async () => { const record = await recordOf(one.path, one.dir); if (record) await app.fs.write(`${one.dir}/${one.path}/${RECORD}`, JSON.stringify({ ...record, text: describe(one.files), check: { problems: report.problems, fill: report.fill, at: new Date().toISOString() } }, null, 1)) })
+  return report
+}
+
+/**
+ * What a call makes of a site: dressed in its look, written, or as the brain's version waiting, shown, checked, and said. @param {One} given
+ * @param {import('../../core/loop.js').ToolContext} ctx @param {string} done @param {string[]} before @param {import('./look.js').Own} [colours] the brain's or the user's @param {boolean} [waits]
+ */
+async function checked(given, ctx, done, before, colours, waits) {
   // A page on its own, made a site again from it each time it is published, keeps its own colours.
   const { look, record } = given.record.page ? { look: null, record: given.record } : await looksOf(given, colours)
-  const dressed = look ? worn(given.files, look) : { files: given.files, put: [], left: [] }, said = saidOf(dressed), one = { ...given, files: dressed.files, record }
-  await write(one, before)
+  const dressed = look ? worn(given.files, look) : { files: given.files, put: [], left: [] }, said = saidOf(dressed), one = { ...given, files: dressed.files, record }, kept = waits ? { ...one, path: waitingOf(one.path) } : one
+  await serial(() => write(kept, before))
   ctx.meta.files = [{ uri: one.path, name: one.record.name, mimeType: 'text/html', size: [...one.files.values()].reduce((sum, bytes) => sum + bytes.length, 0) }]
   if (conversationOf(ctx.signal)?.path === app.current.peek()?.path) await open(one)
   join(one.dir), reread()
-  const report = checkFiles(one.files)
-  // Seen by day and by night alike, whichever the device prefers.
-  const as = (/** @type {'day' | 'night'} */ when) => look && new Map(one.files).set(LOOK, new TextEncoder().encode(cssOf({ ...look, day: look[when], night: look[when] })))
-  report.problems = [...new Set([...report.problems, ...said.problems, ...await shown(as('day') || one.files, report.pages, ctx.signal, as('night') || undefined)])]
-  await write({ ...one, record: { ...one.record, text: describe(one.files), check: { problems: report.problems, fill: report.fill, at: new Date().toISOString() } } })
-  return [done, told(report, { name: one.record.name, place: one.path }), said.line].filter(Boolean).join(' ')
+  return [done, told(await check(kept, look, said.problems, ctx.signal), { name: one.record.name, place: one.path }), said.line, waits && WAITS].filter(Boolean).join(' ')
 }
+
+/** The sites each run made, whose changes in that run are still their making, applied at once rather than waiting (D741). @type {WeakMap<AbortSignal, Set<string>>} */
+const making = new WeakMap()
+/** Whether a call's change to a site waits for the person: one the run didn't make, where the run is the person's. @param {import('../../core/loop.js').ToolContext} ctx @param {string} path */
+const waits = (ctx, path) => Boolean(ctx.signal) && !making.get(/** @type {AbortSignal} */ (ctx.signal))?.has(path)
+
+/** What a call says of a change waiting for the person. */
+const WAITS = 'This is your version, beside the task for the user to accept or reject; site_change goes on from it.'
 
 /** @type {import('../../core/loop.js').Tool} */
 const siteTool = {
@@ -157,9 +215,12 @@ const siteTool = {
   run: async (args, ctx) => {
     const list = Array.isArray(args?.files) ? args.files : [], name = String(args?.name ?? '').trim() || 'Site', now = new Date().toISOString(), before = args?.site ? await load(String(args.site)) : null
     if (!list.length) throw new Error('Give the site its files: index.html first, then style.css and the other pages.')
-    const files = new Map(await Promise.all(list.map((/** @type {any} */ file) => fileOf(file, ctx))))
-    return checked(before ? { ...before, files, record: { ...before.record, name, changed: now } } : { dir: app.projectDir, path: `sites/${ulid()}-${slug(name) || 'site'}`, files,
-      record: { format: 1, name, author: 'jean', created: now, changed: now, source: conversationOf(ctx.signal)?.path ?? '', files: [] } }, ctx, before ? 'Replaced.' : 'Made.', before ? [...before.files.keys()] : [], args?.look)
+    const files = new Map(await Promise.all(list.map((/** @type {any} */ file) => fileOf(file, ctx)))), path = before?.path ?? `sites/${ulid()}-${slug(name) || 'site'}`, wait = Boolean(before) && waits(ctx, path)
+    if (!before && ctx.signal) making.set(ctx.signal, (making.get(ctx.signal) ?? new Set()).add(path))
+    const theirs = wait ? await load(waitingOf(path)) : null
+    return checked(before ? { ...before, files, record: { ...(theirs ?? before).record, name, changed: now } } : { dir: app.projectDir, path, files,
+      record: { format: 1, name, author: 'jean', created: now, changed: now, source: conversationOf(ctx.signal)?.path ?? '', files: [] } }, ctx, before ? 'Replaced.' : 'Made.',
+    [...((wait ? theirs : before)?.files.keys() ?? [])], args?.look, wait)
   },
 }
 
@@ -170,20 +231,26 @@ const changeTool = {
   run: async (args, ctx) => {
     const one = await load(String(args?.site ?? ''))
     if (!one) throw new Error(`There is no site at ${args?.site}.`)
-    const done = changed(one.files, Array.isArray(args?.changes) ? args.changes : [])
+    // After the run that made it, the brain changes its own version, waiting for the person, made from the site the first time.
+    const wait = waits(ctx, one.path), theirs = wait ? await load(waitingOf(one.path)) : null, base = theirs ?? one, done = changed(base.files, Array.isArray(args?.changes) ? args.changes : [])
     if ('error' in done) throw new Error(done.error)
     for (const file of Array.isArray(args?.files) ? args.files : []) done.files.set(...await fileOf(file, ctx))
     for (const path of Array.isArray(args?.remove) ? args.remove : []) done.files.delete(pathIn(path))
-    return checked({ ...one, files: done.files, record: { ...one.record, changed: new Date().toISOString() } }, ctx, 'Changed.', [...one.files.keys()], args?.look)
+    return checked({ ...one, files: done.files, record: { ...base.record, changed: new Date().toISOString() } }, ctx, 'Changed.', [...((wait ? theirs : one)?.files.keys() ?? [])], args?.look, wait)
   },
 }
 
-/** The note a message comes with while a site is open beside the task: its page on show as it is now, once. @param {import('../../core/types.js').Envelope[]} records */
+/**
+ * The note a message comes with while a site is open beside the task, or just after its pane made way for the box: its page on show as
+ * it is now, the brain's version while it waits, and the part the user points at, once. @param {import('../../core/types.js').Envelope[]} records
+ */
 function notes(records) {
-  const view = /** @type {(HTMLElement & { site?: { path: string, name: string, files: Map<string, Uint8Array> }, page?: string }) | null} */ (document.querySelector('app-preview app-site'))
-  const one = view?.site, at = view?.page ?? 'index.html'
+  const view = /** @type {(HTMLElement & { site?: import('./frame.js').Shown, page?: string, pointed?: import('./frame.js').Pointed | null }) | null} */ (document.querySelector('app-preview app-site'))
+  const was = asked?.task === app.current.peek()?.path ? asked : null, one = view?.site ?? was?.site, at = (view?.site ? view.page : was?.page) ?? 'index.html', part = view?.site ? view.pointed : was?.pointed
+  asked = null
   if (!one) return []
-  const text = `The site ${one.name} (${one.path}) is open beside the conversation, on ${at}. Change it with site_change. Its files: ${[...one.files.keys()].join(', ')}. ${at} now:\n\n\`\`\`html\n${new TextDecoder().decode(one.files.get(at) ?? new Uint8Array())}\n\`\`\``
+  const text = `The site ${one.name} (${one.path}) is open beside the conversation, on ${at}.${one.mine ? ' Your version of it waits for the user to accept or reject; site_change goes on from it.' : ''}${part
+    ? ` The user points at its <${part.name}> at ${part.place}${part.words ? `: “${part.words}”` : ''}.` : ''} Change it with site_change. Its files: ${[...one.files.keys()].join(', ')}. ${at} now:\n\n\`\`\`html\n${new TextDecoder().decode(one.files.get(at) ?? new Uint8Array())}\n\`\`\``
   const last = records.findLast(({ update }) => update?.sessionUpdate === '_system_note' && update.data?.kind === 'site')
   return last?.update?.sessionUpdate === '_system_note' && last.update.text === text ? [] : [noteRecord(text, { kind: 'site', uri: one.path })]
 }
@@ -191,7 +258,7 @@ function notes(records) {
 const sites = { id: 'sites', at: 2.8, draw: () => GLYPH, kept, mention: 'site', like: skill,
   pin: (/** @type {{ path: string }} */ { path }, /** @type {boolean} */ pinned) => update(path, (record) => ({ ...record, pinned })),
   rename: (/** @type {{ path: string }} */ { path }, /** @type {string} */ name) => update(path, (record) => ({ ...record, name })),
-  remove: (/** @type {{ path: string }} */ { path }) => app.fs.remove(`${app.projectDir}/${path}`),
+  remove: (/** @type {{ path: string }} */ { path }) => Promise.all([path, waitingOf(path)].map((one) => app.fs.remove(`${app.projectDir}/${one}`))),
   make: async () => { await skill(); await ask('sites.ask', 'sites.example') } }
 
 // Among the creations once the project holds a site, from when its first is written; until then only its card to start one (D553).

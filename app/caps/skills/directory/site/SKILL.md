@@ -115,7 +115,7 @@ Make the site with `site`, read the check it returns, fix what it says, and only
 11. Forms: `<form method="post" data-form="name">` with no `action`: the site's host receives what is sent. A `<label for>` for every field, `autocomplete`, the right `type` (`email`, `tel`, `date`), `required` where it is. Never a field for a password, a card number or an identity number. Beside the button, one line saying who receives what is sent, and what for.
 12. Call `site` with every file. Read its report: each problem names the page and what to change. Fix with `site_change` for a few passages, or `site` again with the site's place for many. After three rounds without a clean report, make the site smaller, not larger.
 13. Hand it over in three short lines: the pages and what each is for; what is left to fill in (the bracketed placeholders), if anything; three ideas to grow it the user can ask for in their own words. Don't end with a question.
-14. To change a site later, use `site_change` with the smallest passages, and keep every page saying the same in each language.
+14. To change a site later, use `site_change` with the smallest passages, and keep every page saying the same in each language. A small ask changes only what was asked, never the rest of the site: anything broader you would change, suggest in your answer instead of applying it.
 
 ## What a site can't do
 

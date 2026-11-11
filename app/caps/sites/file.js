@@ -45,6 +45,22 @@ export function changed(files, changes) {
   return failed.length ? { error: `Nothing changed: ${failed.join('; ')}. Quote each passage exactly as it is in the file.` } : { files: next }
 }
 
+/** Where the brain's version of a site waits for the person (D505, D741), beside the others: `sites/.suggested/<ulid>-<slug>`. @param {string} path */
+export const waitingOf = (path) => path.replace(/^sites\//, 'sites/.suggested/')
+
+/**
+ * Words retyped in a page's frame (D741) as an exact passage of its file: the one text between two tags that reads as the words were,
+ * with those tags' ends, and the words typed in its place, written as text; null where no text, or several, read so. Nothing is
+ * parsed: the frame sends a text's words whole, which run from one tag to the next. Untrusted, as all the frame sends.
+ * @param {string} page @param {unknown} old @param {unknown} typed @returns {{ old: string, new: string } | null}
+ */
+export function retyped(page, old, typed) {
+  const [was, now] = [String(old ?? ''), String(typed ?? '')], plain = (/** @type {string} */ text) => text.replace(/ /g, ' ')
+  const found = was.trim() && now.trim() && /^[^\0-\x08\x0b-\x1f]*$/.test(was + now) ? [...page.matchAll(/>([^<>]*)</g)].filter(([, words]) => plain(unescape(words)) === plain(was)) : []
+  // A space the browser kept from collapsing is a space, unless the words had such spaces of their own.
+  return found.length === 1 ? { old: found[0][0], new: `>${(/ /.test(was) ? now : plain(now)).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}<` } : null
+}
+
 /** A site's recovery code: its secret as the lock writes its own, hexadecimal in fours. @param {Uint8Array} bytes */
 export const codeOf = (bytes) => Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('').toUpperCase().replace(/.{4}(?=.)/g, '$&-')
 /** A recovery code read back, whatever its case, spaces and dashes; null when it isn't one. @param {string} code */
