@@ -67,7 +67,6 @@
   },
   "people.size": "{size} af de {limit}, der kan sendes ad gangen",
   "people.measuring": "Beregner, hvad der sendes…",
-  "people.opens": "Vedkommende har en uge til at åbne det.",
   "people.sentTo": "Sendt til {name}.",
   "people.came": "{name} har sendt dig “{title}”",
   "people.open": "Åbn",

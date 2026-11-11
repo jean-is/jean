@@ -65,7 +65,6 @@
   },
   "people.size": "{size} จาก {limit} ที่ส่งได้ในครั้งเดียว",
   "people.measuring": "กำลังดูว่าจะส่งอะไรบ้าง…",
-  "people.opens": "อีกฝ่ายมีเวลาหนึ่งสัปดาห์ในการเปิด",
   "people.sentTo": "ส่งให้ {name} แล้ว",
   "people.came": "{name} ส่ง “{title}” ให้คุณ",
   "people.open": "เปิด",

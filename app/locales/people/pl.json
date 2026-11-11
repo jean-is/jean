@@ -71,7 +71,6 @@
   },
   "people.size": "{size}, z {limit}, które można wysłać naraz",
   "people.measuring": "Sprawdzanie, co zostanie wysłane…",
-  "people.opens": "Ta osoba ma tydzień, żeby to otworzyć.",
   "people.sentTo": "Wysłano do osoby {name}.",
   "people.came": "{name} przesyła ci „{title}”",
   "people.open": "Otwórz",

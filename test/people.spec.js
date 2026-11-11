@@ -139,7 +139,9 @@ test('a task shared from its menu with only the people chosen: what goes shown f
   await dialog.getByRole('checkbox', { name: 'Bob from the bakery' }).check()
   await expect(dialog.getByRole('button', { name: 'Add a person' })).toBeVisible()
   await expect(dialog.getByText('1 request and its answer')).toBeVisible()
-  await expect(dialog.getByText('They have a week to open it.')).toBeVisible()
+  // Its size only once it is too large to go, and nothing on how long it waits.
+  await expect(dialog.getByText('that can go at once')).toHaveCount(0)
+  await expect(dialog.getByText('a week')).toHaveCount(0)
   await dialog.getByLabel('A few words for them').fill('For Monday')
   await dialog.getByRole('button', { name: 'Send a copy' }).click()
   await expect(dialog.locator('p[role="status"]')).toHaveText('Sent to Bob from the bakery.')

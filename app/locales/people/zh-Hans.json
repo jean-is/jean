@@ -65,7 +65,6 @@
   },
   "people.size": "{size}，一次最多可发送 {limit}",
   "people.measuring": "正在计算要发送的内容…",
-  "people.opens": "对方有一周时间打开。",
   "people.sentTo": "已发送给 {name}。",
   "people.came": "{name} 给你发来了“{title}”",
   "people.open": "打开",

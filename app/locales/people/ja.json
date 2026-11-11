@@ -65,7 +65,6 @@
   },
   "people.size": "{size}（一度に送れるのは {limit} まで）",
   "people.measuring": "送る内容を確認しています…",
-  "people.opens": "相手が開ける期限は 1 週間です。",
   "people.sentTo": "{name} に送りました。",
   "people.came": "{name} から「{title}」が届きました",
   "people.open": "開く",

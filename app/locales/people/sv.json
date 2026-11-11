@@ -67,7 +67,6 @@
   },
   "people.size": "{size} av de {limit} som kan skickas på en gång",
   "people.measuring": "Räknar ut vad som skickas…",
-  "people.opens": "Personen har en vecka på sig att öppna det.",
   "people.sentTo": "Skickat till {name}.",
   "people.came": "{name} skickade ”{title}” till dig",
   "people.open": "Öppna",

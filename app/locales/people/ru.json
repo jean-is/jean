@@ -71,7 +71,6 @@
   },
   "people.size": "{size} из {limit}, которые можно отправить за раз",
   "people.measuring": "Подсчёт того, что будет отправлено…",
-  "people.opens": "Открыть можно в течение недели.",
   "people.sentTo": "Отправлено. Получатель: {name}.",
   "people.came": "{name} отправляет вам «{title}»",
   "people.open": "Открыть",

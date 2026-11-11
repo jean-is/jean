@@ -67,7 +67,6 @@
   },
   "people.size": "{size} от {limit}, които могат да се изпратят наведнъж",
   "people.measuring": "Изчислява се какво ще се изпрати…",
-  "people.opens": "Човекът има една седмица да го отвори.",
   "people.sentTo": "Изпратено на {name}.",
   "people.came": "{name} ви изпрати „{title}“",
   "people.open": "Отвори",

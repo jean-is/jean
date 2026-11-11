@@ -67,7 +67,6 @@
   },
   "people.size": "ఒకేసారి పంపగలిగే {limit}లో {size}",
   "people.measuring": "పంపేవాటిని లెక్కిస్తోంది…",
-  "people.opens": "దీన్ని తెరవడానికి వారికి ఒక వారం ఉంది.",
   "people.sentTo": "{name}కు పంపబడింది.",
   "people.came": "{name} మీకు “{title}” పంపారు",
   "people.open": "తెరువు",

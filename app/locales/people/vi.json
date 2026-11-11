@@ -65,7 +65,6 @@
   },
   "people.size": "{size} trong số {limit} có thể gửi một lần",
   "people.measuring": "Đang xem những gì sẽ được gửi…",
-  "people.opens": "Người đó có một tuần để mở.",
   "people.sentTo": "Đã gửi cho {name}.",
   "people.came": "{name} đã gửi cho bạn “{title}”",
   "people.open": "Mở",

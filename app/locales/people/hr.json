@@ -69,7 +69,6 @@
   },
   "people.size": "{size}, od {limit} koliko se može poslati odjednom",
   "people.measuring": "Provjerava se što će se poslati…",
-  "people.opens": "Ta osoba ima tjedan dana da to otvori.",
   "people.sentTo": "Poslano osobi {name}.",
   "people.came": "Osoba {name} poslala vam je „{title}“",
   "people.open": "Otvori",

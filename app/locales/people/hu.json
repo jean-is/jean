@@ -67,7 +67,6 @@
   },
   "people.size": "{size}, az egyszerre elküldhető {limit} közül",
   "people.measuring": "Annak felmérése, mi megy el…",
-  "people.opens": "Egy hete van, hogy megnyissa.",
   "people.sentTo": "Elküldve neki: {name}.",
   "people.came": "{name} elküldte neked: „{title}”",
   "people.open": "Megnyitás",

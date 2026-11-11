@@ -67,7 +67,6 @@
   },
   "people.size": "{size}، از {limit} که می‌شود یک‌جا فرستاد",
   "people.measuring": "در حال سنجیدن آنچه فرستاده می‌شود…",
-  "people.opens": "یک هفته فرصت دارد آن را باز کند.",
   "people.sentTo": "برای {name} فرستاده شد.",
   "people.came": "{name} «{title}» را برایتان فرستاد",
   "people.open": "باز کردن",

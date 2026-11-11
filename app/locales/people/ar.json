@@ -75,7 +75,6 @@
   },
   "people.size": "{size}، من أصل {limit} يمكن إرسالها دفعة واحدة",
   "people.measuring": "جارٍ حساب ما سيُرسَل…",
-  "people.opens": "يمكن فتحه خلال أسبوع.",
   "people.sentTo": "تم الإرسال إلى {name}.",
   "people.came": "وصلك من {name}: «{title}»",
   "people.open": "فتح",

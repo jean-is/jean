@@ -67,7 +67,6 @@
   },
   "people.size": "{size}; bir seferde en çok {limit} gönderilebilir",
   "people.measuring": "Gönderilecekler hesaplanıyor…",
-  "people.opens": "Karşı tarafın açmak için bir haftası var.",
   "people.sentTo": "{name} adlı kişiye gönderildi.",
   "people.came": "{name} sana bunu gönderdi: “{title}”",
   "people.open": "Aç",

@@ -67,7 +67,6 @@
   },
   "people.size": "{size}, kerralla voi lähettää enintään {limit}",
   "people.measuring": "Katsotaan, mitä lähtee…",
-  "people.opens": "Hänellä on viikko aikaa avata se.",
   "people.sentTo": "Lähetetty henkilölle {name}.",
   "people.came": "{name} lähetti sinulle ”{title}”",
   "people.open": "Avaa",

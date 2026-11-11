@@ -71,7 +71,6 @@
   },
   "people.size": "{size} із {limit}, які можна надіслати за раз",
   "people.measuring": "Підрахунок того, що буде надіслано…",
-  "people.opens": "Відкрити можна протягом тижня.",
   "people.sentTo": "Надіслано. Отримувач: {name}.",
   "people.came": "{name} надсилає вам «{title}»",
   "people.open": "Відкрити",

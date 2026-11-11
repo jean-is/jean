@@ -67,7 +67,6 @@
   },
   "people.size": "{size}, एक बार में जा सकने वाले {limit} में से",
   "people.measuring": "देखा जा रहा है कि क्या जाएगा…",
-  "people.opens": "उनके पास इसे खोलने के लिए एक हफ़्ता है।",
   "people.sentTo": "{name} को भेजा गया।",
   "people.came": "{name} ने आपको “{title}” भेजा",
   "people.open": "खोलें",

@@ -342,8 +342,8 @@ const first = (what) => ((back) => groups.peek().filter((one) => one.able.length
 
 /**
  * What goes, in share's dialog, under who: Add a person; once someone is ticked, with what Jean read for a whole task, a few words, what goes
- * (its requests and answers, each file and its size) and the total against what the relay carries; they have a week to open it. Measured
- * again whenever the dialog opens on something. @param {What} what @param {boolean} chosen whether anyone is ticked
+ * (its requests and answers, each file and its size), and its total only once it is over what the relay carries. Measured again whenever
+ * the dialog opens on something. @param {What} what @param {boolean} chosen whether anyone is ticked
  */
 function goes(what, chosen) {
   const adding = meets ? html`<button type="button" class="button subtle people-add" @click=${add}>${icons.plus} ${t('people.add')}</button>` : nothing
@@ -357,9 +357,10 @@ function goes(what, chosen) {
     ${what.item ? nothing : html`<label class="setting" for="people-read">${t('people.reading', { name: BRAND.name })}<input id="people-read" type="checkbox" class="switch" role="switch"
       .checked=${now?.reading ?? false} @change=${(/** @type {Event} */ e) => measure(what, /** @type {HTMLInputElement} */ (e.target).checked)}></label>`}
     <label for="people-words">${t('people.words')}</label><textarea id="people-words" rows="2" maxlength="280" dir="auto" @input=${(/** @type {Event} */ e) => { words = /** @type {HTMLTextAreaElement} */ (e.target).value }}></textarea>
-    <p class="hint">${!now?.value ? t('people.measuring') : html`${what.item ? nothing : html`${t('people.asked', { count: requestsOf(records).length })} · `}${t('people.size', { size: formatBytes(total), limit: formatBytes(LIMIT) })}`}</p>
+    ${!now?.value ? html`<p class="hint">${t('people.measuring')}</p>` : what.item ? nothing : html`<p class="hint">${t('people.asked', { count: requestsOf(records).length })}</p>`}
     ${files.length ? html`<ul class="people-files">${files.map((file) => html`<li><bdi>${file.name}</bdi> · ${formatBytes(file.size)}</li>`)}</ul>` : nothing}
-    <p class="hint">${t('people.opens')}</p><p role="status">${now?.said ?? ''}</p><p class="people-wrong" role="alert">${now?.wrong ?? ''}</p></div>`
+    ${total > LIMIT ? html`<p class="hint">${t('people.size', { size: formatBytes(total), limit: formatBytes(LIMIT) })}</p>` : nothing}
+    <p role="status">${now?.said ?? ''}</p><p class="people-wrong" role="alert">${now?.wrong ?? ''}</p></div>`
 }
 
 /** A colleague's account, for the audit export (ee/): as `to` or `from`, or nothing for someone met another way. @param {string} fp @param {'to' | 'from'} as */

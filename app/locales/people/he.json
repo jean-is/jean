@@ -69,7 +69,6 @@
   },
   "people.size": "{size}, מתוך {limit} שאפשר לשלוח בבת אחת",
   "people.measuring": "בודקים מה יישלח…",
-  "people.opens": "לצד השני יש שבוע לפתוח את זה.",
   "people.sentTo": "נשלח ל־{name}.",
   "people.came": "נשלח אליך מ־{name}: “{title}”",
   "people.open": "פתיחה",

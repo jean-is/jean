@@ -65,7 +65,6 @@
   },
   "people.size": "{size}，一次最多可傳送 {limit}",
   "people.measuring": "正在計算要傳送的內容…",
-  "people.opens": "對方有一週時間開啟。",
   "people.sentTo": "已傳送給 {name}。",
   "people.came": "{name} 傳給你「{title}」",
   "people.open": "開啟",

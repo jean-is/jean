@@ -69,7 +69,6 @@
   },
   "people.size": "{size}, dei {limit} che possono partire in una volta",
   "people.measuring": "Verifica di cosa verrà inviato…",
-  "people.opens": "Ha una settimana per aprirlo.",
   "people.sentTo": "Inviato a {name}.",
   "people.came": "{name} ti ha inviato «{title}»",
   "people.open": "Apri",

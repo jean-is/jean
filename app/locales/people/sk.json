@@ -71,7 +71,6 @@
   },
   "people.size": "{size} z {limit}, ktoré sa dajú poslať naraz",
   "people.measuring": "Zisťuje sa, čo sa pošle…",
-  "people.opens": "Na otvorenie majú týždeň.",
   "people.sentTo": "Odoslané osobe {name}.",
   "people.came": "{name} vám posiela „{title}“",
   "people.open": "Otvoriť",

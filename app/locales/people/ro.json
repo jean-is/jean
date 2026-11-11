@@ -69,7 +69,6 @@
   },
   "people.size": "{size}, din {limit} cât se poate trimite deodată",
   "people.measuring": "Se verifică ce se trimite…",
-  "people.opens": "Persoana are o săptămână să-l deschidă.",
   "people.sentTo": "Trimis către {name}.",
   "people.came": "{name} v-a trimis „{title}”",
   "people.open": "Deschideți",

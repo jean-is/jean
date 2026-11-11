@@ -65,7 +65,6 @@
   },
   "people.size": "{size}, 한 번에 보낼 수 있는 {limit} 중",
   "people.measuring": "보낼 내용을 확인하는 중…",
-  "people.opens": "상대방은 일주일 안에 열어야 해요.",
   "people.sentTo": "{name}에게 보냈어요.",
   "people.came": "{name}이(가) ‘{title}’을(를) 보냈어요",
   "people.open": "열기",

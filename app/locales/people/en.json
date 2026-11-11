@@ -67,7 +67,6 @@
   },
   "people.size": "{size}, of the {limit} that can go at once",
   "people.measuring": "Seeing what goes…",
-  "people.opens": "They have a week to open it.",
   "people.sentTo": "Sent to {name}.",
   "people.came": "{name} sent you “{title}”",
   "people.open": "Open",
