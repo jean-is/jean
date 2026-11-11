@@ -51,7 +51,9 @@
 :is(.dock-edge, .dock-divider):focus-visible { outline: 0; }
 :is(.dock-edge, .dock-divider):is(:hover, :focus-visible, .is-grabbed)::after { opacity: 1; transition-delay: 0.1s; }
 :is(.dock-edge, .dock-divider).is-grabbed::after { transition-delay: 0s; }
-:root[data-dock='beside'] .pane-head { cursor: grab; } :root:not([data-dock='beside']) .pane-moves { display: none; }
+:root[data-dock='beside'] .pane-head { cursor: grab; } :root:not([data-dock='beside']) :is(.pane-moves, .icon-group:not(:has(> button:not(.pane-moves)))) { display: none; }
+/* Buttons that go together, one group in a pane's head: who has it with its way out, its place, a page's way back and forth. */
+.icon-group { display: flex; align-items: center; } .icon-group:not(:has(> button)) { display: none; }
 .pane-menu { position-anchor: auto; position-area: block-end span-inline-start; position-try-fallbacks: flip-block; margin: 0.25rem 0; cursor: auto; }
 /* While one is dragged: its cursor everywhere, no text selected, and pages let the pointer by. */
 :root[data-resizing] { user-select: none; -webkit-user-select: none; }

@@ -16,7 +16,7 @@ const withLinks = (page) => page.evaluate(async (host) => {
   await updateSettings({ urls: { ...app.settings.value.urls, share: host } })
   await unlock('share')
 }, SHARE_URL)
-const BUTTON = '.pane-head > [popovertarget^="out-"]'
+const BUTTON = '.pane-head .icon-group > [popovertarget^="out-"]'
 /** Capabilities found, in any language. @param {import('@playwright/test').Page} page @param {string[]} ids */
 const found = (page, ...ids) => page.evaluate(async (all) => { const { unlock } = await import('/ui/caps.js'); for (const id of all) await unlock(id) }, ids)
 /** What the fake brain makes when asked to call a tool. @param {import('@playwright/test').Page} page @param {string} name @param {unknown} args @param {number} answers before */
@@ -41,7 +41,8 @@ test('a document and a collection leave the same way, in the same order, the but
   await expect(document.locator('#doc')).toContainText('North bed: beans.')
   const close = document.locator('.pane-head > button').last()
   await expect(close).toHaveAttribute('aria-label', 'Close')
-  await expect(document.locator('.pane-head > button').nth(-2)).toHaveAttribute('aria-label', 'Share, download or print')
+  // Its way out ends the group just before Close.
+  await expect(document.locator('.pane-head > .icon-group:has(+ button:last-child) > button').last()).toHaveAttribute('aria-label', 'Share, download or print')
   await document.locator(BUTTON).click()
   const menu = document.locator('.out-menu')
   await expect(menu.locator('button')).toHaveText(['Share…', 'Send to an app…', 'Copy', 'Word', 'Markdown', 'Print or save as PDF', 'Design system'])

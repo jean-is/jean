@@ -74,7 +74,7 @@ export const servedFrom = (page, address, own) => page.route(`${address}**`, (ro
  * @param {import('@playwright/test').Locator} pane @param {string} name
  */
 export async function downloadFile(pane, name) {
-  const alone = pane.getByRole('button', { name: `Download ${name}` }), menu = pane.locator('.pane-head > [popovertarget^="out-"]')
+  const alone = pane.getByRole('button', { name: `Download ${name}` }), menu = pane.locator('.pane-head .icon-group > [popovertarget^="out-"]')
   await expect(alone.or(menu)).toBeVisible()
   if (await alone.count()) return alone.click()
   await menu.click()

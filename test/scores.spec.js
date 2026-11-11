@@ -289,7 +289,7 @@ test('beside the task, the pane’s button sends a tune to an app here, saves it
   await page.locator('app-creations .creation').click()
   const pane = page.locator('app-preview')
   await expect(pane.locator('app-score .score-sheet svg')).toHaveCount(1)
-  const save = pane.locator('.pane-head > [popovertarget^="out-"]'), menu = pane.locator('.out-menu')
+  const save = pane.locator('.pane-head .icon-group > [popovertarget^="out-"]'), menu = pane.locator('.out-menu')
   await save.click()
   await expect(menu.locator('button')).toHaveText(['Send to an app…', 'Copy', 'MIDI file', 'ABC file', 'Print or save as PDF'])
   // Its ABC as written, and a MIDI file of it.

@@ -78,7 +78,7 @@ test('a table Jean keeps: offered, made from a request and filled, its changes a
   await expect(lanes.nth(0).locator('.table-card')).toHaveCount(0)
 
   // The pane's Download gives the table as a workbook, named so.
-  await page.locator('app-preview .pane-head > [popovertarget^="out-"]').click()
+  await page.locator('app-preview .pane-head .icon-group > [popovertarget^="out-"]').click()
   const [download] = await Promise.all([page.waitForEvent('download'), page.locator('app-preview .out-menu').getByRole('button', { name: /^Excel/ }).click()])
   expect(nameOf(download)).toBe('Job applications.xlsx')
 

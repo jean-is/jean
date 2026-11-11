@@ -9,13 +9,14 @@ import { register, slots } from '../../ui/caps.js'
 import { app } from '../../ui/state.js'
 import { mine } from '../../ui/opfs.js'
 import { useStrings } from '../../core/i18n.js'
+import { styleSheet } from '../../ui/sheet.js'
 import { apart } from '../sync/mirror.js'
 import { circles, starting, circleOf, circleAt, follow, all, apartOf, here, join, turn, done, holding, memberName } from './engine.js'
 import { posting, viewed, after } from './task.js'
 import { how, start, faces, taskFaces, asked, askCard, projectButton } from './page.js'
 import { asking } from './engine.js'
 
-await useStrings('together')
+await Promise.all([useStrings('together'), styleSheet(new URL('together.css', import.meta.url))])
 
 /** @type {(() => void) | null} */
 let release = null
@@ -67,11 +68,11 @@ register({ id: 'together',
   came: { at: 0, draw: () => nothing, name: (/** @type {string} */ fp) => memberName(fp) || (slots('came').find((one) => one.at > 0)?.name(fp) ?? '') },
   // In Share, for what can be worked on together (caps/share/dialog.js): its line once it is, and the verbs' start.
   how: { at: 1, draw: how, start },
-  // The faces of who is in, at the head of a collection's pane worked on together.
-  head: { at: 0, draw: (/** @type {{ uri: string }} */ file) => ((live) => (live ? faces(live) : null))(circleOf(file.uri)) },
+  // The faces of who is in, at the head of a collection's pane worked on together, one group with its way out (ui/preview.js).
+  head: { at: 0, out: true, draw: (/** @type {{ uri: string }} */ file) => ((live) => (live ? faces(live) : null))(circleOf(file.uri)) },
   dialog: { at: 2, draw: () => html`<app-together-dialog></app-together-dialog>` },
-  // A task's faces in the room's head, beside Share.
-  views: { at: 4, draw: taskFaces },
+  // A task's faces in the room's head, just before Share, which they join (ui/looks/human.css).
+  views: { at: 4.9, draw: taskFaces },
   // A project's own dialog: working on all of it together.
   project: { at: 0, draw: projectButton },
   // What others asked this person's Jean, above the conversation (D734).

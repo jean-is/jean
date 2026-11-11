@@ -500,9 +500,9 @@ class Browser extends Element {
     const full = dock.full.value === this
     return html`<aside class="pane browser" aria-label=${t('cap.browser.name')}>
       <header class="pane-head browser-bar">
-        ${button(t('browser.back'), icons.back, () => walk('back'), !trail.canBack)}
+        <div class="icon-group">${button(t('browser.back'), icons.back, () => walk('back'), !trail.canBack)}
         ${button(t('browser.forward'), icons.arrow, () => walk('forward'), !trail.canForward)}
-        ${button(t('browser.reload'), icons.retry, reload, !shown)}
+        ${button(t('browser.reload'), icons.retry, reload, !shown)}</div>
         <form @submit=${submit}>
           <input name="address" type="text" inputmode="url" enterkeyhint="go" autocomplete="off" autocapitalize="off" spellcheck="false" dir="auto"
             class=${shown && !shown.own && trail.moved ? 'is-moved' : ''} title=${t('browser.address')} placeholder=${t('browser.placeholder')}
@@ -512,8 +512,8 @@ class Browser extends Element {
             @blur=${() => { typed.value = null }}>
         </form>
         ${button(t('browser.tab'), icons.external, () => openTab(address), !shown || isLocal(shown.url))}
-        ${button(full ? t('browser.exitFullscreen') : t('browser.fullscreen'), full ? icons['exit-fullscreen'] : icons.fullscreen, () => dock.fill(this))}
-        ${dock.moves(this)}${button(t('action.close'), icons.close, close)}
+        <div class="icon-group">${button(full ? t('browser.exitFullscreen') : t('browser.fullscreen'), full ? icons['exit-fullscreen'] : icons.fullscreen, () => dock.fill(this))}
+        ${dock.moves(this)}</div>${button(t('action.close'), icons.close, close)}
       </header>
       <div class="browser-body">
         ${loading.value ? html`<div class="browser-loading" role="progressbar" aria-label=${t('browser.reload')}></div>` : nothing}

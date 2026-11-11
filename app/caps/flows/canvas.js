@@ -406,8 +406,8 @@ export class Flows extends Element {
           ${choices.map((other) => html`<option value=${other.id} ?selected=${other.id === one?.id}>${other.name}</option>`)}
         </select><span class="flows-gap"></span>` : html`<h2>${t('flows.task')}</h2>`}
         ${one ? actions(one) : nothing}
-        ${iconButton(full ? t('flows.exitFullscreen') : t('flows.fullscreen'), full ? icons['exit-fullscreen'] : icons.fullscreen, () => dock.fill(this))}
-        ${dock.moves(this)}${iconButton(t('action.close'), icons.close, close)}
+        <div class="icon-group">${iconButton(full ? t('flows.exitFullscreen') : t('flows.fullscreen'), full ? icons['exit-fullscreen'] : icons.fullscreen, () => dock.fill(this))}
+        ${dock.moves(this)}</div>${iconButton(t('action.close'), icons.close, close)}
       </header>
       ${board(one, drawingOf(one))}
     </aside>`

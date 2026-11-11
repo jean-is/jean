@@ -2110,7 +2110,7 @@ test.describe('the title and the pane', () => {
     await reach(page)
     await caretAt(page, 'First.', 6)
     await page.keyboard.type(' Second.')
-    await page.locator('app-preview .pane-head > [popovertarget^="out-"]').click()
+    await page.locator('app-preview .pane-head .icon-group > [popovertarget^="out-"]').click()
     await page.locator('app-preview .out-menu').getByRole('button', { name: /^Share…/ }).click()
     await expect(page.locator('app-share-dialog dialog[open]')).toBeVisible()
     expect(await page.evaluate(async () => (await import('/caps/share/share.js')).sharing.value?.item)).toEqual({ text: '# Notes\n\nFirst. Second.\n' })
@@ -2764,7 +2764,7 @@ test.describe('out in the look here (D663)', () => {
 
   /** Saves it as Word from its menu, and reads the file's parts. @param {import('@playwright/test').Page} page */
   async function word(page) {
-    await page.locator('.preview .pane-head > .icon-button[popovertarget^="out-"]').click()
+    await page.locator('.preview .pane-head .icon-group > .icon-button[popovertarget^="out-"]').click()
     const [download] = await Promise.all([page.waitForEvent('download'), page.locator('.preview .out-menu').getByRole('button', { name: /^Word/ }).click()])
     const chunks = []
     for await (const chunk of await download.createReadStream()) chunks.push(chunk)
@@ -2788,7 +2788,7 @@ test.describe('out in the look here (D663)', () => {
     expect(xml['word/document.xml']).toContain('[[ kept ]]')
     expect(xml['word/document.xml']).not.toContain('documents/other.md')
     expect(paths).toContain('docProps/custom.xml')
-    await page.locator('.preview .pane-head > .icon-button[popovertarget^="out-"]').click()
+    await page.locator('.preview .pane-head .icon-group > .icon-button[popovertarget^="out-"]').click()
     const [markdown] = await Promise.all([page.waitForEvent('download'), page.locator('.preview .out-menu').getByRole('button', { name: /^Markdown/ }).click()])
     expect(markdown.suggestedFilename()).toBe('notes.md')
     expect(await problems(page)).toEqual(before)
@@ -2807,7 +2807,7 @@ test.describe('out in the look here (D663)', () => {
     const before = await dressed(page)
     await suggest(page, (await markdownOf(page)).replace('# Plan', '# Plan\n\nAn extra line of Jean\'s.'))
     await expect(page.locator('#doc .suggest')).toHaveCount(1)
-    await page.locator('.preview .pane-head > .icon-button[popovertarget^="out-"]').click()
+    await page.locator('.preview .pane-head .icon-group > .icon-button[popovertarget^="out-"]').click()
     await page.locator('.preview .out-menu').getByRole('button', { name: /^Print or save as PDF/ }).click()
     await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).printed.length)).toBe(1)
     const printed = await page.evaluate(() => /** @type {any} */ (window).printed[0])
@@ -2851,7 +2851,7 @@ test.describe('out in the look here (D663)', () => {
     expect(xml['word/document.xml']).not.toContain('graph LR')
     expect(xml['word/document.xml']).not.toContain('xAxis')
     expect(xml['word/document.xml']).toContain('let kept = 1')
-    await page.locator('.preview .pane-head > .icon-button[popovertarget^="out-"]').click()
+    await page.locator('.preview .pane-head .icon-group > .icon-button[popovertarget^="out-"]').click()
     await page.locator('.preview .out-menu').getByRole('button', { name: /^Print or save as PDF/ }).click()
     await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).printed.length)).toBe(1)
     await page.emulateMedia({ media: 'print' })
@@ -2928,7 +2928,7 @@ test.describe('out in the look here (D663)', () => {
     expect(doc).toContain('Job applications')
     expect(doc.replace(/<[^>]+>/g, '')).toContain('Atelier | *Lune*')
     expect(doc).toContain('<w:tbl>')
-    await page.locator('.preview .pane-head > .icon-button[popovertarget^="out-"]').click()
+    await page.locator('.preview .pane-head .icon-group > .icon-button[popovertarget^="out-"]').click()
     await page.locator('.preview .out-menu').getByRole('button', { name: /^Print or save as PDF/ }).click()
     await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).printed.length)).toBe(1)
     await page.emulateMedia({ media: 'print' })
@@ -2972,7 +2972,7 @@ test.describe('out in the look here (D663)', () => {
     await dressed(page)
     const settings = page.locator('dialog.settings')
     const leads = async () => {
-      await page.locator('.preview .pane-head > .icon-button[popovertarget^="out-"]').click()
+      await page.locator('.preview .pane-head .icon-group > .icon-button[popovertarget^="out-"]').click()
       await page.locator('.preview .out-menu').getByRole('button', { name: 'Design system' }).click()
       await expect(settings.getByRole('heading', { name: 'Design system' })).toBeVisible()
       const at = await page.evaluate(async () => (await import('/ui/state.js')).app.section.peek())
@@ -2994,7 +2994,7 @@ test.describe('out in the look here (D663)', () => {
   for (const lang of ['ar', 'ja']) test(`in ${lang}: Save's menu in its words, the file made, the print drawn`, async ({ page }) => {
     const before = await dressed(page, { lang })
     expect((await word(page)).paths).toContain('word/footer.xml')
-    await page.locator('.preview .pane-head > .icon-button[popovertarget^="out-"]').click()
+    await page.locator('.preview .pane-head .icon-group > .icon-button[popovertarget^="out-"]').click()
     const items = page.locator('.preview .out-menu button')
     await expect(items).toHaveCount(5)
     expect(await items.first().textContent()).not.toMatch(/made\.|^Copy$/)

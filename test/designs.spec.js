@@ -100,7 +100,7 @@ test('a design: offered, laid out three ways, its weekday fixed, finished by han
   // Saved as its file: the drawing, the design inside it, and the faces its words use. The page has scrolled by now, and WebKit
   // places a menu anchored to a button as if it hadn't: back to the top.
   await page.evaluate(() => scrollTo(0, 0))
-  const save = page.locator('app-preview .pane-head > [popovertarget^="out-"]')
+  const save = page.locator('app-preview .pane-head .icon-group > [popovertarget^="out-"]')
   await save.click()
   await expect(page.locator('.out-menu')).toContainText(/things? to look at first/)
   const [file] = await Promise.all([page.waitForEvent('download'), page.locator('.out-menu').getByRole('button', { name: /^Design file/ }).click()])
@@ -321,7 +321,7 @@ test('an A5 design prints two to a sheet of the region’s paper, turned sideway
   await ask(page, 'Make an invitation for Léa’s 7th birthday')
   await answered(page)
   await page.evaluate(() => { window.print = () => {} })
-  await page.locator('app-preview .pane-head > [popovertarget^="out-"]').click()
+  await page.locator('app-preview .pane-head .icon-group > [popovertarget^="out-"]').click()
   await page.locator('.out-menu').getByRole('button', { name: /^Print or save as PDF/ }).click()
   await expect(page.locator('.design-print .design-page')).toHaveCount(2)
   await page.emulateMedia({ media: 'print' })

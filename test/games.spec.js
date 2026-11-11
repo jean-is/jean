@@ -170,7 +170,7 @@ test('a game saved is a page of its own: it plays from a file, its engine inside
   await connectFakeBrain(page)
   await make(page, { name: 'Lantern Leap', engine: 'phaser', actions: ['left', 'right', 'a', 'b'], code })
   const pane = page.locator('app-preview:has(app-game)')
-  await pane.locator('.pane-head > [popovertarget^="out-"]').click()
+  await pane.locator('.pane-head .icon-group > [popovertarget^="out-"]').click()
   const [download] = await Promise.all([page.waitForEvent('download'), pane.locator('.out-menu').getByRole('button', { name: /^Web page/ }).click()])
   const file = test.info().outputPath('lantern-leap.html')
   await download.saveAs(file)
