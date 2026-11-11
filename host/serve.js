@@ -148,6 +148,10 @@ export const listener = (handle, proxied) => async (req, res) => {
   res.writeHead(response.status, Object.fromEntries(response.headers))
   if (response.body) await pipeline(Readable.fromWeb(/** @type {any} */ (response.body)), res).catch(() => res.destroy())
   else res.end()
+  // What the answer left unread, a body refused by its length before it was read (host.js's within()), is read and dropped:
+  // a client that reads the answer only once it has sent it all, as Linux WebKit does, would otherwise wait on a server
+  // that no longer reads it.
+  if (body && !req.complete) { req.removeAllListeners('data'); req.resume() }
 }
 
 /**

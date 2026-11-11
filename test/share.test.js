@@ -112,7 +112,7 @@ test('a link names the host, the id and the secret after #, which browsers never
 
 // ─── The host ────────────────────────────────────────────────────────────────
 
-const { host, LIMIT } = await import('../host/host.js')
+const { host, LIMIT, within } = await import('../host/host.js')
 const { folder, sealRecord, openRecord, listener } = await import('../host/serve.js')
 
 /** A store in memory, its records and reports kept to look at. */
@@ -242,6 +242,26 @@ test('behind a proxy, a share’s record takes the address the proxy saw, not wh
   await fetch(`http://127.0.0.1:${port}/`, { headers: { 'x-forwarded-for': '1.1.1.1, 203.0.113.7' } })
   await new Promise((done) => server.close(done))
   assert.deepEqual(seen, ['203.0.113.7'])
+})
+
+test('a body refused by its length before it is read is read and dropped after the answer, which a client that reads only once it has sent it all, as Linux WebKit does, then gets', { timeout: 10_000 }, async () => {
+  const [{ createServer }, { connect }] = await Promise.all([import('node:http'), import('node:net')])
+  const server = createServer(listener(async (request) => new Response(null, { status: (await within(request, 1000)) ? 200 : 413 }), false))
+  await new Promise((ready) => server.listen(0, '127.0.0.1', () => ready(undefined)))
+  const { port } = /** @type {import('node:net').AddressInfo} */ (server.address())
+  const size = 20_000_000
+  const answer = await new Promise((resolve) => {
+    const socket = connect(port, '127.0.0.1')
+    let heard = ''
+    socket.on('data', (chunk) => { heard += chunk })
+    socket.on('error', () => {})
+    socket.pause()
+    socket.write(`PUT /x HTTP/1.1\r\nHost: 127.0.0.1\r\nContent-Length: ${size}\r\n\r\n`)
+    socket.write(new Uint8Array(size), () => { socket.resume(); setTimeout(() => { socket.destroy(); resolve(heard.split('\r\n')[0]) }, 200) })
+    setTimeout(() => { socket.destroy(); resolve(heard.split('\r\n')[0] || 'nothing, the body never all sent') }, 5000)
+  })
+  await new Promise((done) => { server.closeAllConnections(); server.close(done) })
+  assert.equal(answer, 'HTTP/1.1 413 Payload Too Large')
 })
 
 test('the host refuses what isn’t a share, too big, past its end or taken down', async () => {
