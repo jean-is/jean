@@ -14,8 +14,36 @@ leaving two choices or more that change the whole site), after reading the skill
 
 | Brain | Made | Clean | First check | Change clean | Would go online | Honest on SaaS | Asked once, open | Asked, others |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
+| sonnet (claudecode) | 40 of 40 | **40** | 29 | 40 of 40 | 35 of 40 | 4 of 4 | 4 of 12 | 1 of 28 |
 | qwen3.6-35b-a3b-splash (lmstudio, {"reasoning_effort":"none"}) | 6 of 12 | **5** | 1 | 5 of 7 | 0 of 6 | 0 of 1 | 3 of 6 | 2 of 6 |
-| sonnet (claudecode) | 40 of 40 | **40** | 29 | 40 of 40 | 31 of 40 | 4 of 4 | 6 of 12 | 2 of 28 |
+
+## sonnet (claudecode), 2026-11-11
+
+Made a site on 40 of 40 briefs, with nothing left to fix on 40, 29 of them on the first check and 0 after the third. Its change was clean on 40 of 40. Would go online on 35 of 40 judged, honest on the SaaS brief in 4 of 4. Read the skill before its first site on 40, wrote a page instead on 0. Asked once on 4 of 12 open briefs, and on 1 of 28 others; more than once on 0, before reading the skill on 1. A brief took 1.1 minutes at the median, and a first page weighs 8 KB.
+
+✓ nothing left to fix, ✗ something; then the check it was clean on, or how many it took; then its change; then the judge's word.
+
+| Brief | en | fr | ar | ja |
+|---|---|---|---|---|
+| empty | ✓ 1 · change ✓ · not online · asked | ✓ 1 · change ✓ · online · asked | ✓ 1 · change ✓ · online · asked | ✓ 1 · change ✓ · online · asked |
+| band | ✓ 2 · change ✓ · online | ✓ 1 · change ✓ · online | ✓ 1 · change ✓ · not online | ✓ 1 · change ✓ · not online |
+| cleaning | ✓ 1 · change ✓ · online | ✓ 1 · change ✓ · online | ✓ 1 · change ✓ · online | ✓ 1 · change ✓ · online |
+| landing | ✓ 2 · change ✓ · online | ✓ 2 · change ✓ · online | ✓ 2 · change ✓ · online | ✓ 2 · change ✓ · online |
+| portfolio | ✓ 1 · change ✓ · online | ✓ 1 · change ✓ · online | ✓ 1 · change ✓ · online | ✓ 2 · change ✓ · online |
+| business | ✓ 1 · change ✓ · online | ✓ 1 · change ✓ · online | ✓ 1 · change ✓ · online | ✓ 2 · change ✓ · online |
+| event | ✓ 2 · change ✓ · online | ✓ 1 · change ✓ · online | ✓ 1 · change ✓ · online | ✓ 1 · change ✓ · online |
+| bilingual | ✓ 1 · change ✓ · online | ✓ 1 · change ✓ · not online | ✓ 1 · change ✓ · online | ✓ 2 · change ✓ · online |
+| cv | ✓ 1 · change ✓ · not online | ✓ 1 · change ✓ · online | ✓ 1 · change ✓ · online | ✓ 1 · change ✓ · online |
+| saas | ✓ 1 · change ✓ · online · honest · asked before the skill | ✓ 2 · change ✓ · online · honest | ✓ 1 · change ✓ · online · honest | ✓ 2 · change ✓ · online · honest |
+
+Not online, the judge says:
+- empty, en: Nav has a 'Work' link, but there is no Work section or page.
+- band, ar: On phone the concerts table drops the city column, losing information.
+- band, ja: On the phone, the live info table overflows and the 開演・料金 column is cut off.
+- bilingual, fr: Heading wraps with the colon starting a line, on both desktop and phone.
+- cv, en: On phone, the Languages heading crowds the Skills pills with too little spacing.
+
+Every look of its first site clean by day and by night on 40 of 40, 120 of 120 looks.
 
 ## qwen3.6-35b-a3b-splash (lmstudio, {"reasoning_effort":"none"}), 2026-11-11
 
@@ -42,33 +70,3 @@ Not online, the judge says:
 - business, en: Hero illustration looks like a handbag and jar, not bread; reads as placeholder.
 - business, ja: Invented address, phone number and ingredient origins aren't bracketed; phone nav wraps awkwardly.
 - saas, en: Broken logo glyph text, phone nav cramped, fake localStorage login with passwords on site.
-
-## sonnet (claudecode), 2026-11-11
-
-Made a site on 40 of 40 briefs, with nothing left to fix on 40, 29 of them on the first check and 0 after the third. Its change was clean on 40 of 40. Would go online on 31 of 40 judged, honest on the SaaS brief in 4 of 4. Read the skill before its first site on 40, wrote a page instead on 0. Asked once on 6 of 12 open briefs, and on 2 of 28 others; more than once on 0, before reading the skill on 1. A brief took 1.2 minutes at the median, and a first page weighs 7 KB.
-
-✓ nothing left to fix, ✗ something; then the check it was clean on, or how many it took; then its change; then the judge's word.
-
-| Brief | en | fr | ar | ja |
-|---|---|---|---|---|
-| empty | ✓ 1 · change ✓ · online · asked | ✓ 1 · change ✓ · online · asked | ✓ 1 · change ✓ · online · asked | ✓ 1 · change ✓ · online · asked |
-| band | ✓ 1 · change ✓ · online | ✓ 1 · change ✓ · online · asked | ✓ 1 · change ✓ · online · asked | ✓ 2 · change ✓ · not online |
-| cleaning | ✓ 1 · change ✓ · online | ✓ 2 · change ✓ · online | ✓ 1 · change ✓ · online | ✓ 2 · change ✓ · not online |
-| landing | ✓ 1 · change ✓ · not online | ✓ 2 · change ✓ · not online | ✓ 1 · change ✓ · online | ✓ 2 · change ✓ · online |
-| portfolio | ✓ 1 · change ✓ · online | ✓ 1 · change ✓ · online | ✓ 1 · change ✓ · online | ✓ 2 · change ✓ · online |
-| business | ✓ 1 · change ✓ · online | ✓ 1 · change ✓ · online | ✓ 2 · change ✓ · online | ✓ 2 · change ✓ · online |
-| event | ✓ 1 · change ✓ · online | ✓ 1 · change ✓ · online | ✓ 1 · change ✓ · online | ✓ 2 · change ✓ · not online |
-| bilingual | ✓ 1 · change ✓ · online | ✓ 1 · change ✓ · online | ✓ 1 · change ✓ · online | ✓ 1 · change ✓ · not online · asked |
-| cv | ✓ 1 · change ✓ · not online | ✓ 1 · change ✓ · online | ✓ 1 · change ✓ · online | ✓ 1 · change ✓ · online |
-| saas | ✓ 1 · change ✓ · online · honest · asked before the skill | ✓ 1 · change ✓ · not online · honest | ✓ 2 · change ✓ · online · honest | ✓ 2 · change ✓ · not online · honest |
-
-Not online, the judge says:
-- band, ja: Placeholder brackets throughout, and no live info or real content; not finished.
-- cleaning, ja: 「無料で見積もり相談」は依頼主が言っていない約束で、事実とは限らない。
-- landing, en: Desktop form section is misaligned: heading and text sit offset from the left-aligned form.
-- landing, fr: Steps' descriptions wrap in a narrow column, one word per line, on both views.
-- event, ja: On phone, timeline titles start at inconsistent horizontal positions, so the layout looks unpolished.
-- bilingual, ja: Invents a free trial lesson and adult-only focus the owner never stated.
-- cv, en: On phone, the Languages heading sits cramped right under the Skills chips.
-- saas, fr: Page is a waitlist, not the requested invoice SaaS; visual is plain and generic.
-- saas, ja: Page promises per-customer login and invoice viewing, which the site cannot deliver; misleading claims.

@@ -4,8 +4,9 @@
 // a zip of its files. Published at a name of its own on the share host, asked first, its recovery code shown once, its pages
 // served under the host's policy; published again, only what changed goes; a new recovery code; taken offline. A picture Jean made
 // in the task goes into it by its name, and @ names it from another task (D730). Its three looks (D739), picked by keyboard, its
-// pages following, the pick kept, a colour written put as a property and words that fade by night said. Its widths and looks in
-// Arabic and Japanese.
+// pages following, the pick kept, a colour written put as a property and words that fade by night said. Its words retyped in place
+// and its parts pointed at, by keys as by clicks, and the brain's later change waiting as its version (D741). Its widths, looks, words
+// and pointing in Arabic and Japanese.
 import { readFile } from 'node:fs/promises'
 import { request } from 'node:http'
 import { test, expect } from '@playwright/test'
@@ -24,6 +25,12 @@ const SITE = { name: 'Atelier Nord', files: [
   { path: 'index.html', text: page('Atelier Nord · Bike repairs', 'home', '<h1>Your bike, fixed while you wait</h1><p>Bring it in before noon.</p>') },
   { path: 'prices.html', text: page('Prices · Atelier Nord', 'prices', '<h1>Prices</h1><p class="pale">Prices change in spring.</p>') },
   { path: 'style.css', text: STYLE }], look: { accent: '#9a3b14', paper: '#fffdf9', ink: '#1f1d1b' } }
+
+/** The brain's version of the site beside the task accepted, as the site from now on (D741). @param {import('@playwright/test').Page} page */
+async function accept(page) {
+  await page.locator('app-preview app-site').getByRole('button', { name: 'Accept' }).click()
+  await expect(page.locator('app-preview app-site .site-jean')).toHaveCount(0)
+}
 
 /** Its skill read, then a site made: the answer that says what its check found. @param {import('@playwright/test').Page} page */
 async function make(page) {
@@ -90,6 +97,7 @@ test('a picture Jean made in the task goes into its site by the name it was made
   await ask(page, `Call site_change with ${JSON.stringify({ site: place, files, changes })}`)
   await answered(page, 4)
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Changed.')
+  await accept(page)
   const [made, kept, record] = await page.evaluate(async ([place, uri]) => {
     const { app } = await import('/ui/state.js'), length = async (/** @type {string} */ path) => (await app.fs.readBytes(`${app.projectDir}/${path}`))?.length ?? 0
     return [await length(uri), await length(`${place}/photos/atelier.png`), JSON.parse((await app.fs.read(`${app.projectDir}/${place}/site.json`)) ?? '{}')]
@@ -138,6 +146,7 @@ test('a site is dealt three looks, its own first: one picked by keyboard dresses
   const said = page.locator('.msg-jean .prose').last()
   await expect(said).toContainText('index.html: by night, “Bring it in before noon.” has a contrast of')
   expect(await page.evaluate(async () => JSON.stringify((await import('/ui/state.js')).app.current.value?.records ?? []))).toContain("look.css's properties were put in place of 1 colour written in the site (style.css: #2a6f4e → var(--accent")
+  await accept(page)
   expect(await read('style.css')).toMatch(/\.pale \{ color: var\(--accent(-2)?\); \}/)
   await expect(looks.getByRole('radio')).toHaveCount(3)
   await expect(looks.getByRole('radio', { name: 'For this site' })).toBeChecked()
@@ -162,8 +171,107 @@ test('a site is dealt three looks, its own first: one picked by keyboard dresses
   await ask(page, `Call site_change with ${JSON.stringify({ site: place, look: { accent: '#c2410c', type: 'friendly' } })}`)
   await expect(page.locator('.msg-jean .prose')).toHaveCount(4, { timeout: 60_000 })
   await answered(page, 4)
+  await accept(page)
   await expect(looks.getByRole('radio', { name: 'For this site' })).toBeChecked()
   expect(await read('look.css')).toMatch(/--accent: #b8\w{4};/)
+})
+
+/** The caret at the end of a part's words in its frame, as a click there would put it. @param {import('@playwright/test').Locator} part */
+const toEnd = (part) => part.evaluate((element) => { const range = document.createRange(); range.selectNodeContents(element); range.collapse(false); getSelection()?.removeAllRanges(); getSelection()?.addRange(range) })
+
+test('its words retyped in place by a click or by keys, kept in its files and checked again, those it can’t change put back; a part pointed at by a key or a click for Ask Jean; the brain’s later change waits as its version, accepted or rejected (D741)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  const place = /sites\/[^:]+/.exec(await (await make(page)).innerText())?.[0] ?? ''
+  const pane = page.locator('app-preview:has(app-site)'), site = page.frameLocator('app-preview app-site iframe'), said = pane.locator('.site-said [role="status"]')
+  const read = (/** @type {string} */ path) => page.evaluate(async (path) => { const { app } = await import('/ui/state.js'); return (await app.fs.read(`${app.projectDir}/${path}`)) ?? '' }, path)
+  const checked = async () => JSON.parse(await read(`${place}/site.json`)).check.at
+  const edit = pane.getByRole('button', { name: 'Edit words' }), point = pane.getByRole('button', { name: 'Point at a part' }), heading = site.locator('h1'), line = site.locator('main p')
+
+  // By a click: the heading's words, which Enter keeps in its file, the site checked again.
+  await edit.click()
+  await expect(edit).toHaveAttribute('aria-pressed', 'true')
+  await expect(said).toHaveText('Click words to retype them, or reach them with Tab. Enter keeps them, Escape puts them back.')
+  const before = await checked()
+  await heading.click()
+  await toEnd(heading)
+  await page.keyboard.type(' & oiled')
+  await page.keyboard.press('Enter')
+  await expect.poll(() => read(`${place}/index.html`)).toContain('<h1>Your bike, fixed while you wait &amp; oiled</h1>')
+  await expect.poll(checked).not.toBe(before)
+  // By keys: Tab reaches the next words, Escape puts them back, and leaving keeps them.
+  await page.keyboard.press('Tab')
+  await expect(line).toBeFocused()
+  await toEnd(line)
+  await page.keyboard.type(' Or later.')
+  await page.keyboard.press('Escape')
+  await expect(line).toHaveText('Bring it in before noon.')
+  await toEnd(line)
+  await page.keyboard.type(' Or call.')
+  await page.keyboard.press('Tab')
+  await expect.poll(() => read(`${place}/index.html`)).toContain('<p>Bring it in before noon. Or call.</p>')
+  // Words left empty are put back at once.
+  await heading.click()
+  await page.keyboard.press('ControlOrMeta+A')
+  await page.keyboard.press('Backspace')
+  await page.keyboard.press('Enter')
+  await expect(page.locator('.toast')).toHaveText('Only the words change here, and none can be left empty: it’s back as it was.')
+  await expect(heading).toHaveText('Your bike, fixed while you wait & oiled')
+
+  // A part pointed at by a key, then by a click, which follows no link; Ask Jean gives the box the keys, and the brain hears of it.
+  await point.click()
+  await expect(edit).toHaveAttribute('aria-pressed', 'false')
+  await expect(heading).toHaveAttribute('tabindex', '0')
+  await expect(heading).not.toHaveAttribute('contenteditable')
+  await heading.focus()
+  await page.keyboard.press('Enter')
+  await expect(pane.locator('.site-said q')).toHaveText('Your bike, fixed while you wait & oiled')
+  await site.getByRole('link', { name: 'Prices' }).click()
+  await expect(pane.locator('.site-said q')).toHaveText('Prices')
+  await expect(heading).toHaveText('Your bike, fixed while you wait & oiled')
+  await pane.getByRole('button', { name: 'Ask Jean' }).click()
+  await expect(page.locator('#prompt')).toBeFocused()
+
+  // The brain's change, a turn after the one that made the site, waits as its version: shown, the site's own before it, then accepted.
+  await ask(page, `Call site_change with ${JSON.stringify({ site: place, changes: [{ path: 'index.html', old: 'Or call.', new: 'Or ring us.' }] })}`)
+  await answered(page, 3)
+  const records = await page.evaluate(async () => JSON.stringify((await import('/ui/state.js')).app.current.value?.records ?? []))
+  expect(records).toContain('The user points at its <a> at body > header > nav > a:nth-of-type(2): “Prices”.')
+  expect(records).toContain('This is your version, beside the task for the user to accept or reject; site_change goes on from it.')
+  expect(await read(`${place}/index.html`)).toContain('Or call.')
+  expect(await read(`${place.replace('sites/', 'sites/.suggested/')}/index.html`)).toContain('Or ring us.')
+  await expect(pane.locator('.site-jean')).toContainText('Changed by Jean')
+  await expect(edit).toHaveCount(0)
+  await expect(line).toHaveText('Bring it in before noon. Or ring us.')
+  // At a phone's width, nothing of its bar is cut.
+  await page.setViewportSize({ width: 320, height: 720 })
+  for (const button of await pane.locator('.site-bar button').all()) await expect(button).toBeInViewport()
+  expect(await pane.locator('app-site').evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true)
+  await page.setViewportSize({ width: 1280, height: 720 })
+  await pane.getByRole('button', { name: 'Before' }).click()
+  await expect(line).toHaveText('Bring it in before noon. Or call.')
+  await pane.getByRole('button', { name: 'Accept' }).click()
+  await expect(pane.locator('.site-jean')).toHaveCount(0)
+  await expect(edit).toBeFocused()
+  expect(await read(`${place}/index.html`)).toContain('Or ring us.')
+  // Another, rejected: the site as it was, nothing left waiting.
+  await ask(page, `Call site_change with ${JSON.stringify({ site: place, changes: [{ path: 'index.html', old: 'Or ring us.', new: 'Or write.' }] })}`)
+  await answered(page, 4)
+  await pane.getByRole('button', { name: 'Reject' }).click()
+  await expect(pane.locator('.site-jean')).toHaveCount(0)
+  expect(await read(`${place}/index.html`)).toContain('Or ring us.')
+  expect(await read(`${place.replace('sites/', 'sites/.suggested/')}/site.json`)).toBe('')
+
+  // On a page that says them twice, the words are put back, and said so.
+  await site.getByRole('link', { name: 'Prices' }).click()
+  await expect(heading).toHaveText('Prices')
+  await edit.click()
+  await heading.click()
+  await toEnd(heading)
+  await page.keyboard.type(' and times')
+  await page.keyboard.press('Enter')
+  await expect(page.locator('.toast')).toHaveText('These words can’t be changed here: the page has them more than once, or they don’t come from its file. Ask Jean to change them.')
+  await expect(heading).toHaveText('Prices')
 })
 
 for (const [lang, width, phone] of [['ar', 'العرض', 'هاتف'], ['ja', '幅', 'スマートフォン']]) {
@@ -190,6 +298,38 @@ for (const [lang, width, phone] of [['ar', 'العرض', 'هاتف'], ['ja', '�
     await expect(dialog.getByLabel(words['sites.address'])).toHaveValue('atelier-nord')
     await dialog.getByLabel(words['sites.address']).fill(`atelier-nord-${lang}`)
     await expect(dialog.locator('#publish-said')).toHaveText(words['sites.free'])
+  })
+}
+
+for (const [lang, heading, more] of [['ar', 'خبز كل صباح', ' وكل مساء'], ['ja', '毎朝のパン', 'と焼き菓子']]) {
+  test(`a site's words retyped in place in ${lang}, right to left where it reads so, and a part pointed at, in the user's words and nothing cut on a phone (D741)`, async ({ page }) => {
+    const words = JSON.parse(await readFile(new URL(`../app/locales/sites/${lang}.json`, import.meta.url), 'utf8')), named = (/** @type {string} */ key) => words[key].replace('{name}', 'Jean')
+    await start(page, lang)
+    await connectFakeBrain(page)
+    await ask(page, 'Call skill with {"name":"site"}')
+    await answered(page, 1)
+    const html = /* html */ `<!doctype html><html lang="${lang}" dir="${lang === 'ar' ? 'rtl' : 'ltr'}"><head><meta charset="utf-8"><title>Fournil</title></head><body><main><h1>${heading}</h1><p>[…]</p></main></body></html>`
+    await ask(page, `Call site with ${JSON.stringify({ name: 'Fournil', files: [{ path: 'index.html', text: html }] })}`)
+    await answered(page, 2)
+    const place = /sites\/[^:\s]+/.exec(await page.locator('.msg-jean .prose').last().innerText())?.[0] ?? '', pane = page.locator('app-preview:has(app-site)'), site = page.frameLocator('app-preview app-site iframe'), title = site.locator('h1')
+    await pane.getByRole('button', { name: words['sites.edit'] }).click()
+    await expect(pane.locator('.site-said [role="status"]')).toHaveText(words['sites.editing'])
+    await title.click()
+    await toEnd(title)
+    await page.keyboard.type(more)
+    await page.keyboard.press('Enter')
+    await expect.poll(() => page.evaluate(async (path) => { const { app } = await import('/ui/state.js'); return (await app.fs.read(`${app.projectDir}/${path}/index.html`)) ?? '' }, place)).toContain(`<h1>${heading}${more}</h1>`)
+    await pane.getByRole('button', { name: words['sites.point'] }).click()
+    await expect(pane.locator('.site-said [role="status"]')).toHaveText(named('sites.pointing'))
+    await expect(title).toHaveAttribute('tabindex', '0')
+    await title.focus()
+    await page.keyboard.press('Enter')
+    await expect(pane.locator('.site-said q')).toHaveText(`${heading}${more}`)
+    await page.setViewportSize({ width: 320, height: 720 })
+    for (const button of await pane.locator('.site-bar button').all()) await expect(button).toBeInViewport()
+    expect(await pane.locator('app-site').evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true)
+    await pane.getByRole('button', { name: named('sites.askJean') }).click()
+    await expect(page.locator('#prompt')).toBeFocused()
   })
 }
 
@@ -283,6 +423,7 @@ test('a site goes online at a name of its own, asked first, its recovery code sh
   await ask(page, `Call site_change with ${JSON.stringify({ site: place, changes: [{ path: 'style.css', old: 'var(--tint)', new: 'var(--quiet)' }] })}`)
   await expect(page.locator('.msg-jean .prose')).toHaveCount(3, { timeout: 60_000 })
   await answered(page, 3)
+  await accept(page)
   await publishing()
   await expect(dialog).toContainText('1 file changed since it was published.')
   sent.length = 0
