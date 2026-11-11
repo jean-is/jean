@@ -1,0 +1,10 @@
+/* Settings' Ideas (D743): a title and how the ideas are chosen; a list's ideas, each its words and request, their names above
+   them, its buttons at its end; and what is often asked, each with Keep and Hide. */
+.starters-head { margin-block-end: 1.25rem; } .settings-panel .starters-head h2 { margin: 0; font-size: 1.375rem; font-weight: 600; line-height: 1.3; overflow-wrap: anywhere; } .starters-head h2:focus { outline: none; }
+.sheet .starters-head .lede { margin-block: 0.25rem 0; font-size: 0.9rem; }
+.starters-kept > li > label { flex: 1 1 100%; display: grid; gap: 0.3rem; } .starters-kept :is(input, textarea) { inline-size: 100%; }
+.starters-kept .row { margin-inline-start: auto; gap: 0.25rem; } .starters-kept .is-up svg { rotate: 180deg; }
+.starters-noticed .item-text { flex: 1 1 12rem; } .starters-add { margin-block-end: 1.25rem; }
+/* A list's row opens its page, the way there pointing where the line goes. */
+.starters-lists > li { padding: 0; } .starters-lists > li:hover { background: var(--line); } .starters-lists button.item { padding: 0.65rem 0.9rem; border: 0; background: none; text-align: start; }
+.starters-lists .item > .icon:last-child { rotate: -90deg; } :dir(rtl) .starters-lists .item > .icon:last-child { rotate: 90deg; }

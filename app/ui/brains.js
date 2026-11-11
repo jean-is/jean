@@ -130,7 +130,7 @@ export async function finishSignIn() {
   if (['brain', 'restore', 'sample', 'help'].some((name) => params.has(name))) {
     history.replaceState(null, '', location.pathname + location.hash)
     if (params.has('help')) return (await import('../caps/tour/live.js')).start(params.get('help') ?? '')
-    return params.has('sample') ? (await import('./composer.js')).idea('sample') : (await import('./brain-pages.js')).openAt(params.get('brain'))
+    return params.has('sample') ? (await import('./composer.js')).idea({ key: 'sample' }) : (await import('./brain-pages.js')).openAt(params.get('brain'))
   }
   // OpenRouter's comes back with no state: one with a state is another sign-in's.
   const code = params.has('state') ? null : params.get('code')

@@ -1,0 +1,20 @@
+{
+  "starters.text": "Di bawah kotak pada tugasan baharu, paling banyak empat: idea projek itu sendiri, kemudian idea untuk di mana-mana, kemudian apa yang sering anda minta di situ. Sekali klik meletakkan permintaannya dalam kotak, untuk diubah sebelum dihantar.",
+  "starters.theirs": "Idea organisasi anda dipaparkan selagi anda belum ada idea sendiri.",
+  "starters.everywhere": "Di mana-mana",
+  "starters.everywhere.text": "Dalam setiap projek, selepas idea projek itu sendiri.",
+  "starters.first": "Dalam projek ini, sebelum idea untuk di mana-mana.",
+  "starters.none": "Belum ada",
+  "starters.words": "Dipaparkan sebagai",
+  "starters.request": "Permintaan",
+  "starters.up": "Alih “{title}” ke atas",
+  "starters.down": "Alih “{title}” ke bawah",
+  "starters.remove": "Buang “{title}”",
+  "starters.add": "Tambah idea",
+  "starters.noticed": "Apa yang sering anda minta di sini",
+  "starters.noticed.text": "Permintaan yang dibuat tiga kali atau lebih dalam projek tempat anda berada, dan alirannya, dipaparkan selepas idea anda sendiri.",
+  "starters.noticed.none": "Belum ada apa-apa.",
+  "starters.keep": "Simpan",
+  "starters.hide": "Sembunyikan",
+  "starters.unhide": "Tunjukkan semula yang disembunyikan"
+}

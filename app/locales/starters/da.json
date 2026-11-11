@@ -1,0 +1,20 @@
+{
+  "starters.text": "Under beskedfeltet i en ny opgave, højst fire: projektets egne idéer, så dem, der gælder overalt, så det, du ofte beder om dér. Et klik sætter idéens forespørgsel i feltet, så du kan ændre den, før den sendes.",
+  "starters.theirs": "Din organisations idéer vises, så længe du ikke har nogen selv.",
+  "starters.everywhere": "Overalt",
+  "starters.everywhere.text": "I alle projekter, efter projektets egne.",
+  "starters.first": "I dette projekt, før dem, der gælder overalt.",
+  "starters.none": "Ingen endnu",
+  "starters.words": "Vises som",
+  "starters.request": "Forespørgsel",
+  "starters.up": "Flyt “{title}” op",
+  "starters.down": "Flyt “{title}” ned",
+  "starters.remove": "Fjern “{title}”",
+  "starters.add": "Tilføj en idé",
+  "starters.noticed": "Det, du ofte beder om her",
+  "starters.noticed.text": "Forespørgsler, der er lavet tre gange eller flere i det projekt, du er i, og dets forløb, vist efter dine egne.",
+  "starters.noticed.none": "Intet endnu.",
+  "starters.keep": "Behold",
+  "starters.hide": "Skjul",
+  "starters.unhide": "Vis de skjulte igen"
+}

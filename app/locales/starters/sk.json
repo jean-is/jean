@@ -1,0 +1,20 @@
+{
+  "starters.text": "Pod poľom pri novej úlohe, najviac štyri: vlastné nápady projektu, potom tie, ktoré platia všade, potom to, o čo v ňom často žiadate. Kliknutie vloží požiadavku nápadu do poľa, kde ju pred odoslaním môžete zmeniť.",
+  "starters.theirs": "Nápady vašej organizácie sa zobrazujú, kým nemáte žiadne vlastné.",
+  "starters.everywhere": "Všade",
+  "starters.everywhere.text": "V každom projekte, po vlastných nápadoch projektu.",
+  "starters.first": "V tomto projekte, pred tými, ktoré platia všade.",
+  "starters.none": "Zatiaľ žiadne",
+  "starters.words": "Zobrazené ako",
+  "starters.request": "Požiadavka",
+  "starters.up": "Posunúť „{title}“ nahor",
+  "starters.down": "Posunúť „{title}“ nadol",
+  "starters.remove": "Odstrániť „{title}“",
+  "starters.add": "Pridať nápad",
+  "starters.noticed": "O čo tu často žiadate",
+  "starters.noticed.text": "Požiadavky zadané trikrát alebo viackrát v projekte, v ktorom ste, a jeho postupy, zobrazené po vašich vlastných.",
+  "starters.noticed.none": "Zatiaľ nič.",
+  "starters.keep": "Ponechať",
+  "starters.hide": "Skryť",
+  "starters.unhide": "Znova zobraziť skryté"
+}

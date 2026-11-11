@@ -94,6 +94,8 @@
   "skills.addOne": "Fähigkeit hinzufügen",
   "cap.flows.hint": "Bitte zweimal um etwas, das mehrere Schritte braucht.",
   "cap.flows.text": "Die Schritte einer Aufgabe, die du wiederholst, neben dem Gespräch gezeichnet: ansehen, ändern und wieder ausführen, von Hand oder nach Plan. Jede Aufgabe lässt sich auch als Ablauf ansehen.",
+  "cap.starters.hint": "Frag dreimal nach derselben Art von Aufgabe, nachdem du Fähigkeiten entdeckt oder abgelehnt hast.",
+  "cap.starters.text": "Anfragen, die du oft stellst, unter dem Nachrichtenfeld einer neuen Aufgabe, einen Klick entfernt: deine eigenen, überall oder in einem Projekt, und was du oft fragst. Du änderst sie in den Einstellungen.",
   "skills.directory": "Fähigkeiten zum Hinzufügen",
   "cap.web-search.text": "{name} sucht im Web, wenn für eine Frage Fakten fehlen, und zeigt, woher jede Antwort stammt.",
   "cap.browser.hint": "Öffne drei Links aus Antworten.",

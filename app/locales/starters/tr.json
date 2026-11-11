@@ -1,0 +1,20 @@
+{
+  "starters.text": "Yeni bir görevde kutunun altında, en fazla dört tane: projenin kendi fikirleri, sonra her yer için olanlar, sonra o projede sık istediklerin. Tıklayınca fikrin isteği kutuya gelir; gönderilmeden önce değiştirebilirsin.",
+  "starters.theirs": "Kendi fikrin olmadığı sürece kuruluşunun fikirleri görünür.",
+  "starters.everywhere": "Her yerde",
+  "starters.everywhere.text": "Her projede, projenin kendi fikirlerinden sonra.",
+  "starters.first": "Bu projede, her yer için olanlardan önce.",
+  "starters.none": "Henüz yok",
+  "starters.words": "Gösterilen metin",
+  "starters.request": "İstek",
+  "starters.up": "Yukarı taşı: “{title}”",
+  "starters.down": "Aşağı taşı: “{title}”",
+  "starters.remove": "Kaldır: “{title}”",
+  "starters.add": "Fikir ekle",
+  "starters.noticed": "Burada sık istediklerin",
+  "starters.noticed.text": "Bulunduğun projede üç kez ya da daha fazla yapılan istekler ve projenin akışları, kendi fikirlerinden sonra gösterilir.",
+  "starters.noticed.none": "Henüz bir şey yok.",
+  "starters.keep": "Tut",
+  "starters.hide": "Gizle",
+  "starters.unhide": "Gizlenenleri yeniden göster"
+}

@@ -95,6 +95,8 @@
   "skills.addOne": "Dodaj vještinu",
   "cap.flows.hint": "Dvaput zatražite nešto što traje nekoliko koraka.",
   "cap.flows.text": "Koraci zadatka koji ponavljate, nacrtani pokraj razgovora: pogledajte ih, promijenite i ponovno pokrenite ručno ili prema rasporedu. Svaki se zadatak može vidjeti i kao tijek.",
+  "cap.starters.hint": "Triput zatražite istu vrstu stvari, nakon što su Vještine otkrivene ili odbijene.",
+  "cap.starters.text": "Zahtjevi koje često postavljate, ispod okvira na novom zadatku, na jedan klik: vaši, posvuda ili u jednom projektu, i ono što često tražite. Mijenjate ih u Postavkama.",
   "skills.directory": "Vještine za dodavanje",
   "cap.web-search.text": "{name} traži na webu kad pitanje traži činjenice koje ne zna i pokazuje odakle dolazi svaki odgovor.",
   "cap.browser.hint": "Otvorite tri poveznice iz odgovora.",

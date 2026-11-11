@@ -94,6 +94,8 @@
   "skills.addOne": "Lägg till en färdighet",
   "cap.flows.hint": "Be två gånger om något som tar flera steg.",
   "cap.flows.text": "Stegen i en uppgift du upprepar, ritade bredvid konversationen: se dem, ändra dem och kör dem igen för hand eller enligt ett schema. Varje uppgift kan också ses som ett flöde.",
+  "cap.starters.hint": "Be om samma slags sak tre gånger, när Färdigheter har upptäckts eller avböjts.",
+  "cap.starters.text": "Förfrågningar du gör ofta, under rutan i en ny uppgift, ett klick bort: dina egna, överallt eller i ett projekt, och det du ofta ber om. Du ändrar dem i Inställningar.",
   "skills.directory": "Färdigheter att lägga till",
   "cap.web-search.text": "{name} slår upp saker på webben när en fråga kräver fakta som saknas, och visar var varje svar kommer ifrån.",
   "cap.browser.hint": "Öppna tre länkar från svar.",

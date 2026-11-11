@@ -94,6 +94,8 @@
   "skills.addOne": "Ongeza ujuzi",
   "cap.flows.hint": "Omba mara mbili kitu kinachohitaji hatua kadhaa.",
   "cap.flows.text": "Hatua za kazi unayorudia, zimechorwa kando ya mazungumzo: zitazame, zibadilishe, na uziendeshe tena kwa mkono au kwa ratiba. Kazi yoyote pia inaweza kutazamwa kama mtiririko.",
+  "cap.starters.hint": "Omba aina moja ya kitu mara tatu, baada ya Ujuzi kugunduliwa au kukataliwa.",
+  "cap.starters.text": "Maombi unayofanya mara nyingi, chini ya kisanduku kwenye kazi mpya, kwa mbofyo mmoja: yako mwenyewe, kwa kila mahali au kwa mradi mmoja, na yale unayoomba mara nyingi. Unayabadilisha katika Mipangilio.",
   "skills.directory": "Ujuzi wa kuongeza",
   "cap.web-search.text": "{name} hutafuta kwenye wavuti swali linapohitaji ukweli usiopatikana, na huonyesha kila jibu limetoka wapi.",
   "cap.browser.hint": "Fungua viungo vitatu kutoka kwenye majibu.",

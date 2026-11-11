@@ -1,0 +1,20 @@
+{
+  "starters.text": "新しいタスクのメッセージ欄の下に、最大 4 つ表示されます。まずプロジェクトのヒント、次にどこでも使うヒント、最後にそこでよく頼むことです。クリックするとその依頼がメッセージ欄に入り、送る前に変更できます。",
+  "starters.theirs": "自分のヒントがないあいだは、組織のヒントが表示されます。",
+  "starters.everywhere": "どこでも",
+  "starters.everywhere.text": "すべてのプロジェクトで、プロジェクトのヒントのあとに表示されます。",
+  "starters.first": "このプロジェクトで、どこでも使うヒントの前に表示されます。",
+  "starters.none": "まだありません",
+  "starters.words": "表示名",
+  "starters.request": "依頼",
+  "starters.up": "「{title}」を上へ移動",
+  "starters.down": "「{title}」を下へ移動",
+  "starters.remove": "「{title}」を削除",
+  "starters.add": "ヒントを追加",
+  "starters.noticed": "ここでよく頼むこと",
+  "starters.noticed.text": "今いるプロジェクトで 3 回以上した依頼と、そのフローです。自分のヒントのあとに表示されます。",
+  "starters.noticed.none": "まだありません。",
+  "starters.keep": "残す",
+  "starters.hide": "隠す",
+  "starters.unhide": "隠したものをもう一度表示"
+}

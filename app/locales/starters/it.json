@@ -1,0 +1,20 @@
+{
+  "starters.text": "Sotto la casella di una nuova attività, quattro al massimo: le idee del progetto, poi quelle valide ovunque, poi ciò che chiedi spesso lì. Un clic mette la sua richiesta nella casella, da cambiare prima dell’invio.",
+  "starters.theirs": "Le idee della tua organizzazione si vedono finché non ne hai di tue.",
+  "starters.everywhere": "Ovunque",
+  "starters.everywhere.text": "In ogni progetto, dopo quelle del progetto.",
+  "starters.first": "In questo progetto, prima di quelle valide ovunque.",
+  "starters.none": "Ancora nessuna",
+  "starters.words": "Mostrata come",
+  "starters.request": "Richiesta",
+  "starters.up": "Sposta «{title}» su",
+  "starters.down": "Sposta «{title}» giù",
+  "starters.remove": "Rimuovi «{title}»",
+  "starters.add": "Aggiungi un’idea",
+  "starters.noticed": "Ciò che chiedi spesso qui",
+  "starters.noticed.text": "Le richieste fatte tre volte o più nel progetto in cui sei, e i suoi flussi, mostrate dopo le tue.",
+  "starters.noticed.none": "Ancora niente.",
+  "starters.keep": "Tieni",
+  "starters.hide": "Nascondi",
+  "starters.unhide": "Mostra di nuovo quelle nascoste"
+}

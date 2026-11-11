@@ -1,0 +1,20 @@
+{
+  "starters.text": "Pod polem nowego zadania, najwyżej cztery: najpierw własne pomysły projektu, potem te obowiązujące wszędzie, potem to, o co często tam prosisz. Kliknięcie pomysłu wstawia jego prośbę do pola, by ją zmienić przed wysłaniem.",
+  "starters.theirs": "Pomysły twojej organizacji są widoczne, dopóki nie masz własnych.",
+  "starters.everywhere": "Wszędzie",
+  "starters.everywhere.text": "W każdym projekcie, po własnych pomysłach projektu.",
+  "starters.first": "W tym projekcie, przed tymi obowiązującymi wszędzie.",
+  "starters.none": "Na razie brak",
+  "starters.words": "Wyświetlany jako",
+  "starters.request": "Prośba",
+  "starters.up": "Przenieś „{title}” w górę",
+  "starters.down": "Przenieś „{title}” w dół",
+  "starters.remove": "Usuń „{title}”",
+  "starters.add": "Dodaj pomysł",
+  "starters.noticed": "O co często tu prosisz",
+  "starters.noticed.text": "Prośby powtórzone co najmniej trzy razy w projekcie, w którym jesteś, i jego przepływy, wyświetlane po twoich własnych pomysłach.",
+  "starters.noticed.none": "Na razie nic.",
+  "starters.keep": "Zachowaj",
+  "starters.hide": "Ukryj",
+  "starters.unhide": "Pokaż ponownie ukryte"
+}

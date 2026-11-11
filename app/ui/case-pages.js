@@ -20,7 +20,7 @@ await Promise.all([useStrings('case'), styleSheet(new URL('data-pages.css', impo
 /** The groups, by what each capability is for, each in the case's order (CATALOGUE). */
 const GROUPS = /** @type {Record<string, string[]>} */ ({
   files: ['files', 'made', 'documents', 'tables', 'designs', 'folders', 'meaning', 'pictures'], remember: ['memory', 'feedback', 'projects', 'find', 'names'],
-  again: ['skills', 'routines', 'flows'], web: ['web-search', 'browser', 'connections', 'since', 'extensions'],
+  again: ['skills', 'routines', 'flows', 'starters'], web: ['web-search', 'browser', 'connections', 'since', 'extensions'],
   bigger: ['computer', 'machine', 'helpers', 'double-check', 'reflexes', 'brain-local'], voice: ['live', 'camera', 'screen', 'natural-voice', 'notifications'], keep: ['backup', 'share', 'people', 'together', 'sync', 'devices', 'lock'],
 })
 /** A capability's group. @param {string} id */
@@ -28,7 +28,7 @@ const groupOf = (id) => Object.keys(GROUPS).find((group) => GROUPS[group].includ
 
 /** Where a capability found leads: its section of Settings, a page of one, search, or the browser. */
 const OPENS = /** @type {Record<string, () => void>} */ ({
-  memory: () => openSettings('you'), skills: () => openSettings('skills'), routines: () => openSettings('routines'),
+  memory: () => openSettings('you'), skills: () => openSettings('skills'), routines: () => openSettings('routines'), starters: () => openSettings('starters'),
   connections: () => openSettings('connections'), 'web-search': () => openSettings('web-search'), extensions: () => openSettings('extensions'), computer: () => openSettings('computer'), pictures: () => import('../caps/pictures/pictures.js').then((module) => openSettings(module.paged() ? 'brains/pictures' : 'brains')),
   share: () => openSettings('privacy/links'), machine: () => import('../caps/machine/machine.js').then((module) => module.show()), sync: () => openSettings('data/sync'), devices: () => openSettings('devices'), people: () => openSettings('people'), lock: () => openSettings('privacy/lock'),
   'brain-local': () => openSettings('brains/device'), notifications: () => openSettings('general'), 'natural-voice': () => openSettings('general/natural'), find: () => { app.dialog.value = 'find' },
@@ -45,7 +45,7 @@ const COUNTED = /** @type {Record<string, () => number[]>} */ ({ reflexes: () =>
 /** What the user turned off (D433). */
 const turnedOff = () => app.settings.value.off ?? []
 /** What the organisation, or a parent in a child's profile, turned on: only they turn it off. @param {string} id */
-const theirs = (id) => (app.policy.capabilities?.preUnlock ?? []).includes(id)
+const theirs = (id) => (app.policy.capabilities?.preUnlock ?? []).includes(id) || (id === 'starters' && Boolean(app.policy.starters))
 /** Turn off asked in its page: the capability it is asked for. */
 const asking = signal('')
 // The page open (pageOpen()): a capability's id, or '' for the list.

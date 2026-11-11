@@ -95,6 +95,8 @@
   "skills.addOne": "Aggiungi un’abilità",
   "cap.flows.hint": "Chiedi due volte qualcosa che richiede diversi passaggi.",
   "cap.flows.text": "I passaggi di un’attività che ripeti, disegnati accanto alla conversazione: guardali, cambiali e rieseguili a mano o a scadenze fisse. Qualsiasi attività si può vedere anche come flusso.",
+  "cap.starters.hint": "Chiedi tre volte lo stesso tipo di cosa, una volta trovate o rifiutate le Abilità.",
+  "cap.starters.text": "Le richieste che fai spesso, sotto la casella di una nuova attività, a un clic: le tue, valide ovunque o in un solo progetto, e ciò che chiedi spesso. Le cambi nelle Impostazioni.",
   "skills.directory": "Abilità da aggiungere",
   "cap.web-search.text": "{name} cerca sul web quando a una domanda servono fatti che non ha, e mostra da dove viene ogni risposta.",
   "cap.browser.hint": "Apri tre link dalle risposte.",

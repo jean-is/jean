@@ -1,0 +1,20 @@
+{
+  "starters.text": "Pod polem zprávy nového úkolu, nejvýše čtyři: vlastní nápady projektu, pak ty, které platí všude, pak to, o co tam často žádáte. Kliknutím se jeho požadavek vloží do pole, kde ho před odesláním můžete změnit.",
+  "starters.theirs": "Nápady vaší organizace se zobrazují, dokud nemáte žádné vlastní.",
+  "starters.everywhere": "Všude",
+  "starters.everywhere.text": "V každém projektu, po vlastních nápadech projektu.",
+  "starters.first": "V tomto projektu, před těmi, které platí všude.",
+  "starters.none": "Zatím žádné",
+  "starters.words": "Zobrazený text",
+  "starters.request": "Požadavek",
+  "starters.up": "Přesunout „{title}“ nahoru",
+  "starters.down": "Přesunout „{title}“ dolů",
+  "starters.remove": "Odebrat „{title}“",
+  "starters.add": "Přidat nápad",
+  "starters.noticed": "O co tu často žádáte",
+  "starters.noticed.text": "Požadavky zadané třikrát či vícekrát v projektu, ve kterém právě jste, a jeho postupy, zobrazené za vašimi vlastními.",
+  "starters.noticed.none": "Zatím nic.",
+  "starters.keep": "Ponechat",
+  "starters.hide": "Skrýt",
+  "starters.unhide": "Znovu zobrazit skryté"
+}

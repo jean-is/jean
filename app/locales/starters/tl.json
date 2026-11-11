@@ -1,0 +1,20 @@
+{
+  "starters.text": "Sa ilalim ng kahon sa bagong gawain, apat ang pinakamarami: ang sariling ideya ng proyekto, saka ang para kahit saan, saka ang madalas mong hilingin doon. Sa isang click, mapupunta sa kahon ang kahilingan ng ideya, para mabago mo bago ipadala.",
+  "starters.theirs": "Lumalabas ang mga ideya ng organisasyon mo habang wala ka pang sariling ideya.",
+  "starters.everywhere": "Kahit saan",
+  "starters.everywhere.text": "Sa bawat proyekto, kasunod ng sariling ideya ng proyekto.",
+  "starters.first": "Sa proyektong ito, bago ang para kahit saan.",
+  "starters.none": "Wala pa",
+  "starters.words": "Ipinapakita bilang",
+  "starters.request": "Kahilingan",
+  "starters.up": "Ilipat pataas ang “{title}”",
+  "starters.down": "Ilipat pababa ang “{title}”",
+  "starters.remove": "Alisin ang “{title}”",
+  "starters.add": "Magdagdag ng ideya",
+  "starters.noticed": "Ang madalas mong hilingin dito",
+  "starters.noticed.text": "Mga kahilingang ginawa nang tatlong beses o higit pa sa proyektong kinaroroonan mo, at ang mga daloy nito, ipinapakita kasunod ng sarili mo.",
+  "starters.noticed.none": "Wala pa.",
+  "starters.keep": "Itabi",
+  "starters.hide": "Itago",
+  "starters.unhide": "Ipakitang muli ang mga nakatago"
+}

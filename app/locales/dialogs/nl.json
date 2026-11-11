@@ -94,6 +94,8 @@
   "skills.addOne": "Vaardigheid toevoegen",
   "cap.flows.hint": "Vraag twee keer om iets dat meerdere stappen kost.",
   "cap.flows.text": "De stappen van een taak die je herhaalt, naast het gesprek getekend: bekijk ze, verander ze en voer ze opnieuw uit, met de hand of volgens een schema. Elke taak is ook als stroom te bekijken.",
+  "cap.starters.hint": "Vraag drie keer om hetzelfde soort ding, nadat je Vaardigheden hebt gevonden of afgeslagen.",
+  "cap.starters.text": "Verzoeken die je vaak doet, onder het vak bij een nieuwe taak, met één klik bij de hand: je eigen, voor overal of voor één project, en wat je vaak vraagt. Je verandert ze in Instellingen.",
   "skills.directory": "Vaardigheden om toe te voegen",
   "cap.web-search.text": "{name} zoekt op het web als een vraag feiten nodig heeft die er niet zijn, en laat zien waar elk antwoord vandaan komt.",
   "cap.browser.hint": "Open drie links uit antwoorden.",

@@ -1,0 +1,20 @@
+{
+  "starters.text": "Uuden tehtävän viestikentän alla, enintään neljä: projektin omat ideat, sitten kaikkialle tarkoitetut, sitten se, mitä pyydät siellä usein. Napsautus vie idean pyynnön kenttään, jossa voit muuttaa sitä ennen lähettämistä.",
+  "starters.theirs": "Organisaatiosi ideat näkyvät, kunnes sinulla on omia.",
+  "starters.everywhere": "Kaikkialla",
+  "starters.everywhere.text": "Jokaisessa projektissa, projektin omien jälkeen.",
+  "starters.first": "Tässä projektissa, ennen kaikkialle tarkoitettuja.",
+  "starters.none": "Ei vielä yhtään",
+  "starters.words": "Näkyvä teksti",
+  "starters.request": "Pyyntö",
+  "starters.up": "Siirrä ”{title}” ylös",
+  "starters.down": "Siirrä ”{title}” alas",
+  "starters.remove": "Poista ”{title}”",
+  "starters.add": "Lisää idea",
+  "starters.noticed": "Mitä pyydät täällä usein",
+  "starters.noticed.text": "Pyynnöt, jotka on tehty vähintään kolme kertaa projektissa, jossa olet, ja sen työnkulut, näytetään omiesi jälkeen.",
+  "starters.noticed.none": "Ei vielä mitään.",
+  "starters.keep": "Säilytä",
+  "starters.hide": "Piilota",
+  "starters.unhide": "Näytä piilotetut uudelleen"
+}

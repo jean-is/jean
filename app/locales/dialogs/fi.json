@@ -94,6 +94,8 @@
   "skills.addOne": "Lisää taito",
   "cap.flows.hint": "Pyydä kahdesti jotain, jossa on useita vaiheita.",
   "cap.flows.text": "Toistamasi tehtävän vaiheet piirrettyinä keskustelun viereen: katso niitä, muuta niitä ja aja ne uudelleen käsin tai aikataulun mukaan. Minkä tahansa tehtävän voi nähdä myös työnkulkuna.",
+  "cap.starters.hint": "Pyydä samanlaista asiaa kolme kertaa, kun olet löytänyt tai hylännyt Taidot.",
+  "cap.starters.text": "Usein tekemäsi pyynnöt uuden tehtävän viestikentän alla napsautuksen päässä: omasi, kaikkialla tai yhdessä projektissa, ja se, mitä pyydät usein. Muutat niitä Asetuksissa.",
   "skills.directory": "Lisättävät taidot",
   "cap.web-search.text": "{name} hakee verkosta, kun kysymys vaatii puuttuvia tietoja, ja näyttää, mistä kukin vastaus tulee.",
   "cap.browser.hint": "Avaa kolme linkkiä vastauksista.",

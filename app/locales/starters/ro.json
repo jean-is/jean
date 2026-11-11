@@ -1,0 +1,20 @@
+{
+  "starters.text": "Sub caseta unei sarcini noi, cel mult patru: ideile proiectului, apoi cele valabile peste tot, apoi ce cereți des acolo. Un clic pune cererea ei în casetă, ca s-o schimbați înainte de trimitere.",
+  "starters.theirs": "Ideile organizației dvs. apar cât timp nu aveți niciuna a dvs.",
+  "starters.everywhere": "Peste tot",
+  "starters.everywhere.text": "În fiecare proiect, după ideile proiectului.",
+  "starters.first": "În acest proiect, înaintea celor valabile peste tot.",
+  "starters.none": "Niciuna încă",
+  "starters.words": "Afișată ca",
+  "starters.request": "Cerere",
+  "starters.up": "Mutați „{title}” în sus",
+  "starters.down": "Mutați „{title}” în jos",
+  "starters.remove": "Eliminați „{title}”",
+  "starters.add": "Adăugați o idee",
+  "starters.noticed": "Ce cereți des aici",
+  "starters.noticed.text": "Cererile făcute de trei ori sau mai mult în proiectul în care sunteți, și fluxurile lui, afișate după ideile dvs.",
+  "starters.noticed.none": "Nimic încă.",
+  "starters.keep": "Păstrați",
+  "starters.hide": "Ascundeți",
+  "starters.unhide": "Afișați din nou cele ascunse"
+}

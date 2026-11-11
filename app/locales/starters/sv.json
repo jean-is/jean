@@ -1,0 +1,20 @@
+{
+  "starters.text": "Under rutan i en ny uppgift, högst fyra: projektets egna idéer, sedan de som gäller överallt, sedan det du ofta ber om där. Ett klick lägger idéns förfrågan i rutan, så att du kan ändra den innan den skickas.",
+  "starters.theirs": "Din organisations idéer visas så länge du inte har några egna.",
+  "starters.everywhere": "Överallt",
+  "starters.everywhere.text": "I varje projekt, efter projektets egna.",
+  "starters.first": "I det här projektet, före de som gäller överallt.",
+  "starters.none": "Inga än",
+  "starters.words": "Visas som",
+  "starters.request": "Förfrågan",
+  "starters.up": "Flytta upp ”{title}”",
+  "starters.down": "Flytta ner ”{title}”",
+  "starters.remove": "Ta bort ”{title}”",
+  "starters.add": "Lägg till en idé",
+  "starters.noticed": "Det du ofta ber om här",
+  "starters.noticed.text": "Förfrågningar som gjorts tre gånger eller fler i projektet du är i, och dess flöden, visas efter dina egna.",
+  "starters.noticed.none": "Inget än.",
+  "starters.keep": "Behåll",
+  "starters.hide": "Dölj",
+  "starters.unhide": "Visa de dolda igen"
+}

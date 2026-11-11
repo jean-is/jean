@@ -1,0 +1,20 @@
+{
+  "starters.text": "在新任务的消息框下方，最多四个：先是项目自己的点子，然后是适用于所有地方的，再是你在这个项目里常问的。点一下，点子的请求就会放进消息框，发送前还可以修改。",
+  "starters.theirs": "你还没有自己的点子时，会显示你的组织的点子。",
+  "starters.everywhere": "所有地方",
+  "starters.everywhere.text": "在每个项目中，排在项目自己的点子之后。",
+  "starters.first": "在这个项目中，排在适用于所有地方的点子之前。",
+  "starters.none": "还没有",
+  "starters.words": "显示为",
+  "starters.request": "请求",
+  "starters.up": "上移“{title}”",
+  "starters.down": "下移“{title}”",
+  "starters.remove": "移除“{title}”",
+  "starters.add": "添加点子",
+  "starters.noticed": "你在这里常问的",
+  "starters.noticed.text": "在你所在的项目中提出三次或以上的请求，以及这个项目的流程，显示在你自己的点子之后。",
+  "starters.noticed.none": "还没有。",
+  "starters.keep": "保留",
+  "starters.hide": "隐藏",
+  "starters.unhide": "重新显示已隐藏的"
+}

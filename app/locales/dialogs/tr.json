@@ -94,6 +94,8 @@
   "skills.addOne": "Beceri ekle",
   "cap.flows.hint": "Birkaç adım süren bir şeyi iki kez isteyin.",
   "cap.flows.text": "Tekrarladığınız bir işin adımları, sohbetin yanında çizili: görün, değiştirin ve elle ya da bir plana göre yeniden çalıştırın. Her iş bir akış olarak da görülebilir.",
+  "cap.starters.hint": "Beceriler keşfedildikten ya da reddedildikten sonra, aynı türden bir şeyi üç kez iste.",
+  "cap.starters.text": "Sık yaptığın istekler, yeni bir görevde kutunun altında, tek tık uzağında: her yer ya da tek bir proje için kendi eklediklerin ve sık istediklerin. Bunları Ayarlar’da değiştirirsin.",
   "skills.directory": "Eklenebilecek beceriler",
   "cap.web-search.text": "{name}, bir soru elde olmayan bilgiler gerektirdiğinde webde arar ve her yanıtın nereden geldiğini gösterir.",
   "cap.browser.hint": "Yanıtlardan üç bağlantı aç.",

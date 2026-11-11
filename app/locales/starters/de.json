@@ -1,0 +1,20 @@
+{
+  "starters.text": "Unter dem Nachrichtenfeld einer neuen Aufgabe, höchstens vier: die eigenen Ideen des Projekts, dann die, die überall gelten, dann was du dort oft fragst. Ein Klick setzt ihre Anfrage ins Feld, damit du sie vor dem Senden ändern kannst.",
+  "starters.theirs": "Die Ideen deiner Organisation werden angezeigt, solange du keine eigenen hast.",
+  "starters.everywhere": "Überall",
+  "starters.everywhere.text": "In jedem Projekt, nach den eigenen Ideen des Projekts.",
+  "starters.first": "In diesem Projekt, vor denen, die überall gelten.",
+  "starters.none": "Noch keine",
+  "starters.words": "Angezeigt als",
+  "starters.request": "Anfrage",
+  "starters.up": "„{title}“ nach oben verschieben",
+  "starters.down": "„{title}“ nach unten verschieben",
+  "starters.remove": "„{title}“ entfernen",
+  "starters.add": "Idee hinzufügen",
+  "starters.noticed": "Was du hier oft fragst",
+  "starters.noticed.text": "Anfragen, die im Projekt, in dem du bist, dreimal oder öfter gestellt wurden, und seine Abläufe, angezeigt nach deinen eigenen.",
+  "starters.noticed.none": "Noch nichts.",
+  "starters.keep": "Behalten",
+  "starters.hide": "Ausblenden",
+  "starters.unhide": "Ausgeblendete wieder anzeigen"
+}

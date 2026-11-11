@@ -1,0 +1,20 @@
+{
+  "starters.text": "Ispod okvira na novom zadatku, najviše četiri: ideje samog projekta, zatim one koje vrijede posvuda, zatim ono što ondje često tražite. Klik na ideju stavlja njezin zahtjev u okvir, da ga promijenite prije slanja.",
+  "starters.theirs": "Ideje vaše organizacije prikazuju se dok nemate svojih.",
+  "starters.everywhere": "Posvuda",
+  "starters.everywhere.text": "U svakom projektu, nakon ideja samog projekta.",
+  "starters.first": "U ovom projektu, prije onih koje vrijede posvuda.",
+  "starters.none": "Još nijedna",
+  "starters.words": "Prikazuje se kao",
+  "starters.request": "Zahtjev",
+  "starters.up": "Pomakni „{title}“ gore",
+  "starters.down": "Pomakni „{title}“ dolje",
+  "starters.remove": "Ukloni „{title}“",
+  "starters.add": "Dodaj ideju",
+  "starters.noticed": "Što ovdje često tražite",
+  "starters.noticed.text": "Zahtjevi postavljeni tri ili više puta u projektu u kojem ste, i njegovi tijekovi, prikazuju se nakon vaših ideja.",
+  "starters.noticed.none": "Još ništa.",
+  "starters.keep": "Zadrži",
+  "starters.hide": "Sakrij",
+  "starters.unhide": "Ponovno prikaži skrivene"
+}

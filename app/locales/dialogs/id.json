@@ -93,6 +93,8 @@
   "skills.addOne": "Tambah keterampilan",
   "cap.flows.hint": "Minta dua kali sesuatu yang butuh beberapa langkah.",
   "cap.flows.text": "Langkah-langkah tugas yang kamu ulangi, digambar di samping percakapan: lihat, ubah, dan jalankan lagi secara manual atau terjadwal. Tugas apa pun juga bisa dilihat sebagai alur.",
+  "cap.starters.hint": "Minta hal yang sejenis tiga kali, setelah Keterampilan ditemukan atau ditolak.",
+  "cap.starters.text": "Permintaan yang sering Anda buat, di bawah kotak pada tugas baru, cukup sekali klik: milik Anda sendiri, untuk di mana saja atau untuk satu proyek, dan yang sering Anda minta. Anda mengubahnya di Pengaturan.",
   "skills.directory": "Keterampilan untuk ditambahkan",
   "cap.web-search.text": "{name} mencari di web saat sebuah pertanyaan butuh fakta yang belum ada, dan menunjukkan asal setiap jawaban.",
   "cap.browser.hint": "Buka tiga tautan dari jawaban.",

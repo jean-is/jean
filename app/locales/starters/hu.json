@@ -1,0 +1,20 @@
+{
+  "starters.text": "Egy új feladat mezője alatt, legfeljebb négy: előbb a projekt saját ötletei, aztán a mindenhol érvényesek, végül amit ott gyakran kérsz. Egy kattintás a mezőbe teszi a kérését, hogy elküldés előtt módosíthasd.",
+  "starters.theirs": "A szervezeted ötletei látszanak, amíg nincs saját ötleted.",
+  "starters.everywhere": "Mindenhol",
+  "starters.everywhere.text": "Minden projektben, a projekt saját ötletei után.",
+  "starters.first": "Ebben a projektben, a mindenhol érvényes ötletek előtt.",
+  "starters.none": "Még nincs",
+  "starters.words": "Így jelenik meg",
+  "starters.request": "Kérés",
+  "starters.up": "„{title}” mozgatása feljebb",
+  "starters.down": "„{title}” mozgatása lejjebb",
+  "starters.remove": "„{title}” eltávolítása",
+  "starters.add": "Ötlet hozzáadása",
+  "starters.noticed": "Amit itt gyakran kérsz",
+  "starters.noticed.text": "A legalább háromszor feltett kérések abban a projektben, ahol vagy, és a projekt folyamatai, a saját ötleteid után.",
+  "starters.noticed.none": "Még semmi.",
+  "starters.keep": "Megtartás",
+  "starters.hide": "Elrejtés",
+  "starters.unhide": "A rejtettek megjelenítése újra"
+}

@@ -95,6 +95,8 @@
   "skills.addOne": "Añadir una habilidad",
   "cap.flows.hint": "Pide dos veces algo que lleve varios pasos.",
   "cap.flows.text": "Los pasos de una tarea que repites, dibujados junto a la conversación: míralos, cámbialos y vuelve a ejecutarlos a mano o según un horario. Cualquier tarea también se puede ver como flujo.",
+  "cap.starters.hint": "Pide el mismo tipo de cosa tres veces, después de descubrir o rechazar Habilidades.",
+  "cap.starters.text": "Las peticiones que haces a menudo, bajo el cuadro de mensaje de una nueva tarea, a un clic: las tuyas, en todas partes o en un proyecto, y lo que pides a menudo. Las cambias en Ajustes.",
   "skills.directory": "Habilidades para añadir",
   "cap.web-search.text": "{name} busca en la web cuando una pregunta necesita datos que no tiene, y muestra de dónde sale cada respuesta.",
   "cap.browser.hint": "Abre tres enlaces de las respuestas.",

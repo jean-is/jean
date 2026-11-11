@@ -1,0 +1,20 @@
+{
+  "starters.text": "Under the box on a new task, four at most: the project’s own ideas, then those for everywhere, then what you often ask there. A click puts its request in the box, to change before it goes.",
+  "starters.theirs": "Your organization’s ideas show while you have none of your own.",
+  "starters.everywhere": "Everywhere",
+  "starters.everywhere.text": "In every project, after the project’s own.",
+  "starters.first": "In this project, before those for everywhere.",
+  "starters.none": "None yet",
+  "starters.words": "Shown as",
+  "starters.request": "Request",
+  "starters.up": "Move “{title}” up",
+  "starters.down": "Move “{title}” down",
+  "starters.remove": "Remove “{title}”",
+  "starters.add": "Add an idea",
+  "starters.noticed": "What you often ask here",
+  "starters.noticed.text": "Requests made three times or more in the project you’re in, and its flows, shown after your own.",
+  "starters.noticed.none": "Nothing yet.",
+  "starters.keep": "Keep",
+  "starters.hide": "Hide",
+  "starters.unhide": "Show the hidden ones again"
+}

@@ -1,0 +1,20 @@
+{
+  "starters.text": "Dindan ar voest kemennadenn en un drevell nevez, pevar d’ar muiañ : mennozioù ar raktres e-unan, goude re e pep lec’h, goude ar pezh a c’houlennit alies eno. Ur c’hlik a laka e c’houlenn er voest, d’e gemmañ a-raok ma vo kaset.",
+  "starters.theirs": "Mennozioù hoc’h aozadur a vez diskouezet keit ha n’ho peus hini ebet deoc’h.",
+  "starters.everywhere": "E pep lec’h",
+  "starters.everywhere.text": "E pep raktres, goude re ar raktres e-unan.",
+  "starters.first": "Er raktres-mañ, a-raok re e pep lec’h.",
+  "starters.none": "Hini ebet c’hoazh",
+  "starters.words": "Diskouezet evel",
+  "starters.request": "Goulenn",
+  "starters.up": "Dilec’hiañ « {title} » d’an nec’h",
+  "starters.down": "Dilec’hiañ « {title} » d’an traoñ",
+  "starters.remove": "Lemel « {title} »",
+  "starters.add": "Ouzhpennañ ur mennoz",
+  "starters.noticed": "Ar pezh a c’houlennit alies amañ",
+  "starters.noticed.text": "Goulennoù graet teir gwech pe muioc’h er raktres m’emaoc’h ennañ, hag e red-labour, diskouezet goude ho re deoc’h.",
+  "starters.noticed.none": "Netra c’hoazh.",
+  "starters.keep": "Mirout",
+  "starters.hide": "Kuzhat",
+  "starters.unhide": "Diskouez en-dro ar pezh a zo kuzhet"
+}

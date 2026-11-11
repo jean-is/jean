@@ -94,6 +94,8 @@
   "skills.addOne": "Tilføj en færdighed",
   "cap.flows.hint": "Bed to gange om noget, der tager flere trin.",
   "cap.flows.text": "Trinene i en opgave, du gentager, tegnet ved siden af samtalen: se dem, ændr dem, og kør dem igen manuelt eller efter en plan. Enhver opgave kan også ses som et forløb.",
+  "cap.starters.hint": "Bed om den samme slags ting tre gange, når du har opdaget eller afvist Færdigheder.",
+  "cap.starters.text": "Forespørgsler, du ofte laver, under beskedfeltet i en ny opgave, et klik væk: dine egne, overalt eller i ét projekt, og det, du ofte beder om. Du ændrer dem i Indstillinger.",
   "skills.directory": "Færdigheder at tilføje",
   "cap.web-search.text": "{name} slår ting op på nettet, når et spørgsmål kræver fakta, der mangler, og viser, hvor hvert svar kommer fra.",
   "cap.browser.hint": "Åbn tre links fra svar.",

@@ -1,0 +1,20 @@
+{
+  "starters.text": "Bajo el cuadro de mensaje de una nueva tarea, cuatro como máximo: las ideas propias del proyecto, luego las que se muestran en todas partes, luego lo que pides a menudo allí. Un clic pone su petición en el cuadro, para cambiarla antes de enviarla.",
+  "starters.theirs": "Las ideas de tu organización se muestran mientras no tengas ninguna propia.",
+  "starters.everywhere": "En todas partes",
+  "starters.everywhere.text": "En cada proyecto, después de las propias del proyecto.",
+  "starters.first": "En este proyecto, antes de las que se muestran en todas partes.",
+  "starters.none": "Ninguna aún",
+  "starters.words": "Se muestra como",
+  "starters.request": "Petición",
+  "starters.up": "Mover «{title}» arriba",
+  "starters.down": "Mover «{title}» abajo",
+  "starters.remove": "Quitar «{title}»",
+  "starters.add": "Añadir una idea",
+  "starters.noticed": "Lo que pides a menudo aquí",
+  "starters.noticed.text": "Peticiones hechas tres veces o más en el proyecto en el que estás, y sus flujos, mostrados después de las tuyas.",
+  "starters.noticed.none": "Nada todavía.",
+  "starters.keep": "Guardar",
+  "starters.hide": "Ocultar",
+  "starters.unhide": "Volver a mostrar lo oculto"
+}

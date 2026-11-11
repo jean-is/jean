@@ -1,0 +1,20 @@
+{
+  "starters.text": "A ƙarƙashin akwatin a sabuwar ɗawainiya, huɗu a mafi yawa: ra’ayoyin aikin kansa, sannan na ko’ina, sannan abin da kake yawan nema a can. Dannawa ɗaya na sa buƙatarsa a cikin akwatin, don ka canza ta kafin ta tafi.",
+  "starters.theirs": "Ra’ayoyin ƙungiyarka suna bayyana muddin ba ka da naka.",
+  "starters.everywhere": "Ko’ina",
+  "starters.everywhere.text": "A kowane aiki, bayan na aikin kansa.",
+  "starters.first": "A wannan aiki, kafin na ko’ina.",
+  "starters.none": "Babu tukuna",
+  "starters.words": "Abin da ake nunawa",
+  "starters.request": "Buƙata",
+  "starters.up": "Matsa “{title}” sama",
+  "starters.down": "Matsa “{title}” ƙasa",
+  "starters.remove": "Cire “{title}”",
+  "starters.add": "Ƙara ra’ayi",
+  "starters.noticed": "Abin da kake yawan nema a nan",
+  "starters.noticed.text": "Buƙatun da aka yi sau uku ko fiye a aikin da kake ciki, da gudanansa, ana nuna su bayan naka.",
+  "starters.noticed.none": "Babu komai tukuna.",
+  "starters.keep": "Ajiye",
+  "starters.hide": "Ɓoye",
+  "starters.unhide": "Sake nuna waɗanda aka ɓoye"
+}

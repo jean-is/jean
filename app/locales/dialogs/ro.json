@@ -95,6 +95,8 @@
   "skills.addOne": "Adăugați o abilitate",
   "cap.flows.hint": "Cereți de două ori ceva care are mai mulți pași.",
   "cap.flows.text": "Pașii unei sarcini pe care o repetați, desenați lângă conversație: vedeți-i, schimbați-i și rulați-i din nou manual sau după un program. Orice sarcină poate fi văzută și ca flux.",
+  "cap.starters.hint": "Cereți de trei ori același fel de lucru, după ce Abilitățile au fost găsite sau refuzate.",
+  "cap.starters.text": "Cererile pe care le faceți des, sub caseta unei sarcini noi, la un clic distanță: ale dvs., valabile peste tot sau într-un singur proiect, și ce cereți des. Le schimbați în Setări.",
   "skills.directory": "Abilități de adăugat",
   "cap.web-search.text": "{name} caută pe web când o întrebare are nevoie de fapte care lipsesc și arată de unde vine fiecare răspuns.",
   "cap.browser.hint": "Deschideți trei linkuri din răspunsuri.",

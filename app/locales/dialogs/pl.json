@@ -96,6 +96,8 @@
   "skills.addOne": "Dodaj umiejętność",
   "cap.flows.hint": "Poproś dwa razy o coś, co wymaga kilku kroków.",
   "cap.flows.text": "Kroki zadania, które powtarzasz, narysowane obok rozmowy: oglądaj je, zmieniaj i uruchamiaj ponownie ręcznie lub według harmonogramu. Każde zadanie można też zobaczyć jako przepływ.",
+  "cap.starters.hint": "Poproś trzy razy o ten sam rodzaj rzeczy, gdy Umiejętności zostaną odkryte lub odrzucone.",
+  "cap.starters.text": "Prośby, które często powtarzasz, pod polem nowego zadania, o jedno kliknięcie: twoje własne, wszędzie lub w jednym projekcie, i to, o co często prosisz. Zmieniasz je w Ustawieniach.",
   "skills.directory": "Umiejętności do dodania",
   "cap.web-search.text": "Gdy do odpowiedzi brakuje faktów, są wyszukiwane w sieci, a przy każdej odpowiedzi widać, skąd pochodzi.",
   "cap.browser.hint": "Otwórz trzy linki z odpowiedzi.",

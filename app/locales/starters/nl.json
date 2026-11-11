@@ -1,0 +1,20 @@
+{
+  "starters.text": "Onder het vak bij een nieuwe taak, hooguit vier: eerst de eigen ideeën van het project, dan die voor overal, dan wat je daar vaak vraagt. Een klik zet het verzoek ervan in het vak, om aan te passen voordat het verstuurd wordt.",
+  "starters.theirs": "De ideeën van je organisatie staan er zolang je zelf geen ideeën hebt.",
+  "starters.everywhere": "Overal",
+  "starters.everywhere.text": "In elk project, na de eigen ideeën van het project.",
+  "starters.first": "In dit project, vóór die voor overal.",
+  "starters.none": "Nog geen",
+  "starters.words": "Getoond als",
+  "starters.request": "Verzoek",
+  "starters.up": "‘{title}’ omhoog",
+  "starters.down": "‘{title}’ omlaag",
+  "starters.remove": "‘{title}’ verwijderen",
+  "starters.add": "Idee toevoegen",
+  "starters.noticed": "Wat je hier vaak vraagt",
+  "starters.noticed.text": "Verzoeken die drie keer of vaker zijn gedaan in het project waar je bent, en de stromen ervan, getoond na je eigen ideeën.",
+  "starters.noticed.none": "Nog niets.",
+  "starters.keep": "Bewaren",
+  "starters.hide": "Verbergen",
+  "starters.unhide": "Verborgen verzoeken weer tonen"
+}

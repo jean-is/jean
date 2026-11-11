@@ -94,6 +94,8 @@
   "skills.addOne": "Készség hozzáadása",
   "cap.flows.hint": "Kérj kétszer valamit, ami több lépésből áll.",
   "cap.flows.text": "Egy ismételt feladat lépései a beszélgetés mellé rajzolva: nézd meg, módosítsd és futtasd újra őket kézzel vagy ütemezve. Bármely feladat megjeleníthető folyamatként is.",
+  "cap.starters.hint": "Kérd háromszor ugyanazt a fajta dolgot, miután a Készségeket megtaláltad vagy elutasítottad.",
+  "cap.starters.text": "A gyakori kéréseid egy új feladat mezője alatt, egy kattintásnyira: a sajátjaid, mindenhol vagy egy projektben, és amit gyakran kérsz. A Beállításokban módosíthatod őket.",
   "skills.directory": "Hozzáadható készségek",
   "cap.web-search.text": "{name} a weben keres, ha egy kérdéshez hiányzó tények kellenek, és megmutatja, honnan származik minden válasz.",
   "cap.browser.hint": "Nyiss meg három linket válaszokból.",

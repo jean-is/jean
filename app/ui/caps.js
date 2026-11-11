@@ -34,6 +34,7 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   skills: () => import('../caps/skills/skills.js'),
   routines: () => import('../caps/routines/routines.js'),
   flows: () => import('../caps/flows/flows.js'),
+  starters: () => import('../caps/starters/starters.js'),
   made: () => import('../caps/made/made.js'),
   documents: () => import('../caps/documents/documents.js'),
   tables: () => import('../caps/tables/tables.js'),

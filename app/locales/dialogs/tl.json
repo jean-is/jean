@@ -94,6 +94,8 @@
   "skills.addOne": "Magdagdag ng kasanayan",
   "cap.flows.hint": "Humiling nang dalawang beses ng bagay na ilang hakbang ang kailangan.",
   "cap.flows.text": "Ang mga hakbang ng gawaing inuulit mo, nakaguhit sa tabi ng usapan: tingnan, baguhin, at patakbuhin ulit nang mano-mano o ayon sa iskedyul. Anumang gawain ay makikita rin bilang daloy.",
+  "cap.starters.hint": "Humingi ng parehong uri ng bagay nang tatlong beses, kapag natuklasan na o tinanggihan ang Mga kasanayan.",
+  "cap.starters.text": "Mga kahilingang madalas mong gawin, sa ilalim ng kahon sa bagong gawain, isang click na lang: ang sarili mo, para kahit saan o para sa isang proyekto, at ang madalas mong hilingin. Binabago mo ang mga ito sa Mga setting.",
   "skills.directory": "Mga kasanayang maidadagdag",
   "cap.web-search.text": "Naghahanap ang {name} sa web kapag kailangan ng tanong ang mga katotohanang wala pa, at ipinapakita kung saan galing ang bawat sagot.",
   "cap.browser.hint": "Magbukas ng tatlong link mula sa mga sagot.",

@@ -94,6 +94,8 @@
   "skills.addOne": "Add a skill",
   "cap.flows.hint": "Ask twice for something that takes several steps.",
   "cap.flows.text": "The steps of a task you repeat, drawn beside the conversation: see them, change them, and run them again by hand or on a schedule. Any task can be seen as a flow too.",
+  "cap.starters.hint": "Ask for the same kind of thing three times, once Skills is found or turned down.",
+  "cap.starters.text": "Requests you make often, under the box on a new task, a click away: your own, for everywhere or for one project, and what you often ask. You change them in Settings.",
   "skills.directory": "Skills to add",
   "cap.web-search.text": "{name} looks things up on the web when a question needs facts it doesn’t have, and shows where each answer comes from.",
   "cap.browser.hint": "Open three links from answers.",

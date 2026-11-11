@@ -119,7 +119,7 @@ async function ask(key) {
   if (app.current.value?.records.length) await turnPage(newConversation)
   app.attachments.value = []
   app.draft.value = ''
-  if (key === 'sample') return idea('sample')
+  if (key === 'sample') return idea({ key })
   await skillFor(key)
   app.draft.value = document.querySelector(`.home-tile [data-try="${key}"]`)?.closest('.home-tile')?.querySelector('.home-request')?.textContent || ''
   focusComposer()

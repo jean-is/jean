@@ -1,0 +1,20 @@
+{
+  "starters.text": "تحت مربع الرسالة في مهمة جديدة، أربع على الأكثر: أفكار المشروع نفسه، ثم الأفكار التي تظهر في كل مكان، ثم ما تطلبه كثيرًا هناك. تضع النقرة طلب الفكرة في المربع، لتغيّره قبل أن يُرسَل.",
+  "starters.theirs": "تظهر أفكار مؤسستك ما دامت ليست لديك أفكار خاصة بك.",
+  "starters.everywhere": "في كل مكان",
+  "starters.everywhere.text": "في كل مشروع، بعد أفكار المشروع نفسه.",
+  "starters.first": "في هذا المشروع، قبل الأفكار التي تظهر في كل مكان.",
+  "starters.none": "لا أفكار بعد",
+  "starters.words": "النص الظاهر",
+  "starters.request": "الطلب",
+  "starters.up": "نقل «{title}» إلى الأعلى",
+  "starters.down": "نقل «{title}» إلى الأسفل",
+  "starters.remove": "إزالة «{title}»",
+  "starters.add": "إضافة فكرة",
+  "starters.noticed": "ما تطلبه كثيرًا هنا",
+  "starters.noticed.text": "طلبات تكررت ثلاث مرات أو أكثر في المشروع الذي أنت فيه، وتدفقاته، تظهر بعد أفكارك.",
+  "starters.noticed.none": "لا شيء بعد.",
+  "starters.keep": "إبقاء",
+  "starters.hide": "إخفاء",
+  "starters.unhide": "إظهار المخفي من جديد"
+}

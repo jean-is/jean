@@ -1,0 +1,20 @@
+{
+  "starters.text": "Ní abẹ́ àpótí lórí iṣẹ́ tuntun, kò ju mẹ́rin lọ: àwọn èrò iṣẹ́ àkànṣe náà fúnra rẹ̀, lẹ́yìn náà àwọn ti ibi gbogbo, lẹ́yìn náà ohun tí ẹ máa ń béèrè léraléra nínú iṣẹ́ àkànṣe náà. Títẹ̀ kan máa fi ìbéèrè èrò náà sínú àpótí, kí ẹ lè yí i padà kí ó tó lọ.",
+  "starters.theirs": "Àwọn èrò àjọ yín ń hàn títí ẹ ó fi ní tiyín.",
+  "starters.everywhere": "Níbi gbogbo",
+  "starters.everywhere.text": "Nínú gbogbo iṣẹ́ àkànṣe, lẹ́yìn àwọn èrò iṣẹ́ àkànṣe náà fúnra rẹ̀.",
+  "starters.first": "Nínú iṣẹ́ àkànṣe yìí, ṣáájú àwọn ti ibi gbogbo.",
+  "starters.none": "Kò sí síbẹ̀",
+  "starters.words": "Bí ó ṣe ń hàn",
+  "starters.request": "Ìbéèrè",
+  "starters.up": "Gbé “{title}” sókè",
+  "starters.down": "Gbé “{title}” sísàlẹ̀",
+  "starters.remove": "Yọ “{title}” kúrò",
+  "starters.add": "Fi èrò kan kún un",
+  "starters.noticed": "Ohun tí ẹ máa ń béèrè léraléra níbí",
+  "starters.noticed.text": "Àwọn ìbéèrè tí a ti ṣe ní ẹ̀ẹ̀mẹta tàbí jù bẹ́ẹ̀ lọ nínú iṣẹ́ àkànṣe tí ẹ wà, àti àwọn ìṣàn rẹ̀, tí ń hàn lẹ́yìn tiyín.",
+  "starters.noticed.none": "Kò sí nǹkan kan síbẹ̀.",
+  "starters.keep": "Gbà á",
+  "starters.hide": "Fi pamọ́",
+  "starters.unhide": "Tún fi àwọn tí a fi pamọ́ hàn"
+}

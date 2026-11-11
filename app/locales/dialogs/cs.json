@@ -96,6 +96,8 @@
   "skills.addOne": "Přidat dovednost",
   "cap.flows.hint": "Požádejte dvakrát o něco, co má několik kroků.",
   "cap.flows.text": "Kroky úkolu, který opakujete, nakreslené vedle konverzace: prohlédněte si je, změňte je a spusťte je znovu ručně nebo podle plánu. Každý úkol lze zobrazit i jako postup.",
+  "cap.starters.hint": "Požádejte třikrát o stejný druh věci, až objevíte nebo odmítnete Dovednosti.",
+  "cap.starters.text": "Požadavky, které často zadáváte, pod polem zprávy nového úkolu, na jedno kliknutí: vaše vlastní, všude nebo v jednom projektu, a to, o co často žádáte. Měníte je v Nastavení.",
   "skills.directory": "Dovednosti k přidání",
   "cap.web-search.text": "{name} vyhledává na webu, když otázka potřebuje fakta, která chybí, a ukazuje, odkud každá odpověď pochází.",
   "cap.browser.hint": "Otevřete tři odkazy z odpovědí.",

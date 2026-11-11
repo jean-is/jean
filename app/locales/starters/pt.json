@@ -1,0 +1,20 @@
+{
+  "starters.text": "Debaixo da caixa de uma nova tarefa, quatro no máximo: as ideias do próprio projeto, depois as de todo o lado, depois o que lá pedes muitas vezes. Um clique põe o pedido na caixa, para o mudares antes de seguir.",
+  "starters.theirs": "As ideias da tua organização aparecem enquanto não tiveres nenhuma tua.",
+  "starters.everywhere": "Em todo o lado",
+  "starters.everywhere.text": "Em todos os projetos, depois das do próprio projeto.",
+  "starters.first": "Neste projeto, antes das de todo o lado.",
+  "starters.none": "Nenhuma ainda",
+  "starters.words": "Mostrada como",
+  "starters.request": "Pedido",
+  "starters.up": "Mover «{title}» para cima",
+  "starters.down": "Mover «{title}» para baixo",
+  "starters.remove": "Remover «{title}»",
+  "starters.add": "Adicionar uma ideia",
+  "starters.noticed": "O que pedes muitas vezes aqui",
+  "starters.noticed.text": "Pedidos feitos três vezes ou mais no projeto onde estás, e os seus fluxos, mostrados depois das tuas ideias.",
+  "starters.noticed.none": "Nada ainda.",
+  "starters.keep": "Guardar",
+  "starters.hide": "Ocultar",
+  "starters.unhide": "Mostrar de novo os ocultados"
+}

@@ -61,6 +61,9 @@ export const SCHEMA = {
   connections: [{ 'id!': 'text', 'name!': 'text', 'url!': 'address', auth: new Set(['none', 'key', 'oauth', 'oidc']), servers: ['address'], projects: ['text'], gateway: 'flag' }],
   directory: [{ 'id!': 'text', '*': 'any' }],
   skills: { sources: ['address'], only: 'flag' },
+  // The ideas under the box in place of Jean's (D743): each one's words, in other languages as a skill's are (D222), and a ready-made skill
+  // it brings; `only`, theirs alone, which no one changes.
+  starters: { list: [{ 'title!': 'text', 'prompt!': 'text', skill: 'text', ...Object.fromEntries(LOCALES.flatMap((lang) => [[`title-${lang}`, 'text'], [`prompt-${lang}`, 'text']])) }], only: 'flag' },
   extensions: { ready: ['address'] },
   // on: the sources on and no others, locked; deny: those never on, `brain` the brain's own search.
   searches: { on: [new Set(SEARCHES)], deny: [new Set([...SEARCHES, 'brain'])] },

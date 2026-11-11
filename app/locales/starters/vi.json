@@ -1,0 +1,20 @@
+{
+  "starters.text": "Dưới ô tin nhắn trong nhiệm vụ mới, tối đa bốn: ý tưởng riêng của dự án, rồi đến ý tưởng cho mọi nơi, rồi những gì bạn hay hỏi trong dự án đó. Một cú nhấp đưa yêu cầu của ý tưởng vào ô, để bạn sửa trước khi gửi.",
+  "starters.theirs": "Ý tưởng của tổ chức của bạn được hiển thị khi bạn chưa có ý tưởng riêng.",
+  "starters.everywhere": "Mọi nơi",
+  "starters.everywhere.text": "Trong mọi dự án, sau ý tưởng riêng của dự án.",
+  "starters.first": "Trong dự án này, trước ý tưởng cho mọi nơi.",
+  "starters.none": "Chưa có",
+  "starters.words": "Hiển thị là",
+  "starters.request": "Yêu cầu",
+  "starters.up": "Chuyển “{title}” lên",
+  "starters.down": "Chuyển “{title}” xuống",
+  "starters.remove": "Gỡ “{title}”",
+  "starters.add": "Thêm ý tưởng",
+  "starters.noticed": "Những gì bạn hay hỏi ở đây",
+  "starters.noticed.text": "Các yêu cầu được đưa ra từ ba lần trở lên trong dự án bạn đang ở, cùng các luồng của dự án, hiển thị sau ý tưởng của riêng bạn.",
+  "starters.noticed.none": "Chưa có gì.",
+  "starters.keep": "Giữ",
+  "starters.hide": "Ẩn",
+  "starters.unhide": "Hiện lại những mục đã ẩn"
+}

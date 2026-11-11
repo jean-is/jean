@@ -535,6 +535,313 @@
       },
       "additionalProperties": false
     },
+    "starters": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "prompt": {
+                "type": "string"
+              },
+              "skill": {
+                "type": "string"
+              },
+              "title-am": {
+                "type": "string"
+              },
+              "prompt-am": {
+                "type": "string"
+              },
+              "title-ar": {
+                "type": "string"
+              },
+              "prompt-ar": {
+                "type": "string"
+              },
+              "title-bg": {
+                "type": "string"
+              },
+              "prompt-bg": {
+                "type": "string"
+              },
+              "title-bn": {
+                "type": "string"
+              },
+              "prompt-bn": {
+                "type": "string"
+              },
+              "title-br": {
+                "type": "string"
+              },
+              "prompt-br": {
+                "type": "string"
+              },
+              "title-co": {
+                "type": "string"
+              },
+              "prompt-co": {
+                "type": "string"
+              },
+              "title-cs": {
+                "type": "string"
+              },
+              "prompt-cs": {
+                "type": "string"
+              },
+              "title-da": {
+                "type": "string"
+              },
+              "prompt-da": {
+                "type": "string"
+              },
+              "title-de": {
+                "type": "string"
+              },
+              "prompt-de": {
+                "type": "string"
+              },
+              "title-el": {
+                "type": "string"
+              },
+              "prompt-el": {
+                "type": "string"
+              },
+              "title-en": {
+                "type": "string"
+              },
+              "prompt-en": {
+                "type": "string"
+              },
+              "title-es": {
+                "type": "string"
+              },
+              "prompt-es": {
+                "type": "string"
+              },
+              "title-fa": {
+                "type": "string"
+              },
+              "prompt-fa": {
+                "type": "string"
+              },
+              "title-fi": {
+                "type": "string"
+              },
+              "prompt-fi": {
+                "type": "string"
+              },
+              "title-fr": {
+                "type": "string"
+              },
+              "prompt-fr": {
+                "type": "string"
+              },
+              "title-fr-CA": {
+                "type": "string"
+              },
+              "prompt-fr-CA": {
+                "type": "string"
+              },
+              "title-ha": {
+                "type": "string"
+              },
+              "prompt-ha": {
+                "type": "string"
+              },
+              "title-he": {
+                "type": "string"
+              },
+              "prompt-he": {
+                "type": "string"
+              },
+              "title-hi": {
+                "type": "string"
+              },
+              "prompt-hi": {
+                "type": "string"
+              },
+              "title-hr": {
+                "type": "string"
+              },
+              "prompt-hr": {
+                "type": "string"
+              },
+              "title-hu": {
+                "type": "string"
+              },
+              "prompt-hu": {
+                "type": "string"
+              },
+              "title-id": {
+                "type": "string"
+              },
+              "prompt-id": {
+                "type": "string"
+              },
+              "title-it": {
+                "type": "string"
+              },
+              "prompt-it": {
+                "type": "string"
+              },
+              "title-ja": {
+                "type": "string"
+              },
+              "prompt-ja": {
+                "type": "string"
+              },
+              "title-ko": {
+                "type": "string"
+              },
+              "prompt-ko": {
+                "type": "string"
+              },
+              "title-mr": {
+                "type": "string"
+              },
+              "prompt-mr": {
+                "type": "string"
+              },
+              "title-ms": {
+                "type": "string"
+              },
+              "prompt-ms": {
+                "type": "string"
+              },
+              "title-nl": {
+                "type": "string"
+              },
+              "prompt-nl": {
+                "type": "string"
+              },
+              "title-pl": {
+                "type": "string"
+              },
+              "prompt-pl": {
+                "type": "string"
+              },
+              "title-pt": {
+                "type": "string"
+              },
+              "prompt-pt": {
+                "type": "string"
+              },
+              "title-ro": {
+                "type": "string"
+              },
+              "prompt-ro": {
+                "type": "string"
+              },
+              "title-ru": {
+                "type": "string"
+              },
+              "prompt-ru": {
+                "type": "string"
+              },
+              "title-sk": {
+                "type": "string"
+              },
+              "prompt-sk": {
+                "type": "string"
+              },
+              "title-sv": {
+                "type": "string"
+              },
+              "prompt-sv": {
+                "type": "string"
+              },
+              "title-sw": {
+                "type": "string"
+              },
+              "prompt-sw": {
+                "type": "string"
+              },
+              "title-ta": {
+                "type": "string"
+              },
+              "prompt-ta": {
+                "type": "string"
+              },
+              "title-te": {
+                "type": "string"
+              },
+              "prompt-te": {
+                "type": "string"
+              },
+              "title-th": {
+                "type": "string"
+              },
+              "prompt-th": {
+                "type": "string"
+              },
+              "title-tl": {
+                "type": "string"
+              },
+              "prompt-tl": {
+                "type": "string"
+              },
+              "title-tr": {
+                "type": "string"
+              },
+              "prompt-tr": {
+                "type": "string"
+              },
+              "title-uk": {
+                "type": "string"
+              },
+              "prompt-uk": {
+                "type": "string"
+              },
+              "title-ur": {
+                "type": "string"
+              },
+              "prompt-ur": {
+                "type": "string"
+              },
+              "title-vi": {
+                "type": "string"
+              },
+              "prompt-vi": {
+                "type": "string"
+              },
+              "title-yo": {
+                "type": "string"
+              },
+              "prompt-yo": {
+                "type": "string"
+              },
+              "title-zh-Hans": {
+                "type": "string"
+              },
+              "prompt-zh-Hans": {
+                "type": "string"
+              },
+              "title-zh-Hant": {
+                "type": "string"
+              },
+              "prompt-zh-Hant": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "title",
+              "prompt"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "only": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
     "extensions": {
       "type": "object",
       "properties": {
@@ -1841,6 +2148,610 @@
                           "type": "null"
                         }
                       ]
+                    }
+                  },
+                  "only": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              },
+              "starters": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "list": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {
+                        "title": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "skill": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-am": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-am": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-ar": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-ar": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-bg": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-bg": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-bn": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-bn": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-br": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-br": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-co": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-co": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-cs": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-cs": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-da": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-da": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-de": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-de": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-el": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-el": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-en": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-en": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-es": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-es": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-fa": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-fa": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-fi": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-fi": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-fr": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-fr": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-fr-CA": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-fr-CA": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-ha": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-ha": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-he": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-he": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-hi": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-hi": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-hr": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-hr": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-hu": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-hu": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-it": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-it": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-ja": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-ja": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-ko": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-ko": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-mr": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-mr": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-ms": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-ms": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-nl": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-nl": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-pl": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-pl": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-pt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-pt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-ro": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-ro": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-ru": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-ru": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-sk": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-sk": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-sv": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-sv": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-sw": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-sw": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-ta": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-ta": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-te": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-te": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-th": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-th": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-tl": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-tl": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-tr": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-tr": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-uk": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-uk": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-ur": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-ur": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-vi": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-vi": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-yo": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-yo": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-zh-Hans": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-zh-Hans": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-zh-Hant": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-zh-Hant": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "title",
+                        "prompt"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "only": {

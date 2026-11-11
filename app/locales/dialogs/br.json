@@ -97,6 +97,8 @@
   "skills.addOne": "Ouzhpennañ ur varregezh",
   "cap.flows.hint": "Goulennit div wech un dra a c’houlenn meur a bazenn.",
   "cap.flows.text": "Pazennoù un drevell a adrit, treset e-kichen ar gaozeadenn : gwelit anezho, kemmit anezho, ha lañsit anezho en-dro gant an dorn pe hervez un deiziadur. Forzh peseurt trevell a c’haller gwelout evel ur red-labour ivez.",
+  "cap.starters.hint": "Goulennit an hevelep seurt tra teir gwech, goude bezañ dizoloet pe nac’het Barregezhioù.",
+  "cap.starters.text": "Ar goulennoù a rit alies, dindan ar voest kemennadenn en un drevell nevez, war-bouez ur c’hlik : ho re deoc’h, e pep lec’h pe en ur raktres, hag ar pezh a c’houlennit alies. O c’hemmañ a rit en Arventennoù.",
   "skills.directory": "Barregezhioù da ouzhpennañ",
   "cap.web-search.text": "{name} a glask war ar web pa vez ezhomm eus fedoù n’en deus ket evit ur goulenn, hag a ziskouez a-belec’h e teu pep respont.",
   "cap.browser.hint": "Digorit tri liamm eus ar respontoù.",

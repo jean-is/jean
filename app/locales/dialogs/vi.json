@@ -93,6 +93,8 @@
   "skills.addOne": "Thêm kỹ năng",
   "cap.flows.hint": "Yêu cầu hai lần một việc cần nhiều bước.",
   "cap.flows.text": "Các bước của một việc bạn lặp lại, được vẽ bên cạnh cuộc trò chuyện: xem, thay đổi và chạy lại bằng tay hoặc theo lịch. Việc nào cũng có thể xem dạng luồng.",
+  "cap.starters.hint": "Yêu cầu cùng một kiểu việc ba lần, sau khi đã khám phá hoặc từ chối Kỹ năng.",
+  "cap.starters.text": "Những yêu cầu bạn hay đưa ra, nằm dưới ô tin nhắn trong nhiệm vụ mới, chỉ cần một cú nhấp: của riêng bạn, cho mọi nơi hoặc cho một dự án, và những gì bạn hay hỏi. Bạn có thể thay đổi chúng trong Cài đặt.",
   "skills.directory": "Kỹ năng có thể thêm",
   "cap.web-search.text": "{name} tìm trên web khi câu hỏi cần những thông tin chưa có, và cho biết mỗi câu trả lời đến từ đâu.",
   "cap.browser.hint": "Mở ba liên kết từ câu trả lời.",

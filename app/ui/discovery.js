@@ -31,7 +31,7 @@ const screened = Boolean(navigator.mediaDevices?.getDisplayMedia) // where a scr
 const reflexive = !handheld() // where Kev runs: a computer, never a phone or a tablet (D660)
 const paired = Boolean(serviceURL('relay', app.settings.value, app.policy)) && !app.policy.child && !app.policy.signIn // where a relay carries what a person's devices send each other (D700)
 /** What Jean can do, in the order the house lights up (the collection page). */
-export const CATALOGUE = ['files', 'made', 'documents', 'tables', 'designs', 'computer', ...(reflexive ? ['reflexes'] : []), 'memory', 'feedback', 'find', ...(gpu ? ['meaning'] : []), 'projects', 'folders', 'skills', 'routines', 'flows', 'web-search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'double-check', 'since', ...(told ? ['notifications'] : []), 'names', 'live', ...(filmed ? ['camera'] : []), ...(screened ? ['screen'] : []), 'natural-voice', 'backup', ...(shared ? ['share'] : []), ...(folders ? ['sync'] : []), ...(paired ? ['devices'] : []), ...(paired && shared ? ['people'] : []), ...(paired && shared ? ['together'] : []), 'lock', 'brain-local', 'extensions']
+export const CATALOGUE = ['files', 'made', 'documents', 'tables', 'designs', 'computer', ...(reflexive ? ['reflexes'] : []), 'memory', 'feedback', 'find', ...(gpu ? ['meaning'] : []), 'projects', 'folders', 'skills', 'routines', 'flows', 'starters', 'web-search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'double-check', 'since', ...(told ? ['notifications'] : []), 'names', 'live', ...(filmed ? ['camera'] : []), ...(screened ? ['screen'] : []), 'natural-voice', 'backup', ...(shared ? ['share'] : []), ...(folders ? ['sync'] : []), ...(paired ? ['devices'] : []), ...(paired && shared ? ['people'] : []), ...(paired && shared ? ['together'] : []), 'lock', 'brain-local', 'extensions']
 
 /** What the brain may offer, described for it in English, in a few words: it goes with every request. */
 const OFFERS = /** @type {Record<string, string>} */ ({
@@ -48,6 +48,7 @@ const OFFERS = /** @type {Record<string, string>} */ ({
   skills: 'saving how a task the user repeats or describes is done, as a skill',
   routines: 'doing a task on a schedule, once later like a reminder, or each time a file comes',
   flows: 'the steps of a task the user repeats, drawn and run again',
+  starters: 'keeping requests the user makes often under the box of a new task, a click away, in place of typing them again',
   'web-search': 'searching the web for current or specific facts',
   browser: 'showing a web page beside the conversation',
   pictures: 'making or changing real pictures and short films, when the user asks for a picture, drawing or illustration, in place of an SVG you draw unless they ask for one',
@@ -179,7 +180,7 @@ export async function begin(id) {
   if (id === 'camera') await (await import('../caps/camera/camera.js')).open()
   if (id === 'find') app.dialog.value = 'find'
   if (id === 'since') await (await import('../caps/since/since.js')).make()
-  if ((id === 'lock' || id === 'devices' || id === 'people') && app.dialog.peek() !== 'settings') (await import('./dialogs.js')).openSettings(id === 'lock' ? 'privacy/lock' : id)
+  if ((id === 'lock' || id === 'devices' || id === 'people' || id === 'starters') && app.dialog.peek() !== 'settings') (await import('./dialogs.js')).openSettings(id === 'lock' ? 'privacy/lock' : id)
   if (id === 'browser') (await import('../caps/browser/browser.js')).show()
   if (id === 'flows') (await import('../caps/flows/flows.js')).here()
   if (id === 'machine') (await import('../caps/machine/machine.js')).show()
@@ -260,6 +261,8 @@ effect(() => {
   if (everywhere.value >= LOCKABLE || (effective.value.settings.connections ?? []).length) offerOnce('lock')
 })
 if (app.policy.lock === 'required') unlock('lock')
+// The organisation's ideas show through Ideas (D743).
+if (app.policy.starters) unlock('starters')
 // Search is there from the start, the way around the app besides the drawer (RGAA 12.1, D5).
 AT_START.forEach(unlock)
 effect(() => {
@@ -456,6 +459,8 @@ export async function followUps(answer, records, { id, path }) {
     else if (skills) ids.push('skill')
     else offerOnce('skills', true)
   }
+  // Unless Skills is offered for it, the kind could wait under the box, a click away (D743).
+  if (kind && app.offer.peek()?.id !== 'skills') offerOnce('starters', true)
   if (kind && habitual(kind.times) && !isDenied('routines')) {
     const routines = loaded.value.has('routines') ? await import('../caps/routines/routines.js') : null
     if (!routines) offerOnce('routines', true)

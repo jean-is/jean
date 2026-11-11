@@ -95,6 +95,8 @@
   "skills.addOne": "Adicionar uma competência",
   "cap.flows.hint": "Pede duas vezes algo que leve vários passos.",
   "cap.flows.text": "Os passos de uma tarefa que repetes, desenhados ao lado da conversa: vê-os, muda-os e volta a executá-los à mão ou num horário. Qualquer tarefa também pode ser vista como fluxo.",
+  "cap.starters.hint": "Pede o mesmo tipo de coisa três vezes, depois de encontrares ou recusares as Competências.",
+  "cap.starters.text": "Os pedidos que fazes muitas vezes, debaixo da caixa de uma nova tarefa, à distância de um clique: os teus, para todo o lado ou para um projeto, e o que pedes muitas vezes. Podes mudá-los nas Definições.",
   "skills.directory": "Competências para adicionar",
   "cap.web-search.text": "{name} procura na web quando uma pergunta precisa de factos que não tem, e mostra de onde vem cada resposta.",
   "cap.browser.hint": "Abre três links das respostas.",

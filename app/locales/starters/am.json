@@ -1,0 +1,20 @@
+{
+  "starters.text": "በአዲስ ተግባር ከመልእክት ሳጥኑ ስር፣ ቢበዛ አራት፦ የፕሮጀክቱ የራሱ ሐሳቦች፣ ከዚያ ለሁሉም ቦታ የሆኑት፣ ከዚያ እዚያ ብዙ ጊዜ የሚጠይቁት። አንድ ጠቅታ ጥያቄውን ወደ ሳጥኑ ያስገባዋል፤ ከመላኩ በፊት ሊቀይሩት ይችላሉ።",
+  "starters.theirs": "የራስዎ ሐሳቦች እስከሌሉዎት ድረስ የድርጅትዎ ሐሳቦች ይታያሉ።",
+  "starters.everywhere": "በሁሉም ቦታ",
+  "starters.everywhere.text": "በእያንዳንዱ ፕሮጀክት፣ ከፕሮጀክቱ የራሱ ሐሳቦች በኋላ።",
+  "starters.first": "በዚህ ፕሮጀክት፣ ለሁሉም ቦታ ከሆኑት በፊት።",
+  "starters.none": "እስካሁን የለም",
+  "starters.words": "የሚታየው ጽሑፍ",
+  "starters.request": "ጥያቄ",
+  "starters.up": "ወደ ላይ ያንቀሳቅሱ፦ “{title}”",
+  "starters.down": "ወደ ታች ያንቀሳቅሱ፦ “{title}”",
+  "starters.remove": "ያስወግዱ፦ “{title}”",
+  "starters.add": "ሐሳብ ያክሉ",
+  "starters.noticed": "እዚህ ብዙ ጊዜ የሚጠይቁት",
+  "starters.noticed.text": "ባሉበት ፕሮጀክት ውስጥ ሦስት ጊዜ ወይም ከዚያ በላይ የቀረቡ ጥያቄዎችና የፕሮጀክቱ ፍሰቶች፣ ከራስዎ ሐሳቦች በኋላ ይታያሉ።",
+  "starters.noticed.none": "እስካሁን ምንም የለም።",
+  "starters.keep": "ያቆዩ",
+  "starters.hide": "ይደብቁ",
+  "starters.unhide": "የተደበቁትን እንደገና ያሳዩ"
+}

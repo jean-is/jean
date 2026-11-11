@@ -1,0 +1,20 @@
+{
+  "starters.text": "Sous la zone de saisie d’une nouvelle tâche, quatre au plus : les idées du projet, puis celles de partout, puis ce que vous y demandez souvent. Un clic met sa demande dans la zone, à changer avant l’envoi.",
+  "starters.theirs": "Les idées de votre organisation s’affichent tant que vous n’en avez aucune.",
+  "starters.everywhere": "Partout",
+  "starters.everywhere.text": "Dans tous les projets, après celles du projet.",
+  "starters.first": "Dans ce projet, avant celles de partout.",
+  "starters.none": "Aucune pour l’instant",
+  "starters.words": "Affichée comme",
+  "starters.request": "Demande",
+  "starters.up": "Monter « {title} »",
+  "starters.down": "Descendre « {title} »",
+  "starters.remove": "Retirer « {title} »",
+  "starters.add": "Ajouter une idée",
+  "starters.noticed": "Ce que vous demandez souvent ici",
+  "starters.noticed.text": "Les demandes faites trois fois ou plus dans le projet où vous êtes, et ses flux, affichées après les vôtres.",
+  "starters.noticed.none": "Rien pour l’instant.",
+  "starters.keep": "Garder",
+  "starters.hide": "Masquer",
+  "starters.unhide": "Afficher de nouveau celles masquées"
+}

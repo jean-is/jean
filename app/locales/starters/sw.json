@@ -1,0 +1,20 @@
+{
+  "starters.text": "Chini ya kisanduku kwenye kazi mpya, yasiyozidi manne: mawazo ya mradi wenyewe, kisha yale ya kila mahali, kisha yale unayoomba mara nyingi katika mradi huo. Mbofyo mmoja huweka ombi lake kwenye kisanduku, ili ulibadilishe kabla halijatumwa.",
+  "starters.theirs": "Mawazo ya shirika lako huonyeshwa wakati huna mawazo yako mwenyewe.",
+  "starters.everywhere": "Kila mahali",
+  "starters.everywhere.text": "Katika kila mradi, baada ya yale ya mradi wenyewe.",
+  "starters.first": "Katika mradi huu, kabla ya yale ya kila mahali.",
+  "starters.none": "Bado hakuna",
+  "starters.words": "Huonyeshwa kama",
+  "starters.request": "Ombi",
+  "starters.up": "Hamisha “{title}” juu",
+  "starters.down": "Hamisha “{title}” chini",
+  "starters.remove": "Ondoa “{title}”",
+  "starters.add": "Ongeza wazo",
+  "starters.noticed": "Unachoomba mara nyingi hapa",
+  "starters.noticed.text": "Maombi yaliyofanywa mara tatu au zaidi katika mradi ulimo, na mitiririko yake, huonyeshwa baada ya yako mwenyewe.",
+  "starters.noticed.none": "Bado hakuna kitu.",
+  "starters.keep": "Weka",
+  "starters.hide": "Ficha",
+  "starters.unhide": "Onyesha tena yaliyofichwa"
+}

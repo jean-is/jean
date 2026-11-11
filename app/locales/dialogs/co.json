@@ -95,6 +95,8 @@
   "skills.addOne": "Aghjunghje una cumpetenza",
   "cap.flows.hint": "Dumandate duie volte qualcosa chì piglia parechji passi.",
   "cap.flows.text": "I passi di un compitu ch’è vo ripetite, disegnati accantu à a cunversazione : videteli, cambiateli, è lanciateli torna à manu o secondu un calendariu. Ogni compitu si pò vede dinù cum’è un flussu.",
+  "cap.starters.hint": "Dumandate trè volte u listessu tipu di cosa, dopu avè scupertu o ricusatu Cumpetenze.",
+  "cap.starters.text": "E dumande ch’è vo fate spessu, sottu à a zona di messaghju di un compitu novu, à un clic : e vostre, per dapertuttu o per un prughjettu, è ciò ch’è vo dumandate spessu. E cambiate in i Parametri.",
   "skills.directory": "Cumpetenze da aghjunghje",
   "cap.web-search.text": "{name} circa nant’à u web quandu una dumanda hà bisognu di fatti ch’ellu ùn hà, è mostra d’induve vene ogni risposta.",
   "cap.browser.hint": "Aprite trè ligami di e risposte.",

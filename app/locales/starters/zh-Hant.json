@@ -1,0 +1,20 @@
+{
+  "starters.text": "在新任務的訊息框下方，最多四個：先是專案自己的點子，然後是適用於所有地方的，再來是你在這個專案裡常問的。按一下，點子的請求就會放進訊息框，送出前還可以修改。",
+  "starters.theirs": "你還沒有自己的點子時，會顯示你的組織的點子。",
+  "starters.everywhere": "所有地方",
+  "starters.everywhere.text": "在每個專案中，排在專案自己的點子之後。",
+  "starters.first": "在這個專案中，排在適用於所有地方的點子之前。",
+  "starters.none": "還沒有",
+  "starters.words": "顯示為",
+  "starters.request": "請求",
+  "starters.up": "上移「{title}」",
+  "starters.down": "下移「{title}」",
+  "starters.remove": "移除「{title}」",
+  "starters.add": "新增點子",
+  "starters.noticed": "你在這裡常問的",
+  "starters.noticed.text": "在你所在的專案中提出三次或以上的請求，以及這個專案的流程，顯示在你自己的點子之後。",
+  "starters.noticed.none": "還沒有。",
+  "starters.keep": "保留",
+  "starters.hide": "隱藏",
+  "starters.unhide": "重新顯示已隱藏的"
+}
