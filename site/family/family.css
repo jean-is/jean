@@ -81,7 +81,7 @@
 .fam-steps li { counter-increment: step; display: flex; flex-direction: column; gap: 0.55rem; }
 .fam-steps li::before { content: counter(step) / ''; display: grid; place-items: center; inline-size: 2.2rem; block-size: 2.2rem; border-radius: 50%; background: var(--site-fill); color: var(--site-on-fill); font: 700 1.1rem/1 var(--display); }
 .fam-steps p, .fam-ladder span { color: var(--ink-soft); }
-.fam-steps h3, .fam-learn-head h3 { font: 700 1.4rem/1.2 var(--display); }
+.fam-steps h4, .fam-learn-head h4 { font: 700 1.4rem/1.2 var(--display); }
 .fam-learn-head { display: flex; flex-direction: column; gap: 0.75rem; max-inline-size: 46rem; }
 .fam-ladder { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.9rem; align-items: end; }
 .fam-ladder li { display: flex; flex-direction: column; gap: 0.35rem; padding: 1rem; border: 1px solid var(--line); border-radius: var(--fam-menu); background: var(--room); font-size: 0.9rem; }

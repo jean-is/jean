@@ -4,6 +4,7 @@
   "eyebrow": "Diapos et PowerPoint",
   "h1": "Vos notes en diapos, ou en fichier PowerPoint.",
   "h1.mark": "Vos notes",
+  "acts": [["notes", "Vos notes"], ["slides", "en diapos, ou en fichier PowerPoint."]],
   "lede": "Donnez à {name} vos notes, un rapport ou un tableau, et dites à qui s’adressent les diapos. Vous obtenez des diapos à feuilleter et à projeter en plein écran, dans la réponse même, ou un fichier PowerPoint à modifier, tableaux et graphiques compris. Rien à installer.",
   "cta": "Essayer avec des notes d’exemple",
   "see": "Voir comment ça s’est passé",

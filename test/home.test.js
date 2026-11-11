@@ -5,7 +5,7 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { test } from 'node:test'
 import { BRAND, PAGES } from '../app/brand.js'
-import { inLanguage, sampleAnswer, savingsAnswer, withHome } from '../site/home/page.js'
+import { inLanguage, sampleAnswer, withHome } from '../site/home/page.js'
 import { REPOSITORY, buildSite, ownSite, sitePages } from '../site/site.js'
 import { listedPages, siteFiles, titleOf, withSite } from '../scripts/seo.js'
 
@@ -31,39 +31,42 @@ test('the page never says agent, model, MCP or token, never promises a tutor, an
     assert.doesNotMatch(text, /\b(agents?|models?|MCP|tokens?|tutors?)\b/i, lang)
     assert.doesNotMatch(page, /\sstyle=|<script|\son[a-z]+=/i, lang)
     assert.doesNotMatch(page, /\{\w+\}/, `${lang}: every {param} is filled`)
-    assert.equal(page.match(/data-try="/g)?.length, 12, `${lang}: each of the twelve tiles tries an idea, its replay showing how`)
-    assert.equal(page.match(/class="home-replay" data-replay="/g)?.length, 12, `${lang}: a replay for each tile`)
-    assert.equal(page.match(/ inert>/g)?.length, 11, `${lang}: the first tile's replay shown, the others not`)
-    for (const group of ['home', 'family', 'work']) assert.equal(page.match(new RegExp(`data-for="${group}"`, 'g'))?.length, 4, `${lang}: four tiles ${group}`)
+    assert.equal(page.match(/data-try="/g)?.length, 12, `${lang}: each of the twelve tiles tries an idea`)
+    assert.equal(page.match(/class="button primary" data-try="/g)?.length, 1, `${lang}: the first tile's Try the primary one`)
     assert.ok(page.startsWith(/* html */ `<div class="home" lang="${lang}"`), lang)
     assert.equal(page.match(/<h1[ >]/g)?.length, 1, `${lang}: one heading of its own`)
-    assert.ok(page.indexOf('<h1') < page.indexOf('class="home-strip"'), `${lang}: at the top`)
+    // The promise is its outline: an act for each part of it, in the order that language says them, each on its ground, with its catch.
+    const acts = [...page.matchAll(/<section id="home-(\w+)" class="home-act is-(\w+)"/g)].map(([, act, ground]) => `${act} on ${ground}`)
+    const order = ['ja', 'ko'].includes(lang) ? ['any', 'create', 'keep'] : ['create', 'any', 'keep']
+    assert.deepEqual(acts, order.map((act) => `${act} on ${{ create: 'paper', any: 'fill', keep: 'wait' }[act]}`), `${lang}: the acts as its sentence says them, each on its ground`)
+    assert.match(page, /<h1 class="visually-hidden">/, `${lang}: the promise itself is its heading, for whoever hears or searches the page`)
+    assert.equal(page.match(/<p class="home-catch">/g)?.length, 3, `${lang}: every promise says its catch`)
+    assert.equal(page.match(/<svg class="home-wave is-\w+"/g)?.length, 3, `${lang}: a wave after each act`)
+    assert.ok(page.indexOf('<h1') < page.indexOf('class="home-act '), `${lang}: at the top`)
+    assert.ok(page.indexOf('data-turn') > page.lastIndexOf('class="home-act ') && page.match(/data-turn/g)?.length === 1, `${lang}: Your turn after the acts, once`)
     assert.ok(page.includes('<footer class="site-foot">'), `${lang}: the site’s foot`)
   }
 })
 
-test('the app links the site’s pages where they are, and every page’s foot the homepage at ?index=1, in its language', async () => {
+test('the app links the site’s pages where they are, and every page’s foot the homepage at its own address, in its language', async () => {
   const files = await site()
   const pages = await sitePages()
   for (const [name, addresses] of Object.entries(PAGES)) assert.deepEqual(addresses, pages.get(name)?.addresses, `app/brand.js’s PAGES.${name} is site/${name}/’s`)
   assert.equal(pages.has('about'), false, 'the homepage has no page of its own beside it')
   for (const [path, home] of [['index.html', './'], ['fr.html', 'fr'], ['fr/aide.html', '../fr'], ['ja.html', 'ja'], ['help.html', './']]) {
-    assert.match(files[path], new RegExp(`<footer class="site-foot">[\\s\\S]*<a href="${home.replace(/\./g, '\\.')}\\?index=1"( aria-current="page")?>(Homepage|Page d’accueil|トップページ)</a>`), path)
+    assert.match(files[path], new RegExp(`<footer class="site-foot">[\\s\\S]*<a href="${home.replace(/\./g, '\\.')}"( aria-current="page")?>(Homepage|Page d’accueil|トップページ)</a>`), path)
   }
-  // For whoever has been in the app already, where the page's own address alone would open it instead.
-  assert.ok(files['enterprise.html'].includes(`<a href="./?index=1">See what ${BRAND.name} does for everyone</a>`))
-  assert.ok(files['fr/entreprise.html'].includes(`<a href="../fr?index=1">Voir ce que ${BRAND.name} fait pour tous</a>`))
+  assert.ok(files['enterprise.html'].includes(`<a href="./">See what ${BRAND.name} does for everyone</a>`))
+  assert.ok(files['fr/entreprise.html'].includes(`<a href="../fr">Voir ce que ${BRAND.name} fait pour tous</a>`))
 })
 
-test('the sample’s tile and replay say what the sample spreadsheet holds', async () => {
+test('the sample’s tile says what the sample spreadsheet holds', async () => {
   const sample = await sampleAnswer()
-  assert.deepEqual([sample.products, sample.months], [4, 12], 'replay.sample says 4 products over 12 months, in every language')
-  assert.deepEqual(savingsAnswer(), { total: 29450, put: 24000 }, 'replay.savings says what 200 a month at 4% comes to in ten years')
+  assert.deepEqual([sample.products, sample.months], [4, 12])
   assert.equal(sample.product, 'Juice')
   assert.ok(sample.growth > 1.6 && sample.growth < 1.7)
   const page = (await site())['index.html']
   assert.match(page, /<bdi lang="en" dir="ltr">Juice<\/bdi> grew the most: \+169%/)
-  assert.match(page, /About 29,450 after ten years, 24,000 of it put in/)
   assert.match(page, /<q class="home-request">Which product grew the most over the year\? Show it as a chart\.<\/q>/)
 })
 

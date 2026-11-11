@@ -5,17 +5,17 @@
 // unless the person chose one. Only the site whose address is the brand's own domain has it: never app/, an
 // organisation's copy or the desktop app. The app shows it before any task, in a browser's tab, and takes it away
 // with the first request (ui/shell.js, ui/home.js). Its words are <lang>.json, English's first, with the app's own
-// catalogues where the app already says the same (the sample request, the receipt, the legal links), and its look
+// catalogues where the app already says the same (the sample request, the box's words, what the first screen says of it), and its look
 // home.css, over the app's style sheet and site.css, whose foot it ends with (site/site.js, D438).
 import { readFile } from 'node:fs/promises'
 import { LOCALES } from '../../app/core/i18n.js'
-import { ICONS, REPOSITORY, fill, foot, languageMenu, pictureOf, xml } from '../site.js'
+import { FELT, ICONS, fill, foot, languageMenu, pictureOf, wave, xml } from '../site.js'
 
 /** Each language's page, from the site's root. @type {Record<string, string>} */
 const ADDRESSES = { en: '', ar: 'ar', fr: 'fr', ja: 'ja', ko: 'ko' }
 
 /**
- * The sample spreadsheet's answer, which its tile and its replay say: the product that grew the most
+ * The sample spreadsheet's answer, which its tile says: the product that grew the most
  * from its first month to its last, and by how much, with how many products and months it reads.
  */
 export async function sampleAnswer () {
@@ -25,15 +25,6 @@ export async function sampleAnswer () {
   const units = (/** @type {string | undefined} */ month, /** @type {string} */ product) => Number(rows.find((row) => row[0] === month && row[1] === product)?.[2])
   const [best] = products.map((product) => ({ product, growth: units(months.at(-1), product) / units(months[0], product) - 1 })).sort((a, b) => b.growth - a.growth)
   return { ...best, products: products.length, months: months.length }
-}
-
-/**
- * What the savings idea comes to (starter.savings.prompt): 200 a month for ten years at 4% a year, interest
- * added monthly; the total to the nearest ten, and what was put in.
- */
-export function savingsAnswer (monthly = 200, rate = 0.04, years = 10) {
-  const [month, months] = [rate / 12, years * 12]
-  return { total: Math.round((monthly * ((1 + month) ** months - 1)) / month / 10) * 10, put: monthly * months }
 }
 
 const SAMPLE = await sampleAnswer()
@@ -62,11 +53,20 @@ const DECK = '<svg viewBox="0 0 200 120" aria-hidden="true"><rect class="home-ca
 /** A plan as a timeline: who does what, and when, today marked. */
 const PLAN = /* html */ `<svg viewBox="0 0 200 110" aria-hidden="true"><path class="home-grid" d="M64 10V100M106 10V100M148 10V100"/>${[[18, 62, 44], [38, 84, 52], [58, 118, 46], [78, 150, 38]].map(([y, x, w], i) => /* html */ `<rect class="home-soft" x="12" y="${y}" width="40" height="6" rx="3"/><rect class="${i === 2 ? 'home-water' : 'home-bar'}" x="${x}" y="${y - 3}" width="${w}" height="12" rx="6"/>`).join('')}<path class="home-today" d="M118 6V104"/></svg>`
 
+/** Three days of a year, for the tasks a history shows: said as that language says a day. */
+const DAYS = ['2026-03-12', '2026-06-02', '2026-09-19']
+
+/** Each act's ground: paper, the app's fill, what waits. */
+const GROUNDS = /** @type {const} */ ({ create: 'paper', any: 'fill', keep: 'wait' })
+
 /**
- * The page, in one language: the part index.html ends with, with the site's foot and its language menu.
- * @param {import('../site.js').Kit} kit @param {{ sample?: typeof SAMPLE, saved?: ReturnType<typeof savingsAnswer> }} [at]
+ * The page, in one language: the part index.html ends with, with the site's foot and its language menu. Its promise
+ * is its outline: its heading, for whoever hears the page or searches it, then an act for each part of the sentence, in
+ * the order that language says them, their titles reading as the promise; then what Jean asks of the reader, the
+ * questions and the foot.
+ * @param {import('../site.js').Kit} kit @param {{ sample?: typeof SAMPLE }} [at]
  */
-export function homeOf (kit, { sample = SAMPLE, saved = savingsAnswer() } = {}) {
+export function homeOf (kit, { sample = SAMPLE } = {}) {
   const { lang, dir, brand } = kit
   const params = { free: kit.appText('first.free') }
   const say = (/** @type {string} */ key, more = {}) => kit.say(key, { ...params, ...more })
@@ -74,158 +74,101 @@ export function homeOf (kit, { sample = SAMPLE, saved = savingsAnswer() } = {}) 
   const appSays = (/** @type {string} */ key) => kit.app(key)
   const quoted = (/** @type {string} */ text) => /* html */ `<q class="home-request">${text}</q>`
   const growth = new Intl.NumberFormat(lang, { style: 'percent', signDisplay: 'exceptZero' }).format(sample.growth)
-  const number = new Intl.NumberFormat(lang, { maximumFractionDigits: 0 })
-  const results = { product: '\u0000', growth, total: number.format(saved.total), saved: number.format(saved.put) }
-  /** A replay's step or result, filled with what the sample and the savings come to, the product in its own direction. @param {string} text */
-  const fact = (text) => xml(fill(text, { name: brand.name, ...params, ...results })).replace('\u0000', /* html */ `<bdi lang="en" dir="ltr">${xml(sample.product)}</bdi>`)
-  /** A tile's replay: three steps, what came back, its chip. @param {string} key @returns {string[]} */
-  const replayOf = (key) => {
-    const items = kit.raw(`replay.${key}`)
-    if (!Array.isArray(items) || items.length !== 5) throw new Error(`site/home/${lang}.json: replay.${key} is three steps, a result and a chip`)
-    return items.map((item) => fact(String(item)))
-  }
+  // What the sample comes to, on its tile, the product in its own direction.
+  const badge = xml(fill(String(kit.raw('tile.sample.badge')), { name: brand.name, ...params, product: '\u0000', growth })).replace('\u0000', /* html */ `<bdi lang="en" dir="ltr">${xml(sample.product)}</bdi>`)
   const file = /* html */ `<span class="home-file" dir="ltr">${ICONS.file}sales.csv</span>`
   const tryIt = (/** @type {string} */ key, primary = false) => /* html */ `<button type="button" class="button${primary ? ' primary' : ''}" data-try="${key}" id="home-try-${key}" aria-labelledby="home-try-${key} home-ask-${key}">${say('tile.try')}</button>`
-  /** A use with no file: its request, quoted on the tile and as asked in its replay. @param {string} text */
-  const asking = (text) => ({ ask: quoted(text), said: /* html */ `<span>${text}</span>` })
-  // Four for each, three rows of four mixed, a row each once filtered: what Jean makes and shows, never homework.
+  // Twelve, four in view, the rest a turn away: what Jean makes and shows, never homework.
   const uses = [
-    { key: 'sample', group: 'work', chip: 'chart', ask: `${file} ${quoted(appSays('starter.sample.prompt'))}`, said: /* html */ `${file}<span>${appSays('starter.sample.prompt')}</span>`,
-      art: /* html */ `<div class="home-art" aria-hidden="true"><span class="home-bars"><span></span><span></span><span></span><span></span></span><span class="home-badge">${replayOf('sample')[3]}</span></div>` },
-    { key: 'music', group: 'family', chip: 'music', ...asking(say('tile.music')), art: /* html */ `<div class="home-art">${MUSIC}</div>` },
-    { key: 'quiz', group: 'family', chip: 'app', ...asking(say('tile.quiz')), art: /* html */ `<div class="home-art" aria-hidden="true"><span class="home-quiz"><b>${say('tile.quiz.question')}</b>${list('tile.quiz.answers').map((answer) => /* html */ `<span>${answer}</span>`).join('')}</span></div>` },
-    { key: 'map', group: 'home', chip: 'place', ...asking(say('tile.map')), art: /* html */ `<div class="home-art is-map">${MAP}</div>` },
-    { key: 'slides', group: 'work', chip: 'slides', ...asking(say('tile.slides')), art: /* html */ `<div class="home-art">${DECK}</div>` },
-    { key: 'savings', group: 'home', chip: 'chart', ...asking(appSays('starter.savings.prompt')), art: /* html */ `<div class="home-art">${SAVINGS}</div>` },
-    { key: 'tree', group: 'family', chip: 'tree', ...asking(say('tile.tree')), art: /* html */ `<div class="home-art">${TREE}</div>` },
-    { key: 'dinners', group: 'home', chip: 'table', ...asking(say('tile.dinners')), art: /* html */ `<div class="home-art">${WEEK}</div>` },
-    { key: 'minutes', group: 'work', chip: 'file', ...asking(say('tile.minutes')), art: /* html */ `<div class="home-art">${MINUTES}</div>` },
-    { key: 'invitation', group: 'family', chip: 'file', ...asking(say('tile.invitation')), art: /* html */ `<div class="home-art">${CARD}</div>` },
-    { key: 'picture', group: 'home', chip: 'picture', ...asking(say('tile.picture')), art: /* html */ `<div class="home-art is-map">${STREET}</div>` },
-    { key: 'plan', group: 'work', chip: 'file', ...asking(say('tile.plan')), art: /* html */ `<div class="home-art">${PLAN}</div>` },
+    { key: 'sample', group: 'work', ask: `${file} ${quoted(appSays('starter.sample.prompt'))}`, art: /* html */ `<div class="home-art" aria-hidden="true"><span class="home-bars"><span></span><span></span><span></span><span></span></span><span class="home-badge">${badge}</span></div>` },
+    { key: 'music', group: 'family', ask: quoted(say('tile.music')), art: /* html */ `<div class="home-art">${MUSIC}</div>` },
+    { key: 'quiz', group: 'family', ask: quoted(say('tile.quiz')), art: /* html */ `<div class="home-art" aria-hidden="true"><span class="home-quiz"><b>${say('tile.quiz.question')}</b>${list('tile.quiz.answers').map((answer) => /* html */ `<span>${answer}</span>`).join('')}</span></div>` },
+    { key: 'map', group: 'home', ask: quoted(say('tile.map')), art: /* html */ `<div class="home-art is-map">${MAP}</div>` },
+    { key: 'slides', group: 'work', ask: quoted(say('tile.slides')), art: /* html */ `<div class="home-art">${DECK}</div>` },
+    { key: 'savings', group: 'home', ask: quoted(appSays('starter.savings.prompt')), art: /* html */ `<div class="home-art">${SAVINGS}</div>` },
+    { key: 'tree', group: 'family', ask: quoted(say('tile.tree')), art: /* html */ `<div class="home-art">${TREE}</div>` },
+    { key: 'dinners', group: 'home', ask: quoted(say('tile.dinners')), art: /* html */ `<div class="home-art">${WEEK}</div>` },
+    { key: 'minutes', group: 'work', ask: quoted(say('tile.minutes')), art: /* html */ `<div class="home-art">${MINUTES}</div>` },
+    { key: 'invitation', group: 'family', ask: quoted(say('tile.invitation')), art: /* html */ `<div class="home-art">${CARD}</div>` },
+    { key: 'picture', group: 'home', ask: quoted(say('tile.picture')), art: /* html */ `<div class="home-art is-map">${STREET}</div>` },
+    { key: 'plan', group: 'work', ask: quoted(say('tile.plan')), art: /* html */ `<div class="home-art">${PLAN}</div>` },
   ]
-  // One tile is the active one at all times, the first until a click, a tap or the keyboard picks another, its Try the
-  // primary one and its replay the one shown (ui/home.js).
+  // A tile: what comes back, drawn; who it is for and what it is; the request; its Try, the first one's the primary one.
   const tile = (/** @type {typeof uses[number]} */ use, /** @type {number} */ i) => /* html */ `
-    <li class="home-tile${i ? '' : ' is-active'}" data-for="${use.group}"${i ? '' : ' aria-current="true"'}>
-      <span class="home-where">${say(`range.${use.group}`)}</span>
-      <p class="home-ask" id="home-ask-${use.key}">${use.ask}</p>
-      ${use.art}
-      <p class="home-go">${tryIt(use.key, !i)}</p>
-    </li>`
-  const replay = (/** @type {typeof uses[number]} */ use, /** @type {number} */ i) => {
-    const [first, second, third, got, chip] = replayOf(use.key)
-    return /* html */ `
-      <ol class="home-replay" data-replay="${use.key}" aria-label="${say('replay.how')}"${i ? ' inert' : ''}>
-        <li><span class="home-step">${say('replay.ask')}</span><p class="home-asked" dir="${dir}">${use.said}</p></li>
-        <li><span class="home-step">${say('replay.work')}</span><ul class="home-ticks">${[first, second, third].map((step) => /* html */ `<li><span>${step}</span></li>`).join('')}</ul></li>
-        <li><span class="home-step">${say('replay.get')}</span><p>${got}</p><span class="home-file" dir="${dir}">${ICONS[/** @type {keyof typeof ICONS} */ (use.chip)]}<span>${chip}</span></span></li>
-        <li><span class="home-step">${say('replay.where')}</span><p class="home-receipt"><b>${ICONS.brain}<span>${appSays('receipt.inCloud')}</span></b><span>${say('replay.sent', { host: '\u0000' }).replace('\u0000', '<bdi dir="ltr">gateway.ai</bdi>')}</span><span>${appSays('receipt.certificate')} ✓</span></p></li>
-      </ol>`
-  }
-  const more = (/** @type {string} */ label, /** @type {string[]} */ items, dots = false) => /* html */ `<details><summary><span>${label}</span>${ICONS.down}</summary><ul${dots ? ' class="home-dots"' : ''}>${items.map((item) => /* html */ `<li><span>${item}</span></li>`).join('')}</ul></details>`
-  const door = (/** @type {string} */ id, /** @type {string} */ key, /** @type {string} */ body, featured = false) => /* html */ `
-      <article id="home-${id}" class="home-door${featured ? ' is-featured' : ''}" aria-labelledby="home-${id}-title">
-        <p class="home-door-name">${say(`${key}.name`)}</p>
-        <p class="home-door-why">${say(`${key}.why`)}</p>
-        <h3 id="home-${id}-title" class="home-door-title">${say(`${key}.title`)}</h3>
-        <div class="home-door-body">${body}</div>
-      </article>`
-  // A way on, or a list of them.
-  const go = (/** @type {Array<[string, string]>} */ links) => {
-    const ways = links.map(([href, label]) => /* html */ `<a href="${href}">${label} ${ARROW}</a>`)
-    return ways.length > 1 ? /* html */ `<ul class="home-door-go">${ways.map((way) => /* html */ `<li>${way}</li>`).join('')}</ul>` : /* html */ `<p class="home-door-go">${ways[0]}</p>`
+        <li class="home-tile">
+          ${use.art}
+          <p class="home-where"><span>${say(`where.${use.group}`)}</span><bdi>${say(`kind.${use.key}`)}</bdi></p>
+          <p class="home-ask" id="home-ask-${use.key}">${use.ask}</p>
+          <p class="home-go">${tryIt(use.key, !i)}</p>
+        </li>`
+  // The acts in the order this language's promise says them; a language that writes no spaces joins sentences without one.
+  const join = lang === 'ja' ? '' : ' '
+  const order = /** @type {Array<keyof typeof GROUNDS>} */ (list('acts'))
+  if (`${[...order].sort()}` !== 'any,create,keep') throw new Error(`site/home/${lang}.json: acts is create, any and keep, in the order its promise says them`)
+  // A day as the page's English writes it, the day first, as its spelling is Britain's.
+  const day = new Intl.DateTimeFormat(lang === 'en' ? 'en-GB' : lang, { day: 'numeric', month: 'long', timeZone: 'UTC' })
+  // An act's title, its full stop in the mark's colour; its catch, said under it, every promise with its own.
+  const title = (/** @type {string} */ act) => /* html */ `<h2 id="home-${act}-title" class="home-act-title">${say(`${act}.title`).replace(/([.。])$/u, '<span class="home-dot">$1</span>')}</h2>`
+  const caught = (/** @type {string[]} */ sentences) => /* html */ `<p class="home-catch"><b>${say('catch.name')}</b> <span>${sentences.join(join)}</span></p>`
+  const go = (/** @type {string} */ href, /** @type {string} */ label) => /* html */ `<a href="${href}">${label} ${ARROW}</a>`
+  const acts = {
+    create: /* html */ `
+      <header class="home-act-head">
+        ${title('create')}
+        <p class="home-act-lead">${say('create.why')}</p>
+      </header>
+      <div class="home-row">
+      <button type="button" class="home-turn is-back" aria-label="${say('tiles.back')}" disabled>${TURN}</button>
+      <ul class="home-tiles">${uses.map(tile).join('')}
+      </ul>
+      <button type="button" class="home-turn is-next" aria-label="${say('tiles.next')}">${TURN}</button>
+      </div>
+      ${caught([say('create.catch')])}`,
+    any: /* html */ `
+      <div class="home-any">
+        <header class="home-act-head is-stacked">
+          ${title('any')}
+          <p class="home-act-why">${say('any.why')}</p>
+          <p class="home-act-lead">${say('any.lead')}</p>
+          <p class="home-act-go">${go(kit.link('compare') ?? 'compare', say('any.go'))}</p>
+        </header>
+        <ul class="home-ways">${list('any.ways').map((way, i) => /* html */ `
+          <li${i ? '' : ' class="is-chosen"'}>${ICONS.brain}<span><b>${way}</b><small>${list('any.notes')[i]}</small></span>${i ? '' : ICONS.check}</li>`).join('')}
+        </ul>
+      </div>
+      ${caught(list('any.catch'))}`,
+    keep: /* html */ `
+      <header class="home-act-head">
+        ${title('keep')}
+        <div><p class="home-act-why">${say('keep.why')}</p><p class="home-act-lead">${say('keep.lead')}</p></div>
+      </header>
+      <div class="home-shelf">
+        <article><h3>${say('keep.history')}</h3><ul class="home-past" aria-hidden="true">${list('keep.history.tasks').map((task, i) => /* html */ `<li><span>${task}</span><span>${xml(day.format(new Date(DAYS[i])))}</span></li>`).join('')}</ul><p>${say('keep.history.text')}</p></article>
+        <article><h3>${say('keep.files')}</h3><ul class="home-files" aria-hidden="true">${['slides', 'minutes', 'plan', 'invitation'].map((key) => /* html */ `<li>${ICONS.file}<bdi>${say(`kind.${key}`)}</bdi></li>`).join('')}</ul><p>${say('keep.files.text')}</p></article>
+        <article><h3>${say('keep.memory')}</h3><ul class="home-lines" aria-hidden="true">${list('keep.memory.lines').map((line) => /* html */ `<li>${line}</li>`).join('')}</ul><p>${say('keep.memory.text')}</p></article>
+      </div>
+      <div class="home-move">
+        <div><h3>${say('move.title')}</h3><p>${say('move.sub')}</p></div>
+        <a class="button" href="${kit.link('import') ?? 'import'}">${say('move.go')} ${ARROW}</a>
+      </div>
+      ${caught([say('keep.catch')])}`,
   }
   // Two columns that lay out on their own, so a question opened in one never moves the other; one open at a time (name).
   const columns = (/** @type {string[]} */ items) => [items.slice(0, Math.ceil(items.length / 2)), items.slice(Math.ceil(items.length / 2))].map((half) => /* html */ `<div>${half.join('')}</div>`).join('')
-  const person = (/** @type {string} */ who, /** @type {string} */ how) => /* html */ `<li><i aria-hidden="true">${xml([...kit.text(who, params)][0] ?? '')}</i><span><b>${say(who)}</b><small>${say(how)}</small></span></li>`
   // Each language a link, to its own page or, where it has none, to English's, where the app speaks it all the same (ui/home.js, D680).
   const menu = languageMenu(kit, LOCALES, (code) => /* html */ `href="${kit.site(ADDRESSES[code] ?? '')}" data-language="${code}"${code in ADDRESSES ? ` hreflang="${code}"` : ''}${code === lang ? ' aria-current="true"' : ''}`)
-  // Under the promise, how it is kept: the rest of the description, which search results show after the title.
-  const described = kit.text('description')
-  const rest = described.slice(described.split(/(?<=[.!?؟])\s+|(?<=[。！？])/u)[0].length).trim()
   // The page's own main content while it shows, the app's first screen above it (ui/home.js), then the site's foot.
   return /* html */ `<div class="home" lang="${lang}" dir="${dir}"><main>
-  <h1 class="home-title home-promise">${say('promise')}</h1>${rest ? /* html */ `
-  <p class="home-promise-sub">${xml(rest)}</p>` : ''}
-  <nav class="home-strip" aria-labelledby="home-for">
-    <span id="home-for" class="home-strip-label">${say('strip.label')}</span>
-    <ul>${[['#home-range', 'strip.home'], ['#home-family', 'strip.family'], [kit.link('work') ?? '#home-range', 'strip.work'], ['#home-open', 'strip.it'], ['#home-open', 'strip.developer']]
-      .map(([href, key]) => /* html */ `<li><a class="button" href="${href}">${say(key)}</a></li>`).join('')}</ul>
-  </nav>
-  <section id="home-range" class="home-section" aria-labelledby="home-range-title">
-    <header class="home-head is-centred">
-      <p class="home-why">${say('range.why')}</p>
-      <h2 id="home-range-title" class="home-title">${say('range.title')}</h2>
-      <p class="home-sub">${say('range.sub')}</p>
-    </header>
-    <dl class="home-formats">
-      <div><dt>${say('range.in')}</dt><dd><ul>${list('range.ins').map((word) => /* html */ `<li>${word}</li>`).join('')}</ul></dd></div>
-      <div><dt>${say('range.out')}</dt><dd><ul>${list('range.outs').map((word) => /* html */ `<li>${word}</li>`).join('')}</ul></dd></div>
-    </dl>
-    <fieldset class="home-filter">
-      <legend class="visually-hidden">${say('strip.label')}</legend>
-      ${['all', 'home', 'family', 'work'].map((group) => /* html */ `<input type="radio" name="home-for" id="home-for-${group}"${group === 'all' ? ' checked' : ''}><label for="home-for-${group}">${say(`range.${group}`)}</label>`).join('')}
-    </fieldset>
-    <div class="home-row">
-    <button type="button" class="home-turn is-back" aria-label="${say('range.back')}" disabled>${TURN}</button>
-    <ul class="home-tiles">${uses.map(tile).join('')}
-    </ul>
-    <button type="button" class="home-turn is-next" aria-label="${say('range.next')}">${TURN}</button>
+  <h1 class="visually-hidden">${say('promise')}</h1>${order.map((act, i) => /* html */ `
+  <section id="home-${act}" class="home-act is-${GROUNDS[act]}" aria-labelledby="home-${act}-title">
+    <div class="home-act-in">${acts[act]}
     </div>
-    <div id="home-how" class="home-replays" role="status">${uses.map(replay).join('')}
-    </div>
-  </section>
-  <section id="home-take" class="home-section is-ruled" aria-labelledby="home-take-title">
-    <header class="home-head">
-      <p class="home-why">${say('take.why')}</p>
-      <h2 id="home-take-title" class="home-title">${say('take.title')}</h2>
-      <p class="home-sub">${say('take.sub')}</p>
-    </header>
-    <p class="home-note">${say('take.note')}</p>
-    ${go([[kit.link('import') ?? 'import', say('take.go')]])}
-  </section>
-  <section id="home-personal" class="home-section is-ruled" aria-labelledby="home-personal-title">
-    <header class="home-head">
-      <p class="home-why">${say('personal.why')}</p>
-      <h2 id="home-personal-title" class="home-title">${say('personal.title')}</h2>
-      <p class="home-sub">${say('personal.sub')}</p>
-    </header>
-    <table class="home-personal" aria-labelledby="home-personal-title">
-      <thead><tr><td></td><th scope="col">${say('confidential.mostLabel')}</th><th scope="col">${say('confidential.oursLabel')}</th></tr></thead>
-      <tbody>${list('personal.topics').map((topic, row) => /* html */ `
-        <tr><th scope="row">${topic}</th><td data-label="${say('confidential.mostLabel')}">${list('personal.theirs')[row]}</td><td data-label="${say('confidential.oursLabel')}">${list('personal.yours')[row]}</td></tr>`).join('')}
-      </tbody>
-    </table>
-    <p class="home-note">${say('personal.note')}</p>
-    ${go([[kit.link('import') ?? 'import', say('personal.go')], [kit.link('files') ?? 'files', appSays('welcome.files')]])}
-  </section>
-  <section id="home-why" class="home-section is-side" aria-labelledby="home-why-title">
-    <header class="home-head">
-      <h2 id="home-why-title" class="home-title">${say('why.title')}</h2>
-      <p class="home-sub">${say('why.sub')}</p>
-    </header>
-    <div class="home-doors">${[
-      door('confidential', 'confidential', /* html */ `<dl class="home-versus"><div><dt>${say('confidential.mostLabel')}</dt><dd>${say('confidential.most')}</dd></div><div><dt>${say('confidential.oursLabel')}</dt><dd>${say('confidential.ours')}</dd></div></dl>
-        <p class="home-sealed" aria-hidden="true"><span>${appSays('composer.placeholder')}</span><span>${ICONS.shield}<span>${say('confidential.sealed')}</span></span></p>
-        <p class="home-note">${say('confidential.offline')}</p>
-        ${go([[kit.link('files') ?? 'files', appSays('welcome.files')]])}`, true),
-      door('ai', 'ai', /* html */ `<ul class="home-rows">${list('ai.ways').map((way) => /* html */ `<li>${ICONS.brain}<span>${way}</span></li>`).join('')}</ul>
-        ${go([[kit.link('compare') ?? 'compare', say('ai.go')]])}`),
-      door('family', 'family', /* html */ `<ul class="home-people">${person('family.younger', 'family.withYou')}${person('family.older', 'family.alone')}</ul>
-        <p class="home-source">${say('family.source')}</p>
-        ${go([[kit.link('family') ?? 'family', say('family.go')]])}`),
-      door('simple', 'simple', /* html */ `<div class="home-offer" aria-hidden="true"><p>${appSays('cap.memory.offer')}</p><span><span class="button primary">${appSays('cap.memory.yes')}</span><span class="button subtle">${appSays('offer.no')}</span></span></div>
-        ${more(say('door.more'), list('simple.more'))}`),
-      door('shareable', 'share', /* html */ `<p class="home-link" dir="ltr" aria-hidden="true"><span>https://hst.ing/…</span><span class="button" dir="${dir}">${appSays('action.copy')}</span></p>
-        <p class="home-note">${say('share.limits')}</p>
-        ${more(say('door.more'), list('share.more'))}`),
-      door('open', 'open', /* html */ `<p>${say('open.text')}</p>
-        ${go([[REPOSITORY, say('open.source')], [kit.link('enterprise') ?? 'enterprise', say('open.it')]])}`),
-      door('catch', 'catch', /* html */ `<ul class="home-dots">${list('catch.items').map((item) => /* html */ `<li><span>${item}</span></li>`).join('')}</ul>
-        ${more(say('catch.more'), list('catch.rest'), true)}`),
-    ].join('')}
-    </div>
+    ${wave(GROUNDS[order[i + 1]] ?? 'paper', 'home')}
+  </section>`).join('')}
+  <section id="home-turn" class="home-yours" aria-labelledby="home-turn-title">
+    ${title('turn')}
+    <p><button type="button" class="home-yours-box" data-turn><span>${appSays('composer.placeholder')}</span>${ICONS.send}</button>${FELT.arc}</p>
+    <ul class="home-facts">${['welcome.install', 'welcome.device', 'welcome.open'].map((key) => /* html */ `<li>${appSays(key)}</li>`).join('')}</ul>
   </section>
   <section id="home-questions" class="home-section" aria-labelledby="home-questions-title">
     <h2 id="home-questions-title" class="home-title is-small">${say('faq.title')}</h2>

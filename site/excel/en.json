@@ -4,6 +4,7 @@
   "eyebrow": "Excel and CSV files",
   "h1": "AI for your Excel files that calculates, never guesses.",
   "h1.mark": "calculates",
+  "acts": [["task", "AI for your Excel files"], ["trust", "that calculates, never guesses."]],
   "lede": "Drop a workbook or a CSV in {name} and ask in your own words: which product grew, what the formula is, what changed since last month. A program works out the numbers, and you get back a chart, a table or a new workbook. Nothing to install.",
   "cta": "Try it with a sample spreadsheet",
   "see": "See how it went",

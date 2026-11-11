@@ -5,7 +5,7 @@
 // when it couldn't. Without
 // its script the form still sends, and no quote is made. Its words are <lang>.json; its look enterprise-key.css.
 import { KINDS, PLACES } from '../../requests/requests.js'
-import { underline, xml } from '../site.js'
+import { landing, underline, xml } from '../site.js'
 import { CONTACT, PRICE, SMALL } from '../enterprise/page.js'
 
 /** @type {Record<string, string>} */
@@ -93,16 +93,14 @@ export default {
     const enterprise = kit.link('enterprise')
     const privacy = kit.link('privacy')
     const seller = [xml(SELLER.name), kit.say('quote.capital', { capital: money.format(SELLER.capital) }), xml(SELLER.address), kit.say('quote.ids', { siren: SELLER.siren, vat: SELLER.vat }), xml(CONTACT)]
-    return /* html */ `<section class="site-hero" aria-labelledby="key-title">
+    const hero = /* html */ `<section class="site-hero" aria-labelledby="key-title">
   <div class="site-hero-text">
     <p class="site-eyebrow">${enterprise ? /* html */ `<a href="${enterprise}">${say('eyebrow')}</a>` : say('eyebrow')}</p>
     <h1 id="key-title">${underline(say('h1'), say('h1.mark'))}</h1>
     <p class="site-lede">${say('lede')}</p>
   </div>
-</section>
-
-<section class="site-section is-side" aria-labelledby="key-request">
-  <h2 id="key-request">${say('form.title')}</h2>
+</section>`
+    const request = /* html */ `<div class="site-block">
   <p id="sent" class="key-state" role="status" hidden>${say('sent')}</p>
   <p id="again" class="key-state is-again" role="alert" hidden>${say('again')}</p>
   <p id="refused" class="key-state is-again" role="alert" hidden>${say('refused')}</p>
@@ -159,6 +157,8 @@ export default {
     <p class="key-send"><button class="button primary" type="submit">${say('send')}</button></p>
     <p class="site-source">${say('privacy')}${privacy ? /* html */ ` <a href="${privacy}">${say('privacy.link')}</a>` : ''}</p>
   </form>
-</section>`
+</div>`
+    // A landing page as the site's others are (landing() in site.js): its one act is the request itself, under its own title.
+    return landing(kit, { top: hero, acts: [{ id: 'key-request', title: say('form.title'), body: request }] })
   },
 }

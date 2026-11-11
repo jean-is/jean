@@ -5,6 +5,16 @@
   "eyebrow": "Pour les collectivités, les administrations et les établissements publics",
   "h1": "L’IA pour tout le personnel, sous vos règles.",
   "h1.mark": "sous vos règles",
+  "acts": [
+    [
+      "staff",
+      "L’IA pour tout le personnel,"
+    ],
+    [
+      "rules",
+      "sous vos règles."
+    ]
+  ],
   "lede": "{name} est un dossier de fichiers statiques que votre DSI sert depuis l’adresse de votre administration. Il ne répond que par votre passerelle IA, vers une IA publique comme Albert, un fournisseur mutualisé ou vos propres serveurs, et chacun s’y connecte avec son compte professionnel. Aucun serveur à nous, rien à installer, aucun prix par poste.",
   "cta": "Demander une clé d’essai de 30 jours",
   "share": "Partager avec votre comité de revue",

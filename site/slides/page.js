@@ -27,6 +27,11 @@ const PANE = /* html */ `<svg class="job-drawn" viewBox="0 0 200 112" aria-hidde
 export default job({
   addresses: { en: 'slides', fr: 'fr/diapos', ko: 'ko/slides' },
   into: 'ask',
+  // Its promise goes from the notes to the deck: the notes, proved by what goes in, what comes out and where they go;
+  // the slides, by a deck made step by step and its figures never made up.
+  proves: { notes: ['io', 'where'], slides: ['replay', 'exact'] },
+  // The AI behind it and where pictures come from, under the notes; what a deck shows, takes from a template, keeps in a PowerPoint file and gets wrong, under the slides.
+  limits: { notes: [0, 3], slides: [1, 2, 4, 5] },
   filled (kit) {
     const money = amount(kit), [first, , last] = QUARTERS
     const change = new Intl.NumberFormat(kit.lang, { style: 'percent', signDisplay: 'exceptZero' })

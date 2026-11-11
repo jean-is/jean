@@ -4,6 +4,7 @@
   "eyebrow": "Réponses visuelles",
   "h1": "L’IA qui répond par un schéma, pas par un pavé de texte.",
   "h1.mark": "un schéma",
+  "acts": [["task", "L’IA qui répond par un schéma,"], ["trust", "pas par un pavé de texte."]],
   "lede": "Demandez à {name} avec vos mots, ou déposez un rapport. Une procédure revient en logigramme, des idées en carte mentale, un plan en frise chronologique, un calcul en page à manipuler, le tout dessiné dans la réponse, dans votre langue. Rien à installer.",
   "cta": "Essayer avec une procédure d’exemple",
   "see": "Voir comment ça s’est passé",

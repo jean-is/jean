@@ -5,6 +5,7 @@
   "eyebrow": "{name} pour les enseignants",
   "h1": "Vos quiz, fiches et diapos, faits à partir de votre cours.",
   "h1.mark": "votre cours",
+  "acts": [["get", "Vos quiz, fiches et diapos,"], ["lesson", "faits à partir de votre cours."]],
   "lede": "Donnez à {name} votre cours, une page du manuel ou quelques mots. Vous recevez le quiz de la semaine, une fiche d’exercices en Word, des diapos pour le tableau, des flashcards ou la progression jusqu’aux vacances, dans votre langue et au niveau de vos élèves.",
   "cta": "Faire le quiz de la semaine",
   "see": "Ce que vous obtenez",

@@ -47,6 +47,8 @@ function chart () {
 export default { ...job({
   addresses: { en: 'excel', fr: 'fr/excel', ko: 'ko/excel' },
   into: 'sample',
+  // What its files must be and what it writes, under the task; the AI behind it, its words and where work lives, under what makes it one to trust.
+  limits: { task: [1, 2, 3], trust: [0, 4, 5] },
   filled (kit) {
     const number = new Intl.NumberFormat(kit.lang)
     const percent = new Intl.NumberFormat(kit.lang, { style: 'percent', signDisplay: 'exceptZero' })

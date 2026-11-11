@@ -2,7 +2,7 @@
 import { html, nothing } from 'lit-html'
 import { effect, signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
-import { app, newConversation, turnPage, assistantName, switchTheme, sidebarOpen, toggleSidebar, firstVisit, pairs, APPLE, SHORTCUTS } from './state.js'
+import { app, newConversation, turnPage, assistantName, switchTheme, sidebarOpen, toggleSidebar, inTab, pairs, APPLE, SHORTCUTS } from './state.js'
 import { loaded, unlock, isDenied, slots } from './caps.js'
 import { BRAND } from '../brand.js'
 import { t, tParts, locale } from '../core/i18n.js'
@@ -12,15 +12,15 @@ import { toggleDictation } from './dictation.js'
 import './chat.js'
 import './persona.js'
 
-// jean.is's page (D397): on a first visit, at ?index=1 or from Homepage, until a request (ui/home.js).
+// jean.is's page (D397): in a tab, or from Homepage, until a request (ui/home.js).
 const under = /** @type {HTMLElement | null} */ (document.querySelector('body > .home'))
 if (under) under.hidden = true
-export const homepage = signal(new URLSearchParams(location.search).has('index'))
+export const homepage = signal(false)
 
 class Shell extends Element {
   connectedCallback() {
     super.connectedCallback()
-    if (under) effect(() => { const empty = !app.current.value?.records.length, lang = locale.value; if (!empty) homepage.value = false; const shown = (homepage.value || firstVisit()) && empty; under.hidden ||= !shown; import('./home.js').then((module) => module.follow(under, shown, lang)) })
+    if (under) effect(() => { const empty = !app.current.value?.records.length, lang = locale.value; if (!empty) homepage.value = false; const shown = (homepage.value || inTab()) && empty; under.hidden ||= !shown; import('./home.js').then((module) => module.follow(under, shown, lang)) })
   }
 
   render() {
@@ -44,7 +44,7 @@ class Shell extends Element {
       ${open ? html`<app-inbox role="complementary" aria-label=${t('history.title')}></app-inbox>${views}` : nothing}
       ${app.ephemeral.value ? html`<p class="notice" role="alert">${t('storage.ephemeral')}</p>` : nothing}
       <p class="print-mark"><app-persona still></app-persona><span dir=${/[\u0590-\u08FF]/.test(BRAND.name) ? 'rtl' : 'ltr'}>${BRAND.name}<small dir="ltr">${BRAND.domain}</small></span></p>
-      <div class="board"><div class="here">${under && !current?.records.length && !instead && !app.docked.value && (homepage.value || firstVisit()) ? html`<div class="main">${welcome()}</div>` : html`<main id="main">${current?.records.length ? html`<app-conversation></app-conversation>` : instead ?? welcome()}</main>`}
+      <div class="board"><div class="here">${under && !current?.records.length && !instead && !app.docked.value && (homepage.value || inTab()) ? html`<div class="main">${welcome()}</div>` : html`<main id="main">${current?.records.length ? html`<app-conversation></app-conversation>` : instead ?? welcome()}</main>`}
       ${current?.records.length ? offerAside() : nothing}
       ${slots('above').map((above) => above.draw())}
       <app-composer></app-composer></div></div>

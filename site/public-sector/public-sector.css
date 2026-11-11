@@ -58,12 +58,12 @@
 /* The trust pack */
 .ps-docs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
 .ps-docs a { display: flex; flex-direction: column; gap: 0.3rem; block-size: 100%; padding: 1.1rem 1.2rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--site-side); color: var(--ink); text-decoration: none; }
-.ps-docs a:hover h3 { text-decoration: underline; }
-.ps-docs h3 { font-size: inherit; font-weight: 600; }
+.ps-docs a:hover h4 { text-decoration: underline; }
+.ps-docs h4 { font-size: inherit; font-weight: 600; }
 .ps-docs span { color: var(--ink-soft); font-size: 0.875rem; }
 
 /* Share it with the review team */
-.ps-address { position: relative; max-inline-size: 100%; padding: 0.6rem 1rem; border-radius: 0.75rem; background: var(--room); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-wrap: anywhere; user-select: all; direction: ltr; }
+.ps-address { position: relative; max-inline-size: 100%; padding: 0.6rem 1rem; border-radius: 0.75rem; background: var(--site-side); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-wrap: anywhere; user-select: all; direction: ltr; }
 .ps-address .felt-point { position: absolute; inset-inline-end: calc(100% + 0.75rem); inset-block-start: -1.5rem; inline-size: 5rem; block-size: 3.3rem; }
 .site-end .site-cta { justify-content: center; }
 

@@ -15,4 +15,7 @@ export default product({
     license: { url: 'https://github.com/open-webui/open-webui/blob/main/LICENSE', checked: '2026-10-20' },
   },
   actions: ['local', 'host'],
+  // Its catch, by the part of its promise: what Ollama and MCP servers must allow a browser, under the alternative for
+  // Ollama; no shared space and no admin console, under no server to run.
+  limits: { alternative: [0, 3], where: [1, 2] },
 })

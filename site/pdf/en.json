@@ -4,6 +4,7 @@
   "eyebrow": "PDF files",
   "h1": "Ask your PDF anything, or turn its tables into Excel.",
   "h1.mark": "into Excel",
+  "acts": [["ask", "Ask your PDF anything,"], ["tables", "or turn its tables into Excel."]],
   "lede": "Drop a PDF in {name} and ask in your own words: what it commits you to, the dates and amounts it sets, a summary for someone who won’t read it. Its tables come back as a workbook, its text as a Word document, in your language if you like. Nothing to install.",
   "cta": "Open {name}, then drop a PDF",
   "cta.note": "There is no sample PDF: bring one of yours, one that isn’t confidential to start with, and drop it in the box.",

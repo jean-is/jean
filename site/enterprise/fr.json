@@ -5,6 +5,7 @@
   "eyebrow": "Pour la DSI, la sécurité et les achats",
   "h1": "Toutes les IA que votre entreprise autorise, dans un seul assistant que vos équipes utilisent vraiment.",
   "h1.mark": "utilisent vraiment",
+  "acts": [["approved", "Toutes les IA que votre entreprise autorise,"], ["used", "dans un seul assistant que vos équipes utilisent vraiment."]],
   "lede": "{name} est un dossier de fichiers statiques que vous servez depuis votre propre adresse. Les réponses passent uniquement par votre passerelle IA, chacun se connecte avec votre fournisseur d’identité, et aucun serveur à nous n’intervient. Rien à installer, aucun prix par poste.",
   "cta": "Obtenir le kit pilote",
   "see": "Lire les réponses",

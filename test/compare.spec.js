@@ -1,14 +1,15 @@
-// The comparison pages, served as jean.is's deploy has them (scripts/serve.js --home): the homepage's Your AI
-// door leads to the hub, the hub to each product's page, and each page's buttons open the app where they say: a way to
-// add a brain open in Settings › Brains (Ollama's, a Claude plan's), Settings › Your data's Bring in, which takes
-// another assistant's export, or the sample spreadsheet in the box. Each address is the app's own once there.
+// The comparison pages, served as jean.is's deploy has them (scripts/serve.js --home): the homepage's act on any
+// AI leads to the hub, the hub to each product's page, and each page's buttons, at its top and under Your turn, open
+// the app where they say: a way to add a brain open in Settings › Brains (Ollama's, a Claude plan's), Settings › Your
+// data's Bring in, which takes another assistant's export, or the sample spreadsheet in the box. Each address is the
+// app's own once there.
 import { test, expect } from '@playwright/test'
 
 const JEAN_IS = 'http://127.0.0.1:4186/'
 
-test('the Your AI door leads to the hub, which leads to each product’s page and back', async ({ page }) => {
+test('the homepage’s act on any AI leads to the hub, which leads to each product’s page and back', async ({ page }) => {
   await page.goto(JEAN_IS)
-  await page.locator('#home-ai a', { hasText: 'Compare Jean with the others' }).click()
+  await page.locator('#home-any a', { hasText: 'Compare Jean with the others' }).click()
   await expect(page).toHaveURL(`${JEAN_IS}compare`)
   await expect(page.locator('h1')).toHaveText('Jean beside the AI apps you know')
   const products = await page.locator('.cmp-products a').evaluateAll((links) => links.map((link) => /** @type {HTMLAnchorElement} */ (link).href))

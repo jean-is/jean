@@ -5,7 +5,7 @@
 // for the association as a team; the charter's page is linked once it is built. Its words are <lang>.json, the
 // app's where it says the same and the homepage's for a request quoted and a Try; its look associations.css, over
 // site.css (site/site.js, D438).
-import { FELT, ICONS, WAVE, felt, highlight, questions, ticks, underline, xml } from '../site.js'
+import { FELT, ICONS, WAVE, caught, felt, highlight, landing, ticks, underline, xml } from '../site.js'
 
 /** Where the figures on France's associations come from: Recherches & Solidarités' press release, 16 October 2025. */
 const SOURCE = 'https://recherches-solidarites.org/wp-content/uploads/2025/10/La_France_associative_CP_16-10-2025.pdf'
@@ -50,15 +50,12 @@ export default {
     const files = kit.link('files')
     const charter = kit.link('charter')
     const it = kit.link('enterprise')
-    // The sections after the board's questions take turns with the side colour, however many there are.
-    let turn = 0
-    const tone = () => (turn++ % 2 ? ' is-side' : '')
     const job = (/** @type {typeof JOBS[number]} */ { key, icon, sample }) => /* html */ `
-    <li>${icon}<h3 id="asso-job-${key}">${say(`job.${key}`)}</h3>
+    <li>${icon}<h4 id="asso-job-${key}">${say(`job.${key}`)}</h4>
       <p class="asso-ask" dir="${kit.dir}">${sample ? say(`job.${key}.ask`) : /* html */ `<q>${kit.text(`job.${key}.ask`)}</q>`}</p>
       <p class="asso-get"><span>${say('jobs.get')}</span>${say(`job.${key}.get`)}</p>
       <a class="button" href="${sample ? `${jean}?sample` : ask(key)}" aria-describedby="asso-job-${key}">${sample ? say('job.accounts.try') : home.say('tile.try')}</a></li>`
-    return /* html */ `<section class="site-hero asso-hero" aria-labelledby="asso-title">
+    const hero = /* html */ `<section class="site-hero asso-hero" aria-labelledby="asso-title">
   <div class="site-hero-text">
     <p class="site-eyebrow">${say('eyebrow')}</p>
     <h1 id="asso-title">${underline(say('h1'), say('h1.mark'))}</h1>
@@ -73,53 +70,49 @@ export default {
     <p class="asso-box">${kit.app('composer.placeholder')}</p>
     <p class="asso-ai">${kit.app('composer.ai')}</p>
   </div>
-</section>
-
-<section class="site-section is-side" aria-labelledby="asso-count">
-  <header><h2 id="asso-count">${say('count.title')}</h2><p class="site-why">${say('count.why')}</p></header>
+</section>`
+    const count = /* html */ `<section class="site-block" aria-labelledby="asso-count">
+  <header><h3 id="asso-count">${say('count.title')}</h3><p class="site-why">${say('count.why')}</p></header>
   <div class="site-stats">${kit.table('count.stats', 3).map(([number, text, source], i) => /* html */ `<p><b>${i === 1 ? felt(number, 'circle') : number}</b><span>${text}</span><small>${source}</small></p>`).join('')}</div>
   <p class="asso-free">${say('count.free')}</p>
   <p class="site-source"><a href="${SOURCE}" hreflang="fr">${say('count.source')}</a></p>
-</section>
-
-<section id="asso-jobs" class="site-section" aria-labelledby="asso-jobs-title">
-  <header><h2 id="asso-jobs-title">${say('jobs.title')}</h2><p class="site-why">${say('jobs.why')}</p></header>
+</section>`
+    const jobs = /* html */ `<section id="asso-jobs" class="site-block" aria-labelledby="asso-jobs-title">
+  <header><h3 id="asso-jobs-title">${say('jobs.title')}</h3><p class="site-why">${say('jobs.why')}</p></header>
   <ul class="asso-jobs">${JOBS.map(job).join('')}
-    <li class="is-rest">${ICONS.plus}<h3>${say('job.rest')}</h3><p class="asso-ask">${say('job.rest.text')}</p><a class="button" href="${jean}">${say('job.rest.go')}</a></li>
+    <li class="is-rest">${ICONS.plus}<h4>${say('job.rest')}</h4><p class="asso-ask">${say('job.rest.text')}</p><a class="button" href="${jean}">${say('job.rest.go')}</a></li>
   </ul>
   <p class="site-source">${say('jobs.note')}</p>
-</section>
-
-<section class="site-section is-side" aria-labelledby="asso-worry">
-  <header><h2 id="asso-worry">${say('worry.title')}</h2><p class="site-why">${say('worry.why')}</p></header>
+</section>`
+    const worry = /* html */ `<section class="site-block" aria-labelledby="asso-worry">
+  <header><h3 id="asso-worry">${say('worry.title')}</h3><p class="site-why">${say('worry.why')}</p></header>
   <div class="asso-worries">${WORRIES.map(([key, icon, marked]) => /* html */ `
-    <div>${icon}<h3>${say(`worry.${key}`)}</h3><p>${say(`worry.${key}.text`)}</p>${ticks(list(`worry.${key}.list`).map((item, i) => (i === marked ? highlight(item) : item)))}</div>`).join('')}
+    <div>${icon}<h4>${say(`worry.${key}`)}</h4><p>${say(`worry.${key}.text`)}</p>${ticks(list(`worry.${key}.list`).map((item, i) => (i === marked ? highlight(item) : item)))}</div>`).join('')}
   </div>
   ${files ? /* html */ `<p><a href="${files}">${kit.app('welcome.files')}</a></p>` : ''}
-</section>
-${charter ? /* html */ `
-<section class="site-section asso-charter${tone()}" aria-labelledby="asso-charter">
-  <header><h2 id="asso-charter">${say('charter.title')}</h2><p class="site-why">${say('charter.text')}</p></header>
+</section>`
+    const adopted = charter ? /* html */ `
+<section class="site-block asso-charter" aria-labelledby="asso-charter">
+  <header><h3 id="asso-charter">${say('charter.title')}</h3><p class="site-why">${say('charter.text')}</p></header>
   <p><a class="button primary" href="${charter}">${say('charter.go')}</a></p>
-</section>
-` : ''}
-<section class="site-section${tone()}" aria-labelledby="asso-limits">
-  <h2 id="asso-limits">${say('limits.title')}</h2>
-  <ul class="site-limits">${list('limits.items').map((item) => /* html */ `<li>${item}</li>`).join('')}</ul>
-</section>
-
-<section class="site-section${tone()}" aria-labelledby="asso-faq">
-  <h2 id="asso-faq">${say('faq.title')}</h2>
-  ${questions('asso-questions', kit.table('faq.items', 2, params))}
-</section>
-
-<section id="asso-start" class="site-section site-end asso-start${tone()}" aria-labelledby="asso-start-title">
-  ${WAVE}
-  <h2 id="asso-start-title">${say('start.title')}</h2>
+</section>` : ''
+    const start = /* html */ `${WAVE}
+  <h3>${say('start.title')}</h3>
   <ol>${list('start.steps').map((step) => /* html */ `<li>${step}</li>`).join('')}</ol>
   <p class="asso-go">${FELT.point}<a class="button primary" href="${minutes}">${say('cta')}</a>${sendIt}</p>
   <p class="site-why">${say('start.note')}</p>${it ? /* html */ `
-  <p class="asso-other">${say('start.it').replace('{enterprise}', () => /* html */ `<a href="${it}">${kit.from('enterprise').say('title')}</a>`)}</p>` : ''}
-</section>`
+  <p class="asso-other">${say('start.it').replace('{enterprise}', () => /* html */ `<a href="${it}">${kit.from('enterprise').say('title')}</a>`)}</p>` : ''}`
+    // What it doesn't do, said under the part of the promise each limit is about.
+    const limits = list('limits.items'), not = (/** @type {number[]} */ ...which) => caught(say('limits.title'), which.map((i) => limits[i]))
+    return landing(kit, {
+      top: hero,
+      promise: say('h1'),
+      acts: {
+        free: { id: 'asso-free', body: count, catch: not(1) },
+        volunteers: { id: 'asso-volunteers', body: `${jobs}\n${worry}${adopted}`, catch: not(0, 2, 3, 4, 5) },
+      },
+      turn: { id: 'asso-start', body: start, classes: 'asso-start' },
+      questions: { id: 'asso-faq', name: 'asso-questions', title: say('faq.title'), items: kit.table('faq.items', 2, params) },
+    })
   },
 }

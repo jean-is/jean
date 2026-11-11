@@ -5,6 +5,7 @@
   "eyebrow": "AI policy template",
   "h1": "Your AI charter, in plain words.",
   "h1.mark": "in plain words",
+  "acts": [["charter", "Your AI charter,"], ["plain", "in plain words."]],
   "lede": "One page your association, school, company or public body can adopt as it is or change: what people may use AI for, what never goes into it, how to check what it gives, and who to ask. True of any AI, not only {name}.",
   "see": "Read the template",
   "facts": ["Free to copy and change", "True of any AI", "Comes as a Word document"],

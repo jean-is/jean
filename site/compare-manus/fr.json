@@ -5,6 +5,7 @@
   "eyebrow": "{name} et Manus",
   "h1": "Une alternative libre à Manus qui garde votre travail sur vos appareils",
   "h1.mark": "sur vos appareils",
+  "acts": [["alternative", "Une alternative libre à Manus"], ["where", "qui garde votre travail sur vos appareils"]],
   "lede": "Manus fait votre travail sur un ordinateur dans son cloud. {name} le fait dans un onglet de votre navigateur, avec vos fichiers sur vos appareils et l’IA que vous choisissez, y compris celle de votre propre ordinateur. Gratuit, libre, et aucun crédit à compter.",
   "cta": "Essayer {name} sur un fichier",
   "cta2": "Mettre l’IA sur cet ordinateur",

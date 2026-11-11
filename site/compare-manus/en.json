@@ -5,6 +5,7 @@
   "eyebrow": "{name} and Manus",
   "h1": "An open-source alternative to Manus that keeps your work on your devices",
   "h1.mark": "on your devices",
+  "acts": [["alternative", "An open-source alternative to Manus"], ["where", "that keeps your work on your devices"]],
   "lede": "Manus does your work on a computer in its cloud. {name} does it in your browser tab, with your files on your devices and the AI you choose, the one on your own computer included. Free, open source, and no credits to count.",
   "cta": "Try {name} on a file",
   "cta2": "Get the AI on this computer",

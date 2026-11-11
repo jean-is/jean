@@ -152,6 +152,105 @@ export const questions = (name, items) => /* html */ `<div class="site-questions
 /** Items each with a tick. @param {string[]} items  HTML */
 export const ticks = (items) => /* html */ `<ul class="site-ticks">${items.map((item) => /* html */ `<li>${item}</li>`).join('')}</ul>`
 
+/** The grounds a landing page's acts stand on, in turn: paper, ink, pale yellow. */
+const GROUNDS = ['paper', 'fill', 'wait']
+/**
+ * The edge between two grounds: the next one's, rising in waves. One crest is the box's middle and the line runs on
+ * past either side as far as a screen goes, so that `meet` holds every wave at its size, cut by no width, as `slice`
+ * over the whole line cut its crests on a wide screen. @param {string} next  paper, fill or wait @param {string} [kind]  the class's word
+ */
+export const wave = (next, kind = 'site') => /* html */ `<svg class="${kind}-wave is-${next}" viewBox="-25 0 100 40" preserveAspectRatio="xMidYMax meet" aria-hidden="true"><path d="M-2400 22q25-22 50 0${'t50 0'.repeat(97)}V41H-2400Z"/></svg>`
+/**
+ * A title in the acts' large face. Where its words end on a stop or a pause, it ends on a full stop in felt-tip, or
+ * on its own question or exclamation mark; where they run on into the next part, as a clause before its noun does,
+ * on nothing.
+ * @param {Kit} kit @param {string} id @param {string} words  HTML @param {boolean} [stops]  whether it ends the sentence
+ */
+const large = (kit, id, words, stops = true) => {
+  const [, said, mark] = /^([\s\S]*?)\s*([.,;:。、，?!？！]?)$/.exec(words) ?? []
+  const stop = /[?!？！]/.test(mark) ? mark : stops || mark ? (kit.lang === 'ja' ? '。' : '.') : ''
+  return /* html */ `<h2 id="${id}" class="site-act-title">${said}${stop && /* html */ `<span class="site-dot">${stop}</span>`}</h2>`
+}
+
+/**
+ * What a part of a page's promise doesn't do, under what proves it: one line, or a list.
+ * @param {string} label  HTML: the catch's name (`catch.name`), or the page's own @param {string[]} limits  HTML
+ */
+export const caught = (label, limits) => (limits.length === 1
+  ? /* html */ `<p class="site-catch"><b>${label}</b> <span>${limits[0]}</span></p>`
+  : /* html */ `<div class="site-catch"><p><b>${label}</b></p><ul>${limits.map((limit) => /* html */ `<li>${limit}</li>`).join('')}</ul></div>`)
+
+/** @typedef {{ id: string, body: string, catch?: string }} Act  a part of a page's promise: its blocks (`site-block`, their headings an <h3>), then its catch (caught()) */
+
+/**
+ * A landing page's acts, as the homepage has them (D397): each a large title over what proves it, then its own
+ * catch, on grounds that turn, a wave between two, the last one's leading back to paper. Where they are the page's
+ * promise part by part, its words' `acts` name each part and say it, in the order its language says the promise,
+ * and the parts must make the <h1>, or the build stops; on a page whose title is no sentence, each has a title of
+ * its own.
+ * @param {Kit} kit @param {string} promise  the page's <h1>, as its words say it @param {Record<string, Act> | Array<Act & { title: string }>} named
+ */
+function acts (kit, promise, named) {
+  /** @type {Array<[Act, string, boolean]>} each act, its title, and whether its title ends on a stop whatever its words */
+  let list
+  if (Array.isArray(named)) list = named.map((act) => [act, act.title, true])
+  else {
+    const parts = kit.table('acts', 2)
+    if (parts.map(([, part]) => part).join(kit.lang === 'ja' ? '' : ' ') !== promise || `${parts.map(([name]) => name).sort()}` !== `${Object.keys(named).sort()}`) throw new Error(`site/${kit.name}/${kit.lang}.json: acts are not the promise, part by part`)
+    list = parts.map(([name, part], i) => [named[name], part, i + 1 === parts.length])
+  }
+  return list.map(([act, title, stops], i) => /* html */ `<section id="${act.id}" class="site-act is-${GROUNDS[i % GROUNDS.length]}" aria-labelledby="${act.id}-title">
+  <div class="site-act-in">
+    ${large(kit, `${act.id}-title`, title, stops)}
+    ${act.body}
+    ${act.catch ?? ''}
+  </div>
+  ${wave(i + 1 < list.length ? GROUNDS[(i + 1) % GROUNDS.length] : GROUNDS[0])}
+</section>`).join('\n\n')
+}
+
+/**
+ * A page's top, as most have it: what it is, its title, a line or two, its buttons, its facts ticked by hand, and
+ * what stands beside them.
+ * @param {Kit} kit
+ * @param {{ id: string, title: string, eyebrow?: string, lede?: string, actions?: string, facts?: string[], aside?: string, classes?: string }} top  HTML each
+ */
+export const hero = (kit, { id, title, eyebrow = '', lede = '', actions = '', facts = [], aside = '', classes = '' }) => /* html */ `<section class="site-hero${classes && ` ${classes}`}" aria-labelledby="${id}">
+  <div class="site-hero-text">
+    ${eyebrow && /* html */ `<p class="site-eyebrow">${eyebrow}</p>`}
+    <h1 id="${id}">${title}</h1>
+    ${lede && /* html */ `<p class="site-lede">${lede}</p>`}
+    ${actions && /* html */ `<p class="site-cta">${actions}</p>`}
+    ${facts.length ? /* html */ `<ul class="site-facts is-felt">${facts.map((fact, i) => /* html */ `<li>${FELT.tick(i)}${fact}</li>`).join('')}</ul>` : ''}
+  </div>
+  ${aside}
+</section>`
+
+/**
+ * A landing page's main part, the same anatomy on every one (D397): its top; its acts, the promise part by part or,
+ * on a page whose title is no sentence, parts with titles of their own; Your turn, with the page's one action; its
+ * questions. A page gives the parts it has, and this writes them in their order; site.css is the look of them all.
+ * @param {Kit} kit
+ * @param {object} page
+ * @param {string} page.top  HTML: its hero, the page's own or hero()'s
+ * @param {string} [page.promise]  the <h1>'s words, where the acts are its parts
+ * @param {Record<string, Act> | Array<Act & { title: string }>} page.acts  by the parts' names (the words' `acts`), or in order with their titles
+ * @param {{ id: string, body: string, classes?: string }} [page.turn]  the ending: what to do, as HTML, its heading an <h3>
+ * @param {{ id: string, name: string, title: string, items: string[][] }} [page.questions]  under a heading, each a question and its answer, as HTML
+ * @returns {string}
+ */
+export function landing (kit, { top, promise = '', acts: parts, turn: end, questions: faq }) {
+  return [top, acts(kit, promise, parts),
+    end && /* html */ `<section id="${end.id}" class="site-section site-end site-yours${end.classes ? ` ${end.classes}` : ''}" aria-labelledby="${end.id}-title">
+  ${large(kit, `${end.id}-title`, kit.say('turn.title'))}
+  ${end.body}
+</section>`,
+    faq && /* html */ `<section class="site-section" aria-labelledby="${faq.id}">
+  <h2 id="${faq.id}">${faq.title}</h2>
+  ${questions(faq.name, faq.items)}
+</section>`].filter(Boolean).join('\n\n')
+}
+
 /**
  * The felt-tip pen: what a page most wants read, underlined, circled, struck through, ticked or pointed at by
  * hand, and a highlighter over a line. Every mark is a drawing without words, hidden from screen readers; site.css
@@ -378,7 +477,7 @@ untranslated(() => links.map((link) => link.hreflang), () => own, (code) => loca
 
 /**
  * The foot every page ends with, the same on each: the name, what Jean is and where it's made, with the homepage's
- * menu of languages under them; the homepage, at ?index=1, Help, the pages every copy has, Accessibility and the source;
+ * menu of languages under them; the homepage, Help, the pages every copy has, Accessibility and the source;
  * whom the site's other pages are for, where they're built; what people use Jean for (USES); and the comparison's
  * pages. The page it is on is marked, not left out.
  * @param {Kit} kit @param {string} [languages]  HTML
@@ -393,7 +492,7 @@ export function foot (kit, languages = '') {
   return /* html */ `<footer class="site-foot">
   <div><p class="site-mark"><span dir="ltr">${xml(kit.brand.name)}</span></p><p>${kit.say('foot.tagline')}</p><p>${kit.say('foot.made')}</p><p>${kit.say('foot.cookies')}</p>${languages}</div>
   <nav aria-label="${xml(kit.brand.name)}"><h2 class="site-foot-head">${xml(kit.brand.name)}</h2><ul>
-    ${item(kit.link('home') && `${kit.link('home')}?index=1`, kit.app('learn.home'), 'home')}${item(kit.link('help'), kit.app('learn.help'), 'help')}${item(kit.link('files'), kit.app('welcome.files'), 'files')}${item(kit.link('privacy'), kit.app('welcome.privacy'), 'privacy')}${item(kit.link('terms'), kit.app('welcome.terms'), 'terms')}${item(kit.link('accessibility'), kit.say('foot.accessibility'), 'accessibility')}${item(kit.link('site-map'), kit.say('foot.map'), 'site-map')}${item(REPOSITORY, kit.say('foot.source'))}
+    ${item(kit.link('home'), kit.app('learn.home'), 'home')}${item(kit.link('help'), kit.app('learn.help'), 'help')}${item(kit.link('files'), kit.app('welcome.files'), 'files')}${item(kit.link('privacy'), kit.app('welcome.privacy'), 'privacy')}${item(kit.link('terms'), kit.app('welcome.terms'), 'terms')}${item(kit.link('accessibility'), kit.say('foot.accessibility'), 'accessibility')}${item(kit.link('site-map'), kit.say('foot.map'), 'site-map')}${item(REPOSITORY, kit.say('foot.source'))}
   </ul></nav>${audiences ? /* html */ `
   <nav aria-label="${kit.say('foot.for')}"><h2 class="site-foot-head">${kit.say('foot.for')}</h2><ul>
     ${audiences}

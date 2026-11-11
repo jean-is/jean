@@ -9,7 +9,7 @@
 //   a result shows whole, each the site's only one, the canonical address, every language's version named, the
 //   default's English, the cards, and nothing that keeps it out of results;
 // - in every language: English's and French's at least, each with English's words, of the same kinds, with the same
-//   {params}, its headings as English's are, nothing left as English's says it, French's spacing before ? ! : ;
+//   {params}, its headings as English's are, act by act, nothing left as English's says it, French's spacing before ? ! : ;
 // - and every link to the site's own pages and files reaching one it serves, and style sheets in logical properties.
 import { dir } from '../app/core/i18n.js'
 import { LANGUAGES } from './site.js'
@@ -232,7 +232,14 @@ export function checkSite ({ files, pages, words }, { base = null, served = [] }
     const english = versions.find((page) => page.lang === 'en')
     if (!english) continue
     const root = parse(files[english.path])
-    const outline = (/** @type {Element} */ tree) => elements(tree).filter((element) => /^h[1-6]$/.test(element.name)).map((element) => element.name).join(' ')
+    // An act's headings are told under its id: a language has the acts in the order it says the promise (acts() in
+    // site.js), the same acts and the same headings in each.
+    const actOf = (/** @type {Element | null} */ node) => { for (let at = node; at; at = at.parent) if (/(^| )site-act( |$)/.test(at.attrs.class ?? '')) return at.attrs.id ?? ''; return '' }
+    const outline = (/** @type {Element} */ tree) => {
+      const headings = elements(tree).filter((element) => /^h[1-6]$/.test(element.name)).map((element) => [actOf(element), element.name])
+      const acts = [...new Set(headings.map(([act]) => act))].filter(Boolean).sort()
+      return [headings.filter(([act]) => !act).map(([, name]) => name).join(' '), ...acts.map((act) => `${act}: ${headings.filter(([its]) => its === act).map(([, name]) => name).join(' ')}`)].join(', ')
+    }
     const said = new Set(textsOf(root, 'en').filter(sentence))
     for (const page of versions.filter((version) => version !== english)) {
       const tree = parse(files[page.path])

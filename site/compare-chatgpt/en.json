@@ -5,6 +5,7 @@
   "eyebrow": "{name} and ChatGPT",
   "h1": "A free ChatGPT alternative that keeps your files on your devices",
   "h1.mark": "on your devices",
+  "acts": [["alternative", "A free ChatGPT alternative"], ["where", "that keeps your files on your devices"]],
   "lede": "{name} answers with the AI you choose: one on this computer, a free one, or ChatGPT itself. Bring your ChatGPT history with you. Nothing to install, made in France, open source.",
   "cta": "Try {name}",
   "cta2": "Bring your ChatGPT history",

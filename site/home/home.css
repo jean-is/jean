@@ -7,9 +7,10 @@
 @media (scripting: enabled) { :root:not(.is-ready) body > .home { display: none; } }
 @media print { body > .home { display: none; } }
 
-/* The page rises into the first screen as a sheet, over the room the box's ideas leave free under them (--home-lift,
-   which ui/home.js measures, D653): the room is as it is without the page, its box where it always is, and the page's
-   promise and who it is for show under it, cut by the window's edge, so it reads as going on. The links under the box,
+/* The page rises into the first screen as a sheet, just far enough for its first act's title to show whole with the
+   top 40px of its row, never over the room the box's ideas leave free under them, less a gap (--home-lift, which
+   ui/home.js measures, D653): the room is as it is without the page, its box where it always is, and the row, cut by
+   the window's edge, says the page goes on; in a shorter room, less of it shows. The links under the box,
    which the page's foot has too, are under the sheet, and out of the keyboard's way. */
 body > .home { margin-block-start: calc(-1 * var(--home-lift, 0px)); }
 body:has(> .home:not([hidden])) app-composer > :is(p, footer) { visibility: hidden; }
@@ -47,9 +48,16 @@ body:has(> .home:not([hidden])) app-composer > :is(p, footer) { visibility: hidd
   --home-control: var(--control, oklch(from var(--ink) l c h / 0.08));
   --home-raise: var(--raise, 0 0 0 1px var(--line-strong));
   --home-float: var(--float, 0 1.25rem 3.5rem -0.75rem oklch(0 0 0 / 0.45));
+  /* What waits, Tilde's pale yellow, the third act's ground; a look without one takes the side's. */
+  --home-wait: var(--wait, var(--home-side));
+  /* The felt-tip pen, as site.css gives it to the site's pages: under words, and as a line of its own. */
+  --felt: oklch(from var(--tint) 0.845 min(c, 0.161) h);
+  --felt-line: var(--felt);
+  /* A mark on the fill and words read on it less loudly; Tilde draws the mark in sunflower. */
+  --home-mark: var(--home-on-fill);
+  --home-on-fill-soft: oklch(from var(--home-on-fill) l c h / 0.7);
   --home-pane: 1.25rem;
   --home-sheet: 1.75rem;
-  --home-menu: 0.75rem;
   --home-row: 0.625rem;
   --home-gutter: clamp(1.25rem, 8vw, 7.5rem);
   /* A section's or the foot's sides: the gutter, or wider so what they hold is at most 75rem, centred. */
@@ -60,89 +68,83 @@ body:has(> .home:not([hidden])) app-composer > :is(p, footer) { visibility: hidd
   font-size: 1rem;
   line-height: 1.6;
 }
+[data-theme='light'] .home { --felt-line: oklch(from var(--tint) 0.64 min(c, 0.19) h); }
+/* The fill is dark by day and light by night, so the sunflower on it is night's by day and a deep one by night. */
+:root[data-look='tilde'] .home { --home-mark: oklch(from var(--tint) 0.5 min(c, 0.105) h); }
+:root[data-look='tilde'][data-theme='light'] .home { --home-mark: oklch(from var(--tint) 0.845 min(c, 0.161) h); }
+/* Its sizes follow the page's own width, which the drawer open beside it narrows. */
+.home > main { container-type: inline-size; }
 /* Weightless, so every class of the page's own spaces its element as it says. */
 :where(.home) :where(h1, h2, h3, p, ul, ol, dl, dd, figure, fieldset) { margin: 0; }
 :where(.home) :where(ul, ol) { padding: 0; list-style: none; }
 .home a { color: var(--flame); text-decoration: underline; text-underline-offset: 0.2em; text-decoration-thickness: 1px; }
 .home a.button { color: var(--ink); text-decoration: none; }
-.home :is(h1, h2, h3, .home-why, .home-sub, .home-promise-sub, .home-door-why) { text-wrap: balance; }
+.home :is(h1, h2, h3, .home-act-lead, .home-act-why) { text-wrap: balance; }
 .home:lang(ja) { line-break: strict; }
 .home:lang(ja) :is(h1, h2, h3, p) { word-break: auto-phrase; }
 .home:lang(ko) { word-break: keep-all; }
 .home .flip-rtl { display: inline-block; }
 .home .icon { flex: none; }
 
-/* What Jean is, the page's own heading, then "Jean for you": who it is for, in one band on the fold, the top of a
-   sheet over the room, its corners round and a shadow above it, which rises into place as the page shows. */
-.home-promise { padding: 2.25rem var(--home-gutter) 0; border-block-start: 1px solid var(--line); border-start-start-radius: var(--home-sheet); border-start-end-radius: var(--home-sheet); background: var(--home-side); box-shadow: 0 -1.25rem 2.5rem -1.75rem oklch(0 0 0 / 0.45); text-align: center; }
-@media (prefers-reduced-motion: no-preference) {
-  :is(.home-promise, .home-promise-sub, .home-strip) { animation: home-rise 0.7s var(--ease) 0.3s backwards; }
-}
+/* The promise is the page's heading for whoever hears it or searches it, and what its acts' titles read as; the first
+   act rises into place as the page shows. */
+@media (prefers-reduced-motion: no-preference) { .home > main > .home-act:first-of-type { animation: home-rise 0.7s var(--ease) 0.3s backwards; } }
 @keyframes home-rise { from { translate: 0 2rem; opacity: 0; } }
-.home-strip, .home-strip ul { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem; }
-.home-strip { padding: 1rem var(--home-gutter); border-block: 1px solid var(--line); background: var(--home-side); }
-/* The line under it says how: any AI, and what is kept where; a language without its words yet goes straight to the strip. */
-.home-promise-sub { margin: 0; padding: 0.75rem max(var(--home-gutter), calc((100% - 44rem) / 2)) 0; background: var(--home-side); color: var(--ink-soft); font-size: 1.1rem; text-align: center; }
-:is(.home-promise, .home-promise-sub) + .home-strip { padding-block-end: 1.75rem; border-block-start: 0; }
-.home-strip-label { margin-inline-end: 0.25rem; color: var(--ink-soft); font-size: 0.875rem; white-space: nowrap; }
-.home-strip .button { padding-block: 0.3rem; font-size: 0.875rem; }
+.home:is(:lang(ar), :lang(ja), :lang(ko)) :is(.home-act-title, .home-title, .home-shelf h3, .home-move h3, .site-mark) { font-family: var(--sans); }
 
-/* Sections, their colour the page's width */
-.home-section { display: flex; flex-direction: column; gap: 1.75rem; padding: 4.5rem var(--home-edge); }
-.home-section.is-side { background: var(--home-side); }
-.home-head { display: flex; flex-direction: column; gap: 0.6rem; max-inline-size: 46rem; }
-.home-head.is-centred { align-self: center; align-items: center; text-align: center; }
-.home-why { color: var(--ink-soft); font-size: 1.1rem; line-height: 1.65; }
-.home-title { color: var(--ink); font: 700 clamp(1.75rem, 4vw, 2.5rem)/1.15 var(--display); }
-.home-title.is-small { font-size: clamp(1.5rem, 3vw, 2rem); }
-.home-sub { color: var(--ink-soft); font-size: 1.1rem; }
-.home:is(:lang(ar), :lang(ja), :lang(ko)) :is(.home-title, .home-door-title, .site-mark) { font-family: var(--sans); }
+/* An act for each part of the promise: its title, large, its full stop in the mark's colour; why it matters and
+   what Jean does about it; one proof; its catch. On paper, on the app's fill, on what waits, the wave between two
+   the edge of the one that follows. */
+.home-act { display: flex; flex-direction: column; scroll-margin-block-start: 4.5rem; }
+.home-act.is-fill { background: var(--home-fill); color: var(--home-on-fill); }
+.home-act.is-wait { background: var(--home-wait); }
+.home-act-in { display: flex; flex-direction: column; gap: 2.5rem; padding: 4.5rem var(--home-edge) 0; }
+.home-wave { display: block; inline-size: 100%; block-size: 2.5rem; margin-block: 4.5rem -1px; }
+.home-wave.is-paper { fill: var(--room); }
+.home-wave.is-fill { fill: var(--home-fill); }
+.home-wave.is-wait { fill: var(--home-wait); }
+.home-act-head { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 1rem 3.5rem; }
+.home-act-head > :is(p, div) { flex: 1 1 20rem; max-inline-size: 30rem; margin-block-end: 0.7rem; }
+.home-act-title { color: inherit; font: 700 clamp(3.25rem, 10.4cqi, 8.25rem)/0.95 var(--display); }
+#home-keep .home-act-title { font-size: clamp(3rem, 8.4cqi, 7rem); }
+/* On a wide window the first act shows in the first screen, its title near its top, on paper where no edge shows
+   above it, and its row close under it. */
+@media (min-width: 48rem) { .home > main > .home-act:first-of-type > .home-act-in { gap: 1rem; padding-block-start: 0.5rem; } }
+.home-dot { color: var(--felt-line); }
+.home-act-why { color: var(--ink-soft); font-size: 1.1875rem; font-style: italic; }
+.home:is(:lang(ar), :lang(ja), :lang(ko)) .home-act-why { font-style: normal; }
+.home-act-lead { color: var(--ink-soft); font-size: 1.1875rem; }
 
-/* The range: the words in and out, who it's for, four tries and how one went. */
-.home-formats { display: grid; gap: 0.5rem; justify-items: center; }
-.home-formats > div { display: flex; align-items: baseline; justify-content: center; gap: 0.4rem; }
-.home-formats dt { flex: none; min-inline-size: 3.5rem; margin-inline-end: 0.35rem; color: var(--ink-soft); font-size: 0.8125rem; font-weight: 600; text-align: end; }
-.home-formats ul { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-.home-formats li { padding: 0.15rem 0.7rem; border-radius: 999px; background: var(--room-2); font-size: 0.8125rem; }
-.home-filter { position: relative; isolation: isolate; anchor-scope: --chosen; display: inline-flex; flex-wrap: wrap; align-self: center; gap: 0.25rem; padding: 0.2rem; border: 0; border-radius: 999px; background: var(--room-2); }
-.home-filter input { position: absolute; opacity: 0; pointer-events: none; }
-.home-filter label { display: block; padding: 0.3rem 0.9rem; border-radius: 999px; color: var(--ink-soft); font-size: 0.8125rem; cursor: pointer; transition: color 0.3s var(--ease); }
-.home-filter input:checked + label { background: var(--home-fill); color: var(--home-on-fill); }
-/* Where the browser anchors, the choice's fill is one mark under the choices that slides to the one chosen, as a segmented control's in the app (ui/dialogs.css). */
-@supports (anchor-name: --chosen) {
-  .home-filter input:checked + label { anchor-name: --chosen; background: none; }
-  .home-filter::before { content: ''; position: absolute; z-index: -1; position-anchor: --chosen; inset-block: anchor(start) anchor(end); inset-inline: anchor(start) anchor(end); border-radius: 999px; background: var(--home-fill); transition: inset 0.35s var(--ease); }
-}
-.home-filter input:focus-visible + label { outline: 2px solid var(--flame); outline-offset: 2px; }
-.home:has(#home-for-home:checked) .home-tile:not([data-for='home']),
-.home:has(#home-for-family:checked) .home-tile:not([data-for='family']),
-.home:has(#home-for-work:checked) .home-tile:not([data-for='work']) { display: none; }
+/* The catch, every promise's own, said where the promise is. */
+.home-catch { align-self: flex-start; padding: 0.8rem 1.2rem; border: 1.5px dashed var(--line-strong); border-radius: 1rem; color: var(--ink-soft); font-size: 0.9375rem; }
+.home-catch b { margin-inline-end: 0.35rem; color: var(--ink); font-weight: 600; }
+.is-wait .home-catch { border-color: oklch(from var(--flame) l c h / 0.55); }
 
-/* One row, four tiles in view (two under 70rem), the rest a turn away: the buttons, in the margins, once
-   ui/home.js has them turn the row, and hidden where it ends; the row scrolls without them too. Room for
-   the active tile's ring, which the scrolling row would clip. */
+/* Create: one row of what Jean makes, four tiles in view (two under 70rem), the rest a turn away: the buttons, in
+   the margins, once ui/tiles.js has them turn the row, and hidden where it ends; the row scrolls without them too. */
 .home-row { position: relative; }
-.home-tiles { display: flex; gap: 1rem; margin: -0.3rem; padding: 0.3rem; overflow-x: auto; scroll-snap-type: inline mandatory; scroll-padding-inline: 0.3rem; scrollbar-width: none; }
+.home-tiles { display: flex; gap: 1.25rem; margin: -0.3rem; padding: 0.3rem 0.3rem 1rem; overflow-x: auto; scroll-snap-type: inline mandatory; scroll-padding-inline: 0.3rem; scrollbar-width: none; }
 @media (prefers-reduced-motion: no-preference) { .home-tiles { scroll-behavior: smooth; } }
-.home-tile { display: flex; flex: 0 0 calc((100% - 3rem) / 4); flex-direction: column; gap: 0.7rem; min-block-size: 21rem; padding: 0.9rem; border: 1px solid var(--line); border-radius: var(--home-pane); background: var(--room); scroll-snap-align: start; }
+.home-tile { display: flex; flex: 0 0 calc((100% - 3.75rem) / 4); flex-direction: column; gap: 0.6rem; padding-block-end: 1.2rem; overflow: hidden; border: 1px solid var(--line); border-radius: var(--home-sheet); background: var(--room); box-shadow: 0 0.9rem 2rem -1.4rem oklch(0 0 0 / 0.4); scroll-snap-align: start; }
+.home-tile > :not(.home-art) { margin-inline: 1.25rem; }
+.home-tile:first-child .home-art { background: var(--home-wait); }
 .home-turn { position: absolute; z-index: 1; inset-block-start: calc(50% - 1.375rem); display: none; place-items: center; inline-size: 2.75rem; block-size: 2.75rem; padding: 0; border: 0; border-radius: 50%; background: var(--home-control); box-shadow: var(--home-raise); color: var(--ink); cursor: pointer; }
 .home-turn.is-back { inset-inline-start: -3.25rem; }
 .home-turn.is-next { inset-inline-end: -3.25rem; }
 .home-turn.is-back .icon { rotate: 180deg; }
 .home-row.is-turning .home-turn:not(:disabled) { display: grid; }
 .home-turn:hover { background: var(--room-2); }
-.home-tile { transition: border-color 0.25s var(--ease), box-shadow 0.25s var(--ease); }
-.home-tile:not(.is-active) { cursor: pointer; }
-.home-tile.is-active { border-color: oklch(from var(--home-fill) l c h / 0.6); box-shadow: 0 0 0 3px oklch(from var(--home-fill) l c h / 0.12); }
-.home-where, .home-step, .home-door-name { color: var(--ink-soft); font-size: 0.8125rem; font-weight: 600; line-height: 1.4; }
-.home-ask { font-size: 0.95rem; font-weight: 500; line-height: 1.45; }
+/* Who it is for, then what comes back, a dot between them. */
+.home-where { display: flex; flex-wrap: wrap; gap: 0 0.4rem; margin-block-start: 0.5rem; color: var(--ink-soft); font-size: 0.8125rem; line-height: 1.4; }
+.home-where bdi::before { content: '·'; margin-inline-end: 0.4rem; }
+.home-ask { font-size: 1rem; line-height: 1.45; }
 .home-file { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.1rem 0.55rem 0.1rem 0.4rem; border-radius: 0.4375rem; background: var(--room-2); color: var(--ink); font-size: 0.8125rem; font-weight: 400; vertical-align: middle; }
 .home-file .icon { inline-size: 0.95rem; block-size: 0.95rem; color: var(--flame); }
-.home-go { display: flex; margin-block-start: auto; font-size: 0.8125rem; }
+.home-go { display: flex; margin-block-start: auto; padding-block-start: 0.3rem; font-size: 0.875rem; }
 .home-go .button { white-space: nowrap; }
 
 /* The tiles' pictures, drawn until each is a capture of its request done in that language. */
-.home-art { position: relative; display: grid; flex: 1; place-items: center; min-block-size: 8rem; overflow: hidden; border-radius: var(--home-row); background: var(--room-2); }
+.home-art { position: relative; display: grid; flex: none; place-items: center; block-size: 11.5rem; overflow: hidden; background: var(--room-2); }
 .home-art svg { inline-size: 86%; block-size: auto; }
 .home-art.is-map svg { inline-size: 100%; block-size: 100%; }
 .home-bars { display: flex; align-items: flex-end; gap: 0.6rem; block-size: 70%; padding-block-end: 0.75rem; }
@@ -187,76 +189,66 @@ body:has(> .home:not([hidden])) app-composer > :is(p, footer) { visibility: hidd
 .home-trunk { stroke: var(--ink-soft); stroke-width: 3; }
 .home-blossom { fill: var(--room); }
 
-/* How it went: the active tile's request, replayed. Every replay is in the page, stacked in one place so the page
-   never moves as they change, the active tile's shown. */
-.home-replays { display: grid; scroll-margin-block-start: 5rem; }
-.home-replays > .home-replay { grid-area: 1 / 1; transition: opacity 0.25s var(--ease), visibility 0.25s; }
-.home-replays > .home-replay[inert] { visibility: hidden; opacity: 0; }
-.home-replay { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.25rem; padding: 1.25rem 1.4rem; border: 1px solid var(--line); border-radius: var(--home-pane); background: var(--room); }
-.home-replay > li { display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem; min-inline-size: 0; font-size: 0.875rem; }
-.home-replay > li + li { padding-inline-start: 1.25rem; border-inline-start: 1px solid var(--line); }
-.home-asked { display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem; padding: 0.45rem 0.8rem; border-radius: var(--radius); background: var(--room-2); line-height: 1.45; }
-.home-asked .home-file { background: var(--room); }
-.home-ticks li { display: flex; gap: 0.4rem; align-items: baseline; }
-.home-ticks li::before { content: '✓' / ''; color: var(--flame); }
-.home-receipt { display: flex; flex-direction: column; gap: 0.15rem; padding: 0.7rem 0.8rem; border-radius: var(--home-menu); background: var(--room); box-shadow: var(--home-float); font-size: 0.8125rem; }
-.home-receipt b { display: flex; align-items: center; gap: 0.35rem; font-weight: 600; }
-.home-receipt .icon { inline-size: 1rem; block-size: 1rem; color: var(--flame); }
-.home-receipt span { color: var(--ink-soft); }
-.home-replay .button { margin-block-start: auto; }
+/* With any AI, on the fill: the title and what it means beside the ways to have one, the first chosen. */
+.home-any { display: flex; flex-wrap: wrap; align-items: center; gap: 3rem 4.5rem; }
+.home-act-head.is-stacked { flex: 1 1 26rem; flex-flow: column; align-items: flex-start; gap: 1.5rem; }
+.home-act-head.is-stacked > p { flex: none; max-inline-size: 29rem; margin: 0; }
+#home-any .home-act-title { font-size: clamp(3rem, 7.2cqi, 5.9rem); }
+/* On one line in Japanese, whose words for it are wide. Where it is the first act, its title starts at its top, in the first screen with the top of its ways. */
+.home:lang(ja) #home-any .home-act-title { font-size: clamp(2.6rem, 5.2cqi, 4.6rem); }
+.home > main > .home-act:first-of-type .home-any { align-items: flex-start; }
+.is-fill :is(.home-act-why, .home-ways small, .home-catch) { color: var(--home-on-fill-soft); }
+.is-fill .home-act-lead { color: var(--home-on-fill); font-size: 1.375rem; line-height: 1.45; }
+.is-fill .home-dot { color: var(--home-mark); }
+.home .is-fill a { color: var(--home-mark); font-weight: 500; }
+.is-fill .home-catch { border-color: oklch(from var(--home-on-fill) l c h / 0.35); }
+.is-fill .home-catch b { color: var(--home-on-fill); }
+.home-ways { display: flex; flex: 1 1 24rem; flex-direction: column; gap: 0.75rem; }
+.home-ways li { display: flex; align-items: center; gap: 1rem; padding: 1.1rem 1.4rem; border-radius: var(--home-pane); background: oklch(from var(--home-on-fill) l c h / 0.07); }
+.home-ways li.is-chosen { background: oklch(from var(--home-on-fill) l c h / 0.13); box-shadow: inset 0 0 0 1.5px var(--home-mark); }
+.home-ways .icon { inline-size: 1.9rem; block-size: 1.9rem; color: var(--home-mark); }
+.home-ways li.is-chosen .icon:last-child { inline-size: 1.4rem; block-size: 1.4rem; }
+/* A way's name over its note: the row's own span alone, since a page read right to left has each run of Latin
+   words in a span of its own (page.js's latinSaid). */
+.home-ways li > span { display: flex; flex: 1; flex-direction: column; min-inline-size: 0; }
+.home-ways b { font-size: 1.125rem; font-weight: 600; line-height: 1.35; }
+.home-ways small { font-size: 0.9375rem; }
 
-/* Why Jean: the doors, Confidential first, each in four rows its row's others share (a subgrid), so their names,
-   reasons and promises line up across the row however long each says it. */
-.home-doors { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: auto auto auto 1fr; gap: 1rem; }
-.home-door { display: grid; grid-template-rows: subgrid; grid-row: span 4; gap: 0.6rem; min-inline-size: 0; padding: 1.35rem; border: 1px solid var(--line); border-radius: var(--home-pane); background: var(--room); scroll-margin-block-start: 5rem; }
-.home-door-body { display: flex; flex-direction: column; gap: inherit; min-inline-size: 0; }
-.home-door.is-featured { grid-column: span 2; border-color: var(--line-strong); }
-.home-door-why { color: var(--ink-soft); font-size: 0.875rem; line-height: 1.5; }
-.home-door-title { color: var(--ink); font: 700 1.4rem/1.2 var(--display); }
-.home-door.is-featured .home-door-title { font-size: 1.75rem; }
-.home-door-go { display: flex; flex-direction: column; gap: 0.2rem; margin-block-start: auto; font-size: 0.875rem; font-weight: 500; }
-.home-door-go > * { align-self: flex-start; }
-.home-door details { margin-block-start: auto; font-size: 0.875rem; }
-.home-door summary { display: inline-flex; align-items: center; gap: 0.3rem; color: var(--ink); font-weight: 500; cursor: pointer; list-style: none; }
-.home-door summary::-webkit-details-marker { display: none; }
-.home-door summary .icon { inline-size: 1rem; block-size: 1rem; transition: rotate 0.2s; }
-.home-door details[open] summary .icon { rotate: 180deg; }
-.home-door details > ul { display: flex; flex-direction: column; gap: 0.4rem; margin-block-start: 0.6rem; }
-.home-note { color: var(--ink-soft); font-size: 0.8125rem; }
-.home-versus { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; }
-.home-versus > div { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.7rem 0.85rem; border-radius: var(--home-menu); font-size: 0.875rem; }
-.home-versus > div:first-child { background: var(--room-2); color: var(--ink-soft); }
-.home-versus > div:last-child { border: 1.5px solid var(--home-fill); }
-.home-versus dt { color: var(--ink); font-size: 0.8125rem; font-weight: 600; }
+/* Keep everything, on what waits: a shelf of three, each a little askew as things kept are, then what to bring. */
+.home-shelf { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr)); gap: 1.75rem; }
+.home-shelf article { display: flex; flex-direction: column; gap: 0.8rem; min-inline-size: 0; padding: 1.6rem; border-radius: var(--home-sheet); background: var(--room); box-shadow: 0 1.5rem 3.5rem -1.25rem oklch(from var(--flame) l c h / 0.4); }
+.home-shelf article:nth-child(1) { rotate: -1.2deg; }
+.home-shelf article:nth-child(2) { rotate: 0.8deg; }
+.home-shelf article:nth-child(3) { rotate: -0.6deg; }
+.home-shelf h3, .home-move h3 { font: 700 1.6rem/1.2 var(--display); }
+.home-shelf p { color: var(--ink-soft); font-size: 0.9375rem; }
+.home-shelf article > p:last-child { margin-block-start: auto; }
+.home-past { display: flex; flex-direction: column; gap: 0.4rem; }
+.home-past li { display: flex; justify-content: space-between; gap: 0.75rem; padding: 0.5rem 0.85rem; border-radius: var(--home-row); background: var(--room-2); font-size: 0.9375rem; white-space: nowrap; }
+.home-past li > :first-child { overflow: hidden; text-overflow: ellipsis; }
+.home-past li > :last-child { color: var(--ink-soft); }
+.home-lines { display: flex; flex-direction: column; gap: 0.45rem; padding: 0.8rem 1rem; border-radius: var(--home-row); background: var(--room-2); font-size: 0.9375rem; }
+.home-files { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.home-files li { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.4rem 0.7rem; border-radius: var(--home-row); box-shadow: var(--home-raise); font-size: 0.875rem; }
+.home-files .icon { inline-size: 1rem; block-size: 1rem; color: var(--flame); }
+.home-move { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 2rem; padding: 1.75rem 2rem; border-radius: var(--home-sheet); background: var(--home-fill); color: var(--home-on-fill); }
+.home-move > div { display: flex; flex: 1 1 22rem; flex-direction: column; gap: 0.4rem; }
+.home-move p { color: var(--home-on-fill-soft); font-size: 0.9375rem; }
+.home .home-move a.button { background: var(--home-on-fill); box-shadow: none; color: var(--home-fill); }
 
-/* Personal, as in yours: the usual way and Jean's, a row for each of what it holds; a card a row on a phone. */
-.home-section.is-ruled { border-block-start: 1px solid var(--line); }
-.home-personal { inline-size: calc(100% + 1rem); max-inline-size: 61rem; margin-inline: -0.5rem; border-collapse: separate; border-spacing: 0.5rem 0.45rem; font-size: 0.95rem; }
-.home-personal :is(th, td) { padding: 0.75rem 0.9rem; border-radius: var(--home-menu); text-align: start; vertical-align: top; }
-.home-personal thead th { padding-block: 0 0.1rem; color: var(--ink-soft); font-size: 0.8125rem; font-weight: 600; }
-.home-personal tbody th { inline-size: 22%; padding-inline-start: 0; color: var(--ink); font-weight: 600; }
-.home-personal tbody td:nth-of-type(1) { background: var(--room-2); color: var(--ink-soft); }
-.home-personal tbody td:nth-of-type(2) { border: 1.5px solid var(--home-fill); }
-#home-personal .home-door-go { flex-direction: row; flex-wrap: wrap; gap: 0.4rem 1.5rem; }
-.home-sealed { display: flex; align-items: center; gap: 0.5rem; padding: 0.55rem 0.7rem 0.55rem 0.9rem; border: 1.5px solid var(--flame); border-radius: 1.375rem; background: var(--glass); font-size: 0.8125rem; }
-.home-sealed > span:first-child { flex: 1; min-inline-size: 0; color: var(--ink-faint); }
-.home-sealed > span:last-child { display: inline-flex; align-items: center; gap: 0.3rem; color: var(--flame); font-weight: 500; white-space: nowrap; }
-.home-sealed .icon, .home-rows .icon { inline-size: 1rem; block-size: 1rem; color: var(--flame); }
-.home-rows li, .home-people li { display: flex; align-items: center; gap: 0.6rem; padding-block: 0.4rem; border-block-end: 1px solid var(--line); font-size: 0.875rem; }
-.home-rows li:last-child, .home-people li:last-child { border-block-end: 0; }
-.home-people i { display: grid; flex: none; place-items: center; inline-size: 1.75rem; block-size: 1.75rem; border-radius: 50%; background: var(--room-2); font-size: 0.8125rem; font-style: normal; font-weight: 600; }
-.home-people span { display: flex; flex-direction: column; min-inline-size: 0; line-height: 1.35; }
-.home-people small { color: var(--ink-soft); font-size: 0.8125rem; }
-.home-source { color: var(--ink-faint); font-size: 0.75rem; }
-.home-offer { display: flex; flex-direction: column; gap: 0.6rem; padding: 0.8rem 0.9rem; border: 1px solid var(--wait-line, var(--line-strong)); border-radius: var(--radius); background: var(--wait, var(--room-2)); font-size: 0.8125rem; line-height: 1.45; }
-.home-offer > span { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-.home-offer .button, .home-link .button { padding: 0.2rem 0.75rem; font-size: 0.8125rem; }
-.home-link { display: flex; align-items: center; gap: 0.4rem; padding: 0.35rem 0.35rem 0.35rem 0.7rem; border: 1px solid var(--line-strong); border-radius: 0.5rem; color: var(--ink-soft); font: 0.78rem/1.5 var(--mono); }
-.home-link > span:first-child { flex: 1; min-inline-size: 0; overflow-wrap: anywhere; }
-.home-dots li { display: flex; gap: 0.45rem; font-size: 0.875rem; line-height: 1.45; }
-.home-dots li::before { content: '·' / ''; color: var(--flame); font-weight: 700; }
+/* Your turn: the box again, which takes the reader back to the app's own, and what the first screen says of it; on a
+   phone, where the app's own is docked at the foot, an arrow down to it instead. */
+.home-yours { display: flex; flex-direction: column; align-items: center; gap: 2.25rem; padding: 4.5rem var(--home-edge) 5.5rem; text-align: center; }
+.home-yours > p { display: flex; justify-content: center; inline-size: 100%; }
+.home-yours-box { display: flex; align-items: center; justify-content: space-between; gap: 1rem; inline-size: min(45rem, 100%); padding-block: 1.1rem; padding-inline: 1.4rem 1.1rem; border: 1px solid var(--line-strong); border-radius: 1.375rem; background: var(--room); box-shadow: var(--home-float); color: var(--ink-faint); font: inherit; text-align: start; cursor: pointer; }
+.home-yours-box .icon { box-sizing: border-box; inline-size: 2.75rem; block-size: 2.75rem; padding: 0.7rem; border-radius: 50%; background: var(--home-fill); color: var(--home-on-fill); }
+.home-yours svg.felt-arc { display: none; inline-size: 5.5rem; block-size: 3.2rem; }
+.home-facts { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.4rem 1.4rem; color: var(--ink-soft); font-size: 0.875rem; }
+.home-facts li::before { content: '✓'; margin-inline-end: 0.35rem; color: var(--flame); }
 
-/* Questions, in the words people search with. */
+/* The questions people ask, in two columns, one open at a time. */
+.home-section { display: flex; flex-direction: column; gap: 1.75rem; padding: 0 var(--home-edge) 4.5rem; }
+.home-title { color: var(--ink); font: 700 clamp(1.5rem, 3vw, 2rem)/1.15 var(--display); }
 .home-questions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 3.5rem; align-items: start; }
 .home-questions > div { display: flex; flex-direction: column; min-inline-size: 0; }
 .home-questions details { padding-block: 1rem; border-block-end: 1px solid var(--line); }
@@ -273,22 +265,14 @@ body:has(> .home:not([hidden])) app-composer > :is(p, footer) { visibility: hidd
 .home .site-languages > button { background: var(--home-control); box-shadow: var(--home-raise); color: var(--ink); font-size: 0.8125rem; }
 .home .site-languages > button:hover { background: var(--line-strong); }
 
-/* Two columns under 70rem, one on a phone. */
+/* Two tiles in view under 70rem. */
 @media not (min-width: 70rem) {
-  .home-tile { flex-basis: calc((100% - 1rem) / 2); }
-  .home-doors { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .home-replay { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .home-replay > li:nth-child(3) { padding-inline-start: 0; border-inline-start: 0; }
+  .home-tile { flex-basis: calc((100% - 1.25rem) / 2); }
 }
 
-/* On a phone, the box stays docked at the foot while the page scrolls under it, the ideas leaving with
-   the first screen; the tries scroll sideways (a column at 24rem or less), and every door's promise comes first. */
+/* On a phone, the box stays docked at the foot while the page scrolls under it, the ideas leaving with the first
+   screen; the tries scroll sideways, and the foot keeps clear of the box. */
 @media not (min-width: 48rem) {
-  .home-personal, .home-personal :is(tbody, tr, th, td) { display: block; inline-size: auto; margin: 0; }
-  .home-personal thead { display: none; }
-  .home-personal tr { display: grid; gap: 0.4rem; margin-block-end: 1rem; }
-  .home-personal tbody th { inline-size: auto; padding: 0; }
-  .home-personal td::before { content: attr(data-label); display: block; color: var(--ink); font-size: 0.75rem; font-weight: 600; }
   body:has(> .home) app-composer { padding-block-end: 9rem; }
   body:has(> .home) app-composer > form.composer { position: fixed; inset-inline: 0; inset-block-end: max(0.75rem, env(safe-area-inset-bottom)); z-index: 4; margin-inline: auto; }
   body:has(> .home:not([hidden])) app-composer > :is(p, footer) { display: none; }
@@ -296,35 +280,26 @@ body:has(> .home:not([hidden])) app-composer > :is(p, footer) { visibility: hidd
   html:has(> body > .home:not([hidden])) { scroll-padding-block-end: 9rem; }
   body > .home::after { content: ''; position: fixed; inset-inline: 0; inset-block-end: 0; z-index: 1; block-size: 7rem; background: linear-gradient(oklch(from var(--room) l c h / 0), var(--room) 55%); pointer-events: none; }
   .home { --home-sheet: 1.25rem; }
-  .home-strip, .home-strip ul { flex-wrap: nowrap; justify-content: flex-start; }
-  .home-strip { overflow-x: auto; padding-inline: 1rem; scrollbar-width: none; }
-  .home-strip .button, .home-strip > ul { flex: none; }
-  @media (max-width: 24rem) { .home-strip, .home-strip ul { flex-wrap: wrap; overflow-x: visible; } .home-strip > ul { flex: 1 1 auto; } .home-tiles { flex-direction: column; margin-inline-end: 0; padding-inline-end: 0.3rem; overflow-x: visible; scroll-snap-type: none; } .home-tile { inline-size: auto; min-block-size: 0; } }
-  .home-section { gap: 1.1rem; padding-block: 2.5rem; }
-  .home-head.is-centred { align-self: stretch; align-items: flex-start; text-align: start; }
-  .home-why, .home-sub, .home-promise-sub { font-size: 0.95rem; }
-  .home-formats { justify-items: start; }
-  .home-formats > div { justify-content: flex-start; }
-  .home-formats dt { min-inline-size: 2.25rem; text-align: start; }
-  .home-filter { align-self: flex-start; }
+  .home-act { scroll-margin-block-start: 1rem; }
+  .home-act-in { gap: 1.75rem; padding-block-start: 3rem; }
+  .home-wave { margin-block-start: 3rem; }
+  .home-act-lead, .home-act-why { font-size: 1.0625rem; }
   .home-tiles { gap: 0.75rem; margin-inline-end: calc(-1 * var(--home-gutter)); padding-inline-end: var(--home-gutter); }
-  .home-tile { flex: none; inline-size: 13.5rem; min-block-size: 18.5rem; }
+  .home-tile { flex: none; inline-size: 15.5rem; }
   .home-row.is-turning .home-turn:not(:disabled) { display: none; }
-  .home-replay, .home-doors, .home-questions, .home .site-foot { grid-template-columns: minmax(0, 1fr); }
-  .home-replay { gap: 0.75rem; padding: 1rem; }
-  .home-replay > li + li { padding-block-start: 0.75rem; padding-inline-start: 0; border-block-start: 1px solid var(--line); border-inline-start: 0; }
-  .home-doors { grid-auto-rows: auto; gap: 0.6rem; }
-  .home-door { gap: 0.35rem; padding: 1rem 1.1rem; }
-  .home-door.is-featured { grid-column: auto; gap: 0.6rem; }
-  .home-door-title { font-size: 1.15rem; }
-  .home-door.is-featured .home-door-title { font-size: 1.4rem; }
-  .home-door:not(.is-featured) .home-door-title { order: -1; }
-  .home-door:not(.is-featured) .home-door-name { order: -2; }
-  .home .site-foot { gap: 1.25rem; padding: 2rem 1.25rem 9rem; }
+  .home-any { gap: 2rem; }
+  .home-shelf article { rotate: none; }
+  .home-move { padding: 1.4rem; }
+  .home-yours { gap: 1.5rem; padding-block: 3rem 3.5rem; }
+  .home-yours-box { display: none; }
+  .home-yours svg.felt-arc { display: block; }
+  .home-section { gap: 1.1rem; padding-block-end: 2.5rem; }
+  .home-questions { grid-template-columns: minmax(0, 1fr); }
+  .home .site-foot { padding: 2rem 1.25rem 9rem; }
 }
+/* In forced colours every ground is the system's, so the waves, drawn in the grounds' own, go, and a line parts the acts. */
 @media (forced-colors: active) {
-  .home-filter input:checked + label { forced-color-adjust: none; color: HighlightText; } .home-filter::before { forced-color-adjust: none; background: Highlight; }
-  @supports not (anchor-name: --chosen) { .home-filter input:checked + label { background: Highlight; } }
-  .home-tile.is-active { outline: 2px solid Highlight; }
-  .home-bars span:nth-child(4) { background: Highlight; }
+  .home-wave { display: none; }
+  .home-act { padding-block-end: 4.5rem; border-block-end: 1px solid CanvasText; }
+  .home-ways li.is-chosen { outline: 2px solid Highlight; }
 }

@@ -17,7 +17,7 @@
 /* How to export, app by app */
 .imp-apps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
 .imp-apps li { display: flex; flex-direction: column; gap: 0.65rem; padding: 1.4rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); min-inline-size: 0; }
-.imp-apps h3 { font: 700 1.35rem/1.2 var(--display); }
+.imp-apps h4 { font: 700 1.35rem/1.2 var(--display); }
 .imp-arrives { color: var(--ink-soft); }
 .imp-apps .site-source { margin-block-start: auto; }
 .imp-then { max-inline-size: 46rem; font-size: 1.05rem; }

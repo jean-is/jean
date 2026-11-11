@@ -5,6 +5,7 @@
   "eyebrow": "For IT, security and purchasing teams",
   "h1": "Every AI your company approves, in one assistant people actually use.",
   "h1.mark": "actually use",
+  "acts": [["approved", "Every AI your company approves,"], ["used", "in one assistant people actually use."]],
   "lede": "{name} is a folder of static files you serve from your own address. It answers only through your AI gateway, signs people in with your identity provider, and needs no server of ours. Nothing to install, no price per seat.",
   "cta": "Get the pilot kit",
   "see": "Read the answers",

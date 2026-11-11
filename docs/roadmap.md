@@ -33,7 +33,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] Tables (D491): a brain with a key making and keeping a table, as Claude Code's and Copilot's plans do; two computers editing one table offline, merged through a real drive; the table and the board, each row's Accept and Reject too, with VoiceOver, on a phone, and in Safari
 - [ ] A collection's heads and rows: a row dragged by its handle on an iPad and a phone (Safari and Chrome), and its menu and the arrows with VoiceOver and NVDA; whether a dragged row needs the table to scroll by itself near its edges in Safari
 - [ ] Relations: the last head's list with its group of collections, and Type's Relation page, with VoiceOver and NVDA and on a phone (how iOS and Android show a list's group); a relation to a collection with hundreds of rows
-- [ ] Homepage: the desktop app opening Homepage and Help in the system's browser; jean.is/?index=1 and /fr?index=1 on a phone
+- [ ] Homepage: the desktop app opening Homepage and Help in the system's browser; jean.is and /fr on a phone
 - [ ] The family page: /family and /fr/famille on a phone, and both in Search Console
 - [ ] Hosted copies (D456) once the server is set up for them: a trial at a subdomain of jean.is and an address on another domain by CNAME, each certificate got at the first visit, `policy.html` there finding the header set, the address's policy and its key; a name pointed at the server but not listed getting none; a pinned release kept through six deploys
 - [ ] Container images: `edge` run on an amd64 server (on an arm64 Mac it runs natively and under amd64 emulation); `latest` once the next version is tagged

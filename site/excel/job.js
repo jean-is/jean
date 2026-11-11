@@ -1,16 +1,19 @@
 // The pages for a job people search for help with: a spreadsheet at /excel, a PDF at /pdf, slides at /slides, a diagram
-// at /diagrams (in French /fr/excel, /fr/pdf, /fr/diapos, /fr/schemas). Each catches the words people type, its title saying them, then replays one
-// task as text, step by step: what Jean read, what it worked out, what it gave back and the file it made. Then what
-// goes in and what comes out, how its numbers are worked out by a program rather than guessed (the Computer), where
-// the file goes, the catch, questions, and a last Try that opens Jean with the work already asked where it can be:
-// the sample spreadsheet in the box (?sample), a request sent (?q=), or Jean itself, its box waiting for a file.
-// Each page's folder holds its page.js, which says its addresses, where its Try leads and what it draws of its own,
-// and its words; this module writes them, with the homepage's words for a replay's steps, and excel.css is
+// at /diagrams (in French /fr/excel, /fr/pdf, /fr/diapos, /fr/schemas). Each catches the words people type, its title saying them, then says
+// that promise again part by part, as the homepage does (landing() in site.js): each part a large title over what proves
+// it, then that part's own catch. What proves it: one task replayed as text, step by step (what Jean read, what it
+// worked out, what it gave back and the file it made), what goes in and what comes out, how its numbers are worked
+// out by a program rather than guessed (the Computer), and where the file goes. Then Your turn, a last Try that opens
+// Jean with the work already asked where it can be: the sample spreadsheet in the box (?sample), a request sent
+// (?q=), or Jean itself, its box waiting for a file; and questions.
+// Each page's folder holds its page.js, which says its addresses, where its Try leads, what it draws of its own and
+// which part of its promise each limit is about, and its words, whose `acts` cut its promise into its parts; this
+// module writes them, with the homepage's words for a replay's steps, and excel.css is
 // the look of them all, over site.css (site/site.js, D438). A page whose task Jean can play has its pane frame
 // Jean's own demo of it (demo.html), shown as it ended with a button that plays it, from a task file written here from
 // its words, beside the page; with a guided tour over it, that button plays the tour full size, in a popover.
 import { demoFiles, demoFrame } from '../demo.js'
-import { FELT, ICONS, WAVE, questions, underline, xml } from '../site.js'
+import { FELT, ICONS, WAVE, caught, landing, underline, xml } from '../site.js'
 
 /**
  * Where a page's Try leads: the sample spreadsheet in the box with its request, the request its words give
@@ -28,6 +31,10 @@ import { FELT, ICONS, WAVE, questions, underline, xml } from '../site.js'
  * Its words' {params}, worked out as it is written: plain ones, and names kept in their own direction (<bdi>).
  * @typedef {{ params?: import('../site.js').Params, names?: Record<string, string> }} Filled
  *
+ * What proves a part of a page's promise, a block each: what a page shows of its own, its task replayed, what goes
+ * in and what comes out, how its numbers are worked out, where the file goes.
+ * @typedef {'shows' | 'replay' | 'io' | 'exact' | 'where'} Proof
+ *
  * A job's page.js.
  * @typedef {object} Job
  * @property {Record<string, string>} addresses
@@ -36,7 +43,9 @@ import { FELT, ICONS, WAVE, questions, underline, xml } from '../site.js'
  * @property {(kit: import('../site.js').Kit, words: { say: (key: string) => string, list: (key: string) => string[] }) => Drawn} drawn  its words filled as the page's are
  * @property {(kit: import('../site.js').Kit, words: { text: (key: string) => string, texts: (key: string) => string[] }) => Demo} [demo]  what its pane plays, its words filled as text
  * @property {(kit: import('../site.js').Kit, words: { text: (key: string) => string, texts: (key: string) => string[] }) => Record<string, string>} [tasks]  the files of the other tasks it frames, by their paths
- * @property {(kit: import('../site.js').Kit, words: { say: (key: string) => string, text: (key: string) => string }) => string} [shows]  a section of its own under its promise, as HTML
+ * @property {(kit: import('../site.js').Kit, words: { say: (key: string) => string, text: (key: string) => string }) => string} [shows]  a block of its own, as HTML, the first of what proves its task
+ * @property {Record<string, number[]>} limits  which items of its catch (`catch.items`, from 0) each part of its promise is about, by the part's name in its words' `acts`
+ * @property {Record<string, Proof[]>} [proves]  what proves each part of its promise, in the argument's order, where its parts aren't PROVES'
  * @property {string[]} [exact]  the icons of its cards on numbers, where they say something else first
  * @property {boolean} [tall]  whether its pane is taller, for an answer that wouldn't show whole
  */
@@ -55,6 +64,14 @@ function task (kit, into, own, demo) {
   return { ...kit.has('replay.file') && { file: { name: text('replay.file'), type } }, asked, brain: text('demo.brain'), ...rest }
 }
 
+/**
+ * A job's promise in two parts, as its words' `acts` name them, and what proves each, in the argument's order: the
+ * task itself, then what makes its answer one to trust. A page whose promise says something else names its own
+ * parts (`proves`).
+ * @type {Record<string, Proof[]>}
+ */
+const PROVES = { task: ['shows', 'replay', 'io'], trust: ['exact', 'where'] }
+
 /** The icons of what goes in and what comes out, by the words' first column. */
 const KINDS = { file: ICONS.file, pdf: ICONS.pdf, slides: ICONS.slides, table: ICONS.table, chart: ICONS.chart, picture: ICONS.picture, app: ICONS.app, brain: ICONS.brain, tree: ICONS.tree, clock: ICONS.clock, place: ICONS.place }
 /** The icons of the cards on numbers and on where the file goes, in their words' order. */
@@ -65,7 +82,7 @@ const WHERE = [ICONS.lock, ICONS.brain, ICONS.never]
  * A job's page, as its page.js names it.
  * @param {Job} job @returns {import('../site.js').Page}
  */
-export function job ({ addresses, into, filled = () => ({}), drawn, demo, tasks, shows, exact = EXACT, tall = false }) {
+export function job ({ addresses, into, filled = () => ({}), drawn, demo, tasks, shows, limits, proves = PROVES, exact = EXACT, tall = false }) {
   /** Its words as text, filled as its demo's are. @param {import('../site.js').Kit} kit */
   const asText = (kit) => {
     const { params, names } = filled(kit)
@@ -105,13 +122,13 @@ export function job ({ addresses, into, filled = () => ({}), drawn, demo, tasks,
       const cards = (/** @type {string} */ key, /** @type {string[]} */ icons) => {
         const rows = table(key, 2)
         if (rows.length !== icons.length) throw new Error(`site/${kit.name}/${lang}.json: ${key} has ${rows.length} cards, not ${icons.length}`)
-        return rows.map(([title, text], i) => /* html */ `<li>${icons[i]}<h3>${title}</h3><p>${text}</p></li>`).join('')
+        return rows.map(([title, text], i) => /* html */ `<li>${icons[i]}<h4>${title}</h4><p>${text}</p></li>`).join('')
       }
       const files = kit.link('files')
       // The Try, and the replay: a button at the top, a link at the end.
       const go = (/** @type {boolean} */ top) => /* html */ `<a class="button primary" href="${xml(href)}">${say('cta')}</a><a${top ? ' class="button"' : ''} href="#job-replay">${say('see')}</a>`
       // The pane: Jean's own demo of the task where the page has one, under the pane's head; else a drawing of it, with the box.
-      return /* html */ `<section class="site-hero job-hero" aria-labelledby="job-title">
+      const hero = /* html */ `<section class="site-hero job-hero" aria-labelledby="job-title">
   <div class="site-hero-text">
     <p class="site-eyebrow">${say('eyebrow')}</p>
     <h1 id="job-title">${underline(say('h1'), say('h1.mark'))}</h1>
@@ -127,10 +144,13 @@ export function job ({ addresses, into, filled = () => ({}), drawn, demo, tasks,
     <p class="job-box">${kit.app('composer.placeholder')}</p>
     <p class="job-ai">${kit.app('composer.ai')}</p>`}
   </div>
-</section>
-${shows ? shows(kit, { say, text: asText(kit).text }) : ''}
-<section id="job-replay" class="site-section is-side" aria-labelledby="job-replay-title">
-  <header><h2 id="job-replay-title">${say('replay.title')}</h2><p class="site-why">${say('replay.why')}</p></header>
+</section>`
+      // What proves the promise, a block each.
+      /** @type {Record<Proof, string>} */
+      const blocks = {
+        shows: shows ? shows(kit, { say, text: asText(kit).text }) : '',
+        replay: /* html */ `<section id="job-replay" class="site-block" aria-labelledby="job-replay-title">
+  <header><h3 id="job-replay-title">${say('replay.title')}</h3><p class="site-why">${say('replay.why')}</p></header>
   <div class="job-replay">
   <ol class="job-steps">
     <li><span class="job-step">${home.say('replay.ask')}</span><p class="job-asked" dir="${kit.dir}">${file}<span>${asked}</span></p></li>
@@ -141,47 +161,51 @@ ${shows ? shows(kit, { say, text: asText(kit).text }) : ''}
     <li><span class="job-step">${say('step.made')}</span><p>${say('replay.made')}</p>${chip(kit.text('replay.madeIcon'), 'replay.madeChip')}</li>
   </ol>
   <div class="job-more">
-    <h3>${say('asks.title')}</h3>
+    <h4>${say('asks.title')}</h4>
     <ul class="job-asks">${list('asks.items').map((item) => /* html */ `<li dir="${kit.dir}">${item}</li>`).join('')}</ul>
   </div>
   </div>
-</section>
-
-<section class="site-section" aria-labelledby="job-io">
-  <header><h2 id="job-io">${say('io.title')}</h2><p class="site-why">${say('io.why')}</p></header>
+</section>`,
+        io: /* html */ `<section class="site-block" aria-labelledby="job-io">
+  <header><h3 id="job-io">${say('io.title')}</h3><p class="site-why">${say('io.why')}</p></header>
   <div class="job-io">
-    <div><h3>${say('io.in')}</h3><dl>${io('io.ins')}</dl></div>
-    <div><h3>${say('io.out')}</h3><dl>${io('io.outs')}</dl></div>
+    <div><h4>${say('io.in')}</h4><dl>${io('io.ins')}</dl></div>
+    <div><h4>${say('io.out')}</h4><dl>${io('io.outs')}</dl></div>
   </div>
-</section>
-
-<section class="site-section is-side" aria-labelledby="job-exact">
-  <header><h2 id="job-exact">${say('exact.title')}</h2><p class="site-why">${say('exact.why')}</p></header>
+</section>`,
+        exact: /* html */ `<section class="site-block" aria-labelledby="job-exact">
+  <header><h3 id="job-exact">${say('exact.title')}</h3><p class="site-why">${say('exact.why')}</p></header>
   <ul class="job-cards">${cards('exact.cards', exact)}</ul>
-</section>
-
-<section class="site-section" aria-labelledby="job-where">
-  <header><h2 id="job-where">${say('where.title')}</h2><p class="site-why">${say('where.why')}</p></header>
+</section>`,
+        where: /* html */ `<section class="site-block" aria-labelledby="job-where">
+  <header><h3 id="job-where">${say('where.title')}</h3><p class="site-why">${say('where.why')}</p></header>
   <ul class="job-cards is-where">${cards('where.cards', WHERE)}</ul>
   ${files ? /* html */ `<p><a href="${files}">${kit.app('welcome.files')}</a></p>` : ''}
-</section>
-
-<section class="site-section is-side" aria-labelledby="job-catch">
-  <h2 id="job-catch">${home.say('catch.title')}</h2>
-  <ul class="site-limits">${list('catch.items').map((item) => /* html */ `<li>${item}</li>`).join('')}</ul>
-</section>
-
-<section class="site-section" aria-labelledby="job-faq">
-  <h2 id="job-faq">${home.say('faq.title')}</h2>
-  ${questions('job-questions', table('faq.items', 2))}
-</section>
-
-<section class="site-section is-side site-end" aria-labelledby="job-end">
-  ${WAVE}
-  <h2 id="job-end">${say('end.title')}</h2>
+</section>`,
+      }
+      const end = /* html */ `${WAVE}
+  <h3>${say('end.title')}</h3>
   <p class="site-why">${say('end.why')}</p>
-  <p class="site-cta job-go">${FELT.point}${go(false)}</p>
-</section>`
+  <p class="site-cta job-go">${FELT.point}${go(false)}</p>`
+      // Each part of the promise over what proves it, then the catch's items that part is about: every block the page
+      // has under one part, and every item under one, or the build stops.
+      const catches = list('catch.items')
+      const parts = Object.entries(proves).map(([name, proofs]) => ({ name, proofs: proofs.filter((proof) => blocks[proof]), about: limits[name] ?? [] }))
+      const once = (/** @type {Array<string | number>} */ placed, /** @type {Array<string | number>} */ all) => `${[...placed].sort()}` === `${[...all].sort()}`
+      if (!once(parts.flatMap(({ proofs }) => proofs), Object.entries(blocks).filter(([, block]) => block).map(([proof]) => proof))) throw new Error(`site/${kit.name}/page.js: proves is not each block of the page, once`)
+      if (!once(parts.flatMap(({ about }) => about), catches.map((_, i) => i))) throw new Error(`site/${kit.name}/page.js: limits is not each item of catch.items, once`)
+      const named = Object.fromEntries(parts.map(({ name, proofs, about }) => [name, {
+        id: `job-${name}`,
+        body: proofs.map((proof) => blocks[proof]).join('\n'),
+        ...about.length && { catch: caught(home.say('catch.title'), about.map((i) => catches[i])) },
+      }]))
+      return landing(kit, {
+        top: hero,
+        promise: say('h1'),
+        acts: named,
+        turn: { id: 'job-end', body: end },
+        questions: { id: 'job-faq', name: 'job-questions', title: home.say('faq.title'), items: table('faq.items', 2) },
+      })
     },
   }
 }

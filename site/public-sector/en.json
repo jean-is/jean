@@ -5,6 +5,16 @@
   "eyebrow": "For local governments, ministries and public bodies",
   "h1": "AI for all your staff, under your rules.",
   "h1.mark": "under your rules",
+  "acts": [
+    [
+      "staff",
+      "AI for all your staff,"
+    ],
+    [
+      "rules",
+      "under your rules."
+    ]
+  ],
   "lede": "{name} is a folder of static files your IT serves from your administration’s own address. It answers only through your AI gateway, to a public service such as Albert, a shared provider or your own servers, and people sign in with their work account. No server of ours, nothing to install, no price per seat.",
   "cta": "Ask for a 30-day trial key",
   "share": "Share with your review team",

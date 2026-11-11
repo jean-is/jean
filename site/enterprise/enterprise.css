@@ -34,7 +34,7 @@
 
 /* A pilot in an afternoon: the words a coding assistant takes first, in the page's own direction, then the steps by hand, closed */
 .ent-assist { display: flex; flex-direction: column; gap: 0.75rem; max-inline-size: 46rem; padding: 1.5rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); box-shadow: var(--site-float); }
-.ent-assist h3 { font-size: 1.25rem; }
+.ent-assist h4 { font-size: 1.25rem; }
 .ent-assist p { color: var(--ink-soft); }
 .ent-assist pre { direction: inherit; }
 .ent-manual summary { display: inline-flex; align-items: center; gap: 0.5rem; min-block-size: 2.75rem; padding-inline: 0.5rem; margin-inline-start: -0.5rem; border-radius: 0.5rem; color: var(--ink-soft); font-weight: 600; cursor: pointer; list-style: none; }
@@ -89,19 +89,17 @@
 .ent-table tbody th { font-weight: 600; }
 .ent-table .is-jean { background: oklch(from var(--flame) l c h / 0.12); font-weight: 600; }
 
-/* What it doesn't do */
-
 /* The trust pack */
 .ent-docs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
 .ent-docs a { display: flex; flex-direction: column; gap: 0.3rem; padding: 1.1rem 1.2rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); color: var(--ink); text-decoration: none; }
-.ent-docs h3 { font-size: inherit; font-weight: 600; }
+.ent-docs h4 { font-size: inherit; font-weight: 600; }
 .ent-docs span { color: var(--ink-soft); font-size: 0.875rem; }
 .ent-verify { display: flex; flex-direction: column; gap: 0.6rem; }
 
 /* Pricing */
 .ent-prices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
 .ent-prices li { display: flex; flex-direction: column; gap: 0.7rem; padding: 1.4rem; border: 1px solid var(--line-strong); border-radius: var(--site-pane); background: var(--room); }
-.ent-prices h3 { color: var(--ink-soft); font-size: 0.85rem; font-weight: 600; }
+.ent-prices h4 { color: var(--ink-soft); font-size: 0.85rem; font-weight: 600; }
 .ent-prices b { font: 700 1.6rem/1.15 var(--display); }
 .ent-prices p { color: var(--ink-soft); font-size: 0.95rem; flex: 1; }
 .ent-prices .button { align-self: flex-start; }
@@ -119,6 +117,7 @@
   .ent-flow, .ent-sides, .ent-prices, .ent-docs { grid-template-columns: minmax(0, 1fr); }
   .ent-arrow { justify-self: center; transform: rotate(90deg); }
   .ent-answer-row { grid-template-columns: minmax(0, 1fr); }
+  .ent-address .felt-point { display: none; }
 }
 @media (max-width: 30rem) {
   .ent-steps { grid-template-columns: minmax(0, 1fr); }

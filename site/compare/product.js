@@ -1,13 +1,15 @@
 // The pages that set Jean beside other products: the hub, /compare, and a page a product, /compare/<product>,
 // for the reader who searched for another product's alternative. A product's page puts the reader's words in its
-// title, then a fair paragraph on the other product, the table, where it does better, how to use both, the catch,
-// questions and a last Try. Jean's side of a row carries its status, as on the page for IT; the other product's, the
-// page of its maker's that says so, since every fact about another product is read there, never from memory: cited by
-// number, as an answer's sources are, each number leading to its footnote at the end of the main part, under what was
-// checked and when. Each product's folder holds its page.js, which names its addresses, its sources and where its
-// buttons lead, and its words; this module writes it, the hub's words saying what every page says alike, and compare.css
-// is the look of them all, over site.css (site/site.js, D438).
-import { COMPARED, FELT, ICONS, REPOSITORY, WAVE, felt, questions, underline, xml } from '../site.js'
+// title, then says that promise part by part, as the homepage does (landing() in site.js): an alternative to the other
+// product, over a fair paragraph on it and where it does better; then where Jean works and keeps things, over the
+// table and how to use both; each part with its own catch. Then Your turn, a last Try, the questions and the sources.
+// Jean's side of a row carries its status, as on the page for IT; the other product's, the page of its maker's that
+// says so, since every fact about another product is read there, never from memory: cited by number, as an answer's
+// sources are, each number leading to its footnote at the end of the main part, under what was checked and when.
+// Each product's folder holds its page.js, which names its addresses, its sources, where its buttons lead and which
+// part of its promise each of its limits is about, and its words; this module writes it, the hub's words saying what
+// every page says alike, and compare.css is the look of them all, over site.css (site/site.js, D438).
+import { COMPARED, FELT, ICONS, REPOSITORY, WAVE, caught, felt, landing, underline, xml } from '../site.js'
 
 /** What Jean's side of a row can be: built, with a key, by design, or built and on a computer, through This computer. */
 export const STATUSES = ['built', 'key', 'design', 'computer']
@@ -47,6 +49,8 @@ export const PRODUCTS = COMPARED.slice(1)
  * @property {Record<string, string>} addresses
  * @property {Record<string, Source>} sources  by the ids its words name
  * @property {[Action, Action]} actions  its two buttons, at its top and at its end
+ * @property {{ alternative: number[], where: number[] }} limits  the limits each part of its promise is caught by: an
+ *   alternative to the other product, and where Jean works and keeps things; by their place in its words' catch.items
  */
 
 /**
@@ -62,27 +66,38 @@ export function helpers (kit, sources) {
     return /* html */ `<span class="cmp-status is-${code}">${hub.say(`status.${code}`)}</span>`
   }
   const read = (/** @type {string} */ checked) => day.format(new Date(`${checked}T12:00:00Z`))
-  /** The sources cited so far, numbered in the order the page first cites them, as an answer's are. @type {string[]} */
+  /** The sources cited, numbered in the order the page first cites them, as an answer's are: sourced() numbers them. @type {string[]} */
   const numbered = []
-  /** The numbers of the pages a fact is read from, each leading to its footnote. @param {string} ids  space-separated */
+  /**
+   * The pages a fact is read from, each to be a number leading to its footnote once the page is whole (sourced()): a
+   * language says the parts of the promise in its own order, so a number is only known where the fact stands.
+   * @param {string} ids  space-separated
+   */
   const cited = (ids) => ids.split(/\s+/).filter(Boolean).map((id) => {
-    const source = sources[id]
-    if (!source) throw new Error(`site/${kit.name}/${lang}.json: the source ${id} isn't in its page.js`)
-    if (!numbered.includes(id)) numbered.push(id)
-    const n = String(numbered.indexOf(id) + 1)
-    return /* html */ `<a class="cmp-cite" href="#cmp-source-${n}" aria-label="${hub.say('cite.label', { n, name: kit.text(`source.${id}`), date: read(source.checked) })}">${n}<span class="cmp-cite-tip">${kit.say(`source.${id}`)}<small>${xml(read(source.checked))}</small></span></a>`
+    if (!sources[id]) throw new Error(`site/${kit.name}/${lang}.json: the source ${id} isn't in its page.js`)
+    return /* html */ `<!--cite ${id}-->`
   }).join('')
   /**
    * The footnotes, at the end of the main part: what was checked and when, then each page cited, by its maker's name
-   * for it. The foot itself is the same on every page. To write last, once every number is given.
-   * @param {boolean} [dated]  each says the day it was read, where the note doesn't say one day for them all
+   * for it. The foot itself is the same on every page. Written last, once every number is given.
+   * @param {boolean} dated  each says the day it was read, where the note doesn't say one day for them all
    */
-  const footnotes = (dated = false) => /* html */ `<section class="cmp-notes" aria-label="${kit.app('sources.title')}">
+  const footnotes = (dated) => /* html */ `<section class="cmp-notes" aria-label="${kit.app('sources.title')}">
   <p>${kit.say('foot.note', { date: read(latest(sources)) })}</p>
   <ol>${numbered.map((id, i) => /* html */ `
     <li id="cmp-source-${i + 1}"><span class="cmp-cite">${i + 1}</span><span><a href="${xml(sources[id].url)}">${kit.say(`source.${id}`)}</a>${dated ? /* html */ ` · <time datetime="${sources[id].checked}">${xml(read(sources[id].checked))}</time>` : ''}</span></li>`).join('')}
   </ol>
 </section>`
+  /**
+   * The page whole: each source cited given its number, in the order the page first cites them, then the footnotes.
+   * @param {string} html  the page, as its language orders it @param {boolean} [dated]  as footnotes() takes it
+   */
+  const sourced = (html, dated = false) => `${html.replace(/<!--cite ([\w-]+)-->/g, (whole, id) => {
+    if (!numbered.includes(id)) numbered.push(id)
+    const n = String(numbered.indexOf(id) + 1)
+    const date = read(sources[id].checked)
+    return /* html */ `<a class="cmp-cite" href="#cmp-source-${n}" aria-label="${hub.say('cite.label', { n, name: kit.text(`source.${id}`), date })}">${n}<span class="cmp-cite-tip">${kit.say(`source.${id}`)}<small>${xml(date)}</small></span></a>`
+  })}\n\n${footnotes(dated)}`
   /** @param {Action} action */
   const href = (action) => {
     const start = kit.start
@@ -97,16 +112,23 @@ export function helpers (kit, sources) {
   }
   /** The two buttons, the first the primary one. @param {[Action, Action]} actions @param {string[]} labels */
   const buttons = (actions, labels) => actions.map((action, i) => /* html */ `<a class="button${i ? '' : ' primary'}" href="${xml(href(action))}">${labels[i]}</a>`).join('')
-  /** Questions whose answers may point at the page for IT ({enterprise}). @param {string} id */
-  const asked = (id) => {
+  /** Its questions, whose answers may point at the page for IT ({enterprise}). */
+  const asked = () => {
     const it = kit.link('enterprise')
-    return questions(id, kit.table('faq.items', 2).map(([question, answer]) => [question, answer.replace('{enterprise}', it ? /* html */ `<a href="${it}">${kit.from('enterprise').say('title')}</a>` : kit.from('enterprise').say('title'))]))
+    return kit.table('faq.items', 2).map(([question, answer]) => [question, answer.replace('{enterprise}', it ? /* html */ `<a href="${it}">${kit.from('enterprise').say('title')}</a>` : kit.from('enterprise').say('title'))])
   }
-  /** The catch, plainly: a list, with what says why beside it where there is one. @param {string} tone  its section's class */
-  const caught = (tone) => /* html */ `<section class="site-section${tone} cmp-catch" aria-labelledby="cmp-catch">
-  <header><h2 id="cmp-catch">${hub.say('catch.title')}</h2>${kit.has('catch.why') ? /* html */ `<p class="site-why">${kit.say('catch.why')}</p>` : ''}</header>
-  <ul class="site-limits">${kit.list('catch.items').map((item) => /* html */ `<li>${item}</li>`).join('')}</ul>
-</section>`
+  /**
+   * The catch, plainly, said under the part of the promise each limit is about: every limit the page's words list
+   * under one part, and one only, or the build stops.
+   * @param {Record<string, number[]>} by  each part's limits, by their place in catch.items
+   * @param {(part: string) => string} [label]  what a part's catch is called, as HTML
+   * @returns {Record<string, string | undefined>}
+   */
+  const catches = (by, label = () => hub.say('catch.title')) => {
+    const limits = kit.list('catch.items')
+    if (`${Object.values(by).flat().sort((a, b) => a - b)}` !== `${limits.map((limit, i) => i)}`) throw new Error(`site/${kit.name}/${lang}.json: catch.items lists ${limits.length} limits, which its page.js doesn't put each under one part of its promise`)
+    return Object.fromEntries(Object.entries(by).map(([part, which]) => [part, which.length ? caught(label(part), which.map((i) => limits[i])) : undefined]))
+  }
   /**
    * A table set side by side, which a narrow window stacks a row at a time, each cell saying whose it is: its roles
    * said outright, since a table laid out otherwise loses them in some browsers.
@@ -119,7 +141,7 @@ export function helpers (kit, sources) {
       <tr role="row"><th scope="row" role="rowheader">${what}</th>${cells.map((cell, i) => /* html */ `<td role="cell"${i ? '' : ' class="is-jean"'}><span class="cmp-col">${heads[i].replace(/<small>.*<\/small>/, '')}</span>${cell}</td>`).join('')}</tr>`).join('')}
     </tbody>
   </table></div>`
-  return { hub, status, cited, footnotes, href, buttons, asked, caught, sideBySide }
+  return { hub, status, cited, sourced, href, buttons, asked, catches, sideBySide }
 }
 
 /** The day the last of a page's facts was read. @param {Record<string, Source>} sources */
@@ -128,10 +150,6 @@ export const latest = (sources) => Object.values(sources).map((source) => source
 /** The icons of a product's ways to use both, in its words' order. */
 const BOTH = { history: ICONS.clock, plan: ICONS.computer, private: ICONS.lock, switch: ICONS.brain, skills: ICONS.file, connections: ICONS.globe, program: ICONS.computer, models: ICONS.brain, server: ICONS.app, servers: ICONS.globe }
 
-/**
- * A product's page, as its page.js names it.
- * @param {Product} product @returns {import('../site.js').Page}
- */
 // Escape hides the tip of the number under the pointer or the keys, until they leave it (no "<", which a page's scripts can't
 // hold), on the hub and every product's page.
 export const CITES = `addEventListener('keydown', (event) => {
@@ -144,14 +162,20 @@ export const CITES = `addEventListener('keydown', (event) => {
   }
 })`
 
-export function product ({ addresses, sources, actions }) {
+/**
+ * A product's page, as its page.js names it: its promise in two parts, as its words' `acts` cut it. An alternative to
+ * the other product, over what is fair to say of it and where it does better; and where Jean works and keeps things,
+ * over the two fences where the page draws them, the table and how to use both.
+ * @param {Product} product @returns {import('../site.js').Page}
+ */
+export function product ({ addresses, sources, actions, limits }) {
   return {
     addresses,
     style: 'compare',
     script: CITES,
     main (kit) {
       const { lang } = kit
-      const { hub, status, cited, footnotes, buttons, asked, caught, sideBySide } = helpers(kit, sources)
+      const { hub, status, cited, sourced, buttons, asked, catches, sideBySide } = helpers(kit, sources)
       const say = kit.say
       const name = say('product')
       const origin = kit.base ? new URL(kit.base).origin : `https://${kit.brand.domain}`
@@ -160,11 +184,7 @@ export function product ({ addresses, sources, actions }) {
       const better = kit.list('better.items')
       const betterSources = kit.list('better.sources')
       if (betterSources.length !== better.length) throw new Error(`site/${kit.name}/${lang}.json: better.sources names ${betterSources.length} items' sources, better.items has ${better.length}`)
-      const fence = kit.has('fence.title')
-      // The sections after the top, shaded one in two whichever there are.
-      let n = 0
-      const tone = () => (n++ % 2 ? '' : ' is-side')
-      return /* html */ `<section class="site-hero cmp-hero" aria-labelledby="cmp-title">
+      const hero = /* html */ `<section class="site-hero cmp-hero" aria-labelledby="cmp-title">
   <div class="site-hero-text">
     <nav class="cmp-crumbs" aria-label="${hub.say('crumbs')}"><ol><li><a href="${kit.link('compare')}">${hub.say('crumbs.hub')}</a></li><li><span class="flip-rtl" aria-hidden="true">›</span><span aria-current="page">${name}</span></li></ol></nav>
     <p class="site-eyebrow">${say('eyebrow')}</p>
@@ -178,17 +198,15 @@ export function product ({ addresses, sources, actions }) {
     <pre>OLLAMA_ORIGINS=${xml(origin)} ollama serve</pre>
     <p>${say('setting.text')}</p>
   </div>` : `\n  ${DRAWN.both}`}
-</section>
-
-<section class="site-section${tone()}" aria-labelledby="cmp-fair">
+</section>`
+      const fair = /* html */ `<section class="site-block" aria-labelledby="cmp-fair">
   <div class="cmp-fair">
-    <h2 id="cmp-fair">${say('fair.title')}</h2>
+    <h3 id="cmp-fair">${say('fair.title')}</h3>
     <p>${say('fair.body')}${cited(kit.text('fair.sources'))}</p>
   </div>
-</section>
-${fence ? /* html */ `
-<section class="site-section${tone()}" aria-labelledby="cmp-fence">
-  <h2 id="cmp-fence">${say('fence.title')}</h2>
+</section>`
+      const fences = kit.has('fence.title') ? /* html */ `<section class="site-block" aria-labelledby="cmp-fence">
+  <h3 id="cmp-fence">${say('fence.title')}</h3>
   <div class="cmp-fences">
     <figure class="cmp-fence" aria-labelledby="cmp-fence-jean">
       <div class="cmp-computer"><p class="cmp-label">${say('fence.computer')}</p>
@@ -205,39 +223,36 @@ ${fence ? /* html */ `
       <figcaption id="cmp-fence-other">${say('fence.otherCaption')}</figcaption>
     </figure>
   </div>
-</section>
-` : ''}
-<section id="cmp-table" class="site-section${tone()}" aria-labelledby="cmp-table-title">
-  <h2 id="cmp-table-title">${hub.say('table.side')}</h2>
+</section>` : ''
+      const table = /* html */ `<section id="cmp-table" class="site-block" aria-labelledby="cmp-table-title">
+  <h3 id="cmp-table-title">${hub.say('table.side')}</h3>
   ${sideBySide('cmp-table-title', [xml(kit.brand.name), name], kit.table('table.rows', 5).map(([what, jean, code, other, ids]) => [what, /* html */ `<p>${jean}</p>${status(code)}`, /* html */ `<p>${other}${cited(ids)}</p>`]))}
-</section>
-
-<section class="site-section${tone()}" aria-labelledby="cmp-better">
-  <header><h2 id="cmp-better">${say('better.title')}</h2><p class="site-why">${hub.say('better.why')}</p></header>
+</section>`
+      const does = /* html */ `<section class="site-block" aria-labelledby="cmp-better">
+  <header><h3 id="cmp-better">${say('better.title')}</h3><p class="site-why">${hub.say('better.why')}</p></header>
   <ul class="site-limits cmp-better">${better.map((item, i) => /* html */ `<li><span>${item}${cited(betterSources[i])}</span></li>`).join('')}</ul>
-</section>
-
-<section class="site-section${tone()}" aria-labelledby="cmp-both">
-  <h2 id="cmp-both">${say('both.title')}</h2>
+</section>`
+      const together = /* html */ `<section class="site-block" aria-labelledby="cmp-both">
+  <h3 id="cmp-both">${say('both.title')}</h3>
   <ul class="cmp-cards">${both.map(([icon, title, text, code]) => /* html */ `
-    <li>${BOTH[/** @type {keyof typeof BOTH} */ (icon)]}<h3>${title}</h3><p>${text}</p>${status(code)}</li>`).join('')}
+    <li>${BOTH[/** @type {keyof typeof BOTH} */ (icon)]}<h4>${title}</h4><p>${text}</p>${status(code)}</li>`).join('')}
   </ul>
-</section>
-
-${caught(tone())}
-
-<section class="site-section${tone()}" aria-labelledby="cmp-faq">
-  <h2 id="cmp-faq">${hub.say('faq.title')}</h2>
-  ${asked('cmp-questions')}
-</section>
-
-<section class="site-section${tone()} site-end cmp-end" aria-labelledby="cmp-end">
-  ${WAVE}
-  <h2 id="cmp-end">${say('end.title')}</h2>
-  <p class="site-cta">${FELT.point}${buttons(actions, [say('cta'), say('cta2')])}</p>
-</section>
-
-${footnotes()}`
+</section>`
+      const end = /* html */ `${WAVE}
+  <h3>${say('end.title')}</h3>
+  <p class="site-cta">${FELT.point}${buttons(actions, [say('cta'), say('cta2')])}</p>`
+      // The catch, said under the part of the promise each limit is about, as the product's page.js sorts them.
+      const not = catches(limits)
+      return sourced(landing(kit, {
+        top: hero,
+        promise: say('h1'),
+        acts: {
+          alternative: { id: 'cmp-alternative', body: `${fair}\n${does}`, catch: not.alternative },
+          where: { id: 'cmp-where', body: `${fences && `${fences}\n`}${table}\n${together}`, catch: not.where },
+        },
+        turn: { id: 'cmp-end', body: end, classes: 'cmp-end' },
+        questions: { id: 'cmp-faq', name: 'cmp-questions', title: hub.say('faq.title'), items: asked() },
+      }))
     },
   }
 }

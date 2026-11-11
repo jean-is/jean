@@ -4,6 +4,7 @@
   "eyebrow": "Fichiers PDF",
   "h1": "Interrogez votre PDF, ou passez ses tableaux dans Excel.",
   "h1.mark": "dans Excel",
+  "acts": [["ask", "Interrogez votre PDF,"], ["tables", "ou passez ses tableaux dans Excel."]],
   "lede": "Déposez un PDF dans {name} et demandez avec vos mots : ce qu’il vous engage à faire, les dates et les montants qu’il fixe, un résumé pour quelqu’un qui ne le lira pas. Ses tableaux reviennent en classeur, son texte en document Word, dans votre langue si vous voulez. Rien à installer.",
   "cta": "Ouvrir {name}, puis déposer un PDF",
   "cta.note": "Il n’y a pas de PDF d’exemple : prenez l’un des vôtres, pas confidentiel pour commencer, et déposez-le dans la zone de saisie.",

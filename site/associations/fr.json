@@ -5,6 +5,7 @@
   "eyebrow": "{name} pour les associations",
   "h1": "Une IA gratuite, pour chaque bénévole.",
   "h1.mark": "gratuite",
+  "acts": [["free", "Une IA gratuite,"], ["volunteers", "pour chaque bénévole."]],
   "lede": "La demande de subvention, le procès-verbal de l’AG, la lettre aux adhérents, les comptes, l’affiche du vide-grenier : demandez avec vos mots ou vos notes, et recevez-les déjà faits. Chacun l’ouvre dans son navigateur, sans poste à payer.",
   "cta": "Essayer avec le PV de l’AG",
   "send": "Envoyer au bureau",

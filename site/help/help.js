@@ -12,7 +12,7 @@ import { readdir } from 'node:fs/promises'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { demoFiles, demoFrame } from '../demo.js'
-import { ICONS, SITE, SUPPORT, fill, glyph, xml } from '../site.js'
+import { ICONS, SITE, SUPPORT, fill, glyph, hero, landing, xml } from '../site.js'
 
 /** The home's moments, in the order people meet Jean; an article is in one. */
 export const MOMENTS = ['start', 'ai', 'ask', 'make', 'safe', 'further', 'family', 'fix']
@@ -209,31 +209,23 @@ export async function helpHome (addresses) {
       const path = listed.filter(([, article]) => article.start !== undefined)
       const minutes = path.reduce((sum, [, article]) => sum + article.minutes, 0)
       const moments = MOMENTS.filter((moment) => moment !== 'fix').map((moment) => [moment, listed.filter(([, article]) => article.moment === moment).map(([folder]) => /* html */ `<li>${link(folder)}</li>`).join('')]).filter(([, items]) => items)
-      return /* html */ `<div class="help-home">
-  <header class="help-head">
-    <h1 id="help-title">${kit.say('h1')}</h1>
-    <p class="site-lede">${kit.say('lede')}</p>
-  </header>${fixes ? /* html */ `
-
-  <section class="help-band" aria-labelledby="help-wrong">
-    <h2 id="help-wrong" class="help-label">${kit.say('home.fix')}</h2>
-    <ul class="help-chips">${fixes}</ul>
-  </section>` : ''}${path.length ? /* html */ `
-
-  <section class="help-band" aria-labelledby="help-path">
-    <h2 id="help-path" class="help-label">${kit.say('home.start')} <span>${kit.say('time', { time: duration(kit, minutes) })}</span></h2>
-    <ol class="help-path">${path.map(([folder]) => /* html */ `<li>${link(folder)}</li>`).join('')}</ol>
-  </section>` : ''}
-
-  <section class="help-band" aria-labelledby="help-every">
-    <h2 id="help-every" class="help-label">${kit.say('home.every')}</h2>
-    <div class="help-moments">${moments.map(([moment, items]) => /* html */ `
+      // A landing page as the site's others are (landing() in site.js), its title no sentence: an act for what went
+      // wrong, one for where to start and one for every article, then Jean itself, and whom to write to.
+      return landing(kit, {
+        top: hero(kit, { id: 'help-title', title: kit.say('h1'), lede: kit.say('lede') }),
+        acts: [
+          ...fixes ? [{ id: 'help-wrong', title: kit.say('home.fix'), body: /* html */ `<div class="site-block"><ul class="help-chips">${fixes}</ul></div>` }] : [],
+          ...path.length ? [{ id: 'help-path', title: kit.say('home.start'), body: /* html */ `<div class="site-block">
+      <p class="site-why">${kit.say('time', { time: duration(kit, minutes) })}</p>
+      <ol class="help-path">${path.map(([folder]) => /* html */ `<li>${link(folder)}</li>`).join('')}</ol>
+    </div>` }] : [],
+          { id: 'help-every', title: kit.say('home.every'), body: /* html */ `<div class="site-block"><div class="help-moments">${moments.map(([moment, items]) => /* html */ `
       <section aria-labelledby="help-${moment}"><h3 id="help-${moment}">${kit.say(`moment.${moment}`)}</h3><ul>${items}</ul></section>`).join('')}
-    </div>
-  </section>
-
-  <p class="help-more">${kit.say('home.stuck', { mail: '' }).replace('', () => /* html */ `<a href="mailto:${SUPPORT}">${SUPPORT}</a>`)}</p>
-</div>`
+    </div></div>` },
+        ],
+        turn: { id: 'help-open', body: /* html */ `<p class="site-cta"><a class="button primary" href="${kit.start}">${kit.say('open')}</a></p>
+  <p class="site-why">${kit.say('home.stuck', { mail: '' }).replace('', () => /* html */ `<a href="mailto:${SUPPORT}">${SUPPORT}</a>`)}</p>` },
+      })
     },
   }
 }

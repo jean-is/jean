@@ -6,7 +6,7 @@
 // offline.css, over site.css (site/site.js, D438). Its pane is Jean's own demo of the letter it shows written.
 import { readFile } from 'node:fs/promises'
 import { demoFiles, demoFrame } from '../demo.js'
-import { FELT, ICONS, WAVE, questions, ticks, underline, xml } from '../site.js'
+import { FELT, ICONS, WAVE, caught, landing, ticks, underline, xml } from '../site.js'
 
 const CODE = 'app/caps/brain-local/brain-local.js'
 const BRAIN = await readFile(new URL(`../../${CODE}`, import.meta.url), 'utf8')
@@ -60,7 +60,7 @@ export default {
     // Settings › Brains, with the way to the brain on this computer, or to Ollama's and LM Studio's.
     const device = `${jean}?brain=device`
     const enterprise = kit.link('enterprise')
-    return /* html */ `<section class="site-hero off-hero" aria-labelledby="off-title">
+    const hero = /* html */ `<section class="site-hero off-hero" aria-labelledby="off-title">
   <div class="site-hero-text">
     <p class="site-eyebrow">${say('eyebrow')}</p>
     <h1 id="off-title">${underline(say('h1'), say('h1.mark'))}</h1>
@@ -72,25 +72,23 @@ export default {
     <p class="off-pane-head" aria-hidden="true"><span>${xml(kit.brand.name)}</span><span class="off-chip">${OFFLINE}${say('pane.offline')}</span></p>
     ${demoFrame(kit)}
   </div>
-</section>
-
-<section id="off-needs" class="site-section is-side" aria-labelledby="off-needs-title">
-  <header><h2 id="off-needs-title">${say('needs.title')}</h2><p class="site-why">${say('needs.why')}</p></header>
+</section>`
+    const needs = /* html */ `<section id="off-needs" class="site-block" aria-labelledby="off-needs-title">
+  <header><h3 id="off-needs-title">${say('needs.title')}</h3><p class="site-why">${say('needs.why')}</p></header>
   <div class="site-two">
     <dl class="off-specs">${table('needs.rows', 2).map(([what, need]) => /* html */ `
       <div><dt>${what}</dt><dd>${need}</dd></div>`).join('')}
     </dl>
     <div class="off-else">
-      <h3>${say('needs.elseTitle')}</h3>
+      <h4>${say('needs.elseTitle')}</h4>
       <p>${say('needs.else')}</p>
       <p>${say('needs.local')} <a href="${jean}?brain=local">${say('needs.localLink')}</a></p>
       <p class="site-source">${say('needs.crash')}</p>
     </div>
   </div>
-</section>
-
-<section class="site-section" aria-labelledby="off-how">
-  <header><h2 id="off-how">${say('how.title')}</h2><p class="site-why">${say('how.why')}</p></header>
+</section>`
+    const how = /* html */ `<section class="site-block" aria-labelledby="off-how">
+  <header><h3 id="off-how">${say('how.title')}</h3><p class="site-why">${say('how.why')}</p></header>
   <div class="site-two">
     <ol class="off-steps">${list('how.steps').map((step) => /* html */ `<li>${step}</li>`).join('')}</ol>
     <div class="off-way" aria-hidden="true">
@@ -104,23 +102,20 @@ export default {
     <p>${say('how.speed')}</p>
     <p class="site-source">${say('how.source')}</p>
   </div>
-</section>
-
-<section class="site-section is-side" aria-labelledby="off-private">
-  <header><h2 id="off-private">${say('private.title')}</h2><p class="site-why">${say('private.why')}</p></header>
-  <div class="off-cards">${table('private.cards', 2).map(([name, text], i) => /* html */ `<div>${[ICONS.shield, ICONS.lock, MARK][i]}<h3>${name}</h3><p>${text}</p>${i === 2 ? /* html */ `<p><a href="${kit.site('check')}">${say('private.check')}</a></p>` : ''}</div>`).join('')}</div>
-</section>
-
-<section class="site-section" aria-labelledby="off-also">
-  <header><h2 id="off-also">${say('also.title')}</h2><p class="site-why">${say('also.why')}</p></header>
+</section>`
+    const kept = /* html */ `<section class="site-block" aria-labelledby="off-private">
+  <header><h3 id="off-private">${say('private.title')}</h3><p class="site-why">${say('private.why')}</p></header>
+  <div class="off-cards">${table('private.cards', 2).map(([name, text], i) => /* html */ `<div>${[ICONS.shield, ICONS.lock, MARK][i]}<h4>${name}</h4><p>${text}</p>${i === 2 ? /* html */ `<p><a href="${kit.site('check')}">${say('private.check')}</a></p>` : ''}</div>`).join('')}</div>
+</section>`
+    const also = /* html */ `<section class="site-block" aria-labelledby="off-also">
+  <header><h3 id="off-also">${say('also.title')}</h3><p class="site-why">${say('also.why')}</p></header>
   <div class="site-two">
-    <div class="off-list"><h3>${say('also.yes')}</h3>${ticks(list('also.yesItems'))}</div>
-    <div class="off-list"><h3>${say('also.no')}</h3><ul class="off-dashes">${list('also.noItems').map((item) => /* html */ `<li>${item}</li>`).join('')}</ul></div>
+    <div class="off-list"><h4>${say('also.yes')}</h4>${ticks(list('also.yesItems'))}</div>
+    <div class="off-list"><h4>${say('also.no')}</h4><ul class="off-dashes">${list('also.noItems').map((item) => /* html */ `<li>${item}</li>`).join('')}</ul></div>
   </div>
-</section>
-
-<section class="site-section is-side" aria-labelledby="off-versus">
-  <header><h2 id="off-versus">${say('versus.title')}</h2><p class="site-why">${say('versus.why')}</p></header>
+</section>`
+    const versus = /* html */ `<section class="site-block" aria-labelledby="off-versus">
+  <header><h3 id="off-versus">${say('versus.title')}</h3><p class="site-why">${say('versus.why')}</p></header>
   <div class="off-table-wrap">
     <table class="off-table" aria-labelledby="off-versus">
       <thead><tr><td></td><th scope="col">${say('versus.here')}</th><th scope="col">${say('versus.online')}</th></tr></thead>
@@ -130,28 +125,26 @@ export default {
     </table>
   </div>
   <p class="off-both">${say('versus.both')}</p>
-</section>
-
-<section class="site-section" aria-labelledby="off-work">
-  <header><h2 id="off-work">${say('work.title')}</h2><p class="site-why">${say('work.why')}</p></header>
-  ${enterprise ? /* html */ `<p><a href="${enterprise}">${say('work.link')}</a></p>` : ''}
-</section>
-
-<section class="site-section is-side" aria-labelledby="off-limits">
-  <h2 id="off-limits">${say('limits.title')}</h2>
-  <ul class="site-limits">${list('limits.items').map((item) => /* html */ `<li>${item}</li>`).join('')}</ul>
-</section>
-
-<section class="site-section" aria-labelledby="off-faq">
-  <h2 id="off-faq">${say('faq.title')}</h2>
-  ${questions('off-questions', table('faq.items', 2))}
-</section>
-
-<section class="site-section is-side site-end" aria-labelledby="off-end">
-  ${WAVE}
-  <h2 id="off-end">${app('private.try')}</h2>
-  <p class="site-why">${say('end.why')}</p>
-  <p class="off-go">${FELT.point}<a class="button primary" href="${device}">${say('cta')}</a></p>
 </section>`
+    const work = /* html */ `<section class="site-block" aria-labelledby="off-work">
+  <header><h3 id="off-work">${say('work.title')}</h3><p class="site-why">${say('work.why')}</p></header>
+  ${enterprise ? /* html */ `<p><a href="${enterprise}">${say('work.link')}</a></p>` : ''}
+</section>`
+    const end = /* html */ `${WAVE}
+  <h3>${app('private.try')}</h3>
+  <p class="site-why">${say('end.why')}</p>
+  <p class="off-go">${FELT.point}<a class="button primary" href="${device}">${say('cta')}</a></p>`
+    // What it doesn't do, said under the part of the promise each limit is about.
+    const limits = list('limits.items'), not = (/** @type {number[]} */ ...which) => caught(say('limits.title'), which.map((i) => limits[i]))
+    return landing(kit, {
+      top: hero,
+      promise: say('h1'),
+      acts: {
+        computer: { id: 'off-computer', body: `${needs}\n${kept}\n${versus}\n${work}`, catch: not(0, 1, 3) },
+        offline: { id: 'off-offline', body: `${how}\n${also}`, catch: not(2, 4, 5) },
+      },
+      turn: { id: 'off-end', body: end },
+      questions: { id: 'off-faq', name: 'off-questions', title: say('faq.title'), items: table('faq.items', 2) },
+    })
   },
 }

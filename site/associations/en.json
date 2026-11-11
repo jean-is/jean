@@ -5,6 +5,7 @@
   "eyebrow": "{name} for nonprofits",
   "h1": "Free AI, for every volunteer.",
   "h1.mark": "Free AI",
+  "acts": [["free", "Free AI,"], ["volunteers", "for every volunteer."]],
   "lede": "The grant application, the AGM minutes, the members’ newsletter, the accounts, the poster for the summer fair: ask in your own words or with your notes, and get them back done. Everyone opens it in their own browser, with no seats to pay for.",
   "cta": "Try it with the AGM minutes",
   "send": "Send to the board",

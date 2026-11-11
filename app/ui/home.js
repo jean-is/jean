@@ -1,16 +1,19 @@
-// jean.is's page under the first screen (D397), which build:web writes after the app's root (scripts/home.js),
+// jean.is's page under the first screen (D397), which build:web writes after the app's root (site/home/page.js),
 // one per language at its own address. It speaks the app's one language: when that changes, from Settings,
 // ⌘⇧L or the page's own menu (which sets it as Settings does), the page shown is that language's, at its
 // address, or English's where it has none, read from there and put in place of the other, the place read kept,
 // without leaving. Each Try puts its request in the box as the ideas do, the sample spreadsheet's with its file, a
-// tune's, a quiz's or a deck's with Jean's skill for it. One tile is the active one (ui/tiles.js). The page rises into
-// the first screen as far as the room leaves free under its ideas, which stay where they are without it (D653).
-// Shown, the page is at its own address; hidden, a language's address gives way to the site's, as every other one
-// is, its language kept, and ?index=1 goes; the Vous menu's Homepage shows it again on a new task. Shown, it is the
+// tune's, a quiz's or a deck's with Jean's skill for it; their row turns a view at a time (ui/tiles.js), and Your turn, at
+// the page's end, goes back up to the box. The page rises into the first screen just enough for its first title to
+// show whole with the top of its row, never over the box's ideas, which stay where they are without it (D653).
+// It is under every task that has no request yet, in a browser's tab, and goes with the request; a new task, which
+// starts at its top, has it again, and so the name in the bar leads to it. In Jean installed it shows once the Vous
+// menu's Homepage asks for it. Shown, the page is at its own address; hidden, a language's address gives way to the
+// site's, as every other one is, its language kept. Shown, it is the
 // main content, its <main> the skip link's #main, the app's first screen above it in a <div> (ui/shell.js); where
 // something takes that screen's place (Creations), the room is the <main> again and the page goes, and while a
 // pane covers it (D635) it is out of the keys' way.
-import { app, effective, newConversation, setLocale, turnPage, updateSettings, LOCALES } from './state.js'
+import { app, effective, newConversation, newTasks, setLocale, turnPage, updateSettings, LOCALES } from './state.js'
 import { homepage } from './shell.js'
 import { dir, locale, pickLocale } from '../core/i18n.js'
 import { yoursFirst } from './yours.js'
@@ -27,19 +30,24 @@ const sizes = new ResizeObserver(([entry]) => document.body.style.setProperty('-
 /** What holds the place read over a change of language, while it does. @type {(() => void) | null} */
 let holding = null
 /**
- * How far the page rises into the first screen (--home-lift, home.css): where the box is centred, the room its
- * ideas leave under them, less a gap, 13rem at most; elsewhere, none. Measured in the frame after the box's part of
- * the room changes size, which any change above or in it does, so that nothing is read or written while sizes are
- * being told (WebKit would say they looped).
+ * How far the page rises into the first screen (--home-lift, home.css): where the box is centred, as far as shows its
+ * first act's title whole and the top 40px of what follows it, its row, and never over the room the box's ideas leave
+ * under them, less a gap; elsewhere, none. Measured in the frame after the box's part of the room or the page changes
+ * size, which any change above or in it does, so that nothing is read or written while sizes are being told (WebKit
+ * would say they looped).
  */
-const lift = new ResizeObserver(() => requestAnimationFrame(() => {
-  const composer = document.querySelector('app-composer')
+const rise = () => requestAnimationFrame(() => {
+  const composer = document.querySelector('app-composer'), act = document.querySelector('body > .home .home-act'), title = act?.querySelector('.home-act-title')
   const lowest = Math.max(...[...composer?.children ?? []].filter((child) => child.localName !== 'p' && child.localName !== 'footer').map((child) => child.getBoundingClientRect().bottom))
-  const room = document.documentElement.hasAttribute('data-centred') && composer ? composer.getBoundingClientRect().bottom - lowest - 32 : 0
-  document.body.style.setProperty('--home-lift', `${Math.round(Math.max(0, Math.min(room, 208)))}px`)
+  const room = document.documentElement.hasAttribute('data-centred') && composer ? composer.getBoundingClientRect().bottom - lowest - 48 : 0
+  // From the top of the act, which is the page's, and moves with what is in it as it rises into place (home.css).
+  const next = act?.querySelector('.home-row, .home-ways')?.getBoundingClientRect().top ?? 0
+  const peek = act && title ? Math.max(title.getBoundingClientRect().bottom, next) - act.getBoundingClientRect().top + 40 : 0
+  document.body.style.setProperty('--home-lift', `${Math.round(Math.max(0, Math.min(room, peek)))}px`)
   // Risen anew over a change of language, the page keeps the place read (follow()).
   holding?.()
-}))
+})
+const lift = new ResizeObserver(rise)
 
 /**
  * The page where it goes: shown while it is to be and the room holds the first screen, then the main content; inert under a pane.
@@ -56,16 +64,17 @@ const placing = new MutationObserver(() => bound && place(/** @type {HTMLElement
 /** The page, made to work. @param {HTMLElement} home */
 function bind(home) {
   if (!bound) {
-    lift.observe(document.querySelector('app-composer') ?? home)
     placing.observe(document.querySelector('app-shell .here') ?? home, { childList: true })
     placing.observe(document.documentElement, { attributeFilter: ['data-dock'] })
+    // A new task starts at its top, where the box is, however far down the page was read.
+    newTasks.subscribe(() => { if (showing) scrollTo({ top: 0, behavior: 'instant' }) })
   }
   bound = home
   const list = home.querySelector('#site-languages > ul')
   if (list) yoursFirst(list, navigator.languages)
   home.addEventListener('click', (event) => {
-    const button = event.target instanceof Element ? event.target.closest('[data-try]') : null
-    if (button instanceof HTMLElement) ask(button.dataset.try ?? '')
+    const button = event.target instanceof Element ? event.target.closest('[data-try], [data-turn]') : null
+    if (button instanceof HTMLElement) 'turn' in button.dataset ? yours() : ask(button.dataset.try ?? '')
     // A language is the app's, which this page follows from the same place, the keyboard on the menu's button; a link asked to open elsewhere does.
     const link = event.target instanceof Element ? event.target.closest('[data-language]') : null, menu = link?.closest('[popover]')
     if (!(link instanceof HTMLElement) || !(menu instanceof HTMLElement) || event.metaKey || event.ctrlKey || event.shiftKey) return
@@ -73,6 +82,8 @@ function bind(home) {
   })
   sizes.disconnect()
   sizes.observe(home)
+  lift.disconnect()
+  for (const one of [document.querySelector('app-composer'), home]) if (one) lift.observe(one)
   tiles(home)
 }
 
@@ -89,7 +100,7 @@ const read = (address) => new Promise((resolve) => {
   request.send()
 })
 
-/** jean.is's page again, from the Vous menu's Homepage: on a new task, at the top, as a first visit has it, in place. */
+/** jean.is's page, from the Vous menu's Homepage: on a new task, at the top, in place; in Jean installed, where no task has it by itself, until a request. */
 export async function again() {
   await turnPage(newConversation)
   homepage.value = true
@@ -114,13 +125,19 @@ async function ask(key) {
   focusComposer()
 }
 
-/** The page's blocks a reader is at: a door, a tile, a question, the foot… */
-const BLOCKS = '.home-strip, .home-head, .home-formats, .home-filter, .home-tile, .home-replay, .home-door, .home-questions details, .site-foot'
+/** Your turn, at the page's end: back up to the box on a wide window (on a phone it is docked at the foot already), the keyboard in it. */
+function yours() {
+  if (matchMedia('(min-width: 48rem)').matches) scrollTo({ top: 0, behavior: 'instant' })
+  focusComposer()
+}
+
+/** The page's blocks a reader is at: an act's head, a tile, a card, a question, the foot… */
+const BLOCKS = '.home-act-head, .home-tile, .home-ways, .home-shelf > *, .home-move, .home-catch, .home-yours, .home-questions details, .site-foot'
 
 /**
  * Where the reader is: the page's menu when it changed the language, else the block a third of the way down the
- * window or the nearest above it, by its place among the page's elements, which every language's page has
- * alike, and how far down the window it is; above the page, the window's own place.
+ * window or the nearest above it, by its place among its act's elements, or the page's, which every language's
+ * page has alike, and how far down the window it is; above the page, the window's own place.
  * @param {HTMLElement} home @param {Element | null} menu
  */
 function reading(home, menu) {
@@ -128,13 +145,15 @@ function reading(home, menu) {
   const held = menu !== null && menu.contains(document.activeElement)
   const [at] = held ? [{ block: menu, box: menu.getBoundingClientRect() }] : [...home.querySelectorAll(BLOCKS)].map((block) => ({ block, box: block.getBoundingClientRect() }))
     .filter(({ box }) => box.height && box.top <= line).sort((a, b) => Number(a.box.bottom <= line) - Number(b.box.bottom <= line) || b.box.top - a.box.top)
-  const place = at ? { index: [...home.querySelectorAll('*')].indexOf(at.block), top: at.box.top } : { y: scrollY }
+  // Within its act where it is in one: a language orders the acts as its promise says them.
+  const act = at?.block.closest('.home-act')
+  const place = at ? { act: act?.id, index: [...(act ?? home).querySelectorAll('*')].indexOf(at.block), top: at.box.top } : { y: scrollY }
   return { ...place, menu: held }
 }
 
 /** Back where the reader was, in the language now on the page (reading()). @param {HTMLElement} home @param {any} kept */
 function goBack(home, kept) {
-  const element = home.querySelectorAll('*')[kept.index]
+  const element = ((kept.act && home.querySelector(`#${kept.act}`)) || home).querySelectorAll('*')[kept.index]
   if (element) scrollBy({ top: element.getBoundingClientRect().top - kept.top, behavior: 'instant' })
   else scrollTo({ top: kept.y ?? 0, behavior: 'instant' })
 }
@@ -164,8 +183,11 @@ export async function follow(home, shown, lang) {
   if (menu instanceof HTMLElement) menu.hidden = effective.value.locked.has('locale')
   if (now) Object.assign(/** @type {HTMLElement} */ (menu?.querySelector('button [lang]')), { lang, dir: dir(lang), textContent: now.textContent })
   for (const link of menu?.querySelectorAll('[data-language]') ?? []) link === now ? link.setAttribute('aria-current', 'true') : link.removeAttribute('aria-current')
+  // Back under a task, the page is at its top, whatever was read above it; as Jean starts, where the browser has it.
+  const back = shown && !showing && call > 1
   showing = shown
   place(home)
+  if (back) scrollTo({ top: 0, behavior: 'instant' })
   // Over a change of language, the same place, held while the page settles: the fonts set the lines, and a style
   // sheet landing late (tips.css) has WebKit pull the window up. Until the reader moves, for a moment at most.
   if (kept) {
@@ -179,18 +201,11 @@ export async function follow(home, shown, lang) {
     document.fonts.ready.then(hold)
     if (kept.menu) menu?.querySelector('button')?.focus({ preventScroll: true })
   }
-  const query = new URLSearchParams(location.search)
-  // Shown, the page is at its own address, asked for there once the Vous menu's Homepage showed it; hidden, at the site's.
+  // Shown, the page is at its own address; hidden, at the site's.
   const own = document.querySelector(`link[rel="alternate"][hreflang="${home.lang}"]`)
-  if (shown && own instanceof HTMLLinkElement) {
-    if (homepage.peek()) query.set('index', '1')
-    return history.replaceState(history.state, '', `${new URL(own.href).pathname}${`${query}` && `?${query}`}${location.hash}`)
-  }
+  if (shown && own instanceof HTMLLinkElement) return history.replaceState(history.state, '', `${new URL(own.href).pathname}${location.search}${location.hash}`)
   if (shown) return
-  query.delete('index')
-  const search = `${query}` && `?${query}`
   const asked = document.querySelector('meta[name="app-language"]')?.getAttribute('content')
   if (asked && !location.pathname.endsWith('/') && !effective.value.settings.locale && locale.value === asked && pickLocale(LOCALES, navigator.languages) !== asked) updateSettings({ locale: asked }).catch(console.warn)
-  if (location.pathname.endsWith('/')) return search === location.search || history.replaceState(history.state, '', location.pathname + search + location.hash)
-  history.replaceState(history.state, '', `./${search}${location.hash}`)
+  if (!location.pathname.endsWith('/')) history.replaceState(history.state, '', `./${location.search}${location.hash}`)
 }

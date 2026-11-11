@@ -26,11 +26,11 @@
 .cha-choices input:checked + label { background: var(--site-fill); color: var(--site-on-fill); }
 .cha-choices input:focus-visible + label { outline: 2px solid var(--flame); outline-offset: 2px; }
 .cha-sheet { display: flex; flex-direction: column; gap: 1.25rem; max-inline-size: 50rem; padding: clamp(1.5rem, 5vw, 3rem); border: 1px solid var(--line); border-radius: 0.5rem; background: var(--room); box-shadow: var(--site-float); }
-.cha-sheet h3 { font: 700 clamp(1.4rem, 3vw, 1.85rem)/1.2 var(--display); }
+.cha-sheet h4 { font: 700 clamp(1.4rem, 3vw, 1.85rem)/1.2 var(--display); }
 .cha-parts { display: flex; flex-direction: column; gap: 1.5rem; counter-reset: part; }
 .cha-parts > li { counter-increment: part; display: flex; flex-direction: column; gap: 0.6rem; }
-.cha-parts h4 { margin: 0; font-size: 1.05rem; font-weight: 700; }
-.cha-parts h4::before { content: counter(part) '. '; }
+.cha-parts h5 { margin: 0; font-size: 1.05rem; font-weight: 700; }
+.cha-parts h5::before { content: counter(part) '. '; }
 .cha-parts ul { display: flex; flex-direction: column; gap: 0.45rem; }
 .cha-parts ul li { position: relative; padding-inline-start: 1.1rem; }
 .cha-parts ul li::before { content: '–' / ''; position: absolute; inset-inline-start: 0; color: var(--ink-faint); }

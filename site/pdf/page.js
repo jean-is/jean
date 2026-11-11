@@ -10,5 +10,10 @@ const PANE = /* html */ `<svg class="job-drawn" viewBox="0 0 200 92" aria-hidden
 export default job({
   addresses: { en: 'pdf', fr: 'fr/pdf', ko: 'ko/pdf' },
   into: 'open',
+  // Its promise is two jobs: any question, proved by what goes in, what comes out and where the PDF goes; and tables
+  // made a workbook, proved by the statement replayed and its totals worked out.
+  proves: { ask: ['io', 'where'], tables: ['replay', 'exact'] },
+  // The AI behind it, what it reads and what it gives back, under any question; a table rebuilt and its numbers, under the workbook.
+  limits: { ask: [0, 1, 2, 3], tables: [4, 5] },
   drawn: () => ({ pane: PANE }),
 })

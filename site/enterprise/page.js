@@ -4,7 +4,7 @@
 // design or isn't built yet, and the page claims nothing else. Its words are <lang>.json, the app's where they say
 // the same; its look enterprise.css, over site.css (site/site.js, D438). Its pane is Jean's own demo of what people get.
 import { demoFiles, demoFrame } from '../demo.js'
-import { FELT, ICONS, REPOSITORY, WAVE, felt, highlight, questions, underline, xml } from '../site.js'
+import { FELT, ICONS, REPOSITORY, WAVE, caught, felt, highlight, landing, underline, xml } from '../site.js'
 
 /** Where questions go; keys are asked for on their own page (site/enterprise-key/). */
 export const CONTACT = 'arnaud@jean.is'
@@ -19,6 +19,9 @@ const SEATS = { paid: 15e6, total: 450e6 }
 
 /** The trust pack's documents, in trust.docs's order, as paths in the repository; null is the site's own page, a bare name another page of the site. */
 const DOCS = ['docs/trust/threat-model.md', 'docs/trust/anssi.md', 'docs/trust/dpia.md', 'accessibility', 'docs/trust/pentest.md', 'docs/trust/releases.md', null, 'deploy/README.md', 'docs/enterprise.md']
+
+/** The part of the promise each limit is about, in limits.items's order: its act says it, under what proves that part. */
+const ABOUT = ['approved', 'approved', 'approved', 'used', 'used', 'approved']
 
 /** The roles, as the style sheet names their radio buttons and panels, and the statuses an answer can have. */
 export const ROLES = ['security', 'privacy', 'it', 'purchasing', 'staff', 'ai']
@@ -72,14 +75,16 @@ export default {
     for (const [id] of roles) if (!ROLES.includes(id)) throw new Error(`site/enterprise/${lang}.json: role ${id} isn't one the style sheet knows`)
     const facts = table('why.facts', 2)
     const docs = table('trust.docs', 2)
-    if (facts.length !== FACTS.length || docs.length !== DOCS.length) throw new Error(`site/enterprise/${lang}.json: why.facts or trust.docs has a row too many or too few`)
+    const limits = list('limits.items')
+    if (facts.length !== FACTS.length || docs.length !== DOCS.length || limits.length !== ABOUT.length) throw new Error(`site/enterprise/${lang}.json: why.facts, trust.docs or limits.items has a row too many or too few`)
+    const not = (/** @type {string} */ part) => caught(say('limits.title'), limits.filter((limit, i) => ABOUT[i] === part))
     const head = list('compare.head')
     const compared = table('compare.rows', 5)
     /** A role's answers: each its question, its answer and its status, one of STATUSES. @param {string} id */
     const answers = (id) => table(`answers.${id}`, 3)
     const node = (/** @type {string[]} */ [name, text], /** @type {string} */ kind = '', drawn = name) => /* html */ `<li class="ent-node${kind}">${SKETCH}<b>${drawn}</b><small>${text}</small></li>`
     const address = kit.address(lang)
-    return /* html */ `<section class="site-hero" aria-labelledby="ent-title">
+    const hero = /* html */ `<section class="site-hero" aria-labelledby="ent-title">
   <div class="site-hero-text">
     <p class="site-eyebrow">${say('eyebrow')}</p>
     <h1 id="ent-title">${underline(say('h1'), say('h1.mark'))}</h1>
@@ -92,46 +97,42 @@ export default {
     <ul class="ent-sides">${table('path.sides', 2).map((cells, i) => (i === 2 ? node(cells, ' is-none', felt(cells[0], 'strike')) : node(cells))).join('')}</ul>
     <figcaption id="ent-path-caption"><span class="visually-hidden">${say('path.label')}: </span>${say('path.caption')}</figcaption>
   </figure>
-</section>
-
-<section class="site-section is-side" aria-labelledby="ent-why">
-  <h2 id="ent-why">${say('why.title')}</h2>
+</section>`
+    const why = /* html */ `<section class="site-block" aria-labelledby="ent-why">
+  <h3 id="ent-why">${say('why.title')}</h3>
   <div class="site-stats">${facts.map(([text, source], i) => /* html */ `<p><b>${i ? xml(percent.format(FACTS[i])) : felt(xml(percent.format(FACTS[i])), 'circle')}</b><span>${text}</span><small>${source}</small></p>`).join('')}</div>
   <p class="ent-line">${say('why.line')}</p>
-</section>
-
-<section id="ent-pilot" class="site-section" aria-labelledby="ent-pilot-title">
-  <h2 id="ent-pilot-title">${say('pilot.title')}</h2>
+</section>`
+    const afternoon = /* html */ `<section id="ent-pilot" class="site-block" aria-labelledby="ent-pilot-title">
+  <h3 id="ent-pilot-title">${say('pilot.title')}</h3>
   <div class="ent-assist">
-    <h3>${say('pilot.assist.title')}</h3>
+    <h4>${say('pilot.assist.title')}</h4>
     <p>${say('pilot.assist.body')}</p>
     <pre dir="auto">${say('pilot.assist.prompt', { skill: SKILL })}</pre>
     <p><a href="${SKILL.replace('/tree/', '/blob/')}/SKILL.md">${say('pilot.assist.read')}</a></p>
   </div>
   <details class="ent-manual">
     <summary><span>${say('pilot.manual')}</span>${ICONS.closed}${ICONS.open}</summary>
-    <ol class="ent-steps">${table('pilot.steps', 2).map(([name, text], i) => /* html */ `<li><h3>${name}</h3><p>${text}</p><pre>${xml(SNIPPETS[i] ?? '')}</pre></li>`).join('')}</ol>
+    <ol class="ent-steps">${table('pilot.steps', 2).map(([name, text], i) => /* html */ `<li><h4>${name}</h4><p>${text}</p><pre>${xml(SNIPPETS[i] ?? '')}</pre></li>`).join('')}</ol>
   </details>
   <p class="ent-after">${say('pilot.after')}</p>
   <p><a href="${pilot}">${say('pilot.kit')}</a></p>
-</section>
-
-<section class="site-section is-side" aria-labelledby="ent-people">
+</section>`
+    const box = /* html */ `<section class="site-block" aria-labelledby="ent-people">
   <div class="site-two ent-two">
     <div class="ent-body">
-      <h2 id="ent-people">${say('people.title')}</h2>
+      <h3 id="ent-people">${say('people.title')}</h3>
       <p>${say('people.body')}</p>
-      <p><a href="${jean}?index=1">${say('people.more')}</a></p>
+      <p><a href="${jean}">${say('people.more')}</a></p>
     </div>
     <div class="ent-pane">
       <p class="ent-pane-head" aria-hidden="true"><span>${xml(kit.brand.name)}</span><span class="ent-chip">${ICONS.brain}${say('demo.brain')}</span></p>
       ${demoFrame(kit)}
     </div>
   </div>
-</section>
-
-<section id="ent-answers" class="site-section" aria-labelledby="ent-answers-title">
-  <header><h2 id="ent-answers-title">${say('answers.title')}</h2><p class="site-why">${say('answers.why')}</p></header>
+</section>`
+    const asked = /* html */ `<section id="ent-answers" class="site-block" aria-labelledby="ent-answers-title">
+  <header><h3 id="ent-answers-title">${say('answers.title')}</h3><p class="site-why">${say('answers.why')}</p></header>
   <fieldset class="ent-roles">
     <legend class="visually-hidden">${say('answers.show')}</legend>
     ${roles.map(([id], i) => /* html */ `<input type="radio" name="ent-role" id="ent-role-${id}"${i ? '' : ' checked'}>`).join('')}
@@ -142,47 +143,43 @@ export default {
       </dl>`).join('')}
     </div>
   </fieldset>
-</section>
-
-<section class="site-section is-side" aria-labelledby="ent-compare">
-  <header><h2 id="ent-compare">${say('compare.title')}</h2><p class="site-why">${say('compare.note')}</p></header>
+</section>`
+    const compare = /* html */ `<section class="site-block" aria-labelledby="ent-compare">
+  <header><h3 id="ent-compare">${say('compare.title')}</h3><p class="site-why">${say('compare.note')}</p></header>
   <div class="ent-scroll"><table class="ent-table" aria-labelledby="ent-compare">
     <thead><tr>${head.map((cell, i) => /* html */ `<th scope="col"${i === 1 ? ' class="is-jean"' : ''}>${i === 1 ? felt(cell, 'circle') : cell}</th>`).join('')}</tr></thead>
     <tbody>${compared.map(([what, ...cells]) => /* html */ `
       <tr><th scope="row">${what}</th>${cells.map((cell, i) => /* html */ `<td${i ? '' : ' class="is-jean"'}>${cell}</td>`).join('')}</tr>`).join('')}
     </tbody>
   </table></div>
-</section>
-
-<section class="site-section" aria-labelledby="ent-limits">
-  <h2 id="ent-limits">${say('limits.title')}</h2>
-  <ul class="site-limits">${list('limits.items').map((item) => /* html */ `<li>${item}</li>`).join('')}</ul>
-</section>
-
-<section id="ent-trust" class="site-section is-side" aria-labelledby="ent-trust-title">
-  <h2 id="ent-trust-title">${say('trust.title')}</h2>
-  <ul class="ent-docs">${docs.map(([name, text], i) => /* html */ `<li><a href="${doc(DOCS[i])}"><h3>${name}</h3><span>${text}</span></a></li>`).join('')}</ul>
+</section>`
+    const trust = /* html */ `<section id="ent-trust" class="site-block" aria-labelledby="ent-trust-title">
+  <h3 id="ent-trust-title">${say('trust.title')}</h3>
+  <ul class="ent-docs">${docs.map(([name, text], i) => /* html */ `<li><a href="${doc(DOCS[i])}"><h4>${name}</h4><span>${text}</span></a></li>`).join('')}</ul>
   <div class="ent-verify"><p>${say('trust.verify')}</p><pre>${xml(VERIFY)}</pre><p class="site-source">${say('trust.ci')}</p></div>
-</section>
-
-<section class="site-section" aria-labelledby="ent-price">
-  <h2 id="ent-price">${say('price.title')}</h2>
-  <ul class="ent-prices">${table('price.cards', 4).map(([name, price, text, action], i) => /* html */ `<li><h3>${name}</h3><b>${i ? price : felt(price, 'circle')}</b><p>${text}</p><a class="button${i ? '' : ' primary'}" href="${ways[i]}">${action}</a></li>`).join('')}</ul>
+</section>`
+    const price = /* html */ `<section class="site-block" aria-labelledby="ent-price">
+  <h3 id="ent-price">${say('price.title')}</h3>
+  <ul class="ent-prices">${table('price.cards', 4).map(([name, cost, text, action], i) => /* html */ `<li><h4>${name}</h4><b>${i ? cost : felt(cost, 'circle')}</b><p>${text}</p><a class="button${i ? '' : ' primary'}" href="${ways[i]}">${action}</a></li>`).join('')}</ul>
   <p class="ent-rule">${say('price.rule')}</p>
   <p class="site-source">${say('price.note')}</p>
-</section>
-
-<section class="site-section is-side" aria-labelledby="ent-faq">
-  <h2 id="ent-faq">${say('faq.title')}</h2>
-  ${questions('ent-questions', table('faq.items', 2))}
-</section>
-
-<section class="site-section site-end" aria-labelledby="ent-share">
-  ${WAVE}
-  <h2 id="ent-share">${say('share.title')}</h2>
+</section>`
+    const share = /* html */ `${WAVE}
+  <h3>${say('share.title')}</h3>
   <p class="site-why">${say('share.body')}</p>
   ${address ? /* html */ `<p class="ent-address">${FELT.point}${xml(address)}</p>` : ''}
-  <p><a href="${mail}">${say('share.write')}</a></p>
-</section>`
+  <p><a href="${mail}">${say('share.write')}</a></p>`
+    // The promise part by part: what the organisation governs, sets up and reviews, then what its people get and at
+    // what price; each limit under the part it is about (ABOUT).
+    return landing(kit, {
+      top: hero,
+      promise: say('h1'),
+      acts: {
+        approved: { id: 'ent-approved', body: `${why}\n${afternoon}\n${asked}\n${trust}`, catch: not('approved') },
+        used: { id: 'ent-used', body: `${box}\n${compare}\n${price}`, catch: not('used') },
+      },
+      turn: { id: 'ent-share', body: share },
+      questions: { id: 'ent-faq', name: 'ent-questions', title: say('faq.title'), items: table('faq.items', 2) },
+    })
   },
 }

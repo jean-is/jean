@@ -5,6 +5,7 @@
   "eyebrow": "{name} offline",
   "h1": "AI on your own computer, even offline.",
   "h1.mark": "even offline",
+  "acts": [["computer", "AI on your own computer,"], ["offline", "even offline."]],
   "lede": "Download it once ({size}) and it answers right here in your browser, with no internet, no account and nothing to install. It needs a computer with {memory} of memory and a recent graphics chip, not a phone, and its answers are simpler and slower than a big online AI’s.",
   "cta": "Get the AI on this computer",
   "check": "Is my computer enough?",

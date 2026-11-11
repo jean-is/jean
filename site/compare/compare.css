@@ -96,8 +96,9 @@
 .cmp-status.is-design { box-shadow: inset 0 0 0 1px var(--ink); color: var(--ink); }
 .cmp-status.is-computer { box-shadow: inset 0 0 0 1.5px var(--site-fill); color: var(--ink); }
 
-/* Where the other does better, and the catch */
+/* Where the other does better, and why there is a catch, said after the first one's name */
 .cmp-better li::before { content: '+' / ''; color: var(--flame); font-weight: 700; }
+.cmp-why { font-weight: 400; }
 
 /* Ways, cards and products */
 .cmp-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
@@ -110,7 +111,7 @@
 .cmp-products { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(12rem, 100%), 1fr)); gap: 1rem; }
 .site .cmp-products a { display: flex; flex-direction: column; gap: 0.6rem; block-size: 100%; padding: 1.25rem; border: 1px solid var(--line-strong); border-radius: var(--site-pane); background: var(--room); color: var(--ink); text-decoration: none; }
 .cmp-products a:hover { border-color: var(--ink); }
-.cmp-products h3 { font: 700 1.35rem/1.2 var(--display); }
+.cmp-products h4 { font: 700 1.35rem/1.2 var(--display); }
 .cmp-products span { color: var(--ink-soft); font-size: 0.95rem; }
 .cmp-products .cmp-go { margin-block-start: auto; color: var(--ink); font-weight: 600; }
 

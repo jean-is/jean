@@ -20,4 +20,7 @@ export default product({
     clawhub: { url: 'https://docs.openclaw.ai/tools/skills', checked: '2026-10-20' },
   },
   actions: ['try', 'work'],
+  // Its catch, by the part of its promise: what the AI costs, under the alternative; what staying inside the browser
+  // costs, under it: out of the chat apps' reach, This computer for what is outside the fence, work that lives here.
+  limits: { alternative: [2], where: [0, 1, 3] },
 })

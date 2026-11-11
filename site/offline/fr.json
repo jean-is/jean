@@ -5,6 +5,7 @@
   "eyebrow": "{name} hors ligne",
   "h1": "Une IA sur votre ordinateur, même hors ligne.",
   "h1.mark": "même hors ligne",
+  "acts": [["computer", "Une IA sur votre ordinateur,"], ["offline", "même hors ligne."]],
   "lede": "Téléchargez-la une fois ({size}) : elle répond dans votre navigateur, sans internet, sans compte et sans rien installer. Il lui faut un ordinateur avec {memory} de mémoire et une puce graphique récente, pas un téléphone, et ses réponses sont plus simples et plus lentes que celles d’une grande IA en ligne.",
   "cta": "Mettre l’IA sur cet ordinateur",
   "check": "Mon ordinateur suffit-il ?",

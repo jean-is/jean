@@ -4,6 +4,7 @@
   "eyebrow": "Slides and PowerPoint",
   "h1": "Turn your notes into slides, or a PowerPoint file.",
   "h1.mark": "your notes",
+  "acts": [["notes", "Turn your notes"], ["slides", "into slides, or a PowerPoint file."]],
   "lede": "Give {name} your notes, a report or a spreadsheet, and say who the slides are for. You get a deck to page through and present full screen, right in the answer, or a PowerPoint file to change, its tables and charts included. Nothing to install.",
   "cta": "Try it with sample notes",
   "see": "See how it went",

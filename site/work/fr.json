@@ -5,6 +5,7 @@
   "eyebrow": "{name} au travail",
   "h1": "L’IA au bureau, avec le feu vert de l’informatique.",
   "h1.mark": "le feu vert",
+  "acts": [["work", "L’IA au bureau,"], ["yes", "avec le feu vert de l’informatique."]],
   "lede": "Lire un rapport, vérifier un tableau, transformer des notes en diapos pour lundi. {name} fonctionne dans un onglet du navigateur, sans rien installer. Sur un ordinateur géré, le déploiement se fait comme pour une page web, par votre service informatique, et les réponses ne viennent que de l’IA de l’entreprise.",
   "cta": "Essayer avec un tableau d’exemple",
   "ask": "Demander à l’informatique",

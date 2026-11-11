@@ -1,11 +1,13 @@
-// The page for the person at work: what Jean does with their work, where it goes, why their IT may say no and
-// what answers it, and a ready email that asks IT, at /work in English and /fr/travail in French. It never shows a
-// way round IT. The email leads to the page for IT (D428), or the public sector's where it is built. Its words are
+// The page for the person at work, at /work in English and /fr/travail in French: its promise, then that promise
+// part by part as the homepage has its own (landing() in site/site.js). AI for their work: what Jean does with it and
+// where it goes. That their IT can say yes to: why IT may say no and what answers it, and a ready email that asks
+// IT. Each part ends on what Jean doesn't do there; then their turn, and their questions. It never shows a way
+// round IT. The email leads to the page for IT (D428), or the public sector's where it is built. Its words are
 // <lang>.json, the homepage's for the tiles it shares and the page for IT's where they say the same; its look
 // work.css, over site.css (site/site.js, D438). Its pane is Jean's own demo of the report it shows summed up.
 import { demoFiles, demoFrame } from '../demo.js'
 import { PRICE, SMALL } from '../enterprise/page.js'
-import { FELT, ICONS, WAVE, highlight, questions, underline, xml } from '../site.js'
+import { FELT, ICONS, WAVE, caught, highlight, landing, underline, xml } from '../site.js'
 
 const ADDRESSES = { en: 'work', fr: 'fr/travail', ko: 'ko/work' }
 
@@ -42,7 +44,7 @@ export default {
     const mail = (/** @type {string | null} */ page) => `mailto:?subject=${encodeURIComponent(kit.text('mail.subject'))}&amp;body=${encodeURIComponent(kit.text('mail.body', { page: page ?? '' }))}`
     const files = kit.link('files')
     const enterprise = kit.link('enterprise')
-    return /* html */ `<section class="site-hero wrk-hero" aria-labelledby="wrk-title">
+    const hero = /* html */ `<section class="site-hero wrk-hero" aria-labelledby="wrk-title">
   <div class="site-hero-text">
     <p class="site-eyebrow">${say('eyebrow')}</p>
     <h1 id="wrk-title">${underline(say('h1'), say('h1.mark'))}</h1>
@@ -54,21 +56,18 @@ export default {
     <p class="wrk-pane-head" aria-hidden="true"><span>${xml(kit.brand.name)}</span><span class="wrk-chip">${ICONS.brain}${say('pane.brain')}</span></p>
     ${demoFrame(kit)}
   </div>
-</section>
-
-<section class="site-section is-side" aria-labelledby="wrk-jobs">
-  <header><h2 id="wrk-jobs">${say('jobs.title')}</h2><p class="site-why">${say('jobs.why')}</p></header>
+</section>`
+    const jobs = /* html */ `<section class="site-block" aria-labelledby="wrk-jobs">
+  <header><h3 id="wrk-jobs">${say('jobs.title')}</h3><p class="site-why">${say('jobs.why')}</p></header>
   <ul class="wrk-tiles">${TILES.map(([icon, key]) => /* html */ `<li>${ICONS[/** @type {keyof typeof ICONS} */ (icon)]}<p>${key ? home.say(key) : say('jobs.sample')}</p><a class="button" href="${jean}${key ? `?q=${encodeURIComponent(home.text(key))}` : '?sample'}">${home.say('tile.try')}</a></li>`).join('')}</ul>
-</section>
-
-<section class="site-section" aria-labelledby="wrk-where">
-  <header><h2 id="wrk-where">${say('where.title')}</h2><p class="site-why">${say('where.why')}</p></header>
-  <div class="wrk-where">${table('where.cards', 2).map(([name, text], i) => /* html */ `<div${i === 2 ? ' class="is-never"' : ''}>${[ICONS.computer, ICONS.brain, ICONS.never][i]}<h3>${name}</h3><p>${text}</p></div>`).join('')}</div>
+</section>`
+    const where = /* html */ `<section class="site-block" aria-labelledby="wrk-where">
+  <header><h3 id="wrk-where">${say('where.title')}</h3><p class="site-why">${say('where.why')}</p></header>
+  <div class="wrk-where">${table('where.cards', 2).map(([name, text], i) => /* html */ `<div${i === 2 ? ' class="is-never"' : ''}>${[ICONS.computer, ICONS.brain, ICONS.never][i]}<h4>${name}</h4><p>${text}</p></div>`).join('')}</div>
   ${files ? /* html */ `<p><a href="${files}">${kit.app('welcome.files')}</a></p>` : ''}
-</section>
-
-<section class="site-section is-side" aria-labelledby="wrk-it">
-  <header><h2 id="wrk-it">${say('it.title')}</h2><p class="site-why">${say('it.why')}</p></header>
+</section>`
+    const answers = /* html */ `<section class="site-block" aria-labelledby="wrk-it">
+  <header><h3 id="wrk-it">${say('it.title')}</h3><p class="site-why">${say('it.why')}</p></header>
   <div class="site-two">
     <div class="wrk-body">
       <p>${highlight(say('it.body'))}</p>
@@ -79,10 +78,9 @@ export default {
       <div><dt>${question}</dt><dd>${answer}</dd><dd><span class="wrk-status is-${STATUSES[i]}">${it.say(`status.${STATUSES[i]}`)}</span></dd></div>`).join('')}
     </dl>
   </div>
-</section>
-
-<section id="wrk-kit" class="site-section" aria-labelledby="wrk-kit-title">
-  <header><h2 id="wrk-kit-title">${say('kit.title')}</h2><p class="site-why">${say('kit.why')}</p></header>
+</section>`
+    const email = /* html */ `<section id="wrk-kit" class="site-block" aria-labelledby="wrk-kit-title">
+  <header><h3 id="wrk-kit-title">${say('kit.title')}</h3><p class="site-why">${say('kit.why')}</p></header>
   <div class="site-two">
     <figure class="wrk-mail">
       <figcaption>${say('kit.label')}</figcaption>
@@ -95,23 +93,22 @@ export default {
       <p class="site-source">${say('kit.note')}</p>
     </div>
   </div>
-</section>
-
-<section class="site-section is-side" aria-labelledby="wrk-limits">
-  <h2 id="wrk-limits">${say('limits.title')}</h2>
-  <ul class="site-limits">${list('limits.items').map((item) => /* html */ `<li>${item}</li>`).join('')}</ul>
-</section>
-
-<section class="site-section" aria-labelledby="wrk-faq">
-  <h2 id="wrk-faq">${say('faq.title')}</h2>
-  ${questions('wrk-questions', table('faq.items', 2))}
-</section>
-
-<section class="site-section is-side site-end" aria-labelledby="wrk-end">
-  ${WAVE}
-  <h2 id="wrk-end">${say('end.title')}</h2>
-  <p class="site-why">${say('end.why')}</p>
-  <p class="site-cta wrk-go">${FELT.point}<a class="button primary" href="${jean}?sample">${say('cta')}</a><a href="#wrk-kit">${say('ask')}</a></p>
 </section>`
+    const end = /* html */ `${WAVE}
+  <h3>${say('end.title')}</h3>
+  <p class="site-why">${say('end.why')}</p>
+  <p class="site-cta wrk-go">${FELT.point}<a class="button primary" href="${jean}?sample">${say('cta')}</a><a href="#wrk-kit">${say('ask')}</a></p>`
+    // What it doesn't do at work, said under the part of the promise each limit is about.
+    const limits = list('limits.items'), not = (/** @type {number[]} */ ...which) => caught(say('limits.title'), which.map((i) => limits[i]))
+    return landing(kit, {
+      top: hero,
+      promise: say('h1'),
+      acts: {
+        work: { id: 'wrk-work', body: `${jobs}\n${where}`, catch: not(1, 4, 5) },
+        yes: { id: 'wrk-yes', body: `${answers}\n${email}`, catch: not(0, 2, 3) },
+      },
+      turn: { id: 'wrk-end', body: end },
+      questions: { id: 'wrk-faq', name: 'wrk-questions', title: say('faq.title'), items: table('faq.items', 2) },
+    })
   },
 }

@@ -5,6 +5,7 @@
   "eyebrow": "Modèle de charte IA",
   "h1": "Votre charte IA, en langage clair.",
   "h1.mark": "en langage clair",
+  "acts": [["charter", "Votre charte IA,"], ["plain", "en langage clair."]],
   "lede": "Une page que votre association, école, entreprise ou organisme public peut adopter telle quelle ou modifier : à quoi l’IA peut servir, ce qu’on ne lui confie jamais, comment vérifier ce qu’elle donne, et qui consulter. Valable pour toute IA, pas seulement {name}.",
   "see": "Lire le modèle",
   "facts": ["À copier et modifier librement", "Valable pour toute IA", "En document Word"],

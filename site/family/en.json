@@ -6,6 +6,7 @@
   "eyebrow": "{name} for families",
   "h1": "Your child learns. {name} helps, without doing it for them.",
   "h1.mark": "without doing it for them",
+  "acts": [["learns", "Your child learns."], ["helps", "{name} helps,"], ["alone", "without doing it for them."]],
   "measure": "Measured before it was promised: how often each AI gives a child the answer anyway.",
   "measure.how": "How we measure",
   "lede": "{name} explains at their level and suggests ways to make the lesson their own; your child says it back in their own words. Each child has a profile set by you: what is explained for their age, a lock under 13, and a notice if something serious comes up.",

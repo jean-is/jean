@@ -50,8 +50,7 @@ test('every page of jean.is ends with the same foot: the same pages in each lang
   for (const page of site.pages) {
     const footer = /<footer class="site-foot">([\s\S]*?)<\/footer>/.exec(site.files[page.path])?.[1] ?? ''
     const here = new URL(page.address, BASE).href
-    // The homepage's link asks for it, ?index=1: it is the homepage's own address all the same.
-    const links = [...footer.matchAll(/<a href="([^"]*)"( aria-current="page")?>/g)].map(([, href, current]) => [new URL(href, here).href.replace(/\?index=1$/, ''), Boolean(current)])
+    const links = [...footer.matchAll(/<a href="([^"]*)"( aria-current="page")?>/g)].map(([, href, current]) => [new URL(href, here).href, Boolean(current)])
     const targets = links.map(([href]) => String(href))
     assert.deepEqual(links.filter(([, current]) => current).map(([href]) => href), targets.includes(here) ? [here] : [], `${page.path}: the page it is on, and only it, is marked`)
     const first = byLanguage.get(page.lang)

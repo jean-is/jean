@@ -4,6 +4,7 @@
   "eyebrow": "Visual answers",
   "h1": "AI that answers with a diagram, not a wall of text.",
   "h1.mark": "a diagram",
+  "acts": [["task", "AI that answers with a diagram,"], ["trust", "not a wall of text."]],
   "lede": "Ask {name} in your own words, or drop a report in. A process comes back as a flowchart, ideas as a mind map, a plan as a timeline, a sum as a page you can play with, all drawn right in the answer, in your language. Nothing to install.",
   "cta": "Try it with a sample process",
   "see": "See how it went",

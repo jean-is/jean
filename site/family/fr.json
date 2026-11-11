@@ -6,6 +6,7 @@
   "eyebrow": "{name} pour les familles",
   "h1": "Votre enfant apprend. {name} l’accompagne, sans faire à sa place.",
   "h1.mark": "sans faire à sa place",
+  "acts": [["learns", "Votre enfant apprend."], ["helps", "{name} l’accompagne,"], ["alone", "sans faire à sa place."]],
   "measure": "Mesuré avant d’être promis : combien de fois chaque IA donne quand même la réponse à un enfant.",
   "measure.how": "Comment nous mesurons",
   "lede": "{name} explique à son niveau et propose des façons de s’approprier la leçon ; votre enfant la redit avec ses mots. Chaque enfant a son profil, réglé par vous : ce qu’on lui explique selon son âge, un verrou avant 13 ans, et une alerte si quelque chose de grave arrive.",

@@ -5,6 +5,7 @@
   "eyebrow": "{name} at work",
   "h1": "AI for your work, that your IT can say yes to.",
   "h1.mark": "say yes",
+  "acts": [["work", "AI for your work,"], ["yes", "that your IT can say yes to."]],
   "lede": "Read a report, check a spreadsheet, turn notes into Monday’s slides. {name} works in a browser tab with nothing to install. On a managed computer, your IT deploys it like a web page, and it answers only through your company’s own AI.",
   "cta": "Try it with a sample spreadsheet",
   "ask": "Ask your IT",

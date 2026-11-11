@@ -4,6 +4,7 @@
   "eyebrow": "Fichiers Excel et CSV",
   "h1": "Une IA pour vos fichiers Excel, qui calcule au lieu de deviner.",
   "h1.mark": "calcule",
+  "acts": [["task", "Une IA pour vos fichiers Excel,"], ["trust", "qui calcule au lieu de deviner."]],
   "lede": "Déposez un classeur ou un CSV dans {name} et demandez avec vos mots : quel produit a progressé, quelle formule écrire, ce qui a changé depuis le mois dernier. Un programme calcule les chiffres, et vous récupérez un graphique, un tableau ou un nouveau classeur. Rien à installer.",
   "cta": "Essayer avec un tableau d’exemple",
   "see": "Voir comment ça s’est passé",

@@ -5,6 +5,7 @@
   "eyebrow": "{name} et OpenClaw",
   "h1": "Une alternative libre à OpenClaw qui reste dans votre navigateur",
   "h1.mark": "dans votre navigateur",
+  "acts": [["alternative", "Une alternative libre à OpenClaw"], ["where", "qui reste dans votre navigateur"]],
   "lede": "{name} agit pour vous dans le périmètre du navigateur : ses propres fichiers, les dossiers que vous ouvrez, les sites que vous autorisez, du code dans un espace isolé. Il demande avant que quoi que ce soit en sorte. Rien à installer, et prêt pour le service informatique d’une entreprise.",
   "cta": "Essayer {name}",
   "cta2": "Le déployer au travail",

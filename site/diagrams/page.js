@@ -77,6 +77,8 @@ export default job({
   into: 'ask',
   tall: true,
   exact: [ICONS.app, ICONS.computer, ICONS.clock],
+  // What an AI on this computer, a map and a picture can't do, under the task; the AI behind it, what it understood, its formulas and where work lives, under what makes it one to trust.
+  limits: { task: [3, 4, 5], trust: [0, 1, 2, 6] },
   filled (kit) {
     const money = new Intl.NumberFormat(kit.lang, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format
     const percent = new Intl.NumberFormat(kit.lang, { style: 'percent', maximumFractionDigits: 1 }).format
@@ -96,11 +98,10 @@ export default job({
   },
   shows (kit, { say, text }) {
     const frame = (/** @type {string} */ page, /** @type {string} */ title) => demoFrame(kit, false, { page, title, play: '' })
-    const card = (/** @type {string} */ key, /** @type {string} */ shown, more = '', wide = false) => /* html */ `<li${wide ? ' class="is-wide"' : ''}><h3>${say(`${key}.title`)}</h3><p>${wide ? felt(say(`${key}.try`), 'under') : ''} ${say(`${key}.text`)}${more}</p><div class="job-shown">${shown}</div></li>`
+    const card = (/** @type {string} */ key, /** @type {string} */ shown, more = '', wide = false) => /* html */ `<li${wide ? ' class="is-wide"' : ''}><h4>${say(`${key}.title`)}</h4><p>${wide ? felt(say(`${key}.try`), 'under') : ''} ${say(`${key}.text`)}${more}</p><div class="job-shown">${shown}</div></li>`
     const excel = kit.link('excel')
-    return /* html */ `
-<section class="site-section" aria-labelledby="job-shows">
-  <header><h2 id="job-shows">${say('shows.title')}</h2><p class="site-why">${say('shows.why')}</p></header>
+    return /* html */ `<section class="site-block" aria-labelledby="job-shows">
+  <header><h3 id="job-shows">${say('shows.title')}</h3><p class="site-why">${say('shows.why')}</p></header>
   <ul class="job-shows">
     ${card('page', frame('diagrams/page', text('page.frame')), '', true)}
     ${card('mind', frame('diagrams/mind-map', text('mind.frame')))}
@@ -108,7 +109,6 @@ export default job({
     ${card('chart', frame('excel', text('chart.frame')), excel ? /* html */ ` <a href="${excel}">${say('chart.more')}</a>` : '')}
     ${card('places', sketch(/** @type {string[]} */ (kit.raw('places.names')), text('places.alt')))}
   </ul>
-</section>
-`
+</section>`
   },
 })

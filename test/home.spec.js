@@ -1,8 +1,9 @@
 // jean.is's page under the first screen (D397), served as jean.is's deploy has it (scripts/serve.js --home):
-// the app's root first, the document scrolling on to the page, each Try putting its request in the box, the
-// doors unfolding in place, its top risen into the first screen, which is as it is without it (D653); hidden with the
-// first request. After, the Vous menu's Homepage shows it again in place, at ?index=1, on a new task until the first
-// request there, and Help center ↗ opens it in a tab. It speaks the app's one language: a language's address sets
+// the app's root first, the document scrolling on to the page, each Try putting its request in the box, Your turn
+// going back up to it, its top risen into the first screen, which is as it is without it (D653); hidden with a
+// task's first request, and under the next new task again, which starts at its top: the name in the bar and the Vous
+// menu's Homepage lead there, and Help center ↗ opens in a tab. In Jean installed no task has it by itself, and
+// Homepage shows it in place until a request. It speaks the app's one language: a language's address sets
 // it, the page's menu sets it as Settings does, and the page shown is that language's, at its address, or English's
 // where it has none, read from there without leaving. Once hidden, the address is the site's own, the language kept.
 // On a phone the box stays docked at the foot. Jean as written (app/, any other site) has no page at all.
@@ -18,7 +19,7 @@ const JEAN_IS = 'http://127.0.0.1:4186/'
  */
 const shown = (page, lang) => page.locator(`html.is-ready body > .home:not([hidden])${lang ? `[lang="${lang}"]` : ''}`)
 
-test('on jean.is, the page is under the first screen, its tries fill the box, and the first request hides it for good', async ({ page, browserName }) => {
+test('on jean.is, the page is under the first screen, its tries fill the box, a request hides it, and a new task has it again, at its top', async ({ page, browserName }) => {
   await page.goto(JEAN_IS)
   const home = page.locator('body > .home')
   await expect(shown(page, 'en')).toBeVisible()
@@ -35,11 +36,6 @@ test('on jean.is, the page is under the first screen, its tries fill the box, an
   await expect(page.locator('#prompt')).toHaveValue('A lullaby in D major for Léa’s bedtime.')
   await expect(page.locator('#prompt')).toBeFocused()
   expect(await page.evaluate(() => scrollY)).toBe(0)
-  await home.locator('label[for="home-for-family"]').click()
-  await expect(home.locator('.home-tile[data-for="work"]:visible')).toHaveCount(0)
-  await expect(home.locator('.home-tile[data-for="family"]:visible')).toHaveCount(4)
-  await expect(home.locator('.home-tile:visible')).toHaveCount(4)
-  await home.locator('label[for="home-for-all"]').click()
   await home.locator('.home-tile [data-try="sample"]').click()
   await expect(page.locator('.attachment-name')).toHaveText('sales.csv')
   await expect(page.locator('#prompt')).toHaveValue('Which product grew the most over the year? Show it as a chart.')
@@ -50,11 +46,12 @@ test('on jean.is, the page is under the first screen, its tries fill the box, an
   await home.locator('.home-tile [data-try="sample"]').click()
   await expect(page.locator('.attachment-name')).toHaveCount(1)
 
-  // A door unfolds in place, its words in the page all along.
-  const more = home.locator('#home-shareable details')
-  await expect(more.locator('li').first()).toHaveText('Sealed in your browser. Its key travels in the link, never to the host.', { useInnerText: false })
-  await more.locator('summary').click()
-  await expect(more.locator('li').first()).toBeVisible()
+  // Each promise says its own catch under it, and Your turn, at the page's end, goes back up to the box.
+  await expect(home.locator('.home-act .home-catch')).toHaveCount(3)
+  await expect(home.locator('#home-keep .home-catch span')).toHaveText('Your work lives in this browser. Clear the browser’s data and it’s gone, unless you made a backup.')
+  await home.locator('[data-turn]').click()
+  await expect(page.locator('#prompt')).toBeFocused()
+  expect(await page.evaluate(() => scrollY)).toBe(0)
 
   // The first request hides it (the first brain's step sends the one the box kept, D366).
   await connectFakeBrain(page)
@@ -67,10 +64,27 @@ test('on jean.is, the page is under the first screen, its tries fill the box, an
     await expect(page.locator('html')).toHaveClass(/is-ready/)
     await expect(home).toBeHidden()
   }
-  // A new task doesn't bring it back, and its box's line has the legal pages alone.
+  // A new task has it again, whoever has tasks already: the main content, the site's foot in place of the box's line.
   await page.keyboard.press('ControlOrMeta+Shift+KeyO')
-  await expect(page.locator('app-composer .legal a')).toHaveText(['Privacy', 'Terms'])
+  await expect(shown(page, 'en')).toBeVisible()
+  await expect(page.locator('main:visible')).toHaveCount(1)
+  await expect(page.locator('body > .home > main#main')).toBeVisible()
+  await expect(page.locator('app-composer > footer')).toBeHidden()
+  await expect(page.locator('.home-act-title').first()).toBeInViewport()
+  // Read far down, the name in the bar, which opens a new task, leads back up to the box.
+  await page.locator('.site-foot').scrollIntoViewIfNeeded()
+  expect(await page.evaluate(() => scrollY)).toBeGreaterThan(1000)
+  await page.locator('.bar .wordmark').click()
+  await expect.poll(() => page.evaluate(() => scrollY)).toBe(0)
+  await expect(shown(page, 'en')).toBeVisible()
+  // A try from there, a request, and the next new task has the page once more.
+  await home.locator('.home-tile [data-try="quiz"]').click()
+  await expect(page.locator('#prompt')).toHaveValue('A quiz on the planets for my son, ten questions.')
+  await ask(page, 'Hello again')
   await expect(home).toBeHidden()
+  await page.keyboard.press('ControlOrMeta+Shift+KeyO')
+  await expect(shown(page, 'en')).toBeVisible()
+  expect(await page.evaluate(() => scrollY)).toBe(0)
 })
 
 test('at a language’s own address, the page and the app speak it; once hidden, the address is the site’s own, and Homepage opens that language’s page', async ({ page, browserName, context }) => {
@@ -100,12 +114,12 @@ test('at a language’s own address, the page and the app speak it; once hidden,
   await page.evaluate(() => { /** @type {any} */ (window).stayed = true })
   await (await openProfile(page)).getByRole('button', { name: 'トップページ' }).click()
   await expect(shown(page, 'ja')).toBeVisible()
-  await expect.poll(() => `${new URL(page.url()).pathname}${new URL(page.url()).search}`).toBe('/ja?index=1')
+  await expect.poll(() => `${new URL(page.url()).pathname}${new URL(page.url()).search}`).toBe('/ja')
   expect(await page.evaluate(() => /** @type {any} */ (window).stayed)).toBe(true)
   expect(context.pages()).toHaveLength(1)
 })
 
-test('the Vous menu’s Homepage shows the page in place, the box where it is without it, and Help center opens in a new tab; at ?index=1 the page shows on a new task until its first request (D653)', async ({ page, context }) => {
+test('the Vous menu’s Homepage leads to the page in place, on a new task at its top, and Help center opens in a new tab; the site’s foot links the page at its own address', async ({ page, context }) => {
   await page.goto(JEAN_IS)
   await expect(shown(page, 'en')).toBeVisible()
   await connectFakeBrain(page)
@@ -121,78 +135,86 @@ test('the Vous menu’s Homepage shows the page in place, the box where it is wi
   await expect(help).toHaveURL(`${JEAN_IS}help`)
   await expect(menu).toBeHidden()
   await help.close()
-  // The homepage, though this is no first visit: in place, without leaving, under a new task, the box and its ideas
-  // where a new task has them without it, its top in the first screen, its Try filling the box there.
+  // The homepage, from a task: in place, without leaving, under a new task, at its top, the keyboard in the box.
+  await expect(page.locator('body > .home')).toBeHidden()
+  await page.evaluate(() => { /** @type {any} */ (window).stayed = true })
+  await (await openProfile(page)).getByRole('button', { name: 'Homepage', exact: true }).click()
+  await expect(shown(page, 'en')).toBeVisible()
+  await expect.poll(() => `${new URL(page.url()).pathname}${new URL(page.url()).search}`).toBe('/')
+  expect(await page.evaluate(() => /** @type {any} */ (window).stayed)).toBe(true)
+  expect(context.pages()).toHaveLength(1)
+  await expect(page.locator('.msg-jean')).toHaveCount(0)
+  await expect(page.locator('#prompt')).toBeFocused()
+  expect(await page.evaluate(() => scrollY)).toBe(0)
+  // The site's foot links it at its own address, in its language, which shows it to whoever has tasks too.
+  await page.goto(`${JEAN_IS}fr`)
+  await expect(shown(page, 'fr')).toBeVisible()
+  await expect(page.locator('.site-foot nav a[href="fr"]')).toHaveText('Page d’accueil')
+})
+
+test('in Jean installed, no task has the page by itself: the Vous menu’s Homepage shows it in place, the box where it is without it, until the first request there (D653)', async ({ page, context }) => {
+  // Installed, Jean is in a window of its own, no browser's tab.
+  await page.addInitScript(() => { const media = matchMedia.bind(window); window.matchMedia = (query) => media(query === '(display-mode: browser)' ? 'not all' : query) })
+  await page.goto(JEAN_IS)
+  await expect(page.locator('html')).toHaveClass(/is-ready/)
+  await expect(page.locator('body > .home')).toBeHidden()
+  await connectFakeBrain(page)
+  await ask(page, 'Hello')
+  await answered(page)
+  // A new task there: the box and its ideas alone, its line with the legal pages.
   await page.keyboard.press('ControlOrMeta+Shift+KeyO')
+  await expect(page.locator('app-composer .legal a')).toHaveText(['Privacy', 'Terms'])
   await expect(page.locator('body > .home')).toBeHidden()
   const where = () => page.evaluate(() => [...document.querySelectorAll('app-composer > form, .starters')].map((part) => Math.round(part.getBoundingClientRect().top)))
   await expect(page.locator('html')).toHaveAttribute('data-centred', '')
   await expect.poll(async () => JSON.stringify(await where()) === JSON.stringify(await (page.waitForTimeout(300).then(where)))).toBe(true)
   const alone = await where()
+  // Homepage: the page in place, without leaving, the box and its ideas where a new task has them without it, its
+  // top in the first screen, its Try filling the box there.
   await page.evaluate(() => { /** @type {any} */ (window).stayed = true })
   await (await openProfile(page)).getByRole('button', { name: 'Homepage', exact: true }).click()
   await expect(shown(page, 'en')).toBeVisible()
-  await expect.poll(() => `${new URL(page.url()).pathname}${new URL(page.url()).search}`).toBe('/?index=1')
   expect(await page.evaluate(() => /** @type {any} */ (window).stayed)).toBe(true)
   expect(context.pages()).toHaveLength(1)
-  await expect(page.locator('.msg-jean')).toHaveCount(0)
   await expect(page.locator('html')).toHaveAttribute('data-centred', '')
   await expect.poll(where).toEqual(alone)
-  await expect(page.locator('.home-promise')).toBeInViewport()
+  await expect(page.locator('.home-act-title').first()).toBeInViewport()
   await expect(page.locator('app-composer > footer')).toBeHidden()
   await page.locator('.home-tile [data-try="quiz"]').click()
   await expect(page.locator('#prompt')).toHaveValue('A quiz on the planets for my son, ten questions.')
-  // The first request there hides it and takes ?index=1 from the address, so a new task doesn't bring it back.
+  // The first request there hides it, and a new task doesn't bring it back.
   await ask(page, 'Hello again')
   await expect(page.locator('body > .home')).toBeHidden()
-  await expect.poll(() => new URL(page.url()).search).toBe('')
   await page.keyboard.press('ControlOrMeta+Shift+KeyO')
+  await expect(page.locator('app-composer .legal a')).toHaveText(['Privacy', 'Terms'])
   await expect(page.locator('body > .home')).toBeHidden()
-  // The address alone shows it, in its language: the site's foot asks for it so.
-  await page.goto(`${JEAN_IS}fr?index=1`)
-  await expect(shown(page, 'fr')).toBeVisible()
-  await expect(page.locator('.site-foot a[href="fr?index=1"]')).toHaveText('Page d’accueil')
 })
 
-test('one tile is active at all times, the filter’s mark slides to its choice, and one question opens at a time without moving the other column', async ({ page }) => {
+test('on a wide window the box is mid-window, the first act’s title shows whole under it with the top of its row, the tries are one row turned a view at a time, and one question opens at a time without moving the other column', async ({ page }) => {
+  // A desktop's window, tall enough for the question and its lines above a box at its middle.
+  await page.setViewportSize({ width: 1920, height: 1080 })
+  await page.goto(JEAN_IS)
+  await expect(shown(page, 'en')).toBeVisible()
+  await expect.poll(() => page.locator('app-composer > form').evaluate((box) => { const { top, bottom } = box.getBoundingClientRect(); return Math.abs(top + bottom - innerHeight) / 2 })).toBeLessThanOrEqual(32)
+  // A laptop's, shorter: still room for the title whole and the top 40px of its row, no more (under it, Safari's
+  // first screen, 40px lower, leaves the row out first, then the title's foot).
+  await page.setViewportSize({ width: 1440, height: 900 })
   for (const [address, lang] of [[JEAN_IS, 'en'], [`${JEAN_IS}ar`, 'ar']]) {
     await page.goto(address)
     await expect(shown(page, lang)).toBeVisible()
     const home = shown(page, lang)
-    // Every Try says the same, the sample's too.
+    await expect(home.locator('.home-act-title').first()).toBeInViewport({ ratio: 1 })
+    const row = () => home.locator('.home-act').first().locator('.home-row').evaluate((next) => innerHeight - next.getBoundingClientRect().top)
+    await expect.poll(row).toBeGreaterThanOrEqual(35)
+    await expect.poll(row).toBeLessThanOrEqual(45)
+    // Every Try says the same, the sample's too, the first one's the primary one; a tile's Try puts its request in the box.
     expect(new Set(await home.locator('[data-try]').allTextContents()).size).toBe(1)
     const tiles = home.locator('.home-tile')
-    const current = home.locator('.home-tile[aria-current="true"]')
-    await expect(current).toHaveCount(1)
-    await expect(tiles.first()).toHaveAttribute('aria-current', 'true')
-    // A click picks one, and so does the keyboard; one stays active when the pointer leaves, and a pointer passing over changes nothing.
-    await tiles.nth(2).click({ position: { x: 8, y: 8 } })
-    await expect(tiles.nth(2)).toHaveAttribute('aria-current', 'true')
-    await tiles.nth(1).hover()
-    await expect(tiles.nth(2)).toHaveAttribute('aria-current', 'true')
-    // Its replay is the one shown, heard politely, with no Try of its own; the tile's Try puts its request in the box.
-    await expect(home.locator('.home-replays')).toHaveAttribute('role', 'status')
-    await expect(home.locator('.home-replay[data-replay="quiz"]')).toBeVisible()
-    await expect(home.locator('.home-replay:visible')).toHaveCount(1)
-    await expect(home.locator('.home-replay[data-replay="sample"]')).toBeHidden()
-    await expect(home.locator('.home-replay [data-try]')).toHaveCount(0)
+    await expect(tiles).toHaveCount(12)
+    await expect(home.locator('.home-tile [data-try].primary')).toHaveCount(1)
+    await expect(tiles.first().locator('[data-try]')).toHaveClass(/primary/)
     await tiles.nth(2).locator('[data-try]').click()
     await expect(page.locator('#prompt')).toHaveValue(lang === 'en' ? 'A quiz on the planets for my son, ten questions.' : /./)
-    // Only the active tile's Try is the primary one.
-    await expect(tiles.nth(2).locator('[data-try]')).toHaveClass(/primary/)
-    await expect(tiles.first().locator('[data-try]')).not.toHaveClass(/primary/)
-    await expect(home.locator('.home-tile [data-try].primary')).toHaveCount(1)
-    await page.mouse.move(0, 0)
-    await expect(current).toHaveCount(1)
-    // The keys reaching a tile's Try show its replay, and Escape there brings back the one shown before they came.
-    await tiles.nth(3).locator('[data-try]').focus()
-    await expect(tiles.nth(3)).toHaveAttribute('aria-current', 'true')
-    await expect(tiles.nth(3)).toHaveClass(/is-active/)
-    await page.keyboard.press('Escape')
-    await expect(tiles.nth(2)).toHaveAttribute('aria-current', 'true')
-    await expect(home.locator('.home-replay[data-replay="quiz"]')).toBeVisible()
-    await tiles.nth(3).click({ position: { x: 8, y: 8 } })
-    await expect(tiles.nth(3)).toHaveAttribute('aria-current', 'true')
     // One row: four in view, the next four a turn away, whichever way the page reads; Back once turned.
     const [back, next] = [home.locator('.home-turn.is-back'), home.locator('.home-turn.is-next')]
     await expect(back).toBeHidden()
@@ -204,19 +226,9 @@ test('one tile is active at all times, the filter’s mark slides to its choice,
     await back.click()
     await expect(tiles.first()).toBeInViewport({ ratio: 0.9 })
     await expect(back).toBeHidden()
-    // A filter that hides the active one moves it to the first one shown.
-    await home.locator('label[for="home-for-family"]').click()
-    await expect(tiles.nth(1)).toHaveAttribute('aria-current', 'true')
-    await expect(current).toHaveCount(1)
-    // The mark lies under the choice, whichever way the page reads.
-    const under = () => home.locator('.home-filter').evaluate((filter) => {
-      const [mark, label] = [getComputedStyle(filter, '::before'), /** @type {HTMLElement} */ (filter.querySelector('label[for="home-for-family"]'))]
-      return Math.abs(parseFloat(mark.left) - label.offsetLeft) + Math.abs(parseFloat(mark.width) - label.offsetWidth)
-    })
-    await expect.poll(under).toBeLessThan(2)
-    // Its four fit: the row has nothing to turn to.
-    await expect(next).toBeHidden()
-    await home.locator('label[for="home-for-all"]').click()
+    // The promise is the page's heading, heard and searched; its three acts' titles are what shows of it.
+    await expect(home.locator('h1')).toHaveCount(1)
+    await expect(home.locator('.home-act .home-act-title')).toHaveCount(3)
 
     // One question open at a time; opening one in a column leaves the other column where it was.
     const [first, second] = [home.locator('.home-questions > div').first(), home.locator('.home-questions > div').last()]
@@ -229,7 +241,6 @@ test('one tile is active at all times, the filter’s mark slides to its choice,
     expect(await top()).toBe(before)
     await second.locator('summary').first().click()
     await expect(home.locator('.home-questions details[open]')).toHaveCount(1)
-    await expect(home.locator('.home-link')).toContainText('https://hst.ing/…')
   }
 })
 
@@ -263,8 +274,9 @@ test.describe('in a Japanese browser', () => {
     await expect(page.locator('html')).toHaveAttribute('lang', 'ja')
     // French has a page: the app speaks it, and the page is French, at its address, read from the same place,
     // changed mid-page as Settings or ⌘⇧L would.
-    const door = () => page.locator('#home-shareable').evaluate((element) => element.getBoundingClientRect().top)
-    await page.evaluate(() => scrollBy({ top: (document.getElementById('home-shareable')?.getBoundingClientRect().top ?? 0) - 200, behavior: 'instant' }))
+    // The act on any AI is the first in Japanese and the second in French, each as its promise says them: its catch is the place read.
+    const door = () => page.locator('#home-any .home-catch').evaluate((element) => element.getBoundingClientRect().top)
+    await page.evaluate(() => scrollBy({ top: (document.querySelector('#home-any .home-catch')?.getBoundingClientRect().top ?? 0) - 200, behavior: 'instant' }))
     await page.evaluate(async () => (await import('/ui/state.js')).setLocale('fr'))
     await expect.poll(() => new URL(page.url()).pathname).toBe('/fr')
     await expect(shown(page, 'fr')).toBeVisible()

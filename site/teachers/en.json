@@ -5,6 +5,7 @@
   "eyebrow": "{name} for teachers",
   "h1": "Your quizzes, worksheets and slides, made from your lesson.",
   "h1.mark": "your lesson",
+  "acts": [["get", "Your quizzes, worksheets and slides,"], ["lesson", "made from your lesson."]],
   "lede": "Give {name} your lesson, a page of the textbook or a few words. You get this week’s quiz, a worksheet in Word, slides for the board, flash cards or the term’s lesson plans, in your language and at your pupils’ level.",
   "cta": "Make this week’s quiz",
   "see": "What you get",

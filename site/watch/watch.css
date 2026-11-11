@@ -12,3 +12,4 @@
 .wch-reels article { display: flex; flex-direction: column; gap: 0.6rem; min-inline-size: 0; }
 .wch-reels .wch-player { margin-block-end: 0.4rem; }
 .wch-reels p { color: var(--ink-soft); }
+.site .wch-reels h3 { font: inherit; font-size: 1.05rem; font-weight: 600; }

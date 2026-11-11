@@ -6,7 +6,7 @@
 // page's; its look watch.css, over site.css (site/site.js, D438).
 import { createHash } from 'node:crypto'
 import { readFile } from 'node:fs/promises'
-import { FELT, WAVE, glyph, underline, xml } from '../site.js'
+import { FELT, WAVE, glyph, landing, underline, xml } from '../site.js'
 import { NAMES, reelFiles } from './reels.js'
 
 const HERE = new URL('.', import.meta.url)
@@ -71,7 +71,7 @@ export default {
     /** A reel, framed where it plays: in this page's language, full screen allowed, loaded once near. @param {string} name */
     const frame = (name) => /* html */ `<div class="wch-player"><iframe src="${kit.site('reel.html')}#${new URLSearchParams({ reel: name, lang: kit.lang })}" title="${say(`${name}.title`)}" allow="fullscreen; autoplay" loading="lazy"></iframe></div>`
     const [first, ...rest] = NAMES
-    return /* html */ `<section class="site-hero wch-hero" aria-labelledby="wch-title">
+    const hero = /* html */ `<section class="site-hero wch-hero" aria-labelledby="wch-title">
   <div class="site-hero-text">
     <p class="site-eyebrow">${say('eyebrow')}</p>
     <h1 id="wch-title">${underline(say('h1'), say('h1.mark'))}</h1>
@@ -81,10 +81,9 @@ export default {
     ${frame(first)}
     <figcaption><strong>${say(`${first}.title`)}</strong> ${say(`${first}.about`)}</figcaption>
   </figure>
-</section>
-
-<section class="site-section is-side" aria-labelledby="wch-more">
-  <header><h2 id="wch-more">${say('more.title')}</h2><p class="site-why">${say('more.why')}</p></header>
+</section>`
+    const more = /* html */ `<div class="site-block">
+  <p class="site-why">${say('more.why')}</p>
   <div class="wch-reels">${rest.map((name) => /* html */ `
     <article aria-labelledby="wch-${name}">
       ${frame(name)}
@@ -92,13 +91,15 @@ export default {
       <p>${say(`${name}.about`)}</p>
     </article>`).join('')}
   </div>
-</section>
-
-<section class="site-section site-end" aria-labelledby="wch-end">
-  ${WAVE}
-  <h2 id="wch-end">${say('end.title')}</h2>
+</div>`
+    // A landing page as the site's others are (landing() in site.js): the first reel at its top, the others its one
+    // act, under their own title, then Your turn.
+    return landing(kit, {
+      top: hero,
+      acts: [{ id: 'wch-more', title: say('more.title'), body: more }],
+      turn: { id: 'wch-end', body: /* html */ `${WAVE}
   <p class="site-why">${say('end.why')}</p>
-  <p class="site-cta">${FELT.point}<a class="button primary" href="${kit.start}">${say('end.cta')}</a></p>
-</section>`
+  <p class="site-cta">${FELT.point}<a class="button primary" href="${kit.start}">${say('end.cta')}</a></p>` },
+    })
   },
 }

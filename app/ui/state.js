@@ -295,8 +295,8 @@ export async function enterProject(project) {
   batch(() => { newConversation(); app.project.value = project; app.conversations.value = conversations })
 }
 
-/** Before any task, in a browser's tab (not the desktop app, whose key the tab keeps). */
-export const firstVisit = () => !app.conversations.value.length && !sessionStorage.getItem('app.host') && matchMedia('(display-mode: browser)').matches
+/** In a browser's tab (not the desktop app, whose key the tab keeps). */
+export const inTab = () => !sessionStorage.getItem('app.host') && matchMedia('(display-mode: browser)').matches
 /** Whether this Jean pairs devices (caps/devices, D726): a relay named, not a child's profile, no organisation's sign-in. */
 export const pairs = () => Boolean(serviceURL('relay', app.settings.value, app.policy)) && !app.policy.child && !app.policy.signIn
 

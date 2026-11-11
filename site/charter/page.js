@@ -6,7 +6,7 @@
 // law is met. For an organisation that hosts its own Jean, it says which parts policy.json can hold; then it hands
 // the page to whoever signs it and to the page for that kind of organisation, where one is built. Its words are
 // <lang>.json; its look charter.css, over site.css (site/site.js, D438).
-import { FELT, WAVE, fill, highlight, questions, underline, xml } from '../site.js'
+import { FELT, WAVE, caught, fill, highlight, landing, underline, xml } from '../site.js'
 
 /** The kinds of organisation the template has lines for, in `kinds`'s order, as the style sheet names them. */
 export const KINDS = ['association', 'school', 'company', 'public']
@@ -71,7 +71,7 @@ export default {
       .filter(({ links }) => links.length)
     const enterprise = kit.link('enterprise')
 
-    return /* html */ `<section class="site-hero cha-hero" aria-labelledby="cha-title">
+    const hero = /* html */ `<section class="site-hero cha-hero" aria-labelledby="cha-title">
   <div class="site-hero-text">
     <p class="site-eyebrow">${say('eyebrow')}</p>
     <h1 id="cha-title">${underline(say('h1'), say('h1.mark'))}</h1>
@@ -84,62 +84,59 @@ export default {
     <ol>${parts.map((part) => /* html */ `<li><b>${say(`${part}.title`)}</b><i></i><i></i></li>`).join('')}</ol>
     <p class="cha-paper-signed"><span>${say('paper.signed')}</span>${SIGNED}</p>
   </div>
-</section>
-
-<section id="cha-template" class="site-section is-side" aria-labelledby="cha-template-title">
-  <header><h2 id="cha-template-title">${say('template.title')}</h2><p class="site-why">${say('template.why')}</p></header>
+</section>`
+    const template = /* html */ `<section id="cha-template" class="site-block" aria-labelledby="cha-template-title">
+  <header><h3 id="cha-template-title">${say('template.title')}</h3><p class="site-why">${say('template.why')}</p></header>
   <fieldset class="cha-kinds">
     <legend>${say('kinds.legend')}</legend>
     <div class="cha-choices"><input type="radio" name="cha-kind" id="cha-kind-any" checked><label for="cha-kind-any">${say('kinds.any')}</label>${kinds.map(([label], k) => /* html */ `<input type="radio" name="cha-kind" id="cha-kind-${KINDS[k]}"><label for="cha-kind-${KINDS[k]}">${label}</label>`).join('')}</div>
   </fieldset>
   <article class="cha-sheet" aria-labelledby="cha-sheet-title">
-    <h3 id="cha-sheet-title">${blanks(say('sheet.title'))}</h3>
+    <h4 id="cha-sheet-title">${blanks(say('sheet.title'))}</h4>
     <p>${blanks(say('sheet.intro'))}</p>
     <ol class="cha-parts">${parts.map((part, i) => /* html */ `
-      <li><h4>${say(`${part}.title`)}</h4><ul>${list(`${part}.items`).map((item, j) => /* html */ `<li>${blanks(part === 's3' && !j ? highlight(item) : item)}</li>`).join('')}${list(`${part}.kinds`).map((line, k) => (line ? /* html */ `<li class="cha-for is-${KINDS[k]}"><b class="cha-tag">${kinds[k][1]}</b><span class="visually-hidden">${say('sheet.sep')}</span>${blanks(line)}</li>` : '')).join('')}</ul></li>`).join('')}
+      <li><h5>${say(`${part}.title`)}</h5><ul>${list(`${part}.items`).map((item, j) => /* html */ `<li>${blanks(part === 's3' && !j ? highlight(item) : item)}</li>`).join('')}${list(`${part}.kinds`).map((line, k) => (line ? /* html */ `<li class="cha-for is-${KINDS[k]}"><b class="cha-tag">${kinds[k][1]}</b><span class="visually-hidden">${say('sheet.sep')}</span>${blanks(line)}</li>` : '')).join('')}</ul></li>`).join('')}
     </ol>
   </article>
   <p class="cha-write"><a class="button primary cha-go is-any" href="${write(-1)}">${say('write.any')}</a>${KINDS.map((kind, k) => /* html */ `<a class="button primary cha-go is-${kind}" href="${write(k)}">${writes[k]}</a>`).join('')}</p>
   <p class="cha-note">${say('template.note')}</p>
-</section>
-
-<section class="site-section" aria-labelledby="cha-how">
-  <header><h2 id="cha-how">${say('how.title')}</h2><p class="site-why">${say('how.why')}</p></header>
+</section>`
+    const how = /* html */ `<section class="site-block" aria-labelledby="cha-how">
+  <header><h3 id="cha-how">${say('how.title')}</h3><p class="site-why">${say('how.why')}</p></header>
   <div class="site-two">
     <ol class="cha-steps">${list('how.steps').map((step) => /* html */ `<li>${step}</li>`).join('')}</ol>
     <div class="cha-next">
       ${send ? /* html */ `<p><a class="button" href="${xml(send)}">${say('send')}</a></p>` : ''}
-      ${next.length ? /* html */ `<h3>${say('next.title')}</h3>
+      ${next.length ? /* html */ `<h4>${say('next.title')}</h4>
       <dl>${next.map(({ tag, links }) => /* html */ `<div><dt>${tag}</dt>${links.map(({ page, href }) => /* html */ `<dd><a href="${href}">${say(`next.${page}`)}</a></dd>`).join('')}</div>`).join('')}</dl>` : ''}
     </div>
   </div>
-</section>
-
-<section class="site-section is-side" aria-labelledby="cha-policy">
-  <header><h2 id="cha-policy">${say('policy.title')}</h2><p class="site-why">${say('policy.why')}</p></header>
+</section>`
+    const held = /* html */ `<section class="site-block" aria-labelledby="cha-policy">
+  <header><h3 id="cha-policy">${say('policy.title')}</h3><p class="site-why">${say('policy.why')}</p></header>
   <div class="site-two">
     <dl class="cha-holds">${kit.table('policy.rows', 2).map(([part, text], i) => /* html */ `<div><dt>${part}</dt><dd><code>${KEYS[i]}</code></dd><dd>${text}</dd></div>`).join('')}</dl>
     <pre>${xml(policy(kit.text('policy.label'), kit.text('policy.guard')))}</pre>
   </div>
   <p class="cha-people">${say('policy.people')}</p>
   ${enterprise ? /* html */ `<p><a href="${enterprise}">${say('policy.go')}</a></p>` : ''}
-</section>
-
-<section class="site-section" aria-labelledby="cha-limits">
-  <h2 id="cha-limits">${say('limits.title')}</h2>
-  <ul class="site-limits">${list('limits.items').map((item) => /* html */ `<li>${item}</li>`).join('')}</ul>
-</section>
-
-<section class="site-section is-side" aria-labelledby="cha-faq">
-  <h2 id="cha-faq">${say('faq.title')}</h2>
-  ${questions('cha-questions', kit.table('faq.items', 2))}
-</section>
-
-<section class="site-section site-end" aria-labelledby="cha-start">
-  ${WAVE}
-  <h2 id="cha-start">${say('start.title')}</h2>
-  <p class="cha-go-end">${FELT.point}<a class="button primary" href="${write(-1)}">${say('write.any')}</a></p>
-  <p class="site-why">${say('start.note')}</p>
 </section>`
+    const start = /* html */ `${WAVE}
+  <h3>${say('start.title')}</h3>
+  <p class="cha-go-end">${FELT.point}<a class="button primary" href="${write(-1)}">${say('write.any')}</a></p>
+  <p class="site-why">${say('start.note')}</p>`
+    // What the template isn't, said under the part of the promise each limit is about: the charter itself, and the
+    // plain words people keep it by.
+    const limits = list('limits.items'), not = (/** @type {number[]} */ ...which) => caught(say('limits.title'), which.map((i) => limits[i]))
+    return landing(kit, {
+      top: hero,
+      promise: say('h1'),
+      acts: {
+        charter: { id: 'cha-charter', body: template, catch: not(0, 1, 2, 3, 5) },
+        plain: { id: 'cha-plain', body: `${how}\n${held}`, catch: not(4) },
+      },
+      turn: { id: 'cha-start', body: start },
+      questions: { id: 'cha-faq', name: 'cha-questions', title: say('faq.title'), items: kit.table('faq.items', 2) },
+    })
   },
 }

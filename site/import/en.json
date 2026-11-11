@@ -5,6 +5,7 @@
   "eyebrow": "Moving to {name}",
   "h1": "Your conversations come with you.",
   "h1.mark": "come with you",
+  "acts": [["conversations", "Your conversations"], ["come", "come with you."]],
   "lede": "Years of conversations in ChatGPT, Claude or Gemini? Export them there, drop the file in {name}, and they come in: every conversation with its title and dates, projects with their instructions, nothing twice. Then use any AI, those included.",
   "cta": "Bring my history",
   "see": "How to export",

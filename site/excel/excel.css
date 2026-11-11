@@ -51,7 +51,7 @@
 .job-steps > li:not(:last-child)::after { content: ''; position: absolute; inset-inline-start: calc(0.675rem - 1px); inset-block: 1.3rem 0.2rem; inline-size: 2px; background: var(--line-strong); }
 .job-steps > li:last-child { padding-block-end: 0; }
 .job-step { color: var(--ink-soft); font-size: 0.8125rem; font-weight: 600; line-height: 1.4; }
-.job-asked { display: flex; flex-direction: column; align-items: flex-start; gap: 0.45rem; padding: 0.55rem 0.9rem; border-radius: 1.125rem; background: var(--room); line-height: 1.5; }
+.job-asked { display: flex; flex-direction: column; align-items: flex-start; gap: 0.45rem; padding: 0.55rem 0.9rem; border-radius: 1.125rem; background: var(--site-side); line-height: 1.5; }
 .job-ticks { display: flex; flex-direction: column; gap: 0.3rem; }
 .job-ticks li { display: flex; gap: 0.5rem; align-items: baseline; }
 .job-ticks li::before { content: '✓' / ''; color: var(--flame); font-weight: 600; }
@@ -74,7 +74,7 @@
 .job-io { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
 .job-io > div { display: flex; flex-direction: column; gap: 0.4rem; padding: 1.3rem 1.4rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); }
 /* Each part's title over its kinds, each kind's name and what it is */
-.job-io h3 { font-size: 1.05rem; }
+.job-io h4 { font-size: 1.05rem; }
 .job-io dl > div { display: flex; flex-direction: column; gap: 0.1rem; padding-block: 0.75rem; border-block-start: 1px solid var(--line); }
 .job-io dl > div:first-child { border-block-start: 0; }
 .job-io dt { display: flex; gap: 0.75rem; align-items: flex-start; font-weight: 500; }

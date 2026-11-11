@@ -20,6 +20,19 @@ test('it is at /enterprise in English, /fr/entreprise in French and /ko/enterpri
   for (const path of ['enterprise.html', 'fr/entreprise.html', 'ko/enterprise.html', 'enterprise.css']) assert.ok(files[path], path)
 })
 
+test('its promise is said part by part, every limit once under the part it is about, then Your turn, and the questions last', async () => {
+  const files = await site()
+  for (const [lang, address] of Object.entries(page.addresses)) {
+    const words = /** @type {Record<string, string[][]>} */ (await wordsOf('enterprise', lang))
+    const html = files[`${address}.html`]
+    assert.deepEqual([...html.matchAll(/<section id="ent-(\w+)" class="site-act /g)].map(([, name]) => name), words.acts.map(([name]) => name), `${lang}: an act for each part, in the order it says them`)
+    const limits = [...html.matchAll(/<(p|div) class="site-catch">([\s\S]*?)<\/\1>/g)].flatMap(([, tag, inside]) => (tag === 'p' ? [inside] : inside.match(/<li>/g) ?? []))
+    assert.equal(limits.length, words['limits.items'].length, `${lang}: every limit, once`)
+    const [act, turn, questions] = [html.lastIndexOf('class="site-act '), html.indexOf('<section id="ent-share" class="site-section site-end site-yours"'), html.indexOf('<h2 id="ent-faq"')]
+    assert.ok(act > 0 && act < turn && turn < questions && !html.includes('<section', questions), `${lang}: the acts, Your turn, then the questions`)
+  }
+})
+
 test('every role has its answers, each with a status the style sheet draws, and a panel the style sheet shows', async () => {
   const css = await style()
   const files = await site()

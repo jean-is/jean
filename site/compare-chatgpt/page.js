@@ -16,4 +16,7 @@ export default product({
     parents: { url: 'https://help.openai.com/en/articles/12315553-managing-parental-controls-in-chatgpt', checked: '2026-10-20' },
   },
   actions: ['try', 'history'],
+  // Its catch, by the part of its promise: what a free AI costs or needs and what the plan takes, under the alternative;
+  // work that lives in this browser, under where the files are kept.
+  limits: { alternative: [0, 1, 2], where: [3] },
 })

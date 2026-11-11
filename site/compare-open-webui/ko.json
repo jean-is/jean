@@ -5,6 +5,7 @@
   "eyebrow": "Open WebUI와 {name}",
   "h1": "서버 운영이 필요 없는 Ollama용 Open WebUI 대안",
   "h1.mark": "서버 운영이 필요 없는",
+  "acts": [["where", "서버 운영이 필요 없는"], ["alternative", "Ollama용 Open WebUI 대안"]],
   "lede": "정적 파일 폴더 하나, 그게 {name}의 전부예요. Ollama나 LM Studio에 연결하면 내 컴퓨터에서 답하고, MCP 연결, 파일 주고받기까지 돼요. 배포할 건 웹 페이지 하나뿐이에요.",
   "cta": "내 Ollama에 {name} 연결하기",
   "cta2": "{name} 직접 호스팅하기",

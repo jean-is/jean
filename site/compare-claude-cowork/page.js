@@ -14,4 +14,7 @@ export default product({
     export: { url: 'https://support.claude.com/en/articles/9450526-how-can-i-export-my-claude-data', checked: '2026-10-20' },
   },
   actions: ['sample', 'claude'],
+  // Its catch, by the part of its promise: what the AI costs and what the Claude plan takes, under the alternative;
+  // what the AI on this computer needs and work that lives in this browser, under the browser tab.
+  limits: { alternative: [0, 1], where: [2, 3] },
 })

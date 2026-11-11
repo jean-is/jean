@@ -24,4 +24,7 @@ export default product({
     backup: { url: 'https://help.manus.im/en/articles/16147892-service-change-overview-how-to-back-up-your-data', checked: '2026-11-01' },
   },
   actions: ['sample', 'device'],
+  // Its catch, by the part of its promise: what the AI costs or needs and Manus's backups, under the alternative;
+  // work that stops with the tab and lives in this browser, under where the work is kept.
+  limits: { alternative: [1, 2, 4], where: [0, 3] },
 })

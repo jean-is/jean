@@ -31,7 +31,7 @@
 /* What teachers ask first */
 .tch-worries { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
 .tch-worries > div { display: flex; flex-direction: column; gap: 0.9rem; padding: 1.4rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); }
-.tch-worries h3 { font: 700 1.3rem/1.25 var(--display); }
+.tch-worries h4 { font: 700 1.3rem/1.25 var(--display); }
 .tch-worries .site-ticks { gap: 0.6rem; font-size: 0.95rem; }
 .tch-worries .site-source { margin-block-start: auto; }
 

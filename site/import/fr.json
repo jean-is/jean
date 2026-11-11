@@ -5,6 +5,7 @@
   "eyebrow": "Passer à {name}",
   "h1": "Vos conversations vous suivent.",
   "h1.mark": "vous suivent",
+  "acts": [["conversations", "Vos conversations"], ["come", "vous suivent."]],
   "lede": "Des années de conversations dans ChatGPT, Claude ou Gemini ? Exportez-les là-bas, déposez le fichier dans {name}, et elles arrivent : chaque conversation avec son titre et ses dates, les projets avec leurs instructions, rien en double. Ensuite, utilisez l’IA de votre choix, celles-là comprises.",
   "cta": "Importer mon historique",
   "see": "Comment exporter",

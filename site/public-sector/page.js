@@ -6,7 +6,7 @@
 // Into Jean: a trial key, or the page passed to the review team. The page for IT has the depth. Its words are
 // <lang>.json, the page for IT's where they say the same; its look public-sector.css, over site.css (site/site.js, D438).
 import { CONTACT, PRICE, SMALL, STATUSES } from '../enterprise/page.js'
-import { FELT, REPOSITORY, WAVE, felt, fill, highlight, underline, wordsOf, xml } from '../site.js'
+import { FELT, REPOSITORY, WAVE, felt, fill, highlight, landing, underline, wordsOf, xml } from '../site.js'
 
 /** @type {Record<string, string>} */
 const ADDRESSES = { en: 'public-sector', fr: 'fr/secteur-public', ko: 'ko/public-sector' }
@@ -69,7 +69,7 @@ export default {
     if (groups.length !== GROUPS.length || docs.length !== DOCS.length) throw new Error(`site/public-sector/${lang}.json: groups or trust.docs has a row too many or too few`)
     const doc = (/** @type {string | null} */ path) => (path === null ? REPOSITORY : path.includes('/') ? `${REPOSITORY}/blob/main/${path}` : kit.link(path) ?? REPOSITORY)
     const node = (/** @type {string[]} */ [name, text], kind = '', drawn = name) => /* html */ `<li class="ps-node${kind}"><b>${drawn}</b><small>${text}</small></li>`
-    return /* html */ `<section class="site-hero ps-hero" aria-labelledby="ps-title">
+    const hero = /* html */ `<section class="site-hero ps-hero" aria-labelledby="ps-title">
   <div class="site-hero-text">
     <p class="site-eyebrow">${say('eyebrow')}</p>
     <h1 id="ps-title">${underline(say('h1'), say('h1.mark'))}</h1>
@@ -79,19 +79,17 @@ export default {
     <ul class="site-facts is-felt">${kit.list('facts').map((fact, i) => /* html */ `<li>${FELT.tick(i)}${fact}</li>`).join('')}</ul>
   </div>
   ${HALL}
-</section>
-
-<section class="site-section is-side" aria-labelledby="ps-ai">
-  <header><h2 id="ps-ai">${say('ai.title')}</h2><p class="site-why">${say('ai.why')}</p></header>
+</section>`
+    const govern = /* html */ `<section class="site-block" aria-labelledby="ps-ai">
+  <header><h3 id="ps-ai">${say('ai.title')}</h3><p class="site-why">${say('ai.why')}</p></header>
   <figure class="ps-path" aria-labelledby="ps-path-caption">
     <ol class="ps-flow">${kit.table('path.nodes', 2).map((cells, i) => `${i ? /* html */ `<li class="ps-arrow" aria-hidden="true">${FELT.across}</li>` : ''}${node(cells)}`).join('')}</ol>
     <ul class="ps-sides">${kit.table('path.sides', 2).map((cells, i) => (i === 2 ? node(cells, ' is-none', felt(cells[0], 'strike')) : node(cells))).join('')}</ul>
     <figcaption id="ps-path-caption"><span class="visually-hidden">${it.say('path.label')}: </span>${it.say('path.caption')}</figcaption>
   </figure>
-</section>
-
-<section class="site-section" aria-labelledby="ps-buy">
-  <header><h2 id="ps-buy">${it.say('price.title')}</h2><p class="site-why">${say('buy.why')}</p></header>
+</section>`
+    const buy = /* html */ `<section class="site-block" aria-labelledby="ps-buy">
+  <header><h3 id="ps-buy">${it.say('price.title')}</h3><p class="site-why">${say('buy.why')}</p></header>
   <table class="ps-bands">
     <caption>${say('buy.caption')}</caption>
     <thead><tr><td></td><th scope="col">${say('buy.year')}</th><th scope="col">${say('buy.years')}</th></tr></thead>
@@ -101,34 +99,38 @@ export default {
     </tbody>
   </table>
   <p class="site-cta"><a class="button primary" href="${trial}">${say('cta')}</a>${enterprise ? /* html */ `<a href="${enterprise}#ent-price">${say('buy.more')}</a>` : ''}</p>
-</section>
-
-<section class="site-section is-side" aria-labelledby="ps-answers">
-  <header><h2 id="ps-answers">${say('answers.title')}</h2><p class="site-why">${say('answers.why')}</p></header>
+</section>`
+    const review = /* html */ `<section class="site-block" aria-labelledby="ps-answers">
+  <header><h3 id="ps-answers">${say('answers.title')}</h3><p class="site-why">${say('answers.why')}</p></header>
   <div class="ps-groups">${GROUPS.map((group, g) => /* html */ `
     <div class="ps-group">
-      <h3>${groups[g]}</h3>
+      <h4>${groups[g]}</h4>
       <dl class="ps-answers">${answers(group).map(([question, answer, code]) => /* html */ `
         <div class="ps-row"><dt>${question}</dt><dd>${answer}</dd><dd><span class="ps-status is-${code}">${it.say(`status.${code}`)}</span></dd></div>`).join('')}
       </dl>
     </div>`).join('')}
   </div>
   ${enterprise ? /* html */ `<p><a href="${enterprise}#ent-answers">${say('answers.more')}</a></p>` : ''}
-</section>
-
-<section class="site-section" aria-labelledby="ps-trust">
-  <h2 id="ps-trust">${say('trust.title')}</h2>
-  <ul class="ps-docs">${docs.map(([name, text], i) => /* html */ `<li><a href="${doc(DOCS[i])}"><h3>${name}</h3><span>${text}</span></a></li>`).join('')}</ul>
+</section>`
+    const pack = /* html */ `<section class="site-block" aria-labelledby="ps-trust">
+  <h3 id="ps-trust">${say('trust.title')}</h3>
+  <ul class="ps-docs">${docs.map(([name, text], i) => /* html */ `<li><a href="${doc(DOCS[i])}"><h4>${name}</h4><span>${text}</span></a></li>`).join('')}</ul>
   ${enterprise ? /* html */ `<p><a href="${enterprise}#ent-trust">${say('trust.more')}</a></p>` : ''}
-</section>
-
-<section id="ps-share" class="site-section is-side site-end" aria-labelledby="ps-share-title">
-  ${WAVE}
-  <h2 id="ps-share-title">${it.say('share.title')}</h2>
+</section>`
+    const share = /* html */ `${WAVE}
+  <h3>${it.say('share.title')}</h3>
   <p class="site-why">${say('end.body')}</p>
   <p class="ps-address">${FELT.point}${xml(address)}</p>
   <p class="site-cta"><a class="button primary" href="${mail}">${say('end.send')}</a><a class="button" href="${trial}">${say('cta')}</a></p>
-  <p><a href="mailto:${CONTACT}">${it.say('share.write', { contact: CONTACT })}</a></p>
-</section>`
+  <p><a href="mailto:${CONTACT}">${it.say('share.write', { contact: CONTACT })}</a></p>`
+    return landing(kit, {
+      top: hero,
+      promise: say('h1'),
+      acts: {
+        staff: { id: 'ps-staff', body: `${govern}\n${buy}` },
+        rules: { id: 'ps-rules', body: `${review}\n${pack}` },
+      },
+      turn: { id: 'ps-share', body: share },
+    })
   },
 }
