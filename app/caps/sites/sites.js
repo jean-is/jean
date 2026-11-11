@@ -25,6 +25,8 @@ import { offered } from './offer.js'
 import { checkFiles, told } from './check.js'
 import { LINES, SITE, CHANGE } from './tool.js'
 import { shown, pageOf } from './frame.js'
+import { LOOK, dealt, projectLook, worn, cssOf, saidOf } from './look.js'
+import { lookHere, hexOf } from '../../ui/kit.js'
 
 await Promise.all([useStrings('sites'), styleSheet(new URL('sites.css', import.meta.url))])
 
@@ -60,6 +62,15 @@ export const remember = async (path, published) => { const record = await record
 /** What its first page says it is. @param {Map<string, Uint8Array>} files */
 const describe = (files) => /<meta\s+name=["']description["']\s+content=["']([^"']*)/i.exec(new TextDecoder().decode(files.get('index.html') ?? new Uint8Array()))?.[1] ?? ''
 
+/** Designs' palettes, which a site's looks are dealt from, read once. @type {Promise<any[]> | null} */
+let palettes = null
+/** A site's three looks (./look.js, D739) and the one it wears, its record keeping it. @param {One} one @param {import('./look.js').Own} [given] the brain's colours or the user's */
+async function looksOf(one, given) {
+  const tokens = await lookHere(one.dir), { looks, look, kept } = dealt({ files: one.files, seed: one.path, kept: one.record.look, given, project: (voices) => projectLook(tokens, voices, hexOf),
+    palettes: await (palettes ??= fetch(new URL('../designs/layouts.json', import.meta.url)).then((response) => response.json()).then((book) => book.palettes)) })
+  return { looks, look, record: { ...one.record, look: kept } }
+}
+
 /** The project's sites, the latest made first. @param {string} [dir] @returns {Promise<import('../../ui/creations.js').Creation[]>} */
 async function kept(dir = app.projectDir) {
   const places = (await app.fs.list(`${dir}/sites`)).flatMap(({ kind, name }) => (kind === 'directory' ? [`sites/${name}`] : [])).sort().reverse()
@@ -71,8 +82,18 @@ async function kept(dir = app.projectDir) {
 export const metaOf = async (path) => ((record) => record && { name: record.name, title: record.name, mimeType: 'text/html' })(await recordOf(path).catch(() => null))
 /** What Save gives: its first page, as one page. @param {string} path */
 export const bytesOf = async (path) => ((one) => (one ? pageOf(one.files, 'index.html').then((page) => new TextEncoder().encode(page)) : null))(await load(path))
-/** Its view in its pane. @param {{ uri: string }} file */
-export const editor = async ({ uri }) => ((one) => one && html`<app-site class="beside" .site=${{ path: one.path, name: one.record.name, files: one.files }}></app-site>`)(await load(uri))
+/**
+ * Its view in its pane, a site the brain made with its looks: one picked writes look.css and keeps it in site.json. @param {{ uri: string }} file
+ * @returns {Promise<unknown>}
+ */
+export async function editor({ uri }) {
+  const one = await load(uri), deal = one?.record.look && await looksOf(one)
+  // Each pick after the one before, so that look.css and site.json agree however fast the arrows go.
+  let picking = /** @type {Promise<unknown>} */ (Promise.resolve())
+  const pick = (/** @type {import('./look.js').Look} */ look) => (picking = picking.then(() => load(uri)).then((now) => now && write({ ...now, files: new Map(now.files).set(LOOK, new TextEncoder().encode(cssOf(look))),
+    record: { ...now.record, look: { ...now.record.look, id: look.id, voice: look.voice } } })).catch(console.warn))
+  return one && html`<app-site class="beside" .site=${{ path: one.path, name: one.record.name, files: one.files, ...(deal && { looks: deal.looks, look: deal.look, pick }) }}></app-site>`
+}
 /**
  * A page on its own published as a site of one page: the site made from it the first time, under its name, its files made again from it
  * each time (./file.js's sited()), so that the dialog says what changed since; then Publish's dialog. @param {{ uri: string, title: string }} file @param {BlobPart} page
@@ -109,16 +130,24 @@ async function fileOf(file, ctx) {
   return [path, bytes]
 }
 
-/** What a call makes of a site: written, shown, checked, and said. @param {One} one @param {import('../../core/loop.js').ToolContext} ctx @param {string} done @param {string[]} before */
-async function checked(one, ctx, done, before) {
+/**
+ * What a call makes of a site: dressed in its look, written, shown, checked, and said. @param {One} given @param {import('../../core/loop.js').ToolContext} ctx @param {string} done
+ * @param {string[]} before @param {import('./look.js').Own} [colours] the brain's or the user's
+ */
+async function checked(given, ctx, done, before, colours) {
+  // A page on its own, made a site again from it each time it is published, keeps its own colours.
+  const { look, record } = given.record.page ? { look: null, record: given.record } : await looksOf(given, colours)
+  const dressed = look ? worn(given.files, look) : { files: given.files, put: [], left: [] }, said = saidOf(dressed), one = { ...given, files: dressed.files, record }
   await write(one, before)
   ctx.meta.files = [{ uri: one.path, name: one.record.name, mimeType: 'text/html', size: [...one.files.values()].reduce((sum, bytes) => sum + bytes.length, 0) }]
   if (conversationOf(ctx.signal)?.path === app.current.peek()?.path) await open(one)
   join(one.dir), reread()
   const report = checkFiles(one.files)
-  report.problems = [...new Set([...report.problems, ...await shown(one.files, report.pages, ctx.signal)])]
+  // Seen by day and by night alike, whichever the device prefers.
+  const as = (/** @type {'day' | 'night'} */ when) => look && new Map(one.files).set(LOOK, new TextEncoder().encode(cssOf({ ...look, day: look[when], night: look[when] })))
+  report.problems = [...new Set([...report.problems, ...said.problems, ...await shown(as('day') || one.files, report.pages, ctx.signal, as('night') || undefined)])]
   await write({ ...one, record: { ...one.record, text: describe(one.files), check: { problems: report.problems, fill: report.fill, at: new Date().toISOString() } } })
-  return `${done} ${told(report, { name: one.record.name, place: one.path })}`
+  return [done, told(report, { name: one.record.name, place: one.path }), said.line].filter(Boolean).join(' ')
 }
 
 /** @type {import('../../core/loop.js').Tool} */
@@ -130,7 +159,7 @@ const siteTool = {
     if (!list.length) throw new Error('Give the site its files: index.html first, then style.css and the other pages.')
     const files = new Map(await Promise.all(list.map((/** @type {any} */ file) => fileOf(file, ctx))))
     return checked(before ? { ...before, files, record: { ...before.record, name, changed: now } } : { dir: app.projectDir, path: `sites/${ulid()}-${slug(name) || 'site'}`, files,
-      record: { format: 1, name, author: 'jean', created: now, changed: now, source: conversationOf(ctx.signal)?.path ?? '', files: [] } }, ctx, before ? 'Replaced.' : 'Made.', before ? [...before.files.keys()] : [])
+      record: { format: 1, name, author: 'jean', created: now, changed: now, source: conversationOf(ctx.signal)?.path ?? '', files: [] } }, ctx, before ? 'Replaced.' : 'Made.', before ? [...before.files.keys()] : [], args?.look)
   },
 }
 
@@ -145,7 +174,7 @@ const changeTool = {
     if ('error' in done) throw new Error(done.error)
     for (const file of Array.isArray(args?.files) ? args.files : []) done.files.set(...await fileOf(file, ctx))
     for (const path of Array.isArray(args?.remove) ? args.remove : []) done.files.delete(pathIn(path))
-    return checked({ ...one, files: done.files, record: { ...one.record, changed: new Date().toISOString() } }, ctx, 'Changed.', [...one.files.keys()])
+    return checked({ ...one, files: done.files, record: { ...one.record, changed: new Date().toISOString() } }, ctx, 'Changed.', [...one.files.keys()], args?.look)
   },
 }
 

@@ -29,6 +29,7 @@ import { siteTools, skillLine, LINES } from '../test/sites/tools.js'
 import { sharedFor } from '../test/sites/fixtures.js'
 import { check } from '../test/sites/check.js'
 import { extractPages } from '../app/caps/files/extract.js'
+import { LOOK, cssOf } from '../app/caps/sites/look.js'
 
 /** @import { Chosen } from '../cli/brain.js' */
 /** @typedef {Chosen & { name: string, body?: Record<string, unknown>, maxTokens?: number }} Measured the brain, and its name in results.md */
@@ -113,6 +114,20 @@ Say as one JSON object, and nothing else:
   } catch {
     return { error: `the judge wrote no JSON: ${text.slice(0, 200)}` }
   }
+}
+
+/**
+ * Each look the first request's site was dealt (D739), its look.css in place of the one it wore, checked as that one was, by day and by
+ * night. @param {import('../test/sites/tools.js').Call} call @param {import('@playwright/test').Browser} browser
+ * @returns {Promise<{ look: string, clean: boolean, left: string[] }[]>}
+ */
+async function looksChecked(call, browser) {
+  const out = []
+  for (const look of call.looks) {
+    const report = look === call.look ? call.report : await check(new Map(call.files).set(LOOK, new TextEncoder().encode(cssOf(look))), browser)
+    out.push({ look: `${look.id} ${look.voice}`, clean: !report.problems.length, left: report.problems.slice(0, 2) })
+  }
+  return out
 }
 
 /** The conversation as the brain had it, to read again. @param {any[]} records */
@@ -209,6 +224,7 @@ async function main(argv, env) {
         }, `${DIR}.cache/${slug}/tasks/${brief.id}-${brief.lang}`)
         const { run: found, first, answer } = scored(brief, outcome.records, checks, outcome.spent)
         run = { ...found, ...(outcome.error && { error: outcome.error }) }
+        if (first?.looks) Object.assign(run, { looks: await looksChecked(first, browser) })
         await writeFile(`${out}conversation.md`, transcript(outcome.records))
         await writeFile(`${out}answer.txt`, answer)
         if (first?.report.shots) {
@@ -267,7 +283,13 @@ Made a site on ${of((run) => run.made)} of ${runs.length} briefs, with nothing l
 | Brief | ${langs.join(' | ')} |
 |---|${langs.map(() => '---').join('|')}|
 ${rows.join('\n')}
-${left.length ? `\nLeft to fix:\n${left.join('\n')}\n` : ''}${why.length ? `\nNot online, the judge says:\n${why.join('\n')}\n` : ''}`
+${left.length ? `\nLeft to fix:\n${left.join('\n')}\n` : ''}${why.length ? `\nNot online, the judge says:\n${why.join('\n')}\n` : ''}${looked(runs)}`
+}
+
+/** Its sites' looks (D739): how many sites had every look clean by day and by night, and what each other look left. @param {(Run & { looks?: { look: string, clean: boolean, left: string[] }[] })[]} runs */
+function looked(runs) {
+  const dealt = runs.filter((run) => run.looks?.length), left = dealt.flatMap((run) => (run.looks ?? []).filter((one) => !one.clean).map((one) => `- ${run.id}, ${run.lang}, ${one.look}: ${one.left.join(' ')}`))
+  return dealt.length ? `\nEvery look of its first site clean by day and by night on ${dealt.filter((run) => run.looks?.every((one) => one.clean)).length} of ${dealt.length}, ${dealt.flatMap((run) => run.looks ?? []).filter((one) => one.clean).length} of ${dealt.flatMap((run) => run.looks ?? []).length} looks.\n${left.length ? `${left.join('\n')}\n` : ''}` : ''
 }
 
 const SUMMARY = '## Every brain'

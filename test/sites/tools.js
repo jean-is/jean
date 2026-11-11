@@ -1,20 +1,25 @@
 // The tools a brain is given in npm run sites (Sites' phase 0): `site` and `site_change`, as Sites would declare them,
-// each keeping the site in the run's folder and returning its check, and `skill`, which reads Jean's own skills as
-// own-skills does, "Make a site" (app/caps/skills/directory/site/) among them.
+// each keeping the site in the run's folder, dressed in its look as Sites does (D739: three dealt, no project's here, the
+// brain's colours worn), and returning its check, and `skill`, which reads Jean's own skills as own-skills does, "Make a
+// site" (app/caps/skills/directory/site/) among them.
 import { mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { check } from './check.js'
 import { told } from '../../app/caps/sites/check.js'
 import { pathIn, changed } from '../../app/caps/sites/file.js'
 import { LINES, SITE, CHANGE } from '../../app/caps/sites/tool.js'
+import { dealt, worn as wear, saidOf } from '../../app/caps/sites/look.js'
 
 export { LINES } from '../../app/caps/sites/tool.js'
 
 /** @import { Tool } from '../../app/core/loop.js' */
 /** @typedef {import('./check.js').Report} Report */
-/** @typedef {{ name: 'site' | 'site_change', place: string, report: Report }} Call  each call, in order */
+/** @typedef {import('../../app/caps/sites/look.js').Look} Look */
+/** @typedef {{ name: 'site' | 'site_change', place: string, report: Report, files: Map<string, Uint8Array>, looks: Look[], look: Look }} Call  each call, in order, its site's files and looks */
+/** @typedef {{ name: string, files: Map<string, Uint8Array>, kept?: { id: string, voice: string, own?: import('../../app/caps/sites/look.js').Own } }} Kept */
 
 const DIRECTORY = new URL('../../app/caps/skills/directory/', import.meta.url)
+const { palettes } = JSON.parse(await readFile(new URL('../../app/caps/designs/layouts.json', import.meta.url), 'utf8'))
 
 /** A slug of a name, in any script. @param {string} name */
 const slug = (name) => name.normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-|-$/g, '').slice(0, 40) || 'site'
@@ -25,7 +30,7 @@ const slug = (name) => name.normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N
  * @returns {Tool[]}
  */
 export function siteTools({ dir, browser, shared, calls }) {
-  /** @type {Map<string, { name: string, files: Map<string, Uint8Array> }>} */
+  /** @type {Map<string, Kept>} */
   const sites = new Map()
   const encode = (/** @type {string} */ text) => new TextEncoder().encode(text)
 
@@ -39,9 +44,11 @@ export function siteTools({ dir, browser, shared, calls }) {
     return /** @type {const} */ ([path, found])
   }
 
-  /** Writes a site out, checks it and keeps the call. @param {'site' | 'site_change'} name @param {string} place */
-  const kept = async (name, place) => {
-    const one = /** @type {{ name: string, files: Map<string, Uint8Array> }} */ (sites.get(place))
+  /** Writes a site out in its look, checks it and keeps the call. @param {'site' | 'site_change'} name @param {string} place @param {any} [given] the brain's look */
+  const kept = async (name, place, given) => {
+    const was = /** @type {Kept} */ (sites.get(place)), worn = dealt({ files: was.files, seed: place, palettes, kept: was.kept, given }), { looks, look } = worn
+    const dressed = wear(was.files, look), said = saidOf(dressed), one = { ...was, files: dressed.files, kept: worn.kept }
+    sites.set(place, one)
     const folder = join(dir, place)
     await rm(folder, { recursive: true, force: true })
     for (const [path, bytes] of one.files) {
@@ -54,8 +61,9 @@ export function siteTools({ dir, browser, shared, calls }) {
       await writeFile(join(dir, 'calls', String(calls.length + 1), path), bytes)
     }
     const report = await check(one.files, browser)
-    calls.push({ name, place, report })
-    return told(report, { name: one.name, place })
+    report.problems = [...new Set([...report.problems, ...said.problems])]
+    calls.push({ name, place, report, files: one.files, looks, look })
+    return [told(report, { name: one.name, place }), said.line].filter(Boolean).join(' ')
   }
 
   /** @type {Tool} */
@@ -68,8 +76,8 @@ export function siteTools({ dir, browser, shared, calls }) {
       const made = new Map(files.map(bytesOf))
       const name = String(args?.name ?? '').trim() || 'Site'
       const place = typeof args?.site === 'string' && sites.has(args.site) ? args.site : `sites/${sites.size + 1}-${slug(name)}`
-      sites.set(place, { name, files: made })
-      return kept('site', place)
+      sites.set(place, { ...sites.get(place), name, files: made })
+      return kept('site', place, args?.look)
     },
   }
 
@@ -87,7 +95,7 @@ export function siteTools({ dir, browser, shared, calls }) {
       for (const file of Array.isArray(args?.files) ? args.files : []) files.set(...bytesOf(file))
       for (const path of Array.isArray(args?.remove) ? args.remove : []) files.delete(pathIn(path))
       sites.set(place, { ...one, files })
-      return kept('site_change', place)
+      return kept('site_change', place, args?.look)
     },
   }
 

@@ -1,10 +1,13 @@
 // Sites (D720): a site's paths and changes, what the brain is given, and its check from its files, which npm run sites measures
-// brains with too.
+// brains with too; its looks (D739), each readable by day and by night, and the colours the brain writes put as their properties.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { checkFiles, told } from '../app/caps/sites/check.js'
 import { pathIn, changed, reach, PLACE, sited } from '../app/caps/sites/file.js'
 import { LINES, SITE, CHANGE } from '../app/caps/sites/tool.js'
+import { LOOK, FACES, dealt, lookOf, ownLook, projectLook, cssOf, worn, saidOf } from '../app/caps/sites/look.js'
+import { contrast } from '../app/ui/colour.js'
+import { readFile } from 'node:fs/promises'
 
 const encode = (/** @type {string} */ text) => new TextEncoder().encode(text)
 
@@ -109,4 +112,85 @@ test('what the brain is given: a line each within 40 tokens, schemas within 400'
   assert.deepEqual(LINES.map((line) => line.name), [SITE.name, CHANGE.name])
   for (const line of LINES) assert.ok(Math.ceil(`- ${line.name}: ${line.line}`.length / 4) <= 40, line.line)
   for (const spec of [SITE, CHANGE]) assert.ok(Math.ceil(JSON.stringify(spec).length / 4) <= 400, `${spec.name}: ${JSON.stringify(spec).length} characters`)
+})
+
+const { palettes } = JSON.parse(await readFile(new URL('../app/caps/designs/layouts.json', import.meta.url), 'utf8'))
+const voices = Object.keys(FACES), decode = (/** @type {Uint8Array | undefined} */ bytes) => new TextDecoder().decode(bytes)
+
+test('every look, dealt, the project’s or the brain’s, reads at AA by day and by night', () => {
+  const looks = [...palettes.map((/** @type {any} */ one) => lookOf(one.id, 'calm', { paper: one.ground, ink: one.ink, accent: one.accent, accent2: one.accent2 })),
+    ownLook({ accent: '#c2410c' }, voices, 'calm'), ownLook({ accent: '#ffe066', paper: '#fffef5', ink: '#777777' }, voices, 'calm'), ownLook({ accent: '#7dd3fc', paper: '#0b1020' }, voices, 'calm'),
+    projectLook({ primary: '#e11d48', voice: 'elegant', soft: '#fde2e7', dark: { paper: '#101014', primary: '#ff7799' } }, voices, (colour) => colour), projectLook({ primary: '#ffcc00' }, voices, (colour) => colour)]
+  const pairs = [['ink', 'paper'], ['ink', 'tint'], ['quiet', 'paper'], ['quiet', 'tint'], ['accent', 'paper'], ['accent', 'tint'], ['accent-2', 'paper'], ['accent-2', 'tint'], ['on-accent', 'accent'], ['on-accent', 'accent-2']]
+  for (const look of looks) {
+    assert.ok(look)
+    for (const when of /** @type {const} */ (['day', 'night'])) for (const [words, ground] of pairs) {
+      const colours = /** @type {Record<string, string>} */ (look[when])
+      assert.ok(contrast(colours[words], colours[ground]) >= 4.5, `${look.id} by ${when}: ${words} ${colours[words]} on ${ground} ${colours[ground]}`)
+    }
+    // A night of its own: a dark paper, unless the day's is dark already.
+    assert.ok(contrast(look.night.paper, '#000000') < contrast(look.night.paper, '#ffffff'), look.id)
+  }
+  assert.equal(ownLook({ accent: 'teal' }, voices, 'calm'), null)
+  assert.equal(projectLook({ voice: 'bold' }, voices, (colour) => colour), null)
+})
+
+test('three looks are dealt, the project’s first, then the brain’s, then palettes apart, the same each time, in voices the language has; the one worn kept', () => {
+  const page = (/** @type {string} */ lang) => new Map([['index.html', encode(`<!doctype html><html lang="${lang}" dir="ltr"><head></head></html>`)]])
+  const project = (/** @type {string[]} */ voices) => projectLook({ primary: '#0057b8', voice: 'handwritten' }, voices, (colour) => colour)
+  const given = { accent: '#2a6f4e', type: 'elegant' }, three = dealt({ files: page('ja'), seed: 'sites/01J-bakery', palettes, project, given })
+  assert.deepEqual(three.looks.map((look) => look.id).slice(0, 2), ['project', 'own'])
+  assert.equal(three.looks[0].voice, 'calm', 'no handwriting where Japanese is written')
+  assert.deepEqual([three.look.id, three.look.voice], ['own', 'elegant'], 'the colours given are worn at once')
+  assert.deepEqual(three.kept, { id: 'own', voice: 'elegant', own: given })
+  // Picked again, the brain's colours stay among them, kept.
+  const again = dealt({ files: page('ja'), seed: 'sites/01J-bakery', palettes, project, kept: { ...three.kept, id: 'project', voice: 'calm' } })
+  assert.deepEqual([again.look.id, again.looks[1].id, again.kept.own], ['project', 'own', given])
+  const plain = dealt({ files: page('en'), seed: 'sites/01J-bakery', palettes })
+  assert.equal(new Set(plain.looks.map((look) => look.id)).size, 3)
+  assert.equal(plain.look, plain.looks[0])
+  assert.deepEqual(plain.looks, dealt({ files: page('en'), seed: 'sites/01J-bakery', palettes }).looks)
+  assert.ok(dealt({ files: page('el'), seed: 'sites/01J-greek', palettes }).looks.every((look) => look.voice === 'calm'))
+})
+
+test('look.css holds every property, its night under a dark preference, the project’s fonts first', () => {
+  const css = cssOf(/** @type {import('../app/caps/sites/look.js').Look} */ (projectLook({ primary: '#0057b8', voice: 'elegant', fonts: { heading: ['Playfair Display'], body: ['Inter";}x{'] } }, voices, (colour) => colour)))
+  for (const name of ['paper', 'tint', 'ink', 'quiet', 'accent', 'accent-2', 'on-accent', 'font', 'display', 'display-weight']) assert.match(css, new RegExp(`--${name}: `))
+  assert.match(css, /color-scheme: light dark;[\s\S]*@media \(prefers-color-scheme: dark\) \{ :root \{ --paper: #/)
+  assert.match(css, /--display: "Playfair Display", ui-serif/)
+  assert.match(css, /--font: "Interx", system-ui/)
+  const night = cssOf(lookOf('night', 'bold', { paper: '#1c2240', ink: '#f4f1e8', accent: '#ffc857', accent2: '#8ecae6' }))
+  assert.match(night, /color-scheme: dark;/)
+  assert.doesNotMatch(night, /@media/)
+})
+
+test('a site wears its look: look.css linked from each page, its colours put as the nearest properties, what can’t be read said', () => {
+  const look = lookOf('sunny', 'calm', { paper: '#fff4da', ink: '#1f2a44', accent: '#b23c26', accent2: '#235d97' })
+  const files = new Map([
+    ['index.html', encode('<html><head><link rel="stylesheet" href="style.css"></head><body><p style="color: #ffffff; background: #9a3b14">Hi</p><style>.x { border-color: #333 }</style><svg aria-hidden="true"><rect fill="#f3eee6"/><path stroke="url(#g)" fill="hsl(10 70% 40%)"/></svg></body></html>')],
+    ['fr/index.html', encode('<html><head><link rel="stylesheet" href="../look.css"></head><body></body></html>')],
+    ['es/index.html', encode('<html><head></head><body></body></html>')],
+    ['style.css', encode(':root { --paper: #fff; --brand: #2a6f4e; } a:not(.white) { color: #2a6f4e; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); } .hero { background: linear-gradient(#ffffff, #f5f0e8); font-family: "Gold"; } .band { background: rgb(42 111 78 / 50%); } h1 { color: oklch(50% 0.1 30) }')],
+    [LOOK, encode(':root { --accent: red }')],
+  ])
+  const out = worn(files, look), said = saidOf(out)
+  assert.match(decode(out.files.get('index.html')), /<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="look.css"><\/head>/)
+  assert.match(decode(out.files.get('index.html')), /style="color: var\(--on-accent\); background: var\(--accent\)"/)
+  assert.match(decode(out.files.get('index.html')), /\.x \{ border-color: var\(--ink\) \}/)
+  assert.match(decode(out.files.get('index.html')), /<rect fill="var\(--tint\)"\/><path stroke="url\(#g\)" fill="var\(--accent\)"\/>/)
+  assert.equal(decode(out.files.get('fr/index.html')), decode(files.get('fr/index.html')))
+  assert.match(decode(out.files.get('es/index.html')), /href="\.\.\/look\.css"/)
+  const css = decode(out.files.get('style.css'))
+  assert.doesNotMatch(css, /--paper:/, 'the look’s own properties are look.css’s')
+  assert.match(css, /--brand: var\(--accent-2\)/)
+  assert.match(css, /a:not\(\.white\) \{ color: var\(--accent-2\); box-shadow: 0 1px 2px rgba\(0, 0, 0, 0\.2\);/)
+  assert.match(css, /background: linear-gradient\(var\(--paper\), var\(--tint\)\); font-family: "Gold";/)
+  assert.match(css, /background: color-mix\(in srgb, var\(--accent-2\) 50%, transparent\)/)
+  assert.equal(decode(out.files.get(LOOK)), cssOf(look))
+  assert.deepEqual(out.left, ['style.css: oklch(50% 0.1 30)'])
+  assert.match(said.problems[0], /^style\.css: oklch\(50% 0\.1 30\): write one of look\.css's properties/)
+  assert.match(said.line, /^look\.css's properties were put in place of 10 colours/)
+  // Worn again, nothing more is put.
+  assert.deepEqual(worn(out.files, look).put, [])
+  assert.deepEqual(SITE.parameters.properties.look, CHANGE.parameters.properties.look)
 })

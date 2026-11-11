@@ -4,6 +4,7 @@
 // what overflows, a band below its foot, a picture that won't show, a script's errors, and words whose contrast is too low. Beside
 // the task, <app-site> shows the site at a phone's, a tablet's or a computer's width, its links leading to its other pages.
 import { html, nothing, render } from 'lit-html'
+import { ref } from 'lit-html/directives/ref.js'
 import { computed, effect } from '@preact/signals-core'
 import { app, effective } from '../../ui/state.js'
 import { pageRights, pagePolicy, pageAllow, PAGE_SANDBOX } from '../../ui/csp.js'
@@ -12,8 +13,10 @@ import { t, locale } from '../../core/i18n.js'
 import { sitePage, SITE } from '../folders/site.js'
 import { reach } from './file.js'
 import { WIDTHS } from './check.js'
+import { LOOK, cssOf } from './look.js'
 
-/** @typedef {{ path: string, name: string, files: Map<string, Uint8Array> }} Shown */
+/** @typedef {import('./look.js').Look} Look */
+/** A site on show, and the brain's with its looks, the one it wears and what picking one does. @typedef {{ path: string, name: string, files: Map<string, Uint8Array>, looks?: Look[], look?: Look, pick?: (look: Look) => unknown }} Shown */
 
 const FRAME = new URL('../../preview.html', import.meta.url).href
 const rights = computed(() => pageRights(effective.value.settings, app.policy))
@@ -60,10 +63,11 @@ function seen(page, width, signal) {
 }
 
 /**
- * What each page shows at each width, said as the check says it; nothing when pages may run no script, which the probe needs.
- * @param {Map<string, Uint8Array>} files @param {string[]} pages @param {AbortSignal} [signal] @returns {Promise<string[]>}
+ * What each page shows at each width, said as the check says it, and by night, the contrast of words that read by day; nothing when
+ * pages may run no script, which the probe needs. @param {Map<string, Uint8Array>} files @param {string[]} pages @param {AbortSignal} [signal]
+ * @param {Map<string, Uint8Array>} [night] its files with its look's night as its day (./look.js) @returns {Promise<string[]>}
  */
-export async function shown(files, pages, signal) {
+export async function shown(files, pages, signal, night) {
   if (!rights.peek().allows.scripts) return []
   const problems = /** @type {string[]} */ ([])
   for (const width of WIDTHS) {
@@ -76,6 +80,9 @@ export async function shown(files, pages, signal) {
       for (const fault of one.faults) problems.push(`${path}: its script failed: ${fault}`)
       if (width === Math.max(...WIDTHS)) for (const low of one.low) problems.push(`${path}: “${low.words}” has a contrast of ${low.ratio}:1, not ${low.need}:1`)
     }
+  }
+  for (const path of night ? pages.slice(0, 16) : []) for (const low of (await seen(await pageOf(/** @type {Map<string, Uint8Array>} */ (night), path), Math.max(...WIDTHS), signal))?.low ?? []) {
+    if (!problems.some((one) => one.startsWith(`${path}: “${low.words}”`))) problems.push(`${path}: by night, “${low.words}” has a contrast of ${low.ratio}:1, not ${low.need}:1`)
   }
   return [...new Set(problems)]
 }
@@ -99,15 +106,24 @@ customElements.define('app-site', class extends HTMLElement {
 
   disconnectedCallback() { removeEventListener('message', this.heard); this.#stop() }
 
-  /** Its widths, and the page on show in a frame as wide as the one picked. */
+  /** A look worn: the page on show again in it, its frame reloaded and the radios left as they are, then kept. @param {Look} look */
+  wear(look) {
+    const site = this.#site
+    if (site) (this.#site = { ...site, look, files: new Map(site.files).set(LOOK, new TextEncoder().encode(cssOf(look))) }), this.querySelector('.site-view iframe')?.setAttribute('src', FRAME), site.pick?.(look)
+  }
+
+  /** Its looks (D739), each a radio with its colours, and its widths; the page on show in a frame as wide as the one picked. */
   draw() {
     const site = this.#site, { allows } = rights.peek()
     if (!site) return
     this.dataset.width = this.#width
-    const begin = async (/** @type {Event} */ event) => /** @type {HTMLIFrameElement} */ (event.target).contentWindow?.postMessage({ page: await pageOf(site.files, this.#page), policy: policy() }, '*')
+    const begin = async (/** @type {Event} */ event) => /** @type {HTMLIFrameElement} */ (event.target).contentWindow?.postMessage({ page: await pageOf(this.#site?.files ?? site.files, this.#page), policy: policy() }, '*')
     const pick = (/** @type {string} */ width) => { this.#width = width; this.dataset.width = width }
+    const colours = (/** @type {Look} */ { day }) => ref((swatch) => swatch instanceof HTMLElement && Object.entries({ '--swatch-paper': day.paper, '--swatch-ink': day.ink, '--swatch-accent': day.accent }).forEach(([name, value]) => swatch.style.setProperty(name, value)))
     render(nothing, this)
-    render(html`<span class="segmented site-widths" role="radiogroup" aria-label=${t('sites.width')}>${['phone', 'tablet', 'computer'].map((width) => html`<label for=${`${this.#id}-${width}`}><input id=${`${this.#id}-${width}`}
+    render(html`${site.looks ? html`<span class="segmented site-looks" role="radiogroup" aria-label=${t('sites.looks')}>${site.looks.map((look, i) => html`<label for=${`${this.#id}-look-${i}`}><input id=${`${this.#id}-look-${i}`}
+      type="radio" name=${`${this.#id}-look`} .checked=${look === site.look} @change=${() => this.wear(look)}><span><i class="site-swatch" aria-hidden="true" ${colours(look)}></i>${t(`sites.palette.${look.id}`)}</span></label>`)}</span>` : nothing}
+      <span class="segmented site-widths" role="radiogroup" aria-label=${t('sites.width')}>${['phone', 'tablet', 'computer'].map((width) => html`<label for=${`${this.#id}-${width}`}><input id=${`${this.#id}-${width}`}
       type="radio" name=${this.#id} .checked=${width === this.#width} @change=${() => pick(width)}><span>${t(`sites.${width}`)}</span></label>`)}</span>
       <div class="site-view"><iframe sandbox=${PAGE_SANDBOX} allow=${pageAllow(allows)} src=${FRAME} title=${t('sites.frame', { name: site.name })} @load=${begin}></iframe></div>`, this)
   }

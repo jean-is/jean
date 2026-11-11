@@ -5,7 +5,8 @@
 // language with every page and naming the others, nothing loaded from another site, no script inside a page (the host
 // runs a site's own files only), forms the host can receive, and no field for a password or a card. In Chromium, each
 // page at 320 and 1280 pixels: a sideways scroll, pictures that don't load, a script's errors, what it tried to reach
-// elsewhere, and the contrast of its words (axe-core). It also lists the [placeholders] left to fill in.
+// elsewhere, and the contrast of its words (axe-core), by day and, those that read by day, in its look's night (D739). It also lists the
+// [placeholders] left to fill in.
 import { createServer } from 'node:http'
 import { fileURLToPath } from 'node:url'
 import { checkFiles, WIDTHS } from '../../app/caps/sites/check.js'
@@ -92,13 +93,20 @@ export async function checkInBrowser(browser, files, pages) {
             for (const src of seen.broken) { const to = target(path, String(src)); if (to !== null && reach(files, to)) problems.push(`${path}: the picture ${src} doesn't load`) }
             if (width === Math.max(...WIDTHS)) {
               await page.addScriptTag({ path: AXE })
-              const found = await page.evaluate(async () => {
-                // @ts-ignore axe, added just before
-                const result = await axe.run(document, { runOnly: { type: 'rule', values: ['color-contrast'] }, resultTypes: ['violations'] })
-                return result.violations.flatMap((/** @type {any} */ violation) => violation.nodes.map((/** @type {any} */ node) => ({ where: String(node.target[0]), words: String(node.html ?? '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 40), data: node.any[0]?.data ?? {} })))
-              })
-              for (const { where, words, data } of found.slice(0, 4)) problems.push(`${path}: ${words ? `“${words}” (${where})` : where} has a contrast of ${data.contrastRatio}:1 (${data.fgColor} on ${data.bgColor}), not ${String(data.expectedContrastRatio ?? '4.5').replace(':1', '')}:1`)
-              if (found.length > 4) problems.push(`${path}: ${found.length - 4} more places have too little contrast`)
+              const low = new Set()
+              for (const night of [false, true]) {
+                await page.emulateMedia({ colorScheme: night ? 'dark' : 'light' })
+                const found = await page.evaluate(async () => {
+                  // @ts-ignore axe, added just before
+                  const result = await axe.run(document, { runOnly: { type: 'rule', values: ['color-contrast'] }, resultTypes: ['violations'] })
+                  return result.violations.flatMap((/** @type {any} */ violation) => violation.nodes.map((/** @type {any} */ node) => ({ where: String(node.target[0]), words: String(node.html ?? '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 40), data: node.any[0]?.data ?? {} })))
+                })
+                const when = night ? 'by night, ' : '', more = found.filter((one) => !low.has(one.where))
+                for (const one of more) low.add(one.where)
+                for (const { where, words, data } of more.slice(0, 4)) problems.push(`${path}: ${when}${words ? `“${words}” (${where})` : where} has a contrast of ${data.contrastRatio}:1 (${data.fgColor} on ${data.bgColor}), not ${String(data.expectedContrastRatio ?? '4.5').replace(':1', '')}:1`)
+                if (more.length > 4) problems.push(`${path}: ${when}${more.length - 4} more places have too little contrast`)
+              }
+              await page.emulateMedia({ colorScheme: 'light' })
             }
             // The whole page, as a window as tall as it shows it: made taller until its height holds, since the scrollbar that
             // goes then lays the words out wider (a full-page picture keeps the height from before, a band below the foot).
