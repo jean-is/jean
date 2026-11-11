@@ -34,6 +34,9 @@ function relayed(limits = {}) {
   /** @type {string[]} */
   const asked = []
   globalThis.fetch = (url, init = {}) => new Promise((resolve, reject) => {
+    // As fetch does, a signal already ended sends nothing: a listening stopped while it worked out its address would
+    // otherwise read once more, from the next test's relay.
+    if (init.signal?.aborted) return reject(init.signal.reason)
     init.signal?.addEventListener('abort', () => reject(init.signal?.reason))
     asked.push(`${init.method ?? 'GET'} ${new URL(String(url)).pathname}`)
     handle(new Request(url, { ...init, headers: { .../** @type {Record<string, string>} */ (init.headers), origin: JEAN } }), { address: '203.0.113.7', port: 51234 }).then(resolve, reject)

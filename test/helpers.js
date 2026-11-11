@@ -115,6 +115,12 @@ export async function connectFakeBrain(page) {
   await local.locator('input[name="baseURL"]').fill(BRAIN_URL)
   await local.locator('.button.primary').click()
   await expect(dialog).toBeHidden()
+  // Its toast, Brain connected, closed as a person would, so it covers nothing read or pressed next: a dialog opened
+  // within its seconds takes it in, its Close beside the dialog's own, and on a small window it sits over the header.
+  await page.evaluate(async () => {
+    const [{ app }, { t }] = await Promise.all([import('/ui/state.js'), import('/core/i18n.js')])
+    if (app.toast.value?.message === t('brain.connected')) app.toast.value = null
+  })
   // The step is in the page, where an answer comes next: the pointer leaves, so nothing there is hovered by chance.
   await page.mouse.move(0, 0)
 }
