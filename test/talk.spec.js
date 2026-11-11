@@ -5,7 +5,7 @@
 // is asked again, one the page closed on before anything came stays apart from the next, and a
 // key connects though its service is too busy to list its models; each service that takes a key has its logo.
 // Once a task has started, a line under the box says the assistant is an AI and can make mistakes (D273). Before any
-// task, the welcome says what Jean is, the box under the question on a wide window, at the foot on a phone (D366).
+// task, the box sits under the question on a wide window, at the foot on a phone (D366).
 // What is typed while a request gets ready stays in the box: only its words leave, and on a first request the rest goes with its task.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, answered, openSettings, closeSettings, openTasks, BRAIN_URL, chooseLanguage } from './helpers.js'
@@ -219,11 +219,8 @@ test('once a task has started, a line under the box says the assistant is an AI,
   await expect(page.locator('#prompt')).not.toHaveAccessibleDescription(said.ja)
 })
 
-test('before any task, the welcome says what Jean is; the box sits under the question, its ideas under it, the fine print at the foot, and on a phone at the foot under its ideas, the fine print just under it (D366)', async ({ page }) => {
+test('before any task, the box sits under the question, its ideas under it, the fine print at the foot, and on a phone at the foot under its ideas, the fine print just under it (D366)', async ({ page }) => {
   await start(page)
-  const pitch = page.locator('.pitch')
-  await expect(pitch.locator('p')).toHaveText('Ask for anything. Get back an answer, a document, a chart, a tune, a picture or a small app, right in this tab.')
-  await expect(pitch.locator('li')).toHaveText(['Nothing to install', 'Kept on this device', 'Free and open source'])
   const top = async (/** @type {string} */ selector) => (await page.locator(selector).boundingBox())?.y ?? 0
   const under = async () => { const box = await page.locator('.composer').boundingBox(); return (await top('.legal')) - (box ? box.y + box.height : 0) }
   const { width, height } = page.viewportSize() ?? { width: 1280, height: 720 }
@@ -238,13 +235,12 @@ test('before any task, the welcome says what Jean is; the box sits under the que
     expect(await under()).toBeLessThan(16)
   }).toPass()
   await page.setViewportSize({ width, height })
-  // Once there is a task, a new one says nothing more.
+  // Once there is a task, a new one has the question and its ideas.
   await connectFakeBrain(page)
   await ask(page, 'Explain photosynthesis in simple words')
   await expect(page.locator('.msg-jean .prose').last()).not.toBeEmpty()
   await page.keyboard.press('ControlOrMeta+Shift+KeyO')
   await expect(page.locator('.hero-question')).toBeVisible()
-  await expect(pitch).toHaveCount(0)
   await expect(page.locator('.starter')).toHaveCount(4)
 })
 

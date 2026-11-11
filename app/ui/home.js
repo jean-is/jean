@@ -24,6 +24,8 @@ let calls = 0
 // Its height, which the app's shell reaches over so that the drawer beside it stays put (home.css), in whole pixels, as
 // ui/composer.js reads the shell's height without that reach.
 const sizes = new ResizeObserver(([entry]) => document.body.style.setProperty('--home', `${Math.ceil(entry.borderBoxSize[0].blockSize)}px`))
+/** What holds the place read over a change of language, while it does. @type {(() => void) | null} */
+let holding = null
 /**
  * How far the page rises into the first screen (--home-lift, home.css): where the box is centred, the room its
  * ideas leave under them, less a gap, 13rem at most; elsewhere, none. Measured in the frame after the box's part of
@@ -35,6 +37,8 @@ const lift = new ResizeObserver(() => requestAnimationFrame(() => {
   const lowest = Math.max(...[...composer?.children ?? []].filter((child) => child.localName !== 'p' && child.localName !== 'footer').map((child) => child.getBoundingClientRect().bottom))
   const room = document.documentElement.hasAttribute('data-centred') && composer ? composer.getBoundingClientRect().bottom - lowest - 32 : 0
   document.body.style.setProperty('--home-lift', `${Math.round(Math.max(0, Math.min(room, 208)))}px`)
+  // Risen anew over a change of language, the page keeps the place read (follow()).
+  holding?.()
 }))
 
 /**
@@ -166,7 +170,8 @@ export async function follow(home, shown, lang) {
   // sheet landing late (tips.css) has WebKit pull the window up. Until the reader moves, for a moment at most.
   if (kept) {
     const hold = () => goBack(home, kept)
-    const stop = () => removeEventListener('scroll', hold)
+    const stop = () => { removeEventListener('scroll', hold); if (holding === hold) holding = null }
+    holding = hold
     hold()
     addEventListener('scroll', hold, { passive: true })
     for (const type of ['wheel', 'touchstart', 'keydown', 'pointerdown', 'focusin']) addEventListener(type, stop, { once: true, passive: true })

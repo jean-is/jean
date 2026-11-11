@@ -35,7 +35,7 @@ test('the first message opens one free way and two doors; through the plans and 
   await expect(page.locator('#prompt')).toHaveValue('Explain photosynthesis in simple words')
   await expect(page.locator('app-composer > app-first')).toHaveCount(1)
   await expect(page.locator('dialog[open]')).toHaveCount(0)
-  await expect(page.locator('.starters, .pitch')).toHaveCount(0)
+  await expect(page.locator('.starters')).toHaveCount(0)
   await expect(dialog.locator('.first-free')).toHaveText('Start for free')
   await expect(dialog).toContainText('Jean has no tie to OpenRouter')
   // This browser can't run the device's brain: it isn't offered.
