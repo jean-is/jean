@@ -267,7 +267,7 @@ export async function toolsFor(room, servers) {
       ...(room.terminal ? [{ name: 'bash', line: "commands on the user's computer, in their editor's terminal" }] : []),
       { name: 'recall', line: 'search earlier conversations' },
       { name: 'remember', line: 'save a lasting fact, preference or correction the user states' },
-      { name: 'skill', line: 'read the steps of a skill before following it' },
+      { name: 'skill', line: 'read the steps of a skill before asking the user anything for it or following it' },
     ],
     rules: [
       'Here the user works in their code editor, on the folder in <folder>: show code when it helps.',

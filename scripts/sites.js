@@ -4,7 +4,9 @@
 // capabilities, the skill tool listing Jean's own skills with the draft among them, and the tools Sites would declare,
 // `site` and `site_change`, whose check runs in Chromium (test/sites/check.js). A question the brain asks gets the
 // recommended answer. What it did is read from its conversation: whether it read the skill before its first site, asked
-// anything, wrote a page instead, how many checks it took until nothing was left to fix, and how its change went. Then a
+// (where the brief is open, leaving two choices or more that change the whole site, the skill asks once; elsewhere it
+// asks nothing) and whether before reading the skill, wrote a page instead, how many checks it took until nothing was left
+// to fix, and how its change went. Then a
 // judge, given the brief and the first page as a computer and a phone show it, says whether the person would put it
 // online as it is, and for the SaaS brief whether the answer said plainly what a site can't do.
 // Needs Playwright's Chromium (npx playwright install chromium) and a brain, as `npm run games`: BRAIN, <provider>:<model>
@@ -30,9 +32,9 @@ import { extractPages } from '../app/caps/files/extract.js'
 
 /** @import { Chosen } from '../cli/brain.js' */
 /** @typedef {Chosen & { name: string, body?: Record<string, unknown>, maxTokens?: number }} Measured the brain, and its name in results.md */
-/** @typedef {{ id: string, lang: string, text: string, change: string, files?: string }} Brief */
+/** @typedef {{ id: string, lang: string, text: string, change: string, files?: string, open?: boolean }} Brief */
 /**
- * @typedef {{ id: string, lang: string, made: boolean, read: boolean, asked: number, page: boolean, rounds: number, clean: boolean, cleanAt?: number,
+ * @typedef {{ id: string, lang: string, open?: boolean, made: boolean, read: boolean, asked: number, early: boolean, page: boolean, rounds: number, clean: boolean, cleanAt?: number,
  *   changed: boolean, changedClean: boolean, pages: number, languages: string[], weight: number, fill: number, left: string[],
  *   online?: boolean, why?: string, honest?: boolean, seconds: number, tokens: number, error?: string }} Run
  */
@@ -64,13 +66,15 @@ function scored(brief, records, checks, spent) {
   const cleanAt = ours.findIndex((call) => !call.report.problems.length)
   const first = ours.at(-1), last = theirs.at(-1) ?? first
   const firstSite = sites[0]?.index ?? Infinity
+  const skill = calls.find((call) => call.name === 'skill' && /^site(\/|$)/.test(String(call.input?.name ?? '')))?.index ?? Infinity
+  const asks = calls.filter((call) => call.name === 'ask_user')
   const answer = said(0, Number.isFinite(second) ? second : records.length)
   return {
     first, answer,
     run: {
-      id: brief.id, lang: brief.lang, made: ours.length > 0,
-      read: calls.some((call) => call.name === 'skill' && /^site(\/|$)/.test(String(call.input?.name ?? '')) && call.index < firstSite),
-      asked: calls.filter((call) => call.name === 'ask').length,
+      id: brief.id, lang: brief.lang, ...(brief.open && { open: true }), made: ours.length > 0,
+      read: skill < firstSite,
+      asked: asks.length, early: asks.some((call) => call.index < skill),
       page: !ours.length && (/```html/.test(answer) || calls.some((call) => call.name === 'write' && /\.html?$/i.test(String(call.input?.name ?? call.input?.path ?? '')))),
       rounds: ours.length, clean: !!first && !first.report.problems.length, ...(cleanAt >= 0 && { cleanAt: cleanAt + 1 }),
       changed: theirs.length > 0, changedClean: !!theirs.length && !theirs.at(-1)?.report.problems.length,
@@ -159,7 +163,7 @@ async function main(argv, env) {
   /** @type {Brief[]} */
   const briefs = Object.entries(set.briefs).filter(([id]) => !only || only.includes(id)).flatMap(([id, brief]) => Object.entries(brief)
     .filter(([lang, text]) => typeof text === 'string' && lang !== 'files' && (!langs || langs.includes(lang)))
-    .map(([lang, text]) => ({ id, lang, text: String(text), change: (brief.change ?? set.change)[lang], ...(brief.files && { files: brief.files }) })))
+    .map(([lang, text]) => ({ id, lang, text: String(text), change: (brief.change ?? set.change)[lang], ...(brief.files && { files: brief.files }), ...(brief.open && { open: true }) })))
   const slug = measured.name.replace(/[^\w.-]+/g, '-').replace(/^-|-$/g, '')
   console.log(`sites: ${measured.name}${judge ? `, judged by ${judge.name}` : ', no judge'}; ${briefs.length} briefs`)
 
@@ -238,7 +242,8 @@ function cell(run) {
   if (run.error && !run.made) return `— ${run.error.slice(0, 60)}`
   if (!run.made) return run.page ? '✗ a page' : run.asked ? '✗ asked' : '✗ no site'
   const judged = run.online === undefined ? '' : run.online ? ' · online' : ' · not online'
-  return `${run.clean ? '✓' : '✗'} ${run.cleanAt ?? run.rounds} · ${run.changed ? (run.changedClean ? 'change ✓' : 'change ✗') : 'no change'}${judged}${run.honest === undefined ? '' : run.honest ? ' · honest' : ' · not honest'}`
+  const asked = run.asked ? ` · asked${run.asked > 1 ? ` ${run.asked} times` : ''}${run.early ? ' before the skill' : ''}` : ''
+  return `${run.clean ? '✓' : '✗'} ${run.cleanAt ?? run.rounds} · ${run.changed ? (run.changedClean ? 'change ✓' : 'change ✗') : 'no change'}${judged}${run.honest === undefined ? '' : run.honest ? ' · honest' : ' · not honest'}${asked}`
 }
 
 /** This brain's section: what it made, how often clean and on which check, its changes, the judge's words, then each brief by language. @param {Measured} measured @param {Run[]} every */
@@ -247,6 +252,7 @@ function report({ name }, every) {
   const of = (/** @type {(run: Run) => boolean | undefined} */ test) => runs.filter(test).length
   const median = (/** @type {number[]} */ list) => list.sort((a, b) => a - b)[Math.floor(list.length / 2)] ?? 0
   const judged = runs.filter((run) => run.online !== undefined), saas = runs.filter((run) => run.honest !== undefined)
+  const open = runs.filter((run) => run.open), closed = runs.filter((run) => !run.open)
   const langs = [...new Set(every.map((run) => run.lang))], ids = [...new Set(every.map((run) => run.id))]
   const rows = ids.map((id) => `| ${id} | ${langs.map((lang) => { const run = every.find((one) => one.id === id && one.lang === lang); return run ? cell(run) : '' }).join(' | ')} |`)
   const left = runs.filter((run) => run.made && !run.clean).map((run) => `- ${run.id}, ${run.lang}: ${run.left.join(' ') || 'its last call failed'}`)
@@ -254,7 +260,7 @@ function report({ name }, every) {
   const minutes = Math.round(median(runs.map((run) => run.seconds)) / 6) / 10, kb = Math.round(median(runs.filter((run) => run.made).map((run) => run.weight)) / 1024)
   return `## ${name}, ${new Date().toISOString().slice(0, 10)}
 
-Made a site on ${of((run) => run.made)} of ${runs.length} briefs, with nothing left to fix on ${of((run) => run.clean)}, ${of((run) => run.cleanAt === 1)} of them on the first check and ${of((run) => (run.cleanAt ?? 0) > 3)} after the third. Its change was clean on ${of((run) => run.changedClean)} of ${of((run) => run.changed)}. ${judged.length ? `Would go online on ${of((run) => run.online)} of ${judged.length} judged` : 'Not judged'}${saas.length ? `, honest on the SaaS brief in ${of((run) => run.honest)} of ${saas.length}` : ''}. Read the skill before its first site on ${of((run) => run.read)}, asked the person on ${of((run) => run.asked > 0)}, wrote a page instead on ${of((run) => run.page)}. A brief took ${minutes} minutes at the median, and a first page weighs ${kb} KB.
+Made a site on ${of((run) => run.made)} of ${runs.length} briefs, with nothing left to fix on ${of((run) => run.clean)}, ${of((run) => run.cleanAt === 1)} of them on the first check and ${of((run) => (run.cleanAt ?? 0) > 3)} after the third. Its change was clean on ${of((run) => run.changedClean)} of ${of((run) => run.changed)}. ${judged.length ? `Would go online on ${of((run) => run.online)} of ${judged.length} judged` : 'Not judged'}${saas.length ? `, honest on the SaaS brief in ${of((run) => run.honest)} of ${saas.length}` : ''}. Read the skill before its first site on ${of((run) => run.read)}, wrote a page instead on ${of((run) => run.page)}. Asked once on ${open.filter((run) => run.asked === 1).length} of ${open.length} open briefs, and on ${closed.filter((run) => run.asked > 0).length} of ${closed.length} others; more than once on ${of((run) => run.asked > 1)}, before reading the skill on ${of((run) => run.early)}. A brief took ${minutes} minutes at the median, and a first page weighs ${kb} KB.
 
 ✓ nothing left to fix, ✗ something; then the check it was clean on, or how many it took; then its change; then the judge's word.
 
@@ -271,12 +277,12 @@ function summary(sections) {
   const rows = sections.map((part) => {
     const heading = part.slice(3, part.indexOf('\n'))
     const read = (/** @type {RegExp} */ pattern) => pattern.exec(part)?.slice(1).join(' of ') ?? '—'
-    return `| ${heading.slice(0, heading.lastIndexOf(', '))} | ${read(/Made a site on (\d+) of (\d+)/)} | **${read(/nothing left to fix on (\d+)/)}** | ${read(/(\d+) of them on the first/)} | ${read(/change was clean on (\d+ of \d+)/)} | ${read(/online on (\d+ of \d+)/)} | ${read(/SaaS brief in (\d+ of \d+)/)} |`
+    return `| ${heading.slice(0, heading.lastIndexOf(', '))} | ${read(/Made a site on (\d+) of (\d+)/)} | **${read(/nothing left to fix on (\d+)/)}** | ${read(/(\d+) of them on the first/)} | ${read(/change was clean on (\d+ of \d+)/)} | ${read(/online on (\d+ of \d+)/)} | ${read(/SaaS brief in (\d+ of \d+)/)} | ${read(/Asked once on (\d+ of \d+) open/)} | ${read(/and on (\d+ of \d+) others/)} |`
   })
   return `${SUMMARY}
 
-| Brain | Made | Clean | First check | Change clean | Would go online | Honest on SaaS |
-|---|---:|---:|---:|---:|---:|---:|
+| Brain | Made | Clean | First check | Change clean | Would go online | Honest on SaaS | Asked once, open | Asked, others |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
 ${rows.join('\n')}`
 }
 
@@ -293,8 +299,9 @@ answering through Jean's prompt and own capabilities, the skill "Make a site" am
 tools Sites would declare, unguided: a question it asks gets the recommended answer. Its change follows in the same task.
 A site is clean when its last check has nothing to fix. The judge sees the brief and the first page on a computer and a
 phone, and says whether the person would put it online as it is. A brief that failed for another reason than the brain is
-left out. The gate to build the kind: clean on 26 of 32, online on 22 of 32, honest on the SaaS brief in 4 of 4, Arabic and
-Japanese each within one brief of English.
+left out. The gate to build the kind, on the eight briefs it was set on: clean on 26 of 32, online on 22 of 32, honest on
+the SaaS brief in 4 of 4, Arabic and Japanese each within one brief of English. Asking: once on the open briefs (those
+leaving two choices or more that change the whole site), after reading the skill, and never on the others.
 
 ${[summary(sections), ...sections].join('\n\n')}
 `)
