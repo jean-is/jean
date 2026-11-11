@@ -1,6 +1,6 @@
 {
   "format": 1,
-  "$comment": "What a person asks for, in English, French, Arabic and Japanese (npm run sites). files: what they share with the request, made by fixtures.js. Each brief is followed in the same task by its change, or the set's.",
+  "$comment": "What a person asks for, in English, French, Arabic and Japanese (npm run sites). files: what they share with the request, made by fixtures.js. open: the request leaves two choices or more open that would change the whole site, where the skill asks once; elsewhere it asks nothing. Each brief is followed in the same task by its change, or the set's.",
   "change": {
     "en": "Add a page for prices and make the colours warmer.",
     "fr": "Ajoute une page pour les tarifs et rends les couleurs plus chaudes.",
@@ -9,10 +9,31 @@
   },
   "briefs": {
     "empty": {
+      "open": true,
       "en": "Make me a website.",
       "fr": "Fais-moi un site web.",
       "ar": "اصنع لي موقعًا إلكترونيًا.",
       "ja": "ウェブサイトを作って。"
+    },
+    "band": {
+      "open": true,
+      "en": "A site for my band.",
+      "fr": "Un site pour mon groupe de musique.",
+      "ar": "موقع لفرقتي الموسيقية.",
+      "ja": "私のバンドのサイトを作って。",
+      "change": {
+        "en": "Add a page for our concert dates and make the colours warmer.",
+        "fr": "Ajoute une page pour nos dates de concert et rends les couleurs plus chaudes.",
+        "ar": "أضف صفحة لمواعيد حفلاتنا واجعل الألوان أدفأ.",
+        "ja": "ライブ日程のページを追加して、色をもっと温かみのある感じにして。"
+      }
+    },
+    "cleaning": {
+      "open": true,
+      "en": "A site for my cleaning company. We want more clients, and we're hiring too.",
+      "fr": "Un site pour mon entreprise de ménage. On veut plus de clients, et on recrute aussi.",
+      "ar": "موقع لشركتي للتنظيف. نريد المزيد من العملاء، ونوظّف أيضًا.",
+      "ja": "私の清掃会社のサイトを作って。お客さんを増やしたいし、スタッフも募集中。"
     },
     "landing": {
       "en": "A landing page for my app that helps freelancers send invoices, with a waitlist.",

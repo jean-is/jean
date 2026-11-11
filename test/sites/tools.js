@@ -119,4 +119,4 @@ const skillTool = {
 }
 
 /** The skill's line, as own-skills writes it before Skills is found. */
-export const skillLine = async () => ({ name: 'skill', line: `read the steps of a skill before following it: ${(await ownSkills()).join(', ')}` })
+export const skillLine = async () => ({ name: 'skill', line: `read the steps of a skill before asking the user anything for it or following it: ${(await ownSkills()).join(', ')}` })

@@ -160,7 +160,7 @@ test('before Skills is found, `skill`’s line names Jean’s own, and the brain
   // Beside Visual answers, the room's from its first message.
   expect(await page.evaluate(async () => (await (await import('/caps/skills/skills.js')).skills()).map((skill) => skill.name).sort())).toEqual(['music-score', 'visual'])
   const prompt = await page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.find((record) => record.meta?.prompt)?.meta?.prompt)
-  expect(prompt.system).toMatch(/\n- skill: read the steps of a skill before following it: plain-words, letter, [^\n]*\bmusic-score\b/)
+  expect(prompt.system).toMatch(/\n- skill: read the steps of a skill before asking the user anything for it or following it: plain-words, letter, [^\n]*\bmusic-score\b/)
   expect(prompt.system).not.toContain('<skills>')
   expect(prompt.system).not.toContain('When a request matches a skill')
   expect(prompt.state.tools).toContain('skill')
