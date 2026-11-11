@@ -37,6 +37,8 @@ export const DIRECTORY = Object.freeze([
   { name: 'site', group: 'drawn', icon: 'M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM3 9h18M6 7h.01M8.5 7h.01M7 13h6M7 16h4', cap: 'sites', beside: ['kinds.md', 'look.md'] },
   // Prototypes (D742): the capability it brings, and its sheet of shapes; the look is the site skill's.
   { name: 'prototype', group: 'drawn', icon: 'M3 5h6v14H3zM15 5h6v14h-6zM9 12h6M13 10l2 2-2 2', cap: 'prototypes', beside: ['screens.md'] },
+  // Apps (D553): the pages answers hold, whose capability it needs; a prototype's Build it follows it (D742).
+  { name: 'app', group: 'drawn', icon: 'M4 4h6.5v6.5H4zM4 13.5h6.5V20H4zM13.5 13.5H20V20h-6.5zM16.75 3.35l3.9 3.9-3.9 3.9-3.9-3.9z', cap: 'interactive' },
   { name: 'pptx', group: 'drawn', icon: 'M6.5 3.5h8l4 4v13h-12zM14.5 3.5v4h4M9 14a3 3 0 1 0 6 0 3 3 0 1 0-6 0M12 11v3h3' },
   // Extensions (D692): the capability whose tool it brings, `extension`, which offers one on its page in Settings.
   { name: 'extension', group: 'work', icon: 'M4 10a2.5 2.5 0 0 1 2.5-2.5h2a2.25 2.25 0 1 1 3.5 0h4.5V12a2.25 2.25 0 1 1 0 3.5v2a2.5 2.5 0 0 1-2.5 2.5h-7.5A2.5 2.5 0 0 1 4 17.5Z', cap: 'extensions' },
@@ -57,10 +59,9 @@ export function shownIn({ name, description, title = name, metadata = {} }, lang
  * @returns {Promise<Ready[]>}
  */
 export async function readDirectory({ fetch = globalThis.fetch, base = new URL('directory/', import.meta.url) } = {}) {
-  const read = await Promise.all(DIRECTORY.map(async ({ name, group, icon, cap, beside }) => {
+  return (await Promise.all(DIRECTORY.map(async ({ name, group, icon, cap, beside }) => {
     const url = new URL(`${name}/SKILL.md`, base).href
     const skill = await fetch(url).then(async (response) => (response.ok ? parseSkill(await response.text(), url) : null)).catch(() => null)
     return skill?.name === name ? [{ name, type: /** @type {const} */ ('skill-md'), description: skill.description, url, digest: '', source: '', icon, group, metadata: skill.metadata, body: skill.body, blocks: skill.blocks, cap, beside }] : []
-  }))
-  return read.flat()
+  }))).flat()
 }

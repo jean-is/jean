@@ -71,7 +71,7 @@ customElements.define('app-prototype', class extends HTMLElement {
   /** Build it: Jean is asked for the app the prototype shows, one that works, and given every file of it, as its skill says to build one; the pane makes way where it covers the conversation. */
   build = () => {
     const one = /** @type {Prototype} */ (this.site), files = [...one.files].filter(([path]) => /\.(html|css|js)$/.test(path)).map(([path, bytes]) => `${path}\n\`\`\`\n${new TextDecoder().decode(bytes)}\n\`\`\``)
-    send(t('prototypes.building', { name: one.name }), { notes: [noteRecord(`The user asks you to build the prototype ${one.name} (${one.path}) for real. Read the skill prototype if it isn't above, and follow its part “Build it for real”. Every file of the prototype:\n\n${files.join('\n\n')}`, { kind: 'prototype', uri: one.path })] })
+    send(t('prototypes.building', { name: one.name }), { notes: [noteRecord(`The user asks you to build the prototype ${one.name} (${one.path}) for real. Read the skills prototype and app if they aren't above, and follow the first's part “Build it for real”. Every file of the prototype:\n\n${files.join('\n\n')}`, { kind: 'prototype', uri: one.path })] })
     if (document.documentElement.dataset.dock === 'over') import('../../ui/preview.js').then(({ unshow }) => unshow(one.path))
   }
 

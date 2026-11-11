@@ -3,6 +3,7 @@
 // called, from what pressing through found; the tools as declared.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
+import { readFile } from 'node:fs/promises'
 import { checkScreens, told, flows, stepsOf, named } from '../app/caps/prototypes/check.js'
 import { LINES, PROTOTYPE, CHANGE } from '../app/caps/prototypes/tool.js'
 import { ownSkills } from './prototypes/tools.js'
@@ -83,4 +84,20 @@ test('the tools are declared as a site’s are, a prototype saying its shape, wi
   assert.deepEqual(/** @type {any} */ (PROTOTYPE.parameters).properties.shape.enum, ['phone', 'computer'])
   assert.deepEqual(CHANGE.parameters.required, ['prototype'])
   assert.ok((await ownSkills()).includes('prototype') && (await ownSkills()).includes('site'))
+})
+
+// Build it (board.js) sends the prototype's files with a note naming two skills: the prototype's own, whose part on building
+// says only what a prototype adds, and “Make an app”, which says how an app is written and names what a page is given.
+test('Build it follows the skill for apps, which names only the colours and type a page in an answer is given', async () => {
+  const read = (/** @type {string} */ path) => readFile(new URL(`../app/caps/${path}`, import.meta.url), 'utf8')
+  const [prototype, app, pages, board] = await Promise.all([read('skills/directory/prototype/SKILL.md'), read('skills/directory/app/SKILL.md'), read('interactive/interactive.js'), read('prototypes/board.js')])
+  const build = prototype.slice(prototype.indexOf('## Build it for real'), prototype.indexOf('## What a prototype isn'))
+  assert.match(build, /Read the skill `app`/)
+  assert.doesNotMatch(build, /localStorage|```html/, 'how an app is written is said once, in its own skill')
+  assert.match(board, /Read the skills prototype and app/)
+  assert.ok((await ownSkills()).includes('app'))
+  const given = new Set([...pages.matchAll(/'((?:color|font|border-radius)-[\w-]+)':/g)].map(([, name]) => name))
+  const named = [...app.matchAll(/`--([\w-]+)`/g)].map(([, name]) => name)
+  assert.ok(named.length >= 8 && named.every((name) => given.has(name)), String(named.filter((name) => !given.has(name))))
+  for (const said of ['localStorage', '256 KB', 'aria-current', 'role="status"', 'sendPrompt(text)', '<title>']) assert.ok(app.includes(said), said)
 })

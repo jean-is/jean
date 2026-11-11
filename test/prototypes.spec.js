@@ -79,7 +79,7 @@ test('a prototype made with its skill is pressed through and checked, runs in Tr
   await expect(page.locator('.msg-user').last()).toContainText('Build “Salon” for real, as an app that works.')
   await answered(page, 3)
   const given = await page.evaluate(async () => { const { app } = await import('/ui/state.js'); return (await app.fs.read(String(app.current.value?.path))) ?? '' })
-  for (const words of ['its part “Build it for real”', 'Every file of the prototype', 'confirm.html', 'prototype.js']) expect(given).toContain(words)
+  for (const words of ['Read the skills prototype and app', 'part “Build it for real”', 'Every file of the prototype', 'confirm.html', 'prototype.js']) expect(given).toContain(words)
   // The strip is one Tab stop: its arrows go down it, Enter shows the page.
   await view.locator('.proto-strip .proto-page').first().focus()
   await page.keyboard.press('ArrowDown')

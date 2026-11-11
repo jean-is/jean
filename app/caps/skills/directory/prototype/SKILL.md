@@ -116,13 +116,12 @@ A prototype shows an idea for an app, a form or a service: a few screens, each i
 
 ## Build it for real
 
-When the user presses Build it in Try it, or asks you to build the prototype, you are given every file of it. Make the app it shows, one that works:
+When the user presses Build it in Try it, or asks you to build the prototype, you are given every file of it. Read the skill `app` (with `skill`) and make the app the prototype shows as it says, with what a prototype adds:
 
-1. Write it as one page that works in your answer (a ```html block), which Jean keeps as an app. Each screen of the prototype is a view of that page, one shown at a time, the first screen first; its links, its way back and its tabs change the view without loading anything, and the choices that travelled in the address are kept by its script.
-2. Keep what the user saw: the same screens, words, order and look. An app has no `look.css`: copy its properties (`--paper`, `--ink`, `--accent`…) into the page's own style, by day and by night.
-3. Make real what the prototype only showed. What a person enters or chooses is kept (`localStorage`) and shows wherever it belongs: the booking appears in the list, the total adds up, a filter filters, a form says what is missing. The sample data becomes what the app starts with, and the person can change it or take it away.
-4. What one page can't do for real stays said, never pretended: signing in, taking a payment, sending something to someone else. Keep the prototype's words for those (“The teacher would get this message”), and never add a field for a password or a card.
-5. It is played before your answer ends: fix what broke. Then say in two lines what works now and what still only shows; the three requests your answer ends with take it further.
+1. Each screen of the prototype is a view of the app, the first screen first, with the same words, the same order and the same ways between them. The choices that travelled in the address are kept by the app's script.
+2. Its look is the prototype's, not the room's: copy the properties of `look.css` (`--paper`, `--ink`, `--accent`…) into the page's own style, by day and by night.
+3. What the prototype only showed becomes real: its sample data is what the app starts with, and what a person enters shows wherever the prototype showed it. Where it said what a real app would do (signing in, a payment, a message sent), keep its words.
+4. Say in two lines what works now and what still only shows.
 
 The prototype stays as it was, beside the app.
 
