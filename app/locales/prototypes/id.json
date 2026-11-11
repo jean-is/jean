@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "{name}, sebuah prototipe",
+  "prototypes.view": "Tampilan",
+  "prototypes.board": "Semua halaman",
+  "prototypes.play": "Coba",
+  "prototypes.pages": "Halaman {name}",
+  "prototypes.page": "Halaman {n} dari {count}",
+  "prototypes.leads": "Menuju ke {pages}",
+  "prototypes.changed": "Diubah oleh {name}",
+  "prototypes.zoomOut": "Perkecil",
+  "prototypes.zoomIn": "Perbesar",
+  "prototypes.fit": "Paskan",
+  "prototypes.zoom": "Perbesaran {level}",
+  "prototypes.zip": "Prototipe sebagai zip",
+  "prototypes.ask": "Buat prototipe {what}.",
+  "prototypes.example": "aplikasi pemesanan untuk salon rambut saya"
+}

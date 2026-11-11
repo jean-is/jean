@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "{name}, bir prototip",
+  "prototypes.view": "Görünüm",
+  "prototypes.board": "Tüm sayfalar",
+  "prototypes.play": "Dene",
+  "prototypes.pages": "{name} prototipinin sayfaları",
+  "prototypes.page": "Sayfa {n} / {count}",
+  "prototypes.leads": "Şuraya götürür: {pages}",
+  "prototypes.changed": "Değiştiren: {name}",
+  "prototypes.zoomOut": "Uzaklaştır",
+  "prototypes.zoomIn": "Yakınlaştır",
+  "prototypes.fit": "Sığdır",
+  "prototypes.zoom": "Yakınlaştırma {level}",
+  "prototypes.zip": "Prototip zip olarak",
+  "prototypes.ask": "{what} için bir prototip yap.",
+  "prototypes.example": "kuaför salonumun randevu uygulaması"
+}

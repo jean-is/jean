@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "{name}, en prototype",
+  "prototypes.view": "Visning",
+  "prototypes.board": "Alle sider",
+  "prototypes.play": "Prøv den",
+  "prototypes.pages": "Sider i {name}",
+  "prototypes.page": "Side {n} af {count}",
+  "prototypes.leads": "Fører til {pages}",
+  "prototypes.changed": "Ændret af {name}",
+  "prototypes.zoomOut": "Zoom ud",
+  "prototypes.zoomIn": "Zoom ind",
+  "prototypes.fit": "Tilpas",
+  "prototypes.zoom": "Zoom {level}",
+  "prototypes.zip": "Prototypen som zip",
+  "prototypes.ask": "Lav en prototype af {what}.",
+  "prototypes.example": "en bookingapp til min frisørsalon"
+}

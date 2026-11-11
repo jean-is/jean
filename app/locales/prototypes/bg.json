@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "{name}, прототип",
+  "prototypes.view": "Изглед",
+  "prototypes.board": "Всички страници",
+  "prototypes.play": "Опитай",
+  "prototypes.pages": "Страници на {name}",
+  "prototypes.page": "Страница {n} от {count}",
+  "prototypes.leads": "Води към {pages}",
+  "prototypes.changed": "Променено от {name}",
+  "prototypes.zoomOut": "Намаляване",
+  "prototypes.zoomIn": "Увеличаване",
+  "prototypes.fit": "Побиране",
+  "prototypes.zoom": "Мащаб {level}",
+  "prototypes.zip": "Прототипът като zip",
+  "prototypes.ask": "Направи прототип на {what}.",
+  "prototypes.example": "приложение за записване на час в моя фризьорски салон"
+}

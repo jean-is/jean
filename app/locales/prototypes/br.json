@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "{name}, ur prototip",
+  "prototypes.view": "Diskouez",
+  "prototypes.board": "An holl bajennoù",
+  "prototypes.play": "Esaeañ",
+  "prototypes.pages": "Pajennoù {name}",
+  "prototypes.page": "Pajenn {n} diwar {count}",
+  "prototypes.leads": "A gas da {pages}",
+  "prototypes.changed": "Cheñchet gant {name}",
+  "prototypes.zoomOut": "Pellaat",
+  "prototypes.zoomIn": "Tostaat",
+  "prototypes.fit": "Gwelet pep tra",
+  "prototypes.zoom": "Ment {level}",
+  "prototypes.zip": "Ar prototip e zip",
+  "prototypes.ask": "Gra ur prototip eus {what}.",
+  "prototypes.example": "un arload da gemer emgav em stal barver"
+}

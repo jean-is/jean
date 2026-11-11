@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "{name}, samfurin gwaji",
+  "prototypes.view": "Yanayin gani",
+  "prototypes.board": "Duk shafuka",
+  "prototypes.play": "Gwada shi",
+  "prototypes.pages": "Shafukan {name}",
+  "prototypes.page": "Shafi {n} cikin {count}",
+  "prototypes.leads": "Yana kai ga {pages}",
+  "prototypes.changed": "Canjin {name}",
+  "prototypes.zoomOut": "Rage girma",
+  "prototypes.zoomIn": "Ƙara girma",
+  "prototypes.fit": "Daidaita",
+  "prototypes.zoom": "Girma {level}",
+  "prototypes.zip": "Samfurin gwajin a matsayin zip",
+  "prototypes.ask": "Yi min samfurin gwaji na {what}.",
+  "prototypes.example": "manhajar yin alƙawari a shagona na gyaran gashi"
+}

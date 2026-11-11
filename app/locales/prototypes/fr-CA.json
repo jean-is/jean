@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "{name}, un prototype",
+  "prototypes.view": "Affichage",
+  "prototypes.board": "Toutes les pages",
+  "prototypes.play": "Essayer",
+  "prototypes.pages": "Pages de {name}",
+  "prototypes.page": "Page {n} sur {count}",
+  "prototypes.leads": "Mène à {pages}",
+  "prototypes.changed": "Modifié par {name}",
+  "prototypes.zoomOut": "Zoom arrière",
+  "prototypes.zoomIn": "Zoom avant",
+  "prototypes.fit": "Ajuster",
+  "prototypes.zoom": "Zoom {level}",
+  "prototypes.zip": "Le prototype en zip",
+  "prototypes.ask": "Crée un prototype : {what}.",
+  "prototypes.example": "une application de réservation pour mon salon de coiffure"
+}

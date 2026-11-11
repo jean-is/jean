@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "{name}, एक प्रोटोटाइप",
+  "prototypes.view": "पाहण्याची पद्धत",
+  "prototypes.board": "सर्व पेज",
+  "prototypes.play": "वापरून पाहा",
+  "prototypes.pages": "{name} चे पेज",
+  "prototypes.page": "{count} पैकी पेज {n}",
+  "prototypes.leads": "इथून जाता येते: {pages}",
+  "prototypes.changed": "{name} कडून बदल",
+  "prototypes.zoomOut": "लहान करा",
+  "prototypes.zoomIn": "मोठे करा",
+  "prototypes.fit": "सर्व दाखवा",
+  "prototypes.zoom": "झूम {level}",
+  "prototypes.zip": "प्रोटोटाइप zip स्वरूपात",
+  "prototypes.ask": "{what} चा एक प्रोटोटाइप बनव.",
+  "prototypes.example": "माझ्या हेअर सलूनसाठी बुकिंग ॲप"
+}

@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "{name}, אב טיפוס",
+  "prototypes.view": "תצוגה",
+  "prototypes.board": "כל הדפים",
+  "prototypes.play": "לנסות",
+  "prototypes.pages": "הדפים של {name}",
+  "prototypes.page": "דף {n} מתוך {count}",
+  "prototypes.leads": "מוביל אל {pages}",
+  "prototypes.changed": "שונה על ידי {name}",
+  "prototypes.zoomOut": "התרחקות",
+  "prototypes.zoomIn": "התקרבות",
+  "prototypes.fit": "התאמה",
+  "prototypes.zoom": "זום {level}",
+  "prototypes.zip": "אב הטיפוס כקובץ zip",
+  "prototypes.ask": "צור אב טיפוס של {what}.",
+  "prototypes.example": "אפליקציה לקביעת תורים למספרה שלי"
+}

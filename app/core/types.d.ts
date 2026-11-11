@@ -217,6 +217,8 @@ export type SystemNoteData =
   | { kind: 'game', uri: string }
   /** the site on show beside the conversation, its page on show as it is now (D720) */
   | { kind: 'site', uri: string }
+  /** the prototype on show beside the conversation, its page on show and the part the user points at (D742) */
+  | { kind: 'prototype', uri: string }
   /** what follows came from someone else's Jean, shared through the host named (D361) or sent by a person met, and where the user's own requests start again (end) */
   | { kind: 'shared', from?: string, person?: string, name?: string, thread?: { task: string, id: string }, id?: string, end?: true }
   /** Intuition read a danger in a child's message, told to their parent unless it is at home (D228) */

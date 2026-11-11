@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "原型“{name}”",
+  "prototypes.view": "查看方式",
+  "prototypes.board": "所有页面",
+  "prototypes.play": "试一试",
+  "prototypes.pages": "“{name}”的页面",
+  "prototypes.page": "第 {n} 页，共 {count} 页",
+  "prototypes.leads": "链接到 {pages}",
+  "prototypes.changed": "{name} 的修改",
+  "prototypes.zoomOut": "缩小",
+  "prototypes.zoomIn": "放大",
+  "prototypes.fit": "全部显示",
+  "prototypes.zoom": "缩放 {level}",
+  "prototypes.zip": "原型打包为 zip",
+  "prototypes.ask": "给{what}做一个原型。",
+  "prototypes.example": "我理发店的预约应用"
+}

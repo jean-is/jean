@@ -1,9 +1,10 @@
-// A canvas for prototypes, phase 0: the check from a prototype's files (test/prototypes/check.js), which npm run prototypes
-// measures brains with: Sites' check less what only a site for strangers needs, and a prototype's own rules.
+// Prototypes (D742): the check from a prototype's files (app/caps/prototypes/check.js), which npm run prototypes measures brains
+// with too: Sites' check less what only a site for strangers needs, and a prototype's own rules; the tools as declared.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { checkScreens, told } from './prototypes/check.js'
-import { LINES, PROTOTYPE, CHANGE, ownSkills } from './prototypes/tools.js'
+import { checkScreens, told, flows } from '../app/caps/prototypes/check.js'
+import { LINES, PROTOTYPE, CHANGE } from '../app/caps/prototypes/tool.js'
+import { ownSkills } from './prototypes/tools.js'
 
 const encode = (/** @type {string} */ text) => new TextEncoder().encode(text)
 
@@ -42,9 +43,11 @@ test('a prototype keeps nothing but its address, shows no alert, and asks for no
 
 test('one screen alone is no prototype, and the report says how far pressing through went', () => {
   const report = checkScreens(new Map([['index.html', encode(screen('Survey', '<h1>One question</h1>'))]]))
-  assert.match(report.problems.join('\n'), /it has one screen/)
+  assert.match(report.problems.join('\n'), /it has one page/)
   const said = told({ ...report, flow: { screens: ['index.html'], reached: ['index.html'], followed: 0, pressed: 3, dead: [], unsure: 0, leads: [], errors: 0 } }, { name: 'Survey', place: 'prototypes/1-survey' })
-  assert.match(said, /^Prototype "Survey" is at prototypes\/1-survey: 1 screen in en\.\nPressed through at 390 pixels from index\.html: 1 of 1 screens reached, 0 links followed and 3 controls pressed, 0 doing nothing\./)
+  assert.match(said, /^Prototype "Survey" is at prototypes\/1-survey: 1 page in en\.\nPressed through from index\.html: 1 of 1 pages reached, 0 links followed and 3 controls pressed, 0 doing nothing\./)
+  assert.equal(flows({ ...report, problems: [], flow: { screens: ['index.html'], reached: ['index.html'], followed: 0, pressed: 3, dead: [], unsure: 0, leads: [], errors: 0 } }), true)
+  assert.equal(flows({ ...report, problems: [], flow: { screens: ['index.html', 'x.html'], reached: ['index.html'], followed: 0, pressed: 3, dead: [], unsure: 0, leads: [], errors: 0 } }), false)
 })
 
 test('the tools are declared as a site’s are, with the draft skill among Jean’s own', async () => {

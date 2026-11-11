@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "{name}, prototyp",
+  "prototypes.view": "Zobrazenie",
+  "prototypes.board": "Všetky stránky",
+  "prototypes.play": "Vyskúšať",
+  "prototypes.pages": "Stránky prototypu {name}",
+  "prototypes.page": "Stránka {n} z {count}",
+  "prototypes.leads": "Kam vedie: {pages}",
+  "prototypes.changed": "Zmenila aplikácia {name}",
+  "prototypes.zoomOut": "Oddialiť",
+  "prototypes.zoomIn": "Priblížiť",
+  "prototypes.fit": "Prispôsobiť",
+  "prototypes.zoom": "Priblíženie {level}",
+  "prototypes.zip": "Prototyp ako zip",
+  "prototypes.ask": "Vytvor prototyp {what}.",
+  "prototypes.example": "rezervačnej aplikácie pre môj kadernícky salón"
+}

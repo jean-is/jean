@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "{name}, một nguyên mẫu",
+  "prototypes.view": "Chế độ xem",
+  "prototypes.board": "Tất cả các trang",
+  "prototypes.play": "Dùng thử",
+  "prototypes.pages": "Các trang của {name}",
+  "prototypes.page": "Trang {n}/{count}",
+  "prototypes.leads": "Dẫn đến {pages}",
+  "prototypes.changed": "{name} đã đổi",
+  "prototypes.zoomOut": "Thu nhỏ",
+  "prototypes.zoomIn": "Phóng to",
+  "prototypes.fit": "Vừa khung",
+  "prototypes.zoom": "Thu phóng {level}",
+  "prototypes.zip": "Nguyên mẫu dạng zip",
+  "prototypes.ask": "Làm một nguyên mẫu cho {what}.",
+  "prototypes.example": "ứng dụng đặt lịch tại tiệm tóc của tôi"
+}

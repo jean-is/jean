@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "{name}, ஒரு முன்மாதிரி",
+  "prototypes.view": "காட்சி",
+  "prototypes.board": "எல்லாப் பக்கங்களும்",
+  "prototypes.play": "முயன்று பார்",
+  "prototypes.pages": "{name} முன்மாதிரியின் பக்கங்கள்",
+  "prototypes.page": "{count} இல் பக்கம் {n}",
+  "prototypes.leads": "இங்கிருந்து செல்லும் பக்கங்கள்: {pages}",
+  "prototypes.changed": "{name} செய்த மாற்றம்",
+  "prototypes.zoomOut": "சிறிதாக்கு",
+  "prototypes.zoomIn": "பெரிதாக்கு",
+  "prototypes.fit": "பொருத்து",
+  "prototypes.zoom": "பெரிதாக்கம் {level}",
+  "prototypes.zip": "முன்மாதிரி zip ஆக",
+  "prototypes.ask": "{what}க்கான ஒரு முன்மாதிரியை உருவாக்கு.",
+  "prototypes.example": "என் சிகையலங்கார நிலையத்தின் முன்பதிவு செயலி"
+}

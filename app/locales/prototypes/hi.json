@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "{name}, एक प्रोटोटाइप",
+  "prototypes.view": "देखने का तरीका",
+  "prototypes.board": "सभी पेज",
+  "prototypes.play": "आज़माएँ",
+  "prototypes.pages": "{name} के पेज",
+  "prototypes.page": "{count} में से पेज {n}",
+  "prototypes.leads": "यहाँ से जा सकते हैं: {pages}",
+  "prototypes.changed": "{name} के बदलाव",
+  "prototypes.zoomOut": "छोटा करें",
+  "prototypes.zoomIn": "बड़ा करें",
+  "prototypes.fit": "सब दिखाएँ",
+  "prototypes.zoom": "ज़ूम {level}",
+  "prototypes.zip": "प्रोटोटाइप zip के रूप में",
+  "prototypes.ask": "{what} का एक प्रोटोटाइप बनाओ।",
+  "prototypes.example": "मेरे हेयर सैलून के लिए बुकिंग ऐप"
+}

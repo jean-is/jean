@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "{name}, sebuah prototaip",
+  "prototypes.view": "Paparan",
+  "prototypes.board": "Semua halaman",
+  "prototypes.play": "Cuba",
+  "prototypes.pages": "Halaman {name}",
+  "prototypes.page": "Halaman {n} daripada {count}",
+  "prototypes.leads": "Membawa ke {pages}",
+  "prototypes.changed": "Diubah oleh {name}",
+  "prototypes.zoomOut": "Zum keluar",
+  "prototypes.zoomIn": "Zum masuk",
+  "prototypes.fit": "Muatkan",
+  "prototypes.zoom": "Zum {level}",
+  "prototypes.zip": "Prototaip sebagai zip",
+  "prototypes.ask": "Hasilkan prototaip {what}.",
+  "prototypes.example": "aplikasi tempahan untuk salun rambut saya"
+}

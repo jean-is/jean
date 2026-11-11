@@ -1,12 +1,12 @@
-// The tools a brain is given in npm run prototypes (a canvas for prototypes, phase 0): `prototype` and `prototype_change`,
-// declared here only, as Sites' phase 0 declared its own, each keeping the prototype in the run's folder, dressed in its look as
-// a site is (D739: Sites' look.js, read only), and returning its check (./check.js); and `skill`, which reads Jean's own skills
-// as own-skills does, with the draft "Make a prototype" (./skill/) among them.
+// The tools a brain is given in npm run prototypes (D742): `prototype` and `prototype_change`, as Prototypes declares them
+// (app/caps/prototypes/tool.js), each keeping the prototype in the run's folder, dressed in its look as a site is (D739), and
+// returning its check (./check.js), pressed through in Chromium; and `skill`, which reads Jean's own skills as own-skills does,
+// "Make a prototype" among them.
 import { mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { check, told } from './check.js'
 import { pathIn, changed } from '../../app/caps/sites/file.js'
-import { SITE } from '../../app/caps/sites/tool.js'
+import { PROTOTYPE, CHANGE } from '../../app/caps/prototypes/tool.js'
 import { dealt, worn as wear, saidOf } from '../../app/caps/sites/look.js'
 
 /** @import { Tool } from '../../app/core/loop.js' */
@@ -16,32 +16,9 @@ import { dealt, worn as wear, saidOf } from '../../app/caps/sites/look.js'
 /** @typedef {{ name: string, files: Map<string, Uint8Array>, kept?: { id: string, voice: string, own?: import('../../app/caps/sites/look.js').Own } }} Kept */
 
 const DIRECTORY = new URL('../../app/caps/skills/directory/', import.meta.url)
-const DRAFT = new URL('./skill/', import.meta.url)
 const { palettes } = JSON.parse(await readFile(new URL('../../app/caps/designs/layouts.json', import.meta.url), 'utf8'))
 
-export const LINES = [{ name: 'prototype', line: 'make a clickable prototype of an app or a flow, a few screens; each call presses through it and says what to fix' },
-  { name: 'prototype_change', line: 'change a prototype by exact passages; it is checked again' }]
-
-// A file and a look as a site's are given: the same words, so that what phase 1 builds can share them.
-const { files: FILES, look: LOOK } = /** @type {any} */ (SITE.parameters).properties
-const FILE = { ...FILES.items, properties: { ...FILES.items.properties, path: { type: 'string', description: 'Its path in the prototype: index.html, time.html, style.css, prototype.js, photos/chair.jpg' } } }
-
-/** @type {import('../../app/core/types.js').ToolSpec} */
-export const PROTOTYPE = {
-  name: 'prototype',
-  description: 'Make a clickable prototype of an app or a flow, a screen per page, or replace one whole. Read the skill prototype first. Give every file: each screen as HTML, index.html first, one style.css, a prototype.js only if needed, pictures from the task\'s files. Each call opens every screen at 390 and 1280 pixels, presses every control from index.html on, and says what to fix: fix it and call again.',
-  parameters: { type: 'object', properties: { name: { type: 'string', description: "The prototype's name, in the user's language" }, prototype: { type: 'string', description: "A prototype's place, to replace it whole" },
-    files: { type: 'array', items: FILE }, look: LOOK }, required: ['name', 'files'] },
-}
-
-/** @type {import('../../app/core/types.js').ToolSpec} */
-export const CHANGE = {
-  name: 'prototype_change',
-  description: 'Change a prototype by exact passages of its files, each found once; add or replace whole files with files, take some away with remove. It is checked again and said, as prototype does.',
-  parameters: { type: 'object', properties: { prototype: { type: 'string', description: 'Its place, as prototype gave it' },
-    changes: { type: 'array', items: { type: 'object', properties: { path: { type: 'string' }, old: { type: 'string' }, new: { type: 'string' } }, required: ['path', 'old', 'new'] } },
-    files: { type: 'array', items: FILE }, remove: { type: 'array', items: { type: 'string' } }, look: LOOK }, required: ['prototype'] },
-}
+export { LINES } from '../../app/caps/prototypes/tool.js'
 
 /** A slug of a name, in any script. @param {string} name */
 const slug = (name) => name.normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-|-$/g, '').slice(0, 40) || 'prototype'
@@ -120,16 +97,16 @@ export function prototypeTools({ dir, browser, shared, calls }) {
   return [make, change, skillTool]
 }
 
-/** The steps of one of Jean's own skills or the draft, or of a sheet beside them, without the front matter. @param {string} named */
+/** The steps of one of Jean's own skills, or of a sheet beside them, without the front matter. @param {string} named */
 async function skillText(named) {
   const [name, sheet] = named.replace(/\.md$/, '').split('/')
-  const base = name === 'prototype' ? DRAFT : new URL(`${name}/`, DIRECTORY)
+  const base = new URL(`${name}/`, DIRECTORY)
   const text = await readFile(new URL(sheet ? `${sheet}.md` : 'SKILL.md', base), 'utf8').catch(() => null)
   return text?.replace(/^---\n[\s\S]*?\n---\n/, '').trim() ?? null
 }
 
-/** Jean's own skills' names, as own-skills' line lists them, with the draft's. */
-export const ownSkills = async () => [...(await readdir(DIRECTORY, { withFileTypes: true })).filter((entry) => entry.isDirectory()).map((entry) => entry.name), 'prototype'].sort()
+/** Jean's own skills' names, as own-skills' line lists them. */
+export const ownSkills = async () => (await readdir(DIRECTORY, { withFileTypes: true })).filter((entry) => entry.isDirectory()).map((entry) => entry.name).sort()
 
 /** @type {Tool} As own-skills declares it. */
 const skillTool = {

@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "{name}, 프로토타입",
+  "prototypes.view": "보기",
+  "prototypes.board": "모든 페이지",
+  "prototypes.play": "써 보기",
+  "prototypes.pages": "{name}의 페이지",
+  "prototypes.page": "페이지 {n}/{count}",
+  "prototypes.leads": "연결된 페이지: {pages}",
+  "prototypes.changed": "{name}의 변경",
+  "prototypes.zoomOut": "축소",
+  "prototypes.zoomIn": "확대",
+  "prototypes.fit": "전체 보기",
+  "prototypes.zoom": "배율 {level}",
+  "prototypes.zip": "프로토타입을 ZIP으로",
+  "prototypes.ask": "{what} 프로토타입을 만들어 줘.",
+  "prototypes.example": "내 미용실 예약 앱"
+}

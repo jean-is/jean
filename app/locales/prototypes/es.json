@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "{name}, un prototipo",
+  "prototypes.view": "Vista",
+  "prototypes.board": "Todas las páginas",
+  "prototypes.play": "Probarlo",
+  "prototypes.pages": "Páginas de {name}",
+  "prototypes.page": "Página {n} de {count}",
+  "prototypes.leads": "Lleva a {pages}",
+  "prototypes.changed": "Cambiado por {name}",
+  "prototypes.zoomOut": "Alejar",
+  "prototypes.zoomIn": "Acercar",
+  "prototypes.fit": "Ajustar",
+  "prototypes.zoom": "Zoom {level}",
+  "prototypes.zip": "El prototipo en un zip",
+  "prototypes.ask": "Haz un prototipo de {what}.",
+  "prototypes.example": "una aplicación de reservas para mi peluquería"
+}

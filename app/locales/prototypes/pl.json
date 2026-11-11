@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "{name}, prototyp",
+  "prototypes.view": "Widok",
+  "prototypes.board": "Wszystkie strony",
+  "prototypes.play": "Wypróbuj",
+  "prototypes.pages": "Strony: {name}",
+  "prototypes.page": "Strona {n} z {count}",
+  "prototypes.leads": "Prowadzi do: {pages}",
+  "prototypes.changed": "Zmienione przez: {name}",
+  "prototypes.zoomOut": "Pomniejsz",
+  "prototypes.zoomIn": "Powiększ",
+  "prototypes.fit": "Dopasuj",
+  "prototypes.zoom": "Powiększenie {level}",
+  "prototypes.zip": "Prototyp jako zip",
+  "prototypes.ask": "Zrób prototyp {what}.",
+  "prototypes.example": "aplikacji do rezerwacji wizyt w moim salonie fryzjerskim"
+}

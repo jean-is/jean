@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "{name}، یک نمونهٔ اولیه",
+  "prototypes.view": "نما",
+  "prototypes.board": "همهٔ صفحه‌ها",
+  "prototypes.play": "امتحانش کنید",
+  "prototypes.pages": "صفحه‌های {name}",
+  "prototypes.page": "صفحهٔ {n} از {count}",
+  "prototypes.leads": "به {pages} می‌رود",
+  "prototypes.changed": "تغییر از {name}",
+  "prototypes.zoomOut": "کوچک‌نمایی",
+  "prototypes.zoomIn": "بزرگ‌نمایی",
+  "prototypes.fit": "نمایش همه",
+  "prototypes.zoom": "میزان بزرگ‌نمایی {level}",
+  "prototypes.zip": "نمونهٔ اولیه به‌صورت zip",
+  "prototypes.ask": "یک نمونهٔ اولیه از {what} بساز.",
+  "prototypes.example": "یک برنامهٔ نوبت‌دهی برای آرایشگاهم"
+}

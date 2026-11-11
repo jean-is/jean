@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "{name}፣ ፕሮቶታይፕ",
+  "prototypes.view": "እይታ",
+  "prototypes.board": "ሁሉም ገጾች",
+  "prototypes.play": "ይሞክሩት",
+  "prototypes.pages": "የ{name} ገጾች",
+  "prototypes.page": "ገጽ {n} ከ{count}",
+  "prototypes.leads": "ወደ {pages} ይወስዳል",
+  "prototypes.changed": "የ{name} ለውጥ",
+  "prototypes.zoomOut": "አርቅ",
+  "prototypes.zoomIn": "አቅርብ",
+  "prototypes.fit": "ሁሉንም አሳይ",
+  "prototypes.zoom": "ማጉላት {level}",
+  "prototypes.zip": "ፕሮቶታይፑ በዚፕ",
+  "prototypes.ask": "ፕሮቶታይፕ ሥራልኝ፦ {what}።",
+  "prototypes.example": "ለፀጉር ቤቴ የቀጠሮ ማስያዣ መተግበሪያ"
+}

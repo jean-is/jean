@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "ต้นแบบ {name}",
+  "prototypes.view": "มุมมอง",
+  "prototypes.board": "ทุกหน้า",
+  "prototypes.play": "ลองใช้",
+  "prototypes.pages": "หน้าของ {name}",
+  "prototypes.page": "หน้า {n} จาก {count}",
+  "prototypes.leads": "ไปยัง {pages}",
+  "prototypes.changed": "แก้ไขโดย {name}",
+  "prototypes.zoomOut": "ย่อ",
+  "prototypes.zoomIn": "ขยาย",
+  "prototypes.fit": "ปรับให้พอดี",
+  "prototypes.zoom": "ซูม {level}",
+  "prototypes.zip": "ต้นแบบเป็นไฟล์ zip",
+  "prototypes.ask": "สร้างต้นแบบ{what}",
+  "prototypes.example": "แอปจองคิวสำหรับร้านทำผมของฉัน"
+}

@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "{name}, prototyyppi",
+  "prototypes.view": "Näkymä",
+  "prototypes.board": "Kaikki sivut",
+  "prototypes.play": "Kokeile",
+  "prototypes.pages": "Sivut: {name}",
+  "prototypes.page": "Sivu {n}/{count}",
+  "prototypes.leads": "Vie eteenpäin: {pages}",
+  "prototypes.changed": "Muuttanut: {name}",
+  "prototypes.zoomOut": "Loitonna",
+  "prototypes.zoomIn": "Lähennä",
+  "prototypes.fit": "Sovita",
+  "prototypes.zoom": "Zoomaus {level}",
+  "prototypes.zip": "Prototyyppi zip-tiedostona",
+  "prototypes.ask": "Tee prototyyppi: {what}.",
+  "prototypes.example": "ajanvaraussovellus kampaamolleni"
+}

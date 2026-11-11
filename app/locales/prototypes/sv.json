@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "{name}, en prototyp",
+  "prototypes.view": "Visning",
+  "prototypes.board": "Alla sidor",
+  "prototypes.play": "Prova den",
+  "prototypes.pages": "Sidor i {name}",
+  "prototypes.page": "Sida {n} av {count}",
+  "prototypes.leads": "Leder till {pages}",
+  "prototypes.changed": "Ändrad av {name}",
+  "prototypes.zoomOut": "Zooma ut",
+  "prototypes.zoomIn": "Zooma in",
+  "prototypes.fit": "Anpassa",
+  "prototypes.zoom": "Zoom {level}",
+  "prototypes.zip": "Prototypen som zip",
+  "prototypes.ask": "Gör en prototyp av {what}.",
+  "prototypes.example": "en bokningsapp för min frisörsalong"
+}

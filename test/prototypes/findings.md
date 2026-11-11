@@ -97,5 +97,7 @@ still picture of a page at 390 pixels in the order pressing through reaches them
 phone; under that, where each page leads, as text. Nothing is dragged, nothing hides at 320 pixels, one live document runs whatever
 the prototype's length, and the framed views' budget (D475) stays Sites' one.
 
+Built (D742), the capability was measured again with its own skill, tools and check: [results.md](results.md).
+
 The write-up, with the recommendation (stop, keep this harness; if built anyway, prototypes as a kind of site), is the doc
 [A canvas for prototypes: phase 0](https://claude.ai/artifact/6BtgNw9PcmQNv2CbMYGUJz).

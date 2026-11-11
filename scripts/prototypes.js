@@ -1,9 +1,9 @@
-// Measures a canvas for prototypes' phase 0, before anything of it is built: how often a brain makes a clickable prototype of an
+// Measures Prototypes (D742), first in its phase 0 before it was built: how often a brain makes a clickable prototype of an
 // app or a flow, a screen per page, that passes its check and whose flow works, from the briefs of test/prototypes/set.json in
 // English, French, Arabic and Japanese, then changes it as asked in the same task. Each brief is a task of Jean's run in Node
-// (test/longtasks/jean.js): Jean's prompt and own capabilities, the skill tool listing Jean's own skills with the draft "Make a
-// prototype" among them, and the tools a prototype kind would declare, `prototype` and `prototype_change`, whose check presses
-// through every screen in Chromium (test/prototypes/check.js). A question the brain asks gets the recommended answer. What it did
+// (test/longtasks/jean.js): Jean's prompt and own capabilities, the skill tool listing Jean's own skills, "Make a prototype" among
+// them, and Prototypes' tools, `prototype` and `prototype_change`, whose check presses through every page in Chromium as the tab
+// does (test/prototypes/check.js). A question the brain asks gets the recommended answer. What it did
 // is read from its conversation: whether it read the skill before its first prototype, asked, wrote a page instead, how many
 // checks it took until nothing was left to fix, whether its flow works (every screen reached from the first, no control doing
 // nothing), and how its change went. Then a judge, given the brief, every screen on a phone side by side and the first on a
@@ -300,10 +300,10 @@ async function write({ name }, section) {
   const sections = [section, ...kept].map((part) => part.trimEnd())
   await writeFile(`${DIR}results.md`, `# Prototypes: how often a brain makes one whose flow works
 
-Written by \`npm run prototypes -- --write\`, one section per brain, replaced when that brain is measured again: a canvas for
-prototypes' phase 0, before anything of it is built. Each brief of set.json is a task of Jean's run in Node in its language, the
-measured brain answering through Jean's prompt and own capabilities, the draft skill "Make a prototype" (skill/) among Jean's own,
-and the two tools a prototype kind would declare, unguided: a question it asks gets the recommended answer. Its change follows in
+Written by \`npm run prototypes -- --write\`, one section per brain, replaced when that brain is measured again: first Prototypes'
+phase 0, before it was built (findings.md), then the capability (D742). Each brief of set.json is a task of Jean's run in Node in
+its language, the measured brain answering through Jean's prompt and own capabilities, the skill "Make a prototype" among Jean's own,
+and Prototypes' two tools, unguided: a question it asks gets the recommended answer. Its change follows in
 the same task. A prototype is clean when its last check has nothing to fix; its flow works when every screen is reached from the
 first by pressing what it shows, and no control does nothing. The judge sees the brief, every screen reached on a phone side by
 side and the first on a computer, and says whether the person would show it to colleagues as a prototype of their idea. A brief

@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "{name}, een prototype",
+  "prototypes.view": "Weergave",
+  "prototypes.board": "Alle pagina’s",
+  "prototypes.play": "Uitproberen",
+  "prototypes.pages": "Pagina’s van {name}",
+  "prototypes.page": "Pagina {n} van {count}",
+  "prototypes.leads": "Leidt naar {pages}",
+  "prototypes.changed": "Gewijzigd door {name}",
+  "prototypes.zoomOut": "Uitzoomen",
+  "prototypes.zoomIn": "Inzoomen",
+  "prototypes.fit": "Passend maken",
+  "prototypes.zoom": "Zoom {level}",
+  "prototypes.zip": "Het prototype als zip",
+  "prototypes.ask": "Maak een prototype van {what}.",
+  "prototypes.example": "een boekingsapp voor mijn kapsalon"
+}

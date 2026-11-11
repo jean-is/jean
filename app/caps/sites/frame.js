@@ -22,7 +22,7 @@ import { LOOK, cssOf } from './look.js'
 /**
  * A site on show, and the brain's with its looks, the one it wears and what picking one does; while the brain's version waits, the
  * person's files as `mine` and what accepting or rejecting it does; words retyped, the site's files after, or null when they can't be;
- * Ask Jean. @typedef {{ path: string, name: string, files: Map<string, Uint8Array>, looks?: Look[], look?: Look, pick?: (look: Look) => unknown,
+ * Ask Jean; the frame's name, when it isn't a site's. @typedef {{ path: string, name: string, files: Map<string, Uint8Array>, label?: string, looks?: Look[], look?: Look, pick?: (look: Look) => unknown,
  *   mine?: Map<string, Uint8Array>, decide?: (yes: boolean) => unknown, retype?: (page: string, changes: { old: string, new: string }[]) => Promise<Map<string, Uint8Array> | null>,
  *   ask?: (asked: { site: Shown, page: string, pointed: Pointed | null }) => unknown }} Shown
  */
@@ -30,9 +30,15 @@ import { LOOK, cssOf } from './look.js'
 const FRAME = new URL('../../preview.html', import.meta.url).href
 /** Jean's own script, ahead of the page on show in the pane (./hand.js). */
 const HAND = fetch(new URL('hand.js', import.meta.url)).then((response) => response.text()).then((code) => `<script>${code}</script>`, () => '')
-const rights = computed(() => pageRights(effective.value.settings, app.policy))
+/**
+ * Jean's script ahead of a page whose choices travel in its address (D742): the address it was reached at given back to it, and a form
+ * sent to another of its pages told to Jean as a link is, its fields as that page's address, which the policy would refuse. @param {string} search
+ */
+export const ahead = (search) => `<script>${search ? `history.replaceState(null,'',${JSON.stringify(search)});` : ''}document.addEventListener('submit',(e)=>{const f=e.target,a=f.getAttribute('action')
+if(!a||/^\\s*(javascript:|#)/i.test(a)||f.method!=='get')return;e.preventDefault();const q=new URLSearchParams(new FormData(f,e.submitter));parent.postMessage({open:a.split('?')[0]+(q.size?'?'+q:'')},'*')},true)</script>`
+export const rights = computed(() => pageRights(effective.value.settings, app.policy))
 /** A site's policy: a web page's in a folder, offline. */
-const policy = () => pagePolicy({ ...rights.peek().allows, web: false, network: false }, [], true)
+export const policy = () => pagePolicy({ ...rights.peek().allows, web: false, network: false }, [], true)
 
 /** A page of the site as one document, its style sheets, scripts and pictures in it. @param {Map<string, Uint8Array>} files @param {string} path */
 export const pageOf = async (files, path) => ((shown) => ('html' in shown ? shown.html : ''))(await sitePage(memoryFS(Object.fromEntries(files)), path))
@@ -103,6 +109,7 @@ let made = 0, refocus = ''
 customElements.define('app-site', class extends HTMLElement {
   #site = /** @type {Shown | null} */ (null)
   #page = 'index.html'
+  #search = ''
   #width = 'computer'
   #id = `site-${++made}`
   #stop = () => {}
@@ -112,8 +119,10 @@ customElements.define('app-site', class extends HTMLElement {
    */
   #hand = ''; #pointed = /** @type {Pointed | null} */ (null); #before = false; #given = /** @type {Shown | null} */ (null)
   set site(site) {
-    if (site !== this.#given) site?.path !== this.#site?.path && ((this.#page = 'index.html'), (this.#hand = ''), (this.#pointed = null)), (this.#given = this.#site = site), (this.#before = false), this.isConnected && this.draw()
+    if (site !== this.#given) site?.path !== this.#site?.path && ((this.#page = 'index.html'), (this.#search = ''), (this.#hand = ''), (this.#pointed = null)), (this.#given = this.#site = site), (this.#before = false), this.isConnected && this.draw()
   }
+  /** Another of its pages on show, at the address given. @param {string} page @param {string} [search] */
+  go(page, search = '') { this.#page = page; this.#search = search; this.#pointed = null; this.draw(); this.dispatchEvent(new Event('input', { bubbles: true })) }
   get site() { return this.#site }
   /** The page on show, for the note a message comes with. */
   get page() { return this.#page }
@@ -151,14 +160,14 @@ customElements.define('app-site', class extends HTMLElement {
     this.dataset.width = this.#width
     const begin = async (/** @type {Event} */ event) => {
       const frame = /** @type {HTMLIFrameElement} */ (event.target).contentWindow, now = this.#site ?? site, scripts = rights.peek().allows.scripts
-      frame?.postMessage({ page: (scripts ? await HAND : '') + await pageOf(this.#before && now.mine ? now.mine : now.files, this.#page), policy: policy() }, '*')
+      frame?.postMessage({ page: (scripts ? ahead(this.#search) + await HAND : '') + await pageOf(this.#before && now.mine ? now.mine : now.files, this.#page), policy: policy() }, '*')
       if (scripts) frame?.postMessage({ hand: this.#does, at: this.pointed?.place ?? '' }, '*')
     }
     const colours = (/** @type {Look} */ { day }) => ref((swatch) => swatch instanceof HTMLElement && Object.entries({ '--swatch-paper': day.paper, '--swatch-ink': day.ink, '--swatch-accent': day.accent }).forEach(([name, value]) => swatch.style.setProperty(name, value)))
     render(nothing, this)
     render(html`${site.looks ? html`<span class="segmented site-looks" role="radiogroup" aria-label=${t('sites.looks')}>${site.looks.map((look, i) => html`<label for=${`${this.#id}-look-${i}`}><input id=${`${this.#id}-look-${i}`}
       type="radio" name=${`${this.#id}-look`} .checked=${look === site.look} @change=${() => this.wear(look)}><span><i class="site-swatch" aria-hidden="true" ${colours(look)}></i>${t(`sites.palette.${look.id}`)}</span></label>`)}</span>` : nothing}
-      <div class="site-bar"></div><div class="site-view"><iframe sandbox=${PAGE_SANDBOX} allow=${pageAllow(allows)} src=${FRAME} title=${t('sites.frame', { name: site.name })} @load=${begin}></iframe></div>`, this)
+      <div class="site-bar"></div><div class="site-view"><iframe sandbox=${PAGE_SANDBOX} allow=${pageAllow(allows)} src=${FRAME} title=${site.label ?? t('sites.frame', { name: site.name })} @load=${begin}></iframe></div>`, this)
     this.bar()
     if (refocus === site.path && !site.mine) (refocus = ''), /** @type {HTMLElement | null} */ (this.querySelector('.site-hand button'))?.focus()
   }
@@ -195,7 +204,7 @@ customElements.define('app-site', class extends HTMLElement {
     const page = this.#page, does = this.#does, changes = data.edited?.changes
     if (typeof data.open === 'string') {
       const base = new URL(page, SITE), to = new URL(data.open, base), found = to.origin === base.origin ? reach(site.files, decodeURIComponent(to.pathname.slice(1))) : null
-      if (found?.endsWith('.html')) { this.#page = found; this.#pointed = null; this.draw(); this.dispatchEvent(new Event('input', { bubbles: true })) }
+      if (found?.endsWith('.html')) this.go(found, to.search)
       else if (!found && /^https?:$/.test(to.protocol)) open(to.href, '_blank', 'noopener')
     } else if (does === 'edit' && data.refused === true) notify(t('sites.onlyWords'), { alert: true })
     else if (does === 'edit' && Number.isInteger(data.edited?.id) && Array.isArray(changes) && changes.length && changes.length <= 20 && changes.every((one) => typeof one?.old === 'string' && typeof one?.new === 'string')) {

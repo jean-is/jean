@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "{name}, ένα πρωτότυπο",
+  "prototypes.view": "Προβολή",
+  "prototypes.board": "Όλες οι σελίδες",
+  "prototypes.play": "Δοκιμή",
+  "prototypes.pages": "Σελίδες: {name}",
+  "prototypes.page": "Σελίδα {n} από {count}",
+  "prototypes.leads": "Οδηγεί σε: {pages}",
+  "prototypes.changed": "Άλλαξε από: {name}",
+  "prototypes.zoomOut": "Σμίκρυνση",
+  "prototypes.zoomIn": "Μεγέθυνση",
+  "prototypes.fit": "Προσαρμογή",
+  "prototypes.zoom": "Ζουμ {level}",
+  "prototypes.zip": "Το πρωτότυπο σε zip",
+  "prototypes.ask": "Φτιάξε ένα πρωτότυπο για {what}.",
+  "prototypes.example": "μια εφαρμογή κρατήσεων του κομμωτηρίου μου"
+}

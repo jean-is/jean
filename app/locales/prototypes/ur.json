@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "{name}، ایک پروٹوٹائپ",
+  "prototypes.view": "دیکھنے کا انداز",
+  "prototypes.board": "تمام صفحات",
+  "prototypes.play": "آزمائیں",
+  "prototypes.pages": "{name} کے صفحات",
+  "prototypes.page": "{count} میں سے صفحہ {n}",
+  "prototypes.leads": "یہاں سے جا سکتے ہیں: {pages}",
+  "prototypes.changed": "{name} کی تبدیلی",
+  "prototypes.zoomOut": "چھوٹا کریں",
+  "prototypes.zoomIn": "بڑا کریں",
+  "prototypes.fit": "سب دکھائیں",
+  "prototypes.zoom": "زوم {level}",
+  "prototypes.zip": "پروٹوٹائپ zip کی صورت میں",
+  "prototypes.ask": "{what} کا ایک پروٹوٹائپ بناؤ۔",
+  "prototypes.example": "میرے ہیئر سیلون کے لیے بکنگ ایپ"
+}

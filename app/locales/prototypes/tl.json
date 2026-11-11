@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "{name}, isang prototype",
+  "prototypes.view": "Pagtingin",
+  "prototypes.board": "Lahat ng pahina",
+  "prototypes.play": "Subukan",
+  "prototypes.pages": "Mga pahina ng {name}",
+  "prototypes.page": "Pahina {n} sa {count}",
+  "prototypes.leads": "Papunta sa {pages}",
+  "prototypes.changed": "Binago ni {name}",
+  "prototypes.zoomOut": "Paliitin",
+  "prototypes.zoomIn": "Palakihin",
+  "prototypes.fit": "Ipagkasya",
+  "prototypes.zoom": "Laki: {level}",
+  "prototypes.zip": "Ang prototype bilang zip",
+  "prototypes.ask": "Gumawa ka ng prototype ng {what}.",
+  "prototypes.example": "booking app para sa aking salon"
+}

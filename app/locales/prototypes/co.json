@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "{name}, un prototipu",
+  "prototypes.view": "Vista",
+  "prototypes.board": "Tutte e pagine",
+  "prototypes.play": "Pruvà",
+  "prototypes.pages": "Pagine di {name}",
+  "prototypes.page": "Pagina {n} nant’à {count}",
+  "prototypes.leads": "Porta à {pages}",
+  "prototypes.changed": "Cambiatu da {name}",
+  "prototypes.zoomOut": "Riduce",
+  "prototypes.zoomIn": "Ingrandà",
+  "prototypes.fit": "Adattà",
+  "prototypes.zoom": "Zoom {level}",
+  "prototypes.zip": "U prototipu in zip",
+  "prototypes.ask": "Fà un prototipu di {what}.",
+  "prototypes.example": "un’appiecazione di riservazione per u mo salone di parrucchjeru"
+}

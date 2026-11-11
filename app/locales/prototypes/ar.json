@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "{name}، نموذج أولي",
+  "prototypes.view": "طريقة العرض",
+  "prototypes.board": "كل الصفحات",
+  "prototypes.play": "جرّبه",
+  "prototypes.pages": "صفحات {name}",
+  "prototypes.page": "الصفحة {n} من {count}",
+  "prototypes.leads": "تؤدي إلى {pages}",
+  "prototypes.changed": "تعديل من {name}",
+  "prototypes.zoomOut": "تصغير",
+  "prototypes.zoomIn": "تكبير",
+  "prototypes.fit": "ملاءمة",
+  "prototypes.zoom": "نسبة التكبير {level}",
+  "prototypes.zip": "النموذج الأولي في ملف zip",
+  "prototypes.ask": "اصنع نموذجًا أوليًا لـ{what}.",
+  "prototypes.example": "تطبيق حجوزات لصالون تصفيف الشعر الخاص بي"
+}

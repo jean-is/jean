@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "{name}, прототип",
+  "prototypes.view": "Вигляд",
+  "prototypes.board": "Усі сторінки",
+  "prototypes.play": "Спробувати",
+  "prototypes.pages": "Сторінки: {name}",
+  "prototypes.page": "Сторінка {n} з {count}",
+  "prototypes.leads": "Куди веде: {pages}",
+  "prototypes.changed": "Змінено: {name}",
+  "prototypes.zoomOut": "Віддалити",
+  "prototypes.zoomIn": "Наблизити",
+  "prototypes.fit": "Умістити",
+  "prototypes.zoom": "Масштаб {level}",
+  "prototypes.zip": "Прототип архівом zip",
+  "prototypes.ask": "Зроби прототип {what}.",
+  "prototypes.example": "застосунку для запису до моєї перукарні"
+}

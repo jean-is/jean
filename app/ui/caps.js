@@ -1,8 +1,7 @@
-// Capabilities: one module each, imported when first needed (unlocked), then remembered. A capability may add tools and prompt lines, which conversations started
-// later declare in their frozen prompt; an earlier conversation gets them through a
-// system note (D46, D47). What it does on Jean's events are its hooks (core/hooks.js), and what it
-// draws in the room's slots its slots, so the room knows none of them by name. Policy can deny a
-// capability (never offered nor downloaded) or unlock it ahead (docs/enterprise.md).
+// Capabilities: one module each, imported when first needed (unlocked), then remembered. A capability may add tools and prompt lines,
+// which later conversations declare in their frozen prompt and earlier ones get through a system note (D46, D47). What it does on
+// Jean's events are its hooks (core/hooks.js), and what it draws in the room's slots its slots, so the room knows none of them by
+// name. Policy can deny a capability (never offered nor downloaded) or unlock it ahead (docs/enterprise.md).
 import { signal } from '@preact/signals-core'
 
 /**
@@ -41,6 +40,7 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   designs: () => import('../caps/designs/designs.js'),
   games: () => import('../caps/games/games.js'),
   sites: () => import('../caps/sites/sites.js'),
+  prototypes: () => import('../caps/prototypes/prototypes.js'),
   backup: () => import('../caps/backup/backup.js'),
   sync: () => import('../caps/sync/sync.js'),
   lock: () => import('../caps/lock/lock.js'),
@@ -120,11 +120,7 @@ export function register(capability) {
   loaded.value = new Map(loaded.peek()).set(capability.id, capability)
 }
 
-/**
- * Loads a capability's module (once), asks the service worker to keep its files for
- * offline use, and remembers it. Resolves false when denied or unavailable.
- * @param {string} id
- */
+/** Loads a capability's module (once), asks the service worker to keep its files offline, and remembers it; false when denied or unavailable. @param {string} id */
 export function unlock(id) {
   if (isDenied(id) || !Object.hasOwn(LOADERS, id)) return Promise.resolve(false)
   let pending = loading.get(id)

@@ -1,0 +1,19 @@
+/* Prototypes (D742): its bar over the board or Try it. The board scrolls both ways and pans when its ground is dragged; its steps are columns
+   of pages, an arrow between them for the eye, one column on a narrow pane; each page a still picture as a phone shows it, its title, its
+   place and where it leads under it. Try it is a site's pane (../sites/sites.css). */
+app-prototype { display: flex; flex-direction: column; block-size: 100%; min-block-size: 16rem; container-type: inline-size; }
+app-prototype > app-site { flex: 1; min-block-size: 0; }
+app-prototype .proto-bar { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 0.4rem 0.75rem; margin-block: 0.5rem; padding-inline: 0.5rem; }
+app-prototype .proto-zoom { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem; } app-prototype .proto-zoom output { min-inline-size: 5.5em; text-align: center; font-variant-numeric: tabular-nums; color: var(--ink-soft); }
+app-prototype .proto-board { flex: 1; min-block-size: 0; overflow: auto; padding: 1.5rem; background: var(--line); cursor: grab; }
+app-prototype .proto-board:active { cursor: grabbing; }
+app-prototype .proto-steps { display: flex; align-items: flex-start; gap: 1rem; inline-size: max-content; }
+app-prototype .proto-step { display: flex; flex-direction: column; gap: 1.25rem; margin: 0; padding: 0; list-style: none; }
+app-prototype .proto-arrow { align-self: center; font-size: 2rem; color: var(--ink-soft); } app-prototype .proto-arrow:dir(rtl) { scale: -1 1; }
+app-prototype .proto-page { display: flex; flex-direction: column; gap: 0.4rem; inline-size: 13rem; padding: 0.4rem; border: 1px solid var(--line-strong); border-radius: 0.75rem; background: var(--room); color: var(--ink); font: inherit; text-align: start; cursor: pointer; }
+app-prototype .proto-page :is(img, .proto-blank) { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 390 / 844; border-radius: 0.4rem; background: var(--line); }
+app-prototype .proto-page:focus-visible { outline: 3px solid var(--flame); outline-offset: 2px; }
+app-prototype .proto-title { font-weight: 600; overflow-wrap: anywhere; }
+app-prototype .proto-says { inline-size: 13rem; margin: 0.3rem 0 0; color: var(--ink-soft); font-size: 0.85rem; overflow-wrap: anywhere; }
+@container (inline-size < 40rem) { app-prototype .proto-steps { flex-direction: column; align-items: center; inline-size: auto; } app-prototype .proto-arrow { rotate: 90deg; } app-prototype .proto-arrow:dir(rtl) { scale: 1; } }
+@media (forced-colors: active) { app-prototype .proto-page { border-color: CanvasText; } }

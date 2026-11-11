@@ -8,8 +8,7 @@
 // don't load, a script's errors, what it reached elsewhere, and its words' contrast (axe-core) by day and by night.
 import { fileURLToPath } from 'node:url'
 import sharp from 'sharp'
-import { checkFiles } from '../../app/caps/sites/check.js'
-import { parse, elements } from '../../app/caps/sites/html.js'
+import { checkScreens, told, flows } from '../../app/caps/prototypes/check.js'
 import { reach } from '../../app/caps/sites/file.js'
 import { serve } from '../sites/check.js'
 
@@ -32,46 +31,15 @@ const NARROWEST = 320
 const AXE = fileURLToPath(new URL('../../node_modules/axe-core/axe.min.js', import.meta.url))
 const SCREENS = 16, PRESSES = 30, DEEPER = 12, AT_ONCE = 4
 
-/** What only a site for strangers needs, which a prototype's screens don't. */
-const SITE_ONLY = [/: its description is /, /: its card for shared links/, /top \(header\), not one/, /foot \(footer\), not one/, /a form sends to /, /a form doesn’t send with method="post"/,
-  /a form has no data-form name/, /nothing leads to it from index\.html/, /navigations has no name/]
-
-/** Sites' words, said of a prototype. @param {string} problem */
-const said = (problem) => problem
-  .replace('a field asks for a password; a site never does', 'a field asks for a password; a prototype never does: show signing in as a button such as “Continue as Sara”')
-  .replace('a field asks for a card or bank number; a site never takes payments', 'a field asks for a card or bank number; a prototype never does: write the card as words (“Visa ending 4242, sample”) above a Pay button that leads to the next screen')
-  .replace('the page a visitor lands on', 'its first screen')
-  .replace(/\bsite\.js\b/g, 'prototype.js').replace(/\bthe site’s\b/g, 'the prototype’s').replace(/\bthe site has\b/g, 'the prototype has').replace(/\ba site\b/g, 'a prototype').replace(/\bthe site\b/g, 'the prototype')
-
-const decode = (/** @type {Uint8Array} */ bytes) => new TextDecoder().decode(bytes)
+export { checkScreens, told, flows }
 const extension = (/** @type {string} */ path) => path.toLowerCase().split('.').pop() ?? ''
-
-/** The check from the files alone. @param {Files} files @returns {Report} */
-export function checkScreens(files) {
-  const found = checkFiles(files)
-  const problems = found.problems.filter((problem) => !SITE_ONLY.some((pattern) => pattern.test(problem))).map(said)
-  if (found.pages.length === 1) problems.push('it has one screen; a prototype shows its flow as a screen per step, each its own .html, linked from the one before')
-  for (const [path, bytes] of files) {
-    const scripts = extension(path) === 'js' ? [decode(bytes)] : extension(path) === 'html' ? elements(parse(decode(bytes))).filter((element) => element.name === 'script').map((element) => element.children.join('')) : []
-    for (const code of scripts) {
-      const kept = /\b(localStorage|sessionStorage|indexedDB)\b|document\.cookie/.exec(code)?.[0]
-      if (kept) problems.push(`${path}: it keeps choices in ${kept}, which Jean's frame doesn't have; carry them in the address (confirm.html?time=10:30) and read them with URLSearchParams`)
-      // The browser's own alert(), confirm() and prompt(), not a function of the script's that bears the name.
-      const own = new Set([...code.matchAll(/(?:function\s+|(?:const|let|var)\s+)(alert|confirm|prompt)\b/g)].map((match) => match[1]))
-      for (const shown of new Set([...code.matchAll(/(?<![\w$.])(?<!function\s+)(window\.)?(alert|confirm|prompt)\s*\(/g)].filter((match) => match[1] || !own.has(match[2])).map((match) => match[2]))) {
-        problems.push(`${path}: it calls ${shown}(), which Jean's frame doesn't show; write the message on the screen`)
-      }
-    }
-  }
-  return { ...found, problems: [...new Set(problems)] }
-}
 
 /** The controls a person presses on a screen, as the page shows them. */
 const PRESSABLE = 'a[href], button, input[type=submit], input[type=button], input[type=image], [role=button], [role=tab], [role=link], [role=menuitem], [role=option], summary'
 
 /**
  * Lists what can be pressed on the page, each marked with its number, its name, and where a plain link leads. Run in the page.
- * @param {string} selector @returns {{ at: number, name: string, kind: string, href: string | null, to: string | null, disabled: boolean, invalid: boolean, key: string }[]}
+ * @param {string} selector @returns {{ at: number, name: string, kind: string, href: string | null, to: string | null, submits: boolean, disabled: boolean, invalid: boolean, key: string }[]}
  */
 function listed(selector) {
   const out = []
@@ -88,7 +56,7 @@ function listed(selector) {
     const submits = !!form && (element instanceof HTMLButtonElement ? element.type === 'submit' : element instanceof HTMLInputElement && ['submit', 'image'].includes(element.type))
     const name = (element.getAttribute('aria-label') ?? element.innerText ?? '').trim() || /** @type {HTMLInputElement} */ (element).value || element.title || element.querySelector('img')?.alt || element.tagName.toLowerCase()
     const kind = anchor ? 'link' : element.getAttribute('role') ?? element.tagName.toLowerCase()
-    out.push({ at, name: name.replace(/\s+/g, ' ').slice(0, 40), kind, href: raw, to, disabled: element.matches(':disabled') || element.getAttribute('aria-disabled') === 'true', invalid: submits && !form?.checkValidity(), key: `${kind} ${name} ${raw ?? ''}` })
+    out.push({ at, name: name.replace(/\s+/g, ' ').slice(0, 40), kind, href: raw, to, submits, disabled: element.matches(':disabled') || element.getAttribute('aria-disabled') === 'true', invalid: submits && !form?.checkValidity(), key: `${kind} ${name} ${raw ?? ''}` })
     at++
   }
   return out
@@ -233,13 +201,14 @@ async function explore(context, origin, files, screens) {
         if (now.origin !== origin) return { did: 'led' }
         const to = screenOf(files, origin, now.href)
         if (!to) { problems.push(`${screen}: “${control.name}” leads to ${decodeURIComponent(now.pathname.slice(1))}, which isn't in the prototype`); return { did: 'dead' } }
+        if (to !== screen && control.kind !== 'link' && !target.submits) { problems.push(`${screen}: “${control.name}” leaves the page by its own script, which Jean's frame can't follow; make it a link, or a form whose action is the next page`); return { did: 'unsure' } }
         if (to !== screen) { lead(screen, now.href); return { did: 'led' } }
         if (now.pathname === was.pathname && now.search === was.search && now.hash.length > 1) return { did: 'changed' }
         await page.waitForTimeout(100)
         return (await page.evaluate(shown)).split('\u0002')[0] === before.split('\u0002')[0] ? { did: 'dead' } : { did: 'changed' }
       }
       await page.waitForTimeout(150)
-      if (page.url() !== from) { lead(screen, page.url()); return { did: 'led' } }
+      if (page.url() !== from) { problems.push(`${screen}: “${control.name}” leaves the page by its own script, which Jean's frame can't follow; make it a link, or a form whose action is the next page`); return { did: 'unsure' } }
       if ((await page.evaluate(shown)) === before) return { did: 'dead' }
       const after = await page.evaluate(listed, PRESSABLE)
       const keys = new Set(list.filter((one) => !one.disabled).map((one) => one.key))
@@ -272,7 +241,7 @@ async function explore(context, origin, files, screens) {
       const { did, newly } = await press(screen, path)
       pressed++
       if (did === 'unsure') unsure++
-      if (did === 'dead') dead.push(`${screen}: “${control.name}” (${control.kind}) does nothing a person sees; make it lead to a screen or change this one`)
+      if (did === 'dead') dead.push(`${screen}: “${control.name}” (${control.kind}) does nothing a person sees; make it lead to a page or change this one`)
       if (did === 'changed' && newly && path.length === 1) for (const one of newly) deeper.push({ path: [...path, one], name: one.name })
     }
     await pool(toPress.slice(0, PRESSES).map((control) => [control]), AT_ONCE, judged)
@@ -282,7 +251,7 @@ async function explore(context, origin, files, screens) {
     await pool(more.map(({ path }) => path), AT_ONCE, judged)
   }
   const reached = [...firsts.keys()]
-  for (const screen of screens) if (!firsts.has(screen)) problems.push(`${screen}: nobody reaches it from index.html; lead to it from the screen before`)
+  for (const screen of screens) if (!firsts.has(screen)) problems.push(`${screen}: nobody reaches it from index.html; lead to it from the page before`)
   const flow = { screens, reached, followed, pressed, dead: [...new Set(dead)], unsure, leads: /** @type {[string, string[]][]} */ (reached.map((screen) => [screen, [...leads.get(screen) ?? []]])), errors }
   return { flow, firsts, problems: [...new Set([...problems, ...flow.dead])] }
 }
@@ -421,21 +390,4 @@ export async function check(files, browser) {
   const seen = await checkInBrowser(browser, files, found.pages)
   const more = seen.problems.filter((problem) => { const host = /^it reached ([^;]+);/.exec(problem)?.[1]; return !host || !found.problems.some((one) => one.includes(host)) })
   return { ...found, problems: [...new Set([...found.problems, ...more])], ...(seen.flow && { flow: seen.flow }), ...(seen.shots && { shots: seen.shots }) }
-}
-
-/** Whether its flow works: every screen reached from the first, no control that does nothing, no script failing. @param {Report} report */
-export const flows = (report) => !!report.flow && report.flow.reached.length >= report.flow.screens.length && !report.flow.dead.length && !report.flow.errors
-  && !report.problems.some((problem) => /can't be pressed|isn't in the prototype|nobody reaches it|its script failed/.test(problem))
-
-/** The report as the brain reads it. @param {Report} report @param {{ name: string, place: string }} prototype */
-export function told(report, { name, place }) {
-  const shown = report.problems.slice(0, 30), flow = report.flow
-  return [
-    `Prototype "${name}" is at ${place}: ${report.pages.length} ${report.pages.length === 1 ? 'screen' : 'screens'}${report.languages.length ? ` in ${report.languages.join(', ')}` : ''}.`,
-    ...(flow ? [`Pressed through at 390 pixels from index.html: ${flow.reached.length} of ${flow.screens.length} screens reached, ${flow.followed} links followed and ${flow.pressed} controls pressed, ${flow.dead.length} doing nothing.`] : []),
-    report.problems.length ? `Checked at ${WIDTHS.join(' and ')} pixels, for screen readers: ${report.problems.length} to fix.` : `Checked at ${WIDTHS.join(' and ')} pixels, for screen readers: nothing to fix.`,
-    ...shown.map((problem) => `- ${problem}`),
-    ...(report.problems.length > shown.length ? [`- and ${report.problems.length - shown.length} more`] : []),
-    ...(report.fill.length ? [`Left to fill in: ${report.fill.join('; ')}.`] : []),
-  ].join('\n')
 }

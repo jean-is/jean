@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "{name}, prototip",
+  "prototypes.view": "Prikaz",
+  "prototypes.board": "Sve stranice",
+  "prototypes.play": "Isprobaj",
+  "prototypes.pages": "Stranice prototipa {name}",
+  "prototypes.page": "Stranica {n} od {count}",
+  "prototypes.leads": "Kamo vodi: {pages}",
+  "prototypes.changed": "Promijenila aplikacija {name}",
+  "prototypes.zoomOut": "Smanji",
+  "prototypes.zoomIn": "Povećaj",
+  "prototypes.fit": "Prilagodi",
+  "prototypes.zoom": "Uvećanje {level}",
+  "prototypes.zip": "Prototip kao zip",
+  "prototypes.ask": "Izradi prototip {what}.",
+  "prototypes.example": "aplikacije za naručivanje u mojem frizerskom salonu"
+}

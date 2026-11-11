@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "プロトタイプ「{name}」",
+  "prototypes.view": "表示",
+  "prototypes.board": "すべてのページ",
+  "prototypes.play": "試す",
+  "prototypes.pages": "「{name}」のページ",
+  "prototypes.page": "ページ {n}/{count}",
+  "prototypes.leads": "移動先：{pages}",
+  "prototypes.changed": "{name} が変更",
+  "prototypes.zoomOut": "縮小",
+  "prototypes.zoomIn": "拡大",
+  "prototypes.fit": "全体を表示",
+  "prototypes.zoom": "ズーム {level}",
+  "prototypes.zip": "プロトタイプをZIPで",
+  "prototypes.ask": "{what}のプロトタイプを作ってください。",
+  "prototypes.example": "私のヘアサロンの予約アプリ"
+}

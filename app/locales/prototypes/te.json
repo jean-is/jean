@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "{name}, ఒక ప్రోటోటైప్",
+  "prototypes.view": "వీక్షణ",
+  "prototypes.board": "అన్ని పేజీలు",
+  "prototypes.play": "ప్రయత్నించు",
+  "prototypes.pages": "{name} ప్రోటోటైప్ పేజీలు",
+  "prototypes.page": "{count}లో పేజీ {n}",
+  "prototypes.leads": "ఇక్కడి నుంచి వెళ్లే పేజీలు: {pages}",
+  "prototypes.changed": "{name} చేసిన మార్పు",
+  "prototypes.zoomOut": "చిన్నది చేయండి",
+  "prototypes.zoomIn": "పెద్దది చేయండి",
+  "prototypes.fit": "అన్నీ చూపించండి",
+  "prototypes.zoom": "జూమ్ {level}",
+  "prototypes.zip": "ప్రోటోటైప్ zip‌గా",
+  "prototypes.ask": "{what} కోసం ఒక ప్రోటోటైప్ చేయి.",
+  "prototypes.example": "నా హెయిర్ సెలూన్ బుకింగ్ యాప్"
+}

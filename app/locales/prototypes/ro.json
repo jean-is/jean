@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "{name}, un prototip",
+  "prototypes.view": "Vizualizare",
+  "prototypes.board": "Toate paginile",
+  "prototypes.play": "Încercați-l",
+  "prototypes.pages": "Paginile prototipului {name}",
+  "prototypes.page": "Pagina {n} din {count}",
+  "prototypes.leads": "Duce la {pages}",
+  "prototypes.changed": "Schimbat de {name}",
+  "prototypes.zoomOut": "Micșorați",
+  "prototypes.zoomIn": "Măriți",
+  "prototypes.fit": "Încadrați",
+  "prototypes.zoom": "Zoom {level}",
+  "prototypes.zip": "Prototipul ca zip",
+  "prototypes.ask": "Fă un prototip pentru {what}.",
+  "prototypes.example": "o aplicație de programări la salonul meu de coafură"
+}

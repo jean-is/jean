@@ -1,0 +1,17 @@
+{
+  "prototypes.frame": "{name}, kielelezo",
+  "prototypes.view": "Mwonekano",
+  "prototypes.board": "Kurasa zote",
+  "prototypes.play": "Kijaribu",
+  "prototypes.pages": "Kurasa za {name}",
+  "prototypes.page": "Ukurasa {n} kati ya {count}",
+  "prototypes.leads": "Unaelekeza kwenye {pages}",
+  "prototypes.changed": "Mabadiliko ya {name}",
+  "prototypes.zoomOut": "Punguza",
+  "prototypes.zoomIn": "Kuza",
+  "prototypes.fit": "Tosheleza",
+  "prototypes.zoom": "Ukuzaji {level}",
+  "prototypes.zip": "Kielelezo kama zip",
+  "prototypes.ask": "Nitengenezee kielelezo cha {what}.",
+  "prototypes.example": "programu ya kuweka miadi kwenye saluni yangu ya nywele"
+}
