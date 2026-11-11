@@ -37,6 +37,8 @@ export function gameOf(page) {
 
 /** A game's page with its picture, the one before gone; as it was when either isn't one. @param {string} page @param {string} picture */
 export const pictured = (page, picture) => ((game) => (game && PICTURE.test(picture) ? fileOf({ ...game, picture }, /<html lang="([^"]*)">/.exec(page)?.[1] ?? 'en') : page))(gameOf(page))
+/** A game's code importing what it is lent (./page.js) by path, from a file beside it, as on a site, which has no import map (D720): `from 'phaser'` as `from './phaser.js'`. @param {string} code @param {string[]} names */
+export const beside = (code, names) => code.replace(new RegExp(`(\\b(?:from|import)\\s*\\(?\\s*)(["'])(${names.join('|')})\\2`, 'g'), '$1$2./$3.js$2')
 
 /** The actions a game says it uses, those Jean knows, all of them when it says none. @param {unknown} list */
 export const actionsOf = (list) => ((known) => (known.length ? known : ACTIONS))((Array.isArray(list) ? list : String(list ?? '').split(/[\s,]+/)).map(String).filter((one, i, all) => ACTIONS.includes(one) && all.indexOf(one) === i))

@@ -1,7 +1,7 @@
 // Games (D648): a game's file, its changes by exact passages, the loop guard, the play-test's report, and what the brain is given.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { fileOf, gameOf, actionsOf, replaceOnce, pictured, PLACE } from '../app/caps/games/file.js'
+import { fileOf, gameOf, actionsOf, replaceOnce, pictured, beside, PLACE } from '../app/caps/games/file.js'
 import { guard } from '../app/caps/games/guard.js'
 import { say, apart, FRAMES } from '../app/caps/games/report.js'
 import { LINES, GAME, CHANGE } from '../app/caps/games/tool.js'
@@ -43,6 +43,11 @@ test('the actions a game uses: those Jean knows, each once, all six when it name
   assert.deepEqual(actionsOf(['left', 'jump', 'left', 'a']), ['left', 'a'])
   assert.deepEqual(actionsOf('up down'), ['up', 'down'])
   assert.deepEqual(actionsOf(undefined), ['left', 'right', 'up', 'down', 'a', 'b'])
+})
+
+test('a game published as a site imports what it is lent from files beside it, by path, as a site has no import map (D720)', () => {
+  const code = `import Phaser from 'phaser'\nimport { zzfx } from "zzfx"\nimport'zzfx'\nconst B = await import( 'babylon' )\nconst said = 'phaser'\nimport other from 'phaser-extra'`
+  assert.equal(beside(code, ['phaser', 'zzfx']), `import Phaser from './phaser.js'\nimport { zzfx } from "./zzfx.js"\nimport'./zzfx.js'\nconst B = await import( 'babylon' )\nconst said = 'phaser'\nimport other from 'phaser-extra'`)
 })
 
 test('a change by exact passages: each found once, in order, or why not', () => {

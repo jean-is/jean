@@ -524,3 +524,43 @@ test('a page on its own goes online from its pane as a site of one page, its scr
   await publishing()
   await expect(dialog).toContainText('Nothing changed since it was published.')
 })
+
+test('a game goes online from its pane as a site its host runs: its code, Phaser and ZzFX in files beside its page that it imports by path, no policy of its own stopping them, and it plays there (D720, D648)', async ({ page, context, browserName }) => {
+  const name = `star-${browserName}-${test.info().retry}-${test.info().repeatEachIndex}`, address = `http://${name}.localhost:4185/`
+  await start(page)
+  await page.evaluate(async (host) => {
+    const [{ app, updateSettings }, { fileOf }] = await Promise.all([import('/ui/state.js'), import('/caps/games/file.js')])
+    await updateSettings({ urls: { ...app.settings.value.urls, share: host } })
+    await (await import('/ui/caps.js')).unlock('games')
+    const path = 'games/01M618J3XDP6TSKBY6YYF5PAE7-star-catcher.game.html', now = new Date().toISOString()
+    const code = "import Phaser from 'phaser'\nimport { zzfx } from 'zzfx'\nhost.stage.append(Object.assign(document.createElement('p'), { textContent: `Phaser ${Phaser.VERSION.split('.')[0]}, ZzFX ${typeof zzfx}` }))"
+    await app.fs.write(`${app.projectDir}/${path}`, fileOf({ name: 'Star Catcher', card: 'You are a catcher of stars.', code, meta: { engine: 'phaser', actions: 'a', author: 'jean', created: now, changed: now } }, 'en'))
+    await (await import('/ui/preview.js')).preview({ uri: path, name: 'Star Catcher.game.html', title: 'Star Catcher', mimeType: 'text/html' })
+  }, SHARE_URL)
+  const dialog = page.locator('dialog.site-publish')
+  await page.locator('app-preview').getByRole('button', { name: 'Share, download or print' }).click()
+  await page.getByRole('button', { name: 'Publish…' }).click()
+  await expect(dialog.getByRole('heading')).toHaveText('Publish Star Catcher')
+  await dialog.getByLabel('Address').fill(name)
+  await expect(dialog.locator('#publish-said')).toHaveText('This address is free.')
+  await dialog.getByRole('button', { name: 'Publish', exact: true }).click()
+  await dialog.getByLabel('I’ve kept it somewhere safe').check()
+  await dialog.getByRole('button', { name: 'Done' }).click()
+  await expect(dialog.locator('.site-state.is-live')).toContainText('Online until')
+  const record = await page.evaluate(async () => {
+    const { app } = await import('/ui/state.js'), [site] = (await app.fs.list(`${app.projectDir}/sites`)).map(({ name }) => name)
+    return JSON.parse((await app.fs.read(`${app.projectDir}/sites/${site}/site.json`)) ?? '{}')
+  })
+  expect(record).toMatchObject({ name: 'Star Catcher', files: ['script-1.js', 'script-2.js', 'index.html', 'phaser.js', 'zzfx.js', 'game.js'], published: { name, address } })
+
+  // Online, under the host's policy alone: nothing refused, the game's imports found beside it, and its cover played.
+  await throughHost(context)
+  const visit = await context.newPage(), refused = /** @type {string[]} */ ([])
+  visit.on('console', (message) => { if (/Content Security Policy/i.test(message.text())) refused.push(message.text()) })
+  await visit.goto(address)
+  await expect(visit.locator('#stage p')).toHaveText(/^Phaser \d+, ZzFX function$/)
+  await visit.getByRole('button', { name: 'Play' }).click()
+  await expect(visit.getByRole('button', { name: 'Play' })).toBeHidden()
+  expect(refused).toEqual([])
+  await visit.close()
+})

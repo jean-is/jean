@@ -107,12 +107,12 @@
     removeItem: (/** @type {string} */ key) => (store.delete(String(key)), keep()), clear: () => (store.clear(), keep()), key: (/** @type {number} */ i) => [...store.keys()][i] ?? null, get length() { return store.size } }
   Object.defineProperty(window, 'localStorage', { value: storage, configurable: true })
   let score = NaN
-  const LENT = 'zzfx'
+  let lent = 'zzfx'
   win.host = {
     get stage() { return stage },
     input: { down: (/** @type {string} */ action) => down.has(action), pressed: (/** @type {string} */ action) => pressed.has(action), on: (/** @type {string} */ action, /** @type {unknown} */ fn) => void on.set(action, [...(on.get(action) ?? []), fn]) },
-    // ZzFX, lent as the engines are, by the page's import map.
-    sound: (/** @type {number[]} */ ...params) => void (muted || import(/** @type {string} */ (LENT)).then(({ zzfx, ZZFX }) => (ZZFX.audioContext.resume(), zzfx(...params)), (error) => fault(error))),
+    // ZzFX, lent as the engines are, by the page's import map, or a file beside the game's on a site.
+    sound: (/** @type {number[]} */ ...params) => void (muted || import(lent).then(({ zzfx, ZZFX }) => (ZZFX.audioContext.resume(), zzfx(...params)), (error) => fault(error))),
     save: (/** @type {unknown} */ value) => { const json = JSON.stringify(value ?? null); if (json.length > 65536) throw new RangeError('A save holds 64 KB at most.'); saved = json; keep() },
     load: () => JSON.parse(saved ?? 'null'),
     state: (/** @type {unknown} */ name) => { report.states.push([Math.round(now), String(name)]); if (!test) post({ state: String(name) }) },
@@ -250,7 +250,9 @@
 
   addEventListener('DOMContentLoaded', () => {
     stage = /** @type {HTMLElement} */ (document.getElementById('stage'))
-    url = URL.createObjectURL(new Blob([document.getElementById('game')?.textContent ?? ''], { type: 'text/javascript' }))
+    const game = document.getElementById('game'), src = game?.getAttribute('src')
+    url = src ? new URL(src, document.baseURI).href : URL.createObjectURL(new Blob([game?.textContent ?? ''], { type: 'text/javascript' }))
+    if (src) lent = new URL('zzfx.js', url).href
     // Chromium says where a module's syntax error is on its element, WebKit on import()'s.
     document.body.append(make('script', { type: 'module', src: url }))
     import(url).then(() => test && real.later(play, frames.size ? 0 : 300), (error) => { if (!report.errors.some((one) => one.name === 'SyntaxError')) fault(error, error?.line, error?.column); if (test) play() })

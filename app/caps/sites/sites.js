@@ -55,13 +55,13 @@ export const remember = async (path, published) => { const record = await kind.r
 
 /**
  * A page on its own published as a site of one page: the site made from it the first time, under its name, its files made again from it
- * each time (./file.js's sited()), so that the dialog says what changed since; then Publish's dialog. @param {{ uri: string, title: string }} file @param {BlobPart} page
+ * each time (./file.js's sited(), or given as files, a game's), so that the dialog says what changed since; then Publish's dialog. @param {{ uri: string, title: string }} file @param {BlobPart | Map<string, string>} page
  */
 export async function publishPage(file, page) {
   const [offer, places] = await Promise.all([offered(), app.fs.list(`${app.projectDir}/sites`)]), now = new Date().toISOString(), name = file.title.replace(/\.html?$/i, '') || 'Page'
   if (!offer) return
   const found = (await Promise.all(places.map(async ({ kind: type, name: folder }) => (type === 'directory' && (await kind.recordOf(`sites/${folder}`).catch(() => null))?.page === file.uri ? `sites/${folder}` : '')))).find(Boolean)
-  const [one, files] = [found ? await load(found) : null, new Map([...sited(await new Blob([page]).text())].map(([path, text]) => [path, new TextEncoder().encode(text)]))], path = one?.path ?? `sites/${ulid()}-${slug(name) || 'page'}`
+  const [one, files] = [found ? await load(found) : null, new Map([...(page instanceof Map ? page : sited(await new Blob([page]).text()))].map(([path, text]) => [path, new TextEncoder().encode(text)]))], path = one?.path ?? `sites/${ulid()}-${slug(name) || 'page'}`
   if (!one || files.size !== one.files.size || [...files].some(([at, bytes]) => String(one.files.get(at)) !== String(bytes))) await kind.write(one ? { ...one, files, record: { ...one.record, changed: now } }
     : { dir: app.projectDir, path, files, record: { format: 1, name, author: app.deviceId, created: now, changed: now, source: app.current.peek()?.path ?? '', page: file.uri, files: [] } }, one ? [...one.files.keys()] : [])
   kind.join(app.projectDir), reread()

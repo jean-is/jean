@@ -75,12 +75,13 @@ export async function tokenOf(secret) {
 /** An opening tag, as ./html.js reads one, and one of its on…="" attributes: the event, and what it runs as the page writes it. */
 const [TAG, HANDLER] = [/<([a-zA-Z][\w-]*)((?:\s+[^\s"'>/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s"'=<>`]+))?)*)\s*(\/?)>/g, /\s+on([a-z]{3,})\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/gi]
 /**
- * A page on its own (a file, an app, a game, a deck) as the files of a site, for the host, which runs only a site's own files: each script
- * inside it in a file of its own, in its place, and what its on…="" attributes do in one more, run once the page is read; its data, its
- * styles and the rest as they were. @param {string} page @returns {Map<string, string>}
+ * A page on its own (a file, an app, a deck; a game's is ../games/page.js's siteOf()) as the files of a site, for the host, which runs only a
+ * site's own files: each script inside it in a file of its own, in its place, and what its on…="" attributes do in one more, run once the
+ * page is read; a policy of its own left out, the host's holding there, as it would stop those files; its data, its styles and the rest
+ * as they were. @param {string} page @returns {Map<string, string>}
  */
 export function sited(page) {
-  let [files, runs, marked] = [new Map(), /** @type {string[]} */ ([]), 0], html = page.replace(/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi, (whole, attrs, code) => {
+  let [files, runs, marked] = [new Map(), /** @type {string[]} */ ([]), 0], html = page.replace(/<meta\b[^>]*http-equiv\s*=\s*["']?content-security-policy\b[^>]*>/gi, '').replace(/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi, (whole, attrs, code) => {
     const type = /(?:^|\s)type\s*=\s*["']?([^"'\s>]+)/i.exec(attrs)?.[1].toLowerCase() ?? ''
     if (/(?:^|\s)src\s*=/i.test(attrs) || !code.trim() || !/^(module|text\/javascript|application\/javascript)?$/.test(type)) return whole
     files.set(`script-${files.size + 1}.js`, code)

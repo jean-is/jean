@@ -107,6 +107,9 @@ test('a page on its own as a site the host runs: its scripts in files of their o
     + `document.querySelector('[data-on="2"]').addEventListener('input', function (event) {\nsay(this.value)\n})`)
   // A page with nothing inside to move is the same page.
   assert.deepEqual([...sited('<p>Hi</p>')], [['index.html', '<p>Hi</p>']])
+  // A policy of its own, written for the page opened alone (a game's allows inline scripts only), would stop the files its scripts become: the host's holds.
+  const own = sited(`<head><META charset="utf-8"><meta http-equiv="Content-Security-Policy" content="script-src 'unsafe-inline' data: blob:"><meta http-equiv=content-security-policy content="default-src 'none'"><script>go()</script>`)
+  assert.equal(own.get('index.html'), '<head><META charset="utf-8"><script src="script-1.js"></script>')
 })
 
 test('what the brain is given: a line each within 40 tokens, schemas within 400', () => {

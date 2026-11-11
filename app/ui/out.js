@@ -21,8 +21,8 @@ await useStrings('out')
  */
 /**
  * What a kind can do. first: what to do before any of it (a design's marks); share: what a link holds (Share's `Item`); publish: a way online of its own (a site's, D720); page: the page on
- * its own it is, which goes online as a site of one page where the share host publishes sites; send: what the system's sheet is given, with the file's name and type this browser is asked about.
- * @typedef {{ first?: Way, share?: () => unknown, publish?: Way, page?: () => Promise<BlobPart>, send?: { file?: string, type?: string, make: () => Promise<ShareData> }, copy?: Way, files: Way[], print?: Way, kit?: boolean,
+ * its own it is, or a game's files, which goes online as a site of one page where the share host publishes sites; send: what the system's sheet is given, with the file's name and type this browser is asked about.
+ * @typedef {{ first?: Way, share?: () => unknown, publish?: Way, page?: () => Promise<BlobPart | Map<string, string>>, send?: { file?: string, type?: string, make: () => Promise<ShareData> }, copy?: Way, files: Way[], print?: Way, kit?: boolean,
  *   thing?: { kind: 'collection' | 'document' | 'deck', uri: string } }} Ways  thing: what can be worked on together, which Share asks how (caps/together, D733)
  */
 
@@ -56,7 +56,7 @@ export function printKey(event, file, ways) {
 
 /** Whether the share host publishes sites, asked once a pane shows a page on its own (caps/sites/offer.js), which Sites isn't loaded for. */
 const online = signal(/** @type {boolean | null} */ (null))
-/** A page's Publish…: Sites found, and the page a site of one page in its dialog. @param {Shown} file @param {() => Promise<BlobPart>} page @returns {Way} */
+/** A page's Publish…: Sites found, and the page a site of one page in its dialog. @param {Shown} file @param {() => Promise<BlobPart | Map<string, string>>} page @returns {Way} */
 const publishing = (file, page) => ({ id: '', glyph: icons.globe, label: t('out.publish'), run: async () => (await unlock('sites')) && (await import('../caps/sites/sites.js')).publishPage(file, await page()) })
 
 /** What the system's sheet will send, made as the menu opens, so that it is there within the click the sheet needs. @type {Promise<ShareData> | null} */
