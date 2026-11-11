@@ -219,10 +219,10 @@ export const reshapeTable = (one, edit, undoable = true) => /** @type {Promise<T
 /**
  * A column the user makes another kind, or a relation to a `collection`: each cell with a value of that kind written as one, by
  * the user, a relation's the row of that name, and the choices among them added; one with none stays as it was, unseen, to come back if the
- * kind does. @param {Loaded} one @param {string} id @param {string} type @param {string} [collection]
+ * kind does. @param {Loaded} one @param {string} id @param {string} type @param {string} [collection] @param {string[]} [options] a status's steps, in place of its choices
  */
-export const retype = (one, id, type, collection) => (reshaping = reshaping.catch(() => {}).then(async () => {
-  const now = (await load(one.folder, one.dir)) ?? one, at = new Date().toISOString(), table = reshape(now.table, { retype: { id, type, collection } }, at)
+export const retype = (one, id, type, collection, options) => (reshaping = reshaping.catch(() => {}).then(async () => {
+  const now = (await load(one.folder, one.dir)) ?? one, at = new Date().toISOString(), table = reshape(now.table, { retype: { id, type, collection, ...(options && { options }) } }, at)
   const [was, is] = [now.table, table].map((each) => /** @type {Property} */ (each.properties.find((property) => property.id === id)))
   const target = is.type === 'relation' && await targetOf(now, String(is.collection)), names = target ? namesOf(target.table, target.rows) : new Map()
   const values = now.rows.map((row) => converted(is, valueOf(row, was, now.names), target ? (name) => rowNamed(target.rows, names, name) : undefined))

@@ -176,6 +176,12 @@ test('reshape: a column inserted at a place among them all, made another kind wi
   assert.deepEqual(steps.views.at(-1), { id: 'board', type: 'board', group: 'status' })
   assert.deepEqual(tableProblems(steps), [])
   assert.throws(() => reshape(table, { retype: { id: 'city', type: 'colour' } }, T(6)), /isn't a kind of column/)
+  // Made a status, a choice takes its choices as steps, the first to do and the last done; a status added takes the steps given, and groups a board.
+  assert.deepEqual(propertyOf(reshape(table, { retype: { id: 'stage', type: 'status' } }, T(6)), 'stage')?.options, [{ name: 'Idea', group: 'todo' }, { name: 'Booked', group: 'done' }])
+  const status = reshape(createTable({ name: 'Trips', columns: [{ name: 'City', type: 'text' }] }, { id: TABLE_ID, author: 'user', at: T(0) }), { add: { name: 'Status', type: 'status', options: ['To do', 'In progress', 'Done'] } }, T(6))
+  assert.deepEqual(propertyOf(status, 'status')?.options?.map((option) => option.group), ['todo', 'doing', 'done'])
+  assert.deepEqual(status.views.at(-1), { id: 'board', type: 'board', group: 'status' })
+  assert.deepEqual(tableProblems(status), [])
   // The rows' order is kept as given, and checked when read.
   const sorted = reshape(table, { order: [R(2), R(1)] }, T(7))
   assert.deepEqual(sorted.order, [R(2), R(1)])

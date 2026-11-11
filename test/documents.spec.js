@@ -1338,7 +1338,7 @@ test.describe('the slash menu', () => {
     await table.getByTitle('Collection name').fill('Stays')
     await table.getByTitle('Collection name').press('Tab')
     await table.getByRole('button', { name: 'Add a column' }).click()
-    await page.locator('.table-menu:popover-open').getByRole('button', { name: 'Date' }).click()
+    await page.locator('.table-menu:popover-open').getByRole('button', { name: 'Date', exact: true }).click()
     await expect(table.locator('thead input')).toBeFocused()
     await page.keyboard.type('Arrival')
     await page.keyboard.press('Tab')

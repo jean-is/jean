@@ -469,6 +469,19 @@ test('a collection’s heads stay on top, show their kind and open a menu to ren
   await page.keyboard.press('Escape')
   await expect.poll(async () => (await file())?.nights.slice(0, 4)).toEqual([3, 1, 2, 4])
   expect(JSON.parse((await file())?.text ?? '{}').order).toHaveLength(24)
+
+  // Made a status, the column of stages, text with no choices, takes three steps to start with, and its board comes back.
+  await (await menu('Stage')).getByRole('button', { name: /^Type/ }).click()
+  await page.locator('.table-menu:popover-open').getByRole('button', { name: 'Status' }).click()
+  await expect.poll(async () => (await file())?.board).toBe(true)
+  await expect(rows.first().getByTitle('Stage', { exact: true }).locator('option')).toHaveText(['—', 'To do', 'In progress', 'Done'])
+  // The last head adds what Jean works out too: when each row was made, its name to type at once.
+  await page.locator('.table-add-column').click()
+  await page.locator('.table-menu:popover-open').getByRole('button', { name: 'Date made' }).click()
+  await expect(box).toHaveValue('Date made')
+  await page.keyboard.press('Enter')
+  await expect(rows.first().locator('time')).toHaveAttribute('datetime', /^2026-10-23T09:/)
+  await expect.poll(async () => (await file())?.columns.slice(-2)).toEqual(['stage Stage (status)', 'date-made Date made (created-at)'])
 })
 
 test('a collection’s cell is changed by a click or Enter, kept by Enter, which selects the one under it, left as it was by Escape; the arrows select another; ⌘Z and ⇧⌘Z undo and redo; a row’s handle duplicates or deletes it', async ({ page }) => {

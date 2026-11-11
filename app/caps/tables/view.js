@@ -39,8 +39,11 @@ import { searchable } from '../../ui/mentions.js'
  * @typedef {{ box: HTMLElement, board: Signal<boolean>, naming: Signal<string>, kinds: Signal<string>, relating: Signal<boolean>, collections: Signal<{ folder: string, name: string }[]>, list: () => void, id: string, reviewed?: boolean, search: Signal<string>, formula: Signal<string>, wrong: Signal<boolean>, refused: Signal<Map<string, string>> }} State
  */
 
-/** The kinds of column the user adds or makes one, in the order they are offered. */
-const KINDS = ['text', 'number', 'date', 'select', 'multi-select', 'checkbox', 'link', 'email', 'phone', 'formula']
+/** The kinds of column the user adds or makes one, in the order they are offered, then those Jean works out; never files, which no cell takes yet. */
+const KINDS = ['text', 'number', 'date', 'select', 'multi-select', 'status', 'checkbox', 'link', 'email', 'phone', 'person', 'place', 'formula']
+const WORKED = ['created-by', 'created-at', 'changed-by', 'changed-at']
+/** A status's steps to start with, to do, under way and done, in the user's words, unless it has two choices or more to take as its steps. @param {Property} [property] */
+const steps = (property) => ((property?.options?.length ?? 0) > 1 ? undefined : ['todo', 'doing', 'done'].map((group) => t(`tables.step.${group}`)))
 /** Each kind's glyph, before its column's name; one Jean works out shows who or when. */
 const [who, when] = [icons.person, icon(svg`<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>`)]
 const GLYPHS = /** @type {Record<string, unknown>} */ ({
@@ -256,10 +259,12 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
    * @param {string} type @param {number} [at] @param {string} [collection] a relation's
    */
   const added = async (type, at, collection) => {
-    const table = await shape(one, { add: { name: (collection !== one.folder && targets.find((other) => other.folder === collection)?.name) || t(`tables.kind.${type}`), type, at, collection } })
+    const table = await shape(one, { add: { name: (collection !== one.folder && targets.find((other) => other.folder === collection)?.name) || t(`tables.kind.${type}`), type, at, collection, options: type === 'status' ? steps() : undefined } })
     const made = table?.properties.find((property) => !one.table.properties.some((had) => had.id === property.id))
     if (made) rename(made.id)
   }
+  /** A kind in the last head's menu, which adds a column of it. @param {string} type */
+  const adds = (type) => html`<button type="button" popovertarget=${`${state.id}-add`} popovertargetaction="hide" @click=${() => added(type)}>${GLYPHS[type]}${t(`tables.kind.${type}`)}</button>`
   /** A row moved before or after another, as the rows' order. @param {string} id @param {string} to @param {boolean} after */
   const move = async (id, to, after) => {
     const ids = one.rows.map((row) => row.id).filter((other) => other !== id)
@@ -333,7 +338,7 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
     })
     /** A kind, or a collection a relation is to, ticked when it is the column's. @param {unknown} glyph @param {unknown} label @param {boolean} on @param {() => Promise<unknown>} act */
     const pick = (glyph, label, on, act) => html`<button type="button" aria-current=${String(on)} popovertarget=${menu} popovertargetaction="hide" @click=${() => on || act().catch(() => reread(one))}>${glyph}${label}${on ? icons.check : nothing}</button>`
-    const kind = (/** @type {string} */ type) => pick(GLYPHS[type], t(`tables.kind.${type}`), type === property.type, () => retype(one, property.id, type))
+    const kind = (/** @type {string} */ type) => pick(GLYPHS[type], t(`tables.kind.${type}`), type === property.type, () => retype(one, property.id, type, undefined, type === 'status' ? steps(property) : undefined))
     const to = property.type === 'relation' ? property.collection : ''
     const target = (/** @type {{ folder: string, name: string }} */ { folder, name }) => pick(GLYPHS.relation, html`<span dir="auto">${name}</span>`, folder === to, () => retype(one, property.id, 'relation', folder))
     // Dragged by its head (the button: WebKit drags nothing from inside one) to another's side; hidden from its menu as Settings' columns shown hide it.
@@ -345,9 +350,9 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
         @toggle=${(/** @type {ToggleEvent} */ e) => { if (e.newState === 'closed' && kinds.peek() === property.id) kinds.value = '' }}>${kinds.value === property.id && relating.value
         ? listed([html`<button type="button" class="back" @click=${() => turn(menu, property.id)}>${icons.back}${t('tables.kind.relation')}</button>`], targets.map(target))
         : kinds.value === property.id
-        ? listed([html`<button type="button" class="back" @click=${() => turn(menu)}>${icons.back}${t('tables.type')}</button>`], (KINDS.includes(property.type) || to ? KINDS : [property.type, ...KINDS]).map(kind),
+        ? listed([html`<button type="button" class="back" @click=${() => turn(menu)}>${icons.back}${t('tables.type')}</button>`], ([...KINDS, ...WORKED].includes(property.type) || to ? KINDS : [property.type, ...KINDS]).map(kind),
           [html`<button type="button" class="submenu" aria-current=${String(Boolean(to))} @click=${() => turn(menu, property.id, true)}>${GLYPHS.relation}${t('tables.kind.relation')}<span class="menu-value" dir="auto">${to
-            && (targets.find((other) => other.folder === to)?.name ?? one.related?.get(to)?.table.name)}</span>${icons.chevron}</button>`])
+            && (targets.find((other) => other.folder === to)?.name ?? one.related?.get(to)?.table.name)}</span>${icons.chevron}</button>`], WORKED.map(kind))
         : listed([row(icons.compose, t('action.rename'), () => rename(property.id)),
           html`<button type="button" class="submenu" @click=${() => turn(menu, property.id)}>${GLYPHS[property.type]}${t('tables.type')} <span class="menu-value">${t(`tables.kind.${property.type}`)}</span>${icons.chevron}</button>`],
           [row(ascending, t('tables.ascending'), () => sort(one, property, 'ascending')), row(descending, t('tables.descending'), () => sort(one, property, 'descending'))],
@@ -419,8 +424,9 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
   }
   return html`<div class="table-scroll"><table class="table-grid" aria-label=${one.table.name}>
       <thead><tr><td class="table-grip"></td>${shown.map(heading)}<th scope="col"><button type="button" class="table-add-column" aria-label=${t('tables.addColumn')} popovertarget=${`${state.id}-add`} @focus=${list} @pointerenter=${list}>+</button>
-        <div id=${`${state.id}-add`} class="menu table-menu" popover @focusout=${leaving}>${listed(KINDS.map((type) => html`<button type="button" popovertarget=${`${state.id}-add`} popovertargetaction="hide" @click=${() => added(type)}>${GLYPHS[type]}${t(`tables.kind.${type}`)}</button>`),
-          targets.map(({ folder, name }) => html`<button type="button" popovertarget=${`${state.id}-add`} popovertargetaction="hide" @click=${() => added('relation', undefined, folder)}>${GLYPHS.relation}${t('tables.kind.relation')} <span class="menu-value" dir="auto">${name}</span></button>`))}</div></th></tr></thead>
+        <div id=${`${state.id}-add`} class="menu table-menu" popover @focusout=${leaving}>${listed(KINDS.map(adds),
+          targets.map(({ folder, name }) => html`<button type="button" popovertarget=${`${state.id}-add`} popovertargetaction="hide" @click=${() => added('relation', undefined, folder)}>${GLYPHS.relation}${t('tables.kind.relation')} <span class="menu-value" dir="auto">${name}</span></button>`),
+          WORKED.map(adds))}</div></th></tr></thead>
       <tbody @dragleave=${(/** @type {DragEvent} */ e) => !box.contains(/** @type {Node | null} */ (e.relatedTarget)) && left()} @keydown=${keys}
         @click=${(/** @type {MouseEvent} */ e) => /** @type {Element} */ (e.target).matches(`${CELL}, [data-formula]`) && into(/** @type {Element} */ (e.target).closest(CELL))}
         @focusin=${(/** @type {FocusEvent} */ e) => e.target instanceof HTMLInputElement && e.target.type !== 'checkbox' && before.set(e.target, e.target.value)}>${rows.map((row, i) => html`<tr data-row=${row.id} class=${fresh.has(row.id) ? 'is-jean' : ''}
