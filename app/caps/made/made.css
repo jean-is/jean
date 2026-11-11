@@ -30,6 +30,11 @@ app-file { display: block; }
 .paper-print { position: fixed; inset-block-start: 0; inset-inline-start: 0; z-index: -1; inline-size: 15.92cm; visibility: hidden; pointer-events: none; }
 .paper-logo { display: block; max-block-size: 1cm; max-inline-size: 4cm; }
 .paper-print > .paper-logo { margin-block: 0.75cm; } .paper-print > .paper-logo:first-child { margin-block-start: 0; } .paper-print > .paper-logo[class$='end'] { margin-inline-start: auto; }
+/* A table on paper, measured as it will print, on a page turned on its side too (paper.js): its words whole, spaced by its letters' size, which it shrinks
+   to fit; its heads even and on the line under them, its rows read from their top. A collection's smaller, a line between its columns, as in its view. */
+.paper-print.is-across { inline-size: 24.62cm; } .paper-print table { overflow-wrap: break-word; } .paper-print .paper-cut { overflow-wrap: anywhere; } .paper-print :is(th, td) { padding: 0.5em 0.8em; }
+.paper-print th { vertical-align: bottom; text-wrap: balance; } .paper-print td { vertical-align: top; }
+.paper-rows table { font-size: 0.8rem; } .paper-rows :is(th, td) { padding-inline: 0.6em; } .paper-rows :is(th, td) + :is(th, td) { border-inline-start: 1px solid var(--line); }
 @media print { .print-mark:has(> .paper-logo) > :not(.paper-logo) { display: none; } .print-mark:has(> .paper-logo[class$='end']) { justify-content: flex-end; }
   html.is-printing-paper body > :not(.paper-print) { display: none !important; } html.is-printing-paper .paper-print { position: static; z-index: auto; inline-size: auto; visibility: visible; color-scheme: light; }
   .paper-print > .doc { min-block-size: 0; padding: 0; } .paper-print input { print-color-adjust: exact; } .paper-print .paper-end { text-align: end; }

@@ -110,20 +110,29 @@ export async function downloadWord(source, title, { made, page } = {}) {
 
 /** A collection as a page says it, under its name, for a print. @param {string} folder */
 export async function rowsOf(folder) {
-  const grid = await (await import('../tables/tables.js')).gridIn(folder), box = document.createElement('div')
+  const grid = await (await import('../tables/tables.js')).gridIn(folder), box = Object.assign(document.createElement('div'), { className: 'paper-rows' })
   const cells = (/** @type {string[]} */ row, /** @type {(cell: string, right: boolean) => unknown} */ draw) => row.map((cell, i) => draw(cell, Boolean(grid?.right[i])))
   if (grid) render(html`<h3 dir="auto">${grid.name}</h3><table><thead><tr>${cells(grid.rows[0], (cell, right) => html`<th dir="auto" class=${right ? 'paper-end' : nothing}>${cell}</th>`)}</tr></thead>
     <tbody>${grid.rows.slice(1).map((row) => html`<tr>${cells(row, (cell, right) => html`<td dir="auto" class=${right ? 'paper-end' : nothing}>${cell}</td>`)}</tr>`)}</tbody></table>`, box)
   return box
 }
 
+/** Whether a table's columns, each as wide as its words on one line up to sixteen letters', are wider than `room`. @param {HTMLTableElement} table @param {number} room */
+function wide(table, room) {
+  table.style.inlineSize = 'max-content'
+  const most = 16 * parseFloat(getComputedStyle(table).fontSize), sum = [...table.rows[0]?.cells ?? []].reduce((all, cell) => all + Math.min(cell.offsetWidth, most), 0)
+  table.style.removeProperty('inline-size')
+  return sum > room
+}
+
 /**
  * A document printed alone, what it draws drawn again out of sight at a page's width, a few seconds at most, then gone: as it reads, what
  * Jean suggests left out and a block being written drawn; its logo once, at its start, or at its end for a corner at the foot. Within a Word file's
- * margins, on whichever paper the print dialog holds, the words filling its width and a chart scaled to it in proportion.
- * @param {HTMLElement} dom its editor's
+ * margins, on whichever paper the print dialog holds, the words filling its width and a chart scaled to it in proportion. Turned on its side for a
+ * table too wide to read upright, where the browser can (Safari can't, and shrinks the page to fit).
+ * @param {HTMLElement} dom its editor's @param {{ turn?: boolean }} [options] whether a wide table turns the page
  */
-export async function printPage(dom) {
+export async function printPage(dom, { turn } = {}) {
   const look = await dress(), holder = document.body.appendChild(Object.assign(document.createElement('div'), { className: 'document paper-print' })), page = /** @type {HTMLElement} */ (dom.cloneNode(true))
   for (const one of page.querySelectorAll('.suggest')) one.remove()
   for (const one of page.querySelectorAll('.suggest-old, .is-editing')) one.classList.remove('suggest-old', 'is-editing')
@@ -134,9 +143,17 @@ export async function printPage(dom) {
   holder.append(page)
   if (look?.logo) holder[look.logoAt?.startsWith('bottom') ? 'append' : 'prepend'](logoOf(look))
   const drawing = () => [...holder.querySelectorAll('app-shared, app-chart, app-score, app-diagram, app-latex')].some((one) => !one.querySelector('img, svg, canvas, table, .latex-page')) || [...holder.querySelectorAll('img')].some((one) => !one.complete)
-  await printAlone(holder, 'is-printing-paper', { page: '@page { margin: 2.54cm }', drawing,
+  const across = Boolean(turn) && [...holder.querySelectorAll('table')].some((table) => wide(table, holder.clientWidth))
+  holder.classList.toggle('is-across', across)
+  // One wider than the page, its words whole, takes smaller letters to fit it, three fifths of the room's at least, then breaks its words where it must.
+  const room = holder.clientWidth, least = 0.6 * parseFloat(getComputedStyle(document.documentElement).fontSize)
+  for (const table of holder.querySelectorAll('table')) {
+    for (let pass = 0; pass < 3 && table.offsetWidth > room; pass++) table.style.fontSize = `${Math.max(least, parseFloat(getComputedStyle(table).fontSize) * 0.98 * room / table.offsetWidth)}px`
+    table.classList.toggle('paper-cut', table.offsetWidth > room)
+  }
+  await printAlone(holder, 'is-printing-paper', { page: `@page { ${across ? 'size: landscape; ' : ''}margin: 2.54cm }`, drawing,
     ready: () => { for (const chart of holder.querySelectorAll('.chart')) /** @type {HTMLElement} */ (chart).style.aspectRatio = `${/** @type {HTMLElement} */ (chart).offsetWidth} / ${/** @type {HTMLElement} */ (chart).offsetHeight}` } })
 }
 
-/** What isn't a document printed as one: `drawn`, in a page of its own. @param {unknown} drawn */
-export const printDrawn = (drawn) => { const page = Object.assign(document.createElement('div'), { className: 'doc prose' }); render(drawn, page); return printPage(page) }
+/** What isn't a document printed as one: `drawn`, in a page of its own. @param {unknown} drawn @param {{ turn?: boolean }} [options] */
+export const printDrawn = (drawn, options) => { const page = Object.assign(document.createElement('div'), { className: 'doc prose' }); render(drawn, page); return printPage(page, options) }

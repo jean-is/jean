@@ -1262,7 +1262,7 @@ test('in the design system: a collection\'s pane on its paper, its heads in its 
   expect(await pane.locator('.table-grid td input').first().evaluate((one) => getComputedStyle(one).fontFamily)).toContain('Verdana')
   // Its workbook: the head row in the colour and the headings' face, on the pale fill, over a line; words in the ink and their face. On white, its own colour there.
   const head = page.locator('app-preview .pane-head')
-  await head.locator(':scope > [popovertarget^="out-"]').click()
+  await head.locator('.icon-group > [popovertarget^="out-"]').click()
   const [download] = await Promise.all([page.waitForEvent('download'), page.locator('app-preview .out-menu').getByRole('button', { name: /^Excel/ }).click()])
   const chunks = []
   for await (const chunk of await download.createReadStream()) chunks.push(chunk)
@@ -1273,7 +1273,7 @@ test('in the design system: a collection\'s pane on its paper, its heads in its 
   expect(styles).toContain('<fgColor rgb="FFEEF5F4"/>')
   expect(styles).toContain(`<bottom style="medium"><color rgb="FF${onWhite}"/></bottom>`)
   // Printed: its name and its rows as the view keeps them, nothing to change them with.
-  await head.locator(':scope > [popovertarget^="out-"]').click()
+  await head.locator('.icon-group > [popovertarget^="out-"]').click()
   await page.locator('app-preview .out-menu').getByRole('button', { name: /^Print or save as PDF/ }).click()
   await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).printed)).toBe(true)
   await page.emulateMedia({ media: 'print' })
@@ -1285,11 +1285,24 @@ test('in the design system: a collection\'s pane on its paper, its heads in its 
   expect(await sheet.locator('td').last().evaluate((one) => getComputedStyle(one).textAlign)).toBe('end')
   await expect(sheet.locator('button, input, select, app-table')).toHaveCount(0)
   expect(await sheet.locator('h3').evaluate((one) => getComputedStyle(one).color)).toBe(rgb(`#${onWhite.toLowerCase()}`))
+  await expect(sheet).not.toHaveClass(/is-across/)
+  await page.evaluate(() => dispatchEvent(new Event('afterprint')))
+  await expect(sheet).toHaveCount(0)
+  // One too wide to read upright turns the page on its side, its words kept whole.
+  await page.evaluate(async () => {
+    const { app } = await import('/ui/state.js'), at = '2026-10-21T09:00:00.000Z', uri = 'collections/01K85Z1T00000000000000000W-ideas'
+    await app.fs.write(`${app.projectDir}/${uri}/collection.json`, JSON.stringify({ format: 1, id: '01K85Z1T00000000000000000W', name: 'Ideas', author: 'user', created: at, changed: at, views: [{ id: 'all', name: 'All', type: 'table' }],
+      properties: ['Idea', 'Description', 'Useful to the user', 'Technically feasible', 'Works offline', 'Easy to build', 'Original', 'Total score', 'Person in charge'].map((name, n) => ({ id: `c${n}`, name, type: n > 1 && n < 8 ? 'number' : 'text' })) }))
+    await app.fs.write(`${app.projectDir}/${uri}/changes.jsonl`, `${JSON.stringify({ row: '01K80000000000000000000002', set: { c0: 'Games', c1: 'Small playable games made from a description', c2: 4 }, at, by: 'user' })}\n`)
+    await (await import('/caps/made/ways.js')).collectionWays({ uri, name: 'Ideas.xlsx', title: 'Ideas' }).print?.run()
+  })
+  await expect(sheet).toHaveClass(/is-across/)
+  expect(await sheet.locator('table').evaluate((one) => [getComputedStyle(one).overflowWrap, one.classList.contains('paper-cut')])).toEqual(['break-word', false])
   await page.evaluate(() => dispatchEvent(new Event('afterprint')))
   await expect(sheet).toHaveCount(0)
   // Save's last line leads to the design system's page.
   await page.emulateMedia({ media: 'screen' })
-  await head.locator(':scope > [popovertarget^="out-"]').click()
+  await head.locator('.icon-group > [popovertarget^="out-"]').click()
   await page.locator('app-preview .out-menu').getByRole('button', { name: 'Design system' }).click()
   await expect(page.locator('dialog.settings').getByRole('heading', { name: 'Design system' })).toBeVisible()
 })

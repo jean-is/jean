@@ -33,7 +33,7 @@ export function collectionWays(file) {
     send: { file: `${file.title}.csv`, type: 'text/csv', make: async () => { const { name, bytes } = await made('csv'); return { title: file.title, files: [new File([/** @type {BlobPart} */ (bytes)], name, { type: 'text/csv' })] } } },
     copy: { id: 'copy', run: async () => copyRich(await rows()) },
     files: [{ id: 'xlsx', glyph: icons.table, label: t('made.out.excel'), run: down('xlsx') }, { id: 'csv', glyph: icons.download, label: t('made.out.csv'), run: down('csv') }],
-    print: { id: 'print', run: async () => printDrawn(await rowsOf(file.uri)) }, kit: true }
+    print: { id: 'print', run: async () => printDrawn(await rowsOf(file.uri), { turn: true }) }, kit: true }
 }
 
 // ─── Rich text ───────────────────────────────────────────────────────────────
