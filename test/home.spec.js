@@ -211,10 +211,16 @@ test('on a wide window the box is mid-window, the first act’s title shows whol
     expect(new Set(await home.locator('[data-try]').allTextContents()).size).toBe(1)
     const tiles = home.locator('.home-tile')
     await expect(tiles).toHaveCount(12)
+    // Dealt anew each visit (ui/tiles.js): the twelve the page is written with, in another order (as written once in 12!).
+    const written = [...(await (await page.request.get(address)).text()).matchAll(/data-try="([a-z]+)"/g)].map(([, key]) => key)
+    const dealt = await home.locator('[data-try]').evaluateAll((buttons) => buttons.map((button) => button.getAttribute('data-try')))
+    expect([...dealt].sort()).toEqual([...written].sort())
+    expect(dealt).not.toEqual(written)
     await expect(home.locator('.home-tile [data-try].primary')).toHaveCount(1)
     await expect(tiles.first().locator('[data-try]')).toHaveClass(/primary/)
     await tiles.nth(2).locator('[data-try]').click()
-    await expect(page.locator('#prompt')).toHaveValue(lang === 'en' ? 'A quiz on the planets for my son, ten questions.' : /./)
+    await expect(page.locator('#prompt')).toHaveValue(await tiles.nth(2).locator('.home-request').textContent() ?? '')
+    await expect(page.locator('#prompt')).not.toHaveValue('')
     // One row: four in view, the next four a turn away, whichever way the page reads; Back once turned.
     const [back, next] = [home.locator('.home-turn.is-back'), home.locator('.home-turn.is-next')]
     await expect(back).toBeHidden()
@@ -276,11 +282,15 @@ test.describe('in a Japanese browser', () => {
     // changed mid-page as Settings or ⌘⇧L would.
     // The act on any AI is the first in Japanese and the second in French, each as its promise says them: its catch is the place read.
     const door = () => page.locator('#home-any .home-catch').evaluate((element) => element.getBoundingClientRect().top)
+    const dealt = () => page.locator('.home [data-try]').evaluateAll((buttons) => buttons.map((button) => button.getAttribute('data-try')))
+    const order = await dealt()
     await page.evaluate(() => scrollBy({ top: (document.querySelector('#home-any .home-catch')?.getBoundingClientRect().top ?? 0) - 200, behavior: 'instant' }))
     await page.evaluate(async () => (await import('/ui/state.js')).setLocale('fr'))
     await expect.poll(() => new URL(page.url()).pathname).toBe('/fr')
     await expect(shown(page, 'fr')).toBeVisible()
     await expect(page.locator('html')).toHaveAttribute('lang', 'fr')
+    // The tiles are as this visit dealt them, in every language's page.
+    expect(await dealt()).toEqual(order)
     const menu = page.locator('.home .site-languages'), button = menu.locator('button')
     await expect(button).toContainText('Français')
     await expect.poll(async () => Math.abs(await door() - 200)).toBeLessThan(40)

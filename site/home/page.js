@@ -78,7 +78,8 @@ export function homeOf (kit, { sample = SAMPLE } = {}) {
   const badge = xml(fill(String(kit.raw('tile.sample.badge')), { name: brand.name, ...params, product: '\u0000', growth })).replace('\u0000', /* html */ `<bdi lang="en" dir="ltr">${xml(sample.product)}</bdi>`)
   const file = /* html */ `<span class="home-file" dir="ltr">${ICONS.file}sales.csv</span>`
   const tryIt = (/** @type {string} */ key, primary = false) => /* html */ `<button type="button" class="button${primary ? ' primary' : ''}" data-try="${key}" id="home-try-${key}" aria-labelledby="home-try-${key} home-ask-${key}">${say('tile.try')}</button>`
-  // Twelve, four in view, the rest a turn away: what Jean makes and shows, never homework.
+  // Twelve, four in view, the rest a turn away: what Jean makes and shows, never homework. Written in this order, which
+  // is the one without scripts; the app deals them anew each visit (ui/tiles.js).
   const uses = [
     { key: 'sample', group: 'work', ask: `${file} ${quoted(appSays('starter.sample.prompt'))}`, art: /* html */ `<div class="home-art" aria-hidden="true"><span class="home-bars"><span></span><span></span><span></span><span></span></span><span class="home-badge">${badge}</span></div>` },
     { key: 'music', group: 'family', ask: quoted(say('tile.music')), art: /* html */ `<div class="home-art">${MUSIC}</div>` },
@@ -93,7 +94,8 @@ export function homeOf (kit, { sample = SAMPLE } = {}) {
     { key: 'picture', group: 'home', ask: quoted(say('tile.picture')), art: /* html */ `<div class="home-art is-map">${STREET}</div>` },
     { key: 'plan', group: 'work', ask: quoted(say('tile.plan')), art: /* html */ `<div class="home-art">${PLAN}</div>` },
   ]
-  // A tile: what comes back, drawn; who it is for and what it is; the request; its Try, the first one's the primary one.
+  // A tile: what comes back, drawn; who it is for and what it is; the request; its Try, the first one's the primary one,
+  // as written and as dealt.
   const tile = (/** @type {typeof uses[number]} */ use, /** @type {number} */ i) => /* html */ `
         <li class="home-tile">
           ${use.art}
