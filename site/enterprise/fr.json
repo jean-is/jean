@@ -1,20 +1,16 @@
 {
   "title": "{name} Entreprise",
-  "description": "Toutes les IA que votre entreprise autorise, dans un assistant que vos équipes utilisent vraiment : des fichiers statiques, derrière votre passerelle IA.",
+  "description": "Toutes les IA que votre entreprise autorise, dans un assistant que vos équipes utilisent vraiment : tout fournisseur, tout modèle, derrière votre passerelle.",
   "for": "Entreprise",
-  "eyebrow": "Pour la DSI, la sécurité et les achats",
   "h1": "Toutes les IA que votre entreprise autorise, dans un seul assistant que vos équipes utilisent vraiment.",
   "h1.mark": "utilisent vraiment",
   "acts": [["approved", "Toutes les IA que votre entreprise autorise,"], ["used", "dans un seul assistant que vos équipes utilisent vraiment."]],
-  "lede": "{name} est un dossier de fichiers statiques que vous servez depuis votre propre adresse. Les réponses passent uniquement par votre passerelle IA, chacun se connecte avec votre fournisseur d’identité, et aucun serveur à nous n’intervient. Rien à installer, aucun prix par poste.",
+  "lede": "{name} est un dossier de fichiers statiques, servi depuis votre propre adresse. Il répond par votre passerelle IA, avec les modèles que vous avez choisis.",
   "cta": "Obtenir le kit pilote",
-  "see": "Lire les réponses",
   "try": "Essayer {name} vous-même d’abord",
   "facts": [
-    "Aucun serveur {name}",
-    "Un en-tête suffit à l’imposer",
-    "Votre passerelle, votre authentification",
-    "Gratuit par poste",
+    "Rien à installer",
+    "Jamais de prix par poste",
     "Logiciel libre, MIT"
   ],
   "path.label": "Le trajet d’une requête",
@@ -35,7 +31,7 @@
   "path.sides": [
     [
       "Votre fournisseur d’identité",
-      "Entra ID ou tout OpenID Connect : la connexion part vers la passerelle"
+      "Entra ID ou tout OpenID Connect"
     ],
     [
       "Votre collecteur OpenTelemetry",
@@ -46,25 +42,22 @@
       "Aucun sur le trajet"
     ]
   ],
-  "path.caption": "Le travail de chacun reste dans son navigateur, chiffré. Les requêtes ne vont que là où votre politique et votre en-tête l’autorisent.",
-  "why.title": "Vos équipes utilisent déjà l’IA. Reste à savoir où vont leurs données.",
-  "why.facts": [
-    [
-      "des personnes qui utilisent l’IA au travail apportent leurs propres outils.",
-      "Microsoft et LinkedIn, Work Trend Index 2024"
-    ],
-    [
-      "des postes Microsoft 365 ont Copilot payant : {paid} sur {total}.",
-      "Microsoft, janvier 2026"
-    ],
-    [
-      "des organisations ont interdit l’IA générative au moins une fois. L’usage a continué.",
-      "Cisco Data Privacy Benchmark 2024"
-    ]
+  "path.caption": "Les requêtes ne vont que là où votre politique et votre en-tête l’autorisent.",
+  "any.title": "Tout fournisseur, tout modèle.",
+  "any.why": "OpenAI, Anthropic, Mistral, Google, ou un modèle ouvert sur vos propres serveurs : {name} les parle tous. Changez de modèle dans votre politique, et personne ne change d’outil.",
+  "any.rows": [
+    "Un modèle ouvert, sur vos propres serveurs",
+    "Un modèle intermédiaire, dans votre cloud",
+    "Un modèle de pointe, chez son fournisseur"
   ],
-  "why.line": "Votre passerelle IA est l’endroit où vous gouvernez les modèles, les coûts et les données. {name} donne à chacun un accès qui les y garde.",
-  "pilot.title": "Un pilote en un après-midi",
-  "pilot.assist.title": "Confiez-le à votre assistant de code",
+  "cost.title": "Le grand modèle, seulement quand il le faut.",
+  "cost.why": "L’Intuition, un petit modèle embarqué dans le navigateur de chacun, jauge chaque demande avant qu’elle ne parte. {name} l’envoie alors au moins coûteux de vos modèles capables d’y répondre.",
+  "cost.asks": [
+    "Rends ce mail plus courtois.",
+    "Résume ce contrat en une page.",
+    "Trouve la faille dans ces prévisions à cinq ans."
+  ],
+  "pilot.title": "Un pilote en un après-midi.",
   "pilot.assist.body": "Collez ceci dans Claude Code, Codex ou Copilot. Il demande votre logo, votre fournisseur d’identité et votre passerelle, puis installe votre copie et la vérifie.",
   "pilot.assist.prompt": "Configurez notre propre {name} avec la compétence {skill}",
   "pilot.assist.read": "Lire la compétence",
@@ -87,19 +80,9 @@
       "Ouvrez policy.html à votre adresse. La page lit votre politique et vos en-têtes, essaie chaque adresse et signale ce qui ne va pas."
     ]
   ],
-  "pilot.after": "Ensuite, chacun ouvre l’adresse, se connecte avec son compte professionnel et commence. Edge et Chrome peuvent l’installer comme une application via Intune.",
   "pilot.kit": "Le kit pilote : les recettes, la politique, le jeu d’en-têtes et le dossier de confiance",
-  "people.title": "Une seule case, pour tout le monde",
-  "people.body": "Une question, un fichier ou un dossier ; en retour, une réponse sourcée, un document Word, un tableur, une présentation ou un graphique. Les chiffres sont calculés par du code, pas devinés. En 46 langues, y compris de droite à gauche. Une demande est faite avant tout envoi, partage ou suppression.",
-  "people.more": "Voir ce que {name} fait pour tous",
-  "demo.brain": "Acme AI",
-  "pane.title": "Un rapport de ventes résumé pour la direction, dans {name}",
-  "pane.play": "Voir le déroulé",
-  "people.ask": "Fais-en une synthèse d’une page pour le comité de direction.",
-  "people.file": "Ventes T3.xlsx",
-  "people.answer": "Les ventes progressent de 12 % sur le trimestre, portées par le nord. La synthèse et un graphique sont dans Synthèse T3.docx.",
-  "answers.title": "Ce que vos équipes vont demander",
-  "answers.why": "Une ligne par question, avec son état aujourd’hui. Les documents à joindre à votre revue sont dans le dossier de confiance.",
+  "answers.title": "Ce que vos équipes vont demander.",
+  "answers.why": "Une ligne par question, avec son état aujourd’hui.",
   "answers.show": "Voir les réponses pour",
   "status.built": "Disponible",
   "status.key": "Avec une clé",
@@ -139,7 +122,7 @@
     ],
     [
       "Que peut atteindre le code écrit par l’IA ?",
-      "Il s’exécute dans un worker isolé, d’origine opaque, sans réseau. La page impose Trusted Types et une politique stricte.",
+      "Rien hors de son bac à sable : un worker d’origine opaque, sans réseau.",
       "built"
     ],
     [
@@ -149,7 +132,7 @@
     ],
     [
       "L’IA peut-elle lire les noms de clients et les numéros de carte ?",
-      "Pas si vous les cachez. Les noms de personnes en français, anglais, allemand et espagnol, et les listes et motifs de votre politique, sont repérés sur l’appareil, et une IA en ligne lit des repères à leur place, remis en clair quand elle répond. Ce que rien ne trouve part tel quel, et le reste du texte peut encore dire de qui il s’agit : c’est masqué, pas anonyme.",
+      "Pas ceux que vous cachez. Les noms de personnes en français, anglais, allemand et espagnol, et les listes et motifs de votre politique, quittent l’appareil sous forme de repères, remis en clair dans la réponse. Masqué, pas anonyme : ce que rien ne trouve part tel quel.",
       "key"
     ],
     [
@@ -159,17 +142,17 @@
     ],
     [
       "Comment se fier à une version ?",
-      "Les versions sont signées, avec leur nomenclature CycloneDX, et se vérifient avec OpenSSH. Trois bibliothèques se chargent au démarrage.",
+      "Les versions sont signées, avec leur nomenclature CycloneDX, et se vérifient avec OpenSSH.",
       "built"
     ],
     [
       "Suit-il le guide de l’ANSSI ?",
-      "Chacune de ses 35 recommandations pour un système d’IA générative est traitée dans le dossier de confiance : ce que fait {name}, ce qui vous revient, ce qui n’est pas fait.",
+      "Chacune de ses 35 recommandations pour l’IA générative est traitée dans le dossier de confiance : ce que fait {name}, ce qui vous revient, ce qui n’est pas fait.",
       "built"
     ],
     [
       "Un test d’intrusion externe ?",
-      "Le cahier des charges est publié. Le test n’est pas encore fait.",
+      "Pas encore. Le cahier des charges est publié.",
       "not"
     ]
   ],
@@ -201,7 +184,7 @@
     ],
     [
       "Y a-t-il des cookies ?",
-      "Aucun, d’aucune sorte : rien à déclarer dans votre bandeau de consentement. Chaque modification de {name} est vérifiée, et refusée si elle en dépose un.",
+      "Aucun, d’aucune sorte : rien à déclarer dans votre bandeau de consentement.",
       "design"
     ]
   ],
@@ -212,7 +195,7 @@
       "built"
     ],
     [
-      "Quelles passerelles et quels modèles ?",
+      "Quelles passerelles ?",
       "Tout point d’accès compatible OpenAI ou Anthropic : LiteLLM, Portkey, Cloudflare, Azure API Management, Albert, SAIA, un serveur sur site.",
       "built"
     ],
@@ -227,14 +210,14 @@
       "built"
     ],
     [
+      "En application sur les postes ?",
+      "Edge et Chrome l’installent comme une application via Intune.",
+      "built"
+    ],
+    [
       "Mises à jour ?",
       "Des versions signées. Les versions à support long viennent avec un abonnement.",
       "key"
-    ],
-    [
-      "Une console d’administration ?",
-      "Aucune. Vous gouvernez dans votre passerelle, votre fournisseur d’identité et votre collecteur.",
-      "design"
     ]
   ],
   "answers.purchasing": [
@@ -244,8 +227,8 @@
       "built"
     ],
     [
-      "Combien ça coûte ?",
-      "Rien par poste. Gratuit pour une organisation de moins de {small} personnes ; à partir de {small} personnes, {price} HT par an, quelle que soit sa taille, avec les clés, le support long et les questionnaires remplis.",
+      "SOC 2 ou ISO 27001 ?",
+      "Ni l’un ni l’autre : ils auditent les serveurs d’un prestataire, et rien de vos données ne passe par les nôtres. Le dossier de confiance répond du code que vous déployez.",
       "design"
     ],
     [
@@ -262,6 +245,11 @@
       "Qui est le fournisseur ?",
       "Warehouse SAS, une société française.",
       "built"
+    ],
+    [
+      "Et si Warehouse SAS s’arrête ?",
+      "Vous gardez les versions et le code sous MIT, et chacun garde ses fichiers.",
+      "design"
     ]
   ],
   "answers.staff": [
@@ -284,7 +272,7 @@
   "answers.ai": [
     [
       "Quelles IA peut-on utiliser ?",
-      "Seulement celles que votre politique nomme. Auto choisit parmi elles.",
+      "Seulement celles que votre politique nomme.",
       "built"
     ],
     [
@@ -303,134 +291,65 @@
       "built"
     ]
   ],
-  "compare.title": "Ce qui le distingue",
-  "compare.note": "Des types de réponse, pas des produits.",
-  "compare.head": [
-    "",
-    "{name}",
-    "Assistants cloud par poste",
-    "Plateformes d’assistants",
-    "Chat open source auto-hébergé"
-  ],
-  "compare.rows": [
-    [
-      "Où il tourne",
-      "Dans le navigateur de chacun, depuis votre adresse",
-      "Le cloud de l’éditeur",
-      "Le cloud de l’éditeur, options UE",
-      "Vos serveurs"
-    ],
-    [
-      "Ce que vous exploitez",
-      "Un dossier statique",
-      "Rien",
-      "Rien, ou leur édition sur site",
-      "Serveurs d’application, base de données, stockage"
-    ],
-    [
-      "Qui traite les requêtes",
-      "Votre passerelle seulement",
-      "L’éditeur",
-      "L’éditeur",
-      "Vos serveurs"
-    ],
-    [
-      "Modèles",
-      "Tous, derrière votre passerelle",
-      "Ceux de l’éditeur",
-      "Plusieurs, via l’éditeur",
-      "Tous"
-    ],
-    [
-      "Prix",
-      "Gratuit par poste ; un abonnement par organisation",
-      "Par poste et par mois",
-      "Par poste et par mois",
-      "Gratuit, plus l’exploitation"
-    ],
-    [
-      "Certifications",
-      "Un dossier de confiance : rien de vos données sur nos serveurs",
-      "SOC 2, ISO 27001",
-      "SOC 2, ISO 27001",
-      "À obtenir vous-même"
-    ]
+  "trust.title": "À joindre à votre revue",
+  "trust.docs": [
+    "Modèle de menaces",
+    "Les 35 recommandations de l’ANSSI",
+    "Modèle d’AIPD",
+    "Déclaration d’accessibilité",
+    "Cahier des charges du test d’intrusion",
+    "Versions signées",
+    "Où vont vos fichiers",
+    "Déployer",
+    "Prêt pour l’entreprise"
   ],
   "limits.title": "Ce que {name} ne fait pas",
-  "limits.items": [
-    "Rien ne peut être garanti sur un poste non géré. Le contrôle vient de votre en-tête, de votre réseau et de votre passerelle.",
-    "Pas d’effacement à distance d’un poste.",
-    "Pas de console d’administration, par conception.",
-    "Les routines ne tournent que lorsque {name} est ouvert.",
-    "Effacer les données du navigateur supprime le travail d’une personne, sauf sauvegarde ou dossier synchronisé.",
-    "Les contrôles anti-fuite cherchent ce que vous nommez, pas tout : on peut reformuler, et une image n’est pas lue."
+  "limits.approved": [
+    "Garantir quoi que ce soit sur un poste non géré : le contrôle vient de votre en-tête, de votre réseau et de votre passerelle.",
+    "Effacer un poste à distance.",
+    "Offrir une console d’administration : vous gouvernez dans votre passerelle, votre fournisseur d’identité et votre collecteur.",
+    "Arrêter toute fuite : les contrôles cherchent ce que vous nommez, on peut reformuler, et une image n’est pas lue.",
+    "Jauger les demandes sans l’Intuition : chacun accepte son téléchargement, {size}, sur ordinateur seulement. Sans elle, {name} prend votre modèle intermédiaire."
   ],
-  "trust.title": "Tout ce que votre revue demande, en clair",
-  "trust.docs": [
-    [
-      "Modèle de menaces",
-      "Ce que {name} protège, contre qui, et ce qui vous revient"
-    ],
-    [
-      "Les 35 recommandations de l’ANSSI",
-      "Une par une : ce que fait {name}, ce qui vous revient"
-    ],
-    [
-      "Modèle d’AIPD",
-      "Rempli pour ce que fait {name}"
-    ],
-    [
-      "Déclaration d’accessibilité",
-      "Partiellement conforme avec le RGAA 4.1.2 selon notre propre audit : 80,7 % des critères respectés, et ce qui n’est pas encore accessible"
-    ],
-    [
-      "Cahier des charges du test d’intrusion",
-      "Ce qu’un test externe couvre. Pas encore fait"
-    ],
-    [
-      "Versions signées",
-      "Déployer sans construire, et vérifier ce que vous déployez"
-    ],
-    [
-      "Où vont vos fichiers",
-      "Chaque adresse qu’une copie de {name} contacte, et quand"
-    ],
-    [
-      "Déployer",
-      "IIS, Azure, S3, conteneurs, Intune, un jeu d’en-têtes"
-    ],
-    [
-      "Prêt pour l’entreprise",
-      "La politique, la connexion, l’audit, la conservation et les limites"
-    ]
+  "limits.used": [
+    "Lancer une routine quand {name} est fermé.",
+    "Garder le travail de quelqu’un une fois les données de son navigateur effacées, sauf sauvegarde ou dossier synchronisé."
   ],
-  "trust.verify": "Vérifiez une version avec l’OpenSSH de tout système :",
-  "trust.ci": "Chaque changement passe la vérification des types, les tests unitaires, les budgets de taille, les tests navigateur dans Chromium et WebKit, les signatures des dépôts et les vulnérabilités connues.",
+  "people.title": "Une seule case, pour tout le monde.",
+  "people.body": "Une question, un fichier ou un dossier y entre. Il en sort une réponse sourcée, un document Word, un tableur ou une présentation, en 46 langues.",
+  "people.fact": [
+    "des personnes qui utilisent l’IA au travail apportent leurs propres outils.",
+    "Microsoft et LinkedIn, Work Trend Index 2024"
+  ],
+  "people.more": "Voir ce que {name} fait pour tous",
+  "demo.brain": "Acme AI",
+  "pane.title": "Un rapport de ventes résumé pour la direction, dans {name}",
+  "pane.play": "Voir le déroulé",
+  "people.ask": "Fais-en une synthèse d’une page pour le comité de direction.",
+  "people.file": "Ventes T3.xlsx",
+  "people.answer": "Les ventes progressent de 12 % sur le trimestre, portées par le nord. La synthèse et un graphique sont dans Synthèse T3.docx.",
   "price.title": "Gratuit pour chaque personne. Un abonnement pour l’organisation.",
   "price.cards": [
     [
-      "Ouvert",
+      "Moins de {small} personnes",
       "Gratuit",
-      "Tout ce qu’une personne ou une équipe utilise : connexion à votre passerelle, politique, chiffrement, recettes et dossier de confiance.",
-      "Obtenir le kit pilote"
-    ],
-    [
-      "Abonnement",
-      "{price} HT par an",
-      "Pour une organisation de {small} personnes ou plus, quelle que soit sa taille : l’export d’audit et la conservation, les versions à support long, les questionnaires de sécurité remplis, le rapport du test externe, l’aide à la mise en place et, si vous le souhaitez, une copie hébergée à votre adresse. Jamais par poste.",
-      "Demander une clé d’essai de 30 jours"
-    ],
-    [
-      "Clé gratuite",
-      "Gratuit",
-      "Toutes les fonctions entreprise, pour une organisation de moins de {small} personnes.",
+      "Toutes les fonctions entreprise, avec une clé gratuite.",
       "Demander une clé"
+    ],
+    [
+      "{small} personnes ou plus",
+      "{price} HT par an",
+      "Quelle que soit votre taille, jamais par poste : l’export d’audit et la conservation, les versions à support long, les questionnaires de sécurité remplis, le rapport du test externe, l’aide à la mise en place et, si vous le souhaitez, une copie hébergée à votre adresse.",
+      "Demander une clé d’essai de 30 jours"
     ]
   ],
-  "price.rule": "Une seule règle : gratuit pour toute organisation de moins de {small} personnes, et {price} HT par an pour toute organisation de {small} personnes ou plus, quelle que soit sa taille.",
-  "price.note": "Une clé débloque pour toujours chaque version publiée avant sa date de fin. {name} la vérifie hors ligne et n’appelle jamais nos serveurs. Acheteurs publics : quatre ans d’abonnement restent sous le seuil de dispense de procédure de 60 000 € HT.",
+  "price.note": "Ce qui ne demande pas de clé est un logiciel libre, sous MIT. Une clé débloque pour toujours chaque version publiée avant sa date de fin, et {name} la vérifie hors ligne.",
   "faq.title": "Questions",
   "faq.items": [
+    [
+      "Quelle différence avec un assistant par poste ou un chat auto-hébergé ?",
+      "Un assistant par poste tourne dans le cloud de son éditeur, avec les modèles de son éditeur. Un chat auto-hébergé demande des serveurs d’application, une base de données et du stockage. {name} est un dossier statique : rien à exploiter, tout modèle, aucun prix par poste."
+    ],
     [
       "Peut-il coexister avec Microsoft 365 Copilot ?",
       "Oui. Il sert les personnes sans licence Copilot, sur tout appareil avec un navigateur, et lit et écrit dans Microsoft 365 via votre propre enregistrement d’application."
@@ -440,19 +359,10 @@
       "Avec votre passerelle sur site et l’en-tête limité à elle, rien ne sort de votre réseau. Sur un ordinateur assez puissant, {name} peut aussi répondre sur le poste."
     ],
     [
-      "Quelles passerelles fonctionnent ?",
-      "Tout point d’accès compatible OpenAI : LiteLLM, Portkey, Cloudflare AI Gateway, Azure API Management, et des services publics comme Albert ou SAIA du GWDG."
-    ],
-    [
       "Peut-on y mettre notre nom ?",
       "Oui : votre nom et vos couleurs, et vos propres pages de confidentialité et de conditions."
-    ],
-    [
-      "Et si Warehouse SAS s’arrête ?",
-      "Vous gardez les versions et le code sous MIT, et chacun garde ses fichiers. Si aucune clé n’est en vente pendant 12 mois, le code entreprise passe en MIT."
     ]
   ],
   "share.title": "Partagez cette page avec votre comité de revue",
-  "share.body": "Sécurité, données, achats et représentants du personnel ont chacun leurs réponses plus haut. Envoyez-leur cette adresse :",
   "share.write": "Questions : {contact}"
 }

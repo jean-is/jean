@@ -1,20 +1,16 @@
 {
   "title": "{name} Enterprise",
-  "description": "Every AI your company approves, in one assistant people actually use: static files at your own address, answering only through your AI gateway and sign-in.",
+  "description": "Every AI your company approves, in one assistant people actually use: any provider, any model, behind your own gateway, and never a price per seat.",
   "for": "Enterprise",
-  "eyebrow": "For IT, security and purchasing teams",
   "h1": "Every AI your company approves, in one assistant people actually use.",
   "h1.mark": "actually use",
   "acts": [["approved", "Every AI your company approves,"], ["used", "in one assistant people actually use."]],
-  "lede": "{name} is a folder of static files you serve from your own address. It answers only through your AI gateway, signs people in with your identity provider, and needs no server of ours. Nothing to install, no price per seat.",
+  "lede": "{name} is a folder of static files, served from your own address. It answers through your AI gateway, with the models you chose.",
   "cta": "Get the pilot kit",
-  "see": "Read the answers",
   "try": "Try {name} yourself first",
   "facts": [
-    "No {name} server",
-    "One header enforces it",
-    "Your gateway, your sign-in",
-    "Free per seat",
+    "Nothing to install",
+    "Never a price per seat",
     "Open source, MIT"
   ],
   "path.label": "How a request travels",
@@ -35,7 +31,7 @@
   "path.sides": [
     [
       "Your identity provider",
-      "Entra ID or any OpenID Connect: the sign-in goes to the gateway"
+      "Entra ID or any OpenID Connect"
     ],
     [
       "Your OpenTelemetry collector",
@@ -46,25 +42,22 @@
       "None in the path"
     ]
   ],
-  "path.caption": "Each person’s work stays in their browser, sealed. Requests go only where your policy and your header allow.",
-  "why.title": "Your people already use AI. The question is where it goes.",
-  "why.facts": [
-    [
-      "of people who use AI at work bring their own tools.",
-      "Microsoft and LinkedIn, Work Trend Index 2024"
-    ],
-    [
-      "of Microsoft 365 seats have paid Copilot: {paid} of {total}.",
-      "Microsoft, January 2026"
-    ],
-    [
-      "of organisations have banned generative AI at least once. People kept using it.",
-      "Cisco Data Privacy Benchmark 2024"
-    ]
+  "path.caption": "Requests go only where your policy and your header allow.",
+  "any.title": "Any provider, any model.",
+  "any.why": "OpenAI, Anthropic, Mistral, Google, or an open model on your own servers: {name} works with them all. Change models in your policy, and nobody changes tools.",
+  "any.rows": [
+    "An open model, on your own servers",
+    "A mid-size model, in your cloud",
+    "A frontier model, at its provider"
   ],
-  "why.line": "Your AI gateway is where you govern models, costs and data. {name} gives everyone a front end that keeps it there.",
-  "pilot.title": "A pilot in an afternoon",
-  "pilot.assist.title": "Hand it to your coding assistant",
+  "cost.title": "The big model, only when it’s needed.",
+  "cost.why": "Intuition, a small model that runs in each person’s browser, weighs every request before it leaves. {name} then sends it to the least costly of your models that can do it.",
+  "cost.asks": [
+    "Make this email more polite.",
+    "Sum up this contract in one page.",
+    "Find the flaw in this five-year forecast."
+  ],
+  "pilot.title": "A pilot in an afternoon.",
   "pilot.assist.body": "Paste this into Claude Code, Codex or Copilot. It asks for your logo, sign-in and gateway, then sets up your copy and checks it.",
   "pilot.assist.prompt": "Set up our own {name} with the skill at {skill}",
   "pilot.assist.read": "Read the skill",
@@ -87,19 +80,9 @@
       "Open policy.html at your address. It reads your policy and headers, tries each address, and says what’s wrong."
     ]
   ],
-  "pilot.after": "Then people open the address, sign in with their work account and start. Edge and Chrome can install it as an app through Intune.",
   "pilot.kit": "The pilot kit: the recipes, the policy, the header set and the trust pack",
-  "people.title": "One box, for everyone",
-  "people.body": "A question, a file or a folder goes in; back comes an answer with its sources, a Word document, a spreadsheet, a deck or a chart. Numbers are worked out by code, not guessed. In 46 languages, right to left included. It asks before sending, sharing or deleting anything.",
-  "people.more": "See what {name} does for everyone",
-  "demo.brain": "Acme AI",
-  "pane.title": "A sales report summed up for the board, in {name}",
-  "pane.play": "Watch it unfold",
-  "people.ask": "Turn this into a one-page summary for the board.",
-  "people.file": "Q3 sales.xlsx",
-  "people.answer": "Sales grew 12% on the quarter, led by the north. The summary and a chart are in Q3 summary.docx.",
-  "answers.title": "What your teams will ask",
-  "answers.why": "One line per question, with its status today. The documents to attach to your review are in the trust pack.",
+  "answers.title": "What your teams will ask.",
+  "answers.why": "One line per question, with its status today.",
   "answers.show": "Show the answers for",
   "status.built": "Built",
   "status.key": "With a key",
@@ -139,7 +122,7 @@
     ],
     [
       "What can code the AI writes reach?",
-      "It runs in a sandboxed worker with an opaque origin and no network. The page enforces Trusted Types and a strict policy.",
+      "Nothing outside its sandbox: a worker with an opaque origin and no network.",
       "built"
     ],
     [
@@ -149,7 +132,7 @@
     ],
     [
       "Can the AI read client names and card numbers?",
-      "Not if you hide them. People’s names in English, French, German and Spanish, and your policy’s lists and patterns, are found on the device, and a cloud AI reads marks in their place, put back when it answers. What nothing finds goes as it is, and the rest of a text can still say who it is: masked, not anonymous.",
+      "Not those you hide. People’s names in English, French, German and Spanish, and your policy’s lists and patterns, leave the device as marks, put back in the answer. Masked, not anonymous: what nothing finds goes as it is.",
       "key"
     ],
     [
@@ -159,17 +142,17 @@
     ],
     [
       "How do we trust a release?",
-      "Releases are signed and come with a CycloneDX bill of materials, checked with OpenSSH. Three libraries load up front.",
+      "Releases are signed and come with a CycloneDX bill of materials, checked with OpenSSH.",
       "built"
     ],
     [
       "Does it follow ANSSI’s guide?",
-      "Each of its 35 recommendations for generative AI systems is mapped in the trust pack: what {name} does, what is left to you, what isn’t built.",
+      "Each of its 35 recommendations for generative AI is mapped in the trust pack: what {name} does, what is left to you, what isn’t built.",
       "built"
     ],
     [
       "Has it been tested from outside?",
-      "The brief for the test is published. The test isn’t done yet.",
+      "Not yet. The brief for the test is published.",
       "not"
     ]
   ],
@@ -201,7 +184,7 @@
     ],
     [
       "Does it set cookies?",
-      "None, of any kind, so there is nothing to declare in your consent banner. Every change to {name} is checked, and refused if it sets one.",
+      "None, of any kind: there is nothing to declare in your consent banner.",
       "design"
     ]
   ],
@@ -212,7 +195,7 @@
       "built"
     ],
     [
-      "Which gateways and models?",
+      "Which gateways?",
       "Any OpenAI-compatible or Anthropic endpoint: LiteLLM, Portkey, Cloudflare, Azure API Management, Albert, SAIA, a server on premises.",
       "built"
     ],
@@ -227,14 +210,14 @@
       "built"
     ],
     [
+      "As an app on people’s computers?",
+      "Edge and Chrome install it as an app through Intune.",
+      "built"
+    ],
+    [
       "Updates?",
       "Signed releases. Long-term support releases come with a subscription.",
       "key"
-    ],
-    [
-      "An admin console?",
-      "None. You govern in your gateway, your identity provider and your collector.",
-      "design"
     ]
   ],
   "answers.purchasing": [
@@ -244,8 +227,8 @@
       "built"
     ],
     [
-      "What does it cost?",
-      "Nothing per seat. Free for an organisation of fewer than {small} people; from {small} people, {price} a year, whatever its size, with keys, long-term support and filled-in questionnaires.",
+      "SOC 2 or ISO 27001?",
+      "Neither: they audit a provider’s servers, and nothing of yours passes through ours. The trust pack answers for the code you deploy.",
       "design"
     ],
     [
@@ -262,6 +245,11 @@
       "Who is the vendor?",
       "Warehouse SAS, a French company.",
       "built"
+    ],
+    [
+      "And if Warehouse SAS stops?",
+      "You keep the releases and the code under MIT, and people keep their files.",
+      "design"
     ]
   ],
   "answers.staff": [
@@ -284,7 +272,7 @@
   "answers.ai": [
     [
       "Which brains can people use?",
-      "Only those your policy names. Auto picks among them.",
+      "Only those your policy names.",
       "built"
     ],
     [
@@ -303,134 +291,65 @@
       "built"
     ]
   ],
-  "compare.title": "How it compares",
-  "compare.note": "Kinds of answer, not products.",
-  "compare.head": [
-    "",
-    "{name}",
-    "Per-seat cloud assistants",
-    "Assistant platforms",
-    "Self-hosted open-source chat"
-  ],
-  "compare.rows": [
-    [
-      "Where it runs",
-      "Each person’s browser, from your address",
-      "The vendor’s cloud",
-      "The vendor’s cloud, EU options",
-      "Your servers"
-    ],
-    [
-      "What you operate",
-      "A static folder",
-      "Nothing",
-      "Nothing, or their on-premises edition",
-      "App servers, a database, storage"
-    ],
-    [
-      "Who handles prompts",
-      "Your gateway only",
-      "The vendor",
-      "The vendor",
-      "Your servers"
-    ],
-    [
-      "Models",
-      "Any, behind your gateway",
-      "The vendor’s",
-      "Many, through the vendor",
-      "Any"
-    ],
-    [
-      "Price",
-      "Free per seat; a subscription per organisation",
-      "Per seat, per month",
-      "Per seat, per month",
-      "Free, plus running it"
-    ],
-    [
-      "Certifications",
-      "A trust pack: nothing of yours on our servers",
-      "SOC 2, ISO 27001",
-      "SOC 2, ISO 27001",
-      "Yours to obtain"
-    ]
+  "trust.title": "To attach to your review",
+  "trust.docs": [
+    "Threat model",
+    "ANSSI’s 35 recommendations",
+    "DPIA template",
+    "Accessibility statement",
+    "Penetration test brief",
+    "Signed releases",
+    "Where your files go",
+    "Deploying",
+    "Enterprise readiness"
   ],
   "limits.title": "What {name} doesn’t do",
-  "limits.items": [
-    "It can’t guarantee anything on unmanaged devices. Enforcement comes from your header, your network and your gateway.",
-    "It can’t wipe a device remotely.",
-    "It has no admin console, by design.",
-    "Routines run only while {name} is open.",
-    "Clearing the browser’s data deletes a person’s work, unless they back it up or sync a folder.",
-    "Data-loss checks look for what you name, not for everything: a person can reword it, and a picture isn’t read."
+  "limits.approved": [
+    "Guarantee anything on an unmanaged device: enforcement comes from your header, your network and your gateway.",
+    "Wipe a device remotely.",
+    "Give you an admin console: you govern in your gateway, your identity provider and your collector.",
+    "Stop every leak: data-loss checks look for what you name, a person can reword it, and a picture isn’t read.",
+    "Weigh requests before Intuition is on: each person accepts its download, {size}, on a computer only. Until then, {name} takes your middle model."
   ],
-  "trust.title": "Everything your review asks for, in the open",
-  "trust.docs": [
-    [
-      "Threat model",
-      "What {name} protects, from whom, and what’s left to you"
-    ],
-    [
-      "ANSSI’s 35 recommendations",
-      "Each one: what {name} does, what’s left to you"
-    ],
-    [
-      "DPIA template",
-      "Filled in for what {name} does"
-    ],
-    [
-      "Accessibility statement",
-      "Partially conformant with RGAA 4.1.2 by our own audit: 80.7% of criteria met, and what isn’t accessible yet"
-    ],
-    [
-      "Penetration test brief",
-      "What an outside test covers. Not done yet"
-    ],
-    [
-      "Signed releases",
-      "Deploy without building, and check what you deploy"
-    ],
-    [
-      "Where your files go",
-      "Every address a copy of {name} contacts, and when"
-    ],
-    [
-      "Deploying",
-      "IIS, Azure, S3, containers, Intune, one header set"
-    ],
-    [
-      "Enterprise readiness",
-      "The policy, sign-in, audit, retention, and the limits"
-    ]
+  "limits.used": [
+    "Run a routine while {name} is closed.",
+    "Keep a person’s work once their browser’s data is cleared, unless they back it up or sync a folder."
   ],
-  "trust.verify": "Check a release with the OpenSSH every system has:",
-  "trust.ci": "Every change passes type checks, unit tests, size budgets, browser tests in Chromium and WebKit, registry signatures and known advisories.",
+  "people.title": "One box, for everyone.",
+  "people.body": "A question, a file or a folder goes in. An answer with its sources, a Word document, a spreadsheet or a deck comes back, in 46 languages.",
+  "people.fact": [
+    "of people who use AI at work bring their own tools.",
+    "Microsoft and LinkedIn, Work Trend Index 2024"
+  ],
+  "people.more": "See what {name} does for everyone",
+  "demo.brain": "Acme AI",
+  "pane.title": "A sales report summed up for the board, in {name}",
+  "pane.play": "Watch it unfold",
+  "people.ask": "Turn this into a one-page summary for the board.",
+  "people.file": "Q3 sales.xlsx",
+  "people.answer": "Sales grew 12% on the quarter, led by the north. The summary and a chart are in Q3 summary.docx.",
   "price.title": "Free for every person. A subscription for the organisation.",
   "price.cards": [
     [
-      "Open",
+      "Fewer than {small} people",
       "Free",
-      "Everything a person or a team uses: sign-in to your gateway, the policy, encryption, the recipes and the trust pack.",
-      "Get the pilot kit"
-    ],
-    [
-      "Subscription",
-      "{price} a year",
-      "For an organisation of {small} people or more, whatever its size: the audit export and retention, long-term support releases, filled-in security questionnaires, the outside test’s report, help to set up, and a copy hosted at your address if you want one. Never per seat.",
-      "Ask for a 30-day trial key"
-    ],
-    [
-      "Free key",
-      "Free",
-      "Every enterprise feature, for an organisation of fewer than {small} people.",
+      "Every enterprise feature, with a free key.",
       "Ask for a key"
+    ],
+    [
+      "{small} people or more",
+      "{price} a year excl. VAT",
+      "Whatever your size, never per seat: the audit export and retention, long-term support releases, filled-in security questionnaires, the outside test’s report, help to set up, and a copy hosted at your address if you want one.",
+      "Ask for a 30-day trial key"
     ]
   ],
-  "price.rule": "One rule: free for every organisation of fewer than {small} people, and {price} a year excl. VAT for every organisation of {small} people or more, whatever its size.",
-  "price.note": "A key unlocks every version released before its end date, forever. {name} checks it offline and never calls home.",
+  "price.note": "What needs no key is open source, under MIT. A key unlocks every version released before its end date, forever, and {name} checks it offline.",
   "faq.title": "Questions",
   "faq.items": [
+    [
+      "How is it different from a per-seat assistant or a self-hosted chat?",
+      "A per-seat assistant runs in its vendor’s cloud, on its vendor’s models. A self-hosted chat means app servers, a database and storage to run. {name} is a static folder: nothing to operate, any model, and no price per seat."
+    ],
     [
       "Can it sit alongside Microsoft 365 Copilot?",
       "Yes. It serves the people without a Copilot licence, on any device with a browser, and reads and writes Microsoft 365 through your own app registration."
@@ -440,19 +359,10 @@
       "With your gateway on premises and the header limited to it, nothing leaves your network. On a capable computer, {name} can also answer on the device."
     ],
     [
-      "Which gateways work?",
-      "Any OpenAI-compatible endpoint: LiteLLM, Portkey, Cloudflare AI Gateway, Azure API Management, and public services such as Albert or GWDG’s SAIA."
-    ],
-    [
       "Can we put our name on it?",
       "Yes: your name and colours, and your own privacy page and terms."
-    ],
-    [
-      "What if Warehouse SAS stops?",
-      "You keep the releases and the code under MIT, and people keep their files. If no key can be bought for 12 months, the enterprise code becomes MIT."
     ]
   ],
   "share.title": "Share this page with your review team",
-  "share.body": "Security, privacy, purchasing and staff representatives each have their answers above. Send them this address:",
   "share.write": "Questions: {contact}"
 }

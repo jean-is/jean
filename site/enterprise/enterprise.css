@@ -1,6 +1,7 @@
-/* The page for IT (D428), over site.css: the path a request takes, the pilot, the roles' answers, the comparison,
-   the trust pack and the prices. Logical properties only; classes start with ent-. The roles' answers switch with
-   radio buttons and the sibling selector alone, since the page runs no script but the theme's. */
+/* The page for IT (D428), over site.css: the path a request takes, the levels and what Auto picks among them, the
+   pilot, the roles' answers with the trust pack's documents, and the prices. Logical properties only; classes start
+   with ent-. The roles' answers switch with radio buttons and the sibling selector alone, since the page runs no
+   script but the theme's. */
 
 /* The promise, and the path a request takes */
 .ent-path { display: flex; flex-direction: column; gap: 1rem; padding: 1.5rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--site-side); }
@@ -29,13 +30,32 @@
 .ent-address { position: relative; }
 .ent-address .felt-point { position: absolute; inset-inline-end: calc(100% + 0.75rem); inset-block-start: -1.5rem; inline-size: 5rem; block-size: 3.3rem; }
 
-/* Why now */
-.ent-line { font-size: 1.15rem; max-inline-size: 46rem; }
+/* A part's words beside the screen that shows it */
+.ent-two { align-items: center; }
+.ent-body { display: flex; flex-direction: column; gap: 1.25rem; min-inline-size: 0; }
+.ent-pane { min-inline-size: 0; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); box-shadow: var(--site-float); overflow: hidden; }
+.ent-pane-head { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; padding: 0.85rem 1.1rem; border-block-end: 1px solid var(--line); background: var(--site-side); font-size: 0.875rem; font-weight: 600; }
+.ent-chip { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.2rem 0.65rem; border: 1px solid var(--line-strong); border-radius: 999px; color: var(--ink-soft); font-size: 0.8125rem; font-weight: 500; white-space: nowrap; }
+.ent-chip .icon { inline-size: 1rem; block-size: 1rem; }
 
-/* A pilot in an afternoon: the words a coding assistant takes first, in the page's own direction, then the steps by hand, closed */
-.ent-assist { display: flex; flex-direction: column; gap: 0.75rem; max-inline-size: 46rem; padding: 1.5rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); box-shadow: var(--site-float); }
-.ent-assist h4 { font-size: 1.25rem; }
-.ent-assist p { color: var(--ink-soft); }
+/* Any provider, any model: the three levels an organisation names, each with its cost in coins */
+.ent-levels > div { display: flex; flex-direction: column; gap: 0.15rem; padding: 0.85rem 1.1rem; border-block-start: 1px solid var(--line); }
+.ent-levels > div:first-child { border-block-start: 0; }
+.ent-levels dt { display: flex; align-items: center; gap: 0.55rem; font-weight: 600; }
+.ent-levels dd { color: var(--ink-soft); font-size: 0.9rem; }
+.ent-cost { display: inline-flex; gap: 0.2rem; }
+.ent-cost span { inline-size: 0.5rem; block-size: 0.5rem; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--line-strong); }
+.ent-cost .is-on { background: var(--flame); box-shadow: none; }
+
+/* The big model only when it's needed: three requests, each with the level Auto chose and why */
+.ent-asks { display: flex; flex-direction: column; gap: 1.1rem; padding: 1.1rem; }
+.ent-asks li { display: flex; flex-direction: column; gap: 0.5rem; }
+.ent-asked { align-self: flex-end; max-inline-size: 85%; padding: 0.45rem 0.9rem; border-radius: 1.125rem; background: var(--room-2); }
+.ent-pick { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.6rem; color: var(--ink-soft); font-size: 0.8125rem; }
+.ent-pick .ent-chip { gap: 0.5rem; color: var(--ink); font-weight: 600; }
+
+/* A pilot in an afternoon: the words a coding assistant takes, in the page's own direction, then the steps by hand, closed */
+.ent-assist { display: flex; flex-direction: column; gap: 0.75rem; min-inline-size: 0; padding: 1.25rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); box-shadow: var(--site-float); }
 .ent-assist pre { direction: inherit; }
 .ent-manual summary { display: inline-flex; align-items: center; gap: 0.5rem; min-block-size: 2.75rem; padding-inline: 0.5rem; margin-inline-start: -0.5rem; border-radius: 0.5rem; color: var(--ink-soft); font-weight: 600; cursor: pointer; list-style: none; }
 .ent-manual summary::-webkit-details-marker { display: none; }
@@ -45,16 +65,13 @@
 .ent-steps li { counter-increment: step; display: flex; flex-direction: column; gap: 0.7rem; padding: 1.25rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); min-inline-size: 0; }
 .ent-steps li::before { content: counter(step); display: grid; place-items: center; inline-size: 1.8rem; block-size: 1.8rem; border-radius: 50%; background: var(--room-2); font-weight: 600; font-size: 0.9rem; }
 .ent-steps p { color: var(--ink-soft); font-size: 0.95rem; }
-.ent-after { max-inline-size: 46rem; }
 
-/* What people get */
-.ent-two { align-items: center; }
-.ent-body { display: flex; flex-direction: column; gap: 1rem; }
-.ent-body p:first-of-type { font-size: 1.05rem; }
-.ent-pane { --demo: 22rem; display: flex; flex-direction: column; gap: 0.9rem; padding-block-end: 0.9rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); box-shadow: var(--site-float); overflow: hidden; min-inline-size: 0; }
-.ent-pane-head { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; padding: 0.85rem 1.1rem; border-block-end: 1px solid var(--line); background: var(--site-side); font-size: 0.875rem; font-weight: 600; }
-.ent-chip { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.2rem 0.65rem; border: 1px solid var(--line-strong); border-radius: 999px; color: var(--ink-soft); font-size: 0.8125rem; font-weight: 500; }
-.ent-chip .icon { inline-size: 1rem; block-size: 1rem; }
+/* What people get: Jean's own demo, and the share of people who bring their own tools */
+.ent-demo { --demo: 22rem; display: flex; flex-direction: column; gap: 0.9rem; padding-block-end: 0.9rem; }
+.ent-stat { display: flex; align-items: center; gap: 1.4rem; padding-inline-start: 0.6rem; }
+.ent-stat b { font: 700 clamp(2rem, 4vw, 2.6rem)/1 var(--display); white-space: nowrap; }
+.ent-stat > span { color: var(--ink-soft); font-size: 0.95rem; }
+.ent-stat small { display: block; color: var(--ink-faint); font-size: 0.8125rem; }
 
 /* What your teams will ask: six roles, one shown at a time */
 .ent-roles { position: relative; display: flex; flex-direction: column; gap: 1.25rem; border: 0; padding: 0; min-inline-size: 0; }
@@ -81,29 +98,20 @@
 .ent-status.is-design { box-shadow: inset 0 0 0 1px var(--ink); color: var(--ink); }
 .ent-status.is-not { border: 1px dashed var(--line-strong); color: var(--ink-soft); }
 
-/* How it compares */
-.ent-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); }
-.ent-table { inline-size: 100%; min-inline-size: 46rem; border-collapse: collapse; font-size: 0.9rem; }
-.ent-table :is(th, td) { padding: 0.8rem 1rem; border-block-start: 1px solid var(--line); text-align: start; vertical-align: top; }
-.ent-table thead th { border-block-start: 0; background: var(--site-side); color: var(--ink-soft); font-size: 0.8125rem; font-weight: 600; }
-.ent-table tbody th { font-weight: 600; }
-.ent-table .is-jean { background: oklch(from var(--flame) l c h / 0.12); font-weight: 600; }
+/* The documents a review attaches, under the answers */
+.ent-trust { display: flex; flex-direction: column; gap: 0.75rem; scroll-margin-block-start: 4.5rem; }
+.ent-trust h4 { color: var(--ink-soft); font-size: 0.85rem; font-weight: 600; }
+.ent-docs { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.ent-docs a { display: inline-flex; align-items: center; min-block-size: 2.75rem; padding: 0.3rem 1rem; border: 1px solid var(--line); border-radius: 0.75rem; background: var(--room); color: var(--ink); font-size: 0.9rem; text-decoration: none; }
+.ent-docs a:hover { border-color: var(--line-strong); }
 
-/* The trust pack */
-.ent-docs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
-.ent-docs a { display: flex; flex-direction: column; gap: 0.3rem; padding: 1.1rem 1.2rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); color: var(--ink); text-decoration: none; }
-.ent-docs h4 { font-size: inherit; font-weight: 600; }
-.ent-docs span { color: var(--ink-soft); font-size: 0.875rem; }
-.ent-verify { display: flex; flex-direction: column; gap: 0.6rem; }
-
-/* Pricing */
-.ent-prices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
+/* Pricing: the one rule, as its two cases */
+.ent-prices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
 .ent-prices li { display: flex; flex-direction: column; gap: 0.7rem; padding: 1.4rem; border: 1px solid var(--line-strong); border-radius: var(--site-pane); background: var(--room); }
 .ent-prices h4 { color: var(--ink-soft); font-size: 0.85rem; font-weight: 600; }
 .ent-prices b { font: 700 1.6rem/1.15 var(--display); }
 .ent-prices p { color: var(--ink-soft); font-size: 0.95rem; flex: 1; }
 .ent-prices .button { align-self: flex-start; }
-.ent-rule { max-inline-size: 44rem; font: 600 1.15rem/1.45 var(--display); text-wrap: pretty; }
 
 /* Share it */
 .ent-address { overflow-wrap: anywhere; padding: 0.6rem 1rem; border-radius: 0.75rem; background: var(--room-2); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; user-select: all; direction: ltr; }
@@ -111,10 +119,9 @@
 /* A phone, or any narrow window: one column */
 @media (max-width: 60rem) {
   .ent-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .ent-docs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 52rem) {
-  .ent-flow, .ent-sides, .ent-prices, .ent-docs { grid-template-columns: minmax(0, 1fr); }
+  .ent-flow, .ent-sides, .ent-prices { grid-template-columns: minmax(0, 1fr); }
   .ent-arrow { justify-self: center; transform: rotate(90deg); }
   .ent-answer-row { grid-template-columns: minmax(0, 1fr); }
   .ent-address .felt-point { display: none; }
@@ -123,7 +130,8 @@
   .ent-steps { grid-template-columns: minmax(0, 1fr); }
 }
 @media (forced-colors: active) {
-  .ent-status, .ent-tabs label { border: 1px solid CanvasText; }
+  .ent-status, .ent-tabs label, .ent-cost span { border: 1px solid CanvasText; }
+  .ent-cost .is-on { background: CanvasText; }
   .ent-node { border-color: CanvasText; }
   .ent-sketch { display: none; }
   .ent-sides .ent-node.is-none b { text-decoration: line-through; }
