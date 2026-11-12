@@ -145,8 +145,9 @@ function connectKey(event) {
 /** @param {SubmitEvent} event */
 function connectLocal(event) {
   event.preventDefault()
-  const provider = localProvider.value
-  const baseURL = String(new FormData(/** @type {HTMLFormElement} */ (event.target)).get('baseURL')).trim()
+  const form = new FormData(/** @type {HTMLFormElement} */ (event.target))
+  const provider = /** @type {typeof localProvider.value} */ (form.get('app') ?? localProvider.value)
+  const baseURL = String(form.get('baseURL')).trim()
   attempt('local', provider === 'custom' ? new URL(baseURL).host : t(`provider.${provider}`), () => connectBrain({ provider, baseURL }))
 }
 
@@ -258,50 +259,52 @@ function waysOf(all) {
   const device = all ? fit() : null
   const progress = device?.download.value
   const busy = status.value?.kind === 'busy'
+  // Beside policy's brains, only the ways to those of providers it leaves the person (`ownBrains`).
+  const may = (/** @type {string} */ provider) => !app.policy.brains || !!app.policy.ownBrains?.some((/** @type {string} */ one) => one === '*' || one === provider), keyed = KEYED.filter(may), near = ['ollama', 'lmstudio', 'custom'].filter(may)
   return [
-    ...(isDenied('machine') ? [] : /** @type {(keyof typeof PLANNED)[]} */ (['claude', 'chatgpt', 'copilot']).map((id) => ({ id, group: 'paid', icon: icons.terminal, title: t(`brain.${id}.title`), needs: t(`provider.${PLANNED[id]}`), body: html`
+    ...(isDenied('machine') ? [] : /** @type {(keyof typeof PLANNED)[]} */ (['claude', 'chatgpt', 'copilot']).filter((id) => may(PLANNED[id])).map((id) => ({ id, group: 'paid', icon: icons.terminal, title: t(`brain.${id}.title`), needs: t(`provider.${PLANNED[id]}`), body: html`
       <p>${t(`brain.${id}.text`, { computer: t('cap.machine.name') })}</p>
       <div class="row"><button class="button primary" ?disabled=${busy} @click=${() => connectPlan(id)}>${t(id === 'chatgpt' ? 'brain.chatgpt.action' : 'brain.connect')}</button></div><div role="status">${starting.value?.id === id ? html`<p>${t('brain.plan.start', { computer: t('cap.machine.name') })}</p>` : nothing}</div>${starting.value?.id === id ? starting.value.machine.starter() : nothing}` }))),
-    { id: 'key', group: 'keyed', icon: icons.key, title: t('brain.key.title'), needs: providers(KEYED), body: html`
+    ...(keyed.length ? [{ id: 'key', group: 'keyed', icon: icons.key, title: t('brain.key.title'), needs: providers(keyed), body: html`
       <p>${t('brain.key.text')}</p>
       <form class="stack" @submit=${connectKey}><p class="muted small" id="brain-key-required">${t('brain.required')}</p>
         <label for="brain-provider">${t('brain.key.provider')}
           <select id="brain-provider" name="provider" class="key-provider" @change=${(/** @type {Event} */ e) => { keyProvider.value = valueOf(e) }}><button><selectedcontent></selectedcontent></button>
-            ${KEYED.map((id) => html`<option value=${id} ?selected=${id === keyProvider.value}>${logo(id)}${t(`provider.${id}`)}</option>`)}
+            ${keyed.map((id) => html`<option value=${id} ?selected=${id === keyProvider.value}>${logo(id)}${t(`provider.${id}`)}</option>`)}
           </select>
         </label>
-        ${keySteps(keyProvider.value)}
+        ${keySteps(keyed.includes(keyProvider.value) ? keyProvider.value : keyed[0])}
         <label for="brain-key">${t('brain.key.label')}<input id="brain-key" name="key" type="password" autocomplete="off" spellcheck="false" required dir="ltr" aria-describedby="brain-key-required"
           @input=${(/** @type {Event} */ e) => { const { form, value } = /** @type {HTMLInputElement} */ (e.target); if (form) fillProject(form, value) }}></label>
         ${keyProvider.value === 'vertex' ? html`
           <div class="row"><label class="button" for="brain-file">${t('brain.key.file')}<input id="brain-file" type="file" accept=".json,application/json" class="visually-hidden" @change=${chooseAccount}></label></div>
           <label for="brain-project">${t('brain.key.project')}<input id="brain-project" name="project" required autocomplete="off" spellcheck="false" dir="ltr" aria-describedby="brain-key-required"></label>` : nothing}
         <div class="row"><button class="button primary" ?disabled=${busy}>${t('brain.connect')}</button></div>
-      </form>` },
-    ...(device && progress ? [{ id: 'device', group: 'free', icon: icons['brain-device'], title: t('brain.device.title'), needs: t('brain.device.private'), body: html`
+      </form>` }] : []),
+    ...(device && progress && may('device') ? [{ id: 'device', group: 'free', icon: icons['brain-device'], title: t('brain.device.title'), needs: t('brain.device.private'), body: html`
       <p>${t('brain.device.text', { name: BRAND.name })}</p>
       ${progressOf(device) ?? html`
         ${progress.state === 'failed' ? html`<p class="status is-error" role="alert">${t('brain.device.failed')}</p>` : nothing}
         <div class="row"><button class="button primary" @click=${useDevice}>${icons.download} ${t('brain.device.action', { size: formatBytes(device.GEMMA.bytes) })}</button></div>`}` }] : []),
-    ...(all && !app.policy.child ? [{ id: 'quick', group: 'free', icon: icons.cloud, title: t('brain.quick.title'), needs: t('provider.openrouter'), body: html`
+    ...(all && !app.policy.child && may('openrouter') ? [{ id: 'quick', group: 'free', icon: icons.cloud, title: t('brain.quick.title'), needs: t('provider.openrouter'), body: html`
       <p>${t('brain.quick.text')}</p>
       <div class="row"><button class="button primary" @click=${signUp}>${t('brain.quick.action')} ${icons.external}</button></div>` }] : []),
-    { id: 'local', group: 'free', icon: icons['brain-device'], title: t('brain.local.title'), needs: providers(['ollama', 'lmstudio']), body: html`
+    ...(near.length ? [{ id: 'local', group: 'free', icon: icons['brain-device'], title: t('brain.local.title'), needs: providers(near.length > 1 ? near.filter((id) => id !== 'custom') : near), body: html`
       <p>${t('brain.local.text')}</p>
       <form class="stack" @submit=${connectLocal}><p class="muted small" id="brain-local-required">${t('brain.required')}</p>
         <label for="brain-app">${t('brain.local.app')}
-          <select id="brain-app" @change=${(/** @type {Event} */ e) => {
+          <select id="brain-app" name="app" @change=${(/** @type {Event} */ e) => {
             localProvider.value = /** @type {'ollama' | 'lmstudio' | 'custom'} */ (valueOf(e))
             localAddress.value = PROVIDERS[localProvider.value].baseURL
           }}>
-            ${['ollama', 'lmstudio', 'custom'].map((id) => html`<option value=${id} ?selected=${id === localProvider.value}>${t(`provider.${id}`)}</option>`)}
+            ${near.map((id) => html`<option value=${id} ?selected=${id === localProvider.value}>${t(`provider.${id}`)}</option>`)}
           </select>
         </label>
         <label for="brain-address">${t('brain.local.address')}<input id="brain-address" name="baseURL" type="url" required dir="ltr" aria-describedby="brain-local-required" placeholder="http://localhost:11434/v1"
           .value=${live(localAddress.value)} @input=${(/** @type {Event} */ e) => { localAddress.value = valueOf(e) }}></label>
         <p class="hint">${t('brain.local.hint', { origin: location.origin })}</p>
         <div class="row"><button class="button primary" ?disabled=${busy}>${t('brain.connect')}</button></div>
-      </form>` },
+      </form>` }] : []),
   ]
 }
 const WAYS = ['claude', 'chatgpt', 'copilot', 'key', 'device', 'quick', 'local']
@@ -322,7 +325,7 @@ export function section() {
   const { settings, locked } = effective.value
   const [open, closed] = [pageOpen(), locked.has('brains')]
   const brain = settings.brains.find((one) => one.id === open)
-  if (brain) return page(brain, closed)
+  if (brain) return page(brain, closed || theirs(brain))
   if (open === 'pictures') return html`${head(t('cap.pictures.name'))}${slots('pictures').map((part) => part.draw())}`
   // A capability's own page here, which its row opens: what Jean cost, Receipt's (D691).
   const own = slots('brains').find((part) => part.id === open && part.page)
@@ -331,6 +334,9 @@ export function section() {
   if (!closed && (open === 'add' || !settings.brains.length)) return adding(!settings.brains.length)
   return open === 'auto' ? auto() : listed(closed)
 }
+
+/** Whether a brain is policy's, which no one changes, beside the person's own (`ownBrains`). @param {BrainConfig} brain */
+const theirs = (brain) => !!app.policy.brains?.some((/** @type {BrainConfig} */ one) => one.id === brain.id)
 
 /** Back to the list, or to the ways from one of them, then the page's title and a line under it. @param {string} title @param {unknown} [line] @param {string} [back] */
 const head = (title, line = nothing, back = '') => html`<button class="back button subtle" @click=${() => go(back)}>${icons.back} ${t(back ? 'brain.add' : 'settings.brains')}</button>
@@ -398,7 +404,7 @@ function listed(closed) {
     <section><h3>${t('brain.connectedTitle')}</h3>
       <ul class="list brain-rows">${settings.brains.map((brain) => html`<li><button class="item" data-brain=${brain.id} @click=${() => go(brain.id)}>
         <span class="item-icon">${describe(brain).icon}</span><span class="item-text"><strong><bdi>${describe(brain).name}</bdi>${brain.model ? html` · <bdi>${brain.model.split('/').at(-1)}</bdi>` : nothing}</strong><small>${line(brain)}</small></span>
-        ${troubles.value[brain.id] ? html`<span class="brain-trouble">${t('brain.trouble')}</span>` : nothing}${icons.chevron}</button></li>`)}</ul>
+        ${troubles.value[brain.id] ? html`<span class="brain-trouble">${t('brain.trouble')}</span>` : nothing}${!closed && theirs(brain) ? html`${icons.lock}<span class="visually-hidden">${lockedBy()}</span>` : nothing}${icons.chevron}</button></li>`)}</ul>
       ${closed ? html`<p class="muted">${lockedBy()}</p>` : nothing}
     </section>
     ${slots('brains').filter((part) => !part.head).map((part) => part.draw())}`

@@ -52,6 +52,8 @@ export const SCHEMA = {
   // The organisation's kit for decks (D594): its tokens, layouts and the pictures their art names (D606), SVG written out among them, which deck checks against its grammar as it draws.
   kit: { name: 'text', tokens: { '*': 'any' }, layouts: { '*': 'any' }, pictures: { '*': 'text' } },
   brains: [{ 'id!': 'text', 'provider!': new Set(Object.keys(PROVIDERS)), api: new Set(['openai', 'anthropic', 'device']), baseURL: 'address', model: 'text', label: 'text', headers: { '*': 'text' }, projects: ['text'], jurisdiction: 'text', trains: 'flag', auth: new Set(['oidc']), effort: new Set(['low', 'medium', 'high']) }],
+  // Beside its brains, the providers whose brains people may keep of their own, `*` any (core/settings.js).
+  ownBrains: [new Set([...Object.keys(PROVIDERS), '*'])],
   tiers: { '*': ['text'] },
   rules: Object.fromEntries([...Object.keys(DEFAULT_RULES), 'share'].map((kind) => [kind, RULE])),
   guards: [{ 'id!': 'text', kind: 'text', service: 'text', if: 'text', 'then!': new Set(['ask', 'never']), reason: 'text' }],
@@ -61,6 +63,8 @@ export const SCHEMA = {
   signIn: { 'issuer!': 'address', 'clientId!': 'text', scopes: ['text'] },
   connections: [{ 'id!': 'text', 'name!': 'text', 'url!': 'address', auth: new Set(['none', 'key', 'oauth', 'oidc']), servers: ['address'], projects: ['text'], gateway: 'flag' }],
   directory: [{ 'id!': 'text', '*': 'any' }],
+  // The directory's services shown, by id, beside those `directory` names: any it gains later stays out (connections/directory.js).
+  directoryOnly: ['text'],
   skills: { sources: ['address'], only: 'flag' },
   // The ideas under the box in place of Jean's (D743): each one's words, in other languages as a skill's are (D222), and a ready-made skill
   // it brings; `only`, theirs alone, which no one changes.
@@ -69,6 +73,8 @@ export const SCHEMA = {
   // on: the sources on and no others, locked; deny: those never on, `brain` the brain's own search.
   searches: { on: [new Set(SEARCHES)], deny: [new Set([...SEARCHES, 'brain'])] },
   pages: { scripts: 'flag', fullscreen: 'flag', downloads: 'flag', web: 'flag', network: 'flag', maps: 'flag', sites: ['text'] },
+  // Origins a site's pages take style sheets, pictures and fonts from in Jean's preview, as their host's `sites.sources` (host/sites.js).
+  sites: { sources: Object.fromEntries(['style-src', 'img-src', 'font-src'].map((name) => [name, ['address']])) },
   mapStyles: { light: 'address', dark: 'address' },
   computer: { internet: new Set(['ask', 'any', 'off']), sites: ['text'], relay: 'text', timeMs: 'number', limitMB: 'number', workspaceMB: 'number', registries: { pyodide: 'address', pypi: 'address', npm: 'address' } },
   images: { '*': ['text'] },

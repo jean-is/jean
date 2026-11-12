@@ -29,7 +29,7 @@
 // Web-standard (fetch, Request, Response, Web Crypto): what it keeps goes through a store, a folder
 // on Node (serve.js). Copies are 10 MB at most.
 
-import { SITE, publishing, siteAt, serveSite, aboutPage } from './sites.js'
+import { SITE, publishing, siteAt, serveSite, aboutPage, headersFor } from './sites.js'
 
 export const LIMIT = 10_000_000
 /** How long a share lasts, in days: 30 unless the person said a year. */
@@ -150,13 +150,15 @@ ${card ? /* html */ `<meta property="og:image" content="${escape(picture)}">
   const sites = config.sites && files && store?.held && store.hold && store.forget && store.names
     ? publishing(config.sites, { held: store.held, hold: store.hold, forget: store.forget, names: store.names, record: store.record, report: reported }, files) : null
   const about = `default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'`
+  // Sites' header set, with the origins the configuration adds (sources), checked as the host starts.
+  const siteHeaders = headersFor(config.sites?.sources)
   const shares = config.shares ? new URL(config.shares) : null
 
   return async (request, client = { address: '', port: 0 }) => {
     const url = new URL(request.url)
     // A site's own address, where the host serves its sites' files itself: only under their header set.
     const site = config.sites && files?.read ? siteAt(url, config.sites.address) : null
-    if (site && files) return request.method === 'GET' || request.method === 'HEAD' ? serveSite(files, site, url) : new Response(null, { status: 405 })
+    if (site && files) return request.method === 'GET' || request.method === 'HEAD' ? serveSite(files, site, url, siteHeaders) : new Response(null, { status: 405 })
     // Under the shares' own path (hst.ing/s/…), what follows it is read as the host's own path.
     const under = shares !== null && url.host === shares.host && url.pathname.startsWith(shares.pathname)
     if (under) url.pathname = url.pathname.slice(shares.pathname.length - 1)

@@ -106,10 +106,11 @@ export const DIRECTORY = Object.freeze(/** @type {Known[]} */ ([
 
 /**
  * The directory, with the organisation's entries merged in by id: one can add a service, change
- * an address or a client id, or hide one. What policy names is ready unless it, or the directory, says otherwise.
+ * an address or a client id, or hide one; with `directoryOnly`, only the services it lists and those `directory` names show, so one
+ * the directory gains later stays out. What policy names is ready unless it, or the directory, says otherwise.
  * Those reached come first, from the browser (one whose sign-in takes only registered apps, once policy names one) or through the gateway: one that relays to the
  * service, each of its servers and its sign-in (an API's sign-in alone), and holds the app the sign-in takes when it registers none. Each part is by name.
- * @param {{ directory?: Partial<Known>[] }} [policy] @param {Served} [served]
+ * @param {{ directory?: Partial<Known>[], directoryOnly?: string[] }} [policy] @param {Served} [served]
  * @returns {Listed[]}
  */
 export function known(policy = {}, { hosts = [], clients = {} } = {}) {
@@ -120,7 +121,8 @@ export function known(policy = {}, { hosts = [], clients = {} } = {}) {
     if (id && (entries.has(id) || change.name)) entries.set(id, /** @type {Known} */ ({ ready: true, ...entries.get(id), ...change, id }))
   }
   const relayed = (/** @type {Known} */ { url, servers = [], signIn = [], app, clientId, api }) => [...(api ? [] : [String(url), ...servers]), ...signIn.map((host) => `https://${host}/`)].every((address) => covers(hosts, new URL(address))) && (!app || Boolean(clientId ?? clients[app]))
-  const shown = byName([...entries.values()].filter((entry) => !entry.hidden), (entry) => entry.name, locale.value)
+  const only = policy.directoryOnly && new Set([...policy.directoryOnly, ...(policy.directory ?? []).map((change) => String(change.id))])
+  const shown = byName([...entries.values()].filter((entry) => !entry.hidden && (!only || only.has(entry.id))), (entry) => entry.name, locale.value)
     .map((entry) => ({ ...entry, via: !entry.url ? null : entry.ready && (!entry.app || entry.clientId) ? 'browser' : relayed(entry) ? 'gateway' : null }))
   return /** @type {Listed[]} */ ([...shown.filter((entry) => entry.via), ...shown.filter((entry) => !entry.via)])
 }
@@ -136,7 +138,7 @@ export const searchers = (listed, connections) => listed.filter((entry) => entry
 
 /**
  * The entry a connection was made from, by its address, while it is reached.
- * @param {string} url @param {{ directory?: Partial<Known>[] }} [policy] @param {Served} [served]
+ * @param {string} url @param {{ directory?: Partial<Known>[], directoryOnly?: string[] }} [policy] @param {Served} [served]
  */
 export const knownFor = (url, policy, served) => known(policy, served).find((entry) => entry.via && entry.url === url)
 

@@ -4,7 +4,7 @@
 // with no meeting, and sends him a task from Share; his Jean takes her first letter through the list and shows its card, from her as
 // the list names her. Chromium only: Playwright's WebKit keeps nothing, where no one is kept (test/playwright.config.js).
 import { test, expect } from '@playwright/test'
-import { start, openSettings, closeSettings, openTasks, withPolicy, RELAY_URL } from './helpers.js'
+import { start, openSettings, closeSettings, openTasks, withPolicy, RELAY_URL, SHARE_URL } from './helpers.js'
 import { POLICY, fakeIssuer, fakeGateway } from './fixtures/fake-issuer.js'
 import { authority, issue, requested, certsOnly } from './fixtures/ca.js'
 
@@ -159,4 +159,14 @@ test('with the organisation’s controls, a colleague is found only with a key i
   await hers.getByRole('button', { name: 'Search' }).click()
   await expect(hers.getByText('No one by that name at your organisation uses Jean yet.')).toBeVisible()
   await expect(hers.getByRole('listitem').filter({ hasText: who.ana.preferred_username })).toHaveCount(0)
+})
+
+test('at work, People is offered as anywhere a relay and a share host are named, with nothing turned on ahead, and devices are never paired', async ({ browser }) => {
+  const page = await (await browser.newContext()).newPage()
+  await fakeGateway(page, await fakeIssuer(page, { claims: named().ana }))
+  await withPolicy(page, { ...POLICY, urls: { relay: RELAY_URL, share: SHARE_URL } })
+  await start(page)
+  const catalogue = await page.evaluate(async () => (await import('/ui/discovery.js')).CATALOGUE)
+  expect(catalogue).toContain('people')
+  expect(catalogue).not.toContain('devices')
 })

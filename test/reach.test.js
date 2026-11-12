@@ -516,6 +516,16 @@ describe('the services Jean knows (D95)', () => {
     assert.equal(knownFor('https://gmailmcp.googleapis.com/mcp/v1'), undefined)
   })
 
+  test('with directoryOnly, only the services it lists and those policy’s directory names show, so one the directory gains later stays out', () => {
+    const ids = (/** @type {any} */ policy) => known(policy).map((entry) => entry.id).sort()
+    const policy = { directoryOnly: ['notion', 'slack'], directory: [{ id: 'microsoft-365', clientId: 'jean-spa' }, { id: 'intranet', name: 'Intranet', url: 'https://mcp.corp.example/mcp' }, { id: 'figma', hidden: true }] }
+    assert.deepEqual(ids(policy), ['intranet', 'microsoft-365', 'notion', 'slack'])
+    assert.deepEqual(ids({ directoryOnly: [] }), [])
+    // Listed only to allow it, a service keeps how it is reached: GitLab still only through the gateway.
+    assert.equal(known({ directoryOnly: ['gitlab'] }).find((entry) => entry.id === 'gitlab')?.via, null)
+    assert.equal(ids({ directory: [{ id: 'figma', hidden: true }] }).length, DIRECTORY.length - 1)
+  })
+
   test('the gateway reaches HTTPS on the hosts it names and their subdomains, HTTP only on this computer; Jean checks as it does', () => {
     const hosts = ['googleapis.com', '127.0.0.1']
     const cases = /** @type {const} */ ([

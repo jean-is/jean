@@ -204,6 +204,35 @@
         "additionalProperties": false
       }
     },
+    "ownBrains": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "device",
+          "openrouter",
+          "openai",
+          "anthropic",
+          "gemini",
+          "vertex",
+          "mistral",
+          "meta",
+          "huggingface",
+          "vercel",
+          "groq",
+          "cerebras",
+          "together",
+          "fireworks",
+          "xai",
+          "ollama",
+          "lmstudio",
+          "claudecode",
+          "copilot",
+          "chatgpt",
+          "custom",
+          "*"
+        ]
+      }
+    },
     "tiers": {
       "type": "object",
       "properties": {},
@@ -518,6 +547,12 @@
           "id"
         ],
         "additionalProperties": {}
+      }
+    },
+    "directoryOnly": {
+      "type": "array",
+      "items": {
+        "type": "string"
       }
     },
     "skills": {
@@ -915,6 +950,36 @@
           "items": {
             "type": "string"
           }
+        }
+      },
+      "additionalProperties": false
+    },
+    "sites": {
+      "type": "object",
+      "properties": {
+        "sources": {
+          "type": "object",
+          "properties": {
+            "style-src": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/address"
+              }
+            },
+            "img-src": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/address"
+              }
+            },
+            "font-src": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/address"
+              }
+            }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": false
@@ -1543,6 +1608,39 @@
                   "additionalProperties": false
                 }
               },
+              "ownBrains": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "enum": [
+                    "device",
+                    "openrouter",
+                    "openai",
+                    "anthropic",
+                    "gemini",
+                    "vertex",
+                    "mistral",
+                    "meta",
+                    "huggingface",
+                    "vercel",
+                    "groq",
+                    "cerebras",
+                    "together",
+                    "fireworks",
+                    "xai",
+                    "ollama",
+                    "lmstudio",
+                    "claudecode",
+                    "copilot",
+                    "chatgpt",
+                    "custom",
+                    "*",
+                    null
+                  ]
+                }
+              },
               "tiers": {
                 "type": [
                   "object",
@@ -2126,6 +2224,18 @@
                     "id"
                   ],
                   "additionalProperties": {}
+                }
+              },
+              "directoryOnly": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 }
               },
               "skills": {
@@ -2887,6 +2997,72 @@
                         "null"
                       ]
                     }
+                  }
+                },
+                "additionalProperties": false
+              },
+              "sites": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "sources": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "properties": {
+                      "style-src": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "anyOf": [
+                            {
+                              "$ref": "#/$defs/address"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "img-src": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "anyOf": [
+                            {
+                              "$ref": "#/$defs/address"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "font-src": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "anyOf": [
+                            {
+                              "$ref": "#/$defs/address"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "additionalProperties": false
                   }
                 },
                 "additionalProperties": false

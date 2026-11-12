@@ -8,7 +8,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { host, base64url } from '../host/host.js'
 import { folder, siteFiles } from '../host/serve.js'
-import { refused, fileAt, cleanAt, tidy, siteAt, serveSite, sweepSites, takeDown, bunny, digest, unfit, HEADERS, TYPES, GONE } from '../host/sites.js'
+import { refused, fileAt, cleanAt, tidy, siteAt, serveSite, sweepSites, takeDown, bunny, digest, unfit, HEADERS, TYPES, GONE, headersFor } from '../host/sites.js'
 import { TYPES as JEANS, tokenOf, codeOf, secretOf, failedOf } from '../app/caps/sites/file.js'
 
 const JEAN = 'https://jean.example'
@@ -223,6 +223,19 @@ test('every file of a site is served under the same strict header set, a page fo
   // The sandbox gives each page an opaque origin: no cookie, no storage, no service worker of its own.
   assert.doesNotMatch(HEADERS['content-security-policy'], /allow-same-origin/)
   assert.equal((await on.handle(new Request('http://lyon-bakery.localhost:8788/', { method: 'POST' }))).status, 405)
+})
+
+test('a host adds the origins its configuration names to sites’ style-src, img-src and font-src, and nothing else', async () => {
+  assert.equal(headersFor(), HEADERS)
+  const set = headersFor({ 'style-src': ['https://fonts.googleapis.com'], 'font-src': ['https://fonts.gstatic.com', 'https://*.corp.example'] })
+  assert.match(set['content-security-policy'], /; style-src 'self' 'unsafe-inline' https:\/\/fonts\.googleapis\.com; img-src 'self' data:; font-src 'self' https:\/\/fonts\.gstatic\.com https:\/\/\*\.corp\.example; /)
+  assert.equal(set['content-security-policy'].replace(/ https:\/\/[^\s;]+/g, ''), HEADERS['content-security-policy'])
+  for (const sources of [{ 'script-src': ['https://cdn.example'] }, { 'img-src': ['*'] }, { 'img-src': ['http://images.example'] }, { 'style-src': ["https://a.example; script-src 'unsafe-inline'"] }, { 'font-src': 'https://a.example' }]) {
+    assert.throws(() => headersFor(/** @type {any} */ (sources)), /sites\.sources/, JSON.stringify(sources))
+  }
+  const files = { read: async () => new TextEncoder().encode('body {}') }
+  const served = await serveSite(/** @type {any} */ (files), 'lyon-bakery', new URL('http://lyon-bakery.localhost:8788/style.css'), set)
+  assert.equal(served.headers.get('content-security-policy'), set['content-security-policy'])
 })
 
 test('no address of a site shows .html: its pages’ links lose it as the host keeps them, and an address with it goes to the one without', async () => {

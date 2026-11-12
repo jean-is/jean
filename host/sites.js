@@ -20,6 +20,10 @@
 //   bunny    { storage, api }: the storage zone's address, ending in /, where files go, and Bunny's API, where purges go;
 //            their keys come from the environment (serve.js). Without it, files go to the host's folder, which serves them
 //            itself, as in development and the tests.
+//   sources  origins the header lets every site's pages take style sheets, pictures or fonts from, under the policy's own
+//            names: { "style-src": ["https://fonts.googleapis.com"], "font-src": ["https://fonts.gstatic.com"], "img-src": […] },
+//            each an https origin, `*.` for its subdomains, anything else refused as the host starts. Jean's preview takes
+//            the same from policy.json (`sites.sources`); Bunny's edge script keeps the set it holds, so change it there too.
 //
 // What the host keeps of each name, beside the files, is in its store (serve.js): the hash of the token that holds it, its
 // state, until when, and each file's hash and size. Web-standard, as host.js.
@@ -47,6 +51,24 @@ export const HEADERS = Object.freeze({
   'x-content-type-options': 'nosniff',
   'strict-transport-security': 'max-age=31536000',
 })
+
+/** The directives `sources` may add origins to, and an origin it may add: https, a host or `*.` and a domain, a port. */
+export const SOURCED = ['style-src', 'img-src', 'font-src'], ORIGIN = /^https:\/\/(\*\.)?[a-z0-9-]+(\.[a-z0-9-]+)+(:\d{1,5})?$/
+
+/**
+ * The header set with the origins `sources` names added to its style-src, img-src and font-src; an error for any other
+ * directive or anything that isn't an origin, which could loosen more than these. @param {Config['sources']} [sources]
+ */
+export function headersFor(sources) {
+  if (!sources) return HEADERS
+  for (const [name, origins] of Object.entries(sources)) {
+    if (!SOURCED.includes(name) || !Array.isArray(origins)) throw new Error(`sites.sources names ${name}: only ${SOURCED.join(', ')}, each a list of origins`)
+    const wrong = origins.find((origin) => typeof origin !== 'string' || !ORIGIN.test(origin))
+    if (wrong !== undefined) throw new Error(`sites.sources["${name}"] holds ${JSON.stringify(wrong)}, which isn't an https origin such as https://fonts.gstatic.com`)
+  }
+  const policy = HEADERS['content-security-policy'].split('; ').map((part) => [part, ...(sources[/** @type {keyof typeof sources} */ (part.split(' ')[0])] ?? [])].join(' ')).join('; ')
+  return Object.freeze({ ...HEADERS, 'content-security-policy': policy })
+}
 
 // ─── Names ───────────────────────────────────────────────────────────────────
 
@@ -130,7 +152,7 @@ export const GONE = /* html */ `<!doctype html><html lang="en"><meta charset="ut
  * Where a site's files go, and how the edge forgets them; `read` where the host serves them itself.
  * @typedef {{ put(name: string, path: string, bytes: Uint8Array, type: string): Promise<void>, drop(name: string, path: string): Promise<void>, purge(name: string): Promise<void>,
  *   read?(name: string, path: string): Promise<Uint8Array | null> }} Files
- * @typedef {{ address: string, names?: string[], limits?: Partial<typeof SITE>, bunny?: { storage: string, api: string } }} Config
+ * @typedef {{ address: string, names?: string[], limits?: Partial<typeof SITE>, bunny?: { storage: string, api: string }, sources?: Partial<Record<'style-src' | 'img-src' | 'font-src', string[]>> }} Config
  */
 
 /** A file's SHA-256, as the host and Jean name it. @param {Uint8Array} bytes */
@@ -184,10 +206,10 @@ export async function takeDown(name, names, files) {
 
 /**
  * A site's file as the host serves it itself, where its files are in its folder: under the header set, or 404.
- * @param {Files} files @param {string} name @param {URL} url
+ * @param {Files} files @param {string} name @param {URL} url @param {Readonly<Record<string, string>>} [set] the header set, its sources added
  */
-export async function serveSite(files, name, url) {
-  const headers = { ...HEADERS, 'cache-control': 'no-cache' }, clean = cleanAt(url.pathname)
+export async function serveSite(files, name, url, set = HEADERS) {
+  const headers = { ...set, 'cache-control': 'no-cache' }, clean = cleanAt(url.pathname)
   if (clean !== null) return new Response(null, { status: 301, headers: { ...headers, location: clean } })
   const path = fileAt(url.pathname)
   const bytes = pathOf(path) && await files.read?.(name, path)

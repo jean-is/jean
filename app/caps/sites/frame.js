@@ -45,8 +45,14 @@ const HAND = fetch(new URL('hand.js', import.meta.url)).then((response) => respo
 export const ahead = (search) => `<script>${search ? `history.replaceState(null,'',${JSON.stringify(search)});` : ''}document.addEventListener('submit',(e)=>{const f=e.target,a=f.getAttribute('action')
 if(!a||/^\\s*(javascript:|#)/i.test(a)||f.method!=='get')return;e.preventDefault();const q=new URLSearchParams(new FormData(f,e.submitter));parent.postMessage({open:a.split('?')[0]+(q.size?'?'+q:'')},'*')},true)</script>`
 export const rights = computed(() => pageRights(effective.value.settings, app.policy))
-/** A site's policy: a web page's in a folder, offline. */
-export const policy = () => pagePolicy({ ...rights.peek().allows, web: false, network: false }, [], true)
+/**
+ * A site's policy: a web page's in a folder, offline, but for the https origins policy lets sites take style sheets, pictures and
+ * fonts from (`sites.sources`), as their host's header does (host/sites.js); anything else there is dropped.
+ */
+export const policy = () => pagePolicy({ ...rights.peek().allows, web: false, network: false }, [], true).split('; ').map((part) => {
+  const name = part.split(' ')[0], more = /^(style|img|font)-src$/.test(name) ? [app.policy.sites?.sources?.[name] ?? []].flat() : []
+  return [part, ...more.filter((origin) => /^https:\/\/(\*\.)?[a-z0-9-]+(\.[a-z0-9-]+)+(:\d{1,5})?$/.test(String(origin)))].join(' ')
+}).join('; ')
 
 /** A page of the site as one document, its style sheets, scripts and pictures in it. @param {Map<string, Uint8Array>} files @param {string} path */
 export const pageOf = async (files, path) => ((shown) => ('html' in shown ? shown.html : ''))(await sitePage(memoryFS(Object.fromEntries(files)), path))

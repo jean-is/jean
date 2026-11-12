@@ -444,6 +444,33 @@ test('the picker: a menu above the chip, Auto by default, a brain by hand, kept 
   await expect(brains.locator('[data-brain="key"]')).toBeFocused()
 })
 
+test('beside the organisation’s brains, a person keeps their own of the providers policy leaves them, each of policy’s locked, and adds only those', async ({ page }) => {
+  await withPolicy(page, { brains: [{ id: 'corp', provider: 'custom', api: 'openai', baseURL: BRAIN_URL, model: 'fake-brain-1', label: 'Corp' }], ownBrains: ['openai'] })
+  await start(page)
+  // Two of the person's own: OpenAI's, which policy leaves them, and Mistral's, which it doesn't.
+  await page.evaluate(async () => (await import('/ui/state.js')).updateSettings({ brains: [
+    { id: 'mine', provider: 'openai', api: 'openai', baseURL: 'https://api.openai.com/v1', model: 'gpt-6-sol' },
+    { id: 'gone', provider: 'mistral', api: 'openai', baseURL: 'https://api.mistral.ai/v1', model: 'large' },
+  ] }))
+  const brains = await openSettings(page, 'Brains')
+  const rows = brains.locator('.brain-rows button.item')
+  await expect(rows).toHaveCount(2)
+  await expect(rows.first()).toContainText('Set by your organization')
+  await expect(rows.nth(1)).toContainText('OpenAI')
+  await expect(rows.nth(1)).not.toContainText('Set by your organization')
+  await rows.first().click()
+  await expect(brains.getByRole('button', { name: 'Remove' })).toHaveCount(0)
+  await brains.locator('.back').click()
+  await rows.nth(1).click()
+  await expect(brains.getByRole('button', { name: 'Remove' })).toBeVisible()
+  await brains.locator('.back').click()
+  // Adding one: a key, OpenAI's alone, and no other way.
+  await brains.getByRole('button', { name: 'Add a brain' }).click()
+  await expect(brains.locator('[data-brain]')).toHaveCount(1)
+  await brains.locator('[data-brain="key"]').click()
+  await expect(brains.locator('#brain-provider option')).toHaveText(['OpenAI'])
+})
+
 test('a service’s refusal says what its tool takes, and a script parses a long result whole', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)

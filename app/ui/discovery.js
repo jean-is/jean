@@ -30,9 +30,10 @@ const shared = Boolean(serviceURL('share', app.settings.value, app.policy)) && a
 const filmed = Boolean(navigator.mediaDevices?.getUserMedia) // where a camera can show Jean things (D645)
 const screened = Boolean(navigator.mediaDevices?.getDisplayMedia) // where a screen can be shared, a computer's (D699)
 const reflexive = !handheld() // where Kev runs: a computer, never a phone or a tablet (D660)
-const paired = Boolean(serviceURL('relay', app.settings.value, app.policy)) && !app.policy.child && !app.policy.signIn // where a relay carries what a person's devices send each other (D700)
+const relayed = Boolean(serviceURL('relay', app.settings.value, app.policy)) && !app.policy.child // where a relay carries what devices and people send each other (D700, D727)
+const paired = relayed && !app.policy.signIn // a person's devices, which aren't paired at work (D731)
 /** What Jean can do, in the order the house lights up (the collection page). */
-export const CATALOGUE = ['files', 'made', 'documents', 'tables', 'designs', 'computer', ...(reflexive ? ['reflexes'] : []), 'memory', 'feedback', 'find', ...(gpu ? ['meaning'] : []), 'projects', 'folders', 'skills', 'routines', 'flows', 'starters', 'web-search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'double-check', 'since', ...(told ? ['notifications'] : []), 'names', 'live', ...(filmed ? ['camera'] : []), ...(screened ? ['screen'] : []), 'natural-voice', 'backup', ...(shared ? ['share'] : []), ...(folders ? ['sync'] : []), ...(paired ? ['devices'] : []), ...(paired && shared ? ['people'] : []), ...(paired && shared ? ['together'] : []), 'lock', 'brain-local', 'extensions']
+export const CATALOGUE = ['files', 'made', 'documents', 'tables', 'designs', 'computer', ...(reflexive ? ['reflexes'] : []), 'memory', 'feedback', 'find', ...(gpu ? ['meaning'] : []), 'projects', 'folders', 'skills', 'routines', 'flows', 'starters', 'web-search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'double-check', 'since', ...(told ? ['notifications'] : []), 'names', 'live', ...(filmed ? ['camera'] : []), ...(screened ? ['screen'] : []), 'natural-voice', 'backup', ...(shared ? ['share'] : []), ...(folders ? ['sync'] : []), ...(paired ? ['devices'] : []), ...(relayed && shared ? ['people'] : []), ...(paired && shared ? ['together'] : []), 'lock', 'brain-local', 'extensions']
 
 /** What the brain may offer, described for it in English, in a few words: it goes with every request. */
 const OFFERS = /** @type {Record<string, string>} */ ({
@@ -62,7 +63,7 @@ const OFFERS = /** @type {Record<string, string>} */ ({
   ...(screened && { screen: 'sharing their screen as they work in another app, so you guide them a step at a time and can watch: offer it when they ask how to do something in an app on their computer' }),
   ...(folders && { sync: 'keeping their work the same on their other computers' }),
   ...(paired && { devices: "using this Jean on the user's other devices, a phone or another computer, with its brains and settings" }),
-  ...(paired && shared && { people: 'sending a task or what it made to someone who also uses Jean, and getting their answer back' }),
+  ...(relayed && shared && { people: 'sending a task or what it made to someone who also uses Jean, and getting their answer back' }),
 })
 /** What policy leaves to offer: it is set before this module loads (ui/app.js). */
 const offerable = Object.keys(OFFERS).filter((id) => !isDenied(id))

@@ -302,6 +302,23 @@ test('settings: front matter round trip and policy', () => {
   assert.equal(applyPolicy({ ...DEFAULT_SETTINGS, locale: 'en' }, { locales: ['fr', 'en'] }).settings.locale, 'en')
 })
 
+test('settings: beside policy’s brains, a person keeps their own of the providers ownBrains lists, and then adds more', () => {
+  const corp = { id: 'corp', provider: /** @type {const} */ ('custom'), api: /** @type {const} */ ('openai'), baseURL: 'https://ai.corp/v1', model: 'm' }
+  const plan = { id: 'P', provider: /** @type {const} */ ('claudecode'), api: /** @type {const} */ ('anthropic'), baseURL: 'http://127.0.0.1:8790/', model: 'sonnet' }
+  const keyed = { id: 'K', provider: /** @type {const} */ ('openai'), api: /** @type {const} */ ('openai'), baseURL: 'https://api.openai.com/v1', model: 'gpt' }
+  const mine = { ...DEFAULT_SETTINGS, brains: [plan, keyed, { ...keyed, provider: /** @type {const} */ ('claudecode'), id: 'corp' }], activeBrain: 'P' }
+  const kept = applyPolicy(mine, { brains: [corp], ownBrains: ['claudecode'] })
+  assert.deepEqual(kept.settings.brains.map((brain) => brain.id), ['corp', 'P'], 'the plan kept, the key’s provider not listed, policy’s id never taken')
+  assert.equal(kept.settings.activeBrain, 'P')
+  assert.ok(!kept.locked.has('brains'), 'Settings › Brains open to add more')
+  assert.deepEqual(applyPolicy(mine, { brains: [corp], ownBrains: ['*'] }).settings.brains.map((brain) => brain.id), ['corp', 'P', 'K'])
+  // Without ownBrains, policy's alone, locked, as before; where requests stay within places, only a brain on this computer.
+  const only = applyPolicy(mine, { brains: [corp] })
+  assert.deepEqual([only.settings.brains.map((brain) => brain.id), only.settings.activeBrain, only.locked.has('brains')], [['corp'], 'corp', true])
+  assert.deepEqual(applyPolicy(mine, { brains: [corp], ownBrains: ['*'], jurisdictions: ['FR'] }).settings.brains.map((brain) => brain.id), ['corp'])
+  assert.deepEqual(applyPolicy({ ...mine, brains: [{ ...keyed, id: 'L', provider: 'ollama', baseURL: 'http://localhost:11434/v1' }] }, { brains: [corp], ownBrains: ['*'], jurisdictions: ['FR'] }).settings.brains.map((brain) => brain.id), ['corp', 'L'])
+})
+
 test('settings: a brain or a connection kept to some projects is used in those only, and without a list in every one (D194)', () => {
   assert.ok(usedIn({}, 'P1'))
   assert.ok(usedIn({ projects: ['P1', 'P2'] }, 'P2'))

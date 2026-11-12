@@ -60,7 +60,7 @@ export const saveSettings = (fs, settings) => writeJSON(fs, 'settings.json', set
  * and the keys an organisation locked ("rules.fetch", "brains", "locale"…).
  * @param {Settings} settings
  * Policy's one language is locked; one it doesn't offer (`locales`) is none.
- * @param {{ locale?: string, locales?: string[], brains?: BrainConfig[], rules?: Record<string, RuleValue> }} [policy]
+ * @param {{ locale?: string, locales?: string[], brains?: BrainConfig[], ownBrains?: string[], jurisdictions?: string[], rules?: Record<string, RuleValue> }} [policy]
  */
 export function applyPolicy(settings, policy = {}) {
   /** @type {Set<string>} */
@@ -73,9 +73,10 @@ export function applyPolicy(settings, policy = {}) {
   } else if (policy.locales && !policy.locales.includes(effective.locale ?? '')) effective.locale = null
   // Even none: a child's profile has the brains a parent left it (D228).
   if (policy.brains) {
-    effective.brains = policy.brains
-    if (!policy.brains.some((brain) => brain.id === effective.activeBrain)) effective.activeBrain = policy.brains[0]?.id ?? null
-    locked.add('brains')
+    const theirs = policy.brains
+    effective.brains = [...theirs, ...settings.brains.filter((brain) => policy.ownBrains?.some((one) => one === '*' || one === brain.provider) && !theirs.some((one) => one.id === brain.id) && (!policy.jurisdictions || isLocal(brain)))]
+    if (!effective.brains.some((brain) => brain.id === effective.activeBrain)) effective.activeBrain = effective.brains[0]?.id ?? null
+    if (!policy.ownBrains?.length) locked.add('brains')
   }
   for (const [kind, value] of Object.entries(policy.rules ?? {})) {
     effective.rules[kind] = value
