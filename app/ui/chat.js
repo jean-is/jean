@@ -8,7 +8,7 @@ import { app, retry, effective, brainLabel, openFile, send, canStepUp, askSmarte
 import { unlock, slots, SIZES } from './caps.js'
 import { foldTurns, titleOf, linkedFiles, splitSuggestions, isPicture, filesMade } from '../core/events.js'
 import { serviceURL } from '../core/settings.js'
-import { t, locale, intlLocales, formatBytes, formatDuration, relativeTime } from '../core/i18n.js'
+import { t, locale, intlLocales, formatBytes, relativeTime } from '../core/i18n.js'
 import { markdown, withFormulas } from './markdown.js'
 import { icons } from './icons.js'
 import { mine } from './opfs.js'
@@ -373,7 +373,7 @@ function activity(steps, text, streaming, files, doing, steered) {
           data-depth=${entry.name || depth ? depth : nothing}>
           <details class="step">
             <summary><span class="ember" aria-hidden="true"></span>${entry.status === 'failed' ? html`<span class="visually-hidden">${t('activity.failed')}: </span>` : nothing}<span dir="auto">${entry.name ? toolLabel(entry, files) : entry._meta?.compact ? html`<app-compaction .entry=${entry}></app-compaction>` : brainLine(entry)}</span>${icons.chevron}</summary>
-            ${entry.name ? toolDetails(entry) : brainDetails(entry, said.get(entry.toolCallId))}
+            ${opened(entry, said.get(entry.toolCallId))}
           </details>
         </li>`)}
       </ol>
@@ -384,6 +384,10 @@ function activity(steps, text, streaming, files, doing, steered) {
     ${streaming && offering ? offerCard(offering) : nothing}`
 }
 
+/** ui/steps.js: what each line opens on, loaded with the first activity. */
+const steps = signal(/** @type {typeof import('./steps.js') | null} */ (null))
+const opened = (/** @type {ToolCallInfo} */ entry, /** @type {Step | undefined} */ step) => steps.value?.details(entry, step) ?? (import('./steps.js').then((module) => (steps.value = module)), nothing)
+
 /** Which brain was asked, and why Auto chose it. @param {ToolCallInfo} brain */
 function brainLine(brain) {
   return html`${t('activity.brain', { brain: brainName(brain) })}
@@ -391,57 +395,6 @@ function brainLine(brain) {
     ${brain.rawOutput?.usage?.cacheReadTokens ? html`<span class="muted"> · ${t('activity.cached')}</span>` : nothing}
     ${brain._meta?.hurried ? html`<span class="muted"> · ${t('activity.hurried')}</span>` : nothing}
     ${brain.status === 'failed' && brain.rawOutput?.error ? html`<span class="muted"> — ${brain.rawOutput.error}</span>` : nothing}`
-}
-
-const STOPS = ['end', 'tool_use', 'max_tokens', 'refusal', 'pause', 'other']
-
-/**
- * What the brain thought and wrote that time, exactly as written, then how it stopped, how long
- * it took and how much it read and wrote (or the error's code and status).
- * @param {ToolCallInfo} brain @param {Step | undefined} step
- */
-function brainDetails(brain, step) {
-  const { stopReason, usage, code, status } = brain.rawOutput ?? {}
-  const facts = [
-    STOPS.includes(stopReason) ? t(`activity.stop.${stopReason}`) : '',
-    brain._meta?.ms === undefined ? '' : formatDuration(brain._meta.ms),
-    usage?.inputTokens ? t('activity.size', { input: usage.inputTokens, output: usage.outputTokens ?? 0 }) : '',
-    code ?? '', status ?? '',
-  ].filter(Boolean)
-  return html`<div class="step-body">
-    ${step?.thought ? html`<div class="thought" dir="auto">${markdown(step.thought)}</div>` : nothing}
-    ${step?.text ? html`<pre tabindex="0" dir="auto">${step.text}</pre>` : nothing}
-    ${facts.length ? html`<p class="step-facts">${facts.join(' · ')}</p>` : nothing}
-  </div>`
-}
-
-/** What a call was given and what came back, as the brain saw them. @param {ToolCallInfo} tool */
-function toolDetails(tool) {
-  const input = shown(tool.rawInput)
-  const output = shown(tool.rawOutput)
-  return html`<div class="step-body">
-    <p class="step-facts"><code dir="ltr">${tool.name}</code>${tool._meta?.ms === undefined ? nothing : ` · ${formatDuration(tool._meta.ms)}`}${tool._meta?.by ? whose(tool._meta) : nothing}</p>
-    ${input ? html`<p class="step-label">${t('activity.input')}</p><pre tabindex="0" dir="auto">${input}</pre>` : nothing}
-    ${output ? html`<p class="step-label">${t('activity.output')}</p><pre tabindex="0" dir="auto">${output}</pre>` : nothing}
-  </div>`
-}
-
-/** ui/whose.js, once a call says whose rule decided it (D299). */
-const said = signal(/** @type {typeof import('./whose.js') | null} */ (null))
-const whose = (/** @type {any} */ meta) => said.value?.whose(meta) ?? (import('./whose.js').then((module) => (said.value = module)), nothing)
-
-/**
- * Arguments and results as text: strings as they are, so code stays readable, the rest as JSON.
- * @param {unknown} value @returns {string}
- */
-function shown(value) {
-  if (value === undefined || value === null) return ''
-  if (typeof value === 'string') return value
-  if (typeof value !== 'object' || Array.isArray(value)) return JSON.stringify(value, null, 2)
-  return Object.entries(value).map(([key, item]) => {
-    const text = typeof item === 'string' ? item : JSON.stringify(item, null, 2) ?? ''
-    return text.includes('\n') ? `${key}:\n${text.replace(/^/gm, '  ')}` : `${key}: ${text}`
-  }).join('\n')
 }
 
 /**
