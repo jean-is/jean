@@ -2,7 +2,7 @@
 // A prototype beside the task (D742), <app-prototype>, in two views. All pages, as it opens: its pages on a board without edges, moved by
 // a drag, the wheel or the keys and zoomed about the pointer, a column per step from the first page as pressing through found them
 // (./check.js), each under the control that leads to it, its name on the board's ground over its card, the page itself, running where it lies
-// out of reach (<app-site-page>, ../sites/frame.js), then its place and where it leads on, words that keep their size; in a bottom corner, its zoom and Fit. While the brain still writes it (../sites/kind.js), its pages come
+// out of reach (<app-site-page>, ../sites/frame.js), then its place and where it leads on, words that keep their size; in a bottom corner, its zoom, its level, which sets it at 100%, and Fit. While the brain still writes it (../sites/kind.js), its pages come
 // there one after the other, each written on as it comes. Try it: the one frame a person presses in, a site's (../sites/frame.js), in the
 // shape it was made for, with its looks, its words retyped and its parts pointed at (D741) and the brain's version waiting (D505), its
 // links and forms carrying their choices; ahead of its bar, Back, Start over and the page on show with its place, and at its end Build
@@ -50,7 +50,7 @@ customElements.define('app-prototype', class extends HTMLElement {
     if (one?.path !== this.#one?.path) (this.#view = 'board'), (this.#at = 'index.html'), (this.#held = false)
     const pages = one?.open ? pagesOf(one) : []
     ;[this.#given, this.#stamp] = [one, one?.stamp]
-    this.#one = one && { ...one, lead: this.lead, hint: t('prototypes.pressable'), own: t('prototypes.own'), ...(one.open && { flow: /** @type {any} */ ({ reached: pages, leads: pages.map((page, i) => [page, pages.slice(i + 1, i + 2)]) }) }) }
+    this.#one = one && { ...one, lead: this.lead, own: t('prototypes.own'), ...(one.open && { flow: /** @type {any} */ ({ reached: pages, leads: pages.map((page, i) => [page, pages.slice(i + 1, i + 2)]) }) }) }
     if (!this.#held) this.#fitted = false
     this.isConnected && this.draw()
   }
@@ -187,8 +187,8 @@ customElements.define('app-prototype', class extends HTMLElement {
     }
     render(board ? html`<div class="proto-board" role="region" aria-label=${t('prototypes.pages', { name: one.name })} @keydown=${this.keys} @wheel=${this.wheel} @pointerdown=${this.drag}>
         <div class="proto-steps">${steps.map((step) => html`<ol class="proto-step">${step.map(card)}</ol>`)}</div>
-        <span class="proto-zoom">${button(t('prototypes.zoomOut'), '−', () => { this.#held = true; this.zoom(-1) })}<output role="status">${t('prototypes.zoom', { level: percent.format(this.#zoom) })}</output>
-          ${button(t('prototypes.zoomIn'), '+', () => { this.#held = true; this.zoom(1) })}<button type="button" class="button subtle" @click=${() => { this.#held = false; this.fit() }}>${t('prototypes.fit')}</button></span></div>`
+        <span class="proto-zoom">${button(t('prototypes.zoomOut'), '−', () => { this.#held = true; this.zoom(-1) })}<button type="button" class="button subtle proto-level" title=${t('prototypes.actual', { level: percent.format(1) })} @click=${() => { this.#held = true; this.zoom(0, 1) }}>${percent.format(this.#zoom)}</button>
+          <output class="visually-hidden" role="status">${percent.format(this.#zoom)}</output>${button(t('prototypes.zoomIn'), '+', () => { this.#held = true; this.zoom(1) })}<button type="button" class="button subtle" @click=${() => { this.#held = false; this.fit() }}>${t('prototypes.fit')}</button></span></div>`
       : html`<div class="proto-play"><div class="proto-strip"><button type="button" class="button subtle" @click=${() => this.show('board')}>${icons.board}${t('prototypes.board')}</button>
           <ol aria-label=${t('prototypes.pages', { name: one.name })} @keydown=${this.keys}>${all.map(card)}</ol></div>
         <app-site class="beside" .site=${one} @input=${() => { this.#at = this.#live?.page ?? this.#at; this.draw() }}></app-site></div>`, this)

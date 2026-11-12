@@ -5,8 +5,7 @@
 // what changed goes to Jean as each text's words before and after, put back if Jean refuses them; a key that took any markup away,
 // or left a text without words, puts the field back at once. Pointing, a click on a part, or Enter on one Tab reached, every part
 // with words or a picture reachable, points at it: Jean hears its words and its place, a selector from the body. Meanwhile links
-// lead nowhere and the page's own script hears no click. In a prototype (D742), a press that lands on nothing outlines for a moment
-// what can be pressed, and Jean hears of it. What it sends is untrusted all the same: the page's script could send it.
+// lead nowhere and the page's own script hears no click. What it sends is untrusted all the same: the page's script could send it.
 ;(() => {
   const post = (/** @type {unknown} */ message) => parent.postMessage(message, '*'), sheet = new CSSStyleSheet(), sent = /** @type {Map<number, [Text, string][]>} */ (new Map())
   const WORDS = 'h1,h2,h3,h4,h5,h6,p,li,dt,dd,blockquote,figcaption,caption,th,td,label,summary,a,button,span,strong,em,b,i,small,time,address,cite,q', ring = 'outline: 2px solid Highlight !important; outline-offset: 2px !important; box-shadow: 0 0 0 5px Canvas !important'
@@ -15,11 +14,7 @@
   // Retyping, pointing or neither; what each change sent was, until Jean keeps or refuses it; what was changed on each element, to put back;
   // the field typed in, its texts and their words, how many elements it holds and a copy to put back; the part pointed at, the one under the pointer.
   let mode = '', ids = 0, marked = /** @type {[Element, string, string | null][]} */ ([]), field = /** @type {{ at: HTMLElement, was: [Text, string][], count: number, copy: Node } | null} */ (null)
-  let pointed = /** @type {Element | null} */ (null), over = /** @type {Element | null} */ (null), hints = false
-  // What can be pressed, outlined for a moment once a press landed on nothing, where Jean asked for it.
-  const PRESS = 'a[href],button,summary,[role=button],[role=tab],[role=link],[role=menuitem],[role=option]', lit = new CSSStyleSheet()
-  lit.replaceSync(`:is(${PRESS}) { outline: 2px dashed Highlight !important; outline-offset: 2px !important }`)
-  const flash = () => { document.adoptedStyleSheets = [...document.adoptedStyleSheets, lit]; setTimeout(() => { document.adoptedStyleSheets = document.adoptedStyleSheets.filter((one) => one !== lit) }, 1500); post({ nothing: true }) }
+  let pointed = /** @type {Element | null} */ (null), over = /** @type {Element | null} */ (null)
   const texts = (/** @type {Node} */ at) => { const walk = document.createTreeWalker(at, NodeFilter.SHOW_TEXT), all = /** @type {Text[]} */ ([]); while (walk.nextNode()) all.push(/** @type {Text} */ (walk.currentNode)); return all }
   const worded = (/** @type {Element} */ at) => [...at.childNodes].some((node) => node.nodeType === 3 && /** @type {Text} */ (node).data.trim())
   const mark = (/** @type {Element} */ at, /** @type {string} */ name, /** @type {string} */ value) => { marked.push([at, name, at.getAttribute(name)]); at.setAttribute(name, value) }
@@ -76,12 +71,11 @@
 
   addEventListener('message', ({ source, data }) => {
     if (source !== parent || !data || typeof data !== 'object') return
-    if ('hint' in data) hints = !!data.hint
     if ('hand' in data) document.readyState === 'loading' ? addEventListener('DOMContentLoaded', () => use(String(data.hand), data.at), { once: true }) : use(String(data.hand), data.at)
     if (typeof data.undo === 'number') for (const [node, words] of sent.get(data.undo) ?? []) node.data = words
     sent.delete(data.kept ?? data.undo)
   })
-  addEventListener('click', (event) => { if (mode) event.preventDefault(), event.stopPropagation(), mode === 'point' && event.target instanceof Element && point(event.target); else if (hints && event.target instanceof Element && !event.target.closest(`${PRESS},input,select,textarea,label,[tabindex]`)) flash() }, true)
+  addEventListener('click', (event) => { if (mode) event.preventDefault(), event.stopPropagation(), mode === 'point' && event.target instanceof Element && point(event.target) }, true)
   addEventListener('keydown', (event) => {
     const { key, target } = event
     if (mode === 'edit' && field && target === field.at && !event.isComposing && (key === 'Enter' || key === 'Escape')) event.preventDefault(), key === 'Enter' ? keep(true) : (back(field.at, field.copy), hold(field.at))

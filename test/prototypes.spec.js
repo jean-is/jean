@@ -2,8 +2,8 @@
 // Prototypes (D742): found by its skill, a prototype shows beside the task while the brain still writes the call that makes it, its pages
 // coming one after the other; made, it is pressed through from its first page and checked, the brain hearing what does nothing. It opens on
 // All pages, a board without edges that fills its pane, its zoom in a bottom corner, whose pages run where they lie, each under its name on
-// the board's ground, moved, zoomed and walked with the keys along its flow; a page pressed shows in Try it, the one frame a person presses in, in the shape it was made for, its pages in a strip; its bar goes
-// back and starts over, a form sends its choice to the next page in the address, a press on nothing outlines what can be pressed, and
+// the board's ground, moved, zoomed and walked with the keys along its flow, its level setting it at 100%; a page pressed shows in Try it, the one frame a person presses in, in the shape it was made for,
+// a tablet's on offer too, its pages in a strip; its bar goes back and starts over, a form sends its choice to the next page in the address, and
 // Build it asks for the app it shows. In Arabic and Japanese.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, answered, SHARE_URL } from './helpers.js'
@@ -74,10 +74,19 @@ test('a prototype shows while it is written, its pages coming; made, it is press
   await expect(view.locator('.proto-says').first().locator(':scope > :not(.visually-hidden)')).toHaveText('Leads to Time')
   await expect(view.locator('.proto-says .visually-hidden').first()).toHaveText('Page 1 of 3')
   await expect(view.locator('.proto-by').nth(1)).toHaveText('Press “Cut · €35”')
+  // Its level is its value alone, in smaller words than Fit's; pressed, the board is at 100% at once, and said.
+  const shown = view.locator('.proto-level')
   await view.getByRole('button', { name: 'Zoom in' }).click()
-  await expect(view.getByRole('status')).toContainText('%')
+  await expect(shown).toHaveText(/^\d+%$/)
+  await expect(view.getByRole('status')).toHaveText(await shown.innerText())
+  expect(await shown.evaluate((one) => parseFloat(getComputedStyle(one).fontSize) < parseFloat(getComputedStyle(/** @type {Element} */ (one.parentElement?.lastElementChild)).fontSize))).toBe(true)
+  await expect(shown).toHaveAttribute('title', 'Zoom to 100%')
+  await shown.click()
+  await expect(shown).toHaveText('100%')
+  await expect(view.getByRole('status')).toHaveText('100%')
+  expect(await view.evaluate((one) => getComputedStyle(one).getPropertyValue('--zoom'))).toBe('1')
   // The wheel with Ctrl, as a pinch sends, zooms little by little: a notch is a tenth, not a step.
-  const level = async () => Number((await view.getByRole('status').innerText()).replace(/\D/g, '')), before = await level()
+  const level = async () => Number((await shown.innerText()).replace(/\D/g, '')), before = await level()
   await view.locator('.proto-board').dispatchEvent('wheel', { deltaY: -100, ctrlKey: true })
   await expect.poll(level).toBeGreaterThan(before)
   expect(await level()).toBeLessThan(before * 1.15)
@@ -115,13 +124,17 @@ test('a prototype shows while it is written, its pages coming; made, it is press
   await expect(frame.getByRole('heading', { name: 'Pick a time' })).toBeVisible()
   await view.getByRole('button', { name: 'Start over' }).click()
   await expect(frame.getByRole('heading', { name: 'Services' })).toBeVisible()
-  // A press that lands on nothing is said; its looks are behind one button, its own named a prototype's; its widths are drawings.
-  await frame.getByRole('heading', { name: 'Services' }).click()
-  await expect(page.locator('.toast')).toContainText('Nothing happens there')
+  // Its looks are behind one button, its own named a prototype's; its widths are drawings, a tablet's among them, at its own width, then a phone's again.
   await view.getByRole('button', { name: 'Colours and type' }).click()
   await expect(view.getByRole('radio', { name: 'For this prototype' })).toBeChecked()
   await page.keyboard.press('Escape')
-  await expect(view.locator('.site-widths label svg')).toHaveCount(2)
+  await expect(view.locator('.site-widths label svg')).toHaveCount(3)
+  await view.locator('.site-widths label[title="Tablet"]').click()
+  await expect(view.locator('app-site')).toHaveAttribute('data-width', 'tablet')
+  await expect.poll(async () => (await view.locator('app-site iframe').boundingBox())?.width ?? 0).toBeGreaterThan(390)
+  expect((await view.locator('app-site iframe').boundingBox())?.width).toBeLessThanOrEqual(768)
+  await view.locator('.site-widths label[title="Phone"]').click()
+  await expect(view.locator('app-site')).toHaveAttribute('data-width', 'phone')
   // With them in one group, each a drawing named by its tip: by night, whatever the device prefers, then by day again; Edit words and Point at a part.
   await expect(view.locator('.site-hand.icon-group > button')).toHaveCount(4)
   await expect(view.locator('.site-hand button span')).toHaveCount(0)
