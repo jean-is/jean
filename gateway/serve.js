@@ -21,7 +21,7 @@ export const listener = (handle) => async (req, res) => {
   if (!headers.has('origin') && headers.get('sec-fetch-site') === 'same-origin') headers.set('origin', url.origin)
   const body = req.method === 'GET' || req.method === 'HEAD' ? undefined : /** @type {ReadableStream} */ (Readable.toWeb(req))
   const request = new Request(url, { method: req.method, headers, body, duplex: 'half' })
-  const response = await handle(request).catch(() => Response.json({ error: 'The service could not be reached.' }, { status: 502 }))
+  const response = await handle(request).catch((error) => (console.error('gateway:', error), Response.json({ error: 'The service could not be reached.' }, { status: 502 })))
   res.writeHead(response.status, Object.fromEntries(response.headers))
   if (response.body) await pipeline(Readable.fromWeb(/** @type {any} */ (response.body)), res).catch(() => res.destroy())
   else res.end()

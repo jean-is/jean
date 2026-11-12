@@ -16,6 +16,8 @@ Or, with nothing to clone, its secrets still in `GATEWAY_CONFIG`:
 npx jean-cli gateway --origin https://jean.example
 ```
 
+It keeps no log of what it relays. A service it can't reach, or that sends a request to a host it doesn't relay to, gets a 502 with CORS, so Jean can say so. The cause goes to standard error on one line: the method, the service's origin and why (`ENOTFOUND`, `ECONNREFUSED`, a certificate). The path and query never go there, since they may hold what is private.
+
 ## Try it on your computer
 
 One command serves Jean with the gateway at `/gateway` on the same address, already set for Connections (a policy the development server makes up, as an organisation's would), which is found as anywhere else, or turned on early from its trophy in Settings › Capabilities:

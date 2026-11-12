@@ -97,14 +97,22 @@ export function gateway({ origins = [], hosts = [...SERVICES], clients = [], tim
     if (body === null) return refuse(413, 'This request is too large.')
     const client = method === 'POST' && body ? clients.find((one) => one.tokenEndpoint === url?.href) : undefined
     if (client && body) body = withSecret(client, new TextDecoder().decode(/** @type {ArrayBuffer} */ (body)), headers)
+    // A service it can't reach, or that sends it elsewhere, is answered with CORS, so Jean can say so, and logged with its cause:
+    // the address's origin, never its path or query, which may hold what is private.
+    const failed = (/** @type {string} */ why, /** @type {string} */ error) => (console.error(`gateway: ${method} ${url?.origin}: ${why}`), refuse(502, error))
     // Redirects are followed here, and only to hosts it covers.
     let response
     for (let hops = 0; ; hops++) {
-      response = await fetch(url, { method, headers, body, redirect: 'manual' })
+      try {
+        response = await fetch(url, { method, headers, body, redirect: 'manual' })
+      } catch (error) {
+        const cause = /** @type {{ cause?: { code?: string, message?: string } }} */ (error).cause
+        return failed(`unreachable, ${cause?.code ?? ''} ${cause?.message ?? error}`.replace(/ +/g, ' '), 'The service could not be reached.')
+      }
       const location = response.status >= 300 && response.status < 400 && response.headers.get('location')
       if (!location) break
       const next = new URL(location, url)
-      if (hops === 4 || !covers(hosts, next) || (client && next.origin !== url.origin)) return refuse(502, 'The service sent the request elsewhere.')
+      if (hops === 4 || !covers(hosts, next) || (client && next.origin !== url.origin)) return failed(`sent to ${next.origin}, which it doesn't follow`, 'The service sent the request elsewhere.')
       if (next.origin !== url.origin) for (const name of [...headers.keys()]) if (CREDENTIALS.test(name)) headers.delete(name)
       url = next
       if (response.status === 303 || (response.status < 307 && method === 'POST')) [method, body] = ['GET', undefined]

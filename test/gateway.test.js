@@ -72,6 +72,21 @@ test('a token request, which holds the app’s secret, is never sent to another 
   } finally { done() }
 })
 
+test('a service it can’t reach is answered with CORS, so Jean can say so, and its cause logged without the path', async (t) => {
+  const logged = t.mock.method(console, 'error', () => {})
+  const { handle, done } = relaying(() => { throw new TypeError('fetch failed', { cause: Object.assign(new Error('getaddrinfo ENOTFOUND a.example'), { code: 'ENOTFOUND' }) }) })
+  try {
+    const answer = await handle(through('https://a.example/private/path?token=1'))
+    assert.equal(answer.status, 502)
+    assert.equal(answer.headers.get('access-control-allow-origin'), JEAN)
+    assert.deepEqual(await answer.json(), { error: 'The service could not be reached.' })
+    assert.equal(logged.mock.calls.length, 1)
+    const line = String(logged.mock.calls[0].arguments[0])
+    assert.match(line, /GET https:\/\/a\.example: unreachable, ENOTFOUND getaddrinfo ENOTFOUND a\.example/)
+    assert.doesNotMatch(line, /private|token/)
+  } finally { done() }
+})
+
 test('a request past the limit is refused unread, whatever its length claims', async () => {
   const { asked, handle, done } = relaying(() => new Response('{}'))
   try {
