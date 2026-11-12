@@ -4,7 +4,7 @@
 // paged with its bar or a clicker's keys, presented full screen, with the presenter's view and all slides at once. Beside the
 // conversation, a deck kept as a file of the project's (caps/skills/decks.js), changed three ways: by typing on a slide (a double
 // click on its words), as its Markdown beside the slides (Source), or by asking Jean, whose version waits for the user to accept
-// or reject it slide by slide (D505), the brain told of the deck on show, its slide and the part pointed at; its Slide layout menu
+// or reject it slide by slide (D505), the brain told of the deck on show, its slide, the part pointed at and its kit's own layouts; its Slide layout menu
 // lays a slide out again from the deck's kit (./kit.js), and the pane's one button takes it out (./save.js, ui/out.js). A chart is Charts' own, drawn in SVG
 // for PowerPoint's writer to read; a diagram Pele's, as an answer's is (../interactive/diagram.js, D592), shown as a picture in
 // the deck's colours; a picture, one of the project's files, which the brain names by the name it made it under, read for it.
@@ -25,7 +25,7 @@ import { noteRecord } from '../../core/events.js'
 import { taskFiles, fileNamed } from '../../core/files.js'
 import { t, useStrings, locale, intlLocales } from '../../core/i18n.js'
 import { languageOf } from '../../ui/language.js'
-import { kitHere, withNames, words } from './kit.js'
+import { kitHere, withNames, words, layoutsTold } from './kit.js'
 import { kitSlot } from './kit-slot.js'
 import { cjk } from '../layouts/shapes.js'
 import { drawing, coloured, told, wordsBelow } from '../interactive/diagram.js'
@@ -36,8 +36,8 @@ await Promise.all([useStrings('slides'), useStrings('interactive'), styleSheet(n
 /** A deck kept, as its pane opens it (caps/skills/decks.js): its place, name and Markdown, Jean's version waiting, and how either is written. @typedef {{ path: string, name: string, source: string, theirs: string | null, keep: (mine: string, theirs: string | null) => Promise<unknown> }} Kept */
 /** @typedef {ReturnType<typeof import('@codename/deck').createDeck>} DeckView */
 
-/** The deck on show beside the conversation, which the brain hears of, its slide and the words pointed at. */
-export const shown = signal(/** @type {{ path: string, name: string, source: string, at: number, count: number, part: string } | null} */ (null))
+/** The deck on show beside the conversation, which the brain hears of, its slide, the words pointed at and the layouts its kit adds, changes or turns off. */
+export const shown = signal(/** @type {{ path: string, name: string, source: string, at: number, count: number, part: string, layouts: string } | null} */ (null))
 
 /** A slide's Markdown read as an answer's is, emphasis beside the punctuation of Chinese, Japanese and Korean too. */
 const reader = new Marked({ gfm: true }, cjk)
@@ -270,7 +270,7 @@ class AppSlides extends HTMLElement {
   moved(part) {
     const { view, file } = this
     if (!view || !file) return
-    shown.value = { path: file.path, name: file.name, source: withoutKit(file.source), at: view.at, count: view.deck.slides.length, part: part ?? (shown.peek()?.path === file.path ? shown.peek()?.part ?? '' : '') }
+    shown.value = { path: file.path, name: file.name, source: withoutKit(file.source), at: view.at, count: view.deck.slides.length, part: part ?? (shown.peek()?.path === file.path ? shown.peek()?.part ?? '' : ''), layouts: layoutsTold(view.kit) }
     this.paint()
   }
 
@@ -302,12 +302,13 @@ drawn.value = { ...drawn.peek(), deck, markdown: fenced, md: fenced, slidev: fen
 
 /**
  * The note a message comes with while a deck is on show and the brain hasn't heard of it as it is: its place, the slide on show,
- * the words pointed at, and its Markdown, to write again whole with what is asked changed. @param {import('../../core/types.js').Envelope[]} records
+ * the words pointed at, its Markdown, to write again whole with what is asked changed, and the layouts its kit adds, changes or
+ * turns off. @param {import('../../core/types.js').Envelope[]} records
  */
 function notes(records) {
   const one = shown.peek()
   if (!one) return []
-  const text = `The deck ${one.name} (${one.path}) is open beside the conversation, on slide ${one.at + 1} of ${one.count}.${one.part ? ` The user points at its words "${one.part}".` : ''} As it is now:\n\n\`\`\`\`deck\n${one.source.trim()}\n\`\`\`\`\n\nTo change it, write it again whole in a \`\`\`\`deck block with only what is asked changed: the user accepts or rejects each slide you change. A deck about something else is a new one, with a title of its own.`
+  const text = `The deck ${one.name} (${one.path}) is open beside the conversation, on slide ${one.at + 1} of ${one.count}.${one.part ? ` The user points at its words "${one.part}".` : ''} As it is now:\n\n\`\`\`\`deck\n${one.source.trim()}\n\`\`\`\`\n\n${one.layouts ? `${one.layouts}\n\n` : ''}To change it, write it again whole in a \`\`\`\`deck block with only what is asked changed: the user accepts or rejects each slide you change. A deck about something else is a new one, with a title of its own.`
   const last = records.findLast(({ update }) => update?.sessionUpdate === '_system_note' && update.data?.kind === 'deck')
   return last?.update?.sessionUpdate === '_system_note' && last.update.text === text ? [] : [noteRecord(text, { kind: 'deck', uri: one.path })]
 }

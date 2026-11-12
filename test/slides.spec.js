@@ -664,6 +664,11 @@ test('a design system: Jean\'s own and a project\'s, its colours written or pick
   expect(copy.tokens).toMatchObject({ primary: '#b45309', logo: expect.stringMatching(/^data:image\/png/) })
   expect(copy.layouts).toMatchObject({ image: false, 'side-by-side': { slots: ['default', 'left', 'right'], art: Object.keys(brought?.pictures ?? {}) } })
   expect(copy.pictures).toEqual(brought?.pictures)
+  // The brain is told the layouts it adds, changes or turns off, by name, label and slots: after the skill's steps, and with the deck on show (D594).
+  const told = await page.evaluate(async () => (await import('/caps/skills/skills.js')).steps('slides'))
+  for (const line of ['- `three-numbers` (Three numbers): slots `::one::`, `::two::`, `::three::`.', '- `roadmap` (Roadmap): lists drawn as `timeline`.', '- `side-by-side` (Side by Side): slots `::left::`, `::right::`.', 'The design system turns off `image`.']) expect(told).toContain(line)
+  expect(told, 'deck’s own as the skill names them, and the cover changed only in its look, not again').not.toMatch(/^- `(cover|default|two-cols)`/m)
+  await expect.poll(() => page.evaluate(async () => (await import('/ui/caps.js')).slots('modes').flatMap((mode) => mode.notes?.([], {}) ?? []).map((note) => note.update.text).join('\n'))).toContain('- `side-by-side` (Side by Side): slots `::left::`, `::right::`.')
   await expect(page.locator('app-preview app-slides.beside .deck-slide.is-shown .deck-logo').first()).toBeAttached()
   // On its card among the creations, its first slide with the logo in its corner, never the logo alone over the slide.
   await (await openTasks(page)).getByRole('button', { name: 'Creations', exact: true }).click()

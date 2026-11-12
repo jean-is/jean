@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: MIT
 // Slides (D591): what Jean changes in a deck's Markdown, as text, the rest of it byte for byte: a slide's layout, the kit
-// the deck is drawn with in its headmatter, and Jean's version set against the user's, slide by slide (D505).
+// the deck is drawn with in its headmatter, and Jean's version set against the user's, slide by slide (D505); and the layouts
+// a kit adds, changes or turns off, as the brain is told them (D594).
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { parseDeck } from '@codename/deck'
+import { parseDeck, mergeKits } from '@codename/deck'
 import { piecesOf, withKit, withoutKit, withLayout, changesOf, swapped, withPictures, placeIn, ownName, mostAlike } from '../app/caps/slides/edit.js'
+import { layoutsTold, copyOf } from '../app/caps/slides/kit.js'
 import { fileNamed } from '../app/core/files.js'
 
 const DECK = '---\ntitle: A second oven\n---\n\n# A second oven\n\nPlan for 2027\n\n---\n\n## Where we are\n\n- 120 croissants a day\n\n---\nlayout: fact\n---\n\n# 14 months\n\nto pay it back\n'
@@ -97,4 +99,13 @@ test('a deck’s pictures are found as deck reads them, a picture of the task by
   assert.equal(placeIn('oven.png'), 'decks/oven.png')
   assert.equal(placeIn('../../../secrets/key.png'), 'secrets/key.png')
   for (const outside of ['https://example.com/a.png', 'data:image/png;base64,AA', 'blob:x', '/ui/state.js']) assert.equal(placeIn(outside), undefined, outside)
+})
+
+test('the layouts a kit adds, changes or turns off are told the brain: name, label in the person’s language, what for, slots and figure; a look alone tells nothing', () => {
+  const { kit } = mergeKits({ layouts: { split: { label: { en: 'Split', fr: 'Partagé' }, intent: 'A picture beside the point.', use_when: 'one picture says it', slots: ['default', 'right'], areas: 'default right' },
+    'two-cols-header': { slots: ['default', 'left', 'right'], areas: 'default default | left right' }, roadmap: { label: 'Roadmap', lists: 'timeline' }, image: false, center: { paper: 'ink' } } })
+  assert.equal(layoutsTold(kit, 'fr'), ['Layouts the design system adds or changes, each slot’s words after a line naming it, as `::right::`:', '- `two-cols-header`: slots `::left::`, `::right::`.',
+    '- `split` (Partagé): A picture beside the point; use when: one picture says it; slots `::right::`.', '- `roadmap` (Roadmap): lists drawn as `timeline`.', 'The design system turns off `image`.'].join('\n'))
+  assert.equal(layoutsTold(mergeKits({ layouts: { center: { paper: 'ink' }, cover: { label: 'Title' } } }).kit, 'en'), '', 'what a slide is written with unchanged, nothing to tell')
+  assert.ok(mergeKits(copyOf(kit)).kit.layouts.split, 'a deck kept holds the layout, to draw it and take it to PowerPoint wherever it goes')
 })

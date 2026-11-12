@@ -6,12 +6,14 @@
 // paper is never cream and sunflower never a fill behind words, so the slides deck sets on the primary (a cover, an
 // introduction, the end) are on ink there, as a section is. Its layouts are named in the user's language, as the Slide layout menu
 // and PowerPoint's read them. The project's is its `kit.json`, else one made from its colour (ui/kit.js), which a deck kept
-// is offered again when it changes (D601).
-import { STANDARD, mergeKits } from '@codename/deck'
+// is offered again when it changes (D601). The brain is told the layouts it adds, changes or turns off (layoutsTold()).
+import { STANDARD, mergeKits, labelOf } from '@codename/deck'
 import { app, effective } from '../../ui/state.js'
 import { LOOKS, OWN, lookId } from '../../ui/looks.js'
 import { hexOf, projectKit, kitFile } from '../../ui/kit.js'
 import { t, locale } from '../../core/i18n.js'
+
+/** @typedef {ReturnType<typeof mergeKits>['kit']} Kit */
 
 /** deck's words in the user's language: its bar's, its views', a slide's. */
 export const words = () => Object.fromEntries(['deck', 'previous', 'next', 'where', 'present', 'presenter', 'overview', 'edit', 'source', 'notes', 'noNotes', 'upNext', 'last', 'slide', 'carousel'].map((key) => [key, t(`slides.${key}`)]))
@@ -46,6 +48,21 @@ export const lookPrint = async (dir) => [...JSON.stringify([await kitFile(null),
 
 /** The kit a deck of this project is drawn with, before its own: Jean's, the person's, the organisation's, the project's. @param {string} [dir] */
 export const kitHere = async (dir) => mergeKits(jeanKit(), await kitFile(null), app.policy.kit, await projectKit(dir)).kit
+
+/**
+ * A kit's layouts as the brain is told them, after the steps of a skill that writes decks and with the deck on show (D594): its own,
+ * and those of deck's, which the steps name, where it changes what a slide on them is written with (its slots, the figure its lists
+ * or parts make, the deck's contents, what it is for), never their look; each by its name, its label in the person's language, what
+ * it is for and when, its slots after the default one and its figure; then deck's own it turns off. Empty for none, as Jean's own.
+ * @param {Kit} kit @param {string} [lang]
+ */
+export function layoutsTold({ layouts }, lang = locale.peek()) {
+  const written = (/** @type {Kit['layouts'][string]} */ { slots, lists, parts, contents, intent, use_when, avoid_when }) => JSON.stringify([slots, lists, parts, contents, intent, use_when, avoid_when]), off = Object.keys(STANDARD.layouts).filter((name) => !layouts[name])
+  const said = (/** @type {Kit['layouts'][string]} */ { intent, use_when, avoid_when, slots, lists, parts, contents }) => [intent, use_when && `use when: ${use_when}`, avoid_when && `avoid when: ${avoid_when}`,
+    slots.length > 1 && `slots ${slots.filter((slot) => slot !== 'default').map((slot) => `\`::${slot}::\``).join(', ')}`, lists !== 'bullets' && `lists drawn as \`${lists}\``, parts !== 'none' && `\`##\` parts as \`${parts}\``, contents && 'the deck’s contents under its words'].flatMap((words) => (words ? [words.replace(/[.\s]+$/, '')] : []))
+  const told = Object.entries(layouts).filter(([name, layout]) => !STANDARD.layouts[name] || written(layout) !== written(STANDARD.layouts[name])).map(([name, layout]) => ((named, words) => `- \`${name}\`${named === name ? '' : ` (${named})`}${words.length ? `: ${words.join('; ')}.` : ''}`)(labelOf(layout, name, lang), said(layout)))
+  return [...(told.length ? ['Layouts the design system adds or changes, each slot’s words after a line naming it, as `::right::`:', ...told] : []), ...(off.length ? [`The design system turns off ${off.map((name) => `\`${name}\``).join(', ')}.`] : [])].join('\n')
+}
 
 /**
  * What a deck kept holds of its kit: its tokens and the layouts unlike deck's own, their names left to each reader, deck's own

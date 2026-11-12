@@ -89,8 +89,14 @@ export const read = async (named, [name] = named.trim().split('/')) => { for (co
 /** Says a skill is in the room now, with a way to see its page. @param {string} title @param {string} name */
 const saved = (title, name) => notify(t('skills.saved', { title }), { label: t('skills.open'), run: () => import('../../ui/dialogs.js').then((dialogs) => dialogs.openSettings(`skills/${name}`)) })
 
-/** A skill's steps, or one of the files beside them, for `skill` and for a skill named in the box (D199). @param {string} named */
-export const steps = async (named) => skillSteps(app.fs, await skills(), named)
+/**
+ * A skill's steps, or one of the files beside them, for `skill` and for a skill named in the box (D199); one that writes decks, with
+ * the layouts the design system here adds, changes or turns off, which its steps don't name (D594). @param {string} named
+ */
+export async function steps(named) {
+  const all = await skills(), text = await skillSteps(app.fs, all, named), told = all.find((skill) => skill.name === named.trim())?.blocks?.includes('deck') ? await import('../slides/kit.js').then(async (kit) => kit.layoutsTold(await kit.kitHere())) : ''
+  return told ? `${text}\n\n${told}` : text
+}
 
 /** @type {import('../../core/loop.js').Tool} */
 const saveTool = {
