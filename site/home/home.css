@@ -90,7 +90,9 @@ body:has(> .home:not([hidden])) app-composer > :is(p, footer) { visibility: hidd
    act rises into place as the page shows. */
 @media (prefers-reduced-motion: no-preference) { .home > main > .home-act:first-of-type { animation: home-rise 0.7s var(--ease) 0.3s backwards; } }
 @keyframes home-rise { from { translate: 0 2rem; opacity: 0; } }
-.home:is(:lang(ar), :lang(ja), :lang(ko)) :is(.home-act-title, .home-title, .home-shelf h3, .home-move h3, .site-mark) { font-family: var(--sans); }
+/* In the sans where the display face can't write a language: a script it lacks, or letters of Polish, Romanian and
+   Hungarian, which another face would write in the middle of a word. */
+.home:is(:lang(ar), :lang(ja), :lang(ko), :lang(zh), :lang(pl), :lang(ro), :lang(hu)) :is(.home-act-title, .home-title, .home-shelf h3, .home-move h3, .site-mark) { font-family: var(--sans); }
 
 /* An act for each part of the promise: its title, large, its full stop in the mark's colour; why it matters and
    what Jean does about it; one proof; its catch. On paper, on the app's fill, on what waits, the wave between two
@@ -107,12 +109,16 @@ body:has(> .home:not([hidden])) app-composer > :is(p, footer) { visibility: hidd
 .home-act-head > :is(p, div) { flex: 1 1 20rem; max-inline-size: 30rem; margin-block-end: 0.7rem; }
 .home-act-title { color: inherit; font: 700 clamp(3.25rem, 10.4cqi, 8.25rem)/0.95 var(--display); }
 #home-keep .home-act-title { font-size: clamp(3rem, 8.4cqi, 7rem); }
-/* On a wide window the first act shows in the first screen, its title near its top, on paper where no edge shows
-   above it, and its row close under it. */
-@media (min-width: 48rem) { .home > main > .home-act:first-of-type > .home-act-in { gap: 1rem; padding-block-start: 0.5rem; } }
+/* On a wide window the first act shows in the first screen, its title near its top and its row close under it: on
+   paper, where no edge shows above it; on a ground of its own, as where a language says another part first, clear
+   of that ground's edge. */
+@media (min-width: 48rem) {
+  .home > main > .home-act:first-of-type > .home-act-in { gap: 1rem; padding-block-start: 0.5rem; }
+  .home > main > .home-act:first-of-type:not(.is-paper) > .home-act-in { padding-block-start: 2.25rem; }
+}
 .home-dot { color: var(--felt-line); }
 .home-act-why { color: var(--ink-soft); font-size: 1.1875rem; font-style: italic; }
-.home:is(:lang(ar), :lang(ja), :lang(ko)) .home-act-why { font-style: normal; }
+.home:is(:lang(ar), :lang(ja), :lang(ko), :lang(zh)) .home-act-why { font-style: normal; }
 .home-act-lead { color: var(--ink-soft); font-size: 1.1875rem; }
 
 /* The catch, every promise's own, said where the promise is. */
@@ -194,8 +200,8 @@ body:has(> .home:not([hidden])) app-composer > :is(p, footer) { visibility: hidd
 .home-act-head.is-stacked { flex: 1 1 26rem; flex-flow: column; align-items: flex-start; gap: 1.5rem; }
 .home-act-head.is-stacked > p { flex: none; max-inline-size: 29rem; margin: 0; }
 #home-any .home-act-title { font-size: clamp(3rem, 7.2cqi, 5.9rem); }
-/* On one line in Japanese, whose words for it are wide. Where it is the first act, its title starts at its top, in the first screen with the top of its ways. */
-.home:lang(ja) #home-any .home-act-title { font-size: clamp(2.6rem, 5.2cqi, 4.6rem); }
+/* Smaller in Japanese and Breton, whose words for it are wide, on one line in Japanese. Where it is the first act, its title starts at its top, in the first screen with the top of its ways. */
+.home:is(:lang(ja), :lang(br)) #home-any .home-act-title { font-size: clamp(2.6rem, 5.2cqi, 4.6rem); }
 .home > main > .home-act:first-of-type .home-any { align-items: flex-start; }
 .is-fill :is(.home-act-why, .home-ways small, .home-catch) { color: var(--home-on-fill-soft); }
 .is-fill .home-act-lead { color: var(--home-on-fill); font-size: 1.375rem; line-height: 1.45; }

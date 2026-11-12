@@ -84,7 +84,7 @@ test('it prices per organisation in each language’s own numbers, never per sea
 test('the homepage’s way to the IT page leads to it, in each language', async () => {
   const files = await site()
   for (const [path, html] of Object.entries(files)) {
-    if (!/^(index|ar|fr|ja|ko)\.html$/.test(path)) continue
+    if (!/^(index|ar|br|co|da|de|es|fi|fr|fr-CA|ha|hu|id|it|ja|ko|ms|nl|pl|pt|ro|tl|zh-Hans|zh-Hant)\.html$/.test(path)) continue
     const lang = path === 'index.html' ? 'en' : path.slice(0, -'.html'.length)
     const address = page.addresses[lang] ?? page.addresses.en
     assert.ok(html.includes(`href="${address}"`), `${path}: links ${address}`)

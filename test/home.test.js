@@ -12,11 +12,15 @@ import { listedPages, siteFiles, titleOf, withSite } from '../scripts/seo.js'
 const index = await readFile(new URL('../app/index.html', import.meta.url), 'utf8')
 const description = /<meta name="description" content="([^"]*)">/.exec(index)?.[1] ?? ''
 const BASE = 'https://jean.is/'
+/** The homepage's languages, each but English's at its own address, and the files they are written to. */
+const LANGS = ['ar', 'br', 'co', 'da', 'de', 'en', 'es', 'fi', 'fr', 'fr-CA', 'ha', 'hu', 'id', 'it', 'ja', 'ko', 'ms', 'nl', 'pl', 'pt', 'ro', 'tl', 'zh-Hans', 'zh-Hant']
+const fileOf = (/** @type {string} */ lang) => (lang === 'en' ? 'index.html' : `${lang}.html`)
+const FILES = LANGS.map(fileOf)
 /** The site's files as build:web writes them for jean.is. */
-const built = buildSite({ brand: BRAND, base: BASE, index: (said, address) => withSite(said ? inLanguage(index, said) : index, BASE, BRAND, said ?? description, ['ar', 'en', 'fr', 'ja', 'ko'], address) })
+const built = buildSite({ brand: BRAND, base: BASE, index: (said, address) => withSite(said ? inLanguage(index, said) : index, BASE, BRAND, said ?? description, LANGS, address) })
 const site = async () => (await built).files
 /** Each language's page, the part index.html ends with. */
-const pages = async () => Object.entries(await site()).filter(([path]) => /^(index|ar|fr|ja|ko)\.html$/.test(path)).map(([path, html]) => [path === 'index.html' ? 'en' : path.slice(0, -'.html'.length), html.slice(html.indexOf('<div class="home"'), html.lastIndexOf('</body>'))])
+const pages = async () => Object.entries(await site()).filter(([path]) => FILES.includes(path)).map(([path, html]) => [path === 'index.html' ? 'en' : path.slice(0, -'.html'.length), html.slice(html.indexOf('<div class="home"'), html.lastIndexOf('</body>'))])
 
 test('only the brand’s own site has the page, never an organisation’s copy', () => {
   assert.equal(ownSite('https://jean.is/', BRAND), true)
@@ -25,7 +29,7 @@ test('only the brand’s own site has the page, never an organisation’s copy',
 
 test('the page never says agent, model, MCP or token, never promises a tutor, and runs as written under the policy', async () => {
   const all = await pages()
-  assert.deepEqual(all.map(([lang]) => lang).sort(), ['ar', 'en', 'fr', 'ja', 'ko'])
+  assert.deepEqual(all.map(([lang]) => lang).sort(), LANGS)
   for (const [lang, page] of all) {
     const text = page.replace(/<[^>]+>/g, ' ')
     assert.doesNotMatch(text, /\b(agents?|models?|MCP|tokens?|tutors?)\b/i, lang)
@@ -37,7 +41,7 @@ test('the page never says agent, model, MCP or token, never promises a tutor, an
     assert.equal(page.match(/<h1[ >]/g)?.length, 1, `${lang}: one heading of its own`)
     // The promise is its outline: an act for each part of it, in the order that language says them, each on its ground, with its catch.
     const acts = [...page.matchAll(/<section id="home-(\w+)" class="home-act is-(\w+)"/g)].map(([, act, ground]) => `${act} on ${ground}`)
-    const order = ['ja', 'ko'].includes(lang) ? ['any', 'create', 'keep'] : ['create', 'any', 'keep']
+    const order = ['ja', 'ko', 'zh-Hans', 'zh-Hant'].includes(lang) ? ['any', 'create', 'keep'] : ['create', 'any', 'keep']
     assert.deepEqual(acts, order.map((act) => `${act} on ${{ create: 'paper', any: 'fill', keep: 'wait' }[act]}`), `${lang}: the acts as its sentence says them, each on its ground`)
     assert.match(page, /<h1 class="visually-hidden">/, `${lang}: the promise itself is its heading, for whoever hears or searches the page`)
     assert.equal(page.match(/<p class="home-catch">/g)?.length, 3, `${lang}: every promise says its catch`)
@@ -72,14 +76,14 @@ test('the sample’s tile says what the sample spreadsheet holds', async () => {
 
 test('jean.is’s index.html has the page after the app’s root, and each other language its own page at its own address', async () => {
   const files = await site()
-  assert.deepEqual(Object.keys(files).filter((path) => /^(index|ar|fr|ja|ko)\.html$|^(home|site)\.css$/.test(path)).sort(), ['ar.html', 'fr.html', 'home.css', 'index.html', 'ja.html', 'ko.html', 'site.css'])
+  assert.deepEqual(Object.keys(files).filter((path) => FILES.includes(path) || /^(home|site)\.css$/.test(path)).sort(), [...FILES, 'home.css', 'site.css'].sort())
   const root = files['index.html']
   assert.match(root, /<html lang="en" dir="ltr"/)
   assert.doesNotMatch(root, /app-language/)
   assert.ok(root.indexOf('<div class="home" lang="en"') > root.indexOf('<body>') && root.indexOf('<div class="home"') < root.indexOf('</body>'))
   assert.ok(root.indexOf('href="ui/style.css"') < root.indexOf('href="site.css"') && root.indexOf('href="site.css"') < root.indexOf('href="home.css"'), 'the app’s style sheet, the site’s, then the page’s')
-  for (const html of ['index.html', 'ar.html', 'fr.html', 'ja.html', 'ko.html'].map((path) => files[path])) {
-    for (const [lang, address] of [['en', BASE], ['ar', `${BASE}ar`], ['fr', `${BASE}fr`], ['ja', `${BASE}ja`], ['ko', `${BASE}ko`], ['x-default', BASE]]) assert.match(html, new RegExp(`<link rel="alternate" hreflang="${lang}" href="${address}">`))
+  for (const html of FILES.map((path) => files[path])) {
+    for (const [lang, address] of [...LANGS.map((lang) => [lang, lang === 'en' ? BASE : BASE + lang]), ['x-default', BASE]]) assert.match(html, new RegExp(`<link rel="alternate" hreflang="${lang}" href="${address}">`))
     assert.equal(html.match(/class="home"/g)?.length, 1)
     // Its one heading before the app's greeting is drawn, the promise its title makes after the name.
     assert.deepEqual(html.match(/<h1[ >].*<\/h1>/g)?.map((h1) => h1.replace(/<[^>]+>/g, '')), [new RegExp(`<title>${BRAND.name} · (.*)</title>`).exec(html)?.[1]])
@@ -94,20 +98,27 @@ test('jean.is’s index.html has the page after the app’s root, and each other
   // Its menu links every language the app speaks, as Settings' lists them, the page's marked.
   assert.equal(ja.match(/<a href="[^"]*" data-language="[\w-]+"[^>]* lang="[\w-]+"/g)?.length, 46)
   assert.match(ja, /<a href="(\.\/)?ko" data-language="ko" hreflang="ko" lang="ko"><span dir="ltr">한국어<\/span>/, 'a language with its own page links there')
-  assert.match(ja, /<a href="[^"]*" data-language="de" lang="de"><span dir="ltr">Deutsch<\/span>/, 'and one without says no language of its address')
+  assert.match(ja, /<a href="(\.\/)?zh-Hant" data-language="zh-Hant" hreflang="zh-Hant" lang="zh-Hant"><span dir="ltr">繁體中文<\/span>/, 'under its own code, a script’s too')
+  assert.match(ja, /<a href="[^"]*" data-language="sv" lang="sv"><span dir="ltr">Svenska<\/span>/, 'and one without says no language of its address')
   assert.match(ja, /<a href="[^"]*" data-language="ja" hreflang="ja" aria-current="true" lang="ja"><span dir="ltr">日本語<\/span>/)
   assert.match(files['ar.html'], /<a href="[^"]*" data-language="ar" hreflang="ar" aria-current="true" lang="ar"><span dir="rtl">العربية<\/span>/, 'a name in its own direction, the row in the page’s')
   assert.match(files['fr.html'], /<title>Jean · Créez avec l’IA de votre choix, gardez tout<\/title>/)
   assert.match(files['ar.html'], /<html lang="ar" dir="rtl"/)
+  assert.match(files['de.html'], /<title>Jean · Erstelle mit jeder KI, behalte alles<\/title>/)
+  const zh = files['zh-Hans.html']
+  assert.match(zh, /<html lang="zh-Hans" dir="ltr"/)
+  assert.match(zh, /<meta name="app-language" content="zh-Hans">/)
+  assert.match(zh, /<title>Jean · 用任何 AI 创作，一切都留在你手里<\/title>/)
+  assert.match(zh, /不一定免费。完全不注册就能用？/, 'a language that writes no spaces joins a catch’s sentences without one')
   assert.throws(() => withHome(root, '', { lang: 'en', dir: 'ltr', own: false, languages: [], noscript: '' }), /already/)
 })
 
 test('jean.is’s sitemap lists every page of the site in each of its languages, whose language versions name each other', async () => {
   const pages = Object.fromEntries(Object.entries(await site()).filter(([path]) => path.endsWith('.html')))
   const listed = listedPages(BASE, pages)
-  assert.deepEqual([...listed.keys()], ['', 'accessibility', 'ar', 'ar/watch', 'charter', 'compare', 'compare/chatgpt', 'compare/claude-cowork', 'compare/manus', 'compare/open-webui', 'compare/openclaw', 'diagrams', 'enterprise', 'enterprise/key', 'excel', 'family', 'files', 'fr', 'fr/accessibilite', 'fr/aide', 'fr/aide/ajouter-fichiers-dossiers-et-images', 'fr/aide/ce-que-jean-sait-faire', 'fr/aide/ce-que-voit-l-ia', 'fr/aide/choisir-l-ia', 'fr/aide/cle-refusee', 'fr/aide/commencer-gratuitement-avec-openrouter', 'fr/aide/competences', 'fr/aide/envoyer-une-tache-a-quelqu-un', 'fr/aide/forfait-arrete', 'fr/aide/injoignable', 'fr/aide/jean-est-il-gratuit', 'fr/aide/l-ia-sur-cet-ordinateur', 'fr/aide/les-mots-de-jean', 'fr/aide/mes-taches-ont-disparu', 'fr/aide/ou-est-garde-votre-travail', 'fr/aide/qu-est-ce-que-jean', 'fr/aide/quand-jean-demande-d-abord', 'fr/aide/sauvegarder-et-restaurer', 'fr/aide/sur-tous-vos-appareils', 'fr/aide/travailler-ensemble', 'fr/aide/utiliser-une-cle', 'fr/aide/votre-premiere-tache', 'fr/associations', 'fr/charte-ia', 'fr/comparer',
-    'fr/comparer/chatgpt', 'fr/comparer/claude-cowork', 'fr/comparer/manus', 'fr/comparer/open-webui', 'fr/comparer/openclaw', 'fr/diapos', 'fr/enseignants', 'fr/entreprise', 'fr/entreprise/cle', 'fr/excel', 'fr/famille', 'fr/files', 'fr/hors-ligne', 'fr/importer', 'fr/pdf', 'fr/plan-du-site', 'fr/privacy', 'fr/regarder', 'fr/schemas', 'fr/secteur-public', 'fr/terms', 'fr/travail', 'help', 'help/add-files-folders-and-pictures', 'help/ai-on-this-computer', 'help/back-up-and-restore', 'help/choose-the-ai', 'help/couldnt-reach', 'help/is-jean-free', 'help/key-refused', 'help/my-tasks-are-gone', 'help/on-all-your-devices', 'help/plan-stopped', 'help/send-a-task-to-someone', 'help/skills', 'help/start-free-with-openrouter', 'help/use-a-key-you-have', 'help/what-jean-can-do', 'help/what-jean-is', 'help/what-the-ai-sees', 'help/when-jean-asks-first', 'help/where-your-work-is-kept', 'help/words-you-ll-see', 'help/work-on-something-together', 'help/your-first-task', 'import', 'ja', 'ja/watch', 'ko', 'ko/charter', 'ko/compare', 'ko/compare/chatgpt', 'ko/compare/claude-cowork', 'ko/compare/manus', 'ko/compare/open-webui',
-    'ko/compare/openclaw', 'ko/diagrams', 'ko/enterprise', 'ko/enterprise/key', 'ko/excel', 'ko/family', 'ko/import', 'ko/nonprofits', 'ko/offline', 'ko/pdf', 'ko/public-sector', 'ko/slides', 'ko/teachers', 'ko/work', 'nonprofits', 'offline', 'pdf', 'privacy', 'public-sector', 'site-map', 'slides', 'teachers', 'terms', 'watch', 'work'].map((path) => BASE + path))
+  assert.deepEqual([...listed.keys()], ['', 'accessibility', 'ar', 'ar/watch', 'br', 'charter', 'co', 'compare', 'compare/chatgpt', 'compare/claude-cowork', 'compare/manus', 'compare/open-webui', 'compare/openclaw', 'da', 'de', 'diagrams', 'enterprise', 'enterprise/key', 'es', 'excel', 'family', 'fi', 'files', 'fr', 'fr-CA', 'fr/accessibilite', 'fr/aide', 'fr/aide/ajouter-fichiers-dossiers-et-images', 'fr/aide/ce-que-jean-sait-faire', 'fr/aide/ce-que-voit-l-ia', 'fr/aide/choisir-l-ia', 'fr/aide/cle-refusee', 'fr/aide/commencer-gratuitement-avec-openrouter', 'fr/aide/competences', 'fr/aide/envoyer-une-tache-a-quelqu-un', 'fr/aide/forfait-arrete', 'fr/aide/injoignable', 'fr/aide/jean-est-il-gratuit', 'fr/aide/l-ia-sur-cet-ordinateur', 'fr/aide/les-mots-de-jean', 'fr/aide/mes-taches-ont-disparu', 'fr/aide/ou-est-garde-votre-travail', 'fr/aide/qu-est-ce-que-jean', 'fr/aide/quand-jean-demande-d-abord', 'fr/aide/sauvegarder-et-restaurer', 'fr/aide/sur-tous-vos-appareils', 'fr/aide/travailler-ensemble', 'fr/aide/utiliser-une-cle', 'fr/aide/votre-premiere-tache', 'fr/associations', 'fr/charte-ia', 'fr/comparer',
+    'fr/comparer/chatgpt', 'fr/comparer/claude-cowork', 'fr/comparer/manus', 'fr/comparer/open-webui', 'fr/comparer/openclaw', 'fr/diapos', 'fr/enseignants', 'fr/entreprise', 'fr/entreprise/cle', 'fr/excel', 'fr/famille', 'fr/files', 'fr/hors-ligne', 'fr/importer', 'fr/pdf', 'fr/plan-du-site', 'fr/privacy', 'fr/regarder', 'fr/schemas', 'fr/secteur-public', 'fr/terms', 'fr/travail', 'ha', 'help', 'help/add-files-folders-and-pictures', 'help/ai-on-this-computer', 'help/back-up-and-restore', 'help/choose-the-ai', 'help/couldnt-reach', 'help/is-jean-free', 'help/key-refused', 'help/my-tasks-are-gone', 'help/on-all-your-devices', 'help/plan-stopped', 'help/send-a-task-to-someone', 'help/skills', 'help/start-free-with-openrouter', 'help/use-a-key-you-have', 'help/what-jean-can-do', 'help/what-jean-is', 'help/what-the-ai-sees', 'help/when-jean-asks-first', 'help/where-your-work-is-kept', 'help/words-you-ll-see', 'help/work-on-something-together', 'help/your-first-task', 'hu', 'id', 'import', 'it', 'ja', 'ja/watch', 'ko', 'ko/charter', 'ko/compare', 'ko/compare/chatgpt', 'ko/compare/claude-cowork', 'ko/compare/manus', 'ko/compare/open-webui',
+    'ko/compare/openclaw', 'ko/diagrams', 'ko/enterprise', 'ko/enterprise/key', 'ko/excel', 'ko/family', 'ko/import', 'ko/nonprofits', 'ko/offline', 'ko/pdf', 'ko/public-sector', 'ko/slides', 'ko/teachers', 'ko/work', 'ms', 'nl', 'nonprofits', 'offline', 'pdf', 'pl', 'privacy', 'pt', 'public-sector', 'ro', 'site-map', 'slides', 'teachers', 'terms', 'tl', 'watch', 'work', 'zh-Hans', 'zh-Hant'].map((path) => BASE + path))
   assert.match(siteFiles(BASE, listed)['sitemap.xml'], /<url><loc>https:\/\/jean\.is\/<\/loc><\/url>\n {2}<url><loc>https:\/\/jean\.is\/accessibility<\/loc><\/url>/)
 })
 

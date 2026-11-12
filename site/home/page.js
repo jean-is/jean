@@ -8,11 +8,11 @@
 // catalogues where the app already says the same (the sample request, the box's words, what the first screen says of it), and its look
 // home.css, over the app's style sheet and site.css, whose foot it ends with (site/site.js, D438).
 import { readFile } from 'node:fs/promises'
-import { LOCALES } from '../../app/core/i18n.js'
+import { LOCALES, intlLocales } from '../../app/core/i18n.js'
 import { FELT, ICONS, fill, foot, languageMenu, pictureOf, wave, xml } from '../site.js'
 
 /** Each language's page, from the site's root. @type {Record<string, string>} */
-const ADDRESSES = { en: '', ar: 'ar', fr: 'fr', ja: 'ja', ko: 'ko' }
+const ADDRESSES = { en: '', ar: 'ar', br: 'br', co: 'co', da: 'da', de: 'de', es: 'es', fi: 'fi', fr: 'fr', 'fr-CA': 'fr-CA', ha: 'ha', hu: 'hu', id: 'id', it: 'it', ja: 'ja', ko: 'ko', ms: 'ms', nl: 'nl', pl: 'pl', pt: 'pt', ro: 'ro', tl: 'tl', 'zh-Hans': 'zh-Hans', 'zh-Hant': 'zh-Hant' }
 
 /**
  * The sample spreadsheet's answer, which its tile says: the product that grew the most
@@ -73,7 +73,8 @@ export function homeOf (kit, { sample = SAMPLE } = {}) {
   const list = (/** @type {string} */ key) => kit.list(key, params)
   const appSays = (/** @type {string} */ key) => kit.app(key)
   const quoted = (/** @type {string} */ text) => /* html */ `<q class="home-request">${text}</q>`
-  const growth = new Intl.NumberFormat(lang, { style: 'percent', signDisplay: 'exceptZero' }).format(sample.growth)
+  // Numbers and days as the app writes them in that language: a language Intl lacks, as its region does (core/i18n.js).
+  const growth = new Intl.NumberFormat(intlLocales(lang), { style: 'percent', signDisplay: 'exceptZero' }).format(sample.growth)
   // What the sample comes to, on its tile, the product in its own direction.
   const badge = xml(fill(String(kit.raw('tile.sample.badge')), { name: brand.name, ...params, product: '\u0000', growth })).replace('\u0000', /* html */ `<bdi lang="en" dir="ltr">${xml(sample.product)}</bdi>`)
   const file = /* html */ `<span class="home-file" dir="ltr">${ICONS.file}sales.csv</span>`
@@ -104,11 +105,11 @@ export function homeOf (kit, { sample = SAMPLE } = {}) {
           <p class="home-go">${tryIt(use.key, !i)}</p>
         </li>`
   // The acts in the order this language's promise says them; a language that writes no spaces joins sentences without one.
-  const join = lang === 'ja' ? '' : ' '
+  const join = /^(ja|zh)\b/.test(lang) ? '' : ' '
   const order = /** @type {Array<keyof typeof GROUNDS>} */ (list('acts'))
   if (`${[...order].sort()}` !== 'any,create,keep') throw new Error(`site/home/${lang}.json: acts is create, any and keep, in the order its promise says them`)
   // A day as the page's English writes it, the day first, as its spelling is Britain's.
-  const day = new Intl.DateTimeFormat(lang === 'en' ? 'en-GB' : lang, { day: 'numeric', month: 'long', timeZone: 'UTC' })
+  const day = new Intl.DateTimeFormat(lang === 'en' ? 'en-GB' : intlLocales(lang), { day: 'numeric', month: 'long', timeZone: 'UTC' })
   // An act's title, its full stop in the mark's colour; its catch, said under it, every promise with its own.
   const title = (/** @type {string} */ act) => /* html */ `<h2 id="home-${act}-title" class="home-act-title">${say(`${act}.title`).replace(/([.。])$/u, '<span class="home-dot">$1</span>')}</h2>`
   const caught = (/** @type {string[]} */ sentences) => /* html */ `<p class="home-catch"><b>${say('catch.name')}</b> <span>${sentences.join(join)}</span></p>`

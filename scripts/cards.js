@@ -110,18 +110,24 @@ export async function cards () {
 async function main () {
   const { chromium } = await import('@playwright/test')
   const browser = await chromium.launch()
+  const { sans } = await faces()
   try {
     for (const { file, width, height, lang, page: html, source } of [...await cards(), await hostCard()]) {
       const page = await browser.newPage({ viewport: { width, height } })
       await page.setContent(html)
       await page.evaluate(() => document.fonts.ready.then(() => true))
-      const size = await page.evaluate(([largest, room]) => {
+      const size = await page.evaluate(({ largest, room, sans }) => {
         const words = /** @type {HTMLElement | null} */ (document.querySelector('.words'))
         if (!words) return 0
+        // A letter the display face lacks, as Polish's ą or Romanian's ț, is drawn by whichever face follows it, as wide as
+        // that face makes it: such words are set in the site's sans, whole.
+        const pen = /** @type {CanvasRenderingContext2D} */ (document.createElement('canvas').getContext('2d'))
+        const wide = (/** @type {string} */ letter, /** @type {string} */ after) => { pen.font = `700 100px Display, ${after}`; return pen.measureText(letter).width }
+        if ([...words.textContent ?? ''].some((letter) => wide(letter, 'monospace') !== wide(letter, 'serif'))) words.style.fontFamily = sans
         const fitted = Math.min(largest, Math.floor(largest * room / Math.max(...[...words.children].map((line) => line.getBoundingClientRect().width))))
         words.style.fontSize = `${fitted}px`
         return fitted
-      }, [LARGEST, width - 2 * TAB.start])
+      }, { largest: LARGEST, room: width - 2 * TAB.start, sans })
       const png = recordSource(await page.screenshot({ type: 'png' }), source)
       await mkdir(dirname(file), { recursive: true })
       await writeFile(file, png)
