@@ -11,10 +11,10 @@
     "$comment": "Loaded upfront. On-demand dependencies live inside capability modules and are listed in docs/architecture.md."
   },
   "gzipKB": {
-    "firstLoad": 118.7,
+    "firstLoad": 119.3,
     "css": 13.7,
     "locale": 9.6,
-    "capabilityCode": 61.98,
+    "capabilityCode": 62.13,
     "deck": 30,
     "$comment": "capabilityCode excludes on-demand runtimes (QuickJS, Pyodide, Transformers.js) and model weights. deck is deck's module and style sheet, which the first deck loads."
   },
