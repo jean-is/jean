@@ -4,14 +4,14 @@
 // to its other page followed there; it is among the creations, changed by `site_change` until nothing is left to fix, and leaves as
 // a zip of its files. Published at a name of its own on the share host, asked first, its recovery code shown once, its pages
 // served under the host's policy; published again, only what changed goes; a new recovery code; taken offline. A picture Jean made
-// in the task goes into it by its name, and @ names it from another task (D730). Its three looks (D739), picked by keyboard, its
+// in the task goes into it by its name, its card among the creations running its first page with it, and @ names it from another task (D730). Its three looks (D739), picked by keyboard, its
 // pages following, the pick kept, a colour written put as a property and words that fade by night said. Its words retyped in place
 // and its parts pointed at, by keys as by clicks, and the brain's later change waiting as its version (D741). Its widths, looks, words
 // and pointing in Arabic and Japanese.
 import { readFile } from 'node:fs/promises'
 import { request } from 'node:http'
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, nameOf, paint, SHARE_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, answered, nameOf, paint, openTasks, SHARE_URL } from './helpers.js'
 
 test.setTimeout(120_000)
 
@@ -63,7 +63,7 @@ test('a site made with its skill is checked from its files and as its pages show
   const pane = page.locator('app-preview:has(app-site)'), site = page.frameLocator('app-preview app-site iframe')
   await expect(pane).toBeVisible()
   await expect(site.locator('h1')).toHaveText('Your bike, fixed while you wait')
-  await pane.getByRole('radiogroup', { name: 'Width' }).getByText('Phone').click()
+  await pane.getByRole('radiogroup', { name: 'Width' }).locator('label[title="Phone"]').click()
   await expect(pane.locator('app-site')).toHaveAttribute('data-width', 'phone')
   await expect.poll(async () => (await pane.locator('app-site iframe').boundingBox())?.width ?? 0).toBeLessThanOrEqual(390)
   await site.getByRole('link', { name: 'Prices' }).click()
@@ -78,14 +78,29 @@ test('a site made with its skill is checked from its files and as its pages show
   await answered(page, 3)
   await expect(page.locator('.msg-jean .prose').last()).toContainText('nothing to fix')
 
-  // It leaves as a zip of its files, from the button just before Close, its one way out.
-  const download = page.waitForEvent('download')
-  await pane.getByRole('button', { name: 'Download Atelier Nord' }).click()
+  // It leaves as a zip of its files, from the button just before Close: its one way out where the browser sends nothing to an app, the button itself;
+  // where it does (WebKit), a row of its menu, under Send to an app.
+  const download = page.waitForEvent('download'), out = pane.locator('.pane-head .icon-group > [popovertarget^="out-"]')
+  if (await out.count()) {
+    await out.click()
+    await expect(pane.locator('.out-menu button')).toHaveText(['Send to an app…', 'Site as a zip'])
+    await pane.locator('.out-menu').getByRole('button', { name: 'Site as a zip' }).click()
+  } else await pane.getByRole('button', { name: 'Download Atelier Nord' }).click()
   expect(nameOf(await download)).toBe('Atelier Nord.zip')
   // A zip names its files in the clear, each in its local header and its central directory.
   const zip = await readFile(await (await download).path())
   for (const name of ['index.html', 'prices.html', 'style.css', 'look.css']) expect(zip.includes(name)).toBe(true)
   expect(zip.includes('site.json')).toBe(false)
+  // Sharing found, a link holds it too, as any creation: its pages as one that plays, a file of the project.
+  await page.evaluate(async (host) => {
+    const [{ app, updateSettings }, { unlock }] = await Promise.all([import('/ui/state.js'), import('/ui/caps.js')])
+    await updateSettings({ urls: { ...app.settings.value.urls, share: host } })
+    await unlock('share')
+  }, SHARE_URL)
+  await pane.locator('.pane-head .icon-group > [popovertarget^="out-"]').click()
+  await pane.locator('.out-menu').getByRole('button', { name: /^Share/ }).click()
+  await expect(page.locator('app-share-dialog dialog')).toBeVisible()
+  expect(await page.evaluate(async () => /** @type {any} */ ((await import('/caps/share/share.js')).sharing.value?.item))).toMatchObject({ files: [{ name: 'Atelier Nord.html', mimeType: 'text/html' }] })
 })
 
 test('a picture Jean made in the task goes into its site by the name it was made under, its lists as JSON text read as lists (D730)', async ({ page }) => {
@@ -111,6 +126,13 @@ test('a picture Jean made in the task goes into its site by the name it was made
   await ask(page, `Call site_change with ${JSON.stringify({ site: place, files: [{ path: 'photos/other.png', from: 'bicorne.png' }] })}`)
   await answered(page, 5)
   await expect(page.locator('.msg-jean .prose').last()).toContainText('There is no file named "bicorne.png" in this task. Its files: portrait-atelier.png.')
+  // Its card among the creations runs its first page, the picture in it, at a computer's width and out of reach.
+  await (await openTasks(page)).getByRole('button', { name: 'Creations', exact: true }).click()
+  const card = page.locator('app-creations .creation').filter({ hasText: 'Atelier Nord' }), shown = card.locator('.creation-preview app-site-page iframe').contentFrame()
+  await expect(card.locator('.creation-preview app-site-page')).toHaveAttribute('data-shape', 'computer')
+  await expect(shown.locator('h1')).toHaveText('Your bike, fixed while you wait')
+  await expect(shown.locator('img[alt="The workshop at dawn"]')).toHaveJSProperty('naturalWidth', 96)
+  expect(await card.locator('.creation-preview').evaluate((element) => /** @type {HTMLElement} */ (element).inert)).toBe(true)
 })
 
 test('from another task, @ names a site by its place, opening it beside the task for the brain to change (D730)', async ({ page }) => {
@@ -149,12 +171,16 @@ test('a site is dealt three looks, its own first: one picked by keyboard dresses
   expect(await page.evaluate(async () => JSON.stringify((await import('/ui/state.js')).app.current.value?.records ?? []))).toContain("look.css's properties were put in place of 1 colour written in the site (style.css: #2a6f4e → var(--accent")
   await accept(page)
   expect(await read('style.css')).toMatch(/\.pale \{ color: var\(--accent(-2)?\); \}/)
+  // Its looks are behind one button of its bar, the rows of a menu.
+  const open = () => pane.getByRole('button', { name: 'Colours and type' }).click()
+  await open()
+  await expect(pane.locator('.site-fold .segmented')).toHaveCount(0)
   await expect(looks.getByRole('radio')).toHaveCount(3)
   await expect(looks.getByRole('radio', { name: 'For this site' })).toBeChecked()
   await expect(site.locator('body')).toHaveCSS('background-color', 'rgb(255, 253, 249)')
   // By keyboard, as radios go: the next one picked, its page dressed in it, the focus still there.
   await looks.getByRole('radio', { name: 'For this site' }).focus()
-  await page.keyboard.press('ArrowRight')
+  await page.keyboard.press('ArrowDown')
   const second = looks.getByRole('radio').nth(1)
   await expect(second).toBeChecked()
   await expect(second).toBeFocused()
@@ -173,6 +199,7 @@ test('a site is dealt three looks, its own first: one picked by keyboard dresses
   await expect(page.locator('.msg-jean .prose')).toHaveCount(4, { timeout: 60_000 })
   await answered(page, 4)
   await accept(page)
+  await open()
   await expect(looks.getByRole('radio', { name: 'For this site' })).toBeChecked()
   expect(await read('look.css')).toMatch(/--accent: #b8\w{4};/)
 })
@@ -283,9 +310,10 @@ for (const [lang, width, phone] of [['ar', 'العرض', 'هاتف'], ['ja', '�
     await page.evaluate(async (host) => { const { app, updateSettings } = await import('/ui/state.js'); await updateSettings({ urls: { ...app.settings.value.urls, share: host } }) }, SHARE_URL)
     await make(page)
     const pane = page.locator('app-preview:has(app-site)')
-    await pane.getByRole('radiogroup', { name: width }).getByText(phone).click()
+    await pane.getByRole('radiogroup', { name: width }).locator(`label[title="${phone}"]`).click()
     await expect(pane.locator('app-site')).toHaveAttribute('data-width', 'phone')
     // Its looks in the user's words, the next one picked as the language reads.
+    await pane.getByRole('button', { name: words['sites.looks'] }).click()
     const looks = pane.getByRole('radiogroup', { name: words['sites.looks'] })
     await expect(looks.getByRole('radio', { name: words['sites.palette.own'] })).toBeChecked()
     await looks.locator('label').nth(1).click()

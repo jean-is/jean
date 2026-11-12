@@ -1,8 +1,6 @@
 {
   "prototypes.frame": "{name}, 프로토타입",
-  "prototypes.view": "보기",
   "prototypes.board": "모든 페이지",
-  "prototypes.play": "써 보기",
   "prototypes.pages": "{name}의 페이지",
   "prototypes.page": "페이지 {n}/{count}",
   "prototypes.leads": "연결된 페이지: {pages}",

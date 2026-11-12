@@ -40,8 +40,6 @@
   "documents.collection": "Колекция",
   "documents.bookmark": "Уеб отметка",
   "documents.bookmarkAddress": "Поставете уеб адрес и натиснете Enter",
-  "documents.fullscreen": "Цял екран",
-  "documents.exitFullscreen": "Изход от цял екран",
   "documents.noMatch": "Няма резултати",
   "documents.choice": "{item}, {i} от {n}",
   "documents.handle": "Плъзнете за преместване, щракнете за опции",

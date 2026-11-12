@@ -40,8 +40,6 @@
   "documents.collection": "אוסף",
   "documents.bookmark": "סימנייה לאתר",
   "documents.bookmarkAddress": "הדביקו כתובת אינטרנט ואז הקישו Enter",
-  "documents.fullscreen": "מסך מלא",
-  "documents.exitFullscreen": "יציאה ממסך מלא",
   "documents.noMatch": "אין תוצאות",
   "documents.choice": "{item}, {i} מתוך {n}",
   "documents.handle": "גוררים כדי להזיז, לוחצים לאפשרויות",

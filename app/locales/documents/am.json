@@ -40,8 +40,6 @@
   "documents.collection": "ስብስብ",
   "documents.bookmark": "የድር ዕልባት",
   "documents.bookmarkAddress": "የድር አድራሻ ይለጥፉ፣ ከዚያ Enter ይጫኑ",
-  "documents.fullscreen": "ሙሉ ማያ ገጽ",
-  "documents.exitFullscreen": "ከሙሉ ማያ ገጽ ውጣ",
   "documents.noMatch": "ምንም ውጤት የለም",
   "documents.choice": "{item}፣ {i} ከ{n}",
   "documents.handle": "ለማንቀሳቀስ ይጎትቱ፣ ለአማራጮች ጠቅ ያድርጉ",

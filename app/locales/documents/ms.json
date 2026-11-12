@@ -40,8 +40,6 @@
   "documents.collection": "Koleksi",
   "documents.bookmark": "Penanda web",
   "documents.bookmarkAddress": "Tampal alamat web, kemudian tekan Enter",
-  "documents.fullscreen": "Skrin penuh",
-  "documents.exitFullscreen": "Keluar daripada skrin penuh",
   "documents.noMatch": "Tiada hasil",
   "documents.choice": "{item}, {i} daripada {n}",
   "documents.handle": "Seret untuk mengalihkan, klik untuk pilihan",

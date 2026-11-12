@@ -46,6 +46,7 @@
   "dock.bottom": "Sa ilalim ng gawain",
   "dock.wider": "Mas malapad",
   "dock.narrower": "Mas makitid",
+  "dock.full": "Full screen",
   "speech.noVoice": "Walang boses sa device na ito na kayang bumasa ng {language}. Puwede kang magdagdag sa settings ng system mo.",
   "toast.copied": "Nakopya",
   "toast.undoFor": {

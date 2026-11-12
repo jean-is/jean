@@ -40,8 +40,6 @@
   "documents.collection": "Sammlung",
   "documents.bookmark": "Web-Lesezeichen",
   "documents.bookmarkAddress": "Webadresse einfügen, dann Eingabetaste drücken",
-  "documents.fullscreen": "Vollbild",
-  "documents.exitFullscreen": "Vollbild beenden",
   "documents.noMatch": "Keine Ergebnisse",
   "documents.choice": "{item}, {i} von {n}",
   "documents.handle": "Ziehen zum Verschieben, klicken für Optionen",

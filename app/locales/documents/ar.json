@@ -40,8 +40,6 @@
   "documents.collection": "مجموعة",
   "documents.bookmark": "إشارة مرجعية لموقع",
   "documents.bookmarkAddress": "الصق عنوان ويب، ثم اضغط Enter",
-  "documents.fullscreen": "ملء الشاشة",
-  "documents.exitFullscreen": "الخروج من ملء الشاشة",
   "documents.noMatch": "لا نتائج",
   "documents.choice": "{item}، {i} من {n}",
   "documents.handle": "اسحب للنقل، وانقر لعرض الخيارات",

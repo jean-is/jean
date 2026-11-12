@@ -1,8 +1,6 @@
 {
   "prototypes.frame": "{name}፣ ፕሮቶታይፕ",
-  "prototypes.view": "እይታ",
   "prototypes.board": "ሁሉም ገጾች",
-  "prototypes.play": "ይሞክሩት",
   "prototypes.pages": "የ{name} ገጾች",
   "prototypes.page": "ገጽ {n} ከ{count}",
   "prototypes.leads": "ወደ {pages} ይወስዳል",

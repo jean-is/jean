@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: MIT
-// A prototype pressed through and drawn, in the tab (D742): each page in one frame of a file pane's kind at a time, out of sight at a
-// phone's width, under a site's policy, with Jean's script ahead of it (../sites/frame.js's ahead(): the address's choices, a form sent to
+// A prototype pressed through, in the tab (D742): each page in one frame of a file pane's kind at a time, out of sight at a phone's
+// width, under a site's policy, with Jean's script ahead of it (../sites/frame.js's ahead(): the address's choices, a form sent to
 // another page). From index.html, each plain link is followed and every other control pressed on a fresh page, its fields filled first,
 // once more one level deeper where a press brought new controls out; what leads to a page reaches it, the first that did kept with its name, what changes the page does something,
-// what does neither does nothing, and what leaves by its own script can't be followed. A page's still picture, for the strip and the board, is drawn by
-// the frame itself through an SVG foreignObject, as a game's is, at a phone's width or a computer's, as the prototype is made. Never two frames at once: the board's live page is the other.
+// what does neither does nothing, and what leaves by its own script can't be followed.
 import { pageOf, ahead, policy, rights } from '../sites/frame.js'
 import { PAGE_SANDBOX } from '../../ui/csp.js'
 import { reach } from '../sites/file.js'
@@ -40,28 +39,22 @@ const e=document.querySelector('[data-probe="'+T.at(-1)+'"]');if(!e)return post(
 const was=shown(),keys=new Set(L.filter((o)=>!o.off).map((o)=>o.key));e.click();await wait(350)
 post({pressed:{changed:shown()!==was,newly:list().filter((o)=>!o.off&&!keys.has(o.key))}})})}</script>`
 
-/** The frame's own picture of its page, as a phone shows its first screen: WebP, or JPEG where the browser writes none (WebKit). */
-const SHOOT = `<script>addEventListener('load',()=>setTimeout(async()=>{try{const copy=document.documentElement.cloneNode(true);for(const s of copy.querySelectorAll('script,noscript'))s.remove()
-const w=innerWidth,h=innerHeight,image=new Image();image.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="'+w+'" height="'+h+'"><foreignObject width="100%" height="100%">'+new XMLSerializer().serializeToString(copy)+'</foreignObject></svg>')
-await image.decode();const c=new OffscreenCanvas(w,h),p=c.getContext('2d');p.fillStyle='#fff';p.fillRect(0,0,w,h);for(const e of [document.documentElement,document.body]){p.fillStyle=getComputedStyle(e).backgroundColor;p.fillRect(0,0,w,h)}p.drawImage(image,0,0)
-let b=await c.convertToBlob({type:'image/webp',quality:0.7});if(b.type!=='image/webp')b=await c.convertToBlob({type:'image/jpeg',quality:0.75});const r=new FileReader();r.onload=()=>parent.postMessage({shot:String(r.result)},'*');r.readAsDataURL(b)}catch{parent.postMessage({shot:''},'*')}},250))</script>`
-
 /**
  * One page in a frame out of sight, its probe and Jean's script ahead of it; what its frame said until it answered, or nothing after a while.
- * @param {string} page @param {string} search @param {string} script @param {AbortSignal} [signal] @param {boolean} [wide] at a computer's width, for a picture @returns {Promise<Record<string, any>>}
+ * @param {string} page @param {string} search @param {string} script @param {AbortSignal} [signal] @returns {Promise<Record<string, any>>}
  */
-function framed(page, search, script, signal, wide) {
+function framed(page, search, script, signal) {
   const box = Object.assign(document.createElement('div'), { className: 'site-test proto-test', inert: true }), frame = Object.assign(document.createElement('iframe'), { src: FRAME })
   frame.setAttribute('sandbox', PAGE_SANDBOX)
   box.setAttribute('aria-hidden', 'true')
-  box.style.inlineSize = wide ? '1280px' : '390px', box.style.blockSize = wide ? '800px' : '844px'
+  box.style.inlineSize = '390px'
   const said = /** @type {Record<string, any>} */ ({})
   return new Promise((resolve) => {
     const done = () => { clearTimeout(timer); removeEventListener('message', heard); signal?.removeEventListener('abort', done); box.remove(); resolve(said) }
     const heard = (/** @type {MessageEvent} */ { source, data }) => {
       if (source !== frame.contentWindow || !data || typeof data !== 'object') return
       Object.assign(said, data.open ? { open: String(data.open) } : data)
-      if (data.listed || data.pressed || data.left || 'shot' in data) done()
+      if (data.listed || data.pressed || data.left) done()
     }
     const timer = setTimeout(done, 4000)
     signal?.addEventListener('abort', done)
@@ -118,13 +111,4 @@ export async function pressed(files, screens, signal) {
   const reached = [...firsts.keys()]
   const flow = { screens, reached, followed, pressed: presses, dead: [...new Set(dead)], unsure, errors: 0, leads: /** @type {[string, string[]][]} */ (reached.map((page) => [page, [...leads.get(page) ?? []]])), at: Object.fromEntries(firsts), by }
   return { flow, problems: [...new Set([...problems, ...flow.dead])] }
-}
-
-/** Pictures drawn this session, by their page as put together: a change draws only what it changed. @type {Map<string, Promise<string>>} */
-const drawn = new Map()
-/** A page's still picture as a phone shows its first screen, or a computer, drawn once for what it holds. @param {Map<string, Uint8Array>} files @param {string} path @param {string} [search] @param {boolean} [wide] */
-export async function picture(files, path, search = '', wide = false) {
-  const page = await pageOf(files, path), key = `${wide}${search}\n${page}`
-  if (!drawn.has(key)) drawn.set(key, framed(page, search, SHOOT, undefined, wide).then((said) => String(said.shot ?? ''))), drawn.size > 64 && drawn.delete(/** @type {string} */ (drawn.keys().next().value))
-  return /** @type {Promise<string>} */ (drawn.get(key))
 }

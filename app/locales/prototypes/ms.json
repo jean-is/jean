@@ -1,8 +1,6 @@
 {
   "prototypes.frame": "{name}, sebuah prototaip",
-  "prototypes.view": "Paparan",
   "prototypes.board": "Semua halaman",
-  "prototypes.play": "Cuba",
   "prototypes.pages": "Halaman {name}",
   "prototypes.page": "Halaman {n} daripada {count}",
   "prototypes.leads": "Membawa ke {pages}",

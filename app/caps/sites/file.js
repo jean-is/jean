@@ -102,3 +102,23 @@ export function sited(page) {
   if (runs.length) (files.set('on.js', runs.join('\n')), (html = /<\/body\s*>/i.test(html) ? html.replace(/<\/body\s*>/i, '<script src="on.js"></script>$&') : `${html}<script src="on.js"></script>`))
   return files.set('index.html', html)
 }
+
+/**
+ * Several pages as one that plays, for a site or a prototype shared by a link or sent to an app (D361, D683), where nothing serves its
+ * other pages: each page whole (./frame.js's pageOf()) kept in a script ahead of the first; a link or a form that leads to another of them
+ * writes that page in place, and since the address can't be set wherever such a page shows, the script keeps the choices the link or
+ * the form carried as `self.search`, which its pages read in place of the address's `location.search`. A file's frame runs no script from an
+ * address, a data: one either, so each script a page was given that way is written in it, at its end, where a deferred one runs, in a
+ * block of its own: the pages share one window, where a name declared twice would stop the second.
+ * @param {Record<string, string>} given its pages by their paths @param {string} [first]
+ */
+export function played(given, first = 'index.html') {
+  const pages = Object.fromEntries(Object.entries(given).map(([path, page]) => {
+    const codes = /** @type {string[]} */ ([]), rest = page.replace(/<script\b(?![^>]*\btype\s*=\s*["']?module)[^>]*\ssrc="data:text\/javascript;base64,([^"]*)"[^>]*><\/script>/gi, (_, held) => (codes.push(new TextDecoder().decode(Uint8Array.from(atob(held), (c) => c.charCodeAt(0))).replaceAll('location.search', 'self.search')), ''))
+    return [path, rest.replaceAll('location.search', 'self.search').replace(/<\/body\s*>|$/i, (end) => codes.map((code) => `<script>{${code.replace(/<\/(script)/gi, '<\\/$1')}\n}</script>`).join('') + end)]
+  }))
+  return `<!doctype html><meta charset="utf-8"><script>self.search='';self.pages=${JSON.stringify(pages).replace(/</g, '\\u003c')};self.play=(at)=>{const go=(href,e)=>{const to=new URL(href,'https://pages/'+at),page=to.origin==='https://pages'&&!/^\\s*#/.test(href)&&pages[decodeURIComponent(to.pathname.slice(1))]
+if(!page)return;e.preventDefault();self.search=to.search;document.open();document.write(page);document.close();play(decodeURIComponent(to.pathname.slice(1)))}
+document.addEventListener('click',(e)=>{const a=e.target.closest?.('a[href]');if(a)go(a.getAttribute('href'),e)},true)
+document.addEventListener('submit',(e)=>{const f=e.target,a=f.getAttribute('action');if(a&&f.method==='get')go(a.split('?')[0]+'?'+new URLSearchParams(new FormData(f,e.submitter)),e)},true)};play(${JSON.stringify(first)})</script>${pages[first] ?? ''}`
+}

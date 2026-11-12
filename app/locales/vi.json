@@ -46,6 +46,7 @@
   "dock.bottom": "Bên dưới nhiệm vụ",
   "dock.wider": "Rộng hơn",
   "dock.narrower": "Hẹp hơn",
+  "dock.full": "Toàn màn hình",
   "speech.noVoice": "Không có giọng nào trên thiết bị này đọc được {language}. Bạn có thể thêm giọng trong phần cài đặt hệ thống.",
   "toast.copied": "Đã sao chép",
   "toast.undoFor": {

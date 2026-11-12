@@ -46,6 +46,7 @@
   "dock.bottom": "Under uppgiften",
   "dock.wider": "Bredare",
   "dock.narrower": "Smalare",
+  "dock.full": "Helskärm",
   "speech.noVoice": "Ingen röst på den här enheten kan läsa det här språket ({language}). Systemets inställningar kan lägga till en.",
   "toast.copied": "Kopierat",
   "toast.undoFor": {

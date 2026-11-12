@@ -8,7 +8,7 @@
   --doc-shade: oklch(from var(--ink) l c h / 0.07);
   --doc-shadow: 0 6px 24px light-dark(rgb(0 0 0 / 0.14), rgb(0 0 0 / 0.5));
 }
-.view > .document { flex: 1; display: flex; flex-direction: column; margin: -1.25rem; }
+.view > .document { flex: 1; display: flex; flex-direction: column; }
 /* Full screen, the pane's own colour, its lines no longer than a page's. */
 [data-full] > .preview { background: var(--room-2); }
 [data-full] > .preview .doc-wrap { max-inline-size: 60rem; margin-inline: auto; }

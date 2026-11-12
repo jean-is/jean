@@ -1,8 +1,6 @@
 {
   "prototypes.frame": "{name}, en prototyp",
-  "prototypes.view": "Visning",
   "prototypes.board": "Alla sidor",
-  "prototypes.play": "Prova den",
   "prototypes.pages": "Sidor i {name}",
   "prototypes.page": "Sida {n} av {count}",
   "prototypes.leads": "Leder till {pages}",

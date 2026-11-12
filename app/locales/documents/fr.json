@@ -40,8 +40,6 @@
   "documents.collection": "Collection",
   "documents.bookmark": "Signet web",
   "documents.bookmarkAddress": "Collez une adresse web, puis appuyez sur Entrée",
-  "documents.fullscreen": "Plein écran",
-  "documents.exitFullscreen": "Quitter le plein écran",
   "documents.noMatch": "Aucun résultat",
   "documents.choice": "{item}, {i} sur {n}",
   "documents.handle": "Glisser pour déplacer, cliquer pour les options",

@@ -40,8 +40,6 @@
   "documents.collection": "Kolekcja",
   "documents.bookmark": "Zakładka internetowa",
   "documents.bookmarkAddress": "Wklej adres strony i naciśnij Enter",
-  "documents.fullscreen": "Pełny ekran",
-  "documents.exitFullscreen": "Zamknij pełny ekran",
   "documents.noMatch": "Brak wyników",
   "documents.choice": "{item}, {i} z {n}",
   "documents.handle": "Przeciągnij, aby przenieść, kliknij, aby zobaczyć opcje",

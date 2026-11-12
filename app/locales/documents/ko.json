@@ -40,8 +40,6 @@
   "documents.collection": "컬렉션",
   "documents.bookmark": "웹 북마크",
   "documents.bookmarkAddress": "웹 주소를 붙여 넣은 다음 Enter 키를 누르세요",
-  "documents.fullscreen": "전체 화면",
-  "documents.exitFullscreen": "전체 화면 종료",
   "documents.noMatch": "결과 없음",
   "documents.choice": "{item}, {n}개 중 {i}번째",
   "documents.handle": "끌어서 이동, 클릭하면 옵션",

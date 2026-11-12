@@ -44,7 +44,7 @@ async function check(one, look, said, signal) {
   return report
 }
 
-const kind = folderKind({ id: 'sites', folder: 'sites', record: 'site.json', noun: 'site', words: 'sites', element: 'app-site:not(app-prototype *)', skill: 'site', at: 2.8,
+const kind = folderKind({ id: 'sites', folder: 'sites', record: 'site.json', noun: 'site', says: ['sites.zip', 'sites.ask', 'sites.example'], element: 'app-site:not(app-prototype *)', skill: 'site', at: 2.8,
   /** A browser's window. */
   glyph: icon(svg`<path d="M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM3 9h18M6 7h.01M8.5 7h.01M7 13h6M7 16h4"/>`),
   specs: { make: SITE, change: CHANGE }, text: describe, check, told: (report, at) => told(/** @type {any} */ (report), at),
@@ -68,8 +68,8 @@ export async function publishPage(file, page) {
   kind.join(app.projectDir), reread()
   await (await import('./publish.js')).openPublish(path, offer)
 }
-/** What a site can do (ui/out.js): go online, where the host offers it, or leave as a zip of its files. @param {{ uri: string }} file @param {{ address: string } | null} offer @returns {import('../../ui/out.js').Ways} */
-const ways = (file, offer) => ({ ...(offer && { publish: { id: '', glyph: icons.globe, label: t('sites.publish'), run: () => import('./publish.js').then(({ openPublish }) => openPublish(file.uri, offer)) } }), files: kind.zip(file) })
+/** What a site can do (ui/out.js): go online, where the host offers it, then what its kind can (./kind.js): a link, another app, a zip of its files. @param {{ uri: string, name: string }} file @param {{ address: string } | null} offer @returns {import('../../ui/out.js').Ways} */
+const ways = (file, offer) => ({ ...(offer && { publish: { id: '', glyph: icons.globe, label: t('sites.publish'), run: () => import('./publish.js').then(({ openPublish }) => openPublish(file.uri, offer)) } }), ...kind.ways(file) })
 
-effect(() => register({ id: 'sites', tools: kind.tools, lines: LINES, slots: { ...kind.joined.value, modes: { at: 14, draw: () => null, notes: kind.notes }, out: { at: 2, draw: () => null, of: (/** @type {{ uri: string }} */ { uri }) => /^sites\//.test(uri), load: async () => ((offer) => ({ ways: (/** @type {{ uri: string }} */ file) => ways(file, offer) }))(await offered()) },
+effect(() => register({ id: 'sites', tools: kind.tools, lines: LINES, slots: { ...kind.joined.value, modes: { at: 14, draw: () => null, notes: kind.notes }, out: { at: 2, draw: () => null, of: (/** @type {{ uri: string }} */ { uri }) => /^sites\//.test(uri), load: async () => ((offer) => ({ ways: (/** @type {{ uri: string, name: string }} */ file) => ways(file, offer) }))(await offered()) },
   dialog: { at: 2, draw: () => html`<app-site-publish></app-site-publish>` } } }))

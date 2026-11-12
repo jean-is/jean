@@ -40,8 +40,6 @@
   "documents.collection": "コレクション",
   "documents.bookmark": "ウェブブックマーク",
   "documents.bookmarkAddress": "ウェブアドレスを貼り付けて Enter キーを押します",
-  "documents.fullscreen": "全画面表示",
-  "documents.exitFullscreen": "全画面表示を終了",
   "documents.noMatch": "該当なし",
   "documents.choice": "{item}（{n} 件中 {i} 件目）",
   "documents.handle": "ドラッグで移動、クリックでオプション",

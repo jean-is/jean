@@ -40,8 +40,6 @@
   "documents.collection": "Coleção",
   "documents.bookmark": "Marcador web",
   "documents.bookmarkAddress": "Cola um endereço web e prime Enter",
-  "documents.fullscreen": "Ecrã inteiro",
-  "documents.exitFullscreen": "Sair do ecrã inteiro",
   "documents.noMatch": "Sem resultados",
   "documents.choice": "{item}, {i} de {n}",
   "documents.handle": "Arrasta para mover, clica para ver opções",

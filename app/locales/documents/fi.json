@@ -40,8 +40,6 @@
   "documents.collection": "Kokoelma",
   "documents.bookmark": "Verkkokirjanmerkki",
   "documents.bookmarkAddress": "Liitä verkko-osoite ja paina Enter",
-  "documents.fullscreen": "Koko näyttö",
-  "documents.exitFullscreen": "Poistu koko näytöstä",
   "documents.noMatch": "Ei tuloksia",
   "documents.choice": "{item}, {i}/{n}",
   "documents.handle": "Vedä siirtääksesi, napsauta nähdäksesi vaihtoehdot",

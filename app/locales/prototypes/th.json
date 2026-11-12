@@ -1,8 +1,6 @@
 {
   "prototypes.frame": "ต้นแบบ {name}",
-  "prototypes.view": "มุมมอง",
   "prototypes.board": "ทุกหน้า",
-  "prototypes.play": "ลองใช้",
   "prototypes.pages": "หน้าของ {name}",
   "prototypes.page": "หน้า {n} จาก {count}",
   "prototypes.leads": "ไปยัง {pages}",

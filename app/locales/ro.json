@@ -46,6 +46,7 @@
   "dock.bottom": "Sub sarcină",
   "dock.wider": "Mai lat",
   "dock.narrower": "Mai îngust",
+  "dock.full": "Ecran complet",
   "speech.noVoice": "Nicio voce de pe acest dispozitiv nu poate citi această limbă ({language}). Setările sistemului pot adăuga una.",
   "toast.copied": "Copiat",
   "toast.undoFor": {

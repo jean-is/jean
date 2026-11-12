@@ -46,6 +46,7 @@
   "dock.bottom": "ከተግባሩ በታች",
   "dock.wider": "ሰፋ",
   "dock.narrower": "ጠበብ",
+  "dock.full": "ሙሉ ማያ ገጽ",
   "speech.noVoice": "በዚህ መሣሪያ ላይ {language} ማንበብ የሚችል ድምፅ የለም። በስርዓትዎ ቅንብሮች ውስጥ ማከል ይችላሉ።",
   "toast.copied": "ተቀድቷል",
   "toast.undoFor": {

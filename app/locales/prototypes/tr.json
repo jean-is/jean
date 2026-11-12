@@ -1,8 +1,6 @@
 {
   "prototypes.frame": "{name}, bir prototip",
-  "prototypes.view": "Görünüm",
   "prototypes.board": "Tüm sayfalar",
-  "prototypes.play": "Dene",
   "prototypes.pages": "{name} prototipinin sayfaları",
   "prototypes.page": "Sayfa {n} / {count}",
   "prototypes.leads": "Şuraya götürür: {pages}",

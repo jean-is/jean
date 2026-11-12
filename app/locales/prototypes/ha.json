@@ -1,8 +1,6 @@
 {
   "prototypes.frame": "{name}, samfurin gwaji",
-  "prototypes.view": "Yanayin gani",
   "prototypes.board": "Duk shafuka",
-  "prototypes.play": "Gwada shi",
   "prototypes.pages": "Shafukan {name}",
   "prototypes.page": "Shafi {n} cikin {count}",
   "prototypes.leads": "Yana kai ga {pages}",

@@ -275,7 +275,8 @@ async function* readOpenAI(events) {
     // OpenRouter streams `reasoning`; DeepSeek, LM Studio and vLLM stream `reasoning_content`.
     const thought = [delta.reasoning, delta.reasoning_content].find(isText)
     if (thought) yield { type: 'thinking', delta: thought }
-    for (const call of delta.tool_calls ?? []) addToolDelta(slots, call)
+    // What a call holds so far, as it is written: a pane may fill as it comes.
+    for (const call of delta.tool_calls ?? []) yield { type: 'tool_writing', ...addToolDelta(slots, call) }
     const cited = (delta.annotations ?? []).flatMap((a) => (a.url_citation?.url ? [{ title: a.url_citation.title || a.url_citation.url, url: a.url_citation.url, quote: a.url_citation.content }] : []))
     if (cited.length) yield { type: 'cite', sources: cited }
     if (choice.finish_reason) finish = choice.finish_reason
@@ -290,7 +291,7 @@ async function* readOpenAI(events) {
 }
 
 /**
- * Tool calls stream as fragments keyed by `index`: id and name first, then pieces of arguments.
+ * Tool calls stream as fragments keyed by `index`: id and name first, then pieces of arguments; the call's name and arguments so far.
  * @param {{ id: string, name: string, args: string, extra?: unknown }[]} slots @param {OpenAIToolCallDelta} delta
  */
 function addToolDelta(slots, delta) {
@@ -303,6 +304,7 @@ function addToolDelta(slots, delta) {
   if (delta.function?.name) slot.name = delta.function.name
   const args = delta.function?.arguments
   if (args != null) slot.args += typeof args === 'string' ? args : JSON.stringify(args)
+  return { name: slot.name, args: slot.args }
 }
 
 // ─── Shared with anthropic.js ────────────────────────────────────────────────

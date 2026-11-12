@@ -1,25 +1,32 @@
 /* SPDX-License-Identifier: MIT */
 /* Sites (D720): a site fills its pane under its widths, its frame as wide as the one picked, centred; a check's frames are laid out at
    each width and never seen. */
-app-site { display: flex; flex-direction: column; block-size: 100%; min-block-size: 16rem; }
+app-site { display: flex; flex-direction: column; block-size: 100%; min-block-size: 16rem; container-type: inline-size; }
 app-site .site-view { flex: 1; display: flex; justify-content: center; overflow: auto; background: var(--line); }
 app-site iframe { display: block; inline-size: 100%; block-size: 100%; min-block-size: 16rem; border: 0; background: #fff; }
-app-site[data-width='phone'] iframe { max-inline-size: 390px; }
-app-site[data-width='tablet'] iframe { max-inline-size: 768px; }
+app-site[data-width='phone'] iframe { max-inline-size: 390px; } app-site[data-width='tablet'] iframe { max-inline-size: 768px; }
 .site-test { position: fixed; inset-block-start: 0; inset-inline-start: 0; block-size: 800px; clip-path: inset(50%); pointer-events: none; }
 .site-test iframe { inline-size: 100%; block-size: 100%; border: 0; }
+/* A page running where it lies (frame.js), at the size it was made for, brought down to its width by `scale`, the ratio of the two as the tangent of their angle: a prototype's
+   on its board, and the first page of a site or a prototype on its card among the creations, edge to edge, at a computer's width or, a prototype made for one, a phone's. */
+app-site-page { display: block; aspect-ratio: calc(var(--w) / var(--h)); overflow: hidden; container-type: inline-size; pointer-events: none; } app-site-page iframe { display: block; inline-size: calc(var(--w) * 1px); block-size: calc(var(--h) * 1px); border: 0; background: #fff; transform-origin: 0 0; scale: tan(atan2(100cqi, var(--w) * 1px)); } app-site-page:dir(rtl) iframe { transform-origin: 100% 0; } .creation-preview:has(> app-site-page) { padding: 0; mask-image: none; } .creation-preview > app-site-page { --w: 1280; --h: 800; } .creation-preview > [data-shape='phone'] { --w: 390; --h: 844; }
 /* Publishing (publish.js), as Share's Publish is: the name in the box of the address it makes, over every look's fields, said free with a tick or taken in the danger's
    colour; once online, how it stands, over its address; the recovery code apart, on what waits for the person. */
 .site-publish { line-height: 1.45; } .site-publish .site-name { display: flex; align-items: center; padding-inline: 0.9rem; border: 1px solid var(--line-strong); border-radius: 0.9rem; color: var(--ink-soft); font-size: 0.94rem; }
 .site-publish .site-name:focus-within { outline: 2px solid var(--flame); outline-offset: 1px; } :root .sheet.site-publish .site-name input { flex: 1; min-inline-size: 0; padding: 0.65rem 0; border: 0; outline: 0; background: none; color: var(--ink); }
 .site-publish #publish-said { display: flex; align-items: center; gap: 0.3rem; min-block-size: 1.2em; } .site-publish .is-free .icon { color: var(--flame); } .site-publish .is-taken { color: var(--danger); } .site-publish .site-state { margin: 0; font-weight: 600; }
 .site-publish .site-code { flex: 1; font: 1.05rem var(--mono); letter-spacing: 0.04em; overflow-wrap: anywhere; } .site-publish .site-kept { display: flex; align-items: center; gap: 0.5rem; } .site-publish .site-told:empty { margin: 0; } .site-publish .dialog-foot > .link-button { margin-inline-end: auto; }
-/* Its looks (D739): each a radio with a swatch of its paper, ink and accent, beside its name, over the widths; they wrap on a phone. */
-app-site .site-looks { align-self: center; margin-block-start: 0.5rem; justify-content: center; } app-site .site-looks span { display: flex; align-items: center; gap: 0.4rem; }
+/* Its looks (D739), behind one button of its bar whose swatch is the look worn: a menu's rows, each a radio with a swatch of its paper, ink and accent beside its name. */
+app-site .site-fold { position-anchor: auto; position-area: block-end span-inline-start; margin: 0.25rem 0; } app-site .site-looks { display: flex; flex-direction: column; } app-site .site-fold label { position: relative; } app-site .site-fold input { position: absolute; opacity: 0; }
+app-site .site-looks span { display: flex; align-items: center; gap: 0.6rem; padding-block: 0.5rem; padding-inline: 0.7rem 1rem; border-radius: 0.8rem; color: var(--ink); white-space: nowrap; cursor: pointer; } app-site .site-fold :is(span:hover, :checked + span) { background: var(--line); } app-site .site-fold :checked + span { font-weight: 600; } app-site .site-fold :focus-visible + span { outline: 2px solid var(--flame); outline-offset: -2px; }
 app-site .site-swatch { flex: none; inline-size: 1.1rem; block-size: 1.1rem; border-radius: 50%; border: 0.3rem solid var(--swatch-accent); background: radial-gradient(circle, var(--swatch-ink) 0 30%, var(--swatch-paper) 32%); box-shadow: 0 0 0 1px var(--line-strong); }
-/* Its bar (D741): its widths, Edit words and Point at a part, the brain's version waiting with Before, Reject and Accept, then what retyping or
-   pointing does, or the part pointed at with Ask Jean; all of it wraps on a phone. */
+/* Its bar (D741), one row: its widths as drawings, then one group of drawings named by their tips, its looks' button, by day or by night, Edit words and Point at a part; the brain's version
+   waiting with Before, Reject and Accept, then what retyping or pointing does, or the part pointed at with Ask Jean; all of it wraps on a phone. */
 app-site .site-bar { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 0.4rem 0.75rem; margin-block: 0.5rem; padding-inline: 0.5rem; }
-app-site :is(.site-hand, .site-jean, .site-said) { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.4rem; margin: 0; }
+app-site :is(.site-jean, .site-said) { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.4rem; margin: 0; }
+app-site .site-widths span { display: flex; align-items: center; }
 app-site .site-said { flex-basis: 100%; color: var(--ink-soft); font-size: 0.9rem; text-align: center; } app-site .site-said p { margin: 0; } app-site .site-bar [aria-pressed='true'] { background: var(--line); color: var(--ink); }
 @media (forced-colors: active) { app-site .site-bar [aria-pressed='true'] { background: Highlight; color: HighlightText; } }
+/* A site's blank among the creations (ui/creations.css): a browser's window, its address over a rule, a headline, which writes itself under the pointer or the keys, and its button, pressed after. */
+.is-empty [data-kind='sites'] .creation-blank { background-image: linear-gradient(var(--line-strong) 0 0), linear-gradient(var(--line) 0 0); background-position: center 0.55rem, center 1.5rem; background-size: 45% 0.4rem, 100% 1px; } [data-kind='sites'] .creation-blank::before { inset-block-start: 2.3rem; inset-inline-start: 1.25rem; inline-size: 45%; block-size: 0.55rem; border-radius: 0.2rem; background: var(--line-strong); } [data-kind='sites']:is(:hover, :focus-visible) .creation-blank::before { animation: site-types 1s steps(8) backwards; }
+[data-kind='sites'] .creation-blank::after { inset-block-start: 3.7rem; inset-inline-start: 1.25rem; inline-size: 3rem; block-size: 1.1rem; border-radius: 0.35rem; } [data-kind='sites']:is(:hover, :focus-visible) .creation-blank::after { animation: site-press 0.4s 1.1s; } @keyframes site-types { from { inline-size: 0; } } @keyframes site-press { 50% { scale: 0.88; } }

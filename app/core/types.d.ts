@@ -67,6 +67,8 @@ export type StreamEvent =
   | { type: 'text', delta: string }
   | { type: 'thinking', delta: string }
   | { type: 'tool_call', call: ToolCall }
+  /** a call being written: its tool's name and its arguments so far, as text */
+  | { type: 'tool_writing', name: string, args: string }
   /** sources the text just written cites (the brain's own search) */
   | { type: 'cite', sources: Source[] }
   | { type: 'done', stopReason: StopReason, usage?: Usage, message: AssistantMessage }

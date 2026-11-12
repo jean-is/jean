@@ -40,8 +40,6 @@
   "documents.collection": "Koleksiyon",
   "documents.bookmark": "Bookmark ng web",
   "documents.bookmarkAddress": "I-paste ang isang web address, saka pindutin ang Enter",
-  "documents.fullscreen": "Full screen",
-  "documents.exitFullscreen": "Lumabas sa full screen",
   "documents.noMatch": "Walang resulta",
   "documents.choice": "{item}, {i} sa {n}",
   "documents.handle": "I-drag para ilipat, i-click para sa mga opsyon",

@@ -1,8 +1,6 @@
 {
   "prototypes.frame": "{name}, kielelezo",
-  "prototypes.view": "Mwonekano",
   "prototypes.board": "Kurasa zote",
-  "prototypes.play": "Kijaribu",
   "prototypes.pages": "Kurasa za {name}",
   "prototypes.page": "Ukurasa {n} kati ya {count}",
   "prototypes.leads": "Unaelekeza kwenye {pages}",

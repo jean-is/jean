@@ -46,6 +46,7 @@
   "dock.bottom": "Onder de taak",
   "dock.wider": "Breder",
   "dock.narrower": "Smaller",
+  "dock.full": "Volledig scherm",
   "speech.noVoice": "Geen stem op dit apparaat kan {language} voorlezen. Je kunt er een toevoegen in de instellingen van je systeem.",
   "toast.copied": "Gekopieerd",
   "toast.undoFor": {

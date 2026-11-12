@@ -46,6 +46,7 @@
   "dock.bottom": "Debajo de la tarea",
   "dock.wider": "Más ancho",
   "dock.narrower": "Más estrecho",
+  "dock.full": "Pantalla completa",
   "speech.noVoice": "Ninguna voz de este dispositivo puede leer en {language}. Puedes añadir una en los ajustes de tu sistema.",
   "toast.copied": "Copiado",
   "toast.undoFor": {

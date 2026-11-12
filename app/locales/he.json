@@ -46,6 +46,7 @@
   "dock.bottom": "מתחת למשימה",
   "dock.wider": "רחב יותר",
   "dock.narrower": "צר יותר",
+  "dock.full": "מסך מלא",
   "speech.noVoice": "אין במכשיר הזה קול שיכול להקריא את השפה הזו ({language}). אפשר להוסיף קול בהגדרות המערכת.",
   "toast.copied": "הועתק",
   "toast.undoFor": {

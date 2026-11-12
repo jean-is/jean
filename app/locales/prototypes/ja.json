@@ -1,8 +1,6 @@
 {
   "prototypes.frame": "プロトタイプ「{name}」",
-  "prototypes.view": "表示",
   "prototypes.board": "すべてのページ",
-  "prototypes.play": "試す",
   "prototypes.pages": "「{name}」のページ",
   "prototypes.page": "ページ {n}/{count}",
   "prototypes.leads": "移動先：{pages}",

@@ -46,6 +46,7 @@
   "dock.bottom": "A feladat alá",
   "dock.wider": "Szélesebb",
   "dock.narrower": "Keskenyebb",
+  "dock.full": "Teljes képernyő",
   "speech.noVoice": "Ezen az eszközön egyik hang sem tud ezen a nyelven olvasni ({language}). A rendszerbeállításokban adhatsz hozzá egyet.",
   "toast.copied": "Kimásolva",
   "toast.undoFor": {

@@ -1,8 +1,6 @@
 {
   "prototypes.frame": "{name}، یک نمونهٔ اولیه",
-  "prototypes.view": "نما",
   "prototypes.board": "همهٔ صفحه‌ها",
-  "prototypes.play": "امتحانش کنید",
   "prototypes.pages": "صفحه‌های {name}",
   "prototypes.page": "صفحهٔ {n} از {count}",
   "prototypes.leads": "به {pages} می‌رود",

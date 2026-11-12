@@ -1,8 +1,6 @@
 {
   "prototypes.frame": "{name}, prototip",
-  "prototypes.view": "Prikaz",
   "prototypes.board": "Sve stranice",
-  "prototypes.play": "Isprobaj",
   "prototypes.pages": "Stranice prototipa {name}",
   "prototypes.page": "Stranica {n} od {count}",
   "prototypes.leads": "Kamo vodi: {pages}",

@@ -46,6 +46,7 @@
   "dock.bottom": "Görevin altına",
   "dock.wider": "Daha geniş",
   "dock.narrower": "Daha dar",
+  "dock.full": "Tam ekran",
   "speech.noVoice": "Bu cihazda bu dili ({language}) okuyabilen bir ses yok. Sistem ayarlarından bir ses ekleyebilirsin.",
   "toast.copied": "Kopyalandı",
   "toast.undoFor": {

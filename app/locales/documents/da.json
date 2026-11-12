@@ -40,8 +40,6 @@
   "documents.collection": "Samling",
   "documents.bookmark": "Webbogmærke",
   "documents.bookmarkAddress": "Indsæt en webadresse, og tryk på Enter",
-  "documents.fullscreen": "Fuld skærm",
-  "documents.exitFullscreen": "Afslut fuld skærm",
   "documents.noMatch": "Ingen resultater",
   "documents.choice": "{item}, {i} af {n}",
   "documents.handle": "Træk for at flytte, klik for valgmuligheder",

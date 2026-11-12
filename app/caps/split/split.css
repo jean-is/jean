@@ -10,7 +10,7 @@
 .tile:focus { outline: 0; }
 :root[data-dock='beside'] .dock > app-tile { padding: 0; }
 :root .tile.pane { border: 0; border-radius: 0; background: var(--room); backdrop-filter: none; box-shadow: none; }
-.tile > .view { gap: 0; padding: 1rem 0 0; overscroll-behavior: contain; }
+.tile > .view { padding: 1rem 0 0; overscroll-behavior: contain; }
 .tile app-conversation { flex: 1; inline-size: var(--column); margin-inline: auto; padding-block-end: 2rem; }
 .tile .conversation-title { display: none; }
 app-composer[for] { view-transition-name: none; cursor: text; }

@@ -203,7 +203,11 @@ describe('streamChat (OpenAI-compatible)', () => {
       { choices: [{ delta: { tool_calls: [{ index: 3, id: 'call_d', function: { name: 'write', arguments: '{"broken": ' } }] } }] },
       { choices: [{ delta: {}, finish_reason: 'tool_calls' }] },
     ])
-    const { events } = await run(brains.openrouter, sse)
+    const { events: all } = await run(brains.openrouter, sse)
+    // While a call is written, what it holds so far is said, by its tool's name: a pane may fill as it comes.
+    assert.deepEqual(all.filter((event) => event.type === 'tool_writing').map(({ name, args }) => [name, args]),
+      [['read', ''], ['read', '{"pa'], ['search', '{"q":'], ['read', '{"path":"a.md"}'], ['search', '{"q":"été"}'], ['list', ''], ['write', '{"broken": ']])
+    const events = all.filter((event) => event.type !== 'tool_writing')
     const calls = [
       { id: 'call_a', name: 'read', args: { path: 'a.md' } },
       { id: 'call_b', name: 'search', args: { q: 'été' } },
@@ -447,7 +451,9 @@ describe('streamChat (Anthropic)', () => {
       messageDelta('tool_use', 99),
       messageStop,
     ])
-    const { events } = await run(brains.anthropic, sse)
+    const { events: all } = await run(brains.anthropic, sse)
+    assert.deepEqual(all.filter((event) => event.type === 'tool_writing'), [{ type: 'tool_writing', name: 'read', args: '' }, { type: 'tool_writing', name: 'read', args: '{"path": "ré' }, { type: 'tool_writing', name: 'read', args: '{"path": "résumé.md"}' }])
+    const events = all.filter((event) => event.type !== 'tool_writing')
     const calls = [
       { id: 'toolu_1', name: 'read', args: { path: 'résumé.md' } },
       { id: 'toolu_2', name: 'list', args: {} },
@@ -740,7 +746,7 @@ describe('system notes, documents and caching (D46, D49)', () => {
         { choices: [{ delta: { tool_calls: [{ function: { name: 'search_files', arguments: '{"q":"b"}' }, id: 'c2', type: 'function' }] }, finish_reason: 'tool_calls' }] },
       ]))
       const calls = [{ id: 'c1', name: 'search_files', args: { q: 'a' } }, { id: 'c2', name: 'search_files', args: { q: 'b' } }]
-      assert.deepEqual(events.slice(0, 2), calls.map((one) => ({ type: 'tool_call', call: one })))
+      assert.deepEqual(events.filter((one) => one.type === 'tool_call'), calls.map((one) => ({ type: 'tool_call', call: one })))
       assert.deepEqual(events.at(-1).message, { role: 'assistant', content: '', toolCalls: calls, raw: [{ type: 'tool_call', id: 'c1', extra_content: signed }] })
     })
 

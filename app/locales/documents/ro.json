@@ -40,8 +40,6 @@
   "documents.collection": "Colecție",
   "documents.bookmark": "Marcaj web",
   "documents.bookmarkAddress": "Lipiți o adresă web, apoi apăsați Enter",
-  "documents.fullscreen": "Ecran complet",
-  "documents.exitFullscreen": "Ieșiți din ecranul complet",
   "documents.noMatch": "Niciun rezultat",
   "documents.choice": "{item}, {i} din {n}",
   "documents.handle": "Trageți pentru a muta, faceți clic pentru opțiuni",

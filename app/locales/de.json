@@ -46,6 +46,7 @@
   "dock.bottom": "Unter der Aufgabe",
   "dock.wider": "Breiter",
   "dock.narrower": "Schmaler",
+  "dock.full": "Vollbild",
   "speech.noVoice": "Keine Stimme auf diesem Gerät kann {language} vorlesen. In den Systemeinstellungen kannst du eine hinzufügen.",
   "toast.copied": "Kopiert",
   "toast.undoFor": {

@@ -40,8 +40,6 @@
   "documents.collection": "Verzameling",
   "documents.bookmark": "Webbladwijzer",
   "documents.bookmarkAddress": "Plak een webadres en druk op Enter",
-  "documents.fullscreen": "Volledig scherm",
-  "documents.exitFullscreen": "Volledig scherm sluiten",
   "documents.noMatch": "Geen resultaten",
   "documents.choice": "{item}, {i} van {n}",
   "documents.handle": "Sleep om te verplaatsen, klik voor opties",

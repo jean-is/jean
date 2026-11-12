@@ -1,8 +1,6 @@
 {
   "prototypes.frame": "{name}, אב טיפוס",
-  "prototypes.view": "תצוגה",
   "prototypes.board": "כל הדפים",
-  "prototypes.play": "לנסות",
   "prototypes.pages": "הדפים של {name}",
   "prototypes.page": "דף {n} מתוך {count}",
   "prototypes.leads": "מוביל אל {pages}",

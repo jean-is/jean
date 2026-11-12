@@ -40,8 +40,6 @@
   "documents.collection": "合集",
   "documents.bookmark": "網頁書籤",
   "documents.bookmarkAddress": "貼上網址，然後按 Enter 鍵",
-  "documents.fullscreen": "全螢幕",
-  "documents.exitFullscreen": "結束全螢幕",
   "documents.noMatch": "沒有結果",
   "documents.choice": "{item}，第 {i} 項，共 {n} 項",
   "documents.handle": "拖曳以移動，按一下查看選項",

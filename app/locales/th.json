@@ -46,6 +46,7 @@
   "dock.bottom": "ใต้งาน",
   "dock.wider": "กว้างขึ้น",
   "dock.narrower": "แคบลง",
+  "dock.full": "เต็มหน้าจอ",
   "speech.noVoice": "อุปกรณ์นี้ไม่มีเสียงที่อ่านภาษา{language}ได้ คุณเพิ่มเสียงได้ในการตั้งค่าระบบ",
   "toast.copied": "คัดลอกแล้ว",
   "toast.undoFor": {

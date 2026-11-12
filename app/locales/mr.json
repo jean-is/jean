@@ -46,6 +46,7 @@
   "dock.bottom": "कार्याच्या खाली",
   "dock.wider": "अधिक रुंद",
   "dock.narrower": "अधिक अरुंद",
+  "dock.full": "पूर्ण स्क्रीन",
   "speech.noVoice": "या डिव्हाइसवर {language} वाचू शकेल असा आवाज नाही. तुमच्या सिस्टमच्या सेटिंग्जमध्ये तो जोडता येईल.",
   "toast.copied": "कॉपी झाले",
   "toast.undoFor": {

@@ -46,6 +46,7 @@
   "dock.bottom": "Ispod zadatka",
   "dock.wider": "Šire",
   "dock.narrower": "Uže",
+  "dock.full": "Cijeli zaslon",
   "speech.noVoice": "Nijedan glas na ovom uređaju ne može čitati ovaj jezik: {language}. Postavke sustava mogu ga dodati.",
   "toast.copied": "Kopirano",
   "toast.undoFor": {

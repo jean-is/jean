@@ -1,16 +1,17 @@
 /* SPDX-License-Identifier: MIT */
 /* What a file shows as (ui/view.js, D126): in a file's pane and the browser's (D190), each
    a pane of the dock (ui/dock.css, D144). Loaded with it, after ui/style.css, so its colours are
-   the look's. A web page, a picture and a PDF keep the white they were made on. Logical
+   the look's. A web page, a picture and a PDF keep the white they were made on. A pane pads
+   nothing: what it holds goes from edge to edge, and words bring their own margins. Logical
    properties only. */
 
-.view { flex: 1; min-block-size: 0; display: flex; flex-direction: column; gap: 1.25rem; padding: 1.25rem; overflow: auto; container-type: inline-size; }
-.view-frame { flex: 1; margin: -1.25rem; border: 0; background: white; color-scheme: light; }
-.view-picture, .view-film { align-self: center; max-inline-size: 100%; block-size: auto; border: 1px solid var(--line); border-radius: 0.6rem; background: white; }
-.view-sound { align-self: center; inline-size: 100%; }
-.view-note { margin: auto; max-inline-size: 34rem; color: var(--ink-soft); line-height: 1.55; text-align: center; }
-.view-pages { display: grid; gap: 1rem; }
-.view-pages canvas { display: block; inline-size: 100%; block-size: auto; border-radius: 0.3rem; background: white; box-shadow: 0 0.5rem 1.5rem -0.75rem oklch(0 0 0 / 0.5); }
+.view { flex: 1; min-block-size: 0; display: flex; flex-direction: column; overflow: auto; container-type: inline-size; }
+.view-frame { flex: 1; border: 0; background: white; color-scheme: light; }
+.view-picture, .view-film { align-self: center; max-inline-size: 100%; block-size: auto; margin-block: auto; background: white; }
+.view-sound { align-self: center; inline-size: calc(100% - 2.5rem); margin-block: auto; }
+.view-note { margin: auto; max-inline-size: 34rem; padding: 1.25rem; color: var(--ink-soft); line-height: 1.55; text-align: center; }
+.view-pages { display: grid; gap: 0.5rem; }
+.view-pages canvas { display: block; inline-size: 100%; block-size: auto; background: white; }
 
 /* What a citation points at (D481): over a page or a picture, the rest dimmed and its place outlined; in a text, lit. */
 .view-marked { display: grid; align-self: center; max-inline-size: 100%; }
@@ -32,9 +33,9 @@
 ::highlight(noted) { text-decoration: underline 2px; text-decoration-color: var(--flame); }
 @media (forced-colors: active) { .view-mark path { fill: none; } .view-mark rect { stroke: Highlight; } ::highlight(cite) { background: Highlight; color: HighlightText; } ::highlight(mark) { background: Mark; color: MarkText; } }
 
-/* Markdown, or a document Jean wrote, on a sheet, where pages can't run code (D183); any other text as it is. */
-.view-sheet { padding: clamp(1.25rem, 6cqi, 3rem); border: 1px solid var(--line); border-radius: 0.6rem; background: var(--room); }
-.view-text { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font: 0.85rem/1.6 var(--mono); }
+/* Markdown, or a document Jean wrote, on a sheet, the pane its paper, where pages can't run code (D183); any other text as it is, and what a block's widget draws, in margins of their own. */
+.view:has(.view-sheet) { background: var(--room); } .view-drawn { padding: 1.25rem; } .view-sheet { padding: clamp(1.25rem, 6cqi, 3rem); }
+.view-text { margin: 0; padding: 1.25rem; white-space: pre-wrap; overflow-wrap: anywhere; font: 0.85rem/1.6 var(--mono); }
 
 /* A file of a task saved as a web page or shared by link (ui/reader.js), opened under its name, in a window of its own, the
    width of the answer or the request it goes with: an answer's from where it starts, a request's names at its end. */

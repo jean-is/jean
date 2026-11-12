@@ -1,8 +1,6 @@
 {
   "prototypes.frame": "{name}, prototyp",
-  "prototypes.view": "Zobrazení",
   "prototypes.board": "Všechny stránky",
-  "prototypes.play": "Vyzkoušet",
   "prototypes.pages": "Stránky prototypu {name}",
   "prototypes.page": "Stránka {n} z {count}",
   "prototypes.leads": "Kam vede: {pages}",

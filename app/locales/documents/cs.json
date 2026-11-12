@@ -40,8 +40,6 @@
   "documents.collection": "Sbírka",
   "documents.bookmark": "Webová záložka",
   "documents.bookmarkAddress": "Vložte webovou adresu a stiskněte Enter",
-  "documents.fullscreen": "Celá obrazovka",
-  "documents.exitFullscreen": "Ukončit celou obrazovku",
   "documents.noMatch": "Žádné výsledky",
   "documents.choice": "{item}, {i} z {n}",
   "documents.handle": "Přetažením přesunete, kliknutím zobrazíte možnosti",

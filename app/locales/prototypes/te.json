@@ -1,8 +1,6 @@
 {
   "prototypes.frame": "{name}, ఒక ప్రోటోటైప్",
-  "prototypes.view": "వీక్షణ",
   "prototypes.board": "అన్ని పేజీలు",
-  "prototypes.play": "ప్రయత్నించు",
   "prototypes.pages": "{name} ప్రోటోటైప్ పేజీలు",
   "prototypes.page": "{count}లో పేజీ {n}",
   "prototypes.leads": "ఇక్కడి నుంచి వెళ్లే పేజీలు: {pages}",

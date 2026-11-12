@@ -46,6 +46,7 @@
   "dock.bottom": "Под задачей",
   "dock.wider": "Шире",
   "dock.narrower": "Уже",
+  "dock.full": "Во весь экран",
   "speech.noVoice": "На этом устройстве нет голоса для этого языка ({language}). Его можно добавить в настройках системы.",
   "toast.copied": "Скопировано",
   "toast.undoFor": {

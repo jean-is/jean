@@ -1,8 +1,6 @@
 {
   "prototypes.frame": "{name}, ένα πρωτότυπο",
-  "prototypes.view": "Προβολή",
   "prototypes.board": "Όλες οι σελίδες",
-  "prototypes.play": "Δοκιμή",
   "prototypes.pages": "Σελίδες: {name}",
   "prototypes.page": "Σελίδα {n} από {count}",
   "prototypes.leads": "Οδηγεί σε: {pages}",

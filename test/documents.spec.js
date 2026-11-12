@@ -2134,7 +2134,9 @@ test.describe('the title and the pane', () => {
     await expect(menu).toBeVisible()
     expect(await menu.evaluate((one) => { const { x, y, width, height } = one.getBoundingClientRect(); return one.contains(document.elementFromPoint(x + width / 2, y + height / 2)) })).toBe(true)
     await page.keyboard.press('Backspace')
-    await head.getByRole('button', { name: 'Exit full screen' }).click()
+    // Its button is pressed while it fills the window; pressed again, it gives the window back.
+    await expect(head.getByRole('button', { name: 'Full screen' })).toHaveAttribute('aria-pressed', 'true')
+    await head.getByRole('button', { name: 'Full screen' }).click()
     await expect(full).toHaveCount(0)
   })
 })

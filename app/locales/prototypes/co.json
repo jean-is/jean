@@ -1,8 +1,6 @@
 {
   "prototypes.frame": "{name}, un prototipu",
-  "prototypes.view": "Vista",
   "prototypes.board": "Tutte e pagine",
-  "prototypes.play": "Pruvà",
   "prototypes.pages": "Pagine di {name}",
   "prototypes.page": "Pagina {n} nant’à {count}",
   "prototypes.leads": "Porta à {pages}",

@@ -40,8 +40,6 @@
   "documents.collection": "संग्रह",
   "documents.bookmark": "वेब बुकमार्क",
   "documents.bookmarkAddress": "वेब पत्ता पेस्ट करा, मग Enter दाबा",
-  "documents.fullscreen": "पूर्ण स्क्रीन",
-  "documents.exitFullscreen": "पूर्ण स्क्रीनमधून बाहेर पडा",
   "documents.noMatch": "काहीही सापडले नाही",
   "documents.choice": "{item}, {n} पैकी {i}",
   "documents.handle": "हलवण्यासाठी ओढा, पर्यायांसाठी क्लिक करा",

@@ -46,6 +46,7 @@
   "dock.bottom": "Under opgaven",
   "dock.wider": "Bredere",
   "dock.narrower": "Smallere",
+  "dock.full": "Fuld skærm",
   "speech.noVoice": "Ingen stemme på denne enhed kan læse dette sprog ({language}). Systemets indstillinger kan tilføje en.",
   "toast.copied": "Kopieret",
   "toast.undoFor": {

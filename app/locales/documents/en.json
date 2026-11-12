@@ -40,8 +40,6 @@
   "documents.collection": "Collection",
   "documents.bookmark": "Web bookmark",
   "documents.bookmarkAddress": "Paste a web address, then press Enter",
-  "documents.fullscreen": "Full screen",
-  "documents.exitFullscreen": "Exit full screen",
   "documents.noMatch": "No results",
   "documents.choice": "{item}, {i} of {n}",
   "documents.handle": "Drag to move, click for options",

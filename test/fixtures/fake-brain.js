@@ -822,8 +822,9 @@ createServer(async (req, res) => {
   const slowly = /count slowly to five|عدّ ببطء إلى خمسة|ゆっくり五まで数えて/i.test(question) && last.role !== 'assistant'
   const counted = messages.slice(messages.findLastIndex((m) => m.role === 'user')).filter((m) => m.role === 'tool').length
   // A tool called by its name, with its arguments in JSON ("Call google_calendar_list_events with {}"), found first
-  // when it is deferred; the answer says what it brought, each source with its first line.
-  const calling = /^call (\w+) with (\{[\s\S]*\})$/i.exec(question.trim())
+  // when it is deferred; the answer says what it brought, each source with its first line. "Slowly call …" writes the
+  // call's arguments a piece at a time, as a brain writes a long one (D742).
+  const calling = /^(?:slowly )?call (\w+) with (\{[\s\S]*\})$/i.exec(question.trim())
   if (summing) answer = 'Summary: the user wants the work carried on, step by step.'
   else if (calling && last.role === 'user') call = declared.has(calling[1]) ? { name: calling[1], args: JSON.parse(calling[2]) } : { name: 'find_tools', args: { query: calling[1].replace(/_/g, ' ') } }
   else if (calling && toolName === 'find_tools') call = { name: calling[1], args: JSON.parse(calling[2]) }
@@ -1081,7 +1082,12 @@ createServer(async (req, res) => {
     await pause()
   }
   if (call) {
-    send({ tool_calls: [{ index: 0, id: `call_${Date.now()}`, type: 'function', function: { name: call.name, arguments: JSON.stringify(call.args) } }] })
+    const slow = /^slowly /i.test(question.trim()), args = JSON.stringify(call.args), pieces = slow ? args.match(/[\s\S]{1,400}/g) ?? [] : [args]
+    send({ tool_calls: [{ index: 0, id: `call_${Date.now()}`, type: 'function', function: { name: call.name, arguments: pieces[0] } }] })
+    for (const piece of pieces.slice(1)) {
+      await new Promise((resolve) => setTimeout(resolve, 60))
+      send({ tool_calls: [{ index: 0, function: { arguments: piece } }] })
+    }
     send({}, 'tool_calls')
   } else {
     for (const piece of answer.match(/.{1,6}/gs) ?? []) {

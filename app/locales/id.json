@@ -46,6 +46,7 @@
   "dock.bottom": "Di bawah tugas",
   "dock.wider": "Lebih lebar",
   "dock.narrower": "Lebih sempit",
+  "dock.full": "Layar penuh",
   "speech.noVoice": "Tidak ada suara di perangkat ini yang bisa membaca bahasa {language}. Anda bisa menambahkannya di pengaturan sistem.",
   "toast.copied": "Disalin",
   "toast.undoFor": {

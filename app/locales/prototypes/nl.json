@@ -1,8 +1,6 @@
 {
   "prototypes.frame": "{name}, een prototype",
-  "prototypes.view": "Weergave",
   "prototypes.board": "Alle pagina’s",
-  "prototypes.play": "Uitproberen",
   "prototypes.pages": "Pagina’s van {name}",
   "prototypes.page": "Pagina {n} van {count}",
   "prototypes.leads": "Leidt naar {pages}",

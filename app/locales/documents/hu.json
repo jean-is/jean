@@ -40,8 +40,6 @@
   "documents.collection": "Gyűjtemény",
   "documents.bookmark": "Webes könyvjelző",
   "documents.bookmarkAddress": "Illessz be egy webcímet, majd nyomj Entert",
-  "documents.fullscreen": "Teljes képernyő",
-  "documents.exitFullscreen": "Kilépés a teljes képernyőből",
   "documents.noMatch": "Nincs találat",
   "documents.choice": "{item}, {i} / {n}",
   "documents.handle": "Húzd az áthelyezéshez, kattints a beállításokért",

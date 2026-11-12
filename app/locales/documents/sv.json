@@ -40,8 +40,6 @@
   "documents.collection": "Samling",
   "documents.bookmark": "Webbokmärke",
   "documents.bookmarkAddress": "Klistra in en webbadress och tryck sedan på Retur",
-  "documents.fullscreen": "Helskärm",
-  "documents.exitFullscreen": "Avsluta helskärm",
   "documents.noMatch": "Inga resultat",
   "documents.choice": "{item}, {i} av {n}",
   "documents.handle": "Dra för att flytta, klicka för alternativ",

@@ -5,7 +5,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { checkFiles, told } from '../app/caps/sites/check.js'
-import { pathIn, changed, reach, PLACE, sited, retyped, waitingOf } from '../app/caps/sites/file.js'
+import { pathIn, changed, reach, PLACE, sited, played, retyped, waitingOf } from '../app/caps/sites/file.js'
 import { LINES, SITE, CHANGE } from '../app/caps/sites/tool.js'
 import { LOOK, FACES, dealt, lookOf, ownLook, projectLook, cssOf, worn, saidOf } from '../app/caps/sites/look.js'
 import { contrast } from '../app/ui/colour.js'
@@ -223,4 +223,22 @@ test('words retyped in place are the one text of the page that read so, written 
   assert.ok('files' in done && new TextDecoder().decode(done.files.get('index.html')).startsWith('<h1>Bread</h1>'))
   assert.equal(waitingOf('sites/01J-fournil'), 'sites/.suggested/01J-fournil')
   assert.ok(!PLACE.test(waitingOf('sites/01J-fournil')))
+})
+
+// A site or a prototype shared by a link or sent to an app (D361, D683) is one page that plays: nothing serves its other pages there.
+test('several pages as one that plays: each whole in a script ahead of the first, none of them ending that script, which keeps the choices a link carries for them to read', () => {
+  const pages = { 'index.html': '<!doctype html><title>Services</title><a href="time.html?service=cut">Cut</a><script>document.title += "</script>"</script>', 'time.html': '<!doctype html><p>مرحبا</p><script>new URLSearchParams(location.search)</script>' }
+  const one = played(pages), script = /^<!doctype html><meta charset="utf-8"><script>([\s\S]*?)<\/script>/.exec(one)?.[1] ?? ''
+  assert.ok(script, 'a doctype and its charset first, as a file read from its bytes needs them, then the script')
+  assert.doesNotMatch(script, /<\//, 'no page ends it')
+  const kept = JSON.parse(/self\.pages=(\{.*\});self\.play=/s.exec(script)?.[1] ?? '{}')
+  assert.deepEqual(Object.keys(kept), ['index.html', 'time.html'])
+  assert.deepEqual(kept, { ...pages, 'time.html': pages['time.html'].replace('location.search', 'self.search') }, 'the address can’t be set where a link shows it, so its pages read their choices from the script')
+  assert.match(script, /^self\.search='';/)
+  assert.ok(one.endsWith(`play("index.html")</script>${pages['index.html']}`), 'then the first page')
+  assert.ok(played(pages, 'time.html').endsWith(kept['time.html']))
+  // A script given by a data: address, as a site's page put together has its own, is written in the page, at its end, where a deferred one runs,
+  // in a block: its pages share one window, where its `const` declared by the page before would stop it.
+  const code = 'document.title = "é </script>" + location.search', held = played({ 'index.html': `<!doctype html><head><script src="data:text/javascript;base64,${Buffer.from(code).toString('base64')}" defer></script></head><body><h1>A</h1></body>` })
+  assert.ok(held.endsWith('<!doctype html><head></head><body><h1>A</h1><script>{document.title = "é <\\/script>" + self.search\n}</script></body>'), held.slice(-120))
 })

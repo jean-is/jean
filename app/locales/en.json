@@ -46,6 +46,7 @@
   "dock.bottom": "Under the task",
   "dock.wider": "Wider",
   "dock.narrower": "Narrower",
+  "dock.full": "Full screen",
   "speech.noVoice": "No voice on this device reads {language}. You can add one in your system’s settings.",
   "toast.copied": "Copied",
   "toast.undoFor": {

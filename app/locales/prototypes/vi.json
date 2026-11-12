@@ -1,8 +1,6 @@
 {
   "prototypes.frame": "{name}, một nguyên mẫu",
-  "prototypes.view": "Chế độ xem",
   "prototypes.board": "Tất cả các trang",
-  "prototypes.play": "Dùng thử",
   "prototypes.pages": "Các trang của {name}",
   "prototypes.page": "Trang {n}/{count}",
   "prototypes.leads": "Dẫn đến {pages}",

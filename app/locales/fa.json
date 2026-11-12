@@ -46,6 +46,7 @@
   "dock.bottom": "زیر کار",
   "dock.wider": "پهن‌تر",
   "dock.narrower": "باریک‌تر",
+  "dock.full": "تمام‌صفحه",
   "speech.noVoice": "هیچ صدایی روی این دستگاه نمی‌تواند این زبان ({language}) را بخواند. می‌توانید از تنظیمات سیستم خود یکی اضافه کنید.",
   "toast.copied": "رونوشت شد",
   "toast.undoFor": {

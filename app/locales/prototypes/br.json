@@ -1,8 +1,6 @@
 {
   "prototypes.frame": "{name}, ur prototip",
-  "prototypes.view": "Diskouez",
   "prototypes.board": "An holl bajennoù",
-  "prototypes.play": "Esaeañ",
   "prototypes.pages": "Pajennoù {name}",
   "prototypes.page": "Pajenn {n} diwar {count}",
   "prototypes.leads": "A gas da {pages}",

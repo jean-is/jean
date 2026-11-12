@@ -40,8 +40,6 @@
   "documents.collection": "Zbirka",
   "documents.bookmark": "Web-oznaka",
   "documents.bookmarkAddress": "Zalijepite web-adresu, zatim pritisnite Enter",
-  "documents.fullscreen": "Cijeli zaslon",
-  "documents.exitFullscreen": "Izađi iz cijelog zaslona",
   "documents.noMatch": "Nema rezultata",
   "documents.choice": "{item}, {i} od {n}",
   "documents.handle": "Povucite za premještanje, kliknite za mogućnosti",

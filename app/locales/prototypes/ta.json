@@ -1,8 +1,6 @@
 {
   "prototypes.frame": "{name}, ஒரு முன்மாதிரி",
-  "prototypes.view": "காட்சி",
   "prototypes.board": "எல்லாப் பக்கங்களும்",
-  "prototypes.play": "முயன்று பார்",
   "prototypes.pages": "{name} முன்மாதிரியின் பக்கங்கள்",
   "prototypes.page": "{count} இல் பக்கம் {n}",
   "prototypes.leads": "இங்கிருந்து செல்லும் பக்கங்கள்: {pages}",

@@ -1,8 +1,6 @@
 {
   "prototypes.frame": "{name}, একটি প্রোটোটাইপ",
-  "prototypes.view": "দেখার ধরন",
   "prototypes.board": "সব পেজ",
-  "prototypes.play": "চেষ্টা করুন",
   "prototypes.pages": "{name}-এর পেজ",
   "prototypes.page": "{count}টির মধ্যে পেজ {n}",
   "prototypes.leads": "এখান থেকে যাওয়া যায়: {pages}",

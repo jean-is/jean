@@ -46,6 +46,7 @@
   "dock.bottom": "在任務下方",
   "dock.wider": "更寬",
   "dock.narrower": "更窄",
+  "dock.full": "全螢幕",
   "speech.noVoice": "這台裝置上沒有能朗讀{language}的語音。你可以在系統設定裡新增一個。",
   "toast.copied": "已複製",
   "toast.undoFor": {

@@ -1,8 +1,6 @@
 {
   "prototypes.frame": "{name}, prototípus",
-  "prototypes.view": "Nézet",
   "prototypes.board": "Az összes oldal",
-  "prototypes.play": "Kipróbálás",
   "prototypes.pages": "Oldalak: {name}",
   "prototypes.page": "Oldal: {n} / {count}",
   "prototypes.leads": "Ide vezet: {pages}",

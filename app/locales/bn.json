@@ -46,6 +46,7 @@
   "dock.bottom": "কাজের নিচে",
   "dock.wider": "আরও চওড়া",
   "dock.narrower": "আরও সরু",
+  "dock.full": "পূর্ণ স্ক্রিন",
   "speech.noVoice": "এই ডিভাইসে {language} পড়তে পারে এমন কোনো কণ্ঠ নেই। আপনার সিস্টেমের সেটিংসে একটি যোগ করতে পারেন।",
   "toast.copied": "কপি হয়েছে",
   "toast.undoFor": {

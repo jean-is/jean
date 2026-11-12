@@ -12,10 +12,10 @@ const FILE = { ...FILES.items, properties: { ...FILES.items.properties, path: { 
 /** @type {import('../../core/types.js').ToolSpec} */
 export const PROTOTYPE = {
   name: 'prototype',
-  description: 'Make a clickable prototype of an app or a flow, a page per screen, or replace one whole. Read the skill prototype first. Give every file: each screen as HTML, index.html first, one style.css, a prototype.js only if needed; and its shape. Each call presses every control from index.html on and checks every page at 320 and 1280 pixels, then says what to fix: fix it and call again.',
+  description: 'Make a clickable prototype of an app or a flow, a page per screen, or replace one whole. Read the skill prototype first. Give its shape, then every file: one style.css first, a prototype.js only if needed, then each screen as HTML, index.html first; the user watches each page come as you write it. Each call presses every control from index.html on and checks every page at 320 and 1280 pixels, then says what to fix: fix it and call again.',
   parameters: { type: 'object', properties: { name: { type: 'string', description: "The prototype's name, in the user's language" }, prototype: { type: 'string', description: "A prototype's place, to replace it whole" },
-    files: { type: 'array', items: FILE }, look: LOOK,
-    shape: { type: 'string', enum: ['phone', 'computer'], description: 'What it is made for: phone, an app in a column, or computer, a dashboard or a wide form. Its pictures and Try it open in that shape.' } }, required: ['name', 'files'] },
+    shape: { type: 'string', enum: ['phone', 'computer'], description: 'What it is made for: phone, an app in a column, or computer, a dashboard or a wide form. Its pages show in that shape.' }, look: LOOK,
+    files: { type: 'array', items: FILE } }, required: ['name', 'files'] },
 }
 
 /** @type {import('../../core/types.js').ToolSpec} */

@@ -1,8 +1,6 @@
 {
   "prototypes.frame": "原型“{name}”",
-  "prototypes.view": "查看方式",
   "prototypes.board": "所有页面",
-  "prototypes.play": "试一试",
   "prototypes.pages": "“{name}”的页面",
   "prototypes.page": "第 {n} 页，共 {count} 页",
   "prototypes.leads": "链接到 {pages}",

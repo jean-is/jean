@@ -1,8 +1,6 @@
 {
   "prototypes.frame": "{name}, एक प्रोटोटाइप",
-  "prototypes.view": "देखने का तरीका",
   "prototypes.board": "सभी पेज",
-  "prototypes.play": "आज़माएँ",
   "prototypes.pages": "{name} के पेज",
   "prototypes.page": "{count} में से पेज {n}",
   "prototypes.leads": "यहाँ से जा सकते हैं: {pages}",

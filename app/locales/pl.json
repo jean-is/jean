@@ -46,6 +46,7 @@
   "dock.bottom": "Pod zadaniem",
   "dock.wider": "Szerzej",
   "dock.narrower": "Węziej",
+  "dock.full": "Pełny ekran",
   "speech.noVoice": "Żaden głos na tym urządzeniu nie czyta w tym języku ({language}). Możesz dodać głos w ustawieniach systemu.",
   "toast.copied": "Skopiowano",
   "toast.undoFor": {

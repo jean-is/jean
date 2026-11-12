@@ -46,6 +46,7 @@
   "dock.bottom": "Tehtävän alle",
   "dock.wider": "Leveämmäksi",
   "dock.narrower": "Kapeammaksi",
+  "dock.full": "Koko näyttö",
   "speech.noVoice": "Mikään tämän laitteen ääni ei osaa lukea tätä kieltä ({language}). Voit lisätä äänen järjestelmän asetuksissa.",
   "toast.copied": "Kopioitu",
   "toast.undoFor": {

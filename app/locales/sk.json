@@ -46,6 +46,7 @@
   "dock.bottom": "Pod úlohu",
   "dock.wider": "Širšie",
   "dock.narrower": "Užšie",
+  "dock.full": "Celá obrazovka",
   "speech.noVoice": "Žiadny hlas v tomto zariadení nevie čítať tento jazyk ({language}). Môžete ho pridať v nastaveniach systému.",
   "toast.copied": "Skopírované",
   "toast.undoFor": {

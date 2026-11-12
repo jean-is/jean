@@ -46,6 +46,7 @@
   "dock.bottom": "タスクの下へ",
   "dock.wider": "広く",
   "dock.narrower": "狭く",
+  "dock.full": "全画面表示",
   "speech.noVoice": "この端末には {language} を読み上げられる声がありません。システムの設定で追加できます。",
   "toast.copied": "コピーしました",
   "toast.undoFor": {

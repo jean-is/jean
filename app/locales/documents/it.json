@@ -40,8 +40,6 @@
   "documents.collection": "Raccolta",
   "documents.bookmark": "Segnalibro web",
   "documents.bookmarkAddress": "Incolla un indirizzo web, poi premi Invio",
-  "documents.fullscreen": "Schermo intero",
-  "documents.exitFullscreen": "Esci da schermo intero",
   "documents.noMatch": "Nessun risultato",
   "documents.choice": "{item}, {i} di {n}",
   "documents.handle": "Trascina per spostare, fai clic per le opzioni",

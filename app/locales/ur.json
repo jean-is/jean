@@ -46,6 +46,7 @@
   "dock.bottom": "کام کے نیچے",
   "dock.wider": "زیادہ چوڑا",
   "dock.narrower": "زیادہ تنگ",
+  "dock.full": "پوری اسکرین",
   "speech.noVoice": "اس آلے پر کوئی آواز یہ زبان ({language}) نہیں پڑھ سکتی۔ آپ اپنے سسٹم کی ترتیبات میں ایک آواز شامل کر سکتے ہیں۔",
   "toast.copied": "کاپی ہو گیا",
   "toast.undoFor": {

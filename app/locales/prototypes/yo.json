@@ -1,8 +1,6 @@
 {
   "prototypes.frame": "{name}, àwòkọ́ṣe kan",
-  "prototypes.view": "Ìwò",
   "prototypes.board": "Gbogbo ojú-ìwé",
-  "prototypes.play": "Gbìyànjú rẹ̀",
   "prototypes.pages": "Àwọn ojú-ìwé {name}",
   "prototypes.page": "Ojú-ìwé {n} nínú {count}",
   "prototypes.leads": "Ó ń yọrí sí {pages}",

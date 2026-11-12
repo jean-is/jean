@@ -46,6 +46,7 @@
   "dock.bottom": "పని కింద",
   "dock.wider": "మరింత వెడల్పు",
   "dock.narrower": "మరింత ఇరుకు",
+  "dock.full": "పూర్తి స్క్రీన్",
   "speech.noVoice": "ఈ పరికరంలో {language} చదవగల గొంతు లేదు. మీ సిస్టమ్ సెట్టింగ్‌లలో ఒకదాన్ని జోడించవచ్చు.",
   "toast.copied": "కాపీ అయింది",
   "toast.undoFor": {

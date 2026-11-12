@@ -46,6 +46,7 @@
   "dock.bottom": "在任务下方",
   "dock.wider": "更宽",
   "dock.narrower": "更窄",
+  "dock.full": "全屏",
   "speech.noVoice": "这台设备上没有朗读{language}的声音。你可以在系统设置里添加一个。",
   "toast.copied": "已复制",
   "toast.undoFor": {

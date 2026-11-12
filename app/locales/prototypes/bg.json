@@ -1,8 +1,6 @@
 {
   "prototypes.frame": "{name}, прототип",
-  "prototypes.view": "Изглед",
   "prototypes.board": "Всички страници",
-  "prototypes.play": "Опитай",
   "prototypes.pages": "Страници на {name}",
   "prototypes.page": "Страница {n} от {count}",
   "prototypes.leads": "Води към {pages}",

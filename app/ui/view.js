@@ -90,7 +90,7 @@ export async function viewOf(file, holds, page) {
   if (file.at?.words) holds.push(() => CSS.highlights?.delete('cite'))
   holds.push(effect(() => {
     const drawn = kind && widget({ lang: kind, text })
-    render(drawn ? html`<div class="prose" dir="auto">${drawn}</div>`
+    render(drawn ? html`<div class="view-drawn prose" dir="auto">${drawn}</div>`
       : /^(md|markdown)$/.test(ext) || file.prose ? html`<article class="view-sheet prose" dir="auto">${markdown(text)}</article>`
       : html`<pre class="view-text" dir="auto">${text}</pre>`, box)
     if (file.at?.words) light(box, file.at.words)

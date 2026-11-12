@@ -40,8 +40,6 @@
   "documents.collection": "Koleksiyon",
   "documents.bookmark": "Web yer imi",
   "documents.bookmarkAddress": "Bir web adresi yapıştırın, ardından Enter’a basın",
-  "documents.fullscreen": "Tam ekran",
-  "documents.exitFullscreen": "Tam ekrandan çık",
   "documents.noMatch": "Sonuç yok",
   "documents.choice": "{item}, {i}/{n}",
   "documents.handle": "Taşımak için sürükle, seçenekler için tıkla",

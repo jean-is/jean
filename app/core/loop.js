@@ -155,7 +155,7 @@ export async function runTurn(options) {
     let done = null
     // Thinking at length, the brain may be told to answer now, by the user, or on this computer past its ceiling: it is
     // asked again at once, lightly, from the end of what it thought, and only once (D414).
-    let [cut, hurried, thinking] = [new AbortController(), false, 0]
+    let [cut, hurried, thinking, wrote] = [new AbortController(), false, 0, 0]
     const ceiling = own || !isLocal(brain) ? Infinity : Math.min(CEILING, (options.window ?? Infinity) / 4)
     const hurry = () => cut.abort(HURRY)
     const stop = () => cut.abort()
@@ -182,6 +182,8 @@ export async function runTurn(options) {
               text += marks
               shown({ sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: marks } })
             } else if (event.type === 'tool_call') calls.push(event.call)
+            // A call being written: what it holds so far, on the brain's entry, five times a second at most, for a pane that fills as it comes.
+            else if (event.type === 'tool_writing') { if (Date.now() - wrote > 200) (wrote = Date.now()), onUpdate({ sessionUpdate: 'tool_call_update', toolCallId: entry.toolCallId, _meta: { ...own, writing: { name: event.name, args: event.args } } }, step) }
             else if (event.type === 'done') done = event
           }
           break

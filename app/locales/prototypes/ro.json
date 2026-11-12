@@ -1,8 +1,6 @@
 {
   "prototypes.frame": "{name}, un prototip",
-  "prototypes.view": "Vizualizare",
   "prototypes.board": "Toate paginile",
-  "prototypes.play": "Încercați-l",
   "prototypes.pages": "Paginile prototipului {name}",
   "prototypes.page": "Pagina {n} din {count}",
   "prototypes.leads": "Duce la {pages}",

@@ -1,8 +1,6 @@
 {
   "prototypes.frame": "{name}, prototyyppi",
-  "prototypes.view": "Näkymä",
   "prototypes.board": "Kaikki sivut",
-  "prototypes.play": "Kokeile",
   "prototypes.pages": "Sivut: {name}",
   "prototypes.page": "Sivu {n}/{count}",
   "prototypes.leads": "Vie eteenpäin: {pages}",

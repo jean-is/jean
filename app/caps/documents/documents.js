@@ -9,7 +9,7 @@
 // the box lists the project's documents (ui/complete.js, D488), and the brain knows them from its <documents>
 // section; one it changes unseen opens first, unchanged, its text the brain's to read. One the user makes from
 // Creations has no name: it goes by its title.
-import { html, nothing } from 'lit-html'
+import { html } from 'lit-html'
 import { effect } from '@preact/signals-core'
 import { register, slots } from '../../ui/caps.js'
 import { app, conversationOf } from '../../ui/state.js'
@@ -107,15 +107,6 @@ async function show(path) {
   const one = open.get(path)
   if (!one) throw new Error('The document could not be opened.')
   return one
-}
-
-/**
- * At the top of the pane of the document on show (ui/preview.js): Full screen, which fills the window with it (ui/dock.js).
- * @param {{ uri: string, name: string, title: string }} file @param {{ full: boolean, fill: () => void }} pane
- */
-function head(file, { full, fill }) {
-  if (!open.get(file.uri)) return nothing
-  return html`<button class="icon-button" aria-label=${t(full ? 'documents.exitFullscreen' : 'documents.fullscreen')} @click=${fill}>${icons[full ? 'exit-fullscreen' : 'fullscreen']}</button>`
 }
 
 /** What an address names: a document by its name, none when there is no such document. @param {string} path */
@@ -235,6 +226,6 @@ register({
     return all.length ? { documents: ['suggest with one that is not open beside the conversation opens it there, unchanged, and gives you its text.', ...all.slice(0, LISTED),
       ...(all.length > LISTED ? [`- and ${all.length - LISTED} older ones`] : [])].join('\n') } : {}
   },
-  slots: { modes: { at: 9, draw: () => null, notes }, look: kitSlot, head: { at: 1, draw: head }, out: { at: 1, draw: () => null, of: (/** @type {{ uri: string }} */ { uri }) => /^documents\//.test(uri), load: async () => { const { documentWays } = await import('../made/ways.js'); return { ways: (/** @type {{ uri: string, name: string, title: string }} */ file, /** @type {Element} */ pane) => ((one) => (one ? documentWays(file, one, pane) : null))(open.get(file.uri)) } } }, creations: { id: 'documents', at: 1, draw: () => icons.file, kept, mention: 'document', preview: (/** @type {{ text: string }} */ item) => prose(item.text),
+  slots: { modes: { at: 9, draw: () => null, notes }, look: kitSlot, out: { at: 1, draw: () => null, of: (/** @type {{ uri: string }} */ { uri }) => /^documents\//.test(uri), load: async () => { const { documentWays } = await import('../made/ways.js'); return { ways: (/** @type {{ uri: string, name: string, title: string }} */ file, /** @type {Element} */ pane) => ((one) => (one ? documentWays(file, one, pane) : null))(open.get(file.uri)) } } }, creations: { id: 'documents', at: 1, draw: () => icons.file, kept, mention: 'document', preview: (/** @type {{ text: string }} */ item) => prose(item.text),
     make: blank, pin: amend, rename: (/** @type {Kept} */ item, /** @type {string} */ name) => amend(item, undefined, name), copy, remove }, main: page },
 })

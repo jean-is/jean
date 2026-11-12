@@ -40,8 +40,6 @@
   "documents.collection": "合集",
   "documents.bookmark": "网页书签",
   "documents.bookmarkAddress": "粘贴网址，然后按 Enter 键",
-  "documents.fullscreen": "全屏",
-  "documents.exitFullscreen": "退出全屏",
   "documents.noMatch": "无结果",
   "documents.choice": "{item}，第 {i} 项，共 {n} 项",
   "documents.handle": "拖动以移动，点击查看选项",

@@ -40,8 +40,6 @@
   "documents.collection": "సేకరణ",
   "documents.bookmark": "వెబ్ బుక్‌మార్క్",
   "documents.bookmarkAddress": "వెబ్ చిరునామాను అతికించి, తర్వాత Enter నొక్కండి",
-  "documents.fullscreen": "పూర్తి స్క్రీన్",
-  "documents.exitFullscreen": "పూర్తి స్క్రీన్ నుండి నిష్క్రమించు",
   "documents.noMatch": "ఫలితాలు లేవు",
   "documents.choice": "{item}, {n}లో {i}",
   "documents.handle": "కదిలించడానికి లాగండి, ఎంపికల కోసం క్లిక్ చేయండి",

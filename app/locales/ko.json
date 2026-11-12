@@ -46,6 +46,7 @@
   "dock.bottom": "작업 아래로",
   "dock.wider": "넓게",
   "dock.narrower": "좁게",
+  "dock.full": "전체 화면",
   "speech.noVoice": "이 기기에는 {language} 읽기가 가능한 목소리가 없어요. 시스템 설정에서 추가할 수 있어요.",
   "toast.copied": "복사됨",
   "toast.undoFor": {

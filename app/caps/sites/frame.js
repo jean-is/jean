@@ -10,7 +10,7 @@
 import { html, svg, nothing, render } from 'lit-html'
 import { ref } from 'lit-html/directives/ref.js'
 import { computed, effect, untracked } from '@preact/signals-core'
-import { app, effective, notify, assistantName } from '../../ui/state.js'
+import { app, effective, theme, notify, assistantName } from '../../ui/state.js'
 import { pageRights, pagePolicy, pageAllow, PAGE_SANDBOX } from '../../ui/csp.js'
 import { memoryFS } from '../../core/fs.js'
 import { t, locale } from '../../core/i18n.js'
@@ -26,14 +26,14 @@ import { LOOK, cssOf } from './look.js'
  * A site on show, and the brain's with its looks, the one it wears and what picking one does; while the brain's version waits, the
  * person's files as `mine` and what accepting or rejecting it does; words retyped, the site's files after, or null when they can't be;
  * Ask Jean; the frame's name, when it isn't a site's; and a prototype's: the shape it was made for, what leads its bar and ends it, what a press on
- * nothing says, and what its own look is called. @typedef {{ path: string, name: string, files: Map<string, Uint8Array>, label?: string, looks?: Look[], look?: Look, pick?: (look: Look) => unknown,
+ * nothing says, and what its own look is called; and whether the brain still writes it. @typedef {{ path: string, name: string, files: Map<string, Uint8Array>, label?: string, open?: boolean, looks?: Look[], look?: Look, pick?: (look: Look) => unknown,
  *   mine?: Map<string, Uint8Array>, decide?: (yes: boolean) => unknown, retype?: (page: string, changes: { old: string, new: string }[]) => Promise<Map<string, Uint8Array> | null>,
  *   ask?: (asked: { site: Shown, page: string, pointed: Pointed | null }) => unknown, shape?: 'phone' | 'computer', lead?: (view: HTMLElement, last?: boolean) => unknown, hint?: string, own?: string }} Shown
  */
 
 const FRAME = new URL('../../preview.html', import.meta.url).href
-/** An arrow that points: Point at a part, where its button is its drawing. */
-const POINT = icon(svg`<path d="M6 4l12 6-5 2-2 5z"/>`, 'flip-rtl')
+/** An arrow that points: Point at a part. A disc half in the dark: by night. */
+const POINT = icon(svg`<path d="M6 4l12 6-5 2-2 5z"/>`, 'flip-rtl'), NIGHT = icon(svg`<circle cx="12" cy="12" r="7.5"/><path d="M12 4.5a7.5 7.5 0 0 0 0 15z" fill="currentColor"/>`)
 /** A look's paper, ink and accent, on its swatch. @param {Look} look */
 const colours = ({ day }) => ref((swatch) => swatch instanceof HTMLElement && Object.entries({ '--swatch-paper': day.paper, '--swatch-ink': day.ink, '--swatch-accent': day.accent }).forEach(([name, value]) => swatch.style.setProperty(name, value)))
 /** Jean's own script, ahead of the page on show in the pane (./hand.js). */
@@ -56,6 +56,32 @@ export const policy = () => pagePolicy({ ...rights.peek().allows, web: false, ne
 
 /** A page of the site as one document, its style sheets, scripts and pictures in it. @param {Map<string, Uint8Array>} files @param {string} path */
 export const pageOf = async (files, path) => ((shown) => ('html' in shown ? shown.html : ''))(await sitePage(memoryFS(Object.fromEntries(files)), path))
+
+/**
+ * A page running where it lies, out of reach of the pointer and the keys: a prototype's on its board (../prototypes/board.js), and the
+ * first of a site or a prototype on its card among the creations. A frame of a file pane's kind (D126) given the page as one document,
+ * the address it was first reached at ahead of it. While more of it is to come it is written on, cut after its last whole tag; changed
+ * any other way, it begins again in a new frame.
+ */
+customElements.define('app-site-page', class extends HTMLElement {
+  #given = /** @type {unknown[]} */ ([]); #wrote = ''; #more = false; #ready = false
+  /** Its files, or what reads them, its page, the address it was reached at, and whether more is to come. @param {[Map<string, Uint8Array> | Promise<Map<string, Uint8Array>>, string, string, boolean]} given */
+  set page(given) {
+    if (given.every((one, i) => one === this.#given[i])) return
+    const [files, path, search, more] = (this.#given = given)
+    Promise.resolve(files).then((all) => pageOf(all, path)).then((page) => {
+      if (given !== this.#given) return
+      const now = ahead(search) + (more ? page.slice(0, page.lastIndexOf('>') + 1) : page), frame = this.querySelector('iframe'), on = frame && this.#more && now.startsWith(this.#wrote)
+      if (on && this.#ready) frame.contentWindow?.postMessage({ page: now.slice(this.#wrote.length), open: more }, '*')
+      if (frame && !this.#more && !more && now === this.#wrote) return
+      ;[this.#wrote, this.#more, this.#ready] = [now, more, !!on && this.#ready]
+      if (on) return
+      const next = Object.assign(document.createElement('iframe'), { src: FRAME, tabIndex: -1, sandbox: PAGE_SANDBOX })
+      next.addEventListener('load', () => { this.#ready = true; next.contentWindow?.postMessage({ page: this.#wrote, policy: policy(), open: this.#more }, '*') }, { once: true })
+      this.replaceChildren(next)
+    }).catch(console.warn)
+  }
+})
 
 /**
  * What a page shows once loaded, posted to Jean: its width and what overflows, what shows below its foot, pictures that don't show,
@@ -130,9 +156,9 @@ customElements.define('app-site', class extends HTMLElement {
   /**
    * Retyping, pointing or neither (./hand.js); the part pointed at; the person's version on show while the brain's waits; what the pane
    * gave last, which lit gives again each time the pane is drawn, as it does any object: no reason to load its frame again; the pages it left,
-   * each with its address, to go back to; whether a press on nothing was said.
+   * each with its address, to go back to; whether a press on nothing was said; and whether it shows by night, the room's theme until the person says.
    */
-  #hand = ''; #pointed = /** @type {Pointed | null} */ (null); #before = false; #given = /** @type {Shown | null} */ (null); #trail = /** @type {[string, string][]} */ ([]); #hinted = false
+  #hand = ''; #pointed = /** @type {Pointed | null} */ (null); #before = false; #given = /** @type {Shown | null} */ (null); #trail = /** @type {[string, string][]} */ ([]); #hinted = false; #night = /** @type {boolean | null} */ (null)
   set site(site) {
     if (site !== this.#given) site?.path !== this.#site?.path && ((this.#page = 'index.html'), (this.#search = ''), (this.#hand = ''), (this.#pointed = null), (this.#trail = []), (this.#width = site?.shape ?? 'computer')), (this.#given = this.#site = site), (this.#before = false), this.isConnected && this.draw()
   }
@@ -157,6 +183,8 @@ customElements.define('app-site', class extends HTMLElement {
 
   /** Its frame's window. */
   get #frame() { return this.querySelector('iframe')?.contentWindow }
+  /** Whether its page shows by night. */
+  get #dark() { return this.#night ?? theme.peek() === 'dark' }
   /** What Jean's script in the frame does now: no retyping while the brain's version waits. */
   get #does() { return this.#hand === 'edit' && this.#site?.mine ? '' : this.#hand }
 
@@ -172,44 +200,46 @@ customElements.define('app-site', class extends HTMLElement {
     this.#frame?.postMessage({ hand: this.#does }, '*'), this.bar()
   }
 
-  /** Its looks (D739), each a radio with its colours: side by side, or a prototype's as the rows of its button's menu. @param {Shown} site */
+  /** Its looks (D739), the rows of its button's menu, each a radio with its colours. @param {Shown} site */
   #looks(site) {
-    return site.looks ? html`<span class=${site.lead ? 'site-looks' : 'segmented site-looks'} role="radiogroup" aria-label=${t('sites.looks')}>${site.looks.map((look, i) => html`<label for=${`${this.#id}-look-${i}`}><input id=${`${this.#id}-look-${i}`}
+    return site.looks ? html`<span class="site-looks" role="radiogroup" aria-label=${t('sites.looks')}>${site.looks.map((look, i) => html`<label for=${`${this.#id}-look-${i}`}><input id=${`${this.#id}-look-${i}`}
       type="radio" name=${`${this.#id}-look`} .checked=${look === site.look} @change=${() => this.wear(look)}><span><i class="site-swatch" aria-hidden="true" ${colours(look)}></i>${(look.id === 'own' && site.own) || t(`sites.palette.${look.id}`)}</span></label>`)}</span>` : nothing
   }
 
-  /** Its looks, above its bar unless the bar holds them; its bar; the page on show in a frame as wide as the one picked. */
+  /** Its bar, and the page on show in a frame as wide as the one picked. */
   draw() {
     const site = this.#site, { allows } = rights.peek()
     if (!site) return
     this.dataset.width = this.#width
     const begin = async (/** @type {Event} */ event) => {
-      const frame = /** @type {HTMLIFrameElement} */ (event.target).contentWindow, now = this.#site ?? site, scripts = rights.peek().allows.scripts
-      frame?.postMessage({ page: (scripts ? ahead(this.#search) + await HAND : '') + await pageOf(this.#before && now.mine ? now.mine : now.files, this.#page), policy: policy() }, '*')
+      const frame = /** @type {HTMLIFrameElement} */ (event.target).contentWindow, now = this.#site ?? site, scripts = rights.peek().allows.scripts, files = this.#before && now.mine ? now.mine : now.files, when = this.#dark ? 'night' : 'day'
+      // By day or by night as its bar says, whatever the device prefers: its look's colours of then, as both.
+      frame?.postMessage({ page: (scripts ? ahead(this.#search) + await HAND : '') + await pageOf(now.look ? new Map(files).set(LOOK, new TextEncoder().encode(cssOf({ ...now.look, day: now.look[when], night: now.look[when] }))) : files, this.#page), policy: policy() }, '*')
       if (scripts) frame?.postMessage({ hand: this.#does, at: this.pointed?.place ?? '', hint: !!now.hint }, '*')
     }
     render(nothing, this)
-    render(html`${site.lead ? nothing : this.#looks(site)}
-      <div class="site-bar"></div><div class="site-view"><iframe sandbox=${PAGE_SANDBOX} allow=${pageAllow(allows)} src=${FRAME} title=${site.label ?? t('sites.frame', { name: site.name })} @load=${begin}></iframe></div>`, this)
+    render(html`<div class="site-bar"></div><div class="site-view"><iframe sandbox=${PAGE_SANDBOX} allow=${pageAllow(allows)} src=${FRAME} title=${site.label ?? t('sites.frame', { name: site.name })} @load=${begin}></iframe></div>`, this)
     this.bar()
-    if (refocus === site.path && !site.mine) (refocus = ''), /** @type {HTMLElement | null} */ (this.querySelector('.site-hand button'))?.focus()
+    if (refocus === site.path && !site.mine) (refocus = ''), /** @type {HTMLElement | null} */ (this.querySelector('.site-hand [data-hand]'))?.focus()
   }
 
   /**
-   * What leads a prototype's bar, its widths, a prototype's as drawings, its looks behind one button, what ends its bar, retyping and pointing where pages may run a script, which they need, the brain's version waiting with Before, Reject and
-   * Accept, and what retyping or pointing does now, or the part pointed at with Ask Jean.
+   * What leads a prototype's bar, its widths as drawings, then one group of drawings, each named by its tip: its looks' button, by day or by night where its look has both, and retyping and pointing
+   * where pages may run a script, which they need; what ends a prototype's bar, the brain's version waiting with Before, Reject and Accept, and what retyping or pointing does now, or the part
+   * pointed at with Ask Jean.
    */
   bar() {
     const site = this.#site, at = /** @type {HTMLElement | null} */ (this.querySelector('.site-bar'))
     if (!site || !at) return
     const name = assistantName(), pointed = this.pointed, decide = (/** @type {boolean} */ yes) => { refocus = site.path; site.decide?.(yes) }
     const pick = (/** @type {string} */ width) => { this.#width = width; this.dataset.width = width }
-    const toggle = (/** @type {string} */ hand, /** @type {unknown} */ glyph) => html`<button type="button" class="button subtle" aria-label=${site.lead ? t(`sites.${hand}`) : nothing} aria-pressed=${String(this.#hand === hand)} @click=${() => this.use(this.#hand === hand ? '' : hand)}>${site.lead ? glyph : nothing}<span>${t(`sites.${hand}`)}</span></button>`
-    const before = () => { this.#before = !this.#before; this.querySelector('.site-view iframe')?.setAttribute('src', FRAME); this.bar() }
-    render(html`${site.lead?.(this) ?? nothing}<span class="segmented site-widths" role="radiogroup" aria-label=${t('sites.width')}>${(site.shape ? ['phone', 'computer'] : ['phone', 'tablet', 'computer']).map((width) => html`<label for=${`${this.#id}-${width}`} title=${site.lead ? t(`sites.${width}`) : nothing}><input id=${`${this.#id}-${width}`}
-      type="radio" name=${this.#id} title=${site.lead ? t(`sites.${width}`) : nothing} .checked=${width === this.#width} @change=${() => pick(width)}><span>${site.lead ? /** @type {any} */ (icons)[width] : t(`sites.${width}`)}</span></label>`)}</span>
-      ${site.lead && site.looks ? html`<button type="button" class="icon-button subtle" popovertarget=${`${this.#id}-looks`} aria-label=${t('sites.looks')}><i class="site-swatch" aria-hidden="true" ${colours(site.look ?? site.looks[0])}></i></button><div id=${`${this.#id}-looks`} class="menu site-fold" popover>${this.#looks(site)}</div>` : nothing}
-      ${rights.peek().allows.scripts ? html`<span class="site-hand">${site.mine ? nothing : toggle('edit', icons.compose)}${toggle('point', POINT)}</span>` : nothing}${site.mine ? nothing : site.lead?.(this, true) ?? nothing}
+    const toggle = (/** @type {string} */ hand, /** @type {unknown} */ glyph) => html`<button type="button" class="icon-button subtle" data-hand=${hand} aria-label=${t(`sites.${hand}`)} aria-pressed=${String(this.#hand === hand)} @click=${() => this.use(this.#hand === hand ? '' : hand)}>${glyph}</button>`
+    const again = (/** @type {() => void} */ change) => () => { change(); this.querySelector('.site-view iframe')?.setAttribute('src', FRAME); this.bar() }, before = again(() => { this.#before = !this.#before })
+    render(html`${site.lead?.(this) ?? nothing}<span class="segmented site-widths" role="radiogroup" aria-label=${t('sites.width')}>${(site.shape ? ['phone', 'computer'] : ['phone', 'tablet', 'computer']).map((width) => html`<label for=${`${this.#id}-${width}`} title=${t(`sites.${width}`)}><input id=${`${this.#id}-${width}`}
+      type="radio" name=${this.#id} title=${t(`sites.${width}`)} .checked=${width === this.#width} @change=${() => pick(width)}><span>${/** @type {any} */ (icons)[width]}</span></label>`)}</span>
+      <span class="icon-group site-hand">${site.looks ? html`<button type="button" class="icon-button subtle" popovertarget=${`${this.#id}-looks`} aria-label=${t('sites.looks')}><i class="site-swatch" aria-hidden="true" ${colours(site.look ?? site.looks[0])}></i></button><div id=${`${this.#id}-looks`} class="menu site-fold" popover>${this.#looks(site)}</div>` : nothing}
+        ${site.look && site.look.day.paper !== site.look.night.paper ? html`<button type="button" class="icon-button subtle" aria-label=${t('theme.dark')} aria-pressed=${String(this.#dark)} @click=${again(() => { this.#night = !this.#dark })}>${NIGHT}</button>` : nothing}
+        ${rights.peek().allows.scripts ? html`${site.mine ? nothing : toggle('edit', icons.compose)}${toggle('point', POINT)}` : nothing}</span>${site.mine ? nothing : site.lead?.(this, true) ?? nothing}
       ${site.mine ? html`<p class="site-jean"><span>${t('sites.jean', { name })}</span><button type="button" class="button subtle" aria-pressed=${String(this.#before)} @click=${before}>${t('sites.before')}</button>
         <button type="button" class="button" @click=${() => decide(false)}>${t('sites.reject')}</button><button type="button" class="button primary" @click=${() => decide(true)}>${t('sites.accept')}</button></p>` : nothing}
       <div class="site-said"><p role="status">${this.#does === 'edit' ? t('sites.editing') : this.#does !== 'point' ? '' : !pointed ? t('sites.pointing', { name }) : pointed.words ? html`<q dir="auto">${pointed.words.length > 80 ? `${pointed.words.slice(0, 80)}…` : pointed.words}</q>` : t('sites.part')}</p>

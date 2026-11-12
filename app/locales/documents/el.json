@@ -40,8 +40,6 @@
   "documents.collection": "Συλλογή",
   "documents.bookmark": "Σελιδοδείκτης ιστού",
   "documents.bookmarkAddress": "Επικολλήστε μια διεύθυνση ιστού και πατήστε Enter",
-  "documents.fullscreen": "Πλήρης οθόνη",
-  "documents.exitFullscreen": "Έξοδος από πλήρη οθόνη",
   "documents.noMatch": "Κανένα αποτέλεσμα",
   "documents.choice": "{item}, {i} από {n}",
   "documents.handle": "Σύρετε για μετακίνηση, κάντε κλικ για επιλογές",

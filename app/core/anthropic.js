@@ -208,7 +208,7 @@ function startBlock(block = {}) {
 function applyDelta(block, delta) {
   if (!block || !delta) return null
   if (delta.type === 'signature_delta') block.signature += delta.signature
-  if (delta.type === 'input_json_delta') block.json += delta.partial_json
+  if (delta.type === 'input_json_delta') return (block.json += delta.partial_json), block.type === 'tool_use' ? { type: 'tool_writing', name: block.name, args: block.json } : null
   if (delta.type === 'citations_delta') (block.citations ??= []).push(delta.citation)
   // text_delta carries `text` and thinking_delta carries `thinking`, like the blocks they extend.
   const kind = delta.type === 'text_delta' ? 'text' : delta.type === 'thinking_delta' ? 'thinking' : null
