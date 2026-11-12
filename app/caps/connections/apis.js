@@ -1,17 +1,18 @@
 // SPDX-License-Identifier: MIT
 // Jean's own tools over a service's own API, where its MCP server can't serve everyone: Gmail, Google
 // Calendar and Google Drive for every Google account (D349), Google's MCP servers being a preview for
-// Workspace accounts (D344); Outlook, its calendar, OneDrive and SharePoint for every Microsoft account,
-// through Microsoft Graph (D382). These APIs answer browsers, so their calls go straight to the service,
-// never through a gateway. Each is a server as the MCP client is one (mcp.js): its tools listed once
-// it says who is signed in, so that a token refused shows, and called, a refusal an MCPError, what a
-// call brings in resources cited by their address. Host-agnostic: fetch, Web Crypto and Intl.
+// Workspace accounts (D344); Outlook, its calendar and contacts, OneDrive, SharePoint, and for a work account
+// Teams, its meetings' transcripts and shared mailboxes, through Microsoft Graph (D382). These APIs answer
+// browsers, so their calls go straight to the service, never through a gateway. Each is a server as the MCP
+// client is one (mcp.js): its tools listed once it says who is signed in, those alone that what the sign-in
+// granted allows, so that a token refused shows, and called, a refusal an MCPError, what a call brings in
+// resources cited by their address. Host-agnostic: fetch, Web Crypto and Intl.
 import { MCPError } from './mcp.js'
 import { encode as base64 } from '../../ui/seal.js'
 import { t, useStrings, locale } from '../../core/i18n.js'
 
 /** @import { McpTool, CallResult } from './mcp.js' */
-/** @import { JsonSchema, Content, GmailPart, CalendarEntry, CalendarEvent, DriveFile, SharedDrive, DocsStyle, DocsElement, Recipient, GraphMail, GraphAttachment, GraphCalendar, GraphEvent, DriveItem, SearchHits } from './types.js' */
+/** @import { JsonSchema, Content, GmailPart, CalendarEntry, CalendarEvent, DriveFile, SharedDrive, DocsStyle, DocsElement, Recipient, GraphMail, GraphAttachment, GraphCalendar, GraphEvent, DriveItem, SearchHits, TeamsMessage, TeamsChat, GraphPerson } from './types.js' */
 /**
  * A request with the user's token: its text, its bytes, or its JSON, whose shape is the path's.
  * @typedef {{ (path: string, init: RequestInit & { as: 'text' }): Promise<string>, (path: string, init: RequestInit & { as: 'bytes' }): Promise<Uint8Array>, (path: string, init?: RequestInit & { as?: undefined }): Promise<any> }} Call
@@ -234,30 +235,34 @@ const outgoing = ({ to, cc, bcc, subject, body = '', reply_to }) => {
 const MAIL = 'id,subject,from,toRecipients,ccRecipients,receivedDateTime,bodyPreview,webLink'
 /** An email, cited by its address in Outlook. @param {GraphMail} mail @param {string} text */
 const asMail = (mail, text) => resource(mail.webLink, mail.subject || '(no subject)', text, mail.bodyPreview)
+/** The user's own mailbox, or one shared with them, by its address. @param {string} [address] */
+const box = (address) => (address ? `users/${encodeURIComponent(address)}` : 'me')
+const mailbox = string('A mailbox shared with the user, by its address, to use rather than their own')
+const sharing = object({ ...composing.properties, mailbox }, composing.required)
 
 /** @type {Direct[]} */
 const outlook = [
   tool('search_emails', 'Finds emails as Outlook’s search box does (from:, to:, subject:, hasattachment:true, received>=2026-10-01…), or the latest, each with its id, who wrote it, when and how it starts.',
-    object({ query: string('Outlook’s search, e.g. "from:sam subject:budget"'), max }), true, async ({ query, max = 10 }, call) => {
-      const { value = [] } = await call(`me/messages?${odata({ $select: MAIL, $top: max, ...(query ? { $search: `"${String(query).replace(/"/g, '')}"` } : { $orderby: 'receivedDateTime desc' }) })}`)
+    object({ query: string('Outlook’s search, e.g. "from:sam subject:budget"'), max, mailbox }), true, async ({ query, max = 10, mailbox }, call) => {
+      const { value = [] } = await call(`${box(mailbox)}/messages?${odata({ $select: MAIL, $top: max, ...(query ? { $search: `"${String(query).replace(/"/g, '')}"` } : { $orderby: 'receivedDateTime desc' }) })}`)
       return value.map((/** @type {GraphMail} */ mail) => asMail(mail, [`id: ${mail.id}`, ...mailHeads(mail), '', mail.bodyPreview].join('\n')))
     }),
-  tool('read_email', 'Reads an email whole, by its id, with the names of the files it carries.', object({ id: string('The email’s id, from search_emails') }, ['id']), true, async ({ id }, call) => {
-    const at = `me/messages/${encodeURIComponent(id)}`
+  tool('read_email', 'Reads an email whole, by its id, with the names of the files it carries.', object({ id: string('The email’s id, from search_emails'), mailbox }, ['id']), true, async ({ id, mailbox }, call) => {
+    const at = `${box(mailbox)}/messages/${encodeURIComponent(id)}`
     const [mail, { value: files = [] }] = await Promise.all([call(`${at}?${odata({ $select: `${MAIL},body` })}`, { headers: { prefer: 'outlook.body-content-type="text"' } }), call(`${at}/attachments?${odata({ $select: 'name,isInline' })}`)])
     const names = files.flatMap((/** @type {GraphAttachment} */ file) => (file.isInline ? [] : file.name))
     return [asMail(mail, [...mailHeads(mail), ...(names.length ? [`Files: ${names.join(', ')}`] : []), '', mail.body?.content ?? ''].join('\n'))]
   }),
-  tool('create_draft', 'Writes a draft in Outlook, which the user sends themselves; a reply stays in its thread.', composing, false, async (args, call) => {
-    const draft = await call(args.reply_to ? `me/messages/${encodeURIComponent(args.reply_to)}/createReply` : 'me/messages', { method: 'POST', body: JSON.stringify(args.reply_to ? outgoing(args) : outgoing(args).message) })
+  tool('create_draft', 'Writes a draft in Outlook, which the user sends themselves; a reply stays in its thread.', sharing, false, async (args, call) => {
+    const draft = await call(`${box(args.mailbox)}/messages${args.reply_to ? `/${encodeURIComponent(args.reply_to)}/createReply` : ''}`, { method: 'POST', body: JSON.stringify(args.reply_to ? outgoing(args) : outgoing(args).message) })
     return [asMail(draft, `Draft saved (id: ${draft.id}).`)]
   }),
-  tool('send_email', 'Sends an email from Outlook; a reply stays in its thread.', composing, false,
-    (args, call) => call(args.reply_to ? `me/messages/${encodeURIComponent(args.reply_to)}/reply` : 'me/sendMail', { method: 'POST', body: JSON.stringify(outgoing(args)) }).then(() => said('Sent.'))),
+  tool('send_email', 'Sends an email from Outlook; a reply stays in its thread.', sharing, false,
+    (args, call) => call(`${box(args.mailbox)}/${args.reply_to ? `messages/${encodeURIComponent(args.reply_to)}/reply` : 'sendMail'}`, { method: 'POST', body: JSON.stringify(outgoing(args)) }).then(() => said('Sent.'))),
 ]
 
 // Times go in with their offset, kept in UTC, or in the zone given, and come back in the user's.
-const EVENT = 'id,subject,start,end,location,attendees,bodyPreview,webLink'
+const EVENT = 'id,subject,start,end,location,attendees,bodyPreview,webLink,onlineMeeting'
 const inZone = () => ({ headers: { prefer: `outlook.timezone="${here()}"` } })
 /** A start or an end: a time with its offset, a whole day from its midnight, or a time in a zone. @param {string} at @param {string} [zone] */
 const slot = (at, zone = here()) => (/([zZ]|[+-]\d\d:?\d\d)$/.test(at) ? { dateTime: new Date(at).toISOString().slice(0, -1), timeZone: 'UTC' } : { dateTime: DAY.test(at) ? `${at}T00:00:00` : at, timeZone: zone })
@@ -266,7 +271,7 @@ const meeting = ({ title, start, end, time_zone, location, description, attendee
   ...(description !== undefined && { body: { contentType: 'text', content: description } }), ...(attendees && { attendees: [attendees].flat().map((address) => ({ emailAddress: { address }, type: 'required' })) }) })
 /** @param {GraphEvent} item */
 const asMeeting = (item) => resource(item.webLink, item.subject || '(no title)', [`id: ${item.id}`, `${item.start?.dateTime} → ${item.end?.dateTime} (${item.start?.timeZone})`, item.location?.displayName && `Where: ${item.location.displayName}`,
-  item.attendees?.length && `With: ${item.attendees.map((one) => one.emailAddress?.address).join(', ')}`, item.bodyPreview].filter(Boolean).join('\n'))
+  item.onlineMeeting?.joinUrl && `Join: ${item.onlineMeeting.joinUrl}`, item.attendees?.length && `With: ${item.attendees.map((one) => one.emailAddress?.address).join(', ')}`, item.bodyPreview].filter(Boolean).join('\n'))
 /** A calendar of the user's, their own if none is named. @param {string} [id] */
 const calendarAt = (id) => (id ? `me/calendars/${encodeURIComponent(id)}` : 'me/calendar')
 
@@ -276,7 +281,7 @@ const outlookCalendar = [
     const { value = [] } = await call(`me/calendars?${odata({ $select: 'id,name,isDefaultCalendar,canEdit' })}`)
     return value.map((/** @type {GraphCalendar} */ item) => ({ type: 'text', text: `${item.id}: ${item.name}${item.isDefaultCalendar ? ' (their own)' : ''}, ${item.canEdit ? 'writer' : 'reader'}` }))
   }),
-  tool('list_events', 'Lists a calendar’s events from a time on, earliest first, or those with given words.', object({ calendar: calendarId, from: string('An ISO 8601 time or a day; now if left out'), to: string('The same; a year on if left out'), query: string('Words to find'), max }), true,
+  tool('list_events', 'Lists a calendar’s events from a time on, earliest first, or those with given words, each online meeting with its join link.', object({ calendar: calendarId, from: string('An ISO 8601 time or a day; now if left out'), to: string('The same; a year on if left out'), query: string('Words to find'), max }), true,
     async ({ calendar, from = Date.now(), to, query = '', max = 10 }, call) => {
       const start = instant(from)
       const { value = [] } = await call(`${calendarAt(calendar)}/calendarView?${odata({ startDateTime: start, endDateTime: to ? instant(to) : new Date(Date.parse(start) + 366 * 86_400_000).toISOString(), $orderby: 'start/dateTime', $top: query ? 200 : max, $select: EVENT })}`, inZone())
@@ -320,19 +325,70 @@ const onedrive = [
     }),
 ]
 
-/** Each API by its address (caps/connections/directory.js), with what says who is signed in, and the other origins its tools call. @type {Record<string, { who: string, tools: Direct[], also?: string[] }>} */
+/** A Teams message on one line: when, who, its words out of their HTML. @param {TeamsMessage} one */
+const post = (one) => `${one.createdDateTime} ${one.from?.user?.displayName ?? ''}: ${textOf(one.body?.content ?? '')}`
+/** Teams messages, people's alone, the earliest first. @param {TeamsMessage[]} [messages] @returns {Content[]} */
+const posts = (messages = []) => messages.filter((one) => one.messageType === 'message').reverse().map((one) => ({ type: 'text', text: post(one) }))
+/** A meeting's transcript, Teams' WebVTT, as lines of who said what. @param {string} vtt */
+const spoken = (vtt) => vtt.replace(/<v ([^>]*)>/g, '$1: ').replace(/<\/v>/g, '').split(/\r?\n/).filter((line) => line.trim() && !/^WEBVTT|-->|^[\w-]+\/[\w-]+$/.test(line)).join('\n')
+/** Someone on one line: their name, what they do, where, how to reach them. @param {...unknown} parts @returns {Content} */
+const card = (...parts) => ({ type: 'text', text: parts.flat().filter(Boolean).join(', ') })
+
+/** @type {Direct[]} */
+const teamsAndPeople = [
+  tool('list_chats', 'Lists the user’s Teams chats, the latest first, each with its id, who is in it and its last message.', object({ max }), true, async ({ max = 10 }, call) => ((await call(`me/chats?${odata({ $expand: 'members,lastMessagePreview', $orderby: 'lastMessagePreview/createdDateTime desc', $top: max })}`)).value ?? [])
+    .map((/** @type {TeamsChat} */ chat) => resource(chat.webUrl, chat.topic || chat.members?.map((one) => one.displayName).join(', ') || chat.id, [`id: ${chat.id}`, chat.lastMessagePreview && post(chat.lastMessagePreview)].filter(Boolean).join('\n')))),
+  tool('read_chat', 'Reads a Teams chat’s latest messages, the earliest first.', object({ id: string('The chat’s id, from list_chats'), max }, ['id']), true,
+    async ({ id, max = 10 }, call) => posts((await call(`me/chats/${encodeURIComponent(id)}/messages?${odata({ $top: max, $orderby: 'createdDateTime desc' })}`)).value)),
+  tool('list_channels', 'Lists the teams the user is in and their channels, each with its id.', object({}), true, async (_, call) => (await Promise.all(((await call('me/joinedTeams?$select=id,displayName')).value ?? [])
+    .map(async (/** @type {{ id: string, displayName: string }} */ team) => ((await call(`teams/${team.id}/channels?$select=id,displayName`)).value ?? [])
+      .map((/** @type {{ id: string, displayName: string }} */ one) => card(`${team.displayName} › ${one.displayName}`, `id: ${team.id}/${one.id}`))))).flat()),
+  tool('read_channel', 'Reads a Teams channel’s latest messages, the earliest first.', object({ id: string('The channel’s id, from list_channels'), max }, ['id']), true,
+    async ({ id, max = 10 }, call) => posts((await call(`teams/${String(id).split('/').map(encodeURIComponent).join('/channels/')}/messages?${odata({ $top: max })}`)).value)),
+  tool('read_transcript', 'Reads what was said in a Teams meeting, from the transcript Teams kept.', object({ join_url: string('The meeting’s join link, from list_events') }, ['join_url']), true, async ({ join_url }, call) => {
+    const { value: [meeting] = [] } = await call(`me/onlineMeetings?${odata({ $filter: `JoinWebUrl eq '${String(join_url).replace(/'/g, "''")}'` })}`)
+    if (!meeting) throw new Error('No Teams meeting of the user’s has this join link.')
+    const at = `me/onlineMeetings/${encodeURIComponent(meeting.id)}/transcripts`
+    const latest = (await call(at)).value?.at(-1)
+    return latest ? [resource(join_url, meeting.subject ?? '', spoken(await call(`${at}/${encodeURIComponent(latest.id)}/content?$format=text/vtt`, { as: 'text' })))] : []
+  }),
+  tool('search_contacts', 'Finds people in the user’s Outlook contacts by words in their name, address or company, with their addresses and phones.', object({ query: string('Words to find'), max }), true, async ({ query = '', max = 10 }, call) => ((await call(`me/contacts?${odata({ $select: 'displayName,jobTitle,companyName,emailAddresses,businessPhones,mobilePhone', $orderby: 'displayName', $top: 500 })}`)).value ?? [])
+    .map((/** @type {GraphPerson} */ one) => card(one.displayName, one.jobTitle, one.companyName, one.emailAddresses?.map((each) => each.address), one.businessPhones, one.mobilePhone))
+    .filter((/** @type {Content} */ one) => one.text?.toLowerCase().includes(String(query).toLowerCase())).slice(0, max)),
+  tool('find_people', 'Finds the people the user works and writes with by name, as Outlook suggests them, colleagues and contacts, with their addresses.', object({ query: string('A name, or part of one'), max }, ['query']), true, async ({ query, max = 10 }, call) => ((await call(`me/people?${odata({ $search: `"${String(query).replace(/"/g, '')}"`, $top: max, $select: 'displayName,jobTitle,department,companyName,scoredEmailAddresses' })}`)).value ?? [])
+    .map((/** @type {GraphPerson} */ one) => card(one.displayName, one.jobTitle, one.department, one.companyName, one.scoredEmailAddresses?.map((each) => each.address)))),
+]
+
+// What each Graph tool, or argument, needs of the sign-in, as Graph's permissions reference names it: any of these scopes, or of
+// these sets joined by `+`. A `.Shared` scope reaches what others share with the user too, the mailbox `mailbox` names.
+const [READ_MAIL, READ_FILES, CALENDAR, CHAT] = ['Mail.Read Mail.ReadWrite Mail.Read.Shared Mail.ReadWrite.Shared', 'Files.Read Files.ReadWrite Files.Read.All Files.ReadWrite.All Sites.Read.All Sites.ReadWrite.All', 'Calendars.ReadWrite', 'Chat.Read Chat.ReadWrite']
+const GRAPH = { search_emails: READ_MAIL, read_email: READ_MAIL, create_draft: 'Mail.ReadWrite Mail.ReadWrite.Shared', send_email: 'Mail.Send Mail.Send.Shared', mailbox: 'Mail.Read.Shared Mail.ReadWrite.Shared Mail.Send.Shared',
+  list_calendars: `Calendars.Read ${CALENDAR}`, list_events: `Calendars.Read ${CALENDAR}`, create_event: CALENDAR, update_event: CALENDAR, delete_event: CALENDAR,
+  search_files: READ_FILES, read_file: READ_FILES, create_document: 'Files.ReadWrite Files.ReadWrite.All Sites.ReadWrite.All', search_contacts: 'Contacts.Read Contacts.ReadWrite', find_people: 'People.Read People.Read.All',
+  list_chats: CHAT, read_chat: CHAT, list_channels: 'Team.ReadBasic.All+Channel.ReadBasic.All', read_channel: 'ChannelMessage.Read.All', read_transcript: 'OnlineMeetings.Read+OnlineMeetingTranscript.Read.All' }
+
+/**
+ * Whether what a sign-in granted lets a tool, or an argument, work: all the scopes of one of the ways it needs, written as the
+ * service names them or under its address, in any case. Anything works when nothing says what was granted, or what is needed.
+ * @param {Record<string, string>} [needs] @param {string} [granted] the scopes, as a token's `scope` lists them @returns {(name: string) => boolean}
+ */
+export const allows = (needs = {}, granted = '') => (name) => !granted || !needs[name] || needs[name].toLowerCase().split(' ')
+  .some((way) => way.split('+').every((scope) => granted.toLowerCase().split(' ').some((one) => one.replace(/^.*\//, '') === scope)))
+
+/** Each API by its address (caps/connections/directory.js), with what says who is signed in, the other origins its tools call, and what its tools need. @type {Record<string, { who: string, tools: Direct[], also?: string[], needs?: Record<string, string> }>} */
 export const APIS = {
   'https://gmail.googleapis.com/gmail/v1/users/me/': { who: 'profile', tools: gmail },
   'https://www.googleapis.com/calendar/v3/': { who: 'users/me/calendarList?maxResults=1', tools: calendar },
   'https://www.googleapis.com/drive/v3/': { who: 'about?fields=user', tools: drive, also: [new URL(DOCS).origin] },
-  'https://graph.microsoft.com/v1.0/': { who: 'me?$select=id', tools: [...outlook, ...outlookCalendar, ...onedrive] },
+  'https://graph.microsoft.com/v1.0/': { who: 'me?$select=id', tools: [...outlook, ...outlookCalendar, ...onedrive, ...teamsAndPeople], needs: GRAPH },
 }
 
 /**
  * The server at an address, when it is one of these APIs, or null.
- * @param {{ url: string, authorization: () => Promise<string | undefined>, fetch?: typeof globalThis.fetch }} options
+ * @param {{ url: string, authorization: () => Promise<string | undefined>, granted?: () => Promise<string | undefined>, fetch?: typeof globalThis.fetch }} options
+ *   granted: the scopes its sign-in granted, where the service said, which its tools and their arguments are offered by
  */
-export function apiClient({ url, authorization, fetch = globalThis.fetch }) {
+export function apiClient({ url, authorization, granted = async () => undefined, fetch = globalThis.fetch }) {
   const api = APIS[url]
   if (!api) return null
   /** @param {AbortSignal} [signal] @returns {Call} */
@@ -357,7 +413,9 @@ export function apiClient({ url, authorization, fetch = globalThis.fetch }) {
     /** @param {AbortSignal} [signal] @returns {Promise<McpTool[]>} */
     listTools: async (signal) => {
       await Promise.all([caller(signal)(api.who), useStrings('connections')])
-      return api.tools.map(({ run, ...each }) => ({ ...each, title: t(`api.${each.name}`) }))
+      const may = allows(api.needs, await granted())
+      return api.tools.filter((each) => may(each.name)).map(({ run, inputSchema, ...each }) => ({ ...each, title: t(`api.${each.name}`),
+        inputSchema: { ...inputSchema, properties: Object.fromEntries(Object.entries(inputSchema?.properties ?? {}).filter(([name]) => may(name))) } }))
     },
     /** @param {McpTool} tool @param {Record<string, any>} args @param {AbortSignal} [signal] @returns {Promise<CallResult>} */
     callTool: async (tool, args, signal) => {

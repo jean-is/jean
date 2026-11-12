@@ -203,9 +203,9 @@ describe('the <connections> section', () => {
 
 import { createFakeMail } from './fixtures/fake-mail.js'
 import { mcpClient, MCPError, paramHeaders, headerValue, searchesWeb, toolsOf } from '../app/caps/connections/mcp.js'
-import { apiClient, APIS } from '../app/caps/connections/apis.js'
+import { apiClient, APIS, allows } from '../app/caps/connections/apis.js'
 import { parseChallenge, discover, registerClient, authorization, finish, refresh, whoOf } from '../app/caps/connections/auth.js'
-import { DIRECTORY, known, knownFor, covers, searchers } from '../app/caps/connections/directory.js'
+import { DIRECTORY, known, knownFor, covers, searchers, everyone } from '../app/caps/connections/directory.js'
 import { byName } from '../app/core/search.js'
 import { gateway, covers as gatewayCovers, SERVICES } from '../gateway/gateway.js'
 import { listener, speakable } from '../app/caps/live/turns.js'
@@ -852,8 +852,9 @@ describe('Microsoft Graph, for every Microsoft account (D382)', () => {
   test('one server for Outlook, its calendar and OneDrive: its tools listed once it says who is signed in; a token refused or access denied a refusal, any other error Microsoft’s own words', async () => {
     const { fetch, calls } = fakeGraph({ 'GET me': () => ({ id: 'u1' }) })
     const tools = await graph(fetch).listTools()
-    assert.deepEqual(tools.map((tool) => tool.name), ['search_emails', 'read_email', 'create_draft', 'send_email', 'list_calendars', 'list_events', 'create_event', 'update_event', 'delete_event', 'search_files', 'read_file', 'create_document'])
-    assert.deepEqual(tools.filter((tool) => tool.annotations?.readOnlyHint).map((tool) => tool.name), ['search_emails', 'read_email', 'list_calendars', 'list_events', 'search_files', 'read_file'])
+    assert.deepEqual(tools.map((tool) => tool.name), ['search_emails', 'read_email', 'create_draft', 'send_email', 'list_calendars', 'list_events', 'create_event', 'update_event', 'delete_event', 'search_files', 'read_file', 'create_document',
+      'list_chats', 'read_chat', 'list_channels', 'read_channel', 'read_transcript', 'search_contacts', 'find_people'])
+    assert.deepEqual(tools.filter((tool) => !tool.annotations?.readOnlyHint).map((tool) => tool.name), ['create_draft', 'send_email', 'create_event', 'update_event', 'delete_event', 'create_document'])
     assert.deepEqual([calls[0].url.href, calls[0].init.headers.authorization], ['https://graph.microsoft.com/v1.0/me?$select=id', 'Bearer token'])
     const refusing = (/** @type {number} */ status, /** @type {any} */ error) => graph(async () => Response.json({ error }, { status })).listTools()
     await assert.rejects(refusing(401, { code: 'InvalidAuthenticationToken', message: 'Access token has expired or is not yet valid.' }), (/** @type {any} */ error) => error instanceof MCPError && error.status === 401)
@@ -958,6 +959,99 @@ describe('Microsoft Graph, for every Microsoft account (D382)', () => {
     assert.ok(init.body instanceof Uint8Array)
   })
 
+  test('only the tools, and the arguments, that the scopes granted allow, written under Graph’s address or not, in any case; every one where nothing says what was granted', async () => {
+    const { fetch } = fakeGraph({ 'GET me': () => ({ id: 'u1' }) })
+    const listed = async (/** @type {string | undefined} */ scope) => (await apiClient({ url: GRAPH, authorization: async () => 'Bearer token', granted: async () => scope, fetch })?.listTools()) ?? []
+    const names = async (/** @type {string | undefined} */ scope) => (await listed(scope)).map((tool) => tool.name)
+    const shared = (/** @type {any} */ tool) => 'mailbox' in (tool.inputSchema?.properties ?? {})
+    // The default, which a personal account grants: mail, calendars, files, contacts and people, no Teams, no other mailbox.
+    const personal = await listed('User.Read Mail.ReadWrite Mail.Send Calendars.ReadWrite Files.ReadWrite Files.Read.All Contacts.Read People.Read openid email offline_access')
+    assert.deepEqual(personal.map((tool) => tool.name), ['search_emails', 'read_email', 'create_draft', 'send_email', 'list_calendars', 'list_events', 'create_event', 'update_event', 'delete_event', 'search_files', 'read_file', 'create_document',
+      'search_contacts', 'find_people'])
+    assert.ok(!personal.some(shared))
+    assert.deepEqual(personal[2].inputSchema?.required, ['to', 'body'])
+    assert.deepEqual(await names('https://graph.microsoft.com/User.Read https://graph.microsoft.com/mail.read openid'), ['search_emails', 'read_email'])
+    // A work account's, with what policy asked for: shared mailboxes, Teams' chats and channels, and transcripts, which need the meetings too.
+    const work = await listed('User.Read Mail.ReadWrite.Shared Mail.Send.Shared Chat.Read ChannelMessage.Read.All OnlineMeetings.Read OnlineMeetingTranscript.Read.All')
+    assert.deepEqual(work.map((tool) => tool.name), ['search_emails', 'read_email', 'create_draft', 'send_email', 'list_chats', 'read_chat', 'read_channel', 'read_transcript'])
+    assert.deepEqual(work.map(shared), [true, true, true, true, false, false, false, false])
+    assert.deepEqual(await names('User.Read OnlineMeetingTranscript.Read.All Team.ReadBasic.All'), [])
+    assert.deepEqual(await names('User.Read Team.ReadBasic.All Channel.ReadBasic.All'), ['list_channels'])
+    for (const unsaid of [undefined, '']) assert.equal((await names(unsaid)).length, APIS[GRAPH].tools.length)
+    // An API whose tools name no needs offers them all.
+    assert.equal(allows(undefined, 'https://www.googleapis.com/auth/gmail.modify')('send_email'), true)
+  })
+
+  test('a shared mailbox read and written at its address; an online meeting’s join link, and its transcript as who said what; Teams’ chats and channels, the earliest message first; contacts found by any words, people as Outlook suggests them', async () => {
+    const message = (/** @type {number} */ n, /** @type {string} */ who, /** @type {string} */ html, type = 'message') => ({ messageType: type, createdDateTime: `2026-11-12T09:0${n}:00Z`, from: { user: { displayName: who } }, body: { contentType: 'html', content: html } })
+    const join = 'https://teams.microsoft.com/l/meetup-join/19%3ameeting_abc%40thread.v2/0'
+    const at = { dateTime: '2026-11-12T09:30:00.0000000', timeZone: 'Europe/Paris' }
+    const vtt = 'WEBVTT\n\n0a1b2c3d-4e5f/12-0\n00:00:01.000 --> 00:00:04.000\n<v Sam Ortiz>Morning, all.</v>\n\n0a1b2c3d-4e5f/13-0\n00:00:04.500 --> 00:00:06.000\n<v Ana Martín>The figures are in.</v>\n'
+    const { fetch, calls } = fakeGraph({
+      'GET users/support%40acme.example/messages': () => ({ value: [] }),
+      'POST users/support%40acme.example/sendMail': () => null,
+      'POST users/support%40acme.example/messages/m1/createReply': () => ({ id: 'd1', webLink: 'https://outlook.office.com/d1' }),
+      'GET me/calendar/calendarView': () => ({ value: [{ id: 'e1', subject: 'Standup', webLink: 'https://outlook.office.com/e1', start: at, end: at, onlineMeeting: { joinUrl: join } }] }),
+      'GET me/onlineMeetings': (_, url) => ({ value: url.searchParams.get('$filter') === `JoinWebUrl eq '${join}'` ? [{ id: 'MSo1', subject: 'Standup' }] : [] }),
+      'GET me/onlineMeetings/MSo1/transcripts': () => ({ value: [{ id: 't1' }, { id: 't2' }] }),
+      'GET me/onlineMeetings/MSo1/transcripts/t2/content': () => new Response(vtt),
+      'GET me/chats': () => ({ value: [{ id: '19:c1', webUrl: 'https://teams.microsoft.com/l/chat/19:c1', topic: null, members: [{ displayName: 'Ana Martín' }, { displayName: 'Sam Ortiz' }], lastMessagePreview: message(2, 'Sam Ortiz', '<p>See you &amp; Lea</p>') }] }),
+      'GET me/chats/19%3Ac1/messages': () => ({ value: [message(3, 'Sam Ortiz', '<p>Done.</p>'), message(2, '', '', 'systemEventMessage'), message(1, 'Ana Martín', 'Ready?')] }),
+      'GET me/joinedTeams': () => ({ value: [{ id: 'T1', displayName: 'Sales' }] }),
+      'GET teams/T1/channels': () => ({ value: [{ id: '19:g1@thread.tacv2', displayName: 'General' }] }),
+      'GET teams/T1/channels/19%3Ag1%40thread.tacv2/messages': () => ({ value: [message(1, 'Lea Brun', 'Q4 is closed.')] }),
+      'GET me/contacts': () => ({ value: [{ displayName: 'Sam Ortiz', companyName: 'Acme', emailAddresses: [{ address: 'sam@acme.example' }], businessPhones: ['+33 1 23 45 67 89'] }, { displayName: 'Zoé Petit', emailAddresses: [{ address: 'zoe@petit.example' }] }] }),
+      'GET me/people': () => ({ value: [{ displayName: 'Lea Brun', jobTitle: 'Controller', department: 'Finance', scoredEmailAddresses: [{ address: 'lea@acme.example' }] }] }),
+    })
+    const client = graph(fetch)
+    const path = () => last(calls).url.pathname.slice(6)
+    const texts = async (/** @type {string} */ name, /** @type {any} */ args) => (await run(client, name, args)).content.map((/** @type {any} */ each) => each.text)
+    await run(client, 'search_emails', { mailbox: 'support@acme.example' })
+    assert.equal(path(), 'users/support%40acme.example/messages')
+    await run(client, 'send_email', { mailbox: 'support@acme.example', to: 'sam@acme.example', body: 'On it.' })
+    assert.equal(path(), 'users/support%40acme.example/sendMail')
+    await run(client, 'create_draft', { mailbox: 'support@acme.example', to: 'sam@acme.example', body: 'On it.', reply_to: 'm1' })
+    assert.equal(path(), 'users/support%40acme.example/messages/m1/createReply')
+    const [event] = (await run(client, 'list_events', {})).content
+    assert.ok(event.resource.text.endsWith(`\nJoin: ${join}`))
+    assert.match(String(last(calls).url.searchParams.get('$select')), /,onlineMeeting$/)
+    const [transcript] = (await run(client, 'read_transcript', { join_url: join })).content
+    assert.deepEqual([transcript.resource.uri, transcript.resource.title, transcript.resource.text], [join, 'Standup', 'Sam Ortiz: Morning, all.\nAna Martín: The figures are in.'])
+    await assert.rejects(run(client, 'read_transcript', { join_url: 'https://teams.microsoft.com/l/meetup-join/other' }), /No Teams meeting/)
+    const [chat] = (await run(client, 'list_chats', { max: 5 })).content
+    assert.deepEqual([chat.resource.title, chat.resource.text], ['Ana Martín, Sam Ortiz', 'id: 19:c1\n2026-11-12T09:02:00Z Sam Ortiz: See you & Lea'])
+    assert.deepEqual([...last(calls).url.searchParams], [['$expand', 'members,lastMessagePreview'], ['$orderby', 'lastMessagePreview/createdDateTime desc'], ['$top', '5']])
+    assert.deepEqual(await texts('read_chat', { id: '19:c1' }), ['2026-11-12T09:01:00Z Ana Martín: Ready?', '2026-11-12T09:03:00Z Sam Ortiz: Done.'])
+    assert.deepEqual(await texts('list_channels', {}), ['Sales › General, id: T1/19:g1@thread.tacv2'])
+    assert.deepEqual(await texts('read_channel', { id: 'T1/19:g1@thread.tacv2' }), ['2026-11-12T09:01:00Z Lea Brun: Q4 is closed.'])
+    assert.deepEqual(await texts('search_contacts', { query: 'ACME' }), ['Sam Ortiz, Acme, sam@acme.example, +33 1 23 45 67 89'])
+    assert.deepEqual(await texts('find_people', { query: 'lea' }), ['Lea Brun, Controller, Finance, lea@acme.example'])
+    assert.equal(last(calls).url.searchParams.get('$search'), '"lea"')
+  })
+
+  test('what Microsoft granted is kept with the tokens, and through a renewal that doesn’t say', async () => {
+    const pending = { state: 's', verifier: 'v', clientId: 'jean-spa', redirectURI: 'https://jean.example/', issuer: 'https://login.microsoftonline.com/common/v2.0', issRequired: false, tokenEndpoint: 'https://login.microsoftonline.com/common/oauth2/v2.0/token' }
+    let granted = 'User.Read Mail.Read openid'
+    const fetch = /** @type {typeof globalThis.fetch} */ (async () => Response.json({ access_token: 'a', refresh_token: 'r', expires_in: 3599, ...(granted && { scope: granted }) }))
+    const tokens = await finish(new URLSearchParams({ state: 's', code: 'c' }), pending, fetch)
+    assert.equal(tokens.scope, 'User.Read Mail.Read openid')
+    granted = ''
+    assert.equal((await refresh(tokens, fetch)).scope, 'User.Read Mail.Read openid')
+    granted = 'User.Read'
+    assert.equal((await refresh(tokens, fetch)).scope, 'User.Read')
+  })
+
+  test('policy connects a service for everyone, the organisation’s, once it is reached, from the browser or through the gateway; someone who connected it themselves keeps theirs alone', () => {
+    const url = 'https://graph.microsoft.com/v1.0/'
+    const m365 = { id: 'microsoft-365', name: 'Microsoft 365', url, auth: 'oauth' }
+    assert.deepEqual(everyone({ directory: [{ id: 'microsoft-365', clientId: 'corp-app' }] }), [])
+    assert.deepEqual(everyone({ directory: [{ id: 'microsoft-365', clientId: 'corp-app', connected: true }, { id: 'notion', connected: false }] }), [m365])
+    assert.deepEqual(everyone({ directory: [{ id: 'microsoft-365', connected: true }] }), [])
+    const served = { hosts: ['login.microsoftonline.com'], clients: { 'https://login.microsoftonline.com/common/v2.0': 'web-app' } }
+    assert.deepEqual(everyone({ directory: [{ id: 'microsoft-365', connected: true }] }, served), [{ ...m365, gateway: true }])
+    assert.deepEqual(everyone({ directory: [{ id: 'microsoft-365', clientId: 'corp-app', connected: true }] }, {}, [{ url }]), [])
+  })
+
   test('signing in: Microsoft’s sign-in for any account found at the issuer its entry names, though its document says {tenantid}, asking for every scope at once, with no resource indicator', async () => {
     const m365 = DIRECTORY.find((entry) => entry.id === 'microsoft-365')
     const common = 'https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration'
@@ -969,7 +1063,13 @@ describe('Microsoft Graph, for every Microsoft account (D382)', () => {
     const { url, pending } = await authorization(metadata, { clientId: 'jean-spa', redirectURI: 'https://jean.example/', scopes: m365?.scopes, params: m365?.authorize })
     const params = new URL(url).searchParams
     assert.deepEqual([params.get('scope'), params.get('resource'), params.get('prompt'), params.get('code_challenge_method')],
-      ['User.Read Mail.ReadWrite Mail.Send Calendars.ReadWrite Files.ReadWrite Files.Read.All openid email offline_access', null, null, 'S256'])
+      ['User.Read Mail.ReadWrite Mail.Send Calendars.ReadWrite Files.ReadWrite Files.Read.All Contacts.Read People.Read openid email offline_access', null, null, 'S256'])
+    // The scopes policy names for it are asked for alone, offline_access too only where it names it; none named, the default stays.
+    const exact = (/** @type {string[] | undefined} */ scopes) => known({ directory: [{ id: 'microsoft-365', clientId: 'corp-app', ...(scopes && { scopes }) }] }).find((entry) => entry.id === 'microsoft-365')
+    const asked = async (/** @type {any} */ entry) => new URL((await authorization(metadata, { clientId: 'corp-app', redirectURI: 'https://jean.example/', scopes: entry?.scopes, only: entry?.only })).url).searchParams.get('scope')
+    assert.equal(await asked(exact(['User.Read', 'Mail.Read', 'Chat.Read'])), 'User.Read Mail.Read Chat.Read')
+    assert.equal(await asked(exact(['User.Read', 'Mail.Read', 'offline_access'])), 'User.Read Mail.Read offline_access')
+    assert.equal(await asked(exact()), params.get('scope'))
     assert.equal(pending.issuer, 'https://login.microsoftonline.com/common/v2.0')
     // A tenant's own document doesn't stand for every account's.
     await assert.rejects(discover(String(m365?.url), { issuer: m365?.app, fetch: signIn('https://login.microsoftonline.com/9188040d-6c67-4c5b-b112-36a304b66dad/v2.0') }), /does not say where to sign in/)

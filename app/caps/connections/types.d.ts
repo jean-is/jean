@@ -98,7 +98,12 @@ export type GraphMail = {
 export type GraphAttachment = { name: string, isInline?: boolean }
 export type GraphCalendar = { id: string, name: string, isDefaultCalendar?: boolean, canEdit?: boolean }
 type GraphTime = { dateTime: string, timeZone: string }
-export type GraphEvent = { id: string, webLink: string, subject?: string, start?: GraphTime, end?: GraphTime, location?: { displayName?: string }, attendees?: Recipient[], bodyPreview?: string }
+export type GraphEvent = { id: string, webLink: string, subject?: string, start?: GraphTime, end?: GraphTime, location?: { displayName?: string }, attendees?: Recipient[], bodyPreview?: string, onlineMeeting?: { joinUrl?: string } }
+/** A message in a Teams chat or channel, its words in HTML; a chat's last message as its list gives it. */
+export type TeamsMessage = { createdDateTime?: string, messageType?: string, from?: { user?: { displayName?: string } } | null, body?: { content?: string } }
+export type TeamsChat = { id: string, webUrl: string, topic?: string | null, members?: { displayName?: string }[], lastMessagePreview?: TeamsMessage }
+/** Someone in the user's contacts, or among the people they work with. */
+export type GraphPerson = { displayName?: string, jobTitle?: string, department?: string, companyName?: string, emailAddresses?: { address?: string }[], scoredEmailAddresses?: { address?: string }[], businessPhones?: string[], mobilePhone?: string }
 /** A file in OneDrive or SharePoint; one shared with the user points at the other's. */
 export type DriveItem = {
   id: string

@@ -14,11 +14,12 @@ import { locale } from '../../core/i18n.js'
 import { byName } from '../../core/search.js'
 
 /**
- * @typedef {{ id: string, name: string, group?: string, url?: string, servers?: string[], includes?: string[], clientId?: string, ready?: boolean, hidden?: boolean, logo?: string, signIn?: string[], app?: string, scopes?: string[], authorize?: Record<string, string>, searches?: boolean, api?: boolean }} Known
+ * @typedef {{ id: string, name: string, group?: string, url?: string, servers?: string[], includes?: string[], clientId?: string, ready?: boolean, hidden?: boolean, logo?: string, signIn?: string[], app?: string, scopes?: string[], only?: boolean, authorize?: Record<string, string>, searches?: boolean, api?: boolean, connected?: boolean }} Known
  *   group: what it is for, which Connect a service lists it under (GROUPS; Other when policy names none);
  *   servers: the further servers its one sign-in reaches; includes: the products it reaches, by name;
  *   clientId: one registered with the service, when it can't register Jean; searches: it searches the web;
- *   scopes: what its sign-in asks for, at once, rather than connecting without one first; authorize: more for its sign-in's address;
+ *   scopes: what its sign-in asks for, at once, rather than connecting without one first; only: those alone, as policy named them, with no
+ *   `openid`, `email` or `offline_access` added (D382); authorize: more for its sign-in's address; connected: policy connects it for everyone (everyone());
  *   signIn: the hosts its sign-in is reached at besides its server's, which a gateway relays to as well;
  *   app: its sign-in server (the issuer), when it takes only apps registered there: the one policy names, or else the gateway's;
  *   api: no MCP server, but an API that answers browsers, which Jean's own tools call (apis.js), its sign-in through the gateway unless it is ready
@@ -63,8 +64,10 @@ export const DIRECTORY = Object.freeze(/** @type {Known[]} */ ([
       'calendar.calendarlist.readonly', 'chat.messages.readonly', 'chat.spaces.readonly', 'chat.messages.create', 'contacts.readonly', 'directory.readonly', 'userinfo.profile']) },
   // Any Microsoft account's, through Microsoft Graph, its sign-in too from the browser: Microsoft's answers
   // browsers for an app registered there as a single-page app, whose id policy gives, one sign-in for all (D382).
+  // It asks for what a personal account may grant too; Teams, transcripts and shared mailboxes, which only work
+  // accounts have, are policy's to ask for, and their tools come with the scopes granted (apis.js).
   { id: 'microsoft-365', group: 'mail', name: 'Microsoft 365', url: 'https://graph.microsoft.com/v1.0/', api: true, ready: true, includes: ['Outlook', 'OneDrive', 'SharePoint'], signIn: ['login.microsoftonline.com'],
-    app: 'https://login.microsoftonline.com/common/v2.0', scopes: ['User.Read', 'Mail.ReadWrite', 'Mail.Send', 'Calendars.ReadWrite', 'Files.ReadWrite', 'Files.Read.All'], logo: 'microsoft-365.svg' },
+    app: 'https://login.microsoftonline.com/common/v2.0', scopes: ['User.Read', 'Mail.ReadWrite', 'Mail.Send', 'Calendars.ReadWrite', 'Files.ReadWrite', 'Files.Read.All', 'Contacts.Read', 'People.Read'], logo: 'microsoft-365.svg' },
   { id: 'slack', group: 'talk', name: 'Slack', url: 'https://mcp.slack.com/mcp', signIn: ['slack.com'], app: 'https://mcp.slack.com', logo: 'slack.svg' },
   // GitHub's own server answers browsers, but its sign-in neither does nor registers apps. Its scopes are those of its
   // default tools, asked at once, since Jean doesn't follow its asking for more mid-task (D468).
@@ -118,7 +121,7 @@ export function known(policy = {}, { hosts = [], clients = {} } = {}) {
   const entries = new Map(DIRECTORY.map((entry) => [entry.id, entry]))
   for (const change of policy.directory ?? []) {
     const id = String(change.id ?? '')
-    if (id && (entries.has(id) || change.name)) entries.set(id, /** @type {Known} */ ({ ready: true, ...entries.get(id), ...change, id }))
+    if (id && (entries.has(id) || change.name)) entries.set(id, /** @type {Known} */ ({ ready: true, ...entries.get(id), ...change, ...(change.scopes && { only: true }), id }))
   }
   const relayed = (/** @type {Known} */ { url, servers = [], signIn = [], app, clientId, api }) => [...(api ? [] : [String(url), ...servers]), ...signIn.map((host) => `https://${host}/`)].every((address) => covers(hosts, new URL(address))) && (!app || Boolean(clientId ?? clients[app]))
   const only = policy.directoryOnly && new Set([...policy.directoryOnly, ...(policy.directory ?? []).map((change) => String(change.id))])
@@ -141,6 +144,15 @@ export const searchers = (listed, connections) => listed.filter((entry) => entry
  * @param {string} url @param {{ directory?: Partial<Known>[], directoryOnly?: string[] }} [policy] @param {Served} [served]
  */
 export const knownFor = (url, policy, served) => known(policy, served).find((entry) => entry.via && entry.url === url)
+
+/**
+ * The connections the organisation makes for everyone from its directory (`connected`, D382), while reached: its own, locked as policy's
+ * `connections` are, each signed in on first use. A service the person connected themselves stays theirs alone.
+ * @param {{ directory?: Partial<Known>[], directoryOnly?: string[] }} [policy] @param {Served} [served] @param {{ url: string }[]} [theirs]
+ * @returns {import('../../core/settings.js').Connection[]}
+ */
+export const everyone = (policy = {}, served = {}, theirs = []) => (policy.directory?.some((change) => change.connected) ? known(policy, served) : [])
+  .flatMap(({ id, name, url, via, connected, servers }) => (connected && via && url && !theirs.some((one) => one.url === url) ? { id, name, url, auth: /** @type {const} */ ('oauth'), ...(via === 'gateway' && { gateway: true }), ...(servers && { servers }) } : []))
 
 /**
  * Whether the gateway relays to an address: HTTPS, or HTTP on this computer, to a host it names

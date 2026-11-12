@@ -13,7 +13,7 @@
 import { html, nothing } from 'lit-html'
 import { signal, computed, effect } from '@preact/signals-core'
 import { Element, define } from './base.js'
-import { app, effective, openFile } from './state.js'
+import { app, openFile } from './state.js'
 import { loaded, unlock, isDenied, SIZES } from './caps.js'
 import { ROOM_ICONS } from './dialogs.js'
 import { CATALOGUE } from './discovery.js'
@@ -248,7 +248,7 @@ async function services(show) {
   if (!loaded.value.has('connections')) return
   const connections = await import('../caps/connections/connections.js')
   const known = connections.services()
-  const have = new Set([...(app.policy.connections ?? []), ...(effective.value.settings.connections ?? [])].map((connection) => connection.url))
+  const have = new Set(connections.all().map((connection) => connection.url))
   const list = new Intl.ListFormat(intlLocales(), { type: 'unit', style: 'short' })
   show({ heading: t('cap.connections.yes'), options: known.filter((entry) => entry.via && entry.url && !have.has(entry.url)).map((entry) => ({
     icon: logoOf(entry.name, entry.logo), label: entry.name, ...(entry.includes && { detail: list.format(entry.includes) }), add: true,

@@ -22,7 +22,7 @@ import { returnTo } from '../../ui/router.js'
 import { mcpClient, MCPError, searchesWeb, toolsOf, withArguments } from './mcp.js'
 import { apiClient } from './apis.js'
 import { discover, registerClient, authorization, finish, refresh } from './auth.js'
-import { known, knownFor, covers, logoAt } from './directory.js'
+import { known, knownFor, covers, logoAt, everyone } from './directory.js'
 import { slug, serviceURL } from '../../core/settings.js'
 import { LLMError, mayTrain, mayRead } from '../../core/llm.js'
 import { STRICT } from '../../core/rules.js'
@@ -54,8 +54,12 @@ export const message = signal(/** @type {{ kind: 'busy' | 'error', text: string 
 /** Settings' Connections, from ./page.js, loaded the first time it shows: declared before the slot that draws it. */
 const page = lazyPage(() => import('./page.js'))
 
-/** The organisation's connections (policy), then the user's. @returns {Connection[]} */
-export const all = () => [...(app.policy.connections ?? []), ...(effective.value.settings.connections ?? [])]
+/** The organisation's: policy's connections, then the services its directory connects for everyone (D382). @returns {Connection[]} */
+const organisation = () => [...(app.policy.connections ?? []), ...everyone(app.policy, served.value, effective.value.settings.connections)]
+/** Whether a connection is the organisation's, by its id, the gateway's answer or not. @param {Connection} connection */
+const theirs = ({ id }) => [...app.policy.connections ?? [], ...(app.policy.directory ?? []).filter((/** @type {{ connected?: boolean }} */ one) => one.connected)].some((one) => one.id === id)
+/** The organisation's connections, then the user's. @returns {Connection[]} */
+export const all = () => [...organisation(), ...(effective.value.settings.connections ?? [])]
 /** Those of the room's project: the connections of every project, and those kept to this one. */
 const here = () => all().filter((connection) => !connection.projects || connection.projects.includes(app.project.value.id))
 /** Whether a connection reaches Google's APIs, whose user data no model may be trained on (Limited Use, D440). @param {Connection} connection */
@@ -119,7 +123,9 @@ const clients = new Map()
 function client(connection, address = connection.url) {
   const key = `${connection.id} ${connection.auth} ${address}`
   const authorization = () => credential(connection)
-  return /** @type {ReturnType<typeof mcpClient>} */ (clients.get(key) ?? clients.set(key, apiClient({ url: address, authorization }) ?? mcpClient({ url: address, client: { name: BRAND.name, version: '0.6' }, authorization, fetch: reach(connection) })).get(key))
+  // What its sign-in granted, which an API's tools are offered by.
+  const granted = () => getSecret(app.fs, connection.id).then((secret) => JSON.parse(String(secret)).scope).catch(() => undefined)
+  return /** @type {ReturnType<typeof mcpClient>} */ (clients.get(key) ?? clients.set(key, apiClient({ url: address, authorization, granted }) ?? mcpClient({ url: address, client: { name: BRAND.name, version: '0.6' }, authorization, fetch: reach(connection) })).get(key))
 }
 
 /** What the brain reads when a service wants the user to sign in, first or again. @param {Connection} connection */
@@ -307,16 +313,16 @@ export function nameFor(url) {
   return name[0].toUpperCase() + name.slice(1)
 }
 
-/** Kept, and in Settings its page opened, which says what Jean may do there. @param {Connection} connection @param {(McpTool & { at: string })[]} tools */
+/** Kept, the organisation's as policy has it, and in Settings its page opened, which says what Jean may do there. @param {Connection} connection @param {(McpTool & { at: string })[]} tools */
 async function save(connection, tools) {
-  const again = (app.settings.value.connections ?? []).some((other) => other.id === connection.id)
+  const again = theirs(connection) || (app.settings.value.connections ?? []).some((other) => other.id === connection.id)
   asked.add(connection.id)
-  await updateSettings({ connections: [...(app.settings.value.connections ?? []).filter((other) => other.id !== connection.id), connection] })
+  if (!theirs(connection)) await updateSettings({ connections: [...(app.settings.value.connections ?? []).filter((other) => other.id !== connection.id), connection] })
   status.value = { ...status.value, [connection.id]: { tools } }
   message.value = null
   notify(t('connections.connected', { service: called(connection) }))
   if (app.dialog.peek() === 'settings' && sectionOpen() === 'connections') app.section.value = `connections/${connection.id}`
-  // Its host, never its whole address, which may hold a key; signed in again, it was there already (D421).
+  // Its host, never its whole address, which may hold a key; signed in again, or the organisation's, it was there already (D421).
   if (!again) act('connection.add', { id: connection.id, address: new URL(connection.url).hostname, auth: connection.auth, title: connection.name })
 }
 
@@ -387,7 +393,9 @@ export async function signIn(connection, challenge) {
     const given = entry?.clientId ?? (connection.gateway ? served.value.clients[metadata.issuer] : undefined)
     const { clientId, scope: registered } = given ? { clientId: given } : await registerClient(metadata, { redirectURI, name: BRAND.name, fetch })
     const another = all().some((other) => other.id !== connection.id && other.url === connection.url)
-    const { url, pending } = await authorization(metadata, { clientId, redirectURI, another, scopes: entry?.scopes, params: entry?.authorize, registered })
+    // At the organisation's own identity provider, the account its sign-in has, whose session it holds already, signs in.
+    const hint = !another && new URL(metadata.issuer).host === new URL(app.policy.signIn?.issuer ?? 'x:').host && (await import('../signin/signin.js')).account.value
+    const { url, pending } = await authorization(metadata, { clientId, redirectURI, another, scopes: entry?.scopes, only: entry?.only, params: { ...entry?.authorize, ...(hint && { login_hint: hint }) }, registered })
     sessionStorage.setItem(PENDING, JSON.stringify({ ...pending, connection: { ...connection, auth: 'oauth' }, route: location.hash, draft: app.draft.value }))
     location.assign(url)
   } catch (error) {

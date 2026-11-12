@@ -11,8 +11,8 @@ import { createVerifier, challengeS256 } from '../../core/oauth.js'
  * @typedef {{ issuer: string, authorization_endpoint: string, token_endpoint: string, registration_endpoint?: string, end_session_endpoint?: string, scopes_supported?: string[],
  *   authorization_response_iss_parameter_supported?: boolean, resource?: string, scope?: string, [field: string]: unknown }} Metadata  the sign-in server's, with the resource and scopes to ask for
  * @typedef {{ state: string, verifier: string, clientId: string, redirectURI: string, issuer: string, issRequired: boolean, tokenEndpoint: string, resource?: string }} Pending
- * @typedef {{ access: string, refresh?: string, expiresAt?: number, tokenEndpoint: string, clientId: string, resource?: string, account?: string, name?: string, groups?: string[] | null, idToken?: string }} Tokens
- *   account: who signed in, name: what they are called, groups: the directory's groups and roles they are in (D429)
+ * @typedef {{ access: string, refresh?: string, expiresAt?: number, tokenEndpoint: string, clientId: string, resource?: string, scope?: string, account?: string, name?: string, groups?: string[] | null, idToken?: string }} Tokens
+ *   scope: what the service granted, where it says, which an API's tools are offered by (apis.js); account: who signed in, name: what they are called, groups: the directory's groups and roles they are in (D429)
  */
 
 /** `Bearer resource_metadata="…", scope="…"` → its parameters. @param {string | null | undefined} header @returns {Record<string, string>} */
@@ -93,7 +93,7 @@ export async function registerClient(metadata, { redirectURI, name, fetch = glob
  * A service Jean knows may say what to ask for (`scopes`) and what more its sign-in wants (`params`, D344).
  * Who signs in (an ID token) and renewals are asked for too, where the sign-in server offers them
  * and the client's registration allows them (`registered`, its scopes, when the service said, D469), unless
- * `scopes` are all it asks for (`only`: the organisation's sign-in, `scopesFor()`).
+ * `scopes` are all it asks for (`only`: the organisation's sign-in, `scopesFor()`, or what policy names for a service, D382).
  * @param {Metadata} metadata @param {{ clientId: string, redirectURI: string, another?: boolean, scopes?: string[], params?: Record<string, string>, registered?: string, only?: boolean }} options
  * @returns {Promise<{ url: string, pending: Pending }>}
  */
@@ -130,10 +130,10 @@ export async function finish(params, pending, fetch = globalThis.fetch) {
   return token(pending, { grant_type: 'authorization_code', code, redirect_uri: pending.redirectURI, code_verifier: pending.verifier }, fetch)
 }
 
-/** New tokens before the access token runs out; the refresh token stays when no new one comes. @param {Tokens} tokens @param {typeof globalThis.fetch} [fetch] */
+/** New tokens before the access token runs out; the refresh token, and what was granted, stay when no new ones come. @param {Tokens} tokens @param {typeof globalThis.fetch} [fetch] */
 export async function refresh(tokens, fetch = globalThis.fetch) {
   if (!tokens.refresh) throw new Error('Sign in again.')
-  return { refresh: tokens.refresh, ...await token(tokens, { grant_type: 'refresh_token', refresh_token: tokens.refresh }, fetch) }
+  return { refresh: tokens.refresh, ...(tokens.scope && { scope: tokens.scope }), ...await token(tokens, { grant_type: 'refresh_token', refresh_token: tokens.refresh }, fetch) }
 }
 
 /** @param {{ tokenEndpoint: string, clientId: string, resource?: string }} client @param {Record<string, string>} form @param {typeof globalThis.fetch} fetch @returns {Promise<Tokens>} */
@@ -142,7 +142,7 @@ async function token({ tokenEndpoint, clientId, resource }, form, fetch) {
   const res = await fetch(tokenEndpoint, { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded', accept: 'application/json' }, body })
   const json = await res.json().catch(() => null)
   if (!res.ok || !json?.access_token) throw new Error(json?.error_description ?? json?.error ?? `HTTP ${res.status}`)
-  return { access: json.access_token, ...(json.refresh_token && { refresh: json.refresh_token }), ...(json.expires_in && { expiresAt: Date.now() + json.expires_in * 1000 }), tokenEndpoint, clientId, resource, ...(json.id_token && { idToken: json.id_token, ...await whoOf(json.id_token) }) }
+  return { access: json.access_token, ...(json.refresh_token && { refresh: json.refresh_token }), ...(json.expires_in && { expiresAt: Date.now() + json.expires_in * 1000 }), tokenEndpoint, clientId, resource, ...(typeof json.scope === 'string' && { scope: json.scope }), ...(json.id_token && { idToken: json.id_token, ...await whoOf(json.id_token) }) }
 }
 
 /**

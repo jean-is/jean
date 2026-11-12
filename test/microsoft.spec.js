@@ -15,7 +15,7 @@ async function connectMicrosoft(page) {
   await openSettings(page, 'Connections')
   await connectTile(page, 'Microsoft 365')
   await expect(page.locator('.toast')).toContainText('Microsoft 365 is connected')
-  await expect(page.locator('app-settings dialog[open] .data-head')).toContainText('12 actions')
+  await expect(page.locator('app-settings dialog[open] .data-head')).toContainText('14 actions')
 }
 
 test('Entra ID signs the person in with the tenant’s single-page app, the AI gateway answers with its token, and Microsoft 365 is reached through the organisation’s gateway', async ({ page, baseURL }) => {
@@ -59,7 +59,7 @@ test('Microsoft 365 connects through the organisation’s gateway, which adds it
   const connecting = microsoft.authorized[1]
   expect(connecting.origin + connecting.pathname).toBe(AT)
   expect(connecting.searchParams.get('client_id')).toBe(WEB)
-  expect(connecting.searchParams.get('scope')?.split(' ')).toEqual(['User.Read', 'Mail.ReadWrite', 'Mail.Send', 'Calendars.ReadWrite', 'Files.ReadWrite', 'Files.Read.All', 'openid', 'email', 'offline_access'])
+  expect(connecting.searchParams.get('scope')?.split(' ')).toEqual(['User.Read', 'Mail.ReadWrite', 'Mail.Send', 'Calendars.ReadWrite', 'Files.ReadWrite', 'Files.Read.All', 'Contacts.Read', 'People.Read', 'openid', 'email', 'offline_access'])
   expect(connecting.searchParams.get('code_challenge_method')).toBe('S256')
   expect(microsoft.relayed).toContain(`${ISSUER}/.well-known/openid-configuration`)
   expect(await page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.connections?.map(({ name, account, gateway }) => ({ name, account, gateway }))))
@@ -121,4 +121,28 @@ test('Microsoft 365’s calendar and files work as its mail does: an event added
   // Every request to Graph had Graph's token, from the one sign-in, with every scope it asked for.
   expect(new Set(microsoft.graph)).toEqual(new Set([microsoft.graph[0]]))
   expect(microsoft.graph[0]).toMatch(/^Bearer graph-\d+$/)
+})
+
+test('policy connects Microsoft 365 for everyone with the scopes it names, those alone: the person signs in from its row, as the organisation’s sign-in has them, and only the actions those scopes allow are offered', async ({ page, baseURL, browserName }) => {
+  test.skip(browserName === 'webkit', NOT_KEPT)
+  const microsoft = await fakeMicrosoft(page, { jean: String(baseURL) })
+  await withPolicy(page, { ...POLICY, directory: [{ id: 'microsoft-365', app: ISSUER, scopes: ['User.Read', 'Mail.Read', 'offline_access'], connected: true }] })
+  await start(page)
+  // There from the start, the organisation's, its row asking the person to sign in.
+  const wait = (await openSettings(page, 'Connections')).locator('.connection-wait')
+  await expect(wait).toContainText('Microsoft 365 needs you to sign in')
+  expect(microsoft.authorized).toHaveLength(1)
+  await wait.getByRole('button', { name: 'Sign in' }).click()
+  await expect(page.locator('.toast')).toContainText('Microsoft 365 is connected')
+  // Entra was asked for policy's scopes and nothing more, for the account the organisation's sign-in has.
+  const connecting = microsoft.authorized[1]
+  expect(connecting.searchParams.get('client_id')).toBe(WEB)
+  expect(connecting.searchParams.get('scope')?.split(' ')).toEqual(['User.Read', 'Mail.Read', 'offline_access'])
+  expect(connecting.searchParams.get('login_hint')).toBe('ana@acme.example')
+  // Mail read alone: two actions, on the organisation's page, kept nowhere among the person's own.
+  const dialog = page.locator('app-settings dialog[open]')
+  await expect(dialog.locator('.data-head')).toContainText('2 actions')
+  await expect(dialog.locator('.settings-panel')).toContainText('Set by your organization')
+  await expect(dialog.getByRole('button', { name: 'Disconnect' })).toHaveCount(0)
+  expect(await page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.connections ?? [])).toEqual([])
 })
