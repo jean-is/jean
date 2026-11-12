@@ -478,7 +478,7 @@ describe('the services Jean knows (D95)', () => {
   test('each is reached from the browser, through the gateway that relays to it and its sign-in and holds the app it takes, or not yet; those reached first, each part by name (D191, D214)', () => {
     assert.equal(new Set(DIRECTORY.map((entry) => entry.id)).size, DIRECTORY.length)
     const services = known()
-    assert.deepEqual(services.slice(0, 4).map((entry) => [entry.id, entry.via]), [['atlassian', 'browser'], ['attio', 'browser'], ['canva', 'browser'], ['clickup', 'browser']])
+    assert.deepEqual(services.slice(0, 4).map((entry) => [entry.id, entry.via]), [['amplitude', 'browser'], ['atlassian', 'browser'], ['attio', 'browser'], ['canva', 'browser']])
     for (const entry of services.slice(0, 4)) assert.match(String(entry.url), /^https:\/\//)
     assert.equal(services.length, DIRECTORY.length)
     // Microsoft's sign-in answers browsers, but only for the app policy names, or the gateway's (D382).
@@ -508,7 +508,7 @@ describe('the services Jean knows (D95)', () => {
     assert.equal(known({}, { hosts: ['accounts.google.com', 'oauth2.googleapis.com'] }).find((entry) => entry.id === 'gmail')?.via, null)
     // The gateway as it comes reaches every service that registers Jean, and with an app for each sign-in that doesn't, every one with an address.
     const relayed = (/** @type {Record<string, string>} */ clients) => known({}, { hosts: [...SERVICES], clients }).filter((entry) => entry.via === 'gateway').map((entry) => entry.id)
-    assert.deepEqual(relayed({}), ['airtable', 'calendly', 'dropbox', 'gamma', 'gitlab', 'monday', 'otter', 'todoist', 'zapier'])
+    assert.deepEqual(relayed({}), ['airtable', 'calendly', 'dropbox', 'gamma', 'gitlab', 'ifttt', 'monday', 'otter', 'picsart', 'todoist', 'zapier'])
     const apps = Object.fromEntries(DIRECTORY.flatMap((entry) => (entry.app ? [[entry.app, `${entry.id}-app`]] : [])))
     assert.deepEqual(relayed(apps), byName(DIRECTORY.filter((entry) => (!entry.ready || entry.app) && entry.url), (entry) => entry.name).map((entry) => entry.id))
     assert.equal(through.find((entry) => entry.id === 'servicenow')?.via, null)

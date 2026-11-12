@@ -6,7 +6,7 @@
 // needs no sign-in, CORS on the service; `npm run directory` checks again); otherwise through the gateway, once it relays to
 // the service and its sign-in and holds the app a sign-in that registers none takes (D191, D214);
 // otherwise not yet, shown but disabled. They are the services people
-// at work use most, never a developer's tools but GitHub and GitLab, where teams track work, or a payment's (D192, D468, D469). A logo is the brand's own
+// at work use most, and a few at home (Instacart), never a developer's tools but GitHub and GitLab, where teams track work, or a payment's (D192, D468, D469). A logo is the brand's own
 // file, in logos/ (D159). One that searches the web says so (`searches`), and Settings › Web
 // search offers it until it is connected; once it is, its tools say it themselves (D271).
 // Host-agnostic: no DOM.
@@ -46,6 +46,10 @@ export const DIRECTORY = Object.freeze(/** @type {Known[]} */ ([
   { id: 'wix', group: 'other', name: 'Wix', url: 'https://mcp.wix.com/mcp', ready: true, logo: 'wix.png' },
   { id: 'attio', group: 'customers', name: 'Attio', url: 'https://mcp.attio.com/mcp', ready: true, logo: 'attio.svg' },
   { id: 'fireflies', group: 'talk', name: 'Fireflies', url: 'https://api.fireflies.ai/mcp', ready: true, logo: 'fireflies.png' },
+  // What people do on a product or a site, each in its US region: an organisation elsewhere gives its region's address in policy.
+  { id: 'amplitude', group: 'customers', name: 'Amplitude', url: 'https://mcp.amplitude.com/mcp', ready: true, logo: 'amplitude.png' },
+  { id: 'mixpanel', group: 'customers', name: 'Mixpanel', url: 'https://mcp.mixpanel.com/mcp', ready: true, logo: 'mixpanel.png' },
+  { id: 'contentsquare', group: 'customers', name: 'Contentsquare', url: 'https://api.contentsquare.com/mcp', ready: true, logo: 'contentsquare.png' },
   // Web search with no key and no sign-in (D192).
   { id: 'exa', group: 'other', name: 'Exa', url: 'https://mcp.exa.ai/mcp', ready: true, logo: 'exa.svg', searches: true },
   // Any Google account's, each asking only for what its own tools need (D349).
@@ -76,6 +80,7 @@ export const DIRECTORY = Object.freeze(/** @type {Known[]} */ ([
   { id: 'asana', group: 'tasks', name: 'Asana', url: 'https://mcp.asana.com/v2/mcp', signIn: ['app.asana.com'], app: 'https://app.asana.com', logo: 'asana.svg' },
   { id: 'zoom', group: 'talk', name: 'Zoom', url: 'https://mcp.zoom.us/mcp/zoom/streamable', signIn: ['zoom.us'], app: 'https://zoom.us', logo: 'zoom.png' },
   { id: 'hubspot', group: 'customers', name: 'HubSpot', url: 'https://mcp.hubspot.com/', app: 'https://mcp.hubspot.com', logo: 'hubspot.png' },
+  { id: 'instacart', group: 'other', name: 'Instacart', url: 'https://fig-mcp.instacart.com/mcp', signIn: ['connect.instacart.com'], app: 'https://fig-mcp.instacart.com', logo: 'instacart.png' },
   // Registers only the apps made on its site.
   { id: 'box', group: 'files', name: 'Box', url: 'https://mcp.box.com/', signIn: ['api.box.com'], app: 'https://api.box.com', logo: 'box.png' },
   // Their sign-in refuses browsers, and most of them their service too.
@@ -84,12 +89,14 @@ export const DIRECTORY = Object.freeze(/** @type {Known[]} */ ([
   { id: 'calendly', group: 'mail', name: 'Calendly', url: 'https://mcp.calendly.com/', signIn: ['calendly.com'], logo: 'calendly.svg' },
   { id: 'otter', group: 'talk', name: 'Otter', url: 'https://mcp.otter.ai/mcp', signIn: ['otter.ai'], logo: 'otter.png' },
   { id: 'gamma', group: 'design', name: 'Gamma', url: 'https://mcp.gamma.app/mcp', signIn: ['auth.gamma.app'], logo: 'gamma.svg' },
+  { id: 'picsart', group: 'design', name: 'Picsart', url: 'https://api.picsart.com/gen-ai/mcp', signIn: ['auth.picsart.com'], logo: 'picsart.svg' },
   { id: 'zapier', group: 'other', name: 'Zapier', url: 'https://mcp.zapier.com/api/mcp/mcp', logo: 'zapier.png' },
   // A business's account, cards and invoices, not a payment service: its server sends no money, and a
   // transfer it prepares waits for approval in Qonto's own app (D352). It answers no browser, and registers only the redirects on its list.
   { id: 'qonto', group: 'other', name: 'Qonto', url: 'https://mcp.qonto.com/mcp', app: 'https://mcp.qonto.com', logo: 'qonto.png' },
-  // Its service answers no browser.
+  // Their service answers no browser.
   { id: 'todoist', group: 'tasks', name: 'Todoist', url: 'https://ai.todoist.net/mcp', signIn: ['todoist.com'], logo: 'todoist.png' },
+  { id: 'ifttt', group: 'other', name: 'IFTTT', url: 'https://ifttt.com/mcp', logo: 'ifttt.svg' },
   // Each company's own instance, whose address policy gives, with the app its admin registered
   // there, since it registers none; it answers no browser, whatever the address (D283).
   { id: 'servicenow', group: 'tasks', name: 'ServiceNow', ready: false, logo: 'servicenow.png' },

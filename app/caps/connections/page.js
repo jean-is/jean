@@ -187,8 +187,11 @@ function page(connection) {
 
 // ─── Connecting one ──────────────────────────────────────────────────────────
 
-/** Tiles that open a service's page, a tick on one connected already (another account is its page's). @param {Listed[]} entries */
-const tiles = (entries) => html`<ul class="services">${entries.map((entry) => html`<li><button class="service ${entry.via ? '' : 'is-soon'}" data-page=${`add/${entry.id}`}
+/**
+ * Tiles that open a service's page, a tick on one connected already (another account is its page's); one whose name holds a
+ * word too long for a column (Contentsquare) takes two, as one that lists its products does. @param {Listed[]} entries
+ */
+const tiles = (entries) => html`<ul class="services">${entries.map((entry) => html`<li class=${/\S{12}/.test(entry.name) ? 'is-wide' : nothing}><button class="service ${entry.via ? '' : 'is-soon'}" data-page=${`add/${entry.id}`}
   @click=${() => go(entry.via ? `add/${entry.id}` : 'later')}>${monogram(entry)}<span><strong><bdi>${wrapped(entry.name)}</bdi></strong>${entry.includes
     ? html`<small class="includes">${products(entry.includes)}</small>` : !entry.via ? html`<small>${t('connections.later')}</small>` : nothing}</span>${all().some((connection) => connection.url === entry.url)
     ? html`<span class="connection-had">${icons.check}<span class="visually-hidden">${t('connections.yours')}</span></span>` : nothing}</button></li>`)}</ul>`
@@ -235,7 +238,7 @@ function later() {
         updateSettings({ urls: address ? { ...urls, gateway: address } : urls })
       }}></label>
     ${set ? html`<p class="hint">${lockedBy()}</p>` : nothing}
-    <ul class="services">${soon.map((entry) => html`<li><span class="service is-soon">${monogram(entry)}<span><strong><bdi>${wrapped(entry.name)}</bdi></strong>${entry.includes
+    <ul class="services">${soon.map((entry) => html`<li class=${/\S{12}/.test(entry.name) ? 'is-wide' : nothing}><span class="service is-soon">${monogram(entry)}<span><strong><bdi>${wrapped(entry.name)}</bdi></strong>${entry.includes
       ? html`<small class="includes">${products(entry.includes)}</small>` : nothing}</span></span></li>`)}</ul>`
 }
 
