@@ -10,7 +10,7 @@
     "In {share}, tick each person to work with, among the people you’ve added in {people} ({meet}), then press {together}. Each gets a card with {join}, and has a week to join.",
     "Or, for a link anyone can join, press {inviteLink}: the link is copied, to send the way you send anything, a message or an email. Whoever opens it can edit at first; you can change each person’s role afterwards.",
     "The person who opens the link answers one question: {yourName}. Then {join}: it opens in {name} on their side, in a copy of their own. Nothing to install, no account.",
-    "From then on, {share} says who you work on it with, and has the link with {copyLink}, if there is one. The faces at the top show who is here now; press them to open {inCollection}, {inTask}, {inDoc} or {inDeck}: who is in, how each person came, and who is here."
+    "From then on, {share} says who you work on it with, and has the link with {copyLink}, if there is one. The faces at the top show who is here now; press them to open {inCollection}, {inTask}, {inDoc} or {inDeck}: who is in, how each person came, and who is here. In a document, you see where each person is: their caret in their colour, their name over it, and what they select."
   ],
   "good": [
     "In {inCollection}, and the same for a task, a document or slides, the person who started it gives each person {edit} or {view}, presses {block}, or {remove}: everyone else moves along by themselves, and the person removed keeps what they had. {linkOff} does the same, removing no one; only people who haven’t joined yet then need a new link. {stop} ends it for everyone; anyone else can press {leave}.",

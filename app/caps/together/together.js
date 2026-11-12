@@ -1,8 +1,8 @@
 // Together (D733): people work on one thing at once, each keeping their own copy, a journal on the relay keeping the copies in step.
 // This module registers it: Share's "Work on it together" (./page.js `how`), the faces at the head of a shared thing's pane, its dialog,
 // and the #/join/ address. The visible tab follows every circle kept here (./engine.js), one tab at a time across tabs, and lets go 30
-// seconds after Jean is hidden; each member still in says so every 20 seconds, which the faces show. Found from Share, an invitation or
-// a link: nothing of it shows before.
+// seconds after Jean is hidden; each member still in says so every 20 seconds, which the faces show, and as their caret moves in one of
+// its documents, which the others' copies draw (./carets.js). Found from Share, an invitation or a link: nothing of it shows before.
 import { html, nothing } from 'lit-html'
 import { effect } from '@preact/signals-core'
 import { register, slots } from '../../ui/caps.js'
@@ -11,7 +11,7 @@ import { mine } from '../../ui/opfs.js'
 import { useStrings } from '../../core/i18n.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { apart } from '../sync/mirror.js'
-import { circles, starting, circleOf, circleAt, follow, all, apartOf, here, join, turn, done, holding, memberName } from './engine.js'
+import { circles, starting, circleOf, circleAt, follow, all, apartOf, here, join, turn, done, holding, memberName, caret, othersIn } from './engine.js'
 import { posting, viewed, after } from './task.js'
 import { how, start, faces, taskFaces, asked, askCard, projectButton } from './page.js'
 import { asking } from './engine.js'
@@ -31,7 +31,8 @@ async function wake() {
 // A circle that came from another of the person's devices (D700) is followed once its key is here, by the tab that follows the others.
 app.fs.watch?.((path) => { if (path === '.secrets/keys.json' && (release || !navigator.locks) && !document.hidden) run() }, { all: true })
 document.addEventListener('visibilitychange', () => (document.hidden ? setTimeout(() => { if (document.hidden) release?.() }, 30_000) : wake()))
-setInterval(() => { if (!document.hidden) for (const live of circles.peek().values()) here(live) }, 20_000)
+// Who said nothing for 45 seconds is no longer shown here, nor their caret.
+setInterval(() => { if (!document.hidden) for (const live of circles.peek().values()) here(live); circles.value = new Map(circles.peek()) }, 20_000)
 // The baton held every 30 seconds while this person's answer runs, passed on once it ends, and what came meanwhile written after it.
 setInterval(() => { for (const live of circles.peek().values()) if (live.kept.place && app.running.peek().includes(`${live.kept.place.dir}/${live.kept.place.folder}`)) holding(live) }, 30_000)
 effect(() => {
@@ -64,6 +65,8 @@ register({ id: 'together',
   slots: {
   // What each brain reads of a task worked on together (ui/send.js).
   view: { at: 0, draw: () => nothing, records: (/** @type {any[]} */ records, /** @type {string} */ path) => (circleAt(path) ? viewed(records, memberName) : records) },
+  // In a document's editor, where it is worked on together: each one's caret in their colour with their name, and this person's for them (caps/documents).
+  editor: { at: 0, draw: () => nothing, add: (/** @type {import('prosemirror-view').EditorView} */ view, /** @type {string} */ path) => import('./carets.js').then(({ plug }) => plug(view, path, caret, othersIn)) },
   // The room's line over another's turn names them as the circle does, else as People does (ui/chat.js).
   came: { at: 0, draw: () => nothing, name: (/** @type {string} */ fp) => memberName(fp) || (slots('came').find((one) => one.at > 0)?.name(fp) ?? '') },
   // In Share, for what can be worked on together (caps/share/dialog.js): its line once it is, and the verbs' start.

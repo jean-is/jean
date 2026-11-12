@@ -1,6 +1,6 @@
 // Documents' editor (D485), under node --test: a document's Markdown read and written back byte for byte,
 // Jean's changes found where they are, blocks moved, a list's items among them, and two versions of a
-// document merged from the one both came from (D157).
+// document merged from the one both came from (D157), and another person's caret found where it is in this copy (D733).
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFile, readdir } from 'node:fs/promises'
@@ -10,6 +10,7 @@ import { parse, parseDoc, titled, serialize, same, schema, blockMarkdown, sliceM
 import { diff, tints } from '../app/caps/documents/suggest.js'
 import { BlockSelection, blockRange, moveBlocks, units } from '../app/caps/documents/blocks.js'
 import { merge3 } from '../app/ui/merge.js'
+import { spot, place } from '../app/caps/together/carets.js'
 
 const ROOT = new URL('../', import.meta.url)
 const SAMPLE = new URL('fixtures/editor/jean-answer.md', import.meta.url)
@@ -289,4 +290,22 @@ test('two versions of a document merge line by line from the one both came from:
   const merged = merge3(long, long.replace('Line 15000.', 'Line fifteen thousand.'), long.replace('Line 15010.', 'Line 15 010.'))
   assert.equal(merged, long.replace('Line 15000.', 'Line fifteen thousand.').replace('Line 15010.', 'Line 15 010.'))
   assert.equal(merge3(long, `${long}\nmine`, `theirs\n${long}`), null)
+})
+
+test('another person’s caret is found where it is in this copy, whatever changed above it meanwhile, and nonsense never throws', () => {
+  /** Where a word starts. @param {import('prosemirror-model').Node} doc @param {string} word */
+  const at = (doc, word) => { let found = -1; doc.descendants((node, pos) => { if (found < 0 && node.isText && node.text?.includes(word)) found = pos + node.text.indexOf(word) }); return found }
+  const theirs = held('# Lisbon\n\nFriday: land at 20:15.\n\nSaturday: the castle in the morning.\n')
+  const given = [spot(theirs, at(theirs, 'castle')), spot(theirs, at(theirs, 'Friday'))]
+  assert.equal(place(theirs, given[0]), at(theirs, 'castle'))
+  // Here, a paragraph came above it and a list between: each still on its own words.
+  const mine = held('# Lisbon\n\nThursday: pack.\n\nFriday: land at 20:15.\n\n- tickets\n- passports\n\nSaturday: the castle in the morning.\n')
+  assert.equal(place(mine, given[0]), at(mine, 'castle'))
+  assert.equal(place(mine, given[1]), at(mine, 'Friday'))
+  // Its own block changed meanwhile, as someone types in it: the block at its index, never past its words.
+  const typed = held('# Lisbon\n\nFriday: land at 20:15.\n\nSat.\n')
+  assert.equal(place(typed, given[0]), at(typed, 'Sat.') + 'Sat.'.length)
+  // Past the last block, inside it; and what no copy would say.
+  assert.equal(place(theirs, spot(theirs, theirs.content.size)), theirs.content.size - 1)
+  for (const nonsense of [[Number.NaN, 1e12, ''], [-5, -5, 'x'], [1e9, 3, null]]) assert.ok(place(theirs, /** @type {any} */ (nonsense)) >= 0)
 })

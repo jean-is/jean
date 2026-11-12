@@ -9,7 +9,8 @@
 // section; one it changes unseen opens first, unchanged, its text the brain's to read. One the user makes from
 // Creations has no name: it goes by its title.
 import { html, nothing } from 'lit-html'
-import { register } from '../../ui/caps.js'
+import { effect } from '@preact/signals-core'
+import { register, slots } from '../../ui/caps.js'
 import { app, conversationOf } from '../../ui/state.js'
 import { icons } from '../../ui/menu-icons.js'
 import { page, prose, reread } from '../../ui/creations.js'
@@ -79,6 +80,8 @@ export async function editor(file, holds) {
       : app.fs.exists(side).then((there) => (there ? app.fs.remove(side) : undefined))),
   })
   open.set(path, (shown = one))
+  // What other capabilities add to its editor: each one's caret where it is worked on together (caps/together).
+  const adding = effect(() => { for (const slot of slots('editor')) slot.add(one.editor.view, `${project}/${path}`) })
   // Its file changed elsewhere, by Sync or in another tab: what changed comes in where it is, its front matter too; taken away, it stays open.
   const unwatch = app.fs.watch?.(async (changed) => {
     const now = changed === `${project}/${path}` ? await app.fs.read(changed) : null
@@ -87,6 +90,7 @@ export async function editor(file, holds) {
   }, { all: true })
   holds.push(() => {
     unwatch?.()
+    adding()
     one.editor.destroy()
     if (open.get(path) === one) open.delete(path)
     if (shown === one) shown = [...open.values()].at(-1) ?? null

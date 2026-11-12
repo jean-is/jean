@@ -23,7 +23,7 @@ Jean on all of a person's devices, and with other people, without a server that 
 | The store | Tasks, files and memory the same on every device, Sync's merges | The relay's stores, sealed under keys only the person's devices hold | D227 · D721 |
 | People | Settings › People › Add a person (side by side, or a link and six digits back); Share › tick them › Send a copy; answers back into the task | The person mailbox, sealed person to person | D727 |
 | Colleagues | Colleagues under *At <organisation>* in Send to…, with no meeting | The organisation's own relay, listing people by their checked ID token; `ee/`'s controls | D731 · D732 |
-| Together | Share › tick people › Work on it together, or Copy an invitation link instead; faces of who is here; People in this…; Your devices ticked alone; a project's Work on this project together | Journals: each change signed by its member and sealed under the circle's key | D733 · D734 |
+| Together | Share › tick people › Work on it together, or Copy an invitation link instead; faces of who is here, and each one's caret with their name in a document; People in this…; Your devices ticked alone; a project's Work on this project together | Journals: each change signed by its member and sealed under the circle's key | D733 · D734 |
 | Nudges | A notification, with Jean closed, that something came, never what or from whom | Web Push with no payload, signed by the relay | D736 |
 
 Together binds what each kind of thing's changes are:
@@ -59,7 +59,7 @@ The [DPIA](trust/dpia.md) has each row with who receives what, and the [threat m
   - *Just to people*, a message no Jean answers.
   - Memory off in a shared task, and the card that says, before a task is first shared, what it holds of the person's own (D734).
   - Going back to a request, limited to the person's own last one (D188).
-  - Each person's cursor in a document, and merges a step at a time rather than a version at a time.
+  - Merges a step at a time rather than a version at a time, and each person's caret in a deck.
   - Seeds past the first: a busy journal grows until it has been quiet 7 days.
   - Inside a shared project, Share's pane for one of its things says nothing of the project; a project's invitations through People.
   - A deck open in a tab other than the one following the circle takes the others' slides only when opened again.

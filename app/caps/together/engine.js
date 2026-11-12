@@ -18,6 +18,7 @@ import { t } from '../../core/i18n.js'
 import { personOf } from '../people/flow.js'
 import { apart } from '../sync/mirror.js'
 import { folderOf } from '../tables/table.js'
+import { COLOURS } from '../../ui/touches.js'
 import * as circle from './circle.js'
 import * as journal from './journal.js'
 import * as collection from './collection.js'
@@ -33,9 +34,11 @@ const bindings = { collection, task, document, deck: document, project }
  * A circle as the secret keeps it. `links` whether a link may join; `role` what a link gives, editing or viewing.
  * @typedef {{ format: 1, relay: string, kind: Kind, place: import('./collection.js').Place | null, title: string, owner: string, ownerHash: string, ownerToken?: string,
  *   epoch: number, keys: Record<string, string>, read: string, write?: string, links: boolean, role?: 'edit' | 'view' }} Kept
- * A circle followed: who is in, what the journal holds of the thing, this device's counter, who is here, and how to stop.
+ * A circle followed: who is in, what the journal holds of the thing, this device's counter, who is here and, by member and device, where
+ * their carets are, the next word from here due, and how to stop.
  * @typedef {{ id: string, kept: Kept, me: string, state: circle.State, held: import('./collection.js').Held, n: number, members: Set<string>,
- *   here: Map<string, number>, ready: Promise<void>, caught: () => void, settled?: true, stop: () => void, unwatch?: () => void, joining?: { name: string, invite?: object },
+ *   here: Map<string, number>, carets: Map<string, { at: number, carets: any }>, soon?: ReturnType<typeof setTimeout>, ready: Promise<void>, caught: () => void,
+ *   settled?: true, stop: () => void, unwatch?: () => void, joining?: { name: string, invite?: object },
  *   baton: { holder: string | null, at: number, queue: string[] }, waits: Map<string, () => void> }} Live
  */
 
@@ -173,14 +176,19 @@ export async function follow(id, kept, joining) {
   const control = new AbortController()
   /** @type {Live} */
   const live = { id, kept, me: await fingerprintOf(person.public), state: circle.begun(kept.owner), held: { lines: new Set(), table: '' }, n: Number(saved.n) || 0,
-    members: new Set(saved.members ?? []), here: new Map(), ready, caught, stop: () => control.abort(), joining, baton: { holder: null, at: 0, queue: [] }, waits: new Map() }
+    members: new Set(saved.members ?? []), here: new Map(), carets: new Map(), ready, caught, stop: () => control.abort(), joining, baton: { holder: null, at: 0, queue: [] }, waits: new Map() }
   circles.peek().get(id)?.stop()
   circles.peek().set(id, live)
   starting.delete(id)
   changed()
   journal.follow({ ...whereOf(live), after: 0, signal: control.signal,
     onChange: (line, bytes) => taken(live, bytes, line.at),
-    onFleeting: async (bytes) => { const said = await circle.heard(live.state, id, await circle.openChange(id, keysOf(live.kept), bytes)); if (said) { live.here.set(said.member, Date.now()); changed() } },
+    // A member here, with where their carets are; one who just came hears at once who else is here, and where.
+    onFleeting: async (bytes) => {
+      const said = await circle.heard(live.state, id, await circle.openChange(id, keysOf(live.kept), bytes))
+      if (said && said.member !== live.me && !hereNow(live).has(said.member)) soon(live)
+      if (said) { live.here.set(said.member, Date.now()); live.carets.set(`${said.member} ${said.device}`, { at: Date.now(), carets: said.body?.carets ?? {} }); changed() }
+    },
     onCaught: () => settled(live),
     onEnd: async (how) => {
       // Deleted, or gone from the relay after its days: nothing more comes of it, and nothing posted would ever go.
@@ -341,12 +349,37 @@ export async function stop(live) {
   await ended(live, 'stopped')
 }
 
-/** That this person is here, for whoever has the thing open: a fleeting message, never kept, sent while they're in and may write. @param {Live} live */
+/**
+ * That this person is here, for whoever has the thing open, with where their caret is in each of its documents they have open: a fleeting
+ * message, never kept, sent while they're in and may write. @param {Live} live
+ */
 export async function here(live) {
   if (!live.state.members[live.me] || !live.kept.write) return
   const at = { id: live.id, epoch: live.kept.epoch, key: decode(live.kept.keys[live.kept.epoch]) }
-  journal.say(whereOf(live), await circle.sealChange(at, (await me()).key, { member: live.me, device: app.deviceId, n: 0, kind: 'here', body: {} }))
+  const said = Object.fromEntries([...carets].flatMap(([path, spots]) => ((doc) => (doc === null ? [] : [[doc, spots]]))(docIn(live, path))))
+  return journal.say(whereOf(live), await circle.sealChange(at, (await me()).key, { member: live.me, device: app.deviceId, n: 0, kind: 'here', body: { carets: said } }))
 }
+/** `here` said in a moment, once for all that asks it meanwhile, and again while the relay says it's too much at once. @param {Live} live */
+const soon = (live) => { live.soon ??= setTimeout(() => { delete live.soon; here(live).then((answer) => answer?.status === 429 && soon(live)) }, 200) }
+
+/** This person's carets, by the document's path (./carets.js). @type {Map<string, any>} */
+const carets = new Map()
+/** Where a document is in a circle: '' for its own, its place in a project's, null for none. @param {Live} live @param {string} path */
+const docIn = ({ kept: { kind, place } }, path) => (!place ? null : `${place.dir}/${place.folder}` === path ? '' : kind === 'project' && path.startsWith(`${place.dir}/${place.folder}/`) ? path.slice(place.dir.length + place.folder.length + 2) : null)
+/** This person's caret in a document, moved, or gone with its pane: said to the circles it is in. @param {string} path @param {any} spots */
+export function caret(path, spots) {
+  if (spots) carets.set(path, spots); else carets.delete(path)
+  for (const live of circles.peek().values()) if (docIn(live, path) !== null) soon(live)
+}
+/**
+ * The others in a document, each with their name, their colour and their selection, as their copy last said, in the last 45 seconds
+ * (./carets.js). @param {string} path @returns {import('./carets.js').Other[]}
+ */
+export const othersIn = (path) => [...circles.value.values()].flatMap((live) => ((doc) => (doc === null ? [] : [...live.carets].flatMap(([who, { at, carets: theirs }]) => {
+  const [fp, device] = who.split(' '), one = live.state.members[fp], spots = theirs[doc]
+  return one && !one.gone && (fp !== live.me || device !== app.deviceId) && Date.now() - at < 45_000 && Array.isArray(spots) && spots.length === 2 && spots.every(Array.isArray)
+    ? [{ who, name: one.name, colour: COLOURS[1 + (one.colour % 7)][1], spots: /** @type {import('./carets.js').Other['spots']} */ (spots) }] : []
+})))(docIn(live, path)))
 
 /** Who is here: those who said so in the last 45 seconds. @param {Live} live */
 export const hereNow = (live) => new Set([...live.here].filter(([, at]) => Date.now() - at < 45_000).map(([fp]) => fp))

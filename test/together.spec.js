@@ -129,7 +129,7 @@ test('Ana and Bob work on a task together: each request answered by its own pers
   await answered(ana, 2)
 })
 
-test('Ana and Bob write one document together: each one’s words reach the other’s copy, merged where both wrote', async ({ browser }) => {
+test('Ana and Bob write one document together: each one’s words reach the other’s copy, merged where both wrote, and each sees where the other is', async ({ browser }) => {
   const [ana, bob] = await Promise.all([person(browser, 'Ana'), person(browser, 'Bob')])
   const path = 'documents/01JAQXDOC0000000000000000L-lisbon.md'
   await ana.evaluate(async (path) => {
@@ -165,6 +165,18 @@ test('Ana and Bob write one document together: each one’s words reach the othe
   await write(ana, 'Sunday: Sintra.')
   await expect.poll(() => text(bob)).toContain('Sunday: Sintra.')
   expect(await text(bob)).toContain('Saturday: the castle in the morning.')
+
+  // Each one's caret shows in the other's copy, in their colour with their name, and what they select; gone once their pane closes.
+  await bob.locator('#doc').getByText('Sunday: Sintra.').click()
+  const bobs = ana.locator('#doc .together-caret', { hasText: 'Bob' })
+  await expect(bobs).toBeVisible()
+  expect(await bobs.evaluate((caret) => getComputedStyle(caret).borderInlineStartColor)).not.toBe(await ana.locator('#doc').evaluate((doc) => getComputedStyle(doc).color))
+  await expect(ana.locator('#doc p', { hasText: 'Sunday: Sintra.' }).locator('.together-caret')).toHaveCount(1)
+  await ana.locator('#doc').getByText('Friday: land at 20:15.').selectText()
+  await expect(bob.locator('#doc .together-selection')).toHaveText('Friday: land at 20:15.')
+  await expect(bob.locator('#doc .together-caret', { hasText: 'Ana' })).toBeVisible()
+  await bob.locator('aside.pane.preview').getByRole('button', { name: 'Close' }).click()
+  await expect(bobs).toHaveCount(0)
 })
 
 test('Bob asks Ana’s Jean in their shared task: Ana is asked first, then her own Jean answers, which Bob reads', async ({ browser }) => {

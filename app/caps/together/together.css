@@ -1,2 +1,9 @@
 /* Together's faces (D733), in a pane's head and at the room's top: those here now side by side in one button, as wide as they are. */
 .together-faces { grid-auto-flow: column; gap: 0.125rem; inline-size: auto; min-inline-size: 2.5rem; border-radius: 1.25rem; }
+/* Each one's caret in a document worked on together (carets.js): in their colour with their name over it, under it on the title, and what
+   they selected, tinted. */
+.together-caret { position: relative; margin-inline: -1px; border-inline-start: 2px solid var(--badge); pointer-events: none; }
+.together-caret > bdi { position: absolute; inset-block-end: 100%; inset-inline-start: -2px; max-inline-size: 12rem; overflow: hidden; padding: 0 0.3em; border-radius: 0.3em; border-end-start-radius: 0; background: var(--badge); color: oklch(0.2 0 0); font: normal 600 0.7rem/1.5 var(--sans); white-space: nowrap; text-overflow: ellipsis; user-select: none; } .doc > h1:first-child .together-caret > bdi { inset-block: 100% auto; border-radius: 0.3em; border-start-start-radius: 0; }
+.together-selection { background: oklch(from var(--badge) l c h / 0.3); }
+@media (forced-colors: active) { .together-caret { border-color: Highlight; } .together-caret > bdi { border: 1px solid; } }
+@media (prefers-contrast: more) { .together-caret { border-inline-start-width: 3px; } }
