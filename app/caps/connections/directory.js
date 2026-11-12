@@ -84,6 +84,9 @@ export const DIRECTORY = Object.freeze(/** @type {Known[]} */ ([
   { id: 'zoom', group: 'talk', name: 'Zoom', url: 'https://mcp.zoom.us/mcp/zoom/streamable', signIn: ['zoom.us'], app: 'https://zoom.us', logo: 'zoom.png' },
   { id: 'hubspot', group: 'customers', name: 'HubSpot', url: 'https://mcp.hubspot.com/', app: 'https://mcp.hubspot.com', logo: 'hubspot.png' },
   { id: 'instacart', group: 'other', name: 'Instacart', url: 'https://fig-mcp.instacart.com/mcp', signIn: ['connect.instacart.com'], app: 'https://fig-mcp.instacart.com', logo: 'instacart.png' },
+  // Every org's records, read and changed, at one address; its registration wants an app already registered. A sandbox org's server has
+  // `/sandbox` before `/platform` and signs in at test.salesforce.com, which policy gives.
+  { id: 'salesforce', group: 'customers', name: 'Salesforce', url: 'https://api.salesforce.com/platform/mcp/v1/platform/sobject-all', signIn: ['login.salesforce.com'], app: 'https://login.salesforce.com', logo: 'salesforce.svg' },
   // Registers only the apps made on its site.
   { id: 'box', group: 'files', name: 'Box', url: 'https://mcp.box.com/', signIn: ['api.box.com'], app: 'https://api.box.com', logo: 'box.png' },
   // Their sign-in refuses browsers, and most of them their service too.
@@ -100,9 +103,13 @@ export const DIRECTORY = Object.freeze(/** @type {Known[]} */ ([
   // Their service answers no browser.
   { id: 'todoist', group: 'tasks', name: 'Todoist', url: 'https://ai.todoist.net/mcp', signIn: ['todoist.com'], logo: 'todoist.png' },
   { id: 'ifttt', group: 'other', name: 'IFTTT', url: 'https://ifttt.com/mcp', logo: 'ifttt.svg' },
-  // Each company's own instance, whose address policy gives, with the app its admin registered
-  // there, since it registers none; it answers no browser, whatever the address (D283).
+  // Each company's own instance, whose address policy gives, with the app its admin registered there, since they register
+  // none; reached through the gateway, as ServiceNow's and Databricks's answer no browser, whatever the address (D283).
+  // NetSuite's is the account's (Oracle's service for running a business, its database a developer's tool, D192);
+  // Databricks's a workspace's, a Genie space's or SQL's.
   { id: 'servicenow', group: 'tasks', name: 'ServiceNow', ready: false, logo: 'servicenow.png' },
+  { id: 'netsuite', group: 'other', name: 'Oracle NetSuite', ready: false, logo: 'netsuite.png' },
+  { id: 'databricks', group: 'other', name: 'Databricks', ready: false, logo: 'databricks.png' },
 ]))
 
 /** @typedef {Known & { via: 'browser' | 'gateway' | null }} Listed  how it is reached now; null: not yet */

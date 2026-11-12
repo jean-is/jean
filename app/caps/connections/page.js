@@ -86,8 +86,11 @@ const joined = (parts) => parts.filter(Boolean).map((part, i) => html`${i ? ' ·
 const listOf = (names) => new Intl.ListFormat(intlLocales(), { type: 'conjunction' }).formatToParts(names).map(({ type, value }) => (type === 'element' ? html`<bdi>${value}</bdi>` : value))
 /** How the connection just asked for goes. */
 const said = () => (message.value ? html`<p class="status is-${message.value.kind}" role=${message.value.kind === 'error' ? 'alert' : 'status'}>${message.value.text}</p>` : nothing)
-/** A name like an address may wrap before its dot ("monday" ".com"), one in two words where its capital starts the second ("Service" "Now"). @param {string} text */
-const wrapped = (text) => text.split(/(?=\.)|(?<=[a-z])(?=[A-Z])/).map((part, i) => (i ? html`<wbr>${part}` : part))
+/**
+ * A name like an address may wrap before its dot ("monday" ".com"), one in two words where its capital starts the second ("Service" "Now"),
+ * unless it has a space to wrap at ("Oracle" "NetSuite", never "Oracle Net" "Suite"). @param {string} text
+ */
+const wrapped = (text) => text.split(/(?=\.)|(?<=^\S*[a-z])(?=[A-Z])/).map((part, i) => (i ? html`<wbr>${part}` : part))
 /** Its group, Other for one policy added without one. @param {Listed} entry */
 const groupOf = (entry) => (GROUPS.includes(entry.group ?? '') ? entry.group : 'other')
 
@@ -233,8 +236,7 @@ function later() {
   return html`${back('add', t('cap.connections.yes'))}${head(t(soon.length ? 'connections.later' : 'gateway.title'), t('gateway.text', { name }))}
     <label class="connection-gateway" for="gateway">${t('gateway.title')}<input id="gateway" dir="ltr" type="url" spellcheck="false" autocomplete="off" placeholder="https://…" .value=${gatewayAt.value} ?disabled=${set}
       @change=${(/** @type {Event} */ e) => {
-        const { gateway: _, ...urls } = app.settings.value.urls ?? {}
-        const address = /** @type {HTMLInputElement} */ (e.target).value.trim()
+        const { gateway: _, ...urls } = app.settings.value.urls ?? {}, address = /** @type {HTMLInputElement} */ (e.target).value.trim()
         updateSettings({ urls: address ? { ...urls, gateway: address } : urls })
       }}></label>
     ${set ? html`<p class="hint">${lockedBy()}</p>` : nothing}

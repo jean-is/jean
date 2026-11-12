@@ -485,7 +485,7 @@ describe('the services Jean knows (D95)', () => {
     const microsoft = (/** @type {any} */ policy, /** @type {any} */ served) => known(policy, served).find((entry) => entry.id === 'microsoft-365')?.via
     assert.deepEqual([microsoft({}), microsoft({ directory: [{ id: 'microsoft-365', clientId: 'jean-spa' }] })], [null, 'browser'])
     assert.deepEqual([microsoft({}, { hosts: ['login.microsoftonline.com'], clients: { 'https://login.microsoftonline.com/common/v2.0': 'web-app' } }), microsoft({}, { hosts: ['login.microsoftonline.com'] })], ['gateway', null])
-    assert.ok(services.some((entry) => entry.id === 'servicenow' && !entry.url && entry.via === null))
+    for (const id of ['servicenow', 'netsuite', 'databricks']) assert.ok(services.some((entry) => entry.id === id && !entry.url && entry.via === null))
     // A gateway that relays to Google's servers but not its sign-in, or holds no app of Google's, or
     // relays to some of its servers only (D344), doesn't reach Google.
     const google = { 'https://accounts.google.com': 'google-app' }
@@ -566,18 +566,22 @@ describe('the services Jean knows (D95)', () => {
     assert.equal(knownFor('https://mcp.canva.com/mcp', policy), undefined)
   })
 
-  test('ServiceNow is at each company\'s own address, which policy gives with the app its admin registered, and is reached through the gateway, which relays to every instance (D283)', () => {
-    const url = 'https://acme.service-now.com/sncapps/mcp-server/mcp/sn_mcp_server_default'
+  test('ServiceNow, Oracle NetSuite and Databricks are at each company\'s own address, which policy gives with the app its admin registered, and are reached through the gateway, which relays to every instance (D283)', () => {
     const hosts = [...SERVICES]
-    const via = (/** @type {any} */ change, /** @type {any} */ served) => known({ directory: [{ id: 'servicenow', url, ...change }] }, served).find((entry) => entry.id === 'servicenow')?.via
-    assert.equal(known().find((entry) => entry.id === 'servicenow')?.via, null)
-    assert.equal(via({ clientId: 'acme-jean' }), null)
-    assert.equal(via({ clientId: 'acme-jean' }, { hosts }), 'gateway')
-    assert.equal(knownFor(url, { directory: [{ id: 'servicenow', url, clientId: 'acme-jean' }] }, { hosts })?.clientId, 'acme-jean')
-    // Or the app the gateway holds for that instance; and an instance whose admin lets browsers in says so.
-    assert.equal(via({ app: 'https://acme.service-now.com' }, { hosts }), null)
-    assert.equal(via({ app: 'https://acme.service-now.com' }, { hosts, clients: { 'https://acme.service-now.com': 'acme-app' } }), 'gateway')
-    assert.equal(via({ clientId: 'acme-jean', ready: true }), 'browser')
+    for (const [id, url, issuer] of [['servicenow', 'https://acme.service-now.com/sncapps/mcp-server/mcp/sn_mcp_server_default', 'https://acme.service-now.com'],
+      ['netsuite', 'https://1234567.suitetalk.api.netsuite.com/services/mcp/v1/all', 'https://1234567.suitetalk.api.netsuite.com'],
+      ['databricks', 'https://dbc-1a2b3c4d-5e6f.cloud.databricks.com/api/2.0/mcp/genie/01f0', 'https://dbc-1a2b3c4d-5e6f.cloud.databricks.com/oidc'],
+      ['databricks', 'https://adb-1234567890123456.7.azuredatabricks.net/api/2.0/mcp/sql', 'https://adb-1234567890123456.7.azuredatabricks.net/oidc']]) {
+      const via = (/** @type {any} */ change, /** @type {any} */ served) => known({ directory: [{ id, url, ...change }] }, served).find((entry) => entry.id === id)?.via
+      assert.equal(known().find((entry) => entry.id === id)?.via, null)
+      assert.equal(via({ clientId: 'acme-jean' }), null)
+      assert.equal(via({ clientId: 'acme-jean' }, { hosts }), 'gateway', url)
+      assert.equal(knownFor(url, { directory: [{ id, url, clientId: 'acme-jean' }] }, { hosts })?.clientId, 'acme-jean')
+      // Or the app the gateway holds for that instance; and an instance whose admin lets browsers in says so.
+      assert.equal(via({ app: issuer }, { hosts }), null)
+      assert.equal(via({ app: issuer }, { hosts, clients: { [issuer]: 'acme-app' } }), 'gateway')
+      assert.equal(via({ clientId: 'acme-jean', ready: true }), 'browser')
+    }
   })
 
   test('GitLab registers Jean only through the gateway, which relays to gitlab.com; a company\'s own instance, at the address policy gives with its admin\'s app, is reached from the browser (D469)', () => {
