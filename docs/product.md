@@ -20,6 +20,24 @@
 - **The browser is the security model.** The category's biggest problem is agents with shell access on your laptop. Jean stays inside the most battle-tested sandbox there is.
 - **Open source and reputation come first.** Revenue is secondary. Everything a person or a team uses is MIT. Organisations pay only for the enterprise integrations their IT, security or compliance teams ask for, in `ee/` (open core, D139).
 
+## What Jean does
+
+At a glance, each offered when a moment calls for it ([Progressive discovery](#progressive-discovery)):
+
+- **Reads files:** PDF, Word, Excel, PowerPoint, CSV and text, and pictures for brains that can see ([Files and outputs](#files-and-outputs)).
+- **Does the maths instead of guessing:** calculations run as real code, in JavaScript, Python or bash, in a sandbox inside the tab, never on the person's machine ([Computer](architecture.md#computer)).
+- **Hands back files people can use:** Word documents, spreadsheets, decks, charts, pictures and short films, seen beside the conversation and saved with a click ([Files made for you](architecture.md#files-made-for-you)).
+- **Works on folders where they are:** it finds, reads and changes files in place, shows each change first, and undoes it when asked ([Folders](architecture.md#folders)).
+- **Follows the person to their other devices:** a phone added with a QR code and six digits keeps the same tasks, files and settings, sealed so only their devices can open them; or a folder in OneDrive, Dropbox, iCloud Drive or Google Drive does ([Your devices](architecture.md#your-devices), [Sync](architecture.md#sync)).
+- **Works with other people:** a task or what Jean made goes to someone added, and their answer comes back into the same task; or a collection, a document, slides, a task or a whole project is worked on together, each person keeping their own copy and their own Jean answering them ([together.md](together.md)).
+- **Remembers, if asked to:** what it should know about the person, standing instructions, projects, and skills it learns from requests they repeat ([Instructions and memory](#instructions-and-memory)).
+- **Reaches services and the web,** each source a numbered citation ([Sources and citations](#sources-and-citations)).
+- **Repeats on a schedule:** a routine is a request Jean sends itself every hour, day or week, or once later ([Skills and routines](architecture.md#skills-and-routines)).
+- **Takes on bigger tasks:** helpers work on a task's parts at once, and Double-check compares each cited claim with its source ([Sources and citations](#sources-and-citations)).
+- **Speaks the person's language,** one of 46, right to left included ([Languages](#languages)).
+- **Listens and speaks:** dictation, read-aloud and talking hands-free, and recordings heard, with speech recognised on the device ([Voice](#voice)).
+- **Asks first:** by default before sending, sharing, deleting or anything external, and it never touches passwords or payments; the person chooses *Do it*, *Ask me first* or *Never* for each kind of action ([Rules and approvals](#rules-and-approvals)).
+
 ## Vocabulary
 
 The UI never says "agent", "model", "MCP" or "token".
@@ -373,6 +391,12 @@ Screen sharing (D699), on a computer, is found from a capture of the screen or w
 ## In an editor
 
 People at home in a code editor can have Jean there, through `npx jean-cli acp` in any editor that speaks ACP, such as Zed (D241). It is the same Jean: the projects, memory, skills and conversations of the folder Sync keeps ([jean-cli](architecture.md#jean-cli)). `npx jean-cli gateway` runs the gateway for whoever serves Jean.
+
+## Good to know
+
+- **Data lives in one browser,** at the address Jean was opened from. Clearing the site's data clears Jean's too, so a backup or a synced folder matters.
+- **Folders and syncing need Chrome or Edge.** Elsewhere Jean works on a copy of a folder, and the person saves what changed.
+- **Browsers:** Chrome or Edge 108, Safari 16.4 or Firefox 114, or later. The brain on this device also needs WebGPU with `shader-f16`, on a computer rather than a phone or a tablet.
 
 ## Deliberately out of scope
 

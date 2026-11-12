@@ -1,11 +1,11 @@
-# Jean's CI on GitHub, as .gitlab-ci.yml is on GitLab: budgets, types and tests (npm run check), the
+# Jean's CI on GitHub: budgets, types and tests (npm run check), the
 # packages' audit, and the smoke tests in Chromium and WebKit against the fake brain (npm run e2e).
 # The jobs run side by side; going over a budget fails the run (AGENTS.md), and so does a known high
 # or critical advisory, in a package or in a container image. Once all of them pass, a push to main gets its version,
 # tagged when it asks for a new one (D735); then the container images go to the repository's packages, signed, a new
 # version's Helm chart too, and jean.is and Jean's server are deployed
 # (D320 · D659), which only GitHub does. The image's browsers match the
-# pinned @playwright/test: change both together, here and in .gitlab-ci.yml. The runners are Ubuntu
+# pinned @playwright/test. The runners are Ubuntu
 # 24.04, as the image is (noble), never ubuntu-latest, which moves under the run. An action is named by its commit, which
 # can't move, its version beside it (scripts/security.js holds this; Dependabot says when one is new).
 # Every job that runs Node runs Jean's own, the newest LTS, named once in .nvmrc, over the image's (D701).

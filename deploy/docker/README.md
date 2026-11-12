@@ -3,7 +3,7 @@
 Jean is static files, so a container only serves them (D232). This folder builds three images from the repository:
 
 - **`jean`** serves Jean with nginx, without root, on port 8080. It holds exactly what a web deploy serves and nothing else: no tooling, tests or docs.
-- **`jean-gateway`** is optional. It runs [the gateway](../../README.md#run-it) on Node, on port 8787, for the services a browser can't reach, like Gmail, Microsoft 365 or Slack (D191).
+- **`jean-gateway`** is optional. It runs [the gateway](../../gateway/README.md#run-it) on Node, on port 8787, for the services a browser can't reach, like Gmail, Microsoft 365 or Slack (D191).
 - **`jean-relay`** is optional. It runs [the relay](../../relay/relay.js) on Node, on port 8791: the meeting point for a person's devices and the people they send to (D45 · D226), which later versions of Jean use, and which an organisation runs to keep that with it.
 
 Jean and the gateway keep no data. The relay keeps sealed messages it can't read, 7 days at most, each mailbox until 90 days without use, and a record of each change (its time, address, port and mailbox) for a year, as French law asks of a host: sealed to a key of yours when `RELAY_CONFIG` names one, plain text otherwise. Conversations and files stay in each person's browser, tied to the address Jean is served from. Choose that address once: moving it means everyone exports their data and imports it again.

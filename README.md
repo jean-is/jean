@@ -2,58 +2,40 @@
 
 # Jean
 
-Create with any AI, keep everything.
+**Create with any AI, keep everything.** Anything in, anything out, with GPT, Claude, Gemini or an AI on your own computer. Your history, files and memory stay on your device. Nothing to install. Free and open source.
 
-Ask in words or with a file, and Jean hands back what you asked for, made: an answer with its sources, a document, a spreadsheet, a chart. It works with GPT, Claude, Gemini or an AI on your own computer, and it is made for people who will never open a terminal. There is nothing to install and no Jean server that can read what Jean keeps: it all lives in your browser as plain files, and the thinking happens on your device or with a provider you choose. Free and open source.
-
-[**Open Jean at jean.is**](https://jean.is) · [Help](https://jean.is/help) · [Why Jean exists](MANIFESTO.md)
+[**Open Jean at jean.is**](https://jean.is) · [Help](https://jean.is/help)
 
 [![Jean in a minute: a spreadsheet becomes a chart worked out by a program, a letter written by an AI on the computer itself, an email sent only once allowed, and everything kept on the device.](docs/reel.webp)](https://jean.is/watch)
 
 *Jean in a minute, played by Jean itself. [Watch it with sound, in your language](https://jean.is/watch).*
 
+## Why
+
+AI that does real work has arrived, and it has arrived behind subscriptions, installers and other people's servers. The best personal agents today ask you to type commands into a terminal, keep a computer running, or hand your files to a company's cloud. Most people can do none of that, and none of them should have to.
+
+The browser is already on every device. It is the most battle-tested sandbox ever built, it speaks every language, and it belongs to no one. That is where Jean lives.
+
 ## What Jean does
 
-- **Reads your files:** PDF, Word, Excel, PowerPoint, CSV and text, and pictures for brains that can see.
-- **Does the maths instead of guessing:** calculations run as real code, in JavaScript, Python or bash, in a sandbox inside the tab, never on your machine.
-- **Hands back files you can use:** Word documents, spreadsheets, decks, charts, pictures and short films, seen beside the conversation and saved with a click.
-- **Works on your folders where they are:** it finds, reads and changes files in place, shows you each change first, and undoes it if you ask.
-- **Follows you to your other devices:** add your phone with a QR code and six digits, and your tasks, files and settings stay the same on each, sealed so only your devices can open them; or through a folder in OneDrive, Dropbox, iCloud Drive or Google Drive.
-- **Works with other people:** send a task or what Jean made to someone you added, and their answer comes back into the same task; or work on a collection, a document, slides, a task or a whole project together, each person keeping their own copy and their own Jean answering them.
-- **Remembers, if you want it to:** what it should know about you, standing instructions, projects, and skills it learns from requests you repeat.
-- **Reaches your services and the web,** each source a numbered citation.
-- **Repeats on a schedule:** a routine is a request Jean sends itself every hour, day or week, or once later.
-- **Takes on bigger tasks:** helpers work on a task's parts at once, and Double-check compares each cited claim with its source.
-- **Speaks your language,** one of 46, right to left included.
-- **Listens and speaks:** dictation, read-aloud and talking hands-free, and recordings heard, with speech recognised on your device.
-- **Asks first:** by default before sending, sharing, deleting or anything external, and it never touches passwords or payments. You choose *Do it*, *Ask me first* or *Never* for each kind of action.
+Ask in words or with a file, and Jean hands back what you asked for, made: an answer with its sources, a document, a spreadsheet, a chart. It works things out by running real calculations instead of guessing, shows you what it is doing while it works, and asks before anything that matters: sending, sharing, deleting, anything outside. It never touches passwords or payments.
 
-Jean starts as a single box and offers each of these when you need it, like a game that teaches itself. [docs/product.md](docs/product.md) describes every feature.
+## What makes Jean different
 
-## Private by design
+- **Private by design.** What Jean keeps is encrypted in your browser, and no Jean server can read it. You choose where the thinking happens: on your device, with a provider you pick, or through a plan you already pay for, such as Claude, ChatGPT or Copilot. Each answer says where it was done.
+- **Free and open.** Open source, no subscription. Bring any AI, or none: on a capable computer, Jean thinks entirely on the device, offline too.
+- **Simple first, deep later.** Jean starts as a single box. Everything else, from your folders and your other devices to other people, memory, routines and voice, shows up when you need it, like a game that teaches itself. [docs/product.md](docs/product.md#what-jean-does) lists it all.
+- **Yours to keep.** Everything Jean knows is stored as plain files you can read, back up and take elsewhere.
+- **For everyone.** 46 languages, right to left included, from the first screen to the last answer.
+- **Small on purpose.** Jean's code is small enough to audit: no build step, three libraries loaded up front, and [budgets](budgets.json) checked on every change keep it that way. That is a promise, and a feature.
 
-- **Your data stays on your device,** as plain files in the browser's private file system, one file per thing. A backup is one zip you keep wherever you like; your keys are encrypted on the device, never part of it, and go to another of your devices only if you add one, sealed so only it can open them.
-- **You choose the brain:**
-  - **On this device:** Gemma 4 E2B on WebGPU, about 3.1 GB, downloaded once if you agree, and offered only where it can run.
-  - **In one click:** sign in with OpenRouter.
-  - **Your own key** for Anthropic, OpenAI or any OpenAI-compatible service, or a **local server** such as Ollama or LM Studio.
-  - **A plan you already pay for:** Claude Pro or Max through Claude Code, ChatGPT Plus or Pro, or Copilot through Copilot CLI, each reached through *This computer*.
-  - **Auto** picks one for each request, with Intuition, a small helper on the device, once it is on: the cheapest brain that can do the job, and the device's own for personal content or while you are offline. A switch keeps everything off the cloud.
-- **Each answer says where it was done:** how long it took, what it cost, which brains answered, and whether anything left your device, with a certificate that holds none of your words.
-- **Code a brain writes never runs in the page,** but in a sandboxed worker with an opaque origin and no network. The page has a strict Content Security Policy with Trusted Types.
+## What Jean won't do
 
-## Good to know
+Jean does not work while you are away: that would need a server watching over your things. Routines run while Jean is open, and when you come back, it tells you what changed since last time.
 
-- **Your data lives in this browser,** at the address you opened Jean from. Clearing the site's data clears Jean's too, so keep a backup, or a synced folder.
-- **Folders and syncing need Chrome or Edge.** Elsewhere Jean works on a copy of a folder, and you save what changed.
-- **Routines run while Jean is open.** What fell due while it was closed runs when you are back.
-- **Browsers:** Chrome or Edge 108, Safari 16.4 or Firefox 114, or later. The brain on this device also needs WebGPU with `shader-f16`, on a computer rather than a phone or a tablet.
+Jean does not take over your computer. It works inside the browser's walls, and steps outside them only into a folder you open for it, asking before it runs anything there.
 
-## Small on purpose
-
-There is no build step: Jean is plain ES modules and an import map, with JSDoc types checked by `tsc`. Three libraries load up front, `@preact/signals-core`, `lit-html` and `marked`; everything else, QuickJS, Pyodide and Transformers.js included, loads when a capability is turned on. Every limit, on lines of code, the first load's size and the base prompt among them, is in [budgets.json](budgets.json): CI fails when one is over, and `npm run budgets` prints where each stands.
-
-Jean speaks standards rather than inventing its own: the OpenAI-compatible and Anthropic Messages APIs for brains, MCP for connections, Agent Skills (`SKILL.md`) for skills, ACP `session/update` events for its activity, the Decisions API for Intuition, and `Intl` and the Web Platform for everything else.
+Jean keeps no copy of your things anywhere else. They live in one browser, at the address you opened Jean from, so clearing that site's data clears them too: keep a backup, or a synced folder. [Good to know](docs/product.md#good-to-know) has the browsers Jean needs.
 
 ## Run it yourself
 
@@ -70,44 +52,22 @@ Then open http://127.0.0.1:4173 and pick a brain. To try Jean without any accoun
 node test/fixtures/fake-brain.js
 ```
 
-- **Host your own copy:** `npm ci && npm run build:web`, then serve `dist/web/` over HTTPS from an address that won't change. [deploy/](deploy/README.md) has the headers and a recipe for each host.
-- **Reach services that refuse a browser,** such as Google Workspace or Slack, through [the gateway](docs/gateway.md).
-- **Build the desktop apps** for macOS, Windows and Linux with `npm run build:desktop`: a window of the system's own web view, made with [Neutralino](https://neutralino.js.org), which needs WebKitGTK on Linux ([how it works](docs/architecture.md#desktop-app)).
-- **Use Jean in your editor:** `npx jean-cli acp` in any editor that speaks ACP, such as Zed, on the folder Sync keeps (`~/Jean` unless `--folder` names another) ([cli/](cli/README.md)).
+To host your own copy, serve `dist/web/` from `npm ci && npm run build:web` over HTTPS, at an address that won't change: [deploy/](deploy/README.md) has the headers and a recipe for each host. [gateway/](gateway/README.md) reaches the services that refuse a browser, [cli/](cli/README.md) puts Jean in your editor, and `npm run build:desktop` makes the [desktop apps](docs/architecture.md#desktop-app).
 
 ## Contributing
 
-Read [AGENTS.md](AGENTS.md) before writing code: it holds the rules every change follows, from the budgets to the security, data and UI rules, and every command. Before you push:
-
-```bash
-npm run check
-```
-
-It builds, type-checks, runs the tests and checks the budgets. `npm run e2e` runs the browser tests in Chromium and WebKit against the fake brain (first, once: `npx playwright install chromium webkit`). [CI](.github/workflows/ci.yml) runs both on every push and pull request, and [GitLab's](.gitlab-ci.yml) the first. `npm run ci` runs GitHub's every job on your machine, in Docker, as CI does.
-
-`app/` holds everything a deploy serves; the root holds what never ships: jean-cli, the gateway, the desktop and container builds, the scripts, the tests and the docs.
+Read [AGENTS.md](AGENTS.md) before writing code: it holds the rules every change follows, and every command. Before you push, `npm run check` builds, type-checks, runs the tests and checks the budgets. `npm run e2e` runs the browser tests in Chromium and WebKit against the fake brain (first, once: `npx playwright install chromium webkit`). [CI](.github/workflows/ci.yml) runs both on every push and pull request, and `npm run ci` runs its jobs on your machine, in Docker.
 
 Bugs and questions go in [issues](https://github.com/jean-is/jean/issues). Report a vulnerability privately, as [SECURITY.md](SECURITY.md) says.
 
 ## Documentation
 
-| Document | What's in it |
-|---|---|
-| [MANIFESTO.md](MANIFESTO.md) | Why Jean exists, in one page |
-| [docs/product.md](docs/product.md) | The user, the vocabulary, progressive discovery, and how every feature behaves |
-| [docs/architecture.md](docs/architecture.md) | Stack, data, security, brains, languages, events |
-| [docs/design.md](docs/design.md) | Jean's identity, Tilde, its wave, and the themes |
-| [docs/enterprise.md](docs/enterprise.md) | Policy, gateways, what is open and what is enterprise, and what the architecture allows later |
-| [docs/trust/](docs/trust/README.md) | For an organisation's IT, security and privacy teams: the threat model, signed releases, a DPIA template, how accessibility is checked |
-| [deploy/](deploy/README.md) | Hosting a copy of Jean: the headers, the types, and a recipe for each host |
-| [docs/gateway.md](docs/gateway.md) | Running the gateway, and what each service needs |
-| [cli/](cli/README.md) | jean-cli: Jean in an editor, and the gateway from npm |
-| [docs/reels.md](docs/reels.md) | Jean's videos of itself: the reels made and to make, the player, the score and the export |
-| [docs/together.md](docs/together.md) | Working together: your devices, the people you send to, colleagues, and working on one thing at once, with what the relay keeps and the work left |
-| [docs/sharing.md](docs/sharing.md), [docs/encryption.md](docs/encryption.md), [docs/certificates.md](docs/certificates.md) | Sharing by link, encryption at rest and answer certificates, each with its work left |
-| [docs/roadmap.md](docs/roadmap.md) | The versions, what is still to check by hand, and what the launch needs |
-| [docs/decisions.md](docs/decisions.md), [docs/open-questions.md](docs/open-questions.md) | Every decision as it stands, by topic, with the alternatives that were rejected; and what is still undecided |
-| [docs/background.md](docs/background.md) | Where Jean comes from (DEVS), and the field as of 2026-10-01 |
+- **What Jean is:** [product.md](docs/product.md), the user, the vocabulary and every feature; [design.md](docs/design.md), its identity, Tilde and the themes.
+- **How it is built:** [AGENTS.md](AGENTS.md), the rules; [architecture.md](docs/architecture.md); [decisions.md](docs/decisions.md), every decision that binds, and [open-questions.md](docs/open-questions.md), what is still undecided; [roadmap.md](docs/roadmap.md), the versions and what the launch needs.
+- **Features in depth,** each with its work left: [together.md](docs/together.md), [sharing.md](docs/sharing.md), [encryption.md](docs/encryption.md), [certificates.md](docs/certificates.md), [reels.md](docs/reels.md).
+- **For an organisation:** [enterprise.md](docs/enterprise.md), policy and what is enterprise; [trust/](docs/trust/README.md), for IT, security and privacy teams.
+- **Running a copy:** [deploy/](deploy/README.md), [gateway/](gateway/README.md), [cli/](cli/README.md).
+- **Where Jean comes from:** [background.md](docs/background.md), DEVS and the field.
 
 ## License
 

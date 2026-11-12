@@ -36,7 +36,6 @@ describe("Jean's own Node", () => {
       assert.doesNotMatch(text, /node-version:/, name)
       for (const [job, lines] of jobs(text)) if (/\b(npm|npx|node) /.test(lines)) assert.match(lines, /node-version-file: \.nvmrc/, `${name}: ${job}`)
     }
-    assert.match(await read('.gitlab-ci.yml'), /cat \.nvmrc/)
   })
 
   it('is no older than the oldest Node package.json allows', async () => {

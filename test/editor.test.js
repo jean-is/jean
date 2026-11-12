@@ -16,7 +16,7 @@ const SAMPLE = new URL('fixtures/editor/jean-answer.md', import.meta.url)
 const corpus = async () => {
   const own = await Promise.all(['jean-answer.md', 'llm-styles.md'].map(async (name) => [name, await readFile(new URL(`fixtures/editor/${name}`, import.meta.url), 'utf8')]))
   // Jean's own docs: long, varied, full of tables, code and HTML; a stress test more than a sample.
-  const docs = await Promise.all(['README.md', 'AGENTS.md', 'MANIFESTO.md', ...(await readdir(new URL('docs/', ROOT))).filter((n) => n.endsWith('.md')).map((n) => `docs/${n}`)]
+  const docs = await Promise.all(['README.md', 'AGENTS.md', 'gateway/README.md', ...(await readdir(new URL('docs/', ROOT))).filter((n) => n.endsWith('.md')).map((n) => `docs/${n}`)]
     .map(async (name) => [name, await readFile(new URL(name, ROOT), 'utf8')]))
   return /** @type {Array<[string, string]>} */ ([...own, ...docs])
 }

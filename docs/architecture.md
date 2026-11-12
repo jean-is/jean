@@ -96,7 +96,7 @@ app/              what a deploy serves, as written (D243), which npm run build:w
   ee/             the enterprise integrations, Elastic-2.0 (D139): ee.js (its one door), key.js (the key, checked offline), the audit stream to the organisation's OpenTelemetry collector
                   (D386), retention (what leaves a task, kept first, D412), policy by group (D429), the organisation's seal and authorities (D434), the EU's trusted lists (D439) and residency (D434)
 cli/              jean-cli (Node): main.js, acp.js (Jean in an editor, through ACP), tools.js, brain.js, rpc.js, fs.js; locales/, its strings; README.md, its page on npm (D241)
-gateway/          gateway.js (web-standard: Workers, Deno, Bun) and serve.js (Node): the services a browser can't reach (D191)
+gateway/          gateway.js (web-standard: Workers, Deno, Bun) and serve.js (Node): the services a browser can't reach (D191); README.md, how to run it and what each service needs
 host/             host.js (web-standard) and serve.js (Node): the share host, which keeps sealed copies it can't read (D361)
 requests/         requests.js (web-standard) and serve.js (Node): where an organisation's request for a key goes, kept and mailed to Warehouse SAS
 desktop/          launcher.c and jeanframe.m (the Mac app's framing patch, D160), dmg-background.svg (D155)
