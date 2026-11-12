@@ -72,5 +72,6 @@
   "skills.askDeck": "Pregătește {what}, ca diapozitive pe care le pot prezenta.",
   "skills.deckExample": "o expunere de cinci minute despre circuitul apei în natură",
   "skills.openDeck": "Deschide lângă conversație",
-  "skills.deckNotKept": "Aceste diapozitive nu sunt încă salvate."
+  "skills.deckNotKept": "Aceste diapozitive nu sunt încă salvate.",
+  "skills.drawn": "Adăugate la abilitățile dvs., pentru a afișa întreg ce s-a partajat cu dvs.: {skills}."
 }

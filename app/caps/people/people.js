@@ -26,6 +26,8 @@ import { parseLink } from '../devices/pair.js'
 import { base64url, bytesOf, random } from '../share/seal.js'
 import { personOf, peopleOf, boxesOf, invite as invited, heardHello, heardReveal, confirmed, ended, accept as accepted, heardNonce, heardMet, dropped, received, forget, tidy, nameId, arrivalsOf, sendTo, ARRIVALS, LIMIT, turn } from './flow.js'
 import * as colleague from './colleagues.js'
+// What a task sent here holds draws as it did there, with Jean's own skills that declare it (D378).
+import '../skills/draws.js'
 
 /** @typedef {import('./flow.js').Invite} Invite */
 /** @typedef {import('./flow.js').Met} Met */

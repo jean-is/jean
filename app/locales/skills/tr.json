@@ -70,5 +70,6 @@
   "skills.askDeck": "{what} hazırla; sunabileceğim slaytlar olsun.",
   "skills.deckExample": "su döngüsü üzerine beş dakikalık bir konuşma",
   "skills.openDeck": "Konuşmanın yanında aç",
-  "skills.deckNotKept": "Bu slaytlar henüz saklanmadı."
+  "skills.deckNotKept": "Bu slaytlar henüz saklanmadı.",
+  "skills.drawn": "Seninle paylaşılanın tamamını göstermek için becerilerine eklendi: {skills}."
 }

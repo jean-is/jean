@@ -78,5 +78,6 @@
   "skills.askDeck": "حضّر لي {what}، بشرائح أستطيع عرضها.",
   "skills.deckExample": "محاضرة من خمس دقائق عن دورة الماء",
   "skills.openDeck": "افتح بجانب المحادثة",
-  "skills.deckNotKept": "لم تُحفظ هذه الشرائح بعد."
+  "skills.deckNotKept": "لم تُحفظ هذه الشرائح بعد.",
+  "skills.drawn": "أُضيف إلى مهاراتك لعرض ما شورك معك كاملًا: {skills}."
 }

@@ -74,5 +74,6 @@
   "skills.askDeck": "Připrav {what} jako snímky, které můžu promítnout.",
   "skills.deckExample": "pětiminutovou přednášku o koloběhu vody",
   "skills.openDeck": "Otevřít vedle konverzace",
-  "skills.deckNotKept": "Tyto snímky ještě nejsou uložené."
+  "skills.deckNotKept": "Tyto snímky ještě nejsou uložené.",
+  "skills.drawn": "Přidáno k vašim dovednostem, aby se celé zobrazilo, co s vámi někdo sdílel: {skills}."
 }

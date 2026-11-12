@@ -72,5 +72,6 @@
   "skills.askDeck": "Prepara {what}, in diapositive che io possa proiettare.",
   "skills.deckExample": "un intervento di cinque minuti sul ciclo dell’acqua",
   "skills.openDeck": "Apri accanto alla conversazione",
-  "skills.deckNotKept": "Queste diapositive non sono ancora salvate."
+  "skills.deckNotKept": "Queste diapositive non sono ancora salvate.",
+  "skills.drawn": "Aggiunte alle tue abilità, per mostrare per intero ciò che è stato condiviso con te: {skills}."
 }

@@ -70,5 +70,6 @@
   "skills.askDeck": "Forbered {what}, som dias jeg kan præsentere.",
   "skills.deckExample": "et oplæg på fem minutter om vandets kredsløb",
   "skills.openDeck": "Åbn ved siden af samtalen",
-  "skills.deckNotKept": "Disse dias er ikke gemt endnu."
+  "skills.deckNotKept": "Disse dias er ikke gemt endnu.",
+  "skills.drawn": "Føjet til dine færdigheder, for at vise alt det, der er delt med dig: {skills}."
 }

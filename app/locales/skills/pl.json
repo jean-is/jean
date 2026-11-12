@@ -74,5 +74,6 @@
   "skills.askDeck": "Przygotuj {what}, w slajdach, które da się pokazać.",
   "skills.deckExample": "pięciominutowe wystąpienie o obiegu wody",
   "skills.openDeck": "Otwórz obok rozmowy",
-  "skills.deckNotKept": "Te slajdy nie są jeszcze zapisane."
+  "skills.deckNotKept": "Te slajdy nie są jeszcze zapisane.",
+  "skills.drawn": "Aby pokazać w całości to, co ci udostępniono, dodano do twoich umiejętności: {skills}."
 }

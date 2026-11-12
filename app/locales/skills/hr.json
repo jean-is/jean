@@ -72,5 +72,6 @@
   "skills.askDeck": "Pripremi {what}, kao slajdove koje mogu prezentirati.",
   "skills.deckExample": "petominutno izlaganje o kruženju vode",
   "skills.openDeck": "Otvori pokraj razgovora",
-  "skills.deckNotKept": "Ovi slajdovi još nisu spremljeni."
+  "skills.deckNotKept": "Ovi slajdovi još nisu spremljeni.",
+  "skills.drawn": "Dodano vašim vještinama, da bi se u cijelosti prikazalo ono što je podijeljeno s vama: {skills}."
 }

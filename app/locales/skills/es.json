@@ -72,5 +72,6 @@
   "skills.askDeck": "Prepara {what}, en diapositivas que pueda presentar.",
   "skills.deckExample": "una charla de cinco minutos sobre el ciclo del agua",
   "skills.openDeck": "Abrir junto a la conversación",
-  "skills.deckNotKept": "Estas diapositivas aún no se han guardado."
+  "skills.deckNotKept": "Estas diapositivas aún no se han guardado.",
+  "skills.drawn": "Para mostrar entero lo que compartieron contigo, se añadió a tus habilidades: {skills}."
 }

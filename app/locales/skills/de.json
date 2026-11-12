@@ -70,5 +70,6 @@
   "skills.askDeck": "Bereite {what} vor, als Folien, die ich vorführen kann.",
   "skills.deckExample": "einen fünfminütigen Vortrag über den Wasserkreislauf",
   "skills.openDeck": "Neben dem Gespräch öffnen",
-  "skills.deckNotKept": "Diese Folien sind noch nicht gespeichert."
+  "skills.deckNotKept": "Diese Folien sind noch nicht gespeichert.",
+  "skills.drawn": "Damit alles zu sehen ist, was mit dir geteilt wurde, wurden diese Fähigkeiten zu deinen hinzugefügt: {skills}."
 }

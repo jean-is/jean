@@ -70,5 +70,6 @@
   "skills.askDeck": "Készíts diákat, hogy be tudjam mutatni: {what}.",
   "skills.deckExample": "ötperces előadás a víz körforgásáról",
   "skills.openDeck": "Megnyitás a beszélgetés mellett",
-  "skills.deckNotKept": "Ezek a diák még nincsenek mentve."
+  "skills.deckNotKept": "Ezek a diák még nincsenek mentve.",
+  "skills.drawn": "A veled megosztottak teljes megjelenítéséhez hozzáadva a készségeidhez: {skills}."
 }

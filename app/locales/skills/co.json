@@ -72,5 +72,6 @@
   "skills.askDeck": "Appronta {what}, in diapò ch’o possu prisentà.",
   "skills.deckExample": "un discorsu di cinque minuti nantu à u ciclu di l’acqua",
   "skills.openDeck": "Apre accantu à a cunversazione",
-  "skills.deckNotKept": "Ste diapò ùn sò ancu arregistrate."
+  "skills.deckNotKept": "Ste diapò ùn sò ancu arregistrate.",
+  "skills.drawn": "Aghjuntu à e vostre cumpetenze, per mustrà sanu ciò chì hè statu spartutu cù voi : {skills}."
 }

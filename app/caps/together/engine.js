@@ -6,7 +6,7 @@
 // numbered per device; nothing is followed while Jean is hidden, so a phone in a pocket is no beacon. Found from Share's "Work on it
 // together", an invitation, or a link (#/join/).
 import { signal } from '@preact/signals-core'
-import { contributions } from '../../ui/caps.js'
+import { contributions, unlock } from '../../ui/caps.js'
 import { fire } from '../../core/hooks.js'
 import { app, notify, refreshConversations, openConversation, refreshProjects, enterProject } from '../../ui/state.js'
 import { mine } from '../../ui/opfs.js'
@@ -19,6 +19,7 @@ import { personOf } from '../people/flow.js'
 import { apart } from '../sync/mirror.js'
 import { folderOf } from '../tables/table.js'
 import { COLOURS } from '../../ui/touches.js'
+import { drawIn } from '../skills/draws.js'
 import * as circle from './circle.js'
 import * as journal from './journal.js'
 import * as collection from './collection.js'
@@ -29,6 +30,8 @@ import * as project from './project.js'
 /** What each kind adds (D733): its changes, how they apply, its seed. */
 const bindings = { collection, task, document, deck: document, project }
 /** @typedef {keyof typeof bindings} Kind */
+/** What a project's folders hold, by the capability that shows it (ui/preview.js). */
+const THINGS = /** @type {Record<string, string>} */ ({ documents: 'documents', decks: 'skills', designs: 'designs', collections: 'tables', files: 'files' })
 
 /**
  * A circle as the secret keeps it. `links` whether a link may join; `role` what a link gives, editing or viewing.
@@ -122,6 +125,7 @@ async function taken(live, sealed, at) {
   }
   if ((change.kind === 'seed' ? body.content : change.kind === 'change' && body) && live.kept.place) {
     await bindingOf(live.kept).take(live.kept.place, change.kind === 'seed' ? body.content : body, live.held, { me: live.me, names: (fp) => nameIn(live, fp) })
+    if (change.member !== live.me) drawing(live.kept, change.kind === 'seed' ? body.content : body)
   }
   if (change.kind === 'moved' && change.member !== live.me) await moved(live, body)
   // Someone asks this person's Jean: a card, until they let it answer or put it off.
@@ -131,6 +135,17 @@ async function taken(live, sealed, at) {
   if (change.kind === 'join' && change.member === live.me && live.settled) here(live)
   if (change.kind === 'join' && change.member !== live.me && live.settled) notify(t(body.how === 'link' ? 'together.joinedLink' : 'together.joined', { name: live.state.members[change.member]?.name ?? '' }))
   changed()
+}
+
+/**
+ * What came from another draws here as it did there (D378): a project's things with the capability that shows each, and the charts,
+ * scores and decks of a document, its own or one of a project's, with Jean's own skills that declare them (../skills/draws.js); a task's
+ * are drawn as it shows. @param {Kept} kept @param {{ files?: Record<string, string | null>, markdown?: string }} content
+ */
+function drawing({ kind, place }, { files = {}, markdown = '' }) {
+  for (const path of Object.keys(files)) unlock(THINGS[path.split('/')[0]])
+  const texts = kind === 'document' ? [markdown] : Object.entries(files).flatMap(([path, value]) => (/^documents\/.+\.md$/.test(path) && value ? [new TextDecoder().decode(decode(value))] : []))
+  if (place) drawIn(texts, kind === 'project' ? `${place.dir}/${place.folder}` : place.dir)
 }
 
 /** A circle that ended for this person: removed, stopped by its owner, or moved without them; their copy stays theirs. @param {Live} live @param {'removed' | 'stopped'} how */
@@ -223,7 +238,7 @@ async function settled(live) {
     delete live.joining
     if (kept.kind === 'project') {
       // A project of their own now, so projects are theirs too.
-      await (await import('../../ui/caps.js')).unlock('projects')
+      await unlock('projects')
       await refreshProjects()
       const made = app.projects.peek().find((one) => one.dir === `projects/${kept.place?.folder}`)
       if (made) await enterProject(made)
@@ -232,7 +247,7 @@ async function settled(live) {
       if (kept.place.dir === app.projectDir) await openConversation(`${kept.place.dir}/${kept.place.folder}`)
     } else {
       const [cap, file] = /** @type {Record<string, string[]>} */ ({ document: ['documents', 'documents/documents'], deck: ['skills', 'skills/decks'] })[kept.kind] ?? ['tables', 'tables/tables']
-      const [{ unlock }, { metaOf }, { preview }] = await Promise.all([import('../../ui/caps.js'), import(`../${file}.js`), import('../../ui/preview.js')])
+      const [{ metaOf }, { preview }] = await Promise.all([import(`../${file}.js`), import('../../ui/preview.js')])
       await unlock(cap)
       const meta = await metaOf(kept.place.folder)
       if (meta) preview({ uri: kept.place.folder, ...meta })

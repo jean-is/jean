@@ -68,5 +68,6 @@
   "skills.askDeck": "{what} 슬라이드를 만들어 줘, 내가 발표할 수 있게.",
   "skills.deckExample": "물의 순환에 관한 5분짜리 강연",
   "skills.openDeck": "대화 옆에 열기",
-  "skills.deckNotKept": "이 슬라이드는 아직 저장되지 않았어요."
+  "skills.deckNotKept": "이 슬라이드는 아직 저장되지 않았어요.",
+  "skills.drawn": "공유받은 내용을 모두 보여 드리려고 내 스킬에 추가했어요: {skills}."
 }

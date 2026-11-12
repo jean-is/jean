@@ -74,5 +74,6 @@
   "skills.askDeck": "הכן לי {what}, בשקופיות שאוכל להציג.",
   "skills.deckExample": "הרצאה של חמש דקות על מחזור המים",
   "skills.openDeck": "פתיחה לצד השיחה",
-  "skills.deckNotKept": "השקופיות האלה עוד לא נשמרו."
+  "skills.deckNotKept": "השקופיות האלה עוד לא נשמרו.",
+  "skills.drawn": "כדי להציג במלואו את מה ששותף איתך, נוסף למיומנויות שלך: {skills}."
 }

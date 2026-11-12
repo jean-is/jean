@@ -7,21 +7,19 @@
 // token and what its password made stay among the secrets, so only this device changes it.
 import { html, svg, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
-import { walkTokens } from 'marked'
-import { register, unlock, slots, loaded } from '../../ui/caps.js'
+import { register, slots, loaded } from '../../ui/caps.js'
 import { act } from '../../ui/acts.js'
-import { lex, WIDGETS, PAGES } from '../../ui/markdown.js'
 import { app, notify, showError, refreshConversations, openConversation, SHORTCUTS } from '../../ui/state.js'
 import { serviceURL } from '../../core/settings.js'
 import { t, useStrings, locale, intlLocales } from '../../core/i18n.js'
 import { join, readJSON } from '../../core/fs.js'
-import { foldTurns } from '../../core/events.js'
 import { BRAND } from '../../brand.js'
 import { ulid } from '../../core/ulid.js'
 import { icon, icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { getSecret, setSecret, deleteSecret } from '../../ui/secrets.js'
 import { drawingOf } from '../../ui/export.js'
+import { drawIn, answersOf } from '../skills/draws.js'
 import { valueOf, takeIn } from './value.js'
 import { sealValue, openValue, materialOf, keysOf, idOf, random, base64url, bytesOf, linkOf, hashOf, isPart } from './seal.js'
 
@@ -226,12 +224,11 @@ export async function bringIn(remote, text) {
     const kept = { format: 1, kind: 'received', id: ulid(), host: hostOf(), remote, task: path, createdAt: at, author: app.deviceId }
     await app.fs.write(fileOf(kept.id), `${JSON.stringify(kept, null, 2)}\n`)
     received.value = [kept, ...received.peek()]
+    // What its answers draw is drawn here too, from the moment it shows (D378): a page on sight, a chart, a score or a deck with Jean's
+    // own skill that declares it, which this toast names rather than its own (../skills/draws.js).
+    const added = await drawIn(answersOf(records), app.projectDir, true)
     await refreshConversations()
     await openConversation(path)
-    // What its answers draw is drawn here too (D378): a page on sight, a chart, a score or a deck with Jean's own skill that declares it.
-    const kinds = new Set(/** @type {string[]} */ ([]))
-    walkTokens(foldTurns(records).flatMap((turn) => turn.steps.flatMap((step) => lex(step.text))), (token) => { if (token.type === 'code') kinds.add(String(token.lang).toLowerCase()) })
-    const added = [...kinds].some((kind) => Object.hasOwn(WIDGETS, kind) && !PAGES.includes(kind)) && (await unlock('skills')) ? await (await import('../skills/skills.js')).drawWith([...kinds]).catch(() => []) : []
     notify(added.length ? t('share.broughtWith', { skills: new Intl.ListFormat(intlLocales(locale.peek())).format(added) }) : t('share.brought'))
   } catch (error) {
     console.warn('Share', error)

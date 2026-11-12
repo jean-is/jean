@@ -27,12 +27,13 @@ import { act } from '../../ui/acts.js'
 import { listSkills, saveSkill, skillLines, skillSteps } from '../../core/skills.js'
 import { slug } from '../../core/settings.js'
 import { dirname, join } from '../../core/fs.js'
-import { t, locale, useStrings } from '../../core/i18n.js'
+import { t, locale, intlLocales, useStrings } from '../../core/i18n.js'
 import { DEFAULT_SOURCES, bestFit, indexURL, readIndexes, siteOf, fetchSkill } from './sources.js'
 import { readDirectory, shownIn, DIRECTORY } from './directory.js'
 import * as creations from '../../ui/creations.js'
 import { scores } from './scores.js'
 import { decks, keep, opener } from './decks.js'
+import { DRAWS } from './draws.js'
 
 await Promise.all([useStrings('skills'), styleSheet(new URL('skills.css', import.meta.url))])
 
@@ -43,8 +44,8 @@ export const folders = () => (app.project.value.data.default === true ? [''] : [
 
 /** Whether the user turned a skill off. @param {import('../../core/skills.js').Skill} skill */
 export const isOff = (skill) => skill.metadata?.off === true
-/** Every skill of the room, those turned off too, as Settings lists them. */
-export const room = () => listSkills(app.fs, folders())
+/** Every skill of the room, those turned off too, as Settings lists them; another's by its folders. */
+export const room = (where = folders()) => listSkills(app.fs, where)
 /** The skills of the room Jean follows: those not turned off. */
 export const skills = async () => (await room()).filter((skill) => !isOff(skill))
 
@@ -169,8 +170,7 @@ export async function lookFor(request) {
  * suggestions go. Its author: the user, or Jean when a request brought it.
  * @param {Entry} entry @param {{ body: string, files: { path: string, text: string }[], blocks?: string[], metadata?: Record<string, any> }} unpacked
  */
-export async function adopt(entry, { body, files, blocks, metadata }, by = app.deviceId) {
-  const dir = folders().at(-1) ?? ''
+export async function adopt(entry, { body, files, blocks, metadata }, by = app.deviceId, dir = folders().at(-1) ?? '') {
   for (const file of files) await app.fs.write(join(dir, 'skills', entry.name, file.path), file.text)
   await saveSkill(app.fs, dir, { name: entry.name, description: entry.description, body, by, blocks, metadata, ...(entry.digest && { source: entry.url, digest: entry.digest }) })
   act('skill.add', { name: entry.name, source: entry.digest ? 'elsewhere' : 'directory', ...(entry.digest && { address: new URL(entry.url).hostname, digest: entry.digest }) })
@@ -179,28 +179,27 @@ export async function adopt(entry, { body, files, blocks, metadata }, by = app.d
   app.actions.value = Object.fromEntries(Object.entries(app.actions.value).map(([at, ids]) => [at, ids.filter((id) => id !== 'ready')]))
 }
 
-/** Jean's own skill for each kind of block it draws once a skill declares it. */
-const DRAWS = /** @type {Record<string, string>} */ ({ echarts: 'chart', abc: 'music-score', deck: 'slides' })
-
 /**
- * Jean's own skills by name, added as the user adds one, unless a skill of the room has the name: what a task brought
- * in draws needs (D378), an idea asks for (D366), or the brain reads (D401), even one turned off. Their names, in the user's
- * language. @param {string[]} names
+ * Jean's own skills by name, added as the user adds one, unless a skill of the room (or the one `where` names) has the name: what
+ * came from someone else draws (D378), an idea asks for (D366), or the brain reads (D401), even one turned off. Their names, in the
+ * user's language. @param {string[]} names @param {string[]} [where]
  */
-export async function bring(names) {
-  const have = await room()
+export async function bring(names, where = folders()) {
+  const have = await room(where)
   const ready = (await directory()).filter((entry) => names.includes(entry.name) && !have.some((skill) => skill.name === entry.name))
-  for (const entry of ready) await adopt(entry, await fetchSkill(entry), 'jean')
+  for (const entry of ready) await adopt(entry, await fetchSkill(entry), 'jean', where.at(-1))
   return ready.map((entry) => shownIn(entry, locale.peek()).title)
 }
 
 /**
- * What a task brought in from elsewhere holds is drawn here (a share, D378): a kind of block no skill of the room
- * declares comes with Jean's own skill that does. @param {string[]} kinds the kinds of block the task holds
+ * What came from someone else draws here (./draws.js, D378): each kind of block no skill of the room of `dir`, a project's folder,
+ * declares comes with Jean's own skill that does, which the toast names unless `quiet`. @param {string[]} kinds @param {string} dir @param {boolean} quiet
  */
-export async function drawWith(kinds) {
-  const have = await skills()
-  return bring(kinds.filter((kind) => DRAWS[kind] && !have.some((skill) => skill.blocks?.includes(kind))).map((kind) => DRAWS[kind]))
+export async function drawWith(kinds, dir, quiet) {
+  const where = app.projects.peek().find((one) => one.dir === dir)?.data.default ? [''] : ['', dir], have = (await room(where)).filter((skill) => !isOff(skill))
+  const added = await bring(kinds.filter((kind) => !have.some((skill) => skill.blocks?.includes(kind))).map((kind) => DRAWS[kind]), where)
+  if (added.length && !quiet) notify(t('skills.drawn', { skills: new Intl.ListFormat(intlLocales()).format(added) }), { label: t('skills.open'), run: () => import('../../ui/dialogs.js').then((dialogs) => dialogs.openSettings('skills')) })
+  return added
 }
 
 /** Settings' Skills, from ./page.js, loaded the first time it shows. */

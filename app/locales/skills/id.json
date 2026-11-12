@@ -68,5 +68,6 @@
   "skills.askDeck": "Siapkan {what}, dalam slide yang bisa kupresentasikan.",
   "skills.deckExample": "ceramah lima menit tentang siklus air",
   "skills.openDeck": "Buka di samping percakapan",
-  "skills.deckNotKept": "Slide ini belum disimpan."
+  "skills.deckNotKept": "Slide ini belum disimpan.",
+  "skills.drawn": "Agar yang dibagikan kepada Anda tampil utuh, ditambahkan ke keterampilan Anda: {skills}."
 }

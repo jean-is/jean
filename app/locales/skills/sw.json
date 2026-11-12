@@ -70,5 +70,6 @@
   "skills.askDeck": "Niandalie {what}, kwa slaidi ninazoweza kuwasilisha.",
   "skills.deckExample": "hotuba ya dakika tano kuhusu mzunguko wa maji",
   "skills.openDeck": "Fungua kando ya mazungumzo",
-  "skills.deckNotKept": "Slaidi hizi bado hazijahifadhiwa."
+  "skills.deckNotKept": "Slaidi hizi bado hazijahifadhiwa.",
+  "skills.drawn": "Ili kilichoshirikiwa nawe kionekane chote, imeongezwa kwenye ujuzi wako: {skills}."
 }

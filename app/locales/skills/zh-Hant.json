@@ -68,5 +68,6 @@
   "skills.askDeck": "準備{what}，做成我能簡報的投影片。",
   "skills.deckExample": "關於水循環的五分鐘演講",
   "skills.openDeck": "在對話旁開啟",
-  "skills.deckNotKept": "這些投影片尚未儲存。"
+  "skills.deckNotKept": "這些投影片尚未儲存。",
+  "skills.drawn": "為了完整顯示與你分享的內容，已新增至你的技能：{skills}。"
 }

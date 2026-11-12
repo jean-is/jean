@@ -295,7 +295,7 @@ test('Ana and Bob make one deck together: a slide each reaches the other’s cop
   expect(await source(bob)).toContain('The castle in the morning.')
 })
 
-test('Ana and Bob work on a whole project together: its documents reach each other’s copy, and Ana’s tasks stay hers', async ({ browser }) => {
+test('Ana and Bob work on a whole project together: its documents reach each other’s copy, drawn as hers are, and Ana’s tasks stay hers', async ({ browser }) => {
   const [ana, bob] = await Promise.all([person(browser, 'Ana'), person(browser, 'Bob')])
   const plan = 'documents/01JAQXDOC0000000000000000P-plan.md', task = 'conversations/01JAQXTASK000000000000000Z.jsonl'
   const dir = await ana.evaluate(async ([plan, task]) => {
@@ -303,7 +303,7 @@ test('Ana and Bob work on a whole project together: its documents reach each oth
     await unlock('projects')
     await unlock('together')
     const dir = await createProject(app.fs, { name: 'Lisbon trip', by: 'user' })
-    await app.fs.write(`${dir}/${plan}`, '---\nformat: 1\nname: Plan\nauthor: user\n---\n# Plan\n\nFriday: land at 20:15.\n')
+    await app.fs.write(`${dir}/${plan}`, '---\nformat: 1\nname: Plan\nauthor: user\n---\n# Plan\n\nFriday: land at 20:15.\n\n```echarts\n{"xAxis":{"type":"category","data":["Fri","Sat"]},"yAxis":{"type":"value"},"series":[{"type":"bar","data":[1,2]}]}\n```\n')
     await app.fs.write(`${dir}/${task}`, `${JSON.stringify({ format: 1, kind: 'conversation', id: '01JAQXTASK000000000000000Z' })}\n`)
     await refreshProjects()
     ;(await import('/caps/projects/projects.js')).editProject(app.projects.peek().find((one) => one.dir === dir))
@@ -327,6 +327,9 @@ test('Ana and Bob work on a whole project together: its documents reach each oth
   await expect.poll(() => read(bob, plan)).toContain('Friday: land at 20:15.')
   expect(await read(bob, task)).toBe('')
   await expect(bob.locator('app-projects')).toContainText('Lisbon trip')
+  // Bob never found documents: the project's are his to open, and its chart comes with Jean's own skill, in the project's room.
+  await expect.poll(() => bob.evaluate(async () => (await import('/ui/caps.js')).loaded.peek().has('documents'))).toBe(true)
+  await expect.poll(() => read(bob, 'skills/chart/SKILL.md')).toContain('echarts')
 
   // Each one's words reach the other's copy, and a document Bob makes reaches Ana.
   await bob.evaluate(async ([dir, plan]) => {
@@ -336,6 +339,60 @@ test('Ana and Bob work on a whole project together: its documents reach each oth
   }, [dir, plan])
   await expect.poll(() => read(ana, plan)).toContain('Saturday: the castle.')
   await expect.poll(() => read(ana, 'documents/01JAQXDOC0000000000000000B-food.md')).toContain('Pastéis de nata.')
+})
+
+test('what Ana’s copy draws, Bob’s draws too: a chart in their shared task and a score in their shared document, each with Jean’s own skill that declares it (D378)', async ({ browser }) => {
+  const [ana, bob] = await Promise.all([person(browser, 'Ana'), person(browser, 'Bob')])
+  const doc = 'documents/01JAQXDOC0000000000000000S-song.md'
+  const chart = `Here it is.\n\n\`\`\`echarts\n${JSON.stringify({ xAxis: { type: 'category', data: ['Mon', 'Tue'] }, yAxis: { type: 'value' }, series: [{ type: 'bar', data: [3, 5] }] })}\n\`\`\``
+  /** A link to work together on what Share is opened on. @param {Page} page */
+  const invitation = async (page) => {
+    const sharing = page.locator('app-share-dialog dialog[open]')
+    await sharing.getByRole('button', { name: 'Copy an invitation link instead' }).click()
+    const link = await sharing.getByTitle('Link', { exact: true }).inputValue()
+    await sharing.getByRole('banner').getByRole('button', { name: 'Close' }).click()
+    return link
+  }
+  /** Bob joins from a link. @param {string} link */
+  const join = async (link) => {
+    await bob.goto(link)
+    const joining = bob.locator('app-together-dialog dialog[open]')
+    await joining.getByLabel('Your name, as the others will see it').fill('Bob')
+    await joining.getByRole('button', { name: 'Join' }).click()
+  }
+  /** Bob's skills, by name. */
+  const skills = () => bob.evaluate(async () => ((await import('/ui/caps.js')).loaded.peek().has('skills') ? (await (await import('/caps/skills/skills.js')).skills()).map((skill) => skill.name).sort() : []))
+
+  // A task whose answer holds a chart, which Bob, who never found charts, joins: it draws at once, and the toast names the skill added.
+  await ana.evaluate(async (text) => {
+    const [{ app, refreshConversations, openConversation }, { createConversation, appendRecords }, { metaRecord, userRecord, envelope }, { unlock }] = await Promise.all([
+      import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js'), import('/ui/caps.js')])
+    const { path } = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })
+    await appendRecords(app.fs, path, [metaRecord(app.deviceId, { title: 'My week' }), userRecord('Chart my week', app.deviceId), envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text } }, 0)])
+    await refreshConversations()
+    await openConversation(path)
+    await unlock('share')
+    await (await import('/caps/share/share.js')).openShare({ path, title: 'My week' }, null)
+  }, chart)
+  expect(await skills()).toEqual([])
+  await join(await invitation(ana))
+  const answer = bob.locator('app-conversation .msg-jean .prose')
+  await expect(bob.locator('.toast')).toContainText('Added to your skills, to show in full what was shared with you: Chart.')
+  await expect(answer.locator('app-chart .chart canvas')).toBeVisible()
+  await expect(answer.locator('pre code')).toHaveCount(0)
+  expect(await skills()).toEqual(['chart'])
+
+  // A document holding a tune: Bob's copy draws its score too.
+  await ana.evaluate(async (doc) => {
+    const [{ app }, { unlock }] = await Promise.all([import('/ui/state.js'), import('/ui/caps.js')])
+    await unlock('documents')
+    await app.fs.write(`${app.projectDir}/${doc}`, '---\nformat: 1\nname: Song\nauthor: user\n---\n# Song\n\n```abc\nX:1\nT:Scale\nM:4/4\nK:C\nCDEF|GABc|\n```\n')
+    await (await import('/caps/share/share.js')).openShare({ path: `${app.projectDir}/conversations/`, title: 'Song', item: { text: '' }, thing: { kind: 'document', uri: doc } }, null)
+  }, doc)
+  await join(await invitation(ana))
+  await expect(bob.locator('.toast')).toContainText('Added to your skills, to show in full what was shared with you: Music score.')
+  await expect(bob.locator('#doc app-score .score-sheet svg')).toHaveCount(1)
+  expect(await skills()).toEqual(['chart', 'music-score'])
 })
 
 /** Share opened on Expenses, worked on together or not yet; its dialog. @param {Page} page @param {string} folder */

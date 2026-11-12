@@ -70,5 +70,6 @@
   "skills.askDeck": "{what} ያዘጋጁልኝ፤ ላቀርበው በምችለው ስላይድ ይሁን።",
   "skills.deckExample": "ስለ ውሃ ዑደት የአምስት ደቂቃ ንግግር",
   "skills.openDeck": "ከውይይቱ አጠገብ ክፈት",
-  "skills.deckNotKept": "እነዚህ ስላይዶች ገና አልተቀመጡም።"
+  "skills.deckNotKept": "እነዚህ ስላይዶች ገና አልተቀመጡም።",
+  "skills.drawn": "ከእርስዎ ጋር የተጋራውን ሙሉ በሙሉ ለማሳየት ወደ ክህሎቶችዎ ታክሏል፦ {skills}።"
 }

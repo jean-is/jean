@@ -68,5 +68,6 @@
   "skills.askDeck": "{what}を、発表で使えるスライドにまとめてください。",
   "skills.deckExample": "水の循環についての 5 分間の話",
   "skills.openDeck": "会話の横に開く",
-  "skills.deckNotKept": "このスライドはまだ保存されていません。"
+  "skills.deckNotKept": "このスライドはまだ保存されていません。",
+  "skills.drawn": "共有された内容をすべて表示できるよう、スキルに追加しました：{skills}。"
 }

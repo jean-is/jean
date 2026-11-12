@@ -76,5 +76,6 @@
   "skills.askDeck": "Aoz {what}, e treyonennoù a c’hallin kinnig.",
   "skills.deckExample": "ur brezegenn pemp munutenn diwar-benn kelc’hiad an dour",
   "skills.openDeck": "Digeriñ e-kichen ar gaozeadenn",
-  "skills.deckNotKept": "N’eo ket enrollet an treyonennoù-mañ c’hoazh."
+  "skills.deckNotKept": "N’eo ket enrollet an treyonennoù-mañ c’hoazh.",
+  "skills.drawn": "Ouzhpennet d’ho parregezhioù, evit diskouez en e bezh ar pezh a zo bet rannet ganeoc’h : {skills}."
 }

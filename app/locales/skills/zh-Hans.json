@@ -68,5 +68,6 @@
   "skills.askDeck": "准备{what}，做成我能演示的幻灯片。",
   "skills.deckExample": "一段关于水循环的五分钟讲话",
   "skills.openDeck": "在对话旁打开",
-  "skills.deckNotKept": "这些幻灯片还没有保存。"
+  "skills.deckNotKept": "这些幻灯片还没有保存。",
+  "skills.drawn": "为了完整显示与你共享的内容，已添加到你的技能：{skills}。"
 }

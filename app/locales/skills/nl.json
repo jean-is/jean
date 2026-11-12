@@ -70,5 +70,6 @@
   "skills.askDeck": "Bereid {what} voor, als dia’s die ik kan presenteren.",
   "skills.deckExample": "een praatje van vijf minuten over de waterkringloop",
   "skills.openDeck": "Naast het gesprek openen",
-  "skills.deckNotKept": "Deze dia’s zijn nog niet bewaard."
+  "skills.deckNotKept": "Deze dia’s zijn nog niet bewaard.",
+  "skills.drawn": "Om alles te tonen wat met je is gedeeld, toegevoegd aan je vaardigheden: {skills}."
 }

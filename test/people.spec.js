@@ -102,7 +102,7 @@ test('two people meet side by side: Bob’s six digits typed on Ana’s Jean, th
   await expect(steps(settings)).toHaveCount(0)
 })
 
-test('a task shared from its menu with only the people chosen: what goes shown first, then a card on their Jean, which opens it as theirs, from Ana', async ({ browser }) => {
+test('a task shared from its menu with only the people chosen: what goes shown first, then a card on their Jean, which opens it as theirs, from Ana, its chart drawn (D378)', async ({ browser }) => {
   const [ana, bob] = await Promise.all([person(browser, 'Ana'), person(browser, 'Bob')])
   await meetBeside(ana, bob)
   await ana.evaluate(async () => {
@@ -110,7 +110,7 @@ test('a task shared from its menu with only the people chosen: what goes shown f
       import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js')])
     const { path } = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })
     await appendRecords(app.fs, path, [metaRecord(app.deviceId, { title: 'Plan the trip' }), userRecord('Plan my trip to Lyon', app.deviceId),
-      envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: 'Here is **the plan**.' } }, 0)])
+      envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: `Here is **the plan**.\n\n\`\`\`echarts\n${JSON.stringify({ xAxis: { type: 'category', data: ['Fri', 'Sat'] }, yAxis: { type: 'value' }, series: [{ type: 'bar', data: [2, 5] }] })}\n\`\`\`` } }, 0)])
     await refreshConversations()
   })
   const row = (await openTasks(ana)).locator('.history-list li:not([aria-hidden])', { hasText: 'Plan the trip' })
@@ -159,6 +159,10 @@ test('a task shared from its menu with only the people chosen: what goes shown f
   await expect(bob.locator('app-conversation .msg-user')).toHaveText('Plan my trip to Lyon')
   await expect(bob.locator('app-conversation .msg-actions.is-request')).toHaveCount(0)
   await expect(card).toHaveCount(0)
+  // Bob never found charts: what Ana's answer holds comes with Jean's own skill that draws it, which the toast names.
+  await expect(bob.locator('.toast')).toContainText('Added to your skills, to show in full what was shared with you: Chart.')
+  await expect(bob.locator('app-conversation .msg-jean .prose app-chart .chart canvas')).toBeVisible()
+  await expect(bob.locator('app-conversation .msg-jean .prose pre code')).toHaveCount(0)
 })
 
 test('an answer goes back on its thread: only what Bob added, from his task’s menu, taken into the task Ana sent', async ({ browser }) => {

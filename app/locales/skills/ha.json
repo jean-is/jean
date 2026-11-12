@@ -70,5 +70,6 @@
   "skills.askDeck": "Shirya min {what}, a silaidodi da zan iya gabatarwa.",
   "skills.deckExample": "jawabi na mintuna biyar game da zagayen ruwa",
   "skills.openDeck": "Buɗe a gefen tattaunawar",
-  "skills.deckNotKept": "Ba a adana waɗannan silaidodi ba tukuna."
+  "skills.deckNotKept": "Ba a adana waɗannan silaidodi ba tukuna.",
+  "skills.drawn": "Don a nuna duka abin da aka raba da kai, an ƙara a cikin ƙwarewarka: {skills}."
 }

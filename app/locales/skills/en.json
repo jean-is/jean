@@ -70,5 +70,6 @@
   "skills.askDeck": "Prepare {what}, as slides I can present.",
   "skills.deckExample": "a five-minute talk on the water cycle",
   "skills.openDeck": "Open beside the conversation",
-  "skills.deckNotKept": "These slides aren’t kept yet."
+  "skills.deckNotKept": "These slides aren’t kept yet.",
+  "skills.drawn": "Added to your skills, to show in full what was shared with you: {skills}."
 }
