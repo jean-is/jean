@@ -242,6 +242,9 @@ test('a device added: six digits typed on the one that has the Jean, and the oth
   // On a narrow window, the drawer over the conversation is modal, which leaves nothing outside it to reach: the popover is in it, the pointer reaching its rows.
   await closeSettings(b)
   await b.setViewportSize({ width: 700, height: 800 })
+  // Once the page has taken its new width, which the header's button tells: it says whether the drawer is open on a wide window only.
+  // Asked for before, the tasks were found beside the conversation, and went as the window narrowed.
+  await expect(b.locator('.sidebar-toggle')).not.toHaveAttribute('aria-expanded')
   const drawer = await openTasks(b)
   await drawer.locator('.profile').getByRole('button', { name: 'Your devices' }).click()
   const narrow = b.getByRole('dialog', { name: 'Your devices' })
