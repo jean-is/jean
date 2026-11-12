@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Backups: every file of Jean's folder in one zip, secrets, caches and a device's pairing left out.
 // Importing never deletes or overwrites what is already here, with two exceptions: a conversation
 // that is longer in the backup (conversations only ever grow), and settings (restoredSettings()).

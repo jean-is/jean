@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Together (D733): Ana and Bob work on one collection, each in a browser context of their own, so their own storage, through the relay
 // on 4187, which keeps journals (test/playwright.config.js). Ana makes a link from Share's "Work on it together"; Bob opens it, gives the
 // name the others see and joins; a row each adds reaches the other's copy; Ana removes Bob, who keeps what he had. Chromium only:

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // npm run csp: the pages' policies checked (csp.spec.js) in every engine this computer has, beyond the
 // smoke tests' Chromium and WebKit: Firefox (once: npx playwright install firefox), and Chrome and
 // Edge themselves where they are installed. Safari itself has no Playwright: scripts/serve.js

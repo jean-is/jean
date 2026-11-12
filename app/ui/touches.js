@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The user's touches over a look (D111): an accent, a background, a text size, a typeface, and
 // their own CSS. Loaded with Settings, or at start when there are some (ui/looks.js touched()).
 

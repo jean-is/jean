@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Word, Excel and PowerPoint files as Office draws them (D183), in a file's pane and the browser: by
 // @silurus/ooxml, its parsers WebAssembly, its viewers drawing on a canvas, so nothing of the file
 // becomes markup, in a frame of a file pane's kind (an opaque origin with no network), in a page made

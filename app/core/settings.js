@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // settings.json, organisation policy, and the default project.
 import { readJSON, writeJSON } from './fs.js'
 import { ulid } from './ulid.js'

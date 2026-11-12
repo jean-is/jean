@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Jean's own directory of ready-made skills (D196), for what people ask of it: each a SKILL.md
 // beside this module, shipped and kept offline with the skills capability, read when the directory
 // is shown or a request is compared with it, and added as a skill from elsewhere is, once the

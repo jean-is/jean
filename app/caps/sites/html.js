@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Reading HTML as a tree, enough for what a site's check and jean.is's own pages ask of a page (D720, D438): each element its
 // name, attributes, children (elements or text) and parent; a closing tag closes what it matches, and what it left open.
 // No DOM: node tests run it, and site/checks.js reads Jean's pages with it.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A link for a phone's camera or another device, the same wherever one goes out (D361, D700, D720, D727): its QR code, the field it is
 // copied from, whose button says Copied for two seconds, and the six digits that match two devices or two people, shown on one and typed
 // on the other. Only capabilities import this module, so lean-qr's smallest build, their runtime (vendor/lean-qr), loads with them; where

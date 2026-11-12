@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 # Who may use the gateway: whoever the organisation's sign-in vouches for. Jean sends the person's access
 # token as `Authorization: Bearer`, to the brains (/v1) and to the MCP servers (/mcp) alike. This checks
 # its signature against the issuer's keys, its issuer, audience and expiry, and names the person in

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The user at the foot of the conversations: "You" until their name is known, opening a
 // menu above them with Settings and the language. A language picked there applies and the menu stays on
 // its page, the drawer open beside the conversation staying so (D153, D165). Jean notes the name the user

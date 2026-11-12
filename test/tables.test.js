@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Tables' engine (D474, D491): a table's collection.json, its changes.jsonl merged cell by cell, queries,
 // undo and export; then the multilingual test set scripts/tables.js measures brains on.
 import { test } from 'node:test'

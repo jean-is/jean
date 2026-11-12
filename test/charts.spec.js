@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Charts (D196): a skill from Jean's own directory, read in Settings and added, declares ```echarts
 // blocks; from then on they are widgets in the conversation, drawn by ECharts, copied as their
 // source and their picture at once, and as a picture when the answer is copied. Until a skill of

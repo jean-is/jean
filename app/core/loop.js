@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The agent loop: stream a reply, run tool calls under the rules, feed results
 // back, repeat. Emits live ACP updates and persists settled records.
 import { streamChat as defaultStream, LLMError } from './llm.js'

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Policy's `session` (D676): what it may say, and the clock behind going idle.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'

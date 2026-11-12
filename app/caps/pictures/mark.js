@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A picture made on this device or by a server on this computer says it was made by a trained model
 // (D279), as the AI Act's Article 50(2) asks of what such a system makes: IPTC's Digital Source Type in
 // its XMP, which C2PA, the AI Act's code of practice and the large platforms read, with the maker's name

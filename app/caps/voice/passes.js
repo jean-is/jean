@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Dictation written as it is said, with Whistle or Whisper (no I/O, tested under node --test): what
 // was said since the last pause is written again each time half a second more has come, and kept
 // once the user pauses, so no pass grows long. Silence is never written: Whisper would invent words.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Folders (D141, D149, D152): a project or a conversation opened on a folder of the user's computer, each
 // keeping its own across visits, and Jean finding, reading and changing its files where they are.
 // A new conversation starts on its project's folder and keeps it; the conversation's header names

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Jean's device brain as an OpenAI-compatible server, so that npm run tables (or any runner that takes
 // BRAIN_ADDRESS) measures Jean's own runtime: Gemma 4 E2B through caps/brain-local/brain-worker.js,
 // Transformers.js and ONNX Runtime on WebGPU, in headless Chromium, with the messages, tools, parser

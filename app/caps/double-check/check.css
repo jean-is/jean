@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* Under an answer: whether its sources say what it says, drawn as the sources it read (.read-list). */
 .check li { flex-wrap: nowrap; align-items: baseline; }
 .check li > [dir] { flex: 1 1 auto; min-inline-size: 0; }

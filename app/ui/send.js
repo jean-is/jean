@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Sending a message and answering it: the prompt and the notes since (D46), what the brain reads of
 // the files shared, Auto's choice of a brain, the run with its approvals, and the provider's cache
 // kept warm (D49). Loaded when the user starts typing or sends, not with the first screen (D148):

@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* Extensions (D296): what they draw in the room. */
 .extensions-above { inline-size: var(--column); margin: 0.5rem auto 0; padding: 0.6rem 1.1rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--glass); font-size: 0.92rem; }
 /* One that draws nothing there now takes no room. */

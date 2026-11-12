@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Settings' Ideas (D743): how the ideas under the box are chosen, then a row for everywhere and one for each project, each
 // opening its list, starters/all or starters/<the project's ULID>: each idea's words and request, moved up or down or removed,
 // and a new one; on the list of the project the room is in, what is often asked there, kept or hidden. Without Projects, the

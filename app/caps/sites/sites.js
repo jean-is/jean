@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Sites (D720): websites of a few pages the brain makes with its skill "Make a site". Each is a folder of the project,
 // `sites/<ulid>-<slug>` (./file.js), made or replaced whole by `site` and changed by exact passages with `site_change`; each call
 // checks it, from its files (./check.js) and as its pages show at a phone's and a computer's width (./frame.js), and tells the

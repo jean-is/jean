@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Add files, folders and pictures: dropped on the box, picked with +, or pasted; what Jean reads in them and
 // keeps in the project, @ to point at one again, and a folder worked on where it is, or as a copy outside Chrome and
 // Edge; its pane replays a request about a shared PDF, as Jean answers it.

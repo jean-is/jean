@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What npm run longtasks counts (test/longtasks/score.js): pass^k, partial credit, two-order verdicts, languages,
 // numbers in any locale, and what records say of plans, summaries and work done again.
 import { test } from 'node:test'

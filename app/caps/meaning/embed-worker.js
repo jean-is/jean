@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // EmbeddingGemma 2's text model through Transformers.js: texts in, their meaning out as vectors of
 // 768 numbers, each kept in a byte (D302). Its vision and audio encoders aren't loaded.
 // { type: 'load', host, model, device, dtype }  → progress…, { type: 'ready' }

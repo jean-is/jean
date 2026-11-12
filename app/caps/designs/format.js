@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A design's file (D572): one SVG, `designs/<ulid>-<slug>.svg`, that any program shows as a picture and that
 // holds the design itself as JSON in its <metadata>, which is all Jean reads back: never the SVG's markup, so no
 // other program's drawing is taken for Jean's, and Trusted Types needs no policy. The drawing is written from the

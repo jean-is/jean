@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A fictional logistics company's documents, made from a seed, with questions whose answers and
 // evidence are known: the corpus the document evals run on (docs/architecture.md#retrieval-and-extraction).
 // The same seed and size always give the same text. Nothing generated is committed.

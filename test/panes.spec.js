@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A page's pane that frames Jean's own demo of its task: framed between the pane's head, box and line, as it
 // ended, the AI named as the page names it and the answer drawn (a chart, a deck, words), and a button that plays it
 // again from the request, the answer written as it came. Every page that has one, in English and French, as jean.is

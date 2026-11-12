@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Use a key you already have: a key from one of the services that take requests from a browser, pasted in
 // Settings › Brains' way for keys, with the steps it shows to make one; a key isn't a plan, and Vertex AI's is a
 // service account's file. Show me opens Jean on that way's page.

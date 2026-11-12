@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What Jean cost over time, under Settings › Brains (D691): a line under its title saying this month's, which opens a page of the months, the
 // brains and the tasks that cost most, each worked out by ./spent.js from every project's conversations, at today's prices as
 // each answer's card is (D252). What each task asked for is kept in `.cache/spent.json`, read again only where its file changed.

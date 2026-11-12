@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Anthropic Messages, imported by llm.js the first time an Anthropic brain is used.
 import { LLMError, headersFor, post, endpoint, sseEvents, parseData, parseArgs, doneEvent, streamError, noteBlock, documentBlock } from './llm.js'
 

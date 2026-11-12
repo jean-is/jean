@@ -48,7 +48,7 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
 
 - Everything outside `ee/` is MIT. `ee/` holds the enterprise integrations, under the Elastic License 2.0 plus the grant in `ee/GRANT.md` (D139).
 - Only what an organisation's IT, security or compliance team asks for goes in `ee/`. Never the person's own security, a standard Jean speaks, or anything already open: features never move from open to `ee/`.
-- Every file in `ee/` starts with `// SPDX-FileCopyrightText: 2026 Warehouse SAS` and `// SPDX-License-Identifier: Elastic-2.0`. Never copy code across the line, in either direction.
+- Every file of code (`.js`, `.ts`, `.css`, `.html`, `.py`, `.sh`, `.c`, `.m`) opens with its licence, in its own comment syntax, after a `#!` line or a doctype: `// SPDX-License-Identifier: MIT`, and in `ee/` `// SPDX-FileCopyrightText: 2026 Warehouse SAS` then `// SPDX-License-Identifier: Elastic-2.0`. `npm run security` holds it; `npm run security -- --fix` writes a missing one. Never copy code across the line, in either direction.
 - One module outside `ee/` loads it, with `import()`, and only when policy holds a key. The key check lives in `ee/`. Jean works completely with `ee/` deleted.
 
 ## UI rules
@@ -123,7 +123,7 @@ npm run icons   # draw the PNG icons that installs need from icons/icon.svg, aft
 npm run screenshots  # take the install dialog's screenshots, four pages in each language (-- fr ja: only these), after changing Jean's look
 npm run cards   # draw the pictures a link to jean.is shows, one per language of its homepage, after changing its promise or a language (D682)
 npm run check   # vendor, manifest, tsc --noEmit (strict), tests, budgets
-npm run security  # the security rules above, in the code, and no secret in a tracked file (D679); npm test runs it too
+npm run security  # the security rules above, in the code, no secret in a tracked file (D679), and each file of code's licence (-- --fix writes a missing one); npm test runs it too
 npm run lts     # whether .nvmrc names Node's newest LTS, from Node's list of releases (D701); -- --write moves it and every node:<major> image there; CI runs it each Monday too
 npm test        # node --test --test-force-exit test/*.test.js
 npm run e2e     # Playwright smoke tests in Chromium and WebKit (once: npx playwright install chromium webkit)

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Maps (D291): <app-map> in a page, its GeoJSON as its text, which the page may change to move it (a
 // form beside it, say); a place, a route or an area clicked tells the page (`pick`, with what it
 // says of itself). Lent to a page that holds one, as a ```geojson block in an answer is a page made of

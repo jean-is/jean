@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A picture's area an answer points at (D715): the picture shown small under its mark, the area boxed as the file's view
 // boxes it, a click opening it there. Most often the screen shared or the camera's picture, where it says "here".
 import { html, nothing } from 'lit-html'

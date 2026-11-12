@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // People (D727): the people this profile met, to send tasks and what Jean made to, and get their answers back. Meeting is a state machine
 // the page (./page.js) drives: on the inviting side `inviting`, with each invitation kept on its device until it ends and its mailboxes read
 // while Jean is in sight; on the invited side `accepting`, which the link's arrival (#/meet/…) opens and the person's Accept starts. Once met,

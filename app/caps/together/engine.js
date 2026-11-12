@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Together's engine (D733): people work on one thing at once, each keeping their own copy, a journal on the relay keeping the copies in step
 // (relay/journal.js). ./circle.js says who is in, ./journal.js talks to the relay, and each kind's binding says what its changes are
 // (./collection.js, for a collection). A circle is a secret, `circle:<journal id>`, which follows the person's devices (D700): the relay,

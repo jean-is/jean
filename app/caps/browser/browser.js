@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The browser (D140): web pages beside the conversation, or over it on a narrow screen, in a pane
 // of the dock (D144) that a file's preview shares, with back, forward and reload, an address or
 // words to look up, a new tab and full screen. Links in answers

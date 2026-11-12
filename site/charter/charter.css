@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* The AI charter page, over site.css: the charter as a sheet of paper signed by hand, the template with its kinds of
    organisation, how it is adopted, what policy.json holds of it. Logical properties only; classes start with cha-.
    A kind's own lines and its button show with the radio button chosen, through :has() alone, since the page runs no

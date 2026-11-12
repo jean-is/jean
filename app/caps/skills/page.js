@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Settings' Skills (D121, D196, D261): the skill followed last, then the room's skills, each with its few words, where it
 // came from in a word when not from the user (a site, ready-made) and Off once turned off. A row opens its page, skills/<name>:
 // where it came from, how often it was followed, its switch, then when it is followed, an example to try, its steps, Change it

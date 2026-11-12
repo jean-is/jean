@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Colleagues (D731): on an organisation's own relay, the people its sign-in names, each listed by the ID token it gave them, so that
 // colleagues find each other's devices, a person mailbox and a profile key each, with no meeting (D727). A device sends that token beside
 // its profile's public key, with the token of the person mailbox it lists; the relay checks the token's signature by the issuer's keys, its

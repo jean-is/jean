@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Send a task to someone: Settings › People › Add a person, side by side with a code to scan or apart with a link,
 // the six digits their screen shows typed here; then, in Share, the person ticked and Send a copy, for a task or what
 // Jean made; the card it comes as on their side, Send back to them and Take in, Publish told apart, removing a person,

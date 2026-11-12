@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The watermark in what the brain on this device writes (D402): Aaronson's race keyed by the four
 // tokens before, counted by anyone with the tokenizer.
 import { test } from 'node:test'

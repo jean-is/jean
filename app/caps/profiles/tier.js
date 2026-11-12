@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Set by a parent (D228): what a parent sets in a child's profile, kept in its parent.json in
 // policy.json's shape, so that what honours an organisation's policy honours it too: the brains and
 // rules as the parent left them, the sources web search reads, capabilities turned off, the picture

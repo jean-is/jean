@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What Jean can do and how it is used, for the brain (D423): `about` gives guide.txt, in English, each menu and button it
 // names as the user's screen shows it, and what stands now, from the code rather than the guide: Settings' sections, the
 // keyboard's shortcuts as Settings lists them, the version and when it was made, what an organisation or a parent

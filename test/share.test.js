@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Sharing by link (D361): what of a task goes in a share, its seal, which only the link's secret, and
 // its password when there is one, opens, and the host, which keeps what it can't read.
 import { test } from 'node:test'

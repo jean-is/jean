@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A collection worked on together (D733): its changes are lines of its changes.jsonl and its collection.json, which already merge in
 // any order (caps/tables/changes.js `merge`, table.js `mergeTables`), as Sync merges them. A line that comes is appended, never written
 // over what the person changes meanwhile; a table that comes is merged into the one here. What the person changes here goes as the

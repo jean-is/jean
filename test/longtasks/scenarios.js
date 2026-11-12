@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The eval's own tasks, in English, French, Arabic and Japanese: office work of many steps on files made here from a
 // seed, each with TheAgentCompany-style checkpoints read from the files Jean leaves, and a change of mind the person
 // sends while it works (τ-bench's simulated user, D365). Two short ones are there to see that a plan stays away from a

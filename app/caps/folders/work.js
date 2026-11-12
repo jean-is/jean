@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Work in a folder (D141): its files listed, searched, read and changed where they are, through an
 // FS on the folder (ui/opfs.js's folderFS, or a dropped folder's copy). No DOM: node tests run it on
 // core/fs.js's memoryFS. Word, Excel and PowerPoint are read by Files' readers; PDFs by pdf.js, which

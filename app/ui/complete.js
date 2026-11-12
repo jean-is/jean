@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The box's / and @ (D199). Typed at a word's start, either opens a menu just above the box,
 // which narrows as the user types on. / names what Jean uses for the message: one of the room's
 // skills, one of its connections, something Jean can do; and finds what isn't there yet, a

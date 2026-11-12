@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Ideas under the box (D743): what shows, four at most, the project's own, then the person's everywhere, then those noticed and
 // not hidden; and what is noticed on the device, never by a brain: requests asked again, tasks that began alike (the same kind
 // as Skills is offered for, D121), three at least. Pure, under node --test.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A child's profile (D228), loaded with Profiles there. What a parent set (./tier.js) takes the place
 // of the settings it locks, which say "Set by a parent", and changes only with the parent's password
 // or passkey, which lifts its locks while they change it. A danger Intuition reads in a message, or

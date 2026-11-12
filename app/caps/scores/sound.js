@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A score's sound (D338): the instruments its notes ask for, MS Basic's files from where Settings or policy
 // name them (jsDelivr's copy of the sounds package unless they name another), or where a saved copy names
 // them, each downloaded once, checked against its SHA-256 in Jean's own list of them and kept apart

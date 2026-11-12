@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The natural voice in Settings › General: its row under Reading aloud, the languages here or off, which opens its page,
 // settings/general/natural: its switch, its six languages with whose voice reads each, Listen once here, else Download, and
 // its credit. A language is removed in Your data › Space used. Loaded the first time General shows.

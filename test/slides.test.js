@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Slides (D591): what Jean changes in a deck's Markdown, as text, the rest of it byte for byte: a slide's layout, the kit
 // the deck is drawn with in its headmatter, and Jean's version set against the user's, slide by slide (D505).
 import { test } from 'node:test'

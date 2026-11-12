@@ -1,7 +1,8 @@
+// SPDX-License-Identifier: MIT
 // The security rules AGENTS.md writes down (scripts/security.js): held in the code's own syntax, in every module, on every push.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { audit, codeOf, scan, unpinned, unpinnedImages, writesCookie } from '../scripts/security.js'
+import { audit, codeOf, noticed, scan, unpinned, unpinnedImages, withNotice, writesCookie } from '../scripts/security.js'
 
 const rules = (/** @type {string} */ text, path = 'app/ui/x.js') => scan(path, text).map(({ rule }) => rule)
 
@@ -89,6 +90,21 @@ test('only caps/devices/ reads the store’s keys, which open what the person’
     assert.deepEqual(rules(text, 'app/caps/devices/store.js'), [], text)
   }
   for (const text of ["await getSecret(app.fs, 'share:01J')", "const STORE = 'app-store'", "import { recordsOf } from '../devices/flow.js'"]) assert.deepEqual(rules(text, 'app/ui/state.js'), [], text)
+})
+
+test('each file of code opens with its licence, Elastic-2.0 and its copyright in ee/, MIT everywhere else', () => {
+  const ee = '// SPDX-FileCopyrightText: 2026 Warehouse SAS\n// SPDX-License-Identifier: Elastic-2.0\n'
+  for (const [path, text, want] of [['app/ui/a.js', 'export {}\n', '// SPDX-License-Identifier: MIT\nexport {}\n'], ['app/ee/a.js', 'export {}\n', `${ee}export {}\n`],
+    ['cli/main.js', '#!/usr/bin/env node\nrun()\n', '#!/usr/bin/env node\n// SPDX-License-Identifier: MIT\nrun()\n'], ['deploy/a.sh', '#!/bin/sh\nrun\n', '#!/bin/sh\n# SPDX-License-Identifier: MIT\nrun\n'],
+    ['app/index.html', '<!doctype html>\n<html>', '<!doctype html>\n<!-- SPDX-License-Identifier: MIT -->\n<html>'], ['app/ui/a.css', 'a {}\n', '/* SPDX-License-Identifier: MIT */\na {}\n']]) {
+    assert.ok(!noticed(path, text), path)
+    assert.equal(withNotice(path, text), want)
+    assert.ok(noticed(path, want), path)
+    assert.equal(withNotice(path, want), want, path)
+  }
+  assert.ok(!noticed('app/ui/a.js', `${ee}export {}\n`), 'code taken out of ee/ is seen')
+  assert.equal(withNotice('app/ui/a.js', `${ee}export {}\n`), `${ee}export {}\n`, 'and left for a person, never relicensed')
+  assert.ok(!noticed('app/ee/a.js', '// SPDX-License-Identifier: MIT\nexport {}\n'))
 })
 
 test('every module of Jean’s keeps the rules, and nothing tracked looks like a secret', () => {

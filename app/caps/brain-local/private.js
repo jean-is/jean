@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Private · offline: while the next message can only be answered by the brain in this browser
 // tab, a legend in the box's bottom row (ui/composer.js has its element) says so and opens what that
 // means, and the box is sealed. Offline, Auto answers here too (D70 · D269), and the legend says it still does.

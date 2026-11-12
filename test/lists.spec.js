@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The EU's trusted lists as the organisation's anchors (D439, ee/): with `trust` naming the List of Trusted Lists and
 // the Official Journal's certificates, the check page reads the LOTL and the member state's list a certificate's
 // authority is in, off the page in a worker, checks their signatures, and says the seal is qualified while that list

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The teachers' page: a teacher's own work, at /teachers in English and /fr/enseignants in French. Its promise, then
 // that promise part by part as the homepage has its own (landing() in site/site.js). Their quizzes, worksheets and
 // slides: what comes out of a lesson (this week's quiz, a worksheet in Word, slides, flash cards, the term's plans)

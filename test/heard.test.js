@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A recording heard on the device (D713): where its windows are cut, and how their times are written.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Measures the tutor (D394): how often a brain gives the answer to work that is a child's to do, and
 // how it helps instead. Each request of test/tutor/ is what a child sends in their own space: their
 // parent's instructions as a child's profile gives them (D228), and Jean's ready-made skills for

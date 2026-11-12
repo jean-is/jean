@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The FS type (core/types.d.ts) on a folder of this computer, for Jean outside a browser: the folder
 // Sync mirrors Jean's files to, or the one an editor works in. In Jean's, a file written whole goes to
 // a .tmp beside it first, then takes its place; a mirror never carries a .tmp (caps/sync/mirror.js), so

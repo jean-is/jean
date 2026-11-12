@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // jean.is's page for IT (D428): it tells an organisation that any provider and any model do, that each request goes
 // to the least costly of them, how it deploys Jean, answers each role in the group that decides with a status, and
 // prices per organisation. What every page of the site must be, test/site.test.js holds it to (D438).

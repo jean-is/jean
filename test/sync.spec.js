@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Sync (D157): two computers keep each other's conversations through a folder their cloud drive
 // syncs, or two Jeans through the very same folder. Each computer is a browser context of its own, the
 // system's picker is played by a folder of its private file system (as in folders.spec.js), and the

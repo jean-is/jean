@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* Settings' Your data: a title with Download a backup at its end, the line on how things stand, then rows in their
    groups, each opening its page; a page's title under Back, its line under its title, what it does most at its end. */
 .data-head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; margin-block-end: 1.25rem; } .data-head > :first-child { flex: 1 1 12rem; min-inline-size: 0; }

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The pages' policies (D326): what Jean does refuses nothing in any engine. Jean is served here with
 // each page's own policy again as a report-only header (scripts/serve.js --csp-reports), so the
 // browser itself says what its policy blocks, Trusted Types included, in every frame: the room, the

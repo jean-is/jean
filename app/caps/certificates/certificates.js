@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Checking certificates (D274): a certificate of an answer, or its proof, shared in a conversation
 // brings this capability, whose check_certificate reads them with the files to match and shows what
 // it found in the answer (`_meta.checked`), as the check page does: Jean's words never decide it.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What a part of a page shows of a collection (D633), worked out by Jean so that the page shows the rows as they are and follows
 // them (./tables.js, `follow`): the lines a brain writes for that part (../interactive/parts.js). A table's heads, then its rows, of
 // the columns its first line names or those its table view shows; a chart's labels, then the sum of a column (`sum`) or the count of

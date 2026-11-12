@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // At a glance, an example of an extension for Jean (D296) that adds to how a conversation looks. Under each
 // long answer it draws one line: how long the answer takes to read, a small map of its parts in order
 // (each paragraph a bar as tall as it is long beside the others, a sign for a list, a table, code, a

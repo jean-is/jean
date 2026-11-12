@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Looks (D111): each one's style sheet stays within it, and the user's touches only ever write
 // checked values into CSS.
 import { test } from 'node:test'

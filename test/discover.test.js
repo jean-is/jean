@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // 0.3 "Discover": deferred tools and find_tools (D47), nested calls from scripts (D48),
 // BM25, Kev's packing in the Decisions API shape, Auto, suggestions and sources.
 import { test } from 'node:test'

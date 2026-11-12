@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A person's store as an FS (app/caps/devices/store-fs.js, D721), which Sync's round runs against: two devices in memory and the
 // relay's own handler in this process, its backend in memory too, so that what the relay holds can be read whole.
 import { test } from 'node:test'

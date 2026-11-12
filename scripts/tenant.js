@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Copies of Jean that Warehouse SAS hosts, each at an organisation's own address (D456): one build, the one
 // `npm run deploy` puts in the hosted folder with POLICY='{}', so its index.html names policy.json, served at every
 // address a registry lists, a JSON file kept apart from this repository (TENANTS). Per address, only three things

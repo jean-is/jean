@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What two versions of a text make together, from the one both came from (D157): line by line, lined up by
 // the longest run of lines they share (`steps`, which Jean's changes in a document use too). A part changed
 // on one side alone takes that side's; changed on both, the same, it is taken once; changed on both apart,

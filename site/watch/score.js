@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The reels' score (D687, docs/reels.md#sound): music written here as code and played by Web Audio, so a reel's
 // sound is Jean's own to give (MIT): no recording, no sample, nobody's licence. compose() writes the notes for a
 // reel's plan, the same for a seed every time; Score plays them, tied to the reel's time (paused, sought, faster or

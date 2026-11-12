@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Your devices (D700): a person's devices paired through the relay (relay/, D45 · D226), each its own browser context, so its own
 // storage. The one that has the Jean adds the other from Settings › Your devices (D726): a link, joined on the new one only once
 // the person chooses Join, six digits the new one shows, typed there, and the new one, asked again, opens the same profile, with the

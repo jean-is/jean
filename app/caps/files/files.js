@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Files: the user drops, pastes or picks files, or captures their screen; Jean extracts their
 // text, keeps the original in the project's library, and the next message links to them.
 // Pictures have no text, nor do scans: brains that can see are shown them. Adds `read`, for

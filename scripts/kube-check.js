@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Jean's chart (deploy/helm/jean) as an organisation's hardened cluster runs it: CI's containers job installs it in kind,
 // in a namespace held to Pod Security's "restricted" level, every pod as a random user in group 0 as OpenShift runs it
 // (deploy/helm/ci-values.yaml), then runs this. It asks each pod who it runs as, whether its root can be written and, but

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The audit export (D386): Jean's records as OpenTelemetry GenAI spans, and the batches that carry them.
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'

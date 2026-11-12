@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Notifications: a task done, or waiting on an approval or questions, while the user is in another
 // tab or app, the browser says so, with the task's title and never its answer; a click brings Jean back
 // on it, and coming back takes away those still shown. Offered the first time a task is done while the

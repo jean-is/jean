@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Connections (docs/product.md): the services the user already uses, their email, documents or
 // calendar, reached through MCP (D21, D86). A connection is an address, plus a key or a sign-in
 // when the service asks for one, kept encrypted in .secrets/ and never in a backup. A service can

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Turn-taking for live conversation, with no I/O (tested under node --test): when the user
 // starts and stops speaking, from Silero's probability for each 32 ms of audio, and which
 // sentences of a streaming answer are complete enough to read aloud.

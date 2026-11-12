@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* The dock (ui/dock.js, D144, D635): the panes beside the conversation, a file's preview, the browser, the terminal, a flow and the
    tiles the drawer drags in, laid out with the conversation as one screen in parts; the edges between parts; the box showing where
    something dragged goes. Loaded with the first pane, after ui/style.css and before the pane's own style sheet, so its colours are

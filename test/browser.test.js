@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The browser (D140), the parts with no browser in them: what a typed address leads to, which
 // pages can show beside the conversation, where Back and Forward go, a page's text for the
 // brain, and how this browser installs a site as an app.

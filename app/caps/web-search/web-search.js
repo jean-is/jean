@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Web search (docs/product.md): Jean looks things up when a question needs facts the
 // conversation doesn't hold, in the sources built into it that are on (D271): Wikipedia, on unless
 // turned off, which answers browsers directly, in the user's language; Vikidia, the encyclopedia

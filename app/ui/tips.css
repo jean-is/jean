@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* A title's tip (D233), as a source's looks (.cite-tip in style.css); placed by ui/tips.js. */
 :is(#app-tip, .mark-tip)::before { content: ''; position: absolute; inset: -0.5rem; z-index: -1; }
 .tip {

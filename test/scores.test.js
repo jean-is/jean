@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Scores (D196, D338), the part with no page in it: the notes abcjs reads from ABC notation, as the
 // seconds, pitches and instruments MS Basic plays, and the frequencies Jean's synthesizer does.
 import { test } from 'node:test'

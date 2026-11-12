@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What the camera (D645) and a shared screen (D699) have in common, each a feed of pictures for the task: what a message
 // shares is kept as a picture, as any other (D105); while Jean watches, it looks on its own once what the feed shows has
 // moved and settled, or each minute (watch.js), and a look it has nothing to say about leaves nothing behind; the brain is

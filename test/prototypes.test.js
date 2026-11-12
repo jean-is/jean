@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Prototypes (D742): the check from a prototype's files (app/caps/prototypes/check.js), which npm run prototypes measures brains
 // with too: Sites' check less what only a site for strangers needs, and a prototype's own rules; how its pages lie and what each is
 // called, from what pressing through found; the tools as declared.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Pairing a person's devices (D45, D700), A the one that has the Jean, B the new one. A's link carries a secret `s` and
 // A's fingerprint; a mailbox drawn from `s`, opened once, takes B's hello; A answers with a nonce, B reveals the nonce it
 // had committed to, all three sealed under `s`; then both sides draw six digits from everything that crossed, which the

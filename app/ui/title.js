@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Conversation titles: written while the first answer is, in one short request outside
 // the conversation, by the simplest brain at hand: the fast model of the provider answering, or
 // that brain itself. The message goes where it is going anyway, and the conversation's prompt

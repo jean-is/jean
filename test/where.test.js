@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Where files go: the page lists by hand every address Jean's code names, so it fails here
 // as soon as a default address, a brain's or a known service is added and the page doesn't say so.
 import { test } from 'node:test'

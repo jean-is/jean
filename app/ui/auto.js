@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Auto: the cheapest brain that can do the job, chosen from reflex answers (docs/product.md,
 // "Brains: picker and Auto"). Within a conversation it steps up, never down, so the
 // provider's cache stays warm; a new conversation starts again from the bottom.

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// SPDX-License-Identifier: MIT
 // A stand-in for Copilot CLI (D262), as the bridge runs it: `--acp`, speaking ACP on its input and output.
 // A session's AGENTS.md ends with its prompt. Its first words in a session are Copilot's notice of the tools it
 // left out. A message that asks for the weather announces a call of Jean's weather tool and makes it over

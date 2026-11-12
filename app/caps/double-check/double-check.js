@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Double-check (docs/product.md, "Sources and citations"): once citations are in regular use,
 // Jean checks each claim an answer makes against the source it cites. The brain that wrote the
 // answer is asked, in one short request outside the conversation, whether the passages support

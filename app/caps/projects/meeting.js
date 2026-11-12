@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Meetings (D224): the projects' assistants meet on a topic, each speaking for its project from what
 // it knows (how it should be, its instructions, memory and latest tasks), in rounds where each hears
 // what the others said; the room's assistant chairs, and tells the user what came of it. Who joins,

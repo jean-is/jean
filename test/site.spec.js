@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The site's pages (site/, D438) in a browser, as jean.is serves them (scripts/serve.js --home): axe-core finds
 // nothing WCAG 2.2's A and AA ask of them, contrast included, which site/checks.js can't see from the HTML alone,
 // in every language each page has (Arabic's right to left and Japanese's for the homepage), and in dark in its first, a

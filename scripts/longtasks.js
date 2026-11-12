@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Measures Jean's long-task features with real brains: compaction (D359, D363), plans (D364), steering (D365) and Keep
 // going, each against the same brain without it. What is measured is Jean's harness, not the brain. Four parts, each
 // after a published method (test/longtasks/):

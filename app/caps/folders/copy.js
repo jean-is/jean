@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A folder the browser can't open in place (Safari, Firefox; D141): a read-only copy, its files read
 // as they are on the computer, what Jean changes kept beside them, and saved as one zip. It lasts
 // the visit.

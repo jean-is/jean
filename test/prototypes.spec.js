@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Prototypes (D742): found by its skill, a prototype made with `prototype` is pressed through from its first page and checked, the brain
 // hearing what does nothing; it opens beside the task in Try it, the one live frame, in the shape it was made for, its pages in a strip, still
 // pictures drawn one at a time; its bar goes back and starts over, a form sends its choice to the next page in the address, and a press on

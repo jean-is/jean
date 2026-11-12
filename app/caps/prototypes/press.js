@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A prototype pressed through and drawn, in the tab (D742): each page in one frame of a file pane's kind at a time, out of sight at a
 // phone's width, under a site's policy, with Jean's script ahead of it (../sites/frame.js's ahead(): the address's choices, a form sent to
 // another page). From index.html, each plain link is followed and every other control pressed on a fresh page, its fields filled first,

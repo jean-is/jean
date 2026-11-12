@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // 0.5 "Reach": numbered sources from tools and from the brain's own search, the brain's own
 // search in both adapters, connections over MCP (both eras, and signing in), Wikipedia, and
 // live conversation's turn-taking.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Settings' Appearance (D111): how Jean is easy on the user first, light or dark, the text's size and typeface,
 // and how much moves, each following the device or the theme until picked; then every theme at once, each, on
 // Auto, with its other mode folded into its corner; then Make it yours: an accent, the theme's own, one of the eight

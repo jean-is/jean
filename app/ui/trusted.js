@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Trusted Types: the only script URLs Jean creates are its own files.
 const policy = /** @type {any} */ (globalThis).trustedTypes?.createPolicy('app-urls', {
   createScriptURL: (/** @type {string} */ url) => {

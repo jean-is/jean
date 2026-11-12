@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The screen's parts (D635), as the dock lays them out (./dock.js) and the address keeps them: a split is a row, side by side along
 // the line, or a column, one above the other, of two parts, each a part or another split, and the first part's share of it when it
 // isn't half. A part is `here`, the conversation and its box, a pane by its name (`preview`, `browser`, `terminal`, `flows`), another

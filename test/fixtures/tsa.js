@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A timestamp authority and a public log for the tests (D276), built as real ones answer: an RFC 3161
 // authority that dates what it is asked to, with a key and a certificate of its own, and a log that
 // takes a hashedrekord and promises it, as Sigstore's Rekor v1 does.

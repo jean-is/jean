@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The render package (D305): what a task saved as a web page loads to draw itself as Jean does, its
 // files as Jean's preview shows them, Jean's own modules with a stand-in for the room's state, each
 // listed with its hash, by a version of its own.

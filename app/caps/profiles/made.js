@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A profile's folder made, opened and removed (D228) without loading Profiles, whose module registers its menu: ./profiles.js adds and
 // removes profiles with these, and Your devices (caps/devices/) makes the one another device has, under its folder's name, or erases one (D700).
 import { app, removing } from '../../ui/state.js'

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // MIDI files: no browser plays one, so Jean does. Its notes are read here, then played by a
 // small synthesizer of Jean's own through the Web Audio API, faster than they last, into a WAV that
 // the page's own player plays, with its seeking and its volume. No instruments fetched from another

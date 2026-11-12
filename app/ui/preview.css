@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* A file's pane (ui/preview.js, D126, D640): a pane of the dock (ui/dock.css, D144), beside the
    conversation on a wide screen, over it on a narrow one. Loaded with it, after ui/style.css, so
    its colours are the look's; what a file shows as is styled with it (ui/view.css). Logical

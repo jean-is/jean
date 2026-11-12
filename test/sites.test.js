@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Sites (D720): a site's paths and changes, what the brain is given, and its check from its files, which npm run sites measures
 // brains with too; its looks (D739), each readable by day and by night, and the colours the brain writes put as their properties; words
 // retyped in place (D741), each the one text of its page that read so, written as text.

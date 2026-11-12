@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The people around a task in npm run longtasks, each played by a brain: the person who asked, as τ-bench's simulated
 // user (Yao et al. 2024), who answers Jean's questions and approvals from what they want, and changes their mind on cue;
 // and the brain's plain answer to one request, which the judge and the translator use.

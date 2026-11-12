@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What came from someone else draws here as it did there (D378). A chart, a score or a deck needs a skill of the room that declares
 // its kind of block, or it shows as code (D196): in a task that holds something from elsewhere (D673's `shared` note: brought in from
 // a share, sent through People, worked on together), each time it shows and isn't being answered here, and in a document or project

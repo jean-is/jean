@@ -1,4 +1,5 @@
 #!/bin/sh
+# SPDX-License-Identifier: MIT
 # Jean's files into the S3 bucket CloudFront serves (README.md beside this file): each with its type
 # and Cache-Control: no-cache, as deploy/README.md lists them, and what is no longer there deleted.
 # CloudFront compresses up to 10 MB as it serves; a larger file goes as its brotli copy.

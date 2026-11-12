@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* Your devices (D700): a step of adding or joining one, what it says taking no room while it says nothing, its link, QR code and digits ui/qr.js's; the field a link is pasted in. */
 .devices-flow { display: flex; flex-direction: column; gap: 0.75rem; } .devices-flow :is(h3, p) { margin: 0; } .devices-flow > :is(.devices-said, .devices-wrong):empty { margin-block-end: -0.75rem; }
 .devices-wrong { color: var(--danger); } .devices-remove ul { margin: 0; padding-inline-start: 1.25rem; } .devices-remove .devices-wrong:empty { margin: 0; } .devices-flow > .devices-drawing { margin-block: 0.5rem; }

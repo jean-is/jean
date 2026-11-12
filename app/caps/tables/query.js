@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Rows as a view shows them (D491): filtered, sorted and grouped, and what a column's foot works out; and the value of a column Jean
 // works out: who made a row and changed it, and when; a relation's, the name of its row, with `names`. Columns are named by id or name,
 // and an unknown one is refused with the table's columns, in words a brain reads. Pure, so Node's tests run it.

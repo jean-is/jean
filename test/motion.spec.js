@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Reduced motion (D325, AGENTS.md): with prefers-reduced-motion, nothing on the page moves, in any look.
 // Every animation and transition is noted, frame by frame, while Jean answers, while Settings opens
 // over the room and closes, while the drawer opens and while day turns to night. And without it,

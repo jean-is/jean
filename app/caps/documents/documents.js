@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Documents (D473, D474, D485), Docs for short: a document is a Markdown file of the project's, `documents/<ulid>-<slug>.md`,
 // named once and never renamed, its name, author and times in its front matter. Jean's brain makes one with
 // `document`, and it opens in a pane beside the conversation, in its editor (./editor.js), in Jean's own

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Sites published at names of their own (D720): the host's names, its routes, what it keeps and serves, Bunny's store, and
 // what Jean draws a site's token and recovery code from.
 import { test } from 'node:test'

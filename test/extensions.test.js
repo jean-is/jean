@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readManifest, shownIn, baseOf, siteOf, RIGHTS } from '../app/caps/extensions/manifest.js'

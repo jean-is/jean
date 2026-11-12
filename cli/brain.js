@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Which brain answers outside the browser: the one named (`--brain anthropic`, `openrouter:<name>`,
 // `ollama:<name>`, `custom:<name>` with `--address`, `claudecode`, `copilot`, `chatgpt:<name>`), else the
 // first whose key the environment holds, else the user's own Claude Code with their Claude plan (D235).

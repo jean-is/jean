@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Settings in several tabs (D700): a tab reads settings.json again when another changes it (ui/app.js's watch calls changeSettings()
 // in ui/state.js), and writes a change over the file as it is, one tab at a time, so a tab open all along never writes back what it
 // held before: a person's devices would spread that revert.

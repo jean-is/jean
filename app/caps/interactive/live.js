@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What a page of parts shares (D670), so that what the user changes reaches all it touches at once, with nothing sent to a brain:
 // its form's fields, by their labels; the values worked out from them (<app-values>, a line each, `Name = formula`), in Tables' formulas,
 // which Jean reads itself, never with eval; `{formula}` in figures, a table's lines, a chart's, a card's heading and words, `{formula:2}`

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What visual answers draw (D291, D631), each as a start drawn at once that a document's "/" offers (D485): a page, the charts a page
 // draws, diagrams, a map, a timeline and key figures. Each has its name's key among a document's strings, a glyph, a few English words
 // to find it by as well as its name, and its Markdown, as an answer writes it. Pure, so a document reads it without the rest of this capability.

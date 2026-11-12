@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What Jean cost over time (D691): each request to a brain that a task's records keep, what it read and wrote, priced as each
 // answer's card prices it (D252), at today's prices; by month, by brain, and the tasks that cost most. Pure, so node --test runs it.
 

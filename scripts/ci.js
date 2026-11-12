@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // GitHub's CI on this machine (D724): every job of .github/workflows/*.yml, read from those files, so that a change there is
 // replayed here as it is written. A job runs in the image it names, or with none in that image standing in for GitHub's
 // Ubuntu 24.04 runner, Jean's own Node over it as setup-node puts it and `npm ci` done once per lockfile in the image's

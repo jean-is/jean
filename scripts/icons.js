@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Draws icons/icon.svg as the PNGs that installs need (D131): Android's installed apps take
 // their icon from the web manifest's 192 and 512 pixel PNGs, and iOS takes its home-screen icon
 // only from a 180 pixel apple-touch-icon. Each PNG records the hash of the drawing it came from,

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A Kiwix server's stand-in (D254), answering as libkiwix does under /kiwix/: its catalogue's
 // entries (OPDS), its full-text search (OpenSearch RSS, snippets with <b>) and its pages. Two
 // French books share a page, as a whole Wikipedia and one of its selections do; a search across

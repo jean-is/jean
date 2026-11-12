@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* Settings' Computer, over Your data's heads and rows: each computer's picture (D250) stands on its glow in its
    row's tile and at its page's head; the internet's row, its words then Off / Ask first / Any site, under them when narrow. */
 .computer-art { position: relative; inline-size: 2.6rem; border-radius: 0; background: radial-gradient(50% 24% at 50% 84%, oklch(from var(--flame) l c h / 0.3), transparent); }

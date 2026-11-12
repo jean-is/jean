@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A document or a deck worked on together (D733): its changes are its words as they are saved, a document's Markdown, the file itself,
 // or a deck's, inside its page (caps/skills/decks.js), each merged three ways from the last version both had (ui/merge.js), so that
 // each person's words since stay, both sides of a clash kept. An open document takes the file in by the path Sync's changes come

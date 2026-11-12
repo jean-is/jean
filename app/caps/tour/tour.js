@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A guided tour over a demo (ui/demo.js): stops that each say a few words at a moment of the
 // replay, pointing at what shows then, and go on after a while, with Next (or a clicker's Page Down),
 // or once the viewer clicks what they point at, which plays the next request when it is a follow-up.

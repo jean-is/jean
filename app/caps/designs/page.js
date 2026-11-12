@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A design's page (D572), drawn by lit-html as the browser lays it out: the pane draws it to change it, the takes row
 // and Creations' cards draw it small, and Jean draws it out of sight at each save to fit its words (`fit`) and measure
 // its lines for the file (`linesOf`), which then shows the same where text isn't laid out. Its parts are boxes in the

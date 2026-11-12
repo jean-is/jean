@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // "What Jean knows about you" (docs/product.md), Settings' About you (D134): a title, and a line on where it goes,
 // or on what presses; the user's name, which no brain is sent; their instructions, which Jean always follows, read as
 // text and changed with Save and Cancel; the organization's or a parent's as a row of their own; the newest lines Jean

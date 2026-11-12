@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* The page that checks a site (policy.html, D415), after ui/style.css. Logical properties only. */
 .site-page { display: grid; gap: 1.25rem; max-inline-size: 44rem; margin: 3rem auto; padding: 0 1rem; }
 .site-page section { display: grid; gap: 0.6rem; justify-items: start; }

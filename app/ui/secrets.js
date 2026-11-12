@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // API keys and tokens, in .secrets/, which is never exported, synced or shared, and sealed at
 // rest as every file is, behind the lock when there is one (docs/encryption.md, D371).
 import { readJSON, writeJSON } from '../core/fs.js'

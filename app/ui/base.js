@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A custom element (light DOM) that re-renders whenever a signal it reads changes.
 import { render, nothing } from 'lit-html'
 import { effect } from '@preact/signals-core'

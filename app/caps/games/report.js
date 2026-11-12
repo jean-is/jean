@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What the brain hears of a game it made (D648): what its play-test saw, in words, after each call that makes or changes one. The
 // shell's own report of each run (./shell.js), a baseline played twice and each action held in a run of its own: errors at their
 // lines with a hint for the frequent ones, what the page's rules blocked, the moments reached, which controls changed the picture

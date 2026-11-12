@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Toasts: each one closes, with its own button or swiped aside either way, the new version's too; a swipe cut short
 // brings it back, and its buttons stay buttons. In Arabic and Japanese once.
 import { readFileSync } from 'node:fs'

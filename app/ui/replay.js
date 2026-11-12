@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A task's records played again as they came (D457), for a demo (ui/demo.js): what was said shows
 // whole, and each answer is written again, each call under way and then done, and what the brain
 // thought and wrote a few words at a time, since its file keeps them whole (core/loop.js).

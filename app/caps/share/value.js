@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What of a task, or of one thing it made, leaves for someone else (D361): its copy as JSONL with the files it names, its answers'
 // certificates and the language it was made in, which a share's host keeps sealed, and one that came, written as a task of this
 // person's: its files kept as Files keeps them, then its records between a note that says they are someone else's and one that

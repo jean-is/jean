@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The gateway's witnesses and logs (D276): those it is given, it relays to and says it serves, so
 // Jean's certificates can be dated by authorities that don't answer browsers. And an authority's OCSP
 // responders and CRLs over plain HTTP, when it names their origins whole (D434).

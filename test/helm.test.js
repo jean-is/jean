@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Jean's Helm chart (deploy/helm/jean/, D232 · D702), read as text, since no helm runs here: CI lints and installs it.
 // Its version is Jean's, every pod takes the one security helper, and its values, schema and templates name the same things.
 import { test } from 'node:test'

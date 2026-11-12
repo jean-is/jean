@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Takes the screenshots that the richer install dialog shows (D168, D396), in each of Jean's
 // languages, dark, wide for desktops and narrow for phones: the welcome screen of a first visit; a
 // spreadsheet drawn as a chart; a lease answered with its sources; and that chart's task shared by

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // GDPval's gold subset (OpenAI, arXiv 2510.04374; openai/gdpval on Hugging Face): 220 tasks of 44 occupations, each a
 // request, reference files and a rubric, with the deliverable an expert made. Fetched at run time into .cache/, never
 // committed: its card states no licence. The slice is the tasks Jean's tools can do: reference files Jean reads, a

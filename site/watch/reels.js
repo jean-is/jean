@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Jean's reels (D687, docs/reels.md): what each one plays, as the page that plays them (site/watch/page.js) writes it
 // in each of its languages, from its words: cards, and tasks written as the site's demos are (site/demo.js), each
 // with its stops. A stop holds the replay as long as its caption takes to read in its language. The sample spreadsheet's

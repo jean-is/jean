@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Games (D648): a game's file, its changes by exact passages, the loop guard, the play-test's report, and what the brain is given.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'

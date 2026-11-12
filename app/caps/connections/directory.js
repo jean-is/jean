@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The services Jean already knows (D95): click one, sign in, done. An address here is a provider
 // identity, like a brain's (D33), and policy can replace it (`directory` in policy.json). Each is
 // reached from the browser, once checked from one (`ready`: CORS that lets Authorization through, on

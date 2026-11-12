@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Scores (D196): with the Music score skill of Jean's own directory added, a ```abc block in an
 // answer is a widget: drawn as a score by abcjs, played on MS Basic's instruments (D338), each note
 // lit as it sounds, paused where it is, and copied as its source and its picture at once. A tune

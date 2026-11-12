@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The tools a brain is given in npm run sites (Sites' phase 0): `site` and `site_change`, as Sites would declare them,
 // each keeping the site in the run's folder, dressed in its look as Sites does (D739: three dealt, no project's here, the
 // brain's colours worn), and returning its check, and `skill`, which reads Jean's own skills as own-skills does, "Make a

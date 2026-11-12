@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Pages of parts (D631): a ```html block holding only the visual skill's parts is read as data, to be drawn in the answer itself,
 // and any other is a page for a frame; each part's lines are what it draws, numbers read as the language writes them.
 import { test } from 'node:test'

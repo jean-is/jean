@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Storage worker: the only code that touches OPFS. Started as a module worker by ui/opfs.js.
 // Request { id, op, path, text, from } → { id, result } | { id, error: { name, message } }.
 // `text` is a Uint8Array for writeBytes; readBytes answers with one (its buffer transferred).

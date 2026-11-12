@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A table as a file (D491): CSV, or a workbook made the way Jean makes every file (caps/made/formats.js),
 // the columns' names on top, then a row a line, a relation's cell its row's name. A cell that a spreadsheet would read as a formula starts
 // with an apostrophe instead. Pure, so Node's tests run it.

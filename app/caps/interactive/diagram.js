@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Diagrams (D291, D592): a ```mermaid block, of any kind Mermaid draws, drawn by Pele in its worker (./diagram-worker.js), or
 // beside the page where no worker of Jean's starts (a share's viewer, its files from another site). A flowchart Pele refuses is
 // tried again with its boxes written as Mermaid reads them: brains close a box's brackets swapped (A([Start)]), or put brackets

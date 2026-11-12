@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A guided tour over a demo: its stops show at the moments the tour names, each pointing at what
 // shows then, and go on after a while, with Next or a clicker's Page Down, holding the replay meanwhile, or
 // once the viewer clicks what they point at, a follow-up that plays the next request. Its words are the

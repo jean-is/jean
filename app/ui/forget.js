@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Old tasks let go (D718): with Your data's Delete old tasks set, the tasks of every project not changed for that long, those
 // pinned kept, are deleted for good as Jean opens, once a day, through the hooks on `remove` (D412), which an organisation's
 // retention can refuse.

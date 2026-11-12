@@ -1,4 +1,5 @@
 #!/bin/sh
+# SPDX-License-Identifier: MIT
 # Brings Jean's services on this server to a commit (README.md beside this file). CI sends the code as a tar on
 # standard input, through a key that may run nothing but this script: `command="sudo -n /srv/jean/update",restrict`
 # before it in ubuntu's authorized_keys. The tar holds exactly gateway/, requests/, host/ and relay/ as code/ keeps

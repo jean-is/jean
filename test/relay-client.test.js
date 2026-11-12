@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Jean's side of the relay (ui/relay.js, D45), against the relay's own handler (relay/relay.js) in this process:
 // fetch is a stand-in that hands it each request, from an origin it serves.
 import { test } from 'node:test'

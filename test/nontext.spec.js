@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Non-text contrast (WCAG 2.2 AA, 1.4.11, D420): what tells a control or its state apart reads at 3:1
 // against what is beside it, in every look, by night and by day, at rest and with the light at its
 // brightest. The icon that is a button's only name, against the pixels behind it; a text box's frame,

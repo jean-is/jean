@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Jean and Open WebUI, at /compare/open-webui and /fr/comparer/open-webui, for the technical reader who runs
 // Ollama and wants a front end without a server: the one comparison page that names MCP and models, as /enterprise
 // does. Ollama answers a page in a browser only once it allows the page's address, so the top shows that setting

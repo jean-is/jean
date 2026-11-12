@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The check page (check.html, D274): a certificate of an answer, its proof and the files it may name,
 // any picture's or film's Content Credentials (D324), and what a file Jean made says of how it was made
 // (D410), dropped or chosen, checked here and kept nowhere: nothing given goes out, nor any address in it.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Puts a build of Jean on Bunny CDN, as jean.is is served: dist/web/'s files in a storage zone, each release in a
 // folder of its own, releases/<name>/, then the pull zone pointed at it by one edge rule, as Bunny's own CLI publishes
 // a site, so no visitor gets two versions' files; the cache is purged, and the oldest releases go, keeping the last

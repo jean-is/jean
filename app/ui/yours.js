@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The reader's languages first in a menu of languages, as the person's menu lists them (ui/inbox.js): the homepage's,
 // from ui/home.js, and every other page of the site's, which runs it as written, site/site.js copying it with
 // preferredLocales into their script (MENU), so it names nothing else. Jean's own words for a browser's translation too.

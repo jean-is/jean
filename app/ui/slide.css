@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* The drawer beside the conversation, opened or put away (D234): it slides from the start edge, its
    top with it, and the conversation and the box move over as they will be, never two of them fading
    into each other. Linked by ui/slide.js. */

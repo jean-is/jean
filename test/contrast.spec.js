@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Contrast (D325, WCAG 2.2 AA, 1.4.3): every word on screen against what is actually drawn behind it, in
 // every look, by night and by day, with the light at its brightest for each of Jean's moods and in
 // each project's colour (D78). Pixels, not tokens: the light is a gradient under the text, and a

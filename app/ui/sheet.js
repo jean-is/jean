@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A module's own style sheet, linked when the module loads rather than with the first screen.
 
 /** Whether to keep still: as the user asked on this device (Settings › Appearance › Motion), else as the device asks. */

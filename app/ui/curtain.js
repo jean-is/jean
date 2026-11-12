@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The curtain (D669, docs/design.md): moving between profiles is one gesture, though a whole Jean opens afresh for it
 // (D228). The click leaves here who the page is for; index.html's first line paints it, the room's colours with a badge and
 // a name and nothing Jean keeps, growing from the badge touched over a picture of the page left. It stays while the room

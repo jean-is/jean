@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Data residency (D434, ee/): policy's `jurisdictions` keeps requests to brains within its places. Brains on this
 // device or this computer stay; policy's own stay when the `jurisdiction` it declares is within one; the others
 // are left out, and policy.html says which, since policy's brains are the only ones.

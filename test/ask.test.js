@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Questions for the user (D146): what the brain asks, how each question starts on its card, and
 // the answers it gets back. The card itself is in ask.spec.js, beside this.
 import { test } from 'node:test'

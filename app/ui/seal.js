@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The seal on Jean's files at rest (docs/encryption.md): a header, then records of AES-256-GCM,
 // each file's key derived from the vault key and the file's own salt, and the slots that keep the
 // vault key sealed under this device's key, a passkey, a password or a recovery code. And what goes

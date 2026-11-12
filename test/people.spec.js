@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // People (D727): two people, each in a browser context of their own, so their own storage, meet through the relay (relay/, D45). Ana,
 // told the two ways while she has no one, invites from Settings › People, by a code to scan beside her; Bob opens the link, says who sent
 // it and accepts; the six digits his screen shows are typed on Ana's; then each has the other, Ana's Jean naming Bob as she did, and where

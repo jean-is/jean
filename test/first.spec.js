@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The first brain (D329): the first message, or the brain chip, with no brain yet, shows one free way, the device's
 // brain beside it where it can run, and two doors, to the plans and keys the user already has and to
 // a choice of what matters, in the page under the box that keeps the request (D366). OpenRouter's sign-in is

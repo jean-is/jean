@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The macOS bundle's entry point (D160, on the D155 desktop app): starts the real Neutralino binary, which
 // loads libjeanframe.dylib by a load command of its own (scripts/desktop.js), pointing it at
 // Contents/Resources for resources.neu and the config (so Contents/MacOS holds only code, which

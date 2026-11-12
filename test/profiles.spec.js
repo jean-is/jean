@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Profiles (D228): several Jeans on one device, each its own, listed in the person's menu and opened
 // afresh; a child's, set by a parent and opened by them under 13, whose concerns reach the parent's
 // profile, its kind and when, never the words, unless the danger is at home.

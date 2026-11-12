@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Visual answers as a mode of the box (D300): a row of + turns it on, and it shows at the foot of the box,
 // pressed, until pressed again. While it is on, each message comes with a note that asks the brain to
 // follow the steps of Jean's own ready-made skill Visual answers (caps/skills/directory/visual),

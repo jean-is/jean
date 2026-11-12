@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Measures Prototypes (D742), first in its phase 0 before it was built: how often a brain makes a clickable prototype of an
 // app or a flow, a screen per page, that passes its check and whose flow works, from the briefs of test/prototypes/set.json in
 // English, French, Arabic and Japanese, then changes it as asked in the same task. Each brief is a task of Jean's run in Node

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A minimal MCP client over Streamable HTTP, for Connections (D86): tools/list and tools/call.
 // It speaks the stateless revision (2026-07-28: every request carries its version and client in
 // `_meta`, mirrored in headers) and falls back to the handshake and session of the earlier ones

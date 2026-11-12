@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Documents (D485), in Chromium and WebKit: a Markdown file Jean keeps, open in the preview in its
 // editor, ProseMirror in Jean's own document under its very policy, its Markdown written back byte for byte,
 // what the brain hears of it, what an answer draws drawn in place, Jean's changes with Accept and Reject,

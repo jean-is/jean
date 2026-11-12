@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Allow for this task (D710): per task, by kind and scope (a folder, a site, a service), how often an approval was allowed
 // once, or that it holds for the rest of the task, until the page reloads. Offered from the second card of a kind, never on
 // a guard's card (D295, D673) nor in a child's profile. Loaded with the first approval card.

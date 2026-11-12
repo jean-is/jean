@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What the camera's frames are worth, with no I/O (tested under node --test): how sharp one is, how far the scene
 // moved from another, and the sharpest of the last few, which goes with what the user says, since a phone held in
 // the hand shakes. Every loop stays within its array: JavaScriptCore slows down on a read past the end.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Bringing in Claude's export (D341): of each conversation, the branch the user saw last, what was
 // said in it, its name, its times and the text of the files shared; its projects with their
 // instructions and documents, from its parts, once.

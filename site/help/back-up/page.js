@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Back up and restore: one file with every task and file, from Settings › Your data, kept where only its owner
 // opens it, and restored on any device from its Backup page, adding and deleting nothing; Show me opens Jean there.
 // Its steps show the offer above the box after a third task, Your data with Download a backup ringed, and the Backup

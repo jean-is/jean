@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Charts (D196): a ```echarts block in an answer, drawn by ECharts on a canvas, with the theme's
 // light or dark (on a slide, its paper's), the room's type and numbers in the user's language; drawn again as its box, the
 // theme, the look or the language changes; copied as its source and its picture, on light paper,

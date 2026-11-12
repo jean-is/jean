@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { seal, records, open, isSealed, vaultKey, vaultId, slotKey, close, unseal, encode, decode, deviceKey, boxPair, fingerprintOf, sealBox, openBox, sealFor, openFrom, HEADER, RECORD } from '../app/ui/seal.js'

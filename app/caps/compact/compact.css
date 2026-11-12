@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* Where the brain read on from a summary of what came before (D359): a line across the conversation, drawn as the
    sources it read (.read-list), which opens on the summary. */
 .compaction > summary { display: flex; }

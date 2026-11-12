@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Search: offered once there are ten conversations, then ⌘K (Ctrl+K outside Apple's
 // systems), or Search at the top of the drawer (D165), finds a conversation by its words, a file by
 // its text, and a section of Settings, as people type: part of a word, case and accents aside; once

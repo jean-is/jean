@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Vertex AI: the key a request carries, and its list of models. Imported the first time a Vertex AI brain is used.
 
 import { LLMError, fetchOrThrow } from './llm.js'

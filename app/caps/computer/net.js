@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The Computer's internet (D162): what Settings › Computer and policy allow, which site a request
 // goes to and whether it may, the relay it goes through and the token a registry gets. The computer
 // has no network of its own: Jean makes each request, with no cookies. Tested in Node.

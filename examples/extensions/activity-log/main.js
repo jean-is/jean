@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Activity log, an example of an extension for Jean (D296). It follows everything Jean keeps in your
 // conversations (the record event, D299), what going back to a request removes too, notes each task
 // started and each file shared, says under each answer what was done for it, and tells you when a rule

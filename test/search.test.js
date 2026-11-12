@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Searching as people type: case and accents aside, part of a word is enough, in any
 // script, and what is found is marked where it stands in the text.
 import { test } from 'node:test'

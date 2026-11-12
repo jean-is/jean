@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A kind of folder the brain makes (Sites, D720; Prototypes, D742): each a folder of the project, `<folder>/<ulid>-<slug>`, its files and
 // its record, made or replaced whole by one tool and changed by exact passages with another, each call dressed in its look (./look.js),
 // written, checked and said to the brain, and opened beside the task. Its words are retyped in place and its parts pointed at in its pane

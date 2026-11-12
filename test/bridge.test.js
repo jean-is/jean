@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The bridge (D198): commands on this computer, in the folder it runs in, for Jean only.
 import { test, describe, before, after } from 'node:test'
 import assert from 'node:assert/strict'

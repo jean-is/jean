@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The Tilde icon set (docs/design.md#icons): every glyph, shared or a capability's own, keeps to the grid and the
 // pen, fills only what is solid, and the case of capabilities gives each one a glyph of its own.
 import { test } from 'node:test'

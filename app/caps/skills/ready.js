@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A skill from elsewhere, shown before it is added (D121): where it comes from, when it is used,
 // and its steps, downloaded and checked against the digest its index lists. One of Jean's own
 // (D196) is named in the user's language, and its steps read from its files. Adding it is the

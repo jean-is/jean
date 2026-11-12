@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // search_files: the passages of the files the brain may read that hold the words asked, or every
 // place a phrase is (D24), the project's documents and collections among them. Core ranks (search.js) and cuts
 // passages (files.js); this is the tool, and each file's index, kept in .cache/words/ by the file's content.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A prototype beside the task (D742), <app-prototype>, in two views. Try it, as it opens: the one live frame, a site's (../sites/frame.js),
 // in the shape it was made for, with its looks, its words retyped and its parts pointed at (D741) and the brain's version waiting (D505),
 // its links and forms carrying their choices; ahead of its bar, Back, Start over and the page on show with its place, and at its end Build

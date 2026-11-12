@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* A table beside the conversation (D491): its bar and its tools' panels, the table with a field in each cell, a line under its heads and each row and between its cells, its foot, the board's lanes and cards, and Jean's changes marked. */
 .table-view { display: flex; flex-direction: column; gap: 0.75rem; min-inline-size: 0; container-type: inline-size; }
 /* One line, whatever Search's width: the name gives way, so that nothing moves under the pointer as Search opens or closes. */

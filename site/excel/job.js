@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The pages for a job people search for help with: a spreadsheet at /excel, a PDF at /pdf, slides at /slides, a diagram
 // at /diagrams (in French /fr/excel, /fr/pdf, /fr/diapos, /fr/schemas). Each catches the words people type, its title saying them, then says
 // that promise again part by part, as the homepage does (landing() in site.js): each part a large title over what proves

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Quiet hours, an example of an extension for Jean (D296). During the hours you choose, Jean asks you first
 // before doing anything but reading, searching and thinking, and deletes nothing; the rest of the time,
 // your rules stand as they are. It is a guard made by someone else: it only ever makes Jean more careful

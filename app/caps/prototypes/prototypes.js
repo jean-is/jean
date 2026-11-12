@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Prototypes (D742): clickable mockups of an app or a flow, a page per screen, the brain makes with its skill "Make a prototype". Each is a
 // folder of the project, `prototypes/<ulid>-<slug>`, a kind of folder as a site is (../sites/kind.js): made or replaced whole by `prototype`
 // and changed by exact passages with `prototype_change`, dressed in its look (D739), checked from its files (./check.js), pressed through

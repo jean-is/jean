@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A game played (D648): `<app-game>`, a game's frame in its pane, and the frames of its play-tests, out of sight. Each is a frame of
 // a file pane's kind (preview.html, D126): an opaque origin, scripts and forms, under the policy Settings give web pages, but never
 // reaching the internet whatever they allow, and allowed gamepads besides. Its page (./page.js) runs the game as a module that imports

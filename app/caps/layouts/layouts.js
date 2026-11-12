@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Layouts (D215, D291): what an answer's Markdown shows it to be, laid out as that, from its structure
 // alone (./shapes.js): a comparison as its options side by side, steps one after the other, notes set
 // apart, a column of amounts at the end, a timeline, key figures, a checklist to tick, and the pictures

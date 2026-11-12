@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Statistics for the evals: means and paired bootstrap intervals, seeded so a run repeats exactly.
 import { rng } from './corpus.js'
 

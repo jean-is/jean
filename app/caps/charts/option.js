@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A chart an answer holds (D196): an ECharts option written as JSON in a ```echarts block. It is
 // data, never code: read with JSON.parse, or as the JavaScript ECharts' own examples are written in,
 // its functions left out (D418), then kept to what draws inside the chart. The toolbox goes (its

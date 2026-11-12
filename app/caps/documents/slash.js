@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A document's "/" menu (D485), as in Notion: "/" typed at the start of a line opens what the line can become.
 // What follows the slash narrows it, by the name in Jean's language or in English; the arrows and
 // Enter or Tab choose, as does a click or a tap, and Escape closes it, leaving the slash as text.

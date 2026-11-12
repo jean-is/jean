@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // 0.6, "Delegate": what Double-check reads from an answer and its sources, and how a helper's
 // declarations stay its own. Helpers' turns themselves are in loop.test.js.
 import { test } from 'node:test'

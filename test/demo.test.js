@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A demo (D457): a task's records played again as they came (app/ui/replay.js), and demo.html, which
 // runs only its import map, by its hash, and Jean's own modules, with ui/state.js's stand-in in its place.
 import { test } from 'node:test'

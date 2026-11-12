@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The device's voices, and the one that reads a text best (language.js): loaded with the
 // first answer that can be read aloud, outside the first load. Only voices that run on the
 // device; when none speaks a text's language, Jean says so rather than read it in another's.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The relay's journals, from Jean's side (relay/journal.js, D733): creating one, posting changes, parts and fleeting messages,
 // and following them, all of a relay's over one connection (D737), as a stream, or as long polls where a proxy holds the stream
 // back (no line within 30 seconds, though the relay sends its clock every 20). Each journal picks up from the last change it took.

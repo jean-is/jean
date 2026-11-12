@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The document evals' report: each strategy's scores by size and kind of question, each registered
 // hypothesis marked confirmed, refuted or inconclusive by its rule (hypotheses.json), and what each
 // strategy is for, as test/documents/results.md and strategies.json.

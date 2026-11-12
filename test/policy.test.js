@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What policy.html checks (D415): a policy.json against what this version reads, every part Jean's code
 // reads being in its schema, and an address against a site's Content-Security-Policy, by CSP Level 3's rules.
 import { test } from 'node:test'

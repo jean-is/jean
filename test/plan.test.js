@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Plans (D364): the steps the brain gives, and what the request's records say of its plan. The plan in the room is in
 // plan.spec.js, beside this.
 import { test } from 'node:test'

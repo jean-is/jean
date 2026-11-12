@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // An organisation on Microsoft's side, Jean set up by its policy alone (D191, D382, D385): the person
 // signs in with Entra ID at the first visit, the AI gateway answers with that sign-in's token, and
 // Microsoft 365 connects through the organisation's gateway, which holds the web app Entra registered

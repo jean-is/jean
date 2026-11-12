@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Talk (0.1) and reply suggestions (0.3): an answer streams in, titled meanwhile, its follow-ups become
 // buttons, the room flips to right-to-left in Arabic, and from dark to light. Settings opens over
 // the conversation, in the address (D137), a reload comes back to the line being read, and an

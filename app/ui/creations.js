@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Creations (D497): what the capabilities found keep in the project for the user to come back to, documents, tables, the
 // pictures and films Jean made and the scores its answers hold (D542), each kind given by its capability's `creations` slot.
 // The drawer has one place for them once a capability that keeps them is found, which opens their page (./creations-page.js,

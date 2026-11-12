@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* A picture or a film Jean made (D251), in the answer, with a button to save it, and one to save a picture labelled (D324). */
 app-picture figure { position: relative; inline-size: fit-content; margin: 0; }
 app-picture :is(img, video) { display: block; max-inline-size: 100%; max-block-size: 28rem; border: 1px solid var(--line); border-radius: 0.9rem; }

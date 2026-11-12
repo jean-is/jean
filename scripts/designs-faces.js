@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // How caps/designs/fonts/ was made: the nine open faces of the five voices. Fetches each
 // family as Google Fonts serves it, variable and split by script, into dist/faces/ (never
 // committed); reads its licence in google/fonts for its copyright and Reserved Font Names; then, through

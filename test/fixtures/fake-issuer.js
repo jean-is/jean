@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A fake identity provider shaped like Entra ID, an AI gateway that takes only its tokens, with its
 // MCP servers, and an OpenTelemetry collector, for the specs of the organisation's sign-in (D385) and
 // of the audit export. All are the page's routes: Jean reaches them over https, as it would at work.

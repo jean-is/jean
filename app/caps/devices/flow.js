@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What a paired device keeps and does with what comes (D700): its name, the devices its profile knows (in .secrets/, removed ones kept
 // as removed), the bundle A sends B and B's new profile filled from it, settings and keys that follow with their times in
 // .devices/follows.json, a task handed over, and a device removed. Its context gives it the profile's files, the relay's clock and the

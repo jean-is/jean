@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Reflow and resized text (WCAG 2.2 AA, 1.4.10 and 1.4.4): at 320 by 256 CSS pixels, a 1280 by 1024
 // screen zoomed to 400%, and with the browser's text at 200%, nothing is lost: the page never scrolls
 // sideways (a table or a strip of buttons may, in a box of its own), no words are cut, and every line

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // jean.is's tiles (D397): one row of what Jean makes, dealt anew each visit, turned a view at a time, under the app's
 // first screen (ui/home.js).
 

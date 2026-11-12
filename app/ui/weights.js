@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Weights pinned by their SHA-256 (Whistle, D205; pictures on this device, D251): from the cache
 // Transformers.js keeps its own in, apart from app versions, or else downloaded, checked and kept.
 // A score's instruments come the same way, into a cache of their own (D338), or straight where the

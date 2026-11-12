@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // This computer (D198): a server the sandbox refuses brings the offer; Settings › Computer opens on its
 // page, a row under the sandbox's (D248), with the line, which the user pastes in a terminal in their folder
 // (here, run by the test); the brain's commands then run on this machine, asked first, and a server they

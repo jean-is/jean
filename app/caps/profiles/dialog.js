@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The dialog that adds a profile (D228), in steps: its name, this one's if it has none yet, and whom it is for, but in an
 // organisation's copy, which makes only grown-ups' (D389); for a child, their year of birth and what their profile is set to
 // at that age, with the brains of this one it is given, shown before it is made; then this profile's lock, set here if it

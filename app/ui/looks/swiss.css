@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* Swiss: the International Typographic Style. A grotesque set flush left, black and white with
    one red, rules instead of boxes (D120). Over ui/style.css, which comes after it, so every rule
    here starts with :root[data-look='swiss']. */

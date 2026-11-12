@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Signing in with the organisation's account (D385), Entra ID's way: the issuer policy names, by
 // its tenant, and Jean's app registered there; the scopes for the gateway, and the token it gives.
 import { test } from 'node:test'

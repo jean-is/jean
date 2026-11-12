@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Bringing in Gemini's export from Google Takeout (D340): its answers' HTML as Markdown, its Gems,
 // its requests as conversations, and the whole of it into a project, a zip or a tgz, once only.
 import { test } from 'node:test'

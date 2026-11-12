@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The gateway (D191): what lets Jean reach the services a browser can't, without a Jean server.
 // Whoever serves Jean, an organisation or a person runs it, and names it in settings or policy
 // (`urls.gateway`). It relays a request to a host it allows, without the browser's origin or

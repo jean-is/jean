@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The first rung of the brain ladder (D42): Gemma 4 E2B on this device. Offered only
 // where it can run (WebGPU with shader-f16, enough memory and free space, a computer),
 // downloaded once with consent, then private, free and offline.

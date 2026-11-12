@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Settings' Capabilities (D127, D316): how many capabilities are found, over a bar, and the one thing most worth
 // saying; then seven groups by what each is for, a row a capability, lit with what it does once found, a dashed
 // silhouette saying how it comes until then, and a word only where it isn't simply on: Off, a download, Not set up, or

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Pages in answers (D289): a ```html block is a page that runs in the answer, in every room, in a
 // frame of the preview's kind (scripts and forms, nothing to or from the internet), shown as it is
 // written, in the room's colours and the user's language, as tall as it is. Its form, sent with

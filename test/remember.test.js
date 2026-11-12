@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // 0.4 "Remember": projects, instructions, memory and skills as plain files, and the
 // sections of the frozen prompt that change through system notes (D46).
 import { test } from 'node:test'

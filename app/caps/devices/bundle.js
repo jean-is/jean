@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What follows a person from one of their devices to another (D700): settings field by field, brains and connections item
 // by item, each with the time it last changed, the newest winning, a removal kept as a tombstone. State, not a stream of
 // changes, since messages expire and devices sleep. What belongs to one device stays: its voice, its counters, the brains it

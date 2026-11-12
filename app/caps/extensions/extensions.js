@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Extensions (D296): what someone else made to add to what Jean does, read before it is added, and run
 // apart. An extension is a folder, extensions/<name>/ at the root: its extension.json (manifest.js) and the module
 // it names, kept as they came, beside data.json, what it keeps for itself. Each one turned on runs in a

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The room: header, welcome or conversation, composer, dialogs, toasts.
 import { html, nothing } from 'lit-html'
 import { effect, signal } from '@preact/signals-core'

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What the brain is given for Designs (D572) and what Jean makes of what it sends. The brain writes facts by
 // their role, never coordinates, in wording B as phase 0 measured it (test/designs/findings.md), with a list;
 // Jean repairs what a small brain gets wrong (a size it doesn't know, no title, words that aren't text, a list

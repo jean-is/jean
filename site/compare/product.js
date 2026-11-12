@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The pages that set Jean beside other products: the hub, /compare, and a page a product, /compare/<product>,
 // for the reader who searched for another product's alternative. A product's page puts the reader's words in its
 // title, then says that promise part by part, as the homepage does (landing() in site.js): an alternative to the other

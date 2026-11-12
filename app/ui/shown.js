@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A file of the project as it is drawn: read once it is on the page, and let go with it. A picture
 // the user shared shows itself in their request; Pictures draws those Jean made (D251), once named
 // when made where it is drawn. Attributes, so they survive the upgrade.

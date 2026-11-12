@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Content Credentials (C2PA 2.2, D324): the signed metadata the AI Act asks of what Jean makes
 // (Art. 50(2)), beside the XMP of D279. A picture made on this device or by a server on this computer
 // carries a manifest that says a trained model made it, which one at which revision, and the hash

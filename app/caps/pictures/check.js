@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The check a picture made on this device or by a server on this computer goes through before it
 // shows (D275, D280), as nothing else filters what these make. For nudity and sex, Freepik's NSFW
 // classifier (MIT), an EVA-02 base that sees 448 pixels square, as onnx-community's converter exports

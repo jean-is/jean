@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What policy.html checks (D415): a policy.json against what this version of Jean reads, and whether a
 // site's Content-Security-Policy lets Jean reach each address it names; and the header set every deploy
 // sends (deploy/README.md), which test/recipes.test.js holds the recipes to. Web-standard only, tested in Node.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Where each question's evidence is in the text Jean extracted, file by file and page by page,
 // and the checks that make the gold trustworthy: unique anchors, answers the evidence holds.
 import { normalise, norm, count } from './text.js'

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Connections, web search and live conversation (0.5). The version's done-when: Jean
 // sums up the user's latest emails through a connection, with citations. The connection signs in
 // with OAuth against a fake mail service (test/fixtures/fake-mail.js), in the browser.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The windows beside the conversation are in its address, after its place (D220): the preview, the
 // browser and the page it opened, the terminal and Flows, in the order they opened. Back to another
 // task shows them as they were there, Settings closing leaves them, and a reload shows them again,

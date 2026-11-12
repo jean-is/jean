@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The EU's trusted lists for the tests (D439), as ETSI TS 119 612 writes them: a List of Trusted Lists pointing to
 // member states' lists, each naming qualified authorities (CA/QC) with their statuses over time, and each enveloped-
 // signed as every real one is (XMLDSig, exclusive canonicalization, ECDSA here, its XAdES properties named by Id)

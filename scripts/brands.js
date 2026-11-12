@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Measures a design system proposed from the person's own material (D740): for each brand of test/brands/fixtures.js, two in each
 // of English, French, Arabic and Japanese, its logo, its brand guide (a PDF, or a Word file) and a screenshot of its site are
 // made in Chromium, and Jean's own module (app/caps/slides/brand.js) proposes a kit from each, in a page of Jean's origin, as the

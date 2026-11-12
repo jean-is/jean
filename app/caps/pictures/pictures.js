@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Pictures and films (D251): made from a description, or from pictures of the conversation, by the
 // provider of a connected brain (OpenAI, Gemini, OpenRouter…), by Ollama, or by this device; kept
 // in the project's files as Things Jean made are, a name made again being a new version (D164),

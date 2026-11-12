@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The brain on this device (0.2): offered only where it can run, downloaded once with consent,
 // then answering with no account, no key and no request leaving the page. The device is made
 // capable (WebGPU with shader-f16, memory, space) and the worker that would run Gemma 4 E2B is

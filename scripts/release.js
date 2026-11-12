@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A release an organisation deploys without building it (D419): a commit built as `npm run deploy`
 // builds one, from git and never from the working tree, with neither POLICY nor ADDRESS, so it is the
 // same for every organisation. dist/release/ then holds dist/web/ as one zip, in a folder named as the

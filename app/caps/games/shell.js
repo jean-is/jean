@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A game's frame, around the game (D648): Jean's own script, written ahead of the game in its page (./frame.js), which runs in the
 // frame alone, never in Jean's page. It owns the frame's clock (requestAnimationFrame, performance.now, Date and timers), so that a
 // pause stops the game wherever it is, whatever its engine, and a play-test steps frames as fast as they come, through a

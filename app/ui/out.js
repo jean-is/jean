@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // How what a pane shows leaves Jean (D683), the same for a document, a collection, a deck, a design, a tune, a game, an app, a picture,
 // a film or any other file: one button in its head, just before Close, whose menu goes in one order, as an answer's does: to someone
 // (Publish, online at a name of its own, for a site or any page on its own; Share, a link; Send to an app, the system's sheet; Copy), as a

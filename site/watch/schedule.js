@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A reel's time (D687): its scenes end to end, and in a task, each of the replay's waits and each stop's hold in the
 // order app/ui/demo.js reaches them, so that a reel knows its length and its chapters before it plays, and its clock
 // can end each wait when the reel says (demo.js's lent clock). Pure: reel.js plays it, test/watch.test.js holds it to

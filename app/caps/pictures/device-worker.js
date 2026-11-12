@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Pictures on this device (D251): SD-Turbo in one step, as in ONNX Runtime's own example: noise at
 // the largest sigma, one pass of the UNet guided by the description's CLIP encoding, then the VAE's
 // decoder. Through ONNX Runtime from Jean's own copy (D52), on WebNN where the browser offers it,

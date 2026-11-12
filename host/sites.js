@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Sites published at names of their own (D720), beside the shares: `<name>.hst.ing` for jean.is's host. Whoever runs the
 // host turns it on with `sites` in its configuration; without it, none of this answers. A site is plain files anyone reads, so
 // every one of them is served with the same strict header set (HEADERS), whose sandbox makes each page an opaque origin, as

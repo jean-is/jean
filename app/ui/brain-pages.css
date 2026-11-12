@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* Settings' Brains: a title with Add a brain at its end, what needs the user on Jean's pale yellow, who answers,
    then the brains as rows that open their pages; a page's title under Back, the line about it under its title. */
 .brain-head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; margin-block-end: 1.25rem; } .brain-head > :first-child { flex: 1 1 12rem; min-inline-size: 0; }

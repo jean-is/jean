@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // About this answer (D252): a button under each answer shows, on hover or click, how long it took,
 // what it cost and where it was done. Its certificate says which brains answered and who made its
 // pictures and films, each by name and whether it ran on this device (D263), and what the page

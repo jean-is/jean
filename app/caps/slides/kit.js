@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A deck's look, its kit (D594, D602): Jean's own, under the person's design system (kit.json at the root of their files), under
 // the organisation's in policy (`kit`), under the project's, each over deck's own layouts, and the file's own over them all, which
 // a deck kept keeps (./edit.js). Jean's own follows the look chosen in

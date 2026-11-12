@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Designs (D572): an invitation, a poster, a flyer or a post, laid out by Jean and finished by the user. A design is a
 // file of the project's, `designs/<ulid>-<slug>.svg`, named once and never renamed: a drawing any program shows, holding
 // the design as JSON, which is all Jean reads (./format.js). The brain gives the facts by their role with `design`, and

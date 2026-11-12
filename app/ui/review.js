@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The bar over Jean's changes (D505), in a document (caps/documents) and in a table (caps/tables): how many there
 // are and which one is in view, the arrows to the one before and after where there are several, Accept all and
 // Reject all. One row, at the top of what it is about, at the bottom on a phone (review.css).

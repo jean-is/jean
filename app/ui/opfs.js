@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // FS backed by the origin private file system. All I/O runs in ui/storage-worker.js,
 // with synchronous access handles; this is its RPC client. The same worker
 // works in a folder of the user's, on its handle (D141). The FS is rooted in a profile's folder (D228).

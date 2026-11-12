@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Where files go, which every copy of Jean has and links to: its text in each language, <lang>.html, as written, and
 // its title and description, <lang>.json. A landing page as the site's others are (landing() in site.js), its title
 // no sentence: its top is its title, when it was last updated and its first lines; its acts are three of its own

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What a child's profile tells its parent's (D228): that a concern came up, its kind and when, and the
 // time it spends, sealed for the parent's profile alone, in family/<its ULID>/, outside every profile,
 // since neither holds the other's vault key: sealFor() in ui/seal.js, ECDH P-256 with a key the child's

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The audit export (D386, ee/): each turn goes to the organisation's OpenTelemetry collector as
 // GenAI spans, metadata only unless policy asks for content, and so does each task deleted, once it
 // is gone, never one a refusal kept (D412), and what is done outside the records (D421); on localhost

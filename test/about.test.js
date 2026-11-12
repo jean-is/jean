@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What Jean knows of itself (D423): its guide has a part for every capability of the case, each named by its id, and
 // for what is always there; every menu or button it names is a string of the room's or the dialogs', which `about` gives
 // as the user's screen shows it. A capability's own words and how it is found come from the case, so each has them.

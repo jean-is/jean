@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // People's names in masked requests (D681): reading a classifier's tokens, and what the engine does with what it finds.
 // npm run masks measures the real model, on real weights.
 import { test } from 'node:test'

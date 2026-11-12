@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What an answer draws, drawn in a document too (D485), by Jean's own code (ui/markdown.js, caps/layouts): a
 // block an answer would show otherwise than as its text (steps, a timeline, key figures, a comparison, a
 // note; a formula, a chart, a score, a deck, a page, a diagram, a map) shows as the answer shows it while

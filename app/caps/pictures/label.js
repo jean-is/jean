@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The label the AI Act asks of whoever publishes a picture that could pass for real, or one on a matter
 // of public interest (Art. 50(4), D324): a copy of a picture with the Commission's AI icon, which anyone
 // may use without attribution, and "Made with AI" in the user's language, on a light pill in the corner

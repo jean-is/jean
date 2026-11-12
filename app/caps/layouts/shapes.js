@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Which shape a table, a numbered list or a quote has (D215), told from its Markdown alone, never its
 // words, so that it holds in every language. The tokens are marked's.
 import { Marked, Tokenizer } from 'marked'

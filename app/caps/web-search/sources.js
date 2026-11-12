@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Where web search reads, built into Jean (D271): Wikipedia, on unless the user turns it off;
 // Vikidia, the encyclopedia for 8 to 13 year olds, off until turned on; and a Kiwix server's
 // books, the offline library. Wikipedia and Vikidia are MediaWiki's API, or a Kiwix server whose

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The natural voice (D455): answers read aloud by Kyutai's Pocket TTS on this device, on one WebAssembly
 // thread, in the languages Kyutai documents (NATURAL, ui/voices.js); the system's voices read the others,
 // and any whose voice isn't here. About 108 MB for the first language, downloaded once with consent, and

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Lines of code: lines with something other than comments and white space, as the line budgets
 // count them (D246). Comments are found by reading the text as a browser would, so a '//' or a
 // '/*' inside a string, a template or a regular expression is code.

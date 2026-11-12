@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The user's name: shown at the foot of the conversations, and set in Settings' About you.
 // Until the user has ever set it, Jean notes the one they give for themselves in a conversation,
 // with `save_name`, and says so with an Undo. Once there is one, or the user emptied it, the tool

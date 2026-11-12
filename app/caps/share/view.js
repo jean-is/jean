@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A share, opened (D361, docs/sharing.md): the host's viewer, which the render package carries. It
 // reads the share's id from the address and its secret from after the `#`, which never left the
 // browser, asks for the password when there is one, opens the sealed copy, and draws it as a task

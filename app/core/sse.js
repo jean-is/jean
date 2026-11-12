@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Server-Sent Events parser over a byte stream (the subset of the WHATWG format that model APIs use).
 // https://html.spec.whatwg.org/multipage/server-sent-events.html#event-stream-interpretation
 

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The relay's store (D721): a person's files, sealed on their devices, kept for those devices alone. The relay can neither read
 // nor name what it keeps: an object is named by an HMAC of its path under a key only the devices hold, its meta and parts are
 // sealed there, and parts are named by the SHA-256 of their sealed bytes. Each device has a token of its own, whose SHA-256 the

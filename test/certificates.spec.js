@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Checking certificates (D274): the check page, which anyone opens, reads a certificate of an answer,
 // its proof and files, says whether its seal holds, who sealed it and what it says, and sends nothing
 // it is given anywhere; a certificate shared in a conversation brings check_certificate, whose card in

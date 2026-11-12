@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The natural voice (D455): after three answers read aloud in one of its languages, it is offered above the
 // box; once that language's voice is downloaded, it reads it, while another of its languages is read by the
 // system's voices and offered by a notice until downloaded too. Settings › General turns it off and credits

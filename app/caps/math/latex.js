@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A LaTeX document as Markdown (D185), for what brains write in a ```latex block: sections, lists,
 // emphasis and formulas, which Markdown's reading then lays out, and TikZ pictures, a ```tikz block
 // each, which the math capability draws when they are pgf-pie charts; the rest of a preamble goes. A

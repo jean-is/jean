@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A demo (D457): a task Jean did, played again in the room's own conversation from its file, keeping
 // and sending nothing: its request with its file, then its answer written as it came, the brain asked
 // and a call under way, then done, with its chart; and with wait, the next request only once its

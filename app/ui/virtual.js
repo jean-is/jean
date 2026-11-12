@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A long list drawn only where it shows (D627): a design's takes row, which deals as long as it is scrolled (D572), and each group
 // of cards on Creations. A directive in the list's element, a <ul> or an <ol> holding its items alone: it draws those in
 // view and a screen's worth either side, between two empty ones as long as the rest, so that its scroll bar is as long as all of

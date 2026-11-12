@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The on-device brain's output parser (caps/brain-local/gemma.js), which runs in a browser
 // worker but uses no browser API.
 import { test } from 'node:test'

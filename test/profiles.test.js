@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Profiles (D228): each is a whole Jean in profiles/<ulid>-<slug>/, behind a view of the FS rooted
 // there, so no other module knows of profiles and nothing crosses between them.
 import { test } from 'node:test'

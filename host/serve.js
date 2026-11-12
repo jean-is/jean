@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Runs the share host (host.js, D361) on Node 22 or later, with nothing to install:
 //   HOST_CONFIG='{"origins":["https://jean.example"]}' node host/serve.js
 // PORT (8788 by default) and HOST (127.0.0.1; 0.0.0.0 to answer other machines) say where it listens,

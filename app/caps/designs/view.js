@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A design's view beside the conversation (D572), take 8 of the canvas "Designs proposal": the takes row above the page, deal
 // after deal of three with no brain, more as it scrolls to its end, a take picked again putting moved parts back; the page, a button
 // over each part, which picks it, its words changed in place on a double click or Enter, moved and resized by hand or with the keys

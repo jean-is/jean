@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Settings' Computer (D176): its title with the terminal, one line on what the computer is, then rows that open
 // pages at their own addresses (D509): the Sandbox, and This computer once found (D248), under Where commands run;
 // what it may reach, the internet changed in place and its sites; what it keeps, the project's workspace; then its

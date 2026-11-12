@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Service worker: offline shell and per-capability caches (classic script).
 // VERSION is the one capabilities.json names, stamped where this file is served and never in git (D74).
 const VERSION = 'dev'

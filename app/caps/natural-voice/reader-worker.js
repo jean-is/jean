@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The natural voice's worker (D455): Kyutai's Pocket TTS through ONNX Runtime on WebAssembly, from Jean's
 // own copy (D52), one language loaded at a time. Its files come from the weights host the page passes
 // (D53): a manifest pinned by SHA-256, which pins the rest, a binary for the decoder all languages share and

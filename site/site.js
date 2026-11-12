@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Jean's pages beside the app (D438): each is a folder of site/, its page.js saying its address in each language
 // and what it holds, its words in each language as <lang>.json, English's and French's at least, its text as
 // <lang>.html where it is prose, and its own style sheet, <folder>.css, or another page's, over site.css and the app's. This module

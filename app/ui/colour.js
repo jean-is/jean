@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Colours as WCAG reads them, for a design's marks (caps/designs/checks.js) and for the project's look wherever it goes
 // (ui/kit.js, D601): the contrast of two colours, the nearest one that reads on a ground, and a mix of two. Pure.
 

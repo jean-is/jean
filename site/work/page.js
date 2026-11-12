@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The page for the person at work, at /work in English and /fr/travail in French: its promise, then that promise
 // part by part as the homepage has its own (landing() in site/site.js). AI for their work: what Jean does with it and
 // where it goes. That their IT can say yes to: why IT may say no and what answers it, and a ready email that asks

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // An extension's manifest (D296): extension.json, Jean's own, after Claude Code's for what both need (name,
 // version, description, author, homepage), with what Jean adds: its title and description in each
 // language (title-<lang>, description-<lang>, as a skill gives its own, D222), the module that runs it

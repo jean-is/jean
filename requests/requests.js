@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Where an organisation asks Warehouse SAS for a key: the form of jean.is's page for it (site/enterprise-key/)
 // sends here, at an address of its own (keys.jean.is), or /keys on the site's. It keeps each request and mails it to Warehouse SAS, who signs
 // the key by hand, where its private half lives offline, and answers by email; Jean itself never calls it, and checks

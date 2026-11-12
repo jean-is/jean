@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A table Jean keeps (D473, D474, D491), a collection (D507): its collection.json, the columns (properties) and views, read and
 // checked; a table made from what a brain's table_create sends; and two copies' collection.json merged after
 // Sync, column by column. A column's id comes from its first name and never changes, so renaming it

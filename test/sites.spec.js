@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Sites (D720): found by its skill, a site made with `site` is checked from its files and as its pages show out of sight, the
 // brain hearing what to fix (a line too pale, a placeholder left); it opens beside the task, at a phone's width once picked, its link
 // to its other page followed there; it is among the creations, changed by `site_change` until nothing is left to fix, and leaves as

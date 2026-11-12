@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Slides (D591): with Jean's own Slides skill, a deck an answer writes is drawn by deck slide by slide as it comes, kept as a
 // file of the project's once the answer ends and opened beside the conversation, where it is paged and presented, changed
 // three ways (typing on a slide, as its Markdown, or by asking Jean, whose version is accepted or rejected slide by slide,

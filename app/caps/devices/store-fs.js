@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A person's store on the relay (relay/store.js, D721) as one more FS, which Sync's round (caps/sync/mirror.js) runs against as
 // against a folder. What it knows of the store is a manifest, `.cache/store-index.json` on this device, which pull() brings up to
 // date from the store's feed and replaces whole: list, exists and stat answer from it. A file goes up sealed exactly as at rest

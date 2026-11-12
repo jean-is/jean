@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* Together's faces (D733), in a pane's head and at the room's top: those here now side by side in one button, as wide as they are. */
 .together-faces { grid-auto-flow: column; gap: 0.125rem; inline-size: auto; min-inline-size: 2.5rem; border-radius: 1.25rem; }
 /* Each one's caret in a document worked on together (carets.js): in their colour with their name over it, under it on the title, and what

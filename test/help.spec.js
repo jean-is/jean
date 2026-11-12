@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The Help center, served as jean.is's deploy has it (scripts/serve.js --home): its home lists the articles by moment;
 // an article answers first, names Jean's menus and buttons as Jean does, and leads to Show me, which opens Jean
 // where its steps start and points at each part they name, by Jean's own words, until its end or Escape; its pane

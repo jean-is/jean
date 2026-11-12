@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Shared steps: a fresh Jean in a given language, with the fake brain connected.
 import { readFile } from 'node:fs/promises'
 import { expect } from '@playwright/test'

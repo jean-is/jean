@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { setLoader, useLocale, t, tParts, dir, pickLocale, preferredLocales, languageName, firstWords, formatDuration, formatBytes, locale, intlLocales, relativeTime } from '../app/core/i18n.js'

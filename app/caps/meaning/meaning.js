@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Meaning: search_files finds passages by what they mean as well as by their words (D302), with
 // EmbeddingGemma 2's text model on this device, about 175 MB downloaded once with consent. Each file
 // of the project is read once, in the background, into a vector for each of its passages (search's

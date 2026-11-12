@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The box. Enter sends (never while an IME is composing), steering a task at work (D365); Shift+Enter adds a line, ↑ from an empty box
 // brings back what was asked, / and @ at a word's start open a menu of what can be named (D199). At its top, the questions waiting
 // in the task on screen (caps/ask, D343). Under it (D123): + and dictation, the modes + turned on, the brain, and one button to go.

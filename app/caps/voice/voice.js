@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Dictation, private by default: the browser's on-device recognition where it has one
 // (Chrome's processLocally), otherwise Whistle or a small Whisper, by language, in a worker,
 // downloaded once with consent. Never the cloud recognition some browsers use by default.

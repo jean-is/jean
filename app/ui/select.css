@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* A list to pick from has its own chevron, two strokes in the text's colour, as far from the end as the
    text from the start and as far again from the text: the system's sat against the edge. The system's
    again where colours are forced. Loaded by each module that shows one (Settings, a file's versions, a

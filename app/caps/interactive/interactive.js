@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Pages in answers (D196, D289): a ```html block is a page that runs where it is, in every room, in a
 // frame of a file pane's kind (preview.html, D126): an opaque origin, scripts and forms, under the
 // policy Settings give web pages (D143), so by default nothing comes from the internet or goes to

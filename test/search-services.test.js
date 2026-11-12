@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Search services on the user's key (D671), against stand-ins that answer as each does: Brave's,
 // Tavily's, Google's and Kagi's answers, and the refusals they gave a key they didn't know.
 import { test, mock } from 'node:test'

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A recording shared, heard on this device (D713): its sound decoded by the browser at 16 kHz, a film's too, cut into windows
 // of about 30 s at their quietest moment, each written by dictation's writer (Whistle or Whisper, in the interface's
 // language, downloaded once with consent), as lines with the time each window starts. Nothing of it leaves the device.

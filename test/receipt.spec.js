@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // About this answer (D252): under an answer, a button shows on hover how long it took, what it cost
 // and where it was done, a shield when that was on this device; a click keeps the card, which saves,
 // folded at its foot, the answer's certificate, sealed with this device's key, which holds no word

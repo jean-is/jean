@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Whose rule decided a call (D299), in the activity's words: a call a hook refused, asked about or let go
 // ahead keeps whose answer it was and what it was (_meta.by, _meta.decision). Loaded by the activity only
 // once a call has one, since most never do.

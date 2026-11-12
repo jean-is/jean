@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Helpers, the decision inbox, Double-check, "Since last time" and assistant names (0.6). The
 // version's done-when: a large task is split, approved step by step, and the result is verified
 // against its sources. The fake brain splits a briefing between two helpers, each reading one

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Search services the user has an account with, on their own key (D671): sources like Wikipedia,
 // searched through web_search by every brain. Brave and Kagi refuse browsers, so they go through the gateway
 // (D191). Google answers them. Tavily's refusal of a key carries no CORS, so a browser can't read it: what a

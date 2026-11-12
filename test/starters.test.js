@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Ideas under the box (D743): what shows and in what order, and what is noticed on the device, requests asked again.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'

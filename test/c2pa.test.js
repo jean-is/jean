@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Content Credentials (C2PA 2.2, D324): the manifest a picture made on this device or this computer
 // carries, signed by the seal and dated by a witness, read back as C2PA's own tool reads it; manifests
 // C2PA's tool made (c2patool 0.27.22, its test signer, no thumbnail), read and checked here; and a

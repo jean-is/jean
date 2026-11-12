@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The page for the AI on the person's own computer (D319): downloaded once, then answering in the browser tab with no
 // internet, no account and nothing to install, at /offline in English and /fr/hors-ligne in French. What it needs and
 // what it does less well than a big online AI come first, in the lede, then again in full. Its sizes are read from

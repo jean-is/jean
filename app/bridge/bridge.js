@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The bridge (D198): this computer, for Jean. The user runs it in a terminal, in the folder a
 // conversation has, with the line Settings › Computer gives; the Computer's commands then run here,
 // on the user's own machine, in that folder, with its real programs and ports: `npm run dev` serves,

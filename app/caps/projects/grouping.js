@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Tasks that go together, as a project (D716): looked for among the home project's tasks once a week when it holds many,
 // and once a bring-in ends, by their titles (./groups.js), on this device. The first group not offered before is offered
 // in a toast; taken, it is a project of its own, its tasks moved there with the files they shared or Jean made, then its

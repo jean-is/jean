@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The wave: Jean's presence, the tilde of its mark (docs/design.md).
 // Decorative. It mirrors the presence, and CSS does all the moving (ui/style.css).
 import { html } from 'lit-html'

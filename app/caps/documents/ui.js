@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What the parts of a document's editor share (D485): an element made, a glyph drawn, a box floated
 // beside what it is for, never past the window's edges, and a line's language.
 import { languageOf } from '../../ui/language.js'

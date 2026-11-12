@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The camera (D645): what it shows goes with each message, as a picture the task keeps, and Look closely sends a larger
 // one; it stops when it is closed, and pauses when the page is hidden. On a phone it is a viewfinder over the room, which
 // shrinks to a tile. While Jean watches, a look with nothing to say leaves nothing, and one that speaks is kept and shown

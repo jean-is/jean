@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The relay (D45 · D226): mailboxes for messages sealed between people's devices, which it can't read.
 // Whoever serves Jean runs one, or none, and Jean names it in settings or policy (`urls.relay`). A
 // mailbox is named by the token that opens it, as the share host names a share (D361): its id is the

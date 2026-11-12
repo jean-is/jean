@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Your devices (D45, D700): a person's devices paired, each with keys of its own in each profile and a mailbox on the relay (ui/relay.js).
 // Adding one is a state machine the screens (./page.js) drive through `adding`, joining one through `joining`, which asks the person
 // before it starts and again before the profile that came opens; once paired, each device listens on its mailbox for the devices the

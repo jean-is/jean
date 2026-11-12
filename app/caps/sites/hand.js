@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Jean's hand in a site's frame (D741): written ahead of the page its pane shows (./frame.js), it runs in the frame alone, never in
 // Jean's page, idle until Jean asks. Retyping, the words of headings, paragraphs, list items, quotes, captions, labels, links and
 // buttons are each a field of plain text, which Tab reaches as a click does: Enter keeps what was typed, Escape puts it back, and

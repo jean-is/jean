@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The desktop app's host (D155, D169): Neutralino, which serves Jean on 127.0.0.1, answers the calls
 // its configuration allows: the system's dialog for a folder, a folder opened in the system's file
 // manager, the files there, how much memory the computer has, and the programs it runs, which list

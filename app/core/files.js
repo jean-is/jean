@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The project's file library: files/sha256-<hash>.<ext> (the original), .md (its text,
 // with a [[page N]] line before each page) and .meta.json. Named by content, so the
 // same file dropped twice is stored once. Conversations link to files, never copy them.

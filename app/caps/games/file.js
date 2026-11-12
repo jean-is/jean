@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A game's file (D648): `games/<ulid>-<slug>.game.html`, named once and never renamed, a page whose head holds Jean's facts (its
 // format, engine, the actions it uses, author, when it was made and changed, whether it is pinned, the task it came from), its
 // title its name, its body a picture of it being played and the design card, and the game itself as one module in an inert script,

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Who the audit export names (D427, ee/): the account by default; as a pseudonym, the profile's id alone, and the
 // account sealed for the trustee policy names, as a JWE (RFC 7516) only their private key opens.
 import { test } from 'node:test'

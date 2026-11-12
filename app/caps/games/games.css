@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* Games (D648): a game fills its pane, its frame as tall as the pane, 16:9 at least while the pane is short; a play-test's frame
    is laid out at 640 × 360 and never seen; with scripts turned off, its card. */
 app-game { display: block; block-size: 100%; min-block-size: 16rem; }

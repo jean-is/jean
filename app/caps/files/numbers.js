@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Apple Numbers' spreadsheets, as Numbers has saved them since 2013: a zip of .iwa parts, each a run of
 // Snappy-compressed chunks holding protobuf messages that point at each other by id. No schema ships:
 // the few fields read here are named where they are read, after Apple's own messages (TN, TST, TSWP).

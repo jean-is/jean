@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Gemma 4's output, decoded with its special tokens, as Jean's stream events:
 //   text, a thought channel <|channel>thought\n…<channel|>,
 //   tool calls <|tool_call>call:name{key:<|"|>value<|"|>,n:3}<tool_call|>,

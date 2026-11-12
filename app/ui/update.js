@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A new version, once it is ready: the toast's button lets it in when nothing is under way, and it
 // comes back where the page was, on the same entry, scrolled to the same line, the caret where it
 // was. A page's code can't be swapped as it runs (a module loads once, an element is defined once),

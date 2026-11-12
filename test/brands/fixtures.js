@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Brand material for a design system proposed from it (D740): eight brands made up for these tests, two in each of English,
 // French, Arabic and Japanese, nothing from a client. Each has its logo (an SVG drawn to a PNG), its brand guide (a page printed
 // to a PDF, or a Word file) and its site's home page (a page photographed at 1280 × 800), all set in faces this Mac has, so a

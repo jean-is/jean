@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Flows (D218): the engine that runs a flow's steps, and a conversation drawn as one.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'

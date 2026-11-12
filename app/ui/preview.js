@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The panes of what opens beside the conversation (D126, D144, D635): a file Jean made or the user shared, or a creation, each a pane
 // of the dock by its place in the project, its head naming it, with what its kind adds there, the one button that takes it out (./out.js), and Close. A click
 // that opens a file or a creation, in an answer, the drawer or Creations, opens it in a pane for a look, which the next click gives the

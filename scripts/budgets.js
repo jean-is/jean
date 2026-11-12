@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Checks the hard limits in budgets.json. Prints a table; exits 1 on any failure.
 // Usage: npm run budgets
 //        node scripts/budgets.js --short   a line or two, as the development server says them

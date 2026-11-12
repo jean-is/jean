@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Designs (D572, caps/designs/): the checks behind the mark, the layouts and their takes, design_change, the
 // file's format, what Add adds and where, and the scoring of npm run designs (phase 0), under node --test.
 import { test } from 'node:test'

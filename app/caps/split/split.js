@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Tiles (D635): what the drawer drags onto the screen, a task or a pinned creation, or the Creations page a card, a part of it beside the conversation, for someone
 // who reads several at once, face to face, as the dock lays its panes out (ui/dock.js). Dropped near the middle of a task's or a
 // creation's pane, it takes its place; a quarter from an edge of any part, half of it, a box showing where as it goes; a task dropped

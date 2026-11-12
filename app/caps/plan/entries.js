@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Plans (D364), as text: the steps the brain gave, read the way small brains write them, and what the records of the
 // request at work say of its plan: whether the user confirmed it, and whether it moved in a block of steps. No DOM, so
 // it runs under `node --test`.

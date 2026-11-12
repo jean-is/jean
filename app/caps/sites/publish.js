@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Publishing a site (D720), or a page as a site of one page: Publish… in its pane's one button out opens this dialog, loaded then, where
 // the share host says it publishes sites. What publishing means; a name, Jean's suggestion from the site's name at first, in the address
 // it makes, said free or taken by the host as it is typed; then the site's list, and only the files the host lacks. A site's first

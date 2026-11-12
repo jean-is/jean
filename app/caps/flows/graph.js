@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A task drawn as a flow (D218): its requests, each step of the brain, the calls it made side by
 // side, what ran inside them, and its answers, from the records the conversation shows, with what
 // each is doing or became (D216). A run of a saved flow is drawn as that flow is laid out.

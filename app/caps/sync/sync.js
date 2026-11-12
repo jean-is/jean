@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Sync (D157): Jean's files mirrored into a folder of the user's that their cloud drive (OneDrive,
 // Dropbox, iCloud Drive, Google Drive) keeps the same on their other computers, each computer's Jean
 // syncing with it. Chrome and Edge open the folder in place, with Folders' access (D141): its handle is kept

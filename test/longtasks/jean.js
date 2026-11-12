@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Jean doing a task in Node, for npm run longtasks: core's loop (core/loop.js) with Jean's own capabilities, whose
 // modules load as they are (made's write and edit, ask's questions, plan, compact), the room's modules (app/ui/) standing
 // in for what only a page has; shared files read as Files reads them, and a folder worked on with the Folders tools as

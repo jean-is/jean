@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // People (D727), a section of Settings: the people met, each as this person calls them, the name they give themselves beside it, Rename
 // and Remove, or, with no one yet, the two ways to meet; the invitations this device sent that wait, with the six digits to type once
 // someone accepted one; Add a person, asked the name they are known by, then a code to show beside them or a link to send them, the

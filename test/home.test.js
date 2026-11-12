@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // jean.is's page under the app's first screen (D397): only the brand's own site has it, in each language
 // with words, as static HTML that the policy runs as it is, and its words stay true to the app. What every page of
 // the site must be, this one included, test/site.test.js holds it to (D438).

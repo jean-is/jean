@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Copies of Jean that Warehouse SAS hosts (D456, scripts/tenant.js): the registry and the command, which checks
 // each address's policy as policy.html does and writes Caddy's configuration; and, where this computer has the
 // image jean.is's Caddy runs, two addresses served from one release, each with its own policy and header, and no

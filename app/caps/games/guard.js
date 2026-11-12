@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A check in the condition of every `while`, `do … while` and classic `for` loop of a game's code (D648), so that a loop that never
 // ends throws at its own line instead of freezing Jean, whose page shares its thread with a game's frame in WebKit. Strings,
 // templates, comments and regular expressions are read past, `for … of` and `for … in` left alone, and nothing goes on a line of its

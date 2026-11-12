@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The watermark in what the brain on this device writes (D402), the AI Act's mark for text, which
 // can carry no metadata. Gemma's makers sample its words (a temperature of 1, the 64 likeliest, the
 // fewest whose chances reach 95%); here each is the winner of the exponential race of Aaronson's

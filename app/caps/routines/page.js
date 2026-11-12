@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Settings' Routines (D122, D509): what runs next and what waits for the user, then each routine with when it
 // runs in words, how its last run went and its switch; a row opens its page, routines/<ulid>, with Run now, its
 // request, when, who answers, its runs as each went, and Delete; routines/new makes one. Loaded the first time

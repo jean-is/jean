@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A task saved as a web page (D305): the conversation's own file, its JSONL as it is, in a data
 // block, the files it made and was given beside it, and the few lines that draw its requests and
 // answers, with its pictures, when the page is opened in a browser. Where the render package can

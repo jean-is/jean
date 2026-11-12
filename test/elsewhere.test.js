@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Content from elsewhere (D673, threat 1): once a task holds some, what would go out on a person's Always allow asks again.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'

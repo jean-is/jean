@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A toast swiped aside goes, as its close button makes it go (ui/shell.js): it follows the pointer
 // across, fading, and once past a third of its width or flicked, leaves that way and closes; short
 // of that, it comes back. Its buttons and links are their own, and a finger going up or down still

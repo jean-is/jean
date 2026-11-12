@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// SPDX-License-Identifier: MIT
 // jean-cli (D241): Jean beside a terminal. `jean-cli acp` is Jean inside an editor that speaks ACP
 // (cli/acp.js), on the folder Sync keeps, ~/Jean unless --folder names another; `jean-cli --login`
 // signs in to Claude Code, in the terminal an editor opens for it; `jean-cli gateway` runs the

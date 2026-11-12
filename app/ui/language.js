@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Which language a text is in, and which of the device's voices reads it best. Offline and
 // small: the script tells most languages apart; where several share one, their commonest words
 // (and letters only one of them uses) do. Not a translator's tool, only a reader's.

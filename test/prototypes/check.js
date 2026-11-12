@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The check of a prototype, for npm run prototypes (a canvas for prototypes, phase 0): a few screens of an app or a flow,
 // each its own page, which a person clicks through. From the files, Sites' check (app/caps/sites/check.js) less what only a
 // site for strangers needs (a description, a card, a header and a foot, forms its host receives), plus a prototype's own

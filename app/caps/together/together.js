@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Together (D733): people work on one thing at once, each keeping their own copy, a journal on the relay keeping the copies in step.
 // This module registers it: Share's "Work on it together" (./page.js `how`), the faces at the head of a shared thing's pane, its dialog,
 // and the #/join/ address. The visible tab follows every circle kept here (./engine.js), one tab at a time across tabs, and lets go 30

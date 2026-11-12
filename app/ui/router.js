@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The address keeps the minimum to come back to the same place: the open conversation, in the
 // home project (#/c/<ulid>) or another one (#/p/<ulid>/c/<ulid>; #/p/<ulid>/ is a new one there),
 // Settings over it (D137), on a section or one of its pages (settings/routines/<ulid>, D509), and the windows beside it (D220, ui/windows.js), so reloading, sharing

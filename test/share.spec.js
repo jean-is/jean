@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Sharing by link (D361): a task shared from its menu, once a copy of one was saved, sealed here and
 // kept by the host, which can't read it; opened by its link in the host's viewer, drawn as Jean draws
 // it in an opaque frame, the files it made opening as Jean's preview shows them, reaching nothing but

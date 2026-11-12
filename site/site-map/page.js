@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The site map, every page of the site by what it is for (RGAA's plan du site): only jean.is has all of them, so it
 // doesn't ship. A landing page as the others are (landing() in site.js), its title no sentence: its acts are the
 // site's parts, as the foot names them, each over its pages, and it ends on Jean itself. Its words are <lang>.json

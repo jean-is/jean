@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Shapes Connections reads: MCP's messages and tools, and the answers of the APIs apis.js calls,
 // each with the fields the code reads, a field the service may leave out optional.
 

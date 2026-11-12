@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* The camera (caps/camera/view.js, D645): one dialog, a viewfinder over the room or a tile at a corner. Over a picture of
    anything, its words and buttons sit on dark panels of their own, so they read whatever the camera shows (WCAG AA), in
    the look's ink where colours are forced. Its height is never WebKit's fit-content: what it holds is placed over it, and

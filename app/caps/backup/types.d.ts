@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The shapes of Claude's export as the code reads them; every field may be missing.
 
 /** A message of Claude's export. */

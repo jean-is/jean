@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What an answer's certificate says (D252), from the conversation's records alone: how long the
 // answer took, each brain asked and whether it ran on this device, who made its pictures and films
 // and where (D263), and what the page reached while the answer was written, as the browser recorded it.

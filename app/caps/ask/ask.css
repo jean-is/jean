@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* Questions for the user (D146, D343): loaded with them (caps/ask/ask.js), after ui/style.css. At the top of the box,
    inside it, a line between them: the question, its answers as compact rows that scroll when the window is short, then
    how far along, Back, Skip and Next on one line. Small enough for a phone held sideways. */

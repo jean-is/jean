@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A task saved as a web page (D305): the conversation's own file inside, each line the same JSON,
 // in a page that runs nothing but its own drawing and reaches nothing.
 import { test } from 'node:test'

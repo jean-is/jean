@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Where an organisation asks for a key, at /enterprise/key in English and /fr/entreprise/cle in French: a
 // 30-day trial, a free key, or a subscription, whose quote the page makes as the form is filled, to print. The form
 // sends to the request service (requests/), at its own address (KEYS) or else /keys on the site's, which mails the

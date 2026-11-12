@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Pictures (Files): a picture dropped in is scaled down to what brains take, and a capture of the
 // screen is one frame of what the user shares, which then stops. A brain that can see is shown
 // both. The browser's screen picker is replaced by a painted canvas. In three languages.

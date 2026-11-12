@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The example extensions (examples/extensions/, D296): each one's extension.json reads as Jean reads it, its module
 // registers only events and slots an extension may use, within the rights it asks for, and it does what its
 // card says, run here as extension-worker.js runs it, with a stand-in for Jean.

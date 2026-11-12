@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Things Jean made: files the brain writes (a Word document, a spreadsheet, a text file),
 // kept in the project's files and shown under the answer, ready to save (D119); an answer
 // copied as rich text (pastes formatted into Word, Outlook and Google Docs), shared, downloaded as a

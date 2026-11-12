@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* Settings' Routines (D122, D509): a title with what is at its end, the routines as rows that open their page, each
    saying how its last run went in a word, the switch beside it; a routine's page, its fields with their names above them. */
 .routine-head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; margin-block-end: 1.25rem; } .routine-head > :first-child { flex: 1 1 12rem; min-inline-size: 0; } .routine-acts { display: flex; align-items: center; gap: 0.75rem; }

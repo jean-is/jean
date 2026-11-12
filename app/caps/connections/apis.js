@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Jean's own tools over a service's own API, where its MCP server can't serve everyone: Gmail, Google
 // Calendar and Google Drive for every Google account (D349), Google's MCP servers being a preview for
 // Workspace accounts (D344); Outlook, its calendar, OneDrive and SharePoint for every Microsoft account,

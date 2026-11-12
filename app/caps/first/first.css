@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* The first brain (D329), in the page under the box that keeps the request (D366): one way, wide; the device's brain beside it; two doors; then back from either. */
 .sheet.first { inline-size: var(--column); max-block-size: none; margin: 1rem auto 0; border: 1px solid var(--line-strong); background: var(--room-2); color: var(--ink); box-shadow: 0 1.5rem 3rem -1.5rem oklch(0 0 0 / 0.5); }
 .first-free { inline-size: 100%; padding-block: 0.8rem; font-size: 1rem; }

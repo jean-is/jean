@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Designs (D572), in Chromium and WebKit: offered, then Léa's invitation laid out from its facts three ways beside the conversation;
 // its wrong weekday marked and fixed in place; its words changed as fields; a part moved with the keys and the move undone; More
 // takes; the part the user points at changed by the brain, accepted (D505); and saved as its file, which holds the design and its

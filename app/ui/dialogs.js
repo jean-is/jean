@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The drawer and settings dialogs (native <dialog>: focus trap and Escape for free): Settings' menu, with General and
 // the keyboard's shortcuts here, its other sections each a module loaded the first time it shows.
 import { html, nothing } from 'lit-html'

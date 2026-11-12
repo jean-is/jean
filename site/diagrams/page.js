@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // AI for diagrams (the job pages, ../excel/job.js), at /diagrams and /fr/schemas, for the reader who searched for a free
 // AI that draws a flowchart, a mind map or a timeline. "Visual answers" is what Jean calls them, and its eyebrow says so,
 // but searched, "visual" means pictures, so its address and title say what people type. Its Try sends a sample process

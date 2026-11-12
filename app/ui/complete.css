@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* The box's / and @ (D199): loaded with ui/complete.js, after ui/style.css. A menu just above the box and as wide, grouped, the option Enter picks lit. */
 .composer { position: relative; }
 .complete {

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Pictures and films (D251): the brain offers them when asked to draw, makes a picture kept in the
 // project and shown in the answer, ready to save; a film is asked first, then shown and played there.
 // A conversation that ends on a picture opens at its end once the picture is drawn. The fake brain is

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The box's / and @ as text (D199): what is typed after either at a word's start, what matches
 // it, which picked words a message still holds, an earlier task as the brain reads it, and the note;
 // a request cut where it names something and at its tags.

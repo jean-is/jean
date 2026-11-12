@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // OpenRouter sign-in with OAuth PKCE (RFC 7636), entirely in the browser: the user approves on
 // openrouter.ai, comes back with ?code=…, and the code is exchanged for a key the user controls.
 // https://openrouter.ai/docs/use-cases/oauth-pkce

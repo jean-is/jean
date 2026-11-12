@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Connecting, choosing and removing brains, and the OpenRouter and ChatGPT sign-ins. Loaded with the
 // dialogs, or when the page comes back from signing in; Auto's loadModels() stays in state.js.
 import { BRAND } from '../brand.js'

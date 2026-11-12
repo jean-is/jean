@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What a file shows as beside the conversation (D126): in its pane, and in the browser for a
 // file of the conversation's folder or the project's workspace that isn't a page (D190), so both
 // show a file the same way. A picture, a film or a sound as itself; a MIDI file, which no browser

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The organisation's qualified seal (D436, ee/): a qualified provider holds the key, in its certified device, and
 // seals through the Cloud Signature Consortium's API (v2). `credentials/info` gives the credential's chain; each seal
 // is a SHA-256 Jean computes, authorized, then signed by `signatures/signHash`. A certificate then carries the

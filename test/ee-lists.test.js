@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The EU's trusted lists as anchors (D439, ee/): XML read and written back as exclusive canonicalization says, as
 // libxml2 writes it; a real member state's list's signature checked by the key the LOTL names for it; and fixture
 // lists, a LOTL signed by a key policy carries, or by one its pivots announce, pointing to a member state's list

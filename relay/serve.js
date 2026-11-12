@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Runs the relay (relay.js, D45 · D226) on Node 22 or later, with nothing to install:
 //   RELAY_CONFIG='{"origins":["https://jean.example"]}' node relay/serve.js
 // PORT (8791 by default) and HOST (127.0.0.1; 0.0.0.0 to answer other machines) say where it listens,

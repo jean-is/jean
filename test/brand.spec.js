@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A design system proposed from the person's own material (D740): on the design system's page from a logo, a brand guide as a
 // PDF or a Word file, drawn in its previews and worn only once accepted; or by Jean in a task, from a logo shared, waiting there.
 // Every kit proposed reads at AA by day and by night. In Arabic and Japanese too, from a guide written in each.

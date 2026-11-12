@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The comparison pages, served as jean.is's deploy has them (scripts/serve.js --home): the homepage's act on any
 // AI leads to the hub, the hub to each product's page, and each page's buttons, at its top and under Your turn, open
 // the app where they say: a way to add a brain open in Settings › Brains (Ollama's, a Claude plan's), Settings › Your

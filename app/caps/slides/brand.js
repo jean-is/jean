@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A design system proposed from the person's own material (D740): a logo, a screenshot of their site, a brand guide as a PDF or
 // a Word file. Its colours are read from the codes a guide writes, else from pixels; its faces from the names a guide gives, else
 // from the faces it is set in; its logo is the picture it holds. No brain reads any of it, so a device brain proposes what any

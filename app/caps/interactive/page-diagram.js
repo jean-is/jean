@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A diagram in a page (D291, D592), lent to it as it appears: <app-diagram> holds Mermaid as its text, which the page's own code
 // may set, and asks Jean for its picture, drawn by Pele in the room's colours, again when its text, the room's light or dark or
 // its look changes. Its text shows nowhere; one Pele can't read keeps what it showed.

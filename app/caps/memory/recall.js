@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Recall: searching a project's earlier conversations for what was said, for the Memory
 // capability (caps/memory/memory.js) and for jean-cli. Host-agnostic: no DOM.
 import { listConversations, loadConversation } from '../../core/conversations.js'

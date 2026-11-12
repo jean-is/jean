@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Settings' Your data: Download a backup at its head, the map of where the user's things are (ui/map.js, D728), one line on how
 // things stand, the most pressing thing in it with its fix; then where each copy is, as rows that open their pages at their own addresses (D509):
 // on this device (Space used, Delete old tasks), the copies they keep (Backup, the synced folder), and Bring in. And Privacy (D729), from the

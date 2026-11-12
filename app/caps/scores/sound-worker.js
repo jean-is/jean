@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A score's sound (D338), made in a worker so the page stays smooth while it is (./sound.js). A new
 // request stops the one before.
 import { render } from './sound.js'

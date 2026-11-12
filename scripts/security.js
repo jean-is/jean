@@ -1,9 +1,11 @@
+// SPDX-License-Identifier: MIT
 // The security rules AGENTS.md writes down, checked in the code rather than left to a review (D679): `npm run security`,
 // and test/security.test.js in `npm test`, so that going against one fails CI. Reads every module of Jean's, its services and
 // its scripts; what a rule allows on purpose is listed here with the reason. A second pass looks through every tracked file
-// for what a secret looks like. CodeQL (.github/workflows/codeql.yml) looks further, at what flows where.
+// for what a secret looks like, and that each file of code opens with its licence (`--fix` writes a missing one).
+// CodeQL (.github/workflows/codeql.yml) looks further, at what flows where.
 import { execFileSync } from 'node:child_process'
-import { readdirSync, readFileSync } from 'node:fs'
+import { readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join, resolve, sep } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
@@ -41,6 +43,11 @@ export const ALLOWED = {
   },
   'blank-target': { 'app/ui/composer.js': 'the site\'s own privacy policy and terms; browsers open such a link without an opener anyway' },
   cookie: { 'scripts/serve.js': 'the dev server reads the cookie npm run csp gives each browser it drives, to tell their reports apart (D326); never deployed' },
+  licence: {
+    'test/fixtures/editor/gdocs.html': 'what Google Docs puts on the clipboard, kept as it comes',
+    'test/fixtures/editor/word.html': 'what Word puts on the clipboard, kept as it comes',
+    'test/games/proof/blockhollow.game.html': 'a game a brain made, kept as it made it',
+  },
 }
 
 /** @typedef {{ rule: string, path: string, line: number, text: string }} Finding */
@@ -186,6 +193,33 @@ export const NOT_SECRETS = /** @type {Record<string, string>} */ ({
 const tracked = () => listed()
   .filter((path) => path && !/^(app\/vendor|spikes|dist)\/|\.(png|jpe?g|webp|woff2?|ttf|wasm|xlsx|zip|ico|icns|onnx|bin|sf3|pdf|docx|pptx|mp3|mp4|wav)$|package-lock\.json$/i.test(path))
 
+/** Files of code, each of which opens with its licence; a page's words, as its <lang>.json are, aren't code. */
+const CODE = /\.(?:m?js|cjs|ts|css|html|py|sh|c|m)$/
+const WORDS = /^site\/.+\/[\w-]+\.html$/
+
+/**
+ * The notice a file of code opens with, its licence as SPDX names it, in the file's own comments: in ee/, Elastic-2.0 and its
+ * copyright, as AGENTS.md says; everywhere else MIT, in the one line that names it, LICENSE holding its copyright and text.
+ * @param {string} path
+ */
+export function notice (path) {
+  const lines = path.startsWith('app/ee/') ? ['SPDX-FileCopyrightText: 2026 Warehouse SAS', 'SPDX-License-Identifier: Elastic-2.0'] : ['SPDX-License-Identifier: MIT']
+  const [open, close] = path.endsWith('.css') ? ['/* ', ' */'] : path.endsWith('.html') ? ['<!-- ', ' -->'] : /\.(?:py|sh)$/.test(path) ? ['# ', ''] : ['// ', '']
+  return lines.map((line) => `${open}${line}${close}\n`).join('')
+}
+
+/** Where a file's notice goes: after a #! line or a doctype, which come first. @param {string} text */
+const top = (text) => /^(?:#!.*\n|<!doctype html>\n)?/i.exec(text)?.[0].length ?? 0
+
+/** Whether a file of code opens with its notice. @param {string} path @param {string} text */
+export const noticed = (path, text) => text.startsWith(notice(path), top(text))
+
+/**
+ * A file of code opening with its notice. One opening with another licence's stays as it is, for a person to see: code
+ * crosses ee/'s line only by a decision. @param {string} path @param {string} text
+ */
+export const withNotice = (path, text) => noticed(path, text) || /^\S+ SPDX-/.test(text.slice(top(text))) ? text : text.slice(0, top(text)) + notice(path) + text.slice(top(text))
+
 /** A workflow's actions as anything but a commit, which is all that can't move under a run. @param {string} path @param {string} text @returns {Finding[]} */
 export const unpinned = (path, text) => text.split('\n').flatMap((line, i) => (/^\s*-?\s*uses:\s*(?!\.\/)[^#\s]+@(?![0-9a-f]{40}\b)/.test(line) ? [{ rule: 'unpinned-action', path, line: i + 1, text: line.trim() }] : []))
 
@@ -223,9 +257,10 @@ export function audit() {
   // What Jean ships of others' code writes no cookie either: npm run check fills app/vendor/ before its tests run this.
   for (const path of vendored()) all.push(...writesCookie(path, readFileSync(join(ROOT, path), 'utf8')))
   for (const path of tracked()) {
-    if (NOT_SECRETS[path]) continue
     let text = ''
     try { text = readFileSync(join(ROOT, path), 'utf8') } catch { continue }
+    if (CODE.test(path) && !WORDS.test(path) && !noticed(path, text)) all.push({ rule: 'licence', path, line: 1, text: notice(path).trimEnd() })
+    if (NOT_SECRETS[path]) continue
     const lines = SECRET.test(text) ? text.split('\n') : []
     lines.forEach((line, i) => { if (SECRET.test(line)) all.push({ rule: 'secret', path, line: i + 1, text: line.slice(0, 60) }) })
   }
@@ -236,6 +271,7 @@ export function audit() {
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  if (process.argv.includes('--fix')) for (const { rule, path } of audit().findings) if (rule === 'licence') writeFileSync(join(ROOT, path), withNotice(path, readFileSync(join(ROOT, path), 'utf8')))
   const { findings, stale } = audit()
   for (const { rule, path, line, text } of findings) console.log(`${path}:${line} ${rule}: ${text}`)
   for (const one of stale) console.log(`no longer needed in scripts/security.js: ${one}`)

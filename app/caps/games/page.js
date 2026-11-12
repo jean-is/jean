@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A game's page (D648): its facts, the shell (./shell.js) and its styles, and the game, guarded (./guard.js). In a frame of Jean's
 // (./frame.js) its engine is lent; as a page of its own, which Save gives and a task saved as a page or shared by link shows
 // (ui/view.js), its engine is inside it: offline, its card where scripts don't run, and what it saves kept in the browser's storage

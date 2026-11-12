@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* Minimal: nothing but the words. One grey scale and no accent colour, hairlines, no light, no
    halo, no shadows; the little light stays small in the header and the first screen is the
    question alone (D120). Over ui/style.css, which comes after it, so every rule here starts with

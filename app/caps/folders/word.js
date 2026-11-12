@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A Word document changed in place (D141): one passage, within one paragraph, takes the new text in
 // the runs it spanned, in the first one's formatting. The rest of the document stays as it was: the
 // other runs, paragraphs and parts, unchanged once unzipped.

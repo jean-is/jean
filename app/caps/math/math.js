@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Formulas (D185): drawn by the browser as MathML, which Temml writes from the LaTeX brains use, and
 // LaTeX documents laid out with them, their pgf-pie charts drawn too, copied as a widget is (D196), as
 // their source and their picture at once. Unlocked by the first formula or document a message holds, never offered; until

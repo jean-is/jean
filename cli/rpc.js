@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // JSON-RPC 2.0 over newline-delimited messages, both ways: ACP with the editor on stdin and stdout,
 // and MCP with a program the editor names. Requests are answered side by side, so a cancellation
 // is heard while a prompt is still being answered.

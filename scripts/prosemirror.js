@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // ProseMirror's packages under one name, `#prosemirror` (package.json's imports), which Documents' editor imports
 // (app/caps/documents, D485): Node and the type check read them from here, and Jean's page from the one module
 // scripts/vendor.js bundles of what the editor takes (index.html's import map). Never served.

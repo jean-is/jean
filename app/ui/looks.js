@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Looks (D111): a style sheet over Jean's room, ui/style.css, each (ui/looks/<id>.css), Tilde, Jean's
 // own look, until the user picks one (D373). The user's touches over a look are ui/touches.js, loaded once there are some.
 

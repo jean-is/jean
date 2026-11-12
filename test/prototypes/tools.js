@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The tools a brain is given in npm run prototypes (D742): `prototype` and `prototype_change`, as Prototypes declares them
 // (app/caps/prototypes/tool.js), each keeping the prototype in the run's folder, dressed in its look as a site is (D739), and
 // returning its check (./check.js), pressed through in Chromium; and `skill`, which reads Jean's own skills as own-skills does,

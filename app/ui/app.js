@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Boot: storage, settings, language, default project, then the room.
 import { effect } from '@preact/signals-core'
 import { BRAND } from '../brand.js'

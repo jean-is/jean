@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Masked requests (D681, ee/): a brain in the cloud reads what the organisation hides as marks, on every road a request
 // takes, and the person sees it real. Each engine runs it: its patterns are the engine's. A brain on this computer keeps it
 // here, so these answer from elsewhere; on localhost no key is needed.

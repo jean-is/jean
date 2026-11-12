@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The answer eval: a brain answers each question through Jean's own loop, prompt and file tools
 // (core/loop.js, core/prompt.js, core/files.js), under one condition or another, and its answer is
 // graded without a brain: the last "Answer:" line against the gold, and whether what it was shown

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What is read aloud, by the speaker under an answer (ui/voices.js) or in Live: a message's plain
 // text, its formulas as symbols (D185). Outside the first load.
 import { FORMULA } from './markdown.js'

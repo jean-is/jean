@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What Jean reads from elsewhere can carry instructions (threat 1, docs/trust/threat-model.md). Once a task holds some, a
 // person's Always allow no longer sends anything out unasked: a service's action, a move, a delete, a command on their own
 // computer, an address that neither they nor what was read gave as it is, which a brain may have written something into, or

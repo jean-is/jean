@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* Settings' Connections, over Your data's heads and rows: a page's title beside its service's logo, what needs the
    user on Jean's pale yellow, the search, the services as tiles by what they are for, a tick on one connected. */
 .connection-title { display: flex; align-items: center; gap: 0.85rem; } .connection-title > .item-icon { inline-size: 2.75rem; border-radius: 0.85rem; }

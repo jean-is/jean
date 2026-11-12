@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Games (D648): found by its skill, a game made with `game` is played out of sight and its report heard, opens beside the task to
 // play from its cover, keeps the pane it was played in, saves beside it, opens there from its card, named and pictured, with the
 // browser on, and is among the creations; a broken one is reported at its line; Phaser is lent; with pages' scripts off, its card;

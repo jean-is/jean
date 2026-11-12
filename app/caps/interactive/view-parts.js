@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A page of parts (D631), drawn in the answer itself from what ./parts.js reads in it: key figures as the answers' own (D215),
 // cards side by side, a table whose heads sort it, a chart drawn by Charts (D196), unlocked on sight, a form that adds a row to a
 // table of the page for this visit or sends its fields as the user's next message, a map or a diagram as the answers' own, and

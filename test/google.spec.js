@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // An organisation on Google Workspace, Jean set up by its policy alone (D191, D344, D349, D440): its
 // gateway holds the web app Google registered for it, so Gmail, Google Calendar, Google Drive and
 // Google Workspace connect through it, and its AI gateway, whose contract rules out training on what it

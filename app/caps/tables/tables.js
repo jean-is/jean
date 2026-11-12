@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Tables you keep (D473, D474, D491), collections (D507): a table is a folder of the project's, collections/<ulid>-<slug>/, named once
 // and never renamed: its collection.json (./table.js), its columns and views, and its changes.jsonl (./changes.js),
 // each change's cells with when and by whom. Any brain reads its rows with table_rows, and finds them with search_files;

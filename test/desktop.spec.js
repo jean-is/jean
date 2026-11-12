@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The desktop app (D155, D169): Sync's folder is picked with the system's dialog, its host works in it
 // by its path, and the folder's name opens it in the system's file manager; Settings › Computer has the
 // computer's memory from it (D176); This computer's bridge is started by it (D198); plain HTTP reaches the

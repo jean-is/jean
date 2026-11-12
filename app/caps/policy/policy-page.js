@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The page that checks a site (policy.html, D415), for its IT: what the policy.json index.html names holds that
 // this version doesn't read or reads otherwise, or one chosen here before it goes up (checks.js); the addresses
 // it names, whether the site's own Content-Security-Policy lets Jean reach each, and on a click whether each

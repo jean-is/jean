@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Tiny static file server for development. Serves app/, what a deploy serves (D243), on 127.0.0.1.
 // Usage: npm run serve            (PORT=8080 npm run serve to change the port)
 //        SITE=dist/web npm run serve   what a web deploy serves, after npm run build:web (D318)

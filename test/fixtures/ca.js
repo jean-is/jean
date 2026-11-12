@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // An organisation's authority for the tests (D434), built as real ones answer: a root and an intermediate that
 // certify keys, an EST service's certs-only answers (RFC 7030), OCSP answers (RFC 6960), signed by the issuer or a
 // responder it certified for that, and CRLs (RFC 5280); and a qualified provider's CSC API (v2), which holds its key

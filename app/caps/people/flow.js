@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // People (D727): this profile as a person, the people it met, and the meeting, on pairing's exchange (../devices/pair.js) under its own
 // route and labels. Ana's link carries a secret `s` and her profile key's fingerprint; Bob's Jean, once he accepts, opens a reply mailbox
 // and says hello in a mailbox drawn from `s`, opened once, which only Ana's inviting device reads; her nonce comes to his reply mailbox, his

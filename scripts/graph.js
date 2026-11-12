@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Static import graph and index.html parsing, shared by budgets, manifest and vendor.
 // Pure functions only (tested in test/manifest.test.js).
 

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A task saved as a web page (D305), drawn as Jean draws it: the page's own conversation, each request
 // and each answer, its Markdown with its layouts, formulas, charts, scores, slides, diagrams, maps and
 // pages, the pictures it made, and its files, each opened as Jean's preview shows it (ui/view.js), in

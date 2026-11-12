@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Where the user's things are, drawn (D728): this device in the middle, the copies they keep on the start side, their other devices on the
 // end side, a line to each, moving while it is in step, dashed while there is none yet; a dashed place is an offer, a button. The words are
 // HTML in a grid that turns with the page's direction and wraps in any language, and the lines are drawn between the discs as they land.

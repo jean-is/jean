@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Every other glyph more than one module draws, for the drawer, the menus, Settings and the capabilities, which load after
 // the first screen (docs/design.md#icons). A glyph only one capability draws stays in it, drawn with the same icon().
 import { svg } from 'lit-html'

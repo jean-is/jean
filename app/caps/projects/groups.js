@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Tasks that go together (D716): what each task's title is about, by its telling words, those of five letters or more
 // (two signs where words aren't spaced, never kana alone), which leaves out the little words of every language. The word in
 // the most tasks, four at least and at most half of them, makes a group of those tasks, and the rest are looked at again.

@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* People (D727): a step of meeting someone, what it says taking no room while it says nothing, its link, QR code and digits ui/qr.js's; each person met with their initial; what goes, in share's dialog, its files as small as its hints. */
 .people-flow { display: flex; flex-direction: column; gap: 0.75rem; } .people-flow :is(h3, p) { margin: 0; } .people-flow > :is(.people-said, .people-wrong):empty { margin-block-end: -0.75rem; }
 .people-wrong { color: var(--danger); } .people-flow .list li > form { flex: 1; } .people-field { display: flex; align-items: center; gap: 0.5rem; } .people-field input { flex: 1; min-inline-size: 0; }

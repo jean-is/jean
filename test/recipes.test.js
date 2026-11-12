@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The deploy recipes (deploy/, D415) send the header set, a type for every ending a deploy holds, and the
 // pages without .html, as checks.js and so policy.html expect them: IIS, Static Web Apps, CloudFront, the container and Bunny.
 import { test } from 'node:test'

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Copies the three upfront runtime dependencies from node_modules into app/vendor/,
 // which is gitignored (D51): npm run dev, start, build and check all run this first.
 // From lit-html, only the files Jean's code can reach are copied. The on-demand

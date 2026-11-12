@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Together's screens (D733): Share's "Work on it together" for a collection (the link, or the people chosen), the faces of who is in at
 // the head of its pane, People in this collection (roles, the link, removing, stopping), and the one question a link asks a newcomer,
 // the name the others see. Each member wears a colour, the same on every copy, by the order they came, with their initial beside it.

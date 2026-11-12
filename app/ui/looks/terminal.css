@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* Terminal: a green screen with scan lines, a block cursor and inverse video; by day, the green-bar
    paper it printed on, with its sprocket holes (D120). Over ui/style.css, which comes after it,
    so every rule here starts with :root[data-look='terminal']. */

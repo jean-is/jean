@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Retention (D412, ee/): what leaves a task is kept first, for the period policy names, from each record's own time,
 // in a conversation file of its own under .kept/, which goes once the last of it has been kept that long.
 import { test } from 'node:test'

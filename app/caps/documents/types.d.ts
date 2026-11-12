@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Documents' shapes, for the type check only: what the editor's modules share, kept out of the code it loads.
 import type { Node as PMNode, Fragment, NodeSpec } from 'prosemirror-model'
 import type { Command } from 'prosemirror-state'

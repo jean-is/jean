@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A Bunny Edge Script, of the middleware kind, linked to the pull zone that serves published sites (D720, README.md beside
 // this file): `<name>.hst.ing/<path>` is `<name>/<path>` in the sites' storage zone, `/` and a folder its index.html, a path
 // with no ending its .html, as the share host finds them when it serves a site itself (host/sites.js); an address with .html,

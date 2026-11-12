@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What a web deploy serves (D318): Jean's own code minified, nothing else changed, and each file
 // beside itself compressed; capabilities.json and sw.js describe the files served.
 import assert from 'node:assert/strict'
@@ -25,12 +26,16 @@ test('a module’s own names shorten and its exports stay; a classic script keep
   assert.match(script, /function reply\(/)
 })
 
-test('nothing is lowered or prefixed, text stays UTF-8, and an SPDX notice stays at the top', async () => {
+test('nothing is lowered or prefixed, text stays UTF-8, and ee/’s SPDX notice stays at the top, where an MIT one goes', async () => {
   assert.equal(await minify('a.css', 'dialog[open] {\n  @starting-style { opacity: 0; }\n}\n.mask { mask: none; } /* Colours stay. */\n.fill { fill: oklch(0.69 0.16 27 / 0.5); }\n'),
     'dialog[open]{@starting-style{opacity:0}}.mask{mask:none}.fill{fill:oklch(0.69 0.16 27 / 0.5)}\n')
   assert.match(await minify('a.js', "export const words = (text) => text.match(/\\p{L}+/gu) ?? ['é', '日本']\n"), /^export const words=(\w)=>\1\.match\(\/\\p\{L\}\+\/gu\)\?\?\["é","日本"\];\n$/)
   const notice = '// SPDX-FileCopyrightText: 2026 Warehouse SAS\n// SPDX-License-Identifier: Elastic-2.0\n'
   assert.ok((await minify('ee/a.js', `${notice}export const key = 1 // The key.\n`)).startsWith(notice))
+  const sheet = '/* SPDX-FileCopyrightText: 2026 Warehouse SAS */\n/* SPDX-License-Identifier: Elastic-2.0 */\n'
+  assert.equal(await minify('ee/a.css', `${sheet}.mask { color: red; }\n`), `${sheet}.mask{color:red}\n`)
+  assert.equal(await minify('a.js', '// SPDX-License-Identifier: MIT\nexport const a = 1\n'), 'export const a=1;\n')
+  assert.equal(await minify('a.css', '/* SPDX-License-Identifier: MIT */\n.a { color: red; }\n'), '.a{color:red}\n')
 })
 
 test('capabilities.json lists the files served, by their hashes, and sw.js carries the version they make; the render package and the release keep theirs', async () => {

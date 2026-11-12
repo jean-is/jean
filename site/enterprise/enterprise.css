@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* The page for IT (D428), over site.css: the path a request takes, the levels and what Auto picks among them, the
    pilot, the roles' answers with the trust pack's documents, and the prices. Logical properties only; classes start
    with ent-. The roles' answers switch with radio buttons and the sibling selector alone, since the page runs no

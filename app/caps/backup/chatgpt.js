@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // ChatGPT's part of what Restore brings in (D341, imports.js): its export's conversations.json, or
 // conversations-000.json and on for a large one. A conversation is a tree of messages (`mapping`),
 // since a request edited or an answer tried again starts a branch; the one kept is the branch the

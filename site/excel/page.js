@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // AI for Excel (the job pages, job.js), at /excel and /fr/excel, for the reader who searched for AI to analyse a
 // spreadsheet or write its formulas. Its Try is the sample spreadsheet in the box with the app's own question
 // (?sample, ui/brains.js), and its replay that task, its numbers worked out here from app/caps/files/sales.csv as the

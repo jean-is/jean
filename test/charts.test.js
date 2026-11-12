@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Charts (D196), the part with no page in it: a ```echarts block read as an ECharts option, kept to
 // what draws inside the chart, with its numbers written as the user's language writes them.
 import { test } from 'node:test'

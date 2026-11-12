@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Jean's reels (D687, docs/reels.md): a task's replay planned as app/ui/demo.js plays it, laid out with its stops'
 // holds; scenes end to end; the score, the same for a seed, fuller as the reel goes and home on D at its end; and
 // /watch, which writes the player and each reel in each of its languages, every stop at a moment its task reaches,

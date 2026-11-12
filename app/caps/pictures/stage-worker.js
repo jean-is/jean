@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // FLUX.2 [klein] 4B and Z-Image-Turbo on this device (D263), a stage in each worker: the page starts
 // one per stage and ends it once it has answered, since ONNX Runtime on WebGPU keeps a session's
 // memory until its worker ends, and a maker's graphs don't fit at once on most devices. Through ONNX

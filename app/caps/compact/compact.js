@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Compaction (D359): a conversation near its brain's window is summed up by that same brain, on the same system, tools
 // and history plus one request, and the brain reads on from the summary (core/loop.js's turn.compact). Its record is ACP's
 // compaction_update: the summary, for the user to read, and in _meta what the brain reads, the summary and what Jean knows

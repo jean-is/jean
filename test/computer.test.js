@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The Computer (D162): what it may reach and how, what /workspace holds of a folder and what it
 // gives back, and the capabilities it folds in.
 import { test } from 'node:test'

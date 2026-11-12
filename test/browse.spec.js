@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The browser (D140): web pages beside the conversation, with back, forward, reload and full
 // screen. Links from answers open there once it's found, after three opened elsewhere; the brain
 // opens a page there and reads it; the page on show reaches the brain's next note. A site that

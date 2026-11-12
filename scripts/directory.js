@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Checks the services Jean knows (caps/connections/directory.js, D95) the way a browser would
 // meet them, from an origin none of them knows: can a page reach the service with a sign-in
 // (CORS that lets Authorization through), find where to sign in, register itself there, and trade a

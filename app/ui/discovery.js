@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Progressive discovery (docs/product.md): what Jean can do, and how each capability shows
 // up. Triggers are events that carry no language (a long paste, a spreadsheet shared, a
 // few conversations, plenty of them, the same kind of request a third time, or on three different days,

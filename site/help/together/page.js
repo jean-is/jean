@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Work on something together: in Share, the people met in People ticked, then Work on it together, or Copy an invitation
 // link instead, for a collection, a task, a document or slides; the one question a newcomer answers; the faces of who is
 // here and People in this…, with what the one who started it can do; in a task, each person's own Jean answering

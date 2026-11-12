@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Signing in to a connection (MCP authorization, D87). The service names its authorization
 // server (protected resource metadata, RFC 9728), or one of the 2025-03-26 revision names none and
 // has it at its own origin; that server's metadata says how to sign in (RFC 8414, or OpenID Connect

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Whether a file the brain wrote reads as a sheet, which the event that offers Designs asks (D587, ui/discovery.js):
 // in the shell, since it is asked before Designs is found.
 

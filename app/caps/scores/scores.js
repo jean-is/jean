@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Scores (D196): a ```abc block in an answer, music in ABC notation, drawn as a score by abcjs and
 // played on the instruments it names, MS Basic's, made (./sound.js, D338) the first time it plays, in
 // a worker, or on the page in a saved copy, while it waits showing how much of them has come; without

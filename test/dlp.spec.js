@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Data-loss checks (D674, ee/): what policy's `dlp` names, found on the device, reaches no brain it doesn't allow, and Settings
 // › Your data says so. A brain on this computer keeps it here, so these answer from elsewhere. On localhost no key is needed.
 import { test, expect } from '@playwright/test'

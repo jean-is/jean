@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Target size (WCAG 2.2 AA, 2.5.8): everything the pointer can press is at least 24 by 24 CSS pixels,
 // or far enough from the others that a 24-pixel circle centred on it meets no other target and no
 // other small one's circle. No exception taken, not even for links in a line of text. The first

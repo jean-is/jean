@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Pairing a person's devices (caps/devices/pair.js, D45, D700), end to end through Jean's side of the relay
 // (ui/relay.js) against the relay's own handler (relay/relay.js) in this process, as test/relay-client.test.js runs it.
 import { test } from 'node:test'

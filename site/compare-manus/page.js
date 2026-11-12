@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Jean and Manus, at /compare/manus and /fr/comparer/manus, for the reader who searched for an open-source, free or
 // local alternative to it. Manus also starts from a web page, so what sets the two apart here isn't the install but
 // where the work happens and where it stays. Manus's own pages are what each fact is read from, its help centre's

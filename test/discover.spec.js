@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Discovery (0.3): the first idea shares a sample spreadsheet (D366), Settings' Capabilities groups the
 // capabilities, a page each, "turn on everything" says what still waits, a capability found turns off and on
 // again (D433), what the organisation turned on stays on, and the brain picker offers Auto, the connected brains and

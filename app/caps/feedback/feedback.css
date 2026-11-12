@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* Under the last answer: Not right's few words, on a line of their own below the buttons. */
 .msg-actions:has(.feedback) { flex-wrap: wrap; }
 .msg-actions .feedback { order: 1; display: grid; gap: 0.5rem; flex-basis: 100%; margin-block: 0.5rem; margin-inline-start: 0.5rem; max-inline-size: 36rem; }

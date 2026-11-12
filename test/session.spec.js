@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Policy's `session` (D676, ee/): on a shared computer, signing out erases this profile, once the person confirms; and going
 // idle signs out, or locks. On localhost no key is needed.
 import { test, expect } from '@playwright/test'

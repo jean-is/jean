@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Skills from elsewhere (D116, D121, D207): Agent Skills discovery indexes, the format's own way to
 // publish skills (https://github.com/cloudflare/agent-skills-discovery-rfc, schema 0.2.0), and
 // repositories on GitHub. Jean reads them whole and compares their descriptions with the user's

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A request edited where it is (D312): a double click on its words, or Enter on them, once its answer
 // is written, puts them in a box in their place. Enter or Send, once the user agrees, goes back to the
 // request as Try again does (D188) and asks it in its new words, with the files it shared, and the box

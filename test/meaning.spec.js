@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Search by meaning (D302): when words find nothing in the project's files, the brain offers it; once
 // the user agrees, its weights download, with their progress shown, the files are read into vectors,
 // and search_files finds a passage in other words than the question's. The embedder is replaced by

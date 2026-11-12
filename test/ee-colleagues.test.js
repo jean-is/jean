@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Colleagues' controls (D732, ee/): policy's `colleagues` read as IT writes it; the organisation's EST service certifies a profile's key
 // for its account, which the key's own ECDSA signature asks for; a colleague's device vouched for only while that certificate names their
 // account and its key and leads to policy's anchors; groups kept apart, guests kept out, people from the list alone; and the audit

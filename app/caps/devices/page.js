@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Your devices (D700, D726, D728), a section of Settings: cards, this device first, then the others, each with when it was last seen, or
 // added, and Remove, asked in a dialog that also erases Jean there; what they keep in common, what each keeps; Add a device, its steps
 // shown in its place under the three both devices name (the link and its QR code, the wait; the lock, the six digits the new device shows,

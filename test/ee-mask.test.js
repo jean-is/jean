@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Masked requests (D681): what the organisation hides reaches a brain in the cloud as placeholders, and comes back real.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'

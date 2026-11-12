@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Pictures, as brains that can see take them: a shared picture, one frame of a screen the
 // user shares, or a scan's pages. Brains see no side longer than 1568 pixels: providers scale
 // larger ones down anyway, after they have been sent whole, and every later message in the

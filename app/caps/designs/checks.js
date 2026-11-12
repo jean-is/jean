@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The checks behind a design's mark (D572), made with no brain, as phase 0 measured them (test/designs/findings.md).
 // A part's words are read for dates in the design's language through Intl (its weekdays and months as that language
 // writes them, its digits, Japanese's 月 and 日), then checked: a weekday that isn't its date's, a reply-by date after

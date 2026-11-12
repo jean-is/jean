@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A folder's pages, for the browser (D156): a page of the conversation's folder put together as one
 // document, the way a site's server would serve it, for a frame that can't load anything itself. A
 // page's own scripts run only in an opaque origin, which no service worker serves, so what the page

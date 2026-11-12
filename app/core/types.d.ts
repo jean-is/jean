@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Shared types for core/ and ui/, referenced from JSDoc as import('./types.js').Name.
 
 // ─── Brains (model providers) ────────────────────────────────────────────────

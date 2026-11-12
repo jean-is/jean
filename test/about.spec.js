@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What Jean knows of itself (D423): asked what it can do, the brain reads `about`, which says where each capability
 // stands for this person, in the case's own words and those of the screen, and leaves out what policy denies; from the
 // code, Settings' sections, the keyboard's shortcuts, what the organisation locked, and once Connections is found, the

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Pictures and films from a connected brain's provider (D251): what each API is asked, what comes
 // back as bytes, and a film fetched only from where the brain is. Then what FLUX.2 [klein]'s and
 // Z-Image-Turbo's graphs are given on this device (D263), the glimpses of a picture as it forms,

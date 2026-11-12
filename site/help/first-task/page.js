@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Your first task: the box, a request in one's own words, the answer and its steps, a follow-up, and a new task
 // for something else; its pane replays a first request, a note to a neighbour, as Jean answers it, and the box shows
 // under the step that names it.

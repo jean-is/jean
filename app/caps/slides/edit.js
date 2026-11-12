@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What Slides changes in a deck's Markdown (D591), as text, so that the rest of it stays byte for byte: a slide's layout, in
 // its settings; the kit the deck was drawn with, kept in its headmatter as one line, so that the file looks the same wherever it
 // goes; where its pictures are, a picture of the task named by its name kept at its place in the project; whether a deck an

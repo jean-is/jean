@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Runs the gateway (gateway.js, D191) on Node 22 or later, with nothing to install:
 //   GATEWAY_CONFIG='{"origins":["https://jean.example"]}' node gateway/serve.js
 // PORT (8787 by default) and HOST (127.0.0.1; 0.0.0.0 to answer other machines) say where it listens.

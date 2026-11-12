@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What Jean noticed (memory.md): one Markdown line per entry, oldest first, each with when,
 // by whom and in which conversation it was noted, in an HTML comment that rendering hides.
 // Curated by Jean, and the user can edit or delete any line.

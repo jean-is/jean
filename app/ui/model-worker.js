@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A model's worker's side (the device's brain, Intuition, dictation): Transformers.js from Jean's
 // own copy, never a CDN (D52), and the weights from the host the page passes (D53).
 import { env } from '../vendor/transformers/transformers.web.min.js'

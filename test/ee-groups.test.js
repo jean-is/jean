@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Policy by group (D429, ee/): policy's `groups` lists sections for the directory's groups and app roles, by the value the
 // sign-in's ID token gives each; for each the person is in, in policy's order, its `policy` goes over the organisation's
 // as a JSON Merge Patch (RFC 7386). What signs in, the key and the sections themselves are no group's.

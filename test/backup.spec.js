@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Backup (0.2): everything Jean keeps in one zip, keys left out, restored on another device
 // (here, a fresh browser context) without deleting anything that was already there.
 import { test, expect } from '@playwright/test'

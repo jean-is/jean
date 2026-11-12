@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What the design system's page shows on each layout (D602): a small project, from its idea to its launch, written as a layout
 // wants it, so that each draws what it is for: a figure from its lists or its parts, a sentence, a quote, a picture, its slots.
 // By what a layout does more than its name, so that a kit's own and a template's show theirs too. Dates and numbers are Intl's.

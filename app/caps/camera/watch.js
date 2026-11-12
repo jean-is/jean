@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // When Jean looks on its own while it watches, with no I/O (tested under node --test): once the scene has moved
 // from what it last looked at and kept still a moment, as when a step is done, else every minute; never twice
 // within a few seconds, and for ten minutes at most.

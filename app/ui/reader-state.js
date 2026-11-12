@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What the room's modules read of Jean in a task saved as a web page (D305), in ui/state.js's place:
 // the task and what the page was saved with (the look, what pages may do, the map service, where a
 // score's instruments are, D338), light or

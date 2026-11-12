@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* Settings' Ideas (D743): a title and how the ideas are chosen; a list's ideas, each its words and request, their names above
    them, its buttons at its end; and what is often asked, each with Keep and Hide. */
 .starters-head { margin-block-end: 1.25rem; } .settings-panel .starters-head h2 { margin: 0; font-size: 1.375rem; font-weight: 600; line-height: 1.3; overflow-wrap: anywhere; } .starters-head h2:focus { outline: none; }

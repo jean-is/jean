@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What a help article shows beside a part or a step, so the reader sees what the words say: a part of Jean
 // drawn with the app's own classes and strings, over the app's style sheet the page already has (the box, the first
 // step, an offer, a card that asks first), a page of Settings in Jean's words with what the step names ringed, as Show

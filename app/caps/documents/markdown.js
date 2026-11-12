@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A document's Markdown ⇄ ProseMirror (D485), in the editor and under node --test. marked's
 // lexer reads the file, as Jean's own renderer does (ui/markdown.js), so the editor sees the blocks an
 // answer shows; the writer is prosemirror-markdown's, without its markdown-it parser. A block the

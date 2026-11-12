@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Draws the pictures a link to the brand's own site shows, one per language of its homepage (D682): the name on a
 // browser tab, as Jean is one, with that page's promise under it, at Open Graph's size. And the one a link to a share
 // shows, the same for every share: a link, with no word and no name (host/card.png, D361). No word sits on the sunflower

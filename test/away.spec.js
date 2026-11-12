@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A conversation goes on out of sight (D147): going to another one leaves its answer under way,
 // its name in the list has a small light, ringed while a decision waits there, and coming back
 // shows the answer where it got to, and an answer that came meanwhile a still light until it is opened. The list shows no times. The fake brain asks three questions

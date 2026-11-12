@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Hands a file Jean made to the browser's downloads.
 
 /** @param {Blob} blob @param {string} name */

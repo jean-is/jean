@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* The terminal (caps/computer/terminal.js, D166): a pane of the dock, loaded after ui/dock.css, so
    its colours are the look's. Commands and what they print run left to right in the look's mono
    face, each line of output in its own direction, for text in Arabic or Hebrew. Logical properties only. */

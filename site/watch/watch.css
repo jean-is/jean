@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* The page that plays Jean's reels, over site.css: the first reel under the promise, the others two by two, and the
    way in. Each reel is framed at 16:9, as a video is. Logical properties only; classes start
    with wch-. */

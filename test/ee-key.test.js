@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The key that unlocks ee/ (D139, D386): checked offline, for this origin, against this version's release.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'

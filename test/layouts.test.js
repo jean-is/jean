@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Layouts (D215, D291): which shape a table, a list or a quote has, told from its Markdown alone,
 // never its words: a comparison, steps, a note, a timeline, key figures, a checklist, or none.
 import { test } from 'node:test'

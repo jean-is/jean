@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What npm run longtasks counts, borrowed from published methods and kept pure so node --test runs it: pass^k as
 // τ-bench estimates it, TheAgentCompany's partial credit per checkpoint, a pairwise verdict asked in both orders (a
 // position swap, as MT-Bench's judges are asked), the language a text is written in, and what a run's records say of

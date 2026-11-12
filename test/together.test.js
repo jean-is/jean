@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A circle (caps/together/circle.js, D733): who is in a shared thing, as every copy works it out from the journal's signed changes.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'

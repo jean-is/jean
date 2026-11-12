@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A part of Settings drawn from a module of its own, loaded the first time it shows.
 import { signal } from '@preact/signals-core'
 import { nothing } from 'lit-html'

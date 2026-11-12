@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A deterministic OpenAI-compatible brain for local end-to-end checks.
 // Usage: node test/fixtures/fake-brain.js   (then connect "Other" → http://127.0.0.1:4174/v1)
 // Streams a short thought and a Markdown answer, in the language the prompt asks for.

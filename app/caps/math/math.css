@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* Formulas (D185): set apart, one scrolls only sideways; Chromium lays it out a pixel taller than its box, which the padding holds. */
 app-math[block] { overflow-y: hidden; padding-block: 0.15em; }
 app-math mtext.is-bold { font-weight: bold; }

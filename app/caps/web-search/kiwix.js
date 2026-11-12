@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A Kiwix server, as web search's library or its Wikipedia (D254, D271): kiwix-serve, Kiwix
 // Desktop's own server or a hotspot's, whose answers any browser may read. Its catalogue (OPDS) lists its books and their
 // languages, its search (OpenSearch, as RSS) finds pages in one language's books, and each

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Settings' Connections: its title with Connect a service at its end, one line on what needs the user, else how
 // many are connected, then a row for each, its account and when Jean last used it, a word where it is freer or stricter
 // than the usual, opening its page, connections/<id>: what Jean may do there, reading and acting, for that service alone,

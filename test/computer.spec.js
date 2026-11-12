@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The Computer (D162), which folds in Calculations (0.3, the launch demo) and the data toolkit (0.4):
 // drop a CSV, ask in your language, accept the offer, and get exact totals worked out by a script;
 // scripts and Python in the sandbox, with /workspace and the internet as Settings allow; commands in

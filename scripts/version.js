@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Jean's version, by semver (D735), read from git and written in no file git holds: the newest version's tag a
 // commit reaches, raised once by the most that the commits since ask, as gitmoji grades the code each first line
 // opens with: :boom: a major change, :sparkles: a minor one, a fix or a change people see a patch, the rest nothing.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The drawer, after Manus' (D165): a new task, where each capability found leads, the tasks and
 // the user at its foot, whose menu holds Settings, like the Claude apps' sidebar (D115). On a
 // wide window it stays open beside the conversation (Mail's list, D111), the header's name, Search

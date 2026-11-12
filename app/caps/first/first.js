@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The first brain (D329): what the first message, or the chip, opens while there is none, in place of Settings ›
 // Brains, in the page under the box that keeps the request, where the ideas were (D366). One way first, free, and
 // beside it the device's brain where it can run, downloaded while the cloud's answers; then two doors, to the plan or

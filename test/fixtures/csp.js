@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What test/csp.spec.js and scripts/csp.js share: how a report reads, and the one refusal expected.
 
 /** A report a page's policy sent (scripts/serve.js --csp-reports), in a line. @param {any} report */

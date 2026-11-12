@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // How what a pane shows leaves Jean (D683): one button just before Close, whose menu goes in one order, whatever opens there: to someone
 // (Publish, for a page on its own where the share host publishes sites, Share, Send to an app, Copy), as a file (Download, the format most want first, its own file last), on paper, then the design system
 // for what wears one. What a browser or this Jean can't do isn't there, and one way alone is the button itself. Each kind's own files

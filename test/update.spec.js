@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A new version (D138): a page not used yet takes it on its own once it is ready, where it was; a page in use shows the
 // toast, and a plain reload brings it in, the draft kept; with two tabs the toast waits for its button, which brings
 // both, a busy one once its work is done. On a server of its own over links to app/, all but sw.js, which a test

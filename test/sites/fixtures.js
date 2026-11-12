@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What a person shares with a brief of set.json, made when npm run sites runs, never committed: six photographs drawn as
 // scenes (stand-ins for a photographer's own), and a CV as a Word file in the brief's language.
 import JSZip from 'jszip'

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A task's title (ui/title.js): the reply of the brain asked for one, tidied, and none when it is in another
 // script than the message, as a title in another language would be (a Japanese task once came back in French).
 import { test } from 'node:test'

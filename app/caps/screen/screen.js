@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Screen sharing (docs/product.md, "Screen sharing"; D699): the user shows Jean a window, a tab or their whole screen as they
 // work in another app, and Jean guides them through it. It is a feed as the camera is (caps/camera/feed.js): nothing is
 // streamed to a brain, each message sent while it is on shares a picture of what it shows, and while Jean watches it looks

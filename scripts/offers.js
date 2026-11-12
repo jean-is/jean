@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Measures the brain's own offers (D284): how often a brain calls `offer` for what a request needs,
 // and for what it doesn't. Each labelled request of test/offers/ is the first message of a first
 // conversation, sent with Jean's own frozen prompt and declared tools, which the page itself sends

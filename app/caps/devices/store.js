@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The person's store on their devices (D721, D227): their tasks and files sealed in the store the relay keeps (./store-fs.js), which
 // Sync's round (caps/sync/mirror.js) keeps the same as each device's own, while the profile is open, a round at a time with Sync's
 // (caps/sync/rounds.js). The device that adds another makes it where there is none, or the first of the person's devices; its keys

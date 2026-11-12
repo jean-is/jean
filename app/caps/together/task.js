@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A task worked on together (D734): its changes are records, appended to each copy in the order they come. What goes is what a member
 // wrote: requests, answers, activity, plans; never what is the person's own, their frozen prompt and its notes, a summary, or thoughts.
 // Another's turn is written after a `shared` note naming them, as People writes what someone sent (D727), so the room says "From Ana",

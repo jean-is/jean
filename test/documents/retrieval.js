@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The retrieval eval: what each way of reading would put before the brain for a question, best
 // first, and how much of the question's evidence that covers within a budget of tokens. No brain
 // is asked: the same passages, the same evidence spans, the same budgets for every strategy.

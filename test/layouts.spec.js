@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Layouts (D215): a comparison in an answer shows its options side by side, the best of each row lit
 // and the one recommended framed under its badge; numbered items that start in bold are steps, a
 // GitHub alert and a quote that starts with an emoji are notes; a column of amounts lines up at the

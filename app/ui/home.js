@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // jean.is's page under the first screen (D397), which build:web writes after the app's root (site/home/page.js),
 // one per language at its own address. It speaks the app's one language: when that changes, from Settings,
 // ⌘⇧L or the page's own menu (which sets it as Settings does), the page shown is that language's, at its

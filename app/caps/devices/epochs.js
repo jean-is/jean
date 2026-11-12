@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Who is in a person's store, and the keys a removal changes (D721). Removing a device starts the store's next epoch: its key, made on
 // the device that removes, goes sealed from that device's key to each device its own list still has, itself too, never by the relay's
 // list, with every device removed so far and the rev the epoch begins after, all in one write the relay takes under the last epoch's

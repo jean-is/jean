@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A web bookmark: a line that is only a web link shows as a card, its title over its site. "/"'s Web
 // bookmark asks for an address on a line of its own; pasted, or typed then Enter, the line becomes that link,
 // titled once from the page when its site lets other sites read it, never as the document opens.

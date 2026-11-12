@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Documents' editor (D485), under node --test: a document's Markdown read and written back byte for byte,
 // Jean's changes found where they are, blocks moved, a list's items among them, and two versions of a
 // document merged from the one both came from (D157), and another person's caret found where it is in this copy (D733).

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Jean's own Node, the one CI, the container images and Jean's server run, is the newest LTS, named once in .nvmrc (D701).
 // What can't read that file names the same major in an image's tag, node:<major>-alpine, pinned to its digest where
 // scripts/security.js asks for one, and test/lts.test.js holds every one to it. This asks Node's own list of releases

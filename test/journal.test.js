@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The relay's journals (relay/journal.js, D733): what people work on together, as an ordered list of changes the relay numbers
 // and can't read, kept 7 days after the last. Three tokens: read (the id is its hash), write, owner. A tombstone, 90 days, says
 // what became of one that expired, was deleted or moved, so that only its own write token opens it again.

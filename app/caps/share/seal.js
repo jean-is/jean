@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A shared copy's seal (D361): sealed in the sharer's browser with AES-256-GCM, under a key drawn
 // from the link's secret, and from a password when there is one, so the host keeps what it can't
 // read. The link's `#` carries the secret, which browsers never send. A password's share also has a

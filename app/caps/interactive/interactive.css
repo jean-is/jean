@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* Pages in answers (D289): framed as the other widgets are, so a page reads as one of its own, Copy at its top corner, shown on hover. The page's body adds a little to the padding, room for its focus rings. */
 app-page { position: relative; display: block; padding: 0.75rem 0.85rem; border: 1px solid var(--line); border-radius: 0.9rem; margin-block: 0 0.85rem; }
 app-page iframe { display: block; box-sizing: content-box; inline-size: 100%; block-size: 6rem; border: 0; background: transparent; }

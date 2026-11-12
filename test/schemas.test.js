@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The JSON Schemas each copy of Jean serves at /schemas/ (D415): policy.json's, made from what policy.html
 // checks, and GATEWAY_CONFIG's, written by hand beside the gateway.
 import { test } from 'node:test'

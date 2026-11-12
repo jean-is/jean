@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The family page: what a child's profile is, for the parent who reads before setting one up, at /family in
 // English and /fr/famille in French. It promises the profile (D389, D390) and, its gate passed (D394), how a child
 // learns with Learn it's steps, with how often the brains a child's profile asks give the answer anyway as its proof.

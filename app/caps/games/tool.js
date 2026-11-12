@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What the brain is given for Games (D648): two tools, each with its line, which games.js runs. Pure.
 import { ENGINES, ACTIONS } from './file.js'
 

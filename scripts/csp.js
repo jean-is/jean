@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The pages' policies checked in browsers Playwright doesn't drive (test/csp.spec.js does the others):
 // Safari itself, through the safaridriver it ships with once Safari › Settings › Developer › Allow
 // remote automation is on, and Firefox itself, through geckodriver when it is installed. Jean is

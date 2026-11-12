@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The dock (D144, D635): what opens beside the conversation, each a pane (a file's preview, the browser, the terminal, a flow, and
 // the tasks and creations dragged from the drawer, caps/split), laid out with the conversation as one screen in parts (./tree.js),
 // side by side or one above the other, none ever covering another. A pane that opens goes beside the conversation at the line's

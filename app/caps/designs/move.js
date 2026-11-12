@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A design's parts moved and resized by hand (D572): dragged with the pointer or a finger, snapping to the page's middle and
 // edges, its printer's margin and the other parts' edges, a guide drawn where it snaps, the part placed again as it moves and
 // written once let go; resized by its handles, words keeping their size and wrapping, a picture, an ornament or a QR code its

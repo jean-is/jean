@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The multilingual reflex test set (scripts/reflexes.js measures Kev on it): every launch
 // language holds every example, in the same shape as the English source.
 import { test } from 'node:test'

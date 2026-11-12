@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The wire formats of the model APIs Jean speaks, as llm.js and anthropic.js write and read them: only the fields
 // they touch. What comes from the network is optional wherever the code guards for it.
 

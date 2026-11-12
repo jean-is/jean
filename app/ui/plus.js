@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The menus beside + in the box (D292): pointed at or pressed, its Skills or Connections row opens
 // a menu beside it, the room's skills by name or its connections, each picked to be named in the
 // message as / names it (D199), then a way to add one, in Settings. It is a popover inside +'s, so

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // When rounds run (D157, D721), Sync's with its folder and the store's with the relay alike: as Jean opens, every minute while it is
 // on screen, as it goes out of sight or comes back, and two seconds after Jean's files change here, in any of its tabs, each change
 // putting the round off until they settle; one tab and one round at a time (a Web Lock), a round asked for meanwhile coming soon

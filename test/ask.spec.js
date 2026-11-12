@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Questions for the user (D146, D343): the brain asks everything it needs at once, and the top of
 // the box takes the questions one at a time, the answer Jean recommends picked already, with room
 // for the user's own words, Skip and Back; then every answer goes back to the brain. The fake

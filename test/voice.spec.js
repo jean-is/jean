@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Dictation (0.2): the browser's own recognition on the device when it has one, never its
 // cloud recognition, in the interface language; otherwise Whistle or a small Whisper, by
 // language, downloaded only once the user agrees. The browser's recogniser is replaced by a fake that hears a sentence.

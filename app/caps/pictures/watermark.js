@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The watermark on a picture made on this device or by a server on this computer (D324), the code of
 // practice's second layer beside the marks in its file, which a redrawn or reshared picture loses:
 // Adobe's TrustMark (MIT, code and weights), variant Q, which C2PA's list names com.adobe.trustmark.Q.

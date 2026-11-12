@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Profiles (D228): one device, several Jeans, each a whole one in profiles/<ulid>-<slug>/, which the FS
 // is rooted in (ui/opfs.js), so that nothing crosses between them. Loaded once there is a second, or
 // to make one: the person's menu lists them and adds one, switching opens the other afresh, and

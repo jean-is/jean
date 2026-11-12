@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Measures the skill "Make a site" (D720), first before Sites was built (its phase 0): how often a brain makes a site that passes
 // the check, from the briefs of test/sites/set.json in English, French, Arabic and Japanese, then changes it as asked in
 // the same task. Each brief is a task of Jean's run in Node (test/longtasks/jean.js): Jean's prompt and its own

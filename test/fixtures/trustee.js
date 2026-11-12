@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What the audit's trustee does with any JOSE tool (D427): open a compact JWE, ECDH-ES and A256GCM, with their
 // private key. Written here with node:crypto, apart from Jean's Web Crypto, and checked against RFC 7518's example.
 import assert from 'node:assert/strict'

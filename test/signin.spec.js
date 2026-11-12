@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Signing in with the organisation's account (D385): at work, policy names the identity provider and
 // the gateway's brain; Jean signs in at the first visit, the gateway gets the token, its MCP servers too, which renews,
 // Settings › Brains says who is signed in, and signing out, from the person's menu, stays so until asked.

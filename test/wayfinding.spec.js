@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Finding where you are: the window's title says the page, what Jean is doing is said to a screen reader as it changes and not
 // word by word, and the skip links reach the main content and the box, leaving the task and its address where they are.
 import { readFileSync } from 'node:fs'

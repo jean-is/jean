@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What npm run masks marks: an annotated set's documents, and whether what goes on the wire still holds their names. A name
 // counts only if every letter of it is hidden, so hiding "Durand" but not "S." in "S. Durand" is a miss; over-masked means
 // ordinary words hidden, out of all words not marked as anything.

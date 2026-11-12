@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Looks (D111, D120): Human until one is picked (D174); each one in Settings' gallery, with its thumbnail, dresses the page when
 // picked. Mail keeps the conversations in view once there is one (D369), in one sidebar with the name at its top and
 // the user at its foot (D115, D165), and is back before the first paint; the user's own CSS starts as an outline,

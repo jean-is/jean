@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Microsoft's side of an organisation that runs Jean (D382, D385), at Microsoft's own addresses: Entra
 // ID, holding each app to the rules Entra holds it to; Microsoft Graph, with a mailbox, a calendar and a
 // drive, each opened by the scope Graph wants for it; SharePoint's signed download addresses; the AI

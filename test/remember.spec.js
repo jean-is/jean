@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Memory, projects and skills (0.4), the version's done-when: two projects keep separate
 // memories, and a skill is created from repeated requests. Plus "What Jean knows about you".
 import { test, expect } from '@playwright/test'

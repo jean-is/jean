@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Designs' layouts (D572): the brain gives facts by their role, and Jean lays them out on its own layouts
 // (layouts.json), three takes at once, each a layout, a palette and a voice, dealt again with no brain for More
 // takes. A layout's boxes are in percent of the page, placed from its start, so it mirrors for a language written

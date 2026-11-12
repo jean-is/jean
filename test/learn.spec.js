@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Learn and repeat (0.7): skills from elsewhere, read from a discovery index or a repository on
 // GitHub on the device and added only by the user, after reading their steps (D121, D207);
 // routines, requests Jean sends itself on a schedule, while open or caught up at the next visit (D122). Jean's own Visual answers,

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Bringing in what another assistant kept (D340, D341): Gemini's export from Google Takeout,
 // ChatGPT's or Claude's, a .zip or a .tgz, its parts together, or its JSON alone. Which one it is
 // comes from what it holds, never its name: conversations.json at its root (or conversations-000.json

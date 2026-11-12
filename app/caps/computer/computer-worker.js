@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The Computer (D162), in a worker started from a blob in the sandbox's frame (sandbox.html): an opaque
 // origin with no network. Its engines come in as files from Jean, each the first time a run needs it:
 // the shell (just-bash), whose filesystem is every conversation's computer; QuickJS for JavaScript;

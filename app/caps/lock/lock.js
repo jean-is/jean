@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The lock (docs/encryption.md, D371): what Jean keeps on this device opens only with the person's
 // passkey or password, or their recovery code, rather than with this device's key alone. Every file
 // is sealed either way, by the storage worker (ui/seal.js); a lock changes only the slots of

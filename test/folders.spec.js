@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Folders (0.8, D141, D149), the version's done-when: a synced "Clients" folder, where Jean finds the
 // three contracts that mention a clause and corrects one after showing the change; a folder of code,
 // where the file changes by exactly Jean's change; two conversations in two folders and a project on

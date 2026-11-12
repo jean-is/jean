@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Routines (D115, D122): requests Jean sends itself on a schedule, or once later, one Markdown file each,
 // routines/<ulid>.md in the project they belong to (the home project's at the root). The front
 // matter holds the schedule, the body the request, in the user's words. With no server, a routine

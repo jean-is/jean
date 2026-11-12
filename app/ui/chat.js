@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The conversation: messages, the live activity view, approvals, errors.
 import { html, nothing } from 'lit-html'
 import { repeat } from 'lit-html/directives/repeat.js'

@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* Charts (D196): the chart in its frame, Copy at its top corner, shown on hover. */
 app-chart { position: relative; }
 /* `dir="ltr"` on the box keeps ECharts' anchors in place. In SVG (on a slide), each word then reads from its first letter, or a mixed one would flip; on a canvas, by `sideOf()`. */

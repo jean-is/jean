@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Plans (D364): for work of three steps or more, the brain shows the user its plan, ACP's `plan` update, and keeps it
 // up to date; Jean draws it above the answer's activity. The request's first plan waits at the top of the box for Go
 // ahead, as questions do (caps/ask, D343), under the rule Starting a long task. A confirmed plan carries the task past

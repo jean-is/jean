@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The secrets file, .secrets/keys.json: changed one change at a time, so that writers at once
 // (a sign-in's connections, brains, shares, other tabs) keep each other's, and never over a file
 // that can't be read. And settings.json the same way, so that a stale tab never reverts another's change.

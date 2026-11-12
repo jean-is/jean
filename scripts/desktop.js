@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Builds the desktop version (D155): Jean's own files, as `npm run build` leaves them, in a window
 // of the system's web view, served from inside the app on 127.0.0.1 by Neutralino. In dist/desktop/:
 // <name>.app for macOS 13.3 and later (Intel and Apple silicon), jean-win_x64.exe for Windows 10 and

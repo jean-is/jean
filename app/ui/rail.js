@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Where a flow of a few named steps is (D700's pairing, the same on both devices, D727's meeting): the step under way marked as the current
 // one, those before it ticked, all of them once it is done; and the keyboard following it. Its look is data-pages.css's, which the pages that
 // hold such a flow load.

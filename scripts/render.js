@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The render package, @jean-is/render (D305): Jean's own files, as they are in app/ and at
 // the same paths, that draw a task saved as a web page as Jean draws it, its files as Jean's preview
 // shows them, and the viewer of a share's host (D361). `renderPlan` says what it holds, which `npm run manifest` lists in capabilities.json;

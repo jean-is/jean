@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Choose the AI that answers: the ways to add a brain, as Settings › Brains › Add a brain lists them, and the
 // first message's step, which has the same ways, each shown beside its step (the first step, and the page with Start in
 // one click ringed); Show me opens Jean on that page.

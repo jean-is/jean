@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The organisation's authority (D434, ee/): its EST service certifies the key the device seals with, which never
 // leaves it; each certificate then carries the chain in x5c and, once sealed, what keeps it checkable (JAdES B-LT):
 // the chain in xVals and what the authority said of each certificate's revocation in rVals. An organisation's

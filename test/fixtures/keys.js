@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Which modules use which strings: every quoted key, and every template that builds one
 // (`cap.${id}.name`). Used to check where each string lives (D97).
 import { readFile, readdir } from 'node:fs/promises'

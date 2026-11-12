@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Pages of parts (D631): a ```html block holding only the parts the visual skill names is data, as Markdown is, read here and
 // drawn in the answer itself (./view-parts.js) rather than in a frame: key figures, cards, a table, a chart and a form, nested as
 // the skill shows them, and an <aside> with a map or a diagram. Each part's lines become what it draws. Anything else (a script,

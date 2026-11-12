@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // ACP records: building them and folding them for display. The brain reads the same log, as
 // core/prompt.js's toChatMessages() derives it. One log, two readers.
 /** @import { Envelope, AcpUpdate, ToolCall, ToolCallInfo, PlanEntry, ResourceLink, SystemNoteData, CompactionUpdate } from './types.js' */

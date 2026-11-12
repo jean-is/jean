@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Do it / Ask me first / Never — per kind of action.
 /** @import { RuleValue, ToolKind } from './types.js' */
 

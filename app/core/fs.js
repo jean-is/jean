@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Paths, an in-memory FS (tests, fallback), and JSON helpers.
 // The browser FS lives in ui/opfs.js; both implement the FS type in types.d.ts.
 

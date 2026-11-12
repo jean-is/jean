@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // People (D727): meeting on pairing's exchange between two profiles, against the relay in this process; what a person mailbox takes.
 import { test } from 'node:test'
 import { randomBytes } from 'node:crypto'

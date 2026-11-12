@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A table's changes.jsonl (D474, D491): one line per row a change
 // touches, { row, set: { column: value }, at, by, why? }, or { row, delete: true|false, at, by }.
 // Each cell is its latest change: by time, then author, then value as JSON, so two copies merge by

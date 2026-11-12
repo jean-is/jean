@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Dense retrieval for the evals: passages and questions embedded by an open model through
 // Transformers.js (on this computer's CPU, as npm run reflexes runs Kev), kept as flat Int8 vectors.
 // Eval code only: it moves into the app if the answer eval says it earns its place (H4).

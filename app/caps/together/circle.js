@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A circle (D733): the members of one shared thing, their roles and colours, and its key for each epoch, anchored on its
 // owner's key. Membership lives in the journal itself (relay/journal.js), as signed changes, so that every copy works out the
 // same list: `begin`, the owner's, which in a journal everyone moved to vouches for the members who came along; `join`, signed by the

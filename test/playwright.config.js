@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Smoke tests, one per capability (AGENTS.md), in a real browser engine: the sandbox needs
 // one (an opaque-origin frame running a classic worker). Jean is served as written, or as a web
 // deploy serves it with SITE=dist/web after npm run build:web (D318), and a deterministic fake

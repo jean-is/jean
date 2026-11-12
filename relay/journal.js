@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The relay's journals (D733): what people work on together, a task, a document or a collection, as an ordered list of changes
 // sealed on their devices, which the relay numbers and can neither read nor name. Each member keeps their own copy; a journal only
 // keeps the copies in step, and goes 7 days after its last change. Three tokens: the read token, whose SHA-256's first 16 bytes

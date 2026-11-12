@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A yes-or-no question about a text, a file or an action: answered on the device by Intuition when
 // it is on (a yes at 0.6, D67), else by the room's brain in a word, a step of its own outside any
 // conversation. What sets a routine off asks it (D294), and so do guards (D295).

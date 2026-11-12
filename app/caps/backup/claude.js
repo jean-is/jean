@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Claude's part of what Restore brings in (D341, imports.js): its export's conversations.json, each
 // conversation with its name, its times and its messages (`chat_messages`, the human's and the
 // assistant's). A request edited or an answer tried again leaves its old branch in the list, so the

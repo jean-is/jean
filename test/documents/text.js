@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Text as the evals compare it: the same in every format, whatever its extractor did to spaces,
 // table bars, tabs, line wraps and case. A place found in the normalised text maps back to the
 // extracted text, so evidence is located as a span of the very text the strategies read.

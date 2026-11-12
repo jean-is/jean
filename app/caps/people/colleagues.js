@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Colleagues (D731): where the organisation's own relay lists the people its sign-in names (relay/colleagues.js), this person listed there
 // under their profile's key and person mailbox, proved by the ID token the organisation's sign-in keeps, after each start at most daily and
 // whenever the mailbox changes; and colleagues found there, by a few words, an account or a mailbox, kept as people met are, with no

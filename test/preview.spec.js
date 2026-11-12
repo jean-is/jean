@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The preview (D126): a file Jean made or the user shared opens beside the conversation, as what
 // it is. A web page shows with its style and runs its script, but nothing leaves, and with its
 // code off in Settings the script never runs (D143); it fills the screen and saves a file until

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What a paired device keeps and does with what comes (caps/devices/flow.js, D700), over profiles in memory: its name, the bundle A sends
 // and B's profile filled from it, a task handed over, the devices listed, settings and keys that follow, and a device removed.
 import { test } from 'node:test'

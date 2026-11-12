@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Apps played before the turn ends (D689): each page with a script that a step of an answer wrote is played out of sight, as
 // Games plays a game (D648), in a frame of its kind (preview.html), given what it kept: what goes wrong is caught as it starts,
 // then as each of its controls is used once, its buttons pressed and its fields changed; nothing it sends or saves goes anywhere.

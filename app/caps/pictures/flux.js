@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // FLUX.2 [klein] 4B on this device (D263): what its three graphs are given, worked out here so its
 // worker (stage-worker.js) only runs them, as its ONNX export's notes and Black Forest Labs' own
 // sampler say. The description is read by Qwen3 in its chat template, thinking off, 512 tokens

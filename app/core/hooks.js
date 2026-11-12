@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Hooks: what Jean does passes through named events that code can watch, change or answer in Jean's
 // place, as Claude Code's hooks and mods do. The hooks on an event make a chain, the outermost tier
 // first: each calls next(e), with the event or a changed copy of it (never the event changed), and the

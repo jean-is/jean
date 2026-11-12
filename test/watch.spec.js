@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Jean's reels (D687, docs/reels.md), on jean.is's site as build:web makes it: a reel plays Jean's own conversation,
 // demo.js asking the reel for every wait and moment its plan foresaw and no other; it pauses, seeks by chapter, plays
 // faster, mutes and goes on in another language, each remembered or said; its captions reach a screen reader; and

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What the person did, or Jean did for them, outside a task's records, told once it is done (D421): a skill,
 // a connection, a routine or a link added or removed, an answer or a task taken away. Hooks only watch `act`,
 // as they do `record` (D299), and nothing waits on them; the audit export makes a span of each (ee/, D386).

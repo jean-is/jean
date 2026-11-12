@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Text out of the files people share: Word, PowerPoint and Excel (zips of XML), Numbers (numbers.js),
 // and plain text. Returns pages, so the brain can read a long file a part at a time.
 // A small tag scanner instead of DOMParser keeps this runnable in workers and Node.

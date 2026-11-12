@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Jean's own skills for the brain, Skills found or not (D406): until it is, `skill`'s line names each of the directory's
 // (D196), and `skill` reads one of those, which finds Skills, adds the skill and gives its steps (D401); another name
 // finds nothing. Once found, Skills lists them with the user's, in their few words, with the rule to read the one a

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What a web page in a file's pane may do (D143, D158), the policy it is written under, and what its
 // frame allows. preview.html's own policy is the most these can allow; the relay adds this one
 // ahead of the page.

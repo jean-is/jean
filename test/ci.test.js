@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // GitHub's CI on this machine (scripts/ci.js, D724): every workflow reads, every job plans, and what a job here would run
 // never reaches out. A change to a workflow that the runner can't replay (an action, an input, a condition) fails here.
 import assert from 'node:assert/strict'

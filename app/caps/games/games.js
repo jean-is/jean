@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Games (D648): original games the brain makes with its skill "Make a game", which plays them here. Each is a file of the project,
 // `games/<ulid>-<slug>.game.html` (./file.js), made or replaced whole by `game` and changed by exact passages with `game_change`;
 // each call plays it out of sight and tells the brain what broke, what each control did and what moments it reached (./test.js),

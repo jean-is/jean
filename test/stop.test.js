@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Jean's servers in a container: each runs under Node's permission model with the reads and writes its image's CMD
 // allows (deploy/docker/Dockerfile), and stops on SIGTERM, which Node as a container's first process ignores otherwise,
 // so that a rollout neither waits out the orchestrator's patience nor kills it mid-write.

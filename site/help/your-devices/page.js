@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Use Jean on all your devices: Settings › Your devices › Add a device, its QR code or link opened on the other
 // device (or pasted after Bring it here on its first screen), the six digits that device shows typed back here,
 // then Is this yours? there; what follows (brains, keys, settings, projects, then tasks and files, sealed), what each

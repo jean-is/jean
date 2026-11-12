@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What search engines, and the sites a link is shared on, read of a web deploy that names its address,
 // ADDRESS: index.html's title, its canonical address, Open Graph's and X's cards with the
 // picture of the welcome screen, or on the brand's own site the card of the page's language (D682), and JSON-LD

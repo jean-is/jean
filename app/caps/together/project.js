@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A project worked on together (D733): its documents, collections, decks, designs and files kept the same in every member's copy, as
 // Sync keeps a folder (caps/sync/mirror.js), the journal standing for the folder: a change is files as they now are, settled by their
 // kind there. Its tasks, what Jean remembers and its own instructions stay each person's; a task is worked on together on its own.

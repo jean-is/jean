@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // How much a brain thinks (D414): one that thinks at length, with nothing written yet, can be told to answer now, and answers
 // at once, asked to think little; the first time, a toast leads to Settings › Brains, where the brain then has Thinking, which
 // goes with its next requests. The fake brain thinks on when asked to think it over.

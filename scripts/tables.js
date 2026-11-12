@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Measures how well a brain makes a table from a request to keep track of something (Tables'
 // phase 0): each request of test/tables/<lang>.json goes to the brain once, as the first message
 // of a conversation, with Jean's base prompt, the capability's line, and table_create as its only

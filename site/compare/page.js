@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The comparison's hub: Jean beside the kinds of AI app people know, at /compare in English and /fr/comparer
 // in French, which the homepage's act on any AI leads to. Its promise part by part, as the homepage says its own
 // (landing() in site.js): Jean beside, over its table, kinds rather than brands since products change every month, and a

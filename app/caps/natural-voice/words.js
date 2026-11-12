@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The natural voice's text with its numbers in words (D455): amounts, measures, dates, times, ranges and
 // ordinals written out in the language it reads, as Pocket TTS learnt to read them; in digits, or with a
 // symbol such as €, it stumbles and loops. The names of currencies, units and months are Intl's, and each

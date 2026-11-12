@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // jean.is's family page: it promises a child's profile, begins one in the page's language, and, the gate
 // passed (D394), says how a child learns, with its measurement. What every page of the site must be, test/site.test.js
 // holds it to (D438).

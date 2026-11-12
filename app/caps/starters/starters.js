@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Ideas (D743): what shows under the box on a new task, four at most (./learn.js): the project's own, then the person's for
 // everywhere, then what Jean noticed on this device in the project, requests asked again and its flows. Each list is a file,
 // starters.json, at the root for everywhere and the home project, in its folder for another; what was noticed and hidden, or

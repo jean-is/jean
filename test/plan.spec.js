@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Plans (D364): found silently the first time a task runs out of steps, which pauses at the top of the box until Keep
 // going; then a task done step by step shows its plan above the activity, waits for Go ahead in the box, ticks each step
 // off and folds once done. The box's words change the plan, Always go ahead sets the rule, and the rule's row is in

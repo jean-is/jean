@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Read aloud with the operating system's voices, only those that run on the device
 // (localService), so nothing is sent anywhere. Each answer is read in its own language, which
 // isn't always the one Jean is shown in, by the voice that reads it best (ui/voices.js).

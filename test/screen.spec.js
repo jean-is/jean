@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Screen sharing (D699): a window the user shares goes with each message as a picture, its words readable, kept in the task;
 // sharing ends from its tile, the box's chip or the browser's own bar. A first capture of the screen offers it. While Jean
 // watches, a look with nothing to say leaves nothing, and one that speaks is kept and shown as one. The browser's picker is

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A task saved as a web page (D305): opened, it draws itself as Jean does, from the render package,
 // here Jean's own files at the package's address, each checked by its hash: the answer's Markdown, a
 // formula, a chart, a diagram, a score played on MS Basic's instruments from the sounds package (D338),

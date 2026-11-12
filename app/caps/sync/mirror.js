@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Sync's work (D157), on any two FS: Jean's files here, their mirror there, a folder the user's
 // cloud drive keeps in sync with their other computers (a drive of its own would be another FS). A
 // round compares each side with what it was at the last round (the base, in .cache/): what changed

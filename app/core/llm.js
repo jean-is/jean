@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Model adapters over fetch + SSE: OpenAI-compatible Chat Completions here, and Anthropic
 // Messages in anthropic.js, imported the first time an Anthropic brain is used.
 // No SDKs on purpose (zero dependencies). Together these two wire formats reach almost every model.

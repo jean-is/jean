@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What Kyutai's Pocket TTS needs besides ONNX Runtime (D455): its text, prepared and cut into chunks as
 // pocket-tts 4.0.0 does (models/text_chunking.py), as the ids its SentencePiece Unigram tokenizer gives,
 // byte fallback included; and its weights, expanded from 8-bit numbers into the fp32 data its graphs read.

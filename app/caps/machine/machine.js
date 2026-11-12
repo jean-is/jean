@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // This computer (D198): the user's own machine, for the Computer's commands, through the bridge they
 // run in a terminal (bridge/bridge.js) with the line its part of Settings › Computer gives. A task
 // whose folder is the one the bridge runs in has its commands run there, with the machine's own

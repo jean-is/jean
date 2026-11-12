@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Feedback (D712): in the last answer's More options, Good and Not right. Not right asks what wasn't, then answers again a level up
 // with the person's words as a note, and with Keep it in mind has the brain note what will still matter (remember) and
 // mend the skill it followed: Jean learns from the person on this device, sending nothing anywhere else. Each mark is a

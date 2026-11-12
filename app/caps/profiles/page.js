@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Settings › Privacy › Profiles (D228, D729): Back to Privacy, a concern not yet seen, then every profile on this device, each saying how it opens,
 // a child's of this one its age and today's minutes. This one's row opens its page, profiles/<ULID>: its name, its lock,
 // and Remove, held while a child's under 13 opens only with it. A child's opens theirs: concerns, the week, what it is

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Files Jean makes (D119): a Word document from Markdown, a spreadsheet from CSV or Markdown
 // tables, or any other text file as it is. Office files are zips of XML, written with
 // core/zip.js and the lexer Jean already loads: no file-format library. Those that can say so

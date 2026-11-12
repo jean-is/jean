@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A relay's backend in memory, its mailboxes as nothing and its stores whole (relay/store.js), with what it recorded: for the tests
 // of the relay's store and of the store as an FS (app/caps/devices/store-fs.js).
 /** A backend in memory, mailboxes and stores, with what it recorded. */

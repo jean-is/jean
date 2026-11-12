@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Settings › Appearance › Design system (D602, D664): the kit documents, collections and decks wear, the person's everywhere (kit.json at the root of
 // their files) or a project's (its folder's), as ui/kit.js keeps them, a deck drawn with it beside and a page of paper, over Jean's own look and
 // under the organisation's: its colours by day and by night, each written (rgb(), rgba() or hex) or picked, its type (a voice, or

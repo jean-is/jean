@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A look on paper and on screen (D601, D663, D664): what Word files and prints wear of the design system, the organisation's kit and
 // the project's (ui/kit.js), an answer's as a document's: words in its ink and faces, headings and links in its colour, and its logo in its
 // corner, in place of Jean's mark on a print. On white paper always, its colours deepened to read there: a page's own colour stays in Word's

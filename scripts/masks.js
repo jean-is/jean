@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Measures how well masked requests (D681) hide people's names: Jean's own worker in headless Chromium, on WebAssembly with
 // one thread and no graphics chip as Jean's pages get, over an annotated set of written documents in eight languages, marked
 // through the engine's whole pipeline. Any new model, export or Transformers.js upgrade can move these numbers.

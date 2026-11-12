@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Conversations are append-only JSONL files: `${projectDir}/conversations/${id}.jsonl`, except
 // when the user goes back to a request (D188). Line 1 is a ConversationHeader, every following line one Envelope.
 // A crash mid-append leaves a half-written last line, which is ignored on read.

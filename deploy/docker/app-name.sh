@@ -1,4 +1,5 @@
 #!/bin/sh
+# SPDX-License-Identifier: MIT
 # The name the container gives Jean, APP_NAME (D698): brand.js and the install's manifests say it, written as the
 # container starts into /tmp/app-name, which nginx serves in their place (nginx.conf). Without it, Jean's own are served.
 # nginx's entrypoint runs this from /docker-entrypoint.d/; the folders read and written may be given, as a test does.

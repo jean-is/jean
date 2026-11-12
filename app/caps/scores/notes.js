@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A score's notes as sounds (D196, D338): abcjs gives each note's pitch, volume, instrument, start
 // and length in whole notes; here they become seconds, for MS Basic's instruments (sound-worker.js)
 // or, without them, Jean's own small synthesizer, which takes frequencies. Pure, so Node's tests run it.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A demo (D457): a task Jean did, played again in the room's own conversation (ui/chat.js) for a page
 // or a talk, over a copy's state (ui/reader-state.js, in ui/state.js's place), so it keeps and sends
 // nothing and turns nothing on. demo.html#src=<a task's file on this site>, with lang (en), theme (the

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // About this answer (D252): what its certificate says from the conversation's records, what the
 // answer cost, and its seal (D274): a W3C credential sealed as a JWS, which standard tools check and no
 // change survives, whose words and files are salted digests that only its proof discloses.

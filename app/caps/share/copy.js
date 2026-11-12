@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What of a task goes in a share (D361): its requests and answers and the files it made, by their
 // places in the project, which the share holds them under, never its file as it is. The notes (memory,
 // instructions, the folder, the page on show), the prompt its brain was given, its thinking, plans and

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // DER (X.690) as certificates need it: the seal's own X.509 certificate, made once for its key and
 // carried in each certificate's x5c (D274), read back by check(). Web Crypto only, so it runs where
 // the core does and is tested with node --test.

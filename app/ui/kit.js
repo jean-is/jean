@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The look a project's things share (D594, D601, D602): the person's design system, kit.json at the root of their files, under
 // the organisation's kit in policy (`kit`), under the project's own, its `kit.json`, else one made from its colour. Decks are
 // drawn with it over Jean's own (caps/slides/kit.js); Designs deal their first take in it (caps/designs/designs.js); Word files

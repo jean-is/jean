@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Apps among the creations (D553): the pages a project's answers hold (```html, D289), each a small app Jean made, the newest
 // of each name in a task alone, as a brain writes one whole again for each change; named by its <title>, else its first heading,
 // else its task's title. On its card, the app itself at half size, still; picked, it opens beside the task and works there as in

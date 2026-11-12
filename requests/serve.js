@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Runs the request service (requests.js) on Node 22 or later, with nothing to install:
 //   REQUESTS_CONFIG='{"mail":{"host":"smtp.gmail.com","user":"arnaud@jean.is","password":"<app password>","to":"arnaud@jean.is"}}' node requests/serve.js
 // PORT (8789 by default) and HOST (127.0.0.1; 0.0.0.0 to answer other machines) say where it listens, REQUESTS_DIR

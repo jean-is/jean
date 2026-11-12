@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // An extension's code runs here, in the sandbox (AGENTS.md: code from outside runs only there), a worker of
 // an opaque origin with no network, one for each extension (D296). Jean sends its module as text; the
 // module's register(on, $) hooks events with on(event, match?, run) and draws with $.slot(name, draw).

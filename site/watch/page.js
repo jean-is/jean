@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The page that plays Jean's reels (D687, docs/reels.md), at /watch and /fr/regarder: short videos of Jean at work, each
 // Jean itself playing real tasks again in the reader's language, the first above the others. Beside itself, in each
 // language, it writes every reel and its tasks (reels.js), and the player: reel.html, a document of its own as

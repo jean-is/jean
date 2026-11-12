@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Speech to text with Whisper through Transformers.js, on WebAssembly, or with Whistle (whistle.js).
 // Weights come from the host the page passes (settings or policy), and are cached.
 // { type: 'load', host, model, dtype } or { type: 'load', host, engine: 'whistle' } → { type: 'ready' } (with progress messages)

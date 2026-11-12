@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The bubble over a selection in a document (D485), as in Notion: bold, italic, strikethrough and a link for the text
 // selected. It shows once the selection is made (the mouse let go, Shift+arrows, a phone's handles),
 // above it, or below it on a touch screen, where the system's own menu sits above. From the keyboard,

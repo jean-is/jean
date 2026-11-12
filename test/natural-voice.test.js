@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The natural voice's text and weights (D455): its numbers in words, pocket-tts's text rules, its Unigram
 // tokenizer with byte fallback, its chunks, and 8-bit weights expanded into fp32. Kyutai's own ids for the
 // round-trip sentences matched these in all six languages; here a vocabulary small enough to reason about.

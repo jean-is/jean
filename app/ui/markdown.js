@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Markdown → lit-html templates, from marked's tokens. No innerHTML anywhere:
 // raw HTML in model output is shown as text, and an image shows only as a source gave
 // it (D35: an image URL is a classic way for injected instructions to leak data).

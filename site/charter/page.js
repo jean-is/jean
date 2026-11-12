@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The AI charter page: a template any organisation can adopt as its AI charter, in plain words and true of any AI,
 // for whoever writes it and whoever signs it, at /charter in English and /fr/charte-ia in French. The template is on
 // the page, readable without Jean, with lines of its own for an association, a school, a company and a public body,

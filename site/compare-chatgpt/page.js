@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Jean and ChatGPT, at /compare/chatgpt and /fr/comparer/chatgpt, for the reader who searched for a free
 // ChatGPT alternative: a free AI first, then ChatGPT's history brought in, and the plan last, with its catch, since
 // it takes This computer (D235, D262). OpenAI's pages each fact is read from are below; product.js writes the page.

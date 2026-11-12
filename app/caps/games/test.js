@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A game's play-test (D648), after each call that makes or changes one: the game played out of sight twice as it starts, then once
 // for each action it uses, held a second, each run the same frames from the same seed, 20 s at most; what it saw said in words
 // for the brain (./report.js), and the picture for its card: of the runs' last frames, the one that holds most while it plays, by

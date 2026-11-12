@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Trusted sites, an example of an extension for Jean (D296). Jean asks you before it opens a page (in its
 // browser, or the computer reaching a site). When it does, this extension offers, above the box, to trust
 // that site; once trusted, its pages open without asking, and other sites still ask. It uses the loosen

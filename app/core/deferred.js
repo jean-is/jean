@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Deferred tools (D47): the conversation declares only the tools it started with; the
 // rest are found with find_tools. With codemode declared, they are called from a script;
 // otherwise the tools found are declared from the next request on (one cache miss).

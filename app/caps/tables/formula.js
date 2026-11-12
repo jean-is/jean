@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A Formula column's cells: one formula for the column, worked out for each row from its other cells as the collection is read
 // (`worked()`), so that sorting, filters, the foot, the workbook and the brain see them as any other. Jean reads it itself, never with eval:
 // numbers, "text", the row's columns by their names as written (the longest name first, as it is cased before in any case), + - * / % and ** or ^, = != < <= > >=, brackets,

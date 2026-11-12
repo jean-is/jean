@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The brain picker, a menu above the chip in the box (docs/product.md, "Brains: picker and Auto"):
 // Auto, Fast / Smart / Best from the connected provider, every other brain of the room's project
 // (D194), then "Keep on this device" while one is in the cloud, and all brains. One line each,

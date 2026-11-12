@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Flows (D218): a task's steps, drawn on a canvas and run again by hand or by a routine. A flow is
 // one JSON file, flows/<ulid>.json in its project (the home project's at the root): named steps,
 // each a text, a file, instructions for the brain or one of Jean's tools with its arguments, and

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The relay (relay/, D45 · D226): mailboxes for messages sealed between people's devices, each named
 // by the hash of the token that opens it, as the share host names shares (D361).
 import { test } from 'node:test'

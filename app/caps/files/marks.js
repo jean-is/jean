@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What the user marks in a file beside the task (D690). Words selected in its view, a PDF's page (its words laid over it,
 // ui/view.js) or a text, offer a bar: Highlight, Note and Ask Jean, in the top layer next after the view in the order of focus
 // (Alt+F10 from the view, the arrows along it, Escape back), as a document's bubble is (D485). A highlight, with a note or not, is

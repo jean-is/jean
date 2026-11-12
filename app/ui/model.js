@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The page's side of a model's worker (the device's brain, Intuition, dictation): each request has
 // an id, gets its progress and chunks along the way, then its answer or its error. The worker
 // starts with the first request, and again after it stops or is stopped.

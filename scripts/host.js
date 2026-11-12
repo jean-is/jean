@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The share host's package (D361, host/): its files and how its viewer loads, from this Jean's
 // render package as capabilities.json lists it, in dist/host/, for whoever runs a host: copy the
 // folder, then HOST_CONFIG='{…}' node dist/host/serve.js. The render package of that version has to be

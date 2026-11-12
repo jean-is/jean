@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Jean's side of the relay (relay/relay.js, D45): mailboxes on the relay that settings or policy name (`urls.relay`), each
 // opened by a token only its device holds, where anyone may leave bytes, sealed before they get here (ui/seal.js).
 // One tab reads, the one in sight, holding a Web Lock it takes back as it comes in sight, since a suspended tab behind

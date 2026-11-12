@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Help: the help home, at /help, and its articles, each a folder of site/help/ (D438) whose page.js says what
 // kind of article it is, the moment of the home it belongs to, how long it takes to read, what it shows and its
 // steps, and whose words are its <lang>.json over the home's. An article answers first, in a sentence or two; then

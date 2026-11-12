@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Generates manifest.webmanifest and capabilities.json (content hashes, and the version they make)
 // in app/, writes a modulepreload link for every module of the first load into index.html, and
 // copies LICENSE beside them, so that app/ is the whole of a deploy (D243). sw.js carries that

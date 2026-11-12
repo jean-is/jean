@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Skills: a SKILL.md, in plain words, followed when a request matches it or the box names it with /; Jean's own
 // ready-made ones by what they are for, each joining the user's as the brain first reads it; the user's own, made with
 // Jean, from a file or from a site, read before they come in; where they are kept (D121, D196, D401). Settings › Skills ›

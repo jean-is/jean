@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // My tasks are gone: where they most often still are (another browser, address, profile or project, or a
 // private window), why a browser clears them, and restoring the last backup, the one way back.
 import { helpArticle } from '../help.js'

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A store of IndexedDB's, one per profile and name, for what no file can hold: a folder's handle, which a path on this
 // computer can't stand for. It is never in a backup or a sync. Without IndexedDB (some private windows), nothing is kept.
 import { mine } from './opfs.js'

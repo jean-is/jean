@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What every page of the site must be (D438), read from the HTML the builds write, so that a page added is held to
 // it as it is served, with nothing to register. buildSite()'s pages, each in each of its languages:
 // - for people who can't see or can't use a mouse: its language and direction said, one h1 and headings that never

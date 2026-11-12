@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Measures how well a brain gives a design's facts (Designs' phase 0, take 8): each request of
 // test/designs/<lang>.json goes to the brain once, as the first message of a conversation, with Jean's
 // base prompt, the capability's line and rule, and design as its only tool (app/caps/designs/tool.js).

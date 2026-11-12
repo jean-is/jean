@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A site (D720) is a folder of the project, `sites/<ulid>-<slug>`, named once and never renamed: its pages, style sheets,
 // scripts, drawings and pictures at their own paths in it, and site.json, its record: its format, name, author, times, whether
 // it is pinned, the task it came from, its files, its last check and where it was published, and what publishing draws from the

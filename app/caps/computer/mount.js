@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // /workspace (D162): what a conversation's computer holds of its folder, or of its project's
 // workspace. Before a run, Jean sends it what changed since it last sent; after, it writes back
 // what the run changed, unless the file moved meanwhile. Works on any FS; tested in Node.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // AI for PDF files (the job pages, ../excel/job.js), at /pdf and /fr/pdf, for the reader who searched for a free AI
 // to read a PDF, summarise it or turn it into Excel. Jean has no sample PDF, so its Try opens Jean, and the page says
 // to drop a PDF in the box; its replay is a statement's transactions made a workbook. Scanned PDFs, with no text, are

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What crosses between a person's paired devices (D700): secrets by their kind, never by id alone, and settings that
 // follow the person, field by field and item by item, the newest winning, while what belongs to one device stays.
 import { test } from 'node:test'

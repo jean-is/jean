@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Reflexes: a state and typed questions in, probabilities out, in the shape of the
 // Decisions API (Jev, TypeSafe System One, Kev): `noul` (yes/no), `choice`, `score`.
 // Kev reads the state and every question in one pass: a branch per question, and the

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Projects (docs/product.md, "Projects"): anything the user keeps coming back to gets its own
 // folder, with its conversations, files, instructions, memory and skills, and its own light:
 // the room and the little light take its colour (D78). The home project is always there; once

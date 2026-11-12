@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // ULID: 48-bit millisecond time + 80 random bits, Crockford base32, 26 chars.
 // Lexicographically sortable by creation time. https://github.com/ulid/spec
 

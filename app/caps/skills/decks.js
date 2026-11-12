@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Slides among the creations (D558, D591): the project's decks, each a file of its own, `decks/<ulid>-<slug>.deck.html`, named
 // once and never renamed: a web page any browser opens and presents, its Markdown whole inside it (deck's format), which is all
 // Jean reads (readDeckFile), never running the page; its name its title, and its author, when it was made and changed, whether

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 # Designs' phase 0: renames each of the nine faces to its voice and checks it (scripts/designs-faces.js
 # fetches them). Needs fontTools and brotli: python -m pip install fonttools brotli, in a place of its
 # own; nothing of it ships. Reads <out>/faces.json, writes <out>/voices/<voice>-<family>-<subset>.woff2

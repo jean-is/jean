@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What Jean can do from an editor: the editor's folder, worked on where it is with the Folders
 // capability's tools (caps/folders/work.js); commands in the editor's own terminal; memory, skills
 // and shared files as in the browser; and the tools of the services the editor connects, found with

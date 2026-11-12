@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What the brain is given for Sites (D720): two tools, each with its line, which sites.js runs. Pure.
 import { FACES } from './look.js'
 

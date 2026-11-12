@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The corpus's files in each format, and their text as Jean extracts it. Word and Excel come
 // from Jean's own writer (caps/made/formats.js); PowerPoint from a small writer here; PDF from
 // Chromium printing the HTML below (scripts/documents.js), as a real tool makes them.

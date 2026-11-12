@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The Computer (D162): a computer of Jean's own, in a sandbox in this tab, never the user's machine.
 // Calculations and the data toolkit fold into it (D13, D48, D80): `javascript` (QuickJS, codemode),
 // `python` (Pyodide) and `bash` (just-bash, with python3, pip and node as commands) run in one worker

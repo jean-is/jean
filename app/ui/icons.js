@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The glyphs the first screen draws (the box and the line under it, the answers, the header): 24×24, one pen, the current colour (docs/design.md#icons).
 // The drawer, the menus and Settings import ui/menu-icons.js, which adds the rest.
 import { html, svg } from 'lit-html'

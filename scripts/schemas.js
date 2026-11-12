@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Writes app/schemas/policy.schema.json: the JSON Schema of policy.json, made from what policy.html checks
 // (SCHEMA in app/caps/policy/checks.js), so that an editor's check and Jean's never disagree. Each copy of Jean
 // serves it at /schemas/, jean.is's at https://jean.is/schemas/, beside the gateway's (gateway.schema.json,

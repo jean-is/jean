@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The check of a prototype (D742) from its files: a site's (../sites/check.js) less what only a site for strangers needs (a description,
 // a card, a header and a foot, forms its host receives), and a prototype's own rules: a page per step, nothing kept but the address, no
 // alert(). What pressing its controls finds (./press.js) joins it: the pages nobody reaches, the controls that do nothing; and from it, how

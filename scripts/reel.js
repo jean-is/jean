@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Draws one of Jean's reels (D687, docs/reels.md#the-readmes-animation) as a silent animated WebP, for where a page
 // can't play it: the README. It serves the site as jean.is has it (scripts/serve.js --home), opens the reel's player
 // in Chromium, in a language and by day or by night, with Playwright's clock in place of the page's, and steps it

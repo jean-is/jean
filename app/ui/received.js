@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What another app gave Jean (D714): a share, which the service worker holds in its memory until asked for it by its id in
 // the address (Web Share Target), or files the system opened with Jean once installed (File Handling). Its words go in the
 // box, to send or not, and its files are shared as dropped ones: nothing is sent before the person sends it.

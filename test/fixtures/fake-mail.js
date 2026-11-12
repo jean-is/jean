@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A fake mail service for local end-to-end checks of Connections (0.5), and Wikipedia's and Kiwix's stand-ins.
 // Usage: node test/fixtures/fake-mail.js   (PORT=4182 by default)
 //   /mcp           MCP 2026-07-28 (stateless), behind an OAuth sign-in: protected resource metadata,

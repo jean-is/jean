@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Zip files with the platform's own (de)compression streams: reading Office files
 // (DOCX, XLSX and PPTX are zips of XML) and writing backups. No zip64, no encryption.
 // https://pkware.cachefly.net/webdocs/casestudies/APPNOTE.TXT

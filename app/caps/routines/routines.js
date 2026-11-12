@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Routines (docs/product.md, D122): a task the user wants done regularly, or once later, which
 // Jean does on its own, on a schedule: a request it sends itself, in a conversation of its own, under the same
 // rules as any (approvals wait in the inbox). There is no server: a routine runs while Jean is

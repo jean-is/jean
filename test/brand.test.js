@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A design system proposed from the person's own material (D740): the colours a picture is made of, the codes and faces a
 // guide writes in English, French, Arabic and Japanese, a Word file's faces and logo, and a kit that reads at AA by day and by
 // night whatever the brand's colours. What a browser draws (pictures, PDFs) is brand.spec.js's.

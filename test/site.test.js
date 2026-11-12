@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The site's pages (site/, D438): every page, in every language, is what site/checks.js asks of a page, as jean.is's
 // deploy builds them and as npm run build writes into app/ those every copy has; each runs the app's theme line
 // and nothing else but its own script, where it has one; the app links them in the reader's language; and the checks find what they say they find.

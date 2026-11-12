@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Pictures made on this device (D251, D263), by the one of three the user chose: SD-Turbo, by
 // Stability AI, quick, in one step, in a worker (device-worker.js), through ONNX Runtime on WebNN
 // where the browser offers it, else WebGPU; FLUX.2 [klein] 4B, by Black Forest Labs, finer, in four;

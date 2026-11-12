@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The document evals' own truthfulness (test/documents/): the corpus is what it claims to be, in
 // every format Jean reads. Each answer's evidence is found, once, in the text Jean extracts; it
 // holds the answer; what is asked about and absent is truly absent; paraphrases share no words.

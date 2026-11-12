@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Skills (docs/product.md): the way a task the user keeps asking for is done, saved as an
 // Agent Skill (core/skills.js), so it is done the same way every time. The prompt lists each
 // skill's name and when to use it; `skill` (../own-skills/) reads its steps when a request matches, and

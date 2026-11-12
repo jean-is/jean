@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The organisation's authorities and places (D434, ee/): with policy's `seal`, its EST service certifies the key
 // this device seals with, so a saved certificate carries the authority's chain and, once sealed, what checks it
 // later (JAdES B-LT); Settings › Your data names the authority; with `trust`, the check page served beside that

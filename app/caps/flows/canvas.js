@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The canvas of Flows (D218): a flow's steps as cards joined by wires, in two places. On a new task,
 // the main area in flow mode, on the room's flows; beside a task, a pane of the dock (D144) on that task
 // drawn the same way, with what each step is doing or became, and on the flows it made or ran. A flow's cards

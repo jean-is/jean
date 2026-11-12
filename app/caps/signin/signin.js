@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Signing in with the organisation's account (D385). Policy's `signIn` names its identity provider
 // (OpenID Connect, Entra ID first) and the app IT registered there for Jean; each policy brain that
 // says `auth: 'oidc'`, the organisation's AI gateway, gets the access token as its key, kept under

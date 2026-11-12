@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Jean's version by semver, from git (scripts/version.js, D735): the newest version's tag, raised by what the commits
 // since say they are, and the tag CI makes of it.
 import assert from 'node:assert/strict'

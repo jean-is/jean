@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* A document's editor (D485), in Jean's own document, after ProseMirror's, its tables' and its gap cursor's
    style sheets. Its text is an answer's (.prose), and what an answer draws is drawn as there (drawn.js);
    the rest is the editor's own: its headings, tasks and tables to edit, Jean's changes and where the bar over them sits,

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A design out of Jean (D572, D683), through the pane's one button (ui/out.js): a link to its picture; sent to an app through the system's
 // sheet; copied, picture and words; the picture as it is, as a post or as a story, laid out from the same words the moment it is saved, so it
 // never falls out of step; the design's file, its faces and pictures inside it, which opens anywhere and in Jean again; or a page to print or

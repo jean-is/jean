@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Data-loss checks (D674): what counts as sensitive, found on the device, and what comes of it.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'

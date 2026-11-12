@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The terminal (D166): the conversation's computer, for the user to type on, in a pane of the dock
 // (D144) beside the conversation, or over it on a narrow screen. A command runs where the brain's
 // do, in turn with them, in the same shell with its directory and variables, over the same

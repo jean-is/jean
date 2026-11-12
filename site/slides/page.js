@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // AI for slides (the job pages, ../excel/job.js), at /slides and /fr/diapos, for the reader who searched for a free AI
 // that makes a PowerPoint. Its Try sends sample notes with ?q= (ui/app.js): asked for slides, the brain reads Jean's own
 // Slides skill (D401) and writes the deck in the answer, which Jean keeps beside the task, to present and to save as a

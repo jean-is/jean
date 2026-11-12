@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The one module outside ee/ that loads it (D139): only when policy holds a key, or on localhost,
 // where none is needed, and ee/ checks the key itself. A policy that asks for what ee/ does
 // (`audit`, D386; `retention`, D412; `groups`, D429; `jurisdictions`, `seal`, `trust`, D434; `dlp`, D674; `session`, D676; `colleagues`, D732) with no key, a key that doesn't

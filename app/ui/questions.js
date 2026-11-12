@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The reflex questions Jean asks, in English (D41). One definition serves Jean and the
 // multilingual test set (scripts/reflexes.js), so what is measured is what runs.
 

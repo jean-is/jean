@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The site a web deploy serves (D318): app/ as `npm run build` leaves it, in dist/web/, with Jean's
 // own modules, workers and style sheets minified, and each file of a kilobyte or more that compresses beside
 // itself in brotli (.br) and gzip (.gz), which the server sends as they are rather than compressing on the fly.
@@ -76,17 +77,18 @@ const COPIES = [
 /**
  * A file of Jean's as it ships: no comments, whitespace or long local names, and nothing else changed.
  * A module stays a module and a classic script keeps its global names (esbuild tells them apart);
- * no syntax is lowered and no prefix added, so what runs is what was written; text stays UTF-8; an
- * SPDX notice at the top stays (ee/). A style sheet only loses its whitespace and comments: esbuild's
- * other rewrites turn oklch() colours into sRGB ones, rounded, for a few bytes.
+ * no syntax is lowered and no prefix added, so what runs is what was written; text stays UTF-8; ee/'s
+ * SPDX notice stays at the top, and an MIT one goes, LICENSE beside them saying it whole. A style sheet
+ * only loses its whitespace and comments: esbuild's other rewrites turn oklch() colours into sRGB ones,
+ * rounded, for a few bytes.
  * @param {string} path
  * @param {string} source
  */
 export async function minify (path, source) {
-  const notice = /^(?:\/\/ SPDX-.*\n)+/.exec(source)?.[0] ?? ''
+  const notice = /^(?:(?:\/\/ SPDX-.*|\/\* SPDX-.* \*\/)\n)+/.exec(source)?.[0] ?? ''
   const how = path.endsWith('.css') ? { loader: /** @type {const} */ ('css'), minifyWhitespace: true } : { loader: /** @type {const} */ ('js'), minify: true }
   const { code } = await transform(source, { ...how, charset: 'utf8', legalComments: 'none' })
-  return notice + code
+  return (notice.includes('SPDX-License-Identifier: MIT') ? '' : notice) + code
 }
 
 /**

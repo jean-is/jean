@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Bringing in ChatGPT's export (D341): of each conversation, the branch the user saw last, what
 // the user and ChatGPT said in it, its title, its times and the files shared, from its parts, once.
 import { test } from 'node:test'

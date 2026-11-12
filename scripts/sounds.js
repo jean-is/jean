@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The sounds package, @jean-is/sounds (D338): the instruments a score plays, MS Basic,
 // MuseScore's General MIDI bank (MIT), as a file for each group of its presets that share samples,
 // so that a score downloads only what it plays. Its 128 instruments and its standard drum kit; the

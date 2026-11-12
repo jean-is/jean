@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The relay's store (relay/store.js, D721): a person's files sealed on their devices, kept for those devices alone, against the
 // relay's own handler in this process, with a backend in memory, then its folder on disk.
 import { test } from 'node:test'

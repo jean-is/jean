@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The drawer beside the conversation, opened or put away (D234): it slides from the start edge, a view
 // transition in which the conversation and the box move over as they will be. Loaded by the first
 // press of its button or ⌘B (ui/state.js), with its style sheet.

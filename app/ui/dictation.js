@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Dictation is always available (D26). This module only knows whether it can work here;
 // the engine loads with the voice capability on the first press.
 import { signal } from '@preact/signals-core'

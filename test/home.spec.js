@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // jean.is's page under the first screen (D397), served as jean.is's deploy has it (scripts/serve.js --home):
 // the app's root first, the document scrolling on to the page, each Try putting its request in the box, Your turn
 // going back up to it, its top risen into the first screen, which is as it is without it (D653); hidden with a

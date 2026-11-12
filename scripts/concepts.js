@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Writes app/caps/pictures/concepts.json (D280): what the picture check looks for besides nudity, a
 // few words for each area, read by SigLIP's text encoder into the vectors that its image encoder's
 // view of a picture is compared with on the device; a picture as close as an area's limit to any of

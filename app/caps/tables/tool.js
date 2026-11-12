@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What a brain calls to make a table (D491), as phase 0 measured it (test/tables/findings.md), and the
 // line the prompt gives it, within a capability's 40 tokens. A relation column names its collection, as <tables> tells.
 import { MADE } from './table.js'

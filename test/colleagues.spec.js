@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Colleagues (D731): at work, where the organisation's own relay lists the people its sign-in names, Ana and Bob, each signed in to the
 // fake organisation in a browser context of their own, are listed there as Jean starts; Ana finds Bob in Settings › People and adds him,
 // with no meeting, and sends him a task from Share; his Jean takes her first letter through the list and shows its card, from her as

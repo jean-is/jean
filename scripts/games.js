@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Measures the skill "Make a game" (D648): how often a brain makes a game that plays clean, unguided, from the briefs of
 // test/games/set.json in English, French, Arabic and Japanese. Each brief is a fresh visit to Jean in headless Chromium, in
 // its language, whose brain is the measured one through this script's own server: Jean's own prompt, skill, tools, frame and

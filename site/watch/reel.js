@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The reel player (D687, docs/reels.md): `reel.html#reel=<name>&lang=<lang>` plays one of Jean's reels, framed by a
 // page of the site or alone. A reel is scenes end to end (schedule.js): cards it draws, and tasks Jean did, each
 // played again by demo.html in a frame (D457), whose waits and stops demo.js asks this player for (window.reel.lend).

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // docs/decisions.md is where a Dnnn leads: every number cited in the code, the tests, the scripts
 // and the docs is one entry's, under its heading, so a comment or a commit message finds its rule.
 import { test } from 'node:test'

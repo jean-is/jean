@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What the fakes of Microsoft and Google share (fake-microsoft.js, fake-google.js): a page's request
 // as a server receives it, a server's answer given back to the page, and the organisation's gateway
 // (D191), gateway/gateway.js itself behind a route, its own requests reaching only the services given,

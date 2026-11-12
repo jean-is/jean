@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Skills are Agent Skills (https://agentskills.io): a folder per skill, skills/<name>/SKILL.md,
 // whose front matter holds its name and when to use it. Only those go into the prompt; the
 // steps are read when a request calls for them. Global ones live at the root, a project's in

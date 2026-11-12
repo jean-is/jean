@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 import { parseSSE } from '../app/core/sse.js'

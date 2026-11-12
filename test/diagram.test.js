@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Diagrams (D291, D592): a flowchart Pele refuses as brains write it, mended so that it reads as Mermaid reads it; the words a
 // drawing shows, for those who can't see it; and its colours as Pele's own properties.
 import { test } from 'node:test'

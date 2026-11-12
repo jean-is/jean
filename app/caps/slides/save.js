@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // How a deck leaves (D591, D593, D683), through the pane's one button (ui/out.js), as it is on show: as a link to a copy (Share, D361);
 // as PowerPoint, made in the browser from the deck as drawn (deck's toPptx and PptxGenJS, loaded only then), its words, lists, tables and
 // charts PowerPoint's own, a layout of PowerPoint's for each of the deck's; as its file, a page any browser presents, its pictures inside it

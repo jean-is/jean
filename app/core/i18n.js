@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Messages, plurals and direction. Host-agnostic: the UI injects a loader.
 // Catalogs are flat { key: string | { one, other, … } } objects; English is the fallback.
 import { signal } from '@preact/signals-core'

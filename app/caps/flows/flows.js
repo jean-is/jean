@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Flows (D218): a task's steps on a canvas, which the user sees, changes and runs again, by hand or
 // by a routine, and any task seen the same way. On a new task, + in the box puts the main area in
 // flow mode, on the room's flows; on a task, a button beside the terminal's and the browser's opens

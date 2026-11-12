@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Z-Image-Turbo on this device (D263): what its graphs are given, worked out here so the stage
 // worker only runs them, as the WebNN team's export and its demo drive them. The description is read
 // by Qwen3 in its chat template, its own tokens only; the picture is a 16-channel latent, an eighth of

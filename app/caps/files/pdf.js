@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // PDF text, page by page, with pdf.js (loaded on demand; its legacy build covers Safari 16.4).
 // No font faces: glyphs are drawn as shapes, so pdf.js never needs eval. Character maps let it
 // read Chinese, Japanese and Korean text; standard font metrics keep words apart. A scan's pictures

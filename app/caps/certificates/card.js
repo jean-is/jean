@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What a certificate of an answer shows once checked (D274), on the check page (check.html) and in
 // an answer when Jean is asked: whether its seal holds, which key sealed it and when, what it says,
 // and, with its proof, the words and which of the files given it names. A picture's or a film's

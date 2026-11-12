@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Ideas (D743): the ideas under the box of a new task become the person's, four at most: a project's own, then those for
 // everywhere, then what they often ask there, kept in Settings; with none, the organisation's, policy's `starters`, in the
 // person's language, else Jean's; under `only`, the organisation's alone, locked. In Arabic and Japanese, its words and

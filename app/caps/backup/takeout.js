@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Gemini's part of what Restore brings in (D340, imports.js): Google Takeout's export, or
 // MyActivity.json alone. My Activity's Gemini Apps, in JSON (Takeout's other format, web pages,
 // isn't read), has an activity per request: the request in `title` behind a word such as

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The check of a site (D720), from its files: what a visitor with a phone, a screen reader or a search engine meets on each
 // page, said so that the brain can fix it: its language and direction, title, description and card, one h1 and headings in
 // order, one top, main and foot, names for links, buttons, fields and pictures, links and pictures that lead somewhere, every page

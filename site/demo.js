@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A pane that frames Jean's own demo of a page's task, where the page's pane draws a conversation the demo
 // can play: the task written beside the page as a conversation's file (D457), from the page's words as text, and the
 // frame that shows it as it ended, with a button that plays it, its words the page's (pane.title, pane.play). Where the

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Whistle takes at most 30 s at a time (D205): longer dictation is cut where it is quietest.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'

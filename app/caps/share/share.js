@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Sharing (D361, docs/sharing.md): a task, or one page, chart, deck or picture Jean made, with anyone who has its link, or with only the
 // people chosen, whose pane People draws in the same dialog (its `audience` slot, D727). A link is a copy sealed here and kept by a host that
 // can't read it, which whoever has the link, and the password when there is one, opens. The host is the one whoever serves Jean names

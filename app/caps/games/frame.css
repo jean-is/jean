@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* A game's frame (D648): written into its page with ./shell.js, never into Jean's. The game fills it; the cover, the bar and the
    touch buttons sit over it, light on dark whatever the game draws. */
 html, body { margin: 0; block-size: 100%; overflow: hidden; background: #0e0e14; color: #fff; font: 1rem/1.4 system-ui, sans-serif; }

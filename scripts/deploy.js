@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Puts a commit of Jean on a server reached over SSH (D320): builds it from git, never from the working
 // tree, with `npm run build:web`, uploads dist/web/ as a new release beside the earlier ones, then
 // points `current` at it in one step, keeping the last five. Before the server, it publishes the render

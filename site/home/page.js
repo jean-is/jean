@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // jean.is's own page, under the app's first screen (D397): what Jean is, for a first visit, as static HTML and CSS
 // after the app's root, which build:web writes into index.html and into one page per language beside it,
 // <lang>.html, served at /<lang> as /privacy is, so that every address in it and in the app resolves against the

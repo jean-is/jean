@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Live conversation (docs/product.md, "Voice"): hands-free. Silero hears when the user starts
 // and stops speaking, Whistle or Whisper writes it in the box as it is said, as dictation does
 // (caps/voice/passes.js), the message goes like a typed one once they stop, and the answer

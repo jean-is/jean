@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* What only the dialogs show, loaded with them (ui/dialogs.js), so the first load doesn't carry it
    (D120, like their strings, D97). Placed after ui/style.css. */
 

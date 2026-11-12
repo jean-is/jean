@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Notifications: a task done while the user is in another tab or app offers them as the user
 // comes back; accepted, the browser asks, and the next task done out of sight shows its title, never
 // its answer, as does one that stops for the user's answers: the fake brain asks three questions

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Layouts' shapes, for the type check only: marked's tokens as answers read them, with what Jean adds to them.
 import type { Tokens } from 'marked'
 

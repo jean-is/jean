@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Scores among the creations (D542): the tunes a project's answers hold, as Music score writes them (```abc, D196), each task
 // read again once it has changed, named by its title or its task's; on its card, the top of a white sheet with its titles,
 // Scores left unloaded. Picked, one opens beside the task, its player under it, staying at the pane's foot as it scrolls, waiting for Play. A new one is asked for in the box, Jean's own

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A document's editor (D485), in Jean's own document, under its own policy: a Markdown file edited as a
 // document, which caps/documents/documents.js opens in a pane with create(). There is no toolbar:
 // Markdown typed at a line's start, "/" for a menu of what the line can become, a bubble over the text

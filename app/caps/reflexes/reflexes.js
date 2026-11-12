@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Intuition: reflexes on this device (D16, D41). Kev-0.6B, fine-tuned on Jean's questions in
 // 33 languages (D328), answers typed questions in one pass, in any language: which capability would help, how demanding a request is, whether
 // it shares something personal, whether the last answer missed, which follow-ups fit.

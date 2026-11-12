@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The page for IT (D428): how an organisation puts every AI it approves in one assistant, deployed like a web page, for the IT,
 // security, privacy, purchasing and staff representatives who decide together, mostly without a seller, at
 // /enterprise in English and /fr/entreprise in French. Each part says one thing and shows it: any provider and any

@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* Plans (D364): loaded with them (caps/plan/plan.js), after ui/style.css. Above the answer's activity, the steps as a
    checklist (.read-list), each with its light: hollow until it starts, lit while under way, a check once done. */
 .plan { margin-block-end: 0.5rem; }

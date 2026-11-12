@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // jean.is's page for public bodies, the page for IT's sibling (D428): it says first that nobody needs a key, leads to a
 // trial key, keeps every band under France's threshold for buying without a procedure over three years, and gives staff
 // representatives the page for IT's own answers. What every page of the site must be, test/site.test.js holds it to (D438).

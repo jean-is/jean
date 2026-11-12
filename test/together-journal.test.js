@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The relay's journals from Jean's side (caps/together/journal.js, D733), against relay/journal.js served on a real port.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'

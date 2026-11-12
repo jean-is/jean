@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Settings' Approvals: one line on how things stand, then the three rules as baskets of the kinds of action they
 // hold, each kind opening its page at its own address (D509): what it covers, its three choices with the usual marked,
 // and its exceptions. Then the exceptions themselves, every Always allow a capability keeps (its part of the allowed

@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* The reel player (site/watch/reel.js, D687): over the app's style sheet and the viewer's look, Tilde by default.
    The stage is a picture, 1280 × 720, scaled to its frame as a video is: a third of it what is said, large enough to
    read in a README's column, the rest Jean. Its controls are sized by the player. Logical properties only: inside

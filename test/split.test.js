@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The screen's parts (D635): a layout read from the address and written back, a part dropped in another's place or beside it,
 // taken away, swapped, and where each one goes.
 import { test } from 'node:test'

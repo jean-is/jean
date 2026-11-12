@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Frozen prompts, system notes, shared files in messages, and replayed thinking (D46, D49).
 import { test } from 'node:test'
 import assert from 'node:assert/strict'

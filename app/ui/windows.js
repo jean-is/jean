@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The windows beside the conversation, in the address after its place (D220): the browser, the
 // terminal, Flows and how the dock lays them out with the conversation, the files and creations open among them (D635), each by its name
 // and what it shows, in the order they opened, as `#/c/<ulid>?browser=https://example.com/&terminal`. Reloading, sharing the tab or going back to

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Questions for the user (D146), as text: what the brain asked, read the way small brains write
 // it, how each question starts on its card, and the answers it gets back, as JSON. No DOM, so it
 // runs under `node --test`.

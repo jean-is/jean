@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The camera (D645): which frame goes with a message, and when Jean looks on its own while it watches.
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'

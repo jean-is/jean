@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Brains' prices from models.dev: only what a price needs of the providers Jean knows, found by
 // a model's id or its bare name, and read again from the catalogue only once a week; none for a plan's.
 import { test } from 'node:test'

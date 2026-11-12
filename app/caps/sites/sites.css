@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* Sites (D720): a site fills its pane under its widths, its frame as wide as the one picked, centred; a check's frames are laid out at
    each width and never seen. */
 app-site { display: flex; flex-direction: column; block-size: 100%; min-block-size: 16rem; }

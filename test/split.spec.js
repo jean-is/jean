@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Panes of the dock (D635, D640, D684): a task or a pinned creation dragged from the drawer onto the screen takes a pane's place or half
 // of a part, a box showing where, and the address keeps the layout; another task's pane shows it whole, its box still, and a click or
 // the keyboard in it makes it the one the box is for, where it is, each read where it was, the edge between two moves with the keys, a reload and Back lay them out again, and a narrow window has them over the

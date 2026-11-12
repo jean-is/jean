@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What a paste or a drop brings as HTML (D485), read where reading it is safe: in a small sealed frame of
 // preview.html's kind, which runs cleanTree and hands back only a tree of what a document keeps, its Word
 // and Google Docs lists made lists on the way; the editor builds that tree again with fromTree in an inert

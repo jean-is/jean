@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Globals that exist only inside QuickJS, never in the worker itself: the prelude
 // (computer-worker.js) defines them before nodeModules' source runs there. They are
 // declared here only so nodeModules, which the worker serialises and never calls,

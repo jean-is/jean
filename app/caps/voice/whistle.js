@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Whistle (D205): Cactus Compute's speech to text, 16.9 MB of weights on its own engine, 0.9 MB of
 // WebAssembly. Jean loads the engine itself, with only the calls below, so it gets no files and no
 // network. Both files come from the weights host at a pinned revision, are checked against their

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Files (D24): a file shared in one task of a project is found by search_files from another, without
 // being shared again; the passage comes with its page, and the answer cites it. Its index is kept (D306).
 import { readFileSync } from 'node:fs'

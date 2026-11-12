@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Capabilities: one module each, imported when first needed (unlocked), then remembered. A capability may add tools and prompt lines,
 // which later conversations declare in their frozen prompt and earlier ones get through a system note (D46, D47). What it does on
 // Jean's events are its hooks (core/hooks.js), and what it draws in the room's slots its slots, so the room knows none of them by

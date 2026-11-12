@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A picture's area the person points at (D715): drawn over it with the pointer or a finger, or with the keyboard in thirds
 // (the arrows move it, with Shift they size it, Enter asks), then Ask Jean tells the brain of it with the next message, as a
 // passage is (D690): its place in percent from the top left, which the brain can cite back as [n: x,y,w,h].

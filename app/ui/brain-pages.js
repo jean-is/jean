@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Settings' Brains (D128, D134): who answers, as Auto truly does it, then the brains, each opening its page at its
 // own address (D509): brains/<id>, brains/auto for how Auto chooses, brains/add for the ways to add one, grouped by what
 // the user already has, each way a page of its own (brains/<way>), and brains/pictures for the pictures this device makes.

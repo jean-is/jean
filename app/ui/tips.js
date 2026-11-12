@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Tips (D233): the name of a button or link that shows no words of its own (an icon, a count), or what
 // an element's title adds, shown above it as a source's is, once the pointer rests on it or the keyboard
 // brings it focus, in place of the browser's own, which can't be styled. A title is lifted off

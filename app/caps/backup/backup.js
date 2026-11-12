@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Backup: everything Jean keeps, in one zip the user saves wherever they like. Keys stay
 // on the device (they are never part of a backup). Restoring adds what is missing, and the
 // backup's settings over this device's (restoredSettings() in archive.js).

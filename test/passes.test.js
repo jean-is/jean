@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Dictation with Whistle or Whisper is written as it is said: short passes over what was said since
 // the last pause, kept at each pause, never over silence, and each word written once.
 import { test } from 'node:test'

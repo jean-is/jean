@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A CloudFront Function (cloudfront-js-2.0) on viewer requests: Jean's pages without .html
 // (deploy/README.md), /privacy being privacy.html and /fr/privacy fr/privacy.html.
 function handler (event) {

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Puts jean-cli's package together in dist/cli/: every module cli/main.js reaches, statically or
 // through import(), copied as it is and where it is, its strings (cli/locales/), the licence, the
 // page npm shows (cli/README.md), and a package.json whose command is cli/main.js. Nothing is

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The sandbox (D65): an opaque-origin frame with no network (sandbox.html), where a worker runs code
 // the brain wrote: the Computer's (D162), whose engines (the shell, QuickJS, Pyodide) come in as
 // files the first time a run needs each. The parent fetches the worker's source and the files and

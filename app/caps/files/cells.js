@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A workbook's cells changed in place (D229): a cell takes a formula ("=…"), TRUE or FALSE, a number (unless
 // its style shows numbers as text) or text, in the cell itself so the shared strings stay as they were, and
 // keeps its style, emptied too; the rest stays as it was once unzipped. Excel works the formulas out again as

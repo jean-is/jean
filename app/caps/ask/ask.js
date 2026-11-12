@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Questions for the user (D146, D343): when Jean, or one of its helpers, needs the user's choices to
 // go on, it asks them all at once with `ask_user`, and they wait at the top of the box, inside it, so
 // every look draws them as one with it. One question at a time: the answers to pick from, the one

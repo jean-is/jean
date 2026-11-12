@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A Kiwix server as web search's library or its Wikipedia (D254), against a stand-in that answers
 // as libkiwix does; and web search's sources, searched at once (D271).
 import { test } from 'node:test'

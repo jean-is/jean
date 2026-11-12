@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Google's side of an organisation on Google Workspace that runs Jean (D344, D349, D440), at Google's
 // own addresses: its sign-in, which takes only the web app the organisation's gateway holds, with its
 // secret, and gives a refresh token only to an offline sign-in; Gmail's, Calendar's, Drive's and Docs'

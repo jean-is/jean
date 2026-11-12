@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Jean's changes (D485, D505): Jean's version of the document, compared with the one open block by block; a block
 // changed, a run added and a run taken away are each a change, shown where it is as Jean's version (its new words
 // tinted, Before showing the person's) with Jean's few words, Accept and Reject. Nothing of one is in the document

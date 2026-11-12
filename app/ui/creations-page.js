@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The Creations page (D497), loaded once it shows: the project's creations, a card each, those pinned first, then
 // the latest changed under Today, Yesterday, This week, Earlier this month and the months before, or by when they were made,
 // or by name, found by their words, and those of one kind alone picked from Show's menu, beside Sort's, which lists every kind,

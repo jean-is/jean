@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* Screen sharing's tile (caps/screen/screen.js, D699): the camera's tile (camera.css), wider, showing the whole of what is
    shared, never dragged. */
 .screen.is-tile { aspect-ratio: 16 / 10; cursor: auto; touch-action: auto; }

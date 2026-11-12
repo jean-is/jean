@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // How a document and a collection leave Jean (D683), through the pane's one button (ui/out.js): as a link, through the system's sheet, copied
 // laid out; a document as Word, with its pictures and what it draws inside, or its own Markdown; a collection as a workbook or as CSV; or
 // printed alone, in the look here (./paper.js). And how an answer is copied, the same way a document is. Read as a pane first shows one, or

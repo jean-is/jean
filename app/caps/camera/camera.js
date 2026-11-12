@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The camera (docs/product.md, "Camera"; D645): the user shows Jean what is in front of them and talks about it, hands-free.
 // Nothing is streamed to a brain. Each message sent while it is on shares the sharpest of its last frames, a picture in the
 // task as any other (D105), or the larger one Look closely kept for it. While Jean watches, for what the user asked it to or

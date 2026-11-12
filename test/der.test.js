@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // DER as the seal's certificate needs it (D274): what it writes, Node's own X.509 reads, and what it
 // reads of a certificate is what Node finds in it.
 import { test } from 'node:test'

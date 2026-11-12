@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A diagram (D592): Mermaid's language drawn by Pele (Obsidian's, MIT) with no DOM, its words measured on an OffscreenCanvas,
 // each kind of diagram loaded as one first shows. The SVG and its size go back to the page, which shows it as a picture.
 import { renderAsync } from '../../vendor/pele/lazy.js'

@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* Settings' Skills: a title with its action at its end, the skills as rows that open their page, each saying where it
    came from in a word, the ways to add one and Jean's own as tiles by what they are for, and a skill's page, its steps as steps. */
 .skill-head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; margin-block-end: 1.25rem; } .skill-head > :is(div, h2) { flex: 1 1 12rem; min-inline-size: 0; }

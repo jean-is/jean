@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Slides (D591): decks drawn by deck (@codename/deck, Jean's own library), Slidev's Markdown read liberally. In an answer, a
 // ```deck block, drawn slide by slide as it is written, the slide being written on show, then the first unless the user paged;
 // paged with its bar or a clicker's keys, presented full screen, with the presenter's view and all slides at once. Beside the

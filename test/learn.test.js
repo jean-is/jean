@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // 0.7 "Learn and repeat": skills from elsewhere, read from discovery indexes and checked against
 // their digests (D121), and routines, requests Jean sends itself on a schedule (D122).
 import { test } from 'node:test'

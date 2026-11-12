@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A Bunny Edge Script, of the middleware kind, linked to the pull zone (README.md beside this file): Jean's pages
 // without .html (deploy/README.md), /privacy being privacy.html and /fr/entreprise fr/entreprise.html, as a server's
 // `try_files {path} {path}.html` finds them. It asks the storage zone for <path>.html whenever an address's last part

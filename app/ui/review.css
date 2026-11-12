@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* The bar over Jean's changes (review.js), in a document and in a table: one row, two on a phone, Accept all
    Jean's primary button. Logical properties only. */
 .review { display: flex; align-items: center; gap: 0.4rem; padding: 0.45rem 0.6rem 0.45rem 0.85rem; border-block-end: 1px solid var(--line-strong); background: var(--room); }

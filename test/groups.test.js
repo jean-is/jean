@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Tasks that go together (D716).
 import { test } from 'node:test'
 import assert from 'node:assert/strict'

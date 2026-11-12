@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The share host (D361, docs/sharing.md): it keeps the sealed copies people share from Jean, which it
 // can't read, under ids, for whoever has the link, and shows them with Jean's viewer. Whoever serves
 // Jean runs it, or none, and Jean names it in settings or policy (`urls.share`). It keeps each change's

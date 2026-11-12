@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The on-device brain: Gemma 4 E2B through Transformers.js and WebGPU, in a worker so
 // the page stays responsive. Keeps one KV cache: when the next prompt continues the
 // previous one (the frozen prefix of D46 makes that the normal case), only the new

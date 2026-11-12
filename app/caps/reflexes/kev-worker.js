@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Kev-0.6B through Transformers.js: every reflex question about one state in a single
 // forward pass (D41). Kev scores options instead of writing text, so its graph loads through
 // the base PreTrainedModel class, as its model card says, on WebGPU or WebAssembly.

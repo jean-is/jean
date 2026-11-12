@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The check of a site, for npm run sites (Sites' phase 0): what a visitor with a phone, a screen reader or a search
 // engine meets on each page, said so that a brain can fix it. From the files, in Node: each page's language and
 // direction, title, description and card, one h1 and headings in order, one top, main and foot, names for links,

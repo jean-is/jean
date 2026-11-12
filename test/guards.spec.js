@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Guards (D295): rules for one kind of action or one service, in Settings › Approvals › Exceptions, that only
 // ever make Jean more careful, and with a question, only when its answer about the call is yes.
 import { test, expect } from '@playwright/test'

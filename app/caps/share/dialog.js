@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Share (D361): "Share" and what is shared on one line, then two tabs where both can be. Share: who, ticked among those the dialog's other
 // audiences give (People's people met, Your devices; D727, D700), then the verb, Send a copy, or Work on it together, which Together starts
 // once that unlocks it, or a link that invites anyone (caps/together, D733); what goes, each audience's own. Publish: a copy anyone with the

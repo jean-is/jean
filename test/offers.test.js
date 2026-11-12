@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The multilingual offer test set (scripts/offers.js measures brains on it, D284): every
 // request labelled, and every language holding every request, translated.
 import { test } from 'node:test'

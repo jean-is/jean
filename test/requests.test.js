@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The request service (requests/): a request from the page's form is kept and mailed to Warehouse SAS with the lines
 // that sign its keys, and the page told so; what isn't a request, a robot's or too many asks are not passed on; and
 // the mail goes over SMTP as a mail server expects it.

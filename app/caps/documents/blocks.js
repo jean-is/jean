@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Blocks, as in Notion (D485): whole paragraphs, headings, tables, quotes and a list's items, selected
 // together, then removed, copied, moved or turned into another kind. A list's items are blocks of their
 // own: one moved up past its list's first becomes a list of its own above it, and one moved into the

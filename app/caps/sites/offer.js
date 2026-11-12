@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Whether the share host publishes sites (D720), and the address a name makes there, asked once a host: what Sites needs, and what a
 // page's Publish… asks before it shows (ui/out.js), without loading Sites.
 import { app } from '../../ui/state.js'

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // BM25 with words split by Intl.Segmenter, so it works in every script (CJK and Thai have no spaces),
 // over an index made once: one engine for tools, past conversations, requests and documents.
 // And searching as people type: part of a word is enough, case and accents aside. And lists

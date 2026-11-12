@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A site's look (D739): its colours by day and by night and its type, as CSS custom properties in look.css, which Jean writes and
 // links from every page, and which the brain's style sheets use, never writing a colour of their own. Three looks are dealt for a
 // site with no brain, its project's first (ui/kit.js), else the brain's for the subject or the user's colours, then Designs'

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The box's / and @ (D199): / names what Jean uses, the room's skills and what Jean can do, and
 // once Skills is found, a ready-made skill, read before it is added; @ attaches a file shared
 // before, points at an earlier task, and at a file of the conversation's folder. The message keeps

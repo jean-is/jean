@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// SPDX-License-Identifier: MIT
 // A stand-in for Claude Code (D235), as the bridge runs it: `auth status --json`, and `-p` reading
 // stream-json messages, answering each with Anthropic's stream events. A message that asks for the
 // weather calls Jean's weather tool over the MCP server --mcp-config names, as Claude Code does, and

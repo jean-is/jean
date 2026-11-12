@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Monkey-patch for the desktop app's macOS web view (WebKit): turn on WebKit's internal
 // IgnoreIframeEmbeddingProtectionsEnabled feature so a framed site that sends X-Frame-Options or
 // a CSP frame-ancestors can still show in Jean's browser pane. Injected into the Neutralino binary (D160);

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // index.html guards: the CSP must allow exactly the inline import map, the light-or-dark
 // line and the opt-in to view transitions, and keep the protections Jean relies on.
 import { test } from 'node:test'

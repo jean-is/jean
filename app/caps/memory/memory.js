@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Memory (docs/product.md, "Instructions and memory"): Jean notes the lasting facts, preferences
 // and corrections the user states, one line each in their language, in memory.md: the person's
 // at the root, a project's in its folder. Every new conversation reads them (the newest that fit

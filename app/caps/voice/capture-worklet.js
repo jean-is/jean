@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The microphone, for dictation and live conversation (an AudioWorklet): mono frames of 96 ms at the
 // rate asked for in processorOptions, else the context's own. Live conversation asks for 16 kHz, 1,536
 // samples, three of what voice detection reads at a time, from a context at the microphone's own rate

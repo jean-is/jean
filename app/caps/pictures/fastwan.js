@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // FastWan 2.2 TI2V-5B on this device (D585): what its graphs are given, worked out here so the stage
 // worker only runs them, as FastVideo's DMD sampler drives it. The description is read by umT5-XXL,
 // its own tokens only; the film is a latent of 48 channels for every 4 frames and 16 pixels square,

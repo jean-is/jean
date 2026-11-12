@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A table's view beside the conversation (D491): the table on show (./tables.js) as a table, each cell changed
 // in place as its column's kind asks, or as a board grouped by its status or a select, each card moved by its
 // own choice or dragged to another lane. Jean's changes the user hasn't accepted are marked, under the bar over them (ui/review.js, D505).

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Helpers (docs/product.md): for a big request with independent parts, Jean splits the work and
 // hands each part to a helper: a short turn of its own, with the same brain, tools and rules but
 // not the conversation (D7). Helpers work at the same time; their approvals and questions wait in

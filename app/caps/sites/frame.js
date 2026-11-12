@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // A site's pages in frames (D720): each page put together as a host would serve it, by the folders' sitePage over its files (D156),
 // in a frame of a file pane's kind (preview.html, D126) under the policy Settings give web pages, never reaching the internet.
 // Out of sight, at a phone's and a computer's width, a probe ahead of each page says what only a page shows: a sideways scroll and

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What a request names and its tags. In a box (the message box, a request edited), a word / names (a skill, a
 // connection, what Jean can do: names() in ui/complete.js) is a chip once picked from the menu or typed whole and gone past:
 // its name in the user's language between two isolates, which nothing typed holds, so the box knows it whole (CHIP), a narrow

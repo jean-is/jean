@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // What the brain is given for Prototypes (D742): two tools, each with its line, which prototypes.js runs; a file and a look as a site's
 // are given (../sites/tool.js). Pure.
 import { SITE } from '../sites/tool.js'

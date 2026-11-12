@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Measures the reflexes (Kev-0.6B fine-tuned for them, D328) on the multilingual test set, language by language (D41):
 // the questions Jean asks (ui/questions.js), packed the way Jean packs them
 // (core/decide.js), judged with Jean's own thresholds. Runs on the CPU through Transformers.js;

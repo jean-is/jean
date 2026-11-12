@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Pictures and films from a connected brain's provider (D251), imported on first use: OpenAI's
 // Images API, which Ollama and other servers share, OpenRouter's chat and Gemini's Interactions API;
 // films from the /videos of OpenAI and OpenRouter, whose film models are listed apart, and Gemini's

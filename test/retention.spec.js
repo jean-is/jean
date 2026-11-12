@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Retention (D412, ee/): with policy's `retention`, what leaves a task, an answer tried again or the task deleted,
 // is kept first, out of sight, its certificate with it, and Settings › Your data says for how long; on localhost no
 // key is needed, a profile can't be removed, and served from elsewhere, a policy asking for it without one stops Jean

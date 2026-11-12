@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The document evals (test/documents/): a fictional company's files at five sizes and in every
 // format Jean reads, the questions asked of them, and how each way of reading them scores.
 // Usage: npm run documents -- --fixture              print test/fixtures/documents-xs.pdf with Chromium

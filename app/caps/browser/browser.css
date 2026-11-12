@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* The browser (D140): loaded with it (caps/browser/browser.js), after ui/style.css and the dock's
    (ui/dock.css, D144), so its colours are the look's. A pane of the dock, as a file's preview is,
    beside the conversation on a wide screen, over it on a narrow one. A page keeps the white it

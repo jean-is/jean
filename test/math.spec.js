@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Formulas (D185): the LaTeX an answer holds is drawn as MathML, in a line, set apart or in a table,
 // once the math capability has loaded with the first one; prices written with $ stay text. A ```latex
 // block is laid out as a document, copied as a widget is: its source and its picture at once; one of a

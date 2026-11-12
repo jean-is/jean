@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Each one's caret in a document worked on together (D733), in their colour with their name over it, and what they selected, where their
 // copy says: a plugin of the document's editor (caps/documents), which loads ProseMirror. A place goes as another copy finds it whatever
 // changed above it meanwhile: its block, how far into the block, and a hash of the block's words, the nearest block whose words hash

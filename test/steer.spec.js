@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Steering (D365): what the user sends while a task works waits under its live answer, then its brain reads it before
 // its next step, the work going on under it; × takes it back to the box, and a reload puts one not read yet back there.
 // The fake brain counts slowly to five, a second a step, and stops when told to.

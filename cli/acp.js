@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Jean inside an editor, through ACP (D241, https://agentclientprotocol.com): the editor starts
 // `jean-cli acp` and speaks JSON-RPC on its input and output (cli/rpc.js). Each session is one of
 // Jean's conversations, kept in the folder Sync keeps (caps/sync/mirror.js), in the project on the

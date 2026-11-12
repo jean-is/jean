@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Tables you keep (D491), in Chromium and WebKit: offered by a brain that makes them right, then made from a
 // request and filled by the brain, beside the conversation; Jean's changes marked, accepted or rejected (D505); a cell changed
 // by hand; a row the brain changes from what the user tells it; the board, a card moved by its own step; the

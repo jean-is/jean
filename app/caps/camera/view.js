@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // <app-camera> (D645): the camera's picture. On a touch screen it is a viewfinder over the room, a modal <dialog> the rest of
 // the page can't be reached behind: what the user says and the end of what Jean answers as captions at its foot, on a dark
 // panel whatever the picture, and its buttons where a thumb reaches. Elsewhere, and once Task or Escape shrinks it, the same

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // An extension for the tests (D296): it counts each answer's words, under the answer and above the box,
 // keeps the last count, says when it is reset, keeps files as they are, when it may refuse, and notes
 // what was stopped, and how many records going back to a request removed.

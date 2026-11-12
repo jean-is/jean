@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Double-check, the parts with no browser in them (tested under node --test): the claims an
 // answer makes with the sources they cite, the passage of each source that bears on a claim,
 // the request that asks a brain about them, and the verdicts read from its reply.

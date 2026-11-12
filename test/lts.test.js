@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Jean's own Node, named once in .nvmrc (scripts/lts.js, D701): every image of Node's named here, every CI job that runs
 // Node and package.json's engines agree with it. Whether it is still the newest LTS needs Node's list of releases, which
 // npm run lts reads in CI; here newest() reads a list of that shape, and write() moves a copy of the repository's pins.

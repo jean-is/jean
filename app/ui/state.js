@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Application state (signals) and the actions that change it.
 import { signal, computed, batch } from '@preact/signals-core'
 import { BRAND, PAGES } from '../brand.js'
