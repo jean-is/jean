@@ -1,10 +1,11 @@
 # Jean's Helm chart
 
-Jean, and its gateway and relay when asked for, on Kubernetes or OpenShift (D232 · D702). It runs the three images [deploy/docker/](../../docker/README.md) builds, under OpenShift's `restricted-v2` SCC or Pod Security "restricted", with whichever user the cluster picks. MIT, as everything outside `ee/` is.
+Jean, and its gateway, relay and share host when asked for, on Kubernetes or OpenShift (D232 · D702). It runs the three images [deploy/docker/](../../docker/README.md) builds, the share host from the relay's, under OpenShift's `restricted-v2` SCC or Pod Security "restricted", with whichever user the cluster picks. MIT, as everything outside `ee/` is.
 
 - **`jean`** serves Jean's files with nginx, on port 8080. It keeps nothing: each person's data stays in their browser, tied to the address Jean is served from.
 - **`gateway`** (off by default) relays to the services a browser can't reach, such as Gmail, Microsoft 365 or Slack (D191), on port 8787.
-- **`relay`** (off by default) keeps sealed mailboxes for a person's devices and the people they send to (D45), on port 8791, in a volume of its own.
+- **`relay`** (off by default) keeps sealed mailboxes for a person's devices and the people they send to (D45), and what people work on together (D733), on port 8791, in a volume of its own.
+- **`share`** (off by default) keeps what people share by link, sealed, and shows it with Jean's viewer (D361), on port 8788, in a volume of its own.
 
 Each one answers at a host of its own over HTTPS, through an OpenShift Route or an Ingress the chart makes, or one of yours.
 
@@ -34,13 +35,16 @@ gateway:
 relay:
   enabled: true
   host: relay.apps.corp.example
+share:
+  enabled: true
+  host: share.apps.corp.example
 route:
   enabled: true
 networkPolicy:
   enabled: true
 ```
 
-The gateway's and the relay's addresses go into the policy's `urls` on their own, and Jean's address into their `origins`. The gateway's Secret holds its `GATEWAY_CONFIG`:
+The gateway's, the relay's and the share host's addresses go into the policy's `urls` on their own, and Jean's address into their `origins`. The gateway's Secret holds its `GATEWAY_CONFIG`:
 
 ```bash
 oc create secret generic jean-gateway-config -n jean --from-literal=GATEWAY_CONFIG='{"origins":["https://jean.apps.corp.example"]}'
@@ -58,7 +62,7 @@ Then open `https://jean.apps.corp.example/policy.html`: it says what the server 
 | `global.imageRegistry`, `imagePullSecrets` | A registry that mirrors `ghcr.io`, for every image, and its pull secrets. |
 | `<component>.image` | `registry`, `repository`, `tag` (the chart's `appVersion` when empty) and `digest` (`sha256:…`, which pins the image and is used instead of the tag). |
 | `<component>.host` | The host it answers at, such as `jean.corp.example`. Jean's is where everyone's data stays: choose it once. |
-| `jean.replicaCount`, `gateway.replicaCount` | 2 by default, with a PodDisruptionBudget above 1. The relay has none: it is always one. |
+| `jean.replicaCount`, `gateway.replicaCount` | 2 by default, with a PodDisruptionBudget above 1. The relay and the share host have none: each is always one. |
 | `jean.policy` | The organisation's `policy.json` ([enterprise.md](../../../docs/enterprise.md#policy-model-sketch)), served at `/srv/policy.json`; a change rolls the pods. |
 | `jean.appName` | `APP_NAME`: what people see Jean called, in the room and on their list of apps. |
 | `jean.contentSecurityPolicy` | `CONTENT_SECURITY_POLICY`: a header over Jean's own, which can only take away. |
@@ -66,10 +70,13 @@ Then open `https://jean.apps.corp.example/policy.html`: it says what the server 
 | `gateway.config` | Or `GATEWAY_CONFIG` itself ([its schema](../../../app/schemas/gateway.schema.json)), which the chart writes into a Secret. |
 | `gateway.proxy` | `http`, `https`, `noProxy`: a corporate proxy, set as `HTTP_PROXY`, `HTTPS_PROXY` and `NO_PROXY` with `NODE_USE_ENV_PROXY=1`, without which Node's `fetch` uses none. |
 | `gateway.trustedCA` | Certificates the gateway trusts beyond Node's own, as `NODE_EXTRA_CA_CERTS`: `configMap: openshift` for the cluster's trusted bundle, or a ConfigMap of yours with PEM certificates under `key`. |
-| `relay.config` | `RELAY_CONFIG`: `origins`, `limits` (any of `LIMITS` in [relay.js](../../../relay/relay.js)) and `recordKey`, the public key its records are sealed to (`node host/serve.js keys`). The schema refuses a private key there. |
-| `relay.proxied` | `RELAY_PROXIED=1`. `auto`: when the chart makes a Route or an Ingress for it. |
-| `relay.persistence` | `size` (10Gi), `storageClass`, `existingClaim`. |
-| `<component>.podSecurityContext` | Outside OpenShift: `runAsUser` (101 for Jean, 1000 for the others), `runAsGroup`, `fsGroup` (1000 for the relay), `fsGroupChangePolicy`, `supplementalGroups`. |
+| `relay.config` | `RELAY_CONFIG`: `origins`, `limits` (any of `LIMITS` in [relay.js](../../../relay/relay.js)), `stores` (any of `STORE` in [store.js](../../../relay/store.js), none by default), `journals`, `issuers` ([colleagues.js](../../../relay/colleagues.js)) and `recordKey`, the public key its records are sealed to (`node host/serve.js keys`). The schema refuses a private key there. |
+| `relay.config.journals` | `{}` by default: the relay keeps what people work on together, with every default of `JOURNAL` in [journal.js](../../../relay/journal.js), any of which can be set here, and Share offers to work on something together. `null` keeps none, and Share never offers it. |
+| `share.config` | `HOST_CONFIG` ([host.js](../../../host/host.js)): `origins` and `app`, where a share's *Continue* opens, both Jean's address by default; `name`, `legal`, `alert`, `recordKey`, `sites`, and `render`, `sounds`, `maps` and `viewer` over the image's `viewer.json`. |
+| `share.image` | The relay's image, `jean-is/jean-relay`, which holds the share host and its viewer. |
+| `relay.proxied`, `share.proxied` | `RELAY_PROXIED=1`, `HOST_PROXIED=1`. `auto`: when the chart makes a Route or an Ingress for it. |
+| `relay.persistence`, `share.persistence` | `size` (10Gi), `storageClass`, `existingClaim`. |
+| `<component>.podSecurityContext` | Outside OpenShift: `runAsUser` (101 for Jean, 1000 for the others), `runAsGroup`, `fsGroup` (1000 for the relay and the share host), `fsGroupChangePolicy`, `supplementalGroups`. |
 | `<component>.resources` | Small requests and limits, set. |
 | `route.enabled`, `route.annotations` | A Route per component with a host; `<component>.route.annotations` over these. |
 | `ingress.enabled`, `ingress.className`, `ingress.annotations`, `ingress.tls` | An Ingress per component with a host; `<component>.ingress.annotations` and `<component>.ingress.tlsSecret` for each. One of Routes and Ingresses: OpenShift turns an Ingress into a Route itself. |
@@ -77,15 +84,15 @@ Then open `https://jean.apps.corp.example/policy.html`: it says what the server 
 
 ## What every pod gets
 
-The same two helpers in `_helpers.tpl` write it for the three, so none can drift:
+The same two helpers in `_helpers.tpl` write it for each, so none can drift:
 
 - Its own ServiceAccount, with no role bound and its token never mounted (`automountServiceAccountToken: false`), and no service links in its environment.
-- `runAsNonRoot`, the runtime's seccomp profile, no privilege escalation, every capability dropped, and a read-only root filesystem. Jean writes only to two `emptyDir` volumes, `/tmp` and `/etc/nginx/conf.d`; the gateway nowhere; the relay to `/data`. Node runs them under its permission model besides: the network, reading their own code, and for the relay its folder.
-- Probes on `/`, which nginx answers with Jean and the two others with `{"format":1,…}`, and five seconds' wait before it stops (`sleep` in Jean's, Node in the gateway's and the relay's, which hold no shell), so that the Service sends it nothing more by the time it closes. Each stops cleanly on SIGTERM.
+- `runAsNonRoot`, the runtime's seccomp profile, no privilege escalation, every capability dropped, and a read-only root filesystem. Jean writes only to two `emptyDir` volumes, `/tmp` and `/etc/nginx/conf.d`; the gateway nowhere; the relay and the share host to `/data`. Node runs them under its permission model besides: the network, reading their own code, and for the relay and the share host their folder.
+- Probes on `/`, which nginx answers with Jean and the others with `{"format":1,…}`, and five seconds' wait before it stops (`sleep` in Jean's, Node in the others', which hold no shell), so that the Service sends it nothing more by the time it closes. Each stops cleanly on SIGTERM.
 
 ## OpenShift
 
-- **The SCC.** `restricted-v2`, the default, runs all three: the chart names no user, group or volume group there, so OpenShift picks a user in the namespace's range, in group 0, which owns what the images write to. No SCC of its own, and no `anyuid`.
+- **The SCC.** `restricted-v2`, the default, runs them all: the chart names no user, group or volume group there, so OpenShift picks a user in the namespace's range, in group 0, which owns what the images write to. No SCC of its own, and no `anyuid`.
 - **Routes.** `route.enabled` makes one per host, TLS ending at the router on its own certificate, plain HTTP sent on to HTTPS, and HSTS for a year. The gateway's waits 5 minutes for an answer that streams, the relay's 60 seconds for its reads, which wait 25. A certificate of your own comes through an annotation, such as cert-manager's for Routes.
 - **A TLS-inspecting proxy.** `gateway.trustedCA.configMap: openshift` makes a ConfigMap labelled `config.openshift.io/inject-trusted-cabundle: "true"`, which OpenShift fills with the cluster's trusted bundle, the proxy's certificate included, and the gateway reads it.
 - **The router's network.** The NetworkPolicy lets in namespaces labelled `policy-group.network.openshift.io/ingress`, the default IngressController's. A router on the host's network (`endpointPublishingStrategy: HostNetwork`) comes from `policy-group.network.openshift.io/host-network` instead: name it in `networkPolicy.ingressNamespaceSelector`.
@@ -122,6 +129,15 @@ Red Hat Advanced Cluster Security and Kyverno's `verifyImages` check the same is
 - **Behind the router.** With `RELAY_PROXIED=1`, the relay takes each visitor's address from the last `X-Forwarded-For` entry, which OpenShift's router and most controllers append; without it everyone shares the router's address, and so its 60 mailboxes opened an hour. Since anything that reaches its port could write that header, turn `networkPolicy` on. A router that doesn't send `X-Client-Port` leaves the records of each change with the router's port rather than the visitor's.
 - **Its limits.** They are made for a household's address, and people at work share a few, sometimes one: raise `limits.opens` (mailboxes a network opens an hour, 60) and `limits.sent` (bytes a network sends a day, 256 MB) by about the number of people behind one address.
 
+## The share host
+
+- **From the relay's image**, which holds it, with `host/serve.js` in place of `relay/serve.js` and the same permissions, writing only to `/data`. Its viewer is the image's `host/viewer.json`: a share's page loads the render package of that image's version from jsDelivr, which CI publishes when it deploys the commit it builds the image from. An image of your own names a published one only when built from such a commit with its `VERSION` ([deploy/docker/](../../docker/README.md#configure-it)); `share.config.viewer`, `render` and `sounds` replace what it names.
+- **One replica, replaced rather than rolled**, as the relay: each address's limits and each share's turn live in its memory, and its volume is `ReadWriteOnce`.
+- **Its volume.** A share is 10 MB at most, kept 30 days or a year, as its sender chose; a share taken down leaves its notice a year, and the records of each change stay a year, sealed to `recordKey` when the config names one. The claim stays when the release is uninstalled, since the links people sent still open what it holds.
+- **Its config.** `origins` and `app` default to Jean's address: only Jean shares through it, and a share's *Continue* opens Jean. `alert` posts each report to an address, which `networkPolicy` then lets it reach over HTTPS if it is public. `HOST_CONFIG` is in the pod's environment, as `RELAY_CONFIG` is, so an `alert` address that holds a secret is read by whoever reads the Deployment.
+- **Sites** (`config.sites`, D720), at names of their own, `{name}` in `sites.address`: their files go to its volume and it serves them itself, but the chart routes only `share.host`. Route the sites' own host, a wildcard, to its Service yourself.
+- **A share taken down**, its address then saying so: `kubectl exec deploy/jean-share -- node host/serve.js remove <id>`, for a release named `jean` (the install's notes name its Service).
+
 ## The gateway
 
 Keep its `hosts` to the services people use. It answers only the `origins` it names, but a program other than a browser can send any `Origin`, so `hosts` is what bounds where it relays, and its NetworkPolicy keeps it from the cluster's and private addresses whatever `hosts` says. Behind a proxy, add the proxy's address to `networkPolicy.extraEgress`:
@@ -146,8 +162,9 @@ The chart adds no annotation of any controller's. What each host needs from your
 | Jean | Nothing beyond TLS. |
 | The gateway | Answers streamed as they come, unbuffered, for up to 5 minutes; requests up to 10 MB. |
 | The relay | Requests of 26 MB (a message is 25 MB at most); reads held 60 seconds; the visitor's address appended to `X-Forwarded-For`, and its port as `X-Client-Port` if the controller can. |
+| The share host | Requests of 10 MB (a share, or a site's file, is 10 MB at most); the visitor's address and port as the relay's. |
 
-With ingress-nginx, for example, the relay takes `nginx.ingress.kubernetes.io/proxy-body-size: 26m` and `nginx.ingress.kubernetes.io/proxy-read-timeout: "60"` under `relay.ingress.annotations`, and the gateway `nginx.ingress.kubernetes.io/proxy-buffering: "off"` and `nginx.ingress.kubernetes.io/proxy-read-timeout: "300"`.
+With ingress-nginx, for example, the relay takes `nginx.ingress.kubernetes.io/proxy-body-size: 26m` and `nginx.ingress.kubernetes.io/proxy-read-timeout: "60"` under `relay.ingress.annotations`, the share host `nginx.ingress.kubernetes.io/proxy-body-size: 10m` under `share.ingress.annotations`, and the gateway `nginx.ingress.kubernetes.io/proxy-buffering: "off"` and `nginx.ingress.kubernetes.io/proxy-read-timeout: "300"`.
 
 ## What each NetworkPolicy allows
 
@@ -157,7 +174,8 @@ With `networkPolicy.enabled`, each pod takes in and sends out only this:
 |---|---|---|
 | Jean | From the router's namespace, on 8080 | Nothing |
 | The gateway | From the router's namespace, on 8787 | DNS (53 and 5353) to the cluster's namespaces; TCP 443 and 80 to any address but `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`, `100.64.0.0/10`, `169.254.0.0/16`, `fc00::/7` and `fe80::/10`; and `networkPolicy.extraEgress` |
-| The relay | From the router's namespace, on 8791 | Nothing |
+| The relay | From the router's namespace, on 8791 | Nothing; with `config.issuers`, DNS and TCP 443 as the gateway's |
+| The share host | From the router's namespace, on 8788 | Nothing; with `config.alert`, DNS and TCP 443 as the gateway's |
 
 The router's namespace is `networkPolicy.ingressNamespaceSelector`, or OpenShift's `policy-group.network.openshift.io/ingress` there. Elsewhere it has no default: without it nothing reaches the pods, and the install's notes say so. For ingress-nginx:
 

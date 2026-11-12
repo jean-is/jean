@@ -1,5 +1,5 @@
 {{- if .Values.ingress.enabled }}
-{{- range $component := list "jean" "gateway" "relay" }}
+{{- range $component := list "jean" "gateway" "relay" "share" }}
 {{- $values := index $.Values $component }}
 {{- if and (or (eq $component "jean") $values.enabled) $values.host }}
 {{- $ctx := dict "root" $ "component" $component }}

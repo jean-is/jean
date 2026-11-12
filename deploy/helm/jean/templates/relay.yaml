@@ -72,7 +72,7 @@ spec:
             # Its origins and limits, and the public key its records are sealed to: nothing secret.
             - name: RELAY_CONFIG
               value: {{ include "jean.relayConfig" . | quote }}
-            {{- if include "jean.relayProxied" . }}
+            {{- if include "jean.proxied" $ctx }}
             # Each visitor's address from the last X-Forwarded-For entry, which only the router can send (networkpolicy.yaml).
             - name: RELAY_PROXIED
               value: "1"

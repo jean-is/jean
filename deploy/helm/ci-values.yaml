@@ -1,7 +1,8 @@
-# Jean's chart with the gateway, the relay and NetworkPolicies on, for CI: helm lint --strict, trivy config on what
-# helm template writes, and the install in kind under Pod Security "restricted", checked through port-forward
-# (scripts/kube-check.js), so neither Route nor Ingress. Every pod runs as a user picked at random as OpenShift's are,
-# in group 0, the relay's volume that user's too. The OpenShift branch renders with
+# Jean's chart with the gateway, the relay, the share host and NetworkPolicies on, for CI: helm lint --strict, trivy
+# config on what helm template writes, and the install in kind under Pod Security "restricted", checked through
+# port-forward (scripts/kube-check.js), so neither Route nor Ingress. Every pod runs as a user picked at random as
+# OpenShift's are, in group 0, the relay's and the share host's volumes that user's too. The OpenShift branch
+# renders with
 #   helm template jean deploy/helm/jean -f deploy/helm/ci-values.yaml --set openshift=true --set route.enabled=true
 # which takes the hosts below.
 openshift: false
@@ -10,7 +11,7 @@ jean:
   host: jean.ci.example
   replicaCount: 1
   appName: CI
-  contentSecurityPolicy: "connect-src 'self' https://gateway.ci.example https://relay.ci.example"
+  contentSecurityPolicy: "connect-src 'self' https://gateway.ci.example https://relay.ci.example https://share.ci.example"
   policy:
     capabilities:
       preUnlock: [connections]
@@ -54,6 +55,22 @@ relay:
       free: 10000000
   persistence:
     size: 2Gi
+  podSecurityContext:
+    runAsUser: 1000680000
+    runAsGroup: 0
+    fsGroup: 1000680000
+
+# From the relay's image, as the chart runs it.
+share:
+  enabled: true
+  host: share.ci.example
+  image:
+    registry: ""
+    repository: jean-ci
+    tag: relay
+    pullPolicy: Never
+  persistence:
+    size: 1Gi
   podSecurityContext:
     runAsUser: 1000680000
     runAsGroup: 0

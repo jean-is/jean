@@ -1,4 +1,4 @@
-{{- /* Jean and the gateway keep a pod while a node drains, when they have more than one. The relay has one, which a drain replaces. */}}
+{{- /* Jean and the gateway keep a pod while a node drains, when they have more than one. The relay and the share host have one each, which a drain replaces. */}}
 {{- range $component := list "jean" "gateway" }}
 {{- $values := index $.Values $component }}
 {{- if and (or (eq $component "jean") $values.enabled) (gt (int $values.replicaCount) 1) }}

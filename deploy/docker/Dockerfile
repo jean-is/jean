@@ -1,6 +1,7 @@
 # syntax=docker/dockerfile:1
 # Jean in a container (D232): its files, as a web deploy serves them, behind nginx on port 8080,
 # as a user other than root. The gateway (D191) and the relay (D45) are optional images: --target gateway, --target relay.
+# The relay's image runs the share host (D361) too, with node host/serve.js.
 # Built from the repository's root, as compose.yaml does:
 #   docker build -f deploy/docker/Dockerfile -t jean .
 #   docker build -f deploy/docker/Dockerfile --target gateway -t jean-gateway .
@@ -22,8 +23,12 @@ ARG VERSION
 # Jean reads the policy.json beside index.html (docs/enterprise.md): an empty one, until the
 # organisation mounts its own over it. Then dist/web/, what a web deploy serves, into /site, without
 # its gzip copies: nginx sends the brotli ones, and gzips as it goes for a browser that takes no brotli.
+# Then the share host's viewer.json (scripts/host.js), for the relay's image: a share's page loads the render package
+# this build names, @jean-is/render@<VERSION>-r<a hash of its files>, from jsDelivr, which CI's deploy of the same
+# commit publishes. Without VERSION it names 0.0.0-r…, which npm never holds, and a share's page draws nothing.
 RUN sed -i 's|</head>|<meta name="app-policy" content="policy.json">\n</head>|' app/index.html \
  && npm run build:web \
+ && node scripts/host.js \
  && cp -R dist/web /site \
  && echo '{}' > /site/policy.json \
  && find /site -type f -name '*.gz' -exec sh -c 'for copy; do if [ -f "${copy%.gz}" ]; then rm "$copy"; fi; done' sh {} +
@@ -94,19 +99,21 @@ CMD ["node", "--permission", "--allow-net", "--allow-fs-read=/app/", "--disallow
 FROM --platform=$BUILDPLATFORM node:26-alpine@sha256:8996bb5821d62a8fd9bb27c1cb07462f3fdce6e47d640c6a881ead0b064ce216 AS relay-data
 RUN mkdir /data
 
-# The relay: its modules and the two of the share host's it uses, and Node, nothing to install, configured
-# by RELAY_CONFIG. It keeps its mailboxes in /data, the user it runs as and group 0's, so that a volume Docker makes
-# there starts as theirs, and whichever user OpenShift picks, always in group 0, writes there too. Under Node's
-# permission model it writes nowhere else.
+# The relay: its modules and the share host's, which it uses, and Node, nothing to install, configured by RELAY_CONFIG.
+# The same image runs the share host with node host/serve.js in place of relay/serve.js, configured by HOST_CONFIG,
+# keeping its shares in HOST_DIR, and showing them with the viewer of this build beside it. Each keeps its files in
+# /data, the user it runs as and group 0's, so that a volume Docker makes there starts as theirs, and whichever user
+# OpenShift picks, always in group 0, writes there too. Under Node's permission model it writes nowhere else.
 FROM node-runtime AS relay
 WORKDIR /app
 COPY <<EOF package.json
 {"type":"module"}
 EOF
 COPY host/host.js host/sites.js host/serve.js host/
+COPY --from=build /src/dist/host/viewer.json host/
 COPY relay/ relay/
 COPY --from=relay-data --chown=1000:0 --chmod=770 /data /data
-ENV HOST=0.0.0.0 PORT=8791 RELAY_DIR=/data
+ENV HOST=0.0.0.0 PORT=8791 RELAY_DIR=/data HOST_DIR=/data
 USER 1000
 VOLUME /data
 LABEL org.opencontainers.image.title="jean-relay" \

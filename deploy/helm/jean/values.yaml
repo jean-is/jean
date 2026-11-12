@@ -29,7 +29,7 @@ serviceAccount:
 # Jean itself: its files, behind nginx, on port 8080.
 jean:
   # The host Jean is served at, over HTTPS, such as jean.corp.example. Each person's data stays in their browser, tied
-  # to this address, so choose it once. The gateway's and the relay's origins default to it.
+  # to this address, so choose it once. The gateway's, the relay's and the share host's origins default to it.
   host: ""
   replicaCount: 2
   image:
@@ -46,7 +46,8 @@ jean:
   # (CONTENT_SECURITY_POLICY): "connect-src 'self' https://ai.corp.example"
   contentSecurityPolicy: ""
   # The organisation's policy.json (docs/enterprise.md#policy-model-sketch), served at /srv/policy.json. With the
-  # gateway or the relay on and given a host, urls.gateway and urls.relay name them unless set here.
+  # gateway, the relay or the share host on and given a host, urls.gateway, urls.relay and urls.share name them unless
+  # set here.
   policy: {}
   # Outside OpenShift: the user nginx runs as.
   podSecurityContext:
@@ -145,11 +146,13 @@ relay:
     pullPolicy: IfNotPresent
   # RELAY_CONFIG: origins (Jean's address by default; without one it refuses everyone), limits (any of LIMITS in
   # relay/relay.js), stores (any of STORE in relay/store.js, {} for them all, to keep people's stores: none without it),
-  # journals (any of JOURNAL in relay/journal.js, {} for them all, to keep what people work on together: none without it),
-  # issuers (the organisation's sign-ins whose people it lists, [{ issuer, audience }], relay/colleagues.js; with networkPolicy
-  # on, the relay then reaches public addresses over HTTPS, for their keys) and recordKey, the public half of the key its
-  # records are sealed to (node host/serve.js keys).
-  config: {}
+  # journals (below), issuers (the organisation's sign-ins whose people it lists, [{ issuer, audience }],
+  # relay/colleagues.js; with networkPolicy on, the relay then reaches public addresses over HTTPS, for their keys) and
+  # recordKey, the public half of the key its records are sealed to (node host/serve.js keys).
+  config:
+    # What people work on together (relay/journal.js): {} keeps it with every default of JOURNAL, any of which can be
+    # set here, so that Share offers to work on it together. null keeps none, and Share never offers it.
+    journals: {}
   # RELAY_PROXIED=1: each visitor's address from the last X-Forwarded-For entry, rather than the router's.
   # auto: when the chart makes a Route or an Ingress for it.
   proxied: auto
@@ -187,6 +190,60 @@ relay:
   affinity: {}
   priorityClassName: ""
 
+# The share host (D361): the sealed copies people share by link, which it can't read, shown with Jean's viewer. Port
+# 8788, from the relay's image, which holds it and the viewer of its own version. Always one replica, replaced rather
+# than rolled, since its limits and each share's turn live in its memory.
+share:
+  enabled: false
+  # Its own host, such as share.corp.example: every link to a share starts with it.
+  host: ""
+  image:
+    registry: ghcr.io
+    repository: jean-is/jean-relay
+    tag: ""
+    digest: ""
+    pullPolicy: IfNotPresent
+  # HOST_CONFIG (host/host.js): origins (Jean's address by default; without one it takes no share), app (where a share's
+  # Continue opens, Jean's address by default), name (what its pages call it, Jean by default), legal (its legal
+  # notice's address), alert (an address each report is posted to; with networkPolicy on, the host then reaches public
+  # addresses over HTTPS), recordKey (the public half of the key its records are sealed to, node host/serve.js keys),
+  # sites (sites published at names of their own, host/sites.js, whose address you route to it yourself), and render,
+  # sounds, maps and viewer, where a share's page loads its files from, which the image's viewer.json gives.
+  config: {}
+  # HOST_PROXIED=1: each visitor's address from the last X-Forwarded-For entry, rather than the router's.
+  # auto: when the chart makes a Route or an Ingress for it.
+  proxied: auto
+  # Its shares, 10 MB each at most, kept 30 days or a year, the names of its sites, its records and reports, in /data.
+  persistence:
+    size: 10Gi
+    # Empty: the cluster's default class. "-": none.
+    storageClass: ""
+    # A claim of yours, used instead of the chart's.
+    existingClaim: ""
+  # Outside OpenShift: the user Node runs as, and the volume's group.
+  podSecurityContext:
+    runAsUser: 1000
+    fsGroup: 1000
+    fsGroupChangePolicy: OnRootMismatch
+  resources:
+    requests:
+      cpu: 20m
+      memory: 64Mi
+    limits:
+      cpu: "1"
+      memory: 256Mi
+  ingress:
+    annotations: {}
+    tlsSecret: ""
+  route:
+    annotations: {}
+  podAnnotations: {}
+  podLabels: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  priorityClassName: ""
+
 # OpenShift Routes, one per component with a host: edge TLS on the router's certificate, plain HTTP sent to HTTPS.
 route:
   enabled: false
@@ -199,7 +256,7 @@ ingress:
   annotations: {}
   tls: true
 
-# Only the router reaches each pod; Jean and the relay reach nothing, the gateway only public addresses.
+# Only the router reaches each pod; Jean, the relay and the share host reach nothing, the gateway only public addresses.
 networkPolicy:
   enabled: false
   # The router's namespace. Empty on OpenShift: policy-group.network.openshift.io/ingress. Needed elsewhere:

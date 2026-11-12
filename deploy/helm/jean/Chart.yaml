@@ -1,6 +1,6 @@
 apiVersion: v2
 name: jean
-description: Jean, and its gateway and relay when asked for, on Kubernetes or OpenShift under restricted security (D232 · D702).
+description: Jean, and its gateway, relay and share host when asked for, on Kubernetes or OpenShift under restricted security (D232 · D702).
 type: application
 # None in git (D735): CI publishes the chart with the version its run releases, which test/helm.test.js holds.
 version: 0.0.0

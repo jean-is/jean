@@ -34,10 +34,11 @@ async function flagsOf(/** @type {string} */ target, /** @type {string} */ data)
 
 /**
  * A server started as its image starts it, once it answers `/`. @param {string} target
- * @param {Record<string, string>} env @param {string} data
+ * @param {Record<string, string>} env @param {string} data @param {string} [script] another of the image's servers, with its flags
  */
-async function started(target, env, data) {
-  const { flags, entry } = await flagsOf(target, data)
+async function started(target, env, data, script) {
+  const { flags, entry: own } = await flagsOf(target, data)
+  const entry = script ?? own
   const port = await freePort()
   const child = spawn(process.execPath, [...flags, entry], { cwd: ROOT, env: { ...process.env, ...env, PORT: String(port), HOST: '127.0.0.1' }, stdio: ['ignore', 'pipe', 'pipe'] })
   // Whatever a test finds, the server goes with it.
@@ -94,6 +95,21 @@ test('the relay writes only its folder, and on SIGTERM ends a read still waiting
     assert.equal(end.code, 0, server.output())
     assert.ok(end.took < 7_000, `stopped in ${end.took} ms`)
     await waiting
+  } finally {
+    await rm(data, { recursive: true, force: true })
+  }
+})
+
+test("the share host, as the chart runs it from the relay's image, writes only its folder, and stops on SIGTERM at once", async () => {
+  const data = await mkdtemp(join(tmpdir(), 'jean-stop-'))
+  try {
+    const server = await started('relay', { HOST_CONFIG: JSON.stringify({ origins: [JEAN] }), HOST_DIR: data }, data, 'host/serve.js')
+    const token = Buffer.from(crypto.getRandomValues(new Uint8Array(32))).toString('base64url')
+    const kept = await fetch(`http://127.0.0.1:${server.port}/v1/${await idOf(token)}`, { method: 'PUT', headers: { origin: JEAN, authorization: `Bearer ${token}` }, body: new Uint8Array(64) })
+    assert.equal(kept.status, 201, `${await kept.text()}\n${server.output()}`)
+    const end = await stopTime(server)
+    assert.equal(end.code, 0, server.output())
+    assert.ok(end.took < 2_000, `stopped in ${end.took} ms`)
   } finally {
     await rm(data, { recursive: true, force: true })
   }

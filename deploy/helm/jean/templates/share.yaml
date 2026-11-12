@@ -1,0 +1,113 @@
+{{- if .Values.share.enabled -}}
+{{- $ctx := dict "root" . "component" "share" -}}
+{{- $name := include "jean.componentName" $ctx -}}
+{{- $values := .Values.share -}}
+{{- $persistence := $values.persistence -}}
+{{- if not $persistence.existingClaim }}
+# The share host's sealed copies, its sites' names, its records and reports. Kept when the release is uninstalled, since
+# the links people sent still open them.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "jean.labels" $ctx | nindent 4 }}
+  annotations:
+    helm.sh/resource-policy: keep
+spec:
+  accessModes:
+    - ReadWriteOnce
+  {{- if eq $persistence.storageClass "-" }}
+  storageClassName: ""
+  {{- else if $persistence.storageClass }}
+  storageClassName: {{ $persistence.storageClass }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ $persistence.size }}
+---
+{{- end }}
+# The share host on Node, from the relay's image, which holds it and the viewer of its own version: as user 1000
+# outside OpenShift, any user in group 0 on it, writing only to /data. One replica, replaced rather than rolled: each
+# address's limits and each share's turn live in its memory, and its volume is written by one pod at a time.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "jean.labels" $ctx | nindent 4 }}
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "jean.selectorLabels" $ctx | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "jean.labels" $ctx | nindent 8 }}
+        {{- with $values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with $values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- include "jean.podSecurity" $ctx | nindent 6 }}
+      {{- include "jean.placement" $ctx | nindent 6 }}
+      containers:
+        - name: share
+          image: {{ include "jean.image" (dict "root" . "image" $values.image) }}
+          imagePullPolicy: {{ $values.image.pullPolicy }}
+          {{- include "jean.containerSecurity" . | nindent 10 }}
+          # The relay image's own command, under Node's permission model, but for the server it runs.
+          command: ["node", "--permission", "--allow-net", "--allow-fs-read=/app/", "--allow-fs-read=/data/", "--allow-fs-write=/data/", "--disallow-code-generation-from-strings", "--disable-warning=ExperimentalWarning", "host/serve.js"]
+          env:
+            - name: HOST
+              value: 0.0.0.0
+            - name: PORT
+              value: "8788"
+            - name: HOST_DIR
+              value: /data
+            # Its origins, where a share's Continue opens, and the public key its records are sealed to.
+            - name: HOST_CONFIG
+              value: {{ include "jean.shareConfig" . | quote }}
+            {{- if include "jean.proxied" $ctx }}
+            # Each visitor's address from the last X-Forwarded-For entry, which only the router can send (networkpolicy.yaml).
+            - name: HOST_PROXIED
+              value: "1"
+            {{- end }}
+          ports:
+            - name: http
+              containerPort: 8788
+              protocol: TCP
+          {{- include "jean.lifecycle" (list "node" "-e" "setTimeout(Boolean, 5000)") | nindent 10 }}
+          resources:
+            {{- toYaml $values.resources | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: /data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ $persistence.existingClaim | default $name }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "jean.labels" $ctx | nindent 4 }}
+spec:
+  type: ClusterIP
+  selector:
+    {{- include "jean.selectorLabels" $ctx | nindent 4 }}
+  ports:
+    - name: http
+      port: 8788
+      targetPort: http
+      protocol: TCP
+{{- end }}

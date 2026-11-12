@@ -4,7 +4,7 @@ Jean is static files, so a container only serves them (D232). This folder builds
 
 - **`jean`** serves Jean with nginx, without root, on port 8080. It holds exactly what a web deploy serves and nothing else: no tooling, tests or docs.
 - **`jean-gateway`** is optional. It runs [the gateway](../../gateway/README.md#run-it) on Node, on port 8787, for the services a browser can't reach, like Gmail, Microsoft 365 or Slack (D191).
-- **`jean-relay`** is optional. It runs [the relay](../../relay/relay.js) on Node, on port 8791: the meeting point for a person's devices and the people they send to (D45 · D226), which later versions of Jean use, and which an organisation runs to keep that with it.
+- **`jean-relay`** is optional. It runs [the relay](../../relay/relay.js) on Node, on port 8791: the meeting point for a person's devices and the people they send to (D45 · D226), which later versions of Jean use, and which an organisation runs to keep that with it. The same image runs [the share host](#configure-it) (D361), on port 8788, with the viewer of its own version.
 
 Jean and the gateway keep no data. The relay keeps sealed messages it can't read, 7 days at most, each mailbox until 90 days without use, and a record of each change (its time, address, port and mailbox) for a year, as French law asks of a host: sealed to a key of yours when `RELAY_CONFIG` names one, plain text otherwise. Conversations and files stay in each person's browser, tied to the address Jean is served from. Choose that address once: moving it means everyone exports their data and imports it again.
 
@@ -20,7 +20,7 @@ docker run -d -p 8080:8080 ghcr.io/jean-is/jean:latest
 
 `latest` and a version's numbers, like `0.10.0` and `0.10`, are the versions CI released, each as a push to `main` asked for one ([architecture.md](../../docs/architecture.md#deploying)); `edge` follows `main`, and `sha-` followed by a commit's first seven characters is that commit. The gateway is `ghcr.io/jean-is/jean-gateway`, with the same tags, and the relay `ghcr.io/jean-is/jean-relay`, `edge` and `sha-` from `main` until the next version gives it `latest` and its numbers. Each image carries its build's provenance and its bill of materials, which `docker buildx imagetools inspect` shows with `--format '{{ json .Provenance }}'` or `'{{ json .SBOM }}'`.
 
-To build them yourself, use a checkout of the version you deploy: the image takes the folder as it is, uncommitted changes included. From this folder:
+To build them yourself, use a checkout of the version you deploy: the image takes the folder as it is, uncommitted changes included. `VERSION`, the checkout's own (`npm run --silent version`), names it in the images, and in [the share host's viewer](#configure-it). From this folder:
 
 ```bash
 docker compose up -d --build
@@ -110,10 +110,10 @@ Give the gateway an HTTPS address of its own, such as `https://gateway.corp.exam
 { "urls": { "gateway": "https://gateway.corp.example/" }, "capabilities": { "preUnlock": ["connections"] } }
 ```
 
-**The relay.** `RELAY_CONFIG` names the addresses Jean is served from, which alone may use it, and the public half of the key that seals its records of each change, as French law asks of a host ([relay.js](../../relay/relay.js), [serve.js](../../relay/serve.js)). Without `origins`, it refuses everyone:
+**The relay.** `RELAY_CONFIG` names the addresses Jean is served from, which alone may use it, what it keeps besides people's mailboxes, and the public half of the key that seals its records of each change, as French law asks of a host ([relay.js](../../relay/relay.js), [serve.js](../../relay/serve.js)). Without `origins`, it refuses everyone; without `journals`, it keeps nothing people work on together, and Share never offers to:
 
 ```bash
-RELAY_CONFIG='{"origins":["https://jean.corp.example"]}'
+RELAY_CONFIG='{"origins":["https://jean.corp.example"],"journals":{}}'
 ```
 
 `node host/serve.js keys`, in a checkout, makes the records' key pair: its public half goes in `recordKey`, and its private half stays offline. Its `limits` are [relay.js](../../relay/relay.js)'s `LIMITS`, made for a household's address. In an organisation many people share one, so raise `opens`, the mailboxes a network opens an hour (60), and `sent`, the bytes it sends a day (256 MB), by about the number of people behind one address, here a hundred:
@@ -128,12 +128,26 @@ It keeps people's stores (D721), each person's files sealed so it can't read the
 RELAY_CONFIG='{"origins":["https://jean.corp.example"],"stores":{"made":500,"sent":100000000000}}'
 ```
 
-It keeps journals (D733), what people work on together, sealed so it can't read them, only with `journals`, any of [journal.js](../../relay/journal.js)'s `JOURNAL`. A journal's readers hold a stream open for minutes, so a proxy in front passes it on as it comes (Caddy: `flush_interval -1`); where one holds it back, Jean polls instead.
+It keeps journals (D733), what people work on together, sealed so it can't read them, only with `journals`: `{}` for every default of [journal.js](../../relay/journal.js)'s `JOURNAL`, or any of them changed. Share offers to work on something together only where the relay's root lists `journals`. A journal's readers hold a stream open for minutes, so a proxy in front passes it on as it comes (Caddy: `flush_interval -1`); where one holds it back, Jean polls instead.
 
 The relay keeps its mailboxes, its stores and its journals in the volume at `/data`. Give it an HTTPS address of its own, such as `https://relay.corp.example`. Behind a reverse proxy, set `RELAY_PROXIED=1` and have the proxy send the visitor's address as the last `X-Forwarded-For` entry and its port as `X-Client-Port` (Caddy: `header_up X-Client-Port {remote_port}`, as [Jean's own server](../server/Caddyfile) does), so that limits and records name each visitor rather than the proxy. Then name it in the policy; with none named, there is none:
 
 ```json
 { "urls": { "relay": "https://relay.corp.example/" } }
+```
+
+**The share host** (D361) keeps what people share by link, sealed so it can't read it, and shows it with Jean's viewer. The relay's image runs it too: `host/serve.js` in place of `relay/serve.js`, under the same permissions, on port 8788, keeping its shares and its records of each change in `/data` (`HOST_DIR`). `HOST_CONFIG` names the addresses Jean is served from, which alone may share through it, and where a share's *Continue* opens ([host.js](../../host/host.js), [serve.js](../../host/serve.js)):
+
+```bash
+docker run -d -p 8788:8788 -e PORT=8788 -e HOST_CONFIG='{"origins":["https://jean.corp.example"],"app":"https://jean.corp.example/"}' -v share-data:/data ghcr.io/jean-is/jean-relay:latest node --permission --allow-net --allow-fs-read=/app/ --allow-fs-read=/data/ --allow-fs-write=/data/ --disallow-code-generation-from-strings --disable-warning=ExperimentalWarning host/serve.js
+```
+
+Its viewer is the image's `host/viewer.json`: a share's page loads Jean's render package of the image's version, `@jean-is/render@<version>-r<a hash of its files>`, from jsDelivr, and CI publishes that version when it deploys the commit it builds the image from. An image you build names a published one only from a checkout of a commit CI deployed, unchanged, built with its version: `--build-arg VERSION=0.10.0`, or `VERSION=0.10.0` before `docker compose`. Without `VERSION` it names `0.0.0-r…`, which npm never holds, and a share's page draws nothing. `viewer`, `render` and `sounds` in `HOST_CONFIG` replace what it names.
+
+Give it an HTTPS address of its own, such as `https://share.corp.example`, behind a proxy with `HOST_PROXIED=1` as the relay's, `recordKey` sealing its records as the relay's do, then name it in the policy:
+
+```json
+{ "urls": { "share": "https://share.corp.example/" } }
 ```
 
 ## What the image does
@@ -156,9 +170,9 @@ Pull the new version, or build again from it, and replace the container. Each op
 | | `jean` | `jean-gateway` | `jean-relay` |
 |---|---|---|---|
 | User | 101 | 1000 | 1000 |
-| Port | 8080 | 8787 | 8791 |
+| Port | 8080 | 8787 | 8791, the share host 8788 |
 | Writes to | `/tmp`, `/etc/nginx/conf.d` | nothing | `/data` |
-| Reads | `APP_NAME`, `CONTENT_SECURITY_POLICY`, `/srv/policy.json` | `GATEWAY_CONFIG`, `HTTPS_PROXY`…, `NODE_EXTRA_CA_CERTS` | `RELAY_CONFIG`, `RELAY_PROXIED` |
+| Reads | `APP_NAME`, `CONTENT_SECURITY_POLICY`, `/srv/policy.json` | `GATEWAY_CONFIG`, `HTTPS_PROXY`…, `NODE_EXTRA_CA_CERTS` | `RELAY_CONFIG`, `RELAY_PROXIED`; the share host `HOST_CONFIG`, `HOST_PROXIED` |
 
 - Any user runs them, as OpenShift picks one, in group 0, which owns what each writes to.
 - With a read-only root filesystem, `jean` needs its two folders as `emptyDir` volumes, and the relay a persistent volume at `/data` that its user can write to, such as one with `securityContext.fsGroup`.
@@ -166,7 +180,7 @@ Pull the new version, or build again from it, and replace the container. Each op
 - The gateway and the relay hold Node and nothing else: no shell, no package manager, only the Alpine packages whose libraries Node links (musl, libgcc, libatomic, libstdc++), CA certificates and apk's record of them, which scanners read. So `exec` finds no shell in them, and nothing an intruder could run: debug one with `kubectl debug -it <pod> --image=<an image of yours> --target=gateway --profile=restricted` (or `relay`), which a namespace held to \"restricted\" lets in, and wait before it stops with `node -e "setTimeout(Boolean, 5000)"`, as the chart's `preStop` does, since `sleep` isn't there.
 - nginx runs two workers, whatever the machine's processors.
 - Each stops cleanly on SIGTERM, and a probe can ask for `/`: nginx answers with Jean, the gateway and the relay with `{"format":1,…}`.
-- The relay runs as one replica, replaced rather than rolled, since its waiting reads and limits live in its memory.
+- The relay and the share host each run as one replica, replaced rather than rolled, since their limits, and the relay's waiting reads, live in their memory.
 
 ## Verify an image
 

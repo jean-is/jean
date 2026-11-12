@@ -7,6 +7,7 @@ import { readdir, readFile } from 'node:fs/promises'
 import { LIMITS } from '../relay/relay.js'
 import { STORE } from '../relay/store.js'
 import { JOURNAL } from '../relay/journal.js'
+import { SITE } from '../host/sites.js'
 
 const CHART = new URL('../deploy/helm/jean/', import.meta.url)
 const read = (/** @type {string} */ path) => readFile(new URL(path, CHART), 'utf8')
@@ -47,7 +48,7 @@ test("the chart's version is the release's, which CI sets, git holding none (D73
 
 test('every pod takes the shared pod and container security, probes and stop', () => {
   const pods = Object.entries(templates).filter(([, text]) => /^kind: Deployment$/m.test(text))
-  assert.deepEqual(pods.map(([name]) => name).sort(), ['gateway.yaml', 'jean.yaml', 'relay.yaml'])
+  assert.deepEqual(pods.map(([name]) => name).sort(), ['gateway.yaml', 'jean.yaml', 'relay.yaml', 'share.yaml'])
   for (const [name, text] of pods) {
     const containers = text.match(/^\s+containers:$/gm)?.length ?? 0
     assert.equal(text.match(/include "jean\.podSecurity"/g)?.length, containers, `${name}: a pod without jean.podSecurity`)
@@ -62,13 +63,45 @@ test('every pod takes the shared pod and container security, probes and stop', (
   assert.match(helpers, /\.Capabilities\.APIVersions\.Has "security\.openshift\.io\/v1"/)
   // Five seconds before it stops, waited by what each image holds: nginx's has sleep, the gateway's and the relay's only Node.
   assert.match(templates['jean.yaml'], /include "jean\.lifecycle" \(list "sleep" "5"\)/)
-  for (const name of ['gateway.yaml', 'relay.yaml']) assert.match(templates[name], /include "jean\.lifecycle" \(list "node" "-e" "setTimeout\(Boolean, 5000\)"\)/, name)
+  for (const name of ['gateway.yaml', 'relay.yaml', 'share.yaml']) assert.match(templates[name], /include "jean\.lifecycle" \(list "node" "-e" "setTimeout\(Boolean, 5000\)"\)/, name)
 })
 
-test('the relay is one pod, replaced rather than rolled, and has no replicaCount', () => {
-  assert.match(templates['relay.yaml'], /replicas: 1\n/)
-  assert.match(templates['relay.yaml'], /strategy:\n\s+type: Recreate/)
-  assert.equal(schema.properties.relay.properties.replicaCount, undefined)
+test('the relay and the share host are one pod each, replaced rather than rolled, and have no replicaCount', () => {
+  for (const component of ['relay', 'share']) {
+    assert.match(templates[`${component}.yaml`], /replicas: 1\n/, component)
+    assert.match(templates[`${component}.yaml`], /strategy:\n\s+type: Recreate/, component)
+    assert.equal(schema.properties[component].properties.replicaCount, undefined, component)
+  }
+})
+
+test("the share host runs from the relay's image, with its command but for host/serve.js, and the viewer of the image's own version", async () => {
+  const docker = await readFile(new URL('../deploy/docker/Dockerfile', import.meta.url), 'utf8')
+  const stages = Object.fromEntries(docker.split(/^FROM /m).slice(1).map((stage) => [/^.*\bAS ([\w-]+)$/m.exec(stage.split('\n')[0])?.[1] ?? '', stage]))
+  const relay = JSON.parse(/^CMD (\[.*\])$/m.exec(stages.relay)?.[1] ?? '[]')
+  const share = JSON.parse(/^\s+command: (\[.*\])$/m.exec(templates['share.yaml'])?.[1] ?? '[]')
+  assert.equal(relay.at(-1), 'relay/serve.js')
+  assert.deepEqual(share, [...relay.slice(0, -1), 'host/serve.js'], "the relay image's permissions, nothing more")
+  assert.match(await read('values.yaml'), /^share:\n(?:(?:  .*)?\n)*?  image:\n    registry: ghcr\.io\n    repository: jean-is\/jean-relay$/m)
+  // viewer.json beside serve.js, which reads it there, written in the build stage from the render package that build names.
+  assert.match(stages.build, /&& npm run build:web \\\n && node scripts\/host\.js \\/)
+  assert.match(stages.relay, /^COPY --from=build \/src\/dist\/host\/viewer\.json host\/$/m)
+  assert.ok((await readFile(new URL('../host/serve.js', import.meta.url), 'utf8')).includes("new URL('viewer.json', import.meta.url)"))
+  assert.match(stages.relay, /^ENV .*\bHOST_DIR=\/data\b/m)
+})
+
+test("the relay keeps journals unless told not to, so that Share offers to work on it together", async () => {
+  assert.match(await read('values.yaml'), /^relay:\n(?:(?:  .*)?\n)*?  config:\n(?:    #.*\n)*    journals: \{\}$/m)
+  // Share asks the relay's root, which lists journals only where its configuration keeps them.
+  assert.ok((await readFile(new URL('../app/caps/share/dialog.js', import.meta.url), 'utf8')).includes('Boolean(root?.journals)'))
+  assert.match(await readFile(new URL('../relay/relay.js', import.meta.url), 'utf8'), /config\.journals && store\?\.journal/)
+})
+
+test("every component's address joins the policy's urls, and Jean's their origins", () => {
+  const helpers = templates['_helpers.tpl']
+  assert.match(helpers, /define "jean\.policy"[\s\S]*?range \$component := list "gateway" "relay" "share"/)
+  for (const config of ['jean.gatewayConfig', 'jean.relayConfig', 'jean.shareConfig']) assert.match(helpers, new RegExp(`define "${config.replace('.', '\\.')}"[\\s\\S]*?set \\$config "origins" \\(list \\$origin\\)`), config)
+  assert.match(helpers, /define "jean\.shareConfig"[\s\S]*?set \$config "app" \(printf "%s\/" \$origin\)/, "a share's Continue opens Jean")
+  for (const name of ['ingress.yaml', 'route.yaml', 'networkpolicy.yaml', 'NOTES.txt']) assert.ok(templates[name].includes('list "jean" "gateway" "relay" "share"'), name)
 })
 
 test('values.schema.json parses and refuses a name it doesn\'t know at each level', () => {
@@ -107,13 +140,17 @@ test("the gateway's and the relay's configs take what their servers read", async
   assert.deepEqual(Object.keys(schema.properties.relay.properties.config.properties.stores.properties), Object.keys(STORE))
   assert.deepEqual(Object.keys(schema.properties.relay.properties.config.properties.journals.properties), Object.keys(JOURNAL))
   assert.deepEqual(Object.keys(schema.properties.relay.properties.config.properties.issuers.items.properties), ['issuer', 'audience', 'jwks', 'groups', 'guest'])
+  const share = schema.properties.share.properties.config.properties
+  assert.deepEqual(Object.keys(share).sort(), ['alert', 'app', 'legal', 'maps', 'name', 'origins', 'recordKey', 'render', 'shares', 'sites', 'sounds', 'viewer'])
+  assert.deepEqual(Object.keys(share.sites.properties.limits.properties), Object.keys(SITE))
 })
 
-test('the NetworkPolicy keeps the gateway from private and link-local addresses, the relay too, over HTTPS alone, where it lists the organisation’s people, and the others from everything', () => {
+test('the NetworkPolicy keeps the gateway from private and link-local addresses, the relay and the share host too, over HTTPS alone, where the relay lists the organisation’s people or the share host posts its reports, and the others from everything', () => {
   const policy = templates['networkpolicy.yaml']
   for (const range of ['10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16', '100.64.0.0/10', '169.254.0.0/16', 'fc00::/7', 'fe80::/10']) assert.ok(policy.includes(`- ${range}`), range)
   assert.match(policy, /\$lists := and \(eq \$component "relay"\) \$values\.config\.issuers/)
-  assert.match(policy, /if or \(eq \$component "gateway"\) \$lists/)
+  assert.match(policy, /\$alerts := and \(eq \$component "share"\) \$values\.config\.alert/)
+  assert.match(policy, /if or \(eq \$component "gateway"\) \$lists \$alerts/)
   assert.match(policy, /if eq \$component "gateway" }}\n\s+- port: 80/, 'HTTP for the gateway alone')
   assert.match(policy, /egress: \[\]/)
   assert.match(policy, /policy-group\.network\.openshift\.io\/ingress/)

@@ -214,20 +214,78 @@
                 }
               }
             },
-            "recordKey": {
+            "recordKey": { "$ref": "#/definitions/recordKey" }
+          }
+        },
+        "proxied": { "enum": ["auto", true, false] },
+        "persistence": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "size": { "type": "string", "pattern": "^[0-9]+(\\.[0-9]+)?(Ki|Mi|Gi|Ti|Pi|k|M|G|T|P)?$" },
+            "storageClass": { "type": "string" },
+            "existingClaim": { "type": "string" }
+          }
+        },
+        "podSecurityContext": { "$ref": "#/definitions/podSecurityContext" },
+        "resources": { "$ref": "#/definitions/resources" },
+        "ingress": { "$ref": "#/definitions/ingressOverride" },
+        "route": { "$ref": "#/definitions/routeOverride" },
+        "podAnnotations": { "$ref": "#/definitions/strings" },
+        "podLabels": { "$ref": "#/definitions/strings" },
+        "nodeSelector": { "$ref": "#/definitions/strings" },
+        "tolerations": { "type": "array", "items": { "type": "object" } },
+        "affinity": { "type": "object" },
+        "priorityClassName": { "type": "string" }
+      }
+    },
+    "share": {
+      "type": "object",
+      "description": "One replica, always: it has no replicaCount",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "host": { "$ref": "#/definitions/host" },
+        "image": { "$ref": "#/definitions/image" },
+        "config": {
+          "type": "object",
+          "description": "HOST_CONFIG (host/host.js, host/serve.js)",
+          "additionalProperties": false,
+          "properties": {
+            "origins": { "type": "array", "items": { "type": "string", "pattern": "^https?://[^/?#]+$" } },
+            "app": { "$ref": "#/definitions/address", "description": "Where a share's Continue opens: Jean's address by default" },
+            "name": { "type": "string", "description": "What its pages call it: Jean by default" },
+            "legal": { "$ref": "#/definitions/address", "description": "Its legal notice" },
+            "shares": { "$ref": "#/definitions/address", "description": "Where shares open when the host answers elsewhere too, a path perhaps" },
+            "alert": { "$ref": "#/definitions/address", "description": "Where each report is posted, as one line of text" },
+            "recordKey": { "$ref": "#/definitions/recordKey" },
+            "sites": {
               "type": "object",
-              "description": "The public half of node host/serve.js keys: never the private one, which stays offline",
+              "description": "Sites published at names of their own (host/sites.js), their files in its volume: their address isn't routed by the chart",
               "additionalProperties": false,
-              "required": ["kty", "crv", "x", "y"],
+              "required": ["address"],
               "properties": {
-                "kty": { "const": "EC" },
-                "crv": { "const": "P-256" },
-                "x": { "type": "string" },
-                "y": { "type": "string" },
-                "ext": { "type": "boolean" },
-                "key_ops": { "type": "array", "items": { "type": "string" } }
+                "address": { "type": "string", "pattern": "^https?://[^/]*\\{name\\}", "description": "A site's address, {name} in it" },
+                "names": { "type": "array", "items": { "type": "string" }, "description": "Words refused besides its own" },
+                "limits": {
+                  "type": "object",
+                  "description": "Any of SITE in host/sites.js",
+                  "additionalProperties": false,
+                  "properties": {
+                    "site": { "type": "integer", "minimum": 1 },
+                    "file": { "type": "integer", "minimum": 1 },
+                    "files": { "type": "integer", "minimum": 1 },
+                    "claims": { "type": "integer", "minimum": 1 },
+                    "puts": { "type": "integer", "minimum": 1 },
+                    "days": { "type": "integer", "minimum": 1 }
+                  }
+                }
               }
-            }
+            },
+            "render": { "type": "string", "pattern": "^https?://", "description": "Where a share's render package is, {version} in it: the viewer's by default" },
+            "sounds": { "type": "string", "pattern": "^https?://", "description": "Where a score's instruments are, {version} in it: the viewer's by default" },
+            "maps": { "$ref": "#/definitions/strings", "description": "A map service's styles" },
+            "viewer": { "type": "object", "description": "How its viewer loads, in place of the image's viewer.json: { base, entry, imports, integrity, card }" }
           }
         },
         "proxied": { "enum": ["auto", true, false] },
@@ -292,6 +350,20 @@
     "strings": { "type": "object", "additionalProperties": { "type": "string" } },
     "host": { "type": "string", "pattern": "^$|^[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?(\\.[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?)*$", "description": "A host name alone: no scheme, port or path" },
     "address": { "type": "string", "pattern": "^https?://" },
+    "recordKey": {
+      "type": "object",
+      "description": "The public half of node host/serve.js keys: never the private one, which stays offline",
+      "additionalProperties": false,
+      "required": ["kty", "crv", "x", "y"],
+      "properties": {
+        "kty": { "const": "EC" },
+        "crv": { "const": "P-256" },
+        "x": { "type": "string" },
+        "y": { "type": "string" },
+        "ext": { "type": "boolean" },
+        "key_ops": { "type": "array", "items": { "type": "string" } }
+      }
+    },
     "image": {
       "type": "object",
       "additionalProperties": false,

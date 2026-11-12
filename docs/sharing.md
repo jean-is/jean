@@ -70,6 +70,6 @@ GitHub moved Pages to github.io in 2013 for this reason.
 ## Notes for whoever picks this up
 
 - **Capabilities are found:** nothing of sharing shows before it is (D281), and the capability stays out of the first load.
-- **The viewer is the render package's:** a new viewer reaches the host only once the package of its version is on npm and the host is given that `viewer.json` (`npm run host`).
+- **The viewer is the render package's:** a new viewer reaches the host only once the package of its version is on npm and the host is given that `viewer.json` (`npm run host`), as the relay's container image, which runs a host too, carries the one its build wrote (deploy/docker/).
 - **Decision numbers:** find the highest in `docs/decisions.md` and in every `.claude/worktrees/*` just before taking one.
 - **Live uploads:** a share on hst.ing is a real upload and a real record, so ask the owner before testing against it; `npm run dev:share` and `npm run e2e` run hosts of their own.

@@ -2,13 +2,15 @@
 #   docker compose up -d --build                     Jean on http://localhost:8080
 #   docker compose --profile gateway up -d --build   and the gateway on http://localhost:8787
 #   docker compose --profile relay up -d --build     and the relay on http://localhost:8791
-# Variables come from the shell or from a .env file beside this one.
+# Variables come from the shell or from a .env file beside this one. VERSION, this checkout's (npm run version), is the
+# version the images name, Jean's in Settings › General and the render package the share host's viewer loads.
 name: jean
 services:
   jean:
     build:
       context: ../..
       dockerfile: deploy/docker/Dockerfile
+      args: [VERSION]
     image: jean
     ports:
       - "8080:8080"
@@ -26,6 +28,7 @@ services:
       context: ../..
       dockerfile: deploy/docker/Dockerfile
       target: gateway
+      args: [VERSION]
     image: jean-gateway
     ports:
       - "8787:8787"
@@ -39,9 +42,12 @@ services:
       context: ../..
       dockerfile: deploy/docker/Dockerfile
       target: relay
+      args: [VERSION]
     image: jean-relay
     ports:
       - "8791:8791"
+    # RELAY_CONFIG names Jean's address in origins, and journals ({} for every default) for Share to offer to work on
+    # it together: '{"origins":["https://jean.corp.example"],"journals":{}}' (README.md).
     environment:
       - RELAY_CONFIG
       - RELAY_PROXIED

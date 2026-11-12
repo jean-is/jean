@@ -3,20 +3,24 @@
 {{- if and (not $selector) (include "jean.openshift" .) }}
 {{- $selector = dict "matchLabels" (dict "policy-group.network.openshift.io/ingress" "") }}
 {{- end }}
-{{- range $component := list "jean" "gateway" "relay" }}
+{{- range $component := list "jean" "gateway" "relay" "share" }}
 {{- $values := index $.Values $component }}
 {{- if or (eq $component "jean") $values.enabled }}
 {{- $ctx := dict "root" $ "component" $component }}
 ---
-# Only the router reaches this pod, on its port: the relay trusts the last X-Forwarded-For entry, which anything else
-# could forge. Without the router's namespace, nothing does (NOTES.txt says so).
+# Only the router reaches this pod, on its port: the relay and the share host trust the last X-Forwarded-For entry,
+# which anything else could forge. Without the router's namespace, nothing does (NOTES.txt says so).
 {{- $lists := and (eq $component "relay") $values.config.issuers }}
+{{- $alerts := and (eq $component "share") $values.config.alert }}
 {{- if eq $component "gateway" }}
 # The gateway reaches the cluster's DNS, and public addresses over HTTPS and HTTP, never the cluster's, private or
 # link-local ones, so that a request it relays can't reach inside; networkPolicy.extraEgress adds others.
 {{- else if $lists }}
 # Listing the organisation's people (D731), the relay reaches the cluster's DNS and public addresses over HTTPS, for each
 # issuer's discovery and keys; nothing else.
+{{- else if $alerts }}
+# Posting each report to its alert address, the share host reaches the cluster's DNS and public addresses over HTTPS;
+# nothing else.
 {{- else }}
 # It reaches nothing.
 {{- end }}
@@ -43,7 +47,7 @@ spec:
           protocol: TCP
     {{- else }} []
     {{- end }}
-  {{- if or (eq $component "gateway") $lists }}
+  {{- if or (eq $component "gateway") $lists $alerts }}
   egress:
     - ports:
         - port: 53

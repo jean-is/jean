@@ -17,7 +17,7 @@
 {{- end -}}
 {{- end -}}
 
-{{/* A component's name: Jean's is the release's, the gateway's and the relay's beside it. (dict "root" . "component" "relay") */}}
+{{/* A component's name: Jean's is the release's, the others' beside it. (dict "root" . "component" "relay") */}}
 {{- define "jean.componentName" -}}
 {{- $full := include "jean.fullname" .root -}}
 {{- if eq .component "jean" -}}{{ $full }}{{- else -}}{{ printf "%s-%s" ($full | trunc 55 | trimSuffix "-") .component }}{{- end -}}
@@ -77,7 +77,7 @@ helm.sh/chart: {{ printf "%s-%s" .root.Chart.Name .root.Chart.Version | replace 
 {{- end -}}
 
 {{/*
-The pod's side of the security every pod takes, the same for the three: its own account without a token, no service
+The pod's side of the security every pod takes, the same for each: its own account without a token, no service
 links, never root, the runtime's seccomp profile. Outside OpenShift it names the component's user, group and volume
 group; on OpenShift it leaves them to the SCC, which picks a user in the namespace's range and group 0.
 (dict "root" . "component" "relay")
@@ -117,7 +117,7 @@ securityContext:
   {{- end }}
 {{- end -}}
 
-{{/* The container's side, the same for the three: no new privileges, no capability, a root filesystem it can't write. */}}
+{{/* The container's side, the same for each: no new privileges, no capability, a root filesystem it can't write. */}}
 {{- define "jean.containerSecurity" -}}
 securityContext:
   allowPrivilegeEscalation: false
@@ -131,7 +131,7 @@ securityContext:
 {{- end -}}
 
 {{/* What every container does the same: probes on /, and five seconds for its address to leave the Service before it stops,
-     waited by the command given: `sleep` in Jean's, Node in the gateway's and the relay's, which hold nothing else. */}}
+     waited by the command given: `sleep` in Jean's, Node in the others', which hold nothing else. */}}
 {{- define "jean.lifecycle" -}}
 startupProbe:
   httpGet:
@@ -182,11 +182,11 @@ topologySpreadConstraints:
 {{- end }}
 {{- end -}}
 
-{{/* Jean's policy.json: the values' policy, with the gateway's and the relay's addresses when the chart runs them and policy.urls names neither. */}}
+{{/* Jean's policy.json: the values' policy, with the gateway's, the relay's and the share host's addresses where the chart runs them and policy.urls doesn't name them. */}}
 {{- define "jean.policy" -}}
 {{- $policy := deepCopy (.Values.jean.policy | default dict) -}}
 {{- $urls := deepCopy (get $policy "urls" | default dict) -}}
-{{- range $component := list "gateway" "relay" -}}
+{{- range $component := list "gateway" "relay" "share" -}}
 {{- $origin := include "jean.origin" (dict "root" $ "component" $component) -}}
 {{- if and (index $.Values $component).enabled $origin (not (hasKey $urls $component)) -}}
 {{- $_ := set $urls $component (printf "%s/" $origin) -}}
@@ -216,10 +216,23 @@ topologySpreadConstraints:
 {{- toJson $config -}}
 {{- end -}}
 
-{{/* "true" when the relay takes each visitor's address from the router: proxied true, or auto and the chart exposes it. */}}
-{{- define "jean.relayProxied" -}}
-{{- $asked := toString .Values.relay.proxied -}}
-{{- if or (eq $asked "true") (and (eq $asked "auto") (include "jean.exposed" (dict "root" . "component" "relay"))) -}}true{{- end -}}
+{{/* HOST_CONFIG from the values, its origins Jean's address, and where a share's Continue opens, unless named. */}}
+{{- define "jean.shareConfig" -}}
+{{- $config := deepCopy (.Values.share.config | default dict) -}}
+{{- $origin := include "jean.origin" (dict "root" . "component" "jean") -}}
+{{- if and $origin (not (hasKey $config "origins")) -}}
+{{- $_ := set $config "origins" (list $origin) -}}
+{{- end -}}
+{{- if and $origin (not (hasKey $config "app")) -}}
+{{- $_ := set $config "app" (printf "%s/" $origin) -}}
+{{- end -}}
+{{- toJson $config -}}
+{{- end -}}
+
+{{/* "true" when the relay or the share host takes each visitor's address from the router: proxied true, or auto and the chart exposes it. (dict "root" . "component" "relay") */}}
+{{- define "jean.proxied" -}}
+{{- $asked := toString (index .root.Values .component).proxied -}}
+{{- if or (eq $asked "true") (and (eq $asked "auto") (include "jean.exposed" .)) -}}true{{- end -}}
 {{- end -}}
 
 {{/* One of route.enabled and ingress.enabled: OpenShift turns an Ingress into a Route of its own, which would answer the same host. */}}
