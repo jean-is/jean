@@ -298,6 +298,19 @@ test('a schema asked for on the deck on show is made as a picture first, then pu
   await beside.locator('.review').getByRole('button', { name: 'Accept all' }).click()
   await expect.poll(async () => (await files(page))[0]).toMatchObject({ theirs: null })
   expect((await files(page))[0].page).toContain(`![Le cycle de l'eau](<../${place}>)`)
+  // French as French writes it: the space before a colon never starts a line, in the answer and on the slide; words typed on
+  // go back into the file as written, that space a space.
+  expect(await page.locator('.msg-jean').last().locator('p', { hasText: 'Voilà' }).textContent()).toBe('Voilà\u00a0:')
+  await beside.locator('.deck-stage').press('End')
+  await beside.locator('.deck-stage').press('ArrowLeft')
+  const heading = slide.getByRole('heading')
+  expect(await heading.textContent()).toBe('L\'eau ne se perd pas\u00a0: elle voyage')
+  await heading.dblclick()
+  await heading.evaluate((words) => { const end = document.createRange(); end.selectNodeContents(words); end.collapse(false); getSelection()?.removeAllRanges(); getSelection()?.addRange(end) })
+  await page.keyboard.type('.')
+  await page.keyboard.press('Enter')
+  await expect.poll(async () => (await files(page))[0].page).toContain('\n## L\'eau ne se perd pas : elle voyage.\n')
+  await expect.poll(() => heading.textContent()).toBe('L\'eau ne se perd pas\u00a0: elle voyage.')
 
   // Saved: its file holds the picture itself, twice, and no place in the project.
   await page.evaluate(() => scrollTo(0, 0))

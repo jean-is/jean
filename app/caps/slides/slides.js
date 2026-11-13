@@ -15,7 +15,7 @@ import { createDeck, labelOf, parseDeck } from '@codename/deck'
 import { Marked } from 'marked'
 import { app, theme, notify } from '../../ui/state.js'
 import { copyDrawing, pictureOf } from '../../ui/save.js'
-import { drawn } from '../../ui/markdown.js'
+import { drawn, unbroken } from '../../ui/markdown.js'
 import { drawnActions, register, unlock } from '../../ui/caps.js'
 import { icon } from '../../ui/icons.js'
 import { icons } from '../../ui/menu-icons.js'
@@ -39,10 +39,10 @@ await Promise.all([useStrings('slides'), useStrings('interactive'), styleSheet(n
 /** The deck on show beside the conversation, which the brain hears of, its slide, the words pointed at and the layouts its kit adds, changes or turns off. */
 export const shown = signal(/** @type {{ path: string, name: string, source: string, at: number, count: number, part: string, layouts: string } | null} */ (null))
 
-/** A slide's Markdown read as an answer's is, emphasis beside the punctuation of Chinese, Japanese and Korean too, and a comment still being written not shown (./edit.js). */
+/** A slide's Markdown read as an answer's is, emphasis beside the punctuation of Chinese, Japanese and Korean too, a space before French punctuation unbroken (ui/markdown.js), and a comment still being written not shown (./edit.js). */
 const reader = new Marked({ gfm: true }, cjk)
 /** @param {string} markdown */
-export const lex = (markdown) => reader.lexer(withoutOpenComment(markdown))
+export const lex = (markdown) => ((tokens) => (reader.walkTokens(tokens, (token) => { if (token.type === 'text' && !token.tokens) token.text = unbroken(token.text) }), tokens))(reader.lexer(withoutOpenComment(markdown)))
 /** The bar's words, deck's names for them (its scheme's and PowerPoint's buttons aren't shown: the room says light or dark, the pane's button the rest). */
 const LAYOUT = icon(svg`<rect x="3.5" y="5.5" width="17" height="13" rx="2.5"/><path d="M3.5 9.5h17M12 9.5v9"/>`)
 
@@ -165,6 +165,8 @@ class AppSlides extends HTMLElement {
       for (const kind of ['pointerdown', 'keydown']) root.addEventListener(kind, () => { this.paged = true })
       root.querySelector('.deck-stage')?.addEventListener('click', (event) => this.pointed(event))
       root.querySelector('.deck-where')?.setAttribute('role', 'status')
+      // Words double-clicked to type on, as written rather than unbroken as shown (lex), so that a double click alone changes nothing; unless they hold a no-break space of their own.
+      root.addEventListener('dblclick', (event) => ((words) => { const [from, to] = String(words?.getAttribute('data-edit')).split('-').map(Number); if (words && this.file && !this.file.theirs && !document.fullscreenElement && !this.view?.source.slice(from, to).includes('\u00a0')) for (const walk = document.createTreeWalker(words, NodeFilter.SHOW_TEXT); walk.nextNode();) walk.currentNode.nodeValue = String(walk.currentNode.nodeValue).replace(/\u00a0(?=[:;!?»])|(?<=«)\u00a0/g, ' ') })(/** @type {Element} */ (event.target).closest('[data-edit]')), true)
       // deck's bar after its paging: full screen, by Play, the presenter's view, all slides, Jean's own buttons, then the Markdown;
       // a button deck leaves out (no full screen, a deck not to change) is an empty fragment.
       const bar = /** @type {HTMLElement} */ (root.querySelector('.deck-bar')), act = (/** @type {string} */ name) => /** @type {HTMLElement | DocumentFragment} */ (bar.querySelector(`[data-act='${name}']`) ?? new DocumentFragment()), present = act('present')
@@ -175,8 +177,8 @@ class AppSlides extends HTMLElement {
     this.paint()
   }
 
-  /** Its slides in the deck's language, and what is around them, Jean's, in the person's. */
-  speak() { this.querySelector('.slides-deck')?.setAttribute('lang', locale.peek()); for (const canvas of this.querySelectorAll('.deck-canvas')) canvas.setAttribute('lang', String(parseDeck(this.source).settings.lang ?? languageOf(this.source, locale.peek()))) }
+  /** Its slides in the deck's language, and what is around them, Jean's, in the person's; the speaker's notes unbroken as its slides are. */
+  speak() { this.querySelector('.slides-deck')?.setAttribute('lang', locale.peek()); for (const canvas of this.querySelectorAll('.deck-canvas')) canvas.setAttribute('lang', String(parseDeck(this.source).settings.lang ?? languageOf(this.source, locale.peek()))); for (const notes of this.querySelectorAll('.deck-notes')) notes.textContent = unbroken(notes.textContent ?? '') }
 
   /** Jean's buttons, and the bar over Jean's version: each slide it changes, adds or takes away, accepted or rejected. */
   paint() {

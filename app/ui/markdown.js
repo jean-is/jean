@@ -51,11 +51,11 @@ const AREA = /^:\s*[\d.]+\s*,\s*[\d.]+\s*,\s*[\d.]+\s*,\s*[\d.]+\s*$/
 /** "[1]" or "[1, 3]" → source chips; "[1: "…"]" or "[1, p. 3]" opens the file there (D481); anything else stays text. @param {string} text */
 function cite(text) {
   const sources = cited
-  if (!sources?.size || !/\[\d/.test(text)) return text
+  if (!sources?.size || !/\[\d/.test(text)) return unbroken(text)
   return text.split(/(\[\d+(?:,\s*\d+)*(?:,\s*p\.\s*\d+)?(?::[^\]]+)?\])/).map((part) => {
     const [, list, at] = /^\[([\d,\s]+?)((?:,\s*p\.|:)[^\]]*)?\]$/.exec(part) ?? []
     const numbers = list?.split(/,\s*/).map(Number)
-    if (!numbers?.every((n) => sources.has(n)) || (at && numbers.length > 1)) return part
+    if (!numbers?.every((n) => sources.has(n)) || (at && numbers.length > 1)) return unbroken(part)
     return numbers.map((n) => {
       const source = /** @type {NonNullable<ReturnType<Sources['get']>>} */ (sources.get(n))
       return source.url ? html`<a class="cite" href=${source.url} target="_blank" rel="noopener noreferrer" aria-label=${`${n} · ${source.label}`}>${n}<span class="cite-tip">${source.icon ? html`<img src=${source.icon} alt="" loading="lazy">` : nothing}${source.site}<span dir="auto">${source.name}</span></span></a>`
@@ -195,11 +195,12 @@ const open = (token) => writing && !CLOSED.test(token.raw)
 const opening = (token) => token.codeBlockStyle !== 'indented' && !token.raw.includes('\n')
 
 /** @param {string} href */
-function safeHref(href) {
-  try { return ['http:', 'https:', 'mailto:'].includes(new URL(href).protocol) } catch { return false }
-}
+const safeHref = (href) => { try { return ['http:', 'https:', 'mailto:'].includes(new URL(href).protocol) } catch { return false } }
 
 const ENTITIES = /** @type {Record<string, string>} */ ({ '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#39;': "'", '&nbsp;': ' ' })
 
 /** @param {string} text */
 const decode = (text) => text.replace(/&(amp|lt|gt|quot|#39|nbsp);/g, (entity) => ENTITIES[entity])
+
+/** French's space before : ; ! ? » and after «, if there, kept on its line. @param {string} text */
+export const unbroken = (text) => text.replace(/ (?=[:;!?»])|(?<=«) /g, '\u00a0')
