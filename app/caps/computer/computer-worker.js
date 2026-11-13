@@ -516,52 +516,104 @@ async function npm(args, ctx, computer) {
   if (!/^(install|i|add)$/.test(verb ?? '')) return exit('', "npm: only install, init, ls and run work here; a package's own programs (create-…, npx) don't run.\n", 1)
   const registry = (computer.registries.npm || 'https://registry.npmjs.org/').replace(/\/?$/, '/')
   const wanted = specs.length ? specs.map((spec) => /^(@?[^@]+)(?:@(.+))?$/.exec(spec)?.slice(1) ?? [spec]) : Object.entries(manifest.dependencies ?? {})
-  const queue = wanted.map(([name, range]) => [name, range || 'latest'])
-  /** @type {Record<string, string>} */
-  const added = {}
-  const seen = new Set()
-  while (queue.length) {
-    const [name, range, any] = /** @type {[string, string, boolean?]} */ (queue.shift())
-    if (seen.has(`${name}@${range}`)) continue
-    seen.add(`${name}@${range}`)
-    const at = `${cwd}/node_modules/${name}`
-    const have = (await fs.exists(`${at}/package.json`)) ? JSON.parse(await fs.readFile(`${at}/package.json`)) : null
-    // There already, and so is what it needs, in any version, unless an install stopped midway.
-    if (have && (any || range === 'latest' || satisfies(have.version, range))) {
-      queue.push(...Object.entries(have.dependencies ?? {}).map(([dependency, wants]) => [dependency, wants, true]))
-      continue
-    }
-    const meta = await (await bridged(computer, `${registry}${name.replace('/', '%2f')}`)).json()
-    if (!meta?.versions) throw new Error(`${name} isn't in the registry`)
-    const tagged = meta['dist-tags']?.[range]
-    const version = tagged ?? Object.keys(meta.versions).filter((each) => satisfies(each, range)).sort((a, b) => (satisfies(a, `>${b}`) ? 1 : -1)).at(-1)
-    if (!version) throw new Error(`No version of ${name} matches ${range}`)
-    const info = meta.versions[version]
-    const scripts = Object.keys(info.scripts ?? {}).filter((script) => /^(pre|post)?install$/.test(script))
-    if (scripts.length) throw new Error(`${name}@${version} runs a script as it installs (${scripts.join(', ')}), which can't run here`)
-    const tgz = new Uint8Array(await (await bridged(computer, info.dist.tarball)).arrayBuffer())
-    const [, algorithm, expected] = /^sha(512|256|1)-(.+)$/.exec(info.dist.integrity ?? '') ?? []
-    if (algorithm && crypto.subtle) {
-      const digest = btoa(String.fromCharCode(...new Uint8Array(await crypto.subtle.digest(`SHA-${algorithm}`, tgz))))
-      if (digest !== expected) throw new Error(`${name}@${version} isn't what the registry says it is`)
-    }
-    await fs.rm(at, { recursive: true, force: true })
-    for (const entry of untar(engines.shell.zip.gunzipSync(tgz))) {
-      const path = `${at}/${entry.path.replace(/^[^/]+\//, '')}`
-      if (entry.dir) continue
-      await fs.mkdir(path.slice(0, path.lastIndexOf('/')), { recursive: true })
-      await fs.writeFile(path, entry.bytes)
-    }
-    added[name] = version
-    for (const [dependency, wants] of Object.entries(info.dependencies ?? {})) queue.push([dependency, String(wants)])
+  // Sixteen requests at once for metadata, as npm and pnpm make them, and sixteen for tarballs, which
+  // never hold up the metadata that decides the next level. Each name's metadata is asked for once, in
+  // npm's short form; each tarball as soon as its version is chosen.
+  const [gate, downloads] = [limiter(16), limiter(16)]
+  /** @type {Map<string, Promise<any>>} */
+  const metas = new Map()
+  const metaOf = (/** @type {string} */ name) => metas.get(name) ?? metas.set(name, gate(async () => (await bridged(computer, `${registry}${name.replace('/', '%2f')}`, { headers: { accept: 'application/vnd.npm.install-v1+json; q=1.0, application/json; q=0.8, */*' } })).json())).get(name)
+  /** What each folder of node_modules holds: a package from an earlier install (old), or from this one. @type {Map<string, { at: string, version: string, dependencies?: Record<string, string>, old?: boolean } | null>} */
+  const held = new Map()
+  const holds = async (/** @type {string} */ at) => held.get(at) ?? held.set(at, (await fs.exists(`${at}/package.json`)) ? { ...JSON.parse(await fs.readFile(`${at}/package.json`)), at, old: true } : null).get(at)
+  // Where node looks from the package that needs one: its own node_modules, then each one above it;
+  // what it finds there, and whether that will do.
+  const look = async (/** @type {{ from: string, name: string, range: string, any: boolean }} */ { from, name, range, any }) => {
+    const chain = from.slice(cwd.length).split('/node_modules/').map((_, i, parts) => `${cwd}${parts.slice(0, parts.length - i).join('/node_modules/')}/node_modules/${name}`)
+    let found = null
+    for (const at of chain) if ((found = await holds(at))) break
+    return { chain, found, ok: Boolean(found && (any || range === 'latest' || satisfies(found.version, range))) }
   }
+  const needs = (/** @type {string} */ from, /** @type {Record<string, string>} */ dependencies = {}, any = false) => Object.entries(dependencies).map(([name, range]) => ({ from, name, range: String(range), any }))
+  /** The packages this install writes, by folder. @type {Map<string, string>} */
+  const added = new Map()
+  const writes = /** @type {Promise<void>[]} */ ([])
+  const visited = new Set()
+  let level = wanted.map(([name, range]) => ({ from: cwd, name, range: range || 'latest', any: false }))
+  // A level at a time, so where a package goes never depends on which answer came first.
+  let failed = await (async () => {
+    while (level.length) {
+      const next = []
+      // What this level lacks, asked for at once: nothing, when node_modules has it all.
+      for (const edge of level) if (!(await look(edge)).ok) metaOf(edge.name).catch(() => {})
+      for (const edge of level) {
+        const { from, name, range } = edge
+        const { chain, found, ok } = await look(edge)
+        // There already, and so is what it needs, in any version.
+        if (found && ok) {
+          if (found.old && !visited.has(found.at) && visited.add(found.at)) next.push(...needs(found.at, found.dependencies, true))
+          continue
+        }
+        // At the top of node_modules, unless another version is there: then in its dependent's own.
+        const at = found ? chain[0] : /** @type {string} */ (chain.at(-1))
+        if (found?.at === at && !found.old) continue
+        const meta = await metaOf(name)
+        if (!meta?.versions) throw new Error(`${name} isn't in the registry`)
+        const version = meta['dist-tags']?.[range] ?? Object.keys(meta.versions).filter((each) => satisfies(each, range)).sort((a, b) => (satisfies(a, `>${b}`) ? 1 : -1)).at(-1)
+        if (!version) throw new Error(`No version of ${name} matches ${range}`)
+        const info = meta.versions[version]
+        if (info.hasInstallScript || Object.keys(info.scripts ?? {}).some((script) => /^(pre|post)?install$/.test(script))) throw new Error(`${name}@${version} runs a script as it installs, which can't run here`)
+        held.set(at, { at, version, dependencies: info.dependencies })
+        added.set(at, version)
+        await fs.rm(at, { recursive: true, force: true })
+        writes.push(downloads(() => bridged(computer, info.dist.tarball)).then(async (response) => unpack(fs, at, new Uint8Array(await response.arrayBuffer()), `${name}@${version}`, info.dist.integrity)))
+        next.push(...needs(at, info.dependencies))
+      }
+      level = next
+    }
+  })().catch((error) => error)
+  // Every download ends before npm answers, so nothing is written after it.
+  for (const result of await Promise.allSettled(writes)) if (result.status === 'rejected') failed ??= result.reason
+  if (failed) throw failed
+  const top = (/** @type {string} */ name) => added.get(`${cwd}/node_modules/${name}`)
   if (specs.length) {
-    manifest.dependencies = { ...manifest.dependencies, ...Object.fromEntries(wanted.map(([name]) => [name, added[name] ? `^${added[name]}` : manifest.dependencies?.[name] ?? '*'])) }
+    manifest.dependencies = { ...manifest.dependencies, ...Object.fromEntries(wanted.map(([name]) => [name, top(name) ? `^${top(name)}` : manifest.dependencies?.[name] ?? '*'])) }
     await fs.writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`)
   }
-  const count = Object.keys(added).length
-  if (!count) return exit('up to date\n', '', 0)
-  return exit(`added ${count} package${count === 1 ? '' : 's'}\n${lines(Object.entries(added).map(([name, version]) => `${name}@${version}`))}`, '', 0)
+  if (!added.size) return exit('up to date\n', '', 0)
+  return exit(`added ${added.size} package${added.size === 1 ? '' : 's'}\n${lines([...added].map(([at, version]) => `${at.slice(at.lastIndexOf('/node_modules/') + 14)}@${version}`))}`, '', 0)
+}
+
+/**
+ * A package's tarball, checked against the registry's integrity, into its folder, its package.json
+ * last, so a package cut short is fetched again by the next install.
+ * @param {IFileSystem} fs @param {string} at @param {Uint8Array<ArrayBuffer>} tgz @param {string} what @param {string} [integrity]
+ */
+async function unpack(fs, at, tgz, what, integrity = '') {
+  const [, algorithm, expected] = /^sha(512|256|1)-(.+)$/.exec(integrity) ?? []
+  if (algorithm && crypto.subtle && btoa(String.fromCharCode(...new Uint8Array(await crypto.subtle.digest(`SHA-${algorithm}`, tgz)))) !== expected) throw new Error(`${what} isn't what the registry says it is`)
+  const tar = new Uint8Array(await new Response(new Blob([tgz]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer())
+  const last = (/** @type {{ path: string }} */ entry) => Number(/^[^/]+\/package\.json$/.test(entry.path))
+  for (const entry of [...untar(tar)].filter((entry) => !entry.dir).sort((a, b) => last(a) - last(b))) {
+    const path = `${at}/${entry.path.replace(/^[^/]+\//, '')}`
+    await fs.mkdir(dirOf(path), { recursive: true })
+    await fs.writeFile(path, entry.bytes)
+  }
+}
+
+/** Runs what it is given at most `size` at a time, the others in turn. @param {number} size */
+function limiter(size) {
+  let busy = 0
+  /** @type {(() => void)[]} */
+  const waiting = []
+  // A job that ends hands its place to the next one waiting, or frees it.
+  const done = () => (waiting.length ? waiting.shift()?.() : busy--)
+  /** @template T @param {() => Promise<T>} job @returns {Promise<T>} */
+  return async (job) => {
+    if (busy < size) busy++
+    else await new Promise((resolve) => waiting.push(() => resolve(undefined)))
+    return job().finally(done)
+  }
 }
 
 // ─── Packages, for node ──────────────────────────────────────────────────────

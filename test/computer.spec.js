@@ -315,15 +315,28 @@ test('npm install from the registry Settings name, then node requires and import
     pack('greet', '1.2.0', { 'package.json': JSON.stringify({ main: 'lib/index.js', dependencies: { shout: '>= 2.0.0 < 3' } }), 'lib/index.js': "const shout = require('shout')\nmodule.exports = (name) => shout('hello ' + name)\n" }),
     pack('shout', '2.1.0', { 'index.js': "module.exports = (text) => text.toUpperCase() + '!'\n" }),
     pack('esm-hi', '3.0.0', { 'package.json': JSON.stringify({ type: 'module', exports: { '.': { import: './hi.js' } } }), 'hi.js': "export const hi = () => 'hi from a module'\n" }),
+    // Another major of shout, which old-shout needs while greet keeps 2.x: beside it, in its own node_modules.
+    pack('shout', '1.4.0', { 'index.js': "module.exports = (text) => text + '?'\n" }),
+    pack('old-shout', '1.0.0', { 'package.json': JSON.stringify({ dependencies: { shout: '^1.0.0' } }), 'index.js': "module.exports = require('shout')\n" }),
+    pack('builds', '1.0.0', { 'package.json': JSON.stringify({ scripts: { postinstall: 'node build.js' } }) }),
   ]
   const cors = { 'access-control-allow-origin': '*', 'access-control-allow-headers': '*' }
-  await page.route('https://npm.example.com/**', (route) => {
+  // Each answer a little late, to see requests made side by side; metadata in npm's short form when
+  // it is asked for, which names no scripts, only whether one runs as the package installs.
+  const flying = { now: 0, most: 0, short: 0 }
+  await page.route('https://npm.example.com/**', async (route) => {
     const url = route.request().url()
     if (route.request().method() === 'OPTIONS') return route.fulfill({ status: 204, headers: cors })
+    flying.most = Math.max(flying.most, ++flying.now)
+    await new Promise((resolve) => setTimeout(resolve, 100))
+    flying.now--
     const found = packages.find((each) => url === each.tarball)
     if (found) return route.fulfill({ status: 200, headers: cors, body: found.tgz })
-    const meta = packages.find((each) => url === `https://npm.example.com/${each.meta.name}`)?.meta
-    return route.fulfill({ status: meta ? 200 : 404, headers: { ...cors, 'content-type': 'application/json' }, body: JSON.stringify(meta ?? { error: 'Not found' }) })
+    const metas = packages.filter((each) => url === `https://npm.example.com/${each.meta.name}`).map((each) => each.meta)
+    const short = /application\/vnd\.npm\.install-v1\+json/.test(route.request().headers().accept ?? '')
+    flying.short += Number(short)
+    const versions = Object.fromEntries(metas.flatMap((meta) => Object.entries(meta.versions)).map(([version, { scripts, ...info }]) => [version, short ? { ...info, hasInstallScript: Boolean(scripts?.postinstall) } : { ...info, scripts }]))
+    return route.fulfill({ status: metas.length ? 200 : 404, headers: { ...cors, 'content-type': 'application/json' }, body: JSON.stringify(metas.length ? { ...metas[0], versions } : { error: 'Not found' }) })
   })
   await start(page)
   await connectFakeBrain(page)
@@ -337,6 +350,14 @@ test('npm install from the registry Settings name, then node requires and import
   await expect(answer).toContainText('"greet": "^1.2.0"')
   // package.json is the user's, kept; node_modules stays in the computer.
   await expect(answer).toContainText('Kept in /workspace: package.json.')
+  // Side by side, the names asked for and then their tarballs, in the short form.
+  expect(flying.most).toBeGreaterThan(1)
+  expect(flying.short).toBe(3)
+
+  answer = await command(page, `$ npm install old-shout && ls node_modules/old-shout/node_modules && node -e "console.log(require('greet')('a'), require('old-shout')('b'))" ; npm install builds`)
+  await expect(answer).toContainText('added 2 packages\nold-shout@1.0.0\nshout@1.4.0')
+  await expect(answer).toContainText('HELLO A! b?')
+  await expect(answer).toContainText("builds@1.0.0 runs a script as it installs, which can't run here")
 
   answer = await command(page, `$ echo "import { hi } from 'esm-hi'; console.log(hi())" > hi.mjs && node hi.mjs`)
   await expect(answer).toContainText('hi from a module')
