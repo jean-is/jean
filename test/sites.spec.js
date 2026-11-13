@@ -43,7 +43,7 @@ async function make(page) {
   return page.locator('.msg-jean .prose').last()
 }
 
-test('a site made with its skill is checked from its files and as its pages show, opens beside the task at a phone’s width, follows its links, is a creation, is changed until clean and leaves as a zip (D720)', async ({ page }) => {
+test('a site made with its skill is checked from its files and as its pages show, opens beside the task at a phone’s width, follows its links, is a creation, is changed until clean and leaves as one web page or a zip (D720)', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   const answer = await make(page)
@@ -78,14 +78,20 @@ test('a site made with its skill is checked from its files and as its pages show
   await answered(page, 3)
   await expect(page.locator('.msg-jean .prose').last()).toContainText('nothing to fix')
 
-  // It leaves as a zip of its files, from the button just before Close: its one way out where the browser sends nothing to an app, the button itself;
-  // where it does (WebKit), a row of its menu, under Send to an app.
-  const download = page.waitForEvent('download'), out = pane.locator('.pane-head .icon-group > [popovertarget^="out-"]')
-  if (await out.count()) {
-    await out.click()
-    await expect(pane.locator('.out-menu button')).toHaveText(['Send to an app…', 'Site as a zip'])
-    await pane.locator('.out-menu').getByRole('button', { name: 'Site as a zip' }).click()
-  } else await pane.getByRole('button', { name: 'Download Atelier Nord' }).click()
+  // It leaves from the menu of the button just before Close: sent to an app where the browser sends files (WebKit); downloaded as one web
+  // page that holds every page and plays, which any browser opens, or as a zip of its files.
+  const out = pane.locator('.pane-head .icon-group > [popovertarget^="out-"]'), menu = pane.locator('.out-menu')
+  await out.click()
+  await expect(menu.locator('button:not(:has-text("Send to an app…"))')).toHaveText(['Web page', 'Site as a zip'])
+  const one = page.waitForEvent('download')
+  await menu.getByRole('button', { name: 'Web page' }).click()
+  expect(nameOf(await one)).toBe('Atelier Nord.html')
+  const played = await readFile(await (await one).path(), 'utf8')
+  for (const name of ['index.html', 'prices.html']) expect(played).toContain(`"${name}":`)
+  expect(played).not.toContain('<link rel="stylesheet"')
+  const download = page.waitForEvent('download')
+  await out.click()
+  await menu.getByRole('button', { name: 'Site as a zip' }).click()
   expect(nameOf(await download)).toBe('Atelier Nord.zip')
   // A zip names its files in the clear, each in its local header and its central directory.
   const zip = await readFile(await (await download).path())

@@ -159,19 +159,20 @@ export function folderKind(kind) {
   const open = (one) => import('../../ui/preview.js').then(({ preview }) => preview({ uri: one.path, name: one.record.name, title: one.record.name, mimeType: 'text/html' }))
   /** Shown beside the task as it is now: where a pane shows it and its kind's view takes it anew, in place, what it was doing kept; else opened, unless it only may be given anew. @param {One} one @param {boolean} [only] */
   const show = async (one, only) => { const made = kind.again && await given(one.path); if (!(made && kind.again?.(...made)) && !only) await open(one) }
-  /** Its files as a zip. @param {{ uri: string }} file @returns {import('../../ui/out.js').Ways['files']} */
-  const zip = (file) => [{ id: '', glyph: icons.download, label: t(ZIP), run: async () => {
-    const one = await load(file.uri)
-    if (one) save(new Blob([/** @type {BlobPart} */ (await writeZip([...one.files].map(([name, bytes]) => ({ name, bytes }))))], { type: 'application/zip' }), `${one.record.name}.zip`)
-  } }]
-  /** One as a page on its own that plays (./file.js), its pages put together: what a link or another app is given, as bytes. @param {string} path */
+  /** One as a page on its own that plays (./file.js), its pages put together: what a link, another app or a download is given, as bytes. @param {string} path */
   const alone = async (path) => { const one = await load(path), pages = /** @type {Record<string, string>} */ ({}); for (const page of [...one?.files.keys() ?? []].filter((file) => file.endsWith('.html'))) pages[page] = await pageOf(/** @type {One} */ (one).files, page); return new TextEncoder().encode(played(pages)) }
+  /** Its downloads: that page, which any browser opens, and its files as a zip. @param {{ uri: string, name: string }} file @returns {import('../../ui/out.js').Ways['files']} */
+  const downloads = (file) => [{ id: 'html', glyph: icons.download, label: t('out.webPage'), run: async () => save(new Blob([/** @type {BlobPart} */ (await alone(file.uri))], { type: 'text/html' }), `${file.name}.html`) },
+    { id: '', glyph: icons.folder, label: t(ZIP), run: async () => {
+      const one = await load(file.uri)
+      if (one) save(new Blob([/** @type {BlobPart} */ (await writeZip([...one.files].map(([name, bytes]) => ({ name, bytes }))))], { type: 'application/zip' }), `${one.record.name}.zip`)
+    } }]
   /**
-   * What its pane can do with it (ui/out.js): shared by a link, as a file of the project that plays, or sent to an app as that page, and saved as a zip of its files.
+   * What its pane can do with it (ui/out.js): shared by a link, as a file of the project that plays, sent to an app as that page, or downloaded as it or as a zip of its files.
    * @param {{ uri: string, name: string }} file @returns {import('../../ui/out.js').Ways}
    */
   const ways = (file) => ({ share: async () => ({ text: (await recordOf(file.uri))?.text ?? '', files: [await addFile(app.fs, { projectDir: app.projectDir, name: `${file.name}.html`, mimeType: 'text/html', bytes: await alone(file.uri), pages: [], by: app.deviceId })] }),
-    send: { file: `${file.name}.html`, type: 'text/html', make: async () => ({ files: [new File([await alone(file.uri)], `${file.name}.html`, { type: 'text/html' })] }) }, files: zip(file) })
+    send: { file: `${file.name}.html`, type: 'text/html', make: async () => ({ files: [new File([await alone(file.uri)], `${file.name}.html`, { type: 'text/html' })] }) }, files: downloads(file) })
 
   /**
    * A file of a call: its text, or a file of the task by its name or place, one the user shared or Jean made (a picture, a chart), else

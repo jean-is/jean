@@ -5,8 +5,10 @@
 // the board's ground, moved, zoomed and walked with the keys along its flow, its level setting it at 100%; a page pressed shows in Try it, the one frame a person presses in, in the shape it was made for,
 // a tablet's on offer too, its pages in a strip; its bar goes back and starts over, a form sends its choice to the next page in the address, and
 // Build it asks for the app it shows. In Arabic and Japanese.
+import { createHash } from 'node:crypto'
+import { readFile } from 'node:fs/promises'
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, SHARE_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, answered, nameOf, SHARE_URL } from './helpers.js'
 
 test.setTimeout(120_000)
 
@@ -205,7 +207,7 @@ test('the brain’s later change waits as its version, marked on the board and a
   await expect(view.getByRole('button', { name: 'Fit' })).toBeInViewport()
 })
 
-test('a prototype’s pane takes it out as any creation’s does: shared by a link as one page that plays, its links and forms leading on in place, their choices kept; or as a zip (D683)', async ({ page }) => {
+test('a prototype’s pane takes it out as any creation’s does: shared by a link as one page that plays, its links and forms leading on in place, their choices kept; downloaded as that page, or as a zip (D683)', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await make(page)
@@ -224,6 +226,12 @@ test('a prototype’s pane takes it out as any creation’s does: shared by a li
   expect(item).toMatchObject({ text: 'Salon · Services', files: [{ name: 'Salon.html', mimeType: 'text/html', uri: expect.stringMatching(/^files\/sha256-[0-9a-f]+\.html$/) }] })
   await page.keyboard.press('Escape')
   await expect(page.locator('app-share-dialog dialog[open]')).toHaveCount(0)
+  // Downloaded as a web page, it is that very page, which plays below.
+  await pane.locator('.pane-head .icon-group > [popovertarget^="out-"]').click()
+  const download = page.waitForEvent('download')
+  await menu.getByRole('button', { name: 'Web page' }).click()
+  expect(nameOf(await download)).toBe('Salon.html')
+  expect(`files/sha256-${createHash('sha256').update(await readFile(await (await download).path())).digest('hex')}.html`).toBe(item.files[0].uri)
   // As whoever has the link sees it, a file in a frame with nothing to serve its other pages: it plays.
   await page.evaluate(async (file) => (await import('/ui/preview.js')).preview({ ...file, title: file.name }, true), item.files[0])
   const one = page.locator('app-preview iframe.view-frame').contentFrame()
