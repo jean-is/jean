@@ -8,7 +8,7 @@ import { register } from '../../ui/caps.js'
 import { weightsHost } from '../../ui/state.js'
 import { modelWorker, downloading, handheld } from '../../ui/model.js'
 
-/** @import { Question } from '../../core/decide.js' */
+/** @import { Question, Answer } from '../../core/decide.js' */
 /** @import { Download } from '../brain-local/brain-local.js' */
 
 export const KEV = Object.freeze({ model: 'jean-is/kev-0.6b-reflexes-ONNX', bytes: 3.45e8 })
@@ -17,9 +17,15 @@ export const download = signal(/** @type {Download} */ ({ state: 'idle' }))
 const worker = modelWorker(new URL('./kev-worker.js', import.meta.url), 'Reflexes stopped')
 
 // The reflexes' lines in the browser console start with ◈, a flowchart's decision: → is the
-// state and questions going in, ← the answers coming out. 1 is the first decision.
-const trace = (/** @type {string} */ label, /** @type {unknown[]} */ ...details) => console.info(`◈ ${label}`, ...details)
+// state and the questions' names going in, ← the answers coming out. 1 is the first decision.
+// Each is words to read, never an Object to unfold: a text quoted (its line breaks as \n, a long
+// one clipped), a yes as how likely it is, a choice with how likely it is, a score out of its top.
+const trace = (/** @type {string} */ line) => console.info(`◈ ${line}`)
 const since = (/** @type {number} */ began) => `(${Math.round(performance.now() - began)} ms)`
+/** A state's fields each named, each value as JSON. @param {unknown} value @returns {string} */
+const words = (value, top = true, text = JSON.stringify(value) ?? String(value)) => (top && value && typeof value === 'object' ? Object.entries(value).map(([key, item]) => `${key}: ${words(item, false)}`).join(', ') : text.length > 200 ? `${text.slice(0, 200)}…` : text)
+/** @param {Answer} a */
+const said = (a) => (a.type === 'noul' ? `yes ${Math.round(a.noul * 100)}%` : a.type === 'choice' ? `${a.choice} ${Math.round(a.probabilities[a.choice] * 100)}%` : `${a.score.toFixed(1)}/${Object.keys(a.probabilities).length - 1}`)
 let decisions = 0
 
 /** WebGPU with fp16 shaders runs the q4f16 graph; everything else the q4 one on WebAssembly. */
@@ -43,20 +49,18 @@ export async function isDownloaded() {
 /**
  * Asks Kev; answers in the Decisions API shape.
  * @param {unknown} state @param {Record<string, Question>} questions
- * @returns {Promise<Record<string, import('../../core/decide.js').Answer>>}
+ * @returns {Promise<Record<string, Answer>>}
  */
 async function decide(state, questions) {
   const id = ++decisions
   const began = performance.now()
-  trace(`${id} →`, state, questions)
-  try {
-    const { answers } = await worker.call({ type: 'decide', state, questions })
-    trace(`${id} ←`, answers, since(began))
-    return answers
-  } catch (error) {
-    trace(`${id} ←`, error instanceof Error ? error.message : error, since(began))
+  trace(`${id} → ${words(state)} · ${Object.keys(questions).join(', ')}`)
+  const { answers } = await worker.call({ type: 'decide', state, questions }).catch((error) => {
+    trace(`${id} ← ${error instanceof Error ? error.message : error} ${since(began)}`)
     throw error
-  }
+  })
+  trace(`${id} ← ${Object.entries(answers).map(([name, answer]) => `${name}: ${said(answer)}`).join(', ')} ${since(began)}`)
+  return answers
 }
 
 /** Downloads (first time) and loads Kev; reflexes are on once this resolves. */
@@ -68,7 +72,7 @@ export async function prepare() {
   try {
     const { device, dtype } = await backend()
     await worker.call({ type: 'load', host: weightsHost(), model: KEV.model, device, dtype }, { onMessage: (message) => { download.value = downloading(message, KEV.bytes) } })
-    trace('ready', device, since(began))
+    trace(`ready on ${device} ${since(began)}`)
     download.value = { state: 'ready' }
     register({ ...capability, decide, ready: true })
   } catch (error) {
