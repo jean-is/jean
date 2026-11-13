@@ -522,7 +522,7 @@ async function npm(args, ctx, computer) {
   const [gate, downloads] = [limiter(16), limiter(16)]
   /** @type {Map<string, Promise<any>>} */
   const metas = new Map()
-  const metaOf = (/** @type {string} */ name) => metas.get(name) ?? metas.set(name, gate(async () => (await bridged(computer, `${registry}${name.replace('/', '%2f')}`, { headers: { accept: 'application/vnd.npm.install-v1+json; q=1.0, application/json; q=0.8, */*' } })).json())).get(name)
+  const metaOf = (/** @type {string} */ name) => /** @type {Promise<any>} */ (metas.get(name) ?? metas.set(name, gate(async () => (await bridged(computer, `${registry}${name.replace('/', '%2f')}`, { headers: { accept: 'application/vnd.npm.install-v1+json; q=1.0, application/json; q=0.8, */*' } })).json())).get(name))
   /** What each folder of node_modules holds: a package from an earlier install (old), or from this one. @type {Map<string, { at: string, version: string, dependencies?: Record<string, string>, old?: boolean } | null>} */
   const held = new Map()
   const holds = async (/** @type {string} */ at) => held.get(at) ?? held.set(at, (await fs.exists(`${at}/package.json`)) ? { ...JSON.parse(await fs.readFile(`${at}/package.json`)), at, old: true } : null).get(at)
