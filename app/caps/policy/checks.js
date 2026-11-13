@@ -76,6 +76,8 @@ export const SCHEMA = {
   // Origins a site's pages take style sheets, pictures and fonts from in Jean's preview, as their host's `sites.sources` (host/sites.js).
   sites: { sources: Object.fromEntries(['style-src', 'img-src', 'font-src'].map((name) => [name, ['address']])) },
   mapStyles: { light: 'address', dark: 'address' },
+  // This computer's browser (D746): off, or only for the sites listed, matched as the computer's are.
+  browser: { thisComputer: 'flag', sites: ['text'] },
   computer: { internet: new Set(['ask', 'any', 'off']), sites: ['text'], relay: 'text', timeMs: 'number', limitMB: 'number', workspaceMB: 'number', registries: { pyodide: 'address', pypi: 'address', npm: 'address' } },
   images: { '*': ['text'] },
   films: { '*': ['text'] },

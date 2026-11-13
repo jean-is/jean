@@ -8,8 +8,9 @@ import { existsSync } from 'node:fs'
 import { mkdtemp, mkdir, readFile, writeFile, rm, realpath, stat } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { bridge } from '../app/bridge/bridge.js'
+import { bridge, snapshot } from '../app/bridge/bridge.js'
 import { mcpClient } from '../app/caps/connections/mcp.js'
+import { chromium } from '@playwright/test'
 
 const JEAN = 'https://jean.example'
 const KEY = 'k3y-for-the-test'
@@ -94,7 +95,7 @@ describe('the bridge (D198)', { skip: process.platform === 'win32' }, () => {
     assert.equal(preflight.headers.get('access-control-allow-headers'), 'authorization,content-type,mcp-method')
 
     const client = mcpClient({ url: at, client: { name: 'Jean', version: 'test' }, authorization: async () => `Bearer ${KEY}` })
-    assert.deepEqual((await client.listTools()).map((tool) => tool.name), ['bash', 'about', 'chatgpt'])
+    assert.deepEqual((await client.listTools()).map((tool) => tool.name), ['bash', 'about', 'chatgpt', 'browser'])
     const about = await client.callTool({ name: 'about' }, {})
     assert.equal(about.structuredContent.path, folder)
     const ran = await client.callTool({ name: 'bash' }, { command: 'cat /workspace/site/index.html' })
@@ -155,7 +156,7 @@ describe('Claude Code through the bridge (D235)', { skip: process.platform === '
     await assert.rejects(llm.listModels({ brain, apiKey: 'nope' }), { code: 'auth' })
     const client = mcpClient({ url: brain.baseURL.replace('/v1', '/'), client: { name: 'Jean', version: 'test' }, authorization: async () => `Bearer ${KEY}` })
     const about = (await client.callTool({ name: 'about' }, { claude: true })).structuredContent
-    assert.deepEqual([about.version, about.claude], ['3', true])
+    assert.deepEqual([about.version, about.claude], ['4', true])
     process.env.CLAUDE_SIGNED_OUT = '1'
     try {
       assert.equal((await client.callTool({ name: 'about' }, { claude: true })).structuredContent.claude, false)
@@ -582,5 +583,128 @@ describe('a ChatGPT plan through the bridge (D262)', { skip: process.platform ==
     const again = /** @type {URLSearchParams} */ (seen.authorize.at(-1))
     assert.deepEqual([again.get('client_id'), again.get('agent_name_hint'), again.get('login_hint'), again.get('prompt')], ['oaiapp_1', null, 'user@example.com', null])
     assert.equal(again.get('ext_agent_host_id'), seen.authorize[0]?.get('ext_agent_host_id'))
+  })
+})
+
+// This computer's browser (D746): Chromium's, with no window, driven over a pipe; Playwright's own here.
+describe("this computer's browser through the bridge (D746)", { skip: process.platform === 'win32' || !existsSync(chromium.executablePath()) }, () => {
+  /** @type {string} */
+  let folder
+  /** @type {Awaited<ReturnType<typeof bridge>>} */
+  let work
+  /** @type {import('node:http').Server} */
+  let server
+  /** @type {import('node:http').Server} */
+  let site
+  let [port, origin] = [0, '']
+  /** @type {ReturnType<typeof mcpClient>} */
+  let client
+  const drive = async (/** @type {Record<string, unknown>} */ args) => client.callTool({ name: 'browser' }, args)
+
+  before(async () => {
+    folder = await realpath(await mkdtemp(join(tmpdir(), 'bridge-browser-')))
+    site = createServer((req, res) => {
+      res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' })
+      if (req.url?.startsWith('/next')) return res.end(`<!doctype html><title>Next</title><h1>Sent ${new URL(req.url, 'http://x').searchParams.get('q')}</h1>`)
+      res.end(`<!doctype html><title>Form</title><h1>Hello</h1><p>Some words</p>
+        <form action="/next"><label for=q>Search</label><input id=q name=q value="old"><input type=password name=p aria-label="Password">
+        <select aria-label="Size"><option>Small</option><option>Large</option></select><button>Go</button></form>
+        <a href="/next?q=popped" target="_blank">Pop</a><button onclick="this.textContent = confirm('Sure?') ? 'Yes' : 'No'">Ask</button>`)
+    })
+    await new Promise((ready) => site.listen(0, '127.0.0.1', () => ready(undefined)))
+    origin = `http://127.0.0.1:${/** @type {import('node:net').AddressInfo} */ (site.address()).port}`
+    server = createServer((req, res) => work.handle(req, res))
+    await new Promise((ready) => server.listen(0, '127.0.0.1', () => ready(undefined)))
+    port = /** @type {import('node:net').AddressInfo} */ (server.address()).port
+    // A fresh profile waits for the system's keychain on a Mac, and Chromium in a container runs as root.
+    const flags = ['--use-mock-keychain', '--password-store=basic', ...(process.getuid?.() === 0 ? ['--no-sandbox'] : [])]
+    work = await bridge({ folder, origins: [JEAN], key: KEY, port, browser: [chromium.executablePath(), ...flags], home: join(folder, '.home') })
+    client = mcpClient({ url: `http://127.0.0.1:${port}/`, client: { name: 'Jean', version: 'test' }, authorization: async () => `Bearer ${KEY}` })
+  })
+  after(async () => {
+    server.close()
+    site.close()
+    await work.close()
+    await rm(folder, { recursive: true, force: true })
+  })
+
+  test('a page reads as its parts: those it can act on numbered, what says nothing left out, text once', () => {
+    const nodes = [
+      { nodeId: '1', role: { value: 'RootWebArea' }, name: { value: 'Shop' }, childIds: ['2', '3', '6'] },
+      { nodeId: '2', role: { value: 'heading' }, name: { value: 'Hello' }, childIds: ['7'] },
+      { nodeId: '3', role: { value: 'generic' }, name: { value: '' }, childIds: ['4', '5'] },
+      { nodeId: '4', role: { value: 'link' }, name: { value: 'Pricing  plans' }, backendDOMNodeId: 40, childIds: ['8'] },
+      { nodeId: '5', role: { value: 'textbox' }, name: { value: 'Email' }, value: { value: 'a@b.c' }, backendDOMNodeId: 50, properties: [{ name: 'focused', value: { value: true } }, { name: 'disabled', value: { value: false } }] },
+      { nodeId: '6', ignored: true, role: { value: 'none' }, childIds: ['9'] },
+      { nodeId: '7', role: { value: 'StaticText' }, name: { value: 'Hello' }, childIds: ['10'] },
+      { nodeId: '8', role: { value: 'StaticText' }, name: { value: 'Pricing plans' } },
+      { nodeId: '9', role: { value: 'StaticText' }, name: { value: 'Made with care' } },
+      { nodeId: '10', role: { value: 'InlineTextBox' }, name: { value: 'Hello' } },
+    ]
+    assert.deepEqual(snapshot(nodes), {
+      text: 'heading "Hello"\n[40] link "Pricing plans"\n[50] textbox "Email" = "a@b.c" (focused)\nMade with care',
+      parts: { 40: 'Pricing plans', 50: 'Email' },
+    })
+    assert.match(snapshot(nodes, 10).text, /^heading "Hello"\n… \(cut here\)$/)
+  })
+
+  test('it opens a page, reads it, types (in any script), chooses and clicks there; a field for a password is never typed in', async () => {
+    assert.equal((await client.callTool({ name: 'about' }, {})).structuredContent.browser, true)
+    const opened = await drive({ action: 'open', url: `${origin}/` })
+    assert.deepEqual([opened.structuredContent.url, opened.structuredContent.title], [`${origin}/`, 'Form'])
+    const read = (await drive({ action: 'read' })).structuredContent
+    assert.match(read.text, /heading "Hello"\nSome words/)
+    const ref = (/** @type {string} */ name) => Number(Object.entries(read.parts).find(([, said]) => said === name)?.[0])
+    assert.match(read.text, new RegExp(`\\[${ref('Search')}\\] textbox "Search" = "old"`))
+    assert.match((await drive({ action: 'type', ref: ref('Password'), name: 'Password', text: 'hunter2' })).content[0].text, /password/)
+    assert.match((await drive({ action: 'click', ref: ref('Go'), name: 'Pricing' })).content[0].text, /now says "Go", not "Pricing"/)
+    assert.equal((await drive({ action: 'choose', ref: ref('Size'), name: 'Size', text: 'Large' })).isError, undefined)
+    assert.equal((await drive({ action: 'type', ref: ref('Search'), name: 'Search', text: 'café 東京' })).isError, undefined)
+    assert.equal((await drive({ action: 'click', ref: ref('Go'), name: 'Go' })).isError, undefined)
+    // Read once the page it sent to has loaded, however late it started.
+    const sent = (await drive({ action: 'read' })).structuredContent
+    assert.equal(sent.url, `${origin}/next?q=caf%C3%A9+%E6%9D%B1%E4%BA%AC&p=`)
+    assert.match(sent.text, /heading "Sent café 東京"/)
+    assert.match((await drive({ action: 'click', ref: ref('Go') })).content[0].text, /changed since it was read/)
+    const back = await drive({ action: 'back' })
+    assert.deepEqual([back.structuredContent.url, back.structuredContent.forward], [`${origin}/`, true])
+  })
+
+  test('a question the page asks is answered no and said; a tab it opens shows until it closes', async () => {
+    await drive({ action: 'open', url: `${origin}/` })
+    const read = (await drive({ action: 'read' })).structuredContent
+    const ref = (/** @type {string} */ name) => Number(Object.entries(read.parts).find(([, said]) => said === name)?.[0])
+    const asked = await drive({ action: 'click', ref: ref('Ask') })
+    assert.deepEqual(asked.structuredContent.said, ['The page asked "Sure?", and Jean answered no.'])
+    assert.match((await drive({ action: 'read' })).structuredContent.text, /button "No"/)
+    await drive({ action: 'click', ref: ref('Pop') })
+    // The tab shows once the browser has opened it.
+    let popped = ''
+    for (let tries = 0; tries < 50 && !/heading "Sent popped"/.test(popped); tries++) popped = await new Promise((r) => setTimeout(r, 200)).then(() => drive({ action: 'read' })).then((read) => read.structuredContent.text)
+    assert.match(popped, /heading "Sent popped"/)
+  })
+
+  test("the pane watches it draw, with the key only, and sends it the person's own size, clicks and keys", async () => {
+    assert.equal((await fetch(`http://127.0.0.1:${port}/browser/screen`)).status, 401)
+    await drive({ action: 'size', width: 640, height: 480, scale: 2 })
+    await drive({ action: 'open', url: `${origin}/` })
+    const stop = new AbortController()
+    const res = await fetch(`http://127.0.0.1:${port}/browser/screen`, { headers: { authorization: `Bearer ${KEY}` }, signal: stop.signal })
+    assert.equal(res.headers.get('content-type'), 'text/event-stream')
+    const reader = /** @type {ReadableStreamDefaultReader<Uint8Array>} */ (res.body?.getReader())
+    let text = ''
+    while (!/event: frame\ndata: [^\n]+\n\n/.test(text)) text += new TextDecoder().decode((await reader.read()).value)
+    assert.match(text, new RegExp(`^event: page\ndata: \\{"url":"${origin}/","title":"Form"`))
+    const frame = JSON.parse(/event: frame\ndata: ([^\n]+)/.exec(text)?.[1] ?? '{}')
+    assert.deepEqual([frame.width, frame.height, Buffer.from(frame.data, 'base64').subarray(0, 2).toString('hex')], [640, 480, 'ffd8'])
+    // The person tabs to the field, which selects what it holds, and types over it, a key, then what an input method made.
+    await drive({ action: 'press', key: 'Tab', code: 'Tab', keyCode: 9 })
+    await drive({ action: 'press', key: 'x', code: 'KeyX', keyCode: 88, text: 'x' })
+    await drive({ action: 'text', text: 'ぶ' })
+    assert.match((await drive({ action: 'read' })).structuredContent.text, /textbox "Search" = "xぶ" \(focused\)/)
+    // A click where the person clicked: on the page's top-left corner, away from the field.
+    for (const event of ['down', 'up']) await drive({ action: 'pointer', event, x: 5, y: 470 })
+    assert.match((await drive({ action: 'read' })).structuredContent.text, /textbox "Search" = "xぶ"\n/)
+    stop.abort()
   })
 })

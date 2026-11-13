@@ -20,15 +20,15 @@
 import { createServer } from 'node:http'
 import { execFile, spawn } from 'node:child_process'
 import { createHash, createPublicKey, randomBytes, randomUUID, timingSafeEqual, verify } from 'node:crypto'
-import { appendFileSync } from 'node:fs'
-import { mkdir, mkdtemp, readFile, realpath, rename, rm, symlink, writeFile } from 'node:fs/promises'
+import { appendFileSync, constants } from 'node:fs'
+import { access, mkdir, mkdtemp, readFile, realpath, rename, rm, symlink, writeFile } from 'node:fs/promises'
 import { homedir, platform, tmpdir } from 'node:os'
 import { basename, join, resolve } from 'node:path'
 import { createInterface } from 'node:readline'
 import { pathToFileURL } from 'node:url'
 import { parseArgs } from 'node:util'
 
-const VERSION = '3'
+const VERSION = '4'
 const LEGACY = '2025-11-25'
 // What a command's output keeps, from its end; a request's body at most (a conversation, with its pictures).
 const KEPT = 1_000_000
@@ -58,7 +58,93 @@ const TOOLS = [
     description: "Starts signing in to ChatGPT, for the use of the user's plan: the address to open, whose end comes back to back with ?chatgpt=signed-in, declined or failed. With out, signs out.",
     inputSchema: { type: 'object', properties: { name: { type: 'string' }, issuer: { type: 'string' }, api: { type: 'string' }, back: { type: 'string' }, out: { type: 'boolean' } } },
   },
+  {
+    name: 'browser',
+    description: "This computer's browser, with no window, in a profile of Jean's own (D746): what its tab shows; open an address; read the page as its parts, those it can act on numbered; click one, type in one (submit: then Enter), choose an option of one, press a key, scroll (at a part, up or down); back, forward, reload. A part's name, when given, must still be its name. The pane's own: pointer, wheel, press (a key as the pane heard it), text, size. Never types in a field for a password, a card or a one-time code.",
+    inputSchema: {
+      type: 'object',
+      properties: {
+        action: { type: 'string', enum: ['shown', 'open', 'read', 'click', 'type', 'choose', 'key', 'scroll', 'back', 'forward', 'reload', 'pointer', 'wheel', 'press', 'text', 'size'] },
+        url: { type: 'string' }, ref: { type: 'number' }, name: { type: 'string' }, text: { type: 'string' }, submit: { type: 'boolean' }, key: { type: 'string' }, up: { type: 'boolean' },
+        event: { type: 'string', enum: ['down', 'up', 'move'] }, x: { type: 'number' }, y: { type: 'number' }, dx: { type: 'number' }, dy: { type: 'number' }, button: { type: 'string' }, clicks: { type: 'number' },
+        code: { type: 'string' }, keyCode: { type: 'number' }, modifiers: { type: 'number' }, width: { type: 'number' }, height: { type: 'number' }, scale: { type: 'number' },
+      },
+      required: ['action'],
+    },
+  },
 ]
+
+// ─── This computer's browser (D746) ──────────────────────────────────────────
+// Where each system keeps the browsers the bridge drives, the first found taken: Chromium's, which speak the DevTools protocol.
+const BROWSERS = /** @type {Record<string, string[]>} */ ({
+  darwin: ['Google Chrome', 'Microsoft Edge', 'Chromium', 'Brave Browser'].map((app) => `/Applications/${app}.app/Contents/MacOS/${app}`),
+  linux: ['google-chrome', 'google-chrome-stable', 'chromium', 'chromium-browser', 'microsoft-edge', 'brave-browser'],
+})
+/** The parts the brain can act on, numbered in what it reads. */
+const ACTS = new Set(['link', 'button', 'textbox', 'searchbox', 'checkbox', 'radio', 'combobox', 'listbox', 'option', 'menuitem', 'menuitemcheckbox', 'menuitemradio',
+  'tab', 'switch', 'slider', 'spinbutton', 'treeitem', 'PopUpButton', 'MenuListOption', 'DisclosureTriangle'])
+/** What holds parts and says nothing of its own: left out, its parts kept. */
+const SILENT = new Set(['generic', 'none', 'presentation', 'paragraph', 'LabelText', 'Section', 'group', 'LineBreak', 'strong', 'emphasis', 'Abbr', 'time', 'ListMarker', 'superscript', 'subscript', 'code', 'mark', 'insertion', 'deletion'])
+/** The states a part's line says. */
+const STATES = ['checked', 'pressed', 'expanded', 'selected', 'disabled', 'required', 'focused']
+/** The keys the brain presses by name: their code for Windows' sake, and what they type. */
+const KEYS = /** @type {Record<string, [number, string?]>} */ ({ Enter: [13, '\r'], Tab: [9], Escape: [27], Backspace: [8], Delete: [46], ArrowUp: [38], ArrowDown: [40],
+  ArrowLeft: [37], ArrowRight: [39], Home: [36], End: [35], PageUp: [33], PageDown: [34], Space: [32, ' '] })
+// Run on a field before typing in it: whether it is for a password, a card or a one-time code, which the person types themselves; then selected, so typing replaces it.
+const RESERVED = "function () { const a = ' ' + String(this.autocomplete || '').toLowerCase(); return String(this.type).toLowerCase() === 'password' || / (cc-|one-time-code|current-password|new-password)/.test(a) }"
+const SELECT = 'function () { this.focus(); if (typeof this.select === \'function\') this.select(); else if (this.isContentEditable) getSelection().selectAllChildren(this) }'
+// Run on a list to choose one of its options by its words or value, as a person's choice would: false when it has none such.
+const CHOOSE = "function (wanted) { const o = [...(this.options || [])].find((o) => o.text.trim() === wanted || o.value === wanted); if (!o) return false; this.value = o.value; for (const type of ['input', 'change']) this.dispatchEvent(new Event(type, { bubbles: true })); return true }"
+/** How long a page may take to load after an action, at most; how soon one must start loading to be waited for. */
+const LOAD_MS = 15_000
+const STARTS_MS = 500
+
+/**
+ * A page as the brain reads it (D746), from its accessibility tree: a line for each part, indented under what holds it, those
+ * it can act on numbered by their node (`[12] link "Pricing"`), text as it reads, a field's value and a part's states after it.
+ * What says nothing of its own is left out with its parts kept, and text a part already says once. Cut at the limit. Pure.
+ * @param {any[]} nodes Accessibility.getFullAXTree's, the page's root first @param {number} [limit] characters
+ * @returns {{ text: string, parts: Record<number, string> }} parts: each number's name, which Jean's card shows and a click checks
+ */
+export function snapshot(nodes, limit = 20_000) {
+  const byId = new Map(nodes.map((node) => [node.nodeId, node]))
+  const lines = /** @type {string[]} */ ([])
+  const parts = /** @type {Record<number, string>} */ ({})
+  let size = 0
+  /** @param {any} node @param {number} depth @param {string} said the name of what holds it */
+  const walk = (node, depth, said) => {
+    if (!node || size > limit) return
+    const role = String(node.role?.value ?? '')
+    const name = String(node.name?.value ?? '').replace(/\s+/g, ' ').trim()
+    if (role === 'InlineTextBox') return
+    let line = ''
+    if (role === 'StaticText') line = name !== said ? name : ''
+    else if (!node.ignored && role !== 'RootWebArea' && !(SILENT.has(role) && !name)) {
+      const ref = ACTS.has(role) ? Number(node.backendDOMNodeId) : 0
+      if (ref) parts[ref] = name
+      const value = String(node.value?.value ?? '')
+      const states = (node.properties ?? []).filter((/** @type {any} */ p) => STATES.includes(p.name) && p.value?.value && p.value.value !== 'false').map((/** @type {any} */ p) => p.name)
+      line = `${ref ? `[${ref}] ` : ''}${role}${name ? ` "${name}"` : ''}${value && value !== name ? ` = "${value}"` : ''}${states.length ? ` (${states.join(', ')})` : ''}`
+    }
+    if (line) {
+      lines.push(`${'  '.repeat(depth)}${line}`)
+      size += line.length + 2 * depth + 1
+    }
+    for (const child of node.childIds ?? []) walk(byId.get(child), line ? depth + 1 : depth, line && role !== 'StaticText' ? name : said)
+  }
+  walk(nodes[0], 0, '')
+  return { text: `${lines.join('\n')}${size > limit ? '\n… (cut here)' : ''}`, parts }
+}
+
+/** The first of these programs on this computer: by its path, or by its name on PATH; '' when none is. @param {string[]} names */
+async function firstOf(names) {
+  for (const name of names) {
+    for (const path of name.includes('/') ? [name] : (process.env.PATH ?? '').split(':').filter(Boolean).map((dir) => join(dir, name))) {
+      if (await access(path, constants.X_OK).then(() => true, () => false)) return path
+    }
+  }
+  return ''
+}
 
 // Claude Code's names for the latest of each, which it keeps current: Auto's tiers, in order.
 const MODELS = ['haiku', 'sonnet', 'opus'].map((id) => ({ id, display_name: id[0].toUpperCase() + id.slice(1) }))
@@ -94,8 +180,14 @@ const SIGN_IN_MS = 15 * 60_000
 const RENEW_MS = 120_000
 
 /**
- * @typedef {{ folder: string, origins: string[], key: string, port: number, claude?: string[], copilot?: string[], home?: string }} Options
- *   claude, copilot: how Claude Code and Copilot run; home: the folder that keeps the ChatGPT sign-in
+ * @typedef {{ folder: string, origins: string[], key: string, port: number, claude?: string[], copilot?: string[], browser?: string[], home?: string }} Options
+ *   claude, copilot: how Claude Code and Copilot run; browser: the browser the bridge drives, and its first arguments, else the first
+ *   of BROWSERS found; home: the folder that keeps the ChatGPT sign-in and the browser's profile
+ * @typedef {{ url: string, title: string, loading: boolean, back: boolean, forward: boolean }} Shown what the browser's tab shows, for the pane
+ * @typedef {{ send: (method: string, params?: object, session?: string) => Promise<any>, until: (match: (message: any) => boolean, ms: number) => Promise<any>,
+ *   child: import('node:child_process').ChildProcess, target: string, session: string, tabs: string[], loading: boolean, casting: boolean, page: Shown, said: string[], shown: number, read: number, parts: Set<number> }} Browser
+ *   target and session: the tab on show; tabs: those it opened from, to go back to when it closes; said: what the page's dialogs said since the last action;
+ *   shown: how many documents have shown, the page read last being the read-th, whose parts' numbers alone the brain may act on
  * @typedef {{ exit: number, stdout: string, stderr: string, cwd: string, serving?: { group: number, addresses: string[], log: string } }} Ran
  * @typedef {{ role: string, content: any[] }} Turn
  * @typedef {{ id: string, child: import('node:child_process').ChildProcessWithoutNullStreams, agent: 'claude' | 'copilot', tools: object[],
@@ -326,7 +418,8 @@ function jwt(token) {
  * @param {Options} options
  */
 export async function bridge({ folder, origins, key, port, claude: [program, ...before] = ['claude'], copilot: [copilotProgram, ...copilotBefore] = ['copilot'],
-  home = join(process.env.XDG_CONFIG_HOME || join(homedir(), '.config'), 'jean') }) {
+  browser: [browserGiven, ...browserBefore] = [], home = join(process.env.XDG_CONFIG_HOME || join(homedir(), '.config'), 'jean') }) {
+  const browserProgram = browserGiven ?? await firstOf(BROWSERS[platform()] ?? [])
   const real = await realpath(folder)
   const temp = await mkdtemp(join(tmpdir(), 'jean-'))
   const link = join(temp, 'workspace')
@@ -417,6 +510,261 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
         finish({ exit: code ?? 128 + 15, cwd: outward(cwds.get(computer) ?? link), ...(killed && { stderr: `${stderr}${stderr.endsWith('\n') || !stderr ? '' : '\n'}^C` }) })
       })
     })
+  }
+
+  // ─── This computer's browser (D746) ────────────────────────────────────────
+  // Chrome, Edge, Chromium or Brave of this computer, with no window, in a profile of Jean's own (<home>/browser, where its
+  // sign-ins stay), driven over the DevTools protocol through a pipe only the bridge holds, never a port. Jean's pane draws its
+  // tab as it draws (/browser/screen) and sends it the person's own clicks and keys; the brain reads a page as its
+  // accessibility tree and acts on the parts it numbers. Started when first asked for; ended with the bridge.
+
+  /** @type {Promise<Browser> | null} */
+  let started = null
+  /** The panes watching it draw. @type {Set<import('node:http').ServerResponse>} */
+  const watchers = new Set()
+  /** The pane's size, in its pixels, and how many of the screen's each holds: every tab takes it. */
+  let screen = { width: 1280, height: 800, scale: 1 }
+
+  /** The browser, started once. @returns {Promise<Browser>} */
+  function browser() {
+    return (started ??= (async () => {
+      if (!browserProgram) throw new Error('No Chrome, Edge, Chromium or Brave was found on this computer.')
+      const profile = join(home, 'browser')
+      await mkdir(profile, { recursive: true })
+      const child = spawn(browserProgram, [...browserBefore, `--user-data-dir=${profile}`, '--remote-debugging-pipe', '--headless', '--no-first-run', '--no-default-browser-check', 'about:blank'],
+        { stdio: ['ignore', 'ignore', 'ignore', 'pipe', 'pipe'] })
+      const [, , , input, output] = /** @type {[any, any, any, import('node:stream').Writable, import('node:stream').Readable]} */ (/** @type {unknown} */ (child.stdio))
+      /** @type {Map<number, (message: any) => void>} */
+      const waiting = new Map()
+      /** @type {Set<(message: any) => void>} */
+      const heard = new Set()
+      let [id, buffer] = [0, '']
+      /** @type {Browser} */
+      const b = {
+        child, target: '', session: '', tabs: [], loading: false, casting: false, page: { url: '', title: '', loading: false, back: false, forward: false }, said: [], shown: 0, read: -1, parts: new Set(),
+        send: (method, params = {}, session = '') => new Promise((ok, failed) => {
+          waiting.set(++id, (message) => (message.error ? failed(new Error(message.error.message)) : ok(message.result)))
+          input.write(`${JSON.stringify({ id, method, params, ...(session && { sessionId: session }) })}\0`)
+        }),
+        until: (match, ms) => new Promise((done) => {
+          const finish = (/** @type {any} */ message) => { heard.delete(hear); clearTimeout(timer); done(message) }
+          const hear = (/** @type {any} */ message) => { if (match(message)) finish(message) }
+          const timer = setTimeout(finish, ms, null)
+          heard.add(hear)
+        }),
+      }
+      const gone = new Promise((_, failed) => {
+        child.once('error', failed)
+        child.once('exit', () => failed(new Error('The browser closed.')))
+      })
+      gone.catch(() => {
+        started = null
+        for (const answer of waiting.values()) answer({ error: { message: 'The browser closed.' } })
+        for (const res of watchers) res.end()
+        watchers.clear()
+      })
+      output.setEncoding('utf8')
+      output.on('data', (/** @type {string} */ chunk) => {
+        buffer += chunk
+        for (let at = buffer.indexOf('\0'); at >= 0; at = buffer.indexOf('\0')) {
+          const message = JSON.parse(buffer.slice(0, at))
+          buffer = buffer.slice(at + 1)
+          if (message.id) {
+            waiting.get(message.id)?.(message)
+            waiting.delete(message.id)
+          } else {
+            for (const hear of [...heard]) hear(message)
+            heed(b, message)
+          }
+        }
+      })
+      const { targetInfos } = await Promise.race([b.send('Target.getTargets'), gone])
+      await b.send('Target.setDiscoverTargets', { discover: true })
+      await attach(b, targetInfos.find((/** @type {any} */ target) => target.type === 'page').targetId)
+      return b
+    })())
+  }
+
+  /** Shows a tab: attached, at the pane's size, drawn for it while it watches. @param {Browser} b @param {string} target */
+  async function attach(b, target) {
+    if (b.casting) await b.send('Page.stopScreencast', {}, b.session).catch(() => {})
+    const { sessionId } = await b.send('Target.attachToTarget', { targetId: target, flatten: true })
+    Object.assign(b, { target, session: sessionId, casting: false, loading: false, shown: b.shown + 1 })
+    await Promise.all([b.send('Page.enable', {}, sessionId), b.send('DOM.enable', {}, sessionId), fit(b)])
+    if (watchers.size) await cast(b)
+    await tell(b)
+  }
+
+  /** @param {Browser} b */
+  const fit = (b) => b.send('Emulation.setDeviceMetricsOverride', { width: screen.width, height: screen.height, deviceScaleFactor: screen.scale, mobile: false }, b.session)
+  /** @param {Browser} b */
+  const cast = async (b) => {
+    await b.send('Page.startScreencast', { format: 'jpeg', quality: 75, maxWidth: Math.round(screen.width * screen.scale), maxHeight: Math.round(screen.height * screen.scale) }, b.session)
+    b.casting = true
+  }
+
+  /** What the tab shows now, told to the panes watching. @param {Browser} b */
+  async function tell(b) {
+    const [info, history] = await Promise.all([b.send('Target.getTargetInfo', { targetId: b.target }), b.send('Page.getNavigationHistory', {}, b.session)]).catch(() => [])
+    if (!info) return
+    b.page = { url: info.targetInfo.url, title: info.targetInfo.title, loading: b.loading, back: history.currentIndex > 0, forward: history.currentIndex < history.entries.length - 1 }
+    for (const res of watchers) res.write(sse('page', b.page))
+  }
+
+  /**
+   * What the browser says by itself: a frame drawn, the tab's address, title or loading changed, a tab it opened, which shows
+   * until it closes, and a dialog, which nobody sees there: an alert is taken, a question answered no, and the next result says it.
+   * @param {Browser} b @param {any} message
+   */
+  function heed(b, { method, params = {}, sessionId }) {
+    if (method === 'Page.screencastFrame') {
+      b.send('Page.screencastFrameAck', { sessionId: params.sessionId }, sessionId).catch(() => {})
+      if (sessionId === b.session) for (const res of watchers) if (!res.writableNeedDrain) res.write(sse('frame', { data: params.data, width: params.metadata.deviceWidth, height: params.metadata.deviceHeight }))
+    } else if (method === 'Target.targetInfoChanged' && params.targetInfo.targetId === b.target) tell(b)
+    else if (method === 'Page.frameNavigated' && sessionId === b.session && !params.frame.parentId) b.shown++
+    else if (/^Page\.frameSt(arted|opped)Loading$/.test(method) && sessionId === b.session && params.frameId === b.target) {
+      b.loading = method.includes('Started')
+      tell(b)
+    } else if (method === 'Target.targetCreated' && params.targetInfo.type === 'page' && params.targetInfo.openerId === b.target) {
+      b.tabs.push(b.target)
+      attach(b, params.targetInfo.targetId).catch(() => {})
+    } else if (method === 'Target.targetDestroyed' && params.targetId === b.target) {
+      const back = b.tabs.pop()
+      ;(back ? attach(b, back) : b.send('Target.createTarget', { url: 'about:blank' }).then(({ targetId }) => attach(b, targetId))).catch(() => {})
+    } else if (method === 'Page.javascriptDialogOpening' && sessionId === b.session) {
+      const asks = /^(confirm|prompt)$/.test(params.type)
+      b.said.push(`The page ${asks ? 'asked' : 'said'} "${params.message}"${asks ? ', and Jean answered no' : ''}.`)
+      b.send('Page.handleJavaScriptDialog', { accept: !asks }, sessionId).catch(() => {})
+    }
+  }
+
+  /**
+   * Does something that may load a page, then waits for it to load, when it starts loading soon; one that surely loads, however late it starts.
+   * @param {Browser} b @param {() => Promise<unknown>} act @param {boolean} [loads]
+   */
+  async function settle(b, act, loads = false) {
+    const [session, target] = [b.session, b.target]
+    const heard = (/** @type {string} */ method) => (/** @type {any} */ m) => m.method === method && m.sessionId === session && m.params.frameId === target
+    const [starts, stops] = [b.until(heard('Page.frameStartedLoading'), loads ? LOAD_MS : STARTS_MS), b.until(heard('Page.frameStoppedLoading'), LOAD_MS)]
+    await act()
+    if (await starts) await stops
+  }
+
+  /**
+   * Where to click a part the brain read: its middle, scrolled into view, while it still has the name read with it.
+   * @param {Browser} b @param {unknown} ref @param {unknown} name
+   */
+  async function point(b, ref, name) {
+    const backendNodeId = Number(ref)
+    const lost = () => { throw new Error(`Part [${ref}] is no longer on the page: read it again.`) }
+    if (typeof name === 'string') {
+      const { nodes } = await b.send('Accessibility.getPartialAXTree', { backendNodeId, fetchRelatives: false }, b.session).catch(lost)
+      const now = String(nodes?.[0]?.name?.value ?? '').replace(/\s+/g, ' ').trim()
+      if (now !== name) throw new Error(`Part [${ref}] now says "${now}", not "${name}": read the page again.`)
+    }
+    await b.send('DOM.scrollIntoViewIfNeeded', { backendNodeId }, b.session).catch(lost)
+    const { quads } = await b.send('DOM.getContentQuads', { backendNodeId }, b.session).catch(lost)
+    if (!quads?.length) throw new Error(`Part [${ref}] isn't shown on the page.`)
+    const [q] = quads
+    return { x: (q[0] + q[2] + q[4] + q[6]) / 4, y: (q[1] + q[3] + q[5] + q[7]) / 4 }
+  }
+
+  /** A function run on a part, with what it returns. @param {Browser} b @param {unknown} ref @param {string} code @param {unknown[]} [args] */
+  async function on(b, ref, code, args = []) {
+    const { object } = await b.send('DOM.resolveNode', { backendNodeId: Number(ref) }, b.session).catch(() => { throw new Error(`Part [${ref}] is no longer on the page: read it again.`) })
+    const { result } = await b.send('Runtime.callFunctionOn', { objectId: object.objectId, functionDeclaration: code, arguments: args.map((value) => ({ value })), returnByValue: true }, b.session)
+    return result?.value
+  }
+
+  /** A click at a point, as a mouse makes it. @param {Browser} b @param {{ x: number, y: number }} at */
+  const click = async (b, { x, y }) => {
+    for (const type of ['mouseMoved', 'mousePressed', 'mouseReleased']) await b.send('Input.dispatchMouseEvent', { type, x, y, button: type === 'mouseMoved' ? 'none' : 'left', clickCount: 1 }, b.session)
+  }
+  /** A key pressed and let go: a named one, or one as the pane heard it. @param {Browser} b @param {{ key: string, code?: string, keyCode?: number, text?: string, modifiers?: number }} key */
+  const press = async (b, { key, code = key, keyCode, text = '', modifiers = 0 }) => {
+    const event = { key, code, windowsVirtualKeyCode: keyCode, nativeVirtualKeyCode: keyCode, modifiers }
+    await b.send('Input.dispatchKeyEvent', { type: text ? 'keyDown' : 'rawKeyDown', text, unmodifiedText: text, ...event }, b.session)
+    await b.send('Input.dispatchKeyEvent', { type: 'keyUp', ...event }, b.session)
+  }
+
+  /**
+   * One of the browser tool's actions: the brain's, through Jean's approval, or the pane's own, which are the person's.
+   * @param {Record<string, any>} args @returns {Promise<Shown & { said: string[], text?: string, parts?: Record<number, string> }>}
+   */
+  async function drive(args) {
+    const b = await browser()
+    const { action, ref } = args
+    const said = () => ({ ...b.page, said: b.said.splice(0) })
+    // A number read off another page may name something else on this one.
+    if (ref && (b.read !== b.shown || !b.parts.has(Number(ref)))) throw new Error(`The page changed since it was read, or has no part [${ref}]: read it again.`)
+    if (action === 'shown') return { ...b.page, said: [] }
+    if (action === 'open') {
+      const url = String(args.url ?? '')
+      if (!/^https?:\/\//i.test(url)) throw new Error('An http or https address is needed.')
+      await settle(b, async () => {
+        const { errorText } = await b.send('Page.navigate', { url }, b.session)
+        if (errorText) throw new Error(`${url} didn't open: ${errorText}.`)
+      }, true)
+    } else if (action === 'read') {
+      // A page still loading is read once it has.
+      if (b.loading) await b.until((m) => m.method === 'Page.frameStoppedLoading' && m.sessionId === b.session && m.params.frameId === b.target, LOAD_MS)
+      const { nodes } = await b.send('Accessibility.getFullAXTree', {}, b.session)
+      const read = snapshot(nodes)
+      Object.assign(b, { read: b.shown, parts: new Set(Object.keys(read.parts).map(Number)) })
+      await tell(b)
+      return { ...said(), ...read }
+    } else if (action === 'click') {
+      const at = await point(b, ref, args.name)
+      await settle(b, () => click(b, at))
+    } else if (action === 'type' || action === 'choose') {
+      await point(b, ref, args.name)
+      if (await on(b, ref, RESERVED)) throw new Error('That field is for a password, a card or a one-time code: the user types it themselves.')
+      if (action === 'choose' && !(await on(b, ref, CHOOSE, [String(args.text ?? '')]))) throw new Error(`Part [${ref}] has no option "${args.text}".`)
+      if (action === 'type') {
+        await on(b, ref, SELECT)
+        await b.send('Input.insertText', { text: String(args.text ?? '') }, b.session)
+        if (args.submit) await settle(b, () => press(b, { key: 'Enter', keyCode: 13, text: '\r' }))
+      }
+    } else if (action === 'key') {
+      const [keyCode, text] = KEYS[args.key] ?? []
+      if (!keyCode) throw new Error(`The keys are ${Object.keys(KEYS).join(', ')}.`)
+      await settle(b, () => press(b, { key: args.key === 'Space' ? ' ' : args.key, code: args.key, keyCode, text }))
+    } else if (action === 'scroll') {
+      const at = ref ? await point(b, ref, args.name) : { x: screen.width / 2, y: screen.height / 2 }
+      await b.send('Input.dispatchMouseEvent', { type: 'mouseWheel', ...at, deltaX: 0, deltaY: args.up ? -screen.height * 0.8 : screen.height * 0.8 }, b.session)
+    } else if (action === 'back' || action === 'forward') {
+      const { currentIndex, entries } = await b.send('Page.getNavigationHistory', {}, b.session)
+      const entry = entries[currentIndex + (action === 'back' ? -1 : 1)]
+      if (entry) await settle(b, () => b.send('Page.navigateToHistoryEntry', { entryId: entry.id }, b.session))
+    } else if (action === 'reload') await settle(b, () => b.send('Page.reload', {}, b.session))
+    // The pane's: what the person does there, as they do it.
+    else if (action === 'pointer') {
+      const type = ({ down: 'mousePressed', up: 'mouseReleased', move: 'mouseMoved' })[String(args.event)]
+      await b.send('Input.dispatchMouseEvent', { type, x: Number(args.x), y: Number(args.y), button: type === 'mouseMoved' ? 'none' : String(args.button || 'left'), clickCount: Number(args.clicks) || 1, modifiers: Number(args.modifiers) || 0 }, b.session)
+    } else if (action === 'wheel') await b.send('Input.dispatchMouseEvent', { type: 'mouseWheel', x: Number(args.x), y: Number(args.y), deltaX: Number(args.dx) || 0, deltaY: Number(args.dy) || 0 }, b.session)
+    else if (action === 'press') await press(b, { key: String(args.key), code: String(args.code ?? args.key), keyCode: Number(args.keyCode) || undefined, text: String(args.text ?? ''), modifiers: Number(args.modifiers) || 0 })
+    else if (action === 'text') await b.send('Input.insertText', { text: String(args.text ?? '') }, b.session)
+    else if (action === 'size') {
+      screen = { width: Math.max(200, Math.round(Number(args.width) || 1280)), height: Math.max(200, Math.round(Number(args.height) || 800)), scale: Math.min(3, Math.max(1, Number(args.scale) || 1)) }
+      await fit(b)
+      if (b.casting) await cast(b)
+    } else throw new Error(`Unknown action: ${action}`)
+    await tell(b)
+    return said()
+  }
+
+  /** A pane watching the browser draw: its frames and what its tab shows, as events, until it goes. @param {import('node:http').ServerResponse} res */
+  async function watch(res) {
+    const b = await browser().catch((/** @type {Error} */ error) => void res.writeHead(503).end(error.message))
+    if (!b) return
+    res.writeHead(200, { 'content-type': 'text/event-stream', 'cache-control': 'no-store' })
+    watchers.add(res)
+    res.on('close', () => {
+      watchers.delete(res)
+      if (!watchers.size && b.casting) b.send('Page.stopScreencast', {}, b.session).then(() => { b.casting = false }, () => {})
+    })
+    res.write(sse('page', b.page))
+    if (!b.casting) await cast(b)
   }
 
   // ─── Plans: Claude Code (D235) and Copilot (D262) ──────────────────────────
@@ -919,7 +1267,7 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
       if (session) return method === 'tools/list' ? { tools: session.tools } : method === 'tools/call' ? session.call(params) : null
       if (method === 'tools/list') return { tools: TOOLS }
       if (method === 'tools/call' && params?.name === 'about') {
-        const about = { version: VERSION, folder: basename(real), path: real, os: platform(), node: process.version, serving: [...serving].map(([group, job]) => ({ group, ...job })),
+        const about = { version: VERSION, folder: basename(real), path: real, os: platform(), node: process.version, serving: [...serving].map(([group, job]) => ({ group, ...job })), browser: Boolean(browserProgram),
           ...(params.arguments?.claude && { claude: await signedIn() }),
           ...(params.arguments?.copilot && { copilot: await copilotHere().then((found) => (found ? true : found)) }),
           ...(params.arguments?.chatgpt && { chatgpt: await planned() }) }
@@ -935,6 +1283,10 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
         if (typeof args.command !== 'string') return { content: [{ type: 'text', text: 'A command is needed.' }], isError: true }
         const ran = await run(args.command, { computer: String(args.computer ?? ''), timeMs: Number(args.timeMs) || undefined, signal })
         return { content: [{ type: 'text', text: report(ran) }], structuredContent: ran }
+      }
+      if (method === 'tools/call' && params?.name === 'browser') {
+        return drive(params.arguments ?? {}).then((shown) => ({ content: [{ type: 'text', text: [shown.title, shown.url, ...shown.said, shown.text].filter(Boolean).join('\n') }], structuredContent: shown }),
+          (error) => ({ content: [{ type: 'text', text: String(error?.message ?? error) }], isError: true }))
       }
       return null
     })()
@@ -979,6 +1331,7 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
       return found ? json(200, { data: found }) : json(401, { error: { message: 'Copilot is not installed or signed in on this computer.' } })
     }
     if (req.method === 'GET' && path === '/chatgpt/v1/models') return chatgpt(path, null, res, gone.signal)
+    if (req.method === 'GET' && path === '/browser/screen') return watch(res)
     if (req.method !== 'POST') return res.writeHead(405, { allow: 'POST' }).end()
     const session = path.startsWith('/session/') ? sessions.get(path.slice('/session/'.length)) : undefined
     if (path.startsWith('/session/') && !session) return res.writeHead(404).end()
@@ -997,6 +1350,8 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
   async function close() {
     for (const group of groups) end(group)
     for (const session of sessions.values()) shut(session)
+    // The browser, gone before its profile's folder may be: it writes there as it closes.
+    await started?.then((b) => b.child.exitCode === null && new Promise((done) => { b.child.once('exit', done); b.child.kill() }), () => {})
     await rm(temp, { recursive: true, force: true })
   }
 
@@ -1011,7 +1366,9 @@ export async function main(argv) {
   delete process.env.JEAN_BRIDGE_KEY
   if (!port || !key || !values.origin?.length) throw new Error('The line from Jean is needed: its key, --port and --origin.')
   if (platform() === 'win32') throw new Error('The bridge needs bash: on Windows, run it in WSL.')
-  const work = await bridge({ folder: resolve(values.folder ?? process.cwd()), origins: values.origin, key, port })
+  // The browser it drives, when it isn't one of those it looks for, or not where they usually are; empty, none (D746).
+  const browser = process.env.JEAN_BROWSER === undefined ? undefined : [process.env.JEAN_BROWSER]
+  const work = await bridge({ folder: resolve(values.folder ?? process.cwd()), origins: values.origin, key, port, browser })
   const server = createServer((req, res) => work.handle(req, res).catch((error) => { if (!res.headersSent) res.writeHead(500).end(String(error?.message ?? error)) }))
   await new Promise((ready, failed) => server.once('error', failed).listen(port, '127.0.0.1', () => ready(undefined)))
   console.log(`Jean runs commands in ${work.folder} on this computer, while this runs. Ctrl+C stops it, and what it started.`)

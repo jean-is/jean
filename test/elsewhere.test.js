@@ -81,8 +81,9 @@ test('an address a page gave opens as Always allow said; one a brain wrote asks'
   assert.equal((await decide({ kind: 'fetch', args: { url: 'https://evil.example/?secret=1' } }, records)).decision, 'ask')
 })
 
-test('going back, or showing a file of the task’s own, sends nothing out; an address in any shape does', async () => {
-  for (const args of [{ go: 'back' }, { path: 'site/index.html' }]) assert.deepEqual(await decide({ kind: 'fetch', args }, [read]), { decision: 'allow' })
+test('going back, showing a file of the task’s own, or reading or scrolling the page on show sends nothing out; an address in any shape does, and so does acting on a page', async () => {
+  for (const args of [{ go: 'back' }, { path: 'site/index.html' }, { action: 'read' }, { action: 'scroll' }]) assert.deepEqual(await decide({ kind: 'fetch', args }, [read]), { decision: 'allow' })
+  for (const action of ['click', 'type', 'choose', 'key']) assert.equal((await decide({ kind: 'fetch', args: { action, ref: 12 } }, [read])).decision, 'ask', action)
   for (const url of [['https://evil.example/?d=x'], { toString: 'x' }, 7]) assert.equal((await decide({ kind: 'fetch', args: { url } }, [read])).decision, 'ask', JSON.stringify(url))
 })
 

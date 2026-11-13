@@ -4,13 +4,14 @@
 // (here, run by the test); the brain's commands then run on this machine, asked first, and a server they
 // start keeps running and shows in the browser; the user's own commands in the terminal run there too;
 // "always" for the folder is listed on its page, to take back; Ctrl+C ends it all.
-import { test, expect } from '@playwright/test'
+import { test, expect, chromium } from '@playwright/test'
 import { spawn, spawnSync } from 'node:child_process'
+import { createServer } from 'node:http'
 import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { start, connectFakeBrain, ask, turnOn, openSettings, closeSettings, giveFolder } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, openSettings, closeSettings, giveFolder, callTool } from './helpers.js'
 
 test.skip(process.platform === 'win32', 'The bridge needs bash')
 
@@ -73,7 +74,8 @@ test('a server refused in the sandbox runs on this computer instead, and shows i
   expect(another.stderr).toContain("This isn't the bridge this page expects, so nothing ran")
   // What it says in the terminal, for a failure to show why it didn't answer.
   let said = ''
-  const bridge = spawn('bash', ['-c', line], { cwd: disk, stdio: ['ignore', 'ignore', 'pipe'], detached: true })
+  // No browser of this computer's: the browser frames the site (D746).
+  const bridge = spawn('bash', ['-c', line], { cwd: disk, stdio: ['ignore', 'ignore', 'pipe'], detached: true, env: { ...process.env, JEAN_BROWSER: '' } })
   bridge.stderr?.setEncoding('utf8').on('data', (chunk) => { said += chunk })
   try {
     await expect(panel).toContainText('Tasks with the folder shop run their commands on this computer', { timeout: 15_000 })
@@ -126,6 +128,70 @@ test('a server refused in the sandbox runs on this computer instead, and shows i
   } finally {
     // Ctrl+C in the user's terminal: the bridge ends, and what it started.
     stop(bridge)
+  }
+})
+
+// This computer's browser (D746): with the bridge, the pane's sites show in a browser of this computer, played here by
+// Playwright's own Chromium, drawn in the pane; the brain reads the page as its parts and acts on them, each action asked;
+// the person's own Back is the tab's.
+test('the browser beside the conversation is this computer’s, whose page the brain reads and acts on', async ({ page }) => {
+  test.setTimeout(120_000)
+  const disk = mkdtempSync(join(tmpdir(), 'jean-e2e-'))
+  mkdirSync(join(disk, 'shop'))
+  // A fresh profile waits for a Mac's keychain, and Chromium in a container runs as root, without its own sandbox.
+  writeFileSync(join(disk, 'chromium'), `#!/bin/sh\nexec '${chromium.executablePath()}' --use-mock-keychain --password-store=basic${process.getuid?.() === 0 ? ' --no-sandbox' : ''} "$@"\n`, { mode: 0o755 })
+  const site = createServer((req, res) => {
+    res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' })
+    res.end(req.url?.startsWith('/next') ? `<!doctype html><title>Sent</title><h1>Sent ${new URL(req.url, 'http://x').searchParams.get('q')}</h1>`
+      : '<!doctype html><title>Shop</title><h1 style="font-size: 4rem">Hello</h1><form action="/next"><label for=q>Search</label><input id=q name=q></form>')
+  })
+  await new Promise((ready) => site.listen(0, '127.0.0.1', () => ready(undefined)))
+  const host = `127.0.0.1:${/** @type {import('node:net').AddressInfo} */ (site.address()).port}`
+  await start(page)
+  await connectFakeBrain(page)
+  await turnOn(page, 'Browser')
+  await page.keyboard.press('Escape')
+  // Turned on, This computer leads to its page, under Computer.
+  const capabilities = await openSettings(page, 'Capabilities')
+  await capabilities.locator('.case > li').filter({ has: page.locator('.item-text > strong').getByText('This computer', { exact: true }) }).locator('button.item').click()
+  await capabilities.locator('.settings-panel > .row .button.primary').click()
+  await expect(capabilities.locator('.machine-line code')).toBeVisible()
+  const line = await pasted(page)
+  const bridge = spawn('bash', ['-c', line], { cwd: join(disk, 'shop'), stdio: 'ignore', detached: true, env: { ...process.env, JEAN_BROWSER: join(disk, 'chromium'), XDG_CONFIG_HOME: join(disk, 'config') } })
+  try {
+    await expect(page.locator('app-settings .settings-panel')).toContainText('Tasks with the folder shop run their commands on this computer', { timeout: 15_000 })
+    await closeSettings(page)
+    // The person opens a site: it shows in this computer's browser, drawn in the pane, with the tab's own address.
+    const address = page.locator('.browser-bar input')
+    if (!(await address.isVisible())) await page.locator('.browser-toggle').click()
+    await address.fill(`http://${host}/`)
+    await address.press('Enter')
+    await expect(page.locator('.browser-surface canvas')).toBeVisible()
+    await expect(page.locator('.browser-host')).toBeHidden()
+    await expect.poll(() => page.locator('.browser-remote').evaluate((/** @type {HTMLCanvasElement} */ canvas) => {
+      const { data } = canvas.width ? /** @type {CanvasRenderingContext2D} */ (canvas.getContext('2d')).getImageData(0, 0, canvas.width, canvas.height) : { data: [] }
+      return data.filter((value, i) => i % 4 === 0 && value < 100).length
+    }), { timeout: 15_000 }).toBeGreaterThan(100)
+    await expect(page.locator('.browser-input')).toHaveAttribute('title', 'Shop')
+    // The brain reads it, asked with the site's name; then types in a part it numbered and sends it, asked with what goes where.
+    await expect(await callTool(page, 'page', { action: 'read' }, host)).toContainText('heading "Hello"')
+    const parts = await page.evaluate(async () => (await (await import('/caps/machine/machine.js')).drive({ action: 'read' })).parts ?? {})
+    const ref = Number(Object.entries(parts).find(([, name]) => name === 'Search')?.[0])
+    await expect(await callTool(page, 'page', { action: 'type', ref, text: 'café 東京', submit: true }, `${host} “Search” ← “café 東京”`)).toContainText('Sent (')
+    await expect(address).toHaveValue(`http://${host}/next?q=caf%C3%A9+%E6%9D%B1%E4%BA%AC`)
+    // The person goes back, in the tab's own history.
+    await page.locator('.browser-bar').getByRole('button', { name: 'Back' }).click()
+    await expect(address).toHaveValue(`http://${host}/`)
+    // Policy keeps it to the organisation's sites: another is framed as before, and the brain acts on no page of it.
+    await page.evaluate(async () => { (await import('/ui/state.js')).app.policy.browser = { sites: ['*.corp.example'] } })
+    await address.fill(`http://${host}/next?q=framed`)
+    await address.press('Enter')
+    await expect(page.frameLocator('.browser-host').frameLocator('iframe').locator('h1')).toHaveText('Sent framed')
+    await expect(page.locator('.browser-surface')).toHaveCount(0)
+    await expect(await callTool(page, 'page', { action: 'read' }, host)).toContainText(`The organisation keeps ${host} out of This computer's browser.`)
+  } finally {
+    stop(bridge)
+    site.close()
   }
 })
 

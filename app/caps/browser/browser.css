@@ -40,3 +40,9 @@
 .browser-strip .button { padding-block: 0.3rem; }
 
 @media (forced-colors: active) { .browser-loading::after { background: Highlight; } }
+
+/* This computer's browser (D746): its tab's picture, and over it the field that takes the person's input, showing nothing of its own. */
+.browser-surface { position: relative; flex: 1; min-block-size: 0; background: white; }
+.browser-remote, .browser-input { position: absolute; inset-block: 0; inset-inline: 0; inline-size: 100%; block-size: 100%; }
+.browser-input { margin: 0; padding: 0; border: 0; border-radius: 0; resize: none; background: transparent; color: transparent; caret-color: transparent; outline: none; cursor: default; }
+.browser-input:focus-visible { outline: 2px solid var(--flame); outline-offset: -2px; }

@@ -22,8 +22,9 @@ export const given = (records, url) => typeof url === 'string' && Boolean(url) &
  */
 export const elsewhere = (recordsOf, rules, why) => ({ on: 'tool.check', tier: 'user', run: async (e, next) => {
   const said = await next(e)
-  // Going back, or showing a file of the task's own, sends nothing out; a call with neither names an address, whatever shape it comes in.
-  const out = e.kind === 'fetch' ? !e.service && !said?.meta?.site && typeof e.args?.path !== 'string' && !e.args?.go : CARRIES.includes(e.name) || ['other', 'move', 'delete'].includes(e.kind) || said?.meta?.machine
+  // Going back, showing a file of the task's own, or reading or scrolling the page on show (D746), sends nothing out; a call with
+  // none of these names an address, whatever shape it comes in, or acts on a page: a click, typing, a key.
+  const out = e.kind === 'fetch' ? !e.service && !said?.meta?.site && typeof e.args?.path !== 'string' && !e.args?.go && !['read', 'scroll'].includes(e.args?.action) : CARRIES.includes(e.name) || ['other', 'move', 'delete'].includes(e.kind) || said?.meta?.machine
   if (said?.decision !== 'allow' || !(out || e.service) || !e.task) return said
   const records = await recordsOf(e.task)
   if (!(e.service && records?.some(({ update: u }) => u?.sessionUpdate === '_system_note' && u.data.kind === 'shared')) && (!out || rules()?.[e.kind] || (records && (!records.some(fromElsewhere) || (e.kind === 'fetch' && given(records, e.args?.url)))))) return said

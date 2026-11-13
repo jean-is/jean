@@ -996,6 +996,21 @@
       },
       "additionalProperties": false
     },
+    "browser": {
+      "type": "object",
+      "properties": {
+        "thisComputer": {
+          "type": "boolean"
+        },
+        "sites": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
     "computer": {
       "type": "object",
       "properties": {
@@ -3092,6 +3107,33 @@
                         "type": "null"
                       }
                     ]
+                  }
+                },
+                "additionalProperties": false
+              },
+              "browser": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "thisComputer": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "sites": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
                   }
                 },
                 "additionalProperties": false

@@ -7,6 +7,7 @@
 // 127.0.0.1 with the key in the line, kept in .secrets/ with the folders where the user said
 // "always". A command the brain runs there is asked first; what the user types in the terminal is theirs.
 // The desktop app starts the bridge itself, in a folder the system's dialog picks, as Jean opens.
+// Its browser (D746), Chrome, Edge, Chromium or Brave of that computer, is the pane's, and the brain acts on its page with `page`.
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
@@ -19,10 +20,11 @@ import { BRAND } from '../../brand.js'
 import { t, useStrings } from '../../core/i18n.js'
 import { PROVIDERS } from '../../core/llm.js'
 import { mcpClient } from '../connections/mcp.js'
+import { hostBrowses } from '../browser/pages.js'
 
 /** @typedef {import('../../core/loop.js').ToolContext} ToolContext */
 /** @typedef {{ port: number, key: string, always: string[], path?: string }} Pairing path: the folder the desktop app starts it in */
-/** @typedef {{ on: false } | { on: true, folder: string, path: string, os: string }} Found */
+/** @typedef {{ on: false } | { on: true, folder: string, path: string, os: string, browser: boolean }} Found browser: whether it found a browser to drive */
 
 // Its commands are the Computer's, in a task's folder.
 await Promise.all([useStrings('machine'), unlock('computer'), unlock('folders')])
@@ -150,7 +152,7 @@ async function find(now = false) {
   if (await getSecret(app.fs, SECRET)) {
     try {
       const about = (await clientOf(await pairing()).callTool({ name: 'about' }, {}, AbortSignal.timeout(2000))).structuredContent
-      found = { on: true, folder: String(about.folder), path: String(about.path), os: about.os === 'darwin' ? 'macOS' : String(about.os) }
+      found = { on: true, folder: String(about.folder), path: String(about.path), os: about.os === 'darwin' ? 'macOS' : String(about.os), browser: Boolean(about.browser) }
     } catch {}
   }
   foundAt = Date.now()
@@ -200,6 +202,68 @@ export async function runThere(message, ctx, computer, timeMs) {
   const address = ran.serving?.addresses[0]
   if (address && conversationOf(ctx.signal)?.id === app.current.peek()?.id && loaded.peek().has('browser')) (await import('../browser/browser.js')).visit(address)
   return { done: { ok: true, exit: ran.exit, stdout: ran.stdout + serving, stderr: ran.stderr, cwd: ran.cwd }, left: [], kept: where }
+}
+
+// ─── Its browser (D746) ──────────────────────────────────────────────────────
+
+/** What the brain read of the page last: its address, and each part's name by its number, which a card shows and a click checks. */
+const seen = { url: '', parts: /** @type {Record<number, string>} */ ({}) }
+
+/**
+ * One of the browser's actions, the brain's or the pane's: what its tab shows then, with what its dialogs said; a read, with the page's parts.
+ * @param {Record<string, unknown>} args @param {AbortSignal} [signal]
+ * @returns {Promise<{ url: string, title: string, loading: boolean, back: boolean, forward: boolean, said: string[], text?: string, parts?: Record<number, string> }>}
+ */
+export async function drive(args, signal = AbortSignal.timeout(30_000)) {
+  const result = await clientOf(await pairing()).callTool({ name: 'browser' }, args, signal)
+  if (result.isError || !result.structuredContent) throw new Error(result.content?.[0]?.text ?? 'The bridge gave no answer.')
+  seen.url = result.structuredContent.url
+  if (result.structuredContent.parts) seen.parts = result.structuredContent.parts
+  return result.structuredContent
+}
+
+/** The browser's tab as it draws, and what it shows, as events, for the pane. @param {AbortSignal} signal */
+export const screen = (/** @type {AbortSignal} */ signal) => pairing().then(({ port, key }) => fetch(`http://127.0.0.1:${port}/browser/screen`, { headers: { authorization: `Bearer ${key}` }, signal }))
+
+/** Whether the organisation lets the browser show a site (policy's `browser`). @param {string} url */
+export const allowed = (url) => hostBrowses(app.policy.browser, url)
+
+/** A part as the brain read it: its name in quotes, else, with none, its number. @param {unknown} ref */
+const part = (ref) => (seen.parts[Number(ref)] ? `“${seen.parts[Number(ref)]}”` : `[${ref}]`)
+
+/** @type {import('../../core/loop.js').Tool} */
+const pageTool = {
+  spec: {
+    name: 'page',
+    description: "Act on the web page the browser beside the conversation shows, in the user's own browser on their computer: read it as its parts, those you can act on numbered, then click one, type in one (submit sends it), choose an option of a list, press a key or scroll. Read it again once it changes. Fields for passwords, cards and one-time codes are the user's to fill.",
+    parameters: {
+      type: 'object',
+      properties: {
+        action: { type: 'string', enum: ['read', 'click', 'type', 'choose', 'key', 'scroll'] }, ref: { type: 'number', description: "A part's number, as read" },
+        text: { type: 'string', description: 'What to type, or the option to choose' }, submit: { type: 'boolean' }, up: { type: 'boolean', description: 'Scroll up rather than down' },
+        key: { type: 'string', enum: ['Enter', 'Tab', 'Escape', 'Backspace', 'Delete', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End', 'PageUp', 'PageDown', 'Space'] },
+      },
+      required: ['action'],
+    },
+  },
+  kind: 'fetch',
+  // What the user approves, in any language: the site, the part as it reads, what goes in it, the key.
+  title: (args) => [URL.canParse(seen.url) ? new URL(seen.url).host : '', args?.ref !== undefined && part(args.ref), typeof args?.text === 'string' && `← “${args.text}”`,
+    args?.key, args?.action === 'scroll' && (args.up ? '↑' : '↓')].filter(Boolean).join(' '),
+  run: async (args, ctx) => {
+    const found = await find()
+    if (!found.on || !found.browser) throw new Error(found.on ? 'This computer has no Chrome, Edge, Chromium or Brave to use.' : "This computer's bridge isn't running: the user starts it in Settings › Computer.")
+    // Where the person went from a site policy lists may be one it doesn't.
+    const now = app.policy.browser?.sites ? (await drive({ action: 'shown' }, ctx.signal)).url : ''
+    if (!allowed(now)) throw new Error(`The organisation keeps ${app.policy.browser?.thisComputer === false ? "This computer's browser off" : `${URL.canParse(now) ? new URL(now).host : 'this page'} out of This computer's browser`}.`)
+    if (loaded.peek().has('browser')) (await import('../browser/browser.js')).show()
+    const { action, ref } = args ?? {}
+    const shown = await drive({ action, ref, name: ref === undefined ? undefined : seen.parts[Number(ref)], text: args.text, submit: args.submit, key: args.key, up: args.up }, ctx.signal)
+    const head = [`${shown.title ? `${shown.title} (${shown.url})` : shown.url}`, ...shown.said].join('\n')
+    if (action !== 'read') return `${head}\nDone${shown.loading ? ', and it is still loading' : ''}. Read the page to see what changed.`
+    const [n] = ctx.cite([{ title: shown.title || shown.url, url: shown.url, quote: '' }])
+    return `Source [${n}]: ${head}\n${shown.text}`
+  },
 }
 
 /** @type {ReturnType<typeof setInterval> | undefined} */
@@ -331,7 +395,8 @@ class MachineApproval extends Element {
 define('app-machine-approval', MachineApproval)
 
 // Its row and page in Settings are the Computer's to place: `about()`, `page()`.
-register({ id: 'machine' })
+const browses = app.policy.browser?.thisComputer !== false
+register({ id: 'machine', tools: browses ? [pageTool] : [], lines: browses ? [{ name: 'page', line: "act on the page the browser shows, in the user's own browser: read, click, type" }] : [] })
 // Looked for once on, so Settings and the first command know at once whether it runs; in the desktop
 // app, started again in the folder it was started in.
 desktop.then(async (yes) => {

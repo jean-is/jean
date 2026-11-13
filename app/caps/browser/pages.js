@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
 // The browser (D140), the parts with no browser in them (tested under node --test): what a typed
 // address leads to, which pages can show beside the conversation, where Back and Forward go, a
-// page's words for the brain, and how this browser installs a site as an app.
+// page's words for the brain, how this browser installs a site as an app, and where policy lets This computer's browser go.
+import { covers } from '../computer/net.js'
 
 const LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])$/
 const HOST = /^(localhost|\d{1,3}(\.\d{1,3}){3}|\[[\da-f:]+\])(:\d+)?([/?#]|$)/i
@@ -201,3 +202,9 @@ export class Trail {
     return 'history'
   }
 }
+
+/**
+ * Whether policy's `browser` lets This computer's browser show a site (D746): never with `thisComputer` false; else, when it lists
+ * `sites`, only those, matched as the computer's are. @param {{ thisComputer?: boolean, sites?: string[] } | undefined} rules @param {string} url
+ */
+export const hostBrowses = (rules, url) => rules?.thisComputer !== false && (!rules?.sites || (URL.canParse(url) && rules.sites.some((entry) => covers(entry, new URL(url)))))

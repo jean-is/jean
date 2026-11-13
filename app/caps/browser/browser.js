@@ -28,6 +28,8 @@
 // isn't a page shows as a file's pane shows it, by the same code (ui/view.js, D190): a PDF's pages,
 // Markdown laid out, an Office file or a CSV as Office draws it, any other file as its text. A
 // folder's list is drawn here, not in a page's frame, which some panes that hold Jean refuse.
+// With This computer's bridge and a browser of that computer (D746), sites show in that browser's tab instead, drawn here as it
+// draws (./remote.js): no site refuses it, its address and history are known, and the brain acts on its page.
 import { html, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { signal, computed, effect } from '@preact/signals-core'
@@ -104,6 +106,13 @@ effect(() => {
 /** The Computer's module, once it is on: the project's workspace, and its pages (D167). @type {typeof import('../computer/computer.js') | null} */
 let computer = null
 const computerOn = async () => (unlocked.peek().has('computer') ? (computer = await import('../computer/computer.js')) : null)
+/** This computer's browser (D746), once This computer is on. @type {typeof import('./remote.js') | null} */
+let remote = null
+effect(() => { if (unlocked.value.has('machine') && !remote) import('./remote.js').then((module) => { remote = module; bump() }) })
+/** This computer's browser, while sites show there and policy lets this one. @param {string} url */
+const far = (url) => (remote?.on.value && remote.allowed(url) ? remote : null)
+/** The address it was last asked to open, once open. */
+let opening = Promise.resolve(/** @type {unknown} */ (null))
 /** Whether the project's workspace holds anything, for the empty pane's way to it. */
 const stocked = signal(false)
 const restock = async () => { stocked.value = Boolean(await (await computerOn())?.workspaceHolds()) }
@@ -195,6 +204,12 @@ keep('browser', {
 export function visit(url, { click = false, named = false } = {}) {
   const opens = click || named || open.peek() || !dock.covering()
   typed.value = null
+  const there = isLocal(url) ? null : far(url)
+  if (there) {
+    ;[page.value, open.value, local.value, opening] = [{ url, own: false }, opens, null, there.open(url)]
+    opening.catch(() => notify(t('browser.refused'), { alert: true }))
+    return true
+  }
   if (!isLocal(url) && (!showable(url, location.href) || windowed().includes(siteOf(url)) || refused(url))) {
     if (click) openTab(url)
     if (!click || open.peek()) {
@@ -417,6 +432,8 @@ let ahead = true
 
 /** @param {'back' | 'forward'} way */
 function walk(way) {
+  const url = page.peek()?.url ?? ''
+  if (url && !isLocal(url) && far(url)) return void far(url)?.go(way)
   trail.sync(history.length)
   const step = way === 'back' ? trail.back() : trail.forward()
   if (step === 'history') {
@@ -455,6 +472,7 @@ effect(() => {
 function reload() {
   const shown = page.peek()
   if (!shown) return
+  if (!isLocal(shown.url) && far(shown.url)) return void far(shown.url)?.go('reload')
   if (shown.own) return void visit(shown.url)
   frameTo(trail.reload(), true)
 }
@@ -494,19 +512,20 @@ class Browser extends Element {
     void moves.value
     const shown = page.value
     const here = shown && isLocal(shown.url) ? local.value : null
-    const address = shown && isLocal(shown.url) ? shownAs(shown.url) : shown?.url ?? ''
+    const there = shown && !isLocal(shown.url) ? far(shown.url) : null
+    const address = shown && isLocal(shown.url) ? shownAs(shown.url) : there?.shown.value.url || (shown?.url ?? '')
     const folder = folders?.folderOf(app.current.value)
     const button = (/** @type {string} */ label, /** @type {unknown} */ icon, /** @type {() => unknown} */ run, disabled = false) => html`<button class="icon-button"
       aria-label=${label} ?disabled=${disabled} @click=${run}>${icon}</button>`
     const full = dock.full.value === this
     return html`<aside class="pane browser" aria-label=${t('cap.browser.name')}>
       <header class="pane-head browser-bar">
-        <div class="icon-group">${button(t('browser.back'), icons.back, () => walk('back'), !trail.canBack)}
-        ${button(t('browser.forward'), icons.arrow, () => walk('forward'), !trail.canForward)}
+        <div class="icon-group">${button(t('browser.back'), icons.back, () => walk('back'), there ? !there.shown.value.back : !trail.canBack)}
+        ${button(t('browser.forward'), icons.arrow, () => walk('forward'), there ? !there.shown.value.forward : !trail.canForward)}
         ${button(t('browser.reload'), icons.retry, reload, !shown)}</div>
         <form @submit=${submit}>
           <input name="address" type="text" inputmode="url" enterkeyhint="go" autocomplete="off" autocapitalize="off" spellcheck="false" dir="auto"
-            class=${shown && !shown.own && trail.moved ? 'is-moved' : ''} title=${t('browser.address')} placeholder=${t('browser.placeholder')}
+            class=${shown && !shown.own && !there && trail.moved ? 'is-moved' : ''} title=${t('browser.address')} placeholder=${t('browser.placeholder')}
             .value=${live(typed.value ?? address)} @input=${(/** @type {InputEvent} */ event) => { typed.value = /** @type {HTMLInputElement} */ (event.target).value }}
             @focus=${(/** @type {FocusEvent} */ event) => /** @type {HTMLInputElement} */ (event.target).select()}
             @keydown=${(/** @type {KeyboardEvent} */ event) => { if (event.key === 'Escape' && !event.isComposing && typed.value !== null) { typed.value = null; event.preventDefault() } }}
@@ -517,14 +536,14 @@ class Browser extends Element {
         ${dock.moves(this)}</div>${button(t('action.close'), icons.close, close)}
       </header>
       <div class="browser-body">
-        ${loading.value ? html`<div class="browser-loading" role="progressbar" aria-label=${t('browser.reload')}></div>` : nothing}
-        <iframe class="browser-host" src=${HOST} title=${address || t('cap.browser.name')} allow="fullscreen" ?hidden=${!shown || shown.own || isLocal(shown.url)} @load=${hosted}></iframe>
+        ${loading.value || there?.shown.value.loading ? html`<div class="browser-loading" role="progressbar" aria-label=${t('browser.reload')}></div>` : nothing}
+        <iframe class="browser-host" src=${HOST} title=${address || t('cap.browser.name')} allow="fullscreen" ?hidden=${!shown || shown.own || isLocal(shown.url) || Boolean(there)} @load=${hosted}></iframe>
         ${!shown ? html`<div class="browser-note"><p>${t('browser.empty')}</p>
           ${folder ? html`<div class="row"><button class="button" @click=${() => visit(`${FOLDER}${folder.name}/`, { click: true })}>${icons.folder} ${t('browser.folder', { folder: folder.name })}</button></div>`
           : stocked.value && unlocked.value.has('computer') ? html`<div class="row"><button class="button" @click=${() => visit(WORKSPACE, { click: true })}>${icons.folder} ${t('browser.folder', { folder: WORKSPACE_NAME })}</button></div>` : nothing}</div>`
         : shown.own ? own(shown.url) : here ? ('frame' in here ? here.frame : 'view' in here ? html`<div class="view">${here.view}</div>`
-          : 'list' in here ? listing(here, shown.url) : html`<div class="browser-note"><p>${here.note}</p></div>`) : nothing}
-        ${shown && !shown.own && !isLocal(shown.url) && unsure.value ? html`<div class="browser-strip" role="status">
+          : 'list' in here ? listing(here, shown.url) : html`<div class="browser-note"><p>${here.note}</p></div>`) : there ? there.view() : nothing}
+        ${shown && !shown.own && !isLocal(shown.url) && !there && unsure.value ? html`<div class="browser-strip" role="status">
           <p>${t('browser.blank')}</p>
           <button class="button" @click=${() => ownTab(shown.url)}>${icons.external} ${t('browser.tab')}</button>
           <button class="icon-button subtle" aria-label=${t('action.close')} @click=${() => { shows.add(siteOf(shown.url)); unsure.value = false }}>${icons.close}</button>
@@ -657,6 +676,12 @@ const browseTool = {
     }
     const url = addressOf(String(args?.url ?? ''), searchPage(), locale.peek().split('-')[0])
     if (!url) throw new Error('Give a web address, like https://example.com.')
+    // In the user's own browser (D746): any site, read as its parts, which `page` acts on.
+    if (far(url) && visit(url) && await opening) {
+      const found = await (await import('../machine/machine.js')).drive({ action: 'read' }, ctx.signal)
+      const [n] = ctx.cite([{ title: found.title || siteOf(found.url), url: found.url, quote: '' }])
+      return `Showing ${found.url} beside the conversation, in the user's own browser on their computer: page acts on it.\n\nSource [${n}]: ${found.title} (${found.url})\n${found.text}`
+    }
     const shown = visit(url)
     const status = shown ? `Showing ${url} beside the conversation.` : `${siteOf(url)} can’t show beside the conversation: the user can open it in a tab of its own, or install the site as an app.`
     const found = await read(url, ctx.signal)
@@ -681,6 +706,8 @@ register({
     if (isWorkspace(shown.url)) return { page: `The browser beside the conversation shows ${shownAs(shown.url)}, from the project's workspace.` }
     if (isMade(shown.url)) return { page: `The browser beside the conversation shows ${shownAs(shown.url)}, a page you made, as one of your answers kept it.` }
     if (isLocal(shown.url)) return { page: `The browser beside the conversation shows ${shownAs(shown.url)}, from the user's folder.` }
+    const there = far(shown.url)
+    if (there) return { page: `The browser beside the conversation shows ${(there.shown.peek().url || shown.url).split('#')[0]}, in the user's own browser on their computer: page reads and acts on it.` }
     return { page: `The browser beside the conversation shows ${shown.url.split('#')[0]}${trail.moved ? ', or a page the user went to from there' : ''}.` }
   },
 })

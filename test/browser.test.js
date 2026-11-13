@@ -4,7 +4,7 @@
 // brain, and how this browser installs a site as an app.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { addressOf, showable, siteOf, pageText, installer, Trail } from '../app/caps/browser/pages.js'
+import { addressOf, showable, siteOf, pageText, installer, Trail, hostBrowses } from '../app/caps/browser/pages.js'
 
 const SEARCH = 'https://{lang}.wikipedia.org/w/index.php?search={query}'
 
@@ -144,4 +144,17 @@ test('a page that takes the place of entries ahead is never walked back to', () 
   trail.loaded(12, 9200)
   assert.equal(trail.back(9300), 'history')
   assert.equal(trail.back(9400), null)
+})
+
+test("policy keeps This computer's browser off, or to the sites it lists, matched as the computer's are (D746)", () => {
+  assert.ok(hostBrowses(undefined, 'https://bank.example/'))
+  assert.ok(hostBrowses({}, 'https://bank.example/'))
+  assert.ok(!hostBrowses({ thisComputer: false }, 'https://intranet.corp.example/'))
+  const listed = { sites: ['*.corp.example', 'localhost:*'] }
+  assert.ok(hostBrowses(listed, 'https://intranet.corp.example/a'))
+  assert.ok(hostBrowses(listed, 'http://localhost:5173/'))
+  assert.ok(!hostBrowses(listed, 'https://bank.example/'))
+  assert.ok(!hostBrowses(listed, 'http://intranet.corp.example/'), 'https only')
+  assert.ok(!hostBrowses(listed, ''), 'a page not known yet')
+  assert.ok(!hostBrowses({ sites: [] }, 'https://intranet.corp.example/'), 'an empty list, none')
 })
