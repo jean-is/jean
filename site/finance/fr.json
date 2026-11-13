@@ -1,0 +1,230 @@
+{
+  "title": "{name} pour la finance",
+  "description": "L’IA pour tous dans une banque, une assurance ou une société de gestion : vos modèles déjà sous contrat, par votre passerelle, sans serveur de chez nous.",
+  "for": "Banques et assurances",
+  "eyebrow": "Pour les banques, les assureurs et les sociétés de gestion",
+  "h1": "L’IA pour tous vos collaborateurs, sans nouveau fournisseur dans le chemin de vos données.",
+  "h1.mark": "sans nouveau fournisseur",
+  "acts": [
+    [
+      "everyone",
+      "L’IA pour tous vos collaborateurs,"
+    ],
+    [
+      "vendor",
+      "sans nouveau fournisseur dans le chemin de vos données."
+    ]
+  ],
+  "lede": "{name} est un dossier de fichiers statiques que votre DSI sert depuis votre propre adresse. Il répond par votre passerelle IA, avec les modèles que vous avez déjà sous contrat, et le travail de chacun reste scellé sur son propre ordinateur. Rien ne passe par nos serveurs.",
+  "cta": "Demander une clé d’essai de 30 jours",
+  "share": "La partager avec votre comité des risques",
+  "facts": [
+    "Rien à installer",
+    "Fonctionne sur un réseau fermé",
+    "Logiciel libre, MIT"
+  ],
+  "models.title": "L’IA que vous avez validée, devant chacun.",
+  "models.why": "{share} des banques que la BCE supervise directement utilisent déjà l’IA générative. {name} donne à tous vos collaborateurs les modèles que vous avez sous contrat, par votre passerelle, chacun connecté avec son compte professionnel.",
+  "models.source": "Supervision bancaire de la BCE, 22 septembre 2026",
+  "path.nodes": [
+    [
+      "Un onglet du navigateur",
+      "{name}, servi depuis l’adresse de votre établissement"
+    ],
+    [
+      "Votre passerelle IA",
+      "LiteLLM, Portkey, Azure API Management…"
+    ],
+    [
+      "Vos modèles",
+      "Azure OpenAI, Bedrock, Mistral, ou vos propres serveurs"
+    ]
+  ],
+  "path.sides": [
+    [
+      "Votre fournisseur d’identité",
+      "Entra ID ou tout OpenID Connect"
+    ],
+    [
+      "Votre collecteur",
+      "OpenTelemetry, pour l’audit"
+    ],
+    [
+      "Nos serveurs",
+      "Aucun dans le chemin"
+    ]
+  ],
+  "price.title": "Un seul prix pour tout l’établissement.",
+  "price.why": "Jamais par siège, puisque {name} ne compte personne. Vos modèles restent payés à leur fournisseur, comme aujourd’hui.",
+  "price.caption": "HT, hors usage des modèles",
+  "price.people": "Personnes",
+  "price.year": "Pour l’établissement, par an",
+  "price.each": "Par personne, par an",
+  "price.small": "Moins de {small}",
+  "price.free": "Gratuit",
+  "catch.everyone": [
+    "Pas un système de décision : noter un crédit ou tarifer une assurance vie ou santé sont des usages à haut risque au sens de l’AI Act, pour un autre outil.",
+    "Pas de données de marché intégrées : vos propres sources se connectent une à une, chacune nommée dans votre politique."
+  ],
+  "register.title": "Votre fiche du registre DORA, remplie.",
+  "register.why": "Servi par votre DSI, {name} est une licence et son support. Nous n’hébergeons ni ne traitons rien de vos données : la fiche que rédige votre équipe risque tiers est courte.",
+  "register.caption": "Registre d’information · Service TIC d’un prestataire tiers",
+  "register.rows": [
+    [
+      "Prestataire",
+      "Warehouse SAS, France"
+    ],
+    [
+      "Service",
+      "Une licence logicielle et son support"
+    ],
+    [
+      "Vos données qu’il héberge ou traite",
+      "Aucune"
+    ],
+    [
+      "Où sont vos données",
+      "Sur les ordinateurs de vos collaborateurs, votre passerelle, les modèles sous contrat"
+    ],
+    [
+      "Ses sous-traitants dans le chemin des données",
+      "Aucun"
+    ],
+    [
+      "Sortie",
+      "Des fichiers simples et des standards ouverts, sur n’importe quel hébergement statique"
+    ],
+    [
+      "Si Warehouse SAS s’arrête",
+      "Votre copie continue de fonctionner, rien n’appelle chez nous, et le code entreprise passe en MIT après 12 mois sans clé à acheter"
+    ]
+  ],
+  "answers.title": "Ce que chaque relecteur demandera.",
+  "answers.why": "Une ligne par question, avec son statut aujourd’hui.",
+  "groups": [
+    "Sécurité",
+    "Risque tiers et DORA",
+    "Données personnelles et secret bancaire",
+    "Conformité et conservation"
+  ],
+  "answers.security": [
+    [
+      "Où vont les requêtes et les fichiers ?",
+      "À votre passerelle et aux adresses que votre en-tête autorise, nulle part ailleurs : le navigateur l’impose.",
+      "built"
+    ],
+    [
+      "Que reste-t-il sur les ordinateurs ?",
+      "Le travail de chacun, scellé en AES-256-GCM, derrière un verrou par clé d’accès ou mot de passe que votre politique peut exiger.",
+      "built"
+    ],
+    [
+      "A-t-il été testé de l’extérieur ?",
+      "Le cahier des charges du test est publié. Le test n’est pas encore fait.",
+      "not"
+    ]
+  ],
+  "answers.third": [
+    [
+      "Warehouse SAS est-il un prestataire tiers de services TIC ?",
+      "D’une licence et de son support seulement. Il n’héberge ni ne traite rien de vos données.",
+      "design"
+    ],
+    [
+      "SOC 2 ou ISO 27001 ?",
+      "Ni l’un ni l’autre : ils auditent les serveurs d’un prestataire, et rien de vos données ne passe par les nôtres. Le pack de confiance répond pour le code que vous déployez.",
+      "design"
+    ],
+    [
+      "Une annexe contractuelle pour l’article 30 de DORA ?",
+      "Pas encore. Demandez-la, nous l’écrivons avec vos clauses.",
+      "not"
+    ]
+  ],
+  "answers.data": [
+    [
+      "L’IA peut-elle lire le nom des clients et leurs IBAN ?",
+      "Pas ceux que vous masquez. Numéros de carte, IBAN et vos propres motifs sont repérés sur l’ordinateur ; les noms partent sous forme de marques et reviennent dans la réponse.",
+      "key"
+    ],
+    [
+      "Le travail confidentiel peut-il rester sur nos serveurs ?",
+      "Oui. Ce que vos libellés marquent ne va qu’à l’IA que votre politique désigne pour cela, sur site si vous le voulez.",
+      "key"
+    ],
+    [
+      "Où les requêtes sont-elles traitées ?",
+      "Seulement par les IA que votre politique place dans les pays qu’elle liste, et le certificat de chaque réponse dit où.",
+      "key"
+    ]
+  ],
+  "answers.records": [
+    [
+      "Chaque requête est-elle journalisée ?",
+      "Dans votre collecteur OpenTelemetry : quelle IA, quel outil, quelle décision, avec ou sans le contenu, dans une chaîne qui montre toute altération.",
+      "key"
+    ],
+    [
+      "Peut-on conserver pour une durée fixée ?",
+      "Ce que les collaborateurs suppriment reste sur leur ordinateur la durée que vous fixez, six mois pour l’AI Act, avec ses certificats.",
+      "key"
+    ],
+    [
+      "Agit-il sans demander ?",
+      "Envoyer, partager et supprimer demandent d’abord. Mots de passe et paiements, jamais.",
+      "built"
+    ]
+  ],
+  "trust.title": "Tout est ouvert.",
+  "trust.docs": [
+    [
+      "Modèle de menaces",
+      "Ce que {name} protège, contre qui, et ce qui vous revient"
+    ],
+    [
+      "Cahier des charges du test d’intrusion",
+      "Ce qu’un cabinet extérieur testera ; le test n’est pas encore fait"
+    ],
+    [
+      "Les 35 recommandations de l’ANSSI",
+      "Pour chacune : ce que fait {name}, ce qui vous revient, ce qui n’est pas construit"
+    ],
+    [
+      "Modèle d’AIPD",
+      "Rempli pour ce que fait {name}, vide pour ce que vous décidez"
+    ],
+    [
+      "Versions signées",
+      "Déployer sans compiler, et vérifier ce que vous déployez"
+    ],
+    [
+      "Où vont vos fichiers",
+      "Chaque adresse que contacte une copie de {name}, et quand"
+    ]
+  ],
+  "catch.vendor": [
+    "La conservation sur les ordinateurs est assurée au mieux, et rien dans {name} n’est inaltérable : les journaux de votre passerelle et de votre collecteur font foi.",
+    "Pas d’effacement à distance : le travail d’un ordinateur perdu reste scellé derrière son verrou.",
+    "Les règles d’un navigateur ne valent que sur des ordinateurs gérés : votre en-tête, votre réseau et votre passerelle les font respecter."
+  ],
+  "end.title": "Partagez cette page avec votre comité des risques",
+  "end.body": "Votre RSSI, votre équipe risque tiers, votre DPO et la conformité trouvent chacun leurs réponses ici. Envoyez-leur cette adresse :",
+  "end.send": "L’envoyer à votre comité des risques",
+  "mail.subject": "Une IA pour tous les collaborateurs, pour avis",
+  "mail.body": "Bonjour,\n\nVoici une IA que nous pourrions donner à tous les collaborateurs. Elle ne répondrait que par notre passerelle, avec les modèles que nous avons déjà sous contrat, et aucun serveur du fournisseur ne détiendrait nos données. Chaque question de la revue y a sa réponse, avec son statut aujourd’hui :\n\n{page}\n\nPourriez-vous la lire avant que nous en parlions ?",
+  "faq.title": "Questions",
+  "faq.items": [
+    [
+      "Peut-il cohabiter avec Microsoft 365 Copilot ?",
+      "Oui. Il sert ceux qui n’ont pas de licence Copilot, sur tout ordinateur doté d’un navigateur, et lit et écrit dans Microsoft 365 par votre propre enregistrement d’application."
+    ],
+    [
+      "Fonctionne-t-il sur des bureaux virtuels ?",
+      "Il n’a pas encore été essayé sur Citrix ni Azure Virtual Desktop. Dans Chrome et Edge, le travail de chacun peut être copié en continu dans un dossier d’un partage réseau, que chacun choisit de nouveau après la réinitialisation d’un bureau."
+    ],
+    [
+      "Où vivent nos enregistrements, pour MiFID II, la SEC ou la FINRA ?",
+      "Hors de {name} : le journal de votre passerelle et votre collecteur, contenu compris, gardent chaque requête et chaque réponse, et votre archivage les prend là."
+    ]
+  ]
+}

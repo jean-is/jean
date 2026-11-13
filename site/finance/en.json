@@ -1,0 +1,230 @@
+{
+  "title": "{name} for finance",
+  "description": "AI for everyone at a bank, insurer or asset manager: the models you already contracted, through your own gateway, with no server of ours in the path.",
+  "for": "Banks and insurers",
+  "eyebrow": "For banks, insurers and asset managers",
+  "h1": "AI for everyone at your firm, with no new vendor in the data path.",
+  "h1.mark": "no new vendor",
+  "acts": [
+    [
+      "everyone",
+      "AI for everyone at your firm,"
+    ],
+    [
+      "vendor",
+      "with no new vendor in the data path."
+    ]
+  ],
+  "lede": "{name} is a folder of static files your IT serves from your own address. It answers through your AI gateway, with the models you have already contracted, and each person’s work stays sealed on their own computer. Nothing passes through our servers.",
+  "cta": "Ask for a 30-day trial key",
+  "share": "Share it with your risk committee",
+  "facts": [
+    "Nothing to install",
+    "Works on a closed network",
+    "Open source, MIT"
+  ],
+  "models.title": "The AI you approved, in front of everyone.",
+  "models.why": "{share} of the banks the ECB supervises directly already use generative AI. {name} gives everyone at your firm the models you contracted, through your gateway, each person signed in with their work account.",
+  "models.source": "ECB Banking Supervision, 22 September 2026",
+  "path.nodes": [
+    [
+      "A browser tab",
+      "{name}, served from your firm’s address"
+    ],
+    [
+      "Your AI gateway",
+      "LiteLLM, Portkey, Azure API Management…"
+    ],
+    [
+      "Your models",
+      "Azure OpenAI, Bedrock, Mistral, or your own servers"
+    ]
+  ],
+  "path.sides": [
+    [
+      "Your identity provider",
+      "Entra ID or any OpenID Connect"
+    ],
+    [
+      "Your collector",
+      "OpenTelemetry, for the audit"
+    ],
+    [
+      "Servers of ours",
+      "None in the path"
+    ]
+  ],
+  "price.title": "One price for the whole firm.",
+  "price.why": "Never per seat, since {name} counts no one. Your models are paid to their provider, as they are today.",
+  "price.caption": "Excl. VAT, without the models’ own use",
+  "price.people": "People",
+  "price.year": "For the firm, a year",
+  "price.each": "Per person, a year",
+  "price.small": "Fewer than {small}",
+  "price.free": "Free",
+  "catch.everyone": [
+    "Not a decision system: scoring credit or pricing life and health insurance are high-risk uses under the AI Act, for another tool.",
+    "No market data built in: your own sources connect one by one, each named in your policy."
+  ],
+  "register.title": "Your DORA register entry, filled in.",
+  "register.why": "Served by your IT, {name} is a licence and its support. We host and process nothing of yours, so the entry your third-party risk team writes is short.",
+  "register.caption": "Register of information · ICT third-party service",
+  "register.rows": [
+    [
+      "Provider",
+      "Warehouse SAS, France"
+    ],
+    [
+      "Service",
+      "A software licence and its support"
+    ],
+    [
+      "Your data it hosts or processes",
+      "None"
+    ],
+    [
+      "Where your data is",
+      "Your people’s computers, your gateway, the models you contracted"
+    ],
+    [
+      "Its subcontractors in the data path",
+      "None"
+    ],
+    [
+      "Exit",
+      "Plain files and open standards, on any static host"
+    ],
+    [
+      "If Warehouse SAS stops",
+      "Your copy keeps working, nothing calls home, and the enterprise code becomes MIT after 12 months without a key to buy"
+    ]
+  ],
+  "answers.title": "What each reviewer will ask.",
+  "answers.why": "One line per question, with its status today.",
+  "groups": [
+    "Security",
+    "Third-party risk and DORA",
+    "Data protection and banking secrecy",
+    "Compliance and records"
+  ],
+  "answers.security": [
+    [
+      "Where do prompts and files go?",
+      "To your gateway and the addresses your header allows, nowhere else: the browser enforces it.",
+      "built"
+    ],
+    [
+      "What stays on laptops?",
+      "Each person’s work, sealed with AES-256-GCM, behind a passkey or password lock your policy can require.",
+      "built"
+    ],
+    [
+      "Has it been tested from outside?",
+      "The brief for the test is published. The test isn’t done yet.",
+      "not"
+    ]
+  ],
+  "answers.third": [
+    [
+      "Is Warehouse SAS an ICT third-party provider?",
+      "Of a licence and its support only. It hosts and processes nothing of yours.",
+      "design"
+    ],
+    [
+      "SOC 2 or ISO 27001?",
+      "Neither: they audit a provider’s servers, and nothing of yours passes through ours. The trust pack answers for the code you deploy.",
+      "design"
+    ],
+    [
+      "A contractual annex for DORA’s Article 30?",
+      "Not yet. Ask, and we write it with your clauses.",
+      "not"
+    ]
+  ],
+  "answers.data": [
+    [
+      "Can the AI read client names and IBANs?",
+      "Not those you hide. Card numbers, IBANs and your own patterns are found on the computer; names leave as marks and come back in the answer.",
+      "key"
+    ],
+    [
+      "Can confidential work stay on our own servers?",
+      "Yes. What your labels mark goes only to the AI your policy names for it, on premises if you wish.",
+      "key"
+    ],
+    [
+      "Where are requests processed?",
+      "Only by the AI your policy places in the countries it lists, and each answer’s certificate says where.",
+      "key"
+    ]
+  ],
+  "answers.records": [
+    [
+      "Is every request logged?",
+      "In your OpenTelemetry collector: which AI, which tool, what was decided, with or without content, in a chain that shows tampering.",
+      "key"
+    ],
+    [
+      "Can we keep records for a set time?",
+      "What people delete stays on their computer for the period you set, six months for the AI Act, with its certificates.",
+      "key"
+    ],
+    [
+      "Does it act without asking?",
+      "Sending, sharing and deleting ask first. Passwords and payments, never.",
+      "built"
+    ]
+  ],
+  "trust.title": "All of it in the open.",
+  "trust.docs": [
+    [
+      "Threat model",
+      "What {name} protects, from whom, and what is left to you"
+    ],
+    [
+      "Penetration test brief",
+      "What an outside firm will test; the test isn’t done yet"
+    ],
+    [
+      "ANSSI’s 35 recommendations",
+      "Each one: what {name} does, what’s left to you, what isn’t built"
+    ],
+    [
+      "DPIA template",
+      "Filled in for what {name} does, blank for what you decide"
+    ],
+    [
+      "Signed releases",
+      "Deploy without building, and check what you deploy"
+    ],
+    [
+      "Where your files go",
+      "Every address a copy of {name} contacts, and when"
+    ]
+  ],
+  "catch.vendor": [
+    "Records kept on computers are best effort, and nothing in {name} is write-once: your gateway’s and your collector’s logs are the record.",
+    "No remote wipe: a lost laptop’s work stays sealed behind its lock.",
+    "Rules inside a browser hold only on managed computers: your header, your network and your gateway enforce them."
+  ],
+  "end.title": "Share this page with your risk committee",
+  "end.body": "Your security officer, third-party risk, data protection officer and compliance each find their answers here. Send them this address:",
+  "end.send": "Send it to your risk committee",
+  "mail.subject": "An AI for everyone at the firm, for review",
+  "mail.body": "Hello,\n\nHere is an AI we could give everyone at the firm. It would answer only through our gateway, with the models we already contracted, and no vendor’s server would hold our data. Each question of the review has its answer there, with its status today:\n\n{page}\n\nCould you read it before we talk it over?",
+  "faq.title": "Questions",
+  "faq.items": [
+    [
+      "Can it sit beside Microsoft 365 Copilot?",
+      "Yes. It serves the people without a Copilot licence, on any computer with a browser, and reads and writes Microsoft 365 through your own app registration."
+    ],
+    [
+      "Does it run on virtual desktops?",
+      "It hasn’t been tried on Citrix or Azure Virtual Desktop yet. In Chrome and Edge, each person’s work can be mirrored to a folder on a network share, which they pick again after a desktop resets."
+    ],
+    [
+      "Where do our records live, for MiFID II, the SEC or FINRA?",
+      "Outside {name}: your gateway’s log and your collector, with content on, hold each request and answer, and your archive takes them from there."
+    ]
+  ]
+}

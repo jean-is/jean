@@ -487,7 +487,7 @@ export function foot (kit, languages = '') {
   const item = (/** @type {string | null} */ href, /** @type {string} */ label, /** @type {string} */ name = '') => (href ? /* html */ `<li><a href="${href}"${name === kit.name ? ' aria-current="page"' : ''}>${label}</a></li>` : '')
   const audiences = item(kit.link('family'), kit.say('foot.families'), 'family') + item(kit.link('work'), kit.say('foot.work'), 'work')
     + item(kit.link('teachers'), kit.say('foot.teachers'), 'teachers') + item(kit.link('associations'), kit.say('foot.associations'), 'associations')
-    + item(kit.link('public-sector'), kit.say('foot.public'), 'public-sector') + item(kit.link('enterprise'), kit.say('foot.it'), 'enterprise')
+    + item(kit.link('public-sector'), kit.say('foot.public'), 'public-sector') + item(kit.link('finance'), kit.say('foot.finance'), 'finance') + item(kit.link('enterprise'), kit.say('foot.it'), 'enterprise')
   const uses = USES.map((name) => item(kit.link(name), kit.say(`foot.${name}`), name)).join('')
   const compared = COMPARED.map((name, i) => item(kit.link(name), i ? kit.from(name).say('product') : kit.say('foot.all'), name)).join('')
   return /* html */ `<footer class="site-foot">
