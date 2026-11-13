@@ -106,10 +106,12 @@ export const DIRECTORY = Object.freeze(/** @type {Known[]} */ ([
   // Each company's own instance, whose address policy gives, with the app its admin registered there, since they register
   // none; reached through the gateway, as ServiceNow's and Databricks's answer no browser, whatever the address (D283).
   // NetSuite's is the account's (Oracle's service for running a business, its database a developer's tool, D192);
-  // Databricks's a workspace's, a Genie space's or SQL's.
+  // Databricks's a workspace's, a Genie space's or SQL's. SAP runs none for people's work (its BTP's is an administrator's):
+  // a company makes its own in SAP Integration Suite from its systems, on its own hosts, which its gateway names.
   { id: 'servicenow', group: 'tasks', name: 'ServiceNow', ready: false, logo: 'servicenow.png' },
   { id: 'netsuite', group: 'other', name: 'Oracle NetSuite', ready: false, logo: 'netsuite.png' },
   { id: 'databricks', group: 'other', name: 'Databricks', ready: false, logo: 'databricks.png' },
+  { id: 'sap', group: 'other', name: 'SAP', ready: false, logo: 'sap.svg' },
 ]))
 
 /** @typedef {Known & { via: 'browser' | 'gateway' | null }} Listed  how it is reached now; null: not yet */

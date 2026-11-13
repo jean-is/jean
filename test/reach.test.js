@@ -485,7 +485,7 @@ describe('the services Jean knows (D95)', () => {
     const microsoft = (/** @type {any} */ policy, /** @type {any} */ served) => known(policy, served).find((entry) => entry.id === 'microsoft-365')?.via
     assert.deepEqual([microsoft({}), microsoft({ directory: [{ id: 'microsoft-365', clientId: 'jean-spa' }] })], [null, 'browser'])
     assert.deepEqual([microsoft({}, { hosts: ['login.microsoftonline.com'], clients: { 'https://login.microsoftonline.com/common/v2.0': 'web-app' } }), microsoft({}, { hosts: ['login.microsoftonline.com'] })], ['gateway', null])
-    for (const id of ['servicenow', 'netsuite', 'databricks']) assert.ok(services.some((entry) => entry.id === id && !entry.url && entry.via === null))
+    for (const id of ['servicenow', 'netsuite', 'databricks', 'sap']) assert.ok(services.some((entry) => entry.id === id && !entry.url && entry.via === null))
     // A gateway that relays to Google's servers but not its sign-in, or holds no app of Google's, or
     // relays to some of its servers only (D344), doesn't reach Google.
     const google = { 'https://accounts.google.com': 'google-app' }
@@ -566,12 +566,15 @@ describe('the services Jean knows (D95)', () => {
     assert.equal(knownFor('https://mcp.canva.com/mcp', policy), undefined)
   })
 
-  test('ServiceNow, Oracle NetSuite and Databricks are at each company\'s own address, which policy gives with the app its admin registered, and are reached through the gateway, which relays to every instance (D283)', () => {
-    const hosts = [...SERVICES]
-    for (const [id, url, issuer] of [['servicenow', 'https://acme.service-now.com/sncapps/mcp-server/mcp/sn_mcp_server_default', 'https://acme.service-now.com'],
+  test('ServiceNow, Oracle NetSuite, Databricks and SAP are at each company\'s own address, which policy gives with the app its admin registered, and are reached through the gateway that relays to it (D283)', () => {
+    for (const [id, url, issuer, own] of [['servicenow', 'https://acme.service-now.com/sncapps/mcp-server/mcp/sn_mcp_server_default', 'https://acme.service-now.com'],
       ['netsuite', 'https://1234567.suitetalk.api.netsuite.com/services/mcp/v1/all', 'https://1234567.suitetalk.api.netsuite.com'],
       ['databricks', 'https://dbc-1a2b3c4d-5e6f.cloud.databricks.com/api/2.0/mcp/genie/01f0', 'https://dbc-1a2b3c4d-5e6f.cloud.databricks.com/oidc'],
-      ['databricks', 'https://adb-1234567890123456.7.azuredatabricks.net/api/2.0/mcp/sql', 'https://adb-1234567890123456.7.azuredatabricks.net/oidc']]) {
+      ['databricks', 'https://adb-1234567890123456.7.azuredatabricks.net/api/2.0/mcp/sql', 'https://adb-1234567890123456.7.azuredatabricks.net/oidc'],
+      // SAP's, made in the company's Integration Suite, is on hosts its own gateway names.
+      ['sap', 'https://mcp.acme.example/sales-orders', 'https://acme.accounts.ondemand.com', 'mcp.acme.example']]) {
+      const hosts = [...SERVICES, ...(own ? [own] : [])]
+      if (own) assert.equal(known({ directory: [{ id, url, clientId: 'acme-jean' }] }, { hosts: [...SERVICES] }).find((entry) => entry.id === id)?.via, null)
       const via = (/** @type {any} */ change, /** @type {any} */ served) => known({ directory: [{ id, url, ...change }] }, served).find((entry) => entry.id === id)?.via
       assert.equal(known().find((entry) => entry.id === id)?.via, null)
       assert.equal(via({ clientId: 'acme-jean' }), null)

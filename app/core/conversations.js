@@ -123,8 +123,7 @@ const compare = (a, b) => (a < b ? -1 : a > b ? 1 : 0)
 export async function listConversations(fs, projectDir) {
   const dir = join(projectDir, 'conversations')
   const files = (await fs.list(dir)).filter((entry) => entry.kind === 'file' && entry.name.endsWith('.jsonl'))
-  const summaries = await Promise.all(files.map((entry) => summarize(fs, join(dir, entry.name), entry.name.slice(0, -'.jsonl'.length))))
-  return summaries
+  return (await Promise.all(files.map((entry) => summarize(fs, join(dir, entry.name), entry.name.slice(0, -'.jsonl'.length)))))
     .filter((summary) => summary !== null)
     .sort((a, b) => compare(b.updatedAt, a.updatedAt) || compare(b.id, a.id))
 }
