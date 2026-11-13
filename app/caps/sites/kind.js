@@ -162,7 +162,7 @@ export function folderKind(kind) {
   /** One as a page on its own that plays (./file.js), its pages put together: what a link, another app or a download is given, as bytes. @param {string} path */
   const alone = async (path) => { const one = await load(path), pages = /** @type {Record<string, string>} */ ({}); for (const page of [...one?.files.keys() ?? []].filter((file) => file.endsWith('.html'))) pages[page] = await pageOf(/** @type {One} */ (one).files, page); return new TextEncoder().encode(played(pages)) }
   /** Its downloads: that page, which any browser opens, and its files as a zip. @param {{ uri: string, name: string }} file @returns {import('../../ui/out.js').Ways['files']} */
-  const downloads = (file) => [{ id: 'html', glyph: icons.download, label: t('out.webPage'), run: async () => save(new Blob([/** @type {BlobPart} */ (await alone(file.uri))], { type: 'text/html' }), `${file.name}.html`) },
+  const downloads = (file) => [{ id: 'html', glyph: icons.globe, label: t('out.webPage'), run: async () => save(new Blob([/** @type {BlobPart} */ (await alone(file.uri))], { type: 'text/html' }), `${file.name}.html`) },
     { id: '', glyph: icons.folder, label: t(ZIP), run: async () => {
       const one = await load(file.uri)
       if (one) save(new Blob([/** @type {BlobPart} */ (await writeZip([...one.files].map(([name, bytes]) => ({ name, bytes }))))], { type: 'application/zip' }), `${one.record.name}.zip`)
