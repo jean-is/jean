@@ -87,7 +87,7 @@ The prompt and the declared tools are frozen for the life of a conversation. Cha
 - What Jean tells people about itself comes from `caps/own-skills/guide.txt`, in plain English for the brain: a capability added or changed updates its part there (D423).
 - Docs describe Jean as it is now; history lives in git. No "as built in 0.x", "since Dnnn" or "until Dnnn" asides, no changelog, no budget snapshots (`npm run budgets` prints them).
 - A decision goes into [docs/decisions.md](docs/decisions.md) only when it binds, as its header says: short (what, why, what was rejected), merged with the entries it amends, under the section it belongs to. How a feature works goes into architecture.md or product.md, once. A budget raise takes no number.
-- The roadmap keeps one line per version and one checklist of what is still to check by hand.
+- The roadmap keeps one line per version, the big things next in their order, one checklist of what is still to check by hand, and the gates before the public launch and an organisation's first pilot. A feature that lands moves its row from Next into its version's line.
 - A commit's first line is one short sentence, its gitmoji first; the story goes in the body, after a blank line, since every `git log --oneline` and every new session reads first lines. The gitmoji grades the version the push makes (D735): `:sparkles:` a minor, a fix or a change people see (`:bug:`, `:lipstick:`, `:speech_balloon:`…) a patch, docs, tests and tidying nothing; so it says what the change is, never more.
 
 ## Testing
