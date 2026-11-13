@@ -54,8 +54,9 @@
 /* The pane, as tall as the window: the stage takes what the rows above and the design's bar at its foot leave, the page as big as it holds; the bar's menus open above. */
 .design { display: flex; flex-direction: column; flex: 1 0 auto; gap: 0.6rem; min-inline-size: 0; container-type: inline-size; } .design > * { flex: none; }
 /* Above the page, the takes row, in a box that stays as it scrolls, where its shadows hang, or while a part is picked its bar in the
-   row's place, so that the page never moves under the pointer. */
-.design-top { display: grid; } .design-top > * { grid-area: 1 / 1; } .design-top:has(> .design-part-bar) > .design-row { visibility: hidden; } .design-row { position: relative; min-inline-size: 0; }
+   row's place, so that the page never moves under the pointer. In a pane, the stage from edge to edge, the rows, the fields and the
+   design's bar kept from its edges. */
+.design-top { display: grid; } .design-top > * { grid-area: 1 / 1; } .design-top:has(> .design-part-bar) > .design-row { visibility: hidden; } .design-row { position: relative; min-inline-size: 0; } .view .design-row { padding-block-start: var(--pane-inset); } .view :is(.design-takes, .design-part-bar) { padding-inline: var(--pane-inset); } .view .design-fields { margin-inline: var(--pane-inset); } .view .design-bar { padding: 0 var(--pane-inset) var(--pane-inset); }
 .design-takes { display: flex; align-items: center; gap: 0.5rem; overflow-x: auto; overscroll-behavior-inline: contain; scrollbar-width: thin; margin: -0.15rem 0; padding: 0.3rem; list-style: none; scroll-timeline: --takes inline; }
 .design-take { flex: none; padding: 0; border: 2px solid transparent; border-radius: 0.5rem; background: none; overflow: hidden; cursor: pointer; }
 .design-take .design-page { inline-size: calc(4.5rem * var(--r)); pointer-events: none; }

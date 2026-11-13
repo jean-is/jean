@@ -24,9 +24,9 @@ app-slides .is-pointed { outline: 0.12em dashed var(--flame); outline-offset: 0.
 /* A menu in deck's bar: its items Jean's menu's, not the bar's buttons (deck's grid and Slides' grey). */
 #slides-layouts button { display: flex; color: inherit; } #slides-layouts [aria-checked='false'] > .icon { visibility: hidden; }
 /* Beside the conversation: the slides, from edge to edge of the pane, then their Markdown; Jean's version under its bar, and what it does to the slide on show. */
-app-slides.beside :is(.slides-change, .deck-bar, .deck-source) { padding-inline: 0.75rem; } app-slides.beside .deck-slide { border-radius: 0; }
+app-slides.beside :is(.slides-change, .deck-bar) { padding-inline: var(--pane-inset); } app-slides.beside .deck-bar { padding-block: calc(var(--pane-inset) / 2); } app-slides.beside .deck-slide { border-radius: 0; }
 app-slides.beside .deck.is-editing { display: grid; grid-template: 'stage' auto 'bar' auto 'source' auto / 1fr; }
-app-slides.beside .deck.is-editing .deck-source { grid-area: source; block-size: 22rem; }
+app-slides.beside .deck.is-editing .deck-source { grid-area: source; justify-self: stretch; inline-size: auto; block-size: 22rem; margin: 0 var(--pane-inset) var(--pane-inset); }
 /* The presenter's view: narrow, the slide stays as it was, its bar under it, then the notes beside the next slide, level with it
    under its label, in the room's pen, inset from the pane's edges; wide (a pane full screen), the slide and its bar beside the
    next slide over the notes, all inset. deck lays it out by the window's width, side by side in any pane. */

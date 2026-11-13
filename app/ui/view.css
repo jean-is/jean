@@ -2,10 +2,11 @@
 /* What a file shows as (ui/view.js, D126): in a file's pane and the browser's (D190), each
    a pane of the dock (ui/dock.css, D144). Loaded with it, after ui/style.css, so its colours are
    the look's. A web page, a picture and a PDF keep the white they were made on. A pane pads
-   nothing: what it holds goes from edge to edge, and words bring their own margins. Logical
-   properties only. */
+   nothing: what it holds goes from edge to edge, and words bring their own margins; a bar, a row
+   or a box in it keeps --pane-inset from the pane's edges, the head's own at its end (ui/dock.css).
+   Logical properties only. */
 
-.view { flex: 1; min-block-size: 0; display: flex; flex-direction: column; overflow: auto; container-type: inline-size; }
+.view { --pane-inset: 0.75rem; flex: 1; min-block-size: 0; display: flex; flex-direction: column; overflow: auto; container-type: inline-size; }
 .view-frame { flex: 1; border: 0; background: white; color-scheme: light; }
 .view-picture, .view-film { align-self: center; max-inline-size: 100%; block-size: auto; margin-block: auto; background: white; }
 .view-sound { align-self: center; inline-size: calc(100% - 2.5rem); margin-block: auto; }

@@ -11,8 +11,9 @@
 .table-panel :is(.table-rule, .table-line) { display: flex; align-items: center; gap: 0.4rem; padding-inline: 0.75rem 0.25rem; } .table-line { min-block-size: 2.4rem; } .table-line > span { flex: 1; }
 .table-rule { flex-wrap: wrap; padding-block: 0.15rem; } .table-rule > :is(select, input) { flex: 1 1 7rem; min-inline-size: 0; padding-block: 0.35rem; } .table-rule > select + select { flex: 1.4 1 8.5rem; } .table-rule > input { flex-basis: 6rem; } .table-panel .icon-button { flex: none; inline-size: 2.1rem; block-size: 2.1rem; padding: 0; justify-content: center; border-radius: 50%; }
 .table-scroll { overflow: auto; max-block-size: 70vh; }
-/* The heads stay on top as the rows scroll under them: beside the conversation, the table is no taller than the pane. */
-.view > .table-view, .view > app-table > .table-view { min-block-size: 0; } :is(.view, .view > app-table) > .table-view > .table-scroll { max-block-size: none; } .view > app-table { display: contents; }
+/* The heads stay on top as the rows scroll under them: beside the conversation, the table is no taller than the pane, and goes from edge
+   to edge of it, the bar and the board's lanes kept from its edges, as its foot is from its bottom. */
+.view > .table-view, .view > app-table > .table-view { min-block-size: 0; padding-block-end: var(--pane-inset); } :is(.view, .view > app-table) > .table-view > .table-scroll { max-block-size: none; } .view > app-table { display: contents; } :is(.view, .view > app-table) > .table-view > :is(.table-bar, .table-board) { padding-inline: var(--pane-inset); } :is(.view, .view > app-table) > .table-view > .table-bar { padding-block-start: var(--pane-inset); }
 /* In a short window the pane scrolls, and the table keeps a height to read it in. */
 @media (max-height: 30rem) { :is(.view, .view > app-table) > .table-view > .table-scroll { min-block-size: 10rem; } }
 /* In a document, as far down as the document's view starts below the table's top (tables.js). */
