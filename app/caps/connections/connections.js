@@ -10,7 +10,6 @@
 // "Sending and sharing": both "Ask me first" by default, unless the user chose otherwise for that
 // service alone, where its page says, or on a card. What they bring in is cited by number.
 // Their section of Settings is ./page.js, loaded the first time it shows (D134).
-import { nothing } from 'lit-html'
 import { signal, computed, effect } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
 import { lazyPage } from '../../ui/lazy-page.js'
@@ -24,7 +23,7 @@ import { apiClient } from './apis.js'
 import { discover, registerClient, authorization, finish, refresh } from './auth.js'
 import { known, knownFor, covers, logoAt, everyone } from './directory.js'
 import { slug, serviceURL } from '../../core/settings.js'
-import { LLMError, mayTrain, mayRead } from '../../core/llm.js'
+import { LLMError, PROVIDERS, mayTrain, mayRead } from '../../core/llm.js'
 import { STRICT } from '../../core/rules.js'
 import { loadConversation } from '../../core/conversations.js'
 import { identifier, takes } from '../../core/deferred.js'
@@ -36,7 +35,7 @@ import { icons } from '../../ui/menu-icons.js'
 import { subRow } from '../../ui/composer.js'
 
 /** @import { Connection } from '../../core/settings.js' */
-/** @import { RuleValue } from '../../core/types.js' */
+/** @import { RuleValue, BrainConfig } from '../../core/types.js' */
 /** @import { McpTool, CallResult } from './mcp.js' */
 /** @import { Listed } from './directory.js' */
 
@@ -62,8 +61,13 @@ const theirs = ({ id }) => [...app.policy.connections ?? [], ...(app.policy.dire
 export const all = () => [...organisation(), ...(effective.value.settings.connections ?? [])]
 /** Those of the room's project: the connections of every project, and those kept to this one. */
 const here = () => all().filter((connection) => !connection.projects || connection.projects.includes(app.project.value.id))
-/** Whether a connection reaches Google's APIs, whose user data no model may be trained on (Limited Use, D440). @param {Connection} connection */
+/** Whether a connection reaches Google's APIs, whose user data no model may be trained on (Limited Use, D440). @param {Pick<Connection, 'url' | 'servers'>} connection */
 export const limited = (connection) => [connection.url, ...connection.servers ?? []].some((address) => /\.googleapis\.com$/.test(new URL(address).hostname))
+/**
+ * The services whose brains never train on what they read, by name, in the user's language: what may read Google's (D440).
+ * Given the user's brains, only where they have some and every one may train on it, else ''. @param {BrainConfig[]} [brains]
+ */
+export const untrained = (brains) => (brains && !(brains.length && brains.every((brain) => mayTrain(brain, app.policy))) ? '' : new Intl.ListFormat(intlLocales(), { type: 'disjunction' }).format(Object.entries(PROVIDERS).filter(([, provider]) => provider.trains === false).map(([id]) => t(`provider.${id}`))))
 
 /** What the user chose for a service's reading (`fetch`) or acting (`other`), over its kind's rule, by its id. @param {string} id @param {string} kind */
 export const chosen = (id, kind) => effective.value.settings.services?.[id]?.[kind]
@@ -252,7 +256,7 @@ effect(() => register({
   tools: here().flatMap((connection) => (status.value[connection.id]?.tools ?? []).map((tool) => asTool(connection, tool))),
   rules: ['Find the tools of the services in <connections> with find_tools.'],
   // A task that used Google's services goes to no brain whose service may train on it, whoever asks it (D440).
-  hooks: [{ on: 'turn.step', run: async (e, next) => (e.task && mayTrain(e.brain, app.policy) && !mayRead(e.brain, (await loadConversation(app.fs, e.task).catch(() => null))?.records ?? [], app.policy) ? refused(e.step !== undefined) : next(e)) },
+  hooks: [{ on: 'turn.step', run: async (e, next) => (e.task && mayTrain(e.brain, app.policy) && !mayRead(e.brain, (await loadConversation(app.fs, e.task).catch(() => null))?.records ?? [], app.policy) ? refused(e.step !== undefined && e.brain) : next(e)) },
     // What the user chose for a service: its Ask first or Never only ever tightens its kind's rule, its Always allow stands over it
     // where the organisation set none; the guards still come after (D295). Its calls are marked, so a card's Always allow or Never
     // is kept to the service.
@@ -282,9 +286,12 @@ effect(() => register({
       .map((kind) => ({ what: kind === 'fetch' ? 'reads' : 'acts', name: called(connection), stop: () => choose(connection.id, kind) }))) },
   },
 }))
-/** A request refused, which a turn's step says, with the picker open on the brains that may answer. @param {boolean} said */
-async function* refused(said) {
-  if (said) await useStrings('connections').then(() => (notify(t('connections.untrained'), { alert: true }), import('../../ui/picker.js'))).then((picker) => picker.openPicker())
+/**
+ * A request refused, which a turn's step says, naming the brain and those that would read the task, with the picker open
+ * on the brains that may answer. @param {BrainConfig | false} brain
+ */
+async function* refused(brain) {
+  if (brain) await useStrings('connections').then(() => (notify(t('connections.untrained', { brain: t(`provider.${brain.provider}`), brains: untrained() }), { alert: true }), import('../../ui/picker.js'))).then((picker) => picker.openPicker())
   throw new LLMError('This task used Google’s services, and this brain’s service may train on what it reads.', { code: 'aborted' })
 }
 

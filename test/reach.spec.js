@@ -56,12 +56,17 @@ test('what Google’s services bring in goes only to brains whose service never 
   }, GMAIL)
   await turnOn(page, 'Connections')
   await expect(page.locator('app-settings [data-page="gmail"]')).toContainText('4 actions')
+  // Its page says no brain the user has may read what it brings in, and which would.
+  await page.locator('app-settings [data-page="gmail"]').click()
+  await expect(page.locator('app-settings .connection-trains')).toContainText('every brain you have may train on what it reads')
+  await expect(page.locator('app-settings .connection-trains')).toContainText('Anthropic, Vertex AI')
   await closeSettings(page)
 
   // Gemini's call to Gmail is refused, though allowed: the task is marked, and the picker offers no brain that may read it.
   await ask(page, 'Summarise my latest emails')
   await page.locator('.approval .button.primary').click()
-  await expect(page.locator('.toast')).toContainText('This task used Google services')
+  await expect(page.locator('.toast')).toContainText('This task used Google services, whose data must never train AI, and Google Gemini may train on what it reads.')
+  await expect(page.locator('.toast')).toContainText('such as OpenRouter, OpenAI')
   await expect(page.locator('#brain-menu')).toBeVisible()
   await expect(page.locator('#brain-menu button', { hasText: 'fake-brain-1' })).toHaveCount(0)
   const marked = () => page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.some((record) => record.update?._meta?.limitedUse))
@@ -92,6 +97,10 @@ test('what Google’s services bring in goes only to brains whose service never 
   await expect(page.locator('.msg-jean .prose', { hasText: 'Your 2 latest emails' })).toHaveCount(1)
   expect(answers).toBeGreaterThan(0)
   expect(asked).toEqual([])
+  // With OpenAI's key, Gmail's page says only which brains its data goes to.
+  await openSettings(page, 'Connections')
+  await page.locator('app-settings [data-page="gmail"]').click()
+  await expect(page.locator('app-settings .connection-trains')).toHaveText(/goes only to brains that never train on it/)
 })
 
 test('a service Jean knows is read on its page, then connects with every server its one sign-in reaches (D344); those not reached yet wait apart, saying why', async ({ page }) => {

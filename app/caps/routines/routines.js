@@ -10,7 +10,6 @@
 // went, and `routine_runs` reads the others. One may run each time a file is shared or made instead
 // (D294), the file coming with its request, if it passes the routine's question: its hooks hear of
 // each file, but never in a routine's own run, so a routine never sets another off.
-import { nothing } from 'lit-html'
 import { effect, signal } from '@preact/signals-core'
 import { register, loaded, unlock, slots } from '../../ui/caps.js'
 import { lazyPage } from '../../ui/lazy-page.js'

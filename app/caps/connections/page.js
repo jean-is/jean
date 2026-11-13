@@ -20,7 +20,7 @@ import { byName } from '../../core/search.js'
 import { BRAND } from '../../brand.js'
 import { icons } from '../../ui/menu-icons.js'
 import { GROUPS, logoAt } from './directory.js'
-import { all, status, message, called, labelOf, logoOf, limited, chosen, choose, connectTo, nameFor, signIn, remove, change, list, services, gatewayAt, products, toolName } from './connections.js'
+import { all, status, message, called, labelOf, logoOf, limited, untrained, chosen, choose, connectTo, nameFor, signIn, remove, change, list, services, gatewayAt, products, toolName } from './connections.js'
 
 /** @import { Connection } from '../../core/settings.js' */
 /** @import { Listed } from './directory.js' */
@@ -86,6 +86,11 @@ const joined = (parts) => parts.filter(Boolean).map((part, i) => html`${i ? ' ·
 const listOf = (names) => new Intl.ListFormat(intlLocales(), { type: 'conjunction' }).formatToParts(names).map(({ type, value }) => (type === 'element' ? html`<bdi>${value}</bdi>` : value))
 /** How the connection just asked for goes. */
 const said = () => (message.value ? html`<p class="status is-${message.value.kind}" role=${message.value.kind === 'error' ? 'alert' : 'status'}>${message.value.text}</p>` : nothing)
+/**
+ * What Google's services bring in goes only to brains that never train on it (D440): where every brain the user has may,
+ * which would read it. @param {Pick<Connection, 'url' | 'servers'>} one @param {string} service
+ */
+const trains = (one, service, brains = untrained(effective.value.settings.brains)) => (!limited(one) ? nothing : html`<p class="${brains ? 'status' : 'hint'} connection-trains">${icons.shield} ${brains ? t('connections.noBrain', { service, brains }) : t('connections.trains', { service })}</p>`)
 /**
  * A name like an address may wrap before its dot ("monday" ".com"), one in two words where its capital starts the second ("Service" "Now"),
  * unless it has a space to wrap at ("Oracle" "NetSuite", never "Oracle Net" "Suite"). @param {string} text
@@ -161,7 +166,7 @@ function may(connection) {
     <ul class="rules connection-kinds">${line('fetch', 'connections.read')}${line('other', 'connections.act')}</ul>
     <p class="hint">${t('connections.usual', { name })}</p>
     ${guarded ? html`<p class="hint">${t('connections.guarded', { service: called(connection) })}</p>` : nothing}
-    ${limited(connection) ? html`<p class="hint connection-trains">${icons.shield} ${t('connections.trains', { service: called(connection) })}</p>` : nothing}</section>`
+    ${trains(connection, called(connection))}</section>`
 }
 
 /** A connection's page: how it stands, what Jean may do there, then the connection itself. @param {Connection} connection */
@@ -225,7 +230,7 @@ function service(entry) {
     <section><h3>${t('connections.can', { name })}</h3><ul class="rules">${line('fetch', 'connections.read')}${line('other', 'connections.act')}</ul></section>
     <section><h3>${t('connections.how')}</h3><p>${t('connections.signInThere', { service: entry.name, name })}</p><p class="muted">${t('connections.sealed')}</p>
       ${again ? html`<p class="hint">${t('connections.another', { service: entry.name })}</p>` : nothing}</section>
-    ${said()}
+    ${trains({ url: String(entry.url), servers: entry.servers }, entry.name)}${said()}
     <div class="row"><button class="button primary" ?disabled=${message.value?.kind === 'busy'} @click=${() => connectTo(String(entry.url), entry.name, { gateway: entry.via === 'gateway' })}>${t('connections.connectTo', { service: entry.name })}</button></div>`
 }
 
