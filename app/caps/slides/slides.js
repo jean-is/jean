@@ -29,7 +29,7 @@ import { kitHere, withNames, words, layoutsTold } from './kit.js'
 import { kitSlot } from './kit-slot.js'
 import { cjk } from '../layouts/shapes.js'
 import { drawing, coloured, told, wordsBelow } from '../interactive/diagram.js'
-import { withLayout, withoutKit, changesOf, swapped, withPictures, placeIn } from './edit.js'
+import { withLayout, withoutKit, changesOf, swapped, withPictures, placeIn, withoutOpenComment } from './edit.js'
 
 await Promise.all([useStrings('slides'), useStrings('interactive'), styleSheet(new URL('../../vendor/deck/deck.css', import.meta.url)), styleSheet(new URL('slides.css', import.meta.url))])
 
@@ -39,8 +39,10 @@ await Promise.all([useStrings('slides'), useStrings('interactive'), styleSheet(n
 /** The deck on show beside the conversation, which the brain hears of, its slide, the words pointed at and the layouts its kit adds, changes or turns off. */
 export const shown = signal(/** @type {{ path: string, name: string, source: string, at: number, count: number, part: string, layouts: string } | null} */ (null))
 
-/** A slide's Markdown read as an answer's is, emphasis beside the punctuation of Chinese, Japanese and Korean too. */
+/** A slide's Markdown read as an answer's is, emphasis beside the punctuation of Chinese, Japanese and Korean too, and a comment still being written not shown (./edit.js). */
 const reader = new Marked({ gfm: true }, cjk)
+/** @param {string} markdown */
+export const lex = (markdown) => reader.lexer(withoutOpenComment(markdown))
 /** The bar's words, deck's names for them (its scheme's and PowerPoint's buttons aren't shown: the room says light or dark, the pane's button the rest). */
 const LAYOUT = icon(svg`<rect x="3.5" y="5.5" width="17" height="13" rx="2.5"/><path d="M3.5 9.5h17M12 9.5v9"/>`)
 
@@ -156,7 +158,7 @@ class AppSlides extends HTMLElement {
       render(html`${this.closest('.msg-jean') ? html`<h2 class="visually-hidden" lang=${locale.peek()}>${t('slides.deck')}</h2>` : nothing}${this.file ? html`<div class="slides-review"></div>` : nothing}<div class="slides-deck"></div><div class="slides-more"></div>`, /** @type {HTMLElement} */ (this))
       // Jean's own buttons, taken before deck makes its bar anew (made again in another look or language, they are in the last one).
       const root = /** @type {HTMLElement} */ (this.querySelector('.slides-deck')), more = /** @type {HTMLElement} */ (this.querySelector('.slides-more'))
-      this.view = createDeck(root, { source: this.source, kit, scheme: theme.peek() === 'dark' ? 'dark' : 'light', blocks: BLOCKS, resolve: this.resolve, strings: words(), headings: 'aria', lex: (markdown) => reader.lexer(markdown),
+      this.view = createDeck(root, { source: this.source, kit, scheme: theme.peek() === 'dark' ? 'dark' : 'light', blocks: BLOCKS, resolve: this.resolve, strings: words(), headings: 'aria', lex,
         editable: Boolean(this.file) && !deciding, ...(this.file && !deciding && { onChange: (text) => this.typed(text) }) })
       root.addEventListener('deck-scheme', () => { for (const picture of root.querySelectorAll('img')) { const drawn = pictures.get(picture); if (drawn) colour(picture, drawn) } })
       root.addEventListener('deck-move', () => { this.speak(); this.moved() })

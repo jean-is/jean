@@ -13,6 +13,23 @@ export function piecesOf(source) {
   return ends.map((end, i) => source.slice(i ? ends[i - 1] : 0, end))
 }
 
+/**
+ * A slide's Markdown as it shows: none of a comment that no `-->` closes yet, written so far as notes are (`<!-- …`), nor what
+ * follows it, as a page hides them, nor the `<!` or `<!-` it starts with at the end; a `<!--` in code stays, as code. The
+ * comments that close, deck leaves out itself. @param {string} markdown
+ */
+export function withoutOpenComment(markdown) {
+  let fence = '', opens = /^[ \t]*(`{3,}|~{3,})|(`+)|<!--/gm
+  for (let match; (match = opens.exec(markdown));) {
+    const [, mark, ticks] = match, from = opens.lastIndex, end = ticks ? new RegExp(`(?<!\`)${ticks}(?!\`)|\\n[ \\t]*\\n`).exec(markdown.slice(from)) : markdown.indexOf('-->', from)
+    if (fence || mark) fence = !fence ? mark : mark?.[0] === fence[0] && mark.length >= fence.length ? '' : fence
+    // A code span, to the run of as many backticks before its paragraph ends; else the backticks are text.
+    else if (typeof end !== 'number') { if (end?.[0] === ticks) opens.lastIndex = from + end.index + ticks.length }
+    else if (!/^-?>/.test(markdown.slice(from))) { if (end < 0) return markdown.slice(0, match.index); opens.lastIndex = end + 3 }
+  }
+  return fence ? markdown : markdown.replace(/<!-?$/, '')
+}
+
 /** The headmatter, `---`, its settings and `---`, or null. @param {string} source */
 const headOf = (source) => ((head) => (head && /^\s*[\w-]+\s*:/.test(head[1]) ? head[0] : null))(/^---[ \t]*\n([\s\S]*?)\n---[ \t]*(?=\n|$)/.exec(source))
 /** A rule a deck starts with and the empty lines after it, which hold nothing. */

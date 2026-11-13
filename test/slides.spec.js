@@ -324,6 +324,16 @@ test('while its block is written, the slide being written shows, then the first,
   const block = '````deck\n# One\n\n---\n\n## Two\n\n---\n\n## Three\n````'
   const deck = page.locator('#written app-slides'), slide = deck.locator('.deck-slide.is-shown')
 
+  // A comment still being written shows nothing of itself, as the deck's first words or as a slide's notes, each drawn with what it is written in.
+  await write('Slides:\n\n````deck\n<!-- A deck for the bank')
+  await expect(slide).toHaveAttribute('aria-label', 'Slide 1 of 1')
+  await expect(slide).not.toContainText('bank')
+  await write(`Slides:\n\n${block.slice(0, block.indexOf('## Three') + 8)}\n\n<!-- Say what it costs`)
+  await expect(slide).toHaveAttribute('aria-label', 'Slide 3 of 3')
+  await expect(slide.getByRole('heading')).toHaveText('Three')
+  await expect(slide).not.toContainText('costs')
+  await page.evaluate(() => document.querySelector('#written')?.remove())
+
   await write(`Slides:\n\n${block.slice(0, block.indexOf('## Two') + 6)}`)
   await expect(slide).toHaveAttribute('aria-label', 'Slide 2 of 2')
   await expect(slide.getByRole('heading')).toHaveText('Two')

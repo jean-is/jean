@@ -8,7 +8,7 @@ import { notify } from '../../ui/state.js'
 import { save, printAlone, copyDrawing } from '../../ui/save.js'
 import { icons } from '../../ui/menu-icons.js'
 import { t } from '../../core/i18n.js'
-import { BLOCKS } from './slides.js'
+import { BLOCKS, lex } from './slides.js'
 
 /** The deck in a pane. @param {Element} pane */
 const here = (pane) => /** @type {(HTMLElement & { view: ReturnType<typeof import('@codename/deck').createDeck>, resolve: (src: string) => string | null, picture: () => Promise<Blob> }) | null} */ (pane.querySelector('app-slides.beside'))
@@ -16,7 +16,7 @@ const here = (pane) => /** @type {(HTMLElement & { view: ReturnType<typeof impor
 /** Printed alone, a slide a page, drawn for the printer out of sight, then gone, the room's own page size given back. @param {ReturnType<typeof import('@codename/deck').createDeck>} view @param {(src: string) => string | null} [resolve] */
 async function print(view, resolve) {
   const holder = document.body.appendChild(Object.assign(document.createElement('div'), { className: 'deck-print' }))
-  const printed = createDeck(holder, { source: view.source, kit: view.kit, scheme: 'light', blocks: BLOCKS, resolve, headings: 'aria', editable: false })
+  const printed = createDeck(holder, { source: view.source, kit: view.kit, scheme: 'light', blocks: BLOCKS, resolve, headings: 'aria', editable: false, lex })
   for (const slide of printed.slides()) slide.querySelectorAll('.deck-step').forEach((step) => step.classList.add('is-on'))
   // Its pictures, which deck reads when they come near the screen, read now, out of sight as they are.
   for (const picture of holder.querySelectorAll('img')) picture.loading = 'eager'

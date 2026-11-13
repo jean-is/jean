@@ -5,7 +5,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { parseDeck, mergeKits } from '@codename/deck'
-import { piecesOf, withKit, withoutKit, withLayout, changesOf, swapped, withPictures, placeIn, ownName, mostAlike } from '../app/caps/slides/edit.js'
+import { piecesOf, withKit, withoutKit, withLayout, changesOf, swapped, withPictures, placeIn, ownName, mostAlike, withoutOpenComment } from '../app/caps/slides/edit.js'
 import { layoutsTold, copyOf } from '../app/caps/slides/kit.js'
 import { fileNamed } from '../app/core/files.js'
 
@@ -18,6 +18,20 @@ test('a deck is pieces, a slide each, that join back into it exactly, a rule in 
   assert.equal(piecesOf(tricky).join(''), tricky)
   assert.equal(piecesOf(tricky).length, 4)
   assert.match(piecesOf(DECK)[1], /^\n---\n\n## Where we are/)
+})
+
+test('a comment still being written shows nothing, nor what follows it, from its first `<!`; one closed, or in code, is left as it is', () => {
+  const slide = '\n## Where we are\n\n- 120 croissants a day\n\n'
+  assert.equal(withoutOpenComment(`${slide}<!-- Say what it costs`), slide, 'notes being written at the slide’s end')
+  assert.equal(withoutOpenComment('<!--\n  A deck for the bank'), '', 'a deck that opens with one')
+  for (const start of ['<!', '<!-']) assert.equal(withoutOpenComment(`${slide}${start}`), slide, `its start, ${start}`)
+  assert.equal(withoutOpenComment(`${slide}<!-- one -->\nmore\n<!-- two`), `${slide}<!-- one -->\nmore\n`, 'after one that closes')
+  assert.equal(withoutOpenComment('Prices <!-- check them'), 'Prices ', 'in a line')
+  assert.equal(withoutOpenComment('# A\n\n<!-- a\n---\n\n## B\n'), '# A\n\n', 'and the rest, as a page hides it')
+  for (const whole of [`${slide}<!-- Say what it costs. -->\n`, '<!--> <!---> after', '```html\n<!-- in code\n```\n', '~~~\n```\n<!-- in code\n~~~\n', 'Open one with `<!--`.', 'Open one with ``<!-- ` ``.', '```html\n<!-- still being written'])
+    assert.equal(withoutOpenComment(whole), whole)
+  assert.equal(withoutOpenComment('A `stray tick\n\n<!-- note'), 'A `stray tick\n\n', 'a backtick no other closes in its paragraph is text')
+  assert.equal(withoutOpenComment('```js\nx\n```\n\n<!-- note'), '```js\nx\n```\n\n', 'after a closed fence')
 })
 
 test('the kit goes into the headmatter as one line, read back as the deck’s own, and out again for the brain', () => {
