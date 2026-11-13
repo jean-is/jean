@@ -1,7 +1,8 @@
 /* SPDX-License-Identifier: MIT */
 /* The comparison's pages, over site.css: the hub and every product's page, which share this sheet. Where you
-   are, the setting a page needs first, the fair paragraph and its sources, the two fences, the table, the statuses,
-   the cards, the products and the foot's first line. Logical properties only; classes start with cmp-. */
+   are, the setting a page needs first, the fair paragraph and its sources, the two fences, what each weighs, the
+   table, the statuses, the cards, the products and the foot's first line. Logical properties only; classes start
+   with cmp-. */
 
 /* Where you are, and the setting a page needs first */
 .cmp-hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 22rem); gap: clamp(2rem, 5vw, 4rem); align-items: end; }
@@ -73,6 +74,22 @@
 .cmp-shell { align-self: flex-start; padding: 0.35rem 0.8rem; border-radius: 0.6rem; background: var(--site-fill); color: var(--site-on-fill); font-weight: 600; font-size: 0.9rem; }
 .cmp-computer.is-open ul li { border: 1px solid var(--line-strong); }
 
+/* What each weighs, in bars to scale, lightest first: what it is, how much, then its bar on a faint track as long as
+   the heaviest's. Jean's in the felt-tip's colour, its AI outlined since it's a choice, the other product's in ink,
+   what everyone knows in a quieter grey. */
+.cmp-bars { display: flex; flex-direction: column; gap: 0.75rem; margin: 0; }
+.cmp-bars figcaption { color: var(--ink-soft); font-size: 0.875rem; }
+.cmp-weights { display: grid; grid-template-columns: fit-content(17rem) max-content minmax(8rem, 1fr); align-items: center; gap: 0.55rem 1rem; }
+.cmp-weight { display: grid; grid-column: 1 / -1; grid-template-columns: subgrid; align-items: center; font-size: 0.9375rem; line-height: 1.35; }
+.cmp-weight b { font-variant-numeric: tabular-nums; text-align: end; white-space: nowrap; }
+.cmp-weight.is-everyday { color: var(--ink-soft); }
+.cmp-bar { display: block; inline-size: 100%; block-size: 0.875rem; overflow: visible; border-radius: 3px; background: oklch(from var(--ink) l c h / 0.07); }
+:dir(rtl) .cmp-bar { scale: -1 1; }
+.cmp-bar rect { fill: var(--ink-soft); }
+.cmp-weight.is-jean rect { fill: var(--felt-line); }
+.cmp-weight.is-optional rect { fill: oklch(from var(--felt-line) l c h / 0.25); stroke: var(--felt-line); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.cmp-weight.is-other rect { fill: var(--ink); }
+
 /* Side by side */
 .cmp-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); }
 .cmp-scroll:focus-visible { outline: 2px solid var(--flame); outline-offset: 2px; }
@@ -141,9 +158,14 @@
   .cmp-col { display: block; margin-block-end: 0.25rem; color: var(--ink-soft); font-size: 0.75rem; font-weight: 600; }
   .cmp-end .felt-point { display: none; }
   .cmp-table td.is-jean .cmp-col { color: var(--ink); }
+  .cmp-weights { grid-template-columns: minmax(0, 1fr) max-content; row-gap: 0.9rem; }
+  .cmp-weight { row-gap: 0.35rem; }
+  .cmp-bar { grid-column: 1 / -1; }
 }
 @media (forced-colors: active) {
-  .cmp-status, .cmp-inside { border: 1px solid CanvasText; }
+  .cmp-status, .cmp-inside, .cmp-bar { border: 1px solid CanvasText; }
+  .cmp-bar rect { fill: CanvasText; }
+  .cmp-weight.is-optional rect { fill: Canvas; stroke: CanvasText; }
   .cmp-drawn, .cmp-loop { display: none; }
   .cmp-outside li { text-decoration: line-through; }
 }

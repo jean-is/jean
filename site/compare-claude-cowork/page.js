@@ -2,18 +2,24 @@
 // Jean and Claude Cowork, at /compare/claude-cowork and /fr/comparer/claude-cowork, for the reader who
 // searched for an open-source alternative to it. There is no Claude Code page: that search wants tools for writing
 // software, and Jean reaches a Claude plan through Claude Code (D235), which this page names as the way. Anthropic's
-// pages each fact is read from are below; product.js writes the page.
+// pages each fact is read from are below: what its virtual machine weighs, read on its install page, which gives
+// it only for Linux; and what it lacks on a company's cloud, Bedrock's, Google's or Foundry's, the mode Anthropic
+// calls 3P, read on its table of that mode's features. product.js writes the page.
 import { product } from '../compare/product.js'
 
 export default product({
   addresses: { en: 'compare/claude-cowork', fr: 'fr/comparer/claude-cowork', ko: 'ko/compare/claude-cowork' },
   sources: {
-    cowork: { url: 'https://claude.com/product/cowork', checked: '2026-10-20' },
-    merged: { url: 'https://claude.com/resources/articles/cowork-is-now-claude', checked: '2026-10-20' },
-    pricing: { url: 'https://claude.com/pricing', checked: '2026-10-20' },
-    training: { url: 'https://privacy.claude.com/en/articles/10023580-is-my-data-used-for-model-training', checked: '2026-10-20' },
-    export: { url: 'https://support.claude.com/en/articles/9450526-how-can-i-export-my-claude-data', checked: '2026-10-20' },
+    cowork: { url: 'https://claude.com/product/cowork', checked: '2026-11-13' },
+    merged: { url: 'https://claude.com/resources/articles/cowork-is-now-claude', checked: '2026-11-13' },
+    pricing: { url: 'https://claude.com/pricing', checked: '2026-11-13' },
+    training: { url: 'https://privacy.claude.com/en/articles/10023580-is-my-data-used-for-model-training', checked: '2026-11-13' },
+    export: { url: 'https://support.claude.com/en/articles/9450526-how-can-i-export-my-claude-data', checked: '2026-11-13' },
+    install: { url: 'https://support.claude.com/en/articles/10065433-install-claude-desktop', checked: '2026-11-13' },
+    '3p': { url: 'https://claude.com/docs/third-party/claude-desktop/feature-matrix', checked: '2026-11-13' },
   },
+  // About 25 GB of free space for Cowork's workspace image, on Linux.
+  weights: [{ id: 'cowork', bytes: 25e9, source: 'install' }],
   actions: ['sample', 'claude'],
   // Its catch, by the part of its promise: what the AI costs and what the Claude plan takes, under the alternative;
   // what the AI on this computer needs and work that lives in this browser, under the browser tab.

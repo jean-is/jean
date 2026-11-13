@@ -31,6 +31,22 @@ export const DRAWN = {
   <path class="is-tilde" d="M88 204q19-24 38 0t38 0"/><path d="M292 198L304 198L310 204L310 220L292 220ZM304 198L304 204L310 204"/><path class="is-felt" d="M301 226C303 250 282 262 248 258M258 247C254 251 251 254 247 258C252 261 256 264 261 268"/>`),
 }
 
+/**
+ * What the bars of weights hold besides a product's own: Jean's, as `npm run build:web` leaves it (measured on 13
+ * November 2026: the first load as it travels, in brotli, the font included; the files the service worker keeps to work
+ * offline, every language's, as they are kept; the AI on this computer, GEMMA.bytes in caps/brain-local/brain-local.js),
+ * and two things everyone knows, about their size.
+ * @typedef {{ id: string, bytes: number, kind: 'jean' | 'optional' | 'everyday' | 'other', source?: string }} Weight
+ * @type {Weight[]}
+ */
+const WEIGHTS = [
+  { id: 'open', bytes: 9.2e4, kind: 'jean' },
+  { id: 'photo', bytes: 3e6, kind: 'everyday' },
+  { id: 'offline', bytes: 6.7e6, kind: 'jean' },
+  { id: 'ai', bytes: 3.11e9, kind: 'optional' },
+  { id: 'film', bytes: 4e9, kind: 'everyday' },
+]
+
 /** The browser's perimeter, on the two fences, drawn round by the felt-tip pen. */
 const LOOP = '<svg class="cmp-loop" viewBox="0 0 400 140" preserveAspectRatio="none" aria-hidden="true"><path d="M210 6C120 3 30 6 12 20C2 30 4 100 8 120C12 134 100 136 200 134C300 132 386 134 392 116C398 96 396 36 390 20C384 6 300 4 170 9"/></svg>'
 
@@ -50,6 +66,8 @@ export const PRODUCTS = COMPARED.slice(1)
  * @property {Record<string, string>} addresses
  * @property {Record<string, Source>} sources  by the ids its words name
  * @property {[Action, Action]} actions  its two buttons, at its top and at its end
+ * @property {{ id: string, bytes: number, source: string }[]} [weights]  what it weighs on a computer, in bars to scale
+ *   beside Jean's, each read on one of its sources, its words saying what each is (`weight.<id>`)
  * @property {{ alternative: number[], where: number[] }} limits  the limits each part of its promise is caught by: an
  *   alternative to the other product, and where Jean works and keeps things; by their place in its words' catch.items
  */
@@ -145,6 +163,36 @@ export function helpers (kit, sources) {
   return { hub, status, cited, sourced, href, buttons, asked, catches, sideBySide }
 }
 
+/**
+ * What each weighs on a computer, in bars to scale, lightest first: what it is, how much, and a bar as long as its
+ * share of the heaviest, so the lightest barely show. A bar is a drawing, hidden from screen readers, its length a
+ * rect's width, since the site's policy allows no style written in the page; one too thin to see is a sliver.
+ * @param {import('../site.js').Kit} kit @param {ReturnType<typeof helpers>} help @param {NonNullable<Product['weights']>} own
+ */
+function bars (kit, { hub, cited }, own) {
+  const units = /** @type {const} */ ([[1e9, 'gigabyte'], [1e6, 'megabyte'], [1e3, 'kilobyte']])
+  const size = (/** @type {number} */ bytes) => {
+    const [per, unit] = units.find(([at]) => bytes >= at) ?? units[2]
+    // A number never ends a line apart from its unit.
+    return new Intl.NumberFormat(kit.lang, { style: 'unit', unit, maximumSignificantDigits: 2 }).format(bytes / per).replaceAll(' ', '\u00a0')
+  }
+  const all = [...WEIGHTS, ...own.map((weight) => ({ ...weight, kind: /** @type {const} */ ('other') }))].sort((a, b) => a.bytes - b.bytes)
+  const most = all.at(-1)?.bytes ?? 1
+  const items = all.map(({ id, bytes, kind, source }) => {
+    const what = kind === 'other' ? kit.say(`weight.${id}`) : hub.say(`weight.${id}`)
+    const weight = kind === 'jean' || kind === 'optional' ? size(bytes) : hub.say('weight.about', { size: size(bytes) })
+    const share = (100 * bytes) / most
+    return /* html */ `<li class="cmp-weight is-${kind}"><span class="cmp-what">${what}${source ? cited(source) : ''}</span> <b>${xml(weight)}</b><svg class="cmp-bar" aria-hidden="true"><rect height="100%" width="${share < 0.5 ? '3' : `${share.toFixed(2)}%`}" rx="3"/></svg></li>`
+  })
+  return /* html */ `<section class="site-block cmp-weigh" aria-labelledby="cmp-weight">
+  <header><h3 id="cmp-weight">${hub.say('weight.title')}</h3><p class="site-why">${kit.say('weight.say')}</p></header>
+  <figure class="cmp-bars" aria-labelledby="cmp-weight">
+    <ol class="cmp-weights">${items.join('')}</ol>
+    <figcaption>${hub.say('weight.how')}</figcaption>
+  </figure>
+</section>`
+}
+
 /** The day the last of a page's facts was read. @param {Record<string, Source>} sources */
 export const latest = (sources) => Object.values(sources).map((source) => source.checked).sort().at(-1) ?? ''
 
@@ -169,14 +217,15 @@ export const CITES = `addEventListener('keydown', (event) => {
  * over the two fences where the page draws them, the table and how to use both.
  * @param {Product} product @returns {import('../site.js').Page}
  */
-export function product ({ addresses, sources, actions, limits }) {
+export function product ({ addresses, sources, actions, limits, weights = [] }) {
   return {
     addresses,
     style: 'compare',
     script: CITES,
     main (kit) {
       const { lang } = kit
-      const { hub, status, cited, sourced, buttons, asked, catches, sideBySide } = helpers(kit, sources)
+      const help = helpers(kit, sources)
+      const { hub, status, cited, sourced, buttons, asked, catches, sideBySide } = help
       const say = kit.say
       const name = say('product')
       const origin = kit.base ? new URL(kit.base).origin : `https://${kit.brand.domain}`
@@ -225,10 +274,17 @@ export function product ({ addresses, sources, actions, limits }) {
     </figure>
   </div>
 </section>` : ''
+      /** A side-by-side table's rows, each its heading, Jean's side and its status, the other's and where it was read. @param {string} key */
+      const rows = (key) => kit.table(key, 5).map(([what, jean, code, other, ids]) => [what, /* html */ `<p>${jean}</p>${status(code)}`, /* html */ `<p>${other}${cited(ids)}</p>`])
       const table = /* html */ `<section id="cmp-table" class="site-block" aria-labelledby="cmp-table-title">
   <h3 id="cmp-table-title">${hub.say('table.side')}</h3>
-  ${sideBySide('cmp-table-title', [xml(kit.brand.name), name], kit.table('table.rows', 5).map(([what, jean, code, other, ids]) => [what, /* html */ `<p>${jean}</p>${status(code)}`, /* html */ `<p>${other}${cited(ids)}</p>`]))}
+  ${sideBySide('cmp-table-title', [xml(kit.brand.name), name], rows('table.rows'))}
 </section>`
+      // Where the other product runs in a mode of its own on a company's cloud, what that mode keeps beside Jean.
+      const cloud = kit.has('cloud.title') ? /* html */ `<section class="site-block" aria-labelledby="cmp-cloud">
+  <header><h3 id="cmp-cloud">${say('cloud.title')}</h3><p class="site-why">${say('cloud.why')}${cited(kit.text('cloud.sources'))}</p></header>
+  ${sideBySide('cmp-cloud', [xml(kit.brand.name), /* html */ `${name}<small>${say('cloud.mode')}</small>`], rows('cloud.rows'))}
+</section>` : ''
       const does = /* html */ `<section class="site-block" aria-labelledby="cmp-better">
   <header><h3 id="cmp-better">${say('better.title')}</h3><p class="site-why">${hub.say('better.why')}</p></header>
   <ul class="site-limits cmp-better">${better.map((item, i) => /* html */ `<li><span>${item}${cited(betterSources[i])}</span></li>`).join('')}</ul>
@@ -249,7 +305,7 @@ export function product ({ addresses, sources, actions, limits }) {
         promise: say('h1'),
         acts: {
           alternative: { id: 'cmp-alternative', body: `${fair}\n${does}`, catch: not.alternative },
-          where: { id: 'cmp-where', body: `${fences && `${fences}\n`}${table}\n${together}`, catch: not.where },
+          where: { id: 'cmp-where', body: `${fences && `${fences}\n`}${weights.length ? `${bars(kit, help, weights)}\n` : ''}${table}\n${cloud && `${cloud}\n`}${together}`, catch: not.where },
         },
         turn: { id: 'cmp-end', body: end, classes: 'cmp-end' },
         questions: { id: 'cmp-faq', name: 'cmp-questions', title: hub.say('faq.title'), items: asked() },

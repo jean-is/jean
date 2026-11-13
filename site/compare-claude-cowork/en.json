@@ -11,26 +11,38 @@
   "cta2": "Use your Claude plan",
   "facts": ["Open source, MIT", "Any AI, Claude included", "A local AI if you like", "Nothing to install"],
   "fair.title": "Claude Cowork, fairly",
-  "fair.body": "Claude Cowork is Anthropic’s assistant for getting work done. It works through tasks of several steps in the folders and tools you choose, shows each step as it goes, and keeps going when you close your laptop. It comes with paid Claude plans and runs on Claude. Since September 2026, Anthropic has been folding it into the Claude app itself, on Pro and Max first.",
+  "fair.body": "Claude Cowork is Anthropic’s assistant for getting work done. It works through tasks of several steps in the folders and tools you choose, shows each step as it goes, and keeps going when you close your laptop. It comes with paid Claude plans and runs on Claude. Since September 2026, Anthropic has been folding it into the Claude app itself, on Pro, Max and Ultra first.",
   "fair.sources": "cowork merged",
   "table.rows": [
-    ["Where it runs", "In a browser tab, on any recent computer, phone included.", "built", "The Claude desktop app, with the web and phones in beta; a task keeps running in Anthropic’s cloud.", "cowork"],
+    ["Where it runs", "In a browser tab, on any recent computer, phone included.", "built", "The Claude desktop app, now rolling out on the web and phones too; a task keeps running in Anthropic’s cloud.", "cowork"],
+    ["What it takes on your computer", "Nothing to install: a web page, kept to work offline. The AI on this computer, if you want it, downloads once (3.1 GB).", "built", "The Claude desktop app, and a virtual machine on your computer where code runs. On Linux, Anthropic asks for about 25 GB of free space for it.", "install"],
     ["What it works on", "The files you give it, inside the browser’s fence. A real folder on your computer in Chrome and Edge.", "built", "The folders and tools you choose; deleting anything needs your approval.", "cowork"],
-    ["Which AI", "Any, Claude included: on this computer, a free one, your key, your plan.", "built", "Claude, from Anthropic or through your company’s cloud: Amazon Bedrock, Google Cloud, Microsoft Foundry.", "cowork"],
-    ["Who reads what you send", "The AI you choose. With the AI on this computer, nobody.", "built", "Anthropic. Used to train Claude only if you allow it in its privacy settings.", "training"],
+    ["Which AI", "Any, Claude included: on this computer, a free one, your key, your plan.", "built", "Claude, from Anthropic or through your company’s cloud: Amazon Bedrock, Gemini Enterprise Agent Platform, Microsoft Foundry.", "cowork"],
+    ["Who reads what you send", "The AI you choose. With the AI on this computer, nobody.", "built", "Anthropic. Used to train Claude if you allow it in its privacy settings, or if a conversation is flagged for a safety review.", "training"],
     ["What it costs", "{name} is free; the AI may not be. Your Claude plan works too.", "design", "Paid Claude plans, from Pro at $20 a month, or $17 a month billed yearly. Cowork uses up a plan’s allowance faster than chat does.", "pricing cowork"],
     ["Open source", "Yes, MIT. About 40,000 lines anyone can read.", "built", "No.", ""],
     ["At work", "A folder IT serves from its own address, behind its gateway and sign-in.", "built", "Claude’s Team and Enterprise plans, with access, spending and tools set by admins.", "cowork"],
     ["Leaving with your things", "Plain files and backups. Claude’s export comes in.", "built", "Claude’s data export, from Settings › Privacy, its link sent by email.", "export"]
   ],
+  "cloud.title": "On your company’s cloud",
+  "cloud.why": "A company that reaches Claude through Amazon Bedrock, Google Cloud or Microsoft Foundry runs Claude Cowork in a mode Anthropic calls 3P, for third-party: no sharing between users, no web, no phones, and Anthropic says its architecture can’t bring them there. With {name}, people still work together.",
+  "cloud.sources": "3p",
+  "cloud.mode": "on your company’s cloud (3P)",
+  "cloud.rows": [
+    ["Working together", "Share a task, a document or a whole project with colleagues, or by a link, and work on it together, each answered by their own AI. Sealed end to end, through your organisation’s own relay.", "built", "No sharing between users: one of the differences Anthropic says it can’t bring to this mode.", "3p"],
+    ["On the web and phones", "Yes: a browser tab is enough, phone included.", "built", "No: neither claude.ai on the web nor the mobile app.", "3p"],
+    ["With the computer closed", "{name} works while its tab is open.", "design", "No: its sessions stay on the computer, which must stay awake. A scheduled task missed while it sleeps runs when it wakes.", "3p"]
+  ],
   "better.title": "Where Claude Cowork does better",
   "better.items": [
     "One company’s app and AI, made to work together: sign in and start. {name} asks you to choose an AI first.",
-    "It keeps working when you close your laptop, and runs tasks on a schedule unattended. {name} works while it is open.",
-    "Connectors and plugins kept up by Anthropic.",
+    "It keeps working when you close your laptop, and runs tasks on a schedule unattended, except on your company’s cloud. {name} works while it is open.",
+    "Plugins that bring skills and connectors in one install, and a company’s own private marketplace of them.",
     "It works on folders where they sit on your computer. {name} does that in Chrome and Edge; in other browsers, on the files you give it."
   ],
-  "better.sources": ["cowork", "cowork", "cowork", "cowork"],
+  "better.sources": ["cowork", "cowork 3p", "cowork", "cowork"],
+  "weight.cowork": "Room for Claude Cowork’s virtual machine, on Linux",
+  "weight.say": "{name} opens with less than a photo; Claude Cowork asks for more room than a film.",
   "both.title": "Use both",
   "both.cards": [
     ["plan", "Your Claude plan, in {name}", "Pro or Max: install Claude Code on this computer and sign in, then paste This computer’s line once.", "computer"],
@@ -48,7 +60,7 @@
     ["Can it use a local AI?", "Yes: the one {name} downloads to this computer, or yours in Ollama or LM Studio."],
     ["Can {name} use my Claude plan?", "Yes, Pro or Max, on a computer where Claude Code is installed and signed in."],
     ["Is {name} like Claude Code?", "No. Claude Code is for writing software; {name} is for everyday work on files. {name} uses Claude Code only as the way to your Claude plan."],
-    ["Is Claude Cowork still a separate app?", "Less and less: since September 2026 Anthropic has been folding Cowork into the Claude app, so the same work can start from any conversation, on Pro and Max first."]
+    ["Is Claude Cowork still a separate app?", "Less and less: since September 2026 Anthropic has been folding Cowork into the Claude app, so the same work can start from any conversation, on Pro, Max and Ultra first."]
   ],
   "end.title": "Give {name} a file and see what it makes",
   "foot.note": "Facts about Claude Cowork were checked on {date} on Anthropic’s own pages. Claude is a trademark of Anthropic; {name} is not affiliated with it.",
@@ -56,5 +68,7 @@
   "source.merged": "Claude: Cowork and chat are now one Claude",
   "source.pricing": "Claude pricing",
   "source.training": "Claude privacy: is my data used for training",
-  "source.export": "Claude help centre: exporting your data"
+  "source.export": "Claude help centre: exporting your data",
+  "source.install": "Claude help centre: installing Claude Desktop",
+  "source.3p": "Claude docs: features on third-party platforms (3P)"
 }
