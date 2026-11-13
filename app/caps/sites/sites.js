@@ -9,11 +9,11 @@
 // (D401), or by a page's Publish…; nothing of it shows before. Its words are retyped in place and its parts pointed at for the brain in its
 // pane (./hand.js, D741); what the brain changes after the turn it made the site waits as its version, `sites/.suggested/<ulid>-<slug>`,
 // for the person to accept or reject (D505).
-import { html } from 'lit-html'
+import { html, svg } from 'lit-html'
 import { effect } from '@preact/signals-core'
 import { app } from '../../ui/state.js'
 import { register } from '../../ui/caps.js'
-import { icons } from '../../ui/menu-icons.js'
+import { icon, icons } from '../../ui/menu-icons.js'
 import { reread } from '../../ui/creations.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { ulid } from '../../core/ulid.js'
@@ -46,7 +46,7 @@ async function check(one, look, said, signal) {
 
 const kind = folderKind({ id: 'sites', folder: 'sites', record: 'site.json', noun: 'site', says: ['sites.zip', 'sites.ask', 'sites.example'], element: 'app-site:not(app-prototype *)', skill: 'site', at: 2.8,
   /** A browser's window. */
-  glyph: icons.page,
+  glyph: icon(svg`<path d="M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM3 9h18M6 7h.01M8.5 7h.01M7 13h6M7 16h4"/>`),
   specs: { make: SITE, change: CHANGE }, text: describe, check, told: (report, at) => told(/** @type {any} */ (report), at),
   view: (site) => html`<app-site class="beside" .site=${site}></app-site>` })
 export const { load, metaOf, bytesOf, editor } = kind

@@ -35,6 +35,6 @@ export function ways(file, pane) {
     files: [{ id: 'pptx', glyph: icons.slides, label: t('slides.out.pptx'), run: async () => {
       const [{ toPptx }, { default: PptxGenJS }, { withNames }] = await Promise.all([import(new URL('../../vendor/deck/pptx.mjs', import.meta.url).href), import(new URL('../../vendor/pptxgenjs/pptxgen.mjs', import.meta.url).href), import('./kit.js')]), { view } = shown()
       save((await toPptx({ ...view, kit: withNames(view.kit) }, { PptxGenJS, JSZip: /** @type {any} */ (globalThis).JSZip })).blob, `${file.name}.pptx`)
-    } }, { id: 'file', glyph: icons.page, label: t('out.webPage'), run: async () => save(new Blob([await page()], { type: 'text/html' }), named) }],
+    } }, { id: 'file', glyph: icons.globe, label: t('out.webPage'), run: async () => save(new Blob([await page()], { type: 'text/html' }), named) }],
     print: { id: 'pdf', run: () => print(shown().view, shown().resolve) }, kit: true }
 }

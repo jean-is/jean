@@ -289,7 +289,7 @@ class Made extends Element {
         ${sharing ? html`<ul>${linked.length ? linked.map((part) => part.draw({ text: source, files: /** @type {{ files?: unknown }} */ (this).files }, item)) : item(icons.share, t('made.share'),
           () => navigator.share({ title, text: source }).then(() => act('answer.share', { task }), (/** @type {Error} */ error) => error.name === 'AbortError' || console.warn('Share', error)))}</ul><hr>` : nothing}
         <div role="group" aria-label=${t('out.download')}><p class="menu-heading" aria-hidden="true">${t('out.download')}</p>
-        <ul>${item(icons.page, t('out.webPage'), () => import('../../ui/export.js').then((module) => module.saveAnswer(source, name)), 'answer.save', 'html')}
+        <ul>${item(icons.globe, t('out.webPage'), () => import('../../ui/export.js').then((module) => module.saveAnswer(source, name)), 'answer.save', 'html')}
         ${item(icons.file, t('made.out.word'), () => downloadWord(source, name), 'answer.save', 'docx')}
         ${tables.map((table, i) => item(icons.table, tables.length > 1 ? t('made.csvNumbered', { count: i + 1 }) : t('made.csvTitle'), () => downloadCSV(table, i + 1), 'answer.save', 'csv'))}</ul></div>
         <hr>
