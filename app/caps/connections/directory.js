@@ -53,10 +53,15 @@ export const DIRECTORY = Object.freeze(/** @type {Known[]} */ ([
   { id: 'contentsquare', group: 'customers', name: 'Contentsquare', url: 'https://api.contentsquare.com/mcp', ready: true, logo: 'contentsquare.png' },
   // Web search with no key and no sign-in (D192).
   { id: 'exa', group: 'other', name: 'Exa', url: 'https://mcp.exa.ai/mcp', ready: true, logo: 'exa.svg', searches: true },
-  // Any Google account's, each asking only for what its own tools need (D349).
+  // Freelancers to hire, found with no sign-in; nothing is ordered or paid there.
+  { id: 'fiverr', group: 'other', name: 'Fiverr', url: 'https://mcp.fiverr.com/mcp', ready: true, logo: 'fiverr.png' },
+  // Any Google account's, each asking only for what its own tools need (D349): Docs and Sheets change any document or spreadsheet the user
+  // may, find them by their names alone in Drive, and Docs makes one from Markdown there, which reaches only the files Jean made.
   { id: 'gmail', group: 'mail', name: 'Gmail', url: 'https://gmail.googleapis.com/gmail/v1/users/me/', api: true, ...google(['gmail.modify']), logo: 'gmail.svg' },
   { id: 'google-calendar', group: 'mail', name: 'Google Calendar', url: 'https://www.googleapis.com/calendar/v3/', api: true, ...google(['calendar.events', 'calendar.calendarlist.readonly']), logo: 'google-calendar.svg' },
-  { id: 'google-drive', group: 'files', name: 'Google Drive', url: 'https://www.googleapis.com/drive/v3/', api: true, ...google(['drive.readonly', 'drive.file', 'documents']), logo: 'google-drive.svg' },
+  { id: 'google-drive', group: 'files', name: 'Google Drive', url: 'https://www.googleapis.com/drive/v3/', api: true, ...google(['drive.readonly']), logo: 'google-drive.svg' },
+  { id: 'google-docs', group: 'files', name: 'Google Docs', url: 'https://docs.googleapis.com/v1/documents/', api: true, ...google(['documents', 'drive.metadata.readonly', 'drive.file']), logo: 'google-docs.svg' },
+  { id: 'google-sheets', group: 'files', name: 'Google Sheets', url: 'https://sheets.googleapis.com/v4/spreadsheets/', api: true, ...google(['spreadsheets', 'drive.metadata.readonly']), logo: 'google-sheets.svg' },
   // Google's servers, one a product, are a developer preview for Workspace accounts that refuses browsers.
   // One sign-in reaches them all, asking for what their tools need (D344).
   { id: 'google', group: 'mail', name: 'Google Workspace', url: 'https://gmailmcp.googleapis.com/mcp/v1', servers: ['drive', 'docs', 'sheets', 'slides', 'calendar', 'chat'].map((product) => `https://${product}mcp.googleapis.com/mcp/v1`).concat('https://people.googleapis.com/mcp/v1'),
@@ -103,13 +108,14 @@ export const DIRECTORY = Object.freeze(/** @type {Known[]} */ ([
   // Their service answers no browser.
   { id: 'todoist', group: 'tasks', name: 'Todoist', url: 'https://ai.todoist.net/mcp', signIn: ['todoist.com'], logo: 'todoist.png' },
   { id: 'ifttt', group: 'other', name: 'IFTTT', url: 'https://ifttt.com/mcp', logo: 'ifttt.svg' },
+  { id: 'stewdio', group: 'design', name: 'Stewdio', url: 'https://mcp.stewdio.ai/mcp', signIn: ['signin.stewdio.ai'], logo: 'stewdio.png' },
   // Each company's own instance, whose address policy gives, with the app its admin registered there, since they register
   // none; reached through the gateway, as ServiceNow's and Databricks's answer no browser, whatever the address (D283).
   // NetSuite's is the account's (Oracle's service for running a business, its database a developer's tool, D192);
   // Databricks's a workspace's, a Genie space's or SQL's. SAP runs none for people's work (its BTP's is an administrator's):
   // a company makes its own in SAP Integration Suite from its systems, on its own hosts, which its gateway names.
   { id: 'servicenow', group: 'tasks', name: 'ServiceNow', ready: false, logo: 'servicenow.png' },
-  { id: 'netsuite', group: 'other', name: 'Oracle NetSuite', ready: false, logo: 'netsuite.png' },
+  { id: 'netsuite', group: 'other', name: 'NetSuite', ready: false, logo: 'netsuite.png' },
   { id: 'databricks', group: 'other', name: 'Databricks', ready: false, logo: 'databricks.png' },
   { id: 'sap', group: 'other', name: 'SAP', ready: false, logo: 'sap.svg' },
 ]))

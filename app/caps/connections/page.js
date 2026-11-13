@@ -93,7 +93,7 @@ const said = () => (message.value ? html`<p class="status is-${message.value.kin
 const trains = (one, service, brains = untrained(effective.value.settings.brains)) => (!limited(one) ? nothing : html`<p class="${brains ? 'status' : 'hint'} connection-trains">${icons.shield} ${brains ? t('connections.noBrain', { service, brains }) : t('connections.trains', { service })}</p>`)
 /**
  * A name like an address may wrap before its dot ("monday" ".com"), one in two words where its capital starts the second ("Service" "Now"),
- * unless it has a space to wrap at ("Oracle" "NetSuite", never "Oracle Net" "Suite"). @param {string} text
+ * unless it has a space to wrap at ("Acme CloudDesk", never "Acme Cloud" "Desk"). @param {string} text
  */
 const wrapped = (text) => text.split(/(?=\.)|(?<=^\S*[a-z])(?=[A-Z])/).map((part, i) => (i ? html`<wbr>${part}` : part))
 /** Its group, Other for one policy added without one. @param {Listed} entry */

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 // Jean's own tools over a service's own API, where its MCP server can't serve everyone: Gmail, Google
-// Calendar and Google Drive for every Google account (D349), Google's MCP servers being a preview for
+// Calendar, Google Drive, Google Docs and Google Sheets for every Google account (D349), Google's MCP servers being a preview for
 // Workspace accounts (D344); Outlook, its calendar and contacts, OneDrive, SharePoint, and for a work account
 // Teams, its meetings' transcripts and shared mailboxes, through Microsoft Graph (D382). These APIs answer
 // browsers, so their calls go straight to the service, never through a gateway. Each is a server as the MCP
@@ -161,15 +161,17 @@ const calendar = [
   tool('delete_event', 'Removes an event; its guests are told it is cancelled.', object({ calendar: calendarId, id: eventId }, ['id']), false, ({ calendar, id }, call) => call(`${events(calendar, id)}?sendUpdates=all`, { method: 'DELETE' }).then(() => said('Removed.'))),
 ]
 
-// ─── Google Drive ────────────────────────────────────────────────────────────
+// ─── Google Drive, Docs and Sheets ───────────────────────────────────────────
 
+// Drive's API, which Docs and Sheets find their files with, and say who is signed in.
+const DRIVE = 'https://www.googleapis.com/drive/v3/'
 const FIELDS = 'id,name,mimeType,modifiedTime,webViewLink'
 // Google's own files as text: a document in Markdown, a spreadsheet's first sheet in CSV, a presentation's words.
 const EXPORTS = /** @type {Record<string, string>} */ ({ 'application/vnd.google-apps.document': 'text/markdown', 'application/vnd.google-apps.spreadsheet': 'text/csv', 'application/vnd.google-apps.presentation': 'text/plain' })
 /** @param {DriveFile} file */
 const asFile = (file) => resource(file.webViewLink, file.name, `id: ${file.id}\n${file.mimeType}, changed ${file.modifiedTime}`)
 /** A file's name and address in Drive, a shared drive's too. @param {string} id @param {Call} call @returns {Promise<DriveFile>} */
-const fileAt = (id, call) => call(`files/${encodeURIComponent(id)}?fields=${FIELDS}&supportsAllDrives=true`)
+const fileAt = (id, call) => call(`${DRIVE}files/${encodeURIComponent(id)}?fields=${FIELDS}&supportsAllDrives=true`)
 
 // Google Docs' own API, which places each part of a document by where it starts and ends, as its edits name them.
 const DOCS = 'https://docs.googleapis.com/v1/documents/'
@@ -183,20 +185,28 @@ const outline = (content = [], indent = '') => content.flatMap(({ startIndex = 0
 /** Where files are looked for: one shared drive the user has, by its name, or all of them and the user’s own. @param {unknown} name @param {Call} call @returns {Promise<Record<string, string>>} */
 async function corpus(name, call) {
   if (!name) return { corpora: 'allDrives' }
-  const { drives = [] } = await call('drives?pageSize=100&fields=drives(id,name)')
+  const { drives = [] } = await call(`${DRIVE}drives?pageSize=100&fields=drives(id,name)`)
   const found = drives.find((/** @type {SharedDrive} */ each) => each.name.toLowerCase().includes(String(name).toLowerCase()))
   if (!found) throw new Error(drives.length ? `No shared drive is called ${name}. The user’s are ${drives.map((/** @type {SharedDrive} */ each) => each.name).join(', ')}.` : 'The user has no shared drive.')
   return { corpora: 'drive', driveId: found.id }
 }
 
+/**
+ * Drive's search, in shared drives too or in one by its name, with no words those the user had open last: by words in files or their names, or,
+ * for Docs and Sheets, which see names alone (`drive.metadata.readonly`), Google's own files of a type by words in their names.
+ * @param {string} name @param {string} what @param {string} [type] @returns {Direct}
+ */
+const finder = (name, what, type) => tool(name, `Finds ${what} in Google Drive, shared drives included, by words in ${type ? 'their names' : 'them or in their names'}; with none, those the user had open last.`,
+  object({ query: string('Words to find'), drive: string('A shared drive’s name, to look there alone'), max }), true, async ({ query, drive, max = 10 }, call) => {
+    const q = [query && `${type ? 'name' : 'fullText'} contains '${String(query).replace(/[\\']/g, '\\$&')}'`, type && `mimeType = 'application/vnd.google-apps.${type}'`, 'trashed = false'].filter(Boolean).join(' and ')
+    // Google looks in the user's own Drive alone unless told shared drives are read too.
+    const { files = [] } = await call(`${DRIVE}files?${new URLSearchParams({ q, pageSize: String(max), fields: `files(${FIELDS})`, ...await corpus(drive, call), includeItemsFromAllDrives: 'true', supportsAllDrives: 'true', ...(!query && { orderBy: 'recency desc' }) })}`)
+    return files.map(asFile)
+  })
+
 /** @type {Direct[]} */
 const drive = [
-  tool('search_files', 'Finds files in Google Drive, shared drives included, by words in them or in their names; with none, those the user had open last.', object({ query: string('Words to find'), drive: string('A shared drive’s name, to look there alone'), max }), true, async ({ query, drive, max = 10 }, call) => {
-    const q = `${query ? `fullText contains '${String(query).replace(/[\\']/g, '\\$&')}' and ` : ''}trashed = false`
-    // Google looks in the user's own Drive alone unless told shared drives are read too.
-    const { files = [] } = await call(`files?${new URLSearchParams({ q, pageSize: String(max), fields: `files(${FIELDS})`, ...await corpus(drive, call), includeItemsFromAllDrives: 'true', supportsAllDrives: 'true', ...(!query && { orderBy: 'recency desc' }) })}`)
-    return files.map(asFile)
-  }),
+  finder('search_files', 'files'),
   tool('read_file', 'Reads a file’s text: a document in Markdown, a spreadsheet’s first sheet in CSV, a presentation’s words, or a text file.', object({ id: string('The file’s id, from search_files') }, ['id']), true, async ({ id }, call) => {
     const at = `files/${encodeURIComponent(id)}`
     const file = await fileAt(id, call)
@@ -204,17 +214,54 @@ const drive = [
     if (!as && !/^text\/|\/(json|xml|csv)$/.test(file.mimeType)) throw new Error(`${file.name} is a file of type ${file.mimeType}, whose text can’t be read here.`)
     return [resource(file.webViewLink, file.name, await call(as ? `${at}/export?mimeType=${encodeURIComponent(as)}` : `${at}?alt=media&supportsAllDrives=true`, { as: 'text' }))]
   }),
+]
+
+const documentId = string('The document’s id, from search_documents')
+/** @type {Direct[]} */
+const docs = [
+  finder('search_documents', 'Google Docs documents', 'document'),
+  tool('read_document', 'Reads a Google Docs document as edit_document places its parts: each paragraph’s startIndex–endIndex, named style and words, its tables’ cells, and its named styles’ fonts, sizes and colours.', object({ id: documentId }, ['id']), true,
+    ({ id }, call) => Promise.all([call(`${DOCS}${encodeURIComponent(id)}`), fileAt(id, call)]).then(([doc, file]) => [resource(file.webViewLink, file.name, [`id: ${file.id}`, 'Named styles:', ...(doc.namedStyles?.styles ?? []).map(look), '', ...outline(doc.body?.content)].join('\n'))])),
+  // Drive makes it, from Markdown, as Docs' own API, which writes a document a request at a time, can't.
   tool('create_document', 'Makes a Google Docs document from Markdown, in the user’s Drive.', object({ name: string('Its name'), content: string('Its text, in Markdown') }, ['name', 'content']), false, async ({ name, content }, call) => {
     const boundary = crypto.randomUUID()
     const body = [`--${boundary}`, 'Content-Type: application/json; charset=UTF-8', '', JSON.stringify({ name, mimeType: 'application/vnd.google-apps.document' }),
       `--${boundary}`, 'Content-Type: text/markdown; charset=UTF-8', '', content, `--${boundary}--`].join('\r\n')
-    return [asFile(await call(`/upload/drive/v3/files?uploadType=multipart&fields=${FIELDS}`, { method: 'POST', headers: { 'content-type': `multipart/related; boundary=${boundary}` }, body }))]
+    return [asFile(await call(`${new URL(DRIVE).origin}/upload/drive/v3/files?uploadType=multipart&fields=${FIELDS}`, { method: 'POST', headers: { 'content-type': `multipart/related; boundary=${boundary}` }, body }))]
   }),
-  tool('read_document', 'Reads a Google Docs document as edit_document places its parts: each paragraph’s startIndex–endIndex, named style and words, its tables’ cells, and its named styles’ fonts, sizes and colours.', object({ id: string('The file’s id, from search_files') }, ['id']), true,
-    ({ id }, call) => Promise.all([call(`${DOCS}${encodeURIComponent(id)}`), fileAt(id, call)]).then(([doc, file]) => [resource(file.webViewLink, file.name, [`id: ${file.id}`, 'Named styles:', ...(doc.namedStyles?.styles ?? []).map(look), '', ...outline(doc.body?.content)].join('\n'))])),
   tool('edit_document', 'Changes a Google Docs document, shared drives’ too, with the Docs API’s batchUpdate requests, applied in order: its words (replaceAllText, insertText, deleteContentRange), their look (updateTextStyle, updateParagraphStyle), every heading or paragraph of a named style at once (updateNamedStyle), its tables. Places come from read_document.',
-    object({ id: string('The file’s id, from search_files'), requests: { type: 'array', items: { type: 'object' }, description: 'Requests as the Docs API takes them, e.g. {"updateNamedStyle": {"namedStyle": {"namedStyleType": "HEADING_1", "textStyle": {"weightedFontFamily": {"fontFamily": "Times New Roman"}, "fontSize": {"magnitude": 20, "unit": "PT"}, "foregroundColor": {"color": {"rgbColor": {"red": 0.1, "green": 0.2, "blue": 0.5}}}}}, "fields": "textStyle.weightedFontFamily,textStyle.fontSize,textStyle.foregroundColor"}}' } }, ['id', 'requests']), false,
+    object({ id: documentId, requests: { type: 'array', items: { type: 'object' }, description: 'Requests as the Docs API takes them, e.g. {"updateNamedStyle": {"namedStyle": {"namedStyleType": "HEADING_1", "textStyle": {"weightedFontFamily": {"fontFamily": "Times New Roman"}, "fontSize": {"magnitude": 20, "unit": "PT"}, "foregroundColor": {"color": {"rgbColor": {"red": 0.1, "green": 0.2, "blue": 0.5}}}}}, "fields": "textStyle.weightedFontFamily,textStyle.fontSize,textStyle.foregroundColor"}}' } }, ['id', 'requests']), false,
     ({ id, requests }, call) => call(`${DOCS}${encodeURIComponent(id)}:batchUpdate`, { method: 'POST', body: JSON.stringify({ requests }) }).then(() => fileAt(id, call)).then((file) => [asFile(file)])),
+]
+
+// Google Sheets' own API: cells named as people name them (Budget!B2:D9), written as a person types them, so a formula is worked out.
+const SHEETS = 'https://sheets.googleapis.com/v4/spreadsheets/'
+const TYPED = 'valueInputOption=USER_ENTERED'
+const sheetId = string('The spreadsheet’s id, from search_spreadsheets')
+const rows = { type: 'array', items: { type: 'array', items: { type: 'string' } }, description: 'Rows, each a list of cells as a person types them: words, numbers, dates, or formulas such as =SUM(B2:B9)' }
+/** A spreadsheet's values, at an address, as Sheets' API names them. @param {string} id @param {string} range */
+const cells = (id, range) => `${SHEETS}${encodeURIComponent(id)}/values/${encodeURIComponent(range)}`
+
+/** @type {Direct[]} */
+const sheets = [
+  finder('search_spreadsheets', 'Google Sheets spreadsheets', 'spreadsheet'),
+  tool('read_spreadsheet', 'Reads a spreadsheet: its sheets’ names, then the cells asked for, or its first sheet’s, a row a line, a tab between cells.', object({ id: sheetId, range: string('Cells in A1 notation, e.g. Budget!A1:D20, or a sheet’s name') }, ['id']), true, async ({ id, range }, call) => {
+    const book = await call(`${SHEETS}${encodeURIComponent(id)}?fields=spreadsheetId,spreadsheetUrl,properties.title,sheets.properties.title`)
+    const names = book.sheets.map((/** @type {{ properties: { title: string } }} */ sheet) => sheet.properties.title)
+    // A sheet's name alone is all its cells, quoted since it may have spaces.
+    const { range: at, values = [] } = await call(cells(id, range ?? `'${names[0].replace(/'/g, "''")}'`))
+    return [resource(book.spreadsheetUrl, book.properties.title, [`id: ${book.spreadsheetId}`, `Sheets: ${names.join(', ')}`, '', at, ...values.map((/** @type {string[]} */ row) => row.join('\t'))].join('\n'))]
+  }),
+  tool('write_cells', 'Writes rows into a spreadsheet’s cells, over what they held.', object({ id: sheetId, range: string('Where the rows go, from their first cell, in A1 notation, e.g. Budget!B2'), values: rows }, ['id', 'range', 'values']), false,
+    async ({ id, range, values }, call) => said(`Wrote ${(await call(`${cells(id, range)}?${TYPED}`, { method: 'PUT', body: JSON.stringify({ values }) })).updatedRange}.`)),
+  tool('add_rows', 'Adds rows to a table in a spreadsheet, under its last.', object({ id: sheetId, range: string('The table: a sheet’s name, or its cells in A1 notation'), values: rows }, ['id', 'range', 'values']), false,
+    async ({ id, range, values }, call) => said(`Added ${(await call(`${cells(id, range)}:append?${TYPED}&insertDataOption=INSERT_ROWS`, { method: 'POST', body: JSON.stringify({ values }) })).updates.updatedRange}.`)),
+  tool('create_spreadsheet', 'Makes a Google Sheets spreadsheet in the user’s Drive, its first sheet holding the rows given.', object({ name: string('Its name'), values: rows }, ['name']), false, async ({ name, values }, call) => {
+    const book = await call(SHEETS.slice(0, -1), { method: 'POST', body: JSON.stringify({ properties: { title: name } }) })
+    // An address with no sheet's name is the first sheet's, whatever its name in the user's language.
+    if (values?.length) await call(`${cells(book.spreadsheetId, 'A1')}?${TYPED}`, { method: 'PUT', body: JSON.stringify({ values }) })
+    return [resource(book.spreadsheetUrl, name, `id: ${book.spreadsheetId}`)]
+  }),
 ]
 
 // ─── Microsoft Graph ─────────────────────────────────────────────────────────
@@ -379,7 +426,9 @@ export const allows = (needs = {}, granted = '') => (name) => !granted || !needs
 export const APIS = {
   'https://gmail.googleapis.com/gmail/v1/users/me/': { who: 'profile', tools: gmail },
   'https://www.googleapis.com/calendar/v3/': { who: 'users/me/calendarList?maxResults=1', tools: calendar },
-  'https://www.googleapis.com/drive/v3/': { who: 'about?fields=user', tools: drive, also: [new URL(DOCS).origin] },
+  [DRIVE]: { who: 'about?fields=user', tools: drive },
+  [DOCS]: { who: `${DRIVE}about?fields=user`, tools: docs, also: [new URL(DRIVE).origin] },
+  [SHEETS]: { who: `${DRIVE}about?fields=user`, tools: sheets, also: [new URL(DRIVE).origin] },
   'https://graph.microsoft.com/v1.0/': { who: 'me?$select=id', tools: [...outlook, ...outlookCalendar, ...onedrive, ...teamsAndPeople], needs: GRAPH },
 }
 

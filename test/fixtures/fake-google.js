@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Google's side of an organisation on Google Workspace that runs Jean (D344, D349, D440), at Google's
 // own addresses: its sign-in, which takes only the web app the organisation's gateway holds, with its
-// secret, and gives a refresh token only to an offline sign-in; Gmail's, Calendar's, Drive's and Docs'
+// secret, and gives a refresh token only to an offline sign-in; Gmail's, Calendar's, Drive's, Docs' and Sheets'
 // APIs, which answer browsers, each opened by its own scopes; Workspace's MCP servers, one sign-in for all
 // eight, which answer no browser; the AI gateway, on the organisation's network; and the organisation's
 // gateway (D191, relay.js). All are the page's routes: Jean reaches them over HTTPS, as it would at work.
@@ -51,11 +51,13 @@ export const SERVERS = /** @type {Record<string, { scope: string, tool: string, 
 })
 
 /** The scope Google wants for a request to one of its APIs, by its address: one of these will do. @param {string} method @param {URL} url @returns {string[]} */
-const wanted = (method, { hostname, pathname }) => (hostname === 'gmail.googleapis.com' ? ['gmail.modify']
-  // Docs' own scope changes any document the user may, as one someone else made: Drive's only those Jean made.
+const wanted = (method, { hostname, pathname, searchParams }) => (hostname === 'gmail.googleapis.com' ? ['gmail.modify']
+  // Docs' and Sheets' own scopes change any document or spreadsheet the user may, as one someone else made: Drive's only those Jean made.
   : hostname === 'docs.googleapis.com' ? (method === 'GET' ? ['documents', 'drive.readonly'] : ['documents'])
+  : hostname === 'sheets.googleapis.com' ? (method === 'GET' ? ['spreadsheets', 'spreadsheets.readonly', 'drive.readonly'] : ['spreadsheets'])
   : pathname.startsWith('/calendar/v3/users/me/calendarList') ? ['calendar.calendarlist.readonly'] : pathname.startsWith('/calendar/v3/') ? ['calendar.events']
-    : method === 'GET' ? ['drive.readonly', 'drive.file'] : ['drive.file'])
+    // A file's name and dates are Drive's metadata, which its own scope reads; its text is not.
+    : method !== 'GET' ? ['drive.file'] : pathname.endsWith('/export') || searchParams.has('alt') ? ['drive.readonly', 'drive.file'] : ['drive.readonly', 'drive.file', 'drive.metadata.readonly'])
 
 /**
  * Google, for one page. Its sign-in signs in at once, a refresh token only for `access_type=offline`;
@@ -79,6 +81,7 @@ export async function fakeGoogle(page, { jean, lifetime = 3599 }) {
     /** Calendar's events and Drive's files, as Google keeps them. @type {any[]} */ events: [],
     /** @type {any[]} */ files: [],
     /** Each request Docs was sent to change a document. @type {any[]} */ edits: [],
+    /** Each request for a spreadsheet's cells: how, where, and the rows sent. @type {{ method: string, range: string, values?: string[][] }[]} */ cells: [],
   }
   /** @typedef {{ scopes: string[], challenge?: string, redirect?: string, offline?: boolean }} Grant */
   const [codes, refreshes, issued] = [/** @type {Map<string, Grant>} */ (new Map()), /** @type {Map<string, Grant>} */ (new Map()), /** @type {Map<string, Grant>} */ (new Map())]
@@ -129,6 +132,7 @@ export async function fakeGoogle(page, { jean, lifetime = 3599 }) {
     const gmail = /^\/gmail\/v1\/users\/me\/messages\/(\w+)$/.exec(pathname)
     const file = /^\/drive\/v3\/files\/([\w-]+)(\/export)?$/.exec(pathname)
     const doc = /^\/v1\/documents\/([\w-]+)(:batchUpdate)?$/.exec(pathname)
+    if (hostname === 'sheets.googleapis.com') return sheets(method, pathname, body)
     if (hostname === 'docs.googleapis.com') {
       const kept = state.files.find(({ id }) => id === doc?.[1])
       if (!kept) return { status: 404, json: { error: { code: 404, message: 'Requested entity was not found.', status: 'NOT_FOUND' } } }
@@ -171,13 +175,40 @@ export async function fakeGoogle(page, { jean, lifetime = 3599 }) {
       return { json: state.files.at(-1) }
     }
     if (pathname === '/drive/v3/files') {
-      const words = /fullText contains '((?:[^'\\]|\\.)*)'/.exec(searchParams.get('q') ?? '')?.[1].toLowerCase() ?? ''
-      return { json: { files: state.files.filter(({ name, content }) => `${name} ${content}`.toLowerCase().includes(words)) } }
+      // Words in a file's text and name, or in its name alone, of one type or any.
+      const [, where = 'fullText', words = ''] = /(fullText|name) contains '((?:[^'\\]|\\.)*)'/.exec(searchParams.get('q') ?? '') ?? []
+      const type = /mimeType = '([^']*)'/.exec(searchParams.get('q') ?? '')?.[1]
+      return { json: { files: state.files.filter(({ name, content, mimeType }) => (!type || mimeType === type) && (where === 'name' ? name : `${name} ${content}`).toLowerCase().includes(words.toLowerCase())) } }
     }
     const kept = state.files.find(({ id }) => id === file?.[1])
     if (kept && file?.[2]) return searchParams.get('mimeType') === 'text/markdown' ? { text: kept.content } : { status: 400, json: { error: { code: 400, message: 'Export only supports Docs Editors files.' } } }
     if (kept) return { json: kept }
     return { status: 404, json: { error: { code: 404, message: 'Requested entity was not found.', status: 'NOT_FOUND' } } }
+  }
+
+  /**
+   * Sheets' API: a spreadsheet made, kept in Drive with its rows, its first sheet called as a French account's is; its sheets' names;
+   * its cells read, written as typed from where they start, or rows added under its last. @param {string} method @param {string} pathname @param {any} body
+   * @returns {{ status?: number, json?: unknown }}
+   */
+  const sheets = (method, pathname, body) => {
+    if (pathname === '/v4/spreadsheets' && method === 'POST') {
+      const id = `1Sheet${state.files.length + 1}`
+      state.files.push({ id, name: body.properties.title, mimeType: 'application/vnd.google-apps.spreadsheet', modifiedTime: '2026-11-13T08:00:00.000Z', webViewLink: `https://docs.google.com/spreadsheets/d/${id}/edit`, content: '', rows: [] })
+      return { json: { spreadsheetId: id, spreadsheetUrl: state.files.at(-1).webViewLink, properties: { title: body.properties.title }, sheets: [{ properties: { title: 'Feuille 1' } }] } }
+    }
+    const [, id, range, append] = /^\/v4\/spreadsheets\/([\w-]+)(?:\/values\/([^:]+)(:append)?)?$/.exec(pathname) ?? []
+    const kept = state.files.find((file) => file.id === id && file.rows)
+    if (!kept) return { status: 404, json: { error: { code: 404, message: 'Requested entity was not found.', status: 'NOT_FOUND' } } }
+    if (!range) return { json: { spreadsheetId: id, spreadsheetUrl: kept.webViewLink, properties: { title: kept.name }, sheets: [{ properties: { title: 'Feuille 1' } }] } }
+    state.cells.push({ method, range: decodeURIComponent(range), values: body?.values })
+    if (method === 'GET') return { json: { range: `'Feuille 1'!A1:B${kept.rows.length}`, majorDimension: 'ROWS', values: kept.rows } }
+    // Written from its first cell's row, A1 being the first; a row added after the last.
+    const from = append ? kept.rows.length : Number(/(\d+)$/.exec(decodeURIComponent(range).split(':')[0])?.[1] ?? 1) - 1
+    body.values.forEach((/** @type {string[]} */ row, /** @type {number} */ i) => (kept.rows[from + i] = row))
+    kept.content = kept.rows.map((/** @type {string[]} */ row) => row.join(',')).join('\n')
+    const updatedRange = `'Feuille 1'!A${from + 1}:B${from + body.values.length}`
+    return { json: append ? { updates: { updatedRange } } : { updatedRange } }
   }
 
   /** A Workspace server, through the gateway: where to sign in, then MCP's earlier revision, sessions and all. @param {Request} request @returns {Promise<Response>} */
@@ -205,7 +236,7 @@ export async function fakeGoogle(page, { jean, lifetime = 3599 }) {
   }
 
   await page.route((url) => [ACCOUNTS, 'https://oauth2.googleapis.com'].includes(url.origin), async (route) => answer(route, await accounts(await received(route.request()), 'page')))
-  await page.route((url) => ['gmail.googleapis.com', 'www.googleapis.com', 'docs.googleapis.com'].includes(url.hostname), async (route) => {
+  await page.route((url) => ['gmail.googleapis.com', 'www.googleapis.com', 'docs.googleapis.com', 'sheets.googleapis.com'].includes(url.hostname), async (route) => {
     const request = route.request()
     if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: CORS })
     const url = new URL(request.url())

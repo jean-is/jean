@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 // An organisation on Google Workspace, Jean set up by its policy alone (D191, D344, D349, D440): its
-// gateway holds the web app Google registered for it, so Gmail, Google Calendar, Google Drive and
+// gateway holds the web app Google registered for it, so Gmail, Google Calendar, Google Docs, Google Drive, Google Sheets and
 // Google Workspace connect through it, and its AI gateway, whose contract rules out training on what it
 // is sent, reads what they bring in. Google is test/fixtures/fake-google.js, at its own addresses.
 import { test, expect } from '@playwright/test'
@@ -23,13 +23,13 @@ const tile = (name) => new RegExp(`^${name}$`)
 /** The scopes a sign-in asked for. @param {URL} url */
 const scopes = (url) => url.searchParams.get('scope')?.split(' ')
 
-test('Gmail, Google Calendar, Google Drive and Google Workspace are reached through the organisation’s gateway, which holds Google’s app; Gmail signs in with it, offline, its tokens traded and renewed there, and the AI gateway the policy says never trains sums up the latest emails', async ({ page, baseURL }) => {
+test('Gmail, Google Calendar, Google Docs, Google Drive, Google Sheets and Google Workspace are reached through the organisation’s gateway, which holds Google’s app; Gmail signs in with it, offline, its tokens traded and renewed there, and the AI gateway the policy says never trains sums up the latest emails', async ({ page, baseURL }) => {
   // Google's tokens end within the minute, so each request to Gmail renews one first.
   const google = await fakeGoogle(page, { jean: String(baseURL), lifetime: 30 })
   await withPolicy(page, policy())
   await start(page)
   const settings = await openSettings(page, 'Connections')
-  for (const name of ['Gmail', 'Google Calendar', 'Google Drive', 'Google Workspace']) await expect(settings.locator('.service').filter({ has: page.locator('strong', { hasText: tile(name) }) })).toBeEnabled()
+  for (const name of ['Gmail', 'Google Calendar', 'Google Docs', 'Google Drive', 'Google Sheets', 'Google Workspace']) await expect(settings.locator('.service').filter({ has: page.locator('strong', { hasText: tile(name) }) })).toBeEnabled()
   await closeSettings(page)
   await connectTile(page, 'Gmail', 4)
   // Google's sign-in, with the gateway's app, for Gmail's scope alone, offline and with consent so that it renews, with PKCE and no resource indicator.
@@ -78,28 +78,54 @@ test('Google Calendar connects through the gateway with its own scopes: an event
   expect(google.api.every(({ url }) => url.pathname.startsWith('/calendar/v3/'))).toBe(true)
 })
 
-test('Google Drive connects through the gateway with its own scopes: a document made from Markdown, found by its words, read back in Markdown, then changed by Docs’ own requests', async ({ page, baseURL }) => {
+test('Google Docs and Google Drive connect through the gateway, each with its own scopes: a document made from Markdown, found by its name, changed by Docs’ own requests, then found by its words and read back in Markdown', async ({ page, baseURL }) => {
   const google = await fakeGoogle(page, { jean: String(baseURL) })
   await withPolicy(page, policy())
   await start(page)
-  await connectTile(page, 'Google Drive', 5)
-  expect(scopes(google.authorized[0])).toEqual([`${AUTH}drive.readonly`, `${AUTH}drive.file`, `${AUTH}documents`, 'openid', 'email'])
+  await connectTile(page, 'Google Docs', 4)
+  expect(scopes(google.authorized[0])).toEqual([`${AUTH}documents`, `${AUTH}drive.metadata.readonly`, `${AUTH}drive.file`, 'openid', 'email'])
   await closeSettings(page)
   const content = 'Two days in Lyon, from 12 November.\n\n## Who comes\n\n- The board.'
-  await expect(await callTool(page, 'google_drive_create_document', { name: 'Offsite plan', content }, 'Google Drive: Make a document')).toContainText('Offsite plan')
+  await expect(await callTool(page, 'google_docs_create_document', { name: 'Offsite plan', content }, 'Google Docs: Make a document')).toContainText('Offsite plan')
   expect(google.files).toMatchObject([{ name: 'Offsite plan', mimeType: 'application/vnd.google-apps.document', content }])
-  await expect(await callTool(page, 'google_drive_search_files', { query: 'Lyon' }, 'Google Drive: Search files')).toContainText('Offsite plan')
-  await expect(await callTool(page, 'google_drive_read_file', { id: google.files[0].id }, 'Google Drive: Read a file')).toContainText('Two days in Lyon, from 12 November.')
-  expect(google.api.find(({ url }) => url.pathname.endsWith('/export'))?.url.searchParams.get('mimeType')).toBe('text/markdown')
+  await expect(await callTool(page, 'google_docs_search_documents', { query: 'offsite' }, 'Google Docs: Search documents')).toContainText('Offsite plan')
   // Its parts placed as Docs' requests name them, then its words and its headings' font changed, after asking (D694).
   const { id } = google.files[0]
-  await expect(await callTool(page, 'google_drive_read_document', { id }, 'Google Drive: Read a document’s layout')).toContainText(`id: ${id}`)
+  await expect(await callTool(page, 'google_docs_read_document', { id }, 'Google Docs: Read a document’s layout')).toContainText(`id: ${id}`)
   const requests = [{ replaceAllText: { containsText: { text: 'Lyon', matchCase: true }, replaceText: 'Annecy' } },
     { updateNamedStyle: { namedStyle: { namedStyleType: 'HEADING_2', textStyle: { weightedFontFamily: { fontFamily: 'Times New Roman' } } }, fields: 'textStyle.weightedFontFamily' } }]
-  await expect(await callTool(page, 'google_drive_edit_document', { id, requests }, 'Google Drive: Change a document')).toContainText('Offsite plan')
+  await expect(await callTool(page, 'google_docs_edit_document', { id, requests }, 'Google Docs: Change a document')).toContainText('Offsite plan')
   expect(google.edits).toEqual(requests)
   expect(google.api.filter(({ url }) => url.hostname === 'docs.googleapis.com').map(({ method, url }) => `${method} ${url.pathname}`)).toEqual([`GET /v1/documents/${id}`, `POST /v1/documents/${id}:batchUpdate`])
+  // Drive, its own sign-in, finds and reads what Docs made, and makes nothing.
+  await connectTile(page, 'Google Drive', 2)
+  expect(scopes(google.authorized[1])).toEqual([`${AUTH}drive.readonly`, 'openid', 'email'])
+  await closeSettings(page)
+  await expect(await callTool(page, 'google_drive_search_files', { query: 'Annecy' }, 'Google Drive: Search files')).toContainText('Offsite plan')
   await expect(await callTool(page, 'google_drive_read_file', { id }, 'Google Drive: Read a file')).toContainText('Two days in Annecy, from 12 November.')
+  expect(google.api.find(({ url }) => url.pathname.endsWith('/export'))?.url.searchParams.get('mimeType')).toBe('text/markdown')
+})
+
+test('Google Sheets connects through the gateway with its own scopes: a spreadsheet made with its rows, a row added under them, found by its name, read a row a line, then a cell written over', async ({ page, baseURL }) => {
+  const google = await fakeGoogle(page, { jean: String(baseURL) })
+  await withPolicy(page, policy())
+  await start(page)
+  await connectTile(page, 'Google Sheets', 5)
+  expect(scopes(google.authorized[0])).toEqual([`${AUTH}spreadsheets`, `${AUTH}drive.metadata.readonly`, 'openid', 'email'])
+  await closeSettings(page)
+  const rows = [['Item', 'Cost'], ['Train', '120']]
+  await expect(await callTool(page, 'google_sheets_create_spreadsheet', { name: 'Offsite budget', values: rows }, 'Google Sheets: Make a spreadsheet')).toContainText('Offsite budget')
+  const [{ id }] = google.files
+  await expect(await callTool(page, 'google_sheets_add_rows', { id, range: 'Feuille 1', values: [['Hotel', '=2*95']] }, 'Google Sheets: Add rows')).toContainText('Feuille 1')
+  await expect(await callTool(page, 'google_sheets_search_spreadsheets', { query: 'budget' }, 'Google Sheets: Search spreadsheets')).toContainText('Offsite budget')
+  const read = await callTool(page, 'google_sheets_read_spreadsheet', { id }, 'Google Sheets: Read a spreadsheet')
+  await expect(read).toContainText('Offsite budget')
+  await callTool(page, 'google_sheets_write_cells', { id, range: 'B2', values: [['140']] }, 'Google Sheets: Write in cells')
+  // Made, then filled from A1 as typed, a row added after the last, all read, and one cell written over.
+  expect(google.cells).toEqual([{ method: 'PUT', range: 'A1', values: rows }, { method: 'POST', range: 'Feuille 1', values: [['Hotel', '=2*95']] },
+    { method: 'GET', range: '\'Feuille 1\'' }, { method: 'PUT', range: 'B2', values: [['140']] }])
+  expect(google.files[0].rows).toEqual([['Item', 'Cost'], ['140'], ['Hotel', '=2*95']])
+  expect(google.api.filter(({ url }) => url.hostname === 'sheets.googleapis.com').every(({ url }) => url.searchParams.get('valueInputOption') !== 'RAW')).toBe(true)
 })
 
 test('Google Workspace signs in once for its eight servers, through the gateway, which carries each server’s session; their tools run there, never from the page', async ({ page, baseURL }) => {
