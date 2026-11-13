@@ -58,8 +58,7 @@ function drawable(node, view, getPos, own) {
   if (!node.type.spec.code && own.dom instanceof HTMLElement) own.dom.removeAttribute('dir')
   const now = signal(node)
   const stop = effect(() => {
-    const token = tokenOf(now.value)
-    const on = Boolean(token && DRAWN[token.type]?.(token))
+    const token = tokenOf(now.value), on = Boolean(token && DRAWN[token.type]?.(token))
     dom.classList.toggle('is-drawn', on)
     render(on ? shape(token) : nothing, form)
   })

@@ -2252,6 +2252,57 @@ test.describe('paste', () => {
     expect(await problems(page)).toEqual([])
   })
 
+  /** The caret on a new empty line at the document's end. @param {import('@playwright/test').Page} page */
+  const newLine = (page) => page.evaluate(async () => {
+    const { TextSelection } = await import('#prosemirror')
+    const { view } = /** @type {any} */ (globalThis).editor
+    const tr = view.state.tr.insert(view.state.doc.content.size, view.state.schema.nodes.paragraph.create())
+    view.focus()
+    view.dispatch(tr.setSelection(TextSelection.create(tr.doc, tr.doc.content.size - 1)))
+  })
+
+  test('Markdown pasted as text, in a new document, is its title and its blocks, its picture kept; with ⇧ it stays text', async ({ page }) => {
+    const PNG = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==', 'base64')
+    await page.route('https://pictures.example/**', (route) => route.fulfill({ status: 200, contentType: 'image/png', body: PNG, headers: { 'access-control-allow-origin': '*' } }))
+    await start(page, { markdown: '' })
+    await at(page, 1)
+    const MD = '# Trip to Lisbon\n\nA **short** plan, from [the guide](https://example.com/guide).\n\n## Days\n\n1. Alfama\n2. Belém\n\n- [ ] Tickets\n- [x] Hotel\n\n| Day | Where |\n| --- | --- |\n| 1 | Alfama |\n'
+    expect(await paste(page, '', MD)).toBe(true)
+    await expect(page.locator('#doc > h1')).toHaveText('Trip to Lisbon')
+    await expect(page.locator('#doc h2')).toHaveText('Days')
+    await expect(page.locator('#doc strong')).toHaveText('short')
+    await expect(page.locator('#doc td').nth(1)).toHaveText('Alfama')
+    expect(await markdownOf(page)).toBe(MD)
+    // Its picture, at its address, drawn from there at once, then kept as the project's file.
+    await newLine(page)
+    await paste(page, '', 'See the ![map](https://pictures.example/map.png) and `the key`.')
+    await expect.poll(() => markdownOf(page)).toMatch(/\nSee the !\[map\]\(\.\.\/files\/sha256-[\da-f]{64}\.png\) and `the key`\.\n$/)
+    await expect(page.locator('#doc app-shared.picture')).toHaveAttribute('aria-label', 'map')
+    // ⇧ pastes it as it is, lines of text.
+    await newLine(page)
+    await page.keyboard.down('Shift')
+    await paste(page, '', '## Not a heading\n- nor a list\n- at all')
+    await page.keyboard.up('Shift')
+    await expect(page.locator('#doc > p', { hasText: '## Not a heading' })).toHaveCount(1)
+    await expect(page.locator('#doc > p', { hasText: '- at all' })).toHaveCount(1)
+    expect(await problems(page)).toEqual([])
+  })
+
+  test('a page of Markdown, as Chromium copies a text file\'s page or a code editor its lines, is read as Markdown; a code block in colours stays code', async ({ page }) => {
+    await start(page, { markdown: 'Start.\n' })
+    await newLine(page)
+    const MD = '## Days\n\n- one\n- two'
+    expect(await paste(page, `<pre style="color: rgb(0, 0, 0); font-weight: 400; white-space: pre-wrap;">${MD}</pre>`, MD)).toBe(true)
+    await expect.poll(() => markdownOf(page)).toBe(`Start.\n\n${MD}\n`)
+    await newLine(page)
+    await paste(page, '<meta charset="utf-8"><div style="color: #cccccc; background-color: #1f1f1f; white-space: pre;"><div><span style="color: #569cd6; font-weight: bold;">### Plan</span></div><div><span>Some </span><span style="font-weight: bold;">**bold**</span></div></div>', '### Plan\nSome **bold**')
+    await expect.poll(() => markdownOf(page)).toBe(`Start.\n\n${MD}\n\n### Plan\n\nSome **bold**\n`)
+    await newLine(page)
+    await paste(page, '<pre><span style="color: #6a737d;"># a comment</span>\necho hi</pre>', '# a comment\necho hi')
+    await expect.poll(() => markdownOf(page)).toBe(`Start.\n\n${MD}\n\n### Plan\n\nSome **bold**\n\n\`\`\`\n# a comment\necho hi\n\`\`\`\n`)
+    expect(await problems(page)).toEqual([])
+  })
+
   test('⌘V pastes what the system clipboard holds into the document', async ({ page, browserName, context }) => {
     test.skip(browserName !== 'chromium', 'Playwright grants clipboard access to Chromium only; WebKit\'s pastes are covered by the paste events above')
     await context.grantPermissions(['clipboard-read', 'clipboard-write'])

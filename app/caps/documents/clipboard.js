@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
-// What a paste or a drop brings as HTML (D485), read where reading it is safe: in a small sealed frame of
-// preview.html's kind, which runs cleanTree and hands back only a tree of what a document keeps, its Word
-// and Google Docs lists made lists on the way; the editor builds that tree again with fromTree in an inert
-// document, where nothing loads, and ProseMirror reads that. It imports nothing: the frame has it alone.
+// Pasted or dropped HTML (D485), read in a sealed frame of preview.html's kind: cleanTree hands back a tree of what a document
+// keeps, Word's and Google Docs' lists made lists; fromTree builds it in an inert document for ProseMirror. It imports nothing.
 
 /** What a document keeps of pasted HTML: these elements, these attributes, these styles; of anything else, what it holds. */
 const KEEP = new Set(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'blockquote', 'pre', 'code', 'a', 'b', 'strong', 'i', 'em', 's', 'del', 'strike', 'span', 'br', 'hr', 'table', 'thead', 'tbody', 'tr', 'td', 'th', 'img', 'div', 'sup', 'sub'])
@@ -60,6 +58,9 @@ export function cleanTree(html) {
   lists(doc)
   return toTree(doc.body)
 }
+
+/** Lines of text alone: in <div>s and <span>s, as a code editor copies them, or a <pre> of text, as Chromium a text file's page. @param {Tree} tree @returns {boolean} */
+export const bare = (tree) => tree.every((item) => typeof item === 'string' || (/^(div|span|p|br)$/.test(item.tag) ? bare(item.children) : item.tag === 'pre' && item.children.every((child) => typeof child === 'string')))
 
 /** @param {Node} node @returns {Tree} */
 function toTree(node) {

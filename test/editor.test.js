@@ -7,7 +7,8 @@ import assert from 'node:assert/strict'
 import { readFile, readdir } from 'node:fs/promises'
 import { EditorState, TextSelection } from 'prosemirror-state'
 import { Marked } from 'marked'
-import { parse, parseDoc, titled, serialize, same, schema, blockMarkdown, sliceMarkdown, outline, tree, withContents } from '../app/caps/documents/markdown.js'
+import { parse, parseDoc, titled, serialize, same, schema, blockMarkdown, sliceMarkdown, outline, tree, withContents, pasted } from '../app/caps/documents/markdown.js'
+import { bare } from '../app/caps/documents/clipboard.js'
 import { diff, tints } from '../app/caps/documents/suggest.js'
 import { BlockSelection, blockRange, moveBlocks, units } from '../app/caps/documents/blocks.js'
 import { merge3 } from '../app/ui/merge.js'
@@ -253,6 +254,49 @@ test('a document\'s first line is its title, text alone: its first heading of th
   // A block moves no higher than the first after the title.
   assert.equal(move('# T\n\nPara.\n\nNext.\n', 0, 0, -1).moved, false)
   assert.equal(move('# T\n\nPara.\n\nNext.\n', 1, 1, -1).text, '# T\n\nNext.\n\nPara.\n')
+})
+
+test('text pasted that reads as Markdown makes the blocks it says where it goes, in an empty title a whole document; any other stays lines', () => {
+  /**
+   * A document, the caret after `before`'s first match, on an empty line at its end when it is null, in the title when '', and `text`
+   * pasted there, written. @param {string} source @param {string | null} before @param {string} text
+   */
+  const paste = (source, before, text) => {
+    const read = titled(parse(source)), doc = before === null ? read.doc.copy(read.doc.content.addToEnd(schema.nodes.paragraph.create())) : read.doc
+    let at = before === null ? doc.content.size - 1 : before ? -1 : 1
+    doc.descendants((node, pos) => { if (at < 0 && node.text?.includes(before ?? '')) at = pos + node.text.indexOf(before ?? '') + String(before).length })
+    const state = EditorState.create({ doc, selection: TextSelection.create(doc, at) })
+    const slice = pasted(text, state.selection.$from)
+    if (!slice) return null
+    const next = state.apply(state.tr.replaceSelection(slice)).doc
+    next.check()
+    return serialize(next, read.sources)
+  }
+  // Plain text: lines of an email, a sum, one line that starts as an item would.
+  for (const text of ['Hi Anna,\nThanks for the figures.\nBest, Omar', 'Total: 5*3*2 = 30', '- Omar, our host', '1. Introduction', '#hashtag and a [bracket] (aside)']) assert.equal(paste('Start.\n', null, text), null, text)
+  // Each sign of Markdown, on an empty line.
+  for (const [text, written] of [
+    ['# Plan\n\nText.', '# Plan\n\nText.'], ['> Said.', '> Said.'], ['```js\nx()\n```', '```js\nx()\n```'], ['| a | b |\n| --- | --- |\n| 1 | 2 |', '| a | b |\n| --- | --- |\n| 1 | 2 |'],
+    ['- one\n- two', '- one\n- two'], ['1. one\n2. two', '1. one\n2. two'], ['See [the site](https://example.com).', 'See [the site](https://example.com).'], ['a **bold** word', 'a **bold** word'], ['run `npm test`', 'run `npm test`'],
+  ]) assert.equal(paste('Start.\n', null, text), `Start.\n\n${written}\n`, text)
+  // In a line, its first line joins the words before, its last the words after, as any paste does.
+  assert.equal(paste('Start  end.\n', 'Start ', 'a **bold** and\n\n- one\n- two'), 'Start a **bold** and\n\n- one\n- two end.\n')
+  assert.equal(paste('Start.\n', 'Start.', '## Plan\n\nText.'), 'Start.Plan\n\nText.\n')
+  // In an empty title, a whole document: its first heading of the first level the title, else none, and one line its words.
+  assert.equal(paste('', '', '# Report\n\nIntro, *short*.\n\n## Part\n\n- a\n- b\n'), '# Report\n\nIntro, *short*.\n\n## Part\n\n- a\n- b\n')
+  assert.equal(paste('', '', '## Part\n\nIntro.\n'), '## Part\n\nIntro.\n')
+  assert.equal(paste('', '', 'The **Q3** plan'), '# The Q3 plan\n')
+  // In a title with words, its first line joins them, plain.
+  assert.equal(paste('# Notes\n\nText.\n', 'Notes', ' on **Q3**\n\nMore.'), '# Notes on Q3\n\nMore.\n\nText.\n')
+})
+
+test('HTML of lines of text alone, as a code editor or a browser\'s page of a text file copies Markdown, is told from HTML that shows more', () => {
+  /** An element of the tree the sealed frame hands back. @param {string} tag @param {import('../app/caps/documents/clipboard.js').Tree} children @param {Record<string, string>} [style] */
+  const el = (tag, children, style = {}) => ({ tag, attrs: {}, style, children })
+  assert.equal(bare([el('pre', ['# Title\n\n- one\n- two'], { fontWeight: '400' })]), true)
+  assert.equal(bare([el('div', [el('div', [el('span', ['# Title'], { fontWeight: 'bold' })]), el('div', [el('br', [])]), el('div', [el('span', ['- one'])])])]), true)
+  assert.equal(bare([el('p', ['# Title']), el('p', [el('span', ['Text.'])])]), true)
+  for (const tree of [[el('h1', ['Title'])], [el('p', [el('b', ['Bold'])])], [el('pre', [el('span', ['# a comment'])])], [el('p', [el('a', ['site'])])], [el('ul', [el('li', ['one'])])], [el('img', [])]]) assert.equal(bare(tree), false, JSON.stringify(tree))
 })
 
 test('a line is marked with its language only where Jean is sure of it, whatever language Jean is read in (RGAA 8.7)', async () => {

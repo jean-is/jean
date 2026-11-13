@@ -1,15 +1,10 @@
 // SPDX-License-Identifier: MIT
-// A document's Markdown ⇄ ProseMirror (D485), in the editor and under node --test. marked's
-// lexer reads the file, as Jean's own renderer does (ui/markdown.js), so the editor sees the blocks an
-// answer shows; the writer is prosemirror-markdown's, without its markdown-it parser. A block the
-// person didn't touch goes back as it was read, byte for byte, its blank lines with it: only what
-// changed is written again, with the markers it was written with, and escaped no more than reading it
-// back needs. Two lists of a kind that end up next to each other stay two: the second is written with
-// the other marker, which Markdown reads as another list. Columns side by side are Pandoc's fenced divs (D501).
-// A document's first line is its title, text alone, which the editor holds as a node of its own (`titled()`). A creation
-// is referred to as Obsidian does, `[[its place|its name]]` (D575). A table of contents is `[TOC]` alone on its line, as GitLab, Typora and
-// Python-Markdown write one, which the editor draws as the headings are (toc.js), and anything else writes as their list (`withContents()`).
-import { Schema, tableNodes, MarkdownSerializer, MarkdownSerializerState } from '#prosemirror'
+// A document's Markdown ⇄ ProseMirror (D485), in the editor and under node --test: marked's lexer reads it, as Jean's renderer
+// does (ui/markdown.js), and prosemirror-markdown's writer writes it. An untouched block goes back byte for byte; a changed one
+// with its markers, escaped no more than reading it back needs; two lists of a kind side by side stay two by their markers.
+// Columns are Pandoc's fenced divs (D501), a creation `[[its place|its name]]` (D575), a table of contents `[TOC]` alone on
+// its line (drawn as the headings are, else written as their list: `withContents()`); the first line is the title (`titled()`).
+import { Schema, Slice, tableNodes, MarkdownSerializer, MarkdownSerializerState } from '#prosemirror'
 import { Marked } from 'marked'
 import { columns, cjk } from '../layouts/shapes.js'
 import { mathTokens } from '../../ui/markdown.js'
@@ -261,6 +256,13 @@ export function parse(source) {
 /** The document a piece of Markdown makes, without its sources. @param {string} source */
 export const parseDoc = (source) => parse(source).doc
 
+/** Text pasted as blocks, if it reads as Markdown (Outline's signs), else none; in an empty title, a whole document. @param {string} text @param {import('prosemirror-model').ResolvedPos} $at */
+export function pasted(text, $at) {
+  if (!/^ {0,3}(#{1,6} +\S|> |```|~~~|\|? *:?-{3,}:? *\|)|\]\(\S+\)|\*\*\S[^*\n]*\*\*|`[^`\n]+`/m.test(text) && (text.match(/^ *([-*+]|\d+[.)]) +\S/gm) ?? []).length < 2) return null
+  const read = parse(text)
+  return Slice.maxOpen(($at.parent.type === N.title && !$at.parent.content.size && read.doc.childCount > 1 ? titled(read).doc : read.doc).content)
+}
+
 /**
  * A document as the editor holds it: its first heading of the first level, if it comes first, as its title, its text alone; else
  * `keep` (Jean's version keeps the title it left out) or an empty one, which isn't written. @param {{ doc: PMNode, sources: Sources }} read @param {PMNode} [keep]
@@ -508,8 +510,7 @@ function mergeText(list) {
 
 /** A changed block's Markdown: lightly escaped when that reads back the same. @param {PMNode} node */
 export function blockMarkdown(node) {
-  const light = write(node, lightEscape)
-  const back = parseDoc(light)
+  const light = write(node, lightEscape), back = parseDoc(light)
   if (back.childCount === 1 && same(back.firstChild, node.type === N.title ? N.heading.create({ level: 1 }, node.content) : node)) return light
   return write(node, fullEscape)
 }

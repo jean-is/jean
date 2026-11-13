@@ -54,8 +54,7 @@ export class BlockSelection extends Selection {
 
   /** @param {PMNode} doc @param {Mappable} mapping @returns {Selection} */
   map(doc, mapping) {
-    const anchor = mapping.map(this.anchor, this.anchor <= this.head ? 1 : -1)
-    const head = mapping.map(this.head, this.head < this.anchor ? 1 : -1)
+    const anchor = mapping.map(this.anchor, this.anchor <= this.head ? 1 : -1), head = mapping.map(this.head, this.head < this.anchor ? 1 : -1)
     return anchor === head ? TextSelection.near(doc.resolve(anchor)) : BlockSelection.create(doc, anchor, head)
   }
 
@@ -146,8 +145,7 @@ export function blocks({ label, announce, kinds, adds, mac }) {
       },
       handleKeyDown(view, event) {
         if (event.isComposing) return false
-        const { state } = view
-        const { selection } = state
+        const { state } = view, { selection } = state
         const mod = mac ? event.metaKey : event.ctrlKey
         // Blocks selected keep the keys where they can move no further, which would extend a selection of text.
         if (mod && event.shiftKey && (event.key === 'ArrowUp' || event.key === 'ArrowDown')) return moveBlocks(event.key === 'ArrowUp' ? -1 : 1)(state, view.dispatch) || selection instanceof BlockSelection
@@ -209,8 +207,7 @@ export function blocks({ label, announce, kinds, adds, mac }) {
         const list = unit.list && unit.from === unit.list.pos && /** @type {HTMLElement | null} */ (editor.nodeDOM(unit.list.pos))
         return list && unit.list ? [{ ...unit, to: unit.list.pos + unit.list.node.nodeSize, rect: list.getBoundingClientRect() }] : []
       })
-      const touch = () => matchMedia('(pointer: coarse)').matches
-      const rtl = () => doc.documentElement.dir === 'rtl'
+      const touch = () => matchMedia('(pointer: coarse)').matches, rtl = () => doc.documentElement.dir === 'rtl'
 
       /** The grip beside a block, in the margin where its line starts, outside a list's bullets, centred on its first line. @param {Unit & { rect: DOMRect }} block */
       const show = (block) => {
@@ -272,8 +269,7 @@ export function blocks({ label, announce, kinds, adds, mac }) {
         if (!drawing) return
         const { x, y } = drawing.last
         const [box, off] = [scroller().getBoundingClientRect(), scroller().scrollTop]
-        const top = Math.min(drawing.y, y + off)
-        const bottom = Math.max(drawing.y, y + off)
+        const top = Math.min(drawing.y, y + off), bottom = Math.max(drawing.y, y + off)
         Object.assign(marquee.style, { left: `${Math.min(drawing.x, x)}px`, top: `${Math.max(top - off, box.top)}px`, width: `${Math.abs(x - drawing.x)}px`, height: `${Math.max(0, Math.min(bottom - off, box.bottom) - Math.max(top - off, box.top))}px` })
         marquee.hidden = false
         const crossed = laid().filter(({ rect }) => rect.bottom + off >= top && rect.top + off <= bottom)
@@ -360,8 +356,7 @@ export function blocks({ label, announce, kinds, adds, mac }) {
       }
       /** Opens the menu of the blocks selected, under the grip or beside the first of them. */
       ui.menu = () => {
-        const { state } = editor
-        const { from, to } = state.selection
+        const { state } = editor, { from, to } = state.selection
         const probe = state.apply(state.tr.setSelection(TextSelection.between(state.doc.resolve(from), state.doc.resolve(to))))
         const under = state.apply(below(state))
         /** @param {string} name @param {() => void} run @param {string} glyph @param {boolean} [off] */

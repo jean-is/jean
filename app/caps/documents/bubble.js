@@ -25,8 +25,7 @@ function selectedText(state) {
 
 /** How much of the selected text has the mark: 'all', 'some' or 'none'. @param {EditorState} state @param {MarkType} type */
 function coverage(state, type) {
-  let all = true
-  let some = false
+  let all = true, some = false
   state.doc.nodesBetween(state.selection.from, state.selection.to, (node) => {
     if (!node.isText) return true
     if (type.isInSet(node.marks)) some = true

@@ -9,7 +9,6 @@
 // the box lists the project's documents (ui/complete.js, D488), and the brain knows them from its <documents>
 // section; one it changes unseen opens first, unchanged, its text the brain's to read. One the user makes from
 // Creations has no name: it goes by its title.
-import { html } from 'lit-html'
 import { effect } from '@preact/signals-core'
 import { register, slots } from '../../ui/caps.js'
 import { app, conversationOf } from '../../ui/state.js'

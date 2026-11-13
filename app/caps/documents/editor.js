@@ -1,15 +1,10 @@
 // SPDX-License-Identifier: MIT
-// A document's editor (D485), in Jean's own document, under its own policy: a Markdown file edited as a
-// document, which caps/documents/documents.js opens in a pane with create(). There is no toolbar:
-// Markdown typed at a line's start, "/" for a menu of what the line can become, a bubble over the text
-// selected, the usual keys, and the browser's own Format menu (iOS's B I U) shape the text; whole blocks
-// are selected from the margin or their grip, then removed, moved or turned into another kind. What an
-// answer draws of a block (steps, a comparison, a chart, a formula…) it draws too, by Jean's own code
-// (./drawn.js). Each change is saved a moment later; Jean hears what is selected, and what the person did
-// with its suggestions. What ProseMirror would read with innerHTML, the HTML a paste or a drop brings, is
-// read instead in a small sealed frame of preview.html's kind, which hands back only a tree of what a
-// document keeps (./clipboard.js), built again in an inert document where nothing loads. A picture pasted
-// is kept as a file of the project, and a creation dragged from Creations is held as a block.
+// A document's editor (D485), in Jean's own document under its policy: a Markdown file edited as a document, which
+// documents.js opens with create(). No toolbar: Markdown at a line's start, "/", a bubble over a selection, the usual keys and
+// the browser's Format menu shape the text; blocks are selected from the margin or their grip, to remove, move or turn. What an
+// answer draws, it draws too (./drawn.js). Saved a moment after each change; Jean hears the selection and what became of its
+// suggestions. Pasted HTML is read in a sealed frame (./clipboard.js), never with innerHTML; Markdown pasted as text, as Markdown.
+// A picture pasted is kept as the project's file; a creation dragged from Creations is held as a block.
 import {
   EditorState, Plugin, PluginKey, Selection, TextSelection, NodeSelection, Fragment, Slice, DOMParser as SchemaParser, DOMSerializer, EditorView, Decoration, DecorationSet, history, undo, redo, keymap,
   baseKeymap, toggleMark, setBlockType, wrapIn, chainCommands, exitCode, InputRule, inputRules, wrappingInputRule, textblockTypeInputRule, undoInputRule,
@@ -24,10 +19,10 @@ import { PAGE_SANDBOX, pagePolicy } from '../../ui/csp.js'
 import { encode } from '../../ui/seal.js'
 import { unlock, loaded } from '../../ui/caps.js'
 import { declared, PAGES } from '../../ui/markdown.js'
-import { schema, parse, parseDoc, titled, serialize, sliceMarkdown, safeHref, words, brought, withContents } from './markdown.js'
+import { schema, parse, parseDoc, titled, serialize, sliceMarkdown, safeHref, words, brought, withContents, pasted } from './markdown.js'
 import { el, RTL, free, langOf } from './ui.js'
 import { STARTS } from '../interactive/starts.js'
-import { fromTree } from './clipboard.js'
+import { fromTree, bare } from './clipboard.js'
 import { suggestions, suggest, accept, reject, pending, proposal, suggestionKey } from './suggest.js'
 import { merge3 } from '../../ui/merge.js'
 import { slashMenu, slashKey } from './slash.js'
@@ -70,13 +65,14 @@ addEventListener('message', ({ source, data, ports }) => { if (source === parent
 
 /**
  * HTML a paste or a drop brought, read in the frame, built in an inert document, put in; a paste's pictures with no words, kept, in place
- * of the addresses that came with them (D35). @param {EditorView} view @param {string} html @param {number | null} at @param {File[]} pictures @param {Keep} [keep] a paste's
+ * of the addresses that came with them (D35); lines alone (bare) that read as Markdown, as Markdown. @param {EditorView} view @param {string} html @param {string} text @param {number | null} at @param {File[]} pictures @param {Keep} [keep] a paste's
  */
-async function insertHTML(view, html, at, pictures, keep) {
+async function insertHTML(view, html, text, at, pictures, keep) {
   const { port1, port2 } = new MessageChannel()
   ;(await sealed()).postMessage({ html }, '*', [port2])
   const tree = await new Promise((resolve) => { port1.onmessage = ({ data }) => resolve(Array.isArray(data) ? data : []) })
-  let read = SchemaParser.fromSchema(schema).parseSlice(fromTree(tree, document.implementation.createHTMLDocument('')), { context: at === null ? view.state.selection.$from : view.state.doc.resolve(at) })
+  const $at = at === null ? view.state.selection.$from : view.state.doc.resolve(at)
+  let read = (bare(tree) && pasted(text, $at)) || SchemaParser.fromSchema(schema).parseSlice(fromTree(tree, document.implementation.createHTMLDocument('')), { context: $at })
   // Pasted in the title, which holds text alone, they go on a line of their own after it.
   let to = at
   if (pictures.length && !read.content.textBetween(0, read.content.size).trim()) {
@@ -85,11 +81,15 @@ async function insertHTML(view, html, at, pictures, keep) {
     read = new Slice(Fragment.from(N.paragraph.create(null, kept.flatMap((src, i) => (src ? [N.image.create({ src, alt: alts[i] })] : [])))), title ? 0 : 1, title ? 0 : 1)
     if (title) to = view.state.doc.firstChild?.nodeSize ?? 0
   }
-  // Pictures pasted with words, at their pages' addresses: drawn from there, which the user brought, then each kept once fetched.
-  const remote = new Set()
-  if (keep) read.content.descendants((node) => { if (node.type === N.image && /^(https:|data:image\/)/.test(node.attrs.src)) brought.add(node.attrs.src), remote.add(node.attrs.src) })
+  bring(view, read.content, keep)
   const { state } = view, slice = new Slice(plainHeads(read.content), read.openStart, read.openEnd)
   view.dispatch((to === null ? state.tr.replaceSelection(slice) : state.tr.replaceRange(to, to, slice)).scrollIntoView().setMeta('paste', true).setMeta('uiEvent', at === null ? 'paste' : 'drop'))
+}
+
+/** Pictures pasted with words, at their pages' addresses: drawn from there, which the user brought, then each kept once fetched. @param {EditorView} view @param {Fragment} content @param {Keep} [keep] */
+function bring(view, content, keep) {
+  const remote = new Set()
+  if (keep) content.descendants((node) => { if (node.type === N.image && /^(https:|data:image\/)/.test(node.attrs.src)) brought.add(node.attrs.src), remote.add(node.attrs.src) })
   for (const src of remote) {
     fetched(src).then((file) => file && keep?.(file)).then((kept) => {
       const tr = view.state.tr
@@ -114,7 +114,7 @@ function taken(view, event, data, at, keep) {
   const html = data?.getData('text/html'), pictures = keep ? [...(data?.files ?? [])].filter((file) => file.type.startsWith('image/')) : []
   if ((!html && !pictures.length) || view.composing) return false
   event.preventDefault()
-  insertHTML(view, html ?? '', at, pictures, keep)
+  insertHTML(view, html ?? '', data?.getData('text/plain') ?? '', at, pictures, keep)
   return true
 }
 
@@ -364,9 +364,8 @@ function belowTitle(view, event, slice, moved) {
 
 // ── An editor ─────────────────────────────────────────────────────────────────────────────────────────
 /**
- * A document's editor in `box`: its name, its place and its text, `write` for each change, `keep` for a picture pasted, `tell` for what Jean's brain hears
- * with the next message, and Jean's changes left to decide, `held` as it opens, given to `hold` as they change.
- * The addresses of the pictures the user pasted, which it draws from the web, come as `pictures` and go back with each write.
+ * A document's editor in `box`: `write` for each change, `keep` for a picture pasted, `tell` for what the brain hears with the next message, Jean's
+ * changes left to decide `held` as it opens and given to `hold`, and `pictures`, the addresses it draws the user's pasted ones from, given back with each write.
  * @param {HTMLElement} box @param {{ name: string, path?: string, markdown: string, pictures?: string, write: (markdown: string, pictures: string) => Promise<void>, keep: Keep, tell: (context: string) => void,
  *   held?: { markdown: string, notes?: string[] } | null, hold?: (left: { markdown: string, notes: string[] } | null) => void }} file
  */
@@ -381,8 +380,7 @@ export function create(box, { name, path, markdown: text, pictures, write, keep,
   /** @param {string} said */
   const announce = (said) => { live.textContent = ''; setTimeout(() => { live.textContent = said }, 50) }
 
-  const read = titled(parse(text))
-  const { sources } = read
+  const read = titled(parse(text)), { sources } = read
   let tally = { accepted: 0, rejected: 0 }
   /** The change the bar's arrows went to last. @type {number | null} */
   let current = null
@@ -481,6 +479,9 @@ export function create(box, { name, path, markdown: text, pictures, write, keep,
     attributes,
     nodeViews: views(),
     clipboardSerializer: COPY,
+    // Text that reads as Markdown, as Markdown, but with ⇧.
+    clipboardTextParser: (text, $at, plain) => /** @type {Slice} */ (plain ? null : pasted(text, $at)),
+    handlePaste: (view, _event, slice) => (bring(view, slice.content, keep), false),
     handleDrop: belowTitle,
     dispatchTransaction(tr) {
       view.updateState(view.state.apply(tr))

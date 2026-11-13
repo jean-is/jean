@@ -57,8 +57,7 @@ export function slashMenu({ items, label, announce, key = slashKey, trigger = TR
     state: {
       init: () => CLOSED,
       apply(tr, value, _old, state) {
-        const meta = tr.getMeta(key)
-        const now = typed(state, trigger)
+        const meta = tr.getMeta(key), now = typed(state, trigger)
         if (meta?.close || !now) return CLOSED
         // It opens on the slash just typed, never on one the caret comes back to.
         if (!value.open) return tr.docChanged && now.query === '' ? { open: true, from: now.from, query: '', index: 0 } : CLOSED

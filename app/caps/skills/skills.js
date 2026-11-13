@@ -14,8 +14,7 @@
 // of the room's skills declares them. One the user turns off in Settings (./page.js) says so in its file (`off`) and
 // stays in its folder, so Jean never adds it again, but neither lists, reads nor draws with it until it is turned on. The scores
 // answers hold and the decks they write, kept as files once the answer ends, are among the creations (./scores.js, ./decks.js, D542, D558, D591).
-import { nothing } from 'lit-html'
-import { effect, signal } from '@preact/signals-core'
+import { effect } from '@preact/signals-core'
 import { register, unlock, isDenied } from '../../ui/caps.js'
 import { lazyPage } from '../../ui/lazy-page.js'
 import { declared, WIDGETS } from '../../ui/markdown.js'
