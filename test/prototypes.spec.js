@@ -74,12 +74,16 @@ test('a prototype shows while it is written, its pages coming; made, it is press
   await expect(view.locator('.proto-says').first().locator(':scope > :not(.visually-hidden)')).toHaveText('Leads to Time')
   await expect(view.locator('.proto-says .visually-hidden').first()).toHaveText('Page 1 of 3')
   await expect(view.locator('.proto-by').nth(1)).toHaveText('Press “Cut · €35”')
-  // Its level is its value alone, in smaller words than Fit's; pressed, the board is at 100% at once, and said.
+  // Its words are the board's, never picked up: clicked thrice, nothing is selected.
+  await view.locator('.proto-says').first().click({ clickCount: 3 })
+  expect(await page.evaluate(() => getSelection()?.toString())).toBe('')
+  // Its level is its value alone; it and Fit are as small as the zoom buttons, in smaller words than theirs; pressed, the level sets the board at 100% at once, and said.
   const shown = view.locator('.proto-level')
   await view.getByRole('button', { name: 'Zoom in' }).click()
   await expect(shown).toHaveText(/^\d+%$/)
   await expect(view.getByRole('status')).toHaveText(await shown.innerText())
-  expect(await shown.evaluate((one) => parseFloat(getComputedStyle(one).fontSize) < parseFloat(getComputedStyle(/** @type {Element} */ (one.parentElement?.lastElementChild)).fontSize))).toBe(true)
+  expect(await view.locator('.proto-zoom').evaluate((zoom) => { const size = (/** @type {Element} */ one) => [Math.round(one.getBoundingClientRect().height), parseFloat(getComputedStyle(one).fontSize)], [tall, words] = size(/** @type {Element} */ (zoom.querySelector('.icon-button')))
+    return [...zoom.querySelectorAll('.button')].map((one) => { const [height, letters] = size(one); return height <= tall && letters < words }) })).toEqual([true, true])
   await expect(shown).toHaveAttribute('title', 'Zoom to 100%')
   await shown.click()
   await expect(shown).toHaveText('100%')
