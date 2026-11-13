@@ -368,10 +368,10 @@ test('npm install from the registry Settings name, then node requires and import
   await expect(answer).toContainText('added 1 package')
   await expect(answer).toContainText('up to date')
   await expect(answer).toContainText('< hello >\n  moo\n default,fox')
-  answer = await command(page, `$ mkdir -p lib ; node -e "const fs = require('node:fs'); fs.writeFileSync('n.txt', 'one'); fs.appendFileSync('n.txt', ' two'); fs.readFile('n.txt', 'utf8', (error, text) => console.log(text, fs.existsSync('nope'), fs.statSync('lib').isDirectory()))" ; node -e "require('fs').readFileSync('nope')" ; node -e "require('crypto')"`)
+  answer = await command(page, `$ mkdir -p lib ; node -e "const fs = require('node:fs'); fs.writeFileSync('n.txt', 'one'); fs.appendFileSync('n.txt', ' two'); fs.readFile('n.txt', 'utf8', (error, text) => console.log(text, fs.existsSync('nope'), fs.statSync('lib').isDirectory()))" ; node -e "require('fs').readFileSync('nope')" ; node -e "require('cluster')"`)
   await expect(answer).toContainText('one two false true')
   await expect(answer).toContainText('ENOENT')
-  await expect(answer).toContainText("Cannot find module 'crypto': of Node's own modules, only path, fs, os, util, events, process and buffer are here")
+  await expect(answer).toContainText("Cannot find module 'cluster': it is one of the few of Node's own modules node hasn't here")
   // os, util and events, as packages use them: a constructor that calls EventEmitter on its own `this`.
   answer = await command(page, `$ node -e "const EventEmitter = require('events'); const util = require('node:util'); const os = require('os'); function Bell() { EventEmitter.call(this) } util.inherits(Bell, EventEmitter); const bell = new Bell(); bell.once('ring', (n) => console.log(util.format('%s rang %d times in %s', 'bell', n, os.homedir()), bell.listenerCount('ring'))); bell.emit('ring', '2'); util.promisify(require('fs').readFile)('n.txt').then(console.log)"`)
   await expect(answer).toContainText('bell rang 2 times in /home/user 0\n<Buffer 6f 6e 65 20 74 77 6f>')
@@ -395,17 +395,58 @@ test('npm init, ls and run; a server refused, with the page beside the conversat
   await page.keyboard.press('Escape')
   let answer = await command(page, '$ mkdir site && cd site && npm -v && npm init -y && npm ls')
   await expect(answer).toContainText('Exit code: 0')
-  await expect(answer).toContainText('install, init, ls and run')
+  await expect(answer).toContainText('install, init, ls, run, exec and create')
   await expect(answer).toContainText('"name": "site"')
   answer = await command(page, `$ echo 'console.log("built " + process.argv[2])' > build.js && jq '.scripts = {build: "node build.js", dev: "vite"}' package.json > p && mv p package.json && npm run build -- fast`)
   await expect(answer).toContainText('built fast')
-  for (const server of ['npm run dev', 'npx vite', 'python3 -m http.server', `node -e "require('http')"`]) {
+  // Requiring http is fine, as tools do to fetch; listening is what can't be.
+  for (const server of ['npm run dev', 'npx vite', 'python3 -m http.server', `node -e "require('http').createServer().listen(8080)"`]) {
     answer = await command(page, `$ ${server}`)
     await expect(answer).toContainText('Exit code: 1')
     await expect(answer).toContainText('nothing can listen on a port here')
   }
-  answer = await command(page, '$ npm create vite@latest')
-  await expect(answer).toContainText('only install, init, ls and run work here')
+  answer = await command(page, '$ npm publish')
+  await expect(answer).toContainText('only install, init, ls, run, exec and create work here')
+})
+
+test('npx runs a package’s program: installed once beside the others, or from ./node_modules, with Node’s modules, stdin and its exit code; npm exec and npm create run it too (D745)', async ({ page }) => {
+  test.setTimeout(120_000)
+  const packages = [
+    // CommonJS, as most programs are: a #! line, its own folder for require and __dirname, require.main, stdin, process.exitCode.
+    pack('hello-cli', '1.0.0', { 'package.json': JSON.stringify({ bin: { 'hello-cli': 'bin/cli.js' } }), 'lib/greet.js': "exports.greet = (name) => 'hello ' + name\n",
+      'bin/cli.js': "#!/usr/bin/env node\nconst { greet } = require('../lib/greet')\nconst { version } = JSON.parse(require('fs').readFileSync(require('path').join(__dirname, '..', 'package.json'), 'utf8'))\nconst main = (name) => (name === '--fail' ? (process.exitCode = 2) : process.stdout.write(greet(name) + ' v' + version + '\\n'))\nif (require.main === module) process.argv[2] ? main(process.argv[2]) : process.stdin.on('data', (d) => main(String(d).trim()))\n" }),
+    // An ES module: its package's own #imports, a CommonJS name imported, a stream pipeline to stdout, Intl, and its own address.
+    pack('esm-tool', '2.0.0', { 'package.json': JSON.stringify({ type: 'module', bin: { tool: './bin/tool.js' }, imports: { '#shout': './lib/shout.js' }, dependencies: { 'hello-cli': '^1.0.0' } }), 'lib/shout.js': 'export default (text) => text.toUpperCase()\n',
+      'bin/tool.js': "#!/usr/bin/env node\nimport { fileURLToPath } from 'node:url'\nimport { Readable, Transform } from 'node:stream'\nimport { pipeline } from 'node:stream/promises'\nimport shout from '#shout'\nimport { greet } from 'hello-cli/lib/greet.js'\nconsole.log(new Intl.NumberFormat('fr-FR').format(Number(process.argv[2])), fileURLToPath(import.meta.url).endsWith('esm-tool/bin/tool.js'))\nawait pipeline(Readable.from([greet('tool') + '\\n']), new Transform({ transform: (chunk, e, done) => done(null, shout(String(chunk))) }), process.stdout)\n" }),
+    pack('create-thing', '1.0.0', { 'package.json': JSON.stringify({ bin: 'index.js' }), 'index.js': "require('fs').writeFileSync(process.argv[2] + '.txt', 'made by create-thing')\n" }),
+  ]
+  const cors = { 'access-control-allow-origin': '*', 'access-control-allow-headers': '*' }
+  const asked = /** @type {string[]} */ ([])
+  await page.route('https://npm.example.com/**', async (route) => {
+    const url = route.request().url()
+    if (route.request().method() === 'OPTIONS') return route.fulfill({ status: 204, headers: cors })
+    asked.push(url)
+    const found = packages.find((each) => url === each.tarball)
+    if (found) return route.fulfill({ status: 200, headers: cors, body: found.tgz })
+    const meta = packages.find((each) => url === `https://npm.example.com/${each.meta.name}`)?.meta
+    return route.fulfill({ status: meta ? 200 : 404, headers: { ...cors, 'content-type': 'application/json' }, body: JSON.stringify(meta ?? { error: 'Not found' }) })
+  })
+  await start(page)
+  await connectFakeBrain(page)
+  await turnOn(page, 'Computer in this tab')
+  await page.keyboard.press('Escape')
+  await page.evaluate(async () => (await import('/ui/state.js')).updateSettings({ computer: { registries: { npm: 'https://npm.example.com/' } } }))
+
+  let answer = await command(page, '$ npx hello-cli world && echo piped | npx hello-cli && npx hello-cli --fail ; echo "exit $?"')
+  await expect(answer).toContainText('hello world v1.0.0\nhello piped v1.0.0\nexit 2')
+  // Installed once, beside the others npx has, never in the user's package.json.
+  expect(asked.filter((url) => url.endsWith('.tgz'))).toEqual(['https://npm.example.com/hello-cli/-/hello-cli-1.0.0.tgz'])
+  answer = await command(page, '$ npx -p esm-tool tool 1234.5 ; ls package.json')
+  await expect(answer).toContainText('1 234,5 true\nHELLO TOOL')
+  await expect(answer).toContainText('No such file or directory')
+  // From ./node_modules once installed there; npm exec and npm create as npx runs them.
+  answer = await command(page, '$ npm install hello-cli && npx hello-cli local && npm exec hello-cli -- again && npm create thing demo && cat demo.txt')
+  await expect(answer).toContainText('hello local v1.0.0\nhello again v1.0.0\nmade by create-thing')
 })
 
 test('the project’s workspace in the browser: a page that uses its other files opens there, comes again when one changes, and /workspace lists them (D167); its cards open there (D172); any other file as the preview shows it: a PDF drawn, Markdown laid out, a MIDI file played, the rest as its text (D190)', async ({ page }) => {

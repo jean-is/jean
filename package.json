@@ -109,6 +109,7 @@
     "prosemirror-view": "^1.42.9",
     "pyodide": "^314.0.7",
     "quickjs-emscripten-core": "^0.32.0",
+    "readable-stream": "^4.8.0",
     "spessasynth_core": "^4.4.10",
     "stb-vorbis": "^0.0.7",
     "temml": "^0.14.0",

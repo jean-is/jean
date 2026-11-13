@@ -27,11 +27,14 @@ const PACKAGES = 'https://packages.invalid/'
 const WORKSPACE = '/workspace'
 const HOME = '/home/user'
 // What a server is started with, which can't work here: nothing listens on a port in the sandbox.
-const SERVERS = /^(vite|next|nuxt|astro|serve|http-server|live-server|webpack-dev-server|parcel|nodemon)\b(?! build)|^webpack serve\b/
-const SERVER_MODULES = /^(node:)?(http|https|http2|net)$|^express$/
-// Node's own modules: those node has here (D178), and the others, which it doesn't.
-const OWN = /^(?:node:)?(path|fs|fs\/promises|os|util|events|process|buffer)$/
-const NODE = /^node:|^(assert|child_process|crypto|readline|stream|string_decoder|timers|tty|url|vm|worker_threads|zlib)(\/|$)/
+const SERVERS = /^(vite|next|nuxt|astro|serve|http-server|live-server|webpack-dev-server|parcel|nodemon)\b(?! build)|^webpack serve\b|^expo(\s+(start|web|run:\S*)\b.*)?$|^(react-native|metro) start\b/
+// Node's own modules: those node has here (D178, D745), and the others, which it doesn't.
+const OWN = new RegExp(`^(?:node:)?(${['path', 'path/posix', 'path/win32', 'fs', 'fs/promises', 'os', 'util', 'util/types', 'sys', 'events', 'process', 'buffer', 'assert', 'assert/strict', 'url', 'module', 'tty',
+  'readline', 'readline/promises', 'stream', 'stream/promises', 'stream/consumers', 'string_decoder', 'child_process', 'crypto', 'http', 'https', 'http2', 'net', 'tls', 'dns', 'dns/promises',
+  'dgram', 'zlib', 'worker_threads', 'perf_hooks', 'timers', 'timers/promises', 'vm', 'v8', 'querystring', 'async_hooks', 'diagnostics_channel', 'constants', 'console'].join('|')})$`)
+const NODE = /^node:|^(cluster|domain|inspector|repl|sqlite|test|trace_events|wasi)(\/|$)/
+// Where node finds Node's stream, readable-stream's (scripts/vendor.js).
+const STREAM = '/usr/lib/node/stream.mjs'
 /** Why it can't, and what does instead. @param {string} name */
 const noServer = (name) => `${name}: nothing can listen on a port here, so no server runs. Write the web page in /workspace, its scripts plain JavaScript (or bundled into one file by a script of yours in node) and styles inside it, and it opens beside the conversation by itself.\n`
 
@@ -153,8 +156,8 @@ const LOADERS = {
     }
     // The bytes come from Jean, so nothing is fetched; a location keeps Emscripten from
     // resolving one against import.meta.url, which a blob: URL can't be a base for. Node's Buffer
-    // (feross's, D178) comes along, for each script to start with.
-    return Object.assign(await newQuickJSWASMModuleFromVariant(newVariant(variant, { wasmBinary: files['emscripten-module.wasm'], wasmLocation: 'emscripten-module.wasm' })), { buffer: files['buffer.js'] })
+    // (feross's, D178) comes along, for each script to start with, and readable-stream for those that ask (D745).
+    return Object.assign(await newQuickJSWASMModuleFromVariant(newVariant(variant, { wasmBinary: files['emscripten-module.wasm'], wasmLocation: 'emscripten-module.wasm' })), { buffer: files['buffer.js'], stream: files['stream.js'] })
   },
   // Pyodide's loader fetches its files: its own come from Jean in the load message, and packages
   // through Jean from the registry Settings name (D80, D162). Pyodide refuses classic workers when
@@ -336,10 +339,35 @@ function commands(computer) {
   const node = async (/** @type {string[]} */ args, /** @type {any} */ ctx) => {
     if (/^(-v|--version)$/.test(args[0] ?? '')) return exit('QuickJS (JavaScript)\n', '', 0)
     const program = await source(args, ctx, ['-e', '-p'])
-    const ran = await javascript({ ...program, run: computer.run, cwd: ctx.cwd, env: Object.fromEntries(ctx.env ?? []) }, computer)
+    const ran = await javascript({ ...program, run: computer.run, cwd: ctx.cwd, env: Object.fromEntries(ctx.env ?? []), stdin: program.name === '-' ? '' : text(ctx.stdin) }, computer)
     return exit(ran.stdout, ran.stderr, ran.exit)
   }
-  /** npx and uvx: a package's own program, which doesn't run here, a server's least of all. @param {string} name @param {string} instead */
+  // npx: a package's program, from ./node_modules, else installed once beside the others npx has, then run by node (D745).
+  const npx = async (/** @type {string[]} */ args, /** @type {any} */ ctx) => {
+    const rest = [...args]
+    let pkg = ''
+    while (rest[0]?.startsWith('-')) {
+      const flag = String(rest.shift())
+      if (/^(-p|--package)$/.test(flag)) pkg = String(rest.shift() ?? '')
+      else if (flag.startsWith('--package=')) pkg = flag.slice(10)
+    }
+    const [spec = '', ...argv] = rest
+    if (!spec) return exit('', 'npx: name the package whose program to run\n', 1)
+    if (SERVERS.test(rest.join(' '))) return exit('', noServer('npx'), 1)
+    const want = pkg || spec
+    const name = /^@?[^@]+/.exec(want)?.[0] ?? want
+    const bin = pkg ? spec : name.split('/').pop() ?? name
+    const home = `${HOME}/.npm/_npx/${want.replace(/[^\w.@-]+/g, '+')}`
+    let found = (await binOf(ctx.fs, ctx.cwd, name, bin)) ?? (await binOf(ctx.fs, home, name, bin))
+    if (!found) {
+      await ctx.fs.mkdir(home, { recursive: true })
+      const installed = /** @type {{ exitCode: number }} */ (await npm(['install', want], { ...ctx, cwd: home }, computer))
+      if (installed.exitCode) return installed
+      found = await binOf(ctx.fs, home, name, bin)
+    }
+    return found ? node([found, ...argv], ctx) : exit('', `npx: ${want} has no program named ${bin}\n`, 1)
+  }
+  /** uvx: a package's own program, which doesn't run here, a server's least of all. @param {string} name @param {string} instead */
   const runner = (name, instead) => async (/** @type {string[]} */ args) => exit('', SERVERS.test(args.filter((arg) => !arg.startsWith('-')).join(' ')) ? noServer(name) : `${name}: a package's own programs don't run here: ${instead}.\n`, 1)
   // uv's pip is pip, and its run of Python is python3's; its projects (add, sync, venv…) aren't kept here.
   const uv = async (/** @type {string[]} */ args, /** @type {any} */ ctx) => (args[0] === 'pip' ? pip(args.slice(1), ctx)
@@ -347,7 +375,7 @@ function commands(computer) {
     : exit('', 'uv: only uv pip install, uv pip list and uv run (python, or a .py file) work here.\n', 1))
   // git, which brains type by habit, says how its work is done here; a folder on This computer runs the user's own git.
   return [command('python', py), command('python3', py), command('pip', pip), command('pip3', pip), command('uv', uv), command('node', node), command('js', node), command('tar', (args, ctx) => tarCommand(args, ctx)),
-    command('npm', (args, ctx) => npm(args, ctx, computer)), command('npx', runner('npx', 'npm install it, then require or import it in node')), command('uvx', runner('uvx', 'pip install it, then import it in python3')), command('git', async () => exit('', "git: no git runs here, and no repository can be reached from here. What changes in /workspace is kept after each run, and diff compares two files; a repository is read and changed through a GitHub connection.\n", 1))]
+    command('npm', (args, ctx) => npm(args, ctx, computer)), command('npx', npx), command('uvx', runner('uvx', 'pip install it, then import it in python3')), command('git', async () => exit('', "git: no git runs here, and no repository can be reached from here. What changes in /workspace is kept after each run, and diff compares two files; a repository is read and changed through a GitHub connection.\n", 1))]
 }
 
 // ─── tar and npm ─────────────────────────────────────────────────────────────
@@ -448,13 +476,14 @@ const numbers = (version) => version.replace(/^[v=\s]+/, '').split(/[-+]/)[0].sp
 
 /** Whether a version is in a range of npm's: exact, x, ^, ~, comparisons (">= 3.1.0 < 4" too), and their unions with ||. @param {string} version @param {string} [range] */
 function satisfies(version, range = '*') {
-  if (/-/.test(version.split('+')[0]) && !range.includes('-')) return false
+  if (/-/.test(version.split('+')[0]) && !/\d-\w/.test(range)) return false
   const v = numbers(version)
   const compare = (/** @type {number[]} */ base) => {
     for (let i = 0; i < 3; i++) if ((v[i] || 0) !== (base[i] || 0)) return Math.sign((v[i] || 0) - (base[i] || 0))
     return 0
   }
-  return String(range).replace(/(\^|~|[<>]=?|=)\s+/g, '$1').split('||').some((part) => part.trim().split(/\s+/).every((comparator) => {
+  // A hyphen range ("1 - 2", d3's) is its two ends, the upper one's missing parts any.
+  return String(range).replace(/(\S+)\s+-\s+(\S+)/g, (_, low, high) => (high.split('.').length < 3 ? `>=${low} <${high.replace(/\d+$/, (/** @type {string} */ n) => Number(n) + 1)}` : `>=${low} <=${high}`)).replace(/(\^|~|[<>]=?|=)\s+/g, '$1').split('||').some((part) => part.trim().split(/\s+/).every((comparator) => {
     if (!comparator || /^(\*|x|latest)$/i.test(comparator)) return true
     const [, op = '', rest = ''] = /^(\^|~|>=|<=|>|<|=)?(.*)$/.exec(comparator) ?? []
     const given = numbers(rest)
@@ -484,7 +513,14 @@ async function npm(args, ctx, computer) {
   const { fs, cwd } = ctx
   const manifestPath = `${cwd}/package.json`
   const manifest = (await fs.exists(manifestPath)) ? JSON.parse(await fs.readFile(manifestPath)) : {}
-  if (!verb && args.some((arg) => /^(-v|--version)$/.test(arg))) return exit('npm for this sandbox: install, init, ls and run\n', '', 0)
+  if (!verb && args.some((arg) => /^(-v|--version)$/.test(arg))) return exit('npm for this sandbox: install, init, ls, run, exec and create\n', '', 0)
+  // exec and create (init with a name) as npx runs them: create-<name>'s program, with what follows it.
+  if (/^(exec|x|create)$/.test(verb ?? '') || (verb === 'init' && specs.length)) {
+    const words = args.slice(args.indexOf(/** @type {string} */ (verb)) + 1).filter((arg) => arg !== '--')
+    if (!/^(exec|x)$/.test(verb ?? '')) words[0] = words[0]?.replace(/^(@[^/@]+)(?:\/([^@]+))?|^[^@]+/, (plain, scope, sub) => (scope ? `${scope}/create${sub ? `-${sub}` : ''}` : `create-${plain}`))
+    const ran = await ctx.exec(['npx', ...words].map((word) => `'${word.replaceAll("'", "'\\''")}'`).join(' '), { cwd })
+    return exit(ran.stdout, ran.stderr, ran.exitCode)
+  }
   if (verb === 'init' && !specs.length) {
     if (!manifest.name) {
       Object.assign(manifest, { name: cwd.split('/').pop()?.toLowerCase().replace(/[^a-z0-9._~-]+/g, '-') || 'project', version: '1.0.0', main: 'index.js', ...manifest })
@@ -513,7 +549,7 @@ async function npm(args, ctx, computer) {
     const ran = await ctx.exec(line, { cwd })
     return exit(`> ${line}\n${ran.stdout}`, ran.stderr, ran.exitCode)
   }
-  if (!/^(install|i|add)$/.test(verb ?? '')) return exit('', "npm: only install, init, ls and run work here; a package's own programs (create-…, npx) don't run.\n", 1)
+  if (!/^(install|i|add)$/.test(verb ?? '')) return exit('', 'npm: only install, init, ls, run, exec and create work here.\n', 1)
   const registry = (computer.registries.npm || 'https://registry.npmjs.org/').replace(/\/?$/, '/')
   const wanted = specs.length ? specs.map((spec) => /^(@?[^@]+)(?:@(.+))?$/.exec(spec)?.slice(1) ?? [spec]) : Object.entries(manifest.dependencies ?? {})
   // Sixteen requests at once for metadata, as npm and pnpm make them, and sixteen for tarballs, which
@@ -535,6 +571,9 @@ async function npm(args, ctx, computer) {
     return { chain, found, ok: Boolean(found && (any || range === 'latest' || satisfies(found.version, range))) }
   }
   const needs = (/** @type {string} */ from, /** @type {Record<string, string>} */ dependencies = {}, any = false) => Object.entries(dependencies).map(([name, range]) => ({ from, name, range: String(range), any }))
+  // What a package needs: its dependencies, and its peers that aren't optional, as npm installs them (vitest's vite).
+  const wants = (/** @type {{ dependencies?: Record<string, string>, peerDependencies?: Record<string, string>, peerDependenciesMeta?: Record<string, { optional?: boolean }> }} */ pkg) => ({
+    ...Object.fromEntries(Object.entries(pkg.peerDependencies ?? {}).filter(([name]) => !pkg.peerDependenciesMeta?.[name]?.optional)), ...pkg.dependencies })
   /** The packages this install writes, by folder. @type {Map<string, string>} */
   const added = new Map()
   const writes = /** @type {Promise<void>[]} */ ([])
@@ -551,7 +590,7 @@ async function npm(args, ctx, computer) {
         const { chain, found, ok } = await look(edge)
         // There already, and so is what it needs, in any version.
         if (found && ok) {
-          if (found.old && !visited.has(found.at) && visited.add(found.at)) next.push(...needs(found.at, found.dependencies, true))
+          if (found.old && !visited.has(found.at) && visited.add(found.at)) next.push(...needs(found.at, wants(found), true))
           continue
         }
         // At the top of node_modules, unless another version is there: then in its dependent's own.
@@ -563,11 +602,11 @@ async function npm(args, ctx, computer) {
         if (!version) throw new Error(`No version of ${name} matches ${range}`)
         const info = meta.versions[version]
         if (info.hasInstallScript || Object.keys(info.scripts ?? {}).some((script) => /^(pre|post)?install$/.test(script))) throw new Error(`${name}@${version} runs a script as it installs, which can't run here`)
-        held.set(at, { at, version, dependencies: info.dependencies })
+        held.set(at, { at, version, dependencies: wants(info) })
         added.set(at, version)
         await fs.rm(at, { recursive: true, force: true })
         writes.push(downloads(() => bridged(computer, info.dist.tarball)).then(async (response) => unpack(fs, at, new Uint8Array(await response.arrayBuffer()), `${name}@${version}`, info.dist.integrity)))
-        next.push(...needs(at, info.dependencies))
+        next.push(...needs(at, wants(info)))
       }
       level = next
     }
@@ -632,38 +671,108 @@ function normal(path) {
 }
 
 /**
- * Where an import or a require leads, as Node finds it: one of Node's own modules here, a relative
- * path with its extension or index, or a package in the nearest node_modules, by its exports, module or main.
+ * Where an import or a require leads, as Node finds it: one of Node's own modules here, a file: address, a path with its
+ * extension or index, a folder by its main, a package's own #imports, or a package in the nearest node_modules, by its
+ * exports (their * patterns too), module or main.
  * @param {Map<string, string>} files @param {string} base the importing file @param {string} spec @param {'import' | 'require'} kind
+ * @returns {string | undefined}
  */
 function resolve(files, base, spec, kind) {
+  if (spec.startsWith('file:')) spec = decodeURIComponent(new URL(spec).pathname)
   const own = OWN.exec(spec)
   if (own) return `node:${own[1]}`
   const file = (/** @type {string} */ path) => ['', '.js', '.mjs', '.cjs', '.json', '/index.js', '/index.mjs', '/index.cjs'].map((end) => path + end).find((each) => files.has(each))
-  if (/^\.{0,2}\//.test(spec)) return file(normal(spec.startsWith('/') ? spec : `${dirOf(base)}/${spec}`))
+  /** @param {any} entry @returns {string | undefined} */
+  const pick = (entry) => (typeof entry === 'string' ? entry : Array.isArray(entry) ? pick(entry[0]) : entry && (pick(entry[kind]) ?? pick(entry.node) ?? pick(entry.default)))
+  /** @param {Record<string, any>} map @param {string} key */
+  const mapped = (map, key) => {
+    if (key in map) return pick(map[key])
+    for (const [pattern, target] of Object.entries(map)) {
+      const [head, tail = ''] = pattern.split('*')
+      if (pattern.includes('*') && key.startsWith(head) && key.endsWith(tail) && key.length >= head.length + tail.length) return pick(target)?.replaceAll('*', key.slice(head.length, key.length - tail.length))
+    }
+  }
+  if (/^\.{0,2}\/|^\.{1,2}$/.test(spec)) {
+    const at = normal(spec.startsWith('/') ? spec : `${dirOf(base)}/${spec}`)
+    const manifest = files.get(`${at}/package.json`)
+    return file(at) ?? (manifest ? file(normal(`${at}/${JSON.parse(manifest).main ?? 'index.js'}`)) : undefined)
+  }
+  for (let dir = dirOf(base); spec.startsWith('#'); dir = dirOf(dir)) {
+    const manifest = files.get(`${dir === '/' ? '' : dir}/package.json`)
+    if (manifest) {
+      const target = mapped(JSON.parse(manifest).imports ?? {}, spec)
+      return target?.startsWith('.') ? file(normal(`${dir}/${target}`)) : target && resolve(files, `${dir}/package.json`, target, kind)
+    }
+    if (dir === '/') return undefined
+  }
   const [, name = '', sub] = /^((?:@[^/]+\/)?[^/]+)(?:\/(.*))?$/.exec(spec) ?? []
   for (let dir = dirOf(base); ; dir = dirOf(dir)) {
     const at = `${dir === '/' ? '' : dir}/node_modules/${name}`
     const manifest = files.get(`${at}/package.json`)
     if (manifest) {
       const pkg = JSON.parse(manifest)
-      /** @param {any} entry @returns {string | undefined} */
-      const pick = (entry) => (typeof entry === 'string' ? entry : Array.isArray(entry) ? pick(entry[0]) : entry && (pick(entry[kind]) ?? pick(entry.node) ?? pick(entry.default)))
-      const exported = pkg.exports && (typeof pkg.exports === 'string' || Array.isArray(pkg.exports) || !Object.keys(pkg.exports)[0]?.startsWith('.') ? (sub ? undefined : pkg.exports) : pkg.exports[sub ? `./${sub}` : '.'])
-      const entry = pick(exported) ?? (sub ? sub : (kind === 'import' && pkg.module) || pkg.main || 'index.js')
-      return file(normal(`${at}/${entry}`))
+      const exported = pkg.exports && (typeof pkg.exports === 'string' || Array.isArray(pkg.exports) || !Object.keys(pkg.exports)[0]?.startsWith('.') ? (sub ? undefined : pick(pkg.exports)) : mapped(pkg.exports, sub ? `./${sub}` : '.'))
+      return file(normal(`${at}/${exported ?? (sub ? sub : (kind === 'import' && pkg.module) || pkg.main || 'index.js')}`))
     }
     if (dir === '/') return undefined
   }
 }
 
 /** Why a module isn't there. @param {string} spec */
-const missing = (spec) => new Error(SERVER_MODULES.test(spec) ? noServer('node').trim()
-  : NODE.test(spec) ? `Cannot find module '${spec}': of Node's own modules, only path, fs, os, util, events, process and buffer are here`
+const missing = (spec) => new Error(NODE.test(spec) ? `Cannot find module '${spec}': it is one of the few of Node's own modules node hasn't here`
   : `Cannot find module '${spec}': install it with npm install in bash, or name it by its path`)
 
-/** Whether a file is an ES module rather than CommonJS. @param {string} path @param {string} source */
+/** Whether a script the user wrote is an ES module rather than CommonJS. @param {string} path @param {string} source */
 const isModule = (path, source) => path.endsWith('.mjs') || (!path.endsWith('.cjs') && /^\s*(import\s*[\w{*'"]|export\s)/m.test(source))
+
+/**
+ * Whether a package's file is an ES module, as Node tells: .mjs or .cjs, else its package.json's type, else whether it
+ * fails to `parse` as CommonJS where it has an import or export statement (tsc.js has words that only look like them).
+ * @param {Map<string, string>} files @param {string} path @param {string} source @param {(source: string) => boolean} parses
+ */
+function moduleIn(files, path, source, parses) {
+  if (/\.(mjs|cjs|json)$/.test(path)) return path.endsWith('.mjs')
+  for (let dir = dirOf(path); ; dir = dirOf(dir)) {
+    const manifest = files.get(`${dir === '/' ? '' : dir}/package.json`)
+    const type = manifest && /** @type {{ type?: string }} */ (JSON.parse(manifest)).type
+    if (type === 'module' || type === 'commonjs') return type === 'module'
+    if (manifest || dir === '/') break
+  }
+  return /^\s*(?:import\s*(?:[\w*{][^\n]*?\bfrom\s*['"]|['"{])|export\s*(?:default|const|let|var|function|class|async\s+function)\b|export\s*[{*])/m.test(source) && !parses(source)
+}
+
+/** A module's own address, which QuickJS leaves out of import.meta: in its code, never in its strings or comments (vite's say "import.meta.url"). @param {string} source @param {string} path */
+const meta = (source, path) => source.replace(/(\/\/[^\n]*|\/\*[\s\S]*?\*\/|'(?:\\.|[^'\\\n])*'|"(?:\\.|[^"\\\n])*"|`(?:\\[\s\S]|[^`\\])*`)|\bimport\.meta\.(url|filename|dirname)\b/g,
+  (found, kept, key) => kept ?? JSON.stringify(key === 'url' ? `file://${path}` : key === 'filename' ? path : dirOf(path)))
+
+const RESERVED = new Set('break case catch class const continue debugger default delete do else enum export extends false finally for function if import in instanceof new null return super switch this throw true try typeof var void while with yield let static implements interface package private protected public await arguments eval __esModule'.split(' '))
+
+/**
+ * The names a CommonJS module exports, read as Node's cjs-module-lexer reads them, for `import { name }` from it.
+ * @param {Map<string, string>} files @param {string} path @param {string} source @param {Set<string>} [seen] @returns {string[]}
+ */
+function cjsNames(files, path, source, seen = new Set()) {
+  const names = new Set()
+  if (seen.has(path) || !seen.add(path)) return []
+  for (const [, a, b] of source.matchAll(/(?:^|[^.\w$])(?:module\.)?exports\.([A-Za-z_$][\w$]*)\s*=(?!=)|Object\.defineProperty\(\s*(?:module\.)?exports\s*,\s*['"]([A-Za-z_$][\w$]*)['"]/g)) names.add(a ?? b)
+  for (const [, list] of source.matchAll(/__export\(\s*[\w$]+\s*,\s*\{([^}]*)\}/g)) for (const [, name] of list.matchAll(/([A-Za-z_$][\w$]*)\s*:/g)) names.add(name)
+  for (const [, name] of /module\.exports\s*=\s*\{([^}]*)\}/.exec(source)?.[1].matchAll(/(?:^|,)\s*([A-Za-z_$][\w$]*)\s*(?=[,:]|$)/g) ?? []) names.add(name)
+  for (const [, a, b] of source.matchAll(/module\.exports\s*=\s*require\(\s*['"]([^'"]+)['"]\s*\)|__exportStar\(\s*require\(\s*['"]([^'"]+)['"]\s*\)/g)) {
+    const target = resolve(files, path, a ?? b, 'require')
+    if (target && files.has(target)) for (const name of cjsNames(files, target, files.get(target) ?? '', seen)) names.add(name)
+  }
+  return [...names].filter((name) => !RESERVED.has(name))
+}
+
+/** A package's program in root's node_modules: the one `bin` names, or its only one. @param {any} fs @param {string} root @param {string} name @param {string} bin */
+async function binOf(fs, root, name, bin) {
+  const at = `${root === '/' ? '' : root}/node_modules/${name}`
+  if (!(await fs.exists(`${at}/package.json`))) return null
+  const pkg = JSON.parse(await fs.readFile(`${at}/package.json`))
+  const bins = typeof pkg.bin === 'string' ? { [name.split('/').pop() ?? name]: pkg.bin } : pkg.bin ?? {}
+  const found = bins[bin] ?? (Object.keys(bins).length === 1 ? Object.values(bins)[0] : null)
+  return found && normal(`${at}/${found}`)
+}
 
 
 // ─── JavaScript (QuickJS) ────────────────────────────────────────────────────
@@ -685,17 +794,24 @@ globalThis.fs = {
   exists: async (path) => (await __host('exists', String(path))) === 'true',
 }
 // Timers, as Node's (D178): each waits on the worker's, which isn't computing time, and the run lasts
-// until none is left; a cleared one's wait ends at once. What a callback throws is printed.
+// until none is left; a cleared one's wait ends at once. What a callback, or a microtask, throws is printed and the exit code
+// is 1, as Node has it; its process.exit() ends the timers.
 let __timer = 0
 const __timers = new Set()
+globalThis.__uncaught = (error) => {
+  const exit = '__exit' in Object(error)
+  if (!exit) console.error(error)
+  if (globalThis.process) process.exitCode = exit ? error.__exit : 1
+  if (exit) for (const id of __timers) __timers.delete(id) && __wake(String(id))
+}
 const __later = (fn, ms, args, again, id = ++__timer) => {
   const tick = () => __sleep(String(Math.max(0, Number(ms) || 0)), String(id)).then(() => __timers.has(id) && (again || __timers.delete(id)) && (fn(...args), again && tick()))
-    .catch((error) => '__exit' in Object(error) || console.error(error))
+    .catch(__uncaught)
   __timers.add(id).size && tick()
   return { ref() { return this }, unref() { return this }, hasRef: () => true, [Symbol.toPrimitive]: () => id }
 }
 Object.assign(globalThis, { setTimeout: (fn, ms, ...args) => __later(fn, ms, args, false), setInterval: (fn, ms, ...args) => __later(fn, ms, args, true),
-  setImmediate: (fn, ...args) => __later(fn, 0, args, false), queueMicrotask: (fn) => { Promise.resolve().then(fn) } })
+  setImmediate: (fn, ...args) => __later(fn, 0, args, false), queueMicrotask: (fn) => { Promise.resolve().then(fn).catch(__uncaught) } })
 globalThis.clearTimeout = globalThis.clearInterval = globalThis.clearImmediate = (timer) => { if (__timers.delete(Number(timer))) __wake(String(Number(timer))) }
 globalThis.fetch = async (url, init = {}) => {
   const r = JSON.parse(await __host('fetch', JSON.stringify({ url: String(url), method: init.method, headers: init.headers, body: init.body })))
@@ -723,30 +839,39 @@ globalThis.csv = (text) => {
   return body.map((row) => Object.fromEntries(row.map((value, i) => [head[i] ?? 'column ' + (i + 1), /^-?\\d+(\\.\\d+)?$/.test(value) ? Number(value) : value])))
 }
 `
-// require(), Node's way, from Node's own modules, the computer's files and node_modules (resolved by the worker).
+// require(), Node's way, from Node's own modules, the computer's files and node_modules (resolved by the worker): an ES
+// module evaluated at once (D745), CommonJS compiled under its own name, so import() inside it resolves from its folder.
 const REQUIRE = `
 const __cache = {}
-globalThis.__requireFrom = (base) => (spec) => {
-  const path = __resolve(base, String(spec))
-  if (path.startsWith('node:')) return __node[path.slice(5)]
-  if (__cache[path]) return __cache[path].exports
-  const module = { exports: {} }
-  __cache[path] = module
-  const source = __source(path)
-  if (path.endsWith('.json')) module.exports = JSON.parse(source)
-  else new Function('module', 'exports', 'require', '__filename', '__dirname', source)(module, module.exports, __requireFrom(path), path, path.slice(0, path.lastIndexOf('/')))
-  return module.exports
+globalThis.__requireFrom = (base) => {
+  const require = (spec) => {
+    const path = __resolve(base, String(spec))
+    if (path.startsWith('node:')) return __node[path.slice(5)]
+    if (__cache[path]) return __cache[path].exports
+    const module = { exports: {}, id: path, filename: path, path: path.slice(0, path.lastIndexOf('/')), loaded: false, children: [], paths: [] }
+    module.require = __requireFrom(path)
+    __cache[path] = module
+    if (path === globalThis.__mainPath) globalThis.__main = module
+    if (path.endsWith('.json')) module.exports = JSON.parse(__source(path))
+    else if (__isModule(path) === 'true') module.exports = __esm(path)
+    else __compile(path)(module, module.exports, module.require, path, module.path)
+    module.loaded = true
+    return module.exports
+  }
+  const resolve = (spec) => __resolve(base, String(spec)).replace(/^node:/, '')
+  return Object.defineProperty(Object.assign(require, { resolve: Object.assign(resolve, { paths: () => [] }), cache: __cache, extensions: {} }), 'main', { get: () => globalThis.__main })
 }
+globalThis.__runMain = (path) => { globalThis.__mainPath = path; return __requireFrom(path)(path) }
 globalThis.require = __requireFrom(__cwd + '/[eval]')
 `
-// As a command, Node's way: process, which says it is Node, so packages take their Node ways (D178),
-// and console to stdout and stderr, as util.format writes it.
+// As a command, Node's way: process, which says it is Node, Jean's own (.nvmrc), so packages take their Node ways and those
+// asking for a recent one run (D178, D745), and console to stdout and stderr, as util.format writes it.
 const PROCESS = `
 globalThis.process = { argv: JSON.parse(__argv), env: JSON.parse(__env), cwd: () => __cwd, exit: (code = 0) => { throw { __exit: Number(code) } }, platform: 'browser',
-  version: 'v22.0.0', versions: { node: '22.0.0' }, release: { name: 'node' }, nextTick: (fn, ...args) => queueMicrotask(() => fn(...args)) }
+  version: 'v26.0.0', versions: { node: '26.0.0' }, release: { name: 'node', lts: true }, nextTick: (fn, ...args) => queueMicrotask(() => fn(...args)) }
 for (const level of ['log', 'info', 'warn', 'error']) {
   const write = console[level]
-  console[level] = (...args) => write(__node.util.format(...args))
+  console[level] = (...args) => globalThis.__exited === undefined && write(args.length ? __node.util.format(...args) : '')
 }
 `
 
@@ -998,10 +1123,401 @@ function nodeModules(file, cwd) {
 
   return { path, fs, 'fs/promises': fs.promises, os, util, events: EventEmitter, process: globalThis.process, buffer: globalThis.__buffer }
 }
+// Node's other modules, and the globals, process streams and parts of path, fs, os, util and events that tools reach for (D745):
+// where Node's own is a server, a thread or another program, it says why not when it is used, not when it is required.
+const NODE_MORE = String.raw`
+;(() => {
+  const N = globalThis.__node, g = globalThis, EE = N.events, B = g.Buffer, P = g.process, U = N.util, F = N.fs
+  const stdinText = typeof g.__stdin === 'string' ? g.__stdin : ''
+  g.global = g
+  // Globals QuickJS lacks: text, base64, copies, events and aborts, time, randomness, addresses, and Intl (the browser's own).
+  g.TextEncoder ??= class TextEncoder { get encoding() { return 'utf-8' } encode(s = '') { return new Uint8Array(B.from(String(s))) } encodeInto(s, into) { const b = this.encode(s); into.set(b.subarray(0, into.length)); return { read: s.length, written: Math.min(b.length, into.length) } } }
+  g.TextDecoder ??= class TextDecoder { constructor(enc = 'utf-8') { this.encoding = String(enc).toLowerCase() } decode(b) { return b ? B.from(b instanceof ArrayBuffer ? b : new Uint8Array(b.buffer, b.byteOffset, b.byteLength)).toString(/latin1|ascii/.test(this.encoding) ? 'latin1' : /16/.test(this.encoding) ? 'utf16le' : 'utf8') : '' } }
+  g.Blob ??= class Blob {
+    #bytes
+    constructor(parts = [], o = {}) { this.#bytes = B.concat(parts.map((p) => (p instanceof Blob ? p.#bytes : B.from(typeof p === 'string' || p instanceof ArrayBuffer ? p : new Uint8Array(p.buffer, p.byteOffset, p.byteLength))))); this.type = String(o.type ?? '').toLowerCase() }
+    get size() { return this.#bytes.length }
+    async arrayBuffer() { return new Uint8Array(this.#bytes).buffer }
+    async bytes() { return new Uint8Array(this.#bytes) }
+    async text() { return this.#bytes.toString() }
+    slice(start, end, type) { return new Blob([this.#bytes.subarray(start, end)], { type }) }
+  }
+  g.File ??= class File extends g.Blob { constructor(parts, name, o = {}) { super(parts, o); Object.assign(this, { name: String(name), lastModified: o.lastModified ?? Date.now() }) } }
+  Object.assign(N.buffer, { Blob: g.Blob, File: g.File })
+  g.atob ??= (s) => B.from(String(s), 'base64').toString('latin1')
+  g.btoa ??= (s) => B.from(String(s), 'latin1').toString('base64')
+  g.structuredClone ??= function clone(v, seen = new Map()) {
+    if (v === null || typeof v !== 'object') return v
+    if (seen.has(v)) return seen.get(v)
+    if (v instanceof Date || v instanceof RegExp || ArrayBuffer.isView(v)) return new v.constructor(v)
+    if (v instanceof ArrayBuffer) return v.slice(0)
+    const out = Array.isArray(v) ? [] : v instanceof Map ? new Map() : v instanceof Set ? new Set() : {}
+    seen.set(v, out)
+    if (v instanceof Map) for (const [k, x] of v) out.set(clone(k, seen), clone(x, seen))
+    else if (v instanceof Set) for (const x of v) out.add(clone(x, seen))
+    else for (const k of Object.keys(v)) out[k] = clone(v[k], seen)
+    return out
+  }
+  g.Event ??= class Event { constructor(type, o = {}) { Object.assign(this, { type, bubbles: !!o.bubbles, cancelable: !!o.cancelable, defaultPrevented: false, timeStamp: Date.now() }) } preventDefault() { this.defaultPrevented = true } stopPropagation() {} stopImmediatePropagation() {} }
+  g.EventTarget ??= class EventTarget {
+    #on = {}
+    addEventListener(type, fn, o) { if (fn) (this.#on[type] ??= []).push({ fn, once: !!o?.once }) }
+    removeEventListener(type, fn) { this.#on[type] = (this.#on[type] ?? []).filter((each) => each.fn !== fn) }
+    dispatchEvent(e) {
+      Object.defineProperty(e, 'target', { value: this, configurable: true })
+      for (const { fn, once } of [...(this.#on[e.type] ?? [])]) { if (once) this.removeEventListener(e.type, fn); typeof fn === 'function' ? fn.call(this, e) : fn.handleEvent(e) }
+      if (typeof this['on' + e.type] === 'function') this['on' + e.type](e)
+      return !e.defaultPrevented
+    }
+  }
+  g.AbortSignal ??= class AbortSignal extends g.EventTarget {
+    aborted = false
+    reason = undefined
+    throwIfAborted() { if (this.aborted) throw this.reason }
+    static abort(reason) { const c = new g.AbortController(); c.abort(reason); return c.signal }
+    static timeout(ms) { const c = new g.AbortController(); setTimeout(() => c.abort(new Error('The operation timed out')), ms); return c.signal }
+    static any(signals) { const c = new g.AbortController(); for (const s of signals) s.addEventListener('abort', () => c.abort(s.reason)); return c.signal }
+  }
+  g.AbortController ??= class AbortController { signal = new g.AbortSignal(); abort(reason = new Error('This operation was aborted')) { if (!this.signal.aborted) { Object.assign(this.signal, { aborted: true, reason }); this.signal.dispatchEvent(new g.Event('abort')) } } }
+  const began = Date.now()
+  g.performance ??= { now: () => Date.now() - began, timeOrigin: began, mark() {}, measure() {}, clearMarks() {}, clearMeasures() {}, getEntriesByName: () => [], getEntriesByType: () => [], toJSON: () => ({}) }
+  const random = (view) => { new Uint8Array(view.buffer, view.byteOffset, view.byteLength).set(new Uint8Array(__random(String(view.byteLength)))); return view }
+  const uuid = () => { const h = B.from(random(new Uint8Array(16)).map((b, i) => (i === 6 ? (b & 15) | 64 : i === 8 ? (b & 63) | 128 : b))).toString('hex'); return [h.slice(0, 8), h.slice(8, 12), h.slice(12, 16), h.slice(16, 20), h.slice(20)].join('-') }
+  g.crypto ??= { getRandomValues: random, randomUUID: uuid }
+  if (!g.URL) {
+    const dots = (p) => { const out = []; for (const s of p.split('/')) s === '..' ? out.length > 1 && out.pop() : s !== '.' && out.push(s); return out.join('/') + (/\/\.\.?$/.test(p) && out.length > 1 ? '/' : '') }
+    g.URLSearchParams = class URLSearchParams {
+      #all = []
+      constructor(init = '') {
+        if (typeof init === 'string') for (const part of init.replace(/^\?/, '').split('&').filter(Boolean)) { const [k, v = ''] = part.split(/=(.*)/s).map((x) => decodeURIComponent(x.replace(/\+/g, ' '))); this.#all.push([k, v]) }
+        else for (const [k, v] of Symbol.iterator in Object(init) ? init : Object.entries(init)) this.#all.push([String(k), String(v)])
+      }
+      get(k) { return this.#all.find((e) => e[0] === k)?.[1] ?? null }
+      getAll(k) { return this.#all.filter((e) => e[0] === k).map((e) => e[1]) }
+      has(k) { return this.#all.some((e) => e[0] === k) }
+      set(k, v) { const i = this.#all.findIndex((e) => e[0] === k); this.#all = this.#all.filter((e, j) => e[0] !== k || j === i); i < 0 ? this.#all.push([k, String(v)]) : (this.#all[i] = [k, String(v)]) }
+      append(k, v) { this.#all.push([k, String(v)]) }
+      delete(k) { this.#all = this.#all.filter((e) => e[0] !== k) }
+      sort() { this.#all.sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0)) }
+      forEach(fn) { for (const [k, v] of this.#all) fn(v, k, this) }
+      keys() { return this.#all.map((e) => e[0]).values() }
+      values() { return this.#all.map((e) => e[1]).values() }
+      entries() { return this.#all.values() }
+      [Symbol.iterator]() { return this.entries() }
+      get size() { return this.#all.length }
+      toString() { return this.#all.map(([k, v]) => encodeURIComponent(k) + '=' + encodeURIComponent(v)).join('&') }
+    }
+    g.URL = class URL {
+      constructor(input, base) {
+        input = String(input)
+        let m = /^([a-z][a-z0-9+.-]*):(?:\/\/([^/?#]*))?([^?#]*)(\?[^#]*)?(#.*)?$/i.exec(input)
+        if (!m && base !== undefined) {
+          const b = base instanceof URL ? base : new URL(String(base).startsWith('/') ? 'file://' + base : base)
+          const [, path = '', search = '', hash = ''] = /^([^?#]*)(\?[^#]*)?(#.*)?$/.exec(input)
+          if (path.startsWith('//')) return new URL(b.protocol + input)
+          m = [null, b.protocol.slice(0, -1), b.host, dots(path.startsWith('/') ? path : path ? b.pathname.replace(/[^/]*$/, '') + path : b.pathname), search || (path ? '' : b.search), hash]
+        }
+        if (!m) throw Object.assign(new TypeError('Invalid URL: ' + input), { code: 'ERR_INVALID_URL', input })
+        const [, user = '', password = '', host] = /^(?:([^:@]*)(?::([^@]*))?@)?(.*)$/.exec(m[2] ?? '')
+        Object.assign(this, { protocol: m[1].toLowerCase() + ':', username: user, password, host: host.toLowerCase(), hash: m[5] && m[5] !== '#' ? m[5] : '' })
+        this.hostname = this.host.replace(/:\d+$/, '')
+        this.port = /:(\d+)$/.exec(this.host)?.[1] ?? ''
+        this.pathname = m[2] !== undefined ? dots(m[3] || '/') : m[3]
+        this.searchParams = new g.URLSearchParams(m[4] ?? '')
+      }
+      get search() { const q = this.searchParams.toString(); return q ? '?' + q : '' }
+      set search(s) { this.searchParams = new g.URLSearchParams(s) }
+      get origin() { return /^(https?|wss?|ftp):$/.test(this.protocol) ? this.protocol + '//' + this.host : 'null' }
+      get href() { return this.protocol + (this.host || this.protocol === 'file:' ? '//' : '') + (this.username ? this.username + (this.password ? ':' + this.password : '') + '@' : '') + this.host + this.pathname + this.search + this.hash }
+      toString() { return this.href }
+      toJSON() { return this.href }
+      static canParse(u, b) { try { return !!new URL(u, b) } catch { return false } }
+    }
+  }
+  if (!g.Intl) {
+    const call = (kind, args, method, values) => JSON.parse(__intl(JSON.stringify([kind, args, method, values.map((v) => (v instanceof Date ? { $date: +v } : v))])))
+    g.Intl = { getCanonicalLocales: (l) => call('', [], 'getCanonicalLocales', [l]), supportedValuesOf: (k) => call('', [], 'supportedValuesOf', [k]) }
+    for (const kind of ['NumberFormat', 'DateTimeFormat', 'Collator', 'PluralRules', 'ListFormat', 'RelativeTimeFormat', 'DisplayNames', 'Segmenter']) {
+      const Kind = (g.Intl[kind] = class { constructor(locales, options) { this.args = [locales, options]; this.compare = (a, b) => call(kind, this.args, 'compare', [a, b]) } static supportedLocalesOf(l) { return call(kind, [], 'supportedLocalesOf', [l]) } })
+      for (const method of ['format', 'formatToParts', 'formatRange', 'formatRangeToParts', 'resolvedOptions', 'select', 'selectRange', 'of']) Kind.prototype[method] = function (...values) { return call(kind, this.args, method, values) }
+    }
+    g.Intl.Segmenter.prototype.segment = function (s) { const parts = call('Segmenter', this.args, 'segment', [s]).map((p) => ({ ...p, input: s })); return Object.assign(parts, { containing: (i) => parts.find((p) => p.index <= i && i < p.index + p.segment.length) }) }
+    const dated = (fields) => function (l, o = {}) { return new g.Intl.DateTimeFormat(l, /(year|month|day|hour|minute|second|Style)\b/.test(Object.keys(o).join()) ? o : { ...fields, ...o }).format(this) }
+    const date = { year: 'numeric', month: 'numeric', day: 'numeric' }, time = { hour: 'numeric', minute: 'numeric', second: 'numeric' }
+    Object.assign(Date.prototype, { toLocaleString: dated({ ...date, ...time }), toLocaleDateString: dated(date), toLocaleTimeString: dated(time) })
+    Number.prototype.toLocaleString = function (l, o) { return new g.Intl.NumberFormat(l, o).format(Number(this)) }
+    String.prototype.localeCompare = function (that, l, o) { return call('Collator', [l, o], 'compare', [String(this), String(that)]) }
+  }
+  // process: its streams, exit code and events.
+  if (P) {
+    Object.setPrototypeOf(P, EE.prototype)
+    // Never a terminal; a pipeline that ends it is told it finished, and what comes after still shows.
+    const writer = (log, fd) => Object.assign(Object.create(EE.prototype), {
+      isTTY: false, columns: 80, rows: 24, fd, writable: true, held: '',
+      write(chunk, enc, done) { const lines = (this.held + (typeof chunk === 'string' ? chunk : B.from(chunk).toString())).split('\n'); this.held = lines.pop(); lines.forEach(log); [enc, done].find((f) => typeof f === 'function')?.(); return true },
+      end(chunk, ...rest) {
+        if (chunk && typeof chunk !== 'function') this.write(chunk)
+        this.flush()
+        if (!this.writableFinished) queueMicrotask(() => { this.emit('finish'); this.emit('close') })
+        this.writableEnded = this.writableFinished = true
+        ;[chunk, ...rest].find((f) => typeof f === 'function')?.()
+        return this
+      },
+      flush() { if (this.held) log(this.held); this.held = '' },
+      getWindowSize: () => [80, 24], hasColors: () => false, getColorDepth: () => 1, cork() {}, uncork() {}, setDefaultEncoding() { return this },
+    })
+    P.stdout = writer((line) => console.log(line), 1)
+    P.stderr = writer((line) => console.error(line), 2)
+    g.__flush = () => { P.stdout.flush(); P.stderr.flush() }
+    const stdin = Object.assign(Object.create(EE.prototype), {
+      isTTY: false, fd: 0, readable: true, encoding: null, flowing: false,
+      setEncoding(e) { this.encoding = e; return this }, pause() { return this }, setRawMode() { return this }, ref() { return this }, unref() { return this }, destroy() { return this }, read: () => null,
+      resume() { if (!this.flowing) { this.flowing = true; setTimeout(() => { if (stdinText) this.emit('data', this.encoding ? stdinText : B.from(stdinText)); this.emit('end'); this.emit('close') }, 0) } return this },
+      pipe(to) { this.on('data', (d) => to.write(d)).on('end', () => to.end?.()); return to },
+      async *[Symbol.asyncIterator]() { if (stdinText) yield this.encoding ? stdinText : B.from(stdinText) },
+    })
+    stdin.on = stdin.addListener = function (name, fn) { EE.prototype.on.call(this, name, fn); if (name === 'data' || name === 'end') this.resume(); return this }
+    const exit = P.exit
+    // Its exit ends the program, even from a promise nobody waits on: its code kept, its timers ended, nothing written after it.
+    P.exit = (code) => {
+      const c = Number(code ?? P.exitCode ?? 0)
+      if (g.__exited === undefined) {
+        try { P.emit('exit', c) } catch {}
+        g.__flush()
+        g.__exited = c
+        for (const id of __timers) __timers.delete(id) && __wake(String(id))
+      }
+      return exit(c)
+    }
+    P.hrtime = (prev) => { const t = g.performance.now(), s = Math.floor(t / 1000) - (prev?.[0] ?? 0), ns = Math.floor((t % 1000) * 1e6) - (prev?.[1] ?? 0); return ns < 0 ? [s - 1, ns + 1e9] : [s, ns] }
+    P.hrtime.bigint = () => BigInt(Math.floor(g.performance.now() * 1e6))
+    P.memoryUsage = Object.assign(() => ({ rss: 3e7, heapTotal: 2e7, heapUsed: 1e7, external: 0, arrayBuffers: 0 }), { rss: () => 3e7 })
+    Object.assign(P, { stdin, argv0: 'node', execPath: '/usr/local/bin/node', execArgv: [], pid: 1, ppid: 0, arch: 'wasm32', title: 'node', config: { variables: {} }, features: {}, exitCode: undefined, report: {}, allowedNodeEnvironmentFlags: new Set(),
+      versions: { ...P.versions, v8: '14.1.146', uv: '1.51.0', modules: '141' }, getBuiltinModule: (id) => N[String(id).replace(/^node:/, '')], umask: () => 0o22, getuid: () => 1000, getgid: () => 1000, geteuid: () => 1000, getegid: () => 1000, emitWarning() {}, chdir() {}, binding: () => ({}),
+      cpuUsage: () => ({ user: 0, system: 0 }), resourceUsage: () => ({}), kill: () => true, uptime: () => g.performance.now() / 1000, setUncaughtExceptionCaptureCallback() {}, hasUncaughtExceptionCaptureCallback: () => false, setSourceMapsEnabled() {} })
+  }
+  // util, fs, os, path and events: what node didn't have of them.
+  const ansi = /[\u001B\u009B][[\]()#;?]*(?:(?:(?:[a-zA-Z\d]*(?:;[-a-zA-Z\d/#&.:=?%@~_]*)*)?\u0007)|(?:(?:\d{1,4}(?:;\d{0,4})*)?[\dA-PR-TZcf-ntqry=><~]))/g
+  const is = (C) => (v) => v instanceof C
+  const types = { isPromise: is(Promise), isDate: is(Date), isRegExp: is(RegExp), isMap: is(Map), isSet: is(Set), isWeakMap: is(WeakMap), isWeakSet: is(WeakSet), isNativeError: is(Error), isUint8Array: is(Uint8Array), isArrayBuffer: is(ArrayBuffer), isAnyArrayBuffer: is(ArrayBuffer), isDataView: is(DataView),
+    isArrayBufferView: ArrayBuffer.isView, isTypedArray: (v) => ArrayBuffer.isView(v) && !(v instanceof DataView), isAsyncFunction: (f) => f?.constructor?.name === 'AsyncFunction', isGeneratorFunction: (f) => /GeneratorFunction/.test(f?.constructor?.name ?? ''), isProxy: () => false, isBoxedPrimitive: () => false, isExternal: () => false }
+  const muted = () => Object.assign(() => {}, { enabled: false })
+  Object.assign(U, { types, TextEncoder: g.TextEncoder, TextDecoder: g.TextDecoder, stripVTControlCharacters: (s) => String(s).replace(ansi, ''), styleText: (format, text) => text, debuglog: muted, debug: muted, toUSVString: String, getSystemErrorName: (n) => 'E' + n, formatWithOptions: (o, ...a) => U.format(...a),
+    callbackify: (fn) => (...a) => { const done = a.pop(); fn(...a).then((v) => done(null, v), done) }, aborted: () => new Promise(() => {}), isArray: Array.isArray, isError: is(Error), isDate: is(Date), isRegExp: is(RegExp), isBuffer: (b) => B.isBuffer(b),
+    isFunction: (f) => typeof f === 'function', isString: (s) => typeof s === 'string', isNumber: (n) => typeof n === 'number', isBoolean: (b) => typeof b === 'boolean', isSymbol: (s) => typeof s === 'symbol', isUndefined: (v) => v === undefined, isNullOrUndefined: (v) => v == null,
+    isObject: (o) => o !== null && typeof o === 'object', isPrimitive: (v) => v === null || (typeof v !== 'object' && typeof v !== 'function'),
+    parseArgs({ args = P?.argv.slice(2) ?? [], options = {} } = {}) {
+      const values = {}, positionals = [], short = Object.fromEntries(Object.entries(options).filter(([, o]) => o.short).map(([name, o]) => [o.short, name]))
+      for (let i = 0; i < args.length; i++) {
+        const a = args[i]
+        if (a === '--') { positionals.push(...args.slice(i + 1)); break }
+        if (!/^-./.test(a)) { positionals.push(a); continue }
+        let [name, value] = a.startsWith('--') ? a.slice(2).split(/=(.*)/s) : [short[a[1]] ?? a[1], a.slice(2) || undefined]
+        const o = options[name] ?? {}
+        if (o.type === 'string' && value === undefined) value = args[++i]
+        o.multiple ? (values[name] ??= []).push(o.type === 'string' ? value : true) : (values[name] = o.type === 'string' ? value : true)
+      }
+      for (const [name, o] of Object.entries(options)) if (o.default !== undefined) values[name] ??= o.default
+      return { values, positionals }
+    },
+  })
+  // A .env file's variables, as Node reads them.
+  U.parseEnv = (text) => Object.fromEntries([...String(text).matchAll(/^\s*(?:export\s+)?([\w.-]+)\s*=\s*("(?:\\.|[^"])*"|'[^']*'|[^#\n]*)/gm)].map(([, k, v]) => [k, /^"/.test(v) ? v.slice(1, -1).replace(/\\n/g, '\n') : /^'/.test(v) ? v.slice(1, -1) : v.trim()]))
+  if (P) P.loadEnvFile = (path = '.env') => Object.assign(P.env, U.parseEnv(F.readFileSync(path, 'utf8')))
+  U.inspect.custom = Symbol.for('nodejs.util.inspect.custom')
+  U.inspect.defaultOptions = {}
+  U.promisify.custom = Symbol.for('nodejs.util.promisify.custom')
+  const stat = F.statSync, list = F.readdirSync
+  const fuller = (s) => Object.assign(s, { isSymbolicLink: () => false, isFIFO: () => false, isSocket: () => false, isBlockDevice: () => false, isCharacterDevice: () => false, mode: s.isDirectory() ? 0o40755 : 0o100644,
+    atime: s.mtime, ctime: s.mtime, birthtime: s.mtime, atimeMs: s.mtimeMs, ctimeMs: s.mtimeMs, birthtimeMs: s.mtimeMs, dev: 1, ino: 0, nlink: 1, uid: 1000, gid: 1000, rdev: 0, blksize: 4096, blocks: Math.ceil(s.size / 512) })
+  const fileURLToPath = (u) => { const s = typeof u === 'string' ? u : u?.href; if (typeof s !== 'string') throw Object.assign(new TypeError('The "path" argument must be of type string or an instance of URL'), { code: 'ERR_INVALID_ARG_TYPE' }); return decodeURIComponent(s.startsWith('file:') ? new g.URL(s).pathname : s) }
+  const toPath = (p) => (p instanceof g.URL || (typeof p === 'string' && p.startsWith('file:')) ? fileURLToPath(p) : p)
+  const fds = new Map()
+  let fd = 10
+  const handle = (n) => fds.get(n) ?? (() => { throw Object.assign(new Error('EBADF: bad file descriptor'), { code: 'EBADF' }) })()
+  const glob = (pattern) => new RegExp('^' + pattern.replace(/[.+^$(){}|[\]\\]/g, '\\$&').replace(/\*\*\/|\*\*|\*|\?/g, (m) => ({ '**/': '(?:.*/)?', '**': '.*', '*': '[^/]*' })[m] ?? '[^/]') + '$')
+  Object.assign(F, {
+    statSync: (p, o) => { try { return fuller(stat(p)) } catch (e) { if (o?.throwIfNoEntry !== false) throw e } },
+    readdirSync: (p, o) => (o?.withFileTypes ? list(p, o).map((d) => Object.assign(fuller(d), { parentPath: String(p), path: String(p) })) : list(p, o)),
+    openSync(p, flags = 'r') { const w = /[wa+]/.test(flags), data = /^w/.test(flags) || (w && !F.existsSync(p)) ? B.alloc(0) : F.readFileSync(p); fds.set(++fd, { p, data, at: /a/.test(flags) ? data.length : 0, w }); return fd },
+    closeSync(n) { const h = handle(n); if (h.w) F.writeFileSync(h.p, h.data); fds.delete(n) },
+    readSync(n, buf, off = 0, len, pos = null) {
+      if (off && typeof off === 'object') ({ offset: off = 0, length: len, position: pos = null } = off)
+      const h = n === 0 ? { data: B.from(stdinText), at: 0 } : handle(n), at = pos ?? h.at, read = h.data.copy(buf, off, at, at + (len ?? buf.length - off))
+      if (pos == null) h.at = at + read
+      return read
+    },
+    writeSync(n, data) {
+      const b = typeof data === 'string' ? B.from(data) : B.from(data.buffer, data.byteOffset, data.byteLength)
+      if (n === 1 || n === 2) return (n === 1 ? P?.stdout : P?.stderr)?.write(b.toString()), b.length
+      const h = handle(n), out = B.alloc(Math.max(h.data.length, h.at + b.length))
+      h.data.copy(out)
+      b.copy(out, h.at)
+      Object.assign(h, { data: out, at: h.at + b.length })
+      return b.length
+    },
+    fstatSync: (n) => ({ ...F.statSync(handle(n).p), size: handle(n).data.length }),
+    realpathSync: (p) => N.path.resolve(String(p)), accessSync: (p) => { stat(p) }, copyFileSync: (a, b) => F.writeFileSync(b, F.readFileSync(a)), rmdirSync: (p, o) => F.rmSync(p, o),
+    cpSync: (a, b) => { if (stat(a).isDirectory()) { F.mkdirSync(b, { recursive: true }); for (const name of list(a)) F.cpSync(a + '/' + name, b + '/' + name) } else F.copyFileSync(a, b) },
+    renameSync: (a, b) => { F.cpSync(a, b); F.rmSync(a, { recursive: true }) }, mkdtempSync: (prefix) => (F.mkdirSync((prefix += Math.random().toString(36).slice(2, 8)), { recursive: true }), prefix),
+    readlinkSync: (p) => { throw Object.assign(new Error("EINVAL: invalid argument, readlink '" + p + "'"), { code: 'EINVAL' }) }, symlinkSync: (t, p) => { throw Object.assign(new Error("EPERM: no links here, symlink '" + p + "'"), { code: 'EPERM' }) },
+    linkSync: (t, p) => { throw Object.assign(new Error("EPERM: no links here, link '" + p + "'"), { code: 'EPERM' }) }, truncateSync: (p, n = 0) => F.writeFileSync(p, F.readFileSync(p).subarray(0, n)),
+    statfsSync: () => ({ type: 0, bsize: 4096, blocks: 262144, bfree: 131072, bavail: 131072, files: 65536, ffree: 32768 }),
+    chmodSync() {}, chownSync() {}, lchownSync() {}, fchmodSync() {}, fchownSync() {}, utimesSync() {}, lutimesSync() {}, futimesSync() {}, fsyncSync() {}, fdatasyncSync() {}, watchFile() {}, unwatchFile() {}, watch: () => Object.assign(Object.create(EE.prototype), { close() {}, ref() { return this }, unref() { return this } }),
+    exists: (p, done) => setTimeout(() => done(F.existsSync(p)), 0),
+    globSync(patterns, o = {}) {
+      const cwd = String(o.cwd ?? P?.cwd() ?? '/'), want = [].concat(patterns).map(glob), skip = [].concat(typeof o.exclude === 'function' ? [] : o.exclude ?? []).map(glob), found = []
+      const walk = (rel) => {
+        for (const name of list(N.path.join(cwd, rel || '.'))) {
+          const path = rel ? rel + '/' + name : name, s = stat(N.path.join(cwd, path))
+          if (skip.some((re) => re.test(path))) continue
+          if (want.some((re) => re.test(path))) found.push(o.withFileTypes ? Object.assign(fuller(s), { name, parentPath: N.path.join(cwd, rel || '.') }) : path)
+          if (s.isDirectory() && name !== 'node_modules' && name !== '.git') walk(path)
+        }
+      }
+      walk('')
+      return found
+    },
+    createReadStream: (p, o) => N.stream.Readable.from([F.readFileSync(p, typeof o === 'string' ? o : o?.encoding)]),
+    createWriteStream(p) { const chunks = []; return new N.stream.Writable({ write(c, e, done) { chunks.push(B.from(c)); done() }, final(done) { F.writeFileSync(p, B.concat(chunks)); done() } }) },
+    constants: { F_OK: 0, R_OK: 4, W_OK: 2, X_OK: 1, O_RDONLY: 0, O_WRONLY: 1, O_RDWR: 2, O_CREAT: 64, O_EXCL: 128, O_TRUNC: 512, O_APPEND: 1024, S_IFMT: 61440, S_IFREG: 32768, S_IFDIR: 16384, S_IFLNK: 40960, COPYFILE_EXCL: 1 },
+    F_OK: 0, R_OK: 4, W_OK: 2, X_OK: 1, Dirent: class Dirent {}, Stats: class Stats {},
+  })
+  F.lstatSync = F.statSync
+  F.opendirSync = (p) => { const items = F.readdirSync(p, { withFileTypes: true }); return { path: p, readSync: () => items.shift() ?? null, closeSync() {}, async *[Symbol.asyncIterator]() { yield* items } } }
+  F.glob = (p, o, done) => setTimeout(() => { try { (done ?? o)(null, F.globSync(p, typeof o === 'object' ? o : {})) } catch (e) { (done ?? o)(e) } }, 0)
+  for (const name of Object.keys(F)) {
+    const sync = F[name], base = name.slice(0, -4)
+    if (!name.endsWith('Sync') || name === 'existsSync') continue
+    if (F.promises[base] && !/^(l?stat|readdir)$/.test(base)) continue
+    F.promises[base] = async (...args) => sync(...args)
+    F[base] = (...args) => { const done = typeof args.at(-1) === 'function' ? args.pop() : () => {}; F.promises[base](...args).then((v) => done(null, v), done) }
+  }
+  Object.assign(F.promises, { constants: F.constants, glob: async function* (p, o) { yield* F.globSync(p, o) }, open: async (p, flags) => { const n = F.openSync(p, flags); return { fd: n, readFile: async (o) => F.readFileSync(p, o), writeFile: async (d) => F.writeFileSync(p, d), stat: async () => F.fstatSync(n), close: async () => F.closeSync(n) } } })
+  // Every function of fs takes a file: address too, as Node's does.
+  for (const box of [F, F.promises]) for (const [name, fn] of Object.entries(box)) if (typeof fn === 'function' && /^[a-z]/.test(name)) box[name] = (a, b, ...rest) => fn(toPath(a), /^(copyFile|rename|cp|symlink)/.test(name) ? toPath(b) : b, ...rest)
+  F.realpathSync.native = F.realpathSync
+  Object.assign(N.os, { type: () => 'Linux', release: () => '6.0.0', version: () => '', machine: () => 'wasm32', totalmem: () => 64 * 2 ** 20, freemem: () => 32 * 2 ** 20, availableParallelism: () => 1, loadavg: () => [0, 0, 0], uptime: () => 1, endianness: () => 'LE', networkInterfaces: () => ({}),
+    userInfo: () => ({ username: 'user', homedir: '/home/user', shell: '/bin/bash', uid: 1000, gid: 1000 }), devNull: '/dev/null', constants: { signals: { SIGINT: 2, SIGTERM: 15, SIGKILL: 9 }, errno: {}, priority: {} } })
+  Object.assign(N.path, { win32: N.path, toNamespacedPath: (p) => p, format: (o) => (o.dir ? o.dir + '/' : o.root ?? '') + (o.base ?? (o.name ?? '') + (o.ext ?? '')), matchesGlob: (p, pattern) => glob(pattern).test(p) })
+  Object.assign(EE, { defaultMaxListeners: 10, errorMonitor: Symbol('events.errorMonitor'), captureRejectionSymbol: Symbol.for('nodejs.rejection'), captureRejections: false, setMaxListeners() {},
+    once: (em, name) => new Promise((resolve, reject) => { em.once(name, (...a) => resolve(a)); if (name !== 'error') em.once('error', reject) }), listenerCount: (em, name) => em.listenerCount(name), getEventListeners: (em, name) => em.listeners?.(name) ?? [],
+    addAbortListener: (signal, fn) => (signal.addEventListener('abort', fn, { once: true }), { [Symbol.dispose ?? 'dispose']: () => signal.removeEventListener('abort', fn) }) })
+  Object.assign(EE.prototype, { prependListener(name, fn) { ((this._events ??= {})[name] ??= []).unshift(fn); return this }, prependOnceListener(name, fn) { return this.once(name, fn) }, eventNames() { return Object.keys(this._events ?? {}) }, getMaxListeners: () => 10, rawListeners(name) { return this._events?.[name] ?? [] } })
+  // Node's other modules.
+  class AssertionError extends Error { constructor(o = {}) { super(typeof o === 'string' ? o : o.message ?? 'Assertion failed'); Object.assign(this, { name: 'AssertionError', code: 'ERR_ASSERTION', actual: o.actual, expected: o.expected, operator: o.operator }) } }
+  const fail = (m, said) => { throw m instanceof Error ? m : new AssertionError({ message: m ?? said }) }
+  const same = U.isDeepStrictEqual
+  function assert(v, m) { if (!v) fail(m, 'The expression evaluated to a falsy value') }
+  Object.assign(assert, { ok: assert, AssertionError, fail: (m) => fail(m, 'Failed'), ifError: (v) => { if (v != null) throw v },
+    equal: (a, b, m) => a == b || fail(m, U.inspect(a) + ' == ' + U.inspect(b)), notEqual: (a, b, m) => a != b || fail(m, U.inspect(a) + ' != ' + U.inspect(b)),
+    strictEqual: (a, b, m) => Object.is(a, b) || fail(m, 'Expected values to be strictly equal: ' + U.inspect(a) + ' !== ' + U.inspect(b)), notStrictEqual: (a, b, m) => !Object.is(a, b) || fail(m, 'Expected "actual" to be strictly unequal to: ' + U.inspect(b)),
+    deepEqual: (a, b, m) => same(a, b) || fail(m, 'Expected values to be loosely deep-equal'), deepStrictEqual: (a, b, m) => same(a, b) || fail(m, 'Expected values to be strictly deep-equal'),
+    notDeepEqual: (a, b, m) => !same(a, b) || fail(m, 'Expected values not to be deep-equal'), notDeepStrictEqual: (a, b, m) => !same(a, b) || fail(m, 'Expected values not to be deep-equal'),
+    throws: (fn, e, m) => { try { fn() } catch { return } fail(typeof e === 'string' ? e : m, 'Missing expected exception.') }, doesNotThrow: (fn) => { fn() },
+    rejects: async (p, e, m) => { try { await (typeof p === 'function' ? p() : p) } catch { return } fail(typeof e === 'string' ? e : m, 'Missing expected rejection.') }, doesNotReject: async (p) => { await (typeof p === 'function' ? p() : p) },
+    match: (s, re, m) => re.test(s) || fail(m, 'The input did not match ' + re), doesNotMatch: (s, re, m) => !re.test(s) || fail(m, 'The input was expected not to match ' + re) })
+  assert.strict = assert
+  const url = { URL: g.URL, URLSearchParams: g.URLSearchParams, fileURLToPath, pathToFileURL: (p) => new g.URL('file://' + encodeURI(N.path.resolve(String(p))).replace(/[?#]/g, encodeURIComponent)), domainToASCII: (d) => d, domainToUnicode: (d) => d,
+    format: (u) => (typeof u === 'string' ? u : u.href ?? (u.protocol ?? '') + '//' + (u.host ?? u.hostname ?? '') + (u.pathname ?? '') + (u.search ?? '') + (u.hash ?? '')), urlToHttpOptions: (u) => ({ ...u }),
+    parse: (s) => { try { const u = new g.URL(s); return { ...u, href: u.href, search: u.search, path: u.pathname + u.search, query: u.search.slice(1), slashes: true } } catch { const [pathname, query = ''] = String(s).split('?'); return { pathname, path: s, query, search: query && '?' + query, href: s } } },
+    resolve: (from, to) => new g.URL(to, new g.URL(from, 'resolve://')).href.replace(/^resolve:\/\//, '') }
+  const builtinModules = ['assert', 'async_hooks', 'buffer', 'child_process', 'crypto', 'diagnostics_channel', 'dns', 'events', 'fs', 'http', 'https', 'module', 'net', 'os', 'path', 'perf_hooks', 'process', 'querystring', 'readline', 'stream', 'string_decoder', 'timers', 'tty', 'url', 'util', 'v8', 'vm', 'worker_threads', 'zlib']
+  function Module() {}
+  Object.assign(Module, { Module, builtinModules, createRequire: (f) => g.__requireFrom(fileURLToPath(f)), isBuiltin: (s) => builtinModules.includes(String(s).replace(/^node:/, '')), register() {}, syncBuiltinESMExports() {}, findSourceMap: () => undefined, enableCompileCache: () => ({}), getCompileCacheDir() {},
+    flushCompileCache() {}, constants: { compileCacheStatus: {} }, _cache: {}, _extensions: { '.js': () => {}, '.json': () => {} }, _resolveFilename: (s, parent) => g.__requireFrom(parent?.filename ?? g.__cwd + '/[eval]').resolve(s) })
+  const readlineOf = (promised) => (input, output) => {
+    const o = input && 'input' in Object(input) ? input : { input, output }, rl = Object.create(EE.prototype)
+    const lines = o.input === P?.stdin ? stdinText.split('\n').filter((l, i, all) => i < all.length - 1 || l) : []
+    Object.assign(rl, { terminal: false, line: '', input: o.input, output: o.output, prompted: '> ', closed: false,
+      setPrompt(p) { this.prompted = p }, getPrompt() { return this.prompted }, prompt() {}, write() {}, pause() { return this }, resume() { return this }, getCursorPos: () => ({ rows: 0, cols: 0 }),
+      close() { if (!this.closed) { this.closed = true; this.emit('close') } },
+      question(q, o, done) { const answer = lines.shift() ?? ''; if (promised) return Promise.resolve(answer); setTimeout(() => [o, done].find((f) => typeof f === 'function')?.(answer), 0) },
+      async *[Symbol.asyncIterator]() { while (lines.length) yield lines.shift() } })
+    setTimeout(() => { if (rl.listenerCount('line')) { while (lines.length) rl.emit('line', lines.shift()); rl.close() } }, 0)
+    return rl
+  }
+  const readline = { createInterface: readlineOf(false), Interface: class Interface {}, emitKeypressEvents() {}, clearLine: (s, d, done) => (done?.(), true), clearScreenDown: (s, done) => (done?.(), true),
+    cursorTo: (s, x, y, done) => ([y, done].find((f) => typeof f === 'function')?.(), true), moveCursor: (s, x, y, done) => (done?.(), true), promises: { createInterface: readlineOf(true) } }
+  const noChild = 'child_process: node starts no other program here; run it from bash instead'
+  const child = () => { const c = Object.assign(Object.create(EE.prototype), { stdout: Object.create(EE.prototype), stderr: Object.create(EE.prototype), stdin: { write() {}, end() {} }, kill: () => false }); setTimeout(() => { c.emit('error', new Error(noChild)); c.emit('close', 1) }, 0); return c }
+  const later = (...a) => (setTimeout(() => a.find((f) => typeof f === 'function')?.(new Error(noChild), '', ''), 0), child())
+  const noServer = (what) => () => { throw new Error(what + ': ' + __noServer) }
+  // A server is made, as Node's are; it is listening that fails, told as Node tells it, so a tool's optional socket doesn't stop it.
+  class Server extends EE { listen(...a) { const failed = Object.assign(new Error('listen EACCES: ' + __noServer), { code: 'EACCES' }); setTimeout(() => this.emit('error', failed), 0); return this } address() { return null } close(done) { setTimeout(() => done?.(), 0); return this } ref() { return this } unref() { return this } }
+  const net = (name) => ({ ...Object.fromEntries(['request', 'get', 'connect', 'createConnection', 'lookup', 'resolve'].map((f) => [f, noServer(name + '.' + f)])), createServer: (...a) => new Server(), Server, Agent: class Agent {}, globalAgent: {}, Socket: class Socket {},
+    IncomingMessage: class IncomingMessage {}, ServerResponse: class ServerResponse {}, STATUS_CODES: { 200: 'OK', 201: 'Created', 204: 'No Content', 301: 'Moved Permanently', 302: 'Found', 304: 'Not Modified', 400: 'Bad Request', 401: 'Unauthorized', 403: 'Forbidden', 404: 'Not Found', 500: 'Internal Server Error' },
+    METHODS: ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'PATCH', 'POST', 'PUT'], isIP: () => 0, isIPv4: () => false, isIPv6: () => false, constants: {} })
+  const delay = (ms, v) => new Promise((resolve) => setTimeout(() => resolve(v), ms))
+  const timers = { setTimeout: delay, setImmediate: (v) => delay(0, v), setInterval: async function* (ms, v) { for (;;) yield await delay(ms, v) }, scheduler: { wait: delay, yield: () => delay(0) } }
+  const vm = { runInThisContext: (c) => (0, eval)(c), runInNewContext: (c, scope = {}) => new Function(...Object.keys(scope), 'return eval(' + JSON.stringify(c) + ')')(...Object.values(scope)), createContext: (o = {}) => o, isContext: () => true, compileFunction: (code, params = []) => new Function(...params, code) }
+  vm.runInContext = vm.runInNewContext
+  vm.Script = class Script { constructor(c) { this.c = c } runInThisContext() { return vm.runInThisContext(this.c) } runInNewContext(s) { return vm.runInNewContext(this.c, s) } runInContext(s) { return vm.runInNewContext(this.c, s) } createCachedData() { return B.alloc(0) } }
+  const querystring = { parse: (s, sep = '&', eq = '=') => { const o = {}; for (const part of String(s).split(sep).filter(Boolean)) { const [k, v = ''] = part.split(eq).map((x) => decodeURIComponent(x.replace(/\+/g, ' '))); o[k] = k in o ? [].concat(o[k], v) : v } return o },
+    stringify: (o, sep = '&', eq = '=') => Object.entries(o ?? {}).flatMap(([k, v]) => [].concat(v).map((x) => encodeURIComponent(k) + eq + encodeURIComponent(x))).join(sep), escape: encodeURIComponent, unescape: decodeURIComponent }
+  Object.assign(querystring, { decode: querystring.parse, encode: querystring.stringify })
+  const channel = () => ({ hasSubscribers: false, publish() {}, subscribe() {}, unsubscribe() {}, bindStore() {}, unbindStore() {}, runStores: (d, fn, t, ...a) => fn.apply(t, a) })
+  class StringDecoder {
+    constructor(e = 'utf8') { this.encoding = String(e).toLowerCase().replace('-', ''); this.rest = B.alloc(0) }
+    write(b) {
+      b = B.concat([this.rest, B.from(b)])
+      let end = b.length, i = end - 1
+      while (this.encoding === 'utf8' && i > end - 4 && i >= 0 && (b[i] & 0xc0) === 0x80) i--
+      if (this.encoding === 'utf8' && i >= 0 && (b[i] >= 0xf0 ? 4 : b[i] >= 0xe0 ? 3 : b[i] >= 0xc0 ? 2 : 1) > end - i) end = i
+      this.rest = b.subarray(end)
+      return b.subarray(0, end).toString(this.encoding)
+    }
+    end(b) { const s = b ? this.write(b) : '', r = this.rest.toString(this.encoding); this.rest = B.alloc(0); return s + r }
+  }
+  Object.assign(N, {
+    assert, 'assert/strict': assert, url, module: Module, tty: { isatty: () => false, ReadStream: class ReadStream {}, WriteStream: class WriteStream {} }, readline, 'readline/promises': readline.promises,
+    child_process: { exec: later, execFile: later, spawn: child, fork: child, execSync() { throw new Error(noChild) }, execFileSync() { throw new Error(noChild) }, spawnSync: () => ({ status: 1, error: new Error(noChild), stdout: B.alloc(0), stderr: B.alloc(0), output: [] }) },
+    crypto: { webcrypto: g.crypto, randomUUID: uuid, getRandomValues: random, randomFillSync: random, randomBytes: (n, done) => { const b = random(B.alloc(n)); if (done) setTimeout(() => done(null, b), 0); return b },
+      randomInt: (a, b) => (b === undefined ? 0 : a) + Math.floor((new Uint32Array(random(new Uint8Array(4)).buffer)[0] / 2 ** 32) * (b === undefined ? a : b - a)), timingSafeEqual: (a, b) => B.compare(B.from(a), B.from(b)) === 0, getHashes: () => [], constants: {},
+      createHash() { throw new Error("crypto: node has no hashes here; python3's hashlib has them") }, createHmac() { throw new Error("crypto: node has no hashes here; python3's hmac has them") } },
+    http: net('http'), https: net('https'), http2: net('http2'), net: net('net'), tls: net('tls'), dns: { ...net('dns'), promises: net('dns') }, 'dns/promises': net('dns'), dgram: net('dgram'),
+    worker_threads: { isMainThread: true, parentPort: null, workerData: null, threadId: 0, resourceLimits: {}, Worker: class Worker { constructor() { throw new Error('worker_threads: no threads here') } }, MessageChannel: class MessageChannel {}, MessagePort: class MessagePort {}, setEnvironmentData() {}, getEnvironmentData() {} },
+    perf_hooks: { performance: g.performance, PerformanceObserver: class PerformanceObserver { observe() {} disconnect() {} }, monitorEventLoopDelay: () => ({ enable() {}, disable() {}, percentile: () => 0 }), constants: {} },
+    timers: { setTimeout, clearTimeout, setInterval, clearInterval, setImmediate, clearImmediate, promises: timers }, 'timers/promises': timers, vm, querystring,
+    v8: { getHeapStatistics: () => ({ total_heap_size: 64e6, heap_size_limit: 64e6, used_heap_size: 1e7, total_available_size: 54e6 }), getHeapSpaceStatistics: () => [], setFlagsFromString() {}, cachedDataVersionTag: () => 0, serialize: (v) => B.from(JSON.stringify(v)), deserialize: (b) => JSON.parse(String(b)) },
+    async_hooks: {
+      AsyncLocalStorage: class AsyncLocalStorage { getStore() { return this.store } run(store, fn, ...a) { const was = this.store; this.store = store; try { return fn(...a) } finally { this.store = was } } enterWith(store) { this.store = store } exit(fn, ...a) { return fn(...a) } disable() {} static bind(fn) { return fn } static snapshot() { return (fn, ...a) => fn(...a) } },
+      AsyncResource: class AsyncResource { runInAsyncScope(fn, t, ...a) { return fn.apply(t, a) } bind(fn) { return fn } emitDestroy() { return this } asyncId() { return 1 } triggerAsyncId() { return 0 } static bind(fn) { return fn } },
+      createHook: () => ({ enable() { return this }, disable() { return this } }), executionAsyncId: () => 1, triggerAsyncId: () => 0, executionAsyncResource: () => ({}) },
+    diagnostics_channel: { channel, hasSubscribers: () => false, subscribe() {}, unsubscribe() {}, tracingChannel: () => ({ hasSubscribers: false, subscribe() {}, unsubscribe() {}, start: channel(), end: channel(), asyncStart: channel(), asyncEnd: channel(), error: channel(),
+      traceSync: (fn, c, t, ...a) => fn.apply(t, a), tracePromise: (fn, c, t, ...a) => fn.apply(t, a), traceCallback: (fn, p, c, t, ...a) => fn.apply(t, a) }) },
+    console: Object.assign(Object.create(console), { Console: class Console { constructor(out, err) { const [o, e] = [out?.stdout ?? out, out?.stderr ?? err ?? out?.stdout ?? out]; for (const level of ['log', 'info', 'debug', 'error', 'warn', 'trace']) this[level] = (...a) => (/^(log|info|debug)$/.test(level) ? o : e).write(U.format(...a) + '\n') } } }),
+    string_decoder: { StringDecoder }, constants: { ...F.constants, ...N.os.constants },
+    'path/posix': N.path, 'path/win32': N.path, 'util/types': types, sys: U,
+  })
+  // stream is readable-stream's, and zlib fflate's under Node's names, both made when a program first asks for them.
+  const made = {}
+  const lazy = (name, names, make) => { Object.defineProperty(N, name, { get: () => (made[name] ??= make()) }); g.__lazyNames[name] = names }
+  g.__lazyNames = {}
+  lazy('stream', 'Readable,Writable,Duplex,Transform,PassThrough,Stream,pipeline,finished,addAbortSignal,promises,compose,isReadable,isErrored,isDisturbed,duplexPair,getDefaultHighWaterMark,setDefaultHighWaterMark', () => g.__requireFrom('/')(g.__streamPath).default)
+  lazy('stream/promises', 'pipeline,finished', () => N.stream.promises)
+  const drain = async (s) => { const all = []; for await (const c of s) all.push(B.from(c)); return B.concat(all) }
+  lazy('stream/consumers', 'buffer,text,json,arrayBuffer', () => ({ buffer: drain, text: async (s) => (await drain(s)).toString(), json: async (s) => JSON.parse((await drain(s)).toString()), arrayBuffer: async (s) => new Uint8Array(await drain(s)).buffer }))
+  const ZIP = { gzip: 'gzipSync', gunzip: 'gunzipSync', deflate: 'zlibSync', inflate: 'unzlibSync', deflateRaw: 'deflateSync', inflateRaw: 'inflateSync', unzip: 'decompressSync' }
+  const Up = (s) => s[0].toUpperCase() + s.slice(1)
+  lazy('zlib', Object.keys(ZIP).flatMap((n) => [n, n + 'Sync', Up(n), 'create' + Up(n)]).concat('constants', 'brotliCompressSync', 'brotliDecompressSync').join(), () => {
+    const zlib = { constants: { Z_NO_FLUSH: 0, Z_SYNC_FLUSH: 2, Z_FULL_FLUSH: 3, Z_FINISH: 4, Z_BEST_SPEED: 1, Z_BEST_COMPRESSION: 9, Z_DEFAULT_COMPRESSION: -1 } }
+    zlib.brotliCompressSync = zlib.brotliDecompressSync = () => { throw new Error('zlib: no brotli here; gzip and deflate are') }
+    for (const [name, op] of Object.entries(ZIP)) {
+      const sync = (data) => { const b = B.from(data); return B.from(__zip(op, b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength))) }
+      const Kind = class extends N.stream.Transform { chunks = []; _transform(c, e, done) { this.chunks.push(B.from(c)); done() } _flush(done) { try { done(null, sync(B.concat(this.chunks))) } catch (e) { done(e) } } }
+      Object.assign(zlib, { [name + 'Sync']: sync, [Up(name)]: Kind, ['create' + Up(name)]: (o) => new Kind(o), [name]: (data, o, done) => setTimeout(() => { try { (done ?? o)(null, sync(data)) } catch (e) { (done ?? o)(e) } }, 0) })
+    }
+    return zlib
+  })
+})()
+globalThis.__exportNames = (m) => Object.keys(Object(m)).filter((k) => /^[A-Za-z_$][\w$]*$/.test(k)).join()
+`
 // After process; with the names each exports, for import.
 const NODE_MODULES = `
 globalThis.__node = (${nodeModules})(__fs, __cwd)
-Object.fromEntries(Object.entries(__node).map(([name, module]) => [name, Object.keys(Object(module)).join()]))
+${NODE_MORE}
+Object.assign(Object.fromEntries(Object.entries(__node).map(([name, module]) => [name, __exportNames(module)])), __lazyNames)
 `
 
 /**
@@ -1016,6 +1532,9 @@ Object.fromEntries(Object.entries(__node).map(([name, module]) => [name, Object.
  * @property {number} spent
  * @property {number} started
  * @property {(value?: unknown) => void} [moved] what `idle` waits on, called as something the script started settles
+ * @property {Map<string, string>} files the computer's scripts and packages, by path, which require and import read
+ * @property {string} compiled the CommonJS file compiled last, where import() resolves from in code that has no name of its own
+ * @property {(source: string) => boolean} parses whether a source parses as a script, which an ES module's import doesn't
  * @property {(work: () => void) => void} step
  * @property {(run: number) => Promise<void>} begin
  * @property {() => Promise<void>} idle
@@ -1028,12 +1547,12 @@ Object.fromEntries(Object.entries(__node).map(([name, module]) => [name, Object.
  * require and import, Node's own modules. Each run `begin`s on it: its id, its output and computing
  * time from naught, and the computer's scripts and packages read anew, as require and import are
  * synchronous. The user's node keeps one between lines (D180); a run's own goes with it.
- * @param {{ run: number, cwd: string, tool?: boolean, argv?: string[], name?: string, env?: Record<string, string>, limits?: Record<string, number> }} options
+ * @param {{ run: number, cwd: string, tool?: boolean, argv?: string[], name?: string, env?: Record<string, string>, limits?: Record<string, number>, stdin?: string }} options
  * @param {Computer} computer
  */
-async function jsContext({ run, cwd, tool = false, argv = [], name = '-', env = {}, limits = {} }, computer) {
-  // Its loader adds feross's Buffer, as text.
-  const quickjs = /** @type {QuickJSWASMModule & { buffer: string }} */ (await engine(run, 'quickjs'))
+async function jsContext({ run, cwd, tool = false, argv = [], name = '-', env = {}, limits = {}, stdin = '' }, computer) {
+  // Its loader adds feross's Buffer and readable-stream, as text.
+  const quickjs = /** @type {QuickJSWASMModule & { buffer: string, stream: string }} */ (await engine(run, 'quickjs'))
   const cpu = limits.cpu ?? 20_000
   const output = limits.output ?? 6000
   const runtime = quickjs.newRuntime()
@@ -1050,6 +1569,16 @@ async function jsContext({ run, cwd, tool = false, argv = [], name = '-', env = 
   const js = {
     vm,
     run,
+    files,
+    compiled: '',
+    parses: (source) => {
+      const text = vm.newString(source.replace(/^#!.*/, ''))
+      vm.setProp(vm.global, '__parsed', text)
+      text.dispose()
+      const parsed = vm.evalCode('new Function(globalThis.__parsed)')
+      ;(parsed.error ?? parsed.value).dispose()
+      return !parsed.error
+    },
     alive: true,
     /** @type {string[]} */
     logs: [],
@@ -1075,6 +1604,7 @@ async function jsContext({ run, cwd, tool = false, argv = [], name = '-', env = 
       for (const path of computer.fs.getAllPaths()) {
         if (/\/node_modules\/.*\.(m?js|cjs|json)$|\.(m?js|cjs)$|\/package\.json$/.test(path)) files.set(path, await computer.fs.readFile(path).catch(() => ''))
       }
+      files.set(STREAM, quickjs.stream)
     },
     /** Waits, as Node does, until nothing the script started is pending (timers, Jean's answers, the internet), told by `moved`. */
     async idle() {
@@ -1090,7 +1620,8 @@ async function jsContext({ run, cwd, tool = false, argv = [], name = '-', env = 
         const error = vm.dump(outcome.error)
         outcome.error.dispose()
         if (error && typeof error === 'object' && '__exit' in error) return { exit: error.__exit }
-        throw new Error(typeof error === 'object' && error ? `${error.name ?? 'Error'}: ${error.message}` : String(error))
+        // With where it came from, as Node prints it, when that is a program's or a package's file.
+        throw new Error(typeof error === 'object' && error ? `${error.name ?? 'Error'}: ${error.message}${/\(\//.test(error.stack ?? '') ? `\n${error.stack.trimEnd()}` : ''}` : String(error))
       }
       return outcome.value
     },
@@ -1144,8 +1675,22 @@ async function jsContext({ run, cwd, tool = false, argv = [], name = '-', env = 
     promised('__call', (name, args) => ask(js.run, { type: 'call', name, args: JSON.parse(args) }))
     promised('__host', (op, arg) => host(computer, cwd, op, arg))
     promised('__sleep', (ms, id) => new Promise((resolve) => setTimeout(/** @type {(value?: unknown) => void} */ (waits.set(id, resolve).get(id)), Number(ms))).finally(() => waits.delete(id)))
-    for (const [label, value] of Object.entries({ __argv: JSON.stringify(['node', name, ...argv]), __env: JSON.stringify(env), __cwd: cwd })) {
+    for (const [label, value] of Object.entries({ __argv: JSON.stringify(['node', name, ...argv]), __env: JSON.stringify(env), __cwd: cwd, __stdin: stdin, __streamPath: STREAM, __noServer: noServer('node').replace(/^node: /, '').trim() })) {
       const handle = vm.newString(value)
+      vm.setProp(vm.global, label, handle)
+      handle.dispose()
+    }
+    // A CommonJS file as a function under its own name; an ES module, evaluated at once, as its namespace.
+    for (const [label, work] of /** @type {const} */ ([['__compile', (/** @type {string} */ path) => vm.evalCode(`(function (module, exports, require, __filename, __dirname) {${(files.get(js.compiled = path) ?? '').replace(/^#!.*/, '')}\n})`, path)],
+      ['__esm', (/** @type {string} */ path) => {
+        const started = vm.evalCode(`import * as ns from ${JSON.stringify(path)}; globalThis.__esmNs = ns`, `${path}#require`, { type: 'module' })
+        if (started.error) return started
+        runtime.executePendingJobs()
+        const state = vm.getPromiseState(started.value)
+        started.value.dispose()
+        return state.type === 'rejected' ? { error: state.error } : { value: vm.getProp(vm.global, '__esmNs') }
+      }]])) {
+      const handle = vm.newFunction(label, (/** @type {QuickJSHandle} */ path) => work(vm.getString(path)))
       vm.setProp(vm.global, label, handle)
       handle.dispose()
     }
@@ -1155,7 +1700,21 @@ async function jsContext({ run, cwd, tool = false, argv = [], name = '-', env = 
       if (!found) throw missing(spec)
       return found
     }
+    // Intl is the browser's own, in its time zone, which QuickJS's dates keep too.
+    const intl = (/** @type {string} */ asked) => {
+      const [kind, [locales, options] = [], method, values] = JSON.parse(asked)
+      const args = values.map((/** @type {any} */ value) => (value?.$date === undefined ? value : new Date(value.$date)))
+      const Kind = /** @type {any} */ (Intl)[kind]
+      const made = kind && method !== 'supportedLocalesOf' ? new Kind(locales ?? undefined, options ?? undefined) : (Kind ?? Intl)
+      return JSON.stringify(method === 'segment' ? [...made.segment(args[0])].map(({ segment, index, isWordLike }) => ({ segment, index, isWordLike })) : made[method](...args))
+    }
     for (const [label, work] of /** @type {const} */ ([['__resolve', required], ['__source', (/** @type {string} */ path) => files.get(path)], ['__wake', (/** @type {string} */ id) => waits.get(id)?.()],
+      ['__isModule', (/** @type {string} */ path) => String(moduleIn(files, path, files.get(path) ?? '', js.parses))], ['__intl', intl], ['__random', (/** @type {string} */ size) => {
+        const bytes = new Uint8Array(Number(size))
+        for (let at = 0; at < bytes.length; at += 65536) crypto.getRandomValues(bytes.subarray(at, at + 65536))
+        return bytes
+      }],
+      ['__zip', (/** @type {string} */ op, /** @type {Uint8Array} */ data) => { if (!/^(g?unzip|gzip|(un)?zlib|deflate|inflate|decompress)Sync$/.test(op)) throw new Error(`zlib: no ${op}`); return engines.shell.zip[op](data) }],
       ['__fs', (/** @type {string} */ op, /** @type {string} */ path, /** @type {string | Uint8Array} */ data) => fileSync(computer, op, path, data)]])) {
       const handle = vm.newFunction(label, (/** @type {QuickJSHandle[]} */ ...args) => {
         const found = /** @type {(...args: (string | Uint8Array)[]) => string | Uint8Array | void} */ (work)(...args.map((arg) => (vm.typeof(arg) === 'object' ? vm.getArrayBuffer(arg).consume((/** @type {{ value: Uint8Array }} */ bytes) => bytes.value.slice()) : vm.getString(arg))))
@@ -1168,12 +1727,15 @@ async function jsContext({ run, cwd, tool = false, argv = [], name = '-', env = 
     /** @type {Record<string, string>} */
     let named = {}
     runtime.setModuleLoader((/** @type {string} */ path) => {
-      if (path.startsWith('node:')) return `const m = globalThis.__node[${JSON.stringify(path.slice(5))}]\nexport default m\nexport const { ${named[path.slice(5)]} } = m`
-      const source = files.get(path) ?? ''
+      if (path.startsWith('node:')) return `const m = globalThis.__node[${JSON.stringify(path.slice(5))}]\nexport default m\nexport const { ${named[path.slice(5)] ?? ''} } = m`
+      const source = (files.get(path) ?? '').replace(/^#!.*/, '')
       if (path.endsWith('.json')) return `export default ${source}`
-      if (isModule(path, source)) return source
-      return `const __m = { exports: {} }\n;(function (module, exports, require, __filename, __dirname) {\n${source}\n})(__m, __m.exports, globalThis.__requireFrom(${JSON.stringify(path)}), ${JSON.stringify(path)}, ${JSON.stringify(dirOf(path))})\nexport default __m.exports`
-    }, (/** @type {string} */ base, /** @type {string} */ spec) => resolve(files, base.startsWith('/') ? base : `${cwd}/${base}`, spec, 'import') ?? { error: missing(spec) })
+      if (moduleIn(files, path, source, js.parses)) return meta(source, path)
+      // CommonJS through require, so both share it; its names importable, as Node reads them.
+      const names = cjsNames(files, path, source)
+      return `const m = globalThis.__requireFrom(${JSON.stringify(path)})(${JSON.stringify(path)})\nexport default m\nexport const { ${names.join(', ')} } = m`
+    // import() in code with no name of its own (new Function's, as prettier's bin makes) resolves from the file that made it.
+    }, (/** @type {string} */ base, /** @type {string} */ spec) => resolve(files, base.startsWith('/') ? base : /^(<input>)?$/.test(base) && js.compiled ? js.compiled : `${cwd}/${base}`, spec, 'import') ?? { error: missing(spec) })
     const prelude = vm.unwrapResult(vm.evalCode(`${quickjs.buffer}\n${PRELUDE}${REQUIRE}${tool ? '' : PROCESS}${NODE_MODULES}`, 'prelude.js'))
     named = vm.dump(prelude)
     prelude.dispose()
@@ -1192,16 +1754,29 @@ const stopped = (error) => (/interrupted/i.test(String(error)) ? 'The script use
 /**
  * Runs JavaScript in QuickJS: as the `javascript` tool (its result is the value it returns or ends
  * on, as JSON), or as `node` (what it prints, and its exit code).
- * @param {Parameters<typeof jsContext>[0] & { code: string, print?: boolean }} options
+ * @param {Parameters<typeof jsContext>[0] & { code: string, print?: boolean, file?: string }} options
  * @param {Computer} computer
  */
 async function javascript(options, computer) {
   const { code, cwd, tool = false, print = false, name = '-' } = options
+  // A program's file (node's, or npx's bin/tsc, whatever its name) runs from its own folder, its package's kind of module.
+  const file = tool ? undefined : options.file
   const js = await jsContext(options, computer)
   const { vm } = js
   try {
     await js.begin(options.run)
+    if (file && !js.files.has(file)) js.files.set(file, code)
     const { logs, errors } = js
+    // What a program wrote without its line's end yet, and the exit code it set (process.exitCode).
+    const finish = () => {
+      let exit = 0
+      js.step(() => {
+        const ended = vm.evalCode('globalThis.__flush?.(); Number(globalThis.__exited ?? globalThis.process?.exitCode ?? 0)')
+        if (ended.error) ended.error.dispose()
+        else exit = ended.value.consume((/** @type {QuickJSHandle} */ value) => vm.dump(value))
+      })
+      return exit || 0
+    }
     // The result is what the script returns or, as in a console, its last expression
     // (small brains write `Math.cos(9)` and expect its value). First as a script with
     // top-level await, which resolves to { value: <last expression> }; a top-level return
@@ -1210,19 +1785,21 @@ async function javascript(options, computer) {
     let evaluated
     const exited = (/** @type {{ exit: number }} */ value) => ({ ok: true, exit: value.exit, stdout: lines(logs), stderr: lines(errors) })
     // A program with import or export is a module, whose value is nothing.
-    if (!tool && isModule(name, code)) {
-      js.step(() => { evaluated = vm.evalCode(code, name.startsWith('/') ? name : `${cwd}/[eval].mjs`, { type: 'module' }) })
+    if (!tool && (file ? moduleIn(js.files, file, code, js.parses) : isModule(name, code))) {
+      js.step(() => { evaluated = file ? vm.evalCode(meta(code.replace(/^#!.*/, ''), file), file, { type: 'module' }) : vm.evalCode(code, name.startsWith('/') ? name : `${cwd}/[eval].mjs`, { type: 'module' }) })
       const done = await js.settle(vm.unwrapResult(evaluated))
       if (!done.dispose) return exited(done)
       done.dispose()
       await js.idle()
-      return { ok: true, result: null, logs, exit: 0, stdout: lines(logs), stderr: lines(errors) }
+      return { ok: true, result: null, logs, exit: finish(), stdout: lines(logs), stderr: lines(errors) }
     }
-    js.step(() => { evaluated = vm.evalCode(code, name, ASYNC_SCRIPT) })
+    // A CommonJS program is the main module, with its own require, module and __dirname.
+    const script = file ? `globalThis.__runMain(${JSON.stringify(file)}), undefined` : code
+    js.step(() => { evaluated = vm.evalCode(script, name, ASYNC_SCRIPT) })
     const asScript = !evaluated.error
     if (!asScript) {
       evaluated.error.dispose()
-      js.step(() => { evaluated = vm.evalCode(`(async () => {\n${code}\n})()`, name) })
+      js.step(() => { evaluated = vm.evalCode(`(async () => {\n${script}\n})()`, name) })
     }
     let value = await js.settle(vm.unwrapResult(evaluated))
     if (!value.dispose) return exited(value)
@@ -1236,7 +1813,7 @@ async function javascript(options, computer) {
     value.dispose()
     if (print) logs.push(show(result))
     await js.idle()
-    return { ok: true, result: result === undefined ? null : result, logs, exit: 0, stdout: lines(logs), stderr: lines(errors) }
+    return { ok: true, result: result === undefined ? null : result, logs, exit: finish(), stdout: lines(logs), stderr: lines(errors) }
   } catch (error) {
     const message = stopped(error)
     return { ok: false, error: message, logs: js.logs, exit: 1, stdout: lines(js.logs), stderr: lines([...js.errors, message]) }
