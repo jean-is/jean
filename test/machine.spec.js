@@ -189,6 +189,10 @@ test('the browser beside the conversation is this computer’s, whose page the b
     await expect(page.frameLocator('.browser-host').frameLocator('iframe').locator('h1')).toHaveText('Sent framed')
     await expect(page.locator('.browser-surface')).toHaveCount(0)
     await expect(await callTool(page, 'page', { action: 'read' }, host)).toContainText(`The organisation keeps ${host} out of This computer's browser.`)
+    // Ctrl+C in the terminal ends the bridge at once, which closes its browser first.
+    stop(bridge)
+    await expect.poll(() => bridge.exitCode, { timeout: 10_000 }).not.toBeNull()
+    expect(spawnSync('ps', ['-axo', 'command='], { encoding: 'utf8' }).stdout.split('\n').filter((line) => line.includes(join(disk, 'config')))).toEqual([])
   } finally {
     stop(bridge)
     site.close()

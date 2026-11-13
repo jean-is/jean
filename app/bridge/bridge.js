@@ -531,8 +531,9 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
       if (!browserProgram) throw new Error('No Chrome, Edge, Chromium or Brave was found on this computer.')
       const profile = join(home, 'browser')
       await mkdir(profile, { recursive: true })
+      // In a process group of its own: Ctrl+C in the terminal reaches the bridge alone, which closes it so that it writes what it holds.
       const child = spawn(browserProgram, [...browserBefore, `--user-data-dir=${profile}`, '--remote-debugging-pipe', '--headless', '--no-first-run', '--no-default-browser-check', 'about:blank'],
-        { stdio: ['ignore', 'ignore', 'ignore', 'pipe', 'pipe'] })
+        { stdio: ['ignore', 'ignore', 'ignore', 'pipe', 'pipe'], detached: true })
       const [, , , input, output] = /** @type {[any, any, any, import('node:stream').Writable, import('node:stream').Readable]} */ (/** @type {unknown} */ (child.stdio))
       /** @type {Map<number, (message: any) => void>} */
       const waiting = new Map()
@@ -1350,8 +1351,13 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
   async function close() {
     for (const group of groups) end(group)
     for (const session of sessions.values()) shut(session)
-    // The browser, gone before its profile's folder may be: it writes there as it closes.
-    await started?.then((b) => b.child.exitCode === null && new Promise((done) => { b.child.once('exit', done); b.child.kill() }), () => {})
+    // The browser closed as a person closes it, so it writes what it holds first, a sign-in's cookies among it; killed outright if it
+    // hasn't within 5 s, since a signal only starts a shutdown it may never finish; and gone before its profile's folder may be.
+    await started?.then((b) => b.child.exitCode === null && new Promise((done) => {
+      b.child.once('exit', done)
+      b.send('Browser.close').catch(() => b.child.kill('SIGKILL'))
+      setTimeout(() => b.child.kill('SIGKILL'), 5000).unref()
+    }), () => {})
     await rm(temp, { recursive: true, force: true })
   }
 
