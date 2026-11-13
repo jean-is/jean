@@ -1,20 +1,19 @@
 /* SPDX-License-Identifier: MIT */
 /* Slides (D591): deck's style sheet (vendor/deck/deck.css) under the room's: its bar in the room's buttons and pen, its scheme
    the room's, Jean's version of a slide ringed in the flame, the words pointed at outlined; beside the conversation, the
-   deck's Markdown under its slides, as the pane is narrow; on a card, its first slide alone. */
-app-slides { display: block; }
+   deck's Markdown under its slides, as the pane is narrow; on a card, its first slide alone. Its width, not the window's, lays
+   out the presenter's view. */
+app-slides { display: block; container-type: inline-size; }
 /* deck names its stage for its slides' transitions: named only while one pages, so that through Jean's own (the drawer's, a
    first answer's) it stays in the page rather than over its top bar, and two decks on screen don't share a name, which ends them. */
 :root:not([data-deck-transition]) .deck-stage { view-transition-name: none; }
 app-slides .deck { gap: 0.4rem; }
 app-slides .deck-bar { flex-wrap: wrap; gap: 0.15rem; color: var(--ink-soft); font: inherit; font-size: 0.85rem; }
 app-slides .deck-bar button { min-inline-size: 2.1rem; min-block-size: 2.1rem; border-radius: 50%; color: var(--ink-soft); }
-app-slides .deck-bar button:hover, app-slides .deck-bar button[aria-pressed='true'] { background: var(--line); color: var(--ink); } app-slides .deck-bar button[aria-pressed='true'] { box-shadow: inset 0 0 0 1.5px currentColor; }
+app-slides .deck-bar button:hover, app-slides .deck-bar button[aria-pressed='true'] { background: var(--line); color: var(--ink); } app-slides .deck-bar button[aria-pressed='true'] { box-shadow: inset 0 0 0 1.5px currentColor; } app-slides .deck-bar button:focus-visible { outline: 2px solid var(--flame); }
 .deck-slide .drawn-words { position: absolute; z-index: 2; inset-block-end: 0; inset-inline-start: 0; margin: 0; font-size: 0.75rem; } .deck-slide .drawn-words summary { color: var(--ink-soft); cursor: pointer; } .deck-slide .drawn-words[open] { inset: 0; overflow: auto; padding: 0.5rem; background: var(--room); }
-@media print { .deck-slide .drawn-words { display: none; } }
-app-slides .deck-bar button:focus-visible { outline: 2px solid var(--flame); }
-app-slides .deck-bar svg { inline-size: var(--icon-m); block-size: var(--icon-m); stroke-width: var(--pen); }
-app-slides .deck-bar svg * { vector-effect: non-scaling-stroke; }
+@media print { .deck-slide .drawn-words { display: none; } } .deck-next :is(.drawn-words, .chart-data) { display: none; }
+app-slides .deck-bar svg { inline-size: var(--icon-m); block-size: var(--icon-m); stroke-width: var(--pen); } app-slides .deck-bar svg * { vector-effect: non-scaling-stroke; }
 app-slides .deck-bar [data-act='scheme'] { display: none; }
 app-slides .slides-more { display: contents; }
 :is(app-slides, .deck-print) .deck-block :is(app-chart, app-chart .chart) { position: absolute; inset: 0; block-size: auto; margin: 0; padding: 0; border: 0; }
@@ -28,6 +27,11 @@ app-slides .is-pointed { outline: 0.12em dashed var(--flame); outline-offset: 0.
 app-slides.beside :is(.slides-change, .deck-bar, .deck-source) { padding-inline: 0.75rem; } app-slides.beside .deck-slide { border-radius: 0; }
 app-slides.beside .deck.is-editing { display: grid; grid-template: 'stage' auto 'bar' auto 'source' auto / 1fr; }
 app-slides.beside .deck.is-editing .deck-source { grid-area: source; block-size: 22rem; }
+/* The presenter's view: narrow, the slide stays as it was, its bar under it, then the notes beside the next slide, level with it
+   under its label, in the room's pen, inset from the pane's edges; wide (a pane full screen), the slide and its bar beside the
+   next slide over the notes, all inset. deck lays it out by the window's width, side by side in any pane. */
+app-slides .deck.is-presenting { grid-template: 'stage stage' 'bar bar' '. next' 'notes next' / minmax(0, 3fr) minmax(0, 2fr); align-items: start; column-gap: 0.75rem; min-block-size: 0; } app-slides .deck.is-presenting .deck-presenter { display: contents; } app-slides .deck-next { grid-template-rows: subgrid; font: inherit; font-size: 0.85rem; color: var(--ink-soft); } app-slides .deck-notes { align-self: stretch; color: var(--ink); background: color-mix(in oklch, var(--ink) 5%, transparent); font: inherit; font-size: 1.1rem; line-height: 1.5; } app-slides.beside .deck-notes { margin-inline-start: var(--pane-inset, 0.75rem); margin-block-end: var(--pane-inset, 0.75rem); } app-slides.beside .deck-next { margin-inline-end: var(--pane-inset, 0.75rem); margin-block-end: var(--pane-inset, 0.75rem); } app-slides.beside .deck-next .deck-slide { border-radius: var(--deck-radius); }
+@container (width >= 60rem) { app-slides .deck.is-presenting { grid-template: 'stage next' 'stage notes' 'bar notes' 1fr / minmax(0, 3fr) minmax(0, 2fr); } app-slides .deck-next { grid-template-rows: none; } app-slides.beside .deck.is-presenting { padding: var(--pane-inset, 0.75rem); } app-slides.beside .deck.is-presenting :is(.deck-next, .deck-notes) { margin: 0; } app-slides.beside .deck.is-presenting .deck-bar { padding-inline: 0; } app-slides.beside .deck.is-presenting .deck-slide { border-radius: var(--deck-radius); } }
 app-slides.beside .review { margin-block-end: 0.6rem; }
 app-slides .slides-change { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; margin: 0 0 0.6rem; color: var(--ink-soft); font-size: 0.9rem; }
 app-slides .slides-change span { margin-inline-end: auto; }

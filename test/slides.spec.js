@@ -132,6 +132,21 @@ test('a deck asked for is drawn as it comes, kept as a file, opened beside, page
     await expect(beside.locator('.deck-bar')).not.toContainText('null')
     await expect(beside.locator('.review'), 'what was accepted stays so').toHaveCount(0)
   }
+  // The presenter's view, laid out by the pane's width, not the window's: the slide and its bar stay where they were, then the
+  // notes level with the next slide, inside the pane; once the pane fills the window, the next slide and the notes beside it.
+  const place = (/** @type {import('@playwright/test').Locator} */ one) => one.evaluate((box) => Object.fromEntries(Object.entries(box.getBoundingClientRect().toJSON()).map(([side, px]) => [side, Math.round(px)])))
+  const paned = await place(beside.locator('.deck-stage'))
+  await beside.getByRole('button', { name: 'Presenter view' }).click()
+  await expect(beside.locator('.deck-notes')).toHaveText('No notes for this slide.')
+  const [stage, notes, next, pane] = await Promise.all([beside.locator('.deck-stage'), beside.locator('.deck-notes'), beside.locator('.deck-next .deck-slide'), beside].map(place))
+  expect(stage, 'the slide stays where it was').toEqual(paned)
+  expect(Math.abs(notes.top - next.top), 'the notes level with the next slide').toBeLessThanOrEqual(1)
+  expect(notes.left > pane.left && next.right < pane.right && notes.top > stage.bottom, 'under the slide, inside the pane').toBe(true)
+  const full = page.locator('app-preview .pane-head').getByRole('button', { name: 'Full screen' })
+  await full.click()
+  await expect.poll(async () => (await place(beside.locator('.deck-next .deck-slide'))).left > (await place(beside.locator('.deck-stage'))).right, 'beside the slide, the pane filling the window').toBe(true)
+  await full.click()
+  await beside.getByRole('button', { name: 'Presenter view' }).click()
 
   // Saved as PowerPoint, made in the browser: a file PowerPoint opens, a slide a slide, with its native chart.
   await beside.locator('.deck-stage').press('Home')
