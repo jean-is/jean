@@ -7,6 +7,19 @@ answering with its own failure is counted as the server's, not the brain's.
 The gate, written before the first run: Haiku right on 85% of runs or more and Sonnet on 90%, Arabic and Japanese within 10
 points of English, ordinary tables right on 96% or more, and at most 2 whiteboards made for them.
 
+## Through the skill (T5): the gate, written before the runs
+
+In use, a brain gets Whiteboards' tools only once it reads the skill "Make a whiteboard", which turns the capability on. The parts
+`skill:make` (the 8 briefs), `skill:choose` (the 16 choosing requests) and `skill:tables` (the 20 table requests in each language)
+start with Whiteboards off: `table_create`, `write` and `skill`, its line naming Jean's own skills as own-skills writes it; reading
+"whiteboard" answers its steps and "New tools: whiteboard, whiteboard_change", which are declared from the next step, as Jean does.
+In English, French, Arabic and Japanese, three runs each, Haiku and Sonnet through the Claude plan. GPT-5 mini isn't measured:
+Copilot answers that the model "is not available" (14 November, as for gpt-5.1-mini and gpt-4.1).
+
+The gate: each brain makes a whiteboard right, after reading the skill, for at least 80% of the requests where one is right
+(`skill:make` and the choosing set's whiteboard requests), Arabic and Japanese within 10 points of English, and makes at most 2
+whiteboards for the table requests over all three runs (240 conversations).
+
 ## The wording kept: "three to seven" areas, and the capability's lines cut to 40 tokens
 
 The lines the prompt lists, cut after the runs below to the 40 tokens a capability has ("notes in named areas, to brainstorm,

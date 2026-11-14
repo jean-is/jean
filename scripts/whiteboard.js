@@ -8,9 +8,14 @@
 //            whiteboard_change: every note in one area, none made but the actions asked for, ids intact.
 //   choose:  every tool present (whiteboard, table_create, write): a whiteboard made where one is right, and none elsewhere.
 //   tables:  test/tables/'s requests with the whiteboard's tools beside table_create: tables still right, whiteboards made for them.
+//   skill:make, skill:choose, skill:tables: the same requests as Jean meets them before Whiteboards is found (T5): table_create, write
+//            and `skill`, its line naming Jean's own skills, as own-skills declares them; reading "whiteboard" answers its steps and
+//            declares whiteboard and whiteboard_change from the next step, as Jean does. Right: the skill read, then a whiteboard
+//            made right where one is right, and none where a table or words are.
 // The brain comes from the environment, as for npm run tables: BRAIN=<provider>:<model> (cli/brain.js).
 // Usage: BRAIN=claudecode:haiku npm run whiteboard                  every part, every language, once
 //        npm run whiteboard -- --parts make,regroup --lang fr,ja --runs 3 --parallel 4 --write
+//        npm run whiteboard -- --parts skill:make,skill:choose,skill:tables --runs 3 --verbose       through the skill
 import { readFile, writeFile } from 'node:fs/promises'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { chooseBrain } from '../cli/brain.js'
@@ -18,29 +23,46 @@ import { buildSystemPrompt } from '../app/core/prompt.js'
 import { streamChat } from '../app/core/llm.js'
 import { tableCreate, LINE as TABLE_LINE } from '../app/caps/tables/tool.js'
 import { WHITEBOARD, WHITEBOARD_CHANGE, LINES, made, changed } from '../test/whiteboard/tools.js'
+import { DIRECTORY } from '../app/caps/skills/directory.js'
+import { skillNamed } from '../app/core/skills.js'
 import { score, normal } from './tables.js'
 
 const DIR = fileURLToPath(new URL('../test/whiteboard/', import.meta.url))
 const TABLES = fileURLToPath(new URL('../test/tables/', import.meta.url))
 const LANGS = /** @type {Record<string, string>} */ ({ en: 'English', fr: 'French', ar: 'Arabic', ja: 'Japanese' })
 const STEPS = 8
-const PARTS = ['make', 'regroup', 'choose', 'tables']
+const PARTS = ['make', 'regroup', 'choose', 'tables', 'skill:make', 'skill:choose', 'skill:tables']
 const SCRIPT = { ar: /\p{Script=Arabic}/u, ja: /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u }
 const ROWS = { name: 'table_rows', description: 'Read the rows of a table the user keeps, each with its id, which table_change needs.', parameters: { type: 'object', required: ['table'], properties: { table: { type: 'string' } } } }
 const WRITE = { name: 'write', description: 'Make a file the user keeps: a Word document from Markdown, a spreadsheet from a table, or text.', parameters: { type: 'object', required: ['name', 'content'], properties: { name: { type: 'string' }, content: { type: 'string' } } } }
 const WRITE_LINE = { name: 'write', line: 'make a file: a Word document, a spreadsheet or text' }
+/** Jean's `skill` and its line as own-skills declares them before Skills is found, naming the directory's skills in its order. */
+const SKILL = { name: 'skill', description: 'Read the steps of a skill.', parameters: { type: 'object', properties: { name: { type: 'string' } }, required: ['name'] } }
+const SKILL_LINE = { name: 'skill', line: `read the steps of a skill before asking the user anything for it or following it: ${DIRECTORY.map((entry) => entry.name).join(', ')}` }
+/** A skill's steps without its front matter, as `skill` answers; reading "whiteboard" says the tools it brings, as Jean does. @param {string} named */
+async function skillRead(named) {
+  const name = skillNamed(named).toLowerCase(), [dir, sheet] = name.split('/')
+  const text = DIRECTORY.some((entry) => entry.name === dir) ? await readFile(new URL(`../app/caps/skills/directory/${dir}/${sheet ? `${sheet}.md` : 'SKILL.md'}`, import.meta.url), 'utf8').catch(() => null) : null
+  if (!text) throw new Error(`There is no skill named "${name}".`)
+  const steps = text.replace(/^---\n[\s\S]*?\n---\n/, '').trim()
+  return { name: dir, brings: dir === 'whiteboard' && !sheet, steps: dir === 'whiteboard' && !sheet ? `${steps}\n\nNew tools: whiteboard, whiteboard_change. You can call them directly from your next step.` : steps }
+}
+/** What a brain did where a whiteboard was right and none came. @param {string[]} calls */
+const why = (calls) => (calls.includes('skill:whiteboard') ? `read the skill, then ${calls.filter((call) => !call.startsWith('skill')).join(', ') || 'words'}` : `skill not read: ${calls.join(', ') || 'words'}`)
 
 /** @typedef {{ name: string, areas: { id: string, name: string }[], notes: { id: string, words: string, area: string, owner?: string, due?: string, added?: boolean }[] }} Board */
-/** @typedef {{ part: string, lang: string, id: string, right: boolean, misses: string[], calls: string[], error?: string }} Outcome */
+/** @typedef {{ part: string, lang: string, id: string, right: boolean, misses: string[], calls: string[], want?: boolean, error?: string }} Outcome */
 
 /** A made-up note id, as a ULID looks. @param {number} i */
 const idOf = (i) => `01JC${String(i).padStart(4, '0')}${'ABCDEFGHJKMNPQRSTVWXYZ'.repeat(2).slice(i % 7, i % 7 + 18)}`
 
 /**
  * One conversation: the request (and a note beside it), each call answered as Jean would, until the brain answers in words or
- * STEPS run out. @param {any} chosen @param {string} lang @param {{ text: string, note?: string, tools: any[], lines: any[], board?: Board }} turn
+ * STEPS run out; with `skills`, Jean's `skill` too, whose "whiteboard" declares the whiteboard's tools from the next step.
+ * @param {any} chosen @param {string} lang @param {{ text: string, note?: string, tools: any[], lines: any[], board?: Board, skills?: boolean }} turn
  */
-async function converse({ brain, apiKey, body }, lang, { text, note, tools, lines, board }) {
+async function converse({ brain, apiKey, body }, lang, { text, note, tools, lines, board, skills = false }) {
+  if (skills) (tools = [...tools, SKILL]), (lines = [...lines, SKILL_LINE])
   const system = buildSystemPrompt({ assistantName: 'Jean', uiLanguage: LANGS[lang], tools: lines, now: new Date() })
   /** @type {typeof fetch} */
   const fetch = (url, init) => globalThis.fetch(url, body && typeof init?.body === 'string' ? { ...init, body: JSON.stringify({ ...JSON.parse(init.body), ...body }) } : init)
@@ -65,7 +87,13 @@ async function converse({ brain, apiKey, body }, lang, { text, note, tools, line
       calls.push(call.name)
       let content = '', isError = false
       try {
-        if (call.name === 'whiteboard') {
+        if (call.name === 'skill' && skills) {
+          const read = await skillRead(String(call.args?.name ?? ''))
+          calls[calls.length - 1] = `skill:${read.name}`
+          content = read.steps
+          if (read.brings && !tools.includes(WHITEBOARD)) tools = [...tools, WHITEBOARD, WHITEBOARD_CHANGE]
+        } else if (call.name.startsWith('whiteboard') && !tools.includes(WHITEBOARD)) throw new Error(`There is no tool named "${call.name}".`)
+        else if (call.name === 'whiteboard') {
           const one = made(call.args)
           made_ = { name: one.name, areas: one.areas.map((name, i) => ({ id: idOf(800 + i), name })), notes: one.notes.map((n, i) => ({ id: idOf(900 + i), ...n })) }
           content = `Made ${one.name}, at collections/01JCWHITEBOARD0000000000000-board, open beside the conversation: ${one.areas.length} areas, ${one.notes.length} notes.`
@@ -120,12 +148,12 @@ function areasRight(want, areas, lang, misses) {
   }
 }
 
-/** @param {any} chosen @param {any} set @param {string} lang @param {string} id */
-async function makeOne(chosen, set, lang, id) {
+/** @param {any} chosen @param {any} set @param {string} lang @param {string} id @param {boolean} [skills] through the skill */
+async function makeOne(chosen, set, lang, id, skills = false) {
   const brief = set.make[id]
-  const { calls, made: board } = await converse(chosen, lang, { text: brief[lang], tools: [WHITEBOARD, WHITEBOARD_CHANGE], lines: LINES })
+  const { calls, made: board } = await converse(chosen, lang, { text: brief[lang], ...(skills ? { tools: [tableCreate(lang), WRITE], lines: [TABLE_LINE, WRITE_LINE], skills } : { tools: [WHITEBOARD, WHITEBOARD_CHANGE], lines: LINES }) })
   const misses = []
-  if (!board) misses.push('no whiteboard')
+  if (!board) misses.push(skills ? `no whiteboard, ${why(calls)}` : 'no whiteboard')
   else {
     const names = board.areas.map((a) => a.name)
     areasRight(brief.areas, names, lang, misses)
@@ -168,9 +196,27 @@ async function chooseOne(chosen, set, lang, i) {
   return { right: did === request.whiteboard, misses: did === request.whiteboard ? [] : [did ? 'made a whiteboard' : `none: ${calls.join(', ') || 'words'}`], calls }
 }
 
-/** @param {any} chosen @param {string} lang @param {string} id @param {any} expected @param {string} text */
-async function tableOne(chosen, lang, id, expected, text) {
-  const { calls, tables } = await converse(chosen, lang, { text, tools: [tableCreate(lang), WHITEBOARD, WHITEBOARD_CHANGE], lines: [TABLE_LINE, ...LINES] })
+/**
+ * A choosing request through the skill: where a whiteboard is right, the skill read, then one made of three to seven areas in the
+ * request's language, a note in each; elsewhere none. @param {any} chosen @param {any} set @param {string} lang @param {number} i
+ */
+async function skillChooseOne(chosen, set, lang, i) {
+  const request = set.choose[i]
+  const { calls, made: board } = await converse(chosen, lang, { text: request[lang], tools: [tableCreate(lang), WRITE], lines: [TABLE_LINE, WRITE_LINE], skills: true })
+  const misses = []
+  if (!request.whiteboard && calls.includes('whiteboard')) misses.push('made a whiteboard')
+  if (request.whiteboard && !board) misses.push(`no whiteboard, ${why(calls)}`)
+  if (request.whiteboard && board) {
+    areasRight({ min: 3, max: 7 }, board.areas.map((a) => a.name), lang, misses)
+    const empty = board.areas.filter((a) => !board.notes.some((n) => n.area === a.name)).map((a) => a.name)
+    if (empty.length) misses.push(`empty: ${empty.slice(0, 2).join(', ')}`)
+  }
+  return { right: !misses.length, misses, calls, want: request.whiteboard }
+}
+
+/** @param {any} chosen @param {string} lang @param {string} id @param {any} expected @param {string} text @param {boolean} [skills] through the skill */
+async function tableOne(chosen, lang, id, expected, text, skills = false) {
+  const { calls, tables } = await converse(chosen, lang, { text, ...(skills ? { tools: [tableCreate(lang), WRITE], lines: [TABLE_LINE, WRITE_LINE], skills } : { tools: [tableCreate(lang), WHITEBOARD, WHITEBOARD_CHANGE], lines: [TABLE_LINE, ...LINES] }) })
   const scored = score(expected, tables[0] ?? null)
   const misses = [...(calls.includes('whiteboard') ? ['made a whiteboard'] : []), ...scored.misses]
   return { right: scored.correct && !calls.includes('whiteboard'), misses, calls }
@@ -201,10 +247,13 @@ function report(name, all, runs) {
   const cell = (/** @type {Outcome[]} */ items) => `${percent(items.filter((one) => one.right).length, items.length)} (${items.filter((one) => one.right).length}/${items.length})`
   const misses = (/** @type {Outcome[]} */ items) => Object.entries(Object.groupBy(items.flatMap((one) => one.misses.map((miss) => miss.replace(/\d+/g, 'n').slice(0, 60))), (miss) => miss))
     .sort((a, b) => (b[1]?.length ?? 0) - (a[1]?.length ?? 0)).slice(0, 4).map(([miss, list]) => `${miss.replaceAll('|', '/')} (${list?.length})`).join('; ') || '—'
-  const whiteboards = outcomes.filter((one) => one.part === 'tables' && one.calls.includes('whiteboard')).length
+  const whiteboards = outcomes.filter((one) => one.part.endsWith('tables') && one.calls.includes('whiteboard')).length
+  // Through the skill: where a whiteboard is right, made right after reading it, by language; and those made where none is.
+  const wanted = outcomes.filter((one) => one.part === 'skill:make' || (one.part === 'skill:choose' && one.want)), unwanted = outcomes.filter((one) => one.part === 'skill:choose' && one.want === false)
+  const found = wanted.length ? ` Through the skill, a whiteboard made right where one is right: ${cell(wanted)}, ${langs.map((lang) => `${lang} ${percent(wanted.filter((one) => one.lang === lang && one.right).length, wanted.filter((one) => one.lang === lang).length)}`).join(', ')}; the skill read on ${percent(wanted.filter((one) => one.calls.includes('skill:whiteboard')).length, wanted.length)} of them. Whiteboards made where a table or words are right: ${unwanted.filter((one) => one.calls.includes('whiteboard')).length} of ${unwanted.length}.` : ''
   return `## ${name}, ${new Date().toISOString().slice(0, 10)}
 
-${outcomes.length} conversations${runs > 1 ? `, ${runs} runs each` : ''}${all.length > outcomes.length ? `; ${all.length - outcomes.length} failed at the server and are left out` : ''}.${parts.includes('tables') ? ` Whiteboards made for ordinary tables: ${whiteboards}.` : ''}
+${outcomes.length} conversations${runs > 1 ? `, ${runs} runs each` : ''}${all.length > outcomes.length ? `; ${all.length - outcomes.length} failed at the server and are left out` : ''}.${parts.some((part) => part.endsWith('tables')) ? ` Whiteboards made for ordinary tables: ${whiteboards}.` : ''}${found}
 
 | Part | ${langs.join(' | ')} | All | Commonest misses |
 |---|${langs.map(() => '---:').join('|')}|---:|---|
@@ -244,13 +293,16 @@ async function main(argv, env) {
   const outcomes = []
   try {
     for (const lang of langs) {
-      const tables = parts.includes('tables') ? await tablesIn(lang) : null
+      const tables = parts.some((part) => part.endsWith('tables')) ? await tablesIn(lang) : null
       /** @type {{ part: string, id: string, run: () => Promise<{ right: boolean, misses: string[], calls: string[] }> }[]} */
       const jobs = [
         ...(parts.includes('make') ? Object.keys(set.make).map((id) => ({ part: 'make', id, run: () => makeOne(chosen, set, lang, id) })) : []),
         ...(parts.includes('regroup') ? Object.keys(set.regroup).map((id) => ({ part: 'regroup', id, run: () => regroupOne(chosen, set, lang, id) })) : []),
         ...(parts.includes('choose') ? set.choose.map((/** @type {any} */ _, /** @type {number} */ i) => ({ part: 'choose', id: String(i), run: () => chooseOne(chosen, set, lang, i) })) : []),
-        ...(tables ? Object.keys(tables.requests).map((id) => ({ part: 'tables', id, run: () => tableOne(chosen, lang, id, tables.expected[id], tables.requests[id]) })) : []),
+        ...(tables && parts.includes('tables') ? Object.keys(tables.requests).map((id) => ({ part: 'tables', id, run: () => tableOne(chosen, lang, id, tables.expected[id], tables.requests[id]) })) : []),
+        ...(parts.includes('skill:make') ? Object.keys(set.make).map((id) => ({ part: 'skill:make', id, run: () => makeOne(chosen, set, lang, id, true) })) : []),
+        ...(parts.includes('skill:choose') ? set.choose.map((/** @type {any} */ _, /** @type {number} */ i) => ({ part: 'skill:choose', id: String(i), run: () => skillChooseOne(chosen, set, lang, i) })) : []),
+        ...(tables && parts.includes('skill:tables') ? Object.keys(tables.requests).map((id) => ({ part: 'skill:tables', id, run: () => tableOne(chosen, lang, id, tables.expected[id], tables.requests[id], true) })) : []),
       ].flatMap((job) => Array.from({ length: runs }, () => job))
       /** @type {Outcome[]} */
       const here = []
