@@ -75,5 +75,28 @@
   "whiteboards.removed": {
     "other": "Đã xóa {count}."
   },
-  "whiteboards.tidied": "Đã xếp ghi chú lại thành hàng."
+  "whiteboards.tidied": "Đã xếp ghi chú lại thành hàng.",
+  "whiteboards.asTitle": "Chuyển thành tiêu đề",
+  "whiteboards.asLine": "Chuyển thành văn bản thường",
+  "whiteboards.asTable": "Hiển thị dạng bảng",
+  "whiteboards.only": "Chỉ {section}",
+  "whiteboards.allSections": "Tất cả các phần",
+  "whiteboards.compare": "Trước hoặc sau thay đổi của {name}",
+  "whiteboards.before": "Trước",
+  "whiteboards.after": "Sau",
+  "whiteboards.beforeSaid": "Bảng trắng như trước khi có thay đổi của {name}. “Sau” sẽ hiện lại các thay đổi.",
+  "whiteboards.here": {
+    "other": "{count} người khác đang ở đây"
+  },
+  "whiteboards.inSection": "Trong {section}",
+  "whiteboards.onBoard": "Trên bảng",
+  "whiteboards.goThere": "Đến đó",
+  "whiteboards.picked": {
+    "other": "{count} ghi chú từ “{name}”"
+  },
+  "whiteboards.unpick": "Bỏ ra",
+  "whiteboards.ideas": "Gợi ý cho các ghi chú này",
+  "whiteboards.ideaGroup": "Nhóm các ghi chú này theo chủ đề",
+  "whiteboards.ideaActions": "Biến các ghi chú này thành việc cần làm, mỗi việc có người phụ trách và ngày",
+  "whiteboards.ideaSum": "Tóm tắt các ghi chú này trong vài dòng"
 }

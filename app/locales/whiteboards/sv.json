@@ -79,5 +79,30 @@
     "one": "Borttaget.",
     "other": "{count} borttagna."
   },
-  "whiteboards.tidied": "Lapparna ligger i rader igen."
+  "whiteboards.tidied": "Lapparna ligger i rader igen.",
+  "whiteboards.asTitle": "Gör till rubrik",
+  "whiteboards.asLine": "Gör till vanlig text",
+  "whiteboards.asTable": "Visa som tabell",
+  "whiteboards.only": "Bara {section}",
+  "whiteboards.allSections": "Alla sektioner",
+  "whiteboards.compare": "Före eller efter ändringar från {name}",
+  "whiteboards.before": "Före",
+  "whiteboards.after": "Efter",
+  "whiteboards.beforeSaid": "Whiteboarden som den var före ändringarna från {name}. ”Efter” visar dem igen.",
+  "whiteboards.here": {
+    "one": "{count} person till är här",
+    "other": "{count} personer till är här"
+  },
+  "whiteboards.inSection": "I {section}",
+  "whiteboards.onBoard": "På whiteboarden",
+  "whiteboards.goThere": "Gå dit",
+  "whiteboards.picked": {
+    "one": "{count} lapp från ”{name}”",
+    "other": "{count} lappar från ”{name}”"
+  },
+  "whiteboards.unpick": "Utelämna dem",
+  "whiteboards.ideas": "Idéer om de här lapparna",
+  "whiteboards.ideaGroup": "Gruppera de här lapparna efter tema",
+  "whiteboards.ideaActions": "Gör om de här lapparna till uppgifter, var och en med en ansvarig och ett datum",
+  "whiteboards.ideaSum": "Sammanfatta de här lapparna på några rader"
 }

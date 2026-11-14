@@ -79,5 +79,30 @@
     "one": "Silindi.",
     "other": "{count} öğe silindi."
   },
-  "whiteboards.tidied": "Notlar yeniden sıraya dizildi."
+  "whiteboards.tidied": "Notlar yeniden sıraya dizildi.",
+  "whiteboards.asTitle": "Başlık yap",
+  "whiteboards.asLine": "Düz metin yap",
+  "whiteboards.asTable": "Tablo olarak göster",
+  "whiteboards.only": "Yalnızca {section}",
+  "whiteboards.allSections": "Tüm bölümler",
+  "whiteboards.compare": "{name} tarafından yapılan değişikliklerden önce veya sonra",
+  "whiteboards.before": "Önce",
+  "whiteboards.after": "Sonra",
+  "whiteboards.beforeSaid": "Beyaz tahtanın {name} tarafından yapılan değişikliklerden önceki hâli. “Sonra” onları yeniden gösterir.",
+  "whiteboards.here": {
+    "one": "Burada {count} kişi daha var",
+    "other": "Burada {count} kişi daha var"
+  },
+  "whiteboards.inSection": "{section} bölümünde",
+  "whiteboards.onBoard": "Tahtada",
+  "whiteboards.goThere": "Oraya git",
+  "whiteboards.picked": {
+    "one": "“{name}” tahtasından {count} not",
+    "other": "“{name}” tahtasından {count} not"
+  },
+  "whiteboards.unpick": "Bunları çıkar",
+  "whiteboards.ideas": "Bu notlar için fikirler",
+  "whiteboards.ideaGroup": "Bu notları temaya göre grupla",
+  "whiteboards.ideaActions": "Bu notları, her birinin bir sorumlusu ve tarihi olan iş maddelerine dönüştür",
+  "whiteboards.ideaSum": "Bu notları birkaç satırda özetle"
 }

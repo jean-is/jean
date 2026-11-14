@@ -75,5 +75,28 @@
   "whiteboards.removed": {
     "other": "A ti pa {count} rẹ́."
   },
-  "whiteboards.tidied": "A ti tún àwọn àkọsílẹ̀ tò sí ìlà."
+  "whiteboards.tidied": "A ti tún àwọn àkọsílẹ̀ tò sí ìlà.",
+  "whiteboards.asTitle": "Sọ ọ́ di àkọlé",
+  "whiteboards.asLine": "Sọ ọ́ di ọ̀rọ̀ lásán",
+  "whiteboards.asTable": "Fi hàn bí tábìlì",
+  "whiteboards.only": "{section} nìkan",
+  "whiteboards.allSections": "Gbogbo abala",
+  "whiteboards.compare": "Ṣáájú tàbí lẹ́yìn àwọn àyípadà {name}",
+  "whiteboards.before": "Ṣáájú",
+  "whiteboards.after": "Lẹ́yìn",
+  "whiteboards.beforeSaid": "Pátákó bí ó ṣe rí ṣáájú àwọn àyípadà {name}. “Lẹ́yìn” tún ń fi wọ́n hàn.",
+  "whiteboards.here": {
+    "other": "Àwọn ènìyàn mìíràn {count} wà níbí"
+  },
+  "whiteboards.inSection": "Nínú {section}",
+  "whiteboards.onBoard": "Lórí pátákó",
+  "whiteboards.goThere": "Lọ síbẹ̀",
+  "whiteboards.picked": {
+    "other": "Àkọsílẹ̀ {count} láti “{name}”"
+  },
+  "whiteboards.unpick": "Yọ wọ́n kúrò",
+  "whiteboards.ideas": "Àwọn èrò nípa àwọn àkọsílẹ̀ wọ̀nyí",
+  "whiteboards.ideaGroup": "Kó àwọn àkọsílẹ̀ wọ̀nyí jọ ní ìsọ̀rí-ìsọ̀rí gẹ́gẹ́ bí kókó ọ̀rọ̀",
+  "whiteboards.ideaActions": "Sọ àwọn àkọsílẹ̀ wọ̀nyí di iṣẹ́ láti ṣe, kọ̀ọ̀kan pẹ̀lú olùbójútó àti ọjọ́",
+  "whiteboards.ideaSum": "Ṣe àkópọ̀ àwọn àkọsílẹ̀ wọ̀nyí ní ìlà díẹ̀"
 }

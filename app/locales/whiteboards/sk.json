@@ -87,5 +87,34 @@
     "many": "Odstránené: {count}.",
     "other": "Odstránené: {count}."
   },
-  "whiteboards.tidied": "Lístky sú znova v radoch."
+  "whiteboards.tidied": "Lístky sú znova v radoch.",
+  "whiteboards.asTitle": "Urobiť z neho nadpis",
+  "whiteboards.asLine": "Urobiť z neho obyčajný text",
+  "whiteboards.asTable": "Zobraziť ako tabuľku",
+  "whiteboards.only": "Len sekcia {section}",
+  "whiteboards.allSections": "Všetky sekcie",
+  "whiteboards.compare": "Pred zmenami od aplikácie {name} alebo po nich",
+  "whiteboards.before": "Predtým",
+  "whiteboards.after": "Potom",
+  "whiteboards.beforeSaid": "Tabuľa tak, ako vyzerala pred zmenami od aplikácie {name}. Tlačidlo „Potom“ ich znova ukáže.",
+  "whiteboards.here": {
+    "one": "Je tu ešte {count} človek",
+    "few": "Sú tu ešte {count} ľudia",
+    "many": "Je tu ešte {count} človeka",
+    "other": "Je tu ešte {count} ľudí"
+  },
+  "whiteboards.inSection": "V sekcii {section}",
+  "whiteboards.onBoard": "Na tabuli",
+  "whiteboards.goThere": "Prejsť tam",
+  "whiteboards.picked": {
+    "one": "{count} lístok z tabule „{name}“",
+    "few": "{count} lístky z tabule „{name}“",
+    "many": "{count} lístka z tabule „{name}“",
+    "other": "{count} lístkov z tabule „{name}“"
+  },
+  "whiteboards.unpick": "Vynechať ich",
+  "whiteboards.ideas": "Nápady k týmto lístkom",
+  "whiteboards.ideaGroup": "Zoskup tieto lístky podľa tém",
+  "whiteboards.ideaActions": "Urob z týchto lístkov úlohy, každú so zodpovednou osobou a dátumom",
+  "whiteboards.ideaSum": "Zhrň tieto lístky do niekoľkých riadkov"
 }

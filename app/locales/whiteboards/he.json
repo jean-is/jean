@@ -83,5 +83,32 @@
     "two": "נמחקו {count}.",
     "other": "נמחקו {count}."
   },
-  "whiteboards.tidied": "הפתקים שוב בשורות."
+  "whiteboards.tidied": "הפתקים שוב בשורות.",
+  "whiteboards.asTitle": "הפיכה לכותרת",
+  "whiteboards.asLine": "הפיכה לטקסט רגיל",
+  "whiteboards.asTable": "הצגה כטבלה",
+  "whiteboards.only": "רק {section}",
+  "whiteboards.allSections": "כל האזורים",
+  "whiteboards.compare": "לפני השינויים של {name} או אחריהם",
+  "whiteboards.before": "לפני",
+  "whiteboards.after": "אחרי",
+  "whiteboards.beforeSaid": "הלוח הלבן כפי שהיה לפני השינויים של {name}. “אחרי” מציג אותם שוב.",
+  "whiteboards.here": {
+    "one": "עוד אדם אחד כאן",
+    "two": "עוד שני אנשים כאן",
+    "other": "עוד {count} אנשים כאן"
+  },
+  "whiteboards.inSection": "באזור {section}",
+  "whiteboards.onBoard": "על הלוח",
+  "whiteboards.goThere": "מעבר לשם",
+  "whiteboards.picked": {
+    "one": "פתק אחד מתוך “{name}”",
+    "two": "שני פתקים מתוך “{name}”",
+    "other": "{count} פתקים מתוך “{name}”"
+  },
+  "whiteboards.unpick": "להשמיט אותם",
+  "whiteboards.ideas": "רעיונות לגבי הפתקים האלה",
+  "whiteboards.ideaGroup": "קבץ את הפתקים האלה לפי נושא",
+  "whiteboards.ideaActions": "הפוך את הפתקים האלה למשימות, לכל אחת אחראי ותאריך",
+  "whiteboards.ideaSum": "סכם את הפתקים האלה בכמה שורות"
 }

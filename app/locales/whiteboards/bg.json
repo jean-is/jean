@@ -79,5 +79,30 @@
     "one": "Изтрито.",
     "other": "Изтрити: {count}."
   },
-  "whiteboards.tidied": "Бележките пак са подредени в редове."
+  "whiteboards.tidied": "Бележките пак са подредени в редове.",
+  "whiteboards.asTitle": "Направи го заглавие",
+  "whiteboards.asLine": "Направи го обикновен текст",
+  "whiteboards.asTable": "Покажи като таблица",
+  "whiteboards.only": "Само „{section}“",
+  "whiteboards.allSections": "Всички раздели",
+  "whiteboards.compare": "Преди или след промените от {name}",
+  "whiteboards.before": "Преди",
+  "whiteboards.after": "След",
+  "whiteboards.beforeSaid": "Дъската, каквато беше преди промените от {name}. „След“ ги показва отново.",
+  "whiteboards.here": {
+    "one": "Още {count} човек е тук",
+    "other": "Още {count} души са тук"
+  },
+  "whiteboards.inSection": "В „{section}“",
+  "whiteboards.onBoard": "На дъската",
+  "whiteboards.goThere": "Отиди там",
+  "whiteboards.picked": {
+    "one": "{count} бележка от „{name}“",
+    "other": "{count} бележки от „{name}“"
+  },
+  "whiteboards.unpick": "Махни ги",
+  "whiteboards.ideas": "Идеи за тези бележки",
+  "whiteboards.ideaGroup": "Групирай тези бележки по теми",
+  "whiteboards.ideaActions": "Превърни тези бележки в задачи, всяка с отговорник и дата",
+  "whiteboards.ideaSum": "Обобщи тези бележки в няколко реда"
 }

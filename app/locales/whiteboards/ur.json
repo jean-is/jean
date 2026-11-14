@@ -79,5 +79,30 @@
     "one": "حذف کر دیا گیا۔",
     "other": "{count} حذف کر دیے گئے۔"
   },
-  "whiteboards.tidied": "نوٹس دوبارہ قطاروں میں لگ گئے۔"
+  "whiteboards.tidied": "نوٹس دوبارہ قطاروں میں لگ گئے۔",
+  "whiteboards.asTitle": "عنوان بنائیں",
+  "whiteboards.asLine": "سادہ متن بنائیں",
+  "whiteboards.asTable": "جدول کی صورت میں دکھائیں",
+  "whiteboards.only": "صرف {section}",
+  "whiteboards.allSections": "تمام حصے",
+  "whiteboards.compare": "{name} کی تبدیلیوں سے پہلے یا بعد",
+  "whiteboards.before": "پہلے",
+  "whiteboards.after": "بعد",
+  "whiteboards.beforeSaid": "وائٹ بورڈ جیسا {name} کی تبدیلیوں سے پہلے تھا۔ “بعد” انہیں دوبارہ دکھاتا ہے۔",
+  "whiteboards.here": {
+    "one": "یہاں {count} اور شخص ہے",
+    "other": "یہاں {count} اور لوگ ہیں"
+  },
+  "whiteboards.inSection": "{section} میں",
+  "whiteboards.onBoard": "بورڈ پر",
+  "whiteboards.goThere": "وہاں جائیں",
+  "whiteboards.picked": {
+    "one": "“{name}” سے {count} نوٹ",
+    "other": "“{name}” سے {count} نوٹس"
+  },
+  "whiteboards.unpick": "انہیں نکال دیں",
+  "whiteboards.ideas": "ان نوٹس کے بارے میں خیالات",
+  "whiteboards.ideaGroup": "ان نوٹس کو موضوع کے لحاظ سے گروپ کرو",
+  "whiteboards.ideaActions": "ان نوٹس کو کرنے کے کاموں میں بدلو، ہر ایک کے ساتھ ایک ذمہ دار اور ایک تاریخ",
+  "whiteboards.ideaSum": "ان نوٹس کا چند سطروں میں خلاصہ کرو"
 }

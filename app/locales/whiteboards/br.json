@@ -91,5 +91,36 @@
     "many": "{count} dilamet.",
     "other": "{count} dilamet."
   },
-  "whiteboards.tidied": "Notennoù renket a-rez en-dro."
+  "whiteboards.tidied": "Notennoù renket a-rez en-dro.",
+  "whiteboards.asTitle": "Ober un titl anezhañ",
+  "whiteboards.asLine": "Ober testenn eeun anezhañ",
+  "whiteboards.asTable": "Diskouez evel taolenn",
+  "whiteboards.only": "{section} hepken",
+  "whiteboards.allSections": "An holl rannoù",
+  "whiteboards.compare": "A-raok pe goude kemmoù {name}",
+  "whiteboards.before": "A-raok",
+  "whiteboards.after": "Goude",
+  "whiteboards.beforeSaid": "An daolenn wenn evel ma oa a-raok kemmoù {name}. « Goude » a ziskouez anezho en-dro.",
+  "whiteboards.here": {
+    "one": "{count} den all amañ",
+    "two": "{count} zen all amañ",
+    "few": "{count} den all amañ",
+    "many": "{count} a dud all amañ",
+    "other": "{count} den all amañ"
+  },
+  "whiteboards.inSection": "E {section}",
+  "whiteboards.onBoard": "War an daolenn",
+  "whiteboards.goThere": "Mont di",
+  "whiteboards.picked": {
+    "one": "{count} notenn eus « {name} »",
+    "two": "{count} notenn eus « {name} »",
+    "few": "{count} notenn eus « {name} »",
+    "many": "{count} a notennoù eus « {name} »",
+    "other": "{count} notenn eus « {name} »"
+  },
+  "whiteboards.unpick": "Lezel anezho a-gostez",
+  "whiteboards.ideas": "Mennozhioù diwar-benn an notennoù-mañ",
+  "whiteboards.ideaGroup": "Stroll an notennoù-mañ dre dem",
+  "whiteboards.ideaActions": "Gra oberennoù eus an notennoù-mañ, pep hini gant un atebeg hag un deiziad",
+  "whiteboards.ideaSum": "Diverra an notennoù-mañ en un nebeud linennoù"
 }

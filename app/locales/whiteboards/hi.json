@@ -79,5 +79,30 @@
     "one": "हटा दिया गया।",
     "other": "{count} हटा दिए गए।"
   },
-  "whiteboards.tidied": "नोट फिर से पंक्तियों में लगा दिए गए।"
+  "whiteboards.tidied": "नोट फिर से पंक्तियों में लगा दिए गए।",
+  "whiteboards.asTitle": "शीर्षक बनाएँ",
+  "whiteboards.asLine": "सादा टेक्स्ट बनाएँ",
+  "whiteboards.asTable": "तालिका के रूप में दिखाएँ",
+  "whiteboards.only": "सिर्फ़ {section}",
+  "whiteboards.allSections": "सभी खंड",
+  "whiteboards.compare": "{name} के बदलावों से पहले या बाद",
+  "whiteboards.before": "पहले",
+  "whiteboards.after": "बाद में",
+  "whiteboards.beforeSaid": "{name} के बदलावों से पहले व्हाइटबोर्ड जैसा था। “बाद में” उन्हें फिर दिखाता है।",
+  "whiteboards.here": {
+    "one": "{count} और व्यक्ति यहाँ है",
+    "other": "{count} और लोग यहाँ हैं"
+  },
+  "whiteboards.inSection": "{section} में",
+  "whiteboards.onBoard": "बोर्ड पर",
+  "whiteboards.goThere": "वहाँ जाएँ",
+  "whiteboards.picked": {
+    "one": "“{name}” से {count} नोट",
+    "other": "“{name}” से {count} नोट"
+  },
+  "whiteboards.unpick": "इन्हें हटाएँ",
+  "whiteboards.ideas": "इन नोट के बारे में सुझाव",
+  "whiteboards.ideaGroup": "इन नोट को विषय के हिसाब से समूहों में बाँटो",
+  "whiteboards.ideaActions": "इन नोट को करने वाले कामों में बदलो, हर एक के साथ एक ज़िम्मेदार और एक तारीख़",
+  "whiteboards.ideaSum": "इन नोट को कुछ पंक्तियों में समेटो"
 }

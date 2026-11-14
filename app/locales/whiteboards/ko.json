@@ -75,5 +75,28 @@
   "whiteboards.removed": {
     "other": "{count}개 삭제했어요."
   },
-  "whiteboards.tidied": "메모를 다시 줄 맞춰 놓았어요."
+  "whiteboards.tidied": "메모를 다시 줄 맞춰 놓았어요.",
+  "whiteboards.asTitle": "제목으로 만들기",
+  "whiteboards.asLine": "일반 텍스트로 만들기",
+  "whiteboards.asTable": "표로 보기",
+  "whiteboards.only": "‘{section}’ 구역만",
+  "whiteboards.allSections": "모든 구역",
+  "whiteboards.compare": "{name}의 변경 전후",
+  "whiteboards.before": "변경 전",
+  "whiteboards.after": "변경 후",
+  "whiteboards.beforeSaid": "{name}의 변경 전 화이트보드예요. ‘변경 후’를 누르면 변경이 다시 보여요.",
+  "whiteboards.here": {
+    "other": "다른 사람 {count}명이 여기 있어요"
+  },
+  "whiteboards.inSection": "‘{section}’ 구역",
+  "whiteboards.onBoard": "보드 위",
+  "whiteboards.goThere": "그곳으로 이동",
+  "whiteboards.picked": {
+    "other": "‘{name}’의 메모 {count}개"
+  },
+  "whiteboards.unpick": "빼기",
+  "whiteboards.ideas": "이 메모에 대한 아이디어",
+  "whiteboards.ideaGroup": "이 메모들을 주제별로 묶어 줘",
+  "whiteboards.ideaActions": "이 메모들을 담당자와 날짜가 있는 할 일로 바꿔 줘",
+  "whiteboards.ideaSum": "이 메모들을 몇 줄로 요약해 줘"
 }

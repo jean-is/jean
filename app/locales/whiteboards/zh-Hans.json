@@ -75,5 +75,28 @@
   "whiteboards.removed": {
     "other": "已删除 {count} 项。"
   },
-  "whiteboards.tidied": "便签已重新排成行。"
+  "whiteboards.tidied": "便签已重新排成行。",
+  "whiteboards.asTitle": "设为标题",
+  "whiteboards.asLine": "设为普通文本",
+  "whiteboards.asTable": "以表格显示",
+  "whiteboards.only": "仅“{section}”",
+  "whiteboards.allSections": "所有分区",
+  "whiteboards.compare": "{name} 的修改之前或之后",
+  "whiteboards.before": "修改前",
+  "whiteboards.after": "修改后",
+  "whiteboards.beforeSaid": "白板在 {name} 修改之前的样子。点“修改后”可再次显示这些修改。",
+  "whiteboards.here": {
+    "other": "这里还有 {count} 人"
+  },
+  "whiteboards.inSection": "在“{section}”中",
+  "whiteboards.onBoard": "在白板上",
+  "whiteboards.goThere": "前往",
+  "whiteboards.picked": {
+    "other": "来自“{name}”的 {count} 张便签"
+  },
+  "whiteboards.unpick": "移除",
+  "whiteboards.ideas": "关于这些便签的想法",
+  "whiteboards.ideaGroup": "把这些便签按主题分组",
+  "whiteboards.ideaActions": "把这些便签变成待办事项，每项都有负责人和日期",
+  "whiteboards.ideaSum": "用几行话总结这些便签"
 }

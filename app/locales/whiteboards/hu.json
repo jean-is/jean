@@ -79,5 +79,30 @@
     "one": "Törölve.",
     "other": "{count} törölve."
   },
-  "whiteboards.tidied": "A cetlik újra sorokban."
+  "whiteboards.tidied": "A cetlik újra sorokban.",
+  "whiteboards.asTitle": "Címmé alakítás",
+  "whiteboards.asLine": "Sima szöveggé alakítás",
+  "whiteboards.asTable": "Megjelenítés táblázatként",
+  "whiteboards.only": "Csak ez: {section}",
+  "whiteboards.allSections": "Minden szakasz",
+  "whiteboards.compare": "{name} módosításai előtt vagy után",
+  "whiteboards.before": "Előtte",
+  "whiteboards.after": "Utána",
+  "whiteboards.beforeSaid": "A tábla, ahogy {name} módosításai előtt kinézett. Az „Utána” gomb újra megmutatja őket.",
+  "whiteboards.here": {
+    "one": "Még {count} ember van itt",
+    "other": "Még {count} ember van itt"
+  },
+  "whiteboards.inSection": "Itt: {section}",
+  "whiteboards.onBoard": "A táblán",
+  "whiteboards.goThere": "Odaugrás",
+  "whiteboards.picked": {
+    "one": "{count} cetli innen: „{name}”",
+    "other": "{count} cetli innen: „{name}”"
+  },
+  "whiteboards.unpick": "Kihagyás",
+  "whiteboards.ideas": "Ötletek ezekhez a cetlikhez",
+  "whiteboards.ideaGroup": "Csoportosítsd téma szerint ezeket a cetliket",
+  "whiteboards.ideaActions": "Alakítsd feladatokká ezeket a cetliket, mindegyikhez felelőssel és dátummal",
+  "whiteboards.ideaSum": "Foglald össze ezeket a cetliket néhány sorban"
 }

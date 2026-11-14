@@ -79,5 +79,30 @@
     "one": "An goge.",
     "other": "An goge {count}."
   },
-  "whiteboards.tidied": "An sake jera bayanai a layuka."
+  "whiteboards.tidied": "An sake jera bayanai a layuka.",
+  "whiteboards.asTitle": "Mai da shi take",
+  "whiteboards.asLine": "Mai da shi rubutu na yau da kullum",
+  "whiteboards.asTable": "Nuna a matsayin tebur",
+  "whiteboards.only": "{section} kawai",
+  "whiteboards.allSections": "Duk sassa",
+  "whiteboards.compare": "Kafin ko bayan canje-canjen {name}",
+  "whiteboards.before": "Kafin",
+  "whiteboards.after": "Bayan",
+  "whiteboards.beforeSaid": "Farin allo kamar yadda yake kafin canje-canjen {name}. “Bayan” na sake nuna su.",
+  "whiteboards.here": {
+    "one": "Akwai wani mutum {count} a nan",
+    "other": "Akwai wasu mutane {count} a nan"
+  },
+  "whiteboards.inSection": "A {section}",
+  "whiteboards.onBoard": "A kan allo",
+  "whiteboards.goThere": "Je can",
+  "whiteboards.picked": {
+    "one": "Bayani {count} daga “{name}”",
+    "other": "Bayanai {count} daga “{name}”"
+  },
+  "whiteboards.unpick": "Cire su",
+  "whiteboards.ideas": "Shawarwari game da waɗannan bayanai",
+  "whiteboards.ideaGroup": "Haɗa waɗannan bayanai rukuni-rukuni bisa jigo",
+  "whiteboards.ideaActions": "Mai da waɗannan bayanai ayyukan yi, kowanne da mai alhakinsa da kwanan wata",
+  "whiteboards.ideaSum": "Taƙaita waɗannan bayanai cikin layuka kaɗan"
 }

@@ -79,5 +79,30 @@
     "one": "Διαγράφηκε.",
     "other": "Διαγράφηκαν: {count}."
   },
-  "whiteboards.tidied": "Οι σημειώσεις μπήκαν ξανά σε σειρές."
+  "whiteboards.tidied": "Οι σημειώσεις μπήκαν ξανά σε σειρές.",
+  "whiteboards.asTitle": "Μετατροπή σε τίτλο",
+  "whiteboards.asLine": "Μετατροπή σε απλό κείμενο",
+  "whiteboards.asTable": "Προβολή ως πίνακας",
+  "whiteboards.only": "Μόνο {section}",
+  "whiteboards.allSections": "Όλες οι ενότητες",
+  "whiteboards.compare": "Πριν ή μετά τις αλλαγές από: {name}",
+  "whiteboards.before": "Πριν",
+  "whiteboards.after": "Μετά",
+  "whiteboards.beforeSaid": "Ο λευκός πίνακας όπως ήταν πριν από τις αλλαγές από: {name}. Το «Μετά» τις δείχνει ξανά.",
+  "whiteboards.here": {
+    "one": "{count} ακόμη άτομο εδώ",
+    "other": "{count} ακόμη άτομα εδώ"
+  },
+  "whiteboards.inSection": "Στην ενότητα {section}",
+  "whiteboards.onBoard": "Στον πίνακα",
+  "whiteboards.goThere": "Μετάβαση εκεί",
+  "whiteboards.picked": {
+    "one": "{count} σημείωση από τον πίνακα «{name}»",
+    "other": "{count} σημειώσεις από τον πίνακα «{name}»"
+  },
+  "whiteboards.unpick": "Αφαίρεσή τους",
+  "whiteboards.ideas": "Ιδέες για αυτές τις σημειώσεις",
+  "whiteboards.ideaGroup": "Ομαδοποίησε αυτές τις σημειώσεις ανά θέμα",
+  "whiteboards.ideaActions": "Μετάτρεψε αυτές τις σημειώσεις σε εργασίες, την καθεμία με υπεύθυνο και ημερομηνία",
+  "whiteboards.ideaSum": "Συνόψισε αυτές τις σημειώσεις σε λίγες γραμμές"
 }

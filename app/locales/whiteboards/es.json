@@ -83,5 +83,32 @@
     "many": "Se han eliminado {count}.",
     "other": "Se han eliminado {count}."
   },
-  "whiteboards.tidied": "Notas puestas otra vez en filas."
+  "whiteboards.tidied": "Notas puestas otra vez en filas.",
+  "whiteboards.asTitle": "Convertir en título",
+  "whiteboards.asLine": "Convertir en texto normal",
+  "whiteboards.asTable": "Ver como tabla",
+  "whiteboards.only": "Solo {section}",
+  "whiteboards.allSections": "Todas las secciones",
+  "whiteboards.compare": "Antes o después de los cambios de {name}",
+  "whiteboards.before": "Antes",
+  "whiteboards.after": "Después",
+  "whiteboards.beforeSaid": "La pizarra tal como estaba antes de los cambios de {name}. «Después» los vuelve a mostrar.",
+  "whiteboards.here": {
+    "one": "{count} persona más aquí",
+    "many": "{count} de personas más aquí",
+    "other": "{count} personas más aquí"
+  },
+  "whiteboards.inSection": "En {section}",
+  "whiteboards.onBoard": "En la pizarra",
+  "whiteboards.goThere": "Ir allí",
+  "whiteboards.picked": {
+    "one": "{count} nota de «{name}»",
+    "many": "{count} de notas de «{name}»",
+    "other": "{count} notas de «{name}»"
+  },
+  "whiteboards.unpick": "Quitarlas",
+  "whiteboards.ideas": "Ideas sobre estas notas",
+  "whiteboards.ideaGroup": "Agrupa estas notas por tema",
+  "whiteboards.ideaActions": "Convierte estas notas en tareas, cada una con un responsable y una fecha",
+  "whiteboards.ideaSum": "Resume estas notas en unas pocas líneas"
 }

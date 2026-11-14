@@ -83,5 +83,32 @@
     "many": "{count} d’éléments supprimés.",
     "other": "{count} éléments supprimés."
   },
-  "whiteboards.tidied": "Notes remises en rangées."
+  "whiteboards.tidied": "Notes remises en rangées.",
+  "whiteboards.asTitle": "En faire un titre",
+  "whiteboards.asLine": "En faire du texte simple",
+  "whiteboards.asTable": "Afficher en tableau",
+  "whiteboards.only": "Uniquement {section}",
+  "whiteboards.allSections": "Toutes les sections",
+  "whiteboards.compare": "Avant ou après les modifications de {name}",
+  "whiteboards.before": "Avant",
+  "whiteboards.after": "Après",
+  "whiteboards.beforeSaid": "Le tableau blanc tel qu’il était avant les modifications de {name}. « Après » les affiche à nouveau.",
+  "whiteboards.here": {
+    "one": "{count} autre personne ici",
+    "many": "{count} d’autres personnes ici",
+    "other": "{count} autres personnes ici"
+  },
+  "whiteboards.inSection": "Dans {section}",
+  "whiteboards.onBoard": "Sur le tableau",
+  "whiteboards.goThere": "Y aller",
+  "whiteboards.picked": {
+    "one": "{count} note de « {name} »",
+    "many": "{count} de notes de « {name} »",
+    "other": "{count} notes de « {name} »"
+  },
+  "whiteboards.unpick": "Les retirer",
+  "whiteboards.ideas": "Idées pour ces notes",
+  "whiteboards.ideaGroup": "Regroupe ces notes par thème",
+  "whiteboards.ideaActions": "Transforme ces notes en actions, chacune avec un responsable et une date",
+  "whiteboards.ideaSum": "Résume ces notes en quelques lignes"
 }

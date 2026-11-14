@@ -79,5 +79,30 @@
     "one": "நீக்கப்பட்டது.",
     "other": "{count} நீக்கப்பட்டன."
   },
-  "whiteboards.tidied": "குறிப்புகள் மீண்டும் வரிசைகளில் அடுக்கப்பட்டன."
+  "whiteboards.tidied": "குறிப்புகள் மீண்டும் வரிசைகளில் அடுக்கப்பட்டன.",
+  "whiteboards.asTitle": "தலைப்பாக்கு",
+  "whiteboards.asLine": "சாதாரண உரையாக்கு",
+  "whiteboards.asTable": "அட்டவணையாகக் காட்டு",
+  "whiteboards.only": "{section} மட்டும்",
+  "whiteboards.allSections": "எல்லாப் பகுதிகளும்",
+  "whiteboards.compare": "{name} செய்த மாற்றங்களுக்கு முன் அல்லது பின்",
+  "whiteboards.before": "முன்",
+  "whiteboards.after": "பின்",
+  "whiteboards.beforeSaid": "{name} செய்த மாற்றங்களுக்கு முன் வெள்ளைப் பலகை இருந்தபடி. “பின்” அவற்றை மீண்டும் காட்டும்.",
+  "whiteboards.here": {
+    "one": "இங்கே இன்னும் {count} நபர் உள்ளார்",
+    "other": "இங்கே இன்னும் {count} நபர்கள் உள்ளனர்"
+  },
+  "whiteboards.inSection": "{section} பகுதியில்",
+  "whiteboards.onBoard": "பலகையில்",
+  "whiteboards.goThere": "அங்கே செல்",
+  "whiteboards.picked": {
+    "one": "“{name}” பலகையிலிருந்து {count} குறிப்பு",
+    "other": "“{name}” பலகையிலிருந்து {count} குறிப்புகள்"
+  },
+  "whiteboards.unpick": "அவற்றை விலக்கு",
+  "whiteboards.ideas": "இந்தக் குறிப்புகள் பற்றிய யோசனைகள்",
+  "whiteboards.ideaGroup": "இந்தக் குறிப்புகளைத் தலைப்பு வாரியாகக் குழுவாக்கு",
+  "whiteboards.ideaActions": "இந்தக் குறிப்புகளைச் செய்ய வேண்டிய பணிகளாக்கு, ஒவ்வொன்றுக்கும் ஒரு பொறுப்பாளரும் தேதியும்",
+  "whiteboards.ideaSum": "இந்தக் குறிப்புகளைச் சில வரிகளில் சுருக்கிச் சொல்"
 }

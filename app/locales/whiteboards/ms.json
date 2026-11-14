@@ -75,5 +75,28 @@
   "whiteboards.removed": {
     "other": "{count} dipadam."
   },
-  "whiteboards.tidied": "Nota disusun semula dalam baris."
+  "whiteboards.tidied": "Nota disusun semula dalam baris.",
+  "whiteboards.asTitle": "Jadikan tajuk",
+  "whiteboards.asLine": "Jadikan teks biasa",
+  "whiteboards.asTable": "Papar sebagai jadual",
+  "whiteboards.only": "{section} sahaja",
+  "whiteboards.allSections": "Semua bahagian",
+  "whiteboards.compare": "Sebelum atau selepas perubahan oleh {name}",
+  "whiteboards.before": "Sebelum",
+  "whiteboards.after": "Selepas",
+  "whiteboards.beforeSaid": "Papan putih seperti sebelum perubahan oleh {name}. “Selepas” memaparkannya semula.",
+  "whiteboards.here": {
+    "other": "{count} orang lain di sini"
+  },
+  "whiteboards.inSection": "Dalam {section}",
+  "whiteboards.onBoard": "Di papan",
+  "whiteboards.goThere": "Pergi ke sana",
+  "whiteboards.picked": {
+    "other": "{count} nota daripada “{name}”"
+  },
+  "whiteboards.unpick": "Keluarkan",
+  "whiteboards.ideas": "Idea tentang nota ini",
+  "whiteboards.ideaGroup": "Kumpulkan nota ini mengikut tema",
+  "whiteboards.ideaActions": "Jadikan nota ini tindakan, setiap satu dengan pemilik dan tarikh",
+  "whiteboards.ideaSum": "Ringkaskan nota ini dalam beberapa baris"
 }

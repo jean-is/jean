@@ -79,5 +79,30 @@
     "one": "Slettet.",
     "other": "{count} slettet."
   },
-  "whiteboards.tidied": "Noterne står i rækker igen."
+  "whiteboards.tidied": "Noterne står i rækker igen.",
+  "whiteboards.asTitle": "Gør det til en overskrift",
+  "whiteboards.asLine": "Gør det til almindelig tekst",
+  "whiteboards.asTable": "Vis som tabel",
+  "whiteboards.only": "Kun {section}",
+  "whiteboards.allSections": "Alle sektioner",
+  "whiteboards.compare": "Før eller efter ændringer fra {name}",
+  "whiteboards.before": "Før",
+  "whiteboards.after": "Efter",
+  "whiteboards.beforeSaid": "Whiteboardet, som det var før ændringerne fra {name}. “Efter” viser dem igen.",
+  "whiteboards.here": {
+    "one": "{count} anden person her",
+    "other": "{count} andre personer her"
+  },
+  "whiteboards.inSection": "I {section}",
+  "whiteboards.onBoard": "På whiteboardet",
+  "whiteboards.goThere": "Gå dertil",
+  "whiteboards.picked": {
+    "one": "{count} note fra “{name}”",
+    "other": "{count} noter fra “{name}”"
+  },
+  "whiteboards.unpick": "Udelad dem",
+  "whiteboards.ideas": "Idéer til disse noter",
+  "whiteboards.ideaGroup": "Gruppér disse noter efter emne",
+  "whiteboards.ideaActions": "Gør disse noter til opgaver, hver med en ansvarlig og en dato",
+  "whiteboards.ideaSum": "Opsummer disse noter på få linjer"
 }

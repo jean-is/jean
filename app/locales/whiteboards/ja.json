@@ -75,5 +75,28 @@
   "whiteboards.removed": {
     "other": "{count} 件削除しました。"
   },
-  "whiteboards.tidied": "メモを行に並べ直しました。"
+  "whiteboards.tidied": "メモを行に並べ直しました。",
+  "whiteboards.asTitle": "見出しにする",
+  "whiteboards.asLine": "普通のテキストにする",
+  "whiteboards.asTable": "表で表示",
+  "whiteboards.only": "「{section}」のみ",
+  "whiteboards.allSections": "すべてのセクション",
+  "whiteboards.compare": "{name} の変更の前後",
+  "whiteboards.before": "変更前",
+  "whiteboards.after": "変更後",
+  "whiteboards.beforeSaid": "{name} の変更前のホワイトボードです。「変更後」を押すと、変更をもう一度表示します。",
+  "whiteboards.here": {
+    "other": "ほかに {count} 人がいます"
+  },
+  "whiteboards.inSection": "「{section}」内",
+  "whiteboards.onBoard": "ボード上",
+  "whiteboards.goThere": "そこへ移動",
+  "whiteboards.picked": {
+    "other": "「{name}」のメモ {count} 件"
+  },
+  "whiteboards.unpick": "外す",
+  "whiteboards.ideas": "このメモについてのアイデア",
+  "whiteboards.ideaGroup": "これらのメモをテーマごとにまとめてください",
+  "whiteboards.ideaActions": "これらのメモを、それぞれ担当と日付のついた作業項目にしてください",
+  "whiteboards.ideaSum": "これらのメモを数行で要約してください"
 }

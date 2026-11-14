@@ -79,5 +79,30 @@
     "one": "ተሰርዟል።",
     "other": "{count} ተሰርዘዋል።"
   },
-  "whiteboards.tidied": "ማስታወሻዎቹ እንደገና በረድፍ ተደርድረዋል።"
+  "whiteboards.tidied": "ማስታወሻዎቹ እንደገና በረድፍ ተደርድረዋል።",
+  "whiteboards.asTitle": "ወደ ርዕስ ቀይር",
+  "whiteboards.asLine": "ወደ ተራ ጽሑፍ ቀይር",
+  "whiteboards.asTable": "በሠንጠረዥ አሳይ",
+  "whiteboards.only": "{section} ብቻ",
+  "whiteboards.allSections": "ሁሉም ክፍሎች",
+  "whiteboards.compare": "ከ{name} ለውጦች በፊት ወይም በኋላ",
+  "whiteboards.before": "በፊት",
+  "whiteboards.after": "በኋላ",
+  "whiteboards.beforeSaid": "ነጭ ሰሌዳው ከ{name} ለውጦች በፊት እንደነበረው። “በኋላ” ለውጦቹን እንደገና ያሳያል።",
+  "whiteboards.here": {
+    "one": "እዚህ ሌላ {count} ሰው አለ",
+    "other": "እዚህ ሌሎች {count} ሰዎች አሉ"
+  },
+  "whiteboards.inSection": "በ{section} ውስጥ",
+  "whiteboards.onBoard": "በሰሌዳው ላይ",
+  "whiteboards.goThere": "ወደዚያ ሂድ",
+  "whiteboards.picked": {
+    "one": "ከ“{name}” {count} ማስታወሻ",
+    "other": "ከ“{name}” {count} ማስታወሻዎች"
+  },
+  "whiteboards.unpick": "አስወግዳቸው",
+  "whiteboards.ideas": "ስለእነዚህ ማስታወሻዎች ሐሳቦች",
+  "whiteboards.ideaGroup": "እነዚህን ማስታወሻዎች በርዕስ በቡድን አደራጁልኝ",
+  "whiteboards.ideaActions": "እነዚህን ማስታወሻዎች እያንዳንዳቸው ኃላፊና ቀን ያላቸው ተግባራት አድርጉልኝ",
+  "whiteboards.ideaSum": "እነዚህን ማስታወሻዎች በጥቂት መስመሮች አጠቃልሉልኝ"
 }

@@ -95,5 +95,38 @@
     "many": "تم حذف {count} عنصرًا.",
     "other": "تم حذف {count} عنصر."
   },
-  "whiteboards.tidied": "أُعيدت الملاحظات إلى صفوف."
+  "whiteboards.tidied": "أُعيدت الملاحظات إلى صفوف.",
+  "whiteboards.asTitle": "تحويله إلى عنوان",
+  "whiteboards.asLine": "تحويله إلى نص عادي",
+  "whiteboards.asTable": "العرض كجدول",
+  "whiteboards.only": "{section} فقط",
+  "whiteboards.allSections": "كل الأقسام",
+  "whiteboards.compare": "قبل تعديلات {name} أو بعدها",
+  "whiteboards.before": "قبل",
+  "whiteboards.after": "بعد",
+  "whiteboards.beforeSaid": "السبورة كما كانت قبل تعديلات {name}. «بعد» يعرضها من جديد.",
+  "whiteboards.here": {
+    "zero": "لا أحد آخر هنا",
+    "one": "شخص آخر هنا",
+    "two": "شخصان آخران هنا",
+    "few": "{count} أشخاص آخرون هنا",
+    "many": "{count} شخصًا آخر هنا",
+    "other": "{count} شخص آخر هنا"
+  },
+  "whiteboards.inSection": "في {section}",
+  "whiteboards.onBoard": "على السبورة",
+  "whiteboards.goThere": "الانتقال إلى هناك",
+  "whiteboards.picked": {
+    "zero": "لا ملاحظات من «{name}»",
+    "one": "ملاحظة واحدة من «{name}»",
+    "two": "ملاحظتان من «{name}»",
+    "few": "{count} ملاحظات من «{name}»",
+    "many": "{count} ملاحظةً من «{name}»",
+    "other": "{count} ملاحظة من «{name}»"
+  },
+  "whiteboards.unpick": "استبعادها",
+  "whiteboards.ideas": "أفكار حول هذه الملاحظات",
+  "whiteboards.ideaGroup": "جمّع هذه الملاحظات حسب الموضوع",
+  "whiteboards.ideaActions": "حوّل هذه الملاحظات إلى مهام، لكل منها مسؤول وتاريخ",
+  "whiteboards.ideaSum": "لخّص هذه الملاحظات في بضعة أسطر"
 }

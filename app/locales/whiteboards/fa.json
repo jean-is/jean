@@ -79,5 +79,30 @@
     "one": "حذف شد.",
     "other": "{count} مورد حذف شد."
   },
-  "whiteboards.tidied": "یادداشت‌ها دوباره در ردیف چیده شدند."
+  "whiteboards.tidied": "یادداشت‌ها دوباره در ردیف چیده شدند.",
+  "whiteboards.asTitle": "تبدیل به عنوان",
+  "whiteboards.asLine": "تبدیل به متن ساده",
+  "whiteboards.asTable": "نمایش به‌صورت جدول",
+  "whiteboards.only": "فقط {section}",
+  "whiteboards.allSections": "همهٔ بخش‌ها",
+  "whiteboards.compare": "قبل یا بعد از تغییرهای {name}",
+  "whiteboards.before": "قبل",
+  "whiteboards.after": "بعد",
+  "whiteboards.beforeSaid": "تختهٔ سفید همان‌طور که پیش از تغییرهای {name} بود. «بعد» دوباره آن‌ها را نشان می‌دهد.",
+  "whiteboards.here": {
+    "one": "{count} نفر دیگر اینجاست",
+    "other": "{count} نفر دیگر اینجا هستند"
+  },
+  "whiteboards.inSection": "در {section}",
+  "whiteboards.onBoard": "روی تخته",
+  "whiteboards.goThere": "رفتن به آنجا",
+  "whiteboards.picked": {
+    "one": "{count} یادداشت از «{name}»",
+    "other": "{count} یادداشت از «{name}»"
+  },
+  "whiteboards.unpick": "کنار گذاشتنشان",
+  "whiteboards.ideas": "ایده‌هایی دربارهٔ این یادداشت‌ها",
+  "whiteboards.ideaGroup": "این یادداشت‌ها را بر اساس موضوع دسته‌بندی کن",
+  "whiteboards.ideaActions": "این یادداشت‌ها را به کارهای انجام‌دادنی تبدیل کن، هرکدام با یک مسئول و یک تاریخ",
+  "whiteboards.ideaSum": "این یادداشت‌ها را در چند خط خلاصه کن"
 }

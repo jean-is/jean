@@ -87,5 +87,34 @@
     "many": "Usunięto: {count}.",
     "other": "Usunięto: {count}."
   },
-  "whiteboards.tidied": "Karteczki znowu ułożone w rzędach."
+  "whiteboards.tidied": "Karteczki znowu ułożone w rzędach.",
+  "whiteboards.asTitle": "Zamień na nagłówek",
+  "whiteboards.asLine": "Zamień na zwykły tekst",
+  "whiteboards.asTable": "Pokaż jako tabelę",
+  "whiteboards.only": "Tylko sekcja {section}",
+  "whiteboards.allSections": "Wszystkie sekcje",
+  "whiteboards.compare": "Przed zmianami lub po nich: {name}",
+  "whiteboards.before": "Przedtem",
+  "whiteboards.after": "Potem",
+  "whiteboards.beforeSaid": "Tablica sprzed zmian: {name}. „Potem” znów je pokazuje.",
+  "whiteboards.here": {
+    "one": "Jeszcze {count} osoba tutaj",
+    "few": "Jeszcze {count} osoby tutaj",
+    "many": "Jeszcze {count} osób tutaj",
+    "other": "Jeszcze {count} osoby tutaj"
+  },
+  "whiteboards.inSection": "W sekcji {section}",
+  "whiteboards.onBoard": "Na tablicy",
+  "whiteboards.goThere": "Przejdź tam",
+  "whiteboards.picked": {
+    "one": "{count} karteczka z tablicy „{name}”",
+    "few": "{count} karteczki z tablicy „{name}”",
+    "many": "{count} karteczek z tablicy „{name}”",
+    "other": "{count} karteczki z tablicy „{name}”"
+  },
+  "whiteboards.unpick": "Pomiń je",
+  "whiteboards.ideas": "Pomysły na te karteczki",
+  "whiteboards.ideaGroup": "Pogrupuj te karteczki według tematów",
+  "whiteboards.ideaActions": "Zamień te karteczki na zadania, każde z osobą odpowiedzialną i datą",
+  "whiteboards.ideaSum": "Podsumuj te karteczki w kilku linijkach"
 }

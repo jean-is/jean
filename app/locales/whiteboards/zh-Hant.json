@@ -75,5 +75,28 @@
   "whiteboards.removed": {
     "other": "已刪除 {count} 項。"
   },
-  "whiteboards.tidied": "便利貼已重新排成列。"
+  "whiteboards.tidied": "便利貼已重新排成列。",
+  "whiteboards.asTitle": "設為標題",
+  "whiteboards.asLine": "設為一般文字",
+  "whiteboards.asTable": "以表格顯示",
+  "whiteboards.only": "僅「{section}」",
+  "whiteboards.allSections": "所有分區",
+  "whiteboards.compare": "{name} 的修改之前或之後",
+  "whiteboards.before": "修改前",
+  "whiteboards.after": "修改後",
+  "whiteboards.beforeSaid": "白板在 {name} 修改之前的樣子。按「修改後」可再次顯示這些修改。",
+  "whiteboards.here": {
+    "other": "這裡還有 {count} 人"
+  },
+  "whiteboards.inSection": "在「{section}」中",
+  "whiteboards.onBoard": "在白板上",
+  "whiteboards.goThere": "前往",
+  "whiteboards.picked": {
+    "other": "來自「{name}」的 {count} 張便利貼"
+  },
+  "whiteboards.unpick": "移除",
+  "whiteboards.ideas": "關於這些便利貼的想法",
+  "whiteboards.ideaGroup": "把這些便利貼依主題分組",
+  "whiteboards.ideaActions": "把這些便利貼變成待辦事項，每項都有負責人和日期",
+  "whiteboards.ideaSum": "用幾行話總結這些便利貼"
 }

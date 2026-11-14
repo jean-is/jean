@@ -134,6 +134,8 @@ export function filled(one, part) { try { return fill(one, part, { locales: intl
 const writeTable = async (one, table) => { await written(one); await app.fs.write(`${one.dir}/${one.folder}/collection.json`, `${JSON.stringify(table, null, 2)}\n`) }
 /** Those the Creations page made, on show but not written until the user changes something in them. @type {Map<string, Loaded>} */
 const drafts = new Map()
+/** A whiteboard shown while the call that makes it is written (D747), or none any more. @param {string} folder @param {Loaded} [one] */
+export const drafted = (folder, one) => void (one ? drafts.set(folder, one) : drafts.delete(folder))
 /** One of them written at last, whole, at the user's first change, and listed among the creations. @param {Loaded} one */
 async function written({ folder }) {
   const draft = drafts.get(folder)

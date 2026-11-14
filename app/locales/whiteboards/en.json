@@ -79,5 +79,30 @@
     "one": "Deleted.",
     "other": "{count} deleted."
   },
-  "whiteboards.tidied": "Notes put back in rows."
+  "whiteboards.tidied": "Notes put back in rows.",
+  "whiteboards.asTitle": "Make it a title",
+  "whiteboards.asLine": "Make it plain text",
+  "whiteboards.asTable": "Show as a table",
+  "whiteboards.only": "Only {section}",
+  "whiteboards.allSections": "All sections",
+  "whiteboards.compare": "Before or after {name}’s changes",
+  "whiteboards.before": "Before",
+  "whiteboards.after": "After",
+  "whiteboards.beforeSaid": "The whiteboard as it was before {name}’s changes. After shows them again.",
+  "whiteboards.here": {
+    "one": "{count} other person here",
+    "other": "{count} other people here"
+  },
+  "whiteboards.inSection": "In {section}",
+  "whiteboards.onBoard": "On the board",
+  "whiteboards.goThere": "Go there",
+  "whiteboards.picked": {
+    "one": "{count} note from {name}",
+    "other": "{count} notes from {name}"
+  },
+  "whiteboards.unpick": "Leave them out",
+  "whiteboards.ideas": "Ideas about these notes",
+  "whiteboards.ideaGroup": "Group these notes by theme",
+  "whiteboards.ideaActions": "Turn these notes into action items, each with an owner and a date",
+  "whiteboards.ideaSum": "Sum up these notes in a few lines"
 }

@@ -83,5 +83,32 @@
     "few": "Izbrisano: {count}.",
     "other": "Izbrisano: {count}."
   },
-  "whiteboards.tidied": "Bilješke su opet u redovima."
+  "whiteboards.tidied": "Bilješke su opet u redovima.",
+  "whiteboards.asTitle": "Pretvori u naslov",
+  "whiteboards.asLine": "Pretvori u običan tekst",
+  "whiteboards.asTable": "Prikaži kao tablicu",
+  "whiteboards.only": "Samo odjeljak {section}",
+  "whiteboards.allSections": "Svi odjeljci",
+  "whiteboards.compare": "Prije ili poslije promjena aplikacije {name}",
+  "whiteboards.before": "Prije",
+  "whiteboards.after": "Poslije",
+  "whiteboards.beforeSaid": "Ploča kakva je bila prije promjena aplikacije {name}. „Poslije“ ih ponovno prikazuje.",
+  "whiteboards.here": {
+    "one": "Ovdje je još {count} osoba",
+    "few": "Ovdje su još {count} osobe",
+    "other": "Ovdje je još {count} osoba"
+  },
+  "whiteboards.inSection": "U odjeljku {section}",
+  "whiteboards.onBoard": "Na ploči",
+  "whiteboards.goThere": "Idi tamo",
+  "whiteboards.picked": {
+    "one": "{count} bilješka s ploče „{name}“",
+    "few": "{count} bilješke s ploče „{name}“",
+    "other": "{count} bilješki s ploče „{name}“"
+  },
+  "whiteboards.unpick": "Izostavi ih",
+  "whiteboards.ideas": "Ideje o ovim bilješkama",
+  "whiteboards.ideaGroup": "Grupiraj ove bilješke po temama",
+  "whiteboards.ideaActions": "Pretvori ove bilješke u zadatke, svaki s odgovornom osobom i datumom",
+  "whiteboards.ideaSum": "Sažmi ove bilješke u nekoliko redaka"
 }

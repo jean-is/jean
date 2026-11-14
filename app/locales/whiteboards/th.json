@@ -75,5 +75,28 @@
   "whiteboards.removed": {
     "other": "ลบ {count} รายการแล้ว"
   },
-  "whiteboards.tidied": "จัดโน้ตกลับเป็นแถวแล้ว"
+  "whiteboards.tidied": "จัดโน้ตกลับเป็นแถวแล้ว",
+  "whiteboards.asTitle": "ทำเป็นหัวเรื่อง",
+  "whiteboards.asLine": "ทำเป็นข้อความธรรมดา",
+  "whiteboards.asTable": "แสดงเป็นตาราง",
+  "whiteboards.only": "เฉพาะ {section}",
+  "whiteboards.allSections": "ทุกส่วน",
+  "whiteboards.compare": "ก่อนหรือหลังการแก้ไขของ {name}",
+  "whiteboards.before": "ก่อน",
+  "whiteboards.after": "หลัง",
+  "whiteboards.beforeSaid": "ไวท์บอร์ดตามที่เป็นก่อนการแก้ไขของ {name} ปุ่ม “หลัง” จะแสดงการแก้ไขอีกครั้ง",
+  "whiteboards.here": {
+    "other": "มีคนอื่นอยู่ที่นี่ {count} คน"
+  },
+  "whiteboards.inSection": "ใน {section}",
+  "whiteboards.onBoard": "บนบอร์ด",
+  "whiteboards.goThere": "ไปที่นั่น",
+  "whiteboards.picked": {
+    "other": "โน้ต {count} รายการจาก “{name}”"
+  },
+  "whiteboards.unpick": "เอาออก",
+  "whiteboards.ideas": "ไอเดียเกี่ยวกับโน้ตเหล่านี้",
+  "whiteboards.ideaGroup": "จัดกลุ่มโน้ตเหล่านี้ตามหัวข้อ",
+  "whiteboards.ideaActions": "เปลี่ยนโน้ตเหล่านี้เป็นงานที่ต้องทำ โดยแต่ละงานมีผู้รับผิดชอบและวันที่",
+  "whiteboards.ideaSum": "สรุปโน้ตเหล่านี้ในไม่กี่บรรทัด"
 }

@@ -87,5 +87,34 @@
     "many": "Smazáno: {count}.",
     "other": "Smazáno: {count}."
   },
-  "whiteboards.tidied": "Lístečky jsou zase v řadách."
+  "whiteboards.tidied": "Lístečky jsou zase v řadách.",
+  "whiteboards.asTitle": "Udělat z něj nadpis",
+  "whiteboards.asLine": "Udělat z něj obyčejný text",
+  "whiteboards.asTable": "Zobrazit jako tabulku",
+  "whiteboards.only": "Jen sekce {section}",
+  "whiteboards.allSections": "Všechny sekce",
+  "whiteboards.compare": "Před změnami od aplikace {name} nebo po nich",
+  "whiteboards.before": "Předtím",
+  "whiteboards.after": "Potom",
+  "whiteboards.beforeSaid": "Tabule tak, jak vypadala před změnami od aplikace {name}. Tlačítko „Potom“ je znovu ukáže.",
+  "whiteboards.here": {
+    "one": "Je tu {count} další člověk",
+    "few": "Jsou tu {count} další lidé",
+    "many": "Je tu {count} dalšího člověka",
+    "other": "Je tu {count} dalších lidí"
+  },
+  "whiteboards.inSection": "V sekci {section}",
+  "whiteboards.onBoard": "Na tabuli",
+  "whiteboards.goThere": "Přejít tam",
+  "whiteboards.picked": {
+    "one": "{count} lísteček z tabule „{name}“",
+    "few": "{count} lístečky z tabule „{name}“",
+    "many": "{count} lístečku z tabule „{name}“",
+    "other": "{count} lístečků z tabule „{name}“"
+  },
+  "whiteboards.unpick": "Vynechat je",
+  "whiteboards.ideas": "Nápady k těmto lístečkům",
+  "whiteboards.ideaGroup": "Seskup tyto lístečky podle témat",
+  "whiteboards.ideaActions": "Udělej z těchto lístečků úkoly, každý s odpovědnou osobou a datem",
+  "whiteboards.ideaSum": "Shrň tyto lístečky do několika řádků"
 }

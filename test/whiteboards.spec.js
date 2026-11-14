@@ -36,9 +36,14 @@ test('a whiteboard: made by the brain, its notes dragged, moved with the keys, a
   await expect(board.locator('.wb-area')).toHaveCount(3)
   await expect(notesIn(page, 'Went well')).toHaveText(['Shipped the beta', 'Demo day'])
   await expect(board.locator('.wb-foot')).toContainText('Sam')
-  // Jean's eight rows marked, then kept.
+  // Jean's eight rows marked; Before shows the whiteboard without them, After with them; then they are kept.
   const review = board.getByRole('region', { name: 'Jean’s changes' })
   await expect(review).toContainText('8 changes by Jean')
+  const compare = board.getByRole('group', { name: 'Before or after Jean’s changes' })
+  await compare.getByRole('button', { name: 'Before' }).click()
+  await expect(board.locator('.wb-area')).toHaveCount(0)
+  await compare.getByRole('button', { name: 'After' }).click()
+  await expect(board.locator('.wb-area')).toHaveCount(3)
   await review.getByRole('button', { name: 'Accept all' }).click()
   await expect(review).toHaveCount(0)
   await expect(board.locator('.is-jean')).toHaveCount(0)
@@ -95,6 +100,14 @@ test('a whiteboard: made by the brain, its notes dragged, moved with the keys, a
   await chosen.getByRole('button', { name: 'Ask Jean' }).click()
   await expect(page.locator('#prompt')).toBeFocused()
   expect(await page.evaluate(() => import('/caps/whiteboards/whiteboards.js').then(({ picked }) => picked.value?.rows.length))).toBe(2)
+  // In the box, one chip for them and three ideas, Jean's own words, which an idea puts in the box; the chip's ✕ leaves them out.
+  const chip = page.locator('.composer .wb-chip')
+  await expect(chip).toContainText('2 notes from Team retro')
+  await page.locator('.composer .wb-ideas').getByRole('button', { name: 'Group these notes by theme' }).click()
+  await expect(page.locator('#prompt')).toHaveValue('Group these notes by theme')
+  await chip.getByRole('button', { name: 'Leave them out' }).click()
+  await expect(chip).toHaveCount(0)
+  await page.locator('#prompt').fill('')
 
   // Deleted from its menu, a note comes back with ⌘Z.
   await board.getByRole('button', { name: 'More for Flaky tests' }).click()
@@ -103,6 +116,16 @@ test('a whiteboard: made by the brain, its notes dragged, moved with the keys, a
   await notesIn(page, 'Ideas').first().focus()
   await page.keyboard.press('ControlOrMeta+z')
   await expect(notesIn(page, 'To change')).toHaveText(['Flaky tests'])
+
+  // One section as a table, from its menu, in the address; All sections leads back to every note.
+  await board.getByRole('button', { name: 'More for Ideas' }).click()
+  await page.locator('.wb-menu:popover-open').getByRole('button', { name: 'Show as a table' }).click()
+  await expect(board.locator('.wb-only')).toContainText('Only Ideas')
+  await expect(board.locator('.table-view tbody tr')).toHaveCount(2)
+  await expect(page).toHaveURL(/whiteboard=table(\/|%2F)/)
+  await board.getByRole('button', { name: 'All sections' }).click()
+  await expect(board.locator('app-table tbody tr')).toHaveCount(6)
+  await board.getByRole('group', { name: 'Show as' }).getByRole('button', { name: 'Whiteboard' }).click()
 
   // Lanes and Table, in the address.
   await board.getByRole('group', { name: 'Show as' }).getByRole('button', { name: 'Lanes' }).click()
@@ -117,6 +140,22 @@ test('a whiteboard: made by the brain, its notes dragged, moved with the keys, a
   await ask(page, `Call table_rows with ${JSON.stringify({ table: folder })}`)
   await answered(page, 2)
   await expect(page.locator('.msg-jean .prose').last()).toContainText('a whiteboard: 4 areas, 6 notes')
+})
+
+test('a whiteboard fills as Jean writes the call, its sections first, and stays where it showed once made', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 960 })
+  await start(page)
+  await planBrain(page)
+  await page.evaluate(() => import('/ui/caps.js').then(({ unlock }) => unlock('whiteboards')))
+  await ask(page, `Slowly call whiteboard with ${JSON.stringify(RETRO)}`)
+  const board = page.locator('app-whiteboard')
+  await expect(board.locator('.wb-area').first()).toBeVisible()
+  const drafted = await board.getAttribute('folder')
+  await answered(page)
+  await expect(board.locator('.wb-area')).toHaveCount(3)
+  expect(await board.getAttribute('folder')).toBe(drafted)
+  await expect(notesIn(page, 'Went well')).toHaveText(['Shipped the beta', 'Demo day'])
+  expect(await page.evaluate(() => import('/caps/whiteboards/whiteboards.js').then(({ writing }) => writing.value))).toBe('')
 })
 
 test('in Arabic, a whiteboard runs right to left, and a note dropped lands where it was put (ar)', async ({ page }) => {

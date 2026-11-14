@@ -79,5 +79,30 @@
     "one": "মুছে ফেলা হয়েছে।",
     "other": "{count}টি মুছে ফেলা হয়েছে।"
   },
-  "whiteboards.tidied": "নোটগুলো আবার সারিতে সাজানো হয়েছে।"
+  "whiteboards.tidied": "নোটগুলো আবার সারিতে সাজানো হয়েছে।",
+  "whiteboards.asTitle": "শিরোনাম বানান",
+  "whiteboards.asLine": "সাধারণ লেখা বানান",
+  "whiteboards.asTable": "সারণি হিসেবে দেখান",
+  "whiteboards.only": "শুধু {section}",
+  "whiteboards.allSections": "সব অংশ",
+  "whiteboards.compare": "{name}-এর পরিবর্তনের আগে বা পরে",
+  "whiteboards.before": "আগে",
+  "whiteboards.after": "পরে",
+  "whiteboards.beforeSaid": "{name}-এর পরিবর্তনের আগে হোয়াইটবোর্ড যেমন ছিল। “পরে” আবার পরিবর্তনগুলো দেখায়।",
+  "whiteboards.here": {
+    "one": "এখানে আরও {count} জন আছেন",
+    "other": "এখানে আরও {count} জন আছেন"
+  },
+  "whiteboards.inSection": "{section}-এ",
+  "whiteboards.onBoard": "বোর্ডে",
+  "whiteboards.goThere": "সেখানে যান",
+  "whiteboards.picked": {
+    "one": "“{name}” থেকে {count}টি নোট",
+    "other": "“{name}” থেকে {count}টি নোট"
+  },
+  "whiteboards.unpick": "বাদ দিন",
+  "whiteboards.ideas": "এই নোটগুলো নিয়ে কিছু ভাবনা",
+  "whiteboards.ideaGroup": "এই নোটগুলো বিষয় অনুযায়ী দলে ভাগ করো",
+  "whiteboards.ideaActions": "এই নোটগুলোকে করণীয় কাজে পরিণত করো, প্রতিটির জন্য দায়িত্ব ও তারিখসহ",
+  "whiteboards.ideaSum": "এই নোটগুলো কয়েক লাইনে সংক্ষেপে বলো"
 }

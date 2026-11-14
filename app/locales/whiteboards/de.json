@@ -79,5 +79,30 @@
     "one": "Gelöscht.",
     "other": "{count} gelöscht."
   },
-  "whiteboards.tidied": "Notizen wieder in Reihen gelegt."
+  "whiteboards.tidied": "Notizen wieder in Reihen gelegt.",
+  "whiteboards.asTitle": "Zur Überschrift machen",
+  "whiteboards.asLine": "Zu normalem Text machen",
+  "whiteboards.asTable": "Als Tabelle anzeigen",
+  "whiteboards.only": "Nur {section}",
+  "whiteboards.allSections": "Alle Bereiche",
+  "whiteboards.compare": "Vor oder nach den Änderungen von {name}",
+  "whiteboards.before": "Vorher",
+  "whiteboards.after": "Nachher",
+  "whiteboards.beforeSaid": "Das Whiteboard, wie es vor den Änderungen von {name} war. „Nachher“ zeigt sie wieder.",
+  "whiteboards.here": {
+    "one": "{count} weitere Person hier",
+    "other": "{count} weitere Personen hier"
+  },
+  "whiteboards.inSection": "In {section}",
+  "whiteboards.onBoard": "Auf dem Whiteboard",
+  "whiteboards.goThere": "Dorthin gehen",
+  "whiteboards.picked": {
+    "one": "{count} Notiz aus „{name}“",
+    "other": "{count} Notizen aus „{name}“"
+  },
+  "whiteboards.unpick": "Weglassen",
+  "whiteboards.ideas": "Ideen zu diesen Notizen",
+  "whiteboards.ideaGroup": "Gruppiere diese Notizen nach Thema",
+  "whiteboards.ideaActions": "Mach aus diesen Notizen Aufgaben, jeweils mit Zuständigkeit und Datum",
+  "whiteboards.ideaSum": "Fasse diese Notizen in ein paar Zeilen zusammen"
 }

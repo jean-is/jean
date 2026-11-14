@@ -79,5 +79,30 @@
     "one": "हटवले.",
     "other": "{count} हटवले."
   },
-  "whiteboards.tidied": "टिपा पुन्हा ओळींमध्ये लावल्या."
+  "whiteboards.tidied": "टिपा पुन्हा ओळींमध्ये लावल्या.",
+  "whiteboards.asTitle": "शीर्षक करा",
+  "whiteboards.asLine": "साधा मजकूर करा",
+  "whiteboards.asTable": "तक्ता म्हणून दाखवा",
+  "whiteboards.only": "फक्त {section}",
+  "whiteboards.allSections": "सर्व विभाग",
+  "whiteboards.compare": "{name} कडून झालेल्या बदलांच्या आधी किंवा नंतर",
+  "whiteboards.before": "आधी",
+  "whiteboards.after": "नंतर",
+  "whiteboards.beforeSaid": "{name} कडून झालेल्या बदलांच्या आधी व्हाइटबोर्ड जसा होता तसा. “नंतर” ते बदल पुन्हा दाखवते.",
+  "whiteboards.here": {
+    "one": "इथे आणखी {count} व्यक्ती आहे",
+    "other": "इथे आणखी {count} लोक आहेत"
+  },
+  "whiteboards.inSection": "{section} मध्ये",
+  "whiteboards.onBoard": "बोर्डवर",
+  "whiteboards.goThere": "तिथे जा",
+  "whiteboards.picked": {
+    "one": "“{name}” मधील {count} टीप",
+    "other": "“{name}” मधील {count} टिपा"
+  },
+  "whiteboards.unpick": "त्या वगळा",
+  "whiteboards.ideas": "या टिपांबद्दल कल्पना",
+  "whiteboards.ideaGroup": "या टिपांचे विषयानुसार गट कर",
+  "whiteboards.ideaActions": "या टिपांची कामे कर, प्रत्येकाला एक जबाबदार आणि एक तारीख दे",
+  "whiteboards.ideaSum": "या टिपांचा काही ओळींत सारांश दे"
 }

@@ -83,5 +83,32 @@
     "few": "{count} elemente șterse.",
     "other": "{count} de elemente șterse."
   },
-  "whiteboards.tidied": "Note puse din nou pe rânduri."
+  "whiteboards.tidied": "Note puse din nou pe rânduri.",
+  "whiteboards.asTitle": "Transformați în titlu",
+  "whiteboards.asLine": "Transformați în text simplu",
+  "whiteboards.asTable": "Afișați ca tabel",
+  "whiteboards.only": "Doar {section}",
+  "whiteboards.allSections": "Toate secțiunile",
+  "whiteboards.compare": "Înainte sau după modificările de la {name}",
+  "whiteboards.before": "Înainte",
+  "whiteboards.after": "După",
+  "whiteboards.beforeSaid": "Tabla așa cum era înainte de modificările de la {name}. „După” le afișează din nou.",
+  "whiteboards.here": {
+    "one": "Încă {count} persoană aici",
+    "few": "Încă {count} persoane aici",
+    "other": "Încă {count} de persoane aici"
+  },
+  "whiteboards.inSection": "În {section}",
+  "whiteboards.onBoard": "Pe tablă",
+  "whiteboards.goThere": "Mergeți acolo",
+  "whiteboards.picked": {
+    "one": "{count} notă din „{name}”",
+    "few": "{count} note din „{name}”",
+    "other": "{count} de note din „{name}”"
+  },
+  "whiteboards.unpick": "Scoateți-le",
+  "whiteboards.ideas": "Idei despre aceste note",
+  "whiteboards.ideaGroup": "Grupează aceste note pe teme",
+  "whiteboards.ideaActions": "Transformă aceste note în sarcini, fiecare cu un responsabil și o dată",
+  "whiteboards.ideaSum": "Rezumă aceste note în câteva rânduri"
 }

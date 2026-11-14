@@ -87,5 +87,34 @@
     "many": "Удалено: {count}.",
     "other": "Удалено: {count}."
   },
-  "whiteboards.tidied": "Заметки снова выстроены в ряды."
+  "whiteboards.tidied": "Заметки снова выстроены в ряды.",
+  "whiteboards.asTitle": "Сделать заголовком",
+  "whiteboards.asLine": "Сделать обычным текстом",
+  "whiteboards.asTable": "Показать таблицей",
+  "whiteboards.only": "Только раздел «{section}»",
+  "whiteboards.allSections": "Все разделы",
+  "whiteboards.compare": "До или после правок: {name}",
+  "whiteboards.before": "До",
+  "whiteboards.after": "После",
+  "whiteboards.beforeSaid": "Доска в том виде, в каком была до правок: {name}. «После» снова их покажет.",
+  "whiteboards.here": {
+    "one": "Здесь ещё {count} человек",
+    "few": "Здесь ещё {count} человека",
+    "many": "Здесь ещё {count} человек",
+    "other": "Здесь ещё {count} человека"
+  },
+  "whiteboards.inSection": "В разделе «{section}»",
+  "whiteboards.onBoard": "На доске",
+  "whiteboards.goThere": "Перейти туда",
+  "whiteboards.picked": {
+    "one": "{count} заметка с доски «{name}»",
+    "few": "{count} заметки с доски «{name}»",
+    "many": "{count} заметок с доски «{name}»",
+    "other": "{count} заметки с доски «{name}»"
+  },
+  "whiteboards.unpick": "Убрать их",
+  "whiteboards.ideas": "Идеи для этих заметок",
+  "whiteboards.ideaGroup": "Сгруппируй эти заметки по темам",
+  "whiteboards.ideaActions": "Преврати эти заметки в задачи, у каждой — ответственный и срок",
+  "whiteboards.ideaSum": "Изложи суть этих заметок в нескольких строках"
 }

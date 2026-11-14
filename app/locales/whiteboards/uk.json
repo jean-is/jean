@@ -87,5 +87,34 @@
     "many": "Видалено: {count}.",
     "other": "Видалено: {count}."
   },
-  "whiteboards.tidied": "Нотатки знову вишикувано в ряди."
+  "whiteboards.tidied": "Нотатки знову вишикувано в ряди.",
+  "whiteboards.asTitle": "Зробити заголовком",
+  "whiteboards.asLine": "Зробити звичайним текстом",
+  "whiteboards.asTable": "Показати таблицею",
+  "whiteboards.only": "Лише розділ «{section}»",
+  "whiteboards.allSections": "Усі розділи",
+  "whiteboards.compare": "До або після правок: {name}",
+  "whiteboards.before": "До",
+  "whiteboards.after": "Після",
+  "whiteboards.beforeSaid": "Дошка такою, якою була до правок: {name}. «Після» знову їх покаже.",
+  "whiteboards.here": {
+    "one": "Тут ще {count} людина",
+    "few": "Тут ще {count} людини",
+    "many": "Тут ще {count} людей",
+    "other": "Тут ще {count} людини"
+  },
+  "whiteboards.inSection": "У розділі «{section}»",
+  "whiteboards.onBoard": "На дошці",
+  "whiteboards.goThere": "Перейти туди",
+  "whiteboards.picked": {
+    "one": "{count} нотатка з дошки «{name}»",
+    "few": "{count} нотатки з дошки «{name}»",
+    "many": "{count} нотаток з дошки «{name}»",
+    "other": "{count} нотатки з дошки «{name}»"
+  },
+  "whiteboards.unpick": "Прибрати їх",
+  "whiteboards.ideas": "Ідеї для цих нотаток",
+  "whiteboards.ideaGroup": "Згрупуй ці нотатки за темами",
+  "whiteboards.ideaActions": "Перетвори ці нотатки на завдання, кожне з відповідальним і терміном",
+  "whiteboards.ideaSum": "Підсумуй ці нотатки в кількох рядках"
 }

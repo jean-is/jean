@@ -75,5 +75,28 @@
   "whiteboards.removed": {
     "other": "{count} dihapus."
   },
-  "whiteboards.tidied": "Catatan dirapikan lagi dalam baris."
+  "whiteboards.tidied": "Catatan dirapikan lagi dalam baris.",
+  "whiteboards.asTitle": "Jadikan judul",
+  "whiteboards.asLine": "Jadikan teks biasa",
+  "whiteboards.asTable": "Tampilkan sebagai tabel",
+  "whiteboards.only": "Hanya {section}",
+  "whiteboards.allSections": "Semua bagian",
+  "whiteboards.compare": "Sebelum atau sesudah perubahan dari {name}",
+  "whiteboards.before": "Sebelum",
+  "whiteboards.after": "Sesudah",
+  "whiteboards.beforeSaid": "Papan tulis seperti sebelum perubahan dari {name}. “Sesudah” menampilkannya lagi.",
+  "whiteboards.here": {
+    "other": "{count} orang lain di sini"
+  },
+  "whiteboards.inSection": "Di {section}",
+  "whiteboards.onBoard": "Di papan",
+  "whiteboards.goThere": "Ke sana",
+  "whiteboards.picked": {
+    "other": "{count} catatan dari “{name}”"
+  },
+  "whiteboards.unpick": "Keluarkan",
+  "whiteboards.ideas": "Ide untuk catatan ini",
+  "whiteboards.ideaGroup": "Kelompokkan catatan ini berdasarkan tema",
+  "whiteboards.ideaActions": "Ubah catatan ini menjadi tugas, masing-masing dengan penanggung jawab dan tanggal",
+  "whiteboards.ideaSum": "Ringkas catatan ini dalam beberapa baris"
 }

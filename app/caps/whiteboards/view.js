@@ -20,8 +20,10 @@ import { reviewBar } from '../../ui/review.js'
 import { icons, icon } from '../../ui/menu-icons.js'
 import { load, change, unkept, accept, reject, undoStep, reshapeTable, amend, watched } from '../tables/tables.js'
 import { notesOf, ownProblem, kindOf } from '../tables/table.js'
+import { fold } from '../tables/changes.js'
 import { layout, snap, NOTE, GRID, HUES, WIDE } from './layout.js'
-import { beside, picked, showAs, glyph } from './whiteboards.js'
+import { beside, picked, showAs, showOnly, glyph, writing } from './whiteboards.js'
+import { view as tableOf } from '../tables/view.js'
 
 /** @typedef {import('../tables/tables.js').Loaded} Loaded */
 /** @typedef {import('../tables/changes.js').Row} Row */
@@ -50,6 +52,11 @@ const placed = (box) => ref((element) => {
 const pathOf = (path) => path.reduce((d, n, i) => `${d}${i % 2 ? ' ' : i ? ' L' : 'M'}${n}`, '')
 /** A note's words, its first line, for what names it. @param {Row} row */
 const wordsOf = (row) => String(row.cells.note ?? '').trim()
+/**
+ * A menu's row: the menu closed, then what the row does a frame later, so that one that takes its menu's anchor away never runs as the
+ * menu closes, which WebKit can't bear (ui/creations-page.js's `away`). @param {() => unknown} act
+ */
+const menuRow = (act) => (/** @type {Event} */ event) => { /** @type {HTMLElement | null} */ (/** @type {HTMLElement} */ (event.target).closest('[popover]'))?.hidePopover(); requestAnimationFrame(() => setTimeout(act)) }
 /** @param {Element | null} element */
 const rowOf = (element) => element?.closest('[data-row]')?.getAttribute('data-row') ?? null
 
@@ -59,8 +66,10 @@ customElements.define('app-whiteboard', class extends HTMLElement {
   where = signal(/** @type {Loaded | null} */ (null))
   #id = `wb-${++made}`
   #zoom = 1; #x = 0; #y = 0; #fitted = false
-  /** Whether the person moved the board since it was fitted, which leaves it where they put it as the pane changes size. */
-  #held = false
+  /** Whether the person moved the board since it was fitted, which leaves it where they put it as the pane changes size; and how many rows it had. */
+  #held = false; #count = 0
+  /** Where the board was last moved to, as its pan and zoom. */
+  #moved = ''
   /** @type {Tool} */
   #tool = 'pointer'
   /** @type {typeof INKS[number]} */
@@ -79,6 +88,10 @@ customElements.define('app-whiteboard', class extends HTMLElement {
   #box = null
   /** Where the next press puts what a tool makes, said by the menu's Move here. @type {string | null} */
   #moveHere = null
+  /** Whether Before is pressed: the board as it was without what waits to be accepted, to look at, not to change. */
+  #before = false
+  /** One section's notes as a table, as its menu asks: Tables' view of them, made once while it shows. @type {{ area: string, node: Node, holds: (() => void)[] } | null} */
+  #table = null
   /** The fingers on the board, for a pinch. @type {Map<number, { x: number, y: number }>} */
   #fingers = new Map()
   /** This person's pointer as Together last said it, and when, at two a second at most. */
@@ -95,11 +108,13 @@ customElements.define('app-whiteboard', class extends HTMLElement {
     holds.push(() => beside.delete(this.where))
     // A narrow pane opens on its lanes, one section at a time, unless the address says otherwise.
     if (showAs.peek() === 'board' && this.clientWidth && this.clientWidth < 30 * parseFloat(getComputedStyle(document.documentElement).fontSize)) showAs.value = 'lanes'
-    holds.push(effect(() => { this.where.value; showAs.value; this.draw() }))
+    holds.push(effect(() => { this.where.value; showAs.value; showOnly.value; writing.value; this.draw() }))
+    this.addEventListener('toggle', this.#placed, true)
+    holds.push(() => this.removeEventListener('toggle', this.#placed, true))
     const sized = new ResizeObserver(() => { if (!this.#held && showAs.peek() === 'board') this.fit() })
     sized.observe(this)
     holds.push(() => sized.disconnect())
-    holds.push(() => { showAs.value = 'board' })
+    holds.push(() => { showAs.value = 'board'; showOnly.value = '' })
     // Worked on together: the others' pointers, drawn on a layer of their own, and this person's, gone with the pane.
     const together = slots('pointers')[0], path = `${one.dir}/${one.folder}`
     if (together) holds.push(computed(() => together.of(path)).subscribe((list) => this.#others(list)), () => { clearTimeout(this.#later); together.say(path, null) })
@@ -133,13 +148,44 @@ customElements.define('app-whiteboard', class extends HTMLElement {
       const note = writing && this.querySelector(`[data-row="${CSS.escape(String(writing))}"]`)
       if (note instanceof HTMLElement) note.setAttribute('data-writing', ''), note.style.setProperty('--badge', colour)
     }
+    // Who is here, and where, in the head: their faces open a list, each with Go there, which brings the board to them once.
+    const people = /** @type {HTMLElement | null} */ (this.querySelector('.wb-people')), one = this.where.peek(), areas = one ? layout(one.rows).areas : []
+    const face = (/** @type {string} */ name, /** @type {string} */ colour) => html`<span class="wb-face" ${ref((element) => element instanceof HTMLElement && element.style.setProperty('--badge', colour))}>${[...name][0] ?? ''}</span>`
+    if (people) render(valid.length ? html`<button type="button" class="button subtle wb-faces" aria-label=${t('whiteboards.here', { count: valid.length })} popovertarget=${`${this.#id}-people`}>${valid.slice(0, 4).map(({ name, colour }) => face(name, colour))}</button>
+      <div id=${`${this.#id}-people`} class="menu wb-menu" popover><ul>${valid.map(({ name, colour, spots: [[x, y]] }) => ((area) => html`<li class="wb-person">${face(name, colour)}<span><bdi>${name}</bdi><small>${area ? t('whiteboards.inSection', { section: wordsOf(area.row) }) : t('whiteboards.onBoard')}</small></span>
+        <button type="button" class="button subtle" @click=${menuRow(() => this.#go(x, y))}>${t('whiteboards.goThere')}</button></li>`)([...areas].reverse().find((area) => x >= area.x && x <= area.x + area.w && y >= area.y && y <= area.y + area.h)))}</ul></div>` : nothing, people)
     if (layer) render(valid.map(({ who, name, colour, spots: [[x, y], box] }) => keyed(who, html`<div class="wb-pointer" ${ref((element) => element instanceof HTMLElement && (element.style.setProperty('--x', `${x}px`), element.style.setProperty('--y', `${y}px`), element.style.setProperty('--badge', colour)))}>${POINTER}<bdi>${name}</bdi></div>
       ${box.length === 4 ? html`<div class="wb-theirs" ${placed({ x: box[0], y: box[1], w: box[2] - box[0], h: box[3] - box[1] })} ${ref((element) => element instanceof HTMLElement && element.style.setProperty('--badge', colour))}></div>` : nothing}`)), layer)
   }
 
   disconnectedCallback() {
-    for (const hold of this.holds) hold()
+    for (const hold of [...this.holds, ...this.#table?.holds ?? []]) hold()
     this.holds = []
+    this.#table = null
+  }
+
+  /**
+   * A menu opened, placed under its button as the screen shows it, or over it where there is no room, inside the window: CSS anchoring
+   * measures a button before the board's zoom, so it would put the menu where the button would be at 100%. @param {Event} event
+   */
+  #placed = (event) => {
+    const menu = /** @type {HTMLElement} */ (event.target)
+    if (!menu.matches?.('.wb-menu') || /** @type {ToggleEvent} */ (event).newState !== 'open') return
+    const at = this.querySelector(`[popovertarget="${CSS.escape(menu.id)}"]`)?.getBoundingClientRect(), { offsetWidth: w, offsetHeight: h } = menu
+    if (!at) return
+    const top = at.bottom + 4 + h > innerHeight - 8 ? Math.max(8, at.top - 4 - h) : at.bottom + 4, start = getComputedStyle(menu).direction === 'rtl' ? innerWidth - at.right : at.left
+    menu.style.setProperty('--top', `${top}px`)
+    menu.style.setProperty('--at', `${Math.max(8, Math.min(start, innerWidth - w - 8))}px`)
+    menu.toggleAttribute('data-placed', true)
+  }
+
+  /** A section's notes as a table, read again with each change, or none. @param {string} area */
+  #section(area) {
+    if (this.#table?.area === area) return this.#table.node
+    for (const hold of this.#table?.holds ?? []) hold()
+    const holds = /** @type {(() => void)[]} */ ([]), where = computed(() => ((one) => one && { ...one, rows: one.rows.filter((row) => row.cells.area === area) })(this.where.value))
+    this.#table = { area, holds, node: tableOf(holds, /** @type {any} */ (where)) }
+    return this.#table.node
   }
 
   /** @returns {Loaded} */
@@ -165,6 +211,10 @@ customElements.define('app-whiteboard', class extends HTMLElement {
     board.style.setProperty('--pan-y', `${this.#y}px`)
     board.style.setProperty('--zoom', String(this.#zoom))
     board.toggleAttribute('data-far', this.#zoom < 0.6)
+    // A menu opened over the board stays where its button was: it closes as the board moves, not as it is drawn again.
+    const at = `${this.#x} ${this.#y} ${this.#zoom}`
+    if (at !== this.#moved) for (const menu of board.querySelectorAll('.wb-layer .wb-menu:popover-open')) /** @type {HTMLElement} */ (menu).hidePopover()
+    this.#moved = at
     // Its level, in a span lit leaves alone.
     for (const level of this.querySelectorAll('.wb-level span')) level.textContent = new Intl.NumberFormat(intlLocales(), { style: 'percent' }).format(this.#zoom)
   }
@@ -253,6 +303,15 @@ customElements.define('app-whiteboard', class extends HTMLElement {
     board.addEventListener('pointerup', end, { once: true })
   }
 
+  /** The board brought to a place, its middle there, once; nothing follows anyone. @param {number} x @param {number} y */
+  #go(x, y) {
+    const room = this.querySelector('.wb-board')?.getBoundingClientRect()
+    if (!room) return
+    const middle = this.#point({ clientX: room.x + room.width / 2, clientY: room.y + room.height / 2 })
+    this.#held = true
+    this.pan((middle.x - x) * this.#zoom * (this.#rtl ? -1 : 1), (middle.y - y) * this.#zoom)
+  }
+
   /** @param {string} id */
   #row(id) { return this.#one.rows.find((row) => row.id === id) }
 
@@ -262,11 +321,14 @@ customElements.define('app-whiteboard', class extends HTMLElement {
    */
   #drag(event, board, item, row) {
     const from = { x: event.clientX, y: event.clientY }, moved = { x: 0, y: 0 }, held = item.closest('.wb-area') && item.matches('.wb-area-head') ? /** @type {HTMLElement} */ (item.closest('.wb-area')) : item
-    let going = false
+    let going = false, pressed = false
     const scale = held.closest('.wb-layer') ? this.#zoom : 1
+    // On touch, a long press that hardly moves opens its menu.
+    const long = event.pointerType === 'touch' ? setTimeout(() => { if (!going) (pressed = true), /** @type {HTMLElement | null} */ (item.querySelector('[popover]') ?? held.querySelector(':scope > h3 [popover]'))?.showPopover() }, 550) : undefined
     const move = (/** @type {PointerEvent} */ next) => {
       Object.assign(moved, { x: next.clientX - from.x, y: next.clientY - from.y })
-      if (!going && Math.hypot(moved.x, moved.y) < 4) return
+      if (pressed || (!going && Math.hypot(moved.x, moved.y) < 4)) return
+      clearTimeout(long)
       going = true
       held.toggleAttribute('data-held', true)
       this.querySelector('.wb-shelf')?.toggleAttribute('data-dragging', true)
@@ -276,6 +338,8 @@ customElements.define('app-whiteboard', class extends HTMLElement {
     }
     const up = (/** @type {PointerEvent} */ last) => {
       board.removeEventListener('pointermove', move)
+      clearTimeout(long)
+      if (pressed) return
       const box = held.getBoundingClientRect(), shelf = this.querySelector('.wb-shelf')?.getBoundingClientRect()
       held.removeAttribute('data-held')
       this.querySelector('.wb-shelf')?.removeAttribute('data-dragging')
@@ -500,22 +564,32 @@ customElements.define('app-whiteboard', class extends HTMLElement {
   draw() {
     const one = this.where.peek()
     if (!one) return
-    const as = showAs.peek(), dir = one.table.dir ?? 'ltr', number = new Intl.NumberFormat(intlLocales())
-    const marked = unkept(one), jean = new Set(marked.map((line) => line.row)), name = assistantName()
+    const as = showAs.peek(), dir = one.table.dir ?? 'ltr', only = showOnly.peek() ? this.#row(showOnly.peek()) : undefined
+    const marked = unkept(one), name = assistantName()
+    // Before: the rows without Jean's changes that wait, nothing marked; once none wait, After again.
+    if (!marked.length) this.#before = false
+    if (!(as === 'table' && only) && this.#table) { for (const hold of this.#table.holds) hold(); this.#table = null }
+    const seen = this.#before ? { ...one, rows: fold(one.lines.filter((line) => !marked.includes(/** @type {any} */ (line)))) } : one, jean = new Set(this.#before ? [] : marked.map((line) => line.row))
     const shows = [['board', t('whiteboards.showBoard')], ['lanes', t('whiteboards.showLanes')], ['table', t('whiteboards.showTable')]]
     render(html`<div class="wb" data-as=${as}>
       <div class="wb-head">
         ${glyph}<input class="wb-name" dir="auto" title=${t('whiteboards.name')} .value=${one.table.name} @change=${(/** @type {Event} */ e) => amend({ path: one.folder }, { name: /** @type {HTMLInputElement} */ (e.target).value })}>
+        <span class="wb-people"></span>
         <span class="wb-shows" role="group" aria-label=${t('whiteboards.showAs')}>${shows.map(([id, label]) => html`<button type="button" class="button subtle" aria-pressed=${String(as === id)} @click=${() => { showAs.value = /** @type {any} */ (id) }}>${label}</button>`)}</span>
       </div>
-      ${marked.length ? reviewBar({ label: t('whiteboards.review', { name }), count: t('whiteboards.changes', { count: jean.size, name }), previous: '', next: '',
-        accept: () => accept(one), reject: () => reject(one), acceptAll: t('whiteboards.acceptAll'), rejectAll: t('whiteboards.rejectAll') }) : nothing}
-      ${as === 'table' ? keyed(one.folder, html`<app-table folder=${one.folder}></app-table>`) : as === 'lanes' ? this.#lanes(one, jean) : this.#board(one, dir, jean)}
-      ${as === 'table' ? nothing : this.#shelf(one, jean)}
+      ${marked.length ? html`<div class="wb-review">${reviewBar({ label: t('whiteboards.review', { name }), count: t('whiteboards.changes', { count: jean.size, name }), previous: '', next: '',
+        accept: () => accept(one), reject: () => reject(one), acceptAll: t('whiteboards.acceptAll'), rejectAll: t('whiteboards.rejectAll') })}
+        <span class="wb-shows" role="group" aria-label=${t('whiteboards.compare', { name })}>${[true, false].map((before) => html`<button type="button" class="button subtle" aria-pressed=${String(this.#before === before)}
+          @click=${() => { this.#before = before; this.#said = before ? t('whiteboards.beforeSaid', { name }) : ''; this.draw() }}>${t(before ? 'whiteboards.before' : 'whiteboards.after')}</button>`)}</span></div>` : nothing}
+      ${as === 'table' && only ? html`<p class="wb-only"><span dir="auto">${t('whiteboards.only', { section: wordsOf(only) })}</span> <button type="button" class="button subtle" @click=${() => { showOnly.value = '' }}>${t('whiteboards.allSections')}</button></p>${this.#section(only.id)}`
+        : as === 'table' ? keyed(one.folder, html`<app-table folder=${one.folder}></app-table>`) : as === 'lanes' ? this.#lanes(seen, jean) : this.#board(seen, dir, jean)}
+      ${as === 'table' ? nothing : this.#shelf(seen, jean)}
       <p class="visually-hidden" role="status">${this.#said}</p>
     </div>`, this)
-    if (as === 'board' && !this.#fitted && this.querySelector('.wb-board')?.clientWidth) (this.#fitted = true), this.fit()
+    // Fitted as it opens, and again as rows come while the person hasn't moved it: a whiteboard being written stays whole in view.
+    if (as === 'board' && this.querySelector('.wb-board')?.clientWidth && (!this.#fitted || (!this.#held && one.rows.length !== this.#count))) (this.#fitted = true), this.fit()
     else this.#turn()
+    this.#count = one.rows.length
   }
 
   /**
@@ -547,15 +621,15 @@ customElements.define('app-whiteboard', class extends HTMLElement {
 
   /** A row's menu: Move to… a section or the shelf, Move here, Write, Delete; Accept and Reject on Jean's change. @param {Loaded} one @param {Row} row @param {boolean} marked @param {Area[]} areas */
   #menu(one, row, marked, areas) {
-    const close = (/** @type {Event} */ e) => /** @type {HTMLElement | null} */ (/** @type {HTMLElement} */ (e.target).closest('[popover]'))?.hidePopover()
-    const to = (/** @type {string | null} */ area) => (/** @type {Event} */ e) => { close(e); this.edit([{ row: row.id, set: { area, '@spot': null } }]).then(() => this.say(area ? t('whiteboards.movedTo', { name: wordsOf(row), section: wordsOf(/** @type {Row} */ (this.#row(area))) }) : t('whiteboards.shelved', { name: wordsOf(row) }))) }
+    const to = (/** @type {string | null} */ area) => menuRow(() => this.edit([{ row: row.id, set: { area, '@spot': null } }]).then(() => this.say(area ? t('whiteboards.movedTo', { name: wordsOf(row), section: wordsOf(/** @type {Row} */ (this.#row(area))) }) : t('whiteboards.shelved', { name: wordsOf(row) }))))
     return html`<ul>${kindOf(row) === 'note' ? html`<li><p class="wb-menu-head">${t('whiteboards.moveTo')}</p></li>${areas.filter((area) => area.row.id !== row.cells.area).map((area) => html`<li><button type="button" class="menu-item" @click=${to(area.row.id)}><span class=${`wb-dot wb-hue-${area.hue}`}></span><span dir="auto">${wordsOf(area.row)}</span></button></li>`)}
       ${row.cells.area || row.cells['@spot'] ? html`<li><button type="button" class="menu-item" @click=${to(null)}>${t('whiteboards.toShelf')}</button></li>` : nothing}` : nothing}
-      <li><button type="button" class="menu-item" @click=${(/** @type {Event} */ e) => { close(e); this.#moveHere = row.id; this.say(t('whiteboards.pressWhere')) }}>${t('whiteboards.moveHere')}</button></li>
-      ${kindOf(row) === 'line' ? nothing : html`<li><button type="button" class="menu-item" @click=${(/** @type {Event} */ e) => { close(e); this.write(row) }}>${t('whiteboards.write')}</button></li>`}
-      ${marked ? html`<li><button type="button" class="menu-item" @click=${(/** @type {Event} */ e) => { close(e); accept(one, row.id) }}>${icons.check}${t('whiteboards.accept')}</button></li>
-        <li><button type="button" class="menu-item" @click=${(/** @type {Event} */ e) => { close(e); reject(one, row.id) }}>${t('whiteboards.reject')}</button></li>` : nothing}
-      <li><button type="button" class="menu-item" @click=${(/** @type {Event} */ e) => { close(e); this.erase([row.id]) }}>${icons.trash}${t('action.delete')}</button></li></ul>`
+      <li><button type="button" class="menu-item" @click=${menuRow(() => { this.#moveHere = row.id; this.say(t('whiteboards.pressWhere')) })}>${t('whiteboards.moveHere')}</button></li>
+      ${kindOf(row) === 'line' ? nothing : html`<li><button type="button" class="menu-item" @click=${menuRow(() => { this.write(row) })}>${t('whiteboards.write')}</button></li>`}
+      ${kindOf(row) === 'text' ? html`<li><button type="button" class="menu-item" @click=${menuRow(() => { this.edit([{ row: row.id, set: { '@size': row.cells['@size'] === 'title' ? 'line' : 'title' } }]) })}>${t(row.cells['@size'] === 'title' ? 'whiteboards.asLine' : 'whiteboards.asTitle')}</button></li>` : nothing}
+      ${marked ? html`<li><button type="button" class="menu-item" @click=${menuRow(() => { accept(one, row.id) })}>${icons.check}${t('whiteboards.accept')}</button></li>
+        <li><button type="button" class="menu-item" @click=${menuRow(() => { reject(one, row.id) })}>${t('whiteboards.reject')}</button></li>` : nothing}
+      <li><button type="button" class="menu-item" @click=${menuRow(() => { this.erase([row.id]) })}>${icons.trash}${t('action.delete')}</button></li></ul>`
   }
 
   /** The field a row or a new one is written in: a section's name on one line, a note's or a text's words. @param {Row} [row] */
@@ -584,15 +658,16 @@ customElements.define('app-whiteboard', class extends HTMLElement {
           <button type="button" class="wb-grip icon-button subtle" aria-label=${t('whiteboards.move', { name: words })} @click=${() => this.move(id)}>${GRIP}</button>
           <button type="button" class="icon-button subtle" aria-label=${t('whiteboards.more', { name: words })} popovertarget=${menu}>${icons.more}</button>
           <div id=${menu} class="menu wb-menu" popover><ul>
-            <li><button type="button" class="menu-item" @click=${(/** @type {Event} */ e) => { /** @type {HTMLElement} */ (/** @type {HTMLElement} */ (e.target).closest('[popover]')).hidePopover(); this.write(area.row) }}>${t('action.rename')}</button></li>
-            <li><button type="button" class="menu-item" @click=${() => this.tidy(id)}>${t('whiteboards.tidy')}</button></li>
-            ${one.table.properties.some((property) => property.type === 'person' && !property.deleted) ? nothing : html`<li><button type="button" class="menu-item" @click=${() => this.#dated()}>${t('whiteboards.dated')}</button></li>`}
-            <li><button type="button" class="menu-item" @click=${() => this.ask(inArea(id).map((item) => item.row.id))}>${t('whiteboards.askAbout', { name: assistantName() })}</button></li>
-            ${jean.has(id) ? html`<li><button type="button" class="menu-item" @click=${() => accept(one, id)}>${icons.check}${t('whiteboards.accept')}</button></li><li><button type="button" class="menu-item" @click=${() => reject(one, id)}>${t('whiteboards.reject')}</button></li>` : nothing}
-            <li><button type="button" class="menu-item" @click=${() => this.erase([id])}>${icons.trash}${t('action.delete')}</button></li></ul></div></h3>
+            <li><button type="button" class="menu-item" @click=${menuRow(() => this.write(area.row))}>${t('action.rename')}</button></li>
+            <li><button type="button" class="menu-item" @click=${menuRow(() => this.tidy(id))}>${t('whiteboards.tidy')}</button></li>
+            <li><button type="button" class="menu-item" @click=${menuRow(() => { showOnly.value = id; showAs.value = 'table' })}>${icons.table}${t('whiteboards.asTable')}</button></li>
+            ${one.table.properties.some((property) => property.type === 'person' && !property.deleted) ? nothing : html`<li><button type="button" class="menu-item" @click=${menuRow(() => this.#dated())}>${t('whiteboards.dated')}</button></li>`}
+            <li><button type="button" class="menu-item" @click=${menuRow(() => this.ask(inArea(id).map((item) => item.row.id)))}>${t('whiteboards.askAbout', { name: assistantName() })}</button></li>
+            ${jean.has(id) ? html`<li><button type="button" class="menu-item" @click=${menuRow(() => accept(one, id))}>${icons.check}${t('whiteboards.accept')}</button></li><li><button type="button" class="menu-item" @click=${menuRow(() => reject(one, id))}>${t('whiteboards.reject')}</button></li>` : nothing}
+            <li><button type="button" class="menu-item" @click=${menuRow(() => this.erase([id]))}>${icons.trash}${t('action.delete')}</button></li></ul></div></h3>
         <ul>${inArea(id).map((item) => this.#item(one, item, area, jean, areas, Number(order.get(item.row.id))))}${draft?.area === id ? this.#newOne(draft) : nothing}</ul></section>`
     }
-    return html`<div class="wb-board" role="region" aria-label=${t('whiteboards.board', { name: one.table.name })} data-tool=${this.#tool} ?data-moving=${!!this.#moveHere}
+    return html`<div class="wb-board" role="region" aria-label=${t('whiteboards.board', { name: one.table.name })} data-tool=${this.#tool} ?data-moving=${!!this.#moveHere} ?inert=${this.#before || writing.peek() === one.folder}
         @pointerdown=${this.down} @wheel=${this.wheel} @keydown=${this.keys} @pointermove=${(/** @type {PointerEvent} */ e) => this.#tell(this.#point(e))}>
       <div class="wb-layer" dir=${dir}>
         <div class="wb-others" aria-hidden="true"></div>
@@ -651,7 +726,7 @@ customElements.define('app-whiteboard', class extends HTMLElement {
   /** The bar while notes are selected, in the same place: how many, Ask Jean, Section around them, Move to…, Delete, Done. @param {Area[]} areas */
   #chosen(areas) {
     const rows = [...this.#selected], menu = `${this.#id}-chosen`, name = assistantName()
-    const to = (/** @type {string | null} */ area) => async () => { await this.edit(rows.filter((id) => kindOf(this.#row(id) ?? { cells: {} }) === 'note').map((row) => ({ row, set: { area, '@spot': null } }))); this.#selected.clear(); this.draw() }
+    const to = (/** @type {string | null} */ area) => menuRow(async () => { await this.edit(rows.filter((id) => kindOf(this.#row(id) ?? { cells: {} }) === 'note').map((row) => ({ row, set: { area, '@spot': null } }))); this.#selected.clear(); this.draw() })
     return html`<div class="wb-bar" role="toolbar" aria-label=${t('whiteboards.selected', { count: rows.length })} @keydown=${this.#roving}>
       <b>${t('whiteboards.selected', { count: rows.length })}</b>
       <button type="button" class="button primary" @click=${() => this.ask(rows)}>${t('whiteboards.askAbout', { name })}</button>

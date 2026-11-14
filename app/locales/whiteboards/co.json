@@ -83,5 +83,32 @@
     "many": "{count} d’elementi squassati.",
     "other": "{count} elementi squassati."
   },
-  "whiteboards.tidied": "Note rimesse in fila."
+  "whiteboards.tidied": "Note rimesse in fila.",
+  "whiteboards.asTitle": "Fanne un titulu",
+  "whiteboards.asLine": "Fanne testu simplice",
+  "whiteboards.asTable": "Mustrà cum’è tavula",
+  "whiteboards.only": "Solu {section}",
+  "whiteboards.allSections": "Tutte e sezzioni",
+  "whiteboards.compare": "Nanzu o dopu à i cambiamenti di {name}",
+  "whiteboards.before": "Nanzu",
+  "whiteboards.after": "Dopu",
+  "whiteboards.beforeSaid": "A lavagna cum’ella era nanzu à i cambiamenti di {name}. « Dopu » i mostra torna.",
+  "whiteboards.here": {
+    "one": "{count} altra persona quì",
+    "many": "{count} d’altre persone quì",
+    "other": "{count} altre persone quì"
+  },
+  "whiteboards.inSection": "In {section}",
+  "whiteboards.onBoard": "Nant’à a lavagna",
+  "whiteboards.goThere": "Andà quallà",
+  "whiteboards.picked": {
+    "one": "{count} nota di « {name} »",
+    "many": "{count} di note di « {name} »",
+    "other": "{count} note di « {name} »"
+  },
+  "whiteboards.unpick": "Lasciàle fora",
+  "whiteboards.ideas": "Idee nant’à ste note",
+  "whiteboards.ideaGroup": "Aggruppa ste note per tema",
+  "whiteboards.ideaActions": "Trasforma ste note in azzioni, ognuna cù un rispunsevule è una data",
+  "whiteboards.ideaSum": "Riassumi ste note in qualchì linea"
 }

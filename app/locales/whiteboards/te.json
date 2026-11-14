@@ -79,5 +79,30 @@
     "one": "తొలగించబడింది.",
     "other": "{count} తొలగించబడ్డాయి."
   },
-  "whiteboards.tidied": "గమనికలు మళ్లీ వరుసల్లో పెట్టబడ్డాయి."
+  "whiteboards.tidied": "గమనికలు మళ్లీ వరుసల్లో పెట్టబడ్డాయి.",
+  "whiteboards.asTitle": "శీర్షికగా మార్చు",
+  "whiteboards.asLine": "సాధారణ వచనంగా మార్చు",
+  "whiteboards.asTable": "పట్టికగా చూపించు",
+  "whiteboards.only": "{section} మాత్రమే",
+  "whiteboards.allSections": "అన్ని విభాగాలు",
+  "whiteboards.compare": "{name} చేసిన మార్పులకు ముందు లేదా తర్వాత",
+  "whiteboards.before": "ముందు",
+  "whiteboards.after": "తర్వాత",
+  "whiteboards.beforeSaid": "{name} చేసిన మార్పులకు ముందు వైట్‌బోర్డ్ ఉన్నట్టుగా. “తర్వాత” వాటిని మళ్లీ చూపిస్తుంది.",
+  "whiteboards.here": {
+    "one": "ఇక్కడ ఇంకా {count} వ్యక్తి ఉన్నారు",
+    "other": "ఇక్కడ ఇంకా {count} మంది ఉన్నారు"
+  },
+  "whiteboards.inSection": "{section}లో",
+  "whiteboards.onBoard": "బోర్డుపై",
+  "whiteboards.goThere": "అక్కడికి వెళ్లు",
+  "whiteboards.picked": {
+    "one": "“{name}” నుండి {count} గమనిక",
+    "other": "“{name}” నుండి {count} గమనికలు"
+  },
+  "whiteboards.unpick": "వాటిని తీసివేయి",
+  "whiteboards.ideas": "ఈ గమనికల గురించి ఆలోచనలు",
+  "whiteboards.ideaGroup": "ఈ గమనికలను అంశాల వారీగా సమూహాలుగా చేయి",
+  "whiteboards.ideaActions": "ఈ గమనికలను చేయాల్సిన పనులుగా మార్చు, ఒక్కోదానికి ఒక బాధ్యులు, ఒక తేదీతో",
+  "whiteboards.ideaSum": "ఈ గమనికలను కొన్ని లైన్లలో సంగ్రహించు"
 }

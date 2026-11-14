@@ -79,5 +79,30 @@
     "one": "Verwijderd.",
     "other": "{count} verwijderd."
   },
-  "whiteboards.tidied": "Notities weer in rijen gezet."
+  "whiteboards.tidied": "Notities weer in rijen gezet.",
+  "whiteboards.asTitle": "Omzetten naar titel",
+  "whiteboards.asLine": "Omzetten naar gewone tekst",
+  "whiteboards.asTable": "Toon als tabel",
+  "whiteboards.only": "Alleen {section}",
+  "whiteboards.allSections": "Alle secties",
+  "whiteboards.compare": "Voor of na de wijzigingen van {name}",
+  "whiteboards.before": "Ervoor",
+  "whiteboards.after": "Erna",
+  "whiteboards.beforeSaid": "Het whiteboard zoals het was vóór de wijzigingen van {name}. ‘Erna’ toont ze weer.",
+  "whiteboards.here": {
+    "one": "Nog {count} persoon hier",
+    "other": "Nog {count} personen hier"
+  },
+  "whiteboards.inSection": "In {section}",
+  "whiteboards.onBoard": "Op het whiteboard",
+  "whiteboards.goThere": "Erheen gaan",
+  "whiteboards.picked": {
+    "one": "{count} notitie uit ‘{name}’",
+    "other": "{count} notities uit ‘{name}’"
+  },
+  "whiteboards.unpick": "Weglaten",
+  "whiteboards.ideas": "Ideeën voor deze notities",
+  "whiteboards.ideaGroup": "Groepeer deze notities per thema",
+  "whiteboards.ideaActions": "Maak van deze notities actiepunten, elk met een eigenaar en een datum",
+  "whiteboards.ideaSum": "Vat deze notities samen in een paar regels"
 }

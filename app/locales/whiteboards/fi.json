@@ -79,5 +79,30 @@
     "one": "Poistettu.",
     "other": "{count} poistettu."
   },
-  "whiteboards.tidied": "Laput taas riveissä."
+  "whiteboards.tidied": "Laput taas riveissä.",
+  "whiteboards.asTitle": "Muuta otsikoksi",
+  "whiteboards.asLine": "Muuta tavalliseksi tekstiksi",
+  "whiteboards.asTable": "Näytä taulukkona",
+  "whiteboards.only": "Vain {section}",
+  "whiteboards.allSections": "Kaikki osiot",
+  "whiteboards.compare": "Ennen muutoksia tai niiden jälkeen, tekijä: {name}",
+  "whiteboards.before": "Ennen",
+  "whiteboards.after": "Jälkeen",
+  "whiteboards.beforeSaid": "Valkotaulu sellaisena kuin se oli ennen muutoksia (tekijä: {name}). ”Jälkeen” näyttää ne taas.",
+  "whiteboards.here": {
+    "one": "{count} muu henkilö paikalla",
+    "other": "{count} muuta henkilöä paikalla"
+  },
+  "whiteboards.inSection": "Osiossa {section}",
+  "whiteboards.onBoard": "Taululla",
+  "whiteboards.goThere": "Siirry sinne",
+  "whiteboards.picked": {
+    "one": "{count} lappu taululta ”{name}”",
+    "other": "{count} lappua taululta ”{name}”"
+  },
+  "whiteboards.unpick": "Jätä pois",
+  "whiteboards.ideas": "Ideoita näistä lapuista",
+  "whiteboards.ideaGroup": "Ryhmittele nämä laput aiheittain",
+  "whiteboards.ideaActions": "Tee näistä lapuista tehtäviä, joilla kullakin on vastuuhenkilö ja päivä",
+  "whiteboards.ideaSum": "Tiivistä nämä laput muutamaan riviin"
 }

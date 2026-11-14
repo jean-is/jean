@@ -79,5 +79,30 @@
     "one": "Imefutwa.",
     "other": "Vimefutwa: {count}."
   },
-  "whiteboards.tidied": "Madokezo yamepangwa tena kwa safu."
+  "whiteboards.tidied": "Madokezo yamepangwa tena kwa safu.",
+  "whiteboards.asTitle": "Fanya kuwa kichwa",
+  "whiteboards.asLine": "Fanya kuwa maandishi ya kawaida",
+  "whiteboards.asTable": "Onyesha kama jedwali",
+  "whiteboards.only": "{section} pekee",
+  "whiteboards.allSections": "Sehemu zote",
+  "whiteboards.compare": "Kabla au baada ya mabadiliko ya {name}",
+  "whiteboards.before": "Kabla",
+  "whiteboards.after": "Baada",
+  "whiteboards.beforeSaid": "Ubao kama ulivyokuwa kabla ya mabadiliko ya {name}. “Baada” huyaonyesha tena.",
+  "whiteboards.here": {
+    "one": "Mtu mwingine {count} yuko hapa",
+    "other": "Watu wengine {count} wako hapa"
+  },
+  "whiteboards.inSection": "Katika {section}",
+  "whiteboards.onBoard": "Ubaoni",
+  "whiteboards.goThere": "Nenda huko",
+  "whiteboards.picked": {
+    "one": "Dokezo {count} kutoka “{name}”",
+    "other": "Madokezo {count} kutoka “{name}”"
+  },
+  "whiteboards.unpick": "Yaondoe",
+  "whiteboards.ideas": "Mawazo kuhusu madokezo haya",
+  "whiteboards.ideaGroup": "Panga madokezo haya kwa mada",
+  "whiteboards.ideaActions": "Geuza madokezo haya kuwa kazi za kufanya, kila moja na mhusika na tarehe",
+  "whiteboards.ideaSum": "Fupisha madokezo haya kwa mistari michache"
 }

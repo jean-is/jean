@@ -79,5 +79,30 @@
     "one": "{count} ang nabura.",
     "other": "{count} ang nabura."
   },
-  "whiteboards.tidied": "Nakahanay na ulit ang mga tala."
+  "whiteboards.tidied": "Nakahanay na ulit ang mga tala.",
+  "whiteboards.asTitle": "Gawing pamagat",
+  "whiteboards.asLine": "Gawing karaniwang teksto",
+  "whiteboards.asTable": "Ipakita bilang talahanayan",
+  "whiteboards.only": "{section} lang",
+  "whiteboards.allSections": "Lahat ng seksiyon",
+  "whiteboards.compare": "Bago o pagkatapos ng mga pagbabago ni {name}",
+  "whiteboards.before": "Bago",
+  "whiteboards.after": "Pagkatapos",
+  "whiteboards.beforeSaid": "Ang whiteboard bago ang mga pagbabago ni {name}. Ipinapakita ulit ng “Pagkatapos” ang mga ito.",
+  "whiteboards.here": {
+    "one": "{count} pang tao ang narito",
+    "other": "{count} pang tao ang narito"
+  },
+  "whiteboards.inSection": "Sa {section}",
+  "whiteboards.onBoard": "Sa board",
+  "whiteboards.goThere": "Pumunta roon",
+  "whiteboards.picked": {
+    "one": "{count} tala mula sa “{name}”",
+    "other": "{count} tala mula sa “{name}”"
+  },
+  "whiteboards.unpick": "Alisin ang mga ito",
+  "whiteboards.ideas": "Mga ideya tungkol sa mga talang ito",
+  "whiteboards.ideaGroup": "Pangkatin ayon sa tema ang mga talang ito",
+  "whiteboards.ideaActions": "Gawing mga gawain ang mga talang ito, bawat isa may may-hawak at petsa",
+  "whiteboards.ideaSum": "Ibuod ang mga talang ito sa ilang linya"
 }
