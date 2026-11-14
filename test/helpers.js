@@ -1,13 +1,28 @@
 // SPDX-License-Identifier: MIT
 // Shared steps: a fresh Jean in a given language, with the fake brain connected.
 import { readFile } from 'node:fs/promises'
+import { deflateSync } from 'node:zlib'
 import { expect } from '@playwright/test'
+import { crc32 } from '../app/core/zip.js'
 
 export const BRAIN_URL = 'http://127.0.0.1:4181/v1'
 export const MAIL_URL = 'http://127.0.0.1:4182'
 export const GATEWAY_URL = 'http://127.0.0.1:4183/'
 export const SHARE_URL = 'http://127.0.0.1:4185/'
 export const RELAY_URL = 'http://127.0.0.1:4187/'
+/** A PNG, each pixel `at(x, y)` gives as RGBA. @param {number} width @param {number} height @param {(x: number, y: number) => number[]} at */
+export function png(width, height, at) {
+  const row = width * 4 + 1, raw = Buffer.alloc(row * height)
+  for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) raw.set(at(x, y), y * row + 1 + x * 4)
+  const chunk = (/** @type {string} */ type, /** @type {Buffer} */ data) => {
+    const out = Buffer.alloc(12 + data.length)
+    out.writeUInt32BE(data.length, 0), out.write(type, 4, 'latin1'), data.copy(out, 8), out.writeUInt32BE(crc32(out.subarray(4, 8 + data.length)) >>> 0, 8 + data.length)
+    return out
+  }
+  const head = Buffer.alloc(13)
+  head.writeUInt32BE(width, 0), head.writeUInt32BE(height, 4), head.set([8, 6], 8)
+  return Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), chunk('IHDR', head), chunk('IDAT', deflateSync(raw)), chunk('IEND', Buffer.alloc(0))])
+}
 export const SALES = 'region,month,sales\nNorth,Jan,1200\nSouth,Jan,950\nNorth,Feb,1340\nSouth,Feb,1010\nEast,Jan,700\nEast,Feb,815\n'
 
 /**

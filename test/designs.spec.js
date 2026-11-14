@@ -6,7 +6,8 @@
 // words, arranged and duplicated; offered for an invitation written as a web page; a picture Jean made in the task put in by its name (D730). In Arabic its words run right to left in Jean's own
 // face; in Japanese the weekday in brackets is marked.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, nameOf, paint } from './helpers.js'
+import { readFile } from 'node:fs/promises'
+import { start, connectFakeBrain, ask, answered, nameOf, paint, png, openSettings, closeSettings } from './helpers.js'
 
 /** The design on show, as the pane holds it. @param {import('@playwright/test').Page} page */
 const shown = (page) => page.evaluate(async () => (await import('/caps/designs/designs.js')).shown.value?.design)
@@ -235,6 +236,86 @@ test('in a project with a colour, a design\'s first take wears the project\'s co
   await page.locator('.design-bar').getByRole('button', { name: /Colours/ }).click()
   await expect(page.locator('#design-colours').getByRole('menuitemradio').first()).toHaveText('The project’s colours')
   await expect(page.locator('#design-colours').getByRole('menuitemradio').first()).toHaveAttribute('aria-checked', 'true')
+})
+
+// A design system's own fonts and logo (D601): offered in Settings with Designs alone; the first take set in its fonts, the small print too, which Type
+// names; Add puts its logo in its corner.
+test('in a project with its own fonts and logo, the first take is set in its fonts, which Type names, and Add puts its logo in its corner (D601)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  const logo = `data:image/png;base64,${png(200, 100, () => [15, 118, 110, 255]).toString('base64')}`
+  await page.evaluate(async (logo) => {
+    const [{ app }, { keepKit }, { unlock }] = await Promise.all([import('/ui/state.js'), import('/ui/kit.js'), import('/ui/caps.js')])
+    await keepKit(app.projectDir, { tokens: { primary: '#0f766e', fonts: { heading: ['Georgia'], body: ['Verdana'] }, logo, logoAt: 'bottom-start' } })
+    await unlock('designs')
+  }, logo)
+  // Designs alone offers the design system, which says designs wear it.
+  const settings = await openSettings(page, 'Appearance')
+  await expect(settings.getByRole('button', { name: /^Design system/ })).toContainText('slides and designs')
+  await closeSettings(page)
+  await ask(page, 'Make an invitation for Léa’s 7th birthday')
+  await answered(page)
+  await expect.poll(async () => (await shown(page))?.voice).toBe('own')
+  const stage = page.locator('.design-stage .design-page'), face = (/** @type {string} */ part) => stage.locator(`[data-part="${part}"] p`).evaluate((p) => getComputedStyle(p).fontFamily)
+  expect(await face('title')).toMatch(/^"?Georgia"?, Calm/)
+  expect(await face('words')).toMatch(/^"?Verdana"?, Calm/)
+  expect(await face('small')).toMatch(/^"?Verdana"?, Calm/)
+  await page.locator('.design-bar').getByRole('button', { name: 'Your own fonts' }).click()
+  await expect(page.locator('#design-type').getByRole('menuitemradio', { name: 'Your own fonts' })).toHaveAttribute('aria-checked', 'true')
+  await page.keyboard.press('Escape')
+  await page.locator('.design-bar').getByRole('button', { name: 'Add' }).click()
+  await page.locator('#design-add').getByRole('button', { name: 'Logo' }).click()
+  const added = async () => (await shown(page))?.parts.find((part) => part.words === 'Logo')
+  await expect.poll(async () => (await added())?.px).toEqual([200, 100])
+  const [x, y, w, h] = (await added())?.box ?? []
+  expect([w / h, x < 1480 / 2, y > 2100 / 2]).toEqual([2, true, true])
+  await expect(stage.locator(`[data-part="${(await added())?.id}"] app-shared img`)).toBeVisible()
+})
+
+// A photo (D572): a HEIC one goes in as a JPEG where the browser opens it, as Safari does, else it says why; one too small to print sharp is
+// replaced, or made smaller until it is sharp; a date to reply by after the event is picked in its words, to change.
+test('a HEIC photo goes in as a JPEG where the browser opens it, else it says why; a soft one is replaced or made smaller; a late reply date is picked to change', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('designs') })
+  await ask(page, 'Make an invitation for Léa’s 7th birthday')
+  await answered(page)
+  await page.locator('.design-bar').getByRole('button', { name: /^Parts/ }).click()
+  const fields = page.locator('.design-fields'), picture = async () => (await shown(page))?.parts.find((part) => part.id === 'picture')
+  const choose = async (/** @type {string} */ button, /** @type {{ name: string, mimeType: string, buffer: Buffer }} */ file) => {
+    const [chooser] = await Promise.all([page.waitForEvent('filechooser'), fields.getByRole('button', { name: button }).click()])
+    await chooser.setFiles(file)
+  }
+  const heic = await readFile(new URL('fixtures/photo.heic', import.meta.url))
+  const opens = await page.evaluate(async (bytes) => Boolean(await createImageBitmap(new Blob([new Uint8Array(bytes)], { type: 'image/heic' })).catch(() => null)), [...heic])
+  await choose('Add a photo', { name: 'IMG_0042.HEIC', mimeType: 'image/heic', buffer: heic })
+  if (opens) await expect.poll(async () => [(await picture())?.file?.endsWith('.jpg'), (await picture())?.px]).toEqual([true, [64, 48]])
+  else {
+    await expect(page.locator('.toast')).toContainText('This browser can’t open HEIC photos: try Safari, or a JPEG copy.')
+    await choose('Add a photo', { name: 'small.png', mimeType: 'image/png', buffer: png(64, 48, (x) => [x * 4, 120, 200, 255]) })
+  }
+  // 64 pixels across most of an A5 print soft: another photo, then smaller until it prints sharp.
+  await expect(fields.getByRole('alert').filter({ hasText: 'This picture will print blurry at this size.' })).toBeVisible()
+  await choose('Replace', { name: 'other.png', mimeType: 'image/png', buffer: png(80, 60, (x) => [200, x * 3, 90, 255]) })
+  await expect.poll(async () => (await picture())?.px).toEqual([80, 60])
+  const wide = (await picture())?.box[2] ?? 0
+  await fields.getByRole('button', { name: 'Smaller' }).click()
+  await expect(fields.getByText('This picture will print blurry at this size.')).toHaveCount(0)
+  expect((await picture())?.box[2]).toBeLessThan(wide / 5)
+  // The date to reply by after the event, picked in the small print's words.
+  await fields.getByLabel('Small print').fill('Please reply to Claire by 20 November')
+  await expect(fields.getByRole('alert').filter({ hasText: 'The date to reply by is after the event.' })).toBeVisible()
+  await fields.getByRole('button', { name: 'Change the date' }).click()
+  await expect(fields.getByLabel('Small print')).toBeFocused()
+  const picked = (/** @type {import('@playwright/test').Locator} */ area) => area.evaluate((/** @type {HTMLTextAreaElement} */ one) => one.value.slice(one.selectionStart, one.selectionEnd))
+  await expect.poll(() => picked(fields.getByLabel('Small print'))).toBe('20 November')
+  // From its dot on the page, the words open in place, the date picked there.
+  await page.locator('.design-bar').getByRole('button', { name: /^Parts/ }).click()
+  await expect(fields).toHaveCount(0)
+  await page.getByRole('button', { name: 'Look at Small print' }).click()
+  await page.getByRole('dialog', { name: 'Small print' }).getByRole('button', { name: 'Change the date' }).click()
+  await expect(page.locator('.design-edit')).toBeFocused()
+  await expect.poll(() => picked(page.locator('.design-edit'))).toBe('20 November')
 })
 
 test('an invitation written as a web page offers Designs, and a yes lays it out as one', async ({ page }) => {

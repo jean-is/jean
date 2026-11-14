@@ -39,6 +39,7 @@
   "designs.voice.bold": "Matapang",
   "designs.voice.calm": "Mahinahon",
   "designs.voice.handwritten": "Sulat-kamay",
+  "designs.voice.own": "Sarili mong mga font",
   "designs.parts": "Mga bahagi",
   "designs.look": {
     "one": "Titingnan: {count}",
@@ -78,6 +79,7 @@
   "designs.role.shape": "Hugis",
   "designs.role.text": "Teksto",
   "designs.role.qr": "QR code",
+  "designs.logo": "Logo",
   "designs.higher": "Mas mataas",
   "designs.lower": "Mas mababa",
   "designs.bigger": "Mas malaki",
@@ -113,6 +115,7 @@
   "designs.fix.remove": "Alisin",
   "designs.fix.readable": "Gawing nababasa",
   "designs.fix.inside": "Ipasok sa loob",
+  "designs.fix.date": "Palitan ang petsa",
   "designs.jean": "Binago ni {name}",
   "designs.before": "Dati",
   "designs.accept": "Tanggapin",
@@ -125,6 +128,7 @@
   "designs.acceptAll": "Tanggapin lahat",
   "designs.rejectAll": "Tanggihan lahat",
   "designs.notPicture": "Hindi larawang maipapakita ng disenyo ang file na ito.",
+  "designs.heic": "Hindi kayang buksan ng browser na ito ang mga larawang HEIC: subukan ang Safari, o isang kopyang JPEG.",
   "designs.first": {
     "one": "Titingnan muna: {count}",
     "other": "Titingnan muna: {count}"

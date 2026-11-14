@@ -39,6 +39,7 @@
   "designs.voice.bold": "Güçlü",
   "designs.voice.calm": "Sakin",
   "designs.voice.handwritten": "El yazısı",
+  "designs.voice.own": "Kendi yazı tipleriniz",
   "designs.parts": "Parçalar",
   "designs.look": {
     "one": "Bakılacak: {count}",
@@ -78,6 +79,7 @@
   "designs.role.shape": "Şekil",
   "designs.role.text": "Yazı",
   "designs.role.qr": "QR kodu",
+  "designs.logo": "Logo",
   "designs.higher": "Yukarı",
   "designs.lower": "Aşağı",
   "designs.bigger": "Büyüt",
@@ -113,6 +115,7 @@
   "designs.fix.remove": "Kaldır",
   "designs.fix.readable": "Okunur yap",
   "designs.fix.inside": "İçeri al",
+  "designs.fix.date": "Tarihi değiştir",
   "designs.jean": "Değiştiren: {name}",
   "designs.before": "Önce",
   "designs.accept": "Kabul et",
@@ -125,6 +128,7 @@
   "designs.acceptAll": "Tümünü kabul et",
   "designs.rejectAll": "Tümünü reddet",
   "designs.notPicture": "Bu dosya, bir tasarımın gösterebileceği bir resim değil.",
+  "designs.heic": "Bu tarayıcı HEIC fotoğrafları açamıyor: Safari’yi ya da bir JPEG kopyasını deneyin.",
   "designs.first": {
     "one": "Önce bakılacak: {count}",
     "other": "Önce bakılacak: {count}"

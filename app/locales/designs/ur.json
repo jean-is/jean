@@ -39,6 +39,7 @@
   "designs.voice.bold": "جاندار",
   "designs.voice.calm": "پرسکون",
   "designs.voice.handwritten": "ہاتھ کی لکھائی",
+  "designs.voice.own": "آپ کے اپنے فونٹ",
   "designs.parts": "حصے",
   "designs.look": {
     "one": "دیکھنے کے لیے: {count}",
@@ -78,6 +79,7 @@
   "designs.role.shape": "شکل",
   "designs.role.text": "متن",
   "designs.role.qr": "QR کوڈ",
+  "designs.logo": "لوگو",
   "designs.higher": "اوپر",
   "designs.lower": "نیچے",
   "designs.bigger": "بڑا کریں",
@@ -113,6 +115,7 @@
   "designs.fix.remove": "ہٹائیں",
   "designs.fix.readable": "پڑھنے کے قابل بنائیں",
   "designs.fix.inside": "اندر کریں",
+  "designs.fix.date": "تاریخ بدلیں",
   "designs.jean": "{name} کی تبدیلی",
   "designs.before": "پہلے",
   "designs.accept": "قبول کریں",
@@ -125,6 +128,7 @@
   "designs.acceptAll": "سب قبول کریں",
   "designs.rejectAll": "سب مسترد کریں",
   "designs.notPicture": "یہ فائل ایسی تصویر نہیں جو ڈیزائن دکھا سکے۔",
+  "designs.heic": "یہ براؤزر HEIC تصاویر نہیں کھول سکتا: Safari آزمائیں، یا اس کی JPEG کاپی۔",
   "designs.first": {
     "one": "پہلے دیکھنے کے لیے: {count}",
     "other": "پہلے دیکھنے کے لیے: {count}"

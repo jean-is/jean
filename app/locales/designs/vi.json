@@ -39,6 +39,7 @@
   "designs.voice.bold": "Mạnh mẽ",
   "designs.voice.calm": "Điềm tĩnh",
   "designs.voice.handwritten": "Viết tay",
+  "designs.voice.own": "Phông chữ của bạn",
   "designs.parts": "Thành phần",
   "designs.look": {
     "other": "Cần xem: {count}"
@@ -77,6 +78,7 @@
   "designs.role.shape": "Hình khối",
   "designs.role.text": "Chữ",
   "designs.role.qr": "Mã QR",
+  "designs.logo": "Logo",
   "designs.higher": "Lên trên",
   "designs.lower": "Xuống dưới",
   "designs.bigger": "To hơn",
@@ -112,6 +114,7 @@
   "designs.fix.remove": "Bỏ đi",
   "designs.fix.readable": "Cho dễ đọc",
   "designs.fix.inside": "Đưa vào trong",
+  "designs.fix.date": "Đổi ngày",
   "designs.jean": "{name} đã đổi",
   "designs.before": "Trước",
   "designs.accept": "Chấp nhận",
@@ -123,6 +126,7 @@
   "designs.acceptAll": "Chấp nhận tất cả",
   "designs.rejectAll": "Từ chối tất cả",
   "designs.notPicture": "Tệp này không phải là hình ảnh mà bản thiết kế hiển thị được.",
+  "designs.heic": "Trình duyệt này không mở được ảnh HEIC: hãy thử Safari, hoặc một bản sao JPEG.",
   "designs.first": {
     "other": "Cần xem trước: {count}"
   },

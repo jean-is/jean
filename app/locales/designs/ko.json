@@ -39,6 +39,7 @@
   "designs.voice.bold": "대담한",
   "designs.voice.calm": "차분한",
   "designs.voice.handwritten": "손글씨",
+  "designs.voice.own": "내 글꼴",
   "designs.parts": "요소",
   "designs.look": {
     "other": "확인할 것 {count}개"
@@ -77,6 +78,7 @@
   "designs.role.shape": "도형",
   "designs.role.text": "글자",
   "designs.role.qr": "QR 코드",
+  "designs.logo": "로고",
   "designs.higher": "위로",
   "designs.lower": "아래로",
   "designs.bigger": "더 크게",
@@ -112,6 +114,7 @@
   "designs.fix.remove": "빼기",
   "designs.fix.readable": "읽기 쉽게",
   "designs.fix.inside": "안쪽으로",
+  "designs.fix.date": "날짜 바꾸기",
   "designs.jean": "{name}의 변경",
   "designs.before": "변경 전",
   "designs.accept": "수락",
@@ -123,6 +126,7 @@
   "designs.acceptAll": "모두 수락",
   "designs.rejectAll": "모두 거부",
   "designs.notPicture": "이 파일은 디자인에 넣을 수 있는 이미지가 아니에요.",
+  "designs.heic": "이 브라우저에서는 HEIC 사진을 열 수 없어요. Safari를 쓰거나 JPEG 사본을 넣어 보세요.",
   "designs.first": {
     "other": "먼저 확인할 것 {count}개"
   },

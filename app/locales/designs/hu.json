@@ -39,6 +39,7 @@
   "designs.voice.bold": "Erőteljes",
   "designs.voice.calm": "Nyugodt",
   "designs.voice.handwritten": "Kézírásos",
+  "designs.voice.own": "Saját betűtípusok",
   "designs.parts": "Részek",
   "designs.look": {
     "one": "Megnézendő: {count}",
@@ -78,6 +79,7 @@
   "designs.role.shape": "Alakzat",
   "designs.role.text": "Felirat",
   "designs.role.qr": "QR-kód",
+  "designs.logo": "Logó",
   "designs.higher": "Feljebb",
   "designs.lower": "Lejjebb",
   "designs.bigger": "Nagyobb",
@@ -113,6 +115,7 @@
   "designs.fix.remove": "Eltávolítás",
   "designs.fix.readable": "Legyen olvasható",
   "designs.fix.inside": "Beljebb",
+  "designs.fix.date": "Dátum módosítása",
   "designs.jean": "Módosította: {name}",
   "designs.before": "Előtte",
   "designs.accept": "Elfogadás",
@@ -125,6 +128,7 @@
   "designs.acceptAll": "Összes elfogadása",
   "designs.rejectAll": "Összes elutasítása",
   "designs.notPicture": "Ez a fájl nem olyan kép, amelyet egy terv meg tud jeleníteni.",
+  "designs.heic": "Ez a böngésző nem nyitja meg a HEIC-fotókat: a Safari igen, vagy egy JPEG-másolat is jó.",
   "designs.first": {
     "one": "Előbb megnézendő: {count}",
     "other": "Előbb megnézendő: {count}"

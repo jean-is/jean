@@ -39,6 +39,7 @@
   "designs.voice.bold": "หนักแน่น",
   "designs.voice.calm": "สงบ",
   "designs.voice.handwritten": "ลายมือ",
+  "designs.voice.own": "แบบอักษรของคุณเอง",
   "designs.parts": "ส่วนต่างๆ",
   "designs.look": {
     "other": "ต้องตรวจดู {count} จุด"
@@ -77,6 +78,7 @@
   "designs.role.shape": "รูปทรง",
   "designs.role.text": "ข้อความ",
   "designs.role.qr": "คิวอาร์โค้ด",
+  "designs.logo": "โลโก้",
   "designs.higher": "สูงขึ้น",
   "designs.lower": "ต่ำลง",
   "designs.bigger": "ใหญ่ขึ้น",
@@ -112,6 +114,7 @@
   "designs.fix.remove": "เอาออก",
   "designs.fix.readable": "ทำให้อ่านง่าย",
   "designs.fix.inside": "ย้ายเข้าด้านใน",
+  "designs.fix.date": "เปลี่ยนวันที่",
   "designs.jean": "แก้ไขโดย {name}",
   "designs.before": "ก่อนแก้",
   "designs.accept": "ยอมรับ",
@@ -123,6 +126,7 @@
   "designs.acceptAll": "ยอมรับทั้งหมด",
   "designs.rejectAll": "ปฏิเสธทั้งหมด",
   "designs.notPicture": "ไฟล์นี้ไม่ใช่รูปภาพที่งานออกแบบแสดงได้",
+  "designs.heic": "เบราว์เซอร์นี้เปิดรูป HEIC ไม่ได้ ลองใช้ Safari หรือใช้สำเนา JPEG",
   "designs.first": {
     "other": "ตรวจดูก่อน {count} จุด"
   },

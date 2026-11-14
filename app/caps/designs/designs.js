@@ -24,6 +24,8 @@ import { languageOf } from '../../ui/language.js'
 import { xmpOf } from '../pictures/mark.js'
 import { BRAND } from '../../brand.js'
 import { lookHere, hexOf } from '../../ui/kit.js'
+import { PICTURE } from '../../ui/touches.js'
+import { kitSlot } from '../slides/kit-slot.js'
 import { DESIGN, CHANGE, LINES, RULE, VOICES, repair } from './tool.js'
 import { designOf, changed, withParts, textOf, marksOf, partsOf, ownPalette } from './layout.js'
 import { toSvg, fromSvg, designOfPng } from './format.js'
@@ -42,13 +44,15 @@ const [book] = await Promise.all([/** @type {Promise<Book>} */ (fetch(new URL('l
   styleSheet(new URL('designs.css', import.meta.url))])
 export { book }
 /**
- * The project's look as a palette of Designs' own, first, and its voice, which a new design's first take wears (D601): each of
- * its colours reading on its paper (`ownPalette`). Read again as a design is made or opened.
+ * The project's look as a palette of Designs' own, first, and its voice or own fonts, which a new design's first take wears (D601): each of
+ * its colours reading on its paper (`ownPalette`). Its logo, by day and for a dark ground, waits in Add. Read again as a design is made or opened.
  */
 async function ownLook() {
-  const look = await lookHere(), base = book.palettes.filter((one) => one.id !== 'project')
+  const look = await lookHere(), base = book.palettes.filter((one) => one.id !== 'project'), fonts = look?.fonts
   book.palettes = look?.primary ? [ownPalette(look.paper ? hexOf(look.paper) : '#ffffff', hexOf(look.primary), look.ink ? hexOf(look.ink) : undefined), ...base] : base
   book.voice = look?.voice
+  book.fonts = Array.isArray(fonts?.heading) && Array.isArray(fonts?.body) && fonts.heading.length ? fonts : undefined
+  book.logo = PICTURE.test(look?.logo ?? '') ? { day: look?.logo, night: PICTURE.test(look?.dark?.logo ?? '') ? look?.dark.logo : undefined, at: look?.logoAt } : undefined
 }
 
 /** How many of the project's designs the brain's <designs> names. */
@@ -309,7 +313,7 @@ register({
     const all = (await kept()).map(({ path, name }) => `- ${name}: ${path}`)
     return all.length ? { designs: [...all.slice(0, LISTED), ...(all.length > LISTED ? [`- and ${all.length - LISTED} older ones`] : [])].join('\n') } : {}
   },
-  slots: { modes: { at: 11, draw: () => null, notes },
+  slots: { modes: { at: 11, draw: () => null, notes }, look: kitSlot,
     out: { at: 2, draw: () => null, of: (/** @type {{ uri: string }} */ { uri }) => PLACE.test(uri), load: () => import('./export.js') },
     creations: { id: 'designs', at: 3, draw: () => icons.palette, kept, mention: 'design', preview: (/** @type {{ design: Design }} */ item) => pageOf(item.design),
     make: () => ask('designs.ask', 'designs.example'), pin: (/** @type {{ path: string }} */ item, /** @type {boolean} */ pinned) => amend(item, { pinned }),

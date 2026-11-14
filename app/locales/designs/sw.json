@@ -39,6 +39,7 @@
   "designs.voice.bold": "Imara",
   "designs.voice.calm": "Tulivu",
   "designs.voice.handwritten": "Mwandiko",
+  "designs.voice.own": "Fonti zako mwenyewe",
   "designs.parts": "Sehemu",
   "designs.look": {
     "one": "Za kuangalia: {count}",
@@ -78,6 +79,7 @@
   "designs.role.shape": "Umbo",
   "designs.role.text": "Maandishi",
   "designs.role.qr": "Msimbo QR",
+  "designs.logo": "Nembo",
   "designs.higher": "Juu zaidi",
   "designs.lower": "Chini zaidi",
   "designs.bigger": "Kubwa zaidi",
@@ -113,6 +115,7 @@
   "designs.fix.remove": "Ondoa",
   "designs.fix.readable": "Ifanye isomeke",
   "designs.fix.inside": "Iweke ndani",
+  "designs.fix.date": "Badilisha tarehe",
   "designs.jean": "Mabadiliko ya {name}",
   "designs.before": "Kabla",
   "designs.accept": "Kubali",
@@ -125,6 +128,7 @@
   "designs.acceptAll": "Kubali yote",
   "designs.rejectAll": "Kataa yote",
   "designs.notPicture": "Faili hili si picha ambayo muundo unaweza kuonyesha.",
+  "designs.heic": "Kivinjari hiki hakiwezi kufungua picha za HEIC: jaribu Safari, au nakala ya JPEG.",
   "designs.first": {
     "one": "Za kuangalia kwanza: {count}",
     "other": "Za kuangalia kwanza: {count}"

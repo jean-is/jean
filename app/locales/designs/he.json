@@ -39,6 +39,7 @@
   "designs.voice.bold": "נועז",
   "designs.voice.calm": "רגוע",
   "designs.voice.handwritten": "בכתב יד",
+  "designs.voice.own": "גופנים משלכם",
   "designs.parts": "חלקים",
   "designs.look": {
     "one": "לבדיקה: {count}",
@@ -79,6 +80,7 @@
   "designs.role.shape": "צורה",
   "designs.role.text": "טקסט",
   "designs.role.qr": "קוד QR",
+  "designs.logo": "לוגו",
   "designs.higher": "למעלה",
   "designs.lower": "למטה",
   "designs.bigger": "גדול יותר",
@@ -114,6 +116,7 @@
   "designs.fix.remove": "להסיר",
   "designs.fix.readable": "להפוך לקריא",
   "designs.fix.inside": "להכניס פנימה",
+  "designs.fix.date": "לשנות את התאריך",
   "designs.jean": "שונה על ידי {name}",
   "designs.before": "לפני",
   "designs.accept": "אישור",
@@ -127,6 +130,7 @@
   "designs.acceptAll": "קבלת הכול",
   "designs.rejectAll": "דחיית הכול",
   "designs.notPicture": "הקובץ הזה אינו תמונה שעיצוב יכול להציג.",
+  "designs.heic": "הדפדפן הזה לא יכול לפתוח תמונות HEIC: נסו ב-Safari, או עותק בפורמט JPEG.",
   "designs.first": {
     "one": "לבדיקה קודם: {count}",
     "two": "לבדיקה קודם: {count}",

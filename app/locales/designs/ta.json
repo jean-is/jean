@@ -39,6 +39,7 @@
   "designs.voice.bold": "தடித்த",
   "designs.voice.calm": "அமைதியான",
   "designs.voice.handwritten": "கையெழுத்து",
+  "designs.voice.own": "உங்கள் சொந்த எழுத்துருக்கள்",
   "designs.parts": "பகுதிகள்",
   "designs.look": {
     "one": "பார்க்க வேண்டியவை: {count}",
@@ -78,6 +79,7 @@
   "designs.role.shape": "வடிவம்",
   "designs.role.text": "உரை",
   "designs.role.qr": "QR குறியீடு",
+  "designs.logo": "லோகோ",
   "designs.higher": "மேலே",
   "designs.lower": "கீழே",
   "designs.bigger": "பெரிதாக",
@@ -113,6 +115,7 @@
   "designs.fix.remove": "நீக்கு",
   "designs.fix.readable": "படிக்க எளிதாக்கு",
   "designs.fix.inside": "உள்ளே நகர்த்து",
+  "designs.fix.date": "தேதியை மாற்று",
   "designs.jean": "{name} செய்த மாற்றம்",
   "designs.before": "முன்பு",
   "designs.accept": "ஏற்கவும்",
@@ -125,6 +128,7 @@
   "designs.acceptAll": "அனைத்தையும் ஏற்கவும்",
   "designs.rejectAll": "அனைத்தையும் நிராகரிக்கவும்",
   "designs.notPicture": "இந்தக் கோப்பு வடிவமைப்பு காட்டக்கூடிய படம் அல்ல.",
+  "designs.heic": "இந்த உலாவியால் HEIC படங்களைத் திறக்க முடியாது: Safari-ஐ முயலுங்கள், அல்லது JPEG நகலைப் பயன்படுத்துங்கள்.",
   "designs.first": {
     "one": "முதலில் பார்க்க வேண்டியவை: {count}",
     "other": "முதலில் பார்க்க வேண்டியவை: {count}"

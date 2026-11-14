@@ -39,6 +39,7 @@
   "designs.voice.bold": "Kraftfull",
   "designs.voice.calm": "Lugn",
   "designs.voice.handwritten": "Handskriven",
+  "designs.voice.own": "Egna typsnitt",
   "designs.parts": "Delar",
   "designs.look": {
     "one": "{count} sak att titta på",
@@ -78,6 +79,7 @@
   "designs.role.shape": "Form",
   "designs.role.text": "Text",
   "designs.role.qr": "QR-kod",
+  "designs.logo": "Logotyp",
   "designs.higher": "Högre",
   "designs.lower": "Lägre",
   "designs.bigger": "Större",
@@ -113,6 +115,7 @@
   "designs.fix.remove": "Ta bort",
   "designs.fix.readable": "Gör den läsbar",
   "designs.fix.inside": "Flytta in den",
+  "designs.fix.date": "Ändra datumet",
   "designs.jean": "Ändrad av {name}",
   "designs.before": "Före",
   "designs.accept": "Godkänn",
@@ -125,6 +128,7 @@
   "designs.acceptAll": "Godta alla",
   "designs.rejectAll": "Avvisa alla",
   "designs.notPicture": "Filen är ingen bild som en design kan visa.",
+  "designs.heic": "Den här webbläsaren kan inte öppna HEIC-bilder: prova Safari eller en JPEG-kopia.",
   "designs.first": {
     "one": "{count} sak att titta på först",
     "other": "{count} saker att titta på först"

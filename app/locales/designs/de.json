@@ -39,6 +39,7 @@
   "designs.voice.bold": "Kräftig",
   "designs.voice.calm": "Ruhig",
   "designs.voice.handwritten": "Handschrift",
+  "designs.voice.own": "Eigene Schriftarten",
   "designs.parts": "Teile",
   "designs.look": {
     "one": "{count} Punkt zum Ansehen",
@@ -78,6 +79,7 @@
   "designs.role.shape": "Form",
   "designs.role.text": "Text",
   "designs.role.qr": "QR-Code",
+  "designs.logo": "Logo",
   "designs.higher": "Höher",
   "designs.lower": "Tiefer",
   "designs.bigger": "Größer",
@@ -113,6 +115,7 @@
   "designs.fix.remove": "Entfernen",
   "designs.fix.readable": "Lesbar machen",
   "designs.fix.inside": "Nach innen rücken",
+  "designs.fix.date": "Datum ändern",
   "designs.jean": "Von {name} geändert",
   "designs.before": "Vorher",
   "designs.accept": "Annehmen",
@@ -125,6 +128,7 @@
   "designs.acceptAll": "Alle annehmen",
   "designs.rejectAll": "Alle ablehnen",
   "designs.notPicture": "Diese Datei ist kein Bild, das ein Design zeigen kann.",
+  "designs.heic": "Dieser Browser kann keine HEIC-Fotos öffnen: Versuch es mit Safari oder einer JPEG-Kopie.",
   "designs.first": {
     "one": "{count} Punkt zuerst ansehen",
     "other": "{count} Punkte zuerst ansehen"

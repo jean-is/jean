@@ -39,6 +39,7 @@
   "designs.voice.bold": "জোরালো",
   "designs.voice.calm": "শান্ত",
   "designs.voice.handwritten": "হাতের লেখা",
+  "designs.voice.own": "আপনার নিজের ফন্ট",
   "designs.parts": "অংশ",
   "designs.look": {
     "one": "দেখার আছে: {count}",
@@ -78,6 +79,7 @@
   "designs.role.shape": "আকৃতি",
   "designs.role.text": "লেখা",
   "designs.role.qr": "QR কোড",
+  "designs.logo": "লোগো",
   "designs.higher": "উপরে",
   "designs.lower": "নিচে",
   "designs.bigger": "বড়",
@@ -113,6 +115,7 @@
   "designs.fix.remove": "সরান",
   "designs.fix.readable": "পড়ার মতো করুন",
   "designs.fix.inside": "ভেতরে আনুন",
+  "designs.fix.date": "তারিখ বদলান",
   "designs.jean": "{name}-এর পরিবর্তন",
   "designs.before": "আগে",
   "designs.accept": "গ্রহণ করুন",
@@ -125,6 +128,7 @@
   "designs.acceptAll": "সব গ্রহণ করুন",
   "designs.rejectAll": "সব বাতিল করুন",
   "designs.notPicture": "এই ফাইলটি এমন ছবি নয় যা ডিজাইন দেখাতে পারে।",
+  "designs.heic": "এই ব্রাউজার HEIC ছবি খুলতে পারে না: Safari চেষ্টা করুন, অথবা একটি JPEG কপি দিন।",
   "designs.first": {
     "one": "আগে দেখার আছে: {count}",
     "other": "আগে দেখার আছে: {count}"

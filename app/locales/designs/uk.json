@@ -39,6 +39,7 @@
   "designs.voice.bold": "Сміливий",
   "designs.voice.calm": "Спокійний",
   "designs.voice.handwritten": "Рукописний",
+  "designs.voice.own": "Власні шрифти",
   "designs.parts": "Частини",
   "designs.look": {
     "one": "Варто перевірити: {count}",
@@ -80,6 +81,7 @@
   "designs.role.shape": "Фігура",
   "designs.role.text": "Напис",
   "designs.role.qr": "QR-код",
+  "designs.logo": "Логотип",
   "designs.higher": "Вище",
   "designs.lower": "Нижче",
   "designs.bigger": "Більше",
@@ -115,6 +117,7 @@
   "designs.fix.remove": "Прибрати",
   "designs.fix.readable": "Зробити читабельним",
   "designs.fix.inside": "Посунути всередину",
+  "designs.fix.date": "Змінити дату",
   "designs.jean": "Змінено: {name}",
   "designs.before": "До",
   "designs.accept": "Прийняти",
@@ -129,6 +132,7 @@
   "designs.acceptAll": "Прийняти всі",
   "designs.rejectAll": "Відхилити всі",
   "designs.notPicture": "Цей файл — не зображення, яке може показати макет.",
+  "designs.heic": "Цей браузер не відкриває фото HEIC: спробуйте Safari або копію в JPEG.",
   "designs.first": {
     "one": "Спершу перевірити: {count}",
     "few": "Спершу перевірити: {count}",

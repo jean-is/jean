@@ -39,6 +39,7 @@
   "designs.voice.bold": "Krachtig",
   "designs.voice.calm": "Rustig",
   "designs.voice.handwritten": "Handgeschreven",
+  "designs.voice.own": "Je eigen lettertypen",
   "designs.parts": "Onderdelen",
   "designs.look": {
     "one": "{count} punt om te bekijken",
@@ -78,6 +79,7 @@
   "designs.role.shape": "Vorm",
   "designs.role.text": "Tekst",
   "designs.role.qr": "QR-code",
+  "designs.logo": "Logo",
   "designs.higher": "Hoger",
   "designs.lower": "Lager",
   "designs.bigger": "Groter",
@@ -113,6 +115,7 @@
   "designs.fix.remove": "Weghalen",
   "designs.fix.readable": "Leesbaar maken",
   "designs.fix.inside": "Naar binnen zetten",
+  "designs.fix.date": "Datum aanpassen",
   "designs.jean": "Gewijzigd door {name}",
   "designs.before": "Ervoor",
   "designs.accept": "Accepteren",
@@ -125,6 +128,7 @@
   "designs.acceptAll": "Alles accepteren",
   "designs.rejectAll": "Alles weigeren",
   "designs.notPicture": "Dat bestand is geen afbeelding die een ontwerp kan tonen.",
+  "designs.heic": "Deze browser kan geen HEIC-foto’s openen: probeer Safari, of een JPEG-kopie.",
   "designs.first": {
     "one": "{count} punt eerst bekijken",
     "other": "{count} punten eerst bekijken"

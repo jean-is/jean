@@ -39,6 +39,7 @@
   "designs.voice.bold": "Affirmée",
   "designs.voice.calm": "Calme",
   "designs.voice.handwritten": "Manuscrite",
+  "designs.voice.own": "Vos propres polices",
   "designs.parts": "Éléments",
   "designs.look": {
     "one": "{count} chose à regarder",
@@ -79,6 +80,7 @@
   "designs.role.shape": "Forme",
   "designs.role.text": "Texte",
   "designs.role.qr": "Code QR",
+  "designs.logo": "Logo",
   "designs.higher": "Plus haut",
   "designs.lower": "Plus bas",
   "designs.bigger": "Plus grand",
@@ -114,6 +116,7 @@
   "designs.fix.remove": "Enlever",
   "designs.fix.readable": "Rendre lisible",
   "designs.fix.inside": "L’éloigner du bord",
+  "designs.fix.date": "Changer la date",
   "designs.jean": "Modifié par {name}",
   "designs.before": "Avant",
   "designs.accept": "Accepter",
@@ -127,6 +130,7 @@
   "designs.acceptAll": "Tout accepter",
   "designs.rejectAll": "Tout refuser",
   "designs.notPicture": "Ce fichier n’est pas une image qu’un visuel peut montrer.",
+  "designs.heic": "Ce navigateur ne sait pas ouvrir les photos HEIC : essayez Safari, ou une copie en JPEG.",
   "designs.first": {
     "one": "{count} chose à regarder d’abord",
     "many": "{count} choses à regarder d’abord",

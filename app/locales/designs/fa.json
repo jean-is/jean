@@ -39,6 +39,7 @@
   "designs.voice.bold": "پررنگ",
   "designs.voice.calm": "آرام",
   "designs.voice.handwritten": "دست‌نویس",
+  "designs.voice.own": "قلم‌های خودتان",
   "designs.parts": "بخش‌ها",
   "designs.look": {
     "one": "برای بررسی: {count}",
@@ -78,6 +79,7 @@
   "designs.role.shape": "شکل",
   "designs.role.text": "متن",
   "designs.role.qr": "کد QR",
+  "designs.logo": "نشان",
   "designs.higher": "بالاتر",
   "designs.lower": "پایین‌تر",
   "designs.bigger": "بزرگ‌تر",
@@ -113,6 +115,7 @@
   "designs.fix.remove": "برداشتن",
   "designs.fix.readable": "خواناکردن",
   "designs.fix.inside": "به داخل بردن",
+  "designs.fix.date": "تغییر تاریخ",
   "designs.jean": "تغییر از {name}",
   "designs.before": "قبل",
   "designs.accept": "پذیرفتن",
@@ -125,6 +128,7 @@
   "designs.acceptAll": "پذیرفتن همه",
   "designs.rejectAll": "رد کردن همه",
   "designs.notPicture": "این فایل تصویری نیست که طرح بتواند نشانش دهد.",
+  "designs.heic": "این مرورگر نمی‌تواند عکس‌های HEIC را باز کند: Safari را امتحان کنید، یا یک نسخهٔ JPEG از آن را.",
   "designs.first": {
     "one": "اول برای بررسی: {count}",
     "other": "اول برای بررسی: {count}"

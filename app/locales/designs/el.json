@@ -39,6 +39,7 @@
   "designs.voice.bold": "Έντονο",
   "designs.voice.calm": "Ήρεμο",
   "designs.voice.handwritten": "Χειρόγραφο",
+  "designs.voice.own": "Δικές σας γραμματοσειρές",
   "designs.parts": "Μέρη",
   "designs.look": {
     "one": "Για έλεγχο: {count}",
@@ -78,6 +79,7 @@
   "designs.role.shape": "Σχήμα",
   "designs.role.text": "Κείμενο",
   "designs.role.qr": "Κωδικός QR",
+  "designs.logo": "Λογότυπο",
   "designs.higher": "Πιο πάνω",
   "designs.lower": "Πιο κάτω",
   "designs.bigger": "Μεγαλύτερο",
@@ -113,6 +115,7 @@
   "designs.fix.remove": "Αφαίρεση",
   "designs.fix.readable": "Να διαβάζεται",
   "designs.fix.inside": "Πιο μέσα",
+  "designs.fix.date": "Αλλαγή ημερομηνίας",
   "designs.jean": "Άλλαξε από: {name}",
   "designs.before": "Πριν",
   "designs.accept": "Αποδοχή",
@@ -125,6 +128,7 @@
   "designs.acceptAll": "Αποδοχή όλων",
   "designs.rejectAll": "Απόρριψη όλων",
   "designs.notPicture": "Αυτό το αρχείο δεν είναι εικόνα που μπορεί να δείξει ένα σχέδιο.",
+  "designs.heic": "Αυτό το πρόγραμμα περιήγησης δεν ανοίγει φωτογραφίες HEIC: δοκιμάστε το Safari ή ένα αντίγραφο JPEG.",
   "designs.first": {
     "one": "Πρώτα για έλεγχο: {count}",
     "other": "Πρώτα για έλεγχο: {count}"

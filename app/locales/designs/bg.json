@@ -39,6 +39,7 @@
   "designs.voice.bold": "Смел",
   "designs.voice.calm": "Спокоен",
   "designs.voice.handwritten": "Ръкописен",
+  "designs.voice.own": "Ваши шрифтове",
   "designs.parts": "Части",
   "designs.look": {
     "one": "За проверка: {count}",
@@ -78,6 +79,7 @@
   "designs.role.shape": "Фигура",
   "designs.role.text": "Надпис",
   "designs.role.qr": "QR код",
+  "designs.logo": "Лого",
   "designs.higher": "По-нагоре",
   "designs.lower": "По-надолу",
   "designs.bigger": "По-голямо",
@@ -113,6 +115,7 @@
   "designs.fix.remove": "Махане",
   "designs.fix.readable": "Да се чете лесно",
   "designs.fix.inside": "Навътре",
+  "designs.fix.date": "Смени датата",
   "designs.jean": "Променено от {name}",
   "designs.before": "Преди",
   "designs.accept": "Приемане",
@@ -125,6 +128,7 @@
   "designs.acceptAll": "Приеми всички",
   "designs.rejectAll": "Отхвърли всички",
   "designs.notPicture": "Този файл не е изображение, което макетът може да покаже.",
+  "designs.heic": "Този браузър не може да отваря снимки HEIC: опитайте със Safari или с копие в JPEG.",
   "designs.first": {
     "one": "Първо за проверка: {count}",
     "other": "Първо за проверка: {count}"

@@ -8,7 +8,7 @@ import { readFile } from 'node:fs/promises'
 import { readDates, marks, dpi } from '../app/caps/designs/checks.js'
 import { contrast, readable } from '../app/ui/colour.js'
 import { toSvg, fromSvg, withDesign, designOfPng } from '../app/caps/designs/format.js'
-import { designOf, laid, takesOf, resized, changed, withParts, voicesFor, marksOf, textOf, frameOf, stack, added, stacked, spot, formOf, partsOf, ownPalette, onOf, colourOf } from '../app/caps/designs/layout.js'
+import { designOf, laid, takesOf, resized, changed, withParts, voicesFor, marksOf, textOf, frameOf, stack, added, stacked, spot, formOf, partsOf, ownPalette, onOf, colourOf, logoSpot, sharpened } from '../app/caps/designs/layout.js'
 import { repair, VOICES, ART } from '../app/caps/designs/tool.js'
 import { sheetLike } from '../app/ui/sheet-like.js'
 import { marked } from '../app/caps/pictures/mark.js'
@@ -73,6 +73,9 @@ test('a right weekday, this year or next, is not marked', () => {
 test('a reply-by date after the event is marked, and a date gone by is not', () => {
   const after = { lang: 'en', parts: [{ id: 'when', role: 'when', text: 'Saturday 14 November' }, { id: 'small', role: 'small', text: 'Please reply by 20 November' }] }
   assert.deepEqual(marks(after, { now: NOW }).map((one) => [one.kind, one.part]), [['reply', 'small']])
+  // Its fix picks the late date in the words, to change it there.
+  const [start, end] = marks(after, { now: NOW })[0].at ?? []
+  assert.equal(after.parts[1].text.slice(start, end), '20 November')
   const before = { lang: 'en', parts: [{ id: 'when', role: 'when', text: 'Saturday 14 November' }, { id: 'small', role: 'small', text: 'Please reply by 10 November' }] }
   assert.deepEqual(marks(before, { now: NOW }), [])
   // Lost on 17 October, a swim on 17 October: the dates gone by a design holds are rarely its event's.
@@ -258,6 +261,40 @@ test('in a project with a look of its own, the first take wears its colours and 
   // In a language that has no such voice, the layout's.
   assert.notEqual(designOf({ ...book, voice: 'handwritten' }, { name: '開店', size: 'a5', words: { title: '開店', words: '新しいオーブン' }, pictures: [] }, { ...AT, lang: 'ja' }).take[2], 'handwritten')
   assert.deepEqual(laid(BOOK, design).colours, { ground: own.ground, ink: own.ink, accent: own.accent, accent2: own.accent2 })
+})
+
+test('a project\'s own fonts are its first take\'s type, its small print too; a design keeps them once they are gone, and falls back to Calm with none (D601)', () => {
+  const fonts = { heading: ['Montserrat'], body: ['Open Sans', 'Arial'] }, book = { ...BOOK, palettes: [ownPalette('#ffffff', '#0f766e'), ...BOOK.palettes], voice: 'elegant', fonts }
+  const design = designOf(book, LEA, AT)
+  assert.deepEqual([design.take[1], design.take[2], design.voice, design.fonts], ['project', 'own', 'own', fonts])
+  assert.equal(design.parts.find((part) => part.id === 'small')?.voice, undefined)
+  // Another take is in Designs' own type, without them.
+  assert.equal(laid(book, { ...design, take: takesOf(book, design, 0)[1] }).fonts, undefined)
+  assert.deepEqual(laid(BOOK, design).fonts, fonts)
+  assert.equal(laid(BOOK, { ...design, fonts: undefined }).voice, 'calm')
+})
+
+test('the project\'s logo goes in its corner, else in the corner the parts cover least, mirrored right to left (D601)', () => {
+  const design = designOf(BOOK, LEA, AT), { w, h } = design.page, unit = Math.min(w, h) / 100, free = { ...design, parts: [] }
+  // Twice as wide as tall: its longer side a fifth of the page's shorter.
+  assert.deepEqual(logoSpot(free, 2, 'bottom-start'), [unit * 6, h - unit * 16, unit * 20, unit * 10])
+  assert.deepEqual(logoSpot({ ...free, lang: 'ar' }, 2, 'bottom-start'), [w - unit * 26, h - unit * 16, unit * 20, unit * 10])
+  assert.deepEqual(logoSpot(free, 1, 'nowhere').slice(0, 2), [w - unit * 26, unit * 6])
+  // Covered there by words, it goes where nothing is.
+  const covered = { ...free, parts: [{ id: 'title', role: 'title', text: 'Léa is 7!', box: [0, 0, w, h / 2] }] }
+  assert.equal(logoSpot(covered, 1, 'top-end')[1], h - unit * 26)
+})
+
+test('a picture that would print soft is made smaller about its middle until it prints sharp', () => {
+  const page = { w: 1480, h: 2100, mm: 0.1 }, part = { id: 'picture', role: 'picture', file: 'p.png', px: [600, 400], box: [140, 200, 1200, 800] }
+  const design = /** @type {import('../app/caps/designs/layout.js').Design} */ ({ lang: 'en', page, colours: BOOK.palettes[0], voice: 'calm', parts: [part] })
+  assert.deepEqual(marks({ lang: 'en', page, parts: [part] }, { now: NOW }).map((one) => one.kind), ['soft'])
+  const box = sharpened(design, part)
+  assert.ok(box[2] < 1200 && Math.abs(box[0] + box[2] / 2 - 740) < 0.01 && Math.abs(box[1] + box[3] / 2 - 600) < 0.01 && Math.abs(box[2] / box[3] - 1.5) < 0.01)
+  assert.deepEqual(marks({ lang: 'en', page, parts: [{ ...part, box }] }, { now: NOW }), [])
+  // Sharp already, or with no pixels to count, it stays as it is.
+  assert.deepEqual(sharpened(design, { ...part, box: [0, 0, 200, 100] }), [0, 0, 200, 100])
+  assert.deepEqual(sharpened(design, { ...part, px: undefined }), part.box)
 })
 
 test('the takes a design\'s facts call for come first: a list\'s menu, a short title made big, a name on a certificate', () => {

@@ -35,6 +35,8 @@
 .v-friendly { font-family: Friendly, Calm, 'Hiragino Maru Gothic ProN', 'Yu Gothic', ui-rounded, system-ui, sans-serif; }
 .v-elegant { font-family: Elegant, 'Hiragino Mincho ProN', 'Yu Mincho', 'Noto Serif', serif; } .v-bold { font-family: Bold, Calm, 'Hiragino Sans', 'Yu Gothic', system-ui, sans-serif; }
 .v-calm { font-family: Calm, 'Hiragino Sans', 'Yu Gothic', system-ui, sans-serif; } .v-handwritten { font-family: Handwritten, Friendly, Calm, cursive; }
+/* A design system's own fonts (D601), the device's, Calm behind them for the letters they lack. */
+.v-own { font-family: var(--own-body, Calm), Calm, 'Hiragino Sans', 'Yu Gothic', system-ui, sans-serif; } .v-own.is-display { font-family: var(--own-heading, Calm), Calm, 'Hiragino Sans', 'Yu Gothic', system-ui, sans-serif; }
 
 /* The page: a size container, so a part's type follows its width; its ground printed as it shows. */
 .design-page { position: relative; container-type: inline-size; inline-size: 100%; aspect-ratio: var(--ratio); overflow: hidden; background: var(--ground); print-color-adjust: exact; -webkit-print-color-adjust: exact; }

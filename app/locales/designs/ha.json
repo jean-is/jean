@@ -39,6 +39,7 @@
   "designs.voice.bold": "Mai ƙarfi",
   "designs.voice.calm": "Natsuwa",
   "designs.voice.handwritten": "Rubutun hannu",
+  "designs.voice.own": "Haruffanku na kanku",
   "designs.parts": "Sassa",
   "designs.look": {
     "one": "Abin dubawa: {count}",
@@ -78,6 +79,7 @@
   "designs.role.shape": "Siffa",
   "designs.role.text": "Rubutu",
   "designs.role.qr": "Lambar QR",
+  "designs.logo": "Tambari",
   "designs.higher": "Sama",
   "designs.lower": "Ƙasa",
   "designs.bigger": "Mafi girma",
@@ -113,6 +115,7 @@
   "designs.fix.remove": "Cire",
   "designs.fix.readable": "Sa shi ya karantu",
   "designs.fix.inside": "Shigar da shi ciki",
+  "designs.fix.date": "Canza ranar",
   "designs.jean": "Canjin {name}",
   "designs.before": "Kafin",
   "designs.accept": "Karɓa",
@@ -125,6 +128,7 @@
   "designs.acceptAll": "Karɓi duka",
   "designs.rejectAll": "Ƙi duka",
   "designs.notPicture": "Wannan fayil ba hoto ba ne da zane zai iya nunawa.",
+  "designs.heic": "Wannan burauza ba ya iya buɗe hotunan HEIC: gwada Safari, ko kwafin JPEG.",
   "designs.first": {
     "one": "Abin dubawa da farko: {count}",
     "other": "Abin dubawa da farko: {count}"

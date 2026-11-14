@@ -39,6 +39,7 @@
   "designs.voice.bold": "Bold",
   "designs.voice.calm": "Calm",
   "designs.voice.handwritten": "Handwritten",
+  "designs.voice.own": "Your own fonts",
   "designs.parts": "Parts",
   "designs.look": {
     "one": "{count} thing to look at",
@@ -78,6 +79,7 @@
   "designs.role.shape": "Shape",
   "designs.role.text": "Text",
   "designs.role.qr": "QR code",
+  "designs.logo": "Logo",
   "designs.higher": "Higher",
   "designs.lower": "Lower",
   "designs.bigger": "Bigger",
@@ -113,6 +115,7 @@
   "designs.fix.remove": "Remove",
   "designs.fix.readable": "Make it readable",
   "designs.fix.inside": "Move it in",
+  "designs.fix.date": "Change the date",
   "designs.jean": "Changed by {name}",
   "designs.before": "Before",
   "designs.accept": "Accept",
@@ -125,6 +128,7 @@
   "designs.acceptAll": "Accept all",
   "designs.rejectAll": "Reject all",
   "designs.notPicture": "That file isn’t a picture a design can show.",
+  "designs.heic": "This browser can’t open HEIC photos: try Safari, or a JPEG copy.",
   "designs.first": {
     "one": "{count} thing to look at first",
     "other": "{count} things to look at first"

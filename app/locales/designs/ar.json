@@ -39,6 +39,7 @@
   "designs.voice.bold": "جريء",
   "designs.voice.calm": "هادئ",
   "designs.voice.handwritten": "بخط اليد",
+  "designs.voice.own": "خطوطك الخاصة",
   "designs.parts": "الأجزاء",
   "designs.look": {
     "zero": "للمراجعة: {count}",
@@ -82,6 +83,7 @@
   "designs.role.shape": "الشكل",
   "designs.role.text": "نص",
   "designs.role.qr": "رمز QR",
+  "designs.logo": "الشعار",
   "designs.higher": "أعلى",
   "designs.lower": "أسفل",
   "designs.bigger": "أكبر",
@@ -117,6 +119,7 @@
   "designs.fix.remove": "إزالة",
   "designs.fix.readable": "اجعله مقروءًا",
   "designs.fix.inside": "أدخله إلى الداخل",
+  "designs.fix.date": "غيّر التاريخ",
   "designs.jean": "تعديل من {name}",
   "designs.before": "قبل",
   "designs.accept": "قبول",
@@ -133,6 +136,7 @@
   "designs.acceptAll": "قبول الكل",
   "designs.rejectAll": "رفض الكل",
   "designs.notPicture": "هذا الملف ليس صورة يمكن لتصميم أن يعرضها.",
+  "designs.heic": "لا يستطيع هذا المتصفح فتح صور HEIC: جرّب Safari، أو نسخة JPEG منها.",
   "designs.first": {
     "zero": "للمراجعة أولًا: {count}",
     "one": "للمراجعة أولًا: {count}",

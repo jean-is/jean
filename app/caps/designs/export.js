@@ -33,7 +33,8 @@ const holds = (range) => range.split(',').map((one) => one.trim().replace(/^U\+/
  */
 async function svgOf(design, dir = app.projectDir) {
   const { design: fitted, lines } = await laidOut(design, book), points = new Set([...textOf(fitted)].map((char) => /** @type {number} */ (char.codePointAt(0))))
-  const voices = new Set(fitted.parts.flatMap((part) => (part.text ? [(part.voice ?? fitted.voice)[0].toUpperCase() + (part.voice ?? fitted.voice).slice(1)] : [])))
+  // Own fonts are the device's and stay out of the file, Calm inside it for where they are missing.
+  const voices = new Set(fitted.parts.flatMap((part) => (part.text ? [(part.voice ?? fitted.voice).replace('own', 'calm')] : [])).map((voice) => voice[0].toUpperCase() + voice.slice(1)))
   const rules = [...document.styleSheets].filter((sheet) => sheet.href?.endsWith('/designs.css')).flatMap((sheet) => [...sheet.cssRules].flatMap((rule) => (rule instanceof CSSFontFaceRule ? [{ sheet, rule }] : [])))
   const faces = await Promise.all(rules.filter(({ rule }) => voices.has(rule.style.getPropertyValue('font-family').replace(/"/g, '').trim())
     && holds(rule.style.getPropertyValue('unicode-range')).some(([from, to = from]) => [...points].some((point) => point >= from && point <= to))).map(async ({ sheet, rule }) => {

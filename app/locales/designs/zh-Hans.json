@@ -39,6 +39,7 @@
   "designs.voice.bold": "醒目",
   "designs.voice.calm": "沉静",
   "designs.voice.handwritten": "手写",
+  "designs.voice.own": "自定义字体",
   "designs.parts": "部件",
   "designs.look": {
     "other": "待查看：{count} 处"
@@ -77,6 +78,7 @@
   "designs.role.shape": "形状",
   "designs.role.text": "文字",
   "designs.role.qr": "二维码",
+  "designs.logo": "标志",
   "designs.higher": "上移",
   "designs.lower": "下移",
   "designs.bigger": "放大",
@@ -112,6 +114,7 @@
   "designs.fix.remove": "去掉",
   "designs.fix.readable": "让它清楚可读",
   "designs.fix.inside": "移到里面",
+  "designs.fix.date": "修改日期",
   "designs.jean": "{name} 的修改",
   "designs.before": "修改前",
   "designs.accept": "接受",
@@ -123,6 +126,7 @@
   "designs.acceptAll": "全部接受",
   "designs.rejectAll": "全部拒绝",
   "designs.notPicture": "这个文件不是设计能显示的图片。",
+  "designs.heic": "这个浏览器打不开 HEIC 照片：试试 Safari，或用一份 JPEG 副本。",
   "designs.first": {
     "other": "先查看：{count} 处"
   },

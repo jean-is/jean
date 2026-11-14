@@ -39,6 +39,7 @@
   "designs.voice.bold": "醒目",
   "designs.voice.calm": "沉靜",
   "designs.voice.handwritten": "手寫",
+  "designs.voice.own": "自訂字型",
   "designs.parts": "元件",
   "designs.look": {
     "other": "待查看：{count} 處"
@@ -77,6 +78,7 @@
   "designs.role.shape": "形狀",
   "designs.role.text": "文字",
   "designs.role.qr": "QR 碼",
+  "designs.logo": "標誌",
   "designs.higher": "上移",
   "designs.lower": "下移",
   "designs.bigger": "放大",
@@ -112,6 +114,7 @@
   "designs.fix.remove": "移除",
   "designs.fix.readable": "讓它清楚易讀",
   "designs.fix.inside": "移到裡面",
+  "designs.fix.date": "修改日期",
   "designs.jean": "{name} 的修改",
   "designs.before": "修改前",
   "designs.accept": "接受",
@@ -123,6 +126,7 @@
   "designs.acceptAll": "全部接受",
   "designs.rejectAll": "全部拒絕",
   "designs.notPicture": "這個檔案不是設計能顯示的圖片。",
+  "designs.heic": "這個瀏覽器打不開 HEIC 照片：試試 Safari，或用一份 JPEG 副本。",
   "designs.first": {
     "other": "先查看：{count} 處"
   },

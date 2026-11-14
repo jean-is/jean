@@ -39,6 +39,7 @@
   "designs.voice.bold": "Voimakas",
   "designs.voice.calm": "Rauhallinen",
   "designs.voice.handwritten": "Käsin kirjoitettu",
+  "designs.voice.own": "Omat kirjasimet",
   "designs.parts": "Osat",
   "designs.look": {
     "one": "Katsottavaa: {count}",
@@ -78,6 +79,7 @@
   "designs.role.shape": "Muoto",
   "designs.role.text": "Teksti",
   "designs.role.qr": "QR-koodi",
+  "designs.logo": "Logo",
   "designs.higher": "Ylemmäs",
   "designs.lower": "Alemmas",
   "designs.bigger": "Isommaksi",
@@ -113,6 +115,7 @@
   "designs.fix.remove": "Poista",
   "designs.fix.readable": "Tee luettavaksi",
   "designs.fix.inside": "Siirrä sisemmäs",
+  "designs.fix.date": "Muuta päivää",
   "designs.jean": "Muuttanut: {name}",
   "designs.before": "Ennen",
   "designs.accept": "Hyväksy",
@@ -125,6 +128,7 @@
   "designs.acceptAll": "Hyväksy kaikki",
   "designs.rejectAll": "Hylkää kaikki",
   "designs.notPicture": "Tiedosto ei ole kuva, jota suunnitelma voi näyttää.",
+  "designs.heic": "Tämä selain ei avaa HEIC-kuvia: kokeile Safaria tai JPEG-kopiota.",
   "designs.first": {
     "one": "Katso ensin: {count}",
     "other": "Katso ensin: {count}"

@@ -3,24 +3,9 @@
 // PDF or a Word file, drawn in its previews and worn only once accepted; or by Jean in a task, from a logo shared, waiting there.
 // Every kit proposed reads at AA by day and by night. In Arabic and Japanese too, from a guide written in each.
 import { test, expect } from '@playwright/test'
-import { deflateSync } from 'node:zlib'
-import { start, connectFakeBrain, ask, answered, openSettings } from './helpers.js'
-import { crc32 } from '../app/core/zip.js'
+import { start, connectFakeBrain, ask, answered, openSettings, png } from './helpers.js'
 import { wordGuide, BRANDS } from './brands/fixtures.js'
 
-/** A PNG, each pixel `at(x, y)` gives as RGBA. @param {number} width @param {number} height @param {(x: number, y: number) => number[]} at */
-function png(width, height, at) {
-  const row = width * 4 + 1, raw = Buffer.alloc(row * height)
-  for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) raw.set(at(x, y), y * row + 1 + x * 4)
-  const chunk = (/** @type {string} */ type, /** @type {Buffer} */ data) => {
-    const out = Buffer.alloc(12 + data.length)
-    out.writeUInt32BE(data.length, 0), out.write(type, 4, 'latin1'), data.copy(out, 8), out.writeUInt32BE(crc32(out.subarray(4, 8 + data.length)) >>> 0, 8 + data.length)
-    return out
-  }
-  const head = Buffer.alloc(13)
-  head.writeUInt32BE(width, 0), head.writeUInt32BE(height, 4), head.set([8, 6], 8)
-  return Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), chunk('IHDR', head), chunk('IDAT', deflateSync(raw)), chunk('IEND', Buffer.alloc(0))])
-}
 /** A guide as a PDF of an A4 page, a line each, in Helvetica (one of the standard fonts, which says nothing of the brand). @param {string[]} lines */
 function pdf(lines) {
   const stream = `BT /F1 12 Tf 50 780 Td 16 TL ${lines.map((line) => `(${line}) '`).join(' ')} ET`

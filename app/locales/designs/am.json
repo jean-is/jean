@@ -39,6 +39,7 @@
   "designs.voice.bold": "ደማቅ",
   "designs.voice.calm": "ረጋ ያለ",
   "designs.voice.handwritten": "የእጅ ጽሑፍ",
+  "designs.voice.own": "የራስዎ ፊደላት",
   "designs.parts": "ክፍሎች",
   "designs.look": {
     "one": "የሚታዩ: {count}",
@@ -78,6 +79,7 @@
   "designs.role.shape": "ቅርጽ",
   "designs.role.text": "ጽሑፍ",
   "designs.role.qr": "QR ኮድ",
+  "designs.logo": "አርማ",
   "designs.higher": "ወደ ላይ",
   "designs.lower": "ወደ ታች",
   "designs.bigger": "ትልቅ",
@@ -113,6 +115,7 @@
   "designs.fix.remove": "አስወግድ",
   "designs.fix.readable": "እንዲነበብ አድርግ",
   "designs.fix.inside": "ወደ ውስጥ አስገባ",
+  "designs.fix.date": "ቀኑን ቀይር",
   "designs.jean": "የ{name} ለውጥ",
   "designs.before": "በፊት",
   "designs.accept": "ተቀበል",
@@ -125,6 +128,7 @@
   "designs.acceptAll": "ሁሉንም ተቀበል",
   "designs.rejectAll": "ሁሉንም ውድቅ አድርግ",
   "designs.notPicture": "ይህ ፋይል ንድፍ ሊያሳየው የሚችል ምስል አይደለም።",
+  "designs.heic": "ይህ አሳሽ HEIC ፎቶዎችን መክፈት አይችልም፤ Safariን ይሞክሩ፣ ወይም የJPEG ቅጂ ይጠቀሙ።",
   "designs.first": {
     "one": "መጀመሪያ የሚታዩ: {count}",
     "other": "መጀመሪያ የሚታዩ: {count}"

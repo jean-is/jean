@@ -39,6 +39,7 @@
   "designs.voice.bold": "力強い",
   "designs.voice.calm": "落ち着いた",
   "designs.voice.handwritten": "手書き",
+  "designs.voice.own": "独自のフォント",
   "designs.parts": "パーツ",
   "designs.look": {
     "other": "確認すること：{count} 件"
@@ -77,6 +78,7 @@
   "designs.role.shape": "図形",
   "designs.role.text": "文字",
   "designs.role.qr": "QR コード",
+  "designs.logo": "ロゴ",
   "designs.higher": "上へ",
   "designs.lower": "下へ",
   "designs.bigger": "大きく",
@@ -112,6 +114,7 @@
   "designs.fix.remove": "取り除く",
   "designs.fix.readable": "読みやすくする",
   "designs.fix.inside": "内側に寄せる",
+  "designs.fix.date": "日付を直す",
   "designs.jean": "{name} が変更",
   "designs.before": "変更前",
   "designs.accept": "承認",
@@ -123,6 +126,7 @@
   "designs.acceptAll": "すべて承認",
   "designs.rejectAll": "すべて却下",
   "designs.notPicture": "このファイルはデザインに表示できる画像ではありません。",
+  "designs.heic": "このブラウザでは HEIC の写真を開けません。Safari を使うか、JPEG のコピーをお使いください。",
   "designs.first": {
     "other": "先に確認すること：{count} 件"
   },

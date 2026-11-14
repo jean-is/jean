@@ -60,8 +60,8 @@ export async function projectKit(dir = app.projectDir) {
 /** The tokens here: the person's, the organisation's, the project's. @param {string} [dir] @returns {Promise<Record<string, any>>} */
 const tokensHere = async (dir) => ({ ...(await kitFile(null))?.tokens, ...app.policy.kit?.tokens, ...(await projectKit(dir))?.tokens })
 
-/** The look here, its flat tokens (`primary`, `paper`, `ink`, `voice`…), or none. @param {string} [dir] */
-export const lookHere = async (dir) => ((tokens) => (tokens.primary || tokens.voice ? tokens : null))(await tokensHere(dir))
+/** The look here, its flat tokens (`primary`, `paper`, `ink`, `voice`, `fonts`, `logo`…), or none. @param {string} [dir] */
+export const lookHere = async (dir) => ((tokens) => (tokens.primary || tokens.voice || tokens.fonts || tokens.logo ? tokens : null))(await tokensHere(dir))
 
 /**
  * A look on a ground (D601, D663, D664): its colours for words deepened until they read there, its pale fill where its words read on

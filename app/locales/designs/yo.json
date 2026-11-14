@@ -39,6 +39,7 @@
   "designs.voice.bold": "Alágbára",
   "designs.voice.calm": "Píparọ́rọ́",
   "designs.voice.handwritten": "Ìkọ̀wé ọwọ́",
+  "designs.voice.own": "Fọ́ńtì tiyín",
   "designs.parts": "Àwọn apá",
   "designs.look": {
     "other": "Láti wò: {count}"
@@ -77,6 +78,7 @@
   "designs.role.shape": "Àpẹrẹ",
   "designs.role.text": "Ọ̀rọ̀",
   "designs.role.qr": "Kóòdù QR",
+  "designs.logo": "Àmì",
   "designs.higher": "Sókè",
   "designs.lower": "Sísàlẹ̀",
   "designs.bigger": "Tóbi sí i",
@@ -112,6 +114,7 @@
   "designs.fix.remove": "Yọ ọ́ kúrò",
   "designs.fix.readable": "Jẹ́ kí ó ṣe é kà",
   "designs.fix.inside": "Mú u wọ inú",
+  "designs.fix.date": "Yí ọjọ́ náà padà",
   "designs.jean": "Àyípadà {name}",
   "designs.before": "Ṣáájú",
   "designs.accept": "Gbà",
@@ -123,6 +126,7 @@
   "designs.acceptAll": "Gba gbogbo rẹ̀",
   "designs.rejectAll": "Kọ gbogbo rẹ̀",
   "designs.notPicture": "Fáìlì yìí kì í ṣe àwòrán tí àwòṣe lè fi hàn.",
+  "designs.heic": "Aṣàwákiri yìí kò lè ṣí àwọn fọ́tò HEIC: gbìyànjú Safari, tàbí ẹ̀dà JPEG rẹ̀.",
   "designs.first": {
     "other": "Láti wò kọ́kọ́: {count}"
   },

@@ -39,6 +39,7 @@
   "designs.voice.bold": "Kraftig",
   "designs.voice.calm": "Rolig",
   "designs.voice.handwritten": "Håndskrevet",
+  "designs.voice.own": "Dine egne skrifttyper",
   "designs.parts": "Dele",
   "designs.look": {
     "one": "{count} ting at se på",
@@ -78,6 +79,7 @@
   "designs.role.shape": "Form",
   "designs.role.text": "Tekst",
   "designs.role.qr": "QR-kode",
+  "designs.logo": "Logo",
   "designs.higher": "Højere",
   "designs.lower": "Lavere",
   "designs.bigger": "Større",
@@ -113,6 +115,7 @@
   "designs.fix.remove": "Fjern",
   "designs.fix.readable": "Gør den læselig",
   "designs.fix.inside": "Ryk den ind",
+  "designs.fix.date": "Ret datoen",
   "designs.jean": "Ændret af {name}",
   "designs.before": "Før",
   "designs.accept": "Godkend",
@@ -125,6 +128,7 @@
   "designs.acceptAll": "Godkend alle",
   "designs.rejectAll": "Afvis alle",
   "designs.notPicture": "Filen er ikke et billede, som et design kan vise.",
+  "designs.heic": "Denne browser kan ikke åbne HEIC-billeder: prøv Safari eller en JPEG-kopi.",
   "designs.first": {
     "one": "{count} ting at se på først",
     "other": "{count} ting at se på først"

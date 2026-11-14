@@ -39,6 +39,7 @@
   "designs.voice.bold": "Kreñv",
   "designs.voice.calm": "Sioul",
   "designs.voice.handwritten": "Skrivet gant an dorn",
+  "designs.voice.own": "Ho fontoù deoc’h",
   "designs.parts": "Lodennoù",
   "designs.look": {
     "one": "Da sellet : {count}",
@@ -81,6 +82,7 @@
   "designs.role.shape": "Stumm",
   "designs.role.text": "Skrid",
   "designs.role.qr": "Kod QR",
+  "designs.logo": "Logo",
   "designs.higher": "Uheloc’h",
   "designs.lower": "Izeloc’h",
   "designs.bigger": "Brasoc’h",
@@ -116,6 +118,7 @@
   "designs.fix.remove": "Lemel",
   "designs.fix.readable": "Lakaat da vezañ lennus",
   "designs.fix.inside": "E lakaat diabarzh",
+  "designs.fix.date": "Cheñch an deiziad",
   "designs.jean": "Cheñchet gant {name}",
   "designs.before": "A-raok",
   "designs.accept": "Asantiñ",
@@ -131,6 +134,7 @@
   "designs.acceptAll": "Asantiñ an holl",
   "designs.rejectAll": "Nac’hañ an holl",
   "designs.notPicture": "N’eo ket ar restr-mañ ur skeudenn a c’hell bezañ diskouezet gant un tres.",
+  "designs.heic": "N’hall ket ar merdeer-mañ digeriñ luc’hskeudennoù HEIC : klaskit gant Safari, pe gant un eilskouerenn JPEG.",
   "designs.first": {
     "one": "Da sellet da gentañ : {count}",
     "two": "Da sellet da gentañ : {count}",

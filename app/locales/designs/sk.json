@@ -39,6 +39,7 @@
   "designs.voice.bold": "Výrazné",
   "designs.voice.calm": "Pokojné",
   "designs.voice.handwritten": "Ručne písané",
+  "designs.voice.own": "Vlastné písma",
   "designs.parts": "Časti",
   "designs.look": {
     "one": "Na kontrolu: {count}",
@@ -80,6 +81,7 @@
   "designs.role.shape": "Tvar",
   "designs.role.text": "Popis",
   "designs.role.qr": "QR kód",
+  "designs.logo": "Logo",
   "designs.higher": "Vyššie",
   "designs.lower": "Nižšie",
   "designs.bigger": "Väčšie",
@@ -115,6 +117,7 @@
   "designs.fix.remove": "Odobrať",
   "designs.fix.readable": "Zlepšiť čitateľnosť",
   "designs.fix.inside": "Posunúť dovnútra",
+  "designs.fix.date": "Zmeniť dátum",
   "designs.jean": "Zmenila aplikácia {name}",
   "designs.before": "Predtým",
   "designs.accept": "Prijať",
@@ -129,6 +132,7 @@
   "designs.acceptAll": "Prijať všetko",
   "designs.rejectAll": "Odmietnuť všetko",
   "designs.notPicture": "Tento súbor nie je obrázok, ktorý návrh vie zobraziť.",
+  "designs.heic": "Tento prehliadač neotvorí fotky HEIC: skúste Safari alebo kópiu v JPEG.",
   "designs.first": {
     "one": "Najprv skontrolovať: {count}",
     "few": "Najprv skontrolovať: {count}",

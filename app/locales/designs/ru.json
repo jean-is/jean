@@ -39,6 +39,7 @@
   "designs.voice.bold": "Смелый",
   "designs.voice.calm": "Спокойный",
   "designs.voice.handwritten": "Рукописный",
+  "designs.voice.own": "Свои шрифты",
   "designs.parts": "Части",
   "designs.look": {
     "one": "Стоит проверить: {count}",
@@ -80,6 +81,7 @@
   "designs.role.shape": "Фигура",
   "designs.role.text": "Надпись",
   "designs.role.qr": "QR-код",
+  "designs.logo": "Логотип",
   "designs.higher": "Выше",
   "designs.lower": "Ниже",
   "designs.bigger": "Крупнее",
@@ -115,6 +117,7 @@
   "designs.fix.remove": "Убрать",
   "designs.fix.readable": "Сделать читаемым",
   "designs.fix.inside": "Сдвинуть внутрь",
+  "designs.fix.date": "Изменить дату",
   "designs.jean": "Изменено: {name}",
   "designs.before": "До",
   "designs.accept": "Принять",
@@ -129,6 +132,7 @@
   "designs.acceptAll": "Принять все",
   "designs.rejectAll": "Отклонить все",
   "designs.notPicture": "Этот файл — не картинка, которую может показать макет.",
+  "designs.heic": "Этот браузер не открывает фото HEIC: попробуйте Safari или копию в JPEG.",
   "designs.first": {
     "one": "Сначала проверить: {count}",
     "few": "Сначала проверить: {count}",

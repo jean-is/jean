@@ -39,6 +39,7 @@
   "designs.voice.bold": "Forte",
   "designs.voice.calm": "Calmu",
   "designs.voice.handwritten": "À manu",
+  "designs.voice.own": "I vostri caratteri",
   "designs.parts": "Parti",
   "designs.look": {
     "one": "{count} cosa da guardà",
@@ -79,6 +80,7 @@
   "designs.role.shape": "Forma",
   "designs.role.text": "Testu",
   "designs.role.qr": "Codice QR",
+  "designs.logo": "Logu",
   "designs.higher": "Più in sù",
   "designs.lower": "Più in giò",
   "designs.bigger": "Più grande",
@@ -114,6 +116,7 @@
   "designs.fix.remove": "Caccià",
   "designs.fix.readable": "Rende leghjibile",
   "designs.fix.inside": "Alluntanallu da l’orlu",
+  "designs.fix.date": "Cambià a data",
   "designs.jean": "Cambiatu da {name}",
   "designs.before": "Prima",
   "designs.accept": "Accettà",
@@ -127,6 +130,7 @@
   "designs.acceptAll": "Accettà tuttu",
   "designs.rejectAll": "Ricusà tuttu",
   "designs.notPicture": "Stu schedariu ùn hè micca una fiura chì un visuale pò mustrà.",
+  "designs.heic": "Stu navigatore ùn pò micca apre e foto HEIC : pruvate cù Safari, o cù una copia JPEG.",
   "designs.first": {
     "one": "{count} cosa da guardà prima",
     "many": "{count} cose da guardà prima",

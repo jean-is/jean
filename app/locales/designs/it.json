@@ -39,6 +39,7 @@
   "designs.voice.bold": "Deciso",
   "designs.voice.calm": "Calmo",
   "designs.voice.handwritten": "A mano",
+  "designs.voice.own": "I tuoi caratteri",
   "designs.parts": "Parti",
   "designs.look": {
     "one": "{count} cosa da guardare",
@@ -79,6 +80,7 @@
   "designs.role.shape": "Forma",
   "designs.role.text": "Testo",
   "designs.role.qr": "Codice QR",
+  "designs.logo": "Logo",
   "designs.higher": "Più su",
   "designs.lower": "Più giù",
   "designs.bigger": "Più grande",
@@ -114,6 +116,7 @@
   "designs.fix.remove": "Togli",
   "designs.fix.readable": "Rendilo leggibile",
   "designs.fix.inside": "Spostalo dentro",
+  "designs.fix.date": "Cambia la data",
   "designs.jean": "Cambiato da {name}",
   "designs.before": "Prima",
   "designs.accept": "Accetta",
@@ -127,6 +130,7 @@
   "designs.acceptAll": "Accetta tutto",
   "designs.rejectAll": "Rifiuta tutto",
   "designs.notPicture": "Questo file non è un’immagine che un design può mostrare.",
+  "designs.heic": "Questo browser non apre le foto HEIC: prova con Safari, o con una copia in JPEG.",
   "designs.first": {
     "one": "{count} cosa da guardare prima",
     "many": "{count} cose da guardare prima",

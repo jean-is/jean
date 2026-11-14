@@ -3002,7 +3002,7 @@ test.describe('out in the look here (D663)', () => {
     const loaded = () => page.evaluate(async () => (await import('/ui/caps.js')).loaded.peek().has('slides'))
     await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('documents') })
     await expect(row).toHaveCount(1)
-    await expect(row).toContainText('documents, collections and slides')
+    await expect(row).toContainText('documents, collections, slides and designs')
     await row.click()
     await expect(settings.getByRole('heading', { name: 'Design system' })).toBeVisible()
     await expect(settings.locator('.kit-preview .deck-slide').first()).toBeAttached()

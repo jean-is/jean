@@ -39,6 +39,7 @@
   "designs.voice.bold": "Puternic",
   "designs.voice.calm": "Calm",
   "designs.voice.handwritten": "De mână",
+  "designs.voice.own": "Fonturile dvs.",
   "designs.parts": "Părți",
   "designs.look": {
     "one": "De văzut: {count}",
@@ -79,6 +80,7 @@
   "designs.role.shape": "Formă",
   "designs.role.text": "Text",
   "designs.role.qr": "Cod QR",
+  "designs.logo": "Logo",
   "designs.higher": "Mai sus",
   "designs.lower": "Mai jos",
   "designs.bigger": "Mai mare",
@@ -114,6 +116,7 @@
   "designs.fix.remove": "Eliminați",
   "designs.fix.readable": "Faceți-l lizibil",
   "designs.fix.inside": "Mutați-l înăuntru",
+  "designs.fix.date": "Schimbați data",
   "designs.jean": "Schimbat de {name}",
   "designs.before": "Înainte",
   "designs.accept": "Acceptați",
@@ -127,6 +130,7 @@
   "designs.acceptAll": "Acceptați tot",
   "designs.rejectAll": "Respingeți tot",
   "designs.notPicture": "Fișierul nu este o imagine pe care o poate arăta un design.",
+  "designs.heic": "Acest browser nu poate deschide fotografii HEIC: încercați Safari sau o copie JPEG.",
   "designs.first": {
     "one": "De văzut întâi: {count}",
     "few": "De văzut întâi: {count}",

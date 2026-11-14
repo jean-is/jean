@@ -39,6 +39,7 @@
   "designs.voice.bold": "దృఢమైన",
   "designs.voice.calm": "ప్రశాంతం",
   "designs.voice.handwritten": "చేతిరాత",
+  "designs.voice.own": "మీ సొంత ఫాంట్‌లు",
   "designs.parts": "భాగాలు",
   "designs.look": {
     "one": "చూడాల్సినవి: {count}",
@@ -78,6 +79,7 @@
   "designs.role.shape": "ఆకారం",
   "designs.role.text": "వచనం",
   "designs.role.qr": "QR కోడ్",
+  "designs.logo": "లోగో",
   "designs.higher": "పైకి",
   "designs.lower": "కిందికి",
   "designs.bigger": "పెద్దగా",
@@ -113,6 +115,7 @@
   "designs.fix.remove": "తీసివేయి",
   "designs.fix.readable": "చదవగలిగేలా చేయి",
   "designs.fix.inside": "లోపలికి జరుపు",
+  "designs.fix.date": "తేదీ మార్చు",
   "designs.jean": "{name} చేసిన మార్పు",
   "designs.before": "ముందు",
   "designs.accept": "అంగీకరించు",
@@ -125,6 +128,7 @@
   "designs.acceptAll": "అన్నీ ఆమోదించు",
   "designs.rejectAll": "అన్నీ తిరస్కరించు",
   "designs.notPicture": "ఈ ఫైల్ డిజైన్ చూపించగల చిత్రం కాదు.",
+  "designs.heic": "ఈ బ్రౌజర్ HEIC ఫోటోలను తెరవలేదు: Safari ప్రయత్నించండి, లేదా దాని JPEG కాపీ వాడండి.",
   "designs.first": {
     "one": "ముందు చూడాల్సినవి: {count}",
     "other": "ముందు చూడాల్సినవి: {count}"

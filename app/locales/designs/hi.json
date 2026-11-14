@@ -39,6 +39,7 @@
   "designs.voice.bold": "दमदार",
   "designs.voice.calm": "शांत",
   "designs.voice.handwritten": "हाथ की लिखावट",
+  "designs.voice.own": "आपके अपने फ़ॉन्ट",
   "designs.parts": "हिस्से",
   "designs.look": {
     "one": "देखने को: {count}",
@@ -78,6 +79,7 @@
   "designs.role.shape": "आकार",
   "designs.role.text": "पाठ",
   "designs.role.qr": "QR कोड",
+  "designs.logo": "लोगो",
   "designs.higher": "ऊपर",
   "designs.lower": "नीचे",
   "designs.bigger": "बड़ा",
@@ -113,6 +115,7 @@
   "designs.fix.remove": "हटाएँ",
   "designs.fix.readable": "पढ़ने लायक बनाएँ",
   "designs.fix.inside": "अंदर करें",
+  "designs.fix.date": "तारीख़ बदलें",
   "designs.jean": "{name} के बदलाव",
   "designs.before": "पहले",
   "designs.accept": "स्वीकार करें",
@@ -125,6 +128,7 @@
   "designs.acceptAll": "सभी स्वीकार करें",
   "designs.rejectAll": "सभी अस्वीकार करें",
   "designs.notPicture": "यह फ़ाइल ऐसी तस्वीर नहीं है जिसे डिज़ाइन दिखा सके।",
+  "designs.heic": "यह ब्राउज़र HEIC फ़ोटो नहीं खोल सकता: Safari आज़माएँ, या उसकी JPEG कॉपी।",
   "designs.first": {
     "one": "पहले देखने को: {count}",
     "other": "पहले देखने को: {count}"

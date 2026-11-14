@@ -12,13 +12,13 @@ import { contrast } from '../../ui/colour.js'
 /** @typedef {{ lang: string, parts: Part[], page?: Page, ground?: string }} Design */
 /** @typedef {{ index: number, start: number, end: number, short: boolean }} Weekday */
 /** Where in the words (UTF-16 offsets), the day, month (1 to 12), year when written, and weekday when named. @typedef {{ start: number, end: number, day: number, month: number, year?: number, weekday?: Weekday }} Found */
-/** @typedef {{ part: string, kind: 'gap' | 'weekday' | 'reply' | 'faint' | 'soft' | 'margin', fix?: string, gap?: string, year?: number, ratio?: number, dpi?: number }} Mark */
+/** A mark; `at`, where in the words its date is (UTF-16 offsets). @typedef {{ part: string, kind: 'gap' | 'weekday' | 'reply' | 'faint' | 'soft' | 'margin', fix?: string, gap?: string, year?: number, ratio?: number, dpi?: number, at?: number[] }} Mark */
 
 const DAY = 86_400_000
 // A date written without its year is this year's, unless that was more than this long ago.
 const BACK = 60 * DAY
 // Below this, a picture prints soft.
-const SHARP = 200
+export const SHARP = 200
 // What a home printer leaves white at a sheet's edges.
 const EDGE_MM = 5
 const CJK = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u
@@ -198,7 +198,8 @@ export function marks(design, { now }) {
         out.push({ part: part.id, kind: 'weekday', year, fix: text.slice(0, said.start) + weekdayName(actual, said.short, lang, text.slice(said.start, said.end)) + text.slice(said.end) })
       }
     }
-    if (part.role === 'small' && event !== undefined && dates.some((found) => Date.UTC(yearOf(found, now), found.month - 1, found.day) > event)) out.push({ part: part.id, kind: 'reply' })
+    const late = part.role === 'small' && event !== undefined && dates.find((found) => Date.UTC(yearOf(found, now), found.month - 1, found.day) > event)
+    if (late) out.push({ part: part.id, kind: 'reply', at: [late.start, late.end] })
     const ground = part.ground ?? design.ground
     if (text && part.color && ground) {
       const ratio = contrast(part.color, ground)

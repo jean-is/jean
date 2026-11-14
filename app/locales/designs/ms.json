@@ -39,6 +39,7 @@
   "designs.voice.bold": "Tegas",
   "designs.voice.calm": "Tenang",
   "designs.voice.handwritten": "Tulisan tangan",
+  "designs.voice.own": "Fon anda sendiri",
   "designs.parts": "Bahagian",
   "designs.look": {
     "other": "Perlu dilihat: {count}"
@@ -77,6 +78,7 @@
   "designs.role.shape": "Bentuk",
   "designs.role.text": "Teks",
   "designs.role.qr": "Kod QR",
+  "designs.logo": "Logo",
   "designs.higher": "Lebih tinggi",
   "designs.lower": "Lebih rendah",
   "designs.bigger": "Lebih besar",
@@ -112,6 +114,7 @@
   "designs.fix.remove": "Buang",
   "designs.fix.readable": "Jadikan mudah dibaca",
   "designs.fix.inside": "Alih ke dalam",
+  "designs.fix.date": "Tukar tarikh",
   "designs.jean": "Diubah oleh {name}",
   "designs.before": "Sebelum",
   "designs.accept": "Terima",
@@ -123,6 +126,7 @@
   "designs.acceptAll": "Terima semua",
   "designs.rejectAll": "Tolak semua",
   "designs.notPicture": "Fail ini bukan gambar yang boleh dipaparkan oleh reka bentuk.",
+  "designs.heic": "Pelayar ini tidak dapat membuka foto HEIC: cuba Safari, atau salinan JPEG.",
   "designs.first": {
     "other": "Lihat dahulu: {count}"
   },

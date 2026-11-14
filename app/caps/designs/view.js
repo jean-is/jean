@@ -20,9 +20,11 @@ import { virtual } from '../../ui/virtual.js'
 import { addFile } from '../../core/files.js'
 import { paperFor } from '../made/formats.js'
 import { book, shown, picked, write, suggested, makeWay } from './designs.js'
-import { laid, takesOf, resized, marksOf, voicesFor, unitOf, colourOf, contrastOf, leadOf, weightOf, spot, added, stacked, formOf, pathsOf, onOf } from './layout.js'
+import { laid, takesOf, resized, marksOf, voicesFor, unitOf, colourOf, contrastOf, leadOf, weightOf, spot, added, stacked, formOf, pathsOf, onOf, logoSpot, sharpened, DISPLAY } from './layout.js'
 import { FORMS, ART } from './tool.js'
-import { pageOf, vars, laidOut, ART as drawn } from './page.js'
+import { pageOf, vars, laidOut, facesOf, ART as drawn } from './page.js'
+import { contrast } from '../../ui/colour.js'
+import { decode } from '../../ui/seal.js'
 import { handles, drag, keyed, nudge } from './move.js'
 
 /** @import { Design, Part } from './layout.js' */
@@ -104,8 +106,17 @@ function duplicate(part) {
 /** A part over all the others, or behind them all but the layout's own shapes. @param {Part} part @param {string} way front or back */
 const restack = (part, way) => { change((design) => ({ ...design, parts: stacked(design.parts, part.id, way) })); say(t('designs.moved', { part: nameOf(part) })) }
 
-/** A photo from the device, the files dropped or pasted, into a picture's place or as a new picture. @param {File | undefined} file @param {string} [into] a picture part's id */
+/** A HEIC photo as a JPEG every program shows, where this browser opens it, as Safari does; else none. @param {File} file */
+async function jpegOf(file) {
+  const bitmap = await createImageBitmap(file).catch(() => null), canvas = bitmap && new OffscreenCanvas(bitmap.width, bitmap.height)
+  if (!bitmap || !canvas) return undefined
+  canvas.getContext('2d')?.drawImage(bitmap, 0, 0)
+  bitmap.close()
+  return new File([await canvas.convertToBlob({ type: 'image/jpeg', quality: 0.92 })], `${file.name.replace(/\.hei[cf]$/i, '') || 'photo'}.jpg`, { type: 'image/jpeg' })
+}
+/** A photo from the device, the files dropped or pasted, into a picture's place or as a new picture; a HEIC one made a JPEG. @param {File | undefined} file @param {string} [into] a picture part's id */
 async function photo(file, into) {
+  if (file && (/^image\/hei[cf]$/.test(file.type) || /\.hei[cf]$/i.test(file.name)) && !(file = await jpegOf(file))) return notify(t('designs.heic'), { alert: true })
   if (!file || !/^image\/(png|jpeg|webp|gif|avif)$/.test(file.type)) return file && notify(t('designs.notPicture'), { alert: true })
   const bytes = new Uint8Array(await file.arrayBuffer()), bitmap = await createImageBitmap(file).catch(() => null)
   if (!bitmap) return notify(t('designs.notPicture'), { alert: true })
@@ -117,10 +128,31 @@ async function photo(file, into) {
 }
 /** The device's own file picker, for a photo. @param {string} [into] */
 function pick(into) {
-  const input = Object.assign(document.createElement('input'), { type: 'file', accept: 'image/png,image/jpeg,image/webp,image/gif,image/avif' })
+  const input = Object.assign(document.createElement('input'), { type: 'file', accept: 'image/png,image/jpeg,image/webp,image/gif,image/avif,image/heic,image/heif,.heic,.heif' })
   input.addEventListener('change', () => photo(input.files?.[0], into))
   input.click()
 }
+/** The project's logo added in its corner (D601), its dark ground's own on a dark ground, as a picture the user moves or takes away. */
+async function addLogo() {
+  const one = shown.peek(), logo = book.logo, ground = one?.design.colours.ground ?? '#ffffff'
+  if (!one || !logo) return
+  const url = (contrast('#ffffff', ground) > contrast('#000000', ground) && logo.night) || logo.day, [, type = '', data = ''] = /^data:([^;]+);base64,(.*)$/.exec(url) ?? [], image = new Image()
+  image.src = url
+  await image.decode().catch(() => {})
+  const link = await addFile(app.fs, { projectDir: one.dir, name: `logo.${type.slice(6).replace('svg+xml', 'svg').replace('jpeg', 'jpg')}`, mimeType: type, bytes: decode(data), pages: [], by: 'user' })
+  // A drawing has no pixels to print soft.
+  add('picture', { file: link.uri, words: t('designs.logo'), box: logoSpot(one.design, image.naturalWidth / image.naturalHeight || 1, logo.at), ...(type !== 'image/svg+xml' && image.naturalWidth && { px: [image.naturalWidth, image.naturalHeight] }) })
+}
+/** The small print's words to change, the date to reply by picked in them: in their field, else in place. @param {Part} part @param {import('./checks.js').Mark} mark @param {string} where field or pop */
+function dated(part, mark, where) {
+  const [start = 0, end = 0] = mark.at ?? []
+  if (where === 'pop') { fixing.value = ''; editing.value = part.id }
+  // At once where the words are drawn already, else as they are.
+  const pick = () => { const field = /** @type {HTMLTextAreaElement | null} */ (document.querySelector(where === 'pop' ? '.design-edit' : `#design-field-${part.id}`)); field?.focus(); field?.setSelectionRange(start, end); return field }
+  if (!pick()) requestAnimationFrame(pick)
+}
+/** Type's Aa in a voice, or in own fonts. @param {string} voice @param {import('./layout.js').Fonts} [fonts] */
+const aa = (voice, fonts) => html`<b class="v-${voice} is-display" ${vars(voice === 'own' ? facesOf(fonts) : {})}>Aa</b>`
 /** A part opened to change, with Enter or a double click: its words in place, a picture's photo from the device, what a QR code opens. @param {Part} part */
 function edit(part) {
   if (part.text !== undefined) editing.value = part.id
@@ -151,6 +183,10 @@ function fixOf(design, mark, where) {
   if (mark.kind === 'faint') {
     const on = onOf(design, part), best = ['ink', 'accent', 'accent2', 'ground'].sort((a, b) => contrastOf(design, b, on) - contrastOf(design, a, on))[0]
     return html`<p>${t('designs.mark.faint')}</p><div>${fix(t('designs.fix.readable'), () => changePart(part.id, { color: best }))}${keep}</div>`
+  }
+  if (mark.kind === 'reply') return html`<p>${t('designs.mark.reply')}</p><div><button type="button" class="button primary" @click=${() => dated(part, mark, where)}>${t('designs.fix.date')}</button>${keep}</div>`
+  if (mark.kind === 'soft') {
+    return html`<p>${t('designs.mark.soft')}</p><div>${fix(t('designs.smaller'), () => changePart(part.id, { box: sharpened(design, part), moved: true }))}<button type="button" class="button" @click=${() => { done(); pick(part.id) }}>${t('designs.replace')}</button>${keep}</div>`
   }
   if (mark.kind === 'margin') {
     const edge = design.page.mm ? 50 : unitOf(design.page) * 3, [x, y, w, h] = part.box, { w: pw, h: ph } = design.page
@@ -256,14 +292,16 @@ function bar(design, marked) {
     <button type="button" class="icon-button is-wide" popovertarget="design-colours" aria-label=${t('designs.colours')}>${swatches(design.colours)}</button>
     <div id="design-colours" class="menu design-menu" role="menu" popover>${book.palettes.map((one) => row('design-colours', palette?.id === one.id, html`${swatches(one)}${t(`designs.palette.${one.id}`)}`,
       () => change((now) => ({ ...now, take: [now.take[0], one.id, now.take[2]], colours: { ground: one.ground, ink: one.ink, accent: one.accent, accent2: one.accent2 } }))))}</div>
-    <button type="button" class="icon-button" popovertarget="design-type" aria-label=${t(`designs.voice.${design.voice}`)}><b class="v-${design.voice}">Aa</b></button>
-    <div id="design-type" class="menu design-menu" role="menu" popover>${voicesFor(design.lang).map((voice) => row('design-type', design.voice === voice, html`<b class="v-${voice}">Aa</b>${t(`designs.voice.${voice}`)}`,
-      () => change((now) => ({ ...now, voice, parts: now.parts.map((part) => (part.role === 'small' || !part.voice ? part : { ...part, voice: undefined })) }))))}</div>
+    <button type="button" class="icon-button" popovertarget="design-type" aria-label=${t(`designs.voice.${design.voice}`)}>${aa(design.voice, design.fonts)}</button>
+    <div id="design-type" class="menu design-menu" role="menu" popover>${[...voicesFor(design.lang), ...(book.fonts ?? design.fonts ? ['own'] : [])].map((voice) => row('design-type', design.voice === voice, html`${aa(voice, book.fonts ?? design.fonts)}${t(`designs.voice.${voice}`)}`,
+      // Own fonts set the small print too, which otherwise stays as it is.
+      () => change((now) => ({ ...now, voice, take: [now.take[0], now.take[1], voice], fonts: voice === 'own' ? book.fonts ?? now.fonts : undefined,
+        parts: now.parts.map((part) => (part.role === 'small' && !(voice === 'own' && part.voice === 'calm') || !part.voice ? part : { ...part, voice: undefined })) }))))}</div>
     <span class="design-gap" aria-hidden="true"></span>
     <button type="button" class="icon-button is-wide" aria-pressed=${String(fields.value)} aria-label=${marked ? `${t('designs.parts')} ${new Intl.NumberFormat(intlLocales()).format(marked)}` : t('designs.parts')} aria-describedby=${marked ? 'design-look' : nothing} @click=${toggleFields}>${icons.list}${marked
       ? html`<span class="design-count">${new Intl.NumberFormat(intlLocales()).format(marked)}</span><span id="design-look" hidden>${t('designs.look', { count: marked })}</span>` : nothing}</button>
     <button type="button" class="icon-button" popovertarget="design-add" aria-label=${t('designs.add')}>${icons.plus}</button>
-    <div id="design-add" class="menu design-menu design-adds" popover><ul>${[['designs.role.text', () => add('text')], ['designs.role.picture', () => pick()], ['designs.role.qr', () => add('qr')]]
+    <div id="design-add" class="menu design-menu design-adds" popover><ul>${[['designs.role.text', () => add('text')], ['designs.role.picture', () => pick()], ['designs.role.qr', () => add('qr')], ...(book.logo ? [['designs.logo', addLogo]] : [])]
       .map(([label, act]) => html`<li><button type="button" popovertarget="design-add" popovertargetaction="hide" @click=${act}>${t(/** @type {string} */ (label))}</button></li>`)}</ul>
       ${[['designs.shapes', FORMS], ['designs.ornaments', ART]].map(([label, kinds]) => html`<p id="design-${label.slice(8)}">${t(/** @type {string} */ (label))}</p><ul class="design-glyphs" aria-labelledby="design-${label.slice(8)}">
         ${/** @type {string[]} */ (kinds).map((kind) => html`<li><button type="button" class="icon-button" popovertarget="design-add" popovertargetaction="hide" aria-label=${t(FORMS.includes(kind) ? `designs.shape.${kind}` : `designs.art.${kind}`)}
@@ -347,7 +385,7 @@ function draw(one) {
 /** A part's words changed in place: a box over it in its own type, which Escape or leaving puts away. @param {Design} design @param {Part} part */
 function editor(design, part) {
   const { w, h } = design.page
-  return html`<textarea class="design-edit design-words v-${part.voice ?? design.voice}" data-align=${part.align ?? 'center'} dir="auto" title=${nameOf(part)} .value=${live(part.text ?? '')}
+  return html`<textarea class="design-edit design-words v-${part.voice ?? design.voice} ${DISPLAY.includes(part.role) ? 'is-display' : ''}" data-align=${part.align ?? 'center'} dir="auto" title=${nameOf(part)} .value=${live(part.text ?? '')}
     ${vars({ '--x': `${(part.box[0] / w) * 100}%`, '--y': `${(part.box[1] / h) * 100}%`, '--w': `${(part.box[2] / w) * 100}%`, '--h': `${(part.box[3] / h) * 100}%`,
       '--size': `${((part.size ?? 0) / w) * 100}cqi`, '--lead': String(leadOf(design, part)), '--weight': String(weightOf(design, part)), '--pen': colourOf(design, part.color) })}
     @input=${typed(part)} @compositionend=${typed(part)}

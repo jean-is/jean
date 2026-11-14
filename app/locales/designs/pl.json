@@ -39,6 +39,7 @@
   "designs.voice.bold": "Wyrazisty",
   "designs.voice.calm": "Spokojny",
   "designs.voice.handwritten": "Odręczny",
+  "designs.voice.own": "Własne czcionki",
   "designs.parts": "Elementy",
   "designs.look": {
     "one": "Do sprawdzenia: {count}",
@@ -80,6 +81,7 @@
   "designs.role.shape": "Kształt",
   "designs.role.text": "Napis",
   "designs.role.qr": "Kod QR",
+  "designs.logo": "Logo",
   "designs.higher": "Wyżej",
   "designs.lower": "Niżej",
   "designs.bigger": "Większy",
@@ -115,6 +117,7 @@
   "designs.fix.remove": "Usuń",
   "designs.fix.readable": "Popraw czytelność",
   "designs.fix.inside": "Przesuń do środka",
+  "designs.fix.date": "Zmień datę",
   "designs.jean": "Zmienione przez: {name}",
   "designs.before": "Przed",
   "designs.accept": "Akceptuj",
@@ -129,6 +132,7 @@
   "designs.acceptAll": "Akceptuj wszystkie",
   "designs.rejectAll": "Odrzuć wszystkie",
   "designs.notPicture": "Ten plik nie jest obrazem, który projekt może pokazać.",
+  "designs.heic": "Ta przeglądarka nie otwiera zdjęć HEIC: spróbuj w Safari albo użyj kopii w JPEG.",
   "designs.first": {
     "one": "Najpierw do sprawdzenia: {count}",
     "few": "Najpierw do sprawdzenia: {count}",

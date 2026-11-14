@@ -6,7 +6,7 @@
 // (`stack`). A design re-laid on another take, or another size for Save, keeps its words and what the user added;
 // design_change's changes (`changed`) are Jean's version of each part, for the user to accept or reject. Pure.
 import { ROLES, VOICES, PAGES, FORMS, ART } from './tool.js'
-import { marks } from './checks.js'
+import { marks, SHARP } from './checks.js'
 import { contrast, readable, mix } from '../../ui/colour.js'
 import { dir } from '../../core/i18n.js'
 
@@ -26,16 +26,20 @@ import { dir } from '../../core/i18n.js'
 /** A take: its layout's, palette's and voice's ids. @typedef {[string, string, string]} Take */
 /**
  * @typedef {{ format: 1, name: string, author: string, created: string, changed: string, lang: string, size: string, page: Page, take: Take, deal: number,
- *   colours: Colours, voice: string, parts: Part[], quiet?: string[], occasion?: string, date?: string, pinned?: boolean }} Design
+ *   colours: Colours, voice: string, parts: Part[], quiet?: string[], occasion?: string, date?: string, pinned?: boolean, fonts?: Fonts }} Design
  */
 /** @typedef {{ box: number[], roles?: string[], align: string, valign: string, foot?: boolean, on?: string }} Region */
 /** @typedef {{ picture?: number[], shapes?: { box: number[], fill: string, radius?: number }[], regions: Region[] }} Frame */
 /** @typedef {{ id: string, voice: string, needs?: string, type?: Record<string, number> } & Record<string, any>} Layout */
-/** @typedef {{ type: Record<string, number>, colours: Record<string, string>, layouts: Layout[], palettes: (Colours & { id: string })[], voice?: string }} Book the project's look's voice too (D601) */
+/** A design system's own fonts, by family name, headings' and other words'. @typedef {{ heading: string[], body: string[] }} Fonts */
+/**
+ * @typedef {{ type: Record<string, number>, colours: Record<string, string>, layouts: Layout[], palettes: (Colours & { id: string })[], voice?: string, fonts?: Fonts,
+ *   logo?: { day: string, night?: string, at?: string } }} Book the project's look's voice, own fonts and logo too, by day and on a dark ground, and its corner (D601)
+ */
 
-/** The type each voice's display words and other words take. */
-export const WEIGHTS = /** @type {Record<string, number[]>} */ ({ friendly: [800, 600], elegant: [700, 500], bold: [700, 500], calm: [700, 500], handwritten: [400, 400] })
-const DISPLAY = ['title', 'when', 'who']
+/** The type each voice's display words and other words take; `own`, a design system's own fonts (D601). */
+export const WEIGHTS = /** @type {Record<string, number[]>} */ ({ friendly: [800, 600], elegant: [700, 500], bold: [700, 500], calm: [700, 500], handwritten: [400, 400], own: [700, 400] })
+export const DISPLAY = ['title', 'when', 'who']
 const WIDE = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/u
 
 /** @param {Page} page */
@@ -107,9 +111,11 @@ export const regionFor = (regions, role) => Math.max(0, regions.findIndex((one) 
 export function laid(book, design) {
   // A palette no longer here, the project's whose look is gone, leaves the design its colours.
   const palette = book.palettes.find((one) => one.id === design.take[1]) ?? { id: '', ...design.colours }, { id, ...colours } = palette
-  const next = { ...design, colours, voice: design.take[2], parts: design.parts.filter((part) => part.added || part.role !== 'shape') }
+  // Own fonts are the project's, else the design's own where the project's look is gone; with neither, Calm.
+  const fonts = design.take[2] === 'own' ? book.fonts ?? design.fonts : undefined, voice = fonts || design.take[2] !== 'own' ? design.take[2] : 'calm'
+  const next = { ...design, colours, voice, fonts, parts: design.parts.filter((part) => part.added || part.role !== 'shape') }
   const { layout, picture, shapes, regions } = frameOf(book, next), unit = unitOf(design.page), type = { ...book.type, ...layout.type }
-  const parts = next.parts.map((part) => (part.added ? part : { ...part, moved: undefined, voice: part.role === 'small' && next.voice !== 'calm' ? 'calm' : undefined }))
+  const parts = next.parts.map((part) => (part.added ? part : { ...part, moved: undefined, voice: part.role === 'small' && !['calm', 'own'].includes(next.voice) ? 'calm' : undefined }))
   for (const [n, region] of regions.entries()) {
     const here = parts.filter((part) => !part.added && part.text !== undefined && regionFor(regions, part.role) === n)
     let k = 1
@@ -142,8 +148,8 @@ export function takesOf(book, design, deal) {
   const voices = voicesFor(design.lang), at = hash(design.created + design.name), own = book.palettes.find((one) => one.id === 'project'), dealt = book.palettes.filter((one) => one !== own)
   return [0, 1, 2].map((i) => {
     const layout = order[(deal * 3 + i) % order.length], voice = voices.includes(layout.voice) ? layout.voice : voices[0]
-    // The first in the project's look (D601), in its voice where the language has it.
-    return own && !deal && !i ? [layout.id, own.id, voices.includes(book.voice ?? '') ? String(book.voice) : voice] : [layout.id, dealt[(at + deal * 3 + i) % dealt.length].id, voice]
+    // The first in the project's look (D601), in its own fonts, else its voice where the language has it.
+    return own && !deal && !i ? [layout.id, own.id, book.fonts ? 'own' : voices.includes(book.voice ?? '') ? String(book.voice) : voice] : [layout.id, dealt[(at + deal * 3 + i) % dealt.length].id, voice]
   })
 }
 
@@ -188,12 +194,28 @@ export const formOf = (kind, unit) => (ART.includes(kind) ? { art: kind }
 export function spot(design, kind) {
   const { w, h } = design.page, unit = unitOf(design.page), m = unit * 6, s = unit * (kind === 'qr' ? 20 : 24), [end, start] = dir(design.lang) === 'rtl' ? [m, w - m - s] : [w - m - s, m]
   if (ART.includes(kind) || kind === 'qr') {
-    const covered = (/** @type {number[]} */ [x, y]) => design.parts.filter((part) => part.added || part.role !== 'shape')
-      .reduce((sum, { box: [px, py, pw, ph] }) => sum + Math.max(0, Math.min(x + s, px + pw) - Math.max(x, px)) * Math.max(0, Math.min(y + s, py + ph) - Math.max(y, py)), 0)
-    const corners = [[end, m], [start, m], [end, h - m - s], [start, h - m - s]]
-    return [...(kind === 'qr' ? [corners[2], corners[3], corners[0], corners[1]] : corners).reduce((best, one) => (covered(one) < covered(best) ? one : best)), s, s]
+    const corners = [[end, m, s, s], [start, m, s, s], [end, h - m - s, s, s], [start, h - m - s, s, s]]
+    return (kind === 'qr' ? [corners[2], corners[3], corners[0], corners[1]] : corners).reduce((best, one) => (coverOf(design, one) < coverOf(design, best) ? one : best))
   }
   return kind === 'text' ? [w * 0.15, h * 0.45, w * 0.7, unit * 9] : kind === 'line' ? [w * 0.25, h / 2, w * 0.5, unit * 0.8] : [w * 0.3, h / 2 - w * 0.2, w * 0.4, w * 0.4]
+}
+/** How much of a box the design's parts cover, the layout's shapes apart. @param {Design} design @param {number[]} box */
+const coverOf = (design, [x, y, w, h]) => design.parts.filter((part) => part.added || part.role !== 'shape')
+  .reduce((sum, { box: [px, py, pw, ph] }) => sum + Math.max(0, Math.min(x + w, px + pw) - Math.max(x, px)) * Math.max(0, Math.min(y + h, py + ph) - Math.max(y, py)), 0)
+/**
+ * Where the project's logo goes, added (D601): in its corner, unless the parts cover it, else the corner they cover least; its longer side a
+ * fifth of the page's shorter. @param {Design} design @param {number} ratio its width over its height @param {string} [at] its kit's corner
+ */
+export function logoSpot(design, ratio, at = 'top-end') {
+  const { w, h } = design.page, unit = unitOf(design.page), m = unit * 6, [lw, lh] = ratio >= 1 ? [unit * 20, (unit * 20) / ratio] : [unit * 20 * ratio, unit * 20], rtl = dir(design.lang) === 'rtl'
+  const corners = ['top-end', 'top-start', 'bottom-end', 'bottom-start'], first = corners.includes(at) ? at : corners[0]
+  return [first, ...corners.filter((one) => one !== first)].map((one) => [one.endsWith('end') !== rtl ? w - m - lw : m, one.startsWith('top') ? m : h - m - lh, lw, lh])
+    .reduce((best, one) => (coverOf(design, one) < coverOf(design, best) ? one : best))
+}
+/** A picture's box made smaller about its middle until it prints sharp, or as it is. @param {Design} design @param {Part} part */
+export function sharpened(design, part) {
+  const [x, y, w, h] = part.box, most = design.page.mm && part.px ? ((part.px[0] / SHARP) * 25.4 * 0.99) / design.page.mm : w, k = Math.min(1, most / w)
+  return [x + (w * (1 - k)) / 2, y + (h * (1 - k)) / 2, w * k, h * k]
 }
 /** The parts with one added: words over the others, anything else behind the words, so that nothing added covers them. @param {Part[]} parts @param {Part} part */
 export function added(parts, part) {

@@ -39,6 +39,7 @@
   "designs.voice.bold": "ठसठशीत",
   "designs.voice.calm": "शांत",
   "designs.voice.handwritten": "हस्ताक्षर",
+  "designs.voice.own": "तुमचे स्वतःचे टंक",
   "designs.parts": "भाग",
   "designs.look": {
     "one": "पाहायचे: {count}",
@@ -78,6 +79,7 @@
   "designs.role.shape": "आकार",
   "designs.role.text": "मजकूर",
   "designs.role.qr": "QR कोड",
+  "designs.logo": "लोगो",
   "designs.higher": "वर",
   "designs.lower": "खाली",
   "designs.bigger": "मोठे",
@@ -113,6 +115,7 @@
   "designs.fix.remove": "काढा",
   "designs.fix.readable": "वाचण्याजोगे करा",
   "designs.fix.inside": "आत घ्या",
+  "designs.fix.date": "तारीख बदला",
   "designs.jean": "{name} कडून बदल",
   "designs.before": "आधी",
   "designs.accept": "स्वीकारा",
@@ -125,6 +128,7 @@
   "designs.acceptAll": "सर्व स्वीकारा",
   "designs.rejectAll": "सर्व नाकारा",
   "designs.notPicture": "ही फाइल डिझाइन दाखवू शकेल असे चित्र नाही.",
+  "designs.heic": "हा ब्राउझर HEIC फोटो उघडू शकत नाही: Safari वापरून पाहा, किंवा त्याची JPEG प्रत.",
   "designs.first": {
     "one": "आधी पाहायचे: {count}",
     "other": "आधी पाहायचे: {count}"

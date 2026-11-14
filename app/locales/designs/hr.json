@@ -39,6 +39,7 @@
   "designs.voice.bold": "Snažno",
   "designs.voice.calm": "Mirno",
   "designs.voice.handwritten": "Rukopis",
+  "designs.voice.own": "Vlastiti fontovi",
   "designs.parts": "Dijelovi",
   "designs.look": {
     "one": "Za provjeru: {count}",
@@ -79,6 +80,7 @@
   "designs.role.shape": "Oblik",
   "designs.role.text": "Natpis",
   "designs.role.qr": "QR kod",
+  "designs.logo": "Logotip",
   "designs.higher": "Više",
   "designs.lower": "Niže",
   "designs.bigger": "Veće",
@@ -114,6 +116,7 @@
   "designs.fix.remove": "Ukloni",
   "designs.fix.readable": "Učini čitljivim",
   "designs.fix.inside": "Pomakni unutra",
+  "designs.fix.date": "Promijeni datum",
   "designs.jean": "Promijenila aplikacija {name}",
   "designs.before": "Prije",
   "designs.accept": "Prihvati",
@@ -127,6 +130,7 @@
   "designs.acceptAll": "Prihvati sve",
   "designs.rejectAll": "Odbaci sve",
   "designs.notPicture": "Ova datoteka nije slika koju dizajn može prikazati.",
+  "designs.heic": "Ovaj preglednik ne može otvoriti fotografije HEIC: pokušajte u Safariju ili s kopijom u JPEG-u.",
   "designs.first": {
     "one": "Najprije provjeriti: {count}",
     "few": "Najprije provjeriti: {count}",

@@ -6,7 +6,7 @@
 // its width, and it is laid out left to right whatever the language, each part's words in the design's own direction.
 import { html, nothing, render, svg } from 'lit-html'
 import { ref } from 'lit-html/directives/ref.js'
-import { colourOf, weightOf, leadOf, frameOf, stack, unitOf, inksOf, pathsOf, WEIGHTS } from './layout.js'
+import { colourOf, weightOf, leadOf, frameOf, stack, unitOf, inksOf, pathsOf, WEIGHTS, DISPLAY } from './layout.js'
 import { dir, t, locale } from '../../core/i18n.js'
 import { codeOf } from '../../ui/qr.js'
 
@@ -41,13 +41,15 @@ function partOf(design, part, stage = false) {
     return html`<div class="design-part design-picture ${form}" data-part=${part.id} ${vars({ ...place, ...round, '--pen': colourOf(design, 'ink') })}>${part.file
       ? html`<app-shared uri=${part.file} type=${typeOf(part.file)}></app-shared>` : part.role === 'qr' ? html`<span lang=${locale.value} dir=${dir()}>${t('designs.role.qr')}</span>` : html`<span dir=${dir(design.lang)}>${part.words}</span>`}</div>`
   }
-  return html`<div class="design-part design-words v-${part.voice ?? design.voice}" data-part=${part.id} data-align=${part.align ?? 'center'} ${vars({ ...place,
+  return html`<div class="design-part design-words v-${part.voice ?? design.voice} ${DISPLAY.includes(part.role) ? 'is-display' : ''}" data-part=${part.id} data-align=${part.align ?? 'center'} ${vars({ ...place,
     '--size': `${((part.size ?? 0) / w) * 100}cqi`, '--lead': String(leadOf(design, part)), '--weight': String(weightOf(design, part)), '--pen': colourOf(design, part.color) })}>
     <p dir=${dir(design.lang)} role=${stage && part.role === 'title' ? 'heading' : nothing} aria-level=${stage && part.role === 'title' ? 3 : nothing}>${(part.text ?? '').replace(SEPARATOR, '\u00a0$1').split(GAP).map((bit, i) => (i % 2 ? html`<mark>${bit}</mark>` : bit))}</p></div>`
 }
 
+/** A design system's own fonts as CSS, its headings' and other words' families (D601), for the `own` voice. @param {import('./layout.js').Fonts} [fonts] */
+export const facesOf = (fonts) => Object.fromEntries(fonts ? [['--own-heading', fonts.heading], ['--own-body', fonts.body]].map(([name, families]) => [name, /** @type {string[]} */ (families).map((one) => `"${one.replace(/["\\]/g, '')}"`).join(', ')]) : [])
 /** A design's page, with what the pane draws over it. @param {Design} design @param {unknown} [over] */
-export const pageOf = (design, over = nothing) => html`<div class="design-page" lang=${design.lang} dir="ltr" ${vars({ '--ratio': `${design.page.w} / ${design.page.h}`, '--r': String(design.page.w / design.page.h), '--ground': design.colours.ground })}>
+export const pageOf = (design, over = nothing) => html`<div class="design-page" lang=${design.lang} dir="ltr" ${vars({ '--ratio': `${design.page.w} / ${design.page.h}`, '--r': String(design.page.w / design.page.h), '--ground': design.colours.ground, ...facesOf(design.fonts) })}>
   ${design.parts.map((part) => partOf(design, part, over !== nothing))}${over}</div>`
 
 /** Each drawn part's element, by its id. @param {Element} page */
@@ -129,7 +131,8 @@ export async function laidOut(design, book) {
   const holder = aside().appendChild(document.createElement('div'))
   try {
     render(pageOf(design), holder)
-    const voices = new Set(design.parts.map((part) => part.voice ?? design.voice))
+    // Own fonts are the device's, Calm behind them.
+    const voices = new Set(design.parts.map((part) => (part.voice ?? design.voice).replace('own', 'calm')))
     await Promise.all([...voices].flatMap((voice) => WEIGHTS[voice].map((weight) => document.fonts.load(`${weight} 16px ${voice[0].toUpperCase()}${voice.slice(1)}`, design.parts.map((part) => part.text ?? '').join(''))))).catch(() => {})
     let fitted = design
     // Fitted until it settles, as each stack moves its parts.
