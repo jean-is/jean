@@ -19,7 +19,8 @@ class Virtual extends AsyncDirective {
   from = 0; to = 0; step = 0; gap = 0; lanes = 1; at = -1; queued = 0; lengths = [0, 0]
   /** @type {Options} */ options = { count: 0, draw: () => null }; box = /** @type {HTMLElement | undefined} */ (undefined)
   seen = new ResizeObserver(() => { this.measure(); this.check() })
-  queue = () => { this.queued ||= requestAnimationFrame(() => { this.queued = 0; this.check() }) }
+  /** Checked in the next frame: on a scroll, only one that can move the list, its own or a box it is in, never another's, which reading its place would make lay out. @param {Event} [event] */
+  queue = (event) => { const at = event?.target; if (!(at instanceof Node) || at === document || at.contains(this.box ?? null)) this.queued ||= requestAnimationFrame(() => { this.queued = 0; this.check() }) }
 
   /** @param {Options} options */
   render(options) {

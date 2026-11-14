@@ -74,8 +74,9 @@ class Conversation extends Element {
       this.#at = this.#box().scrollTop
     }
   })
-  #onScroll = () => {
-    if (!this.#opening) this.#follow = atEnd(120, this.#box())
+  /** @param {Event} [event] its box's own, never a pane's */
+  #onScroll = (event) => {
+    if (!this.#opening && (!event || event.target === document || event.target === this.#box())) this.#follow = atEnd(120, this.#box())
   }
   #keep = () => {
     const at = this.#task.peek() || spotOf(this)
@@ -277,8 +278,7 @@ function followUps(at, suggestions, brain) {
 
 /**
  * "What Jean read", from what actually went to the brain for this answer: the files shared
- * so far (with the pages that fit) and this turn's completed reads. Honest even when a small
- * brain cites badly.
+ * so far (with the pages that fit) and this turn's completed reads.
  * @param {Turn[]} upTo @param {ToolCallInfo[]} entries @param {ResourceLink[]} files
  * @returns {{ link: ResourceLink, range?: [number, number], of?: number }[]}
  */
@@ -319,7 +319,7 @@ function sourcesView(cited) {
  * "What Jean is doing", from the turn's ACP records, in the order it happened: each time the
  * brain was asked, then the calls it made. What a script or a helper did shows under its call,
  * as a tree: a helper's brain, its calls, and their scripts' calls. Each line opens on what it
- * was given and what came back, so a step that went wrong can be looked into; a plan's step under way says what it does (D364).
+ * was given and what came back; a plan's step under way says what it does (D364).
  * @param {Step[]} steps @param {string} text @param {boolean} streaming @param {ResourceLink[]} files @param {string} [doing] @param {boolean} [steered]
  */
 function activity(steps, text, streaming, files, doing, steered) {

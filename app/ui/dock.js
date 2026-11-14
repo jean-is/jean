@@ -197,6 +197,8 @@ export const full = signal(/** @type {HTMLElement | null} */ (null))
 export function fill(element) {
   full.value = full.peek() === element ? null : element
   for (const one of panes.values()) one.toggleAttribute('data-full', one === full.peek())
+  // Said on the dock too, never found from it with :has(), which would restyle the whole page at each letter typed.
+  dock.toggleAttribute('data-filled', Boolean(full.peek()))
   arrange()
 }
 // Escape gives the window back, unless something in the pane takes it, or a dialog or a menu over it.

@@ -333,7 +333,7 @@ app-latex:not(:defined) { white-space: pre-wrap; font: 0.86rem var(--mono); }
 .msg-actions { margin-inline-start: -0.5rem; }
 .msg-actions .icon-button { opacity: 0.75; transition: opacity 0.3s; }
 app-made:not(:defined) { display: none; }
-.msg-actions:is(.msg-jean:hover *, .msg-user:hover + *, :hover, :focus-within) .icon-button:enabled { opacity: 1; }
+:is(.msg-jean:hover .msg-actions, .msg-user:hover + .msg-actions, .msg-actions:hover, .msg-actions:focus-within) .icon-button:enabled { opacity: 1; }
 @media (hover: none) { .msg-actions .icon-button:enabled { opacity: 1; } }
 .msg-actions .icon-button:disabled { opacity: 0.25; background: none; cursor: default; }
 .msg-actions.is-request { align-self: flex-end; margin-block-start: -0.6rem; margin-inline: 0 -0.5rem; }

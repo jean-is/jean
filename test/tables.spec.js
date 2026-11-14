@@ -440,17 +440,19 @@ test('a collection’s heads stay on top, show their kind and open a menu to ren
 
   // A row's handle shows with the pointer on its row, or the keyboard, which Tab brings to it from the row before; dragged over
   // another row's first half, the row goes before it.
+  // Its dots are drawn by its style sheet (an svg's style changing would lay out the whole table).
   const handle = (/** @type {number} */ n) => rows.nth(n).getByRole('button', { name: 'Move row' })
+  const dots = (/** @type {number} */ n) => handle(n).evaluate((button) => getComputedStyle(button, '::before').visibility)
   await page.mouse.move(0, 0)
-  await expect(handle(2)).toHaveCSS('opacity', '0')
+  await expect.poll(() => dots(2)).toBe('hidden')
   await rows.nth(1).getByTitle('Stage', { exact: true }).focus()
   // WebKit, as Safari, tabs to buttons with Alt.
   await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab')
   await expect(handle(2)).toBeFocused()
-  await expect(handle(2)).toHaveCSS('opacity', '1')
+  await expect.poll(() => dots(2)).toBe('visible')
   await handle(2).blur()
   await rows.nth(2).hover()
-  await expect(handle(2)).toHaveCSS('opacity', '1')
+  await expect.poll(() => dots(2)).toBe('visible')
   await handle(2).dragTo(rows.nth(0), { targetPosition: { x: 60, y: 4 } })
   await expect(rows.first().getByTitle('Nights booked')).toHaveValue('3')
   await expect.poll(async () => (await file())?.nights.slice(0, 4)).toEqual([3, 1, 2, 4])

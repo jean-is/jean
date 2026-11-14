@@ -35,6 +35,8 @@ app-table .table-grid thead > tr > * { translate: 0 var(--lift, 0); }
 /* A field fills its cell, plain, whatever the look gives fields. */
 .table-view .table-grid tbody :is(td, th) > :is(input:not([type="checkbox"]), select) { inline-size: 100%; min-inline-size: 8rem; min-block-size: 2.25rem; padding: 0.3rem 0.6rem; border: 1px solid transparent; border-radius: 0; background-color: transparent; color: inherit; font: inherit; }
 .table-view .table-grid :is(td, th) > input[type="date"] { min-inline-size: 10.5rem; }
+/* A number takes no arrows to step it, which a press would change silently, and which, shown as the pointer passes, would lay out the whole table. */
+.table-grid input[type="number"] { appearance: textfield; } .table-grid input[type="number"]::-webkit-inner-spin-button { display: none; }
 /* A cell selected, its own box with the keyboard on it, or its field being changed; one its column refuses, a line under it and the form it takes. */
 .table-view .table-grid :is(:is(td, th)[tabindex]:focus, :is(td, th) > :is(input, select):focus-visible) { outline: 2px solid var(--flame); outline-offset: -2px; }
 .table-view .table-grid :is(td, th) > [aria-invalid='true'] { border-block-end-color: var(--danger); } .table-wrong { inline-size: 13rem; overflow-wrap: anywhere; box-sizing: border-box; margin: 0; padding: 0 0.6rem 0.4rem; font-size: 0.8rem; }
@@ -55,9 +57,10 @@ app-table .table-grid thead > tr > * { translate: 0 var(--lift, 0); }
 .table-view .table-grid th > .table-add-column { appearance: none; inline-size: 2rem; block-size: 2rem; padding: 0; border: 0; border-radius: 0.5rem; background: none; color: var(--ink-soft); font-size: 1.1rem; text-align: center; cursor: pointer; } .table-view .table-grid .table-add-column:hover { background: var(--line); color: var(--ink); }
 /* A row's handle at its start, shown with the pointer or the keyboard on its row and always on a touch screen; a line where a row dragged goes. */
 .table-grid .table-grip { inline-size: 1.75rem; padding: 0; }
-.table-grip .icon-button { inline-size: 1.75rem; opacity: 0; cursor: grab; } .table-grip .icon { --glyph: var(--icon-s); }
-.table-grid tr:is(:hover, :focus-within) .table-grip .icon-button { opacity: 1; }
-@media (hover: none) { .table-grip .icon-button, .table-total:not(:has(span)) { opacity: 1; } }
+/* Its six dots, drawn here and shown as the pointer passes: an svg's style changing would lay out the whole table, and dots drawn unseen take each frame's paint. */
+.table-grip .icon-button { inline-size: 1.75rem; cursor: grab; } .table-grip .icon-button::before { content: ''; visibility: hidden; inline-size: 12px; block-size: 18px; background: radial-gradient(circle, currentColor 1.5px, transparent 1.75px) 0 0 / 6px 6px; }
+.table-grid tr:is(:hover, :focus-within) > .table-grip > .icon-button::before { visibility: visible; }
+@media (hover: none) { .table-grip .icon-button::before { visibility: visible; } .table-total:not(:has(span)) { opacity: 1; } }
 .table-grid tr[data-drop='before'] > td { box-shadow: inset 0 2px var(--flame); }
 .table-grid tr[data-drop='after'] > td { box-shadow: inset 0 -2px var(--flame); }
 /* Where a column dragged by its head goes: a line on that side of the head it is over, its line's start or end. */

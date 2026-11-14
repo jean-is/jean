@@ -134,11 +134,11 @@ export function query(table, rows, { filter, sort = [], group, locale, names } =
     if (!values.length || isEmpty(value)) return [null]
     return byGroup ? values.map((one) => property.options?.find((option) => option.name === one)?.group ?? null) : values
   }
-  const found = shown.flatMap(valuesOf)
+  // In one pass: each row in each of its values' groups, once.
   /** @type {unknown[]} */
   const named = byGroup ? [...GROUPS] : property.type === 'checkbox' ? [false, true] : property.options?.map((option) => option.name) ?? []
-  const others = [...new Set(found.filter((value) => value !== null && !named.includes(value)))]
-    .sort((a, b) => compareIn(property, a, b, collator))
-  const values = [...named, ...others, ...(found.includes(null) ? [null] : [])]
-  return { rows: shown, groups: values.map((value) => ({ value, rows: shown.filter((row) => valuesOf(row).some((one) => one === value)) })) }
+  const groups = new Map(named.map((value) => [value, /** @type {Row[]} */ ([])]))
+  for (const row of shown) for (const value of new Set(valuesOf(row))) (groups.get(value) ?? groups.set(value, []).get(value))?.push(row)
+  const others = [...groups.keys()].slice(named.length).filter((value) => value !== null).sort((a, b) => compareIn(property, a, b, collator))
+  return { rows: shown, groups: [...named, ...others, ...(groups.has(null) ? [null] : [])].map((value) => ({ value, rows: groups.get(value) ?? [] })) }
 }

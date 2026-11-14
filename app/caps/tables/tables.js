@@ -50,7 +50,7 @@ const ROWS = 200
 /** The table opened last beside the conversation, which waits to be on show where it opens (D635). */
 export const shown = signal(/** @type {Loaded | null} */ (null))
 /** The tables drawn now: those beside the conversation and those documents hold, each read again as it changes; those beside it, which the brain hears of (D635). */
-const showing = new Set([shown]), beside = new Set([shown])
+const showing = new Set([shown]), besides = new Set([shown])
 /** The tables blank() made that a document hasn't drawn yet, whose first field then takes the keyboard. */
 const fresh = new Set()
 
@@ -303,8 +303,10 @@ async function fromPage() {
   requestAnimationFrame(() => /** @type {HTMLInputElement | null} */ (document.querySelector('app-preview .table-name'))?.select())
 }
 
-/** Jean's changes the user hasn't accepted or rejected, the latest last (./changes.js). @param {Loaded} one @returns {Change[]} */
-export const unkept = (one) => marked(one.lines, one.table.kept)
+/** Jean's changes the user hasn't accepted or rejected, the latest last (./changes.js), worked out once for each copy read, not at each draw. @type {WeakMap<Line[], { kept?: string, marked: Change[] }>} */
+const unkepts = new WeakMap()
+/** @param {Loaded} one @returns {Change[]} */
+export const unkept = (one) => { const was = unkepts.get(one.lines); if (was && was.kept === one.table.kept) return was.marked; const now = marked(one.lines, one.table.kept); unkepts.set(one.lines, { kept: one.table.kept, marked: now }); return now }
 
 /** The user accepts Jean's changes, or one row's, which become the user's own: they show so from now on. @param {Loaded} one @param {string} [row] */
 export async function accept(one, row) {
@@ -366,7 +368,8 @@ export async function metaOf(folder) {
  * brain hears of; as many as there are. @param {{ uri: string }} file @param {(() => void)[]} holds
  */
 export async function editor(file, holds) {
-  const one = await load(file.uri)
+  // Its view's module fetched meanwhile, which a whiteboard's draws with too.
+  const [one] = await Promise.all([load(file.uri), import('./view.js')])
   if (!one) return null
   // A whiteboard, Whiteboards' view, which comes once a whiteboard does (D747).
   if (one.table.kind && await unlock('whiteboards')) return (await import('../whiteboards/whiteboards.js')).editor(file, holds)
@@ -481,7 +484,7 @@ const changeTool = {
  * its place, its columns and how many rows it has, or the user changed.
  * @param {import('../../core/types.js').Envelope[]} records
  */
-const notes = (records) => [...new Map([...beside].flatMap((where) => (where.peek() ? [[where.peek()?.folder, /** @type {Loaded} */ (where.peek())]] : []))).values()].flatMap((one) => {
+const notes = (records) => [...new Map([...besides].flatMap((where) => (where.peek() ? [[where.peek()?.folder, /** @type {Loaded} */ (where.peek())]] : []))).values()].flatMap((one) => {
   const text = `The table ${one.table.name} (${one.folder}) is open beside the conversation: ${one.rows.length} rows. Its columns: ${columnsOf(one)}. Read its rows with table_rows.`
   const last = records.findLast(({ update }) => update?.sessionUpdate === '_system_note' && update.data.kind === 'table' && update.data.uri === one.folder)
   return last?.update?.sessionUpdate === '_system_note' && last.update.text === text ? [] : [noteRecord(text, { kind: 'table', uri: one.folder })]
@@ -494,11 +497,12 @@ customElements.define('app-table', class extends HTMLElement {
   holds = []
 
   async connectedCallback() {
-    const [holds, folder] = [this.holds, this.getAttribute('folder') ?? '']
-    const [one, { view }] = await Promise.all([load(folder).catch(() => null), import('./view.js')])
+    const [holds, folder, beside] = [this.holds, this.getAttribute('folder') ?? '', this.hasAttribute('beside')]
+    // Beside the task, as editor() has just read it.
+    const [one, { view }] = await Promise.all([beside && shown.peek()?.folder === folder ? shown.peek() : load(folder).catch(() => null), import('./view.js')])
     if (holds !== this.holds || !this.isConnected) return
     if (!one) return void (this.textContent = folder)
-    const where = signal(/** @type {Loaded | null} */ (one)), sets = this.hasAttribute('beside') ? [showing, beside] : [showing]
+    const where = signal(/** @type {Loaded | null} */ (one)), sets = beside ? [showing, besides] : [showing]
     for (const set of sets) set.add(where), holds.push(() => set.delete(where))
     this.replaceChildren(view(holds, where))
     // Its heads stay at the top of what the document shows while its rows pass under it: they stick in the table's own box,

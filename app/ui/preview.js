@@ -192,13 +192,24 @@ class Pane extends Element {
   #stay = () => { this.#still = {} }
   /** @param {globalThis.Element} view */
   #scrollBack(view) { for (const [name, [x, y]] of Object.entries(this.#still)) { const box = name ? view.querySelector(`.${CSS.escape(name)}`) : view; box?.scrollTo(x, y); if (box && Math.abs(box.scrollLeft - x) + Math.abs(box.scrollTop - y) < 2) delete this.#still[name] } }
-  /** A scroll kept while the file shows, not as its view gives way to another's or goes back where it was: the view's, or the one box of its class's in it. @param {Event} event */
+  /**
+   * A scroll kept while the file shows, not as its view gives way to another's or goes back where it was: the view's, or the one box of its class's in it;
+   * written a moment after the scrolling, never at each of its events, which would take a frame's time each. @param {Event} event
+   */
   #scrolled = ({ target }) => {
-    const box = /** @type {HTMLElement} */ (target), at = box.closest('.view'), name = box === at ? '' : box.classList[0]
-    if (!at || this.#view.peek() === nothing || name === undefined || name in this.#still || (name && at.querySelectorAll(`.${CSS.escape(name)}`).length > 1)) return
-    places[this.#place()] = { ...places[this.#place()], [name]: [box.scrollLeft, box.scrollTop] }
-    try { sessionStorage.setItem(PLACES, JSON.stringify(places)) } catch {}
+    this.#moved.add(/** @type {HTMLElement} */ (target))
+    this.#later ||= setTimeout(() => {
+      for (const box of this.#moved) {
+        const at = box.closest('.view'), name = box === at ? '' : box.classList[0]
+        if (!at || this.#view.peek() === nothing || name === undefined || name in this.#still || (name && at.querySelectorAll(`.${CSS.escape(name)}`).length > 1)) continue
+        places[this.#place()] = { ...places[this.#place()], [name]: [box.scrollLeft, box.scrollTop] }
+      }
+      this.#moved.clear(), (this.#later = 0)
+      try { sessionStorage.setItem(PLACES, JSON.stringify(places)) } catch {}
+    }, 250)
   }
+  #moved = /** @type {Set<HTMLElement>} */ (new Set())
+  #later = 0
 }
 
 /**

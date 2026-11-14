@@ -36,9 +36,17 @@ export function textOf(row, property, { labels = {}, names } = {}) {
  */
 export function said(row, property, { locales, ...options } = {}) {
   const value = valueOf(row, property)
-  if (property.type === 'date' && typeof value === 'string') return new Intl.DateTimeFormat(locales, { dateStyle: 'medium', ...(value.includes('T') && { timeStyle: 'short' }) }).format(new Date(value.includes('T') ? value : `${value}T00:00`))
-  return typeof value === 'number' ? new Intl.NumberFormat(locales).format(value) : textOf(row, property, options)
+  if (property.type === 'date' && typeof value === 'string') return format('DateTimeFormat', locales, { dateStyle: 'medium', ...(value.includes('T') && { timeStyle: 'short' }) }).format(new Date(value.includes('T') ? value : `${value}T00:00`))
+  return typeof value === 'number' ? format('NumberFormat', locales).format(value) : textOf(row, property, options)
 }
+
+/** Each formatter made, by its kind, languages and options: made once, not for each cell at each draw. @type {Map<string, Intl.NumberFormat | Intl.DateTimeFormat>} */
+const formats = new Map()
+/**
+ * @template {'NumberFormat' | 'DateTimeFormat'} K @param {K} kind @param {string[] | undefined} locales @param {object} [options]
+ * @returns {K extends 'NumberFormat' ? Intl.NumberFormat : Intl.DateTimeFormat}
+ */
+export const format = (kind, locales, options = {}) => { const key = `${kind} ${locales} ${JSON.stringify(options)}`; if (!formats.has(key)) formats.set(key, new (/** @type {any} */ (Intl)[kind])(locales, options)); return /** @type {any} */ (formats.get(key)) }
 
 /** Each of a collection's rows by its id, its name as its first text column, else its first, holds it. @param {Table} table @param {Row[]} rows */
 export const namesOf = (table, rows) => ((title) => new Map(rows.map((row) => [row.id, title ? textOf(row, title) : ''])))(titleOf(table))
