@@ -36,6 +36,7 @@ export default {
     const table = (/** @type {string} */ key, /** @type {number} */ width) => kit.table(key, width, params)
     const home = kit.from('home')
     const it = kit.from('enterprise')
+    const pricing = kit.link('pricing')
     const jean = kit.start
     const rows = table('it.rows', 2)
     if (rows.length !== STATUSES.length) throw new Error(`site/work/${lang}.json: it.rows has ${rows.length} rows, STATUSES ${STATUSES.length}`)
@@ -109,7 +110,8 @@ export default {
         yes: { id: 'wrk-yes', body: `${answers}\n${email}`, catch: not(0, 2, 3) },
       },
       turn: { id: 'wrk-end', body: end },
-      questions: { id: 'wrk-faq', name: 'wrk-questions', title: say('faq.title'), items: table('faq.items', 2) },
+      // The price, where an answer says it, leads to the page that says all of it.
+      questions: { id: 'wrk-faq', name: 'wrk-questions', title: say('faq.title'), items: table('faq.items', 2).map(([question, answer]) => [question, pricing ? answer.replace(xml(params.price), (price) => /* html */ `<a href="${pricing}">${price}</a>`) : answer]) },
     })
   },
 }

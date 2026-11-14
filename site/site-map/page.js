@@ -20,7 +20,7 @@ export default {
     return landing(kit, {
       top: hero(kit, { id: 'map-title', title: kit.say('h1'), lede: kit.say('lede') }),
       acts: [
-        { id: 'map-site', title: xml(kit.brand.name), body: pages([top, item('help', kit.app('learn.help')), item('files', kit.app('welcome.files')), item('privacy', kit.app('welcome.privacy')), item('terms', kit.app('welcome.terms')), item('accessibility', kit.say('foot.accessibility'))]) },
+        { id: 'map-site', title: xml(kit.brand.name), body: pages([top, item('help', kit.app('learn.help')), item('pricing', kit.say('foot.pricing')), item('files', kit.app('welcome.files')), item('privacy', kit.app('welcome.privacy')), item('terms', kit.app('welcome.terms')), item('accessibility', kit.say('foot.accessibility'))]) },
         { id: 'map-for', title: kit.say('foot.for'), body: pages([item('family', kit.say('foot.families')), item('work', kit.say('foot.work')), item('teachers', kit.say('foot.teachers')), item('associations', kit.say('foot.associations')), item('charter', kit.from('charter').say('h1')), item('public-sector', kit.say('foot.public')), item('finance', kit.say('foot.finance')), item('enterprise', kit.say('foot.it')), item('enterprise-key', kit.from('enterprise-key').say('h1'))]) },
         { id: 'map-uses', title: kit.say('foot.uses'), body: pages(USES.map((name) => item(name, kit.say(`foot.${name}`)))) },
         { id: 'map-compared', title: kit.say('foot.compared'), body: pages(COMPARED.map((name, i) => item(name, i ? kit.from(name).say('product') : kit.say('foot.all')))) },

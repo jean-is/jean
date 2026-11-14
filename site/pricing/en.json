@@ -1,0 +1,56 @@
+{
+  "title": "{name} pricing",
+  "description": "What {name} costs: nothing for a person, with no account and no card, and one price a year for a large organisation, whatever its size.",
+  "h1": "Free for you, paid for by organisations.",
+  "h1.mark": "Free for you,",
+  "acts": [["you", "Free for you,"], ["orgs", "paid for by organisations."]],
+  "lede": "{name} costs a person nothing, with no account and no card. An organisation of {small} people or more pays one price a year to host its own copy, whatever its size.",
+  "facts": ["No paid version for people", "No seats to count", "Open source, under MIT"],
+  "tags": [["You", "At home, at school, at work"], ["Your organisation", "From {small} people, to host its own copy"]],
+  "tags.free": "No trial, no end date",
+  "year": "a year excl. VAT",
+  "ways.title": "The AI that answers has its own price.",
+  "ways.why": "Use the AI you want, and change it any time. Two of them cost nothing.",
+  "ways.heads": ["The AI that answers", "You pay", "You need"],
+  "ways.rows": [
+    ["{zero}", "No account"],
+    ["{zero}", "A free OpenRouter account"],
+    ["What you already pay", "The plan. No second subscription."],
+    ["Nothing yourself", "Your company’s sign-in"]
+  ],
+  "ways.limit": "A free AI is limited each day, by its provider.",
+  "rule.title": "One rule, one price.",
+  "rule.why": "An organisation pays to host its own copy of {name}, with what IT, security and compliance ask for. Never per seat: {name} counts no one.",
+  "rule.size": "Whatever your size, never per seat:",
+  "rule.ticks": [
+    "The audit export and retention",
+    "Long-term support releases",
+    "Filled-in security questionnaires",
+    "The outside test’s report",
+    "Help to set up",
+    "A copy hosted at your address, if you want one"
+  ],
+  "per.title": "What {price} comes to, per person, per year",
+  "per.at": "at {count} people",
+  "sale.title": "Nothing else is for sale.",
+  "sale.items": [
+    ["Advertising", "None, in {name} or on this site, and no cookie to serve it."],
+    ["Your data", "{name} runs no server that sees your work. There is nothing to sell."],
+    ["A place in the list", "No AI provider pays to be the one {name} suggests."]
+  ],
+  "orgs.limits": [
+    "The price holds no AI: its providers bill your organisation for what its people use.",
+    "One price for each organisation that deploys {name}."
+  ],
+  "turn.body": "Nothing to buy before you try.",
+  "turn.other": "Hosting {name} for an organisation? {ask}.",
+  "faq.title": "Questions",
+  "faq.items": [
+    ["Will {name} stay free?", "Yes. Its code is open source under the MIT licence, so what is free today cannot be taken back."],
+    ["Can an organisation try before it pays?", "Yes: a 30-day trial key, with every enterprise feature."],
+    ["How does an organisation pay?", "On a quote, then an invoice, payable by bank transfer within 30 days."],
+    ["What happens when a key ends?", "Every version released before its end date keeps working, forever. Later versions need a new key."],
+    ["Is there another price for schools, nonprofits or public bodies?", "No, the same rule for all: free under {small} people, {price} a year from {small}. For French public buyers, four years stay under the {threshold} threshold for buying without a procedure."],
+    ["Does {name} count our people?", "No. {name} counts no one: the size is the one you give when you ask for a key."]
+  ]
+}

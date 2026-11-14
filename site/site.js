@@ -478,7 +478,7 @@ untranslated(() => links.map((link) => link.hreflang), () => own, (code) => loca
 
 /**
  * The foot every page ends with, the same on each: the name, what Jean is and where it's made, with the homepage's
- * menu of languages under them; the homepage, Help, the pages every copy has, Accessibility and the source;
+ * menu of languages under them; the homepage, Help, Pricing, the pages every copy has, Accessibility and the source;
  * whom the site's other pages are for, where they're built; what people use Jean for (USES); and the comparison's
  * pages. The page it is on is marked, not left out.
  * @param {Kit} kit @param {string} [languages]  HTML
@@ -493,7 +493,7 @@ export function foot (kit, languages = '') {
   return /* html */ `<footer class="site-foot">
   <div><p class="site-mark"><span dir="ltr">${xml(kit.brand.name)}</span></p><p>${kit.say('foot.tagline')}</p><p>${kit.say('foot.made')}</p><p>${kit.say('foot.cookies')}</p>${languages}</div>
   <nav aria-label="${xml(kit.brand.name)}"><h2 class="site-foot-head">${xml(kit.brand.name)}</h2><ul>
-    ${item(kit.link('home'), kit.app('learn.home'), 'home')}${item(kit.link('help'), kit.app('learn.help'), 'help')}${item(kit.link('files'), kit.app('welcome.files'), 'files')}${item(kit.link('privacy'), kit.app('welcome.privacy'), 'privacy')}${item(kit.link('terms'), kit.app('welcome.terms'), 'terms')}${item(kit.link('accessibility'), kit.say('foot.accessibility'), 'accessibility')}${item(kit.link('site-map'), kit.say('foot.map'), 'site-map')}${item(REPOSITORY, kit.say('foot.source'))}
+    ${item(kit.link('home'), kit.app('learn.home'), 'home')}${item(kit.link('help'), kit.app('learn.help'), 'help')}${item(kit.link('pricing'), kit.say('foot.pricing'), 'pricing')}${item(kit.link('files'), kit.app('welcome.files'), 'files')}${item(kit.link('privacy'), kit.app('welcome.privacy'), 'privacy')}${item(kit.link('terms'), kit.app('welcome.terms'), 'terms')}${item(kit.link('accessibility'), kit.say('foot.accessibility'), 'accessibility')}${item(kit.link('site-map'), kit.say('foot.map'), 'site-map')}${item(REPOSITORY, kit.say('foot.source'))}
   </ul></nav>${audiences ? /* html */ `
   <nav aria-label="${kit.say('foot.for')}"><h2 class="site-foot-head">${kit.say('foot.for')}</h2><ul>
     ${audiences}

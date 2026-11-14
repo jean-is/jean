@@ -1,0 +1,56 @@
+{
+  "title": "Tarifs de {name}",
+  "description": "Ce que coûte {name} : rien pour une personne, sans compte ni carte, et un seul prix par an pour une grande organisation, quelle que soit sa taille.",
+  "h1": "Gratuit pour vous, payé par les organisations.",
+  "h1.mark": "Gratuit pour vous,",
+  "acts": [["you", "Gratuit pour vous,"], ["orgs", "payé par les organisations."]],
+  "lede": "Pour une personne, {name} ne coûte rien, sans compte ni carte bancaire. Une organisation de {small} personnes ou plus paie un seul prix par an pour héberger sa propre copie, quelle que soit sa taille.",
+  "facts": ["Aucune version payante pour vous", "Aucun poste à compter", "Logiciel libre, sous MIT"],
+  "tags": [["Vous", "À la maison, à l’école, au travail"], ["Votre organisation", "Dès {small} personnes, pour héberger sa propre copie"]],
+  "tags.free": "Ni essai, ni date de fin",
+  "year": "HT par an",
+  "ways.title": "L’IA qui répond a son propre prix.",
+  "ways.why": "Utilisez l’IA que vous voulez, et changez-en quand vous voulez. Deux d’entre elles ne coûtent rien.",
+  "ways.heads": ["L’IA qui répond", "Vous payez", "Il vous faut"],
+  "ways.rows": [
+    ["{zero}", "Aucun compte"],
+    ["{zero}", "Un compte OpenRouter gratuit"],
+    ["Ce que vous payez déjà", "L’abonnement, sans en prendre un second."],
+    ["Rien de votre poche", "La connexion de votre entreprise"]
+  ],
+  "ways.limit": "Une IA gratuite est limitée chaque jour par son fournisseur.",
+  "rule.title": "Une règle, un prix.",
+  "rule.why": "Une organisation paie pour héberger sa propre copie de {name}, avec ce que demandent l’informatique, la sécurité et la conformité. Jamais par poste : {name} ne compte personne.",
+  "rule.size": "Quelle que soit votre taille, jamais par poste :",
+  "rule.ticks": [
+    "L’export d’audit et la conservation",
+    "Les versions à support long",
+    "Les questionnaires de sécurité remplis",
+    "Le rapport du test externe",
+    "L’aide à la mise en place",
+    "Une copie hébergée à votre adresse, si vous le souhaitez"
+  ],
+  "per.title": "Ce que {price} représentent, par personne et par an",
+  "per.at": "pour {count} personnes",
+  "sale.title": "Rien d’autre n’est à vendre.",
+  "sale.items": [
+    ["La publicité", "Aucune, ni dans {name} ni sur ce site, et aucun cookie pour la servir."],
+    ["Vos données", "{name} ne fait tourner aucun serveur qui voie votre travail. Il n’y a rien à vendre."],
+    ["Une place dans la liste", "Aucun fournisseur d’IA ne paie pour être celui que {name} propose."]
+  ],
+  "orgs.limits": [
+    "Le prix ne comprend aucune IA : chaque fournisseur facture à votre organisation ce que ses équipes utilisent.",
+    "Un prix pour chaque organisation qui déploie {name}."
+  ],
+  "turn.body": "Rien à acheter avant d’essayer.",
+  "turn.other": "Vous hébergez {name} pour une organisation ? {ask}.",
+  "faq.title": "Questions",
+  "faq.items": [
+    ["Utiliser {name} restera-t-il gratuit ?", "Oui. Son code est un logiciel libre sous licence MIT : ce qui est gratuit aujourd’hui ne peut pas être repris."],
+    ["Une organisation peut-elle essayer avant de payer ?", "Oui : une clé d’essai de 30 jours, avec toutes les fonctions entreprise."],
+    ["Comment une organisation paie-t-elle ?", "Sur devis, puis sur facture, payable par virement à 30 jours."],
+    ["Que se passe-t-il quand une clé arrive à sa fin ?", "Chaque version publiée avant sa date de fin continue de fonctionner, pour toujours. Les versions suivantes demandent une nouvelle clé."],
+    ["Y a-t-il un autre prix pour les écoles, les associations ou les organismes publics ?", "Non, la même règle pour tous : gratuit en dessous de {small} personnes, {price} HT par an à partir de {small}. Pour les acheteurs publics français, quatre ans restent sous le seuil de dispense de procédure de {threshold} HT."],
+    ["Est-ce que {name} compte nos effectifs ?", "Non. {name} ne compte personne : la taille est celle que vous donnez en demandant une clé."]
+  ]
+}

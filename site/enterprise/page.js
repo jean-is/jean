@@ -71,6 +71,8 @@ export default {
     const doc = (/** @type {string | null} */ path) => (path === null ? files ?? REPOSITORY : path.includes('/') ? `${REPOSITORY}/blob/main/${path}` : kit.link(path) ?? REPOSITORY)
     const mail = `mailto:${CONTACT}`
     const key = kit.link('enterprise-key')
+    // The price's own page, which says what it comes to per person and what is never for sale.
+    const pricing = kit.link('pricing')
     // Each price's way on: the key page with its key chosen.
     const ways = [key ? `${key}#free` : mail, key ? `${key}#trial` : mail]
     const status = (/** @type {string} */ code) => {
@@ -164,7 +166,8 @@ export default {
 </section>`
     const price = /* html */ `<section class="site-block" aria-labelledby="ent-price">
   <h3 id="ent-price">${say('price.title')}</h3>
-  <ul class="ent-prices">${prices.map(([name, cost, text, action], i) => /* html */ `<li><h4>${name}</h4><b>${i ? cost : felt(cost, 'circle')}</b><p>${text}</p><a class="button${i ? ' primary' : ''}" href="${ways[i]}">${action}</a></li>`).join('')}</ul>
+  <ul class="ent-prices">${prices.map(([name, cost, text, action], i) => /* html */ `<li><h4>${name}</h4><b>${i ? cost : felt(cost, 'circle')}</b><p>${text}</p><a class="button${i ? ' primary' : ''}" href="${ways[i]}">${action}</a></li>`).join('')}</ul>${pricing ? /* html */ `
+  <p><a href="${pricing}">${kit.say('foot.pricing')}</a></p>` : ''}
   <p class="site-source">${say('price.note')}</p>
 </section>`
     const share = /* html */ `${WAVE}

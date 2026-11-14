@@ -13,8 +13,8 @@ import { FELT, REPOSITORY, WAVE, felt, fill, highlight, landing, underline, word
 const ADDRESSES = { en: 'public-sector', fr: 'fr/secteur-public', ko: 'ko/public-sector' }
 
 /** France's threshold for buying without a procedure, in euros excl. VAT, and the years of the price that stay under it, or the build stops. */
-const THRESHOLD = 60_000
-const YEARS = 4
+export const THRESHOLD = 60_000
+export const YEARS = 4
 if (!(PRICE * YEARS < THRESHOLD)) throw new Error(`site/public-sector: the price no longer stays under France’s threshold over ${YEARS} years, as the page says it does`)
 
 /** The trust pack's documents, in trust.docs's order, as paths in the repository; null is the repository itself, a bare name a page of the site. */
