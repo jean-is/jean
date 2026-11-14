@@ -51,6 +51,18 @@ export const DIRECTORY = Object.freeze(/** @type {Known[]} */ ([
   { id: 'amplitude', group: 'customers', name: 'Amplitude', url: 'https://mcp.amplitude.com/mcp', ready: true, logo: 'amplitude.png' },
   { id: 'mixpanel', group: 'customers', name: 'Mixpanel', url: 'https://mcp.mixpanel.com/mcp', ready: true, logo: 'mixpanel.png' },
   { id: 'contentsquare', group: 'customers', name: 'Contentsquare', url: 'https://api.contentsquare.com/mcp', ready: true, logo: 'contentsquare.png' },
+  { id: 'fullstory', group: 'customers', name: 'Fullstory', url: 'https://api.fullstory.com/mcp/fullstory', ready: true, logo: 'fullstory.svg' },
+  // Trello signs in at Atlassian's, as a service of its own.
+  { id: 'trello', group: 'tasks', name: 'Trello', url: 'https://mcp.trello.com/v1', ready: true, logo: 'trello.png' },
+  { id: 'hive', group: 'tasks', name: 'Hive', url: 'https://hive-mind.hive.com/mcp', ready: true, logo: 'hive.png' },
+  { id: 'egnyte', group: 'files', name: 'Egnyte', url: 'https://mcp-server.egnyte.com/mcp', ready: true, logo: 'egnyte.png' },
+  { id: 'guru', group: 'files', name: 'Guru', url: 'https://mcp.api.getguru.com/mcp', ready: true, logo: 'guru.png' },
+  // Surveys and forms, and what people answered; marketing by email and on social networks; companies and people to sell to.
+  { id: 'surveymonkey', group: 'customers', name: 'SurveyMonkey', url: 'https://mcp.surveymonkey.com/mcp', ready: true, logo: 'surveymonkey.svg' },
+  { id: 'jotform', group: 'customers', name: 'Jotform', url: 'https://mcp.jotform.com/', ready: true, logo: 'jotform.png' },
+  { id: 'klaviyo', group: 'customers', name: 'Klaviyo', url: 'https://mcp.klaviyo.com/mcp', ready: true, logo: 'klaviyo.png' },
+  { id: 'metricool', group: 'customers', name: 'Metricool', url: 'https://ai.metricool.com/mcp', ready: true, logo: 'metricool.png' },
+  { id: 'clay', group: 'customers', name: 'Clay', url: 'https://api.clay.com/v3/mcp', ready: true, logo: 'clay.png' },
   // Web search with no key and no sign-in (D192).
   { id: 'exa', group: 'other', name: 'Exa', url: 'https://mcp.exa.ai/mcp', ready: true, logo: 'exa.svg', searches: true },
   // Freelancers to hire, found with no sign-in; nothing is ordered or paid there.
