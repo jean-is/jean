@@ -43,6 +43,7 @@
   "any.ways": ["Egy ingyenes MI", "A ChatGPT-, Claude- vagy Copilot-előfizetésed", "Egy MI ezen a számítógépen", "A céged MI-je"],
   "any.notes": ["Ingyenes OpenRouter-fiókkal.", "Az előfizetés, amelyért már fizetsz. Nincs szükség másodikra.", "Kapcsold ki a Wi-Fit, és akkor is válaszol.", "A céged átjárója és bejelentkezése mögött."],
   "any.go": "{name} és a többiek összehasonlítása",
+  "any.all": "Minden MI egy helyen",
   "any.catch": ["{name} ingyenes; a mögötte dolgozó MI nem feltétlenül az.", "Teljesen regisztráció nélkül? Csak az ezen a számítógépen futó MI-vel.", "Ehhez az MI-hez újabb számítógép kell: 12 GB memória és újabb grafikus chip. Telefonon nem megy."],
   "keep.title": "és tarts meg mindent.",
   "keep.why": "Az alkalmazások megváltoztatják a szabályaikat, vagy megszűnnek.",

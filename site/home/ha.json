@@ -43,6 +43,7 @@
   "any.ways": ["AI kyauta", "Shirin ChatGPT, Claude ko Copilot ɗinka", "AI a wannan kwamfutar", "AI ɗin kamfaninka"],
   "any.notes": ["Da asusun OpenRouter kyauta.", "Shirin da kake biya tuni. Babu buƙatar na biyu.", "Kashe Wi-Fi, za ta ci gaba da amsawa.", "A bayan ƙofar shiga da shigar kamfaninka."],
   "any.go": "Kwatanta {name} da sauran",
+  "any.all": "Kowace AI a wuri ɗaya",
   "any.catch": ["Amfani da {name} kyauta ne; AI ɗin da ke baya ba lallai kyauta ba ce.", "Ba tare da rajista ko kaɗan ba? Sai da AI ɗin da ke wannan kwamfutar kawai.", "Wannan AI ɗin tana buƙatar sabuwar kwamfuta: memori 12 GB da sabon guntun zane. Ba a waya ba."],
   "keep.title": "ka riƙe komai.",
   "keep.why": "Manhajoji suna canza dokokinsu, ko su rufe.",

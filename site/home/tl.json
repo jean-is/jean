@@ -43,6 +43,7 @@
   "any.ways": ["Isang libreng AI", "Ang ChatGPT, Claude o Copilot plan mo", "Isang AI sa computer na ito", "Ang AI ng kompanya mo"],
   "any.notes": ["Gamit ang libreng OpenRouter account.", "Ang plan na binabayaran mo na. Walang pangalawang subscription.", "Patayin ang Wi-Fi at sasagot pa rin ito.", "Sa likod ng gateway at sign-in ng kompanya mo."],
   "any.go": "Ikumpara ang {name} sa iba",
+  "any.all": "Lahat ng AI sa iisang lugar",
   "any.catch": ["Libre ang {name}; ang AI sa likod nito, maaaring hindi.", "Walang kahit anong sign-up? Sa AI lang sa computer na ito.", "Kailangan ng AI na iyon ng medyo bagong computer: 12 GB na memory at bagong graphics chip. Hindi sa telepono."],
   "keep.title": "itago ang lahat.",
   "keep.why": "Nagbabago ng patakaran ang mga app, o nagsasara.",

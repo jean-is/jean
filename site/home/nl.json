@@ -43,6 +43,7 @@
   "any.ways": ["Een gratis AI", "Je abonnement op ChatGPT, Claude of Copilot", "Een AI op deze computer", "De AI van je bedrijf"],
   "any.notes": ["Met een gratis OpenRouter-account.", "Het abonnement waar je al voor betaalt. Geen tweede abonnement.", "Zet wifi uit en je krijgt nog steeds antwoord.", "Achter de gateway en de login van je bedrijf."],
   "any.go": "Vergelijk {name} met de andere",
+  "any.all": "Elke AI op één plek",
   "any.catch": ["{name} is gratis; de AI erachter misschien niet.", "Helemaal zonder aanmelding? Alleen met de AI op deze computer.", "Die AI vraagt een recente computer: 12 GB geheugen en een recente grafische chip. Niet op telefoons."],
   "keep.title": "en bewaar alles.",
   "keep.why": "Apps veranderen hun regels, of stoppen.",

@@ -43,6 +43,7 @@
   "any.ways": ["Un AI gratuit", "Abonamentul dvs. ChatGPT, Claude sau Copilot", "Un AI pe acest computer", "Cel al companiei dvs."],
   "any.notes": ["Cu un cont OpenRouter gratuit.", "Abonamentul pe care îl plătiți deja. Fără un al doilea abonament.", "Opriți Wi-Fi și tot răspunde.", "În spatele gateway-ului și al autentificării companiei dvs."],
   "any.go": "Comparați {name} cu celelalte",
+  "any.all": "Orice AI, într-un singur loc",
   "any.catch": ["{name} nu costă nimic; AI-ul din spate poate costa.", "Fără nicio înregistrare? Doar cu AI-ul de pe acest computer.", "Acel AI are nevoie de un computer recent: 12 GB de memorie și un cip grafic recent. Nu pe telefoane."],
   "keep.title": "păstrați totul.",
   "keep.why": "Aplicațiile își schimbă regulile sau se închid.",
