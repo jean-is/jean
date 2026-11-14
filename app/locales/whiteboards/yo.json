@@ -66,6 +66,8 @@
   "whiteboards.zoomIn": "Sún mọ́",
   "whiteboards.actual": "Fihàn ní {level}",
   "whiteboards.fit": "Fi gbogbo rẹ̀ hàn",
+  "whiteboards.pictureAll": "Àwòrán gbogbo pátákó náà",
+  "whiteboards.pictureView": "Àwòrán apá tí ó hàn",
   "whiteboards.selected": {
     "other": "A ti yan {count}"
   },

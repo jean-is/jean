@@ -5,6 +5,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { layout, free, snap, arrowPath, placeOf, NOTE, GAP, HEAD, WIDE } from '../app/caps/whiteboards/layout.js'
 import { made, changed, rowsOf, editsOf } from '../app/caps/whiteboards/tool.js'
+import { svgOf } from '../app/caps/whiteboards/picture.js'
 import { fold, stamp } from '../app/caps/tables/changes.js'
 
 /** A row's ULID, by number. @param {number} n */
@@ -102,4 +103,30 @@ test('placeOf: a note whose words, whole, are a creation\'s place, as a Creation
   assert.equal(placeOf('```table\ncollections/01K8-budget\n```'), 'collections/01K8-budget')
   assert.equal(placeOf('decks/01K8-launch.md'), 'decks/01K8-launch.md')
   for (const words of ['Ship the beta', 'yes / no', 'see [[documents/01K8.md|Plan]]', '[[documents/01K8.md|Plan]] first', '', undefined]) assert.equal(placeOf(words), null, String(words))
+})
+
+test('svgOf: the board as a picture, its words escaped in HTML that wraps in its own direction, each section\'s and note\'s colour, lines and arrows as paths, mirrored right to left, or the part in view alone', () => {
+  const palette = { room: '#fff', board: '#eee', ink: '#111', wait: '#cde', hues: Array.from({ length: 7 }, (_, i) => ({ area: `#a${i}0`, edge: `#e${i}0`, note: `#b${i}0`, ink: `#c${i}0` })) }
+  const rows = fold([line(R(1), { note: 'Risks', '@kind': 'area', '@spot': { area: null, x: 0, y: 0 } }, 1), line(R(2), { note: '<b>Flaky</b> & slow', area: R(1) }, 2),
+    line(R(3), { note: 'Lunch', '@hue': 3, '@spot': { area: null, x: 0, y: 400 } }, 2), line(R(4), { '@kind': 'line', '@path': [0, 0, 40, 20], '@ink': 2, '@spot': { area: null, x: 400, y: 400 } }, 2),
+    line(R(5), { '@kind': 'arrow', '@ends': [R(3), R(1)] }, 3), line(R(6), { note: 'Plan', '@kind': 'text', '@size': 'title', '@spot': { area: null, x: 0, y: -100 } }, 3)])
+  const { svg, w, h } = svgOf(rows, { palette, font: 'system-ui, "Noto Sans"' }), { bounds } = layout(rows)
+  assert.deepEqual([w, h], [bounds.w + 48, bounds.h + 48])
+  assert.match(svg, /^<svg xmlns="http:\/\/www\.w3\.org\/2000\/svg" width="\d+" height="\d+"/)
+  assert.match(svg, /&lt;b&gt;Flaky&lt;\/b&gt; &amp; slow/)
+  assert.doesNotMatch(svg, /<b>/)
+  assert.match(svg, /dir="auto"/)
+  assert.match(svg, /font-family: system-ui, &quot;Noto Sans&quot;/)
+  for (const colour of ['#a00', '#b00', '#b30', '#c20']) assert.ok(svg.includes(`: ${colour}`), colour)
+  assert.equal(svg.match(/<path /g)?.length, 2)
+  assert.match(svg, /font-size: 28px/)
+  // Right to left, what lies at the board's start lies at the picture's right.
+  const first = (/** @type {string} */ text) => Number(/<foreignObject x="(-?\d+)"/.exec(text)?.[1])
+  assert.equal(first(svg), 24)
+  assert.equal(first(svgOf(rows, { palette, font: 'serif', dir: 'rtl' }).svg), w - 24 - bounds.w)
+  // The part in view: what lies outside it isn't drawn.
+  const part = svgOf(rows, { palette, font: 'serif', view: { x: 0, y: 380, w: 300, h: 200 } })
+  assert.deepEqual([part.w, part.h], [300, 200])
+  assert.match(part.svg, /Lunch/)
+  assert.doesNotMatch(part.svg, /Risks|Flaky/)
 })

@@ -72,6 +72,8 @@
   "whiteboards.zoomIn": "Powiększ",
   "whiteboards.actual": "Pokaż w skali {level}",
   "whiteboards.fit": "Dopasuj",
+  "whiteboards.pictureAll": "Obraz całej tablicy",
+  "whiteboards.pictureView": "Obraz widocznej części",
   "whiteboards.selected": {
     "one": "Zaznaczono: {count}",
     "few": "Zaznaczono: {count}",

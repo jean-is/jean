@@ -70,6 +70,8 @@
   "whiteboards.zoomIn": "Acercar",
   "whiteboards.actual": "Ver al {level}",
   "whiteboards.fit": "Ajustar",
+  "whiteboards.pictureAll": "Imagen de toda la pizarra",
+  "whiteboards.pictureView": "Imagen de lo que se ve",
   "whiteboards.selected": {
     "one": "Selección: {count}",
     "many": "Selección: {count}",

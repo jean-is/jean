@@ -68,6 +68,8 @@
   "whiteboards.zoomIn": "Nagyítás",
   "whiteboards.actual": "Megjelenítés {level} méretben",
   "whiteboards.fit": "Illesztés",
+  "whiteboards.pictureAll": "Kép az egész tábláról",
+  "whiteboards.pictureView": "Kép a látható részről",
   "whiteboards.selected": {
     "one": "{count} kijelölve",
     "other": "{count} kijelölve"

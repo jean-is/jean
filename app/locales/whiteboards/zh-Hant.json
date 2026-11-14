@@ -66,6 +66,8 @@
   "whiteboards.zoomIn": "放大",
   "whiteboards.actual": "以 {level} 顯示",
   "whiteboards.fit": "全部顯示",
+  "whiteboards.pictureAll": "整個白板的圖片",
+  "whiteboards.pictureView": "可見部分的圖片",
   "whiteboards.selected": {
     "other": "已選 {count} 項"
   },

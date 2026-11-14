@@ -34,6 +34,8 @@ export const glyph = icon(svg`<rect x="3.5" y="4.5" width="17" height="15" rx="2
 export const beside = new Set(/** @type {import('@preact/signals-core').Signal<Loaded | null>[]} */ ([]))
 export const picked = signal(/** @type {{ folder: string, rows: string[] } | null} */ (null))
 export const showAs = signal(/** @type {'board' | 'lanes' | 'table'} */ ('board')), showOnly = signal('')
+/** The whiteboards panes show, by their places, whose way out Whiteboards gives. */
+export const onShow = signal(/** @type {string[]} */ ([]))
 keep('whiteboard', {
   get: () => (showAs.value === 'board' ? null : showAs.value === 'table' && showOnly.value ? `table/${showOnly.value}` : showAs.value),
   set: (state) => { const [as, only = ''] = (state ?? '').split('/'); showAs.value = as === 'lanes' || as === 'table' ? as : 'board'; showOnly.value = as === 'table' ? only : '' },
@@ -223,7 +225,7 @@ register({
   id: 'whiteboards',
   tools: [makeTool, changeTool],
   lines: LINES,
-  slots: { modes: { at: 11, draw: () => null, notes }, box: { at: 1, draw: chip }, creations: { id: 'whiteboards', at: 3, draw: () => glyph, kept, mention: 'whiteboard', preview, make: fromPage, copy: tables.copy,
+  slots: { modes: { at: 11, draw: () => null, notes }, box: { at: 1, draw: chip }, out: { at: 1, draw: () => null, of: (/** @type {{ uri: string }} */ { uri }) => onShow.value.includes(uri), load: async () => (await import('./view.js')).ways() }, creations: { id: 'whiteboards', at: 3, draw: () => glyph, kept, mention: 'whiteboard', preview, make: fromPage, copy: tables.copy,
     pin: (/** @type {{ path: string }} */ item, /** @type {boolean} */ pinned) => tables.amend(item, { pinned }), rename: (/** @type {{ path: string }} */ item, /** @type {string} */ name) => tables.amend(item, { name }),
     remove: (/** @type {{ path: string }} */ { path }) => app.fs.remove(`${app.projectDir}/${path}`) } },
 })

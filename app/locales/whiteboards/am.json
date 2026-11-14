@@ -68,6 +68,8 @@
   "whiteboards.zoomIn": "አቅርብ",
   "whiteboards.actual": "በ{level} አሳይ",
   "whiteboards.fit": "ሁሉንም አሳይ",
+  "whiteboards.pictureAll": "የመላው ነጭ ሰሌዳ ምስል",
+  "whiteboards.pictureView": "የሚታየው ክፍል ምስል",
   "whiteboards.selected": {
     "one": "የተመረጡ፦ {count}",
     "other": "የተመረጡ፦ {count}"

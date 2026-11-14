@@ -70,6 +70,8 @@
   "whiteboards.zoomIn": "התקרבות",
   "whiteboards.actual": "תצוגה בגודל {level}",
   "whiteboards.fit": "התאמה",
+  "whiteboards.pictureAll": "תמונה של כל הלוח הלבן",
+  "whiteboards.pictureView": "תמונה של החלק הגלוי",
   "whiteboards.selected": {
     "one": "{count} בבחירה",
     "two": "{count} בבחירה",

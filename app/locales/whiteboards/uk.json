@@ -72,6 +72,8 @@
   "whiteboards.zoomIn": "Наблизити",
   "whiteboards.actual": "Показати в масштабі {level}",
   "whiteboards.fit": "Умістити",
+  "whiteboards.pictureAll": "Зображення всієї дошки",
+  "whiteboards.pictureView": "Зображення видимої частини",
   "whiteboards.selected": {
     "one": "Вибрано: {count}",
     "few": "Вибрано: {count}",

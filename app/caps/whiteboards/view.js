@@ -24,7 +24,9 @@ import { notesOf, ownProblem, kindOf } from '../tables/table.js'
 import { fold } from '../tables/changes.js'
 import { layout, snap, arrowPath, placeOf, NOTE, GRID, HUES, WIDE } from './layout.js'
 import { all, show } from '../../ui/creations.js'
-import { beside, picked, showAs, showOnly, glyph, writing } from './whiteboards.js'
+import { save, pictureOf } from '../../ui/save.js'
+import { svgOf } from './picture.js'
+import { beside, picked, showAs, showOnly, glyph, writing, onShow } from './whiteboards.js'
 import { view as tableOf } from '../tables/view.js'
 
 /** @typedef {import('../tables/tables.js').Loaded} Loaded */
@@ -114,7 +116,8 @@ customElements.define('app-whiteboard', class extends HTMLElement {
     this.where.value = one
     watched(this.where, holds)
     beside.add(this.where)
-    holds.push(() => beside.delete(this.where))
+    onShow.value = [...onShow.peek(), folder]
+    holds.push(() => beside.delete(this.where), () => { onShow.value = onShow.peek().filter((one) => one !== folder) })
     // A narrow pane opens on its lanes, one section at a time, unless the address says otherwise.
     if (showAs.peek() === 'board' && this.clientWidth && this.clientWidth < 30 * parseFloat(getComputedStyle(document.documentElement).fontSize)) showAs.value = 'lanes'
     holds.push(effect(() => { this.where.value; showAs.value; showOnly.value; writing.value; this.draw() }))
@@ -186,6 +189,24 @@ customElements.define('app-whiteboard', class extends HTMLElement {
     menu.style.setProperty('--top', `${top}px`)
     menu.style.setProperty('--at', `${Math.max(8, Math.min(start, innerWidth - w - 8))}px`)
     menu.toggleAttribute('data-placed', true)
+  }
+
+  /**
+   * The board as a picture to keep, a PNG, the whole of it or the part in view, in the look as it is, at most 16 million pixels: its
+   * colours read from the look by an element of each kind, out of sight, its words in the faces they show in. @param {boolean} [inView]
+   */
+  async picture(inView = false) {
+    const one = this.#one, probe = this.appendChild(Object.assign(document.createElement('div'), { className: 'wb-probe' }))
+    probe.style.setProperty('background', 'var(--room)')
+    render(html`<div class="wb-board"></div><i class="wb-note"></i><svg class="wb-ink"></svg>${Array.from({ length: HUES }, (_, i) => html`<div class=${`wb-area wb-hue-${i}`}><i class="wb-note"></i><svg class=${`wb-ink wb-hue-${i}`}></svg></div>`)}`, probe)
+    const style = (/** @type {string} */ selector) => getComputedStyle(/** @type {Element} */ (probe.querySelector(selector)))
+    const palette = { room: getComputedStyle(probe).backgroundColor, board: style('.wb-board').backgroundColor, ink: style(':scope > .wb-ink').color, wait: style(':scope > .wb-note').backgroundColor,
+      hues: Array.from({ length: HUES }, (_, i) => ({ area: style(`.wb-hue-${i}`).backgroundColor, edge: style(`.wb-hue-${i}`).borderTopColor, note: style(`.wb-hue-${i} .wb-note`).backgroundColor, ink: style(`.wb-hue-${i} .wb-ink`).color })) }
+    probe.remove()
+    const room = this.querySelector('.wb-board')?.getBoundingClientRect(), [a, b] = room ? [this.#point({ clientX: room.left, clientY: room.top }), this.#point({ clientX: room.right, clientY: room.bottom })] : []
+    const { svg, w, h } = svgOf(one.rows, { dir: one.table.dir, palette, font: getComputedStyle(this).fontFamily, words: nameOf, ...(inView && a && b && { view: { x: Math.min(a.x, b.x), y: a.y, w: Math.abs(b.x - a.x), h: b.y - a.y } }) })
+    const k = Math.min(1, Math.sqrt(4e6 / (w * h)))
+    save(await pictureOf(svg, Math.round(w * k), Math.round(h * k)), `${one.table.name}.png`)
   }
 
   /** A section's notes as a table, read again with each change, or none. @param {string} area */
@@ -879,3 +900,16 @@ customElements.define('app-whiteboard', class extends HTMLElement {
       <ul>${loose.map((item) => this.#item(one, { ...item, x: 0, y: 0 }, { x: 0, y: 0 }, jean, areas, 0))}</ul></section>` : nothing}</div>`
   }
 })
+
+/**
+ * What a whiteboard on show can do (ui/out.js), through Whiteboards' `out` slot: what a collection can, and a picture of it, whole, or,
+ * shown as a whiteboard, as far as it is in view.
+ */
+export async function ways() {
+  const { collectionWays } = await import('../made/ways.js')
+  return { ways: (/** @type {import('../../ui/preview.js').Shown} */ file, /** @type {Element} */ pane) => {
+    const all = collectionWays(file), board = () => /** @type {{ picture: (inView: boolean) => Promise<void> } | null} */ (/** @type {unknown} */ (pane.querySelector('app-whiteboard')))
+    const picture = (/** @type {boolean} */ inView) => ({ id: 'png', glyph: icons.image, label: t(inView ? 'whiteboards.pictureView' : 'whiteboards.pictureAll'), run: () => board()?.picture(inView) })
+    return { ...all, files: [picture(false), ...(showAs.value === 'board' ? [picture(true)] : []), ...all.files] }
+  } }
+}

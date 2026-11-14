@@ -66,6 +66,8 @@
   "whiteboards.zoomIn": "Perbesar",
   "whiteboards.actual": "Tampilkan pada {level}",
   "whiteboards.fit": "Paskan",
+  "whiteboards.pictureAll": "Gambar seluruh papan tulis",
+  "whiteboards.pictureView": "Gambar bagian yang terlihat",
   "whiteboards.selected": {
     "other": "{count} dipilih"
   },

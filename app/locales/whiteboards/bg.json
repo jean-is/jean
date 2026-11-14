@@ -68,6 +68,8 @@
   "whiteboards.zoomIn": "Увеличаване",
   "whiteboards.actual": "Покажи в мащаб {level}",
   "whiteboards.fit": "Побиране",
+  "whiteboards.pictureAll": "Изображение на цялата дъска",
+  "whiteboards.pictureView": "Изображение на видимата част",
   "whiteboards.selected": {
     "one": "Избрано: {count}",
     "other": "Избрано: {count}"

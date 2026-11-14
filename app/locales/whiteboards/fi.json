@@ -68,6 +68,8 @@
   "whiteboards.zoomIn": "Lähennä",
   "whiteboards.actual": "Näytä koossa {level}",
   "whiteboards.fit": "Sovita",
+  "whiteboards.pictureAll": "Kuva koko valkotaulusta",
+  "whiteboards.pictureView": "Kuva näkyvästä osasta",
   "whiteboards.selected": {
     "one": "{count} valittu",
     "other": "{count} valittu"

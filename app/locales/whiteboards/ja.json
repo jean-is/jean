@@ -66,6 +66,8 @@
   "whiteboards.zoomIn": "拡大",
   "whiteboards.actual": "{level} で表示",
   "whiteboards.fit": "全体を表示",
+  "whiteboards.pictureAll": "ホワイトボード全体の画像",
+  "whiteboards.pictureView": "表示中の部分の画像",
   "whiteboards.selected": {
     "other": "{count} 件選択中"
   },

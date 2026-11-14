@@ -68,6 +68,8 @@
   "whiteboards.zoomIn": "بڑا کریں",
   "whiteboards.actual": "{level} پر دکھائیں",
   "whiteboards.fit": "سب دکھائیں",
+  "whiteboards.pictureAll": "پورے وائٹ بورڈ کی تصویر",
+  "whiteboards.pictureView": "نظر آنے والے حصے کی تصویر",
   "whiteboards.selected": {
     "one": "منتخب: {count}",
     "other": "منتخب: {count}"

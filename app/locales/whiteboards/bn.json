@@ -68,6 +68,8 @@
   "whiteboards.zoomIn": "বড় করুন",
   "whiteboards.actual": "{level} মাপে দেখান",
   "whiteboards.fit": "সব দেখান",
+  "whiteboards.pictureAll": "পুরো হোয়াইটবোর্ডের ছবি",
+  "whiteboards.pictureView": "দৃশ্যমান অংশের ছবি",
   "whiteboards.selected": {
     "one": "{count}টি বাছা হয়েছে",
     "other": "{count}টি বাছা হয়েছে"

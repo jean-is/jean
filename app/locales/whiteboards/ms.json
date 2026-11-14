@@ -66,6 +66,8 @@
   "whiteboards.zoomIn": "Zum masuk",
   "whiteboards.actual": "Paparkan pada {level}",
   "whiteboards.fit": "Muatkan",
+  "whiteboards.pictureAll": "Gambar seluruh papan putih",
+  "whiteboards.pictureView": "Gambar bahagian yang kelihatan",
   "whiteboards.selected": {
     "other": "{count} dipilih"
   },

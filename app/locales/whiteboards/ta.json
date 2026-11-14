@@ -68,6 +68,8 @@
   "whiteboards.zoomIn": "பெரிதாக்கு",
   "whiteboards.actual": "{level} அளவில் காட்டு",
   "whiteboards.fit": "பொருத்து",
+  "whiteboards.pictureAll": "முழு வெள்ளைப் பலகையின் படம்",
+  "whiteboards.pictureView": "தெரியும் பகுதியின் படம்",
   "whiteboards.selected": {
     "one": "{count} தேர்ந்தெடுக்கப்பட்டது",
     "other": "{count} தேர்ந்தெடுக்கப்பட்டன"

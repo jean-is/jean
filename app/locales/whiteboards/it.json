@@ -70,6 +70,8 @@
   "whiteboards.zoomIn": "Ingrandisci",
   "whiteboards.actual": "Visualizza al {level}",
   "whiteboards.fit": "Adatta",
+  "whiteboards.pictureAll": "Immagine di tutta la lavagna",
+  "whiteboards.pictureView": "Immagine della parte visibile",
   "whiteboards.selected": {
     "one": "Selezione: {count}",
     "many": "Selezione: {count}",

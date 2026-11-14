@@ -68,6 +68,8 @@
   "whiteboards.zoomIn": "Yakınlaştır",
   "whiteboards.actual": "{level} boyutunda göster",
   "whiteboards.fit": "Sığdır",
+  "whiteboards.pictureAll": "Tüm beyaz tahtanın resmi",
+  "whiteboards.pictureView": "Görünen kısmın resmi",
   "whiteboards.selected": {
     "one": "{count} seçili",
     "other": "{count} seçili"

@@ -68,6 +68,8 @@
   "whiteboards.zoomIn": "Zoom ind",
   "whiteboards.actual": "Vis ved {level}",
   "whiteboards.fit": "Tilpas",
+  "whiteboards.pictureAll": "Billede af hele whiteboardet",
+  "whiteboards.pictureView": "Billede af den synlige del",
   "whiteboards.selected": {
     "one": "{count} valgt",
     "other": "{count} valgt"

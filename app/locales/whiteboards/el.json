@@ -68,6 +68,8 @@
   "whiteboards.zoomIn": "Μεγέθυνση",
   "whiteboards.actual": "Προβολή στο {level}",
   "whiteboards.fit": "Προσαρμογή",
+  "whiteboards.pictureAll": "Εικόνα όλου του λευκού πίνακα",
+  "whiteboards.pictureView": "Εικόνα του ορατού τμήματος",
   "whiteboards.selected": {
     "one": "Επιλογή: {count}",
     "other": "Επιλογή: {count}"

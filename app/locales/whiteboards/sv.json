@@ -68,6 +68,8 @@
   "whiteboards.zoomIn": "Zooma in",
   "whiteboards.actual": "Visa i {level}",
   "whiteboards.fit": "Anpassa",
+  "whiteboards.pictureAll": "Bild av hela whiteboarden",
+  "whiteboards.pictureView": "Bild av den synliga delen",
   "whiteboards.selected": {
     "one": "{count} markerad",
     "other": "{count} markerade"

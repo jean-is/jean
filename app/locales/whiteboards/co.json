@@ -70,6 +70,8 @@
   "whiteboards.zoomIn": "Ingrandà",
   "whiteboards.actual": "Mustrà à {level}",
   "whiteboards.fit": "Adattà",
+  "whiteboards.pictureAll": "Fiura di tutta a lavagna",
+  "whiteboards.pictureView": "Fiura di ciò chì si vede",
   "whiteboards.selected": {
     "one": "Selezzione : {count}",
     "many": "Selezzione : {count}",

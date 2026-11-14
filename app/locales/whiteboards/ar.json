@@ -76,6 +76,8 @@
   "whiteboards.zoomIn": "تكبير",
   "whiteboards.actual": "عرض بنسبة {level}",
   "whiteboards.fit": "ملاءمة",
+  "whiteboards.pictureAll": "صورة للسبورة كلها",
+  "whiteboards.pictureView": "صورة للجزء الظاهر",
   "whiteboards.selected": {
     "zero": "المحدد: {count}",
     "one": "المحدد: {count}",

@@ -3,8 +3,9 @@
 // notes where Jean's code put them, Jean's changes accepted; a note dragged into another section and one from the shelf onto the open
 // board, landing where they were dropped, for the file as for the screen; a note moved with its grip and the arrows; a section made
 // with the bar, a line drawn and erased, arrows drawn and deleted; notes selected and asked about by id; a note deleted and brought back with ⌘Z,
-// its arrow with it, and given a colour; a Creations card dropped on it, shown and opened; Lanes and
+// its arrow with it, and given a colour; a Creations card dropped on it, shown and opened; pictures of it downloaded; Lanes and
 // Table in the address; table_rows reading it. In Arabic, the board runs right to left and a drop still lands where it was put.
+import { readFileSync } from 'node:fs'
 import { test, expect } from '@playwright/test'
 import { start, ask, answered, BRAIN_URL } from './helpers.js'
 
@@ -201,6 +202,15 @@ test('a whiteboard: made by the brain, its notes dragged, moved with the keys, a
   await expect(card.locator('.creation-preview th')).toHaveText('Item')
   await expect(board.getByRole('status')).toContainText('Budget')
   expect((await rows(page)).some((row) => row.note === `[[${budget}|Budget]]`)).toBe(true)
+  // A picture of it from the pane's way out, the whole whiteboard or what is in view: a PNG, named for it.
+  for (const [way, wide] of /** @type {const} */ ([['Picture of the whole whiteboard', 600], ['Picture of what’s in view', 300]])) {
+    await page.getByRole('complementary', { name: 'Team retro' }).getByRole('button', { name: /download/i }).click()
+    const [download] = await Promise.all([page.waitForEvent('download'), page.locator('.out-menu:popover-open').getByRole('button', { name: way }).click()])
+    expect(download.suggestedFilename()).toBe('Team retro.png')
+    const png = readFileSync(await download.path())
+    expect(png.subarray(1, 4).toString()).toBe('PNG')
+    expect(png.readUInt32BE(16)).toBeGreaterThan(wide)
+  }
   await card.click()
   await expect(page.getByRole('complementary', { name: 'Budget' }).locator('app-table')).toBeVisible()
 })

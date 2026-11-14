@@ -68,6 +68,8 @@
   "whiteboards.zoomIn": "Inzoomen",
   "whiteboards.actual": "Tonen op {level}",
   "whiteboards.fit": "Passend maken",
+  "whiteboards.pictureAll": "Afbeelding van het hele whiteboard",
+  "whiteboards.pictureView": "Afbeelding van het zichtbare deel",
   "whiteboards.selected": {
     "one": "{count} geselecteerd",
     "other": "{count} geselecteerd"

@@ -68,6 +68,8 @@
   "whiteboards.zoomIn": "Palakihin",
   "whiteboards.actual": "Ipakita sa {level}",
   "whiteboards.fit": "Ipagkasya",
+  "whiteboards.pictureAll": "Larawan ng buong whiteboard",
+  "whiteboards.pictureView": "Larawan ng nakikitang bahagi",
   "whiteboards.selected": {
     "one": "{count} ang napili",
     "other": "{count} ang napili"

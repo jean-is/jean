@@ -68,6 +68,8 @@
   "whiteboards.zoomIn": "Vergrößern",
   "whiteboards.actual": "Auf {level} anzeigen",
   "whiteboards.fit": "Einpassen",
+  "whiteboards.pictureAll": "Bild des ganzen Whiteboards",
+  "whiteboards.pictureView": "Bild des sichtbaren Ausschnitts",
   "whiteboards.selected": {
     "one": "{count} ausgewählt",
     "other": "{count} ausgewählt"

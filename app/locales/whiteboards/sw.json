@@ -68,6 +68,8 @@
   "whiteboards.zoomIn": "Kuza",
   "whiteboards.actual": "Onyesha kwa {level}",
   "whiteboards.fit": "Tosheleza",
+  "whiteboards.pictureAll": "Picha ya ubao wote",
+  "whiteboards.pictureView": "Picha ya sehemu inayoonekana",
   "whiteboards.selected": {
     "one": "Vilivyochaguliwa: {count}",
     "other": "Vilivyochaguliwa: {count}"

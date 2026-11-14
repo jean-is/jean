@@ -70,6 +70,8 @@
   "whiteboards.zoomIn": "Măriți",
   "whiteboards.actual": "Afișați la {level}",
   "whiteboards.fit": "Încadrați",
+  "whiteboards.pictureAll": "Imagine cu întreaga tablă albă",
+  "whiteboards.pictureView": "Imagine cu partea vizibilă",
   "whiteboards.selected": {
     "one": "Selecție: {count}",
     "few": "Selecție: {count}",

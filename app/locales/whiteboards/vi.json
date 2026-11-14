@@ -66,6 +66,8 @@
   "whiteboards.zoomIn": "Phóng to",
   "whiteboards.actual": "Hiển thị ở {level}",
   "whiteboards.fit": "Vừa khung",
+  "whiteboards.pictureAll": "Hình ảnh toàn bộ bảng trắng",
+  "whiteboards.pictureView": "Hình ảnh phần đang hiển thị",
   "whiteboards.selected": {
     "other": "Đã chọn {count}"
   },

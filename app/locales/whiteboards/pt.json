@@ -70,6 +70,8 @@
   "whiteboards.zoomIn": "Aproximar",
   "whiteboards.actual": "Ver a {level}",
   "whiteboards.fit": "Ajustar",
+  "whiteboards.pictureAll": "Imagem de todo o quadro branco",
+  "whiteboards.pictureView": "Imagem da parte visível",
   "whiteboards.selected": {
     "one": "Seleção: {count}",
     "many": "Seleção: {count}",

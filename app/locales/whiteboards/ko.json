@@ -66,6 +66,8 @@
   "whiteboards.zoomIn": "확대",
   "whiteboards.actual": "{level}로 보기",
   "whiteboards.fit": "전체 보기",
+  "whiteboards.pictureAll": "화이트보드 전체 이미지",
+  "whiteboards.pictureView": "보이는 부분 이미지",
   "whiteboards.selected": {
     "other": "{count}개 선택됨"
   },

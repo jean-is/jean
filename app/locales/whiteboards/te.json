@@ -68,6 +68,8 @@
   "whiteboards.zoomIn": "పెద్దది చేయండి",
   "whiteboards.actual": "{level} పరిమాణంలో చూపించు",
   "whiteboards.fit": "అన్నీ చూపించండి",
+  "whiteboards.pictureAll": "మొత్తం వైట్‌బోర్డ్ చిత్రం",
+  "whiteboards.pictureView": "కనిపిస్తున్న భాగం చిత్రం",
   "whiteboards.selected": {
     "one": "ఎంచుకున్నవి: {count}",
     "other": "ఎంచుకున్నవి: {count}"

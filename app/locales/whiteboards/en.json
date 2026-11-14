@@ -68,6 +68,8 @@
   "whiteboards.zoomIn": "Zoom in",
   "whiteboards.actual": "Show at {level}",
   "whiteboards.fit": "Fit",
+  "whiteboards.pictureAll": "Picture of the whole whiteboard",
+  "whiteboards.pictureView": "Picture of what’s in view",
   "whiteboards.selected": {
     "one": "{count} selected",
     "other": "{count} selected"

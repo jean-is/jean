@@ -74,6 +74,8 @@
   "whiteboards.zoomIn": "Tostaat",
   "whiteboards.actual": "Lakaat ar ment da {level}",
   "whiteboards.fit": "Gwelet pep tra",
+  "whiteboards.pictureAll": "Skeudenn eus an daolenn wenn a-bezh",
+  "whiteboards.pictureView": "Skeudenn eus ar pezh a weler",
   "whiteboards.selected": {
     "one": "Diuzet : {count}",
     "two": "Diuzet : {count}",

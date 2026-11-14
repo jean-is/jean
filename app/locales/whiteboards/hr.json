@@ -70,6 +70,8 @@
   "whiteboards.zoomIn": "Povećaj",
   "whiteboards.actual": "Prikaži na {level}",
   "whiteboards.fit": "Prilagodi",
+  "whiteboards.pictureAll": "Slika cijele ploče",
+  "whiteboards.pictureView": "Slika vidljivog dijela",
   "whiteboards.selected": {
     "one": "Odabrano: {count}",
     "few": "Odabrano: {count}",

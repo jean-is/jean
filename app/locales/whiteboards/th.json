@@ -66,6 +66,8 @@
   "whiteboards.zoomIn": "ขยาย",
   "whiteboards.actual": "แสดงที่ {level}",
   "whiteboards.fit": "ปรับให้พอดี",
+  "whiteboards.pictureAll": "รูปภาพของไวท์บอร์ดทั้งหมด",
+  "whiteboards.pictureView": "รูปภาพของส่วนที่มองเห็น",
   "whiteboards.selected": {
     "other": "เลือกแล้ว {count} รายการ"
   },

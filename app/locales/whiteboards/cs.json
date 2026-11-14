@@ -72,6 +72,8 @@
   "whiteboards.zoomIn": "Přiblížit",
   "whiteboards.actual": "Zobrazit v měřítku {level}",
   "whiteboards.fit": "Přizpůsobit",
+  "whiteboards.pictureAll": "Obrázek celé tabule",
+  "whiteboards.pictureView": "Obrázek viditelné části",
   "whiteboards.selected": {
     "one": "Vybráno: {count}",
     "few": "Vybráno: {count}",

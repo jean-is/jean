@@ -68,6 +68,8 @@
   "whiteboards.zoomIn": "Ƙara girma",
   "whiteboards.actual": "Nuna a {level}",
   "whiteboards.fit": "Daidaita",
+  "whiteboards.pictureAll": "Hoton farin allo gaba ɗaya",
+  "whiteboards.pictureView": "Hoton abin da ake gani",
   "whiteboards.selected": {
     "one": "An zaɓa: {count}",
     "other": "An zaɓa: {count}"

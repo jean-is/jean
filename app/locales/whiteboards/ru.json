@@ -72,6 +72,8 @@
   "whiteboards.zoomIn": "Приблизить",
   "whiteboards.actual": "Показать в масштабе {level}",
   "whiteboards.fit": "Уместить",
+  "whiteboards.pictureAll": "Картинка всей доски",
+  "whiteboards.pictureView": "Картинка видимой части",
   "whiteboards.selected": {
     "one": "Выбрано: {count}",
     "few": "Выбрано: {count}",

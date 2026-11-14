@@ -68,6 +68,8 @@
   "whiteboards.zoomIn": "بزرگ‌نمایی",
   "whiteboards.actual": "نمایش با بزرگ‌نمایی {level}",
   "whiteboards.fit": "نمایش همه",
+  "whiteboards.pictureAll": "تصویر کل تختهٔ سفید",
+  "whiteboards.pictureView": "تصویر بخش نمایان",
   "whiteboards.selected": {
     "one": "{count} انتخاب‌شده",
     "other": "{count} انتخاب‌شده"
