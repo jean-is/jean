@@ -4,7 +4,8 @@
 // it makes, said free or taken by the host as it is typed; then the site's list, and only the files the host lacks. A site's first
 // publish makes its secret, kept among the secrets (never in a backup, export or share) and shown once as its recovery code, apart, which
 // brings it to another device. Once published: until when, its address to copy or open as Share's link is, what changed, a new recovery
-// code, Publish again and Take it offline. Asked each time: nothing goes before the person presses Publish.
+// code, Publish again and Take it offline. Asked each time: nothing goes before the person presses Publish. A site with a form goes with
+// Jean's script for its replies (./replies.js, D751), sealed to a key made at its first publish; the replies waiting are collected as it opens.
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
@@ -16,12 +17,14 @@ import { linkField, copyButton } from '../../ui/qr.js'
 import { t, intlLocales } from '../../core/i18n.js'
 import { slug } from '../../core/settings.js'
 import { TYPES, codeOf, secretOf, tokenOf, failedOf } from './file.js'
-import { load, remember } from './sites.js'
+import { load, remember, collect } from './sites.js'
+import { repliesAt, scriptOf, withReplies, formed, pairOf, sealKey, keyOf as privateOf } from './replies.js'
 import { hostOf } from './offer.js'
 
 /**
- * The site in the dialog: its record and files, their hashes, the share host and what it offers, and its secret here, if any.
- * @typedef {import('./sites.js').One & { hashes: Record<string, string>, host: string, offer: { address: string }, secret: string }} Shown
+ * The site in the dialog: its record and files as they go online, their hashes, the share host and what it offers, its secret here, if any,
+ * whether it has a form whose replies go to the host, or only one that sends nothing (a page on its own's), and the key made for its replies, kept once it is published.
+ * @typedef {import('./sites.js').One & { hashes: Record<string, string>, host: string, offer: { address: string, replies?: number }, secret: string, forms: boolean, plain: boolean, pair: { key: string, privateKey: CryptoKey } | null }} Shown
  */
 const site = signal(/** @type {Shown | null} */ (null))
 /** The name typed, what the host says of it, the recovery code typed (null while its field is closed), the code just made, whether it was kept. */
@@ -38,12 +41,19 @@ const digest = async (bytes) => btoa(String.fromCharCode(...new Uint8Array(await
 const secretNow = () => (site.peek()?.secret ? secretOf(site.peek()?.secret ?? '') : typed.peek() ? secretOf(typed.peek() ?? '') : null)
 const day = (/** @type {string} */ when) => new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'long' }).format(new Date(when))
 
-/** Opens the dialog on a site. @param {string} path @param {{ address: string }} offer */
+/**
+ * Opens the dialog on a site, its files as they go online: with a form, Jean's script for its replies, to the key it was published with or
+ * one made now, kept if it is; and the replies waiting, collected. @param {string} path @param {{ address: string, replies?: number }} offer
+ */
 export async function openPublish(path, offer) {
-  const one = await load(path)
-  if (!one) return
+  const was = await load(path)
+  if (!was) return
+  const pages = [...was.files].flatMap(([file, bytes]) => (/\.html?$/i.test(file) ? [new TextDecoder().decode(bytes)] : [])), forms = pages.some(formed), plain = !forms && pages.some((page) => /<form\b/i.test(page))
+  const kept = was.record.published?.replies, pair = forms && !kept ? await pairOf() : null
+  const one = { ...was, files: forms ? withReplies(was.files, scriptOf(offer.replies ? repliesAt(offer.address) : '', kept?.key ?? pair?.key ?? '')) : was.files }
   const hashes = Object.fromEntries(await Promise.all([...one.files].map(async ([file, bytes]) => [file, await digest(bytes)])))
-  site.value = { ...one, hashes, host: hostOf(), offer, secret: String(await getSecret(app.fs, keyOf(path)) ?? '') }
+  site.value = { ...one, hashes, host: hostOf(), offer, secret: String(await getSecret(app.fs, keyOf(path)) ?? ''), forms, plain, pair }
+  if (kept) collect(path)
   said.value = { state: '' }; typed.value = null; made.value = ''; told.value = { text: '' }
   pick(one.record.published?.name ?? ((suggested) => (suggested.length >= 3 ? suggested : ''))(slug(one.record.name).slice(0, 40).replace(/-$/, '')))
   app.dialog.value = 'publish'
@@ -74,7 +84,9 @@ async function publish() {
   try {
     // A secret made here is kept before the name is claimed, so that no claim outlives what holds it; one typed, once the host took it.
     if (fresh && !code) await setSecret(app.fs, keyOf(one.path), codeOf(secret))
-    const list = () => ask(name.peek(), { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ files: one.hashes }) }, token).then((response) => (response.ok ? response.json() : Promise.reject(response)))
+    // Its forms' replies, to the key it went online with, or the one made for it, its private half sealed under the secret.
+    const replies = (await load(one.path))?.record.published?.replies ?? (one.pair && { key: one.pair.key, sealed: await sealKey(one.pair.privateKey, secret) })
+    const list = () => ask(name.peek(), { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ files: one.hashes, ...(one.forms && one.offer.replies && { replies: true }) }) }, token).then((response) => (response.ok ? response.json() : Promise.reject(response)))
     let answer = await list()
     working.value = { done: 0, count: answer.need?.length ?? 0 }
     for (const path of answer.need ?? []) {
@@ -83,7 +95,7 @@ async function publish() {
       working.value = { done: (working.peek()?.done ?? 0) + 1, count: answer.need.length }
     }
     if (answer.need?.length) answer = await list()
-    const published = { host: one.host, name: name.peek(), address: String(answer.address), expires: String(answer.expires), at: new Date().toISOString(), files: one.hashes }
+    const published = { host: one.host, name: name.peek(), address: String(answer.address), expires: String(answer.expires), at: new Date().toISOString(), files: one.hashes, ...(replies && { replies }) }
     if (code) await setSecret(app.fs, keyOf(one.path), codeOf(secret))
     await remember(one.path, published)
     site.value = { ...one, secret: codeOf(secret), record: { ...one.record, published } }
@@ -103,6 +115,8 @@ async function publish() {
 async function offline() {
   const one = site.peek(), out = one?.record.published, secret = secretNow()
   if (!one || !out || !secret || !confirm(t('sites.confirmOffline'))) return
+  // What visitors sent first, which goes with it.
+  await collect(one.path)
   const response = await ask(out.name, { method: 'DELETE' }, await tokenOf(secret)).catch(() => null)
   if (!response?.ok && response?.status !== 404) return void (told.value = { text: t('sites.failed'), alert: true })
   const published = { ...out, expires: new Date().toISOString() }
@@ -121,10 +135,15 @@ async function renew() {
   if (!one || !out || !old || renewing.peek() || !confirm(t('sites.confirmNewCode'))) return
   const post = async () => ask(`${out.name}/token`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token: await tokenOf(secret) }) }, await tokenOf(old))
   renewing.value = true
+  // Its replies' private half, sealed under the new secret before the old one stops.
+  const sealed = out.replies && await sealKey(await privateOf(out.replies.sealed, old), secret)
   const response = await post().catch(post).catch(() => null).finally(() => { renewing.value = false })
   if (!response?.ok) return void (told.value = { text: t('sites.newCodeFailed'), alert: true })
   await setSecret(app.fs, keyOf(one.path), codeOf(secret))
-  site.value = { ...one, secret: codeOf(secret) }; made.value = codeOf(secret); kept.value = false; told.value = { text: t('sites.newCodeMade') }
+  // As site.json has it now, the replies collected meanwhile with it.
+  const now = (await load(one.path))?.record.published ?? out, published = sealed && now.replies ? { ...now, replies: { ...now.replies, sealed } } : now
+  if (sealed) await remember(one.path, published)
+  site.value = { ...one, secret: codeOf(secret), record: { ...one.record, published } }; made.value = codeOf(secret); kept.value = false; told.value = { text: t('sites.newCodeMade') }
 }
 
 /** What the host said of the name typed, in words. */
@@ -136,7 +155,6 @@ class PublishDialog extends Element {
     if (!one) return html`<dialog class="sheet site-publish" @close=${closed('publish')} @click=${backdrop}></dialog>`
     const live = Boolean(out) && Date.parse(out?.expires ?? '') > Date.now(), mine = Boolean(one.secret) || Boolean(typed.value && secretOf(typed.value))
     const changed = out ? new Set([...Object.keys(one.hashes), ...Object.keys(out.files)].filter((path) => one.hashes[path] !== out.files[path])).size : 0
-    const forms = [...one.files].some(([path, bytes]) => path.endsWith('.html') && /<form\b/i.test(new TextDecoder().decode(bytes)))
     const [before, after] = one.offer.address.replace(/^https?:\/\//, '').split('{name}')
     const state = said.value.state, free = state === 'free' || state === 'yours'
     // Where it is online, to copy or open, as Share's link is.
@@ -157,7 +175,7 @@ class PublishDialog extends Element {
           <span class="site-name" dir="ltr"><span aria-hidden="true">${before}</span><input id="publish-name" autocomplete="off" spellcheck="false" maxlength="40" aria-describedby="publish-said"
             .value=${name.value} @input=${(/** @type {Event} */ event) => pick(/** @type {HTMLInputElement} */ (event.target).value.toLowerCase())}><span aria-hidden="true">${after.replace(/\/$/, '')}</span></span>
           <small id="publish-said" role="status" class=${free ? 'is-free' : state ? 'is-taken' : ''}>${free && nameSaid() ? icons.check : nothing}${nameSaid()}</small>${typed.value === null ? nothing : code}</form>`}
-      ${forms && !made.value ? html`<p class="hint">${t('sites.formWaits')}</p>` : nothing}
+      ${(one.forms || one.plain) && !made.value ? html`<p class="hint">${t(one.forms && one.offer.replies ? 'sites.formReplies' : 'sites.formWaits')}</p>` : nothing}
       <p class="visually-hidden" role="status">${told.value.alert ? '' : told.value.text}</p><p class="site-told" role="alert">${told.value.alert ? told.value.text : ''}</p>
       <footer class="dialog-foot">${made.value ? html`<button class="button primary" ?disabled=${!kept.value} @click=${() => { made.value = '' }}>${t('sites.done')}</button>`
         : html`${out && live && mine ? html`<button class="button subtle danger" @click=${offline}>${t('sites.offline')}</button>` : !out && typed.value === null ? html`<button type="button" class="link-button" @click=${() => { typed.value = '' }}>${t('sites.haveCode')}</button>` : nothing}

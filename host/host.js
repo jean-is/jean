@@ -43,6 +43,7 @@ const WRITES = 60
 const REPORTS = 10
 const HOUR = 3_600_000
 const PUTS = SITE.puts
+const REPLIES = SITE.sent
 const ID = /^\/(?:v1\/)?([\w-]{22})(\/report)?$/
 
 /**
@@ -128,7 +129,7 @@ ${card ? /* html */ `<meta property="og:image" content="${escape(picture)}">
     `font-src data: ${sources}`, `connect-src 'self' ${sources}`, `frame-src 'self'`, "base-uri 'none'", "form-action 'none'", "frame-ancestors 'none'"].join('; '))()
   const framed = ['sandbox allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox', `default-src 'none'`, `script-src 'unsafe-inline' 'wasm-unsafe-eval' data: blob: ${sources}`,
     `style-src 'unsafe-inline' ${sources}`, `img-src data: blob: ${sources}`, `font-src data: ${sources}`, 'media-src data: blob:', `connect-src ${sources}`, 'worker-src blob:', "base-uri 'none'", "form-action 'none'", "frame-ancestors 'self'"].join('; ')
-  /** What each address did this hour. @type {Map<string, { from: number, writes: number, reports: number, puts: number }>} */
+  /** What each address did this hour. @type {Map<string, { from: number, writes: number, reports: number, puts: number, replies: number }>} */
   const seen = new Map()
   let swept = 0
   /** Each share's proofs and changes under way, one at a time: tries made together would each read the same count. @type {Map<string, Promise<unknown>>} */
@@ -147,11 +148,11 @@ ${card ? /* html */ `<meta property="og:image" content="${escape(picture)}">
     if (config.alert) fetch(config.alert, { method: 'POST', headers: { 'content-type': 'text/plain; charset=utf-8' }, body: `${name}: a report. ${text.slice(0, 500)}` }).catch(console.error)
   }
   const { store, files } = config
-  const sites = config.sites && files && store?.held && store.hold && store.forget && store.names
-    ? publishing(config.sites, { held: store.held, hold: store.hold, forget: store.forget, names: store.names, record: store.record, report: reported }, files) : null
+  const sites = config.sites && files && store?.held && store.hold && store.forget && store.names && store.replies && store.keepReply && store.dropReplies
+    ? publishing(config.sites, { held: store.held, hold: store.hold, forget: store.forget, names: store.names, record: store.record, report: reported, replies: store.replies, keepReply: store.keepReply, dropReplies: store.dropReplies }, files) : null
   const about = `default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'`
   // Sites' header set, with the origins the configuration adds (sources), checked as the host starts.
-  const siteHeaders = headersFor(config.sites?.sources)
+  const siteHeaders = headersFor(config.sites?.sources, config.sites?.address)
   const shares = config.shares ? new URL(config.shares) : null
 
   return async (request, client = { address: '', port: 0 }) => {
@@ -175,7 +176,7 @@ ${card ? /* html */ `<meta property="og:image" content="${escape(picture)}">
     const reading = request.method === 'GET' || request.method === 'HEAD'
     const page = (/** @type {boolean} */ sent) => new Response(aboutPage({ name, legal: config.legal, host: url.host, sent }), { headers: { 'content-type': 'text/html; charset=utf-8', 'content-security-policy': about, 'x-content-type-options': 'nosniff', 'referrer-policy': 'no-referrer' } })
     if (url.pathname === '/' && reading) return request.headers.get('accept')?.includes('text/html') ? page(false)
-      : answer(200, { format: 1, limit: LIMIT, days: DAYS, ...(sites && config.sites && { sites: { address: config.sites.address, limit: SITE.site, file: SITE.file, files: SITE.files, days: SITE.days, ...config.sites.limits } }) })
+      : answer(200, { format: 1, limit: LIMIT, days: DAYS, ...(sites && config.sites && { sites: { address: config.sites.address, limit: SITE.site, file: SITE.file, files: SITE.files, days: SITE.days, replies: SITE.waits, ...config.sites.limits } }) })
     if (url.pathname === '/report' && reading) return page(false)
     if (url.pathname === '/frame' && reading) return new Response(RELAY, { headers: { 'content-type': 'text/html; charset=utf-8', 'content-security-policy': framed, 'x-content-type-options': 'nosniff', 'cache-control': 'public, max-age=3600' } })
     if (url.pathname === '/card.png' && reading && card) return new Response(card, { headers: { 'content-type': 'image/png', 'x-content-type-options': 'nosniff', 'x-robots-tag': 'noindex', 'cache-control': 'public, max-age=86400' } })
@@ -190,7 +191,7 @@ ${card ? /* html */ `<meta property="og:image" content="${escape(picture)}">
     const now = Date.now()
     const network = networkOf(client.address)
     const by = seen.get(network)
-    const mine = by && now - by.from < HOUR ? by : { from: now, writes: 0, reports: 0, puts: 0 }
+    const mine = by && now - by.from < HOUR ? by : { from: now, writes: 0, reports: 0, puts: 0, replies: 0 }
     // Grown long, what is past its hour goes, once a minute at most, so that many addresses can't wipe what the others did; far past that, all goes.
     if (seen.size > 100_000 && now - swept > 60_000) {
       swept = now
@@ -198,8 +199,8 @@ ${card ? /* html */ `<meta property="og:image" content="${escape(picture)}">
       if (seen.size > 1_000_000) seen.clear()
     }
     seen.set(network, mine)
-    /** Whether the address has done this too often this hour, counting this time. @param {'writes' | 'reports' | 'puts'} kind */
-    const spend = (kind) => ++mine[kind] > { writes: WRITES, reports: REPORTS, puts: PUTS }[kind]
+    /** Whether the address has done this too often this hour, counting this time. @param {'writes' | 'reports' | 'puts' | 'replies'} kind */
+    const spend = (kind) => ++mine[kind] > { writes: WRITES, reports: REPORTS, puts: PUTS, replies: REPLIES }[kind]
     if (url.pathname === '/report') {
       if (request.method !== 'POST') return answer(405, { error: 'Send a report.' })
       if (spend('reports')) return answer(429, { error: 'Too many reports. Try again later.' })

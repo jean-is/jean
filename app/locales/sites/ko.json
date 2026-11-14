@@ -46,6 +46,12 @@
   "sites.public": "누구나 열 수 있고, 검색 엔진에도 표시돼요.",
   "sites.year": "1년 동안 온라인에 있어요. 게시할 때마다 1년이 새로 시작돼요.",
   "sites.formWaits": "이 사이트의 양식은 아직 답장을 보낼 수 없어요.",
+  "sites.formReplies": "방문자가 양식으로 보낸 내용은 여기 컬렉션으로 들어와요. 그때까지 호스트가 봉인한 채로 최대 한 달 동안 보관해요.",
+  "sites.replied": {
+    "other": "{name}에 새 답장이 {count}개 왔어요."
+  },
+  "sites.repliesOf": "{form} · {site}",
+  "sites.sentAt": "보낸 시각",
   "sites.go": "게시",
   "sites.publishing": "게시 중… {count}개 중 {done}개",
   "sites.haveCode": "복구 코드가 있어요",

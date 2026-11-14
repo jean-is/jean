@@ -3,7 +3,8 @@
 // brain hearing what to fix (a line too pale, a placeholder left); it opens beside the task, at a phone's width once picked, its link
 // to its other page followed there; it is among the creations, changed by `site_change` until nothing is left to fix, and leaves as
 // a zip of its files. Published at a name of its own on the share host, asked first, its recovery code shown once, its pages
-// served under the host's policy; published again, only what changed goes; a new recovery code; taken offline. A picture Jean made
+// served under the host's policy; published again, only what changed goes; a new recovery code; taken offline. A visitor's reply to its
+// form, sealed in their browser, said sent in the page's words and collected into a collection (D751). A picture Jean made
 // in the task goes into it by its name, its card among the creations running its first page with it, and @ names it from another task (D730). Its three looks (D739), picked by keyboard, its
 // pages following, the pick kept, a colour written put as a property and words that fade by night said. Its words retyped in place
 // and its parts pointed at, by keys as by clicks, and the brain's later change waiting as its version (D741). Its widths, looks, words
@@ -22,6 +23,8 @@ const page = (title, here, body) => /* html */ `<!doctype html><html lang="en" d
 <meta property="og:title" content="${title}"><meta property="og:description" content="Bike repairs while you wait."><meta property="og:type" content="website"><link rel="stylesheet" href="look.css"><link rel="stylesheet" href="style.css"></head>
 <body><header><a href="index.html">Atelier Nord</a><nav aria-label="Main"><a href="index.html"${here === 'home' ? ' aria-current="page"' : ''}>Home</a> <a href="prices.html"${here === 'prices' ? ' aria-current="page"' : ''}>Prices</a></nav></header>
 <main>${body}</main><footer><p>Atelier Nord · [your address]</p></footer></body></html>`
+/** The same, for a test whose own `page` is the browser's. */
+const sitePage = page
 const SITE = { name: 'Atelier Nord', files: [
   { path: 'index.html', text: page('Atelier Nord · Bike repairs', 'home', '<h1>Your bike, fixed while you wait</h1><p>Bring it in before noon.</p>') },
   { path: 'prices.html', text: page('Prices · Atelier Nord', 'prices', '<h1>Prices</h1><p class="pale">Prices change in spring.</p>') },
@@ -517,6 +520,77 @@ test('a site goes online at a name of its own, asked first, its recovery code sh
   await expect(dialog).toContainText('Offline since')
   const gone = await context.newPage()
   expect((await gone.goto(address))?.status()).toBe(404)
+})
+
+test('a visitor’s reply to a published site’s form is sealed in their browser, said sent in the page’s words, and collected into a collection, the host keeping none (D751)', async ({ page, context, browserName }) => {
+  const name = `fournil-${browserName}-${test.info().retry}-${test.info().repeatEachIndex}`, address = `http://${name}.localhost:4185/`
+  const form = '<h1>Order a cake</h1><form method="post" data-form="orders"><label for="who">Your name</label><input id="who" name="who" autocomplete="name" required>'
+    + '<fieldset><legend>The cake</legend><label><input type="radio" name="cake" value="Lemon" checked> Lemon</label><label><input type="radio" name="cake" value="Chocolate"> Chocolate</label></fieldset>'
+    + '<button>Order</button><p>Your order goes to our bakers, who write back to confirm it.</p><p data-sent hidden>Thank you: we write back within a day.</p><p data-unsent hidden>It didn’t go. Call us instead.</p></form>'
+  await start(page)
+  await connectFakeBrain(page)
+  await page.evaluate(async (host) => { const { app, updateSettings } = await import('/ui/state.js'); await updateSettings({ urls: { ...app.settings.value.urls, share: host } }) }, SHARE_URL)
+  await ask(page, 'Call skill with {"name":"site"}')
+  await answered(page, 1)
+  await ask(page, `Call site with ${JSON.stringify({ name: 'Fournil', files: [{ path: 'index.html', text: sitePage('Fournil · Cakes', 'home', form) }, { path: 'prices.html', text: sitePage('Prices · Fournil', 'prices', '<h1>Prices</h1>') }, { path: 'style.css', text: STYLE }], look: SITE.look })}`)
+  await expect(page.locator('.msg-jean .prose')).toHaveCount(2, { timeout: 60_000 })
+  await answered(page, 2)
+  const place = /sites\/[^:]+/.exec(await page.locator('.msg-jean .prose').last().innerText())?.[0] ?? ''
+  expect(await page.locator('.msg-jean .prose').last().innerText()).not.toMatch(/data-sent|data-unsent|has no name/)
+
+  // Published, its dialog saying where what visitors send goes.
+  const pane = page.locator('app-preview:has(app-site)'), dialog = page.locator('dialog.site-publish')
+  const publishing = async () => {
+    await pane.getByRole('button', { name: 'Share or download' }).click()
+    await page.getByRole('button', { name: 'Publish…' }).click()
+    await expect(dialog).toBeVisible()
+  }
+  await publishing()
+  await expect(dialog).toContainText('What visitors send with its form comes here, into a collection. Until then, the host keeps it sealed, for a month at most.')
+  await dialog.getByLabel('Address').fill(name)
+  await expect(dialog.locator('#publish-said')).toHaveText('This address is free.')
+  await dialog.getByRole('button', { name: 'Publish', exact: true }).click()
+  await dialog.getByLabel('I’ve kept it somewhere safe').check()
+  await dialog.getByRole('button', { name: 'Done' }).click()
+  const record = await page.evaluate(async (place) => { const { app } = await import('/ui/state.js'); return JSON.parse((await app.fs.read(`${app.projectDir}/${place}/site.json`)) ?? '{}') }, place)
+  expect(Object.keys(record.published.files).sort()).toEqual(['_form.js', 'index.html', 'look.css', 'prices.html', 'style.css'])
+  expect(Object.keys(record.published.replies).sort()).toEqual(['key', 'sealed'])
+  await dialog.locator('.dialog-head').getByRole('button', { name: 'Close' }).click()
+
+  // A visitor orders: what they sent goes sealed to the host, and the page says so in its own words, its fields emptied. Chromium takes
+  // *.localhost to this computer itself, and refuses a page a route fulfils, which it counts as the internet's, any request to it.
+  if (browserName !== 'chromium') await throughHost(context)
+  const visit = await context.newPage(), posted = /** @type {string[]} */ ([])
+  visit.on('request', (one) => { if (one.method() === 'POST') posted.push(one.postData() ?? '') })
+  await visit.goto(address)
+  await visit.getByLabel('Your name').fill('Amina')
+  await visit.getByLabel('Chocolate').check()
+  await visit.getByRole('button', { name: 'Order' }).click()
+  await expect(visit.getByRole('status')).toHaveText('Thank you: we write back within a day.')
+  await expect(visit.getByLabel('Your name')).toHaveValue('')
+  expect(posted).toHaveLength(1)
+  expect(posted[0]).toMatch(/^[\w-]{124,}$/)
+  expect(posted[0]).not.toContain('Amina')
+  await visit.close()
+
+  // Jean collects it as the dialog opens: a row of the form's collection, its fields by their labels, and nothing left at the host.
+  await publishing()
+  await expect(page.locator('.toast')).toContainText('1 new reply to Fournil.')
+  const kept = await page.evaluate(async () => {
+    const [{ app }, tables] = await Promise.all([import('/ui/state.js'), import('/caps/tables/tables.js')]), [found] = await tables.collections()
+    const one = await tables.load(found.folder)
+    return { name: one?.table.name, columns: one?.table.properties.map((property) => `${property.name}:${property.type}`), cells: one?.rows.map((row) => Object.values(row.cells)), by: one?.lines.map((line) => 'by' in line && line.by) }
+  })
+  expect(kept.name).toBe('orders · Fournil')
+  expect(kept.columns).toEqual(['Sent:date', 'Your name:text', 'The cake:select'])
+  expect(kept.cells).toEqual([[expect.stringMatching(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/), 'Amina', 'Chocolate']])
+  expect(kept.by).toEqual(['visitor'])
+  const left = await page.evaluate(async ([host, name, place]) => {
+    const [{ app }, { getSecret }, { tokenOf, secretOf }] = await Promise.all([import('/ui/state.js'), import('/ui/secrets.js'), import('/caps/sites/file.js')])
+    const secret = /** @type {Uint8Array} */ (secretOf(String(await getSecret(app.fs, `site:${place.split('/')[1].split('-')[0]}`))))
+    return (await (await fetch(`${host}v1/sites/${name}/replies`, { headers: { authorization: `Bearer ${await tokenOf(secret)}` } })).json()).replies
+  }, [SHARE_URL, name, place])
+  expect(left).toEqual([])
 })
 
 test('a page on its own goes online from its pane as a site of one page, its script and its on…="" in files of their own as the host runs them, made again from the page each time (D720)', async ({ page, context, browserName }) => {

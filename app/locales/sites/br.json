@@ -46,6 +46,16 @@
   "sites.public": "Forzh piv a c’hall he digeriñ, hag al luskerioù klask a ziskouez anezhi.",
   "sites.year": "Enlinenn e-pad ur bloaz. Gant pep embannadur e adkrog ar bloaz.",
   "sites.formWaits": "N’hall ket furmskrid al lec’hienn kas respontoù c’hoazh.",
+  "sites.formReplies": "Ar pezh a gas ar weladennerien gant e furmskrid a zeu amañ, en un dastumad. Betek neuze e vir an herberc’hier anezhañ siellet, ur miz d’ar muiañ.",
+  "sites.replied": {
+    "one": "{count} respont nevez da {name}.",
+    "two": "{count} respont nevez da {name}.",
+    "few": "{count} respont nevez da {name}.",
+    "many": "{count} a respontoù nevez da {name}.",
+    "other": "{count} respont nevez da {name}."
+  },
+  "sites.repliesOf": "{form} · {site}",
+  "sites.sentAt": "Kaset",
   "sites.go": "Embann",
   "sites.publishing": "Oc’h embann… {done} diwar {count}",
   "sites.haveCode": "He c’hod adtapout am eus",

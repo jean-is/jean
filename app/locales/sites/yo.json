@@ -46,6 +46,12 @@
   "sites.public": "Ẹnikẹ́ni lè ṣí i, àwọn ẹ̀rọ ìwádìí sì ń fi í hàn.",
   "sites.year": "Ó máa wà lórí ayélujára fún ọdún kan. Ìgbàkígbà tí ẹ bá tẹ̀ ẹ́ jáde, ọdún náà máa bẹ̀rẹ̀ lọ́tun.",
   "sites.formWaits": "Fọ́ọ̀mù ojú òpó náà kò tíì lè fi èsì ránṣẹ́.",
+  "sites.formReplies": "Ohun tí àwọn àlejò bá fi fọ́ọ̀mù rẹ̀ ránṣẹ́ máa ń wá síbí, sínú àkójọpọ̀ kan. Títí di ìgbà náà, olùgbàlejò máa ń pa á mọ́ ní dídì, fún oṣù kan jù lọ.",
+  "sites.replied": {
+    "other": "Èsì tuntun {count} fún {name}."
+  },
+  "sites.repliesOf": "{form} · {site}",
+  "sites.sentAt": "Ìgbà tí a fi ránṣẹ́",
   "sites.go": "Tẹ̀ ẹ́ jáde",
   "sites.publishing": "Ó ń tẹ̀ ẹ́ jáde… {done} nínú {count}",
   "sites.haveCode": "Mo ní kóòdù ìmúpadàbọ̀sípò rẹ̀",

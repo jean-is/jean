@@ -46,6 +46,15 @@
   "sites.public": "Każdy może ją otworzyć, a wyszukiwarki ją pokazują.",
   "sites.year": "Online przez rok. Każda publikacja liczy ten rok od nowa.",
   "sites.formWaits": "Formularz strony nie może jeszcze wysyłać odpowiedzi.",
+  "sites.formReplies": "To, co odwiedzający wysyłają jej formularzem, trafia tutaj, do kolekcji. Do tego czasu host przechowuje to zapieczętowane, najwyżej miesiąc.",
+  "sites.replied": {
+    "one": "{count} nowa odpowiedź dla {name}.",
+    "few": "{count} nowe odpowiedzi dla {name}.",
+    "many": "{count} nowych odpowiedzi dla {name}.",
+    "other": "{count} nowej odpowiedzi dla {name}."
+  },
+  "sites.repliesOf": "{form} · {site}",
+  "sites.sentAt": "Wysłano",
   "sites.go": "Opublikuj",
   "sites.publishing": "Publikowanie… {done} z {count}",
   "sites.haveCode": "Mam jej kod odzyskiwania",

@@ -4,14 +4,16 @@
 // it is pinned, the task it came from, its files, its last check and where it was published, and what publishing draws from the
 // secret kept for it: its token and its recovery code; and a page on its own made a site of one page. Pure: node tests run it.
 import { unescape } from './html.js'
+import { SCRIPT } from './replies.js'
 
 /**
  * What site.json holds; `page`, the page on its own it is made from again each time it is published (sited()); `published`, where it went
- * online (./publish.js): the host, the name, its address, until when, when, and its files' hashes; `look`, the look it wears (./look.js), and the brain's or the user's colours;
+ * online (./publish.js): the host, the name, its address, until when, when, and its files' hashes, and where its forms have replies (./replies.js, D751), their
+ * key's public half, the private one sealed under its secret, the collection each form's go to, and the last one collected; `look`, the look it wears (./look.js), and the brain's or the user's colours;
  * `shape`, what a prototype is made for, a phone or a computer (D742).
  * @typedef {{ format: number, name: string, author: string, created: string, changed: string, pinned?: boolean, source: string, page?: string, files: string[], text?: string, check?: { problems: string[], fill: string[], flow?: import("../prototypes/check.js").Flow, at: string },
  *   look?: { id: string, voice: string, own?: import('./look.js').Own }, shape?: 'phone' | 'computer',
- *   published?: { host: string, name: string, address: string, expires: string, at: string, files: Record<string, string> } }} SiteRecord
+ *   published?: { host: string, name: string, address: string, expires: string, at: string, files: Record<string, string>, replies?: { key: string, sealed: string, collections?: Record<string, string>, through?: string } } }} SiteRecord
  */
 
 export const PLACE = /^sites\/[^/.][^/]*$/
@@ -24,6 +26,7 @@ export const TYPES = /** @type {Record<string, string>} */ ({ html: 'text/html',
 export function pathIn(path) {
   const clean = String(path ?? '').trim().replace(/^\.?\/+/, '')
   if (!clean || clean === RECORD || clean.split('/').some((part) => part === '..' || part === '' || part.startsWith('.')) || /^[a-z]+:/i.test(clean)) throw new Error(`"${path}" isn't a path in the site: write one such as index.html or fr/index.html`)
+  if (clean === SCRIPT) throw new Error(`${clean} is the app's own, added to a site with a form as it goes online: name the file otherwise`)
   if (!TYPES[clean.toLowerCase().split('.').pop() ?? '']) throw new Error(`${clean}: a site holds pages, style sheets, scripts, drawings and pictures, not .${clean.split('.').pop()} files`)
   return clean
 }

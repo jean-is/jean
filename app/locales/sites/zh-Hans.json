@@ -46,6 +46,12 @@
   "sites.public": "任何人都能打开它，搜索引擎也会显示它。",
   "sites.year": "上线一年。每次发布都会重新计算一年。",
   "sites.formWaits": "这个网站的表单还不能发送回复。",
+  "sites.formReplies": "访客用它的表单发送的内容会来到这里，放进一个合集。在那之前，托管方会把它密封保存，最多一个月。",
+  "sites.replied": {
+    "other": "{name} 有 {count} 条新回复。"
+  },
+  "sites.repliesOf": "{form} · {site}",
+  "sites.sentAt": "发送时间",
   "sites.go": "发布",
   "sites.publishing": "正在发布… {done}/{count}",
   "sites.haveCode": "我有它的恢复码",

@@ -46,6 +46,13 @@
   "sites.public": "Bárki megnyithatja, és a keresőmotorok is megjelenítik.",
   "sites.year": "Egy évig online. Minden közzététel újraindítja az évet.",
   "sites.formWaits": "A weboldal űrlapja még nem tud válaszokat küldeni.",
+  "sites.formReplies": "Amit a látogatók az űrlapján küldenek, ide érkezik, egy gyűjteménybe. Addig a tárhely lepecsételve őrzi, legfeljebb egy hónapig.",
+  "sites.replied": {
+    "one": "{count} új válasz ide: {name}.",
+    "other": "{count} új válasz ide: {name}."
+  },
+  "sites.repliesOf": "{form} · {site}",
+  "sites.sentAt": "Elküldve",
   "sites.go": "Közzététel",
   "sites.publishing": "Közzététel… {done} / {count}",
   "sites.haveCode": "Megvan a helyreállítási kódja",

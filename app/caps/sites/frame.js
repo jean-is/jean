@@ -40,9 +40,11 @@ const colours = ({ day }) => ref((swatch) => swatch instanceof HTMLElement && Ob
 const HAND = fetch(new URL('hand.js', import.meta.url)).then((response) => response.text()).then((code) => `<script>${code}</script>`, () => '')
 /**
  * Jean's script ahead of a page whose choices travel in its address (D742): the address it was reached at given back to it, and a form
- * sent to another of its pages told to Jean as a link is, its fields as that page's address, which the policy would refuse. @param {string} search
+ * sent to another of its pages told to Jean as a link is, its fields as that page's address, which the policy would refuse; a form whose
+ * replies go to the host once online (D751) sends nothing here and shows the words it would show once sent. @param {string} search
  */
 export const ahead = (search) => `<script>${search ? `history.replaceState(null,'',${JSON.stringify(search)});` : ''}document.addEventListener('submit',(e)=>{const f=e.target,a=f.getAttribute('action')
+if(!a&&f.dataset.form!==undefined){e.preventDefault();for(const l of f.querySelectorAll('[data-sent]'))l.hidden=false;return}
 if(!a||/^\\s*(javascript:|#)/i.test(a)||f.method!=='get')return;e.preventDefault();const q=new URLSearchParams(new FormData(f,e.submitter));parent.postMessage({open:a.split('?')[0]+(q.size?'?'+q:'')},'*')},true)</script>`
 export const rights = computed(() => pageRights(effective.value.settings, app.policy))
 /**

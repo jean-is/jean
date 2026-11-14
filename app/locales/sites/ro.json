@@ -46,6 +46,14 @@
   "sites.public": "Oricine îl poate deschide, iar motoarele de căutare îl afișează.",
   "sites.year": "Online timp de un an. Fiecare publicare pornește anul de la capăt.",
   "sites.formWaits": "Formularul site-ului nu poate încă trimite răspunsuri.",
+  "sites.formReplies": "Ce trimit vizitatorii prin formularul lui ajunge aici, într-o colecție. Până atunci, gazda îl păstrează sigilat, cel mult o lună.",
+  "sites.replied": {
+    "one": "{count} răspuns nou pentru {name}.",
+    "few": "{count} răspunsuri noi pentru {name}.",
+    "other": "{count} de răspunsuri noi pentru {name}."
+  },
+  "sites.repliesOf": "{form} · {site}",
+  "sites.sentAt": "Trimis",
   "sites.go": "Publicați",
   "sites.publishing": "Se publică… {done} din {count}",
   "sites.haveCode": "Am codul lui de recuperare",

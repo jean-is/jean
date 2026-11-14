@@ -46,6 +46,12 @@
   "sites.public": "Ai cũng mở được, và các công cụ tìm kiếm sẽ hiển thị nó.",
   "sites.year": "Có trên mạng trong một năm. Mỗi lần đưa lên mạng lại tính thêm một năm từ hôm đó.",
   "sites.formWaits": "Biểu mẫu của trang chưa gửi được phản hồi.",
+  "sites.formReplies": "Những gì khách gửi qua biểu mẫu sẽ về đây, vào một bộ sưu tập. Trước đó, máy chủ giữ nó ở dạng niêm phong, tối đa một tháng.",
+  "sites.replied": {
+    "other": "{count} phản hồi mới cho {name}."
+  },
+  "sites.repliesOf": "{form} · {site}",
+  "sites.sentAt": "Đã gửi",
   "sites.go": "Đưa lên mạng",
   "sites.publishing": "Đang đưa lên mạng… {done} trên {count}",
   "sites.haveCode": "Tôi có mã khôi phục của trang",

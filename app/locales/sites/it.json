@@ -46,6 +46,14 @@
   "sites.public": "Chiunque può aprirlo, e i motori di ricerca lo mostrano.",
   "sites.year": "Online per un anno. Ogni pubblicazione lo rinnova.",
   "sites.formWaits": "Il modulo del sito non può ancora inviare risposte.",
+  "sites.formReplies": "Ciò che i visitatori inviano con il suo modulo arriva qui, in una raccolta. Fino ad allora l’host lo conserva sigillato, per un mese al massimo.",
+  "sites.replied": {
+    "one": "{count} nuova risposta per {name}.",
+    "many": "{count} di nuove risposte per {name}.",
+    "other": "{count} nuove risposte per {name}."
+  },
+  "sites.repliesOf": "{form} · {site}",
+  "sites.sentAt": "Inviato",
   "sites.go": "Pubblica",
   "sites.publishing": "Pubblicazione… {done} di {count}",
   "sites.haveCode": "Ho il suo codice di recupero",

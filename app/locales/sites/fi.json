@@ -46,6 +46,13 @@
   "sites.public": "Kuka tahansa voi avata sen, ja hakukoneet näyttävät sen.",
   "sites.year": "Verkossa vuoden. Jokainen julkaisu aloittaa vuoden alusta.",
   "sites.formWaits": "Sivuston lomake ei voi vielä lähettää vastauksia.",
+  "sites.formReplies": "Mitä kävijät lähettävät sen lomakkeella, tulee tänne kokoelmaan. Siihen asti palvelin säilyttää sen sinetöitynä, enintään kuukauden.",
+  "sites.replied": {
+    "one": "{count} uusi vastaus sivustolle {name}.",
+    "other": "{count} uutta vastausta sivustolle {name}."
+  },
+  "sites.repliesOf": "{form} · {site}",
+  "sites.sentAt": "Lähetetty",
   "sites.go": "Julkaise",
   "sites.publishing": "Julkaistaan… {done}/{count}",
   "sites.haveCode": "Minulla on sen palautuskoodi",

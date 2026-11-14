@@ -48,14 +48,15 @@ export async function openRecord(line, key) {
 }
 
 /**
- * A folder as the host's store: each share's sealed copy and its metadata beside it, what it keeps of each site's name, a file
- * of records a day, sealed when there is a key, and the reports. Once a day, what has expired goes: a share past its end, a
- * record past a year, a taken-down share's notice past a year.
+ * A folder as the host's store: each share's sealed copy and its metadata beside it, what it keeps of each site's name and the
+ * sealed replies waiting for it, a file of records a day, sealed when there is a key, and the reports. Once a day, what has
+ * expired goes: a share past its end, a record past a year, a taken-down share's notice past a year (sweepSites: replies past theirs).
  * @param {string} dir @param {CryptoKey | null} recordKey @returns {import('./host.js').Store & import('./sites.js').Names & { sweep(): Promise<void> }}
  */
 export function folder(dir, recordKey) {
   const shares = join(dir, 'shares')
   const names = join(dir, 'names')
+  const replies = join(dir, 'replies')
   const records = join(dir, 'records')
   /** @param {string} id */
   const at = (id) => join(shares, id)
@@ -79,6 +80,13 @@ export function folder(dir, recordKey) {
     },
     forget: (name) => rm(join(names, `${name}.json`), { force: true }),
     names: async () => (await readdir(names).catch(() => [])).flatMap((name) => (name.endsWith('.json') ? [name.slice(0, -5)] : [])),
+    replies: async (name) => Promise.all((await readdir(join(replies, name)).catch(() => [])).filter((id) => !id.endsWith('.part')).sort()
+      .map(async (id) => ({ id, sealed: await readFile(join(replies, name, id), 'utf8') }))),
+    async keepReply(name, id, sealed) {
+      await mkdir(join(replies, name), { recursive: true })
+      await write(join(replies, name, id), sealed)
+    },
+    dropReplies: async (name, ids) => { for (const id of ids) await rm(join(replies, name, id), { force: true }) },
     async report(text) {
       await mkdir(dir, { recursive: true })
       await appendFile(join(dir, 'reports.log'), `${text}\n`)

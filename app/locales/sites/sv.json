@@ -46,6 +46,13 @@
   "sites.public": "Vem som helst kan öppna den, och sökmotorer visar den.",
   "sites.year": "Online i ett år. Varje publicering börjar om året.",
   "sites.formWaits": "Webbplatsens formulär kan inte skicka svar än.",
+  "sites.formReplies": "Det besökare skickar med formuläret kommer hit, till en samling. Tills dess håller värden det förseglat, högst en månad.",
+  "sites.replied": {
+    "one": "{count} nytt svar till {name}.",
+    "other": "{count} nya svar till {name}."
+  },
+  "sites.repliesOf": "{form} · {site}",
+  "sites.sentAt": "Skickat",
   "sites.go": "Publicera",
   "sites.publishing": "Publicerar… {done} av {count}",
   "sites.haveCode": "Jag har återställningskoden",

@@ -46,6 +46,12 @@
   "sites.public": "誰でも開くことができ、検索エンジンにも表示されます。",
   "sites.year": "1 年間公開されます。公開するたびに、期間が新しく 1 年になります。",
   "sites.formWaits": "このサイトのフォームは、まだ返信を送れません。",
+  "sites.formReplies": "訪問者がフォームで送った内容は、ここのコレクションに届きます。それまでは、ホストが封をしたまま、最長1か月保管します。",
+  "sites.replied": {
+    "other": "{name} に新しい返信が {count} 件あります。"
+  },
+  "sites.repliesOf": "{form} · {site}",
+  "sites.sentAt": "送信日時",
   "sites.go": "公開",
   "sites.publishing": "公開中… {count} 件中 {done} 件",
   "sites.haveCode": "回復コードを持っています",

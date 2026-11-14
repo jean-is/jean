@@ -3,12 +3,13 @@
 // this file): `<name>.hst.ing/<path>` is `<name>/<path>` in the sites' storage zone, `/` and a folder its index.html, a path
 // with no ending its .html, as the share host finds them when it serves a site itself (host/sites.js); an address with .html,
 // .htm or a folder's index goes to the one without, so none shows an ending. Every answer gets the
-// sites' header set, whose sandbox makes each page an opaque origin; test/publish.test.js holds it to host/sites.js's HEADERS.
+// sites' header set, whose sandbox makes each page an opaque origin, and whose connect-src lets a form's replies go to hst.ing (D751);
+// test/publish.test.js holds it to host/sites.js's headersFor() for `https://{name}.hst.ing/`.
 // It runs only when the edge has no copy, and the headers are kept with the copy.
 import * as BunnySDK from '@bunny.net/edgescript-sdk@0.13.0'
 
 const HEADERS = {
-  "content-security-policy": "sandbox allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox; default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; media-src 'self'; manifest-src 'self'; connect-src 'self'; form-action 'none'; base-uri 'none'; frame-ancestors 'none'",
+  "content-security-policy": "sandbox allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox; default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; media-src 'self'; manifest-src 'self'; connect-src 'self' https://hst.ing; form-action 'none'; base-uri 'none'; frame-ancestors 'none'",
   "access-control-allow-origin": "*",
   "cross-origin-opener-policy": "same-origin",
   "permissions-policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), serial=(), hid=(), bluetooth=()",

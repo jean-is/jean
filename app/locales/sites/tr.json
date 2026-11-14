@@ -46,6 +46,13 @@
   "sites.public": "Herkes açabilir ve arama motorları gösterir.",
   "sites.year": "Bir yıl yayında kalır. Her yayınlama bir yılı yeniden başlatır.",
   "sites.formWaits": "Sitenin formu henüz yanıt gönderemiyor.",
+  "sites.formReplies": "Ziyaretçilerin formuyla gönderdikleri buraya, bir koleksiyona gelir. O zamana kadar sunucu bunu mühürlü saklar, en fazla bir ay.",
+  "sites.replied": {
+    "one": "{name} için {count} yeni yanıt.",
+    "other": "{name} için {count} yeni yanıt."
+  },
+  "sites.repliesOf": "{form} · {site}",
+  "sites.sentAt": "Gönderildi",
   "sites.go": "Yayınla",
   "sites.publishing": "Yayınlanıyor… {done} / {count}",
   "sites.haveCode": "Kurtarma kodu bende",

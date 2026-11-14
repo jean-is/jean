@@ -46,6 +46,15 @@
   "sites.public": "Kdokoli ho může otevřít a vyhledávače ho zobrazují.",
   "sites.year": "Online na rok. Každým zveřejněním začíná rok znovu.",
   "sites.formWaits": "Formulář webu zatím neumí odesílat odpovědi.",
+  "sites.formReplies": "Co návštěvníci pošlou jeho formulářem, přijde sem, do sbírky. Do té doby to hostitel uchovává zapečetěné, nejvýš měsíc.",
+  "sites.replied": {
+    "one": "{count} nová odpověď pro {name}.",
+    "few": "{count} nové odpovědi pro {name}.",
+    "many": "{count} nové odpovědi pro {name}.",
+    "other": "{count} nových odpovědí pro {name}."
+  },
+  "sites.repliesOf": "{form} · {site}",
+  "sites.sentAt": "Odesláno",
   "sites.go": "Zveřejnit",
   "sites.publishing": "Zveřejňování… {done} z {count}",
   "sites.haveCode": "Mám jeho kód pro obnovení",

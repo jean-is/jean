@@ -46,6 +46,12 @@
   "sites.public": "任何人都能開啟，搜尋引擎也會顯示。",
   "sites.year": "上線一年。每次發布都會重新計算一年。",
   "sites.formWaits": "這個網站的表單還不能傳送回覆。",
+  "sites.formReplies": "訪客用它的表單傳送的內容會來到這裡，放進一個合集。在那之前，託管方會把它密封保存，最多一個月。",
+  "sites.replied": {
+    "other": "{name} 有 {count} 則新回覆。"
+  },
+  "sites.repliesOf": "{form} · {site}",
+  "sites.sentAt": "傳送時間",
   "sites.go": "發布",
   "sites.publishing": "正在發布… {done} / {count}",
   "sites.haveCode": "我有它的復原碼",

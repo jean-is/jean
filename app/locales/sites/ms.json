@@ -46,6 +46,12 @@
   "sites.public": "Sesiapa sahaja boleh membukanya, dan enjin carian memaparkannya.",
   "sites.year": "Dalam talian selama setahun. Setiap penerbitan memulakan tempoh setahun itu semula.",
   "sites.formWaits": "Borang laman web ini belum boleh menghantar balasan.",
+  "sites.formReplies": "Apa yang dihantar pelawat melalui borangnya sampai ke sini, ke dalam koleksi. Sehingga itu, hos menyimpannya dalam keadaan termeterai, paling lama sebulan.",
+  "sites.replied": {
+    "other": "{count} balasan baharu untuk {name}."
+  },
+  "sites.repliesOf": "{form} · {site}",
+  "sites.sentAt": "Dihantar",
   "sites.go": "Terbitkan",
   "sites.publishing": "Menerbitkan… {done} daripada {count}",
   "sites.haveCode": "Saya ada kod pemulihannya",

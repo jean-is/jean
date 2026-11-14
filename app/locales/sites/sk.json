@@ -46,6 +46,15 @@
   "sites.public": "Ktokoľvek ho môže otvoriť a vyhľadávače ho zobrazujú.",
   "sites.year": "Online na rok. Každým zverejnením sa rok začína odznova.",
   "sites.formWaits": "Formulár webu zatiaľ nevie odosielať odpovede.",
+  "sites.formReplies": "Čo návštevníci pošlú jeho formulárom, príde sem, do zbierky. Dovtedy to hostiteľ uchováva zapečatené, najviac mesiac.",
+  "sites.replied": {
+    "one": "{count} nová odpoveď pre {name}.",
+    "few": "{count} nové odpovede pre {name}.",
+    "many": "{count} novej odpovede pre {name}.",
+    "other": "{count} nových odpovedí pre {name}."
+  },
+  "sites.repliesOf": "{form} · {site}",
+  "sites.sentAt": "Odoslané",
   "sites.go": "Zverejniť",
   "sites.publishing": "Zverejňuje sa… {done} z {count}",
   "sites.haveCode": "Mám jeho kód na obnovenie",

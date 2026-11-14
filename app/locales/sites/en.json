@@ -46,6 +46,13 @@
   "sites.public": "Anyone can open it, and search engines show it.",
   "sites.year": "Online for a year. Each publish renews it.",
   "sites.formWaits": "Its form can’t send replies yet.",
+  "sites.formReplies": "What visitors send with its form comes here, into a collection. Until then, the host keeps it sealed, for a month at most.",
+  "sites.replied": {
+    "one": "{count} new reply to {name}.",
+    "other": "{count} new replies to {name}."
+  },
+  "sites.repliesOf": "{form} · {site}",
+  "sites.sentAt": "Sent",
   "sites.go": "Publish",
   "sites.publishing": "Publishing… {done} of {count}",
   "sites.haveCode": "I have its recovery code",

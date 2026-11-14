@@ -46,6 +46,13 @@
   "sites.public": "Iedereen kan hem openen en zoekmachines tonen hem.",
   "sites.year": "Een jaar lang online. Elke publicatie verlengt dat met een jaar.",
   "sites.formWaits": "Het formulier van de website kan nog geen antwoorden versturen.",
+  "sites.formReplies": "Wat bezoekers met het formulier versturen, komt hier binnen, in een verzameling. Tot dan bewaart de host het verzegeld, hooguit een maand.",
+  "sites.replied": {
+    "one": "{count} nieuw antwoord voor {name}.",
+    "other": "{count} nieuwe antwoorden voor {name}."
+  },
+  "sites.repliesOf": "{form} · {site}",
+  "sites.sentAt": "Verstuurd",
   "sites.go": "Publiceren",
   "sites.publishing": "Publiceren… {done} van {count}",
   "sites.haveCode": "Ik heb de herstelcode",

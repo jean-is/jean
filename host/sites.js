@@ -12,6 +12,10 @@
 //   DELETE /v1/sites/<name>          takes it offline; its name then waits a year for its token alone
 //   POST   /v1/sites/<name>/token    a new token in place of the one sent, { token }: a secret a device removed may keep stops there
 //   POST   /v1/sites/<name>/report   a report: { words, page? }
+//   POST   /v1/sites/<name>/replies  from anyone, a visitor's reply to one of its forms, sealed in their browser to the site's key (D751),
+//                                    as text: kept until Jean collects it, `waits` days at most, for a site published with { replies: true }
+//   GET    /v1/sites/<name>/replies  with its token, the replies waiting, { replies: [{ id, sealed }] }, the oldest first
+//   DELETE /v1/sites/<name>/replies?through=<id>  with its token, those collected, that id and those before it
 //
 // `sites` in the configuration:
 //   address  a site's address, '{name}' in it: "https://{name}.hst.ing/"
@@ -29,8 +33,11 @@
 // state, until when, and each file's hash and size. Web-standard, as host.js.
 import { base64url, hashOf, within } from './host.js'
 
-/** A site's limits: its bytes, a file's, its files; names a network claims a day, files it sends an hour; days a site stays up. */
-export const SITE = { site: 50_000_000, file: 10_000_000, files: 500, claims: 5, puts: 2000, days: 365 }
+/**
+ * A site's limits: its bytes, a file's, its files; names a network claims a day, files it sends an hour; days a site stays up; replies
+ * waiting for Jean, a reply's bytes, the days one waits, and those a network sends an hour.
+ */
+export const SITE = { site: 50_000_000, file: 10_000_000, files: 500, claims: 5, puts: 2000, days: 365, replies: 500, reply: 20_000, waits: 30, sent: 30 }
 const DAY = 86_400_000
 
 /** What a site holds, by ending, and what it is served as: the same as Jean's own list (app/caps/sites/file.js), which a test holds it to. */
@@ -55,18 +62,23 @@ export const HEADERS = Object.freeze({
 /** The directives `sources` may add origins to, and an origin it may add: https, a host or `*.` and a domain, a port. */
 export const SOURCED = ['style-src', 'img-src', 'font-src'], ORIGIN = /^https:\/\/(\*\.)?[a-z0-9-]+(\.[a-z0-9-]+)+(:\d{1,5})?$/
 
+/** Where a site's forms send their replies (D751): the host at its sites' parent name, `https://hst.ing` for `https://{name}.hst.ing/`. @param {string} address */
+export const repliesAt = (address) => new URL(addressOf(address, 'x')).origin.replace('//x.', '//')
+
 /**
- * The header set with the origins `sources` names added to its style-src, img-src and font-src; an error for any other
- * directive or anything that isn't an origin, which could loosen more than these. @param {Config['sources']} [sources]
+ * The header set with the origins `sources` names added to its style-src, img-src and font-src, and where replies go (repliesAt) to its
+ * connect-src; an error for any other directive or anything that isn't an origin, which could loosen more than these.
+ * @param {Config['sources']} [sources] @param {string} [address] the sites' address, '{name}' in it
  */
-export function headersFor(sources) {
-  if (!sources) return HEADERS
-  for (const [name, origins] of Object.entries(sources)) {
+export function headersFor(sources, address) {
+  if (!sources && !address) return HEADERS
+  for (const [name, origins] of Object.entries(sources ?? {})) {
     if (!SOURCED.includes(name) || !Array.isArray(origins)) throw new Error(`sites.sources names ${name}: only ${SOURCED.join(', ')}, each a list of origins`)
     const wrong = origins.find((origin) => typeof origin !== 'string' || !ORIGIN.test(origin))
     if (wrong !== undefined) throw new Error(`sites.sources["${name}"] holds ${JSON.stringify(wrong)}, which isn't an https origin such as https://fonts.gstatic.com`)
   }
-  const policy = HEADERS['content-security-policy'].split('; ').map((part) => [part, ...(sources[/** @type {keyof typeof sources} */ (part.split(' ')[0])] ?? [])].join(' ')).join('; ')
+  const added = /** @type {Record<string, string[]>} */ ({ ...sources, ...(address && { 'connect-src': [repliesAt(address)] }) })
+  const policy = HEADERS['content-security-policy'].split('; ').map((part) => [part, ...(added[part.split(' ')[0]] ?? [])].join(' ')).join('; ')
   return Object.freeze({ ...HEADERS, 'content-security-policy': policy })
 }
 
@@ -144,11 +156,12 @@ export const GONE = /* html */ `<!doctype html><html lang="en"><meta charset="ut
 <p>This site was taken down.</p><p lang="fr">Ce site a été retiré.</p>`
 
 /**
- * What the host keeps of a name: the hash of its token, its state, until when, its files.
- * @typedef {{ format: 1, token: string, state: 'claimed' | 'live' | 'ended' | 'removed', expires: string, files: Record<string, { hash: string, size: number }>, published?: string, removed?: string }} Held
- * Where the host keeps names (serve.js's folder).
+ * What the host keeps of a name: the hash of its token, its state, until when, its files, and whether its forms send replies.
+ * @typedef {{ format: 1, token: string, state: 'claimed' | 'live' | 'ended' | 'removed', expires: string, files: Record<string, { hash: string, size: number }>, published?: string, removed?: string, replies?: true }} Held
+ * Where the host keeps names (serve.js's folder), and the sealed replies waiting for each, by ids that sort by when they came.
  * @typedef {{ held(name: string): Promise<Held | null>, hold(name: string, held: Held): Promise<void>, forget(name: string): Promise<void>, names(): Promise<string[]>,
- *   report(text: string): Promise<void>, record(text: string): Promise<void> }} Names
+ *   report(text: string): Promise<void>, record(text: string): Promise<void>, replies(name: string): Promise<{ id: string, sealed: string }[]>,
+ *   keepReply(name: string, id: string, sealed: string): Promise<void>, dropReplies(name: string, ids: string[]): Promise<void> }} Names
  * Where a site's files go, and how the edge forgets them; `read` where the host serves them itself.
  * @typedef {{ put(name: string, path: string, bytes: Uint8Array, type: string): Promise<void>, drop(name: string, path: string): Promise<void>, purge(name: string): Promise<void>,
  *   read?(name: string, path: string): Promise<Uint8Array | null> }} Files
@@ -178,14 +191,23 @@ export function bunny({ storage, api }, { storageKey, apiKey }, address) {
   }
 }
 
+/** A reply's id: when it came, in base 36, so that ids sort by it, then a part of its own. @param {number} now */
+const replyId = (now) => `${now.toString(36).padStart(9, '0')}-${base64url(crypto.getRandomValues(new Uint8Array(6)))}`
+/** When a reply came, from its id. @param {string} id */
+export const cameAt = (id) => parseInt(id.split('-')[0], 36)
+/** Every reply waiting for a site, gone with it. @param {Names} names @param {string} name */
+const dropAll = async (names, name) => names.dropReplies(name, (await names.replies(name)).map((one) => one.id))
+
 /**
  * Sites that have ended: a claim never published goes after its day, a site after its year, its name then held a year for its
- * token, then free. Taken down stays taken down. @param {Names} names @param {Files} files @param {number} [now]
+ * token, then free, their replies with them; replies past their days. Taken down stays taken down. @param {Names} names @param {Files} files @param {number} [now]
  */
 export async function sweepSites(names, files, now = Date.now()) {
   for (const name of await names.names()) {
     const held = await names.held(name)
+    await names.dropReplies(name, (await names.replies(name)).filter((one) => !(cameAt(one.id) + SITE.waits * DAY > now)).map((one) => one.id))
     if (!held || held.state === 'removed' || Date.parse(held.expires) > now) continue
+    await dropAll(names, name)
     for (const path of Object.keys(held.files)) await files.drop(name, path)
     if (held.state === 'live') {
       await names.hold(name, { ...held, state: 'ended', files: {}, expires: new Date(now + SITE.days * DAY).toISOString() })
@@ -198,6 +220,7 @@ export async function sweepSites(names, files, now = Date.now()) {
 export async function takeDown(name, names, files) {
   const held = await names.held(name)
   for (const path of Object.keys(held?.files ?? {})) await files.drop(name, path)
+  await dropAll(names, name)
   await files.put(name, 'index.html', new TextEncoder().encode(GONE), TYPES.html)
   await names.hold(name, { format: 1, token: held?.token ?? '', state: 'removed', expires: '', removed: new Date().toISOString(), files: {} })
   await files.purge(name)
@@ -228,7 +251,7 @@ export function siteAt(url, address) {
 /**
  * The host's routes for sites.
  * @param {Config} config @param {Names} names @param {Files} files
- * @returns {(request: Request, url: URL, at: { ours: boolean, now: number, network: string, spend: (kind: 'writes' | 'reports' | 'puts') => boolean, inTurn: <T>(id: string, task: () => Promise<T>) => Promise<T>,
+ * @returns {(request: Request, url: URL, at: { ours: boolean, now: number, network: string, spend: (kind: 'writes' | 'reports' | 'puts' | 'replies') => boolean, inTurn: <T>(id: string, task: () => Promise<T>) => Promise<T>,
  *   answer: (status: number, body?: object) => Response, client: { address: string, port: number, protocol?: string } }) => Promise<Response>}
  */
 export function publishing(config, names, files) {
@@ -257,6 +280,21 @@ export function publishing(config, names, files) {
       return answer(202, {})
     }
 
+    // A visitor's reply, from any page, sealed to the site's key, which the host can't open: kept for a site whose forms send them, while it is
+    // online, one at a time, so that a site's count holds.
+    if (rest === 'replies' && request.method === 'POST') {
+      if (spend('replies')) return answer(429, { error: 'Too many replies from here. Try again later.' })
+      const bytes = await within(request, limits.reply), sealed = bytes ? new TextDecoder().decode(bytes) : ''
+      if (!/^[\w-]{124,}$/.test(sealed)) return answer(bytes ? 400 : 413, { error: 'This isn’t a sealed reply.' })
+      return inTurn(`replies:${name}`, async () => {
+        const held = why ? null : live(await names.held(name))
+        if (held?.state !== 'live' || !held.replies) return answer(404, { error: 'This site takes no replies.' })
+        if ((await names.replies(name)).length >= limits.replies) return answer(429, { error: 'This site has too many replies waiting.', why: 'full' })
+        await names.keepReply(name, replyId(now), sealed)
+        return answer(202, {})
+      })
+    }
+
     if ((request.method === 'GET' || request.method === 'HEAD') && !rest) {
       if (why) return answer(200, { state: 'refused', why })
       const held = live(await names.held(name))
@@ -273,12 +311,22 @@ export function publishing(config, names, files) {
     const mine = (held) => (!held ? answer(404, { error: 'Nothing is published at this name.' }) : held.state === 'removed' ? answer(410, { error: 'This site was taken down.' })
       : held.token !== tokenHash ? answer(403, { error: 'This name is someone else’s.' }) : held)
 
+    // The replies waiting, to their site's token alone; then those Jean collected, by the last one's id.
+    if (rest === 'replies' && (request.method === 'GET' || request.method === 'DELETE')) {
+      const held = mine(live(await names.held(name)))
+      if (held instanceof Response) return held
+      if (request.method === 'GET') return answer(200, { replies: await names.replies(name) })
+      const through = url.searchParams.get('through') ?? ''
+      await inTurn(`replies:${name}`, async () => names.dropReplies(name, (await names.replies(name)).filter((one) => one.id <= through).map((one) => one.id)))
+      return answer(200, {})
+    }
+
     if (request.method === 'POST' && !rest) {
       if (spend('writes')) return answer(429, { error: 'Too many changes. Try again later.' })
       const bytes = await within(request, 200_000)
       /** @type {Record<string, unknown>} */
-      let list = {}
-      try { list = JSON.parse(new TextDecoder().decode(bytes ?? new Uint8Array())).files ?? {} } catch {}
+      let list = {}, replies = false
+      try { ({ files: list = {}, replies = false } = JSON.parse(new TextDecoder().decode(bytes ?? new Uint8Array()))) } catch {}
       const paths = Object.keys(list)
       if (!paths.includes('index.html') || paths.length > limits.files || paths.some((path) => !pathOf(path) || !/^[\w-]{43}$/.test(String(list[path])))) return answer(400, { error: `A site's list names index.html and at most ${limits.files} files, each with its SHA-256.` })
       return inTurn(`site:${name}`, async () => {
@@ -299,8 +347,9 @@ export function publishing(config, names, files) {
         }
         for (const path of Object.keys(next.files)) if (!paths.includes(path)) await files.drop(name, path)
         const first = next.state !== 'live'
-        const expires = new Date(now + limits.days * DAY).toISOString()
-        await names.hold(name, { ...next, state: 'live', published: new Date(now).toISOString(), expires, files: Object.fromEntries(paths.map((path) => [path, next.files[path]])) })
+        const expires = new Date(now + limits.days * DAY).toISOString(), kept = { ...next }
+        delete kept.replies
+        await names.hold(name, { ...kept, state: 'live', published: new Date(now).toISOString(), expires, files: Object.fromEntries(paths.map((path) => [path, next.files[path]])), ...(replies === true && { replies: true }) })
         await files.purge(name)
         await record(first ? 'create' : 'change')
         return answer(first ? 201 : 200, { address, expires })
@@ -353,6 +402,7 @@ export function publishing(config, names, files) {
         const held = mine(live(await names.held(name)))
         if (held instanceof Response) return held
         for (const path of Object.keys(held.files)) await files.drop(name, path)
+        await dropAll(names, name)
         await names.hold(name, { ...held, state: 'ended', files: {}, expires: new Date(now + limits.days * DAY).toISOString() })
         await files.purge(name)
         await record('delete')

@@ -46,6 +46,14 @@
   "sites.public": "Svatko je može otvoriti, a tražilice je prikazuju.",
   "sites.year": "Na mreži godinu dana. Svakom objavom godina počinje iznova.",
   "sites.formWaits": "Obrazac web-stranice još ne može slati odgovore.",
+  "sites.formReplies": "Ono što posjetitelji pošalju njegovim obrascem stiže ovamo, u zbirku. Do tada ga poslužitelj čuva zapečaćeno, najviše mjesec dana.",
+  "sites.replied": {
+    "one": "{count} novi odgovor za {name}.",
+    "few": "{count} nova odgovora za {name}.",
+    "other": "{count} novih odgovora za {name}."
+  },
+  "sites.repliesOf": "{form} · {site}",
+  "sites.sentAt": "Poslano",
   "sites.go": "Objavi",
   "sites.publishing": "Objavljivanje… {done} od {count}",
   "sites.haveCode": "Imam njezin kod za oporavak",

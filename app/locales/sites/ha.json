@@ -46,6 +46,13 @@
   "sites.public": "Kowa zai iya buɗe shi, kuma injunan bincike suna nuna shi.",
   "sites.year": "Yana kan intanet na shekara ɗaya. Duk lokacin da ka wallafa shi, shekarar tana sake farawa.",
   "sites.formWaits": "Fom ɗin shafin ba zai iya aika amsoshi ba tukuna.",
+  "sites.formReplies": "Abin da baƙi suke aikawa ta fom ɗinsa yana zuwa nan, cikin kundi. Har zuwa lokacin, mai masaukin yana adana shi a rufe, wata ɗaya a mafi yawa.",
+  "sites.replied": {
+    "one": "Sabuwar amsa {count} ga {name}.",
+    "other": "Sababbin amsoshi {count} ga {name}."
+  },
+  "sites.repliesOf": "{form} · {site}",
+  "sites.sentAt": "An aika",
   "sites.go": "Wallafa",
   "sites.publishing": "Ana wallafawa… {done} cikin {count}",
   "sites.haveCode": "Ina da lambar maidowarsa",

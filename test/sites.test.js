@@ -6,6 +6,8 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { checkFiles, told } from '../app/caps/sites/check.js'
 import { pathIn, changed, reach, PLACE, sited, played, retyped, waitingOf } from '../app/caps/sites/file.js'
+import { SCRIPT, scriptOf, withReplies, formed } from '../app/caps/sites/replies.js'
+import { checkScreens } from '../app/caps/prototypes/check.js'
 import { LINES, SITE, CHANGE } from '../app/caps/sites/tool.js'
 import { LOOK, FACES, dealt, lookOf, ownLook, projectLook, cssOf, worn, saidOf } from '../app/caps/sites/look.js'
 import { contrast } from '../app/ui/colour.js'
@@ -26,7 +28,7 @@ const versions = /* html */ '<link rel="alternate" hreflang="en" href="/index.ht
 
 test('a site as the skill asks passes, in two languages, one right to left', () => {
   const files = new Map([
-    ['index.html', encode(page('en', 'Fournil · Bakery', '<a href="ar/index.html" lang="ar" hreflang="ar">العربية</a><h1>Bread every morning</h1><img src="bread.jpg" alt="A loaf on a board" width="800" height="600"><form method="post" data-form="cake"><label for="email">Email</label><input id="email" type="email" name="email"><button>Send</button></form>', versions))],
+    ['index.html', encode(page('en', 'Fournil · Bakery', '<a href="ar/index.html" lang="ar" hreflang="ar">العربية</a><h1>Bread every morning</h1><img src="bread.jpg" alt="A loaf on a board" width="800" height="600"><form method="post" data-form="cake"><label for="email">Email</label><input id="email" type="email" name="email"><button>Send</button><p data-sent hidden>Thank you: we write back within a day.</p><p data-unsent hidden>It didn’t go. Call us instead.</p></form>', versions))],
     ['ar/index.html', encode(page('ar', 'فورنيل · مخبز', '<h1>خبز كل صباح</h1>', versions))],
     ['style.css', encode('body { margin-inline: auto; padding-block: 1rem; text-align: start; }')],
     ['bread.jpg', new Uint8Array([0xff, 0xd8, 0xff])],
@@ -55,6 +57,34 @@ test('what the skill forbids is each said, with its page', () => {
   }
 })
 
+test('a form says in the page’s words whether what was sent went, each field named, both lines hidden until then; a prototype’s needn’t (D751)', () => {
+  const form = (/** @type {string} */ inside) => new Map([['index.html', encode(page('en', 'Fournil · Bakery', `<h1>Order a cake</h1><form method="post" data-form="orders"><label for="who">Your name</label>${inside}<button>Order</button></form>`))]])
+  const said = (/** @type {string} */ inside) => checkFiles(form(inside)).problems.filter((problem) => problem.includes('form'))
+  assert.deepEqual(said('<input id="who" name="who"><p data-sent hidden>Thanks.</p><p data-unsent hidden>It didn’t go.</p>'), [])
+  assert.deepEqual(said('<input id="who">'), ['index.html: a form has no [data-sent] element: a hidden line saying, in the page’s words, that what was sent went and what happens next',
+    'index.html: a form has no [data-unsent] element: a hidden line saying, in the page’s words, that it didn’t go and how else to reach them', 'index.html: a form’s field #who has no name, so what is typed in it isn’t sent'])
+  assert.deepEqual(said('<input id="who" name="who"><p data-sent>Thanks.</p><p data-unsent hidden>No.</p>'), ['index.html: a form’s [data-sent] shows before anything is sent: give it hidden'])
+  // A prototype's form sends nowhere: none of this is said of it.
+  assert.equal(checkScreens(form('<input id="who">')).problems.filter((problem) => problem.includes('form')).length, 0)
+})
+
+test('a site with a form goes online with the script its replies go with, each page with one loading it; one without, as it is (D751)', () => {
+  const files = new Map([['index.html', encode('<html><head><title>A</title></head><body><form method="post" data-form="orders"></form></body></html>')], ['fr/index.html', encode('<p>Bonjour</p>')], ['style.css', encode('p {}')]])
+  const out = withReplies(files, scriptOf('https://hst.ing', 'KEY'))
+  assert.deepEqual([...out.keys()], ['index.html', 'fr/index.html', 'style.css', SCRIPT])
+  assert.equal(new TextDecoder().decode(out.get('index.html')), `<html><head><title>A</title><script src="/${SCRIPT}" defer></script></head><body><form method="post" data-form="orders"></form></body></html>`)
+  assert.equal(out.get('fr/index.html'), files.get('fr/index.html'))
+  const script = new TextDecoder().decode(out.get(SCRIPT))
+  assert.match(script, /^\/\/ Jean's script for this site's forms/)
+  assert.match(script, /const at = "https:\/\/hst\.ing", key = "KEY"/)
+  assert.match(script, /fetch\(at \+ '\/v1\/sites\/' \+ location\.hostname\.split\('\.'\)\[0\] \+ '\/replies'/)
+  // The same files make the same script and pages, so Publish again finds nothing changed.
+  assert.deepEqual(withReplies(files, scriptOf('https://hst.ing', 'KEY')), out)
+  const plain = new Map([['index.html', encode('<form method="post"></form>')]])
+  assert.equal(withReplies(plain, 'x'), plain)
+  assert.ok(formed('<form class="a" data-form="rsvp">') && !formed('<form data-formula="x">') && !formed('<p data-form="x">'))
+})
+
 test('each language has every page, and names the others', () => {
   const files = new Map([
     ['index.html', encode(page('en', 'Home', '<h1>Home</h1><a href="prices.html">Prices</a>'))],
@@ -69,10 +99,10 @@ test('each language has every page, and names the others', () => {
   assert.ok(!problems.some((problem) => problem.includes('physical')))
 })
 
-test("a site's paths: its own files, never its record, a hidden file, one outside it or a kind it doesn't hold", () => {
+test("a site's paths: its own files, never its record, a hidden file, one outside it, a kind it doesn't hold or the script its forms go online with", () => {
   assert.equal(pathIn('./fr/index.html'), 'fr/index.html')
   assert.equal(pathIn('/photos/dunes.JPG'), 'photos/dunes.JPG')
-  for (const wrong of ['', 'site.json', '../index.html', 'a//b.html', '.hidden/page.html', 'https://example.com/a.html', 'notes.docx', 'app.php']) assert.throws(() => pathIn(wrong), undefined, wrong)
+  for (const wrong of ['', 'site.json', '../index.html', 'a//b.html', '.hidden/page.html', 'https://example.com/a.html', 'notes.docx', 'app.php', SCRIPT]) assert.throws(() => pathIn(wrong), undefined, wrong)
   assert.ok(PLACE.test('sites/01ABC-bakery') && !PLACE.test('sites/01ABC-bakery/index.html') && !PLACE.test('sites/.cache'))
   const files = new Map([['index.html', 1], ['fr/index.html', 1], ['menu.html', 1]])
   assert.deepEqual(['', 'fr/', 'fr', 'menu', 'menu.html', 'missing'].map((path) => reach(files, path)), ['index.html', 'fr/index.html', 'fr/index.html', 'menu.html', 'menu.html', null])

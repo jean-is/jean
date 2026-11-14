@@ -46,6 +46,13 @@
   "sites.public": "Mabubuksan ito ng kahit sino, at ipinapakita ito ng mga search engine.",
   "sites.year": "Online nang isang taon. Sa bawat paglalathala, nagsisimula ulit ang taon.",
   "sites.formWaits": "Hindi pa makapagpadala ng sagot ang form ng site.",
+  "sites.formReplies": "Ang ipinapadala ng mga bisita sa form nito ay dumarating dito, sa isang koleksiyon. Hanggang doon, itinatago ito ng host nang selyado, isang buwan nang pinakamatagal.",
+  "sites.replied": {
+    "one": "{count} bagong sagot sa {name}.",
+    "other": "{count} bagong sagot sa {name}."
+  },
+  "sites.repliesOf": "{form} · {site}",
+  "sites.sentAt": "Ipinadala",
   "sites.go": "Ilathala",
   "sites.publishing": "Inilalathala… {done} sa {count}",
   "sites.haveCode": "Nasa akin ang recovery code nito",

@@ -3,7 +3,8 @@
 // page, said so that the brain can fix it: its language and direction, title, description and card, one h1 and headings in
 // order, one top, main and foot, names for links, buttons, fields and pictures, links and pictures that lead somewhere, every page
 // reached from index.html, each language with every page and naming the others, nothing loaded from another site, no script
-// inside a page (a host runs a site's own files only), forms the host can receive, no field for a password or a card, and the
+// inside a page (a host runs a site's own files only), forms the host can receive, each field named and the page's own words for a
+// reply that went and one that didn't (D751), no field for a password or a card, and the
 // [placeholders] left to fill in. What only a page shows (a sideways scroll, a picture that won't load, a script's error,
 // contrast) is ./frame.js's. Pure: node tests run it, and npm run sites measures brains with it.
 import { parse, elements } from './html.js'
@@ -184,11 +185,18 @@ export function checkFiles(files) {
     const styles = named('style').map((style) => style.children.join('')).join('\n')
     if (/url\(\s*['"]?(https?:)?\/\/|@import\s+(url\()?\s*['"]?(https?:)?\/\//i.test(styles)) say('its style loads something from another site')
 
-    // Forms the host receives, asking for nothing a site mustn't.
+    // Forms the host receives, asking for nothing a site mustn't, each field named, and saying in the page's words whether what was sent went.
     for (const form of named('form')) {
       if (form.attrs.action !== undefined) say(`a form sends to ${form.attrs.action || 'its action'}; leave action out, since the host receives what it sends`)
       if ((form.attrs.method ?? 'get').toLowerCase() !== 'post') say('a form doesn’t send with method="post"')
       if (!form.attrs['data-form']) say('a form has no data-form name')
+      const inside = elements(form), [sent, unsent] = ['data-sent', 'data-unsent'].map((mark) => inside.find((element) => element.attrs[mark] !== undefined))
+      if (!sent) say('a form has no [data-sent] element: a hidden line saying, in the page’s words, that what was sent went and what happens next')
+      if (!unsent) say('a form has no [data-unsent] element: a hidden line saying, in the page’s words, that it didn’t go and how else to reach them')
+      for (const [mark, line] of /** @type {[string, Element | undefined][]} */ ([['data-sent', sent], ['data-unsent', unsent]])) if (line && line.attrs.hidden === undefined) say(`a form’s [${mark}] shows before anything is sent: give it hidden`)
+      for (const field of inside.filter((element) => ['input', 'select', 'textarea'].includes(element.name) && !['submit', 'button', 'reset', 'image'].includes(element.attrs.type ?? ''))) {
+        if (!field.attrs.name) say(`a form’s field ${field.attrs.id ? `#${field.attrs.id}` : `<${field.name}>`} has no name, so what is typed in it isn’t sent`)
+      }
     }
     for (const field of all.filter((element) => ['input', 'select', 'textarea'].includes(element.name))) {
       const words = `${field.attrs.name ?? ''} ${field.attrs.id ?? ''} ${field.attrs.autocomplete ?? ''}`

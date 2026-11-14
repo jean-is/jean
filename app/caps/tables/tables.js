@@ -247,6 +247,17 @@ async function made(table, rows = []) {
   await app.fs.write(`${one.dir}/${one.folder}/changes.jsonl`, stringifyChanges(stamp([], rows, { by: 'user' })))
   return (await load(one.folder)) ?? one
 }
+/**
+ * A collection made with no conversation, empty, in a project, `dir`, as a site's replies make one (D751); its place. @param {{ name: string, columns: { name: string, type: string }[] }} spec
+ * @param {string} dir
+ */
+export async function makeTable(spec, dir) {
+  const table = createTable(spec, { id: ulid(), author: 'user', at: new Date().toISOString() }), one = { dir, folder: folderOf(table), table, lines: [], rows: [] }
+  await writeTable(one, table)
+  await app.fs.write(`${dir}/${one.folder}/changes.jsonl`, '')
+  listed()
+  return one.folder
+}
 
 /** A collection pinned or renamed from the Creations page, as its view renames it. @param {{ path: string }} item @param {{ pinned?: boolean, name?: string }} edit */
 export const amend = ({ path }, { pinned, name }) => (reshaping = reshaping.catch(() => {}).then(async () => {

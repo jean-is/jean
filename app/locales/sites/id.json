@@ -46,6 +46,12 @@
   "sites.public": "Siapa pun bisa membukanya, dan mesin pencari menampilkannya.",
   "sites.year": "Online selama setahun. Setiap kali diterbitkan, masa setahun itu dimulai lagi.",
   "sites.formWaits": "Formulir situs ini belum bisa mengirim balasan.",
+  "sites.formReplies": "Apa yang dikirim pengunjung lewat formulirnya masuk ke sini, ke sebuah koleksi. Sampai saat itu, host menyimpannya tersegel, paling lama sebulan.",
+  "sites.replied": {
+    "other": "{count} balasan baru untuk {name}."
+  },
+  "sites.repliesOf": "{form} · {site}",
+  "sites.sentAt": "Dikirim",
   "sites.go": "Terbitkan",
   "sites.publishing": "Menerbitkan… {done} dari {count}",
   "sites.haveCode": "Saya punya kode pemulihannya",

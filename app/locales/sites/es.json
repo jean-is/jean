@@ -46,6 +46,14 @@
   "sites.public": "Cualquiera puede abrirlo, y los motores de búsqueda lo muestran.",
   "sites.year": "En línea durante un año. Cada vez que publicas, se renueva.",
   "sites.formWaits": "El formulario del sitio aún no puede enviar respuestas.",
+  "sites.formReplies": "Lo que los visitantes envían con su formulario llega aquí, a una colección. Hasta entonces, el servidor lo guarda sellado, un mes como máximo.",
+  "sites.replied": {
+    "one": "{count} respuesta nueva para {name}.",
+    "many": "{count} de respuestas nuevas para {name}.",
+    "other": "{count} respuestas nuevas para {name}."
+  },
+  "sites.repliesOf": "{form} · {site}",
+  "sites.sentAt": "Enviado",
   "sites.go": "Publicar",
   "sites.publishing": "Publicando… {done} de {count}",
   "sites.haveCode": "Tengo su código de recuperación",

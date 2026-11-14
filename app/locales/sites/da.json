@@ -46,6 +46,13 @@
   "sites.public": "Alle kan åbne det, og søgemaskiner viser det.",
   "sites.year": "Online i et år. Hver udgivelse starter året forfra.",
   "sites.formWaits": "Webstedets formular kan ikke sende svar endnu.",
+  "sites.formReplies": "Det, besøgende sender med formularen, kommer hertil i en samling. Indtil da holder værten det forseglet, højst en måned.",
+  "sites.replied": {
+    "one": "{count} nyt svar til {name}.",
+    "other": "{count} nye svar til {name}."
+  },
+  "sites.repliesOf": "{form} · {site}",
+  "sites.sentAt": "Sendt",
   "sites.go": "Udgiv",
   "sites.publishing": "Udgiver… {done} af {count}",
   "sites.haveCode": "Jeg har dets gendannelseskode",

@@ -15,7 +15,7 @@ import { parse, elements } from '../sites/html.js'
 
 /** What only a site for strangers needs, which a prototype's pages don't. */
 const SITE_ONLY = [/: its description is /, /: its card for shared links/, /top \(header\), not one/, /foot \(footer\), not one/, /a form sends to /, /a form doesn’t send with method="post"/,
-  /a form has no data-form name/, /nothing leads to it from index\.html/, /navigations has no name/]
+  /a form has no data-form name/, /a form has no \[data-/, /a form’s (\[data-|field )/, /nothing leads to it from index\.html/, /navigations has no name/]
 
 /** A site's words, said of a prototype. @param {string} problem */
 const said = (problem) => problem

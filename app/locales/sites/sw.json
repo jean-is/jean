@@ -46,6 +46,13 @@
   "sites.public": "Mtu yeyote anaweza kuifungua, na injini za utafutaji zinaionyesha.",
   "sites.year": "Iko mtandaoni kwa mwaka mmoja. Kila uchapishaji unaanzisha mwaka upya.",
   "sites.formWaits": "Fomu ya tovuti bado haiwezi kutuma majibu.",
+  "sites.formReplies": "Kile wageni wanachotuma kwa fomu yake kinakuja hapa, kwenye mkusanyiko. Hadi wakati huo, mwenyeji anakihifadhi kikiwa kimefungwa, kwa muda usiozidi mwezi mmoja.",
+  "sites.replied": {
+    "one": "Jibu {count} jipya kwa {name}.",
+    "other": "Majibu {count} mapya kwa {name}."
+  },
+  "sites.repliesOf": "{form} · {site}",
+  "sites.sentAt": "Ilitumwa",
   "sites.go": "Chapisha",
   "sites.publishing": "Inachapisha… {done} kati ya {count}",
   "sites.haveCode": "Nina msimbo wake wa urejeshaji",

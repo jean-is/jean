@@ -46,6 +46,13 @@
   "sites.public": "ማንኛውም ሰው ሊከፍተው ይችላል፣ የፍለጋ ሞተሮችም ያሳዩታል።",
   "sites.year": "ለአንድ ዓመት በኢንተርኔት ላይ ይቆያል። በታተመ ቁጥር ዓመቱ እንደገና ይጀምራል።",
   "sites.formWaits": "የድረ ገጹ ቅጽ ገና ምላሾችን መላክ አይችልም።",
+  "sites.formReplies": "ጎብኚዎች በቅጹ የሚልኩት ወደዚህ፣ ወደ ስብስብ ይመጣል። እስከዚያው አስተናጋጁ ታሽጎ ያቆየዋል፣ ቢበዛ ለአንድ ወር።",
+  "sites.replied": {
+    "one": "ለ{name} {count} አዲስ ምላሽ።",
+    "other": "ለ{name} {count} አዲስ ምላሾች።"
+  },
+  "sites.repliesOf": "{form} · {site}",
+  "sites.sentAt": "የተላከበት",
   "sites.go": "አትም",
   "sites.publishing": "በማተም ላይ… ከ{count} ውስጥ {done}",
   "sites.haveCode": "የመልሶ ማግኛ ኮዱ አለኝ",

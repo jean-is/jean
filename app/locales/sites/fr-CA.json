@@ -46,6 +46,14 @@
   "sites.public": "Tout le monde peut l’ouvrir, et les moteurs de recherche le montrent.",
   "sites.year": "En ligne pendant un an. Chaque publication prolonge d’un an.",
   "sites.formWaits": "Son formulaire ne peut pas encore envoyer de réponses.",
+  "sites.formReplies": "Ce que les visiteurs envoient avec son formulaire arrive ici, dans une collection. D’ici là, l’hébergeur le garde scellé, un mois au plus.",
+  "sites.replied": {
+    "one": "{count} nouvelle réponse à {name}.",
+    "many": "{count} de nouvelles réponses à {name}.",
+    "other": "{count} nouvelles réponses à {name}."
+  },
+  "sites.repliesOf": "{form} · {site}",
+  "sites.sentAt": "Envoyé le",
   "sites.go": "Publier",
   "sites.publishing": "Publication… {done} sur {count}",
   "sites.haveCode": "J’ai son code de récupération",

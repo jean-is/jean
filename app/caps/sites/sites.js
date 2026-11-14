@@ -8,18 +8,21 @@
 // (publishPage). Among the creations once the project holds one; until then its card to start one. Found by its skill, which brings it
 // (D401), or by a page's Publish…; nothing of it shows before. Its words are retyped in place and its parts pointed at for the brain in its
 // pane (./hand.js, D741); what the brain changes after the turn it made the site waits as its version, `sites/.suggested/<ulid>-<slug>`,
-// for the person to accept or reject (D505).
+// for the person to accept or reject (D505). What visitors send its forms once it is online waits sealed at the host until Jean collects it
+// into a collection for each form, as the project opens and as Publish's dialog does (D751, ./replies.js).
 import { html, svg } from 'lit-html'
 import { effect } from '@preact/signals-core'
-import { app } from '../../ui/state.js'
-import { register } from '../../ui/caps.js'
+import { app, notify } from '../../ui/state.js'
+import { register, unlock } from '../../ui/caps.js'
+import { getSecret } from '../../ui/secrets.js'
 import { icon, icons } from '../../ui/menu-icons.js'
 import { reread } from '../../ui/creations.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { ulid } from '../../core/ulid.js'
 import { slug } from '../../core/settings.js'
 import { t, useStrings } from '../../core/i18n.js'
-import { sited } from './file.js'
+import { sited, secretOf, tokenOf } from './file.js'
+import { keyOf, opened } from './replies.js'
 import { offered } from './offer.js'
 import { checkFiles, told } from './check.js'
 import { LINES, SITE, CHANGE } from './tool.js'
@@ -51,8 +54,55 @@ const kind = folderKind({ id: 'sites', folder: 'sites', record: 'site.json', nou
   view: (site) => html`<app-site class="beside" .site=${site}></app-site>` })
 export const { load, metaOf, bytesOf, editor } = kind
 
-/** A site's record with what was published, its files untouched. @param {string} path @param {import('./file.js').SiteRecord['published']} published */
-export const remember = async (path, published) => { const record = await kind.recordOf(path); if (record) await app.fs.write(`${app.projectDir}/${path}/site.json`, JSON.stringify({ ...record, published }, null, 1)) }
+/** A site's record with what was published, its files untouched. @param {string} path @param {import('./file.js').SiteRecord['published']} published @param {string} [dir] */
+export const remember = async (path, published, dir = app.projectDir) => { const record = await kind.recordOf(path, dir); if (record) await app.fs.write(`${dir}/${path}/site.json`, JSON.stringify({ ...record, published }, null, 1)) }
+
+const DAY = 86_400_000
+/** Collections under way, by site, one at a time. @type {Map<string, Promise<number>>} */
+const collecting = new Map()
+/**
+ * The replies waiting at the host for a published site's forms (D751), opened with its secret and kept as rows of a collection for each form,
+ * made the first time, named after the form and the site: when it was sent, then a column for each field by its label, a choice's a select.
+ * Then the host drops them; the last one's id stays in site.json, so that none comes twice. None for a site whose secret isn't here, or with
+ * Tables turned off, whose replies wait at the host. @param {string} path @param {string} [dir] @returns {Promise<number>} how many came
+ */
+export const collect = (path, dir = app.projectDir) => collecting.get(path) ?? /** @type {Promise<number>} */ (collecting.set(path, gather(path, dir).catch((error) => (console.warn(error), 0)).finally(() => collecting.delete(path))).get(path))
+/** @param {string} path @param {string} dir */
+async function gather(path, dir) {
+  const record = await kind.recordOf(path, dir).catch(() => null), out = record?.published, kept = out?.replies
+  const code = kept && Date.parse(out.expires) > Date.now() - 30 * DAY && await getSecret(app.fs, `site:${path.split('/')[1].split('-')[0]}`), secret = code ? secretOf(String(code)) : null
+  if (!record || !out || !kept || !secret) return 0
+  const at = new URL(`v1/sites/${out.name}/replies`, out.host), authorization = `Bearer ${await tokenOf(secret)}`
+  /** @type {{ id: string, sealed: string }[]} */
+  const replies = /** @type {{ replies?: any }} */ (await fetch(at, { headers: { authorization } }).then((answer) => (answer.ok ? answer.json() : {}), () => ({}))).replies ?? []
+  if (!Array.isArray(replies)) return 0
+  const fresh = replies.filter((one) => one.id > (kept.through ?? '')), key = fresh.length ? await keyOf(kept.sealed, secret) : null
+  const came = /** @type {NonNullable<Awaited<ReturnType<typeof opened>>>[]} */ ((await Promise.all(fresh.map((one) => (key ? opened(one.sealed, key) : null)))).filter(Boolean))
+  if (!replies.length || (came.length && !(await unlock('tables'))) || app.projectDir !== dir) return 0
+  const collections = { ...kept.collections }
+  if (came.length) {
+    const [tables, { propertyOf, converted }] = await Promise.all([import('../tables/tables.js'), import('../tables/table.js')]), sent = t('sites.sentAt')
+    for (const form of new Set(came.map((one) => one.form))) {
+      const rows = came.filter((one) => one.form === form)
+      let one = (collections[form] && await tables.load(collections[form], dir).catch(() => null)) || await tables.load(await tables.makeTable({ name: t('sites.repliesOf', { form, site: record.name }), columns: [{ name: sent, type: 'date' }] }, dir), dir)
+      for (const field of rows.flatMap((reply) => reply.fields)) if (one && !propertyOf(one.table, field.label)) one = (await tables.reshapeTable(one, { add: { name: field.label, type: field.choice ? 'select' : 'text' } }, false), await tables.load(one.folder, dir))
+      if (!one) continue
+      const table = one.table, cell = (/** @type {string} */ label, /** @type {string} */ value) => ((property) => ((fit) => (property && fit !== undefined ? [[property.id, fit]] : []))(property && converted(property, value)))(propertyOf(table, label))
+      // When each was sent, on this device's clock, then its fields, each as its column takes it.
+      await tables.change(one, rows.map((reply) => ({ set: Object.fromEntries([...cell(sent, new Date(Date.parse(reply.at) - new Date(reply.at).getTimezoneOffset() * 60_000).toISOString().slice(0, 16)), ...reply.fields.flatMap((field) => cell(field.label, field.value))]) })), 'visitor', undefined, false, false)
+      collections[form] = one.folder
+    }
+  }
+  // Only its replies' part of the record, as it is now: a publish may have written the rest meanwhile.
+  const now = (await kind.recordOf(path, dir).catch(() => null))?.published ?? out
+  await remember(path, { ...now, replies: { ...now.replies ?? kept, collections, through: replies[replies.length - 1].id } }, dir)
+  await fetch(`${at}?through=${encodeURIComponent(replies[replies.length - 1].id)}`, { method: 'DELETE', headers: { authorization } }).catch(() => {})
+  if (came.length) notify(t('sites.replied', { count: came.length, name: record.name }))
+  return came.length
+}
+/** Each published site of a project with replies waiting, collected once as it opens. */
+let collected = ''
+effect(() => { const dir = app.projectDir; if (dir !== collected) (collected = dir, kind.kept(dir).then((list) => list.forEach(({ path }) => collect(path, dir)), console.warn)) })
 
 /**
  * A page on its own published as a site of one page: the site made from it the first time, under its name, its files made again from it

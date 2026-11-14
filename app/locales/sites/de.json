@@ -46,6 +46,13 @@
   "sites.public": "Alle können sie öffnen, und Suchmaschinen zeigen sie an.",
   "sites.year": "Ein Jahr lang online. Jede Veröffentlichung verlängert das um ein Jahr.",
   "sites.formWaits": "Das Formular der Website kann noch keine Antworten senden.",
+  "sites.formReplies": "Was Besucher über das Formular senden, kommt hierher, in eine Sammlung. Bis dahin bewahrt der Host es versiegelt auf, höchstens einen Monat lang.",
+  "sites.replied": {
+    "one": "{count} neue Antwort für {name}.",
+    "other": "{count} neue Antworten für {name}."
+  },
+  "sites.repliesOf": "{form} · {site}",
+  "sites.sentAt": "Gesendet",
   "sites.go": "Veröffentlichen",
   "sites.publishing": "Wird veröffentlicht… {done} von {count}",
   "sites.haveCode": "Ich habe den Wiederherstellungscode",

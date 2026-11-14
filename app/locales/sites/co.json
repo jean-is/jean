@@ -46,6 +46,14 @@
   "sites.public": "Chiunque u pò apre, è i mutori di ricerca u mostranu.",
   "sites.year": "In linea per un annu. Ogni publicazione u rinnova.",
   "sites.formWaits": "U furmulariu di u situ ùn pò ancu mandà risposte.",
+  "sites.formReplies": "Ciò chì i visitatori mandanu cù u so furmulariu ghjunghje quì, in una cullezzione. Finu à tandu, l’ospitatore u tene sigillatu, un mese à u più.",
+  "sites.replied": {
+    "one": "{count} risposta nova per {name}.",
+    "many": "{count} di risposte nove per {name}.",
+    "other": "{count} risposte nove per {name}."
+  },
+  "sites.repliesOf": "{form} · {site}",
+  "sites.sentAt": "Mandatu",
   "sites.go": "Publicà",
   "sites.publishing": "Publicazione… {done} nant’à {count}",
   "sites.haveCode": "Aghju u so codice di ricuperu",

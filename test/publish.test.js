@@ -1,15 +1,16 @@
 // SPDX-License-Identifier: MIT
 // Sites published at names of their own (D720): the host's names, its routes, what it keeps and serves, Bunny's store, and
-// what Jean draws a site's token and recovery code from.
+// what Jean draws a site's token and recovery code from; replies to its forms, sealed in a visitor's browser (D751).
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { mkdtemp, readFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { host, base64url } from '../host/host.js'
-import { folder, siteFiles } from '../host/serve.js'
-import { refused, fileAt, cleanAt, tidy, siteAt, serveSite, sweepSites, takeDown, bunny, digest, unfit, HEADERS, TYPES, GONE, headersFor } from '../host/sites.js'
+import { folder, siteFiles, sealRecord } from '../host/serve.js'
+import { refused, fileAt, cleanAt, tidy, siteAt, serveSite, sweepSites, takeDown, bunny, digest, unfit, HEADERS, TYPES, GONE, headersFor, repliesAt, cameAt } from '../host/sites.js'
 import { TYPES as JEANS, tokenOf, codeOf, secretOf, failedOf } from '../app/caps/sites/file.js'
+import { repliesAt as jeans, pairOf, sealKey, keyOf, opened } from '../app/caps/sites/replies.js'
 
 const JEAN = 'https://jean.example'
 const CLIENT = { address: '203.0.113.7', port: 51234, protocol: 'HTTP/1.1' }
@@ -19,11 +20,15 @@ const DAY = 86_400_000
 /** Names and files in memory, as the host keeps them. */
 function memory() {
   const held = new Map(), files = new Map(), reports = /** @type {string[]} */ ([]), records = /** @type {string[]} */ ([]), purged = /** @type {string[]} */ ([])
+  const waiting = /** @type {Map<string, Map<string, string>>} */ (new Map())
   return {
-    held, files, reports, records, purged,
+    held, files, reports, records, purged, waiting,
     store: { meta: async () => null, body: async () => null, put: async () => {}, remove: async () => {}, report: async (/** @type {string} */ text) => { reports.push(text) }, record: async (/** @type {string} */ text) => { records.push(text) },
       held: async (/** @type {string} */ name) => held.get(name) ?? null, hold: async (/** @type {string} */ name, /** @type {any} */ one) => { held.set(name, structuredClone(one)) },
-      forget: async (/** @type {string} */ name) => { held.delete(name) }, names: async () => [...held.keys()] },
+      forget: async (/** @type {string} */ name) => { held.delete(name) }, names: async () => [...held.keys()],
+      replies: async (/** @type {string} */ name) => [...waiting.get(name) ?? []].sort(([a], [b]) => (a < b ? -1 : 1)).map(([id, sealed]) => ({ id, sealed })),
+      keepReply: async (/** @type {string} */ name, /** @type {string} */ id, /** @type {string} */ sealed) => { waiting.set(name, (waiting.get(name) ?? new Map()).set(id, sealed)) },
+      dropReplies: async (/** @type {string} */ name, /** @type {string[]} */ ids) => { for (const id of ids) waiting.get(name)?.delete(id) } },
     sites: { put: async (/** @type {string} */ name, /** @type {string} */ path, /** @type {Uint8Array} */ bytes) => { files.set(`${name}/${path}`, bytes) }, drop: async (/** @type {string} */ name, /** @type {string} */ path) => { files.delete(`${name}/${path}`) },
       purge: async (/** @type {string} */ name) => { purged.push(name) }, read: async (/** @type {string} */ name, /** @type {string} */ path) => files.get(`${name}/${path}`) ?? null },
   }
@@ -215,7 +220,7 @@ test('every file of a site is served under the same strict header set, a page fo
     const response = await on.handle(new Request(`http://lyon-bakery.localhost:8788${path}`))
     assert.equal(response.status, 200)
     assert.equal(response.headers.get('content-type'), type)
-    for (const [name, value] of Object.entries(HEADERS)) assert.equal(response.headers.get(name), value)
+    for (const [name, value] of Object.entries(headersFor(undefined, 'http://{name}.localhost:8788/'))) assert.equal(response.headers.get(name), value)
   }
   const missing = await serveSite(on.sites, 'lyon-bakery', new URL('http://lyon-bakery.localhost:8788/nothing'))
   assert.equal(missing.status, 404)
@@ -225,8 +230,14 @@ test('every file of a site is served under the same strict header set, a page fo
   assert.equal((await on.handle(new Request('http://lyon-bakery.localhost:8788/', { method: 'POST' }))).status, 405)
 })
 
-test('a host adds the origins its configuration names to sites’ style-src, img-src and font-src, and nothing else', async () => {
+test('a host adds the origins its configuration names to sites’ style-src, img-src and font-src, where replies go to connect-src, and nothing else', async () => {
   assert.equal(headersFor(), HEADERS)
+  // Where a site's forms send their replies: the host at the sites' parent name, as Jean's script says it.
+  for (const [address, at] of [['https://{name}.hst.ing/', 'https://hst.ing'], ['http://{name}.localhost:8788/', 'http://localhost:8788'], ['https://{name}.sites.corp.example/', 'https://sites.corp.example']]) {
+    assert.equal(repliesAt(address), at)
+    assert.equal(jeans(address), at)
+    assert.match(headersFor(undefined, address)['content-security-policy'], new RegExp(`; connect-src 'self' ${at.replace(/[.:/]/g, '\\$&')}; form-action 'none'; `))
+  }
   const set = headersFor({ 'style-src': ['https://fonts.googleapis.com'], 'font-src': ['https://fonts.gstatic.com', 'https://*.corp.example'] })
   assert.match(set['content-security-policy'], /; style-src 'self' 'unsafe-inline' https:\/\/fonts\.googleapis\.com; img-src 'self' data:; font-src 'self' https:\/\/fonts\.gstatic\.com https:\/\/\*\.corp\.example; /)
   assert.equal(set['content-security-policy'].replace(/ https:\/\/[^\s;]+/g, ''), HEADERS['content-security-policy'])
@@ -258,14 +269,14 @@ test('no address of a site shows .html: its pages’ links lose it as the host k
     const moved = await on.handle(new Request(`http://lyon-bakery.localhost:8788${path}`))
     assert.equal(moved.status, 301, path)
     assert.equal(moved.headers.get('location'), to)
-    for (const [name, value] of Object.entries(HEADERS)) assert.equal(moved.headers.get(name), value)
+    for (const [name, value] of Object.entries(headersFor(undefined, 'http://{name}.localhost:8788/'))) assert.equal(moved.headers.get(name), value)
   }
 })
 
 test('the host says it publishes sites, and its own page has a form to report one', async () => {
   const on = hostOn({ legal: 'https://legal.example/', alert: 'https://alerts.example/topic' })
   const told = await (await on.ask('/', { origin: null })).json()
-  assert.deepEqual(told.sites, { address: ADDRESS, limit: 50_000_000, file: 10_000_000, files: 500, days: 365 })
+  assert.deepEqual(told.sites, { address: ADDRESS, limit: 50_000_000, file: 10_000_000, files: 500, days: 365, replies: 30 })
   assert.equal((await (await hostOn({ sites: undefined }).ask('/', { origin: null })).json()).sites, undefined)
   const page = await on.ask('/', { origin: null, headers: { accept: 'text/html' } })
   const text = await page.text()
@@ -332,11 +343,80 @@ test('a folder keeps names and files; Bunny gets each file with its type and che
 test('the host serves what Jean makes, and Bunny’s edge adds the same headers', async () => {
   assert.deepEqual(TYPES, JEANS)
   const edge = await readFile(new URL('../deploy/bunny/sites.js', import.meta.url), 'utf8')
-  assert.deepEqual(JSON.parse(/** @type {string} */ (/const HEADERS = (\{[\s\S]*?\n\})/.exec(edge)?.[1])), { ...HEADERS })
+  assert.deepEqual(JSON.parse(/** @type {string} */ (/const HEADERS = (\{[\s\S]*?\n\})/.exec(edge)?.[1])), { ...headersFor(undefined, 'https://{name}.hst.ing/') })
   // The edge sends an address with .html where the host does: its own cleanAt, run here.
   const own = /** @type {string} */ (/^const cleanAt = .*$/m.exec(edge)?.[0])
   const { cleanAt: edgeAt } = await import(`data:text/javascript,${encodeURIComponent(`${own}\nexport { cleanAt }`)}`)
   for (const path of ['/about.html', '/index.html', '/index', '/fr/index.htm', '/fr/contact.HTML', '/', '/about', '/fr/', '/style.css', '/index-2026']) assert.equal(edgeAt(path), cleanAt(path), path)
+})
+
+test('a site published with its forms’ replies takes them sealed from any page, keeps them for its token alone until Jean collects them, and lets them go after 30 days or with the site (D751)', async () => {
+  const on = hostOn({ sites: { address: ADDRESS, limits: { reply: 2000, replies: 3 } } }), mine = token(), { files, list } = await siteOf(PAGES)
+  /** Publishes the site, its forms' replies taken or not. @param {boolean} replies */
+  const publishing = async (replies) => {
+    const post = () => on.ask('/v1/sites/lyon-bakery', { method: 'POST', token: mine, body: JSON.stringify({ files: list, replies }) })
+    for (const path of (await (await post()).json()).need ?? []) await on.ask(`/v1/sites/lyon-bakery/${path}`, { method: 'PUT', token: mine, body: /** @type {BodyInit} */ (files.get(path)) })
+    assert.ok((await post()).ok)
+  }
+  // Jean's pair for the site, its private half sealed under the site's secret; a visitor's browser seals to the public one, as the host's records are.
+  const secret = crypto.getRandomValues(new Uint8Array(16)), pair = await pairOf(), sealed = await sealKey(pair.privateKey, secret)
+  const to = await crypto.subtle.importKey('raw', Uint8Array.from(atob(pair.key.replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0)), { name: 'ECDH', namedCurve: 'P-256' }, false, [])
+  const reply = (/** @type {string} */ text) => sealRecord(JSON.stringify({ format: 1, form: 'orders', page: '/', at: '2026-11-14T10:00:00.000Z', fields: [{ label: 'Your name', value: text, choice: false }, { label: 'The cake', value: 'Lemon', choice: true }] }), to)
+  const send = async (/** @type {string} */ body, client = CLIENT) => on.ask('/v1/sites/lyon-bakery/replies', { method: 'POST', origin: 'null', client, headers: { 'content-type': 'text/plain' }, body })
+
+  // A site published without them takes none; with them, any page's do, as text from its opaque origin, read by any.
+  await publishing(false)
+  assert.equal((await send(await reply('Amina'))).status, 404)
+  await publishing(true)
+  const taken = await send(await reply('Amina'))
+  assert.deepEqual([taken.status, taken.headers.get('access-control-allow-origin')], [202, '*'])
+  assert.equal((await send('hello')).status, 400)
+  assert.equal((await send('x'.repeat(2001))).status, 413)
+  // To its token alone, the oldest first; Jean opens them with the private half its secret unseals.
+  assert.equal((await on.ask('/v1/sites/lyon-bakery/replies')).status, 401)
+  assert.equal((await on.ask('/v1/sites/lyon-bakery/replies', { token: token() })).status, 403)
+  assert.equal((await on.ask('/v1/sites/lyon-bakery/replies', { token: mine, origin: 'https://elsewhere.example' })).status, 403)
+  await send(await reply('Bilal'))
+  const { replies } = await (await on.ask('/v1/sites/lyon-bakery/replies', { token: mine })).json()
+  assert.equal(replies.length, 2)
+  const key = await keyOf(sealed, secret)
+  assert.deepEqual(await opened(replies[0].sealed, key), { form: 'orders', at: '2026-11-14T10:00:00.000Z', fields: [{ label: 'Your name', value: 'Amina', choice: false }, { label: 'The cake', value: 'Lemon', choice: true }] })
+  assert.equal((await opened(replies[1].sealed, key))?.fields[0].value, 'Bilal')
+  await assert.rejects(keyOf(sealed, crypto.getRandomValues(new Uint8Array(16))))
+  assert.equal(await opened(replies[0].sealed, (await pairOf()).privateKey), null)
+  // Three waiting at most; collected, those up to the last one Jean read go, and room comes back.
+  await send(await reply('Chloé'))
+  const full = await send(await reply('Dmitri'))
+  assert.deepEqual([full.status, (await full.json()).why], [429, 'full'])
+  assert.equal((await on.ask(`/v1/sites/lyon-bakery/replies?through=${replies[1].id}`, { method: 'DELETE', token: mine })).status, 200)
+  assert.deepEqual((await on.store.replies('lyon-bakery')).length, 1)
+  // Thirty from one network an hour.
+  const busy = hostOn(), name = 'busy-bakery'
+  await busy.ask(`/v1/sites/${name}`, { method: 'POST', token: mine, body: JSON.stringify({ files: list, replies: true }) })
+  const said = []
+  for (let n = 0; n <= 30; n++) said.push((await busy.ask(`/v1/sites/${name}/replies`, { method: 'POST', origin: 'null', body: 'x'.repeat(130) })).status)
+  assert.deepEqual([said[0], said.at(-1)], [404, 429])
+  // Past 30 days a reply goes; taken offline, the site's go with it; published again without them, it takes none.
+  const now = Date.now()
+  await on.store.keepReply('lyon-bakery', `${(now - 31 * DAY).toString(36).padStart(9, '0')}-old`, 'x')
+  assert.ok(Math.abs(cameAt(`${now.toString(36).padStart(9, '0')}-a`) - now) < 1)
+  const recent = (await on.store.replies('lyon-bakery')).map((one) => one.id).filter((id) => !id.endsWith('-old'))
+  await sweepSites(on.store, on.sites, now)
+  assert.deepEqual((await on.store.replies('lyon-bakery')).map((one) => one.id), recent)
+  await publishing(false)
+  assert.equal((await send(await reply('Emma'))).status, 404)
+  assert.equal((await on.ask('/v1/sites/lyon-bakery', { method: 'DELETE', token: mine })).status, 200)
+  assert.deepEqual(await on.store.replies('lyon-bakery'), [])
+})
+
+test('a folder keeps a site’s replies, each under its id, until they are dropped', async () => {
+  const store = folder(await mkdtemp(join(tmpdir(), 'jean-replies-')), null)
+  assert.deepEqual(await store.replies('lyon-bakery'), [])
+  await store.keepReply('lyon-bakery', '00000000b-x', 'second')
+  await store.keepReply('lyon-bakery', '00000000a-y', 'first')
+  assert.deepEqual(await store.replies('lyon-bakery'), [{ id: '00000000a-y', sealed: 'first' }, { id: '00000000b-x', sealed: 'second' }])
+  await store.dropReplies('lyon-bakery', ['00000000a-y'])
+  assert.deepEqual((await store.replies('lyon-bakery')).map((one) => one.id), ['00000000b-x'])
 })
 
 test('a site’s token comes from its secret one way, and its recovery code reads back whatever its case, spaces and dashes', async () => {

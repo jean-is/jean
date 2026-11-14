@@ -277,7 +277,11 @@
                     "files": { "type": "integer", "minimum": 1 },
                     "claims": { "type": "integer", "minimum": 1 },
                     "puts": { "type": "integer", "minimum": 1 },
-                    "days": { "type": "integer", "minimum": 1 }
+                    "days": { "type": "integer", "minimum": 1 },
+                    "replies": { "type": "integer", "minimum": 1 },
+                    "reply": { "type": "integer", "minimum": 1 },
+                    "waits": { "type": "integer", "minimum": 1 },
+                    "sent": { "type": "integer", "minimum": 1 }
                   }
                 }
               }
