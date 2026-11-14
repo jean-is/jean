@@ -1,0 +1,68 @@
+{
+  "title": "Every AI in one place: ChatGPT, Claude, Gemini, free and local · {name}",
+  "description": "ChatGPT, Claude, Gemini, a free AI and one on your computer, in one browser tab. Switch mid-task and keep the history. Free, open source, no new subscription.",
+  "h1": "Every AI in one place, nothing lost when you switch, and not one more subscription.",
+  "h1.mark": "nothing lost",
+  "acts": [["place", "Every AI in one place,"], ["switch", "nothing lost when you switch,"], ["free", "and not one more subscription."]],
+  "lede": "ChatGPT, Claude, Gemini, a free AI or one that runs on your own computer: use them from one browser tab, and change in the middle of a task. Your history stays with you, on your device, whichever AI answers.",
+  "facts": ["No {name} account", "Nothing to install", "Open source, under MIT"],
+  "tab.head": "In one browser tab",
+  "tab.caption": "One box for all of them. The chip beside {send} picks the AI.",
+  "ways.title": "Four ways in. Two cost nothing.",
+  "ways.why": "Use the AI you want, and change it any time.",
+  "ways.start": "To start",
+  "ways.which": [
+    "The one {name} downloads, or yours in Ollama or LM Studio",
+    "Free AIs, through OpenRouter",
+    "ChatGPT, Claude or GitHub Copilot",
+    "Thirteen services: OpenAI, Anthropic, Google for Gemini, Mistral…"
+  ],
+  "ways.key": ["What you use", "A key from that service"],
+  "ways.go": ["Get it", "Start for free", "Use my plan", "Add my key"],
+  "place.limit": "A ChatGPT, Claude or Copilot plan takes a line to paste once, on a computer.",
+  "mid.title": "Change AI in the middle of a task.",
+  "mid.why": [
+    "Pick another from the chip beside {send}. It reads the task so far, your requests, the answers and the files, and carries on.",
+    "Under each answer, {name} says which AI wrote it."
+  ],
+  "thread.heads": ["Way", "By July"],
+  "thread.rows": ["Set {monthly} aside each month", "Sell what you no longer use", "Round up what you spend"],
+  "thread.about": "about {amount}",
+  "thread.switched": "You pick Claude from the chip",
+  "thread.ask": "Add a fourth way, and draw them as a chart.",
+  "thread.bars": ["Set aside", "Sell", "Round up", "Drop a subscription"],
+  "thread.caption": "One task, two AIs. The second read everything above it.",
+  "kept.title": "Your history sits under every AI, not inside one.",
+  "kept.why": "An AI’s own app keeps your history in your account there. {name} keeps it on your device, so it is there whichever AI answers.",
+  "kept.apps": "In each AI’s own app",
+  "kept.parts": ["History", "Files", "Memory"],
+  "kept.apps.line": "Three apps, three histories.",
+  "kept.jean": "In {name}",
+  "kept.files": "Plain files, in this browser or in a folder you pick.",
+  "kept.memory": "A page you read and change, in plain words.",
+  "kept.jean.line": "One history, on your device, under all of them.",
+  "kept.move": "Coming from ChatGPT, Claude or Gemini? Bring your history: their exports come in, nothing twice.",
+  "switch.limits": [
+    "One AI answers at a time. {name} doesn’t show two answers side by side: to compare, switch and ask again.",
+    "Switch to an AI online and it reads the task so far, as it must to carry on."
+  ],
+  "sale.title": "{name} has nothing to sell you.",
+  "sale.why": "It is free and open source. What you pay goes to the AI you choose, and only if you choose one that costs.",
+  "sale.items": [
+    ["A {name} plan", "There is none for people: no paid version, no trial that ends."],
+    ["A margin on your AI", "Your plan and your keys are billed by their makers, at their price. {name} adds nothing."]
+  ],
+  "sale.source": "Open source, under MIT: what is free today can’t be taken back. Free for you, paid for by organisations: {pricing}.",
+  "sale.pricing": "see Pricing",
+  "turn.body": "Start with a free AI. Add yours when you like.",
+  "turn.other": "Already pay for ChatGPT, Claude or Copilot? {plan}.",
+  "turn.plan": "Use your plan",
+  "faq.items": [
+    ["Can I ask several AIs at once?", "Not side by side: one AI answers at a time. Switch from the box and ask again, and both answers stay in the task."],
+    ["Is there one subscription for all of them?", "{name} sells none. It uses the plan you already pay for, a key billed by what you use, or an AI that costs nothing."],
+    ["Which AI should I pick?", "It depends on the task, and it changes often. Leave the chip on {auto}, or pick one by hand and switch when an answer disappoints: the task carries on."],
+    ["Is it open source?", "Yes, under the MIT licence. Anyone can read every line, and host a copy at their own address."],
+    ["Are my keys safe?", "A key you type is kept on your devices, sealed. It goes only to the service it belongs to, and never into a backup or a share."],
+    ["Does it work on a phone?", "Yes, in the browser, with a free AI or your key. Your plan and the AI on this computer need a computer."]
+  ]
+}

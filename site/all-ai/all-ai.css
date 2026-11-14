@@ -1,0 +1,114 @@
+/* SPDX-License-Identifier: MIT */
+/* The page for every AI in one place, over site.css: the promise beside the names over the one box, the ways to an AI
+   as a table that a narrow window stacks, one task answered by two AIs, where the history is kept, and what is not
+   for sale. Logical properties only; classes start with allai-. */
+
+/* The promise, and every AI's name over the one box, the chip that picks among them circled by hand */
+.allai-hero { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.95fr); gap: clamp(2rem, 5vw, 4rem); align-items: center; }
+.allai-hero .site-hero-text { max-inline-size: none; }
+.allai-tab { display: flex; flex-direction: column; gap: 1.25rem; min-inline-size: 0; padding: 1.5rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); box-shadow: var(--site-float); }
+.allai-tab-head { color: var(--ink-soft); font-size: 0.8125rem; font-weight: 600; }
+.allai-pills { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.allai-pills li { display: inline-flex; align-items: center; gap: 0.4rem; padding-block: 0.35rem; padding-inline: 0.55rem 0.8rem; border-radius: 999px; background: var(--room-2); font-size: 0.9375rem; font-weight: 500; }
+.allai-pills .icon, .allai-way .icon, .allai-by .icon, .allai-chip .icon:first-child { color: var(--flame); }
+.allai-box { display: flex; align-items: center; gap: 0.6rem; min-block-size: 3.5rem; padding-block: 0.55rem; padding-inline: 1.1rem 0.6rem; border: 1px solid var(--line-strong); border-radius: 1.375rem; background: var(--room); }
+.allai-ask { flex: 1; min-inline-size: 0; color: var(--ink-soft); font-size: 0.9375rem; }
+.allai-box .felt.is-circle { display: inline-flex; flex: none; }
+.allai-box svg.felt-circle { inset-inline-start: -14%; inset-block-start: -42%; inline-size: 128%; block-size: 184%; }
+.allai-chip { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.3rem 0.55rem; border-radius: 999px; background: var(--room-2); font-size: 0.8125rem; font-weight: 500; white-space: nowrap; }
+.allai-chip .icon { inline-size: 1rem; block-size: 1rem; }
+.allai-send { display: inline-grid; place-items: center; inline-size: 2.25rem; block-size: 2.25rem; flex: none; border-radius: 50%; background: var(--site-fill); color: var(--site-on-fill); }
+.allai-send .icon { inline-size: 1rem; block-size: 1rem; }
+.allai-tab figcaption, .allai-thread figcaption { color: var(--ink-soft); font-size: 0.875rem; }
+
+/* The ways to an AI: what each costs, needs, and the way into it */
+.allai-ways { inline-size: 100%; border: 1px solid var(--line); border-radius: var(--site-pane); border-collapse: separate; border-spacing: 0; background: var(--room); overflow: hidden; }
+.allai-ways :is(th, td) { padding: 1.15rem 1.5rem; text-align: start; vertical-align: middle; font-weight: 400; }
+.allai-ways thead th { padding-block: 0.7rem; background: var(--room-2); color: var(--ink-soft); font-size: 0.8125rem; font-weight: 600; }
+.allai-ways tbody :is(th, td) { border-block-start: 1px solid var(--line); }
+.allai-way { display: flex; align-items: center; gap: 0.6rem; font-size: 1.05rem; font-weight: 600; }
+.allai-which { display: block; margin-block-start: 0.2rem; padding-inline-start: 1.85rem; color: var(--ink-soft); font-size: 0.9375rem; }
+/* Over its cell's own weight: the display face is bold at any, but a language it has no letters for falls back to the system's */
+.allai-ways .allai-pay { font: 700 1.5rem/1.15 var(--display); }
+.allai-ways .allai-need { color: var(--ink-soft); }
+.allai-ways .allai-go { text-align: end; white-space: nowrap; }
+.site .allai-go a { color: var(--ink); font-weight: 600; }
+
+/* One task, two AIs: what you ask on the right, who answered under each answer, the switch between them */
+.allai-two { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr); gap: clamp(1.5rem, 4vw, 3.5rem); align-items: center; }
+.allai-words { display: flex; flex-direction: column; gap: 0.75rem; }
+.allai-thread { display: flex; flex-direction: column; gap: 0.9rem; margin: 0; padding: 1.5rem; border: 1px solid var(--line-strong); border-radius: var(--site-pane); background: var(--room); }
+.allai-said { align-self: flex-end; max-inline-size: 85%; padding: 0.45rem 0.9rem; border-radius: 1.125rem; background: var(--room-2); line-height: 1.45; }
+.allai-answer { display: flex; flex-direction: column; gap: 0.6rem; }
+.allai-mini { inline-size: 100%; border-collapse: collapse; font-size: 0.875rem; }
+.allai-mini :is(th, td) { padding: 0.35rem 0.6rem; border-block-end: 1px solid var(--line); text-align: start; font-weight: 400; }
+.allai-mini thead th { color: var(--ink-soft); font-size: 0.75rem; font-weight: 600; }
+.allai-mini :is(td, th):last-child { text-align: end; font-variant-numeric: tabular-nums; }
+.allai-bars { display: grid; grid-template-columns: minmax(0, max-content) minmax(4.5rem, 1fr) max-content; align-items: center; gap: 0.4rem 0.75rem; font-size: 0.875rem; }
+.allai-bars li { display: grid; grid-column: 1 / -1; grid-template-columns: subgrid; align-items: center; }
+.allai-bars svg { display: block; inline-size: 100%; block-size: 0.75rem; border-radius: 3px; background: var(--line); }
+.allai-bars rect { fill: var(--felt-line); }
+.allai-bars b { font-weight: 600; font-variant-numeric: tabular-nums; }
+.allai-by { display: flex; align-items: center; gap: 0.4rem; color: var(--ink-soft); font-size: 0.8125rem; }
+.allai-by .icon { inline-size: 1rem; block-size: 1rem; }
+.allai-switched { display: flex; align-items: center; gap: 0.75rem; color: var(--flame); font-size: 0.8125rem; font-weight: 600; text-align: center; }
+.allai-switched::before, .allai-switched::after { content: ''; flex: 1; border-block-start: 1.5px dashed var(--felt-line); }
+
+/* Where the history is kept: in each AI's own app, or once, under every AI */
+.allai-kept { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; }
+.allai-side { display: flex; flex-direction: column; gap: 0.9rem; min-inline-size: 0; }
+.allai-side > p { color: var(--ink-soft); font-size: 0.95rem; }
+.allai-frame { display: flex; flex-direction: column; gap: 0.75rem; flex: 1; padding: 1.1rem; border: 1px solid var(--line-strong); border-radius: var(--site-pane); }
+.allai-side.is-jean .allai-frame { border-color: transparent; background: oklch(from var(--flame) l c h / 0.08); box-shadow: inset 0 0 0 2px var(--felt-line); }
+.allai-label { color: var(--ink-soft); font-size: 0.75rem; font-weight: 600; }
+.allai-silos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem; flex: 1; }
+.allai-silos > li { display: flex; flex-direction: column; gap: 0.4rem; padding: 0.7rem; border: 1px dashed var(--line-strong); border-radius: 0.9rem; }
+.allai-silos b { font-size: 0.9375rem; font-weight: 600; }
+.allai-silos span { padding: 0.15rem 0.55rem; border-radius: 0.5rem; background: var(--room-2); color: var(--ink-soft); font-size: 0.8125rem; }
+.allai-over { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.allai-over li { padding: 0.2rem 0.7rem; border-radius: 999px; background: var(--room); font-size: 0.875rem; font-weight: 500; box-shadow: 0 0 0 0.5px var(--line-strong); }
+.allai-shelf { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem; flex: 1; }
+.allai-shelf li { display: flex; flex-direction: column; gap: 0.25rem; padding: 0.8rem; border-radius: 0.9rem; background: var(--site-fill); color: var(--site-on-fill); }
+.allai-shelf b { font-size: 0.9375rem; font-weight: 600; }
+.allai-shelf span { color: oklch(from var(--site-on-fill) l c h / 0.8); font-size: 0.8125rem; line-height: 1.4; }
+.allai-strip { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem 1.5rem; padding: 1.1rem 1.25rem; border-radius: var(--site-pane); background: var(--room-2); }
+.allai-strip p { flex: 1 1 20rem; }
+
+/* What is not for sale: as many across as their titles fit in, so a title struck by hand stays on one line */
+.allai-nots { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: 1.5rem 2.5rem; }
+.allai-nots li { display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem; }
+.site .allai-nots h4 { font: 700 1.5rem/1.2 var(--display); }
+.allai-nots p { color: var(--ink-soft); }
+.allai-source { color: var(--ink-soft); font-size: 0.9375rem; }
+
+/* Your turn's other way, for whoever already pays for a plan */
+.allai-other { color: var(--ink-soft); }
+
+/* A tablet, a phone, or any narrow window: one column, each way its name over what it costs and needs, each with
+   its column's name, then the way into it; all of it still there */
+@media (max-width: 52rem) {
+  .allai-hero, .allai-two, .allai-kept { grid-template-columns: minmax(0, 1fr); }
+  .allai-ways, .allai-ways tbody { display: block; }
+  .allai-ways thead { display: none; }
+  .allai-ways tbody tr { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0.75rem 1rem; padding: 1.15rem 1.25rem; }
+  .allai-ways tbody tr + tr { border-block-start: 1px solid var(--line); }
+  .allai-ways tbody :is(th, td) { display: block; padding: 0; border: 0; }
+  .allai-ways tbody :is(th, .allai-go) { grid-column: 1 / -1; }
+  .allai-ways .allai-go { text-align: start; }
+  .allai-ways td[data-label]::before { content: attr(data-label); display: block; margin-block-end: 0.15rem; color: var(--ink-soft); font: 600 0.8125rem/1.4 var(--sans); }
+  .allai-ways .allai-pay { font-size: 1.35rem; }
+}
+@media (max-width: 40rem) {
+  .allai-silos, .allai-shelf { grid-template-columns: minmax(0, 1fr); }
+  .allai-silos > li { flex-direction: row; flex-wrap: wrap; align-items: center; }
+  .allai-silos b { flex: 1 0 100%; }
+}
+/* Where a struck title may take two lines, the pen's one stroke would pass between them: the type's own instead */
+@media (max-width: 22.5rem) {
+  .allai-nots svg.felt-strike { display: none; }
+  .allai-nots h4 { text-decoration: line-through; }
+}
+@media (forced-colors: active) {
+  .allai-nots h4 { text-decoration: line-through; }
+  .allai-bars rect { fill: CanvasText; }
+}
