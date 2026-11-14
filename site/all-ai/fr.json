@@ -1,0 +1,68 @@
+{
+  "title": "ChatGPT, Claude, Gemini, IA gratuite ou locale, au même endroit · {name}",
+  "description": "ChatGPT, Claude, Gemini, une IA gratuite ou locale, dans un onglet. Changez en pleine tâche, l’historique reste. Gratuit, libre, sans nouvel abonnement.",
+  "h1": "Toutes les IA au même endroit, rien de perdu en changeant, et pas un abonnement de plus.",
+  "h1.mark": "rien de perdu",
+  "acts": [["place", "Toutes les IA au même endroit,"], ["switch", "rien de perdu en changeant,"], ["free", "et pas un abonnement de plus."]],
+  "lede": "ChatGPT, Claude, Gemini, une IA gratuite ou une IA qui tourne sur votre propre ordinateur : utilisez-les depuis un seul onglet du navigateur, et changez-en en pleine tâche. Votre historique reste avec vous, sur votre appareil, quelle que soit l’IA qui répond.",
+  "facts": ["Aucun compte {name}", "Rien à installer", "Logiciel libre, sous MIT"],
+  "tab.head": "Dans un seul onglet du navigateur",
+  "tab.caption": "Une seule zone de saisie pour toutes. La pastille à côté du bouton {send} choisit l’IA.",
+  "ways.title": "Quatre façons d’y accéder. Deux ne coûtent rien.",
+  "ways.why": "Utilisez l’IA que vous voulez, et changez-en quand vous voulez.",
+  "ways.start": "Pour commencer",
+  "ways.which": [
+    "Celle que {name} télécharge, ou la vôtre dans Ollama ou LM Studio",
+    "Des IA gratuites, par OpenRouter",
+    "ChatGPT, Claude ou GitHub Copilot",
+    "Treize services : OpenAI, Anthropic, Google pour Gemini, Mistral…"
+  ],
+  "ways.key": ["Ce que vous utilisez", "Une clé de ce service"],
+  "ways.go": ["L’obtenir", "Commencer gratuitement", "Utiliser mon abonnement", "Ajouter ma clé"],
+  "place.limit": "Un abonnement ChatGPT, Claude ou Copilot demande une ligne à coller une fois, sur un ordinateur.",
+  "mid.title": "Changez d’IA en pleine tâche.",
+  "mid.why": [
+    "Choisissez-en une autre dans la pastille à côté du bouton {send}. Elle lit la tâche jusque-là, vos demandes, les réponses et les fichiers, et poursuit.",
+    "Sous chaque réponse, {name} indique quelle IA l’a écrite."
+  ],
+  "thread.heads": ["Façon", "D’ici juillet"],
+  "thread.rows": ["Mettre {monthly} de côté chaque mois", "Vendre ce que vous n’utilisez plus", "Arrondir vos dépenses"],
+  "thread.about": "environ {amount}",
+  "thread.switched": "Vous choisissez Claude dans la pastille",
+  "thread.ask": "Ajoute une quatrième façon, et montre-les dans un graphique.",
+  "thread.bars": ["De côté", "Vendre", "Arrondir", "Un abonnement de moins"],
+  "thread.caption": "Une tâche, deux IA. La seconde a lu tout ce qui précède.",
+  "kept.title": "Votre historique est sous toutes les IA, pas dans l’une d’elles.",
+  "kept.why": "L’application d’une IA garde votre historique dans votre compte chez elle. {name} le garde sur votre appareil : il est là, quelle que soit l’IA qui répond.",
+  "kept.apps": "Dans l’application de chaque IA",
+  "kept.parts": ["Historique", "Fichiers", "Mémoire"],
+  "kept.apps.line": "Trois applications, trois historiques.",
+  "kept.jean": "Dans {name}",
+  "kept.files": "Des fichiers ordinaires, dans ce navigateur ou dans un dossier de votre choix.",
+  "kept.memory": "Une page que vous lisez et modifiez, en mots simples.",
+  "kept.jean.line": "Un seul historique, sur votre appareil, sous toutes les IA.",
+  "kept.move": "Vous venez de ChatGPT, de Claude ou de Gemini ? Importez votre historique : leurs exports arrivent, aucune conversation en double.",
+  "switch.limits": [
+    "Une seule IA répond à la fois. {name} n’affiche pas deux réponses côte à côte : pour comparer, changez d’IA et redemandez.",
+    "Passez à une IA en ligne, et elle lit la tâche jusque-là, comme il le faut pour poursuivre."
+  ],
+  "sale.title": "{name} n’a rien à vous vendre.",
+  "sale.why": "C’est gratuit et libre. Ce que vous payez va à l’IA que vous choisissez, et seulement si vous en choisissez une payante.",
+  "sale.items": [
+    ["Un abonnement {name}", "Il n’y en a pas pour vous : ni version payante, ni essai qui prend fin."],
+    ["Une marge sur votre IA", "Votre abonnement et vos clés sont facturés par leurs fournisseurs, à leur prix. {name} n’ajoute rien."]
+  ],
+  "sale.source": "Logiciel libre, sous MIT : ce qui est gratuit aujourd’hui ne peut pas être repris. Gratuit pour vous, payé par les organisations : {pricing}.",
+  "sale.pricing": "voir les tarifs",
+  "turn.body": "Commencez avec une IA gratuite. Ajoutez la vôtre quand vous voulez.",
+  "turn.other": "Vous payez déjà ChatGPT, Claude ou Copilot ? {plan}.",
+  "turn.plan": "Utilisez votre abonnement",
+  "faq.items": [
+    ["Puis-je interroger plusieurs IA à la fois ?", "Pas côte à côte : une seule IA répond à la fois. Changez d’IA depuis la zone de saisie et redemandez : les deux réponses restent dans la tâche."],
+    ["Y a-t-il un seul abonnement pour toutes ?", "{name} n’en vend aucun. Vous utilisez l’abonnement que vous payez déjà, une clé facturée à l’usage, ou une IA qui ne coûte rien."],
+    ["Quelle IA choisir ?", "Cela dépend de la tâche, et cela change souvent. Laissez la pastille sur {auto}, ou choisissez-en une vous-même et changez quand une réponse déçoit : la tâche continue."],
+    ["Est-ce un logiciel libre ?", "Oui, sous licence MIT. Chacun peut en lire chaque ligne, et en héberger une copie à sa propre adresse."],
+    ["Mes clés sont-elles en sécurité ?", "Une clé que vous saisissez est gardée sur vos appareils, scellée. Elle ne va qu’au service auquel elle appartient, et jamais dans une sauvegarde ni un partage."],
+    ["Est-ce que ça marche sur un téléphone ?", "Oui, dans le navigateur, avec une IA gratuite ou votre clé. Votre abonnement et l’IA sur cet ordinateur demandent un ordinateur."]
+  ]
+}
