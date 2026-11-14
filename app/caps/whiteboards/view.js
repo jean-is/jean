@@ -99,7 +99,8 @@ customElements.define('app-whiteboard', class extends HTMLElement {
   #moveHere = null
   /** @type {string | null} */
   #from = null
-  /** The first thing the Tab key reaches on the board. */
+  /** The arrow whose head is being pointed elsewhere, from its menu; and the first thing the Tab key reaches on the board. @type {string | null} */
+  #rejoining = null
   #stop = ''
   /** Whether Before is pressed: the board as it was without what waits to be accepted, to look at, not to change. */
   #before = false
@@ -305,12 +306,12 @@ customElements.define('app-whiteboard', class extends HTMLElement {
     if (board.matches('.wb-shelf')) return void (row && target.closest('.wb-note') && this.#drag(event, board, /** @type {HTMLElement} */ (target.closest('.wb-note')), row))
     if (this.#moveHere) return void this.#drop(this.#moveHere, at, event)
     const kind = row ? kindOf(this.#row(row) ?? { cells: {} }) : ''
-    if (this.#tool === 'arrow' || this.#from) return void (row && kind !== 'arrow' ? this.#arrow(event, board, row) : ((this.#from = null), this.draw()))
+    if (this.#tool === 'arrow' || this.#from) return void (row && kind !== 'arrow' ? this.#arrow(event, board, row) : ((this.#from = this.#rejoining = null), this.draw()))
     if (this.#tool === 'draw') return this.#draw(event, board, at)
     if (this.#tool === 'erase') return void ((kind === 'line' || kind === 'arrow') && this.erase([/** @type {string} */ (row)]).then(() => kind === 'line' && this.say(t('whiteboards.erased'))))
     if (this.#tool !== 'pointer') return void this.#make(this.#tool, at)
     if (row && event.shiftKey) return void (this.#selected.has(row) ? this.#selected.delete(row) : this.#selected.add(row), this.draw())
-    if (kind === 'arrow') return void board.addEventListener('pointerup', () => this.#refocus(/** @type {string} */ (row)), { once: true })
+    if (kind === 'arrow') return this.#end(event, board, /** @type {string} */ (row), at)
     const item = row && target.closest('.wb-note, .wb-text, .wb-line, .wb-area-head')
     if (item) return this.#drag(event, board, /** @type {HTMLElement} */ (item), /** @type {string} */ (row))
     if (event.shiftKey) return this.#boxing(event, board, at)
@@ -486,7 +487,7 @@ customElements.define('app-whiteboard', class extends HTMLElement {
     const { items, areas } = layout(this.#one.rows), from = [...items, ...areas].find((one) => one.row.id === row)
     if (!from) return
     const start = { x: Math.round(from.x + from.w / 2), y: Math.round(from.y + from.h / 2) }
-    const move = (/** @type {PointerEvent} */ next) => { const p = this.#point(next), end = { x: Math.round(p.x), y: Math.round(p.y) }; this.#live(arrowPath([start.x, start.y, end.x, end.y]), { x: Math.min(start.x, end.x) - 16, y: Math.min(start.y, end.y) - 16 }, { x: Math.max(start.x, end.x) + 16, y: Math.max(start.y, end.y) + 16 }) }
+    const move = (/** @type {PointerEvent} */ next) => { const p = this.#point(next); this.#rubber([start.x, start.y, Math.round(p.x), Math.round(p.y)]) }
     board.setPointerCapture(event.pointerId)
     board.addEventListener('pointermove', move)
     board.addEventListener('pointerup', (/** @type {PointerEvent} */ up) => {
@@ -497,10 +498,53 @@ customElements.define('app-whiteboard', class extends HTMLElement {
     }, { once: true })
   }
 
-  /** The arrow being drawn, made to point at a note, a text, a line or a section: a row of its own, unless one already joins them so. @param {string} to */
+  /** An arrow on its way, from its ends. @param {number[]} ends */
+  #rubber(ends) { this.#live(arrowPath(ends), { x: Math.min(ends[0], ends[2]) - 16, y: Math.min(ends[1], ends[3]) - 16 }, { x: Math.max(ends[0], ends[2]) + 16, y: Math.max(ends[1], ends[3]) + 16 }) }
+
+  /**
+   * An arrow pressed: near either end, a drag takes that end to what it is let go on, the other staying; a press that hardly moves gives
+   * it the keys. @param {PointerEvent} event @param {HTMLElement} board @param {string} id @param {{ x: number, y: number }} at
+   */
+  #end(event, board, id, at) {
+    const [x1 = 0, y1 = 0, x2 = 0, y2 = 0] = layout(this.#one.rows).items.find((one) => one.row.id === id)?.ends ?? [], [tail, head] = [Math.hypot(at.x - x1, at.y - y1), Math.hypot(at.x - x2, at.y - y2)]
+    const from = { x: event.clientX, y: event.clientY }, held = this.querySelector(`[data-row="${id}"]`)
+    let going = false
+    const move = (/** @type {PointerEvent} */ next) => {
+      if (Math.min(tail, head) > 32 || (!going && Math.hypot(next.clientX - from.x, next.clientY - from.y) < 4)) return
+      going = true
+      held?.toggleAttribute('data-ghost', true)
+      const p = this.#point(next)
+      this.#rubber((head < tail ? [x1, y1, p.x, p.y] : [p.x, p.y, x2, y2]).map(Math.round))
+    }
+    board.setPointerCapture(event.pointerId)
+    board.addEventListener('pointermove', move)
+    board.addEventListener('pointerup', (/** @type {PointerEvent} */ up) => {
+      board.removeEventListener('pointermove', move)
+      held?.removeAttribute('data-ghost')
+      this.#live('')
+      going ? this.#rejoin(id, rowOf(document.elementFromPoint(up.clientX, up.clientY)), head < tail) : this.#refocus(id)
+    }, { once: true })
+  }
+  /** An arrow's end taken to another thing, its other end staying: one step to undo, and a cell like any other for Together. @param {string} id @param {string | null} to @param {boolean} head */
+  async #rejoin(id, to, head) {
+    const ends = /** @type {string[]} */ (this.#row(id)?.cells['@ends'] ?? []), end = to ? this.#row(to) : undefined, now = head ? [ends[0], to] : [to, ends[1]]
+    if (!end || kindOf(end) === 'arrow' || now[0] === now[1] || String(now) === String(ends)) return this.draw()
+    await this.edit([{ row: id, set: { '@ends': now } }])
+    this.say(t('whiteboards.arrowMoved', { from: nameOf(this.#row(String(now[0]))), to: nameOf(this.#row(String(now[1]))) }))
+  }
+  /** An arrow pointed elsewhere, from its menu: its start kept, the next press, Enter or a menu's Point the arrow here says where. @param {string} id */
+  #repoint(id) {
+    this.#from = String(/** @type {string[]} */ (this.#row(id)?.cells['@ends'] ?? [])[0] ?? '')
+    this.#rejoining = id
+    this.draw()
+    this.say(t('whiteboards.arrowWhere'))
+  }
+
+  /** The arrow being drawn, or pointed elsewhere, made to point at a note, a text, a line or a section: a row of its own, unless one already joins them so. @param {string} to */
   async #link(to) {
-    const from = this.#from, end = this.#row(to)
-    this.#from = null
+    const from = this.#from, end = this.#row(to), again = this.#rejoining
+    this.#from = this.#rejoining = null
+    if (again) return this.#rejoin(again, to, true)
     if (!from || from === to || !this.#row(from) || !end || kindOf(end) === 'arrow') return this.draw()
     if (!this.#one.rows.some((row) => kindOf(row) === 'arrow' && String(row.cells['@ends']) === `${from},${to}`)) await this.edit([{ set: { '@kind': 'arrow', '@ends': [from, to] } }])
     this.say(t('whiteboards.arrowMade', { from: nameOf(this.#row(from)), to: nameOf(end) }))
@@ -622,7 +666,7 @@ customElements.define('app-whiteboard', class extends HTMLElement {
     if (nearer && !target.closest('.wb-note')) return event.preventDefault(), (this.#held = true), this.zoom(nearer)
     if (event.key === '0' && !target.closest('.wb-note')) return event.preventDefault(), this.fit()
     const row = rowOf(target)
-    if (event.key === 'Escape' && (this.#selected.size || this.#from)) return event.preventDefault(), this.#selected.clear(), (this.#from = null), this.draw()
+    if (event.key === 'Escape' && (this.#selected.size || this.#from)) return event.preventDefault(), this.#selected.clear(), (this.#from = this.#rejoining = null), this.draw()
     if (!row || !target.matches('.wb-words')) return
     if (event.key === 'Enter' && this.#from) return event.preventDefault(), void this.#link(row)
     if ((event.key === 'Delete' || event.key === 'Backspace')) return event.preventDefault(), this.erase([row])
@@ -740,7 +784,9 @@ customElements.define('app-whiteboard', class extends HTMLElement {
       const name = ends ? t('whiteboards.arrowName', { from: nameOf(this.#row(/** @type {string[]} */ (row.cells['@ends'])[0])), to: nameOf(this.#row(/** @type {string[]} */ (row.cells['@ends'])[1])) }) : t('whiteboards.line')
       if (!ends && ownProblem('@path', path)) return nothing
       return html`<li class=${classes} data-row=${id} ${placed(box)} ${z_}><svg role="img" aria-label=${name} viewBox=${`0 0 ${item.w} ${item.h}`} class=${ends || ink === 'ink' ? 'wb-ink' : `wb-ink wb-hue-${Number(ink) % HUES}`}>${ends ? svg`<path class="wb-hit" d=${arrowPath(ends)}/>` : nothing}<path d=${ends ? arrowPath(ends) : pathOf(path)}/></svg>
-        <button type="button" class="wb-words visually-hidden" tabindex=${tab}>${name}</button></li>`
+        <button type="button" class="wb-words visually-hidden" tabindex=${tab}>${name}</button>${ends ? html`<button type="button" class="wb-more icon-button" tabindex=${tab} aria-label=${t('whiteboards.more', { name })} popovertarget=${menu}
+          ${placed({ x: (ends[0] + ends[2]) / 2, y: (ends[1] + ends[3]) / 2 })}>${icons.more}</button><div id=${menu} class="menu wb-menu" popover><ul><li><button type="button" class="menu-item" @click=${menuRow(() => this.#repoint(id))}>${ARROW}${t('whiteboards.repoint')}</button></li>
+          <li><button type="button" class="menu-item" @click=${menuRow(() => { this.erase([id]) })}>${icons.trash}${t('action.delete')}</button></li></ul></div>` : nothing}</li>`
     }
     const foot = one.table.properties.filter((property) => !property.deleted && property.id !== 'note' && property.id !== 'area' && row.cells[property.id] != null).slice(0, 2)
     return html`<li class=${classes} data-row=${id} ${placed(box)} ${z_}>
@@ -831,7 +877,7 @@ customElements.define('app-whiteboard', class extends HTMLElement {
   /** The bar at the board's foot, a toolbar, one Tab stop: the pointer, Note, Text, Section, Arrow, Draw and its inks and eraser; then the zoom. */
   #bar() {
     const tool = (/** @type {Tool} */ id, /** @type {unknown} */ glyph, /** @type {string} */ label) => html`<button type="button" class="icon-button" aria-label=${label} aria-pressed=${String(this.#tool === id)} tabindex=${this.#tool === id ? 0 : -1}
-      @click=${() => { this.#tool = id; this.#from = null; this.draw(); if ((id === 'note' || id === 'text' || id === 'section') && !matchMedia('(pointer: fine)').matches) this.#make(id, this.#middle()) }}>${glyph}</button>`
+      @click=${() => { this.#tool = id; this.#from = this.#rejoining = null; this.draw(); if ((id === 'note' || id === 'text' || id === 'section') && !matchMedia('(pointer: fine)').matches) this.#make(id, this.#middle()) }}>${glyph}</button>`
     const percent = new Intl.NumberFormat(intlLocales(), { style: 'percent' })
     return html`<div class="wb-bar" role="toolbar" aria-label=${t('whiteboards.tools')} @keydown=${this.#roving}>
       ${tool('pointer', POINTER, t('whiteboards.pointer'))}${tool('note', NOTE_GLYPH, t('whiteboards.note'))}${tool('text', TEXT, t('whiteboards.text'))}${tool('section', SECTION, t('whiteboards.section'))}${tool('arrow', ARROW, t('whiteboards.arrow'))}${tool('draw', DRAW, t('whiteboards.draw'))}

@@ -101,12 +101,12 @@ test('a whiteboard: made by the brain, its notes dragged, moved with the keys, a
   await board.getByRole('toolbar', { name: 'Tools' }).getByRole('button', { name: 'Arrow' }).click()
   const flaky = /** @type {{ x: number, y: number, width: number, height: number }} */ (await notesIn(page, 'To change').first().boundingBox())
   await drag(page, notesIn(page, 'Went well').first(), { x: flaky.x + flaky.width / 2, y: flaky.y + flaky.height / 2 })
-  await expect(board.locator('.wb-arrow svg')).toHaveAttribute('aria-label', 'Arrow from Shipped the beta to Flaky tests')
+  await expect(board.locator('.wb-arrow > svg')).toHaveAttribute('aria-label', 'Arrow from Shipped the beta to Flaky tests')
   const ids = Object.fromEntries((await rows(page)).map((row) => [row.note, row.id]))
   expect((await rows(page)).find((row) => row['@kind'] === 'arrow')?.['@ends']).toEqual([ids['Shipped the beta'], ids['Flaky tests']])
   await board.getByRole('button', { name: 'Select and move' }).click()
   const hit = /** @type {{ x: number, y: number, width: number, height: number }} */ (await board.locator('.wb-arrow .wb-hit').boundingBox())
-  await page.mouse.click(hit.x + hit.width / 2, hit.y + hit.height / 2)
+  await page.mouse.click(hit.x + hit.width / 4, hit.y + hit.height / 2)
   await expect(board.locator('.wb-arrow .wb-words')).toBeFocused()
   await page.keyboard.press('Delete')
   await expect(board.locator('.wb-arrow')).toHaveCount(0)
@@ -116,7 +116,7 @@ test('a whiteboard: made by the brain, its notes dragged, moved with the keys, a
   await expect(board.getByRole('status')).toContainText('press what the arrow points to')
   await notesIn(page, 'To change').first().focus()
   await page.keyboard.press('Enter')
-  await expect(board.locator('.wb-arrow svg')).toHaveAttribute('aria-label', 'Arrow from Demo day to Flaky tests')
+  await expect(board.locator('.wb-arrow > svg')).toHaveAttribute('aria-label', 'Arrow from Demo day to Flaky tests')
   await expect(board.getByRole('status')).toHaveText('Arrow drawn from Demo day to Flaky tests.')
 
   // Two notes selected with Shift: the bar says how many and asks Jean about them, by id.
@@ -215,7 +215,7 @@ test('a whiteboard: made by the brain, its notes dragged, moved with the keys, a
   await expect(page.getByRole('complementary', { name: 'Budget' }).locator('app-table')).toBeVisible()
 })
 
-test('the arrow keys walk notes, drawings and arrows, and the board keeps one Tab stop though an arrow lies lowest', async ({ page }) => {
+test('the arrow keys walk notes, drawings and arrows; an arrow points elsewhere from its menu or by an end dragged, a step to undo', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 960 })
   await start(page)
   await page.evaluate(async () => {
@@ -242,6 +242,28 @@ test('the arrow keys walk notes, drawings and arrows, and the board keeps one Ta
   await expect(board.locator('.wb-line .wb-words')).toHaveAccessibleName('Drawing')
   await page.keyboard.press('ArrowLeft')
   await expect(words('Build')).toBeFocused()
+  // Pointed elsewhere from its menu, then Enter on another note; ⌘Z puts it back.
+  await board.getByRole('button', { name: 'More for Arrow from Ask to Build' }).click()
+  await page.locator('.wb-menu:popover-open').getByRole('button', { name: 'Point it elsewhere' }).click()
+  await expect(board.getByRole('status')).toContainText('press what the arrow points to')
+  await words('Ship').focus()
+  await page.keyboard.press('Enter')
+  await expect(arrow).toHaveAttribute('aria-label', 'Arrow from Ask to Ship')
+  await expect(board.getByRole('status')).toHaveText('The arrow now goes from Ask to Ship.')
+  await page.keyboard.press('ControlOrMeta+z')
+  await expect(arrow).toHaveAttribute('aria-label', 'Arrow from Ask to Build')
+  // At its own size, its tail dragged from Ask onto Ship: the arrow goes from Ship now, its head where it was.
+  await board.evaluate((element) => /** @type {any} */ (element).zoom(0, 1))
+  const box = async (/** @type {import('@playwright/test').Locator} */ one) => /** @type {{ x: number, y: number, width: number, height: number }} */ (await one.boundingBox())
+  const [room, middle] = [await box(board.locator('.wb-board')), await box(board.locator('.wb-arrow .wb-hit'))]
+  await board.evaluate((element, [x, y]) => /** @type {any} */ (element).pan(x, y), [room.x + room.width / 2 - middle.x - middle.width / 2, room.y + room.height / 2 - middle.y - middle.height / 2])
+  const [line, ship] = [await box(board.locator('.wb-arrow > svg > path:not(.wb-hit)')), await box(words('Ship'))]
+  await page.mouse.move(line.x + 4, line.y + line.height / 2)
+  await page.mouse.down()
+  // Its top, clear of the bar floating at the board's foot.
+  await page.mouse.move(ship.x + ship.width / 2, ship.y + 12, { steps: 10 })
+  await page.mouse.up()
+  await expect(arrow).toHaveAttribute('aria-label', 'Arrow from Ship to Build')
 })
 
 test('a whiteboard fills as Jean writes the call, its sections first, and stays where it showed once made', async ({ page }) => {
@@ -300,7 +322,7 @@ test('in Arabic, a whiteboard runs right to left, and a note dropped lands where
   await board.locator('.wb-area').first().locator('.wb-note .wb-words').first().click()
   await board.locator('.wb-area').first().locator('.wb-note .wb-words').nth(1).click()
   await expect(board.locator('.wb-arrow')).toHaveCount(1)
-  const [a, b, arrow] = await Promise.all([...[0, 1].map((i) => board.locator('.wb-area').first().locator('.wb-note').nth(i).boundingBox()), board.locator('.wb-arrow path:not(.wb-hit)').boundingBox()])
+  const [a, b, arrow] = await Promise.all([...[0, 1].map((i) => board.locator('.wb-area').first().locator('.wb-note').nth(i).boundingBox()), board.locator('.wb-arrow > svg > path:not(.wb-hit)').boundingBox()])
   const middle = (/** @type {any} */ box) => box.x + box.width / 2
   expect(Math.min(middle(a), middle(b))).toBeLessThan(middle(arrow))
   expect(Math.max(middle(a), middle(b))).toBeGreaterThan(middle(arrow))
