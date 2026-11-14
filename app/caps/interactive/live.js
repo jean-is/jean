@@ -2,7 +2,8 @@
 // What a page of parts shares (D670), so that what the user changes reaches all it touches at once, with nothing sent to a brain:
 // its form's fields, by their labels; the values worked out from them (<app-values>, a line each, `Name = formula`), in Tables' formulas,
 // which Jean reads itself, never with eval; `{formula}` in figures, a table's lines, a chart's, a card's heading and words, `{formula:2}`
-// with that many decimals, said in the language; a table's `each="Year = 1..Years"`, which repeats the lines that hold one; `{sum Column}`
+// with that many decimals, said in the language, an amount beside its currency's symbol (`€{formula}`, `{formula} $`) as the language writes one;
+// a table's `each="Year = 1..Years"`, which repeats the lines that hold one; `{sum Column}`
 // and `{count}`, what a table of the page adds up to as it stands, the rows its forms added too; a chart's `from="its id"`, drawn from it by
 // `by` and `sum`; a choice named as a table's column, which keeps the rows that hold it, one no row holds (All) keeping them all.
 // What can't be worked out is a dash. A page with none of these stays as it was written. Pure, so Node's tests run it.
@@ -12,15 +13,18 @@ import { all, form, lines, number, split, table } from './parts.js'
 /** @import { Part } from './parts.js' */
 /** What a form's fields, what they work out and a table's sums hold, by their names. @typedef {Record<string, unknown>} Cells */
 
-const FORMULA = /\{([^{}]+)\}/g, HOLDS = /\{[^{}]+\}/, LIST = /\s*[,،、]\s*/
+const FORMULA = /(?<![\p{L}\p{N}])(\p{Sc})\s?\{([^{}]+)\}|\{([^{}]+)\}(?:\s?(\p{Sc})(?![\p{L}\p{N}]))?/gu, HOLDS = /\{[^{}]+\}/, LIST = /\s*[,،、]\s*/
 /** The parts whose lines may hold a formula: a diagram's braces are its own. */
 const SPELLED = ['app-figures', 'app-table', 'app-chart', '#text']
 /** The rows an `each` makes at most. */
 const MOST = 600
 /** A number as a chart's lines, and the brain, read one: a few decimals, whatever the language; none for what is no number. @param {number} value @param {string} [digits] */
 const plain = (value, digits) => (Number.isFinite(value) ? String(Number(value.toFixed(digits ? Number(digits) : Math.abs(value) < 1 ? 4 : 2))) : '')
-/** A line with what `say` makes of each formula's words and the decimals it asks for. @param {string} line @param {(text: string, digits?: string) => string} say */
-const spelled = (line, say) => line.replace(FORMULA, (_, inner) => ((found) => say(found[1], found[2]))(/** @type {RegExpExecArray} */ (/^(.*?)(?::\s*(\d))?\s*$/s.exec(inner))))
+/**
+ * A line with what `say` makes of each formula's words, the decimals it asks for and the currency's symbol beside it, given what was written.
+ * @param {string} line @param {(text: string, digits: string | undefined, symbol: string | undefined, whole: string) => string} say
+ */
+const spelled = (line, say) => line.replace(FORMULA, (whole, before, inner, alone, after) => ((found) => say(found[1], found[2], before ?? after, whole))(/** @type {RegExpExecArray} */ (/^(.*?)(?::\s*(\d))?\s*$/s.exec(inner ?? alone))))
 /** @param {string} raw */
 const read = (raw) => (raw.trim() !== '' && Number.isFinite(Number(raw)) ? Number(raw) : raw)
 
@@ -42,11 +46,15 @@ export function shared(parts, { given, added, lang, locales }) {
   const reader = (/** @type {string} */ text) => { try { return compile(text.replace(/[{}]/g, ''), columns) } catch { return () => NaN } }
   /** What a formula comes to; NaN where it can't be read or worked out. @param {string} text @param {Cells} cells */
   const value = (text, cells) => /** @type {(cells: Cells) => any} */ (readers.get(text) ?? readers.set(text, reader(text)).get(text))(cells)
-  /** A result in the page's words. @param {unknown} got @param {string} [digits] @param {boolean} [bare] with no marks between thousands */
-  const said = (got, digits, bare) => (typeof got === 'boolean' ? (got ? '✓' : '') : typeof got !== 'number' ? String(got) : !Number.isFinite(got) ? '—' : /** @type {Intl.NumberFormat} */ (formats.get(`${digits}${bare}`)
-    ?? formats.set(`${digits}${bare}`, new Intl.NumberFormat(locales, { maximumFractionDigits: digits ? Number(digits) : 2, minimumFractionDigits: digits ? Number(digits) : 0, useGrouping: !bare, signDisplay: 'negative' })).get(`${digits}${bare}`)).format(got))
-  /** A line with each formula worked out, an `each`'s own name as it is written. @param {string} line @param {Cells} cells @param {string} [name] */
-  const spell = (line, cells, name) => (live ? spelled(line, (text, digits) => said(value(text, cells), digits, text.trim() === name)) : line)
+  /** The language's numbers with these decimals: with no marks between thousands, or as an amount, which a symbol takes the place of the currency in. @param {string} [digits] @param {'' | 'bare' | 'money'} [as] */
+  const writer = (digits, as = '') => /** @type {Intl.NumberFormat} */ (formats.get(`${digits}${as}`) ?? formats.set(`${digits}${as}`, new Intl.NumberFormat(locales, { maximumFractionDigits: digits ? Number(digits) : 2,
+    minimumFractionDigits: digits ? Number(digits) : 0, useGrouping: as !== 'bare', signDisplay: 'negative', ...(as === 'money' && { style: 'currency', currency: 'EUR', currencyDisplay: 'narrowSymbol' }) })).get(`${digits}${as}`))
+  /** A result in the page's words; a number beside a currency's symbol, the amount as the language writes one, sign and symbol in their places. @param {unknown} got @param {string} [digits] @param {boolean} [bare] with no marks between thousands @param {string} [symbol] */
+  const said = (got, digits, bare, symbol) => (typeof got === 'boolean' ? (got ? '✓' : '') : typeof got !== 'number' ? String(got) : !Number.isFinite(got) ? '—'
+    : symbol ? writer(digits, 'money').formatToParts(got).map((part) => (part.type === 'currency' ? symbol : part.value)).join('') : writer(digits, bare ? 'bare' : '').format(got))
+  /** A line with each formula worked out, an `each`'s own name as it is written; what is no amount beside its symbol as it was written. @param {string} line @param {Cells} cells @param {string} [name] */
+  const spell = (line, cells, name) => (live ? spelled(line, (text, digits, symbol, whole) => ((got) => (symbol && typeof got === 'number' && Number.isFinite(got) ? said(got, digits, false, symbol)
+    : whole.replace(HOLDS, () => said(got, digits, text.trim() === name))))(value(text, cells))) : line)
   const base = /** @type {Cells} */ (Object.fromEntries(fields.map(({ label, kind, start, choices }) => ((raw) => [label, typeof raw === 'boolean' ? raw : /^(yes|no)$/.test(kind) ? (raw ? /^(yes|on|true|✓)$/i.test(raw) : kind === 'yes')
     : /^(number|range)$/.test(kind) ? (raw === '' ? NaN : number(raw, lang, true)) : read(raw)])(given.get(label) ?? (start || choices?.[0] || '')))))
   /** The fields, the tables' sums, and each value worked out, as often as there are values, so that one written before what it reads sees it. @param {Cells} [extra] */

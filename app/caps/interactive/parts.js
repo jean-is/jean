@@ -91,6 +91,14 @@ export const table = (part) => (([heads = [], ...rows]) => ({ heads, rows: rows.
 /** A chart: its kind, its labels, then each series by its name, its values by commas, in the language's digits or not. @param {Part} part @param {string} [lang] */
 export const chart = (part, lang) => (([labels = '', ...series]) => ({ kind: part.attrs.kind || 'bar', labels: cells(labels),
   series: series.map((line) => split(line, ':')).map(([name, values]) => ({ name, data: values.split(/[,;،、]/).map((value) => number(value, lang, true)) })) }))(lines(part))
+/** A chart's option for ECharts: bars, lines, areas, bars across or a pie, by its labels and series. @param {ReturnType<typeof chart>} drawing */
+export function option({ kind, labels, series }) {
+  const values = (/** @type {number[]} */ data) => data.map((value) => (Number.isFinite(value) ? value : null))
+  if (kind === 'pie') return { tooltip: { trigger: 'item' }, legend: { bottom: 0 }, series: [{ type: 'pie', radius: ['38%', '62%'], data: labels.map((name, i) => ({ name, value: values(series[0]?.data ?? [])[i] ?? 0 })) }] }
+  const [across, along] = kind === 'hbar' ? ['yAxis', 'xAxis'] : ['xAxis', 'yAxis']
+  return { tooltip: { trigger: 'axis' }, ...(series.length > 1 && { legend: {} }), [across]: { type: 'category', data: labels }, [along]: { type: 'value' },
+    series: series.map(({ name, data }) => ({ name, data: values(data), type: /^(line|area)$/.test(kind) ? 'line' : 'bar', ...(kind === 'area' && { areaStyle: {} }) })) }
+}
 
 const KINDS = ['number', 'date', 'month', 'time', 'long', 'yes', 'no', 'email', 'tel', 'url']
 const RANGE = /^(-?[\d.]+?)\s*\.\.\s*(-?[\d.]+?)(?:\s*\.\.\s*([\d.]+))?$/

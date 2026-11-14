@@ -176,6 +176,19 @@ class AppChart extends HTMLElement {
       paper.dispose()
     }
   }
+
+  /** The chart as it shows, in SVG at its size, for a page that leaves Jean drawn (../interactive/alone.js); '' while none is drawn. */
+  svg() {
+    const { option } = this, box = this.querySelector('.chart')
+    if (!option || !box) return ''
+    const copy = echarts.init(null, theme.peek() === 'dark' ? 'dark' : undefined, { renderer: 'svg', ssr: true, width: box.clientWidth, height: box.clientHeight })
+    try {
+      copy.setOption({ ...dressed(option, getComputedStyle(this).fontFamily), animation: false })
+      return copy.renderToSVGString()
+    } finally {
+      copy.dispose()
+    }
+  }
 }
 
 // A canvas draws its words in the one direction it is given: each is given its own, for the box's `dir="ltr"` not to flip a mixed one (in SVG: charts.css).

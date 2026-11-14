@@ -8,7 +8,7 @@
 import { readFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { test, expect } from '@playwright/test'
-import { start, openTasks, openSettings, closeSettings, SHARE_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, answered, openTasks, openSettings, closeSettings, SHARE_URL } from './helpers.js'
 import { renderFiles } from '../scripts/render.js'
 
 const PACKAGE = /^https:\/\/cdn\.jsdelivr\.net\/npm\/@jean-is\/render@[^/]+\/(.+)$/
@@ -247,6 +247,37 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   const after = await context.newPage()
   await after.goto(link)
   await expect(after.getByText('This is no longer shared.')).toBeVisible()
+  await context.close()
+})
+
+test('a page of parts shared by link from its pane opens in the host’s viewer drawn as Jean draws it, and its slider changes all it shows there (D670)', async ({ page, browser }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await page.evaluate(async (host) => {
+    const [{ app, updateSettings }, { unlock }] = await Promise.all([import('/ui/state.js'), import('/ui/caps.js')])
+    await updateSettings({ urls: { ...app.settings.value.urls, share: host } })
+    await unlock('share')
+  }, SHARE_URL)
+  await ask(page, 'How much will a car loan cost?')
+  await answered(page)
+  await page.evaluate(async () => { const { apps } = await import('/caps/interactive/apps.js'), [one] = await apps.kept(); await apps.open(one) })
+  await page.locator('app-preview .pane-head .icon-group > [popovertarget^="out-"]').click()
+  await page.locator('app-preview .out-menu').getByRole('button', { name: /^Share/ }).click()
+  const dialog = page.locator('app-share-dialog dialog[open]')
+  await dialog.getByRole('button', { name: 'Publish link' }).click()
+  const link = await dialog.locator('.link-field input').inputValue()
+
+  const { context } = await reading(browser)
+  const viewer = await context.newPage(), errors = /** @type {string[]} */ ([])
+  viewer.on('pageerror', (error) => errors.push(error.message))
+  await viewer.goto(link)
+  const frame = viewer.frameLocator('iframe[src="/frame"]'), values = frame.locator('app-parts ul.figures > li strong')
+  await expect(values).toHaveText(['€282.38', '€1,942.91'])
+  await expect(frame.locator('app-parts tbody tr:not(.chart-data *)')).toHaveCount(6)
+  await frame.getByRole('spinbutton', { name: 'Years' }).fill('3')
+  await expect(values).toHaveText(['€448.89', '€1,160.05'])
+  await expect(frame.locator('app-parts tbody tr:not(.chart-data *)')).toHaveCount(4)
+  expect(errors).toEqual([])
   await context.close()
 })
 

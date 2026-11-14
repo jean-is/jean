@@ -2,7 +2,7 @@
 // Sharing (D361, docs/sharing.md): a task, or one page, chart, deck or picture Jean made, with anyone who has its link, or with only the
 // people chosen, whose pane People draws in the same dialog (its `audience` slot, D727). A link is a copy sealed here and kept by a host that
 // can't read it, which whoever has the link, and the password when there is one, opens. The host is the one whoever serves Jean names
-// (`urls.share`), none until one is, and policy can say never (`rules.share`). Found after a first copy saved, or with People (D281).
+// (`urls.share`), none until one is, and policy can say never (`rules.share`). Found after a first copy saved, of a task or of what a pane shows (ui/out.js), or with People (D281).
 // The copy holds the requests, the answers and the files made, never the notes, the prompt, the
 // thinking or the secrets (copy.js). Each share is a file of Jean's, shares/<ulid>.json; its write
 // token and what its password made stay among the secrets, so only this device changes it.

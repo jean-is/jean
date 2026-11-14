@@ -8,8 +8,10 @@
 // fetched by Jean; a page holds a map beside its form, in step both ways. A diagram saved as a
 // .mmd file, or in a Markdown file, is drawn as in an answer, in the browser and the preview.
 // The pages answers hold are apps among the creations once the project holds one (D553).
+import { readFile } from 'node:fs/promises'
+import { pathToFileURL } from 'node:url'
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, openSettings, openApprovals, closeSettings, openTasks, nextCopy, chooseLanguage } from './helpers.js'
+import { start, connectFakeBrain, ask, answered, openSettings, openApprovals, closeSettings, openTasks, nextCopy, chooseLanguage, SHARE_URL } from './helpers.js'
 
 /** The language, picked in Settings as start() picks it. @param {import('@playwright/test').Page} page @param {string} lang */
 async function speak(page, lang) {
@@ -329,6 +331,66 @@ test('Visual answers, a mode + turns on: shown pressed at the box’s foot, its 
   expect(await told()).toHaveLength(2)
 })
 
+test('a page of parts leaves Jean drawn as Jean draws it and live without Jean: its page downloaded shows its figures, table and chart, and its slider changes them all, asking for nothing; where scripts don’t run it is drawn still; and sharing by link is found once it has left (D670, D361)', async ({ page, browser }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  // A host for links is named, and sharing not yet found.
+  await page.evaluate(async (host) => { const { app, updateSettings } = await import('/ui/state.js'); await updateSettings({ urls: { ...app.settings.value.urls, share: host } }) }, SHARE_URL)
+  await ask(page, 'How much will a car loan cost?')
+  await answered(page)
+  await page.evaluate(async () => { const { apps } = await import('/caps/interactive/apps.js'), [one] = await apps.kept(); await apps.open(one) })
+  const pane = page.locator('app-preview'), out = pane.locator('.pane-head .icon-group > [popovertarget^="out-"]')
+  await expect(pane.locator('app-parts ul.figures > li strong')).toHaveText(['€282.38', '€1,942.91'])
+  await out.click()
+  await expect(pane.locator('.out-menu button', { hasText: 'Share…' })).toHaveCount(0)
+  const [download] = await Promise.all([page.waitForEvent('download'), pane.locator('.out-menu').getByRole('button', { name: /^Web page/ }).click()])
+  const file = test.info().outputPath('loan.html')
+  await download.saveAs(file)
+  // Its modules inside it, ECharts among them.
+  const saved = await readFile(file, 'utf8')
+  expect(['alive', 'parts', 'live', 'formula', 'option', 'echarts'].map((name) => saved.includes(`<script type="text/x-module" data-name="${name}">`))).toEqual([true, true, true, true, true, true])
+
+  const alone = await browser.newContext(), asked = /** @type {string[]} */ ([]), errors = /** @type {string[]} */ ([])
+  alone.on('request', (request) => { if (!/^(file|blob|data):/.test(request.url())) asked.push(request.url()) })
+  const loan = await alone.newPage()
+  loan.on('pageerror', (error) => errors.push(error.message))
+  await loan.goto(pathToFileURL(file).href)
+  const values = loan.locator('ul.figures > li strong'), rows = loan.locator('tbody tr:not(.chart-data *)')
+  await expect(values).toHaveText(['€282.38', '€1,942.91'])
+  await expect(loan.locator('.part-card > h4').first()).toHaveText('Left over 5 years')
+  await expect(rows).toHaveCount(6)
+  await expect(loan.locator('app-chart .chart svg')).toBeVisible()
+  // None of Jean's buttons, nor the one that asked the brain, as nothing is sent from it.
+  await expect(loan.locator('.drawn-foot')).toHaveCount(0)
+  await expect(loan.getByRole('button', { name: 'Is it a good deal?' })).toHaveCount(0)
+  expect(await values.first().evaluate((element) => getComputedStyle(element).fontFamily)).toMatch(/^Display\b/)
+  // Its slider and its number are one field, and all that reads it follows, as in Jean.
+  await loan.getByRole('spinbutton', { name: 'Years' }).fill('3')
+  await expect(loan.getByRole('slider', { name: 'Years' })).toHaveValue('3')
+  await expect(values).toHaveText(['€448.89', '€1,160.05'])
+  await expect(loan.locator('.part-card > h4').first()).toHaveText('Left over 3 years')
+  await expect(rows).toHaveCount(4)
+  await expect(loan.locator('app-chart .chart-data tbody tr')).toHaveCount(4)
+  // A head sorts its table, an amount by its value.
+  await loan.getByRole('button', { name: 'Balance' }).click()
+  await expect(loan.getByRole('columnheader', { name: 'Balance' })).toHaveAttribute('aria-sort', 'ascending')
+  await expect(rows.first().locator('td, th').first()).toHaveText('3')
+  expect(errors).toEqual([])
+  expect(asked).toEqual([])
+  await alone.close()
+  // Where scripts don't run, drawn as it was left.
+  const still = await browser.newContext({ javaScriptEnabled: false }), off = await still.newPage()
+  await off.goto(pathToFileURL(file).href)
+  await expect(off.locator('ul.figures > li strong')).toHaveText(['€282.38', '€1,942.91'])
+  await expect(off.locator('tbody tr:not(.chart-data *)')).toHaveCount(6)
+  await expect(off.locator('app-chart .chart svg')).toBeVisible()
+  await still.close()
+
+  // It has left Jean, as a task's copy saved does: sharing it by link is found.
+  await out.click()
+  await expect(pane.locator('.out-menu button', { hasText: 'Share…' })).toHaveCount(1)
+})
+
 test('the pages answers hold are apps among the creations once there is one, the newest of each name alone, still on its card, working beside the task, marked in its task, and Create asks for one (D553)', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
@@ -523,7 +585,7 @@ test('a page\'s form, figures, table and chart share their state: a slider or a 
   const parts = page.locator('.msg-jean .prose app-parts').last()
   await expect(parts.locator('iframe')).toHaveCount(0)
   const values = parts.locator('ul.figures > li strong'), rows = parts.locator('tbody tr:not(.chart-data *)'), years = parts.getByRole('slider', { name: 'Years' })
-  await expect(values).toHaveText(['282.38 €', '1,942.91 €'])
+  await expect(values).toHaveText(['€282.38', '€1,942.91'])
   await expect(rows).toHaveCount(6)
   await expect(parts.locator('.part-card > h4').first()).toHaveText('Left over 5 years')
   await expect(parts.locator('app-chart .chart canvas').first()).toBeVisible()
@@ -536,7 +598,7 @@ test('a page\'s form, figures, table and chart share their state: a slider or a 
   await page.keyboard.press('ArrowLeft')
   await page.keyboard.press('ArrowLeft')
   await expect(parts.getByRole('spinbutton', { name: 'Years' })).toHaveValue('3')
-  await expect(values).toHaveText(['448.89 €', '1,160.05 €'])
+  await expect(values).toHaveText(['€448.89', '€1,160.05'])
   await expect(rows).toHaveCount(4)
   await expect(parts.locator('.part-card > h4').first()).toHaveText('Left over 3 years')
   await expect.poll(async () => (await series()).length).toBe(4)
@@ -549,7 +611,7 @@ test('a page\'s form, figures, table and chart share their state: a slider or a 
   await expect(amount).toBeFocused()
   await expect(amount).toHaveValue('30000')
   await expect(parts.getByRole('slider', { name: 'Amount' })).toHaveValue('30000')
-  await expect(values.first()).toHaveText('897.78 €')
+  await expect(values.first()).toHaveText('€897.78')
   await expect(page.locator('.msg-user')).toHaveCount(1)
 
   // Its one button sends the fields as they are; the note before it tells the brain what the page now holds.
@@ -583,8 +645,9 @@ test('a page\'s form, figures, table and chart share their state: a slider or a 
   await ask(page, 'كم يكلف قرض السيارة؟')
   await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
   const arabic = page.locator('.msg-jean .prose app-parts').last(), slider = arabic.getByRole('slider', { name: 'السنوات' })
-  const [monthly, five] = await page.evaluate(() => [new Intl.NumberFormat('ar', { minimumFractionDigits: 2 }).format(282.38), new Intl.NumberFormat('ar').format(5)])
-  await expect(arabic.locator('ul.figures > li strong').first()).toHaveText(`${monthly} €`)
+  // An amount as Arabic writes one, the symbol where the language puts it.
+  const [monthly, five] = await page.evaluate(() => [new Intl.NumberFormat('ar', { style: 'currency', currency: 'EUR', currencyDisplay: 'narrowSymbol', minimumFractionDigits: 2, maximumFractionDigits: 2 }).formatToParts(282.38).map((part) => (part.type === 'currency' ? '€' : part.value)).join(''), new Intl.NumberFormat('ar').format(5)])
+  await expect(arabic.locator('ul.figures > li strong').first()).toHaveText(monthly)
   await expect(arabic.locator('.part-card > h4').first()).toHaveText(`المتبقي خلال ${five} سنوات`)
   expect(await slider.evaluate((element) => getComputedStyle(element).direction)).toBe('rtl')
   await slider.focus()
@@ -594,7 +657,7 @@ test('a page\'s form, figures, table and chart share their state: a slider or a 
   await ask(page, '自動車ローンはいくらですか')
   await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
   const japanese = page.locator('.msg-jean .prose app-parts').last()
-  await expect(japanese.locator('ul.figures > li strong').first()).toHaveText('282.38 €')
+  await expect(japanese.locator('ul.figures > li strong').first()).toHaveText('€282.38')
   await japanese.getByRole('spinbutton', { name: '年数' }).fill('2')
   await expect(japanese.locator('tbody tr:not(.chart-data *)')).toHaveCount(3)
   await expect(japanese.locator('.part-card > h4').first()).toHaveText('2年の残高')

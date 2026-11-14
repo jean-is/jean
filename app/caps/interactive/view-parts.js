@@ -19,7 +19,7 @@ import { t, locale, intlLocales } from '../../core/i18n.js'
 import { foldTurns } from '../../core/events.js'
 import { loadConversation } from '../../core/conversations.js'
 import { aligned } from '../layouts/shapes.js'
-import { parse, all, bound, key, frozen, figures, table, chart, form, number, changed } from './parts.js'
+import { parse, all, bound, key, frozen, figures, table, chart, form, number, option, changed } from './parts.js'
 import { shared } from './live.js'
 
 /** @import { Part } from './parts.js' */
@@ -27,15 +27,6 @@ import { shared } from './live.js'
 /** @import { Loaded } from '../tables/tables.js' */
 /** @import { Property } from '../tables/table.js' */
 /** A part as it is drawn: one that shows a collection with its lines filled, the collection followed, and a form's columns; or the name of one not here, or of one its `where` can't filter. @typedef {Part & { live?: Signal<Loaded | null>, columns?: Property[], missing?: string, unread?: string }} Shown */
-
-/** A chart's option for ECharts: bars, lines, areas, bars across or a pie, by its labels and series. @param {ReturnType<typeof chart>} drawing */
-function option({ kind, labels, series }) {
-  const values = (/** @type {number[]} */ data) => data.map((value) => (Number.isFinite(value) ? value : null))
-  if (kind === 'pie') return { tooltip: { trigger: 'item' }, legend: { bottom: 0 }, series: [{ type: 'pie', radius: ['38%', '62%'], data: labels.map((name, i) => ({ name, value: values(series[0]?.data ?? [])[i] ?? 0 })) }] }
-  const [across, along] = kind === 'hbar' ? ['yAxis', 'xAxis'] : ['xAxis', 'yAxis']
-  return { tooltip: { trigger: 'axis' }, ...(series.length > 1 && { legend: {} }), [across]: { type: 'category', data: labels }, [along]: { type: 'value' },
-    series: series.map(({ name, data }) => ({ name, data: values(data), type: /^(line|area)$/.test(kind) ? 'line' : 'bar', ...(kind === 'area' && { areaStyle: {} }) })) }
-}
 
 const FENCE = /^ {0,3}(`{3,}|~{3,})html[^\n]*\n([\s\S]*?)\n {0,3}\1/gim
 /**
@@ -92,23 +83,23 @@ customElements.define('app-parts', class extends HTMLElement {
 
   draw() {
     const source = this.getAttribute('source') ?? '', open = this.hasAttribute('open'), parts = parse(source, open) ?? []
-    const tables = all(parts).filter((part) => part.tag === 'app-table'), asides = parts.filter((part) => part.tag === 'aside')
+    const every = all(parts), tables = every.filter((part) => part.tag === 'app-table'), asides = parts.filter((part) => part.tag === 'aside')
     this.fills = {}
     const state = shared(parts, { given: this.given, added: this.added, lang: locale.peek(), locales: intlLocales(locale.peek()) })
     this.told = state.now
     /** @param {Part} given @returns {unknown} */
     const piece = (given) => {
-      const name = bound(given, tables), part = /** @type {Shown} */ (name === undefined ? state.filled(given) : this.bound(given, name))
+      const name = bound(given, tables), part = /** @type {Shown} */ (name === undefined ? state.filled(given) : this.bound(given, name)), place = every.indexOf(given)
       if (part.missing || part.unread) return html`<p class="muted small" dir="auto">${part.unread ? t('interactive.unread', { name: part.unread, where: part.attrs.where ?? '' }) : t('interactive.noCollection', { name: part.missing ?? '' })}</p>`
       switch (part.tag) {
-        case 'app-figures': return html`<ul class="figures" aria-live=${state.live ? 'polite' : nothing}>${figures(part).map(([value, words]) => html`<li><strong>${value}</strong><span>${words}</span></li>`)}</ul>`
+        case 'app-figures': return html`<ul class="figures" data-part=${place} aria-live=${state.live ? 'polite' : nothing}>${figures(part).map(([value, words]) => html`<li><strong>${value}</strong><span>${words}</span></li>`)}</ul>`
         case 'app-cards': return html`<div class="part-cards">${part.kids.map(piece)}</div>`
-        case 'app-card': return html`<section class=${'wide' in part.attrs ? 'part-card wide' : 'part-card'}>${part.attrs.heading ? html`<h4 dir="auto">${part.attrs.heading}</h4>` : nothing}${part.kids.map(piece)}</section>`
+        case 'app-card': return html`<section class=${'wide' in part.attrs ? 'part-card wide' : 'part-card'} data-part=${place}>${part.attrs.heading ? html`<h4 dir="auto">${part.attrs.heading}</h4>` : nothing}${part.kids.map(piece)}</section>`
         case 'aside': return html`<aside>${part.kids.map(piece)}</aside>`
-        case '#text': return part.text.trim().split(/\n\s*\n/).map((said) => html`<p dir="auto">${said.replace(/\s*\n\s*/g, ' ')}</p>`)
-        case 'app-table': return this.table(part, tables.indexOf(given))
-        case 'app-chart': return this.chart(part, state.live)
-        case 'app-form': return this.form(part, tables, state)
+        case '#text': return part.text.trim().split(/\n\s*\n/).map((said) => html`<p dir="auto" data-part=${place}>${said.replace(/\s*\n\s*/g, ' ')}</p>`)
+        case 'app-table': return this.table(part, tables.indexOf(given), place)
+        case 'app-chart': return this.chart(part, state.live, place)
+        case 'app-form': return this.form(part, tables, state, place)
         case 'app-map': return drawn.value.geojson?.(part.text, open) ?? nothing
         case 'app-diagram': return drawn.value.mermaid?.(part.text, open) ?? nothing
       }
@@ -155,27 +146,28 @@ customElements.define('app-parts', class extends HTMLElement {
   /**
    * A table, its amounts at the end, sorted by a head once one is pressed; each cell's words in their own
    * direction, as a date the user's language writes, filled in a page in another. @param {Part} part @param {number} n its place among the page's tables
+   * @param {number} [place] the part's among the page's, which a page that leaves Jean finds it by (./alone.js)
    */
-  table(part, n) {
+  table(part, n, place = -1) {
     const { heads, rows } = table(part), lang = locale.peek(), sort = this.sorted.get(n), named = namesRows(heads[0] ?? '', rows.map((row) => String(row[0] ?? '').trim()))
     const align = aligned({ align: heads.map(() => null), rows: rows.map((row) => row.map((text) => ({ text }))) }).map((side) => side && `align-${side}`), collator = new Intl.Collator(intlLocales(lang), { numeric: true })
     /** An amount by its value, one with none after the others; any other cell as the language sorts words. @param {string} a @param {string} b */
     const compare = (a, b) => (sort && align[sort.column] ? ((x, y) => (Number.isNaN(x) ? 1 : Number.isNaN(y) ? -1 : x - y))(number(a, lang), number(b, lang)) : collator.compare(a, b))
     const shown = sort ? [...rows].sort((a, b) => compare(a[sort.column], b[sort.column]) * (sort.down ? -1 : 1)) : rows
     const by = (/** @type {number} */ column) => () => { this.sorted.set(n, { column, down: sort?.column === column && !sort.down }); this.tick.value++ }
-    return html`<div class="table" tabindex="0"><table>
+    return html`<div class="table" tabindex="0" data-part=${place}><table>
       <thead><tr>${heads.map((head, i) => html`<th scope="col" class=${align[i] || ''} aria-sort=${sort?.column === i ? (sort.down ? 'descending' : 'ascending') : nothing}>${head ? html`<button type="button" class="sorts" @click=${by(i)}>${head}</button>` : nothing}</th>`)}</tr></thead>
       <tbody>${shown.map((row) => html`<tr>${row.map((cell, i) => (i || !named ? html`<td class=${align[i] || ''}><bdi>${cell}</bdi></td>`
         : html`<th scope="row" class=${align[i] || ''}><bdi>${cell}</bdi></th>`))}</tr>`)}</tbody>
     </table></div>`
   }
 
-  /** A chart, drawn by Charts once it has come, the same one as what it shows changes on a page that shares (`live`); until then, or where it can't come, its numbers as a table. @param {Part} part @param {boolean} live */
-  chart(part, live) {
+  /** A chart, drawn by Charts once it has come, the same one as what it shows changes on a page that shares (`live`); until then, or where it can't come, its numbers as a table. @param {Part} part @param {boolean} live @param {number} [place] */
+  chart(part, live, place = -1) {
     const drawing = chart(part, locale.peek())
-    if (customElements.get('app-chart')) return html`<app-chart ?live=${live} source=${JSON.stringify(option(drawing))}></app-chart>`
+    if (customElements.get('app-chart')) return html`<app-chart ?live=${live} data-part=${place} source=${JSON.stringify(option(drawing))}></app-chart>`
     void unlock('charts').then((come) => come && this.isConnected && this.tick.value++)
-    return this.table({ ...part, text: [['', ...drawing.labels], ...drawing.series.map(({ name, data }) => [name, ...data])].map((row) => row.join(' | ')).join('\n') }, -1)
+    return this.table({ ...part, text: [['', ...drawing.labels], ...drawing.series.map(({ name, data }) => [name, ...data])].map((row) => row.join(' | ')).join('\n') }, -1, place)
   }
 
   /** What the user set or added: drawn again, and told to the brain with their next message. */
@@ -185,9 +177,9 @@ customElements.define('app-parts', class extends HTMLElement {
    * A form: a field for each of its lines, and its button, which adds what was filled in as a row to the collection it shows, as the
    * user's own change, or to the page's table it names, for this visit, or else sends it as the user's next message: what it asks,
    * then each field and its value. On a page that shares (`live`), a form that adds no row has its fields read at once, and a button only if it asks something.
-   * @param {Shown} part @param {Part[]} tables the page's @param {ReturnType<typeof shared>} state
+   * @param {Shown} part @param {Part[]} tables the page's @param {ReturnType<typeof shared>} state @param {number} [place]
    */
-  form(part, tables, state) {
+  form(part, tables, state, place = -1) {
     const fields = form(part), { ask = '', to = '' } = part.attrs, label = ask || t('action.send'), button = ask || to || !state.live, at = ++forms
     /** A field the user changed: all that reads it follows. @param {any} event */
     const changes = ({ target }) => { this.given.set(target.name, target.type === 'checkbox' ? target.checked : target.value); this.changed() }
@@ -207,7 +199,7 @@ customElements.define('app-parts', class extends HTMLElement {
       : field.kind === 'yes' || field.kind === 'no' ? html`<input id=${id} type="checkbox" name=${field.label} ?checked=${field.start ? /^(yes|on|true|✓)$/i.test(field.start) : field.kind === 'yes'}>`
       : field.kind === 'range' ? ((now) => html`<input id=${id} type="range" name=${field.label} min=${field.min ?? nothing} max=${field.max ?? nothing} step=${field.step ?? nothing} .value=${now}><input type="number" name=${field.label} title=${field.label} step=${field.step ?? nothing} .value=${now}>`)(String(this.given.get(field.label) ?? field.start))
       : html`<input id=${id} type=${field.kind === 'text' ? 'text' : field.kind} name=${field.label} step=${field.kind === 'number' ? 'any' : nothing} value=${field.start}>`)
-    return html`<form class="part-form" @submit=${submit} @input=${state.live && !to ? changes : nothing}>${fields.map((field, i) => html`<label class=${field.kind === 'yes' || field.kind === 'no' ? 'tick' : field.kind === 'range' ? 'slides' : ''} for=${`part-${at}-${i}`}><span dir="auto">${field.label}</span>${input(field, `part-${at}-${i}`)}</label>`)}
+    return html`<form class="part-form" data-part=${place} @submit=${submit} @input=${state.live && !to ? changes : nothing}>${fields.map((field, i) => html`<label class=${field.kind === 'yes' || field.kind === 'no' ? 'tick' : field.kind === 'range' ? 'slides' : ''} for=${`part-${at}-${i}`}><span dir="auto">${field.label}</span>${input(field, `part-${at}-${i}`)}</label>`)}
       ${button ? html`<button type="submit" class="button primary">${label}</button>` : nothing}</form>`
   }
 })

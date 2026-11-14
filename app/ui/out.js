@@ -13,6 +13,7 @@ import { act } from './acts.js'
 import { loaded, slots, unlock, isDenied } from './caps.js'
 import { icons } from './menu-icons.js'
 import { t, useStrings } from '../core/i18n.js'
+import { serviceURL } from '../core/settings.js'
 
 await useStrings('out')
 
@@ -40,10 +41,14 @@ export function waysOf(file, pane, other) {
   return part ? moduleOf(part)?.ways(file, pane) ?? null : other()
 }
 
-/** A way taken, said to the audit once done; a system sheet closed unused is no failure. @param {Shown} file @param {Way} way @param {EventTarget | null} [from] */
+/**
+ * A way taken, said to the audit once done; a system sheet closed unused is no failure. What leaves Jean so is a copy, as a task's saved one is: sharing by
+ * link is found then, where a host is named (D361). @param {Shown} file @param {Way} way @param {EventTarget | null} [from]
+ */
 async function take(file, way, from = null) {
   try {
     await way.run(from)
+    if (serviceURL('share', app.settings.peek(), app.policy) && app.policy.rules?.share !== 'never') void unlock('share')
     if (way.id) act('file.save', { task: app.current.peek()?.path, path: file.uri, format: way.id })
   } catch (error) {
     if (!(error instanceof DOMException && error.name === 'AbortError')) (console.warn('Out', error), notify(t(way.id === 'copy' ? 'made.copyFailed' : 'out.failed'), { alert: true }))

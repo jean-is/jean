@@ -293,6 +293,28 @@ Year | Big
   assert.deepEqual(chart(pie.of('app-chart'), 'fr').series[0].data, [1234.57, 1235])
 })
 
+test('an amount beside its currency’s symbol is written as the language writes one, its sign and symbol in their places; what is no amount, or a symbol glued to a word, stays as written', () => {
+  const page = `<app-values>
+Loss = -3652.4
+Gain = 282.38
+</app-values>
+<app-figures>
+€{Loss:0} | before
+{Gain:2} € | after
+{Loss} | plain
+US\${Gain:0} | glued
+€{Missing} | none
+</app-figures>`
+  const said = (/** @type {string} */ lang) => figures(drawnBy(page, { lang, locales: [lang] }).of('app-figures')).map(([value]) => value)
+  assert.deepEqual(said('en'), ['-€3,652', '€282.38', '-3,652.4', 'US$282', '€—'])
+  const [before, after, plain, glued, none] = said('fr')
+  assert.match(before, /^-3\s652\s€$/)
+  assert.match(after, /^282,38\s€$/)
+  assert.match(plain, /^-3\s652,4$/)
+  assert.deepEqual([glued, none], ['US$282', '€—'])
+  assert.deepEqual(said('ja').slice(0, 2), ['-€3,652', '€282.38'])
+})
+
 test('a form’s row reaches the table it names, then what adds up that table: figures, formulas and a chart', () => {
   const page = `<app-form>
 Budget: number = 100

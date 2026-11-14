@@ -649,6 +649,47 @@ test('a page on its own goes online from its pane as a site of one page, its scr
   await expect(dialog).toContainText('Nothing changed since it was published.')
 })
 
+test('a page of parts goes online from its pane as a site its host runs: drawn as Jean draws it, its modules and ECharts in files beside it that import each other by path, nothing refused, and live there (D720, D670)', async ({ page, context, browserName }) => {
+  const name = `loan-${browserName}-${test.info().retry}-${test.info().repeatEachIndex}`, address = `http://${name}.localhost:4185/`
+  await start(page)
+  await connectFakeBrain(page)
+  await page.evaluate(async (host) => { const { app, updateSettings } = await import('/ui/state.js'); await updateSettings({ urls: { ...app.settings.value.urls, share: host } }) }, SHARE_URL)
+  await ask(page, 'How much will a car loan cost?')
+  await answered(page)
+  await page.evaluate(async () => { const { apps } = await import('/caps/interactive/apps.js'), [one] = await apps.kept(); await apps.open(one) })
+  const dialog = page.locator('dialog.site-publish')
+  await page.locator('app-preview').getByRole('button', { name: 'Share, download or print' }).click()
+  await page.getByRole('button', { name: 'Publish…' }).click()
+  await dialog.getByLabel('Address').fill(name)
+  await expect(dialog.locator('#publish-said')).toHaveText('This address is free.')
+  await dialog.getByRole('button', { name: 'Publish', exact: true }).click()
+  await dialog.getByLabel('I’ve kept it somewhere safe').check()
+  await dialog.getByRole('button', { name: 'Done' }).click()
+  await expect(dialog.locator('.site-state.is-live')).toContainText('Online until')
+  const record = await page.evaluate(async () => {
+    const { app } = await import('/ui/state.js'), [site] = (await app.fs.list(`${app.projectDir}/sites`)).map(({ name }) => name)
+    return JSON.parse((await app.fs.read(`${app.projectDir}/sites/${site}/site.json`)) ?? '{}')
+  })
+  expect(record).toMatchObject({ files: ['alive.js', 'parts.js', 'live.js', 'formula.js', 'option.js', 'echarts.js', 'index.html'], published: { name, address } })
+
+  await throughHost(context)
+  const visit = await context.newPage(), refused = /** @type {string[]} */ ([]), errors = /** @type {string[]} */ ([])
+  visit.on('console', (message) => { if (/Content Security Policy/i.test(message.text())) refused.push(message.text()) })
+  visit.on('pageerror', (error) => errors.push(error.message))
+  await visit.goto(address)
+  const values = visit.locator('ul.figures > li strong'), rows = visit.locator('tbody tr:not(.chart-data *)')
+  await expect(values).toHaveText(['€282.38', '€1,942.91'])
+  await expect(rows).toHaveCount(6)
+  await expect(visit.locator('app-chart .chart svg')).toBeVisible()
+  await visit.getByRole('spinbutton', { name: 'Years' }).fill('3')
+  await expect(values).toHaveText(['€448.89', '€1,160.05'])
+  await expect(visit.locator('.part-card > h4').first()).toHaveText('Left over 3 years')
+  await expect(rows).toHaveCount(4)
+  expect(refused).toEqual([])
+  expect(errors).toEqual([])
+  await visit.close()
+})
+
 test('a game goes online from its pane as a site its host runs: its code, Phaser and ZzFX in files beside its page that it imports by path, no policy of its own stopping them, and it plays there (D720, D648)', async ({ page, context, browserName }) => {
   const name = `star-${browserName}-${test.info().retry}-${test.info().repeatEachIndex}`, address = `http://${name}.localhost:4185/`
   await start(page)
