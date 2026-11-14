@@ -92,6 +92,8 @@ export const DIRECTORY = Object.freeze(/** @type {Known[]} */ ([
   // Every org's records, read and changed, at one address; its registration wants an app already registered. A sandbox org's server has
   // `/sandbox` before `/platform` and signs in at test.salesforce.com, which policy gives.
   { id: 'salesforce', group: 'customers', name: 'Salesforce', url: 'https://api.salesforce.com/platform/mcp/v1/platform/sobject-all', signIn: ['login.salesforce.com'], app: 'https://login.salesforce.com', logo: 'salesforce.svg' },
+  // Its sign-in answers no browser, nor its server the headers Jean sends, and it registers only the redirects on its list.
+  { id: 'pipedrive', group: 'customers', name: 'Pipedrive', url: 'https://mcp.pipedrive.ai/mcp', signIn: ['oauth.pipedrive.com'], app: 'https://oauth.pipedrive.com', logo: 'pipedrive.png' },
   // Registers only the apps made on its site.
   { id: 'box', group: 'files', name: 'Box', url: 'https://mcp.box.com/', signIn: ['api.box.com'], app: 'https://api.box.com', logo: 'box.png' },
   // Their sign-in refuses browsers, and most of them their service too.

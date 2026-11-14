@@ -18,6 +18,7 @@ What the certificates' next steps hang on ([certificates.md](certificates.md)):
   - **Google** (D344, D349): Google verifying Jean's app, so that anyone can sign in rather than the test users it lists (a review of its sensitive scopes, and a yearly security assessment for Gmail's and Drive's restricted ones); Google ending the developer preview, and its servers answering browsers.
   - **Slack and Dropbox:** CORS, plus open registration for Slack. Dropbox, like Figma, registers only the apps on its list: ask both to add Jean.
   - **Qonto:** registers only the redirects on its list, added on request at its developers' support: ask for `https://jean.is/` and the desktop apps' `http://127.0.0.1:24601/`, then its entry drops `app`. An organisation's own address needs the same.
+  - **Pipedrive:** registers only the redirects on its list, which holds this computer's already: ask its developers for `https://jean.is/`, then its entry drops `app`.
 - **Helpers on a cheaper brain?** Helpers use the brain that delegated (D98). Auto could give them a lighter tier: cheaper, but one answer would then mix two models' work. To decide with real tasks.
 - **What a template carries** (D476): a project's instructions, skills, tables and routines, and its connections as names and addresses only, without their secrets?
 - **Requests between people's Jeans (D226):** A2A's messages over the relay, or ACP's?
