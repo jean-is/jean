@@ -136,21 +136,22 @@ sections, to sort ideas together". table_create keeps its note. suggest_skill is
 | A whiteboard made right through the skill, where one is right | Haiku | Sonnet | Gate |
 |---|---:|---:|---:|
 | Skills not found, Jean's (above) | 79.7% (153/192) | 87.5% (168/192) | 80% |
-| Skills found, as Jean is | 69% (132/192) | 87.5% (168/192) | 80% |
+| Skills found, before the `when` in `<skills>` | 69% (132/192) | 87.5% (168/192) | 80% |
 | Those, by language: en, fr, ar, ja | 67, 63, 67, 79 | 88, 79, 90, 94 | ar, ja within 10 of en |
-| Skills found, whiteboard's `when` after its words in `<skills>` | 77% (147/192) | 91% (174/192) | 80% |
+| Skills found, whiteboard's `when` after its words in `<skills>`: Jean's | 77% (147/192) | 91% (174/192) | 80% |
 | Those, by language: en, fr, ar, ja | 77, 77, 73, 79 | 92, 83, 90, 98 | ar, ja within 10 of en |
 | Whiteboards made for the 80 table requests, three runs, in each | 0 | 0 | 2 at most |
-| Those tables right: as Jean is, then with the `when` | 98%, 98% | 92%, 91% | about as before |
+| Those tables right: before the `when`, then with it | 98%, 98% | 92%, 91% | about as before |
 
-As Jean is, Haiku loses 11 points once Skills is found. What told it a whiteboard's use was `readFor` in `skill`'s line, and the
+Before the `when` was there, Haiku lost 11 points once Skills is found. What told it a whiteboard's use was `readFor` in `skill`'s line, and the
 listing's words don't say brainstorm or retrospective. Of its 60 misses, 57 are the skill not read: words 28, a table 23, and
 "project-plan" read 6. Sonnet doesn't move: 22 not read (words 10, a table 8) and one section empty.
 
 With "; read whiteboard for a brainstorm, a retrospective or things to sort into groups with others, in place of a list or a table"
-after whiteboard's words in `<skills>` (`readFor(['whiteboard'])`, the same words; `SKILLS_TEXT` in the environment), Haiku comes
-back to 77%. That is under the gate, and 2.7 points under where it is before Skills is found. Its 45 misses: 33 not read (words 14,
-a table 11, "project-plan" 8) and 12 with a section empty. Sonnet is at 91%. Not in `app/`, since Haiku doesn't pass.
+after whiteboard's words in `<skills>` (`readFor(['whiteboard'])`, the same words), Haiku comes back to 77%. That is under the gate, and 2.7 points under where it is before Skills is found. Its 45 misses: 33 not read (words 14,
+a table 11, "project-plan" 8) and 12 with a section empty. Sonnet is at 91%. It shipped at the owner's word, under the gate, since it
+beats 69%: `listedOwn()` in `app/caps/skills/directory.js`, which `listed()` calls, gives each of Jean's own its `readFor`. `--found`
+measures Jean with it, and an empty `SKILLS_TEXT` without it.
 
 Sonnet's tables, 92% and 91% here, were 95% in the run above and 93% at first: its misses are its own long tables ("n columns", 11
 each time), and the tables' tools and words are the same in every state.
@@ -160,7 +161,7 @@ The next wording to measure keeps "; read whiteboard for …" in `skill`'s line 
 or following it; read whiteboard for a brainstorm, a retrospective or things to sort into groups with others, in place of a list or
 a table" npm run whiteboard -- --parts skill:make,skill:choose,skill:tables --runs 3 --found`.
 
-#### haiku (claudecode), Skills found, as Jean is
+#### haiku (claudecode), Skills found, before the `when` in `<skills>`
 
 528 conversations, 3 runs each.
 
@@ -170,7 +171,7 @@ a table" npm run whiteboard -- --parts skill:make,skill:choose,skill:tables --ru
 | skill:choose | 67% (32/48) | 63% (30/48) | 67% (32/48) | 79% (38/48) | 69% (132/192) | skill not read: words (28); skill not read: table_create (21); project-plan read (6); a section empty (3) |
 | skill:tables | 97% (58/60) | 100% (60/60) | 97% (58/60) | 97% (58/60) | 98% (234/240) | no medicine (1); no who (1); no gift (1); no price (1) |
 
-#### sonnet (claudecode), Skills found, as Jean is
+#### sonnet (claudecode), Skills found, before the `when` in `<skills>`
 
 528 conversations, 3 runs each.
 
@@ -180,7 +181,7 @@ a table" npm run whiteboard -- --parts skill:make,skill:choose,skill:tables --ru
 | skill:choose | 88% (42/48) | 81% (39/48) | 90% (43/48) | 94% (45/48) | 88% (169/192) | skill not read: words (10); skill not read: table_create (8); skill not read: write, table_create (2); a section empty (1) |
 | skill:tables | 95% (57/60) | 93% (56/60) | 90% (54/60) | 90% (54/60) | 92% (221/240) | n columns (11); الحالة: steps مرسلة, مدفوعة (2); no ステータス (2); no handed (1) |
 
-#### haiku (claudecode), Skills found, the `when` in `<skills>`
+#### haiku (claudecode), Skills found, the `when` in `<skills>`: Jean's
 
 528 conversations, 3 runs each.
 
@@ -190,7 +191,7 @@ a table" npm run whiteboard -- --parts skill:make,skill:choose,skill:tables --ru
 | skill:choose | 77% (37/48) | 77% (37/48) | 73% (35/48) | 79% (38/48) | 77% (147/192) | skill not read: words (14); a section empty (12); skill not read: table_create (11); project-plan read (8) |
 | skill:tables | 97% (58/60) | 100% (60/60) | 97% (58/60) | 98% (59/60) | 98% (235/240) | no cost (1); no course (1); no completed (1); no سلم (1) |
 
-#### sonnet (claudecode), Skills found, the `when` in `<skills>`
+#### sonnet (claudecode), Skills found, the `when` in `<skills>`: Jean's
 
 528 conversations, 3 runs each.
 

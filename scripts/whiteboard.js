@@ -25,7 +25,7 @@ import { buildSystemPrompt } from '../app/core/prompt.js'
 import { streamChat } from '../app/core/llm.js'
 import { tableCreate, LINE as TABLE_LINE } from '../app/caps/tables/tool.js'
 import { WHITEBOARD, WHITEBOARD_CHANGE, LINES, made, changed } from '../test/whiteboard/tools.js'
-import { DIRECTORY, readFor, shownIn } from '../app/caps/skills/directory.js'
+import { DIRECTORY, readFor, shownIn, listedOwn } from '../app/caps/skills/directory.js'
 import { skillNamed, skillLines, parseSkill } from '../app/core/skills.js'
 import { score, normal } from './tables.js'
 
@@ -50,8 +50,9 @@ const SKILL_LINE = { name: 'skill', line: process.env.SKILL_LINE || `read the st
 const tableSpec = (lang) => (process.env.TABLE_NOTE == null ? tableCreate(lang, { whiteboard: true }) : ((spec) => ({ ...spec, description: [spec.description, process.env.TABLE_NOTE].filter(Boolean).join(' ') }))(tableCreate(lang)))
 /**
  * Once Skills is found (--found), as app/caps/skills/skills.js declares it: `skill`'s line naming none, save_skill and its line, the
- * rule, and <skills> listing each of Jean's own by its `text-en` in the directory's order, as listed() does for a fresh room. SKILLS_TEXT
- * in the environment is added to whiteboard's words there, as it stands, measured before any goes into Jean.
+ * rule, and <skills> listing each of Jean's own by its `text-en` and what some are read for, in the directory's order, as listed() does
+ * for a fresh room (listedOwn). SKILLS_TEXT in the environment takes the place of whiteboard's `when` there, as it stands, none when
+ * empty (Jean before it), measured before any goes into Jean.
  */
 const FOUND_LINE = { name: 'skill', line: process.env.SKILL_LINE || 'read the steps of a skill before asking the user anything for it or following it' }
 const SAVE = { name: 'save_skill', description: 'Save a skill: how a task is done, to do it the same way every time. For a new one the user asks for, first ask the few things you need to know (what it is for, what they will give it, what should come back and how) unless the conversation already says, then save it. name: a few English words joined by hyphens; description: when to use it; example: a short request that uses it, complete enough to send as it is; steps: Markdown starting with a "# " title. Description, example and steps in the user’s language.',
@@ -60,11 +61,8 @@ const SAVE_LINE = { name: 'save_skill', line: 'save how a task is done as a skil
 const FOUND_RULE = 'When a request matches a skill, read it and follow its steps.'
 /** <skills> once Skills is found. */
 async function listing() {
-  return skillLines(await Promise.all(DIRECTORY.map(async ({ name }) => {
-    const skill = parseSkill(await readFile(new URL(`../app/caps/skills/directory/${name}/SKILL.md`, import.meta.url), 'utf8'), `skills/${name}/SKILL.md`)
-    const text = shownIn(skill ?? { name, description: '' }, 'en').text
-    return { name, description: name === 'whiteboard' && process.env.SKILLS_TEXT ? `${text}${process.env.SKILLS_TEXT}` : text }
-  })))
+  const own = await Promise.all(DIRECTORY.map(async ({ name }) => parseSkill(await readFile(new URL(`../app/caps/skills/directory/${name}/SKILL.md`, import.meta.url), 'utf8'), `skills/${name}/SKILL.md`) ?? { name, description: '' }))
+  return skillLines(process.env.SKILLS_TEXT == null ? listedOwn(own, []) : own.map((skill) => ({ name: skill.name, description: `${shownIn(skill, 'en').text}${skill.name === 'whiteboard' ? process.env.SKILLS_TEXT : ''}` })))
 }
 /** Whether Skills is found, and its <skills>, from --found. */
 const state = { found: false, skills: '' }

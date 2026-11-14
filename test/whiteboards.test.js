@@ -7,7 +7,9 @@ import { layout, free, snap, arrowPath, placeOf, footOf, NOTE, GAP, HEAD, WIDE }
 import { made, changed, rowsOf, editsOf } from '../app/caps/whiteboards/tool.js'
 import { svgOf } from '../app/caps/whiteboards/picture.js'
 import { fold, stamp } from '../app/caps/tables/changes.js'
-import { DIRECTORY, readFor } from '../app/caps/skills/directory.js'
+import { readFile } from 'node:fs/promises'
+import { DIRECTORY, readFor, readDirectory, listedOwn } from '../app/caps/skills/directory.js'
+import { skillLines } from '../app/core/skills.js'
 
 /** A row's ULID, by number. @param {number} n */
 const R = (n) => `01K8${String(n).padStart(22, '0')}`
@@ -143,4 +145,14 @@ test('found through its skill: `skill`’s line says what whiteboard is read for
   assert.equal(readFor(names), '; read whiteboard for a brainstorm, a retrospective or things to sort into groups with others, in place of a list or a table')
   assert.equal(readFor(names.filter((name) => name !== 'whiteboard')), '')
   assert.equal(readFor([]), '')
+})
+
+test('found through its skill once Skills is found: <skills> gives whiteboard what it is read for after its few words, the room’s copy too, and nothing once policy leaves it out', async () => {
+  const own = await readDirectory({ fetch: /** @type {any} */ (async (/** @type {string} */ url) => new Response(await readFile(new URL(url)))), base: new URL('../app/caps/skills/directory/', import.meta.url) })
+  const said = 'Notes in sections, to sort ideas together; read whiteboard for a brainstorm, a retrospective or things to sort into groups with others, in place of a list or a table'
+  assert.equal(listedOwn(own, []).find((one) => one.name === 'whiteboard')?.description, said)
+  assert.equal(listedOwn(own, [/** @type {any} */ (own.find((entry) => entry.name === 'whiteboard'))]).find((one) => one.name === 'whiteboard')?.description, said)
+  assert.ok(listedOwn(own, []).every((one) => one.name === 'whiteboard' || !one.description.includes('; read ')))
+  // Policy denying Whiteboards keeps the skill from the directory Skills lists (directory() in caps/skills/skills.js), and its words with it.
+  assert.ok(!skillLines(listedOwn(own.filter((entry) => entry.cap !== 'whiteboards'), [])).includes('whiteboard'))
 })

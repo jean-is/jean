@@ -52,6 +52,13 @@ export const DIRECTORY = Object.freeze([
 export const readFor = (names) => DIRECTORY.filter((entry) => entry.when && names.includes(entry.name)).map((entry) => `; read ${entry.name} for ${entry.when}`).join('')
 
 /**
+ * Jean's own as <skills> lists them once Skills is found: each in its few English words, the room's skill of its name in its place,
+ * then when the brain reads it, as `skill`'s line said before (readFor). @param {readonly { name: string, description: string, title?: string, metadata?: Record<string, any> }[]} own
+ * @param {readonly { name: string, description: string, title?: string, metadata?: Record<string, any> }[]} have the room's
+ */
+export const listedOwn = (own, have) => own.map((entry) => ({ name: entry.name, description: `${shownIn(have.find((skill) => skill.name === entry.name) ?? entry, 'en').text}${readFor([entry.name])}` }))
+
+/**
  * What a skill is called and when it is used: in this language when its metadata gives it (D222), else in English, else as
  * written. @param {{ name: string, description: string, title?: string, metadata?: Record<string, any> }} skill @param {string} lang
  */

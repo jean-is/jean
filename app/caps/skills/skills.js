@@ -29,7 +29,7 @@ import { slug } from '../../core/settings.js'
 import { dirname, join } from '../../core/fs.js'
 import { t, locale, intlLocales, useStrings } from '../../core/i18n.js'
 import { DEFAULT_SOURCES, bestFit, indexURL, readIndexes, siteOf, fetchSkill } from './sources.js'
-import { readDirectory, shownIn, DIRECTORY } from './directory.js'
+import { readDirectory, shownIn, listedOwn, DIRECTORY } from './directory.js'
 import * as creations from '../../ui/creations.js'
 import { scores } from './scores.js'
 import { decks, keep, opener } from './decks.js'
@@ -152,13 +152,13 @@ export const directory = async () => (app.policy.skills?.only ? [] : (shelf ??= 
 
 /**
  * The skills <skills> lists: the room's, then Jean's own in the directory's order, the room's of that name in its place,
- * each in its few English words, whether the room has it yet or not, so one added changes nothing the brain read (D401).
+ * each in its few English words and what some are read for, whether the room has it yet or not, so one added changes nothing
+ * the brain read (D401).
  */
 async function listed() {
   const [all, own] = await Promise.all([room(), directory()])
   const have = all.filter((skill) => !isOff(skill))
-  return [...have.filter((skill) => !own.some((entry) => entry.name === skill.name)),
-    ...own.filter((entry) => !all.some((skill) => skill.name === entry.name && isOff(skill))).map((entry) => ({ name: entry.name, description: shownIn(have.find((skill) => skill.name === entry.name) ?? entry, 'en').text }))]
+  return [...have.filter((skill) => !own.some((entry) => entry.name === skill.name)), ...listedOwn(own.filter((entry) => !all.some((skill) => skill.name === entry.name && isOff(skill))), have)]
 }
 
 /** A skill from elsewhere suggested in a conversation, by the conversation's path, shown under its answers. @type {Map<string, Entry>} */
