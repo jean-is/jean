@@ -294,6 +294,116 @@ for (const [lang, table, board, review] of [['ar', 'جدول', 'لوحة', 'تغ
   })
 }
 
+/**
+ * A budget of four rows whose cost is money (in `currency`) and whose stage is a status, grouped by it, opened beside the task (D752).
+ * @param {import('@playwright/test').Page} page @param {string} [currency] @param {string[]} [words] its columns' names, then its steps
+ */
+const budget = (page, currency = 'EUR', words = ['Item', 'Cost', 'Stage', 'Due', 'To pay', 'Paid']) => page.evaluate(async ([currency, words]) => {
+  const [{ unlock }, { app }] = await Promise.all([import('/ui/caps.js'), import('/ui/state.js')])
+  await unlock('tables')
+  const folder = 'collections/01K85Z1T00000000000000000W-budget', at = '2026-11-14T09:00:00.000Z', [item, cost, stage, due, open, paid] = words
+  await app.fs.write(`${app.projectDir}/${folder}/collection.json`, JSON.stringify({ format: 1, id: '01K85Z1T00000000000000000W', name: 'Budget', author: 'user', created: at, changed: at,
+    properties: [{ id: 'item', name: item, type: 'text' }, { id: 'cost', name: cost, type: 'number', format: 'money', currency }, { id: 'stage', name: stage, type: 'status', options: [{ name: open, group: 'todo' }, { name: paid, group: 'done' }] },
+      { id: 'due', name: due, type: 'date' }, ...['Venue', 'Notes', 'Owner', 'Email', 'Phone'].map((name) => ({ id: name.toLowerCase(), name, type: 'text' }))], views: [{ id: 'table', type: 'table', group: 'stage' }] }))
+  const rows = [['Venue hire', 480, open, '2026-09-12'], ['Cakes and tea', 62.5, paid, null], ['Raffle prizes', 120, open, '2026-09-20'], ['Posters', 35, paid, '2026-08-30']]
+  await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, rows.map(([item, cost, stage, due], i) => `${JSON.stringify({ row: `01K8000000000000000000000${i}`, set: { item, cost, stage, ...(due && { due }), notes: 'A note long enough to need room' }, at, by: 'user' })}\n`).join(''))
+  ;(await import('/ui/preview.js')).preview({ uri: folder, name: 'Budget.xlsx', title: 'Budget' }, true)
+}, /** @type {const} */ ([currency, words]))
+
+for (const [lang, currency, words, money, sum, group, arrange] of /** @type {const} */ ([
+  ['ar', 'SAR', ['البند', 'التكلفة', 'المرحلة', 'الموعد', 'للدفع', 'مدفوع'], '480.00 ر.س.', 'المجموع', 'المجموع الفرعي', 'تنظيم'],
+  ['ja', 'JPY', ['項目', '費用', '段階', '期日', '未払い', '支払済み'], '￥480', '合計', '小計', '整理'],
+])) {
+  test(`in ${lang}, a collection's money, groups, chips and readings are the language's, its amounts at the cell's end, its fade at the end edge (D752)`, async ({ page }) => {
+    await start(page, lang)
+    await budget(page, currency, words)
+    const grid = page.locator('.table-grid')
+    await expect(page.locator('.table-tools > .icon-button')).toHaveAttribute('aria-label', arrange)
+    // A chip names the group by its column; the groups' heads in the steps' words, each subtotal in the currency, said in the language.
+    await expect(page.locator('.table-chips > li').first()).toHaveText(words[2])
+    await expect(grid.locator('tr.table-group .table-fold')).toHaveText([new RegExp(words[4]), new RegExp(words[5])])
+    await expect(grid.locator('tr.table-group .table-sub .visually-hidden').first()).toHaveText(group)
+    // Each amount reads as money in the language, its field showing once its cell has the keys; the foot's Sum from the start.
+    const first = grid.locator('tbody tr[data-row]').first(), reading = first.locator('.table-read.is-amount')
+    await expect(reading).toContainText(money)
+    await expect(first.getByTitle(words[1])).toHaveCSS('opacity', '0')
+    await expect(grid.locator('tfoot .table-total').nth(1)).toContainText(sum)
+    // At the cell's end: the left in Arabic, the right in Japanese.
+    const [cell, said] = await reading.evaluate((bdi) => { const range = document.createRange(); range.selectNodeContents(bdi); return [/** @type {Element} */ (bdi.parentElement).getBoundingClientRect().toJSON(), range.getBoundingClientRect().toJSON()] })
+    if (lang === 'ar') expect(said.left - cell.left).toBeLessThan(16)
+    else expect(cell.right - said.right).toBeLessThan(16)
+    await first.getByTitle(words[1]).focus()
+    await expect(first.getByTitle(words[1])).toHaveCSS('opacity', '1')
+    await expect(reading).toHaveCSS('visibility', 'hidden')
+    // More past the end edge: the fade there, on the left in Arabic.
+    const [fade, view] = await Promise.all([page.locator('.table-fade'), page.locator('.table-view')].map((one) => one.boundingBox()))
+    await expect(page.locator('.table-fade')).toHaveClass(/is-more/)
+    if (lang === 'ar') expect(Math.abs((fade?.x ?? 0) - (view?.x ?? 0))).toBeLessThan(24)
+    else expect(Math.abs((fade?.x ?? 0) + (fade?.width ?? 0) - (view?.x ?? 0) - (view?.width ?? 0))).toBeLessThan(24)
+  })
+}
+
+test('at 320 px a collection loses nothing: its bar on one line, its chips wrapping, nothing past the page, its first column scrolling with the rest (D752)', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 700 })
+  await start(page)
+  await budget(page)
+  await expect(page.locator('.table-grid tbody tr[data-row]')).toHaveCount(4)
+  const [bar, shows, tools] = await Promise.all(['.table-bar', '.table-shows', '.table-tools'].map((one) => page.locator(one).boundingBox()))
+  expect(bar?.height ?? 99).toBeLessThan(64)
+  expect(Math.abs((shows?.y ?? 0) - (tools?.y ?? 0))).toBeLessThan(8)
+  for (const box of [bar, shows, tools]) expect((box?.x ?? -1) >= 0 && (box?.x ?? 0) + (box?.width ?? 0) <= 320).toBe(true)
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320)
+  const chip = await page.locator('.table-chips').boundingBox()
+  expect((chip?.x ?? 0) + (chip?.width ?? 0)).toBeLessThanOrEqual(320)
+  await expect(page.locator('.table-grid tbody tr[data-row] > :nth-child(2)').first()).not.toHaveCSS('position', 'sticky')
+  // Each reading stays inside its cell.
+  for (const reading of await page.locator('.table-read').all()) {
+    const [inner, outer] = await Promise.all([reading.boundingBox(), reading.locator('..').boundingBox()])
+    expect((inner?.x ?? 0) >= (outer?.x ?? 0) - 1 && (inner?.x ?? 0) + (inner?.width ?? 0) <= (outer?.x ?? 0) + (outer?.width ?? 0) + 1).toBe(true)
+  }
+})
+
+test('under forced colours a collection\'s fields show and its readings go; with more contrast its fade is a line (D752)', async ({ page, browserName }) => {
+  await start(page)
+  await budget(page)
+  const first = page.locator('.table-grid tbody tr[data-row]').first()
+  await expect(first.getByTitle('Cost')).toHaveCSS('opacity', '0')
+  await page.emulateMedia({ contrast: 'more' })
+  await expect(page.locator('.table-fade')).toHaveCSS('background-image', 'none')
+  await expect(page.locator('.table-fade')).toHaveCSS('border-inline-end-width', '2px')
+  test.skip(browserName !== 'chromium', 'forced colours are emulated in Chromium alone')
+  await page.emulateMedia({ forcedColors: 'active' })
+  await expect(first.locator('.table-read').first()).toBeHidden()
+  await expect(first.getByTitle('Cost')).toHaveCSS('opacity', '1')
+})
+
+test('in each of the 12 looks, by day and by night, a collection\'s first column stays on a ground of its own and its readings read at AA (D752)', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await start(page)
+  await budget(page)
+  await page.locator('.table-scroll').evaluate((box) => { box.scrollLeft = 300 })
+  const looks = await page.evaluate(async () => Object.keys((await import('/ui/looks.js')).LOOKS))
+  expect(looks).toHaveLength(12)
+  const failures = []
+  for (const look of looks) {
+    for (const scheme of /** @type {const} */ (['light', 'dark'])) {
+      await page.emulateMedia({ colorScheme: scheme })
+      await page.evaluate(async (id) => (await import('/ui/state.js')).setLook({ id }), look)
+      await expect(page.locator('html')).toHaveAttribute('data-look', look)
+      const said = await page.evaluate(() => {
+        const rgb = (/** @type {string} */ css) => { const c = /** @type {CanvasRenderingContext2D} */ (document.createElement('canvas').getContext('2d')); c.fillStyle = css; c.fillRect(0, 0, 1, 1); return [...c.getImageData(0, 0, 1, 1).data] }
+        const lum = (/** @type {number[]} */ [r, g, b]) => [r, g, b].map((v) => ((v /= 255) <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4)).reduce((sum, v, i) => sum + v * [0.2126, 0.7152, 0.0722][i], 0)
+        const contrast = (/** @type {number[]} */ a, /** @type {number[]} */ b) => ((x, y) => (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05))(lum(a), lum(b))
+        const cell = /** @type {HTMLElement} */ (document.querySelector('.table-grid tbody tr[data-row] > :nth-child(2)')), reading = /** @type {HTMLElement} */ (document.querySelector('.table-read.is-amount'))
+        const ground = getComputedStyle(cell), head = getComputedStyle(/** @type {HTMLElement} */ (document.querySelector('.table-grid thead th')))
+        return { position: ground.position, alpha: rgb(ground.backgroundColor)[3], same: ground.backgroundColor === head.backgroundColor, ratio: contrast(rgb(getComputedStyle(reading).color), rgb(head.backgroundColor)) }
+      })
+      if (said.position !== 'sticky' || said.alpha !== 255 || !said.same || said.ratio < 4.5) failures.push(`${look} ${scheme}: ${JSON.stringify(said)}`)
+    }
+  }
+  expect(failures).toEqual([])
+})
+
 test('a collection is pinned, renamed, duplicated with its rows and deleted from the Creations page', async ({ page, browserName }) => {
   test.skip(browserName === 'webkit', 'the same menu as a document’s (documents.spec.js)')
   await start(page)
