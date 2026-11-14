@@ -84,6 +84,9 @@ test('a whiteboard: made by the brain, its notes dragged, moved with the keys, a
   await page.mouse.move(ground.x + 400, ground.y + ground.height - 220)
   await page.mouse.down()
   for (let i = 1; i <= 12; i++) await page.mouse.move(ground.x + 400 + i * 15, ground.y + ground.height - 220 + (i % 4) * 10)
+  // Drawn as it comes, before the pointer is let go, in a box as large as its points.
+  await expect(board.locator('.wb-stroke path')).toHaveAttribute('d', /L/)
+  expect((await board.locator('.wb-stroke').boundingBox())?.width).toBeGreaterThan(100)
   await page.mouse.up()
   await expect(board.locator('.wb-line svg')).toHaveCount(1)
   await expect(board.locator('.wb-line svg')).toHaveAttribute('aria-label', 'Drawing')
@@ -129,7 +132,9 @@ test('a whiteboard: made by the brain, its notes dragged, moved with the keys, a
 
   // Lanes and Table, in the address.
   await board.getByRole('group', { name: 'Show as' }).getByRole('button', { name: 'Lanes' }).click()
-  await expect(board.locator('.wb-lane')).toHaveCount(4)
+  // A lane for the notes in no section, after the sections'.
+  await expect(board.locator('.wb-lane')).toHaveCount(5)
+  await expect(board.locator('.wb-lane.is-loose .wb-words')).toHaveText(['Book the offsite', 'Demo day'])
   await expect(page).toHaveURL(/whiteboard=lanes/)
   await board.getByRole('group', { name: 'Show as' }).getByRole('button', { name: 'Table' }).click()
   await expect(board.locator('app-table tbody tr')).toHaveCount(6)

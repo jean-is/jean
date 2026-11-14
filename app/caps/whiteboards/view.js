@@ -242,9 +242,11 @@ customElements.define('app-whiteboard', class extends HTMLElement {
   fit() {
     const room = this.querySelector('.wb-board')?.getBoundingClientRect(), { bounds } = layout(this.#one.rows)
     if (!room) return
-    this.#zoom = Math.max(0.15, Math.min(1, (room.width - 48) / bounds.w, (room.height - 96) / bounds.h))
+    // What floats over the board, its head and its dock, covers none of it.
+    const top = Math.max(24, (this.querySelector('.wb-head')?.getBoundingClientRect().bottom ?? room.top) - room.top + 16), under = Math.max(24, room.bottom - (this.querySelector('.wb-dock')?.getBoundingClientRect().top ?? room.bottom) + 16), high = room.height - top - under
+    this.#zoom = Math.max(0.15, Math.min(1, (room.width - 48) / bounds.w, high / bounds.h))
     this.#x = (this.#rtl ? -1 : 1) * ((room.width - bounds.w * this.#zoom) / 2 - bounds.x * this.#zoom)
-    this.#y = Math.max(24, (room.height - 72 - bounds.h * this.#zoom) / 2) - bounds.y * this.#zoom
+    this.#y = top + Math.max(0, (high - bounds.h * this.#zoom) / 2) - bounds.y * this.#zoom
     this.#turn()
   }
   /** The wheel or two fingers move the board; with Ctrl or ⌘, as a pinch sends, it zooms about the pointer. */
@@ -382,12 +384,18 @@ customElements.define('app-whiteboard', class extends HTMLElement {
 
   /** A line drawn while Draw is pressed, kept as points from its own corner, thinned, once it is finished. @param {PointerEvent} event @param {HTMLElement} board @param {{ x: number, y: number }} at */
   #draw(event, board, at) {
-    const points = [Math.round(at.x), Math.round(at.y)], path = /** @type {SVGPathElement | null} */ (this.querySelector('.wb-stroke path'))
+    const points = [Math.round(at.x), Math.round(at.y)], path = /** @type {SVGPathElement | null} */ (this.querySelector('.wb-stroke path')), stroke = /** @type {SVGSVGElement | null} */ (path?.ownerSVGElement ?? null)
     this.#stroke = points
+    // Drawn as it comes, in a box as large as its points, which is what a browser paints again as it changes.
+    const lo = { x: at.x, y: at.y }, hi = { x: at.x, y: at.y }
     const move = (/** @type {PointerEvent} */ next) => {
       const p = this.#point(next), [x, y] = points.slice(-2)
       if (Math.hypot(p.x - x, p.y - y) < 3 || points.length >= 4000) return
       points.push(Math.round(p.x), Math.round(p.y))
+      Object.assign(lo, { x: Math.min(lo.x, p.x), y: Math.min(lo.y, p.y) }), Object.assign(hi, { x: Math.max(hi.x, p.x), y: Math.max(hi.y, p.y) })
+      const box = { x: Math.floor(lo.x) - 8, y: Math.floor(lo.y) - 8, w: Math.ceil(hi.x - lo.x) + 16, h: Math.ceil(hi.y - lo.y) + 16 }
+      for (const [key, value] of Object.entries(box)) stroke?.style.setProperty(`--${key}`, `${value}px`)
+      stroke?.setAttribute('viewBox', `${box.x} ${box.y} ${box.w} ${box.h}`)
       path?.setAttribute('d', pathOf(points))
     }
     board.setPointerCapture(event.pointerId)
@@ -396,6 +404,7 @@ customElements.define('app-whiteboard', class extends HTMLElement {
       board.removeEventListener('pointermove', move)
       this.#stroke = null
       path?.setAttribute('d', '')
+      for (const key of ['x', 'y', 'w', 'h']) stroke?.style.removeProperty(`--${key}`)
       if (points.length < 4) return
       const xs = points.filter((_, i) => i % 2 === 0), ys = points.filter((_, i) => i % 2), x = Math.min(...xs), y = Math.min(...ys)
       const { areas } = layout(this.#one.rows), into = [...areas].reverse().find((area) => x >= area.x && x <= area.x + area.w && y >= area.y && y <= area.y + area.h)
@@ -571,11 +580,11 @@ customElements.define('app-whiteboard', class extends HTMLElement {
     if (!(as === 'table' && only) && this.#table) { for (const hold of this.#table.holds) hold(); this.#table = null }
     const seen = this.#before ? { ...one, rows: fold(one.lines.filter((line) => !marked.includes(/** @type {any} */ (line)))) } : one, jean = new Set(this.#before ? [] : marked.map((line) => line.row))
     const shows = [['board', t('whiteboards.showBoard')], ['lanes', t('whiteboards.showLanes')], ['table', t('whiteboards.showTable')]]
-    render(html`<div class="wb" data-as=${as}>
+    render(html`<div class="wb" data-as=${as}><div class="wb-stage">
       <div class="wb-head">
-        ${glyph}<input class="wb-name" dir="auto" title=${t('whiteboards.name')} .value=${one.table.name} @change=${(/** @type {Event} */ e) => amend({ path: one.folder }, { name: /** @type {HTMLInputElement} */ (e.target).value })}>
-        <span class="wb-people"></span>
-        <span class="wb-shows" role="group" aria-label=${t('whiteboards.showAs')}>${shows.map(([id, label]) => html`<button type="button" class="button subtle" aria-pressed=${String(as === id)} @click=${() => { showAs.value = /** @type {any} */ (id) }}>${label}</button>`)}</span>
+        <span class="wb-title">${glyph}<input class="wb-name" dir="auto" title=${t('whiteboards.name')} .value=${one.table.name} @change=${(/** @type {Event} */ e) => amend({ path: one.folder }, { name: /** @type {HTMLInputElement} */ (e.target).value })}></span>
+        <span class="wb-end"><span class="wb-people"></span>
+          <span class="wb-shows" role="group" aria-label=${t('whiteboards.showAs')}>${shows.map(([id, label]) => html`<button type="button" class="button subtle" aria-pressed=${String(as === id)} @click=${() => { showAs.value = /** @type {any} */ (id) }}>${label}</button>`)}</span></span>
       </div>
       ${marked.length ? html`<div class="wb-review">${reviewBar({ label: t('whiteboards.review', { name }), count: t('whiteboards.changes', { count: jean.size, name }), previous: '', next: '',
         accept: () => accept(one), reject: () => reject(one), acceptAll: t('whiteboards.acceptAll'), rejectAll: t('whiteboards.rejectAll') })}
@@ -583,9 +592,8 @@ customElements.define('app-whiteboard', class extends HTMLElement {
           @click=${() => { this.#before = before; this.#said = before ? t('whiteboards.beforeSaid', { name }) : ''; this.draw() }}>${t(before ? 'whiteboards.before' : 'whiteboards.after')}</button>`)}</span></div>` : nothing}
       ${as === 'table' && only ? html`<p class="wb-only"><span dir="auto">${t('whiteboards.only', { section: wordsOf(only) })}</span> <button type="button" class="button subtle" @click=${() => { showOnly.value = '' }}>${t('whiteboards.allSections')}</button></p>${this.#section(only.id)}`
         : as === 'table' ? keyed(one.folder, html`<app-table folder=${one.folder}></app-table>`) : as === 'lanes' ? this.#lanes(seen, jean) : this.#board(seen, dir, jean)}
-      ${as === 'table' ? nothing : this.#shelf(seen, jean)}
-      <p class="visually-hidden" role="status">${this.#said}</p>
-    </div>`, this)
+      ${as === 'table' ? nothing : html`<div class="wb-dock">${as === 'board' ? (this.#selected.size ? this.#chosen(layout(seen.rows).areas) : this.#bar()) : nothing}${this.#shelf(seen, jean, as === 'lanes')}</div>`}
+    </div><p class="visually-hidden" role="status">${this.#said}</p></div>`, this)
     // Fitted as it opens, and again as rows come while the person hasn't moved it: a whiteboard being written stays whole in view.
     if (as === 'board' && this.querySelector('.wb-board')?.clientWidth && (!this.#fitted || (!this.#held && one.rows.length !== this.#count))) (this.#fitted = true), this.fit()
     else this.#turn()
@@ -677,7 +685,6 @@ customElements.define('app-whiteboard', class extends HTMLElement {
         <svg class="wb-stroke" aria-hidden="true"><path class=${this.#ink === 'ink' ? 'wb-ink' : `wb-ink wb-hue-${this.#ink}`}/></svg>
         ${this.#box ? html`<div class="wb-box" ${placed(this.#box)}></div>` : nothing}
       </div>
-      ${this.#selected.size ? this.#chosen(areas) : this.#bar()}
     </div>`
   }
 
@@ -739,26 +746,29 @@ customElements.define('app-whiteboard', class extends HTMLElement {
   }
 
   /**
-   * The shelf at the pane's foot: a note to write in, then the notes that wait, the newest first, in a row that scrolls, and Group them,
-   * which asks Jean to sort them. @param {Loaded} one @param {Set<string>} jean
+   * The shelf, floating at the board's foot: a note to write in, then the notes that wait, the newest first, in a row that scrolls, and
+   * Group them, which asks Jean to sort them; in the lanes, where those notes have a lane of their own, its field and Group them alone.
+   * @param {Loaded} one @param {Set<string>} jean @param {boolean} [lanes]
    */
-  #shelf(one, jean) {
-    const { shelf, areas } = layout(one.rows), name = assistantName()
-    return html`<section class=${`wb-shelf${shelf.length ? '' : ' is-empty'}`} aria-labelledby=${`${this.#id}-shelf`} @pointerdown=${this.down} @keydown=${this.keys}>
+  #shelf(one, jean, lanes = false) {
+    const { shelf, areas } = layout(one.rows)
+    return html`<section class=${`wb-shelf${shelf.length && !lanes ? '' : ' is-empty'}`} aria-labelledby=${`${this.#id}-shelf`} @pointerdown=${this.down} @keydown=${this.keys}>
       <h3 id=${`${this.#id}-shelf`} class="visually-hidden">${t('whiteboards.shelf')}</h3>
       <textarea class="wb-new" dir="auto" rows="1" title=${t('whiteboards.newNote')} placeholder=${t('whiteboards.newNote')} @keydown=${this.shelved}></textarea>
-      ${shelf.length ? html`<ul>${shelf.map((row) => this.#item(one, { row, kind: 'note', area: null, placed: false, x: 0, y: 0, ...NOTE }, { x: 0, y: 0 }, jean, areas, 0))}</ul>
+      ${shelf.length ? html`${lanes ? nothing : html`<ul>${shelf.map((row) => this.#item(one, { row, kind: 'note', area: null, placed: false, x: 0, y: 0, ...NOTE }, { x: 0, y: 0 }, jean, areas, 0))}</ul>`}
         ${shelf.length > 1 ? html`<button type="button" class="button" @click=${() => send(t('whiteboards.groupThem', { name: one.table.name }), { notes: [] })}>${t('whiteboards.group')}</button>` : nothing}` : nothing}
     </section>`
   }
 
-  /** The lanes: a column for each section, then the shelf's notes, each a card with its menu. @param {Loaded} one @param {Set<string>} jean */
+  /** The lanes: a column for each section, then one for the notes in none, those that wait and those on the open board, each a card with its menu. @param {Loaded} one @param {Set<string>} jean */
   #lanes(one, jean) {
-    const { areas, items } = layout(one.rows), number = new Intl.NumberFormat(intlLocales())
+    const { areas, items, shelf } = layout(one.rows), number = new Intl.NumberFormat(intlLocales())
+    const loose = [...items.filter((item) => !item.area && item.kind === 'note'), ...shelf.map((row) => ({ row, kind: /** @type {const} */ ('note'), area: null, placed: false, x: 0, y: 0, ...NOTE }))]
     return html`<div class="wb-lanes" dir=${one.table.dir ?? 'ltr'} @keydown=${this.keys}>${areas.map((area) => {
       const notes = items.filter((item) => item.area === area.row.id && item.kind === 'note')
       return html`<section class=${`wb-lane wb-hue-${area.hue}`} aria-labelledby=${`${this.#id}-lane-${area.row.id}`}><h3 id=${`${this.#id}-lane-${area.row.id}`}><span class="wb-dot"></span><span dir="auto">${wordsOf(area.row)}</span> <span class="wb-count">${number.format(notes.length)}</span></h3>
         <ul>${notes.map((item) => this.#item(one, { ...item, x: 0, y: 0 }, { x: 0, y: 0 }, jean, areas, 0))}</ul></section>`
-    })}</div>`
+    })}${loose.length ? html`<section class="wb-lane is-loose" aria-labelledby=${`${this.#id}-lane-loose`}><h3 id=${`${this.#id}-lane-loose`}><span class="wb-dot"></span><span dir="auto">${t('whiteboards.shelf')}</span> <span class="wb-count">${number.format(loose.length)}</span></h3>
+      <ul>${loose.map((item) => this.#item(one, { ...item, x: 0, y: 0 }, { x: 0, y: 0 }, jean, areas, 0))}</ul></section>` : nothing}</div>`
   }
 })
