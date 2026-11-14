@@ -7,7 +7,7 @@
 // design_change's changes (`changed`) are Jean's version of each part, for the user to accept or reject. Pure.
 import { ROLES, VOICES, PAGES, FORMS, ART } from './tool.js'
 import { marks } from './checks.js'
-import { contrast, readable } from '../../ui/colour.js'
+import { contrast, readable, mix } from '../../ui/colour.js'
 import { dir } from '../../core/i18n.js'
 
 /** @import { Facts } from './tool.js' */
@@ -40,6 +40,16 @@ const WIDE = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han
 
 /** @param {Page} page */
 export const shapeOf = (page) => (page.h / page.w > 1.15 ? 'tall' : page.w / page.h > 1.15 ? 'wide' : 'square')
+/**
+ * The project's look as a palette of Designs' own (D601, D740): its colour and ink deepened until they read on its paper, and beside them
+ * the palest of its colour that still reads there at AA, as the words role wears it. @param {string} ground @param {string} primary
+ * @param {string} [ink] all #rrggbb @returns {Colours & { id: string }}
+ */
+export function ownPalette(ground, primary, ink = '#1c1b1f') {
+  const accent = readable(primary, ground), paler = (/** @type {number} */ step) => mix(accent, ground, step / 20)
+  return { id: 'project', ground, ink: readable(ink, ground), accent, accent2: paler([...Array(20).keys()].findLast((step) => contrast(paler(step), ground) >= 4.5) ?? 0) }
+}
+
 /** A hundredth of the page's shorter side, which type and moves go by. @param {Page} page */
 export const unitOf = (page) => Math.min(page.w, page.h) / 100
 /** @param {Design} design @param {string} [name] */

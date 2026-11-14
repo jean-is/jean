@@ -8,7 +8,7 @@ import { readFile } from 'node:fs/promises'
 import { readDates, marks, dpi } from '../app/caps/designs/checks.js'
 import { contrast, readable } from '../app/ui/colour.js'
 import { toSvg, fromSvg, withDesign, designOfPng } from '../app/caps/designs/format.js'
-import { designOf, laid, takesOf, resized, changed, withParts, voicesFor, marksOf, textOf, frameOf, stack, added, stacked, spot, formOf, partsOf } from '../app/caps/designs/layout.js'
+import { designOf, laid, takesOf, resized, changed, withParts, voicesFor, marksOf, textOf, frameOf, stack, added, stacked, spot, formOf, partsOf, ownPalette, onOf, colourOf } from '../app/caps/designs/layout.js'
 import { repair, VOICES, ART } from '../app/caps/designs/tool.js'
 import { sheetLike } from '../app/ui/sheet-like.js'
 import { marked } from '../app/caps/pictures/mark.js'
@@ -204,6 +204,28 @@ test('every palette\'s words pass AA on its ground, and its ground on its accent
   }
 })
 
+test('a design in the project\'s own colours reads at AA in every role and layout, whatever its paper and colour (D601, D740)', () => {
+  // A brand's colour at every twelfth of the hue, dark, mid and pale, on white, cream, yellow, grey, navy and black paper.
+  const hsl = (/** @type {number} */ h, /** @type {number} */ l) => `#${[0, 8, 4].map((n) => Math.round((l - 0.85 * Math.min(l, 1 - l) * Math.max(-1, Math.min((n + h / 30) % 12 - 3, 9 - (n + h / 30) % 12, 1))) * 255).toString(16).padStart(2, '0')).join('')}`
+  const facts = { name: 'Open day', size: 'a5', words: { title: 'Open day', words: 'Come and see the new oven', items: 'Bread\nCakes', when: 'Saturday 21 November · 3 pm', where: '12 rue des Lilas, Lyon', who: 'Sami', small: 'Free entry' }, pictures: [] }
+  for (const paper of ['#ffffff', '#fbf8f1', '#f7c531', '#777777', '#1c2240', '#000000']) for (const h of [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330]) for (const l of [0.3, 0.5, 0.8]) {
+    const own = ownPalette(paper, hsl(h, l), h % 60 ? undefined : hsl(h, 0.2)), book = { ...BOOK, palettes: [own, ...BOOK.palettes] }
+    assert.ok(contrast(own.accent2, paper) <= contrast(own.accent, paper), `${own.accent2} is no darker than ${own.accent}`)
+    for (const size of ['a5', 'wide']) for (const layout of BOOK.layouts) {
+      const design = laid(book, { ...designOf(book, { ...facts, size }, AT), take: [layout.id, 'project', 'calm'] })
+      for (const part of design.parts.filter((one) => one.text)) {
+        const ratio = contrast(colourOf(design, part.color), colourOf(design, onOf(design, part) ?? 'ground'))
+        assert.ok(ratio >= 4.5, `${layout.id} ${size}: ${part.role} ${ratio.toFixed(2)} in ${JSON.stringify(own)}`)
+      }
+      assert.deepEqual(marksOf(design, NOW).filter((mark) => mark.kind === 'faint'), [])
+    }
+  }
+  // A deep colour has room for a paler one, which reads all the same.
+  const navy = ownPalette('#ffffff', '#1f3a93')
+  assert.notEqual(navy.accent2, navy.accent)
+  assert.ok(contrast(navy.accent2, '#ffffff') >= 4.5 && contrast(navy.accent2, '#ffffff') < 5.5)
+})
+
 test('a design is laid out from the facts: each in its place on the page, its words stacked, its takes dealt three at a time', () => {
   const design = designOf(BOOK, LEA, AT), takes = takesOf(BOOK, design, 0)
   assert.equal(takes.length, 3)
@@ -227,7 +249,7 @@ test('a design is laid out from the facts: each in its place on the page, its wo
 })
 
 test('in a project with a look of its own, the first take wears its colours and voice, the others Designs\' own; a palette gone leaves a design its colours (D601)', () => {
-  const own = { id: 'project', ground: '#ffffff', ink: '#1c1b1f', accent: readable('#0f766e', '#ffffff'), accent2: '#9fc8c4' }
+  const own = ownPalette('#ffffff', '#0f766e')
   const book = { ...BOOK, palettes: [own, ...BOOK.palettes], voice: 'elegant' }
   const design = designOf(book, { name: 'Open day', size: 'a5', words: { title: 'Open day', words: 'Come and see the new oven' }, pictures: [] }, AT)
   assert.deepEqual([design.take[1], design.take[2], design.colours.accent], ['project', 'elegant', own.accent])
