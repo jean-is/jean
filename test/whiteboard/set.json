@@ -1,0 +1,115 @@
+{
+  "format": 1,
+  "$comment": "Whiteboard phase 0 (npm run whiteboard). make: a whiteboard asked for from words; areas: how many a right one has, and whether their order is time's (order); owners: names the brief gives, each of which a note must name. regroup: a whiteboard of notes waiting on the shelf, open beside the task, and a request to sort them, the tools looped (table_rows, then whiteboard_change by id); owners as in make. choose: a request with every tool present, a whiteboard right for it (whiteboard: true) or not.",
+  "make": {
+    "launch": {
+      "areas": { "min": 4, "max": 6, "order": true },
+      "owners": { "en": ["Léa", "Omar"], "fr": ["Léa", "Omar"], "ar": ["ليا", "عمر"], "ja": ["レア", "オマル"] },
+      "en": "We launch our bakery's new website in four weeks. Plan it on a whiteboard, week by week: Léa takes the photos, Omar writes the texts, and I check the prices.",
+      "fr": "Nous lançons le nouveau site de notre boulangerie dans quatre semaines. Planifie-le sur un tableau blanc, semaine par semaine : Léa fait les photos, Omar écrit les textes, et moi je vérifie les prix.",
+      "ar": "سنطلق الموقع الجديد لمخبزنا بعد أربعة أسابيع. خطّط له على سبورة، أسبوعًا بأسبوع: ليا تلتقط الصور، وعمر يكتب النصوص، وأنا أراجع الأسعار.",
+      "ja": "4週間後にパン屋の新しいウェブサイトを公開します。週ごとにホワイトボードで計画して。写真はレア、文章はオマル、価格の確認は私です。"
+    },
+    "retro": {
+      "areas": { "min": 3, "max": 6 },
+      "en": "Our team just finished a two-month project. Set up a whiteboard for our retrospective: what went well, what didn't, what we'll do differently, with a few notes in each to start us off.",
+      "fr": "Notre équipe vient de finir un projet de deux mois. Prépare un tableau blanc pour notre rétrospective : ce qui a bien marché, ce qui n'a pas marché, ce que nous ferons autrement, avec quelques notes dans chaque partie pour lancer la discussion.",
+      "ar": "أنهى فريقنا للتو مشروعًا استمر شهرين. جهّز سبورة لاجتماع المراجعة: ما نجح، وما لم ينجح، وما سنفعله بشكل مختلف، مع بعض الملاحظات في كل جزء لنبدأ بها.",
+      "ja": "チームで2か月のプロジェクトが終わったところです。振り返り用のホワイトボードを用意して。うまくいったこと、うまくいかなかったこと、次に変えることに分けて、話し始めやすいようにそれぞれ付箋をいくつか入れておいて。"
+    },
+    "trip": {
+      "areas": { "min": 3, "max": 8 },
+      "en": "Ideas for our family trip to Portugal in August: put them on a whiteboard by theme, so we can choose together.",
+      "fr": "Des idées pour notre voyage en famille au Portugal en août : mets-les sur un tableau blanc par thème, pour qu'on choisisse ensemble.",
+      "ar": "أفكار لرحلتنا العائلية إلى البرتغال في أغسطس: ضعها على سبورة حسب الموضوع، حتى نختار معًا.",
+      "ja": "8月の家族のポルトガル旅行のアイデアを、テーマ別にホワイトボードにまとめて。みんなで選びたいので。"
+    },
+    "fair": {
+      "areas": { "min": 3, "max": 8 },
+      "en": "Our association is organising a spring fair. Brainstorm on a whiteboard everything we need to think of, grouped by theme.",
+      "fr": "Notre association organise une fête de printemps. Fais un remue-méninges sur un tableau blanc de tout ce à quoi il faut penser, regroupé par thème.",
+      "ar": "تنظّم جمعيتنا معرض الربيع. اعصف أفكارًا على سبورة بكل ما يجب أن نفكر فيه، مجمّعًا حسب الموضوع.",
+      "ja": "私たちの会で春のお祭りを開きます。考えておくべきことをすべて、テーマごとにホワイトボードでブレインストーミングして。"
+    },
+    "onboarding": {
+      "areas": { "min": 4, "max": 6, "order": true },
+      "owners": { "en": ["Sam"], "fr": ["Sam"], "ar": ["سام"], "ja": ["サム"] },
+      "en": "A new colleague joins us on Monday. Plan their first month on a whiteboard, week by week. Sam is their buddy and shows them our tools.",
+      "fr": "Une nouvelle collègue arrive lundi. Planifie son premier mois sur un tableau blanc, semaine par semaine. Sam est son parrain et lui montre nos outils.",
+      "ar": "تنضم إلينا زميلة جديدة يوم الاثنين. خطّط لشهرها الأول على سبورة، أسبوعًا بأسبوع. سام هو مرافقها ويعرّفها على أدواتنا.",
+      "ja": "月曜日に新しい同僚が入社します。最初の1か月を週ごとにホワイトボードで計画して。サムが世話役で、社内のツールを教えます。"
+    },
+    "wedding": {
+      "areas": { "min": 3, "max": 8 },
+      "en": "We're organising a small wedding in June. Make a whiteboard of everything we still have to decide, sorted into a few groups.",
+      "fr": "Nous organisons un petit mariage en juin. Fais un tableau blanc de tout ce qu'il nous reste à décider, rangé en quelques groupes.",
+      "ar": "ننظّم حفل زفاف صغيرًا في يونيو. اصنع سبورة بكل ما بقي علينا أن نقرره، مرتّبًا في بضع مجموعات.",
+      "ja": "6月に小さな結婚式をします。まだ決めることをすべて、いくつかのグループに分けてホワイトボードにまとめて。"
+    },
+    "kitchen": {
+      "areas": { "min": 3, "max": 8 },
+      "en": "We're redoing our kitchen. A whiteboard of the decisions to make: the budget, the layout, the appliances and the works, with notes in each.",
+      "fr": "Nous refaisons notre cuisine. Un tableau blanc des décisions à prendre : le budget, l'agencement, l'électroménager et les travaux, avec des notes dans chaque partie.",
+      "ar": "نعيد تجهيز مطبخنا. سبورة بالقرارات التي يجب اتخاذها: الميزانية، والتصميم، والأجهزة، والأعمال، مع ملاحظات في كل جزء.",
+      "ja": "キッチンをリフォームします。決めることをホワイトボードにまとめて。予算、レイアウト、家電、工事に分けて、それぞれに付箋を入れて。"
+    },
+    "newsletter": {
+      "areas": { "min": 3, "max": 4, "order": true },
+      "en": "Ideas for the next three issues of our school's newsletter, on a whiteboard with one area per issue, in order: October, November, December.",
+      "fr": "Des idées pour les trois prochains numéros de la lettre d'information de l'école, sur un tableau blanc avec une partie par numéro, dans l'ordre : octobre, novembre, décembre.",
+      "ar": "أفكار للأعداد الثلاثة القادمة من نشرة مدرستنا، على سبورة بجزء لكل عدد، بالترتيب: أكتوبر، نوفمبر، ديسمبر.",
+      "ja": "学校のお便りの次の3号分のアイデアを、号ごとに分けてホワイトボードにまとめて。順番は10月、11月、12月です。"
+    }
+  },
+  "regroup": {
+    "retro": {
+      "areas": { "min": 3, "max": 6 },
+      "owners": { "en": ["Nadia", "Tom"], "fr": ["Nadia", "Tom"], "ar": ["نادية", "توم"], "ja": ["ナディア", "トム"] },
+      "request": {
+        "en": "Group these notes by theme, then add our action items: Nadia fixes the release checklist, Tom books the team lunch.",
+        "fr": "Regroupe ces notes par thème, puis ajoute nos actions : Nadia corrige la liste de contrôle des mises en ligne, Tom réserve le déjeuner d'équipe.",
+        "ar": "اجمع هذه الملاحظات حسب الموضوع، ثم أضف المهام: نادية تصلح قائمة التحقق من الإصدار، وتوم يحجز غداء الفريق.",
+        "ja": "これらの付箋をテーマ別にまとめてから、アクションを追加して。ナディアはリリースのチェックリストを直す、トムはチームのランチを予約する。"
+      },
+      "notes": {
+        "en": ["Releases were smooth after week 3", "Too many meetings on Mondays", "Great help from the design team", "The checklist missed the database step", "We shipped two days early", "Reviews took too long", "Nobody knew who owned support", "Pair programming worked well", "Specs changed late twice", "Demo day was fun", "Tests were flaky", "Customers liked the new search", "Hard to reach the client on Fridays", "Good use of the shared board", "Onboarding docs are out of date", "Lunch together helped", "Deploys at night are tiring", "Clear goals from the start", "Too many tools for chat", "Celebrate the launch"],
+        "fr": ["Les mises en ligne se sont bien passées après la semaine 3", "Trop de réunions le lundi", "Super aide de l'équipe design", "La liste de contrôle oubliait l'étape base de données", "Livré avec deux jours d'avance", "Les relectures ont pris trop de temps", "Personne ne savait qui gérait le support", "Le travail en binôme a bien marché", "Le cahier des charges a changé tard, deux fois", "La journée de démo était sympa", "Les tests étaient instables", "Les clients ont aimé la nouvelle recherche", "Difficile de joindre le client le vendredi", "Bon usage du tableau partagé", "La doc d'accueil n'est plus à jour", "Déjeuner ensemble a aidé", "Les mises en ligne de nuit sont fatigantes", "Des objectifs clairs dès le début", "Trop d'outils de discussion", "Fêter le lancement"],
+        "ar": ["سارت الإصدارات بسلاسة بعد الأسبوع الثالث", "اجتماعات كثيرة جدًا أيام الاثنين", "مساعدة رائعة من فريق التصميم", "قائمة التحقق نسيت خطوة قاعدة البيانات", "سلّمنا قبل الموعد بيومين", "استغرقت المراجعات وقتًا طويلًا", "لم يعرف أحد من المسؤول عن الدعم", "نجحت البرمجة الثنائية", "تغيّرت المواصفات متأخرًا مرتين", "كان يوم العرض ممتعًا", "كانت الاختبارات غير مستقرة", "أحب العملاء البحث الجديد", "من الصعب التواصل مع العميل أيام الجمعة", "استخدمنا اللوحة المشتركة جيدًا", "وثائق الانضمام قديمة", "ساعد الغداء معًا", "النشر ليلًا متعب", "أهداف واضحة منذ البداية", "أدوات محادثة كثيرة جدًا", "الاحتفال بالإطلاق"],
+        "ja": ["3週目以降はリリースが順調だった", "月曜の会議が多すぎる", "デザインチームの助けが大きかった", "チェックリストにデータベースの手順が抜けていた", "2日早く出荷できた", "レビューに時間がかかりすぎた", "サポートの担当が誰か分からなかった", "ペアプログラミングがうまくいった", "仕様が終盤に2回変わった", "デモの日が楽しかった", "テストが不安定だった", "新しい検索がお客さんに好評", "金曜は顧客に連絡がつきにくい", "共有ボードをうまく使えた", "オンボーディング資料が古い", "一緒にランチしたのが良かった", "夜のデプロイは疲れる", "最初から目標が明確だった", "チャットツールが多すぎる", "リリースをお祝いする"]
+      }
+    },
+    "party": {
+      "areas": { "min": 3, "max": 7 },
+      "request": {
+        "en": "Sort these ideas for our street party into a few themes.",
+        "fr": "Range ces idées pour notre fête de quartier en quelques thèmes.",
+        "ar": "رتّب هذه الأفكار لحفلة شارعنا في بضعة مواضيع.",
+        "ja": "町内のお祭りのアイデアを、いくつかのテーマに分けて。"
+      },
+      "notes": {
+        "en": ["Ask the town hall to close the street", "A barbecue", "Face painting for kids", "Music from the neighbour's band", "Tables and chairs from the school", "A cake contest", "Posters in the bakery", "First aid kit", "A raffle for the library", "Lemonade stand", "Bins and recycling", "A treasure hunt", "Ask for a permit for music", "Fairy lights", "A group photo", "Vegetarian dishes", "Message on the residents' group", "Chalk drawing on the pavement", "Insurance for the day", "Bunting between the houses", "Volunteers to clean up", "A quiz about the neighbourhood", "Parking for the band's van", "Ice cream", "Games for older people", "A flyer in every letterbox", "Shade tents", "Toilets nearby", "Thank-you notes afterwards", "Dance lessons"],
+        "fr": ["Demander à la mairie de fermer la rue", "Un barbecue", "Maquillage pour les enfants", "Musique avec le groupe du voisin", "Tables et chaises de l'école", "Un concours de gâteaux", "Affiches à la boulangerie", "Trousse de premiers secours", "Une tombola pour la bibliothèque", "Stand de citronnade", "Poubelles et tri", "Une chasse au trésor", "Demander une autorisation pour la musique", "Guirlandes lumineuses", "Une photo de groupe", "Plats végétariens", "Message sur le groupe des habitants", "Dessins à la craie sur le trottoir", "Assurance pour la journée", "Fanions entre les maisons", "Bénévoles pour ranger", "Un quiz sur le quartier", "Stationnement pour la camionnette du groupe", "Glaces", "Jeux pour les aînés", "Un tract dans chaque boîte aux lettres", "Tonnelles pour l'ombre", "Toilettes à proximité", "Mots de remerciement après", "Cours de danse"],
+        "ar": ["أن نطلب من البلدية إغلاق الشارع", "حفل شواء", "رسم على وجوه الأطفال", "موسيقى من فرقة الجار", "طاولات وكراسٍ من المدرسة", "مسابقة كعك", "ملصقات في المخبز", "حقيبة إسعافات أولية", "يانصيب لصالح المكتبة", "كشك عصير ليمون", "صناديق قمامة وإعادة تدوير", "لعبة البحث عن الكنز", "طلب تصريح للموسيقى", "أضواء زينة", "صورة جماعية", "أطباق نباتية", "رسالة في مجموعة السكان", "رسم بالطباشير على الرصيف", "تأمين لليوم", "رايات بين البيوت", "متطوعون للتنظيف", "مسابقة أسئلة عن الحي", "موقف لسيارة الفرقة", "مثلجات", "ألعاب لكبار السن", "منشور في كل صندوق بريد", "خيام للظل", "دورات مياه قريبة", "رسائل شكر بعد الحفل", "دروس رقص"],
+        "ja": ["市役所に通りの通行止めを頼む", "バーベキュー", "子ども向けフェイスペイント", "近所のバンドの演奏", "学校からテーブルと椅子を借りる", "ケーキコンテスト", "パン屋にポスターを貼る", "救急セット", "図書館のためのくじ引き", "レモネードの屋台", "ゴミ箱と分別", "宝探し", "音楽の許可を取る", "電飾", "集合写真", "ベジタリアン料理", "住民グループに連絡する", "歩道にチョークで絵を描く", "当日の保険", "家と家の間に旗を飾る", "片付けのボランティア", "町内クイズ", "バンドの車の駐車場所", "アイスクリーム", "お年寄り向けのゲーム", "全戸にチラシを配る", "日よけのテント", "近くのトイレ", "後でお礼状を出す", "ダンス教室"]
+      }
+    }
+  },
+  "choose": [
+    { "whiteboard": true, "en": "Let's brainstorm names for our podcast together.", "fr": "Faisons un remue-méninges ensemble pour trouver un nom à notre podcast.", "ar": "لنتبادل الأفكار معًا لاختيار اسم لبودكاستنا.", "ja": "一緒にポッドキャストの名前をブレインストーミングしよう。" },
+    { "whiteboard": true, "en": "Help me run a retro with my team tomorrow.", "fr": "Aide-moi à animer une rétro avec mon équipe demain.", "ar": "ساعدني في إدارة اجتماع مراجعة مع فريقي غدًا.", "ja": "明日チームで振り返りをするのを手伝って。" },
+    { "whiteboard": true, "en": "Sort these garden ideas into groups we can discuss: herbs, a pond, a bench, tomatoes, a compost bin, a swing, lavender, a shed.", "fr": "Range ces idées pour le jardin en groupes dont on pourra discuter : des herbes aromatiques, une mare, un banc, des tomates, un composteur, une balançoire, de la lavande, un abri.", "ar": "رتّب أفكار الحديقة هذه في مجموعات نناقشها: أعشاب، بركة، مقعد، طماطم، صندوق سماد، أرجوحة، خزامى، كوخ.", "ja": "庭のアイデアを話し合えるようにグループ分けして。ハーブ、池、ベンチ、トマト、コンポスト、ブランコ、ラベンダー、物置。" },
+    { "whiteboard": true, "en": "Plan our house move week by week, on a board the whole family can see.", "fr": "Planifie notre déménagement semaine par semaine, sur un tableau que toute la famille peut voir.", "ar": "خطّط لانتقالنا إلى البيت الجديد أسبوعًا بأسبوع، على لوحة تراها العائلة كلها.", "ja": "引っ越しを週ごとに、家族みんなが見られるボードで計画して。" },
+    { "whiteboard": true, "en": "Collect everyone's ideas for the office party in one place we can all add to.", "fr": "Rassemble les idées de chacun pour la fête du bureau dans un endroit où tout le monde peut en ajouter.", "ar": "اجمع أفكار الجميع لحفلة المكتب في مكان واحد يمكننا كلنا الإضافة إليه.", "ja": "会社のパーティーのアイデアを、みんなが書き足せる場所に集めて。" },
+    { "whiteboard": true, "en": "Put this product feedback into themes so the team can discuss it: slow login, love the dark mode, export is confusing, want a mobile app, prices too high, great support.", "fr": "Classe ces retours sur le produit par thème pour que l'équipe en discute : connexion lente, le mode sombre est top, l'export est confus, on veut une appli mobile, prix trop élevés, super support.", "ar": "صنّف ملاحظات المستخدمين هذه حسب الموضوع ليناقشها الفريق: تسجيل دخول بطيء، الوضع الداكن رائع، التصدير مربك، نريد تطبيقًا للجوال، الأسعار مرتفعة، دعم ممتاز.", "ja": "チームで話し合えるように、製品へのフィードバックをテーマ別に分けて。ログインが遅い、ダークモードが好き、エクスポートが分かりにくい、スマホアプリが欲しい、価格が高い、サポートが素晴らしい。" },
+    { "whiteboard": true, "en": "A board for our project kick-off: goals, risks and open questions.", "fr": "Un tableau pour le lancement de notre projet : objectifs, risques et questions ouvertes.", "ar": "لوحة لانطلاق مشروعنا: الأهداف والمخاطر والأسئلة المفتوحة.", "ja": "プロジェクトのキックオフ用のボード。目標、リスク、未解決の質問。" },
+    { "whiteboard": true, "en": "Map out the steps of our hiring process with the team, so everyone can move things around.", "fr": "Pose les étapes de notre processus de recrutement avec l'équipe, pour que chacun puisse les déplacer.", "ar": "ارسم خطوات عملية التوظيف لدينا مع الفريق، بحيث يستطيع الجميع تحريكها.", "ja": "採用の流れのステップを、みんなで動かせるようにチームと一緒に書き出して。" },
+    { "whiteboard": false, "en": "Keep track of my job applications.", "fr": "Suis mes candidatures.", "ar": "تابع طلبات التوظيف التي قدّمتها.", "ja": "応募した求人を管理して。" },
+    { "whiteboard": false, "en": "Write a letter to my landlord about the broken heating.", "fr": "Écris une lettre à mon propriétaire au sujet du chauffage en panne.", "ar": "اكتب رسالة إلى مالك الشقة بشأن التدفئة المعطّلة.", "ja": "暖房の故障について大家さんへの手紙を書いて。" },
+    { "whiteboard": false, "en": "Make a table of our monthly expenses.", "fr": "Fais un tableau de nos dépenses mensuelles.", "ar": "اصنع جدولًا لمصاريفنا الشهرية.", "ja": "毎月の出費の表を作って。" },
+    { "whiteboard": false, "en": "Summarise the main causes of the French Revolution in five points.", "fr": "Résume en cinq points les principales causes de la Révolution française.", "ar": "لخّص الأسباب الرئيسية للثورة الفرنسية في خمس نقاط.", "ja": "フランス革命の主な原因を5つにまとめて。" },
+    { "whiteboard": false, "en": "Track my reading list, with a rating for each book.", "fr": "Suis ma liste de lecture, avec une note pour chaque livre.", "ar": "تابع قائمة قراءتي، مع تقييم لكل كتاب.", "ja": "読書リストを管理して。本ごとに評価もつけて。" },
+    { "whiteboard": false, "en": "Draft this month's newsletter for our parents' association.", "fr": "Rédige la lettre d'information de ce mois pour notre association de parents.", "ar": "اكتب مسودة نشرة هذا الشهر لجمعية أولياء الأمور.", "ja": "保護者会の今月のお便りの下書きを書いて。" },
+    { "whiteboard": false, "en": "List the countries of South America with their capitals.", "fr": "Donne la liste des pays d'Amérique du Sud avec leur capitale.", "ar": "اذكر دول أمريكا الجنوبية مع عواصمها.", "ja": "南米の国と首都を一覧にして。" },
+    { "whiteboard": false, "en": "Keep a list of the plants in my garden and when to water each one.", "fr": "Tiens une liste des plantes de mon jardin et de quand arroser chacune.", "ar": "احتفظ بقائمة نباتات حديقتي ومتى أسقي كلًّا منها.", "ja": "庭の植物と、それぞれの水やりの時期を一覧で管理して。" }
+  ]
+}

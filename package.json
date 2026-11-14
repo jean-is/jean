@@ -54,6 +54,7 @@
     "games": "npm run build && node scripts/games.js",
     "sites": "node scripts/sites.js",
     "prototypes": "node scripts/prototypes.js",
+    "whiteboard": "node scripts/whiteboard.js",
     "brands": "node scripts/brands.js",
     "concepts": "node scripts/concepts.js",
     "schemas": "node scripts/schemas.js",
