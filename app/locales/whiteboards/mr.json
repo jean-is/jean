@@ -21,6 +21,7 @@
   "whiteboards.ground": "बोर्डवर, विभागांच्या बाहेर",
   "whiteboards.shelf": "अजून न लावलेल्या टिपा",
   "whiteboards.empty": "(रिकामे)",
+  "whiteboards.open": "“{name}” उघडा",
   "whiteboards.line": "रेखाचित्र",
   "whiteboards.arrowName": "“{from}” पासून “{to}” पर्यंत बाण",
   "whiteboards.move": "“{name}” हलवा",

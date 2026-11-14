@@ -21,6 +21,7 @@
   "whiteboards.ground": "Στον πίνακα, εκτός ενοτήτων",
   "whiteboards.shelf": "Σημειώσεις που δεν έχουν ταξινομηθεί ακόμα",
   "whiteboards.empty": "(κενό)",
+  "whiteboards.open": "Άνοιγμα «{name}»",
   "whiteboards.line": "Σχέδιο",
   "whiteboards.arrowName": "Βέλος από «{from}» προς «{to}»",
   "whiteboards.move": "Μετακίνηση «{name}»",

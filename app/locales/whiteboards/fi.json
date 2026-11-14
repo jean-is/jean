@@ -21,6 +21,7 @@
   "whiteboards.ground": "Taululla, osioiden ulkopuolella",
   "whiteboards.shelf": "Lajittelemattomat laput",
   "whiteboards.empty": "(tyhjä)",
+  "whiteboards.open": "Avaa ”{name}”",
   "whiteboards.line": "Piirros",
   "whiteboards.arrowName": "Nuoli kohteesta ”{from}” kohteeseen ”{to}”",
   "whiteboards.move": "Siirrä ”{name}”",

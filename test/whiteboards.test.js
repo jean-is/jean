@@ -3,7 +3,7 @@
 // makes placed where nothing lies, by Jean's code.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { layout, free, snap, arrowPath, NOTE, GAP, HEAD, WIDE } from '../app/caps/whiteboards/layout.js'
+import { layout, free, snap, arrowPath, placeOf, NOTE, GAP, HEAD, WIDE } from '../app/caps/whiteboards/layout.js'
 import { made, changed, rowsOf, editsOf } from '../app/caps/whiteboards/tool.js'
 import { fold, stamp } from '../app/caps/tables/changes.js'
 
@@ -94,4 +94,12 @@ test('arrows: from the edge of one thing to the edge of the other, under all tha
   assert.deepEqual(layout(fold([...lines, { row: R(2), delete: true, at: T(4), by: 'user' }])).items.filter((item) => item.kind === 'arrow'), [])
   // Its head at the second end, two strokes back from it.
   assert.equal(arrowPath([0, 0, 100, 0]), 'M0 0L100 0M87 -6L100 0L87 6')
+})
+
+test('placeOf: a note whose words, whole, are a creation\'s place, as a Creations card gives it dragged: a link, a table\'s block, or the place alone', () => {
+  assert.equal(placeOf('[[documents/01K8.md|Plan, v2]]'), 'documents/01K8.md')
+  assert.equal(placeOf(' [[collections/01K8-budget]]\n'), 'collections/01K8-budget')
+  assert.equal(placeOf('```table\ncollections/01K8-budget\n```'), 'collections/01K8-budget')
+  assert.equal(placeOf('decks/01K8-launch.md'), 'decks/01K8-launch.md')
+  for (const words of ['Ship the beta', 'yes / no', 'see [[documents/01K8.md|Plan]]', '[[documents/01K8.md|Plan]] first', '', undefined]) assert.equal(placeOf(words), null, String(words))
 })

@@ -23,6 +23,7 @@
   "whiteboards.ground": "На доске, вне разделов",
   "whiteboards.shelf": "Ещё не разобранные заметки",
   "whiteboards.empty": "(пусто)",
+  "whiteboards.open": "Открыть «{name}»",
   "whiteboards.line": "Рисунок",
   "whiteboards.arrowName": "Стрелка от элемента «{from}» к элементу «{to}»",
   "whiteboards.move": "Переместить «{name}»",

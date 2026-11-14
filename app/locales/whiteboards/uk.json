@@ -23,6 +23,7 @@
   "whiteboards.ground": "На дошці, поза розділами",
   "whiteboards.shelf": "Ще не розібрані нотатки",
   "whiteboards.empty": "(порожньо)",
+  "whiteboards.open": "Відкрити «{name}»",
   "whiteboards.line": "Малюнок",
   "whiteboards.arrowName": "Стрілка від елемента «{from}» до елемента «{to}»",
   "whiteboards.move": "Перемістити «{name}»",

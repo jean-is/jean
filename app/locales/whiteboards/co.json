@@ -22,6 +22,7 @@
   "whiteboards.ground": "Nant’à a lavagna, fora di e sezzioni",
   "whiteboards.shelf": "Note micca ancu ordinate",
   "whiteboards.empty": "(senza testu)",
+  "whiteboards.open": "Apre « {name} »",
   "whiteboards.line": "Disegnu",
   "whiteboards.arrowName": "Freccia da « {from} » à « {to} »",
   "whiteboards.move": "Spiazzà « {name} »",

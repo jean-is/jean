@@ -21,6 +21,7 @@
   "whiteboards.ground": "Auf dem Whiteboard, außerhalb der Bereiche",
   "whiteboards.shelf": "Noch nicht sortierte Notizen",
   "whiteboards.empty": "(leer)",
+  "whiteboards.open": "„{name}“ öffnen",
   "whiteboards.line": "Zeichnung",
   "whiteboards.arrowName": "Pfeil von „{from}“ zu „{to}“",
   "whiteboards.move": "„{name}“ verschieben",

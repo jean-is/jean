@@ -21,6 +21,7 @@
   "whiteboards.ground": "በሰሌዳው ላይ፣ ከክፍሎች ውጭ",
   "whiteboards.shelf": "ገና ያልተደረደሩ ማስታወሻዎች",
   "whiteboards.empty": "(ባዶ)",
+  "whiteboards.open": "“{name}”ን ክፈት",
   "whiteboards.line": "ሥዕል",
   "whiteboards.arrowName": "ከ“{from}” ወደ “{to}” የሚሄድ ቀስት",
   "whiteboards.move": "“{name}”ን አንቀሳቅስ",

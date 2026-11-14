@@ -3,7 +3,7 @@
 // notes where Jean's code put them, Jean's changes accepted; a note dragged into another section and one from the shelf onto the open
 // board, landing where they were dropped, for the file as for the screen; a note moved with its grip and the arrows; a section made
 // with the bar, a line drawn and erased, arrows drawn and deleted; notes selected and asked about by id; a note deleted and brought back with ⌘Z,
-// its arrow with it, and given a colour; Lanes and
+// its arrow with it, and given a colour; a Creations card dropped on it, shown and opened; Lanes and
 // Table in the address; table_rows reading it. In Arabic, the board runs right to left and a drop still lands where it was put.
 import { test, expect } from '@playwright/test'
 import { start, ask, answered, BRAIN_URL } from './helpers.js'
@@ -182,6 +182,27 @@ test('a whiteboard: made by the brain, its notes dragged, moved with the keys, a
   // Its arrows by the ids they join, after its texts.
   const told = await page.evaluate((table) => import('/ui/caps.js').then(({ loaded }) => /** @type {any} */ (loaded.value.get('tables'))?.tools.find((/** @type {any} */ tool) => tool.spec.name === 'table_rows').run({ table }, { meta: {}, signal: new AbortController().signal })), folder)
   expect(String(told).split('\n').at(-1)).toMatch(/^\{"arrow":"\w+","from":"\w+","to":"\w+"\}$/)
+
+  // A Creations card dropped on the board, as a table's gives its block, makes a note that shows that creation's card; a press opens it.
+  await board.getByRole('group', { name: 'Show as' }).getByRole('button', { name: 'Whiteboard' }).click()
+  const budget = await page.evaluate(async () => {
+    const brain = { id: 'cloud', provider: 'anthropic', api: 'anthropic', baseURL: 'https://api.anthropic.com', model: 'claude' }, { loaded } = await import('/ui/caps.js')
+    const made = await /** @type {any} */ (loaded.value.get('tables'))?.tools.find((/** @type {any} */ tool) => tool.spec.name === 'table_create').run({ name: 'Budget', columns: [{ name: 'Item', type: 'text' }] }, { brain, signal: new AbortController().signal, meta: {} })
+    await (await import('/ui/creations.js')).reread()
+    return /at (collections\/\S+),/.exec(String(made))?.[1] ?? ''
+  })
+  const open = /** @type {{ x: number, y: number, width: number, height: number }} */ (await board.locator('.wb-board').boundingBox())
+  await page.evaluate(({ place, x, y }) => {
+    const data = new DataTransfer(), at = /** @type {Element} */ (document.querySelector('app-whiteboard .wb-board'))
+    data.setData('text/x-creation-block', `\`\`\`table\n${place}\n\`\`\``)
+    for (const type of ['dragenter', 'dragover', 'drop']) at.dispatchEvent(new DragEvent(type, { dataTransfer: data, clientX: x, clientY: y, bubbles: true, cancelable: true }))
+  }, { place: budget, x: open.x + open.width / 2, y: open.y + open.height - 200 })
+  const card = board.getByRole('button', { name: 'Open Budget' })
+  await expect(card.locator('.creation-preview th')).toHaveText('Item')
+  await expect(board.getByRole('status')).toContainText('Budget')
+  expect((await rows(page)).some((row) => row.note === `[[${budget}|Budget]]`)).toBe(true)
+  await card.click()
+  await expect(page.getByRole('complementary', { name: 'Budget' }).locator('app-table')).toBeVisible()
 })
 
 test('a whiteboard fills as Jean writes the call, its sections first, and stays where it showed once made', async ({ page }) => {

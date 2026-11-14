@@ -21,6 +21,7 @@
   "whiteboards.ground": "On the board, outside sections",
   "whiteboards.shelf": "Notes not sorted yet",
   "whiteboards.empty": "(empty)",
+  "whiteboards.open": "Open {name}",
   "whiteboards.line": "Drawing",
   "whiteboards.arrowName": "Arrow from {from} to {to}",
   "whiteboards.move": "Move {name}",

@@ -20,6 +20,7 @@
   "whiteboards.ground": "บนบอร์ด นอกส่วนต่าง ๆ",
   "whiteboards.shelf": "โน้ตที่ยังไม่ได้จัด",
   "whiteboards.empty": "(ว่าง)",
+  "whiteboards.open": "เปิด “{name}”",
   "whiteboards.line": "ภาพวาด",
   "whiteboards.arrowName": "ลูกศรจาก “{from}” ไปยัง “{to}”",
   "whiteboards.move": "ย้าย “{name}”",

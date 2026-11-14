@@ -25,6 +25,7 @@
   "whiteboards.ground": "على السبورة، خارج الأقسام",
   "whiteboards.shelf": "ملاحظات لم تُفرز بعد",
   "whiteboards.empty": "(بلا نص)",
+  "whiteboards.open": "فتح «{name}»",
   "whiteboards.line": "رسم",
   "whiteboards.arrowName": "سهم من «{from}» إلى «{to}»",
   "whiteboards.move": "نقل «{name}»",

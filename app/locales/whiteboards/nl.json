@@ -21,6 +21,7 @@
   "whiteboards.ground": "Op het whiteboard, buiten de secties",
   "whiteboards.shelf": "Nog niet gesorteerde notities",
   "whiteboards.empty": "(leeg)",
+  "whiteboards.open": "‘{name}’ openen",
   "whiteboards.line": "Tekening",
   "whiteboards.arrowName": "Pijl van ‘{from}’ naar ‘{to}’",
   "whiteboards.move": "‘{name}’ verplaatsen",

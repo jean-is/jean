@@ -21,6 +21,7 @@
   "whiteboards.ground": "बोर्ड पर, खंडों से बाहर",
   "whiteboards.shelf": "नोट जो अभी छाँटे नहीं गए",
   "whiteboards.empty": "(खाली)",
+  "whiteboards.open": "“{name}” खोलें",
   "whiteboards.line": "चित्र",
   "whiteboards.arrowName": "“{from}” से “{to}” तक तीर",
   "whiteboards.move": "“{name}” खिसकाएँ",

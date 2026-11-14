@@ -22,7 +22,8 @@ import { still } from '../../ui/sheet.js'
 import { load, change, unkept, accept, reject, undoStep, reshapeTable, amend, watched } from '../tables/tables.js'
 import { notesOf, ownProblem, kindOf } from '../tables/table.js'
 import { fold } from '../tables/changes.js'
-import { layout, snap, arrowPath, NOTE, GRID, HUES, WIDE } from './layout.js'
+import { layout, snap, arrowPath, placeOf, NOTE, GRID, HUES, WIDE } from './layout.js'
+import { all, show } from '../../ui/creations.js'
 import { beside, picked, showAs, showOnly, glyph, writing } from './whiteboards.js'
 import { view as tableOf } from '../tables/view.js'
 
@@ -54,8 +55,10 @@ const placed = (box) => ref((element) => {
 const pathOf = (path) => path.reduce((d, n, i) => `${d}${i % 2 ? ' ' : i ? ' L' : 'M'}${n}`, '')
 /** A note's words, its first line, for what names it. @param {Row} row */
 const wordsOf = (row) => String(row.cells.note ?? '').trim()
-/** What names a row in what is said: its words, or that it is a drawing. @param {Row} [row] */
-const nameOf = (row) => (row && wordsOf(row)) || t('whiteboards.line')
+/** The creation a note's words are the place of, among those Creations lists, whose card it shows. @param {Row} [row] */
+const cardOf = (row) => ((place) => (place ? all.value.find((one) => one.link.uri === place || one.path === place) : undefined))(row && kindOf(row) === 'note' && placeOf(row.cells.note))
+/** What names a row in what is said: its words, the creation it shows, or that it is a drawing. @param {Row} [row] */
+const nameOf = (row) => cardOf(row)?.name || (row && wordsOf(row)) || t('whiteboards.line')
 /**
  * A menu's row: the menu closed, then what the row does a frame later, so that one that takes its menu's anchor away never runs as the
  * menu closes, which WebKit can't bear (ui/creations-page.js's `away`). @param {() => unknown} act
@@ -331,7 +334,7 @@ customElements.define('app-whiteboard', class extends HTMLElement {
    * when let go; a press that hardly moves gives it the keys. @param {PointerEvent} event @param {HTMLElement} board @param {HTMLElement} item @param {string} row
    */
   #drag(event, board, item, row) {
-    const from = { x: event.clientX, y: event.clientY }, moved = { x: 0, y: 0 }, held = item.closest('.wb-area') && item.matches('.wb-area-head') ? /** @type {HTMLElement} */ (item.closest('.wb-area')) : item
+    const from = { x: event.clientX, y: event.clientY }, moved = { x: 0, y: 0 }, held = item.closest('.wb-area') && item.matches('.wb-area-head') ? /** @type {HTMLElement} */ (item.closest('.wb-area')) : item, card = cardOf(this.#row(row))
     let going = false, pressed = false
     const scale = held.closest('.wb-layer') ? this.#zoom : 1
     // On touch, a long press that hardly moves opens its menu.
@@ -355,7 +358,8 @@ customElements.define('app-whiteboard', class extends HTMLElement {
       held.removeAttribute('data-held')
       this.querySelector('.wb-shelf')?.removeAttribute('data-dragging')
       held.style.removeProperty('--dx'), held.style.removeProperty('--dy')
-      if (!going) return void (this.#at = row, this.draw(), /** @type {HTMLElement | null} */ (this.querySelector(`[data-row="${row}"] .wb-words`))?.focus())
+      // A press that hardly moves gives it the keys, or opens the creation whose card it shows.
+      if (!going) return void (card ? show(card)() : (this.#at = row, this.draw(), /** @type {HTMLElement | null} */ (this.querySelector(`[data-row="${row}"] .wb-words`))?.focus()))
       const onShelf = shelf && last.clientY > shelf.top && last.clientY < shelf.bottom && last.clientX > shelf.left && last.clientX < shelf.right
       this.#drop(row, this.#point({ clientX: this.#rtl ? box.right : box.left, clientY: box.top }), last, Boolean(onShelf))
     }
@@ -370,21 +374,41 @@ customElements.define('app-whiteboard', class extends HTMLElement {
    * @param {{ clientX: number, clientY: number }} [pointer] @param {boolean} [shelf]
    */
   async #drop(id, at, pointer, shelf = false) {
-    const row = this.#row(id), { areas } = layout(this.#one.rows)
+    const row = this.#row(id)
     this.#moveHere = null
     if (!row) return
     const x = snap(at.x), y = snap(at.y)
     if (kindOf(row) === 'area') return void (await this.edit([{ row: id, set: { '@spot': { area: null, x, y } } }]), this.say(t('whiteboards.moved', { name: wordsOf(row) })))
     if (shelf && kindOf(row) === 'note') return void (await this.edit([{ row: id, set: { area: null, '@spot': null } }]), this.say(t('whiteboards.shelved', { name: wordsOf(row) })))
-    const middle = { x: at.x + NOTE.w / 2, y: at.y + NOTE.h / 2 }, into = [...areas].reverse().find((area) => middle.x >= area.x && middle.x <= area.x + area.w && middle.y >= area.y && middle.y <= area.y + area.h)
-    await this.edit([{ row: id, set: into ? { area: into.row.id, '@spot': { area: into.row.id, x: snap(at.x - into.x), y: snap(at.y - into.y) } } : { area: null, '@spot': { area: null, x, y } } }])
-    this.say(into ? t('whiteboards.movedTo', { name: wordsOf(row) || t('whiteboards.line'), section: wordsOf(into.row) }) : t('whiteboards.onGround', { name: wordsOf(row) || t('whiteboards.line') }))
+    const { into, set } = this.#placing(at)
+    await this.edit([{ row: id, set }])
+    this.say(into ? t('whiteboards.movedTo', { name: nameOf(row), section: wordsOf(into.row) }) : t('whiteboards.onGround', { name: nameOf(row) }))
     if (pointer) this.#at = id
+  }
+
+  /** The section a point lies in, the one on top. @param {{ x: number, y: number }} at */
+  #under(at) { return [...layout(this.#one.rows).areas].reverse().find((area) => at.x >= area.x && at.x <= area.x + area.w && at.y >= area.y && at.y <= area.y + area.h) }
+  /** Where a note with its corner at `at` goes, on the fine grid: the section its middle lies in, at its place there, or the open board. @param {{ x: number, y: number }} at */
+  #placing(at) {
+    const into = this.#under({ x: at.x + NOTE.w / 2, y: at.y + NOTE.h / 2 })
+    return { into, set: into ? { area: into.row.id, '@spot': { area: into.row.id, x: snap(at.x - into.x), y: snap(at.y - into.y) } } : { area: null, '@spot': { area: null, x: snap(at.x), y: snap(at.y) } } }
+  }
+
+  /** A Creations card over the board, which takes it. @param {DragEvent} event */
+  over = (event) => { if (event.dataTransfer?.types.some((type) => type.startsWith('text/x-creation'))) event.preventDefault() }
+  /** A Creations card dropped on the board: a note where it lands, whose words are its place, which shows its card. @param {DragEvent} event */
+  landed = async (event) => {
+    const place = placeOf(event.dataTransfer?.getData('text/x-creation-block') || event.dataTransfer?.getData('text/x-creation')), card = place && all.peek().find((one) => one.link.uri === place || one.path === place)
+    if (!card) return
+    event.preventDefault()
+    const at = this.#point(event), { into, set } = this.#placing({ x: at.x - NOTE.w / 2, y: at.y - NOTE.h / 2 })
+    await this.edit([{ set: { note: `[[${card.link.uri}|${card.name.replace(/[[\]|\n]+/g, ' ')}]]`, ...set } }])
+    this.say(into ? t('whiteboards.movedTo', { name: card.name, section: wordsOf(into.row) }) : t('whiteboards.onGround', { name: card.name }))
   }
 
   /** What a tool makes at a place: a note or a text written there, or a section named there; the tool then back to the pointer. @param {Tool} tool @param {{ x: number, y: number }} at */
   #make(tool, at) {
-    const { areas } = layout(this.#one.rows), into = tool === 'section' ? undefined : [...areas].reverse().find((area) => at.x >= area.x && at.x <= area.x + area.w && at.y >= area.y && at.y <= area.y + area.h)
+    const into = tool === 'section' ? undefined : this.#under(at)
     this.#draft = { kind: tool === 'section' ? 'area' : tool === 'text' ? 'text' : 'note', area: into?.row.id ?? null, x: snap(at.x - (into?.x ?? 0)), y: snap(at.y - (into?.y ?? 0)), words: '' }
     this.#tool = 'pointer'
     this.draw()
@@ -411,8 +435,7 @@ customElements.define('app-whiteboard', class extends HTMLElement {
       this.#live('')
       if (points.length < 4) return
       const xs = points.filter((_, i) => i % 2 === 0), ys = points.filter((_, i) => i % 2), x = Math.min(...xs), y = Math.min(...ys)
-      const { areas } = layout(this.#one.rows), into = [...areas].reverse().find((area) => x >= area.x && x <= area.x + area.w && y >= area.y && y <= area.y + area.h)
-      const own = points.map((n, i) => n - (i % 2 ? y : x))
+      const into = this.#under({ x, y }), own = points.map((n, i) => n - (i % 2 ? y : x))
       await this.edit([{ set: { '@kind': 'line', '@path': own, '@ink': this.#ink, ...(into ? { area: into.row.id } : {}), '@spot': { area: into?.row.id ?? null, x: x - (into?.x ?? 0), y: y - (into?.y ?? 0) } } }])
       this.say(t('whiteboards.drawn'))
     }, { once: true })
@@ -683,7 +706,7 @@ customElements.define('app-whiteboard', class extends HTMLElement {
    * Reject. @param {Loaded} one @param {Item} item @param {{ x: number, y: number }} origin @param {Set<string>} jean @param {Area[]} areas @param {number} z
    */
   #item(one, item, origin, jean, areas, z) {
-    const { row } = item, id = row.id, words = wordsOf(row), mine = this.#moving?.row === id ? this.#moving : null, box = { x: (mine?.x ?? item.x) - origin.x, y: (mine?.y ?? item.y) - origin.y, w: item.w, h: item.h }, hue = row.cells['@hue']
+    const { row } = item, id = row.id, card = cardOf(row), words = card?.name ?? wordsOf(row), mine = this.#moving?.row === id ? this.#moving : null, box = { x: (mine?.x ?? item.x) - origin.x, y: (mine?.y ?? item.y) - origin.y, w: item.w, h: item.h }, hue = row.cells['@hue']
     const classes = `wb-${item.kind}${jean.has(id) ? ' is-jean' : ''}${this.#selected.has(id) ? ' is-selected' : ''}${mine || this.#from === id ? ' is-moving' : ''}${item.area ? '' : ' is-ground'}${row.cells['@size'] === 'title' ? ' is-title' : ''}${item.kind === 'note' && hue != null && !ownProblem('@hue', hue) ? ` is-hued wb-hue-${hue}` : ''}`
     if (this.#draft?.row === id) return html`<li class=${`${classes} wb-draft`} data-row=${id} ${placed(box)}>${this.#field(row)}</li>`
     const z_ = ref((element) => element instanceof HTMLElement && element.style.setProperty('--z', String(z + 1)))
@@ -697,8 +720,9 @@ customElements.define('app-whiteboard', class extends HTMLElement {
     const menu = `${this.#id}-menu-${id}`, foot = one.table.properties.filter((property) => !property.deleted && property.id !== 'note' && property.id !== 'area' && row.cells[property.id] != null).slice(0, 2)
     const tab = this.#at === id || (!this.#at && z === 0) ? 0 : -1
     return html`<li class=${classes} data-row=${id} ${placed(box)} ${z_}>
-      <button type="button" class="wb-words" dir="auto" tabindex=${tab} @dblclick=${() => this.write(row)} @keydown=${(/** @type {KeyboardEvent} */ e) => { if (e.key === 'Enter' && !e.isComposing && !this.#from) { e.preventDefault(); this.write(row) } }}
-        @focus=${() => { this.#at = id }}>${words || t('whiteboards.empty')}</button>
+      <button type="button" class=${card ? 'wb-words wb-card' : 'wb-words'} dir="auto" tabindex=${tab} aria-label=${card ? t('whiteboards.open', { name: card.name }) : nothing} @dblclick=${() => this.write(row)}
+        @keydown=${(/** @type {KeyboardEvent} */ e) => { if (e.key === 'Enter' && !e.isComposing && !this.#from) { e.preventDefault(); card ? show(card)() : this.write(row) } }} @focus=${() => { this.#at = id }}>${card
+          ? html`<span class="creation-preview" aria-hidden="true" inert>${card.kind.preview?.(card) ?? card.kind.draw()}</span><span class="wb-card-name">${card.kind.draw()}<span dir="auto">${card.name}</span></span>` : words || t('whiteboards.empty')}</button>
       ${foot.length ? html`<p class="wb-foot" dir="auto">${foot.map((property) => html`<span>${String(row.cells[property.id])}</span>`)}</p>` : nothing}
       <button type="button" class="wb-grip icon-button" tabindex=${tab} aria-label=${t('whiteboards.move', { name: words })} @click=${() => this.move(id)}>${GRIP}</button>
       <button type="button" class="wb-more icon-button" tabindex=${tab} aria-label=${t('whiteboards.more', { name: words })} popovertarget=${menu}>${icons.more}</button>
@@ -756,7 +780,7 @@ customElements.define('app-whiteboard', class extends HTMLElement {
         <ul>${inArea(id).map((item) => this.#item(one, item, area, jean, areas, Number(order.get(item.row.id))))}${draft?.area === id ? this.#newOne(draft) : nothing}</ul></section>`
     }
     return html`<div class="wb-board" role="region" aria-label=${t('whiteboards.board', { name: one.table.name })} data-tool=${this.#tool} ?data-moving=${!!this.#moveHere} ?inert=${this.#before || writing.peek() === one.folder}
-        @pointerdown=${this.down} @wheel=${this.wheel} @keydown=${this.keys} @pointermove=${(/** @type {PointerEvent} */ e) => this.#tell(this.#point(e))}>
+        @pointerdown=${this.down} @wheel=${this.wheel} @keydown=${this.keys} @dragenter=${this.over} @dragover=${this.over} @drop=${this.landed} @pointermove=${(/** @type {PointerEvent} */ e) => this.#tell(this.#point(e))}>
       <div class="wb-layer" dir=${dir}>
         <div class="wb-others" aria-hidden="true"></div>
         ${areas.map(section)}

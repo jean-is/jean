@@ -77,11 +77,11 @@ document.addEventListener('dragstart', (event) => {
   event.dataTransfer.effectAllowed = 'move'
 })
 // WebKit drops only where dragenter was taken as well as dragover; the drop is taken before the box, which would write what was dropped,
-// but for a card's over a document's text, which takes what it holds there.
+// but for a card's over a document's text or a whiteboard's board, which takes what it holds there.
 for (const type of ['dragenter', 'dragover', 'drop']) {
   document.addEventListener(type, (event) => {
     const { clientX, clientY, dataTransfer } = /** @type {DragEvent} */ (event), card = dataTransfer?.types.some((one) => one.startsWith('text/x-creation'))
-    const target = dragged && dataTransfer?.types.includes(TYPE) && !(card && document.elementFromPoint(clientX, clientY)?.closest('[contenteditable="true"]')) ? dock.aim(clientX, clientY, dragged, true) : null
+    const target = dragged && dataTransfer?.types.includes(TYPE) && !(card && document.elementFromPoint(clientX, clientY)?.closest('[contenteditable="true"], .wb-board')) ? dock.aim(clientX, clientY, dragged, true) : null
     dock.show(type === 'drop' ? null : target)
     if (!target) return
     event.preventDefault()

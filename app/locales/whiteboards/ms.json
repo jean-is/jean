@@ -20,6 +20,7 @@
   "whiteboards.ground": "Di papan, di luar bahagian",
   "whiteboards.shelf": "Nota yang belum diisih",
   "whiteboards.empty": "(kosong)",
+  "whiteboards.open": "Buka “{name}”",
   "whiteboards.line": "Lukisan",
   "whiteboards.arrowName": "Anak panah dari “{from}” ke “{to}”",
   "whiteboards.move": "Alihkan “{name}”",

@@ -22,6 +22,7 @@
   "whiteboards.ground": "Pe tablă, în afara secțiunilor",
   "whiteboards.shelf": "Note încă nesortate",
   "whiteboards.empty": "(fără text)",
+  "whiteboards.open": "Deschideți „{name}”",
   "whiteboards.line": "Desen",
   "whiteboards.arrowName": "Săgeată de la „{from}” la „{to}”",
   "whiteboards.move": "Mutați „{name}”",

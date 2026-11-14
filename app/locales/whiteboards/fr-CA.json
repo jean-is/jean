@@ -22,6 +22,7 @@
   "whiteboards.ground": "Sur le tableau, hors des sections",
   "whiteboards.shelf": "Notes pas encore triées",
   "whiteboards.empty": "(vide)",
+  "whiteboards.open": "Ouvrir « {name} »",
   "whiteboards.line": "Dessin",
   "whiteboards.arrowName": "Flèche de « {from} » vers « {to} »",
   "whiteboards.move": "Déplacer « {name} »",

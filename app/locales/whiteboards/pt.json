@@ -22,6 +22,7 @@
   "whiteboards.ground": "No quadro, fora das secções",
   "whiteboards.shelf": "Notas ainda por organizar",
   "whiteboards.empty": "(sem texto)",
+  "whiteboards.open": "Abrir «{name}»",
   "whiteboards.line": "Desenho",
   "whiteboards.arrowName": "Seta de «{from}» para «{to}»",
   "whiteboards.move": "Mover «{name}»",

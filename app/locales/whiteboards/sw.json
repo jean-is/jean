@@ -21,6 +21,7 @@
   "whiteboards.ground": "Ubaoni, nje ya sehemu",
   "whiteboards.shelf": "Madokezo ambayo bado hayajapangwa",
   "whiteboards.empty": "(tupu)",
+  "whiteboards.open": "Fungua “{name}”",
   "whiteboards.line": "Mchoro",
   "whiteboards.arrowName": "Mshale kutoka “{from}” hadi “{to}”",
   "whiteboards.move": "Hamisha “{name}”",

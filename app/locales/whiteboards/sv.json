@@ -21,6 +21,7 @@
   "whiteboards.ground": "På whiteboarden, utanför sektionerna",
   "whiteboards.shelf": "Lappar som inte är sorterade än",
   "whiteboards.empty": "(tom)",
+  "whiteboards.open": "Öppna ”{name}”",
   "whiteboards.line": "Teckning",
   "whiteboards.arrowName": "Pil från ”{from}” till ”{to}”",
   "whiteboards.move": "Flytta ”{name}”",

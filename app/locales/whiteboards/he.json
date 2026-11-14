@@ -22,6 +22,7 @@
   "whiteboards.ground": "על הלוח, מחוץ לאזורים",
   "whiteboards.shelf": "פתקים שעוד לא מוינו",
   "whiteboards.empty": "(ריק)",
+  "whiteboards.open": "פתיחת “{name}”",
   "whiteboards.line": "ציור",
   "whiteboards.arrowName": "חץ מ־“{from}” אל “{to}”",
   "whiteboards.move": "העברת “{name}”",

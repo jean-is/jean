@@ -20,6 +20,7 @@
   "whiteboards.ground": "白板上，分區之外",
   "whiteboards.shelf": "還沒分類的便利貼",
   "whiteboards.empty": "（空白）",
+  "whiteboards.open": "開啟「{name}」",
   "whiteboards.line": "手繪",
   "whiteboards.arrowName": "從「{from}」指向「{to}」的箭頭",
   "whiteboards.move": "移動「{name}」",

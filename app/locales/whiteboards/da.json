@@ -21,6 +21,7 @@
   "whiteboards.ground": "På whiteboardet, uden for sektionerne",
   "whiteboards.shelf": "Noter, der ikke er sorteret endnu",
   "whiteboards.empty": "(tom)",
+  "whiteboards.open": "Åbn “{name}”",
   "whiteboards.line": "Tegning",
   "whiteboards.arrowName": "Pil fra “{from}” til “{to}”",
   "whiteboards.move": "Flyt “{name}”",

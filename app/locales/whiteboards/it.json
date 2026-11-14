@@ -22,6 +22,7 @@
   "whiteboards.ground": "Sulla lavagna, fuori dalle sezioni",
   "whiteboards.shelf": "Note non ancora ordinate",
   "whiteboards.empty": "(senza testo)",
+  "whiteboards.open": "Apri «{name}»",
   "whiteboards.line": "Disegno",
   "whiteboards.arrowName": "Freccia da «{from}» a «{to}»",
   "whiteboards.move": "Sposta «{name}»",

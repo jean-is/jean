@@ -22,6 +22,7 @@
   "whiteboards.ground": "Na ploči, izvan odjeljaka",
   "whiteboards.shelf": "Još nerazvrstane bilješke",
   "whiteboards.empty": "(prazno)",
+  "whiteboards.open": "Otvori „{name}“",
   "whiteboards.line": "Crtež",
   "whiteboards.arrowName": "Strelica od stavke „{from}“ do stavke „{to}“",
   "whiteboards.move": "Premjesti „{name}“",

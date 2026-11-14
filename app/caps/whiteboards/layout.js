@@ -62,6 +62,12 @@ export function arrowPath([x1, y1, x2, y2]) {
   return `M${x1} ${y1}L${x2} ${y2}M${wing(0.45)}L${x2} ${y2}L${wing(-0.45)}`
 }
 
+/**
+ * The place of a creation a note's words are, whole, as a Creations card gives it dragged: `[[place|name]]`, a table's block, or a place
+ * alone; else null. @param {unknown} words
+ */
+export const placeOf = (words) => /^\s*(?:\[\[([^|\]\n]+)(?:\|[^\]\n]*)?\]\]|```table\n([^\s`]+)\n```|([a-z][\w-]*\/[^\s[\]|]+))\s*$/.exec(String(words ?? ''))?.slice(1).find(Boolean) ?? null
+
 /** What lies on top: the later spot, then the row's id. @param {{ row: Row }} a @param {{ row: Row }} b */
 const above = (a, b) => ((x, y) => (x !== y ? (x < y ? -1 : 1) : a.row.id < b.row.id ? -1 : 1))(a.row.stamps['@spot']?.at ?? '', b.row.stamps['@spot']?.at ?? '')
 

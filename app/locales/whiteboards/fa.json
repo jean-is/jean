@@ -21,6 +21,7 @@
   "whiteboards.ground": "روی تخته، بیرون از بخش‌ها",
   "whiteboards.shelf": "یادداشت‌هایی که هنوز دسته‌بندی نشده‌اند",
   "whiteboards.empty": "(خالی)",
+  "whiteboards.open": "باز کردن «{name}»",
   "whiteboards.line": "طرح",
   "whiteboards.arrowName": "پیکان از «{from}» به «{to}»",
   "whiteboards.move": "جابه‌جا کردن «{name}»",

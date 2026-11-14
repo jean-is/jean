@@ -21,6 +21,7 @@
   "whiteboards.ground": "బోర్డుపై, విభాగాల బయట",
   "whiteboards.shelf": "ఇంకా వర్గీకరించని గమనికలు",
   "whiteboards.empty": "(ఖాళీ)",
+  "whiteboards.open": "“{name}”ని తెరువు",
   "whiteboards.line": "చిత్రం",
   "whiteboards.arrowName": "“{from}” నుండి “{to}” వరకు బాణం",
   "whiteboards.move": "“{name}”ని జరుపు",

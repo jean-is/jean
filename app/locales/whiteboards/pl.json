@@ -23,6 +23,7 @@
   "whiteboards.ground": "Na tablicy, poza sekcjami",
   "whiteboards.shelf": "Jeszcze nieposortowane karteczki",
   "whiteboards.empty": "(bez tekstu)",
+  "whiteboards.open": "Otwórz „{name}”",
   "whiteboards.line": "Rysunek",
   "whiteboards.arrowName": "Strzałka od elementu „{from}” do elementu „{to}”",
   "whiteboards.move": "Przenieś „{name}”",

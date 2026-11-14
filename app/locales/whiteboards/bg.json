@@ -21,6 +21,7 @@
   "whiteboards.ground": "На дъската, извън разделите",
   "whiteboards.shelf": "Още неподредени бележки",
   "whiteboards.empty": "(празно)",
+  "whiteboards.open": "Отвори „{name}“",
   "whiteboards.line": "Рисунка",
   "whiteboards.arrowName": "Стрелка от „{from}“ към „{to}“",
   "whiteboards.move": "Премести „{name}“",

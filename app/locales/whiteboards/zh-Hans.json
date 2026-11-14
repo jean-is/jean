@@ -20,6 +20,7 @@
   "whiteboards.ground": "白板上，分区之外",
   "whiteboards.shelf": "还没分类的便签",
   "whiteboards.empty": "（空）",
+  "whiteboards.open": "打开“{name}”",
   "whiteboards.line": "手绘",
   "whiteboards.arrowName": "从“{from}”指向“{to}”的箭头",
   "whiteboards.move": "移动“{name}”",

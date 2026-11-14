@@ -21,6 +21,7 @@
   "whiteboards.ground": "বোর্ডে, অংশগুলোর বাইরে",
   "whiteboards.shelf": "যে নোটগুলো এখনো সাজানো হয়নি",
   "whiteboards.empty": "(খালি)",
+  "whiteboards.open": "“{name}” খুলুন",
   "whiteboards.line": "অঙ্কন",
   "whiteboards.arrowName": "“{from}” থেকে “{to}” পর্যন্ত তীর",
   "whiteboards.move": "“{name}” সরান",

@@ -21,6 +21,7 @@
   "whiteboards.ground": "Tahtada, bölümlerin dışında",
   "whiteboards.shelf": "Henüz sıralanmamış notlar",
   "whiteboards.empty": "(boş)",
+  "whiteboards.open": "Aç: “{name}”",
   "whiteboards.line": "Çizim",
   "whiteboards.arrowName": "“{from}” öğesinden “{to}” öğesine ok",
   "whiteboards.move": "Taşı: “{name}”",

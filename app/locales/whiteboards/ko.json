@@ -20,6 +20,7 @@
   "whiteboards.ground": "보드 위, 구역 밖",
   "whiteboards.shelf": "아직 정리하지 않은 메모",
   "whiteboards.empty": "(비어 있음)",
+  "whiteboards.open": "‘{name}’ 열기",
   "whiteboards.line": "손 그림",
   "whiteboards.arrowName": "‘{from}’ 항목에서 ‘{to}’ 항목으로 가는 화살표",
   "whiteboards.move": "‘{name}’ 옮기기",

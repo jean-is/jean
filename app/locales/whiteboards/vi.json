@@ -20,6 +20,7 @@
   "whiteboards.ground": "Trên bảng, ngoài các phần",
   "whiteboards.shelf": "Ghi chú chưa sắp xếp",
   "whiteboards.empty": "(trống)",
+  "whiteboards.open": "Mở “{name}”",
   "whiteboards.line": "Hình vẽ",
   "whiteboards.arrowName": "Mũi tên từ “{from}” đến “{to}”",
   "whiteboards.move": "Di chuyển “{name}”",

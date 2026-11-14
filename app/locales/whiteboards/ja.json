@@ -20,6 +20,7 @@
   "whiteboards.ground": "ボード上、セクションの外",
   "whiteboards.shelf": "まだ分類していないメモ",
   "whiteboards.empty": "（空）",
+  "whiteboards.open": "「{name}」を開く",
   "whiteboards.line": "手描き",
   "whiteboards.arrowName": "「{from}」から「{to}」への矢印",
   "whiteboards.move": "「{name}」を移動",

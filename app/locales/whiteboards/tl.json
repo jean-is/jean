@@ -21,6 +21,7 @@
   "whiteboards.ground": "Sa board, labas sa mga seksiyon",
   "whiteboards.shelf": "Mga talang hindi pa naaayos",
   "whiteboards.empty": "(walang laman)",
+  "whiteboards.open": "Buksan ang “{name}”",
   "whiteboards.line": "Guhit",
   "whiteboards.arrowName": "Palaso mula sa “{from}” papunta sa “{to}”",
   "whiteboards.move": "Ilipat ang “{name}”",

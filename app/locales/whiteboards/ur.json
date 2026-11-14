@@ -21,6 +21,7 @@
   "whiteboards.ground": "بورڈ پر، حصوں سے باہر",
   "whiteboards.shelf": "نوٹس جو ابھی ترتیب نہیں دیے گئے",
   "whiteboards.empty": "(خالی)",
+  "whiteboards.open": "“{name}” کھولیں",
   "whiteboards.line": "ڈرائنگ",
   "whiteboards.arrowName": "“{from}” سے “{to}” تک تیر",
   "whiteboards.move": "“{name}” منتقل کریں",

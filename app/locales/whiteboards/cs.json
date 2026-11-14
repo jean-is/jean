@@ -23,6 +23,7 @@
   "whiteboards.ground": "Na tabuli, mimo sekce",
   "whiteboards.shelf": "Lístečky, které ještě nejsou roztříděné",
   "whiteboards.empty": "(bez textu)",
+  "whiteboards.open": "Otevřít „{name}“",
   "whiteboards.line": "Kresba",
   "whiteboards.arrowName": "Šipka z položky „{from}“ do položky „{to}“",
   "whiteboards.move": "Přesunout „{name}“",

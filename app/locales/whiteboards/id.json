@@ -20,6 +20,7 @@
   "whiteboards.ground": "Di papan, di luar bagian",
   "whiteboards.shelf": "Catatan yang belum diurutkan",
   "whiteboards.empty": "(kosong)",
+  "whiteboards.open": "Buka “{name}”",
   "whiteboards.line": "Gambar",
   "whiteboards.arrowName": "Panah dari “{from}” ke “{to}”",
   "whiteboards.move": "Pindahkan “{name}”",

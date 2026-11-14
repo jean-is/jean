@@ -21,6 +21,7 @@
   "whiteboards.ground": "A táblán, a szakaszokon kívül",
   "whiteboards.shelf": "Még nem rendezett cetlik",
   "whiteboards.empty": "(üres)",
+  "whiteboards.open": "„{name}” megnyitása",
   "whiteboards.line": "Rajz",
   "whiteboards.arrowName": "Nyíl innen: „{from}”, ide: „{to}”",
   "whiteboards.move": "„{name}” áthelyezése",

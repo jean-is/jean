@@ -22,6 +22,7 @@
   "whiteboards.ground": "En la pizarra, fuera de las secciones",
   "whiteboards.shelf": "Notas aún sin ordenar",
   "whiteboards.empty": "(sin texto)",
+  "whiteboards.open": "Abrir «{name}»",
   "whiteboards.line": "Dibujo",
   "whiteboards.arrowName": "Flecha de «{from}» a «{to}»",
   "whiteboards.move": "Mover «{name}»",
