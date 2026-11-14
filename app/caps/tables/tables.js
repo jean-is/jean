@@ -408,14 +408,15 @@ const createTool = {
 
 /**
  * A whiteboard as table_rows gives it (D747), as phase 0 measured: its areas by id, then its notes, each with its area's id, or where it
- * waits, then its texts; never a drawn line. @param {Loaded} one
+ * waits, then its texts, then its arrows by the ids they join; never a drawn line. @param {Loaded} one
  */
 function boardRows(one) {
   const areas = one.rows.filter((row) => kindOf(row) === 'area'), ids = new Set(/** @type {unknown[]} */ (areas.map((row) => row.id))), notes = notesOf(one.rows), columns = one.table.properties.filter((property) => !property.deleted && property.id !== 'area')
   const cells = (/** @type {Row} */ row) => Object.fromEntries(columns.flatMap((property) => (row.cells[property.id] === undefined ? [] : [[property.name, row.cells[property.id]]])))
   return [`${one.table.name} (${one.folder}), a whiteboard: ${areas.length} areas, ${notes.length} notes.`, ...areas.map((row) => JSON.stringify({ area: row.id, name: row.cells.note ?? '' })),
     ...notes.map((row) => JSON.stringify({ row: row.id, ...cells(row), ...(ids.has(row.cells.area) ? { area: row.cells.area } : spotOf(row, ids) ? { ground: true } : { shelf: true }) })),
-    ...one.rows.filter((row) => kindOf(row) === 'text').map((row) => JSON.stringify({ row: row.id, kind: 'text', ...cells(row) }))].join('\n')
+    ...one.rows.filter((row) => kindOf(row) === 'text').map((row) => JSON.stringify({ row: row.id, kind: 'text', ...cells(row) })),
+    ...one.rows.flatMap((row) => ((ends) => (kindOf(row) === 'arrow' && ends.length && ends.every((id) => one.rows.some((other) => other.id === id && kindOf(other) !== 'line')) ? [JSON.stringify({ arrow: row.id, from: ends[0], to: ends[1] })] : []))(/** @type {string[]} */ (row.cells['@ends'] ?? [])))].join('\n')
 }
 
 /** @type {import('../../core/loop.js').Tool} */

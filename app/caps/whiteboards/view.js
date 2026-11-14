@@ -22,7 +22,7 @@ import { still } from '../../ui/sheet.js'
 import { load, change, unkept, accept, reject, undoStep, reshapeTable, amend, watched } from '../tables/tables.js'
 import { notesOf, ownProblem, kindOf } from '../tables/table.js'
 import { fold } from '../tables/changes.js'
-import { layout, snap, NOTE, GRID, HUES, WIDE } from './layout.js'
+import { layout, snap, arrowPath, NOTE, GRID, HUES, WIDE } from './layout.js'
 import { beside, picked, showAs, showOnly, glyph, writing } from './whiteboards.js'
 import { view as tableOf } from '../tables/view.js'
 
@@ -30,7 +30,7 @@ import { view as tableOf } from '../tables/view.js'
 /** @typedef {import('../tables/changes.js').Row} Row */
 /** @typedef {import('./layout.js').Item} Item */
 /** @typedef {import('./layout.js').Area} Area */
-/** What a press on the board makes, or what it does. @typedef {'pointer' | 'note' | 'text' | 'section' | 'draw' | 'erase'} Tool */
+/** What a press on the board makes, or what it does. @typedef {'pointer' | 'note' | 'text' | 'section' | 'arrow' | 'draw' | 'erase'} Tool */
 /** What is being written, a row or a new one where it will lie: its words as typed. @typedef {{ row?: string, kind: 'note' | 'text' | 'area', area: string | null, x: number, y: number, words: string, shelf?: boolean }} Draft */
 
 const GRIP = icon(svg`<g fill="currentColor" stroke="none"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></g>`)
@@ -38,6 +38,7 @@ const POINTER = icon(svg`<path d="M6 3.5l12 8.5-5.5 1.2 3.2 6-2.4 1.3-3.2-6L6 18
 const NOTE_GLYPH = icon(svg`<path d="M5 4.5h14v10l-5 5H5zM14 19.5v-5h5"/>`)
 const TEXT = icon(svg`<path d="M5 6.5V5h14v1.5M12 5v14M9 19h6"/>`)
 const SECTION = icon(svg`<rect x="3.5" y="5" width="17" height="14" rx="2.5"/><path d="M3.5 9.5h17"/>`)
+const ARROW = icon(svg`<path d="M5 19 19 5M10 5h9v9"/>`)
 const DRAW = icon(svg`<path d="M4 20c3-1 5-6 8-9s5-6 7-5-1 4-4 7-6 4-6 6 3 1 5 0"/>`)
 const ERASE = icon(svg`<path d="M8.5 19.5h11M4.8 14.7l8.5-8.5a2 2 0 0 1 2.8 0l2.2 2.2a2 2 0 0 1 0 2.8l-7.3 7.3H8.5L4.8 15.5a.6.6 0 0 1 0-.8z"/>`)
 /** The inks a line takes: the board's ink, then three of the sections' colours. */
@@ -53,6 +54,8 @@ const placed = (box) => ref((element) => {
 const pathOf = (path) => path.reduce((d, n, i) => `${d}${i % 2 ? ' ' : i ? ' L' : 'M'}${n}`, '')
 /** A note's words, its first line, for what names it. @param {Row} row */
 const wordsOf = (row) => String(row.cells.note ?? '').trim()
+/** What names a row in what is said: its words, or that it is a drawing. @param {Row} [row] */
+const nameOf = (row) => (row && wordsOf(row)) || t('whiteboards.line')
 /**
  * A menu's row: the menu closed, then what the row does a frame later, so that one that takes its menu's anchor away never runs as the
  * menu closes, which WebKit can't bear (ui/creations-page.js's `away`). @param {() => unknown} act
@@ -87,8 +90,10 @@ customElements.define('app-whiteboard', class extends HTMLElement {
   #stroke = null
   /** @type {{ x: number, y: number, w: number, h: number } | null} */
   #box = null
-  /** Where the next press puts what a tool makes, said by the menu's Move here. @type {string | null} */
+  /** Where the next press puts what a tool makes, said by the menu's Move here; what an arrow being drawn starts from. @type {string | null} */
   #moveHere = null
+  /** @type {string | null} */
+  #from = null
   /** Whether Before is pressed: the board as it was without what waits to be accepted, to look at, not to change. */
   #before = false
   /** One section's notes as a table, as its menu asks: Tables' view of them, made once while it shows. @type {{ area: string, node: Node, holds: (() => void)[] } | null} */
@@ -273,10 +278,13 @@ customElements.define('app-whiteboard', class extends HTMLElement {
     // On the shelf, only a note dragged out of it.
     if (board.matches('.wb-shelf')) return void (row && target.closest('.wb-note') && this.#drag(event, board, /** @type {HTMLElement} */ (target.closest('.wb-note')), row))
     if (this.#moveHere) return void this.#drop(this.#moveHere, at, event)
+    const kind = row ? kindOf(this.#row(row) ?? { cells: {} }) : ''
+    if (this.#tool === 'arrow' || this.#from) return void (row && kind !== 'arrow' ? this.#arrow(event, board, row) : ((this.#from = null), this.draw()))
     if (this.#tool === 'draw') return this.#draw(event, board, at)
-    if (this.#tool === 'erase') return void (row && kindOf(this.#row(row) ?? { cells: {} }) === 'line' && this.edit([{ row, delete: true }]).then(() => this.say(t('whiteboards.erased'))))
+    if (this.#tool === 'erase') return void ((kind === 'line' || kind === 'arrow') && this.erase([/** @type {string} */ (row)]).then(() => kind === 'line' && this.say(t('whiteboards.erased'))))
     if (this.#tool !== 'pointer') return void this.#make(this.#tool, at)
     if (row && event.shiftKey) return void (this.#selected.has(row) ? this.#selected.delete(row) : this.#selected.add(row), this.draw())
+    if (kind === 'arrow') return void board.addEventListener('pointerup', () => this.#refocus(/** @type {string} */ (row)), { once: true })
     const item = row && target.closest('.wb-note, .wb-text, .wb-line, .wb-area-head')
     if (item) return this.#drag(event, board, /** @type {HTMLElement} */ (item), /** @type {string} */ (row))
     if (event.shiftKey) return this.#boxing(event, board, at)
@@ -385,27 +393,22 @@ customElements.define('app-whiteboard', class extends HTMLElement {
 
   /** A line drawn while Draw is pressed, kept as points from its own corner, thinned, once it is finished. @param {PointerEvent} event @param {HTMLElement} board @param {{ x: number, y: number }} at */
   #draw(event, board, at) {
-    const points = [Math.round(at.x), Math.round(at.y)], path = /** @type {SVGPathElement | null} */ (this.querySelector('.wb-stroke path')), stroke = /** @type {SVGSVGElement | null} */ (path?.ownerSVGElement ?? null)
+    const points = [Math.round(at.x), Math.round(at.y)]
     this.#stroke = points
-    // Drawn as it comes, in a box as large as its points, which is what a browser paints again as it changes.
     const lo = { x: at.x, y: at.y }, hi = { x: at.x, y: at.y }
     const move = (/** @type {PointerEvent} */ next) => {
       const p = this.#point(next), [x, y] = points.slice(-2)
       if (Math.hypot(p.x - x, p.y - y) < 3 || points.length >= 4000) return
       points.push(Math.round(p.x), Math.round(p.y))
       Object.assign(lo, { x: Math.min(lo.x, p.x), y: Math.min(lo.y, p.y) }), Object.assign(hi, { x: Math.max(hi.x, p.x), y: Math.max(hi.y, p.y) })
-      const box = { x: Math.floor(lo.x) - 8, y: Math.floor(lo.y) - 8, w: Math.ceil(hi.x - lo.x) + 16, h: Math.ceil(hi.y - lo.y) + 16 }
-      for (const [key, value] of Object.entries(box)) stroke?.style.setProperty(`--${key}`, `${value}px`)
-      stroke?.setAttribute('viewBox', `${box.x} ${box.y} ${box.w} ${box.h}`)
-      path?.setAttribute('d', pathOf(points))
+      this.#live(pathOf(points), lo, hi)
     }
     board.setPointerCapture(event.pointerId)
     board.addEventListener('pointermove', move)
     board.addEventListener('pointerup', async () => {
       board.removeEventListener('pointermove', move)
       this.#stroke = null
-      path?.setAttribute('d', '')
-      for (const key of ['x', 'y', 'w', 'h']) stroke?.style.removeProperty(`--${key}`)
+      this.#live('')
       if (points.length < 4) return
       const xs = points.filter((_, i) => i % 2 === 0), ys = points.filter((_, i) => i % 2), x = Math.min(...xs), y = Math.min(...ys)
       const { areas } = layout(this.#one.rows), into = [...areas].reverse().find((area) => x >= area.x && x <= area.x + area.w && y >= area.y && y <= area.y + area.h)
@@ -413,6 +416,53 @@ customElements.define('app-whiteboard', class extends HTMLElement {
       await this.edit([{ set: { '@kind': 'line', '@path': own, '@ink': this.#ink, ...(into ? { area: into.row.id } : {}), '@spot': { area: into?.row.id ?? null, x: x - (into?.x ?? 0), y: y - (into?.y ?? 0) } } }])
       this.say(t('whiteboards.drawn'))
     }, { once: true })
+  }
+
+  /**
+   * A line on its way, drawn as it comes in a box as large as its points, which is what a browser paints again as it changes; none once
+   * it is done. @param {string} d @param {{ x: number, y: number }} [lo] @param {{ x: number, y: number }} [hi]
+   */
+  #live(d, lo, hi) {
+    const path = this.querySelector('.wb-stroke path'), stroke = path?.closest('svg'), box = lo && hi && { x: Math.floor(lo.x) - 8, y: Math.floor(lo.y) - 8, w: Math.ceil(hi.x - lo.x) + 16, h: Math.ceil(hi.y - lo.y) + 16 }
+    for (const key of /** @type {const} */ (['x', 'y', 'w', 'h'])) box ? stroke?.style.setProperty(`--${key}`, `${box[key]}px`) : stroke?.style.removeProperty(`--${key}`)
+    if (box) stroke?.setAttribute('viewBox', `${box.x} ${box.y} ${box.w} ${box.h}`)
+    path?.setAttribute('d', d)
+  }
+
+  /**
+   * An arrow from what was pressed, following the pointer: let go on another thing, it points there; let go where it was pressed, the next
+   * press says where, or Enter on another, or its menu. @param {PointerEvent} event @param {HTMLElement} board @param {string} row
+   */
+  #arrow(event, board, row) {
+    if (this.#from && this.#from !== row) return void this.#link(row)
+    this.#from = row
+    this.draw()
+    const { items, areas } = layout(this.#one.rows), from = [...items, ...areas].find((one) => one.row.id === row)
+    if (!from) return
+    const start = { x: Math.round(from.x + from.w / 2), y: Math.round(from.y + from.h / 2) }
+    const move = (/** @type {PointerEvent} */ next) => { const p = this.#point(next), end = { x: Math.round(p.x), y: Math.round(p.y) }; this.#live(arrowPath([start.x, start.y, end.x, end.y]), { x: Math.min(start.x, end.x) - 16, y: Math.min(start.y, end.y) - 16 }, { x: Math.max(start.x, end.x) + 16, y: Math.max(start.y, end.y) + 16 }) }
+    board.setPointerCapture(event.pointerId)
+    board.addEventListener('pointermove', move)
+    board.addEventListener('pointerup', (/** @type {PointerEvent} */ up) => {
+      board.removeEventListener('pointermove', move)
+      this.#live('')
+      const to = rowOf(document.elementFromPoint(up.clientX, up.clientY))
+      to && to !== row ? this.#link(to) : this.say(t('whiteboards.arrowWhere'))
+    }, { once: true })
+  }
+
+  /** The arrow being drawn, made to point at a note, a text, a line or a section: a row of its own, unless one already joins them so. @param {string} to */
+  async #link(to) {
+    const from = this.#from, end = this.#row(to)
+    this.#from = null
+    if (!from || from === to || !this.#row(from) || !end || kindOf(end) === 'arrow') return this.draw()
+    if (!this.#one.rows.some((row) => kindOf(row) === 'arrow' && String(row.cells['@ends']) === `${from},${to}`)) await this.edit([{ set: { '@kind': 'arrow', '@ends': [from, to] } }])
+    this.say(t('whiteboards.arrowMade', { from: nameOf(this.#row(from)), to: nameOf(end) }))
+  }
+  /** A menu's row for arrows: one drawn from this, or, while one is, pointing it here. @param {string} id */
+  #arrowRow(id) {
+    const to = this.#from && this.#from !== id
+    return html`<li><button type="button" class="menu-item" @click=${menuRow(() => (to ? this.#link(id) : ((this.#from = id), this.draw(), this.say(t('whiteboards.arrowWhere')))))}>${ARROW}${t(to ? 'whiteboards.arrowTo' : 'whiteboards.arrowFrom')}</button></li>`
   }
 
   /** Shift with a drag on the ground: a box, and the notes, texts and lines it touches selected. @param {PointerEvent} event @param {HTMLElement} board @param {{ x: number, y: number }} from */
@@ -526,17 +576,19 @@ customElements.define('app-whiteboard', class extends HTMLElement {
     if (nearer && !target.closest('.wb-note')) return event.preventDefault(), (this.#held = true), this.zoom(nearer)
     if (event.key === '0' && !target.closest('.wb-note')) return event.preventDefault(), this.fit()
     const row = rowOf(target)
-    if (event.key === 'Escape' && this.#selected.size) return event.preventDefault(), this.#selected.clear(), this.draw()
+    if (event.key === 'Escape' && (this.#selected.size || this.#from)) return event.preventDefault(), this.#selected.clear(), (this.#from = null), this.draw()
     if (!row || !target.matches('.wb-words')) return
+    if (event.key === 'Enter' && this.#from) return event.preventDefault(), void this.#link(row)
     if ((event.key === 'Delete' || event.key === 'Backspace')) return event.preventDefault(), this.erase([row])
     if (!arrow) return
     event.preventDefault()
-    // The nearest note that way, by where they lie.
-    const { items } = layout(this.#one.rows), from = items.find((item) => item.row.id === row), [dx, dy] = /** @type {[number, number]} */ (arrow).map((n, i) => (i === 0 ? n * back : n))
-    if (!from) return
-    const next = items.filter((item) => item !== from && item.kind !== 'line' && ((item.x - from.x) * dx > 0 || (item.y - from.y) * dy > 0) && (dx ? Math.abs(item.y - from.y) < Math.abs(item.x - from.x) + NOTE.h : Math.abs(item.x - from.x) < Math.abs(item.y - from.y) + NOTE.w))
+    // The nearest note that way, by where they lie, an arrow by its middle.
+    const { items } = layout(this.#one.rows), found = items.find((item) => item.row.id === row), [dx, dy] = /** @type {[number, number]} */ (arrow).map((n, i) => (i === 0 ? n * back : n))
+    const spot = (/** @type {Item} */ item) => (item.ends ? { item, x: (item.ends[0] + item.ends[2] - NOTE.w) / 2, y: (item.ends[1] + item.ends[3] - NOTE.h) / 2 } : { item, x: item.x, y: item.y })
+    if (!found) return
+    const from = spot(found), next = items.filter((item) => item !== found && item.kind !== 'line').map(spot).filter((at) => ((at.x - from.x) * dx > 0 || (at.y - from.y) * dy > 0) && (dx ? Math.abs(at.y - from.y) < Math.abs(at.x - from.x) + NOTE.h : Math.abs(at.x - from.x) < Math.abs(at.y - from.y) + NOTE.w))
       .sort((a, b) => Math.hypot(a.x - from.x, a.y - from.y) - Math.hypot(b.x - from.x, b.y - from.y))[0]
-    if (next) this.#refocus(next.row.id)
+    if (next) this.#refocus(next.item.row.id)
   }
 
   /** A note given the keys, and the board moved so that it shows. @param {string} row */
@@ -558,17 +610,19 @@ customElements.define('app-whiteboard', class extends HTMLElement {
     requestAnimationFrame(() => /** @type {HTMLElement | null} */ (this.querySelector(`[data-row="${id}"] .wb-grip`))?.focus())
   }
 
-  /** Rows removed, a section with what it holds but its notes, which go back to the shelf; one step to undo. @param {string[]} ids */
+  /** Rows removed, a section with what it holds but its notes, which go back to the shelf, and the arrows to any; one step to undo. @param {string[]} ids */
   async erase(ids) {
-    const gone = new Set(ids), held = this.#one.rows.filter((row) => gone.has(String(row.cells.area)) && kindOf(row) !== 'note')
-    await this.edit([...ids, ...held.map((row) => row.id)].map((row) => ({ row, delete: true })))
+    const gone = new Set(ids)
+    for (const row of this.#one.rows) if (gone.has(String(row.cells.area)) && kindOf(row) !== 'note') gone.add(row.id)
+    for (const row of this.#one.rows) if (kindOf(row) === 'arrow' && [row.cells['@ends']].flat().some((end) => gone.has(/** @type {string} */ (end)))) gone.add(row.id)
+    await this.edit([...gone].map((row) => ({ row, delete: true })))
     this.#selected.clear()
     this.say(t('whiteboards.removed', { count: ids.length }))
   }
 
   /** Selected notes wrapped in a new section, made where they lie, each keeping its place in it. */
   async wrap() {
-    const { items } = layout(this.#one.rows), chosen = items.filter((item) => this.#selected.has(item.row.id))
+    const { items } = layout(this.#one.rows), chosen = items.filter((item) => this.#selected.has(item.row.id) && item.kind !== 'arrow')
     if (!chosen.length) return
     const x = snap(Math.min(...chosen.map((item) => item.x)) - GRID), y = snap(Math.min(...chosen.map((item) => item.y)) - 3 * GRID), id = ulid()
     await this.edit([{ row: id, set: { note: t('whiteboards.untitledSection'), '@kind': 'area', '@spot': { area: null, x, y } } },
@@ -630,19 +684,20 @@ customElements.define('app-whiteboard', class extends HTMLElement {
    */
   #item(one, item, origin, jean, areas, z) {
     const { row } = item, id = row.id, words = wordsOf(row), mine = this.#moving?.row === id ? this.#moving : null, box = { x: (mine?.x ?? item.x) - origin.x, y: (mine?.y ?? item.y) - origin.y, w: item.w, h: item.h }, hue = row.cells['@hue']
-    const classes = `wb-${item.kind}${jean.has(id) ? ' is-jean' : ''}${this.#selected.has(id) ? ' is-selected' : ''}${mine ? ' is-moving' : ''}${item.area ? '' : ' is-ground'}${row.cells['@size'] === 'title' ? ' is-title' : ''}${item.kind === 'note' && hue != null && !ownProblem('@hue', hue) ? ` is-hued wb-hue-${hue}` : ''}`
+    const classes = `wb-${item.kind}${jean.has(id) ? ' is-jean' : ''}${this.#selected.has(id) ? ' is-selected' : ''}${mine || this.#from === id ? ' is-moving' : ''}${item.area ? '' : ' is-ground'}${row.cells['@size'] === 'title' ? ' is-title' : ''}${item.kind === 'note' && hue != null && !ownProblem('@hue', hue) ? ` is-hued wb-hue-${hue}` : ''}`
     if (this.#draft?.row === id) return html`<li class=${`${classes} wb-draft`} data-row=${id} ${placed(box)}>${this.#field(row)}</li>`
     const z_ = ref((element) => element instanceof HTMLElement && element.style.setProperty('--z', String(z + 1)))
-    if (item.kind === 'line') {
-      const path = /** @type {number[]} */ (row.cells['@path']), ink = row.cells['@ink']
-      if (ownProblem('@path', path)) return nothing
-      return html`<li class=${classes} data-row=${id} ${placed(box)} ${z_}><svg role="img" aria-label=${t('whiteboards.line')} viewBox=${`0 0 ${item.w} ${item.h}`} class=${ink === 'ink' ? 'wb-ink' : `wb-ink wb-hue-${Number(ink) % HUES}`}><path d=${pathOf(path)}/></svg>
-        <button type="button" class="wb-words visually-hidden" tabindex=${this.#at === id ? 0 : -1}>${t('whiteboards.line')}</button></li>`
+    if (item.kind === 'line' || item.ends) {
+      const path = /** @type {number[]} */ (row.cells['@path']), ink = row.cells['@ink'], ends = item.ends?.map((n, i) => n - (i % 2 ? item.y : item.x))
+      const name = ends ? t('whiteboards.arrowName', { from: nameOf(this.#row(/** @type {string[]} */ (row.cells['@ends'])[0])), to: nameOf(this.#row(/** @type {string[]} */ (row.cells['@ends'])[1])) }) : t('whiteboards.line')
+      if (!ends && ownProblem('@path', path)) return nothing
+      return html`<li class=${classes} data-row=${id} ${placed(box)} ${z_}><svg role="img" aria-label=${name} viewBox=${`0 0 ${item.w} ${item.h}`} class=${ends || ink === 'ink' ? 'wb-ink' : `wb-ink wb-hue-${Number(ink) % HUES}`}>${ends ? svg`<path class="wb-hit" d=${arrowPath(ends)}/>` : nothing}<path d=${ends ? arrowPath(ends) : pathOf(path)}/></svg>
+        <button type="button" class="wb-words visually-hidden" tabindex=${this.#at === id ? 0 : -1}>${name}</button></li>`
     }
     const menu = `${this.#id}-menu-${id}`, foot = one.table.properties.filter((property) => !property.deleted && property.id !== 'note' && property.id !== 'area' && row.cells[property.id] != null).slice(0, 2)
     const tab = this.#at === id || (!this.#at && z === 0) ? 0 : -1
     return html`<li class=${classes} data-row=${id} ${placed(box)} ${z_}>
-      <button type="button" class="wb-words" dir="auto" tabindex=${tab} @dblclick=${() => this.write(row)} @keydown=${(/** @type {KeyboardEvent} */ e) => { if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); this.write(row) } }}
+      <button type="button" class="wb-words" dir="auto" tabindex=${tab} @dblclick=${() => this.write(row)} @keydown=${(/** @type {KeyboardEvent} */ e) => { if (e.key === 'Enter' && !e.isComposing && !this.#from) { e.preventDefault(); this.write(row) } }}
         @focus=${() => { this.#at = id }}>${words || t('whiteboards.empty')}</button>
       ${foot.length ? html`<p class="wb-foot" dir="auto">${foot.map((property) => html`<span>${String(row.cells[property.id])}</span>`)}</p>` : nothing}
       <button type="button" class="wb-grip icon-button" tabindex=${tab} aria-label=${t('whiteboards.move', { name: words })} @click=${() => this.move(id)}>${GRIP}</button>
@@ -657,7 +712,7 @@ customElements.define('app-whiteboard', class extends HTMLElement {
       ${row.cells.area || row.cells['@spot'] ? html`<li><button type="button" class="menu-item" @click=${to(null)}>${t('whiteboards.toShelf')}</button></li>` : nothing}
       <li><p class="wb-menu-head" id=${`${this.#id}-hue-${row.id}`}>${t('whiteboards.colour')}</p><ul class="wb-hues" aria-labelledby=${`${this.#id}-hue-${row.id}`}>${[null, ...Array.from({ length: HUES }, (_, i) => i)].map((hue) => html`<li>
         <button type="button" class="icon-button wb-swatch" aria-label=${hue === null ? t('whiteboards.noHue') : t(`whiteboards.hue${hue}`)} aria-pressed=${String((row.cells['@hue'] ?? null) === hue)} @click=${menuRow(() => this.edit([{ row: row.id, set: { '@hue': hue } }]))}><span class=${hue === null ? 'wb-dot is-none' : `wb-dot wb-hue-${hue}`}></span></button></li>`)}</ul></li>` : nothing}
-      <li><button type="button" class="menu-item" @click=${menuRow(() => { this.#moveHere = row.id; this.say(t('whiteboards.pressWhere')) })}>${t('whiteboards.moveHere')}</button></li>
+      <li><button type="button" class="menu-item" @click=${menuRow(() => { this.#moveHere = row.id; this.say(t('whiteboards.pressWhere')) })}>${t('whiteboards.moveHere')}</button></li>${this.#arrowRow(row.id)}
       ${kindOf(row) === 'line' ? nothing : html`<li><button type="button" class="menu-item" @click=${menuRow(() => { this.write(row) })}>${t('whiteboards.write')}</button></li>`}
       ${kindOf(row) === 'text' ? html`<li><button type="button" class="menu-item" @click=${menuRow(() => { this.edit([{ row: row.id, set: { '@size': row.cells['@size'] === 'title' ? 'line' : 'title' } }]) })}>${t(row.cells['@size'] === 'title' ? 'whiteboards.asLine' : 'whiteboards.asTitle')}</button></li>` : nothing}
       ${marked ? html`<li><button type="button" class="menu-item" @click=${menuRow(() => { accept(one, row.id) })}>${icons.check}${t('whiteboards.accept')}</button></li>
@@ -684,7 +739,7 @@ customElements.define('app-whiteboard', class extends HTMLElement {
     const section = (/** @type {Area} */ area) => {
       const id = area.row.id, mine = this.#moving?.row === id ? this.#moving : null, box = { x: mine?.x ?? area.x, y: mine?.y ?? area.y, w: area.w, h: area.h }, count = notesOf(inArea(id).map((item) => item.row)).length, words = wordsOf(area.row), menu = `${this.#id}-menu-${id}`
       const all = inArea(id).filter((item) => item.kind === 'note'), dashed = all.length && all.every((item) => jean.has(item.row.id))
-      return html`<section class=${`wb-area wb-hue-${area.hue}${jean.has(id) ? ' is-jean' : ''}${dashed ? ' is-new' : ''}${mine ? ' is-moving' : ''}`} data-row=${id} aria-labelledby=${`${this.#id}-${id}`} ${placed(box)}>
+      return html`<section class=${`wb-area wb-hue-${area.hue}${jean.has(id) ? ' is-jean' : ''}${dashed ? ' is-new' : ''}${mine || this.#from === id ? ' is-moving' : ''}`} data-row=${id} aria-labelledby=${`${this.#id}-${id}`} ${placed(box)}>
         <h3 class="wb-area-head" data-row=${id}>${this.#draft?.row === id ? this.#field(area.row) : html`<span class="wb-dot"></span><span id=${`${this.#id}-${id}`} dir="auto" @dblclick=${() => this.write(area.row)}>${words}</span>`}
           <span class="wb-count">${number.format(count)}</span>
           <button type="button" class="icon-button subtle" aria-label=${t('whiteboards.newIn', { section: words })} @click=${() => this.#make('note', { x: area.x + 16, y: area.y + area.h - NOTE.h - 16 })}>${icons.plus}</button>
@@ -692,7 +747,7 @@ customElements.define('app-whiteboard', class extends HTMLElement {
           <button type="button" class="icon-button subtle" aria-label=${t('whiteboards.more', { name: words })} popovertarget=${menu}>${icons.more}</button>
           <div id=${menu} class="menu wb-menu" popover><ul>
             <li><button type="button" class="menu-item" @click=${menuRow(() => this.write(area.row))}>${t('action.rename')}</button></li>
-            <li><button type="button" class="menu-item" @click=${menuRow(() => this.tidy(id))}>${t('whiteboards.tidy')}</button></li>
+            <li><button type="button" class="menu-item" @click=${menuRow(() => this.tidy(id))}>${t('whiteboards.tidy')}</button></li>${this.#arrowRow(id)}
             <li><button type="button" class="menu-item" @click=${menuRow(() => { showOnly.value = id; showAs.value = 'table' })}>${icons.table}${t('whiteboards.asTable')}</button></li>
             ${one.table.properties.some((property) => property.type === 'person' && !property.deleted) ? nothing : html`<li><button type="button" class="menu-item" @click=${menuRow(() => this.#dated())}>${t('whiteboards.dated')}</button></li>`}
             <li><button type="button" class="menu-item" @click=${menuRow(() => this.ask(inArea(id).map((item) => item.row.id)))}>${t('whiteboards.askAbout', { name: assistantName() })}</button></li>
@@ -724,13 +779,13 @@ customElements.define('app-whiteboard', class extends HTMLElement {
     this.say(t('whiteboards.datedSaid'))
   }
 
-  /** The bar at the board's foot, a toolbar, one Tab stop: the pointer, Note, Text, Section, Draw and its inks and eraser; then the zoom. */
+  /** The bar at the board's foot, a toolbar, one Tab stop: the pointer, Note, Text, Section, Arrow, Draw and its inks and eraser; then the zoom. */
   #bar() {
     const tool = (/** @type {Tool} */ id, /** @type {unknown} */ glyph, /** @type {string} */ label) => html`<button type="button" class="icon-button" aria-label=${label} aria-pressed=${String(this.#tool === id)} tabindex=${this.#tool === id ? 0 : -1}
-      @click=${() => { this.#tool = id; this.draw(); if (id !== 'pointer' && id !== 'draw' && id !== 'erase' && !matchMedia('(pointer: fine)').matches) this.#make(id, this.#middle()) }}>${glyph}</button>`
+      @click=${() => { this.#tool = id; this.#from = null; this.draw(); if ((id === 'note' || id === 'text' || id === 'section') && !matchMedia('(pointer: fine)').matches) this.#make(id, this.#middle()) }}>${glyph}</button>`
     const percent = new Intl.NumberFormat(intlLocales(), { style: 'percent' })
     return html`<div class="wb-bar" role="toolbar" aria-label=${t('whiteboards.tools')} @keydown=${this.#roving}>
-      ${tool('pointer', POINTER, t('whiteboards.pointer'))}${tool('note', NOTE_GLYPH, t('whiteboards.note'))}${tool('text', TEXT, t('whiteboards.text'))}${tool('section', SECTION, t('whiteboards.section'))}${tool('draw', DRAW, t('whiteboards.draw'))}
+      ${tool('pointer', POINTER, t('whiteboards.pointer'))}${tool('note', NOTE_GLYPH, t('whiteboards.note'))}${tool('text', TEXT, t('whiteboards.text'))}${tool('section', SECTION, t('whiteboards.section'))}${tool('arrow', ARROW, t('whiteboards.arrow'))}${tool('draw', DRAW, t('whiteboards.draw'))}
       ${this.#tool === 'draw' || this.#tool === 'erase' ? html`${INKS.map((ink) => html`<button type="button" class="icon-button wb-inks" aria-label=${ink === 'ink' ? t('whiteboards.ink') : t(`whiteboards.hue${ink}`)} aria-pressed=${String(this.#tool === 'draw' && this.#ink === ink)} tabindex="-1"
         @click=${() => { this.#ink = ink; this.#tool = 'draw'; this.draw() }}><span class=${ink === 'ink' ? 'wb-dot wb-ink' : `wb-dot wb-hue-${ink}`}></span></button>`)}${tool('erase', ERASE, t('whiteboards.erase'))}` : nothing}
       <span class="wb-zoom"><button type="button" class="icon-button subtle" tabindex="-1" aria-label=${t('whiteboards.zoomOut')} @click=${() => { this.#held = true; this.zoom(-1) }}>−</button>

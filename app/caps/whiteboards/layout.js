@@ -2,8 +2,8 @@
 // Where everything on a whiteboard lies (D747), the same on every screen: one fixed board, in its own units (a CSS pixel at 100%), from
 // the start corner of the direction it was made in. Each area at its spot, as wide as four notes or what it holds, and as tall; its notes
 // in rows of four under its head (its flow), those placed by hand at their spots in it, its texts and lines too; on the open ground, what
-// was put there; on the shelf, the notes that wait, the newest first. What lies on top was moved last: the newest spot, then the row's
-// id, the same order on every copy, areas under the rest. Pure, so node --test runs it.
+// was put there; on the shelf, the notes that wait, the newest first; arrows between what lies on the board. What lies on top was moved
+// last: the newest spot, then the row's id, the same order on every copy, areas under the rest and arrows over them. Pure, so node --test runs it.
 import { kindOf, spotOf } from '../tables/table.js'
 
 /** A note's size, the gaps between notes, an area's head, and the fine grid a drop settles on, an eighth of a note. */
@@ -15,7 +15,7 @@ export const HUES = 7
 
 /** @typedef {{ x: number, y: number, w: number, h: number }} Box */
 /** @typedef {import('../tables/changes.js').Row} Row */
-/** A thing on the board: where it lies, in its area or on the ground, and whether a person placed it there. @typedef {Box & { row: Row, kind: 'note' | 'text' | 'line', area: string | null, placed: boolean }} Item */
+/** A thing on the board: where it lies, in its area or on the ground, and whether a person placed it there; an arrow's ends, x and y of each. @typedef {Box & { row: Row, kind: 'note' | 'text' | 'line' | 'arrow', area: string | null, placed: boolean, ends?: number[] }} Item */
 /** @typedef {Box & { row: Row, hue: number }} Area */
 
 /** A whole number on the fine grid. @param {number} n */
@@ -51,6 +51,17 @@ function sized(row) {
   return { ...NOTE }
 }
 
+/** Where a line from the middle of one box toward the middle of another leaves the first, a little past its edge. @param {Box} from @param {Box} to */
+function edge(from, to) {
+  const x = from.x + from.w / 2, y = from.y + from.h / 2, dx = to.x + to.w / 2 - x, dy = to.y + to.h / 2 - y, k = Math.min((from.w / 2 + 6) / Math.abs(dx), (from.h / 2 + 6) / Math.abs(dy))
+  return Number.isFinite(k) ? [Math.round(x + dx * k), Math.round(y + dy * k)] : [x, y]
+}
+/** An arrow's path: its line, then its head at the second end. @param {number[]} ends */
+export function arrowPath([x1, y1, x2, y2]) {
+  const angle = Math.atan2(y2 - y1, x2 - x1), wing = (/** @type {number} */ turn) => `${Math.round(x2 - 14 * Math.cos(angle + turn))} ${Math.round(y2 - 14 * Math.sin(angle + turn))}`
+  return `M${x1} ${y1}L${x2} ${y2}M${wing(0.45)}L${x2} ${y2}L${wing(-0.45)}`
+}
+
 /** What lies on top: the later spot, then the row's id. @param {{ row: Row }} a @param {{ row: Row }} b */
 const above = (a, b) => ((x, y) => (x !== y ? (x < y ? -1 : 1) : a.row.id < b.row.id ? -1 : 1))(a.row.stamps['@spot']?.at ?? '', b.row.stamps['@spot']?.at ?? '')
 
@@ -63,7 +74,7 @@ export function layout(rows) {
   /** @type {Item[]} */
   const items = [], shelf = /** @type {Row[]} */ ([])
   for (const row of rows) {
-    if (kindOf(row) === 'area') continue
+    if (kindOf(row) === 'area' || kindOf(row) === 'arrow') continue
     const area = ids.has(/** @type {string} */ (row.cells.area)) ? /** @type {string} */ (row.cells.area) : null, spot = spotOf(row, ids)
     if (area) held.get(area)?.push(row)
     else if (spot) items.push({ row, kind: /** @type {Item['kind']} */ (kindOf(row)), area: null, placed: true, x: spot.x, y: spot.y, ...sized(row) })
@@ -82,6 +93,14 @@ export function layout(rows) {
     areas.push({ row, hue: areaRows.indexOf(row) % HUES, ...box })
     items.push(...mine.map((one) => ({ ...one, x: box.x + one.x, y: box.y + one.y })))
   }
+  // Arrows, from the edge of one thing to the edge of the other, while both lie on the board; under everything but the areas.
+  const at = new Map([...areas, ...items].map((one) => [one.row.id, one]))
+  for (const row of rows) {
+    const [a, b] = kindOf(row) === 'arrow' && Array.isArray(row.cells['@ends']) ? row.cells['@ends'].map((id) => at.get(id)) : []
+    if (!a || !b) continue
+    const ends = [...edge(a, b), ...edge(b, a)]
+    items.push({ row, kind: 'arrow', area: null, placed: false, ends, x: Math.min(ends[0], ends[2]) - GAP, y: Math.min(ends[1], ends[3]) - GAP, w: Math.abs(ends[2] - ends[0]) + 2 * GAP, h: Math.abs(ends[3] - ends[1]) + 2 * GAP })
+  }
   const all = [...areas, ...items], x = Math.min(0, ...all.map((one) => one.x)), y = Math.min(0, ...all.map((one) => one.y))
-  return { areas: areas.sort(above), items: items.sort(above), shelf: shelf.reverse(), bounds: { x, y, w: Math.max(WIDE, ...all.map((one) => one.x + one.w)) - x, h: Math.max(NOTE.h, ...all.map((one) => one.y + one.h)) - y } }
+  return { areas: areas.sort(above), items: items.sort((a, b) => Number(b.kind === 'arrow') - Number(a.kind === 'arrow') || above(a, b)), shelf: shelf.reverse(), bounds: { x, y, w: Math.max(WIDE, ...all.map((one) => one.x + one.w)) - x, h: Math.max(NOTE.h, ...all.map((one) => one.y + one.h)) - y } }
 }

@@ -3,7 +3,7 @@
 // makes placed where nothing lies, by Jean's code.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { layout, free, snap, NOTE, GAP, HEAD, WIDE } from '../app/caps/whiteboards/layout.js'
+import { layout, free, snap, arrowPath, NOTE, GAP, HEAD, WIDE } from '../app/caps/whiteboards/layout.js'
 import { made, changed, rowsOf, editsOf } from '../app/caps/whiteboards/tool.js'
 import { fold, stamp } from '../app/caps/tables/changes.js'
 
@@ -74,4 +74,24 @@ test('a note\'s colour is the person\'s alone: a brain\'s arguments that give on
   const change = changed({ add: [{ words: 'Ship', area: R(100), '@hue': 2 }], move: [{ note: R(101), area: R(100), '@hue': 2 }] }, new Set([R(101)]), [{ id: R(100), name: 'Week 1' }])
   assert.ok(editsOf(change, [], counter()).every((edit) => Object.keys(edit.set).every((key) => !key.startsWith('@') || key === '@kind' || key === '@spot')))
   assert.ok(editsOf(change, [], counter()).every((edit) => !('@hue' in edit.set)))
+})
+
+test('arrows: from the edge of one thing to the edge of the other, under all that lies on the board; none while an end is gone or waits on the shelf', () => {
+  const lines = [line(R(1), { note: 'A', '@spot': { area: null, x: 0, y: 0 } }, 1), line(R(2), { note: 'B', '@spot': { area: null, x: 400, y: 0 } }, 1),
+    line(R(3), { '@kind': 'arrow', '@ends': [R(1), R(2)] }, 2), line(R(4), { note: 'Waits' }, 2), line(R(5), { '@kind': 'arrow', '@ends': [R(1), R(4)] }, 2),
+    line(R(6), { note: 'Area', '@kind': 'area', '@spot': { area: null, x: 0, y: 600 } }, 2), line(R(7), { '@kind': 'arrow', '@ends': [R(2), R(6)] }, 3)]
+  const { items, shelf } = layout(fold(lines)), arrows = items.filter((item) => item.kind === 'arrow')
+  assert.deepEqual(arrows.map((item) => item.row.id), [R(3), R(7)])
+  assert.deepEqual(arrows[0].ends, [NOTE.w + 6, NOTE.h / 2, 400 - 6, NOTE.h / 2])
+  assert.deepEqual([arrows[0].x, arrows[0].y, arrows[0].w, arrows[0].area], [NOTE.w + 6 - GAP, NOTE.h / 2 - GAP, 400 - 12 - NOTE.w + 2 * GAP, null])
+  // Into a section, it ends at the section's edge.
+  assert.equal(arrows[1].ends[3], 600 - 6)
+  assert.deepEqual(items.slice(0, 2).map((item) => item.kind), ['arrow', 'arrow'])
+  // Under a note in a section's rows too, which has no spot of its own.
+  const flow = layout(fold([...lines, line(R(8), { note: 'In the area', area: R(6) }, 1), line(R(9), { '@kind': 'arrow', '@ends': [R(8), R(1)] }, 5)])).items
+  assert.ok(flow.findIndex((item) => item.row.id === R(9)) < flow.findIndex((item) => item.row.id === R(8)))
+  assert.deepEqual(shelf.map((row) => row.id), [R(4)])
+  assert.deepEqual(layout(fold([...lines, { row: R(2), delete: true, at: T(4), by: 'user' }])).items.filter((item) => item.kind === 'arrow'), [])
+  // Its head at the second end, two strokes back from it.
+  assert.equal(arrowPath([0, 0, 100, 0]), 'M0 0L100 0M87 -6L100 0L87 6')
 })
