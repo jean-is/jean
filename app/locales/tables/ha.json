@@ -104,5 +104,9 @@
     "other": "ginshiƙai {count} a ɓoye"
   },
   "tables.showAll": "Nuna dukkan ginshiƙai",
-  "tables.arranged": "Abin da aka tsara"
+  "tables.arranged": "Abin da aka tsara",
+  "tables.plain": "Lamba kawai",
+  "tables.money": "Kuɗi",
+  "tables.percent": "Kashi",
+  "tables.currency": "Kuɗin ƙasa"
 }

@@ -104,5 +104,9 @@
     "other": "{count} κρυφές στήλες"
   },
   "tables.showAll": "Εμφάνιση όλων των στηλών",
-  "tables.arranged": "Τρέχουσα οργάνωση"
+  "tables.arranged": "Τρέχουσα οργάνωση",
+  "tables.plain": "Απλός αριθμός",
+  "tables.money": "Χρηματικό ποσό",
+  "tables.percent": "Ποσοστό",
+  "tables.currency": "Νόμισμα"
 }

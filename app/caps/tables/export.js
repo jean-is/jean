@@ -16,6 +16,8 @@ import { titleOf } from './table.js'
 // A spreadsheet reads these as the start of a formula; a number or a phone number is none.
 const FORMULA = /^[=+\-@\t\r]/
 const NUMBERLIKE = /^[+-]?[\d\s().\-/]+$/
+/** In a workbook, only a cell starting with = would be a formula. */
+const TO_SHEET = /^=/
 
 /**
  * A cell as text: lists joined, a box as a word, a file or a place by its name.
@@ -32,13 +34,22 @@ export function textOf(row, property, { labels = {}, names } = {}) {
 
 /**
  * A cell as a card and a page say it: a date and a number as the language writes them, a box as a word, a relation's row by its name.
- * @param {Row} row @param {Property} property @param {Options & { locales?: string[] }} [options]
+ * @param {Row} row @param {Property} property @param {Options & { locales?: string[], digits?: number }} [options]
  */
-export function said(row, property, { locales, ...options } = {}) {
+export function said(row, property, { locales, digits, ...options } = {}) {
   const value = valueOf(row, property)
   if (property.type === 'date' && typeof value === 'string') return format('DateTimeFormat', locales, { dateStyle: 'medium', ...(value.includes('T') && { timeStyle: 'short' }) }).format(new Date(value.includes('T') ? value : `${value}T00:00`))
-  return typeof value === 'number' ? format('NumberFormat', locales).format(value) : textOf(row, property, options)
+  return typeof value === 'number' ? amount(value, property, locales, digits) : textOf(row, property, options)
 }
+
+/**
+ * A number as its column writes it (D752): money in its currency, a share as a part of a hundred, else with `digits` decimals, as many as the
+ * column's longest has (`digitsOf()`). @param {number} value @param {Property} property @param {string[] | undefined} locales @param {number} [digits]
+ */
+export const amount = (value, property, locales, digits) => (property.format === 'money' && property.currency ? format('NumberFormat', locales, { style: 'currency', currency: property.currency })
+  : property.format === 'percent' ? format('NumberFormat', locales, { style: 'percent', maximumFractionDigits: 2 }) : format('NumberFormat', locales, digits === undefined ? {} : { minimumFractionDigits: digits, maximumFractionDigits: digits })).format(property.format === 'percent' ? value / 100 : value)
+/** How many decimals a column of plain numbers shows, as many as its longest has, three at most. @param {Row[]} rows @param {Property} property */
+export const digitsOf = (rows, property) => rows.reduce((most, row) => ((value) => (typeof value === 'number' && Number.isFinite(value) ? Math.max(most, Math.min(3, String(value).split('.')[1]?.length ?? 0)) : most))(row.cells[property.id]), 0)
 
 /** Each formatter made, by its kind, languages and options: made once, not for each cell at each draw. @type {Map<string, Intl.NumberFormat | Intl.DateTimeFormat>} */
 const formats = new Map()
@@ -65,6 +76,8 @@ function cellsOf(table, rows, options, formula) {
   const columns = table.properties.filter((property) => !property.deleted)
   return [columns.map((property) => property.name), ...rows.map((row) => columns.map((property) => {
     const text = textOf(row, property, options)
+    // A share is written as one, which a workbook keeps as a percentage.
+    if (property.format === 'percent' && text && formula === TO_SHEET) return `${text}%`
     return property.type !== 'number' && formula.test(text) && !NUMBERLIKE.test(text) ? `'${text}` : text
   }))]
 }
@@ -83,5 +96,5 @@ export function toCSV(table, rows, options = {}) {
 export function exportTable(table, rows, kind, options = {}) {
   if (kind === 'csv') return makeFile(`${table.name}.csv`, toCSV(table, rows, options))
   const quoted = (/** @type {string} */ text) => (/[",\n\r]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text)
-  return makeFile(`${table.name}.xlsx`, `sep=,\n${cellsOf(table, rows, options, /^=/).map((cells) => cells.map(quoted).join(',')).join('\n')}\n`, { look: options.look })
+  return makeFile(`${table.name}.xlsx`, `sep=,\n${cellsOf(table, rows, options, TO_SHEET).map((cells) => cells.map(quoted).join(',')).join('\n')}\n`, { look: options.look })
 }

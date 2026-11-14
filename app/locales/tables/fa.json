@@ -104,5 +104,9 @@
     "other": "{count} ستون پنهان"
   },
   "tables.showAll": "نمایش همه ستون‌ها",
-  "tables.arranged": "چیدمان فعلی"
+  "tables.arranged": "چیدمان فعلی",
+  "tables.plain": "عدد ساده",
+  "tables.money": "مبلغ",
+  "tables.percent": "درصد",
+  "tables.currency": "واحد پول"
 }

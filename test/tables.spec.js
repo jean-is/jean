@@ -355,8 +355,10 @@ test('a collection’s heads stay on top, show their kind and open a menu to ren
   await expect.poll(async () => (await file())?.columns).toEqual(['name Name (text)', 'nights Nights booked (number)', 'stage Stage (select)'])
 
   // Made text, its numbers become text; made a number again, they are numbers, as they were. A choice made text takes the board with it.
+  // A number's page says how it is written too, plain, money or a share, under its kinds.
   await (await menu('Nights booked')).getByRole('button', { name: /^Type/ }).click()
-  await expect(page.locator('.table-menu:popover-open [aria-current="true"]')).toBeFocused()
+  await expect(page.locator('.table-menu:popover-open [aria-current="true"]').first()).toBeFocused()
+  await expect(page.locator('.table-menu:popover-open [aria-current="true"]')).toHaveText(['Number', 'Plain number'])
   await page.locator('.table-menu:popover-open').getByRole('button', { name: 'Text' }).click()
   await expect.poll(async () => (await file())?.nights.slice(0, 3)).toEqual(['1', '8', '15'])
   await (await menu('Nights booked')).getByRole('button', { name: /^Type/ }).click()
@@ -854,7 +856,7 @@ test('a collection’s bar finds rows with Find, as Creations does, and Arrange 
   await foot.nth(1).click()
   await expect(page.locator('.table-menu:popover-open button')).toHaveText(['None', 'Sum', 'Percent filled'])
   await page.locator('.table-menu:popover-open').getByRole('button', { name: 'Sum' }).click()
-  await expect(foot.nth(1)).toHaveText('Sum 779.5')
+  await expect(foot.nth(1)).toHaveText('Sum 779.50')
   // New row is the table's own, right under its rows, above the foot.
   const [last, add, sums] = await Promise.all([rows.last(), page.getByRole('button', { name: 'New row' }), page.locator('.table-grid tfoot tr:last-child')].map((one) => one.boundingBox()))
   expect(Math.abs((add?.y ?? 0) - (last?.y ?? 0) - (last?.height ?? 0))).toBeLessThan(2)
@@ -871,7 +873,7 @@ test('a collection’s bar finds rows with Find, as Creations does, and Arrange 
   await page.evaluate(() => import('/ui/preview.js').then(({ preview }) => preview({ uri: 'collections/01K85Z1T00000000000000000G-expenses', name: 'Expenses.xlsx', title: 'Expenses' })))
   await expect.poll(values).toEqual(['Conférence', 'Hotel', 'Train to Lyon'])
   await expect(page.locator('.table-grid .table-head')).toHaveText(['Item', 'Amount', 'Stage'])
-  await expect(foot.nth(1)).toHaveText('Sum 779.5')
+  await expect(foot.nth(1)).toHaveText('Sum 779.50')
 })
 
 test('in a document, a collection’s columns are as wide as their fields, a long name is cut short on one line and whole in its tip, and its heads stay in view as the document scrolls', async ({ page }) => {

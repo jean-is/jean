@@ -104,5 +104,9 @@
     "other": "{count} sütun gizli"
   },
   "tables.showAll": "Tüm sütunları göster",
-  "tables.arranged": "Düzen"
+  "tables.arranged": "Düzen",
+  "tables.plain": "Düz sayı",
+  "tables.money": "Para",
+  "tables.percent": "Yüzde",
+  "tables.currency": "Para birimi"
 }

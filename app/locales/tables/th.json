@@ -102,5 +102,9 @@
     "other": "ซ่อน {count} คอลัมน์"
   },
   "tables.showAll": "แสดงทุกคอลัมน์",
-  "tables.arranged": "การจัดระเบียบ"
+  "tables.arranged": "การจัดระเบียบ",
+  "tables.plain": "ตัวเลขธรรมดา",
+  "tables.money": "จำนวนเงิน",
+  "tables.percent": "ร้อยละ",
+  "tables.currency": "สกุลเงิน"
 }

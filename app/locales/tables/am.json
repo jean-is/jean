@@ -104,5 +104,9 @@
     "other": "{count} ዓምዶች ተደብቀዋል"
   },
   "tables.showAll": "ሁሉንም ዓምዶች አሳይ",
-  "tables.arranged": "የተደራጀው"
+  "tables.arranged": "የተደራጀው",
+  "tables.plain": "ተራ ቁጥር",
+  "tables.money": "ገንዘብ",
+  "tables.percent": "መቶኛ",
+  "tables.currency": "ምንዛሪ"
 }

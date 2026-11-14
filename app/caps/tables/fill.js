@@ -7,7 +7,7 @@
 //, in words a brain writes: a column, a way to compare and a value, a date's from today. Pure, so Node's tests run it.
 import { query, total, valueOf } from './query.js'
 import { propertyOf, converted } from './table.js'
-import { said } from './export.js'
+import { said, amount } from './export.js'
 
 /** @import { Table, Property } from './table.js' */
 /** @import { Row } from './changes.js' */
@@ -112,7 +112,7 @@ export function fill({ table, rows: all, names }, part, how) {
     return { text: own.map((line) => {
       const [what, words = ''] = line.split(/\|(.*)/s), [, kind = '', ref = ''] = /^(sum|count)\b(.*)$/i.exec(what.trim()) ?? [], [property] = ref.trim() ? named(table, ref) : []
       const value = /^sum$/i.test(kind) && property ? total(rows, property, 'sum') : /^count$/i.test(kind) ? (property ? Math.round(total(rows, property, 'percent') * rows.length) : rows.length) : null
-      return value === null ? line : `${plain.format(value)} |${words}`
+      return value === null ? line : `${property && /^sum$/i.test(kind) ? amount(value, property, how.locales) : plain.format(value)} |${words}`
     }).join('\n') }
   }
   if (part.tag === 'app-chart') {

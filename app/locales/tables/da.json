@@ -104,5 +104,9 @@
     "other": "{count} skjulte kolonner"
   },
   "tables.showAll": "Vis alle kolonner",
-  "tables.arranged": "Arrangeret"
+  "tables.arranged": "Arrangeret",
+  "tables.plain": "Almindeligt tal",
+  "tables.money": "Beløb",
+  "tables.percent": "Procent",
+  "tables.currency": "Valuta"
 }

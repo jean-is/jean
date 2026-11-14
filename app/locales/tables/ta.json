@@ -104,5 +104,9 @@
     "other": "{count} நெடுவரிசைகள் மறைக்கப்பட்டன"
   },
   "tables.showAll": "எல்லா நெடுவரிசைகளையும் காட்டு",
-  "tables.arranged": "ஒழுங்கமைப்பு"
+  "tables.arranged": "ஒழுங்கமைப்பு",
+  "tables.plain": "சாதாரண எண்",
+  "tables.money": "பணம்",
+  "tables.percent": "சதவீதம்",
+  "tables.currency": "நாணயம்"
 }

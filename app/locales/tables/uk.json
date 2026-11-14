@@ -108,5 +108,9 @@
     "other": "{count} стовпця приховано"
   },
   "tables.showAll": "Показати всі стовпці",
-  "tables.arranged": "Упорядкування"
+  "tables.arranged": "Упорядкування",
+  "tables.plain": "Звичайне число",
+  "tables.money": "Гроші",
+  "tables.percent": "Відсоток",
+  "tables.currency": "Валюта"
 }

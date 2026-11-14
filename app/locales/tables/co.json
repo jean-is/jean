@@ -106,5 +106,9 @@
     "other": "{count} culonne piattate"
   },
   "tables.showAll": "Mustrà tutte e culonne",
-  "tables.arranged": "Urganizatu"
+  "tables.arranged": "Urganizatu",
+  "tables.plain": "Numeru simplice",
+  "tables.money": "Soldi",
+  "tables.percent": "Percentuale",
+  "tables.currency": "Muneta"
 }

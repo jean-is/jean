@@ -104,5 +104,9 @@
     "other": "{count}টি কলাম লুকানো"
   },
   "tables.showAll": "সব কলাম দেখান",
-  "tables.arranged": "বর্তমান বিন্যাস"
+  "tables.arranged": "বর্তমান বিন্যাস",
+  "tables.plain": "সাধারণ সংখ্যা",
+  "tables.money": "টাকার অঙ্ক",
+  "tables.percent": "শতাংশ",
+  "tables.currency": "মুদ্রা"
 }

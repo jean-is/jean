@@ -108,5 +108,9 @@
     "other": "{count} столбца скрыто"
   },
   "tables.showAll": "Показать все столбцы",
-  "tables.arranged": "Упорядочено"
+  "tables.arranged": "Упорядочено",
+  "tables.plain": "Обычное число",
+  "tables.money": "Деньги",
+  "tables.percent": "Проценты",
+  "tables.currency": "Валюта"
 }

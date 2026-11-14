@@ -104,5 +104,9 @@
     "other": "{count} column na nakatago"
   },
   "tables.showAll": "Ipakita ang lahat ng column",
-  "tables.arranged": "Pagkakaayos"
+  "tables.arranged": "Pagkakaayos",
+  "tables.plain": "Karaniwang numero",
+  "tables.money": "Pera",
+  "tables.percent": "Porsiyento",
+  "tables.currency": "Uri ng pera"
 }

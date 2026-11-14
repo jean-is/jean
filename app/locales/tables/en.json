@@ -104,5 +104,9 @@
     "other": "{count} columns hidden"
   },
   "tables.showAll": "Show every column",
-  "tables.arranged": "Arranged"
+  "tables.arranged": "Arranged",
+  "tables.plain": "Plain number",
+  "tables.money": "Money",
+  "tables.percent": "Percentage",
+  "tables.currency": "Currency"
 }

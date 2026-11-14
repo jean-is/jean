@@ -108,5 +108,9 @@
     "other": "{count} skrytých stĺpcov"
   },
   "tables.showAll": "Zobraziť všetky stĺpce",
-  "tables.arranged": "Usporiadanie"
+  "tables.arranged": "Usporiadanie",
+  "tables.plain": "Bežné číslo",
+  "tables.money": "Peniaze",
+  "tables.percent": "Percento",
+  "tables.currency": "Mena"
 }

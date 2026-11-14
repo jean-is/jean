@@ -110,5 +110,9 @@
     "other": "{count} bann kuzhet"
   },
   "tables.showAll": "Diskouez an holl vannoù",
-  "tables.arranged": "Aozet"
+  "tables.arranged": "Aozet",
+  "tables.plain": "Niver eeun",
+  "tables.money": "Arc’hant",
+  "tables.percent": "Dregantad",
+  "tables.currency": "Moneiz"
 }

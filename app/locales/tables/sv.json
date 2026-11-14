@@ -104,5 +104,9 @@
     "other": "{count} dolda kolumner"
   },
   "tables.showAll": "Visa alla kolumner",
-  "tables.arranged": "Ordning"
+  "tables.arranged": "Ordning",
+  "tables.plain": "Vanligt tal",
+  "tables.money": "Belopp",
+  "tables.percent": "Procent",
+  "tables.currency": "Valuta"
 }

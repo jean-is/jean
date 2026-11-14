@@ -104,5 +104,9 @@
     "other": "{count} saraketta piilotettu"
   },
   "tables.showAll": "Näytä kaikki sarakkeet",
-  "tables.arranged": "Järjestely"
+  "tables.arranged": "Järjestely",
+  "tables.plain": "Tavallinen luku",
+  "tables.money": "Rahasumma",
+  "tables.percent": "Prosentti",
+  "tables.currency": "Valuutta"
 }

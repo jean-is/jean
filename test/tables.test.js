@@ -5,10 +5,10 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readdir, readFile } from 'node:fs/promises'
 import { readZip } from '../app/core/zip.js'
-import { createTable, readTable, tableProblems, checkCell, grown, mergeTables, propertyOf, folderOf, reshape, converted, titleOf, ownProblem, kindOf, notesOf, spotOf, arranged } from '../app/caps/tables/table.js'
+import { createTable, readTable, tableProblems, checkCell, grown, mergeTables, propertyOf, folderOf, reshape, converted, titleOf, ownProblem, kindOf, notesOf, spotOf, arranged, currencyOf } from '../app/caps/tables/table.js'
 import { parseChanges, stringifyChanges, nextAt, stamp, fold, merge, undo, inverse, marked, reading } from '../app/caps/tables/changes.js'
 import { query, valueOf, ordered, total } from '../app/caps/tables/query.js'
-import { toCSV, exportTable, textOf, namesOf, rowNamed } from '../app/caps/tables/export.js'
+import { toCSV, exportTable, textOf, namesOf, rowNamed, said, amount, digitsOf } from '../app/caps/tables/export.js'
 import { fill, rules } from '../app/caps/tables/fill.js'
 import { TABLE_CREATE, LINE, EXAMPLES, tableCreate } from '../app/caps/tables/tool.js'
 import { compile, worked, renamed } from '../app/caps/tables/formula.js'
@@ -188,6 +188,36 @@ test('reshape: a column inserted at a place among them all, made another kind wi
   assert.deepEqual(sorted.order, [R(2), R(1)])
   assert.deepEqual(tableProblems({ ...sorted, order: [1] }), ["The table's order isn't a list of its rows' ids."])
   assert.equal('order' in reshape(table, { name: 'Voyages' }, T(8)), false)
+})
+
+test('a number is money in a currency or a share (D752): from a brain\'s format or its money type, checked, changed from its head, and written so', () => {
+  const made = createTable({ name: 'Budget', columns: [{ name: 'Item', type: 'text' }, { name: 'Cost', type: 'number', format: 'money', currency: 'EUR' }, { name: 'Tip', type: 'money', currency: 'JPY' },
+    { name: 'Done', type: 'number', format: 'percent' }, { name: 'Count', type: 'number', format: 'pounds' }, { name: 'Note', type: 'text', format: 'money' }] }, { id: '01K85Z1T00000000000000000A', author: 'jean', at: '2026-11-14T09:00:00.000Z' })
+  assert.deepEqual(made.properties.map(({ format, currency }) => [format, currency]), [[undefined, undefined], ['money', 'EUR'], ['money', 'JPY'], ['percent', undefined], [undefined, undefined], [undefined, undefined]])
+  assert.match(tableProblems({ ...made, properties: [...made.properties, { id: 'x', name: 'X', type: 'text', format: 'money' }] }).join(), /only a number is money or a share/)
+  assert.match(tableProblems({ ...made, properties: [...made.properties, { id: 'y', name: 'Y', type: 'number', format: 'money', currency: 'euro' }] }).join(), /ISO 4217/)
+  // From the head: money in another currency, a share, then plain again; another kind loses it.
+  const at = '2026-11-14T10:00:00.000Z', cost = (/** @type {any} */ table) => table.properties.find((/** @type {any} */ one) => one.id === 'cost')
+  assert.deepEqual(cost(reshape(made, { number: { id: 'cost', format: 'money', currency: 'USD' } }, at)), { id: 'cost', name: 'Cost', type: 'number', format: 'money', currency: 'USD' })
+  assert.deepEqual(cost(reshape(made, { number: { id: 'cost', format: 'percent', currency: 'USD' } }, at)), { id: 'cost', name: 'Cost', type: 'number', format: 'percent' })
+  assert.deepEqual(cost(reshape(made, { number: { id: 'cost' } }, at)), { id: 'cost', name: 'Cost', type: 'number' })
+  assert.deepEqual(cost(reshape(made, { retype: { id: 'cost', type: 'text' } }, at)), { id: 'cost', name: 'Cost', type: 'text' })
+  // As the language writes it: money in its currency, a share of a hundred, plain numbers with their column's decimals.
+  const row = (/** @type {Record<string, unknown>} */ cells) => /** @type {any} */ ({ cells })
+  assert.equal(said(row({ cost: 480 }), cost(made), { locales: ['en'] }), '€480.00')
+  assert.equal(said(row({ cost: 480 }), cost(made), { locales: ['fr'] }), '480,00\u00a0€')
+  assert.equal(amount(1234, made.properties[2], ['ja']), '￥1,234')
+  assert.equal(amount(12.5, made.properties[3], ['en']), '12.5%')
+  const count = made.properties[4], rows = [row({ count: 1.5 }), row({ count: 2.25 }), row({ count: 3 }), row({ count: 0.12345 })]
+  assert.equal(digitsOf(rows.slice(0, 3), count), 2)
+  assert.equal(digitsOf(rows, count), 3)
+  assert.equal(said(rows[2], count, { locales: ['en'], digits: 2 }), '3.00')
+  // Out: a workbook keeps a share as a percentage; CSV writes the number.
+  assert.equal(toCSV(made, [row({ item: 'Venue', cost: 480, done: 25 })]).split('\r\n')[1], 'Venue,480,,25,,')
+})
+
+test('currencyOf: a region\'s currency, the euro where it is and where nothing says', () => {
+  assert.deepEqual(['US', 'GB', 'JP', 'FR', 'DE', 'CH', 'SA', 'MA', 'IN', 'CN', 'CL', 'UY', 'QQ', ''].map(currencyOf), ['USD', 'GBP', 'JPY', 'EUR', 'EUR', 'CHF', 'SAR', 'MAD', 'INR', 'CNY', 'CLP', 'UYU', 'EUR', 'EUR'])
 })
 
 test('converted: a value as a column of another kind holds it, or nothing, so that the cell stays as it was', () => {

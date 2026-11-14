@@ -104,5 +104,9 @@
     "other": "{count} Spalten ausgeblendet"
   },
   "tables.showAll": "Alle Spalten anzeigen",
-  "tables.arranged": "Angeordnet"
+  "tables.arranged": "Angeordnet",
+  "tables.plain": "Einfache Zahl",
+  "tables.money": "Geldbetrag",
+  "tables.percent": "Prozent",
+  "tables.currency": "Währung"
 }

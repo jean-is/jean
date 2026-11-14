@@ -31,7 +31,10 @@ const ALIASES = /** @type {Record<string, PropertyType>} */ ({
 
 /** @typedef {typeof TYPES[number]} PropertyType */
 /** @typedef {{ name: string, group?: typeof GROUPS[number] }} Option */
-/** A column; collection: a relation's, by its place; formula: a Formula's; deleted: when it was removed. @typedef {{ id: string, name: string, type: PropertyType, options?: Option[], collection?: string, formula?: string, deleted?: string }} Property */
+/**
+ * A column; collection: a relation's, by its place; formula: a Formula's; format: a number's, money (in `currency`, its ISO 4217 code) or a share of a
+ * hundred (D752); deleted: when it was removed. @typedef {{ id: string, name: string, type: PropertyType, options?: Option[], collection?: string, formula?: string, format?: 'money' | 'percent', currency?: string, deleted?: string }} Property
+ */
 /** @typedef {{ property: string, direction?: 'ascending' | 'descending' }} Sort */
 /** A rule of a view's filter. @typedef {{ property: string, op: import('./query.js').Op, value?: unknown }} Rule */
 /**
@@ -99,6 +102,10 @@ export function propertyFrom(column, taken) {
   /** @type {Property} */
   const property = { id: idFor(name, taken), name, type }
   if (type === 'formula') property.formula = typeof column.formula === 'string' ? column.formula : ''
+  // A number of money, a brain's money or currency type too, or a share (D752).
+  const format = /^(money|currency)$/.test(raw) ? 'money' : column.format
+  if (type === 'number' && (format === 'money' || format === 'percent')) property.format = format
+  if (property.format === 'money' && /^[A-Z]{3}$/.test(column.currency)) property.currency = column.currency
   if (type === 'relation' && !PLACE.test(property.collection = column.collection)) throw new Error(`${name}: a relation names its collection, one the project keeps by its place, or this one by its name.`)
   if (CHOICES.has(type)) {
     const options = [...new Set((Array.isArray(column.options) ? column.options : []).map((/** @type {any} */ option) => String((option && typeof option === 'object' ? option.name : option) ?? '').trim()).filter(Boolean))]
@@ -152,6 +159,8 @@ export function tableProblems(table) {
     if (!TYPES.includes(property?.type)) problems.push(`${label}: "${property?.type}" isn't a kind of column.`)
     else if (CHOICES.has(property.type)) problems.push(...optionProblems(property, label))
     else if (property.type === 'relation' && !PLACE.test(property.collection)) problems.push(`${label}: a relation names its collection by its place.`)
+    if (property?.format !== undefined && !(property.type === 'number' && ['money', 'percent'].includes(property.format))) problems.push(`${label}: only a number is money or a share.`)
+    if (property?.currency !== undefined && !(property.format === 'money' && /^[A-Z]{3}$/.test(property.currency))) problems.push(`${label}: money's currency is its ISO 4217 code, such as EUR.`)
   }
   if (table.kind && !(ids.get('note')?.type === 'text' && ids.get('area')?.type === 'relation' && !ids.get('note').deleted && !ids.get('area').deleted)) problems.push('A whiteboard keeps its notes\' words in note, and their areas in area.')
   if (!Array.isArray(table.views)) return [...problems, 'The table has no views.']
@@ -261,7 +270,7 @@ export function grown(table, values, at) {
  * another column has gets a number, an empty one changes nothing, the last column stays, a board goes with its column's choices, and a
  * select or a status added or made groups one when there is none.
  * @param {Table} table
- * @param {{ name?: string, add?: { name: string, type: string, at?: number, collection?: string, options?: string[] }, rename?: { id: string, name: string }, retype?: { id: string, type: string, collection?: string, options?: string[] }, move?: { id: string, to: string, after: boolean }, remove?: string, restore?: string, order?: string[], formula?: { id: string, text: string }, view?: Partial<View> | ((view: View) => Partial<View>) }} edit
+ * @param {{ name?: string, add?: { name: string, type: string, at?: number, collection?: string, options?: string[] }, rename?: { id: string, name: string }, retype?: { id: string, type: string, collection?: string, options?: string[] }, move?: { id: string, to: string, after: boolean }, remove?: string, restore?: string, order?: string[], formula?: { id: string, text: string }, number?: { id: string, format?: 'money' | 'percent', currency?: string }, view?: Partial<View> | ((view: View) => Partial<View>) }} edit
  * @param {string} at @returns {Table}
  */
 export function reshape(table, edit, at) {
@@ -288,6 +297,8 @@ export function reshape(table, edit, at) {
     properties = properties.map((property) => (property.id === id ? { ...property, name } : property.formula ? { ...property, formula: rewritten(property.formula, live, id, name) } : property))
   }
   if (edit.formula) properties = properties.map((property) => (property.id === edit.formula?.id ? { ...property, formula: edit.formula.text } : property))
+  // A number made money in a currency, a share, or a plain number again.
+  if (edit.number) properties = properties.map((property) => (property.id === edit.number?.id && property.type === 'number' ? (({ format, currency, ...plain }) => ({ ...plain, ...(edit.number?.format && { format: edit.number.format }), ...(edit.number?.format === 'money' && { currency: edit.number.currency }) }))(property) : property))
   // Another kind keeps its id, its name and the choices it had, as names; a relation, the collection it is to unless given another.
   if (edit.retype) properties = properties.map((property) => (property.id === edit.retype?.id ? (made = Object.assign(propertyFrom({ ...property, ...edit.retype }, new Set()), { id: property.id })) : property))
   if (edit.move) {
@@ -332,6 +343,13 @@ export function arranged(rows) {
   const key = (/** @type {R} */ row) => ((spot, area) => [area < 0 ? areas.length : area, spot ? 0 : 1, spot?.y ?? 0, spot?.x ?? 0])(spotOf(row, ids), areas.indexOf(String(row.cells.area)))
   return notesOf(rows).map((row, i) => ({ row, at: [...key(row), i] })).sort((a, b) => a.at.reduce((by, n, i) => by || n - b.at[i], 0)).map(({ row }) => row)
 }
+
+/**
+ * A region's currency, by its ISO 3166 code: the euro's where it is, else the one ISO 4217 names after it (US, USD), but three that start a fund's
+ * code; the euro's when none does. @param {string} [region]
+ */
+export const currencyOf = (region = '') => (/^(AT|BE|CY|DE|EE|ES|FI|FR|GR|HR|IE|IT|LT|LU|LV|MT|NL|PT|SI|SK|AD|MC|SM|VA|ME|XK)$/.test(region) ? 'EUR'
+  : ({ CH: 'CHF', CL: 'CLP', UY: 'UYU' })[region] ?? ((/^[A-Z]{2}$/.test(region) && Intl.supportedValuesOf('currency').find((code) => code.startsWith(region))) || 'EUR'))
 
 /** A date, or a date and time, as ISO 8601 writes it, that is on the calendar. @param {unknown} value */
 function isDate(value) {

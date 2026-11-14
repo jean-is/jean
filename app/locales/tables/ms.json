@@ -102,5 +102,9 @@
     "other": "{count} lajur disembunyikan"
   },
   "tables.showAll": "Paparkan semua lajur",
-  "tables.arranged": "Susunan"
+  "tables.arranged": "Susunan",
+  "tables.plain": "Nombor biasa",
+  "tables.money": "Wang",
+  "tables.percent": "Peratus",
+  "tables.currency": "Mata wang"
 }

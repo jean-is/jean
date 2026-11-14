@@ -108,5 +108,9 @@
     "other": "{count} ukrytej kolumny"
   },
   "tables.showAll": "Pokaż wszystkie kolumny",
-  "tables.arranged": "Porządek"
+  "tables.arranged": "Porządek",
+  "tables.plain": "Zwykła liczba",
+  "tables.money": "Kwota",
+  "tables.percent": "Procent",
+  "tables.currency": "Waluta"
 }

@@ -104,5 +104,9 @@
     "other": "{count} स्तंभ लपवले"
   },
   "tables.showAll": "सर्व स्तंभ दाखवा",
-  "tables.arranged": "सध्याची मांडणी"
+  "tables.arranged": "सध्याची मांडणी",
+  "tables.plain": "साधी संख्या",
+  "tables.money": "रक्कम",
+  "tables.percent": "टक्केवारी",
+  "tables.currency": "चलन"
 }

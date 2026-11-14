@@ -104,5 +104,9 @@
     "other": "{count} kolommen verborgen"
   },
   "tables.showAll": "Alle kolommen tonen",
-  "tables.arranged": "Ordening"
+  "tables.arranged": "Ordening",
+  "tables.plain": "Gewoon getal",
+  "tables.money": "Geldbedrag",
+  "tables.percent": "Percentage",
+  "tables.currency": "Valuta"
 }

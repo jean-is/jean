@@ -102,5 +102,9 @@
     "other": "已隱藏 {count} 欄"
   },
   "tables.showAll": "顯示所有欄",
-  "tables.arranged": "整理條件"
+  "tables.arranged": "整理條件",
+  "tables.plain": "一般數字",
+  "tables.money": "金額",
+  "tables.percent": "百分比",
+  "tables.currency": "貨幣"
 }

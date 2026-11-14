@@ -104,5 +104,9 @@
     "other": "safuwima {count} zimefichwa"
   },
   "tables.showAll": "Onyesha safuwima zote",
-  "tables.arranged": "Mpangilio"
+  "tables.arranged": "Mpangilio",
+  "tables.plain": "Nambari ya kawaida",
+  "tables.money": "Pesa",
+  "tables.percent": "Asilimia",
+  "tables.currency": "Sarafu"
 }

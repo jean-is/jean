@@ -106,5 +106,9 @@
     "other": "{count} colonne nascoste"
   },
   "tables.showAll": "Mostra tutte le colonne",
-  "tables.arranged": "Organizzazione"
+  "tables.arranged": "Organizzazione",
+  "tables.plain": "Numero semplice",
+  "tables.money": "Importo",
+  "tables.percent": "Percentuale",
+  "tables.currency": "Valuta"
 }

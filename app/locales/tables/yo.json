@@ -102,5 +102,9 @@
     "other": "ọwọ̀n {count} ni a fi pamọ́"
   },
   "tables.showAll": "Fi gbogbo ọwọ̀n hàn",
-  "tables.arranged": "Ètò tó wà"
+  "tables.arranged": "Ètò tó wà",
+  "tables.plain": "Nọ́ńbà lásán",
+  "tables.money": "Owó",
+  "tables.percent": "Ìpín ọgọ́rùn-ún",
+  "tables.currency": "Owó ilẹ̀"
 }

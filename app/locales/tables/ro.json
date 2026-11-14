@@ -106,5 +106,9 @@
     "other": "{count} de coloane ascunse"
   },
   "tables.showAll": "Afișați toate coloanele",
-  "tables.arranged": "Organizare"
+  "tables.arranged": "Organizare",
+  "tables.plain": "Număr simplu",
+  "tables.money": "Sumă de bani",
+  "tables.percent": "Procent",
+  "tables.currency": "Monedă"
 }

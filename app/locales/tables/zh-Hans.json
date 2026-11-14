@@ -102,5 +102,9 @@
     "other": "已隐藏 {count} 列"
   },
   "tables.showAll": "显示所有列",
-  "tables.arranged": "整理条件"
+  "tables.arranged": "整理条件",
+  "tables.plain": "普通数字",
+  "tables.money": "金额",
+  "tables.percent": "百分比",
+  "tables.currency": "货币"
 }

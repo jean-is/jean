@@ -102,5 +102,9 @@
     "other": "{count} 列を非表示"
   },
   "tables.showAll": "すべての列を表示",
-  "tables.arranged": "整理の条件"
+  "tables.arranged": "整理の条件",
+  "tables.plain": "通常の数値",
+  "tables.money": "金額",
+  "tables.percent": "パーセント",
+  "tables.currency": "通貨"
 }

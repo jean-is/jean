@@ -106,5 +106,9 @@
     "other": "{count} עמודות מוסתרות"
   },
   "tables.showAll": "הצגת כל העמודות",
-  "tables.arranged": "הסידור הנוכחי"
+  "tables.arranged": "הסידור הנוכחי",
+  "tables.plain": "מספר רגיל",
+  "tables.money": "סכום כסף",
+  "tables.percent": "אחוז",
+  "tables.currency": "מטבע"
 }

@@ -104,5 +104,9 @@
     "other": "{count} rejtett oszlop"
   },
   "tables.showAll": "Minden oszlop megjelenítése",
-  "tables.arranged": "Jelenlegi elrendezés"
+  "tables.arranged": "Jelenlegi elrendezés",
+  "tables.plain": "Egyszerű szám",
+  "tables.money": "Pénzösszeg",
+  "tables.percent": "Százalék",
+  "tables.currency": "Pénznem"
 }

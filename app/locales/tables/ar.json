@@ -112,5 +112,9 @@
     "other": "{count} عمود مخفي"
   },
   "tables.showAll": "إظهار كل الأعمدة",
-  "tables.arranged": "التنظيم الحالي"
+  "tables.arranged": "التنظيم الحالي",
+  "tables.plain": "رقم عادي",
+  "tables.money": "مبلغ مالي",
+  "tables.percent": "نسبة مئوية",
+  "tables.currency": "العملة"
 }

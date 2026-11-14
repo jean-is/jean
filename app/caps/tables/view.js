@@ -21,11 +21,11 @@ import { t, locale, intlLocales } from '../../core/i18n.js'
 import { notify, assistantName } from '../../ui/state.js'
 import { reviewBar } from '../../ui/review.js'
 import { icons, icon } from '../../ui/menu-icons.js'
-import { shown, change, unkept, accept, reject, reread, reshapeTable, retype, collections, undoStep, load, wayOf } from './tables.js'
+import { shown, change, unkept, accept, reject, reread, reshapeTable, retype, collections, undoStep, load, wayOf, localCurrency } from './tables.js'
 import { query, valueOf, total, filterOf } from './query.js'
 import { titleOf, checkCell, notesOf } from './table.js'
 import { compile } from './formula.js'
-import { textOf, said as told, format } from './export.js'
+import { textOf, said as told, format, amount, digitsOf } from './export.js'
 import { searchable } from '../../ui/mentions.js'
 
 /** @import { Property, View, Rule } from './table.js' */
@@ -37,7 +37,7 @@ import { searchable } from '../../ui/mentions.js'
  * menu lists the kinds, whether it lists the collections a relation can be to then, the project's collections, read again by `list()`,
  * what its menus' ids start with, the words Search keeps the rows with, the Formula whose dialog is open, saying when its formula can't be read,
  * and what was typed in cells their columns refuse, by "row column".
- * @typedef {{ box: HTMLElement, beside: boolean, as: Signal<string>, naming: Signal<string>, kinds: Signal<string>, relating: Signal<boolean>, collections: Signal<{ folder: string, name: string }[]>, list: () => void, id: string, reviewed?: boolean, search: Signal<string>, formula: Signal<string>, wrong: Signal<boolean>, refused: Signal<Map<string, string>>, from?: Element | null }} State
+ * @typedef {{ box: HTMLElement, beside: boolean, as: Signal<string>, naming: Signal<string>, kinds: Signal<string>, relating: Signal<boolean>, collections: Signal<{ folder: string, name: string }[]>, list: () => void, id: string, reviewed?: boolean, search: Signal<string>, formula: Signal<string>, wrong: Signal<boolean>, refused: Signal<Map<string, string>>, from?: Element | null, digits?: Map<string, number> }} State
  */
 
 /** The kinds of column the user adds or makes one, in the order they are offered, then those Jean works out; never files, which no cell takes yet. */
@@ -110,10 +110,29 @@ export function view(holds, source = shown, beside = false) {
   }
   holds.push(effect(() => {
     render(draw(source.value, state, go), box)
-    // What a changed cell's tip says, on its field, where the keyboard and a screen reader are.
-    for (const field of box.querySelectorAll('tbody [aria-description]')) if (!field.closest('.is-jean')) field.removeAttribute('aria-description')
-    for (const field of box.querySelectorAll('tbody .is-jean > :is(input, select)')) field.setAttribute('aria-description', t('tables.changed', { count: 1, name: assistantName() }))
+    // What a changed cell's tip says, on its field, where the keyboard and a screen reader are, and a sum of money's currency.
+    for (const field of /** @type {NodeListOf<HTMLElement>} */ (box.querySelectorAll('tbody :is([aria-description], [data-money], .is-jean > :is(input, select))'))) {
+      const words = [field.closest('.is-jean') && t('tables.changed', { count: 1, name: assistantName() }), field.dataset.money].filter(Boolean).join(' · ')
+      if (words) field.setAttribute('aria-description', words); else field.removeAttribute('aria-description')
+    }
+    requestAnimationFrame(edge)
   }))
+  /**
+   * More lies past the table's end edge: a fade says so there, told on scroll, on resize and after each draw, never over Accept and Reject;
+   * and the room the first column and the heads take, which a cell given the keys is scrolled out from under.
+   */
+  function edge() {
+    const scroll = /** @type {HTMLElement | null} */ (box.querySelector('.table-scroll')), fade = /** @type {HTMLElement | null} */ (box.querySelector('.table-fade'))
+    if (!scroll || !fade) return
+    const decide = scroll.querySelector('tbody .table-decide')?.getBoundingClientRect().width ?? 0, first = scroll.querySelector('thead .table-grip + *')?.getBoundingClientRect().width ?? 0
+    for (const [name, px] of Object.entries({ '--top': scroll.offsetTop, '--height': scroll.clientHeight, '--end': decide + scroll.offsetWidth - scroll.clientWidth })) fade.style.setProperty(name, `${px}px`)
+    scroll.style.setProperty('--first', `${first}px`)
+    fade.classList.toggle('is-more', Math.abs(scroll.scrollLeft) + scroll.clientWidth < scroll.scrollWidth - 4)
+  }
+  box.addEventListener('scroll', edge, { capture: true, passive: true })
+  const sized = new ResizeObserver(edge)
+  sized.observe(box)
+  holds.push(() => sized.disconnect())
   // Escape closes a menu open in it alone, wherever the keyboard is, never the pane; ⌘Z undoes the user's last step and ⇧⌘Z does it again,
   // but in a field being written in, whose own words they undo.
   box.addEventListener('keydown', (event) => {
@@ -259,6 +278,8 @@ const decide = (one, row) => html`<button type="button" class="icon-button" aria
  */
 function grid(one, columns, shown, rows, calculate, fresh, state) {
   const { box, naming, kinds, relating, list } = state, title = /** @type {Property} */ (titleOf(one.table))
+  // As many decimals in each column of plain numbers as its longest has (D752).
+  state.digits = new Map(shown.flatMap((property) => (property.type === 'number' && !property.format ? [[property.id, digitsOf(one.rows, property)]] : [])))
   // This collection first, then the others a relation can be to.
   const targets = [{ folder: one.folder, name: t('tables.thisCollection') }, ...state.collections.value.filter((other) => other.folder !== one.folder)]
   /** The keyboard to a field of the view once it is drawn, its text selected. @param {string} selector */
@@ -367,6 +388,17 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
     const pick = (glyph, label, on, act) => html`<button type="button" aria-current=${String(on)} popovertarget=${menu} popovertargetaction="hide" @click=${() => on || act().catch(() => reread(one))}>${glyph}${label}${on ? icons.check : nothing}</button>`
     const kind = (/** @type {string} */ type) => pick(GLYPHS[type], t(`tables.kind.${type}`), type === property.type, () => retype(one, property.id, type, undefined, type === 'status' ? steps(property) : undefined))
     const to = property.type === 'relation' ? property.collection : ''
+    /**
+     * A number written plain, as money or as a share of a hundred, each ticked when it is the column's; money asks its currency, beside it, the
+     * menu staying open (D752). @param {Property} property @param {string} menu
+     */
+    const money = (property, menu) => {
+      const as = (/** @type {'' | 'money' | 'percent'} */ format, /** @type {string} */ word) => html`<button type="button" aria-current=${String((property.format ?? '') === format)} popovertarget=${format === 'money' ? nothing : menu} popovertargetaction="hide"
+        @click=${() => (property.format ?? '') === format || shape(one, { number: { id: property.id, format: format || undefined, currency: property.currency ?? localCurrency() } }).then(() => format === 'money' && focus(`#${menu} select`))}>${GLYPHS.number}${t(word)}${(property.format ?? '') === format ? icons.check : nothing}</button>`
+      const names = new Intl.DisplayNames(intlLocales(), { type: 'currency' }), field = `${menu}-currency`
+      return [as('', 'tables.plain'), as('money', 'tables.money'), ...(property.format === 'money' ? [html`<label class="table-line" for=${field}><span>${t('tables.currency')}</span><select id=${field} .value=${live(property.currency ?? '')}
+        @change=${(/** @type {Event} */ e) => shape(one, { number: { id: property.id, format: 'money', currency: typed(e) } })}>${Intl.supportedValuesOf('currency').map((code) => html`<option value=${code} ?selected=${code === property.currency}>${names.of(code)} (${code})</option>`)}</select></label>`] : []), as('percent', 'tables.percent')]
+    }
     const target = (/** @type {{ folder: string, name: string }} */ { folder, name }) => pick(GLYPHS.relation, html`<span dir="auto">${name}</span>`, folder === to, () => retype(one, property.id, 'relation', folder))
     // Dragged by its head (the button: WebKit drags nothing from inside one) to another's side; hidden from its menu as Settings' columns shown hide it.
     return html`<th scope="col" data-column=${property.id} @dragenter=${aside} @dragover=${aside} @drop=${(/** @type {DragEvent} */ e) => put(e, property.id)} @dragend=${left}>${naming.value === property.id
@@ -377,7 +409,7 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
         @toggle=${(/** @type {ToggleEvent} */ e) => { if (e.newState === 'closed' && kinds.peek() === property.id) kinds.value = '' }}>${kinds.value === property.id && relating.value
         ? listed([html`<button type="button" class="back" @click=${() => turn(menu, property.id)}>${icons.back}${t('tables.kind.relation')}</button>`], targets.map(target))
         : kinds.value === property.id
-        ? listed([html`<button type="button" class="back" @click=${() => turn(menu)}>${icons.back}${t('tables.type')}</button>`], ([...KINDS, ...WORKED].includes(property.type) || to ? KINDS : [property.type, ...KINDS]).map(kind),
+        ? listed([html`<button type="button" class="back" @click=${() => turn(menu)}>${icons.back}${t('tables.type')}</button>`], ([...KINDS, ...WORKED].includes(property.type) || to ? KINDS : [property.type, ...KINDS]).map(kind), ...(property.type === 'number' ? [money(property, menu)] : []),
           [html`<button type="button" class="submenu" aria-current=${String(Boolean(to))} @click=${() => turn(menu, property.id, true)}>${GLYPHS.relation}${t('tables.kind.relation')}<span class="menu-value" dir="auto">${to
             && (targets.find((other) => other.folder === to)?.name ?? one.related?.get(to)?.table.name)}</span>${icons.chevron}</button>`], WORKED.map(kind))
         : listed([row(icons.compose, t('action.rename'), () => rename(property.id)),
@@ -394,7 +426,7 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
   const foot = (property, i) => {
     const menu = `${state.id}-foot-${i}`, how = calculate[property.id] ?? '', word = (/** @type {string} */ to) => (to === 'percent' && property.type === 'checkbox' ? 'ticked' : to || 'none')
     return html`<td><button type="button" class="table-total" popovertarget=${menu}>${how ? html`<span class="muted">${t(`tables.calc.${word(how)}`)}</span>
-      ${format('NumberFormat', intlLocales(), how === 'sum' ? {} : { style: 'percent' }).format(total(rows, property, how))}` : t('tables.calculate')}</button>
+      ${how === 'sum' ? amount(total(rows, property, how), property, intlLocales(), state.digits?.get(property.id)) : format('NumberFormat', intlLocales(), { style: 'percent' }).format(total(rows, property, how))}` : t('tables.calculate')}</button>
       <div id=${menu} class="menu table-menu" popover>${listed((/** @type {const} */ (['', 'sum', 'percent'])).filter((to) => to !== 'sum' || property.type === 'number' || property.type === 'formula').map((to) => html`<button type="button"
         aria-current=${String(how === to)} popovertarget=${menu} popovertargetaction="hide" @click=${() => shape(one, { view: (now) => ({ calculate: { ...now.calculate, [property.id]: to || undefined } }) })}>${t(`tables.calc.${word(to)}`)}${how === to ? icons.check : nothing}</button>`))}</div></td>`
   }
@@ -458,7 +490,7 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
           targets.map(({ folder, name }) => html`<button type="button" popovertarget=${`${state.id}-add`} popovertargetaction="hide" @click=${() => added('relation', undefined, folder)}>${GLYPHS.relation}${t('tables.kind.relation')} <span class="menu-value" dir="auto">${name}</span></button>`),
           WORKED.map(adds))}</div></th></tr></thead>
       <tbody @dragleave=${(/** @type {DragEvent} */ e) => !box.contains(/** @type {Node | null} */ (e.relatedTarget)) && left()} @keydown=${keys}
-        @click=${(/** @type {MouseEvent} */ e) => /** @type {Element} */ (e.target).matches(`${CELL}, [data-formula]`) && into(/** @type {Element} */ (e.target).closest(CELL))}
+        @click=${(/** @type {MouseEvent} */ e) => { const at = /** @type {HTMLInputElement} */ (e.target); if (at.matches(`${CELL}, [data-formula]`)) into(at.closest(CELL)); else if (at.type === 'date') try { at.showPicker() } catch {} }}
         @focusin=${(/** @type {FocusEvent} */ e) => e.target instanceof HTMLInputElement && e.target.type !== 'checkbox' && before.set(e.target, e.target.value)}>${rows.map((row, i) => html`<tr data-row=${row.id} class=${fresh.has(row.id) ? 'is-jean' : ''}
         @dragover=${over} @drop=${(/** @type {DragEvent} */ e) => dropped(e, row.id)}>
         <td class="table-grip"><button type="button" class="icon-button" draggable="true" aria-label=${t('tables.moveRow')} aria-keyshortcuts="ArrowUp ArrowDown" popovertarget=${`${state.id}-row`} @click=${() => rowMenu(i)}
@@ -472,7 +504,7 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
       </tr>`)}</tbody>
       <tfoot><tr><td class="table-grip"></td><td colspan=${shown.length + 1}><button type="button" class="table-add" @click=${add}>${icons.plus}${t('tables.addRow')}</button></td></tr>
         <tr><td class="table-grip"></td>${shown.map(foot)}<td></td></tr></tfoot>
-    </table></div><div id=${`${state.id}-row`} class="menu table-menu" popover></div>
+    </table></div><div class="table-fade" aria-hidden="true"></div><div id=${`${state.id}-row`} class="menu table-menu" popover></div>
     ${editing ? html`<dialog class="sheet table-formula" aria-label=${editing.name} @close=${() => { state.formula.value = '' }} @keydown=${(/** @type {KeyboardEvent} */ e) => e.key === 'Escape' && e.stopPropagation()}>
       <form method="dialog" @submit=${(/** @type {SubmitEvent} */ e) => save(e, editing)}>
         <header class="dialog-head"><h2 dir="auto">${GLYPHS.formula}${editing.name}</h2><button type="button" class="icon-button" aria-label=${t('action.close')} @click=${() => /** @type {HTMLDialogElement | null} */ (box.querySelector('dialog.table-formula'))?.close()}>${icons.close}</button></header>
@@ -493,10 +525,11 @@ function cell(one, row, property, state) {
   const read = (/** @type {Event} */ event) => /** @type {HTMLInputElement} */ (event.target)
   switch (property.type) {
     case 'checkbox': return html`<input type="checkbox" title=${property.name} .checked=${live(value === true)} @change=${(/** @type {Event} */ e) => set(read(e).checked, e)}>`
-    case 'number': return html`<input type="number" step="any" title=${property.name} .value=${live(value === null ? '' : String(value))}
+    case 'number': return html`${value === null ? nothing : reading(said(row, property, one.names, state.digits?.get(property.id)), 'is-amount')}<input type="number" dir="ltr" step="any" title=${property.name}
+      data-money=${property.format === 'money' && property.currency ? new Intl.DisplayNames(intlLocales(), { type: 'currency' }).of(property.currency) : nothing} .value=${live(value === null ? '' : String(value))}
       @change=${(/** @type {Event} */ e) => set(read(e).value === '' ? null : read(e).valueAsNumber, e)}>`
-    case 'date': return html`<input type="date" title=${property.name} .value=${live(String(value ?? '').slice(0, 10))} @change=${(/** @type {Event} */ e) => set(read(e).value || null, e)}>`
-    case 'status':
+    case 'date': return html`${value ? reading(said(row, property, one.names)) : nothing}<input type="date" title=${property.name} .value=${live(String(value ?? '').slice(0, 10))} @change=${(/** @type {Event} */ e) => set(read(e).value || null, e)}>`
+    case 'status': return html`${value ? reading(html`<span class="table-pill" data-group=${property.options?.find((option) => option.name === value)?.group ?? nothing}>${value}</span>`) : nothing}${choice(one, row, property)}`
     case 'relation':
     case 'select': return choice(one, row, property)
     case 'multi-select': return html`<input dir="auto" title=${property.name} .value=${live(Array.isArray(value) ? value.join(', ') : '')}
@@ -576,8 +609,13 @@ const indexOf = (one, columns) => {
   indexes.set(one.rows, { locale: locale.value, texts })
   return texts
 }
-/** A cell as a card says it, in the user's language (./export.js). @param {Row} row @param {Property} property @param {Map<string, string>} [names] */
-const said = (row, property, names) => told(row, property, { locales: intlLocales(), labels: { yes: t('tables.yes'), no: t('tables.no') }, names })
+/** A cell as a card says it, in the user's language (./export.js). @param {Row} row @param {Property} property @param {Map<string, string>} [names] @param {number} [digits] */
+const said = (row, property, names, digits) => told(row, property, { locales: intlLocales(), labels: { yes: t('tables.yes'), no: t('tables.no') }, names, digits })
+/**
+ * A cell's reading, drawn over its field until the cell has the keys (D752), which alone shows the field: an amount as its column writes it,
+ * a day in the user's words, a step as its pill. Seen, never read: its field is what the keys and a screen reader reach. @param {unknown} words @param {string} [kind]
+ */
+const reading = (words, kind = '') => html`<bdi class=${`table-read ${kind}`} aria-hidden="true">${words}</bdi>`
 
 /**
  * The board: a lane for each step or choice, in their order, then one for rows with none, of the rows the view keeps; each card its row's

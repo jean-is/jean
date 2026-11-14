@@ -102,5 +102,9 @@
     "other": "열 {count}개 숨김"
   },
   "tables.showAll": "모든 열 표시",
-  "tables.arranged": "정리 조건"
+  "tables.arranged": "정리 조건",
+  "tables.plain": "일반 숫자",
+  "tables.money": "금액",
+  "tables.percent": "백분율",
+  "tables.currency": "통화"
 }

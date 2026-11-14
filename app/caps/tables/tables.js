@@ -26,11 +26,11 @@ import { ulid } from '../../core/ulid.js'
 import { useStrings, locale, t, intlLocales } from '../../core/i18n.js'
 import { icons } from '../../ui/menu-icons.js'
 import { page, grid, reread as listed } from '../../ui/creations.js'
-import { createTable, readTable, folderOf, propertyOf, checkCell, grown, reshape, converted, canonical, isOwn, ownProblem, kindOf, notesOf, spotOf, arranged, PLACE as FOLDER } from './table.js'
+import { createTable, readTable, folderOf, propertyOf, checkCell, grown, reshape, converted, canonical, isOwn, ownProblem, kindOf, notesOf, spotOf, arranged, currencyOf, PLACE as FOLDER } from './table.js'
 import { stringifyChanges, stamp, fold, undo, reading, marked, inverse } from './changes.js'
 import { query, ordered, valueOf, filterOf } from './query.js'
 import { worked } from './formula.js'
-import { exportTable, namesOf, rowNamed, said } from './export.js'
+import { exportTable, namesOf, rowNamed, said, digitsOf } from './export.js'
 import { tableCreate, LINE } from './tool.js'
 import { fill } from './fill.js'
 
@@ -287,8 +287,13 @@ export const amend = ({ path }, { pinned, name }) => (reshaping = reshaping.catc
 async function placed(args, id) {
   const all = [{ folder: folderOf({ id, name: String(args?.name ?? '').trim() }), name: String(args?.name ?? '') }, ...await collections()], key = (/** @type {unknown} */ name) => String(name ?? '').trim().toLocaleLowerCase()
   const to = (/** @type {any} */ column) => all.find(({ folder, name }) => folder === column.collection || key(name) === key(column.collection))?.folder ?? column.collection
-  return Array.isArray(args?.columns) ? { ...args, columns: args.columns.map((/** @type {any} */ column) => (column?.type === 'relation' ? { ...column, collection: to(column) } : column)) } : args
+  // Money in the currency the request names, else the person's region's (D752).
+  const money = (/** @type {any} */ column) => (column?.format === 'money' || /^(money|currency)$/i.test(column?.type) ? { ...column, currency: column.currency ?? localCurrency() } : column)
+  return Array.isArray(args?.columns) ? { ...args, columns: args.columns.map((/** @type {any} */ column) => (column?.type === 'relation' ? { ...column, collection: to(column) } : money(column))) } : args
 }
+
+/** The currency of the person's region, for money nobody named one for. */
+export const localCurrency = () => currencyOf(new Intl.Locale(intlLocales()[0] ?? 'en').maximize().region)
 
 /** A copy, the user's, by the name given, with its rows as they are. @param {{ path: string }} item @param {string} name */
 export async function copy({ path }, name) {
@@ -353,7 +358,8 @@ export async function gridIn(folder) {
   if (!one) return null
   const hidden = one.table.views.find((view) => view.type === 'table')?.hidden ?? [], kept = filterOf(one.table), columns = one.table.properties.filter((property) => !property.deleted && !hidden.includes(property.id))
   const rows = one.table.kind ? arranged(one.rows) : query(one.table, one.rows, { ...(kept.length && { filter: { and: kept } }), locale: locale.value, names: one.names }).rows
-  return { name: one.table.name, right: columns.map((property) => property.type === 'number'), rows: [columns.map((property) => property.name), ...rows.map((row) => columns.map((property) => said(row, property, { locales: intlLocales(), names: one.names, labels: { yes: '✓', no: '' } })))] }
+  const digits = columns.map((property) => digitsOf(rows, property))
+  return { name: one.table.name, right: columns.map((property) => property.type === 'number'), rows: [columns.map((property) => property.name), ...rows.map((row) => columns.map((property, i) => said(row, property, { locales: intlLocales(), names: one.names, labels: { yes: '✓', no: '' }, digits: property.type === 'number' ? digits[i] : undefined })))] }
 }
 
 /**

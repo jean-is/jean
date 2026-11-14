@@ -108,5 +108,9 @@
     "other": "{count} skrytých sloupců"
   },
   "tables.showAll": "Zobrazit všechny sloupce",
-  "tables.arranged": "Uspořádání"
+  "tables.arranged": "Uspořádání",
+  "tables.plain": "Obyčejné číslo",
+  "tables.money": "Peníze",
+  "tables.percent": "Procento",
+  "tables.currency": "Měna"
 }

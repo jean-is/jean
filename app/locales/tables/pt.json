@@ -106,5 +106,9 @@
     "other": "{count} colunas ocultas"
   },
   "tables.showAll": "Mostrar todas as colunas",
-  "tables.arranged": "Organização"
+  "tables.arranged": "Organização",
+  "tables.plain": "Número simples",
+  "tables.money": "Dinheiro",
+  "tables.percent": "Percentagem",
+  "tables.currency": "Moeda"
 }

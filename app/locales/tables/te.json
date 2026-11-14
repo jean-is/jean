@@ -104,5 +104,9 @@
     "other": "{count} నిలువు వరుసలు దాచబడ్డాయి"
   },
   "tables.showAll": "అన్ని నిలువు వరుసలు చూపు",
-  "tables.arranged": "ప్రస్తుత అమరిక"
+  "tables.arranged": "ప్రస్తుత అమరిక",
+  "tables.plain": "సాధారణ సంఖ్య",
+  "tables.money": "డబ్బు",
+  "tables.percent": "శాతం",
+  "tables.currency": "కరెన్సీ"
 }

@@ -102,5 +102,9 @@
     "other": "{count} kolom disembunyikan"
   },
   "tables.showAll": "Tampilkan semua kolom",
-  "tables.arranged": "Pengaturan"
+  "tables.arranged": "Pengaturan",
+  "tables.plain": "Angka biasa",
+  "tables.money": "Uang",
+  "tables.percent": "Persentase",
+  "tables.currency": "Mata uang"
 }

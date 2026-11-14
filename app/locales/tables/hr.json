@@ -106,5 +106,9 @@
     "other": "{count} skrivenih stupaca"
   },
   "tables.showAll": "Prikaži sve stupce",
-  "tables.arranged": "Raspored"
+  "tables.arranged": "Raspored",
+  "tables.plain": "Običan broj",
+  "tables.money": "Novac",
+  "tables.percent": "Postotak",
+  "tables.currency": "Valuta"
 }

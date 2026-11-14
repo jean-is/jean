@@ -104,5 +104,9 @@
     "other": "{count} скрити колони"
   },
   "tables.showAll": "Покажи всички колони",
-  "tables.arranged": "Подредено"
+  "tables.arranged": "Подредено",
+  "tables.plain": "Обикновено число",
+  "tables.money": "Пари",
+  "tables.percent": "Процент",
+  "tables.currency": "Валута"
 }

@@ -104,5 +104,9 @@
     "other": "{count} کالم چھپے ہوئے"
   },
   "tables.showAll": "تمام کالم دکھائیں",
-  "tables.arranged": "موجودہ انتظام"
+  "tables.arranged": "موجودہ انتظام",
+  "tables.plain": "سادہ عدد",
+  "tables.money": "رقم",
+  "tables.percent": "فیصد",
+  "tables.currency": "کرنسی"
 }
