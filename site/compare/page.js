@@ -24,6 +24,9 @@ const SOURCES = {
   'manus-pricing': { url: 'https://manus.im/pricing', checked: '2026-11-01' },
 }
 
+/** Each product's page's addresses, by language, so a card knows whether its page is in the hub's. @type {Record<string, Record<string, string>>} */
+const ADDRESSES = Object.fromEntries(await Promise.all(PRODUCTS.map(async (name) => [name, (await import(`../${name}/page.js`)).default.addresses])))
+
 /** @type {import('../site.js').Page} */
 export default {
   addresses: { en: 'compare', fr: 'fr/comparer', ko: 'ko/compare' },
@@ -58,10 +61,12 @@ export default {
   </ul>
   <div class="cmp-strip"><p>${say('choose.history')}</p><a class="button" href="${kit.start}?restore">${say('history')}</a></div>
 </section>`
+    // A product's page this language lacks is English's, and so is what its card says of it.
+    const english = (/** @type {string} */ name) => (kit.lang in ADDRESSES[name] ? ['', ''] : [' hreflang="en"', ' lang="en"'])
     const one = /* html */ `<section class="site-block" aria-labelledby="cmp-one">
   <h3 id="cmp-one">${say('one.title')}</h3>
   <ul class="cmp-products">${PRODUCTS.map((name, i) => /* html */ `
-    <li><a href="${kit.link(name)}"><h4>${kit.from(name).say('product')}</h4><span>${cards[i]}</span><span class="cmp-go">${kit.from(name).say('eyebrow')} <span class="flip-rtl" aria-hidden="true">→</span></span></a></li>`).join('')}
+    <li><a href="${kit.link(name)}"${english(name)[0]}><h4>${kit.from(name).say('product')}</h4><span>${cards[i]}</span><span class="cmp-go"${english(name)[1]}>${kit.from(name).say('eyebrow')} <span class="flip-rtl" aria-hidden="true">→</span></span></a></li>`).join('')}
   </ul>
 </section>`
     const end = /* html */ `${WAVE}

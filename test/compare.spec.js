@@ -14,10 +14,11 @@ test('the homepage’s act on any AI leads to the hub, which leads to each produ
   await expect(page).toHaveURL(`${JEAN_IS}compare`)
   await expect(page.locator('h1')).toHaveText('Jean beside the AI apps you know')
   const products = await page.locator('.cmp-products a').evaluateAll((links) => links.map((link) => /** @type {HTMLAnchorElement} */ (link).href))
-  expect(products).toEqual(['chatgpt', 'claude-cowork', 'manus', 'openclaw', 'open-webui'].map((name) => `${JEAN_IS}compare/${name}`))
+  expect(products).toEqual(['chatgpt', 'claude-cowork', 'manus', 'notebooklm', 'openclaw', 'open-webui'].map((name) => `${JEAN_IS}compare/${name}`))
   for (const address of products) {
     await page.goto(address)
-    await expect(page.locator('.cmp-crumbs [aria-current="page"]')).toHaveText(await page.locator('.cmp-table thead th').nth(1).textContent() ?? '')
+    // The product's name heads its column, a new name its maker gave it under it.
+    await expect(page.locator('.cmp-crumbs [aria-current="page"]')).toHaveText(await page.locator('.cmp-table thead th').nth(1).evaluate((head) => head.firstChild?.textContent ?? ''))
     expect(await page.locator('.cmp-crumbs a').evaluate((link) => /** @type {HTMLAnchorElement} */ (link).href)).toBe(`${JEAN_IS}compare`)
     // Every cell on the other product's side says where it was read, but where there is nothing to read.
     for (const cell of await page.locator('.cmp-table tbody td:not(.is-jean)').all()) {
