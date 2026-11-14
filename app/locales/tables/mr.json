@@ -64,16 +64,8 @@
   "tables.kind.changed-at": "शेवटचा बदल",
   "tables.search": "ओळ शोधा",
   "tables.filter": "फिल्टर",
-  "tables.filterOn": {
-    "one": "फिल्टर: {count} नियम सुरू",
-    "other": "फिल्टर: {count} नियम सुरू"
-  },
   "tables.sort": "क्रमाने लावा",
   "tables.shown": "दाखवलेले स्तंभ",
-  "tables.settingsOn": {
-    "one": "सेटिंग्ज: {count} स्तंभ लपवला",
-    "other": "सेटिंग्ज: {count} स्तंभ लपवले"
-  },
   "tables.column": "स्तंभ",
   "tables.compare": "अट",
   "tables.addFilter": "फिल्टर जोडा",
@@ -102,5 +94,15 @@
   "tables.yourFormula": "तुमचे सूत्र",
   "tables.formulaHint": "स्तंभ त्यांच्या नावाने, + − * / आणि round, min, max किंवा sqrt सारखी फंक्शन्स.",
   "tables.formulaWrong": "हे सूत्र मोजता येत नाही: स्तंभांची नावे आणि कंस तपासा.",
-  "tables.save": "जतन करा"
+  "tables.save": "जतन करा",
+  "tables.arrange": "मांडणी करा",
+  "tables.groupBy": "यानुसार गट",
+  "tables.ungrouped": "गट नाहीत",
+  "tables.unchip": "काढा: {name}",
+  "tables.hidden": {
+    "one": "{count} स्तंभ लपवला",
+    "other": "{count} स्तंभ लपवले"
+  },
+  "tables.showAll": "सर्व स्तंभ दाखवा",
+  "tables.arranged": "सध्याची मांडणी"
 }

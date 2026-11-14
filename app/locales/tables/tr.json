@@ -64,16 +64,8 @@
   "tables.kind.changed-at": "Son değişiklik",
   "tables.search": "Satır ara",
   "tables.filter": "Filtrele",
-  "tables.filterOn": {
-    "one": "Filtrele: {count} kural açık",
-    "other": "Filtrele: {count} kural açık"
-  },
   "tables.sort": "Sırala",
   "tables.shown": "Gösterilen sütunlar",
-  "tables.settingsOn": {
-    "one": "Ayarlar: {count} sütun gizli",
-    "other": "Ayarlar: {count} sütun gizli"
-  },
   "tables.column": "Sütun",
   "tables.compare": "Koşul",
   "tables.addFilter": "Filtre ekle",
@@ -102,5 +94,15 @@
   "tables.yourFormula": "Formülünüz",
   "tables.formulaHint": "Sütunlar adlarıyla, + − * / ve round, min, max ya da sqrt gibi işlevler.",
   "tables.formulaWrong": "Bu formül hesaplanamıyor: sütun adlarını ve parantezleri kontrol edin.",
-  "tables.save": "Kaydet"
+  "tables.save": "Kaydet",
+  "tables.arrange": "Düzenle",
+  "tables.groupBy": "Grupla",
+  "tables.ungrouped": "Gruplama yok",
+  "tables.unchip": "Kaldır: {name}",
+  "tables.hidden": {
+    "one": "{count} sütun gizli",
+    "other": "{count} sütun gizli"
+  },
+  "tables.showAll": "Tüm sütunları göster",
+  "tables.arranged": "Düzen"
 }

@@ -63,14 +63,8 @@
   "tables.kind.changed-at": "Sửa lần cuối",
   "tables.search": "Tìm hàng",
   "tables.filter": "Lọc",
-  "tables.filterOn": {
-    "other": "Lọc: đang bật {count} quy tắc"
-  },
   "tables.sort": "Sắp xếp",
   "tables.shown": "Cột hiển thị",
-  "tables.settingsOn": {
-    "other": "Cài đặt: {count} cột đang ẩn"
-  },
   "tables.column": "Cột",
   "tables.compare": "Điều kiện",
   "tables.addFilter": "Thêm bộ lọc",
@@ -99,5 +93,14 @@
   "tables.yourFormula": "Công thức của bạn",
   "tables.formulaHint": "Các cột theo tên, + − * / và các hàm như round, min, max hoặc sqrt.",
   "tables.formulaWrong": "Không tính được công thức này: hãy kiểm tra tên cột và dấu ngoặc.",
-  "tables.save": "Lưu"
+  "tables.save": "Lưu",
+  "tables.arrange": "Sắp đặt",
+  "tables.groupBy": "Nhóm theo",
+  "tables.ungrouped": "Không nhóm",
+  "tables.unchip": "Gỡ {name}",
+  "tables.hidden": {
+    "other": "{count} cột đang ẩn"
+  },
+  "tables.showAll": "Hiện mọi cột",
+  "tables.arranged": "Cách sắp đặt"
 }

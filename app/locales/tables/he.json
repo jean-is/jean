@@ -65,18 +65,8 @@
   "tables.kind.changed-at": "שינוי אחרון",
   "tables.search": "חיפוש שורה",
   "tables.filter": "סינון",
-  "tables.filterOn": {
-    "one": "סינון: כלל {count} פעיל",
-    "two": "סינון: {count} כללים פעילים",
-    "other": "סינון: {count} כללים פעילים"
-  },
   "tables.sort": "מיון",
   "tables.shown": "עמודות מוצגות",
-  "tables.settingsOn": {
-    "one": "הגדרות: עמודה {count} מוסתרת",
-    "two": "הגדרות: {count} עמודות מוסתרות",
-    "other": "הגדרות: {count} עמודות מוסתרות"
-  },
   "tables.column": "עמודה",
   "tables.compare": "תנאי",
   "tables.addFilter": "הוספת מסנן",
@@ -105,5 +95,16 @@
   "tables.yourFormula": "הנוסחה שלך",
   "tables.formulaHint": "עמודות לפי שמן, ‎+ − * /‎ ופונקציות כמו round, ‏min, ‏max או sqrt.",
   "tables.formulaWrong": "אי אפשר לחשב את הנוסחה הזו: כדאי לבדוק את שמות העמודות ואת הסוגריים.",
-  "tables.save": "שמירה"
+  "tables.save": "שמירה",
+  "tables.arrange": "סידור",
+  "tables.groupBy": "קיבוץ לפי",
+  "tables.ungrouped": "ללא קיבוץ",
+  "tables.unchip": "הסרת {name}",
+  "tables.hidden": {
+    "one": "עמודה {count} מוסתרת",
+    "two": "{count} עמודות מוסתרות",
+    "other": "{count} עמודות מוסתרות"
+  },
+  "tables.showAll": "הצגת כל העמודות",
+  "tables.arranged": "הסידור הנוכחי"
 }

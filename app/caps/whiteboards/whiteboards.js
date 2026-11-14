@@ -4,11 +4,10 @@
 // collections/<ulid>-<slug>/, which merge cell by cell through Sync and Together, undo a step at a time, and show Jean's changes until
 // they are accepted or rejected (D505). So this unlocks Tables, and policy denying Tables denies it too. Here: its two tools, which only
 // brains that make tables right have (D491), the note a message comes with for one beside the task, what is selected on it, its
-// creations, how it is on show in the address, and its view beside the conversation (./view.js). Every brain reads one with table_rows.
+// creations, and its view beside the conversation (./view.js). Every brain reads one with table_rows.
 import { html, svg, nothing } from 'lit-html'
 import { signal, effect, untracked } from '@preact/signals-core'
 import { register, unlock } from '../../ui/caps.js'
-import { keep } from '../../ui/windows.js'
 import { app, conversationOf } from '../../ui/state.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { noteRecord } from '../../core/events.js'
@@ -30,16 +29,11 @@ await Promise.all([useStrings('whiteboards'), styleSheet(new URL('whiteboards.cs
 
 /** A board with notes on it. */
 export const glyph = icon(svg`<rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M6.5 7.5h4v4h-4zM13.5 7.5h4v4h-4zM6.5 14h4"/>`)
-/** The whiteboards drawn beside the task, which the brain hears of; what is selected on one; and how the one on show is shown, which the address keeps. */
+/** The whiteboards drawn beside the task, which the brain hears of, and what is selected on one; how each shows is in the address, by its place, as a collection's is (Tables' wayOf). */
 export const beside = new Set(/** @type {import('@preact/signals-core').Signal<Loaded | null>[]} */ ([]))
 export const picked = signal(/** @type {{ folder: string, rows: string[] } | null} */ (null))
-export const showAs = signal(/** @type {'board' | 'lanes' | 'table'} */ ('board')), showOnly = signal('')
 /** The whiteboards panes show, by their places, whose way out Whiteboards gives. */
 export const onShow = signal(/** @type {string[]} */ ([]))
-keep('whiteboard', {
-  get: () => (showAs.value === 'board' ? null : showAs.value === 'table' && showOnly.value ? `table/${showOnly.value}` : showAs.value),
-  set: (state) => { const [as, only = ''] = (state ?? '').split('/'); showAs.value = as === 'lanes' || as === 'table' ? as : 'board'; showOnly.value = as === 'table' ? only : '' },
-})
 
 /**
  * A new whiteboard's collection.json, in the direction of the language it is made in: its notes' words, and the section each is in, a
@@ -208,7 +202,7 @@ const preview = ({ areas }) => {
 /** One from the Creations page, empty, beside the task, its name taking the keys. */
 async function fromPage() {
   await open(await write(boardOf(t('whiteboards.untitled'), 'user')))
-  requestAnimationFrame(() => /** @type {HTMLInputElement | null} */ (document.querySelector('app-preview .wb-name'))?.select())
+  requestAnimationFrame(() => /** @type {HTMLInputElement | null} */ (document.querySelector('app-preview .pane-name'))?.select())
 }
 
 /** Its view beside the conversation (ui/preview.js, through Tables' editor). @param {{ uri: string }} file @param {(() => void)[]} holds */
@@ -225,7 +219,7 @@ register({
   id: 'whiteboards',
   tools: [makeTool, changeTool],
   lines: LINES,
-  slots: { modes: { at: 11, draw: () => null, notes }, box: { at: 1, draw: chip }, out: { at: 1, draw: () => null, of: (/** @type {{ uri: string }} */ { uri }) => onShow.value.includes(uri), load: async () => (await import('./view.js')).ways() }, creations: { id: 'whiteboards', at: 3, draw: () => glyph, kept, mention: 'whiteboard', preview, make: fromPage, copy: tables.copy,
+  slots: { modes: { at: 11, draw: () => null, notes }, head: { at: 1, draw: () => null, named: (/** @type {{ uri: string, title: string }} */ file, /** @type {(name: string) => void} */ renamed) => onShow.value.includes(file.uri) && tables.nameField(file, renamed, t('whiteboards.name')) }, box: { at: 1, draw: chip }, out: { at: 1, draw: () => null, of: (/** @type {{ uri: string }} */ { uri }) => onShow.value.includes(uri), load: async () => (await import('./view.js')).ways() }, creations: { id: 'whiteboards', at: 3, draw: () => glyph, kept, mention: 'whiteboard', preview, make: fromPage, copy: tables.copy,
     pin: (/** @type {{ path: string }} */ item, /** @type {boolean} */ pinned) => tables.amend(item, { pinned }), rename: (/** @type {{ path: string }} */ item, /** @type {string} */ name) => tables.amend(item, { name }),
     remove: (/** @type {{ path: string }} */ { path }) => app.fs.remove(`${app.projectDir}/${path}`) } },
 })

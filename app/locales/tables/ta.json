@@ -64,16 +64,8 @@
   "tables.kind.changed-at": "கடைசி மாற்றம்",
   "tables.search": "வரிசையைத் தேடு",
   "tables.filter": "வடிகட்டு",
-  "tables.filterOn": {
-    "one": "வடிகட்டு: {count} விதி இயக்கத்தில்",
-    "other": "வடிகட்டு: {count} விதிகள் இயக்கத்தில்"
-  },
   "tables.sort": "அடுக்கு",
   "tables.shown": "காட்டப்படும் நெடுவரிசைகள்",
-  "tables.settingsOn": {
-    "one": "அமைப்புகள்: {count} நெடுவரிசை மறைக்கப்பட்டது",
-    "other": "அமைப்புகள்: {count} நெடுவரிசைகள் மறைக்கப்பட்டன"
-  },
   "tables.column": "நெடுவரிசை",
   "tables.compare": "நிபந்தனை",
   "tables.addFilter": "வடிகட்டியைச் சேர்",
@@ -102,5 +94,15 @@
   "tables.yourFormula": "உங்கள் சூத்திரம்",
   "tables.formulaHint": "நெடுவரிசைகள் அவற்றின் பெயரால், + − * / மற்றும் round, min, max அல்லது sqrt போன்ற செயல்பாடுகள்.",
   "tables.formulaWrong": "இந்தச் சூத்திரத்தைக் கணக்கிட முடியவில்லை: நெடுவரிசைப் பெயர்களையும் அடைப்புக்குறிகளையும் சரிபாருங்கள்.",
-  "tables.save": "சேமி"
+  "tables.save": "சேமி",
+  "tables.arrange": "ஒழுங்குபடுத்து",
+  "tables.groupBy": "இதன்படி குழுவாக்கு",
+  "tables.ungrouped": "குழுக்கள் இல்லை",
+  "tables.unchip": "அகற்று: {name}",
+  "tables.hidden": {
+    "one": "{count} நெடுவரிசை மறைக்கப்பட்டது",
+    "other": "{count} நெடுவரிசைகள் மறைக்கப்பட்டன"
+  },
+  "tables.showAll": "எல்லா நெடுவரிசைகளையும் காட்டு",
+  "tables.arranged": "ஒழுங்கமைப்பு"
 }

@@ -66,20 +66,8 @@
   "tables.kind.changed-at": "Последнее изменение",
   "tables.search": "Найти строку",
   "tables.filter": "Фильтр",
-  "tables.filterOn": {
-    "one": "Фильтр: {count} правило включено",
-    "few": "Фильтр: {count} правила включены",
-    "many": "Фильтр: {count} правил включено",
-    "other": "Фильтр: {count} правила включено"
-  },
   "tables.sort": "Сортировка",
   "tables.shown": "Показанные столбцы",
-  "tables.settingsOn": {
-    "one": "Настройки: {count} столбец скрыт",
-    "few": "Настройки: {count} столбца скрыты",
-    "many": "Настройки: {count} столбцов скрыто",
-    "other": "Настройки: {count} столбца скрыто"
-  },
   "tables.column": "Столбец",
   "tables.compare": "Условие",
   "tables.addFilter": "Добавить фильтр",
@@ -108,5 +96,17 @@
   "tables.yourFormula": "Ваша формула",
   "tables.formulaHint": "Столбцы по их названиям, + − * / и функции вроде round, min, max или sqrt.",
   "tables.formulaWrong": "Эту формулу нельзя вычислить: проверьте названия столбцов и скобки.",
-  "tables.save": "Сохранить"
+  "tables.save": "Сохранить",
+  "tables.arrange": "Упорядочить",
+  "tables.groupBy": "Группировка",
+  "tables.ungrouped": "Без группировки",
+  "tables.unchip": "Убрать: {name}",
+  "tables.hidden": {
+    "one": "{count} столбец скрыт",
+    "few": "{count} столбца скрыты",
+    "many": "{count} столбцов скрыто",
+    "other": "{count} столбца скрыто"
+  },
+  "tables.showAll": "Показать все столбцы",
+  "tables.arranged": "Упорядочено"
 }

@@ -66,20 +66,8 @@
   "tables.kind.changed-at": "Ostatnia zmiana",
   "tables.search": "Szukaj wiersza",
   "tables.filter": "Filtruj",
-  "tables.filterOn": {
-    "one": "Filtruj: {count} reguła włączona",
-    "few": "Filtruj: {count} reguły włączone",
-    "many": "Filtruj: {count} reguł włączonych",
-    "other": "Filtruj: {count} reguły włączone"
-  },
   "tables.sort": "Sortuj",
   "tables.shown": "Widoczne kolumny",
-  "tables.settingsOn": {
-    "one": "Ustawienia: {count} ukryta kolumna",
-    "few": "Ustawienia: {count} ukryte kolumny",
-    "many": "Ustawienia: {count} ukrytych kolumn",
-    "other": "Ustawienia: {count} ukrytej kolumny"
-  },
   "tables.column": "Kolumna",
   "tables.compare": "Warunek",
   "tables.addFilter": "Dodaj filtr",
@@ -108,5 +96,17 @@
   "tables.yourFormula": "Twoja formuła",
   "tables.formulaHint": "Kolumny po nazwach, + − * / i funkcje takie jak round, min, max czy sqrt.",
   "tables.formulaWrong": "Tej formuły nie da się obliczyć: sprawdź nazwy kolumn i nawiasy.",
-  "tables.save": "Zapisz"
+  "tables.save": "Zapisz",
+  "tables.arrange": "Uporządkuj",
+  "tables.groupBy": "Grupuj według",
+  "tables.ungrouped": "Bez grup",
+  "tables.unchip": "Usuń: {name}",
+  "tables.hidden": {
+    "one": "{count} ukryta kolumna",
+    "few": "{count} ukryte kolumny",
+    "many": "{count} ukrytych kolumn",
+    "other": "{count} ukrytej kolumny"
+  },
+  "tables.showAll": "Pokaż wszystkie kolumny",
+  "tables.arranged": "Porządek"
 }

@@ -64,16 +64,8 @@
   "tables.kind.changed-at": "Zuletzt geändert",
   "tables.search": "Zeile suchen",
   "tables.filter": "Filtern",
-  "tables.filterOn": {
-    "one": "Filtern: {count} Regel aktiv",
-    "other": "Filtern: {count} Regeln aktiv"
-  },
   "tables.sort": "Sortieren",
   "tables.shown": "Angezeigte Spalten",
-  "tables.settingsOn": {
-    "one": "Einstellungen: {count} Spalte ausgeblendet",
-    "other": "Einstellungen: {count} Spalten ausgeblendet"
-  },
   "tables.column": "Spalte",
   "tables.compare": "Bedingung",
   "tables.addFilter": "Filter hinzufügen",
@@ -102,5 +94,15 @@
   "tables.yourFormula": "Deine Formel",
   "tables.formulaHint": "Spalten mit ihrem Namen, + − * / und Funktionen wie round, min, max oder sqrt.",
   "tables.formulaWrong": "Diese Formel lässt sich nicht berechnen: Prüf die Spaltennamen und die Klammern.",
-  "tables.save": "Speichern"
+  "tables.save": "Speichern",
+  "tables.arrange": "Anordnen",
+  "tables.groupBy": "Gruppieren nach",
+  "tables.ungrouped": "Keine Gruppen",
+  "tables.unchip": "{name} entfernen",
+  "tables.hidden": {
+    "one": "{count} Spalte ausgeblendet",
+    "other": "{count} Spalten ausgeblendet"
+  },
+  "tables.showAll": "Alle Spalten anzeigen",
+  "tables.arranged": "Angeordnet"
 }

@@ -64,16 +64,8 @@
   "tables.kind.changed-at": "آخرین تغییر",
   "tables.search": "جستجوی ردیف‌ها",
   "tables.filter": "فیلتر",
-  "tables.filterOn": {
-    "one": "فیلتر: {count} قاعده فعال",
-    "other": "فیلتر: {count} قاعده فعال"
-  },
   "tables.sort": "مرتب‌سازی",
   "tables.shown": "ستون‌های نمایان",
-  "tables.settingsOn": {
-    "one": "تنظیمات: {count} ستون پنهان",
-    "other": "تنظیمات: {count} ستون پنهان"
-  },
   "tables.column": "ستون",
   "tables.compare": "شرط",
   "tables.addFilter": "افزودن فیلتر",
@@ -102,5 +94,15 @@
   "tables.yourFormula": "فرمول شما",
   "tables.formulaHint": "ستون‌ها با نامشان، + − * / و تابع‌هایی مانند round، min، max یا sqrt.",
   "tables.formulaWrong": "این فرمول محاسبه‌پذیر نیست: نام ستون‌ها و پرانتزها را بررسی کنید.",
-  "tables.save": "ذخیره"
+  "tables.save": "ذخیره",
+  "tables.arrange": "چیدمان",
+  "tables.groupBy": "گروه‌بندی بر اساس",
+  "tables.ungrouped": "بدون گروه",
+  "tables.unchip": "برداشتن {name}",
+  "tables.hidden": {
+    "one": "{count} ستون پنهان",
+    "other": "{count} ستون پنهان"
+  },
+  "tables.showAll": "نمایش همه ستون‌ها",
+  "tables.arranged": "چیدمان فعلی"
 }

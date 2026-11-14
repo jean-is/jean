@@ -64,16 +64,8 @@
   "tables.kind.changed-at": "Senest ændret",
   "tables.search": "Find en række",
   "tables.filter": "Filtrér",
-  "tables.filterOn": {
-    "one": "Filtrér: {count} regel slået til",
-    "other": "Filtrér: {count} regler slået til"
-  },
   "tables.sort": "Sortér",
   "tables.shown": "Viste kolonner",
-  "tables.settingsOn": {
-    "one": "Indstillinger: {count} skjult kolonne",
-    "other": "Indstillinger: {count} skjulte kolonner"
-  },
   "tables.column": "Kolonne",
   "tables.compare": "Betingelse",
   "tables.addFilter": "Tilføj et filter",
@@ -102,5 +94,15 @@
   "tables.yourFormula": "Din formel",
   "tables.formulaHint": "Kolonner ved deres navn, + − * / og funktioner som round, min, max eller sqrt.",
   "tables.formulaWrong": "Formlen kan ikke beregnes: tjek kolonnernes navne og parenteserne.",
-  "tables.save": "Gem"
+  "tables.save": "Gem",
+  "tables.arrange": "Arrangér",
+  "tables.groupBy": "Gruppér efter",
+  "tables.ungrouped": "Ingen grupper",
+  "tables.unchip": "Fjern {name}",
+  "tables.hidden": {
+    "one": "{count} skjult kolonne",
+    "other": "{count} skjulte kolonner"
+  },
+  "tables.showAll": "Vis alle kolonner",
+  "tables.arranged": "Arrangeret"
 }

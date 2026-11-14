@@ -645,7 +645,7 @@ test.describe('found and used by the brain', () => {
     await creations.getByRole('button', { name: 'Create', exact: true }).click()
     await expect(creations.locator('.creations-menu:popover-open button')).toHaveText(['Document', 'Collection'])
     await creations.locator('.creations-menu:popover-open').getByRole('button', { name: 'Collection' }).click()
-    const name = page.locator('app-preview .table-name')
+    const name = page.locator('app-preview .pane-name')
     await expect(name).toBeFocused()
     await page.waitForTimeout(500)
     expect(await names('tables')).toEqual([])

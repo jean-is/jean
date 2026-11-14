@@ -66,20 +66,8 @@
   "tables.kind.changed-at": "Naposledy změněno",
   "tables.search": "Najít řádek",
   "tables.filter": "Filtr",
-  "tables.filterOn": {
-    "one": "Filtr: {count} pravidlo zapnuto",
-    "few": "Filtr: {count} pravidla zapnuta",
-    "many": "Filtr: {count} pravidla zapnuto",
-    "other": "Filtr: {count} pravidel zapnuto"
-  },
   "tables.sort": "Seřadit",
   "tables.shown": "Zobrazené sloupce",
-  "tables.settingsOn": {
-    "one": "Nastavení: {count} skrytý sloupec",
-    "few": "Nastavení: {count} skryté sloupce",
-    "many": "Nastavení: {count} skrytého sloupce",
-    "other": "Nastavení: {count} skrytých sloupců"
-  },
   "tables.column": "Sloupec",
   "tables.compare": "Podmínka",
   "tables.addFilter": "Přidat filtr",
@@ -108,5 +96,17 @@
   "tables.yourFormula": "Váš vzorec",
   "tables.formulaHint": "Sloupce jejich názvy, + − * / a funkce jako round, min, max nebo sqrt.",
   "tables.formulaWrong": "Tento vzorec nelze spočítat: zkontrolujte názvy sloupců a závorky.",
-  "tables.save": "Uložit"
+  "tables.save": "Uložit",
+  "tables.arrange": "Uspořádat",
+  "tables.groupBy": "Seskupit podle",
+  "tables.ungrouped": "Bez seskupení",
+  "tables.unchip": "Odebrat: {name}",
+  "tables.hidden": {
+    "one": "{count} skrytý sloupec",
+    "few": "{count} skryté sloupce",
+    "many": "{count} skrytého sloupce",
+    "other": "{count} skrytých sloupců"
+  },
+  "tables.showAll": "Zobrazit všechny sloupce",
+  "tables.arranged": "Uspořádání"
 }

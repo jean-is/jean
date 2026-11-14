@@ -65,18 +65,8 @@
   "tables.kind.changed-at": "Posljednja promjena",
   "tables.search": "Pronađi redak",
   "tables.filter": "Filtriraj",
-  "tables.filterOn": {
-    "one": "Filtriraj: {count} pravilo uključeno",
-    "few": "Filtriraj: {count} pravila uključena",
-    "other": "Filtriraj: {count} pravila uključeno"
-  },
   "tables.sort": "Poredaj",
   "tables.shown": "Prikazani stupci",
-  "tables.settingsOn": {
-    "one": "Postavke: {count} skriveni stupac",
-    "few": "Postavke: {count} skrivena stupca",
-    "other": "Postavke: {count} skrivenih stupaca"
-  },
   "tables.column": "Stupac",
   "tables.compare": "Uvjet",
   "tables.addFilter": "Dodaj filtar",
@@ -105,5 +95,16 @@
   "tables.yourFormula": "Vaša formula",
   "tables.formulaHint": "Stupci po nazivima, + − * / i funkcije poput round, min, max ili sqrt.",
   "tables.formulaWrong": "Ova se formula ne može izračunati: provjerite nazive stupaca i zagrade.",
-  "tables.save": "Spremi"
+  "tables.save": "Spremi",
+  "tables.arrange": "Rasporedi",
+  "tables.groupBy": "Grupiraj po",
+  "tables.ungrouped": "Bez grupa",
+  "tables.unchip": "Ukloni: {name}",
+  "tables.hidden": {
+    "one": "{count} skriveni stupac",
+    "few": "{count} skrivena stupca",
+    "other": "{count} skrivenih stupaca"
+  },
+  "tables.showAll": "Prikaži sve stupce",
+  "tables.arranged": "Raspored"
 }

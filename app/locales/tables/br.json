@@ -67,22 +67,8 @@
   "tables.kind.changed-at": "Kemm diwezhañ",
   "tables.search": "Klask ul linenn",
   "tables.filter": "Silañ",
-  "tables.filterOn": {
-    "one": "Silañ : {count} reolenn gweredekaet",
-    "two": "Silañ : {count} reolenn gweredekaet",
-    "few": "Silañ : {count} reolenn gweredekaet",
-    "many": "Silañ : {count} a reolennoù gweredekaet",
-    "other": "Silañ : {count} reolenn gweredekaet"
-  },
   "tables.sort": "Rummañ",
   "tables.shown": "Bannoù diskouezet",
-  "tables.settingsOn": {
-    "one": "Arventennoù : {count} bann kuzhet",
-    "two": "Arventennoù : {count} vann kuzhet",
-    "few": "Arventennoù : {count} bann kuzhet",
-    "many": "Arventennoù : {count} a vannoù kuzhet",
-    "other": "Arventennoù : {count} bann kuzhet"
-  },
   "tables.column": "Bann",
   "tables.compare": "Amplegad",
   "tables.addFilter": "Ouzhpennañ ur sil",
@@ -111,5 +97,18 @@
   "tables.yourFormula": "Ho formulenn",
   "tables.formulaHint": "Ar bannoù dre o anv, + − * / hag arc’hwelioù evel round, min, max pe sqrt.",
   "tables.formulaWrong": "N’haller ket jediñ ar formulenn-mañ : gwiriit anvioù ar bannoù hag ar c’hrommelloù.",
-  "tables.save": "Enrollañ"
+  "tables.save": "Enrollañ",
+  "tables.arrange": "Aozañ",
+  "tables.groupBy": "Strollañ hervez",
+  "tables.ungrouped": "Strollad ebet",
+  "tables.unchip": "Lemel {name}",
+  "tables.hidden": {
+    "one": "{count} bann kuzhet",
+    "two": "{count} vann kuzhet",
+    "few": "{count} bann kuzhet",
+    "many": "{count} a vannoù kuzhet",
+    "other": "{count} bann kuzhet"
+  },
+  "tables.showAll": "Diskouez an holl vannoù",
+  "tables.arranged": "Aozet"
 }

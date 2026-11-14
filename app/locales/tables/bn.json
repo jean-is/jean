@@ -64,16 +64,8 @@
   "tables.kind.changed-at": "শেষ বদল",
   "tables.search": "সারি খুঁজুন",
   "tables.filter": "ফিল্টার",
-  "tables.filterOn": {
-    "one": "ফিল্টার: {count}টি নিয়ম চালু",
-    "other": "ফিল্টার: {count}টি নিয়ম চালু"
-  },
   "tables.sort": "সাজান",
   "tables.shown": "দেখানো কলাম",
-  "tables.settingsOn": {
-    "one": "সেটিংস: {count}টি কলাম লুকানো",
-    "other": "সেটিংস: {count}টি কলাম লুকানো"
-  },
   "tables.column": "কলাম",
   "tables.compare": "শর্ত",
   "tables.addFilter": "ফিল্টার যোগ করুন",
@@ -102,5 +94,15 @@
   "tables.yourFormula": "আপনার সূত্র",
   "tables.formulaHint": "কলামগুলো তাদের নামে, + − * / এবং round, min, max বা sqrt-এর মতো ফাংশন।",
   "tables.formulaWrong": "এই সূত্রটি হিসাব করা যাচ্ছে না: কলামের নাম আর বন্ধনীগুলো দেখে নিন।",
-  "tables.save": "সংরক্ষণ করুন"
+  "tables.save": "সংরক্ষণ করুন",
+  "tables.arrange": "বিন্যাস করুন",
+  "tables.groupBy": "যেভাবে দল করা",
+  "tables.ungrouped": "কোনো দল নয়",
+  "tables.unchip": "সরান: {name}",
+  "tables.hidden": {
+    "one": "{count}টি কলাম লুকানো",
+    "other": "{count}টি কলাম লুকানো"
+  },
+  "tables.showAll": "সব কলাম দেখান",
+  "tables.arranged": "বর্তমান বিন্যাস"
 }

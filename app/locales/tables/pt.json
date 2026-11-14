@@ -65,18 +65,8 @@
   "tables.kind.changed-at": "Última alteração",
   "tables.search": "Procurar uma linha",
   "tables.filter": "Filtrar",
-  "tables.filterOn": {
-    "one": "Filtro: {count} regra ativa",
-    "many": "Filtro: {count} de regras ativas",
-    "other": "Filtro: {count} regras ativas"
-  },
   "tables.sort": "Ordenar",
   "tables.shown": "Colunas visíveis",
-  "tables.settingsOn": {
-    "one": "Definições: {count} coluna oculta",
-    "many": "Definições: {count} de colunas ocultas",
-    "other": "Definições: {count} colunas ocultas"
-  },
   "tables.column": "Coluna",
   "tables.compare": "Condição",
   "tables.addFilter": "Adicionar um filtro",
@@ -105,5 +95,16 @@
   "tables.yourFormula": "A tua fórmula",
   "tables.formulaHint": "As colunas pelo nome, + − * / e funções como round, min, max ou sqrt.",
   "tables.formulaWrong": "Esta fórmula não pode ser calculada: verifica os nomes das colunas e os parênteses.",
-  "tables.save": "Guardar"
+  "tables.save": "Guardar",
+  "tables.arrange": "Organizar",
+  "tables.groupBy": "Agrupar por",
+  "tables.ungrouped": "Sem grupos",
+  "tables.unchip": "Remover {name}",
+  "tables.hidden": {
+    "one": "{count} coluna oculta",
+    "many": "{count} de colunas ocultas",
+    "other": "{count} colunas ocultas"
+  },
+  "tables.showAll": "Mostrar todas as colunas",
+  "tables.arranged": "Organização"
 }

@@ -1,19 +1,21 @@
 /* SPDX-License-Identifier: MIT */
 /* A table beside the conversation (D491): its bar and its tools' panels, the table with a field in each cell, a line under its heads and each row and between its cells, its foot, the board's lanes and cards, and Jean's changes marked. */
 .table-view { display: flex; flex-direction: column; gap: 0.75rem; min-inline-size: 0; container-type: inline-size; }
-/* One line, whatever Search's width: the name gives way, so that nothing moves under the pointer as Search opens or closes. */
+/* One line, whatever Find's width: Show as at its start (after the name, in a document), Find and Arrange at its end, so that nothing moves under the pointer as Find opens or closes. */
 .table-bar { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
-.table-lines { display: contents; } .table-tools { display: flex; flex: none; align-items: center; gap: 0.1rem; margin-inline-start: auto; }
-/* A tool whose rules are on: how many, beside its glyph. */
-.table-tools > [aria-pressed='true'] { grid-auto-flow: column; gap: 0.15rem; inline-size: auto; min-inline-size: 2.5rem; padding-inline: 0.5rem 0.6rem; border-radius: 999px; color: var(--ink); } .table-on { font-size: 0.8rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.table-lines { display: contents; } .table-tools { display: flex; flex: none; align-items: center; gap: 0.1rem; margin-inline-start: auto; } .table-shows { display: flex; flex: none; gap: 0.1rem; } .table-shows > [aria-pressed='true'] { background: var(--line); color: var(--ink); }
+/* What is arranged, a chip each: its words open Arrange on it, its × takes it away. */
+.table-chips { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0; padding: 0; list-style: none; } .table-chip { display: flex; align-items: center; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--line-strong); font-size: 0.85rem; }
+.table-chip > button:first-child { display: flex; align-items: center; gap: 0.35rem; min-block-size: 2rem; padding-block: 0; padding-inline: 0.6rem 0.2rem; border: 0; background: none; color: inherit; font: inherit; } .table-chip .icon { --glyph: var(--icon-s); } .table-chip .icon-button { inline-size: 2rem; block-size: 2rem; }
 .table-tools .creations-find:is(:focus-within, :has(input:not(:placeholder-shown))) { inline-size: min(16rem, 45cqi); }
+.table-panel > h3 > label { font: inherit; } .table-panel .table-line > select { flex: 1; min-inline-size: 0; padding-block: 0.35rem; }
 .table-panel { inline-size: min(28rem, 92vw); } .table-tools > .table-panel { position-area: block-end span-inline-start; } .table-panel h3 { margin: 0.6rem 0.75rem 0.2rem; color: var(--ink-soft); font-size: 0.8rem; font-weight: 600; }
 .table-panel :is(.table-rule, .table-line) { display: flex; align-items: center; gap: 0.4rem; padding-inline: 0.75rem 0.25rem; } .table-line { min-block-size: 2.4rem; } .table-line > span { flex: 1; }
 .table-rule { flex-wrap: wrap; padding-block: 0.15rem; } .table-rule > :is(select, input) { flex: 1 1 7rem; min-inline-size: 0; padding-block: 0.35rem; } .table-rule > select + select { flex: 1.4 1 8.5rem; } .table-rule > input { flex-basis: 6rem; } .table-panel .icon-button { flex: none; inline-size: 2.1rem; block-size: 2.1rem; padding: 0; justify-content: center; border-radius: 50%; }
 .table-scroll { overflow: auto; max-block-size: 70vh; }
 /* The heads stay on top as the rows scroll under them: beside the conversation, the table is no taller than the pane, and goes from edge
    to edge of it, the bar and the board's lanes kept from its edges, as its foot is from its bottom. */
-.view > .table-view, .view > app-table > .table-view { min-block-size: 0; padding-block-end: var(--pane-inset); } :is(.view, .view > app-table) > .table-view > .table-scroll { max-block-size: none; } .view > app-table { display: contents; } :is(.view, .view > app-table) > .table-view > :is(.table-bar, .table-board) { padding-inline: var(--pane-inset); } :is(.view, .view > app-table) > .table-view > .table-bar { padding-block-start: var(--pane-inset); }
+.view > .table-view, .view > app-table > .table-view { min-block-size: 0; padding-block-end: var(--pane-inset); } :is(.view, .view > app-table) > .table-view > .table-scroll { max-block-size: none; } .view > app-table { display: contents; } :is(.view, .view > app-table) > .table-view > :is(.table-bar, .table-chips, .table-board) { padding-inline: var(--pane-inset); } :is(.view, .view > app-table) > .table-view > .table-bar { padding-block-start: var(--pane-inset); }
 /* In a short window the pane scrolls, and the table keeps a height to read it in. */
 @media (max-height: 30rem) { :is(.view, .view > app-table) > .table-view > .table-scroll { min-block-size: 10rem; } }
 /* In a document, as far down as the document's view starts below the table's top (tables.js). */

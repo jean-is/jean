@@ -63,14 +63,8 @@
   "tables.kind.changed-at": "最終更新日時",
   "tables.search": "行を検索",
   "tables.filter": "フィルター",
-  "tables.filterOn": {
-    "other": "フィルター：{count} 件の条件を適用中"
-  },
   "tables.sort": "並べ替え",
   "tables.shown": "表示する列",
-  "tables.settingsOn": {
-    "other": "設定：{count} 列を非表示"
-  },
   "tables.column": "列",
   "tables.compare": "条件",
   "tables.addFilter": "フィルターを追加",
@@ -99,5 +93,14 @@
   "tables.yourFormula": "数式を入力",
   "tables.formulaHint": "列は名前のまま、+ − * / と round・min・max・sqrt などの関数が使えます。",
   "tables.formulaWrong": "この数式は計算できません。列の名前とかっこを確かめてください。",
-  "tables.save": "保存"
+  "tables.save": "保存",
+  "tables.arrange": "整理",
+  "tables.groupBy": "グループ化",
+  "tables.ungrouped": "なし",
+  "tables.unchip": "外す：{name}",
+  "tables.hidden": {
+    "other": "{count} 列を非表示"
+  },
+  "tables.showAll": "すべての列を表示",
+  "tables.arranged": "整理の条件"
 }

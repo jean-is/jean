@@ -64,16 +64,8 @@
   "tables.kind.changed-at": "Senast ändrad",
   "tables.search": "Hitta en rad",
   "tables.filter": "Filtrera",
-  "tables.filterOn": {
-    "one": "Filtrera: {count} regel på",
-    "other": "Filtrera: {count} regler på"
-  },
   "tables.sort": "Sortera",
   "tables.shown": "Visade kolumner",
-  "tables.settingsOn": {
-    "one": "Inställningar: {count} dold kolumn",
-    "other": "Inställningar: {count} dolda kolumner"
-  },
   "tables.column": "Kolumn",
   "tables.compare": "Villkor",
   "tables.addFilter": "Lägg till ett filter",
@@ -102,5 +94,15 @@
   "tables.yourFormula": "Din formel",
   "tables.formulaHint": "Kolumner med sina namn, + − * / och funktioner som round, min, max eller sqrt.",
   "tables.formulaWrong": "Formeln kan inte räknas ut: kontrollera kolumnernas namn och parenteserna.",
-  "tables.save": "Spara"
+  "tables.save": "Spara",
+  "tables.arrange": "Ordna",
+  "tables.groupBy": "Gruppera efter",
+  "tables.ungrouped": "Inga grupper",
+  "tables.unchip": "Ta bort {name}",
+  "tables.hidden": {
+    "one": "{count} dold kolumn",
+    "other": "{count} dolda kolumner"
+  },
+  "tables.showAll": "Visa alla kolumner",
+  "tables.arranged": "Ordning"
 }

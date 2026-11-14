@@ -63,14 +63,8 @@
   "tables.kind.changed-at": "수정한 날짜",
   "tables.search": "행 찾기",
   "tables.filter": "필터",
-  "tables.filterOn": {
-    "other": "필터: 규칙 {count}개 적용 중"
-  },
   "tables.sort": "정렬",
   "tables.shown": "표시할 열",
-  "tables.settingsOn": {
-    "other": "설정: 열 {count}개 숨김"
-  },
   "tables.column": "열",
   "tables.compare": "조건",
   "tables.addFilter": "필터 추가",
@@ -99,5 +93,14 @@
   "tables.yourFormula": "수식 입력",
   "tables.formulaHint": "열은 이름으로, + − * / 와 round, min, max, sqrt 같은 함수를 쓸 수 있어요.",
   "tables.formulaWrong": "이 수식은 계산할 수 없어요. 열 이름과 괄호를 확인하세요.",
-  "tables.save": "저장"
+  "tables.save": "저장",
+  "tables.arrange": "정리",
+  "tables.groupBy": "그룹",
+  "tables.ungrouped": "없음",
+  "tables.unchip": "제거: {name}",
+  "tables.hidden": {
+    "other": "열 {count}개 숨김"
+  },
+  "tables.showAll": "모든 열 표시",
+  "tables.arranged": "정리 조건"
 }

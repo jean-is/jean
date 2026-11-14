@@ -65,18 +65,8 @@
   "tables.kind.changed-at": "Ultima mudificazione",
   "tables.search": "Circà una linea",
   "tables.filter": "Filtrà",
-  "tables.filterOn": {
-    "one": "Filtrà : {count} regula attiva",
-    "many": "Filtrà : {count} di regule attive",
-    "other": "Filtrà : {count} regule attive"
-  },
   "tables.sort": "Ordinà",
   "tables.shown": "Culonne mustrate",
-  "tables.settingsOn": {
-    "one": "Parametri : {count} culonna piattata",
-    "many": "Parametri : {count} di culonne piattate",
-    "other": "Parametri : {count} culonne piattate"
-  },
   "tables.column": "Culonna",
   "tables.compare": "Cundizione",
   "tables.addFilter": "Aghjunghje un filtru",
@@ -105,5 +95,16 @@
   "tables.yourFormula": "A vostra formula",
   "tables.formulaHint": "E culonne per u so nome, + − * / è funzioni cum’è round, min, max o sqrt.",
   "tables.formulaWrong": "Sta formula ùn si pò calculà : verificate i nomi di e culonne è e parentesi.",
-  "tables.save": "Arregistrà"
+  "tables.save": "Arregistrà",
+  "tables.arrange": "Urganizà",
+  "tables.groupBy": "Raggruppà per",
+  "tables.ungrouped": "Nisunu gruppu",
+  "tables.unchip": "Caccià {name}",
+  "tables.hidden": {
+    "one": "{count} culonna piattata",
+    "many": "{count} di culonne piattate",
+    "other": "{count} culonne piattate"
+  },
+  "tables.showAll": "Mustrà tutte e culonne",
+  "tables.arranged": "Urganizatu"
 }

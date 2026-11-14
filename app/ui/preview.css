@@ -13,3 +13,6 @@ app-preview[data-look] .pane-head h2 { color: var(--ink-soft); } app-preview[dat
 .out-menu { position-anchor: auto; position-area: block-end span-inline-start; position-try-fallbacks: flip-block, flip-inline; margin: 0.25rem 0; max-inline-size: min(22rem, 92vw); max-block-size: calc(100dvh - 5rem); overflow-y: auto; }
 .out-menu button { white-space: normal; } .out-menu button > :first-child { flex: none; }
 .menu-heading { margin: 0.35rem 0.75rem 0.15rem; color: var(--ink-soft); font-size: 0.8rem; }
+/* A creation's name, changed in its head (a collection's, a whiteboard's): no box until it is pointed at or changed. */
+.pane-head h2 > input.pane-name:not([type]) { field-sizing: content; inline-size: auto; min-inline-size: 4rem; max-inline-size: 100%; padding: 0.1rem 0.35rem; border: 1px solid transparent; border-radius: 0.4rem; background: none; color: inherit; font: inherit; text-overflow: ellipsis; } .pane-head h2 > input.pane-name:is(:hover, :focus) { border-color: var(--line-strong); }
+@media (prefers-contrast: more) { .pane-head h2 > input.pane-name:not([type]) { border-block-end-color: var(--ink-faint); } }

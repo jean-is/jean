@@ -64,16 +64,8 @@
   "tables.kind.changed-at": "Huling binago",
   "tables.search": "Maghanap ng row",
   "tables.filter": "I-filter",
-  "tables.filterOn": {
-    "one": "I-filter: {count} panuntunang naka-on",
-    "other": "I-filter: {count} panuntunang naka-on"
-  },
   "tables.sort": "Ayusin",
   "tables.shown": "Mga column na ipinapakita",
-  "tables.settingsOn": {
-    "one": "Mga setting: {count} column na nakatago",
-    "other": "Mga setting: {count} column na nakatago"
-  },
   "tables.column": "Column",
   "tables.compare": "Kondisyon",
   "tables.addFilter": "Magdagdag ng filter",
@@ -102,5 +94,15 @@
   "tables.yourFormula": "Ang formula mo",
   "tables.formulaHint": "Mga column ayon sa pangalan, + − * / at mga function gaya ng round, min, max o sqrt.",
   "tables.formulaWrong": "Hindi makuwenta ang formula na ito: tingnan ang mga pangalan ng column at ang mga panaklong.",
-  "tables.save": "I-save"
+  "tables.save": "I-save",
+  "tables.arrange": "Isaayos",
+  "tables.groupBy": "Igrupo ayon sa",
+  "tables.ungrouped": "Walang grupo",
+  "tables.unchip": "Alisin ang {name}",
+  "tables.hidden": {
+    "one": "{count} column na nakatago",
+    "other": "{count} column na nakatago"
+  },
+  "tables.showAll": "Ipakita ang lahat ng column",
+  "tables.arranged": "Pagkakaayos"
 }

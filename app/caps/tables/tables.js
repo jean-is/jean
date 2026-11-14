@@ -11,8 +11,10 @@
 // does the Creations page, which opens it beside the task. A relation's cells are rows of a collection of the project, this
 // one or another, by its place: load() reads those collections and their rows' names, which the view, the brain and the workbook show.
 import { html } from 'lit-html'
+import { live } from 'lit-html/directives/live.js'
 import { signal } from '@preact/signals-core'
 import { register, unlock, isDenied } from '../../ui/caps.js'
+import { keep } from '../../ui/windows.js'
 import { onPaper } from '../../ui/kit.js'
 import { kitSlot } from '../slides/kit-slot.js'
 import '../made/paper.js'
@@ -51,6 +53,17 @@ const ROWS = 200
 export const shown = signal(/** @type {Loaded | null} */ (null))
 /** The tables drawn now: those beside the conversation and those documents hold, each read again as it changes; those beside it, which the brain hears of (D635). */
 const showing = new Set([shown]), besides = new Set([shown])
+/**
+ * How each collection beside the task shows, by its id, which the address keeps as `show=<id>:<as>:<words>,…` (D752): `as`, '' as it opens (a
+ * table; a whiteboard, a board), and Find's words, set back as its pane closes. @type {Map<string, { as: import('@preact/signals-core').Signal<string>, find: import('@preact/signals-core').Signal<string> }>}
+ */
+const ways = new Map(), shows = signal(0)
+/** @param {string} folder a collection's place */
+export const wayOf = (folder) => { const id = folder.slice(12, 38); if (!ways.has(id)) ways.set(id, { as: signal(''), find: signal('') }), shows.value++; return /** @type {{ as: import('@preact/signals-core').Signal<string>, find: import('@preact/signals-core').Signal<string> }} */ (ways.get(id)) }
+keep('show', {
+  get: () => (shows.value, [...ways].flatMap(([id, { as, find }]) => (as.value || find.value ? [`${id}:${as.value}${find.value ? `:${encodeURIComponent(find.value)}` : ''}`] : [])).join(',') || null),
+  set: (state) => { const named = new Map((state ?? '').split(',').map((item) => [item.slice(0, 26), item.slice(27).split(':')])); for (const id of named.keys()) if (id) wayOf(`collections/${id}`); for (const [id, way] of ways) [way.as.value, way.find.value] = [named.get(id)?.[0] ?? '', decodeURIComponent(named.get(id)?.[1] ?? '')] },
+})
 /** The tables blank() made that a document hasn't drawn yet, whose first field then takes the keyboard. */
 const fresh = new Set()
 
@@ -300,7 +313,7 @@ async function fromPage() {
   const table = untitled(), lines = stamp([], [{ row: ulid(), set: {} }], { by: 'user' }), one = { dir: app.projectDir, folder: folderOf(table), table, lines, rows: fold(lines) }
   drafts.set(one.folder, one)
   await open(one)
-  requestAnimationFrame(() => /** @type {HTMLInputElement | null} */ (document.querySelector('app-preview .table-name'))?.select())
+  requestAnimationFrame(() => /** @type {HTMLInputElement | null} */ (document.querySelector('app-preview .pane-name'))?.select())
 }
 
 /** Jean's changes the user hasn't accepted or rejected, the latest last (./changes.js), worked out once for each copy read, not at each draw. @type {WeakMap<Line[], { kept?: string, marked: Change[] }>} */
@@ -377,6 +390,13 @@ export async function editor(file, holds) {
   holds.push(() => { if (shown.peek()?.folder === one.folder) shown.value = null })
   return html`<app-table folder=${file.uri} beside></app-table>`
 }
+
+/**
+ * A collection's name in its pane's head (ui/preview.js), changed there; a whiteboard's too, with its own tip. @param {{ uri: string, title: string }} file
+ * @param {(name: string) => void} renamed @param {string} [tip]
+ */
+export const nameField = (file, renamed, tip = t('tables.tableName')) => html`<input class="pane-name" dir="auto" title=${tip} .value=${live(file.title)}
+  @change=${(/** @type {Event} */ e) => { const name = /** @type {HTMLInputElement} */ (e.target).value.trim(); if (name) renamed(name), amend({ path: file.uri }, { name }) }}>`
 
 /** A table, beside the conversation, once it is on show. @param {Loaded} one */
 async function open(one) {
@@ -504,7 +524,7 @@ customElements.define('app-table', class extends HTMLElement {
     if (!one) return void (this.textContent = folder)
     const where = signal(/** @type {Loaded | null} */ (one)), sets = beside ? [showing, besides] : [showing]
     for (const set of sets) set.add(where), holds.push(() => set.delete(where))
-    this.replaceChildren(view(holds, where))
+    this.replaceChildren(view(holds, where, beside))
     // Its heads stay at the top of what the document shows while its rows pass under it: they stick in the table's own box,
     // which scrolls sideways, and are lifted down as far as the view the document scrolls in starts below the box's top, never past its last row.
     const lift = (/** @type {Event} */ event) => {
@@ -535,7 +555,7 @@ register({
     return all.length ? { tables: ['A relation column of table_create names one of these in collection, its place or name; each of its cells is then a row of it, set by its name.',
       ...all.slice(0, LISTED), ...(all.length > LISTED ? [`- and ${all.length - LISTED} older ones`] : [])].join('\n') } : {}
   },
-  slots: { modes: { at: 10, draw: () => null, notes }, look: kitSlot, out: { at: 2, draw: () => null, of: (/** @type {{ uri: string }} */ { uri }) => /^collections\//.test(uri), load: async () => ({ ways: (await import('../made/ways.js')).collectionWays }) }, creations: { id: 'tables', at: 2, draw: () => icons.table, kept, mention: 'table', preview: (/** @type {{ grid: string[][] }} */ item) => grid(item.grid), make: fromPage,
+  slots: { modes: { at: 10, draw: () => null, notes }, head: { at: 2, draw: () => null, named: (/** @type {{ uri: string, title: string }} */ file, /** @type {(name: string) => void} */ renamed) => /^collections\//.test(file.uri) && nameField(file, renamed) }, look: kitSlot, out: { at: 2, draw: () => null, of: (/** @type {{ uri: string }} */ { uri }) => /^collections\//.test(uri), load: async () => ({ ways: (await import('../made/ways.js')).collectionWays }) }, creations: { id: 'tables', at: 2, draw: () => icons.table, kept, mention: 'table', preview: (/** @type {{ grid: string[][] }} */ item) => grid(item.grid), make: fromPage,
     // Dragged into a document, its view there.
     held: (/** @type {{ path: string }} */ { path }) => `\`\`\`table\n${path}\n\`\`\``,
     pin: (/** @type {{ path: string }} */ item, /** @type {boolean} */ pinned) => amend(item, { pinned }), rename: (/** @type {{ path: string }} */ item, /** @type {string} */ name) => amend(item, { name }), copy,

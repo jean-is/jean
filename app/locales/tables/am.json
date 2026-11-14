@@ -64,16 +64,8 @@
   "tables.kind.changed-at": "መጨረሻ የተቀየረበት",
   "tables.search": "ረድፍ ፈልግ",
   "tables.filter": "አጣራ",
-  "tables.filterOn": {
-    "one": "አጣራ፦ {count} ደንብ በሥራ ላይ",
-    "other": "አጣራ፦ {count} ደንቦች በሥራ ላይ"
-  },
   "tables.sort": "ደርድር",
   "tables.shown": "የሚታዩ ዓምዶች",
-  "tables.settingsOn": {
-    "one": "ቅንብሮች፦ {count} ዓምድ ተደብቋል",
-    "other": "ቅንብሮች፦ {count} ዓምዶች ተደብቀዋል"
-  },
   "tables.column": "ዓምድ",
   "tables.compare": "ሁኔታ",
   "tables.addFilter": "ማጣሪያ ያክሉ",
@@ -102,5 +94,15 @@
   "tables.yourFormula": "የእርስዎ ቀመር",
   "tables.formulaHint": "ዓምዶች በስማቸው፣ + − * / እና እንደ round፣ min፣ max ወይም sqrt ያሉ ተግባራት።",
   "tables.formulaWrong": "ይህ ቀመር ሊሰላ አይችልም፦ የዓምዶቹን ስሞችና ቅንፎቹን ያረጋግጡ።",
-  "tables.save": "አስቀምጥ"
+  "tables.save": "አስቀምጥ",
+  "tables.arrange": "አደራጅ",
+  "tables.groupBy": "በዚህ መድብ",
+  "tables.ungrouped": "ቡድን የለም",
+  "tables.unchip": "ያስወግዱ፦ {name}",
+  "tables.hidden": {
+    "one": "{count} ዓምድ ተደብቋል",
+    "other": "{count} ዓምዶች ተደብቀዋል"
+  },
+  "tables.showAll": "ሁሉንም ዓምዶች አሳይ",
+  "tables.arranged": "የተደራጀው"
 }

@@ -21,7 +21,7 @@ import { t, locale, intlLocales } from '../../core/i18n.js'
 import { notify, assistantName } from '../../ui/state.js'
 import { reviewBar } from '../../ui/review.js'
 import { icons, icon } from '../../ui/menu-icons.js'
-import { shown, change, unkept, accept, reject, reread, reshapeTable, retype, collections, undoStep, load } from './tables.js'
+import { shown, change, unkept, accept, reject, reread, reshapeTable, retype, collections, undoStep, load, wayOf } from './tables.js'
 import { query, valueOf, total, filterOf } from './query.js'
 import { titleOf, checkCell, notesOf } from './table.js'
 import { compile } from './formula.js'
@@ -33,11 +33,11 @@ import { searchable } from '../../ui/mentions.js'
 /** @import { Loaded } from './tables.js' */
 /** @import { Signal } from '@preact/signals-core' */
 /**
- * What a view keeps while it is drawn: its box, whether it shows the board, the column whose name is being changed, the one whose
+ * What a view keeps while it is drawn: its box, whether it is beside the task, how it shows ('' as a table, or 'board'), the column whose name is being changed, the one whose
  * menu lists the kinds, whether it lists the collections a relation can be to then, the project's collections, read again by `list()`,
  * what its menus' ids start with, the words Search keeps the rows with, the Formula whose dialog is open, saying when its formula can't be read,
  * and what was typed in cells their columns refuse, by "row column".
- * @typedef {{ box: HTMLElement, board: Signal<boolean>, naming: Signal<string>, kinds: Signal<string>, relating: Signal<boolean>, collections: Signal<{ folder: string, name: string }[]>, list: () => void, id: string, reviewed?: boolean, search: Signal<string>, formula: Signal<string>, wrong: Signal<boolean>, refused: Signal<Map<string, string>>, from?: Element | null }} State
+ * @typedef {{ box: HTMLElement, beside: boolean, as: Signal<string>, naming: Signal<string>, kinds: Signal<string>, relating: Signal<boolean>, collections: Signal<{ folder: string, name: string }[]>, list: () => void, id: string, reviewed?: boolean, search: Signal<string>, formula: Signal<string>, wrong: Signal<boolean>, refused: Signal<Map<string, string>>, from?: Element | null }} State
  */
 
 /** The kinds of column the user adds or makes one, in the order they are offered, then those Jean works out; never files, which no cell takes yet. */
@@ -64,8 +64,8 @@ const GLYPHS = /** @type {Record<string, unknown>} */ ({
   relation: icon(svg`<rect x="3.5" y="4" width="8" height="6" rx="2"/><rect x="12.5" y="14" width="8" height="6" rx="2"/><path d="M7.5 10v4.5a2.5 2.5 0 0 0 2.5 2.5h2.5"/>`, 'flip-rtl'),
   'created-by': who, 'changed-by': who, 'created-at': when, 'changed-at': when, formula: icon(svg`<path d="M13.5 4.5h-1a2.5 2.5 0 0 0-2.5 2.5v12.5M7 10h6M15 12.5l5 6M20 12.5l-5 6"/>`),
 })
-/** Filter's funnel, Sort's arrows and Settings' sliders; a head's Hide, an eye struck through. */
-const [funnel, arrows, sliders] = [icon(svg`<path d="M4.5 5.5h15l-6 7.5v5l-3 1.5V13Z"/>`), icon(svg`<path d="M8 19.5v-15M4.5 8 8 4.5 11.5 8M16 4.5v15M12.5 16l3.5 3.5 3.5-3.5"/>`),
+/** A filter's funnel and Arrange's sliders; a head's Hide, an eye struck through. */
+const [funnel, sliders] = [icon(svg`<path d="M4.5 5.5h15l-6 7.5v5l-3 1.5V13Z"/>`),
   icon(svg`<path d="M4.5 7h7M15.5 7h4M4.5 17h4M12.5 17h7"/><circle cx="13.5" cy="7" r="2"/><circle cx="10.5" cy="17" r="2"/>`, 'flip-rtl')], shut = icon(svg`<path d="M3.5 12S6.5 6.5 12 6.5 20.5 12 20.5 12 17.5 17.5 12 17.5 3.5 12 3.5 12Z"/><circle cx="12" cy="12" r="2.5"/><path d="m5 5 14 14"/>`)
 /** The kinds a rule compares as dates: before, after. */
 const DATED = /^(date|created-at|changed-at)$/
@@ -90,12 +90,15 @@ const before = new WeakMap()
 
 /**
  * The view's box, drawn from `source` while it holds a table: a pane's on show, or one a document holds.
- * @param {(() => void)[]} holds @param {Signal<Loaded | null>} [source]
+ * @param {(() => void)[]} holds @param {Signal<Loaded | null>} [source] @param {boolean} [beside] in a pane beside the task
  */
-export function view(holds, source = shown) {
+export function view(holds, source = shown, beside = false) {
   const box = Object.assign(document.createElement('div'), { className: 'table-view' })
+  const way = beside ? wayOf(source.peek()?.folder ?? '') : { as: signal(''), find: signal('') }
   /** @type {State} */
-  const state = { box, board: signal(false), naming: signal(''), kinds: signal(''), relating: signal(false), collections: signal(/** @type {{ folder: string, name: string }[]} */ ([])), list: () => {}, id: `table-${++drawn}`, search: signal(''), formula: signal(''), wrong: signal(false), refused: signal(new Map()) }
+  const state = { box, beside, as: way.as, naming: signal(''), kinds: signal(''), relating: signal(false), collections: signal(/** @type {{ folder: string, name: string }[]} */ ([])), list: () => {}, id: `table-${++drawn}`, search: way.find, formula: signal(''), wrong: signal(false), refused: signal(new Map()) }
+  // Beside the task, how it shows is in the address until its pane closes.
+  if (beside) holds.push(() => { way.as.value = way.find.value = '' })
   state.list = () => { const dir = source.peek()?.dir; if (dir) collections(dir).then((all) => { state.collections.value = all }) }
   state.list()
   let reached = -1
@@ -160,17 +163,28 @@ const opsOf = ({ type }) => (type === 'checkbox' ? ['is'] : [...(type === 'numbe
 /** A new rule on a column, its first way to compare, a box ticked. @param {Property} property @returns {Rule} */
 const ruleOn = (property) => ({ property: property.id, op: opsOf(property)[0], ...(property.type === 'checkbox' && { value: true }) })
 
-/** @param {Loaded | null} one @param {State} state @param {(step: 1 | -1) => void} go */
+/** The kinds rows are grouped by, in Arrange and on the board: a choice, a status, a person or a box. */
+const GROUPED = /^(select|status|person|checkbox)$/
+
+/**
+ * The view: its bar, Show as (on the board where it has lanes), Find, and Arrange, one panel to group, filter, show columns and sort; a line of
+ * chips under it while something is arranged, each opening Arrange on it, its × taking it away; then the rows. Beside the task, the name is the
+ * pane's head's and Show as and Find's words are in the address; in a document, the name heads the bar; a whiteboard shown as a table has Find and Arrange alone.
+ * @param {Loaded | null} one @param {State} state @param {(step: 1 | -1) => void} go
+ */
 function draw(one, state, go) {
   if (!one) return nothing
   // A whiteboard shown as a table: its notes (D747).
-  if (one.table.kind) one = { ...one, rows: notesOf(one.rows) }
-  const { board, search } = state
+  const whiteboard = Boolean(one.table.kind)
+  if (whiteboard) one = { ...one, rows: notesOf(one.rows) }
+  const { as, search, id } = state
   const columns = one.table.properties.filter((property) => !property.deleted)
-  const lanes = one.table.views.find((view) => view.type === 'board' && columns.some((property) => property.id === view.group))
-  // What the table view filters, hides and works out: a rule on a column gone is dropped, one with nothing to compare with keeps every row.
+  // What the table view groups, filters, hides and works out: a rule on a column gone is dropped, one with nothing to compare with keeps every row.
   const settings = one.table.views.find((view) => view.type === 'table'), hidden = settings?.hidden ?? [], calculate = settings?.calculate ?? {}
   const rules = (settings?.filter?.and ?? []).filter((rule) => columns.some((property) => property.id === rule.property))
+  // The board's lanes by the group Arrange names, else by the board's own, a status or a choice.
+  const by = columns.find((property) => property.id === settings?.group && GROUPED.test(property.type)), groups = columns.filter((property) => GROUPED.test(property.type))
+  const lanes = by || columns.find((property) => property.id === one.table.views.find((view) => view.type === 'board')?.group)
   const kept = filterOf(one.table), words = searchable(search.value.trim()), texts = words && indexOf(one, columns)
   const rows = query(one.table, one.rows, { ...(kept.length && { filter: { and: kept } }), locale: locale.value, names: one.names }).rows.filter((row) => !texts || texts.get(row.id)?.includes(words))
   // Each change made from the table view as it is by then, so that one made before the last is drawn isn't lost.
@@ -179,45 +193,54 @@ function draw(one, state, go) {
   const filter = (change) => view((now) => ({ filter: { and: change((now.filter?.and ?? []).filter((rule) => columns.some((property) => property.id === rule.property))) } }))
   const ruled = html`${rules.length ? listed(rules.map((rule, i) => {
     const property = /** @type {Property} */ (columns.find((one) => one.id === rule.property)), set = (/** @type {Partial<Rule>} */ edit) => filter((all) => all.map((one, j) => (i === j ? { ...one, ...edit } : one)))
-    return html`<div class="table-rule" role="group" aria-label=${t('tables.filter')}><select title=${t('tables.column')} .value=${live(rule.property)} @change=${(/** @type {Event} */ e) => set(ruleOn(/** @type {Property} */ (columns.find((one) => one.id === typed(e)))))}>${columns.map((one) => html`<option value=${one.id} ?selected=${one === property}>${one.name}</option>`)}</select>
+    return html`<div class="table-rule" role="group" aria-label=${t('tables.filter')}><select id=${`${id}-rule-${i}`} title=${t('tables.column')} .value=${live(rule.property)} @change=${(/** @type {Event} */ e) => set(ruleOn(/** @type {Property} */ (columns.find((one) => one.id === typed(e)))))}>${columns.map((one) => html`<option value=${one.id} ?selected=${one === property}>${one.name}</option>`)}</select>
       ${keyed(property.id, html`<select title=${t('tables.compare')} .value=${live(rule.op)} @change=${(/** @type {Event} */ e) => set({ op: /** @type {Rule['op']} */ (typed(e)) })}>${opsOf(property).map((op) => html`<option value=${op} ?selected=${op === rule.op}>${t(`tables.op.${DATED.test(property.type) && op.endsWith('-than') ? (op === 'less-than' ? 'before' : 'after') : op}`)}</option>`)}</select>
       ${rule.op.endsWith('empty') ? nothing : against(property, rule.value, (value) => set({ value }))}`)}
       <button type="button" class="icon-button" aria-label=${t('action.remove')} @click=${() => filter((all) => all.filter((_, j) => j !== i))}>${icons.trash}</button></div>`
   })) : nothing}<button type="button" @click=${() => filter((all) => [...all, ruleOn(columns[0])])}>${icons.plus}${t('tables.addFilter')}</button>`
   const sorting = listed(columns.map((property) => html`<div class="table-line" role="group" aria-label=${property.name}>${GLYPHS[property.type]}<span dir="auto">${property.name}</span>
     <button type="button" class="icon-button" aria-label=${t('tables.ascending')} @click=${() => sort(one, property, 'ascending')}>${ascending}</button><button type="button" class="icon-button" aria-label=${t('tables.descending')} @click=${() => sort(one, property, 'descending')}>${descending}</button></div>`))
-  /**
-   * A tool of the bar, opening its menu; one that sets rules is pressed while some are on, how many said in its name and beside its glyph.
-   * @param {string} name @param {string} label @param {unknown} glyph @param {unknown} content @param {string} [said] its name while `on` are @param {number} [on]
-   */
-  const tool = (name, label, glyph, content, said = '', on = 0) => html`<button type="button" class="icon-button" aria-label=${on ? said : label} aria-pressed=${said ? String(on > 0) : nothing}
-    popovertarget=${`${state.id}-${name}`}>${glyph}${on ? html`<span class="table-on">${format('NumberFormat', intlLocales()).format(on)}</span>` : nothing}</button>
-    <div id=${`${state.id}-${name}`} class="menu table-menu table-panel" popover @focusout=${leaving}>${content}</div>`
-  const off = columns.filter((property) => hidden.includes(property.id)).length
+  const off = columns.filter((property) => hidden.includes(property.id))
+  /** Arrange pressed, never a chip, which would place its panel (WebKit freezes on an opener gone as it closes), then the keyboard on `field`. @param {string} field its id */
+  const arrange = (field) => {
+    const panel = /** @type {HTMLElement} */ (state.box.querySelector(`#${id}-arrange`))
+    if (!panel.matches(':popover-open')) /** @type {HTMLElement} */ (state.box.querySelector(`[popovertarget="${id}-arrange"]`)).click()
+    requestAnimationFrame(() => /** @type {HTMLElement | null} */ (panel.querySelector(`#${CSS.escape(field)}`))?.focus())
+  }
+  /** What is arranged, as a chip: a press opens Arrange on it, its × takes it away. @param {unknown} glyph @param {unknown} words @param {string} field @param {string} label @param {() => unknown} away */
+  const chip = (glyph, words, field, label, away) => html`<li class="table-chip"><button type="button" @click=${() => arrange(field)}>${glyph}${words}</button><button type="button" class="icon-button" aria-label=${label} @click=${away}>${icons.close}</button></li>`
+  const chips = [...(by ? [chip(GLYPHS[by.type], html`<span dir="auto">${by.name}</span>`, `${id}-group`, t('tables.unchip', { name: by.name }), () => view(() => ({ group: undefined })))] : []),
+    ...kept.map((rule) => ((property, i) => chip(funnel, html`<span dir="auto">${property.name}</span>${rule.op === 'is' ? html`<span class="muted" dir="auto">${told(/** @type {Row} */ ({ cells: { [property.id]: rule.value } }), property, { locales: intlLocales(), labels: { yes: t('tables.yes'), no: t('tables.no') } })}</span>` : nothing}`,
+      `${id}-rule-${i}`, t('tables.unchip', { name: property.name }), () => filter((all) => all.filter((_, j) => j !== i))))(/** @type {Property} */ (columns.find((one) => one.id === rule.property)), rules.indexOf(rule))),
+    ...(off.length ? [chip(shut, t('tables.hidden', { count: off.length }), `${id}-shown-${off[0].id}`, t('tables.showAll'), () => view(() => ({ hidden: [] })))] : [])]
   // What Search or Filter keep when it is nothing, in a status there before its words; a collection with no rows at all says so too.
   const none = !one.rows.length ? t('tables.empty') : rows.length ? '' : words ? t('tables.noMatch', { words: search.value.trim() }) : kept.length ? t('tables.noneKept') : ''
   const marked = unkept(one)
   // The cells and rows Jean changed, as "row column" and by row.
   const fresh = new Set(marked.flatMap((line) => [line.row, ...Object.keys(line.set ?? {}).map((id) => `${line.row} ${id}`)]))
   const cells = marked.reduce((count, line) => count + Math.max(1, Object.keys(line.set ?? {}).length), 0)
-  // Search shows from five rows, as on the Creations page; Escape empties it, leaving the pane open.
-  const count = t('tables.changed', { count: cells, name: assistantName() })
+  // Find shows from five rows, as on the Creations page; Escape empties it, leaving the pane open.
+  const count = t('tables.changed', { count: cells, name: assistantName() }), board = Boolean(lanes) && as.value === 'board' && !whiteboard
   return html`<p class="visually-hidden" role="status">${(state.reviewed ||= cells > 0) ? count : ''}</p>${marked.length ? reviewBar({
       label: t('tables.review'), count, go: cells > 1 ? go : null, previous: t('tables.previous'), next: t('tables.next'),
       accept: decided(accept, one), reject: decided(reject, one), acceptAll: t('tables.acceptAll'), rejectAll: t('tables.rejectAll'),
     }) : nothing}
-    <div class="table-bar">
-      <input class="table-name" dir="auto" title=${t('tables.tableName')} .value=${live(one.table.name)} @change=${(/** @type {Event} */ e) => shape(one, { name: typed(e) })}>
-      <div class="table-tools">${one.rows.length > 4 || search.value ? html`<label class="creations-find" for=${`${state.id}-find`}>${icons.search}<span class="visually-hidden">${t('tables.search')}</span><input id=${`${state.id}-find`} type="search" dir="auto" placeholder=${t('tables.search')} title=${t('tables.search')}
+    <div class="table-bar">${state.beside || whiteboard ? nothing : html`<input class="table-name" dir="auto" title=${t('tables.tableName')} .value=${live(one.table.name)} @change=${(/** @type {Event} */ e) => shape(one, { name: typed(e) })}>`}
+      ${lanes && !whiteboard ? html`<div class="table-shows" role="group" aria-label=${t('tables.views')}>${(/** @type {const} */ ([['', 'table'], ['board', 'board']])).map(([way, name]) => html`<button type="button" class="icon-button"
+        aria-label=${t(`tables.${name}`)} aria-pressed=${String(as.value === way)} @click=${() => { as.value = way }}>${icons[name]}</button>`)}</div>` : nothing}
+      <div class="table-tools">${one.rows.length > 4 || search.value ? html`<label class="creations-find" for=${`${id}-find`}>${icons.search}<span class="visually-hidden">${t('tables.search')}</span><input id=${`${id}-find`} type="search" dir="auto" placeholder=${t('tables.search')} title=${t('tables.search')}
         .value=${live(search.value)} @input=${(/** @type {Event} */ e) => { search.value = typed(e) }} @keydown=${(/** @type {KeyboardEvent} */ e) => { if (e.key === 'Escape' && search.value && !e.isComposing) { e.stopPropagation(); search.value = '' } }}></label>` : nothing}
-        ${tool('filter', t('tables.filter'), funnel, ruled, t('tables.filterOn', { count: kept.length }), kept.length)}${tool('sort', t('tables.sort'), arrows, sorting)}
-        ${tool('settings', t('settings.title'), sliders, html`${lanes ? html`<h3>${t('tables.views')}</h3>${listed([false, true].map((on) => html`<button type="button" aria-current=${String(board.value === on)}
-          @click=${() => { board.value = on }}>${on ? icons.board : icons.table}${t(on ? 'tables.board' : 'tables.table')}${board.value === on ? icons.check : nothing}</button>`))}` : nothing}
-          <h3 id=${`${state.id}-shown`}>${t('tables.shown')}</h3><div class="table-lines" role="group" aria-labelledby=${`${state.id}-shown`}>${listed(columns.map((property) => html`<label class="table-line" for=${`${state.id}-shown-${property.id}`}><input id=${`${state.id}-shown-${property.id}`} type="checkbox" .checked=${live(!hidden.includes(property.id))} ?disabled=${property === titleOf(one.table)}
+        <button type="button" class="icon-button" aria-label=${t('tables.arrange')} popovertarget=${`${id}-arrange`}>${sliders}</button>
+        <div id=${`${id}-arrange`} class="menu table-menu table-panel" popover @focusout=${leaving}>
+          <h3><label for=${`${id}-group`}>${t('tables.groupBy')}</label></h3><div class="table-line"><select id=${`${id}-group`} .value=${live(by?.id ?? '')} @change=${(/** @type {Event} */ e) => view(() => ({ group: typed(e) || undefined }))}>
+            <option value="">${t('tables.ungrouped')}</option>${groups.map((property) => html`<option value=${property.id} ?selected=${property === by}>${property.name}</option>`)}</select></div>
+          <h3>${t('tables.filter')}</h3>${ruled}
+          <h3 id=${`${id}-shown`}>${t('tables.shown')}</h3><div class="table-lines" role="group" aria-labelledby=${`${id}-shown`}>${listed(columns.map((property) => html`<label class="table-line" for=${`${id}-shown-${property.id}`}><input id=${`${id}-shown-${property.id}`} type="checkbox" .checked=${live(!hidden.includes(property.id))} ?disabled=${property === titleOf(one.table)}
             @change=${(/** @type {Event} */ e) => view(({ hidden = [] }) => ({ hidden: /** @type {HTMLInputElement} */ (e.target).checked ? hidden.filter((id) => id !== property.id) : [...hidden, property.id] }))}>${GLYPHS[property.type]}<span dir="auto">${property.name}</span></label>`))}</div>
-          <h3>${t('tables.filter')}</h3>${ruled}<h3>${t('tables.sort')}</h3>${sorting}`, t('tables.settingsOn', { count: off }), off)}
+          <h3>${t('tables.sort')}</h3>${sorting}</div>
       </div></div>
-    ${board.value && lanes ? lanesOf(one, lanes, columns, rows, hidden, fresh) : grid(one, columns, columns.filter((property) => !hidden.includes(property.id)), rows, calculate, fresh, state)}${columns.filter(({ type }) => type === 'select').map((property) => html`<datalist id=${listOf(one, property)}>${(property.options ?? []).map((option) => html`<option value=${option.name}></option>`)}</datalist>`)}
+    ${chips.length ? html`<ul class="table-chips" aria-label=${t('tables.arranged')}>${chips}</ul>` : nothing}
+    ${board && lanes ? lanesOf(one, lanes, columns, rows, hidden, fresh, state) : grid(one, columns, columns.filter((property) => !hidden.includes(property.id)), rows, calculate, fresh, state)}${columns.filter(({ type }) => type === 'select').map((property) => html`<datalist id=${listOf(one, property)}>${(property.options ?? []).map((option) => html`<option value=${option.name}></option>`)}</datalist>`)}
     <div class=${none ? 'table-none' : 'table-none is-quiet'}><p role="status" dir="auto">${none || nothing}</p>${words && one.rows.length && !rows.length ? html`<button type="button" class="button"
       @click=${() => { search.value = ''; /** @type {HTMLElement | null} */ (state.box.querySelector('.creations-find input'))?.focus() }}>${t('tables.clear')}</button>` : nothing}</div>`
 }
@@ -559,11 +582,9 @@ const said = (row, property, names) => told(row, property, { locales: intlLocale
 /**
  * The board: a lane for each step or choice, in their order, then one for rows with none, of the rows the view keeps; each card its row's
  * name, two of its other cells shown, and its own step or choice to move it; dragged, it moves to the lane it is dropped in.
- * @param {Loaded} one @param {View} lanes @param {Property[]} columns @param {Row[]} rows @param {string[]} hidden @param {Set<string>} fresh
+ * @param {Loaded} one @param {Property} by @param {Property[]} columns @param {Row[]} rows @param {string[]} hidden @param {Set<string>} fresh @param {State} state
  */
-function lanesOf(one, lanes, columns, rows, hidden, fresh) {
-  const by = columns.find((property) => property.id === lanes.group)
-  if (!by) return nothing
+function lanesOf(one, by, columns, rows, hidden, fresh, state) {
   const { groups = [] } = query(one.table, rows, { group: { property: by.id }, locale: locale.value })
   const title = columns.find((property) => property.type === 'text') ?? columns[0]
   const others = columns.filter((property) => property !== title && property !== by && !hidden.includes(property.id)).slice(0, 2)
@@ -573,7 +594,7 @@ function lanesOf(one, lanes, columns, rows, hidden, fresh) {
     if (row) edit(one, { row, set: { [by.id]: value } })
   }
   return html`<div class="table-board">${groups.map(({ value, rows }) => {
-    const name = value === null ? t('tables.none', { column: by.name }) : String(value)
+    const name = value === null ? t('tables.none', { column: by.name }) : typeof value === 'boolean' ? t(value ? 'tables.yes' : 'tables.no') : String(value)
     return html`<section class="table-lane" aria-label=${name} @dragover=${(/** @type {DragEvent} */ e) => e.preventDefault()} @drop=${drop(value)}>
       <h3><span dir="auto">${name}</span> <span class="muted">${format('NumberFormat', intlLocales()).format(rows.length)}</span></h3>
       ${rows.length ? html`<ul>${rows.map((row) => {
@@ -583,7 +604,7 @@ function lanesOf(one, lanes, columns, rows, hidden, fresh) {
         @dragstart=${(/** @type {DragEvent} */ e) => e.dataTransfer?.setData('text/x-row', row.id)}>
         <h4 dir="auto">${textOf(row, title) || '—'}</h4>
         ${shown.length ? html`<dl>${shown.map((property) => html`<div class="table-field"><dt class="muted" dir="auto">${property.name}</dt><dd dir="auto">${said(row, property, one.names)}</dd></div>`)}</dl>` : nothing}
-        ${choice(one, row, by)}${fresh.has(row.id) ? html`<div class="table-decide">${decide(one, row.id)}</div>` : nothing}
+        ${cell(one, row, by, state)}${fresh.has(row.id) ? html`<div class="table-decide">${decide(one, row.id)}</div>` : nothing}
       </article></li>`
       })}</ul>` : nothing}
     </section>`

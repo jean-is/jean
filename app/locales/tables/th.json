@@ -63,14 +63,8 @@
   "tables.kind.changed-at": "แก้ไขล่าสุด",
   "tables.search": "ค้นหาแถว",
   "tables.filter": "กรอง",
-  "tables.filterOn": {
-    "other": "กรอง: ใช้ {count} กฎอยู่"
-  },
   "tables.sort": "เรียง",
   "tables.shown": "คอลัมน์ที่แสดง",
-  "tables.settingsOn": {
-    "other": "การตั้งค่า: ซ่อน {count} คอลัมน์"
-  },
   "tables.column": "คอลัมน์",
   "tables.compare": "เงื่อนไข",
   "tables.addFilter": "เพิ่มตัวกรอง",
@@ -99,5 +93,14 @@
   "tables.yourFormula": "สูตรของคุณ",
   "tables.formulaHint": "คอลัมน์ตามชื่อ, + − * / และฟังก์ชันอย่าง round, min, max หรือ sqrt",
   "tables.formulaWrong": "คำนวณสูตรนี้ไม่ได้ ตรวจชื่อคอลัมน์และวงเล็บอีกครั้ง",
-  "tables.save": "บันทึก"
+  "tables.save": "บันทึก",
+  "tables.arrange": "จัดระเบียบ",
+  "tables.groupBy": "จัดกลุ่มตาม",
+  "tables.ungrouped": "ไม่จัดกลุ่ม",
+  "tables.unchip": "นำออก: {name}",
+  "tables.hidden": {
+    "other": "ซ่อน {count} คอลัมน์"
+  },
+  "tables.showAll": "แสดงทุกคอลัมน์",
+  "tables.arranged": "การจัดระเบียบ"
 }

@@ -63,14 +63,8 @@
   "tables.kind.changed-at": "修改時間",
   "tables.search": "尋找列",
   "tables.filter": "篩選",
-  "tables.filterOn": {
-    "other": "篩選：已啟用 {count} 條規則"
-  },
   "tables.sort": "排序",
   "tables.shown": "顯示的欄",
-  "tables.settingsOn": {
-    "other": "設定：已隱藏 {count} 欄"
-  },
   "tables.column": "欄",
   "tables.compare": "條件",
   "tables.addFilter": "新增篩選條件",
@@ -99,5 +93,14 @@
   "tables.yourFormula": "你的公式",
   "tables.formulaHint": "以名稱引用欄位，可用 + − * / 以及 round、min、max、sqrt 等函式。",
   "tables.formulaWrong": "無法計算這個公式：請檢查欄位名稱和括號。",
-  "tables.save": "儲存"
+  "tables.save": "儲存",
+  "tables.arrange": "整理",
+  "tables.groupBy": "分組依據",
+  "tables.ungrouped": "不分組",
+  "tables.unchip": "移除{name}",
+  "tables.hidden": {
+    "other": "已隱藏 {count} 欄"
+  },
+  "tables.showAll": "顯示所有欄",
+  "tables.arranged": "整理條件"
 }

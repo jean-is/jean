@@ -64,16 +64,8 @@
   "tables.kind.changed-at": "Laatst gewijzigd",
   "tables.search": "Rij zoeken",
   "tables.filter": "Filteren",
-  "tables.filterOn": {
-    "one": "Filteren: {count} regel actief",
-    "other": "Filteren: {count} regels actief"
-  },
   "tables.sort": "Sorteren",
   "tables.shown": "Getoonde kolommen",
-  "tables.settingsOn": {
-    "one": "Instellingen: {count} kolom verborgen",
-    "other": "Instellingen: {count} kolommen verborgen"
-  },
   "tables.column": "Kolom",
   "tables.compare": "Voorwaarde",
   "tables.addFilter": "Filter toevoegen",
@@ -102,5 +94,15 @@
   "tables.yourFormula": "Je formule",
   "tables.formulaHint": "Kolommen met hun naam, + − * / en functies zoals round, min, max of sqrt.",
   "tables.formulaWrong": "Deze formule kan niet worden berekend: controleer de kolomnamen en de haakjes.",
-  "tables.save": "Opslaan"
+  "tables.save": "Opslaan",
+  "tables.arrange": "Ordenen",
+  "tables.groupBy": "Groeperen op",
+  "tables.ungrouped": "Geen groepen",
+  "tables.unchip": "{name} weghalen",
+  "tables.hidden": {
+    "one": "{count} kolom verborgen",
+    "other": "{count} kolommen verborgen"
+  },
+  "tables.showAll": "Alle kolommen tonen",
+  "tables.arranged": "Ordening"
 }

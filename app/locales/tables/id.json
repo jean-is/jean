@@ -63,14 +63,8 @@
   "tables.kind.changed-at": "Terakhir diubah",
   "tables.search": "Cari baris",
   "tables.filter": "Filter",
-  "tables.filterOn": {
-    "other": "Filter: {count} aturan aktif"
-  },
   "tables.sort": "Urutkan",
   "tables.shown": "Kolom yang ditampilkan",
-  "tables.settingsOn": {
-    "other": "Pengaturan: {count} kolom disembunyikan"
-  },
   "tables.column": "Kolom",
   "tables.compare": "Kondisi",
   "tables.addFilter": "Tambah filter",
@@ -99,5 +93,14 @@
   "tables.yourFormula": "Rumus Anda",
   "tables.formulaHint": "Kolom dengan namanya, + − * / dan fungsi seperti round, min, max, atau sqrt.",
   "tables.formulaWrong": "Rumus ini tidak bisa dihitung: periksa nama kolom dan tanda kurungnya.",
-  "tables.save": "Simpan"
+  "tables.save": "Simpan",
+  "tables.arrange": "Atur",
+  "tables.groupBy": "Kelompokkan menurut",
+  "tables.ungrouped": "Tanpa kelompok",
+  "tables.unchip": "Buang {name}",
+  "tables.hidden": {
+    "other": "{count} kolom disembunyikan"
+  },
+  "tables.showAll": "Tampilkan semua kolom",
+  "tables.arranged": "Pengaturan"
 }

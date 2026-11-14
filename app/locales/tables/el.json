@@ -64,16 +64,8 @@
   "tables.kind.changed-at": "Τελευταία αλλαγή",
   "tables.search": "Εύρεση γραμμής",
   "tables.filter": "Φίλτρο",
-  "tables.filterOn": {
-    "one": "Φίλτρο: {count} κανόνας ενεργός",
-    "other": "Φίλτρο: {count} κανόνες ενεργοί"
-  },
   "tables.sort": "Ταξινόμηση",
   "tables.shown": "Εμφανιζόμενες στήλες",
-  "tables.settingsOn": {
-    "one": "Ρυθμίσεις: {count} κρυφή στήλη",
-    "other": "Ρυθμίσεις: {count} κρυφές στήλες"
-  },
   "tables.column": "Στήλη",
   "tables.compare": "Συνθήκη",
   "tables.addFilter": "Προσθήκη φίλτρου",
@@ -102,5 +94,15 @@
   "tables.yourFormula": "Ο τύπος σας",
   "tables.formulaHint": "Οι στήλες με τα ονόματά τους, + − * / και συναρτήσεις όπως round, min, max ή sqrt.",
   "tables.formulaWrong": "Αυτός ο τύπος δεν μπορεί να υπολογιστεί: ελέγξτε τα ονόματα των στηλών και τις παρενθέσεις.",
-  "tables.save": "Αποθήκευση"
+  "tables.save": "Αποθήκευση",
+  "tables.arrange": "Οργάνωση",
+  "tables.groupBy": "Ομαδοποίηση κατά",
+  "tables.ungrouped": "Χωρίς ομάδες",
+  "tables.unchip": "Αφαίρεση: {name}",
+  "tables.hidden": {
+    "one": "{count} κρυφή στήλη",
+    "other": "{count} κρυφές στήλες"
+  },
+  "tables.showAll": "Εμφάνιση όλων των στηλών",
+  "tables.arranged": "Τρέχουσα οργάνωση"
 }

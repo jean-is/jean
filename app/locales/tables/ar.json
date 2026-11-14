@@ -68,24 +68,8 @@
   "tables.kind.changed-at": "آخر تعديل",
   "tables.search": "ابحث في الصفوف",
   "tables.filter": "تصفية",
-  "tables.filterOn": {
-    "zero": "تصفية: {count} قاعدة مفعّلة",
-    "one": "تصفية: {count} قاعدة مفعّلة",
-    "two": "تصفية: {count} قاعدتان مفعّلتان",
-    "few": "تصفية: {count} قواعد مفعّلة",
-    "many": "تصفية: {count} قاعدة مفعّلة",
-    "other": "تصفية: {count} قاعدة مفعّلة"
-  },
   "tables.sort": "فرز",
   "tables.shown": "الأعمدة المعروضة",
-  "tables.settingsOn": {
-    "zero": "الإعدادات: {count} عمود مخفي",
-    "one": "الإعدادات: {count} عمود مخفي",
-    "two": "الإعدادات: {count} عمودان مخفيان",
-    "few": "الإعدادات: {count} أعمدة مخفية",
-    "many": "الإعدادات: {count} عمودًا مخفيًا",
-    "other": "الإعدادات: {count} عمود مخفي"
-  },
   "tables.column": "العمود",
   "tables.compare": "الشرط",
   "tables.addFilter": "إضافة عامل تصفية",
@@ -114,5 +98,19 @@
   "tables.yourFormula": "صيغتك",
   "tables.formulaHint": "الأعمدة بأسمائها، و+ − * / ودوال مثل round وmin وmax وsqrt.",
   "tables.formulaWrong": "تعذّر حساب هذه الصيغة: تحقّق من أسماء الأعمدة ومن الأقواس.",
-  "tables.save": "حفظ"
+  "tables.save": "حفظ",
+  "tables.arrange": "تنظيم",
+  "tables.groupBy": "التجميع حسب",
+  "tables.ungrouped": "بلا تجميع",
+  "tables.unchip": "إزالة {name}",
+  "tables.hidden": {
+    "zero": "{count} عمود مخفي",
+    "one": "{count} عمود مخفي",
+    "two": "{count} عمودان مخفيان",
+    "few": "{count} أعمدة مخفية",
+    "many": "{count} عمودًا مخفيًا",
+    "other": "{count} عمود مخفي"
+  },
+  "tables.showAll": "إظهار كل الأعمدة",
+  "tables.arranged": "التنظيم الحالي"
 }

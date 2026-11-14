@@ -64,16 +64,8 @@
   "tables.kind.changed-at": "Последна промяна",
   "tables.search": "Намери ред",
   "tables.filter": "Филтър",
-  "tables.filterOn": {
-    "one": "Филтър: {count} правило е включено",
-    "other": "Филтър: {count} правила са включени"
-  },
   "tables.sort": "Сортиране",
   "tables.shown": "Показани колони",
-  "tables.settingsOn": {
-    "one": "Настройки: {count} скрита колона",
-    "other": "Настройки: {count} скрити колони"
-  },
   "tables.column": "Колона",
   "tables.compare": "Условие",
   "tables.addFilter": "Добави филтър",
@@ -102,5 +94,15 @@
   "tables.yourFormula": "Вашата формула",
   "tables.formulaHint": "Колоните с имената им, + − * / и функции като round, min, max или sqrt.",
   "tables.formulaWrong": "Тази формула не може да се изчисли: проверете имената на колоните и скобите.",
-  "tables.save": "Запазване"
+  "tables.save": "Запазване",
+  "tables.arrange": "Подреждане",
+  "tables.groupBy": "Групиране по",
+  "tables.ungrouped": "Без групи",
+  "tables.unchip": "Премахни {name}",
+  "tables.hidden": {
+    "one": "{count} скрита колона",
+    "other": "{count} скрити колони"
+  },
+  "tables.showAll": "Покажи всички колони",
+  "tables.arranged": "Подредено"
 }

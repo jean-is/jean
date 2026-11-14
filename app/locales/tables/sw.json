@@ -64,16 +64,8 @@
   "tables.kind.changed-at": "Ilibadilishwa mwisho",
   "tables.search": "Tafuta safu",
   "tables.filter": "Chuja",
-  "tables.filterOn": {
-    "one": "Chuja: kanuni {count} imewashwa",
-    "other": "Chuja: kanuni {count} zimewashwa"
-  },
   "tables.sort": "Panga",
   "tables.shown": "Safuwima zinazoonyeshwa",
-  "tables.settingsOn": {
-    "one": "Mipangilio: safuwima {count} imefichwa",
-    "other": "Mipangilio: safuwima {count} zimefichwa"
-  },
   "tables.column": "Safuwima",
   "tables.compare": "Sharti",
   "tables.addFilter": "Ongeza kichujio",
@@ -102,5 +94,15 @@
   "tables.yourFormula": "Fomula yako",
   "tables.formulaHint": "Safu kwa majina yake, + − * / na vitendakazi kama round, min, max au sqrt.",
   "tables.formulaWrong": "Fomula hii haiwezi kukokotolewa: kagua majina ya safu na mabano.",
-  "tables.save": "Hifadhi"
+  "tables.save": "Hifadhi",
+  "tables.arrange": "Pangilia",
+  "tables.groupBy": "Weka katika makundi kwa",
+  "tables.ungrouped": "Hakuna makundi",
+  "tables.unchip": "Ondoa {name}",
+  "tables.hidden": {
+    "one": "safuwima {count} imefichwa",
+    "other": "safuwima {count} zimefichwa"
+  },
+  "tables.showAll": "Onyesha safuwima zote",
+  "tables.arranged": "Mpangilio"
 }

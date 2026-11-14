@@ -64,16 +64,8 @@
   "tables.kind.changed-at": "చివరి మార్పు",
   "tables.search": "వరుసను వెతకండి",
   "tables.filter": "ఫిల్టర్",
-  "tables.filterOn": {
-    "one": "ఫిల్టర్: {count} నియమం ఆన్‌లో ఉంది",
-    "other": "ఫిల్టర్: {count} నియమాలు ఆన్‌లో ఉన్నాయి"
-  },
   "tables.sort": "అమర్చు",
   "tables.shown": "చూపిన నిలువు వరుసలు",
-  "tables.settingsOn": {
-    "one": "సెట్టింగ్‌లు: {count} నిలువు వరుస దాచబడింది",
-    "other": "సెట్టింగ్‌లు: {count} నిలువు వరుసలు దాచబడ్డాయి"
-  },
   "tables.column": "నిలువు వరుస",
   "tables.compare": "షరతు",
   "tables.addFilter": "ఫిల్టర్‌ను జోడించు",
@@ -102,5 +94,15 @@
   "tables.yourFormula": "మీ సూత్రం",
   "tables.formulaHint": "నిలువు వరుసలు వాటి పేర్లతో, + − * / మరియు round, min, max లేదా sqrt వంటి ఫంక్షన్‌లు.",
   "tables.formulaWrong": "ఈ సూత్రాన్ని లెక్కించలేము: నిలువు వరుసల పేర్లు, కుండలీకరణాలు చూడండి.",
-  "tables.save": "సేవ్ చేయి"
+  "tables.save": "సేవ్ చేయి",
+  "tables.arrange": "క్రమబద్ధీకరించు",
+  "tables.groupBy": "దీని ప్రకారం సమూహం",
+  "tables.ungrouped": "సమూహాలు లేవు",
+  "tables.unchip": "తీసివేయి: {name}",
+  "tables.hidden": {
+    "one": "{count} నిలువు వరుస దాచబడింది",
+    "other": "{count} నిలువు వరుసలు దాచబడ్డాయి"
+  },
+  "tables.showAll": "అన్ని నిలువు వరుసలు చూపు",
+  "tables.arranged": "ప్రస్తుత అమరిక"
 }

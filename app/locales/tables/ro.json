@@ -65,18 +65,8 @@
   "tables.kind.changed-at": "Ultima schimbare",
   "tables.search": "Găsiți un rând",
   "tables.filter": "Filtrați",
-  "tables.filterOn": {
-    "one": "Filtrați: {count} regulă activă",
-    "few": "Filtrați: {count} reguli active",
-    "other": "Filtrați: {count} de reguli active"
-  },
   "tables.sort": "Sortați",
   "tables.shown": "Coloane afișate",
-  "tables.settingsOn": {
-    "one": "Setări: {count} coloană ascunsă",
-    "few": "Setări: {count} coloane ascunse",
-    "other": "Setări: {count} de coloane ascunse"
-  },
   "tables.column": "Coloană",
   "tables.compare": "Condiție",
   "tables.addFilter": "Adăugați un filtru",
@@ -105,5 +95,16 @@
   "tables.yourFormula": "Formula ta",
   "tables.formulaHint": "Coloanele după nume, + − * / și funcții precum round, min, max sau sqrt.",
   "tables.formulaWrong": "Această formulă nu poate fi calculată: verifică numele coloanelor și parantezele.",
-  "tables.save": "Salvează"
+  "tables.save": "Salvează",
+  "tables.arrange": "Organizați",
+  "tables.groupBy": "Grupați după",
+  "tables.ungrouped": "Fără grupuri",
+  "tables.unchip": "Eliminați {name}",
+  "tables.hidden": {
+    "one": "{count} coloană ascunsă",
+    "few": "{count} coloane ascunse",
+    "other": "{count} de coloane ascunse"
+  },
+  "tables.showAll": "Afișați toate coloanele",
+  "tables.arranged": "Organizare"
 }

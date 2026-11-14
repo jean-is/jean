@@ -64,16 +64,8 @@
   "tables.kind.changed-at": "Utoljára módosítva",
   "tables.search": "Sor keresése",
   "tables.filter": "Szűrés",
-  "tables.filterOn": {
-    "one": "Szűrés: {count} szabály bekapcsolva",
-    "other": "Szűrés: {count} szabály bekapcsolva"
-  },
   "tables.sort": "Rendezés",
   "tables.shown": "Látható oszlopok",
-  "tables.settingsOn": {
-    "one": "Beállítások: {count} rejtett oszlop",
-    "other": "Beállítások: {count} rejtett oszlop"
-  },
   "tables.column": "Oszlop",
   "tables.compare": "Feltétel",
   "tables.addFilter": "Szűrő hozzáadása",
@@ -102,5 +94,15 @@
   "tables.yourFormula": "Az Ön képlete",
   "tables.formulaHint": "Az oszlopok a nevükkel, + − * / és függvények, például round, min, max vagy sqrt.",
   "tables.formulaWrong": "Ez a képlet nem számolható ki: ellenőrizze az oszlopneveket és a zárójeleket.",
-  "tables.save": "Mentés"
+  "tables.save": "Mentés",
+  "tables.arrange": "Elrendezés",
+  "tables.groupBy": "Csoportosítás",
+  "tables.ungrouped": "Nincs csoportosítás",
+  "tables.unchip": "Eltávolítás: {name}",
+  "tables.hidden": {
+    "one": "{count} rejtett oszlop",
+    "other": "{count} rejtett oszlop"
+  },
+  "tables.showAll": "Minden oszlop megjelenítése",
+  "tables.arranged": "Jelenlegi elrendezés"
 }

@@ -66,20 +66,8 @@
   "tables.kind.changed-at": "Naposledy zmenené",
   "tables.search": "Nájsť riadok",
   "tables.filter": "Filtrovať",
-  "tables.filterOn": {
-    "one": "Filtrovať: {count} pravidlo zapnuté",
-    "few": "Filtrovať: {count} pravidlá zapnuté",
-    "many": "Filtrovať: {count} pravidla zapnutého",
-    "other": "Filtrovať: {count} pravidiel zapnutých"
-  },
   "tables.sort": "Zoradiť",
   "tables.shown": "Zobrazené stĺpce",
-  "tables.settingsOn": {
-    "one": "Nastavenia: {count} skrytý stĺpec",
-    "few": "Nastavenia: {count} skryté stĺpce",
-    "many": "Nastavenia: {count} skrytého stĺpca",
-    "other": "Nastavenia: {count} skrytých stĺpcov"
-  },
   "tables.column": "Stĺpec",
   "tables.compare": "Podmienka",
   "tables.addFilter": "Pridať filter",
@@ -108,5 +96,17 @@
   "tables.yourFormula": "Váš vzorec",
   "tables.formulaHint": "Stĺpce ich názvami, + − * / a funkcie ako round, min, max alebo sqrt.",
   "tables.formulaWrong": "Tento vzorec sa nedá vypočítať: skontrolujte názvy stĺpcov a zátvorky.",
-  "tables.save": "Uložiť"
+  "tables.save": "Uložiť",
+  "tables.arrange": "Usporiadať",
+  "tables.groupBy": "Zoskupiť podľa",
+  "tables.ungrouped": "Bez zoskupenia",
+  "tables.unchip": "Odstrániť: {name}",
+  "tables.hidden": {
+    "one": "{count} skrytý stĺpec",
+    "few": "{count} skryté stĺpce",
+    "many": "{count} skrytého stĺpca",
+    "other": "{count} skrytých stĺpcov"
+  },
+  "tables.showAll": "Zobraziť všetky stĺpce",
+  "tables.arranged": "Usporiadanie"
 }

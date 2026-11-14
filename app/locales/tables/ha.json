@@ -64,16 +64,8 @@
   "tables.kind.changed-at": "Canjin ƙarshe",
   "tables.search": "Nemo layi",
   "tables.filter": "Tace",
-  "tables.filterOn": {
-    "one": "Tace: doka {count} na aiki",
-    "other": "Tace: dokoki {count} na aiki"
-  },
   "tables.sort": "Jera",
   "tables.shown": "Ginshiƙan da ake nunawa",
-  "tables.settingsOn": {
-    "one": "Saituna: ginshiƙi {count} a ɓoye",
-    "other": "Saituna: ginshiƙai {count} a ɓoye"
-  },
   "tables.column": "Ginshiƙi",
   "tables.compare": "Sharaɗi",
   "tables.addFilter": "Ƙara matata",
@@ -102,5 +94,15 @@
   "tables.yourFormula": "Dabararka",
   "tables.formulaHint": "Ginshiƙai da sunayensu, + − * / da ayyuka kamar round, min, max ko sqrt.",
   "tables.formulaWrong": "Ba za a iya lissafa wannan dabara ba: duba sunayen ginshiƙai da baka.",
-  "tables.save": "Ajiye"
+  "tables.save": "Ajiye",
+  "tables.arrange": "Tsara",
+  "tables.groupBy": "Haɗa bisa",
+  "tables.ungrouped": "Babu rukuni",
+  "tables.unchip": "Cire {name}",
+  "tables.hidden": {
+    "one": "ginshiƙi {count} a ɓoye",
+    "other": "ginshiƙai {count} a ɓoye"
+  },
+  "tables.showAll": "Nuna dukkan ginshiƙai",
+  "tables.arranged": "Abin da aka tsara"
 }

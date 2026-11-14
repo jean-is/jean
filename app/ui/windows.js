@@ -28,7 +28,7 @@ const SOURCES = /** @type {Record<string, [string, () => Promise<unknown>]>} */ 
   flow: ['flows', () => import('../caps/flows/flows.js')],
   creations: ['', () => import('./creations.js')],
   split: ['', () => import('./preview.js')],
-  whiteboard: ['whiteboards', () => import('../caps/whiteboards/whiteboards.js')],
+  show: ['tables', () => import('../caps/tables/tables.js')],
 })
 
 const windows = signal(/** @type {Map<string, Kept>} */ (new Map()))

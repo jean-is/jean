@@ -19,14 +19,14 @@ import { send } from '../../ui/send.js'
 import { reviewBar } from '../../ui/review.js'
 import { icons, icon } from '../../ui/menu-icons.js'
 import { still } from '../../ui/sheet.js'
-import { load, change, unkept, accept, reject, undoStep, reshapeTable, amend, watched } from '../tables/tables.js'
+import { load, change, unkept, accept, reject, undoStep, reshapeTable, watched, wayOf } from '../tables/tables.js'
 import { notesOf, ownProblem, kindOf } from '../tables/table.js'
 import { fold } from '../tables/changes.js'
 import { layout, snap, arrowPath, placeOf, footOf, NOTE, GRID, HUES, WIDE } from './layout.js'
 import { all, show } from '../../ui/creations.js'
 import { save, pictureOf } from '../../ui/save.js'
 import { svgOf } from './picture.js'
-import { beside, picked, showAs, showOnly, glyph, writing, onShow } from './whiteboards.js'
+import { beside, picked, writing, onShow } from './whiteboards.js'
 import { view as tableOf } from '../tables/view.js'
 
 /** @typedef {import('../tables/tables.js').Loaded} Loaded */
@@ -83,6 +83,8 @@ customElements.define('app-whiteboard', class extends HTMLElement {
   #tool = 'pointer'
   /** @type {typeof INKS[number]} */
   #ink = 'ink'
+  /** How it shows, which the address keeps by its place (Tables' wayOf): '' as a board, its lanes, as a table, or one section's notes as a table, `table/<id>`. */
+  as = signal('')
   /** @type {Draft | null} */
   #draft = null
   #selected = /** @type {Set<string>} */ (new Set())
@@ -124,15 +126,16 @@ customElements.define('app-whiteboard', class extends HTMLElement {
     onShow.value = [...onShow.peek(), folder]
     holds.push(() => beside.delete(this.where), () => { onShow.value = onShow.peek().filter((one) => one !== folder) }, () => this.#near.disconnect())
     // A narrow pane opens on its lanes, one section at a time, unless the address says otherwise.
-    if (showAs.peek() === 'board' && this.clientWidth && this.clientWidth < 30 * parseFloat(getComputedStyle(document.documentElement).fontSize)) showAs.value = 'lanes'
-    holds.push(effect(() => { this.where.value; showAs.value; showOnly.value; writing.value; this.draw() }))
+    this.as = wayOf(folder).as
+    if (!this.as.peek() && this.clientWidth && this.clientWidth < 30 * parseFloat(getComputedStyle(document.documentElement).fontSize)) this.as.value = 'lanes'
+    holds.push(effect(() => { this.where.value; this.as.value; writing.value; this.draw() }))
     this.addEventListener('toggle', this.#placed, true)
     this.addEventListener('beforetoggle', this.#filled, true)
     holds.push(() => this.removeEventListener('toggle', this.#placed, true), () => this.removeEventListener('beforetoggle', this.#filled, true))
-    const sized = new ResizeObserver(() => { if (!this.#held && showAs.peek() === 'board') this.fit() })
+    const sized = new ResizeObserver(() => { if (!this.#held && !this.as.peek()) this.fit() })
     sized.observe(this)
     holds.push(() => sized.disconnect())
-    holds.push(() => { showAs.value = 'board'; showOnly.value = '' })
+    holds.push(() => { this.as.value = '' })
     // Worked on together: the others' pointers, drawn on a layer of their own, and this person's, gone with the pane.
     const together = slots('pointers')[0], path = `${one.dir}/${one.folder}`
     if (together) holds.push(computed(() => together.of(path)).subscribe((list) => this.#others(list)), () => { clearTimeout(this.#later); together.say(path, null) })
@@ -639,7 +642,7 @@ customElements.define('app-whiteboard', class extends HTMLElement {
     if (!words) return
     field.value = ''
     // On a phone's lanes, the section on show takes it; elsewhere it waits on the shelf.
-    const area = showAs.peek() === 'lanes' && this.#narrow() ? this.#onShow() : null
+    const area = this.as.peek() === 'lanes' && this.#narrow() ? this.#onShow() : null
     await this.edit([{ set: { note: words, ...(area && { area }) } }])
     this.say(area ? t('whiteboards.movedTo', { name: words, section: wordsOf(/** @type {Row} */ (this.#row(area))) }) : t('whiteboards.waiting', { name: words }))
   }
@@ -763,7 +766,7 @@ customElements.define('app-whiteboard', class extends HTMLElement {
   draw() {
     const one = this.where.peek()
     if (!one) return
-    const as = showAs.peek(), dir = one.table.dir ?? 'ltr', only = showOnly.peek() ? this.#row(showOnly.peek()) : undefined
+    const [way, section] = this.as.peek().split('/'), as = way || 'board', dir = one.table.dir ?? 'ltr', only = section ? this.#row(section) : undefined
     const marked = unkept(one), name = assistantName()
     // Before: the rows without Jean's changes that wait, nothing marked; once none wait, After again.
     if (!marked.length) this.#before = false
@@ -772,15 +775,14 @@ customElements.define('app-whiteboard', class extends HTMLElement {
     const shows = [['board', t('whiteboards.showBoard')], ['lanes', t('whiteboards.showLanes')], ['table', t('whiteboards.showTable')]]
     render(html`<div class="wb" data-as=${as}><div class="wb-stage">
       <div class="wb-head">
-        <span class="wb-title">${glyph}<input class="wb-name" dir="auto" title=${t('whiteboards.name')} .value=${one.table.name} @change=${(/** @type {Event} */ e) => amend({ path: one.folder }, { name: /** @type {HTMLInputElement} */ (e.target).value })}></span>
         <span class="wb-end"><span class="wb-people"></span>
-          <span class="wb-shows" role="group" aria-label=${t('whiteboards.showAs')}>${shows.map(([id, label]) => html`<button type="button" class="button subtle" aria-pressed=${String(as === id)} @click=${() => { showAs.value = /** @type {any} */ (id) }}>${label}</button>`)}</span></span>
+          <span class="wb-shows" role="group" aria-label=${t('whiteboards.showAs')}>${shows.map(([id, label]) => html`<button type="button" class="button subtle" aria-pressed=${String(as === id)} @click=${() => { this.as.value = id === 'board' ? '' : id }}>${label}</button>`)}</span></span>
       </div>
       ${marked.length ? html`<div class="wb-review">${reviewBar({ label: t('whiteboards.review', { name }), count: t('whiteboards.changes', { count: jean.size, name }), previous: '', next: '',
         accept: () => accept(one), reject: () => reject(one), acceptAll: t('whiteboards.acceptAll'), rejectAll: t('whiteboards.rejectAll') })}
         <span class="wb-shows" role="group" aria-label=${t('whiteboards.compare', { name })}>${[true, false].map((before) => html`<button type="button" class="button subtle" aria-pressed=${String(this.#before === before)}
           @click=${() => { this.#before = before; this.#said = before ? t('whiteboards.beforeSaid', { name }) : ''; this.draw() }}>${t(before ? 'whiteboards.before' : 'whiteboards.after')}</button>`)}</span></div>` : nothing}
-      ${as === 'table' && only ? html`<p class="wb-only"><span dir="auto">${t('whiteboards.only', { section: wordsOf(only) })}</span> <button type="button" class="button subtle" @click=${() => { showOnly.value = '' }}>${t('whiteboards.allSections')}</button></p>${this.#section(only.id)}`
+      ${as === 'table' && only ? html`<p class="wb-only"><span dir="auto">${t('whiteboards.only', { section: wordsOf(only) })}</span> <button type="button" class="button subtle" @click=${() => { this.as.value = 'table' }}>${t('whiteboards.allSections')}</button></p>${this.#section(only.id)}`
         : as === 'table' ? keyed(one.folder, html`<app-table folder=${one.folder}></app-table>`) : as === 'lanes' ? this.#lanes(seen, jean) : this.#board(seen, dir, jean)}
       ${as === 'table' ? nothing : html`<div class="wb-dock">${as === 'board' ? (this.#selected.size ? this.#chosen(layout(seen.rows).areas) : this.#bar()) : nothing}${this.#shelf(seen, jean, as === 'lanes')}</div>`}
     </div><p class="visually-hidden" role="status">${this.#said}</p></div>`, this)
@@ -866,7 +868,7 @@ customElements.define('app-whiteboard', class extends HTMLElement {
           <div id=${menu} class="menu wb-menu" popover><ul>
             <li><button type="button" class="menu-item" @click=${menuRow(() => this.write(area.row))}>${t('action.rename')}</button></li>
             <li><button type="button" class="menu-item" @click=${menuRow(() => this.tidy(id))}>${t('whiteboards.tidy')}</button></li>${this.#arrowRow(id)}
-            <li><button type="button" class="menu-item" @click=${menuRow(() => { showOnly.value = id; showAs.value = 'table' })}>${icons.table}${t('whiteboards.asTable')}</button></li>
+            <li><button type="button" class="menu-item" @click=${menuRow(() => { this.as.value = `table/${id}` })}>${icons.table}${t('whiteboards.asTable')}</button></li>
             ${one.table.properties.some((property) => property.type === 'person' && !property.deleted) ? nothing : html`<li><button type="button" class="menu-item" @click=${menuRow(() => this.#dated())}>${t('whiteboards.dated')}</button></li>`}
             <li><button type="button" class="menu-item" @click=${menuRow(() => this.ask(inArea(id).map((item) => item.row.id)))}>${t('whiteboards.askAbout', { name: assistantName() })}</button></li>
             ${jean.has(id) ? html`<li><button type="button" class="menu-item" @click=${menuRow(() => accept(one, id))}>${icons.check}${t('whiteboards.accept')}</button></li><li><button type="button" class="menu-item" @click=${menuRow(() => reject(one, id))}>${t('whiteboards.reject')}</button></li>` : nothing}
@@ -983,6 +985,6 @@ export async function ways() {
   return { ways: (/** @type {import('../../ui/preview.js').Shown} */ file, /** @type {Element} */ pane) => {
     const all = collectionWays(file), board = () => /** @type {{ picture: (inView: boolean) => Promise<void> } | null} */ (/** @type {unknown} */ (pane.querySelector('app-whiteboard')))
     const picture = (/** @type {boolean} */ inView) => ({ id: 'png', glyph: icons.image, label: t(inView ? 'whiteboards.pictureView' : 'whiteboards.pictureAll'), run: () => board()?.picture(inView) })
-    return { ...all, files: [picture(false), ...(showAs.value === 'board' ? [picture(true)] : []), ...all.files] }
+    return { ...all, files: [picture(false), ...(!wayOf(file.uri).as.value ? [picture(true)] : []), ...all.files] }
   } }
 }

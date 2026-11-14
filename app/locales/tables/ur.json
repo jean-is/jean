@@ -64,16 +64,8 @@
   "tables.kind.changed-at": "آخری تبدیلی",
   "tables.search": "قطار تلاش کریں",
   "tables.filter": "فلٹر",
-  "tables.filterOn": {
-    "one": "فلٹر: {count} اصول فعال",
-    "other": "فلٹر: {count} اصول فعال"
-  },
   "tables.sort": "ترتیب دیں",
   "tables.shown": "دکھائے گئے کالم",
-  "tables.settingsOn": {
-    "one": "ترتیبات: {count} کالم چھپا ہوا",
-    "other": "ترتیبات: {count} کالم چھپے ہوئے"
-  },
   "tables.column": "کالم",
   "tables.compare": "شرط",
   "tables.addFilter": "فلٹر شامل کریں",
@@ -102,5 +94,15 @@
   "tables.yourFormula": "آپ کا فارمولا",
   "tables.formulaHint": "کالم اپنے ناموں سے، + − * / اور round، min، max یا sqrt جیسے فنکشن۔",
   "tables.formulaWrong": "یہ فارمولا حساب نہیں ہو سکتا: کالموں کے نام اور قوسین دیکھ لیں۔",
-  "tables.save": "محفوظ کریں"
+  "tables.save": "محفوظ کریں",
+  "tables.arrange": "منظم کریں",
+  "tables.groupBy": "گروپ بندی بلحاظ",
+  "tables.ungrouped": "کوئی گروپ نہیں",
+  "tables.unchip": "ہٹائیں: {name}",
+  "tables.hidden": {
+    "one": "{count} کالم چھپا ہوا",
+    "other": "{count} کالم چھپے ہوئے"
+  },
+  "tables.showAll": "تمام کالم دکھائیں",
+  "tables.arranged": "موجودہ انتظام"
 }

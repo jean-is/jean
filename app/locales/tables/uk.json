@@ -66,20 +66,8 @@
   "tables.kind.changed-at": "Остання зміна",
   "tables.search": "Знайти рядок",
   "tables.filter": "Фільтр",
-  "tables.filterOn": {
-    "one": "Фільтр: {count} правило ввімкнено",
-    "few": "Фільтр: {count} правила ввімкнено",
-    "many": "Фільтр: {count} правил ввімкнено",
-    "other": "Фільтр: {count} правила ввімкнено"
-  },
   "tables.sort": "Сортування",
   "tables.shown": "Показані стовпці",
-  "tables.settingsOn": {
-    "one": "Налаштування: {count} стовпець приховано",
-    "few": "Налаштування: {count} стовпці приховано",
-    "many": "Налаштування: {count} стовпців приховано",
-    "other": "Налаштування: {count} стовпця приховано"
-  },
   "tables.column": "Стовпець",
   "tables.compare": "Умова",
   "tables.addFilter": "Додати фільтр",
@@ -108,5 +96,17 @@
   "tables.yourFormula": "Ваша формула",
   "tables.formulaHint": "Стовпці за їхніми назвами, + − * / і функції як-от round, min, max або sqrt.",
   "tables.formulaWrong": "Цю формулу не можна обчислити: перевірте назви стовпців і дужки.",
-  "tables.save": "Зберегти"
+  "tables.save": "Зберегти",
+  "tables.arrange": "Упорядкувати",
+  "tables.groupBy": "Групування",
+  "tables.ungrouped": "Без групування",
+  "tables.unchip": "Прибрати: {name}",
+  "tables.hidden": {
+    "one": "{count} стовпець приховано",
+    "few": "{count} стовпці приховано",
+    "many": "{count} стовпців приховано",
+    "other": "{count} стовпця приховано"
+  },
+  "tables.showAll": "Показати всі стовпці",
+  "tables.arranged": "Упорядкування"
 }

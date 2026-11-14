@@ -160,9 +160,11 @@ class Pane extends Element {
     const ways = waysOf(file, this, () => fileWays(file, this.copy() || file.uri))
     // Full screen, whatever it shows, which fills the window with it (ui/dock.js), goes with Move, one group, as the pane's place; what a kind adds that says `out`, who it is worked on with, with the way out (D683).
     const head = (/** @type {boolean} */ out) => slots('head').filter((part) => Boolean(part.out) === out).map((part) => part.draw(file)), full = dock.full.value === this
+    // Its name, a field where what it shows says so (a collection's, a whiteboard's): a rename names the pane too.
+    const named = slots('head').map((part) => part.named?.(file, (/** @type {string} */ title) => { this.file.value = { ...file, title } })).find(Boolean)
     return html`<aside class="pane preview" aria-label=${file.title} @keydown=${(/** @type {KeyboardEvent} */ event) => { if (event.key === 'Escape' && !event.defaultPrevented && !this.querySelector(':popover-open')) dock.full.peek() === this ? dock.fill(this) : this.#close(); else printKey(event, file, ways) }}>
       <header class="pane-head" @dblclick=${this.#keep}>
-        <h2><span dir="auto">${file.title}</span></h2>
+        <h2>${named || html`<span dir="auto">${file.title}</span>`}</h2>
         ${all.length > 1 && at >= 0 ? html`<select class="versions" title=${t('preview.versions')} .value=${String(at)}
           @change=${(/** @type {Event} */ event) => { this.file.value = { ...all[Number(/** @type {HTMLSelectElement} */ (event.target).value)], title: file.title } }}>
           ${all.map((each, i) => html`<option value=${i} ?selected=${i === at}>${t('made.version', { n: each.version })}</option>`)}</select>` : nothing}

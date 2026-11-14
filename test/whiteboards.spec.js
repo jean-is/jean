@@ -160,7 +160,8 @@ test('a whiteboard: made by the brain, its notes dragged, moved with the keys, a
   await page.locator('.wb-menu:popover-open').getByRole('button', { name: 'Show as a table' }).click()
   await expect(board.locator('.wb-only')).toContainText('Only Ideas')
   await expect(board.locator('.table-view tbody tr')).toHaveCount(2)
-  await expect(page).toHaveURL(/whiteboard=table(\/|%2F)/)
+  // Kept by the whiteboard's place, as a collection's way to show is (`show=<id>:<as>`).
+  await expect(page).toHaveURL(/show=[0-9A-Z]{26}:table(\/|%2F)/)
   await board.getByRole('button', { name: 'All sections' }).click()
   await expect(board.locator('app-table tbody tr')).toHaveCount(6)
   await board.getByRole('group', { name: 'Show as' }).getByRole('button', { name: 'Whiteboard' }).click()
@@ -170,10 +171,10 @@ test('a whiteboard: made by the brain, its notes dragged, moved with the keys, a
   // A lane for the notes in no section, after the sections'.
   await expect(board.locator('.wb-lane')).toHaveCount(5)
   await expect(board.locator('.wb-lane.is-loose .wb-words')).toHaveText(['Book the offsite', 'Demo day'])
-  await expect(page).toHaveURL(/whiteboard=lanes/)
+  await expect(page).toHaveURL(/show=[0-9A-Z]{26}:lanes/)
   await board.getByRole('group', { name: 'Show as' }).getByRole('button', { name: 'Table' }).click()
   await expect(board.locator('app-table tbody tr')).toHaveCount(6)
-  await expect(page).toHaveURL(/whiteboard=table/)
+  await expect(page).toHaveURL(/show=[0-9A-Z]{26}:table/)
 
   // Any brain reads it with table_rows: its sections by id, then its notes.
   const folder = await page.evaluate(() => document.querySelector('app-whiteboard')?.getAttribute('folder'))

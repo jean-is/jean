@@ -63,14 +63,8 @@
   "tables.kind.changed-at": "Àyípadà tó kẹ́yìn",
   "tables.search": "Wá ìlà",
   "tables.filter": "Ṣẹ́",
-  "tables.filterOn": {
-    "other": "Ṣẹ́: òfin {count} ń ṣiṣẹ́"
-  },
   "tables.sort": "Tò",
   "tables.shown": "Àwọn ọwọ̀n tí a fihàn",
-  "tables.settingsOn": {
-    "other": "Ètò: ọwọ̀n {count} ni a fi pamọ́"
-  },
   "tables.column": "Ọwọ̀n",
   "tables.compare": "Ìpò",
   "tables.addFilter": "Ṣàfikún ìṣẹ́",
@@ -99,5 +93,14 @@
   "tables.yourFormula": "Àgbékalẹ̀ rẹ",
   "tables.formulaHint": "Àwọn ọ̀wọ̀n pẹ̀lú orúkọ wọn, + − * / àti àwọn iṣẹ́ bíi round, min, max tàbí sqrt.",
   "tables.formulaWrong": "A kò lè ṣírò àgbékalẹ̀ yìí: ṣàyẹ̀wò orúkọ àwọn ọ̀wọ̀n àti àwọn àkámọ́.",
-  "tables.save": "Fi pamọ́"
+  "tables.save": "Fi pamọ́",
+  "tables.arrange": "Ṣètò",
+  "tables.groupBy": "Ṣàkójọ nípa",
+  "tables.ungrouped": "Kò sí àkójọ",
+  "tables.unchip": "Yọ {name} kúrò",
+  "tables.hidden": {
+    "other": "ọwọ̀n {count} ni a fi pamọ́"
+  },
+  "tables.showAll": "Fi gbogbo ọwọ̀n hàn",
+  "tables.arranged": "Ètò tó wà"
 }

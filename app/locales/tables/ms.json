@@ -63,14 +63,8 @@
   "tables.kind.changed-at": "Terakhir diubah",
   "tables.search": "Cari baris",
   "tables.filter": "Tapis",
-  "tables.filterOn": {
-    "other": "Tapis: {count} peraturan aktif"
-  },
   "tables.sort": "Isih",
   "tables.shown": "Lajur yang dipaparkan",
-  "tables.settingsOn": {
-    "other": "Tetapan: {count} lajur disembunyikan"
-  },
   "tables.column": "Lajur",
   "tables.compare": "Syarat",
   "tables.addFilter": "Tambah penapis",
@@ -99,5 +93,14 @@
   "tables.yourFormula": "Formula anda",
   "tables.formulaHint": "Lajur mengikut namanya, + − * / dan fungsi seperti round, min, max atau sqrt.",
   "tables.formulaWrong": "Formula ini tidak dapat dikira: semak nama lajur dan tanda kurung.",
-  "tables.save": "Simpan"
+  "tables.save": "Simpan",
+  "tables.arrange": "Susun",
+  "tables.groupBy": "Kumpulkan mengikut",
+  "tables.ungrouped": "Tiada kumpulan",
+  "tables.unchip": "Buang {name}",
+  "tables.hidden": {
+    "other": "{count} lajur disembunyikan"
+  },
+  "tables.showAll": "Paparkan semua lajur",
+  "tables.arranged": "Susunan"
 }

@@ -64,16 +64,8 @@
   "tables.kind.changed-at": "Viimeksi muutettu",
   "tables.search": "Etsi rivi",
   "tables.filter": "Suodata",
-  "tables.filterOn": {
-    "one": "Suodata: {count} sääntö käytössä",
-    "other": "Suodata: {count} sääntöä käytössä"
-  },
   "tables.sort": "Järjestä",
   "tables.shown": "Näytettävät sarakkeet",
-  "tables.settingsOn": {
-    "one": "Asetukset: {count} sarake piilotettu",
-    "other": "Asetukset: {count} saraketta piilotettu"
-  },
   "tables.column": "Sarake",
   "tables.compare": "Ehto",
   "tables.addFilter": "Lisää suodatin",
@@ -102,5 +94,15 @@
   "tables.yourFormula": "Kaavasi",
   "tables.formulaHint": "Sarakkeet nimillään, + − * / ja funktiot kuten round, min, max tai sqrt.",
   "tables.formulaWrong": "Kaavaa ei voi laskea: tarkista sarakkeiden nimet ja sulkeet.",
-  "tables.save": "Tallenna"
+  "tables.save": "Tallenna",
+  "tables.arrange": "Järjestele",
+  "tables.groupBy": "Ryhmittely",
+  "tables.ungrouped": "Ei ryhmiä",
+  "tables.unchip": "Poista {name}",
+  "tables.hidden": {
+    "one": "{count} sarake piilotettu",
+    "other": "{count} saraketta piilotettu"
+  },
+  "tables.showAll": "Näytä kaikki sarakkeet",
+  "tables.arranged": "Järjestely"
 }
