@@ -110,5 +110,11 @@
   "tables.plain": "Numeru simplice",
   "tables.money": "Soldi",
   "tables.percent": "Percentuale",
-  "tables.currency": "Muneta"
+  "tables.currency": "Muneta",
+  "tables.calc.average": "Media",
+  "tables.calc.min": "U più chjucu",
+  "tables.calc.max": "U più grande",
+  "tables.calc.count": "Contu",
+  "tables.subtotal": "Sottusomma",
+  "tables.movedTo": "Spustatu in {group}"
 }

@@ -106,5 +106,11 @@
   "tables.plain": "ตัวเลขธรรมดา",
   "tables.money": "จำนวนเงิน",
   "tables.percent": "ร้อยละ",
-  "tables.currency": "สกุลเงิน"
+  "tables.currency": "สกุลเงิน",
+  "tables.calc.average": "ค่าเฉลี่ย",
+  "tables.calc.min": "ค่าน้อยที่สุด",
+  "tables.calc.max": "ค่ามากที่สุด",
+  "tables.calc.count": "จำนวน",
+  "tables.subtotal": "ยอดรวมย่อย",
+  "tables.movedTo": "ย้ายไปที่ {group} แล้ว"
 }

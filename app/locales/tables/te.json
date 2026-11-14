@@ -108,5 +108,11 @@
   "tables.plain": "సాధారణ సంఖ్య",
   "tables.money": "డబ్బు",
   "tables.percent": "శాతం",
-  "tables.currency": "కరెన్సీ"
+  "tables.currency": "కరెన్సీ",
+  "tables.calc.average": "సగటు",
+  "tables.calc.min": "కనిష్ఠం",
+  "tables.calc.max": "గరిష్ఠం",
+  "tables.calc.count": "గణన",
+  "tables.subtotal": "ఉప మొత్తం",
+  "tables.movedTo": "తరలించబడింది: {group}"
 }

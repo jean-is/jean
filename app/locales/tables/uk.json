@@ -112,5 +112,11 @@
   "tables.plain": "Звичайне число",
   "tables.money": "Гроші",
   "tables.percent": "Відсоток",
-  "tables.currency": "Валюта"
+  "tables.currency": "Валюта",
+  "tables.calc.average": "Середнє",
+  "tables.calc.min": "Найменше",
+  "tables.calc.max": "Найбільше",
+  "tables.calc.count": "Кількість",
+  "tables.subtotal": "Проміжний підсумок",
+  "tables.movedTo": "Переміщено: {group}"
 }

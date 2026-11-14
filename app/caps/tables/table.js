@@ -19,6 +19,8 @@ export const TYPES = /** @type {const} */ ([...MADE, ...COMPUTED])
 export const GROUPS = /** @type {const} */ (['todo', 'doing', 'done'])
 const VIEWS = ['table', 'board', 'list', 'calendar', 'gallery']
 const CHOICES = new Set(['select', 'multi-select', 'status'])
+/** What a board's lanes are by: a choice, a step, a person or a box (D752). */
+const LANES = ['select', 'status', 'person', 'checkbox']
 const ULID = /^[0-9A-HJKMNP-TV-Z]{26}$/
 export const PLACE = /^collections\/[0-9A-HJKMNP-TV-Z]{26}-[^/]+$/
 export const TIME = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
@@ -38,8 +40,9 @@ const ALIASES = /** @type {Record<string, PropertyType>} */ ({
 /** @typedef {{ property: string, direction?: 'ascending' | 'descending' }} Sort */
 /** A rule of a view's filter. @typedef {{ property: string, op: import('./query.js').Op, value?: unknown }} Rule */
 /**
- * A view; filter: the rules a row meets to show, hidden: the columns it doesn't show, calculate: what each column's foot works out.
- * @typedef {{ id: string, type: 'table' | 'board' | 'list' | 'calendar' | 'gallery', name?: string, group?: string, sort?: Sort[], filter?: { and: Rule[] }, hidden?: string[], calculate?: Partial<Record<string, 'sum' | 'percent'>> }} View
+ * A view; filter: the rules a row meets to show, hidden: the columns it doesn't show, calculate: what each column's foot works out, 'none' kept as such (D752);
+ * group: what a table view's rows and its board's lanes are grouped by, a board's own its lanes else.
+ * @typedef {{ id: string, type: 'table' | 'board' | 'list' | 'calendar' | 'gallery', name?: string, group?: string, sort?: Sort[], filter?: { and: Rule[] }, hidden?: string[], calculate?: Partial<Record<string, import('./query.js').Total | 'none'>> }} View
  */
 /**
  * kept: the time of Jean's latest change the user kept, after which Jean's changes are marked (D491); order: the rows' ids in the
@@ -170,7 +173,7 @@ export function tableProblems(table) {
     if (typeof view?.id !== 'string' || views.has(view.id)) problems.push(`A view has no id of its own: "${view?.id}".`)
     views.add(view?.id)
     if (!VIEWS.includes(view?.type)) problems.push(`The view "${view?.id}": "${view?.type}" isn't a kind of view.`)
-    if (view?.type === 'board' && !['select', 'status'].includes(ids.get(view.group)?.type)) problems.push(`The view "${view.id}": a board is grouped by a select or status column.`)
+    if (view?.type === 'board' && !LANES.includes(ids.get(view.group)?.type)) problems.push(`The view "${view.id}": a board is grouped by a select, status, person or checkbox column.`)
     for (const sort of [...view?.sort ?? [], ...view?.filter?.and ?? []]) if (!ids.has(sort?.property)) problems.push(`The view "${view.id}" sorts or filters by a column the table hasn't: "${sort?.property}".`)
   }
   return problems
@@ -308,7 +311,7 @@ export function reshape(table, edit, at) {
   if (edit.remove && live.length > 1) properties = properties.map((property) => (property.id === edit.remove ? { ...property, deleted: at } : property))
   // Brought back where it was, numbered if another has its name by then.
   if (edit.restore) properties = properties.map((property) => (property.id === edit.restore && property.deleted ? (({ deleted, ...back }) => ({ ...back, name: free(back.name, back.id) }))(property) : property))
-  views = views.filter((view) => view.type !== 'board' || properties.some((property) => property.id === view.group && (property.type === 'select' || property.type === 'status')))
+  views = views.filter((view) => view.type !== 'board' || properties.some((property) => property.id === view.group && LANES.includes(property.type)))
   if ((made?.type === 'select' || made?.type === 'status') && !table.kind && !views.some((view) => view.type === 'board')) views = [...views, { id: 'board', type: 'board', group: made.id }]
   if (edit.view) views = views.map((view) => (view.type === 'table' ? { ...view, ...(typeof edit.view === 'function' ? edit.view(view) : edit.view) } : view))
   return { ...table, name, properties, views, ...(edit.order && { order: edit.order }), changed: at }

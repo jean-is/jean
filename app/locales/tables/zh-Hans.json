@@ -106,5 +106,11 @@
   "tables.plain": "普通数字",
   "tables.money": "金额",
   "tables.percent": "百分比",
-  "tables.currency": "货币"
+  "tables.currency": "货币",
+  "tables.calc.average": "平均值",
+  "tables.calc.min": "最小值",
+  "tables.calc.max": "最大值",
+  "tables.calc.count": "计数",
+  "tables.subtotal": "小计",
+  "tables.movedTo": "已移到 {group}"
 }

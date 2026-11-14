@@ -108,5 +108,11 @@
   "tables.plain": "সাধারণ সংখ্যা",
   "tables.money": "টাকার অঙ্ক",
   "tables.percent": "শতাংশ",
-  "tables.currency": "মুদ্রা"
+  "tables.currency": "মুদ্রা",
+  "tables.calc.average": "গড়",
+  "tables.calc.min": "সবচেয়ে কম",
+  "tables.calc.max": "সবচেয়ে বেশি",
+  "tables.calc.count": "গণনা",
+  "tables.subtotal": "উপমোট",
+  "tables.movedTo": "সরানো হয়েছে: {group}"
 }

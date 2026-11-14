@@ -108,5 +108,11 @@
   "tables.plain": "சாதாரண எண்",
   "tables.money": "பணம்",
   "tables.percent": "சதவீதம்",
-  "tables.currency": "நாணயம்"
+  "tables.currency": "நாணயம்",
+  "tables.calc.average": "சராசரி",
+  "tables.calc.min": "குறைந்தபட்சம்",
+  "tables.calc.max": "அதிகபட்சம்",
+  "tables.calc.count": "எண்ணிக்கை",
+  "tables.subtotal": "துணைக் கூட்டுத்தொகை",
+  "tables.movedTo": "நகர்த்தப்பட்டது: {group}"
 }

@@ -28,9 +28,9 @@ import { icons } from '../../ui/menu-icons.js'
 import { page, grid, reread as listed } from '../../ui/creations.js'
 import { createTable, readTable, folderOf, propertyOf, checkCell, grown, reshape, converted, canonical, isOwn, ownProblem, kindOf, notesOf, spotOf, arranged, currencyOf, PLACE as FOLDER } from './table.js'
 import { stringifyChanges, stamp, fold, undo, reading, marked, inverse } from './changes.js'
-import { query, ordered, valueOf, filterOf } from './query.js'
+import { query, ordered, valueOf, filterOf, total } from './query.js'
 import { worked } from './formula.js'
-import { exportTable, namesOf, rowNamed, said, digitsOf } from './export.js'
+import { exportTable, namesOf, rowNamed, said, digitsOf, amount, calcOf } from './export.js'
 import { tableCreate, LINE } from './tool.js'
 import { fill } from './fill.js'
 
@@ -349,17 +349,33 @@ export async function workbook(folder, kind = 'xlsx') {
   return one && exportTable(one.table, one.table.kind ? arranged(one.rows) : one.rows, kind, { names: one.names, look: await onPaper() })
 }
 
+/** A group's name (D752): a value as its column says it, none as "No …", a box yes or no, a month in the user's words. @param {unknown} value @param {Property} by */
+export const groupName = (value, by) => (value === null ? t('tables.none', { column: by.name }) : typeof value === 'boolean' ? t(value ? 'tables.yes' : 'tables.no')
+  : /^(date|created-at|changed-at)$/.test(by.type) ? new Intl.DateTimeFormat(intlLocales(), { month: 'long', year: 'numeric' }).format(new Date(`${value}-01T00:00`)) : String(value))
+
 /**
  * A collection as a print or a Word file says it (D664): its name, its columns' over its rows, each cell as the language writes it, as its
- * table view keeps them, and which columns line up at their end. @param {string} folder
+ * table view keeps and groups them, each group under a head of its name, how many and its subtotals (`heads`, their rows' places), its foot's
+ * totals under them, and which columns line up at their end. @param {string} folder
  */
 export async function gridIn(folder) {
   const one = await load(folder)
   if (!one) return null
-  const hidden = one.table.views.find((view) => view.type === 'table')?.hidden ?? [], kept = filterOf(one.table), columns = one.table.properties.filter((property) => !property.deleted && !hidden.includes(property.id))
-  const rows = one.table.kind ? arranged(one.rows) : query(one.table, one.rows, { ...(kept.length && { filter: { and: kept } }), locale: locale.value, names: one.names }).rows
-  const digits = columns.map((property) => digitsOf(rows, property))
-  return { name: one.table.name, right: columns.map((property) => property.type === 'number'), rows: [columns.map((property) => property.name), ...rows.map((row) => columns.map((property, i) => said(row, property, { locales: intlLocales(), names: one.names, labels: { yes: '✓', no: '' }, digits: property.type === 'number' ? digits[i] : undefined })))] }
+  const view = one.table.views.find((each) => each.type === 'table'), hidden = view?.hidden ?? [], kept = filterOf(one.table), columns = one.table.properties.filter((property) => !property.deleted && !hidden.includes(property.id))
+  const all = one.table.kind ? arranged(one.rows) : query(one.table, one.rows, { ...(kept.length && { filter: { and: kept } }), locale: locale.value, names: one.names }).rows
+  const digits = columns.map((property) => digitsOf(all, property)), how = { locales: intlLocales(), names: one.names, labels: { yes: '✓', no: '' } }, number = new Intl.NumberFormat(intlLocales())
+  const line = (/** @type {Row} */ row) => columns.map((property, i) => said(row, property, { ...how, digits: property.type === 'number' ? digits[i] : undefined }))
+  /** What each column's foot works out over some rows, as its word and the figure. @param {Row[]} rows */
+  const totals = (rows) => columns.map((property, i) => ((calc, value) => (calc && value !== null ? `${t(`tables.calc.${calc === 'percent' && property.type === 'checkbox' ? 'ticked' : calc}`)} ${calc === 'count' ? number.format(value) : calc === 'percent' ? new Intl.NumberFormat(intlLocales(), { style: 'percent' }).format(value) : amount(value, property, intlLocales(), calc === 'average' ? undefined : digits[i])}` : ''))(calcOf(property, view?.calculate), calcOf(property, view?.calculate) ? total(rows, property, /** @type {import('./query.js').Total} */ (calcOf(property, view?.calculate))) : null))
+  const by = !one.table.kind ? columns.find((property) => property.id === view?.group && /^(select|status|person|checkbox|date)$/.test(property.type)) : undefined
+  const groups = by ? query(one.table, all, { group: { property: by.id }, locale: locale.value, names: one.names }).groups?.filter((group) => group.rows.length) ?? [] : [{ value: undefined, rows: all }]
+  const rows = /** @type {string[][]} */ ([]), heads = /** @type {number[]} */ ([])
+  for (const group of groups) {
+    if (by) heads.push(rows.length + 1), rows.push(totals(group.rows).map((cell, i) => (i ? cell : `${groupName(group.value, by)} · ${number.format(group.rows.length)}`)))
+    rows.push(...group.rows.map(line))
+  }
+  const foot = totals(all)
+  return { name: one.table.name, right: columns.map((property) => property.type === 'number'), rows: [columns.map((property) => property.name), ...rows], heads, foot: foot.some(Boolean) ? foot : null }
 }
 
 /**

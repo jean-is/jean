@@ -3,7 +3,7 @@
 // the columns' names on top, then a row a line, a relation's cell its row's name. A cell that a spreadsheet would read as a formula starts
 // with an apostrophe instead. Pure, so Node's tests run it.
 import { makeFile } from '../made/formats.js'
-import { valueOf } from './query.js'
+import { valueOf, total } from './query.js'
 import { titleOf } from './table.js'
 
 /** @import { Table, Property } from './table.js' */
@@ -59,6 +59,14 @@ const formats = new Map()
  */
 export const format = (kind, locales, options = {}) => { const key = `${kind} ${locales} ${JSON.stringify(options)}`; if (!formats.has(key)) formats.set(key, new (/** @type {any} */ (Intl)[kind])(locales, options)); return /** @type {any} */ (formats.get(key)) }
 
+/**
+ * What a column's foot works out unless the person says (None kept as such): money's sum, else nothing (D752). @param {Property} property
+ * @param {import('./table.js').View['calculate']} [calculate] @returns {import('./query.js').Total | ''}
+ */
+export const calcOf = (property, calculate = {}) => ((how) => (how === 'none' ? '' : how ?? (property.format === 'money' ? 'sum' : '')))(calculate[property.id])
+/** A column's letters in a workbook: A, then Z, AA. @param {number} i @returns {string} */
+const letters = (i) => (i >= 26 ? letters(Math.floor(i / 26) - 1) : '') + String.fromCharCode(65 + (i % 26))
+
 /** Each of a collection's rows by its id, its name as its first text column, else its first, holds it. @param {Table} table @param {Row[]} rows */
 export const namesOf = (table, rows) => ((title) => new Map(rows.map((row) => [row.id, title ? textOf(row, title) : ''])))(titleOf(table))
 
@@ -96,5 +104,9 @@ export function toCSV(table, rows, options = {}) {
 export function exportTable(table, rows, kind, options = {}) {
   if (kind === 'csv') return makeFile(`${table.name}.csv`, toCSV(table, rows, options))
   const quoted = (/** @type {string} */ text) => (/[",\n\r]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text)
-  return makeFile(`${table.name}.xlsx`, `sep=,\n${cellsOf(table, rows, options, TO_SHEET).map((cells) => cells.map(quoted).join(',')).join('\n')}\n`, { look: options.look })
+  // Its foot, as the table view works it out, each a formula a workbook works out again (D752); a share filled as the figure it is.
+  const columns = table.properties.filter((property) => !property.deleted), calculate = table.views.find((view) => view.type === 'table')?.calculate
+  const foot = columns.map((property, i) => ((how) => (!how || !rows.length ? '' : how === 'percent' ? `${Math.round(Number(total(rows, property, how)) * 1000) / 10}%`
+    : `=${({ sum: 'SUM', average: 'AVERAGE', min: 'MIN', max: 'MAX', count: 'COUNTA' })[how]}(${letters(i)}2:${letters(i)}${rows.length + 1})`))(calcOf(property, calculate)))
+  return makeFile(`${table.name}.xlsx`, `sep=,\n${[...cellsOf(table, rows, options, TO_SHEET), ...(foot.some(Boolean) ? [foot] : [])].map((cells) => cells.map(quoted).join(',')).join('\n')}\n`, { look: options.look })
 }

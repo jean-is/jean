@@ -5,7 +5,7 @@
 // rows for each value of a column (`by`), a date's by month; key figures, each line's `sum <column>` or `count` worked out; a form's
 // fields, one for each column it names or every column a row is made with, by its kind. A part's `where` keeps only some of the rows
 //, in words a brain writes: a column, a way to compare and a value, a date's from today. Pure, so Node's tests run it.
-import { query, total, valueOf } from './query.js'
+import { query, total } from './query.js'
 import { propertyOf, converted } from './table.js'
 import { said, amount } from './export.js'
 
@@ -86,15 +86,11 @@ export function rules(table, text, how) {
   return ((either) => (either.length === 1 ? either[0] : { or: either }))(pieces(text.trim(), 'or').map((alternative) => ({ and: pieces(alternative, 'and').map((said) => read(said.trim())) })))
 }
 
-/** For each value of a column, the rows that hold it, as a chart's labels say it: a date's by month. @param {Table} table @param {Row[]} rows @param {Property} by @param {How} how @param {Map<string, string>} [names] */
+/** For each value of a column, the rows that hold it, as a chart's labels say it: a date's by month, as query() groups it. @param {Table} table @param {Row[]} rows @param {Property} by @param {How} how @param {Map<string, string>} [names] */
 function grouped(table, rows, by, how, names) {
-  if (!/date|-at$/.test(by.type)) {
-    return (query(table, rows, { group: { property: by.id }, names }).groups ?? []).flatMap((group) => (group.value === null ? []
-      : [{ label: typeof group.value === 'boolean' ? how.labels[group.value ? 'yes' : 'no'] : String(group.value), rows: group.rows }]))
-  }
-  const months = /** @type {Map<string, Row[]>} */ (new Map()), month = new Intl.DateTimeFormat(how.locales, { month: 'short', year: 'numeric' })
-  for (const row of rows) if (valueOf(row, by)) months.set(String(valueOf(row, by)).slice(0, 7), [...(months.get(String(valueOf(row, by)).slice(0, 7)) ?? []), row])
-  return [...months].sort(([a], [b]) => (a < b ? -1 : 1)).map(([key, rows]) => ({ label: month.format(new Date(`${key}-01T00:00`)), rows }))
+  const month = new Intl.DateTimeFormat(how.locales, { month: 'short', year: 'numeric' }), dated = /date|-at$/.test(by.type)
+  return (query(table, rows, { group: { property: by.id }, names }).groups ?? []).flatMap((group) => (group.value === null ? []
+    : [{ label: typeof group.value === 'boolean' ? how.labels[group.value ? 'yes' : 'no'] : dated ? month.format(new Date(`${group.value}-01T00:00`)) : String(group.value), rows: group.rows }]))
 }
 
 /**
@@ -111,7 +107,7 @@ export function fill({ table, rows: all, names }, part, how) {
   if (part.tag === 'app-figures') {
     return { text: own.map((line) => {
       const [what, words = ''] = line.split(/\|(.*)/s), [, kind = '', ref = ''] = /^(sum|count)\b(.*)$/i.exec(what.trim()) ?? [], [property] = ref.trim() ? named(table, ref) : []
-      const value = /^sum$/i.test(kind) && property ? total(rows, property, 'sum') : /^count$/i.test(kind) ? (property ? Math.round(total(rows, property, 'percent') * rows.length) : rows.length) : null
+      const value = /^sum$/i.test(kind) && property ? total(rows, property, 'sum') : /^count$/i.test(kind) ? (property ? total(rows, property, 'count') : rows.length) : null
       return value === null ? line : `${property && /^sum$/i.test(kind) ? amount(value, property, how.locales) : plain.format(value)} |${words}`
     }).join('\n') }
   }

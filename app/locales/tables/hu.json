@@ -108,5 +108,11 @@
   "tables.plain": "Egyszerű szám",
   "tables.money": "Pénzösszeg",
   "tables.percent": "Százalék",
-  "tables.currency": "Pénznem"
+  "tables.currency": "Pénznem",
+  "tables.calc.average": "Átlag",
+  "tables.calc.min": "Legkisebb",
+  "tables.calc.max": "Legnagyobb",
+  "tables.calc.count": "Darabszám",
+  "tables.subtotal": "Részösszeg",
+  "tables.movedTo": "Áthelyezve ide: {group}"
 }

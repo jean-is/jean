@@ -112,5 +112,11 @@
   "tables.plain": "Zwykła liczba",
   "tables.money": "Kwota",
   "tables.percent": "Procent",
-  "tables.currency": "Waluta"
+  "tables.currency": "Waluta",
+  "tables.calc.average": "Średnia",
+  "tables.calc.min": "Najmniejsza",
+  "tables.calc.max": "Największa",
+  "tables.calc.count": "Zliczenie",
+  "tables.subtotal": "Suma częściowa",
+  "tables.movedTo": "Przeniesiono do: {group}"
 }

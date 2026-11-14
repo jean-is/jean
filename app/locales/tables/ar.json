@@ -116,5 +116,11 @@
   "tables.plain": "رقم عادي",
   "tables.money": "مبلغ مالي",
   "tables.percent": "نسبة مئوية",
-  "tables.currency": "العملة"
+  "tables.currency": "العملة",
+  "tables.calc.average": "المتوسط",
+  "tables.calc.min": "الأصغر",
+  "tables.calc.max": "الأكبر",
+  "tables.calc.count": "العدد",
+  "tables.subtotal": "المجموع الفرعي",
+  "tables.movedTo": "نُقل إلى {group}"
 }

@@ -110,5 +110,11 @@
   "tables.plain": "Običan broj",
   "tables.money": "Novac",
   "tables.percent": "Postotak",
-  "tables.currency": "Valuta"
+  "tables.currency": "Valuta",
+  "tables.calc.average": "Prosjek",
+  "tables.calc.min": "Najmanje",
+  "tables.calc.max": "Najveće",
+  "tables.calc.count": "Broj unosa",
+  "tables.subtotal": "Međuzbroj",
+  "tables.movedTo": "Premješteno u: {group}"
 }

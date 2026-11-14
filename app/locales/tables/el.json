@@ -108,5 +108,11 @@
   "tables.plain": "Απλός αριθμός",
   "tables.money": "Χρηματικό ποσό",
   "tables.percent": "Ποσοστό",
-  "tables.currency": "Νόμισμα"
+  "tables.currency": "Νόμισμα",
+  "tables.calc.average": "Μέσος όρος",
+  "tables.calc.min": "Ελάχιστο",
+  "tables.calc.max": "Μέγιστο",
+  "tables.calc.count": "Πλήθος",
+  "tables.subtotal": "Μερικό άθροισμα",
+  "tables.movedTo": "Μετακινήθηκε: {group}"
 }

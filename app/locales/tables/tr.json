@@ -108,5 +108,11 @@
   "tables.plain": "Düz sayı",
   "tables.money": "Para",
   "tables.percent": "Yüzde",
-  "tables.currency": "Para birimi"
+  "tables.currency": "Para birimi",
+  "tables.calc.average": "Ortalama",
+  "tables.calc.min": "En küçük",
+  "tables.calc.max": "En büyük",
+  "tables.calc.count": "Sayım",
+  "tables.subtotal": "Ara toplam",
+  "tables.movedTo": "Taşındı: {group}"
 }

@@ -108,5 +108,11 @@
   "tables.plain": "Gewoon getal",
   "tables.money": "Geldbedrag",
   "tables.percent": "Percentage",
-  "tables.currency": "Valuta"
+  "tables.currency": "Valuta",
+  "tables.calc.average": "Gemiddelde",
+  "tables.calc.min": "Kleinste",
+  "tables.calc.max": "Grootste",
+  "tables.calc.count": "Aantal",
+  "tables.subtotal": "Subtotaal",
+  "tables.movedTo": "Verplaatst naar {group}"
 }

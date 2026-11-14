@@ -106,5 +106,11 @@
   "tables.plain": "Nombor biasa",
   "tables.money": "Wang",
   "tables.percent": "Peratus",
-  "tables.currency": "Mata wang"
+  "tables.currency": "Mata wang",
+  "tables.calc.average": "Purata",
+  "tables.calc.min": "Terkecil",
+  "tables.calc.max": "Terbesar",
+  "tables.calc.count": "Kiraan",
+  "tables.subtotal": "Subjumlah",
+  "tables.movedTo": "Dipindahkan ke {group}"
 }

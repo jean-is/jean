@@ -108,5 +108,11 @@
   "tables.plain": "Tavallinen luku",
   "tables.money": "Rahasumma",
   "tables.percent": "Prosentti",
-  "tables.currency": "Valuutta"
+  "tables.currency": "Valuutta",
+  "tables.calc.average": "Keskiarvo",
+  "tables.calc.min": "Pienin",
+  "tables.calc.max": "Suurin",
+  "tables.calc.count": "Määrä",
+  "tables.subtotal": "Välisumma",
+  "tables.movedTo": "Siirretty: {group}"
 }

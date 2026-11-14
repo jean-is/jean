@@ -108,5 +108,11 @@
   "tables.plain": "Vanligt tal",
   "tables.money": "Belopp",
   "tables.percent": "Procent",
-  "tables.currency": "Valuta"
+  "tables.currency": "Valuta",
+  "tables.calc.average": "Medelvärde",
+  "tables.calc.min": "Minsta",
+  "tables.calc.max": "Största",
+  "tables.calc.count": "Antal",
+  "tables.subtotal": "Delsumma",
+  "tables.movedTo": "Flyttad till {group}"
 }

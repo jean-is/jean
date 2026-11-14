@@ -108,5 +108,11 @@
   "tables.plain": "Nambari ya kawaida",
   "tables.money": "Pesa",
   "tables.percent": "Asilimia",
-  "tables.currency": "Sarafu"
+  "tables.currency": "Sarafu",
+  "tables.calc.average": "Wastani",
+  "tables.calc.min": "Ndogo zaidi",
+  "tables.calc.max": "Kubwa zaidi",
+  "tables.calc.count": "Idadi",
+  "tables.subtotal": "Jumla ndogo",
+  "tables.movedTo": "Imehamishiwa {group}"
 }

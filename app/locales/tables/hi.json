@@ -108,5 +108,11 @@
   "tables.plain": "सामान्य संख्या",
   "tables.money": "रकम",
   "tables.percent": "प्रतिशत",
-  "tables.currency": "मुद्रा"
+  "tables.currency": "मुद्रा",
+  "tables.calc.average": "औसत",
+  "tables.calc.min": "न्यूनतम",
+  "tables.calc.max": "अधिकतम",
+  "tables.calc.count": "गिनती",
+  "tables.subtotal": "उप-योग",
+  "tables.movedTo": "{group} में ले जाया गया"
 }

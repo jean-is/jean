@@ -108,5 +108,11 @@
   "tables.plain": "Einfache Zahl",
   "tables.money": "Geldbetrag",
   "tables.percent": "Prozent",
-  "tables.currency": "Währung"
+  "tables.currency": "Währung",
+  "tables.calc.average": "Durchschnitt",
+  "tables.calc.min": "Kleinster Wert",
+  "tables.calc.max": "Größter Wert",
+  "tables.calc.count": "Anzahl",
+  "tables.subtotal": "Zwischensumme",
+  "tables.movedTo": "Verschoben nach {group}"
 }

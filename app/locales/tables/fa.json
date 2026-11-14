@@ -108,5 +108,11 @@
   "tables.plain": "عدد ساده",
   "tables.money": "مبلغ",
   "tables.percent": "درصد",
-  "tables.currency": "واحد پول"
+  "tables.currency": "واحد پول",
+  "tables.calc.average": "میانگین",
+  "tables.calc.min": "کمترین",
+  "tables.calc.max": "بیشترین",
+  "tables.calc.count": "تعداد",
+  "tables.subtotal": "جمع جزء",
+  "tables.movedTo": "به {group} منتقل شد"
 }

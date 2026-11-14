@@ -108,5 +108,11 @@
   "tables.plain": "ተራ ቁጥር",
   "tables.money": "ገንዘብ",
   "tables.percent": "መቶኛ",
-  "tables.currency": "ምንዛሪ"
+  "tables.currency": "ምንዛሪ",
+  "tables.calc.average": "አማካይ",
+  "tables.calc.min": "ትንሹ",
+  "tables.calc.max": "ትልቁ",
+  "tables.calc.count": "ብዛት",
+  "tables.subtotal": "ንዑስ ድምር",
+  "tables.movedTo": "ወደ {group} ተዛውሯል"
 }

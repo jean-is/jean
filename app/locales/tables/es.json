@@ -110,5 +110,11 @@
   "tables.plain": "Número simple",
   "tables.money": "Dinero",
   "tables.percent": "Porcentaje",
-  "tables.currency": "Moneda"
+  "tables.currency": "Moneda",
+  "tables.calc.average": "Media",
+  "tables.calc.min": "Mínimo",
+  "tables.calc.max": "Máximo",
+  "tables.calc.count": "Recuento",
+  "tables.subtotal": "Subtotal",
+  "tables.movedTo": "Fila movida a {group}"
 }

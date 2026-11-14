@@ -93,7 +93,9 @@ export async function withRows(source) {
   let words = source
   for (const [block, folder] of source.matchAll(/^```table\n(collections\/[^\n]+)\n```$/gm)) {
     const grid = await (await import('../tables/tables.js')).gridIn(folder), line = (/** @type {string[]} */ cells) => `| ${cells.map((cell) => cell.replace(/[\\`*_[\]<>|~$&]/g, '\\$&').replace(/\s*\n\s*/g, ' ')).join(' | ')} |`
-    if (grid) words = words.replace(block, () => [`### ${grid.name}`, '', line(grid.rows[0]), `| ${grid.right.map((right) => (right ? '---:' : '---')).join(' | ')} |`, ...grid.rows.slice(1).map(line)].join('\n'))
+    // A group's head and the foot, bold (D752).
+    const bold = (/** @type {string} */ row) => row.replace(/\| ([^|]+?) (?=\|)/g, (all, cell) => (cell.trim() ? `| **${cell.trim()}** ` : all))
+    if (grid) words = words.replace(block, () => [`### ${grid.name}`, '', line(grid.rows[0]), `| ${grid.right.map((right) => (right ? '---:' : '---')).join(' | ')} |`, ...grid.rows.slice(1).map((row, i) => (grid.heads.includes(i + 1) ? bold(line(row)) : line(row))), ...(grid.foot ? [bold(line(grid.foot))] : [])].join('\n'))
   }
   return words
 }
@@ -114,7 +116,8 @@ export async function rowsOf(folder) {
   const grid = await (await import('../tables/tables.js')).gridIn(folder), box = Object.assign(document.createElement('div'), { className: 'paper-rows' })
   const cells = (/** @type {string[]} */ row, /** @type {(cell: string, right: boolean) => unknown} */ draw) => row.map((cell, i) => draw(cell, Boolean(grid?.right[i])))
   if (grid) render(html`<h3 dir="auto">${grid.name}</h3><table><thead><tr>${cells(grid.rows[0], (cell, right) => html`<th dir="auto" class=${right ? 'paper-end' : nothing}>${cell}</th>`)}</tr></thead>
-    <tbody>${grid.rows.slice(1).map((row) => html`<tr>${cells(row, (cell, right) => html`<td dir="auto" class=${right ? 'paper-end' : nothing}>${cell}</td>`)}</tr>`)}</tbody></table>`, box)
+    <tbody>${grid.rows.slice(1).map((row, i) => html`<tr class=${grid.heads.includes(i + 1) ? 'paper-group' : nothing}>${cells(row, (cell, right) => html`<td dir="auto" class=${right ? 'paper-end' : nothing}>${cell}</td>`)}</tr>`)}</tbody>
+    ${grid.foot ? html`<tfoot><tr>${cells(grid.foot, (cell, right) => html`<td dir="auto" class=${right ? 'paper-end' : nothing}>${cell}</td>`)}</tr></tfoot>` : nothing}</table>`, box)
   return box
 }
 

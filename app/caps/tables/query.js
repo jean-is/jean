@@ -82,12 +82,20 @@ function compareIn(property, a, b, collator) {
   return collator.compare(shown(a), shown(b))
 }
 
+/** What a column's foot or a group's head works out (D752). @typedef {'sum' | 'average' | 'min' | 'max' | 'count' | 'percent'} Total */
 /**
- * What a column's foot works out over the rows shown: the sum of its numbers, or the share of the rows with a value in it, a box's
- * only when ticked. @param {Row[]} rows @param {Property} property @param {'sum' | 'percent'} how @returns {number}
+ * What a column's foot works out over the rows shown: of its numbers, their sum, average, smallest or largest; of its cells, how many are
+ * filled, or their share of the rows, a box's only when ticked. Null when no number is there to work out. @param {Row[]} rows
+ * @param {Property} property @param {Total} how @returns {number | null}
  */
-export const total = (rows, property, how) => rows.map((row) => valueOf(row, property)).reduce((/** @type {number} */ sum, value) => sum + (how === 'sum'
-  ? (typeof value === 'number' ? value : 0) : Number(value !== false && !isEmpty(value)) / rows.length), 0)
+export function total(rows, property, how) {
+  const values = rows.map((row) => valueOf(row, property)), numbers = /** @type {number[]} */ (values.filter((value) => typeof value === 'number' && Number.isFinite(value)))
+  const filled = values.filter((value) => value !== false && !isEmpty(value)).length
+  if (how === 'count') return filled
+  if (how === 'percent') return rows.length ? filled / rows.length : 0
+  if (how === 'sum') return numbers.reduce((sum, value) => sum + value, 0)
+  return !numbers.length ? null : how === 'average' ? numbers.reduce((sum, value) => sum + value, 0) / numbers.length : how === 'min' ? Math.min(...numbers) : Math.max(...numbers)
+}
 
 /**
  * The rules of a table view's filter that keep rows: each on a column the table has, with something to compare with, or asking for
@@ -104,7 +112,7 @@ export function ordered(rows, order = []) {
 /**
  * The rows a view shows: those its filter keeps, sorted, empty cells last whichever way; with a
  * group, also in groups: each step or choice in its order, even with no row, a row in each of its
- * labels, then the values no choice names, then empty cells; a relation by its rows' `names`.
+ * labels, then the values no choice names, then empty cells; a relation by its rows' `names`, a date by its month, `YYYY-MM`.
  * @param {Table} table @param {Row[]} rows
  * @param {{ filter?: Filter, sort?: Sort[], group?: Group, locale?: string, names?: Map<string, string> }} [view]
  * @returns {{ rows: Row[], groups?: { value: unknown, rows: Row[] }[] }}
@@ -126,13 +134,13 @@ export function query(table, rows, { filter, sort = [], group, locale, names } =
   })
   if (!group) return { rows: shown }
   const property = columnOf(table, group.property)
-  const byGroup = group.by === 'group' && property.type === 'status'
-  /** @param {Row} row @returns {unknown[]} */
+  const byGroup = group.by === 'group' && property.type === 'status', dated = property.type === 'date' || property.type.endsWith('-at')
+  /** A row's values: a step's group by `group`, a date's month (D752). @param {Row} row @returns {unknown[]} */
   const valuesOf = (row) => {
     const value = valueOf(row, property, names)
     const values = Array.isArray(value) ? value : [value]
     if (!values.length || isEmpty(value)) return [null]
-    return byGroup ? values.map((one) => property.options?.find((option) => option.name === one)?.group ?? null) : values
+    return byGroup ? values.map((one) => property.options?.find((option) => option.name === one)?.group ?? null) : dated ? values.map((one) => String(one).slice(0, 7)) : values
   }
   // In one pass: each row in each of its values' groups, once.
   /** @type {unknown[]} */

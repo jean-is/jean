@@ -112,5 +112,11 @@
   "tables.plain": "Bežné číslo",
   "tables.money": "Peniaze",
   "tables.percent": "Percento",
-  "tables.currency": "Mena"
+  "tables.currency": "Mena",
+  "tables.calc.average": "Priemer",
+  "tables.calc.min": "Najmenšie",
+  "tables.calc.max": "Najväčšie",
+  "tables.calc.count": "Počet",
+  "tables.subtotal": "Medzisúčet",
+  "tables.movedTo": "Presunuté do: {group}"
 }

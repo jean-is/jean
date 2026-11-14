@@ -110,5 +110,11 @@
   "tables.plain": "Număr simplu",
   "tables.money": "Sumă de bani",
   "tables.percent": "Procent",
-  "tables.currency": "Monedă"
+  "tables.currency": "Monedă",
+  "tables.calc.average": "Medie",
+  "tables.calc.min": "Minim",
+  "tables.calc.max": "Maxim",
+  "tables.calc.count": "Numărătoare",
+  "tables.subtotal": "Subtotal",
+  "tables.movedTo": "Rând mutat în {group}"
 }

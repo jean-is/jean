@@ -110,5 +110,11 @@
   "tables.plain": "מספר רגיל",
   "tables.money": "סכום כסף",
   "tables.percent": "אחוז",
-  "tables.currency": "מטבע"
+  "tables.currency": "מטבע",
+  "tables.calc.average": "ממוצע",
+  "tables.calc.min": "הקטן ביותר",
+  "tables.calc.max": "הגדול ביותר",
+  "tables.calc.count": "ספירה",
+  "tables.subtotal": "סכום ביניים",
+  "tables.movedTo": "השורה הועברה אל {group}"
 }

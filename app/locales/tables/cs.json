@@ -112,5 +112,11 @@
   "tables.plain": "Obyčejné číslo",
   "tables.money": "Peníze",
   "tables.percent": "Procento",
-  "tables.currency": "Měna"
+  "tables.currency": "Měna",
+  "tables.calc.average": "Průměr",
+  "tables.calc.min": "Nejmenší",
+  "tables.calc.max": "Největší",
+  "tables.calc.count": "Počet",
+  "tables.subtotal": "Mezisoučet",
+  "tables.movedTo": "Přesunuto do: {group}"
 }

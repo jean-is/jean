@@ -106,5 +106,11 @@
   "tables.plain": "Angka biasa",
   "tables.money": "Uang",
   "tables.percent": "Persentase",
-  "tables.currency": "Mata uang"
+  "tables.currency": "Mata uang",
+  "tables.calc.average": "Rata-rata",
+  "tables.calc.min": "Terkecil",
+  "tables.calc.max": "Terbesar",
+  "tables.calc.count": "Hitungan",
+  "tables.subtotal": "Subtotal",
+  "tables.movedTo": "Dipindahkan ke {group}"
 }

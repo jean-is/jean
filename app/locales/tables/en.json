@@ -108,5 +108,11 @@
   "tables.plain": "Plain number",
   "tables.money": "Money",
   "tables.percent": "Percentage",
-  "tables.currency": "Currency"
+  "tables.currency": "Currency",
+  "tables.calc.average": "Average",
+  "tables.calc.min": "Smallest",
+  "tables.calc.max": "Largest",
+  "tables.calc.count": "Count",
+  "tables.subtotal": "Subtotal",
+  "tables.movedTo": "Moved to {group}"
 }

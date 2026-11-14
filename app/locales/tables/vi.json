@@ -106,5 +106,11 @@
   "tables.plain": "Số thường",
   "tables.money": "Tiền",
   "tables.percent": "Phần trăm",
-  "tables.currency": "Đơn vị tiền"
+  "tables.currency": "Đơn vị tiền",
+  "tables.calc.average": "Trung bình",
+  "tables.calc.min": "Nhỏ nhất",
+  "tables.calc.max": "Lớn nhất",
+  "tables.calc.count": "Đếm",
+  "tables.subtotal": "Tổng phụ",
+  "tables.movedTo": "Đã chuyển sang {group}"
 }

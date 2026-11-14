@@ -108,5 +108,11 @@
   "tables.plain": "سادہ عدد",
   "tables.money": "رقم",
   "tables.percent": "فیصد",
-  "tables.currency": "کرنسی"
+  "tables.currency": "کرنسی",
+  "tables.calc.average": "اوسط",
+  "tables.calc.min": "کم ترین",
+  "tables.calc.max": "زیادہ ترین",
+  "tables.calc.count": "گنتی",
+  "tables.subtotal": "ذیلی مجموعہ",
+  "tables.movedTo": "{group} میں منتقل کر دیا گیا"
 }

@@ -108,5 +108,11 @@
   "tables.plain": "Almindeligt tal",
   "tables.money": "Beløb",
   "tables.percent": "Procent",
-  "tables.currency": "Valuta"
+  "tables.currency": "Valuta",
+  "tables.calc.average": "Gennemsnit",
+  "tables.calc.min": "Mindste",
+  "tables.calc.max": "Største",
+  "tables.calc.count": "Antal",
+  "tables.subtotal": "Subtotal",
+  "tables.movedTo": "Flyttet til {group}"
 }

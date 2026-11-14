@@ -110,5 +110,11 @@
   "tables.plain": "Nombre simple",
   "tables.money": "Montant",
   "tables.percent": "Pourcentage",
-  "tables.currency": "Devise"
+  "tables.currency": "Devise",
+  "tables.calc.average": "Moyenne",
+  "tables.calc.min": "Minimum",
+  "tables.calc.max": "Maximum",
+  "tables.calc.count": "Décompte",
+  "tables.subtotal": "Sous-total",
+  "tables.movedTo": "Ligne déplacée dans {group}"
 }

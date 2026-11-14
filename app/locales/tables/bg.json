@@ -108,5 +108,11 @@
   "tables.plain": "Обикновено число",
   "tables.money": "Пари",
   "tables.percent": "Процент",
-  "tables.currency": "Валута"
+  "tables.currency": "Валута",
+  "tables.calc.average": "Средно",
+  "tables.calc.min": "Най-малко",
+  "tables.calc.max": "Най-голямо",
+  "tables.calc.count": "Брой",
+  "tables.subtotal": "Междинна сума",
+  "tables.movedTo": "Преместено в {group}"
 }

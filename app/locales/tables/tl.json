@@ -108,5 +108,11 @@
   "tables.plain": "Karaniwang numero",
   "tables.money": "Pera",
   "tables.percent": "Porsiyento",
-  "tables.currency": "Uri ng pera"
+  "tables.currency": "Uri ng pera",
+  "tables.calc.average": "Promedyo",
+  "tables.calc.min": "Pinakamaliit",
+  "tables.calc.max": "Pinakamalaki",
+  "tables.calc.count": "Bilang",
+  "tables.subtotal": "Subtotal",
+  "tables.movedTo": "Inilipat sa {group}"
 }

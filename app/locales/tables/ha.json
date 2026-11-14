@@ -108,5 +108,11 @@
   "tables.plain": "Lamba kawai",
   "tables.money": "Kuɗi",
   "tables.percent": "Kashi",
-  "tables.currency": "Kuɗin ƙasa"
+  "tables.currency": "Kuɗin ƙasa",
+  "tables.calc.average": "Matsakaici",
+  "tables.calc.min": "Mafi ƙanƙanta",
+  "tables.calc.max": "Mafi girma",
+  "tables.calc.count": "Adadi",
+  "tables.subtotal": "Jimlar ɓangare",
+  "tables.movedTo": "An matsa zuwa {group}"
 }

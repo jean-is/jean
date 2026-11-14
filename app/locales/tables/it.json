@@ -110,5 +110,11 @@
   "tables.plain": "Numero semplice",
   "tables.money": "Importo",
   "tables.percent": "Percentuale",
-  "tables.currency": "Valuta"
+  "tables.currency": "Valuta",
+  "tables.calc.average": "Media",
+  "tables.calc.min": "Minimo",
+  "tables.calc.max": "Massimo",
+  "tables.calc.count": "Conteggio",
+  "tables.subtotal": "Subtotale",
+  "tables.movedTo": "Riga spostata in {group}"
 }

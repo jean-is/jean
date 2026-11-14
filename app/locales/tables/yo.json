@@ -106,5 +106,11 @@
   "tables.plain": "Nọ́ńbà lásán",
   "tables.money": "Owó",
   "tables.percent": "Ìpín ọgọ́rùn-ún",
-  "tables.currency": "Owó ilẹ̀"
+  "tables.currency": "Owó ilẹ̀",
+  "tables.calc.average": "Àròpín",
+  "tables.calc.min": "Èyí tó kéré jù",
+  "tables.calc.max": "Èyí tó tóbi jù",
+  "tables.calc.count": "Iye",
+  "tables.subtotal": "Àpapọ̀ apá",
+  "tables.movedTo": "A ti gbé e lọ sí {group}"
 }

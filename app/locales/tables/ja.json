@@ -106,5 +106,11 @@
   "tables.plain": "通常の数値",
   "tables.money": "金額",
   "tables.percent": "パーセント",
-  "tables.currency": "通貨"
+  "tables.currency": "通貨",
+  "tables.calc.average": "平均",
+  "tables.calc.min": "最小",
+  "tables.calc.max": "最大",
+  "tables.calc.count": "件数",
+  "tables.subtotal": "小計",
+  "tables.movedTo": "{group} に移動しました"
 }

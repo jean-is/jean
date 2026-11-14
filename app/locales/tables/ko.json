@@ -106,5 +106,11 @@
   "tables.plain": "일반 숫자",
   "tables.money": "금액",
   "tables.percent": "백분율",
-  "tables.currency": "통화"
+  "tables.currency": "통화",
+  "tables.calc.average": "평균",
+  "tables.calc.min": "최솟값",
+  "tables.calc.max": "최댓값",
+  "tables.calc.count": "개수",
+  "tables.subtotal": "소계",
+  "tables.movedTo": "이동한 그룹: {group}"
 }

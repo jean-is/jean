@@ -114,5 +114,11 @@
   "tables.plain": "Niver eeun",
   "tables.money": "Arc’hant",
   "tables.percent": "Dregantad",
-  "tables.currency": "Moneiz"
+  "tables.currency": "Moneiz",
+  "tables.calc.average": "Keitad",
+  "tables.calc.min": "Bihanañ",
+  "tables.calc.max": "Brasañ",
+  "tables.calc.count": "Kont",
+  "tables.subtotal": "Isammad",
+  "tables.movedTo": "Dilec’hiet da {group}"
 }

@@ -112,5 +112,11 @@
   "tables.plain": "Обычное число",
   "tables.money": "Деньги",
   "tables.percent": "Проценты",
-  "tables.currency": "Валюта"
+  "tables.currency": "Валюта",
+  "tables.calc.average": "Среднее",
+  "tables.calc.min": "Наименьшее",
+  "tables.calc.max": "Наибольшее",
+  "tables.calc.count": "Количество",
+  "tables.subtotal": "Промежуточный итог",
+  "tables.movedTo": "Перемещено: {group}"
 }

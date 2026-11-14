@@ -83,7 +83,7 @@ test('readTable: says what is wrong with a collection.json, and refuses one a ne
   assert.ok(problems.some((p) => /Two columns have the id "company"/.test(p)), problems.join('\n'))
   assert.ok(problems.some((p) => /Pay.*money/.test(p)), problems.join('\n'))
   assert.ok(problems.some((p) => /Stage.*New.*todo, doing or done/.test(p)), problems.join('\n'))
-  assert.ok(problems.some((p) => /board.*select or status/.test(p)), problems.join('\n'))
+  assert.ok(problems.some((p) => /board.*select, status, person or checkbox/.test(p)), problems.join('\n'))
   assert.throws(() => readTable(JSON.stringify(broken)), /money/)
   assert.throws(() => readTable(JSON.stringify({ ...table, format: 2 })), /newer/)
   assert.throws(() => readTable('{'), /JSON/)
@@ -618,6 +618,21 @@ test('query: groups by step with every step there, by the steps’ groups, a row
   assert.deepEqual(groups({ property: 'tags' }), [['Remote', [R(1)]], ['Paris', [R(2)]], ['Startup', [R(2)]], [null, [R(3), R(4)]]])
   assert.deepEqual(groups({ property: 'referral' }), [[false, [R(1), R(3), R(4)]], [true, [R(2)]]])
   assert.deepEqual(groups({ property: 'role' }), [['Analyst', [R(3)]], ['Designer', [R(1)]], ['Writer', [R(2)]], [null, [R(4)]]])
+})
+
+test('total: a column\'s sum, average, smallest, largest, count of cells filled and share filled, nothing to average in none (D752)', () => {
+  const property = /** @type {any} */ ({ id: 'cost', name: 'Cost', type: 'number' }), box = /** @type {any} */ ({ id: 'paid', name: 'Paid', type: 'checkbox' })
+  const rows = /** @type {any[]} */ ([{ cells: { cost: 4, paid: true } }, { cells: { cost: 10 } }, { cells: {} }, { cells: { cost: -1, paid: true } }])
+  assert.deepEqual(['sum', 'average', 'min', 'max', 'count', 'percent'].map((how) => total(rows, property, /** @type {any} */ (how))), [13, 13 / 3, -1, 10, 3, 0.75])
+  assert.deepEqual([total(rows, box, 'count'), total(rows, box, 'percent')], [2, 0.5])
+  assert.equal(total([], property, 'average'), null)
+  assert.equal(total([], property, 'percent'), 0)
+})
+
+test('query: a date groups by its month, the months in order, none last (D752)', () => {
+  const table = createTable({ name: 'Trips', columns: [{ name: 'Where', type: 'text' }, { name: 'When', type: 'date' }] }, { id: TABLE_ID, author: 'user', at: T(0) })
+  const rows = fold(stamp([], [['Lyon', '2026-03-02'], ['Nice', '2026-01-20'], ['Pau', null], ['Metz', '2026-03-30']].map(([where, when], i) => ({ row: `01K80000000000000000000${i}0`, set: { where, when } })), { by: 'user', now: Date.parse(T(1)) }))
+  assert.deepEqual(query(table, rows, { group: { property: 'when' } }).groups?.map((group) => [group.value, group.rows.map((row) => row.cells.where)]), [['2026-01', ['Nice']], ['2026-03', ['Lyon', 'Metz']], [null, ['Pau']]])
 })
 
 test('valueOf: who made a row and changed it, and when, an unticked box false and an empty cell null', () => {
