@@ -215,6 +215,35 @@ test('a whiteboard: made by the brain, its notes dragged, moved with the keys, a
   await expect(page.getByRole('complementary', { name: 'Budget' }).locator('app-table')).toBeVisible()
 })
 
+test('the arrow keys walk notes, drawings and arrows, and the board keeps one Tab stop though an arrow lies lowest', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 960 })
+  await start(page)
+  await page.evaluate(async () => {
+    const caps = await import('/ui/caps.js'), tables = await import('/caps/tables/tables.js')
+    await caps.unlock('whiteboards')
+    const ctx = /** @type {any} */ ({ brain: { id: 'cloud', provider: 'anthropic', api: 'anthropic', baseURL: 'https://api.anthropic.com', model: 'claude' }, signal: new AbortController().signal, meta: {} })
+    const made = await /** @type {any} */ (caps.loaded.value.get('whiteboards'))?.tools[0].run({ name: 'Flow', areas: ['Later'], notes: [{ words: 'Someday', area: 'Later' }] }, ctx)
+    const uri = /at (collections\/\S+),/.exec(String(made))?.[1] ?? '', load = async () => /** @type {any} */ (await tables.load(uri))
+    await tables.accept(await load())
+    const ids = await tables.change(await load(), [{ set: { note: 'Ask', '@spot': { area: null, x: 0, y: 600 } } }, { set: { note: 'Build', '@spot': { area: null, x: 400, y: 600 } } },
+      { set: { note: 'Ship', '@spot': { area: null, x: 0, y: 900 } } }, { set: { '@kind': 'line', '@path': [0, 0, 60, 30, 120, 0], '@ink': 'ink', '@spot': { area: null, x: 800, y: 640 } } },
+      { set: { note: `[[${uri}|Flow]]`, '@spot': { area: null, x: 3000, y: 600 } } }], 'user')
+    await tables.change(await load(), [{ set: { '@kind': 'arrow', '@ends': [ids[0], ids[1]] } }], 'user')
+    await (await import('/ui/creations.js')).reread()
+    ;(await import('/ui/preview.js')).preview({ uri, name: 'Flow', title: 'Flow' }, true)
+  })
+  const board = page.locator('app-whiteboard'), words = (/** @type {string} */ name) => board.locator('.wb-note .wb-words', { hasText: name }), arrow = board.locator('.wb-arrow > svg')
+  await expect(arrow).toHaveAttribute('aria-label', 'Arrow from Ask to Build')
+  // One stop for the keys, though an arrow lies lowest of all.
+  await expect(board.locator('.wb-board [tabindex="0"]')).not.toHaveCount(0)
+  // Ask, then the arrow by its middle, then Build, then the drawing, named as before.
+  await words('Ask').focus()
+  for (const next of [board.locator('.wb-arrow .wb-words'), words('Build'), board.locator('.wb-line .wb-words')]) (await page.keyboard.press('ArrowRight'), await expect(next).toBeFocused())
+  await expect(board.locator('.wb-line .wb-words')).toHaveAccessibleName('Drawing')
+  await page.keyboard.press('ArrowLeft')
+  await expect(words('Build')).toBeFocused()
+})
+
 test('a whiteboard fills as Jean writes the call, its sections first, and stays where it showed once made', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 960 })
   await start(page)

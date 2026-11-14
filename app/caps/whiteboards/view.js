@@ -99,6 +99,8 @@ customElements.define('app-whiteboard', class extends HTMLElement {
   #moveHere = null
   /** @type {string | null} */
   #from = null
+  /** The first thing the Tab key reaches on the board. */
+  #stop = ''
   /** Whether Before is pressed: the board as it was without what waits to be accepted, to look at, not to change. */
   #before = false
   /** One section's notes as a table, as its menu asks: Tables' view of them, made once while it shows. @type {{ area: string, node: Node, holds: (() => void)[] } | null} */
@@ -626,11 +628,11 @@ customElements.define('app-whiteboard', class extends HTMLElement {
     if ((event.key === 'Delete' || event.key === 'Backspace')) return event.preventDefault(), this.erase([row])
     if (!arrow) return
     event.preventDefault()
-    // The nearest note that way, by where they lie, an arrow by its middle.
+    // The nearest thing that way, a note, a text, a drawing or an arrow, by its middle.
     const { items } = layout(this.#one.rows), found = items.find((item) => item.row.id === row), [dx, dy] = /** @type {[number, number]} */ (arrow).map((n, i) => (i === 0 ? n * back : n))
-    const spot = (/** @type {Item} */ item) => (item.ends ? { item, x: (item.ends[0] + item.ends[2] - NOTE.w) / 2, y: (item.ends[1] + item.ends[3] - NOTE.h) / 2 } : { item, x: item.x, y: item.y })
+    const spot = (/** @type {Item} */ item) => ({ item, x: item.x + (item.w - NOTE.w) / 2, y: item.y + (item.h - NOTE.h) / 2 })
     if (!found) return
-    const from = spot(found), next = items.filter((item) => item !== found && item.kind !== 'line').map(spot).filter((at) => ((at.x - from.x) * dx > 0 || (at.y - from.y) * dy > 0) && (dx ? Math.abs(at.y - from.y) < Math.abs(at.x - from.x) + NOTE.h : Math.abs(at.x - from.x) < Math.abs(at.y - from.y) + NOTE.w))
+    const from = spot(found), next = items.filter((item) => item !== found).map(spot).filter((at) => ((at.x - from.x) * dx > 0 || (at.y - from.y) * dy > 0) && (dx ? Math.abs(at.y - from.y) < Math.abs(at.x - from.x) + NOTE.h : Math.abs(at.x - from.x) < Math.abs(at.y - from.y) + NOTE.w))
       .sort((a, b) => Math.hypot(a.x - from.x, a.y - from.y) - Math.hypot(b.x - from.x, b.y - from.y))[0]
     if (next) this.#refocus(next.item.row.id)
   }
@@ -730,16 +732,17 @@ customElements.define('app-whiteboard', class extends HTMLElement {
     const { row } = item, id = row.id, card = cardOf(row), words = card?.name ?? wordsOf(row), mine = this.#moving?.row === id ? this.#moving : null, box = { x: (mine?.x ?? item.x) - origin.x, y: (mine?.y ?? item.y) - origin.y, w: item.w, h: item.h }, hue = row.cells['@hue']
     const classes = `wb-${item.kind}${jean.has(id) ? ' is-jean' : ''}${this.#selected.has(id) ? ' is-selected' : ''}${mine || this.#from === id ? ' is-moving' : ''}${item.area ? '' : ' is-ground'}${row.cells['@size'] === 'title' ? ' is-title' : ''}${item.kind === 'note' && hue != null && !ownProblem('@hue', hue) ? ` is-hued wb-hue-${hue}` : ''}`
     if (this.#draft?.row === id) return html`<li class=${`${classes} wb-draft`} data-row=${id} ${placed(box)}>${this.#field(row)}</li>`
-    const z_ = ref((element) => element instanceof HTMLElement && element.style.setProperty('--z', String(z + 1)))
+    const z_ = ref((element) => element instanceof HTMLElement && element.style.setProperty('--z', String(z + 1))), menu = `${this.#id}-menu-${id}`
+    // The keys' one stop: where they were last, else the board's first thing; on the shelf and in the lanes (z below 0), each.
+    const tab = this.#at === id || (!this.#at && (z < 0 || id === this.#stop)) ? 0 : -1
     if (item.kind === 'line' || item.ends) {
       const path = /** @type {number[]} */ (row.cells['@path']), ink = row.cells['@ink'], ends = item.ends?.map((n, i) => n - (i % 2 ? item.y : item.x))
       const name = ends ? t('whiteboards.arrowName', { from: nameOf(this.#row(/** @type {string[]} */ (row.cells['@ends'])[0])), to: nameOf(this.#row(/** @type {string[]} */ (row.cells['@ends'])[1])) }) : t('whiteboards.line')
       if (!ends && ownProblem('@path', path)) return nothing
       return html`<li class=${classes} data-row=${id} ${placed(box)} ${z_}><svg role="img" aria-label=${name} viewBox=${`0 0 ${item.w} ${item.h}`} class=${ends || ink === 'ink' ? 'wb-ink' : `wb-ink wb-hue-${Number(ink) % HUES}`}>${ends ? svg`<path class="wb-hit" d=${arrowPath(ends)}/>` : nothing}<path d=${ends ? arrowPath(ends) : pathOf(path)}/></svg>
-        <button type="button" class="wb-words visually-hidden" tabindex=${this.#at === id ? 0 : -1}>${name}</button></li>`
+        <button type="button" class="wb-words visually-hidden" tabindex=${tab}>${name}</button></li>`
     }
-    const menu = `${this.#id}-menu-${id}`, foot = one.table.properties.filter((property) => !property.deleted && property.id !== 'note' && property.id !== 'area' && row.cells[property.id] != null).slice(0, 2)
-    const tab = this.#at === id || (!this.#at && z === 0) ? 0 : -1
+    const foot = one.table.properties.filter((property) => !property.deleted && property.id !== 'note' && property.id !== 'area' && row.cells[property.id] != null).slice(0, 2)
     return html`<li class=${classes} data-row=${id} ${placed(box)} ${z_}>
       <button type="button" class=${card ? 'wb-words wb-card' : 'wb-words'} dir="auto" tabindex=${tab} aria-label=${card ? t('whiteboards.open', { name: card.name }) : nothing} @dblclick=${() => this.write(row)}
         @keydown=${(/** @type {KeyboardEvent} */ e) => { if (e.key === 'Enter' && !e.isComposing && !this.#from) { e.preventDefault(); card ? show(card)() : this.write(row) } }} @focus=${() => { this.#at = id }}>${card
@@ -778,6 +781,7 @@ customElements.define('app-whiteboard', class extends HTMLElement {
    */
   #board(one, dir, jean) {
     const { areas, items } = layout(one.rows), number = new Intl.NumberFormat(intlLocales()), order = new Map(items.map((item, i) => [item.row.id, i]))
+    this.#stop = items.find((item) => item.kind !== 'arrow')?.row.id ?? ''
     // In reading order: top to bottom, from the start.
     const inArea = (/** @type {string | null} */ area) => items.filter((item) => item.area === area).sort((a, b) => a.y - b.y || a.x - b.x)
     const draft = this.#draft && !this.#draft.row ? this.#draft : null
@@ -880,7 +884,7 @@ customElements.define('app-whiteboard', class extends HTMLElement {
     return html`<section class=${`wb-shelf${shelf.length && !lanes ? '' : ' is-empty'}`} aria-labelledby=${`${this.#id}-shelf`} @pointerdown=${this.down} @keydown=${this.keys}>
       <h3 id=${`${this.#id}-shelf`} class="visually-hidden">${t('whiteboards.shelf')}</h3>
       <textarea class="wb-new" dir="auto" rows="1" title=${t('whiteboards.newNote')} placeholder=${t('whiteboards.newNote')} @keydown=${this.shelved}></textarea>
-      ${shelf.length ? html`${lanes ? nothing : html`<ul>${shelf.map((row) => this.#item(one, { row, kind: 'note', area: null, placed: false, x: 0, y: 0, ...NOTE }, { x: 0, y: 0 }, jean, areas, 0))}</ul>`}
+      ${shelf.length ? html`${lanes ? nothing : html`<ul>${shelf.map((row) => this.#item(one, { row, kind: 'note', area: null, placed: false, x: 0, y: 0, ...NOTE }, { x: 0, y: 0 }, jean, areas, -1))}</ul>`}
         ${shelf.length > 1 ? html`<button type="button" class="button" @click=${() => send(t('whiteboards.groupThem', { name: one.table.name }), { notes: [] })}>${t('whiteboards.group')}</button>` : nothing}` : nothing}
     </section>`
   }
@@ -895,9 +899,9 @@ customElements.define('app-whiteboard', class extends HTMLElement {
     return html`${tabs}<div class="wb-lanes" dir=${one.table.dir ?? 'ltr'} @keydown=${this.keys} @scroll=${this.#shown}>${areas.map((area) => {
       const notes = items.filter((item) => item.area === area.row.id && item.kind === 'note')
       return html`<section class=${`wb-lane wb-hue-${area.hue}`} data-area=${area.row.id} aria-labelledby=${`${this.#id}-lane-${area.row.id}`}><h3 id=${`${this.#id}-lane-${area.row.id}`}><span class="wb-dot"></span><span dir="auto">${wordsOf(area.row)}</span> <span class="wb-count">${number.format(notes.length)}</span></h3>
-        <ul>${notes.map((item) => this.#item(one, { ...item, x: 0, y: 0 }, { x: 0, y: 0 }, jean, areas, 0))}</ul></section>`
+        <ul>${notes.map((item) => this.#item(one, { ...item, x: 0, y: 0 }, { x: 0, y: 0 }, jean, areas, -1))}</ul></section>`
     })}${loose.length ? html`<section class="wb-lane is-loose" data-area="" aria-labelledby=${`${this.#id}-lane-loose`}><h3 id=${`${this.#id}-lane-loose`}><span class="wb-dot"></span><span dir="auto">${t('whiteboards.shelf')}</span> <span class="wb-count">${number.format(loose.length)}</span></h3>
-      <ul>${loose.map((item) => this.#item(one, { ...item, x: 0, y: 0 }, { x: 0, y: 0 }, jean, areas, 0))}</ul></section>` : nothing}</div>`
+      <ul>${loose.map((item) => this.#item(one, { ...item, x: 0, y: 0 }, { x: 0, y: 0 }, jean, areas, -1))}</ul></section>` : nothing}</div>`
   }
 })
 
