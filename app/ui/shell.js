@@ -147,15 +147,16 @@ function welcome() {
 
 /** @type {Toasts | undefined} */
 let toasts
-/** Where the room has the toasts. @type {{ parent: Node, next: Node | null } | undefined} */
+/** Where the room has the toasts. @type {{ parent: HTMLElement, next: Node | null } | undefined} */
 let home
 
 // The toasts, in the top layer, above what is open. A modal dialog makes everything outside it
-// inert, so while one is open they go inside it, where their buttons can still be pressed.
+// inert, so while one is open they go inside it, where their buttons can still be pressed; panes
+// covering the room make it inert (ui/dock.js), so meanwhile they go out of it.
 class Toasts extends Element {
   connectedCallback() {
     toasts = this
-    home ??= { parent: /** @type {Node} */ (this.parentNode), next: this.nextSibling }
+    home ??= { parent: /** @type {HTMLElement} */ (this.parentNode), next: this.nextSibling }
     super.connectedCallback()
   }
 
@@ -183,12 +184,11 @@ class Toasts extends Element {
   }
 }
 
-/** Puts the toasts in the open modal dialog, or back where the room has them: each dialog calls it as it opens and closes. */
+/** Puts the toasts in the open modal dialog, else first in the page while the room is inert, or back where the room has them: each dialog calls it as it opens and closes, the dock as it covers the room. */
 export function placeToasts() {
   if (!toasts || !home) return
-  const dialog = document.querySelector('dialog:modal')
-  if (dialog) { if (toasts.parentNode !== dialog) dialog.prepend(toasts) }
-  else if (toasts.parentNode !== home.parent) home.parent.insertBefore(toasts, home.next)
+  const into = document.querySelector('dialog:modal') ?? (home.parent.inert ? document.body : home.parent)
+  if (toasts.parentNode !== into) into.insertBefore(toasts, into === home.parent ? home.next : into.firstChild)
 }
 
 define('app-toasts', Toasts)

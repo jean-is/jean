@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 // Toasts: each one closes, with its own button or swiped aside either way, the new version's too; a swipe cut short
-// brings it back, and its buttons stay buttons. In Arabic and Japanese once.
+// brings it back, and its buttons stay buttons, over a pane that makes the room inert too. In Arabic and Japanese once.
 import { readFileSync } from 'node:fs'
 import { test, expect } from '@playwright/test'
 import { start } from './helpers.js'
@@ -66,3 +66,50 @@ for (const lang of ['en', 'ar', 'ja']) {
     await expect(page.locator('html')).toHaveAttribute('data-undone', '')
   })
 }
+
+test('over a pane that covers the room, on a narrow window or full screen on a wide one, a toast still takes a press, and goes back in the room after', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 800 })
+  await start(page)
+  const shell = page.locator('app-shell'), undo = page.locator('.toast').getByRole('button', { name: 'Undo' }), home = page.locator('app-shell > app-toasts')
+  /** A toast whose Undo marks the page. */
+  const notify = () => page.evaluate(async () => (await import('/ui/state.js')).notify('Saved', { label: 'Undo', run: () => { document.documentElement.dataset.undone = '' } }, 60e3))
+  /** A pane, as any capability's, opened or closed, and full screen or not. @param {{ shown: boolean, full?: boolean }} to */
+  const pane = (to) => page.evaluate(async ({ shown, full }) => {
+    const dock = await import('/ui/dock.js')
+    let element = document.getElementById('a-pane')
+    if (!element) {
+      element = Object.assign(document.createElement('section'), { id: 'a-pane' })
+      element.append(Object.assign(document.createElement('div'), { className: 'pane', textContent: 'A pane' }))
+      dock.join(element, 'a-pane')
+    }
+    dock.place(element, shown)
+    if (Boolean(full) !== (dock.full.peek() === element)) dock.fill(element)
+  }, to)
+  const pressed = async () => {
+    await undo.click()
+    await expect(page.locator('html')).toHaveAttribute('data-undone', '')
+    await page.evaluate(() => { delete document.documentElement.dataset.undone })
+  }
+
+  // Already there as the pane comes over the room.
+  await notify()
+  await pane({ shown: true })
+  await expect(shell).toHaveJSProperty('inert', true)
+  await pressed()
+  await pane({ shown: false })
+  await expect(shell).toHaveJSProperty('inert', false)
+  await expect(home).toHaveCount(1)
+
+  // Beside the conversation the room takes presses as it is; full screen, the pane makes it inert again.
+  await page.setViewportSize({ width: 1280, height: 800 })
+  await pane({ shown: true })
+  await expect(shell).toHaveJSProperty('inert', false)
+  await pane({ shown: true, full: true })
+  await expect(shell).toHaveJSProperty('inert', true)
+  await notify()
+  await pressed()
+  await pane({ shown: true })
+  await expect(home).toHaveCount(1)
+  await notify()
+  await pressed()
+})

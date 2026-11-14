@@ -17,6 +17,7 @@ import { styleSheet } from './sheet.js'
 import { keep } from './windows.js'
 import { icons } from './menu-icons.js'
 import { atEnd, scroller, toEnd } from './chat.js'
+import { placeToasts } from './shell.js'
 import { MOST, leaves, parse, places, put, rename as named, reshare, swap, without, write, zone } from './tree.js'
 
 /** @import { Tree, Zone } from './tree.js' */
@@ -159,6 +160,7 @@ function arrange() {
   else delete root.dataset.dock
   const shell = /** @type {HTMLElement | null} */ (document.querySelector('app-shell'))
   if (shell) shell.inert = root.dataset.dock === 'over' || Boolean(full.peek())
+  placeToasts()
   if (beside !== root.hasAttribute('data-split')) {
     const [end, at] = [atEnd(), scroller().scrollTop]
     root.toggleAttribute('data-split', beside)
