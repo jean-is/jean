@@ -192,7 +192,7 @@
 :root:is([data-look='human'], [data-look='tilde']) [data-full] > .pane { border: 0; border-radius: 0; box-shadow: none; }
 @keyframes human-panel { from { opacity: 0; scale: 0.94; } }
 :root:is([data-look='human'], [data-look='tilde']) .pane-head { padding-inline: 1rem 0.625rem; }
-:root:is([data-look='human'], [data-look='tilde']) .pane-head h2 { font-size: 0.9375rem; text-align: center; }
+:root:is([data-look='human'], [data-look='tilde']) .pane-head h2 { font-size: 0.9375rem; }
 :root:is([data-look='human'], [data-look='tilde']) .drawer { margin-block: 0.625rem; margin-inline-start: 0.625rem; block-size: calc(100dvh - 1.25rem); border-radius: 1.25rem; } :root:is([data-look='human'], [data-look='tilde']) .drawer .sidebar-settings { background: var(--room-2); border-radius: 0.625rem; border-end-start-radius: 0; border-end-end-radius: 0; }
 
 @media (width > 40rem) {
