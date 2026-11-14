@@ -1,0 +1,9 @@
+.cache/
+# The expectations and results for the public workbooks copy values from them: they stay beside the files, out of git.
+public.js
+public-shape.js
+public.md
+held.js
+held.md
+third.js
+third.md
