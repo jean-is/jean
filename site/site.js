@@ -40,7 +40,7 @@ export const SUPPORT = 'arnaud@jean.is'
 export const USES = ['excel', 'pdf', 'slides', 'diagrams', 'import', 'offline']
 
 /** The comparison's pages, the hub first, then a product's each, in the order the foot and the hub list them. */
-export const COMPARED = ['compare', 'compare-chatgpt', 'compare-claude-cowork', 'compare-manus', 'compare-openclaw', 'compare-open-webui']
+export const COMPARED = ['compare', 'compare-chatgpt', 'compare-claude-cowork', 'compare-manus', 'compare-notebooklm', 'compare-openclaw', 'compare-open-webui']
 
 /** Whether the site at `base` is the brand's own, the one site with every page (scripts/seo.js). */
 export { ownSite } from '../scripts/seo.js'

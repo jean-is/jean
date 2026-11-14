@@ -276,9 +276,10 @@ export function product ({ addresses, sources, actions, limits, weights = [] }) 
 </section>` : ''
       /** A side-by-side table's rows, each its heading, Jean's side and its status, the other's and where it was read. @param {string} key */
       const rows = (key) => kit.table(key, 5).map(([what, jean, code, other, ids]) => [what, /* html */ `<p>${jean}</p>${status(code)}`, /* html */ `<p>${other}${cited(ids)}</p>`])
+      // A product its maker has renamed keeps the name people type, its new one under it in the table's head (`product.also`).
       const table = /* html */ `<section id="cmp-table" class="site-block" aria-labelledby="cmp-table-title">
   <h3 id="cmp-table-title">${hub.say('table.side')}</h3>
-  ${sideBySide('cmp-table-title', [xml(kit.brand.name), name], rows('table.rows'))}
+  ${sideBySide('cmp-table-title', [xml(kit.brand.name), kit.has('product.also') ? /* html */ `${name}<small>${say('product.also')}</small>` : name], rows('table.rows'))}
 </section>`
       // Where the other product runs in a mode of its own on a company's cloud, what that mode keeps beside Jean.
       const cloud = kit.has('cloud.title') ? /* html */ `<section class="site-block" aria-labelledby="cmp-cloud">
