@@ -16,6 +16,8 @@
   color: var(--ink);
   box-shadow: 0 1.5rem 3rem -1.5rem oklch(0 0 0 / 0.6);
 }
+/* Under the box once it has risen to the bar over a keyboard the browser doesn't tell of (ui/keyboard.js). */
+.composer[data-risen] .complete { inset-block: calc(100% + 0.5rem) auto; }
 .complete ul { margin: 0; padding: 0; list-style: none; }
 .complete-heading { padding: 0.55rem 0.75rem 0.25rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.78rem; font-weight: 600; color: var(--ink-soft); }
 .complete-option { display: grid; grid-template-columns: auto minmax(min(9rem, 50%), 1fr) minmax(0, auto); align-items: center; gap: 0.1rem 0.7rem; padding: 0.5rem 0.75rem; border-radius: 0.8rem; cursor: pointer; }

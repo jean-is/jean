@@ -211,7 +211,7 @@ class Composer extends Element {
     // A link from another of the person's devices goes where opening it would, which asks before anything joins (caps/devices, D726).
     if (pairs() && /^[^#\s]*#\/pair\/[\w-]{43}\.[\w-]{22}$/.test(text)) return void (event.preventDefault(), (location.hash = text.replace(/^[^#]*/, '')))
     // A long paste is a document in disguise: offer files (an event, so any language works).
-    if (!files.length && text.length > LONG_PASTE) import('./discovery.js').then((module) => module.offerOnce('files', true))
+    if (!files.length && text.length > 2000) import('./discovery.js').then((module) => module.offerOnce('files', true))
     if (!files.length) return
     event.preventDefault()
     attachFiles(files)
@@ -257,8 +257,6 @@ function primary(busy, empty, hands) {
     @click=${() => import('../caps/live/live.js').then((module) => module.toggle())}>${on ? icons.close : icons.voice}</button>`
   return html`<button class="send" ?disabled=${empty} aria-label=${t('action.send')}>${icons.send}</button>`
 }
-
-const LONG_PASTE = 2000
 
 /** The box's words as sent: a chip's / word once ui/marks.js is here, else its name. */
 export const plain = { of: (/** @type {string} */ text) => text.replace(/\u2068\u202F|\u202F\u2069/g, '') }

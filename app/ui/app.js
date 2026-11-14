@@ -154,8 +154,9 @@ async function start() {
   // First, before what jean.is has under it (D397).
   document.body.prepend(document.createElement('app-shell'))
   root.classList.add('is-ready')
-  // The box has the keyboard, but not on a touchscreen, where it would cover the welcome.
+  // The box has the keyboard, but not on a touchscreen, where one would cover the welcome and can cover the box (ui/keyboard.js).
   if (matchMedia('(pointer: fine)').matches) focusComposer()
+  else import('./keyboard.js')
   // What the user discovered (and policy unlocks) comes back, after first paint.
   app.ready = Promise.all([import('./discovery.js'), ...[...new Set([...app.settings.value.unlocked, ...preUnlock])].map(unlock)])
   if (document.getElementById('curtain')) import('./curtain.js').then((curtain) => curtain.lift()).catch(failed)
