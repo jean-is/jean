@@ -36,9 +36,15 @@ const SCRIPT = { ar: /\p{Script=Arabic}/u, ja: /[\p{Script=Han}\p{Script=Hiragan
 const ROWS = { name: 'table_rows', description: 'Read the rows of a table the user keeps, each with its id, which table_change needs.', parameters: { type: 'object', required: ['table'], properties: { table: { type: 'string' } } } }
 const WRITE = { name: 'write', description: 'Make a file the user keeps: a Word document from Markdown, a spreadsheet from a table, or text.', parameters: { type: 'object', required: ['name', 'content'], properties: { name: { type: 'string' }, content: { type: 'string' } } } }
 const WRITE_LINE = { name: 'write', line: 'make a file: a Word document, a spreadsheet or text' }
-/** Jean's `skill` and its line as own-skills declares them before Skills is found, naming the directory's skills in its order. */
+/**
+ * Jean's `skill` and its line as own-skills declares them before Skills is found, naming the directory's skills in its order. A wording
+ * to try in their place, measured before any goes into Jean: SKILL_LINE, the whole line; TABLE_NOTE, words after table_create's
+ * description (test/whiteboard/results.md has the pair measured).
+ */
 const SKILL = { name: 'skill', description: 'Read the steps of a skill.', parameters: { type: 'object', properties: { name: { type: 'string' } }, required: ['name'] } }
-const SKILL_LINE = { name: 'skill', line: `read the steps of a skill before asking the user anything for it or following it: ${DIRECTORY.map((entry) => entry.name).join(', ')}` }
+const SKILL_LINE = { name: 'skill', line: process.env.SKILL_LINE || `read the steps of a skill before asking the user anything for it or following it: ${DIRECTORY.map((entry) => entry.name).join(', ')}` }
+/** table_create as Tables declares it in the request's language, with TABLE_NOTE's words after its description when given. @param {string} lang */
+const tableSpec = (lang) => ((spec) => (process.env.TABLE_NOTE ? { ...spec, description: `${spec.description} ${process.env.TABLE_NOTE}` } : spec))(tableCreate(lang))
 /** A skill's steps without its front matter, as `skill` answers; reading "whiteboard" says the tools it brings, as Jean does. @param {string} named */
 async function skillRead(named) {
   const name = skillNamed(named).toLowerCase(), [dir, sheet] = name.split('/')
@@ -151,7 +157,7 @@ function areasRight(want, areas, lang, misses) {
 /** @param {any} chosen @param {any} set @param {string} lang @param {string} id @param {boolean} [skills] through the skill */
 async function makeOne(chosen, set, lang, id, skills = false) {
   const brief = set.make[id]
-  const { calls, made: board } = await converse(chosen, lang, { text: brief[lang], ...(skills ? { tools: [tableCreate(lang), WRITE], lines: [TABLE_LINE, WRITE_LINE], skills } : { tools: [WHITEBOARD, WHITEBOARD_CHANGE], lines: LINES }) })
+  const { calls, made: board } = await converse(chosen, lang, { text: brief[lang], ...(skills ? { tools: [tableSpec(lang), WRITE], lines: [TABLE_LINE, WRITE_LINE], skills } : { tools: [WHITEBOARD, WHITEBOARD_CHANGE], lines: LINES }) })
   const misses = []
   if (!board) misses.push(skills ? `no whiteboard, ${why(calls)}` : 'no whiteboard')
   else {
@@ -202,7 +208,7 @@ async function chooseOne(chosen, set, lang, i) {
  */
 async function skillChooseOne(chosen, set, lang, i) {
   const request = set.choose[i]
-  const { calls, made: board } = await converse(chosen, lang, { text: request[lang], tools: [tableCreate(lang), WRITE], lines: [TABLE_LINE, WRITE_LINE], skills: true })
+  const { calls, made: board } = await converse(chosen, lang, { text: request[lang], tools: [tableSpec(lang), WRITE], lines: [TABLE_LINE, WRITE_LINE], skills: true })
   const misses = []
   if (!request.whiteboard && calls.includes('whiteboard')) misses.push('made a whiteboard')
   if (request.whiteboard && !board) misses.push(`no whiteboard, ${why(calls)}`)
@@ -216,7 +222,7 @@ async function skillChooseOne(chosen, set, lang, i) {
 
 /** @param {any} chosen @param {string} lang @param {string} id @param {any} expected @param {string} text @param {boolean} [skills] through the skill */
 async function tableOne(chosen, lang, id, expected, text, skills = false) {
-  const { calls, tables } = await converse(chosen, lang, { text, ...(skills ? { tools: [tableCreate(lang), WRITE], lines: [TABLE_LINE, WRITE_LINE], skills } : { tools: [tableCreate(lang), WHITEBOARD, WHITEBOARD_CHANGE], lines: [TABLE_LINE, ...LINES] }) })
+  const { calls, tables } = await converse(chosen, lang, { text, ...(skills ? { tools: [tableSpec(lang), WRITE], lines: [TABLE_LINE, WRITE_LINE], skills } : { tools: [tableCreate(lang), WHITEBOARD, WHITEBOARD_CHANGE], lines: [TABLE_LINE, ...LINES] }) })
   const scored = score(expected, tables[0] ?? null)
   const misses = [...(calls.includes('whiteboard') ? ['made a whiteboard'] : []), ...scored.misses]
   return { right: scored.correct && !calls.includes('whiteboard'), misses, calls }
