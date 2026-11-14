@@ -7,8 +7,9 @@
 // Times come from a hybrid clock: a change is stamped after every line its copy holds, so a clock
 // that is behind never buries a change made after another was seen. Lines of one change share
 // their stamp; undo writes the values from before an author's latest change, not past a compacted
-// mark, which a file compacted later starts with. Pure, so Node's tests run it.
-import { canonical, TIME } from './table.js'
+// mark, which a file compacted later starts with. A whiteboard's own cells (D747) are the person's: the review neither marks nor
+// undoes them. A file read again with lines appended is parsed and folded for those alone. Pure, so Node's tests run it.
+import { canonical, TIME, isOwn } from './table.js'
 import { parseLine } from '../../core/conversations.js'
 
 /** @typedef {{ row: string, set?: Record<string, unknown>, delete?: boolean, at: string, by: string, why?: string, undoes?: string }} Change */
@@ -57,14 +58,18 @@ const order = (a, b) => (a.at !== b.at ? (a.at < b.at ? -1 : 1) : a.by !== b.by 
 /** @param {Stamp} a @param {Stamp} b */
 const before = (a, b) => a.at < b.at || (a.at === b.at && a.by < b.by)
 
-/** Each row's winning value for each cell, and for whether it is deleted. @param {Line[]} lines @returns {Map<string, Winners>} */
-function winners(lines) {
-  /** @type {Map<string, Winners>} */
-  const rows = new Map()
+/**
+ * Each row's winning value for each cell, and for whether it is deleted; onto `start`'s, which stay as they were, the rows the lines touch
+ * copied first. @param {Line[]} lines @param {Map<string, Winners>} [start] @returns {Map<string, Winners>}
+ */
+function winners(lines, start) {
+  const rows = new Map(start), copied = new Set()
   for (const line of lines) {
     if (!('row' in line)) continue
     const stamp = { at: line.at, by: line.by }
     let row = rows.get(line.row)
+    if (row && start && !copied.has(line.row)) rows.set(line.row, (row = { ...row, cells: new Map(row.cells) }))
+    copied.add(line.row)
     if (!row) rows.set(line.row, (row = { cells: new Map(), created: stamp }))
     else if (before(stamp, row.created)) row.created = stamp
     if (line.set) {
@@ -90,12 +95,28 @@ const isGone = (row) => row.gone?.value === true && !(row.changed && row.changed
  * The rows the lines make, in the order they were made; with `deleted`, those gone too.
  * @param {Line[]} lines @param {{ deleted?: boolean }} [options] @returns {Row[]}
  */
-export function fold(lines, { deleted = false } = {}) {
-  return [...winners(lines)].filter(([, row]) => deleted || !isGone(row)).map(([id, row]) => {
+export const fold = (lines, { deleted = false } = {}) => rowsOf(winners(lines), deleted)
+/** @param {Map<string, Winners>} winning @param {boolean} deleted @returns {Row[]} */
+function rowsOf(winning, deleted) {
+  return [...winning].filter(([, row]) => deleted || !isGone(row)).map(([id, row]) => {
     const cells = Object.fromEntries([...row.cells].filter(([, candidate]) => candidate.value !== null).map(([key, candidate]) => [key, candidate.value]))
     const stamps = Object.fromEntries([...row.cells].map(([key, { at, by }]) => [key, { at, by }]))
     return { id, cells, stamps, created: row.created, changed: row.changed ?? row.created, ...(isGone(row) && row.gone ? { deleted: { at: row.gone.at, by: row.gone.by } } : {}) }
   }).sort((a, b) => (before(a.created, b.created) ? -1 : before(b.created, a.created) ? 1 : a.id < b.id ? -1 : 1))
+}
+
+/** Each file's text, lines and winners as last read, by a key of its own. @type {Map<string, { text: string, lines: Line[], rows: Map<string, Winners> }>} */
+const reads = new Map()
+/**
+ * A changes.jsonl's lines and its rows, as `text` holds them: where it is what was read last for `key` with lines appended after a whole
+ * one, only those are parsed and folded, onto what was (D747). @param {string} key @param {string} text
+ * @returns {{ lines: Line[], rows: (options?: { deleted?: boolean }) => Row[] }}
+ */
+export function reading(key, text) {
+  const last = reads.get(key), more = last && text.startsWith(last.text) && (!last.text || last.text.endsWith('\n')) ? parseChanges(text.slice(last.text.length)) : null
+  const lines = !more ? parseChanges(text) : more.length ? [...(last?.lines ?? []), ...more] : last?.lines ?? [], rows = !more ? winners(lines) : more.length ? winners(more, last?.rows) : last?.rows ?? new Map()
+  reads.set(key, { text, lines, rows })
+  return { lines, rows: ({ deleted = false } = {}) => rowsOf(rows, deleted) }
 }
 
 /** Lines in the file's order: marks first, then by time, author and text. @param {Line} a @param {Line} b */
@@ -116,7 +137,7 @@ export function merge(a, b) {
 /**
  * Undoes `author`'s latest change not undone yet, since the file was last compacted: each cell it
  * set goes back to its value before, unless someone changed it since (skipped); a row it made goes,
- * unless someone wrote in it since; a row it deleted comes back. The lines are `by`'s, and say which
+ * unless someone wrote in it since; a row it deleted comes back; a whiteboard's own cells stay. The lines are `by`'s, and say which
  * change they undo. Null when there is none. `only` names the change, in place of the latest.
  * @param {Line[]} lines @param {{ author: string, by: string, now?: number, only?: string }} options
  * @returns {{ lines: Change[], skipped: { row: string, property: string }[] } | null}
@@ -137,12 +158,13 @@ export function undo(lines, { author, by, now, only }) {
     const latest = /** @type {Winners} */ (current.get(line.row))
     const then = previous.get(line.row)
     const edit = edits.get(line.row) ?? /** @type {Edit} */ (edits.set(line.row, { row: line.row }).get(line.row))
-    const untouched = [...latest.cells.values(), ...(latest.gone ? [latest.gone] : [])].every((candidate) => candidate.at === at && candidate.by === author)
+    const untouched = [...[...latest.cells].flatMap(([key, candidate]) => (isOwn(key) ? [] : [candidate])), ...(latest.gone ? [latest.gone] : [])].every((candidate) => candidate.at === at && candidate.by === author)
     if (!then && untouched) {
       edit.delete = true
       continue
     }
     for (const [key, value] of Object.entries(line.set ?? {})) {
+      if (isOwn(key)) continue
       if (latest.cells.get(key)?.json !== canonical(value)) skipped.push({ row: line.row, property: key })
       else (edit.set ??= {})[key] = then?.cells.get(key)?.value ?? null
     }
@@ -150,4 +172,21 @@ export function undo(lines, { author, by, now, only }) {
   }
   const written = [...edits.values()].filter((edit) => edit.set || edit.delete !== undefined)
   return { lines: written.length ? stamp(lines, written, { by, now, undoes: at }) : [], skipped }
+}
+
+/**
+ * `jean`'s changes the person hasn't accepted or rejected, after what they kept, the latest last: a cell they wrote over since, or a row
+ * they deleted, is decided; a whiteboard's own cells are never marked. @param {Line[]} lines @param {string} [kept] @returns {Change[]}
+ */
+export function marked(lines, kept = '') {
+  const changes = /** @type {Change[]} */ (lines.filter((line) => 'row' in line)), mine = changes.filter((line) => line.by === 'user')
+  const open = (/** @type {Change} */ line, /** @type {string} */ id) => !mine.some((later) => later.row === line.row && later.at > line.at && (later.delete !== undefined || (id in (later.set ?? {}))))
+  return changes.filter((line) => line.by === 'jean' && line.at > kept && (line.set ? Object.keys(line.set).filter((id) => !isOwn(id)) : ['']).some((id) => open(line, id)))
+}
+
+/** What undoes `edits` made after `lines`: each cell set back as it was, a row deleted or brought back as it was, a row made deleted. @param {Line[]} lines @param {Edit[]} edits @returns {Edit[]} */
+export function inverse(lines, edits) {
+  const was = new Map(fold(lines, { deleted: true }).map((row) => [row.id, row]))
+  return edits.map(({ row, set, delete: gone }) => ((before) => (before ? { row, ...(set && { set: Object.fromEntries(Object.keys(set).map((id) => [id, before.cells[id] ?? null])) }),
+    ...(gone !== undefined && { delete: Boolean(before.deleted) }) } : { row, delete: true }))(was.get(row)))
 }

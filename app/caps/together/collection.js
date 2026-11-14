@@ -4,7 +4,7 @@
 // over what the person changes meanwhile; a table that comes is merged into the one here. What the person changes here goes as the
 // lines the journal doesn't hold yet, and the table when it differs from the last one the journal had.
 import { app } from '../../ui/state.js'
-import { parseChanges, stringifyChanges } from '../tables/changes.js'
+import { parseChanges, stringifyChanges, reading } from '../tables/changes.js'
 import { readTable, mergeTables, canonical } from '../tables/table.js'
 
 /** Where a collection is: its project's folder and its own. @typedef {{ dir: string, folder: string }} Place */
@@ -13,7 +13,11 @@ import { readTable, mergeTables, canonical } from '../tables/table.js'
 /** @param {Place} place */
 const paths = ({ dir, folder }) => ({ table: `${dir}/${folder}/collection.json`, lines: `${dir}/${folder}/changes.jsonl` })
 /** @param {Place} place */
-const read = async (place) => ({ table: tableOf(await app.fs.read(paths(place).table)), lines: parseChanges(await app.fs.read(paths(place).lines) ?? '') })
+const read = async (place) => ({ table: tableOf(await app.fs.read(paths(place).table)), lines: reading(`${place.dir}/${place.folder}`, await app.fs.read(paths(place).lines) ?? '').lines })
+/** A line as the journal holds it, worked out once for each line read (D747): a file read again keeps the lines it had. @type {WeakMap<object, string>} */
+const keys = new WeakMap()
+/** @param {object} line */
+const keyOf = (line) => keys.get(line) ?? /** @type {string} */ (keys.set(line, canonical(line)).get(line))
 /** A table, or none where there is none yet, as a newcomer has, or what is there isn't one. @param {string | null} text */
 const tableOf = (text) => { try { return text ? readTable(text) : null } catch { return null } }
 /** Tables' views shown, read again. @param {Place} place */
@@ -36,7 +40,7 @@ export async function take(place, body, held) {
   const here = await read(place)
   const lines = parseChanges(stringifyChanges(Array.isArray(body.lines) ? body.lines : []))
   for (const line of lines) held.lines.add(canonical(line))
-  const known = new Set(here.lines.map(canonical)), fresh = lines.filter((line) => !known.has(canonical(line)))
+  const known = new Set(here.lines.map(keyOf)), fresh = lines.filter((line) => !known.has(canonical(line)))
   if (fresh.length) await app.fs.append(paths(place).lines, stringifyChanges(fresh))
   const table = body.table && tableOf(JSON.stringify(body.table))
   if (table) {
@@ -56,9 +60,9 @@ export function watch(place, held, post) {
   let running = Promise.resolve()
   const look = () => (running = running.then(async () => {
     const here = await read(place)
-    const fresh = here.lines.filter((line) => !held.lines.has(canonical(line)))
+    const fresh = here.lines.filter((line) => !held.lines.has(keyOf(line)))
     if (fresh.length) {
-      for (const line of fresh) held.lines.add(canonical(line))
+      for (const line of fresh) held.lines.add(keyOf(line))
       await post({ lines: fresh })
     }
     if (here.table && canonical(here.table) !== held.table) {

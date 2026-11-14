@@ -38,6 +38,8 @@ export const DIRECTORY = Object.freeze([
   { name: 'site', group: 'drawn', icon: 'M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM3 9h18M6 7h.01M8.5 7h.01M7 13h6M7 16h4', cap: 'sites', beside: ['kinds.md', 'look.md'] },
   // Prototypes (D742): the capability it brings, and its sheet of shapes; the look is the site skill's.
   { name: 'prototype', group: 'drawn', icon: 'M3 5h6v14H3zM15 5h6v14h-6zM9 12h6M13 10l2 2-2 2', cap: 'prototypes', beside: ['screens.md'] },
+  // Whiteboards (D747): the capability it brings, whose two tools make and sort one.
+  { name: 'whiteboard', group: 'drawn', icon: 'M3.5 4.5h17v15h-17zM6.5 7.5h4v4h-4zM13.5 7.5h4v4h-4zM6.5 14h4', cap: 'whiteboards' },
   // Apps (D553): the pages answers hold, whose capability it needs; a prototype's Build it follows it (D742).
   { name: 'app', group: 'drawn', icon: 'M4 4h6.5v6.5H4zM4 13.5h6.5V20H4zM13.5 13.5H20V20h-6.5zM16.75 3.35l3.9 3.9-3.9 3.9-3.9-3.9z', cap: 'interactive' },
   { name: 'pptx', group: 'drawn', icon: 'M6.5 3.5h8l4 4v13h-12zM14.5 3.5v4h4M9 14a3 3 0 1 0 6 0 3 3 0 1 0-6 0M12 11v3h3' },

@@ -43,6 +43,7 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   games: () => import('../caps/games/games.js'),
   sites: () => import('../caps/sites/sites.js'),
   prototypes: () => import('../caps/prototypes/prototypes.js'),
+  whiteboards: () => import('../caps/whiteboards/whiteboards.js'),
   backup: () => import('../caps/backup/backup.js'),
   sync: () => import('../caps/sync/sync.js'),
   lock: () => import('../caps/lock/lock.js'),

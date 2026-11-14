@@ -69,6 +69,8 @@ register({ id: 'together',
   // Whether others work on a thing of the project, by its place there: what a brain reads of it is from elsewhere (ui/send.js, D673).
   others: { at: 0, draw: () => nothing, holds: (/** @type {string} */ uri) => othersAt(`${app.projectDir}/${uri}`) },
   // In a document's editor, where it is worked on together: each one's caret in their colour with their name, and this person's for them (caps/documents).
+  // On a whiteboard worked on together (caps/whiteboards): each one's pointer, what they write and what they selected, through the carets' way.
+  pointers: { at: 0, draw: () => nothing, say: caret, of: othersIn },
   editor: { at: 0, draw: () => nothing, add: (/** @type {import('prosemirror-view').EditorView} */ view, /** @type {string} */ path) => import('./carets.js').then(({ plug }) => plug(view, path, caret, othersIn)) },
   // The room's line over another's turn names them as the circle does, else as People does (ui/chat.js).
   came: { at: 0, draw: () => nothing, name: (/** @type {string} */ fp) => memberName(fp) || (slots('came').find((one) => one.at > 0)?.name(fp) ?? '') },

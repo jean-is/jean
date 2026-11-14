@@ -5,8 +5,8 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readdir, readFile } from 'node:fs/promises'
 import { readZip } from '../app/core/zip.js'
-import { createTable, readTable, tableProblems, checkCell, grown, mergeTables, propertyOf, folderOf, reshape, converted, titleOf } from '../app/caps/tables/table.js'
-import { parseChanges, stringifyChanges, nextAt, stamp, fold, merge, undo } from '../app/caps/tables/changes.js'
+import { createTable, readTable, tableProblems, checkCell, grown, mergeTables, propertyOf, folderOf, reshape, converted, titleOf, ownProblem, kindOf, notesOf, spotOf, arranged } from '../app/caps/tables/table.js'
+import { parseChanges, stringifyChanges, nextAt, stamp, fold, merge, undo, inverse, marked, reading } from '../app/caps/tables/changes.js'
 import { query, valueOf, ordered, total } from '../app/caps/tables/query.js'
 import { toCSV, exportTable, textOf, namesOf, rowNamed } from '../app/caps/tables/export.js'
 import { fill, rules } from '../app/caps/tables/fill.js'
@@ -435,6 +435,97 @@ test('undo: an author’s latest change goes back, then the one before; a cell c
   // A row Jean made and nobody touched since goes; a deletion undone brings the row back.
   const made = stamp([], [{ row: R(9), set: { company: 'Wayne' } }], { by: 'jean', now: Date.parse(T(1)) })
   assert.deepEqual(fold([...made, ...(undo(made, { author: 'jean', by: 'user', now: Date.parse(T(2)) })?.lines ?? [])]), [])
+})
+
+// ─── A whiteboard's rows (D747) ──────────────────────────────────────────────
+
+const BOARD_ID = '01K85Z1T' + 'B'.padStart(18, '0')
+/** A whiteboard: its notes' words, and the area each is in, a relation to itself. @returns {import('../app/caps/tables/table.js').Table} */
+const board = () => ({ format: 1, id: BOARD_ID, name: 'Retro', kind: 'whiteboard', dir: 'ltr', author: 'user', created: T(0), changed: T(0),
+  properties: [{ id: 'note', name: 'Note', type: 'text' }, { id: 'area', name: 'Area', type: 'relation', collection: `collections/${BOARD_ID}-retro` }], views: [{ id: 'table', type: 'table' }] })
+/** Two areas, the first made first; notes in them, placed by hand or in the flow, one on the ground, one on the shelf; a text and a drawn line. */
+const WALL = [
+  line(R(1), { note: 'Went well', '@kind': 'area', '@spot': { area: null, x: 0, y: 0 } }, T(1)),
+  line(R(2), { note: 'To change', '@kind': 'area', '@spot': { area: null, x: 1200, y: 0 } }, T(1)),
+  line(R(3), { note: 'Flaky tests', area: R(2), '@spot': { area: R(2), x: 0, y: 64 } }, T(2)),
+  line(R(4), { note: 'Slow builds', area: R(2), '@spot': { area: R(2), x: 0, y: 0 } }, T(2)),
+  line(R(5), { note: 'Lunch', '@spot': { area: null, x: 40, y: 900 } }, T(2)),
+  line(R(6), { note: 'Demo day', area: R(1) }, T(2)),
+  line(R(7), { note: 'Ask Sam', area: R(2), '@spot': { area: R(1), x: 8, y: 8 } }, T(3)),
+  line(R(8), { note: 'Wiki' }, T(3)),
+  line(R(9), { note: 'Next sprint', '@kind': 'text', '@size': 'title', '@spot': { area: null, x: 0, y: -80 } }, T(3)),
+  line(R(10), { '@kind': 'line', '@path': [0, 0, 12, 4, 30, 10], '@ink': 'ink', '@spot': { area: null, x: 600, y: 400 } }, T(3)),
+]
+
+test('a whiteboard is a collection of its own kind, in the direction it was made, its words in note and its areas in area; no column id starts with @', () => {
+  assert.deepEqual(tableProblems(board()), [])
+  assert.match(tableProblems({ ...board(), kind: 'mural' }).join(), /kind of collection/)
+  assert.match(tableProblems({ ...board(), dir: 'up' }).join(), /direction/)
+  assert.match(tableProblems({ ...board(), properties: [board().properties[0]] }).join(), /area/)
+  assert.match(tableProblems({ ...jobs(), properties: [...jobs().properties, { id: '@spot', name: 'Spot', type: 'text' }] }).join(), /@/)
+  // Its own columns stay as they are, and a select added groups no board: the whiteboard draws its own lanes.
+  let one = reshape(board(), { add: { name: 'Mood', type: 'select', options: ['😀'] } }, T(1))
+  assert.deepEqual(one.views.map((view) => view.type), ['table'])
+  for (const edit of [{ remove: 'note' }, { remove: 'area' }, { retype: { id: 'area', type: 'text' } }, { retype: { id: 'note', type: 'number' } }]) one = reshape(one, edit, T(2))
+  assert.deepEqual(tableProblems(one), [])
+  assert.deepEqual(one.properties.slice(0, 2), board().properties)
+})
+
+test('ownProblem: what kind a row is, where it lies, a text\'s size, a drawn line\'s points and ink, each checked; null clears any', () => {
+  for (const [key, value] of [['@kind', 'area'], ['@kind', 'text'], ['@kind', 'line'], ['@spot', { area: R(1), x: 8, y: -16 }], ['@spot', { area: null, x: 0, y: 0 }], ['@size', 'title'], ['@size', 'line'],
+    ['@path', [0, 0, 10, 4]], ['@ink', 'ink'], ['@ink', 0], ['@ink', 6], ['@spot', null], ['@kind', null]]) assert.equal(ownProblem(key, value), null, `${key} ${JSON.stringify(value)}`)
+  for (const [key, value] of [['@kind', 'note'], ['@spot', { area: 'x', x: 0, y: 0 }], ['@spot', { area: null, x: 0.5, y: 0 }], ['@spot', { x: 0, y: 0 }], ['@size', 'big'], ['@path', [0, 0, 1]],
+    ['@path', Array(4002).fill(1)], ['@path', [0.5, 1]], ['@ink', 7], ['@ink', 'red'], ['@colour', 'red']]) assert.ok(ownProblem(key, value), `${key} ${JSON.stringify(value)}`)
+})
+
+test('a whiteboard\'s rows: their kinds, where each lies while its area is its own, and its notes as a grid or paper lists them: by area, those placed by hand first, top to bottom', () => {
+  const rows = fold(WALL), areas = new Set([R(1), R(2)])
+  assert.deepEqual(rows.map(kindOf), ['area', 'area', 'note', 'note', 'note', 'note', 'note', 'note', 'text', 'line'])
+  assert.deepEqual(notesOf(rows).map((row) => row.id), [R(3), R(4), R(5), R(6), R(7), R(8)])
+  // A spot counts while it names the row's own area: Ask Sam's names another, so it is in its area's flow.
+  assert.deepEqual([R(1), R(3), R(5), R(6), R(7), R(8)].map((id) => spotOf(/** @type {any} */ (rows.find((row) => row.id === id)), areas)),
+    [{ area: null, x: 0, y: 0 }, { area: R(2), x: 0, y: 64 }, { area: null, x: 40, y: 900 }, undefined, undefined, undefined])
+  assert.deepEqual(arranged(rows).map((row) => row.id), [R(6), R(4), R(3), R(7), R(5), R(8)])
+  // An area gone: its notes are on the shelf again, their spots no longer counting.
+  const gone = fold([...WALL, { row: R(2), delete: true, at: T(4), by: 'user' }])
+  assert.equal(spotOf(/** @type {any} */ (gone.find((row) => row.id === R(3))), new Set([R(1)])), undefined)
+  assert.deepEqual(arranged(gone).map((row) => row.id), [R(6), R(5), R(3), R(4), R(7), R(8)])
+})
+
+test('Reject over a whiteboard: its own cells neither go back nor count as written since; an area Jean made goes, though moved since, and one Jean renamed stays an area', () => {
+  const lines = [...stamp([], [{ row: R(2), set: { note: 'Wins', '@kind': 'area', '@spot': { area: null, x: 0, y: 0 } } }], { by: 'user', now: Date.parse(T(0)) })]
+  lines.push(...stamp(lines, [{ row: R(1), set: { note: 'Risks', '@kind': 'area', '@spot': { area: null, x: 1200, y: 0 } } }, { row: R(3), set: { note: 'Flaky', area: R(1) } }, { row: R(2), set: { note: 'Good' } }], { by: 'jean', now: Date.parse(T(1)) }))
+  lines.push(...stamp(lines, [{ row: R(1), set: { '@spot': { area: null, x: 2400, y: 0 } } }, { row: R(2), set: { '@spot': { area: null, x: 0, y: 600 } } }], { by: 'user', now: Date.parse(T(2)) }))
+  // Moving them decided nothing: Jean's three rows wait, and only their words and areas.
+  assert.deepEqual(marked(lines).map((one) => one.row), [R(1), R(3), R(2)])
+  assert.deepEqual(marked(lines, T(1)), [])
+  assert.deepEqual(marked([...lines, { row: R(4), set: { '@spot': { area: null, x: 0, y: 0 } }, at: T(3), by: 'jean' }]).map((one) => one.row), [R(1), R(3), R(2)])
+  const back = (/** @type {string} */ row) => undo(lines.filter((one) => 'row' in one && one.row === row), { author: 'jean', by: 'user', now: Date.parse(T(3)), only: T(1) })?.lines ?? []
+  const after = fold([...lines, ...back(R(1)), ...back(R(2))])
+  assert.equal(after.some((row) => row.id === R(1)), false)
+  assert.deepEqual(after.find((row) => row.id === R(2))?.cells, { note: 'Wins', '@kind': 'area', '@spot': { area: null, x: 0, y: 600 } })
+})
+
+test('inverse: what undoes a person\'s change on a whiteboard, its own cells with the rest: a note dragged out goes back with its area, a row made goes, one erased comes back', () => {
+  const lines = [line(R(1), { note: 'Risks', '@kind': 'area', '@spot': { area: null, x: 0, y: 0 } }, T(1)), line(R(2), { note: 'Flaky', area: R(1), '@spot': { area: R(1), x: 8, y: 8 } }, T(1)),
+    line(R(3), { '@kind': 'line', '@path': [0, 0, 4, 4], '@ink': 2, '@spot': { area: null, x: 0, y: 0 } }, T(1))]
+  assert.deepEqual(inverse(lines, [{ row: R(2), set: { area: null, '@spot': { area: null, x: 400, y: 40 } } }, { row: R(4), set: { note: 'New', '@kind': 'area' } }, { row: R(3), delete: true }]), [
+    { row: R(2), set: { area: R(1), '@spot': { area: R(1), x: 8, y: 8 } } }, { row: R(4), delete: true }, { row: R(3), delete: false }])
+})
+
+test('reading: a file read again with lines appended parses and folds only those, to the rows a whole fold gives; rewritten, or after a half-written line, it is read whole', () => {
+  const [first, more] = [WALL.slice(0, 6), [...WALL.slice(6), line(R(3), { area: R(1) }, T(5)), { row: R(5), delete: true, at: T(6), by: 'user' }]]
+  const a = reading('wall', stringifyChanges(first)), b = reading('wall', stringifyChanges(first) + stringifyChanges(more))
+  assert.deepEqual(a.rows(), fold(first))
+  assert.deepEqual(b.rows(), fold([...first, ...more]))
+  assert.deepEqual(b.rows({ deleted: true }), fold([...first, ...more], { deleted: true }))
+  assert.ok(b.lines.slice(0, first.length).every((one, i) => one === a.lines[i]), 'the lines read before are kept, not parsed again')
+  assert.deepEqual(a.rows(), fold(first), 'what was read before is left as it was')
+  const sorted = stringifyChanges(merge(first, more))
+  assert.deepEqual(reading('wall', sorted).rows(), fold([...first, ...more]))
+  const half = stringifyChanges(first) + '{"row":"' + R(9)
+  assert.deepEqual(reading('half', half).rows(), fold(first))
+  assert.deepEqual(reading('half', stringifyChanges(first) + stringifyChanges(more)).rows(), fold([...first, ...more]))
 })
 
 // ─── Queries ─────────────────────────────────────────────────────────────────

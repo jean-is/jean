@@ -23,7 +23,7 @@ import { reviewBar } from '../../ui/review.js'
 import { icons, icon } from '../../ui/menu-icons.js'
 import { shown, change, unkept, accept, reject, reread, reshapeTable, retype, collections, undoStep, load } from './tables.js'
 import { query, valueOf, total, filterOf } from './query.js'
-import { titleOf, checkCell } from './table.js'
+import { titleOf, checkCell, notesOf } from './table.js'
 import { compile } from './formula.js'
 import { textOf, said as told } from './export.js'
 import { searchable } from '../../ui/mentions.js'
@@ -161,6 +161,8 @@ const ruleOn = (property) => ({ property: property.id, op: opsOf(property)[0], .
 /** @param {Loaded | null} one @param {State} state @param {(step: 1 | -1) => void} go */
 function draw(one, state, go) {
   if (!one) return nothing
+  // A whiteboard shown as a table: its notes (D747).
+  if (one.table.kind) one = { ...one, rows: notesOf(one.rows) }
   const { board, search } = state
   const columns = one.table.properties.filter((property) => !property.deleted)
   const lanes = one.table.views.find((view) => view.type === 'board' && columns.some((property) => property.id === view.group))

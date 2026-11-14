@@ -215,6 +215,8 @@ export type SystemNoteData = { others?: true } & (
   | { kind: 'document', uri: string }
   /** the table on show beside the conversation, its columns and how many rows it has (D491) */
   | { kind: 'table', uri: string }
+  /** the whiteboard on show beside the conversation, how many sections and notes it has, and the notes the user selected, by id (D747) */
+  | { kind: 'whiteboard', uri: string }
   /** the design on show beside the conversation, its parts and the one the user points at (D572) */
   | { kind: 'design', uri: string }
   /** the deck on show beside the conversation as it is now, its slide on show and the words the user points at (D591) */

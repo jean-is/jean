@@ -4,7 +4,9 @@
 // Sync, column by column. A column's id comes from its first name and never changes, so renaming it
 // rewrites no change. A status a brain gives no steps is a select, and a select's choices grow as values
 // come (D491), as Notion's do. A relation is to a collection, this one or another, by its place, and each of its cells to one row
-// there, by the row's ULID; a brain makes one too. Pure, so Node's tests run it.
+// there, by the row's ULID; a brain makes one too. A whiteboard (D747) is a collection of its own kind: its notes' words in `note`, the
+// area each is in in `area`, a relation to itself, and areas, texts and drawn lines rows too, told apart by cells whose keys start with @,
+// which only the person and Jean's own code write. Pure, so Node's tests run it.
 import { slug } from '../../core/settings.js'
 import { renamed as rewritten } from './formula.js'
 
@@ -38,8 +40,9 @@ const ALIASES = /** @type {Record<string, PropertyType>} */ ({
  */
 /**
  * kept: the time of Jean's latest change the user kept, after which Jean's changes are marked (D491); order: the rows' ids in the
- * order the user put them, those it doesn't name after them, as they were made.
- * @typedef {{ format: 1, id: string, name: string, author: string, created: string, changed: string, properties: Property[], views: View[], kept?: string, pinned?: boolean, order?: string[] }} Table
+ * order the user put them, those it doesn't name after them, as they were made; kind: a whiteboard's (D747), and dir: the direction it
+ * was made in, the same for everyone who sees it.
+ * @typedef {{ format: 1, id: string, name: string, author: string, created: string, changed: string, properties: Property[], views: View[], kept?: string, pinned?: boolean, order?: string[], kind?: 'whiteboard', dir?: 'ltr' | 'rtl' }} Table
  */
 
 /** A column's id: its first name, in any script, lower case. @param {string} name @param {Set<string>} taken */
@@ -128,6 +131,8 @@ export function tableProblems(table) {
   if (typeof table.name !== 'string' || !table.name.trim()) problems.push('The table has no name.')
   if (typeof table.author !== 'string' || !table.author) problems.push('The table has no author.')
   for (const key of ['created', 'changed']) if (!TIME.test(table[key])) problems.push(`The table's ${key} time isn't an ISO time in UTC.`)
+  if (table.kind !== undefined && table.kind !== 'whiteboard') problems.push(`"${table.kind}" isn't a kind of collection.`)
+  if (table.dir !== undefined && table.dir !== 'ltr' && table.dir !== 'rtl') problems.push('The table\'s direction is ltr or rtl.')
   if (table.order !== undefined && !(Array.isArray(table.order) && table.order.every((/** @type {unknown} */ id) => typeof id === 'string'))) problems.push('The table\'s order isn\'t a list of its rows\' ids.')
   if (!Array.isArray(table.properties) || !table.properties.length) return [...problems, 'The table has no columns.']
   /** @type {Map<string, any>} */
@@ -139,6 +144,7 @@ export function tableProblems(table) {
     if (typeof property?.id !== 'string' || !property.id) problems.push('A column has no id.')
     else if (ids.has(property.id)) problems.push(`Two columns have the id "${property.id}".`)
     else ids.set(property.id, property)
+    if (isOwn(String(property?.id))) problems.push(`${label}: a column's id never starts with @.`)
     if (typeof property?.name !== 'string' || !property.name.trim()) problems.push(`The column "${property?.id}" has no name.`)
     else if (!property.deleted && names.has(property.name.toLocaleLowerCase())) problems.push(`Two columns are named "${property.name}".`)
     else if (!property.deleted) names.add(property.name.toLocaleLowerCase())
@@ -147,6 +153,7 @@ export function tableProblems(table) {
     else if (CHOICES.has(property.type)) problems.push(...optionProblems(property, label))
     else if (property.type === 'relation' && !PLACE.test(property.collection)) problems.push(`${label}: a relation names its collection by its place.`)
   }
+  if (table.kind && !(ids.get('note')?.type === 'text' && ids.get('area')?.type === 'relation' && !ids.get('note').deleted && !ids.get('area').deleted)) problems.push('A whiteboard keeps its notes\' words in note, and their areas in area.')
   if (!Array.isArray(table.views)) return [...problems, 'The table has no views.']
   /** @type {Set<string>} */
   const views = new Set()
@@ -267,6 +274,8 @@ export function reshape(table, edit, at) {
     return n > 1 ? `${name} ${n}` : name
   }
   let { name, properties, views } = table, made = /** @type {Property | undefined} */ (undefined)
+  // A whiteboard's own two columns stay as they are.
+  if (table.kind && ['note', 'area'].some((id) => id === edit.remove || id === edit.retype?.id)) return table
   if (edit.name?.trim()) name = edit.name.trim()
   if (edit.add) {
     made = propertyFrom({ ...edit.add, name: free(edit.add.name.trim()) }, new Set(properties.map((one) => one.id)))
@@ -289,9 +298,39 @@ export function reshape(table, edit, at) {
   // Brought back where it was, numbered if another has its name by then.
   if (edit.restore) properties = properties.map((property) => (property.id === edit.restore && property.deleted ? (({ deleted, ...back }) => ({ ...back, name: free(back.name, back.id) }))(property) : property))
   views = views.filter((view) => view.type !== 'board' || properties.some((property) => property.id === view.group && (property.type === 'select' || property.type === 'status')))
-  if ((made?.type === 'select' || made?.type === 'status') && !views.some((view) => view.type === 'board')) views = [...views, { id: 'board', type: 'board', group: made.id }]
+  if ((made?.type === 'select' || made?.type === 'status') && !table.kind && !views.some((view) => view.type === 'board')) views = [...views, { id: 'board', type: 'board', group: made.id }]
   if (edit.view) views = views.map((view) => (view.type === 'table' ? { ...view, ...(typeof edit.view === 'function' ? edit.view(view) : edit.view) } : view))
   return { ...table, name, properties, views, ...(edit.order && { order: edit.order }), changed: at }
+}
+
+/** Whether a cell is a whiteboard's own (D747): what kind of row it is and where it lies, written by the person and Jean's code alone. @param {string} key */
+export const isOwn = (key) => key[0] === '@'
+/**
+ * What is wrong with a whiteboard's own cell, in words; null when it fits: an area, a text or a drawn line (a note has no kind); where it
+ * lies, an area's id or none (the ground), in whole units of the board; a text's size; a line's points from its corner, x and y in turn, at
+ * most 2,000; its ink, or an area colour's place. null clears it. @param {string} key @param {unknown} value
+ */
+export function ownProblem(key, value) {
+  const whole = (/** @type {unknown} */ n) => Number.isInteger(n) && Math.abs(/** @type {number} */ (n)) <= 1e6, it = /** @type {any} */ (value)
+  const fits = /** @type {Record<string, () => boolean>} */ ({ '@kind': () => ['area', 'text', 'line'].includes(it), '@spot': () => (it?.area === null || ULID.test(it?.area)) && whole(it.x) && whole(it.y),
+    '@size': () => it === 'title' || it === 'line', '@path': () => Array.isArray(it) && it.length % 2 === 0 && it.length <= 4000 && it.every(whole), '@ink': () => it === 'ink' || (Number.isInteger(it) && it >= 0 && it < 7) })[key]
+  return value === null || fits?.() ? null : `${key} can't be ${JSON.stringify(value)?.slice(0, 40)}.`
+}
+/** A row's kind on a whiteboard: an area, a text, a drawn line, else a note, as every row of a collection is. @param {{ cells: Record<string, unknown> }} row */
+export const kindOf = (row) => /** @type {'note' | 'area' | 'text' | 'line'} */ (row.cells['@kind'] ?? 'note')
+/** What a grid, a workbook, a list or paper shows of a collection's rows: a whiteboard's notes alone. @template {{ cells: Record<string, unknown> }} R @param {R[]} rows */
+export const notesOf = (rows) => rows.filter((row) => kindOf(row) === 'note')
+/**
+ * Where a whiteboard's row lies: its spot, while the area it names is the row's own and is still there (an area's, and one on the ground,
+ * name none); else undefined, in its area's flow, or on the shelf. @param {{ cells: Record<string, unknown> }} row @param {Set<unknown>} areas their ids
+ * @returns {{ area: string | null, x: number, y: number } | undefined}
+ */
+export const spotOf = (row, areas) => ((spot, area) => (spot?.area === area ? spot : undefined))(/** @type {any} */ (row.cells['@spot']), areas.has(row.cells.area) ? row.cells.area : null)
+/** A whiteboard's notes as a grid or paper lists them: by area, in the order they were made, then those in none; in each, those placed by hand first, top to bottom, from the start. @template {{ id: string, cells: Record<string, unknown> }} R @param {R[]} rows */
+export function arranged(rows) {
+  const areas = rows.flatMap((row) => (kindOf(row) === 'area' ? [row.id] : [])), ids = new Set(areas)
+  const key = (/** @type {R} */ row) => ((spot, area) => [area < 0 ? areas.length : area, spot ? 0 : 1, spot?.y ?? 0, spot?.x ?? 0])(spotOf(row, ids), areas.indexOf(String(row.cells.area)))
+  return notesOf(rows).map((row, i) => ({ row, at: [...key(row), i] })).sort((a, b) => a.at.reduce((by, n, i) => by || n - b.at[i], 0)).map(({ row }) => row)
 }
 
 /** A date, or a date and time, as ISO 8601 writes it, that is on the calendar. @param {unknown} value */

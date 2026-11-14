@@ -12,7 +12,7 @@
 // one or another, by its place: load() reads those collections and their rows' names, which the view, the brain and the workbook show.
 import { html } from 'lit-html'
 import { signal } from '@preact/signals-core'
-import { register } from '../../ui/caps.js'
+import { register, unlock } from '../../ui/caps.js'
 import { onPaper } from '../../ui/kit.js'
 import { kitSlot } from '../slides/kit-slot.js'
 import '../made/paper.js'
@@ -24,8 +24,8 @@ import { ulid } from '../../core/ulid.js'
 import { useStrings, locale, t, intlLocales } from '../../core/i18n.js'
 import { icons } from '../../ui/menu-icons.js'
 import { page, grid, reread as listed } from '../../ui/creations.js'
-import { createTable, readTable, folderOf, propertyOf, checkCell, grown, reshape, converted, canonical, PLACE as FOLDER } from './table.js'
-import { parseChanges, stringifyChanges, stamp, fold, undo } from './changes.js'
+import { createTable, readTable, folderOf, propertyOf, checkCell, grown, reshape, converted, canonical, isOwn, ownProblem, kindOf, notesOf, spotOf, arranged, PLACE as FOLDER } from './table.js'
+import { stringifyChanges, stamp, fold, undo, reading, marked, inverse } from './changes.js'
 import { query, ordered, valueOf, filterOf } from './query.js'
 import { worked } from './formula.js'
 import { exportTable, namesOf, rowNamed, said } from './export.js'
@@ -61,8 +61,8 @@ const fresh = new Set()
 export async function load(folder, dir = app.projectDir, alone = false) {
   const text = FOLDER.test(folder) && await app.fs.read(`${dir}/${folder}/collection.json`)
   if (!text) return drafts.get(folder) ?? null
-  const lines = parseChanges((await app.fs.read(`${dir}/${folder}/changes.jsonl`)) ?? ''), table = readTable(text)
-  const one = { dir, folder, table, lines, rows: worked(table, ordered(fold(lines), table.order)) }
+  const { lines, rows } = reading(`${dir}/${folder}`, (await app.fs.read(`${dir}/${folder}/changes.jsonl`)) ?? ''), table = readTable(text)
+  const one = { dir, folder, table, lines, rows: worked(table, ordered(rows(), table.order)) }
   if (alone) return one
   const places = [...new Set(table.properties.flatMap((property) => (property.type === 'relation' && !property.deleted ? [String(property.collection)] : [])))]
   const related = new Map(/** @type {[string, Loaded][]} */ ((await Promise.all(places.map(async (place) => [place, await targetOf(one, place)]))).filter(([, target]) => target)))
@@ -70,12 +70,12 @@ export async function load(folder, dir = app.projectDir, alone = false) {
 }
 
 /** The places of a project's collections, the latest made first. @param {string} dir */
-const folders = async (dir) => (await app.fs.list(`${dir}/collections`)).flatMap(({ kind, name }) => (kind === 'directory' ? [`collections/${name}`] : [])).sort().reverse()
-/** The collection a relation is to, read: this one or another of the project's; null once it is gone. @param {Loaded} one @param {string} place */
-const targetOf = (one, place) => (place === one.folder ? one : load(place, one.dir, true).catch(() => null))
+export const folders = async (dir) => (await app.fs.list(`${dir}/collections`)).flatMap(({ kind, name }) => (kind === 'directory' ? [`collections/${name}`] : [])).sort().reverse()
+/** The collection a relation is to, read: this one, a whiteboard's areas alone (D747), or another of the project's; null once it is gone. @param {Loaded} one @param {string} place */
+const targetOf = (one, place) => (place !== one.folder ? load(place, one.dir, true).catch(() => null) : one.table.kind ? { ...one, rows: one.rows.filter((row) => kindOf(row) === 'area') } : one)
 /** The project's collections by place and name, the latest made first, for a relation to be to one. @param {string} [dir] */
 export const collections = async (dir = app.projectDir) => (await Promise.all((await folders(dir)).map((folder) => load(folder, dir, true).catch(() => null))))
-  .flatMap((one) => (one ? [{ folder: one.folder, name: one.table.name }] : []))
+  .flatMap((one) => (one && !one.table.kind ? [{ folder: one.folder, name: one.table.name }] : []))
 
 /** A table drawn read again, wherever it is, after a change here or the brain's, or one refused, and those whose relations are to it. @param {Loaded} one */
 export async function reread(one) {
@@ -87,6 +87,8 @@ export async function reread(one) {
   }
 }
 
+/** A signal of a collection drawn, read again with each change, until `holds` lets it go. @param {import('@preact/signals-core').Signal<Loaded | null>} where @param {(() => void)[]} holds */
+export const watched = (where, holds) => { showing.add(where); holds.push(() => showing.delete(where)) }
 /**
  * A collection of the project's by its name, in any case, or its place, read into a signal drawn with the others, so that a page's parts
  * follow each change (D633); null when there is none. @param {string} name @param {(() => void)[]} holds
@@ -145,21 +147,24 @@ async function written({ folder }) {
 /**
  * A change, by the user or the brain: each cell checked against its column, a row without an id made, the
  * choices a select doesn't have yet added to it, and its lines written after the others. Throws what is
- * wrong, in words a brain reads; the user's is a step to undo. @param {Loaded} one @param {{ row?: string, set?: Record<string, unknown>, delete?: boolean }[]} edits
- * @param {string} by @param {string} [why] @param {boolean} [undoable] @returns {Promise<string[]>} the rows', in order
+ * wrong, in words a brain reads; the user's is a step to undo. A whiteboard's own cells (D747) come only from the person or Jean's own code
+ * (`own`), which may name new rows, an area made in the same change among them. @param {Loaded} one @param {{ row?: string, set?: Record<string, unknown>, delete?: boolean }[]} edits
+ * @param {string} by @param {string} [why] @param {boolean} [undoable] @param {boolean} [own] @returns {Promise<string[]>} the rows', in order
  */
-export async function change(one, edits, by, why, undoable = by === 'user') {
-  const { table } = one
+export async function change(one, edits, by, why, undoable = by === 'user', own = by === 'user') {
+  const { table } = one, named = new Set(edits.map((edit) => edit.row))
   // New rows' ids in order, so that rows made in one change keep the order they came in.
   const ids = edits.filter((edit) => !edit.row).map(() => ulid()).sort()
   const ready = edits.map((edit) => {
-    if (edit.row && !one.lines.some((line) => 'row' in line && line.row === edit.row)) throw new Error(`${table.name} has no row ${edit.row}: leave out a new row's id.`)
+    if (edit.row && !own && !one.lines.some((line) => 'row' in line && line.row === edit.row)) throw new Error(`${table.name} has no row ${edit.row}: leave out a new row's id.`)
     const set = Object.fromEntries(Object.entries(edit.set ?? {}).map(([ref, value]) => {
+      const mine = isOwn(ref) && (own ? ownProblem(ref, value) : `Only the person places what is on a whiteboard: leave out ${ref}.`)
+      if (isOwn(ref)) return mine ? (() => { throw new Error(mine) })() : [ref, value]
       const property = propertyOf(table, ref)
       if (!property || property.deleted) throw new Error(`${table.name} has no column "${ref}": its columns are ${table.properties.filter((one) => !one.deleted).map((one) => one.name).join(', ')}.`)
       // A relation's row by its id or its name.
       const target = property.type === 'relation' && value !== null ? one.related?.get(String(property.collection)) : undefined
-      const cell = target ? rowNamed(target.rows, one.names ?? new Map(), value) : value
+      const cell = target && !(own && named.has(/** @type {string} */ (value))) ? rowNamed(target.rows, one.names ?? new Map(), value) : value
       const wrong = cell === undefined ? `${property.name} takes a row of ${target?.table.name}, by its name or its id: ${JSON.stringify(value)} names none, or more than one.` : checkCell(property, cell)
       if (wrong) throw new Error(wrong)
       return [property.id, cell]
@@ -173,9 +178,7 @@ export async function change(one, edits, by, why, undoable = by === 'user') {
   await (more ? writeTable(one, more) : written(one))
   await app.fs.append(`${one.dir}/${one.folder}/changes.jsonl`, stringifyChanges(lines))
   // Undone, a row made goes, one deleted comes back and each cell set is as it was.
-  const was = new Map(fold(one.lines, { deleted: true }).map((row) => [row.id, row]))
-  if (undoable) did(one, { forth: ready, back: ready.map(({ row, set, delete: gone }) => ((before) => (before ? { row, ...(set && { set: Object.fromEntries(Object.keys(set).map((id) => [id, before.cells[id] ?? null])) }),
-    ...(gone !== undefined && { delete: Boolean(before.deleted) }) } : { row, delete: true }))(was.get(row))) })
+  if (undoable) did(one, { forth: ready, back: inverse(one.lines, ready) })
   await reread(one)
   return ready.map((edit) => edit.row)
 }
@@ -244,7 +247,7 @@ async function made(table, rows = []) {
 }
 
 /** A collection pinned or renamed from the Creations page, as its view renames it. @param {{ path: string }} item @param {{ pinned?: boolean, name?: string }} edit */
-const amend = ({ path }, { pinned, name }) => (reshaping = reshaping.catch(() => {}).then(async () => {
+export const amend = ({ path }, { pinned, name }) => (reshaping = reshaping.catch(() => {}).then(async () => {
   const one = await load(path)
   if (!one) return
   const { pinned: was, ...table } = name ? reshape(one.table, { name }, new Date().toISOString()) : one.table
@@ -262,7 +265,7 @@ async function placed(args, id) {
 }
 
 /** A copy, the user's, by the name given, with its rows as they are. @param {{ path: string }} item @param {string} name */
-async function copy({ path }, name) {
+export async function copy({ path }, name) {
   const one = await load(path), now = new Date().toISOString()
   if (!one) throw new Error(`There is no collection ${path}.`)
   const { pinned, kept, ...table } = one.table, id = ulid()
@@ -287,17 +290,13 @@ async function fromPage() {
   requestAnimationFrame(() => /** @type {HTMLInputElement | null} */ (document.querySelector('app-preview .table-name'))?.select())
 }
 
-/** Jean's changes the user hasn't accepted or rejected, the latest last: what the user wrote over since, or deleted, is decided. @param {Loaded} one @returns {Change[]} */
-export function unkept(one) {
-  const mine = /** @type {Change[]} */ (one.lines.filter((line) => 'row' in line && line.by === 'user'))
-  const open = (/** @type {Change} */ line, /** @type {string} */ id) => !mine.some((later) => later.row === line.row && later.at > line.at && (later.delete !== undefined || (id in (later.set ?? {}))))
-  return /** @type {Change[]} */ (one.lines.filter((line) => 'row' in line && line.by === 'jean' && line.at > (one.table.kept ?? '') && (line.set ? Object.keys(line.set) : ['']).some((id) => open(line, id))))
-}
+/** Jean's changes the user hasn't accepted or rejected, the latest last (./changes.js). @param {Loaded} one @returns {Change[]} */
+export const unkept = (one) => marked(one.lines, one.table.kept)
 
 /** The user accepts Jean's changes, or one row's, which become the user's own: they show so from now on. @param {Loaded} one @param {string} [row] */
 export async function accept(one, row) {
   const marked = unkept(one), at = marked.at(-1)?.at, cells = one.rows.find((each) => each.id === row)?.cells ?? {}
-  if (row) await app.fs.append(`${one.dir}/${one.folder}/changes.jsonl`, stringifyChanges(stamp(one.lines, [{ row, set: Object.fromEntries(marked.filter((line) => line.row === row).flatMap((line) => Object.keys(line.set ?? {})).map((id) => [id, cells[id] ?? null])) }], { by: 'user' })))
+  if (row) await app.fs.append(`${one.dir}/${one.folder}/changes.jsonl`, stringifyChanges(stamp(one.lines, [{ row, set: Object.fromEntries(marked.filter((line) => line.row === row).flatMap((line) => Object.keys(line.set ?? {}).filter((id) => !isOwn(id))).map((id) => [id, cells[id] ?? null])) }], { by: 'user' })))
   else if (at) await writeTable(one, { ...one.table, kept: at })
   await reread(one)
 }
@@ -314,7 +313,7 @@ export async function reject(one, row) {
 /** A table as a workbook or as CSV, for its pane's Download: its rows as its view shows them. @param {string} folder @param {'xlsx' | 'csv'} [kind] */
 export async function workbook(folder, kind = 'xlsx') {
   const one = await load(folder)
-  return one && exportTable(one.table, one.rows, kind, { names: one.names, look: await onPaper() })
+  return one && exportTable(one.table, one.table.kind ? arranged(one.rows) : one.rows, kind, { names: one.names, look: await onPaper() })
 }
 
 /**
@@ -325,7 +324,7 @@ export async function gridIn(folder) {
   const one = await load(folder)
   if (!one) return null
   const hidden = one.table.views.find((view) => view.type === 'table')?.hidden ?? [], kept = filterOf(one.table), columns = one.table.properties.filter((property) => !property.deleted && !hidden.includes(property.id))
-  const rows = query(one.table, one.rows, { ...(kept.length && { filter: { and: kept } }), locale: locale.value, names: one.names }).rows
+  const rows = one.table.kind ? arranged(one.rows) : query(one.table, one.rows, { ...(kept.length && { filter: { and: kept } }), locale: locale.value, names: one.names }).rows
   return { name: one.table.name, right: columns.map((property) => property.type === 'number'), rows: [columns.map((property) => property.name), ...rows.map((row) => columns.map((property) => said(row, property, { locales: intlLocales(), names: one.names, labels: { yes: '✓', no: '' } })))] }
 }
 
@@ -337,7 +336,7 @@ export async function kept(dir = app.projectDir) {
   const all = await Promise.all((await folders(dir)).map((folder) => load(folder, dir).catch(() => null)))
   /** A cell as text, a relation's the name of its row. @param {Loaded} one @param {Row} row @param {Property} property */
   const cell = (one, row, property) => ((value) => (Array.isArray(value) ? value.join(', ') : value === true ? '✓' : value === false || value == null ? '' : String(value)))(property.type === 'relation' ? valueOf(row, property, one.names) : row.cells[property.id])
-  return all.flatMap((one) => (one ? [{ path: one.folder, name: one.table.name, changed: one.lines.reduce((latest, line) => ('at' in line && line.at > latest ? line.at : latest), one.table.changed), created: one.table.created, pinned: one.table.pinned === true,
+  return all.flatMap((one) => (one && !one.table.kind ? [{ path: one.folder, name: one.table.name, changed: one.lines.reduce((latest, line) => ('at' in line && line.at > latest ? line.at : latest), one.table.changed), created: one.table.created, pinned: one.table.pinned === true,
     grid: ((heads) => [heads.map((property) => property.name), ...one.rows.slice(0, 6).map((row) => heads.map((property) => cell(one, row, property)))])(one.table.properties.filter((property) => !property.deleted).slice(0, 4)),
     link: /** @type {import('../../core/types.js').ResourceLink} */ ({ type: 'resource_link', uri: one.folder, name: one.table.name, title: one.table.name }), text: ((columns) => [columns.map((property) => property.name).join(', '),
       ...one.rows.map((row) => columns.flatMap((property) => [cell(one, row, property)].filter(Boolean).map((value) => `${property.name}: ${value}`)).join('; '))].join('\n'))(one.table.properties.filter((property) => !property.deleted)) }] : []))
@@ -356,6 +355,8 @@ export async function metaOf(folder) {
 export async function editor(file, holds) {
   const one = await load(file.uri)
   if (!one) return null
+  // A whiteboard, Whiteboards' view, which comes once a whiteboard does (D747).
+  if (one.table.kind && await unlock('whiteboards')) return (await import('../whiteboards/whiteboards.js')).editor(file, holds)
   shown.value = one
   holds.push(() => { if (shown.peek()?.folder === one.folder) shown.value = null })
   return html`<app-table folder=${file.uri} beside></app-table>`
@@ -403,6 +404,18 @@ const createTool = {
   },
 }
 
+/**
+ * A whiteboard as table_rows gives it (D747), as phase 0 measured: its areas by id, then its notes, each with its area's id, or where it
+ * waits, then its texts; never a drawn line. @param {Loaded} one
+ */
+function boardRows(one) {
+  const areas = one.rows.filter((row) => kindOf(row) === 'area'), ids = new Set(/** @type {unknown[]} */ (areas.map((row) => row.id))), notes = notesOf(one.rows), columns = one.table.properties.filter((property) => !property.deleted && property.id !== 'area')
+  const cells = (/** @type {Row} */ row) => Object.fromEntries(columns.flatMap((property) => (row.cells[property.id] === undefined ? [] : [[property.name, row.cells[property.id]]])))
+  return [`${one.table.name} (${one.folder}), a whiteboard: ${areas.length} areas, ${notes.length} notes.`, ...areas.map((row) => JSON.stringify({ area: row.id, name: row.cells.note ?? '' })),
+    ...notes.map((row) => JSON.stringify({ row: row.id, ...cells(row), ...(ids.has(row.cells.area) ? { area: row.cells.area } : spotOf(row, ids) ? { ground: true } : { shelf: true }) })),
+    ...one.rows.filter((row) => kindOf(row) === 'text').map((row) => JSON.stringify({ row: row.id, kind: 'text', ...cells(row) }))].join('\n')
+}
+
 /** @type {import('../../core/loop.js').Tool} */
 const rowsTool = {
   spec: {
@@ -416,6 +429,7 @@ const rowsTool = {
   run: async (args, ctx) => {
     const one = await named(args?.table)
     ctx.meta.read = one.folder
+    if (one.table.kind) return boardRows(one)
     const { rows } = query(one.table, one.rows, { ...(args?.filter && { filter: args.filter }), locale: locale.peek(), names: one.names })
     const columns = one.table.properties.filter((property) => !property.deleted)
     const lines = rows.slice(0, ROWS).map((row) => JSON.stringify({ row: row.id, ...Object.fromEntries(columns.flatMap((property) => (row.cells[property.id] === undefined ? []
@@ -441,6 +455,7 @@ const changeTool = {
   run: async (args, ctx) => {
     refuse(ctx)
     const one = await named(args?.table)
+    if (one.table.kind) throw new Error(`${one.table.name} is a whiteboard: change it with whiteboard_change.`)
     const ids = await change(one, Array.isArray(args?.rows) ? args.rows : [], 'jean', typeof args?.why === 'string' ? args.why : undefined)
     if (here(ctx)) await open(one)
     return ids.length ? `Changed ${ids.length} rows of ${one.table.name}, beside the conversation for the user to accept or reject: ${ids.join(', ')}.` : 'Nothing changed: give each row a set or delete.'

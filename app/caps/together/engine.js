@@ -144,7 +144,8 @@ async function taken(live, sealed, at) {
  * are drawn as it shows. @param {Kept} kept @param {{ files?: Record<string, string | null>, markdown?: string }} content
  */
 function drawing({ kind, place }, { files = {}, markdown = '' }) {
-  for (const path of Object.keys(files)) unlock(THINGS[path.split('/')[0]])
+  // A whiteboard is a collection of its own kind (D747), which Whiteboards shows.
+  for (const [path, value] of Object.entries(files)) unlock(/\/collection\.json$/.test(path) && value && new TextDecoder().decode(decode(value)).includes('"whiteboard"') ? 'whiteboards' : THINGS[path.split('/')[0]])
   const texts = kind === 'document' ? [markdown] : Object.entries(files).flatMap(([path, value]) => (/^documents\/.+\.md$/.test(path) && value ? [new TextDecoder().decode(decode(value))] : []))
   if (place) drawIn(texts, kind === 'project' ? `${place.dir}/${place.folder}` : place.dir)
 }
@@ -386,7 +387,7 @@ export function caret(path, spots) {
 }
 /**
  * The others in a document, each with their name, their colour and their selection, as their copy last said, in the last 45 seconds
- * (./carets.js). @param {string} path @returns {import('./carets.js').Other[]}
+ * (./carets.js); on a whiteboard, their pointer and what they write, then what they selected. @param {string} path @returns {import('./carets.js').Other[]}
  */
 export const othersIn = (path) => [...circles.value.values()].flatMap((live) => ((doc) => (doc === null ? [] : [...live.carets].flatMap(([who, { at, carets: theirs }]) => {
   const [fp, device] = who.split(' '), one = live.state.members[fp], spots = theirs[doc]
