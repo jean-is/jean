@@ -12,7 +12,7 @@
   "cap.files.text": "Pudota PDF-, Word-, Excel-, PowerPoint-, CSV- tai tekstitiedostoja, ja {name} lukee ne. Kuvat ja kuvakaappaukset menevät aivoille, jotka näkevät.",
   "cap.made.text": "Pyydä Word-asiakirjaa, laskentataulukkoa tai muuta tiedostoa ja tallenna se yhdellä napsautuksella. Kopioi vastaukset muotoiluineen ja lataa taulukot Exceliin.",
   "cap.documents.text": "Asiakirjat keskustelun vieressä: kirjoita niihin /-merkillä otsikoita, luetteloita ja taulukoita, lihavoi valitsemiasi sanoja tai tee niistä linkkejä ja siirrä kokonaisia lohkoja. Sovelluksen {name} muutokset näkyvät paikoillaan, kukin säilytettäväksi tai kumottavaksi.",
-  "cap.tables.text": "Kokoelmat keskustelun vieressä, kukin taulukkona tai tauluna. Sovelluksen {name} muutokset näkyvät merkittyinä, säilytettäviksi tai kumottaviksi. Toistaiseksi ne vaativat pilviaivot tai tilauksen.",
+  "cap.tables.text": "Kokoelmat keskustelun vieressä, kukin taulukkona tai tauluna. Sovelluksen {name} muutokset näkyvät merkittyinä, hyväksyttäviksi tai hylättäviksi. Toistaiseksi ne vaativat pilviaivot tai tilauksen.",
   "cap.computer.text": "Tietokone hiekkalaatikossa tässä välilehdessä, ei koskaan itse laite: se ajaa komentoja, JavaScriptiä ja Pythonia kansiosi tai projektin työtilan tiedostoille ja yhdistää internetiin niin kuin sallit.",
   "cap.reflexes.text": "Pieni apuri tällä laitteella ({size}, kerran), joka aistii, mitä tarvitset: oikeat aivot jokaiseen viestiin, ehdotuksia, uutta kokeiltavaa. Mikään ei lähde tältä laitteelta.",
   "cap.meaning.text": "Löytää, mitä tiedostosi sanovat, myös toisin sanoin tai toisella kielellä, pienen apurin avulla tällä laitteella ({size}, kerran). Mikään ei lähde tältä laitteelta.",

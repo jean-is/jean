@@ -12,7 +12,7 @@
   "cap.files.text": "Přetáhněte sem soubory PDF, Word, Excel, PowerPoint, CSV nebo text a {name} je přečte. Obrázky a snímky obrazovky jdou mozkům, které vidí.",
   "cap.made.text": "Požádejte o dokument Word, tabulku nebo jiný soubor a uložte ho jedním kliknutím. Kopírujte odpovědi i s formátováním a stahujte tabulky pro Excel.",
   "cap.documents.text": "Dokumenty uložené vedle konverzace: pište do nich s / pro nadpisy, seznamy a tabulky, zvýrazněte vybraná slova tučně nebo z nich udělejte odkaz a přesouvejte celé bloky. Změny od aplikace {name} se zobrazí tam, kde jsou, každou lze ponechat nebo vrátit.",
-  "cap.tables.text": "Sbírky vedle konverzace, každá zobrazená jako tabulka nebo nástěnka. Změny od aplikace {name} se zobrazí označené, k ponechání nebo vrácení. Zatím potřebují mozek v cloudu nebo předplatné.",
+  "cap.tables.text": "Sbírky vedle konverzace, každá zobrazená jako tabulka nebo nástěnka. Změny od aplikace {name} se zobrazí označené, k přijetí nebo odmítnutí. Zatím potřebují mozek v cloudu nebo předplatné.",
   "cap.computer.text": "Počítač v izolovaném prostředí v této kartě, nikdy samotné toto zařízení: spouští příkazy, JavaScript a Python nad soubory vaší složky nebo pracovního prostoru projektu a připojuje se k internetu tak, jak dovolíte.",
   "cap.reflexes.text": "Malý pomocník v tomto zařízení ({size}, jednou), který vycítí, co potřebujete: správný mozek pro každou zprávu, návrhy, nové věci k vyzkoušení. Nic neopustí toto zařízení.",
   "cap.meaning.text": "Najde, co říkají vaše soubory, i jinými slovy nebo v jiném jazyce, s malým pomocníkem v tomto zařízení ({size}, jednou). Nic neopustí toto zařízení.",

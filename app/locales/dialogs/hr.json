@@ -12,7 +12,7 @@
   "cap.files.text": "Ispustite PDF-ove, datoteke Worda, Excela, PowerPointa, CSV ili tekstne datoteke, a {name} ih čita. Slike i snimke zaslona idu mozgovima koji mogu vidjeti.",
   "cap.made.text": "Zatražite dokument Worda, proračunsku tablicu ili drugu datoteku i spremite je jednim klikom. Kopirajte odgovore s oblikovanjem i preuzmite tablice za Excel.",
   "cap.documents.text": "Dokumenti koji se čuvaju pokraj razgovora: pišite u njima s / za naslove, popise i tablice, odabrane riječi podebljajte ili pretvorite u poveznicu i premještajte cijele blokove. Promjene aplikacije {name} prikazuju se ondje gdje jesu, svaka za zadržavanje ili poništavanje.",
-  "cap.tables.text": "Zbirke pokraj razgovora, svaka prikazana kao tablica ili ploča. Promjene aplikacije {name} prikazuju se označene, za zadržavanje ili poništavanje. Zasad im treba mozak u oblaku ili pretplata.",
+  "cap.tables.text": "Zbirke pokraj razgovora, svaka prikazana kao tablica ili ploča. Promjene aplikacije {name} prikazuju se označene, za prihvaćanje ili odbacivanje. Zasad im treba mozak u oblaku ili pretplata.",
   "cap.computer.text": "Računalo u izoliranom okruženju u ovoj kartici, nikad sam ovaj uređaj: pokreće naredbe, JavaScript i Python na datotekama vaše mape ili u radnom prostoru projekta i pristupa internetu kako dopustite.",
   "cap.reflexes.text": "Mali pomoćnik na ovom uređaju ({size}, jednom) koji osjeti što vam treba: pravi mozak za svaku poruku, prijedloge, nove stvari za isprobati. Ništa ne napušta ovaj uređaj.",
   "cap.meaning.text": "Pronalazi što vaše datoteke govore, čak i drugim riječima ili na drugom jeziku, s malim pomoćnikom na ovom uređaju ({size}, jednom). Ništa ne napušta ovaj uređaj.",

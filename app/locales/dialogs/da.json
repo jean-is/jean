@@ -12,7 +12,7 @@
   "cap.files.text": "Træk PDF-, Word-, Excel-, PowerPoint-, CSV- eller tekstfiler ind, og {name} læser dem. Billeder og skærmbilleder går til hjerner, der kan se.",
   "cap.made.text": "Bed om et Word-dokument, et regneark eller en anden fil, og gem det med ét klik. Kopiér svar med deres formatering, og hent tabeller til Excel.",
   "cap.documents.text": "Dokumenter, der gemmes ved siden af samtalen: skriv i dem med / til overskrifter, lister og tabeller, gør valgte ord fede eller til et link, og flyt hele blokke. Ændringer fra {name} vises, hvor de er, hver til at beholde eller fortryde.",
-  "cap.tables.text": "Samlinger ved siden af samtalen, hver vist som en tabel eller en tavle. Ændringer fra {name} vises markeret, til at beholde eller fortryde. Indtil videre kræver de en hjerne i skyen eller et abonnement.",
+  "cap.tables.text": "Samlinger ved siden af samtalen, hver vist som en tabel eller en tavle. Ændringer fra {name} vises markeret, til at godkende eller afvise. Indtil videre kræver de en hjerne i skyen eller et abonnement.",
   "cap.computer.text": "En computer i en sandkasse i denne fane, aldrig selve enheden: den kører kommandoer, JavaScript og Python på filerne i din mappe eller i projektets arbejdsområde og når internettet, som du tillader.",
   "cap.reflexes.text": "En lille hjælper på denne enhed ({size}, én gang), der fornemmer, hvad du har brug for: den rigtige hjerne til hver besked, forslag, nye ting at prøve. Intet forlader denne enhed.",
   "cap.meaning.text": "Finder, hvad dine filer siger, også med andre ord eller på et andet sprog, med en lille hjælper på denne enhed ({size}, én gang). Intet forlader denne enhed.",

@@ -12,7 +12,7 @@
   "cap.files.text": "Trageți aici fișiere PDF, Word, Excel, PowerPoint, CSV sau text, iar {name} le citește. Imaginile și capturile de ecran merg la creierele care pot vedea.",
   "cap.made.text": "Cereți un document Word, o foaie de calcul sau alt fișier și salvați-l cu un clic. Copiați răspunsurile cu formatarea lor și descărcați tabelele pentru Excel.",
   "cap.documents.text": "Documente păstrate lângă conversație: scrieți în ele cu / pentru titluri, liste și tabele, faceți aldine sau link cuvintele alese și mutați blocuri întregi. Schimbările venite de la {name} apar acolo unde sunt, fiecare de păstrat sau anulat.",
-  "cap.tables.text": "Colecții lângă conversație, fiecare afișată ca tabel sau ca panou. Schimbările venite de la {name} apar marcate, de păstrat sau anulat. Deocamdată au nevoie de un creier în cloud sau de un abonament.",
+  "cap.tables.text": "Colecții lângă conversație, fiecare afișată ca tabel sau ca panou. Schimbările venite de la {name} apar marcate, de acceptat sau respins. Deocamdată au nevoie de un creier în cloud sau de un abonament.",
   "cap.computer.text": "Un computer într-un mediu izolat în această filă, niciodată dispozitivul însuși: rulează comenzi, JavaScript și Python pe fișierele dosarului dvs. sau ale spațiului de lucru al proiectului și accesează internetul cum permiteți.",
   "cap.reflexes.text": "Un mic ajutor pe acest dispozitiv ({size}, o dată) care simte de ce aveți nevoie: creierul potrivit pentru fiecare mesaj, sugestii, lucruri noi de încercat. Nimic nu părăsește acest dispozitiv.",
   "cap.meaning.text": "Găsește ce spun fișierele dvs., chiar și în alte cuvinte sau în altă limbă, cu un mic ajutor pe acest dispozitiv ({size}, o dată). Nimic nu părăsește acest dispozitiv.",

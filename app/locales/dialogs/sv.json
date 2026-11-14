@@ -12,7 +12,7 @@
   "cap.files.text": "Släpp in PDF-, Word-, Excel-, PowerPoint-, CSV- eller textfiler, så läser {name} dem. Bilder och skärmbilder går till hjärnor som kan se.",
   "cap.made.text": "Be om ett Word-dokument, ett kalkylark eller en annan fil, och spara den med ett klick. Kopiera svar med formatering, och ladda ner tabeller för Excel.",
   "cap.documents.text": "Dokument som sparas bredvid konversationen: skriv i dem med / för rubriker, listor och tabeller, gör ord du väljer feta eller till en länk, och flytta hela block. Ändringar från {name} visas där de är, var och en att behålla eller ångra.",
-  "cap.tables.text": "Samlingar bredvid konversationen, var och en visad som en tabell eller en tavla. Ändringar från {name} visas markerade, att behålla eller ångra. Än så länge behöver de en hjärna i molnet eller en plan.",
+  "cap.tables.text": "Samlingar bredvid konversationen, var och en visad som en tabell eller en tavla. Ändringar från {name} visas markerade, att godta eller avvisa. Än så länge behöver de en hjärna i molnet eller en plan.",
   "cap.computer.text": "En dator i en sandlåda i den här fliken, aldrig själva enheten: den kör kommandon, JavaScript och Python på filerna i din mapp eller i projektets arbetsyta, och når internet så som du tillåter.",
   "cap.reflexes.text": "En liten hjälpare på den här enheten ({size}, en gång) som känner av vad du behöver: rätt hjärna för varje meddelande, förslag, nya saker att prova. Inget lämnar den här enheten.",
   "cap.meaning.text": "Hittar vad dina filer säger, även med andra ord eller på ett annat språk, med en liten hjälpare på den här enheten ({size}, en gång). Inget lämnar den här enheten.",
