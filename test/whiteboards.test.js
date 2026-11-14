@@ -3,7 +3,7 @@
 // makes placed where nothing lies, by Jean's code.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { layout, free, snap, arrowPath, placeOf, NOTE, GAP, HEAD, WIDE } from '../app/caps/whiteboards/layout.js'
+import { layout, free, snap, arrowPath, placeOf, footOf, NOTE, GAP, HEAD, WIDE } from '../app/caps/whiteboards/layout.js'
 import { made, changed, rowsOf, editsOf } from '../app/caps/whiteboards/tool.js'
 import { svgOf } from '../app/caps/whiteboards/picture.js'
 import { fold, stamp } from '../app/caps/tables/changes.js'
@@ -106,11 +106,12 @@ test('placeOf: a note whose words, whole, are a creation\'s place, as a Creation
 })
 
 test('svgOf: the board as a picture, its words escaped in HTML that wraps in its own direction, each section\'s and note\'s colour, lines and arrows as paths, mirrored right to left, or the part in view alone', () => {
-  const palette = { room: '#fff', board: '#eee', ink: '#111', wait: '#cde', hues: Array.from({ length: 7 }, (_, i) => ({ area: `#a${i}0`, edge: `#e${i}0`, note: `#b${i}0`, ink: `#c${i}0` })) }
-  const rows = fold([line(R(1), { note: 'Risks', '@kind': 'area', '@spot': { area: null, x: 0, y: 0 } }, 1), line(R(2), { note: '<b>Flaky</b> & slow', area: R(1) }, 2),
+  const palette = { room: '#fff', soft: '#777', board: '#eee', ink: '#111', wait: '#cde', hues: Array.from({ length: 7 }, (_, i) => ({ area: `#a${i}0`, edge: `#e${i}0`, note: `#b${i}0`, ink: `#c${i}0` })) }
+  const rows = fold([line(R(1), { note: 'Risks', '@kind': 'area', '@spot': { area: null, x: 0, y: 0 } }, 1), line(R(2), { note: '<b>Flaky</b> & slow', area: R(1), owner: 'Sam', due: '2026-12-01' }, 2),
     line(R(3), { note: 'Lunch', '@hue': 3, '@spot': { area: null, x: 0, y: 400 } }, 2), line(R(4), { '@kind': 'line', '@path': [0, 0, 40, 20], '@ink': 2, '@spot': { area: null, x: 400, y: 400 } }, 2),
     line(R(5), { '@kind': 'arrow', '@ends': [R(3), R(1)] }, 3), line(R(6), { note: 'Plan', '@kind': 'text', '@size': 'title', '@spot': { area: null, x: 0, y: -100 } }, 3)])
-  const { svg, w, h } = svgOf(rows, { palette, font: 'system-ui, "Noto Sans"' }), { bounds } = layout(rows)
+  const columns = [{ id: 'note' }, { id: 'area' }, { id: 'gone', deleted: '2026-11-01' }, { id: 'owner' }, { id: 'due' }]
+  const { svg, w, h } = svgOf(rows, { palette, font: 'system-ui, "Noto Sans"', columns }), { bounds } = layout(rows)
   assert.deepEqual([w, h], [bounds.w + 48, bounds.h + 48])
   assert.match(svg, /^<svg xmlns="http:\/\/www\.w3\.org\/2000\/svg" width="\d+" height="\d+"/)
   assert.match(svg, /&lt;b&gt;Flaky&lt;\/b&gt; &amp; slow/)
@@ -120,6 +121,11 @@ test('svgOf: the board as a picture, its words escaped in HTML that wraps in its
   for (const colour of ['#a00', '#b00', '#b30', '#c20']) assert.ok(svg.includes(`: ${colour}`), colour)
   assert.equal(svg.match(/<path /g)?.length, 2)
   assert.match(svg, /font-size: 28px/)
+  // A section's head says how many notes it holds, and a note's foot its owner and its date, as the board shows them.
+  assert.match(svg, /Risks<\/span><span style="color: #777[^>]*>1<\/span>/)
+  assert.match(svg, />Sam<\/span><span [^>]*>2026-12-01<\/span>/)
+  assert.deepEqual(footOf(columns, rows[1]), ['Sam', '2026-12-01'])
+  assert.match(svgOf(rows, { palette, font: 'serif', dir: 'rtl', columns }).svg, /<div xmlns="http:\/\/www\.w3\.org\/1999\/xhtml" dir="rtl"[^>]*><span dir="auto"[^>]*>Risks/)
   // Right to left, what lies at the board's start lies at the picture's right.
   const first = (/** @type {string} */ text) => Number(/<foreignObject x="(-?\d+)"/.exec(text)?.[1])
   assert.equal(first(svg), 24)

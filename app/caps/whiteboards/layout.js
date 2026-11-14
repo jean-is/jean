@@ -68,6 +68,9 @@ export function arrowPath([x1, y1, x2, y2]) {
  */
 export const placeOf = (words) => /^\s*(?:\[\[([^|\]\n]+)(?:\|[^\]\n]*)?\]\]|```table\n([^\s`]+)\n```|([a-z][\w-]*\/[^\s[\]|]+))\s*$/.exec(String(words ?? ''))?.slice(1).find(Boolean) ?? null
 
+/** What a note shows at its foot: the first two of its other cells that hold something, as words. @param {{ id: string, deleted?: string }[]} properties @param {Row} row */
+export const footOf = (properties, row) => properties.filter((property) => !property.deleted && property.id !== 'note' && property.id !== 'area' && row.cells[property.id] != null).slice(0, 2).map((property) => String(row.cells[property.id]))
+
 /** What lies on top: the later spot, then the row's id. @param {{ row: Row }} a @param {{ row: Row }} b */
 const above = (a, b) => ((x, y) => (x !== y ? (x < y ? -1 : 1) : a.row.id < b.row.id ? -1 : 1))(a.row.stamps['@spot']?.at ?? '', b.row.stamps['@spot']?.at ?? '')
 

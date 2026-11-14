@@ -22,7 +22,7 @@ import { still } from '../../ui/sheet.js'
 import { load, change, unkept, accept, reject, undoStep, reshapeTable, amend, watched } from '../tables/tables.js'
 import { notesOf, ownProblem, kindOf } from '../tables/table.js'
 import { fold } from '../tables/changes.js'
-import { layout, snap, arrowPath, placeOf, NOTE, GRID, HUES, WIDE } from './layout.js'
+import { layout, snap, arrowPath, placeOf, footOf, NOTE, GRID, HUES, WIDE } from './layout.js'
 import { all, show } from '../../ui/creations.js'
 import { save, pictureOf } from '../../ui/save.js'
 import { svgOf } from './picture.js'
@@ -201,13 +201,13 @@ customElements.define('app-whiteboard', class extends HTMLElement {
   async picture(inView = false) {
     const one = this.#one, probe = this.appendChild(Object.assign(document.createElement('div'), { className: 'wb-probe' }))
     probe.style.setProperty('background', 'var(--room)')
-    render(html`<div class="wb-board"></div><i class="wb-note"></i><svg class="wb-ink"></svg>${Array.from({ length: HUES }, (_, i) => html`<div class=${`wb-area wb-hue-${i}`}><i class="wb-note"></i><svg class=${`wb-ink wb-hue-${i}`}></svg></div>`)}`, probe)
+    render(html`<div class="wb-board"></div><i class="wb-note"></i><i class="wb-count"></i><svg class="wb-ink"></svg>${Array.from({ length: HUES }, (_, i) => html`<div class=${`wb-area wb-hue-${i}`}><i class="wb-note"></i><svg class=${`wb-ink wb-hue-${i}`}></svg></div>`)}`, probe)
     const style = (/** @type {string} */ selector) => getComputedStyle(/** @type {Element} */ (probe.querySelector(selector)))
-    const palette = { room: getComputedStyle(probe).backgroundColor, board: style('.wb-board').backgroundColor, ink: style(':scope > .wb-ink').color, wait: style(':scope > .wb-note').backgroundColor,
+    const palette = { room: getComputedStyle(probe).backgroundColor, board: style('.wb-board').backgroundColor, ink: style(':scope > .wb-ink').color, soft: style('.wb-count').color, wait: style(':scope > .wb-note').backgroundColor,
       hues: Array.from({ length: HUES }, (_, i) => ({ area: style(`.wb-hue-${i}`).backgroundColor, edge: style(`.wb-hue-${i}`).borderTopColor, note: style(`.wb-hue-${i} .wb-note`).backgroundColor, ink: style(`.wb-hue-${i} .wb-ink`).color })) }
     probe.remove()
     const room = this.querySelector('.wb-board')?.getBoundingClientRect(), [a, b] = room ? [this.#point({ clientX: room.left, clientY: room.top }), this.#point({ clientX: room.right, clientY: room.bottom })] : []
-    const { svg, w, h } = svgOf(one.rows, { dir: one.table.dir, palette, font: getComputedStyle(this).fontFamily, words: nameOf, ...(inView && a && b && { view: { x: Math.min(a.x, b.x), y: a.y, w: Math.abs(b.x - a.x), h: b.y - a.y } }) })
+    const { svg, w, h } = svgOf(one.rows, { dir: one.table.dir, palette, font: getComputedStyle(this).fontFamily, words: nameOf, columns: one.table.properties, locales: intlLocales(), ...(inView && a && b && { view: { x: Math.min(a.x, b.x), y: a.y, w: Math.abs(b.x - a.x), h: b.y - a.y } }) })
     const k = Math.min(1, Math.sqrt(4e6 / (w * h)))
     save(await pictureOf(svg, Math.round(w * k), Math.round(h * k)), `${one.table.name}.png`)
   }
@@ -788,12 +788,12 @@ customElements.define('app-whiteboard', class extends HTMLElement {
           ${placed({ x: (ends[0] + ends[2]) / 2, y: (ends[1] + ends[3]) / 2 })}>${icons.more}</button><div id=${menu} class="menu wb-menu" popover><ul><li><button type="button" class="menu-item" @click=${menuRow(() => this.#repoint(id))}>${ARROW}${t('whiteboards.repoint')}</button></li>
           <li><button type="button" class="menu-item" @click=${menuRow(() => { this.erase([id]) })}>${icons.trash}${t('action.delete')}</button></li></ul></div>` : nothing}</li>`
     }
-    const foot = one.table.properties.filter((property) => !property.deleted && property.id !== 'note' && property.id !== 'area' && row.cells[property.id] != null).slice(0, 2)
+    const foot = footOf(one.table.properties, row)
     return html`<li class=${classes} data-row=${id} ${placed(box)} ${z_}>
       <button type="button" class=${card ? 'wb-words wb-card' : 'wb-words'} dir="auto" tabindex=${tab} aria-label=${card ? t('whiteboards.open', { name: card.name }) : nothing} @dblclick=${() => this.write(row)}
         @keydown=${(/** @type {KeyboardEvent} */ e) => { if (e.key === 'Enter' && !e.isComposing && !this.#from) { e.preventDefault(); card ? show(card)() : this.write(row) } }} @focus=${() => { this.#at = id }}>${card
           ? html`<span class="creation-preview" aria-hidden="true" inert>${card.kind.preview?.(card) ?? card.kind.draw()}</span><span class="wb-card-name">${card.kind.draw()}<span dir="auto">${card.name}</span></span>` : words || t('whiteboards.empty')}</button>
-      ${foot.length ? html`<p class="wb-foot" dir="auto">${foot.map((property) => html`<span>${String(row.cells[property.id])}</span>`)}</p>` : nothing}
+      ${foot.length ? html`<p class="wb-foot" dir="auto">${foot.map((words) => html`<span>${words}</span>`)}</p>` : nothing}
       <button type="button" class="wb-grip icon-button" tabindex=${tab} aria-label=${t('whiteboards.move', { name: words })} @click=${() => this.move(id)}>${GRIP}</button>
       <button type="button" class="wb-more icon-button" tabindex=${tab} aria-label=${t('whiteboards.more', { name: words })} popovertarget=${menu}>${icons.more}</button>
       <div id=${menu} class="menu wb-menu" popover>${this.#menu(one, row, jean.has(id), areas)}</div></li>`
