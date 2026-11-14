@@ -247,6 +247,8 @@ const pageTool = {
     },
   },
   kind: 'fetch',
+  // Acting on the page, a guard's card: it keeps asking, never let through by Allow for this task nor kept by Always allow (D746).
+  check: async (args) => (['read', 'scroll'].includes(String(args?.action)) ? undefined : { meta: { guard: 'page' } }),
   // What the user approves, in any language: the site, the part as it reads, what goes in it, the key.
   title: (args) => [URL.canParse(seen.url) ? new URL(seen.url).host : '', args?.ref !== undefined && part(args.ref), typeof args?.text === 'string' && `← “${args.text}”`,
     args?.key, args?.action === 'scroll' && (args.up ? '↑' : '↓')].filter(Boolean).join(' '),

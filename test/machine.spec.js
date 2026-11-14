@@ -11,7 +11,7 @@ import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { start, connectFakeBrain, ask, turnOn, openSettings, closeSettings, giveFolder, callTool } from './helpers.js'
+import { start, connectFakeBrain, ask, answered, turnOn, openSettings, closeSettings, giveFolder, callTool } from './helpers.js'
 
 test.skip(process.platform === 'win32', 'The bridge needs bash')
 
@@ -177,7 +177,19 @@ test('the browser beside the conversation is this computer’s, whose page the b
     await expect(await callTool(page, 'page', { action: 'read' }, host)).toContainText('heading "Hello"')
     const parts = await page.evaluate(async () => (await (await import('/caps/machine/machine.js')).drive({ action: 'read' })).parts ?? {})
     const ref = Number(Object.entries(parts).find(([, name]) => name === 'Search')?.[0])
-    await expect(await callTool(page, 'page', { action: 'type', ref, text: 'café 東京', submit: true }, `${host} “Search” ← “café 東京”`)).toContainText('Sent (')
+    // Read again, its second card offers Allow for this task, which lets the task's reading through, never its acting on the page:
+    // typing still asks, with no such offer, as every click and key does (D746).
+    const before = await page.locator('.msg-jean .prose').count()
+    await ask(page, `Call page with ${JSON.stringify({ action: 'read' })}`)
+    await page.locator('.approval').getByRole('button', { name: 'Allow for this task' }).click()
+    await answered(page, before + 1)
+    await ask(page, `Call page with ${JSON.stringify({ action: 'type', ref, text: 'café 東京', submit: true })}`)
+    const typing = page.locator('.approval')
+    await expect(typing).toContainText(`${host} “Search” ← “café 東京”`)
+    await expect(typing.getByRole('button', { name: 'Allow for this task' })).toHaveCount(0)
+    await typing.locator('.button.primary').click()
+    await answered(page, before + 2)
+    await expect(page.locator('.msg-jean .prose').last()).toContainText('Sent (')
     await expect(address).toHaveValue(`http://${host}/next?q=caf%C3%A9+%E6%9D%B1%E4%BA%AC`)
     // The person goes back, in the tab's own history.
     await page.locator('.browser-bar').getByRole('button', { name: 'Back' }).click()
@@ -188,7 +200,10 @@ test('the browser beside the conversation is this computer’s, whose page the b
     await address.press('Enter')
     await expect(page.frameLocator('.browser-host').frameLocator('iframe').locator('h1')).toHaveText('Sent framed')
     await expect(page.locator('.browser-surface')).toHaveCount(0)
-    await expect(await callTool(page, 'page', { action: 'read' }, host)).toContainText(`The organisation keeps ${host} out of This computer's browser.`)
+    // Its reading, let through for this task, is refused all the same.
+    await ask(page, `Call page with ${JSON.stringify({ action: 'read' })}`)
+    await answered(page, before + 3)
+    await expect(page.locator('.msg-jean .prose').last()).toContainText(`The organisation keeps ${host} out of This computer's browser.`)
     // Ctrl+C in the terminal ends the bridge at once, which closes its browser first.
     stop(bridge)
     await expect.poll(() => bridge.exitCode, { timeout: 10_000 }).not.toBeNull()
