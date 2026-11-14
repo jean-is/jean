@@ -413,8 +413,9 @@ const rowsTool = {
   kind: 'read',
   title: (args) => `Read ${args?.table ?? ''}`,
   // A read leaves the screen and its address as they are: nothing opens beside the task (D657).
-  run: async (args) => {
+  run: async (args, ctx) => {
     const one = await named(args?.table)
+    ctx.meta.read = one.folder
     const { rows } = query(one.table, one.rows, { ...(args?.filter && { filter: args.filter }), locale: locale.peek(), names: one.names })
     const columns = one.table.properties.filter((property) => !property.deleted)
     const lines = rows.slice(0, ROWS).map((row) => JSON.stringify({ row: row.id, ...Object.fromEntries(columns.flatMap((property) => (row.cells[property.id] === undefined ? []

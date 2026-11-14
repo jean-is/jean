@@ -3,7 +3,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { boxPair, fingerprintOf } from '../app/ui/seal.js'
-import { sealChange, openChange, take, begun, invitation, membersOf, envelopes, followed, linkOf, fromLink } from '../app/caps/together/circle.js'
+import { sealChange, openChange, take, begun, invitation, membersOf, alone, envelopes, followed, linkOf, fromLink } from '../app/caps/together/circle.js'
 
 const ID = 'AAAAAAAAAAAAAAAAAAAAAA'
 /** A person: their profile's pair and fingerprint, and a counter for their device. */
@@ -41,6 +41,18 @@ test('membership as every copy works it out: the owner begins, a link joins only
   assert.ok(await read(await made(bob, 'join', { key: bob.open, name: 'Bob', how: 'invite', invite: forBob })))
   assert.ok(await read(await made(carol, 'join', { key: carol.open, name: 'Carol', how: 'invite', invite: await invitation(ID, bob.key, carol.fp) })), 'an editor invites too')
   assert.deepEqual(membersOf(state).map((one) => [one.name, one.role, one.colour]), [['Ana', 'owner', 0], ['Bob', 'editor', 1], ['Carol', 'editor', 2]])
+})
+
+test('alone: only the person, once the journal says so; anyone else who ever came, gone or not, means others wrote in it', async () => {
+  const [ana, bob] = await Promise.all([person(), person()])
+  const { state, read } = copy(ana.fp)
+  assert.equal(alone(state, ana.fp), false, 'nobody is known before the journal is read')
+  await read(await made(ana, 'begin', { key: ana.open, name: 'Ana', links: true }))
+  assert.equal(alone(state, ana.fp), true)
+  await read(await made(bob, 'join', { key: bob.open, name: 'Bob', how: 'link' }))
+  assert.equal(alone(state, ana.fp), false)
+  await read(await made(bob, 'leave', {}))
+  assert.equal(alone(state, ana.fp), false, 'what Bob wrote stays')
 })
 
 test('a change counts only from a member who may make it: signed by their key, a counter above the last, not removed, blocked or a viewer', async () => {

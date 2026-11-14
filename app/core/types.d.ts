@@ -173,8 +173,11 @@ export type AcpUpdate =
 export type CompactionUpdate = { sessionUpdate: 'compaction_update', compactionId: string, status: 'in_progress' | 'completed' | 'failed' | 'cancelled', summary?: TextBlock[],
   _meta?: { text: string, reason: 'window' | 'too_long', brain?: { provider: ProviderId, model: string }, usage?: Usage } }
 
-/** What a system note changed, for the UI label; `text` is what the brain reads (D46). */
-export type SystemNoteData =
+/**
+ * What a system note changed, for the UI label; `text` is what the brain reads (D46). `others`: what it holds is of a thing others work on
+ * with the person, so it is from elsewhere (D673, ui/send.js).
+ */
+export type SystemNoteData = { others?: true } & (
   | { kind: 'language', language: string }
   | { kind: 'date', date: string }
   | { kind: 'tools', added: string[] }
@@ -225,7 +228,7 @@ export type SystemNoteData =
   /** what follows came from someone else's Jean, shared through the host named (D361) or sent by a person met, and where the user's own requests start again (end) */
   | { kind: 'shared', from?: string, person?: string, name?: string, thread?: { task: string, id: string }, id?: string, end?: true }
   /** Intuition read a danger in a child's message, told to their parent unless it is at home (D228) */
-  | { kind: 'concern', concern: string }
+  | { kind: 'concern', concern: string })
 
 /**
  * What a conversation's brain was told, frozen at its start (D46), then changed by notes.

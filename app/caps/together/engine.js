@@ -151,11 +151,8 @@ function drawing({ kind, place }, { files = {}, markdown = '' }) {
 
 /** A circle that ended for this person: removed, stopped by its owner, or moved without them; their copy stays theirs. @param {Live} live @param {'removed' | 'stopped'} how */
 async function ended(live, how) {
-  live.stop()
-  live.unwatch?.()
-  circles.peek().delete(live.id)
+  await unfollow(live)
   for (const place of apartOf(live.kept)) apart.delete(place)
-  await save(live.id, null)
   await app.fs.remove(cache(live.id)).catch(() => {})
   // A link that never opened anything has no title to name.
   notify(live.kept.title ? t(how === 'removed' ? 'together.removed' : 'together.stopped', { title: live.kept.title }) : t('together.gone'))
@@ -169,13 +166,13 @@ async function moved(live, body) {
   const { write: _, ...rest } = live.kept
   const kept = { ...rest, epoch: next.epoch, keys: { ...live.kept.keys, [next.epoch]: next.key }, read: next.read, ...(next.write && { write: next.write }), links: next.links }
   const id = await journal.journalOf(next.read)
-  live.stop()
-  live.unwatch?.()
-  circles.peek().delete(live.id)
-  await save(live.id, null)
+  await unfollow(live)
   await save(id, kept)
   follow(id, kept)
 }
+
+/** No longer followed here, its secret gone: it ended for this person, or moved to the next journal. @param {Live} live */
+const unfollow = (live) => { live.stop(); live.unwatch?.(); circles.peek().delete(live.id); return save(live.id, null) }
 
 /**
  * Follows a circle from the start of its journal: once caught up, a joiner says so and opens the thing, and what changes here goes.
@@ -404,6 +401,12 @@ export const hereNow = (live) => new Set([...live.here].filter(([, at]) => Date.
 export const circleOf = (folder) => [...circles.value.values()].find((live) => live.kept.place?.folder === folder && live.kept.place.dir === app.projectDir) ?? null
 /** The circle a file is in, by its path, as a task's is. @param {string} path */
 export const circleAt = (path) => [...circles.value.values()].find((live) => live.kept.place && `${live.kept.place.dir}/${live.kept.place.folder}` === path) ?? null
+/**
+ * Whether someone else works, or once worked, on the thing at a path, or on what holds it, so that what is read of it is from elsewhere (D673):
+ * a circle with another member, one moved to a next epoch (whose journal knows only who stayed), or one another tab follows, whose members this
+ * tab can't tell. @param {string} path
+ */
+export const othersAt = (path) => [...apart].some((place) => (path === place || path.startsWith(`${place}/`)) && ![...circles.peek().values()].some((live) => apartOf(live.kept).includes(place) && !live.kept.epoch && circle.alone(live.state, live.me)))
 /** A member's name in any circle followed here: the room's line over another's turn (ui/chat.js). @param {string} fp */
 export const memberName = (fp) => [...circles.peek().values()].map((live) => nameIn(live, fp)).find(Boolean) ?? ''
 

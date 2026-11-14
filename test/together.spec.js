@@ -74,6 +74,14 @@ test('Ana and Bob work on a collection together: a link and a name, each one’s
   }, folder)
   await expect(ana.getByRole('button', { name: 'Here now: Bob' })).toBeVisible()
 
+  // What Bob wrote is from elsewhere for Ana's Jean (D673): the note on the collection beside her task, and the call that reads its rows.
+  await connectFakeBrain(ana)
+  await ask(ana, 'Bob invited me to an interview')
+  await answered(ana)
+  const marked = await ana.evaluate(() => import('/ui/state.js').then(({ app }) => (app.current.value?.records ?? []).flatMap(({ update: u }) => (u?.sessionUpdate === 'tool_call' && u.name === 'table_rows' && u.status === 'completed'
+    ? [`call ${u._meta?.others}`] : u?.sessionUpdate === '_system_note' && u.data.kind === 'table' ? [`note ${u.data.others}`] : []))))
+  expect(marked).toEqual(['note true', 'call true'])
+
   // Ana removes Bob: the others would move to a new link; Bob is told, and keeps what he had.
   await ana.getByRole('button', { name: 'Here now: Bob' }).click()
   const people = ana.locator('app-together-dialog dialog[open]')
@@ -255,6 +263,8 @@ test('Ana keeps a collection in step on her own two devices: no link, nobody els
   await expect.poll(() => items(laptop, folder)).toEqual(['Flat', 'Flights', 'Taxi'])
   await add(laptop, folder, 'Museum')
   await expect.poll(() => items(phone, folder)).toEqual(['Flat', 'Flights', 'Museum', 'Taxi'])
+  // Nobody else ever came, so what the phone reads of it is her own, not from elsewhere (D673).
+  expect(await phone.evaluate((folder) => import('/ui/caps.js').then(({ slots }) => slots('others').some((one) => one.holds(folder))), folder)).toBe(false)
 })
 
 test('Ana and Bob make one deck together: a slide each reaches the other’s copy, and Ana’s open deck takes Bob’s in', async ({ browser }) => {

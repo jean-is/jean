@@ -20,8 +20,7 @@ import { getSecret } from './secrets.js'
 import { unlock, contributions, slots, FIRST_REQUEST } from './caps.js'
 import {
   app, effective, activeBrain, brainsHere, brainLabel, assistantName, cloudAllowed, currentFiles, conversationOf, readBody, loadModels,
-  notify, setPresence, setRule, showError, updateSettings, refreshConversations, sidebarOpen, openConversation, turnPage, beginRun, endRun, stop, CITED, keepRecords,
-  newTasks, showRun, stirred,
+  notify, setPresence, setRule, showError, updateSettings, refreshConversations, sidebarOpen, openConversation, turnPage, beginRun, endRun, stop, CITED, keepRecords, newTasks, showRun, stirred,
 } from './state.js'
 
 /** @import { BrainConfig, Envelope, ToolCallInfo, ResourceLink } from '../core/types.js' */
@@ -45,6 +44,13 @@ const SERVERS = ['ollama', 'lmstudio']
 
 /** @type {Map<string, string | null>} uri → extracted text; files are named by content, so this never goes stale */
 const texts = new Map()
+
+/**
+ * Whether others work with the person on the thing of the project at this place (caps/together): what a brain reads of it, a note by its
+ * place or a call by what it read (`read`) or cites, is marked from elsewhere as it is kept, so that the task's Always allow sends nothing out
+ * unasked after it (D673). @param {unknown} uri
+ */
+const others = (uri) => typeof uri === 'string' && slots('others').some((one) => one.holds(uri))
 
 /** @param {ResourceLink} link @param {string[]} pages */
 export function rememberText(link, pages) {
@@ -101,15 +107,14 @@ function attachedLinks(brain, records, items, text) {
   let budget = contextTokens(brain) * DOCUMENT_SHARE
   /** @type {ResourceLink[]} */
   const links = []
-  for (const item of items) {
-    if (item.status !== 'ready' || !item.link || !item.pages) continue
-    const pages = item.pages
+  for (const { status, link, pages } of items) {
+    if (status !== 'ready' || !link || !pages) continue
     const chosen = small ? preselect(pages, text, Math.max(budget, 1)) : [pagesThatFit(pages, Math.max(budget, 1))]
     budget -= chosen.reduce((sum, [first, last]) => sum + pages.slice(first - 1, last).reduce((n, page) => n + estimateTokens(page), 0), 0)
     const whole = chosen.length === 1 && chosen[0][1] >= pages.length
     // The number the brain cites it by, kept if the same file was shared before.
-    const source = sourceNumber([...linkedFiles(records), ...links], item.link)
-    links.push({ ...item.link, _meta: { ...(!whole && { pages: chosen, of: pages.length }), source } })
+    const source = sourceNumber([...linkedFiles(records), ...links], link)
+    links.push({ ...link, _meta: { ...(!whole && { pages: chosen, of: pages.length }), source } })
   }
   return links
 }
@@ -196,6 +201,7 @@ async function context(task) {
  */
 async function prepare(text, brain, task, notes = [], items = app.attachments.value) {
   const records = task?.records ?? []
+  for (const { update: u } of notes) if (u?.sessionUpdate === '_system_note' && 'uri' in u.data && others(u.data.uri)) u.data.others = true
   // Things Jean made comes with the first message, so a file can be made from the start (D119), and
   // so do questions, so the brain can ask from the start (D146), noting the user's name, Jean's
   // own skills, which the brain may read before Skills is found (D406), and the receipt, so the browser's
@@ -617,6 +623,7 @@ async function runAgent(conversation, brain, meta, call, after, held) {
       },
       persist: async (records) => {
         if (run.held) return
+        for (const { update: u } of records) if (u?.sessionUpdate === 'tool_call' && (others(u._meta?.read) || u._meta?.sources?.some((source) => others(source.url)))) u._meta = { ...u._meta, others: true }
         await written
         all.push(...records)
         await keepRecords(path, records)

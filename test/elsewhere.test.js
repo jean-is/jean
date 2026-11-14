@@ -28,6 +28,11 @@ test('a task holds content from elsewhere once it read a page or a service, was 
   assert.ok(fromElsewhere(record({ sessionUpdate: 'tool_call', kind: 'think', status: 'completed', _meta: { raw: [{ type: 'server_tool_use' }, { type: 'web_search_tool_result' }] } })))
   assert.ok(fromElsewhere(record({ sessionUpdate: 'tool_call', kind: 'other', status: 'failed', _meta: { service: 'mail' } })))
   assert.ok(fromElsewhere(record({ sessionUpdate: 'tool_call', kind: 'think', status: 'completed', _meta: { parent: 'c1' } })))
+  // A thing others work on with the person, read by a call or open beside the task (ui/send.js marks it).
+  assert.ok(fromElsewhere(record({ sessionUpdate: 'tool_call', kind: 'read', status: 'completed', _meta: { read: 'collections/a', others: true } })))
+  assert.ok(fromElsewhere(record({ sessionUpdate: '_system_note', data: { kind: 'document', uri: 'documents/a.md', others: true } })))
+  assert.ok(!fromElsewhere(record({ sessionUpdate: 'tool_call', kind: 'read', status: 'completed', _meta: { read: 'collections/a' } })))
+  assert.ok(!fromElsewhere(record({ sessionUpdate: '_system_note', data: { kind: 'table', uri: 'collections/a' } })))
   // The person's own words, Jean's own files and what it remembers, what was declined, and a call that never finished, don't count.
   assert.ok(!fromElsewhere(record({ sessionUpdate: 'tool_call', kind: 'fetch', status: 'failed', _meta: { declined: true } })))
   assert.ok(!fromElsewhere(record({ sessionUpdate: 'tool_call', kind: 'think', status: 'completed', _meta: { raw: [{ type: 'thinking' }] } })))

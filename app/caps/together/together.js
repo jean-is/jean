@@ -12,7 +12,7 @@ import { mine } from '../../ui/opfs.js'
 import { useStrings } from '../../core/i18n.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { apart } from '../sync/mirror.js'
-import { circles, starting, circleOf, circleAt, follow, all, apartOf, here, join, turn, done, holding, memberName, caret, othersIn } from './engine.js'
+import { circles, starting, circleOf, circleAt, follow, all, apartOf, here, join, turn, done, holding, memberName, caret, othersIn, othersAt } from './engine.js'
 import { posting, viewed, after } from './task.js'
 import { how, start, faces, taskFaces, asked, askCard, projectButton } from './page.js'
 import { asking } from './engine.js'
@@ -66,6 +66,8 @@ register({ id: 'together',
   slots: {
   // What each brain reads of a task worked on together (ui/send.js).
   view: { at: 0, draw: () => nothing, records: (/** @type {any[]} */ records, /** @type {string} */ path) => (circleAt(path) ? viewed(records, memberName) : records) },
+  // Whether others work on a thing of the project, by its place there: what a brain reads of it is from elsewhere (ui/send.js, D673).
+  others: { at: 0, draw: () => nothing, holds: (/** @type {string} */ uri) => othersAt(`${app.projectDir}/${uri}`) },
   // In a document's editor, where it is worked on together: each one's caret in their colour with their name, and this person's for them (caps/documents).
   editor: { at: 0, draw: () => nothing, add: (/** @type {import('prosemirror-view').EditorView} */ view, /** @type {string} */ path) => import('./carets.js').then(({ plug }) => plug(view, path, caret, othersIn)) },
   // The room's line over another's turn names them as the circle does, else as People does (ui/chat.js).

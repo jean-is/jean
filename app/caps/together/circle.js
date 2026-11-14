@@ -150,6 +150,8 @@ export const isMembership = (change) => MEMBERSHIP.has(change.kind)
 
 /** The members still in, in the order they came. @param {State} state */
 export const membersOf = (state) => Object.values(state.members).filter((one) => !one.gone).sort((a, b) => a.colour - b.colour)
+/** Whether nobody but this person is or ever was in: only their own devices follow it. Before the journal is read nobody is known, so it isn't. @param {State} state @param {string} me */
+export const alone = (state, me) => Boolean(state.members[me]) && Object.keys(state.members).every((fp) => fp === me)
 
 /**
  * What `moved` carries: the next epoch, sealed to each member left, as removing a device seals the store's (caps/devices/epochs.js).

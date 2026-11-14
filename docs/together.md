@@ -10,7 +10,7 @@ Jean on all of a person's devices, and with other people, without a server that 
 1. **The copies are the truth.** Each device, and each person, keeps their own copy, as plain files in Jean's folder. The relay is a meeting point: it orders and passes on what it can't read.
 2. **Keys go only where the person is.** Messages are sealed from one device's or person's key to another's, changes under a key only a thing's members hold. The relay keeps hashes of tokens, never a key or a name.
 3. **Each person's own Jean answers them.** Their brain, keys, connections, rules and approvals. Another's Jean answers only when its person lets it; nobody's AI acts on someone else's authority.
-4. **What comes from someone else is from elsewhere** (D673): another person's words reach a brain quoted, as theirs, never as the person's request, and a task holding them asks before anything goes out.
+4. **What comes from someone else is from elsewhere** (D673): another person's words reach a brain quoted, as theirs, never as the person's request, and a task holding them asks before anything goes out. So does a task that read a collection, a document, a deck or a project someone else works, or once worked, on.
 5. **What goes is shown first,** and nothing of the person's own (their prompt, notes, memory, thoughts, keys) goes unasked.
 6. **Ending leaves everyone their copy.** Removing a device, a person or a member stops what is new reaching them, never what they had.
 7. **Nothing shows before it is found** (D281), and every address comes from settings or policy (`urls.relay`): jean.is names relay.jean.is, an organisation its own relay, or none.
