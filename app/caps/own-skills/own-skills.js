@@ -7,7 +7,7 @@
 // Loaded with the first message, like questions (D146), with no trophy: nothing of it shows (D281).
 import { register, isDenied, loaded, unlock } from '../../ui/caps.js'
 import { app } from '../../ui/state.js'
-import { DIRECTORY } from '../skills/directory.js'
+import { DIRECTORY, readFor } from '../skills/directory.js'
 import { skillNamed, listSkills, parseSkill, saveSkill } from '../../core/skills.js'
 import { t } from '../../core/i18n.js'
 import { reach } from '../../core/deferred.js'
@@ -38,8 +38,9 @@ const skillTool = {
 }
 
 // The line is read as a conversation starts: in it, a small brain reads one as often as from a <skills> list, and
-// offers what else a request needs as often as without them (D406).
-const line = { name: 'skill', get line() { return `read the steps of a skill before asking the user anything for it or following it${loaded.value.has('skills') || !own.length ? '' : `: ${own.join(', ')}`}` } }
+// offers what else a request needs as often as without them (D406); and what some are read for, where a request that doesn't
+// name them missed them (readFor).
+const line = { name: 'skill', get line() { return `read the steps of a skill before asking the user anything for it or following it${loaded.value.has('skills') || !own.length ? '' : `: ${own.join(', ')}${readFor(own)}`}` } }
 
 /** @type {import('../../core/loop.js').Tool} The activity calls it as the user's menu does (D127). */
 const aboutTool = { spec: { name: 'about', description: 'What you can do in this app and how it is used, as it stands for this user: each part in a line, and those a topic matches whole.', parameters: { type: 'object', properties: { topic: { type: 'string', description: 'What the user asks about, in English, such as "share a task"; none for every part' } } } },

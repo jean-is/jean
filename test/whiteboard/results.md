@@ -24,33 +24,39 @@ whiteboards for the table requests over all three runs (240 conversations).
 
 | A whiteboard made right through the skill, where one is right | Haiku | Sonnet | Gate |
 |---|---:|---:|---:|
-| `skill`'s line naming the skills alone, as Jean is | 45% (86/192) | 57% (110/192) | 80% |
+| `skill`'s line naming the skills alone, as Jean was | 45% (86/192) | 57% (110/192) | 80% |
 | With the line's words for whiteboard and table_create's note | 79.7% (153/192) | 89% (170/192) | 80% |
-| Those, by language: en, fr, ar, ja | 81, 73, 79, 85 | 90, 81, 88, 96 | ar, ja within 10 of en |
-| Whiteboards made for the 80 table requests, three runs | 0 and 0 | 0 and 0 | 2 at most |
+| The same, table_create's own words cut so the note fits in 400 tokens: Jean's | 79.7% (153/192) | 87.5% (168/192) | 80% |
+| Jean's, by language: en, fr, ar, ja | 83, 75, 79, 81 | 90, 81, 85, 94 | ar, ja within 10 of en |
+| Whiteboards made for the 80 table requests, three runs, in each of the three | 0 | 0 | 2 at most |
+| Those tables right: as Jean was, then Jean's | 98%, 99% | 93%, 95% | about as before |
 
-As Jean is, every request that names a whiteboard got one (Haiku 86%, its misses tables made without reading the skill; Sonnet
+Before them, every request that names a whiteboard got one (Haiku 86%, its misses tables made without reading the skill; Sonnet
 99%), and almost none of those that only imply one: of the choosing set's 96, Haiku made 3, Sonnet 15. Every such miss is the skill
 not read: a table, a document or words instead, or Sonnet reading "project-plan". When the skill was read, it was followed.
 
-Two descriptions, both in `app/` and not shipped, close most of it. In `skill`'s line, after the names: "; read whiteboard for a
-brainstorm, a retrospective or things to sort into groups with others, in place of a list or a table". After table_create's
-description: "For notes to brainstorm or sort with others, such as a retrospective, read the skill whiteboard instead: it brings a
-whiteboard." With both, Sonnet passes the gate on all three counts. Haiku passes on languages and tables and is one conversation
-short on the first: 153 of 192, where 154 is 80%. Tables stay as they were: Haiku 98% right, Sonnet 94%. One conversation of each
-brain failed at the server ("fetch failed") and is left out of 528.
+Two descriptions, Jean's since (`app/caps/skills/directory.js`, `app/caps/tables/tool.js`), close most of it. In `skill`'s line,
+after the names: "; read whiteboard for a brainstorm, a retrospective or things to sort into groups with others, in place of a list
+or a table". After table_create's description: "For notes to brainstorm or sort with others, such as a retrospective, read the skill
+whiteboard instead: it brings a whiteboard." The note took table_create from about 390 tokens to 404–423, so its own words were cut,
+every rule kept: "Make a table to keep track of something" went, which the tool's name and line say, and the sentence on the person
+filling in a row took in the one on what the request names, which said the same. With them it is 376–395 tokens. Measured again,
+the whiteboards held and the tables didn't drop. Sonnet passes the gate on all three counts. Haiku passes on languages and tables
+and is one conversation short on the first: 153 of 192, where 154 is 80%. In the first run, one conversation of each brain failed at
+the server ("fetch failed") and is left out of 528.
 
-The misses left: the skill not read 31 times by Haiku (the house move planned "on a board the whole family can see" 12 times in 12,
-a table each time; the hiring steps 7) and 15 by Sonnet (that move 9 times, reading "project-plan" instead; the French kick-off as a
-table 3, the Arabic retro as a document 3); and a whiteboard with a section left empty, 8 by Haiku and 7 by Sonnet: "Favorites" for
-the podcast's names, the office party's sections for everyone to add to. The skill doesn't ask that every section hold a note, and
-that request asks for a place others fill: counted right, Haiku is at 84% (161/192) and Sonnet at 92% (177/192).
+The misses left, with Jean's wording: the skill not read 29 times by Haiku (the house move planned "on a board the whole family can
+see" 10 times in 12, a table each time; the hiring steps 6; the office party 5) and 19 by Sonnet (that move 10 times, reading
+"project-plan" instead; the French kick-off as a table 3, the Arabic retro as a document 3); and a whiteboard with a section left
+empty, 10 by Haiku and 5 by Sonnet: "To sort" or "Favorites" for the podcast's names, the office party's sections for everyone to
+add to. The skill doesn't ask that every section hold a note, and that request asks for a place others fill: counted right, Haiku is
+at 85% (163/192) and Sonnet at 90% (173/192).
 
 Wordings tried first, Haiku on the choosing set's 8 English whiteboard requests (no whiteboard made where none is right in any):
 
 | Wording | Runs | Right |
 |---|---:|---:|
-| The line as Jean has it | 3 | 0 of 24 |
+| The line naming the skills alone | 3 | 0 of 24 |
 | The line, then "; read whiteboard for a brainstorm, a retrospective or ideas to sort with others, in place of a list or a table" | 1 | 2 of 8 |
 | The line asking to read a skill "first whenever a request is for what one makes", whiteboard's use after it | 1 | 3 of 8 |
 | table_create's note alone | 2 | 5 of 16 |
@@ -58,9 +64,29 @@ Wordings tried first, Haiku on the choosing set's 8 English whiteboard requests 
 | The line's words above and the note | 2 | 11 of 16 |
 
 `npm run whiteboard -- --parts skill:make,skill:choose,skill:tables --runs 3` measures Jean as it is; SKILL_LINE and TABLE_NOTE
-in the environment measure another line or note.
+in the environment measure another line or note, and the line naming the skills alone with an empty TABLE_NOTE, Jean without them.
 
-#### haiku (claudecode), with the line's words and the note
+#### haiku (claudecode), Jean's: the line's words, the note, table_create's words cut
+
+528 conversations, 3 runs each.
+
+| Part | en | fr | ar | ja | All | Commonest misses |
+|---|---:|---:|---:|---:|---:|---|
+| skill:make | 100% (24/24) | 100% (24/24) | 100% (24/24) | 100% (24/24) | 100% (96/96) | — |
+| skill:choose | 83% (40/48) | 75% (36/48) | 79% (38/48) | 81% (39/48) | 80% (153/192) | skill not read: table_create (17); skill not read: table_create, write (8); skill not read: words (3); a section empty (10) |
+| skill:tables | 98% (59/60) | 100% (60/60) | 98% (59/60) | 98% (59/60) | 99% (237/240) | no task (1); no المهمة (1); 参加の状況: status (1) |
+
+#### sonnet (claudecode), Jean's: the line's words, the note, table_create's words cut
+
+528 conversations, 3 runs each.
+
+| Part | en | fr | ar | ja | All | Commonest misses |
+|---|---:|---:|---:|---:|---:|---|
+| skill:make | 100% (24/24) | 100% (24/24) | 100% (24/24) | 100% (24/24) | 100% (96/96) | — |
+| skill:choose | 90% (43/48) | 81% (39/48) | 85% (41/48) | 94% (45/48) | 88% (168/192) | project-plan read (10); skill not read: table_create (3); skill not read: write, table_create (3); a section empty (5) |
+| skill:tables | 97% (58/60) | 97% (58/60) | 93% (56/60) | 93% (56/60) | 95% (228/240) | n columns (7); no handed (1); الحالة: steps مرسلة, مدفوعة (1); الحالة: steps مدفوعة (1) |
+
+#### haiku (claudecode), with the line's words and the note, table_create as it was
 
 527 conversations, 3 runs each; 1 failed at the server.
 
@@ -70,7 +96,7 @@ in the environment measure another line or note.
 | skill:choose | 81% (39/48) | 73% (35/48) | 79% (38/48) | 85% (41/48) | 80% (153/192) | skill not read: table_create (20); skill not read: table_create, write (6); skill not read: words (5); a section empty (8) |
 | skill:tables | 100% (60/60) | 98% (59/60) | 98% (59/60) | 95% (56/59) | 98% (234/239) | no statut (1); الحالة: steps مرسلة (1); no 電話 (1); no プレゼント (1) |
 
-#### sonnet (claudecode), with the line's words and the note
+#### sonnet (claudecode), with the line's words and the note, table_create as it was
 
 527 conversations, 3 runs each; 1 failed at the server.
 
@@ -80,7 +106,7 @@ in the environment measure another line or note.
 | skill:choose | 90% (43/48) | 81% (39/48) | 88% (42/48) | 96% (46/48) | 89% (170/192) | skill not read: project-plan read, table_create (9); skill not read: table_create (3); skill not read: write, table_create (2); a section empty (7) |
 | skill:tables | 90% (54/60) | 98% (59/60) | 95% (57/60) | 93% (55/59) | 94% (225/239) | n columns (5); no address (3); no rent (3); no handed (2) |
 
-#### haiku (claudecode), as Jean is
+#### haiku (claudecode), before them
 
 528 conversations, 3 runs each.
 
@@ -90,7 +116,7 @@ in the environment measure another line or note.
 | skill:choose | 50% (24/48) | 50% (24/48) | 56% (27/48) | 50% (24/48) | 52% (99/192) | skill not read: table_create (45); skill not read: words (39); skill not read: table_create, write (5) |
 | skill:tables | 100% (60/60) | 100% (60/60) | 98% (59/60) | 92% (55/60) | 98% (234/240) | no プレゼント (3); no المهمة (1); no 電話 (1); no 名前 (1) |
 
-#### sonnet (claudecode), as Jean is
+#### sonnet (claudecode), before them
 
 528 conversations, 3 runs each.
 

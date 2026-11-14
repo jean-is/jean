@@ -648,10 +648,19 @@ test('table_create: a capability line within 40 tokens, a tool that names every 
   assert.deepEqual(/** @type {any} */ (TABLE_CREATE.parameters).properties.columns.items.properties.collection, { type: 'string' })
   for (const [lang, example] of Object.entries(EXAMPLES)) {
     assert.ok(tableCreate(lang).description.endsWith(JSON.stringify(example)), lang)
-    assert.ok(Math.ceil(JSON.stringify(tableCreate(lang)).length / 4) <= 400, `${lang}: ${JSON.stringify(tableCreate(lang)).length} characters`)
+    // As live Jean sends it, the whiteboard's note included.
+    for (const whiteboard of [false, true]) assert.ok(Math.ceil(JSON.stringify(tableCreate(lang, { whiteboard })).length / 4) <= 400, `${lang}: ${JSON.stringify(tableCreate(lang, { whiteboard })).length} characters`)
     assert.deepEqual(tableProblems(createTable(example, { id: TABLE_ID, author: 'jean', at: T(0) })), [], lang)
   }
   assert.equal(tableCreate('sw').description, TABLE_CREATE.description)
+})
+
+test('table_create where the whiteboard’s skill can be read: the note measured after its description, nothing else changed (test/whiteboard/results.md)', () => {
+  for (const lang of [...Object.keys(EXAMPLES), 'sw']) {
+    const plain = tableCreate(lang), noted = tableCreate(lang, { whiteboard: true })
+    assert.equal(noted.description, `${plain.description} For notes to brainstorm or sort with others, such as a retrospective, read the skill whiteboard instead: it brings a whiteboard.`, lang)
+    assert.deepEqual({ ...noted, description: '' }, { ...plain, description: '' }, lang)
+  }
 })
 
 test('STRICT: the schema a brain’s reply is held to takes what Jean takes, refuses what Jean refuses, and asks a select for its choices', () => {

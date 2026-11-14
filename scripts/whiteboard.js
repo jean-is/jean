@@ -23,7 +23,7 @@ import { buildSystemPrompt } from '../app/core/prompt.js'
 import { streamChat } from '../app/core/llm.js'
 import { tableCreate, LINE as TABLE_LINE } from '../app/caps/tables/tool.js'
 import { WHITEBOARD, WHITEBOARD_CHANGE, LINES, made, changed } from '../test/whiteboard/tools.js'
-import { DIRECTORY } from '../app/caps/skills/directory.js'
+import { DIRECTORY, readFor } from '../app/caps/skills/directory.js'
 import { skillNamed } from '../app/core/skills.js'
 import { score, normal } from './tables.js'
 
@@ -37,14 +37,15 @@ const ROWS = { name: 'table_rows', description: 'Read the rows of a table the us
 const WRITE = { name: 'write', description: 'Make a file the user keeps: a Word document from Markdown, a spreadsheet from a table, or text.', parameters: { type: 'object', required: ['name', 'content'], properties: { name: { type: 'string' }, content: { type: 'string' } } } }
 const WRITE_LINE = { name: 'write', line: 'make a file: a Word document, a spreadsheet or text' }
 /**
- * Jean's `skill` and its line as own-skills declares them before Skills is found, naming the directory's skills in its order. A wording
- * to try in their place, measured before any goes into Jean: SKILL_LINE, the whole line; TABLE_NOTE, words after table_create's
- * description (test/whiteboard/results.md has the pair measured).
+ * Jean's `skill` and its line as own-skills declares them before Skills is found, naming the directory's skills in its order and what
+ * some are read for. A wording to try in their place, measured before any goes into Jean: SKILL_LINE, the whole line; TABLE_NOTE, the
+ * words after table_create's description in place of its whiteboard's, none when empty (the line naming the skills alone and an empty
+ * TABLE_NOTE measure Jean as it was before them).
  */
 const SKILL = { name: 'skill', description: 'Read the steps of a skill.', parameters: { type: 'object', properties: { name: { type: 'string' } }, required: ['name'] } }
-const SKILL_LINE = { name: 'skill', line: process.env.SKILL_LINE || `read the steps of a skill before asking the user anything for it or following it: ${DIRECTORY.map((entry) => entry.name).join(', ')}` }
-/** table_create as Tables declares it in the request's language, with TABLE_NOTE's words after its description when given. @param {string} lang */
-const tableSpec = (lang) => ((spec) => (process.env.TABLE_NOTE ? { ...spec, description: `${spec.description} ${process.env.TABLE_NOTE}` } : spec))(tableCreate(lang))
+const SKILL_LINE = { name: 'skill', line: process.env.SKILL_LINE || `read the steps of a skill before asking the user anything for it or following it: ${DIRECTORY.map((entry) => entry.name).join(', ')}${readFor(DIRECTORY.map((entry) => entry.name))}` }
+/** table_create as Tables declares it where the whiteboard's skill can be read, in the request's language, or with TABLE_NOTE's words. @param {string} lang */
+const tableSpec = (lang) => (process.env.TABLE_NOTE == null ? tableCreate(lang, { whiteboard: true }) : ((spec) => ({ ...spec, description: [spec.description, process.env.TABLE_NOTE].filter(Boolean).join(' ') }))(tableCreate(lang)))
 /** A skill's steps without its front matter, as `skill` answers; reading "whiteboard" says the tools it brings, as Jean does. @param {string} named */
 async function skillRead(named) {
   const name = skillNamed(named).toLowerCase(), [dir, sheet] = name.split('/')

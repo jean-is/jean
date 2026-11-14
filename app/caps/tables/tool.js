@@ -8,9 +8,9 @@ export const LINE = { name: 'table_create', line: 'when the user wants to keep t
 // Measured on the device's brain (test/tables/findings.md): asking for a column for everything a
 // row will hold, naming the types, and showing one table about nothing the test set asks for, in the
 // user's language, so that its own columns are in that language too. In the app, from the locales.
-const TEXT = 'Make a table to keep track of something. Name it and its columns in the user’s language; the first column names each row. '
-  + 'Think of the person filling in one row: give a column to each thing they will write down. '
-  + 'Give it a column for each thing the request names or implies, and for what the user will note about each row: who, when, how much, and where it stands. '
+// Said in fewer words for the whiteboard's note to fit within 400 tokens, and measured again (test/whiteboard/results.md).
+const TEXT = 'Name the table and its columns in the user’s language; the first column names each row. '
+  + 'Think of the person filling in one row: give a column to each thing the request names or implies, and to what they will note: who, when, how much, where it stands. '
   + 'Give each column the type its values have: a date, a number, a checkbox for yes or no, a select for a few choices, a status for steps (its options, in order); text for the rest.'
 /** @param {string} name @param {string[]} columns plant, room, last watered, every how many days, repotting, health @param {string[]} rooms @param {string[]} health */
 const plants = (name, [plant, room, watered, every, repot, healthy], rooms, health) => ({ name, columns: [
@@ -24,13 +24,17 @@ export const EXAMPLES = /** @type {Record<string, object>} */ ({
   ja: plants('植物', ['植物', '部屋', '最後の水やり', '水やりの間隔（日）', '植え替えが必要', '元気さ'], ['リビング', 'キッチン', '寝室'], ['元気', '弱っている', '枯れた']),
 })
 
+// Where the skill "Make a whiteboard" can be read: with no word of it here, a brain made a table of a retrospective's or a
+// brainstorm's notes rather than read it (test/whiteboard/results.md).
+const WHITEBOARD = 'For notes to brainstorm or sort with others, such as a retrospective, read the skill whiteboard instead: it brings a whiteboard.'
+
 /**
- * table_create, its example in the user's language, English where there is none.
- * @param {string} [lang] @returns {import('../../core/types.js').ToolSpec}
+ * table_create, its example in the user's language, English where there is none, and the whiteboard's skill where it can be read.
+ * @param {string} [lang] @param {{ whiteboard?: boolean }} [options] @returns {import('../../core/types.js').ToolSpec}
  */
-export const tableCreate = (lang = 'en') => ({
+export const tableCreate = (lang = 'en', { whiteboard = false } = {}) => ({
   name: 'table_create',
-  description: `${TEXT} For plants to water: ${JSON.stringify(EXAMPLES[lang] ?? EXAMPLES.en)}`,
+  description: `${TEXT} For plants to water: ${JSON.stringify(EXAMPLES[lang] ?? EXAMPLES.en)}${whiteboard ? ` ${WHITEBOARD}` : ''}`,
   parameters: {
     type: 'object',
     properties: {

@@ -48,13 +48,13 @@ The pass needs the grip, the Move mode and the menu, which T4 builds first; Voic
 French: *Tableau blanc*, the owner's word. Japanese ホワイトボード and Arabic سبورة (or سبورة بيضاء) still wait for a native reader;
 the planning session's reading, and the lanes as *Sections*, are in the plan.
 
-## e. Found through its skill (T5): misses as Jean is, Sonnet passes with two descriptions, Haiku one conversation short
+## e. Found through its skill (T5): with two descriptions, Sonnet passes and Haiku is one conversation short
 
 14 November, Haiku and Sonnet through the Claude plan, Whiteboards off and Jean's own skills offered as own-skills offers them,
 three runs in four languages ([results](results.md#through-the-skill-t5-the-gate-written-before-the-runs)); GPT-5 mini isn't
 offered by Copilot.
 
-- As Jean is, the skill is found when a request names a whiteboard (Haiku 86%, Sonnet 99%) and almost never when it only implies
+- Before them, the skill was found when a request named a whiteboard (Haiku 86%, Sonnet 99%) and almost never when it only implied
   one: 3 and 15 of the 96 brainstorms, retros and boards to sort. Where one is right, 45% and 57%, under the gate's 80%. Each miss
   is the skill not read; read, it was always followed. No whiteboard was made where a table or words are right.
 - Two descriptions say when to read it. `skill`'s line, after the names: "; read whiteboard for a brainstorm, a retrospective or
@@ -63,11 +63,14 @@ offered by Copilot.
   79.7% (153/192) and Sonnet to 89%, Arabic and Japanese within 10 points of English, no whiteboard for the 239 tables, which stay
   at 98% and 94% right. Sonnet passes, and Haiku is short by one conversation. Neither description alone did it: Haiku made 5 of
   16 with the note and 2 of 8 with the line's words.
-- What is left: a plan "on a board the whole family can see", which Haiku always made a table and Sonnet read as "project-plan"; a
-  section left empty for the group to fill (Favorites, the party's sections everyone adds to), counted as a miss though the skill
-  doesn't forbid it (with them, 84% and 92%).
-- Not shipped. In `app/`, they are a `when` on the directory's whiteboard entry, which own-skills' line adds after the names, and
-  the note on table_create where the skill can be read. The note takes table_create from about 390 tokens to 404–423, over the 400
-  that the tests hold a tool's schema to. A note that fits has 39 characters, for the French example, and isn't measured.
+- The note took table_create past the 400 tokens a tool's schema keeps to (404–423), so its own words were cut, every rule kept:
+  "Make a table to keep track of something", which its name and line say, and two sentences that said the same thing in one. With
+  the note, 376–395 tokens. Measured again, both hold: Haiku 79.7% (en 83, fr 75, ar 79, ja 81), Sonnet 87.5% (90, 81, 85, 94),
+  no whiteboard for the 240 tables, which are right 99% and 95% of the time against 98% and 93% before.
+- In `app/`: a `when` on the directory's whiteboard entry, which own-skills' line adds after the names, and the note on
+  table_create wherever the skill can be read; `test/tables.test.js` holds the tool to 400 tokens with the note.
+- What is left: a plan "on a board the whole family can see", which Haiku mostly made a table and Sonnet read as "project-plan";
+  a section left empty for the group to fill ("To sort", Favorites, the party's sections everyone adds to), counted as a miss though
+  the skill doesn't forbid it (with them, 85% and 90%).
 - Not measured: once Skills is found, its own list replaces the names in the line, the skill's description is what the brain
   reads, and the line's words are gone.

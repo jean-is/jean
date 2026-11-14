@@ -7,6 +7,7 @@ import { layout, free, snap, arrowPath, placeOf, footOf, NOTE, GAP, HEAD, WIDE }
 import { made, changed, rowsOf, editsOf } from '../app/caps/whiteboards/tool.js'
 import { svgOf } from '../app/caps/whiteboards/picture.js'
 import { fold, stamp } from '../app/caps/tables/changes.js'
+import { DIRECTORY, readFor } from '../app/caps/skills/directory.js'
 
 /** A row's ULID, by number. @param {number} n */
 const R = (n) => `01K8${String(n).padStart(22, '0')}`
@@ -135,4 +136,11 @@ test('svgOf: the board as a picture, its words escaped in HTML that wraps in its
   assert.deepEqual([part.w, part.h], [300, 200])
   assert.match(part.svg, /Lunch/)
   assert.doesNotMatch(part.svg, /Risks|Flaky/)
+})
+
+test('found through its skill: `skill`’s line says what whiteboard is read for after the names, in the words measured, and nothing once policy leaves it out', () => {
+  const names = DIRECTORY.map((entry) => entry.name)
+  assert.equal(readFor(names), '; read whiteboard for a brainstorm, a retrospective or things to sort into groups with others, in place of a list or a table')
+  assert.equal(readFor(names.filter((name) => name !== 'whiteboard')), '')
+  assert.equal(readFor([]), '')
 })

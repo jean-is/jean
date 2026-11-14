@@ -12,7 +12,7 @@
 // one or another, by its place: load() reads those collections and their rows' names, which the view, the brain and the workbook show.
 import { html } from 'lit-html'
 import { signal } from '@preact/signals-core'
-import { register, unlock } from '../../ui/caps.js'
+import { register, unlock, isDenied } from '../../ui/caps.js'
 import { onPaper } from '../../ui/kit.js'
 import { kitSlot } from '../slides/kit-slot.js'
 import '../made/paper.js'
@@ -405,7 +405,7 @@ const here = (ctx) => conversationOf(ctx.signal)?.path === app.current.peek()?.p
 
 /** @type {import('../../core/loop.js').Tool} */
 const createTool = {
-  spec: tableCreate(locale.peek()),
+  spec: tableCreate(locale.peek(), { whiteboard: !app.policy.skills?.only && !isDenied('skills') && !isDenied('whiteboards') }),
   kind: 'edit',
   for: passes,
   title: (args) => `Table ${args?.name ?? ''}`,

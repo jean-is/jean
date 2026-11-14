@@ -10,7 +10,7 @@ import { parseSkill } from '../../core/skills.js'
 /** @typedef {import('./sources.js').Entry & { icon: string, group: string, body: string, blocks?: string[] }} Ready  digest '': Jean's own, read from its own files, its steps too */
 
 /** The skills, by name, with what they are for, as Settings' Add a skill groups them, and their icon's path (24×24, drawn with a line). */
-/** @type {readonly { name: string, group: string, icon: string, cap?: string, beside?: string[] }[]} */
+/** @type {readonly { name: string, group: string, icon: string, cap?: string, beside?: string[], when?: string }[]} */
 export const DIRECTORY = Object.freeze([
   { name: 'plain-words', group: 'day', icon: 'M4.5 5.5h15v10h-8l-4 3.5v-3.5h-3zM8 9h8M8 12h5' },
   { name: 'letter', group: 'day', icon: 'M3.5 6.5h17v11h-17zM3.5 7l8.5 6 8.5-6' },
@@ -38,14 +38,18 @@ export const DIRECTORY = Object.freeze([
   { name: 'site', group: 'drawn', icon: 'M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM3 9h18M6 7h.01M8.5 7h.01M7 13h6M7 16h4', cap: 'sites', beside: ['kinds.md', 'look.md'] },
   // Prototypes (D742): the capability it brings, and its sheet of shapes; the look is the site skill's.
   { name: 'prototype', group: 'drawn', icon: 'M3 5h6v14H3zM15 5h6v14h-6zM9 12h6M13 10l2 2-2 2', cap: 'prototypes', beside: ['screens.md'] },
-  // Whiteboards (D747): the capability it brings, whose two tools make and sort one.
-  { name: 'whiteboard', group: 'drawn', icon: 'M3.5 4.5h17v15h-17zM6.5 7.5h4v4h-4zM13.5 7.5h4v4h-4zM6.5 14h4', cap: 'whiteboards' },
+  // Whiteboards (D747): the capability it brings, whose two tools make and sort one, and when the brain reads it, which requests
+  // that don't name a whiteboard need (test/whiteboard/results.md).
+  { name: 'whiteboard', group: 'drawn', icon: 'M3.5 4.5h17v15h-17zM6.5 7.5h4v4h-4zM13.5 7.5h4v4h-4zM6.5 14h4', cap: 'whiteboards', when: 'a brainstorm, a retrospective or things to sort into groups with others, in place of a list or a table' },
   // Apps (D553): the pages answers hold, whose capability it needs; a prototype's Build it follows it (D742).
   { name: 'app', group: 'drawn', icon: 'M4 4h6.5v6.5H4zM4 13.5h6.5V20H4zM13.5 13.5H20V20h-6.5zM16.75 3.35l3.9 3.9-3.9 3.9-3.9-3.9z', cap: 'interactive' },
   { name: 'pptx', group: 'drawn', icon: 'M6.5 3.5h8l4 4v13h-12zM14.5 3.5v4h4M9 14a3 3 0 1 0 6 0 3 3 0 1 0-6 0M12 11v3h3' },
   // Extensions (D692): the capability whose tool it brings, `extension`, which offers one on its page in Settings.
   { name: 'extension', group: 'work', icon: 'M4 10a2.5 2.5 0 0 1 2.5-2.5h2a2.25 2.25 0 1 1 3.5 0h4.5V12a2.25 2.25 0 1 1 0 3.5v2a2.5 2.5 0 0 1-2.5 2.5h-7.5A2.5 2.5 0 0 1 4 17.5Z', cap: 'extensions' },
 ])
+
+/** After `skill`'s line names `names`, when the brain reads those that say so. @param {readonly string[]} names */
+export const readFor = (names) => DIRECTORY.filter((entry) => entry.when && names.includes(entry.name)).map((entry) => `; read ${entry.name} for ${entry.when}`).join('')
 
 /**
  * What a skill is called and when it is used: in this language when its metadata gives it (D222), else in English, else as
