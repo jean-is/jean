@@ -43,6 +43,7 @@
   "any.ways": ["Ilmainen tekoäly", "ChatGPT-, Claude- tai Copilot-tilauksesi", "Tekoäly tällä tietokoneella", "Yrityksesi tekoäly"],
   "any.notes": ["Ilmaisella OpenRouter-tilillä.", "Tilaus, josta jo maksat. Ei toista tilausta.", "Katkaise wifi, ja se vastaa silti.", "Yrityksesi yhdyskäytävän ja kirjautumisen takana."],
   "any.go": "{name} ja muut vertailussa",
+  "any.all": "Kaikki tekoälyt yhdessä paikassa",
   "any.catch": ["{name} on ilmainen; sen takana oleva tekoäly ei välttämättä ole.", "Kokonaan ilman rekisteröitymistä? Vain tämän tietokoneen tekoälyllä.", "Se tekoäly vaatii uudehkon tietokoneen: 12 Gt muistia ja uudehkon grafiikkapiirin. Ei puhelimissa."],
   "keep.title": "pidä kaikki.",
   "keep.why": "Sovellukset muuttavat sääntöjään tai lopettavat.",

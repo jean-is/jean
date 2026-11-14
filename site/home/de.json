@@ -43,6 +43,7 @@
   "any.ways": ["Eine kostenlose KI", "Dein Abo von ChatGPT, Claude oder Copilot", "Eine KI auf diesem Computer", "Die KI deines Unternehmens"],
   "any.notes": ["Mit einem kostenlosen OpenRouter-Konto.", "Das Abo, das du schon bezahlst. Kein zweites Abo.", "Schalte das WLAN aus, und sie antwortet trotzdem.", "Hinter dem Gateway und der Anmeldung deines Unternehmens."],
   "any.go": "{name} mit den anderen vergleichen",
+  "any.all": "Jede KI an einem Ort",
   "any.catch": ["{name} ist kostenlos; die KI dahinter vielleicht nicht.", "Ganz ohne Registrierung? Nur mit der KI auf diesem Computer.", "Diese KI braucht einen neueren Computer: 12 GB Arbeitsspeicher und einen neueren Grafikchip. Nicht auf Handys."],
   "keep.title": "behalte alles.",
   "keep.why": "Apps ändern ihre Regeln oder werden eingestellt.",

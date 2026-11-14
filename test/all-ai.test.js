@@ -34,6 +34,19 @@ test('it is at /all-ai in English and /fr/toutes-les-ia in French, only on jean.
   assert.match(files['all-ai.html'], /<li><a href="all-ai" aria-current="page">Every AI<\/a><\/li>/)
 })
 
+test('the homepage’s act on any AI and the hub’s “You don’t have to choose” each lead to it, in the homepage’s words in their language', async () => {
+  const files = await site()
+  const arrow = ' <span class="flip-rtl" aria-hidden="true">→</span></a>'
+  const act = (/** @type {string} */ html) => html.split('<section id="home-any"')[1].split('</section>')[0]
+  const choose = (/** @type {string} */ html) => html.split('<section class="site-block" aria-labelledby="cmp-choose')[1].split('</header>')[0]
+  assert.ok(act(files['index.html']).includes(`<a href="all-ai">Every AI in one place${arrow}<a href="compare">`), 'first, before the hub')
+  assert.ok(act(files['fr.html']).includes(`<a href="fr/toutes-les-ia">Toutes les IA au même endroit${arrow}`))
+  assert.ok(act(files['ja.html']).includes(`<a href="all-ai">${xml((await words('home', 'ja'))['any.all'])}${arrow}`), 'a language it isn’t in leads to its English')
+  assert.ok(choose(files['compare.html']).includes(`<a href="all-ai">Every AI in one place${arrow}`))
+  assert.ok(choose(files['fr/comparer.html']).includes(`<a href="../fr/toutes-les-ia">Toutes les IA au même endroit${arrow}`))
+  assert.ok(choose(files['ko/compare.html']).includes(`<a href="../all-ai">${xml((await words('home', 'ko'))['any.all'])}${arrow}`))
+})
+
 test('its top has one button, Open Jean, its promise is its three acts with what is never lost underlined, and the chip that picks the AI is circled', async () => {
   const files = await site()
   for (const [lang, address] of Object.entries(page.addresses)) {

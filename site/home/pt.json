@@ -43,6 +43,7 @@
   "any.ways": ["Uma IA gratuita", "O teu plano ChatGPT, Claude ou Copilot", "Uma IA neste computador", "A da tua empresa"],
   "any.notes": ["Com uma conta OpenRouter gratuita.", "O plano que já pagas. Sem segunda subscrição.", "Desliga o Wi-Fi e continua a responder.", "Atrás do gateway e do início de sessão da tua empresa."],
   "any.go": "Comparar {name} com os outros",
+  "any.all": "Todas as IA num só lugar",
   "any.catch": ["{name} é grátis; a IA por trás pode não ser.", "Sem qualquer registo? Só com a IA neste computador.", "Essa IA precisa de um computador recente: 12 GB de memória e um chip gráfico recente. Não em telemóveis."],
   "keep.title": "guarda tudo.",
   "keep.why": "As aplicações mudam as regras, ou fecham.",

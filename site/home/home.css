@@ -200,6 +200,8 @@ body:has(> .home:not([hidden])) app-composer > :is(p, footer) { visibility: hidd
 .home-any { display: flex; flex-wrap: wrap; align-items: center; gap: 3rem 4.5rem; }
 .home-act-head.is-stacked { flex: 1 1 26rem; flex-flow: column; align-items: flex-start; gap: 1.5rem; }
 .home-act-head.is-stacked > p { flex: none; max-inline-size: 29rem; margin: 0; }
+/* Its ways on: every AI in one place, then the others beside it, one under the other */
+.home-act-go { display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem; }
 #home-any .home-act-title { font-size: clamp(3rem, 7.2cqi, 5.9rem); }
 /* Smaller in Japanese and Breton, whose words for it are wide, on one line in Japanese. Where it is the first act, its title starts at its top, in the first screen with the top of its ways. */
 .home:is(:lang(ja), :lang(br)) #home-any .home-act-title { font-size: clamp(2.6rem, 5.2cqi, 4.6rem); }

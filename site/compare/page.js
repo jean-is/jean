@@ -52,7 +52,7 @@ export default {
       /* html */ `<p>${chat}${cited(chatIds)}</p>`, /* html */ `<p>${apps}${cited(appsIds)}</p>`, ...others.map((cell) => /* html */ `<p>${cell}</p>`)]), ' is-kinds')}
 </section>`
     const ways = /* html */ `<section class="site-block" aria-labelledby="cmp-choose">
-  <header><h3 id="cmp-choose">${say('choose.title')}</h3><p class="site-why">${say('choose.why')}</p></header>
+  <header><h3 id="cmp-choose">${say('choose.title')}</h3><p class="site-why">${say('choose.why')}</p><p><a href="${kit.link('all-ai') ?? 'all-ai'}">${kit.from('home').say('any.all')} <span class="flip-rtl" aria-hidden="true">→</span></a></p></header>
   <ul class="cmp-cards is-four">${choose.map(([title, text, code]) => /* html */ `
     <li><h4>${title}</h4><p>${text}</p>${status(code)}</li>`).join('')}
   </ul>

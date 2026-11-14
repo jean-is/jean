@@ -43,6 +43,7 @@
   "any.ways": ["AI gratis", "Paket ChatGPT, Claude, atau Copilot Anda", "AI di komputer ini", "AI perusahaan Anda"],
   "any.notes": ["Dengan akun OpenRouter gratis.", "Paket yang sudah Anda bayar. Tanpa langganan kedua.", "Matikan Wi-Fi, dan ia tetap menjawab.", "Di balik gateway dan login perusahaan Anda."],
   "any.go": "Bandingkan {name} dengan yang lain",
+  "any.all": "Semua AI di satu tempat",
   "any.catch": ["{name} gratis; AI di baliknya belum tentu.", "Tanpa daftar sama sekali? Hanya dengan AI di komputer ini.", "AI itu butuh komputer yang cukup baru: memori 12 GB dan cip grafis yang baru. Tidak di ponsel."],
   "keep.title": "simpan semuanya.",
   "keep.why": "Aplikasi mengubah aturannya, atau tutup.",

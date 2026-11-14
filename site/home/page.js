@@ -134,7 +134,7 @@ export function homeOf (kit, { sample = SAMPLE } = {}) {
           ${title('any')}
           <p class="home-act-why">${say('any.why')}</p>
           <p class="home-act-lead">${say('any.lead')}</p>
-          <p class="home-act-go">${go(kit.link('compare') ?? 'compare', say('any.go'))}</p>
+          <p class="home-act-go">${go(kit.link('all-ai') ?? 'all-ai', say('any.all'))}${go(kit.link('compare') ?? 'compare', say('any.go'))}</p>
         </header>
         <ul class="home-ways">${list('any.ways').map((way, i) => /* html */ `
           <li${i ? '' : ' class="is-chosen"'}>${ICONS.brain}<span><b>${way}</b><small>${list('any.notes')[i]}</small></span>${i ? '' : ICONS.check}</li>`).join('')}

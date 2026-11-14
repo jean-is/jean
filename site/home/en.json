@@ -43,6 +43,7 @@
   "any.ways": ["A free one", "Your ChatGPT, Claude or Copilot plan", "One on this computer", "Your company’s"],
   "any.notes": ["With a free OpenRouter account.", "The plan you already pay for. No second subscription.", "Turn off Wi-Fi and it still answers.", "Behind your company’s gateway and sign-in."],
   "any.go": "Compare {name} with the others",
+  "any.all": "Every AI in one place",
   "any.catch": ["{name} is free; the AI behind it may not be.", "No sign-up at all? Only with the AI on this computer.", "That AI needs a recent computer: 12 GB of memory and a recent graphics chip. Not phones."],
   "keep.title": "keep everything.",
   "keep.why": "Apps change their rules, or close.",
