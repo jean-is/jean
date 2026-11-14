@@ -30,7 +30,8 @@
 .pricing-ways td:last-child { color: var(--ink-soft); }
 .pricing-way { display: flex; align-items: center; gap: 0.6rem; font-size: 1.05rem; font-weight: 600; }
 .pricing-way .icon { color: var(--flame); }
-.pricing-pay { font: 700 1.5rem/1.15 var(--display); }
+/* Over its cell's own weight: the display face is bold at any, but a language it has no letters for falls back to the system's */
+.pricing-ways .pricing-pay { font: 700 1.5rem/1.15 var(--display); }
 
 /* An organisation's two prices, what the price comes to per person, and what is not for sale */
 .pricing-cards { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); gap: 1.25rem; }
@@ -69,7 +70,7 @@
   .pricing-ways tbody :is(th, td) { display: block; padding: 0; border: 0; }
   .pricing-ways tbody th { grid-column: 1 / -1; }
   .pricing-ways td::before { content: attr(data-label); display: block; margin-block-end: 0.15rem; color: var(--ink-soft); font: 600 0.8125rem/1.4 var(--sans); }
-  .pricing-pay { font-size: 1.35rem; }
+  .pricing-ways .pricing-pay { font-size: 1.35rem; }
 }
 /* Where a struck title may take two lines, the pen's one stroke would pass between them: the type's own instead */
 @media (max-width: 22.5rem) {

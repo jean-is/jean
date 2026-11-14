@@ -19,18 +19,20 @@ const site = async () => (await built).files
 const words = async (name, lang) => /** @type {Record<string, any>} */ (await wordsOf(name, lang))
 const said = (/** @type {string} */ text) => xml(fill(text, { name: BRAND.name, small: new Intl.NumberFormat('en').format(SMALL) }))
 
-test('it is at /pricing in English and /fr/tarifs in French, only on jean.is, and the foot of every page and the site map lead to it', async () => {
-  assert.deepEqual(page.addresses, { en: 'pricing', fr: 'fr/tarifs' })
+test('it is at /pricing in English, /fr/tarifs in French and /ko/pricing in Korean, only on jean.is, and the foot of every page and the site map lead to it', async () => {
+  assert.deepEqual(page.addresses, { en: 'pricing', fr: 'fr/tarifs', ko: 'ko/pricing' })
   assert.ok(!page.ships)
   const files = await site()
-  for (const path of ['pricing.html', 'fr/tarifs.html', 'pricing.css']) assert.ok(files[path], path)
+  for (const path of ['pricing.html', 'fr/tarifs.html', 'ko/pricing.html', 'pricing.css']) assert.ok(files[path], path)
   assert.match(files['enterprise.html'], /<li><a href="help">Help center<\/a><\/li><li><a href="pricing">Pricing<\/a><\/li>/)
   assert.match(files['fr/entreprise.html'], /<li><a href="\.\.\/fr\/tarifs">Tarifs<\/a><\/li>/)
-  assert.match(files['ko/enterprise.html'], /<li><a href="\.\.\/pricing">요금<\/a><\/li>/, 'a language it isn’t in leads to its English')
+  assert.match(files['ko/enterprise.html'], /<li><a href="\.\.\/ko\/pricing">요금<\/a><\/li>/)
+  assert.match(files['ja.html'], /<li><a href="pricing">料金<\/a><\/li>/, 'a language it isn’t in leads to its English')
   assert.match(files['site-map.html'], /<li><a href="pricing">Pricing<\/a><\/li>/)
   assert.match(files['pricing.html'], /<li><a href="pricing" aria-current="page">Pricing<\/a><\/li>/)
   assert.match(files['enterprise.html'], /<\/ul>\s*<p><a href="pricing">Pricing<\/a><\/p>\s*<p class="site-source">/, 'under the page for IT’s price cards')
   assert.match(files['fr/travail.html'], /<a href="\.\.\/fr\/tarifs">9\u202f900\u00a0€<\/a>/, 'from the price in the page for work’s answer')
+  assert.match(files['ko/work.html'], /<a href="\.\.\/ko\/pricing">€9,900<\/a>/, 'in Korean too')
 })
 
 test('its top has one button, Open Jean, and its two prices lead to their parts, in each language’s own numbers', async () => {
@@ -40,7 +42,7 @@ test('its top has one button, Open Jean, and its two prices lead to their parts,
     const top = html.split('</section>')[0]
     const money = new Intl.NumberFormat(lang, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 })
     assert.equal(top.match(/class="button/g)?.length, 1, `${lang}: one button at the top`)
-    assert.match(top, /<a class="button primary" href="(\.\/|\.\.\/fr)">/, `${lang}: it opens Jean`)
+    assert.match(top, /<a class="button primary" href="(\.\/|\.\.\/fr|\.\.\/ko)">/, `${lang}: it opens Jean`)
     assert.match(top, new RegExp(`<a class="pricing-tag" href="#pricing-you">[\\s\\S]*${money.format(0)}<svg class="felt-circle"`), `${lang}: a person’s price, circled`)
     assert.match(top, new RegExp(`<a class="pricing-tag" href="#pricing-orgs">[\\s\\S]*<b>${money.format(PRICE)}</b>`), `${lang}: an organisation’s`)
     for (const id of ['pricing-you', 'pricing-orgs']) assert.match(html, new RegExp(`<section id="${id}" class="site-act`), `${lang}: ${id}`)

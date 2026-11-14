@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
-// The pricing page, the price's one address (D428 · D464), at /pricing in English and /fr/tarifs in French: free for
-// a person, whichever AI answers, each AI's own price in a table; then an organisation's one rule, what its price comes
-// to per person, and what is never for sale (D749). Its numbers are the page for IT's (PRICE, SMALL) and the public
-// sector's (THRESHOLD), formatted with Intl in the page's language. Its words are <lang>.json, the homepage's four ways
-// and their catch and the page for IT's price cards and note where it says the same; its look pricing.css, over
-// site.css (site/site.js, D438). Only jean.is has it.
+// The pricing page, the price's one address (D428 · D464), at /pricing in English, /fr/tarifs in French and /ko/pricing
+// in Korean: free for a person, whichever AI answers, each AI's own price in a table; then an organisation's one rule,
+// what its price comes to per person, and what is never for sale (D749). Its numbers are the page for IT's (PRICE,
+// SMALL) and the public sector's (THRESHOLD), formatted with Intl in the page's language. Its words are <lang>.json, the
+// homepage's four ways and their catch and the page for IT's price cards and note where it says the same; its look
+// pricing.css, over site.css (site/site.js, D438). Only jean.is has it.
 import { CONTACT, PRICE, SMALL } from '../enterprise/page.js'
 import { THRESHOLD } from '../public-sector/page.js'
 import { ICONS, WAVE, caught, felt, fill, hero, landing, underline, wordsOf, xml } from '../site.js'
 
-const ADDRESSES = { en: 'pricing', fr: 'fr/tarifs' }
+const ADDRESSES = { en: 'pricing', fr: 'fr/tarifs', ko: 'ko/pricing' }
 
 /** The sizes the price is shown at per person: the smallest that pays, then two larger; none under SMALL, or the build stops. */
 const SIZES = [SMALL, 1000, 5000]
