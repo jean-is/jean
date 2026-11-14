@@ -114,5 +114,9 @@
   "tables.calc.max": "Största",
   "tables.calc.count": "Antal",
   "tables.subtotal": "Delsumma",
-  "tables.movedTo": "Flyttad till {group}"
+  "tables.movedTo": "Flyttad till {group}",
+  "tables.made": {
+    "one": "{count} ny rad att granska",
+    "other": "{count} nya rader att granska"
+  }
 }

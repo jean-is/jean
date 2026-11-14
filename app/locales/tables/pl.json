@@ -118,5 +118,11 @@
   "tables.calc.max": "Największa",
   "tables.calc.count": "Zliczenie",
   "tables.subtotal": "Suma częściowa",
-  "tables.movedTo": "Przeniesiono do: {group}"
+  "tables.movedTo": "Przeniesiono do: {group}",
+  "tables.made": {
+    "one": "{count} nowy wiersz do przejrzenia",
+    "few": "{count} nowe wiersze do przejrzenia",
+    "many": "{count} nowych wierszy do przejrzenia",
+    "other": "{count} nowego wiersza do przejrzenia"
+  }
 }

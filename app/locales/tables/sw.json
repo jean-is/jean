@@ -114,5 +114,9 @@
   "tables.calc.max": "Kubwa zaidi",
   "tables.calc.count": "Idadi",
   "tables.subtotal": "Jumla ndogo",
-  "tables.movedTo": "Imehamishiwa {group}"
+  "tables.movedTo": "Imehamishiwa {group}",
+  "tables.made": {
+    "one": "Safu mpya {count} ya kukagua",
+    "other": "Safu mpya {count} za kukagua"
+  }
 }

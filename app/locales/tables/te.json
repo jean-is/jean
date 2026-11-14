@@ -114,5 +114,9 @@
   "tables.calc.max": "గరిష్ఠం",
   "tables.calc.count": "గణన",
   "tables.subtotal": "ఉప మొత్తం",
-  "tables.movedTo": "తరలించబడింది: {group}"
+  "tables.movedTo": "తరలించబడింది: {group}",
+  "tables.made": {
+    "one": "చూడాల్సిన {count} కొత్త వరుస",
+    "other": "చూడాల్సిన {count} కొత్త వరుసలు"
+  }
 }

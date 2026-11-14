@@ -114,5 +114,9 @@
   "tables.calc.max": "कमाल",
   "tables.calc.count": "मोजणी",
   "tables.subtotal": "उप-बेरीज",
-  "tables.movedTo": "{group} मध्ये हलवले"
+  "tables.movedTo": "{group} मध्ये हलवले",
+  "tables.made": {
+    "one": "{count} नवी ओळ तपासायची आहे",
+    "other": "{count} नव्या ओळी तपासायच्या आहेत"
+  }
 }

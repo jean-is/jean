@@ -116,5 +116,10 @@
   "tables.calc.max": "U più grande",
   "tables.calc.count": "Contu",
   "tables.subtotal": "Sottusomma",
-  "tables.movedTo": "Spustatu in {group}"
+  "tables.movedTo": "Spustatu in {group}",
+  "tables.made": {
+    "one": "{count} linea nova da rivede",
+    "many": "{count} di linee nove da rivede",
+    "other": "{count} linee nove da rivede"
+  }
 }

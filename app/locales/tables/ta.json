@@ -114,5 +114,9 @@
   "tables.calc.max": "அதிகபட்சம்",
   "tables.calc.count": "எண்ணிக்கை",
   "tables.subtotal": "துணைக் கூட்டுத்தொகை",
-  "tables.movedTo": "நகர்த்தப்பட்டது: {group}"
+  "tables.movedTo": "நகர்த்தப்பட்டது: {group}",
+  "tables.made": {
+    "one": "பார்க்க வேண்டிய {count} புதிய வரிசை",
+    "other": "பார்க்க வேண்டிய {count} புதிய வரிசைகள்"
+  }
 }

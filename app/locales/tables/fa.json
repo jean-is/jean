@@ -114,5 +114,9 @@
   "tables.calc.max": "بیشترین",
   "tables.calc.count": "تعداد",
   "tables.subtotal": "جمع جزء",
-  "tables.movedTo": "به {group} منتقل شد"
+  "tables.movedTo": "به {group} منتقل شد",
+  "tables.made": {
+    "one": "{count} ردیف تازه برای بررسی",
+    "other": "{count} ردیف تازه برای بررسی"
+  }
 }

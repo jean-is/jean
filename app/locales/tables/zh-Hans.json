@@ -112,5 +112,8 @@
   "tables.calc.max": "最大值",
   "tables.calc.count": "计数",
   "tables.subtotal": "小计",
-  "tables.movedTo": "已移到 {group}"
+  "tables.movedTo": "已移到 {group}",
+  "tables.made": {
+    "other": "{count} 行新内容待查看"
+  }
 }

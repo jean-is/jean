@@ -33,7 +33,7 @@ test('a table Jean keeps: offered, made from a request and filled, its changes a
   await answered(page)
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Done: the table is beside the conversation.')
 
-  // Beside the conversation, by its name alone; Jean's 11 cells marked, to keep or undo.
+  // Beside the conversation, by its name alone; made and filled by Jean, it is one decision: how many rows, no cell marked (D752).
   await expect(page.locator('app-preview .pane-name')).toHaveValue('Job applications')
   const rows = page.locator('.table-grid tbody tr')
   await expect(rows).toHaveCount(3)
@@ -42,8 +42,9 @@ test('a table Jean keeps: offered, made from a request and filled, its changes a
   await expect(rows.nth(2).getByTitle('Status')).toHaveValue('To apply')
   await expect(rows.nth(0).getByTitle('Applied on')).toHaveValue('2026-10-18')
   const review = page.getByRole('region', { name: 'Suggested changes' })
-  await expect(review).toContainText('11 changes to review')
-  await expect(page.locator('.table-grid :is(td, th).is-jean')).toHaveCount(11)
+  await expect(review).toContainText('3 new rows to review')
+  await expect(page.locator('.table-grid .is-jean, .table-decide button')).toHaveCount(0)
+  await expect(review.getByRole('button', { name: 'Next change' })).toHaveCount(0)
   await review.getByRole('button', { name: 'Accept all' }).click()
   await expect(review).toHaveCount(0)
   await expect(page.locator('.table-grid .is-jean')).toHaveCount(0)
@@ -105,7 +106,7 @@ test('Jean’s changes to three rows are each accepted or rejected, on the table
   await page.locator('.msg-jean .approval').getByRole('button', { name: 'Turn it on' }).click()
   await answered(page)
   const review = page.getByRole('region', { name: 'Suggested changes' }), said = page.locator('.table-view > [role="status"]'), tools = page.locator('.table-tools button').first()
-  await expect(said).toHaveText('11 changes to review')
+  await expect(said).toHaveText('3 new rows to review')
   await review.getByRole('button', { name: 'Accept all' }).click()
   // Said, the bar gone with the button pressed, and the keyboard on the view's tools rather than lost.
   await expect(said).toHaveText('0 changes to review')
@@ -153,6 +154,42 @@ test('Jean’s changes to three rows are each accepted or rejected, on the table
   await card.getByRole('button', { name: 'Reject' }).click()
   await expect(page.locator('.table-lane').nth(1).locator('.table-card').filter({ hasText: 'Brightwater' })).toHaveCount(1)
   await expect(review).toContainText('2 changes to review')
+})
+
+test('a collection Jean made and filled is one decision, a cell the person changes meanwhile changing nothing of it; Rejected, its rows go, leaving it empty; a row Jean made then changed goes whole, never left empty (D752)', async ({ page }) => {
+  await start(page)
+  /** A collection Jean made, its rows Jean's from one change, then each step given. @param {string} name @param {object[][]} more each a change's lines */
+  const seed = (name, more = []) => page.evaluate(async ([name, more]) => {
+    const [{ unlock }, { app }] = await Promise.all([import('/ui/caps.js'), import('/ui/state.js')])
+    await unlock('tables')
+    const id = name === 'Trips' ? '01K85Z1T00000000000000000T' : '01K85Z1T00000000000000000V', folder = `collections/${id}-${name.toLowerCase()}`, at = (/** @type {number} */ minute) => `2026-11-14T09:0${minute}:00.000Z`
+    await app.fs.write(`${app.projectDir}/${folder}/collection.json`, JSON.stringify({ format: 1, id, name, author: 'jean', created: at(0), changed: at(0),
+      properties: [{ id: 'where', name: 'Where', type: 'text' }, { id: 'nights', name: 'Nights', type: 'number' }], views: [{ id: 'table', type: 'table' }] }))
+    const lines = [['01K80000000000000000000001', 'Lyon', 2], ['01K80000000000000000000002', 'Nice', 3]].map(([row, where, nights]) => ({ row, set: { where, nights }, at: at(1), by: 'jean' }))
+    await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, [...lines, ...more.flat()].map((line) => `${JSON.stringify(line)}\n`).join(''))
+    ;(await import('/ui/preview.js')).preview({ uri: folder, name: `${name}.xlsx`, title: name }, true)
+    return folder
+  }, /** @type {const} */ ([name, more]))
+  const review = page.getByRole('region', { name: 'Suggested changes' }), rows = page.locator('.table-grid tbody tr')
+  await seed('Trips', [[{ row: '01K80000000000000000000001', set: { nights: 4 }, at: '2026-11-14T09:02:00.000Z', by: 'user' }]])
+  await expect(review).toContainText('2 new rows to review')
+  await expect(page.locator('.table-grid .is-jean, .table-decide button')).toHaveCount(0)
+  await review.getByRole('button', { name: 'Reject all' }).click()
+  // The person's cell stays theirs; Jean's go, and the row Jean made that nobody else wrote in goes whole.
+  await expect(review).toHaveCount(0)
+  await expect(rows).toHaveCount(1)
+  await expect(rows.first().getByTitle('Nights')).toHaveValue('4')
+  await expect(rows.first().getByTitle('Where')).toHaveValue('')
+
+  // Changed by Jean after it made them, its changes are marked as ever; Reject all takes each row whole, none left empty.
+  await page.locator('app-preview .pane-head button').last().click()
+  await seed('Visits', [[{ row: '01K80000000000000000000002', set: { nights: 5 }, at: '2026-11-14T09:03:00.000Z', by: 'jean' }]])
+  await expect(review).toContainText('5 changes to review')
+  await expect(page.locator('.table-grid :is(td, th).is-jean')).toHaveCount(4)
+  await review.getByRole('button', { name: 'Reject all' }).click()
+  await expect(review).toHaveCount(0)
+  await expect(rows).toHaveCount(0)
+  await expect(page.locator('.table-view .table-none [role="status"]')).toHaveText('No rows yet.')
 })
 
 test('a brain on this computer gets neither table_create nor table_change, nor offers Tables: it says it can’t keep tables yet', async ({ page }) => {

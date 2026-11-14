@@ -112,5 +112,8 @@
   "tables.calc.max": "Lớn nhất",
   "tables.calc.count": "Đếm",
   "tables.subtotal": "Tổng phụ",
-  "tables.movedTo": "Đã chuyển sang {group}"
+  "tables.movedTo": "Đã chuyển sang {group}",
+  "tables.made": {
+    "other": "{count} hàng mới cần xem"
+  }
 }

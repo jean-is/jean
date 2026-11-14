@@ -116,5 +116,10 @@
   "tables.calc.max": "Najveće",
   "tables.calc.count": "Broj unosa",
   "tables.subtotal": "Međuzbroj",
-  "tables.movedTo": "Premješteno u: {group}"
+  "tables.movedTo": "Premješteno u: {group}",
+  "tables.made": {
+    "one": "{count} novi redak za pregled",
+    "few": "{count} nova retka za pregled",
+    "other": "{count} novih redaka za pregled"
+  }
 }

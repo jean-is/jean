@@ -334,11 +334,17 @@ export async function accept(one, row) {
   await reread(one)
 }
 
-/** The user rejects Jean's changes, or one row's, the latest first; a cell the user changed since stays as it is. @param {Loaded} one @param {string} [row] */
+/**
+ * The user rejects Jean's changes, or one row's, the latest first; a cell the user changed since stays as it is. A row Jean made that nobody else
+ * has written in goes whole, whatever Jean changed in it after: undone change by change, it was left empty (D752). @param {Loaded} one @param {string} [row]
+ */
 export async function reject(one, row) {
+  const lines = unkept(one).filter((each) => !row || each.row === row), born = new Map(one.rows.map((each) => [each.id, each.created]))
+  const theirs = new Set(one.lines.flatMap((line) => ('row' in line && line.by !== 'jean' ? [line.row] : [])))
+  const gone = new Set(lines.flatMap((line) => (!theirs.has(line.row) && born.get(line.row)?.at === line.at && born.get(line.row)?.by === 'jean' ? [line.row] : [])))
   /** @type {Line[]} */
-  const back = []
-  for (const line of unkept(one).filter((each) => !row || each.row === row).reverse()) back.push(...undo([...one.lines, ...back].filter((each) => !('row' in each) || each.row === line.row), { author: 'jean', by: 'user', only: line.at })?.lines ?? [])
+  const back = gone.size ? stamp(one.lines, [...gone].map((id) => ({ row: id, delete: true })), { by: 'user' }) : []
+  for (const line of lines.filter((each) => !gone.has(each.row)).reverse()) back.push(...undo([...one.lines, ...back].filter((each) => !('row' in each) || each.row === line.row), { author: 'jean', by: 'user', only: line.at })?.lines ?? [])
   if (back.length) await app.fs.append(`${one.dir}/${one.folder}/changes.jsonl`, stringifyChanges(back))
   await reread(one)
 }

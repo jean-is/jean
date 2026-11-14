@@ -118,5 +118,11 @@
   "tables.calc.max": "Největší",
   "tables.calc.count": "Počet",
   "tables.subtotal": "Mezisoučet",
-  "tables.movedTo": "Přesunuto do: {group}"
+  "tables.movedTo": "Přesunuto do: {group}",
+  "tables.made": {
+    "one": "{count} nový řádek ke kontrole",
+    "few": "{count} nové řádky ke kontrole",
+    "many": "{count} nového řádku ke kontrole",
+    "other": "{count} nových řádků ke kontrole"
+  }
 }

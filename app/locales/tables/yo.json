@@ -112,5 +112,8 @@
   "tables.calc.max": "Èyí tó tóbi jù",
   "tables.calc.count": "Iye",
   "tables.subtotal": "Àpapọ̀ apá",
-  "tables.movedTo": "A ti gbé e lọ sí {group}"
+  "tables.movedTo": "A ti gbé e lọ sí {group}",
+  "tables.made": {
+    "other": "Ìlà tuntun {count} láti ṣàyẹ̀wò"
+  }
 }

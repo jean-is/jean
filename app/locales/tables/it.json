@@ -116,5 +116,10 @@
   "tables.calc.max": "Massimo",
   "tables.calc.count": "Conteggio",
   "tables.subtotal": "Subtotale",
-  "tables.movedTo": "Riga spostata in {group}"
+  "tables.movedTo": "Riga spostata in {group}",
+  "tables.made": {
+    "one": "{count} nuova riga da rivedere",
+    "many": "{count} di nuove righe da rivedere",
+    "other": "{count} nuove righe da rivedere"
+  }
 }

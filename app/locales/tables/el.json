@@ -114,5 +114,9 @@
   "tables.calc.max": "Μέγιστο",
   "tables.calc.count": "Πλήθος",
   "tables.subtotal": "Μερικό άθροισμα",
-  "tables.movedTo": "Μετακινήθηκε: {group}"
+  "tables.movedTo": "Μετακινήθηκε: {group}",
+  "tables.made": {
+    "one": "{count} νέα γραμμή για έλεγχο",
+    "other": "{count} νέες γραμμές για έλεγχο"
+  }
 }

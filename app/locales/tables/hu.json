@@ -114,5 +114,9 @@
   "tables.calc.max": "Legnagyobb",
   "tables.calc.count": "Darabszám",
   "tables.subtotal": "Részösszeg",
-  "tables.movedTo": "Áthelyezve ide: {group}"
+  "tables.movedTo": "Áthelyezve ide: {group}",
+  "tables.made": {
+    "one": "{count} ellenőrizendő új sor",
+    "other": "{count} ellenőrizendő új sor"
+  }
 }

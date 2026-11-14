@@ -114,5 +114,9 @@
   "tables.calc.max": "Най-голямо",
   "tables.calc.count": "Брой",
   "tables.subtotal": "Междинна сума",
-  "tables.movedTo": "Преместено в {group}"
+  "tables.movedTo": "Преместено в {group}",
+  "tables.made": {
+    "one": "{count} нов ред за преглед",
+    "other": "{count} нови реда за преглед"
+  }
 }

@@ -116,5 +116,10 @@
   "tables.calc.max": "הגדול ביותר",
   "tables.calc.count": "ספירה",
   "tables.subtotal": "סכום ביניים",
-  "tables.movedTo": "השורה הועברה אל {group}"
+  "tables.movedTo": "השורה הועברה אל {group}",
+  "tables.made": {
+    "one": "שורה חדשה אחת לבדיקה",
+    "two": "{count} שורות חדשות לבדיקה",
+    "other": "{count} שורות חדשות לבדיקה"
+  }
 }

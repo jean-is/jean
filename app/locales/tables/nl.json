@@ -114,5 +114,9 @@
   "tables.calc.max": "Grootste",
   "tables.calc.count": "Aantal",
   "tables.subtotal": "Subtotaal",
-  "tables.movedTo": "Verplaatst naar {group}"
+  "tables.movedTo": "Verplaatst naar {group}",
+  "tables.made": {
+    "one": "{count} nieuwe rij te bekijken",
+    "other": "{count} nieuwe rijen te bekijken"
+  }
 }

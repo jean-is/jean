@@ -118,5 +118,11 @@
   "tables.calc.max": "Найбільше",
   "tables.calc.count": "Кількість",
   "tables.subtotal": "Проміжний підсумок",
-  "tables.movedTo": "Переміщено: {group}"
+  "tables.movedTo": "Переміщено: {group}",
+  "tables.made": {
+    "one": "{count} новий рядок на перевірку",
+    "few": "{count} нові рядки на перевірку",
+    "many": "{count} нових рядків на перевірку",
+    "other": "{count} нового рядка на перевірку"
+  }
 }

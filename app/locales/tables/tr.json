@@ -114,5 +114,9 @@
   "tables.calc.max": "En büyük",
   "tables.calc.count": "Sayım",
   "tables.subtotal": "Ara toplam",
-  "tables.movedTo": "Taşındı: {group}"
+  "tables.movedTo": "Taşındı: {group}",
+  "tables.made": {
+    "one": "İncelenecek {count} yeni satır",
+    "other": "İncelenecek {count} yeni satır"
+  }
 }

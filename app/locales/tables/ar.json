@@ -122,5 +122,13 @@
   "tables.calc.max": "الأكبر",
   "tables.calc.count": "العدد",
   "tables.subtotal": "المجموع الفرعي",
-  "tables.movedTo": "نُقل إلى {group}"
+  "tables.movedTo": "نُقل إلى {group}",
+  "tables.made": {
+    "zero": "لا صفوف جديدة للمراجعة",
+    "one": "صف جديد واحد للمراجعة",
+    "two": "صفّان جديدان للمراجعة",
+    "few": "{count} صفوف جديدة للمراجعة",
+    "many": "{count} صفًا جديدًا للمراجعة",
+    "other": "{count} صف جديد للمراجعة"
+  }
 }

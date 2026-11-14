@@ -114,5 +114,9 @@
   "tables.calc.max": "Mafi girma",
   "tables.calc.count": "Adadi",
   "tables.subtotal": "Jimlar ɓangare",
-  "tables.movedTo": "An matsa zuwa {group}"
+  "tables.movedTo": "An matsa zuwa {group}",
+  "tables.made": {
+    "one": "Sabon layi {count} da za a duba",
+    "other": "Sababbin layuka {count} da za a duba"
+  }
 }

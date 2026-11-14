@@ -114,5 +114,9 @@
   "tables.calc.max": "Largest",
   "tables.calc.count": "Count",
   "tables.subtotal": "Subtotal",
-  "tables.movedTo": "Moved to {group}"
+  "tables.movedTo": "Moved to {group}",
+  "tables.made": {
+    "one": "{count} new row to review",
+    "other": "{count} new rows to review"
+  }
 }

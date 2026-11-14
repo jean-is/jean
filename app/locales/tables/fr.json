@@ -116,5 +116,10 @@
   "tables.calc.max": "Maximum",
   "tables.calc.count": "Décompte",
   "tables.subtotal": "Sous-total",
-  "tables.movedTo": "Ligne déplacée dans {group}"
+  "tables.movedTo": "Ligne déplacée dans {group}",
+  "tables.made": {
+    "one": "{count} nouvelle ligne à revoir",
+    "many": "{count} de nouvelles lignes à revoir",
+    "other": "{count} nouvelles lignes à revoir"
+  }
 }

@@ -244,14 +244,17 @@ function draw(one, state, go) {
     ...(off.length ? [chip(shut, t('tables.hidden', { count: off.length }), `${id}-shown-${off[0].id}`, t('tables.showAll'), () => view(() => ({ hidden: [] })))] : [])]
   // What Search or Filter keep when it is nothing, in a status there before its words; a collection with no rows at all says so too.
   const none = !one.rows.length ? t('tables.empty') : rows.length ? '' : words ? t('tables.noMatch', { words: search.value.trim() }) : kept.length ? t('tables.noneKept') : ''
-  const marked = unkept(one)
+  const marked = unkept(one), born = !whiteboard && !one.table.kept && marked.length ? new Map(one.rows.map((row) => [row.id, row.created])) : null
+  // A collection Jean made and filled, nothing of it accepted yet, is one decision: how many rows, no cell marked; a cell the person changes
+  // meanwhile is theirs and changes nothing of it; from Jean's next change, its changes are marked as ever (D752).
+  const made = Boolean(born) && one.rows.every((row) => row.created.by === 'jean') && marked.every((line) => born?.get(line.row)?.at === line.at)
   // The cells and rows Jean changed, as "row column" and by row.
-  const fresh = new Set(marked.flatMap((line) => [line.row, ...Object.keys(line.set ?? {}).map((id) => `${line.row} ${id}`)]))
+  const fresh = new Set(made ? [] : marked.flatMap((line) => [line.row, ...Object.keys(line.set ?? {}).map((id) => `${line.row} ${id}`)]))
   const cells = marked.reduce((count, line) => count + Math.max(1, Object.keys(line.set ?? {}).length), 0)
   // Find shows from five rows, as on the Creations page; Escape empties it, leaving the pane open.
-  const count = t('tables.changed', { count: cells, name: assistantName() }), board = Boolean(lanes) && as.value === 'board' && !whiteboard
+  const count = made ? t('tables.made', { count: one.rows.length }) : t('tables.changed', { count: cells, name: assistantName() }), board = Boolean(lanes) && as.value === 'board' && !whiteboard
   return html`<p class="visually-hidden" role="status">${(state.reviewed ||= cells > 0) ? count : ''}</p>${marked.length ? reviewBar({
-      label: t('tables.review'), count, go: cells > 1 ? go : null, previous: t('tables.previous'), next: t('tables.next'),
+      label: t('tables.review'), count, go: cells > 1 && !made ? go : null, previous: t('tables.previous'), next: t('tables.next'),
       accept: decided(accept, one), reject: decided(reject, one), acceptAll: t('tables.acceptAll'), rejectAll: t('tables.rejectAll'),
     }) : nothing}
     <div class="table-bar">${state.beside || whiteboard ? nothing : html`<input class="table-name" dir="auto" title=${t('tables.tableName')} .value=${live(one.table.name)} @change=${(/** @type {Event} */ e) => shape(one, { name: typed(e) })}>`}

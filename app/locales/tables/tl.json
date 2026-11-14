@@ -114,5 +114,9 @@
   "tables.calc.max": "Pinakamalaki",
   "tables.calc.count": "Bilang",
   "tables.subtotal": "Subtotal",
-  "tables.movedTo": "Inilipat sa {group}"
+  "tables.movedTo": "Inilipat sa {group}",
+  "tables.made": {
+    "one": "{count} bagong row na susuriin",
+    "other": "{count} bagong row na susuriin"
+  }
 }

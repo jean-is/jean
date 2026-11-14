@@ -112,5 +112,8 @@
   "tables.calc.max": "最大",
   "tables.calc.count": "件数",
   "tables.subtotal": "小計",
-  "tables.movedTo": "{group} に移動しました"
+  "tables.movedTo": "{group} に移動しました",
+  "tables.made": {
+    "other": "確認する新しい行：{count} 件"
+  }
 }

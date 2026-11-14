@@ -114,5 +114,9 @@
   "tables.calc.max": "Største",
   "tables.calc.count": "Antal",
   "tables.subtotal": "Subtotal",
-  "tables.movedTo": "Flyttet til {group}"
+  "tables.movedTo": "Flyttet til {group}",
+  "tables.made": {
+    "one": "{count} ny række at gennemgå",
+    "other": "{count} nye rækker at gennemgå"
+  }
 }

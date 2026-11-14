@@ -112,5 +112,8 @@
   "tables.calc.max": "Terbesar",
   "tables.calc.count": "Kiraan",
   "tables.subtotal": "Subjumlah",
-  "tables.movedTo": "Dipindahkan ke {group}"
+  "tables.movedTo": "Dipindahkan ke {group}",
+  "tables.made": {
+    "other": "{count} baris baharu untuk disemak"
+  }
 }

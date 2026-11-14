@@ -112,5 +112,8 @@
   "tables.calc.max": "ค่ามากที่สุด",
   "tables.calc.count": "จำนวน",
   "tables.subtotal": "ยอดรวมย่อย",
-  "tables.movedTo": "ย้ายไปที่ {group} แล้ว"
+  "tables.movedTo": "ย้ายไปที่ {group} แล้ว",
+  "tables.made": {
+    "other": "แถวใหม่ที่รอตรวจ {count} แถว"
+  }
 }

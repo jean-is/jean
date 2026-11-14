@@ -114,5 +114,9 @@
   "tables.calc.max": "সবচেয়ে বেশি",
   "tables.calc.count": "গণনা",
   "tables.subtotal": "উপমোট",
-  "tables.movedTo": "সরানো হয়েছে: {group}"
+  "tables.movedTo": "সরানো হয়েছে: {group}",
+  "tables.made": {
+    "one": "{count}টি নতুন সারি দেখা বাকি",
+    "other": "{count}টি নতুন সারি দেখা বাকি"
+  }
 }

@@ -114,5 +114,9 @@
   "tables.calc.max": "Größter Wert",
   "tables.calc.count": "Anzahl",
   "tables.subtotal": "Zwischensumme",
-  "tables.movedTo": "Verschoben nach {group}"
+  "tables.movedTo": "Verschoben nach {group}",
+  "tables.made": {
+    "one": "{count} neue Zeile zu prüfen",
+    "other": "{count} neue Zeilen zu prüfen"
+  }
 }

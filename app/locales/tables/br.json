@@ -120,5 +120,12 @@
   "tables.calc.max": "Brasañ",
   "tables.calc.count": "Kont",
   "tables.subtotal": "Isammad",
-  "tables.movedTo": "Dilec’hiet da {group}"
+  "tables.movedTo": "Dilec’hiet da {group}",
+  "tables.made": {
+    "one": "{count} linenn nevez da adwelet",
+    "two": "{count} linenn nevez da adwelet",
+    "few": "{count} linenn nevez da adwelet",
+    "many": "{count} a linennoù nevez da adwelet",
+    "other": "{count} linenn nevez da adwelet"
+  }
 }

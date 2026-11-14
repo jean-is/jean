@@ -114,5 +114,9 @@
   "tables.calc.max": "زیادہ ترین",
   "tables.calc.count": "گنتی",
   "tables.subtotal": "ذیلی مجموعہ",
-  "tables.movedTo": "{group} میں منتقل کر دیا گیا"
+  "tables.movedTo": "{group} میں منتقل کر دیا گیا",
+  "tables.made": {
+    "one": "{count} نئی قطار جائزے کے لیے",
+    "other": "{count} نئی قطاریں جائزے کے لیے"
+  }
 }

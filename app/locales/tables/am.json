@@ -114,5 +114,9 @@
   "tables.calc.max": "ትልቁ",
   "tables.calc.count": "ብዛት",
   "tables.subtotal": "ንዑስ ድምር",
-  "tables.movedTo": "ወደ {group} ተዛውሯል"
+  "tables.movedTo": "ወደ {group} ተዛውሯል",
+  "tables.made": {
+    "one": "{count} የሚገመገም አዲስ ረድፍ",
+    "other": "{count} የሚገመገሙ አዲስ ረድፎች"
+  }
 }

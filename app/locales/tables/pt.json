@@ -116,5 +116,10 @@
   "tables.calc.max": "Máximo",
   "tables.calc.count": "Contagem",
   "tables.subtotal": "Subtotal",
-  "tables.movedTo": "Linha movida para {group}"
+  "tables.movedTo": "Linha movida para {group}",
+  "tables.made": {
+    "one": "{count} linha nova para rever",
+    "many": "{count} de linhas novas para rever",
+    "other": "{count} linhas novas para rever"
+  }
 }

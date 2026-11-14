@@ -116,5 +116,10 @@
   "tables.calc.max": "Máximo",
   "tables.calc.count": "Recuento",
   "tables.subtotal": "Subtotal",
-  "tables.movedTo": "Fila movida a {group}"
+  "tables.movedTo": "Fila movida a {group}",
+  "tables.made": {
+    "one": "{count} fila nueva por revisar",
+    "many": "{count} de filas nuevas por revisar",
+    "other": "{count} filas nuevas por revisar"
+  }
 }

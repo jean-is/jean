@@ -112,5 +112,8 @@
   "tables.calc.max": "최댓값",
   "tables.calc.count": "개수",
   "tables.subtotal": "소계",
-  "tables.movedTo": "이동한 그룹: {group}"
+  "tables.movedTo": "이동한 그룹: {group}",
+  "tables.made": {
+    "other": "검토할 새 행 {count}개"
+  }
 }

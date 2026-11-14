@@ -114,5 +114,9 @@
   "tables.calc.max": "अधिकतम",
   "tables.calc.count": "गिनती",
   "tables.subtotal": "उप-योग",
-  "tables.movedTo": "{group} में ले जाया गया"
+  "tables.movedTo": "{group} में ले जाया गया",
+  "tables.made": {
+    "one": "{count} नई पंक्ति देखनी बाकी",
+    "other": "{count} नई पंक्तियाँ देखनी बाकी"
+  }
 }

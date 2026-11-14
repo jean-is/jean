@@ -116,5 +116,10 @@
   "tables.calc.max": "Maxim",
   "tables.calc.count": "Numărătoare",
   "tables.subtotal": "Subtotal",
-  "tables.movedTo": "Rând mutat în {group}"
+  "tables.movedTo": "Rând mutat în {group}",
+  "tables.made": {
+    "one": "{count} rând nou de revizuit",
+    "few": "{count} rânduri noi de revizuit",
+    "other": "{count} de rânduri noi de revizuit"
+  }
 }

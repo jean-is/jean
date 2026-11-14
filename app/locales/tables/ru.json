@@ -118,5 +118,11 @@
   "tables.calc.max": "Наибольшее",
   "tables.calc.count": "Количество",
   "tables.subtotal": "Промежуточный итог",
-  "tables.movedTo": "Перемещено: {group}"
+  "tables.movedTo": "Перемещено: {group}",
+  "tables.made": {
+    "one": "{count} новая строка на проверку",
+    "few": "{count} новые строки на проверку",
+    "many": "{count} новых строк на проверку",
+    "other": "{count} новой строки на проверку"
+  }
 }

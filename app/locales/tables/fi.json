@@ -114,5 +114,9 @@
   "tables.calc.max": "Suurin",
   "tables.calc.count": "Määrä",
   "tables.subtotal": "Välisumma",
-  "tables.movedTo": "Siirretty: {group}"
+  "tables.movedTo": "Siirretty: {group}",
+  "tables.made": {
+    "one": "{count} uusi tarkistettava rivi",
+    "other": "{count} uutta tarkistettavaa riviä"
+  }
 }
