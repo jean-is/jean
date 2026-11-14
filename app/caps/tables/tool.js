@@ -48,8 +48,6 @@ export const tableCreate = (lang = 'en', { whiteboard = false } = {}) => ({
             type: { type: 'string', enum: MADE },
             options: { type: 'array', items: { type: 'string' }, description: 'A select’s choices, or a status’s steps in order' },
             collection: { type: 'string' },
-            // A number's, within the tool's 400 tokens: the currency is the person's region's (D752).
-            format: { enum: ['money', 'percent'] },
           },
           required: ['name', 'type'],
         },
