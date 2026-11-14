@@ -35,7 +35,7 @@
   "sale.title": "Rien d’autre n’est à vendre.",
   "sale.items": [
     ["La publicité", "Aucune, ni dans {name} ni sur ce site, et aucun cookie pour la servir."],
-    ["Vos données", "{name} ne fait tourner aucun serveur qui voie votre travail. Il n’y a rien à vendre."],
+    ["Vos données", "Aucun serveur de {name} ne voit votre travail. Il n’y a rien à vendre."],
     ["Une place dans la liste", "Aucun fournisseur d’IA ne paie pour être celui que {name} propose."]
   ],
   "orgs.limits": [

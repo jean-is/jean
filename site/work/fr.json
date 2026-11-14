@@ -73,7 +73,7 @@
   "kit.label": "L’e-mail",
   "kit.subject": "Objet :",
   "mail.subject": "Pourrions-nous utiliser {name} au travail ?",
-  "mail.body": "Bonjour,\n\nJ’aimerais utiliser une IA pour mon travail : lire des rapports, vérifier des tableaux, préparer des présentations. {name} fonctionne dans un onglet du navigateur, sans rien installer, et son éditeur n’a aucun serveur qui voie notre travail.\n\nLe déploiement se fait comme pour une page web : un dossier sur notre propre serveur web, des réponses qui ne viennent que du service d’IA de l’entreprise, avec notre connexion et nos règles. L’utilisation est gratuite ; les fonctions que demande l’informatique sont facturées par organisation, jamais par personne.\n\nLa page écrite pour l’informatique, la sécurité et les achats :\n{page}\n\nPourriez-vous y jeter un œil ?\n\nMerci",
+  "mail.body": "Bonjour,\n\nJ’aimerais utiliser une IA pour mon travail : lire des rapports, vérifier des tableaux, préparer des présentations. {name} fonctionne dans un onglet du navigateur, sans rien installer, et aucun serveur de son éditeur ne voit notre travail.\n\nLe déploiement se fait comme pour une page web : un dossier sur notre propre serveur web, des réponses qui ne viennent que du service d’IA de l’entreprise, avec notre connexion et nos règles. L’utilisation est gratuite ; les fonctions que demande l’informatique sont facturées par organisation, jamais par personne.\n\nLa page écrite pour l’informatique, la sécurité et les achats :\n{page}\n\nPourriez-vous y jeter un œil ?\n\nMerci",
   "kit.steps": [
     "Le bouton ouvre votre messagerie avec cet e-mail prêt.",
     "Ajoutez l’adresse de votre service informatique, et ce que vous en feriez.",
