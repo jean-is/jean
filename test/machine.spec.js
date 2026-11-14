@@ -138,8 +138,8 @@ test('the browser beside the conversation is this computer’s, whose page the b
   test.setTimeout(120_000)
   const disk = mkdtempSync(join(tmpdir(), 'jean-e2e-'))
   mkdirSync(join(disk, 'shop'))
-  // A fresh profile waits for a Mac's keychain, and Chromium in a container runs as root, without its own sandbox.
-  writeFileSync(join(disk, 'chromium'), `#!/bin/sh\nexec '${chromium.executablePath()}' --use-mock-keychain --password-store=basic${process.getuid?.() === 0 ? ' --no-sandbox' : ''} "$@"\n`, { mode: 0o755 })
+  // A fresh profile waits for a Mac's keychain, and Chromium in a container runs as root, without its own sandbox; no window here.
+  writeFileSync(join(disk, 'chromium'), `#!/bin/sh\nexec '${chromium.executablePath()}' --headless --use-mock-keychain --password-store=basic${process.getuid?.() === 0 ? ' --no-sandbox' : ''} "$@"\n`, { mode: 0o755 })
   const site = createServer((req, res) => {
     res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' })
     res.end(req.url?.startsWith('/next') ? `<!doctype html><title>Sent</title><h1>Sent ${new URL(req.url, 'http://x').searchParams.get('q')}</h1>`

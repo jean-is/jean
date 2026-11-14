@@ -586,7 +586,7 @@ describe('a ChatGPT plan through the bridge (D262)', { skip: process.platform ==
   })
 })
 
-// This computer's browser (D746): Chromium's, with no window, driven over a pipe; Playwright's own here.
+// This computer's browser (D746): Chromium's, driven over a pipe; Playwright's own here, with no window, as on a Linux with no screen.
 describe("this computer's browser through the bridge (D746)", { skip: process.platform === 'win32' || !existsSync(chromium.executablePath()) }, () => {
   /** @type {string} */
   let folder
@@ -617,7 +617,7 @@ describe("this computer's browser through the bridge (D746)", { skip: process.pl
     await new Promise((ready) => server.listen(0, '127.0.0.1', () => ready(undefined)))
     port = /** @type {import('node:net').AddressInfo} */ (server.address()).port
     // A fresh profile waits for the system's keychain on a Mac, and Chromium in a container runs as root.
-    const flags = ['--use-mock-keychain', '--password-store=basic', ...(process.getuid?.() === 0 ? ['--no-sandbox'] : [])]
+    const flags = ['--headless', '--use-mock-keychain', '--password-store=basic', ...(process.getuid?.() === 0 ? ['--no-sandbox'] : [])]
     work = await bridge({ folder, origins: [JEAN], key: KEY, port, browser: [chromium.executablePath(), ...flags], home: join(folder, '.home') })
     client = mcpClient({ url: `http://127.0.0.1:${port}/`, client: { name: 'Jean', version: 'test' }, authorization: async () => `Bearer ${KEY}` })
   })

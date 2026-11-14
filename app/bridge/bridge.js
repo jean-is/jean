@@ -60,7 +60,7 @@ const TOOLS = [
   },
   {
     name: 'browser',
-    description: "This computer's browser, with no window, in a profile of Jean's own (D746): what its tab shows; open an address; read the page as its parts, those it can act on numbered; click one, type in one (submit: then Enter), choose an option of one, press a key, scroll (at a part, up or down); back, forward, reload. A part's name, when given, must still be its name. The pane's own: pointer, wheel, press (a key as the pane heard it), text, size. Never types in a field for a password, a card or a one-time code.",
+    description: "This computer's browser, in a window kept behind the others and a profile of Jean's own (D746): what its tab shows; open an address; read the page as its parts, those it can act on numbered; click one, type in one (submit: then Enter), choose an option of one, press a key, scroll (at a part, up or down); back, forward, reload. A part's name, when given, must still be its name. The pane's own: pointer, wheel, press (a key as the pane heard it), text, size. Never types in a field for a password, a card or a one-time code.",
     inputSchema: {
       type: 'object',
       properties: {
@@ -185,9 +185,10 @@ const RENEW_MS = 120_000
  *   of BROWSERS found; home: the folder that keeps the ChatGPT sign-in and the browser's profile
  * @typedef {{ url: string, title: string, loading: boolean, back: boolean, forward: boolean }} Shown what the browser's tab shows, for the pane
  * @typedef {{ send: (method: string, params?: object, session?: string) => Promise<any>, until: (match: (message: any) => boolean, ms: number) => Promise<any>,
- *   child: import('node:child_process').ChildProcess, target: string, session: string, tabs: string[], loading: boolean, casting: boolean, page: Shown, said: string[], shown: number, read: number, parts: Set<number> }} Browser
+ *   child: import('node:child_process').ChildProcess, target: string, session: string, tabs: string[], loading: boolean, casting: boolean, page: Shown, said: string[], shown: number, read: number, parts: Set<number>, before: number }} Browser
  *   target and session: the tab on show; tabs: those it opened from, to go back to when it closes; said: what the page's dialogs said since the last action;
- *   shown: how many documents have shown, the page read last being the read-th, whose parts' numbers alone the brain may act on
+ *   shown: how many documents have shown, the page read last being the read-th, whose parts' numbers alone the brain may act on;
+ *   before: on a Mac, the process of the app in front before the last click or key that may open a tab
  * @typedef {{ exit: number, stdout: string, stderr: string, cwd: string, serving?: { group: number, addresses: string[], log: string } }} Ran
  * @typedef {{ role: string, content: any[] }} Turn
  * @typedef {{ id: string, child: import('node:child_process').ChildProcessWithoutNullStreams, agent: 'claude' | 'copilot', tools: object[],
@@ -513,10 +514,11 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
   }
 
   // ─── This computer's browser (D746) ────────────────────────────────────────
-  // Chrome, Edge, Chromium or Brave of this computer, with no window, in a profile of Jean's own (<home>/browser, where its
-  // sign-ins stay), driven over the DevTools protocol through a pipe only the bridge holds, never a port. Jean's pane draws its
-  // tab as it draws (/browser/screen) and sends it the person's own clicks and keys; the brain reads a page as its
-  // accessibility tree and acts on the parts it numbers. Started when first asked for; ended with the bridge.
+  // Chrome, Edge, Chromium or Brave of this computer, in a window of its own kept behind the others (none on a Linux with no
+  // screen), in a profile of Jean's own (<home>/browser, where its sign-ins stay), driven over the DevTools protocol through a
+  // pipe only the bridge holds, never a port. Jean's pane draws its tab as it draws (/browser/screen) and sends it the person's
+  // own clicks and keys; the brain reads a page as its accessibility tree and acts on the parts it numbers. Started when first
+  // asked for; ended with the bridge. Many sites turn a windowless browser away, and with a window their check is the person's to pass.
 
   /** @type {Promise<Browser> | null} */
   let started = null
@@ -532,8 +534,10 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
       const profile = join(home, 'browser')
       await mkdir(profile, { recursive: true })
       // In a process group of its own: Ctrl+C in the terminal reaches the bridge alone, which closes it so that it writes what it holds.
-      const child = spawn(browserProgram, [...browserBefore, `--user-data-dir=${profile}`, '--remote-debugging-pipe', '--headless', '--no-first-run', '--no-default-browser-check', 'about:blank'],
-        { stdio: ['ignore', 'ignore', 'ignore', 'pipe', 'pipe'], detached: true })
+      // No window at first, so it doesn't come to the front; its tab's, opened behind, draws all the same, covered.
+      const screenless = platform() === 'linux' && !process.env.DISPLAY && !process.env.WAYLAND_DISPLAY
+      const child = spawn(browserProgram, [...browserBefore, `--user-data-dir=${profile}`, '--remote-debugging-pipe', ...(screenless ? ['--headless'] : []), '--no-startup-window',
+        '--disable-backgrounding-occluded-windows', '--no-first-run', '--no-default-browser-check'], { stdio: ['ignore', 'ignore', 'ignore', 'pipe', 'pipe'], detached: true })
       const [, , , input, output] = /** @type {[any, any, any, import('node:stream').Writable, import('node:stream').Readable]} */ (/** @type {unknown} */ (child.stdio))
       /** @type {Map<number, (message: any) => void>} */
       const waiting = new Map()
@@ -542,7 +546,7 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
       let [id, buffer] = [0, '']
       /** @type {Browser} */
       const b = {
-        child, target: '', session: '', tabs: [], loading: false, casting: false, page: { url: '', title: '', loading: false, back: false, forward: false }, said: [], shown: 0, read: -1, parts: new Set(),
+        child, target: '', session: '', tabs: [], loading: false, casting: false, page: { url: '', title: '', loading: false, back: false, forward: false }, said: [], shown: 0, read: -1, parts: new Set(), before: 0,
         send: (method, params = {}, session = '') => new Promise((ok, failed) => {
           waiting.set(++id, (message) => (message.error ? failed(new Error(message.error.message)) : ok(message.result)))
           input.write(`${JSON.stringify({ id, method, params, ...(session && { sessionId: session }) })}\0`)
@@ -579,9 +583,8 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
           }
         }
       })
-      const { targetInfos } = await Promise.race([b.send('Target.getTargets'), gone])
-      await b.send('Target.setDiscoverTargets', { discover: true })
-      await attach(b, targetInfos.find((/** @type {any} */ target) => target.type === 'page').targetId)
+      await Promise.race([b.send('Target.setDiscoverTargets', { discover: true }), gone])
+      await attach(b, await behind(b))
       return b
     })())
   }
@@ -596,6 +599,23 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
     await tell(b)
   }
 
+  /** A tab in a new window, opened behind the others, as the person's own window keeps the front. @param {Browser} b @returns {Promise<string>} */
+  const behind = async (b) => (await b.send('Target.createTarget', { url: 'about:blank', newWindow: true, background: true })).targetId
+  /** On a Mac, the process of the app in front; elsewhere, none. @returns {Promise<number>} */
+  const frontmost = () => (platform() === 'darwin' ? new Promise((done) => execFile('/bin/sh', ['-c', 'lsappinfo info -only pid "$(lsappinfo front)"'],
+    (_, out) => done(Number(/=\s*(\d+)/.exec(String(out))?.[1]) || 0))) : Promise.resolve(0))
+  /**
+   * A tab or a window a page opens brings the browser to the front, on a Mac: the app the person was in goes back there once it has,
+   * within a second, made active by its process (AppKit through osascript, which asks nothing). @param {Browser} b
+   */
+  async function behindAgain(b) {
+    const { before } = b
+    if (!before || before === b.child.pid) return
+    for (let tries = 0; tries < 10; tries++) {
+      if ((await frontmost()) === b.child.pid) return void execFile('/usr/bin/osascript', ['-l', 'JavaScript', '-e', `ObjC.import('AppKit'); $.NSRunningApplication.runningApplicationWithProcessIdentifier(${before}).activateWithOptions(0)`], () => {})
+      await new Promise((wait) => setTimeout(wait, 100))
+    }
+  }
   /** @param {Browser} b */
   const fit = (b) => b.send('Emulation.setDeviceMetricsOverride', { width: screen.width, height: screen.height, deviceScaleFactor: screen.scale, mobile: false }, b.session)
   /** @param {Browser} b */
@@ -629,9 +649,10 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
     } else if (method === 'Target.targetCreated' && params.targetInfo.type === 'page' && params.targetInfo.openerId === b.target) {
       b.tabs.push(b.target)
       attach(b, params.targetInfo.targetId).catch(() => {})
+      behindAgain(b)
     } else if (method === 'Target.targetDestroyed' && params.targetId === b.target) {
       const back = b.tabs.pop()
-      ;(back ? attach(b, back) : b.send('Target.createTarget', { url: 'about:blank' }).then(({ targetId }) => attach(b, targetId))).catch(() => {})
+      ;(back ? attach(b, back) : behind(b).then((targetId) => attach(b, targetId))).catch(() => {})
     } else if (method === 'Page.javascriptDialogOpening' && sessionId === b.session) {
       const asks = /^(confirm|prompt)$/.test(params.type)
       b.said.push(`The page ${asks ? 'asked' : 'said'} "${params.message}"${asks ? ', and Jean answered no' : ''}.`)
@@ -698,6 +719,8 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
     const said = () => ({ ...b.page, said: b.said.splice(0) })
     // A number read off another page may name something else on this one.
     if (ref && (b.read !== b.shown || !b.parts.has(Number(ref)))) throw new Error(`The page changed since it was read, or has no part [${ref}]: read it again.`)
+    // What may open a tab: the app in front before it, to give the front back to (behindAgain).
+    if (action === 'click' || (/^(key|press)$/.test(action) && /^(Enter|Space| )$/.test(String(args.key))) || (action === 'type' && args.submit) || (action === 'pointer' && args.event === 'down')) b.before = await frontmost()
     if (action === 'shown') return { ...b.page, said: [] }
     if (action === 'open') {
       const url = String(args.url ?? '')
