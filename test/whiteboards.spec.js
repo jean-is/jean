@@ -2,7 +2,7 @@
 // Whiteboards (D747), in Chromium and WebKit: one made by a brain that makes tables right, beside the conversation, its sections and
 // notes where Jean's code put them, Jean's changes accepted; a note dragged into another section and one from the shelf onto the open
 // board, landing where they were dropped, for the file as for the screen; a note moved with its grip and the arrows; a section made
-// with the bar, a line drawn and erased; notes selected and asked about by id; a note deleted and brought back with ⌘Z; Lanes and
+// with the bar, a line drawn and erased; notes selected and asked about by id; a note deleted and brought back with ⌘Z, and given a colour; Lanes and
 // Table in the address; table_rows reading it. In Arabic, the board runs right to left and a drop still lands where it was put.
 import { test, expect } from '@playwright/test'
 import { start, ask, answered, BRAIN_URL } from './helpers.js'
@@ -119,6 +119,16 @@ test('a whiteboard: made by the brain, its notes dragged, moved with the keys, a
   await notesIn(page, 'Ideas').first().focus()
   await page.keyboard.press('ControlOrMeta+z')
   await expect(notesIn(page, 'To change')).toHaveText(['Flaky tests'])
+
+  // A note given a colour of its own from its menu, the one it has pressed there; then none again, its section's.
+  await board.getByRole('button', { name: 'More for Pair programming' }).click()
+  await page.locator('.wb-menu:popover-open').getByRole('button', { name: 'Violet' }).click()
+  await expect(board.locator('.wb-note.wb-hue-3')).toContainText('Pair programming')
+  expect((await rows(page)).find((row) => row.note === 'Pair programming')?.['@hue']).toBe(3)
+  await board.getByRole('button', { name: 'More for Pair programming' }).click()
+  await expect(page.locator('.wb-menu:popover-open').getByRole('button', { name: 'Violet' })).toHaveAttribute('aria-pressed', 'true')
+  await page.locator('.wb-menu:popover-open').getByRole('button', { name: 'No colour of its own' }).click()
+  await expect(board.locator('.wb-note.is-hued')).toHaveCount(0)
 
   // One section as a table, from its menu, in the address; All sections leads back to every note.
   await board.getByRole('button', { name: 'More for Ideas' }).click()

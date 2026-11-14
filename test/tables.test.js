@@ -471,11 +471,11 @@ test('a whiteboard is a collection of its own kind, in the direction it was made
   assert.deepEqual(one.properties.slice(0, 2), board().properties)
 })
 
-test('ownProblem: what kind a row is, where it lies, a text\'s size, a drawn line\'s points and ink, each checked; null clears any', () => {
+test('ownProblem: what kind a row is, where it lies, a text\'s size, a drawn line\'s points and ink, a note\'s colour, each checked; null clears any', () => {
   for (const [key, value] of [['@kind', 'area'], ['@kind', 'text'], ['@kind', 'line'], ['@spot', { area: R(1), x: 8, y: -16 }], ['@spot', { area: null, x: 0, y: 0 }], ['@size', 'title'], ['@size', 'line'],
-    ['@path', [0, 0, 10, 4]], ['@ink', 'ink'], ['@ink', 0], ['@ink', 6], ['@spot', null], ['@kind', null]]) assert.equal(ownProblem(key, value), null, `${key} ${JSON.stringify(value)}`)
+    ['@path', [0, 0, 10, 4]], ['@ink', 'ink'], ['@ink', 0], ['@ink', 6], ['@hue', 0], ['@hue', 6], ['@hue', null], ['@spot', null], ['@kind', null]]) assert.equal(ownProblem(key, value), null, `${key} ${JSON.stringify(value)}`)
   for (const [key, value] of [['@kind', 'note'], ['@spot', { area: 'x', x: 0, y: 0 }], ['@spot', { area: null, x: 0.5, y: 0 }], ['@spot', { x: 0, y: 0 }], ['@size', 'big'], ['@path', [0, 0, 1]],
-    ['@path', Array(4002).fill(1)], ['@path', [0.5, 1]], ['@ink', 7], ['@ink', 'red'], ['@colour', 'red']]) assert.ok(ownProblem(key, value), `${key} ${JSON.stringify(value)}`)
+    ['@path', Array(4002).fill(1)], ['@path', [0.5, 1]], ['@ink', 7], ['@ink', 'red'], ['@hue', 7], ['@hue', -1], ['@hue', 'ink'], ['@hue', 2.5], ['@colour', 'red']]) assert.ok(ownProblem(key, value), `${key} ${JSON.stringify(value)}`)
 })
 
 test('a whiteboard\'s rows: their kinds, where each lies while its area is its own, and its notes as a grid or paper lists them: by area, those placed by hand first, top to bottom', () => {

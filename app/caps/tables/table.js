@@ -308,12 +308,12 @@ export const isOwn = (key) => key[0] === '@'
 /**
  * What is wrong with a whiteboard's own cell, in words; null when it fits: an area, a text or a drawn line (a note has no kind); where it
  * lies, an area's id or none (the ground), in whole units of the board; a text's size; a line's points from its corner, x and y in turn, at
- * most 2,000; its ink, or an area colour's place. null clears it. @param {string} key @param {unknown} value
+ * most 2,000; its ink, or an area colour's place; a note's colour, one of those places. null clears it. @param {string} key @param {unknown} value
  */
 export function ownProblem(key, value) {
-  const whole = (/** @type {unknown} */ n) => Number.isInteger(n) && Math.abs(/** @type {number} */ (n)) <= 1e6, it = /** @type {any} */ (value)
+  const whole = (/** @type {unknown} */ n) => Number.isInteger(n) && Math.abs(/** @type {number} */ (n)) <= 1e6, it = /** @type {any} */ (value), hue = () => Number.isInteger(it) && it >= 0 && it < 7
   const fits = /** @type {Record<string, () => boolean>} */ ({ '@kind': () => ['area', 'text', 'line'].includes(it), '@spot': () => (it?.area === null || ULID.test(it?.area)) && whole(it.x) && whole(it.y),
-    '@size': () => it === 'title' || it === 'line', '@path': () => Array.isArray(it) && it.length % 2 === 0 && it.length <= 4000 && it.every(whole), '@ink': () => it === 'ink' || (Number.isInteger(it) && it >= 0 && it < 7) })[key]
+    '@size': () => it === 'title' || it === 'line', '@path': () => Array.isArray(it) && it.length % 2 === 0 && it.length <= 4000 && it.every(whole), '@ink': () => it === 'ink' || hue(), '@hue': hue })[key]
   return value === null || fits?.() ? null : `${key} can't be ${JSON.stringify(value)?.slice(0, 40)}.`
 }
 /** A row's kind on a whiteboard: an area, a text, a drawn line, else a note, as every row of a collection is. @param {{ cells: Record<string, unknown> }} row */

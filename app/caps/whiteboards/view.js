@@ -629,8 +629,8 @@ customElements.define('app-whiteboard', class extends HTMLElement {
    * Reject. @param {Loaded} one @param {Item} item @param {{ x: number, y: number }} origin @param {Set<string>} jean @param {Area[]} areas @param {number} z
    */
   #item(one, item, origin, jean, areas, z) {
-    const { row } = item, id = row.id, words = wordsOf(row), mine = this.#moving?.row === id ? this.#moving : null, box = { x: (mine?.x ?? item.x) - origin.x, y: (mine?.y ?? item.y) - origin.y, w: item.w, h: item.h }
-    const classes = `wb-${item.kind}${jean.has(id) ? ' is-jean' : ''}${this.#selected.has(id) ? ' is-selected' : ''}${mine ? ' is-moving' : ''}${item.area ? '' : ' is-ground'}${row.cells['@size'] === 'title' ? ' is-title' : ''}`
+    const { row } = item, id = row.id, words = wordsOf(row), mine = this.#moving?.row === id ? this.#moving : null, box = { x: (mine?.x ?? item.x) - origin.x, y: (mine?.y ?? item.y) - origin.y, w: item.w, h: item.h }, hue = row.cells['@hue']
+    const classes = `wb-${item.kind}${jean.has(id) ? ' is-jean' : ''}${this.#selected.has(id) ? ' is-selected' : ''}${mine ? ' is-moving' : ''}${item.area ? '' : ' is-ground'}${row.cells['@size'] === 'title' ? ' is-title' : ''}${item.kind === 'note' && hue != null && !ownProblem('@hue', hue) ? ` is-hued wb-hue-${hue}` : ''}`
     if (this.#draft?.row === id) return html`<li class=${`${classes} wb-draft`} data-row=${id} ${placed(box)}>${this.#field(row)}</li>`
     const z_ = ref((element) => element instanceof HTMLElement && element.style.setProperty('--z', String(z + 1)))
     if (item.kind === 'line') {
@@ -650,11 +650,13 @@ customElements.define('app-whiteboard', class extends HTMLElement {
       <div id=${menu} class="menu wb-menu" popover>${this.#menu(one, row, jean.has(id), areas)}</div></li>`
   }
 
-  /** A row's menu: Move to… a section or the shelf, Move here, Write, Delete; Accept and Reject on Jean's change. @param {Loaded} one @param {Row} row @param {boolean} marked @param {Area[]} areas */
+  /** A row's menu: Move to… a section or the shelf, a note's colour, Move here, Write, Delete; Accept and Reject on Jean's change. @param {Loaded} one @param {Row} row @param {boolean} marked @param {Area[]} areas */
   #menu(one, row, marked, areas) {
     const to = (/** @type {string | null} */ area) => menuRow(() => this.edit([{ row: row.id, set: { area, '@spot': null } }]).then(() => this.say(area ? t('whiteboards.movedTo', { name: wordsOf(row), section: wordsOf(/** @type {Row} */ (this.#row(area))) }) : t('whiteboards.shelved', { name: wordsOf(row) }))))
     return html`<ul>${kindOf(row) === 'note' ? html`<li><p class="wb-menu-head">${t('whiteboards.moveTo')}</p></li>${areas.filter((area) => area.row.id !== row.cells.area).map((area) => html`<li><button type="button" class="menu-item" @click=${to(area.row.id)}><span class=${`wb-dot wb-hue-${area.hue}`}></span><span dir="auto">${wordsOf(area.row)}</span></button></li>`)}
-      ${row.cells.area || row.cells['@spot'] ? html`<li><button type="button" class="menu-item" @click=${to(null)}>${t('whiteboards.toShelf')}</button></li>` : nothing}` : nothing}
+      ${row.cells.area || row.cells['@spot'] ? html`<li><button type="button" class="menu-item" @click=${to(null)}>${t('whiteboards.toShelf')}</button></li>` : nothing}
+      <li><p class="wb-menu-head" id=${`${this.#id}-hue-${row.id}`}>${t('whiteboards.colour')}</p><ul class="wb-hues" aria-labelledby=${`${this.#id}-hue-${row.id}`}>${[null, ...Array.from({ length: HUES }, (_, i) => i)].map((hue) => html`<li>
+        <button type="button" class="icon-button wb-swatch" aria-label=${hue === null ? t('whiteboards.noHue') : t(`whiteboards.hue${hue}`)} aria-pressed=${String((row.cells['@hue'] ?? null) === hue)} @click=${menuRow(() => this.edit([{ row: row.id, set: { '@hue': hue } }]))}><span class=${hue === null ? 'wb-dot is-none' : `wb-dot wb-hue-${hue}`}></span></button></li>`)}</ul></li>` : nothing}
       <li><button type="button" class="menu-item" @click=${menuRow(() => { this.#moveHere = row.id; this.say(t('whiteboards.pressWhere')) })}>${t('whiteboards.moveHere')}</button></li>
       ${kindOf(row) === 'line' ? nothing : html`<li><button type="button" class="menu-item" @click=${menuRow(() => { this.write(row) })}>${t('whiteboards.write')}</button></li>`}
       ${kindOf(row) === 'text' ? html`<li><button type="button" class="menu-item" @click=${menuRow(() => { this.edit([{ row: row.id, set: { '@size': row.cells['@size'] === 'title' ? 'line' : 'title' } }]) })}>${t(row.cells['@size'] === 'title' ? 'whiteboards.asLine' : 'whiteboards.asTitle')}</button></li>` : nothing}

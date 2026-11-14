@@ -240,16 +240,21 @@ for (const [look, lang, contrast = 'no-preference'] of RUNS) {
       await audit(page, `${look} ${scheme} tasks`, failures)
     }
     await closeTasks(page).catch(() => {})
-    // A whiteboard beside the task (D747): its head and its shelf, glass over its board, its sections and their notes, Jean's marks on them.
+    // A whiteboard beside the task (D747): its head and its shelf, glass over its board, its sections and their notes, Jean's marks on them, notes of each colour.
     await page.evaluate(async () => {
       const caps = await import('/ui/caps.js')
       await caps.unlock('whiteboards')
       const brain = { id: 'cloud', provider: 'anthropic', api: 'anthropic', baseURL: 'https://api.anthropic.com', model: 'claude' }, made = await caps.loaded.value.get('whiteboards')?.tools?.[0].run({ name: 'Retro', areas: ['Went well', 'To change'],
         notes: [{ words: 'Shipped the beta', area: 'Went well' }, { words: 'Flaky tests', area: 'To change' }] }, /** @type {any} */ ({ brain, signal: new AbortController().signal, meta: {} }))
       const uri = /at (collections\/\S+),/.exec(String(made))?.[1] ?? ''
+      // A note in a section given another colour, and one of each colour on the open board.
+      const tables = await import('/caps/tables/tables.js'), one = /** @type {any} */ (await tables.load(uri))
+      await tables.change(one, [{ row: one.rows.find((/** @type {any} */ row) => row.cells.note === 'Shipped the beta').id, set: { '@hue': 4 } },
+        ...Array.from({ length: 7 }, (_, i) => ({ set: { note: `Colour ${i + 1}`, '@hue': i, '@spot': { area: null, x: i * 180, y: 520 } } }))], 'user')
       ;(await import('/ui/preview.js')).preview({ uri, name: 'Retro', title: 'Retro' }, true)
     })
     await expect(page.locator('app-whiteboard .wb-area')).toHaveCount(2)
+    await expect(page.locator('app-whiteboard .wb-note.is-hued')).toHaveCount(8)
     for (const scheme of /** @type {const} */ (['dark', 'light'])) {
       await daylight(page, scheme)
       await audit(page, `${look} ${scheme} whiteboard`, failures)

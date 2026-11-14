@@ -66,3 +66,12 @@ test('the whiteboard\'s rows: its areas first, each placed by Jean\'s code, then
   const later = /** @type {{ x: number, y: number }} */ (more[0].set['@spot']), laid = layout(rows).areas
   assert.ok(laid.every((box) => later.x >= box.x + box.w || later.y >= box.y + box.h || later.x + WIDE <= box.x), 'the new area lies over none')
 })
+
+test('a note\'s colour is the person\'s alone: a brain\'s arguments that give one, or any own cell, come to nothing in the rows its tools make', () => {
+  const board = made({ name: 'Launch', areas: ['Week 1'], notes: [{ words: 'Brief', area: 'Week 1', '@hue': 3, hue: 3, '@spot': { area: null, x: 0, y: 0 } }] })
+  const edits = rowsOf(board, counter())
+  assert.deepEqual(edits[1].set, { note: 'Brief', area: R(100) })
+  const change = changed({ add: [{ words: 'Ship', area: R(100), '@hue': 2 }], move: [{ note: R(101), area: R(100), '@hue': 2 }] }, new Set([R(101)]), [{ id: R(100), name: 'Week 1' }])
+  assert.ok(editsOf(change, [], counter()).every((edit) => Object.keys(edit.set).every((key) => !key.startsWith('@') || key === '@kind' || key === '@spot')))
+  assert.ok(editsOf(change, [], counter()).every((edit) => !('@hue' in edit.set)))
+})
