@@ -7,7 +7,7 @@ import { readFileSync, readdirSync } from 'node:fs'
 import { memoryFS } from '../app/core/fs.js'
 import { crossing } from '../app/ui/secrets.js'
 import { DEFAULT_SETTINGS } from '../app/core/settings.js'
-import { CONDITIONAL, FOLLOWS, STAYS, following, merged, ownOf, snapshotOf, stamp } from '../app/caps/devices/bundle.js'
+import { CONDITIONAL, FOLLOWS, STAYS, following, merged, snapshotOf, stamp } from '../app/caps/devices/bundle.js'
 import { revoking } from '../app/caps/devices/flow.js'
 import { codeOf } from '../scripts/security.js'
 
@@ -238,22 +238,6 @@ test('a field cleared on one device goes as null with its time, and is cleared o
   // An older one changes nothing; nor does a field never set, which has no time to go with.
   assert.deepEqual(merged(device({ name: 'Ada' }), { fields: { name: 50 } }, snapshot).patch, {})
   assert.equal('name' in snapshotOf(following(device()), {}).fields, false)
-})
-
-test('what a device keeps of its own when another’s profile comes: all that stays, and of what follows, what is its alone', () => {
-  const settings = /** @type {any} */ ({ ...device({ voice: 'Kyoko', dock: { width: 0.3 }, name: 'B', locale: 'ja', rules: { fetch: 'never' } }), brains: BRAINS, activeBrain: 'local', connections: CONNECTIONS,
-    unlocked: ['files', 'machine', 'brain-local', 'folders', 'sync', 'camera'], urls: { kiwix: 'http://localhost:8080', wikipedia: 'https://wiki.example/w/api.php' } })
-  const own = /** @type {any} */ (ownOf(settings))
-  assert.deepEqual(Object.keys(own).filter((name) => FOLLOWS.includes(/** @type {any} */ (name))).sort(), ['activeBrain', 'brains', 'connections', 'rules', 'unlocked', 'urls'])
-  assert.deepEqual(own.rules, { fetch: 'never' }, 'its approvals whole, as its choices for services')
-  assert.deepEqual([own.voice, own.dock, own.cloud], ['Kyoko', { width: 0.3 }, true])
-  assert.deepEqual(own.brains.map((/** @type {any} */ one) => one.id), ['plan', 'oidc', 'local', 'device'])
-  assert.equal(own.activeBrain, 'local')
-  assert.deepEqual(own.connections.map((/** @type {any} */ one) => one.id), ['mine'])
-  assert.deepEqual(own.urls, { kiwix: 'http://localhost:8080' })
-  assert.deepEqual(own.unlocked, ['machine', 'brain-local', 'folders', 'sync'])
-  assert.equal(ownOf({ ...settings, activeBrain: 'TYPED000000000000000000000' }).activeBrain, null, 'a brain chosen that follows is chosen again from what comes')
-  assert.equal('urls' in ownOf({ ...settings, urls: { wikipedia: 'https://wiki.example/w/api.php' }, connections: [] }), false)
 })
 
 test('what a device keeps for itself, a plan, a local brain, a connection on this computer, is never added, changed or removed from elsewhere', () => {

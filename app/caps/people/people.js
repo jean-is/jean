@@ -26,7 +26,7 @@ import { listen, reader } from '../../ui/relay.js'
 import { serviceURL } from '../../core/settings.js'
 import { parseLink } from '../devices/pair.js'
 import { base64url, bytesOf, random } from '../share/seal.js'
-import { personOf, peopleOf, boxesOf, invite as invited, heardHello, heardReveal, confirmed, ended, accept as accepted, heardNonce, heardMet, dropped, received, forget, tidy, nameId, arrivalsOf, sendTo, ARRIVALS, LIMIT, turn } from './flow.js'
+import { personOf, peopleOf, boxesOf, invite as invited, heardHello, heardReveal, confirmed, ended, accept as accepted, heardNonce, heardMet, dropped, received, forget, tidy, nameId, arrivalsOf, sendTo, ARRIVALS, LIMIT, turn, carry } from './flow.js'
 import * as colleague from './colleagues.js'
 // What a task sent here holds draws as it did there, with Jean's own skills that declare it (D378).
 import '../skills/draws.js'
@@ -301,6 +301,15 @@ export async function turned() {
   await locked('app-person', async () => turn(await contextOf()))
   await watch()
   return people.peek().map((one) => one.name)
+}
+
+/**
+ * People this device met before it joined the person's other devices, told of the profile's key, which it took (caps/devices): one tab
+ * at a time, then read again on the profile's mailbox. @param {import('./flow.js').Person} was @param {import('./flow.js').Met[]} them
+ */
+export async function carried(was, them) {
+  await locked('app-person', async () => carry(await contextOf(), was, them))
+  await watch()
 }
 
 // ─── Sending and what comes ──────────────────────────────────────────────────

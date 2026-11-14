@@ -202,7 +202,7 @@ test('changed on both sides: a conversation’s longer version wins, anything el
   assert.equal(await here.read(PLAN), 'Be brief, there.')
 })
 
-test('a document changed on two computers keeps the changes of both, line by line, and the newer one’s front matter; with no version both had, the newer wins', async () => {
+test('a document changed on two computers keeps the changes of both, line by line, and the newer one’s front matter; with no version both had, the lines of both', async () => {
   const DOC = `${HOME}/documents/01K90000000000000000000000-trip.md`
   const head = (/** @type {string} */ changed) => `---\nformat: 1\nauthor: user\nchanged: ${changed}\n---\n`
   const body = '# Trip\n\nWe leave on Monday.\n\nCall Anna.\n'
@@ -223,13 +223,14 @@ test('a document changed on two computers keeps the changes of both, line by lin
   await there.write(DOC, both.replace('Tom.\n', 'Tom.\n\nPack light.\n'))
   await syncRound(here, there)
   assert.equal(await here.read(DOC), head('11:00') + '# Our trip\n\nWe leave on Tuesday.\n\nCall Anna and Tom.\n\nPack light.\n')
-  // With what both had lost, a cache cleared: the newer.
+  // With what both had lost, a cache cleared, or on two devices that never met: what both hold once, what each has kept.
   await here.remove(`.cache/sync/${DOC}`)
-  await here.write(DOC, head('12:00') + 'Mine.\n')
+  await here.write(DOC, head('12:00') + '# Our trip\n\nMine.\n')
   await later()
-  await there.write(DOC, head('13:00') + 'Theirs.\n')
+  await there.write(DOC, head('13:00') + '# Our trip\n\nTheirs.\n')
   await syncRound(here, there)
-  assert.equal(await here.read(DOC), head('13:00') + 'Theirs.\n')
+  assert.equal(await here.read(DOC), head('13:00') + '# Our trip\n\nMine.\n\nTheirs.\n')
+  assert.equal(await there.read(DOC), await here.read(DOC))
 })
 
 test('a table changed on two computers keeps every change of both, each cell its latest, and the columns’ choices of both (D491)', async () => {

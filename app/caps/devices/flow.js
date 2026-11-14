@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: MIT
 // What a paired device keeps and does with what comes (D700): its name, the devices its profile knows (in .secrets/, removed ones kept
-// as removed), the bundle A sends B and B's new profile filled from it, settings and keys that follow with their times in
+// as removed), the bundle A sends B and the profile B joins with merged with it, settings and keys that follow with their times in
 // .devices/follows.json, a task handed over, and a device removed. Its context gives it the profile's files, the relay's clock and the
 // way to send, so it touches no DOM and node --test runs it.
-import { DEFAULT_SETTINGS, loadSettings, saveSettings, parseFrontMatter, stringifyFrontMatter } from '../../core/settings.js'
+import { DEFAULT_SETTINGS, listProjects, parseFrontMatter, stringifyFrontMatter } from '../../core/settings.js'
 import { memoryFS, readJSON, writeJSON, walk } from '../../core/fs.js'
 import { ulid } from '../../core/ulid.js'
 import { crossing, getSecret, setSecret, setSecrets, deleteSecret, dropSecrets } from '../../ui/secrets.js'
 import { VAULT, encode, decode } from '../../ui/seal.js'
-import { DEFAULT_RULES } from '../../core/rules.js'
+import { merge2 } from '../../ui/merge.js'
 import { filesIn } from '../../ui/export.js'
 import { SERVICES, isService } from '../web-search/services.js'
 import { carried } from '../sync/mirror.js'
-import { CONDITIONAL, FOLLOWS, ULID, following, merged, ownOf, snapshotOf, stamp, timeOf, wins } from './bundle.js'
+import { CONDITIONAL, FOLLOWS, ULID, canon, following, merged, snapshotOf, stamp, timeOf, wins } from './bundle.js'
 import { MANIFEST } from './store-fs.js'
 import { PERSON, madePerson } from '../people/flow.js'
 
@@ -32,7 +32,7 @@ import { PERSON, madePerson } from '../people/flow.js'
  * follows.json: the times of what follows (bundle.js) and of the keys that cross, what settings were when last stamped, when another device
  * was last heard, by the relay's time of its message, and each one, by its id, kept on this device alone, when it last asked them, a mark while something waits to reach every device, the
  * devices the last share didn't reach and the mark it was for, those removed and not yet told (whether to erase Jean there) and of those
- * the ones the relay took, the projects it had, which refill() won't bring back, and, removed, the devices it had then, with the identity
+ * the ones the relay took, the projects it had, which merge() won’t bring back, and, removed, the devices it had then, with the identity
  * it was removed as.
  * @typedef {Partial<import('./bundle.js').Times> & { keys?: Record<string, KeyStamp>, seen?: Partial<Settings>, heard?: number, from?: Record<string, number>, asked?: number, pending?: number, unreached?: string[], sentFor?: number, posted?: string[], owe?: Record<string, boolean>, had?: string[], left?: string[], leftAs?: string }} Follows
  */
@@ -57,8 +57,6 @@ export const [STORE, STORED] = ['store', ['.cache/store.json', MANIFEST]]
 /** The most a message holds, as the relay takes them. */
 export const LIMIT = 25_000_000
 export { ULID } from './bundle.js'
-/** A profile's folder, as another device names it. */
-export const PROFILE = /^profiles\/[0-9A-HJKMNP-TV-Z]{26}-[a-z0-9-]{1,64}$/
 const PROJECT = /^projects\/[0-9A-HJKMNP-TV-Z]{26}-[a-z0-9-]{1,64}\/project\.md$/
 /** A week; how far ahead of this device's clock another's time may be, a minute, and no more, so that no time from the future wins for good. */
 const [WEEK, SOON] = [7 * 86_400_000, 60_000]
@@ -286,7 +284,7 @@ const capped = (kept, limit) => ({ ...kept, fields: Object.fromEntries(Object.en
   ...Object.fromEntries(/** @type {const} */ (['brains', 'connections', 'keys']).map((part) => [part, kept[part] && Object.fromEntries(Object.entries(kept[part] ?? {}).map(([id, one]) => [id, { ...one, at: Math.min(one.at, limit) }]))])) })
 /** A removal no longer owed. @param {Context} ctx @param {string} id */
 const forgive = (ctx, id) => follows(ctx, async (kept) => { const { [id]: _, ...owe } = kept.owe ?? {}; await keep(ctx.fs, { owe }) })
-/** Projects this device had, by folder, which refill() won't bring back once deleted. @param {Pick<Context, 'fs' | 'lock'>} ctx @param {string[]} names */
+/** Projects this device had, by folder, which merge() won’t bring back once deleted. @param {Pick<Context, 'fs' | 'lock'>} ctx @param {string[]} names */
 const hadToo = (ctx, names) => follows(ctx, (kept) => keep(ctx.fs, { had: [...new Set([...kept.had ?? [], ...names])] }))
 /** A mark never made before: later than the last, waiting or sent, whatever the clock says. @param {Context} ctx @param {Follows} kept */
 const fresh = (ctx, kept) => Math.max(ctx.now(), Math.max(kept.pending ?? 0, kept.sentFor ?? 0) + 1)
@@ -399,12 +397,15 @@ const hear = (ctx, at, id) => follows(ctx, async (kept) => { if (at > (kept.from
 export const quiet = (ctx) => follows(ctx, async (kept) => ((await recordsOf(ctx.fs)).some((one) => one.id !== ctx.me.id && ctx.now() - Math.max(kept.from?.[one.id] ?? 0, Date.parse(one.createdAt), kept.asked ?? 0) > WEEK)
   && keep(ctx.fs, { asked: ctx.now() }).then(() => true)))
 
-// ─── Pairing: the bundle, and B's new profile ────────────────────────────────
+// ─── Pairing: the bundle, and the profile B joins with ───────────────────────
+
+/** What first run's Home says of itself (createProject() in core/settings.js). */
+const HOME = ['format', 'default', 'name', 'createdAt', 'by']
 
 /**
- * What A sends B once the code matched: this profile as it is named, the id A gave B, its settings and keys as it would send them, each
+ * What A sends B once the code matched: this profile's name and colour, the id A gave B, its settings and keys as it would send them, each
  * with the time it changed, nothing stamped anew (B may leave it unopened), every project's project.md, Home's too, but those kept on
- * this device (Home's front matter alone), and the devices it knows, B's among them. @param {Context} ctx @param {{ dir: string, name: string, colour?: string }} profile @param {Device} you B's record
+ * this device (Home's front matter alone), and the devices it knows, B's among them. @param {Context} ctx @param {{ name: string, colour?: string }} profile @param {Device} you B's record
  */
 export async function bundleOf(ctx, profile, you) {
   // This profile as a person (caps/people), made here where it has none, so that the device added is the same person (D727).
@@ -422,89 +423,79 @@ export async function bundleOf(ctx, profile, you) {
 export const known = (ctx, ...paths) => hadToo(ctx, paths.map((path) => path.split('/')[1]))
 /** The projects a bundle holds, by folder: those the device it fills has had, and may delete. @param {any} bundle @returns {string[]} */
 const projectsOf = (bundle) => (Array.isArray(bundle.projects) ? bundle.projects : []).map((/** @type {any} */ one) => String(one?.path).split('/')[1]).filter(Boolean)
-/** Every time 1 at least, so that all a bundle holds, untimed too, comes into a profile that holds nothing yet. @param {Record<string, any>} [part] */
-const timed = (part = {}) => Object.fromEntries(Object.entries(part).map(([id, one]) => [id, one && typeof one === 'object' ? { ...one, at: one.at || 1 } : one]))
+/** What is the person's among a profile's keys: who it is as a person, and whom it met (caps/people). */
+const PERSONAL = /^(person$|people:)/
+/** A routine's file, at a profile's root (Home's) or in a project. */
+const ROUTINE = /^(projects\/[^/]+\/)?routines\/[0-9A-HJKMNP-TV-Z]{26}\.md$/
 
 /**
- * B's new profile filled from A's bundle, before it opens: B's settings for all that doesn't follow, and of what does, the brains,
- * connections, addresses and capabilities of B alone beside A's, leaving out what B's catalogue lacks, saved with their times; the keys of
- * what B keeps of its own, from its profile until now (`secretOf`); A's keys, chosen again by crossing(); every project.md, Home's too, so
- * that no second Home is made; the devices; B's own identity; and the store's keys, if any. @param {FS} fs the new profile's @param {any} bundle
- * @param {{ settings: Settings, catalogue: string[], me: Identity, now: number, secretOf?: (id: string) => Promise<string | null>, policy?: Policy, lock?: boolean, store?: unknown }} here
- *   B's settings until now, its catalogue and identity, the relay's clock, the keys of the profile it was in, the organisation's brains,
- *   whether the profile left beside it has a lock, and the store's keys A sent with *kept*, with B's own token
+ * The profile open on B joining A's devices from A's bundle, in place (D748): B keeps all it holds, which goes to them through the store,
+ * and takes what they hold. Of the settings that follow, one neither device ever stamped is A's where A set it, and B's where A never
+ * did, which then goes to A; otherwise the newest wins, as between any of the person's devices, so that what B did on its own since a
+ * removal wins (settle()). The keys of both, A's person in place of B's. A's Home is B's: B's own folds into it, its tasks and files
+ * moved and its words merged, but one kept on B, which stays there as a project. A project.md for each project of A's that B never
+ * had, one it deleted while paired staying deleted; B's routines on a schedule run on B still. Then the devices, of which those B
+ * removed itself stay removed and those of a pairing that removed it, kept to be added again in place (alone()), go, forgotten only once
+ * the new list is written, so that a join failing on the way and tried again still knows them; its identity; the store's keys, with
+ * nothing it knew of a store before; and A's name and colour for the profile. Gives B's person, where A's is another, and the people B
+ * met under it, who know it by its key, to be told of A's (caps/people).
+ * @param {Context} ctx B's new identity's @param {any} bundle @param {unknown} [store] @returns {Promise<{ was: any, met: any[] }>}
  */
-export async function adopt(fs, bundle, { settings, catalogue, me, now, secretOf = async () => null, policy, lock, store }) {
-  const base = /** @type {Settings} */ ({ ...DEFAULT_SETTINGS, ...ownOf(settings) })
-  const { fields, brains, connections } = bundle.settings ?? {}
-  const { patch, times } = merged(base, {}, { fields: timed(fields), brains: timed(brains), connections: timed(connections) }, now + SOON)
-  // Your devices, and the Lock where the profile left beside it has one, so that the new one opens on it (adoptHere() in ./devices.js).
-  const next = /** @type {Settings} */ ({ ...base, ...patch, unlocked: [...new Set([...(patch.unlocked ?? base.unlocked).filter((id) => base.unlocked.includes(id) || fits(id, catalogue)), 'devices', ...(lock ? ['lock'] : [])])] })
-  await saveSettings(fs, next)
-  // With the one secret the Computer's machine keeps for its bridge (caps/machine/machine.js).
-  for (const id of [...base.brains.map((brain) => brain.id), ...(base.connections ?? []).map((connection) => connection.id), ...(base.unlocked.includes('machine') ? ['computer-bridge'] : [])]) {
-    const value = await secretOf(id)
-    if (typeof value === 'string' && await getSecret(fs, id) !== value) await setSecret(fs, id, value)
+export async function merge(ctx, bundle, store) {
+  const { fs } = ctx
+  const [kept, before, held] = [await followsOf(fs), JSON.parse(await getSecret(fs, SECRET) ?? 'null'), Object.fromEntries(Object.entries(await keysOf(fs, await ctx.settings(), ctx.policy)).filter(([id]) => PERSONAL.test(id)))]
+  const [person, mine] = [bundle.keys?.[PERSON], JSON.parse(held[PERSON] ?? 'null')]
+  const was = mine && typeof person?.value === 'string' && !sameKey(mine.public, JSON.parse(person.value).public) ? mine : null
+  const met = was ? Object.entries(held).flatMap(([id, value]) => (/^people:[\w-]{22}$/.test(id) ? [{ ...JSON.parse(value), fp: id.slice(7) }] : [])) : []
+  // Who it was as the person, and whom it met, which it forgot as it was removed, go as no tombstone: A's come.
+  await follows(ctx, (now) => keep(fs, { keys: Object.fromEntries(Object.entries(now.keys ?? {}).filter(([id]) => !PERSONAL.test(id) || Object.hasOwn(held, id))) }))
+  const unlocked = (await ctx.settings()).unlocked
+  if (!unlocked.includes('devices')) await ctx.change({ unlocked: [...unlocked, 'devices'] })
+  // A field neither device stamped, as before any pairing: A's where A set it, B's where A never did, stamped then so that it goes to A.
+  const fields = /** @type {Record<string, any>} */ ({}), ours = /** @type {string[]} */ ([])
+  for (const name of FOLLOWS.filter((one) => one !== 'brains' && one !== 'connections')) {
+    const one = bundle.settings?.fields?.[name]
+    if (one && (one.at || kept.fields?.[name])) fields[name] = one
+    else if (one && canon(one.value ?? null) !== canon(/** @type {Record<string, unknown>} */ (/** @type {unknown} */ (DEFAULT_SETTINGS))[name] ?? null)) fields[name] = { ...one, at: 1 }
+    else ours.push(name)
   }
-  await unkinded(fs, settings, next, policy)
-  const keys = /** @type {Record<string, KeyStamp>} */ ({})
-  await takeKeys(fs, bundle.keys, [next], keys, now + SOON, policy)
-  await keep(fs, { ...times, keys, seen: following(next), heard: now, had: projectsOf(bundle) })
-  for (const { path, text } of bundle.projects ?? []) if (PROJECT.test(path) && typeof text === 'string') await fs.write(path, text)
-  await setSecrets(fs, { [DEVICES]: JSON.stringify(mergeLists([], bundle.devices, '', null) ?? []), [SECRET]: JSON.stringify(me), ...(shaped(store) && { [STORE]: JSON.stringify(store) }) })
-}
-
-/**
- * The profile open here filled again from A's bundle, on a device removed that kept Jean on its own (inPlace()): what it did on its own
- * since, stamped now, wins over what came, as with any other device's settings and keys (settle()); a project.md only where none is; then
- * the devices, its identity and the store's keys, with nothing it knew of a store before. @param {Context} ctx its new identity's @param {any} bundle @param {unknown} [store]
- */
-export async function refill(ctx, bundle, store) {
-  const { had, left = [] } = await followsOf(ctx.fs)
-  await settle(ctx, bundle.settings ?? {}, bundle.keys)
-  // A project it deleted on its own, paired or since, stays deleted: only those it never had come.
-  for (const { path, text } of bundle.projects ?? []) if (PROJECT.test(path) && typeof text === 'string' && !had?.includes(path.split('/')[1]) && !(await ctx.fs.exists(path))) await ctx.fs.write(path, text)
+  await settle(ctx, { ...bundle.settings, fields }, bundle.keys)
+  const now = /** @type {Record<string, unknown>} */ (following(await ctx.settings()))
+  const at = typeof person?.value === 'string' ? timeOf(person.at, ctx.now() + SOON) : null
+  // A's person in B's place, whichever a tie kept.
+  if (at !== null) await setSecret(fs, PERSON, person.value)
+  await follows(ctx, async (times) => keep(fs, { pending: fresh(ctx, times), keys: { ...times.keys, ...(at !== null && { [PERSON]: { at, hash: await hashOf(person.value) } }) },
+    fields: { ...times.fields, ...Object.fromEntries(ours.filter((name) => canon(now[name] ?? null) !== canon(bundle.settings?.fields?.[name]?.value ?? null)).map((name) => [name, Math.max(times.fields?.[name] ?? 0, 1)])) } }))
+  // A project it deleted while paired stays deleted: only those it never had come.
+  for (const { path, text } of bundle.projects ?? []) if (PROJECT.test(path) && typeof text === 'string' && !kept.had?.includes(path.split('/')[1]) && !(await fs.exists(path))) await fs.write(path, text)
   await hadToo(ctx, projectsOf(bundle))
-  // The devices it removed itself stay removed, which the device that removed it may never have heard of; those alone() set aside are
-  // forgotten only once the new list is written, so that a refill failing on the way and tried again still knows them.
-  const removed = (await listOf(ctx.fs)).filter((one) => one.removedAt && !left.includes(one.id))
-  await Promise.all(STORED.map((path) => ctx.fs.remove(path)))
-  await setSecrets(ctx.fs, { [DEVICES]: JSON.stringify(mergeLists(removed, bundle.devices, '', null) ?? removed), [SECRET]: JSON.stringify(ctx.me), [STORE]: shaped(store) ? JSON.stringify(store) : null })
-  await locked(ctx, FOLLOWING, () => keep(ctx.fs, { left: undefined }))
-}
-
-/** What first run makes in a profile, beside Home's project.md, and what this capability keeps there: settings, keys, caches, times. */
-const FIRST = /^(settings\.json|\.secrets\/(keys|vault)\.json|\.(cache|devices)\/.+)$/
-/** What first run's Home says of itself (createProject() in core/settings.js). */
-const HOME = ['format', 'default', 'name', 'createdAt', 'by']
-/** A setting's value, none and empty alike. @param {unknown} value */
-const set = (value) => JSON.stringify(value && typeof value === 'object' && !Object.keys(value).length ? null : value ?? null)
-/**
- * Whether nothing was ever done in a profile, which joining another device's then removes: it holds nothing but what first run makes,
- * settings that follow as first run has them (but what Jean finds out as it goes: capabilities, offers answered, the language), none of
- * those that stay set, no key but this device's own, no device but this one, no lock, and Home as first run writes it, empty. @param {FS} fs
- */
-export async function untouched(fs) {
-  const all = /** @type {Record<string, any>} */ (await loadSettings(fs))
-  const [settings, first] = [following(/** @type {Settings} */ (all)), following(DEFAULT_SETTINGS)]
-  if (FOLLOWS.some((name) => !['unlocked', 'offers', 'locale', 'rules'].includes(name) && set(settings[name]) !== set(first[name]))) return false
-  // No approval but as it is anyway, nothing else set to happen without asking, nor old tasks deleted or a limit, no brain but the one first run offers (this device's), no
-  // connection, and no lock: its vault holds first run's device slot alone.
-  if (Object.entries(all.rules ?? {}).some(([kind, rule]) => rule !== (DEFAULT_RULES[kind] ?? 'ask')) || all.brains.some((/** @type {{ api: string }} */ one) => one.api !== 'device') || all.connections?.length
-    || ['services', 'pages', 'meet', 'films', 'computer', 'forget', 'limit'].some((name) => set(all[name]) !== set(/** @type {Record<string, any>} */ (DEFAULT_SETTINGS)[name]))) return false
-  if ((await readJSON(fs, VAULT, {})).slots?.some((/** @type {{ kind: string }} */ slot) => slot.kind !== 'device')
-    || Object.keys(await readJSON(fs, '.secrets/keys.json', {})).some((id) => id !== SECRET && id !== DEVICES)) return false
-  // Paired, or once was: its devices still list it, and it may owe one its removal.
-  const me = JSON.parse(await getSecret(fs, SECRET) ?? 'null')?.id
-  if ((await listOf(fs)).some((one) => one.id !== me)) return false
-  let home = false
-  for (const path of await walk(fs)) {
-    if (FIRST.test(path)) continue
-    const { data, body } = parseFrontMatter(PROJECT.test(path) ? await fs.read(path) ?? '' : 'x')
-    if (home || data.default !== true || body.trim() || Object.keys(data).some((key) => !HOME.includes(key))) return false
-    home = true
+  // One Home: A's, B's own folding into it, its words after A's; one kept on B stays there, a project.
+  const home = (bundle.projects ?? []).find((/** @type {any} */ one) => PROJECT.test(one?.path) && typeof one.text === 'string' && parseFrontMatter(one.text).data.default === true)?.path.slice(0, -11)
+  for (const { dir, data, body } of home ? (await listProjects(fs)).filter((one) => one.data.default === true && one.dir !== home) : []) {
+    const { default: _, ...rest } = data
+    if (data.cloud === false) { await fs.write(`${dir}/project.md`, stringifyFrontMatter(rest, body)); continue }
+    for (const path of (await walk(fs, dir)).filter((one) => one !== `${dir}/project.md`)) {
+      const [to, bytes] = [home + path.slice(dir.length), await fs.readBytes(path)]
+      if (bytes && !(await fs.exists(to))) await fs.writeBytes(to, bytes)
+    }
+    const theirs = parseFrontMatter(await fs.read(`${home}/project.md`) ?? '')
+    if (body.trim()) await fs.write(`${home}/project.md`, stringifyFrontMatter(theirs.data, theirs.body.trim() ? merge2(theirs.body, body) ?? theirs.body : body))
+    await fs.remove(dir)
   }
-  return true
+  // A routine on a schedule that names no device, made before B had any, or the identity B had, runs on B still.
+  for (const dir of ['', ...(await fs.list('projects')).map(({ name }) => `projects/${name}/`)]) for (const { name } of await fs.list(`${dir}routines`)) {
+    const { data, body } = parseFrontMatter(ROUTINE.test(`${dir}routines/${name}`) ? await fs.read(`${dir}routines/${name}`) ?? '' : '')
+    if (data.every && (data.device ? [before?.id, kept.leftAs].includes(data.device) : !kept.seen)) await fs.write(`${dir}routines/${name}`, stringifyFrontMatter({ ...data, device: ctx.me.id }, body))
+  }
+  // The devices B removed itself stay removed, which A may never have heard of; those alone() set aside go, once the new list is written.
+  const removed = (await listOf(fs)).filter((one) => one.removedAt && !(kept.left ?? []).includes(one.id))
+  await Promise.all(STORED.map((path) => fs.remove(path)))
+  await setSecrets(fs, { [DEVICES]: JSON.stringify(mergeLists(removed, bundle.devices, '', null) ?? removed), [SECRET]: JSON.stringify(ctx.me), [STORE]: shaped(store) ? JSON.stringify(store) : null })
+  await locked(ctx, FOLLOWING, () => keep(fs, { left: undefined }))
+  const [{ name, colour } = /** @type {any} */ ({}), vault] = [bundle.profile, await readJSON(fs, VAULT, null)]
+  const named = { ...(typeof name === 'string' && name && name.length <= 100 && { name }), ...(typeof colour === 'string' && /^oklch\([\d. ]+\)$/.test(colour) && { colour }) }
+  if (vault && Object.entries(named).some(([key, value]) => vault[key] !== value)) await writeJSON(fs, VAULT, { ...vault, ...named })
+  return { was, met }
 }
 
 // ─── A task handed over ──────────────────────────────────────────────────────
@@ -639,9 +630,6 @@ export async function back(ctx, from, value) {
   return true
 }
 
-/** The settings this device brings of its own to a profile it joins (adopt()): the first run's profile's, which holds nothing and goes; none from one with work, maybe another person's. @param {FS} fs the profile open @param {Settings} settings its */
-export const broughtFrom = async (fs, settings) => (await untouched(fs) ? settings : null)
-
 /** Of this device's removals a batch brought, the one to act on: the first from a device still had once the batch's lists are taken, which may add it again in place; else the first. @param {FS} fs @param {{ erase: boolean, by: string }[]} removals */
 export const firstOf = async (fs, removals) => ((live) => removals.find((one) => live.some((held) => held.id === one.by)) ?? removals[0])(await recordsOf(fs))
 
@@ -649,7 +637,7 @@ export const firstOf = async (fs, removals) => ((live) => removals.find((one) =>
  * This device removed by another, Jean kept here on its own: its identity gone, so it neither hears nor sends, and every device kept as
  * removed but the one that removed it, the only one that may add it again in place (inPlace()): a device removed after it, which it never
  * hears of, can't. The times stay, with the projects it has now, so that what it does on its own since wins then, a project it deletes
- * included (refill()). One tab at a time, the devices it set aside written down before any is marked removed, so that a tab closed
+ * included (merge()). One tab at a time, the devices it set aside written down before any is marked removed, so that a tab closed
  * on the way, or another running it again for the same removal, keeps them. @param {FS} fs @param {string} by @param {number} now
  * @param {string} as this device's id as it was removed @param {Context['lock']} [lock]
  */

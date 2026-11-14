@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 // What a paired device keeps and does with what comes (caps/devices/flow.js, D700), over profiles in memory: its name, the bundle A sends
-// and B's profile filled from it, a task handed over, the devices listed, settings and keys that follow, and a device removed.
+// and the profile B joins with merged with it, a task handed over, the devices listed, settings and keys that follow, and a device removed.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { memoryFS, readJSON, walk } from '../app/core/fs.js'
@@ -14,7 +14,7 @@ import { carried } from '../app/caps/sync/mirror.js'
 import { following, snapshotOf } from '../app/caps/devices/bundle.js'
 import { headersFor } from '../app/core/llm.js'
 import { owed, merged } from '../app/caps/devices/epochs.js'
-import { SECRET, DEVICES, STORE, STORED, TIMES, carrying, shaped, deviceName, recordFor, recordsOf, listOf, changeList, mergeLists, tell, quiet, writeRecord, writeOwn, inPlace, bundleOf, adopt, refill, untouched, taskOf, arrive, receive, removal, look, share, unreached, known, back, firstOf, broughtFrom, alone } from '../app/caps/devices/flow.js'
+import { SECRET, DEVICES, STORE, STORED, TIMES, carrying, shaped, deviceName, recordFor, recordsOf, listOf, changeList, mergeLists, tell, quiet, writeRecord, writeOwn, inPlace, bundleOf, merge, taskOf, arrive, receive, removal, look, share, unreached, known, back, firstOf, alone } from '../app/caps/devices/flow.js'
 
 const T = 1_800_000_000_000
 const CATALOGUE = ['files', 'tables', 'documents', 'camera']
@@ -93,7 +93,7 @@ test('A’s bundle: settings and keys with the times they changed, nothing stamp
   const { fs, me } = await profileA()
   const b = await identity()
   const you = recordOfIt(b, 'iPhone · Safari')
-  const profile = { dir: `profiles/${ulid(T)}-ada`, name: 'Ada', colour: 'oklch(0.74 0.17 150)' }
+  const profile = { name: 'Ada', colour: 'oklch(0.74 0.17 150)' }
   const { ctx, at } = context(fs, me)
   await look(ctx)
   at(T + 5)
@@ -127,7 +127,7 @@ test('A’s bundle: settings and keys with the times they changed, nothing stamp
 
 test('the devices a profile knows and the times of what follows stay where neither Sync nor a backup goes', async () => {
   const { fs, me } = await profileA()
-  await bundleOf(context(fs, me).ctx, { dir: `profiles/${ulid(T)}-ada`, name: 'Ada' }, recordOfIt(await identity(), 'iPhone · Safari'))
+  await bundleOf(context(fs, me).ctx, { name: 'Ada' }, recordOfIt(await identity(), 'iPhone · Safari'))
   const paths = await walk(fs)
   assert.ok(paths.includes(TIMES))
   assert.deepEqual(paths.filter((path) => /device/.test(path) && path !== TIMES), [], 'no file of a device: the list is a secret')
@@ -135,22 +135,21 @@ test('the devices a profile knows and the times of what follows stay where neith
   for (const path of [TIMES, '.secrets/keys.json']) assert.deepEqual([carried(path), isBackedUp(path)], [false, false], path)
 })
 
-test('B’s new profile, filled from the bundle: its own voice and look, nothing its catalogue lacks, only the keys that cross, and its own identity', async () => {
+test('B joins in place from the bundle: what follows comes where A set it, B keeps its own voice and look, nothing its catalogue lacks, only the keys that cross, and its own identity', async () => {
   const { fs, me } = await profileA()
   const b = await identity()
-  const bundle = await bundleOf(context(fs, me).ctx, { dir: `profiles/${ulid(T)}-ada`, name: 'Ada' }, recordOfIt(b, 'iPhone · Safari'))
-  const onB = memoryFS()
-  const firstRun = /** @type {any} */ ({ ...DEFAULT_SETTINGS, locale: 'ja', voice: 'Kyoko', look: { id: 'paper' }, unlocked: ['camera'] })
+  const bundle = await bundleOf(context(fs, me).ctx, { name: 'Ada' }, recordOfIt(b, 'iPhone · Safari'))
+  const onB = memoryFS({ 'settings.json': JSON.stringify({ ...DEFAULT_SETTINGS, voice: 'Kyoko', look: { id: 'paper' }, unlocked: ['camera'] }) })
   // A bundle that holds more keys than cross: they are chosen again here, never this device's own identity or devices.
   const more = Object.fromEntries(Object.entries({ plan: 'key of plan', 'computer-bridge': 'bridge', [SECRET]: 'theirs', [DEVICES]: '[]', SGNED000000000000000000000: 'token' }).map(([id, value]) => [id, { value, at: T }]))
-  await adopt(onB, { ...bundle, keys: { ...bundle.keys, ...more } }, { settings: firstRun, catalogue: CATALOGUE, me: b, now: T + 5 })
+  await merge(context(onB, b, T + 5).ctx, { ...bundle, keys: { ...bundle.keys, ...more } })
   const settings = await loadSettings(onB)
   assert.equal(settings.locale, 'fr', 'what follows the person comes')
   assert.equal(settings.name, 'Ada')
   assert.deepEqual([settings.voice, settings.look], ['Kyoko', { id: 'paper' }], 'what stays on a device is B’s')
   assert.deepEqual(settings.brains.map((one) => one.id), ['TYPED000000000000000000000'])
   assert.equal(settings.activeBrain, 'TYPED000000000000000000000')
-  assert.deepEqual(settings.unlocked, ['files', 'tables', 'devices'], 'no reflexes on a device whose catalogue lacks them, no machine, which is A’s alone')
+  assert.deepEqual(settings.unlocked, ['camera', 'devices', 'files', 'tables'], 'no reflexes on a device whose catalogue lacks them, no machine, which is A’s alone')
   assert.equal(await getSecret(onB, 'TYPED000000000000000000000'), 'key of typed')
   assert.equal(await getSecret(onB, 'KEYED000000000000000000000'), 'key of keyed')
   for (const id of ['plan', 'SGNED000000000000000000000', 'computer-bridge', 'signin']) assert.equal(await getSecret(onB, id), null, id)
@@ -162,26 +161,27 @@ test('B’s new profile, filled from the bundle: its own voice and look, nothing
   assert.deepEqual((await recordsOf(onB)).map((one) => one.id).sort(), [me.id, b.id].sort())
   // What had no time on A comes with the least, so that a change anywhere wins over it.
   const kept = await readJSON(onB, TIMES)
-  assert.deepEqual([kept.fields.locale, kept.keys.TYPED000000000000000000000.at, kept.heard], [1, 0, T + 5])
-  // Saved with its times, never stamped again.
-  assert.equal((await look(context(onB, b, T + 9).ctx)).changed, false)
+  assert.deepEqual([kept.fields.locale, kept.keys.TYPED000000000000000000000.at], [1, 0])
+  // Saved with its times, never stamped again, and marked to go.
+  const { changed, pending } = await look(context(onB, b, T + 9).ctx)
+  assert.deepEqual([changed, pending], [false, T + 5])
 })
 
 test('the store’s keys A sent with *kept* are written with B’s identity and devices, in one write; malformed, none are', async () => {
   const { fs, me } = await profileA()
   const b = await identity()
-  const bundle = await bundleOf(context(fs, me).ctx, { dir: `profiles/${ulid(T)}-ada`, name: 'Ada' }, recordOfIt(b, 'iPhone · Safari'))
+  const bundle = await bundleOf(context(fs, me).ctx, { name: 'Ada' }, recordOfIt(b, 'iPhone · Safari'))
   const store = { sid: base64url(random(16)), N: base64url(random(32)), epochs: { 0: base64url(random(32)) }, relay: 'https://relay.example/', token: base64url(random(32)) }
   const onB = memoryFS()
   /** @type {string[][]} */
   const writes = []
   const write = onB.write.bind(onB)
   onB.write = async (path, text) => { if (path === '.secrets/keys.json') writes.push(Object.keys(JSON.parse(text))); return write(path, text) }
-  await adopt(onB, bundle, { settings: DEFAULT_SETTINGS, catalogue: CATALOGUE, me: b, now: T + 5, store })
+  await merge(context(onB, b, T + 5).ctx, bundle, store)
   assert.deepEqual(JSON.parse(String(await getSecret(onB, STORE))), store)
   assert.ok([SECRET, DEVICES, STORE].every((id) => writes.at(-1)?.includes(id)) && !writes.slice(0, -1).some((ids) => ids.includes(SECRET)), 'the identity, the devices and the store together')
   const other = memoryFS()
-  await adopt(other, bundle, { settings: DEFAULT_SETTINGS, catalogue: CATALOGUE, me: b, now: T + 5, store: { ...store, N: 'short' } })
+  await merge(context(other, b, T + 5).ctx, bundle, { ...store, N: 'short' })
   assert.equal(await getSecret(other, STORE), null)
   assert.equal(shaped({ ...store, epochs: {} }), false)
   // Its settings tell the others which store it holds, none once the relay no longer opens it.
@@ -196,25 +196,34 @@ test('the store carries what Sync does, but projects kept on this device, Home�
     [true, false, false, false, true, true, false, false, false])
 })
 
-test('B keeps what is its own beside what comes: its settings that stay, the brains it alone runs, its connections and capabilities on this computer, and their keys', async () => {
+test('B keeps all it holds beside what comes: its brains and connections, those that follow going to A, its settings that stay, and their keys', async () => {
   const { fs, me } = await profileA()
   const b = await identity()
-  const bundle = await bundleOf(context(fs, me).ctx, { dir: `profiles/${ulid(T)}-ada`, name: 'Ada' }, recordOfIt(b, 'iPhone · Safari'))
-  const [mine, plan] = [brain('mine', 'ollama', 'http://localhost:11434/v1'), brain('myplan', 'claudecode', 'http://127.0.0.1:23001/v1')]
-  const desk = { id: 'desk', name: 'Desk', url: 'http://localhost:3000/mcp', auth: 'key' }
-  const onB = memoryFS()
-  const settings = /** @type {any} */ ({ ...DEFAULT_SETTINGS, voice: 'Kyoko', dock: { width: 0.3 }, brains: [mine, plan, brain('cloudy', 'mistral', 'https://api.mistral.ai/v1')], activeBrain: 'mine',
-    connections: [desk, { id: 'far', name: 'Far', url: 'https://far.example/mcp', auth: 'key' }], unlocked: ['machine', 'folders', 'brain-local', 'camera'], name: 'B', rules: { fetch: 'never' } })
-  const keys = /** @type {Record<string, string>} */ ({ mine: 'key of mine', myplan: 'bridge key of my plan', desk: 'key of desk', far: 'key of far', cloudy: 'key of cloudy', 'computer-bridge': '{"port":1}' })
-  await adopt(onB, bundle, { settings, catalogue: CATALOGUE, me: b, now: T + 5, secretOf: async (id) => keys[id] ?? null })
+  const A = context(fs, me)
+  const bundle = await bundleOf(A.ctx, { name: 'Ada' }, recordOfIt(b, 'iPhone · Safari'))
+  await writeRecord(fs, recordOfIt(b, 'iPhone · Safari'))
+  const [mine, plan, cloudy] = [brain('mine', 'ollama', 'http://localhost:11434/v1'), brain('myplan', 'claudecode', 'http://127.0.0.1:23001/v1'), brain('MSTRA000000000000000000000', 'mistral', 'https://api.mistral.ai/v1')]
+  const [desk, far] = [{ id: 'desk', name: 'Desk', url: 'http://localhost:3000/mcp', auth: 'key' }, { id: 'FAR00000000000000000000000', name: 'Far', url: 'https://far.example/mcp', auth: 'key' }]
+  const onB = memoryFS({ 'settings.json': JSON.stringify({ ...DEFAULT_SETTINGS, voice: 'Kyoko', dock: { width: 0.3 }, brains: [mine, plan, cloudy], activeBrain: 'mine', connections: [desk, far],
+    unlocked: ['machine', 'folders', 'brain-local', 'camera'], name: 'B', rules: { fetch: 'never' }, maskWords: ['Bob'] }),
+  '.secrets/keys.json': JSON.stringify({ mine: 'key of mine', myplan: 'bridge key of my plan', desk: 'key of desk', FAR00000000000000000000000: 'key of far', MSTRA000000000000000000000: 'key of cloudy', 'computer-bridge': '{"port":1}' }) })
+  const B = context(onB, b, T + 5)
+  await merge(B.ctx, bundle)
   const made = await loadSettings(onB)
-  assert.deepEqual(made.brains.map((one) => one.id), ['mine', 'myplan', 'TYPED000000000000000000000'], 'its own brains beside A’s; one of B’s in the cloud follows, so A’s list is the list')
-  assert.equal(made.activeBrain, 'TYPED000000000000000000000', 'the brain chosen comes from A, where it was chosen last')
-  assert.deepEqual(made.connections?.map((one) => one.id), ['desk', 'KEYED000000000000000000000', 'SGNED000000000000000000000'])
-  assert.deepEqual(made.unlocked, ['machine', 'folders', 'brain-local', 'files', 'tables', 'devices'])
-  assert.deepEqual([made.voice, made.dock, made.name, made.rules], ['Kyoko', { width: 0.3 }, 'Ada', { fetch: 'never' }], 'what stays is B’s, what follows A’s')
-  for (const [id, value] of Object.entries({ mine: 'key of mine', myplan: 'bridge key of my plan', desk: 'key of desk', 'computer-bridge': '{"port":1}', TYPED000000000000000000000: 'key of typed' })) assert.equal(await getSecret(onB, id), value, id)
-  for (const id of ['far', 'cloudy']) assert.equal(await getSecret(onB, id), null, id)
+  assert.deepEqual(made.brains.map((one) => one.id), ['mine', 'myplan', 'MSTRA000000000000000000000', 'TYPED000000000000000000000'], 'its own brains beside A’s, one in the cloud too')
+  assert.equal(made.activeBrain, 'TYPED000000000000000000000', 'the brain chosen comes from A, which set it')
+  assert.deepEqual(made.connections?.map((one) => one.id), ['desk', 'FAR00000000000000000000000', 'KEYED000000000000000000000', 'SGNED000000000000000000000'])
+  assert.deepEqual(made.unlocked, ['machine', 'folders', 'brain-local', 'camera', 'devices', 'files', 'tables'])
+  assert.deepEqual([made.voice, made.dock, made.name, made.rules, made.maskWords], ['Kyoko', { width: 0.3 }, 'Ada', { fetch: 'never' }, ['Bob']], 'what stays is B’s, A’s name where both set one, the stricter rule and both words to mask')
+  for (const [id, value] of Object.entries({ mine: 'key of mine', myplan: 'bridge key of my plan', desk: 'key of desk', FAR00000000000000000000000: 'key of far', MSTRA000000000000000000000: 'key of cloudy', 'computer-bridge': '{"port":1}', TYPED000000000000000000000: 'key of typed' })) assert.equal(await getSecret(onB, id), value, id)
+  // What B had that follows goes to A, its keys with it; never what stays on B.
+  await share(B.ctx)
+  assert.deepEqual(B.sent.map((one) => one.to), [me.id])
+  await receive(A.ctx, /** @type {any} */ ((await recordsOf(fs)).find((one) => one.id === b.id)), B.sent[0].value)
+  const onA = await loadSettings(fs)
+  assert.deepEqual([onA.brains.map((one) => one.id), onA.connections?.map((one) => one.id), onA.maskWords, onA.rules.fetch, onA.name], [[...BRAINS.map((one) => one.id), 'MSTRA000000000000000000000'],
+    [...CONNECTIONS.map((one) => one.id), 'FAR00000000000000000000000'], ['Bob'], 'never', 'Ada'])
+  assert.deepEqual([await getSecret(fs, 'MSTRA000000000000000000000'), await getSecret(fs, 'FAR00000000000000000000000'), await getSecret(fs, 'mine')], ['key of cloudy', 'key of far', null])
 })
 
 test('a bundle left unopened stamps nothing: a change made elsewhere before it, sent later, still wins', async () => {
@@ -231,14 +240,14 @@ test('a bundle left unopened stamps nothing: a change made elsewhere before it, 
   const fromC = (await look(C.ctx)).value
   // On A, a phone added, the bundle made, and the phone leaves it unopened.
   A.at(T + 2000)
-  await bundleOf(A.ctx, { dir: `profiles/${ulid(T)}-ada`, name: 'Ada' }, recordOfIt(await identity(), 'Phone'))
+  await bundleOf(A.ctx, { name: 'Ada' }, recordOfIt(await identity(), 'Phone'))
   // C back: A takes what changed there.
   A.at(T + 3000)
   await receive(A.ctx, /** @type {any} */ ((await recordsOf(fsA)).find((one) => one.id === c.id)), fromC)
   assert.deepEqual([(await loadSettings(fsA)).maskWords, await getSecret(fsA, 'TYPED000000000000000000000')], [['Ada'], 'sk-NEW'])
 })
 
-test('refilled in place, a device keeps what it did on its own since: its project.md, its words to mask, a brain it added and its key, and its own plan brain, whatever comes', async () => {
+test('added again in place, a device keeps what it did on its own since: its project.md, its words to mask, a brain it added and its key, and its own plan brain, whatever comes', async () => {
   const [a, b, c] = await Promise.all([identity(), identity(), identity()])
   const plan = brain('X', 'claudecode', 'http://127.0.0.1:23001/v1')
   const files = (/** @type {any} */ more = {}) => memoryFS({ 'settings.json': JSON.stringify({ ...DEFAULT_SETTINGS, name: 'Ada', rules: { fetch: 'ask' }, brains: [BRAINS[0], ...(more.brains ?? [])], activeBrain: 'TYPED000000000000000000000' }),
@@ -264,14 +273,14 @@ test('refilled in place, a device keeps what it did on its own since: its projec
   await saveSettings(fsA, { ...await loadSettings(fsA), name: 'Ada L.' })
   await fsA.write(`${HOME}/project.md`, project({ default: true, name: 'Home' }))
   const meB = await identity()
-  const bundle = /** @type {any} */ (await bundleOf(A.ctx, { dir: `profiles/${ulid(T)}-ada`, name: 'Ada' }, recordFor(meB, 'Phone', T + 30, a.id)))
+  const bundle = /** @type {any} */ (await bundleOf(A.ctx, { name: 'Ada' }, recordFor(meB, 'Phone', T + 30, a.id)))
   bundle.settings.brains.X = { value: brain('X', 'openai', 'https://api.openai.com/v1'), at: T + 40 }
   assert.deepEqual([await inPlace(fsB, a.public), await inPlace(fsB, c.public)], [true, false], 'only the device that removed it, never one removed after, which it never hears of')
   const B = context(fsB, meB, T + 50)
   // What it knew of a store before goes, the store's keys that came taking its place; the versions Markdown merges from stay.
   for (const path of [...STORED, '.cache/store/memory.md']) await fsB.write(path, '{}')
   const store = { sid: base64url(random(16)), N: base64url(random(32)), epochs: { 0: base64url(random(32)) }, relay: 'https://relay.example/', token: base64url(random(32)) }
-  await refill(B.ctx, bundle, store)
+  await merge(B.ctx, bundle, store)
   assert.deepEqual([JSON.parse(String(await getSecret(fsB, STORE))), ...await Promise.all([...STORED, '.cache/store/memory.md'].map((path) => fsB.exists(path)))], [store, false, false, true])
   const after = await loadSettings(fsB)
   assert.deepEqual([after.name, after.maskWords], ['Ada L.', ['Ada']], 'A’s later change comes, B’s own stays')
@@ -286,37 +295,97 @@ test('refilled in place, a device keeps what it did on its own since: its projec
   assert.ok(!JSON.stringify(B.sent).includes('BRIDGE-KEY'))
 })
 
-test('B’s new profile keeps B’s own addresses, on this computer or not, and takes where A’s sources read', async () => {
+test('B joining keeps its own addresses, on this computer or not, and takes where A’s sources read', async () => {
   const { fs, me } = await profileA()
   await saveSettings(fs, { ...await loadSettings(fs), urls: { wikipedia: 'https://wiki.example/w/api.php', share: 'https://hst.ing', kiwix: 'http://localhost:8080' } })
   const b = await identity()
-  const bundle = await bundleOf(context(fs, me).ctx, { dir: `profiles/${ulid(T)}-ada`, name: 'Ada' }, recordOfIt(b, 'iPhone · Safari'))
-  const onB = memoryFS()
-  await adopt(onB, bundle, { settings: { ...DEFAULT_SETTINGS, urls: { relay: 'http://127.0.0.1:8791/', share: 'https://mine.example' } }, catalogue: CATALOGUE, me: b, now: T + 5 })
+  const bundle = await bundleOf(context(fs, me).ctx, { name: 'Ada' }, recordOfIt(b, 'iPhone · Safari'))
+  const onB = memoryFS({ 'settings.json': JSON.stringify({ ...DEFAULT_SETTINGS, urls: { relay: 'http://127.0.0.1:8791/', share: 'https://mine.example' } }) })
+  await merge(context(onB, b, T + 5).ctx, bundle)
   assert.deepEqual((await loadSettings(onB)).urls, { wikipedia: 'https://wiki.example/w/api.php', relay: 'http://127.0.0.1:8791/', share: 'https://mine.example' })
 })
 
-test('a profile nothing was ever done in holds only what first run makes: settings, keys, caches, and an empty Home', async () => {
-  const first = { 'settings.json': '{}', '.secrets/keys.json': '{}', '.secrets/vault.json': '{}', '.cache/index.json': '{}', [TIMES]: '{}', [`${HOME}/project.md`]: project({ default: true, name: 'Home' }) }
-  assert.equal(await untouched(memoryFS()), true)
-  assert.equal(await untouched(memoryFS(first)), true)
-  for (const [path, text] of Object.entries({ [`${HOME}/conversations/${ulid()}.jsonl`]: '{}\n', [`${WORK}/project.md`]: project({ name: 'Work' }), 'memory/me.md': 'I like tea',
-    [`${HOME}/files/sha256-abc.txt`]: 'notes', [`${HOME}/documents/${ulid()}.md`]: '# Plan', 'collections/books/collection.json': '{}', 'skills/x/SKILL.md': '---\n---\n', 'shares/x.json': '{}', 'notes.txt': 'x' })) {
-    assert.equal(await untouched(memoryFS({ ...first, [path]: text })), false, path)
-  }
-  assert.equal(await untouched(memoryFS({ ...first, [`projects/${ulid(T + 5)}-home/project.md`]: project({ default: true, name: 'Home' }) })), false, 'two Homes')
-  // What Jean found out as it went, and what stays on the device, aren't the person's work; what they set, typed or wrote is.
-  const found = { 'settings.json': JSON.stringify({ ...DEFAULT_SETTINGS, locale: 'ja', unlocked: ['devices', 'camera'], offers: { tables: 'x' }, voice: 'Kyoko', urls: { relay: 'http://127.0.0.1:8791/' } }), '.secrets/keys.json': JSON.stringify({ [SECRET]: '{}', [DEVICES]: '[]' }) }
-  assert.equal(await untouched(memoryFS({ ...first, ...found })), true)
-  for (const [path, text] of Object.entries({ 'settings.json': JSON.stringify({ ...DEFAULT_SETTINGS, brains: [BRAINS[0]] }), '.secrets/keys.json': JSON.stringify({ 'search:brave': '{"key":"b"}' }),
-    [`${HOME}/project.md`]: `${project({ default: true, name: 'Home' })}Answer in French.`, [`${HOME}/project.md `]: '' })) {
-    if (path.endsWith(' ')) continue
-    assert.equal(await untouched(memoryFS({ ...first, [path]: text })), false, path)
-  }
-  // A parent's profile, a teen's made from it: its family key is work too, never erased with it.
-  assert.equal(await untouched(memoryFS({ ...first, '.secrets/family.json': '{}' })), false, 'a family key')
-  for (const settings of [{ brains: [BRAINS[0]] }, { maskWords: ['Ada'] }, { name: 'Ada' }]) assert.equal(await untouched(memoryFS({ ...first, 'settings.json': JSON.stringify({ ...DEFAULT_SETTINGS, ...settings }) })), false, JSON.stringify(settings))
-  assert.equal(await untouched(memoryFS({ ...first, [`${HOME}/project.md`]: project({ default: true, name: 'Home', colour: 'oklch(0.7 0.1 20)' }) })), false, 'Home as first run doesn’t write it')
+/** A routine on a schedule, as its file holds it, naming the device it runs on or none. @param {string} [device] */
+const routine = (device) => stringifyFrontMatter({ format: 1, title: 'News', every: 'day', at: '08:00', active: true, ...(device && { device }), author: 'user', createdAt: new Date(T).toISOString() }, 'The news.\n')
+
+test('a device with work joins in place: all it holds stays, its Home folds into the profile’s, its routines run on it, and the profile takes A’s name', async () => {
+  const { fs, me } = await profileA()
+  const [b, had] = [await identity(), await identity()]
+  const bundle = await bundleOf(context(fs, me).ctx, { name: 'Ada', colour: 'oklch(0.74 0.17 150)' }, recordOfIt(b, 'iPhone · Safari'))
+  const [homeB, notes, task] = [`projects/${ulid(T + 100)}-home`, `projects/${ulid(T + 101)}-notes`, `${ulid(T + 200)}.jsonl`]
+  const [none, mine, theirs] = [ulid(T + 201), ulid(T + 202), ulid(T + 203)]
+  const onB = memoryFS({ 'settings.json': JSON.stringify(DEFAULT_SETTINGS), '.secrets/vault.json': JSON.stringify({ format: 1, name: 'Bob', slots: [{ kind: 'device' }] }),
+    [`${homeB}/project.md`]: `${project({ default: true, name: 'Home' })}Answer briefly.\n`, [`${homeB}/conversations/${task}`]: '{"format":1,"kind":"conversation"}\n', [`${homeB}/files/sha256-abc.txt`]: 'notes',
+    [`${notes}/project.md`]: project({ name: 'Notes' }), [`${notes}/conversations/${task}`]: '{"format":1,"kind":"conversation"}\n', 'memory.md': '- Likes tea\n',
+    [`routines/${none}.md`]: routine(), [`routines/${mine}.md`]: routine(had.id), [`${notes}/routines/${theirs}.md`]: routine(me.id) })
+  // An identity of its own, alone: its record goes, the new one in its place.
+  await setSecret(onB, SECRET, JSON.stringify(had))
+  await writeOwn(onB, recordOfIt(had, 'iPhone · Safari'))
+  assert.deepEqual(await merge(context(onB, b, T + 5).ctx, bundle), { was: null, met: [] })
+  assert.deepEqual([await onB.read(`${notes}/conversations/${task}`), await onB.read('memory.md')], ['{"format":1,"kind":"conversation"}\n', '- Likes tea\n'], 'what it holds stays, to go through the store')
+  assert.equal(await onB.exists(homeB), false, 'one Home')
+  assert.deepEqual([await onB.read(`${HOME}/conversations/${task}`), await onB.read(`${HOME}/files/sha256-abc.txt`)], ['{"format":1,"kind":"conversation"}\n', 'notes'])
+  assert.match(String(await onB.read(`${HOME}/project.md`)), /default: true[\s\S]*---\nAnswer briefly\.\n$/)
+  assert.deepEqual(await Promise.all([`routines/${none}.md`, `routines/${mine}.md`, `${notes}/routines/${theirs}.md`].map(async (path) => /device: (\w+)/.exec(String(await onB.read(path)))?.[1])), [b.id, b.id, me.id])
+  assert.deepEqual((await listOf(onB)).map((one) => one.id), [me.id, b.id])
+  assert.deepEqual(JSON.parse(String(await onB.read('.secrets/vault.json'))), { format: 1, name: 'Ada', colour: 'oklch(0.74 0.17 150)', slots: [{ kind: 'device' }] })
+  // A Home kept on the device stays there, a project of its own; and nothing names a colour that isn't one.
+  const onC = memoryFS({ 'settings.json': JSON.stringify(DEFAULT_SETTINGS), '.secrets/vault.json': JSON.stringify({ format: 1, name: 'Cy', slots: [] }),
+    [`${homeB}/project.md`]: project({ default: true, name: 'Home', cloud: false }), [`${homeB}/conversations/${task}`]: '{"format":1,"kind":"conversation"}\n' })
+  await merge(context(onC, b, T + 5).ctx, { ...bundle, profile: { name: '', colour: 'red; background: url(x)' } })
+  assert.deepEqual([await onC.exists(`${homeB}/conversations/${task}`), /default/.test(String(await onC.read(`${homeB}/project.md`))), /cloud: false/.test(String(await onC.read(`${homeB}/project.md`)))], [true, false, true])
+  assert.equal(JSON.parse(String(await onC.read('.secrets/vault.json'))).name, 'Cy')
+})
+
+test('of what follows, a field neither device stamped is A’s where A set it and B’s where A never did, which then goes to A and stays there', async () => {
+  const { fs, me } = await profileA()
+  const b = await identity()
+  const A = context(fs, me)
+  const bundle = await bundleOf(A.ctx, { name: 'Ada' }, recordOfIt(b, 'iPhone · Safari'))
+  await writeRecord(fs, recordOfIt(b, 'iPhone · Safari'))
+  const onB = memoryFS({ 'settings.json': JSON.stringify({ ...DEFAULT_SETTINGS, locale: 'ja', name: 'Bob', memory: false, search: false }) })
+  const B = context(onB, b, T + 5)
+  await merge(B.ctx, bundle)
+  const there = await loadSettings(onB)
+  assert.deepEqual([there.locale, there.name, there.memory, there.search], ['fr', 'Ada', false, false])
+  await share(B.ctx)
+  await receive(A.ctx, /** @type {any} */ ((await recordsOf(fs)).find((one) => one.id === b.id)), B.sent[0].value)
+  const here = await loadSettings(fs)
+  assert.deepEqual([here.locale, here.name, here.memory, here.search], ['fr', 'Ada', false, false])
+  // A's own change later still wins everywhere.
+  A.at(T + 10)
+  await saveSettings(fs, { ...here, memory: true })
+  await receive(B.ctx, /** @type {any} */ ((await recordsOf(onB)).find((one) => one.id === me.id)), (await look(A.ctx)).value)
+  assert.equal((await loadSettings(onB)).memory, true)
+})
+
+test('joining, B takes A’s person in place of its own, whatever a tie would keep, and gives its own back with whom it met, to be told; forgotten as it was removed, none goes as a tombstone', async () => {
+  const { fs, me } = await profileA()
+  const b = await identity()
+  const A = context(fs, me)
+  const bundle = await bundleOf(A.ctx, { name: 'Ada' }, recordOfIt(b, 'iPhone · Safari'))
+  const [own, bob] = [{ ...await boxPair(), token: 't', mailbox: 'm' }, await boxPair()]
+  const met = { format: 1, key: bob.public, said: 'Bob', met: 'link', at: T, mailbox: 'bobs' }
+  const onB = memoryFS({ '.secrets/keys.json': JSON.stringify({ person: JSON.stringify(own), [`people:${'B'.repeat(22)}`]: JSON.stringify(met), [`people:${'B'.repeat(22)}:name`]: 'Bob' }) })
+  const B = context(onB, b, T + 5)
+  const given = await merge(B.ctx, bundle)
+  assert.deepEqual([given.was, given.met], [own, [{ ...met, fp: 'B'.repeat(22) }]])
+  assert.equal(await getSecret(onB, 'person'), bundle.keys.person.value)
+  assert.equal((await readJSON(onB, TIMES)).keys.person.at, bundle.keys.person.at)
+  // The people it met go to A, and A's person stays A's.
+  await share(B.ctx)
+  assert.deepEqual([B.sent[0].value.keys.person.value, B.sent[0].value.keys[`people:${'B'.repeat(22)}`]?.value], [bundle.keys.person.value, JSON.stringify(met)])
+  // Removed, it forgets who it is; added again, A's person comes, with no tombstone of its own to beat it.
+  await look(B.ctx)
+  await alone(onB, me.id, T + 20, b.id)
+  A.at(T + 30)
+  const again = await identity()
+  const next = await bundleOf(A.ctx, { name: 'Ada' }, recordFor(again, 'iPhone · Safari', T + 30, me.id))
+  const C = context(onB, again, T + 40)
+  assert.deepEqual(await merge(C.ctx, next), { was: null, met: [] })
+  assert.equal(await getSecret(onB, 'person'), next.keys.person.value)
+  await share(C.ctx)
+  assert.ok(!Object.values(C.sent[0].value.keys).some((one) => /** @type {any} */ (one).gone), 'nothing forgotten goes')
 })
 
 /** A task in Work that shared a file, as its device keeps it. */
@@ -704,10 +773,10 @@ test('a connection signed in on one device while another renames it keeps the ty
   const fsA = memoryFS({ 'settings.json': JSON.stringify({ ...DEFAULT_SETTINGS, connections: [C] }), '.secrets/keys.json': JSON.stringify({ CNN00000000000000000000000: 'k1' }) })
   await writeRecord(fsA, recordOfIt(a, 'A'))
   const A = context(fsA, a)
-  const bundle = await bundleOf(A.ctx, { dir: `profiles/${ulid(T)}-x`, name: 'X' }, recordOfIt(b, 'B'))
+  const bundle = await bundleOf(A.ctx, { name: 'X' }, recordOfIt(b, 'B'))
   await writeRecord(fsA, recordOfIt(b, 'B'))
   const fsB = memoryFS()
-  await adopt(fsB, bundle, { settings: { ...DEFAULT_SETTINGS }, catalogue: CATALOGUE, me: b, now: T })
+  await merge(context(fsB, b).ctx, bundle)
   const B = context(fsB, b)
   const [onA, onB] = [/** @type {any} */ ((await recordsOf(fsA)).find((one) => one.id === b.id)), /** @type {any} */ ((await recordsOf(fsB)).find((one) => one.id === a.id))]
   const TOKENS = JSON.stringify({ access: 'ACCESS', refresh: 'REFRESH', expiresAt: T + 3_600_000 })
@@ -792,12 +861,12 @@ test('a device paired while another is removed hears of the removal from the one
   const [A, C] = [device(await profile(), a), device(await profile(), c)]
   // On A, the code typed: the bundle lists X. Meanwhile the person removes X on C, and A reads it.
   const you = recordFor(b, 'Pixel', T, a.id)
-  const bundle = await bundleOf(A, { dir: `profiles/${ulid(T)}-ada`, name: 'Ada' }, you)
+  const bundle = await bundleOf(A, { name: 'Ada' }, you)
   await removal(C, x.id, true)
   await read(A)
   // B joins: A keeps it and tells everyone, B too; the removed X, which knew B's mailbox some other way, sends B a list naming Z, and its removal.
   const fsB = memoryFS()
-  await adopt(fsB, bundle, { settings: { ...DEFAULT_SETTINGS }, catalogue: CATALOGUE, me: b, now: T })
+  await merge(context(fsB, b).ctx, bundle)
   const B = device(fsB, b)
   await writeRecord(A.fs, you)
   await tell(A, { kind: 'devices', records: await listOf(A.fs) })
@@ -1128,36 +1197,26 @@ test('of two shares at once, the one begun before a removal never tells the remo
   assert.equal(sent.filter((one) => one.value.kind === 'removed').length, 1)
 })
 
-test('a profile paired, or once, is never untouched; a project deleted while paired stays deleted when the profile is filled again', async () => {
-  const first = { 'settings.json': '{}', [`${HOME}/project.md`]: project({ default: true, name: 'Home' }) }
-  const [me, other] = await Promise.all([identity(), identity()])
-  const single = memoryFS({ ...first, '.secrets/keys.json': JSON.stringify({ [SECRET]: JSON.stringify(me) }) })
-  await writeRecord(single, recordOfIt(me, 'Phone'))
-  assert.equal(await untouched(single), true, 'its own record alone')
-  for (const removed of [false, true]) {
-    const paired = memoryFS({ ...first, '.secrets/keys.json': JSON.stringify({ [SECRET]: JSON.stringify(me) }) })
-    for (const one of [recordOfIt(me, 'Phone'), { ...recordOfIt(other, 'Mac'), ...(removed && { removedAt: new Date(T).toISOString() }) }]) await writeRecord(paired, one)
-    assert.equal(await untouched(paired), false, `another device, removed: ${removed}`)
-  }
+test('a project deleted while paired stays deleted when the profile is filled again', async () => {
   // B, filled from A's bundle with Health in it, deletes Health while paired; removed, then filled again in place: Health stays deleted.
   const { fs: fsA, me: a } = await profileA()
   await fsA.write(`${HEALTH}/project.md`, project({ name: 'Health' }))
   const meB = await identity()
-  const bundle = await bundleOf(context(fsA, a).ctx, { dir: `profiles/${ulid(T)}-ada`, name: 'Ada' }, recordFor(meB, 'Phone', T, a.id))
+  const bundle = await bundleOf(context(fsA, a).ctx, { name: 'Ada' }, recordFor(meB, 'Phone', T, a.id))
   const fsB = memoryFS()
-  await adopt(fsB, bundle, { settings: { ...DEFAULT_SETTINGS }, catalogue: CATALOGUE, me: meB, now: T })
+  await merge(context(fsB, meB).ctx, bundle)
   await fsB.remove(HEALTH)
   await alone(fsB, a.id, T + 10, meB.id)
-  await refill(context(fsB, await identity(), T + 20).ctx, bundle)
+  await merge(context(fsB, await identity(), T + 20).ctx, bundle)
   assert.deepEqual([await fsB.exists(HEALTH), await fsB.exists(`${WORK}/project.md`)], [false, true])
-  // A project that came with that refill, deleted while paired, stays deleted the next time too.
+  // A project that came with that join, deleted while paired, stays deleted the next time too.
   const again = { ...bundle, projects: [...bundle.projects, { path: `${HEALTH}-2/project.md`, text: project({ name: 'New' }) }] }
   const second = await identity()
-  await refill(context(fsB, second, T + 30).ctx, again)
+  await merge(context(fsB, second, T + 30).ctx, again)
   assert.equal(await fsB.exists(`${HEALTH}-2`), true)
   await fsB.remove(`${HEALTH}-2`)
   await alone(fsB, a.id, T + 40, second.id)
-  await refill(context(fsB, await identity(), T + 50).ctx, again)
+  await merge(context(fsB, await identity(), T + 50).ctx, again)
   assert.equal(await fsB.exists(`${HEALTH}-2`), false)
 })
 
@@ -1292,12 +1351,11 @@ test('a device that learns of a removal tells the removed device too, which may 
 test('joining keeps what this device turned off of its own, and its Auto when kept on itself; a project a task crossed with stays deleted when filled again', async () => {
   const { fs, me } = await profileA()
   const b = await identity()
-  const bundle = await bundleOf(context(fs, me).ctx, { dir: `profiles/${ulid(T)}-ada`, name: 'Ada' }, recordOfIt(b, 'Mac · Jean'))
-  const onB = memoryFS()
-  await adopt(onB, { ...bundle, projects: bundle.projects.filter((one) => !one.path.startsWith(WORK)), settings: { ...bundle.settings, fields: { ...bundle.settings.fields, off: { value: ['tables'], at: T } } } },
-    { settings: /** @type {any} */ ({ ...DEFAULT_SETTINGS, unlocked: ['machine', 'files'], off: ['machine', 'files'], cloud: false, auto: false, offers: { 'voice.download': 'T1', tables: 'T1' }, services: { KEYED000000000000000000000: { other: 'allow' } } }),
-      catalogue: CATALOGUE, me: b, now: T, secretOf: async (id) => (id === 'computer-bridge' ? '{"port":1}' : null) })
-  assert.deepEqual([...(await loadSettings(onB)).off ?? []].sort(), ['machine', 'tables'], 'This computer stays off here; what follows comes')
+  const bundle = await bundleOf(context(fs, me).ctx, { name: 'Ada' }, recordOfIt(b, 'Mac · Jean'))
+  const onB = memoryFS({ 'settings.json': JSON.stringify({ ...DEFAULT_SETTINGS, unlocked: ['machine', 'files'], off: ['machine', 'files'], cloud: false, auto: false, offers: { 'voice.download': 'T1', tables: 'T1' }, services: { KEYED000000000000000000000: { other: 'allow' } } }),
+    '.secrets/keys.json': JSON.stringify({ 'computer-bridge': '{"port":1}' }) })
+  await merge(context(onB, b).ctx, { ...bundle, projects: bundle.projects.filter((one) => !one.path.startsWith(WORK)), settings: { ...bundle.settings, fields: { ...bundle.settings.fields, off: { value: ['tables'], at: T } } } })
+  assert.deepEqual([...(await loadSettings(onB)).off ?? []].sort(), ['files', 'machine', 'tables'], 'what it turned off stays off here; what follows comes')
   assert.equal((await loadSettings(onB)).auto, false, 'kept on itself, its own Auto')
   assert.deepEqual([(await loadSettings(onB)).offers?.['voice.download'], (await loadSettings(onB)).services], ['T1', { KEYED000000000000000000000: { other: 'allow' } }], 'its own consent to download, and its own choices for a service')
   // A task of a project the bundle didn't bring arrives; the project is deleted while paired, then the profile is filled again.
@@ -1307,7 +1365,7 @@ test('joining keeps what this device turned off of its own, and its Auto when ke
   await onB.remove(WORK)
   await alone(onB, me.id, T + 10, b.id)
   const more = { ...bundle, projects: [...bundle.projects, { path: `${WORK}/project.md`, text: project({ name: 'Work' }) }] }
-  await refill(context(onB, await identity(), T + 20).ctx, more)
+  await merge(context(onB, await identity(), T + 20).ctx, more)
   assert.equal(await onB.exists(WORK), false)
 })
 
@@ -1425,7 +1483,7 @@ test('a device removed and filled again in place keeps the removals it made itse
   const you = recordFor(b, 'iPhone', clock.now, A.me.id)
   boxes.set(you.id, [])
   const again = { ...context(B.fs, { ...b, id: you.id }, clock.now).ctx, send: async (/** @type {any} */ to, /** @type {any} */ value) => boxes.get(to.id)?.push({ from: you.id, value: structuredClone(value) }) }
-  await refill(again, await bundleOf(A.ctx, { dir: `profiles/${ulid(T)}-ada`, name: 'Ada' }, you))
+  await merge(again, await bundleOf(A.ctx, { name: 'Ada' }, you))
   await writeRecord(A.fs, you)
   await share(A.ctx)
   const kept = await listOf(B.fs)
@@ -1441,7 +1499,7 @@ test('a device removed and filled again in place keeps the removals it made itse
   await alone(B.fs, A.me.id, clock.now, you.id)
   const c = await identity()
   const third = recordFor(c, 'iPhone', clock.now, A.me.id)
-  await refill(context(B.fs, { ...c, id: third.id }, clock.now).ctx, await bundleOf(A.ctx, { dir: `profiles/${ulid(T)}-ada`, name: 'Ada' }, third))
+  await merge(context(B.fs, { ...c, id: third.id }, clock.now).ctx, await bundleOf(A.ctx, { name: 'Ada' }, third))
   assert.equal(Boolean((await listOf(B.fs)).find((one) => one.id === f.id)?.removedAt), false)
 })
 
@@ -1518,15 +1576,15 @@ test('a project kept on this device stays out of a bundle, and one the adding de
   await fsL.write(`${THERAPY}/project.md`, project({ name: 'Therapy', cloud: false }) + 'Notes from my sessions.')
   // The laptop adds the phone: the project kept on it stays.
   const p = await identity()
-  const bundle = await bundleOf(context(fsL, l).ctx, { dir: `profiles/${ulid(T)}-ada`, name: 'Ada' }, recordFor(p, 'Phone', T, l.id))
+  const bundle = await bundleOf(context(fsL, l).ctx, { name: 'Ada' }, recordFor(p, 'Phone', T, l.id))
   const fsP = memoryFS()
-  await adopt(fsP, bundle, { settings: { ...DEFAULT_SETTINGS }, catalogue: CATALOGUE, me: p, now: T })
+  await merge(context(fsP, p).ctx, bundle)
   assert.deepEqual([await fsP.exists(THERAPY), await fsP.exists(`${HEALTH}/project.md`)], [false, true])
   // The laptop deletes Health while paired, is removed with Jean kept, and added again in place from the phone: Health stays deleted.
   await fsL.remove(HEALTH)
   await alone(fsL, p.id, T + 10, l.id)
   const again = await identity()
-  await refill(context(fsL, again, T + 20).ctx, await bundleOf(context(fsP, p, T + 20).ctx, { dir: `profiles/${ulid(T)}-ada`, name: 'Ada' }, recordFor(again, 'Laptop', T + 20, p.id)))
+  await merge(context(fsL, again, T + 20).ctx, await bundleOf(context(fsP, p, T + 20).ctx, { name: 'Ada' }, recordFor(again, 'Laptop', T + 20, p.id)))
   assert.deepEqual([await fsL.exists(HEALTH), await fsL.exists(THERAPY)], [false, true])
 })
 
@@ -1563,7 +1621,7 @@ test('a device removed, paired anew from itself, then removed and added again in
   // The tablet removes it, Jean kept, and adds it again in place.
   await alone(fs, tablet.id, T + 30, again.id)
   const bundle = { devices: [recordOfIt(tablet, 'Tablet'), recordFor(second, 'Device', T + 20, again.id), recordFor(last, 'Phone', T + 40, tablet.id)] }
-  await refill(context(fs, last, T + 40).ctx, bundle)
+  await merge(context(fs, last, T + 40).ctx, bundle)
   const list = await listOf(fs)
   assert.deepEqual([tablet, second, last].map((one) => Boolean(list.find((held) => held.id === one.id)?.removedAt)), [false, false, false])
 })
@@ -1663,7 +1721,7 @@ test('a tab still listening as an identity this device no longer has acts on not
   const b2 = await identity()
   const you = recordFor(b2, 'Desktop', clock.now, A.me.id)
   boxes.set(you.id, [])
-  await refill(context(B.fs, { ...b2, id: you.id }, clock.now).ctx, await bundleOf(A.ctx, { dir: `profiles/${ulid(T)}-ada`, name: 'Ada' }, you))
+  await merge(context(B.fs, { ...b2, id: you.id }, clock.now).ctx, await bundleOf(A.ctx, { name: 'Ada' }, you))
   await writeRecord(A.fs, you)
   await share(A.ctx)
   // Another tab of B, hidden throughout, opens the old mailbox again; C's late notice to the old identity lands there.
@@ -1691,9 +1749,9 @@ test('Home kept on this device goes as Home alone, its front matter without a wo
   const { fs: fsA, me: a } = await profileA()
   await fsA.write(`${HOME}/project.md`, project({ default: true, name: 'Home', colour: 'blue', cloud: false, assistantName: 'Jo' }) + 'My private instructions.')
   const p = await identity()
-  const bundle = await bundleOf(context(fsA, a).ctx, { dir: `profiles/${ulid(T)}-ada`, name: 'Ada' }, recordFor(p, 'Phone', T, a.id))
+  const bundle = await bundleOf(context(fsA, a).ctx, { name: 'Ada' }, recordFor(p, 'Phone', T, a.id))
   const fsP = memoryFS()
-  await adopt(fsP, bundle, { settings: { ...DEFAULT_SETTINGS }, catalogue: CATALOGUE, me: p, now: T })
+  await merge(context(fsP, p).ctx, bundle)
   const home = await fsP.read(`${HOME}/project.md`) ?? ''
   assert.deepEqual([home.includes('My private'), home.includes('Jo'), /default: true/.test(home), /cloud: false/.test(home), /colour: blue/.test(home)], [false, false, true, true, true])
 })
@@ -1710,24 +1768,6 @@ test('a brain this device has never takes headers from elsewhere, and none of th
   const brains = (await loadSettings(A.fs)).brains
   assert.deepEqual([brains[0].headers, brains.find((one) => one.id === OTHER.id)?.headers], [undefined, OTHER.headers])
   assert.equal(headersFor({ ...brains[0], headers: { Authorization: 'Bearer thief' } }, await getSecret(A.fs, BRAINS[0].id) ?? undefined).authorization, 'Bearer sk')
-})
-
-test('joining brings the open profile’s own settings only when it is the first run’s, never those of one with work, maybe another person’s', async () => {
-  const { fs, me } = await profileA()
-  const dad = /** @type {any} */ ({ ...DEFAULT_SETTINGS, rules: { delete: 'allow' }, services: { KEYED000000000000000000000: { send: 'allow' } }, forget: 30, brains: [brain('plan', 'claudecode', 'http://127.0.0.1:23001/v1')],
-    connections: [{ id: 'LCL00000000000000000000000', name: 'Mail', url: 'http://localhost:3000/', auth: 'key' }], unlocked: ['files', 'machine'] })
-  const open = memoryFS({ 'settings.json': JSON.stringify(dad), '.secrets/keys.json': JSON.stringify({ 'computer-bridge': '{"port":1}', LCL00000000000000000000000: 'dad-mail' }), [`${WORK}/project.md`]: project({ name: 'Work' }) })
-  assert.equal(await broughtFrom(open, dad), null)
-  const mom = await identity()
-  const bundle = await bundleOf(context(fs, me).ctx, { dir: `profiles/${ulid(T)}-mom`, name: 'Mom' }, recordFor(mom, 'Computer', T, me.id))
-  const made = memoryFS()
-  await adopt(made, bundle, { settings: await broughtFrom(open, dad) ?? DEFAULT_SETTINGS, catalogue: CATALOGUE, me: mom, now: T })
-  const there = await loadSettings(made)
-  assert.deepEqual([there.rules, there.services, there.forget, there.brains.some((one) => one.id === 'plan'), (there.connections ?? []).some((one) => one.id === 'LCL00000000000000000000000')], [DEFAULT_SETTINGS.rules, undefined, undefined, false, false])
-  assert.deepEqual([await getSecret(made, 'computer-bridge'), await getSecret(made, 'LCL00000000000000000000000')], [null, null])
-  // From the first run's profile, which holds nothing, its own settings come.
-  const first = memoryFS({ 'settings.json': JSON.stringify({ ...DEFAULT_SETTINGS, voice: 'Kyoko' }) })
-  assert.equal((await broughtFrom(first, { ...DEFAULT_SETTINGS, voice: 'Kyoko' }))?.voice, 'Kyoko')
 })
 
 test('a list that changes this one is marked as waiting, with what it owes, before it is written, so a tab closed between still sends both as Jean opens', async (t) => {
@@ -1779,21 +1819,7 @@ test('approvals follow as services do: an Ask first or a Never goes, the stricte
   assert.deepEqual((await loadSettings(B.fs)).rules, { other: 'never', read: 'never', delete: 'never' })
 })
 
-test('a profile locked, or set up, is never untouched: joining neither brings its settings nor removes it; the first run’s, a voice or this device’s brain picked, still is', async () => {
-  const first = { ...DEFAULT_SETTINGS, voice: 'Kyoko', brains: [{ id: ulid(T), provider: 'device', api: 'device', baseURL: '', model: 'gemma' }] }
-  const home = { [`${HOME}/project.md`]: project({ default: true, name: 'Home' }) }
-  const fresh = memoryFS({ 'settings.json': JSON.stringify(first), '.secrets/vault.json': JSON.stringify({ format: 1, slots: [{ kind: 'device' }] }), ...home })
-  assert.deepEqual([await untouched(fresh), (await broughtFrom(fresh, /** @type {any} */ (first)))?.voice], [true, 'Kyoko'])
-  const locked = memoryFS({ 'settings.json': JSON.stringify(first), '.secrets/vault.json': JSON.stringify({ format: 1, slots: [{ kind: 'password' }, { kind: 'recovery' }] }), ...home })
-  assert.equal(await untouched(locked), false, 'a lock set')
-  const setUps = /** @type {Record<string, any>[]} */ ([{ rules: { delete: 'allow' } }, { services: { X: { send: 'allow' } } }, { forget: 30 }, { limit: 5 }, { pages: { sites: ['*'] } }, { films: true },
-    { brains: [{ id: ulid(T), provider: 'ollama', api: 'openai', baseURL: 'http://localhost:11434/v1', model: 'q' }] }, { connections: [{ id: ulid(T), name: 'Mail', url: 'http://localhost:3333/mcp', auth: 'none' }] }])
-  for (const change of setUps) assert.equal(await untouched(memoryFS({ 'settings.json': JSON.stringify({ ...first, ...change }), ...home })), false, JSON.stringify(change))
-  // An approval as it is anyway, set by hand, is no change.
-  assert.equal(await untouched(memoryFS({ 'settings.json': JSON.stringify({ ...first, rules: { fetch: 'ask' } }), ...home })), true)
-})
-
-test('alone() writes down the devices it sets aside before marking any removed, one tab at a time, and refill() forgets them only once its list is written', async (t) => {
+test('alone() writes down the devices it sets aside before marking any removed, one tab at a time, and merge() forgets them only once its list is written', async (t) => {
   t.mock.method(console, 'warn', () => {})
   const [a, p, c, d, again] = await Promise.all(Array.from({ length: 5 }, () => identity()))
   const fresh = async () => {
@@ -1825,26 +1851,12 @@ test('alone() writes down the devices it sets aside before marking any removed, 
   const slow = new Proxy(two, { get: (target, key) => (key !== 'read' ? target[key] : async (/** @type {string} */ path) => { if (path === '.secrets/keys.json') await firstDone; return target.read(path) }) })
   await Promise.all([alone(two, a.id, T, p.id, turn).then(ended), alone(slow, a.id, T, p.id, turn)])
   assert.deepEqual(await left(two), expected)
-  // Added again in place, the refill failing as it writes the new list, then tried again: C and D, set aside, are back.
+  // Added again in place, the join failing as it writes the new list, then tried again: C and D, set aside, are back.
   const bundle = { devices: [recordOfIt(a, 'Device'), recordOfIt(c, 'Device'), recordOfIt(d, 'Device'), recordFor(again, 'Phone', T + 10, a.id)] }
-  await assert.rejects(refill(context(closing(one, (path) => path === '.secrets/keys.json', true), { ...again, id: bundle.devices[3].id }, T + 10).ctx, bundle))
-  await refill(context(one, { ...again, id: bundle.devices[3].id }, T + 10).ctx, bundle)
+  await assert.rejects(merge(context(closing(one, (path) => path === '.secrets/keys.json', true), { ...again, id: bundle.devices[3].id }, T + 10).ctx, bundle))
+  await merge(context(one, { ...again, id: bundle.devices[3].id }, T + 10).ctx, bundle)
   const list = await listOf(one)
   assert.deepEqual([c, d].map((dev) => Boolean(list.find((held) => held.id === dev.id)?.removedAt)), [false, false])
-})
-
-test('joining from a profile with a lock unlocks Lock in the new one, whatever came, so that it opens on it', async () => {
-  const { fs, me } = await profileA()
-  const b = await identity()
-  const bundle = await bundleOf(context(fs, me).ctx, { dir: `profiles/${ulid(T)}-ada`, name: 'Ada' }, recordFor(b, 'Laptop', T, me.id))
-  assert.equal((await loadSettings(fs)).unlocked.includes('lock'), false)
-  const made = memoryFS()
-  await adopt(made, bundle, { settings: DEFAULT_SETTINGS, catalogue: CATALOGUE, me: b, now: T, lock: true })
-  const unlocked = (await loadSettings(made)).unlocked
-  assert.deepEqual([unlocked.includes('devices'), unlocked.includes('lock')], [true, true])
-  const plain = memoryFS()
-  await adopt(plain, bundle, { settings: DEFAULT_SETTINGS, catalogue: CATALOGUE, me: b, now: T })
-  assert.equal((await loadSettings(plain)).unlocked.includes('lock'), false)
 })
 
 test('a service’s Ask first is kept as it comes, whatever this device’s rule for its kind then, so an Always allow of the kind set here later never loosens it', async (t) => {
@@ -1875,7 +1887,7 @@ test('alone() run again keeps what it set aside then and what it has now: a devi
   assert.deepEqual([...(await readJSON(fs, TIMES)).left].sort(), [x.id, c.id, y.id].sort())
   // Added again in place by A: Y is live, never one of its removals.
   const you = recordFor(again, 'Phone', T + 20, a.id)
-  await refill(context(fs, { ...again, id: you.id }, T + 20).ctx, { devices: [recordOfIt(a, 'Device'), recordOfIt(c, 'Device'), recordFor(y, 'Device', T, c.id), you] })
+  await merge(context(fs, { ...again, id: you.id }, T + 20).ctx, { devices: [recordOfIt(a, 'Device'), recordOfIt(c, 'Device'), recordFor(y, 'Device', T, c.id), you] })
   assert.equal(Boolean((await listOf(fs)).find((one) => one.id === y.id)?.removedAt), false)
 })
 

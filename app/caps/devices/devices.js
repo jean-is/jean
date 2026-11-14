@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 // Your devices (D45, D700): a person's devices paired, each with keys of its own in each profile and a mailbox on the relay (ui/relay.js).
 // Adding one is a state machine the screens (./page.js) drive through `adding`, joining one through `joining`, which asks the person
-// before it starts and again before the profile that came opens; once paired, each device listens on its mailbox for the devices the
+// before it starts and again before the profile open here joins the one that came; once paired, each device listens on its mailbox for the devices the
 // profile knows, settings and keys that follow the person, a task handed over, or its own removal. The steps are pure in ./pair.js, what
 // crosses in ./bundle.js, and what a device keeps and does with what comes in ./flow.js.
 import { html, svg, nothing } from 'lit-html'
 import { signal, effect, computed } from '@preact/signals-core'
 import { register, unlock } from '../../ui/caps.js'
 import { app, changeSettings, rememberUnlocked, refreshConversations, refreshProjects, brainLabel, notify, pairs } from '../../ui/state.js'
-import { PLACE, here, mine } from '../../ui/opfs.js'
+import { here, mine } from '../../ui/opfs.js'
 import { host } from '../../ui/host.js'
 import { handheld } from '../../ui/model.js'
 import { lazyPage } from '../../ui/lazy-page.js'
@@ -16,21 +16,21 @@ import { styleSheet } from '../../ui/sheet.js'
 import { icon, icons } from '../../ui/menu-icons.js'
 import { ghost } from '../../ui/map.js'
 import { t, useStrings, useLocale, relativeTime, intlLocales } from '../../core/i18n.js'
-import { switchTo, initialOf, whoOf } from '../../ui/curtain.js'
+import { switchTo, whoOf } from '../../ui/curtain.js'
 import { getSecret, setSecret } from '../../ui/secrets.js'
-import { VAULT, boxPair, fingerprintOf, close, deviceKey } from '../../ui/seal.js'
+import { VAULT, boxPair, fingerprintOf } from '../../ui/seal.js'
 import { mailbox, open, send, read, remove, listen, reader } from '../../ui/relay.js'
-import { DEFAULT_SETTINGS, loadSettings, serviceURL } from '../../core/settings.js'
+import { loadSettings, serviceURL } from '../../core/settings.js'
 import { ulid } from '../../core/ulid.js'
 import { BRAND } from '../../brand.js'
 import { base64url, hashOf, random } from '../share/seal.js'
 import { linkOf, parseLink, pairingBox, sealHello, openHello, sealNonce, openNonce, sealReveal, openReveal, codeOf, sameCode, envelope, openEnvelope } from './pair.js'
-import { SECRET, STORE, LIMIT, ULID, PROFILE, deviceName, recordOf, recordFor, recordsOf, listOf, sameKey, writeRecord, writeOwn, inPlace, tell, look, mark, share, unreached, known, quiet, followsOf, bundleOf, adopt, refill, untouched, broughtFrom, taskOf, receive, removal, back, firstOf, alone } from './flow.js'
+import { SECRET, STORE, LIMIT, ULID, deviceName, recordOf, recordFor, recordsOf, listOf, sameKey, writeRecord, writeOwn, inPlace, tell, look, mark, share, unreached, known, quiet, followsOf, bundleOf, merge, taskOf, receive, removal, back, firstOf, alone } from './flow.js'
 
 /** @typedef {import('./flow.js').Identity} Identity */
 /** @typedef {import('./flow.js').Device} Device */
 /** @typedef {import('./flow.js').Context} Context */
-/** Why a pairing failed. @typedef {'link' | 'used' | 'gone' | 'key' | 'child' | 'relay' | 'storage' | 'exists' | 'tries' | 'broken'} Reason */
+/** Why a pairing failed. @typedef {'link' | 'used' | 'gone' | 'key' | 'child' | 'relay' | 'storage' | 'exists' | 'paired' | 'removed' | 'tries' | 'broken'} Reason */
 /**
  * Adding a device, on the one that has the Jean: the link to show, with Jean's web address (none in the desktop app: the link is then only
  * pasted), B's name, the lock to ask first where the profile has one (caps/lock/lock.js's ways(passed)), the code and the tries left, sending,
@@ -40,7 +40,7 @@ import { SECRET, STORE, LIMIT, ULID, PROFILE, deviceName, recordOf, recordFor, r
 /**
  * Joining, on the new device: a link that came, what it does said and Join asked for; first, in an iPhone's Safari, adding Jean to the
  * Home Screen, whose Jean keeps files of its own, the link kept to paste there; waiting for A, the code to show, the profile that came
- * and the device it came from, to open or not, the profile being made, then made; or why it failed.
+ * and the device it came from, to join or not, the profile open here joining it, then joined; or why it failed.
  * @typedef {{ step: 'idle' | 'waiting' | 'adopting' | 'done' } | { step: 'ask' | 'home', link: string } | { step: 'code', code: string } | { step: 'trust', profile: string, device: string }
  *   | { step: 'failed', reason: Reason }} Joining
  */
@@ -316,7 +316,7 @@ export async function confirm(typed) {
   try {
     const [ctx, you] = [await contextOf(me), recordFor({ id: ulid(), public: hello.key, mailbox: hello.mailbox }, hello.name, now(), me.id)]
     const kept = JSON.parse(await app.fs.read(VAULT) ?? '{}')
-    const bundle = await bundleOf(ctx, { dir: here(), name: kept.name ?? '', ...(kept.colour && { colour: kept.colour }) }, you)
+    const bundle = await bundleOf(ctx, { name: kept.name ?? '', ...(kept.colour && { colour: kept.colour }) }, you)
     await send(relayOf(), hello.mailbox, await envelope(me, hello.key, bundle))
     // B shows what came and asks before it opens it: only then is it one of this profile's devices, which B waits to hear before it
     // makes anything. Then every device has the list, B too, whose mailbox, read in order, holds it before anything a device removed
@@ -354,7 +354,8 @@ async function nextFrom(next, me, key, take) {
 /**
  * Joins the person's other device, on B, from its link, once the person chose Join: this device's keys and mailbox made, the hello sent
  * (a link used already is said so), A's nonce taken only from the link's key, the reveal sent, the code shown, then A's bundle taken only
- * from that key; the profile it names and the device it comes from shown, and only on the person's Join again (trusted()), made here.
+ * from that key; the profile it names and the device it comes from shown, and only on the person's Join again (trusted()), the profile
+ * open here joining it.
  * Its catalogue isn't sent: B leaves out what its own lacks as the bundle and every snapshot arrive.
  * @param {string | { s: Uint8Array, fpA: string } | null} link a link, or what parseLink() gave
  */
@@ -384,10 +385,10 @@ export async function join(link) {
     const bundle = await fromA('bundle')
     // From here, A hears whether its bundle was opened: left, when the person cancels or it can't be taken.
     one.leave = async () => send(base, nonce.mailbox, await envelope(me, nonce.key, { kind: 'left' }))
-    const again = await welcome(bundle, nonce.key)
+    await welcome(nonce.key)
     await next.done()
     const from = (Array.isArray(bundle.devices) ? bundle.devices : []).map(recordOf).find((/** @type {Device | null} */ record) => record && sameKey(record.key, nonce.key))
-    joining.value = { step: 'trust', profile: bundle.profile.name || BRAND.name, device: from?.name ?? '' }
+    joining.value = { step: 'trust', profile: (typeof bundle.profile?.name === 'string' && bundle.profile.name.slice(0, 100)) || BRAND.name, device: from?.name ?? '' }
     await new Promise((resolve, reject) => { one.agree = () => resolve(undefined); one.controller.signal.addEventListener('abort', () => reject(one.controller.signal.reason), { once: true }) })
     // A told, which keeps B, then says so: only then is anything made here. Gone meanwhile (Cancel there, its tab closed), B goes on
     // waiting, and says so, until the person cancels here.
@@ -399,7 +400,7 @@ export async function join(link) {
     await next.done()
     one.leave = undefined
     joining.value = { step: 'adopting' }
-    await adoptHere(bundle, { ...me, id: bundle.you }, one, again, kept.store && { ...kept.store, relay: base, token })
+    await adoptHere(bundle, { ...me, id: bundle.you }, one, kept.store && { ...kept.store, relay: base, token })
   } catch (error) {
     failed(one, joining, error)
   }
@@ -409,55 +410,34 @@ export async function join(link) {
 export const trusted = () => flow?.agree?.()
 
 /**
- * Whether a bundle may be taken here, before the person is asked: a profile named as profiles are, not here already, unless it is the
- * one open here, filled again in place, which only a device removed that kept Jean on its own takes (alone(), no identity left), and
- * only from a device it had and never saw removed: a device removed since can't take back the one that removed it. Gives whether it is
- * that one. @param {any} bundle @param {JsonWebKey} key A's
+ * Whether the profile open here may join the device of this key, before the person is asked: one never paired, or removed and kept on its
+ * own, joins any device but one it removed itself; one paired joins none, already with that one or with others, which add the new one
+ * instead; and one removed is added again in place by the device that removed it (inPlace()). @param {JsonWebKey} key A's
  */
-async function welcome(bundle, key) {
-  const { dir, name } = bundle.profile ?? {}
-  if (!PROFILE.test(dir) || typeof name !== 'string') throw Object.assign(new Error('No profile in the bundle'), { reason: 'broken' })
-  const again = dir === here()
-  if (again ? !await inPlace(app.fs, key) : await app.whole?.exists(dir)) throw Object.assign(new Error('This profile is here already'), { reason: 'exists' })
-  return again
+async function welcome(key) {
+  if (await inPlace(app.fs, key)) return
+  const [me, list] = [await identity(false), await listOf(app.fs)]
+  const known = list.find((one) => sameKey(one.key, key))
+  const reason = me && known && !known.removedAt ? 'exists' : me && list.some((one) => one.id !== me.id && !one.removedAt) ? 'paired'
+    : known?.removedAt && !(await followsOf(app.fs)).left?.includes(known.id) ? 'removed' : null
+  if (reason) throw Object.assign(new Error('This profile can’t join that device'), { reason })
 }
 
 /**
- * A's profile made here under its folder's own name, with a vault of its own, filled before it first opens, with what this device keeps
- * of its own from the profile open until now; the profile first run made removed when nothing was ever done in it; then opened. Joined
- * again where a removal kept this Jean (removed(false)), the profile open is that one, filled again in place; with the store's keys, if any.
- * @param {any} bundle @param {Identity} me @param {Flow} one @param {boolean} again @param {unknown} store
+ * The profile open here joins A's devices, in place (D748): what it holds stays, and goes to them, and what they hold comes (merge()); then the
+ * mailbox of an identity it had alone goes, and people it met under a key of its own are told of the profile's (caps/people); then it
+ * opens again. @param {any} bundle @param {Identity} me @param {Flow} one @param {unknown} store
  */
-async function adoptHere(bundle, me, one, again, store) {
-  const { dir, name, colour } = bundle.profile
-  const tint = typeof colour === 'string' && /^oklch\([\d. ]+\)$/.test(colour) ? colour : undefined
-  const [{ vaulted, into, erase }, { CATALOGUE: catalogue }] = await Promise.all([import('../profiles/made.js'), import('../../ui/discovery.js')])
-  // What this device keeps of its own comes only from the first run's profile, never from one with work, maybe another person's.
-  const brought = again ? null : await broughtFrom(app.fs, app.settings.peek())
-  // The profile left beside it has a lock: the new one has Lock, and opens on it, since it doesn't have one yet.
-  const lock = !again && await lockedHere()
-  const mine = { settings: brought ?? DEFAULT_SETTINGS, catalogue, me, now: now(), policy: app.policy, lock, store }
-  if (again) await refill(await contextOf(me), bundle, store)
-  else try {
-    const raw = random(32)
-    const key = await vaulted(dir, raw, [await close(raw, /** @type {CryptoKey} */ (await deviceKey('make', dir)), { kind: 'device' })], { name, ...(tint && { colour: tint }) })
-    raw.fill(0)
-    const { worker, fs } = await into(dir, key)
-    try { await adopt(fs, bundle, mine) } finally { worker.terminate() }
-  } catch (error) {
-    await app.whole?.remove(dir)
-    await deviceKey('forget', dir)
-    throw error
-  }
+async function adoptHere(bundle, me, one, store) {
+  const had = await identity(false)
+  const { was, met } = await merge(await contextOf(me), bundle, store)
+  if (had) await remove(relayOf(), had.token).catch(() => {})
+  if (was) await (met.length && await unlock('people') ? (await import('../people/people.js')).carried(was, met) : remove(relayOf(), was.token)).catch(warn)
   one.boxes.length = 0
-  // Done, said a moment before the switch, which reloads the page.
+  // Done, said a moment before the profile opens again, which reloads the page.
   joining.value = { step: 'done' }
   await new Promise((resolve) => setTimeout(resolve, 1500))
-  // Never a profile another's names as its parent: its family key would go with it, and the child's settings stay locked.
-  const parent = (await Promise.all((await app.whole?.list('profiles') ?? []).map(async ({ name }) => JSON.parse(await app.whole?.read(`profiles/${name}/${VAULT}`) ?? 'null')?.parent?.profile))).includes(here())
-  if (brought && !parent && await untouched(app.fs)) await erase(here())
-  if (lock) sessionStorage.setItem(`${PLACE}:${dir}`, JSON.stringify({ place: '#/settings/privacy/lock', caret: null }))
-  switchTo(dir, { name, initial: initialOf(name), colour: tint })
+  switchTo(here(), whoOf(JSON.parse(await app.fs.read(VAULT) ?? 'null')))
 }
 
 /**

@@ -11,7 +11,7 @@ import { parse, parseDoc, titled, serialize, same, schema, blockMarkdown, sliceM
 import { bare } from '../app/caps/documents/clipboard.js'
 import { diff, tints } from '../app/caps/documents/suggest.js'
 import { BlockSelection, blockRange, moveBlocks, units } from '../app/caps/documents/blocks.js'
-import { merge3 } from '../app/ui/merge.js'
+import { merge2, merge3 } from '../app/ui/merge.js'
 import { spot, place } from '../app/caps/together/carets.js'
 
 const ROOT = new URL('../', import.meta.url)
@@ -335,6 +335,15 @@ test('two versions of a document merge line by line from the one both came from:
   const merged = merge3(long, long.replace('Line 15000.', 'Line fifteen thousand.'), long.replace('Line 15010.', 'Line 15 010.'))
   assert.equal(merged, long.replace('Line 15000.', 'Line fifteen thousand.').replace('Line 15010.', 'Line 15 010.'))
   assert.equal(merge3(long, `${long}\nmine`, `theirs\n${long}`), null)
+})
+
+test('two versions with none both came from merge from the lines both hold: what only one has stays, both where they differ, the same once', () => {
+  const mine = '# Memory\n\n- Likes tea\n- Lives in Lyon\n- Has a cat\n'
+  const theirs = '# Memory\n\n- Likes tea\n- Lives in Paris\n- Speaks Japanese\n'
+  assert.equal(merge2(mine, mine), mine)
+  assert.equal(merge2(mine, theirs), '# Memory\n\n- Likes tea\n- Lives in Lyon\n- Has a cat\n\n- Lives in Paris\n- Speaks Japanese\n')
+  assert.equal(merge2('', theirs), theirs)
+  assert.equal(merge2(Array.from({ length: 3000 }, (_, i) => `${i}`).join('\n'), Array.from({ length: 3000 }, (_, i) => `${i}.`).join('\n')), null, 'too long to line up')
 })
 
 test('another person’s caret is found where it is in this copy, whatever changed above it meanwhile, and nonsense never throws', () => {

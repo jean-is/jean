@@ -54,7 +54,7 @@ const addressOf = (kind, item) => canon((kind === 'brains' ? ['baseURL', 'provid
 /** A brain another device can use: no plan through the bridge, no organisation's sign-in, nothing local. @param {import('../../core/types.js').BrainConfig} brain */
 const goes = (brain) => !/^(claudecode|copilot|chatgpt)$/.test(brain.provider) && brain.auth !== 'oidc' && !isLocal(brain)
 /** JSON with keys in order, so that equal values compare equal; a field cleared, absent or null, is null. @param {unknown} value */
-const canon = (value) => JSON.stringify(value ?? null, (_, one) => (one && typeof one === 'object' && !Array.isArray(one) ? Object.fromEntries(Object.keys(one).sort().map((key) => [key, one[key]])) : one))
+export const canon = (value) => JSON.stringify(value ?? null, (_, one) => (one && typeof one === 'object' && !Array.isArray(one) ? Object.fromEntries(Object.keys(one).sort().map((key) => [key, one[key]])) : one))
 /** Whether theirs wins over mine: newer, or as new and the greater, so that both sides settle on one. @param {number} at @param {unknown} value @param {number} mine @param {unknown} held */
 export const wins = (at, value, mine, held) => at > mine || (at === mine && canon(value) > canon(held))
 /** @param {Partial<Times>} [times] @returns {Times} */
@@ -92,25 +92,6 @@ function tighter(mine, theirs, floor = () => 0) {
 }
 /** How strict a kind of action's rule is, by these approvals, else the usual one (core/rules.js). @param {Record<string, any>} [rules] */
 const ruleOf = (rules) => (/** @type {string} */ kind) => /** @type {Record<string, number>} */ (STRICT)[rules?.[kind] ?? DEFAULT_RULES[kind] ?? 'ask']
-
-/**
- * What of a device's settings stays on it when another device's profile comes (adopt() in ./flow.js): every field that doesn't
- * follow, and of those that do, the brains it alone runs, its connections and addresses on this computer, its own capabilities,
- * the brain chosen when it is one of those, what it turned off of its own, its approvals and choices for services, its consents to
- * download, and, kept on this device, its own Auto.
- * @param {Settings} settings @returns {Partial<Settings>}
- */
-export function ownOf(settings) {
-  const out = /** @type {Record<string, any>} */ (Object.fromEntries(Object.entries(settings).filter(([name]) => !FOLLOWS.includes(/** @type {any} */ (name)))))
-  const [connections, urls] = [(settings.connections ?? []).filter((connection) => here(connection.url)), ownURLs(settings.urls)]
-  Object.assign(out, { brains: settings.brains.filter((brain) => !goes(brain)), unlocked: settings.unlocked.filter((id) => OWN.includes(id)) },
-    connections.length > 0 && { connections }, Object.keys(urls).length > 0 && { urls })
-  out.activeBrain = out.brains.some((/** @type {{ id: string }} */ brain) => brain.id === settings.activeBrain) ? settings.activeBrain : null
-  const off = settings.off?.filter((id) => LOCAL_OFF.includes(id)) ?? []
-  const offers = Object.fromEntries(Object.entries(settings.offers ?? {}).filter(([id]) => OWN_OFFERS.includes(id)))
-  Object.assign(out, off.length > 0 && { off }, settings.cloud === false && { auto: settings.auto }, settings.services && { services: settings.services }, { rules: settings.rules }, Object.keys(offers).length > 0 && { offers })
-  return out
-}
 
 /**
  * The times again after a change of settings: now for each field, brain and connection that changed, a tombstone for one
@@ -154,7 +135,7 @@ const whole = (name, entry, id) => entry !== null && typeof entry === 'object' &
 
 /**
  * Another device's snapshot over this one's settings, each time no later than `now`, anything malformed left out: for each field and
- * item the newest wins and a tombstone removes, but what this device keeps for itself (ownOf()) stays as it is; a field
+ * item the newest wins and a tombstone removes, but what this device keeps for itself stays as it is; a field
  * cleared there is cleared here, back to its default where it has one; `unlocked`, `maskWords`, `guards`, `off`, `offers`, `services` and
  * `rules` take both, the last two the stricter; this device keeps its own addresses, and where its items' keys go. Only what changed is in the patch, a field cleared in it as undefined.
  * @param {Settings} settings @param {Partial<Times>} times @param {Snapshot} snapshot @param {number} [now] @returns {{ patch: Partial<Settings>, times: Times }}

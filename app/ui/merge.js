@@ -3,7 +3,8 @@
 // the longest run of lines they share (`steps`, which Jean's changes in a document use too). A part changed
 // on one side alone takes that side's; changed on both, the same, it is taken once; changed on both apart,
 // both stay, this side's first, so nothing anyone wrote is lost. Sync merges a Markdown file changed on two
-// computers with it (caps/sync/mirror.js), and a document's editor what came in as it was typed in. Pure.
+// computers with it (caps/sync/mirror.js), from the lines both hold where they never had a version in common
+// (merge2), and a document's editor what came in as it was typed in. Pure.
 
 /**
  * How two lists line up (their longest common subsequence): [i, j] the same in both, [i, -1] or [-1, j] in one only.
@@ -55,4 +56,14 @@ export function merge3(base, mine, theirs) {
     i = k + 1, ja = ea + 1, jb = eb + 1
   }
   return [...out, ...all[0].slice(all[0].length - end)].join('\n')
+}
+
+/**
+ * What two versions of a text make with no version both came from, two devices' that never met: the lines both hold, in order, taken as
+ * that version, so a part only one side has stays, and both sides' where they differ, this side's first. Null when too long to line up.
+ * @param {string} mine @param {string} theirs @returns {string | null}
+ */
+export function merge2(mine, theirs) {
+  const [a, b] = [mine, theirs].map((text) => text.split('\n'))
+  return a.length * b.length > 4e6 ? null : merge3(steps(a, b, (x, y) => x === y).filter(([i, j]) => i >= 0 && j >= 0).map(([i]) => a[i]).join('\n'), mine, theirs)
 }

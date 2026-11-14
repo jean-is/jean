@@ -9,7 +9,7 @@ import { fingerprintOf } from '../app/ui/seal.js'
 import { bytesOf } from '../app/caps/share/seal.js'
 import { pairingBox, codeOf, envelope } from '../app/caps/devices/pair.js'
 import { memoryFS } from '../app/core/fs.js'
-import { personOf, peopleOf, invite, heardHello, heardReveal, confirmed, accept, heardNonce, heardMet, received, forget, tidy, metId, nameId, WEEK, sendTo, arrivalsOf, ARRIVALS, turn, letter, madePerson } from '../app/caps/people/flow.js'
+import { personOf, peopleOf, invite, heardHello, heardReveal, confirmed, accept, heardNonce, heardMet, received, forget, tidy, metId, nameId, WEEK, sendTo, arrivalsOf, ARRIVALS, turn, carry, letter, madePerson } from '../app/caps/people/flow.js'
 import { lists, listed, find, keep, introduced, trust, vetted } from '../app/caps/people/colleagues.js'
 import { ISSUER, JWKS, POLICY, idTokenOf } from './fixtures/fake-issuer.js'
 
@@ -211,6 +211,33 @@ test('a device removed turns the profile’s key: each person takes the new key 
   assert.equal((await arrivalsOf(bob))[0]?.title, 'After')
   await sendTo(bob, fpA, { title: 'Back', words: '', value: VALUE, thread: THREAD }, 'reply')
   assert.equal((await received(ana, await next(now.token)))?.kind, 'reply')
+  assert.equal(await read(BASE, was.token).then(() => 'open', (error) => error.status), 404)
+})
+
+test('a device that met someone before it joined the person’s others takes their key: that someone takes it from the key they knew, and what goes after reaches them', async () => {
+  relayed()
+  const { ana, bob, fpA, fpB } = await met()
+  // Ana's phone, where she met Bob, joins her computer, whose profile holds another person: the phone takes that one, and tells Bob.
+  const [was, computer] = [await personOf(ana), await madePerson()]
+  await sendTo(bob, fpA, { title: 'Before', words: '', value: VALUE, thread: THREAD })
+  await received(ana, await next(was.token))
+  await open(BASE, computer.token)
+  const them = (await peopleOf(ana)).map(({ name, ...one }) => one)
+  ana.secrets.person = JSON.stringify(computer)
+  await carry(ana, was, them)
+  const now = await personOf(ana)
+  assert.deepEqual([now.public.x, now.old?.map((one) => one.public.x)], [computer.public.x, [was.public.x]])
+  assert.equal((await received(bob, await next((await personOf(bob)).token)))?.kind, 'met')
+  const [ana2] = await peopleOf(bob)
+  assert.deepEqual([ana2.key.x, ana2.mailbox, ana2.before?.x], [computer.public.x, computer.mailbox, was.public.x])
+  assert.equal((await received(ana, await next(computer.token)))?.kind, 'took')
+  // What Ana sends now opens on Bob's Jean, what came before under the old key still opens, and what he sends reaches her new mailbox.
+  await sendTo(ana, fpB, { title: 'After', words: '', value: VALUE, thread: THREAD })
+  await received(bob, await next((await personOf(bob)).token))
+  assert.equal((await arrivalsOf(bob))[0]?.title, 'After')
+  await sendTo(bob, fpA, { title: 'Back', words: '', value: VALUE, thread: THREAD }, 'reply')
+  assert.equal((await received(ana, await next(computer.token)))?.kind, 'reply')
+  assert.deepEqual((await arrivalsOf(ana)).map((one) => one.title), ['Before', 'Back'])
   assert.equal(await read(BASE, was.token).then(() => 'open', (error) => error.status), 404)
 })
 

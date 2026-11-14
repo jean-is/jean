@@ -330,6 +330,23 @@ export async function turn(ctx) {
 }
 
 /**
+ * The people a device met under a key of its own before it joined the person's other devices, whose key it took (caps/devices, D748):
+ * each told, in a letter from this profile's key with the chain from the one they knew, as a turned key tells them; that pair kept, first
+ * so that a turn of this key still chains from its own, for what was sealed to it, and its mailbox gone. @param {Context} ctx
+ * @param {Person} was @param {Met[]} them as that device held them
+ */
+export async function carry(ctx, was, them) {
+  const [me, said] = [await personOf(ctx), await ctx.said()]
+  const chain = /** @type {Chain} */ ({ kind: 'chain', key: me.public, prior: await fingerprintOf(was.public), mailbox: me.mailbox, at: ctx.now() })
+  await ctx.set({ [PERSON]: JSON.stringify({ ...me, old: [{ key: was.key, public: was.public }, ...me.old ?? []] }) })
+  for (const one of them.filter((person) => person.mailbox && !person.again)) {
+    const sent = { ...parsed(await letter(me, one.key, 'met', { mailbox: me.mailbox, said }, ctx)), chain: decoder.decode(await envelope(was, one.key, chain)) }
+    await send(ctx.base, String(one.mailbox), encoder.encode(JSON.stringify(sent))).catch(() => {})
+  }
+  await remove(ctx.base, was.token).catch(() => {})
+}
+
+/**
  * A chain someone's Jean attached: their new key and mailbox, sealed from the key held for them. Taken from that key, and told back (`took`);
  * one from the key before it naming yet another key is a second turn from one key, which can't be told apart from a stolen device's, so they
  * are to be met again. @param {Context} ctx @param {Person} me @param {Uint8Array} bytes

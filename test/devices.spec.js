@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 // Your devices (D700): a person's devices paired through the relay (relay/, D45 · D226), each its own browser context, so its own
 // storage. The one that has the Jean adds the other from Settings › Your devices (D726): a link, joined on the new one only once
-// the person chooses Join, six digits the new one shows, typed there, and the new one, asked again, opens the same profile, with the
-// brains and keys that cross and none of those that never do; settings then follow the person, a task goes from one to the other from
-// its menu, and a device removed erases Jean there. Playwright's
+// the person chooses Join, six digits the new one shows, typed there, and the new one, asked again, joins its own profile to the
+// other's, keeping all it holds, with the brains and keys that cross and none of those that never do; settings then follow the person,
+// tasks go both ways, and a device removed erases Jean there. Playwright's
 // WebKit keeps nothing (a private window's storage), where a device is neither added nor joined: there, the exchange itself runs
 // between two pages, from the modules, against the relay.
 import { readFile, readdir } from 'node:fs/promises'
@@ -127,7 +127,7 @@ async function joinThere(b) {
   await expect(flow.locator('.rail > li')).toHaveText(['Show the code', 'Match the digits', 'Done'])
   await expect(flow.locator('.rail [aria-current="step"]')).toHaveText('Show the code')
   await expect(flow.getByRole('heading')).toHaveText('Bring your Jean here?')
-  await expect(flow.locator('p').first()).toHaveText('Your Jean on your other device comes to this one, with its brains, settings and projects. You then type six digits there.')
+  await expect(flow.locator('p').first()).toHaveText('Your Jean here and your Jean on your other device become one: each gets what the other has, its brains, settings, tasks and projects. You then type six digits there.')
   await flow.getByRole('button', { name: 'Bring it here' }).click()
 }
 
@@ -139,7 +139,7 @@ async function trustThere(b, a) {
   await expect(question).toBeFocused()
   await expect(flow.locator('.rail [aria-current="step"]')).toHaveText('Match the digits')
   await expect(flow.locator('.devices-who small')).toHaveText(`From ${await nameOf(a)}`)
-  await expect(flow.locator('.devices-who + .hint')).toHaveText('Only if you just chose Add a device there yourself.')
+  await expect(flow.locator('.devices-who + .hint')).toHaveText('Only if you just chose Add a device there yourself, since what’s here goes there too.')
   await flow.getByRole('button', { name: 'Yes, it’s mine' }).click()
 }
 
@@ -159,25 +159,30 @@ async function typeCode(settings, code) {
   await field.fill(code)
 }
 
-/** A and B paired, B in A's profile and listening, A's Your devices back at rest. Gives A's profile and its Your devices. @param {Page} a @param {Page} b */
+/** A and B paired, B opened again in its own profile, joined, and listening, A's Your devices back at rest. Gives B's profile and A's Your devices. @param {Page} a @param {Page} b */
 async function pair(a, b) {
+  const dir = await here(b)
   const { settings, code } = await exchange(a, b)
   // Typed as the new device shows them, a space between the halves: they go at the sixth digit, without Add.
   await typeCode(settings, `${code.slice(0, 3)} ${code.slice(3)}`)
   await sent(settings, a)
+  const reloaded = b.waitForEvent('load', { timeout: 20_000 })
   await trustThere(b, a)
-  await expect(settings.locator('.devices-said')).toHaveText(/ is added\. It opens with your brains, settings and projects\.$/)
+  await expect(settings.locator('.devices-said')).toHaveText(/ is added\. Each now gets what the other has: brains, settings, tasks and projects\.$/)
   // Done on the rail, every step ticked, and on the map, the device just added beside this one.
   await expect(settings.locator('.rail > .is-done')).toHaveCount(3)
   await expect(settings.getByRole('list', { name: 'Your devices' }).getByRole('listitem')).toHaveCount(2)
-  const dir = await here(a)
-  await expect.poll(() => here(b), { timeout: 20_000 }).toBe(dir)
+  // B opens again where it was, on Your devices, which lists both.
+  await reloaded
+  await expect(b.locator('app-settings .devices-cards > li')).toHaveCount(2)
+  await closeSettings(b)
+  expect(await here(b)).toBe(dir)
   await settings.getByRole('button', { name: 'Done' }).click()
   await expect(settings.locator('.devices-cards > li')).toHaveCount(2)
   return { dir, settings }
 }
 
-test('a device added: six digits typed on the one that has the Jean, and the other opens the same profile, with the keys that cross alone', async ({ page, browser }) => {
+test('a device added: six digits typed on the one that has the Jean, and the other joins its own profile to it, with the keys that cross alone', async ({ page, browser }) => {
   await deviceA(page)
   const b = await device(browser)
   // The brain in the cloud, answered by the fake brain, with the key it is asked with.
@@ -190,13 +195,14 @@ test('a device added: six digits typed on the one that has the Jean, and the oth
   const { settings, code } = await exchange(page, b)
   await typeCode(settings, code)
   await sent(settings, page)
+  const reloaded = b.waitForEvent('load', { timeout: 20_000 })
   await trustThere(b, page)
-  await expect(settings.locator('.devices-said')).toHaveText(/ is added\. It opens with your brains, settings and projects\.$/)
-  // B opens A's profile, under its folder's own name, its first-run profile gone.
-  const dir = await here(page)
-  await expect.poll(() => here(b), { timeout: 20_000 }).toBe(dir)
-  expect(first).not.toBe(dir)
-  expect(await profiles(b)).toEqual([dir])
+  await expect(settings.locator('.devices-said')).toHaveText(/ is added\. Each now gets what the other has: brains, settings, tasks and projects\.$/)
+  // B opens again in its own profile, now joined to A's, where it was, on Your devices, which lists both: no other profile is made.
+  await reloaded
+  await expect(b.locator('app-settings .devices-cards > li')).toHaveCount(2)
+  await closeSettings(b)
+  expect([await here(b), await profiles(b)]).toEqual([first, [first]])
   const settled = await settingsOf(b)
   expect(settled.brains.map((/** @type {{ id: string }} */ brain) => brain.id)).toEqual([CLOUD.id])
   expect(settled.activeBrain).toBe(CLOUD.id)
@@ -272,7 +278,7 @@ test('three wrong codes end the adding, on both devices', async ({ page, browser
   // B hears it, rather than waiting for a profile that won't come.
   await expect(b.locator('app-settings .devices-wrong')).toHaveText(said)
   await expect(b.locator('app-settings .digits')).toHaveCount(0)
-  expect(await here(b)).not.toBe(await here(page))
+  expect(await listed(b)).toEqual([])
   await settings.locator('.devices-actions').getByRole('button', { name: 'Close' }).click()
   await expect(settings.getByRole('button', { name: 'Add a device' })).toBeFocused()
   await b.context().close()
@@ -309,6 +315,24 @@ test('a second device opening the same link hears it was already used', async ({
   await expect(c.locator('app-settings .digits')).toHaveCount(0)
   // B's adding goes on.
   await expect(b.locator('app-settings .digits')).toHaveText(/^\d{3} \d{3}$/)
+  await Promise.all([b, c].map((one) => one.context().close()))
+})
+
+test('a device already with others joins no other device: it says so, adds nothing, and the other hears it stopped', async ({ page, browser }) => {
+  await deviceA(page)
+  const b = await device(browser)
+  await pair(page, b)
+  const c = await device(browser)
+  const settings = await devicesPage(c)
+  await settings.getByRole('button', { name: 'Add a device' }).click()
+  await b.goto(await settings.getByRole('textbox', { name: 'The link to open on your other device' }).inputValue())
+  await joinThere(b)
+  const digits = b.locator('app-settings .digits')
+  await expect(digits).toHaveText(/^\d{3} \d{3}$/)
+  await typeCode(settings, String(await digits.textContent()).replace(' ', ''))
+  await expect(b.locator('app-settings .devices-wrong')).toHaveText('This device already syncs with your other devices. Add the new one from here instead.')
+  await expect(settings.locator('.devices-wrong')).toHaveText('Your other device stopped adding this one. Start again there.')
+  expect([(await listed(b)).length, (await listed(c)).length]).toEqual([2, 1])
   await Promise.all([b, c].map((one) => one.context().close()))
 })
 
@@ -475,7 +499,7 @@ test('a device removed with its box unticked keeps Jean on its own, and added ag
   // It forgets who it is, and keeps the devices it knew, listing none, only to be added again in place.
   await expect.poll(() => read(b, '.secrets/keys.json').then((text) => Object.keys(JSON.parse(String(text))).sort())).toEqual([NOTES, CLOUD.id, 'devices', 'search:brave'])
   expect(await b.evaluate(async () => (await import('/caps/devices/devices.js')).devices.value.length)).toBe(0)
-  // Added again: the profile open there is A's, filled again, B's own task kept.
+  // Added again: the profile open there joins A's again, B's own task kept.
   await closeSettings(page)
   const { settings: again, code } = await exchange(page, b)
   const reloaded = b.waitForEvent('load', { timeout: 20_000 })
@@ -490,8 +514,8 @@ test('a device removed with its box unticked keeps Jean on its own, and added ag
   await expect.poll(() => here(b)).toBe(dir)
   expect(await profiles(b)).toEqual([dir])
   expect(await read(b, mine)).not.toBeNull()
-  // Its keys again, the store's among them, A having let its new token in.
-  expect(Object.keys(JSON.parse(String(await read(b, '.secrets/keys.json')))).sort()).toEqual([NOTES, CLOUD.id, 'device', 'devices', 'search:brave', 'store'])
+  // Its keys again, the store's among them, A having let its new token in, and the profile as a person, which it forgot as it was removed.
+  expect(Object.keys(JSON.parse(String(await read(b, '.secrets/keys.json')))).sort()).toEqual([NOTES, CLOUD.id, 'device', 'devices', 'person', 'search:brave', 'store'])
   await again.getByRole('button', { name: 'Done' }).click()
   await expect(again.locator('.devices-cards > li')).toHaveCount(2)
   // And it hears A again.
@@ -536,7 +560,7 @@ test('a locked profile asks for its lock before the six digits', async ({ page, 
   await sent(settings, page)
   await trustThere(b, page)
   await expect(settings.locator('.devices-said')).toHaveText(/ is added\./)
-  await expect.poll(() => here(b), { timeout: 20_000 }).toBe(await here(page))
+  await expect.poll(() => listed(b).catch(() => []), { timeout: 20_000 }).toHaveLength(2)
   await b.context().close()
 })
 
@@ -761,6 +785,25 @@ test('a task made on one device shows on the other through the store, and the re
   const held = (await relayHolds(keysA.sid)).join('\n')
   expect(held.length).toBeGreaterThan(0)
   for (const word of [TITLE, 'Lyon', 'the plan', 'conversations', 'projects', 'key of the cloud']) expect(held).not.toContain(word)
+  await b.context().close()
+})
+
+test('a device with a task and memory of its own joins in place: they stay there and go to the other, whose own come, the memory of both kept', async ({ page, browser }) => {
+  await deviceA(page)
+  const b = await device(browser)
+  const [theirs, mine] = [await taskOn(page, TITLE, 'Plan my trip to Lyon by the sea'), await taskOn(b, 'Bake bread', 'A loaf for Sunday')]
+  for (const [one, text] of /** @type {const} */ ([[page, '- Likes tea\n'], [b, '- Has a cat\n']])) await one.evaluate(async (text) => (await import('/ui/state.js')).app.fs.write('memory.md', text), text)
+  await pair(page, b)
+  // B's task was in its own Home, which folded into the profile's: the same task under A's Home, on both.
+  const there = mine.replace(/^projects\/[^/]+/, String(/^projects\/[^/]+/.exec(theirs)))
+  expect(await read(b, mine)).toBeNull()
+  await expect.poll(async () => { await storeRound(b); return inStore(b) }, { timeout: 20_000 }).toContain(there)
+  await expect.poll(async () => { await storeRound(page); return read(page, there) }, { timeout: 20_000 }).toBe(await read(b, there))
+  await expect.poll(async () => { await storeRound(b); return read(b, theirs) }, { timeout: 20_000 }).toBe(await read(page, theirs))
+  await expect((await openTasks(page)).locator('.history-list li:not([aria-hidden])', { hasText: 'Bake bread' })).toBeVisible()
+  // What each remembered apart, both lines kept, the same on both.
+  const both = async () => { await storeRound(page); await storeRound(b); return Promise.all([page, b].map((one) => read(one, 'memory.md'))) }
+  await expect.poll(async () => ((held) => held[0] === held[1] && /- Likes tea/.test(String(held[0])) && /- Has a cat/.test(String(held[0])))(await both()), { timeout: 20_000 }).toBe(true)
   await b.context().close()
 })
 

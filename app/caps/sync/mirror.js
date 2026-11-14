@@ -5,7 +5,7 @@
 // on one side goes to the other, a deletion too; what changed on both is settled by the file's kind.
 // A conversation grows (unless gone back to a request, D188), so the longer wins; two that went apart both stay, the mirror's as a
 // new conversation; a table's changes and columns merge (D474, D491); a Markdown file's words merge line by line from the
-// version both last had (ui/merge.js); a file named by its hash never differs; anything else, the newer wins. Keys,
+// version both last had, or the lines both hold (ui/merge.js); a file named by its hash never differs; anything else, the newer wins. Keys,
 // caches, settings.json and what drives and systems leave in a folder stay where they are. What a round
 // takes from a conversation here goes only as `removing` lets it, as any removal does (D412).
 import { walk, dirname, readJSON, writeJSON } from '../../core/fs.js'
@@ -52,13 +52,15 @@ function mergedTable(path, x, y) {
 }
 
 /**
- * Two versions of a Markdown file as one, from the version both had: its words line by line, every change of either kept, and
- * the newer one's front matter. Null without that version, or when they can't be lined up: the newer then wins.
+ * Two versions of a Markdown file as one, from the version both had, or without one (two devices that never met, a cache cleared)
+ * from the lines both hold: its words line by line, every change of either kept, and the newer one's front matter. Null when they
+ * can't be lined up: the newer then wins.
  * @param {Uint8Array | null} base @param {Uint8Array} x @param {Uint8Array} y @param {boolean} newer whether x is
  */
 async function mergedText(base, x, y, newer) {
   const [o, a, b] = [base, x, y].map((bytes) => new TextDecoder().decode(bytes ?? undefined))
-  const body = base && (await import('../../ui/merge.js')).merge3(o.slice(head(o).length), a.slice(head(a).length), b.slice(head(b).length))
+  const [{ merge2, merge3 }, mine, theirs] = [await import('../../ui/merge.js'), a.slice(head(a).length), b.slice(head(b).length)]
+  const body = base ? merge3(o.slice(head(o).length), mine, theirs) : merge2(mine, theirs)
   return typeof body === 'string' ? new TextEncoder().encode(head(newer ? a : b) + body) : null
 }
 
