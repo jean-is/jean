@@ -20,7 +20,7 @@ These come from the repository, https://github.com/jean-is/jean, at the version 
 
 - `examples/enterprise/`: a sign-in (Dex), a gateway (LiteLLM), a relay and Jean, working together on one computer. Its README's "Make it yours" lists every place an address appears.
 - `app/schemas/policy.schema.json`, also served by every copy of Jean at `/schemas/policy.schema.json`: every field Jean reads. Never write a field it doesn't have.
-- `docs/enterprise.md`: what each part of the policy does, signing in at work (Entra ID step by step) and hosted copies.
+- `docs/enterprise.md`: what each part of the policy does, signing in at work (Entra ID and Google Workspace step by step) and hosted copies.
 - `deploy/README.md`: the header set, the file types, and recipes for IIS, Azure Static Web Apps, S3 behind CloudFront and a container.
 
 Without a terminal, as when Jean itself follows this skill, write `policy.json` and the checklists below, and leave the files and servers to the person.
@@ -30,7 +30,7 @@ Without a terminal, as when Jean itself follows this skill, write `policy.json` 
 Ask in one message, and only what neither the person nor their files have told you. A brand book, a PowerPoint template or a logo file answers the first question: take the colours, the typeface's feel and the logo from it.
 
 1. **Name and look:** the organisation's name, its logo (SVG best, or PNG), its colours as `#rrggbb`, and the languages people work in.
-2. **Sign-in:** Entra ID, Okta, Google Workspace, another OpenID Connect provider, or none yet. With none, the example's Dex is enough to try.
+2. **Sign-in:** Entra ID, Okta, Google Workspace (through the example's Dex), another OpenID Connect provider, or none yet. With none, the example's Dex is enough to try.
 3. **Brains:** the AI gateway they already have (LiteLLM, Portkey, Azure API Management, Bifrost…), with its address and the names of its models. Or the example's LiteLLM, in front of a provider they have a contract with.
 4. **Connections:** the MCP servers everyone should have, and how each checks who asks.
 5. **House rules:** what every answer should follow, in a sentence or two.
@@ -77,6 +77,7 @@ Content-Security-Policy: connect-src 'self' http://localhost:5556 http://localho
 ## The sign-in and the gateway
 
 - **Entra ID:** register Jean as a single-page application, with Jean's address, final `/` included, as its redirect URI. On the gateway's own app, expose a scope with v2 access tokens and grant Jean's app consent for it; `signIn.scopes` lists it with `openid`, `profile`, `email` and `offline_access`. Name the issuer by tenant ID. `docs/enterprise.md` has each step. Hand them over as a checklist for whoever administers the tenant: never change a production tenant or gateway yourself unless the person asks you to.
+- **Google Workspace:** always through Dex, never directly. Google asks for a secret a page can't keep, and its access tokens can't be checked by the gateway. Keep the example's Dex and add its commented `google` connector, with `hostedDomains` set to the organisation's domains so that only its accounts get in. `signIn` names Dex's issuer, and the header names Dex, never Google. In Google Cloud, the app's audience is *Internal*, and its OAuth client is a *Web application* whose redirect is Dex's issuer followed by `/callback`. `docs/enterprise.md` has each step, and the groups for sections. The client secret goes in `.env`, never in `dex.yaml` or the policy.
 - **Another OpenID Connect provider:** its issuer and Jean's client id, and, when the gateway needs a scope of its own, every scope the sign-in asks for, `offline_access` among them for refresh tokens. Its discovery and token endpoints must answer Jean's origin with CORS.
 - **The gateway** checks each request's token: its signature, its issuer, its audience and its expiry, as `oidc_auth.py` does for LiteLLM. It answers Jean's origin with CORS for `Authorization`, `Content-Type`, `Mcp-Protocol-Version`, `Mcp-Method` and `Mcp-Name`.
 - **Keeping the example's Dex or LiteLLM:** change every address where the README's "Make it yours" says it appears, put the brand in `brand/`, and give Dex a lasting `storage` beyond a trial.

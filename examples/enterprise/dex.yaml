@@ -1,6 +1,6 @@
 # Reefknot Mutual's sign-in: Dex, with Jean as a public app (PKCE, no secret, as a page in a browser
 # is) and one person in its own list. Dex can put the directory you already have behind it with a
-# connector (LDAP, SAML, Entra ID, Google), or Jean signs in to that one directly.
+# connector (LDAP, SAML, Entra ID, Google), or Jean signs in to that one directly, Google excepted (below).
 issuer: http://localhost:5556/dex
 
 # Its pages in Reefknot's name, logo and colours: brand/, mounted as the theme below.
@@ -34,6 +34,27 @@ staticClients:
     public: true
     # Jean's address, which it comes back to from signing in.
     redirectURIs: ["http://localhost:8080/"]
+
+# Google Workspace in place of the list below, its accounts alone. Jean can't sign in to Google
+# directly, so it goes through Dex (docs/enterprise.md, "Signing in at work"). Uncomment, set the
+# GOOGLE_ values in .env, and remove enablePasswordDB and staticPasswords.
+# connectors:
+#   - type: google
+#     id: google
+#     name: Google
+#     config:
+#       clientID: $GOOGLE_CLIENT_ID
+#       clientSecret: $GOOGLE_CLIENT_SECRET
+#       # Dex's issuer followed by /callback, as Google's OAuth client lists it.
+#       redirectURI: http://localhost:5556/dex/callback
+#       # Every other account is turned away.
+#       hostedDomains: ["reefknot.example"]
+#       # Without it, Google asks for consent at every sign-in.
+#       promptType: ""
+#       # Each person's groups, for policy by group: a service account's key, and a Workspace user who can read groups.
+#       # serviceAccountFilePath: /etc/dex/google.json
+#       # domainToAdminEmail:
+#       #   reefknot.example: admin@reefknot.example
 
 enablePasswordDB: true
 staticPasswords:

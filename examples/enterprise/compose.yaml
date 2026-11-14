@@ -22,6 +22,10 @@ services:
   dex:
     image: ghcr.io/dexidp/dex:v2.46.1-distroless
     command: ["dex", "serve", "/etc/dex/config.yaml"]
+    environment:
+      # Read by dex.yaml's Google connector, once uncommented.
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
     ports:
       - "127.0.0.1:5556:5556"
     volumes:
