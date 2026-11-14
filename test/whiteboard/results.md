@@ -126,6 +126,80 @@ in the environment measure another line or note, and the line naming the skills 
 | skill:choose | 63% (30/48) | 50% (24/48) | 63% (30/48) | 56% (27/48) | 58% (111/192) | skill not read: words (31); skill not read: table_create (22); project-plan read (12); skill not read: write (10) |
 | skill:tables | 93% (56/60) | 93% (56/60) | 92% (55/60) | 93% (56/60) | 93% (223/240) | n columns (10); no handed (2); الحالة: steps مرسلة, مدفوعة (2); no rendu (1) |
 
+### Once Skills is found: Sonnet holds, Haiku falls back to 69%, and to 77% with the `when` in its listing
+
+Measured with `--found`, the gate unchanged. Skills is found once a skill has been read, and Whiteboards may still not be. Then
+`skill`'s line names no skill, and `readFor` goes with the names. Skills adds save_skill, its line and the rule "When a request
+matches a skill, read it and follow its steps.", and `<skills>` lists each of Jean's own by its `text-en`, whiteboard's as "Notes in
+sections, to sort ideas together". table_create keeps its note. suggest_skill is deferred, so it isn't declared.
+
+| A whiteboard made right through the skill, where one is right | Haiku | Sonnet | Gate |
+|---|---:|---:|---:|
+| Skills not found, Jean's (above) | 79.7% (153/192) | 87.5% (168/192) | 80% |
+| Skills found, as Jean is | 69% (132/192) | 87.5% (168/192) | 80% |
+| Those, by language: en, fr, ar, ja | 67, 63, 67, 79 | 88, 79, 90, 94 | ar, ja within 10 of en |
+| Skills found, whiteboard's `when` after its words in `<skills>` | 77% (147/192) | 91% (174/192) | 80% |
+| Those, by language: en, fr, ar, ja | 77, 77, 73, 79 | 92, 83, 90, 98 | ar, ja within 10 of en |
+| Whiteboards made for the 80 table requests, three runs, in each | 0 | 0 | 2 at most |
+| Those tables right: as Jean is, then with the `when` | 98%, 98% | 92%, 91% | about as before |
+
+As Jean is, Haiku loses 11 points once Skills is found. What told it a whiteboard's use was `readFor` in `skill`'s line, and the
+listing's words don't say brainstorm or retrospective. Of its 60 misses, 57 are the skill not read: words 28, a table 23, and
+"project-plan" read 6. Sonnet doesn't move: 22 not read (words 10, a table 8) and one section empty.
+
+With "; read whiteboard for a brainstorm, a retrospective or things to sort into groups with others, in place of a list or a table"
+after whiteboard's words in `<skills>` (`readFor(['whiteboard'])`, the same words; `SKILLS_TEXT` in the environment), Haiku comes
+back to 77%. That is under the gate, and 2.7 points under where it is before Skills is found. Its 45 misses: 33 not read (words 14,
+a table 11, "project-plan" 8) and 12 with a section empty. Sonnet is at 91%. Not in `app/`, since Haiku doesn't pass.
+
+Sonnet's tables, 92% and 91% here, were 95% in the run above and 93% at first: its misses are its own long tables ("n columns", 11
+each time), and the tables' tools and words are the same in every state.
+
+The next wording to measure keeps "; read whiteboard for …" in `skill`'s line once Skills is found, where Haiku read it before
+(`readFor(own)` after the line's words with no names): `SKILL_LINE="read the steps of a skill before asking the user anything for it
+or following it; read whiteboard for a brainstorm, a retrospective or things to sort into groups with others, in place of a list or
+a table" npm run whiteboard -- --parts skill:make,skill:choose,skill:tables --runs 3 --found`.
+
+#### haiku (claudecode), Skills found, as Jean is
+
+528 conversations, 3 runs each.
+
+| Part | en | fr | ar | ja | All | Commonest misses |
+|---|---:|---:|---:|---:|---:|---|
+| skill:make | 100% (24/24) | 100% (24/24) | 100% (24/24) | 100% (24/24) | 100% (96/96) | — |
+| skill:choose | 67% (32/48) | 63% (30/48) | 67% (32/48) | 79% (38/48) | 69% (132/192) | skill not read: words (28); skill not read: table_create (21); project-plan read (6); a section empty (3) |
+| skill:tables | 97% (58/60) | 100% (60/60) | 97% (58/60) | 97% (58/60) | 98% (234/240) | no medicine (1); no who (1); no gift (1); no price (1) |
+
+#### sonnet (claudecode), Skills found, as Jean is
+
+528 conversations, 3 runs each.
+
+| Part | en | fr | ar | ja | All | Commonest misses |
+|---|---:|---:|---:|---:|---:|---|
+| skill:make | 100% (24/24) | 96% (23/24) | 100% (24/24) | 100% (24/24) | 99% (95/96) | a section empty (1) |
+| skill:choose | 88% (42/48) | 81% (39/48) | 90% (43/48) | 94% (45/48) | 88% (169/192) | skill not read: words (10); skill not read: table_create (8); skill not read: write, table_create (2); a section empty (1) |
+| skill:tables | 95% (57/60) | 93% (56/60) | 90% (54/60) | 90% (54/60) | 92% (221/240) | n columns (11); الحالة: steps مرسلة, مدفوعة (2); no ステータス (2); no handed (1) |
+
+#### haiku (claudecode), Skills found, the `when` in `<skills>`
+
+528 conversations, 3 runs each.
+
+| Part | en | fr | ar | ja | All | Commonest misses |
+|---|---:|---:|---:|---:|---:|---|
+| skill:make | 100% (24/24) | 100% (24/24) | 100% (24/24) | 100% (24/24) | 100% (96/96) | — |
+| skill:choose | 77% (37/48) | 77% (37/48) | 73% (35/48) | 79% (38/48) | 77% (147/192) | skill not read: words (14); a section empty (12); skill not read: table_create (11); project-plan read (8) |
+| skill:tables | 97% (58/60) | 100% (60/60) | 97% (58/60) | 98% (59/60) | 98% (235/240) | no cost (1); no course (1); no completed (1); no سلم (1) |
+
+#### sonnet (claudecode), Skills found, the `when` in `<skills>`
+
+528 conversations, 3 runs each.
+
+| Part | en | fr | ar | ja | All | Commonest misses |
+|---|---:|---:|---:|---:|---:|---|
+| skill:make | 100% (24/24) | 100% (24/24) | 100% (24/24) | 100% (24/24) | 100% (96/96) | — |
+| skill:choose | 92% (44/48) | 83% (40/48) | 90% (43/48) | 98% (47/48) | 91% (174/192) | skill not read: table_create (6); a section empty (6); skill not read: write (3); skill not read: words (2) |
+| skill:tables | 93% (56/60) | 87% (52/60) | 88% (53/60) | 95% (57/60) | 91% (218/240) | n columns (11); no handed (2); no rendu (2); الحالة: steps مرسلة, مدفوعة (2) |
+
 ## The wording kept: "three to seven" areas, and the capability's lines cut to 40 tokens
 
 The lines the prompt lists, cut after the runs below to the 40 tokens a capability has ("notes in named areas, to brainstorm,

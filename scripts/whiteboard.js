@@ -11,11 +11,13 @@
 //   skill:make, skill:choose, skill:tables: the same requests as Jean meets them before Whiteboards is found (T5): table_create, write
 //            and `skill`, its line naming Jean's own skills, as own-skills declares them; reading "whiteboard" answers its steps and
 //            declares whiteboard and whiteboard_change from the next step, as Jean does. Right: the skill read, then a whiteboard
-//            made right where one is right, and none where a table or words are.
+//            made right where one is right, and none where a table or words are. With --found, as Jean is once Skills is found:
+//            `skill`'s line names none, Skills adds save_skill and its rule, and <skills> lists Jean's own by their few English words.
 // The brain comes from the environment, as for npm run tables: BRAIN=<provider>:<model> (cli/brain.js).
 // Usage: BRAIN=claudecode:haiku npm run whiteboard                  every part, every language, once
 //        npm run whiteboard -- --parts make,regroup --lang fr,ja --runs 3 --parallel 4 --write
 //        npm run whiteboard -- --parts skill:make,skill:choose,skill:tables --runs 3 --verbose       through the skill
+//        npm run whiteboard -- --parts skill:make,skill:choose,skill:tables --runs 3 --found         … once Skills is found
 import { readFile, writeFile } from 'node:fs/promises'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { chooseBrain } from '../cli/brain.js'
@@ -23,8 +25,8 @@ import { buildSystemPrompt } from '../app/core/prompt.js'
 import { streamChat } from '../app/core/llm.js'
 import { tableCreate, LINE as TABLE_LINE } from '../app/caps/tables/tool.js'
 import { WHITEBOARD, WHITEBOARD_CHANGE, LINES, made, changed } from '../test/whiteboard/tools.js'
-import { DIRECTORY, readFor } from '../app/caps/skills/directory.js'
-import { skillNamed } from '../app/core/skills.js'
+import { DIRECTORY, readFor, shownIn } from '../app/caps/skills/directory.js'
+import { skillNamed, skillLines, parseSkill } from '../app/core/skills.js'
 import { score, normal } from './tables.js'
 
 const DIR = fileURLToPath(new URL('../test/whiteboard/', import.meta.url))
@@ -46,6 +48,26 @@ const SKILL = { name: 'skill', description: 'Read the steps of a skill.', parame
 const SKILL_LINE = { name: 'skill', line: process.env.SKILL_LINE || `read the steps of a skill before asking the user anything for it or following it: ${DIRECTORY.map((entry) => entry.name).join(', ')}${readFor(DIRECTORY.map((entry) => entry.name))}` }
 /** table_create as Tables declares it where the whiteboard's skill can be read, in the request's language, or with TABLE_NOTE's words. @param {string} lang */
 const tableSpec = (lang) => (process.env.TABLE_NOTE == null ? tableCreate(lang, { whiteboard: true }) : ((spec) => ({ ...spec, description: [spec.description, process.env.TABLE_NOTE].filter(Boolean).join(' ') }))(tableCreate(lang)))
+/**
+ * Once Skills is found (--found), as app/caps/skills/skills.js declares it: `skill`'s line naming none, save_skill and its line, the
+ * rule, and <skills> listing each of Jean's own by its `text-en` in the directory's order, as listed() does for a fresh room. SKILLS_TEXT
+ * in the environment is added to whiteboard's words there, as it stands, measured before any goes into Jean.
+ */
+const FOUND_LINE = { name: 'skill', line: process.env.SKILL_LINE || 'read the steps of a skill before asking the user anything for it or following it' }
+const SAVE = { name: 'save_skill', description: 'Save a skill: how a task is done, to do it the same way every time. For a new one the user asks for, first ask the few things you need to know (what it is for, what they will give it, what should come back and how) unless the conversation already says, then save it. name: a few English words joined by hyphens; description: when to use it; example: a short request that uses it, complete enough to send as it is; steps: Markdown starting with a "# " title. Description, example and steps in the user’s language.',
+  parameters: { type: 'object', properties: { name: { type: 'string' }, description: { type: 'string' }, example: { type: 'string' }, steps: { type: 'string' } }, required: ['name', 'description', 'example', 'steps'] } }
+const SAVE_LINE = { name: 'save_skill', line: 'save how a task is done as a skill, or make one with the user, when they ask' }
+const FOUND_RULE = 'When a request matches a skill, read it and follow its steps.'
+/** <skills> once Skills is found. */
+async function listing() {
+  return skillLines(await Promise.all(DIRECTORY.map(async ({ name }) => {
+    const skill = parseSkill(await readFile(new URL(`../app/caps/skills/directory/${name}/SKILL.md`, import.meta.url), 'utf8'), `skills/${name}/SKILL.md`)
+    const text = shownIn(skill ?? { name, description: '' }, 'en').text
+    return { name, description: name === 'whiteboard' && process.env.SKILLS_TEXT ? `${text}${process.env.SKILLS_TEXT}` : text }
+  })))
+}
+/** Whether Skills is found, and its <skills>, from --found. */
+const state = { found: false, skills: '' }
 /** A skill's steps without its front matter, as `skill` answers; reading "whiteboard" says the tools it brings, as Jean does. @param {string} named */
 async function skillRead(named) {
   const name = skillNamed(named).toLowerCase(), [dir, sheet] = name.split('/')
@@ -69,8 +91,8 @@ const idOf = (i) => `01JC${String(i).padStart(4, '0')}${'ABCDEFGHJKMNPQRSTVWXYZ'
  * @param {any} chosen @param {string} lang @param {{ text: string, note?: string, tools: any[], lines: any[], board?: Board, skills?: boolean }} turn
  */
 async function converse({ brain, apiKey, body }, lang, { text, note, tools, lines, board, skills = false }) {
-  if (skills) (tools = [...tools, SKILL]), (lines = [...lines, SKILL_LINE])
-  const system = buildSystemPrompt({ assistantName: 'Jean', uiLanguage: LANGS[lang], tools: lines, now: new Date() })
+  if (skills) (tools = [...tools, SKILL, ...(state.found ? [SAVE] : [])]), (lines = [...lines, ...(state.found ? [FOUND_LINE, SAVE_LINE] : [SKILL_LINE])])
+  const system = buildSystemPrompt({ assistantName: 'Jean', uiLanguage: LANGS[lang], tools: lines, ...(skills && state.found && { rules: [FOUND_RULE], sections: { skills: state.skills } }), now: new Date() })
   /** @type {typeof fetch} */
   const fetch = (url, init) => globalThis.fetch(url, body && typeof init?.body === 'string' ? { ...init, body: JSON.stringify({ ...JSON.parse(init.body), ...body }) } : init)
   /** @type {any[]} */
@@ -119,6 +141,7 @@ async function converse({ brain, apiKey, body }, lang, { text, note, tools, line
           tables.push(call.args)
           content = 'Made the table, open beside the conversation, with no rows yet.'
         } else if (call.name === 'write') content = `Made ${call.args?.name ?? 'the file'}.`
+        else if (call.name === 'save_skill' && state.found) content = `Saved the skill ${call.args?.name ?? ''}.`
         else throw new Error(`No tool ${call.name} here.`)
       } catch (error) { content = /** @type {Error} */ (error).message; isError = true }
       messages.push({ role: 'tool', toolCallId: call.id, name: call.name, content, ...(isError && { isError }) })
@@ -260,7 +283,7 @@ function report(name, all, runs) {
   const found = wanted.length ? ` Through the skill, a whiteboard made right where one is right: ${cell(wanted)}, ${langs.map((lang) => `${lang} ${percent(wanted.filter((one) => one.lang === lang && one.right).length, wanted.filter((one) => one.lang === lang).length)}`).join(', ')}; the skill read on ${percent(wanted.filter((one) => one.calls.includes('skill:whiteboard')).length, wanted.length)} of them. Whiteboards made where a table or words are right: ${unwanted.filter((one) => one.calls.includes('whiteboard')).length} of ${unwanted.length}.` : ''
   return `## ${name}, ${new Date().toISOString().slice(0, 10)}
 
-${outcomes.length} conversations${runs > 1 ? `, ${runs} runs each` : ''}${all.length > outcomes.length ? `; ${all.length - outcomes.length} failed at the server and are left out` : ''}.${parts.some((part) => part.endsWith('tables')) ? ` Whiteboards made for ordinary tables: ${whiteboards}.` : ''}${found}
+${outcomes.length} conversations${runs > 1 ? `, ${runs} runs each` : ''}${state.found ? ', Skills found' : ''}${all.length > outcomes.length ? `; ${all.length - outcomes.length} failed at the server and are left out` : ''}.${parts.some((part) => part.endsWith('tables')) ? ` Whiteboards made for ordinary tables: ${whiteboards}.` : ''}${found}
 
 | Part | ${langs.join(' | ')} | All | Commonest misses |
 |---|${langs.map(() => '---:').join('|')}|---:|---|
@@ -295,7 +318,8 @@ async function main(argv, env) {
   const parts = (flag('--parts')?.split(',') ?? PARTS).filter((part) => PARTS.includes(part))
   const runs = Number(flag('--runs') ?? 1), parallel = Number(flag('--parallel') ?? 4)
   const set = JSON.parse(await readFile(`${DIR}set.json`, 'utf8'))
-  console.log(`whiteboard: ${name}, ${parts.join(', ')}`)
+  if (argv.includes('--found')) Object.assign(state, { found: true, skills: await listing() })
+  console.log(`whiteboard: ${name}, ${parts.join(', ')}${state.found ? ', Skills found' : ''}`)
   /** @type {Outcome[]} */
   const outcomes = []
   try {
