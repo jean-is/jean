@@ -199,6 +199,10 @@ test('a whiteboard: made by the brain, its notes dragged, moved with the keys, a
     for (const type of ['dragenter', 'dragover', 'drop']) at.dispatchEvent(new DragEvent(type, { dataTransfer: data, clientX: x, clientY: y, bubbles: true, cancelable: true }))
   }, { place: budget, x: open.x + open.width / 2, y: open.y + open.height - 200 })
   const card = board.getByRole('button', { name: 'Open Budget' })
+  // Its picture drawn once near enough to read: none under the far mark.
+  await expect(card.locator('.creation-preview > *')).toHaveCount(0)
+  const near = /** @type {{ x: number, y: number, width: number, height: number }} */ (await card.boundingBox())
+  await board.evaluate((element, at) => /** @type {any} */ (element).zoom(0, 1, at), { clientX: near.x + near.width / 2, clientY: near.y + near.height / 2 })
   await expect(card.locator('.creation-preview th')).toHaveText('Item')
   await expect(board.getByRole('status')).toContainText('Budget')
   expect((await rows(page)).some((row) => row.note === `[[${budget}|Budget]]`)).toBe(true)
@@ -215,7 +219,7 @@ test('a whiteboard: made by the brain, its notes dragged, moved with the keys, a
   await expect(page.getByRole('complementary', { name: 'Budget' }).locator('app-table')).toBeVisible()
 })
 
-test('the arrow keys walk notes, drawings and arrows; an arrow points elsewhere from its menu or by an end dragged, a step to undo', async ({ page }) => {
+test('the arrow keys walk notes, drawings and arrows; an arrow points elsewhere from its menu or by an end dragged, a step to undo; a card draws its picture once near the screen', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 960 })
   await start(page)
   await page.evaluate(async () => {
@@ -264,6 +268,11 @@ test('the arrow keys walk notes, drawings and arrows; an arrow points elsewhere 
   await page.mouse.move(ship.x + ship.width / 2, ship.y + 12, { steps: 10 })
   await page.mouse.up()
   await expect(arrow).toHaveAttribute('aria-label', 'Arrow from Ship to Build')
+  // The card far off draws nothing until it comes near the screen.
+  await expect(board.locator('.wb-card .creation-preview > *')).toHaveCount(0)
+  const card = await box(board.locator('.wb-card'))
+  await board.evaluate((element, by) => /** @type {any} */ (element).pan(by, 0), room.x + room.width / 2 - card.x)
+  await expect(board.locator('.wb-card .creation-preview svg')).toHaveCount(1)
 })
 
 test('a whiteboard fills as Jean writes the call, its sections first, and stays where it showed once made', async ({ page }) => {

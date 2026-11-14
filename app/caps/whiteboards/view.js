@@ -111,6 +111,8 @@ customElements.define('app-whiteboard', class extends HTMLElement {
   /** This person's pointer as Together last said it, and when, at two a second at most. */
   #pointer = { x: 0, y: 0, at: 0 }
   #later = /** @type {ReturnType<typeof setTimeout> | undefined} */ (undefined)
+  /** Cards' pictures, drawn only while near the screen, so that a large board's out of sight cost nothing (a deck, an app). */
+  #near = new IntersectionObserver((all) => { for (const { target, isIntersecting } of all) this.#paint(/** @type {HTMLElement} */ (target), isIntersecting) }, { rootMargin: '25%' })
 
   async connectedCallback() {
     const holds = this.holds, folder = this.getAttribute('folder') ?? ''
@@ -120,12 +122,13 @@ customElements.define('app-whiteboard', class extends HTMLElement {
     watched(this.where, holds)
     beside.add(this.where)
     onShow.value = [...onShow.peek(), folder]
-    holds.push(() => beside.delete(this.where), () => { onShow.value = onShow.peek().filter((one) => one !== folder) })
+    holds.push(() => beside.delete(this.where), () => { onShow.value = onShow.peek().filter((one) => one !== folder) }, () => this.#near.disconnect())
     // A narrow pane opens on its lanes, one section at a time, unless the address says otherwise.
     if (showAs.peek() === 'board' && this.clientWidth && this.clientWidth < 30 * parseFloat(getComputedStyle(document.documentElement).fontSize)) showAs.value = 'lanes'
     holds.push(effect(() => { this.where.value; showAs.value; showOnly.value; writing.value; this.draw() }))
     this.addEventListener('toggle', this.#placed, true)
-    holds.push(() => this.removeEventListener('toggle', this.#placed, true))
+    this.addEventListener('beforetoggle', this.#filled, true)
+    holds.push(() => this.removeEventListener('toggle', this.#placed, true), () => this.removeEventListener('beforetoggle', this.#filled, true))
     const sized = new ResizeObserver(() => { if (!this.#held && showAs.peek() === 'board') this.fit() })
     sized.observe(this)
     holds.push(() => sized.disconnect())
@@ -212,6 +215,26 @@ customElements.define('app-whiteboard', class extends HTMLElement {
     save(await pictureOf(svg, Math.round(w * k), Math.round(h * k)), `${one.table.name}.png`)
   }
 
+  /**
+   * A card's picture in its box while the box is near the screen, gone once it isn't, drawn again if the note shows another; observed from
+   * its first drawing, which lit makes before the box is in the page. @param {HTMLElement} box @param {boolean} [near]
+   */
+  #paint(box, near = box.hasAttribute('data-near')) {
+    if (!box.isConnected) return this.#near.unobserve(box)
+    const card = cardOf(this.#row(rowOf(box) ?? '')), place = near && card ? card.link.uri : ''
+    box.toggleAttribute('data-near', near)
+    if ((box.dataset.drawn ?? '') === place) return
+    render(card && place ? card.kind.preview?.(card) ?? card.kind.draw() : nothing, box)
+    box.dataset.drawn = place
+  }
+
+  /** A note's or a text's menu, filled as it opens: a board of hundreds keeps one menu's rows, not hundreds. @param {Event} event */
+  #filled = (event) => {
+    const menu = /** @type {HTMLElement} */ (event.target), row = this.#row(menu.dataset?.menu ?? ''), one = this.#one
+    if (!row || /** @type {ToggleEvent} */ (event).newState !== 'open') return
+    render(this.#menu(one, row, !this.#before && unkept(one).some((line) => line.row === row.id), layout(one.rows).areas), menu)
+  }
+
   /** A section's notes as a table, read again with each change, or none. @param {string} area */
   #section(area) {
     if (this.#table?.area === area) return this.#table.node
@@ -240,9 +263,9 @@ customElements.define('app-whiteboard', class extends HTMLElement {
   #turn() {
     const board = /** @type {HTMLElement | null} */ (this.querySelector('.wb-board'))
     if (!board) return
-    board.style.setProperty('--pan-x', `${this.#x}px`)
-    board.style.setProperty('--pan-y', `${this.#y}px`)
-    board.style.setProperty('--zoom', String(this.#zoom))
+    // On the layer and the dots alone: a custom property set on the board would restyle each of its thousands of elements at each step.
+    Object.assign(/** @type {HTMLElement} */ (this.#layer).style, { translate: `${this.#x}px ${this.#y}px`, scale: String(this.#zoom) })
+    Object.assign(board.style, { backgroundPosition: `${this.#x}px ${this.#y}px`, backgroundSize: `${40 * this.#zoom}px ${40 * this.#zoom}px` })
     board.toggleAttribute('data-far', this.#zoom < 0.6)
     // A menu opened over the board stays where its button was: it closes as the board moves, not as it is drawn again.
     const at = `${this.#x} ${this.#y} ${this.#zoom}`
@@ -792,11 +815,11 @@ customElements.define('app-whiteboard', class extends HTMLElement {
     return html`<li class=${classes} data-row=${id} ${placed(box)} ${z_}>
       <button type="button" class=${card ? 'wb-words wb-card' : 'wb-words'} dir="auto" tabindex=${tab} aria-label=${card ? t('whiteboards.open', { name: card.name }) : nothing} @dblclick=${() => this.write(row)}
         @keydown=${(/** @type {KeyboardEvent} */ e) => { if (e.key === 'Enter' && !e.isComposing && !this.#from) { e.preventDefault(); card ? show(card)() : this.write(row) } }} @focus=${() => { this.#at = id }}>${card
-          ? html`<span class="creation-preview" aria-hidden="true" inert>${card.kind.preview?.(card) ?? card.kind.draw()}</span><span class="wb-card-name">${card.kind.draw()}<span dir="auto">${card.name}</span></span>` : words || t('whiteboards.empty')}</button>
+          ? html`<span class="creation-preview" aria-hidden="true" inert ${ref((box) => { if (box instanceof HTMLElement) (this.#near.observe(box), box.isConnected && this.#paint(box)) })}></span><span class="wb-card-name">${card.kind.draw()}<span dir="auto">${card.name}</span></span>` : words || t('whiteboards.empty')}</button>
       ${foot.length ? html`<p class="wb-foot" dir="auto">${foot.map((words) => html`<span>${words}</span>`)}</p>` : nothing}
       <button type="button" class="wb-grip icon-button" tabindex=${tab} aria-label=${t('whiteboards.move', { name: words })} @click=${() => this.move(id)}>${GRIP}</button>
       <button type="button" class="wb-more icon-button" tabindex=${tab} aria-label=${t('whiteboards.more', { name: words })} popovertarget=${menu}>${icons.more}</button>
-      <div id=${menu} class="menu wb-menu" popover>${this.#menu(one, row, jean.has(id), areas)}</div></li>`
+      <div id=${menu} class="menu wb-menu" popover data-menu=${id}></div></li>`
   }
 
   /** A row's menu: Move to… a section or the shelf, a note's colour, Move here, Write, Delete; Accept and Reject on Jean's change. @param {Loaded} one @param {Row} row @param {boolean} marked @param {Area[]} areas */

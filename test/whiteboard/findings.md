@@ -35,6 +35,9 @@ lines of 200 points, a log of 5,000 lines (1 MB). Chromium headless with the CPU
   four times (`take()`, `watch()`, `came()`, `reread()`), so T1 folds only what came and reads once per change.
 - The far mark's restyle costs one long frame (51 ms, 133 with 1,000 notes): it changes once the zoom settles.
 - Not measured: a phone, and a headed window (nothing here contends for the GPU, which is what D285's headed runs caught).
+- Phase 2, the view itself (14 November), Chromium at 4×, 300 notes in 12 sections, 30 texts and 200 drawn lines, and 20 notes showing a
+  creation's card: panning at 59 fps (worst frame 33 ms), zooming across the far mark at 52 (50 ms), a whole redraw 39 ms; 59, 55 and 36
+  without the cards. Before, the pan set on the board as a custom property restyled its 36,000 elements at each step: 3 fps.
 
 ## c. Screen readers: not run
 
