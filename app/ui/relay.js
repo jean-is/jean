@@ -95,13 +95,14 @@ export function reader(base, token, signal, clock) {
  * pauses it, a second, then twice as long each time up to a minute, or until the device is back online. Its mailbox gone (the relay
  * lost it), it is opened again, or `lost` decides; numbered lower than what was read (the relay rolled back), it is read from its start. `clock` hears the
  * relay's time at each read. `quiet`, a signal, holds it back while it is true, ending a read under way: nothing goes to the relay while
- * an answer is written, which reads what the page reached meanwhile (caps/receipt). Gives what stops it.
+ * an answer is written, which reads what the page reached meanwhile (caps/receipt). `hidden` reads on out of sight while it says so, as long as
+ * no window in sight takes the reading. Gives what stops it.
  * @param {{ base: string, token: string, lock: string, onMessages: (messages: Message[]) => unknown, clock?: (now: number) => void, lost?: typeof open,
- *   quiet?: { peek: () => boolean, subscribe: (heard: (on: boolean) => void) => () => void } }} options
+ *   quiet?: { peek: () => boolean, subscribe: (heard: (on: boolean) => void) => () => void }, hidden?: () => boolean }} options
  */
-export function listen({ base, token, lock, onMessages, clock, lost = open, quiet }) {
+export function listen({ base, token, lock, onMessages, clock, lost = open, quiet, hidden }) {
   const [page, locks] = [globalThis.document, globalThis.navigator?.locks]
-  /** Whether stop() ran, the number of the last message read, and this tab's reading, which Jean hidden, another tab taking the lock or stop() ends. */
+  /** Whether stop() ran, the number of the last message read, and this tab's reading, which Jean hidden (unless `hidden` says so), another tab taking the lock or stop() ends. */
   let [stopped, after, held] = [false, 0, /** @type {AbortController | undefined} */ (undefined)]
   /** One reading at a time, the last one's batch handled before the next reads; and what ends the pause under way, back online. */
   let [turn, wake] = [Promise.resolve(), () => {}]
@@ -134,7 +135,7 @@ export function listen({ base, token, lock, onMessages, clock, lost = open, quie
     }
   }
   const hold = (steal = true) => {
-    if (stopped || quiet?.peek() || page?.visibilityState === 'hidden') return
+    if (stopped || quiet?.peek() || (page?.visibilityState === 'hidden' && !hidden?.())) return
     held?.abort()
     const mine = (held = new AbortController())
     const run = () => (turn = turn.then(() => reading(mine.signal)))
@@ -142,7 +143,7 @@ export function listen({ base, token, lock, onMessages, clock, lost = open, quie
     if (locks) locks.request(lock, steal ? { steal: true } : { signal: mine.signal }, run).catch(() => { mine.abort(); if (held === mine) hold(false) })
     else run()
   }
-  const [seen, online] = [() => (page?.visibilityState === 'hidden' ? held?.abort() : hold()), () => wake()]
+  const [seen, online] = [() => (page?.visibilityState !== 'hidden' ? hold() : hidden?.() ? undefined : held?.abort()), () => wake()]
   page?.addEventListener('visibilitychange', seen)
   globalThis.addEventListener?.('online', online)
   const unquiet = quiet?.subscribe((on) => (on ? held?.abort() : hold())) ?? (hold(), undefined)

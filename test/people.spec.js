@@ -250,3 +250,29 @@ test('a closed Jean is nudged when something comes for its person (D736): its de
   expect(sent.status).toBe(201)
   await expect.poll(nudges).toEqual([expect.stringMatching(/^vapid t=[\w-]+\.[\w-]+\.[\w-]+, k=[\w-]{87}$/)])
 })
+
+test('an invitation that comes while Jean is out of sight is read all the same and told as a closed Jean’s nudge tells it, never who sent what; its card’s words spoken, and taken away on coming back (D736)', async ({ browser }) => {
+  const [ana, bob] = await Promise.all([person(browser, 'Ana'), person(browser, 'Bob')])
+  await meetBeside(ana, bob)
+  // Bob leaves his tab, his browser letting Jean notify: what it shows, and what it takes away, kept.
+  /** @param {boolean} hidden */
+  const leave = (hidden) => bob.evaluate((hidden) => {
+    const g = /** @type {any} */ (window)
+    g.shown ??= []
+    g.Notification = class { static permission = 'granted'; constructor(/** @type {string} */ title, /** @type {NotificationOptions} */ options) { g.shown.push({ title, body: options.body, tag: options.tag }) } close() { g.shown.push('closed') } }
+    Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => (hidden ? 'hidden' : 'visible') })
+    Object.defineProperty(document, 'hidden', { configurable: true, get: () => hidden })
+    document.dispatchEvent(new Event('visibilitychange'))
+    if (!hidden) window.dispatchEvent(new Event('focus'))
+  }, hidden)
+  await leave(true)
+  await ana.evaluate(async () => {
+    const people = await import('/caps/people/people.js')
+    await people.tell(people.people.value[0].fp, { title: 'Plan the trip', link: '', invite: {} }, 'together')
+  })
+  await expect(bob.locator('.people-card')).toContainText('Ana invites you to work on “Plan the trip” together')
+  await expect(bob.locator('[role="status"] .visually-hidden')).toHaveText('Ana invites you to work on “Plan the trip” together')
+  expect(await bob.evaluate(() => /** @type {any} */ (window).shown)).toEqual([{ title: 'Jean', body: 'Something came for you. Open Jean to see it.', tag: 'app-nudge' }])
+  await leave(false)
+  expect(await bob.evaluate(() => /** @type {any} */ (window).shown)).toEqual([{ title: 'Jean', body: 'Something came for you. Open Jean to see it.', tag: 'app-nudge' }, 'closed'])
+})

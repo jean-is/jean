@@ -10,6 +10,7 @@ import { register, unlock, contributions } from '../../ui/caps.js'
 import { fire } from '../../core/hooks.js'
 import { app, pairs, refreshConversations, openConversation, conversationOf, keepRecords, notify } from '../../ui/state.js'
 import { act } from '../../ui/acts.js'
+import { away } from '../../ui/discovery.js'
 import { callsIn, filesMade, metaRecord, requestsOf } from '../../core/events.js'
 import { filesIn } from '../../ui/export.js'
 import { mine } from '../../ui/opfs.js'
@@ -96,7 +97,7 @@ const reasonOf = (error) => error?.reason ?? (error?.status === 409 ? 'used' : e
 let reading = new AbortController()
 /**
  * Reads what this device waits for, while Jean is in sight: each invitation's two mailboxes, the acceptance's reply mailbox, and the person
- * mailbox, every device of the person reading it. Started again whenever one begins or ends.
+ * mailbox, every device of the person reading it, out of sight too where what comes can be told. Started again whenever one begins or ends.
  */
 async function watch() {
   reading.abort()
@@ -108,13 +109,15 @@ async function watch() {
   const person = await me()
   if (colleagues) listOn(person).catch(warn)
   nudged(base, person).catch(warn)
-  const stop = listen({ base, token: person.token, lock: mine('app-people'), quiet: answering, onMessages: async (messages) => {
+  const stop = listen({ base, token: person.token, lock: mine('app-people'), quiet: answering, hidden: nudging, onMessages: async (messages) => {
     for (const { bytes } of messages) {
       // A colleague who writes first is looked up on the list (D731).
       if (colleagues) await colleague.introduced(ctx, person, bytes).catch(warn)
-      const got = await received(ctx, bytes).catch(() => null)
+      const [had, got] = [arrivals.peek(), await received(ctx, bytes).catch(() => null)]
       if (got?.kind) await refresh()
       if (got?.kind === 'joined') notify(t('people.joined', { name: people.peek().find((one) => one.fp === got.from)?.name ?? '', app: BRAND.name }))
+      const came = arrivals.peek().find((one) => one.id === got?.id && !had.some((was) => was.id === one.id))
+      if (came) told(came)
     }
   } })
   controller.signal.addEventListener('abort', stop)
@@ -125,13 +128,34 @@ async function watch() {
   await refresh()
 }
 
+/** Whether the browser may tell the person that something came: Notifications on, and allowed (D736). */
+const nudging = () => globalThis.Notification?.permission === 'granted' && app.settings.peek().notifications !== false
+
+/**
+ * What came from someone, told: its card's words spoken (ui/shell.js); out of sight, in a closed Jean's nudge's words (D736), never who sent
+ * what, which a lock screen would show, and taken away on coming back. @param {Awaited<ReturnType<typeof arrivalsOf>>[number]} one
+ */
+function told(one) {
+  notify(t(one.kind === 'together' ? 'people.invites' : one.kind === 'reply' ? 'people.answered' : 'people.came', { name: one.name, title: one.title || t('conversation.untitled') }), { quiet: true })
+  if (!away() || !nudging()) return
+  const [title, options] = [BRAND.name, { body: t('people.nudge', { name: BRAND.name }), tag: 'app-nudge', lang: locale.peek(), dir: dir(), icon: 'icons/icon-192.png', data: { hash: location.hash } }]
+  try {
+    const item = new Notification(title, options)
+    item.onclick = () => { focus(); item.close() }
+    addEventListener('focus', () => item.close(), { once: true })
+  } catch {
+    // Android's browsers show one only through the service worker, which brings Jean back on a tap (sw.js).
+    navigator.serviceWorker?.ready.then((registration) => registration.showNotification(title, options)).catch(warn)
+  }
+}
+
 /**
  * Nudged when something comes while Jean is closed (D736): where the browser may tell the person (Notifications on) and the relay sends
  * nudges, this device's push subscription is kept beside the person mailbox; turned off, it is taken off. A nudge holds nothing: the
  * service worker says something came, in the words left here in the person's language (sw.js). @param {string} base @param {import('./flow.js').Person} person
  */
 async function nudged(base, person) {
-  const registration = await navigator.serviceWorker?.getRegistration(), on = Notification.permission === 'granted' && app.settings.peek().notifications !== false
+  const registration = await navigator.serviceWorker?.getRegistration(), on = nudging()
   const key = registration?.pushManager && (await (await fetch(base)).json()).push, had = key && await registration.pushManager.getSubscription()
   if (!key || (!on && !had)) return
   if (on) await (await caches.open('app-push')).put(new URL('push.json', registration.scope), Response.json({ title: BRAND.name, body: t('people.nudge', { name: BRAND.name }), lang: locale.peek(), dir: dir() }))

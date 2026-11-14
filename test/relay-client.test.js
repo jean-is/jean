@@ -327,3 +327,44 @@ test('a window whose reading another took reads again as soon as that one is hid
   stopTwo()
   assert.deepEqual(heard, ['for whoever reads'])
 })
+
+test('a window out of sight reads on while `hidden` says so, until a window in sight takes the reading; told no, hidden it stops', { timeout: 10_000 }, async () => {
+  relayed()
+  const { token, id } = await mailbox()
+  await open(BASE, token)
+  /** A page of its own, in sight until hidden. */
+  const page = () => { const seen = /** @type {(() => void)[]} */ ([]); return { visibilityState: 'visible', addEventListener: (/** @type {string} */ _, /** @type {() => void} */ fn) => seen.push(fn), removeEventListener: () => {}, hide() { this.visibilityState = 'hidden'; for (const fn of seen) fn() } } }
+  const until = async (/** @type {() => boolean} */ done) => { for (let i = 0; i < 100 && !done(); i++) await new Promise((resolve) => setTimeout(resolve, 50)) }
+  const [one, two, three] = [page(), page(), page()]
+  const g = /** @type {any} */ (globalThis)
+  const [was, heardOne, heardTwo, heardThree] = [g.document, /** @type {string[]} */ ([]), /** @type {string[]} */ ([]), /** @type {string[]} */ ([])]
+  g.document = one
+  const stopOne = listen({ base: BASE, token, lock: 'relay-out-of-sight', hidden: () => true, onMessages: (messages) => { heardOne.push(...messages.map((message) => text(message.bytes))) } })
+  g.document = was
+  await new Promise((resolve) => setTimeout(resolve, 50))
+  one.hide()
+  await send(BASE, id, bytes('while hidden'))
+  await until(() => heardOne.length > 0)
+  assert.deepEqual(heardOne, ['while hidden'])
+  // A window in sight takes it, and the hidden one waits its turn.
+  g.document = two
+  const stopTwo = listen({ base: BASE, token, lock: 'relay-out-of-sight', onMessages: (messages) => { heardTwo.push(...messages.map((message) => text(message.bytes))) } })
+  g.document = was
+  await new Promise((resolve) => setTimeout(resolve, 50))
+  await send(BASE, id, bytes('in sight'))
+  await until(() => heardTwo.includes('in sight'))
+  stopTwo()
+  stopOne()
+  assert.deepEqual([heardOne, heardTwo.at(-1)], [['while hidden'], 'in sight'])
+  // Told no, a window hidden reads no more.
+  g.document = three
+  const stopThree = listen({ base: BASE, token, lock: 'relay-out-of-sight-no', hidden: () => false, onMessages: (messages) => { heardThree.push(...messages.map((message) => text(message.bytes))) } })
+  g.document = was
+  await new Promise((resolve) => setTimeout(resolve, 50))
+  three.hide()
+  await new Promise((resolve) => setTimeout(resolve, 50))
+  await send(BASE, id, bytes('unread'))
+  await new Promise((resolve) => setTimeout(resolve, 300))
+  stopThree()
+  assert.deepEqual(heardThree, [])
+})
