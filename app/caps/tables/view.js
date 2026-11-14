@@ -116,7 +116,7 @@ export function view(holds, source = shown, beside = false) {
     // What a changed cell's tip says, on its field, where the keyboard and a screen reader are, and a sum of money's currency.
     for (const field of /** @type {NodeListOf<HTMLElement>} */ (box.querySelectorAll('tbody :is([aria-description], [data-money], .is-jean > :is(input, select))'))) {
       const words = [field.closest('.is-jean') && t('tables.changed', { count: 1, name: assistantName() }), field.dataset.money].filter(Boolean).join(' · ')
-      if (words) field.setAttribute('aria-description', words); else field.removeAttribute('aria-description')
+      if (!words) field.removeAttribute('aria-description'); else if (field.getAttribute('aria-description') !== words) field.setAttribute('aria-description', words)
     }
     requestAnimationFrame(edge)
   }))
@@ -127,12 +127,15 @@ export function view(holds, source = shown, beside = false) {
   function edge() {
     const scroll = /** @type {HTMLElement | null} */ (box.querySelector('.table-scroll')), fade = /** @type {HTMLElement | null} */ (box.querySelector('.table-fade'))
     if (!scroll || !fade) return
-    const decide = scroll.querySelector('tbody .table-decide')?.getBoundingClientRect().width ?? 0, first = scroll.querySelector('thead .table-grip + *')?.getBoundingClientRect().width ?? 0
-    for (const [name, px] of Object.entries({ '--top': scroll.offsetTop, '--height': scroll.clientHeight, '--end': decide + scroll.offsetWidth - scroll.clientWidth })) fade.style.setProperty(name, `${px}px`)
-    scroll.style.setProperty('--first', `${first}px`)
+    const decide = scroll.querySelector('tbody .table-decide')?.getBoundingClientRect().width ?? 0, first = /** @type {HTMLElement | null} */ (scroll.querySelector('thead .table-grip + *'))
+    // Written only when they change, on the fade alone, and the scroller's own padding never inherited: each write would restyle the whole table.
+    for (const [name, px] of Object.entries({ '--top': scroll.offsetTop, '--height': scroll.clientHeight, '--end': decide + scroll.offsetWidth - scroll.clientWidth })) if (fade.style.getPropertyValue(name) !== `${px}px`) fade.style.setProperty(name, `${px}px`)
+    const pad = first && getComputedStyle(first).position === 'sticky' ? `${first.offsetWidth + (/** @type {HTMLElement | null} */ (scroll.querySelector('thead .table-grip'))?.offsetWidth ?? 0)}px` : ''
+    if (scroll.style.scrollPaddingInlineStart !== pad) scroll.style.scrollPaddingInlineStart = pad
     fade.classList.toggle('is-more', Math.abs(scroll.scrollLeft) + scroll.clientWidth < scroll.scrollWidth - 4)
   }
-  box.addEventListener('scroll', edge, { capture: true, passive: true })
+  // The table's own scrolls alone: a field's, as a word is typed in Find, would lay the whole table out for nothing.
+  box.addEventListener('scroll', (event) => { if (/** @type {Element} */ (event.target).classList?.contains('table-scroll')) edge() }, { capture: true, passive: true })
   const sized = new ResizeObserver(edge)
   sized.observe(box)
   holds.push(() => sized.disconnect())
@@ -187,6 +190,8 @@ const ruleOn = (property) => ({ property: property.id, op: opsOf(property)[0], .
 
 /** The kinds rows are grouped by, in Arrange and on the board: a choice, a status, a person, a box, or a date by its month, which no lane takes. */
 const GROUPED = /^(select|status|person|checkbox|date)$/
+/** The kinds whose cells are read over their fields (D752). */
+const READS = /^(number|date|status)$/
 /** The kinds whose foot sums, averages and finds the smallest and the largest. */
 const NUMERIC = /^(number|formula)$/
 /** A total as its column writes it, a count and a share as such; nothing when there is no number to work out. @param {Row[]} rows @param {Property} property @param {import('./query.js').Total} how @param {number} [digits] */
@@ -517,7 +522,8 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
         ${shown.map((property) => {
           const changed = fresh.has(`${row.id} ${property.id}`), tip = changed ? t('tables.changed', { count: 1, name: assistantName() }) : nothing, content = cell(one, row, property, state)
           // The column that names the rows heads its row.
-          return property === title ? html`<th scope="row" tabindex="-1" class=${changed ? 'is-jean' : ''} title=${tip}>${content}</th>` : html`<td tabindex="-1" class=${changed ? 'is-jean' : ''} title=${tip}>${content}</td>`
+          const classes = `${changed ? 'is-jean ' : ''}${READS.test(property.type) ? 'is-read' : ''}`
+          return property === title ? html`<th scope="row" tabindex="-1" class=${classes} title=${tip}>${content}</th>` : html`<td tabindex="-1" class=${classes} title=${tip}>${content}</td>`
         })}<td class=${fresh.has(row.id) ? 'table-decide' : ''}>${fresh.has(row.id) ? decide(one, row.id) : nothing}</td>
       </tr>`)(/** @type {number} */ (place.get(row.id)))
   /** Where a row whose group's cell changed has gone, said, the keys on that cell again (D752). */
@@ -656,8 +662,14 @@ const indexOf = (one, columns) => {
   indexes.set(one.rows, { locale: locale.value, texts })
   return texts
 }
+/** Each cell's words as said, kept for each copy of its row read: a draw for a letter in Find says none again. @type {WeakMap<Row, Map<string, string>>} */
+const sayings = new WeakMap()
 /** A cell as a card says it, in the user's language (./export.js). @param {Row} row @param {Property} property @param {Map<string, string>} [names] @param {number} [digits] */
-const said = (row, property, names, digits) => told(row, property, { locales: intlLocales(), labels: { yes: t('tables.yes'), no: t('tables.no') }, names, digits })
+const said = (row, property, names, digits) => {
+  const kept = sayings.get(row) ?? /** @type {Map<string, string>} */ (sayings.set(row, new Map()).get(row)), key = `${locale.value} ${property.id} ${property.type} ${property.format} ${property.currency} ${digits}`
+  if (!kept.has(key)) kept.set(key, told(row, property, { locales: intlLocales(), labels: { yes: t('tables.yes'), no: t('tables.no') }, names, digits }))
+  return /** @type {string} */ (kept.get(key))
+}
 /**
  * A cell's reading, drawn over its field until the cell has the keys (D752), which alone shows the field: an amount as its column writes it,
  * a day in the user's words, a step as its pill. Seen, never read: its field is what the keys and a screen reader reach. @param {unknown} words @param {string} [kind]
