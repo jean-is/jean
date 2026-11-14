@@ -163,6 +163,26 @@ test('a whiteboard fills as Jean writes the call, its sections first, and stays 
   expect(await page.evaluate(() => import('/caps/whiteboards/whiteboards.js').then(({ writing }) => writing.value))).toBe('')
 })
 
+test('on a phone, a whiteboard opens on its lanes, one section at a time under a strip of them, and a note written goes into the one on show', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await start(page)
+  await planBrain(page)
+  await page.evaluate(() => import('/ui/caps.js').then(({ unlock }) => unlock('whiteboards')))
+  await ask(page, `Call whiteboard with ${JSON.stringify(RETRO)}`)
+  await answered(page)
+  await page.evaluate(() => import('/ui/preview.js').then(({ preview }) => preview({ uri: String(document.querySelector('app-whiteboard')?.getAttribute('folder') ?? ''), name: 'Team retro', title: 'Team retro' }, true)))
+  const board = page.locator('app-whiteboard'), strip = board.getByRole('navigation', { name: 'Lanes' })
+  await expect(board.locator('.wb')).toHaveAttribute('data-as', 'lanes')
+  await expect(strip.getByRole('button')).toHaveText(['Went well', 'To change', 'Ideas'])
+  await expect(strip.getByRole('button', { name: 'Went well' })).toHaveAttribute('aria-current', 'true')
+  await strip.getByRole('button', { name: 'Ideas' }).click()
+  await expect(strip.getByRole('button', { name: 'Ideas' })).toHaveAttribute('aria-current', 'true')
+  await expect(board.locator('.wb-lane[data-area]').nth(2)).toBeInViewport({ ratio: 0.9 })
+  await board.getByTitle('New note').fill('Mob reviews')
+  await board.getByTitle('New note').press('Enter')
+  await expect(board.locator('.wb-lane[data-area]').nth(2).locator('.wb-words')).toHaveText(['Pair programming', 'Mob reviews'])
+})
+
 test('in Arabic, a whiteboard runs right to left, and a note dropped lands where it was put (ar)', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 960 })
   await start(page, 'ar')

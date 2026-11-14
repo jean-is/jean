@@ -18,6 +18,7 @@ import { slots } from '../../ui/caps.js'
 import { send } from '../../ui/send.js'
 import { reviewBar } from '../../ui/review.js'
 import { icons, icon } from '../../ui/menu-icons.js'
+import { still } from '../../ui/sheet.js'
 import { load, change, unkept, accept, reject, undoStep, reshapeTable, amend, watched } from '../tables/tables.js'
 import { notesOf, ownProblem, kindOf } from '../tables/table.js'
 import { fold } from '../tables/changes.js'
@@ -474,8 +475,30 @@ customElements.define('app-whiteboard', class extends HTMLElement {
     const words = field.value.trim()
     if (!words) return
     field.value = ''
-    await this.edit([{ set: { note: words } }])
-    this.say(t('whiteboards.waiting', { name: words }))
+    // On a phone's lanes, the section on show takes it; elsewhere it waits on the shelf.
+    const area = showAs.peek() === 'lanes' && this.#narrow() ? this.#onShow() : null
+    await this.edit([{ set: { note: words, ...(area && { area }) } }])
+    this.say(area ? t('whiteboards.movedTo', { name: words, section: wordsOf(/** @type {Row} */ (this.#row(area))) }) : t('whiteboards.waiting', { name: words }))
+  }
+
+  /** Whether the pane is under 30rem, where the lanes show one section at a time. */
+  #narrow() { return this.clientWidth > 0 && this.clientWidth < 30 * parseFloat(getComputedStyle(document.documentElement).fontSize) }
+  /** The lane on show in a phone's lanes: its section's id, or none for the notes in no section. */
+  #onShow() {
+    const lanes = this.querySelector('.wb-lanes'), all = [...this.querySelectorAll('.wb-lane')], i = lanes && all.length ? Math.round(Math.abs(lanes.scrollLeft) / Math.max(1, lanes.scrollWidth / all.length)) : 0
+    return all[Math.min(i, all.length - 1)]?.getAttribute('data-area') || null
+  }
+  /** A phone's lane brought on show, from its button in the strip, by as far as it lies from the lanes' start, either way round. @param {string} area */
+  #bring(area) {
+    const lanes = this.querySelector('.wb-lanes'), lane = this.querySelector(`.wb-lane[data-area="${CSS.escape(area)}"]`)
+    if (!lanes || !lane) return
+    const [box, at] = [lanes.getBoundingClientRect(), lane.getBoundingClientRect()], rtl = getComputedStyle(lanes).direction === 'rtl'
+    lanes.scrollBy({ left: rtl ? at.right - box.right : at.left - box.left - parseFloat(getComputedStyle(lanes).paddingInlineStart), behavior: still() ? 'auto' : 'smooth' })
+  }
+  /** The strip over a phone's lanes says which is on show, as the lanes scroll. */
+  #shown = () => {
+    const on = this.#onShow() ?? ''
+    for (const tab of this.querySelectorAll('.wb-tabs button')) tab.setAttribute('aria-current', String(tab.getAttribute('data-area') === on))
   }
 
   // ─── Keys ─────────────────────────────────────────────────────────────────────
@@ -764,11 +787,14 @@ customElements.define('app-whiteboard', class extends HTMLElement {
   #lanes(one, jean) {
     const { areas, items, shelf } = layout(one.rows), number = new Intl.NumberFormat(intlLocales())
     const loose = [...items.filter((item) => !item.area && item.kind === 'note'), ...shelf.map((row) => ({ row, kind: /** @type {const} */ ('note'), area: null, placed: false, x: 0, y: 0, ...NOTE }))]
-    return html`<div class="wb-lanes" dir=${one.table.dir ?? 'ltr'} @keydown=${this.keys}>${areas.map((area) => {
+    // On a phone, one at a time, a strip of them over them: each a button that brings its lane, the one on show marked.
+    const tabs = this.#narrow() ? html`<nav class="wb-tabs" aria-label=${t('whiteboards.showLanes')}><ul>${[...areas.map((area) => [area.row.id, wordsOf(area.row), area.hue]), ...(loose.length ? [['', t('whiteboards.shelf'), -1]] : [])].map(([id, name, hue], i) => html`<li>
+      <button type="button" class="button subtle" data-area=${id} aria-current=${String(i === 0)} @click=${() => this.#bring(String(id))}><span class=${hue === -1 ? 'wb-dot' : `wb-dot wb-hue-${hue}`}></span><span dir="auto">${name}</span></button></li>`)}</ul></nav>` : nothing
+    return html`${tabs}<div class="wb-lanes" dir=${one.table.dir ?? 'ltr'} @keydown=${this.keys} @scroll=${this.#shown}>${areas.map((area) => {
       const notes = items.filter((item) => item.area === area.row.id && item.kind === 'note')
-      return html`<section class=${`wb-lane wb-hue-${area.hue}`} aria-labelledby=${`${this.#id}-lane-${area.row.id}`}><h3 id=${`${this.#id}-lane-${area.row.id}`}><span class="wb-dot"></span><span dir="auto">${wordsOf(area.row)}</span> <span class="wb-count">${number.format(notes.length)}</span></h3>
+      return html`<section class=${`wb-lane wb-hue-${area.hue}`} data-area=${area.row.id} aria-labelledby=${`${this.#id}-lane-${area.row.id}`}><h3 id=${`${this.#id}-lane-${area.row.id}`}><span class="wb-dot"></span><span dir="auto">${wordsOf(area.row)}</span> <span class="wb-count">${number.format(notes.length)}</span></h3>
         <ul>${notes.map((item) => this.#item(one, { ...item, x: 0, y: 0 }, { x: 0, y: 0 }, jean, areas, 0))}</ul></section>`
-    })}${loose.length ? html`<section class="wb-lane is-loose" aria-labelledby=${`${this.#id}-lane-loose`}><h3 id=${`${this.#id}-lane-loose`}><span class="wb-dot"></span><span dir="auto">${t('whiteboards.shelf')}</span> <span class="wb-count">${number.format(loose.length)}</span></h3>
+    })}${loose.length ? html`<section class="wb-lane is-loose" data-area="" aria-labelledby=${`${this.#id}-lane-loose`}><h3 id=${`${this.#id}-lane-loose`}><span class="wb-dot"></span><span dir="auto">${t('whiteboards.shelf')}</span> <span class="wb-count">${number.format(loose.length)}</span></h3>
       <ul>${loose.map((item) => this.#item(one, { ...item, x: 0, y: 0 }, { x: 0, y: 0 }, jean, areas, 0))}</ul></section>` : nothing}</div>`
   }
 })
