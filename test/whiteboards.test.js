@@ -8,7 +8,7 @@ import { made, changed, rowsOf, editsOf } from '../app/caps/whiteboards/tool.js'
 import { svgOf } from '../app/caps/whiteboards/picture.js'
 import { fold, stamp } from '../app/caps/tables/changes.js'
 import { readFile } from 'node:fs/promises'
-import { DIRECTORY, readFor, readDirectory, listedOwn } from '../app/caps/skills/directory.js'
+import { DIRECTORY, readFor, readDirectory, listedOwn, skillLine } from '../app/caps/skills/directory.js'
 import { skillLines } from '../app/core/skills.js'
 
 /** A row's ULID, by number. @param {number} n */
@@ -155,4 +155,14 @@ test('found through its skill once Skills is found: <skills> gives whiteboard wh
   assert.ok(listedOwn(own, []).every((one) => one.name === 'whiteboard' || !one.description.includes('; read ')))
   // Policy denying Whiteboards keeps the skill from the directory Skills lists (directory() in caps/skills/skills.js), and its words with it.
   assert.ok(!skillLines(listedOwn(own.filter((entry) => entry.cap !== 'whiteboards'), [])).includes('whiteboard'))
+})
+
+test('found through its skill: `skill`’s line names Jean’s own until Skills is found, then none, and says what whiteboard is read for either way, in the words measured', () => {
+  const names = DIRECTORY.map((entry) => entry.name), plain = 'read the steps of a skill before asking the user anything for it or following it'
+  const use = '; read whiteboard for a brainstorm, a retrospective or things to sort into groups with others, in place of a list or a table'
+  assert.equal(skillLine(names, false), `${plain}: ${names.join(', ')}${use}`)
+  assert.equal(skillLine(names, true), `${plain}${use}`)
+  // Policy denying Whiteboards takes its words from the line, and keeping to the organisation's sources takes every name.
+  assert.equal(skillLine(names.filter((name) => name !== 'whiteboard'), true), plain)
+  assert.equal(skillLine([], false), plain)
 })

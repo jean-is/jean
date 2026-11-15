@@ -25,7 +25,7 @@ import { buildSystemPrompt } from '../app/core/prompt.js'
 import { streamChat } from '../app/core/llm.js'
 import { tableCreate, LINE as TABLE_LINE } from '../app/caps/tables/tool.js'
 import { WHITEBOARD, WHITEBOARD_CHANGE, LINES, made, changed } from '../test/whiteboard/tools.js'
-import { DIRECTORY, readFor, shownIn, listedOwn } from '../app/caps/skills/directory.js'
+import { DIRECTORY, skillLine, shownIn, listedOwn } from '../app/caps/skills/directory.js'
 import { skillNamed, skillLines, parseSkill } from '../app/core/skills.js'
 import { score, normal } from './tables.js'
 
@@ -45,7 +45,7 @@ const WRITE_LINE = { name: 'write', line: 'make a file: a Word document, a sprea
  * TABLE_NOTE measure Jean as it was before them).
  */
 const SKILL = { name: 'skill', description: 'Read the steps of a skill.', parameters: { type: 'object', properties: { name: { type: 'string' } }, required: ['name'] } }
-const SKILL_LINE = { name: 'skill', line: process.env.SKILL_LINE || `read the steps of a skill before asking the user anything for it or following it: ${DIRECTORY.map((entry) => entry.name).join(', ')}${readFor(DIRECTORY.map((entry) => entry.name))}` }
+const SKILL_LINE = { name: 'skill', line: process.env.SKILL_LINE || skillLine(DIRECTORY.map((entry) => entry.name), false) }
 /** table_create as Tables declares it where the whiteboard's skill can be read, in the request's language, or with TABLE_NOTE's words. @param {string} lang */
 const tableSpec = (lang) => (process.env.TABLE_NOTE == null ? tableCreate(lang, { whiteboard: true }) : ((spec) => ({ ...spec, description: [spec.description, process.env.TABLE_NOTE].filter(Boolean).join(' ') }))(tableCreate(lang)))
 /**
@@ -54,7 +54,7 @@ const tableSpec = (lang) => (process.env.TABLE_NOTE == null ? tableCreate(lang, 
  * for a fresh room (listedOwn). SKILLS_TEXT in the environment takes the place of whiteboard's `when` there, as it stands, none when
  * empty (Jean before it), measured before any goes into Jean.
  */
-const FOUND_LINE = { name: 'skill', line: process.env.SKILL_LINE || 'read the steps of a skill before asking the user anything for it or following it' }
+const FOUND_LINE = { name: 'skill', line: process.env.SKILL_LINE || skillLine(DIRECTORY.map((entry) => entry.name), true) }
 const SAVE = { name: 'save_skill', description: 'Save a skill: how a task is done, to do it the same way every time. For a new one the user asks for, first ask the few things you need to know (what it is for, what they will give it, what should come back and how) unless the conversation already says, then save it. name: a few English words joined by hyphens; description: when to use it; example: a short request that uses it, complete enough to send as it is; steps: Markdown starting with a "# " title. Description, example and steps in the user’s language.',
   parameters: { type: 'object', properties: { name: { type: 'string' }, description: { type: 'string' }, example: { type: 'string' }, steps: { type: 'string' } }, required: ['name', 'description', 'example', 'steps'] } }
 const SAVE_LINE = { name: 'save_skill', line: 'save how a task is done as a skill, or make one with the user, when they ask' }

@@ -75,9 +75,9 @@ offered by Copilot.
 - Not measured: once Skills is found, its own list replaces the names in the line, the skill's description is what the brain
   reads, and the line's words are gone.
 
-## f. Once Skills is found: Haiku falls back, and the `when` in its listing brings it to 77%, shipped under the gate
+## f. Once Skills is found: Haiku falls back, and passes again with the `when` in its listing and in `skill`'s line
 
-15 November, the same set and gate, `--found` ([results](results.md#once-skills-is-found-sonnet-holds-haiku-falls-back-to-69-and-to-77-with-the-when-in-its-listing)).
+15 November, the same set and gate, `--found` ([results](results.md#once-skills-is-found-haiku-falls-back-to-69-and-passes-at-84-with-the-when-in-its-listing-and-in-skills-line)).
 
 - Once a skill has been read, Skills is found, `skill`'s line names no skill and `readFor` goes with the names. Haiku falls back
   from 79.7% to 69%, the skill unread for brainstorms answered in words or as a table. Sonnet holds at 87.5%. No whiteboard for
@@ -85,4 +85,6 @@ offered by Copilot.
 - Whiteboard's `when` after its words in `<skills>` ("Notes in sections, to sort ideas together; read whiteboard for …") brings
   Haiku to 77% (en 77, fr 77, ar 73, ja 79) and Sonnet to 91%, no whiteboard for tables. Under the gate for Haiku, it shipped at
   the owner's word since it beats 69%: `listedOwn()` in `caps/skills/directory.js`, reusing `readFor`, which `listed()` calls.
-- Next to measure: the same words kept in `skill`'s line once Skills is found, where Haiku read them before.
+- The same words kept in `skill`'s line once Skills is found, with no names before them (`skillLine()`), take Haiku to 84% (en 90,
+  fr 79, ar 81, ja 88) and leave Sonnet at 91%: both pass the gate, no whiteboard for tables, tables as before (98% and 91%).
+  Jean's since.

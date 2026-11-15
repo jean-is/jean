@@ -40,10 +40,10 @@ after the names: "; read whiteboard for a brainstorm, a retrospective or things 
 or a table". After table_create's description: "For notes to brainstorm or sort with others, such as a retrospective, read the skill
 whiteboard instead: it brings a whiteboard." The note took table_create from about 390 tokens to 404–423, so its own words were cut,
 every rule kept: "Make a table to keep track of something" went, which the tool's name and line say, and the sentence on the person
-filling in a row took in the one on what the request names, which said the same. With them it is 376–395 tokens. Measured again,
-the whiteboards held and the tables didn't drop. Sonnet passes the gate on all three counts. Haiku passes on languages and tables
-and is one conversation short on the first: 153 of 192, where 154 is 80%. In the first run, one conversation of each brain failed at
-the server ("fetch failed") and is left out of 528.
+filling in a row took in the one on what the request names, which said the same. With them it is 376–395 tokens. Measured again, the
+whiteboards held and the tables didn't drop. Sonnet passes the gate on all three counts. Haiku passes on languages and tables and is
+one conversation short on the first: 153 of 192, where 154 is 80%. In the first run, one conversation of each brain failed at the
+server ("fetch failed") and is left out of 528.
 
 The misses left, with Jean's wording: the skill not read 29 times by Haiku (the house move planned "on a board the whole family can
 see" 10 times in 12, a table each time; the hiring steps 6; the office party 5) and 19 by Sonnet (that move 10 times, reading
@@ -126,40 +126,66 @@ in the environment measure another line or note, and the line naming the skills 
 | skill:choose | 63% (30/48) | 50% (24/48) | 63% (30/48) | 56% (27/48) | 58% (111/192) | skill not read: words (31); skill not read: table_create (22); project-plan read (12); skill not read: write (10) |
 | skill:tables | 93% (56/60) | 93% (56/60) | 92% (55/60) | 93% (56/60) | 93% (223/240) | n columns (10); no handed (2); الحالة: steps مرسلة, مدفوعة (2); no rendu (1) |
 
-### Once Skills is found: Sonnet holds, Haiku falls back to 69%, and to 77% with the `when` in its listing
+### Once Skills is found: Haiku falls back to 69%, and passes at 84% with the `when` in its listing and in `skill`'s line
 
 Measured with `--found`, the gate unchanged. Skills is found once a skill has been read, and Whiteboards may still not be. Then
-`skill`'s line names no skill, and `readFor` goes with the names. Skills adds save_skill, its line and the rule "When a request
-matches a skill, read it and follow its steps.", and `<skills>` lists each of Jean's own by its `text-en`, whiteboard's as "Notes in
-sections, to sort ideas together". table_create keeps its note. suggest_skill is deferred, so it isn't declared.
+`skill`'s line names no skill, and `readFor` went with the names until the last run below. Skills adds save_skill, its line and the
+rule "When a request matches a skill, read it and follow its steps.", and `<skills>` lists each of Jean's own by its `text-en`,
+whiteboard's as "Notes in sections, to sort ideas together". table_create keeps its note. suggest_skill is deferred, so it isn't
+declared.
 
 | A whiteboard made right through the skill, where one is right | Haiku | Sonnet | Gate |
 |---|---:|---:|---:|
 | Skills not found, Jean's (above) | 79.7% (153/192) | 87.5% (168/192) | 80% |
 | Skills found, before the `when` in `<skills>` | 69% (132/192) | 87.5% (168/192) | 80% |
 | Those, by language: en, fr, ar, ja | 67, 63, 67, 79 | 88, 79, 90, 94 | ar, ja within 10 of en |
-| Skills found, whiteboard's `when` after its words in `<skills>`: Jean's | 77% (147/192) | 91% (174/192) | 80% |
+| Skills found, whiteboard's `when` after its words in `<skills>` | 77% (147/192) | 91% (174/192) | 80% |
 | Those, by language: en, fr, ar, ja | 77, 77, 73, 79 | 92, 83, 90, 98 | ar, ja within 10 of en |
+| That, and the `when` kept in `skill`'s line with no names: Jean's | 84% (162/192) | 91% (174/192) | 80% |
+| Those, by language: en, fr, ar, ja | 90, 79, 81, 88 | 94, 81, 92, 96 | ar, ja within 10 of en |
 | Whiteboards made for the 80 table requests, three runs, in each | 0 | 0 | 2 at most |
-| Those tables right: before the `when`, then with it | 98%, 98% | 92%, 91% | about as before |
+| Those tables right: before the `when`, with it in `<skills>`, then in the line too | 98%, 98%, 98% | 92%, 91%, 91% | about as before |
 
-Before the `when` was there, Haiku lost 11 points once Skills is found. What told it a whiteboard's use was `readFor` in `skill`'s line, and the
-listing's words don't say brainstorm or retrospective. Of its 60 misses, 57 are the skill not read: words 28, a table 23, and
-"project-plan" read 6. Sonnet doesn't move: 22 not read (words 10, a table 8) and one section empty.
+Before the `when` was there, Haiku lost 11 points once Skills is found. What told it a whiteboard's use was `readFor` in `skill`'s
+line, and the listing's words don't say brainstorm or retrospective. Of its 60 misses, 57 are the skill not read: words 28, a table
+23, and "project-plan" read 6. Sonnet doesn't move: 22 not read (words 10, a table 8) and one section empty.
 
 With "; read whiteboard for a brainstorm, a retrospective or things to sort into groups with others, in place of a list or a table"
-after whiteboard's words in `<skills>` (`readFor(['whiteboard'])`, the same words), Haiku comes back to 77%. That is under the gate, and 2.7 points under where it is before Skills is found. Its 45 misses: 33 not read (words 14,
-a table 11, "project-plan" 8) and 12 with a section empty. Sonnet is at 91%. It shipped at the owner's word, under the gate, since it
+after whiteboard's words in `<skills>` (`readFor(['whiteboard'])`, the same words), Haiku comes back to 77%. That is under the gate,
+and 2.7 points under where it is before Skills is found. Its 45 misses: 33 not read (words 14, a table 11, "project-plan" 8) and 12
+with a section empty. Sonnet is at 91%. It shipped at the owner's word, under the gate, since it
 beats 69%: `listedOwn()` in `app/caps/skills/directory.js`, which `listed()` calls, gives each of Jean's own its `readFor`. `--found`
 measures Jean with it, and an empty `SKILLS_TEXT` without it.
 
 Sonnet's tables, 92% and 91% here, were 95% in the run above and 93% at first: its misses are its own long tables ("n columns", 11
 each time), and the tables' tools and words are the same in every state.
 
-The next wording to measure keeps "; read whiteboard for …" in `skill`'s line once Skills is found, where Haiku read it before
-(`readFor(own)` after the line's words with no names): `SKILL_LINE="read the steps of a skill before asking the user anything for it
-or following it; read whiteboard for a brainstorm, a retrospective or things to sort into groups with others, in place of a list or
-a table" npm run whiteboard -- --parts skill:make,skill:choose,skill:tables --runs 3 --found`.
+Keeping "; read whiteboard for …" in `skill`'s line too once Skills is found, where Haiku read it before Skills is found, with no
+names before it, takes Haiku to 84% (en 90, fr 79, ar 81, ja 88) and leaves Sonnet at 91% (94, 81, 92, 96). Both pass the gate on
+every count. No whiteboard was made for the 240 tables, which are right 98% and 91% of the time, as in the runs before. Haiku's 30
+misses: 20 skill not read (a table 10, "project-plan" read 7, words 3) and 10 a section empty; Sonnet's 18: 8 not read and 10 a
+section empty. Jean's since: `skillLine()` in `app/caps/skills/directory.js` writes the line, Skills found or not, and own-skills
+and the harness both call it.
+
+#### haiku (claudecode), Skills found, the `when` in `<skills>` and in `skill`'s line: Jean's
+
+528 conversations, 3 runs each.
+
+| Part | en | fr | ar | ja | All | Commonest misses |
+|---|---:|---:|---:|---:|---:|---|
+| skill:make | 100% (24/24) | 100% (24/24) | 100% (24/24) | 100% (24/24) | 100% (96/96) | — |
+| skill:choose | 90% (43/48) | 79% (38/48) | 81% (39/48) | 88% (42/48) | 84% (162/192) | a section empty (10); project-plan read (7); skill not read: table_create (7); skill not read: words (3) |
+| skill:tables | 97% (58/60) | 100% (60/60) | 98% (59/60) | 97% (58/60) | 98% (235/240) | no who (2); no task (1); no due (1); no status (1) |
+
+#### sonnet (claudecode), Skills found, the `when` in `<skills>` and in `skill`'s line: Jean's
+
+528 conversations, 3 runs each.
+
+| Part | en | fr | ar | ja | All | Commonest misses |
+|---|---:|---:|---:|---:|---:|---|
+| skill:make | 100% (24/24) | 100% (24/24) | 100% (24/24) | 100% (24/24) | 100% (96/96) | — |
+| skill:choose | 94% (45/48) | 81% (39/48) | 92% (44/48) | 96% (46/48) | 91% (174/192) | a section empty (10); skill not read: table_create (6); skill not read: write (1); skill not read: words (1) |
+| skill:tables | 93% (56/60) | 88% (53/60) | 87% (52/60) | 97% (58/60) | 91% (219/240) | n columns (11); no échéance (2); no الشخص (2); no handed (1) |
 
 #### haiku (claudecode), Skills found, before the `when` in `<skills>`
 
@@ -181,7 +207,7 @@ a table" npm run whiteboard -- --parts skill:make,skill:choose,skill:tables --ru
 | skill:choose | 88% (42/48) | 81% (39/48) | 90% (43/48) | 94% (45/48) | 88% (169/192) | skill not read: words (10); skill not read: table_create (8); skill not read: write, table_create (2); a section empty (1) |
 | skill:tables | 95% (57/60) | 93% (56/60) | 90% (54/60) | 90% (54/60) | 92% (221/240) | n columns (11); الحالة: steps مرسلة, مدفوعة (2); no ステータス (2); no handed (1) |
 
-#### haiku (claudecode), Skills found, the `when` in `<skills>`: Jean's
+#### haiku (claudecode), Skills found, the `when` in `<skills>`
 
 528 conversations, 3 runs each.
 
@@ -191,7 +217,7 @@ a table" npm run whiteboard -- --parts skill:make,skill:choose,skill:tables --ru
 | skill:choose | 77% (37/48) | 77% (37/48) | 73% (35/48) | 79% (38/48) | 77% (147/192) | skill not read: words (14); a section empty (12); skill not read: table_create (11); project-plan read (8) |
 | skill:tables | 97% (58/60) | 100% (60/60) | 97% (58/60) | 98% (59/60) | 98% (235/240) | no cost (1); no course (1); no completed (1); no سلم (1) |
 
-#### sonnet (claudecode), Skills found, the `when` in `<skills>`: Jean's
+#### sonnet (claudecode), Skills found, the `when` in `<skills>`
 
 528 conversations, 3 runs each.
 

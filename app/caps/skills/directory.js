@@ -52,6 +52,12 @@ export const DIRECTORY = Object.freeze([
 export const readFor = (names) => DIRECTORY.filter((entry) => entry.when && names.includes(entry.name)).map((entry) => `; read ${entry.name} for ${entry.when}`).join('')
 
 /**
+ * `skill`'s line: Jean's own by name until Skills is found, which lists them, and when some are read for either way, which a brain
+ * that reads it nowhere else misses (test/whiteboard/results.md). @param {readonly string[]} names @param {boolean} found
+ */
+export const skillLine = (names, found) => `read the steps of a skill before asking the user anything for it or following it${names.length && !found ? `: ${names.join(', ')}` : ''}${readFor(names)}`
+
+/**
  * Jean's own as <skills> lists them once Skills is found: each in its few English words, the room's skill of its name in its place,
  * then when the brain reads it, as `skill`'s line said before (readFor). @param {readonly { name: string, description: string, title?: string, metadata?: Record<string, any> }[]} own
  * @param {readonly { name: string, description: string, title?: string, metadata?: Record<string, any> }[]} have the room's
