@@ -9,7 +9,7 @@
   "welcome.device": "保存在這台裝置上",
   "welcome.open": "免費、開源",
   "welcome.join": "已經在其他裝置上使用 {name} 了？{link}",
-  "welcome.bring": "把它帶過來",
+  "welcome.sync": "同步這兩台裝置",
   "starter.sample": "用範例試算表試試",
   "starter.sample.prompt": "這一年裡哪個產品成長最多？用圖表給我看。",
   "starter.music": "寫一段曲子",

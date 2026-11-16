@@ -9,7 +9,7 @@
   "welcome.device": "এই ডিভাইসেই রাখা থাকে",
   "welcome.open": "বিনামূল্যে ও ওপেন সোর্স",
   "welcome.join": "অন্য ডিভাইসে আগে থেকেই {name} ব্যবহার করছেন? {link}",
-  "welcome.bring": "এখানে নিয়ে আসুন",
+  "welcome.sync": "দুটিকে সিঙ্ক করুন",
   "starter.sample": "নমুনা স্প্রেডশিট",
   "starter.sample.prompt": "বছরজুড়ে কোন পণ্যটি সবচেয়ে বেশি বেড়েছে? চার্টে দেখাও।",
   "starter.music": "সুর বাঁধা",

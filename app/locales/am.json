@@ -9,7 +9,7 @@
   "welcome.device": "በዚህ መሣሪያ ላይ ይቀመጣል",
   "welcome.open": "ነፃ እና ክፍት ምንጭ",
   "welcome.join": "{name}ን በሌላ መሣሪያ ላይ ቀድሞውኑ ይጠቀማሉ? {link}",
-  "welcome.bring": "እዚህ ያምጡት",
+  "welcome.sync": "ሁለቱን ያመሳስሉ",
   "starter.sample": "የተመን ሉህ ይሞክሩ",
   "starter.sample.prompt": "በዓመቱ ውስጥ በጣም ያደገው የትኛው ምርት ነው? በሠንጠረዥ ያሳዩኝ።",
   "starter.music": "ዜማ መድረስ",

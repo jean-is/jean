@@ -9,7 +9,7 @@
   "welcome.device": "Bewaard op dit apparaat",
   "welcome.open": "Gratis en open source",
   "welcome.join": "Gebruik je {name} al op een ander apparaat? {link}",
-  "welcome.bring": "Hierheen halen",
+  "welcome.sync": "Beide synchroniseren",
   "starter.sample": "Probeer een tabel",
   "starter.sample.prompt": "Welk product is in de loop van het jaar het meest gegroeid? Laat het zien in een grafiek.",
   "starter.music": "Melodie componeren",

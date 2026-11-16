@@ -9,7 +9,7 @@
   "welcome.device": "याच डिव्हाइसवर जतन",
   "welcome.open": "विनामूल्य आणि ओपन सोर्स",
   "welcome.join": "दुसऱ्या डिव्हाइसवर आधीपासून {name} वापरता? {link}",
-  "welcome.bring": "इथे आणा",
+  "welcome.sync": "दोन्ही सिंक करा",
   "starter.sample": "स्प्रेडशीट करून पाहा",
   "starter.sample.prompt": "वर्षभरात कोणते उत्पादन सर्वाधिक वाढले? ते तक्त्यात दाखव.",
   "starter.music": "धून रचा",

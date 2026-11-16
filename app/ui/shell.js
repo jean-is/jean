@@ -133,15 +133,15 @@ document.addEventListener('keydown', (event) => {
   }
 })
 
-const bringHere = () => unlock('devices').then((on) => { if (on) import('./dialogs.js').then((dialogs) => dialogs.openSettings('devices/join')) })
+const syncHere = () => unlock('devices').then((on) => { if (on) import('./dialogs.js').then((dialogs) => dialogs.openSettings('devices/join')) })
 
-// Before any task, until Your devices is found, a way to bring Jean here (D726).
+// Before any task, until Your devices is found, a way to sync the two (D726).
 function welcome() {
-  const bring = !app.conversations.value.length && pairs() && !loaded.value.has('devices') && !isDenied('devices') && !app.ephemeral.value
+  const syncs = !app.conversations.value.length && pairs() && !loaded.value.has('devices') && !isDenied('devices') && !app.ephemeral.value
   return html`<section class="welcome">
     <app-persona></app-persona>
     <h1 class="hero-question">${t('welcome.question')}</h1>
-    ${bring ? html`<p class="muted">${tParts('welcome.join', { name: BRAND.name, link: html`<button type="button" class="link-button" @click=${bringHere}>${t('welcome.bring')}</button>` })}</p>` : nothing}
+    ${syncs ? html`<p class="muted">${tParts('welcome.join', { name: BRAND.name, link: html`<button type="button" class="link-button" @click=${syncHere}>${t('welcome.sync')}</button>` })}</p>` : nothing}
   </section>`
 }
 

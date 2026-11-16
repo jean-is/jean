@@ -9,7 +9,7 @@
   "welcome.device": "Păstrat pe acest dispozitiv",
   "welcome.open": "Gratuit și open source",
   "welcome.join": "Folosiți deja {name} pe alt dispozitiv? {link}",
-  "welcome.bring": "Aduceți-vă lucrurile aici",
+  "welcome.sync": "Sincronizați-le pe amândouă",
   "starter.sample": "Încercați o foaie de calcul",
   "starter.sample.prompt": "Care produs a crescut cel mai mult în cursul anului? Arată-mi asta într-un grafic.",
   "starter.music": "Compuneți o melodie",

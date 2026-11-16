@@ -9,7 +9,7 @@
   "welcome.device": "Disimpan di perangkat ini",
   "welcome.open": "Gratis dan sumber terbuka",
   "welcome.join": "Sudah memakai {name} di perangkat lain? {link}",
-  "welcome.bring": "Bawa ke sini",
+  "welcome.sync": "Sinkronkan keduanya",
   "starter.sample": "Coba tabel contoh",
   "starter.sample.prompt": "Produk mana yang paling tumbuh sepanjang tahun? Tunjukkan dalam grafik.",
   "starter.music": "Gubah lagu",

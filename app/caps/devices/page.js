@@ -3,7 +3,7 @@
 // added, and Remove, asked in a dialog that also erases Jean there; what they keep in common, what each keeps; Add a device, its steps
 // shown in its place under the three both devices name (the link and its QR code, the wait; the lock, the six digits the new device shows,
 // sent at the sixth; done, on the map). A new device joins from its own page, devices/join, which its welcome opens: a link from the other
-// device, pasted there, in the box or opened, joined in the same place once the person chooses Bring it here, its six digits shown to type
+// device, pasted there, in the box or opened, joined in the same place once the person chooses Sync the two, its six digits shown to type
 // there, then the profile that came and the device it came from, as a card, opened only on Yes, it's mine. Loaded the first time it shows.
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
@@ -50,7 +50,7 @@ function step() {
   if (b.step === 'home') return { at: 0, body: html`<h3 tabindex="-1">${t('devices.homeTitle', { name })}</h3><p>${t('devices.homeText', { name })}</p><p>${t('devices.homePaste')}</p>${field(b.link)}`,
     buttons: row(html`<button class="button" @click=${() => { joining.value = { step: 'ask', link: b.link } }}>${t('devices.inSafari')}</button>`, quit()) }
   const asked = html`<h3 tabindex="-1">${t('devices.askTitle', { name })}</h3><p>${t('devices.coming', { name })}</p>`
-  if (b.step === 'ask') return { at: 0, body: asked, buttons: row(html`<button class="button primary" @click=${() => join(b.link)}>${t('welcome.bring')}</button>`, quit()) }
+  if (b.step === 'ask') return { at: 0, body: asked, buttons: row(html`<button class="button primary" @click=${() => join(b.link)}>${t('welcome.sync')}</button>`, quit()) }
   if (b.step === 'waiting') return { at: 0, body: asked, said: t('devices.joining'), waits: true, buttons: row(quit()) }
   if (b.step === 'code') return { at: 1, body: html`<h3 tabindex="-1">${t('devices.typeThere')}</h3>${digitsOf(b.code)}`, buttons: row(quit()) }
   // The profile that came as a card, its initial and its name, and the device it came from; Yes, it's mine opens it.

@@ -9,7 +9,7 @@
   "welcome.device": "Gemt på denne enhed",
   "welcome.open": "Gratis og open source",
   "welcome.join": "Bruger du allerede {name} på en anden enhed? {link}",
-  "welcome.bring": "Hent det hele hertil",
+  "welcome.sync": "Synkroniser de to",
   "starter.sample": "Prøv et regneark",
   "starter.sample.prompt": "Hvilket produkt voksede mest i løbet af året? Vis det som et diagram.",
   "starter.music": "Komponér en melodi",

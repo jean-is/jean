@@ -9,7 +9,7 @@
   "welcome.device": "データはこの端末に保存",
   "welcome.open": "無料・オープンソース",
   "welcome.join": "別の端末で {name} をすでに使っていますか？{link}",
-  "welcome.bring": "この端末でも使う",
+  "welcome.sync": "2 台を同期する",
   "starter.sample": "サンプルの表で試す",
   "starter.sample.prompt": "1 年間でいちばん伸びた商品はどれですか？グラフで見せてください。",
   "starter.music": "曲をつくる",

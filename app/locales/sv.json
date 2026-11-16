@@ -9,7 +9,7 @@
   "welcome.device": "Sparas på den här enheten",
   "welcome.open": "Gratis och öppen källkod",
   "welcome.join": "Använder du redan {name} på en annan enhet? {link}",
-  "welcome.bring": "Hämta den hit",
+  "welcome.sync": "Synkronisera de två",
   "starter.sample": "Prova ett kalkylark",
   "starter.sample.prompt": "Vilken produkt växte mest under året? Visa det som ett diagram.",
   "starter.music": "Komponera en melodi",

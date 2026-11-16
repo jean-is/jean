@@ -9,7 +9,7 @@
   "welcome.device": "Kept on this device",
   "welcome.open": "Free and open source",
   "welcome.join": "Already use {name} on another device? {link}",
-  "welcome.bring": "Bring it here",
+  "welcome.sync": "Sync the two",
   "starter.sample": "Try a spreadsheet",
   "starter.sample.prompt": "Which product grew the most over the year? Show it as a chart.",
   "starter.music": "Compose a tune",

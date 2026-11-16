@@ -121,14 +121,14 @@ async function exchange(a, b) {
   return { settings, link, code: String(await digits.textContent()).replace(' ', '') }
 }
 
-/** On the new device, at the first of the three steps, what joining does said, and Bring it here chosen. @param {Page} b */
+/** On the new device, at the first of the three steps, what joining does said, and Sync the two chosen. @param {Page} b */
 async function joinThere(b) {
   const flow = b.locator('app-settings .devices-flow')
   await expect(flow.locator('.rail > li')).toHaveText(['Show the code', 'Match the digits', 'Done'])
   await expect(flow.locator('.rail [aria-current="step"]')).toHaveText('Show the code')
-  await expect(flow.getByRole('heading')).toHaveText('Bring your Jean here?')
+  await expect(flow.getByRole('heading')).toHaveText('Sync with your other device?')
   await expect(flow.locator('p').first()).toHaveText('Your Jean here and your Jean on your other device become one: each gets what the other has, its brains, settings, tasks and projects. You then type six digits there.')
-  await flow.getByRole('button', { name: 'Bring it here' }).click()
+  await flow.getByRole('button', { name: 'Sync the two' }).click()
 }
 
 /** On the new device, still matching, the profile that came as a card, from the device it came from, opened with Yes, it's mine. @param {Page} b @param {Page} a */
@@ -310,7 +310,7 @@ test('a second device opening the same link hears it was already used', async ({
   await expect(c.locator('#prompt')).toHaveValue('')
   await expect(c).toHaveURL(/#\/settings\/devices$/)
   const there = c.locator('app-settings dialog[open]')
-  await there.getByRole('button', { name: 'Bring it here' }).click()
+  await there.getByRole('button', { name: 'Sync the two' }).click()
   await expect(there.locator('.devices-wrong')).toHaveText('This link was already used. On your other device, choose Add a device again for a new one.')
   await expect(c.locator('app-settings .digits')).toHaveCount(0)
   // B's adding goes on.
@@ -564,7 +564,7 @@ test('a locked profile asks for its lock before the six digits', async ({ page, 
   await b.context().close()
 })
 
-test('a link opened does nothing until Bring it here, and the profile that comes, from a device this one doesn’t know, opens only on Yes, it’s mine', async ({ page, browser }) => {
+test('a link opened does nothing until Sync the two, and the profile that comes, from a device this one doesn’t know, opens only on Yes, it’s mine', async ({ page, browser }) => {
   await deviceA(page)
   const b = await device(browser)
   const first = await here(b)
@@ -573,9 +573,9 @@ test('a link opened does nothing until Bring it here, and the profile that comes
   const link = await settings.getByRole('textbox', { name: 'The link to open on your other device' }).inputValue()
   await b.goto(link)
   const flow = b.locator('app-settings .devices-flow')
-  await expect(flow.getByRole('button', { name: 'Bring it here' })).toBeVisible()
+  await expect(flow.getByRole('button', { name: 'Sync the two' })).toBeVisible()
   await expect(b).toHaveURL(/#\/settings\/devices$/)
-  // Nothing goes from B until Bring it here: A still waits, B shows no digits.
+  // Nothing goes from B until Sync the two: A still waits, B shows no digits.
   await b.waitForTimeout(1500)
   await expect(settings.locator('.devices-said')).toHaveText('Waiting for your other device…')
   await expect(flow.locator('.digits')).toHaveCount(0)
@@ -583,7 +583,7 @@ test('a link opened does nothing until Bring it here, and the profile that comes
   await flow.getByRole('button', { name: 'Cancel' }).click()
   await b.locator('app-settings').getByRole('button', { name: 'Join another device' }).click()
   await expect(b.locator('app-settings .data-head h2')).toBeFocused()
-  await expect(b.locator('app-settings .data-head h2')).toHaveText('Bring your Jean here')
+  await expect(b.locator('app-settings .data-head h2')).toHaveText('Sync with your other device')
   await expect(b).toHaveURL(/#\/settings\/devices\/join$/)
   await flow.getByRole('textbox', { name: 'A link from your other device' }).fill(link)
   await flow.getByRole('button', { name: 'Join' }).click()
@@ -639,13 +639,13 @@ for (const lang of ['ar', 'ja']) {
     /** Nothing wider than the screen, and nothing cut. */
     const fits = () => b.evaluate(() => [document.documentElement.scrollWidth <= innerWidth,
       [...document.querySelectorAll('app-settings .devices-flow *')].every((element) => element.scrollWidth <= element.clientWidth + 1 || getComputedStyle(element).display === 'inline')])
-    // The three steps, the first under way; what joining does, then Bring it here.
+    // The three steps, the first under way; what joining does, then Sync the two.
     await expect(flow.locator('.rail > li')).toHaveText([words['devices.step.show'], words['devices.step.match'], words['devices.step.done']])
     await expect(flow.getByRole('heading')).toHaveText(words['devices.askTitle'].replaceAll('{name}', 'Jean'))
     await expect(flow.locator('p').first()).toHaveText(words['devices.coming'].replaceAll('{name}', 'Jean'))
-    await expect(flow.getByRole('button')).toHaveText([words['welcome.bring'], words['devices.cancel']])
+    await expect(flow.getByRole('button')).toHaveText([words['welcome.sync'], words['devices.cancel']])
     expect(await fits()).toEqual([true, true])
-    await flow.getByRole('button', { name: words['welcome.bring'] }).click()
+    await flow.getByRole('button', { name: words['welcome.sync'] }).click()
     await expect(flow.locator('.digits')).toHaveText(/^\d{3} \d{3}$/)
     await expect(b.locator('html')).toHaveAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr')
     await expect(flow.getByRole('heading')).toHaveText(words['devices.typeThere'])
@@ -967,14 +967,14 @@ test('where nothing is kept, a device is neither added nor joined, and the page 
   await expect(settings.locator('.devices-wrong')).toHaveText('This browser can’t keep Jean’s files here, in a private window for instance.')
 })
 
-test('a fresh Jean offers, from its welcome, to bring Jean from another device, and Your data, while this device is alone, to add one', async ({ browser }) => {
+test('a fresh Jean offers, from its welcome, to sync with another device, and Your data, while this device is alone, to add one', async ({ browser }) => {
   const b = await device(browser)
   test.skip(await ephemeral(b), 'nothing is kept here: a private window, Playwright’s WebKit')
   const line = b.locator('.welcome > p.muted')
-  await expect(line).toHaveText('Already use Jean on another device? Bring it here')
-  await line.getByRole('button', { name: 'Bring it here' }).click()
+  await expect(line).toHaveText('Already use Jean on another device? Sync the two')
+  await line.getByRole('button', { name: 'Sync the two' }).click()
   const settings = b.locator('app-settings dialog[open]')
-  await expect(settings.locator('.data-head h2')).toHaveText('Bring your Jean here')
+  await expect(settings.locator('.data-head h2')).toHaveText('Sync with your other device')
   await expect(settings.locator('.data-head .lede')).toHaveText('On the device that has your Jean, open Settings › Your devices and choose Add a device. Not there yet? It’s in Settings › Capabilities. Then point this device’s camera at its code, or paste its link here.')
   await expect(b).toHaveURL(/#\/settings\/devices\/join$/)
   // Back on Your devices, the keyboard on what led to the page; no row of it left in Your data, whose line offers to add a device.
@@ -999,7 +999,7 @@ test('a fresh Jean offers, from its welcome, to bring Jean from another device, 
   await expect(pop.getByRole('button', { name: 'Add a device' })).toBeFocused()
   await pop.getByRole('button', { name: 'Join another device' }).click()
   await expect(pop).toBeHidden()
-  await expect(settings.locator('.data-head h2')).toHaveText('Bring your Jean here')
+  await expect(settings.locator('.data-head h2')).toHaveText('Sync with your other device')
   await expect(b).toHaveURL(/#\/settings\/devices\/join$/)
   await b.context().close()
 })

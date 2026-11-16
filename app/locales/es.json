@@ -9,7 +9,7 @@
   "welcome.device": "Guardado en este dispositivo",
   "welcome.open": "Gratis y de código abierto",
   "welcome.join": "¿Ya usas {name} en otro dispositivo? {link}",
-  "welcome.bring": "Traer todo aquí",
+  "welcome.sync": "Sincronizar los dos",
   "starter.sample": "Probar una hoja de cálculo",
   "starter.sample.prompt": "¿Qué producto creció más a lo largo del año? Muéstralo en un gráfico.",
   "starter.music": "Componer una melodía",

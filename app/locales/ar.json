@@ -9,7 +9,7 @@
   "welcome.device": "محفوظ على هذا الجهاز",
   "welcome.open": "مجاني ومفتوح المصدر",
   "welcome.join": "هل تستخدم {name} على جهاز آخر بالفعل؟ {link}",
-  "welcome.bring": "نقل ما لديك إلى هنا",
+  "welcome.sync": "مزامنة الجهازين",
   "starter.sample": "جرّب جدول بيانات",
   "starter.sample.prompt": "أي منتج نما أكثر خلال السنة؟ اعرض ذلك لي في رسم بياني.",
   "starter.music": "تلحين مقطوعة",

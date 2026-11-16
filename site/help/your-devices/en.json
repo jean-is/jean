@@ -8,7 +8,7 @@
   "steps": [
     "On the device you already use, open {settings}, from the menu with your name (or “You”), at the foot of the task list, then {devices}. Not there yet? Turn {devices} on in {settings} › {capabilities}.",
     "Press {add}. It shows a QR code and a link.",
-    "On the new device, point its camera at the code, or open the link there, then press {bring}. On {name}’s first screen there, you can also press {bring}, paste the link and press {join}.",
+    "On the new device, point its camera at the code, or open the link there, then press {sync}. On {name}’s first screen there, you can also press {sync}, paste the link and press {join}.",
     "The new device then shows six digits. Type them on the first device: they go as you type the sixth, and you have three tries. If {name} has a lock there, it asks you to unlock it first.",
     "Back on the new device, check the name and the device it came from, under {yours}, then press {mine}. Your {name} opens there, and the first device says it is added."
   ],
@@ -19,7 +19,7 @@
     "Everything goes sealed from one device to another, so that only your devices can read it. Your devices share 1 GB; {devices} shows how much is used, and once it is full, what is new stays on the device it was made on.",
     "On an iPhone or iPad, the link opened in Safari first offers to add {name} to the Home Screen, which keeps its files apart from Safari’s: add it, open it from the Home Screen and paste the link in its box, or press {safari}.",
     "The desktop app shows no QR code: copy its link and open it on the other device.",
-    "If the new device already has {name}, open {devices} there, press {other} and paste the link; what it held stays there, in a profile of its own.",
+    "If the new device already has {name}, with tasks of its own, open {devices} there, press {other} and paste the link. Nothing is replaced on either device: what it held stays there and goes to your other devices, and what they hold comes to it.",
     "To remove a device, lost or no longer used, press {remove} on its card in {devices}. {erase} is ticked: the device is emptied of {name} the next time it opens, and either way it gets nothing more from now on. Then come the keys it may still hold, to replace each where you made it, and the sites it could still change, each to protect with a new recovery code.",
     "Not in a child’s profile, nor in a copy of {name} that your organisation signs you in to."
   ],

@@ -9,7 +9,7 @@
   "welcome.device": "Nakatago sa device na ito",
   "welcome.open": "Libre at open source",
   "welcome.join": "Gumagamit ka na ba ng {name} sa ibang device? {link}",
-  "welcome.bring": "Dalhin ito rito",
+  "welcome.sync": "I-sync ang dalawa",
   "starter.sample": "Subukan ang spreadsheet",
   "starter.sample.prompt": "Aling produkto ang pinakalumaki sa loob ng taon? Ipakita mo bilang chart.",
   "starter.music": "Gumawa ng himig",

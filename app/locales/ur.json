@@ -9,7 +9,7 @@
   "welcome.device": "اسی ڈیوائس پر محفوظ",
   "welcome.open": "مفت اور اوپن سورس",
   "welcome.join": "کیا آپ پہلے سے کسی دوسرے آلے پر {name} استعمال کرتے ہیں؟ {link}",
-  "welcome.bring": "اسے یہاں لائیں",
+  "welcome.sync": "دونوں کو سنک کریں",
   "starter.sample": "اسپریڈشیٹ آزمائیں",
   "starter.sample.prompt": "سال بھر میں کون سی پروڈکٹ سب سے زیادہ بڑھی؟ اسے چارٹ میں دکھاؤ۔",
   "starter.music": "دھن بنائیں",

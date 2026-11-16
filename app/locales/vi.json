@@ -9,7 +9,7 @@
   "welcome.device": "Lưu trên thiết bị này",
   "welcome.open": "Miễn phí và mã nguồn mở",
   "welcome.join": "Bạn đã dùng {name} trên thiết bị khác rồi? {link}",
-  "welcome.bring": "Mang sang đây",
+  "welcome.sync": "Đồng bộ cả hai",
   "starter.sample": "Thử bảng tính mẫu",
   "starter.sample.prompt": "Sản phẩm nào tăng trưởng nhiều nhất trong năm? Cho tôi xem bằng biểu đồ.",
   "starter.music": "Sáng tác giai điệu",

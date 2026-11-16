@@ -9,7 +9,7 @@
   "welcome.device": "เก็บไว้ในอุปกรณ์นี้",
   "welcome.open": "ฟรีและโอเพนซอร์ส",
   "welcome.join": "ใช้ {name} บนอุปกรณ์อื่นอยู่แล้วใช่ไหม {link}",
-  "welcome.bring": "นำมาที่นี่",
+  "welcome.sync": "ซิงก์ทั้งสองเครื่อง",
   "starter.sample": "ลองกับสเปรดชีต",
   "starter.sample.prompt": "สินค้าไหนเติบโตมากที่สุดตลอดทั้งปี แสดงเป็นกราฟ",
   "starter.music": "แต่งทำนอง",

@@ -9,7 +9,7 @@
   "welcome.device": "Huhifadhiwa kwenye kifaa hiki",
   "welcome.open": "Bure na chanzo huria",
   "welcome.join": "Tayari unatumia {name} kwenye kifaa kingine? {link}",
-  "welcome.bring": "Leta hapa",
+  "welcome.sync": "Sawazisha vyote viwili",
   "starter.sample": "Jaribu lahajedwali",
   "starter.sample.prompt": "Ni bidhaa gani ilikua zaidi katika mwaka? Nionyeshe kwa chati.",
   "starter.music": "Tunga wimbo",

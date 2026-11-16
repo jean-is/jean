@@ -9,7 +9,7 @@
   "welcome.device": "Uloženo v tomto zařízení",
   "welcome.open": "Zdarma a s otevřeným zdrojovým kódem",
   "welcome.join": "Už používáte aplikaci {name} v jiném zařízení? {link}",
-  "welcome.bring": "Přenést ji sem",
+  "welcome.sync": "Synchronizovat obě",
   "starter.sample": "Vyzkoušet tabulku",
   "starter.sample.prompt": "Který produkt za rok nejvíc vyrostl? Ukaž to v grafu.",
   "starter.music": "Složit melodii",

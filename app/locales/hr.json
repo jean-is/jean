@@ -9,7 +9,7 @@
   "welcome.device": "Čuva se na ovom uređaju",
   "welcome.open": "Besplatno i otvorenog koda",
   "welcome.join": "Već koristite aplikaciju {name} na drugom uređaju? {link}",
-  "welcome.bring": "Prenesite je ovamo",
+  "welcome.sync": "Sinkronizirajte oba",
   "starter.sample": "Isprobaj tablicu",
   "starter.sample.prompt": "Koji je proizvod najviše narastao tijekom godine? Prikaži to kao grafikon.",
   "starter.music": "Skladaj melodiju",

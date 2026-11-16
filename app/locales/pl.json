@@ -9,7 +9,7 @@
   "welcome.device": "Przechowywane na tym urządzeniu",
   "welcome.open": "Bezpłatny i otwartoźródłowy",
   "welcome.join": "Używasz już aplikacji {name} na innym urządzeniu? {link}",
-  "welcome.bring": "Przenieś ją tutaj",
+  "welcome.sync": "Zsynchronizuj oba",
   "starter.sample": "Wypróbuj arkusz",
   "starter.sample.prompt": "Który produkt urósł najbardziej w ciągu roku? Pokaż to na wykresie.",
   "starter.music": "Skomponuj melodię",

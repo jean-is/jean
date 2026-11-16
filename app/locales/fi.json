@@ -9,7 +9,7 @@
   "welcome.device": "Säilyy tällä laitteella",
   "welcome.open": "Ilmainen ja avointa lähdekoodia",
   "welcome.join": "Käytätkö jo sovellusta {name} toisella laitteella? {link}",
-  "welcome.bring": "Tuo se tänne",
+  "welcome.sync": "Synkronoi molemmat",
   "starter.sample": "Kokeile laskentataulukkoa",
   "starter.sample.prompt": "Mikä tuote kasvoi eniten vuoden aikana? Näytä se kaaviona.",
   "starter.music": "Sävellä sävelmä",

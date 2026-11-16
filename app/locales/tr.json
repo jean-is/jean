@@ -9,7 +9,7 @@
   "welcome.device": "Bu cihazda saklanır",
   "welcome.open": "Ücretsiz ve açık kaynak",
   "welcome.join": "{name} uygulamasını başka bir cihazda zaten kullanıyor musun? {link}",
-  "welcome.bring": "Buraya getir",
+  "welcome.sync": "İkisini eşitle",
   "starter.sample": "Örnek tabloyla dene",
   "starter.sample.prompt": "Yıl boyunca en çok hangi ürün büyüdü? Bunu grafik olarak göster.",
   "starter.music": "Beste yap",

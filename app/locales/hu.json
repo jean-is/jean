@@ -9,7 +9,7 @@
   "welcome.device": "Ezen az eszközön marad",
   "welcome.open": "Ingyenes és nyílt forráskódú",
   "welcome.join": "Egy másik eszközön már használod a(z) {name} alkalmazást? {link}",
-  "welcome.bring": "Hozd át ide",
+  "welcome.sync": "Szinkronizáld a kettőt",
   "starter.sample": "Próbálj ki egy táblázatot",
   "starter.sample.prompt": "Melyik termék nőtt a legtöbbet az év során? Mutasd meg diagramon.",
   "starter.music": "Komponálj dallamot",
