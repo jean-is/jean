@@ -32,6 +32,9 @@
   ],
   "per.title": "What {price} comes to, per person, per year",
   "per.at": "at {count} people",
+  "seat.at": "per seat, per year, at any size",
+  "seat.note": "For comparison, a price per seat: the same for each person, however many you are. {plan} lists {month} a seat a month, billed yearly. As with {name}, the AI’s use is billed on top.",
+  "seat.source": "Source: {source}, read on {date}.",
   "sale.title": "Nothing else is for sale.",
   "sale.items": [
     ["Advertising", "None, in {name} or on this site, and no cookie to serve it."],
@@ -47,6 +50,7 @@
   "faq.title": "Questions",
   "faq.items": [
     ["Will {name} stay free?", "Yes. Its code is open source under the MIT licence, so what is free today cannot be taken back."],
+    ["If it’s free, where does the money come from?", "From organisations of {small} people or more: each pays {price} a year to host its own copy. Nothing else is sold: no advertising, no data, no place in the list."],
     ["Can an organisation try before it pays?", "Yes: a 30-day trial key, with every enterprise feature."],
     ["How does an organisation pay?", "On a quote, then an invoice, payable by bank transfer within 30 days."],
     ["What happens when a key ends?", "Every version released before its end date keeps working, forever. Later versions need a new key."],

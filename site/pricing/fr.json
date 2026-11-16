@@ -30,8 +30,11 @@
     "L’aide à la mise en place",
     "Une copie hébergée à votre adresse, si vous le souhaitez"
   ],
-  "per.title": "Ce que {price} représentent, par personne et par an",
+  "per.title": "Ce que représentent {price}, par personne et par an",
   "per.at": "pour {count} personnes",
+  "seat.at": "par poste et par an, quelle que soit la taille",
+  "seat.note": "À titre de comparaison, un prix par poste : le même pour chaque personne, quel que soit l’effectif. {plan} affiche {month} par poste et par mois, en facturation annuelle. Comme avec {name}, l’usage de l’IA est facturé en plus.",
+  "seat.source": "Source : {source}, lue le {date}.",
   "sale.title": "Rien d’autre n’est à vendre.",
   "sale.items": [
     ["La publicité", "Aucune, ni dans {name} ni sur ce site, et aucun cookie pour la servir."],
@@ -47,6 +50,7 @@
   "faq.title": "Questions",
   "faq.items": [
     ["Utiliser {name} restera-t-il gratuit ?", "Oui. Son code est un logiciel libre sous licence MIT : ce qui est gratuit aujourd’hui ne peut pas être repris."],
+    ["Si c’est gratuit, d’où vient l’argent ?", "Des organisations de {small} personnes ou plus : chacune paie {price} HT par an pour héberger sa propre copie. Rien d’autre n’est vendu : ni publicité, ni données, ni place dans la liste."],
     ["Une organisation peut-elle essayer avant de payer ?", "Oui : une clé d’essai de 30 jours, avec toutes les fonctions entreprise."],
     ["Comment une organisation paie-t-elle ?", "Sur devis, puis sur facture, payable par virement à 30 jours."],
     ["Que se passe-t-il quand une clé arrive à sa fin ?", "Chaque version publiée avant sa date de fin continue de fonctionner, pour toujours. Les versions suivantes demandent une nouvelle clé."],

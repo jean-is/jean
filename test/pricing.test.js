@@ -1,13 +1,16 @@
 // SPDX-License-Identifier: MIT
 // jean.is's pricing page, the price's one address (D428 · D464): its one button opens Jean, its two prices lead to
 // their parts, its figures are the page for IT's and the public sector's numbers in each language's own, and it says
-// the homepage's four ways and the page for IT's price cards in their words. What every page of the site must be,
-// test/site.test.js holds it to (D438).
+// the homepage's four ways and the page for IT's price cards in their words. Under what the price comes to per person
+// stands a price per seat, SEAT's list price for a year, never a figure its words hold, with its maker's page and the
+// day it was read there; and whoever hosts Jean for an organisation is shown the way to a key beside the one button
+// and at the page's end. What every page of the site must be, test/site.test.js holds it to (D438).
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { BRAND } from '../app/brand.js'
+import key from '../site/enterprise-key/page.js'
 import { PRICE, SMALL } from '../site/enterprise/page.js'
-import page from '../site/pricing/page.js'
+import page, { SEAT } from '../site/pricing/page.js'
 import { THRESHOLD } from '../site/public-sector/page.js'
 import { buildSite, fill, wordsOf, xml } from '../site/site.js'
 
@@ -70,4 +73,41 @@ test('it says the homepage’s four ways and the page for IT’s price cards in 
   const [few, many] = (await words('enterprise', 'en'))['price.cards']
   assert.match(html, new RegExp(`<a class="button" href="enterprise/key#free">${said(few[3])}</a>`))
   assert.match(html, new RegExp(`<a class="button primary" href="enterprise/key#trial">${said(many[3])}</a>`))
+})
+
+test('under what the price comes to per person stands a price per seat: the plan’s list price for a year, in each language’s own numbers, its words holding no figure', async () => {
+  const files = await site()
+  for (const [lang, address] of Object.entries(page.addresses)) {
+    const html = files[`${address}.html`]
+    const money = new Intl.NumberFormat(lang, { style: 'currency', currency: SEAT.currency, maximumFractionDigits: 0 })
+    const at = html.indexOf('<div class="pricing-seat">')
+    const seat = html.slice(at, html.indexOf('<p class="site-source">', at))
+    assert.ok(at > html.indexOf('class="site-stats"'), `${lang}: after the price per person`)
+    assert.ok(seat.includes(`<b>${xml(money.format(SEAT.month * 12))}</b>`), `${lang}: twelve months of a seat`)
+    assert.ok(seat.includes(xml(money.format(SEAT.month))) && seat.includes(SEAT.plan), `${lang}: the plan and its price a month`)
+    const own = await words('pricing', lang)
+    assert.ok(own['seat.note'].includes('{plan}') && own['seat.note'].includes('{month}') && !/\d/.test(own['seat.note'] + own['seat.at']), `${lang}: its words hold no figure`)
+  }
+  assert.ok(files['pricing.html'].includes('<b>$240</b>'), 'for the list price read on its maker’s page')
+})
+
+test('the price per seat names its maker’s page and the day it was read there, which has been', async () => {
+  assert.match(SEAT.checked, /^\d{4}-\d{2}-\d{2}$/)
+  assert.ok(Date.parse(`${SEAT.checked}T00:00:00Z`) <= Date.now(), 'read on a day that has been')
+  assert.equal(new URL(SEAT.url).protocol, 'https:')
+  const files = await site()
+  for (const [lang, address] of Object.entries(page.addresses)) {
+    assert.match(files[`${address}.html`], new RegExp(`<p class="site-source">[^<]*<a href="${SEAT.url}">[^<]+</a>[^<]*<time datetime="${SEAT.checked}">[^<]+</time>`), lang)
+  }
+})
+
+test('whoever hosts it for an organisation is shown the way to a key beside the one button, and again at the end', async () => {
+  const files = await site()
+  for (const [lang, address] of Object.entries(page.addresses)) {
+    const html = files[`${address}.html`]
+    const ways = [...html.matchAll(/<(?:span|p) class="pricing-other">[^<]*<a href="([^"]+)">[^<]+<\/a>/g)]
+    assert.equal(ways.length, 2, lang)
+    for (const [, href] of ways) assert.ok(href.endsWith(key.addresses[lang]), `${lang}: ${href}`)
+    assert.ok(ways[0].index < html.indexOf('class="site-facts') && ways[1].index > html.indexOf('id="pricing-turn"'), lang)
+  }
 })

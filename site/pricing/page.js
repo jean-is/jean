@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 // The pricing page, the price's one address (D428 · D464), at /pricing in English, /fr/tarifs in French and /ko/pricing
 // in Korean: free for a person, whichever AI answers, each AI's own price in a table; then an organisation's one rule,
-// what its price comes to per person, and what is never for sale (D749). Its numbers are the page for IT's (PRICE,
-// SMALL) and the public sector's (THRESHOLD), formatted with Intl in the page's language. Its words are <lang>.json, the
-// homepage's four ways and their catch and the page for IT's price cards and note where it says the same; its look
-// pricing.css, over site.css (site/site.js, D438). Only jean.is has it.
+// what its price comes to per person beside what a price per seat does (SEAT), and what is never for sale (D749). Its
+// numbers are the page for IT's (PRICE, SMALL) and the public sector's (THRESHOLD), formatted with Intl in the page's
+// language. Its words are <lang>.json, the homepage's four ways and their catch and the page for IT's price cards and
+// note where it says the same; its look pricing.css, over site.css (site/site.js, D438). Only jean.is has it.
 import { CONTACT, PRICE, SMALL } from '../enterprise/page.js'
 import { THRESHOLD } from '../public-sector/page.js'
 import { ICONS, WAVE, caught, felt, fill, hero, landing, underline, wordsOf, xml } from '../site.js'
@@ -14,6 +14,14 @@ const ADDRESSES = { en: 'pricing', fr: 'fr/tarifs', ko: 'ko/pricing' }
 /** The sizes the price is shown at per person: the smallest that pays, then two larger; none under SMALL, or the build stops. */
 const SIZES = [SMALL, 1000, 5000]
 if (SIZES.some((size) => size < SMALL)) throw new Error(`site/pricing: every size the price is shown at must be ${SMALL} people or more`)
+
+/**
+ * A price per seat, set beside what Jean's comes to per person: a plan whose price is made as Jean's is, the seat on
+ * one side and the AI's use billed on top, so the two compare; its list price a seat a month, billed yearly, as its
+ * maker's page says it, and the day it was read there, as the comparison's sources are (site/compare/product.js).
+ * Read the page again before changing either, never from memory.
+ */
+export const SEAT = { plan: 'Claude Enterprise', month: 20, currency: 'USD', source: 'claude-pricing', url: 'https://claude.com/pricing', checked: '2026-11-16' }
 
 /** The homepage's four ways (`any.ways`), in the table's order, from no account to the company's; and which of its catch's lines (`any.catch`) this page's says. */
 const WAYS = [2, 0, 1, 3]
@@ -32,6 +40,8 @@ export default {
     const money = new Intl.NumberFormat(lang, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 })
     const cents = new Intl.NumberFormat(lang, { style: 'currency', currency: 'EUR', minimumFractionDigits: 2, maximumFractionDigits: 2 })
     const count = new Intl.NumberFormat(lang)
+    const seat = new Intl.NumberFormat(lang, { style: 'currency', currency: SEAT.currency, maximumFractionDigits: 0 })
+    const day = new Intl.DateTimeFormat(lang, { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
     const params = { small: count.format(SMALL), price: money.format(PRICE), zero: money.format(0), threshold: money.format(THRESHOLD) }
     const say = (/** @type {string} */ key, more = {}) => kit.say(key, { ...params, ...more })
     const list = (/** @type {string} */ key) => kit.list(key, params)
@@ -52,6 +62,8 @@ export default {
     const key = kit.link('enterprise-key')
     const mail = `mailto:${CONTACT}`
     const open = /* html */ `<a class="button primary" href="${kit.start}">${kit.say('open')}</a>`
+    // Whoever hosts it for an organisation, shown the way to a key: beside a person's way in, and again at the end.
+    const other = say('turn.other').replace('{ask}', () => /* html */ `<a href="${key ?? mail}">${few[3]}</a>`)
     const [you, organisation] = table('tags', 2)
     // The two prices, each leading to its part: a person's circled, an organisation's with its terms.
     const tag = (/** @type {string} */ act, /** @type {string[]} */ [who, what], /** @type {string} */ figure, /** @type {string} */ terms) => /* html */ `<li><a class="pricing-tag" href="#${act}"><span class="pricing-who"><b>${who}</b><small>${what}</small></span><span class="pricing-what"><b>${figure}</b><small>${terms}</small></span></a></li>`
@@ -62,7 +74,7 @@ export default {
       id: 'pricing-title',
       title: underline(h1, mark).replace(rest, () => /* html */ `<span class="pricing-rest">${rest}</span>`),
       lede: say('lede'),
-      actions: open,
+      actions: /* html */ `${open}<span class="pricing-other">${other}</span>`,
       facts: list('facts'),
       classes: 'pricing-hero',
       aside: /* html */ `<ul class="pricing-tags">
@@ -90,6 +102,11 @@ export default {
   <div class="pricing-per">
     <h4>${say('per.title')}</h4>
     <div class="site-stats">${SIZES.map((size) => /* html */ `<p><b>${xml(cents.format(PRICE / size))}</b><span>${say('per.at', { count: count.format(size) })}</span></p>`).join('')}</div>
+    <div class="pricing-seat">
+      <p class="pricing-seat-figure"><b>${xml(seat.format(SEAT.month * 12))}</b><span>${say('seat.at')}</span></p>
+      <div class="pricing-seat-note"><p>${say('seat.note', { plan: SEAT.plan, month: seat.format(SEAT.month) })}</p>
+        <p class="site-source">${say('seat.source').replace('{source}', () => /* html */ `<a href="${xml(SEAT.url)}">${kit.from('compare').say(`source.${SEAT.source}`)}</a>`).replace('{date}', () => /* html */ `<time datetime="${SEAT.checked}">${xml(day.format(new Date(`${SEAT.checked}T12:00:00Z`)))}</time>`)}</p></div>
+    </div>
   </div>
   <p class="site-source">${kit.from('enterprise').say('price.note')}</p>
 </section>`
@@ -100,7 +117,7 @@ export default {
     const turn = /* html */ `${WAVE}
   <h3>${say('turn.body')}</h3>
   <p class="site-cta">${open}</p>
-  <p class="pricing-other">${say('turn.other').replace('{ask}', () => /* html */ `<a href="${key ?? mail}">${few[3]}</a>`)}</p>`
+  <p class="pricing-other">${other}</p>`
     // The promise part by part: a person's price, then an organisation's; each limit once, under the part it is about.
     return landing(kit, {
       top,

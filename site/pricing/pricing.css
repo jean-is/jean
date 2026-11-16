@@ -1,10 +1,11 @@
 /* SPDX-License-Identifier: MIT */
 /* The pricing page, over site.css: the promise beside its two prices, what each AI costs as a table that a narrow
-   window stacks, an organisation's two prices with what the price comes to per person, and what is not for sale.
+   window stacks, an organisation's two prices with what the price comes to per person beside a price per seat, and
+   what is not for sale.
    Logical properties only; classes start with pricing-. */
 
 /* The promise, and its two prices beside it, each leading to its part */
-.pricing-hero { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.85fr); gap: clamp(2rem, 5vw, 4rem); align-items: center; }
+.pricing-hero { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.8fr); gap: clamp(2rem, 5vw, 4rem); align-items: center; }
 .pricing-hero .site-hero-text { max-inline-size: none; }
 .pricing-rest { display: inline-block; }
 .pricing-tags { container-type: inline-size; display: flex; flex-direction: column; min-inline-size: 0; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); box-shadow: var(--site-float); }
@@ -44,6 +45,12 @@
 .pricing-ticks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem 1.5rem; inline-size: 100%; padding-block-end: 0.6rem; }
 .pricing-per { display: flex; flex-direction: column; gap: 1rem; }
 .pricing-per .site-stats span { color: var(--ink-soft); }
+/* Under them, what a price per seat comes to, for comparison: its figure as large as theirs, so the eye sets them
+   side by side, but in the soft ink, since it isn't Jean's; then what it is and where it was read */
+.pricing-seat { display: grid; grid-template-columns: fit-content(15rem) minmax(0, 1fr); align-items: center; gap: 1rem 2.5rem; margin-block-start: 0.25rem; padding: 1.5rem; border: 1px solid var(--line); border-radius: var(--site-pane); }
+.pricing-seat-figure { display: flex; flex-direction: column; gap: 0.6rem; color: var(--ink-soft); }
+.pricing-seat-figure b { font: 700 clamp(2.2rem, 4vw, 3rem)/1 var(--display); white-space: nowrap; }
+.pricing-seat-note { display: flex; flex-direction: column; gap: 0.4rem; color: var(--ink-soft); font-size: 0.9375rem; }
 /* As many across as their titles fit in, so a title struck by hand stays on one line */
 .pricing-nots { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: 1.5rem 2.5rem; }
 .pricing-nots li { display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem; }
@@ -59,7 +66,7 @@
   .pricing-hero { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
 }
 @media (max-width: 52rem) {
-  .pricing-hero, .pricing-cards, .pricing-ticks { grid-template-columns: minmax(0, 1fr); }
+  .pricing-hero, .pricing-cards, .pricing-ticks, .pricing-seat { grid-template-columns: minmax(0, 1fr); }
   /* The heading's link to itself follows its words here, and would drop below a part kept whole that wraps */
   .pricing-rest { display: inline; }
   .site a.pricing-tag { padding: 1.25rem; }
