@@ -145,6 +145,7 @@
               "lmstudio",
               "claudecode",
               "copilot",
+              "antigravity",
               "chatgpt",
               "custom"
             ]
@@ -227,6 +228,7 @@
           "lmstudio",
           "claudecode",
           "copilot",
+          "antigravity",
           "chatgpt",
           "custom",
           "*"
@@ -1529,6 +1531,7 @@
                         "lmstudio",
                         "claudecode",
                         "copilot",
+                        "antigravity",
                         "chatgpt",
                         "custom",
                         null
@@ -1649,6 +1652,7 @@
                     "lmstudio",
                     "claudecode",
                     "copilot",
+                    "antigravity",
                     "chatgpt",
                     "custom",
                     "*",

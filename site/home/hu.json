@@ -40,7 +40,7 @@
   "any.title": "bármelyik MI-vel.",
   "any.why": "Az MI havonta változik, és lehet, hogy már fizetsz is egyért.",
   "any.lead": "Használd azt az MI-t, amelyiket szeretnéd. Válts, amikor csak akarsz.",
-  "any.ways": ["Egy ingyenes MI", "A ChatGPT-, Claude- vagy Copilot-előfizetésed", "Egy MI ezen a számítógépen", "A céged MI-je"],
+  "any.ways": ["Egy ingyenes MI", "A ChatGPT-, Claude-, Gemini- vagy Copilot-előfizetésed", "Egy MI ezen a számítógépen", "A céged MI-je"],
   "any.notes": ["Ingyenes OpenRouter-fiókkal.", "Az előfizetés, amelyért már fizetsz. Nincs szükség másodikra.", "Kapcsold ki a Wi-Fit, és akkor is válaszol.", "A céged átjárója és bejelentkezése mögött."],
   "any.go": "{name} és a többiek összehasonlítása",
   "any.all": "Minden MI egy helyen",
@@ -65,7 +65,7 @@
     ["Használható regisztráció nélkül?", "Az ezen a számítógépen futó MI-vel igen. A „{free}” lehetőséghez ingyenes OpenRouter-fiók kell."],
     ["Működik Excel- és PDF-fájlokkal?", "Igen, és Worddel, PowerPointtal, fényképekkel és egész mappákkal is. Kész fájlokat is visszakapsz: egy diagramot, egy táblázatot, egy Word-dokumentumot."],
     ["Működik telefonon vagy offline?", "Telefonon igen, a böngészőben. Offline az ezen a számítógépen futó MI-vel, amelyhez 12 GB memória és újabb grafikus chip kell: telefonon nem."],
-    ["Használhatom a ChatGPT- vagy Claude-előfizetésemet?", "Igen, és a Copilotét is: {name} azt az előfizetést használja, amelyért már fizetsz, ezen a számítógépen keresztül. Nincs szükség másodikra."],
+    ["Használhatom a ChatGPT-, Claude- vagy Gemini-előfizetésemet?", "Igen, és a Copilotét is: {name} azt az előfizetést használja, amelyért már fizetsz, ezen a számítógépen keresztül. Nincs szükség másodikra."],
     ["Tévedhet?", "Igen. A számokat kiszámolja, nem találgatja, és minden válasz alatt ott áll, hol készült. A szöveget ellenőrizd, ahogy egy munkatársadét is tennéd."],
     ["Használhatom a munkahelyemen?", "Ha a céged nem ad MI-t, úgy működik, ahogy van. Ha a gépedet a cég felügyeli, kérdezd meg az informatikát: {name} ugyanúgy telepíthető, mint egy weboldal, a céged átjárója és bejelentkezése mögött."],
     ["Követ engem {name}?", "Nem. Nincsenek követő sütik, és soha nem is lesznek; valójában semmilyen süti nincs. Nincs látogatottságmérés, nincs reklám, és nincs sütisáv sem, mert nincs mit elfogadni. Minden módosítást ellenőrzünk, és elutasítjuk, ha sütit helyezne el."]

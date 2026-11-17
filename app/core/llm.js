@@ -46,6 +46,8 @@ export const PROVIDERS = {
   claudecode: { api: 'anthropic', baseURL: '', defaultModel: 'opus', needsKey: true },
   // The user's own Copilot CLI, with their Copilot plan, the same way (D262).
   copilot: { api: 'anthropic', baseURL: '', defaultModel: 'claude-sonnet-5.5', needsKey: true },
+  // The user's own Antigravity CLI, with their Gemini plan (Google AI Pro or Ultra), the same way (D756); it starts on the version Antigravity has chosen.
+  antigravity: { api: 'anthropic', baseURL: '', defaultModel: null, needsKey: true },
   // A ChatGPT plan, through the bridge, which signs in to it and keeps its tokens; this is where it sends Jean's requests (D262).
   chatgpt: { api: 'openai', baseURL: 'https://api.openai.com/v1', defaultModel: null, needsKey: true },
   custom: { api: 'openai', baseURL: '', defaultModel: null, needsKey: false },

@@ -40,7 +40,7 @@
     ["The AI on this computer", "Free, no sign-up, works offline. Needs 12 GB of memory and a recent graphics chip.", "built"],
     ["A free one", "One click, with a free OpenRouter account.", "built"],
     ["Your key", "Thirteen services, OpenAI, Anthropic, Google and Mistral among them.", "key"],
-    ["Your plan", "ChatGPT, Claude or GitHub Copilot, through This computer: a line you paste once, on a computer.", "computer"]
+    ["Your plan", "ChatGPT, Claude, Gemini or GitHub Copilot, through This computer: a line you paste once, on a computer.", "computer"]
   ],
   "choose.history": "Coming from one of them? Bring your history: ChatGPT’s, Claude’s and Gemini’s exports come in, nothing twice.",
   "one.title": "Compared one by one",
@@ -57,7 +57,7 @@
   "catch.items": [
     "{name} is free; the AI behind it may not be.",
     "Without a sign-up, only the AI on this computer answers. It needs 12 GB of memory and a recent graphics chip, and no phone runs it.",
-    "Using a ChatGPT, Claude or GitHub Copilot plan takes This computer: a line to paste once, on a computer.",
+    "Using a ChatGPT, Claude, Gemini or GitHub Copilot plan takes This computer: a line to paste once, on a computer.",
     "Your work lives in this browser. Clear its data without a backup and it’s gone.",
     "It can be wrong. Numbers are calculated; check the words, as you would a colleague’s."
   ],

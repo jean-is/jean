@@ -8,8 +8,8 @@
 // of its own; one still serving when it has printed a local address and gone quiet keeps running,
 // its output going on in a log, until the user stops the bridge (Ctrl+C), which ends them all.
 // Jean's desktop app starts it itself, `--attached`: it ends when the app does, its input closing.
-// It also lets the user's plans answer as brains: their own Claude Code and Copilot CLI (D235, D262),
-// and their ChatGPT plan, which Jean signs in to as itself and whose tokens stay here (D262).
+// It also lets the user's plans answer as brains: their own Claude Code, Copilot CLI and Antigravity CLI
+// (D235, D262, D756), and their ChatGPT plan, which Jean signs in to as itself and whose tokens stay here (D262).
 //
 //   curl -fsSL <jean>/bridge/bridge.js | JEAN_BRIDGE_KEY=<key> node --input-type=module -e '<runs it if its hash is the one given>' -- --port <port> --origin <jean>
 //
@@ -23,7 +23,7 @@ import { createHash, createPublicKey, randomBytes, randomUUID, timingSafeEqual, 
 import { appendFileSync, constants } from 'node:fs'
 import { access, mkdir, mkdtemp, readFile, realpath, rename, rm, symlink, writeFile } from 'node:fs/promises'
 import { homedir, platform, tmpdir } from 'node:os'
-import { basename, join, resolve } from 'node:path'
+import { basename, dirname, join, resolve } from 'node:path'
 import { createInterface } from 'node:readline'
 import { pathToFileURL } from 'node:url'
 import { parseArgs } from 'node:util'
@@ -49,8 +49,8 @@ const TOOLS = [
   },
   {
     name: 'about',
-    description: 'This computer: the folder the bridge runs in, the system, and what runs in the background; with claude or copilot, whether that CLI is here and signed in (null: not here), and with claude, how it reaches Claude (claudeTerms); with chatgpt, whether the bridge is signed in to ChatGPT with the use of its plan.',
-    inputSchema: { type: 'object', properties: { claude: { type: 'boolean' }, copilot: { type: 'boolean' }, chatgpt: { type: 'boolean' } } },
+    description: 'This computer: the folder the bridge runs in, the system, and what runs in the background; with claude, copilot or antigravity, whether that CLI is here and signed in (null: not here), and with claude, how it reaches Claude (claudeTerms); with chatgpt, whether the bridge is signed in to ChatGPT with the use of its plan.',
+    inputSchema: { type: 'object', properties: { claude: { type: 'boolean' }, copilot: { type: 'boolean' }, antigravity: { type: 'boolean' }, chatgpt: { type: 'boolean' } } },
     annotations: { readOnlyHint: true },
   },
   {
@@ -162,15 +162,21 @@ const FAILURES = /** @type {Record<string, object>} */ ({
 const THOUGHTS = ['--thinking-display', 'summarized']
 // The brain's own web search, which a CLI can't lend: Jean's search runs in its place.
 const SEARCH = { name: 'web_search', description: 'Search the web for facts the conversation does not hold. Results are numbered sources to cite.', inputSchema: { type: 'object', properties: { query: { type: 'string' } }, required: ['query'] } }
-// How long Copilot's model list holds; the calls it announced that a step waits for before it ends without them.
+// How long Copilot's and Antigravity's model lists hold; the calls one announced that a step waits for before it ends without them.
 const MODELS_MS = 3_600_000
 const ANNOUNCED_MS = 1000
-// What a steer waits for Copilot to say the calls it runs are done, at most, before it is said anyway.
+// What a steer waits for Copilot or Antigravity to say the calls it runs are done, at most, before it is said anyway.
 const SETTLED_MS = 5000
 // What Copilot says before its first words, of the tools it was told to leave out or doesn't know.
 const NOTICE = /^Info: /
-// Before Jean's prompt in Copilot's AGENTS.md: its own prompt makes it a coding assistant, which Jean's replaces.
+// Before Jean's prompt in Copilot's AGENTS.md and Antigravity's agent: their own prompts make them coding assistants, which Jean's replaces.
 const FRAME = 'These instructions come from the app the user talks to. They take the place of any earlier ones on who you are, what you help with and which tools you have: you are not a coding assistant unless they say so.\n\n'
+// Antigravity's custom agent that is Jean in a conversation's folder (D756): its body is its prompt, and with no tools listed it
+// has none of its own, Jean's coming over MCP; it runs no command by itself. Quoted, so no YAML reads `off` as false.
+const AGENT = 'jean'
+const AGENT_HEAD = `---\nname: ${AGENT}\ndescription: The app the user talks to.\nmainAgent: true\nsubagent: false\ncommandExecutionPolicy: "off"\n---\n\n`
+// The kinds of an ACP tool call that are a CLI's own work on this computer or the web, which Jean's tools never are.
+const OWN_KINDS = new Set(['read', 'edit', 'delete', 'move', 'search', 'execute', 'fetch'])
 // ChatGPT's sign-in for open-source apps (D262): what it asks for, the plan's use included, and where it comes back.
 const SCOPES = 'openid profile email offline_access resource.invoke chatgpt.tokens.use.direct'
 const PLAN_SCOPE = 'chatgpt.tokens.use.direct'
@@ -180,8 +186,8 @@ const SIGN_IN_MS = 15 * 60_000
 const RENEW_MS = 120_000
 
 /**
- * @typedef {{ folder: string, origins: string[], key: string, port: number, claude?: string[], copilot?: string[], browser?: string[], home?: string }} Options
- *   claude, copilot: how Claude Code and Copilot run; browser: the browser the bridge drives, and its first arguments, else the first
+ * @typedef {{ folder: string, origins: string[], key: string, port: number, claude?: string[], copilot?: string[], antigravity?: string[], browser?: string[], home?: string }} Options
+ *   claude, copilot, antigravity: how Claude Code, Copilot and Antigravity run; browser: the browser the bridge drives, and its first arguments, else the first
  *   of BROWSERS found; home: the folder that keeps the ChatGPT sign-in and the browser's profile
  * @typedef {{ url: string, title: string, loading: boolean, back: boolean, forward: boolean }} Shown what the browser's tab shows, for the pane
  * @typedef {{ send: (method: string, params?: object, session?: string) => Promise<any>, until: (match: (message: any) => boolean, ms: number) => Promise<any>,
@@ -191,7 +197,8 @@ const RENEW_MS = 120_000
  *   before: on a Mac, the process of the app in front before the last click or key that may open a tab
  * @typedef {{ exit: number, stdout: string, stderr: string, cwd: string, serving?: { group: number, addresses: string[], log: string } }} Ran
  * @typedef {{ role: string, content: any[] }} Turn
- * @typedef {{ id: string, child: import('node:child_process').ChildProcessWithoutNullStreams, agent: 'claude' | 'copilot', tools: object[],
+ * @typedef {'copilot' | 'antigravity'} Speaker a CLI that speaks ACP
+ * @typedef {{ id: string, child: import('node:child_process').ChildProcessWithoutNullStreams, agent: 'claude' | Speaker, tools: object[],
  *   count: number, seen: string, asked: { id: string, name: string, called?: boolean }[], given: Map<string, object>, waiting: Map<string, (result: object) => void>, stderr: string, idle?: NodeJS.Timeout,
  *   say: (content: any[]) => void, call: (params: any) => object | Promise<object>, step: (res: import('node:http').ServerResponse, signal: AbortSignal) => Promise<void> }} Session
  *   count and seen: the turns it has had, and their mark; asked: the tool calls of its last step; say: a message for it;
@@ -281,9 +288,10 @@ function writer(res, model) {
 
 /**
  * JSON-RPC over a child's lines, as ACP speaks it: what it asks or tells goes to incoming, whose answer
- * goes back; what we ask resolves with its whole response, an error one if the child ends first.
+ * goes back; what we ask resolves with its whole response, an error one if the child ends first; what we
+ * tell (notify) wants none.
  * @param {import('node:child_process').ChildProcessWithoutNullStreams} child @param {(message: any) => object | undefined} incoming
- * @returns {(method: string, params: object) => Promise<any>}
+ * @returns {((method: string, params: object) => Promise<any>) & { notify: (method: string, params: object) => void }}
  */
 function acp(child, incoming) {
   let sent = 0
@@ -306,10 +314,35 @@ function acp(child, incoming) {
   }
   child.on('close', ended).on('error', ended)
   child.stdin.on('error', () => {})
-  return (method, params) => new Promise((settle) => {
+  const request = (/** @type {string} */ method, /** @type {object} */ params) => new Promise((settle) => {
     pending.set(++sent, settle)
     write({ id: sent, method, params })
   })
+  return Object.assign(request, { notify: (/** @type {string} */ method, /** @type {object} */ params) => write({ method, params }) })
+}
+
+/** Whether a title names this tool, alone or after its server's name (`jean-weather`, `jean/weather`, `mcp(jean/weather)`). @param {string} title @param {string} name */
+const names = (title, name) => new RegExp(`(^|[\\s/:.(-])${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(\\)|\\s|$)`).test(title)
+
+/**
+ * Whether an ACP tool call a CLI asks to make is one of Jean's (D756): its title names one, and its kind is none of a
+ * CLI's own work on this computer or the web. Anything else is the CLI's own, which the bridge never allows.
+ * @param {any} call the request's toolCall @param {{ name: string }[]} tools Jean's
+ */
+export const jeans = (call, tools) => !OWN_KINDS.has(call?.kind) && tools.some(({ name }) => names(String(call?.title ?? ''), name))
+
+/**
+ * The models a session of an ACP CLI offers, as Anthropic lists them, but a CLI's own Auto: ACP's configuration option for
+ * the model, its choices flat or in groups, or its older list of them; with first, the one chosen first, which a new brain
+ * starts on. @param {any} result session/new's @param {boolean} [first]
+ */
+export function modelsOf(result, first = false) {
+  const option = result?.configOptions?.find((/** @type {any} */ each) => each.category === 'model')
+  const listed = option ? (option.options ?? []).flatMap((/** @type {any} */ each) => each.options ?? [each]).map((/** @type {any} */ each) => ({ id: each.value, name: each.name }))
+    : (result?.models?.availableModels ?? []).map((/** @type {any} */ each) => ({ id: each.modelId, name: each.name }))
+  const current = option ? option.currentValue : result?.models?.currentModelId
+  const models = listed.filter((/** @type {any} */ each) => each.id && each.id !== 'auto').map((/** @type {any} */ each) => ({ id: String(each.id), display_name: String(each.name ?? each.id) }))
+  return first ? [...models.filter((each) => each.id === current), ...models.filter((each) => each.id !== current)] : models
 }
 
 /** ACP's reasons a turn ends, as Anthropic's. */
@@ -318,9 +351,9 @@ const STOPS = /** @type {Record<string, string>} */ ({ max_tokens: 'max_tokens',
 /** A turn's usage, as ACP counts it, as Anthropic's, which counts what was read from the cache apart. @param {any} usage */
 const usageOf = (usage) => ({ input_tokens: Math.max(0, (usage?.inputTokens ?? 0) - (usage?.cachedReadTokens ?? 0)), output_tokens: usage?.outputTokens ?? 0, cache_read_input_tokens: usage?.cachedReadTokens ?? 0 })
 
-/** An error of Copilot's, as Anthropic's kind of it: Jean words a sign-in and a limit the same. @param {any} error */
+/** An error of Copilot's or Antigravity's, as Anthropic's kind of it: Jean words a sign-in and a limit the same. @param {any} error */
 const kindOf = (error) => (error?.code === -32000 || /auth|sign.?in|log.?in/i.test(error?.message) ? { type: 'authentication_error' }
-  : /limit|quota|premium|credit|exceeded/i.test(error?.message) ? { type: 'rate_limit_error' } : {})
+  : /limit|quota|premium|credit|exceeded|exhausted/i.test(error?.message) ? { type: 'rate_limit_error' } : {})
 
 // ─── ChatGPT's Responses, as Chat Completions (D262) ─────────────────────────
 
@@ -419,7 +452,7 @@ function jwt(token) {
  * @param {Options} options
  */
 export async function bridge({ folder, origins, key, port, claude: [program, ...before] = ['claude'], copilot: [copilotProgram, ...copilotBefore] = ['copilot'],
-  browser: [browserGiven, ...browserBefore] = [], home = join(process.env.XDG_CONFIG_HOME || join(homedir(), '.config'), 'jean') }) {
+  antigravity: [agyProgram, ...agyBefore] = ['agy'], browser: [browserGiven, ...browserBefore] = [], home = join(process.env.XDG_CONFIG_HOME || join(homedir(), '.config'), 'jean') }) {
   const browserProgram = browserGiven ?? await firstOf(BROWSERS[platform()] ?? [])
   const real = await realpath(folder)
   const temp = await mkdtemp(join(tmpdir(), 'jean-'))
@@ -791,14 +824,15 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
     if (!b.casting) await cast(b)
   }
 
-  // ─── Plans: Claude Code (D235) and Copilot (D262) ──────────────────────────
-  // The user's own Claude Code or Copilot CLI, signed in with their plan through its maker's own sign-in,
-  // answers Jean's Messages requests as an Anthropic brain would: a conversation runs in one process with
-  // no tools of its own, only Jean's, offered back to it over MCP at /session/<its id>. A step that calls
-  // them ends the request; the calls wait for the results Jean's next request brings, and its next message
-  // goes on in the same process. Any other history starts one afresh, its earlier turns told. Claude Code
-  // speaks stream-json, with Jean's prompt as its own; Copilot speaks ACP, with Jean's prompt as the
-  // AGENTS.md of a folder of its own. The sign-ins stay theirs: the bridge never reads them.
+  // ─── Plans: Claude Code (D235), Copilot (D262) and Antigravity (D756) ──────
+  // The user's own Claude Code, Copilot CLI or Antigravity CLI, signed in with their plan through its maker's
+  // own sign-in, answers Jean's Messages requests as an Anthropic brain would: a conversation runs in one
+  // process with no tools of its own, only Jean's, offered back to it over MCP at /session/<its id>. A step
+  // that calls them ends the request; the calls wait for the results Jean's next request brings, and its next
+  // message goes on in the same process. Any other history starts one afresh, its earlier turns told. Claude
+  // Code speaks stream-json, with Jean's prompt as its own; Copilot and Antigravity speak ACP, in a folder of
+  // their own, Copilot with Jean's prompt as its AGENTS.md, Antigravity as a custom agent of the folder's.
+  // The sign-ins stay theirs: the bridge never reads them.
 
   /** @type {Map<string, Session>} */
   const sessions = new Map()
@@ -918,17 +952,24 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
   }
 
   /**
-   * A conversation's Copilot, over ACP: Jean's prompt as the AGENTS.md of a folder of its own, Jean's tools
-   * its only ones (`jean-<name>` to it), none of its own servers. A step goes on until its turn ends, or until
-   * it has called Jean's tools and the calls it announced have come. @param {string} model @param {string} system @param {object[]} tools
+   * A conversation's Copilot or Antigravity, over ACP, in a folder of its own, with Jean's tools its only ones and none of
+   * its own servers. Copilot: Jean's prompt as the folder's AGENTS.md, its tools kept to Jean's (`jean-<name>` to it) by its
+   * flags, its model one of them. Antigravity (D756): Jean's prompt as the folder's custom agent, which lists no tools of its
+   * own, Jean's coming over MCP, which needs a process for each session; its model chosen once the session is open; any
+   * action of its own it asks to take refused. A step goes on until its turn ends, or until it has called Jean's tools and
+   * the calls it announced have come. @param {Speaker} agent @param {string} model @param {string} system @param {object[]} tools
    */
-  async function copilot(model, system, tools) {
+  async function speaker(agent, model, system, tools) {
     const id = randomUUID()
     const dir = join(temp, id)
-    await mkdir(dir)
-    await writeFile(join(dir, 'AGENTS.md'), `${FRAME}${system}`)
+    const [file, prompt] = agent === 'copilot' ? ['AGENTS.md', `${FRAME}${system}`] : [join('.agents', 'agents', `${AGENT}.md`), `${AGENT_HEAD}${FRAME}${system}`]
+    await mkdir(dirname(join(dir, file)), { recursive: true })
+    await writeFile(join(dir, file), prompt)
     const only = tools.map((/** @type {any} */ tool) => `jean-${tool.name}`).join(',') || 'jean-'
-    const child = spawn(copilotProgram, [...copilotBefore, '--acp', '--model', model, `--available-tools=${only}`, '--allow-tool=jean', '--disable-builtin-mcps', '--no-ask-user'], { cwd: dir })
+    const child = agent === 'copilot'
+      ? spawn(copilotProgram, [...copilotBefore, '--acp', '--model', model, `--available-tools=${only}`, '--allow-tool=jean', '--disable-builtin-mcps', '--no-ask-user'], { cwd: dir })
+      : spawn(agyProgram, [...agyBefore, 'acp', '--agent', AGENT, '--process-per-session', '--disable-telemetry'], { cwd: dir })
+    const stopped = `${agent === 'copilot' ? 'Copilot' : 'Antigravity'} stopped.`
     /** What it said, thought, called and ended with, as they come. @type {any[]} */
     const queue = []
     /** @type {(() => void) | null} */
@@ -967,24 +1008,35 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
       }
       if (update?.sessionUpdate === 'agent_thought_chunk' && heard && text) push({ type: 'thinking', text })
       if (update?.sessionUpdate === 'tool_call') running.add(String(update.toolCallId))
-      if (update?.sessionUpdate === 'tool_call' && heard) announced.push({ id: String(update.toolCallId), title: String(update.title) })
+      // Calls of its own that Antigravity announces, which it is refused, are never the ones Jean's calls take.
+      if (update?.sessionUpdate === 'tool_call' && heard && (agent === 'copilot' || jeans(update, tools))) announced.push({ id: String(update.toolCallId), title: String(update.title) })
       if (update?.sessionUpdate === 'tool_call_update' && /^(completed|failed)$/.test(update.status) && running.delete(String(update.toolCallId)) && !running.size) settled?.()
-      // Jean's tools are allowed: Jean asks the user, as with any brain.
-      const allow = message.method === 'session/request_permission' && message.params?.options?.find((/** @type {any} */ option) => /^allow/.test(option.kind))
-      return allow ? { outcome: { outcome: 'selected', optionId: allow.optionId } } : undefined
+      if (message.method !== 'session/request_permission') return undefined
+      // Jean's tools are allowed: Jean asks the user, as with any brain. Copilot has no others; any action of Antigravity's own is refused.
+      const ours = agent === 'copilot' || jeans(message.params?.toolCall, tools)
+      const option = message.params?.options?.find((/** @type {any} */ each) => (ours ? /^allow/ : /^reject/).test(each.kind))
+      return option ? { outcome: { outcome: 'selected', optionId: option.optionId } } : ours ? undefined : { outcome: { outcome: 'cancelled' } }
     })
-    child.on('close', () => push({ type: 'error', error: { message: session.stderr.trim() || 'Copilot stopped.' } }))
+    child.on('close', () => push({ type: 'error', error: { message: session.stderr.trim() || stopped } }))
     const opened = (async () => {
       await request('initialize', { protocolVersion: 1, clientCapabilities: {} })
       const created = await request('session/new', { cwd: dir, mcpServers: [{ type: 'http', name: 'jean', url: `http://127.0.0.1:${port}/session/${id}`, headers: [{ name: 'authorization', value: `Bearer ${key}` }] }] })
       if (created.error) throw created.error
-      return String(created.result.sessionId)
+      const sessionId = String(created.result.sessionId)
+      // Antigravity's model is a choice of the session's, never a flag: ACP's configuration option for it, or its older way.
+      const option = created.result.configOptions?.find((/** @type {any} */ each) => each.category === 'model')
+      const chosen = agent === 'copilot' ? {} : option ? await request('session/set_config_option', { sessionId, configId: option.id, value: model })
+        : created.result.models ? await request('session/set_model', { sessionId, modelId: model }) : {}
+      if (chosen.error) throw chosen.error
+      return sessionId
     })()
+    /** The prompt last sent, until it is answered. @type {Promise<unknown>} */
+    let turn = Promise.resolve()
     const session = keep({
-      id, child: /** @type {any} */ (child), agent: 'copilot', tools,
-      // A message that starts with / is the user's words, never one of Copilot's commands: a zero-width space goes before it.
+      id, child: /** @type {any} */ (child), agent, tools,
+      // A message that starts with / is the user's words, never one of the CLI's commands: a zero-width space goes before it.
       // One said while it answers (a steer, D365) goes once the calls it runs are done: Copilot ends that turn, cancelled,
-      // keeping their results, and answers this one next.
+      // keeping their results, and answers this one next. Antigravity would take it into that turn, which is cancelled first.
       say: (content) => {
         const mine = ++given
         void opened.then(async (sessionId) => {
@@ -996,7 +1048,12 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
             setTimeout(done, SETTLED_MS)
           })
           settled = null
-          const answered = await request('session/prompt', { sessionId, prompt })
+          if (agent === 'antigravity' && answering < mine) {
+            request.notify('session/cancel', { sessionId })
+            await turn
+          }
+          const prompted = (turn = request('session/prompt', { sessionId, prompt }))
+          const answered = await prompted
           answering = Math.max(answering, mine + 1)
           announced.length = 0
           running.clear()
@@ -1007,7 +1064,7 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
         // A call of a turn a steer ends is not Jean's to run.
         if (given > answering) return { content: [{ type: 'text', text: 'Not run: the user said something new.' }], isError: true }
         const name = String(params?.name ?? '')
-        const [known] = announced.splice(Math.max(0, announced.findIndex((each) => each.title === `jean-${name}`)), 1)
+        const [known] = announced.splice(Math.max(0, announced.findIndex((each) => names(each.title, name))), 1)
         const toolId = known?.id ?? `toolu_${randomUUID()}`
         push({ type: 'call', id: toolId, name, input: params?.arguments ?? {} })
         return new Promise((answered) => session.waiting.set(toolId, answered))
@@ -1024,41 +1081,43 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
             session.asked.push({ id: event.id, name: event.name })
             out.call(event)
           } else if (event.type === 'end') return out.end(STOPS[event.stopReason] ?? 'end_turn', usageOf(event.usage))
-          else return fail(res, session, String(event.error?.message || 'Copilot stopped.'), kindOf(event.error))
+          else return fail(res, session, String(event.error?.message || stopped), kindOf(event.error))
         }
       },
     })
     return session
   }
 
-  /** @type {{ at: number, models: object[] } | null} */
-  let copilotSeen = null
+  /** @type {Partial<Record<Speaker, { at: number, models: object[] }>>} */
+  const seen = {}
 
   /**
-   * Copilot's models, from a session it opens, which also says it is here and signed in: null when it
-   * isn't here, false when it opens none. Kept an hour. @returns {Promise<object[] | false | null>}
+   * Copilot's or Antigravity's models, from a session it opens, which also says it is here and signed in: null when it
+   * isn't here, false when it opens none. Kept an hour; Antigravity's chosen one first, which a new brain starts on.
+   * @param {Speaker} agent @returns {Promise<object[] | false | null>}
    */
-  async function copilotHere() {
-    if (copilotSeen && Date.now() - copilotSeen.at < MODELS_MS) return copilotSeen.models
-    const child = spawn(copilotProgram, [...copilotBefore, '--acp', '--disable-builtin-mcps'], { cwd: temp })
+  async function here(agent) {
+    const kept = seen[agent]
+    if (kept && Date.now() - kept.at < MODELS_MS) return kept.models
+    const child = agent === 'copilot' ? spawn(copilotProgram, [...copilotBefore, '--acp', '--disable-builtin-mcps'], { cwd: temp })
+      : spawn(agyProgram, [...agyBefore, 'acp', '--disable-telemetry'], { cwd: temp })
     const request = acp(/** @type {any} */ (child), () => undefined)
     const found = await Promise.race([new Promise((done) => setTimeout(() => done(null), 30_000)), (async () => {
       if ((await request('initialize', { protocolVersion: 1, clientCapabilities: {} })).error) return null
       const created = await request('session/new', { cwd: temp, mcpServers: [] })
       if (created.error) return false
       await request('session/close', { sessionId: created.result.sessionId })
-      return (created.result.models?.availableModels ?? []).filter((/** @type {any} */ model) => model.modelId !== 'auto')
-        .map((/** @type {any} */ model) => ({ id: String(model.modelId), display_name: String(model.name ?? model.modelId) }))
+      return modelsOf(created.result, agent === 'antigravity')
     })()])
     child.kill()
-    if (found) copilotSeen = { at: Date.now(), models: found }
+    if (found) seen[agent] = { at: Date.now(), models: found }
     return /** @type {object[] | false | null} */ (found)
   }
 
   /**
-   * A Messages request to Claude Code or Copilot: the step that follows its history, streamed as Anthropic's
+   * A Messages request to Claude Code, Copilot or Antigravity: the step that follows its history, streamed as Anthropic's
    * events. The conversation the last request left goes on in its process; any other starts one.
-   * @param {'claude' | 'copilot'} agent @param {any} body @param {import('node:http').ServerResponse} res @param {AbortSignal} signal
+   * @param {'claude' | Speaker} agent @param {any} body @param {import('node:http').ServerResponse} res @param {AbortSignal} signal
    */
   async function converse(agent, body, res, signal) {
     // Warming the cache ahead (D49) is the CLI's own matter.
@@ -1075,12 +1134,12 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
     let session = [...sessions.values()].find((each) => each.agent === agent && each.count === history.length - 2 && each.seen === mark(history.slice(0, each.count)) && answers(each))
     if (session && results.length) {
       // What the user sent meanwhile (D365) is their next message, said before the results reach the calls, which the CLI
-      // reads once they are in: Claude Code within its turn, Copilot in the next.
+      // reads once they are in: Claude Code within its turn, Copilot and Antigravity in the next.
       const more = last.content.filter((block) => block.type !== 'tool_result')
       if (more.length) session.say(more)
       results.forEach((block) => give(/** @type {Session} */ (session), block.tool_use_id, result(block)))
     } else {
-      session ??= agent === 'claude' ? await claudeCode(String(body.model), system, tools) : await copilot(String(body.model), system, tools)
+      session ??= agent === 'claude' ? await claudeCode(String(body.model), system, tools) : await speaker(agent, String(body.model), system, tools)
       const tail = results.length ? [{ type: 'text', text: 'Go on from there.' }] : last.content
       session.say(session.count || history.length === 1 ? tail : [{ type: 'text', text: told(results.length ? history : history.slice(0, -1)) }, ...tail])
     }
@@ -1302,7 +1361,8 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
       if (method === 'tools/call' && params?.name === 'about') {
         const about = { version: VERSION, folder: basename(real), path: real, os: platform(), node: process.version, serving: [...serving].map(([group, job]) => ({ group, ...job })), browser: Boolean(browserProgram),
           ...(params.arguments?.claude && await signedIn()),
-          ...(params.arguments?.copilot && { copilot: await copilotHere().then((found) => (found ? true : found)) }),
+          ...(params.arguments?.copilot && { copilot: await here('copilot').then((found) => (found ? true : found)) }),
+          ...(params.arguments?.antigravity && { antigravity: await here('antigravity').then((found) => (found ? true : found)) }),
           ...(params.arguments?.chatgpt && { chatgpt: await planned() }) }
         return { content: [{ type: 'text', text: JSON.stringify(about) }], structuredContent: about }
       }
@@ -1329,7 +1389,8 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
   /**
    * An HTTP request: from this computer, by its own name; from Jean's origin, or no browser's; with the key,
    * which a brain's request sends as Anthropic's (D235). MCP at /, a CLI's own at /session/<id>; Messages for Claude Code at /v1,
-   * for Copilot at /copilot/v1; Chat Completions for ChatGPT at /chatgpt/v1, whose sign-in comes back at /auth/callback with no key.
+   * for Copilot at /copilot/v1, for Antigravity at /antigravity/v1; Chat Completions for ChatGPT at /chatgpt/v1, whose sign-in
+   * comes back at /auth/callback with no key.
    * @param {import('node:http').IncomingMessage} req @param {import('node:http').ServerResponse} res
    */
   async function handle(req, res) {
@@ -1359,9 +1420,10 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
     res.on('close', () => { if (!res.writableFinished) gone.abort() })
     const json = (/** @type {number} */ status, /** @type {object} */ data) => res.writeHead(status, { 'content-type': 'application/json' }).end(JSON.stringify(data))
     if (req.method === 'GET' && path === '/v1/models') return json(200, { data: MODELS })
-    if (req.method === 'GET' && path === '/copilot/v1/models') {
-      const found = await copilotHere()
-      return found ? json(200, { data: found }) : json(401, { error: { message: 'Copilot is not installed or signed in on this computer.' } })
+    const listed = /** @type {Speaker | undefined} */ ({ '/copilot/v1/models': 'copilot', '/antigravity/v1/models': 'antigravity' })[path]
+    if (req.method === 'GET' && listed) {
+      const found = await here(listed)
+      return found ? json(200, { data: found }) : json(401, { error: { message: `${listed === 'copilot' ? 'Copilot' : 'Antigravity'} is not installed or signed in on this computer.` } })
     }
     if (req.method === 'GET' && path === '/chatgpt/v1/models') return chatgpt(path, null, res, gone.signal)
     if (req.method === 'GET' && path === '/browser/screen') return watch(res)
@@ -1372,7 +1434,8 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
     for await (const chunk of req) if ((body += chunk).length > BODY) return res.writeHead(413).end()
     const message = (() => { try { return JSON.parse(body) } catch { return null } })()
     if (!message) return res.writeHead(400).end()
-    if (path === '/v1/messages' || path === '/copilot/v1/messages') return converse(path === '/v1/messages' ? 'claude' : 'copilot', message, res, gone.signal)
+    const agent = /** @type {'claude' | Speaker | undefined} */ ({ '/v1/messages': 'claude', '/copilot/v1/messages': 'copilot', '/antigravity/v1/messages': 'antigravity' })[path]
+    if (agent) return converse(agent, message, res, gone.signal)
     if (path === '/chatgpt/v1/chat/completions') return chatgpt(path, message, res, gone.signal)
     const reply = await answer(message, gone.signal, session)
     if (!reply) return res.writeHead(202).end()

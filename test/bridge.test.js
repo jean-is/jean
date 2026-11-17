@@ -8,7 +8,7 @@ import { existsSync } from 'node:fs'
 import { mkdtemp, mkdir, readFile, writeFile, rm, realpath, stat } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { bridge, snapshot } from '../app/bridge/bridge.js'
+import { bridge, jeans, modelsOf, snapshot } from '../app/bridge/bridge.js'
 import { mcpClient } from '../app/caps/connections/mcp.js'
 import { chromium } from '@playwright/test'
 
@@ -404,6 +404,140 @@ describe('Copilot through the bridge (D262)', { skip: process.platform === 'win3
     for (let i = 0; i < 8; i++) await step([{ role: 'user', content: `other ${i}` }])
     messages.push(asked.done.message, { role: 'tool', toolCallId: asked.calls[0].id, name: 'weather', content: 'Sunny, 21°C' })
     assert.equal((await step(messages, [weather])).text, 'In Lyon: Sunny, 21°C')
+  })
+})
+
+// Antigravity (D756): the user's own Antigravity CLI, with their Gemini plan, answers Jean's Anthropic requests here, over ACP,
+// as a custom agent of a folder of its own that has none of Antigravity's tools; any action of its own it asks to take is refused.
+describe('a Gemini plan through Antigravity and the bridge (D756)', { skip: process.platform === 'win32' }, () => {
+  /** @type {typeof import('../app/core/llm.js')} */
+  let llm
+  /** @type {Awaited<ReturnType<typeof bridge>>} */
+  let work
+  /** @type {import('node:http').Server} */
+  let server
+  /** @type {import('../app/core/types.js').BrainConfig} */
+  let brain
+  /** @type {string} */
+  let folder
+  const antigravity = [process.execPath, new URL('./fixtures/antigravity.js', import.meta.url).pathname]
+  const weather = { name: 'weather', description: 'The weather in a city', parameters: { type: 'object', properties: { city: { type: 'string' } } } }
+
+  before(async () => {
+    llm = await import('../app/core/llm.js')
+    folder = await realpath(await mkdtemp(join(tmpdir(), 'bridge-antigravity-')))
+    server = createServer((req, res) => work.handle(req, res))
+    await new Promise((ready) => server.listen(0, '127.0.0.1', () => ready(undefined)))
+    const port = /** @type {import('node:net').AddressInfo} */ (server.address()).port
+    work = await bridge({ folder, origins: [JEAN], key: KEY, port, antigravity })
+    brain = { id: 'g', provider: 'antigravity', api: 'anthropic', baseURL: `http://127.0.0.1:${port}/antigravity/v1`, model: 'gemini-3.1-pro' }
+  })
+  after(async () => {
+    server.close()
+    await work.close()
+    await rm(folder, { recursive: true, force: true })
+  })
+
+  /** One step, as Jean's loop reads it. @param {any[]} messages @param {any[]} [tools] @param {import('../app/core/types.js').BrainConfig} [asked] */
+  async function step(messages, tools = [], asked = brain) {
+    let [text, thinking] = ['', '']
+    /** @type {any} */
+    let done
+    /** @type {any[]} */
+    const calls = []
+    for await (const event of llm.streamChat({ brain: asked, apiKey: KEY, system: 'You are Jean, briefly.', messages, tools })) {
+      if (event.type === 'text') text += event.delta
+      if (event.type === 'thinking') thinking += event.delta
+      if (event.type === 'tool_call') calls.push(event.call)
+      if (event.type === 'done') done = event
+    }
+    return { text, thinking, calls, done }
+  }
+
+  test('it says whether Antigravity is here and signed in, and lists its models, the one it has chosen first', async () => {
+    const client = mcpClient({ url: brain.baseURL.replace('/antigravity/v1', '/'), client: { name: 'Jean', version: 'test' }, authorization: async () => `Bearer ${KEY}` })
+    process.env.ANTIGRAVITY_SIGNED_OUT = '1'
+    try {
+      assert.equal((await client.callTool({ name: 'about' }, { antigravity: true })).structuredContent.antigravity, false)
+      await assert.rejects(llm.listModels({ brain, apiKey: KEY }), { code: 'auth' })
+    } finally {
+      delete process.env.ANTIGRAVITY_SIGNED_OUT
+    }
+    assert.equal((await client.callTool({ name: 'about' }, { antigravity: true })).structuredContent.antigravity, true)
+    assert.deepEqual((await llm.listModels({ brain, apiKey: KEY })).map((model) => model.id), ['gemini-3.8-flash', 'gemini-3.5-flash-lite', 'gemini-3.1-pro'])
+    // Not on this computer at all.
+    /** @type {Awaited<ReturnType<typeof bridge>>} */
+    let elsewhere
+    const there = createServer((req, res) => elsewhere.handle(req, res))
+    await new Promise((ready) => there.listen(0, '127.0.0.1', () => ready(undefined)))
+    const port = /** @type {import('node:net').AddressInfo} */ (there.address()).port
+    elsewhere = await bridge({ folder, origins: [JEAN], key: KEY, port, antigravity: [join(folder, 'no-agy')] })
+    const asked = mcpClient({ url: `http://127.0.0.1:${port}/`, client: { name: 'Jean', version: 'test' }, authorization: async () => `Bearer ${KEY}` })
+    assert.equal((await asked.callTool({ name: 'about' }, { antigravity: true })).structuredContent.antigravity, null)
+    there.close()
+    await elsewhere.close()
+  })
+
+  test('a conversation goes on in one Antigravity, as an agent with Jean’s prompt, on the version chosen and no tools of its own; another history is told to a new one', async () => {
+    /** @type {any[]} */
+    const messages = [{ role: 'user', content: 'hello' }]
+    const first = await step(messages, [weather])
+    assert.equal(first.text, 'Heard (gemini-3.1-pro, You are Jean, jean, no tools): hello')
+    assert.deepEqual([first.done.stopReason, first.done.usage], ['end', { inputTokens: 10, outputTokens: 5 }])
+    messages.push(first.done.message, { role: 'user', content: '/usage, said again' })
+    // Only the new message reaches it, never as one of Antigravity's commands.
+    assert.equal((await step(messages, [weather])).text, 'Heard (gemini-3.1-pro, You are Jean, jean, no tools): ​/usage, said again')
+    const other = await step([{ role: 'user', content: 'hi' }, { role: 'assistant', content: 'Hello!' }, { role: 'user', content: 'what now?' }])
+    assert.equal(other.text, 'Heard (gemini-3.1-pro, You are Jean, jean, no tools): <earlier-conversation>\nUser: hi\n\nAssistant: Hello!\n</earlier-conversation>\nwhat now?')
+  })
+
+  test('Antigravity calls Jean’s tools, never its own: the step ends with the call it announced, and the next request brings its result', async () => {
+    /** @type {any[]} */
+    const messages = [{ role: 'user', content: 'The weather in Lyon?' }]
+    const asked = await step(messages, [weather])
+    assert.deepEqual(asked.calls, [{ id: asked.calls[0]?.id, name: 'weather', args: { city: 'Lyon' } }])
+    assert.match(asked.calls[0].id, /^call_/)
+    assert.deepEqual([asked.thinking, asked.done.stopReason], ['Lyon, then.', 'tool_use'])
+    messages.push(asked.done.message, { role: 'tool', toolCallId: asked.calls[0].id, name: 'weather', content: 'Sunny, 21°C' })
+    const answered = await step(messages, [weather])
+    assert.equal(answered.text, 'In Lyon: Sunny, 21°C, its own command refused')
+    assert.deepEqual(answered.done.usage, { inputTokens: 30, outputTokens: 5, cacheReadTokens: 10 })
+  })
+
+  test('what the user sent while a call ran (D365) is their next message: once the call has its result, the turn is cancelled and Antigravity answers it, never taking it into that turn', async () => {
+    /** @type {any[]} */
+    const messages = [{ role: 'user', content: 'The weather in Lyon?' }]
+    const asked = await step(messages, [weather])
+    messages.push(asked.done.message, { role: 'tool', toolCallId: asked.calls[0].id, name: 'weather', content: 'The user declined this action.', isError: true },
+      { role: 'user', content: 'Actually, leave out Training' })
+    const answered = await step(messages, [weather])
+    assert.equal(answered.text, 'Heard (gemini-3.1-pro, You are Jean, jean, no tools), after The user declined this action. (an error): Actually, leave out Training')
+    assert.equal(answered.done.stopReason, 'end')
+  })
+
+  test('a plan’s limit is the brain’s limit, and a version Antigravity doesn’t offer says so', async () => {
+    await assert.rejects(step([{ role: 'user', content: 'over the limit' }]), { code: 'rate_limit', message: /weekly limit/ })
+    await assert.rejects(step([{ role: 'user', content: 'hello' }], [], { ...brain, model: 'gemini-9' }), { message: /Unknown model: gemini-9/ })
+  })
+})
+
+describe('what the bridge makes of an ACP CLI (D756)', () => {
+  test('a call is Jean’s when its title names one of Jean’s tools and its kind is none of the CLI’s own work', () => {
+    const tools = [{ name: 'weather' }, { name: 'find_tools' }]
+    for (const title of ['jean-weather', 'jean/weather', 'mcp(jean/weather)', 'weather', 'jean: find_tools']) assert.ok(jeans({ title, kind: 'other' }, tools), title)
+    assert.ok(jeans({ title: 'jean/weather' }, tools))
+    for (const call of [{ title: 'Run weather', kind: 'execute' }, { title: 'jean/weather', kind: 'fetch' }, { title: 'jean/weather_now', kind: 'other' }, { title: 'jean/find', kind: 'other' }, { kind: 'other' }, null]) {
+      assert.equal(jeans(call, tools), false, JSON.stringify(call))
+    }
+  })
+
+  test('its models come from the configuration option for them, in groups or not, or its older list, never its own Auto', () => {
+    const configOptions = [{ id: 'mode', category: 'mode', options: [{ value: 'plan', name: 'Plan' }] },
+      { id: 'model', category: 'model', currentValue: 'b', options: [{ group: 'g', name: 'G', options: [{ value: 'a', name: 'A' }, { value: 'auto', name: 'Auto' }] }, { value: 'b', name: 'B' }] }]
+    assert.deepEqual(modelsOf({ configOptions }), [{ id: 'a', display_name: 'A' }, { id: 'b', display_name: 'B' }])
+    assert.deepEqual(modelsOf({ configOptions }, true).map((model) => model.id), ['b', 'a'])
+    assert.deepEqual(modelsOf({ models: { currentModelId: 'y', availableModels: [{ modelId: 'x' }, { modelId: 'y', name: 'Y' }] } }, true), [{ id: 'y', display_name: 'Y' }, { id: 'x', display_name: 'x' }])
+    assert.deepEqual(modelsOf({}), [])
   })
 })
 

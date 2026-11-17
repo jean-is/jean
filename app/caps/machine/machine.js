@@ -40,8 +40,8 @@ const desktop = host.then((known) => (inApp.value = Boolean(known) && known?.os 
 const RUNNING = 'app.bridge'
 // How long what Jean found of the bridge holds before a command asks again.
 const FRESH_MS = 5000
-/** The plans' brains (D235, D262): where each answers on the bridge, and what its `about` is asked for it. */
-const PLANS = /** @type {Record<string, [string, string]>} */ ({ claudecode: ['/v1', 'claude'], copilot: ['/copilot/v1', 'copilot'], chatgpt: ['/chatgpt/v1', 'chatgpt'] })
+/** The plans' brains (D235, D262, D756): where each answers on the bridge, and what its `about` is asked for it. */
+const PLANS = /** @type {Record<string, [string, string]>} */ ({ claudecode: ['/v1', 'claude'], copilot: ['/copilot/v1', 'copilot'], antigravity: ['/antigravity/v1', 'antigravity'], chatgpt: ['/chatgpt/v1', 'chatgpt'] })
 // Where ChatGPT signs in for open-source apps (D262): an identity of the provider's, like its API's address.
 const ISSUER = 'https://auth.openai.com'
 
@@ -74,11 +74,11 @@ const pairing = () => (paired ??= (async () => {
 })())
 
 /**
- * A plan's brain on this computer (D235, D262): where Jean reaches it through the bridge, and whether it is
- * ready (Claude Code or Copilot there and signed in, the bridge signed in to ChatGPT with the plan's use), or
+ * A plan's brain on this computer (D235, D262, D756): where Jean reaches it through the bridge, and whether it is ready
+ * (Claude Code, Copilot or Antigravity there and signed in, the bridge signed in to ChatGPT with the plan's use), or
  * the bridge, started before it knew that plan, needs starting again; null while the bridge isn't running. For
  * Claude Code, how it reaches Claude too, as `claude auth status` says, for what may read Google's data (D440).
- * @param {string} provider claudecode, copilot or chatgpt
+ * @param {string} provider claudecode, copilot, antigravity or chatgpt
  * @returns {Promise<{ baseURL: string, apiKey: string, ready: boolean, old: boolean, terms?: Parameters<typeof import('../../core/terms.js').commercial>[0] } | null>}
  */
 export async function plan(provider) {

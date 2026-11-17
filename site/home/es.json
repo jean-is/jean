@@ -40,7 +40,7 @@
   "any.title": "con cualquier IA.",
   "any.why": "La IA cambia cada mes, y quizá ya pagues una.",
   "any.lead": "Usa la IA que quieras. Cámbiala cuando quieras.",
-  "any.ways": ["Una IA gratuita", "Tu plan de ChatGPT, Claude o Copilot", "Una IA en esta computadora", "La de tu empresa"],
+  "any.ways": ["Una IA gratuita", "Tu plan de ChatGPT, Claude, Gemini o Copilot", "Una IA en esta computadora", "La de tu empresa"],
   "any.notes": ["Con una cuenta gratuita de OpenRouter.", "El plan que ya pagas. Sin una segunda suscripción.", "Desactiva el wifi y sigue respondiendo.", "Detrás de la pasarela y el inicio de sesión de tu empresa."],
   "any.go": "Comparar {name} con los demás",
   "any.all": "Todas las IA en un solo lugar",
@@ -65,7 +65,7 @@
     ["¿Se puede usar sin registrarse?", "Con la IA en esta computadora, sí. «{free}» pide una cuenta gratuita de OpenRouter."],
     ["¿Funciona con archivos de Excel y PDF?", "Sí, y con Word, PowerPoint, fotos y carpetas enteras. También devuelve archivos terminados: un gráfico, una tabla, un documento de Word."],
     ["¿Funciona en un teléfono, o sin conexión?", "En un teléfono, sí, en el navegador. Sin conexión, con la IA en esta computadora, que necesita 12 GB de memoria y un chip gráfico reciente: no en teléfonos."],
-    ["¿Puedo usar mi plan de ChatGPT o Claude?", "Sí, y el de Copilot: {name} usa el plan que ya pagas, a través de esta computadora. Sin una segunda suscripción."],
+    ["¿Puedo usar mi plan de ChatGPT, Claude o Gemini?", "Sí, y el de Copilot: {name} usa el plan que ya pagas, a través de esta computadora. Sin una segunda suscripción."],
     ["¿Puede equivocarse?", "Sí. Los números se calculan, no se adivinan, y debajo de cada respuesta dice dónde se hizo. Revisa las palabras, como harías con las de un colega."],
     ["¿Se puede usar en el trabajo?", "Si tu empresa no te da ninguna IA, funciona tal cual. Si tu computadora está administrada, pregunta a tu departamento de TI: {name} se despliega como una página web, detrás de la pasarela y el inicio de sesión de tu empresa."],
     ["¿{name} me rastrea?", "No. No hay cookies de seguimiento, y nunca las habrá; de hecho, no hay ninguna cookie. Ni analíticas, ni publicidad, ni aviso de cookies, porque no hay nada que aceptar. Cada cambio en {name} se revisa, y se rechaza si instala una cookie."]

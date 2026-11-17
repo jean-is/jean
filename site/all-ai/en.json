@@ -14,12 +14,12 @@
   "ways.which": [
     "The one {name} downloads, or yours in Ollama or LM Studio",
     "Free AIs, through OpenRouter",
-    "ChatGPT, Claude or GitHub Copilot",
+    "ChatGPT, Claude, Gemini or GitHub Copilot",
     "Thirteen services: OpenAI, Anthropic, Google for Gemini, Mistral…"
   ],
   "ways.key": ["What you use", "A key from that service"],
   "ways.go": ["Get it", "Start for free", "Use my plan", "Add my key"],
-  "place.limit": "A ChatGPT, Claude or Copilot plan takes a line to paste once, on a computer.",
+  "place.limit": "A ChatGPT, Claude, Gemini or Copilot plan takes a line to paste once, on a computer.",
   "mid.title": "Change AI in the middle of a task.",
   "mid.why": [
     "Pick another from the chip beside {send}. It reads the task so far, your requests, the answers and the files, and carries on.",
@@ -55,7 +55,7 @@
   "sale.source": "Open source, under MIT: what is free today can’t be taken back. Free for you, paid for by organisations: {pricing}.",
   "sale.pricing": "see Pricing",
   "turn.body": "Start with a free AI. Add yours when you like.",
-  "turn.other": "Already pay for ChatGPT, Claude or Copilot? {plan}.",
+  "turn.other": "Already pay for ChatGPT, Claude, Gemini or Copilot? {plan}.",
   "turn.plan": "Use your plan",
   "faq.items": [
     ["Can I ask several AIs at once?", "Not side by side: one AI answers at a time. Switch from the box and ask again, and both answers stay in the task."],

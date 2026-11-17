@@ -40,7 +40,7 @@
   "any.title": "with any AI.",
   "any.why": "AI changes every month, and you may already pay for one.",
   "any.lead": "Use the AI you want. Change it any time.",
-  "any.ways": ["A free one", "Your ChatGPT, Claude or Copilot plan", "One on this computer", "Your company’s"],
+  "any.ways": ["A free one", "Your ChatGPT, Claude, Gemini or Copilot plan", "One on this computer", "Your company’s"],
   "any.notes": ["With a free OpenRouter account.", "The plan you already pay for. No second subscription.", "Turn off Wi-Fi and it still answers.", "Behind your company’s gateway and sign-in."],
   "any.go": "Compare {name} with the others",
   "any.all": "Every AI in one place",
@@ -65,7 +65,7 @@
     ["Can I use it without signing up?", "With the AI on this computer, yes. {free} asks for a free OpenRouter account."],
     ["Does it work with Excel and PDF files?", "Yes, and with Word, PowerPoint, photos and whole folders. It hands back finished files too: a chart, a table, a document in Word."],
     ["Does it work on a phone, or offline?", "On a phone, yes, in the browser. Offline, with the AI on this computer, which needs 12 GB of memory and a recent graphics chip: not on phones."],
-    ["Can I use my ChatGPT or Claude plan?", "Yes, and Copilot’s: {name} uses the plan you already pay for, through this computer. No second subscription."],
+    ["Can I use my ChatGPT, Claude or Gemini plan?", "Yes, and Copilot’s: {name} uses the plan you already pay for, through this computer. No second subscription."],
     ["Can it make mistakes?", "Yes. Numbers are calculated rather than guessed, and under every answer it says where it was done. Check the words, as you would a colleague’s."],
     ["Can I use it at work?", "If your company gives you no AI, it works as it is. If your computer is managed, ask your IT: {name} is deployed like a web page, behind your company’s gateway and sign-in."],
     ["Does {name} track me?", "No. There are no tracking cookies, and there never will be; in fact, no cookies at all. No analytics, no advertising, and no cookie banner, since there is nothing to agree to. Every change to {name} is checked, and refused if it sets a cookie."]

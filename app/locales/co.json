@@ -124,6 +124,7 @@
   "provider.lmstudio": "LM Studio",
   "provider.claudecode": "Claude Code",
   "provider.copilot": "GitHub Copilot",
+  "provider.antigravity": "Google Antigravity",
   "provider.chatgpt": "ChatGPT",
   "provider.custom": "Altru",
   "provider.gemini": "Google Gemini",

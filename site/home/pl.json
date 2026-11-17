@@ -40,7 +40,7 @@
   "any.title": "z dowolną AI.",
   "any.why": "AI zmienia się co miesiąc, a może już za jakąś płacisz.",
   "any.lead": "Korzystaj z AI, której chcesz. Zmieniaj ją, kiedy chcesz.",
-  "any.ways": ["Darmowa AI", "Twój plan ChatGPT, Claude lub Copilot", "AI na tym komputerze", "AI twojej firmy"],
+  "any.ways": ["Darmowa AI", "Twój plan ChatGPT, Claude, Gemini lub Copilot", "AI na tym komputerze", "AI twojej firmy"],
   "any.notes": ["Z darmowym kontem OpenRouter.", "Plan, za który już płacisz. Bez drugiej subskrypcji.", "Wyłącz Wi-Fi, a i tak odpowie.", "Za bramą i logowaniem twojej firmy."],
   "any.go": "Porównaj {name} z innymi",
   "any.all": "Każda AI w jednym miejscu",
@@ -65,7 +65,7 @@
     ["Czy da się korzystać bez rejestracji?", "Z AI na tym komputerze: tak. „{free}” wymaga darmowego konta OpenRouter."],
     ["Czy działa z plikami Excela i PDF?", "Tak, także z Wordem, PowerPointem, zdjęciami i całymi folderami. Oddaje też gotowe pliki: wykres, tabelę, dokument Worda."],
     ["Czy działa na telefonie albo offline?", "Na telefonie tak, w przeglądarce. Offline z AI na tym komputerze, która potrzebuje 12 GB pamięci i nowszego układu graficznego: nie na telefonach."],
-    ["Czy mogę użyć swojego planu ChatGPT lub Claude?", "Tak, Copilota też: {name} korzysta z planu, za który już płacisz, przez ten komputer. Bez drugiej subskrypcji."],
+    ["Czy mogę użyć swojego planu ChatGPT, Claude lub Gemini?", "Tak, Copilota też: {name} korzysta z planu, za który już płacisz, przez ten komputer. Bez drugiej subskrypcji."],
     ["Czy może się mylić?", "Tak. Liczby są obliczane, a nie zgadywane, a pod każdą odpowiedzią jest napisane, gdzie powstała. Słowa sprawdź tak, jak sprawdza się po współpracowniku."],
     ["Czy mogę korzystać w pracy?", "Jeśli firma nie daje ci żadnej AI, działa od ręki. Jeśli twoim komputerem zarządza firma, zapytaj dział IT: {name} wdraża się jak stronę internetową, za bramą i logowaniem twojej firmy."],
     ["Czy {name} mnie śledzi?", "Nie. Nie ma śledzących plików cookie i nigdy nie będzie; właściwie nie ma żadnych plików cookie. Żadnej analityki, żadnych reklam ani banera cookie, bo nie ma na co się zgadzać. Każda zmiana w kodzie jest sprawdzana i odrzucana, jeśli ustawia plik cookie."]

@@ -14,12 +14,12 @@
   "ways.which": [
     "Celle que {name} télécharge, ou la vôtre dans Ollama ou LM Studio",
     "Des IA gratuites, par OpenRouter",
-    "ChatGPT, Claude ou GitHub Copilot",
+    "ChatGPT, Claude, Gemini ou GitHub Copilot",
     "Treize services : OpenAI, Anthropic, Google pour Gemini, Mistral…"
   ],
   "ways.key": ["Ce que vous utilisez", "Une clé de ce service"],
   "ways.go": ["L’obtenir", "Commencer gratuitement", "Utiliser mon abonnement", "Ajouter ma clé"],
-  "place.limit": "Un abonnement ChatGPT, Claude ou Copilot demande une ligne à coller une fois, sur un ordinateur.",
+  "place.limit": "Un abonnement ChatGPT, Claude, Gemini ou Copilot demande une ligne à coller une fois, sur un ordinateur.",
   "mid.title": "Changez d’IA en pleine tâche.",
   "mid.why": [
     "Choisissez-en une autre dans la pastille à côté du bouton {send}. Elle lit la tâche jusque-là, vos demandes, les réponses et les fichiers, et poursuit.",
@@ -55,7 +55,7 @@
   "sale.source": "Logiciel libre, sous MIT : ce qui est gratuit aujourd’hui ne peut pas être repris. Gratuit pour vous, payé par les organisations : {pricing}.",
   "sale.pricing": "voir les tarifs",
   "turn.body": "Commencez avec une IA gratuite. Ajoutez la vôtre quand vous voulez.",
-  "turn.other": "Vous payez déjà ChatGPT, Claude ou Copilot ? {plan}.",
+  "turn.other": "Vous payez déjà ChatGPT, Claude, Gemini ou Copilot ? {plan}.",
   "turn.plan": "Utilisez votre abonnement",
   "faq.items": [
     ["Puis-je interroger plusieurs IA à la fois ?", "Pas côte à côte : une seule IA répond à la fois. Changez d’IA depuis la zone de saisie et redemandez : les deux réponses restent dans la tâche."],

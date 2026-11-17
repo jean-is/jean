@@ -24,7 +24,7 @@
   ],
   "fixes": [
     [
-      "It’s your Claude, ChatGPT or Copilot plan",
+      "It’s your Claude, ChatGPT, Gemini or Copilot plan",
       "A plan answers through a line you pasted in a terminal, which stops when your computer restarts or the terminal closes. Paste it again: {plan}."
     ],
     [

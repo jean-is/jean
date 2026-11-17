@@ -40,7 +40,7 @@
   "any.title": "com qualquer IA.",
   "any.why": "A IA muda todos os meses, e talvez já pagues uma.",
   "any.lead": "Usa a IA que quiseres. Muda quando quiseres.",
-  "any.ways": ["Uma IA gratuita", "O teu plano ChatGPT, Claude ou Copilot", "Uma IA neste computador", "A da tua empresa"],
+  "any.ways": ["Uma IA gratuita", "O teu plano ChatGPT, Claude, Gemini ou Copilot", "Uma IA neste computador", "A da tua empresa"],
   "any.notes": ["Com uma conta OpenRouter gratuita.", "O plano que já pagas. Sem segunda subscrição.", "Desliga o Wi-Fi e continua a responder.", "Atrás do gateway e do início de sessão da tua empresa."],
   "any.go": "Comparar {name} com os outros",
   "any.all": "Todas as IA num só lugar",
@@ -65,7 +65,7 @@
     ["Posso usar sem me registar?", "Com a IA neste computador, sim. «{free}» pede uma conta OpenRouter gratuita."],
     ["Funciona com ficheiros Excel e PDF?", "Sim, e com Word, PowerPoint, fotografias e pastas inteiras. Também devolve ficheiros prontos: um gráfico, uma tabela, um documento Word."],
     ["Funciona no telemóvel, ou sem internet?", "No telemóvel, sim, no navegador. Sem internet, com a IA neste computador, que precisa de 12 GB de memória e de um chip gráfico recente: não em telemóveis."],
-    ["Posso usar o meu plano ChatGPT ou Claude?", "Sim, e o do Copilot: {name} usa o plano que já pagas, através deste computador. Sem segunda subscrição."],
+    ["Posso usar o meu plano ChatGPT, Claude ou Gemini?", "Sim, e o do Copilot: {name} usa o plano que já pagas, através deste computador. Sem segunda subscrição."],
     ["Pode enganar-se?", "Sim. Os números são calculados, não adivinhados, e por baixo de cada resposta diz onde foi feita. Verifica as palavras, como farias com as de um colega."],
     ["Posso usar no trabalho?", "Se a tua empresa não te dá nenhuma IA, funciona tal como está. Se o teu computador é gerido, pergunta à equipa de informática: {name} instala-se como uma página web, atrás do gateway e do início de sessão da tua empresa."],
     ["{name} rastreia-me?", "Não. Não há cookies de rastreio, nem nunca haverá; aliás, não há cookies nenhuns. Nem estatísticas, nem publicidade, nem aviso de cookies, porque não há nada para aceitar. Cada alteração a {name} é verificada, e recusada se criar um cookie."]

@@ -105,7 +105,7 @@ export async function tell(dir, set) {
  * never through OpenRouter, whose terms are for adults, nor a plan through This computer, which is off there.
  * @param {import('../../core/types.js').BrainConfig[]} [given]
  */
-export const forChild = (given = []) => [...new Map([...given, ...app.settings.value.brains.filter((brain) => !['openrouter', 'claudecode', 'copilot', 'chatgpt'].includes(brain.provider))
+export const forChild = (given = []) => [...new Map([...given, ...app.settings.value.brains.filter((brain) => !['openrouter', 'claudecode', 'copilot', 'antigravity', 'chatgpt'].includes(brain.provider))
   .map(({ projects, ...brain }) => brain)].map((brain) => [brain.id, brain])).values()]
 
 /**

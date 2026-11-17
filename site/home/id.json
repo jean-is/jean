@@ -40,7 +40,7 @@
   "any.title": "dengan AI apa pun.",
   "any.why": "AI berubah setiap bulan, dan mungkin Anda sudah membayar salah satunya.",
   "any.lead": "Gunakan AI yang Anda mau. Ganti kapan saja.",
-  "any.ways": ["AI gratis", "Paket ChatGPT, Claude, atau Copilot Anda", "AI di komputer ini", "AI perusahaan Anda"],
+  "any.ways": ["AI gratis", "Paket ChatGPT, Claude, Gemini, atau Copilot Anda", "AI di komputer ini", "AI perusahaan Anda"],
   "any.notes": ["Dengan akun OpenRouter gratis.", "Paket yang sudah Anda bayar. Tanpa langganan kedua.", "Matikan Wi-Fi, dan ia tetap menjawab.", "Di balik gateway dan login perusahaan Anda."],
   "any.go": "Bandingkan {name} dengan yang lain",
   "any.all": "Semua AI di satu tempat",
@@ -65,7 +65,7 @@
     ["Bisakah dipakai tanpa mendaftar?", "Dengan AI di komputer ini, bisa. “{free}” memerlukan akun OpenRouter gratis."],
     ["Apakah bisa dengan file Excel dan PDF?", "Bisa, juga dengan Word, PowerPoint, foto, dan folder utuh. File jadi pun dikembalikan: grafik, tabel, dokumen Word."],
     ["Apakah bisa di ponsel, atau offline?", "Di ponsel bisa, lewat browser. Offline dengan AI di komputer ini, yang butuh memori 12 GB dan cip grafis yang baru: tidak di ponsel."],
-    ["Bisakah saya memakai paket ChatGPT atau Claude saya?", "Bisa, juga paket Copilot: {name} memakai paket yang sudah Anda bayar, lewat komputer ini. Tanpa langganan kedua."],
+    ["Bisakah saya memakai paket ChatGPT, Claude, atau Gemini saya?", "Bisa, juga paket Copilot: {name} memakai paket yang sudah Anda bayar, lewat komputer ini. Tanpa langganan kedua."],
     ["Bisakah ia keliru?", "Bisa. Angka dihitung, bukan ditebak, dan di bawah setiap jawaban tertulis di mana jawaban itu dibuat. Periksa kata-katanya, seperti Anda memeriksa pekerjaan rekan kerja."],
     ["Bisakah dipakai di tempat kerja?", "Jika perusahaan Anda tidak menyediakan AI, langsung bisa dipakai apa adanya. Jika komputer Anda dikelola kantor, tanyakan ke tim TI: {name} dipasang seperti halaman web, di balik gateway dan login perusahaan Anda."],
     ["Apakah {name} melacak saya?", "Tidak. Tidak ada cookie pelacak, dan tidak akan pernah ada; bahkan tidak ada cookie sama sekali. Tanpa analitik, tanpa iklan, dan tanpa banner cookie, karena tidak ada yang perlu disetujui. Setiap perubahan pada {name} diperiksa, dan ditolak jika memasang cookie."]

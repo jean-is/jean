@@ -40,7 +40,7 @@
     ["이 컴퓨터 안의 AI", "무료, 가입 없이, 오프라인에서도. 메모리 12GB와 최신 그래픽 칩이 필요해요.", "built"],
     ["무료 AI", "무료 OpenRouter 계정으로 클릭 한 번.", "built"],
     ["내 키", "OpenAI, Anthropic, Google, Mistral을 비롯한 13개 서비스.", "key"],
-    ["내 요금제", "ChatGPT, Claude, GitHub Copilot을 ‘이 컴퓨터’를 통해서. 컴퓨터에서 한 줄만 한 번 붙여 넣으면 돼요.", "computer"]
+    ["내 요금제", "ChatGPT, Claude, Gemini, GitHub Copilot을 ‘이 컴퓨터’를 통해서. 컴퓨터에서 한 줄만 한 번 붙여 넣으면 돼요.", "computer"]
   ],
   "choose.history": "그중 하나를 쓰다 왔나요? 기록을 가져오세요. ChatGPT, Claude, Gemini의 내보내기를 중복 없이 가져와요.",
   "one.title": "하나씩 비교",
@@ -57,7 +57,7 @@
   "catch.items": [
     "{name} 자체는 무료지만, 뒤에서 답하는 AI는 유료일 수 있어요.",
     "가입 없이 쓸 수 있는 건 이 컴퓨터 안의 AI뿐이고, 메모리 12GB와 최신 그래픽 칩이 필요해요. 휴대폰에서는 안 돼요.",
-    "ChatGPT, Claude, GitHub Copilot 요금제를 쓰려면 ‘이 컴퓨터’가 필요해요. 컴퓨터에서 한 줄을 한 번 붙여 넣으면 돼요.",
+    "ChatGPT, Claude, Gemini, GitHub Copilot 요금제를 쓰려면 ‘이 컴퓨터’가 필요해요. 컴퓨터에서 한 줄을 한 번 붙여 넣으면 돼요.",
     "작업은 이 브라우저에 저장돼요. 백업 없이 데이터를 지우면 사라져요.",
     "틀릴 수 있어요. 숫자는 계산하지만, 글은 동료가 쓴 글처럼 확인해 주세요."
   ],

@@ -284,6 +284,35 @@ test('the user’s Copilot plan answers, through Copilot on this computer', asyn
   }
 })
 
+// A Gemini plan (D756): the user's own Antigravity CLI, signed in with Google, answers through the bridge, over ACP, as an
+// agent with Jean's prompt; played here by test/fixtures/antigravity.js, first on the PATH of the terminal the line is pasted in.
+test('the user’s Gemini plan answers, through Antigravity on this computer', async ({ page }) => {
+  test.setTimeout(120_000)
+  const disk = mkdtempSync(join(tmpdir(), 'jean-e2e-'))
+  const bin = join(disk, 'bin')
+  mkdirSync(bin)
+  writeFileSync(join(bin, 'agy'), `#!/bin/sh\nexec '${process.execPath}' '${fileURLToPath(new URL('./fixtures/antigravity.js', import.meta.url))}' "$@"\n`, { mode: 0o755 })
+  await start(page)
+  const settings = await openSettings(page, 'Brains')
+  await settings.locator('[data-brain="gemini"]').click()
+  const way = settings.locator('.brain-way')
+  await expect(way).toContainText('Google AI Pro or Ultra plan')
+  await way.getByRole('button', { name: 'Connect' }).click()
+  const line = await pasted(page)
+  const bridge = spawn('bash', ['-c', line], { cwd: disk, stdio: 'ignore', detached: true, env: { ...process.env, PATH: `${bin}:${process.env.PATH}` } })
+  try {
+    await expect(settings).toBeHidden({ timeout: 20_000 })
+    await expect(page.locator('[role="status"] .toast')).toContainText('Brain connected')
+    await expect((await openSettings(page, 'Brains')).locator('.brain-rows button', { hasText: 'Google Antigravity' })).toContainText('In the cloud')
+    await closeSettings(page)
+    await ask(page, 'hello there')
+    // On the version Antigravity had chosen, as an agent of Jean's own with no tools of Antigravity's.
+    await expect(page.locator('.msg-jean .prose').last()).toContainText(/Heard \(gemini-3\.8-flash, [\s\S]*, jean, no tools\): [\s\S]*hello there/, { timeout: 20_000 })
+  } finally {
+    stop(bridge)
+  }
+})
+
 // ChatGPT (D262): back from its sign-in without the plan's use, Settings › Brains says so, on its way's page.
 test('back from ChatGPT’s sign-in, declined, Settings › Brains says why', async ({ page }) => {
   await start(page)

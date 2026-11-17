@@ -151,17 +151,17 @@ function connectLocal(event) {
   attempt('local', provider === 'custom' ? new URL(baseURL).host : t(`provider.${provider}`), () => connectBrain({ provider, baseURL }))
 }
 
-/** The plans' ways, by the brain each adds (D235, D262). */
-const PLANNED = /** @type {const} */ ({ claude: 'claudecode', copilot: 'copilot', chatgpt: 'chatgpt' })
+/** The plans' ways, by the brain each adds (D235, D262, D756). */
+const PLANNED = /** @type {const} */ ({ claude: 'claudecode', copilot: 'copilot', gemini: 'antigravity', chatgpt: 'chatgpt' })
 
 /** The plan whose Connect waits for This computer, which isn't running: its way shows how to start it, and connects by itself once it runs. */
 const starting = signal(/** @type {{ id: keyof typeof PLANNED, machine: typeof import('../caps/machine/machine.js') } | null} */ (null))
 effect(() => { const wait = starting.value; if (wait?.machine.bridge.value.on) untracked(() => connectPlan(wait.id)) })
 
 /**
- * A plan's brain, through This computer (D235, D262), started first from the plan's own way, which goes on by itself
- * once it runs. Claude Code and Copilot are the user's own, signed in on it; ChatGPT is signed in to first, the page
- * going there and back.
+ * A plan's brain, through This computer (D235, D262, D756), started first from the plan's own way, which goes on by itself
+ * once it runs. Claude Code, Copilot and Antigravity are the user's own, signed in on it; ChatGPT is signed in to first, the
+ * page going there and back.
  * @param {keyof typeof PLANNED} id
  */
 async function connectPlan(id) {
@@ -262,7 +262,7 @@ function waysOf(all) {
   // Beside policy's brains, only the ways to those of providers it leaves the person (`ownBrains`).
   const may = (/** @type {string} */ provider) => !app.policy.brains || !!app.policy.ownBrains?.some((/** @type {string} */ one) => one === '*' || one === provider), keyed = KEYED.filter(may), near = ['ollama', 'lmstudio', 'custom'].filter(may)
   return [
-    ...(isDenied('machine') ? [] : /** @type {(keyof typeof PLANNED)[]} */ (['claude', 'chatgpt', 'copilot']).filter((id) => may(PLANNED[id])).map((id) => ({ id, group: 'paid', icon: icons.terminal, title: t(`brain.${id}.title`), needs: t(`provider.${PLANNED[id]}`), body: html`
+    ...(isDenied('machine') ? [] : /** @type {(keyof typeof PLANNED)[]} */ (['claude', 'chatgpt', 'gemini', 'copilot']).filter((id) => may(PLANNED[id])).map((id) => ({ id, group: 'paid', icon: icons.terminal, title: t(`brain.${id}.title`), needs: t(`provider.${PLANNED[id]}`), body: html`
       <p>${t(`brain.${id}.text`, { computer: t('cap.machine.name') })}</p>
       <div class="row"><button class="button primary" ?disabled=${busy} @click=${() => connectPlan(id)}>${t(id === 'chatgpt' ? 'brain.chatgpt.action' : 'brain.connect')}</button></div><div role="status">${starting.value?.id === id ? html`<p>${t('brain.plan.start', { computer: t('cap.machine.name') })}</p>` : nothing}</div>${starting.value?.id === id ? starting.value.machine.starter() : nothing}` }))),
     ...(keyed.length ? [{ id: 'key', group: 'keyed', icon: icons.key, title: t('brain.key.title'), needs: providers(keyed), body: html`
@@ -307,7 +307,7 @@ function waysOf(all) {
       </form>` }] : []),
   ]
 }
-const WAYS = ['claude', 'chatgpt', 'copilot', 'key', 'device', 'quick', 'local']
+const WAYS = ['claude', 'chatgpt', 'gemini', 'copilot', 'key', 'device', 'quick', 'local']
 
 /** What a way said back, under it. @param {string} id */
 const reply = (id) => (status.value?.way === id ? html`<p class="status is-${status.value.kind}" role=${status.value.kind === 'error' ? 'alert' : 'status'}>${status.value.message}</p>` : nothing)
@@ -489,7 +489,7 @@ function page(brain, closed) {
         <div class="list brains" role="radiogroup" aria-labelledby="brain-version">${tiers.map((model) => version(model))}${tiers.includes(brain.model) ? nothing : version(brain.model)}</div>` : nothing}
       <input class="model-input" aria-labelledby="brain-version" title=${t('brain.model')} list=${`models-${brain.id}`} .value=${live(brain.model)} dir="ltr" @change=${(/** @type {Event} */ e) => setVersion(brain.id, valueOf(e).trim())}>
       <datalist id=${`models-${brain.id}`}>${models.map((model) => html`<option value=${model.id}>${model.name ?? ''}</option>`)}</datalist>
-      ${!closed && !/^c(laudecode|opilot)$/.test(brain.provider) && (effective.value.settings.hurried || brain.effort) ? html`<label for="brain-effort">${t('brain.thinking')}<select id="brain-effort" @change=${(/** @type {Event} */ e) => setEffort(brain.id, valueOf(e)).catch(showError)}>
+      ${!closed && !/^(claudecode|copilot|antigravity)$/.test(brain.provider) && (effective.value.settings.hurried || brain.effort) ? html`<label for="brain-effort">${t('brain.thinking')}<select id="brain-effort" @change=${(/** @type {Event} */ e) => setEffort(brain.id, valueOf(e)).catch(showError)}>
         ${['', 'low', 'medium', 'high'].map((effort) => html`<option value=${effort} ?selected=${(brain.effort ?? '') === effort}>${t(effort ? `brain.thinking.${effort}` : 'auto.name')}</option>`)}</select></label>` : nothing}
     </section>`}
     ${closed || !placeable(brain) ? nothing : html`<section>${where(brain, (projects) => keepBrain(brain.id, projects).catch(showError))}</section>`}

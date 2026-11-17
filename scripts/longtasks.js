@@ -50,7 +50,7 @@ const ON = { plan: true, compact: true, keep: 3 }
 /** @type {Features} */
 const OFF = { plan: false, compact: false, keep: 0 }
 /** What a provider's failure says, as against Jean's own outcomes (a request past the window is one). */
-const PROVIDER = /Copilot stopped|overloaded|rate limit|too many requests|fetch failed|network|ECONN|socket|timed? ?out|HTTP 5\d\d|server error/i
+const PROVIDER = /(Copilot|Antigravity) stopped|overloaded|rate limit|too many requests|fetch failed|network|ECONN|socket|timed? ?out|HTTP 5\d\d|server error/i
 /** The diagnosis's long runs: a brain of a small window, for summaries to come (D359), with room for Jean's prompt and tools. */
 const PROBE_WINDOW = 16000
 

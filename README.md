@@ -22,7 +22,7 @@ Ask in words or with a file, and Jean hands back what you asked for, made: an an
 
 ## What makes Jean different
 
-- **Private by design.** What Jean keeps is encrypted in your browser, and no Jean server can read it. You choose where the thinking happens: on your device, with a provider you pick, or through a plan you already pay for, such as Claude, ChatGPT or Copilot. Each answer says where it was done.
+- **Private by design.** What Jean keeps is encrypted in your browser, and no Jean server can read it. You choose where the thinking happens: on your device, with a provider you pick, or through a plan you already pay for, such as Claude, ChatGPT, Gemini or Copilot. Each answer says where it was done.
 - **Free and open.** Open source, no subscription. Bring any AI, or none: on a capable computer, Jean thinks entirely on the device, offline too.
 - **Simple first, deep later.** Jean starts as a single box. Everything else, from your folders and your other devices to other people, memory, routines and voice, shows up when you need it, like a game that teaches itself. [docs/product.md](docs/product.md#what-jean-does) lists it all.
 - **Yours to keep.** Everything Jean knows is stored as plain files you can read, back up and take elsewhere.

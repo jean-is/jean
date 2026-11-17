@@ -40,7 +40,7 @@
   "any.title": "gant ne vern pe speredegezh artifisiel.",
   "any.why": "Cheñch a ra ar speredegezh artifisiel bep miz, ha marteze e paeit evit unan dija.",
   "any.lead": "Implijit an hini a fell deoc’h. Cheñchit pa garit.",
-  "any.ways": ["Unan digoust", "Ho koumanant ChatGPT, Claude pe Copilot", "Unan war an urzhiataer-mañ", "Hini hoc’h embregerezh"],
+  "any.ways": ["Unan digoust", "Ho koumanant ChatGPT, Claude, Gemini pe Copilot", "Unan war an urzhiataer-mañ", "Hini hoc’h embregerezh"],
   "any.notes": ["Gant ur gont OpenRouter digoust.", "Ar c’houmanant a baeit dija. Eil koumanant ebet.", "Diweredekait ar Wi-Fi : respont a ra atav.", "A-dreñv dor-dremen ha kevreadenn hoc’h embregerezh."],
   "any.go": "Keñveriañ {name} gant ar re all",
   "any.all": "Pep speredegezh artifisiel en ul lec’h",
@@ -65,7 +65,7 @@
     ["Ha posupl eo implijout {name} hep enskrivañ ?", "Gant an hini a zo war an urzhiataer-mañ, ya. « {free} » a c’houlenn ur gont OpenRouter digoust."],
     ["Mont a ra en-dro gant restroù Excel ha PDF ?", "Ya, ha gant Word, PowerPoint, skeudennoù ha teuliadoù a-bezh. Restroù echu a resevit ivez : ur grafik, un daolenn, un teul Word."],
     ["Mont a ra en-dro war ur pellgomzer, pe ezlinenn ?", "War ur pellgomzer, ya, er merdeer. Ezlinenn, gant an hini a zo war an urzhiataer-mañ, hag he deus ezhomm eus 12 Go a vemor hag ur skantenn c’hrafek nevez : ket war ar pellgomzerioù."],
-    ["Ha gallout a ran implijout ma c’houmanant ChatGPT pe Claude ?", "Ya, ha hini Copilot : ar c’houmanant a baeit dija a dalvez amañ, dre an urzhiataer-mañ. Eil koumanant ebet."],
+    ["Ha gallout a ran implijout ma c’houmanant ChatGPT, Claude pe Gemini ?", "Ya, ha hini Copilot : ar c’houmanant a baeit dija a dalvez amañ, dre an urzhiataer-mañ. Eil koumanant ebet."],
     ["Ha gallout a ra faziañ ?", "Ya. Jedet e vez ar sifroù, n’int ket divinet, ha dindan pep respont emañ skrivet pelec’h eo bet graet. Gwiriit ar gerioù, evel re ur c’henlabourer."],
     ["Ha gallout a ran implijout {name} el labour ?", "Ma ne ro hoc’h embregerezh netra deoc’h, mont a ra en-dro evel m’emañ. Ma vez meret hoc’h urzhiataer, goulennit digant ar servij urzhiataerezh : {name} a vez staliet evel ur bajenn web, a-dreñv dor-dremen ha kevreadenn hoc’h embregerezh."],
     ["Ha heuliet e vezan ?", "Nann. Toupin heuliañ ebet, ha ne vo biken ; e gwirionez, toupin ebet. Na muzuliañ an dud, na bruderezh, na bandenn toupinoù, peogwir n’eus netra da asantiñ. Gwiriet e vez pep kemm e {name}, ha nac’het ma lak un toupin."]

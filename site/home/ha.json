@@ -40,7 +40,7 @@
   "any.title": "da kowace AI.",
   "any.why": "AI na canzawa kowane wata, kuma wataƙila kana biyan ɗaya tuni.",
   "any.lead": "Yi amfani da AI ɗin da kake so. Ka canza ta duk lokacin da ka so.",
-  "any.ways": ["AI kyauta", "Shirin ChatGPT, Claude ko Copilot ɗinka", "AI a wannan kwamfutar", "AI ɗin kamfaninka"],
+  "any.ways": ["AI kyauta", "Shirin ChatGPT, Claude, Gemini ko Copilot ɗinka", "AI a wannan kwamfutar", "AI ɗin kamfaninka"],
   "any.notes": ["Da asusun OpenRouter kyauta.", "Shirin da kake biya tuni. Babu buƙatar na biyu.", "Kashe Wi-Fi, za ta ci gaba da amsawa.", "A bayan ƙofar shiga da shigar kamfaninka."],
   "any.go": "Kwatanta {name} da sauran",
   "any.all": "Kowace AI a wuri ɗaya",
@@ -65,7 +65,7 @@
     ["Ana iya amfani ba tare da rajista ba?", "Da AI ɗin da ke wannan kwamfutar, e. “{free}” na buƙatar asusun OpenRouter kyauta."],
     ["Ana iya amfani da fayilolin Excel da PDF?", "E, har da Word, PowerPoint, hotuna da dukan fayilolin ajiya. Ana kuma dawo maka da fayilolin da aka gama: jadawali, tebur, takardar Word."],
     ["Ana iya amfani a waya, ko ba tare da intanet ba?", "A waya, e, a cikin burauza. Ba tare da intanet ba, da AI ɗin da ke wannan kwamfutar, wadda ke buƙatar memori 12 GB da sabon guntun zane: ba a waya ba."],
-    ["Zan iya amfani da shirin ChatGPT ko Claude ɗina?", "E, har da na Copilot: {name} na amfani da shirin da kake biya tuni, ta wannan kwamfutar. Babu buƙatar na biyu."],
+    ["Zan iya amfani da shirin ChatGPT, Claude ko Gemini ɗina?", "E, har da na Copilot: {name} na amfani da shirin da kake biya tuni, ta wannan kwamfutar. Babu buƙatar na biyu."],
     ["Ana iya samun kuskure?", "E. Ana lissafa lambobi, ba a kintata su, kuma a ƙasan kowace amsa an rubuta inda aka yi ta. Ka duba kalmomin, kamar yadda za ka duba na abokin aiki."],
     ["Zan iya amfani a wurin aiki?", "Idan kamfaninka bai ba ka wata AI ba, ana iya amfani kai tsaye. Idan kamfani ne ke kula da kwamfutarka, ka tambayi sashen IT: ana saka {name} kamar shafin yanar gizo, a bayan ƙofar shiga da shigar kamfaninka."],
     ["{name} na bin diddigina?", "A’a. Babu kukis na bin diddigi, kuma ba za a taɓa samu ba; a gaskiya, babu kukis ko ɗaya. Babu ƙididdigar masu ziyara, babu talla, babu sanarwar kukis, domin babu abin da za ka amince da shi. Ana duba kowane canji a {name}, a ƙi shi idan ya saka kuki."]

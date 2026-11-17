@@ -165,7 +165,7 @@ A profile is a whole Jean on the device: a personal one and a work one, or one p
 - **An address opens its profile,** whichever was open last in that tab.
 - **A child's profile** (D389), set by a parent:
   - Never in an organisation's copy, one whose policy signs in, names the brains or holds a key: there, Add a profile makes a grown-up's at once, without asking whom it is for, and the family page's address opens nothing.
-  - Adding one goes in steps: whom it is for; for a child, the year of birth and what their profile does at that age, with who answers: the parent's own brains, their keys copied into it, but OpenRouter, whose terms are for adults, and a ChatGPT, Claude or Copilot plan; then the parent's own lock, set right there if they have none, so the child can't open it, and their password or passkey.
+  - Adding one goes in steps: whom it is for; for a child, the year of birth and what their profile does at that age, with who answers: the parent's own brains, their keys copied into it, but OpenRouter, whose terms are for adults, and a ChatGPT, Claude, Gemini or Copilot plan; then the parent's own lock, set right there if they have none, so the child can't open it, and their password or passkey.
   - Under 13, the profile opens only with the parent's password or passkey; from the school year the child turns 13 (4e in France), on its own, or with the child's own lock.
   - Settings › Set by a parent shows what the profile is set to, and a parent's password or passkey opens it to change. Start for free is never offered there, and pictures are checked at the strictest. Whatever it locks says "Set by a parent", and the child's approval cards offer Allow once and Not now, never Always allow or Never.
   - Each message the child sends comes with Learn it's steps, as if they had named it, so the brain helps them learn rather than do their work (D394); a parent's and grown-ups' profiles are as they were.
@@ -249,13 +249,13 @@ What is picked stays in the message as words ("/chart", "@Budget 2026"), and Jea
 
 ## Brains: picker and Auto
 
-**The first brain** (D329). The first message, or the chip, while there is no brain, shows "One step before I answer" in the page, which keeps the request and the files it shares (D366): Start for free, a free account on OpenRouter's site, then back to the request, answered; where this computer can run a private brain, a box beside it gets that one too, downloaded in the background while OpenRouter answers, Auto then having both. Two doors lead on: "I already use ChatGPT, Claude or Copilot", to Settings › Brains, and "I'd rather choose", by what matters most (my words staying on this computer, starting right away, or the best answers). A line says Jean has no tie to OpenRouter nor to any other service there. Offline, Settings › Brains opens in its place and says a brain needs the internet to set up, unless one already runs on this computer; the request stays in the box (D667).
+**The first brain** (D329). The first message, or the chip, while there is no brain, shows "One step before I answer" in the page, which keeps the request and the files it shares (D366): Start for free, a free account on OpenRouter's site, then back to the request, answered; where this computer can run a private brain, a box beside it gets that one too, downloaded in the background while OpenRouter answers, Auto then having both. Two doors lead on: "I already use ChatGPT, Claude, Gemini or Copilot", to Settings › Brains, and "I'd rather choose", by what matters most (my words staying on this computer, starting right away, or the best answers). A line says Jean has no tie to OpenRouter nor to any other service there. Offline, Settings › Brains opens in its place and says a brain needs the internet to set up, unless one already runs on this computer; the request stays in the box (D667).
 
 A chip in the message box, beside its send button, reads **Auto ▾**, or the name of the brain picked by hand (its provider is in the picker). It opens a menu above it:
 
 - **Auto** (recommended)
 - **On this device:** private, free, works offline
-- **Fast / Smart / Best,** taken from the connected provider. Each shows the real model name and a plain cost ("about 1¢ per answer") on hover; a plan's say "in your Claude plan", "in your Copilot plan" or "in your ChatGPT plan" instead (D235 · D262).
+- **Fast / Smart / Best,** taken from the connected provider. Each shows the real model name and a plain cost ("about 1¢ per answer") on hover; a plan's say "in your Claude plan", "in your Gemini plan", "in your Copilot plan" or "in your ChatGPT plan" instead (D235 · D262, D756).
 - **All brains**
 - **Keep on this device,** an explicit switch, while a brain is in the cloud. While it is on, the picker offers no brain in the cloud, and one picked by hand gives way to Auto. In a project kept on this device, it is on and can't be turned off, and says why (D307)
 

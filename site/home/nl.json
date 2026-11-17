@@ -40,7 +40,7 @@
   "any.title": "met elke AI.",
   "any.why": "AI verandert elke maand, en misschien betaal je er al voor een.",
   "any.lead": "Gebruik de AI die je wilt. Wissel wanneer je wilt.",
-  "any.ways": ["Een gratis AI", "Je abonnement op ChatGPT, Claude of Copilot", "Een AI op deze computer", "De AI van je bedrijf"],
+  "any.ways": ["Een gratis AI", "Je abonnement op ChatGPT, Claude, Gemini of Copilot", "Een AI op deze computer", "De AI van je bedrijf"],
   "any.notes": ["Met een gratis OpenRouter-account.", "Het abonnement waar je al voor betaalt. Geen tweede abonnement.", "Zet wifi uit en je krijgt nog steeds antwoord.", "Achter de gateway en de login van je bedrijf."],
   "any.go": "Vergelijk {name} met de andere",
   "any.all": "Elke AI op één plek",
@@ -65,7 +65,7 @@
     ["Kan ik het gebruiken zonder me aan te melden?", "Met de AI op deze computer wel. ‘{free}’ vraagt een gratis OpenRouter-account."],
     ["Werkt het met Excel- en pdf-bestanden?", "Ja, en met Word, PowerPoint, foto’s en hele mappen. Je krijgt ook kant-en-klare bestanden terug: een grafiek, een tabel, een Word-document."],
     ["Werkt het op een telefoon, of offline?", "Op een telefoon wel, in de browser. Offline met de AI op deze computer, die 12 GB geheugen en een recente grafische chip vraagt: niet op telefoons."],
-    ["Kan ik mijn abonnement op ChatGPT of Claude gebruiken?", "Ja, en dat op Copilot: {name} gebruikt het abonnement waar je al voor betaalt, via deze computer. Geen tweede abonnement."],
+    ["Kan ik mijn abonnement op ChatGPT, Claude of Gemini gebruiken?", "Ja, en dat op Copilot: {name} gebruikt het abonnement waar je al voor betaalt, via deze computer. Geen tweede abonnement."],
     ["Kan het fouten maken?", "Ja. Getallen worden berekend, niet geraden, en onder elk antwoord staat waar het is gemaakt. Controleer de woorden, zoals je die van een collega zou controleren."],
     ["Kan ik het op het werk gebruiken?", "Als je bedrijf je geen AI geeft, werkt het zoals het is. Wordt je computer beheerd, vraag het dan aan je IT-afdeling: {name} wordt uitgerold als een webpagina, achter de gateway en de login van je bedrijf."],
     ["Volgt {name} mij?", "Nee. Er zijn geen trackingcookies en die komen er nooit; er zijn zelfs helemaal geen cookies. Geen statistieken, geen advertenties en geen cookiebanner, want er valt niets te accepteren. Elke wijziging aan {name} wordt gecontroleerd, en geweigerd als ze een cookie plaatst."]

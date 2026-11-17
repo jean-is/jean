@@ -52,7 +52,7 @@ const ownURLs = (urls, theirs = false) => Object.fromEntries(Object.entries(urls
 /** Where an item's key or sign-in goes, and how (a brain's headers), which Jean never changes once it is made, but a connection's key for a sign-in or back. @param {'brains' | 'connections'} kind @param {any} item */
 const addressOf = (kind, item) => canon((kind === 'brains' ? ['baseURL', 'provider', 'api', 'headers'] : ['url', 'servers', 'gateway', 'auth']).map((name) => (name === 'auth' && /^(key|oauth)$/.test(item.auth) ? 'key' : item[name])))
 /** A brain another device can use: no plan through the bridge, no organisation's sign-in, nothing local. @param {import('../../core/types.js').BrainConfig} brain */
-const goes = (brain) => !/^(claudecode|copilot|chatgpt)$/.test(brain.provider) && brain.auth !== 'oidc' && !isLocal(brain)
+const goes = (brain) => !/^(claudecode|copilot|antigravity|chatgpt)$/.test(brain.provider) && brain.auth !== 'oidc' && !isLocal(brain)
 /** JSON with keys in order, so that equal values compare equal; a field cleared, absent or null, is null. @param {unknown} value */
 export const canon = (value) => JSON.stringify(value ?? null, (_, one) => (one && typeof one === 'object' && !Array.isArray(one) ? Object.fromEntries(Object.keys(one).sort().map((key) => [key, one[key]])) : one))
 /** Whether theirs wins over mine: newer, or as new and the greater, so that both sides settle on one. @param {number} at @param {unknown} value @param {number} mine @param {unknown} held */

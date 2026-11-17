@@ -40,7 +40,7 @@
   "any.title": "med enhver AI.",
   "any.why": "AI ændrer sig hver måned, og måske betaler du allerede for en.",
   "any.lead": "Brug den AI, du vil. Skift, når du vil.",
-  "any.ways": ["En gratis AI", "Dit abonnement på ChatGPT, Claude eller Copilot", "En AI på denne computer", "Din virksomheds AI"],
+  "any.ways": ["En gratis AI", "Dit abonnement på ChatGPT, Claude, Gemini eller Copilot", "En AI på denne computer", "Din virksomheds AI"],
   "any.notes": ["Med en gratis OpenRouter-konto.", "Det abonnement, du allerede betaler for. Intet ekstra abonnement.", "Slå wi-fi fra, og den svarer stadig.", "Bag din virksomheds gateway og login."],
   "any.go": "Sammenlign {name} med de andre",
   "any.all": "Enhver AI samlet ét sted",
@@ -65,7 +65,7 @@
     ["Kan det bruges uden tilmelding?", "Med AI’en på denne computer, ja. “{free}” kræver en gratis OpenRouter-konto."],
     ["Virker det med Excel- og PDF-filer?", "Ja, og med Word, PowerPoint, fotos og hele mapper. Du får også færdige filer tilbage: et diagram, en tabel, et Word-dokument."],
     ["Virker det på en telefon, eller offline?", "På en telefon, ja, i browseren. Offline med AI’en på denne computer, som kræver 12 GB hukommelse og en nyere grafikchip: ikke på telefoner."],
-    ["Kan jeg bruge mit ChatGPT- eller Claude-abonnement?", "Ja, og Copilots: {name} bruger det abonnement, du allerede betaler for, via denne computer. Intet ekstra abonnement."],
+    ["Kan jeg bruge mit ChatGPT-, Claude- eller Gemini-abonnement?", "Ja, og Copilots: {name} bruger det abonnement, du allerede betaler for, via denne computer. Intet ekstra abonnement."],
     ["Kan AI’en tage fejl?", "Ja. Tal bliver beregnet, ikke gættet, og under hvert svar står der, hvor det blev lavet. Tjek ordene, som du ville tjekke en kollegas."],
     ["Kan jeg bruge det på arbejdet?", "Hvis din virksomhed ikke giver dig nogen AI, virker det, som det er. Hvis din computer er administreret, så spørg jeres it-afdeling: {name} udrulles som en webside, bag virksomhedens gateway og login."],
     ["Sporer {name} mig?", "Nej. Der er ingen sporingscookies, og det kommer der aldrig; faktisk ingen cookies overhovedet. Ingen statistik, ingen reklamer og intet cookiebanner, for der er ikke noget at sige ja til. Hver ændring af {name} bliver tjekket, og afvist, hvis den sætter en cookie."]

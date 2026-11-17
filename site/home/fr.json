@@ -40,7 +40,7 @@
   "any.title": "avec l’IA de votre choix.",
   "any.why": "L’IA change chaque mois, et vous en payez peut-être déjà une.",
   "any.lead": "Utilisez l’IA que vous voulez. Changez-en quand vous voulez.",
-  "any.ways": ["Une IA gratuite", "Votre abonnement ChatGPT, Claude ou Copilot", "Une IA sur cet ordinateur", "Celle de votre entreprise"],
+  "any.ways": ["Une IA gratuite", "Votre abonnement ChatGPT, Claude, Gemini ou Copilot", "Une IA sur cet ordinateur", "Celle de votre entreprise"],
   "any.notes": ["Avec un compte OpenRouter gratuit.", "L’abonnement que vous payez déjà. Pas de second abonnement.", "Coupez le Wi-Fi : les réponses arrivent toujours.", "Derrière la passerelle et la connexion de votre entreprise."],
   "any.go": "{name} face aux autres",
   "any.all": "Toutes les IA au même endroit",
@@ -65,7 +65,7 @@
     ["Peut-on l’utiliser sans inscription ?", "Avec l’IA sur cet ordinateur, oui. « {free} » demande un compte OpenRouter gratuit."],
     ["Ça marche avec des fichiers Excel et PDF ?", "Oui, et avec Word, PowerPoint, des photos et des dossiers entiers. Vous recevez aussi des fichiers finis : un graphique, un tableau, un document Word."],
     ["Ça marche sur téléphone, ou hors ligne ?", "Sur téléphone, oui, dans le navigateur. Hors ligne, avec l’IA sur cet ordinateur, qui demande 12 Go de mémoire et une puce graphique récente : pas sur téléphone."],
-    ["Puis-je utiliser mon abonnement ChatGPT ou Claude ?", "Oui, et celui de Copilot : l’abonnement que vous payez déjà sert ici, via cet ordinateur. Pas de second abonnement."],
+    ["Puis-je utiliser mon abonnement ChatGPT, Claude ou Gemini ?", "Oui, et celui de Copilot : l’abonnement que vous payez déjà sert ici, via cet ordinateur. Pas de second abonnement."],
     ["Peut-il se tromper ?", "Oui. Les chiffres sont calculés, pas devinés, et sous chaque réponse figure l’endroit où elle a été faite. Vérifiez les mots, comme ceux d’un collègue."],
     ["Puis-je l’utiliser au travail ?", "Si votre entreprise ne vous fournit rien, ça marche tel quel. Si votre ordinateur est géré, demandez à votre DSI : {name} se déploie comme une page web, derrière la passerelle et la connexion de votre entreprise."],
     ["Est-ce qu’on me piste ?", "Non. Aucun cookie de suivi, et il n’y en aura jamais ; en fait, aucun cookie du tout. Ni mesure d’audience, ni publicité, ni bandeau de cookies, puisqu’il n’y a rien à accepter. Chaque modification de {name} est vérifiée, et refusée si elle dépose un cookie."]

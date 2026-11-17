@@ -40,7 +40,7 @@
   "any.title": "cu orice AI.",
   "any.why": "AI-ul se schimbă în fiecare lună și poate plătiți deja pentru unul.",
   "any.lead": "Folosiți AI-ul pe care îl doriți. Schimbați-l oricând.",
-  "any.ways": ["Un AI gratuit", "Abonamentul dvs. ChatGPT, Claude sau Copilot", "Un AI pe acest computer", "Cel al companiei dvs."],
+  "any.ways": ["Un AI gratuit", "Abonamentul dvs. ChatGPT, Claude, Gemini sau Copilot", "Un AI pe acest computer", "Cel al companiei dvs."],
   "any.notes": ["Cu un cont OpenRouter gratuit.", "Abonamentul pe care îl plătiți deja. Fără un al doilea abonament.", "Opriți Wi-Fi și tot răspunde.", "În spatele gateway-ului și al autentificării companiei dvs."],
   "any.go": "Comparați {name} cu celelalte",
   "any.all": "Orice AI, într-un singur loc",
@@ -65,7 +65,7 @@
     ["Se poate folosi fără înregistrare?", "Cu AI-ul de pe acest computer, da. „{free}” cere un cont OpenRouter gratuit."],
     ["Funcționează cu fișiere Excel și PDF?", "Da, și cu Word, PowerPoint, fotografii și dosare întregi. Primiți înapoi și fișiere gata făcute: un grafic, un tabel, un document Word."],
     ["Funcționează pe telefon sau offline?", "Pe telefon, da, în browser. Offline, cu AI-ul de pe acest computer, care are nevoie de 12 GB de memorie și de un cip grafic recent: nu pe telefoane."],
-    ["Pot folosi abonamentul meu ChatGPT sau Claude?", "Da, și pe cel Copilot: {name} folosește abonamentul pe care îl plătiți deja, prin acest computer. Fără un al doilea abonament."],
+    ["Pot folosi abonamentul meu ChatGPT, Claude sau Gemini?", "Da, și pe cel Copilot: {name} folosește abonamentul pe care îl plătiți deja, prin acest computer. Fără un al doilea abonament."],
     ["Poate greși?", "Da. Cifrele sunt calculate, nu ghicite, iar sub fiecare răspuns scrie unde a fost făcut. Verificați cuvintele, ca pe ale unui coleg."],
     ["Se poate folosi la serviciu?", "Dacă firma nu vă pune la dispoziție un AI, funcționează așa cum este. Dacă aveți un computer administrat, întrebați departamentul IT: {name} se instalează ca o pagină web, în spatele gateway-ului și al autentificării companiei dvs."],
     ["{name} mă urmărește?", "Nu. Nu există cookie-uri de urmărire și nu vor exista niciodată; de fapt, niciun cookie. Fără statistici, fără reclame și fără banner de cookie-uri, pentru că nu aveți nimic de acceptat. Fiecare modificare a aplicației este verificată și respinsă dacă setează un cookie."]

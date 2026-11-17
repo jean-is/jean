@@ -40,7 +40,7 @@
   "any.title": "con qualsiasi IA.",
   "any.why": "L’IA cambia ogni mese, e forse ne paghi già una.",
   "any.lead": "Usa l’IA che vuoi. Cambiala quando vuoi.",
-  "any.ways": ["Un’IA gratuita", "Il tuo piano ChatGPT, Claude o Copilot", "Un’IA su questo computer", "Quella della tua azienda"],
+  "any.ways": ["Un’IA gratuita", "Il tuo piano ChatGPT, Claude, Gemini o Copilot", "Un’IA su questo computer", "Quella della tua azienda"],
   "any.notes": ["Con un account OpenRouter gratuito.", "Il piano che paghi già. Nessun secondo abbonamento.", "Spegni il Wi-Fi e risponde lo stesso.", "Dietro il gateway e l’accesso della tua azienda."],
   "any.go": "Confronta {name} con gli altri",
   "any.all": "Tutte le IA in un solo posto",
@@ -65,7 +65,7 @@
     ["Si può usare senza registrarsi?", "Con l’IA su questo computer, sì. «{free}» richiede un account OpenRouter gratuito."],
     ["Funziona con i file Excel e PDF?", "Sì, e anche con Word, PowerPoint, foto e intere cartelle. Restituisce anche file finiti: un grafico, una tabella, un documento Word."],
     ["Funziona sul telefono, o offline?", "Sul telefono sì, nel browser. Offline con l’IA su questo computer, che richiede 12 GB di memoria e un chip grafico recente: non sui telefoni."],
-    ["Posso usare il mio piano ChatGPT o Claude?", "Sì, e anche quello di Copilot: {name} usa il piano che paghi già, tramite questo computer. Nessun secondo abbonamento."],
+    ["Posso usare il mio piano ChatGPT, Claude o Gemini?", "Sì, e anche quello di Copilot: {name} usa il piano che paghi già, tramite questo computer. Nessun secondo abbonamento."],
     ["Può sbagliare?", "Sì. I numeri sono calcolati, non tirati a indovinare, e sotto ogni risposta c’è scritto dove è stata elaborata. Controlla le parole, come faresti con quelle di un collega."],
     ["Si può usare al lavoro?", "Se la tua azienda non ti fornisce un’IA, funziona così com’è. Se il tuo computer è gestito, chiedi al reparto IT: {name} si distribuisce come una pagina web, dietro il gateway e l’accesso della tua azienda."],
     ["{name} mi traccia?", "No. Non ci sono cookie di tracciamento, e non ci saranno mai; anzi, non c’è nessun cookie. Niente statistiche, niente pubblicità e nessun banner dei cookie, perché non c’è nulla da accettare. Ogni modifica a {name} viene controllata, e rifiutata se imposta un cookie."]

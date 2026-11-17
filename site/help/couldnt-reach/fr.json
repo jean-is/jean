@@ -24,7 +24,7 @@
   ],
   "fixes": [
     [
-      "C’est votre forfait Claude, ChatGPT ou Copilot",
+      "C’est votre forfait Claude, ChatGPT, Gemini ou Copilot",
       "Un forfait répond par une ligne collée dans un terminal, qui s’arrête quand l’ordinateur redémarre ou que le terminal se ferme. Recollez-la : {plan}."
     ],
     [

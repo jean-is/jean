@@ -69,7 +69,7 @@ export const getSecret = async (fs, id) => (await readJSON(fs, FILE, {}))[id] ??
 export async function crossing(fs, settings, policy = {}) {
   const theirs = new Set((policy.brains ?? []).map((brain) => brain.id))
   // Only ids Jean gives brains and connections, ULIDs, which no secret that stays has, whatever another device names a brain.
-  const brains = new Set(settings.brains.filter((brain) => ULID.test(brain.id) && !/^(claudecode|copilot|chatgpt)$/.test(brain.provider) && brain.auth !== 'oidc' && !isLocal(brain)).map((brain) => brain.id))
+  const brains = new Set(settings.brains.filter((brain) => ULID.test(brain.id) && !/^(claudecode|copilot|antigravity|chatgpt)$/.test(brain.provider) && brain.auth !== 'oidc' && !isLocal(brain)).map((brain) => brain.id))
   const keyed = new Set((settings.connections ?? []).filter((connection) => ULID.test(connection.id) && connection.auth === 'key').map((connection) => connection.id))
   const all = /** @type {Record<string, string>} */ (await readJSON(fs, FILE, {}))
   return Object.fromEntries(Object.entries(all).filter(([id, value]) => /^(person$|people:|circle:)/.test(id) || (typed(id, value) && !OWN.includes(id) && !theirs.has(id) && (brains.has(id) || keyed.has(id) || /^(search|site):/.test(id)))))

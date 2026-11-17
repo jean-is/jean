@@ -40,7 +40,7 @@
   "any.title": "gamit ang anumang AI.",
   "any.why": "Nagbabago ang AI buwan-buwan, at baka may binabayaran ka na.",
   "any.lead": "Gamitin ang AI na gusto mo. Palitan kahit kailan.",
-  "any.ways": ["Isang libreng AI", "Ang ChatGPT, Claude o Copilot plan mo", "Isang AI sa computer na ito", "Ang AI ng kompanya mo"],
+  "any.ways": ["Isang libreng AI", "Ang ChatGPT, Claude, Gemini o Copilot plan mo", "Isang AI sa computer na ito", "Ang AI ng kompanya mo"],
   "any.notes": ["Gamit ang libreng OpenRouter account.", "Ang plan na binabayaran mo na. Walang pangalawang subscription.", "Patayin ang Wi-Fi at sasagot pa rin ito.", "Sa likod ng gateway at sign-in ng kompanya mo."],
   "any.go": "Ikumpara ang {name} sa iba",
   "any.all": "Lahat ng AI sa iisang lugar",
@@ -65,7 +65,7 @@
     ["Magagamit ko ba ito nang hindi nagsa-sign up?", "Sa AI sa computer na ito, oo. Kailangan ng “{free}” ng libreng OpenRouter account."],
     ["Gumagana ba ito sa mga Excel at PDF file?", "Oo, pati sa Word, PowerPoint, mga litrato at buong folder. Nagbabalik din ito ng mga yari nang file: chart, talahanayan, dokumento sa Word."],
     ["Gumagana ba ito sa telepono, o offline?", "Sa telepono, oo, sa browser. Offline, gamit ang AI sa computer na ito, na kailangan ng 12 GB na memory at bagong graphics chip: hindi sa telepono."],
-    ["Magagamit ko ba ang ChatGPT o Claude plan ko?", "Oo, pati ang sa Copilot: ginagamit ng {name} ang plan na binabayaran mo na, sa pamamagitan ng computer na ito. Walang pangalawang subscription."],
+    ["Magagamit ko ba ang ChatGPT, Claude o Gemini plan ko?", "Oo, pati ang sa Copilot: ginagamit ng {name} ang plan na binabayaran mo na, sa pamamagitan ng computer na ito. Walang pangalawang subscription."],
     ["Maaari ba itong magkamali?", "Oo. Kinukuwenta ang mga numero, hindi hinuhulaan, at sa ilalim ng bawat sagot, nakasulat kung saan ito ginawa. Suriin ang mga salita, gaya ng pagsuri mo sa gawa ng katrabaho."],
     ["Magagamit ko ba ito sa trabaho?", "Kung walang ibinibigay na AI ang kompanya mo, gagana ito kung ano ito. Kung pinamamahalaan ng kompanya ang computer mo, magtanong sa IT ninyo: idine-deploy ang {name} na parang web page, sa likod ng gateway at sign-in ng kompanya mo."],
     ["Sinusubaybayan ba ako ng {name}?", "Hindi. Walang tracking cookies, at hindi magkakaroon kailanman; sa katunayan, walang kahit anong cookie. Walang analytics, walang ads, at walang cookie banner, dahil walang kailangang sang-ayunan. Sinusuri ang bawat pagbabago sa {name}, at tinatanggihan kung naglalagay ito ng cookie."]

@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 // Which brain answers outside the browser: the one named (`--brain anthropic`, `openrouter:<name>`,
-// `ollama:<name>`, `custom:<name>` with `--address`, `claudecode`, `copilot`, `chatgpt:<name>`), else the
-// first whose key the environment holds, else the user's own Claude Code with their Claude plan (D235).
+// `ollama:<name>`, `custom:<name>` with `--address`, `claudecode`, `copilot`, `antigravity:<name>`, `chatgpt:<name>`),
+// else the first whose key the environment holds, else the user's own Claude Code with their Claude plan (D235).
 // A plan's brain answers through a bridge (bridge/bridge.js) started here on a free port, as This
-// computer's: Copilot is the user's own too, ChatGPT the sign-in Jean's bridge keeps on this computer
-// (D262). Keys come from the environment only: none is ever written down.
+// computer's: Copilot and Antigravity are the user's own too (D262, D756), ChatGPT the sign-in Jean's bridge
+// keeps on this computer (D262). Keys come from the environment only: none is ever written down.
 import { execFile } from 'node:child_process'
 import { randomUUID } from 'node:crypto'
 import { createServer } from 'node:http'
@@ -19,7 +19,7 @@ const KEYS = { huggingface: 'HF_TOKEN', vercel: 'AI_GATEWAY_API_KEY' }
 /** @param {string} id */
 export const keyOf = (id) => KEYS[id] ?? `${id.toUpperCase().replace(/\W/g, '_')}_API_KEY`
 /** Where each plan's brain answers on the bridge, and its name in errors. @type {Partial<Record<ProviderId, string[]>>} */
-const PLANS = { claudecode: ['/v1', 'Claude Code'], copilot: ['/copilot/v1', 'GitHub Copilot'], chatgpt: ['/chatgpt/v1', 'ChatGPT'] }
+const PLANS = { claudecode: ['/v1', 'Claude Code'], copilot: ['/copilot/v1', 'GitHub Copilot'], antigravity: ['/antigravity/v1', 'Google Antigravity'], chatgpt: ['/chatgpt/v1', 'ChatGPT'] }
 // Looked for in the environment: not the browser's own, one that needs a Google Cloud project, a
 // server on this computer (named), nor a plan's (Claude Code's last); those that have a brain of their own first.
 const LOOKED = /** @type {ProviderId[]} */ (Object.keys(PROVIDERS))

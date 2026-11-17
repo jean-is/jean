@@ -40,7 +40,7 @@
     ["L’IA de cet ordinateur", "Gratuite, sans inscription, hors ligne. Il faut 12 Go de mémoire et une puce graphique récente.", "built"],
     ["Une IA gratuite", "En un clic, avec un compte OpenRouter gratuit.", "built"],
     ["Votre clé", "Treize services, dont OpenAI, Anthropic, Google et Mistral.", "key"],
-    ["Votre abonnement", "ChatGPT, Claude ou GitHub Copilot, par « Votre ordinateur » : une ligne à coller une fois, sur un ordinateur.", "computer"]
+    ["Votre abonnement", "ChatGPT, Claude, Gemini ou GitHub Copilot, par « Votre ordinateur » : une ligne à coller une fois, sur un ordinateur.", "computer"]
   ],
   "choose.history": "Vous venez de l’un d’eux ? Importez votre historique : les exports de ChatGPT, de Claude et de Gemini arrivent, aucune conversation en double.",
   "one.title": "Comparés un par un",
@@ -57,7 +57,7 @@
   "catch.items": [
     "{name} est gratuit ; l’IA derrière ne l’est pas toujours.",
     "Sans inscription, seule l’IA de cet ordinateur répond : il lui faut 12 Go de mémoire et une puce graphique récente, et aucun téléphone ne la fait tourner.",
-    "Un abonnement ChatGPT, Claude ou GitHub Copilot passe par « Votre ordinateur » : une ligne à coller une fois, sur un ordinateur.",
+    "Un abonnement ChatGPT, Claude, Gemini ou GitHub Copilot passe par « Votre ordinateur » : une ligne à coller une fois, sur un ordinateur.",
     "Votre travail vit dans ce navigateur. Effacez ses données sans sauvegarde et il disparaît.",
     "Il peut se tromper. Les chiffres sont calculés ; relisez les mots, comme ceux d’un collègue."
   ],
