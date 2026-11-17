@@ -27,7 +27,7 @@ Jean on all of a person's devices, and with other people, without a server that 
 | Nudges | A notification, with Jean closed, that something came, never what or from whom | Web Push with no payload, signed by the relay | D736 |
 
 Together binds what each kind of thing's changes are:
-- **A collection:** lines of its `changes.jsonl`, merged as Sync merges tables.
+- **A collection:** lines of its `changes.jsonl`, merged as Sync merges tables; the files its cells name, sent before the lines that name them and kept only if their content is what their name says; its `collection.json`, with the views kept, one taken away staying so. What a person arranges of it, a filter, a sort, columns hidden, is theirs alone, in a `yours.json` nothing sends, until they keep it as a view (D753); so is a view their Jean proposes (D755).
 - **A task:** records, each named by its writer; one answer at a time (the baton); others' turns after a note naming them.
 - **A document or a deck:** its Markdown, merged three ways from the last version both had.
 - **A project:** its documents, collections, decks, designs and files, through Sync's own rounds against the journal's copy. Never its tasks, memory or instructions: a task in it is worked on together on its own.

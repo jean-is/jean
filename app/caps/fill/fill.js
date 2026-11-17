@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: MIT
 // What a part of a page shows of a collection (D633), worked out by Jean so that the page shows the rows as they are and follows
-// them (./tables.js, `follow`): the lines a brain writes for that part (../interactive/parts.js). A table's heads, then its rows, of
+// them (../tables/tables.js, `follow`): the lines a brain writes for that part (../interactive/parts.js). A table's heads, then its rows, of
 // the columns its first line names or those its table view shows; a chart's labels, then the sum of a column (`sum`) or the count of
 // rows for each value of a column (`by`), a date's by month; key figures, each line's `sum <column>` or `count` worked out; a form's
 // fields, one for each column it names or every column a row is made with, by its kind. A part's `where` keeps only some of the rows
 //, in words a brain writes: a column, a way to compare and a value, a date's from today. Pure, so Node's tests run it.
-import { query, total } from './query.js'
-import { propertyOf, converted } from './table.js'
-import { said, amount } from './export.js'
+import { query, total } from '../tables/query.js'
+import { propertyOf, converted } from '../tables/table.js'
+import { said, amount } from '../tables/export.js'
 
-/** @import { Table, Property } from './table.js' */
-/** @import { Row } from './changes.js' */
-/** @import { Filter, Op } from './query.js' */
+/** @import { Table, Property } from '../tables/table.js' */
+/** @import { Row } from '../tables/changes.js' */
+/** @import { Filter, Op } from '../tables/query.js' */
 /** @typedef {{ tag: string, attrs: Record<string, string>, text: string }} Part */
 /** today, which a `where`'s dates count from. @typedef {{ locales: string[], labels: { yes: string, no: string }, today: Date }} How */
 

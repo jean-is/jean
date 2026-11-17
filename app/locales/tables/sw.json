@@ -105,6 +105,13 @@
   },
   "tables.showAll": "Onyesha safuwima zote",
   "tables.arranged": "Mpangilio",
+  "tables.allRows": "Safu zote",
+  "tables.viewName": "Jina la mwonekano",
+  "tables.keepView": "Hifadhi kama mwonekano",
+  "tables.keep": "Hifadhi",
+  "tables.reset": "Weka upya",
+  "tables.onlyYou": "Ni wewe tu unayeona hili",
+  "tables.me": "Mimi",
   "tables.plain": "Nambari ya kawaida",
   "tables.money": "Pesa",
   "tables.percent": "Asilimia",
@@ -118,5 +125,23 @@
   "tables.made": {
     "one": "Safu mpya {count} ya kukagua",
     "other": "Safu mpya {count} za kukagua"
-  }
+  },
+  "tables.open": "Fungua",
+  "tables.choices": "Machaguo",
+  "tables.addChoice": "Ongeza chaguo",
+  "tables.colour": "Rangi",
+  "tables.hue0": "Kijani",
+  "tables.hue1": "Kijani-buluu",
+  "tables.hue2": "Buluu",
+  "tables.hue3": "Zambarau",
+  "tables.hue4": "Waridi kali",
+  "tables.hue5": "Waridi",
+  "tables.hue6": "Kijivu",
+  "tables.kind.picture": "Picha",
+  "tables.gallery": "Matunzio",
+  "tables.addPicture": "Ongeza picha",
+  "tables.addFiles": "Ongeza faili",
+  "tables.calendar": "Kalenda",
+  "tables.end": "Mwisho",
+  "tables.time": "Saa"
 }

@@ -46,10 +46,11 @@ const same = (a, b) => (typeof a === 'string' && typeof b === 'string' ? lower(a
 /** Numbers by size, anything else as text: ISO dates and times by when. @param {unknown} a @param {unknown} b */
 const compare = (a, b) => (typeof a === 'number' && typeof b === 'number' ? a - b : String(a) < String(b) ? -1 : String(a) > String(b) ? 1 : 0)
 
-/** @param {Table} table @param {Row} row @param {Filter} filter @param {Map<string, string>} [names] @returns {boolean} */
-function matches(table, row, filter, names) {
-  if ('and' in filter) return filter.and.every((one) => matches(table, row, one, names))
-  if ('or' in filter) return filter.or.some((one) => matches(table, row, one, names))
+/** A rule's value `{ me: true }` is the person looking, by the name they go by (`me`). @param {Table} table @param {Row} row @param {Filter} filter @param {Map<string, string>} [names] @param {string} [me] @returns {boolean} */
+function matches(table, row, filter, names, me) {
+  if ('and' in filter) return filter.and.every((one) => matches(table, row, one, names, me))
+  if ('or' in filter) return filter.or.some((one) => matches(table, row, one, names, me))
+  if (/** @type {{ me?: boolean } | null} */ (filter.value)?.me) filter = { ...filter, value: me }
   if (!OPS.includes(filter.op)) throw new Error(`"${filter.op}" isn't a way to filter: use ${OPS.join(', ')}.`)
   const value = valueOf(row, columnOf(table, filter.property), names)
   const contains = () => (Array.isArray(value) ? value.some((one) => same(one, filter.value)) : !isEmpty(value) && lower(String(value)).includes(lower(String(filter.value))))
@@ -98,10 +99,10 @@ export function total(rows, property, how) {
 }
 
 /**
- * The rules of a table view's filter that keep rows: each on a column the table has, with something to compare with, or asking for
- * an empty cell. @param {Table} table @returns {import('./table.js').Rule[]}
+ * The rules of a view's filter that keep rows, the collection's own unless given another: each on a column the table has, with something to
+ * compare with, or asking for an empty cell. @param {Table} table @param {Pick<import('./table.js').View, 'filter'>} [view] @returns {import('./table.js').Rule[]}
  */
-export const filterOf = (table) => (table.views.find((view) => view.type === 'table')?.filter?.and ?? []).filter((rule) => table.properties.some((property) => !property.deleted && property.id === rule.property) && (rule.op.endsWith('empty') || (rule.value ?? '') !== ''))
+export const filterOf = (table, view = table.views.find((one) => one.id === 'table')) => (view?.filter?.and ?? []).filter((rule) => table.properties.some((property) => !property.deleted && property.id === rule.property) && (rule.op.endsWith('empty') || (rule.value ?? '') !== ''))
 
 /** Rows in the order the user put them: those `order` names first, as it names them, then the others as they were made. @param {Row[]} rows @param {string[]} [order] */
 export function ordered(rows, order = []) {
@@ -114,13 +115,13 @@ export function ordered(rows, order = []) {
  * group, also in groups: each step or choice in its order, even with no row, a row in each of its
  * labels, then the values no choice names, then empty cells; a relation by its rows' `names`, a date by its month, `YYYY-MM`.
  * @param {Table} table @param {Row[]} rows
- * @param {{ filter?: Filter, sort?: Sort[], group?: Group, locale?: string, names?: Map<string, string> }} [view]
+ * @param {{ filter?: Filter, sort?: Sort[], group?: Group, locale?: string, names?: Map<string, string>, me?: string }} [view] me: the name the person looking goes by
  * @returns {{ rows: Row[], groups?: { value: unknown, rows: Row[] }[] }}
  */
-export function query(table, rows, { filter, sort = [], group, locale, names } = {}) {
+export function query(table, rows, { filter, sort = [], group, locale, names, me } = {}) {
   const collator = new Intl.Collator(locale, { numeric: true, sensitivity: 'base' })
   const keys = sort.map((one) => ({ property: columnOf(table, one.property), down: one.direction === 'descending' }))
-  const shown = rows.filter((row) => !filter || matches(table, row, filter, names)).sort((a, b) => {
+  const shown = rows.filter((row) => !filter || matches(table, row, filter, names, me)).sort((a, b) => {
     for (const { property, down } of keys) {
       const [x, y] = [a, b].map((row) => valueOf(row, property, names))
       if (isEmpty(x) || isEmpty(y)) {

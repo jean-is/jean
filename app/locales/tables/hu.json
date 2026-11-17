@@ -105,6 +105,13 @@
   },
   "tables.showAll": "Minden oszlop megjelenítése",
   "tables.arranged": "Jelenlegi elrendezés",
+  "tables.allRows": "Minden sor",
+  "tables.viewName": "A nézet neve",
+  "tables.keepView": "Megtartás nézetként",
+  "tables.keep": "Megtartás",
+  "tables.reset": "Visszaállítás",
+  "tables.onlyYou": "Ezt csak te látod",
+  "tables.me": "Én",
   "tables.plain": "Egyszerű szám",
   "tables.money": "Pénzösszeg",
   "tables.percent": "Százalék",
@@ -118,5 +125,23 @@
   "tables.made": {
     "one": "{count} ellenőrizendő új sor",
     "other": "{count} ellenőrizendő új sor"
-  }
+  },
+  "tables.open": "Megnyitás",
+  "tables.choices": "Lehetőségek",
+  "tables.addChoice": "Lehetőség hozzáadása",
+  "tables.colour": "Szín",
+  "tables.hue0": "Zöld",
+  "tables.hue1": "Kékeszöld",
+  "tables.hue2": "Kék",
+  "tables.hue3": "Ibolya",
+  "tables.hue4": "Fukszia",
+  "tables.hue5": "Rózsaszín",
+  "tables.hue6": "Szürke",
+  "tables.kind.picture": "Kép",
+  "tables.gallery": "Galéria",
+  "tables.addPicture": "Kép hozzáadása",
+  "tables.addFiles": "Fájlok hozzáadása",
+  "tables.calendar": "Naptár",
+  "tables.end": "Vége",
+  "tables.time": "Idő"
 }

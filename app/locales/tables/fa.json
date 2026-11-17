@@ -105,6 +105,13 @@
   },
   "tables.showAll": "نمایش همه ستون‌ها",
   "tables.arranged": "چیدمان فعلی",
+  "tables.allRows": "همهٔ ردیف‌ها",
+  "tables.viewName": "نام نما",
+  "tables.keepView": "نگه‌داشتن به‌صورت نما",
+  "tables.keep": "نگه‌داشتن",
+  "tables.reset": "بازنشانی",
+  "tables.onlyYou": "فقط شما این را می‌بینید",
+  "tables.me": "من",
   "tables.plain": "عدد ساده",
   "tables.money": "مبلغ",
   "tables.percent": "درصد",
@@ -118,5 +125,23 @@
   "tables.made": {
     "one": "{count} ردیف تازه برای بررسی",
     "other": "{count} ردیف تازه برای بررسی"
-  }
+  },
+  "tables.open": "باز کردن",
+  "tables.choices": "گزینه‌ها",
+  "tables.addChoice": "افزودن گزینه",
+  "tables.colour": "رنگ",
+  "tables.hue0": "سبز",
+  "tables.hue1": "فیروزه‌ای",
+  "tables.hue2": "آبی",
+  "tables.hue3": "بنفش",
+  "tables.hue4": "سرخابی",
+  "tables.hue5": "صورتی",
+  "tables.hue6": "خاکستری",
+  "tables.kind.picture": "تصویر",
+  "tables.gallery": "گالری",
+  "tables.addPicture": "افزودن تصویر",
+  "tables.addFiles": "افزودن فایل",
+  "tables.calendar": "تقویم",
+  "tables.end": "پایان",
+  "tables.time": "ساعت"
 }

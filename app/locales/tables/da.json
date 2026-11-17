@@ -105,6 +105,13 @@
   },
   "tables.showAll": "Vis alle kolonner",
   "tables.arranged": "Arrangeret",
+  "tables.allRows": "Alle rækker",
+  "tables.viewName": "Visningens navn",
+  "tables.keepView": "Behold som visning",
+  "tables.keep": "Behold",
+  "tables.reset": "Nulstil",
+  "tables.onlyYou": "Kun du ser dette",
+  "tables.me": "Mig",
   "tables.plain": "Almindeligt tal",
   "tables.money": "Beløb",
   "tables.percent": "Procent",
@@ -118,5 +125,23 @@
   "tables.made": {
     "one": "{count} ny række at gennemgå",
     "other": "{count} nye rækker at gennemgå"
-  }
+  },
+  "tables.open": "Åbn",
+  "tables.choices": "Valgmuligheder",
+  "tables.addChoice": "Tilføj en valgmulighed",
+  "tables.colour": "Farve",
+  "tables.hue0": "Grøn",
+  "tables.hue1": "Blågrøn",
+  "tables.hue2": "Blå",
+  "tables.hue3": "Violet",
+  "tables.hue4": "Fuchsia",
+  "tables.hue5": "Rosa",
+  "tables.hue6": "Grå",
+  "tables.kind.picture": "Billede",
+  "tables.gallery": "Galleri",
+  "tables.addPicture": "Tilføj et billede",
+  "tables.addFiles": "Tilføj filer",
+  "tables.calendar": "Kalender",
+  "tables.end": "Slut",
+  "tables.time": "Tidspunkt"
 }

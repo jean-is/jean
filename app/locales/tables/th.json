@@ -103,6 +103,13 @@
   },
   "tables.showAll": "แสดงทุกคอลัมน์",
   "tables.arranged": "การจัดระเบียบ",
+  "tables.allRows": "ทุกแถว",
+  "tables.viewName": "ชื่อมุมมอง",
+  "tables.keepView": "เก็บไว้เป็นมุมมอง",
+  "tables.keep": "เก็บไว้",
+  "tables.reset": "รีเซ็ต",
+  "tables.onlyYou": "มีแค่คุณที่เห็นสิ่งนี้",
+  "tables.me": "ฉัน",
   "tables.plain": "ตัวเลขธรรมดา",
   "tables.money": "จำนวนเงิน",
   "tables.percent": "ร้อยละ",
@@ -115,5 +122,23 @@
   "tables.movedTo": "ย้ายไปที่ {group} แล้ว",
   "tables.made": {
     "other": "แถวใหม่ที่รอตรวจ {count} แถว"
-  }
+  },
+  "tables.open": "เปิด",
+  "tables.choices": "ตัวเลือก",
+  "tables.addChoice": "เพิ่มตัวเลือก",
+  "tables.colour": "สี",
+  "tables.hue0": "เขียว",
+  "tables.hue1": "เขียวน้ำทะเล",
+  "tables.hue2": "น้ำเงิน",
+  "tables.hue3": "ม่วง",
+  "tables.hue4": "ชมพูบานเย็น",
+  "tables.hue5": "กุหลาบ",
+  "tables.hue6": "เทา",
+  "tables.kind.picture": "รูปภาพ",
+  "tables.gallery": "แกลเลอรี",
+  "tables.addPicture": "เพิ่มรูปภาพ",
+  "tables.addFiles": "เพิ่มไฟล์",
+  "tables.calendar": "ปฏิทิน",
+  "tables.end": "สิ้นสุด",
+  "tables.time": "เวลา"
 }

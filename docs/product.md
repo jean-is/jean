@@ -52,7 +52,8 @@ The UI never says "agent", "model", "MCP" or "token".
 | A task's steps, kept to see and run again | Flow (D218) |
 | MCP server / connector | Connection |
 | Artifact kept in the project (a document, a table, a picture, a score…) | Creation: Creations (D497) |
-| A table Jean keeps (Tables), its rows and typed columns | Collection, shown as a table or a board; "table" is only a grid (D507) |
+| A table Jean keeps (Tables), its rows and typed columns | Collection, shown as a table, a board, a gallery or a calendar; "table" is only a grid (D507) |
+| What a collection shows, arranged and kept under a name | View; All rows is the collection itself (D753) |
 | Something laid out to print, post or send (Designs): an invitation, a poster, a flyer, a post | Design, Visuel in French; its three layouts are takes, its fonts voices (D572) |
 | An original game made to play here (Games), its skill and its kind among the creations | Game, Jeu in French; what it is, how it plays and how it grows is its design card (D648) |
 | A website of a few pages (Sites), its skill and its kind among the creations | Site, in every language its own word for a website; never "website builder", "deploy" or "hosting" (D720); the three it is dealt are its colours and type, each named by its palette (D739) |

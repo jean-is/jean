@@ -2968,7 +2968,7 @@ test.describe('out in the look here (D663)', () => {
     await page.evaluate(async ({ folder }) => {
       const { app } = await import('/ui/state.js'), at = '2026-10-21T09:00:00.000Z'
       await (await import('/ui/caps.js')).unlock('tables')
-      await app.fs.write(`${app.projectDir}/${folder}/collection.json`, JSON.stringify({ format: 1, id: '01K85Z1T00000000000000000Q', name: 'Job applications', author: 'user', created: at, changed: at, properties: [{ id: 'name', name: 'Name', type: 'text' }, { id: 'pay', name: 'Pay', type: 'number' }], views: [{ id: 'all', name: 'All', type: 'table' }] }))
+      await app.fs.write(`${app.projectDir}/${folder}/collection.json`, JSON.stringify({ format: 1, id: '01K85Z1T00000000000000000Q', name: 'Job applications', author: 'user', created: at, changed: at, properties: [{ id: 'name', name: 'Name', type: 'text' }, { id: 'pay', name: 'Pay', type: 'number' }], views: [{ id: 'table', type: 'table' }] }))
       await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, `${JSON.stringify({ row: '01K80000000000000000000001', set: { name: 'Atelier | *Lune*', pay: 3100 }, at, by: 'user' })}\n`)
     }, { folder })
     await suggest(page, `${await markdownOf(page)}\n\`\`\`table\n${folder}\n\`\`\`\n`)

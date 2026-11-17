@@ -103,6 +103,13 @@
   },
   "tables.showAll": "Tampilkan semua kolom",
   "tables.arranged": "Pengaturan",
+  "tables.allRows": "Semua baris",
+  "tables.viewName": "Nama tampilan",
+  "tables.keepView": "Simpan sebagai tampilan",
+  "tables.keep": "Simpan",
+  "tables.reset": "Atur ulang",
+  "tables.onlyYou": "Hanya Anda yang melihat ini",
+  "tables.me": "Saya",
   "tables.plain": "Angka biasa",
   "tables.money": "Uang",
   "tables.percent": "Persentase",
@@ -115,5 +122,23 @@
   "tables.movedTo": "Dipindahkan ke {group}",
   "tables.made": {
     "other": "{count} baris baru untuk ditinjau"
-  }
+  },
+  "tables.open": "Buka",
+  "tables.choices": "Pilihan",
+  "tables.addChoice": "Tambah pilihan",
+  "tables.colour": "Warna",
+  "tables.hue0": "Hijau",
+  "tables.hue1": "Toska",
+  "tables.hue2": "Biru",
+  "tables.hue3": "Ungu",
+  "tables.hue4": "Fuksia",
+  "tables.hue5": "Mawar",
+  "tables.hue6": "Abu-abu",
+  "tables.kind.picture": "Gambar",
+  "tables.gallery": "Galeri",
+  "tables.addPicture": "Tambah gambar",
+  "tables.addFiles": "Tambahkan file",
+  "tables.calendar": "Kalender",
+  "tables.end": "Akhir",
+  "tables.time": "Waktu"
 }

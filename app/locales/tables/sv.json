@@ -105,6 +105,13 @@
   },
   "tables.showAll": "Visa alla kolumner",
   "tables.arranged": "Ordning",
+  "tables.allRows": "Alla rader",
+  "tables.viewName": "Vyns namn",
+  "tables.keepView": "Behåll som vy",
+  "tables.keep": "Behåll",
+  "tables.reset": "Återställ",
+  "tables.onlyYou": "Bara du ser detta",
+  "tables.me": "Jag",
   "tables.plain": "Vanligt tal",
   "tables.money": "Belopp",
   "tables.percent": "Procent",
@@ -118,5 +125,23 @@
   "tables.made": {
     "one": "{count} ny rad att granska",
     "other": "{count} nya rader att granska"
-  }
+  },
+  "tables.open": "Öppna",
+  "tables.choices": "Alternativ",
+  "tables.addChoice": "Lägg till ett alternativ",
+  "tables.colour": "Färg",
+  "tables.hue0": "Grön",
+  "tables.hue1": "Blågrön",
+  "tables.hue2": "Blå",
+  "tables.hue3": "Violett",
+  "tables.hue4": "Fuchsia",
+  "tables.hue5": "Rosa",
+  "tables.hue6": "Grå",
+  "tables.kind.picture": "Bild",
+  "tables.gallery": "Galleri",
+  "tables.addPicture": "Lägg till en bild",
+  "tables.addFiles": "Lägg till filer",
+  "tables.calendar": "Kalender",
+  "tables.end": "Slut",
+  "tables.time": "Tid"
 }

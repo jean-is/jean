@@ -2,13 +2,16 @@
 // A collection worked on together (D733): its changes are lines of its changes.jsonl and its collection.json, which already merge in
 // any order (caps/tables/changes.js `merge`, table.js `mergeTables`), as Sync merges them. A line that comes is appended, never written
 // over what the person changes meanwhile; a table that comes is merged into the one here. What the person changes here goes as the
-// lines the journal doesn't hold yet, and the table when it differs from the last one the journal had.
+// lines the journal doesn't hold yet, and the table when it differs from the last one the journal had. The files its cells name, in its folder
+// by their content's hash, go before the lines that name them, and one that comes is kept only if its content is what its name says.
 import { app } from '../../ui/state.js'
+import { sha256Hex } from '../../core/files.js'
+import { encode, decode } from '../../ui/seal.js'
 import { parseChanges, stringifyChanges, reading } from '../tables/changes.js'
-import { readTable, mergeTables, canonical } from '../tables/table.js'
+import { readTable, mergeTables, canonical, FILE } from '../tables/table.js'
 
 /** Where a collection is: its project's folder and its own. @typedef {{ dir: string, folder: string }} Place */
-/** What the journal holds of it: each line, as text, and its table's. @typedef {{ lines: Set<string>, table: string }} Held */
+/** What the journal holds of it: each line, as text, its table's, and its cells' files, by their places in its folder. @typedef {{ lines: Set<string>, table: string, files?: Set<string> }} Held */
 
 /** @param {Place} place */
 const paths = ({ dir, folder }) => ({ table: `${dir}/${folder}/collection.json`, lines: `${dir}/${folder}/changes.jsonl` })
@@ -26,17 +29,34 @@ const shown = (place) => import('../tables/tables.js').then((tables) => { if (pl
 /** A collection's own name, for a card or a toast. @param {Place} place */
 export const titleOf = async (place) => (await read(place)).table?.name ?? ''
 
-/** All of it, for a seed: its table and its lines. @param {Place} place */
-export const seedOf = (place) => read(place)
+/** The files its cells name, those of its folder's `files`, each as base64 by its place there, but those `held`. @param {Place} place @param {Set<string>} [held] */
+async function filesOf(place, held) {
+  const dir = `${place.dir}/${place.folder}`, files = /** @type {Record<string, string>} */ ({})
+  for (const path of (await app.fs.list(`${dir}/files`).catch(() => [])).map(({ name }) => `files/${name}`)) {
+    const bytes = FILE.test(path) && !held?.has(path) && await app.fs.readBytes(`${dir}/${path}`)
+    if (bytes) files[path] = encode(bytes)
+  }
+  return files
+}
 
-/** What a seed holds, taken as the journal's, so that none of it goes again as a change. @param {Held} held @param {{ table: any, lines: any[] }} content */
-export const hold = (held, { table, lines }) => { for (const line of lines) held.lines.add(canonical(line)); if (table) held.table = canonical(table) }
+/** All of it, for a seed: its table, its lines and its cells' files. @param {Place} place */
+export const seedOf = async (place) => ({ ...await read(place), files: await filesOf(place) })
+
+/** What a seed holds, taken as the journal's, so that none of it goes again as a change. @param {Held} held @param {{ table: any, lines: any[], files?: Record<string, string> }} content */
+export const hold = (held, { table, lines, files }) => { for (const line of lines) held.lines.add(canonical(line)); if (table) held.table = canonical(table); for (const path of Object.keys(files ?? {})) (held.files ??= new Set()).add(path) }
 
 /**
  * What came, taken in: lines appended where they aren't here yet, a table merged into this one, or made where there is none, as a
- * newcomer's first seed makes the collection. @param {Place} place @param {{ table?: any, lines?: any[] }} body @param {Held} held
+ * newcomer's first seed makes the collection; a file kept first, where its name says its content is, and left out when its content isn't that
+ * or its place is no cell's file's. @param {Place} place @param {{ table?: any, lines?: any[], files?: Record<string, unknown> }} body @param {Held} held
  */
 export async function take(place, body, held) {
+  for (const [path, value] of Object.entries(body.files ?? {})) {
+    const bytes = FILE.test(path) && typeof value === 'string' ? await Promise.resolve(value).then(decode).catch(() => null) : null, at = `${place.dir}/${place.folder}/${path}`
+    if (!bytes || `files/${await sha256Hex(bytes)}` !== path.replace(/\.[^.]+$/, '')) continue
+    ;(held.files ??= new Set()).add(path)
+    if (!(await app.fs.exists(at))) await app.fs.writeBytes(at, bytes)
+  }
   const here = await read(place)
   const lines = parseChanges(stringifyChanges(Array.isArray(body.lines) ? body.lines : []))
   for (const line of lines) held.lines.add(canonical(line))
@@ -53,12 +73,16 @@ export async function take(place, body, held) {
 
 /**
  * What the person changed here that the journal doesn't hold, posted as it is written, in any tab: the new lines, and the table once it
- * differs. @param {Place} place @param {Held} held @param {(body: { lines?: any[], table?: any }) => Promise<unknown>} post @returns {() => void} what stops it
+ * differs. @param {Place} place @param {Held} held @param {(body: { lines?: any[], table?: any, files?: Record<string, string> }) => Promise<unknown>} post @returns {() => void} what stops it
  */
 export function watch(place, held, post) {
-  const { table, lines } = paths(place)
+  const { table, lines } = paths(place), kept = `${place.dir}/${place.folder}/files/`
   let running = Promise.resolve()
   const look = () => (running = running.then(async () => {
+    // Its cells' files first, so that no line names one that isn't there yet.
+    const files = await filesOf(place, held.files ??= new Set())
+    for (const path of Object.keys(files)) held.files.add(path)
+    if (Object.keys(files).length) await post({ files })
     const here = await read(place)
     const fresh = here.lines.filter((line) => !held.lines.has(keyOf(line)))
     if (fresh.length) {
@@ -72,5 +96,5 @@ export function watch(place, held, post) {
   }).catch((error) => console.warn('Together', error)))
   // What changed here before the watch began, between the seed taken and the journal caught up, goes now, not with the next change.
   look()
-  return app.fs.watch?.((path) => { if (path === table || path === lines) look() }, { all: true }) ?? (() => {})
+  return app.fs.watch?.((path) => { if (path === table || path === lines || path.startsWith(kept)) look() }, { all: true }) ?? (() => {})
 }

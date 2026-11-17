@@ -43,7 +43,7 @@ addEventListener('message', ({ source, data }) => [...panes.values()].find((pane
 // Where the user was in the workbook they changed last, to show it there again.
 let where = /** @type {{ uri: string, at: import('../caps/files/office.js').Place } | null} */ (null)
 
-/** Documents' module for a document, Tables' for a collection, Designs' for a design, Skills' scores for a tune an answer holds and decks for a deck kept, Games' for a game, its pages' for an app one holds, once found (D485, D491, D507, D553, D558, D572, D591, D648). @param {string} uri */
+/** Documents' module for a document, Tables' for a collection (a file a cell names, in its folder, is any file), Designs' for a design, Skills' scores for a tune an answer holds and decks for a deck kept, Games' for a game, its pages' for an app one holds, once found (D485, D491, D507, D553, D558, D572, D591, D648). @param {string} uri */
 const keeper = (uri) => {
   const [, id, load] = KEEPERS.find(([place]) => place.test(uri)) ?? []
   return id && load && loaded.peek().has(id) ? load() : null
@@ -53,7 +53,7 @@ const keeper = (uri) => {
  * @typedef {{ metaOf: (uri: string) => Promise<{ name: string, title: string, mimeType?: string } | null | undefined>, editor: (file: Shown, holds: (() => void)[], close: () => void) => unknown }} Kept
  * @typedef {Kept | (Kept & { bytesOf: (uri: string) => Promise<Uint8Array | null> })} Keeper
  */
-const KEEPERS = /** @type {[RegExp, string, () => Promise<Keeper>][]} */ ([[/^documents\//, 'documents', () => import('../caps/documents/documents.js')], [/^collections\//, 'tables', () => import('../caps/tables/tables.js')],
+const KEEPERS = /** @type {[RegExp, string, () => Promise<Keeper>][]} */ ([[/^documents\//, 'documents', () => import('../caps/documents/documents.js')], [/^collections\/[^/]+$/, 'tables', () => import('../caps/tables/tables.js')],
   [/^designs\//, 'designs', () => import('../caps/designs/designs.js')], [/^conversations\/[^#]+#\d+$/, 'skills', () => import('../caps/skills/scores.js')], [/^decks\//, 'skills', () => import('../caps/skills/decks.js')], [/^games\//, 'games', () => import('../caps/games/games.js')], [/^sites\//, 'sites', () => import('../caps/sites/sites.js')], [/^prototypes\//, 'prototypes', () => import('../caps/prototypes/prototypes.js')], [/^conversations\/[^#]+#app-\d+$/, 'interactive', () => import('../caps/interactive/apps.js')]])
 /** A file's name, title and kind by its place; a creation's by its capability's, once found (D485, D491). @param {string} uri */
 const metaOf = async (uri) => (/^files\/[^/]+$/.test(uri) ? await fileMeta(app.fs, app.projectDir, uri).then((one) => one && { ...one, title: fileTitle(one.name) }) : await (await keeper(uri))?.metaOf(uri))

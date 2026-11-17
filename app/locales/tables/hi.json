@@ -105,6 +105,13 @@
   },
   "tables.showAll": "सभी स्तंभ दिखाएँ",
   "tables.arranged": "मौजूदा व्यवस्था",
+  "tables.allRows": "सभी पंक्तियाँ",
+  "tables.viewName": "व्यू का नाम",
+  "tables.keepView": "व्यू के रूप में रखें",
+  "tables.keep": "रखें",
+  "tables.reset": "रीसेट करें",
+  "tables.onlyYou": "यह सिर्फ़ आपको दिखता है",
+  "tables.me": "मैं",
   "tables.plain": "सामान्य संख्या",
   "tables.money": "रकम",
   "tables.percent": "प्रतिशत",
@@ -118,5 +125,23 @@
   "tables.made": {
     "one": "{count} नई पंक्ति देखनी बाकी",
     "other": "{count} नई पंक्तियाँ देखनी बाकी"
-  }
+  },
+  "tables.open": "खोलें",
+  "tables.choices": "विकल्प",
+  "tables.addChoice": "विकल्प जोड़ें",
+  "tables.colour": "रंग",
+  "tables.hue0": "हरा",
+  "tables.hue1": "फ़िरोज़ी",
+  "tables.hue2": "नीला",
+  "tables.hue3": "बैंगनी",
+  "tables.hue4": "रानी गुलाबी",
+  "tables.hue5": "गुलाबी",
+  "tables.hue6": "स्लेटी",
+  "tables.kind.picture": "तस्वीर",
+  "tables.gallery": "गैलरी",
+  "tables.addPicture": "चित्र जोड़ें",
+  "tables.addFiles": "फ़ाइलें जोड़ें",
+  "tables.calendar": "कैलेंडर",
+  "tables.end": "समाप्ति",
+  "tables.time": "समय"
 }

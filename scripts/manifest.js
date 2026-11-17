@@ -47,6 +47,9 @@ export const CAPABILITY_RUNTIMES = /** @type {Record<string, string[]>} */ ({
   games: ['vendor/phaser', 'vendor/babylon', 'vendor/zzfx'],
   // Not a runtime, but on demand as one: the enterprise integrations, which only their loader imports (D139).
   enterprise: ['ee'],
+  // Not runtimes either, but on demand as one: a collection's board, gallery and calendar, each in a folder of its own, which Tables fetches as one is
+  // first shown, what fills a page's parts from a collection, as a page first follows one, and what makes a view of what a brain proposes.
+  tables: ['caps/board', 'caps/gallery', 'caps/calendar', 'caps/fill', 'caps/views'],
   // No capability of its own: a page that holds a map fetches it then, as it does the map's tiles (D291).
   maps: ['vendor/maplibre'],
 })

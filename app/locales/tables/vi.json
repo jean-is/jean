@@ -103,6 +103,13 @@
   },
   "tables.showAll": "Hiện mọi cột",
   "tables.arranged": "Cách sắp đặt",
+  "tables.allRows": "Tất cả các hàng",
+  "tables.viewName": "Tên chế độ xem",
+  "tables.keepView": "Giữ làm chế độ xem",
+  "tables.keep": "Giữ",
+  "tables.reset": "Đặt lại",
+  "tables.onlyYou": "Chỉ bạn thấy điều này",
+  "tables.me": "Tôi",
   "tables.plain": "Số thường",
   "tables.money": "Tiền",
   "tables.percent": "Phần trăm",
@@ -115,5 +122,23 @@
   "tables.movedTo": "Đã chuyển sang {group}",
   "tables.made": {
     "other": "{count} hàng mới cần xem"
-  }
+  },
+  "tables.open": "Mở",
+  "tables.choices": "Các lựa chọn",
+  "tables.addChoice": "Thêm lựa chọn",
+  "tables.colour": "Màu",
+  "tables.hue0": "Xanh lá",
+  "tables.hue1": "Xanh mòng két",
+  "tables.hue2": "Xanh dương",
+  "tables.hue3": "Tím",
+  "tables.hue4": "Hồng cánh sen",
+  "tables.hue5": "Hồng",
+  "tables.hue6": "Xám",
+  "tables.kind.picture": "Hình ảnh",
+  "tables.gallery": "Thư viện ảnh",
+  "tables.addPicture": "Thêm ảnh",
+  "tables.addFiles": "Thêm tệp",
+  "tables.calendar": "Lịch",
+  "tables.end": "Kết thúc",
+  "tables.time": "Giờ"
 }

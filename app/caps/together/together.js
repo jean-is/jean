@@ -74,6 +74,9 @@ register({ id: 'together',
   editor: { at: 0, draw: () => nothing, add: (/** @type {import('prosemirror-view').EditorView} */ view, /** @type {string} */ path) => import('./carets.js').then(({ plug }) => plug(view, path, caret, othersIn)) },
   // The room's line over another's turn names them as the circle does, else as People does (ui/chat.js).
   came: { at: 0, draw: () => nothing, name: (/** @type {string} */ fp) => memberName(fp) || (slots('came').find((one) => one.at > 0)?.name(fp) ?? '') },
+  // The names a collection's Person column offers (caps/tables/view.js): those who work on it, this person among them, by the name a rule on "Me" keeps.
+  names: { at: 0, draw: () => nothing, of: (/** @type {string} */ folder) => Object.values(circleOf(folder)?.state.members ?? {}).flatMap((one) => (one.gone ? [] : [one.name])),
+    me: (/** @type {string} */ folder) => ((live) => live?.state.members[live.me]?.name)(circleOf(folder)) },
   // In Share, for what can be worked on together (caps/share/dialog.js): its line once it is, and the verbs' start.
   how: { at: 1, draw: how, start },
   // The faces of who is in, at the head of a collection's pane worked on together, one group with its way out (ui/preview.js).

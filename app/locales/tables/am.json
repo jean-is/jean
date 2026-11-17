@@ -105,6 +105,13 @@
   },
   "tables.showAll": "ሁሉንም ዓምዶች አሳይ",
   "tables.arranged": "የተደራጀው",
+  "tables.allRows": "ሁሉም ረድፎች",
+  "tables.viewName": "የእይታው ስም",
+  "tables.keepView": "እንደ እይታ አቆይ",
+  "tables.keep": "አቆይ",
+  "tables.reset": "ዳግም አስጀምር",
+  "tables.onlyYou": "ይህን የሚያዩት እርስዎ ብቻ ነዎት",
+  "tables.me": "እኔ",
   "tables.plain": "ተራ ቁጥር",
   "tables.money": "ገንዘብ",
   "tables.percent": "መቶኛ",
@@ -118,5 +125,23 @@
   "tables.made": {
     "one": "{count} የሚገመገም አዲስ ረድፍ",
     "other": "{count} የሚገመገሙ አዲስ ረድፎች"
-  }
+  },
+  "tables.open": "ክፈት",
+  "tables.choices": "ምርጫዎች",
+  "tables.addChoice": "ምርጫ ያክሉ",
+  "tables.colour": "ቀለም",
+  "tables.hue0": "አረንጓዴ",
+  "tables.hue1": "ሰማያዊ አረንጓዴ",
+  "tables.hue2": "ሰማያዊ",
+  "tables.hue3": "ወይን ጠጅ",
+  "tables.hue4": "ደማቅ ሮዝ",
+  "tables.hue5": "ሮዝ",
+  "tables.hue6": "ግራጫ",
+  "tables.kind.picture": "ምስል",
+  "tables.gallery": "ጋለሪ",
+  "tables.addPicture": "ምስል ያክሉ",
+  "tables.addFiles": "ፋይሎችን ያክሉ",
+  "tables.calendar": "የቀን መቁጠሪያ",
+  "tables.end": "መጨረሻ",
+  "tables.time": "ሰዓት"
 }

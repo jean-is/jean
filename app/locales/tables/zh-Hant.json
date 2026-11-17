@@ -103,6 +103,13 @@
   },
   "tables.showAll": "顯示所有欄",
   "tables.arranged": "整理條件",
+  "tables.allRows": "所有列",
+  "tables.viewName": "檢視名稱",
+  "tables.keepView": "保留為檢視",
+  "tables.keep": "保留",
+  "tables.reset": "重設",
+  "tables.onlyYou": "只有你看得到",
+  "tables.me": "我",
   "tables.plain": "一般數字",
   "tables.money": "金額",
   "tables.percent": "百分比",
@@ -115,5 +122,23 @@
   "tables.movedTo": "已移到 {group}",
   "tables.made": {
     "other": "{count} 列新內容待查看"
-  }
+  },
+  "tables.open": "開啟",
+  "tables.choices": "選項",
+  "tables.addChoice": "新增選項",
+  "tables.colour": "顏色",
+  "tables.hue0": "綠",
+  "tables.hue1": "青綠",
+  "tables.hue2": "藍",
+  "tables.hue3": "紫羅蘭",
+  "tables.hue4": "紫紅",
+  "tables.hue5": "玫瑰",
+  "tables.hue6": "灰",
+  "tables.kind.picture": "圖片",
+  "tables.gallery": "圖庫",
+  "tables.addPicture": "新增圖片",
+  "tables.addFiles": "新增檔案",
+  "tables.calendar": "行事曆",
+  "tables.end": "結束",
+  "tables.time": "時間"
 }

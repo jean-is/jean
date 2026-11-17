@@ -103,6 +103,13 @@
   },
   "tables.showAll": "Fi gbogbo ọwọ̀n hàn",
   "tables.arranged": "Ètò tó wà",
+  "tables.allRows": "Gbogbo ìlà",
+  "tables.viewName": "Orúkọ ìwò",
+  "tables.keepView": "Tọ́jú u gẹ́gẹ́ bí ìwò",
+  "tables.keep": "Tọ́jú u",
+  "tables.reset": "Tún un tò",
+  "tables.onlyYou": "Ìwọ nìkan ló ń rí èyí",
+  "tables.me": "Èmi",
   "tables.plain": "Nọ́ńbà lásán",
   "tables.money": "Owó",
   "tables.percent": "Ìpín ọgọ́rùn-ún",
@@ -115,5 +122,23 @@
   "tables.movedTo": "A ti gbé e lọ sí {group}",
   "tables.made": {
     "other": "Ìlà tuntun {count} láti ṣàyẹ̀wò"
-  }
+  },
+  "tables.open": "Ṣí i",
+  "tables.choices": "Àwọn àṣàyàn",
+  "tables.addChoice": "Ṣàfikún àṣàyàn",
+  "tables.colour": "Àwọ̀",
+  "tables.hue0": "Àwọ̀ ewé",
+  "tables.hue1": "Àwọ̀ ewé-búlúù",
+  "tables.hue2": "Búlúù",
+  "tables.hue3": "Àlùkò",
+  "tables.hue4": "Fúṣíà",
+  "tables.hue5": "Pupa rúsúrúsú",
+  "tables.hue6": "Àwọ̀ eérú",
+  "tables.kind.picture": "Àwòrán",
+  "tables.gallery": "Àwọn àwòrán",
+  "tables.addPicture": "Fi àwòrán kún un",
+  "tables.addFiles": "Ṣàfikún fáìlì",
+  "tables.calendar": "Kàlẹ́ńdà",
+  "tables.end": "Ìparí",
+  "tables.time": "Àkókò"
 }

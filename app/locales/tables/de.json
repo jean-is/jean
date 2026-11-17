@@ -105,6 +105,13 @@
   },
   "tables.showAll": "Alle Spalten anzeigen",
   "tables.arranged": "Angeordnet",
+  "tables.allRows": "Alle Zeilen",
+  "tables.viewName": "Name der Ansicht",
+  "tables.keepView": "Als Ansicht behalten",
+  "tables.keep": "Behalten",
+  "tables.reset": "Zurücksetzen",
+  "tables.onlyYou": "Nur du siehst das",
+  "tables.me": "Ich",
   "tables.plain": "Einfache Zahl",
   "tables.money": "Geldbetrag",
   "tables.percent": "Prozent",
@@ -118,5 +125,23 @@
   "tables.made": {
     "one": "{count} neue Zeile zu prüfen",
     "other": "{count} neue Zeilen zu prüfen"
-  }
+  },
+  "tables.open": "Öffnen",
+  "tables.choices": "Optionen",
+  "tables.addChoice": "Option hinzufügen",
+  "tables.colour": "Farbe",
+  "tables.hue0": "Grün",
+  "tables.hue1": "Türkis",
+  "tables.hue2": "Blau",
+  "tables.hue3": "Violett",
+  "tables.hue4": "Fuchsia",
+  "tables.hue5": "Rosa",
+  "tables.hue6": "Grau",
+  "tables.kind.picture": "Bild",
+  "tables.gallery": "Galerie",
+  "tables.addPicture": "Bild hinzufügen",
+  "tables.addFiles": "Dateien hinzufügen",
+  "tables.calendar": "Kalender",
+  "tables.end": "Ende",
+  "tables.time": "Uhrzeit"
 }

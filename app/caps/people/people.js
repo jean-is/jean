@@ -481,6 +481,8 @@ register({ id: 'people', tools: [sendTool], lines: [{ name: 'send_to', line: "se
   audience: { at: 1, when: offered, who, first, draw: goes, copy: copyTo, went },
   // The room's line over what someone sent names them as the person does (ui/chat.js).
   came: { at: 1, draw: () => nothing, name: (/** @type {string} */ fp) => people.value.find((one) => one.fp === fp)?.name ?? '' },
+  // The names a collection's Person column offers (caps/tables/view.js): the people met.
+  names: { at: 1, draw: () => nothing, of: () => people.value.map((one) => one.name) },
 } })
 // The secrets, where the people met follow the person's devices, and what came, which the store brings from them, changed in any tab or by another device.
 app.fs.watch?.((path) => { if (path === '.secrets/keys.json' || path.startsWith(`${ARRIVALS}/`)) refresh().catch(warn) }, { all: true })

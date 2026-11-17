@@ -105,6 +105,13 @@
   },
   "tables.showAll": "Εμφάνιση όλων των στηλών",
   "tables.arranged": "Τρέχουσα οργάνωση",
+  "tables.allRows": "Όλες οι γραμμές",
+  "tables.viewName": "Όνομα προβολής",
+  "tables.keepView": "Διατήρηση ως προβολή",
+  "tables.keep": "Διατήρηση",
+  "tables.reset": "Επαναφορά",
+  "tables.onlyYou": "Μόνο εσείς το βλέπετε",
+  "tables.me": "Εγώ",
   "tables.plain": "Απλός αριθμός",
   "tables.money": "Χρηματικό ποσό",
   "tables.percent": "Ποσοστό",
@@ -118,5 +125,23 @@
   "tables.made": {
     "one": "{count} νέα γραμμή για έλεγχο",
     "other": "{count} νέες γραμμές για έλεγχο"
-  }
+  },
+  "tables.open": "Άνοιγμα",
+  "tables.choices": "Επιλογές",
+  "tables.addChoice": "Προσθήκη επιλογής",
+  "tables.colour": "Χρώμα",
+  "tables.hue0": "Πράσινο",
+  "tables.hue1": "Γαλαζοπράσινο",
+  "tables.hue2": "Μπλε",
+  "tables.hue3": "Βιολετί",
+  "tables.hue4": "Φούξια",
+  "tables.hue5": "Ροζ",
+  "tables.hue6": "Γκρι",
+  "tables.kind.picture": "Εικόνα",
+  "tables.gallery": "Γκαλερί",
+  "tables.addPicture": "Προσθήκη εικόνας",
+  "tables.addFiles": "Προσθήκη αρχείων",
+  "tables.calendar": "Ημερολόγιο",
+  "tables.end": "Λήξη",
+  "tables.time": "Ώρα"
 }

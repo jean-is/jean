@@ -105,6 +105,13 @@
   },
   "tables.showAll": "Tüm sütunları göster",
   "tables.arranged": "Düzen",
+  "tables.allRows": "Tüm satırlar",
+  "tables.viewName": "Görünüm adı",
+  "tables.keepView": "Görünüm olarak sakla",
+  "tables.keep": "Sakla",
+  "tables.reset": "Sıfırla",
+  "tables.onlyYou": "Bunu yalnızca siz görüyorsunuz",
+  "tables.me": "Ben",
   "tables.plain": "Düz sayı",
   "tables.money": "Para",
   "tables.percent": "Yüzde",
@@ -118,5 +125,23 @@
   "tables.made": {
     "one": "İncelenecek {count} yeni satır",
     "other": "İncelenecek {count} yeni satır"
-  }
+  },
+  "tables.open": "Aç",
+  "tables.choices": "Seçenekler",
+  "tables.addChoice": "Seçenek ekle",
+  "tables.colour": "Renk",
+  "tables.hue0": "Yeşil",
+  "tables.hue1": "Turkuaz",
+  "tables.hue2": "Mavi",
+  "tables.hue3": "Mor",
+  "tables.hue4": "Fuşya",
+  "tables.hue5": "Gül",
+  "tables.hue6": "Gri",
+  "tables.kind.picture": "Resim",
+  "tables.gallery": "Galeri",
+  "tables.addPicture": "Resim ekle",
+  "tables.addFiles": "Dosya ekle",
+  "tables.calendar": "Takvim",
+  "tables.end": "Bitiş",
+  "tables.time": "Saat"
 }

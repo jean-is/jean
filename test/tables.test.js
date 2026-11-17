@@ -5,11 +5,11 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readdir, readFile } from 'node:fs/promises'
 import { readZip } from '../app/core/zip.js'
-import { createTable, readTable, tableProblems, checkCell, grown, mergeTables, propertyOf, folderOf, reshape, converted, titleOf, ownProblem, kindOf, notesOf, spotOf, arranged, currencyOf } from '../app/caps/tables/table.js'
+import { createTable, readTable, tableProblems, checkCell, grown, mergeTables, propertyOf, folderOf, reshape, converted, titleOf, ownProblem, kindOf, notesOf, spotOf, arranged, currencyOf, hueOf, hueFor, HUES, propertyFrom, filesOf, MADE, calendarOf, keptViews, viewOf } from '../app/caps/tables/table.js'
 import { parseChanges, stringifyChanges, nextAt, stamp, fold, merge, undo, inverse, marked, reading } from '../app/caps/tables/changes.js'
-import { query, valueOf, ordered, total } from '../app/caps/tables/query.js'
+import { query, valueOf, ordered, total, filterOf } from '../app/caps/tables/query.js'
 import { toCSV, exportTable, textOf, namesOf, rowNamed, said, amount, digitsOf } from '../app/caps/tables/export.js'
-import { fill, rules } from '../app/caps/tables/fill.js'
+import { fill, rules } from '../app/caps/fill/fill.js'
 import { TABLE_CREATE, LINE, EXAMPLES, tableCreate } from '../app/caps/tables/tool.js'
 import { compile, worked, renamed } from '../app/caps/tables/formula.js'
 import { score, matchNames, STRICT } from '../scripts/tables.js'
@@ -99,7 +99,7 @@ test('checkCell: each type takes its own values, and nothing can be set in a col
   ] }, { id: TABLE_ID, author: 'jean', at: T(0) })
   const ok = /** @type {[string, unknown][]} */ ([['name', 'Hi'], ['count', -2.5], ['kind', 'B'], ['labels', ['x', 'y']], ['step', 'Done'], ['due', '2026-10-21'], ['due', '2026-10-21T14:30'],
     ['done', false], ['site', 'https://jean.is/'], ['mail', 'ana@example.org'], ['phone', '+33 6 12 34 56 78'], ['who', 'Ana'], ['where', 'Lyon'],
-    ['where', { name: 'Gare de Lyon', lat: 48.84, lon: 2.37 }], ['papers', [{ name: 'CV.pdf', file: 'attachments/ab12.pdf' }]], ['count', null],
+    ['where', { name: 'Gare de Lyon', lat: 48.84, lon: 2.37 }], ['papers', [{ name: 'CV.pdf', file: `files/${'ab'.repeat(32)}.pdf` }]], ['count', null],
     ['kind', 'C'], ['labels', ['z']]])
   for (const [id, value] of ok) assert.equal(checkCell(/** @type {any} */ (propertyOf(table, id)), value), null, `${id} takes ${JSON.stringify(value)}`)
   const wrong = /** @type {[string, unknown][]} */ ([['name', 3], ['count', '3'], ['count', Infinity], ['kind', ' '], ['labels', 'x'], ['labels', [3]], ['step', 'Doing'],
@@ -188,6 +188,84 @@ test('reshape: a column inserted at a place among them all, made another kind wi
   assert.deepEqual(sorted.order, [R(2), R(1)])
   assert.deepEqual(tableProblems({ ...sorted, order: [1] }), ["The table's order isn't a list of its rows' ids."])
   assert.equal('order' in reshape(table, { name: 'Voyages' }, T(8)), false)
+})
+
+test('a choice has a colour, one of seven: its place among its column\'s choices until the person picks one, a step its group\'s look; picked, checked, kept by another kind and by a merge, and a name its own', () => {
+  const table = createTable({ name: 'Visits', columns: [{ name: 'Home', type: 'text' }, { name: 'Room', type: 'select', options: ['Living room', 'Kitchen', 'Bedroom', 'Hall', 'Attic', 'Cellar', 'Garage', 'Garden'] }, { name: 'Stage', type: 'status', options: ['To see', 'Seen', 'Signed'] }] }, { id: TABLE_ID, author: 'user', at: T(0) })
+  const [room, stage] = [propertyOf(table, 'Room'), propertyOf(table, 'Stage')].map((property) => /** @type {import('../app/caps/tables/table.js').Property} */ (property))
+  // By its place, the eighth as the first; a step none, nor a choice the column hasn't.
+  assert.deepEqual(['Living room', 'Kitchen', 'Garage', 'Garden', 'Shed'].map((name) => hueOf(room, name)), [0, 1, 6, 0, undefined])
+  assert.equal(hueOf(stage, 'Seen'), undefined)
+  // Picked, it is kept with the choice; picked again as none, it is its place's again.
+  const picked = reshape(table, { hue: { id: 'room', name: 'Kitchen', hue: 5 } }, T(1)), kitchen = /** @type {import('../app/caps/tables/table.js').Property} */ (propertyOf(picked, 'Room'))
+  assert.deepEqual(kitchen.options?.[1], { name: 'Kitchen', hue: 5 })
+  assert.equal(hueOf(kitchen, 'Kitchen'), 5)
+  assert.deepEqual(tableProblems(picked), [])
+  assert.deepEqual(propertyOf(reshape(picked, { hue: { id: 'room', name: 'Kitchen' } }, T(2)), 'Room')?.options?.[1], { name: 'Kitchen' })
+  const stepped = reshape(picked, { hue: { id: 'stage', name: 'Signed', hue: 0 } }, T(2))
+  assert.deepEqual(propertyOf(stepped, 'Stage')?.options?.[2], { name: 'Signed', group: 'done', hue: 0 })
+  assert.equal(hueOf(/** @type {any} */ (propertyOf(stepped, 'Stage')), 'Signed'), 0)
+  // Only one of the seven is a colour.
+  for (const hue of [7, -1, 1.5, '2']) assert.match(tableProblems({ ...picked, properties: picked.properties.map((property) => (property.id === 'room' ? { ...property, options: [{ name: 'Kitchen', hue }] } : property)) }).join(), /Room: the choice "Kitchen" has a colour that isn't one of the 7/)
+  // Made several choices, its choices keep their colours; so does the newer copy's in a merge.
+  assert.deepEqual(propertyOf(reshape(picked, { retype: { id: 'room', type: 'multi-select' } }, T(3)), 'Room')?.options?.[1], { name: 'Kitchen', hue: 5 })
+  assert.deepEqual(propertyOf(mergeTables(table, picked), 'Room')?.options?.[1], { name: 'Kitchen', hue: 5 })
+  // A person's face is one of the seven too, the same for a name wherever it is read.
+  assert.equal(hueFor('Léa Martin'), hueFor('Léa Martin'))
+  for (const name of ['Léa Martin', '田中', 'محمد', '']) assert.ok(Number.isInteger(hueFor(name)) && hueFor(name) >= 0 && hueFor(name) < HUES)
+  assert.notEqual(hueFor('Léa Martin'), hueFor('Tom Roy'))
+})
+
+test('a picture or a files cell names files the collection keeps in its own folder, by their content: checked, read by their names, and a picture a kind people make, which a brain\'s words for one give too', () => {
+  const table = createTable({ name: 'Plants', columns: [{ name: 'Plant', type: 'text' }, { name: 'Photo', type: 'image' }, { name: 'Papers', type: 'files' }] }, { id: TABLE_ID, author: 'user', at: T(0) })
+  const [photo, papers] = ['Photo', 'Papers'].map((name) => /** @type {import('../app/caps/tables/table.js').Property} */ (propertyOf(table, name)))
+  assert.deepEqual([photo.type, papers.type], ['picture', 'files'])
+  assert.deepEqual(tableProblems(table), [])
+  for (const word of ['picture', 'Photo', 'images', 'photos']) assert.equal(propertyFrom({ name: 'x', type: word }, new Set()).type, 'picture', word)
+  // table_create's list stays as phase 0 measured it: a picture is none of the kinds it names.
+  assert.equal(/** @type {readonly string[]} */ (MADE).includes('picture'), false)
+  const kept = { name: 'ficus.png', file: `files/${'ab'.repeat(32)}.png`, type: 'image/png' }
+  for (const property of [photo, papers]) {
+    for (const value of [[kept], [kept, { name: 'label.jpg', file: `files/${'0f'.repeat(32)}.jpg` }], [], null]) assert.equal(checkCell(property, value), null, JSON.stringify(value))
+    // Never a path out of its folder, a name alone, or a file with no name.
+    for (const value of [['ficus.png'], [{ name: 'ficus.png' }], [{ file: kept.file }], [{ name: 'x', file: '../settings.json' }], [{ name: 'x', file: `files/../${'ab'.repeat(32)}.png` }], [{ name: 'x', file: 'files/short.png' }], [{ ...kept, type: 3 }], kept]) assert.match(String(checkCell(property, value)), /a list of files/, JSON.stringify(value))
+  }
+  assert.deepEqual(filesOf([kept, 'x', null, { name: 'y' }]), [kept])
+  assert.deepEqual(filesOf(null), [])
+  assert.equal(textOf(/** @type {any} */ ({ cells: { photo: [kept, { ...kept, name: 'pot.png' }] } }), photo), 'ficus.png, pot.png')
+})
+
+test('a calendar is by a date column, the first until one is picked, its rows lasting until another when one is; a date takes a time of day; checked, and gone with their columns', () => {
+  const table = createTable({ name: 'Stays', columns: [{ name: 'Guest', type: 'text' }, { name: 'Arrives', type: 'date' }, { name: 'Leaves', type: 'date' }, { name: 'Paid on', type: 'date' }] }, { id: TABLE_ID, author: 'user', at: T(0) })
+  const ids = (/** @type {import('../app/caps/tables/table.js').Table} */ one) => ((found) => found && [found.date.id, found.until?.id, found.dates.map(({ id }) => id)])(calendarOf(one))
+  // By its first date column, lasting until none, with nothing kept.
+  assert.deepEqual(ids(table), ['arrives', undefined, ['arrives', 'leaves', 'paid-on']])
+  assert.equal(table.views.some((view) => view.type === 'calendar'), false)
+  assert.equal(calendarOf(createTable({ name: 'x', columns: [{ name: 'a', type: 'text' }] }, { id: TABLE_ID, author: 'user', at: T(0) })), null)
+  // Picked, they are the calendar view's, which merges and reads back.
+  const lasting = reshape(table, { calendar: { until: 'leaves' } }, T(1))
+  assert.deepEqual(lasting.views.find((view) => view.type === 'calendar'), { id: 'calendar', type: 'calendar', date: 'arrives', until: 'leaves' })
+  assert.deepEqual(ids(lasting), ['arrives', 'leaves', ['arrives', 'leaves', 'paid-on']])
+  assert.deepEqual(tableProblems(lasting), [])
+  assert.deepEqual(ids(mergeTables(table, lasting)), ids(lasting))
+  const other = reshape(lasting, { calendar: { date: 'paid-on', until: '' } }, T(2))
+  assert.deepEqual(other.views.find((view) => view.type === 'calendar'), { id: 'calendar', type: 'calendar', date: 'paid-on' })
+  // A row never lasts until the day it is on, nor a calendar by a column that is no date.
+  assert.deepEqual(ids(reshape(lasting, { calendar: { date: 'leaves' } }, T(2))), ['leaves', undefined, ['arrives', 'leaves', 'paid-on']])
+  for (const view of [{ date: 'guest' }, { date: 'arrives', until: 'arrives' }, { date: 'arrives', until: 'guest' }, {}]) assert.match(tableProblems({ ...table, views: [...table.views, { id: 'calendar', type: 'calendar', ...view }] }).join(), /a calendar is by a date column/)
+  // Its end's column gone, it lasts until none; its own gone or made another kind, it is by the first date again.
+  assert.deepEqual(ids(reshape(lasting, { remove: 'leaves' }, T(3))), ['arrives', undefined, ['arrives', 'paid-on']])
+  assert.deepEqual(ids(reshape(lasting, { retype: { id: 'arrives', type: 'text' } }, T(3))), ['leaves', undefined, ['leaves', 'paid-on']])
+  assert.equal(reshape(lasting, { remove: 'arrives' }, T(3)).views.some((view) => view.type === 'calendar'), false)
+  // A date takes a time of day, kept as it becomes a date again from another kind, and only a date does.
+  const timed = reshape(table, { time: { id: 'arrives', on: true } }, T(4))
+  assert.equal(propertyOf(timed, 'Arrives')?.time, true)
+  assert.deepEqual(tableProblems(timed), [])
+  assert.equal('time' in /** @type {object} */ (propertyOf(reshape(timed, { time: { id: 'arrives', on: false } }, T(5)), 'Arrives')), false)
+  assert.equal('time' in /** @type {object} */ (propertyOf(reshape(timed, { retype: { id: 'arrives', type: 'text' } }, T(5)), 'Arrives')), false)
+  assert.equal(propertyOf(reshape(table, { time: { id: 'guest', on: true } }, T(5)), 'Guest')?.time, undefined)
+  assert.match(tableProblems({ ...table, properties: table.properties.map((property) => (property.id === 'guest' ? { ...property, time: true } : property)) }).join(), /Guest: only a date takes a time/)
+  assert.equal(propertyFrom({ name: 'When', type: 'date', time: true }, new Set()).time, true)
 })
 
 test('a number is money in a currency or a share (D752): from a brain\'s format or its money type, checked, changed from its head, and written so', () => {
@@ -306,6 +384,74 @@ test('the table view keeps the filter\'s rules, the columns hidden and what each
   assert.equal(total(rows, referral, 'percent'), 1 / 3)
   assert.equal(total(rows, role, 'percent'), 1)
   assert.equal(total([], salary, 'percent'), 0)
+})
+
+test('views the person keeps, each a name and what it shows: the collection\'s own arrangement kept under a name, itself whole again; one arranged on its own, renamed, and taken away for every copy; what a person arranged since shows over its view; rows sorted by a view\'s column, and a rule on the person themselves', () => {
+  const referred = { and: [{ property: 'referral', op: /** @type {const} */ ('is'), value: true }] }, bySalary = [{ property: 'salary', direction: /** @type {const} */ ('descending') }]
+  const arranged = reshape(jobs(), { view: { group: 'status', filter: referred, hidden: ['tags'], sort: bySalary, calculate: { salary: 'sum' } } }, T(1))
+  assert.deepEqual(keptViews(arranged), [])
+  const kept = reshape(arranged, { keep: { name: ' Referred ', type: 'board' } }, T(2)), [view] = keptViews(kept)
+  assert.deepEqual(view, { id: 'v20261021090200000', type: 'board', name: 'Referred', group: 'status', filter: referred, hidden: ['tags'], sort: bySalary, calculate: { salary: 'sum' } })
+  // The collection's own is whole again, its feet as they were; what its board is by stays.
+  assert.deepEqual(kept.views[0], { id: 'table', type: 'table', calculate: { salary: 'sum' } })
+  assert.deepEqual(kept.views[1], jobs().views[1])
+  assert.deepEqual(tableProblems(kept), [])
+  assert.deepEqual(readTable(JSON.stringify(kept)), kept)
+  // A view by its id, else the collection's own, which what its board is by never stands for; with what was arranged since over it.
+  assert.deepEqual(viewOf(kept, view.id), view)
+  assert.deepEqual(viewOf(kept, 'none'), kept.views[0])
+  assert.deepEqual(viewOf(kept, 'board'), kept.views[0])
+  assert.deepEqual(viewOf(kept, view.id, { [view.id]: { type: 'table', hidden: [] }, table: { group: 'tags' } }), { ...view, type: 'table', hidden: [] })
+  assert.deepEqual(viewOf(kept, 'none', { table: { group: 'tags' } }), { ...kept.views[0], group: 'tags' })
+  // A view proposed to this person, among theirs under an id of its own, shows as a view; never in place of one kept or of the collection's own.
+  assert.deepEqual(viewOf(kept, 'p1', { p1: { name: 'Remote', type: 'board', group: 'status' } }), { id: 'p1', type: 'board', name: 'Remote', group: 'status' })
+  assert.deepEqual(viewOf(kept, 'p1', { p1: { group: 'status' } }), kept.views[0])
+  assert.deepEqual(viewOf(kept, 'table', { table: { name: 'All' } }).id, 'table')
+  // Arranged on its own, the collection's as it was; kept again at the same moment, an id of its own; from a view with what was arranged since, that view as it was.
+  const shown = reshape(kept, { view: { hidden: [] }, of: view.id }, T(3))
+  assert.deepEqual([viewOf(shown, view.id).hidden, shown.views[0]], [[], kept.views[0]])
+  const twice = reshape(kept, { keep: { name: 'Again', type: 'table' } }, T(2))
+  assert.equal(new Set(twice.views.map((one) => one.id)).size, 4)
+  const mine = reshape(kept, { keep: { name: 'Mine', type: 'calendar', from: view.id, filter: { and: [] } } }, T(4))
+  assert.deepEqual(keptViews(mine).map((one) => [one.name, one.type, one.filter?.and.length, one.group]), [['Referred', 'board', 1, 'status'], ['Mine', 'calendar', 0, 'status']])
+  assert.deepEqual(tableProblems(mine), [])
+  assert.equal(reshape(kept, { keep: { name: ' ', type: 'table' } }, T(4)).views.length, 3)
+  // The collection's own kept with what one person arranged over it stays as it is for the others.
+  const over = reshape(arranged, { keep: { name: 'Hidden less', type: 'table', hidden: [] } }, T(4))
+  assert.deepEqual([over.views[0], keptViews(over)[0].hidden, keptViews(over)[0].group], [arranged.views[0], [], 'status'])
+  assert.deepEqual(reshape(arranged, { keep: { name: 'Averages', type: 'table', calculate: { salary: 'average' } } }, T(4)).views[0], arranged.views[0])
+  // What a view is told to hold no more, as nothing or none, it no longer has; its id stays its own.
+  assert.deepEqual(reshape(kept, { view: () => /** @type {any} */ ({ group: null, filter: undefined, hidden: null, id: 'other' }), of: view.id }, T(4)).views[2], { id: view.id, type: 'board', name: 'Referred', sort: bySalary, calculate: { salary: 'sum' } })
+  assert.deepEqual(keptViews(reshape(arranged, { keep: /** @type {any} */ ({ name: 'Flat', type: 'table', group: null }) }, T(4)))[0].group, undefined)
+  // Renamed, never the collection's own; taken away, it keeps its id and when, so that no copy brings it back.
+  assert.equal(keptViews(reshape(kept, { named: { id: view.id, name: ' Friends ' } }, T(5)))[0].name, 'Friends')
+  assert.deepEqual(reshape(kept, { named: { id: 'table', name: 'All' } }, T(5)).views, kept.views)
+  const dropped = reshape(kept, { drop: view.id }, T(6))
+  assert.deepEqual([keptViews(dropped), dropped.views[2]], [[], { id: view.id, type: 'board', name: 'Referred', deleted: T(6) }])
+  assert.deepEqual(reshape(kept, { drop: 'table' }, T(6)).views, kept.views)
+  assert.deepEqual([tableProblems(dropped), readTable(JSON.stringify(dropped))], [[], dropped])
+  for (const other of [{ ...kept, changed: T(5) }, { ...kept, changed: T(9) }]) {
+    assert.deepEqual(keptViews(mergeTables(dropped, other)), [])
+    assert.deepEqual(mergeTables(dropped, other).views, mergeTables(other, dropped).views)
+  }
+  assert.deepEqual(keptViews(mergeTables(twice, mine)).map((one) => one.name).sort(), ['Again', 'Mine', 'Referred'])
+  // Checked: a name of its own words; shown as a board or a calendar whatever its columns, as a table where they have nothing to show.
+  assert.ok(tableProblems({ ...kept, views: [...kept.views, { id: 'v2', type: 'table', name: ' ' }] }).some((problem) => /needs a name/.test(problem)))
+  assert.deepEqual(tableProblems({ ...kept, views: [...kept.views, { id: 'v2', type: 'board', name: 'Lanes' }, { id: 'v3', type: 'calendar', name: 'Days' }] }), [])
+  assert.deepEqual(keptViews(reshape(kept, { remove: 'status' }, T(7))).map((one) => one.name), ['Referred'])
+  // Its rows: those its rules keep, sorted by its column, empty cells last.
+  const rows = fold(BASE)
+  assert.deepEqual(filterOf(kept, view), referred.and)
+  assert.deepEqual(filterOf(kept), [])
+  assert.deepEqual(query(kept, rows, { sort: view.sort }).rows.map((row) => row.id), [R(1), R(3), R(2)])
+  assert.deepEqual(query(kept, rows, { filter: { and: filterOf(kept, view) }, sort: view.sort }).rows.map((row) => row.id), [R(2)])
+  // A rule on the person themselves, by the name they go by here, in any case; none where they have no name.
+  const staffed = reshape(jobs(), { add: { name: 'Recruiter', type: 'person' } }, T(1)), people = fold([...BASE, line(R(1), { recruiter: 'Léa' }, T(2)), line(R(2), { recruiter: 'Tom' }, T(2))])
+  const me = { property: 'recruiter', op: /** @type {const} */ ('is'), value: { me: true } }
+  assert.deepEqual(query(staffed, people, { filter: me, me: 'LÉA' }).rows.map((row) => row.id), [R(1)])
+  assert.deepEqual(query(staffed, people, { filter: { ...me, op: 'is-not' }, me: 'Léa' }).rows.map((row) => row.id), [R(2), R(3)])
+  assert.deepEqual(query(staffed, people, { filter: me }).rows, [])
+  assert.deepEqual(filterOf(reshape(staffed, { view: { filter: { and: [me] } } }, T(3))), [me])
 })
 
 test('ordered: the rows the order names first, as it names them, then the others as they were made; an id of no row changes nothing', () => {

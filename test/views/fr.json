@@ -1,0 +1,69 @@
+{
+  "me": "Léa",
+  "tables": {
+    "visits": {
+      "name": "Visites",
+      "columns": [["Lieu", "text"], ["Étape", "status", ["À visiter", "Visité", "Offre faite"]], ["Prix", "number"], ["Qui", "person"], ["Jour", "date"], ["Photo", "picture"]],
+      "rows": [
+        ["Villa Aurore", "À visiter", 420000, "Léa", "2026-11-20"],
+        ["Loft Canal", "Visité", 310000, "Tom", "2026-11-05"],
+        ["Maison Pins", "À visiter", 560000, "Tom", "2026-12-02"],
+        ["Studio Port", "Offre faite", 190000, "Léa", "2026-10-28"],
+        ["Mas Lavande", "Visité", 230000, "Léa", "2026-11-12"],
+        ["Duplex Gare", "À visiter", 275000, null, null]
+      ]
+    },
+    "expenses": {
+      "name": "Dépenses",
+      "columns": [["Libellé", "text"], ["Montant", "number"], ["Catégorie", "select", ["Voyage", "Repas", "Bureau"]], ["Payé", "checkbox"], ["Date", "date"]],
+      "rows": [
+        ["Train pour Lyon", 89.5, "Voyage", true, "2026-11-03"],
+        ["Hôtel", 240, "Voyage", true, "2026-11-04"],
+        ["Déjeuner d’équipe", 76.25, "Repas", false, "2026-11-10"],
+        ["Papier d’imprimante", 32, "Bureau", false, "2026-10-15"],
+        ["Conférence", 450, "Voyage", false, "2026-11-14"],
+        ["Café", 18, "Repas", true, "2026-11-15"]
+      ]
+    },
+    "books": {
+      "name": "Lectures",
+      "columns": [["Titre", "text"], ["Auteur", "text"], ["Genre", "multi-select", ["Roman", "Histoire", "Science", "Classique"]], ["Statut", "status", ["À lire", "En cours", "Lu"]], ["Note", "number"], ["Terminé le", "date"]],
+      "rows": [
+        ["Dune", "Frank Herbert", ["Roman", "Science"], "Lu", 5, "2026-08-02"],
+        ["Sapiens", "Yuval Noah Harari", ["Histoire"], "En cours", null, null],
+        ["Germinal", "Émile Zola", ["Roman", "Classique"], "Lu", 4, "2026-09-18"],
+        ["Cosmos", "Carl Sagan", ["Science"], "À lire", null, null],
+        ["Persuasion", "Jane Austen", ["Roman", "Classique"], "À lire", null, null],
+        ["SPQR", "Mary Beard", ["Histoire"], "Lu", 3, "2026-10-30"]
+      ]
+    }
+  },
+  "requests": {
+    "to-visit": "Montre-moi seulement les lieux qu’il me reste à visiter.",
+    "cheap": "Affiche uniquement les lieux à moins de 300 000, du moins cher au plus cher.",
+    "board": "J’aimerais voir les visites en colonnes, une par étape.",
+    "mine": "Affiche seulement mes visites.",
+    "calendar": "Mets les visites sur un calendrier.",
+    "unassigned": "Filtre la liste sur les visites auxquelles personne n’est encore affecté.",
+    "november": "Montre les visites datées de novembre, par ordre de date.",
+    "unpaid": "Montre ce qu’il me reste à payer, les plus gros montants d’abord.",
+    "travel": "Affiche uniquement les dépenses de voyage.",
+    "over100": "Montre les dépenses de plus de 100.",
+    "by-category": "Regroupe mes dépenses par catégorie.",
+    "not-food": "Montre tout sauf les repas.",
+    "unpaid-travel": "Montre les dépenses de voyage que je n’ai pas encore payées.",
+    "hide-date": "Masque la colonne de date et trie les dépenses par libellé, de A à Z.",
+    "read-best": "Montre les livres que j’ai lus, les mieux notés d’abord.",
+    "novels-unread": "Montre les romans que je n’ai pas encore lus.",
+    "status-board": "Affiche ma liste de lecture en colonnes, par statut.",
+    "zola": "Montre seulement les livres de Zola.",
+    "unrated": "Montre les livres que je n’ai pas encore notés.",
+    "classics": "Juste les classiques, s’il te plaît.",
+    "count": "Combien de lieux me reste-t-il à visiter ?",
+    "mark": "J’ai visité la Villa Aurore hier, note-le.",
+    "add": "Ajoute un trajet en taxi : 32 euros, voyage, payé aujourd’hui.",
+    "total": "Combien ai-je dépensé en voyage jusqu’ici ?",
+    "finished": "J’ai fini Sapiens hier, je lui mets 4.",
+    "best": "Quel livre ai-je le mieux noté ?"
+  }
+}

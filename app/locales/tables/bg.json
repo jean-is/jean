@@ -105,6 +105,13 @@
   },
   "tables.showAll": "Покажи всички колони",
   "tables.arranged": "Подредено",
+  "tables.allRows": "Всички редове",
+  "tables.viewName": "Име на изгледа",
+  "tables.keepView": "Запазване като изглед",
+  "tables.keep": "Запазване",
+  "tables.reset": "Нулиране",
+  "tables.onlyYou": "Само вие виждате това",
+  "tables.me": "Аз",
   "tables.plain": "Обикновено число",
   "tables.money": "Пари",
   "tables.percent": "Процент",
@@ -118,5 +125,23 @@
   "tables.made": {
     "one": "{count} нов ред за преглед",
     "other": "{count} нови реда за преглед"
-  }
+  },
+  "tables.open": "Отвори",
+  "tables.choices": "Опции",
+  "tables.addChoice": "Добави опция",
+  "tables.colour": "Цвят",
+  "tables.hue0": "Зелено",
+  "tables.hue1": "Синьозелено",
+  "tables.hue2": "Синьо",
+  "tables.hue3": "Виолетово",
+  "tables.hue4": "Фуксия",
+  "tables.hue5": "Розово",
+  "tables.hue6": "Сиво",
+  "tables.kind.picture": "Изображение",
+  "tables.gallery": "Галерия",
+  "tables.addPicture": "Добавяне на изображение",
+  "tables.addFiles": "Добави файлове",
+  "tables.calendar": "Календар",
+  "tables.end": "Край",
+  "tables.time": "Час"
 }

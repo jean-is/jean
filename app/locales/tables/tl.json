@@ -105,6 +105,13 @@
   },
   "tables.showAll": "Ipakita ang lahat ng column",
   "tables.arranged": "Pagkakaayos",
+  "tables.allRows": "Lahat ng row",
+  "tables.viewName": "Pangalan ng view",
+  "tables.keepView": "Itabi bilang view",
+  "tables.keep": "Itabi",
+  "tables.reset": "I-reset",
+  "tables.onlyYou": "Ikaw lang ang nakakakita nito",
+  "tables.me": "Ako",
   "tables.plain": "Karaniwang numero",
   "tables.money": "Pera",
   "tables.percent": "Porsiyento",
@@ -118,5 +125,23 @@
   "tables.made": {
     "one": "{count} bagong row na susuriin",
     "other": "{count} bagong row na susuriin"
-  }
+  },
+  "tables.open": "Buksan",
+  "tables.choices": "Mga pagpipilian",
+  "tables.addChoice": "Magdagdag ng pagpipilian",
+  "tables.colour": "Kulay",
+  "tables.hue0": "Berde",
+  "tables.hue1": "Teal",
+  "tables.hue2": "Asul",
+  "tables.hue3": "Lila",
+  "tables.hue4": "Fuchsia",
+  "tables.hue5": "Rosas",
+  "tables.hue6": "Kulay-abo",
+  "tables.kind.picture": "Larawan",
+  "tables.gallery": "Gallery",
+  "tables.addPicture": "Magdagdag ng larawan",
+  "tables.addFiles": "Magdagdag ng mga file",
+  "tables.calendar": "Kalendaryo",
+  "tables.end": "Katapusan",
+  "tables.time": "Oras"
 }

@@ -103,6 +103,13 @@
   },
   "tables.showAll": "Paparkan semua lajur",
   "tables.arranged": "Susunan",
+  "tables.allRows": "Semua baris",
+  "tables.viewName": "Nama paparan",
+  "tables.keepView": "Simpan sebagai paparan",
+  "tables.keep": "Simpan",
+  "tables.reset": "Tetapkan semula",
+  "tables.onlyYou": "Hanya anda yang nampak ini",
+  "tables.me": "Saya",
   "tables.plain": "Nombor biasa",
   "tables.money": "Wang",
   "tables.percent": "Peratus",
@@ -115,5 +122,23 @@
   "tables.movedTo": "Dipindahkan ke {group}",
   "tables.made": {
     "other": "{count} baris baharu untuk disemak"
-  }
+  },
+  "tables.open": "Buka",
+  "tables.choices": "Pilihan",
+  "tables.addChoice": "Tambah pilihan",
+  "tables.colour": "Warna",
+  "tables.hue0": "Hijau",
+  "tables.hue1": "Biru kehijauan",
+  "tables.hue2": "Biru",
+  "tables.hue3": "Ungu",
+  "tables.hue4": "Magenta",
+  "tables.hue5": "Mawar",
+  "tables.hue6": "Kelabu",
+  "tables.kind.picture": "Gambar",
+  "tables.gallery": "Galeri",
+  "tables.addPicture": "Tambah gambar",
+  "tables.addFiles": "Tambah fail",
+  "tables.calendar": "Kalendar",
+  "tables.end": "Akhir",
+  "tables.time": "Masa"
 }

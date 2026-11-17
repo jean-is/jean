@@ -105,6 +105,13 @@
   },
   "tables.showAll": "सर्व स्तंभ दाखवा",
   "tables.arranged": "सध्याची मांडणी",
+  "tables.allRows": "सर्व ओळी",
+  "tables.viewName": "दृश्याचे नाव",
+  "tables.keepView": "दृश्य म्हणून ठेवा",
+  "tables.keep": "ठेवा",
+  "tables.reset": "रीसेट करा",
+  "tables.onlyYou": "हे फक्त तुम्हालाच दिसते",
+  "tables.me": "मी",
   "tables.plain": "साधी संख्या",
   "tables.money": "रक्कम",
   "tables.percent": "टक्केवारी",
@@ -118,5 +125,23 @@
   "tables.made": {
     "one": "{count} नवी ओळ तपासायची आहे",
     "other": "{count} नव्या ओळी तपासायच्या आहेत"
-  }
+  },
+  "tables.open": "उघडा",
+  "tables.choices": "पर्याय",
+  "tables.addChoice": "पर्याय जोडा",
+  "tables.colour": "रंग",
+  "tables.hue0": "हिरवा",
+  "tables.hue1": "नीलहरित",
+  "tables.hue2": "निळा",
+  "tables.hue3": "जांभळा",
+  "tables.hue4": "राणी गुलाबी",
+  "tables.hue5": "गुलाबी",
+  "tables.hue6": "राखाडी",
+  "tables.kind.picture": "चित्र",
+  "tables.gallery": "गॅलरी",
+  "tables.addPicture": "चित्र जोडा",
+  "tables.addFiles": "फाइल्स जोडा",
+  "tables.calendar": "कॅलेंडर",
+  "tables.end": "समाप्ती",
+  "tables.time": "वेळ"
 }

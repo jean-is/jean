@@ -15,13 +15,18 @@ export const FORMAT = 1
 export const MADE = /** @type {const} */ (['text', 'number', 'select', 'multi-select', 'status', 'date', 'checkbox', 'link', 'email', 'phone', 'person', 'place', 'files', 'relation'])
 /** Worked out by Jean, never set: a formula's cells too (./formula.js). */
 export const COMPUTED = /** @type {const} */ (['created-by', 'created-at', 'changed-by', 'changed-at', 'formula'])
-export const TYPES = /** @type {const} */ ([...MADE, ...COMPUTED])
+/** Every kind: a picture among them, which people make and table_create's list, measured as it is, doesn't name. */
+export const TYPES = /** @type {const} */ ([...MADE, 'picture', ...COMPUTED])
 export const GROUPS = /** @type {const} */ (['todo', 'doing', 'done'])
+/** How many colours a choice or a person's face has, a whiteboard's seven. */
+export const HUES = 7
 const VIEWS = ['table', 'board', 'list', 'calendar', 'gallery']
 const CHOICES = new Set(['select', 'multi-select', 'status'])
 /** What a board's lanes are by: a choice, a step, a person or a box (D752). */
 const LANES = ['select', 'status', 'person', 'checkbox']
 const ULID = /^[0-9A-HJKMNP-TV-Z]{26}$/
+/** A file a picture's or a files cell names: in its collection's own folder, named by its content's SHA-256, so never a way out of it. */
+export const FILE = /^files\/[0-9a-f]{64}\.[a-z0-9]{1,8}$/
 export const PLACE = /^collections\/[0-9A-HJKMNP-TV-Z]{26}-[^/]+$/
 export const TIME = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
 // The words brains use for kinds of columns, as Jean's.
@@ -29,20 +34,23 @@ const ALIASES = /** @type {Record<string, PropertyType>} */ ({
   string: 'text', title: 'text', 'rich-text': 'text', integer: 'number', float: 'number', decimal: 'number', currency: 'number', money: 'number',
   url: 'link', boolean: 'checkbox', bool: 'checkbox', multiselect: 'multi-select', tags: 'multi-select', datetime: 'date', 'date-time': 'date',
   tel: 'phone', 'phone-number': 'phone', location: 'place', address: 'place', user: 'person', people: 'person', file: 'files', attachments: 'files',
+  image: 'picture', images: 'picture', photo: 'picture', photos: 'picture', pictures: 'picture',
 })
 
 /** @typedef {typeof TYPES[number]} PropertyType */
-/** @typedef {{ name: string, group?: typeof GROUPS[number] }} Option */
+/** A choice; hue: the colour the person picked for it, one of HUES by its place. @typedef {{ name: string, group?: typeof GROUPS[number], hue?: number }} Option */
 /**
  * A column; collection: a relation's, by its place; formula: a Formula's; format: a number's, money (in `currency`, its ISO 4217 code) or a share of a
- * hundred (D752); deleted: when it was removed. @typedef {{ id: string, name: string, type: PropertyType, options?: Option[], collection?: string, formula?: string, format?: 'money' | 'percent', currency?: string, deleted?: string }} Property
+ * hundred (D752); time: a date's, with a time of day; deleted: when it was removed. @typedef {{ id: string, name: string, type: PropertyType, options?: Option[], collection?: string, formula?: string, format?: 'money' | 'percent', currency?: string, time?: true, deleted?: string }} Property
  */
 /** @typedef {{ property: string, direction?: 'ascending' | 'descending' }} Sort */
 /** A rule of a view's filter. @typedef {{ property: string, op: import('./query.js').Op, value?: unknown }} Rule */
 /**
- * A view; filter: the rules a row meets to show, hidden: the columns it doesn't show, calculate: what each column's foot works out, 'none' kept as such (D752);
- * group: what a table view's rows and its board's lanes are grouped by, a board's own its lanes else.
- * @typedef {{ id: string, type: 'table' | 'board' | 'list' | 'calendar' | 'gallery', name?: string, group?: string, sort?: Sort[], filter?: { and: Rule[] }, hidden?: string[], calculate?: Partial<Record<string, import('./query.js').Total | 'none'>> }} View
+ * A view; filter: the rules a row meets to show, hidden: the columns it doesn't show, sort: the column its rows are sorted by, calculate: what each column's foot works out,
+ * 'none' kept as such (D752); group: what a table view's rows and its board's lanes are grouped by, a board's own its lanes else; date: the date column a calendar's rows
+ * are on, until: the one they last to. `table` is the collection's own arrangement, `board` and `calendar` what those are by; one with a name is a view the person kept,
+ * shown as its type, arranged on its own; deleted: when it was taken away, kept so that no copy brings it back.
+ * @typedef {{ id: string, type: 'table' | 'board' | 'list' | 'calendar' | 'gallery', name?: string, group?: string, date?: string, until?: string, sort?: Sort[], filter?: { and: Rule[] }, hidden?: string[], calculate?: Partial<Record<string, import('./query.js').Total | 'none'>>, deleted?: string }} View
  */
 /**
  * kept: the time of Jean's latest change the user kept, after which Jean's changes are marked (D491); order: the rows' ids in the
@@ -109,12 +117,16 @@ export function propertyFrom(column, taken) {
   const format = /^(money|currency)$/.test(raw) ? 'money' : column.format
   if (type === 'number' && (format === 'money' || format === 'percent')) property.format = format
   if (property.format === 'money' && /^[A-Z]{3}$/.test(column.currency)) property.currency = column.currency
+  if (type === 'date' && column.time === true) property.time = true
   if (type === 'relation' && !PLACE.test(property.collection = column.collection)) throw new Error(`${name}: a relation names its collection, one the project keeps by its place, or this one by its name.`)
   if (CHOICES.has(type)) {
-    const options = [...new Set((Array.isArray(column.options) ? column.options : []).map((/** @type {any} */ option) => String((option && typeof option === 'object' ? option.name : option) ?? '').trim()).filter(Boolean))]
+    const given = Array.isArray(column.options) ? column.options : [], named = (/** @type {any} */ option) => String((option && typeof option === 'object' ? option.name : option) ?? '').trim()
+    const options = [...new Set(given.map(named).filter(Boolean))]
+    // The colour each was given stays its own, whatever kind its column becomes.
+    const hue = (/** @type {string} */ name) => ((picked) => (Number.isInteger(picked) ? { hue: picked } : {}))(given.find((/** @type {any} */ option) => named(option) === name)?.hue)
     // A status with fewer than two steps is a select, whose choices come as values do (D491).
     if (type === 'status' && options.length < 2) property.type = type = 'select'
-    property.options = options.map((option, i) => (type === 'status' ? { name: option, group: GROUPS[i === 0 ? 0 : i === options.length - 1 ? 2 : 1] } : { name: option }))
+    property.options = options.map((option, i) => ({ name: option, ...(type === 'status' && { group: GROUPS[i === 0 ? 0 : i === options.length - 1 ? 2 : 1] }), ...hue(option) }))
   }
   return property
 }
@@ -164,6 +176,7 @@ export function tableProblems(table) {
     else if (property.type === 'relation' && !PLACE.test(property.collection)) problems.push(`${label}: a relation names its collection by its place.`)
     if (property?.format !== undefined && !(property.type === 'number' && ['money', 'percent'].includes(property.format))) problems.push(`${label}: only a number is money or a share.`)
     if (property?.currency !== undefined && !(property.format === 'money' && /^[A-Z]{3}$/.test(property.currency))) problems.push(`${label}: money's currency is its ISO 4217 code, such as EUR.`)
+    if (property?.time !== undefined && !(property.type === 'date' && property.time === true)) problems.push(`${label}: only a date takes a time.`)
   }
   if (table.kind && !(ids.get('note')?.type === 'text' && ids.get('area')?.type === 'relation' && !ids.get('note').deleted && !ids.get('area').deleted)) problems.push('A whiteboard keeps its notes\' words in note, and their areas in area.')
   if (!Array.isArray(table.views)) return [...problems, 'The table has no views.']
@@ -173,7 +186,9 @@ export function tableProblems(table) {
     if (typeof view?.id !== 'string' || views.has(view.id)) problems.push(`A view has no id of its own: "${view?.id}".`)
     views.add(view?.id)
     if (!VIEWS.includes(view?.type)) problems.push(`The view "${view?.id}": "${view?.type}" isn't a kind of view.`)
-    if (view?.type === 'board' && !LANES.includes(ids.get(view.group)?.type)) problems.push(`The view "${view.id}": a board is grouped by a select, status, person or checkbox column.`)
+    if (view?.name !== undefined && !(typeof view.name === 'string' && view.name.trim())) problems.push(`The view "${view.id}" needs a name.`)
+    if (view?.type === 'board' && !view.name && !LANES.includes(ids.get(view.group)?.type)) problems.push(`The view "${view.id}": a board is grouped by a select, status, person or checkbox column.`)
+    if (view?.type === 'calendar' && !view.name && !(ids.get(view.date)?.type === 'date' && (view.until === undefined || (ids.get(view.until)?.type === 'date' && view.until !== view.date)))) problems.push(`The view "${view.id}": a calendar is by a date column, its rows lasting until another.`)
     for (const sort of [...view?.sort ?? [], ...view?.filter?.and ?? []]) if (!ids.has(sort?.property)) problems.push(`The view "${view.id}" sorts or filters by a column the table hasn't: "${sort?.property}".`)
   }
   return problems
@@ -190,9 +205,40 @@ function optionProblems(property, label) {
     if (typeof option?.name !== 'string' || !option.name.trim() || seen.has(option.name)) problems.push(`${label}: each choice needs a name of its own.`)
     seen.add(option?.name)
     if (property.type === 'status' && !GROUPS.includes(option?.group)) problems.push(`${label}: the step "${option?.name}" is in no group: todo, doing or done.`)
+    if (option?.hue !== undefined && !(Number.isInteger(option.hue) && option.hue >= 0 && option.hue < HUES)) problems.push(`${label}: the choice "${option?.name}" has a colour that isn't one of the ${HUES}.`)
   }
   return problems
 }
+
+/**
+ * The colour a choice shows, one of HUES: the one the person picked, else its place among its column's choices; a step none until one is
+ * picked, its group's look saying where it stands. @param {Property} property @param {unknown} name @returns {number | undefined}
+ */
+export function hueOf(property, name) {
+  const at = property.options?.findIndex((option) => option.name === name) ?? -1
+  return at < 0 ? undefined : property.options?.[at].hue ?? (property.type === 'status' ? undefined : at % HUES)
+}
+/** The colour of a person's face, one of HUES, from their name: the same wherever it is read. @param {string} name */
+export const hueFor = (name) => [...name.normalize('NFKC').toLocaleLowerCase()].reduce((sum, letter) => (sum * 31 + (letter.codePointAt(0) ?? 0)) % 9973, 0) % HUES
+
+/**
+ * What a collection's calendar is by: its date columns, the one its rows are on, the first until one is picked, and the one they last until, if
+ * picked; null where no column is a date. @param {Pick<Table, 'properties' | 'views'>} table @returns {{ date: Property, until?: Property, dates: Property[] } | null}
+ */
+export function calendarOf(table) {
+  const dates = table.properties.filter((property) => property.type === 'date' && !property.deleted), view = table.views.find((one) => one.id === 'calendar'), date = dates.find((property) => property.id === view?.date) ?? dates[0]
+  return date ? { date, until: dates.find((property) => property.id === view?.until && property !== date), dates } : null
+}
+
+/** The views the person kept, each by its name, those taken away left out. @param {Pick<Table, 'views'>} table */
+export const keptViews = (table) => table.views.filter((view) => view.name && !view.deleted)
+/**
+ * What a view shows: the kept view of that id, else one proposed to this person under it (among theirs, with a name; D755), else the collection's own
+ * arrangement, with what the person arranged of it since and hasn't kept over it.
+ * @param {Pick<Table, 'views'>} table @param {string} [id] @param {Record<string, Partial<View>>} [yours] by view @returns {View}
+ */
+export const viewOf = (table, id, yours) => ((view) => ({ ...view, ...yours?.[view.id], id: view.id }))(keptViews(table).find((view) => view.id === id)
+  ?? (id && id !== 'table' && yours?.[id]?.name ? /** @type {View} */ ({ id, type: 'table' }) : table.views.find((view) => view.id === 'table') ?? /** @type {View} */ ({ id: 'table', type: 'table' })))
 
 /** The column that names a collection's rows: its first text column, else its first. @param {Table} table @returns {Property | undefined} */
 export const titleOf = (table) => ((live) => live.find((property) => property.type === 'text') ?? live[0])(table.properties.filter((property) => !property.deleted))
@@ -214,6 +260,7 @@ export function checkCell(property, value) {
   if (value === null) return null
   const choice = (/** @type {unknown} */ v) => typeof v === 'string' && v.trim() !== ''
   const steps = property.options?.map((option) => option.name) ?? []
+  const kept = /** @type {[(value: any) => boolean, string]} */ ([(v) => Array.isArray(v) && filesOf(v).length === v.length && v.every((file) => file.type === undefined || typeof file.type === 'string'), 'a list of files, each { name, file }, its file one the collection keeps'])
   const fits = /** @type {Record<Exclude<PropertyType, typeof COMPUTED[number]>, [(value: any) => boolean, string]>} */ ({
     text: [(v) => typeof v === 'string', 'text'],
     number: [(v) => typeof v === 'number' && Number.isFinite(v), 'a number'],
@@ -227,12 +274,15 @@ export function checkCell(property, value) {
     phone: [(v) => typeof v === 'string' && /^\+?[\d\s().\-/]{3,}$/.test(v) && /\d.*\d.*\d/.test(v), 'a phone number'],
     person: [(v) => typeof v === 'string', 'a name'],
     place: [(v) => typeof v === 'string' || (typeof v?.name === 'string' && ['lat', 'lon'].every((key) => v[key] === undefined || Number.isFinite(v[key]))), 'a place: its name, or { name, lat, lon }'],
-    files: [(v) => Array.isArray(v) && v.every((file) => typeof file?.name === 'string'), 'a list of files, each { name, file }'],
+    files: kept, picture: kept,
     relation: [(v) => typeof v === 'string' && ULID.test(v), 'a row of its collection, by its name or its id'],
   })
   const [check, what] = fits[/** @type {Exclude<PropertyType, typeof COMPUTED[number]>} */ (type)]
   return check(value) ? null : `${name} takes ${what}: ${JSON.stringify(value)} isn't one.`
 }
+
+/** The files a picture's or a files cell names, each `{ name, file, type? }`, its file one the collection keeps. @param {unknown} value @returns {{ name: string, file: string, type?: string }[]} */
+export const filesOf = (value) => (Array.isArray(value) ? value.filter((file) => typeof file?.name === 'string' && FILE.test(file?.file)) : [])
 
 /**
  * A value as a column of another kind holds it: its text as a number, a date, a link, choices by commas, the row `named` so…;
@@ -269,11 +319,12 @@ export function grown(table, values, at) {
 /**
  * The table renamed, or a column added (at the end or `at` a place among them all), renamed, made another kind, moved before or after another, taken away or brought back, or its
  * rows put in an order, as the user changes it in its view, or what its table view filters, hides and works out, given or made from it, or a Formula's
- * formula, each formula naming a column renamed written with its new name: a name
+ * formula, or a choice's colour, or a date's time of day, or what its calendar is by, or a view (`of`, else the collection's own) arranged, kept under a name with what it
+ * shows (the collection's own then whole again, its feet staying), renamed or taken away, each formula naming a column renamed written with its new name: a name
  * another column has gets a number, an empty one changes nothing, the last column stays, a board goes with its column's choices, and a
  * select or a status added or made groups one when there is none.
  * @param {Table} table
- * @param {{ name?: string, add?: { name: string, type: string, at?: number, collection?: string, options?: string[] }, rename?: { id: string, name: string }, retype?: { id: string, type: string, collection?: string, options?: string[] }, move?: { id: string, to: string, after: boolean }, remove?: string, restore?: string, order?: string[], formula?: { id: string, text: string }, number?: { id: string, format?: 'money' | 'percent', currency?: string }, view?: Partial<View> | ((view: View) => Partial<View>) }} edit
+ * @param {{ name?: string, add?: { name: string, type: string, at?: number, collection?: string, options?: string[] }, rename?: { id: string, name: string }, retype?: { id: string, type: string, collection?: string, options?: string[] }, move?: { id: string, to: string, after: boolean }, remove?: string, restore?: string, order?: string[], formula?: { id: string, text: string }, hue?: { id: string, name: string, hue?: number }, time?: { id: string, on: boolean }, calendar?: { date?: string, until?: string }, number?: { id: string, format?: 'money' | 'percent', currency?: string }, view?: Partial<View> | ((view: View) => Partial<View>), of?: string, keep?: Partial<View> & { name: string, from?: string }, named?: { id: string, name: string }, drop?: string }} edit
  * @param {string} at @returns {Table}
  */
 export function reshape(table, edit, at) {
@@ -300,6 +351,10 @@ export function reshape(table, edit, at) {
     properties = properties.map((property) => (property.id === id ? { ...property, name } : property.formula ? { ...property, formula: rewritten(property.formula, live, id, name) } : property))
   }
   if (edit.formula) properties = properties.map((property) => (property.id === edit.formula?.id ? { ...property, formula: edit.formula.text } : property))
+  // A date with a time of day, or without one again.
+  if (edit.time) properties = properties.map((property) => (property.id === edit.time?.id && property.type === 'date' ? (({ time, ...plain }) => ({ ...plain, ...(edit.time?.on && { time: /** @type {const} */ (true) }) }))(property) : property))
+  // A choice's colour picked, or none again, its place's then.
+  if (edit.hue) properties = properties.map((property) => (property.id === edit.hue?.id ? { ...property, options: property.options?.map(({ hue, ...option }) => ({ ...option, ...(option.name === edit.hue?.name ? edit.hue.hue !== undefined && { hue: edit.hue.hue } : hue !== undefined && { hue }) })) } : property))
   // A number made money in a currency, a share, or a plain number again.
   if (edit.number) properties = properties.map((property) => (property.id === edit.number?.id && property.type === 'number' ? (({ format, currency, ...plain }) => ({ ...plain, ...(edit.number?.format && { format: edit.number.format }), ...(edit.number?.format === 'money' && { currency: edit.number.currency }) }))(property) : property))
   // Another kind keeps its id, its name and the choices it had, as names; a relation, the collection it is to unless given another.
@@ -311,9 +366,26 @@ export function reshape(table, edit, at) {
   if (edit.remove && live.length > 1) properties = properties.map((property) => (property.id === edit.remove ? { ...property, deleted: at } : property))
   // Brought back where it was, numbered if another has its name by then.
   if (edit.restore) properties = properties.map((property) => (property.id === edit.restore && property.deleted ? (({ deleted, ...back }) => ({ ...back, name: free(back.name, back.id) }))(property) : property))
-  views = views.filter((view) => view.type !== 'board' || properties.some((property) => property.id === view.group && LANES.includes(property.type)))
-  if ((made?.type === 'select' || made?.type === 'status') && !table.kind && !views.some((view) => view.type === 'board')) views = [...views, { id: 'board', type: 'board', group: made.id }]
-  if (edit.view) views = views.map((view) => (view.type === 'table' ? { ...view, ...(typeof edit.view === 'function' ? edit.view(view) : edit.view) } : view))
+  views = views.filter((view) => view.id !== 'board' || properties.some((property) => property.id === view.group && LANES.includes(property.type)))
+  if ((made?.type === 'select' || made?.type === 'status') && !table.kind && !views.some((view) => view.id === 'board')) views = [...views, { id: 'board', type: 'board', group: made.id }]
+  /** A view with what it holds alone, nothing where it was told to hold none. @param {View} view @returns {View} */
+  const held = (view) => /** @type {View} */ (Object.fromEntries(Object.entries(view).filter(([, value]) => value != null)))
+  if (edit.view) views = views.map((view) => (view.id === (edit.of ?? 'table') ? held({ ...view, ...(typeof edit.view === 'function' ? edit.view(view) : edit.view), id: view.id }) : view))
+  // A view kept under a name, with what it shows: an id of its own, from when. The collection's own arrangement, kept as it is, is whole again;
+  // kept with anything one person arranged over it, it stays as it is for the others.
+  const { from = 'table', ...shown } = edit.keep ?? { name: '' }, source = shown.name.trim() && views.find((view) => view.id === from)
+  if (source) {
+    let id = `v${at.replace(/\D/g, '')}`
+    while (views.some((view) => view.id === id)) id += '0'
+    const kept = held({ ...source, ...shown, id, name: shown.name.trim() }), moved = source.id === 'table' && Object.keys(shown).every((key) => key === 'name' || key === 'type')
+    views = [...views.map((view) => (moved && view === source ? (({ group, filter, hidden, sort, ...whole }) => whole)(view) : view)), kept]
+  }
+  if (edit.named?.name.trim()) views = views.map((view) => (view.id === edit.named?.id && view.name ? { ...view, name: edit.named.name.trim() } : view))
+  if (edit.drop) views = views.map((view) => (view.id === edit.drop && view.name ? { id: view.id, type: view.type, name: view.name, deleted: at } : view))
+  // The calendar's date column picked, or the one its rows last until, none with ''; kept while they are dates, a row never lasting until the day it is on.
+  const was = calendarOf({ ...table, properties, views }), dated = (/** @type {string | undefined} */ id) => was?.dates.find((property) => property.id === id)
+  const [date, until] = [dated(edit.calendar?.date) ?? was?.date, edit.calendar?.until === undefined ? was?.until : dated(edit.calendar.until)]
+  views = [...views.filter((view) => view.id !== 'calendar'), ...(date && (edit.calendar || views.some((view) => view.id === 'calendar' && dated(view.date))) ? [/** @type {View} */ ({ id: 'calendar', type: 'calendar', date: date.id, ...(until && until !== date && { until: until.id }) })] : [])]
   return { ...table, name, properties, views, ...(edit.order && { order: edit.order }), changed: at }
 }
 
@@ -365,7 +437,7 @@ function isDate(value) {
 /**
  * Two copies' collection.json after Sync: the newer copy's, with the columns and views only the other
  * has, and each select's, multi-select's or status's choices from both, so that no cell's value
- * loses its choice; what the user kept, the later. The same column changed on both copies: the newer
+ * loses its choice; a view taken away on either stays so; what the user kept, the later. The same column changed on both copies: the newer
  * copy's wins, whole.
  * @param {Table} a @param {Table} b @returns {Table}
  */
@@ -375,7 +447,7 @@ export function mergeTables(a, b) {
     ? { ...mine, options: [...mine.options, ...theirs.options.filter((option) => !mine.options?.some((kept) => kept.name === option.name))] }
     : mine))
   const kept = [newer.kept, older.kept].filter(Boolean).sort().at(-1)
-  return { ...newer, properties, views: union(newer.views, older.views, (mine) => mine), ...(kept && { kept }) }
+  return { ...newer, properties, views: union(newer.views, older.views, (mine, theirs) => (theirs.deleted && !mine.deleted ? theirs : mine)), ...(kept && { kept }) }
 }
 
 /**

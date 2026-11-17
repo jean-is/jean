@@ -105,6 +105,13 @@
   },
   "tables.showAll": "সব কলাম দেখান",
   "tables.arranged": "বর্তমান বিন্যাস",
+  "tables.allRows": "সব সারি",
+  "tables.viewName": "ভিউয়ের নাম",
+  "tables.keepView": "ভিউ হিসেবে রাখুন",
+  "tables.keep": "রাখুন",
+  "tables.reset": "রিসেট করুন",
+  "tables.onlyYou": "এটি শুধু আপনি দেখছেন",
+  "tables.me": "আমি",
   "tables.plain": "সাধারণ সংখ্যা",
   "tables.money": "টাকার অঙ্ক",
   "tables.percent": "শতাংশ",
@@ -118,5 +125,23 @@
   "tables.made": {
     "one": "{count}টি নতুন সারি দেখা বাকি",
     "other": "{count}টি নতুন সারি দেখা বাকি"
-  }
+  },
+  "tables.open": "খুলুন",
+  "tables.choices": "বিকল্পগুলি",
+  "tables.addChoice": "বিকল্প যোগ করুন",
+  "tables.colour": "রং",
+  "tables.hue0": "সবুজ",
+  "tables.hue1": "ফিরোজা",
+  "tables.hue2": "নীল",
+  "tables.hue3": "বেগুনি",
+  "tables.hue4": "ম্যাজেন্টা",
+  "tables.hue5": "গোলাপি",
+  "tables.hue6": "ধূসর",
+  "tables.kind.picture": "ছবি",
+  "tables.gallery": "গ্যালারি",
+  "tables.addPicture": "ছবি যোগ করুন",
+  "tables.addFiles": "ফাইল যোগ করুন",
+  "tables.calendar": "ক্যালেন্ডার",
+  "tables.end": "শেষ",
+  "tables.time": "সময়"
 }

@@ -3,7 +3,7 @@
 // cards side by side, a table whose heads sort it, a chart drawn by Charts (D196), unlocked on sight, a form that adds a row to a
 // table of the page for this visit or sends its fields as the user's next message, a map or a diagram as the answers' own, and
 // an aside beside the rest where there is room. Copy gives its source. It grows as the answer writes it.
-// A part that names a collection (D633) shows it as it is and follows each change: Jean fills its lines from it (../tables/fill.js),
+// A part that names a collection (D633) shows it as it is and follows each change: Jean fills its lines from it (../fill/fill.js),
 // so the page never reads it, and a form adds a row to it as the user's own change. Only in a task of the project's own, never one
 // brought in from someone else's (D361, D378); there, and in a copy saved or shared, it shows what was kept of it then. Its `where`
 // keeps only some of the rows; one that can't be read says so. What its parts share (D670, ./live.js) is worked out anew at each draw from

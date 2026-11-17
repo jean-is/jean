@@ -58,3 +58,39 @@ export const tableCreate = (lang = 'en', { whiteboard = false } = {}) => ({
 })
 
 export const TABLE_CREATE = tableCreate()
+
+/** What a brain calls to read a table's rows, and to add or change some: beside table_create, so that the measures of brains give them as Jean does. @type {import('../../core/types.js').ToolSpec} */
+export const TABLE_ROWS = {
+  name: 'table_rows',
+  description: 'Read the rows of a table the user keeps, each with its id, which table_change needs. A filter keeps some: { property, op, value }, op being is, is-not, contains, is-empty, greater-than or less-than.',
+  parameters: { type: 'object', required: ['table'], properties: { table: { type: 'string', description: 'Its place, as table_create gave it' }, filter: { type: 'object' } } },
+}
+/** @type {import('../../core/types.js').ToolSpec} */
+export const TABLE_CHANGE = {
+  name: 'table_change',
+  description: 'Add or change rows of a table the user keeps: set each cell by its column\'s name; a row without its id is a new one; delete: true removes a row. The user sees each change, to accept or reject.',
+  parameters: { type: 'object', required: ['table', 'rows'], properties: {
+    table: { type: 'string', description: 'Its place, as table_create gave it' },
+    rows: { type: 'array', items: { type: 'object', properties: { row: { type: 'string' }, set: { type: 'object' }, delete: { type: 'boolean' } } } },
+    why: { type: 'string', description: 'What it comes from, in a few words, e.g. "the email of 23 October"' },
+  } },
+}
+
+/**
+ * What a brain calls to propose a view of a table (D755), in the words the measure of brains took (test/views/findings.md): what Jean makes of it
+ * is caps/views' `viewFrom()`. `description` in place of its own, to measure another. @param {string} [description] @returns {import('../../core/types.js').ToolSpec}
+ */
+export const tableView = (description = 'When the user asks to show, filter, sort or group the rows of a table they keep ("show only…", "just my…", "sort by…", "as a board"), propose a view with this, even after reading its rows, rather than listing them in your answer: the table then shows them itself, and the user keeps the view or not. Its columns are enough to write one. It changes nothing else. Name it in the user’s language. '
+  + 'filter: the rules a row meets, each { property, op, value }, op as in table_rows, or is-not-empty, at-least, at-most; a date as 2026-10-21; a person column’s value "@me" is whoever is looking.') => ({
+  name: 'table_view',
+  description,
+  parameters: { type: 'object', required: ['table', 'name'], properties: {
+    table: { type: 'string', description: 'Its place, as table_create gave it' },
+    name: { type: 'string' },
+    show: { type: 'string', enum: ['table', 'board', 'gallery', 'calendar'] },
+    filter: { type: 'array', items: { type: 'object', properties: { property: { type: 'string' }, op: { type: 'string' }, value: {} }, required: ['property', 'op'] } },
+    sort: { type: 'object', properties: { property: { type: 'string' }, direction: { type: 'string', enum: ['ascending', 'descending'] } }, required: ['property'] },
+    group: { type: 'string', description: 'A column to group the rows by' },
+    hide: { type: 'array', items: { type: 'string' }, description: 'Columns not to show' },
+  } },
+})

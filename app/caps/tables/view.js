@@ -6,11 +6,12 @@
 // made another kind, the rows sorted by it, a column added before or after it, hidden or taken away; the last head adds one.
 // A relation is to this collection or another of the project's, picked from Type's or the last head's list, and its cell picks a row there by its name.
 // A row is moved by its handle at its start, shown with the pointer or the keyboard on it: dragged, or with the arrows; a click or a right click on it
-// opens its menu, to insert a row under it, duplicate or delete it. A cell is selected or changed, ⌘Z undoing the user's last step and ⇧⌘Z doing it again; a Formula's
+// opens its menu, to open it as a sheet of all its columns, insert a row under it, duplicate or delete it. A cell is selected or changed, ⌘Z undoing the user's last step and ⇧⌘Z doing it again; a Formula's
 // opens a dialog to write the column's formula in. Its
 // name changes above it, beside Search, which keeps the rows with its words in any cell as the Creations page's does, Filter, the rules a row meets to show, Sort, the
-// rows sorted by a column once, and Settings: the layout, the columns shown, the filter and the sort; the table's foot works out a sum or
-// a share for each column. In the pane as in a document that holds it. lit-html, in Jean's own document, redrawn as the table
+// rows sorted by a column, and Settings: the layout, the columns shown, the filter and the sort; the table's foot works out a sum or
+// a share for each column. What is arranged is kept as a view under a name, picked from the bar's start; where others work on the collection too, it is
+// this person's alone until they keep it (D753). In the pane as in a document that holds it. lit-html, in Jean's own document, redrawn as the table
 // changes here or by the brain.
 import { html, svg, nothing, render } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
@@ -20,11 +21,13 @@ import { ref } from 'lit-html/directives/ref.js'
 import { signal, effect } from '@preact/signals-core'
 import { t, locale, intlLocales } from '../../core/i18n.js'
 import { notify, assistantName } from '../../ui/state.js'
+import { slots } from '../../ui/caps.js'
+import '../../ui/shown.js'
 import { reviewBar } from '../../ui/review.js'
 import { icons, icon } from '../../ui/menu-icons.js'
-import { shown, change, unkept, accept, reject, reread, reshapeTable, retype, collections, undoStep, load, wayOf, localCurrency, groupName } from './tables.js'
+import { shown, change, unkept, accept, reject, reread, reshapeTable, retype, collections, undoStep, load, wayOf, localCurrency, groupName, attach, yoursOf, alone, meIn } from './tables.js'
 import { query, valueOf, total, filterOf } from './query.js'
-import { titleOf, checkCell, notesOf, canonical } from './table.js'
+import { titleOf, checkCell, notesOf, canonical, hueOf, hueFor, filesOf, calendarOf, keptViews, viewOf, HUES } from './table.js'
 import { compile } from './formula.js'
 import { textOf, said as told, format, amount, digitsOf, calcOf } from './export.js'
 import { searchable } from '../../ui/mentions.js'
@@ -37,12 +40,14 @@ import { searchable } from '../../ui/mentions.js'
  * What a view keeps while it is drawn: its box, whether it is beside the task, how it shows ('' as a table, or 'board'), the column whose name is being changed, the one whose
  * menu lists the kinds, whether it lists the collections a relation can be to then, the project's collections, read again by `list()`,
  * what its menus' ids start with, the words Search keeps the rows with, the Formula whose dialog is open, saying when its formula can't be read,
- * and what was typed in cells their columns refuse, by "row column".
- * @typedef {{ box: HTMLElement, beside: boolean, as: Signal<string>, naming: Signal<string>, kinds: Signal<string>, relating: Signal<boolean>, collections: Signal<{ folder: string, name: string }[]>, list: () => void, id: string, reviewed?: boolean, search: Signal<string>, formula: Signal<string>, wrong: Signal<boolean>, refused: Signal<Map<string, string>>, from?: Element | null, digits?: Map<string, number>, folded: Signal<Set<string>>, by?: Property, calculate?: NonNullable<View['calculate']>, follow?: (row: string, value: unknown) => void }} State
+ * what was typed in cells their columns refuse, by "row column", the row open as a sheet, by its id (`openRow` opens one), the column whose menu lists its
+ * choices' colours, the collection as it is now, its calendar's month on show, whether the view picked is being named, what arranges
+ * the view on show (`arrange`), and its rows as it sorts them, a row moved by hand then theirs to order (`order`).
+ * @typedef {{ box: HTMLElement, beside: boolean, as: Signal<string>, naming: Signal<string>, kinds: Signal<string>, relating: Signal<boolean>, collections: Signal<{ folder: string, name: string }[]>, list: () => void, id: string, reviewed?: boolean, search: Signal<string>, formula: Signal<string>, wrong: Signal<boolean>, refused: Signal<Map<string, string>>, from?: Element | null, digits?: Map<string, number>, folded: Signal<Set<string>>, open: Signal<string>, choosing: Signal<string>, month: Signal<string>, titling: Signal<boolean>, arrange?: (edit: (view: View) => Partial<View>) => unknown, order?: () => Row[], openRow: (id: string) => void, now: () => Loaded | null, by?: Property, calculate?: NonNullable<View['calculate']>, follow?: (row: string, value: unknown) => void }} State
  */
 
-/** The kinds of column the user adds or makes one, in the order they are offered, then those Jean works out; never files, which no cell takes yet. */
-const KINDS = ['text', 'number', 'date', 'select', 'multi-select', 'status', 'checkbox', 'link', 'email', 'phone', 'person', 'place', 'formula']
+/** The kinds of column the user adds or makes one, in the order they are offered, then those Jean works out. */
+const KINDS = ['text', 'number', 'date', 'select', 'multi-select', 'status', 'checkbox', 'link', 'email', 'phone', 'person', 'place', 'picture', 'files', 'formula']
 const WORKED = ['created-by', 'created-at', 'changed-by', 'changed-at']
 /** A status's steps to start with, to do, under way and done, in the user's words, unless it has two choices or more to take as its steps. @param {Property} [property] */
 const steps = (property) => ((property?.options?.length ?? 0) > 1 ? undefined : ['todo', 'doing', 'done'].map((group) => t(`tables.step.${group}`)))
@@ -61,7 +66,7 @@ const GLYPHS = /** @type {Record<string, unknown>} */ ({
   phone: icon(svg`<path d="M9 4.5H6.5a2 2 0 0 0-2 2.1c.5 7.3 5.6 12.4 12.9 12.9a2 2 0 0 0 2.1-2V15L16 13.5l-2 2a11 11 0 0 1-5-5l2-2Z"/>`, 'flip-rtl'),
   person: who,
   place: icon(svg`<path d="M12 20.5s6.5-5.6 6.5-10.5a6.5 6.5 0 0 0-13 0c0 4.9 6.5 10.5 6.5 10.5Z"/><circle cx="12" cy="10" r="2.5"/>`),
-  files: icons.attach,
+  files: icons.attach, picture: icons.image,
   relation: icon(svg`<rect x="3.5" y="4" width="8" height="6" rx="2"/><rect x="12.5" y="14" width="8" height="6" rx="2"/><path d="M7.5 10v4.5a2.5 2.5 0 0 0 2.5 2.5h2.5"/>`, 'flip-rtl'),
   'created-by': who, 'changed-by': who, 'created-at': when, 'changed-at': when, formula: icon(svg`<path d="M13.5 4.5h-1a2.5 2.5 0 0 0-2.5 2.5v12.5M7 10h6M15 12.5l5 6M20 12.5l-5 6"/>`),
 })
@@ -97,7 +102,9 @@ export function view(holds, source = shown, beside = false) {
   const box = Object.assign(document.createElement('div'), { className: 'table-view' })
   const way = beside ? wayOf(source.peek()?.folder ?? '') : { as: signal(''), find: signal('') }
   /** @type {State} */
-  const state = { box, beside, as: way.as, naming: signal(''), kinds: signal(''), relating: signal(false), collections: signal(/** @type {{ folder: string, name: string }[]} */ ([])), list: () => {}, id: `table-${++drawn}`, search: way.find, formula: signal(''), wrong: signal(false), refused: signal(new Map()), folded: signal(new Set()) }
+  const state = { box, beside, as: way.as, naming: signal(''), kinds: signal(''), relating: signal(false), collections: signal(/** @type {{ folder: string, name: string }[]} */ ([])), list: () => {}, id: `table-${++drawn}`, search: way.find, formula: signal(''), wrong: signal(false), refused: signal(new Map()), folded: signal(new Set()), open: signal(''), choosing: signal(''), month: signal(''), titling: signal(false), now: () => source.peek(),
+    // A row open as a sheet, over the page, its first field taking the keyboard.
+    openRow: (id) => { state.open.value = id; requestAnimationFrame(() => import('../../ui/dialogs.js').then(() => { const sheet = /** @type {HTMLDialogElement | null} */ (box.querySelector('dialog.table-row')); if (sheet && !sheet.open) sheet.showModal(); /** @type {HTMLElement | null | undefined} */ (sheet?.querySelector('dd :is(input, select)'))?.focus() })) } }
   // Beside the task, how it shows is in the address until its pane closes.
   if (beside) holds.push(() => { way.as.value = way.find.value = '' })
   state.list = () => { const dir = source.peek()?.dir; if (dir) collections(dir).then((all) => { state.collections.value = all }) }
@@ -180,8 +187,10 @@ const leaving = ({ currentTarget, relatedTarget }) => { const box = /** @type {H
 const shape = (one, edit) => reshapeTable(one, edit).catch(() => reread(one))
 /** @param {Event} event */
 const typed = (event) => /** @type {HTMLInputElement} */ (event.target).value
-/** The rows in a column's order, from A to Z or from Z to A, empty cells last, kept as the rows' order. @param {Loaded} one @param {Property} property @param {'ascending' | 'descending'} direction */
-const sort = (one, property, direction) => shape(one, { order: query(one.table, one.rows, { sort: [{ property: property.id, direction }], locale: locale.value, names: one.names }).rows.map((row) => row.id) })
+/** The view on show sorted by a column, from A to Z or from Z to A, empty cells last; pressed again, sorted no more. @param {State} state @param {Property} property @param {string} direction */
+const sort = (state, property, direction) => state.arrange?.(({ sort: [was] = [] }) => ({ sort: was?.property === property.id && (was.direction ?? 'ascending') === direction ? undefined : [{ property: property.id, direction: /** @type {'ascending'} */ (direction) }] }))
+/** The ways to show a collection, each by its glyph. */
+const LAID = /** @type {Record<string, unknown>} */ ({ table: icons.table, board: icons.board, gallery: icons.image, calendar: GLYPHS.date })
 /** How a rule compares, as its column's kind allows. @param {Property} property @returns {Rule['op'][]} */
 const opsOf = ({ type }) => (type === 'checkbox' ? ['is'] : [...(type === 'number' || DATED.test(type) || type === 'select' || type === 'status' ? [] : /** @type {const} */ (['contains', 'does-not-contain'])),
   'is', 'is-not', ...(type === 'number' || DATED.test(type) ? /** @type {const} */ (['greater-than', 'less-than']) : []), 'is-empty', 'is-not-empty'])
@@ -190,8 +199,8 @@ const ruleOn = (property) => ({ property: property.id, op: opsOf(property)[0], .
 
 /** The kinds rows are grouped by, in Arrange and on the board: a choice, a status, a person, a box, or a date by its month, which no lane takes. */
 const GROUPED = /^(select|status|person|checkbox|date)$/
-/** The kinds whose cells are read over their fields (D752). */
-const READS = /^(number|date|status)$/
+/** The kinds whose cells are read over their fields (D752): a choice as its pill, a person with their face; and those with a button at their end, pictures and files. */
+const READS = /^(number|date|status|select|multi-select|person|picture|files)$/
 /** The kinds whose foot sums, averages and finds the smallest and the largest. */
 const NUMERIC = /^(number|formula)$/
 /** A total as its column writes it, a count and a share as such; nothing when there is no number to work out. @param {Row[]} rows @param {Property} property @param {import('./query.js').Total} how @param {number} [digits] */
@@ -211,29 +220,43 @@ function draw(one, state, go) {
   if (whiteboard) one = { ...one, rows: notesOf(one.rows) }
   const { as, search, id } = state
   const columns = one.table.properties.filter((property) => !property.deleted)
-  // What the table view groups, filters, hides and works out: a rule on a column gone is dropped, one with nothing to compare with keeps every row.
-  const settings = one.table.views.find((view) => view.type === 'table'), hidden = settings?.hidden ?? [], calculate = settings?.calculate ?? {}
-  const rules = (settings?.filter?.and ?? []).filter((rule) => columns.some((property) => property.id === rule.property))
+  // The view on show: one the person kept, picked by its name, else the collection's own, with what they arranged of it since and haven't kept (./tables.js `yoursOf()`).
+  // What it groups, filters, hides, sorts and works out: a rule or a sort on a column gone is dropped, a rule with nothing to compare with keeps every row.
+  const views = whiteboard ? [] : keptViews(one.table), yours = whiteboard ? {} : yoursOf(one).value, settings = viewOf(one.table, as.value, yours)
+  const at = settings.id, picked = at !== 'table', mine = yours[at], hidden = settings.hidden ?? [], calculate = settings.calculate ?? {}
+  // The views Jean proposed (D755), this person's alone until kept: those of theirs with a name, under an id no view kept has; and whether one is on show.
+  const proposed = Object.keys(yours).filter((key) => yours[key].name && !views.some((view) => view.id === key)), own = views.some((view) => view.id === at), offered = picked && !own
+  const rules = (settings.filter?.and ?? []).filter((rule) => columns.some((property) => property.id === rule.property))
+  const [sorted] = (settings.sort ?? []).flatMap((sort) => ((property) => (property ? [{ property, direction: sort.direction ?? 'ascending' }] : []))(columns.find((property) => property.id === sort.property)))
   // Grouped by what Arrange names; the board's lanes too, unless it is a date, else by the board's own, a status or a choice.
-  const by = columns.find((property) => property.id === settings?.group && GROUPED.test(property.type)), groups = columns.filter((property) => GROUPED.test(property.type))
-  const lanes = (by?.type !== 'date' && by) || columns.find((property) => property.id === one.table.views.find((view) => view.type === 'board')?.group)
+  const by = columns.find((property) => property.id === settings.group && GROUPED.test(property.type)), groups = columns.filter((property) => GROUPED.test(property.type))
+  const lanes = (by?.type !== 'date' && by) || columns.find((property) => property.id === one.table.views.find((view) => view.id === 'board')?.group)
+  // The gallery's pictures: its first column of them; the calendar's dates: the column picked, else its first.
+  const covers = columns.find((property) => property.type === 'picture'), dated = calendarOf(one.table)
   state.by = by
   state.calculate = calculate
-  const kept = filterOf(one.table), words = searchable(search.value.trim()), texts = words && indexOf(one, columns)
-  const rows = query(one.table, one.rows, { ...(kept.length && { filter: { and: kept } }), locale: locale.value, names: one.names }).rows.filter((row) => !texts || texts.get(row.id)?.includes(words))
-  // Each change made from the table view as it is by then, so that one made before the last is drawn isn't lost.
-  const view = (/** @type {(view: View) => Partial<View>} */ edit) => shape(one, { view: edit })
+  const kept = filterOf(one.table, settings), words = searchable(search.value.trim()), texts = words && indexOf(one, columns)
+  const asked = { sort: sorted ? [{ property: sorted.property.id, direction: sorted.direction }] : [], locale: locale.value, names: one.names, me: meIn(one) }
+  const rows = query(one.table, one.rows, { ...(kept.length && { filter: { and: kept } }), ...asked }).rows.filter((row) => !texts || texts.get(row.id)?.includes(words))
+  // Each change made from the view as it is by then, so that one made before the last is drawn isn't lost: for everyone, or, where others work on the
+  // collection too (Together's `others`) or something of the view is already this person's alone, for this person until they keep it.
+  const view = (/** @type {(view: View) => Partial<View>} */ edit) => ((all) => (!whiteboard && (all[at] || slots('others').some((part) => part.holds(one.folder)))
+    ? alone(one, at, { ...all[at], ...edit(viewOf(one.table, at, all)) }) : shape(one, { view: edit, of: at })))(yoursOf(one).peek())
+  state.arrange = view
+  // Sorted, a row moved by hand takes the rows' order as they show, which they are sorted by no more.
+  state.order = sorted ? () => (view(() => ({ sort: undefined })), query(one.table, one.rows, asked).rows) : undefined
   /** The filter's rules: each a column, how it compares and with what. @param {(rules: Rule[]) => Rule[]} change */
   const filter = (change) => view((now) => ({ filter: { and: change((now.filter?.and ?? []).filter((rule) => columns.some((property) => property.id === rule.property))) } }))
   const ruled = html`${rules.length ? listed(rules.map((rule, i) => {
     const property = /** @type {Property} */ (columns.find((one) => one.id === rule.property)), set = (/** @type {Partial<Rule>} */ edit) => filter((all) => all.map((one, j) => (i === j ? { ...one, ...edit } : one)))
     return html`<div class="table-rule" role="group" aria-label=${t('tables.filter')}><select id=${`${id}-rule-${i}`} title=${t('tables.column')} .value=${live(rule.property)} @change=${(/** @type {Event} */ e) => set(ruleOn(/** @type {Property} */ (columns.find((one) => one.id === typed(e)))))}>${columns.map((one) => html`<option value=${one.id} ?selected=${one === property}>${one.name}</option>`)}</select>
       ${keyed(property.id, html`<select title=${t('tables.compare')} .value=${live(rule.op)} @change=${(/** @type {Event} */ e) => set({ op: /** @type {Rule['op']} */ (typed(e)) })}>${opsOf(property).map((op) => html`<option value=${op} ?selected=${op === rule.op}>${t(`tables.op.${DATED.test(property.type) && op.endsWith('-than') ? (op === 'less-than' ? 'before' : 'after') : op}`)}</option>`)}</select>
-      ${rule.op.endsWith('empty') ? nothing : against(property, rule.value, (value) => set({ value }))}`)}
+      ${rule.op.endsWith('empty') ? nothing : against(property, rule.value, (value) => set({ value }), `${id}-me`)}`)}
       <button type="button" class="icon-button" aria-label=${t('action.remove')} @click=${() => filter((all) => all.filter((_, j) => j !== i))}>${icons.trash}</button></div>`
   })) : nothing}<button type="button" @click=${() => filter((all) => [...all, ruleOn(columns[0])])}>${icons.plus}${t('tables.addFilter')}</button>`
   const sorting = listed(columns.map((property) => html`<div class="table-line" role="group" aria-label=${property.name}>${GLYPHS[property.type]}<span dir="auto">${property.name}</span>
-    <button type="button" class="icon-button" aria-label=${t('tables.ascending')} @click=${() => sort(one, property, 'ascending')}>${ascending}</button><button type="button" class="icon-button" aria-label=${t('tables.descending')} @click=${() => sort(one, property, 'descending')}>${descending}</button></div>`))
+    ${[['ascending', ascending], ['descending', descending]].map(([direction, glyph]) => html`<button type="button" id=${direction === 'ascending' ? `${id}-sort-${property.id}` : nothing} class="icon-button" aria-label=${t(`tables.${direction}`)}
+      aria-pressed=${String(sorted?.property === property && sorted.direction === direction)} @click=${() => sort(state, property, /** @type {string} */ (direction))}>${glyph}</button>`)}</div>`))
   const off = columns.filter((property) => hidden.includes(property.id))
   /** Arrange pressed, never a chip, which would place its panel (WebKit freezes on an opener gone as it closes), then the keyboard on `field`. @param {string} field its id */
   const arrange = (field) => {
@@ -244,9 +267,10 @@ function draw(one, state, go) {
   /** What is arranged, as a chip: a press opens Arrange on it, its × takes it away. @param {unknown} glyph @param {unknown} words @param {string} field @param {string} label @param {() => unknown} away */
   const chip = (glyph, words, field, label, away) => html`<li class="table-chip"><button type="button" @click=${() => arrange(field)}>${glyph}${words}</button><button type="button" class="icon-button" aria-label=${label} @click=${away}>${icons.close}</button></li>`
   const chips = [...(by ? [chip(GLYPHS[by.type], html`<span dir="auto">${by.name}</span>`, `${id}-group`, t('tables.unchip', { name: by.name }), () => view(() => ({ group: undefined })))] : []),
-    ...kept.map((rule) => ((property, i) => chip(funnel, html`<span dir="auto">${property.name}</span>${rule.op === 'is' ? html`<span class="muted" dir="auto">${told(/** @type {Row} */ ({ cells: { [property.id]: rule.value } }), property, { locales: intlLocales(), labels: { yes: t('tables.yes'), no: t('tables.no') } })}</span>` : nothing}`,
+    ...kept.map((rule) => ((property, i) => chip(funnel, html`<span dir="auto">${property.name}</span>${rule.op === 'is' ? html`<span class="muted" dir="auto">${/** @type {{ me?: boolean } | null} */ (rule.value)?.me ? t('tables.me') : told(/** @type {Row} */ ({ cells: { [property.id]: rule.value } }), property, { locales: intlLocales(), labels: { yes: t('tables.yes'), no: t('tables.no') } })}</span>` : nothing}`,
       `${id}-rule-${i}`, t('tables.unchip', { name: property.name }), () => filter((all) => all.filter((_, j) => j !== i))))(/** @type {Property} */ (columns.find((one) => one.id === rule.property)), rules.indexOf(rule))),
-    ...(off.length ? [chip(shut, t('tables.hidden', { count: off.length }), `${id}-shown-${off[0].id}`, t('tables.showAll'), () => view(() => ({ hidden: [] })))] : [])]
+    ...(off.length ? [chip(shut, t('tables.hidden', { count: off.length }), `${id}-shown-${off[0].id}`, t('tables.showAll'), () => view(() => ({ hidden: [] })))] : []),
+    ...(sorted ? [chip(sorted.direction === 'descending' ? descending : ascending, html`<span dir="auto">${sorted.property.name}</span>`, `${id}-sort-${sorted.property.id}`, t('tables.unchip', { name: sorted.property.name }), () => view(() => ({ sort: undefined })))] : [])]
   // What Search or Filter keep when it is nothing, in a status there before its words; a collection with no rows at all says so too.
   const none = !one.rows.length ? t('tables.empty') : rows.length ? '' : words ? t('tables.noMatch', { words: search.value.trim() }) : kept.length ? t('tables.noneKept') : ''
   const marked = unkept(one), born = !whiteboard && !one.table.kept && marked.length ? new Map(one.rows.map((row) => [row.id, row.created])) : null
@@ -257,14 +281,49 @@ function draw(one, state, go) {
   const fresh = new Set(made ? [] : marked.flatMap((line) => [line.row, ...Object.keys(line.set ?? {}).map((id) => `${line.row} ${id}`)]))
   const cells = marked.reduce((count, line) => count + Math.max(1, Object.keys(line.set ?? {}).length), 0)
   // Find shows from five rows, as on the Creations page; Escape empties it, leaving the pane open.
-  const count = made ? t('tables.made', { count: one.rows.length }) : t('tables.changed', { count: cells, name: assistantName() }), board = Boolean(lanes) && as.value === 'board' && !whiteboard
+  // The names its Person columns offer, and the row open as a sheet, while the collection still has it.
+  const people = columns.some(({ type }) => type === 'person') ? namesIn(one, columns) : [], opened = state.open.value && one.rows.find((row) => row.id === state.open.value)
+  const count = made ? t('tables.made', { count: one.rows.length }) : t('tables.changed', { count: cells, name: assistantName() })
+  // Shown as a layout only where it has something to show: lanes, pictures or dates; a whiteboard's notes, as a table alone.
+  const offers = /** @type {Record<string, unknown>} */ ({ table: true, board: lanes, gallery: covers, calendar: dated }), asks = picked ? settings.type : as.value, way = !whiteboard && asks !== 'table' && offers[asks] ? asks : ''
+  /** The view picked named, its name's field taking the keyboard: once its menu has closed, since the field takes its button's place (WebKit freezes on an opener gone as its menu closes). */
+  const retitle = () => requestAnimationFrame(() => { state.titling.value = true; requestAnimationFrame(() => { const field = /** @type {HTMLInputElement | null} */ (state.box.querySelector('.table-titled')); field?.focus(); field?.select() }) })
+  /**
+   * What shows kept. A view kept, arranged by this person alone: as they arranged it, for everyone. Else a view of its own, picked: one Jean proposed, under
+   * the name it has, with nothing of the collection's own arrangement; else under a name from what it keeps, its group or how it shows, then theirs to
+   * write. @param {boolean} [fresh] a view of its own, whatever shows
+   */
+  const keep = async (fresh) => {
+    if (own && mine && !fresh) return shape(one, { view: () => mine, of: at }).then(() => alone(one, at))
+    const name = /** @type {string} */ ((offered && settings.name) || (kept.find((rule) => rule.op === 'is' && typeof rule.value === 'string')?.value ?? by?.name ?? t(`tables.${way || 'table'}`)))
+    const table = await shape(one, { keep: { ...(offered && { group: undefined, filter: undefined, hidden: undefined, sort: undefined }), ...mine, name, from: own ? at : 'table', type: /** @type {View['type']} */ (way || 'table') } })
+    const made = table && keptViews(table).find((view) => !views.some((had) => had.id === view.id))
+    if (!made) return
+    if (mine) await alone(one, at)
+    as.value = made.id
+    if (!offered) retitle()
+  }
+  /** The name's field left with Enter, or with Escape as it was; the keys go back to the views' button. @param {KeyboardEvent} event */
+  const titled = (event) => {
+    const field = /** @type {HTMLInputElement} */ (event.currentTarget)
+    if (event.isComposing || !/^(Enter|Escape)$/.test(event.key)) return
+    event.stopPropagation()
+    if (event.key === 'Escape') field.value = settings.name ?? ''
+    field.blur()
+    requestAnimationFrame(() => /** @type {HTMLElement | null} */ (state.box.querySelector('.table-kept'))?.focus())
+  }
   return html`<p class="visually-hidden" role="status">${(state.reviewed ||= cells > 0) ? count : ''}</p>${marked.length ? reviewBar({
       label: t('tables.review'), count, go: cells > 1 && !made ? go : null, previous: t('tables.previous'), next: t('tables.next'),
       accept: decided(accept, one), reject: decided(reject, one), acceptAll: t('tables.acceptAll'), rejectAll: t('tables.rejectAll'),
     }) : nothing}
     <div class="table-bar">${state.beside || whiteboard ? nothing : html`<input class="table-name" dir="auto" title=${t('tables.tableName')} .value=${live(one.table.name)} @change=${(/** @type {Event} */ e) => shape(one, { name: typed(e) })}>`}
-      ${lanes && !whiteboard ? html`<div class="table-shows" role="group" aria-label=${t('tables.views')}>${(/** @type {const} */ ([['', 'table'], ['board', 'board']])).map(([way, name]) => html`<button type="button" class="icon-button"
-        aria-label=${t(`tables.${name}`)} aria-pressed=${String(as.value === way)} @click=${() => { as.value = way }}>${icons[name]}</button>`)}</div>` : nothing}
+      ${!views.length && !proposed.length ? nothing : state.titling.value && own ? html`<input class="table-titled" dir="auto" title=${t('tables.viewName')} .value=${live(settings.name ?? '')} @change=${(/** @type {Event} */ e) => shape(one, { named: { id: at, name: typed(e) } })}
+        @blur=${() => { state.titling.value = false }} @keydown=${titled}>` : html`<button type="button" class="table-kept" popovertarget=${`${id}-views`}>${LAID[settings.type] ?? LAID.table}<span dir="auto">${picked ? settings.name : t('tables.allRows')}</span>${icons.chevron}</button>
+        <div id=${`${id}-views`} class="menu table-menu" popover @focusout=${leaving}>${listed([['', 'table', t('tables.allRows')], ...views.map((view) => [view.id, view.type, view.name]), ...proposed.map((key) => [key, yours[key].type, yours[key].name, assistantName()])].map(([to, type, name, from]) => html`<button type="button" aria-current=${String(to === (picked ? at : ''))}
+          popovertarget=${`${id}-views`} popovertargetaction="hide" @click=${() => { as.value = /** @type {string} */ (to) }}>${LAID[/** @type {string} */ (type)] ?? LAID.table}<span dir="auto">${name}</span>${from ? html`<span class="menu-value" dir="auto">${from}</span>` : nothing}${to === (picked ? at : '') ? icons.check : nothing}</button>`),
+          ...(own ? [[option(`${id}-views`, icons.compose, t('action.rename'), retitle), option(`${id}-views`, icons.trash, t('action.delete'), () => { as.value = ''; shape(one, { drop: at }) }, false, 'danger')]] : []))}</div>`}
+      ${(lanes || covers || dated) && !whiteboard ? html`<div class="table-shows" role="group" aria-label=${t('tables.views')}>${Object.keys(LAID).filter((name) => offers[name]).map((name) => html`<button type="button" class="icon-button"
+        aria-label=${t(`tables.${name}`)} aria-pressed=${String((way || 'table') === name)} @click=${() => (picked ? view(() => ({ type: /** @type {View['type']} */ (name) })) : (as.value = name === 'table' ? '' : name))}>${LAID[name]}</button>`)}</div>` : nothing}
       <div class="table-tools">${one.rows.length > 4 || search.value ? html`<label class="creations-find" for=${`${id}-find`}>${icons.search}<span class="visually-hidden">${t('tables.search')}</span><input id=${`${id}-find`} type="search" dir="auto" placeholder=${t('tables.search')} title=${t('tables.search')}
         .value=${live(search.value)} @input=${(/** @type {Event} */ e) => { search.value = typed(e) }} @keydown=${(/** @type {KeyboardEvent} */ e) => { if (e.key === 'Escape' && search.value && !e.isComposing) { e.stopPropagation(); search.value = '' } }}></label>` : nothing}
         <button type="button" class="icon-button" aria-label=${t('tables.arrange')} popovertarget=${`${id}-arrange`}>${sliders}</button>
@@ -274,10 +333,15 @@ function draw(one, state, go) {
           <h3>${t('tables.filter')}</h3>${ruled}
           <h3 id=${`${id}-shown`}>${t('tables.shown')}</h3><div class="table-lines" role="group" aria-labelledby=${`${id}-shown`}>${listed(columns.map((property) => html`<label class="table-line" for=${`${id}-shown-${property.id}`}><input id=${`${id}-shown-${property.id}`} type="checkbox" .checked=${live(!hidden.includes(property.id))} ?disabled=${property === titleOf(one.table)}
             @change=${(/** @type {Event} */ e) => view(({ hidden = [] }) => ({ hidden: /** @type {HTMLInputElement} */ (e.target).checked ? hidden.filter((id) => id !== property.id) : [...hidden, property.id] }))}>${GLYPHS[property.type]}<span dir="auto">${property.name}</span></label>`))}</div>
-          <h3>${t('tables.sort')}</h3>${sorting}</div>
+          <h3>${t('tables.sort')}</h3>${sorting}${whiteboard ? nothing : html`<hr>${option(`${id}-arrange`, icons.pin, t('tables.keepView'), () => keep(true))}`}</div>
       </div></div>
     ${chips.length ? html`<ul class="table-chips" aria-label=${t('tables.arranged')}>${chips}</ul>` : nothing}
-    ${board && lanes ? lanesOf(one, lanes, columns, rows, hidden, fresh, state) : grid(one, columns, columns.filter((property) => !hidden.includes(property.id)), rows, calculate, fresh, state)}${columns.filter(({ type }) => type === 'select').map((property) => html`<datalist id=${listOf(one, property)}>${(property.options ?? []).map((option) => html`<option value=${option.name}></option>`)}</datalist>`)}
+    <div class=${mine ? 'table-yours' : 'table-yours is-quiet'}><span role="status">${mine ? (offered ? t('tool.offer', { name: settings.name ?? '' }) : t('tables.onlyYou')) : nothing}</span>${mine ? html`<button type="button" class="table-keep" @click=${() => keep()}>${t('tables.keep')}</button><button type="button" class="table-keep"
+      @click=${() => { if (offered) as.value = ''; alone(one, at) }}>${t(offered ? 'offer.no' : 'tables.reset')}</button>` : nothing}</div>
+    ${way ? laid(way, { id, one, columns, rows, hidden, fresh, state, parts, by: lanes, covers, ...dated, pick: (/** @type {{ date?: string, until?: string }} */ calendar) => shape(one, { calendar }),
+      words: { add: t('tables.addRow'), unnamed: t('tables.unnamed'), wrong: t('tables.wrong'), subtotal: t('tables.subtotal'), changed: (/** @type {number} */ count) => t('tables.changed', { count, name: assistantName() }), none: dated ? t('tables.none', { column: dated.date.name }) : '', date: t('tables.kind.date'), end: t('tables.end') } }) : grid(one, columns, columns.filter((property) => !hidden.includes(property.id)), rows, calculate, fresh, state)}${columns.filter(({ type }) => type === 'select' || type === 'person').map((property) => html`<datalist id=${listOf(one, property)}>${(property.type === 'person' ? people : (property.options ?? []).map((option) => option.name)).map((name) => html`<option value=${name}></option>`)}</datalist>`)}
+    ${people.length ? html`<datalist id=${`${id}-me`}>${[t('tables.me'), ...people].map((name) => html`<option value=${name}></option>`)}</datalist>` : nothing}
+    ${opened ? sheet(one, opened, columns, fresh, state) : nothing}
     <div class=${none ? 'table-none' : 'table-none is-quiet'}><p role="status" dir="auto">${none || nothing}</p>${words && one.rows.length && !rows.length ? html`<button type="button" class="button"
       @click=${() => { search.value = ''; /** @type {HTMLElement | null} */ (state.box.querySelector('.creations-find input'))?.focus() }}>${t('tables.clear')}</button>` : nothing}</div>`
 }
@@ -333,8 +397,8 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
   const adds = (type) => html`<button type="button" popovertarget=${`${state.id}-add`} popovertargetaction="hide" @click=${() => added(type)}>${GLYPHS[type]}${t(`tables.kind.${type}`)}</button>`
   /** A row moved before or after another, as the rows' order. @param {string} id @param {string} to @param {boolean} after */
   const move = async (id, to, after) => {
-    const ids = one.rows.map((row) => row.id).filter((other) => other !== id)
-    if (id === to || ids.length === one.rows.length) return
+    if (id === to || !one.rows.some((row) => row.id === id)) return
+    const ids = (state.order?.() ?? one.rows).map((row) => row.id).filter((other) => other !== id)
     ids.splice(ids.indexOf(to) + (after ? 1 : 0), 0, id)
     await shape(one, { order: ids })
   }
@@ -396,6 +460,8 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
     requestAnimationFrame(() => /** @type {HTMLElement | null} */ (box.querySelector(`#${id} ${column ? '[aria-current="true"]' : '.submenu'}`) ?? box.querySelector(`#${id} hr + ul button`))?.focus())
   }
 
+  /** A column's menu showing its choices, each with the seven colours to pick its own from, or its actions again; the keyboard on the page's first row. @param {string} id @param {string} [column] */
+  const choose = (id, column = '') => { state.choosing.value = column; requestAnimationFrame(() => /** @type {HTMLElement | null} */ (box.querySelector(`#${id} button`))?.focus()) }
   /** A column's head, its menu under it, opened by a click or a right click, which Escape closes, leaving the pane; its name, which a long one cuts short on screen, whole in its tip. @param {Property} property @param {number} i */
   const heading = (property, i) => {
     const menu = `${state.id}-${i}`, place = one.table.properties.indexOf(property)
@@ -430,18 +496,24 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
           @keydown=${(/** @type {KeyboardEvent} */ e) => named(e, property)} @blur=${(/** @type {FocusEvent} */ e) => named(e, property)}>`
         : html`<button type="button" class="table-head" popovertarget=${menu} title=${property.name} draggable="true" @dragstart=${(/** @type {DragEvent} */ e) => e.dataTransfer?.setData('text/x-column', property.id)} @contextmenu=${(/** @type {MouseEvent} */ e) => { e.preventDefault(); /** @type {HTMLElement} */ (e.currentTarget).click() }}>${GLYPHS[property.type]}<span dir="auto">${property.name}</span></button>`}
       <div id=${menu} class="menu table-menu" popover @focusout=${leaving}
-        @toggle=${(/** @type {ToggleEvent} */ e) => { if (e.newState === 'closed' && kinds.peek() === property.id) kinds.value = '' }}>${kinds.value === property.id && relating.value
+        @toggle=${(/** @type {ToggleEvent} */ e) => { if (e.newState === 'closed' && kinds.peek() === property.id) kinds.value = ''; if (e.newState === 'closed' && state.choosing.peek() === property.id) state.choosing.value = '' }}>${state.choosing.value === property.id
+        ? listed([html`<button type="button" class="back" @click=${() => choose(menu)}>${icons.back}${t('tables.colour')}</button>`], (property.options ?? []).map((option) => html`<div class="table-line table-hues" role="group" aria-label=${option.name}>${pill(property, option.name)}
+          ${Array.from({ length: HUES }, (_, hue) => html`<button type="button" class="icon-button" aria-label=${t(`tables.hue${hue}`)} aria-pressed=${String(hueOf(property, option.name) === hue)}
+            @click=${() => shape(one, { hue: { id: property.id, name: option.name, hue: option.hue === hue ? undefined : hue } })}><i class="table-dot" data-hue=${hue}></i></button>`)}</div>`))
+        : kinds.value === property.id && relating.value
         ? listed([html`<button type="button" class="back" @click=${() => turn(menu, property.id)}>${icons.back}${t('tables.kind.relation')}</button>`], targets.map(target))
         : kinds.value === property.id
-        ? listed([html`<button type="button" class="back" @click=${() => turn(menu)}>${icons.back}${t('tables.type')}</button>`], ([...KINDS, ...WORKED].includes(property.type) || to ? KINDS : [property.type, ...KINDS]).map(kind), ...(property.type === 'number' ? [money(property, menu)] : []),
+        ? listed([html`<button type="button" class="back" @click=${() => turn(menu)}>${icons.back}${t('tables.type')}</button>`], ([...KINDS, ...WORKED].includes(property.type) || to ? KINDS : [property.type, ...KINDS]).map(kind), ...(property.type === 'number' ? [money(property, menu)] : []), ...(property.type === 'date' ? [[html`<button type="button" aria-current=${String(Boolean(property.time))} popovertarget=${menu} popovertargetaction="hide"
+            @click=${() => shape(one, { time: { id: property.id, on: !property.time } })}>${when}${t('tables.time')}${property.time ? icons.check : nothing}</button>`]] : []),
           [html`<button type="button" class="submenu" aria-current=${String(Boolean(to))} @click=${() => turn(menu, property.id, true)}>${GLYPHS.relation}${t('tables.kind.relation')}<span class="menu-value" dir="auto">${to
             && (targets.find((other) => other.folder === to)?.name ?? one.related?.get(to)?.table.name)}</span>${icons.chevron}</button>`], WORKED.map(kind))
         : listed([row(icons.compose, t('action.rename'), () => rename(property.id)),
-          html`<button type="button" class="submenu" @click=${() => turn(menu, property.id)}>${GLYPHS[property.type]}${t('tables.type')} <span class="menu-value">${t(`tables.kind.${property.type}`)}</span>${icons.chevron}</button>`],
-          [row(ascending, t('tables.ascending'), () => sort(one, property, 'ascending')), row(descending, t('tables.descending'), () => sort(one, property, 'descending'))],
+          html`<button type="button" class="submenu" @click=${() => turn(menu, property.id)}>${GLYPHS[property.type]}${t('tables.type')} <span class="menu-value">${t(`tables.kind.${property.type}`)}</span>${icons.chevron}</button>`,
+          ...(property.options?.length ? [html`<button type="button" class="submenu" @click=${() => choose(menu, property.id)}>${icons.palette}${t('tables.colour')}${icons.chevron}</button>`] : [])],
+          [row(ascending, t('tables.ascending'), () => sort(state, property, 'ascending')), row(descending, t('tables.descending'), () => sort(state, property, 'descending'))],
           [row(icons.back, t('tables.insertStart'), () => added('text', place)), row(icons.arrow, t('tables.insertEnd'), () => added('text', place + 1))],
           [row(toStart, t('tables.moveStart'), moved(shown[i - 1], false), !i), row(toEnd, t('tables.moveEnd'), moved(shown[i + 1], true), i === shown.length - 1)],
-          [row(shut, t('tables.hide'), () => shape(one, { view: ({ hidden = [] }) => ({ hidden: [...hidden, property.id] }) }), property === title)],
+          [row(shut, t('tables.hide'), () => state.arrange?.(({ hidden = [] }) => ({ hidden: [...hidden, property.id] })), property === title)],
           [row(icons.trash, t('action.delete'), gone, columns.length < 2, 'danger')])}</div>
     </th>`
   }
@@ -453,7 +525,7 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
     return html`<td><button type="button" class="table-total" popovertarget=${menu}>${how ? html`<span class="muted">${t(`tables.calc.${word(how)}`)}</span>
       ${totalOf(rows, property, how, state.digits?.get(property.id))}` : t('tables.calculate')}</button>
       <div id=${menu} class="menu table-menu" popover>${listed(ways.map((to) => html`<button type="button"
-        aria-current=${String(how === to)} popovertarget=${menu} popovertargetaction="hide" @click=${() => shape(one, { view: (now) => ({ calculate: { ...now.calculate, [property.id]: to || 'none' } }) })}>${t(`tables.calc.${word(to)}`)}${how === to ? icons.check : nothing}</button>`))}</div></td>`
+        aria-current=${String(how === to)} popovertarget=${menu} popovertargetaction="hide" @click=${() => state.arrange?.((now) => ({ calculate: { ...now.calculate, [property.id]: /** @type {import('./query.js').Total} */ (to || 'none') } }))}>${t(`tables.calc.${word(to)}`)}${how === to ? icons.check : nothing}</button>`))}</div></td>`
   }
 
   const blank = { [columns[0].id]: columns[0].type === 'checkbox' ? false : null }
@@ -465,14 +537,16 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
     ids.splice(ids.indexOf(row.id) + 1, 0, id)
     if (id) await reshapeTable(one, { order: ids }, false).catch(() => reread(one)).then(() => copy || focus(`tr[data-row="${CSS.escape(id)}"] :is(input, select)`))
   }
-  /** The rows' one menu, drawn for the row whose handle opens it: a row under it or a copy, moved up or down, or deleted. @param {number} i */
-  const rowMenu = (i) => { const row = rows[i], item = option.bind(null, `${state.id}-row`); render(listed([item(icons.plus, t('tables.insertBelow'), () => twin(row, false)), item(icons.copy, t('tables.duplicate'), () => twin(row))],
+  /** The rows' one menu, drawn for the row whose handle opens it: opened as a sheet, a row under it or a copy, moved up or down, or deleted. @param {number} i */
+  const rowMenu = (i) => { const row = rows[i], item = option.bind(null, `${state.id}-row`); render(listed([item(icons.fullscreen, t('tables.open'), () => state.openRow(row.id))], [item(icons.plus, t('tables.insertBelow'), () => twin(row, false)), item(icons.copy, t('tables.duplicate'), () => twin(row))],
     [item(up, t('tables.moveUp'), () => shove(i, -1), !i), item(down, t('tables.moveDown'), () => shove(i, 1), i === rows.length - 1)], [item(icons.trash, t('action.delete'), () => drop(row, i), false, 'danger')]), /** @type {HTMLElement} */ (box.querySelector(`#${state.id}-row`))) }
   /** A cell's field takes the keyboard, the caret at the end of its words. @param {Element | null | undefined} td */
   const into = (td) => {
     const field = /** @type {HTMLInputElement | null | undefined} */ (td?.querySelector('input, select')), formula = /** @type {HTMLElement | null | undefined} */ (td?.querySelector('[data-formula]'))
     if (formula) return open(String(formula.dataset.formula))
-    field?.focus()
+    // A picture's or a files cell has no field: its menu opens.
+    if (!field) return /** @type {HTMLElement | null | undefined} */ (td?.querySelector('.table-pick'))?.click()
+    field.focus()
     try { field?.setSelectionRange(field.value.length, field.value.length) } catch {}
   }
   /** A Formula's dialog, over the page, its formula's words taking the keyboard, the caret at their end. @param {string} id */
@@ -499,9 +573,9 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
    * @param {KeyboardEvent} event
    */
   const keys = (event) => {
-    // The arrows stop at a group's edge: its cell is the keys' way across.
+    // The arrows stop at a group's edge: its cell is the keys' way across. A button in a cell, which opens its choices, keeps its own keys.
     const at = /** @type {HTMLElement} */ (event.target), td = /** @type {HTMLElement | null} */ (at.closest(CELL)), cells = [...(td?.closest('tbody') ?? box).querySelectorAll(CELL)]
-    if (!td || event.isComposing || event.metaKey || event.ctrlKey || event.altKey) return
+    if (!td || at instanceof HTMLButtonElement || event.isComposing || event.metaKey || event.ctrlKey || event.altKey) return
     const [w, rtl] = [shown.length, getComputedStyle(td).direction === 'rtl'], by = at === td ? /** @type {Record<string, number>} */ ({ ArrowUp: -w, ArrowDown: w, ArrowLeft: rtl ? 1 : -1, ArrowRight: rtl ? -1 : 1 })[event.key]
       : ({ Enter: w, Escape: 0 })[event.key]
     if (event.key === 'Escape' && at instanceof HTMLInputElement && before.has(at)) at.value = /** @type {string} */ (before.get(at))
@@ -510,6 +584,13 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
     else /** @type {HTMLElement} */ (cells[cells.indexOf(td) + by] ?? td).focus()
     event.preventDefault()
     event.stopPropagation()
+  }
+  /** Files dragged over a picture's or a files cell are for it, not for the task's box. @param {DragEvent} event */
+  const filesOver = (event) => { if (event.dataTransfer?.types.includes('Files')) event.preventDefault(), event.stopPropagation() }
+  /** Dropped on such a cell, or pasted while it has the keys, they are its own. @param {Row} row @param {Property} property */
+  const filesIn = (row, property) => (/** @type {DragEvent | ClipboardEvent} */ event) => {
+    const files = [...('dataTransfer' in event ? event.dataTransfer : event.clipboardData)?.files ?? []]
+    if (files.length) event.preventDefault(), event.stopPropagation(), given(one, row, property, files)
   }
   /** Each row's place among the rows shown, which its handle moves it by. */
   const place = new Map(rows.map((row, i) => [row.id, i]))
@@ -523,7 +604,8 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
           const changed = fresh.has(`${row.id} ${property.id}`), tip = changed ? t('tables.changed', { count: 1, name: assistantName() }) : nothing, content = cell(one, row, property, state)
           // The column that names the rows heads its row.
           const classes = `${changed ? 'is-jean ' : ''}${READS.test(property.type) ? 'is-read' : ''}`
-          return property === title ? html`<th scope="row" tabindex="-1" class=${classes} title=${tip}>${content}</th>` : html`<td tabindex="-1" class=${classes} title=${tip}>${content}</td>`
+          const takes = /^(picture|files)$/.test(property.type) ? filesIn(row, property) : undefined
+          return property === title ? html`<th scope="row" tabindex="-1" class=${classes} title=${tip}>${content}</th>` : html`<td tabindex="-1" class=${classes} title=${tip} @dragover=${takes && filesOver} @drop=${takes} @paste=${takes}>${content}</td>`
         })}<td class=${fresh.has(row.id) ? 'table-decide' : ''}>${fresh.has(row.id) ? decide(one, row.id) : nothing}</td>
       </tr>`)(/** @type {number} */ (place.get(row.id)))
   /** Where a row whose group's cell changed has gone, said, the keys on that cell again (D752). */
@@ -542,7 +624,7 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
     const fold = () => { const all = new Set(state.folded.peek()); if (!all.delete(key)) all.add(key); state.folded.value = all }
     const onto = (/** @type {DragEvent} */ e) => { const id = e.dataTransfer?.getData('text/x-row'); left(); if (id && by && group) e.preventDefault(), edit(one, { row: id, set: { [by.id]: group.value } }) }
     return html`<tbody @dragleave=${(/** @type {DragEvent} */ e) => !box.contains(/** @type {Node | null} */ (e.relatedTarget)) && left()} @keydown=${keys}
-        @click=${(/** @type {MouseEvent} */ e) => { const at = /** @type {HTMLInputElement} */ (e.target); if (at.matches(`${CELL}, [data-formula]`)) into(at.closest(CELL)); else if (at.type === 'date') try { at.showPicker() } catch {} }}
+        @click=${(/** @type {MouseEvent} */ e) => { const at = /** @type {HTMLInputElement} */ (e.target); if (at.matches(`${CELL}, [data-formula]`)) into(at.closest(CELL)); else if (/^date/.test(at.type)) try { at.showPicker() } catch {} }}
         @focusin=${(/** @type {FocusEvent} */ e) => e.target instanceof HTMLInputElement && e.target.type !== 'checkbox' && before.set(e.target, e.target.value)}>${group && by ? html`<tr class="table-group"
         @dragover=${(/** @type {DragEvent} */ e) => !DATED.test(by.type) && e.dataTransfer?.types.includes('text/x-row') && e.preventDefault()} @drop=${onto}><td class="table-grip"></td>
         <th scope="rowgroup"><button type="button" class="table-fold" aria-expanded=${String(!shut)} @click=${fold}>${icons.chevron}<span dir="auto">${groupName(group.value, by)}</span>
@@ -557,7 +639,7 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
         : body(rows)}
       <tfoot><tr><td class="table-grip"></td><td colspan=${shown.length + 1}><button type="button" class="table-add" @click=${add}>${icons.plus}${t('tables.addRow')}</button></td></tr>
         <tr><td class="table-grip"></td>${shown.map(foot)}<td></td></tr></tfoot>
-    </table></div><div class="table-fade" aria-hidden="true"></div><div id=${`${state.id}-row`} class="menu table-menu" popover></div>
+    </table></div><div class="table-fade" aria-hidden="true"></div><div id=${`${state.id}-row`} class="menu table-menu" popover></div><div id=${`${state.id}-pick`} class="menu table-menu table-picks" popover @focusout=${leaving}></div>
     ${editing ? html`<dialog class="sheet table-formula" aria-label=${editing.name} @close=${() => { state.formula.value = '' }} @keydown=${(/** @type {KeyboardEvent} */ e) => e.key === 'Escape' && e.stopPropagation()}>
       <form method="dialog" @submit=${(/** @type {SubmitEvent} */ e) => save(e, editing)}>
         <header class="dialog-head"><h2 dir="auto">${GLYPHS.formula}${editing.name}</h2><button type="button" class="icon-button" aria-label=${t('action.close')} @click=${() => /** @type {HTMLDialogElement | null} */ (box.querySelector('dialog.table-formula'))?.close()}>${icons.close}</button></header>
@@ -568,11 +650,19 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
 }
 
 /**
- * A cell as its column's kind changes it: a box to tick, a number, a date, a step or a choice, a few
- * choices, text; what Jean works out, and files, as they are. Named by its column, in its tip too.
- * @param {Loaded} one @param {Row} row @param {Property} property @param {State} state
+ * A date with a time as its field takes it, 2026-11-20T14:30 here: one written with a zone, as a brain may, at this device's hour; one with no time, at
+ * midnight, until it is given one. @param {unknown} value
  */
-function cell(one, row, property, state) {
+const clockOf = (value) => (typeof value !== 'string' || !value ? '' : !value.includes('T') ? `${value}T00:00` : /(Z|[+-]\d{2}:\d{2})$/.test(value) ? ((at) => (Number.isNaN(at.getTime()) ? '' : new Date(at.getTime() - at.getTimezoneOffset() * 6e4).toISOString().slice(0, 16)))(new Date(value)) : value.slice(0, 16))
+
+/**
+ * A cell as its column's kind changes it: a box to tick, a number, a date, a step or a choice, a few
+ * choices, text; what Jean works out, and files, as they are. Named by its column, in its tip too. A choice reads as its pill, in its colour,
+ * several as theirs, with a button for their menu (`pick()`), by its id, the table's or a sheet's own; a person with their face; pictures small and files by
+ * their names, with a button for their menu too (`filed()`).
+ * @param {Loaded} one @param {Row} row @param {Property} property @param {State} state @param {string} [menu]
+ */
+function cell(one, row, property, state, menu = `${state.id}-pick`) {
   const value = valueOf(row, property)
   const set = (/** @type {unknown} */ next, /** @type {Event} */ event) => edit(one, { row: row.id, set: { [property.id]: next } }, event).then((done) => { if (done && state.by?.id === property.id) state.follow?.(row.id, next) })
   const read = (/** @type {Event} */ event) => /** @type {HTMLInputElement} */ (event.target)
@@ -581,14 +671,17 @@ function cell(one, row, property, state) {
     case 'number': return html`${value === null ? nothing : reading(said(row, property, one.names, state.digits?.get(property.id)), 'is-amount')}<input type="number" dir="ltr" step="any" title=${property.name}
       data-money=${property.format === 'money' && property.currency ? new Intl.DisplayNames(intlLocales(), { type: 'currency' }).of(property.currency) : nothing} .value=${live(value === null ? '' : String(value))}
       @change=${(/** @type {Event} */ e) => set(read(e).value === '' ? null : read(e).valueAsNumber, e)}>`
-    case 'date': return html`${value ? reading(said(row, property, one.names)) : nothing}<input type="date" title=${property.name} .value=${live(String(value ?? '').slice(0, 10))} @change=${(/** @type {Event} */ e) => set(read(e).value || null, e)}>`
-    case 'status': return html`${value ? reading(html`<span class="table-pill" data-group=${property.options?.find((option) => option.name === value)?.group ?? nothing}>${value}</span>`) : nothing}${choice(one, row, property, state)}`
-    case 'relation':
-    case 'select': return choice(one, row, property, state)
-    case 'multi-select': return html`<input dir="auto" title=${property.name} .value=${live(Array.isArray(value) ? value.join(', ') : '')}
-      @change=${(/** @type {Event} */ e) => set(read(e).value.split(/[,،、]/).map((one) => one.trim()).filter(Boolean), e)}>`
+    case 'date': { const timed = property.time || String(value ?? '').includes('T'); return html`${value ? reading(said(row, property, one.names)) : nothing}<input type=${timed ? 'datetime-local' : 'date'} title=${property.name} .value=${live(timed ? clockOf(value) : String(value ?? '').slice(0, 10))} @change=${(/** @type {Event} */ e) => set(read(e).value || null, e)}>` }
+    case 'status':
+    case 'select': return html`${value ? reading(pill(property, value)) : nothing}${choice(one, row, property, state)}`
+    case 'person': return html`${value ? reading(html`${face(String(value))}<span dir="auto">${value}</span>`) : nothing}${choice(one, row, property, state)}`
+    case 'relation': return choice(one, row, property, state)
+    case 'multi-select': return html`${Array.isArray(value) && value.length ? reading(value.map((name) => pill(property, name)), 'is-pills') : nothing}<input dir="auto" title=${property.name} .value=${live(Array.isArray(value) ? value.join(', ') : '')}
+      @change=${(/** @type {Event} */ e) => set(read(e).value.split(/[,،、]/).map((one) => one.trim()).filter(Boolean), e)}><button type="button" class="icon-button table-pick" aria-label=${t('tables.choices')} popovertarget=${menu} @click=${() => pick(one, row, property, state, menu)}>${icons.chevron}</button>`
     case 'formula': return html`<span dir="auto" data-formula=${property.id}>${said(row, property, one.names)}</span>`
-    case 'files':
+    case 'picture':
+    case 'files': { const all = filesOf(value); return html`<div class="table-files">${all.map((file) => (property.type === 'picture' ? pictured(one, file) : html`<span class="table-file" dir="auto">${icons.attach}${file.name}</span>`))}</div><button type="button" class="icon-button table-pick"
+      aria-label=${t(`tables.kind.${property.type}`)} title=${all.map((file) => file.name).join(', ') || nothing} popovertarget=${menu} @click=${() => filed(one, row, property, state, menu)}>${icons.chevron}</button>` }
     case 'created-by':
     case 'changed-by': return html`<span dir="auto">${textOf(row, property)}</span>`
     case 'created-at':
@@ -608,14 +701,28 @@ function cell(one, row, property, state) {
 }
 
 /**
- * What a rule compares with, as its column's kind takes it: ticked or not, a choice, a number, a date, else text.
- * @param {Property} property @param {unknown} value @param {(value: unknown) => void} set
+ * A row open as a sheet, over the page: every column, those the table hides too, its name beside its cell, changed there as in the table; a
+ * cell Jean changed is marked. Escape closes it alone. @param {Loaded} one @param {Row} row @param {Property[]} columns @param {Set<string>} fresh @param {State} state
  */
-function against(property, value, set) {
-  const now = String(value ?? ''), change = (/** @type {Event & { target: HTMLInputElement }} */ { target: field }) => set(property.type === 'checkbox' ? field.value === 'true' : field.type === 'number' && field.value ? field.valueAsNumber : field.value)
+function sheet(one, row, columns, fresh, state) {
+  const title = /** @type {Property} */ (titleOf(one.table)), name = textOf(row, title) || t('tables.unnamed'), menu = `${state.id}-sheet-pick`
+  return html`<dialog class="sheet table-row" aria-label=${name} @close=${() => { state.open.value = '' }} @keydown=${(/** @type {KeyboardEvent} */ e) => e.key === 'Escape' && e.stopPropagation()}>
+    <header class="dialog-head"><h2 dir="auto">${name}</h2><button type="button" class="icon-button" aria-label=${t('action.close')} @click=${(/** @type {Event} */ e) => /** @type {Element} */ (e.currentTarget).closest('dialog')?.close()}>${icons.close}</button></header>
+    <dl class="table-fields">${columns.map((property) => html`<div><dt>${GLYPHS[property.type]}<span dir="auto">${property.name}</span></dt>
+      <dd class=${`${fresh.has(`${row.id} ${property.id}`) ? 'is-jean ' : ''}${READS.test(property.type) ? 'is-read' : ''}`}>${cell(one, row, property, state, menu)}</dd></div>`)}</dl>
+    <div id=${menu} class="menu table-menu table-picks" popover @focusout=${leaving}></div></dialog>`
+}
+
+/**
+ * What a rule compares with, as its column's kind takes it: ticked or not, a choice, a number, a date, else text.
+ * A person's offers the names its column knows after "Me", the person looking, whoever they are (query.js). @param {Property} property @param {unknown} value @param {(value: unknown) => void} set @param {string} people the id of that list
+ */
+function against(property, value, set, people) {
+  const person = property.type === 'person', now = /** @type {{ me?: boolean } | null} */ (value)?.me ? t('tables.me') : String(value ?? '')
+  const change = (/** @type {Event & { target: HTMLInputElement }} */ { target: field }) => set(property.type === 'checkbox' ? field.value === 'true' : field.type === 'number' && field.value ? field.valueAsNumber : person && field.value === t('tables.me') ? { me: true } : field.value)
   if (property.type === 'checkbox' || property.options) return html`<select title=${property.name} .value=${live(now)} @change=${change}>${(property.options
     ? [['', '—'], ...property.options.map(({ name }) => [name, name])] : [['true', t('tables.yes')], ['false', t('tables.no')]]).map(([id, name]) => html`<option value=${id} ?selected=${id === now}>${name}</option>`)}</select>`
-  return html`<input dir="auto" type=${property.type === 'number' ? 'number' : DATED.test(property.type) ? 'date' : 'text'} title=${property.name} .value=${now} @change=${change}>`
+  return html`<input dir="auto" type=${property.type === 'number' ? 'number' : DATED.test(property.type) ? 'date' : 'text'} list=${person ? people : nothing} title=${property.name} .value=${now} @change=${change}>`
 }
 
 /** The id of the list of a select's choices, one a column, drawn with the view, which its fields hold only in use (`choice()`). @param {Loaded} one @param {Property} property */
@@ -623,7 +730,7 @@ const listOf = (one, property) => `choices-${one.table.id}-${property.id}`
 
 /**
  * A step to pick among a status's, a row among those of the collection a relation is to (`related()`), or a choice among a select's, where typing a
- * new one adds it (D491). A select's field holds its column's list only with the pointer or the keyboard on it: in every row, the style Chromium
+ * new one adds it (D491), as a name among those a Person's column knows (`namesIn()`). A select's field holds its column's list only with the pointer or the keyboard on it: in every row, the style Chromium
  * works out grows with their square, 100 s for eight such columns of 3,000 rows. Its row gone to another group, the keys follow it.
  * @param {Loaded} one @param {Row} row @param {Property} property @param {State} state
  */
@@ -631,7 +738,7 @@ function choice(one, row, property, state) {
   const value = /** @type {string | null} */ (valueOf(row, property)), next = (/** @type {Event} */ event) => /** @type {HTMLInputElement} */ (event.target).value.trim() || null
   const set = (/** @type {Event} */ event) => ((to) => edit(one, { row: row.id, set: { [property.id]: to } }, event).then((done) => { if (done && state.by?.id === property.id) state.follow?.(row.id, to) }))(next(event))
   if (property.type === 'relation') return related(one, property, value, set)
-  if (property.type !== 'select') return html`<select title=${property.name} .value=${live((property.options ?? []).some(({ name }) => name === value) ? value : '')} @change=${set}>
+  if (property.type !== 'select' && property.type !== 'person') return html`<select title=${property.name} .value=${live((property.options ?? []).some(({ name }) => name === value) ? value : '')} @change=${set}>
       <option value="">—</option>${(property.options ?? []).map(({ name }) => html`<option value=${name} ?selected=${name === value}>${name}</option>`)}
     </select>`
   const on = (/** @type {Event} */ { currentTarget }) => /** @type {Element} */ (currentTarget).setAttribute('list', listOf(one, property))
@@ -675,38 +782,83 @@ const said = (row, property, names, digits) => {
  * a day in the user's words, a step as its pill. Seen, never read: its field is what the keys and a screen reader reach. @param {unknown} words @param {string} [kind]
  */
 const reading = (words, kind = '') => html`<bdi class=${`table-read ${kind}`} aria-hidden="true">${words}</bdi>`
+/** A choice as its pill, in its colour (`hueOf()`), a step in its group's look until one is picked. @param {Property} property @param {unknown} name */
+const pill = (property, name) => html`<span class="table-pill" dir="auto" data-hue=${hueOf(property, name) ?? nothing} data-group=${property.options?.find((option) => option.name === name)?.group ?? nothing}>${name}</span>`
+/** A person's face: their name's first letter on their colour, the same wherever the name is read. @param {string} name */
+const face = (name) => html`<span class="table-face" data-hue=${hueFor(name)}>${[...name.trim()][0] ?? ''}</span>`
+/**
+ * The names a Person's field offers: those the collection's Person columns hold, then those other capabilities know of, the people worked with
+ * on it and the people met (their `names` slot), and the person's own, as the language sorts them. @param {Loaded} one @param {Property[]} columns
+ */
+const namesIn = (one, columns) => [...new Set([...one.rows.flatMap((row) => columns.flatMap((property) => (property.type === 'person' ? [row.cells[property.id]] : []))),
+  ...slots('names').flatMap((part) => part.of(one.folder)), meIn(one)].filter((name) => typeof name === 'string' && name.trim()))].sort((a, b) => a.localeCompare(b, intlLocales()))
 
 /**
- * The board: a lane for each step or choice, in their order, then one for rows with none, of the rows the view keeps; each card its row's
- * name, two of its other cells shown, and its own step or choice to move it; dragged, it moves to the lane it is dropped in.
- * @param {Loaded} one @param {Property} by @param {Property[]} columns @param {Row[]} rows @param {string[]} hidden @param {Set<string>} fresh @param {State} state
+ * A cell's menu drawn again after a change of its own, from the collection, its row and its column as they are by then.
+ * @param {typeof pick} draw @param {Row} row @param {Property} property @param {State} state @param {string} menu
  */
-function lanesOf(one, by, columns, rows, hidden, fresh, state) {
-  const { groups = [] } = query(one.table, rows, { group: { property: by.id }, locale: locale.value })
-  const title = columns.find((property) => property.type === 'text') ?? columns[0]
-  const others = columns.filter((property) => property !== title && property !== by && !hidden.includes(property.id)).slice(0, 2)
-  // Each lane's subtotal: of the first column whose foot works out a number.
-  const summed = columns.find((property) => /^(sum|average|min|max)$/.test(calcOf(property, state.calculate)))
-  const drop = (/** @type {unknown} */ value) => (/** @type {DragEvent} */ event) => {
-    event.preventDefault()
-    const row = event.dataTransfer?.getData('text/x-row')
-    if (row) edit(one, { row, set: { [by.id]: value } })
+function again(draw, row, property, state, menu) {
+  const now = state.now(), next = now?.rows.find(({ id }) => id === row.id), column = now?.table.properties.find(({ id }) => id === property.id)
+  if (now && next && column) draw(now, next, column, state, menu)
+}
+/** A picture a cell names, read from the collection's folder once it is on the page (ui/shown.js). @param {Loaded} one @param {{ file: string, type?: string }} file */
+const pictured = (one, file) => html`<app-shared uri=${`${one.folder}/${file.file}`} type=${file.type ?? nothing}></app-shared>`
+/** Files given to a cell, kept with the collection (`attach()`); one it can't take, no picture or too big, is said. @param {Loaded} one @param {Row} row @param {Property} property @param {File[]} files */
+const given = (one, row, property, files) => attach(one, row, property, files).then((left) => left > 0, () => true).then((left) => { if (left) notify(t('tables.wrong'), { alert: true }) })
+/**
+ * The menu of a picture's or a files cell, drawn for the cell whose button opens it: each file by its name, which opens it beside the task as any
+ * file is, with what takes it away from the cell, then what adds some from the device; each change is the cell's, the menu then drawn again.
+ * @param {Loaded} one @param {Row} row @param {Property} property @param {State} state @param {string} menu its id
+ */
+function filed(one, row, property, state, menu) {
+  const box = /** @type {HTMLElement} */ (state.box.querySelector(`#${menu}`)), all = filesOf(valueOf(row, property)), picture = property.type === 'picture'
+  const open = (/** @type {typeof all[number]} */ file) => {
+    box.hidePopover()
+    ;/** @type {HTMLDialogElement | null} */ (state.box.querySelector('dialog.table-row'))?.close()
+    import('../../ui/preview.js').then(({ preview }) => preview({ uri: `${one.folder}/${file.file}`, name: file.name, title: file.name.replace(/\.[^.]+$/, '') || file.name, mimeType: file.type }, true))
   }
-  return html`<div class="table-board">${groups.map(({ value, rows }) => {
-    const name = groupName(value, by), how = summed && calcOf(summed, state.calculate)
-    return html`<section class="table-lane" aria-label=${name} @dragover=${(/** @type {DragEvent} */ e) => e.preventDefault()} @drop=${drop(value)}>
-      <h3><span dir="auto">${name}</span> <span class="muted">${summed && how ? html`<span class="table-sub"><span class="visually-hidden">${t('tables.subtotal')}</span>${totalOf(rows, summed, how, state.digits?.get(summed.id))}</span> · ` : nothing}${format('NumberFormat', intlLocales()).format(rows.length)}</span></h3>
-      ${rows.length ? html`<ul>${rows.map((row) => {
-        // Its cells shown, each a name and a value; one Jean changed says so in its tip.
-        const shown = others.filter((property) => valueOf(row, property, one.names) !== null), changed = [...fresh].filter((at) => at.startsWith(`${row.id} `)).length
-        return html`<li><article class=${`table-card${fresh.has(row.id) ? ' is-jean' : ''}`} title=${fresh.has(row.id) ? t('tables.changed', { count: Math.max(1, changed), name: assistantName() }) : nothing} draggable="true"
-        @dragstart=${(/** @type {DragEvent} */ e) => e.dataTransfer?.setData('text/x-row', row.id)}>
-        <h4 dir="auto">${textOf(row, title) || '—'}</h4>
-        ${shown.length ? html`<dl>${shown.map((property) => html`<div class="table-field"><dt class="muted" dir="auto">${property.name}</dt><dd dir="auto">${said(row, property, one.names)}</dd></div>`)}</dl>` : nothing}
-        ${cell(one, row, by, state)}${fresh.has(row.id) ? html`<div class="table-decide">${decide(one, row.id)}</div>` : nothing}
-      </article></li>`
-      })}</ul>` : nothing}
-      <button type="button" class="table-add" @click=${() => edit(one, { set: { [title.id]: null, [by.id]: value } })}>${icons.plus}${t('tables.addRow')}</button>
-    </section>`
-  })}</div>`
+  const add = (/** @type {Event} */ event) => { const field = /** @type {HTMLInputElement} */ (event.target), files = [...field.files ?? []]; field.value = ''; given(one, row, property, files).then(() => again(filed, row, property, state, menu)) }
+  render(listed(...[all.map((file, i) => html`<div class="table-line" role="group" aria-label=${file.name}><button type="button" class="table-file" @click=${() => open(file)}>${picture ? pictured(one, file) : icons.attach}<span dir="auto">${file.name}</span></button>
+    <button type="button" class="icon-button" aria-label=${t('action.remove')} @click=${() => edit(one, { row: row.id, set: { [property.id]: all.filter((_, j) => j !== i) } }).then(() => again(filed, row, property, state, menu))}>${icons.trash}</button></div>`),
+    [html`<label class="table-line table-file" for=${`${menu}-add`}>${icons.plus}${t(picture ? 'tables.addPicture' : 'tables.addFiles')}<input id=${`${menu}-add`} class="visually-hidden" type="file" multiple accept=${picture ? 'image/*' : nothing} @change=${add}></label>`]].filter((group) => group.length)), box)
+}
+
+/**
+ * The menu of a Several choices' cell, drawn for the cell whose button opens it: each of its column's choices, ticked while the cell holds
+ * it, and a field that adds one; each change is the cell's, the menu then drawn again from the collection as it is.
+ * @param {Loaded} one @param {Row} row @param {Property} property @param {State} state @param {string} menu its id
+ */
+function pick(one, row, property, state, menu) {
+  const box = /** @type {HTMLElement} */ (state.box.querySelector(`#${menu}`)), held = new Set(/** @type {unknown[]} */ (valueOf(row, property) ?? []))
+  const ticked = () => [.../** @type {NodeListOf<HTMLInputElement>} */ (box.querySelectorAll('input:checked'))].map((field) => field.value)
+  const set = (/** @type {string[]} */ names) => edit(one, { row: row.id, set: { [property.id]: names } }).then(() => again(pick, row, property, state, menu))
+  const add = (/** @type {KeyboardEvent} */ event) => {
+    const field = /** @type {HTMLInputElement} */ (event.target), name = field.value.trim()
+    if (event.key !== 'Enter' || event.isComposing) return
+    event.preventDefault()
+    event.stopPropagation()
+    if (name) { field.value = ''; set([...new Set([...ticked(), name])]) }
+  }
+  render(listed(...[(property.options ?? []).map((option, i) => html`<label class="table-line" for=${`${menu}-${i}`}><input id=${`${menu}-${i}`} type="checkbox" value=${option.name} .checked=${live(held.has(option.name))}
+    @change=${() => set(ticked())}>${pill(property, option.name)}</label>`), [html`<input dir="auto" title=${t('tables.addChoice')} placeholder=${t('tables.addChoice')} @keydown=${add}>`]].filter((group) => group.length)), box)
+}
+
+/** A card's cells, those of `columns` that hold something, each a name and a value. @param {Loaded} one @param {Row} row @param {Property[]} columns */
+const facts = (one, row, columns) => ((shown) => (shown.length ? html`<dl>${shown.map((property) => html`<div class="table-field"><dt class="muted" dir="auto">${property.name}</dt><dd dir="auto">${said(row, property, one.names)}</dd></div>`)}</dl>` : nothing))(
+  columns.filter((property) => valueOf(row, property, one.names) !== null))
+/** A row made with the cells a layout gives it, which opens as a sheet, to be named. @param {Loaded} one @param {Record<string, unknown>} set @param {State} state */
+const added = (one, set, state) => change(one, [{ set }], 'user').then(([id]) => id && state.openRow(id), () => notify(t('tables.wrong'), { alert: true }))
+/** What the layouts draw their cards with, the view's own: a card's cells, a cell as its field, a row's Accept and Reject, a total, a change, a picture and a row made. */
+export const parts = { facts, cell, decide, totalOf, edit, pictured, added }
+
+/** The layouts in folders of their own, each fetched as one is first shown, and those that have come. @type {Record<string, () => Promise<{ default: (given: any) => unknown }>>} */
+const LAYOUTS = { board: () => import('../board/board.js'), gallery: () => import('../gallery/gallery.js'), calendar: () => import('../calendar/calendar.js') }
+const layouts = signal(/** @type {Record<string, (given: any) => unknown>} */ ({}))
+/**
+ * A board, a gallery or a calendar, drawn by its own folder (caps/board, caps/gallery, caps/calendar) with what the view gives it: the collection,
+ * its columns, the rows the view keeps, those Jean changed, the cards' parts and Tables' words; nothing until it has come. @param {string} way @param {object} given
+ */
+function laid(way, given) {
+  if (!layouts.value[way]) return LAYOUTS[way]().then((module) => { layouts.value = { ...layouts.peek(), [way]: module.default } }), nothing
+  return layouts.value[way](given)
 }

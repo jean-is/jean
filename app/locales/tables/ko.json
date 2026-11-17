@@ -103,6 +103,13 @@
   },
   "tables.showAll": "모든 열 표시",
   "tables.arranged": "정리 조건",
+  "tables.allRows": "모든 행",
+  "tables.viewName": "보기 이름",
+  "tables.keepView": "보기로 저장",
+  "tables.keep": "저장",
+  "tables.reset": "초기화",
+  "tables.onlyYou": "나만 볼 수 있어요",
+  "tables.me": "나",
   "tables.plain": "일반 숫자",
   "tables.money": "금액",
   "tables.percent": "백분율",
@@ -115,5 +122,23 @@
   "tables.movedTo": "이동한 그룹: {group}",
   "tables.made": {
     "other": "검토할 새 행 {count}개"
-  }
+  },
+  "tables.open": "열기",
+  "tables.choices": "선택 항목",
+  "tables.addChoice": "선택 항목 추가",
+  "tables.colour": "색",
+  "tables.hue0": "초록",
+  "tables.hue1": "청록",
+  "tables.hue2": "파랑",
+  "tables.hue3": "보라",
+  "tables.hue4": "자홍색",
+  "tables.hue5": "장미색",
+  "tables.hue6": "회색",
+  "tables.kind.picture": "이미지",
+  "tables.gallery": "갤러리",
+  "tables.addPicture": "이미지 추가",
+  "tables.addFiles": "파일 추가",
+  "tables.calendar": "캘린더",
+  "tables.end": "종료",
+  "tables.time": "시간"
 }

@@ -105,6 +105,13 @@
   },
   "tables.showAll": "எல்லா நெடுவரிசைகளையும் காட்டு",
   "tables.arranged": "ஒழுங்கமைப்பு",
+  "tables.allRows": "எல்லா வரிசைகளும்",
+  "tables.viewName": "காட்சியின் பெயர்",
+  "tables.keepView": "காட்சியாக வைத்திரு",
+  "tables.keep": "வைத்திரு",
+  "tables.reset": "மீட்டமை",
+  "tables.onlyYou": "இதை நீங்கள் மட்டுமே பார்க்கிறீர்கள்",
+  "tables.me": "நான்",
   "tables.plain": "சாதாரண எண்",
   "tables.money": "பணம்",
   "tables.percent": "சதவீதம்",
@@ -118,5 +125,23 @@
   "tables.made": {
     "one": "பார்க்க வேண்டிய {count} புதிய வரிசை",
     "other": "பார்க்க வேண்டிய {count} புதிய வரிசைகள்"
-  }
+  },
+  "tables.open": "திற",
+  "tables.choices": "தேர்வுகள்",
+  "tables.addChoice": "தேர்வைச் சேர்",
+  "tables.colour": "நிறம்",
+  "tables.hue0": "பச்சை",
+  "tables.hue1": "டீல்",
+  "tables.hue2": "நீலம்",
+  "tables.hue3": "ஊதா",
+  "tables.hue4": "ஃபூஷியா",
+  "tables.hue5": "ரோஜா",
+  "tables.hue6": "சாம்பல்",
+  "tables.kind.picture": "படம்",
+  "tables.gallery": "கேலரி",
+  "tables.addPicture": "படத்தைச் சேர்",
+  "tables.addFiles": "கோப்புகளைச் சேர்",
+  "tables.calendar": "நாள்காட்டி",
+  "tables.end": "முடிவு",
+  "tables.time": "நேரம்"
 }

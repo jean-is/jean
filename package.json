@@ -55,6 +55,7 @@
     "sites": "node scripts/sites.js",
     "prototypes": "node scripts/prototypes.js",
     "whiteboard": "node scripts/whiteboard.js",
+    "views": "node scripts/views.js",
     "brands": "node scripts/brands.js",
     "concepts": "node scripts/concepts.js",
     "schemas": "node scripts/schemas.js",

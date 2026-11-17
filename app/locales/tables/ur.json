@@ -105,6 +105,13 @@
   },
   "tables.showAll": "تمام کالم دکھائیں",
   "tables.arranged": "موجودہ انتظام",
+  "tables.allRows": "تمام قطاریں",
+  "tables.viewName": "منظر کا نام",
+  "tables.keepView": "منظر کے طور پر رکھیں",
+  "tables.keep": "رکھیں",
+  "tables.reset": "ری سیٹ کریں",
+  "tables.onlyYou": "یہ صرف آپ کو نظر آتا ہے",
+  "tables.me": "میں",
   "tables.plain": "سادہ عدد",
   "tables.money": "رقم",
   "tables.percent": "فیصد",
@@ -118,5 +125,23 @@
   "tables.made": {
     "one": "{count} نئی قطار جائزے کے لیے",
     "other": "{count} نئی قطاریں جائزے کے لیے"
-  }
+  },
+  "tables.open": "کھولیں",
+  "tables.choices": "اختیارات",
+  "tables.addChoice": "اختیار شامل کریں",
+  "tables.colour": "رنگ",
+  "tables.hue0": "سبز",
+  "tables.hue1": "فیروزی",
+  "tables.hue2": "نیلا",
+  "tables.hue3": "بنفشی",
+  "tables.hue4": "رانی گلابی",
+  "tables.hue5": "گلابی",
+  "tables.hue6": "سرمئی",
+  "tables.kind.picture": "تصویر",
+  "tables.gallery": "گیلری",
+  "tables.addPicture": "تصویر شامل کریں",
+  "tables.addFiles": "فائلیں شامل کریں",
+  "tables.calendar": "کیلنڈر",
+  "tables.end": "اختتام",
+  "tables.time": "وقت"
 }

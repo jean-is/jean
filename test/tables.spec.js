@@ -286,7 +286,7 @@ for (const [lang, table, board, review] of [['ar', 'جدول', 'لوحة', 'تغ
     await page.keyboard.press(lang === 'ar' ? 'ArrowLeft' : 'ArrowRight')
     await expect(cells.nth(1)).toBeFocused()
     await page.locator('.table-grip button').first().click()
-    await expect(page.locator('.table-menu:popover-open button')).toHaveText(lang === 'ar' ? ['إدراج أسفل', 'تكرار', 'نقل إلى الأعلى', 'نقل إلى الأسفل', 'حذف'] : ['下に挿入', '複製', '上へ移動', '下へ移動', '削除'])
+    await expect(page.locator('.table-menu:popover-open button')).toHaveText(lang === 'ar' ? ['فتح', 'إدراج أسفل', 'تكرار', 'نقل إلى الأعلى', 'نقل إلى الأسفل', 'حذف'] : ['開く', '下に挿入', '複製', '上へ移動', '下へ移動', '削除'])
     // A column's menu moves it to the language's start or end: right first in Arabic.
     await page.keyboard.press('Escape')
     await page.locator('.table-grid .table-head').first().click()
@@ -516,13 +516,15 @@ test('a collection’s heads stay on top, show their kind and open a menu to ren
   await expect.poll(async () => (await file())?.board).toBe(false)
   await expect(page.locator('.table-panel button[aria-current]')).toHaveCount(0)
 
-  // Sorted from Z to A, then from A to Z: the rows keep that order.
+  // Sorted from Z to A, then from A to Z: the view keeps it, a chip saying so, the rows' own order as it was.
   await (await menu('Nights booked')).getByRole('button', { name: 'Sort Z → A' }).click()
   await expect(rows.first().getByTitle('Nights booked')).toHaveValue('24')
   await expect(rows.last().getByTitle('Nights booked')).toHaveValue('1')
   await (await menu('Nights booked')).getByRole('button', { name: 'Sort A → Z' }).click()
   await expect(rows.first().getByTitle('Nights booked')).toHaveValue('1')
-  await expect.poll(async () => (await file())?.nights.slice(0, 4)).toEqual([1, 2, 3, 4])
+  await expect(page.locator('.table-chips > li')).toHaveText(['Nights booked'])
+  await expect.poll(async () => JSON.parse((await file())?.text ?? '{}').views[0].sort).toEqual([{ property: 'nights', direction: 'ascending' }])
+  expect((await file())?.nights.slice(0, 4)).toEqual([1, 8, 15, 22])
 
   // Insert left adds a text column before it, its name to type at once; Delete takes it away.
   await (await menu('Nights booked')).getByRole('button', { name: 'Insert left' }).click()
@@ -572,14 +574,13 @@ test('a collection’s heads stay on top, show their kind and open a menu to ren
   await (await menu('Text')).getByRole('button', { name: 'Hide' }).click()
   await expect(heads).toHaveText(['Name', 'Nights booked', 'Stage'])
   const chip = page.locator('.table-chips > li')
-  await expect(chip).toHaveCount(1)
-  await expect(chip.locator('button').first()).toHaveText('1 column hidden')
+  await expect(chip).toHaveText(['1 column hidden', 'Nights booked'])
   await chip.locator('button').first().click()
   await expect(page.locator('.table-panel:popover-open').getByRole('checkbox', { name: 'Text' })).toBeFocused()
   await expect(page.locator('.table-panel:popover-open').getByRole('checkbox', { name: 'Text' })).not.toBeChecked()
   await page.locator('.table-panel:popover-open').getByRole('checkbox', { name: 'Text' }).check()
   await expect(heads).toHaveText(['Name', 'Nights booked', 'Text', 'Stage'])
-  await expect(chip).toHaveCount(0)
+  await expect(chip).toHaveCount(1)
   await page.keyboard.press('Escape')
   await (await menu('Text')).getByRole('button', { name: 'Hide' }).click()
   await page.locator('.table-chips').getByRole('button', { name: 'Show every column' }).click()
@@ -600,9 +601,11 @@ test('a collection’s heads stay on top, show their kind and open a menu to ren
   await handle(2).blur()
   await rows.nth(2).hover()
   await expect.poll(() => dots(2)).toBe('visible')
+  // Sorted, the rows take the order shown as one is moved by hand, and are sorted no more.
   await handle(2).dragTo(rows.nth(0), { targetPosition: { x: 60, y: 4 } })
   await expect(rows.first().getByTitle('Nights booked')).toHaveValue('3')
   await expect.poll(async () => (await file())?.nights.slice(0, 4)).toEqual([3, 1, 2, 4])
+  await expect(chip).toHaveCount(0)
   // The arrows move it by one, the keyboard staying on its handle.
   await handle(0).focus()
   await page.keyboard.press('ArrowDown')
@@ -697,7 +700,7 @@ test('a collection’s cell is changed by a click or Enter, kept by Enter, which
   const handle = (/** @type {number} */ n) => rows.nth(n).getByRole('button', { name: 'Move row' }), menu = page.locator('.table-menu:popover-open')
   await rows.nth(1).hover()
   await handle(1).click()
-  await expect(menu.getByRole('listitem')).toHaveText(['Insert below', 'Duplicate', 'Move up', 'Move down', 'Delete'])
+  await expect(menu.getByRole('listitem')).toHaveText(['Open', 'Insert below', 'Duplicate', 'Move up', 'Move down', 'Delete'])
   await menu.getByRole('button', { name: 'Duplicate' }).click()
   await expect.poll(values).toEqual(['Lyon and Annecy', 'Porto', 'Porto', 'Kyoto'])
   await expect(rows.nth(2).getByTitle('Days')).toHaveValue('3')
@@ -975,10 +978,11 @@ test('a collection’s bar finds rows with Find, as Creations does, and Arrange 
   await chips.first().locator('button').first().click()
   await expect(panel.getByRole('combobox', { name: 'Column' })).toBeFocused()
 
-  // Sort: Amount from Z to A, once, as the rows' order, with no chip.
+  // Sort: Amount from Z to A, kept by the view, its button pressed, a chip saying so.
   await panel.getByRole('group', { name: 'Amount' }).getByRole('button', { name: 'Sort Z → A' }).click()
   await expect.poll(values).toEqual(['Conférence', 'Hotel', 'Train to Lyon'])
-  await expect(chips).toHaveCount(1)
+  await expect(panel.getByRole('group', { name: 'Amount' }).getByRole('button', { name: 'Sort Z → A' })).toHaveAttribute('aria-pressed', 'true')
+  await expect(chips).toHaveText(['Amount', 'Amount'])
 
   // Columns shown: Receipt hidden, the name column always shown, a chip saying so; grouped by Stage, a chip naming it; then Show as's board,
   // of the rows the filter keeps, in the stage's lanes, and the table again.
@@ -986,13 +990,13 @@ test('a collection’s bar finds rows with Find, as Creations does, and Arrange 
   await panel.getByRole('checkbox', { name: 'Receipt' }).uncheck()
   await expect(page.locator('.table-grid .table-head')).toHaveText(['Item', 'Amount', 'Stage'])
   await panel.getByRole('combobox', { name: 'Group by' }).selectOption('Stage')
-  await expect(chips).toHaveText(['Stage', 'Amount', '1 column hidden'])
+  await expect(chips).toHaveText(['Stage', 'Amount', '1 column hidden', 'Amount'])
   await page.keyboard.press('Escape')
   await page.locator('.table-shows').getByRole('button', { name: 'Board' }).click()
   await expect(page.locator('.table-lane .table-card')).toHaveCount(3)
   await page.locator('.table-shows').getByRole('button', { name: 'Table' }).click()
   await chips.getByRole('button', { name: 'Remove Stage' }).click()
-  await expect(chips).toHaveText(['Amount', '1 column hidden'])
+  await expect(chips).toHaveText(['Amount', '1 column hidden', 'Amount'])
 
   // The foot: Calculate, under Amount, sums the rows shown; Percent filled under Stage.
   const foot = page.locator('.table-grid tfoot .table-total')
@@ -1435,7 +1439,7 @@ test('in the design system: a collection\'s pane on its paper, its heads in its 
     await (await import('/ui/caps.js')).unlock('tables')
     await (await import('/ui/kit.js')).keepKit(null, { tokens: { primary: '#2dd4bf', ink: '#223344', paper: '#fdf6e3', soft: '#eef5f4', fonts: { heading: ['Georgia'], body: ['Verdana'] } } })
     await app.fs.write(`${app.projectDir}/${folder}/collection.json`, JSON.stringify({ format: 1, id: '01K85Z1T00000000000000000P', name: 'Costs', author: 'user', created: at, changed: at,
-      properties: [{ id: 'item', name: 'Item', type: 'text' }, { id: 'amount', name: 'Amount', type: 'number' }, { id: 'secret', name: 'Hidden one', type: 'text' }], views: [{ id: 'all', name: 'All', type: 'table', hidden: ['secret'] }] }))
+      properties: [{ id: 'item', name: 'Item', type: 'text' }, { id: 'amount', name: 'Amount', type: 'number' }, { id: 'secret', name: 'Hidden one', type: 'text' }], views: [{ id: 'table', type: 'table', hidden: ['secret'] }] }))
     await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, `${JSON.stringify({ row: '01K80000000000000000000001', set: { item: 'Rent', amount: 1200, secret: 'Unseen' }, at, by: 'user' })}\n`)
     ;(await import('/ui/preview.js')).preview({ uri: folder, name: 'Costs.xlsx', title: 'Costs' })
     return (await import('/ui/colour.js')).readable('#2dd4bf', '#fdf6e3')
@@ -1477,7 +1481,7 @@ test('in the design system: a collection\'s pane on its paper, its heads in its 
   // One too wide to read upright turns the page on its side, its words kept whole.
   await page.evaluate(async () => {
     const { app } = await import('/ui/state.js'), at = '2026-10-21T09:00:00.000Z', uri = 'collections/01K85Z1T00000000000000000W-ideas'
-    await app.fs.write(`${app.projectDir}/${uri}/collection.json`, JSON.stringify({ format: 1, id: '01K85Z1T00000000000000000W', name: 'Ideas', author: 'user', created: at, changed: at, views: [{ id: 'all', name: 'All', type: 'table' }],
+    await app.fs.write(`${app.projectDir}/${uri}/collection.json`, JSON.stringify({ format: 1, id: '01K85Z1T00000000000000000W', name: 'Ideas', author: 'user', created: at, changed: at, views: [{ id: 'table', type: 'table' }],
       properties: ['Idea', 'Description', 'Useful to the user', 'Technically feasible', 'Works offline', 'Easy to build', 'Original', 'Total score', 'Person in charge'].map((name, n) => ({ id: `c${n}`, name, type: n > 1 && n < 8 ? 'number' : 'text' })) }))
     await app.fs.write(`${app.projectDir}/${uri}/changes.jsonl`, `${JSON.stringify({ row: '01K80000000000000000000002', set: { c0: 'Games', c1: 'Small playable games made from a description', c2: 4 }, at, by: 'user' })}\n`)
     await (await import('/caps/made/ways.js')).collectionWays({ uri, name: 'Ideas.xlsx', title: 'Ideas' }).print?.run()
@@ -1513,3 +1517,642 @@ test('a collection’s table has its name, and its menus close as the keyboard l
   await page.keyboard.press('Tab')
   await expect(page.locator('.table-menu:popover-open')).toHaveCount(0)
 })
+
+/** A collection of homes to visit, with a choice, several choices and a person, beside the task. @param {import('@playwright/test').Page} page */
+const visits = (page) => page.evaluate(async () => {
+  const [{ unlock }, { app }] = await Promise.all([import('/ui/caps.js'), import('/ui/state.js')])
+  await unlock('tables')
+  const tables = await import('/caps/tables/tables.js')
+  const folder = await tables.makeTable({ name: 'Visits', columns: [{ name: 'Home', type: 'text' }, { name: 'Room', type: 'select', options: ['Living room', 'Kitchen'] }, { name: 'Tags', type: 'multi-select', options: ['Garden', 'Lift', 'Parking'] }, { name: 'Agent', type: 'person' }] }, app.projectDir)
+  await tables.change(/** @type {any} */ (await tables.load(folder)), [{ set: { Home: 'Villa Aurore', Room: 'Living room', Tags: ['Garden'], Agent: 'Léa Martin' } }, { set: { Home: 'Quai 12', Room: 'Kitchen', Agent: 'Tom Roy' } }], 'user')
+  ;(await import('/ui/preview.js')).preview({ uri: folder, name: 'Visits.xlsx', title: 'Visits' }, true)
+})
+
+test('a choice reads as its pill, in a colour picked from its column’s menu; several choices are ticked in their menu; a person has a face and the names known are offered; a row opens as a sheet from its menu and from a board’s card, which a new card opens to be named', async ({ page }) => {
+  await start(page)
+  await visits(page)
+  const rows = page.locator('.table-grid tbody tr'), menu = page.locator('.table-menu:popover-open')
+  await expect(rows).toHaveCount(2)
+  // A choice is its pill, in the colour of its place among its column's choices; a person, their face before their name, and the names the column holds offered.
+  await expect(rows.nth(0).locator('.table-pill')).toHaveText(['Living room', 'Garden'])
+  await expect(rows.nth(1).locator('.table-pill').first()).toHaveAttribute('data-hue', '1')
+  await expect(rows.nth(0).locator('.table-face')).toHaveText('L')
+  await expect(page.locator('.table-view datalist[id$="-agent"] option')).toHaveCount(2)
+
+  // Its colour is picked from its column's menu, and kept with the choice; pressed again, it is its place's again.
+  await page.locator('.table-head', { hasText: 'Room' }).click()
+  await menu.getByRole('button', { name: 'Colour' }).click()
+  const rose = menu.getByRole('group', { name: 'Kitchen' }).getByRole('button', { name: 'Rose' })
+  await rose.click()
+  await expect(rose).toHaveAttribute('aria-pressed', 'true')
+  await expect(rows.nth(1).locator('.table-pill').first()).toHaveAttribute('data-hue', '5')
+  await rose.click()
+  await expect(rows.nth(1).locator('.table-pill').first()).toHaveAttribute('data-hue', '1')
+  await page.keyboard.press('Escape')
+  await expect(menu).toHaveCount(0)
+
+  // Several choices are ticked in their menu, which a button at the cell's end opens, and one more is added there.
+  const tags = rows.nth(1).getByTitle('Tags')
+  await tags.hover()
+  await rows.nth(1).getByRole('button', { name: 'Choices' }).click()
+  await menu.getByLabel('Lift').check()
+  await expect(tags).toHaveValue('Lift')
+  await menu.getByTitle('Add a choice').fill('Balcony')
+  await menu.getByTitle('Add a choice').press('Enter')
+  await expect(tags).toHaveValue('Lift, Balcony')
+  await expect(menu.getByRole('checkbox')).toHaveCount(4)
+  await expect(rows.nth(1).locator('.table-pill')).toHaveText(['Kitchen', 'Lift', 'Balcony'])
+  await page.keyboard.press('Escape')
+
+  // A row opens as a sheet from its handle's menu: every column by its name, changed there as in the table; Escape closes it alone.
+  await rows.nth(0).hover()
+  await rows.nth(0).getByRole('button', { name: 'Move row' }).click()
+  await menu.getByRole('button', { name: 'Open' }).click()
+  const sheet = page.getByRole('dialog', { name: 'Villa Aurore' })
+  await expect(sheet.locator('dt')).toHaveText(['Home', 'Room', 'Tags', 'Agent'])
+  await expect(sheet.getByTitle('Home')).toBeFocused()
+  await sheet.getByTitle('Agent').fill('Tom Roy')
+  await sheet.getByTitle('Agent').press('Tab')
+  await expect(rows.nth(0).getByTitle('Agent')).toHaveValue('Tom Roy')
+  await sheet.getByRole('button', { name: 'Choices' }).click()
+  await sheet.getByLabel('Parking').check()
+  await expect(rows.nth(0).getByTitle('Tags')).toHaveValue('Garden, Parking')
+  await page.keyboard.press('Escape')
+  await page.keyboard.press('Escape')
+  await expect(sheet).toHaveCount(0)
+  await expect(page.locator('app-preview .pane-name')).toHaveValue('Visits')
+
+  // On the board, a lane wears its choice's colour, a card's name opens its row, and a card made at a lane's foot opens to be named.
+  await page.locator('.table-shows').getByRole('button', { name: 'Board' }).click()
+  const lane = page.locator('.table-lane').first()
+  await expect(lane.locator('h3 .table-dot')).toHaveAttribute('data-hue', '0')
+  await lane.getByRole('button', { name: 'Villa Aurore' }).click()
+  await expect(sheet).toBeVisible()
+  await page.keyboard.press('Escape')
+  await lane.getByRole('button', { name: 'New row' }).click()
+  const fresh = page.getByRole('dialog', { name: 'Untitled' })
+  await expect(fresh.getByTitle('Home')).toBeFocused()
+  await expect(fresh.getByTitle('Room')).toHaveValue('Living room')
+  await fresh.getByTitle('Home').fill('Les Tilleuls')
+  await fresh.getByTitle('Home').press('Tab')
+  await expect(page.getByRole('dialog', { name: 'Les Tilleuls' })).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(lane.locator('.table-card h4')).toHaveText(['Villa Aurore', 'Les Tilleuls'])
+})
+
+for (const [lang, open, colour, green, choices] of [['ar', 'فتح', 'اللون', 'أخضر', 'الاختيارات'], ['ja', '開く', '色', '緑', '選択肢']]) {
+  test(`a row's sheet and a choice's colours in ${lang}: their words the language's`, async ({ page }) => {
+    await start(page, lang)
+    await visits(page)
+    const rows = page.locator('.table-grid tbody tr'), menu = page.locator('.table-menu:popover-open')
+    await rows.nth(0).hover()
+    await rows.nth(0).locator('.table-grip button').click()
+    await menu.getByRole('button', { name: open, exact: true }).click()
+    const sheet = page.getByRole('dialog', { name: 'Villa Aurore' })
+    await expect(sheet.locator('dt')).toHaveCount(4)
+    await expect(sheet.getByRole('button', { name: choices })).toHaveCount(1)
+    await page.keyboard.press('Escape')
+    await expect(sheet).toHaveCount(0)
+    await page.locator('.table-head', { hasText: 'Room' }).click()
+    await menu.getByRole('button', { name: colour, exact: true }).click()
+    await expect(menu.getByRole('group', { name: 'Living room' }).getByRole('button', { name: green, exact: true })).toHaveAttribute('aria-pressed', 'true')
+  })
+}
+
+/** A picture of one pixel, as a browser opens one. */
+const PNG = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==', 'base64')
+/** A collection of homes with a picture and files, beside the task. @param {import('@playwright/test').Page} page */
+const homes = (page) => page.evaluate(async () => {
+  const [{ unlock }, { app }] = await Promise.all([import('/ui/caps.js'), import('/ui/state.js')])
+  await unlock('tables')
+  const tables = await import('/caps/tables/tables.js')
+  const folder = await tables.makeTable({ name: 'Homes', columns: [{ name: 'Home', type: 'text' }, { name: 'Photo', type: 'picture' }, { name: 'Papers', type: 'files' }, { name: 'Rent', type: 'number' }] }, app.projectDir)
+  await tables.change(/** @type {any} */ (await tables.load(folder)), [{ set: { Home: 'Villa Aurore', Rent: 1450 } }, { set: { Home: 'Quai 12', Rent: 980 } }], 'user')
+  ;(await import('/ui/preview.js')).preview({ uri: folder, name: 'Homes.xlsx', title: 'Homes' }, true)
+  return folder
+})
+/** The files a collection keeps for its cells, by their names in its folder. @param {import('@playwright/test').Page} page @param {string} folder */
+const filesIn = (page, folder) => page.evaluate(async (folder) => (await (await import('/ui/state.js')).app.fs.list(`${(await import('/ui/state.js')).app.projectDir}/${folder}/files`).catch(() => [])).map(({ name }) => name).sort(), folder)
+
+test('a picture is added to its cell from the cell’s menu, kept in the collection’s folder by its content, shown small in the table, larger in the row’s sheet and over its card in the gallery, opened beside the task and taken away; a file goes by its name; what is no picture is refused; a copy takes its files', async ({ page }) => {
+  await start(page)
+  const folder = await homes(page)
+  const rows = page.locator('.table-grid tbody tr'), menu = page.locator('.table-menu:popover-open'), photo = (/** @type {number} */ n) => rows.nth(n).locator('td').nth(1), papers = (/** @type {number} */ n) => rows.nth(n).locator('td').nth(2)
+  await expect(rows).toHaveCount(2)
+  // Where a column holds pictures, Show as offers the gallery; a picture is a kind the last head adds, files too.
+  await expect.poll(() => page.locator('.table-shows button').evaluateAll((all) => all.map((one) => one.getAttribute('aria-label')))).toEqual(['Table', 'Gallery'])
+  await page.locator('.table-add-column').click()
+  await expect(menu.getByRole('button', { name: 'Picture', exact: true })).toBeVisible()
+  await expect(menu.getByRole('button', { name: 'Files', exact: true })).toBeVisible()
+  await page.keyboard.press('Escape')
+
+  // A press on the cell opens its menu, whose Add a picture takes one from the device: kept by its content's hash, named in the cell, shown small.
+  await photo(0).click()
+  await menu.getByLabel('Add a picture').setInputFiles({ name: 'villa.png', mimeType: 'image/png', buffer: PNG })
+  await expect(photo(0).locator('img')).toHaveCount(1)
+  await expect(menu.getByRole('group', { name: 'villa.png' })).toHaveCount(1)
+  expect(await filesIn(page, folder)).toEqual([expect.stringMatching(/^[0-9a-f]{64}\.png$/)])
+  await expect(photo(0).getByRole('button', { name: 'Picture' })).toHaveAttribute('title', 'villa.png')
+  // The same picture given to another row is kept once; what is no picture is refused, and said.
+  await page.keyboard.press('Escape')
+  await photo(1).click()
+  await menu.getByLabel('Add a picture').setInputFiles([{ name: 'again.png', mimeType: 'image/png', buffer: PNG }, { name: 'notes.txt', mimeType: 'text/plain', buffer: Buffer.from('no picture') }])
+  await expect(photo(1).locator('img')).toHaveCount(1)
+  await expect(page.getByRole('alert').filter({ hasText: 'That doesn’t fit this column.' })).toHaveCount(1)
+  expect(await filesIn(page, folder)).toHaveLength(1)
+  // Taken away from its cell, there, as the user's change.
+  await menu.getByRole('group', { name: 'again.png' }).getByRole('button', { name: 'Remove' }).click()
+  await expect(photo(1).locator('img')).toHaveCount(0)
+  await expect(menu.getByRole('group')).toHaveCount(0)
+  await page.keyboard.press('Escape')
+  // Dropped on its cell, or pasted while the cell has the keys, a picture is the cell's own, never the task's box's.
+  const carried = await page.evaluateHandle((bytes) => { const data = new DataTransfer(); data.items.add(new File([Uint8Array.from(atob(bytes), (char) => char.charCodeAt(0))], 'dropped.png', { type: 'image/png' })); return data }, PNG.toString('base64'))
+  await photo(1).dispatchEvent('dragover', { dataTransfer: carried })
+  await photo(1).dispatchEvent('drop', { dataTransfer: carried })
+  await expect(photo(1).locator('img')).toHaveCount(1)
+  await photo(1).evaluate((cell, data) => { cell.focus(); cell.dispatchEvent(new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true })) }, carried)
+  await expect(photo(1).locator('img')).toHaveCount(2)
+  await expect(page.locator('.attachment')).toHaveCount(0)
+
+  // A file goes by its name, any kind of file; its name opens it beside the task, as any file.
+  await papers(0).click()
+  await menu.getByLabel('Add files').setInputFiles({ name: 'lease.txt', mimeType: 'text/plain', buffer: Buffer.from('The lease, in plain words.') })
+  await expect(papers(0).locator('.table-file')).toHaveText('lease.txt')
+  expect(await filesIn(page, folder)).toHaveLength(2)
+  await page.keyboard.press('Escape')
+  await photo(0).click()
+  await menu.getByRole('button', { name: 'villa.png' }).click()
+  await expect(page.locator('app-preview .view > img')).toHaveCount(1)
+  await expect(page.locator('app-preview')).toHaveCount(2)
+
+  // In the gallery, a card a row, its picture over its name; the card opens the row's sheet, where the picture shows larger; New row opens one to fill.
+  await page.locator('.table-shows').getByRole('button', { name: 'Gallery' }).click()
+  const cards = page.locator('.table-gallery .table-card')
+  await expect(cards.locator('h4')).toHaveText(['Villa Aurore', 'Quai 12'])
+  await expect(cards.nth(0).locator('.table-cover img')).toHaveCount(1)
+  await expect(cards.nth(1).locator('.table-cover img')).toHaveCount(1)
+  await expect(cards.nth(0).locator('dd')).toHaveText(['lease.txt', '1,450'])
+  await cards.nth(0).click()
+  const sheet = page.getByRole('dialog', { name: 'Villa Aurore' })
+  await expect(sheet.locator('dd').nth(1).locator('img')).toHaveCount(1)
+  await page.keyboard.press('Escape')
+  await page.locator('.table-gallery').getByRole('button', { name: 'New row' }).click()
+  await expect(page.getByRole('dialog', { name: 'Untitled' }).getByTitle('Home')).toBeFocused()
+  await page.keyboard.press('Escape')
+  await expect(cards).toHaveCount(3)
+  await expect(cards.nth(2).locator('.table-cover img')).toHaveCount(0)
+
+  // A copy takes the files its cells name; a search of the project reads a file by its name.
+  const copied = await page.evaluate(async (folder) => { const tables = await import('/caps/tables/tables.js'), copy = await tables.copy({ path: folder }, 'Homes (copy)'); return { copy, text: (await tables.kept()).find((one) => one.path === copy)?.text } }, folder)
+  expect(await filesIn(page, copied.copy)).toEqual(await filesIn(page, folder))
+  expect(copied.text).toContain('Photo: villa.png; Papers: lease.txt')
+})
+
+test('a file that comes from someone a collection is worked on with is kept only where a cell’s file goes, and only if its content is what its name says', async ({ page }) => {
+  await start(page)
+  const folder = await homes(page)
+  const taken = await page.evaluate(async (folder) => {
+    const [{ app }, together] = await Promise.all([import('/ui/state.js'), import('/caps/together/collection.js')])
+    const place = { dir: app.projectDir, folder }, held = /** @type {{ lines: Set<string>, table: string, files?: Set<string> }} */ ({ lines: new Set(), table: '' })
+    const bytes = new TextEncoder().encode('a note from someone'), hex = [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))].map((byte) => byte.toString(16).padStart(2, '0')).join(''), sent = btoa(String.fromCharCode(...bytes))
+    await together.take(place, { files: { [`files/${hex}.txt`]: sent, [`files/${'0'.repeat(64)}.txt`]: sent, [`files/${'f'.repeat(64)}.png`]: '%%%', '../settings.json': sent, 'collection.json': sent, [`files/${hex}.txt/../../collection.json`]: sent, [`files/${hex}`]: 3 } }, held)
+    const dir = `${app.projectDir}/${folder}`
+    return { hex, files: (await app.fs.list(`${dir}/files`)).map(({ name }) => name), held: [...held.files ?? []], table: JSON.parse((await app.fs.read(`${dir}/collection.json`)) ?? '{}').name, text: new TextDecoder().decode(/** @type {Uint8Array} */ (await app.fs.readBytes(`${dir}/files/${hex}.txt`))) }
+  }, folder)
+  expect(taken.files).toEqual([`${taken.hex}.txt`])
+  expect(taken.held).toEqual([`files/${taken.hex}.txt`])
+  expect(taken.table).toBe('Homes')
+  expect(taken.text).toBe('a note from someone')
+})
+
+for (const [lang, shows, add] of /** @type {const} */ ([['ar', ['جدول', 'معرض'], 'أضف صورة'], ['ja', ['表', 'ギャラリー'], '画像を追加']])) {
+  test(`pictures and the gallery in ${lang}: their words the language's`, async ({ page }) => {
+    await start(page, lang)
+    await homes(page)
+    await expect.poll(() => page.locator('.table-shows button').evaluateAll((all) => all.map((one) => one.getAttribute('aria-label')))).toEqual(shows)
+    await page.locator('.table-grid tbody tr').first().locator('td').nth(1).click()
+    await page.locator('.table-menu:popover-open').getByLabel(add).setInputFiles({ name: 'villa.png', mimeType: 'image/png', buffer: PNG })
+    await page.keyboard.press('Escape')
+    await page.locator('.table-shows button').nth(1).click()
+    await expect(page.locator('.table-gallery .table-cover img')).toHaveCount(1)
+  })
+}
+
+/** A collection of stays, each with the day it arrives on and the one it leaves on, beside the task. @param {import('@playwright/test').Page} page */
+const stays = (page) => page.evaluate(async () => {
+  const [{ unlock }, { app }] = await Promise.all([import('/ui/caps.js'), import('/ui/state.js')])
+  await unlock('tables')
+  const tables = await import('/caps/tables/tables.js')
+  const folder = await tables.makeTable({ name: 'Stays', columns: [{ name: 'Guest', type: 'text' }, { name: 'Arrives', type: 'date' }, { name: 'Leaves', type: 'date' }] }, app.projectDir)
+  await tables.change(/** @type {any} */ (await tables.load(folder)), [{ set: { Guest: 'Ana', Arrives: '2026-11-20', Leaves: '2026-11-23' } }, { set: { Guest: 'Bo', Arrives: '2026-11-20T14:30' } }, { set: { Guest: 'Cy' } }, { set: { Guest: 'Di', Arrives: '2026-12-02' } }], 'user')
+  ;(await import('/ui/preview.js')).preview({ uri: folder, name: 'Stays.xlsx', title: 'Stays' }, true)
+})
+/** A day's cell of the calendar on show. @param {import('@playwright/test').Page} page @param {string} date */
+const dayOf = (page, date) => page.locator('.cal-grid td', { has: page.locator(`time[datetime="${date}"]`) })
+
+test('a collection with a date shows as a calendar, fetched as one is first shown: a month from the language’s first day, each row on its day by its time, lasting until another date once picked; a row opens, is dragged to another day with its end, and is made on a day; the months pass; narrow, the days are a list', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2026-11-17T10:00:00'))
+  await start(page)
+  const fetched = /** @type {string[]} */ ([])
+  page.on('request', (request) => { if (request.url().includes('/caps/calendar/')) fetched.push(request.url()) })
+  await stays(page)
+  await expect.poll(() => page.locator('.table-shows button').evaluateAll((all) => all.map((one) => one.getAttribute('aria-label')))).toEqual(['Table', 'Calendar'])
+  expect(fetched).toEqual([])
+  await page.locator('.table-shows').getByRole('button', { name: 'Calendar' }).click()
+  // This month, since a row is in it; its weeks from Sunday, as English counts them; today's day marked; each row on its day, one with a time after it.
+  await expect(page.locator('.cal-bar h3')).toHaveText('November 2026')
+  expect(fetched.some((url) => url.endsWith('/caps/calendar/calendar.js'))).toBe(true)
+  await expect(page.locator('.cal-grid th')).toHaveText(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'])
+  await expect(page.locator('.cal-grid td[aria-current="date"] time')).toHaveAttribute('datetime', '2026-11-17')
+  await expect(dayOf(page, '2026-11-20').locator('.cal-row')).toHaveText(['Ana', '2:30 PM Bo'])
+  await expect(dayOf(page, '2026-11-21').locator('.cal-row')).toHaveCount(0)
+  // One with no day waits under the month.
+  await expect(page.getByRole('region', { name: 'No Arrives' }).locator('.cal-row')).toHaveText(['Cy'])
+
+  // With two date columns, the one its rows last until is picked, and kept with the collection: a row is on each of its days.
+  await page.locator('.cal-bar').getByLabel('End', { exact: true }).selectOption({ label: 'Leaves' })
+  await expect(dayOf(page, '2026-11-23').locator('.cal-row')).toHaveText(['Ana'])
+  await expect(dayOf(page, '2026-11-24').locator('.cal-row')).toHaveCount(0)
+  expect(await page.evaluate(async () => (await import('/caps/tables/tables.js')).shown.value?.table.views.find((view) => view.type === 'calendar'))).toEqual({ id: 'calendar', type: 'calendar', date: 'arrives', until: 'leaves' })
+  // A row's name opens it as a sheet.
+  await dayOf(page, '2026-11-22').getByRole('button', { name: 'Ana' }).click()
+  await expect(page.getByRole('dialog', { name: 'Ana' })).toBeVisible()
+  await page.keyboard.press('Escape')
+
+  // Dragged to another day, it is on that day, its end as many days later.
+  const carried = await page.evaluateHandle(() => new DataTransfer())
+  await dayOf(page, '2026-11-20').getByRole('button', { name: 'Ana' }).dispatchEvent('dragstart', { dataTransfer: carried })
+  await dayOf(page, '2026-11-26').dispatchEvent('dragover', { dataTransfer: carried })
+  await dayOf(page, '2026-11-26').dispatchEvent('drop', { dataTransfer: carried })
+  await expect(dayOf(page, '2026-11-29').locator('.cal-row')).toHaveText(['Ana'])
+  await expect(dayOf(page, '2026-11-20').locator('.cal-row')).toHaveText(['2:30 PM Bo'])
+  await expect.poll(async () => (await changes(page)).at(-1)).toMatchObject({ by: 'user', set: { arrives: '2026-11-26', leaves: '2026-11-29' } })
+  // One with a time keeps it; one with no day takes the day it is dropped on.
+  await dayOf(page, '2026-11-20').getByRole('button', { name: 'Bo' }).dispatchEvent('dragstart', { dataTransfer: carried })
+  await dayOf(page, '2026-11-18').dispatchEvent('drop', { dataTransfer: carried })
+  await expect(dayOf(page, '2026-11-18').locator('.cal-row')).toHaveText(['2:30 PM Bo'])
+  await expect.poll(async () => (await changes(page)).at(-1)).toMatchObject({ set: { arrives: '2026-11-18T14:30' } })
+
+  // A day's + makes a row on it, which opens to be named.
+  await dayOf(page, '2026-11-05').hover()
+  await dayOf(page, '2026-11-05').getByRole('button', { name: 'New row' }).click()
+  const fresh = page.getByRole('dialog', { name: 'Untitled' })
+  await expect(fresh.getByTitle('Arrives')).toHaveValue('2026-11-05')
+  await fresh.getByTitle('Guest').fill('Eve')
+  await fresh.getByTitle('Guest').press('Tab')
+  await page.keyboard.press('Escape')
+  await expect(dayOf(page, '2026-11-05').locator('.cal-row')).toHaveText(['Eve'])
+
+  // The months pass, in the language's own words, and come back to this one.
+  await page.getByRole('button', { name: 'Next month' }).click()
+  await expect(page.locator('.cal-bar h3')).toHaveText('December 2026')
+  await expect(dayOf(page, '2026-12-02').locator('.cal-row')).toHaveText(['Di'])
+  await page.getByRole('button', { name: 'This month' }).click()
+  await expect(page.locator('.cal-bar h3')).toHaveText('November 2026')
+  await page.getByRole('button', { name: 'Last month' }).click()
+  await expect(page.locator('.cal-bar h3')).toHaveText('October 2026')
+  await expect(page.locator('.cal-row')).toHaveText(['Cy'])
+  await page.getByRole('button', { name: 'This month' }).click()
+
+  // Where the pane is narrow, the days are a list, each saying its weekday, and nothing goes past the window's edge.
+  await page.setViewportSize({ width: 380, height: 800 })
+  await expect(dayOf(page, '2026-11-05')).toHaveCSS('display', 'block')
+  await expect(dayOf(page, '2026-11-05').locator('time')).toHaveText('Thu 5')
+  await expect(page.locator('.cal-grid thead')).toBeHidden()
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+})
+
+test('a date takes a time of day from its head’s Type, its cell keeping the time a date already has; a calendar opens on the month of the next row to come when none is in this one', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2026-08-03T10:00:00'))
+  await start(page)
+  await stays(page)
+  const rows = page.locator('.table-grid tbody tr'), menu = page.locator('.table-menu:popover-open')
+  // A date written with a time shows it, and keeps it as its day changes.
+  await expect(rows.nth(1).getByTitle('Arrives')).toHaveAttribute('type', 'datetime-local')
+  await expect(rows.nth(1).getByTitle('Arrives')).toHaveValue('2026-11-20T14:30')
+  await expect(rows.nth(0).getByTitle('Arrives')).toHaveAttribute('type', 'date')
+  await rows.nth(1).getByTitle('Arrives').fill('2026-11-21T14:30')
+  await rows.nth(1).getByTitle('Arrives').press('Tab')
+  await expect.poll(async () => (await changes(page)).at(-1)).toMatchObject({ by: 'user', set: { arrives: '2026-11-21T14:30' } })
+  // Time, on a date's Type page, gives every cell of its column a time to set, a day alone at midnight until then; pressed again, days alone.
+  await page.locator('.table-head', { hasText: 'Leaves' }).click()
+  await menu.getByRole('button', { name: 'Type' }).click()
+  await menu.getByRole('button', { name: 'Time', exact: true }).click()
+  await expect(rows.nth(0).getByTitle('Leaves')).toHaveAttribute('type', 'datetime-local')
+  await expect(rows.nth(0).getByTitle('Leaves')).toHaveValue('2026-11-23T00:00')
+  await rows.nth(0).getByTitle('Leaves').fill('2026-11-23T11:00')
+  await rows.nth(0).getByTitle('Leaves').press('Tab')
+  await expect.poll(async () => (await changes(page)).at(-1)).toMatchObject({ set: { leaves: '2026-11-23T11:00' } })
+  await page.locator('.table-head', { hasText: 'Leaves' }).click()
+  await menu.getByRole('button', { name: 'Type' }).click()
+  await expect(menu.getByRole('button', { name: 'Time', exact: true })).toHaveAttribute('aria-current', 'true')
+  await page.keyboard.press('Escape')
+  // In August, with no row then, the calendar opens on November, where the next one is.
+  await page.locator('.table-shows').getByRole('button', { name: 'Calendar' }).click()
+  await expect(page.locator('.cal-bar h3')).toHaveText('November 2026')
+  await expect(page.getByRole('button', { name: 'This month' })).toBeEnabled()
+})
+
+for (const [lang, shows, title, first, next] of /** @type {const} */ ([['ar', ['جدول', 'تقويم'], 'نوفمبر 2026', 'السبت', 'الشهر القادم'], ['ja', ['表', 'カレンダー'], '2026年11月', '日曜日', '来月']])) {
+  test(`a calendar in ${lang}: its week from the language's first day, its month, its days and its moves in the language's words`, async ({ page }) => {
+    await page.clock.setFixedTime(new Date('2026-11-17T10:00:00'))
+    await start(page, lang)
+    await stays(page)
+    await expect.poll(() => page.locator('.table-shows button').evaluateAll((all) => all.map((one) => one.getAttribute('aria-label')))).toEqual(shows)
+    await page.locator('.table-shows button').nth(1).click()
+    await expect(page.locator('.cal-bar h3')).toHaveText(title)
+    await expect(page.locator('.cal-grid th').first()).toHaveAttribute('abbr', first)
+    await expect(dayOf(page, '2026-11-20').locator('.cal-row')).toHaveCount(2)
+    await page.getByRole('button', { name: next }).click()
+    await expect(dayOf(page, '2026-12-02').locator('.cal-row')).toHaveCount(1)
+    // Its first day's column is at the line's start, the right in Arabic.
+    const [head, last] = await Promise.all([page.locator('.cal-grid th').first().boundingBox(), page.locator('.cal-grid th').last().boundingBox()])
+    expect(lang === 'ar' ? (head?.x ?? 0) > (last?.x ?? 0) : (head?.x ?? 0) < (last?.x ?? 0)).toBe(true)
+  })
+}
+
+/** A collection of visits with a choice, a number and a person, beside the task. @param {import('@playwright/test').Page} page */
+const viewing = (page) => page.evaluate(async () => {
+  const [{ unlock }, { app }] = await Promise.all([import('/ui/caps.js'), import('/ui/state.js')])
+  await unlock('tables')
+  const folder = 'collections/01K85Z1T00000000000000000V-visits', at = '2026-11-17T09:00:00.000Z'
+  await app.fs.write(`${app.projectDir}/${folder}/collection.json`, JSON.stringify({ format: 1, id: '01K85Z1T00000000000000000V', name: 'Visits', author: 'user', created: at, changed: at,
+    properties: [{ id: 'place', name: 'Place', type: 'text' }, { id: 'stage', name: 'Stage', type: 'select', options: [{ name: 'Open' }, { name: 'Done' }] }, { id: 'price', name: 'Price', type: 'number' }, { id: 'who', name: 'Who', type: 'person' }],
+    views: [{ id: 'table', type: 'table' }, { id: 'board', type: 'board', group: 'stage' }] }))
+  const rows = [['Villa Aurore', 'Open', 420, 'Léa'], ['Loft Canal', 'Done', 310, 'Tom'], ['Maison Pins', 'Open', 560, 'Tom'], ['Studio Port', 'Open', 190, 'Léa']]
+  await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, rows.map(([place, stage, price, who], i) => `${JSON.stringify({ row: `01K8000000000000000000000${i}`, set: { place, stage, price, who }, at: `2026-11-17T09:0${i + 1}:00.000Z`, by: 'user' })}\n`).join(''))
+  ;(await import('/ui/preview.js')).preview({ uri: folder, name: 'Visits.xlsx', title: 'Visits' })
+  return folder
+})
+/** The collection on show as its files hold it: its views, and what this person arranged of it alone. @param {import('@playwright/test').Page} page */
+const viewsOf = (page) => page.evaluate(async () => {
+  const [{ shown }, { app }] = await Promise.all([import('/caps/tables/tables.js'), import('/ui/state.js')]), at = `${shown.value?.dir}/${shown.value?.folder}`
+  return { views: JSON.parse(await app.fs.read(`${at}/collection.json`) ?? '{}').views, yours: JSON.parse(await app.fs.read(`${at}/yours.json`) ?? 'null')?.views ?? null }
+})
+/** Others work on every collection, as Together says where they do, this person going by Léa among them. @param {import('@playwright/test').Page} page */
+const together = (page) => page.evaluate(() => import('/ui/caps.js').then(({ register }) => register(/** @type {any} */ ({ id: 'others-here',
+  slots: { others: { at: 0, draw: () => null, holds: () => true }, names: { at: 0, draw: () => null, of: () => ['Léa', 'Tom'], me: () => 'Léa' } } }))))
+
+test('what is arranged is kept as a view from Arrange, under a name the person writes: picked from the bar by its name, shown its own way, arranged on its own, renamed and deleted; the collection’s own is whole again, and a sort stays with its view until a row is moved by hand', async ({ page }) => {
+  await start(page)
+  await viewing(page)
+  const places = () => page.locator('.table-grid tbody tr').getByTitle('Place').evaluateAll((fields) => fields.map((field) => /** @type {HTMLInputElement} */ (field).value))
+  const arrange = page.locator('.table-tools').getByRole('button', { name: 'Arrange', exact: true }), panel = page.locator('.table-panel:popover-open'), chips = page.locator('.table-chips > li')
+  const button = page.locator('.table-kept'), menu = page.locator('.table-menu:popover-open'), field = page.getByTitle('View name')
+  await expect.poll(places).toEqual(['Villa Aurore', 'Loft Canal', 'Maison Pins', 'Studio Port'])
+  // No view kept, nothing of them shows.
+  await expect(button).toHaveCount(0)
+  await expect(page.locator('.table-yours')).toHaveText('')
+  // Arranged: the open ones, the dearest first; alone, the collection keeps it as it always has.
+  await arrange.click()
+  await panel.getByRole('button', { name: 'Add a filter' }).click()
+  await panel.getByRole('combobox', { name: 'Column' }).selectOption('Stage')
+  await panel.locator('.table-rule select').last().selectOption('Open')
+  await panel.getByRole('group', { name: 'Price' }).getByRole('button', { name: 'Sort Z → A' }).click()
+  await expect.poll(places).toEqual(['Maison Pins', 'Villa Aurore', 'Studio Port'])
+  await expect(chips).toHaveText(['StageOpen', 'Price'])
+  await expect.poll(async () => (await viewsOf(page)).views[0]).toEqual({ id: 'table', type: 'table', filter: { and: [{ property: 'stage', op: 'is', value: 'Open' }] }, sort: [{ property: 'price', direction: 'descending' }] })
+  expect((await viewsOf(page)).yours).toBe(null)
+  // Kept as a view: named from its rule, the name selected to write another; the collection's own is whole again.
+  await panel.getByRole('button', { name: 'Keep as a view' }).click()
+  await expect(field).toBeFocused()
+  await expect(field).toHaveValue('Open')
+  await page.keyboard.type('Open visits')
+  await page.keyboard.press('Enter')
+  await expect(button).toBeFocused()
+  await expect(button).toHaveText('Open visits')
+  await expect.poll(places).toEqual(['Maison Pins', 'Villa Aurore', 'Studio Port'])
+  const { views } = await viewsOf(page), id = views[2].id
+  expect(views).toEqual([{ id: 'table', type: 'table' }, { id: 'board', type: 'board', group: 'stage' }, { id, type: 'table', name: 'Open visits', filter: { and: [{ property: 'stage', op: 'is', value: 'Open' }] }, sort: [{ property: 'price', direction: 'descending' }] }])
+  await expect(page).toHaveURL(new RegExp(`show=01K85Z1T00000000000000000V(:|%3A)${id}`))
+  // The bar's button lists All rows and the views kept, the one on show marked; All rows shows every row, with nothing arranged.
+  await button.click()
+  await expect(menu.getByRole('button')).toHaveText(['All rows', 'Open visits', 'Rename', 'Delete'])
+  await expect(menu.getByRole('button', { name: 'Open visits' })).toHaveAttribute('aria-current', 'true')
+  await menu.getByRole('button', { name: 'All rows' }).click()
+  await expect(button).toHaveText('All rows')
+  await expect.poll(places).toEqual(['Villa Aurore', 'Loft Canal', 'Maison Pins', 'Studio Port'])
+  await expect(chips).toHaveCount(0)
+  // A view shows its own way: as a board, which All rows doesn't follow; and arranged on its own.
+  await button.click()
+  await menu.getByRole('button', { name: 'Open visits' }).click()
+  await page.locator('.table-shows').getByRole('button', { name: 'Board' }).click()
+  await expect(page.locator('.table-lane .table-card')).toHaveCount(3)
+  await expect.poll(async () => (await viewsOf(page)).views[2].type).toBe('board')
+  await button.click()
+  await menu.getByRole('button', { name: 'All rows' }).click()
+  await expect(page.locator('.table-grid')).toBeVisible()
+  await button.click()
+  await menu.getByRole('button', { name: 'Open visits' }).click()
+  await expect(page.locator('.table-lane .table-card')).toHaveCount(3)
+  await page.locator('.table-shows').getByRole('button', { name: 'Table' }).click()
+  await arrange.click()
+  await panel.getByRole('checkbox', { name: 'Who' }).uncheck()
+  await page.keyboard.press('Escape')
+  await expect(page.locator('.table-grid .table-head')).toHaveText(['Place', 'Stage', 'Price'])
+  await expect.poll(async () => (await viewsOf(page)).views).toMatchObject([{ id: 'table', type: 'table' }, {}, { name: 'Open visits', type: 'table', hidden: ['who'] }])
+  // Sorted, a row moved by hand takes the order shown, which is the rows' from then on, the view sorted no more.
+  await page.locator('.table-grid tbody tr').nth(2).getByRole('button', { name: 'Move row' }).focus()
+  await page.keyboard.press('ArrowUp')
+  await expect.poll(places).toEqual(['Maison Pins', 'Studio Port', 'Villa Aurore'])
+  await expect(chips).toHaveText(['StageOpen', '1 column hidden'])
+  await expect.poll(async () => (await viewsOf(page)).views[2].sort).toBe(undefined)
+  // At 320 px its name has a line of its own, nothing past the page.
+  await page.setViewportSize({ width: 320, height: 640 })
+  await expect(button).toBeVisible()
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+  expect(await button.evaluate((one) => one.scrollWidth <= one.clientWidth + 1)).toBe(true)
+  await page.setViewportSize({ width: 1280, height: 720 })
+  // Renamed from its menu: Escape leaves it as it was, Enter keeps what is written.
+  await button.click()
+  await menu.getByRole('button', { name: 'Rename' }).click()
+  await expect(field).toBeFocused()
+  await page.keyboard.type('Nothing')
+  await page.keyboard.press('Escape')
+  await expect(button).toHaveText('Open visits')
+  await expect(page.locator('.table-view')).toBeVisible()
+  await button.click()
+  await menu.getByRole('button', { name: 'Rename' }).click()
+  await expect(field).toBeFocused()
+  await page.keyboard.type('To see')
+  await page.keyboard.press('Enter')
+  await expect(button).toHaveText('To see')
+  // Deleted: All rows shows, no view is listed, and the file keeps that it went, so that no copy brings it back.
+  await button.click()
+  await menu.getByRole('button', { name: 'Delete' }).click()
+  await expect(button).toHaveCount(0)
+  await expect.poll(places).toEqual(['Maison Pins', 'Studio Port', 'Villa Aurore', 'Loft Canal'])
+  await expect.poll(async () => (await viewsOf(page)).views[2]).toMatchObject({ id, name: 'To see', deleted: expect.any(String) })
+})
+
+test('where others work on a collection too, what a person arranges is theirs alone until they keep it: said under the bar, kept in a file of their own, there again once reloaded, reset, kept as a view of its own, or kept into the view picked; a rule on Me keeps each person’s own rows', async ({ page, browserName }) => {
+  await start(page)
+  await viewing(page)
+  await together(page)
+  const places = () => page.locator('.table-grid tbody tr').getByTitle('Place').evaluateAll((fields) => fields.map((field) => /** @type {HTMLInputElement} */ (field).value))
+  const arrange = page.locator('.table-tools').getByRole('button', { name: 'Arrange', exact: true }), panel = page.locator('.table-panel:popover-open'), chips = page.locator('.table-chips > li')
+  const yours = page.locator('.table-yours'), button = page.locator('.table-kept'), field = page.getByTitle('View name')
+  await expect.poll(places).toHaveLength(4)
+  // A rule on Me, offered before the names known: this person's rows, by the name they go by among the others.
+  await arrange.click()
+  await panel.getByRole('button', { name: 'Add a filter' }).click()
+  await panel.getByRole('combobox', { name: 'Column' }).selectOption('Who')
+  await panel.locator('.table-rule select').last().selectOption('is')
+  expect(await page.locator('datalist[id$="-me"] option').evaluateAll((all) => all.map((one) => /** @type {HTMLOptionElement} */ (one).value))).toEqual(['Me', 'Léa', 'Tom'])
+  await panel.locator('.table-rule').getByTitle('Who').fill('Me')
+  await panel.locator('.table-rule').getByTitle('Who').press('Enter')
+  await page.keyboard.press('Escape')
+  await expect.poll(places).toEqual(['Villa Aurore', 'Studio Port'])
+  await expect(chips).toHaveText(['WhoMe'])
+  // Theirs alone: said, in a status; the collection's own file as it was, theirs beside it.
+  await expect(yours.getByRole('status')).toHaveText('Only you see this')
+  await expect(yours.getByRole('button')).toHaveText(['Keep', 'Reset'])
+  await expect.poll(async () => (await viewsOf(page)).yours).toEqual({ table: { filter: { and: [{ property: 'who', op: 'is', value: { me: true } }] } } })
+  expect((await viewsOf(page)).views).toEqual([{ id: 'table', type: 'table' }, { id: 'board', type: 'board', group: 'stage' }])
+  // There again once the page is loaded again; WebKit runs here like a private window, where nothing is kept for the next visit.
+  if (browserName !== 'webkit') {
+    await page.reload()
+    await page.evaluate(() => import('/ui/caps.js').then(({ unlock }) => unlock('tables')))
+    await together(page)
+    await page.evaluate(() => import('/ui/preview.js').then(({ preview }) => preview({ uri: 'collections/01K85Z1T00000000000000000V-visits', name: 'Visits.xlsx', title: 'Visits' })))
+    await expect.poll(places).toEqual(['Villa Aurore', 'Studio Port'])
+    await expect(yours.getByRole('status')).toHaveText('Only you see this')
+  }
+  // Reset: as it is for everyone again, their file gone.
+  await yours.getByRole('button', { name: 'Reset' }).click()
+  await expect.poll(places).toHaveLength(4)
+  await expect(yours).toHaveText('')
+  await expect.poll(async () => (await viewsOf(page)).yours).toBe(null)
+  // Grouped, then kept: a view of its own for everyone, named from its group, the collection's own as it was, nothing theirs alone left.
+  await arrange.click()
+  await panel.getByRole('combobox', { name: 'Group by' }).selectOption('Stage')
+  await page.keyboard.press('Escape')
+  await expect(page.locator('.table-grid tr.table-group')).toHaveCount(2)
+  await yours.getByRole('button', { name: 'Keep' }).click()
+  await expect(field).toHaveValue('Stage')
+  await expect(field).toBeFocused()
+  await page.keyboard.press('Enter')
+  await expect(button).toHaveText('Stage')
+  await expect(yours).toHaveText('')
+  await expect.poll(async () => (await viewsOf(page)).views).toMatchObject([{ id: 'table', type: 'table' }, { id: 'board' }, { name: 'Stage', type: 'table', group: 'stage' }])
+  expect((await viewsOf(page)).views[0]).toEqual({ id: 'table', type: 'table' })
+  expect((await viewsOf(page)).yours).toBe(null)
+  // The view picked, shown as a board by this person alone until kept: then for everyone.
+  await page.locator('.table-shows').getByRole('button', { name: 'Board' }).click()
+  await expect(page.locator('.table-lane')).toHaveCount(2)
+  await expect(yours.getByRole('status')).toHaveText('Only you see this')
+  expect((await viewsOf(page)).views[2].type).toBe('table')
+  await yours.getByRole('button', { name: 'Keep' }).click()
+  await expect(yours).toHaveText('')
+  await expect(page.locator('.table-lane')).toHaveCount(2)
+  await expect.poll(async () => (await viewsOf(page)).views[2].type).toBe('board')
+  expect((await viewsOf(page)).yours).toBe(null)
+})
+
+for (const [lang, all, keepView, only, keep, reset, me] of /** @type {const} */ ([['ar', 'كل الصفوف', 'احتفظ به كعرض', 'هذا ظاهر لك وحدك', 'احتفظ', 'أعد الضبط', 'أنا'], ['ja', 'すべての行', 'ビューとして保存', 'あなただけに表示されています', '保存', 'リセット', '自分']])) {
+  test(`kept views in ${lang}: their words the language's, the view's name at the bar's start`, async ({ page }) => {
+    await start(page, lang)
+    await viewing(page)
+    await expect(page.locator('.table-grid tbody tr')).toHaveCount(4)
+    // Kept from Arrange, the last of its panel; its name, then All rows in its menu.
+    await page.locator('.table-tools > button').click()
+    await expect(page.locator('.table-panel:popover-open > button').last()).toHaveText(keepView)
+    await page.locator('.table-panel:popover-open > button').last().click()
+    await expect(page.locator('.table-titled')).toBeFocused()
+    await page.keyboard.press('Enter')
+    const button = page.locator('.table-kept')
+    await expect(button).toBeFocused()
+    await button.click()
+    await expect(page.locator('.table-menu:popover-open button').first()).toHaveText(all)
+    await page.keyboard.press('Escape')
+    // At the bar's start: the right in Arabic.
+    const [name, tools] = await Promise.all([button.boundingBox(), page.locator('.table-tools').boundingBox()])
+    expect(lang === 'ar' ? (name?.x ?? 0) > (tools?.x ?? 0) : (name?.x ?? 0) < (tools?.x ?? 0)).toBe(true)
+    // With others, what is arranged is this person's alone, said in the language, with what keeps it and what resets it; a rule takes Me.
+    await together(page)
+    await page.locator('.table-tools > button').click()
+    const panel = page.locator('.table-panel:popover-open')
+    await panel.locator('select').first().selectOption('stage')
+    await expect(page.locator('.table-yours [role="status"]')).toHaveText(only)
+    await expect(page.locator('.table-yours button')).toHaveText([keep, reset])
+    expect(await page.locator('datalist[id$="-me"] option').first().evaluate((one) => /** @type {HTMLOptionElement} */ (one).value)).toBe(me)
+  })
+}
+
+test('asked to show only some rows, the brain proposes a view: on show at once, the person’s alone, said under the bar, the collection as it was; kept, it is a view of the collection under its name; one Jean can’t make is refused in words, and No thanks takes one away (D755)', async ({ page }) => {
+  await start(page)
+  await planBrain(page)
+  await viewing(page)
+  const places = () => page.locator('.table-grid tbody tr').getByTitle('Place').evaluateAll((fields) => fields.map((field) => /** @type {HTMLInputElement} */ (field).value))
+  const yours = page.locator('.table-yours'), button = page.locator('.table-kept'), menu = page.locator('.table-menu:popover-open')
+  await expect.poll(places).toHaveLength(4)
+  const before = (await viewsOf(page)).views
+  await ask(page, 'Show only the open visits, the dearest first')
+  await answered(page)
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Done: the view is over the collection')
+  // On show: its rows, sorted, a column hidden, its name at the bar's start; said as suggested, in a status, with what keeps it and what doesn't.
+  await expect(button).toHaveText('Open, dearest first')
+  await expect.poll(places).toEqual(['Maison Pins', 'Villa Aurore', 'Studio Port'])
+  await expect(page.locator('.table-grid .table-head')).toHaveText(['Place', 'Stage', 'Price'])
+  await expect(page.locator('.table-chips > li')).toHaveText(['StageOpen', '1 column hidden', 'Price'])
+  await expect(yours.getByRole('status')).toHaveText('Suggested: Open, dearest first')
+  await expect(yours.getByRole('button')).toHaveText(['Keep', 'No thanks'])
+  // Nothing of the collection changed: the view is among this person's own.
+  const made = await viewsOf(page), [id] = Object.keys(made.yours)
+  expect(made.views).toEqual(before)
+  expect(made.yours[id]).toEqual({ name: 'Open, dearest first', type: 'table', filter: { and: [{ property: 'stage', op: 'is', value: 'Open' }] }, sort: [{ property: 'price', direction: 'descending' }], hidden: ['who'] })
+  // Its menu lists it after All rows, by whom, with nothing to rename or delete; All rows shows every row, the view still there to pick.
+  await button.click()
+  await expect(menu.getByRole('button')).toHaveText(['All rows', /^Open, dearest first\s*Jean$/])
+  await menu.getByRole('button', { name: 'All rows' }).click()
+  await expect.poll(places).toHaveLength(4)
+  await expect(yours).toHaveText('')
+  await button.click()
+  await menu.getByRole('button', { name: /Open, dearest first/ }).click()
+  await expect.poll(places).toHaveLength(3)
+  // Kept: a view of the collection under the name it has, the collection's own arrangement as it was, nothing theirs alone left.
+  await yours.getByRole('button', { name: 'Keep' }).click()
+  await expect(yours).toHaveText('')
+  await expect(button).toHaveText('Open, dearest first')
+  await expect(page.locator('.table-titled')).toHaveCount(0)
+  await expect.poll(async () => (await viewsOf(page)).views).toMatchObject([{ id: 'table', type: 'table' }, { id: 'board' }, { name: 'Open, dearest first', type: 'table', filter: { and: [{ property: 'stage', op: 'is', value: 'Open' }] }, sort: [{ property: 'price', direction: 'descending' }], hidden: ['who'] }])
+  expect((await viewsOf(page)).views[0]).toEqual({ id: 'table', type: 'table' })
+  expect((await viewsOf(page)).yours).toBe(null)
+  await expect.poll(places).toEqual(['Maison Pins', 'Villa Aurore', 'Studio Port'])
+  // A view Jean can't make, a gallery with no pictures, is refused in words the brain reads; nothing is proposed.
+  await ask(page, 'Show the visits as a gallery')
+  await answered(page, 2)
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('That didn’t work: Error: A gallery shows pictures: this table has no picture column.')
+  expect((await viewsOf(page)).yours).toBe(null)
+  // Proposed again, then No thanks: All rows, and the view gone.
+  await ask(page, 'Show only the open visits again')
+  await answered(page, 3)
+  await expect(yours.getByRole('status')).toHaveText('Suggested: Open, dearest first')
+  // Proposed once more under the same name, it takes the place of the one before.
+  await ask(page, 'Show only the open visits once more')
+  await answered(page, 4)
+  expect(Object.keys((await viewsOf(page)).yours)).toHaveLength(1)
+  await yours.getByRole('button', { name: 'No thanks' }).click()
+  await expect(button).toHaveText('All rows')
+  await expect.poll(places).toHaveLength(4)
+  await expect.poll(async () => (await viewsOf(page)).yours).toBe(null)
+  await button.click()
+  await expect(menu.getByRole('button')).toHaveText(['All rows', 'Open, dearest first'])
+})
+
+for (const [lang, suggested, no] of /** @type {const} */ ([['ar', 'اقتراح: مفتوحة', 'لا، شكرًا'], ['ja', '提案：未完了', 'いいえ、結構です']])) {
+  test(`a proposed view in ${lang}: said and refused in the language's words`, async ({ page }) => {
+    await start(page, lang)
+    await viewing(page)
+    await expect(page.locator('.table-grid tbody tr')).toHaveCount(4)
+    await page.evaluate((name) => import('/caps/tables/tables.js').then(({ shown, alone }) => shown.value && alone(shown.value, 'p1', { name, type: 'table', filter: { and: [{ property: 'stage', op: 'is', value: 'Open' }] } })), suggested.split(/[:：]\s*/)[1])
+    await page.locator('.table-kept').click()
+    await page.locator('.table-menu:popover-open button').nth(1).click()
+    await expect(page.locator('.table-grid tbody tr')).toHaveCount(3)
+    await expect(page.locator('.table-yours [role="status"]')).toHaveText(suggested)
+    await expect(page.locator('.table-yours button').last()).toHaveText(no)
+    await page.locator('.table-yours button').last().click()
+    await expect(page.locator('.table-grid tbody tr')).toHaveCount(4)
+    await expect(page.locator('.table-kept')).toHaveCount(0)
+  })
+}

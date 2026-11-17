@@ -105,6 +105,13 @@
   },
   "tables.showAll": "Nuna dukkan ginshiƙai",
   "tables.arranged": "Abin da aka tsara",
+  "tables.allRows": "Duk layuka",
+  "tables.viewName": "Sunan kallo",
+  "tables.keepView": "Ajiye a matsayin kallo",
+  "tables.keep": "Ajiye",
+  "tables.reset": "Sake saitawa",
+  "tables.onlyYou": "Kai kaɗai ke ganin wannan",
+  "tables.me": "Ni",
   "tables.plain": "Lamba kawai",
   "tables.money": "Kuɗi",
   "tables.percent": "Kashi",
@@ -118,5 +125,23 @@
   "tables.made": {
     "one": "Sabon layi {count} da za a duba",
     "other": "Sababbin layuka {count} da za a duba"
-  }
+  },
+  "tables.open": "Buɗe",
+  "tables.choices": "Zaɓuɓɓuka",
+  "tables.addChoice": "Ƙara zaɓi",
+  "tables.colour": "Launi",
+  "tables.hue0": "Kore",
+  "tables.hue1": "Shuɗi-kore",
+  "tables.hue2": "Shuɗi",
+  "tables.hue3": "Shunayya",
+  "tables.hue4": "Ruwan hoda mai haske",
+  "tables.hue5": "Ruwan hoda",
+  "tables.hue6": "Toka",
+  "tables.kind.picture": "Hoto",
+  "tables.gallery": "Hotuna",
+  "tables.addPicture": "Ƙara hoto",
+  "tables.addFiles": "Ƙara fayiloli",
+  "tables.calendar": "Kalanda",
+  "tables.end": "Ƙarshe",
+  "tables.time": "Lokaci"
 }

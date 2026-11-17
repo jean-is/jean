@@ -103,6 +103,13 @@
   },
   "tables.showAll": "すべての列を表示",
   "tables.arranged": "整理の条件",
+  "tables.allRows": "すべての行",
+  "tables.viewName": "ビューの名前",
+  "tables.keepView": "ビューとして保存",
+  "tables.keep": "保存",
+  "tables.reset": "リセット",
+  "tables.onlyYou": "あなただけに表示されています",
+  "tables.me": "自分",
   "tables.plain": "通常の数値",
   "tables.money": "金額",
   "tables.percent": "パーセント",
@@ -115,5 +122,23 @@
   "tables.movedTo": "{group} に移動しました",
   "tables.made": {
     "other": "確認する新しい行：{count} 件"
-  }
+  },
+  "tables.open": "開く",
+  "tables.choices": "選択肢",
+  "tables.addChoice": "選択肢を追加",
+  "tables.colour": "色",
+  "tables.hue0": "緑",
+  "tables.hue1": "青緑",
+  "tables.hue2": "青",
+  "tables.hue3": "すみれ",
+  "tables.hue4": "フクシア",
+  "tables.hue5": "ローズ",
+  "tables.hue6": "灰色",
+  "tables.kind.picture": "画像",
+  "tables.gallery": "ギャラリー",
+  "tables.addPicture": "画像を追加",
+  "tables.addFiles": "ファイルを追加",
+  "tables.calendar": "カレンダー",
+  "tables.end": "終了",
+  "tables.time": "時刻"
 }

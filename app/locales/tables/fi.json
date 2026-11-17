@@ -105,6 +105,13 @@
   },
   "tables.showAll": "Näytä kaikki sarakkeet",
   "tables.arranged": "Järjestely",
+  "tables.allRows": "Kaikki rivit",
+  "tables.viewName": "Näkymän nimi",
+  "tables.keepView": "Säilytä näkymänä",
+  "tables.keep": "Säilytä",
+  "tables.reset": "Palauta",
+  "tables.onlyYou": "Vain sinä näet tämän",
+  "tables.me": "Minä",
   "tables.plain": "Tavallinen luku",
   "tables.money": "Rahasumma",
   "tables.percent": "Prosentti",
@@ -118,5 +125,23 @@
   "tables.made": {
     "one": "{count} uusi tarkistettava rivi",
     "other": "{count} uutta tarkistettavaa riviä"
-  }
+  },
+  "tables.open": "Avaa",
+  "tables.choices": "Valinnat",
+  "tables.addChoice": "Lisää valinta",
+  "tables.colour": "Väri",
+  "tables.hue0": "Vihreä",
+  "tables.hue1": "Sinivihreä",
+  "tables.hue2": "Sininen",
+  "tables.hue3": "Violetti",
+  "tables.hue4": "Fuksia",
+  "tables.hue5": "Ruusu",
+  "tables.hue6": "Harmaa",
+  "tables.kind.picture": "Kuva",
+  "tables.gallery": "Galleria",
+  "tables.addPicture": "Lisää kuva",
+  "tables.addFiles": "Lisää tiedostoja",
+  "tables.calendar": "Kalenteri",
+  "tables.end": "Loppu",
+  "tables.time": "Aika"
 }

@@ -76,7 +76,7 @@ test('a document and a collection leave the same way, in the same order, the but
   await page.evaluate(async () => {
     const { app } = await import('/ui/state.js'), at = '2026-10-21T09:00:00.000Z', folder = 'collections/01K85Z1T00000000000000000P-costs'
     await app.fs.write(`${app.projectDir}/${folder}/collection.json`, JSON.stringify({ format: 1, id: '01K85Z1T00000000000000000P', name: 'Costs', author: 'user', created: at, changed: at,
-      properties: [{ id: 'item', name: 'Item', type: 'text' }, { id: 'amount', name: 'Amount', type: 'number' }], views: [{ id: 'all', name: 'All', type: 'table' }] }))
+      properties: [{ id: 'item', name: 'Item', type: 'text' }, { id: 'amount', name: 'Amount', type: 'number' }], views: [{ id: 'table', type: 'table' }] }))
     await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, `${JSON.stringify({ row: '01K80000000000000000000001', set: { item: 'Seeds', amount: 12 }, at, by: 'user' })}\n`)
     ;(await import('/ui/preview.js')).preview({ uri: folder, name: 'Costs.xlsx', title: 'Costs' })
   })

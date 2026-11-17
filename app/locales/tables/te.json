@@ -105,6 +105,13 @@
   },
   "tables.showAll": "అన్ని నిలువు వరుసలు చూపు",
   "tables.arranged": "ప్రస్తుత అమరిక",
+  "tables.allRows": "అన్ని వరుసలు",
+  "tables.viewName": "వీక్షణ పేరు",
+  "tables.keepView": "వీక్షణగా ఉంచండి",
+  "tables.keep": "ఉంచండి",
+  "tables.reset": "రీసెట్ చేయండి",
+  "tables.onlyYou": "దీన్ని మీరు మాత్రమే చూస్తున్నారు",
+  "tables.me": "నేను",
   "tables.plain": "సాధారణ సంఖ్య",
   "tables.money": "డబ్బు",
   "tables.percent": "శాతం",
@@ -118,5 +125,23 @@
   "tables.made": {
     "one": "చూడాల్సిన {count} కొత్త వరుస",
     "other": "చూడాల్సిన {count} కొత్త వరుసలు"
-  }
+  },
+  "tables.open": "తెరువు",
+  "tables.choices": "ఎంపికలు",
+  "tables.addChoice": "ఎంపికను జోడించు",
+  "tables.colour": "రంగు",
+  "tables.hue0": "ఆకుపచ్చ",
+  "tables.hue1": "నీలిపచ్చ",
+  "tables.hue2": "నీలం",
+  "tables.hue3": "ఊదా",
+  "tables.hue4": "ఫ్యూషియా",
+  "tables.hue5": "గులాబీ",
+  "tables.hue6": "బూడిద",
+  "tables.kind.picture": "చిత్రం",
+  "tables.gallery": "గ్యాలరీ",
+  "tables.addPicture": "చిత్రాన్ని జోడించండి",
+  "tables.addFiles": "ఫైళ్లు జోడించు",
+  "tables.calendar": "క్యాలెండర్",
+  "tables.end": "ముగింపు",
+  "tables.time": "సమయం"
 }

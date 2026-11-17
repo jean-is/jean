@@ -105,6 +105,13 @@
   },
   "tables.showAll": "Alle kolommen tonen",
   "tables.arranged": "Ordening",
+  "tables.allRows": "Alle rijen",
+  "tables.viewName": "Naam van de weergave",
+  "tables.keepView": "Bewaren als weergave",
+  "tables.keep": "Bewaren",
+  "tables.reset": "Herstellen",
+  "tables.onlyYou": "Alleen jij ziet dit",
+  "tables.me": "Ik",
   "tables.plain": "Gewoon getal",
   "tables.money": "Geldbedrag",
   "tables.percent": "Percentage",
@@ -118,5 +125,23 @@
   "tables.made": {
     "one": "{count} nieuwe rij te bekijken",
     "other": "{count} nieuwe rijen te bekijken"
-  }
+  },
+  "tables.open": "Openen",
+  "tables.choices": "Keuzes",
+  "tables.addChoice": "Keuze toevoegen",
+  "tables.colour": "Kleur",
+  "tables.hue0": "Groen",
+  "tables.hue1": "Turquoise",
+  "tables.hue2": "Blauw",
+  "tables.hue3": "Violet",
+  "tables.hue4": "Fuchsia",
+  "tables.hue5": "Roze",
+  "tables.hue6": "Grijs",
+  "tables.kind.picture": "Afbeelding",
+  "tables.gallery": "Galerij",
+  "tables.addPicture": "Afbeelding toevoegen",
+  "tables.addFiles": "Bestanden toevoegen",
+  "tables.calendar": "Kalender",
+  "tables.end": "Einde",
+  "tables.time": "Tijd"
 }

@@ -13,26 +13,26 @@
 import { html } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { signal } from '@preact/signals-core'
-import { register, unlock, isDenied } from '../../ui/caps.js'
+import { register, unlock, isDenied, slots } from '../../ui/caps.js'
 import { keep } from '../../ui/windows.js'
 import { onPaper } from '../../ui/kit.js'
 import { kitSlot } from '../slides/kit-slot.js'
 import '../made/paper.js'
-import { app, conversationOf } from '../../ui/state.js'
+import { app, conversationOf, effective } from '../../ui/state.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { noteRecord } from '../../core/events.js'
 import { isLocal } from '../../core/settings.js'
 import { ulid } from '../../core/ulid.js'
+import { sha256Hex } from '../../core/files.js'
 import { useStrings, locale, t, intlLocales } from '../../core/i18n.js'
 import { icons } from '../../ui/menu-icons.js'
 import { page, grid, reread as listed } from '../../ui/creations.js'
-import { createTable, readTable, folderOf, propertyOf, checkCell, grown, reshape, converted, canonical, isOwn, ownProblem, kindOf, notesOf, spotOf, arranged, currencyOf, PLACE as FOLDER } from './table.js'
+import { createTable, readTable, folderOf, propertyOf, checkCell, grown, reshape, converted, canonical, isOwn, ownProblem, kindOf, notesOf, spotOf, arranged, currencyOf, filesOf, viewOf, PLACE as FOLDER } from './table.js'
 import { stringifyChanges, stamp, fold, undo, reading, marked, inverse } from './changes.js'
 import { query, ordered, valueOf, filterOf, total } from './query.js'
 import { worked } from './formula.js'
 import { exportTable, namesOf, rowNamed, said, digitsOf, amount, calcOf } from './export.js'
-import { tableCreate, LINE } from './tool.js'
-import { fill } from './fill.js'
+import { tableCreate, tableView, LINE, TABLE_ROWS, TABLE_CHANGE } from './tool.js'
 
 await Promise.all([useStrings('tables'), styleSheet(new URL('tables.css', import.meta.url))])
 
@@ -64,6 +64,30 @@ keep('show', {
   get: () => (shows.value, [...ways].flatMap(([id, { as, find }]) => (as.value || find.value ? [`${id}:${as.value}${find.value ? `:${encodeURIComponent(find.value)}` : ''}`] : [])).join(',') || null),
   set: (state) => { const named = new Map((state ?? '').split(',').map((item) => [item.slice(0, 26), item.slice(27).split(':')])); for (const id of named.keys()) if (id) wayOf(`collections/${id}`); for (const [id, way] of ways) [way.as.value, way.find.value] = [named.get(id)?.[0] ?? '', decodeURIComponent(named.get(id)?.[1] ?? '')] },
 })
+/**
+ * What the person arranged of each collection and hasn't kept, by view: theirs alone, in the collection's `yours.json`, which is no part of what
+ * the others who work on it get (caps/together/collection.js), read as the collection is first shown. @type {Map<string, import('@preact/signals-core').Signal<Record<string, Partial<import('./table.js').View>>>>}
+ */
+const yours = new Map()
+/** Each one's file once read, which a change waits for: none is written over what the file held. @type {WeakMap<object, Promise<unknown>>} */
+const reads = new WeakMap()
+/** @param {Pick<Loaded, 'dir' | 'folder'>} one */
+export function yoursOf({ dir, folder }) {
+  const at = `${dir}/${folder}/yours.json`, kept = yours.get(at) ?? signal(/** @type {Record<string, Partial<import('./table.js').View>>} */ ({}))
+  if (!yours.has(at)) reads.set(yours.set(at, kept) && kept, app.fs.read(at).then((text) => { const views = text && JSON.parse(text).views; if (views) kept.value = { ...views, ...kept.peek() } }).catch(() => {}))
+  return kept
+}
+/** A view arranged for this person alone, until kept; with nothing, as it is for everyone again. @param {Loaded} one @param {string} id the view's @param {Partial<import('./table.js').View>} [view] */
+export async function alone(one, id, view) {
+  const kept = yoursOf(one), at = `${one.dir}/${one.folder}/yours.json`
+  await reads.get(kept)
+  const { [id]: was, ...all } = kept.peek()
+  kept.value = view ? Object.assign(all, { [id]: view }) : all
+  // What it no longer holds is written as none, so that it still holds none once read again.
+  return Object.keys(all).length ? app.fs.write(at, `${JSON.stringify({ format: 1, views: all }, (_, value) => value ?? null, 2)}\n`) : app.fs.remove(at)
+}
+/** The name the person goes by in a collection, which a rule on "Me" keeps: the one those who work on it with them see, else the one they gave Jean. @param {Loaded} one @returns {string | undefined} */
+export const meIn = (one) => slots('names').map((part) => part.me?.(one.folder)).find(Boolean) ?? effective.value.settings.name
 /** The tables blank() made that a document hasn't drawn yet, whose first field then takes the keyboard. */
 const fresh = new Set()
 
@@ -102,11 +126,14 @@ export async function reread(one) {
 
 /** A signal of a collection drawn, read again with each change, until `holds` lets it go. @param {import('@preact/signals-core').Signal<Loaded | null>} where @param {(() => void)[]} holds */
 export const watched = (where, holds) => { showing.add(where); holds.push(() => showing.delete(where)) }
+/** What works out a page's part from a collection, in a folder of its own (caps/fill) that only such pages need: fetched as one first follows a collection. @type {typeof import('../fill/fill.js').fill | undefined} */
+let fill
 /**
  * A collection of the project's by its name, in any case, or its place, read into a signal drawn with the others, so that a page's parts
  * follow each change (D633); null when there is none. @param {string} name @param {(() => void)[]} holds
  */
 export async function follow(name, holds) {
+  fill ??= (await import('../fill/fill.js')).fill
   const key = (/** @type {string} */ text) => text.trim().normalize('NFKC').toLocaleLowerCase(), found = (await collections()).find((one) => one.folder === name.trim() || key(one.name) === key(name))
   const one = found && (await load(found.folder).catch(() => null)), where = signal(/** @type {Loaded | null} */ (one || null))
   return one ? (showing.add(where), holds.push(() => showing.delete(where)), where) : null
@@ -140,8 +167,8 @@ export async function mentioned(folder) {
     `\`count\` counts rows, a date column groups by month, and a form with no lines has a field per column. A part's \`where\` keeps only some rows, when only some are asked for: \`where="${date ? `${date.name} is this month` : by ? `${by.name} is ${by.options?.[0]?.name ?? ''}` : `${live[0]?.name} is empty`}"\`, a column, then is, is not, contains, before, after, >, < or is empty, then a value, joined by and; a date can be today, this week, this month, last month, this year or last 30 days.`,
     ...(kept.length ? [`Its table shows only the rows where ${kept.map((rule) => `${propertyOf(one.table, rule.property)?.name} ${rule.op.replaceAll('-', ' ')}${rule.op.endsWith('empty') ? '' : ` ${typeof rule.value === 'boolean' ? (rule.value ? 'yes' : 'no') : rule.value}`}`).join(' and ')} now: a page shows every row unless its where says so too.`] : [])].join('\n') }
 }
-/** What a page's part shows of a collection (./fill.js), in the user's language, its dates from today; null when its `where` can't be read. @param {Loaded} one @param {import('./fill.js').Part} part */
-export function filled(one, part) { try { return fill(one, part, { locales: intlLocales(locale.peek()), labels: { yes: t('tables.yes'), no: t('tables.no') }, today: new Date() }) } catch { return null } }
+/** What a page's part shows of a collection (caps/fill), in the user's language, its dates from today; null when its `where` can't be read, or before a page follows one. @param {Loaded} one @param {import('../fill/fill.js').Part} part */
+export function filled(one, part) { try { return fill?.(one, part, { locales: intlLocales(locale.peek()), labels: { yes: t('tables.yes'), no: t('tables.no') }, today: new Date() }) ?? null } catch { return null } }
 
 /** @param {Loaded} one @param {Table} table */
 const writeTable = async (one, table) => { await written(one); await app.fs.write(`${one.dir}/${one.folder}/collection.json`, `${JSON.stringify(table, null, 2)}\n`) }
@@ -196,6 +223,26 @@ export async function change(one, edits, by, why, undoable = by === 'user', own 
   if (undoable) did(one, { forth: ready, back: inverse(one.lines, ready) })
   await reread(one)
   return ready.map((edit) => edit.row)
+}
+
+/** How big a file a cell takes at most: what a letter to someone carries (caps/people). */
+const MAX = 25_000_000
+/**
+ * Files given to a picture's or a files cell: each kept in the collection's own folder, named by its content's hash, so the same one twice is kept
+ * once, a picture as a browser opens one (caps/files/pictures.js), then named in the cell after those it holds, as the user's change. One that is no
+ * picture, or too big, is left out. @param {Loaded} one @param {Row} row @param {Property} property @param {File[]} files @returns {Promise<number>} how many were left out
+ */
+export async function attach(one, row, property, files) {
+  const kept = []
+  for (const file of files) {
+    const fit = property.type === 'picture' ? await (await import('../files/pictures.js')).fitPicture(file) : { name: file.name, mimeType: file.type, bytes: new Uint8Array(await file.arrayBuffer()) }
+    if (!fit || fit.bytes.length > MAX) continue
+    const path = `files/${await sha256Hex(fit.bytes)}.${/\.([a-z0-9]{1,8})$/i.exec(fit.name)?.[1]?.toLowerCase() ?? 'bin'}`, at = `${one.dir}/${one.folder}/${path}`
+    if (!(await app.fs.exists(at))) await app.fs.writeBytes(at, fit.bytes)
+    kept.push({ name: fit.name, file: path, ...(fit.mimeType && { type: fit.mimeType }) })
+  }
+  if (kept.length) await change(one, [{ row: row.id, set: { [property.id]: [...filesOf(row.cells[property.id]), ...kept] } }], 'user')
+  return files.length - kept.length
 }
 
 /**
@@ -295,14 +342,17 @@ async function placed(args, id) {
 /** The currency of the person's region, for money nobody named one for. */
 export const localCurrency = () => currencyOf(new Intl.Locale(intlLocales()[0] ?? 'en').maximize().region)
 
-/** A copy, the user's, by the name given, with its rows as they are. @param {{ path: string }} item @param {string} name */
+/** A copy, the user's, by the name given, with its rows as they are and the files they name. @param {{ path: string }} item @param {string} name */
 export async function copy({ path }, name) {
   const one = await load(path), now = new Date().toISOString()
   if (!one) throw new Error(`There is no collection ${path}.`)
   const { pinned, kept, ...table } = one.table, id = ulid()
   // Its relations to itself are to the copy, whose rows keep their ids.
   const properties = table.properties.map((property) => (property.collection === path ? { ...property, collection: folderOf({ id, name }) } : property))
-  return (await made({ ...table, properties, id, name, author: 'user', created: now, changed: now }, one.rows.filter((row) => !row.deleted).map((row) => ({ row: row.id, set: row.cells })))).folder
+  const { folder } = await made({ ...table, properties, id, name, author: 'user', created: now, changed: now }, one.rows.filter((row) => !row.deleted).map((row) => ({ row: row.id, set: row.cells })))
+  // The files its cells name go with it.
+  for (const { name: file } of await app.fs.list(`${one.dir}/${path}/files`).catch(() => [])) await app.fs.readBytes(`${one.dir}/${path}/files/${file}`).then((bytes) => bytes && app.fs.writeBytes(`${app.projectDir}/${folder}/files/${file}`, bytes))
+  return folder
 }
 
 /** The user's new table: a column for each row's name and one empty row. */
@@ -367,8 +417,8 @@ export const groupName = (value, by) => (value === null ? t('tables.none', { col
 export async function gridIn(folder) {
   const one = await load(folder)
   if (!one) return null
-  const view = one.table.views.find((each) => each.type === 'table'), hidden = view?.hidden ?? [], kept = filterOf(one.table), columns = one.table.properties.filter((property) => !property.deleted && !hidden.includes(property.id))
-  const all = one.table.kind ? arranged(one.rows) : query(one.table, one.rows, { ...(kept.length && { filter: { and: kept } }), locale: locale.value, names: one.names }).rows
+  const view = viewOf(one.table, wayOf(folder).as.peek(), yoursOf(one).peek()), hidden = view.hidden ?? [], kept = filterOf(one.table, view), columns = one.table.properties.filter((property) => !property.deleted && !hidden.includes(property.id))
+  const all = one.table.kind ? arranged(one.rows) : query(one.table, one.rows, { ...(kept.length && { filter: { and: kept } }), sort: view.sort?.filter((sort) => propertyOf(one.table, sort.property)), locale: locale.value, names: one.names, me: meIn(one) }).rows
   const digits = columns.map((property) => digitsOf(all, property)), how = { locales: intlLocales(), names: one.names, labels: { yes: '✓', no: '' } }, number = new Intl.NumberFormat(intlLocales())
   const line = (/** @type {Row} */ row) => columns.map((property, i) => said(row, property, { ...how, digits: property.type === 'number' ? digits[i] : undefined }))
   /** What each column's foot works out over some rows, as its word and the figure. @param {Row[]} rows */
@@ -390,8 +440,8 @@ export async function gridIn(folder) {
  */
 export async function kept(dir = app.projectDir) {
   const all = await Promise.all((await folders(dir)).map((folder) => load(folder, dir).catch(() => null)))
-  /** A cell as text, a relation's the name of its row. @param {Loaded} one @param {Row} row @param {Property} property */
-  const cell = (one, row, property) => ((value) => (Array.isArray(value) ? value.join(', ') : value === true ? '✓' : value === false || value == null ? '' : String(value)))(property.type === 'relation' ? valueOf(row, property, one.names) : row.cells[property.id])
+  /** A cell as text, a relation's the name of its row, a file's its name. @param {Loaded} one @param {Row} row @param {Property} property */
+  const cell = (one, row, property) => ((value) => (Array.isArray(value) ? value.map((item) => item?.name ?? item).join(', ') : value === true ? '✓' : value === false || value == null ? '' : String(value)))(property.type === 'relation' ? valueOf(row, property, one.names) : row.cells[property.id])
   return all.flatMap((one) => (one && !one.table.kind ? [{ path: one.folder, name: one.table.name, changed: one.lines.reduce((latest, line) => ('at' in line && line.at > latest ? line.at : latest), one.table.changed), created: one.table.created, pinned: one.table.pinned === true,
     grid: ((heads) => [heads.map((property) => property.name), ...one.rows.slice(0, 6).map((row) => heads.map((property) => cell(one, row, property)))])(one.table.properties.filter((property) => !property.deleted).slice(0, 4)),
     link: /** @type {import('../../core/types.js').ResourceLink} */ ({ type: 'resource_link', uri: one.folder, name: one.table.name, title: one.table.name }), text: ((columns) => [columns.map((property) => property.name).join(', '),
@@ -483,11 +533,7 @@ function boardRows(one) {
 
 /** @type {import('../../core/loop.js').Tool} */
 const rowsTool = {
-  spec: {
-    name: 'table_rows',
-    description: 'Read the rows of a table the user keeps, each with its id, which table_change needs. A filter keeps some: { property, op, value }, op being is, is-not, contains, is-empty, greater-than or less-than.',
-    parameters: { type: 'object', required: ['table'], properties: { table: { type: 'string', description: 'Its place, as table_create gave it' }, filter: { type: 'object' } } },
-  },
+  spec: TABLE_ROWS,
   kind: 'read',
   title: (args) => `Read ${args?.table ?? ''}`,
   // A read leaves the screen and its address as they are: nothing opens beside the task (D657).
@@ -505,15 +551,7 @@ const rowsTool = {
 
 /** @type {import('../../core/loop.js').Tool} */
 const changeTool = {
-  spec: {
-    name: 'table_change',
-    description: 'Add or change rows of a table the user keeps: set each cell by its column\'s name; a row without its id is a new one; delete: true removes a row. The user sees each change, to accept or reject.',
-    parameters: { type: 'object', required: ['table', 'rows'], properties: {
-      table: { type: 'string', description: 'Its place, as table_create gave it' },
-      rows: { type: 'array', items: { type: 'object', properties: { row: { type: 'string' }, set: { type: 'object' }, delete: { type: 'boolean' } } } },
-      why: { type: 'string', description: 'What it comes from, in a few words, e.g. "the email of 23 October"' },
-    } },
-  },
+  spec: TABLE_CHANGE,
   kind: 'edit',
   for: passes,
   title: (args) => `Change ${args?.table ?? ''}`,
@@ -524,6 +562,27 @@ const changeTool = {
     const ids = await change(one, Array.isArray(args?.rows) ? args.rows : [], 'jean', typeof args?.why === 'string' ? args.why : undefined)
     if (here(ctx)) await open(one)
     return ids.length ? `Changed ${ids.length} rows of ${one.table.name}, beside the conversation for the user to accept or reject: ${ids.join(', ')}.` : 'Nothing changed: give each row a set or delete.'
+  },
+}
+
+/** @type {import('../../core/loop.js').Tool} */
+const viewTool = {
+  spec: tableView(),
+  kind: 'edit',
+  for: passes,
+  title: (args) => `View ${args?.name ?? ''}`,
+  // A view proposed (D755), made of what the brain sent by a folder of its own (caps/views): this person's alone, under an id of its own, on show at
+  // once where its task is on screen, for them to keep or not. Nothing of the collection changes.
+  run: async (args, ctx) => {
+    refuse(ctx)
+    const one = await named(args?.table), view = (await import('../views/views.js')).viewFrom(one.table, args), mine = yoursOf(one)
+    await reads.get(mine)
+    // Proposed again under a name, it takes the place of the one proposed before.
+    const id = Object.keys(mine.peek()).find((key) => mine.peek()[key].name === view.name) ?? `p${ulid()}`
+    await alone(one, id, view)
+    if (here(ctx)) await open(one), (wayOf(one.folder).as.value = id)
+    const { rows } = query(one.table, one.rows, { ...(view.filter && { filter: view.filter }), locale: locale.peek(), names: one.names, me: meIn(one) })
+    return `Proposed the view ${view.name} of ${one.table.name}: it keeps ${rows.length} of its ${one.rows.length} rows. The user sees it over the collection, theirs alone, to keep or not; nothing else changed.`
   },
 }
 
@@ -575,7 +634,7 @@ customElements.define('app-table', class extends HTMLElement {
 
 register({
   id: 'tables',
-  tools: [createTool, rowsTool, changeTool],
+  tools: [createTool, rowsTool, changeTool, viewTool],
   lines: [LINE],
   // The project's tables, the latest made first, by name and place, which a relation of table_create's names.
   sections: async () => {
@@ -583,7 +642,7 @@ register({
     return all.length ? { tables: ['A relation column of table_create names one of these in collection, its place or name; each of its cells is then a row of it, set by its name.',
       ...all.slice(0, LISTED), ...(all.length > LISTED ? [`- and ${all.length - LISTED} older ones`] : [])].join('\n') } : {}
   },
-  slots: { modes: { at: 10, draw: () => null, notes }, head: { at: 2, draw: () => null, named: (/** @type {{ uri: string, title: string }} */ file, /** @type {(name: string) => void} */ renamed) => /^collections\//.test(file.uri) && nameField(file, renamed) }, look: kitSlot, out: { at: 2, draw: () => null, of: (/** @type {{ uri: string }} */ { uri }) => /^collections\//.test(uri), load: async () => ({ ways: (await import('../made/ways.js')).collectionWays }) }, creations: { id: 'tables', at: 2, draw: () => icons.table, kept, mention: 'table', preview: (/** @type {{ grid: string[][] }} */ item) => grid(item.grid), make: fromPage,
+  slots: { modes: { at: 10, draw: () => null, notes }, head: { at: 2, draw: () => null, named: (/** @type {{ uri: string, title: string }} */ file, /** @type {(name: string) => void} */ renamed) => FOLDER.test(file.uri) && nameField(file, renamed) }, look: kitSlot, out: { at: 2, draw: () => null, of: (/** @type {{ uri: string }} */ { uri }) => FOLDER.test(uri), load: async () => ({ ways: (await import('../made/ways.js')).collectionWays }) }, creations: { id: 'tables', at: 2, draw: () => icons.table, kept, mention: 'table', preview: (/** @type {{ grid: string[][] }} */ item) => grid(item.grid), make: fromPage,
     // Dragged into a document, its view there.
     held: (/** @type {{ path: string }} */ { path }) => `\`\`\`table\n${path}\n\`\`\``,
     pin: (/** @type {{ path: string }} */ item, /** @type {boolean} */ pinned) => amend(item, { pinned }), rename: (/** @type {{ path: string }} */ item, /** @type {string} */ name) => amend(item, { name }), copy,
