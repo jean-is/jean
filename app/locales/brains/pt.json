@@ -55,6 +55,8 @@
   "brain.howToFix": "Como corrigir",
   "brain.fix": "Resolver",
   "brain.key.change": "Mudar a chave",
+  "brain.gemini.billed": "A faturação está ativa no projeto do Google Cloud desta chave, ou usas a chave a partir do Espaço Económico Europeu, do Reino Unido ou da Suíça",
+  "brain.gemini.billedHint": "Assim, a Google nunca treina uma IA com o que este cérebro lê, por isso ele pode ler o que o Gmail e os outros serviços da Google trazem.",
   "brain.versionHint": "O Auto usa Rápido, Esperto ou O melhor, conforme cada mensagem pede. Quando és tu a escolher {brain}, responde com:",
   "brain.paid": "Algo que já pagas",
   "brain.keyed": "Uma chave de um serviço",

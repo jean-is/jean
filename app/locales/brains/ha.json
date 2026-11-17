@@ -55,6 +55,8 @@
   "brain.howToFix": "Yadda za a gyara shi",
   "brain.fix": "Gyara",
   "brain.key.change": "Canza makulli",
+  "brain.gemini.billed": "An kunna biyan kuɗi a aikin Google Cloud na wannan makullin, ko kana amfani da shi daga Yankin Tattalin Arzikin Turai, Birtaniya ko Switzerland",
+  "brain.gemini.billedHint": "To Google ba ta taɓa horar da AI da abin da wannan ƙwaƙwalwa take karantawa ba, don haka za ta iya karanta abin da Gmail da sauran ayyukan Google suka kawo.",
   "brain.versionHint": "Atomatik na amfani da Mai sauri, Mai wayo ko Mafi kyau gwargwadon bukatar kowane saƙo. Idan kai da kanka ka zaɓi {brain}, yana amsawa da wannan siga:",
   "brain.paid": "Abin da kake biya tuni",
   "brain.keyed": "Makulli daga wani sabis",

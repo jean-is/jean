@@ -55,6 +55,8 @@
   "brain.howToFix": "Jak to naprawić",
   "brain.fix": "Napraw",
   "brain.key.change": "Zmień klucz",
+  "brain.gemini.billed": "Rozliczenia są włączone w projekcie Google Cloud tego klucza albo używasz go z Europejskiego Obszaru Gospodarczego, Wielkiej Brytanii lub Szwajcarii",
+  "brain.gemini.billedHint": "Google nigdy wtedy nie trenuje AI na tym, co czyta ten mózg, więc może on czytać to, co przynoszą Gmail i inne usługi Google.",
   "brain.versionHint": "Auto bierze Szybki, Bystry lub Najlepszy, zależnie od tego, czego potrzebuje wiadomość. Gdy sam wybierasz {brain}, odpowiada wersja:",
   "brain.paid": "Coś, za co już płacisz",
   "brain.keyed": "Klucz z usługi",

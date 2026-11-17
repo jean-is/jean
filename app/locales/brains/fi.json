@@ -55,6 +55,8 @@
   "brain.howToFix": "Näin korjaat sen",
   "brain.fix": "Korjaa",
   "brain.key.change": "Vaihda avain",
+  "brain.gemini.billed": "Tämän avaimen Google Cloud -projektissa on laskutus käytössä, tai käytät avainta Euroopan talousalueelta, Isosta-Britanniasta tai Sveitsistä",
+  "brain.gemini.billedHint": "Google ei silloin koskaan kouluta tekoälyä sillä, mitä nämä aivot lukevat, joten ne saavat lukea sen, mitä Gmail ja Googlen muut palvelut tuovat.",
   "brain.versionHint": "Auto käyttää Nopeaa, Fiksua tai Parasta sen mukaan, mitä kukin viesti vaatii. Kun valitset itse nämä aivot ({brain}), ne vastaavat tällä:",
   "brain.paid": "Jotain, mistä maksat",
   "brain.keyed": "Palvelun avain",

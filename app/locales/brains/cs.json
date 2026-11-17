@@ -55,6 +55,8 @@
   "brain.howToFix": "Jak to opravit",
   "brain.fix": "Opravit",
   "brain.key.change": "Změnit klíč",
+  "brain.gemini.billed": "Projekt Google Cloud tohoto klíče má zapnutou fakturaci, nebo ho používáte z Evropského hospodářského prostoru, Spojeného království či Švýcarska",
+  "brain.gemini.billedHint": "Google pak nikdy netrénuje AI na tom, co tento mozek čte, takže smí číst, co přinese Gmail a další služby Googlu.",
   "brain.versionHint": "Auto používá Rychlý, Chytrý nebo Nejlepší podle toho, co která zpráva potřebuje. Když {brain} vyberete sami, odpovídá s:",
   "brain.paid": "Něco, za co platíte",
   "brain.keyed": "Klíč od služby",

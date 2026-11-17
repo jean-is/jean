@@ -55,6 +55,8 @@
   "brain.howToFix": "Cách khắc phục",
   "brain.fix": "Khắc phục",
   "brain.key.change": "Đổi khóa",
+  "brain.gemini.billed": "Dự án Google Cloud của khóa này đã bật thanh toán, hoặc bạn dùng khóa từ Khu vực Kinh tế Châu Âu, Vương quốc Anh hay Thụy Sĩ",
+  "brain.gemini.billedHint": "Khi đó Google không bao giờ dùng những gì bộ não này đọc để huấn luyện AI, nên nó có thể đọc những gì Gmail và các dịch vụ khác của Google mang vào.",
   "brain.versionHint": "Tự động dùng Nhanh, Thông minh hoặc Tốt nhất tùy mỗi tin nhắn cần. Khi bạn tự chọn {brain}, nó trả lời bằng phiên bản:",
   "brain.paid": "Thứ bạn đã trả tiền",
   "brain.keyed": "Khóa từ một dịch vụ",

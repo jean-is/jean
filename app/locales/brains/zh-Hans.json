@@ -55,6 +55,8 @@
   "brain.howToFix": "如何解决",
   "brain.fix": "去处理",
   "brain.key.change": "更换密钥",
+  "brain.gemini.billed": "此密钥的 Google Cloud 项目已启用结算，或者你在欧洲经济区、英国或瑞士使用它",
+  "brain.gemini.billedHint": "这样 Google 绝不会用这个大脑读到的内容训练 AI，所以它可以读取 Gmail 及 Google 其他服务带来的内容。",
   "brain.versionHint": "自动会按每条消息的需要选用“快速”“聪明”或“最佳”。你自己选择 {brain} 时，它用以下版本回答：",
   "brain.paid": "你已在付费的",
   "brain.keyed": "某个服务的密钥",

@@ -55,6 +55,8 @@
   "brain.howToFix": "Cara memperbaikinya",
   "brain.fix": "Perbaiki",
   "brain.key.change": "Ganti kunci",
+  "brain.gemini.billed": "Penagihan aktif untuk proyek Google Cloud kunci ini, atau Anda memakainya dari Kawasan Ekonomi Eropa, Inggris, atau Swiss",
+  "brain.gemini.billedHint": "Google lalu tidak pernah melatih AI dengan apa yang dibaca otak ini, jadi otak ini boleh membaca apa yang dibawa Gmail dan layanan Google lainnya.",
   "brain.versionHint": "Otomatis memakai Cepat, Pintar, atau Terbaik sesuai kebutuhan tiap pesan. Saat Anda sendiri memilih {brain}, ia menjawab dengan versi:",
   "brain.paid": "Sesuatu yang sudah Anda bayar",
   "brain.keyed": "Kunci dari sebuah layanan",

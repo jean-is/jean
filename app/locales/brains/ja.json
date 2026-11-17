@@ -55,6 +55,8 @@
   "brain.howToFix": "直し方",
   "brain.fix": "直す",
   "brain.key.change": "キーを変更",
+  "brain.gemini.billed": "このキーの Google Cloud プロジェクトで課金が有効になっているか、欧州経済領域・英国・スイスから使っている",
+  "brain.gemini.billedHint": "その場合 Google はこの頭脳が読んだ内容を AI の学習に一切使わないため、Gmail など Google の他のサービスから取り込んだ内容を読ませることができます。",
   "brain.versionHint": "自動では、メッセージごとに「速い」「賢い」「最上」を使い分けます。{brain} を自分で選んだときは、次のバージョンで答えます：",
   "brain.paid": "すでに支払っているもの",
   "brain.keyed": "サービスのキー",

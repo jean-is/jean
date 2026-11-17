@@ -55,6 +55,8 @@
   "brain.howToFix": "Bí a ṣe lè tún un ṣe",
   "brain.fix": "Ṣàtúnṣe",
   "brain.key.change": "Yí kọ́kọ́rọ́ padà",
+  "brain.gemini.billed": "Ìsanwó ti wà ní títàn fún iṣẹ́ akanṣe Google Cloud kọ́kọ́rọ́ yìí, tàbí ẹ ń lò ó láti Agbègbè Ọrọ̀-ajé Yúróòpù, UK tàbí Switzerland",
+  "brain.gemini.billedHint": "Nígbà náà Google kì í fi ohun tí ọpọlọ yìí bá kà kọ́ AI láé, nítorí náà ó lè ka ohun tí Gmail àti àwọn iṣẹ́ Google mìíràn mú wá.",
   "brain.versionHint": "Aládàáṣe ń lo Kíákíá, Ọlọ́gbọ́n tàbí Èyí tó dára jù, bí ìfiránṣẹ́ kọ̀ọ̀kan ṣe nílò. Nígbà tí ẹ bá yan {brain} fúnra yín, yóò dáhùn pẹ̀lú ẹ̀yà yìí:",
   "brain.paid": "Ohun tí ẹ ti ń sanwó fún",
   "brain.keyed": "Kọ́kọ́rọ́ láti iṣẹ́ kan",

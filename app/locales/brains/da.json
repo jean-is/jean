@@ -55,6 +55,8 @@
   "brain.howToFix": "Sådan løser du det",
   "brain.fix": "Ordn det",
   "brain.key.change": "Skift nøgle",
+  "brain.gemini.billed": "Fakturering er slået til for denne nøgles Google Cloud-projekt, eller du bruger den fra Det Europæiske Økonomiske Samarbejdsområde, Storbritannien eller Schweiz",
+  "brain.gemini.billedHint": "Google træner så aldrig AI på det, denne hjerne læser, så den må læse det, Gmail og Googles andre tjenester bringer ind.",
   "brain.versionHint": "Auto bruger Hurtig, Klog eller Bedst, efter hvad hver besked kræver. Når du selv vælger {brain}, svarer den med:",
   "brain.paid": "Noget, du betaler for",
   "brain.keyed": "En nøgle fra en tjeneste",

@@ -2,7 +2,8 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 import { parseSSE } from '../app/core/sse.js'
-import { PROVIDERS, LLMError, headersFor, streamChat, listModels, checkKey, warmCache, openaiMessages, mayTrain, mayRead, limitedUse } from '../app/core/llm.js'
+import { PROVIDERS, LLMError, headersFor, streamChat, listModels, checkKey, warmCache, openaiMessages, mayTrain, mayRead, limitedUse, checked } from '../app/core/llm.js'
+import { commercial, billed, PAID_ONLY } from '../app/core/terms.js'
 import { minimumCacheable } from '../app/core/anthropic.js'
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -1123,9 +1124,55 @@ describe('what Google’s services bring in goes only to brains that don’t tra
     for (const provider of ['gemini', 'mistral', 'meta', 'huggingface', 'vercel']) assert.equal(mayTrain({ ...gemini, provider }), true, provider)
     // A plan's brain through This computer's bridge leaves it, under the plan's terms (D235, D262).
     assert.equal(mayTrain({ ...brains.ollama, provider: 'claudecode', api: 'anthropic' }), true)
-    // The person writes their own settings: only policy's brain says what its contract does.
+    // The person writes their own settings: only policy's brain says what its contract does, but for a Gemini key's owner.
     assert.equal(mayTrain(corp), true)
     assert.equal(mayTrain(corp, { brains: [corp] }), false)
+  })
+
+  test('a Gemini key’s owner may say Google never trains on it; a check that found so holds until its time is up', () => {
+    // Billed, or used from the EEA, the UK or Switzerland, where Google's paid terms cover free use too.
+    assert.equal(mayTrain({ ...gemini, trains: false }), false)
+    assert.equal(mayTrain({ ...gemini, provider: 'mistral', trains: false }), true)
+    const plan = { ...brains.ollama, id: 'plan', provider: 'claudecode', api: 'anthropic' }
+    try {
+      checked.set(plan.id, Date.now() + 60_000)
+      assert.equal(mayTrain(plan), false)
+      assert.equal(mayRead(plan, held), true)
+      checked.set(plan.id, Date.now() - 1)
+      assert.equal(mayTrain(plan), true)
+    } finally {
+      checked.delete(plan.id)
+    }
+  })
+
+  test('Claude Code never trains through a cloud’s Claude, an API key or a plan for work; Pro, Max and gateways may', () => {
+    const own = { provider: 'firstParty', method: 'claude.ai', gateway: false }
+    for (const plan of ['team', 'enterprise']) assert.equal(commercial({ ...own, plan }), true, plan)
+    for (const plan of ['pro', 'max', undefined]) assert.equal(commercial({ ...own, plan }), false, plan)
+    for (const method of ['api_key', 'api_key_helper']) assert.equal(commercial({ ...own, method }), true, method)
+    // A long-lived token from claude setup-token says no plan.
+    assert.equal(commercial({ ...own, method: 'oauth_token' }), false)
+    for (const provider of ['bedrock', 'vertex', 'foundry', 'anthropicAws', 'anthropicGoogleCloud', 'mantle']) assert.equal(commercial({ provider, method: 'third_party', gateway: false }), true, provider)
+    // An address or a token of the user's own stands in for any of them, whose service nobody here knows.
+    assert.equal(commercial({ ...own, plan: 'enterprise', gateway: true }), false)
+    assert.equal(commercial({ provider: 'bedrock', method: 'third_party', gateway: true }), false)
+    assert.equal(commercial({ provider: 'gateway', method: 'none', gateway: false }), false)
+    assert.equal(commercial(undefined), false)
+    assert.equal(commercial(null), false)
+  })
+
+  test('a Gemini key is found billed when a model with no free tier answers it, and only then', async () => {
+    /** @type {any[]} */
+    const asked = []
+    const answering = (/** @type {number} */ status) => /** @type {typeof fetch} */ (async (url, init) => { asked.push([url, init]); return new Response('{}', { status }) })
+    assert.equal(await billed({ baseURL: gemini.baseURL, apiKey: 'k', fetch: answering(200) }), true)
+    const [url, init] = asked[0]
+    assert.equal(url, `${gemini.baseURL}/chat/completions`)
+    assert.equal(init.headers.authorization, 'Bearer k')
+    assert.equal(JSON.parse(init.body).model, PAID_ONLY)
+    // An unbilled project's key is refused at its free tier's limit of 0; a retired model, a wrong key or no network say nothing either.
+    for (const status of [429, 404, 400, 401, 402, 500]) assert.equal(await billed({ baseURL: gemini.baseURL, apiKey: 'k', fetch: answering(status) }), false, String(status))
+    assert.equal(await billed({ baseURL: gemini.baseURL, apiKey: 'k', fetch: async () => { throw new TypeError('offline') } }), false)
   })
 
   test('a task that holds it goes only to such a brain', () => {

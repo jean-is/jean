@@ -24,6 +24,7 @@ import { discover, registerClient, authorization, finish, refresh } from './auth
 import { known, knownFor, covers, logoAt, everyone } from './directory.js'
 import { slug, serviceURL } from '../../core/settings.js'
 import { LLMError, PROVIDERS, mayTrain, mayRead } from '../../core/llm.js'
+import { checkTerms, checkAll } from './terms.js'
 import { STRICT } from '../../core/rules.js'
 import { loadConversation } from '../../core/conversations.js'
 import { identifier, takes } from '../../core/deferred.js'
@@ -209,9 +210,9 @@ function asTool(connection, tool) {
     // An access token refused before it expired is renewed once, unless renewing it was refused. A
     // service that lists its tools to anyone may still run them only for someone signed in (D193):
     // its row offers it. Refused once signed in, it is what the sign-in didn't allow (D344). Google's services mark the task,
-    // and run only for a brain whose service doesn't train on what it reads (D440).
+    // and run only for a brain whose service doesn't train on what it reads, as its terms say or a check of its plan finds (D440).
     run: async (args, ctx) => {
-      if (limited(connection) && (ctx.meta.limitedUse = true) && mayTrain(ctx.brain, app.policy)) throw new Error(`${called(connection)} isn't read by this brain: what Google's services bring in goes only to brains whose service never trains on it. Ask the user to pick one in the box, or to ask again with Auto, which picks one.`)
+      if (limited(connection) && (ctx.meta.limitedUse = true) && mayTrain(ctx.brain, app.policy) && !(await checkTerms(ctx.brain))) throw new Error(`${called(connection)} isn't read by this brain: what Google's services bring in goes only to brains whose service never trains on it. Ask the user to pick one in the box, or to ask again with Auto, which picks one.`)
       return answer(connection, label, await call(args, ctx.signal).catch(async (error) => {
         if (!(error instanceof MCPError && error.auth)) throw new Error(withArguments(error.message, takes(spec)))
         if (connection.auth === 'none' || (connection.auth === 'oidc' && error.status === 401)) {
@@ -256,7 +257,7 @@ effect(() => register({
   tools: here().flatMap((connection) => (status.value[connection.id]?.tools ?? []).map((tool) => asTool(connection, tool))),
   rules: ['Find the tools of the services in <connections> with find_tools.'],
   // A task that used Google's services goes to no brain whose service may train on it, whoever asks it (D440).
-  hooks: [{ on: 'turn.step', run: async (e, next) => (e.task && mayTrain(e.brain, app.policy) && !mayRead(e.brain, (await loadConversation(app.fs, e.task).catch(() => null))?.records ?? [], app.policy) ? refused(e.step !== undefined && e.brain) : next(e)) },
+  hooks: [{ on: 'turn.step', run: async (e, next) => (e.task && mayTrain(e.brain, app.policy) && !mayRead(e.brain, (await loadConversation(app.fs, e.task).catch(() => null))?.records ?? [], app.policy) && !(await checkTerms(e.brain)) ? refused(e.step !== undefined && e.brain) : next(e)) },
     // What the user chose for a service: its Ask first or Never only ever tightens its kind's rule, its Always allow stands over it
     // where the organisation set none; the guards still come after (D295). Its calls are marked, so a card's Always allow or Never
     // is kept to the service.
@@ -288,10 +289,10 @@ effect(() => register({
 }))
 /**
  * A request refused, which a turn's step says, naming the brain and those that would read the task, with the picker open
- * on the brains that may answer. @param {BrainConfig | false} brain
+ * on the brains that may answer, each brain's plan checked first. @param {BrainConfig | false} brain
  */
 async function* refused(brain) {
-  if (brain) await useStrings('connections').then(() => (notify(t('connections.untrained', { brain: t(`provider.${brain.provider}`), brains: untrained() }), { alert: true }), import('../../ui/picker.js'))).then((picker) => picker.openPicker())
+  if (brain) await Promise.all([useStrings('connections'), checkAll(brain)]).then(() => (notify(t('connections.untrained', { brain: t(`provider.${brain.provider}`), brains: untrained() }), { alert: true }), import('../../ui/picker.js'))).then((picker) => picker.openPicker())
   throw new LLMError('This task used Google’s services, and this brain’s service may train on what it reads.', { code: 'aborted' })
 }
 

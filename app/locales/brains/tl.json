@@ -55,6 +55,8 @@
   "brain.howToFix": "Paano ito ayusin",
   "brain.fix": "Ayusin",
   "brain.key.change": "Palitan ang susi",
+  "brain.gemini.billed": "Naka-on ang billing sa proyekto sa Google Cloud ng susing ito, o ginagamit mo ito mula sa European Economic Area, UK, o Switzerland",
+  "brain.gemini.billedHint": "Kung gayon, hindi kailanman nagsasanay ang Google ng AI sa binabasa ng utak na ito, kaya maaari nitong basahin ang dinadala ng Gmail at ng iba pang serbisyo ng Google.",
   "brain.versionHint": "Ginagamit ng Auto ang Mabilis, Matalino o Pinakamahusay ayon sa kailangan ng bawat mensahe. Kapag ikaw mismo ang pumili ng {brain}, sasagot ito gamit ang bersyong:",
   "brain.paid": "Isang bagay na binabayaran mo na",
   "brain.keyed": "Susi mula sa isang serbisyo",

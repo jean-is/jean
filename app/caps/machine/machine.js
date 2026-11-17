@@ -76,9 +76,10 @@ const pairing = () => (paired ??= (async () => {
 /**
  * A plan's brain on this computer (D235, D262): where Jean reaches it through the bridge, and whether it is
  * ready (Claude Code or Copilot there and signed in, the bridge signed in to ChatGPT with the plan's use), or
- * the bridge, started before it knew that plan, needs starting again; null while the bridge isn't running.
+ * the bridge, started before it knew that plan, needs starting again; null while the bridge isn't running. For
+ * Claude Code, how it reaches Claude too, as `claude auth status` says, for what may read Google's data (D440).
  * @param {string} provider claudecode, copilot or chatgpt
- * @returns {Promise<{ baseURL: string, apiKey: string, ready: boolean, old: boolean } | null>}
+ * @returns {Promise<{ baseURL: string, apiKey: string, ready: boolean, old: boolean, terms?: Parameters<typeof import('../../core/terms.js').commercial>[0] } | null>}
  */
 export async function plan(provider) {
   if (!(await find(true)).on) return null
@@ -86,7 +87,7 @@ export async function plan(provider) {
   const [path, asked] = PLANS[provider]
   const about = await clientOf(pair).callTool({ name: 'about' }, { [asked]: true }, AbortSignal.timeout(40_000)).catch(() => null)
   const found = about?.structuredContent?.[asked]
-  return { baseURL: `http://127.0.0.1:${pair.port}${path}`, apiKey: pair.key, ready: found === true, old: Boolean(about) && found === undefined }
+  return { baseURL: `http://127.0.0.1:${pair.port}${path}`, apiKey: pair.key, ready: found === true, old: Boolean(about) && found === undefined, terms: about?.structuredContent?.claudeTerms }
 }
 
 /** Where the page goes to sign in to ChatGPT, as Jean, through the bridge, which keeps the tokens; it comes back with ?chatgpt=… (D262). */

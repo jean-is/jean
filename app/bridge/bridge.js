@@ -49,7 +49,7 @@ const TOOLS = [
   },
   {
     name: 'about',
-    description: 'This computer: the folder the bridge runs in, the system, and what runs in the background; with claude or copilot, whether that CLI is here and signed in (null: not here); with chatgpt, whether the bridge is signed in to ChatGPT with the use of its plan.',
+    description: 'This computer: the folder the bridge runs in, the system, and what runs in the background; with claude or copilot, whether that CLI is here and signed in (null: not here), and with claude, how it reaches Claude (claudeTerms); with chatgpt, whether the bridge is signed in to ChatGPT with the use of its plan.',
     inputSchema: { type: 'object', properties: { claude: { type: 'boolean' }, copilot: { type: 'boolean' }, chatgpt: { type: 'boolean' } } },
     annotations: { readOnlyHint: true },
   },
@@ -814,11 +814,20 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
     return { env: { ...settings?.env, ...process.env }, helpers: Object.fromEntries(HELPERS.filter((name) => typeof settings?.[name] === 'string').map((name) => [name, settings[name]])) }
   }
 
-  /** Whether Claude Code is on this computer and signed in, a gateway's token counting, which it sends as it is; null when it isn't here. @returns {Promise<boolean | null>} */
+  /**
+   * Whether Claude Code is on this computer and signed in, a gateway's token counting, which it sends as it is; null when it isn't
+   * here. With it, how it reaches Claude, for what may read Google's services' data (D440): its provider, how it signed in, its
+   * plan, and whether an address or a token of the user's own (a gateway's) stands in for its provider's.
+   * @returns {Promise<{ claude: boolean | null, claudeTerms?: { provider?: string, method?: string, plan?: string, gateway: boolean } }>}
+   */
   const signedIn = async () => {
     const { env } = await reach()
     return new Promise((done) => execFile(program, [...before, 'auth', 'status', '--json'], { timeout: 15_000 }, (_, stdout) => {
-      try { done(Boolean(JSON.parse(stdout).loggedIn || env.ANTHROPIC_AUTH_TOKEN)) } catch { done(null) }
+      try {
+        const { loggedIn, apiProvider: provider, authMethod: method, subscriptionType: plan } = JSON.parse(stdout)
+        const gateway = Boolean(env.ANTHROPIC_AUTH_TOKEN) || Object.keys(env).some((name) => /^ANTHROPIC_\w*BASE_URL$/.test(name) && env[name])
+        done({ claude: Boolean(loggedIn || env.ANTHROPIC_AUTH_TOKEN), claudeTerms: { provider, method, plan, gateway } })
+      } catch { done({ claude: null }) }
     }))
   }
 
@@ -1292,7 +1301,7 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
       if (method === 'tools/list') return { tools: TOOLS }
       if (method === 'tools/call' && params?.name === 'about') {
         const about = { version: VERSION, folder: basename(real), path: real, os: platform(), node: process.version, serving: [...serving].map(([group, job]) => ({ group, ...job })), browser: Boolean(browserProgram),
-          ...(params.arguments?.claude && { claude: await signedIn() }),
+          ...(params.arguments?.claude && await signedIn()),
           ...(params.arguments?.copilot && { copilot: await copilotHere().then((found) => (found ? true : found)) }),
           ...(params.arguments?.chatgpt && { chatgpt: await planned() }) }
         return { content: [{ type: 'text', text: JSON.stringify(about) }], structuredContent: about }

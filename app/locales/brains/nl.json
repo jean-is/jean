@@ -55,6 +55,8 @@
   "brain.howToFix": "Zo los je het op",
   "brain.fix": "Oplossen",
   "brain.key.change": "Sleutel wijzigen",
+  "brain.gemini.billed": "Facturering staat aan voor het Google Cloud-project van deze sleutel, of je gebruikt hem vanuit de Europese Economische Ruimte, het Verenigd Koninkrijk of Zwitserland",
+  "brain.gemini.billedHint": "Google traint dan nooit een AI op wat dit brein leest, dus het mag lezen wat Gmail en de andere diensten van Google binnenbrengen.",
   "brain.versionHint": "Auto neemt Snel, Slim of Het beste, naargelang elk bericht vraagt. Kies je {brain} zelf, dan antwoordt het met:",
   "brain.paid": "Iets waar je al voor betaalt",
   "brain.keyed": "Een sleutel van een dienst",

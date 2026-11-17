@@ -55,6 +55,8 @@
   "brain.howToFix": "Cumu riparallu",
   "brain.fix": "Accunciallu",
   "brain.key.change": "Cambià a chjave",
+  "brain.gemini.billed": "A fatturazione hè attivata nant’à u prughjettu Google Cloud di sta chjave, o a impiegate da u Spaziu ecunomicu europeu, da u Regnu Unitu o da a Svizzera",
+  "brain.gemini.billedHint": "Google ùn ammaestra tandu mai un’intelligenza artificiale cù ciò chì leghje stu cervellu, chì pò dunque leghje ciò chì portanu Gmail è l’altri servizii di Google.",
   "brain.versionHint": "Autumaticu piglia Rapidu, Intelligente o U megliu secondu ciò chì ogni messaghju dumanda. Quandu sceglite {brain} voi stessi, risponde cù :",
   "brain.paid": "Qualcosa ch’è vo pagate digià",
   "brain.keyed": "Una chjave d’un serviziu",

@@ -55,6 +55,8 @@
   "brain.howToFix": "Kako to popraviti",
   "brain.fix": "Popravi",
   "brain.key.change": "Promijeni ključ",
+  "brain.gemini.billed": "Naplata je uključena za Google Cloud projekt ovog ključa ili ga koristite iz Europskog gospodarskog prostora, Ujedinjenog Kraljevstva ili Švicarske",
+  "brain.gemini.billedHint": "Google tada nikad ne uči umjetnu inteligenciju na onome što ovaj mozak čita, pa on smije čitati ono što donose Gmail i ostale Googleove usluge.",
   "brain.versionHint": "Automatski koristi Brzi, Pametni ili Najbolji, kako koja poruka traži. Kad sami odaberete mozak {brain}, odgovara s:",
   "brain.paid": "Nešto što plaćate",
   "brain.keyed": "Ključ od usluge",

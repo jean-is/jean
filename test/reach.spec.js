@@ -45,8 +45,15 @@ test('what Google’s services bring in goes only to brains whose service never 
       : { messages: Object.keys(emails).map((each) => ({ id: each })) } })
   })
   // The fake brain stands behind Gemini's address, whose free tier trains on what it's sent, and behind OpenAI's, which doesn't.
+  // Gemini's model with no free tier refuses the key, as Google refuses an unbilled project's, until its project is billed.
+  let billing = false
+  const PAID_ONLY = 'gemini-3.1-pro-preview'
+  const probe = (/** @type {import('@playwright/test').Request} */ request) => request.method() === 'POST' && request.postDataJSON()?.model === PAID_ONLY
   for (const base of ['https://generativelanguage.googleapis.com/v1beta/openai', 'https://api.openai.com/v1']) {
-    await page.route(`${base}/**`, async (route) => route.fulfill({ response: await route.fetch({ url: route.request().url().replace(base, BRAIN_URL) }) }))
+    await page.route(`${base}/**`, async (route) => (probe(route.request())
+      ? route.fulfill(billing ? { json: { choices: [{ index: 0, message: { role: 'assistant', content: 'Hi' }, finish_reason: 'length' }] } }
+        : { status: 429, json: [{ error: { code: 429, status: 'RESOURCE_EXHAUSTED', message: 'Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0' } }] })
+      : route.fulfill({ response: await route.fetch({ url: route.request().url().replace(base, BRAIN_URL) }) })))
   }
   await start(page)
   const gemini = await page.evaluate(async (url) => {
@@ -83,7 +90,7 @@ test('what Google’s services bring in goes only to brains whose service never 
   await expect(page.locator('#brain-menu button', { hasText: 'fake-brain-1' })).toHaveCount(1)
   await page.keyboard.press('Escape')
 
-  // Gemini picked by hand: the task goes no further, and nothing reaches it.
+  // Gemini picked by hand: the task goes no further, and nothing of it reaches Gemini, which is only asked whether its key's project is billed.
   const answers = await page.locator('.msg-jean').count()
   await page.evaluate(async (id) => {
     const [{ updateSettings }, { useBrain }] = await Promise.all([import('/ui/state.js'), import('/ui/brains.js')])
@@ -91,12 +98,39 @@ test('what Google’s services bring in goes only to brains whose service never 
     await useBrain(id)
   }, gemini)
   const asked = []
-  page.on('request', (request) => request.url().startsWith('https://generativelanguage.googleapis.com/') && request.method() === 'POST' && asked.push(request.url()))
+  const checks = []
+  page.on('request', (request) => request.url().startsWith('https://generativelanguage.googleapis.com/') && request.method() === 'POST' && (probe(request) ? checks : asked).push(request.url()))
   await ask(page, 'Thanks, and the next ones?')
+  // Refused, the picker opens again on the brains that may answer.
+  await expect(page.locator('#brain-menu')).toBeVisible()
   await expect(page.locator('.toast').last()).toContainText('This task used Google services')
   await expect(page.locator('.msg-jean .prose', { hasText: 'Your 2 latest emails' })).toHaveCount(1)
   expect(answers).toBeGreaterThan(0)
   expect(asked).toEqual([])
+  expect(checks.length).toBeGreaterThan(0)
+  await page.keyboard.press('Escape')
+
+  // Its owner says its project is billed, or that they use it from the EEA, the UK or Switzerland: Gemini reads the task.
+  await page.evaluate(async (id) => (await import('/ui/dialogs.js')).openSettings(`brains/${id}`), gemini)
+  const box = page.getByLabel('Billing is on for this key’s Google Cloud project, or you use it from the European Economic Area, the UK or Switzerland')
+  await box.check()
+  await closeSettings(page)
+  await ask(page, 'And my latest emails now?')
+  await page.locator('.approval .button.primary').click()
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Your 2 latest emails')
+  expect(asked.length).toBeGreaterThan(0)
+
+  // Taken back, the task goes no further; billed, which its check finds, it reads the task again, no one saying so.
+  await page.evaluate(async (id) => (await import('/ui/dialogs.js')).openSettings(`brains/${id}`), gemini)
+  await box.uncheck()
+  await closeSettings(page)
+  await ask(page, 'My latest emails once more?')
+  await expect(page.locator('#brain-menu')).toBeVisible()
+  billing = true
+  await page.keyboard.press('Escape')
+  await ask(page, 'And my latest emails today?')
+  await page.locator('.approval .button.primary').click()
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Your 2 latest emails')
   // With OpenAI's key, Gmail's page says only which brains its data goes to.
   await openSettings(page, 'Connections')
   await page.locator('app-settings [data-page="gmail"]').click()

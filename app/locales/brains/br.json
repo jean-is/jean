@@ -55,6 +55,8 @@
   "brain.howToFix": "Penaos e reizhañ",
   "brain.fix": "Reizhañ",
   "brain.key.change": "Cheñch alc’hwez",
+  "brain.gemini.billed": "Gweredekaet eo ar fakturiñ evit raktres Google Cloud an alc’hwez-mañ, pe e implijit anezhañ eus an Takad Armerzhel Europa, eus ar Rouantelezh-Unanet pe eus Suis",
+  "brain.gemini.billedHint": "Neuze ne stumm biken Google ur speredegezh artifisiel war ar pezh a lenn an empenn-mañ, setu e c’hall lenn ar pezh a zegas Gmail ha servijoù all Google.",
   "brain.versionHint": "Emgefre a gemer Buan, Speredek pe Ar gwellañ hervez ezhomm pep kemennadenn. Pa zibabit {brain} hoc’h-unan e respont gant ar stumm :",
   "brain.paid": "Un dra a baeit dija",
   "brain.keyed": "Un alc’hwez eus ur servij",

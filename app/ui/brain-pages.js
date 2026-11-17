@@ -17,7 +17,7 @@ import { priceOf, PLANS } from './prices.js'
 import { getSecret, setSecret } from './secrets.js'
 import { ulid } from '../core/ulid.js'
 import { BRAND } from '../brand.js'
-import { PROVIDERS, listModels, checkKey } from '../core/llm.js'
+import { PROVIDERS, listModels, checkKey, checked } from '../core/llm.js'
 import { t, intlLocales, formatBytes, useStrings } from '../core/i18n.js'
 import { icons } from './menu-icons.js'
 import { styleSheet } from './sheet.js'
@@ -448,6 +448,13 @@ function auto() {
 /** A version's price for a typical answer, or the plan it is in (D235). @param {BrainConfig} brain @param {string} model @param {import('./prices.js').Pricing} [listed] */
 const price = (brain, model, listed) => (PLANS[brain.provider] ? t('picker.plan', { plan: PLANS[brain.provider] }) : cost(priceOf(brain.provider, model, listed)))
 
+/**
+ * Its owner says of a Gemini key that its project is billed, or that they use it from the EEA, the UK or Switzerland, where
+ * Google's paid terms cover free use, so what Google's services bring in may go to it; or takes it back (D440).
+ * @param {string} id @param {boolean} said
+ */
+const billed = (id, said) => updateSettings({ brains: app.settings.value.brains.map((brain) => (brain.id === id ? { ...brain, trains: said ? false : undefined } : brain)) })
+
 /** The brain whose key is being replaced. */
 const rekeying = signal(/** @type {string | null} */ (null))
 
@@ -455,6 +462,7 @@ const rekeying = signal(/** @type {string | null} */ (null))
 async function rekey(event, brain) {
   event.preventDefault()
   await setSecret(app.fs, brain.id, String(new FormData(/** @type {HTMLFormElement} */ (event.target)).get('key')).trim())
+  checked.delete(brain.id)
   rekeying.value = null
   await ask(brain)
 }
@@ -462,7 +470,8 @@ async function rekey(event, brain) {
 /**
  * A brain's page: what it says when it can't answer; its versions, Fast, Smart and Best by name with their price, what
  * Auto asks for said above them, any other found by name; how much it thinks, once the user asked for an answer now
- * (D414); the projects it is used in (D194); its key; Remove at its foot. @param {BrainConfig} brain @param {boolean} closed
+ * (D414); the projects it is used in (D194); for Gemini, whether its owner says Google never trains on what it is sent (D440);
+ * its key; Remove at its foot. @param {BrainConfig} brain @param {boolean} closed
  */
 function page(brain, closed) {
   const { name } = describe(brain)
@@ -484,6 +493,8 @@ function page(brain, closed) {
         ${['', 'low', 'medium', 'high'].map((effort) => html`<option value=${effort} ?selected=${(brain.effort ?? '') === effort}>${t(effort ? `brain.thinking.${effort}` : 'auto.name')}</option>`)}</select></label>` : nothing}
     </section>`}
     ${closed || !placeable(brain) ? nothing : html`<section>${where(brain, (projects) => keepBrain(brain.id, projects).catch(showError))}</section>`}
+    ${closed || brain.provider !== 'gemini' ? nothing : html`<section><label class="item" for="brain-billed"><input id="brain-billed" type="checkbox" aria-describedby="brain-billed-hint" .checked=${live(brain.trains === false)}
+      @change=${(/** @type {Event} */ e) => billed(brain.id, /** @type {HTMLInputElement} */ (e.target).checked).catch(showError)}>${t('brain.gemini.billed')}</label><p id="brain-billed-hint" class="muted small">${t('brain.gemini.billedHint')}</p></section>`}
     ${closed || !KEYED.includes(brain.provider) ? nothing : html`<section><h3>${t('brain.key.label')}</h3><p class="muted small">${t('brain.key.text')}</p>${rekeying.value === brain.id
       ? html`<form class="stack" @submit=${(/** @type {SubmitEvent} */ e) => rekey(e, brain).catch(showError)}><label for="brain-rekey">${t('brain.key.label')}<input id="brain-rekey" name="key" type="password" autocomplete="off" spellcheck="false" required dir="ltr"></label>
         <div class="row"><button class="button primary">${t('brain.connect')}</button></div></form>`

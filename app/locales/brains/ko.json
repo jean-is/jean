@@ -55,6 +55,8 @@
   "brain.howToFix": "해결 방법",
   "brain.fix": "해결하기",
   "brain.key.change": "키 바꾸기",
+  "brain.gemini.billed": "이 키의 Google Cloud 프로젝트에 결제가 켜져 있거나, 유럽경제지역·영국·스위스에서 사용해요",
+  "brain.gemini.billedHint": "그러면 Google은 이 두뇌가 읽는 내용으로 절대 AI를 학습시키지 않으므로, Gmail 등 Google의 다른 서비스에서 가져온 내용을 읽을 수 있어요.",
   "brain.versionHint": "자동은 메시지마다 필요한 만큼 빠름, 똑똑함, 최고 중에서 골라요. {brain}을(를) 직접 고르면 이 버전으로 답해요:",
   "brain.paid": "이미 결제하고 있는 것",
   "brain.keyed": "서비스의 키",

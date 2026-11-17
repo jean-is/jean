@@ -55,6 +55,8 @@
   "brain.howToFix": "Så löser du det",
   "brain.fix": "Åtgärda",
   "brain.key.change": "Byt nyckel",
+  "brain.gemini.billed": "Fakturering är aktiverad för den här nyckelns Google Cloud-projekt, eller så använder du den från Europeiska ekonomiska samarbetsområdet, Storbritannien eller Schweiz",
+  "brain.gemini.billedHint": "Google tränar då aldrig AI på det den här hjärnan läser, så den får läsa det som Gmail och Googles andra tjänster tar in.",
   "brain.versionHint": "Auto använder Snabb, Smart eller Bäst, efter vad varje meddelande behöver. När du själv väljer {brain} svarar den med:",
   "brain.paid": "Något du betalar för",
   "brain.keyed": "En nyckel från en tjänst",

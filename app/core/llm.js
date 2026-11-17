@@ -51,12 +51,17 @@ export const PROVIDERS = {
   custom: { api: 'openai', baseURL: '', defaultModel: null, needsKey: false },
 }
 
+/** Brains core/terms.js found reached under terms that never train, by id, until when that holds (D440). @type {Map<string, number>} */
+export const checked = new Map()
+
 /**
  * Whether a brain's service may train on what it is sent (D440): unless its provider's terms say it doesn't, it never leaves
- * this computer, or it is one of policy's, which says so for the contract behind it (a person writes their own settings).
+ * this computer, a check found it reached under terms that don't, its owner says so of a Gemini key (billed, or where Google's
+ * paid terms cover free use), or it is one of policy's, which says so for the contract behind it.
  * @param {BrainConfig} brain @param {{ brains?: BrainConfig[] }} [policy]
  */
-export const mayTrain = (brain, policy = {}) => !isLocal(brain) && PROVIDERS[brain.provider]?.trains !== false && !policy.brains?.some((one) => one.id === brain.id && one.trains === false)
+export const mayTrain = (brain, policy = {}) => !isLocal(brain) && PROVIDERS[brain.provider]?.trains !== false && !((checked.get(brain.id) ?? 0) > Date.now())
+  && !(brain.provider === 'gemini' && brain.trains === false) && !policy.brains?.some((one) => one.id === brain.id && one.trains === false)
 
 /** Whether a task used Google's services, whose user data is never to train a model (Limited Use): a call to one says so (D440). @param {{ update?: any }[]} records */
 export const limitedUse = (records) => records.some((record) => record.update?._meta?.limitedUse)

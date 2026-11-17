@@ -55,6 +55,8 @@
   "brain.howToFix": "እንዴት ማስተካከል እንደሚቻል",
   "brain.fix": "አስተካክል",
   "brain.key.change": "ቁልፍ ቀይር",
+  "brain.gemini.billed": "ለዚህ ቁልፍ የGoogle Cloud ፕሮጀክት ክፍያ በርቷል፣ ወይም ከአውሮፓ ኢኮኖሚያዊ ክልል፣ ከዩናይትድ ኪንግደም ወይም ከስዊዘርላንድ ይጠቀሙበታል",
+  "brain.gemini.billedHint": "ያኔ Google ይህ አንጎል በሚያነበው AIን ፈጽሞ አያሠለጥንም፣ ስለዚህ Gmail እና ሌሎች የGoogle አገልግሎቶች የሚያመጡትን ማንበብ ይችላል።",
   "brain.versionHint": "ራስ-ሰር እንደ እያንዳንዱ መልእክት ፍላጎት ፈጣን፣ ብልህ ወይም ምርጥ ይጠቀማል። ራስዎ {brain} ሲመርጡ በዚህ ስሪት ይመልሳል፦",
   "brain.paid": "አስቀድመው የሚከፍሉለት",
   "brain.keyed": "ከአገልግሎት የሚገኝ ቁልፍ",

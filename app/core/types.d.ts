@@ -26,7 +26,10 @@ export interface BrainConfig {
   jurisdiction?: string
   /** A policy brain whose key is the organisation's sign-in (D385) */
   auth?: 'oidc'
-  /** False on a policy brain whose contract says its service never trains on what it is sent (D440) */
+  /**
+   * False on a policy brain whose contract says its service never trains on what it is sent, or on a Gemini brain whose owner
+   * says its key's project is billed, or used from the EEA, the UK or Switzerland, where Google's paid terms cover free use (D440)
+   */
   trains?: boolean
   /** How much it thinks before answering, as the user or policy set it; without it, Auto decides (D414) */
   effort?: Effort

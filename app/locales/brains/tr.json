@@ -55,6 +55,8 @@
   "brain.howToFix": "Nasıl düzeltilir",
   "brain.fix": "Düzelt",
   "brain.key.change": "Anahtarı değiştir",
+  "brain.gemini.billed": "Bu anahtarın Google Cloud projesinde faturalandırma açık ya da anahtarı Avrupa Ekonomik Alanı’ndan, Birleşik Krallık’tan veya İsviçre’den kullanıyorsun",
+  "brain.gemini.billedHint": "Google bu durumda bu beynin okuduklarıyla asla yapay zekâ eğitmez, bu yüzden beyin Gmail’in ve Google’ın diğer hizmetlerinin getirdiklerini okuyabilir.",
   "brain.versionHint": "Otomatik, her mesajın gerektirdiğine göre Hızlı, Akıllı ya da En iyisi arasından seçer. Kendin seçtiğinde {brain} şu sürümle yanıtlar:",
   "brain.paid": "Zaten ödediğin bir şey",
   "brain.keyed": "Bir hizmetten anahtar",

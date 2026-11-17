@@ -157,6 +157,19 @@ describe('Claude Code through the bridge (D235)', { skip: process.platform === '
     const client = mcpClient({ url: brain.baseURL.replace('/v1', '/'), client: { name: 'Jean', version: 'test' }, authorization: async () => `Bearer ${KEY}` })
     const about = (await client.callTool({ name: 'about' }, { claude: true })).structuredContent
     assert.deepEqual([about.version, about.claude], ['4', true])
+    // How it reaches Claude, for what may read Google's services' data (D440), with no address of the user's own in the way,
+    // which whatever runs these tests may have.
+    const own = { ANTHROPIC_BASE_URL: process.env.ANTHROPIC_BASE_URL, ANTHROPIC_AUTH_TOKEN: process.env.ANTHROPIC_AUTH_TOKEN }
+    delete process.env.ANTHROPIC_BASE_URL
+    delete process.env.ANTHROPIC_AUTH_TOKEN
+    try {
+      assert.deepEqual((await client.callTool({ name: 'about' }, { claude: true })).structuredContent.claudeTerms, { provider: 'firstParty', method: 'claude.ai', plan: 'max', gateway: false })
+      process.env.CLAUDE_PLAN = 'team'
+      assert.equal((await client.callTool({ name: 'about' }, { claude: true })).structuredContent.claudeTerms.plan, 'team')
+    } finally {
+      delete process.env.CLAUDE_PLAN
+      for (const [name, value] of Object.entries(own)) if (value !== undefined) process.env[name] = value
+    }
     process.env.CLAUDE_SIGNED_OUT = '1'
     try {
       assert.equal((await client.callTool({ name: 'about' }, { claude: true })).structuredContent.claude, false)
@@ -256,7 +269,10 @@ describe('Claude Code through the bridge (D235)', { skip: process.platform === '
       // Claude Code says it isn't signed in when a gateway's token is all it has, which it sends as it is.
       process.env.CLAUDE_SIGNED_OUT = '1'
       const client = mcpClient({ url: brain.baseURL.replace('/v1', '/'), client: { name: 'Jean', version: 'test' }, authorization: async () => `Bearer ${KEY}` })
-      assert.equal((await client.callTool({ name: 'about' }, { claude: true })).structuredContent.claude, true)
+      const about = (await client.callTool({ name: 'about' }, { claude: true })).structuredContent
+      assert.equal(about.claude, true)
+      // Whatever plan it says, the gateway's service is nobody's here to vouch for (D440).
+      assert.equal(about.claudeTerms.gateway, true)
     } finally {
       delete process.env.CLAUDE_SIGNED_OUT
       for (const [name, value] of Object.entries(own)) if (value !== undefined) process.env[name] = value

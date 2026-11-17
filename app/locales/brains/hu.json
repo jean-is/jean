@@ -55,6 +55,8 @@
   "brain.howToFix": "Hogyan javítható",
   "brain.fix": "Javítás",
   "brain.key.change": "Kulcs cseréje",
+  "brain.gemini.billed": "A kulcs Google Cloud-projektjében be van kapcsolva a számlázás, vagy az Európai Gazdasági Térségből, az Egyesült Királyságból vagy Svájcból használod",
+  "brain.gemini.billedHint": "A Google ilyenkor soha nem tanít MI-t azon, amit ez az agy olvas, így elolvashatja, amit a Gmail és a Google többi szolgáltatása behoz.",
   "brain.versionHint": "Az Auto a Gyors, az Okos vagy a Legjobb közül választ, ahogy az adott üzenet kívánja. Ha magad választod ezt: {brain}, ezzel válaszol:",
   "brain.paid": "Valami, amiért fizetsz",
   "brain.keyed": "Egy szolgáltatás kulcsa",

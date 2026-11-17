@@ -20,6 +20,7 @@ import { byName } from '../../core/search.js'
 import { BRAND } from '../../brand.js'
 import { icons } from '../../ui/menu-icons.js'
 import { GROUPS, logoAt } from './directory.js'
+import { rechecked, checkAll } from './terms.js'
 import { all, status, message, called, labelOf, logoOf, limited, untrained, chosen, choose, connectTo, nameFor, signIn, remove, change, list, services, gatewayAt, products, toolName } from './connections.js'
 
 /** @import { Connection } from '../../core/settings.js' */
@@ -86,11 +87,18 @@ const joined = (parts) => parts.filter(Boolean).map((part, i) => html`${i ? ' ·
 const listOf = (names) => new Intl.ListFormat(intlLocales(), { type: 'conjunction' }).formatToParts(names).map(({ type, value }) => (type === 'element' ? html`<bdi>${value}</bdi>` : value))
 /** How the connection just asked for goes. */
 const said = () => (message.value ? html`<p class="status is-${message.value.kind}" role=${message.value.kind === 'error' ? 'alert' : 'status'}>${message.value.text}</p>` : nothing)
+/** Whether the brains' plans were checked since Jean opened, once a Google service's page was first drawn. */
+let checking = false
 /**
- * What Google's services bring in goes only to brains that never train on it (D440): where every brain the user has may,
- * which would read it. @param {Pick<Connection, 'url' | 'servers'>} one @param {string} service
+ * What Google's services bring in goes only to brains that never train on it (D440): where every brain the user has may, their
+ * plans checked, which would read it. @param {Pick<Connection, 'url' | 'servers'>} one @param {string} service
  */
-const trains = (one, service, brains = untrained(effective.value.settings.brains)) => (!limited(one) ? nothing : html`<p class="${brains ? 'status' : 'hint'} connection-trains">${icons.shield} ${brains ? t('connections.noBrain', { service, brains }) : t('connections.trains', { service })}</p>`)
+function trains(one, service) {
+  if (!limited(one)) return nothing
+  checking ||= Boolean(checkAll())
+  const brains = (rechecked.value, untrained(effective.value.settings.brains))
+  return html`<p class="${brains ? 'status' : 'hint'} connection-trains">${icons.shield} ${brains ? t('connections.noBrain', { service, brains }) : t('connections.trains', { service })}</p>`
+}
 /**
  * A name like an address may wrap before its dot ("monday" ".com"), one in two words where its capital starts the second ("Service" "Now"),
  * unless it has a space to wrap at ("Acme CloudDesk", never "Acme Cloud" "Desk"). @param {string} text

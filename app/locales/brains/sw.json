@@ -55,6 +55,8 @@
   "brain.howToFix": "Jinsi ya kurekebisha",
   "brain.fix": "Rekebisha",
   "brain.key.change": "Badilisha ufunguo",
+  "brain.gemini.billed": "Utozaji umewashwa kwa mradi wa Google Cloud wa ufunguo huu, au unautumia kutoka Eneo la Kiuchumi la Ulaya, Uingereza au Uswisi",
+  "brain.gemini.billedHint": "Hapo Google kamwe haifunzi AI kwa kile ambacho ubongo huu unasoma, kwa hiyo unaweza kusoma kile kinacholetwa na Gmail na huduma nyingine za Google.",
   "brain.versionHint": "Otomatiki hutumia Haraka, Werevu au Bora zaidi kulingana na mahitaji ya kila ujumbe. Ukichagua {brain} mwenyewe, hujibu kwa toleo hili:",
   "brain.paid": "Kitu unacholipia tayari",
   "brain.keyed": "Ufunguo kutoka kwa huduma",

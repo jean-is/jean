@@ -55,6 +55,8 @@
   "brain.howToFix": "Cum se rezolvă",
   "brain.fix": "Remediați",
   "brain.key.change": "Schimbați cheia",
+  "brain.gemini.billed": "Facturarea este activată pentru proiectul Google Cloud al acestei chei sau o folosiți din Spațiul Economic European, Regatul Unit ori Elveția",
+  "brain.gemini.billedHint": "Atunci Google nu antrenează niciodată AI pe ce citește acest creier, așa că poate citi ce aduc Gmail și celelalte servicii Google.",
   "brain.versionHint": "Auto folosește Rapid, Inteligent sau Cel mai bun, după cum are nevoie fiecare mesaj. Când alegeți dvs. {brain}, răspunde cu:",
   "brain.paid": "Ceva pentru care plătiți",
   "brain.keyed": "O cheie de la un serviciu",

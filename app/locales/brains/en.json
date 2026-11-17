@@ -55,6 +55,8 @@
   "brain.howToFix": "How to fix it",
   "brain.fix": "Fix it",
   "brain.key.change": "Change key",
+  "brain.gemini.billed": "Billing is on for this key’s Google Cloud project, or you use it from the European Economic Area, the UK or Switzerland",
+  "brain.gemini.billedHint": "Google then never trains AI on what this brain reads, so it may read what Gmail and Google’s other services bring in.",
   "brain.versionHint": "Auto uses Fast, Smart or Best, as each message needs. When you choose {brain} yourself, it answers with:",
   "brain.paid": "Something you pay for",
   "brain.keyed": "A key from a service",
