@@ -70,5 +70,7 @@ export function watch(place, held, post) {
       await post({ table: here.table })
     }
   }).catch((error) => console.warn('Together', error)))
+  // What changed here before the watch began, between the seed taken and the journal caught up, goes now, not with the next change.
+  look()
   return app.fs.watch?.((path) => { if (path === table || path === lines) look() }, { all: true }) ?? (() => {})
 }
