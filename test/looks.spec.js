@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 // Looks (D111, D120): Human until one is picked (D174); each one in Settings' gallery, with its thumbnail, dresses the page when
-// picked. Mail keeps the conversations in view once there is one (D369), in one sidebar with the name at its top and
+// picked. Mail's drawer, put away until the user opens it (D369), is one sidebar with the name at its top and
 // the user at its foot (D115, D165), and is back before the first paint; the user's own CSS starts as an outline,
 // commented out, on a page of its own, and shows as it is typed; right to left, the sidebar changes sides. A segmented control's fill
 // slides to the choice, in each look's colours. Appearance reads first: light or dark, the text, motion; then every theme at once, each
@@ -59,13 +59,14 @@ test('right to left, Mail’s sidebar sits on the right, the name at its top', a
   expect(top?.y).toBeLessThan(list?.y ?? 0)
 })
 
-test('a first visit has the window to itself, and Tilde, Human and Mail open the drawer once there is a task, unless the user put it away', async ({ page }) => {
+test('the drawer starts put away in every look, a task or not, until the user opens it, then stays as they left it', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 720 })
   await page.goto('./')
-  // The first screen is Tilde's (D373), its drawer put away while the room has no task, its button at the header's start (D165, D369).
+  // The first screen is Tilde's (D373), its drawer put away, its button at the header's start (D165, D369).
   const question = page.locator('.hero-question')
   const toggle = page.locator('.sidebar-toggle')
   const tasks = page.locator('app-inbox')
+  const kept = () => page.evaluate(() => localStorage.getItem(`app.sidebar:${sessionStorage.getItem('app.profile') ?? ''}`))
   await expect(question).toBeVisible()
   await expect(page.locator('html')).toHaveAttribute('data-look', 'tilde')
   await expect(page.locator('html')).not.toHaveAttribute('data-sidebar')
@@ -74,47 +75,32 @@ test('a first visit has the window to itself, and Tilde, Human and Mail open the
   await expect(toggle).toHaveAttribute('aria-label', 'Open sidebar')
   const centre = await question.evaluate((element) => { const box = element.getBoundingClientRect(); return box.x + box.width / 2 })
   expect(Math.abs(centre - 640)).toBeLessThan(2)
-  // One answer, and the drawer is beside the task, which it lists, and beside a new task after it.
+  // One answer, and the drawer stays put away, in Tilde, Mail and Human as in Minimal.
   await connectFakeBrain(page)
   await ask(page, 'Hello')
   await expect(page.locator('.msg-jean')).toHaveCount(1)
+  await expect.poll(() => page.evaluate(async () => (await import('/ui/state.js')).app.conversations.value.length)).toBe(1)
+  for (const id of ['tilde', 'mail', 'human', 'minimal']) {
+    await look(page, id)
+    await expect(page.locator('html')).toHaveAttribute('data-look', id)
+    await expect(tasks).toHaveCount(0)
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false')
+  }
+  expect(await kept()).toBeNull()
+  // Opened, it lists the task and stays open in any look, kept on this device; put away, it stays so.
+  await toggle.click()
   await expect(tasks.locator('.history-item')).toHaveCount(1)
   await expect(toggle).toHaveAttribute('aria-label', 'Close sidebar')
-  await tasks.locator('.place', { hasText: 'New task' }).click()
-  await expect(question).toBeVisible()
-  await expect(tasks).toBeVisible()
-  // Mail's too; Minimal's is the box alone. Nothing was chosen meanwhile.
   await look(page, 'mail')
+  await expect(page.locator('html')).toHaveAttribute('data-look', 'mail')
   await expect(tasks).toBeVisible()
-  await look(page, 'minimal')
-  await expect(tasks).toHaveCount(0)
-  await look(page, 'human')
-  await expect(tasks).toBeVisible()
-  expect(await page.evaluate(() => localStorage.getItem(`app.sidebar:${sessionStorage.getItem('app.profile') ?? ''}`))).toBeNull()
-  // Put away, it stays so in any look.
+  expect(await kept()).toBe('open')
   await toggle.click()
   await expect(tasks).toHaveCount(0)
-  await look(page, 'mail')
+  expect(await kept()).toBeNull()
+  await look(page, 'tilde')
+  await expect(page.locator('html')).toHaveAttribute('data-look', 'tilde')
   await expect(tasks).toHaveCount(0)
-})
-
-test('a press that opens the drawer holds, though the room’s first task arrives while it slides', async ({ page }) => {
-  await page.setViewportSize({ width: 1280, height: 720 })
-  await start(page)
-  await connectFakeBrain(page)
-  const toggle = page.locator('.sidebar-toggle')
-  await expect(toggle).toHaveAttribute('aria-expanded', 'false')
-  // The slide's module held back: the press is on its way as the task arrives, which opens the drawer in Tilde by itself.
-  let go = () => {}
-  const held = new Promise((resolve) => { go = () => resolve(null) })
-  await page.route('**/ui/slide.js*', async (route) => { await held; await route.fallback() })
-  await toggle.click()
-  await ask(page, 'Hello')
-  await expect.poll(() => page.evaluate(async () => (await import('/ui/state.js')).app.conversations.value.length)).toBe(1)
-  go()
-  await expect(page.locator('app-inbox .history-item')).toHaveCount(1)
-  await expect.poll(() => page.evaluate(() => localStorage.getItem(`app.sidebar:${sessionStorage.getItem('app.profile') ?? ''}`))).toBe('open')
-  await expect(toggle).toHaveAttribute('aria-expanded', 'true')
 })
 
 test('the drawer opens beside the conversation or is put away, as the user left it', async ({ page }) => {
@@ -122,7 +108,7 @@ test('the drawer opens beside the conversation or is put away, as the user left 
   await expect(page.locator('.hero-question')).toBeVisible()
   const toggle = page.locator('.sidebar-toggle')
   const tasks = page.locator('app-inbox')
-  // Minimal's is the box alone, and Mail's too while there is no task.
+  // Put away in Minimal as in Mail, until the button opens it.
   await look(page, 'minimal')
   await expect(tasks).toHaveCount(0)
   await expect(toggle).toHaveAttribute('aria-expanded', 'false')

@@ -96,8 +96,10 @@ test('Jean notes the name the user gives, once, and the user changes it in About
   await ask(page, "I'm Marie, can you help me plan my week?")
   await expect(page.locator('.toast')).toContainText('Hello, Marie! Your name is saved.')
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Nice to meet you, Marie.')
-  await expect(page.locator('app-inbox .profile-name')).toHaveText('Marie')
-  await expect(page.locator('app-inbox .avatar')).toHaveText('M')
+  // At the drawer's foot, once it is opened (D369).
+  const drawer = await openTasks(page)
+  await expect(drawer.locator('.profile-name')).toHaveText('Marie')
+  await expect(drawer.locator('.avatar')).toHaveText('M')
   await expect.poll(() => savedName(page)).toBe('Marie')
   await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()
 

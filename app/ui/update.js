@@ -10,13 +10,12 @@
 // (D723), since the browser's words replace the text Jean's elements write to. Settings › General asks for a new version at
 // once (look()). Loaded after the first paint.
 import { effect } from '@preact/signals-core'
-import { app, chipLabel, decisionsHere, effective, offeredLocales, setLocale } from './state.js'
+import { app, chipLabel, decisionsHere, effective, offeredLocales, setLocale, sidebarOpen } from './state.js'
 import { BRAND } from '../brand.js'
 import { shown } from './creations.js'
 import { titleOf } from '../core/events.js'
 import { locale, t } from '../core/i18n.js'
 import { loaded } from './caps.js'
-import { LOOKS } from './looks.js'
 import { scriptURL } from './trusted.js'
 import { settle, working } from './curtain.js'
 import { untranslated } from './yours.js'
@@ -109,7 +108,7 @@ async function arrive() {
   if (!saved && !held) return
   saved ??= {}
   history.replaceState(saved.state ?? null, '', location.pathname + location.hash)
-  await Promise.all([app.ready.catch(() => {}), app.dialog.peek() && import('./dialogs.js'), LOOKS[app.look.peek()].list && import('./inbox.js')])
+  await Promise.all([app.ready.catch(() => {}), app.dialog.peek() && import('./dialogs.js'), sidebarOpen.peek() && import('./inbox.js')])
   if (saved.place === location.hash) {
     scrollTo({ top: saved.scroll, behavior: 'instant' })
     const box = document.getElementById('prompt')

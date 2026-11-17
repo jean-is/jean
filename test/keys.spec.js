@@ -6,7 +6,7 @@
 // the one before (D130, D238, D253, D584); ⌘B opens the drawer or puts it away (D234); ⌘/ shows the shortcuts (D257);
 // ⌘S saves a copy of the open task, and no key deletes one (D313); Escape stops an answer (D315).
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, openSettings, closeSettings, nameOf } from './helpers.js'
+import { start, connectFakeBrain, ask, openSettings, closeSettings, openTasks, nameOf } from './helpers.js'
 
 test('⌘, opens Settings, and ⌘⇧O starts a new conversation from anywhere', async ({ page }) => {
   await start(page)
@@ -283,7 +283,7 @@ test('⌘S saves a copy of the open task, as its ⋮ menu shows, and no key dele
     }
     await refreshConversations()
   })
-  const tasks = page.locator('app-inbox')
+  const tasks = await openTasks(page)
   const row = (/** @type {string} */ name) => tasks.locator('.history-list li:not([aria-hidden])', { hasText: name })
   await row('Plan the week').locator('.history-item').click()
   await expect(page.locator('.msg-user')).toHaveText('Plan the week')

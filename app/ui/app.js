@@ -98,8 +98,7 @@ async function start() {
   const measure = () => { app.wide.value = wide.matches }
   wide.addEventListener('change', measure)
   measure()
-  const side = localStorage.getItem(mine(SIDEBAR_KEY))
-  app.sidebar.value = side === 'open' ? true : side === 'closed' ? false : null
+  app.sidebar.value = localStorage.getItem(mine(SIDEBAR_KEY)) === 'open'
   app.folded.value = new Set(localStorage.getItem(mine(FOLDED_KEY))?.split(' '))
   effect(() => { root.toggleAttribute('data-sidebar', sidebarOpen.value) })
   // A look (D111) switches once its sheet is in. Its id stays for index.html,

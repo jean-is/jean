@@ -6,16 +6,16 @@
 
 /**
  * Each look, with what the page needs before its style sheet says it: the browser bar's colour
- * by night and by day, and its accent, where the colour pickers start. Tilde, Mail and Human keep
- * the conversations in view, beside the one open (`list`); Tilde builds on Human's sheet (`on`). In
- * the gallery's order: Tilde, the look Jean starts in, Human, then from the calmest to the most playful (D174, D373).
+ * by night and by day, and its accent, where the colour pickers start; Tilde builds on Human's sheet
+ * (`on`). In the gallery's order: Tilde, the look Jean starts in, Human, then from the calmest to the
+ * most playful (D174, D373).
  */
 /** @typedef {'tilde' | 'human' | 'mail' | 'minimal' | 'swiss' | 'fjord' | 'velvet' | 'notebook' | 'blueprint' | 'classic' | 'terminal' | 'neon'} LookId */
-/** @type {Readonly<Record<LookId, { bar: [string, string], accent: string, list?: boolean, on?: LookId }>>} */
+/** @type {Readonly<Record<LookId, { bar: [string, string], accent: string, on?: LookId }>>} */
 export const LOOKS = Object.freeze({
-  tilde: { bar: ['#131313', '#ffffff'], accent: '#f7c531', list: true, on: 'human' },
-  human: { bar: ['#1e1e1e', '#ffffff'], accent: '#0a84ff', list: true },
-  mail: { bar: ['#060708', '#f4f5f7'], accent: '#3d82f6', list: true },
+  tilde: { bar: ['#131313', '#ffffff'], accent: '#f7c531', on: 'human' },
+  human: { bar: ['#1e1e1e', '#ffffff'], accent: '#0a84ff' },
+  mail: { bar: ['#060708', '#f4f5f7'], accent: '#3d82f6' },
   minimal: { bar: ['#0a0a0a', '#fdfdfd'], accent: '#161616' },
   swiss: { bar: ['#0d0d0d', '#fdfdfd'], accent: '#d81618' },
   fjord: { bar: ['#2d333f', '#eef0f5'], accent: '#88cada' },

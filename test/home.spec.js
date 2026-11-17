@@ -10,7 +10,7 @@
 // On a phone the box stays docked at the foot. Jean as written (app/, any other site) has no page at all.
 // Playwright's WebKit keeps nothing over a reload or a new address (no OPFS), so what a reload keeps is checked in Chromium.
 import { test, expect } from '@playwright/test'
-import { connectFakeBrain, ask, answered, openProfile } from './helpers.js'
+import { connectFakeBrain, ask, answered, openProfile, openTasks } from './helpers.js'
 
 const JEAN_IS = 'http://127.0.0.1:4186/'
 /**
@@ -162,6 +162,8 @@ test('in Jean installed, no task has the page by itself: the Vous menu’s Homep
   await connectFakeBrain(page)
   await ask(page, 'Hello')
   await answered(page)
+  // The drawer opened, as the Vous menu at its foot has it below, so the box is measured in the same room both times (D369).
+  await openTasks(page)
   // A new task there: the box and its ideas alone, its line with the legal pages.
   await page.keyboard.press('ControlOrMeta+Shift+KeyO')
   await expect(page.locator('app-composer .legal a')).toHaveText(['Privacy', 'Terms'])

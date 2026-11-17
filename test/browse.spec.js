@@ -7,7 +7,7 @@
 // covering the other, and its edge and the divider between them resize them (D144). A web page Jean
 // made opens there from its card (D172). Right to left, the pane mirrors; in Japanese, its strings are Japanese.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, holdAnswers, turnOn, openSettings, openTasks, closeTasks, BRAIN_URL, SALES } from './helpers.js'
+import { start, connectFakeBrain, ask, holdAnswers, turnOn, openSettings, openTasks, BRAIN_URL, SALES } from './helpers.js'
 
 const SITE = BRAIN_URL.replace(/\/v1$/, '/site')
 
@@ -329,9 +329,8 @@ test('the browser and a file share the side of the window, neither covering the 
   await page.locator('.composer input[type="file"]').setInputFiles({ name: 'sales.csv', mimeType: 'text/csv', buffer: Buffer.from(SALES) })
   await expect(page.locator('.attachment[data-status="ready"]')).toHaveCount(1)
   await ask(page, 'Here is my table')
-  // The drawer, open with the first task (D369), put away: the window is the conversation's and the dock's (D165).
-  await expect(page.locator('app-inbox')).toBeVisible()
-  await closeTasks(page)
+  // The drawer put away, as it starts (D369): the window is the conversation's and the dock's (D165).
+  await expect(page.locator('app-inbox')).toHaveCount(0)
   await page.locator('.msg-files .file-chip').click()
   const preview = page.locator('app-preview .preview')
   const pane = page.locator('app-browser .browser')

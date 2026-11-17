@@ -237,9 +237,7 @@ export async function paint(page, name, description) {
  * @param {import('@playwright/test').Page} page
  */
 export async function openTasks(page) {
-  // Pressed in the moment it is found put away, before its module has drawn it too: the look opens it by itself as
-  // a room's first task arrives, and a press found it closed a moment before would put it away again. Once the header
-  // is drawn, and again should the page go elsewhere meanwhile.
+  // Pressed in the moment it is found put away, once the header is drawn, and again should the page go elsewhere meanwhile.
   await expect(page.locator('.sidebar-toggle')).toBeAttached()
   await expect(() => page.evaluate(async () => {
     const { app, sidebarOpen } = await import('/ui/state.js'), toggle = /** @type {HTMLElement | null} */ (document.querySelector('.sidebar-toggle'))

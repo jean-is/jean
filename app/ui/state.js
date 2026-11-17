@@ -6,7 +6,7 @@ import { DEFAULT_SETTINGS, saveSettings, applyPolicy, serviceURL, listProjects, 
 import { loadConversation, listConversations, deleteConversation, appendRecords } from '../core/conversations.js'
 import { linkedFiles, unanswered } from '../core/events.js'
 import { t, locale, useLocale, LOCALES } from '../core/i18n.js'
-import { LOOKS, lookId } from './looks.js'
+import { lookId } from './looks.js'
 import { contributions } from './caps.js'
 import { mine } from './opfs.js'
 
@@ -60,8 +60,8 @@ export const app = {
   chosenTheme: signal(/** @type {Theme | null} */ (null)),
   /** The look on screen (D111), once its style sheet is in; settings hold the one chosen. */
   look: signal(/** @type {import('./looks.js').LookId} */ ('tilde')),
-  /** The drawer kept open beside the conversation, or put away, as the user left it on this device; null until then (D165). */
-  sidebar: signal(/** @type {boolean | null} */ (null)),
+  /** The drawer kept open beside the conversation, as the user left it on this device; put away until they open it (D165, D369). */
+  sidebar: signal(false),
   /** The headings folded on this device: 'pinned', 'tasks', 'creations'. */
   folded: signal(/** @type {Set<string>} */ (new Set())),
   /** Whether the window is wide enough for the drawer to stay open beside the conversation. */
@@ -201,17 +201,18 @@ export function switchTheme() {
   setTheme(next === app.deviceTheme.value ? null : next)
 }
 
-// The drawer open beside the conversation or put away (D165) belongs to this device too, as the
-// user left it; until then, to the look: Tilde, Mail and Human keep it open once the room has a task (D369), the others put it away.
+// The drawer open beside the conversation (D165) belongs to this device too, as the user left it;
+// until they open it, it is put away in every look, the window the conversation's (D369).
 export const SIDEBAR_KEY = 'app.sidebar'
 
 /** Whether the drawer is open beside the conversation now, on a wide window. */
-export const sidebarOpen = computed(() => app.wide.value && (app.sidebar.value ?? (LOOKS[app.look.value].list === true && app.conversations.value.length > 0)))
+export const sidebarOpen = computed(() => app.wide.value && app.sidebar.value)
 
 /** The drawer open beside the conversation, or put away, from now on on this device. @param {boolean} open */
 export function setSidebar(open) {
   app.sidebar.value = open
-  localStorage.setItem(mine(SIDEBAR_KEY), open ? 'open' : 'closed')
+  if (open) localStorage.setItem(mine(SIDEBAR_KEY), 'open')
+  else localStorage.removeItem(mine(SIDEBAR_KEY))
 }
 
 // So are the headings folded.
@@ -228,8 +229,6 @@ export function fold(name) {
 /** The header's button and ⌘B: the drawer beside the conversation on a wide window, over it on a narrow one. */
 export function toggleSidebar() {
   if (!app.wide.value) return void (app.dialog.value = app.dialog.value === 'history' ? null : 'history')
-  // Held: a first task arriving meanwhile would open it, and the press put it away.
-  app.sidebar.value = sidebarOpen.value
   if (!document.startViewTransition) setSidebar(!sidebarOpen.value)
   // Beside the conversation, it slides (D234).
   else import('./slide.js').then(({ slide }) => slide())

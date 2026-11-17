@@ -87,8 +87,11 @@ export const waits = /** @type {Set<Promise<unknown>>} */ (new Set())
  */
 const sided = (tree, to) => (typeof tree === 'string' ? tree : { ...tree, a: sided(tree.a, to), b: sided(tree.b, to),
   ...(tree.split === 'row' && (tree.a === 'here' || tree.b === 'here') && { share: to(tree.share, tree.a === 'here' ? besideShare() : 1 - besideShare()) }) })
+/** The parts as the address writes them, a side as wide as opening makes it written as none. @param {Tree} tree */
+const written = (tree) => write(sided(tree, (share, side) => (Math.abs(share - side) < 0.006 ? 0.5 : share)))
 keep('split', {
-  get: () => { const tree = visible.value; return tree === 'here' || (!leaves(tree).some(tiled) && write(tree) === write(standard())) ? null : write(sided(tree, (share, side) => (Math.abs(share - side) < 0.006 ? 0.5 : share))) },
+  // Compared as written, so that a side a hair off what opening makes it, as the drawer opening leaves it, names no split.
+  get: () => { const tree = visible.value; return tree === 'here' || (!leaves(tree).some(tiled) && written(tree) === written(standard())) ? null : written(tree) },
   set: async (state) => {
     const read = state === null ? null : parse(state), tree = read && sided(read, (share, side) => (share === 0.5 ? side : share)), id = app.current.peek()?.id
     layout.value = filled((tree && id ? without(tree, id) : tree) ?? 'here')
