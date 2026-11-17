@@ -211,7 +211,7 @@ test('a whiteboard: made by the brain, its notes dragged, moved with the keys, a
   for (const [way, wide] of /** @type {const} */ ([['Picture of the whole whiteboard', 600], ['Picture of what’s in view', 300]])) {
     await page.getByRole('complementary', { name: 'Team retro' }).getByRole('button', { name: /download/i }).click()
     const [download] = await Promise.all([page.waitForEvent('download'), page.locator('.out-menu:popover-open').getByRole('button', { name: way }).click()])
-    expect(download.suggestedFilename()).toBe('Team retro.png')
+    expect(download.suggestedFilename().replaceAll('_', ' '), 'WebKit on Linux writes a space as _').toBe('Team retro.png')
     const png = readFileSync(await download.path())
     expect(png.subarray(1, 4).toString()).toBe('PNG')
     expect(png.readUInt32BE(16)).toBeGreaterThan(wide)

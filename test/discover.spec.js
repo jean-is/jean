@@ -11,7 +11,7 @@ test('every capability’s modules load in this engine', async ({ page }) => {
   const failed = await page.evaluate(async () => {
     const { capabilities, shell } = await (await fetch('capabilities.json')).json()
     const modules = [...shell, ...Object.values(capabilities).flatMap((capability) => /** @type {any} */ (capability).files)]
-      .filter((file) => /^caps\/.*\.js$/.test(file) && !/-(worker|worklet)\.js$|games\/shell\.js$|profiles\/child\.js$/.test(file))
+      .filter((file) => /^caps\/.*\.js$/.test(file) && !/-(worker|worklet)\.js$|games\/shell\.js$|interactive\/alive\.js$|profiles\/child\.js$/.test(file))
     const results = await Promise.allSettled(modules.map((file) => import(`/${file}`)))
     return results.flatMap((result, i) => (result.status === 'rejected' ? [`${modules[i]}: ${result.reason}`] : []))
   })

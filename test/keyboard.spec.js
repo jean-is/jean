@@ -43,8 +43,9 @@ test.describe('on a touchscreen whose browser says nothing of its keyboard', () 
     expect(list?.y).toBeGreaterThan(box.bottom)
     await page.keyboard.press('Escape')
 
-    // Touched elsewhere, the box lets the keys go, and goes back to its place.
-    await page.locator('.hero-question').tap()
+    // The keys gone elsewhere, as a touch outside takes them, the box goes back to its place. Blurred rather than a tap, which
+    // moves the keys only where the browser follows it with a mouse's events: WebKit on Linux sends none after a tap.
+    await page.locator('#prompt').blur()
     await expect(page.locator('#prompt')).not.toBeFocused()
     await expect.poll(async () => Math.round((await places(page)).top)).toBe(Math.round(before.top))
     await resting(page)

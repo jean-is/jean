@@ -37,8 +37,12 @@ export const TRIVY = { action: '38b337fff0a2f984d5be173c99e3f633438167ec', image
 const BUILDER = 'jean-ci'
 /** Where a container finds this repository, read-only, to fetch the whole history from. */
 const ORIGIN = '/origin.git'
-/** What a job takes of Docker's machine, processors and GB, by its id: the scheduler's measure, and a container's limits. */
-const SIZES = /** @type {Record<string, [number, number]>} */ ({ e2e: [2, 2.5], check: [4, 4], containers: [4, 6], images: [4, 4], analyze: [4, 6] })
+/**
+ * What a job takes of Docker's machine, processors and GB, by its id: the scheduler's measure, and a container's limits. The
+ * browser tests take the runner's four processors, as their two workers have them on GitHub: on two, a game's frame budget and
+ * the slower decks miss their time.
+ */
+const SIZES = /** @type {Record<string, [number, number]>} */ ({ e2e: [4, 2.5], check: [4, 4], containers: [4, 6], images: [4, 4], analyze: [4, 6] })
 /** Which jobs go first: the longest. */
 const FIRST = ['e2e', 'containers', 'check', 'analyze']
 
@@ -787,8 +791,15 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   const info = /** @type {string} */ (quiet('docker', ['info', '--format', '{{.NCPU}} {{.MemTotal}}'])).split(' ').map(Number)
   /** @type {Outputs} */
   const given = {}
-  const results = await schedule(runnable, { cpus: info[0], memory: info[1] / 2 ** 30 }, async (run) => {
-    if (blocked.includes(run)) return { failed: `needs ${run.tools.filter((tool) => missing.includes(tool)).join(', ')} here`, skipped: [] }
+  // Docker's processors but a runner's four, for what runs beside its containers and outside their limits: the jobs here (CodeQL,
+  // the containers job's builder and cluster) and the machine itself. Every one of them taken, WebKit's frames came late.
+  const results = await schedule(runnable, { cpus: Math.max(4, info[0] - 4), memory: info[1] / 2 ** 30 }, async (run) => {
+    if (blocked.includes(run)) {
+      // A log of its own all the same, which the summary reads.
+      const failed = `needs ${run.tools.filter((tool) => missing.includes(tool)).join(', ')} here`
+      await writeFile(join(OUT, `${run.slug}.log`), `✘ ${failed}\n`)
+      return { failed, skipped: [] }
+    }
     const result = await execute(run, shared, Object.fromEntries(run.needs.map((other) => [other, given[other] ?? { outputs: {} }])))
     given[run.job] = { outputs: { ...given[run.job]?.outputs, ...result.outputs } }
     return result

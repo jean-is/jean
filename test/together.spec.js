@@ -60,7 +60,7 @@ test('Ana and Bob work on a collection together: a link and a name, each one’s
   await joining.getByLabel('Your name, as the others will see it').fill('Bob')
   await joining.getByRole('button', { name: 'Join' }).click()
   await expect.poll(() => items(bob, folder)).toEqual(['Flat', 'Flights'])
-  await expect(bob.locator('aside.pane.preview h2')).toHaveText('Expenses')
+  await expect(bob.locator('aside.pane.preview .pane-name')).toHaveValue('Expenses')
   await expect(ana.locator('app-toasts')).toContainText('Bob joined with the link')
 
   // Each one's row reaches the other's copy, and Ana sees Bob here.
