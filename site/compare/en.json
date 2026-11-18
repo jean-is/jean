@@ -1,5 +1,5 @@
 {
-  "title": "{name} compared: ChatGPT, Claude, Manus, OpenClaw, Open WebUI",
+  "title": "{name} compared: ChatGPT, Claude, Gemini, Manus, OpenClaw, Open WebUI",
   "description": "{name} beside the AI apps you know: where each one runs, who reads what you send, what it costs, and whether you can leave with your things.",
   "eyebrow": "Compare",
   "h1": "{name} beside the AI apps you know",
@@ -21,16 +21,16 @@
   "table.jean": "{name}",
   "table.head": [
     ["Chat apps from AI companies", "ChatGPT, Claude, Gemini, Copilot"],
-    ["Assistants that act for you", "ChatGPT Work, Claude Cowork, OpenClaw, Manus"],
+    ["Assistants that act for you", "ChatGPT Work, Claude Cowork, Gemini Tasks, OpenClaw, Manus"],
     ["Local AI apps", "LM Studio, Ollama"],
     ["Self-hosted chat", "Open WebUI, LibreChat"]
   ],
   "table.rows": [
-    ["Where it runs", "In a browser tab, from {domain} or your own address", "built", "The company’s servers; apps for phone and computer", "", "A program on your computer or a server; ChatGPT Work and Cowork also in their makers’ clouds, Manus in its own", "chatgpt-work-help cowork manus-welcome", "Your computer, after an install", "Your server, usually with Docker"],
+    ["Where it runs", "In a browser tab, from {domain} or your own address", "built", "The company’s servers; apps for phone and computer", "", "A program on your computer or a server; ChatGPT Work and Cowork also in their makers’ clouds, Manus and Gemini Tasks in theirs alone", "chatgpt-work-help cowork manus-welcome gemini-schedules", "Your computer, after an install", "Your server, usually with Docker"],
     ["Who reads what you send", "The AI you choose. With the AI on this computer, nobody", "built", "The company; some train their AI on it unless you opt out", "openai-train claude-train", "The AI provider each one uses, and Manus itself", "manus-privacy", "Nobody, while the AI runs on your computer", "Your server, and the AI behind it"],
     ["Which AI", "Any: on this computer, a free one, your key, your plan, your company’s", "built", "The company’s own", "", "One company’s, or any you set up", "", "Open ones you download", "Any you connect"],
-    ["What you install", "Nothing", "built", "Nothing on the web; apps if you like", "", "An app, sometimes a terminal; nothing for ChatGPT Work or Manus on the web", "chatgpt-work manus-home", "An app, then downloads of several GB", "A server, a database, updates"],
-    ["What it costs", "{name} is free; the AI may not be", "design", "Free with limits, then a monthly plan", "openai-train claude-pricing", "A plan, or your own keys; Manus counts credits, ChatGPT Work a plan’s allowance, then credits", "manus-pricing chatgpt-work-usage", "Free", "Free software, plus running it"],
+    ["What you install", "Nothing", "built", "Nothing on the web; apps if you like", "", "An app, sometimes a terminal; nothing for ChatGPT Work, Gemini Tasks or Manus on the web", "chatgpt-work gemini-tasks manus-home", "An app, then downloads of several GB", "A server, a database, updates"],
+    ["What it costs", "{name} is free; the AI may not be", "design", "Free with limits, then a monthly plan", "openai-train claude-pricing", "A plan, or your own keys; Manus counts credits, ChatGPT Work a plan’s allowance, then credits; Gemini Tasks is free of charge in six countries, none in Europe", "manus-pricing chatgpt-work-usage gemini-tasks", "Free", "Free software, plus running it"],
     ["Can you leave with your things", "Plain files and backups; ChatGPT’s, Claude’s and Gemini’s exports come in", "built", "An export you ask for, sent by email", "openai-export claude-export", "Files on your disk, or on the maker’s servers when the work runs in its cloud; history varies", "manus-privacy chatgpt-work-help", "Files on your disk", "A database you can copy"],
     ["For a family", "A profile per child, set by a parent", "built", "It varies: ChatGPT from 13 with parental controls, Claude for adults only", "openai-parents claude-age", "Not made for children", "", "Not made for children", "Up to whoever runs it"]
   ],
@@ -48,6 +48,7 @@
     "Keep ChatGPT if you like. Your files stay on your devices.",
     "Finished files with the AI you choose, not only OpenAI’s, kept on your devices.",
     "Open source, in a browser tab, with any AI.",
+    "The work on your devices, not in Google’s cloud, with any AI, in any country.",
     "The work on your devices, with any AI and no credits.",
     "Any AI on your files, and the files stay on your devices.",
     "It works inside the browser’s fence, and asks before anything leaves it.",
@@ -65,7 +66,7 @@
   "faq.title": "Questions people ask",
   "faq.items": [
     ["Is {name} a ChatGPT alternative?", "It can be. It can also be where you use ChatGPT, with your files kept on your devices. {name} is the app; the AI is your choice."],
-    ["And the assistants that do the work, like ChatGPT Work or Claude Cowork?", "{name} is one of them: it works through a task and hands back finished files, in a browser tab, with the AI you choose. Each has its page: {compare-chatgpt-work}, {compare-claude-cowork}."],
+    ["And the assistants that do the work, like ChatGPT Work, Claude Cowork or Gemini Tasks?", "{name} is one of them: it works through a task and hands back finished files, in a browser tab, with the AI you choose. Each has its page: {compare-chatgpt-work}, {compare-claude-cowork}, {compare-gemini-tasks}."],
     ["Which is best: ChatGPT, Claude or Gemini?", "It depends on the task, and it changes often. In {name} you can switch the AI from the box and ask again."],
     ["Is it free?", "{name} is free and open source. The AI may cost: free on this computer or with a free account, otherwise your key or your plan."],
     ["Do I need an account?", "Not with the AI on this computer. The free one asks for an OpenRouter account."],
@@ -101,6 +102,8 @@
   "source.chatgpt-work-help": "OpenAI help centre: ChatGPT Work and Codex",
   "source.chatgpt-work-usage": "ChatGPT Learn: pricing of Work and Codex",
   "source.cowork": "Claude Cowork",
+  "source.gemini-tasks": "Gemini Apps help: tasks and workflows",
+  "source.gemini-schedules": "Gemini Apps help: schedules for tasks",
   "source.manus-home": "Manus",
   "source.manus-welcome": "Manus docs: welcome",
   "source.manus-privacy": "Manus privacy policy",

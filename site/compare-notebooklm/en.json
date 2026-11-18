@@ -55,7 +55,8 @@
     ["Can it turn my documents into a podcast, like Audio Overviews?", "No. {name} reads an answer aloud in one voice, made on your device. For a discussion between hosts, NotebookLM is the tool."],
     ["Can I use it for studying?", "Yes. Give it your course and ask for a summary, a quiz, a mind map or a timeline; each answer cites the page it came from. A child gets a profile a parent sets, with no account."],
     ["Can I use Mistral, or keep everything in Europe?", "Yes. {name} is made in France and open source, and its AI can be European too: Mistral’s with your key, or one on your own computer."],
-    ["Does it read Word, Excel and PowerPoint files?", "Yes, as they are, and PDFs, pictures and whole folders. It hands back Word and Excel files too."]
+    ["Does it read Word, Excel and PowerPoint files?", "Yes, as they are, and PDFs, pictures and whole folders. It hands back Word and Excel files too."],
+    ["And Tasks, Gemini’s mode that does the work?", "That is another part of the Gemini app, with a page of its own: {compare-gemini-tasks}."]
   ],
   "end.title": "Give {name} a file, and ask where it says so",
   "foot.note": "Facts about NotebookLM, now Gemini Notebook, were checked on {date} on Google’s own pages. Both names are Google’s; {name} is not affiliated with Google.",

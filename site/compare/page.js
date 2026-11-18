@@ -21,6 +21,8 @@ const SOURCES = {
   'chatgpt-work-help': { url: 'https://help.openai.com/en/articles/20001275-chatgpt-work-and-codex', checked: '2026-11-18' },
   'chatgpt-work-usage': { url: 'https://learn.chatgpt.com/docs/pricing', checked: '2026-11-18' },
   'cowork': { url: 'https://claude.com/product/cowork', checked: '2026-10-20' },
+  'gemini-tasks': { url: 'https://support.google.com/gemini/answer/17094507?hl=en', checked: '2026-11-18' },
+  'gemini-schedules': { url: 'https://support.google.com/gemini/answer/17094710?hl=en', checked: '2026-11-18' },
   'manus-home': { url: 'https://manus.im/', checked: '2026-11-01' },
   'manus-welcome': { url: 'https://manus.im/docs/introduction/welcome', checked: '2026-11-01' },
   'manus-privacy': { url: 'https://manus.im/privacy', checked: '2026-11-01' },

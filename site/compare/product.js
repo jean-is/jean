@@ -59,7 +59,7 @@ export const PRODUCTS = COMPARED.slice(1)
  *
  * Where a button leads: a request sent (`?q=`), the sample spreadsheet in the box, Settings where Restore brings an
  * export in, Settings › Brains with one way open, the deploy guide, or the page for IT.
- * @typedef {'try' | 'sample' | 'history' | 'claude' | 'chatgpt' | 'local' | 'device' | 'host' | 'work'} Action
+ * @typedef {'try' | 'sample' | 'history' | 'claude' | 'chatgpt' | 'gemini' | 'local' | 'device' | 'host' | 'work'} Action
  *
  * A product's page.js.
  * @typedef {object} Product

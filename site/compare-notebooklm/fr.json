@@ -55,7 +55,8 @@
     ["Peut-il transformer mes documents en podcast, comme les résumés audio ?", "Non. {name} lit une réponse à voix haute, d’une seule voix, créée sur votre appareil. Pour une discussion entre animateurs, NotebookLM est l’outil qu’il vous faut."],
     ["Puis-je l’utiliser pour étudier ?", "Oui. Donnez-lui votre cours et demandez un résumé, un quiz, une carte mentale ou une frise ; chaque réponse cite la page d’où elle vient. Un enfant a un profil réglé par un parent, sans compte."],
     ["Puis-je utiliser Mistral, ou tout garder en Europe ?", "Oui. {name} est fait en France et open source, et son IA peut être européenne elle aussi : celle de Mistral avec votre clé, ou une IA sur votre propre ordinateur."],
-    ["Lit-il les fichiers Word, Excel et PowerPoint ?", "Oui, tels quels, ainsi que les PDF, les images et les dossiers entiers. Il rend aussi des fichiers Word et Excel."]
+    ["Lit-il les fichiers Word, Excel et PowerPoint ?", "Oui, tels quels, ainsi que les PDF, les images et les dossiers entiers. Il rend aussi des fichiers Word et Excel."],
+    ["Et Tasks, le mode de Gemini qui fait le travail ?", "C’est une autre partie de l’application Gemini, qui a sa propre page : {compare-gemini-tasks}."]
   ],
   "end.title": "Donnez un fichier à {name}, et demandez où c’est écrit",
   "foot.note": "Les informations sur NotebookLM, devenu Gemini Notebook, ont été vérifiées le {date} sur les pages de Google. Les deux noms appartiennent à Google ; {name} n’est pas affilié à Google.",
