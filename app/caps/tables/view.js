@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 // A collection's view, beside the conversation (D491) as in a document that holds it: the one on show (./tables.js) as a table, each cell changed in place
-// as its column's kind asks, or as a board, a gallery, a calendar or, where it is narrow, a list (D757), each drawn by a folder of its own. Jean's changes
+// as its column's kind asks, or as a board, a gallery, a calendar, a timeline or, where it is narrow, a list (D757), each drawn by a folder of its own. Jean's changes
 // the user hasn't accepted are marked, under the bar over them (ui/review.js, D505). Its heads stay on top as its rows scroll, each its kind's glyph and
 // its name, opening the column's menu: renamed, made another kind or a relation to a collection, the rows sorted by it, Jean asked to fill it, a column
 // added beside it, hidden or taken away; the last head adds one. A row is moved by the handle at its start, dragged or with the arrows; a click or a right
@@ -81,7 +81,7 @@ const [toStart, toEnd] = [icon(svg`<path d="M5 5v14M19 12H9m4-4-4 4 4 4"/>`, 'fl
 const [up, down] = [icon(svg`<path d="M5 5h14M12 19V9m-4 4 4-4 4 4"/>`), icon(svg`<path d="M5 19h14M12 5v10m-4-4 4 4 4-4"/>`)]
 /** A menu's rows, a list for each group of them, a line between. @param {...unknown[]} groups */
 const listed = (...groups) => groups.map((rows, i) => html`${i ? html`<hr>` : nothing}<ul>${rows.map((row) => html`<li>${row}</li>`)}</ul>`)
-/** A row of a menu, by its id, that acts and closes it, greyed where it can't. @param {string} menu @param {unknown} glyph @param {string} label @param {() => unknown} act @param {boolean} [off] @param {string} [kind] */
+/** A row of a menu, by its id, that acts and closes it, greyed where it can't. @param {string} menu @param {unknown} glyph @param {unknown} label @param {() => unknown} act @param {boolean} [off] @param {string} [kind] */
 const option = (menu, glyph, label, act, off = false, kind = '') => html`<button type="button" class=${kind || nothing} popovertarget=${menu} popovertargetaction="hide" ?disabled=${off} @click=${act}>${glyph}${label}</button>`
 /** The views drawn so far, whose menus' ids each start with its own number. */
 let drawn = 0
@@ -192,7 +192,7 @@ const typed = (event) => /** @type {HTMLInputElement} */ (event.target).value
 /** The view on show sorted by a column, from A to Z or from Z to A, empty cells last; pressed again, sorted no more. @param {State} state @param {Property} property @param {string} direction */
 const sort = (state, property, direction) => state.arrange?.(({ sort: [was] = [] }) => ({ sort: was?.property === property.id && (was.direction ?? 'ascending') === direction ? undefined : [{ property: property.id, direction: /** @type {'ascending'} */ (direction) }] }))
 /** The ways to show a collection, each by its glyph. */
-const LAID = /** @type {Record<string, unknown>} */ ({ table: icons.table, list: icons.list, board: icons.board, gallery: icons.image, calendar: GLYPHS.date })
+const LAID = /** @type {Record<string, unknown>} */ ({ table: icons.table, list: icons.list, board: icons.board, gallery: icons.image, calendar: GLYPHS.date, timeline: icon(svg`<path d="M4.5 6.5h8M9 12h10.5M6.5 17.5h8"/>`, 'flip-rtl') })
 /** How a rule compares, as its column's kind allows. @param {Property} property @returns {Rule['op'][]} */
 const opsOf = ({ type }) => (type === 'checkbox' ? ['is'] : [...(type === 'number' || DATED.test(type) || type === 'select' || type === 'status' ? [] : /** @type {const} */ (['contains', 'does-not-contain'])),
   'is', 'is-not', ...(type === 'number' || DATED.test(type) ? /** @type {const} */ (['greater-than', 'less-than']) : []), 'is-empty', 'is-not-empty'])
@@ -233,7 +233,7 @@ function draw(one, state, go) {
   // Grouped by what Arrange names; the board's lanes too, unless it is a date, else by the board's own, a status or a choice.
   const by = columns.find((property) => property.id === settings.group && GROUPED.test(property.type)), groups = columns.filter((property) => GROUPED.test(property.type))
   const lanes = (by?.type !== 'date' && by) || columns.find((property) => property.id === one.table.views.find((view) => view.id === 'board')?.group)
-  // The gallery's pictures: its first column of them; the calendar's dates: the column picked, else its first.
+  // The gallery's pictures: its first column of them; the calendar's and the timeline's dates: the column picked, else its first.
   const covers = columns.find((property) => property.type === 'picture'), dated = calendarOf(one.table)
   state.by = by
   state.calculate = calculate
@@ -288,11 +288,11 @@ function draw(one, state, go) {
   const count = made ? t('tables.made', { count: one.rows.length }) : t('tables.changed', { count: cells, name: assistantName() })
   // Shown as a layout only where it has something to show: lanes, pictures or dates; a whiteboard's notes, as a table alone. Narrow, a list of the
   // rows' cards shows in the table's place until the table is picked, and in the board's (D757).
-  const narrow = state.narrow.value && !whiteboard, offers = /** @type {Record<string, unknown>} */ ({ table: true, list: narrow, board: lanes, gallery: covers, calendar: dated }), asks = picked ? settings.type : as.value
+  const narrow = state.narrow.value && !whiteboard, offers = /** @type {Record<string, unknown>} */ ({ table: true, list: true, board: lanes, gallery: covers, calendar: dated, timeline: dated }), asks = picked ? settings.type : as.value
   const wanted = !whiteboard && asks !== 'table' && offers[asks] ? asks : '', shows = wanted || (narrow && !state.grid.value ? 'list' : 'table'), way = narrow && wanted === 'board' ? 'list' : shows === 'table' ? '' : shows
   const ways = Object.keys(LAID).filter((name) => offers[name])
   /** Shown another way: the view picked's own, else in the address; a list is the table, narrow. @param {string} name */
-  const show = (name) => { const type = /** @type {View['type']} */ (name === 'list' ? 'table' : name); state.grid.value = name === 'table'; if (picked) view(() => ({ type })); else as.value = type === 'table' ? '' : type }
+  const show = (name) => { const type = /** @type {View['type']} */ (name === 'list' && narrow ? 'table' : name); state.grid.value = name === 'table'; if (picked) view(() => ({ type })); else as.value = type === 'table' ? '' : type }
   const title = /** @type {Property} */ (titleOf(one.table)), counted = (/** @type {number} */ count) => format('NumberFormat', intlLocales()).format(count), jean = assistantName()
   /** The view picked named, its name's field taking the keyboard: once its menu has closed, since the field takes its button's place (WebKit freezes on an opener gone as its menu closes). */
   const retitle = () => requestAnimationFrame(() => { state.titling.value = true; requestAnimationFrame(() => { const field = /** @type {HTMLInputElement | null} */ (state.box.querySelector('.table-titled')); field?.focus(); field?.select() }) })
@@ -324,20 +324,20 @@ function draw(one, state, go) {
   const said = { add: t('tables.addRow'), unnamed: t('tables.unnamed'), wrong: t('tables.wrong'), subtotal: t('tables.subtotal'), changed: (/** @type {number} */ count) => t('tables.changed', { count, name: jean }), none: dated ? t('tables.none', { column: dated.date.name }) : '', date: t('tables.kind.date'), end: t('tables.end'),
     open: t('tables.open'), duplicate: t('tables.duplicate'), last: t('tables.kind.changed-at'), me: t('tables.me'), ask: t('tables.ask', { name: jean }), of: (/** @type {number} */ shown, /** @type {number} */ count) => t('tables.of', { shown: counted(shown), count: counted(count) }),
     about: (/** @type {Row} */ row) => t('tables.asked.row', { table: one.table.name, row: textOf(row, title) || t('tables.unnamed') }) }
-  const given = { id, one, columns, rows, hidden, fresh, state, parts, covers, words: said, by: wanted === 'board' ? lanes : way && way !== 'list' ? undefined : by }
+  const given = { id, one, columns, rows, hidden, fresh, state, parts, covers, words: said, by: wanted === 'board' ? lanes : way === 'gallery' || way === 'calendar' ? undefined : by }
   return html`<p class="visually-hidden" role="status">${(state.reviewed ||= cells > 0) ? count : ''}</p>${marked.length ? reviewBar({
       label: t('tables.review'), count, go: cells > 1 && !made ? go : null, previous: t('tables.previous'), next: t('tables.next'),
       accept: decided(accept, one), reject: decided(reject, one), acceptAll: t('tables.acceptAll'), rejectAll: t('tables.rejectAll'),
     }) : nothing}
     <div class="table-bar">${state.beside || whiteboard ? nothing : html`<input class="table-name" dir="auto" title=${t('tables.tableName')} .value=${live(one.table.name)} @change=${(/** @type {Event} */ e) => shape(one, { name: typed(e) })}>`}
-      ${whiteboard ? nothing : state.titling.value && own ? html`<input class="table-titled" dir="auto" title=${t('tables.viewName')} .value=${live(settings.name ?? '')} @change=${(/** @type {Event} */ e) => shape(one, { named: { id: at, name: typed(e) } })}
-        @blur=${() => { state.titling.value = false }} @keydown=${titled}>` : html`<button type="button" class="table-kept" popovertarget=${`${id}-views`}><span dir="auto">${picked ? settings.name : t('tables.allRows')}</span><span class="muted">${rows.length < one.rows.length ? t('tables.of', { shown: counted(rows.length), count: counted(one.rows.length) }) : counted(rows.length)}</span>${icons.chevron}</button>
-        <div id=${`${id}-views`} class="menu table-menu" popover @focusout=${leaving}>${listed([['', 'table', t('tables.allRows')], ...views.map((view) => [view.id, view.type, view.name]), ...proposed.map((key) => [key, yours[key].type, yours[key].name, assistantName()])].map(([to, type, name, from]) => html`<button type="button" aria-current=${String(to === (picked ? at : ''))}
-          popovertarget=${`${id}-views`} popovertargetaction="hide" @click=${() => { as.value = /** @type {string} */ (to) }}>${LAID[/** @type {string} */ (type)] ?? LAID.table}<span dir="auto">${name}</span>${from ? html`<span class="menu-value" dir="auto">${from}</span>` : nothing}${to === (picked ? at : '') ? icons.check : nothing}</button>`),
-          [option(`${id}-views`, icons.pin, t('tables.keepView'), () => keep(true)), ...(own ? [option(`${id}-views`, icons.compose, t('action.rename'), retitle), option(`${id}-views`, icons.trash, t('action.delete'), () => { as.value = ''; shape(one, { drop: at }) }, false, 'danger')] : [])])}</div>`}
       ${ways.length > 1 ? html`<button type="button" class="table-laid" title=${t('tables.views')} popovertarget=${`${id}-shows`}>${LAID[shows]}<span>${t(`tables.${shows}`)}</span>${icons.chevron}</button>
         <div id=${`${id}-shows`} class="menu table-menu" popover @focusout=${leaving}>${listed(ways.map((name) => html`<button type="button" aria-current=${String(shows === name)} popovertarget=${`${id}-shows`} popovertargetaction="hide"
           @click=${() => show(name)}>${LAID[name]}${t(`tables.${name}`)}${shows === name ? icons.check : nothing}</button>`))}</div>` : nothing}
+      ${whiteboard ? nothing : state.titling.value && own ? html`<input class="table-titled" dir="auto" title=${t('tables.viewName')} .value=${live(settings.name ?? '')} @change=${(/** @type {Event} */ e) => shape(one, { named: { id: at, name: typed(e) } })}
+        @blur=${() => { state.titling.value = false }} @keydown=${titled}>` : html`<button type="button" class="table-kept" popovertarget=${`${id}-views`}><span dir="auto">${picked ? settings.name : t('tables.allRows')}</span>${rows.length < one.rows.length ? html`<span class="muted">${t('tables.of', { shown: counted(rows.length), count: counted(one.rows.length) })}</span>` : html`<span class="muted is-all">${counted(rows.length)}</span>`}${icons.chevron}</button>
+        <div id=${`${id}-views`} class="menu table-menu" popover @focusout=${leaving}>${listed([['', 'table', t('tables.allRows')], ...views.map((view) => [view.id, view.type, view.name]), ...proposed.map((key) => [key, yours[key].type, yours[key].name, assistantName()])].map(([to, type, name, from]) => html`<button type="button" aria-current=${String(to === (picked ? at : ''))}
+          popovertarget=${`${id}-views`} popovertargetaction="hide" @click=${() => { as.value = /** @type {string} */ (to) }}>${LAID[/** @type {string} */ (type)] ?? LAID.table}<span dir="auto">${name}</span>${from ? html`<span class="menu-value" dir="auto">${from}</span>` : nothing}${to === (picked ? at : '') ? icons.check : nothing}</button>`),
+          [option(`${id}-views`, icons.pin, t('tables.keepView'), () => keep(true)), ...(own ? [option(`${id}-views`, icons.compose, t('action.rename'), retitle), option(`${id}-views`, icons.trash, t('action.delete'), () => { as.value = ''; shape(one, { drop: at }) }, false, 'danger')] : [])])}</div>`}
       <div class="table-tools">${one.rows.length > 4 || search.value ? html`<label class="creations-find" for=${`${id}-find`}>${icons.search}<span class="visually-hidden">${t('tables.search')}</span><input id=${`${id}-find`} type="search" dir="auto" placeholder=${t('tables.search')} title=${t('tables.search')}
         .value=${live(search.value)} @input=${(/** @type {Event} */ e) => { search.value = typed(e) }} @keydown=${(/** @type {KeyboardEvent} */ e) => { if (e.key === 'Escape' && search.value && !e.isComposing) { e.stopPropagation(); search.value = '' } }}></label>` : nothing}
         <button type="button" class="icon-button" aria-label=${t('tables.arrange')} popovertarget=${`${id}-arrange`}>${sliders}</button>
@@ -348,7 +348,7 @@ function draw(one, state, go) {
           <h3 id=${`${id}-shown`}>${t('tables.shown')}</h3><div class="table-lines" role="group" aria-labelledby=${`${id}-shown`}>${listed(columns.map((property) => html`<label class="table-line" for=${`${id}-shown-${property.id}`}><input id=${`${id}-shown-${property.id}`} type="checkbox" .checked=${live(!hidden.includes(property.id))} ?disabled=${property === titleOf(one.table)}
             @change=${(/** @type {Event} */ e) => view(({ hidden = [] }) => ({ hidden: /** @type {HTMLInputElement} */ (e.target).checked ? hidden.filter((id) => id !== property.id) : [...hidden, property.id] }))}>${GLYPHS[property.type]}<span dir="auto">${property.name}</span></label>`))}</div>
           <h3>${t('tables.sort')}</h3>${sorting}${whiteboard ? nothing : html`<hr>${option(`${id}-arrange`, icons.pin, t('tables.keepView'), () => keep(true))}`}</div>
-        ${whiteboard ? nothing : html`<button type="button" class="icon-button" aria-label=${t('tables.addRow')} @click=${() => added(one, { [title.id]: null }, state)}>${icons.plus}</button>`}
+        ${whiteboard ? nothing : html`<button type="button" class="button primary table-new" @click=${() => added(one, { [title.id]: null }, state)}>${icons.plus}<span>${t('tables.addRow')}</span></button>`}
       </div></div>
     ${chips.length ? html`<ul class="table-chips" aria-label=${t('tables.arranged')}>${chips}</ul>` : nothing}
     <div class=${mine ? 'table-yours' : 'table-yours is-quiet'}><span role="status">${mine ? (offered ? t('tool.offer', { name: settings.name ?? '' }) : t('tables.onlyYou')) : nothing}</span>${mine ? html`<button type="button" class="table-keep" @click=${() => keep()}>${t('tables.keep')}</button><button type="button" class="table-keep"
@@ -526,7 +526,7 @@ function grid(one, columns, shown, rows, calculate, fresh, state, words) {
         : listed([row(icons.compose, t('action.rename'), () => rename(property.id)),
           html`<button type="button" class="submenu" @click=${() => turn(menu, property.id)}>${GLYPHS[property.type]}${t('tables.type')} <span class="menu-value">${t(`tables.kind.${property.type}`)}</span>${icons.chevron}</button>`,
           ...(property.options?.length ? [html`<button type="button" class="submenu" @click=${() => choose(menu, property.id)}>${icons.palette}${t('tables.colour')}${icons.chevron}</button>`] : [])],
-          ...([...WORKED, 'formula'].includes(property.type) ? [] : [[row(icons.brain, t('tables.askFill', { name: assistantName() }), () => ask(one, t('tables.asked.fill', { table: one.table.name, column: property.name })))]]),
+          ...((empty) => (!empty || [...WORKED, 'formula'].includes(property.type) ? [] : [[row(icons.brain, html`${t('tables.askFill', { name: assistantName() })}<span class="menu-value">${empty}</span>`, () => ask(one, t('tables.asked.fill', { table: one.table.name, column: property.name })))]]))(rows.length - Number(total(rows, property, 'count'))),
           [row(ascending, t('tables.ascending'), () => sort(state, property, 'ascending')), row(descending, t('tables.descending'), () => sort(state, property, 'descending'))],
           [row(icons.back, t('tables.insertStart'), () => added('text', place)), row(icons.arrow, t('tables.insertEnd'), () => added('text', place + 1))],
           [row(toStart, t('tables.moveStart'), moved(shown[i - 1], false), !i), row(toEnd, t('tables.moveEnd'), moved(shown[i + 1], true), i === shown.length - 1)],
@@ -855,10 +855,10 @@ const added = (one, set, state) => change(one, [{ set }], 'user').then(([id]) =>
 export const parts = { cell, decide, totalOf, edit, pictured, added, pill, face, said, option, listed, rid, ask, leaving, glyphs: GLYPHS, reads: READS }
 
 /** The layouts and a row's sheet, in folders of their own, each fetched as one is first shown, and those that have come. @type {Record<string, () => Promise<{ default: (given: any) => unknown }>>} */
-const LAYOUTS = { board: () => import('../board/board.js'), gallery: () => import('../gallery/gallery.js'), calendar: () => import('../calendar/calendar.js'), list: () => import('../list/list.js'), row: () => import('../row/row.js') }
+const LAYOUTS = { board: () => import('../board/board.js'), gallery: () => import('../gallery/gallery.js'), calendar: () => import('../calendar/calendar.js'), timeline: () => import('../timeline/timeline.js'), list: () => import('../list/list.js'), row: () => import('../row/row.js') }
 const layouts = signal(/** @type {Record<string, (given: any) => unknown>} */ ({}))
 /**
- * A board, a gallery, a calendar, a list or a row's sheet, drawn by its own folder (caps/board, gallery, calendar, list, row) with what the view gives it: the collection,
+ * A board, a gallery, a calendar, a timeline, a list or a row's sheet, drawn by its own folder (caps/board, gallery, calendar, timeline, list, row) with what the view gives it: the collection,
  * its columns, the rows the view keeps, those Jean changed, the cards' parts and Tables' words; nothing until it has come. @param {string} way @param {object} given
  */
 function laid(way, given) {

@@ -157,6 +157,7 @@
   "tables.end": "النهاية",
   "tables.time": "الوقت",
   "tables.list": "قائمة",
+  "tables.timeline": "خط زمني",
   "tables.of": "{shown} من {count}",
   "tables.ask": "اسأل {name}",
   "tables.askFill": "اطلب من {name} تعبئته",

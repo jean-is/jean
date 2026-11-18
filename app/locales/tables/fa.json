@@ -145,6 +145,7 @@
   "tables.end": "پایان",
   "tables.time": "ساعت",
   "tables.list": "فهرست",
+  "tables.timeline": "خط زمانی",
   "tables.of": "{shown} از {count}",
   "tables.ask": "پرسیدن از {name}",
   "tables.askFill": "درخواست پر کردن از {name}",

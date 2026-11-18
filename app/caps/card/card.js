@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: MIT
-// A row's card, the same in a collection's list, board and gallery (D757), in a folder of its own that those layouts import: its name, which opens the
-// row as a sheet, then the first four of its other cells shown that hold something, each read as its kind reads, a choice as its pill, a person with
-// their face, a day or money in the user's words, the others after their column's name; then its menu: opened, given another of its group's values,
-// which moves it with no drag, asked about, or deleted. And a group's head, as a lane and a list's group say it. The cards' parts and Tables' words
-// come from the view, whose they are.
+// A row's card, the same in a collection's list, board, gallery and calendar's days (D757), in a folder of its own that those layouts import: its
+// name, which opens the row as a sheet; then what tells it apart, picked by kind among the columns shown, in their order: two choices as their
+// pills and a day, and where those leave room, its other cells after their column's name; at its end an amount and a person's face; then its menu:
+// opened, given another of its group's values, which moves it with no drag, asked about, or deleted. And a group's head, as a lane and a list's group
+// say it. The cards' parts and Tables' words come from the view, whose they are.
 import { html, nothing, render } from 'lit-html'
 import { t, intlLocales } from '../../core/i18n.js'
 import { icons } from '../../ui/menu-icons.js'
 import { groupName } from '../tables/tables.js'
-import { titleOf, hueOf, canonical } from '../tables/table.js'
-import { valueOf } from '../tables/query.js'
-import { textOf, format, calcOf } from '../tables/export.js'
+import { titleOf, hueOf, canonical, filesOf } from '../tables/table.js'
+import { valueOf, total } from '../tables/query.js'
+import { textOf, format, calcOf, amount, digitsOf } from '../tables/export.js'
 
 /** @import { Property } from '../tables/table.js' */
 /** @import { Row } from '../tables/changes.js' */
@@ -24,25 +24,45 @@ import { textOf, format, calcOf } from '../tables/export.js'
  */
 /** The column a card's row is moved by from its menu, and the values it takes: its groups'. @typedef {{ by: Property, values: unknown[] }} Moves */
 
-/** The kinds a card reads without their column's name: they say what they are. */
-const TELLING = /^(status|select|multi-select|person|date)$/
+/**
+ * A row's first picture, which leads its card: small in a list, a glyph in its place where the row has none; over a board's card, where it has one.
+ * @param {Given} given @param {Row} row @param {boolean} [small]
+ */
+export function pictureOf({ one, covers, parts }, row, small) {
+  const [file] = covers ? filesOf(valueOf(row, covers)) : []
+  return !covers ? nothing : small ? html`<div class="table-thumb">${file ? parts.pictured(one, file) : parts.glyphs.picture}</div>` : file ? html`<div class="table-cover">${parts.pictured(one, file)}</div>` : nothing
+}
+
+/** The kinds a card reads as pills. */
+const CHOICE = /^(status|select|multi-select)$/
+/** An amount as a card says it: money with no cents where none of the view's rows has any, else as the table writes it. @param {Row[]} rows @param {Property} property @param {unknown} value */
+const sumOf = (rows, property, value, locales = intlLocales()) => (typeof value !== 'number' ? '' : property.format === 'money' && property.currency && !digitsOf(rows, property)
+  ? format('NumberFormat', locales, { style: 'currency', currency: property.currency, maximumFractionDigits: 0 }).format(value) : amount(value, property, locales, property.format ? undefined : digitsOf(rows, property)))
+/** A day as a card says it, short: its weekday, its day and its month, its year when it is another, its time where it has one. @param {unknown} value */
+const dayOf = (value) => ((text, timed = text.includes('T'), at = new Date(timed ? text : `${text}T12:00`)) => (Number.isNaN(at.getTime()) ? text : format('DateTimeFormat', intlLocales(),
+  { weekday: 'short', day: 'numeric', month: 'short', ...(at.getFullYear() !== new Date().getFullYear() && { year: 'numeric' }), ...(timed && { hour: 'numeric', minute: '2-digit' }) }).format(at)))(String(value))
 
 /**
  * @param {Given} given @param {Row} row
- * @param {{ skip?: (Property | undefined)[], lead?: unknown, moves?: Moves, drag?: boolean }} [how] the columns its layout already says, what leads it, a picture, and how it moves
+ * @param {{ skip?: (Property | undefined)[], lead?: unknown, more?: { name: string, text: string }[], moves?: Moves, drag?: boolean }} [how] the columns its layout already says, what leads it, a picture, what its layout says of it
+ *   first, each under a name, and how it moves
  */
-export function card(given, row, { skip = [], lead = nothing, moves, drag = false } = {}) {
+export function card(given, row, { skip = [], lead = nothing, more = [], moves, drag = false } = {}) {
   const { one, columns, hidden, fresh, state, parts, words } = given, title = /** @type {Property} */ (titleOf(one.table)), jean = fresh.has(row.id)
-  const held = (/** @type {unknown} */ value) => value !== null && value !== false && value !== '' && !(Array.isArray(value) && !value.length)
-  const cells = columns.filter((property) => property !== title && !skip.includes(property) && !hidden.includes(property.id) && !/^(picture|files)$/.test(property.type) && held(valueOf(row, property, one.names))).slice(0, 4)
+  const value = (/** @type {Property} */ property) => valueOf(row, property, one.names), held = (/** @type {unknown} */ value) => value !== null && value !== false && value !== '' && !(Array.isArray(value) && !value.length)
+  const shown = columns.filter((property) => property !== title && !skip.includes(property) && !hidden.includes(property.id) && held(value(property))), kind = (/** @type {string} */ type) => shown.find((property) => property.type === type)
+  // Two things tell it apart, on one line: what its layout says of it, then its day and its choices; where those leave room, its other cells.
+  const day = kind('date'), sum = kind('number'), who = kind('person'), room = Math.max(0, 2 - more.length), picked = [...(day && room ? [day] : []), ...shown.filter(({ type }) => CHOICE.test(type))].slice(0, room)
+  const others = shown.filter(({ type }) => !CHOICE.test(type) && !/^(date|number|person|picture|files)$/.test(type)).slice(0, room - picked.length)
+  const facts = shown.filter((property) => picked.includes(property) || others.includes(property))
   return html`<article class=${`table-card${jean ? ' is-jean' : ''}`} title=${jean ? words.changed(Math.max(1, [...fresh].filter((at) => at.startsWith(`${row.id} `)).length)) : nothing}
       draggable=${drag ? 'true' : nothing} @dragstart=${(/** @type {DragEvent} */ e) => e.dataTransfer?.setData('text/x-row', row.id)}>${lead}
     <h4><button type="button" class="table-open" dir="auto" @click=${() => state.openRow(row.id)}>${textOf(row, title) || words.unnamed}</button></h4>
-    ${cells.length ? html`<dl>${cells.map((property) => {
-      const value = valueOf(row, property, one.names), named = !TELLING.test(property.type) && !property.format
-      return html`<div class="table-field"><dt class=${named ? 'muted' : 'visually-hidden'} dir="auto">${property.name}</dt><dd dir="auto" title=${named ? nothing : property.name}>${property.type === 'person' ? html`${parts.face(String(value))}${value}`
-        : /select|status/.test(property.type) ? [value].flat().map((name) => parts.pill(property, name)) : parts.said(row, property, one.names)}</dd></div>`
-    })}</dl>` : nothing}
+    ${facts.length || more.length ? html`<dl class="table-facts">${more.map(({ name, text }) => html`<div class="table-field"><dt class="visually-hidden" dir="auto">${name}</dt><dd title=${name}>${text}</dd></div>`)}
+      ${facts.map((property) => html`<div class="table-field"><dt class=${others.includes(property) ? 'muted' : 'visually-hidden'} dir="auto">${property.name}</dt>
+      <dd dir="auto" title=${others.includes(property) ? nothing : property.name}>${CHOICE.test(property.type) ? [value(property)].flat().map((name) => parts.pill(property, name)) : property === day ? dayOf(value(day)) : parts.said(row, property, one.names)}</dd></div>`)}</dl>` : nothing}
+    ${sum || who ? html`<dl class="table-ends">${sum ? html`<div class="table-field"><dt class="visually-hidden" dir="auto">${sum.name}</dt><dd class="table-sum" title=${sum.name}>${sumOf(given.rows, sum, value(sum))}</dd></div>` : nothing}
+      ${who ? html`<div class="table-field is-who"><dt class="visually-hidden" dir="auto">${who.name}</dt><dd title=${String(value(who))}>${parts.face(String(value(who)))}<span class="visually-hidden" dir="auto">${value(who)}</span></dd></div>` : nothing}</dl>` : nothing}
     <button type="button" class="icon-button table-more" aria-label=${t('action.more')} popovertarget=${`${state.id}-card`} @click=${() => menu(given, row, moves)}>${icons.more}</button>
     ${jean ? html`<div class="table-decide">${parts.decide(one, row.id)}</div>` : nothing}</article>`
 }
@@ -55,18 +75,19 @@ export function card(given, row, { skip = [], lead = nothing, moves, drag = fals
 function menu({ one, state, parts, words }, row, moves) {
   const id = `${state.id}-card`, item = parts.option.bind(null, id), at = moves && canonical(valueOf(row, moves.by))
   render(html`${parts.listed([item(icons.fullscreen, words.open, () => state.openRow(row.id))])}${moves ? html`<hr><h3 id=${`${id}-by`} dir="auto">${moves.by.name}</h3><ul aria-labelledby=${`${id}-by`}>${moves.values.map((value) => html`<li><button type="button"
-      aria-current=${String(canonical(value) === at)} popovertarget=${id} popovertargetaction="hide" @click=${() => parts.edit(one, { row: row.id, set: { [moves.by.id]: value } })}>${dot(moves.by, value)}<span dir="auto">${groupName(value, moves.by)}</span>${canonical(value) === at ? icons.check : nothing}</button></li>`)}</ul>` : nothing}
+      aria-current=${String(canonical(value) === at)} popovertarget=${id} popovertargetaction="hide" @click=${() => parts.edit(one, { row: row.id, set: { [moves.by.id]: value } })}>${named(parts, moves.by, value)}${canonical(value) === at ? icons.check : nothing}</button></li>`)}</ul>` : nothing}
     <hr>${parts.listed([item(icons.brain, words.ask, () => parts.ask(one, words.about(row)))], [item(icons.trash, t('action.delete'), () => parts.rid(one, row), false, 'danger')])}`, /** @type {HTMLElement} */ (state.box.querySelector(`#${id}`)))
 }
 
-/** A choice's colour, a dot before its name, where it has one. @param {Property} by @param {unknown} value */
-const dot = (by, value) => ((hue) => (hue === undefined ? nothing : html`<i class="table-dot" data-hue=${hue}></i>`))(hueOf(by, value))
+/** A group by its name: a choice's as its pill, another's after its colour's dot, where it has one. @param {Given['parts']} parts @param {Property} by @param {unknown} value */
+const named = (parts, by, value) => (CHOICE.test(by.type) && typeof value === 'string' && value ? parts.pill(by, value)
+  : html`${((hue) => (hue === undefined ? nothing : html`<i class="table-dot" data-hue=${hue}></i>`))(hueOf(by, value))}<span dir="auto">${groupName(value, by)}</span>`)
 
 /**
- * A group's head, as a board's lane and a list's group say it: its colour before its name, then its subtotal, of the first column whose foot works out
- * a number, and how many rows. @param {Given} given @param {Property} by @param {{ value: unknown, rows: Row[] }} group
+ * A group's head, as a board's lane and a list's group say it: its name, how many rows, and at its end its subtotal, of the first column whose foot
+ * works out a number, named in its tip. @param {Given} given @param {Property} by @param {{ value: unknown, rows: Row[] }} group
  */
-export function head({ columns, state, parts, words }, by, { value, rows }) {
+export function head({ columns, rows: all, state, parts, words }, by, { value, rows }) {
   const summed = columns.find((property) => /^(sum|average|min|max)$/.test(calcOf(property, state.calculate))), how = summed && calcOf(summed, state.calculate)
-  return html`<span dir="auto">${dot(by, value)} ${groupName(value, by)}</span> <span class="muted">${summed && how ? html`<span class="table-sub"><span class="visually-hidden">${words.subtotal}</span>${parts.totalOf(rows, summed, how, state.digits?.get(summed.id))}</span> · ` : nothing}${format('NumberFormat', intlLocales()).format(rows.length)}</span>`
+  return html`${named(parts, by, value)} <span class="muted">${format('NumberFormat', intlLocales()).format(rows.length)}</span>${summed && how ? html` <span class="table-sub" title=${summed.name}><span class="visually-hidden">${words.subtotal}</span>${sumOf(all, summed, total(rows, summed, /** @type {import('../tables/query.js').Total} */ (how)))}</span>` : nothing}`
 }

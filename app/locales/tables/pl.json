@@ -151,6 +151,7 @@
   "tables.end": "Koniec",
   "tables.time": "Godzina",
   "tables.list": "Lista",
+  "tables.timeline": "Oś czasu",
   "tables.of": "{shown} z {count}",
   "tables.ask": "Zapytaj: {name}",
   "tables.askFill": "Poproś o wypełnienie: {name}",

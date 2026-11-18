@@ -145,6 +145,7 @@
   "tables.end": "Slut",
   "tables.time": "Tidspunkt",
   "tables.list": "Liste",
+  "tables.timeline": "Tidslinje",
   "tables.of": "{shown} af {count}",
   "tables.ask": "Spørg {name}",
   "tables.askFill": "Bed {name} om at udfylde den",

@@ -145,6 +145,7 @@
   "tables.end": "Bitiş",
   "tables.time": "Saat",
   "tables.list": "Liste",
+  "tables.timeline": "Zaman çizelgesi",
   "tables.of": "{shown} / {count}",
   "tables.ask": "{name} uygulamasına sor",
   "tables.askFill": "{name} uygulamasından doldurmasını iste",

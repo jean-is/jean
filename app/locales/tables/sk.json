@@ -151,6 +151,7 @@
   "tables.end": "Koniec",
   "tables.time": "Čas",
   "tables.list": "Zoznam",
+  "tables.timeline": "Časová os",
   "tables.of": "{shown} z {count}",
   "tables.ask": "Opýtať sa aplikácie {name}",
   "tables.askFill": "Požiadať aplikáciu {name} o vyplnenie",

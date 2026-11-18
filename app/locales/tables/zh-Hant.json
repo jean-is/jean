@@ -142,6 +142,7 @@
   "tables.end": "結束",
   "tables.time": "時間",
   "tables.list": "清單",
+  "tables.timeline": "時間軸",
   "tables.of": "{shown} / {count}",
   "tables.ask": "問 {name}",
   "tables.askFill": "請 {name} 填寫",

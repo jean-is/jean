@@ -142,6 +142,7 @@
   "tables.end": "종료",
   "tables.time": "시간",
   "tables.list": "목록",
+  "tables.timeline": "타임라인",
   "tables.of": "{shown} / {count}",
   "tables.ask": "{name}에게 묻기",
   "tables.askFill": "{name}에게 채우기 요청",

@@ -145,6 +145,7 @@
   "tables.end": "End",
   "tables.time": "Time",
   "tables.list": "List",
+  "tables.timeline": "Timeline",
   "tables.of": "{shown} of {count}",
   "tables.ask": "Ask {name}",
   "tables.askFill": "Ask {name} to fill it",

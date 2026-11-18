@@ -87,7 +87,7 @@ export const tableView = (description = 'When the user asks to show, filter, sor
   parameters: { type: 'object', required: ['table', 'name'], properties: {
     table: { type: 'string', description: 'Its place, as table_create gave it' },
     name: { type: 'string' },
-    show: { type: 'string', enum: ['table', 'board', 'gallery', 'calendar'] },
+    show: { type: 'string', enum: ['table', 'list', 'board', 'gallery', 'calendar', 'timeline'] },
     filter: { type: 'array', items: { type: 'object', properties: { property: { type: 'string' }, op: { type: 'string' }, value: {} }, required: ['property', 'op'] } },
     sort: { type: 'object', properties: { property: { type: 'string' }, direction: { type: 'string', enum: ['ascending', 'descending'] } }, required: ['property'] },
     group: { type: 'string', description: 'A column to group the rows by' },

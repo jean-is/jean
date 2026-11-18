@@ -142,6 +142,7 @@
   "tables.end": "结束",
   "tables.time": "时间",
   "tables.list": "列表",
+  "tables.timeline": "时间线",
   "tables.of": "{shown} / {count}",
   "tables.ask": "问 {name}",
   "tables.askFill": "让 {name} 填写",

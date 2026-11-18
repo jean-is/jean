@@ -151,6 +151,7 @@
   "tables.end": "Завершення",
   "tables.time": "Час",
   "tables.list": "Список",
+  "tables.timeline": "Часова шкала",
   "tables.of": "{shown} з {count}",
   "tables.ask": "Запитати {name}",
   "tables.askFill": "Попросити {name} заповнити",

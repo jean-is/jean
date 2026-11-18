@@ -145,6 +145,7 @@
   "tables.end": "መጨረሻ",
   "tables.time": "ሰዓት",
   "tables.list": "ዝርዝር",
+  "tables.timeline": "የጊዜ መስመር",
   "tables.of": "{shown} / {count}",
   "tables.ask": "{name}ን ጠይቅ",
   "tables.askFill": "በ{name} አስሞላ",

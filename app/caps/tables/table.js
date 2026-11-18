@@ -20,7 +20,7 @@ export const TYPES = /** @type {const} */ ([...MADE, 'picture', ...COMPUTED])
 export const GROUPS = /** @type {const} */ (['todo', 'doing', 'done'])
 /** How many colours a choice or a person's face has, a whiteboard's seven. */
 export const HUES = 7
-const VIEWS = ['table', 'board', 'list', 'calendar', 'gallery']
+const VIEWS = ['table', 'board', 'list', 'calendar', 'gallery', 'timeline']
 const CHOICES = new Set(['select', 'multi-select', 'status'])
 /** What a board's lanes are by: a choice, a step, a person or a box (D752). */
 const LANES = ['select', 'status', 'person', 'checkbox']
@@ -50,7 +50,7 @@ const ALIASES = /** @type {Record<string, PropertyType>} */ ({
  * 'none' kept as such (D752); group: what a table view's rows and its board's lanes are grouped by, a board's own its lanes else; date: the date column a calendar's rows
  * are on, until: the one they last to. `table` is the collection's own arrangement, `board` and `calendar` what those are by; one with a name is a view the person kept,
  * shown as its type, arranged on its own; deleted: when it was taken away, kept so that no copy brings it back.
- * @typedef {{ id: string, type: 'table' | 'board' | 'list' | 'calendar' | 'gallery', name?: string, group?: string, date?: string, until?: string, sort?: Sort[], filter?: { and: Rule[] }, hidden?: string[], calculate?: Partial<Record<string, import('./query.js').Total | 'none'>>, deleted?: string }} View
+ * @typedef {{ id: string, type: 'table' | 'board' | 'list' | 'calendar' | 'gallery' | 'timeline', name?: string, group?: string, date?: string, until?: string, sort?: Sort[], filter?: { and: Rule[] }, hidden?: string[], calculate?: Partial<Record<string, import('./query.js').Total | 'none'>>, deleted?: string }} View
  */
 /**
  * kept: the time of Jean's latest change the user kept, after which Jean's changes are marked (D491); order: the rows' ids in the

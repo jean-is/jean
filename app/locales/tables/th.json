@@ -142,6 +142,7 @@
   "tables.end": "สิ้นสุด",
   "tables.time": "เวลา",
   "tables.list": "รายการ",
+  "tables.timeline": "ไทม์ไลน์",
   "tables.of": "{shown} จาก {count}",
   "tables.ask": "ถาม {name}",
   "tables.askFill": "ขอให้ {name} กรอกให้",

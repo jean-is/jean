@@ -145,6 +145,7 @@
   "tables.end": "Ende",
   "tables.time": "Uhrzeit",
   "tables.list": "Liste",
+  "tables.timeline": "Zeitleiste",
   "tables.of": "{shown} von {count}",
   "tables.ask": "{name} fragen",
   "tables.askFill": "Von {name} ausfüllen lassen",

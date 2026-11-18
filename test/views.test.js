@@ -26,11 +26,13 @@ test('viewFrom: a view from what a brain sends, its columns by name in any case 
     { and: [{ property: 'who', op: 'is', value: { me: true } }, { property: 'day', op: 'is-not-empty' }] })
   assert.deepEqual(viewFrom(books, { name: 'Classics', filter: [{ property: 'Genre', op: 'contains', value: 'classic' }] }).filter, { and: [{ property: 'genre', op: 'contains', value: 'Classic' }] })
   assert.deepEqual(viewFrom(fixture(set.tables.expenses, 2).table, { name: 'Unpaid', filter: [{ property: 'Paid', op: 'is', value: 'no' }] }).filter, { and: [{ property: 'paid', op: 'is', value: false }] })
-  // Shown as a board, by the group asked for, else by the board's own; as a gallery and a calendar where a column makes one.
+  // Shown as a board, by the group asked for, else by the board's own; as a gallery, a calendar and a timeline where a column makes one.
   assert.deepEqual(viewFrom(table, { name: 'Board', show: 'board' }), { name: 'Board', type: 'board', group: 'stage' })
   assert.deepEqual(viewFrom(table, { name: 'By person', show: 'Board', group: 'Who' }), { name: 'By person', type: 'board', group: 'who' })
   assert.equal(viewFrom(table, { name: 'Photos', show: 'gallery' }).type, 'gallery')
+  assert.equal(viewFrom(table, { name: 'Lines', show: 'List' }).type, 'list')
   assert.equal(viewFrom(table, { name: 'Days', show: 'calendar' }).type, 'calendar')
+  assert.deepEqual(viewFrom(table, { name: 'Plan', show: 'Timeline', group: 'Who' }), { name: 'Plan', type: 'timeline', group: 'who' })
   // What it makes is a view a collection keeps.
   const kept = reshape(table, { keep: { ...viewFrom(table, { name: 'Cheap', filter: [{ property: 'Price', op: '<', value: 300000 }], show: 'board' }) } }, '2026-11-17T10:00:00.000Z')
   assert.deepEqual([tableProblems(kept), keptViews(kept).map((view) => [view.name, view.type, view.group])], [[], [['Cheap', 'board', 'stage']]])
@@ -42,7 +44,7 @@ test('viewFrom refuses, in words a brain reads: no name, a column the table hasn
   refused({}, /Give the view a name/)
   refused({ name: 'A', filter: [{ property: 'Cost', op: 'is', value: 1 }] }, /no column "Cost": its columns are Place, Stage, Price, Who, Day, Photo/)
   refused({ name: 'A', filter: [{ property: 'Price', op: 'near', value: 1 }] }, /"near" isn't a way to compare: use is, is-not/)
-  refused({ name: 'A', show: 'list' }, /"list" isn't a way to show a table: use table, board, gallery, calendar/)
+  refused({ name: 'A', show: 'chart' }, /"chart" isn't a way to show a table: use table, list, board, gallery, calendar, timeline\./)
   refused({ name: 'A', filter: [{ property: 'Stage', op: 'is', value: 'Sold' }] }, /no choice "Sold": its choices are To visit, Visited, Offer made/)
   refused({ name: 'A', filter: [{ property: 'Price', op: 'is', value: 'cheap' }] }, /holds numbers/)
   refused({ name: 'A', filter: [{ property: 'Day', op: 'before', value: 'December' }] }, /holds dates: compare it with one written as 2026-10-21/)
@@ -52,7 +54,8 @@ test('viewFrom refuses, in words a brain reads: no name, a column the table hasn
   refused({ name: 'A', show: 'board', group: 'Day' }, /board's lanes/)
   refused({ name: 'A', hide: ['Place'] }, /"Place" names each row/)
   refused({ name: 'A', show: 'gallery' }, /no picture column/, expenses)
-  refused({ name: 'A', show: 'calendar' }, /no date column/, reshape(expenses, { remove: 'date' }, '2026-11-17T10:00:00.000Z'))
+  refused({ name: 'A', show: 'calendar' }, /A calendar shows dates: this table has no date column/, reshape(expenses, { remove: 'date' }, '2026-11-17T10:00:00.000Z'))
+  refused({ name: 'A', show: 'timeline' }, /A timeline shows dates: this table has no date column/, reshape(expenses, { remove: 'date' }, '2026-11-17T10:00:00.000Z'))
   refused({ name: 'A' }, /whiteboard has no views/, { ...table, kind: 'whiteboard' })
 })
 

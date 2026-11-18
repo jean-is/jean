@@ -148,6 +148,7 @@
   "tables.end": "Kraj",
   "tables.time": "Vrijeme",
   "tables.list": "Popis",
+  "tables.timeline": "Vremenska crta",
   "tables.of": "{shown} od {count}",
   "tables.ask": "Pitaj aplikaciju {name}",
   "tables.askFill": "Zamoli aplikaciju {name} da ga ispuni",

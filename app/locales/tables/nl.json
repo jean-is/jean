@@ -145,6 +145,7 @@
   "tables.end": "Einde",
   "tables.time": "Tijd",
   "tables.list": "Lijst",
+  "tables.timeline": "Tijdlijn",
   "tables.of": "{shown} van {count}",
   "tables.ask": "{name} vragen",
   "tables.askFill": "{name} vragen deze in te vullen",

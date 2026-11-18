@@ -145,6 +145,7 @@
   "tables.end": "Vége",
   "tables.time": "Idő",
   "tables.list": "Lista",
+  "tables.timeline": "Idővonal",
   "tables.of": "{shown} / {count}",
   "tables.ask": "Kérdezd: {name}",
   "tables.askFill": "Kitöltés kérése: {name}",

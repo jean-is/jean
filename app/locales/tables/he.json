@@ -148,6 +148,7 @@
   "tables.end": "סיום",
   "tables.time": "שעה",
   "tables.list": "רשימה",
+  "tables.timeline": "ציר זמן",
   "tables.of": "{shown} מתוך {count}",
   "tables.ask": "לשאול את {name}",
   "tables.askFill": "לבקש מ־{name} למלא אותה",

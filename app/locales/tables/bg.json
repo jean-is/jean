@@ -145,6 +145,7 @@
   "tables.end": "Край",
   "tables.time": "Час",
   "tables.list": "Списък",
+  "tables.timeline": "Времева линия",
   "tables.of": "{shown} от {count}",
   "tables.ask": "Питане на {name}",
   "tables.askFill": "Попълване от {name}",

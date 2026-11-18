@@ -145,6 +145,7 @@
   "tables.end": "Slut",
   "tables.time": "Tid",
   "tables.list": "Lista",
+  "tables.timeline": "Tidslinje",
   "tables.of": "{shown} av {count}",
   "tables.ask": "Fråga {name}",
   "tables.askFill": "Be {name} fylla i den",

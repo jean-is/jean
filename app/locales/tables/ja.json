@@ -142,6 +142,7 @@
   "tables.end": "終了",
   "tables.time": "時刻",
   "tables.list": "リスト",
+  "tables.timeline": "タイムライン",
   "tables.of": "{shown} / {count}",
   "tables.ask": "{name} に頼む",
   "tables.askFill": "{name} に入力を頼む",

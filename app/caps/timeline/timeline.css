@@ -1,0 +1,16 @@
+/* SPDX-License-Identifier: MIT */
+/* A collection as a timeline, under the calendar's bar: its months side by side, as wide as the pane or wider, a day never narrower than its span asks,
+   each month's name over its column, in sight while the rows scroll under it; a row a bar on a line of its own, its name in sight while the bar is;
+   today a line; a group's head at the start of what shows. */
+.line h3 { white-space: nowrap; } .line-scroll { flex: 1 1 auto; min-block-size: 9rem; overflow: auto; border-block: 1px solid var(--line); }
+.line-track { position: relative; display: flex; flex-direction: column; gap: 0.25rem; box-sizing: border-box; min-block-size: 100%; inline-size: max(100%, calc(var(--days) * var(--wide))); padding-block: 2.2rem 0.6rem; font-size: 0.85rem; }
+.line-months span { position: absolute; inset-block: 0; inset-inline-start: calc(var(--at) / var(--days) * 100%); inline-size: calc(var(--len) / var(--days) * 100%); box-sizing: border-box; border-inline-start: 1px solid var(--line); pointer-events: none; }
+.line-months b { position: sticky; inset-block-start: 0; z-index: 2; display: block; overflow: hidden; padding: 0.4rem; background: var(--room-2); color: var(--ink-soft); font-size: 0.8rem; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.line-now { position: absolute; inset-block: 1.9rem 0; inset-inline-start: calc((var(--at) + 0.5) / var(--days) * 100%); border-inline-start: 2px solid var(--flame); pointer-events: none; }
+.line-rows, .line section { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 0.25rem; margin: 0; padding: 0; list-style: none; }
+.line section > h4 { position: sticky; inset-inline-start: 0; inline-size: max-content; max-inline-size: 90cqi; margin: 0.4rem 0 0; padding-inline: 0.4rem; font-size: 0.85rem; }
+.line-bar { display: block; box-sizing: border-box; min-block-size: 1.8rem; margin-inline-start: calc(var(--at) / var(--days) * 100%); inline-size: max(0.7rem, calc(var(--len) / var(--days) * 100%)); padding: 0; border: 0; border-radius: 0.35rem; background: oklch(from currentColor l c h / 0.14); color: inherit; font: inherit; text-align: start; white-space: nowrap; cursor: pointer; }
+.line-bar bdi { position: sticky; inset-inline-start: 0; display: inline-block; max-inline-size: min(16rem, 70cqi); overflow: hidden; padding: 0.3rem 0.5rem; text-overflow: ellipsis; vertical-align: middle; }
+.line-bar[data-group='doing'] { background: oklch(from var(--flame) l c h / 0.22); } .line-bar[data-group='done'] { background: oklch(from var(--ink) l c h / 0.08); } .table-view .line-bar[data-hue] { background: color-mix(in oklab, var(--room) 62%, var(--hue)); }
+.line-bar.is-jean { box-shadow: inset 0 0 0 1.5px var(--flame); } .line-bar:focus-visible { outline: 2px solid var(--flame); outline-offset: 1px; }
+@media (prefers-contrast: more) { .line-months span { border-color: var(--ink-faint); } .line-bar { box-shadow: inset 0 0 0 1px var(--ink-faint); } } @media (forced-colors: active) { .line-bar { border: 1px solid ButtonText; } .line-now { border-color: Highlight; } }

@@ -145,6 +145,7 @@
   "tables.end": "Katapusan",
   "tables.time": "Oras",
   "tables.list": "Listahan",
+  "tables.timeline": "Timeline",
   "tables.of": "{shown} / {count}",
   "tables.ask": "Itanong kay {name}",
   "tables.askFill": "Hilingin kay {name} na punan ito",

@@ -148,6 +148,7 @@
   "tables.end": "Fin",
   "tables.time": "Heure",
   "tables.list": "Liste",
+  "tables.timeline": "Frise",
   "tables.of": "{shown} sur {count}",
   "tables.ask": "Demander à {name}",
   "tables.askFill": "Demander à {name} de la remplir",

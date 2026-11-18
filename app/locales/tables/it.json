@@ -148,6 +148,7 @@
   "tables.end": "Fine",
   "tables.time": "Ora",
   "tables.list": "Elenco",
+  "tables.timeline": "Cronologia",
   "tables.of": "{shown} di {count}",
   "tables.ask": "Chiedi a {name}",
   "tables.askFill": "Chiedi a {name} di compilarla",

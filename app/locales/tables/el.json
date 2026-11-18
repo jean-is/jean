@@ -145,6 +145,7 @@
   "tables.end": "Λήξη",
   "tables.time": "Ώρα",
   "tables.list": "Λίστα",
+  "tables.timeline": "Χρονολόγιο",
   "tables.of": "{shown} από {count}",
   "tables.ask": "Ερώτηση στο {name}",
   "tables.askFill": "Συμπλήρωση από το {name}",

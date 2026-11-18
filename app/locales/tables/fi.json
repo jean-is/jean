@@ -145,6 +145,7 @@
   "tables.end": "Loppu",
   "tables.time": "Aika",
   "tables.list": "Luettelo",
+  "tables.timeline": "Aikajana",
   "tables.of": "{shown}/{count}",
   "tables.ask": "Kysy: {name}",
   "tables.askFill": "Pyydä täyttämään: {name}",

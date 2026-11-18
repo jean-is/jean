@@ -151,6 +151,7 @@
   "tables.end": "Окончание",
   "tables.time": "Время",
   "tables.list": "Список",
+  "tables.timeline": "Хронология",
   "tables.of": "{shown} из {count}",
   "tables.ask": "Спросить {name}",
   "tables.askFill": "Попросить {name} заполнить",

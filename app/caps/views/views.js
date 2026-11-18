@@ -11,7 +11,7 @@ const OPS = ['is', 'is-not', 'contains', 'does-not-contain', 'is-empty', 'is-not
 /** Other words brains write for a way to compare. */
 const ALSO = /** @type {Record<string, string>} */ ({ equals: 'is', '=': 'is', 'not-equals': 'is-not', '!=': 'is-not', 'not-contains': 'does-not-contain', after: 'greater-than', '>': 'greater-than',
   before: 'less-than', '<': 'less-than', '>=': 'at-least', 'greater-than-or-equal': 'at-least', 'on-or-after': 'at-least', '<=': 'at-most', 'less-than-or-equal': 'at-most', 'on-or-before': 'at-most' })
-const SHOWS = ['table', 'board', 'gallery', 'calendar']
+const SHOWS = ['table', 'list', 'board', 'gallery', 'calendar', 'timeline']
 /** The kinds rows are grouped by, and those that make a board's lanes. */
 const GROUPED = /^(select|status|person|checkbox|date)$/, LANES = /^(select|status|person|checkbox)$/
 const DATED = /^(date|created-at|changed-at)$/, DATE = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:\d{2})?)?$/
@@ -83,7 +83,7 @@ export function viewFrom(table, args) {
     if (!grouped || !LANES.test(grouped.type)) throw new Error('A board\'s lanes are a column of choices, steps, people or boxes: name one in group.')
   }
   if (type === 'gallery' && !live(table).some((property) => property.type === 'picture')) throw new Error('A gallery shows pictures: this table has no picture column.')
-  if (type === 'calendar' && !calendarOf(table)) throw new Error('A calendar shows dates: this table has no date column.')
+  if (/^(calendar|timeline)$/.test(type) && !calendarOf(table)) throw new Error(`A ${type} shows dates: this table has no date column.`)
   const hidden = [args.hide ?? []].flat().map((ref) => column(table, ref))
   if (hidden.includes(/** @type {Property} */ (titleOf(table)))) throw new Error(`"${titleOf(table)?.name}" names each row: it can't be hidden.`)
   return { name, type, ...(rules.length && { filter: { and: rules } }), ...(sorted && { sort: [{ property: sorted.id, direction: /^desc/i.test(String(by.direction ?? '')) ? 'descending' : 'ascending' }] }),

@@ -263,7 +263,7 @@ test('a brain on this computer reads a collection all the same, opening nothing,
   await opens(() => expect(page.locator('.document .ProseMirror')).toContainText('The offsite is in Lisbon', { timeout: 2000 }))
 })
 
-for (const [lang, table, board, review] of [['ar', 'جدول', 'لوحة', 'تغيير واحد للمراجعة'], ['ja', '表', 'ボード', '確認する変更：1 件']]) {
+for (const [lang, table, board, review, list] of [['ar', 'جدول', 'لوحة', 'تغيير واحد للمراجعة', 'قائمة'], ['ja', '表', 'ボード', '確認する変更：1 件', 'リスト']]) {
   test(`a table in ${lang}: its view mirrored where the language writes right to left, its words the language's`, async ({ page }) => {
     await start(page, lang)
     await page.evaluate(async () => {
@@ -281,7 +281,7 @@ for (const [lang, table, board, review] of [['ar', 'جدول', 'لوحة', 'تغ
       ;(await import('/ui/preview.js')).preview({ uri: folder, name: 'وظائف.xlsx', title: 'وظائف' })
     })
     await expect(page.locator('html')).toHaveAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr')
-    expect(await layouts(page)).toEqual([table, board])
+    expect(await layouts(page)).toEqual([table, list, board])
     await expect(page.locator('.table-laid')).toHaveText(table)
     await expect(page.locator('.table-total').first()).toHaveText(lang === 'ar' ? 'حساب' : '計算')
     await expect(page.locator('.table-view .review')).toContainText(review)
@@ -361,25 +361,27 @@ for (const [lang, currency, words, money, sum, group, arrange] of /** @type {con
   })
 }
 
-test('at 320 px a collection loses nothing: a list of its rows’ cards in its table’s place, under its groups’ heads, which fold, its bar on one line, its chips wrapping, nothing past the page; the table is a press away, its first column scrolling with the rest (D752, D757)', async ({ page }) => {
+test('at 320 px a collection loses nothing: a list of its rows’ cards in its table’s place, under its groups’ heads, which fold, its bar on one line, its chips wrapping, nothing past the page; the table is a press away, its first column staying as the rest scroll (D752, D757)', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 700 })
   await start(page)
   await budget(page)
-  // A card a row, its name and its cells as their kinds read, under its group's head: its name, its subtotal and how many rows.
+  // A card a row, its name and what tells it apart, picked by kind, under its group's head: its name, how many rows and its subtotal.
   const cards = page.locator('.table-list .table-card'), heads = page.locator('.table-listed .table-fold')
   await expect(cards.locator('h4')).toHaveText(['Venue hire', 'Raffle prizes', 'Cakes and tea', 'Posters'])
   await expect(page.locator('.table-grid')).toHaveCount(0)
   await expect(page.locator('.table-laid')).toHaveText('List')
-  expect(await layouts(page)).toEqual(['Table', 'List', 'Board', 'Calendar'])
+  expect(await layouts(page)).toEqual(['Table', 'List', 'Board', 'Calendar', 'Timeline'])
   await expect(page.locator('.table-kept')).toHaveText('All rows4')
-  await expect(heads).toHaveText([/To pay.*€600\.00 · 2/, /Paid.*€97\.50 · 2/])
-  await expect(cards.first().locator('.table-field')).toHaveText(['Cost€480.00', 'DueSep 12, 2026', 'NotesA note long enough to need room'])
+  await expect(heads).toHaveText([/To pay\s*2\s*Subtotal€600\.00/, /Paid\s*2\s*Subtotal€97\.50/])
+  await expect(cards.first().locator('.table-facts .table-field')).toHaveText([/Due\s*Sat, Sep 12/, /Notes\s*A note long enough to need room/])
+  await expect(cards.first().locator('.table-sum')).toHaveText('€480.00')
   await expect(cards.first().locator('dt').first()).toHaveClass('visually-hidden')
   // Folded, a group still says its totals; the whole card opens its row.
   await heads.first().click()
   await expect(heads.first()).toHaveAttribute('aria-expanded', 'false')
   await expect(cards).toHaveCount(2)
   await heads.first().click()
+  await expect(cards).toHaveCount(4)
   await cards.first().click({ position: { x: 12, y: 40 } })
   await expect(page.getByRole('dialog', { name: 'Venue hire' })).toBeVisible()
   await page.keyboard.press('Escape')
@@ -387,7 +389,7 @@ test('at 320 px a collection loses nothing: a list of its rows’ cards in its t
   await cards.first().getByRole('button', { name: 'More options' }).click()
   await expect(page.locator('.table-menu:popover-open button')).toHaveText(['Open', 'To pay', 'Paid', 'Ask Jean', 'Delete'])
   await page.locator('.table-menu:popover-open').getByRole('button', { name: 'Paid' }).click()
-  await expect(heads).toHaveText([/To pay.*€120\.00 · 1/, /Paid.*€577\.50 · 3/])
+  await expect(heads).toHaveText([/To pay\s*1\s*Subtotal€120\.00/, /Paid\s*3\s*Subtotal€577\.50/])
   const [bar, shows, tools] = await Promise.all(['.table-bar', '.table-laid', '.table-tools'].map((one) => page.locator(one).boundingBox()))
   expect(bar?.height ?? 99).toBeLessThan(64)
   expect(Math.abs((shows?.y ?? 0) - (tools?.y ?? 0))).toBeLessThan(8)
@@ -395,16 +397,42 @@ test('at 320 px a collection loses nothing: a list of its rows’ cards in its t
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320)
   const chip = await page.locator('.table-chips').boundingBox()
   expect((chip?.x ?? 0) + (chip?.width ?? 0)).toBeLessThanOrEqual(320)
-  // The table, picked from Show as, which then names it: every row, the first column scrolling with the rest.
+  // The table, picked from Show as, which then names it: every row, the first column staying as the rest scroll, no wider than its share.
   await showAs(page, 'Table')
   await expect(page.locator('.table-grid tbody tr[data-row]')).toHaveCount(4)
-  await expect(page.locator('.table-grid tbody tr[data-row] > :nth-child(2)').first()).not.toHaveCSS('position', 'sticky')
+  await expect(page.locator('.table-grid tbody tr[data-row] > :nth-child(2)').first()).toHaveCSS('position', 'sticky')
+  expect((await page.locator('.table-grid tbody tr[data-row] > :nth-child(2)').first().boundingBox())?.width ?? 999).toBeLessThanOrEqual(153)
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320)
   // Each reading stays inside its cell.
   for (const reading of await page.locator('.table-read').all()) {
     const [inner, outer] = await Promise.all([reading.boundingBox(), reading.locator('..').boundingBox()])
     expect((inner?.x ?? 0) >= (outer?.x ?? 0) - 1 && (inner?.x ?? 0) + (inner?.width ?? 0) <= (outer?.x ?? 0) + (outer?.width ?? 0) + 1).toBe(true)
   }
+})
+
+test('a list is a layout at every width (D757): picked where the view is wide, it is in the address and stays as the view narrows; where the view is narrow it is the table\'s place, the table a press away, and the bar says its layout first, New row its one filled button', async ({ page }) => {
+  await start(page)
+  await budget(page)
+  const grid = page.locator('.table-grid'), cards = page.locator('.table-list .table-card')
+  await expect(grid).toHaveCount(1)
+  // The bar: the layout, then the view on show, and New row by its name.
+  const [laid, kept] = await Promise.all([page.locator('.table-laid').boundingBox(), page.locator('.table-kept').boundingBox()])
+  expect((laid?.x ?? 0) < (kept?.x ?? 0)).toBe(true)
+  await expect(page.locator('.table-new')).toHaveText('New row')
+  await showAs(page, 'List')
+  await expect(grid).toHaveCount(0)
+  await expect(cards.locator('h4')).toHaveText(['Venue hire', 'Raffle prizes', 'Cakes and tea', 'Posters'])
+  await expect(page).toHaveURL(/show=[^&]*(:|%3A)list/)
+  // Narrow, it is still the list; the table is a press away there, and the list again, which is then the table's place: wide again, the table.
+  await page.setViewportSize({ width: 380, height: 800 })
+  await expect(page.locator('.table-laid')).toHaveText('List')
+  await expect(page.locator('.table-new')).toHaveAccessibleName('New row')
+  await showAs(page, 'Table')
+  await expect(grid).toHaveCount(1)
+  await showAs(page, 'List')
+  await expect(cards).toHaveCount(4)
+  await page.setViewportSize({ width: 1280, height: 720 })
+  await expect(grid).toHaveCount(1)
 })
 
 test('under forced colours a collection\'s fields show and its readings go; with more contrast its fade is a line (D752)', async ({ page, browserName }) => {
@@ -1608,7 +1636,7 @@ test('a choice reads as its pill, in a colour picked from its column’s menu; s
   await rows.nth(0).getByRole('button', { name: 'Move row' }).click()
   await menu.getByRole('button', { name: 'Open' }).click()
   const sheet = page.getByRole('dialog', { name: 'Villa Aurore' })
-  await expect(sheet.locator('dt')).toHaveText(['Home', 'Room', 'Tags', 'Agent'])
+  await expect(sheet.locator('.table-fields dt')).toHaveText(['Home', 'Room', 'Tags', 'Agent'])
   await expect(sheet.getByTitle('Home')).toBeFocused()
   await sheet.getByTitle('Agent').fill('Tom Roy')
   await sheet.getByTitle('Agent').press('Tab')
@@ -1624,7 +1652,7 @@ test('a choice reads as its pill, in a colour picked from its column’s menu; s
   // On the board, a lane wears its choice's colour, a card's name opens its row, and a card made at a lane's foot opens to be named.
   await showAs(page, 'Board')
   const lane = page.locator('.table-lane').first()
-  await expect(lane.locator('h3 .table-dot')).toHaveAttribute('data-hue', '0')
+  await expect(lane.locator('h3 .table-pill')).toHaveAttribute('data-hue', '0')
   await lane.getByRole('button', { name: 'Villa Aurore' }).click()
   await expect(sheet).toBeVisible()
   await page.keyboard.press('Escape')
@@ -1639,8 +1667,8 @@ test('a choice reads as its pill, in a colour picked from its column’s menu; s
   await expect(lane.locator('.table-card h4')).toHaveText(['Villa Aurore', 'Les Tilleuls'])
 })
 
-for (const [lang, open, colour, green, choices, place, fill, asked, list] of [['ar', 'فتح', 'اللون', 'أخضر', 'الاختيارات', '1 من 2', 'اطلب من {name} تعبئته', 'في «Visits»، املأ العمود «Room» حيثما كان فارغًا.', 'قائمة'],
-  ['ja', '開く', '色', '緑', '選択肢', '1 / 2', '{name} に入力を頼む', '「Visits」で、列「Room」の空いているところを入力してください。', 'リスト']]) {
+for (const [lang, open, colour, green, choices, place, fill, asked, list] of [['ar', 'فتح', 'اللون', 'أخضر', 'الاختيارات', '1 من 2', 'اطلب من {name} تعبئته', 'في «Visits»، املأ العمود «Tags» حيثما كان فارغًا.', 'قائمة'],
+  ['ja', '開く', '色', '緑', '選択肢', '1 / 2', '{name} に入力を頼む', '「Visits」で、列「Tags」の空いているところを入力してください。', 'リスト']]) {
   test(`a row's sheet, a choice's colours, what asks Jean and the list in ${lang}: their words the language's`, async ({ page }) => {
     await start(page, lang)
     await visits(page)
@@ -1649,7 +1677,7 @@ for (const [lang, open, colour, green, choices, place, fill, asked, list] of [['
     await rows.nth(0).locator('.table-grip button').click()
     await menu.getByRole('button', { name: open, exact: true }).click()
     const sheet = page.getByRole('dialog', { name: 'Villa Aurore' })
-    await expect(sheet.locator('dt')).toHaveCount(4)
+    await expect(sheet.locator('.table-fields dt')).toHaveCount(4)
     await expect(sheet.getByRole('button', { name: choices })).toHaveCount(1)
     await expect(sheet.locator('.dialog-head [role="status"]')).toHaveText(place)
     await page.keyboard.press('Escape')
@@ -1657,10 +1685,10 @@ for (const [lang, open, colour, green, choices, place, fill, asked, list] of [['
     await page.locator('.table-head', { hasText: 'Room' }).click()
     await menu.getByRole('button', { name: colour, exact: true }).click()
     await expect(menu.getByRole('group', { name: 'Living room' }).getByRole('button', { name: green, exact: true })).toHaveAttribute('aria-pressed', 'true')
-    // A column's menu asks Jean to fill it, and the request it writes in the box is the language's too; where the view is narrow, the list, by its name.
+    // A column with an empty cell asks Jean to fill it from its menu, and the request it writes in the box is the language's too; where the view is narrow, the list, by its name.
     await page.keyboard.press('Escape')
-    await page.locator('.table-head', { hasText: 'Room' }).click()
-    await menu.getByRole('button', { name: fill.replace('{name}', await jean(page)), exact: true }).click()
+    await page.locator('.table-head', { hasText: 'Tags' }).click()
+    await menu.getByRole('button', { name: fill.replace('{name}', await jean(page)) }).click()
     await expect(page.locator('#prompt')).toHaveValue(asked)
     await page.setViewportSize({ width: 390, height: 800 })
     await expect(page.locator('.table-laid')).toHaveText(list)
@@ -1715,10 +1743,15 @@ test('a link, an email and a phone open from their cells’ ends, a link read wi
   const sheet = page.locator('dialog.table-row')
   await expect(sheet).toHaveAccessibleName('Quai 12')
   await expect(sheet.locator('.dialog-head [role="status"]')).toHaveText('2 of 5')
-  await expect(sheet.locator('.table-last li').first()).toContainText('Jean')
-  await expect(sheet.locator('.table-last li').first().locator('span').last()).toHaveText('Notes')
+  await expect(sheet.locator('.table-last li').first().locator('p')).toContainText('Jean')
+  await expect(sheet.locator('.table-last li').first().locator('dt')).toHaveText(['Notes'])
   await expect(sheet.locator('.table-last q').first()).toHaveText('the email of 6 November')
   await expect(sheet.locator('.table-last li').last()).toContainText('Me')
+  // A change says what it set, the value before it struck through; the row's name is its first cell, large.
+  await expect(sheet.locator('.table-last li').first().locator('s')).toHaveText('On the water.')
+  await expect(sheet.locator('.table-last li').first().locator('b')).toHaveText('On the water. Offer sent.')
+  await expect(sheet.locator('.table-fields > div').first()).toHaveClass('table-title')
+  await expect(sheet.getByTitle('Home')).toHaveValue('Quai 12')
   await sheet.getByRole('button', { name: 'Gare 27' }).click()
   await expect(sheet).toHaveAccessibleName('Gare 27')
   await expect(sheet.locator('.dialog-head [role="status"]')).toHaveText('3 of 5')
@@ -1729,6 +1762,26 @@ test('a link, an email and a phone open from their cells’ ends, a link read wi
   await expect(sheet.locator('.table-cover')).toHaveCount(0)
   await sheet.getByRole('button', { name: 'Quai 12' }).click()
   await expect(sheet).toHaveAccessibleName('Quai 12')
+  // A swipe across it goes to the row after, and back.
+  const swipe = (/** @type {number} */ from, /** @type {number} */ to) => sheet.evaluate((box, [from, to]) => {
+    for (const [type, x] of /** @type {[string, number][]} */ ([['touchstart', from], ['touchend', to]])) box.dispatchEvent(Object.defineProperty(new Event(type, { bubbles: true }), 'changedTouches', { value: [{ clientX: x, clientY: 300 }] }))
+  }, [from, to])
+  await swipe(300, 100)
+  await expect(sheet).toHaveAccessibleName('Gare 27')
+  await swipe(100, 300)
+  await expect(sheet).toHaveAccessibleName('Quai 12')
+  // A press that began inside it and ends outside leaves it open, as words selected past its edge do; a press outside closes it.
+  const inside = await sheet.locator('.dialog-head [role="status"]').boundingBox()
+  await page.mouse.move((inside?.x ?? 0) + 4, (inside?.y ?? 0) + 4)
+  await page.mouse.down()
+  await page.mouse.move(5, 5)
+  await page.mouse.up()
+  await expect(sheet).toHaveAccessibleName('Quai 12')
+  await page.mouse.click(5, 5)
+  await expect(sheet).toHaveCount(0)
+  await rows.nth(1).getByRole('button', { name: 'Move row' }).click()
+  await menu.getByRole('button', { name: 'Open' }).click()
+  await expect(sheet).toHaveAccessibleName('Quai 12')
   // Asked about from its menu: the sheet closes, and the request is in the box, to finish; nothing is sent.
   await sheet.getByRole('button', { name: 'More options' }).click()
   await expect(menu.getByRole('button')).toHaveText(['Ask Jean', 'Delete'])
@@ -1737,8 +1790,13 @@ test('a link, an email and a phone open from their cells’ ends, a link read wi
   await expect(box).toHaveValue('In “Homes”, about “Quai 12”: ')
   await expect(box).toBeFocused()
   await expect(page.locator('.msg')).toHaveCount(0)
-  // A column's menu asks Jean to fill it; one Jean works out has no such row.
+  // A column's menu asks Jean to fill it, saying how many of its cells are empty; one with none empty has no such row.
+  await page.locator('.table-grid .table-head').nth(0).click()
+  await expect(menu.getByRole('button', { name: 'Sort A → Z' })).toBeVisible()
+  await expect(menu.getByRole('button', { name: 'Ask Jean to fill it' })).toHaveCount(0)
+  await page.keyboard.press('Escape')
   await page.locator('.table-grid .table-head').nth(4).click()
+  await expect(menu.getByRole('button', { name: 'Ask Jean to fill it' }).locator('.menu-value')).toHaveText('3')
   await menu.getByRole('button', { name: 'Ask Jean to fill it' }).click()
   await expect(box).toHaveValue('In “Homes”, fill in “Notes” wherever it is empty.')
   // Find's words that match no row are Jean's to show, asked in the box; the collection stays as it is.
@@ -1787,7 +1845,7 @@ test('a picture is added to its cell from the cell’s menu, kept in the collect
   const rows = page.locator('.table-grid tbody tr'), menu = page.locator('.table-menu:popover-open'), photo = (/** @type {number} */ n) => rows.nth(n).locator('td').nth(1), papers = (/** @type {number} */ n) => rows.nth(n).locator('td').nth(2)
   await expect(rows).toHaveCount(2)
   // Where a column holds pictures, Show as offers the gallery; a picture is a kind the last head adds, files too.
-  expect(await layouts(page)).toEqual(['Table', 'Gallery'])
+  expect(await layouts(page)).toEqual(['Table', 'List', 'Gallery'])
   await page.locator('.table-add-column').click()
   await expect(menu.getByRole('button', { name: 'Picture', exact: true })).toBeVisible()
   await expect(menu.getByRole('button', { name: 'Files', exact: true })).toBeVisible()
@@ -1873,7 +1931,7 @@ test('a file that comes from someone a collection is worked on with is kept only
   expect(taken.text).toBe('a note from someone')
 })
 
-for (const [lang, shows, add] of /** @type {const} */ ([['ar', ['جدول', 'معرض'], 'أضف صورة'], ['ja', ['表', 'ギャラリー'], '画像を追加']])) {
+for (const [lang, shows, add] of /** @type {const} */ ([['ar', ['جدول', 'قائمة', 'معرض'], 'أضف صورة'], ['ja', ['表', 'リスト', 'ギャラリー'], '画像を追加']])) {
   test(`pictures and the gallery in ${lang}: their words the language's`, async ({ page }) => {
     await start(page, lang)
     await homes(page)
@@ -1881,7 +1939,7 @@ for (const [lang, shows, add] of /** @type {const} */ ([['ar', ['جدول', 'م�
     await page.locator('.table-grid tbody tr').first().locator('td').nth(1).click()
     await page.locator('.table-menu:popover-open').getByLabel(add).setInputFiles({ name: 'villa.png', mimeType: 'image/png', buffer: PNG })
     await page.keyboard.press('Escape')
-    await showAs(page, shows[1])
+    await showAs(page, shows[2])
     await expect(page.locator('.table-gallery .table-cover img')).toHaveCount(1)
   })
 }
@@ -1904,7 +1962,7 @@ test('a collection with a date shows as a calendar, fetched as one is first show
   const fetched = /** @type {string[]} */ ([])
   page.on('request', (request) => { if (request.url().includes('/caps/calendar/')) fetched.push(request.url()) })
   await stays(page)
-  expect(await layouts(page)).toEqual(['Table', 'Calendar'])
+  expect(await layouts(page)).toEqual(['Table', 'List', 'Calendar', 'Timeline'])
   expect(fetched).toEqual([])
   await showAs(page, 'Calendar')
   // This month, since a row is in it; its weeks from Sunday, as English counts them; today's day marked; each row on its day, one with a time after it.
@@ -1962,12 +2020,129 @@ test('a collection with a date shows as a calendar, fetched as one is first show
   await expect(page.locator('.cal-row')).toHaveText(['Cy'])
   await page.getByRole('button', { name: 'This month' }).click()
 
-  // Where the pane is narrow, the days are a list, each saying its weekday, and nothing goes past the window's edge.
+  // Where the pane is narrow, the days are a list (D757): those a row starts on, and today, each under its date, its rows their cards.
   await page.setViewportSize({ width: 380, height: 800 })
-  await expect(dayOf(page, '2026-11-05')).toHaveCSS('display', 'block')
-  await expect(dayOf(page, '2026-11-05').locator('time')).toHaveText('Thu 5')
-  await expect(page.locator('.cal-grid thead')).toBeHidden()
+  const days = page.locator('.cal-on')
+  await expect(days.locator('h4 time')).toHaveText(['Tue, Nov 17', 'Wed, Nov 18', 'Thu, Nov 26'])
+  await expect(page.locator('.cal-grid')).toHaveCount(0)
+  await expect(days.first()).toHaveAttribute('aria-current', 'date')
+  await expect(days.locator('> h4 .muted')).toHaveText(['Today', 'Tomorrow'])
+  // Today, with no row, offers one; a row with a time says it, and one that lasts is listed on its first day alone, saying its days.
+  await expect(days.first().getByRole('button', { name: 'New row' })).toBeVisible()
+  await expect(days.nth(1).locator('.table-card h4')).toHaveText('Bo')
+  await expect(days.nth(1).locator('.table-field dd')).toHaveText(['2:30 PM'])
+  await expect(days.nth(2).locator('.table-field dd')).toHaveText([/^Nov 26\s–\s29$/])
+  // This month's days gone by are folded over them, by their dates and how many rows they hold, and unfold.
+  const past = page.locator('.cal > .table-fold')
+  await expect(past).toHaveText(/Nov 5\s*1/)
+  await expect(past).toHaveAttribute('aria-expanded', 'false')
+  await past.click()
+  await expect(days.locator('h4 time')).toHaveText(['Thu, Nov 5', 'Tue, Nov 17', 'Wed, Nov 18', 'Thu, Nov 26'])
+  // A card there opens its row, and nothing goes past the window's edge.
+  await days.first().getByRole('button', { name: 'Eve' }).click()
+  await expect(page.getByRole('dialog', { name: 'Eve' })).toBeVisible()
+  await page.keyboard.press('Escape')
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+})
+
+/** A plan with a step, a person and two dates, beside the task. @param {import('@playwright/test').Page} page */
+const plan = (page) => page.evaluate(async () => {
+  const [{ unlock }, { app }] = await Promise.all([import('/ui/caps.js'), import('/ui/state.js')])
+  await unlock('tables')
+  const tables = await import('/caps/tables/tables.js')
+  const folder = await tables.makeTable({ name: 'Move', columns: [{ name: 'Step', type: 'text' }, { name: 'Stage', type: 'status', options: ['To do', 'Doing', 'Done'] }, { name: 'Who', type: 'person' }, { name: 'Starts', type: 'date' }, { name: 'Ends', type: 'date' }] }, app.projectDir)
+  await tables.change(/** @type {any} */ (await tables.load(folder)), [{ set: { Step: 'Give notice', Stage: 'Done', Who: 'Lea', Starts: '2026-10-26', Ends: '2026-10-30' } },
+    { set: { Step: 'Find a flat near the canal, with a room for the piano', Stage: 'Doing', Who: 'Lea', Starts: '2026-11-02', Ends: '2026-11-27' } }, { set: { Step: 'Sign the lease', Stage: 'To do', Who: 'Tom', Starts: '2026-12-01T10:00' } }, { set: { Step: 'Housewarming', Who: 'Tom' } }], 'user')
+  ;(await import('/ui/preview.js')).preview({ uri: folder, name: 'Move.xlsx', title: 'Move' }, true)
+})
+/** Where a bar is along the timeline, a share of its width from its start, and how much of it the bar takes. @param {import('@playwright/test').Locator} bar */
+const lies = (bar) => bar.evaluate((button) => {
+  const track = /** @type {Element} */ (button.closest('.line-track')).getBoundingClientRect(), box = button.getBoundingClientRect(), days = Number(getComputedStyle(button).getPropertyValue('--days'))
+  return [Math.round((getComputedStyle(button).direction === 'rtl' ? track.right - box.right : box.left - track.left) / track.width * days), Math.round(box.width / track.width * days)]
+})
+
+test('a collection with a date shows as a timeline, fetched as one is first shown: its months side by side, each row a bar from its day to the one it lasts until, by the calendar\'s columns, in its step\'s look; a bar opens its row, and is dragged to other days with its end; grouped, its rows are under their heads; narrow, it scrolls in its place, a bar\'s name in sight; and a long name stays in its day on the calendar', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2026-11-17T10:00:00'))
+  await start(page)
+  const fetched = /** @type {string[]} */ ([])
+  page.on('request', (request) => { if (request.url().includes('/caps/timeline/')) fetched.push(request.url()) })
+  await plan(page)
+  expect(await layouts(page)).toEqual(['Table', 'List', 'Board', 'Calendar', 'Timeline'])
+  expect(fetched).toEqual([])
+  await showAs(page, 'Timeline')
+  // Whole months, from the first row's to the one after the last row's, the first and each January saying their year; today a line among them.
+  const bars = page.locator('.line-bar'), bar = (/** @type {string} */ name) => page.locator('.line-bar', { hasText: name })
+  await expect(page.locator('.line h3')).toHaveText(/^Oct 2026\s–\sJan 2027$/)
+  expect(fetched.some((url) => url.endsWith('/caps/timeline/timeline.js'))).toBe(true)
+  await expect(page.locator('.line-months b')).toHaveText(['Oct 2026', 'Nov', 'Dec', 'Jan 2027'])
+  await expect(page.locator('.line-now')).toBeVisible()
+  // Each row a bar on a line of its own, on its day; one with no day waits under the timeline.
+  await expect(bars).toHaveText(['Give notice', 'Find a flat near the canal, with a room for the piano', 'Sign the lease'])
+  expect([await lies(bars.nth(0)), await lies(bars.nth(1)), await lies(bars.nth(2))]).toEqual([[25, 1], [32, 1], [61, 1]])
+  await expect(page.getByRole('region', { name: 'No Starts' }).locator('.cal-row')).toHaveText(['Housewarming'])
+
+  // The column its rows last until is the calendar's, picked here or there and kept with the collection: a bar runs from its day to that one.
+  await page.locator('.cal-bar').getByLabel('End', { exact: true }).selectOption({ label: 'Ends' })
+  await expect.poll(() => lies(bars.nth(1))).toEqual([32, 26])
+  expect([await lies(bars.nth(0)), await lies(bars.nth(2))]).toEqual([[25, 5], [61, 1]])
+  expect(await page.evaluate(async () => (await import('/caps/tables/tables.js')).shown.value?.table.views)).toContainEqual({ id: 'calendar', type: 'calendar', date: 'starts', until: 'ends' })
+  // A bar says its days, and takes its step's look, as its pill has it.
+  await expect(bars.nth(1)).toHaveAttribute('title', /^Nov 2\s–\s27, 2026$/)
+  await expect(bars.nth(2)).toHaveAttribute('title', 'Dec 1, 2026')
+  await expect(bars.nth(1)).toHaveAttribute('data-group', 'doing')
+  // Pressed, it opens its row as a sheet.
+  await bar('Give notice').click()
+  await expect(page.getByRole('dialog', { name: 'Give notice' })).toBeVisible()
+  await page.keyboard.press('Escape')
+
+  // Dragged along, held two days from its start, it starts two days before the day it is let go on, its end as many days later.
+  const track = page.locator('.line-track'), carried = await page.evaluateHandle(() => new DataTransfer())
+  const at = async (/** @type {import('@playwright/test').Locator} */ box, /** @type {number} */ day, /** @type {number} */ days) => ((size) => ({ clientX: (size?.x ?? 0) + (day + 0.5) / days * (size?.width ?? 0), clientY: (size?.y ?? 0) + 4 }))(await box.boundingBox())
+  await bar('Give notice').dispatchEvent('dragstart', { dataTransfer: carried, ...await at(bar('Give notice'), 2, 5) })
+  await track.dispatchEvent('dragover', { dataTransfer: carried, ...await at(track, 40, 123) })
+  await track.dispatchEvent('drop', { dataTransfer: carried, ...await at(track, 40, 123) })
+  await expect.poll(async () => (await changes(page)).at(-1)).toMatchObject({ by: 'user', set: { starts: '2026-11-08', ends: '2026-11-12' } })
+  await expect(page.locator('.line-months b')).toHaveText(['Nov 2026', 'Dec', 'Jan 2027'])
+  // One with a time keeps it; one with no day takes the day it is let go on.
+  await bar('Sign the lease').dispatchEvent('dragstart', { dataTransfer: carried, ...await at(bar('Sign the lease'), 0, 1) })
+  await track.dispatchEvent('drop', { dataTransfer: carried, ...await at(track, 33, 92) })
+  await expect.poll(async () => (await changes(page)).at(-1)).toMatchObject({ set: { starts: '2026-12-04T10:00' } })
+  await page.getByRole('region', { name: 'No Starts' }).getByRole('button', { name: 'Housewarming' }).dispatchEvent('dragstart', { dataTransfer: carried })
+  await track.dispatchEvent('drop', { dataTransfer: carried, ...await at(track, 50, 92) })
+  await expect.poll(async () => (await changes(page)).at(-1)).toMatchObject({ set: { starts: '2026-12-21' } })
+  await expect(bars).toHaveCount(4)
+
+  // Grouped, as Arrange asks, each group's rows are under its head, which says how many it has.
+  await page.locator('.table-tools').getByRole('button', { name: 'Arrange', exact: true }).click()
+  await page.locator('.table-panel').getByRole('combobox', { name: 'Group by' }).selectOption('Who')
+  await page.keyboard.press('Escape')
+  await expect(page.locator('.line section h4')).toHaveText([/^\s*Lea\s*2\s*$/, /^\s*Tom\s*2\s*$/])
+  await expect(page.getByRole('region', { name: 'Tom' }).locator('.line-bar')).toHaveText(['Sign the lease', 'Housewarming'])
+  // Today is brought back in sight by its button, which Intl names.
+  await page.getByRole('button', { name: 'Today', exact: true }).click()
+  await expect(page.locator('.line-now')).toBeInViewport()
+
+  // Narrow, the months scroll in their place, nothing goes past the window's edge, and a bar's name stays in sight while its bar is.
+  await page.setViewportSize({ width: 380, height: 800 })
+  await expect(page.locator('.table-laid')).toBeVisible()
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+  const scroll = page.locator('.line-scroll')
+  expect(await scroll.evaluate((box) => box.scrollWidth > box.clientWidth)).toBe(true)
+  await page.evaluate(async () => { const tables = await import('/caps/tables/tables.js'), one = /** @type {any} */ (tables.shown.value); await tables.change(await tables.load(one.folder, one.dir), [{ row: one.rows[1].id, set: { Ends: '2027-01-20' } }], 'user') })
+  await expect.poll(() => lies(bar('piano'))).toEqual([1, 80])
+  // Scrolled until its bar starts a hundred pixels before what shows, again if the pane is still settling, its name is at the edge of what shows.
+  await expect.poll(() => scroll.evaluate((box) => {
+    const bar = /** @type {Element} */ ([...box.querySelectorAll('.line-bar')].find((one) => one.textContent?.includes('piano'))), edge = box.getBoundingClientRect().left
+    box.scrollLeft += bar.getBoundingClientRect().left - edge + 100
+    return [bar.getBoundingClientRect().left - edge < -90, /** @type {Element} */ (bar.querySelector('bdi')).getBoundingClientRect().left - edge >= -1]
+  })).toEqual([true, true])
+
+  // On the calendar, wide again, a name longer than a day stays in its day.
+  await page.setViewportSize({ width: 1280, height: 800 })
+  await showAs(page, 'Calendar')
+  const chip = dayOf(page, '2026-11-03').locator('.cal-row')
+  await expect(chip).toHaveText('Find a flat near the canal, with a room for the piano')
+  expect(await chip.evaluate((button) => button.getBoundingClientRect().right <= /** @type {Element} */ (button.closest('td')).getBoundingClientRect().right)).toBe(true)
 })
 
 test('a date takes a time of day from its head’s Type, its cell keeping the time a date already has; a calendar opens on the month of the next row to come when none is in this one', async ({ page }) => {
@@ -2001,13 +2176,13 @@ test('a date takes a time of day from its head’s Type, its cell keeping the ti
   await expect(page.getByRole('button', { name: 'This month' })).toBeEnabled()
 })
 
-for (const [lang, shows, title, first, next] of /** @type {const} */ ([['ar', ['جدول', 'تقويم'], 'نوفمبر 2026', 'السبت', 'الشهر القادم'], ['ja', ['表', 'カレンダー'], '2026年11月', '日曜日', '来月']])) {
-  test(`a calendar in ${lang}: its week from the language's first day, its month, its days and its moves in the language's words`, async ({ page }) => {
+for (const [lang, shows, title, first, next, today] of /** @type {const} */ ([['ar', ['جدول', 'قائمة', 'تقويم', 'خط زمني'], 'نوفمبر 2026', 'السبت', 'الشهر القادم', 'اليوم'], ['ja', ['表', 'リスト', 'カレンダー', 'タイムライン'], '2026年11月', '日曜日', '来月', '今日']])) {
+  test(`a calendar and a timeline in ${lang}: its week from the language's first day, its month, its days and its moves in the language's words; the timeline's months from the line's start`, async ({ page }) => {
     await page.clock.setFixedTime(new Date('2026-11-17T10:00:00'))
     await start(page, lang)
     await stays(page)
     expect(await layouts(page)).toEqual(shows)
-    await showAs(page, shows[1])
+    await showAs(page, shows[2])
     await expect(page.locator('.cal-bar h3')).toHaveText(title)
     await expect(page.locator('.cal-grid th').first()).toHaveAttribute('abbr', first)
     await expect(dayOf(page, '2026-11-20').locator('.cal-row')).toHaveCount(2)
@@ -2016,6 +2191,13 @@ for (const [lang, shows, title, first, next] of /** @type {const} */ ([['ar', ['
     // Its first day's column is at the line's start, the right in Arabic.
     const [head, last] = await Promise.all([page.locator('.cal-grid th').first().boundingBox(), page.locator('.cal-grid th').last().boundingBox()])
     expect(lang === 'ar' ? (head?.x ?? 0) > (last?.x ?? 0) : (head?.x ?? 0) < (last?.x ?? 0)).toBe(true)
+    // As a timeline, named in the language, its months run from the line's start, the right in Arabic, and a bar lies on its day from there.
+    await showAs(page, shows[3])
+    await expect(page.locator('.line-months b')).toHaveCount(3)
+    const [early, late] = await Promise.all([page.locator('.line-months b').first().boundingBox(), page.locator('.line-months b').last().boundingBox()])
+    expect(lang === 'ar' ? (early?.x ?? 0) > (late?.x ?? 0) : (early?.x ?? 0) < (late?.x ?? 0)).toBe(true)
+    expect(await lies(page.locator('.line-bar').first())).toEqual([19, 1])
+    await expect(page.getByRole('button', { name: today, exact: true })).toBeEnabled()
   })
 }
 

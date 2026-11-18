@@ -142,6 +142,7 @@
   "tables.end": "Kết thúc",
   "tables.time": "Giờ",
   "tables.list": "Danh sách",
+  "tables.timeline": "Dòng thời gian",
   "tables.of": "{shown} / {count}",
   "tables.ask": "Hỏi {name}",
   "tables.askFill": "Nhờ {name} điền vào",
