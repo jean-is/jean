@@ -12,13 +12,15 @@ What the certificates' next steps hang on ([certificates.md](certificates.md)):
 ## Smaller questions
 
 - **First run while the brain downloads:** what do people see during the ~3 GB download, alongside "start right now with a free account"? Can the download resume after the tab closes?
-- **Client ID Metadata Documents for Connections:** publish one at jean.is, so services without dynamic registration accept Jean (D88)? ServiceNow takes them (its admin pastes the document's address instead of registering an app, D283), and needs the redirect of each address Jean is served from.
+- **Client ID Metadata Documents for Connections:** publish one at jean.is, so services without dynamic registration accept Jean (D88)? ServiceNow takes them (its admin pastes the document's address instead of registering an app, D283), and needs the redirect of each address Jean is served from; Tableau's and Ironclad's sign-ins take them in place of registration.
 - **The services not available yet (D95):** what would let each one in at jean.is?
   - **Microsoft 365** (D382): jean.is's app in Microsoft Entra, a single-page app for any organisation's accounts and personal ones, publisher-verified (a Microsoft AI Cloud Partner Program ID), so that organisations' admins consent to it; and whether signing in again once a day is bearable, or jean.is's gateway should hold a web app, which renews for 90 days.
   - **Google** (D344, D349): Google verifying Jean's app, so that anyone can sign in rather than the test users it lists (a review of its sensitive scopes, and a yearly security assessment for Gmail's and Drive's restricted ones); Google ending the developer preview, and its servers answering browsers.
   - **Slack and Dropbox:** CORS, plus open registration for Slack. Dropbox, like Figma, registers only the apps on its list: ask both to add Jean.
   - **Qonto:** registers only the redirects on its list, added on request at its developers' support: ask for `https://jean.is/` and the desktop apps' `http://127.0.0.1:24601/`, then its entry drops `app`. An organisation's own address needs the same.
   - **Pipedrive:** registers only the redirects on its list, which holds this computer's already: ask its developers for `https://jean.is/`, then its entry drops `app`.
+  - **Highspot:** its server (`mcp.highspot.com/mcp`) names the sign-in server `https://app.highspot.com/auth/`, whose metadata calls itself `https://app.highspot.com`, which RFC 8414 forbids and Jean refuses: ask Highspot to make them match, then its entry gets that address, through the gateway (its CORS lets no sign-in through).
+  - **Rox:** says it has an MCP server, but publishes no address for it: ask Rox for one before it is a tile.
 - **Helpers on a cheaper brain?** Helpers use the brain that delegated (D98). Auto could give them a lighter tier: cheaper, but one answer would then mix two models' work. To decide with real tasks.
 - **What a template carries** (D476): a project's instructions, skills, tables and routines, and its connections as names and addresses only, without their secrets?
 - **Requests between people's Jeans (D226):** A2A's messages over the relay, or ACP's?

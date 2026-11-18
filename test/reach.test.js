@@ -485,7 +485,7 @@ describe('the services Jean knows (D95)', () => {
     const microsoft = (/** @type {any} */ policy, /** @type {any} */ served) => known(policy, served).find((entry) => entry.id === 'microsoft-365')?.via
     assert.deepEqual([microsoft({}), microsoft({ directory: [{ id: 'microsoft-365', clientId: 'jean-spa' }] })], [null, 'browser'])
     assert.deepEqual([microsoft({}, { hosts: ['login.microsoftonline.com'], clients: { 'https://login.microsoftonline.com/common/v2.0': 'web-app' } }), microsoft({}, { hosts: ['login.microsoftonline.com'] })], ['gateway', null])
-    for (const id of ['servicenow', 'netsuite', 'databricks', 'sap']) assert.ok(services.some((entry) => entry.id === id && !entry.url && entry.via === null))
+    for (const id of ['servicenow', 'netsuite', 'databricks', 'sap', 'zoho-crm', 'highspot']) assert.ok(services.some((entry) => entry.id === id && !entry.url && entry.via === null))
     // A gateway that relays to Google's servers but not its sign-in, or holds no app of Google's, or
     // relays to some of its servers only (D344), doesn't reach Google.
     const google = { 'https://accounts.google.com': 'google-app' }
@@ -508,7 +508,8 @@ describe('the services Jean knows (D95)', () => {
     assert.equal(known({}, { hosts: ['accounts.google.com', 'oauth2.googleapis.com'] }).find((entry) => entry.id === 'gmail')?.via, null)
     // The gateway as it comes reaches every service that registers Jean, and with an app for each sign-in that doesn't, every one with an address.
     const relayed = (/** @type {Record<string, string>} */ clients) => known({}, { hosts: [...SERVICES], clients }).filter((entry) => entry.via === 'gateway').map((entry) => entry.id)
-    assert.deepEqual(relayed({}), ['airtable', 'calendly', 'dropbox', 'gamma', 'gitlab', 'ifttt', 'monday', 'otter', 'picsart', 'stewdio', 'todoist', 'zapier'])
+    assert.deepEqual(relayed({}), ['actively', 'airtable', 'apollo', 'backstory', 'calendly', 'close', 'dropbox', 'gamma', 'gitlab', 'gong', 'hex', 'ifttt', 'monaco', 'monday', 'otter', 'outreach',
+      'pandadoc', 'picsart', 'stewdio', 'todoist', 'zapier', 'zoominfo'])
     const apps = Object.fromEntries(DIRECTORY.flatMap((entry) => (entry.app ? [[entry.app, `${entry.id}-app`]] : [])))
     assert.deepEqual(relayed(apps), byName(DIRECTORY.filter((entry) => (!entry.ready || entry.app) && entry.url), (entry) => entry.name).map((entry) => entry.id))
     assert.equal(through.find((entry) => entry.id === 'servicenow')?.via, null)

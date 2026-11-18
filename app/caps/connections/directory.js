@@ -123,6 +123,27 @@ export const DIRECTORY = Object.freeze(/** @type {Known[]} */ ([
   { id: 'todoist', group: 'tasks', name: 'Todoist', url: 'https://ai.todoist.net/mcp', signIn: ['todoist.com'], logo: 'todoist.png' },
   { id: 'ifttt', group: 'other', name: 'IFTTT', url: 'https://ifttt.com/mcp', logo: 'ifttt.svg' },
   { id: 'stewdio', group: 'design', name: 'Stewdio', url: 'https://mcp.stewdio.ai/mcp', signIn: ['signin.stewdio.ai'], logo: 'stewdio.png' },
+  // Selling: its calls, deals, the people and companies to reach, its proposals; and data. Their servers or sign-ins refuse
+  // browsers, and register Jean through the gateway. Hex's is its US cloud's: one in its EU or its own gives its address in policy.
+  { id: 'gong', group: 'talk', name: 'Gong', url: 'https://mcp.gong.io/mcp', signIn: ['app.gong.io'], logo: 'gong.svg' },
+  { id: 'close', group: 'customers', name: 'Close', url: 'https://mcp.close.com/mcp', signIn: ['api.close.com'], logo: 'close.png' },
+  { id: 'monaco', group: 'customers', name: 'Monaco', url: 'https://mcp.monaco.com/mcp', signIn: ['monaco-inc.us.auth0.com'], logo: 'monaco.png' },
+  { id: 'backstory', group: 'customers', name: 'Backstory', url: 'https://mcp.backstory.ai/mcp', logo: 'backstory.svg' },
+  { id: 'outreach', group: 'customers', name: 'Outreach', url: 'https://api.outreach.io/mcp/', logo: 'outreach.png' },
+  { id: 'apollo', group: 'customers', name: 'Apollo.io', url: 'https://mcp.apollo.io/mcp', logo: 'apollo.png' },
+  { id: 'actively', group: 'customers', name: 'Actively AI', url: 'https://api.actively.ai/mcp', signIn: ['auth.actively.ai'], logo: 'actively.png' },
+  { id: 'zoominfo', group: 'customers', name: 'ZoomInfo', url: 'https://mcp.zoominfo.com/mcp', signIn: ['okta-login.zoominfo.com'], logo: 'zoominfo.png' },
+  { id: 'pandadoc', group: 'files', name: 'PandaDoc', url: 'https://mcp.pandadoc.com/v1/mcp', logo: 'pandadoc.png' },
+  { id: 'hex', group: 'other', name: 'Hex', url: 'https://app.hex.tech/mcp', logo: 'hex.svg' },
+  // Refuse browsers, and register only the apps made on their sites, Tableau's and Ironclad's otherwise taking a client metadata document,
+  // which waits for the domain. Seismic's own tenant's address (`/tenants/<name>`), Ironclad's in Europe (`mcp.eu1.`) and a Tableau Server's are policy's.
+  { id: 'seismic', group: 'files', name: 'Seismic', url: 'https://mcp.seismic.com/', signIn: ['auth.seismic.com'], app: 'https://auth.seismic.com', logo: 'seismic.png' },
+  { id: 'docusign', group: 'files', name: 'Docusign', url: 'https://mcp.docusign.com/mcp', signIn: ['account.docusign.com'], app: 'https://mcp.docusign.com', logo: 'docusign.png' },
+  { id: 'ironclad', group: 'files', name: 'Ironclad', url: 'https://mcp.na1.ironcladapp.com/mcp', signIn: ['ironcladapp.com'], app: 'https://ironcladapp.com', logo: 'ironclad.png' },
+  { id: 'tableau', group: 'other', name: 'Tableau', url: 'https://mcp.tableau.com/', signIn: ['sso.online.tableau.com'], app: 'https://sso.online.tableau.com', logo: 'tableau.png' },
+  // Power BI's answers browsers, and its sign-in, Microsoft's for work accounts, a page for an app registered in Entra as a
+  // single-page app: the client id policy gives makes it ready, as Microsoft 365's does (D382); until then, the gateway's app.
+  { id: 'power-bi', group: 'other', name: 'Power BI', url: 'https://api.fabric.microsoft.com/v1/mcp/powerbi', signIn: ['login.microsoftonline.com'], app: 'https://login.microsoftonline.com/organizations/v2.0', logo: 'power-bi.svg' },
   // Each company's own instance, whose address policy gives, with the app its admin registered there, since they register
   // none; reached through the gateway, as ServiceNow's and Databricks's answer no browser, whatever the address (D283).
   // NetSuite's is the account's (Oracle's service for running a business, its database a developer's tool, D192);
@@ -132,6 +153,10 @@ export const DIRECTORY = Object.freeze(/** @type {Known[]} */ ([
   { id: 'netsuite', group: 'other', name: 'NetSuite', ready: false, logo: 'netsuite.png' },
   { id: 'databricks', group: 'other', name: 'Databricks', ready: false, logo: 'databricks.png' },
   { id: 'sap', group: 'other', name: 'SAP', ready: false, logo: 'sap.svg' },
+  // Zoho CRM's servers are each organisation's too, made in Zoho's console, a key in their address. Highspot's names a sign-in
+  // server whose metadata calls itself by another issuer, which Jean refuses (RFC 8414): not yet, until Highspot mends it.
+  { id: 'zoho-crm', group: 'customers', name: 'Zoho CRM', ready: false, logo: 'zoho-crm.svg' },
+  { id: 'highspot', group: 'files', name: 'Highspot', ready: false, logo: 'highspot.png' },
 ]))
 
 /** @typedef {Known & { via: 'browser' | 'gateway' | null }} Listed  how it is reached now; null: not yet */

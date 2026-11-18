@@ -41,7 +41,8 @@ const ANSWERED = ['content-type', 'cache-control', 'mcp-session-id', 'mcp-protoc
 // Then the search services a browser can't read, each on the user's key (caps/web-search/services.js, D671).
 export const SERVICES = Object.freeze(['googleapis.com', 'accounts.google.com', 'login.microsoftonline.com', 'slack.com', 'githubcopilot.com', 'github.com', 'gitlab.com', 'dropbox.com',
   'dropboxapi.com', 'figma.com', 'asana.com', 'zoom.us', 'hubspot.com', 'instacart.com', 'salesforce.com', 'pipedrive.com', 'pipedrive.ai', 'box.com', 'monday.com', 'airtable.com', 'calendly.com', 'otter.ai', 'gamma.app', 'picsart.com', 'zapier.com', 'qonto.com',
-  'todoist.com', 'todoist.net', 'ifttt.com', 'stewdio.ai', 'service-now.com', 'netsuite.com', 'databricks.com', 'azuredatabricks.net', 'search.brave.com', 'kagi.com', 'api.tavily.com'])
+  'todoist.com', 'todoist.net', 'ifttt.com', 'stewdio.ai', 'gong.io', 'close.com', 'monaco.com', 'monaco-inc.us.auth0.com', 'backstory.ai', 'outreach.io', 'apollo.io',
+  'actively.ai', 'zoominfo.com', 'pandadoc.com', 'hex.tech', 'seismic.com', 'docusign.com', 'ironcladapp.com', 'tableau.com', 'api.fabric.microsoft.com', 'service-now.com', 'netsuite.com', 'databricks.com', 'azuredatabricks.net', 'search.brave.com', 'kagi.com', 'api.tavily.com'])
 
 /**
  * @typedef {{ issuer: string, tokenEndpoint: string, clientId: string, clientSecret: string, auth?: 'post' | 'basic' }} Client
