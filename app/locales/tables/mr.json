@@ -143,5 +143,12 @@
   "tables.addFiles": "फाइल्स जोडा",
   "tables.calendar": "कॅलेंडर",
   "tables.end": "समाप्ती",
-  "tables.time": "वेळ"
+  "tables.time": "वेळ",
+  "tables.list": "यादी",
+  "tables.of": "{shown} / {count}",
+  "tables.ask": "{name} ला विचारा",
+  "tables.askFill": "{name} ला हे भरायला सांगा",
+  "tables.asked.show": "“{table}” मध्ये फक्त हे दाखव: {words}",
+  "tables.asked.fill": "“{table}” मध्ये “{column}” स्तंभ जिथे रिकामा आहे तिथे भर.",
+  "tables.asked.row": "“{table}” मध्ये, “{row}” बद्दल: "
 }

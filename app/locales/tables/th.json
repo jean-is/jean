@@ -140,5 +140,12 @@
   "tables.addFiles": "เพิ่มไฟล์",
   "tables.calendar": "ปฏิทิน",
   "tables.end": "สิ้นสุด",
-  "tables.time": "เวลา"
+  "tables.time": "เวลา",
+  "tables.list": "รายการ",
+  "tables.of": "{shown} จาก {count}",
+  "tables.ask": "ถาม {name}",
+  "tables.askFill": "ขอให้ {name} กรอกให้",
+  "tables.asked.show": "ใน “{table}” แสดงเฉพาะ: {words}",
+  "tables.asked.fill": "ใน “{table}” ให้กรอกคอลัมน์ “{column}” ตรงที่ยังว่างอยู่",
+  "tables.asked.row": "ใน “{table}” เกี่ยวกับ “{row}”: "
 }

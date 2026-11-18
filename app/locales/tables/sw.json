@@ -143,5 +143,12 @@
   "tables.addFiles": "Ongeza faili",
   "tables.calendar": "Kalenda",
   "tables.end": "Mwisho",
-  "tables.time": "Saa"
+  "tables.time": "Saa",
+  "tables.list": "Orodha",
+  "tables.of": "{shown} / {count}",
+  "tables.ask": "Muulize {name}",
+  "tables.askFill": "Mwombe {name} aijaze",
+  "tables.asked.show": "Katika “{table}”, onyesha tu: {words}",
+  "tables.asked.fill": "Katika “{table}”, jaza safuwima “{column}” popote ilipo tupu.",
+  "tables.asked.row": "Katika “{table}”, kuhusu “{row}”: "
 }

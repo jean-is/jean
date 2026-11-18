@@ -143,5 +143,12 @@
   "tables.addFiles": "افزودن فایل",
   "tables.calendar": "تقویم",
   "tables.end": "پایان",
-  "tables.time": "ساعت"
+  "tables.time": "ساعت",
+  "tables.list": "فهرست",
+  "tables.of": "{shown} از {count}",
+  "tables.ask": "پرسیدن از {name}",
+  "tables.askFill": "درخواست پر کردن از {name}",
+  "tables.asked.show": "در «{table}» فقط این را نشان بده: {words}",
+  "tables.asked.fill": "در «{table}»، ستون «{column}» را هر جا خالی است پر کن.",
+  "tables.asked.row": "در «{table}»، دربارهٔ «{row}»: "
 }

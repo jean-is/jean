@@ -146,5 +146,12 @@
   "tables.addFiles": "Dodaj datoteke",
   "tables.calendar": "Kalendar",
   "tables.end": "Kraj",
-  "tables.time": "Vrijeme"
+  "tables.time": "Vrijeme",
+  "tables.list": "Popis",
+  "tables.of": "{shown} od {count}",
+  "tables.ask": "Pitaj aplikaciju {name}",
+  "tables.askFill": "Zamoli aplikaciju {name} da ga ispuni",
+  "tables.asked.show": "U „{table}“ prikaži samo: {words}",
+  "tables.asked.fill": "U „{table}“ ispuni stupac „{column}“ tamo gdje je prazan.",
+  "tables.asked.row": "U „{table}“, o retku „{row}“: "
 }

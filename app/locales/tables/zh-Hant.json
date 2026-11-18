@@ -140,5 +140,12 @@
   "tables.addFiles": "新增檔案",
   "tables.calendar": "行事曆",
   "tables.end": "結束",
-  "tables.time": "時間"
+  "tables.time": "時間",
+  "tables.list": "清單",
+  "tables.of": "{shown} / {count}",
+  "tables.ask": "問 {name}",
+  "tables.askFill": "請 {name} 填寫",
+  "tables.asked.show": "在「{table}」中只顯示：{words}",
+  "tables.asked.fill": "在「{table}」中，把「{column}」欄裡空著的地方填上。",
+  "tables.asked.row": "在「{table}」中，關於「{row}」："
 }

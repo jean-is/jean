@@ -143,5 +143,12 @@
   "tables.addFiles": "ፋይሎችን ያክሉ",
   "tables.calendar": "የቀን መቁጠሪያ",
   "tables.end": "መጨረሻ",
-  "tables.time": "ሰዓት"
+  "tables.time": "ሰዓት",
+  "tables.list": "ዝርዝር",
+  "tables.of": "{shown} / {count}",
+  "tables.ask": "{name}ን ጠይቅ",
+  "tables.askFill": "በ{name} አስሞላ",
+  "tables.asked.show": "በ“{table}” ውስጥ ይህን ብቻ አሳይ፦ {words}",
+  "tables.asked.fill": "በ“{table}” ውስጥ ዓምድ “{column}” ባዶ በሆነበት ሁሉ ሙላ።",
+  "tables.asked.row": "በ“{table}” ውስጥ፣ ስለ “{row}”፦ "
 }

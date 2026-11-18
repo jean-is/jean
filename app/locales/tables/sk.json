@@ -149,5 +149,12 @@
   "tables.addFiles": "Pridať súbory",
   "tables.calendar": "Kalendár",
   "tables.end": "Koniec",
-  "tables.time": "Čas"
+  "tables.time": "Čas",
+  "tables.list": "Zoznam",
+  "tables.of": "{shown} z {count}",
+  "tables.ask": "Opýtať sa aplikácie {name}",
+  "tables.askFill": "Požiadať aplikáciu {name} o vyplnenie",
+  "tables.asked.show": "V „{table}“ ukáž len: {words}",
+  "tables.asked.fill": "V „{table}“ vyplň stĺpec „{column}“ tam, kde je prázdny.",
+  "tables.asked.row": "V „{table}“, k riadku „{row}“: "
 }

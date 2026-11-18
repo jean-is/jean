@@ -143,5 +143,12 @@
   "tables.addFiles": "Добави файлове",
   "tables.calendar": "Календар",
   "tables.end": "Край",
-  "tables.time": "Час"
+  "tables.time": "Час",
+  "tables.list": "Списък",
+  "tables.of": "{shown} от {count}",
+  "tables.ask": "Питане на {name}",
+  "tables.askFill": "Попълване от {name}",
+  "tables.asked.show": "В „{table}“ покажи само: {words}",
+  "tables.asked.fill": "В „{table}“ попълни колоната „{column}“ там, където е празна.",
+  "tables.asked.row": "В „{table}“, за реда „{row}“: "
 }

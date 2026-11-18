@@ -140,5 +140,12 @@
   "tables.addFiles": "ファイルを追加",
   "tables.calendar": "カレンダー",
   "tables.end": "終了",
-  "tables.time": "時刻"
+  "tables.time": "時刻",
+  "tables.list": "リスト",
+  "tables.of": "{shown} / {count}",
+  "tables.ask": "{name} に頼む",
+  "tables.askFill": "{name} に入力を頼む",
+  "tables.asked.show": "「{table}」で、次のものだけを表示してください：{words}",
+  "tables.asked.fill": "「{table}」で、列「{column}」の空いているところを入力してください。",
+  "tables.asked.row": "「{table}」の「{row}」について、"
 }

@@ -143,5 +143,12 @@
   "tables.addFiles": "Lisää tiedostoja",
   "tables.calendar": "Kalenteri",
   "tables.end": "Loppu",
-  "tables.time": "Aika"
+  "tables.time": "Aika",
+  "tables.list": "Luettelo",
+  "tables.of": "{shown}/{count}",
+  "tables.ask": "Kysy: {name}",
+  "tables.askFill": "Pyydä täyttämään: {name}",
+  "tables.asked.show": "Näytä kohteesta ”{table}” vain: {words}",
+  "tables.asked.fill": "Täytä kohteessa ”{table}” sarake ”{column}” siltä osin kuin se on tyhjä.",
+  "tables.asked.row": "Kohteessa ”{table}”, rivistä ”{row}”: "
 }

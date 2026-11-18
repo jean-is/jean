@@ -143,5 +143,12 @@
   "tables.addFiles": "Magdagdag ng mga file",
   "tables.calendar": "Kalendaryo",
   "tables.end": "Katapusan",
-  "tables.time": "Oras"
+  "tables.time": "Oras",
+  "tables.list": "Listahan",
+  "tables.of": "{shown} / {count}",
+  "tables.ask": "Itanong kay {name}",
+  "tables.askFill": "Hilingin kay {name} na punan ito",
+  "tables.asked.show": "Sa “{table}”, ipakita lang: {words}",
+  "tables.asked.fill": "Sa “{table}”, punan ang column na “{column}” kung saan ito walang laman.",
+  "tables.asked.row": "Sa “{table}”, tungkol sa “{row}”: "
 }

@@ -140,5 +140,12 @@
   "tables.addFiles": "파일 추가",
   "tables.calendar": "캘린더",
   "tables.end": "종료",
-  "tables.time": "시간"
+  "tables.time": "시간",
+  "tables.list": "목록",
+  "tables.of": "{shown} / {count}",
+  "tables.ask": "{name}에게 묻기",
+  "tables.askFill": "{name}에게 채우기 요청",
+  "tables.asked.show": "‘{table}’에서 다음만 보여 줘: {words}",
+  "tables.asked.fill": "‘{table}’에서 ‘{column}’ 열의 빈 곳을 채워 줘.",
+  "tables.asked.row": "‘{table}’의 ‘{row}’에 대해: "
 }

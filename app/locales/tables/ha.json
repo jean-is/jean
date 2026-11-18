@@ -143,5 +143,12 @@
   "tables.addFiles": "Ƙara fayiloli",
   "tables.calendar": "Kalanda",
   "tables.end": "Ƙarshe",
-  "tables.time": "Lokaci"
+  "tables.time": "Lokaci",
+  "tables.list": "Jeri",
+  "tables.of": "{shown} / {count}",
+  "tables.ask": "Tambayi {name}",
+  "tables.askFill": "Nemi {name} don cika shi",
+  "tables.asked.show": "A cikin “{table}”, nuna kawai: {words}",
+  "tables.asked.fill": "A cikin “{table}”, cika ginshiƙin “{column}” a duk inda yake fanko.",
+  "tables.asked.row": "A cikin “{table}”, game da “{row}”: "
 }

@@ -143,5 +143,12 @@
   "tables.addFiles": "ফাইল যোগ করুন",
   "tables.calendar": "ক্যালেন্ডার",
   "tables.end": "শেষ",
-  "tables.time": "সময়"
+  "tables.time": "সময়",
+  "tables.list": "তালিকা",
+  "tables.of": "{shown} / {count}",
+  "tables.ask": "{name}-কে জিজ্ঞেস করুন",
+  "tables.askFill": "{name}-কে এটি পূরণ করতে বলুন",
+  "tables.asked.show": "“{table}”-এ শুধু এটা দেখাও: {words}",
+  "tables.asked.fill": "“{table}”-এ “{column}” কলাম যেখানে খালি সেখানে পূরণ করো।",
+  "tables.asked.row": "“{table}”-এ, “{row}” সম্পর্কে: "
 }

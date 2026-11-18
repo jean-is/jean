@@ -143,5 +143,12 @@
   "tables.addFiles": "Tilføj filer",
   "tables.calendar": "Kalender",
   "tables.end": "Slut",
-  "tables.time": "Tidspunkt"
+  "tables.time": "Tidspunkt",
+  "tables.list": "Liste",
+  "tables.of": "{shown} af {count}",
+  "tables.ask": "Spørg {name}",
+  "tables.askFill": "Bed {name} om at udfylde den",
+  "tables.asked.show": "Vis kun dette i “{table}”: {words}",
+  "tables.asked.fill": "Udfyld “{column}” i “{table}”, hvor den er tom.",
+  "tables.asked.row": "I “{table}”, om “{row}”: "
 }

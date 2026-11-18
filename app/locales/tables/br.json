@@ -152,5 +152,12 @@
   "tables.addFiles": "Ouzhpennañ restroù",
   "tables.calendar": "Deiziadur",
   "tables.end": "Dibenn",
-  "tables.time": "Eur"
+  "tables.time": "Eur",
+  "tables.list": "Roll",
+  "tables.of": "{shown} diwar {count}",
+  "tables.ask": "Goulenn ouzh {name}",
+  "tables.askFill": "Goulenn ouzh {name} e leuniañ",
+  "tables.asked.show": "E « {table} », diskouez hepken : {words}",
+  "tables.asked.fill": "E « {table} », leugn « {column} » e kement lec’h ma’z eo goullo.",
+  "tables.asked.row": "E « {table} », diwar-benn « {row} » : "
 }

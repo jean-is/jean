@@ -143,5 +143,12 @@
   "tables.addFiles": "فائلیں شامل کریں",
   "tables.calendar": "کیلنڈر",
   "tables.end": "اختتام",
-  "tables.time": "وقت"
+  "tables.time": "وقت",
+  "tables.list": "فہرست",
+  "tables.of": "{shown} / {count}",
+  "tables.ask": "{name} سے پوچھیں",
+  "tables.askFill": "{name} سے اسے بھرنے کو کہیں",
+  "tables.asked.show": "“{table}” میں صرف یہ دکھاؤ: {words}",
+  "tables.asked.fill": "“{table}” میں کالم “{column}” جہاں خالی ہے وہاں بھر دو۔",
+  "tables.asked.row": "“{table}” میں، “{row}” کے بارے میں: "
 }

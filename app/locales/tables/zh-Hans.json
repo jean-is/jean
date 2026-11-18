@@ -140,5 +140,12 @@
   "tables.addFiles": "添加文件",
   "tables.calendar": "日历",
   "tables.end": "结束",
-  "tables.time": "时间"
+  "tables.time": "时间",
+  "tables.list": "列表",
+  "tables.of": "{shown} / {count}",
+  "tables.ask": "问 {name}",
+  "tables.askFill": "让 {name} 填写",
+  "tables.asked.show": "在“{table}”中只显示：{words}",
+  "tables.asked.fill": "在“{table}”中，把“{column}”列里空着的地方填上。",
+  "tables.asked.row": "在“{table}”中，关于“{row}”："
 }

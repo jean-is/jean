@@ -143,5 +143,12 @@
   "tables.addFiles": "ఫైళ్లు జోడించు",
   "tables.calendar": "క్యాలెండర్",
   "tables.end": "ముగింపు",
-  "tables.time": "సమయం"
+  "tables.time": "సమయం",
+  "tables.list": "జాబితా",
+  "tables.of": "{shown} / {count}",
+  "tables.ask": "{name}ని అడుగు",
+  "tables.askFill": "{name}ని దీన్ని నింపమని అడుగు",
+  "tables.asked.show": "“{table}”లో ఇది మాత్రమే చూపించు: {words}",
+  "tables.asked.fill": "“{table}”లో “{column}” నిలువు వరుస ఖాళీగా ఉన్న చోట నింపు.",
+  "tables.asked.row": "“{table}”లో, “{row}” గురించి: "
 }

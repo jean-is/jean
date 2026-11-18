@@ -149,5 +149,12 @@
   "tables.addFiles": "Dodaj pliki",
   "tables.calendar": "Kalendarz",
   "tables.end": "Koniec",
-  "tables.time": "Godzina"
+  "tables.time": "Godzina",
+  "tables.list": "Lista",
+  "tables.of": "{shown} z {count}",
+  "tables.ask": "Zapytaj: {name}",
+  "tables.askFill": "Poproś o wypełnienie: {name}",
+  "tables.asked.show": "W „{table}” pokaż tylko: {words}",
+  "tables.asked.fill": "W „{table}” wypełnij kolumnę „{column}” tam, gdzie jest pusta.",
+  "tables.asked.row": "W „{table}”, o wierszu „{row}”: "
 }

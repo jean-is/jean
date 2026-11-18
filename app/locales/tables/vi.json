@@ -140,5 +140,12 @@
   "tables.addFiles": "Thêm tệp",
   "tables.calendar": "Lịch",
   "tables.end": "Kết thúc",
-  "tables.time": "Giờ"
+  "tables.time": "Giờ",
+  "tables.list": "Danh sách",
+  "tables.of": "{shown} / {count}",
+  "tables.ask": "Hỏi {name}",
+  "tables.askFill": "Nhờ {name} điền vào",
+  "tables.asked.show": "Trong “{table}”, chỉ hiện: {words}",
+  "tables.asked.fill": "Trong “{table}”, hãy điền cột “{column}” ở những chỗ còn trống.",
+  "tables.asked.row": "Trong “{table}”, về “{row}”: "
 }

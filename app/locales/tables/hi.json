@@ -143,5 +143,12 @@
   "tables.addFiles": "फ़ाइलें जोड़ें",
   "tables.calendar": "कैलेंडर",
   "tables.end": "समाप्ति",
-  "tables.time": "समय"
+  "tables.time": "समय",
+  "tables.list": "सूची",
+  "tables.of": "{shown} / {count}",
+  "tables.ask": "{name} से पूछें",
+  "tables.askFill": "{name} से इसे भरने को कहें",
+  "tables.asked.show": "“{table}” में सिर्फ़ यह दिखाओ: {words}",
+  "tables.asked.fill": "“{table}” में स्तंभ “{column}” जहाँ खाली है वहाँ भर दो।",
+  "tables.asked.row": "“{table}” में, “{row}” के बारे में: "
 }

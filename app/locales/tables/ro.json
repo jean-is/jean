@@ -146,5 +146,12 @@
   "tables.addFiles": "Adăugați fișiere",
   "tables.calendar": "Calendar",
   "tables.end": "Sfârșit",
-  "tables.time": "Oră"
+  "tables.time": "Oră",
+  "tables.list": "Listă",
+  "tables.of": "{shown} din {count}",
+  "tables.ask": "Întrebați {name}",
+  "tables.askFill": "Rugați {name} să o completeze",
+  "tables.asked.show": "În „{table}”, arată doar: {words}",
+  "tables.asked.fill": "În „{table}”, completează coloana „{column}” acolo unde este goală.",
+  "tables.asked.row": "În „{table}”, despre „{row}”: "
 }

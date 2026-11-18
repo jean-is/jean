@@ -146,5 +146,12 @@
   "tables.addFiles": "Aghjunghje schedarii",
   "tables.calendar": "Calendariu",
   "tables.end": "Fine",
-  "tables.time": "Ora"
+  "tables.time": "Ora",
+  "tables.list": "Lista",
+  "tables.of": "{shown} nant’à {count}",
+  "tables.ask": "Dumandà à {name}",
+  "tables.askFill": "Dumandà à {name} d’empiela",
+  "tables.asked.show": "In « {table} », mostra solu : {words}",
+  "tables.asked.fill": "In « {table} », empii « {column} » induve hè viotu.",
+  "tables.asked.row": "In « {table} », à prupositu di « {row} » : "
 }

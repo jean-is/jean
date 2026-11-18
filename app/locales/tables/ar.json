@@ -155,5 +155,12 @@
   "tables.addFiles": "إضافة ملفات",
   "tables.calendar": "تقويم",
   "tables.end": "النهاية",
-  "tables.time": "الوقت"
+  "tables.time": "الوقت",
+  "tables.list": "قائمة",
+  "tables.of": "{shown} من {count}",
+  "tables.ask": "اسأل {name}",
+  "tables.askFill": "اطلب من {name} تعبئته",
+  "tables.asked.show": "في «{table}»، اعرض فقط: {words}",
+  "tables.asked.fill": "في «{table}»، املأ العمود «{column}» حيثما كان فارغًا.",
+  "tables.asked.row": "في «{table}»، بخصوص «{row}»: "
 }

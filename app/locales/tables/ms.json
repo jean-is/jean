@@ -140,5 +140,12 @@
   "tables.addFiles": "Tambah fail",
   "tables.calendar": "Kalendar",
   "tables.end": "Akhir",
-  "tables.time": "Masa"
+  "tables.time": "Masa",
+  "tables.list": "Senarai",
+  "tables.of": "{shown} daripada {count}",
+  "tables.ask": "Tanya {name}",
+  "tables.askFill": "Minta {name} mengisinya",
+  "tables.asked.show": "Dalam “{table}”, tunjukkan hanya: {words}",
+  "tables.asked.fill": "Dalam “{table}”, isi lajur “{column}” di mana-mana yang masih kosong.",
+  "tables.asked.row": "Dalam “{table}”, tentang “{row}”: "
 }

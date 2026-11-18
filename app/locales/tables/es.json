@@ -146,5 +146,12 @@
   "tables.addFiles": "Añadir archivos",
   "tables.calendar": "Calendario",
   "tables.end": "Fin",
-  "tables.time": "Hora"
+  "tables.time": "Hora",
+  "tables.list": "Lista",
+  "tables.of": "{shown} de {count}",
+  "tables.ask": "Preguntar a {name}",
+  "tables.askFill": "Pedir a {name} que la rellene",
+  "tables.asked.show": "En «{table}», muestra solo: {words}",
+  "tables.asked.fill": "En «{table}», rellena «{column}» donde esté vacío.",
+  "tables.asked.row": "En «{table}», sobre «{row}»: "
 }

@@ -143,5 +143,12 @@
   "tables.addFiles": "கோப்புகளைச் சேர்",
   "tables.calendar": "நாள்காட்டி",
   "tables.end": "முடிவு",
-  "tables.time": "நேரம்"
+  "tables.time": "நேரம்",
+  "tables.list": "பட்டியல்",
+  "tables.of": "{shown} / {count}",
+  "tables.ask": "{name}-இடம் கேள்",
+  "tables.askFill": "{name}-இடம் இதை நிரப்பச் சொல்",
+  "tables.asked.show": "“{table}” இல் இதை மட்டும் காட்டு: {words}",
+  "tables.asked.fill": "“{table}” இல் “{column}” நெடுவரிசை காலியாக உள்ள இடங்களில் நிரப்பு.",
+  "tables.asked.row": "“{table}” இல், “{row}” பற்றி: "
 }

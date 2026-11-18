@@ -143,5 +143,12 @@
   "tables.addFiles": "Fájlok hozzáadása",
   "tables.calendar": "Naptár",
   "tables.end": "Vége",
-  "tables.time": "Idő"
+  "tables.time": "Idő",
+  "tables.list": "Lista",
+  "tables.of": "{shown} / {count}",
+  "tables.ask": "Kérdezd: {name}",
+  "tables.askFill": "Kitöltés kérése: {name}",
+  "tables.asked.show": "Itt: „{table}”, csak ezt mutasd: {words}",
+  "tables.asked.fill": "Itt: „{table}”, töltsd ki a(z) „{column}” oszlopot ott, ahol üres.",
+  "tables.asked.row": "Itt: „{table}”, erről a sorról: „{row}”: "
 }

@@ -143,5 +143,12 @@
   "tables.addFiles": "Add files",
   "tables.calendar": "Calendar",
   "tables.end": "End",
-  "tables.time": "Time"
+  "tables.time": "Time",
+  "tables.list": "List",
+  "tables.of": "{shown} of {count}",
+  "tables.ask": "Ask {name}",
+  "tables.askFill": "Ask {name} to fill it",
+  "tables.asked.show": "In “{table}”, show only: {words}",
+  "tables.asked.fill": "In “{table}”, fill in “{column}” wherever it is empty.",
+  "tables.asked.row": "In “{table}”, about “{row}”: "
 }

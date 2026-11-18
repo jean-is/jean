@@ -140,5 +140,12 @@
   "tables.addFiles": "Ṣàfikún fáìlì",
   "tables.calendar": "Kàlẹ́ńdà",
   "tables.end": "Ìparí",
-  "tables.time": "Àkókò"
+  "tables.time": "Àkókò",
+  "tables.list": "Àkójọ",
+  "tables.of": "{shown} / {count}",
+  "tables.ask": "Bi {name} léèrè",
+  "tables.askFill": "Ní kí {name} kún un",
+  "tables.asked.show": "Nínú “{table}”, fi èyí nìkan hàn: {words}",
+  "tables.asked.fill": "Nínú “{table}”, kún ọwọ̀n “{column}” níbikíbi tó bá ṣófo.",
+  "tables.asked.row": "Nínú “{table}”, nípa “{row}”: "
 }

@@ -143,5 +143,12 @@
   "tables.addFiles": "Dosya ekle",
   "tables.calendar": "Takvim",
   "tables.end": "Bitiş",
-  "tables.time": "Saat"
+  "tables.time": "Saat",
+  "tables.list": "Liste",
+  "tables.of": "{shown} / {count}",
+  "tables.ask": "{name} uygulamasına sor",
+  "tables.askFill": "{name} uygulamasından doldurmasını iste",
+  "tables.asked.show": "“{table}” içinde yalnızca şunu göster: {words}",
+  "tables.asked.fill": "“{table}” içinde “{column}” sütununu boş olduğu yerlerde doldur.",
+  "tables.asked.row": "“{table}” içinde, “{row}” hakkında: "
 }

@@ -143,5 +143,12 @@
   "tables.addFiles": "Lägg till filer",
   "tables.calendar": "Kalender",
   "tables.end": "Slut",
-  "tables.time": "Tid"
+  "tables.time": "Tid",
+  "tables.list": "Lista",
+  "tables.of": "{shown} av {count}",
+  "tables.ask": "Fråga {name}",
+  "tables.askFill": "Be {name} fylla i den",
+  "tables.asked.show": "Visa bara detta i ”{table}”: {words}",
+  "tables.asked.fill": "Fyll i ”{column}” i ”{table}” där den är tom.",
+  "tables.asked.row": "I ”{table}”, om ”{row}”: "
 }

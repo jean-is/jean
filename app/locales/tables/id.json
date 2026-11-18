@@ -140,5 +140,12 @@
   "tables.addFiles": "Tambahkan file",
   "tables.calendar": "Kalender",
   "tables.end": "Akhir",
-  "tables.time": "Waktu"
+  "tables.time": "Waktu",
+  "tables.list": "Daftar",
+  "tables.of": "{shown} dari {count}",
+  "tables.ask": "Tanya {name}",
+  "tables.askFill": "Minta {name} mengisinya",
+  "tables.asked.show": "Di “{table}”, tampilkan hanya: {words}",
+  "tables.asked.fill": "Di “{table}”, isi kolom “{column}” di mana pun yang masih kosong.",
+  "tables.asked.row": "Di “{table}”, tentang “{row}”: "
 }
