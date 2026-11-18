@@ -312,6 +312,9 @@ export async function carried(was, them) {
   await watch()
 }
 
+/** This device joined the person's others with no one met to tell (caps/devices): the person's mailbox, theirs now, read from here on. */
+export const paired = () => watch()
+
 // ─── Sending and what comes ──────────────────────────────────────────────────
 
 /** Once no answer is being written, so that an answer's record holds only what it reached (caps/receipt). */

@@ -70,7 +70,6 @@
   "devices.mine": "Ja, det är mitt",
   "devices.stop": "Nej, avbryt",
   "devices.adopting": "Gör i ordning den här enheten…",
-  "devices.joined": "Klart. Öppnar {name}…",
   "devices.homeTitle": "Lägg först till {name} på hemskärmen",
   "devices.homeText": "På en iPhone eller iPad håller {name} på hemskärmen allt åtskilt från Safari. Tryck på ”Dela”, sedan på ”Lägg till på hemskärmen”, och öppna {name} därifrån.",
   "devices.homePaste": "Klistra sedan in den här länken i meddelanderutan där.",

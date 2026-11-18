@@ -159,22 +159,41 @@ async function typeCode(settings, code) {
   await field.fill(code)
 }
 
-/** A and B paired, B opened again in its own profile, joined, and listening, A's Your devices back at rest. Gives B's profile and A's Your devices. @param {Page} a @param {Page} b */
+/** Marks B's page, which joining keeps: it never opens again. @param {Page} b */
+const keep = (b) => b.evaluate(() => Object.assign(window, { kept: true }))
+
+/**
+ * On the new device, joined with no reload (the page marked by keep() is the same): done on the rail and on the map, with both, said
+ * by its own name, as the device that added it says; Done, and its Your devices lists both. @param {Page} b
+ */
+async function joined(b) {
+  const settings = b.locator('app-settings dialog[open]')
+  const said = settings.locator('.devices-said')
+  await expect(said).toHaveText(/ is added\. Each now gets what the other has: brains, settings, tasks and projects\.$/)
+  expect(await said.textContent()).toBe(`${await nameOf(b)} is added. Each now gets what the other has: brains, settings, tasks and projects.`)
+  await expect(settings.locator('.rail > .is-done')).toHaveCount(3)
+  await expect(settings.getByRole('list', { name: 'Your devices' }).getByRole('listitem')).toHaveCount(2)
+  await expect(settings.getByRole('button', { name: 'Done' })).toBeFocused()
+  await settings.getByRole('button', { name: 'Done' }).click()
+  await expect(settings.locator('.devices-cards > li')).toHaveCount(2)
+  expect(await b.evaluate(() => /** @type {any} */ (window).kept)).toBe(true)
+}
+
+/** A and B paired, B joined in its own profile with no reload, and listening, A's Your devices back at rest. Gives B's profile and A's Your devices. @param {Page} a @param {Page} b */
 async function pair(a, b) {
   const dir = await here(b)
   const { settings, code } = await exchange(a, b)
   // Typed as the new device shows them, a space between the halves: they go at the sixth digit, without Add.
   await typeCode(settings, `${code.slice(0, 3)} ${code.slice(3)}`)
   await sent(settings, a)
-  const reloaded = b.waitForEvent('load', { timeout: 20_000 })
+  await keep(b)
   await trustThere(b, a)
   await expect(settings.locator('.devices-said')).toHaveText(/ is added\. Each now gets what the other has: brains, settings, tasks and projects\.$/)
   // Done on the rail, every step ticked, and on the map, the device just added beside this one.
   await expect(settings.locator('.rail > .is-done')).toHaveCount(3)
   await expect(settings.getByRole('list', { name: 'Your devices' }).getByRole('listitem')).toHaveCount(2)
-  // B opens again where it was, on Your devices, which lists both.
-  await reloaded
-  await expect(b.locator('app-settings .devices-cards > li')).toHaveCount(2)
+  // B goes on where it is, with no reload, its Your devices listing both.
+  await joined(b)
   await closeSettings(b)
   expect(await here(b)).toBe(dir)
   await settings.getByRole('button', { name: 'Done' }).click()
@@ -195,12 +214,11 @@ test('a device added: six digits typed on the one that has the Jean, and the oth
   const { settings, code } = await exchange(page, b)
   await typeCode(settings, code)
   await sent(settings, page)
-  const reloaded = b.waitForEvent('load', { timeout: 20_000 })
+  await keep(b)
   await trustThere(b, page)
   await expect(settings.locator('.devices-said')).toHaveText(/ is added\. Each now gets what the other has: brains, settings, tasks and projects\.$/)
-  // B opens again in its own profile, now joined to A's, where it was, on Your devices, which lists both: no other profile is made.
-  await reloaded
-  await expect(b.locator('app-settings .devices-cards > li')).toHaveCount(2)
+  // B goes on in its own profile, now joined to A's, with no reload, its Your devices listing both: no other profile is made.
+  await joined(b)
   await closeSettings(b)
   expect([await here(b), await profiles(b)]).toEqual([first, [first]])
   const settled = await settingsOf(b)
@@ -502,16 +520,14 @@ test('a device removed with its box unticked keeps Jean on its own, and added ag
   // Added again: the profile open there joins A's again, B's own task kept.
   await closeSettings(page)
   const { settings: again, code } = await exchange(page, b)
-  const reloaded = b.waitForEvent('load', { timeout: 20_000 })
+  await keep(b)
   await typeCode(again, code)
   await sent(again, page)
   await trustThere(b, page)
   await expect(again.locator('.devices-said')).toHaveText(/ is added\./)
-  await expect(b.locator('app-settings .devices-said')).toHaveText('Done. Opening your Jean…')
-  // Opened again where it was, on Your devices, which lists both.
-  await reloaded
-  await expect(b.locator('app-settings .devices-cards > li')).toHaveCount(2)
-  await expect.poll(() => here(b)).toBe(dir)
+  // Where it is, with no reload, its Your devices listing both.
+  await joined(b)
+  expect(await here(b)).toBe(dir)
   expect(await profiles(b)).toEqual([dir])
   expect(await read(b, mine)).not.toBeNull()
   // Its keys again, the store's among them, A having let its new token in, and the profile as a person, which it forgot as it was removed.

@@ -42,9 +42,10 @@ export function rounds(kind) {
 
 /**
  * What came in shows: the projects (and Projects, Memory and Skills when what they keep came), the
- * room's conversations, and the one on screen unless it is being answered, which closes if it went. @param {string[]} came
+ * room's conversations, and the one on screen unless it is being answered, which closes if it went; with
+ * nothing, what joining another device brought (caps/devices). @param {string[]} came
  */
-async function show(came) {
+export async function show(came) {
   await settleHomes(app.fs)
   await refreshProjects()
   const home = app.projects.value.find((project) => project.data.default === true)

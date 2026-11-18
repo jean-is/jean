@@ -44,6 +44,10 @@ const quit = (label = 'devices.cancel', kind = 'button subtle') => html`<button 
 const named = (name) => html`<bdi>${name}</bdi>`
 
 
+/** Done, on either device: on the map, this device beside the others, the one just added among them, said by its name. @param {string} device @returns {Step} */
+const added = (device) => ({ at: 2, body: ((mine) => mine && map(t('cap.devices.name'), { icon: kindOf(mine.name), name: mine.name }, [places() ?? []].flat()))(devices.value.find((one) => one.id === own.value)),
+  said: t('devices.done', { device }), buttons: row(quit('devices.ok', 'button primary')) })
+
 /** The step under way, adding on this device or joining another, or none. @returns {Step | null} */
 function step() {
   const [a, b, name] = [adding.value, joining.value, BRAND.name]
@@ -57,7 +61,9 @@ function step() {
   if (b.step === 'trust') return { at: 1, body: html`<h3 tabindex="-1">${t('devices.yours')}</h3><div class="devices-who"><span class="avatar" aria-hidden="true">${initialOf(b.profile)}</span>
       <strong dir="auto">${b.profile}</strong><small>${tParts('devices.fromDevice', { device: named(b.device) })}</small></div><p class="hint">${t('devices.trustHint')}</p>`,
     buttons: row(html`<button class="button primary" @click=${trusted}>${t('devices.mine')}</button>`, quit('devices.stop')) }
-  if (b.step === 'adopting' || b.step === 'done') return { at: 2, said: t(b.step === 'done' ? 'devices.joined' : 'devices.adopting', { name }), waits: true }
+  if (b.step === 'adopting') return { at: 2, said: t('devices.adopting'), waits: true }
+  // Joined, with no reload: on the map, this device beside the others, as the device that added it shows.
+  if (b.step === 'done') return added(devices.value.find((one) => one.id === own.value)?.name ?? '')
   if (b.step === 'failed') return { wrong: t(`devices.why.${b.reason}`, { name }), buttons: row(quit('devices.close')) }
   // Its link as a QR code for the other device's camera, and the link itself, sent through the system's sheet from a phone or a tablet.
   if (a.step === 'waiting') return { at: 0, body: html`<h3 tabindex="-1">${t('devices.open')}</h3>${a.address ? qrOf(a.link, t('devices.qr')) : nothing}<p>${a.address ? t('devices.point') : t('devices.pasteThere', { name })}</p>
@@ -67,9 +73,7 @@ function step() {
     wrong: a.left < 3 ? t('devices.wrong', { count: a.left }) : '' }
   // Until the new device says it opened what came, which waits on the person there.
   if (a.step === 'sending') return { at: 1, said: t('devices.sending', { device: a.name }), waits: true, buttons: row(quit()) }
-  // Done, on the map the device just added joins.
-  if (a.step === 'done') return { at: 2, body: ((mine) => mine && map(t('cap.devices.name'), { icon: kindOf(mine.name), name: mine.name }, [places() ?? []].flat()))(devices.value.find((one) => one.id === own.value)),
-    said: t('devices.done', { device: a.name }), buttons: row(quit('devices.ok', 'button primary')) }
+  if (a.step === 'done') return added(a.name)
   if (a.step === 'failed') return { wrong: t(`devices.why.${a.reason}`, { name }), buttons: row(html`<button class="button" @click=${start}>${t('devices.again')}</button>`, quit('devices.close')) }
   return null
 }

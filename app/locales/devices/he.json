@@ -73,7 +73,6 @@
   "devices.mine": "כן, זה שלי",
   "devices.stop": "לא, לעצור",
   "devices.adopting": "מגדירים את המכשיר הזה…",
-  "devices.joined": "הושלם. פותחים את {name}…",
   "devices.homeTitle": "קודם, הוסיפו את {name} למסך הבית",
   "devices.homeText": "ב־iPhone או ב־iPad, מה שנשמר ב־{name} ממסך הבית נפרד ממה שנשמר ב־Safari. הקישו על ״שיתוף״, ואז על ״הוספה למסך הבית״, ופתחו את {name} משם.",
   "devices.homePaste": "שם, הדביקו את הקישור הזה בתיבת ההודעה.",

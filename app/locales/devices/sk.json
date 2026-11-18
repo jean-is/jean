@@ -76,7 +76,6 @@
   "devices.mine": "Áno, je moje",
   "devices.stop": "Nie, zastaviť",
   "devices.adopting": "Nastavuje sa toto zariadenie…",
-  "devices.joined": "Hotovo. Otvára sa aplikácia {name}…",
   "devices.homeTitle": "Najprv pridajte aplikáciu {name} na plochu",
   "devices.homeText": "V iPhone alebo iPade má aplikácia {name} na ploche svoje veci oddelene od Safari. Klepnite na Zdieľať, potom na Pridať na plochu a otvorte ju odtiaľ.",
   "devices.homePaste": "Tam vložte tento odkaz do poľa správy.",

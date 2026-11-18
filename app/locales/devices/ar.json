@@ -82,7 +82,6 @@
   "devices.mine": "نعم، هذا لي",
   "devices.stop": "لا، أوقف الإضافة",
   "devices.adopting": "جارٍ إعداد هذا الجهاز…",
-  "devices.joined": "تم. جارٍ فتح {name}…",
   "devices.homeTitle": "أولًا، أضف {name} إلى الشاشة الرئيسية",
   "devices.homeText": "على iPhone أو iPad، ما يُحفظ في {name} على الشاشة الرئيسية يبقى منفصلًا عمّا يُحفظ في Safari. اضغط «مشاركة»، ثم «إضافة إلى الشاشة الرئيسية»، ثم افتح {name} من هناك.",
   "devices.homePaste": "هناك، الصق هذا الرابط في مربع الرسالة.",

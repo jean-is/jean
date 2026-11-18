@@ -73,7 +73,6 @@
   "devices.mine": "Oui, c’est à moi",
   "devices.stop": "Non, arrêter",
   "devices.adopting": "Préparation de cet appareil…",
-  "devices.joined": "Terminé. Ouverture de votre {name}…",
   "devices.homeTitle": "D’abord, ajoutez {name} à votre écran d’accueil",
   "devices.homeText": "Sur un iPhone ou un iPad, à partir de l’écran d’accueil, {name} garde ses affaires séparées de celles de Safari. Touchez Partager, puis Sur l’écran d’accueil, et ouvrez {name} à partir de cet écran.",
   "devices.homePaste": "Là, collez ce lien dans la zone de saisie.",

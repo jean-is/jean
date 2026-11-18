@@ -70,7 +70,6 @@
   "devices.mine": "አዎ፣ የእኔ ነው",
   "devices.stop": "አይ፣ ያቁሙ",
   "devices.adopting": "ይህን መሣሪያ በማዘጋጀት ላይ…",
-  "devices.joined": "ተጠናቋል። {name}ን በመክፈት ላይ…",
   "devices.homeTitle": "መጀመሪያ {name}ን ወደ መነሻ ማያ ገጽዎ ያክሉ",
   "devices.homeText": "በiPhone ወይም በiPad ላይ፣ {name}ን ከመነሻ ማያ ገጽ ሲከፍቱ ነገሮቹ ከSafari ተለይተው ይቀመጣሉ። Share ይንኩ፣ ከዚያ Add to Home Screen ይምረጡ፣ እና {name}ን ከዚያ ይክፈቱ።",
   "devices.homePaste": "እዚያ ይህን አገናኝ በመልእክት ሳጥኑ ውስጥ ይለጥፉ።",

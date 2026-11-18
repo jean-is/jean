@@ -70,7 +70,6 @@
   "devices.mine": "Ja, det er mit",
   "devices.stop": "Nej, stop",
   "devices.adopting": "Gør denne enhed klar…",
-  "devices.joined": "Færdig. Åbner {name}…",
   "devices.homeTitle": "Føj først {name} til din hjemmeskærm",
   "devices.homeText": "På en iPhone eller iPad holder {name} på hjemmeskærmen alt adskilt fra Safari. Tryk på “Del”, derefter på “Føj til hjemmeskærm”, og åbn {name} derfra.",
   "devices.homePaste": "Indsæt så dette link i beskedfeltet dér.",

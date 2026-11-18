@@ -73,7 +73,6 @@
   "devices.mine": "Da, îmi aparține",
   "devices.stop": "Nu, opriți",
   "devices.adopting": "Se pregătește acest dispozitiv…",
-  "devices.joined": "Gata. Se deschide {name}…",
   "devices.homeTitle": "Mai întâi, adăugați {name} pe ecranul principal",
   "devices.homeText": "Pe un iPhone sau iPad, {name} de pe ecranul principal își păstrează lucrurile separat de cele din Safari. Atingeți Partajați, apoi Adaugă pe ecranul principal, și deschideți {name} de acolo.",
   "devices.homePaste": "Acolo, lipiți acest link în caseta de mesaj.",

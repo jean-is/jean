@@ -70,7 +70,6 @@
   "devices.mine": "Kyllä, se on minun",
   "devices.stop": "Ei, peruuta",
   "devices.adopting": "Valmistellaan tätä laitetta…",
-  "devices.joined": "Valmis. Avataan sovellus {name}…",
   "devices.homeTitle": "Lisää ensin sovellus {name} Koti-valikkoon",
   "devices.homeText": "iPhonessa tai iPadissa Koti-valikosta avattu {name} pitää tietonsa erillään Safarin tiedoista. Napauta ”Jaa”, sitten ”Lisää Koti-valikkoon”, ja avaa sovellus sieltä.",
   "devices.homePaste": "Liitä tämä linkki siellä viestikenttään.",

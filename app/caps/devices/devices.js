@@ -6,7 +6,7 @@
 // crosses in ./bundle.js, and what a device keeps and does with what comes in ./flow.js.
 import { html, svg, nothing } from 'lit-html'
 import { signal, effect, computed } from '@preact/signals-core'
-import { register, unlock } from '../../ui/caps.js'
+import { register, unlock, loaded } from '../../ui/caps.js'
 import { app, changeSettings, rememberUnlocked, refreshConversations, refreshProjects, brainLabel, notify, pairs } from '../../ui/state.js'
 import { here, mine } from '../../ui/opfs.js'
 import { host } from '../../ui/host.js'
@@ -146,9 +146,11 @@ async function listening() {
   // Paired, or once was: the store's rounds, which its keys, held or not, decide (./store.js).
   const paired = (await listOf(app.fs)).length > 1
   if (paired) await storeOf().then((store) => store.start(ctx, relayOf)).catch(warn)
-  // Its identity gone or another now, as this device's removal was acted on in another tab, its mailbox is never opened again.
-  stop = listen({ base, token: me.token, lock: mine('app-devices'), onMessages: (messages) => heard(ctx, messages), clock: clocked, quiet: answering,
-    lost: async (...box) => ((await identity(false))?.id === me.id ? open(...box) : stop()) })
+  // Its identity gone or another now, as this device's removal was acted on in another tab or it joined other devices, its mailbox is
+  // never opened again, and only its own listening stops, never the next identity's.
+  const off = listen({ base, token: me.token, lock: mine('app-devices'), onMessages: (messages) => heard(ctx, messages, off), clock: clocked, quiet: answering,
+    lost: async (...box) => ((await identity(false))?.id === me.id ? open(...box) : off()) })
+  stop = off
   // A device removed here may still be owed its removal.
   if (!paired) return
   if (await quiet(ctx)) await tell(ctx, { kind: 'ask' })
@@ -159,10 +161,11 @@ async function listening() {
 /**
  * Each message opened with the keys of the devices this profile knows, anything else dropped, then done; one from a device removed here,
  * which may be back with its mailbox gone, owes it its removal again (back()). This device's removal is acted on once all that came is
- * read, each removal's list taken (firstOf()); by a tab whose identity went or is another now, nothing is. @param {Context} ctx @param {import('../../ui/relay.js').Message[]} messages
+ * read, each removal's list taken (firstOf()); by a tab whose identity went or is another now, nothing is, its listening stopped.
+ * @param {Context} ctx @param {import('../../ui/relay.js').Message[]} messages @param {() => void} off
  */
-async function heard(ctx, messages) {
-  if ((await identity(false))?.id !== ctx.me.id) return stop()
+async function heard(ctx, messages, off) {
+  if ((await identity(false))?.id !== ctx.me.id) return off()
   const removals = /** @type {{ erase: boolean, by: string }[]} */ ([])
   for (const { bytes, at } of messages) {
     const known = await listOf(app.fs)
@@ -425,19 +428,40 @@ async function welcome(key) {
 
 /**
  * The profile open here joins A's devices, in place (D748): what it holds stays, and goes to them, and what they hold comes (merge()); then the
- * mailbox of an identity it had alone goes, and people it met under a key of its own are told of the profile's (caps/people); then it
- * opens again. @param {any} bundle @param {Identity} me @param {Flow} one @param {unknown} store
+ * mailbox of an identity it had alone goes, and people it met under a key of its own are told of the profile's (caps/people). It goes on
+ * without opening again: what came shows (shown()), and its mailbox and the store's rounds start under its new identity.
+ * @param {any} bundle @param {Identity} me @param {Flow} one @param {unknown} store
  */
 async function adoptHere(bundle, me, one, store) {
   const had = await identity(false)
   const { was, met } = await merge(await contextOf(me), bundle, store)
   if (had) await remove(relayOf(), had.token).catch(() => {})
-  if (was) await (met.length && await unlock('people') ? (await import('../people/people.js')).carried(was, met) : remove(relayOf(), was.token)).catch(warn)
+  // People reads the person's mailbox, A's person's from now on.
+  if (was && met.length && await unlock('people')) await (await import('../people/people.js')).carried(was, met).catch(warn)
+  else {
+    if (was) await remove(relayOf(), was.token).catch(() => {})
+    if (loaded.peek().has('people')) await (await import('../people/people.js')).paired().catch(warn)
+  }
   one.boxes.length = 0
-  // Done, said a moment before the profile opens again, which reloads the page.
+  await end(one)
+  await shown().catch(warn)
+  await refresh()
+  listening().catch(warn)
   joining.value = { step: 'done' }
-  await new Promise((resolve) => setTimeout(resolve, 1500))
-  switchTo(here(), whoOf(JSON.parse(await app.fs.read(VAULT) ?? 'null')))
+}
+
+/**
+ * What joining brought, shown as opening again would: the capabilities its settings found, the profile's name and colour, the projects
+ * with one Home, and the task on screen where merge() moved it with Home's, or a new one where it went.
+ */
+async function shown() {
+  await Promise.all(app.settings.peek().unlocked.map(unlock))
+  if (loaded.peek().has('profiles')) await (await import('../profiles/profiles.js')).refresh()
+  const current = app.current.peek()
+  await (await import('../sync/rounds.js')).show([])
+  if (!current || app.current.peek() !== current || await app.fs.exists(current.path)) return
+  const moved = `${app.projectDir}/conversations/${current.path.split('/').at(-1)}`
+  app.current.value = await app.fs.exists(moved) ? { ...current, path: moved } : null
 }
 
 /**

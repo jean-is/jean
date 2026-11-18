@@ -73,7 +73,6 @@
   "devices.mine": "Sí, es mío",
   "devices.stop": "No, cancelar",
   "devices.adopting": "Preparando este dispositivo…",
-  "devices.joined": "Listo. Abriendo {name}…",
   "devices.homeTitle": "Primero, añade {name} a tu pantalla de inicio",
   "devices.homeText": "En un iPhone o iPad, {name} en la pantalla de inicio guarda sus cosas aparte de las de Safari. Toca Compartir, luego Añadir a pantalla de inicio, y abre {name} desde allí.",
   "devices.homePaste": "Allí, pega este enlace en el cuadro de mensaje.",

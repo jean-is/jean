@@ -67,7 +67,6 @@
   "devices.mine": "是的，是我的",
   "devices.stop": "不是，停止",
   "devices.adopting": "正在設定這台裝置…",
-  "devices.joined": "完成。正在開啟你的 {name}…",
   "devices.homeTitle": "先把 {name} 加入主畫面",
   "devices.homeText": "在 iPhone 或 iPad 上，主畫面上的 {name} 會把它的內容和 Safari 的分開保存。點「分享」，再點「加入主畫面」，然後從那裡開啟它。",
   "devices.homePaste": "在那裡，把這個連結貼到訊息框裡。",

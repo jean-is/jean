@@ -67,7 +67,6 @@
   "devices.mine": "Ya, ini milik saya",
   "devices.stop": "Tidak, hentikan",
   "devices.adopting": "Menyiapkan perangkat ini…",
-  "devices.joined": "Selesai. Membuka {name} Anda…",
   "devices.homeTitle": "Pertama, tambahkan {name} ke Layar Utama",
   "devices.homeText": "Di iPhone atau iPad, {name} di Layar Utama menyimpan datanya terpisah dari Safari. Ketuk Bagikan, lalu Tambahkan ke Layar Utama, lalu buka {name} dari sana.",
   "devices.homePaste": "Di sana, tempel tautan ini di kotak pesan.",

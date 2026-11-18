@@ -70,7 +70,6 @@
   "devices.mine": "Igen, az enyém",
   "devices.stop": "Nem, állítsd le",
   "devices.adopting": "Ennek az eszköznek a beállítása…",
-  "devices.joined": "Kész. A(z) {name} megnyitása…",
   "devices.homeTitle": "Először add hozzá a(z) {name} alkalmazást a Főképernyőhöz",
   "devices.homeText": "iPhone-on vagy iPaden a Főképernyőn lévő {name} a Safaritól külön tartja a dolgait. Koppints a Megosztás gombra, majd a Főképernyőhöz adás lehetőségre, és onnan nyisd meg.",
   "devices.homePaste": "Ott illeszd be ezt a linket az üzenetmezőbe.",

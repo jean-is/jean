@@ -76,7 +76,6 @@
   "devices.mine": "Tak, to moje",
   "devices.stop": "Nie, przerwij",
   "devices.adopting": "Przygotowywanie tego urządzenia…",
-  "devices.joined": "Gotowe. Otwieranie aplikacji {name}…",
   "devices.homeTitle": "Najpierw dodaj aplikację {name} do ekranu początkowego",
   "devices.homeText": "Na iPhonie lub iPadzie aplikacja {name} na ekranie początkowym trzyma swoje rzeczy osobno od Safari. Stuknij Udostępnij, potem Do ekranu początkowego, i otwórz ją stamtąd.",
   "devices.homePaste": "Tam wklej ten link do pola wiadomości.",

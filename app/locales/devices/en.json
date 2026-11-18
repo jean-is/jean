@@ -70,7 +70,6 @@
   "devices.mine": "Yes, it’s mine",
   "devices.stop": "No, stop",
   "devices.adopting": "Setting up this device…",
-  "devices.joined": "Done. Opening your {name}…",
   "devices.homeTitle": "First, add {name} to your Home Screen",
   "devices.homeText": "On an iPhone or iPad, {name} on the Home Screen keeps its things apart from Safari’s. Tap Share, then Add to Home Screen, and open it from there.",
   "devices.homePaste": "There, paste this link into the box.",

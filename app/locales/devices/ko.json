@@ -67,7 +67,6 @@
   "devices.mine": "네, 제 거예요",
   "devices.stop": "아니요, 중단할게요",
   "devices.adopting": "이 기기를 준비하는 중…",
-  "devices.joined": "다 됐어요. {name} 여는 중…",
   "devices.homeTitle": "먼저 {name} 아이콘을 홈 화면에 추가하세요",
   "devices.homeText": "iPhone이나 iPad에서는 홈 화면에서 연 {name}의 데이터가 Safari의 데이터와 따로 보관돼요. ‘공유’를 누른 다음 ‘홈 화면에 추가’를 선택하고, 거기서 여세요.",
   "devices.homePaste": "거기서 입력창에 이 링크를 붙여 넣으세요.",

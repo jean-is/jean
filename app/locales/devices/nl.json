@@ -70,7 +70,6 @@
   "devices.mine": "Ja, het is van mij",
   "devices.stop": "Nee, stoppen",
   "devices.adopting": "Dit apparaat wordt ingesteld…",
-  "devices.joined": "Klaar. {name} wordt geopend…",
   "devices.homeTitle": "Zet {name} eerst op je beginscherm",
   "devices.homeText": "Op een iPhone of iPad houdt {name} op het beginscherm alles gescheiden van Safari. Tik op ‘Deel’, dan op ‘Zet op beginscherm’, en open {name} vanaf daar.",
   "devices.homePaste": "Plak deze link daar in het berichtvak.",

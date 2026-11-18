@@ -70,7 +70,6 @@
   "devices.mine": "Ja, das ist meins",
   "devices.stop": "Nein, abbrechen",
   "devices.adopting": "Dieses Gerät wird eingerichtet…",
-  "devices.joined": "Fertig. {name} wird geöffnet…",
   "devices.homeTitle": "Füge {name} zuerst zu deinem Home-Bildschirm hinzu",
   "devices.homeText": "Auf einem iPhone oder iPad hält {name} auf dem Home-Bildschirm alles getrennt von Safari. Tippe auf „Teilen“, dann auf „Zum Home-Bildschirm“, und öffne {name} von dort.",
   "devices.homePaste": "Füge dort diesen Link ins Nachrichtenfeld ein.",

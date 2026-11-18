@@ -73,7 +73,6 @@
   "devices.mine": "Sì, è mio",
   "devices.stop": "No, annulla",
   "devices.adopting": "Preparazione di questo dispositivo…",
-  "devices.joined": "Fatto. Apertura di {name}…",
   "devices.homeTitle": "Prima, aggiungi {name} alla schermata Home",
   "devices.homeText": "Su iPhone o iPad, {name} nella schermata Home tiene le sue cose separate da quelle di Safari. Tocca Condividi, poi Aggiungi alla schermata Home, e apri {name} da lì.",
   "devices.homePaste": "Lì, incolla questo link nella casella del messaggio.",

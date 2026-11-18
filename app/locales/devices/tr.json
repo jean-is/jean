@@ -70,7 +70,6 @@
   "devices.mine": "Evet, benim",
   "devices.stop": "Hayır, durdur",
   "devices.adopting": "Bu cihaz hazırlanıyor…",
-  "devices.joined": "Bitti. {name} açılıyor…",
   "devices.homeTitle": "Önce {name} uygulamasını Ana Ekrana ekle",
   "devices.homeText": "iPhone ya da iPad’de Ana Ekrandaki {name}, kendi verilerini Safari’ninkilerden ayrı tutar. Paylaş’a, sonra Ana Ekrana Ekle’ye dokun ve oradan aç.",
   "devices.homePaste": "Orada bu bağlantıyı mesaj kutusuna yapıştır.",

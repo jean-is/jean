@@ -73,7 +73,6 @@
   "devices.mine": "Sim, é meu",
   "devices.stop": "Não, cancelar",
   "devices.adopting": "A preparar este dispositivo…",
-  "devices.joined": "Concluído. A abrir {name}…",
   "devices.homeTitle": "Primeiro, adiciona {name} ao ecrã principal",
   "devices.homeText": "Num iPhone ou iPad, {name} no ecrã principal guarda as suas coisas à parte das do Safari. Toca em Partilhar, depois em Adicionar ao ecrã principal, e abre {name} a partir daí.",
   "devices.homePaste": "Aí, cola esta ligação na caixa de mensagem.",

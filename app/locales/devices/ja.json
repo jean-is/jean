@@ -67,7 +67,6 @@
   "devices.mine": "はい、自分のものです",
   "devices.stop": "いいえ、中止する",
   "devices.adopting": "この端末を準備しています…",
-  "devices.joined": "完了しました。{name} を開いています…",
   "devices.homeTitle": "まず、{name} をホーム画面に追加してください",
   "devices.homeText": "iPhone や iPad では、ホーム画面に追加した {name} のデータは Safari とは別に保たれます。「共有」をタップし、「ホーム画面に追加」を選んで、そこから開いてください。",
   "devices.homePaste": "ホーム画面から開いたら、メッセージ欄にこのリンクを貼り付けてください。",

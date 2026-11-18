@@ -73,7 +73,6 @@
   "devices.mine": "Da, moje je",
   "devices.stop": "Ne, zaustavi",
   "devices.adopting": "Postavljanje ovog uređaja…",
-  "devices.joined": "Gotovo. Otvaranje aplikacije {name}…",
   "devices.homeTitle": "Najprije dodajte aplikaciju {name} na početni zaslon",
   "devices.homeText": "Na iPhoneu ili iPadu aplikacija {name} na početnom zaslonu svoje stvari čuva odvojeno od Safarija. Dodirnite Dijeli, zatim Dodaj na početni zaslon i otvorite je odande.",
   "devices.homePaste": "Ondje zalijepite ovu poveznicu u okvir za poruku.",
