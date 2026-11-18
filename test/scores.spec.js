@@ -234,7 +234,8 @@ test('a tune is renamed and pinned by a record in its task, and taken off the Cr
   const place = tasks.getByRole('button', { name: 'Creations', exact: true })
   await place.click()
   const creations = page.locator('app-creations'), card = creations.locator('.creation')
-  await creations.locator('.creation-start[data-kind="music"]').click()
+  await creations.getByRole('button', { name: 'Create', exact: true }).click()
+  await creations.locator('#creations-new [data-kind="music"]').click()
   await expect(page.locator('#prompt')).toBeFocused()
   await expect(page.locator('#prompt')).toHaveValue('Compose a short lullaby for the piano, as sheet music I can play.')
   await page.keyboard.type('a jig')
@@ -247,7 +248,7 @@ test('a tune is renamed and pinned by a record in its task, and taken off the Cr
   await page.keyboard.type('Jig for Léa')
   await page.keyboard.press('Enter')
   await (await menu()).getByRole('button', { name: 'Pin' }).click()
-  await expect(creations.locator('.creations-group')).toHaveText(['Pinned1'])
+  await expect(card.getByRole('img', { name: 'Pinned' })).toHaveCount(1)
   await expect(card.locator('.creation-open')).toHaveText(['Jig for Léa'])
   // Read again from its task, as after a reload (which Playwright's WebKit, keeping nothing, can't show).
   const tunes = () => page.evaluate(async () => (await (await import('/ui/creations.js')).creationsHere()).map((one) => `${one.name}${one.pinned ? ' (pinned)' : ''}`))
@@ -279,9 +280,10 @@ test('beside the task, the pane’s button sends a tune to an app here, saves it
   const tasks = await openTasks(page)
   const place = tasks.getByRole('button', { name: 'Creations', exact: true })
   await place.click()
-  await page.locator('app-creations .creation-start[data-kind="music"]').click()
+  await page.locator('app-creations').getByRole('button', { name: 'Create', exact: true }).click()
+  await page.locator('#creations-new [data-kind="music"]').click()
   await expect(page.locator('#prompt')).toHaveValue('Compose a short lullaby for the piano, as sheet music I can play.')
-  // The words are there a moment before the keyboard: until then, keys press the card.
+  // The words are there a moment before the keyboard.
   await expect(page.locator('#prompt')).toBeFocused()
   await page.keyboard.type('a jig')
   await page.keyboard.press('Enter')

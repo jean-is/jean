@@ -3,7 +3,7 @@
 // its record, made or replaced whole by one tool and changed by exact passages with another, each call dressed in its look (./look.js),
 // written, checked and said to the brain, and opened beside the task. Its words are retyped in place and its parts pointed at in its pane
 // (./hand.js, D741); what the brain changes after the turn that made it waits as its version, `<folder>/.suggested/<ulid>-<slug>`, for the
-// person to accept or reject (D505). Among the creations once the project holds one, until then its card to start one. Each kind says
+// person to accept or reject (D505). Among the creations once the project holds one, until then its row in Create's menu. Each kind says
 // its folder, record, words, tools, check and view; Sites adds publishing (./sites.js). A kind whose pane fills as it comes (Prototypes) is
 // shown while the brain still writes the call that makes it, from what the call holds so far.
 import { html } from 'lit-html'
@@ -300,7 +300,7 @@ export function folderKind(kind) {
     remove: (/** @type {{ path: string }} */ { path }) => Promise.all([path, waitingOf(path)].map((one) => app.fs.remove(`${app.projectDir}/${one}`))),
     make: async () => { await skill(); await ask(ASK, EXAMPLE) } }
 
-  // Among the creations once the project holds one, from when its first is written; until then only its card to start one (D553).
+  // Among the creations once the project holds one, from when its first is written; until then only its row in Create's menu (D553).
   const joined = signal(/** @type {Record<string, unknown>} */ ({ starts: entry }))
   let here = ''
   /** It among the creations of the project open, `dir`, which holds one. @param {string} dir */

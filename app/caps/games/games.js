@@ -5,7 +5,7 @@
 // so that it fixes the game before showing it. A game opens beside the task in its own frame (./frame.js): a cover to start it,
 // pause, mute, full screen, buttons on a touch screen, saves kept beside it; saved, a page of its own that plays anywhere offline
 // (./page.js). Among the creations once the project holds one, each shown by a picture of it being played, which its play-test took;
-// until then its card to start one. Found by its skill, which brings it (D401); nothing of it shows before.
+// until then its row in Create's menu. Found by its skill, which brings it (D401); nothing of it shows before.
 import { html, nothing, svg } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { app, conversationOf } from '../../ui/state.js'
@@ -126,7 +126,7 @@ const games = { id: 'games', at: 2.7, draw: () => GLYPH, kept, mention: 'game', 
   make: async () => { await skill(); await ask('games.ask', 'games.example') } }
 
 // Among the creations once the project holds a game, from when its first is written, so that the play-test's seconds show it there
-// already; until then only its card to start one (D553).
+// already; until then only its row in Create's menu (D553).
 const joined = signal(/** @type {Record<string, unknown>} */ ({ starts: games }))
 let here = ''
 /** Games among the creations of the project open, `dir`, which holds one. @param {string} dir */

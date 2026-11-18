@@ -422,14 +422,9 @@ test('a collection is pinned, renamed, duplicated with its rows and deleted from
   const tasks = await openTasks(page)
   await tasks.getByRole('button', { name: 'Creations', exact: true }).click()
   const creations = page.locator('app-creations'), names = creations.locator('.creation-open')
-  // One kind here: no kinds to pick, and one card to start another.
-  await expect(creations.locator('.creations-kinds')).toHaveCount(0)
-  await expect(creations.locator('.creation-start b')).toHaveText(['Collection'])
-  // Its + stays at its end on a phone too.
-  const size = page.viewportSize()
-  await page.setViewportSize({ width: 390, height: 844 })
-  await expect(creations.locator('.creation-start > .icon')).toBeVisible()
-  if (size) await page.setViewportSize(size)
+  // One kind here: no kinds to pick, and Create names it, making another at once.
+  await expect(creations.locator('.creations-kinds, .creations-chips')).toHaveCount(0)
+  await expect(creations.locator('.creations-bar .primary')).toHaveText('Collection')
   const menu = async (/** @type {string} */ name) => {
     const card = creations.locator('.creation').filter({ hasText: name })
     await card.hover()

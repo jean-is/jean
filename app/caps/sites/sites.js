@@ -5,7 +5,7 @@
 // brain what to fix before it is shown. A site opens beside the task at a phone's, a tablet's or a computer's width, its links leading
 // to its other pages, and leaves as a zip of its files, or goes online at a name of its own where the share host publishes
 // sites (./publish.js). A page on its own (a file, an app, a game, a deck) goes online the same way, as a site of one page made from it
-// (publishPage). Among the creations once the project holds one; until then its card to start one. Found by its skill, which brings it
+// (publishPage). Among the creations once the project holds one; until then its row in Create's menu. Found by its skill, which brings it
 // (D401), or by a page's Publish…; nothing of it shows before. Its words are retyped in place and its parts pointed at for the brain in its
 // pane (./hand.js, D741); what the brain changes after the turn it made the site waits as its version, `sites/.suggested/<ulid>-<slug>`,
 // for the person to accept or reject (D505). What visitors send its forms once it is online waits sealed at the host until Jean collects it

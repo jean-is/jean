@@ -492,12 +492,12 @@ test('the pictures and films it made are among the creations, a card each openin
   await cards.nth(1).click()
   await expect(page.locator('app-preview .pane-head h2')).toHaveText('draw-a-lighthouse-at-dusk')
   await expect(page.locator('app-preview .view-picture')).toBeVisible()
-  // Create, a menu of a picture, a film and an app, which the project doesn't hold yet (D553): a request in the box, its example
-  // selected, which the user's own words replace; the app's card to start one is there too.
+  // Create, a menu of a picture, a film and an app, which the project doesn't hold yet (D553), each with its few words, in two
+  // groups under their names: a request in the box, its example selected, which the user's own words replace.
   await creations.locator('.creations-bar').getByRole('button', { name: 'Create', exact: true }).click()
   const kinds = creations.locator('#creations-new')
-  await expect(kinds.getByRole('button')).toHaveText(['Picture', 'Film', 'App'])
-  await expect(creations.locator('.creation-start b')).toHaveText(['Picture', 'Film', 'App'])
+  await expect(kinds.locator('b')).toHaveText(['Picture', 'Film', 'App'])
+  await expect(kinds.locator('p')).toHaveText(['Pictures and sound', 'Use and play'])
   await kinds.getByRole('button', { name: 'Picture' }).click()
   const box = page.locator('#prompt'), selected = () => box.evaluate((/** @type {HTMLTextAreaElement} */ area) => area.value.slice(area.selectionStart, area.selectionEnd))
   await expect(box).toBeFocused()
@@ -505,8 +505,9 @@ test('the pictures and films it made are among the creations, a card each openin
   expect(await selected()).toBe('a lighthouse at dusk, in watercolour')
   await page.keyboard.type('a fox in the snow')
   await expect(box).toHaveValue('Make a picture of a fox in the snow.')
-  // A film's card above them, the same: what the box held replaced.
-  await creations.locator('.creation-start[data-kind="films"]').click()
+  // A film, from the menu again, the same: what the box held replaced.
+  await creations.locator('.creations-bar').getByRole('button', { name: 'Create', exact: true }).click()
+  await kinds.locator('[data-kind="films"]').click()
   await expect(box).toBeFocused()
   await expect(box).toHaveValue('Make a film of a paper boat drifting down a stream.')
   expect(await selected()).toBe('a paper boat drifting down a stream')
@@ -514,7 +515,7 @@ test('the pictures and films it made are among the creations, a card each openin
   await expect(page.locator('app-settings dialog[open]')).toHaveCount(0)
 })
 
-test('with nothing here to make a picture or a film, turning them on, their Open and their cards lead to Settings › Brains, where a brain that makes them is added, not to an empty page; a film\'s card unfolds while nothing is made (D542, D585)', async ({ page }) => {
+test('with nothing here to make a picture or a film, turning them on, their Open and their rows in Create\'s menu lead to Settings › Brains, where a brain that makes them is added, not to an empty page (D542, D585)', async ({ page }) => {
   // No brain that makes pictures or films, on a device without WebGPU.
   await page.addInitScript(() => Object.defineProperty(Navigator.prototype, 'gpu', { configurable: true, get: () => undefined }))
   await page.route('**/v1/models', async (route) => {
@@ -542,14 +543,16 @@ test('with nothing here to make a picture or a film, turning them on, their Open
   const tasks = await openTasks(page)
   await tasks.getByRole('button', { name: 'Creations', exact: true }).click()
   const creations = page.locator('app-creations'), box = page.locator('#prompt')
-  const picture = creations.locator('.creation-start[data-kind="pictures"]'), film = creations.locator('.creation-start[data-kind="films"]')
-  await expect(creations.locator('.creations-start')).toHaveClass(/is-empty/)
+  const picture = creations.locator('#creations-new [data-kind="pictures"]'), film = creations.locator('#creations-new [data-kind="films"]')
+  // Nothing made yet: the page says so around Create, whose menu holds a picture and a film, each with its few words.
+  await expect(creations.locator('.creations-empty')).toBeVisible()
+  await creations.getByRole('button', { name: 'Create', exact: true }).click()
   await expect(film).toHaveText(/Film\s+An animated scene/)
-  await expect(film.locator('.creation-blank')).toBeVisible()
   await picture.click()
   await expect(box).toHaveValue('Make a picture of a lighthouse at dusk, in watercolour.')
   await brains()
   await closeSettings(page)
+  await creations.getByRole('button', { name: 'Create', exact: true }).click()
   await film.click()
   await expect(box).toHaveValue('Make a film of a paper boat drifting down a stream.')
   await brains()
@@ -581,7 +584,7 @@ test('a picture is renamed, each of its versions, pinned, asked for again like i
   await page.keyboard.press('Enter')
   await (await menu()).getByRole('button', { name: 'Pin' }).click()
   await expect.poll(metas).toEqual(['Lighthouse for Léa.png (pinned)'])
-  await expect(creations.locator('.creations-group')).toHaveText(['Pinned1'])
+  await expect(creations.locator('.creation').getByRole('img', { name: 'Pinned' })).toHaveCount(1)
   // Another like it: a request in the box, the user's words to come at its end.
   await (await menu()).getByRole('button', { name: 'Another like this' }).click()
   const box = page.locator('#prompt')

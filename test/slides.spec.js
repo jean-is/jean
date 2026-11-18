@@ -394,9 +394,9 @@ test('the decks kept are slides among the creations: their first slide on their 
   const place = tasks.getByRole('button', { name: 'Creations', exact: true })
   await place.click()
   const creations = page.locator('app-creations'), card = creations.locator('.creation')
-  await expect(creations.locator('.creation-start b')).toHaveText(['Slides', 'Score'])
   // Create, then Slides: Jean's own Slides skill in the room, and a request in the box, its example selected for the user's own words.
   await creations.getByRole('button', { name: 'Create', exact: true }).click()
+  await expect(creations.locator('#creations-new b')).toHaveText(['Slides', 'Score'])
   await creations.locator('.creations-menu:popover-open').getByRole('button', { name: 'Slides' }).click()
   const box = page.locator('#prompt')
   await expect(box).toBeFocused()

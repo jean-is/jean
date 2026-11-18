@@ -31,16 +31,16 @@ const latest = (a, b) => (a.changed < b.changed ? 1 : -1)
 const of = async (kind) => (/** @type {Creation[]} */ (await kind.kept())).map((item) => ({ ...item, kind }))
 /** The open project's creations, the latest changed first, each with its kind's slot: what the drawer, the page and @ list. */
 export const creationsHere = async () => (await Promise.all(slots('creations').map(of))).flat().sort(latest)
-/** Those listed, read again as the tasks are, as capabilities come, and as their page opens or changes one; and whether their page shows. */
-export const all = signal(/** @type {Awaited<ReturnType<typeof creationsHere>>} */ ([])), shown = signal(false)
+/** Those listed, read again as the tasks are, as capabilities come, and as their page opens or changes one; whether their page shows; and whether the project's have been read, before which none listed doesn't mean none made. */
+export const all = signal(/** @type {Awaited<ReturnType<typeof creationsHere>>} */ ([])), shown = signal(false), read = signal(false)
 let reading = 0
 // Each kind's as soon as it is read, so that a slow kind (the scores of many tasks) holds back none of the others.
-export const reread = () => { const at = ++reading, kinds = slots('creations'); return Promise.all(kinds.map((kind) => of(kind).then((list) => { if (at === reading) all.value = [...all.value.filter((one) => one.kind !== kind && kinds.includes(one.kind)), ...list].sort(latest) }))).catch(console.warn) }
+export const reread = () => { const at = ++reading, kinds = slots('creations'); return Promise.all(kinds.map((kind) => of(kind).then((list) => { if (at === reading) all.value = [...all.value.filter((one) => one.kind !== kind && kinds.includes(one.kind)), ...list].sort(latest) }))).then(() => { if (at === reading) read.value = true }).catch(console.warn) }
 effect(() => { void [app.conversations.value, loaded.value]; reread() })
 // Another project keeps the page, none of the one left's on it while its own are read. Loaded with the drawer open, before the
 // room has its project (app.js), none yet is no other: the first new task after a reload leaves the page too.
 let room = app.project.peek().dir
-effect(() => { void [newTasks.value, app.current.value]; const dir = app.project.peek().dir; if (dir === room || !room) shown.value = false; else all.value = []; room = dir })
+effect(() => { void [newTasks.value, app.current.value]; const dir = app.project.peek().dir; if (dir === room || !room) shown.value = false; else { all.value = []; read.value = false } room = dir })
 
 /** The page, in place of a new task's welcome: the `main` slot Documents and Tables carry, left for another page there. */
 export const page = { at: 2, draw: () => (shown.value ? (void import('./creations-page.js'), html`<app-creations></app-creations>`) : null), leave: () => { shown.value = false } }
@@ -74,7 +74,7 @@ export async function ask(key, example) {
 }
 
 /** Their glyph, three shapes, none of them a kind, so that every kind made and every kind to come is among them (D393); pointed at, they are tossed and land back (creations.css). */
-const SHAPES = icon(svg`<path d="M12 3 16.5 10.5h-9Z"/><rect x="3.5" y="13" width="7.5" height="7.5" rx="1.5"/><circle cx="16.75" cy="16.75" r="3.75"/>`, 'creations-shapes')
+export const SHAPES = icon(svg`<path d="M12 3 16.5 10.5h-9Z"/><rect x="3.5" y="13" width="7.5" height="7.5" rx="1.5"/><circle cx="16.75" cy="16.75" r="3.75"/>`, 'creations-shapes')
 
 /** The drawer's place for them, once a capability that keeps them is found, which opens their page. */
 export const place = () => (slots('creations').length ? html`<button class="place" @click=${open}>${SHAPES}${t('creations.title')}</button>` : nothing)

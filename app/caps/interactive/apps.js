@@ -54,7 +54,7 @@ const ways = (file, pane) => ({ share: async () => ({ text: `\`\`\`html\n${(awai
   files: [{ id: '', glyph: icons.globe, label: t('out.webPage'), run: async () => (await import('../../ui/preview.js')).download(file) }],
   print: { id: 'print', run: async () => (await import('../made/paper.js')).printPage(/** @type {HTMLElement} */ (pane.querySelector('.view .prose'))) } })
 
-/** Its slots, Creations' page among them, once the project holds an app; until then only its card to start one, on the page another kind opens (D553). */
+/** Its slots, Creations' page among them, once the project holds an app; until then only its row in Create's menu, on the page another kind opens (D553). */
 const joined = signal(/** @type {Record<string, unknown>} */ ({ starts: apps }))
 let here = ''
 effect(() => {

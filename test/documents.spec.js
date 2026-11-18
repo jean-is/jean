@@ -601,11 +601,20 @@ test.describe('found and used by the brain', () => {
     await expect(cards).toHaveCount(7)
     await addProject(page, 'Garden')
     await enterProject(page, 'Garden')
-    await expect(page.locator('app-creations .creations-start')).toHaveClass(/is-empty/)
+    await expect(page.locator('app-creations .creations-empty')).toBeVisible()
     await expect(cards).toHaveCount(0)
     await expect(page).toHaveURL(/#\/p\/[0-9A-HJKMNP-TV-Z]{26}\/\?creations$/)
+    // While these are read, slowly here, the page doesn't say that nothing is made.
+    await page.evaluate(async () => {
+      const [{ app }, { slots }] = await Promise.all([import('/ui/state.js'), import('/ui/caps.js')]), kind = slots('creations')[0], kept = kind.kept, garden = app.projectDir
+      kind.kept = async (/** @type {unknown[]} */ ...given) => {
+        if (app.projectDir !== garden) { await new Promise((done) => setTimeout(done, 300)); Object.assign(window, { early: Boolean(document.querySelector('app-creations .creations-empty')) }); kind.kept = kept }
+        return kept.call(kind, ...given)
+      }
+    })
     await enterProject(page, 'Jean')
     await expect(cards).toHaveCount(7)
+    expect(await page.evaluate(() => /** @type {any} */ (window).early)).toBe(false)
     await expect(page).toHaveURL(/#\/\?creations$/)
   })
 
@@ -614,20 +623,25 @@ test.describe('found and used by the brain', () => {
     const tasks = await openTasks(page)
     const place = tasks.getByRole('button', { name: 'Creations', exact: true })
     await page.evaluate(async () => { const { unlock } = await import('/ui/caps.js'); await unlock('documents'); await unlock('tables') })
-    // Found, with nothing made yet: the place is as wide as the drawer's others, and the page has a card to start one of each.
+    // Found, with nothing made yet: the place is as wide as the drawer's others, and the page says so around Create, with
+    // nothing to find, show or order.
     await place.click()
     const creations = page.locator('app-creations')
     await expect(creations.locator('.creation')).toHaveCount(0)
     const [own, other] = await Promise.all([place.boundingBox(), tasks.getByRole('button', { name: 'New task' }).boundingBox()])
     expect(own?.width).toBe(other?.width)
-    await expect(creations.locator('.creation-start b')).toHaveText(['Document', 'Collection'])
-    // Nothing yet: each card unfolds into an empty one of its kind, with nothing to find or order.
-    await expect(creations.locator('.creations-start')).toHaveClass(/is-empty/)
-    await expect(creations.locator('.creations-find, .creations-order')).toHaveCount(0)
+    await expect(creations.locator('.creations-empty h2')).toHaveText('Nothing made yet')
+    await expect(creations.locator('.creations-bar, .creations-chips')).toHaveCount(0)
+    // Create's menu names each kind by its noun, with its few words; kinds of one group have no name over them.
+    const create = creations.getByRole('button', { name: 'Create', exact: true }), kinds = creations.locator('#creations-new')
+    await create.click()
+    await expect(kinds.locator('b')).toHaveText(['Document', 'Collection'])
+    await expect(kinds.locator('small')).toHaveText(['Pages to write and lay out', 'Lists in rows and columns'])
+    await expect(kinds.locator('p')).toHaveCount(0)
     /** The project's creations of a kind, by name, as Documents and Tables keep them. @param {string} id */
     const names = (id) => page.evaluate(async (cap) => (await (await import(`/caps/${cap}/${cap}.js`)).kept()).map((one) => one.name), id)
     // Open beside the task, but nothing written until the user writes.
-    await creations.getByRole('button', { name: /^Document/ }).click()
+    await kinds.getByRole('button', { name: 'Document' }).click()
     await expect(page.locator('#doc')).toBeFocused()
     await page.waitForTimeout(500)
     expect(await names('documents')).toEqual([])
@@ -636,15 +650,13 @@ test.describe('found and used by the brain', () => {
     await expect(page.locator('#doc h1')).toHaveText('Budget')
     await expect.poll(() => names('documents')).toEqual(['Budget'])
     await expect(creations.getByRole('button', { name: 'Budget' })).toBeVisible()
-    // One: the cards fold, and one creation has no order yet.
-    await expect(creations.locator('.creations-start')).not.toHaveClass(/is-empty/)
+    // One: the page has its bar, with Create alone, as one creation has no order yet.
+    await expect(creations.locator('.creations-empty')).toHaveCount(0)
     await expect(creations.locator('.creations-order')).toHaveCount(0)
 
-    // The bar's New makes one too.
-    // Create, its menu naming each kind by its noun.
-    await creations.getByRole('button', { name: 'Create', exact: true }).click()
-    await expect(creations.locator('.creations-menu:popover-open button')).toHaveText(['Document', 'Collection'])
-    await creations.locator('.creations-menu:popover-open').getByRole('button', { name: 'Collection' }).click()
+    // Create, in the bar now, makes one too.
+    await create.click()
+    await kinds.getByRole('button', { name: 'Collection' }).click()
     const name = page.locator('app-preview .pane-name')
     await expect(name).toBeFocused()
     await page.waitForTimeout(500)
@@ -653,55 +665,74 @@ test.describe('found and used by the brain', () => {
     await page.keyboard.press('Tab')
     await expect.poll(() => names('tables')).toEqual(['Trips'])
     await expect(creations.locator('.creation')).toHaveCount(2)
-    // Two can be ordered, and shown by kind, but there is nothing to find yet.
-    await expect(creations.getByRole('button', { name: 'Sort by: Last changed' })).toBeVisible()
-    await expect(creations.getByRole('button', { name: 'Show: All' })).toBeVisible()
+    // Two can be ordered, and shown by kind, a chip for each kind that holds some, with its count, but there is nothing to find yet:
+    // Sort is beside Create, at the bar's end.
+    const sort = creations.getByRole('button', { name: 'Sort by: Last changed' })
+    await expect(sort).toBeVisible()
+    const [by, make] = await Promise.all([sort.boundingBox(), create.boundingBox()])
+    expect((make?.x ?? 0) - (by?.x ?? 0) - (by?.width ?? 0)).toBeLessThan(16)
+    await expect(creations.locator('.creations-chips button')).toHaveText(['All 2', 'Docs 1', 'Collections 1'])
     await expect(creations.locator('.creations-find')).toHaveCount(0)
   })
 
-  test('on a wide page the cards to start one share a row, piled where it is too narrow, the ones after a card pointed at sliding away from it, and a narrower page, a file beside it too, or a touch screen keeps the cards\' columns', async ({ page, browserName }) => {
+  test('where the page is narrow, a file beside it, the kinds fold into Show\'s menu beside Sort\'s, the search and Create share the bar\'s first line until it is narrower still, and Create\'s groups go one under the other', async ({ page }) => {
     await begin(page)
-    await page.evaluate(async () => { const { unlock } = await import('/ui/caps.js'); for (const id of ['documents', 'tables', 'skills', 'pictures']) await unlock(id) })
+    await page.setViewportSize({ width: 1280, height: 720 })
+    await page.evaluate(async (all) => {
+      const [{ app }, { ulid }, { unlock }] = await Promise.all([import('/ui/state.js'), import('/core/ulid.js'), import('/ui/caps.js')])
+      for (const name of all) {
+        const at = new Date().toISOString()
+        await app.fs.write(`${app.projectDir}/documents/${ulid()}-${name.toLowerCase()}.md`, `---\nformat: 1\nauthor: user\ncreated: ${at}\nchanged: ${at}\n---\n# ${name}\n`)
+      }
+      for (const id of ['documents', 'tables', 'skills', 'pictures']) await unlock(id)
+      await (await import('/caps/tables/tables.js')).blank()
+    }, ['Budget', 'Menu', 'Letter', 'Notes', 'Minutes of the meeting of parents and teachers'])
     const tasks = await openTasks(page)
     await tasks.getByRole('button', { name: 'Creations', exact: true }).click()
-    const row = page.locator('app-creations .creations-start'), starts = row.locator('.creation-start')
-    await expect(starts).toHaveCount(6)
-    const boxes = async () => /** @type {{ x: number, y: number, width: number }[]} */ (await Promise.all([row, ...await starts.all()].map((one) => one.boundingBox())))
-    // A smaller desktop window: the cards' own columns, on two rows.
-    await page.setViewportSize({ width: 1000, height: 720 })
-    await expect.poll(async () => { const [, a, , , , , f] = await boxes(); return f.y > a.y }).toBe(true)
-    // A window of 1,280 px, the drawer open: one row, each card but the last piled under the next, the last within the row.
+    const creations = page.locator('app-creations'), chips = creations.locator('.creations-chips'), show = creations.locator('.creations-kinds')
+    const find = creations.locator('.creations-find'), create = creations.getByRole('button', { name: 'Create', exact: true }), heads = creations.locator('#creations-new p')
+    /** How far apart two boxes' middles are, down the page. @param {import('@playwright/test').Locator} a @param {import('@playwright/test').Locator} b */
+    const apart = async (a, b) => { const [one, two] = await Promise.all([a.boundingBox(), b.boundingBox()]); return Math.round((two?.y ?? 0) + (two?.height ?? 0) / 2 - (one?.y ?? 0) - (one?.height ?? 0) / 2) }
+    // A window of 1,280 px, the drawer open: a chip for each kind that holds some, no Show, and Create's groups side by side, each under its name.
+    await expect(chips.getByRole('button')).toHaveText(['All 6', 'Docs 5', 'Collections 1'])
+    await expect(show).toBeHidden()
+    // A long name takes a second line rather than being cut after a few letters, and no more than two.
+    const lines = async (/** @type {string} */ name) => Math.round(await creations.locator('.creation-open', { hasText: name }).locator('span').evaluate((words) => words.getBoundingClientRect().height / parseFloat(getComputedStyle(words).lineHeight)))
+    expect([await lines('Budget'), await lines('Minutes of the meeting')]).toEqual([1, 2])
+    await create.click()
+    await expect(heads.nth(0)).toHaveText('Write and plan')
+    await expect(heads.nth(1)).toHaveText('Pictures and sound')
+    expect(await apart(heads.nth(0), heads.nth(1))).toBe(0)
+    await page.keyboard.press('Escape')
+    // A document beside the page, in a window of 1,500 px: the page, not the window, is what is narrow, about 400 px. Show,
+    // named by what it shows, takes the chips' place, on the bar's second line with Sort, under the search and Create.
+    await creations.locator('.creation-open', { hasText: 'Budget' }).click()
+    await expect(page.locator('#doc h1')).toHaveText('Budget')
+    await page.setViewportSize({ width: 1500, height: 720 })
+    await expect(chips).toBeHidden()
+    await expect(show).toHaveAttribute('aria-label', 'Show: All')
+    await expect(show).toHaveText('All')
+    expect(Math.abs(await apart(find, create))).toBeLessThan(3)
+    expect(await apart(find, show)).toBeGreaterThan(20)
+    expect(Math.abs(await apart(show, creations.locator('.creations-order')))).toBeLessThan(3)
+    // Create's groups, one under the other there.
+    await create.click()
+    expect(await apart(heads.nth(0), heads.nth(1))).toBeGreaterThan(40)
+    await page.keyboard.press('Escape')
+    // Show's menu picks a kind, as a chip does, and is marked while one is picked.
+    await show.click()
+    await expect(creations.locator('#creations-kinds [role="menuitemradio"]')).toHaveText(['All 6', 'Docs 5', 'Collections 1'])
+    await creations.locator('#creations-kinds').getByRole('menuitemradio', { name: 'Collections 1' }).click()
+    await expect(show).toHaveAttribute('aria-label', 'Show: Collections')
+    await expect(show).toHaveClass(/is-on/)
+    await expect(creations.locator('.creation')).toHaveCount(1)
+    // The window at 1,280 px again, the page 320 px: the search has the bar's first line, its words whole, and Create comes after it.
     await page.setViewportSize({ width: 1280, height: 720 })
-    await expect.poll(async () => new Set((await boxes()).slice(1).map((one) => one.y)).size).toBe(1)
-    const [line, first, second, , , , last] = await boxes()
-    expect(second.x).toBeLessThan(first.x + first.width)
-    expect(last.x + last.width).toBeLessThanOrEqual(line.x + line.width + 1)
-    // Pointed at, a card stays where it is, the next sliding away to the row's gap after it, those after it each by its share so
-    // that their steps stay even, the last staying put; the one before the last pointed at, the last slides on past the row's end.
-    await starts.first().hover({ position: { x: 20, y: 20 } })
-    await expect.poll(async () => { const [, one, two] = await boxes(); return Math.round(two.x - (one.x + one.width)) }).toBe(12)
-    const [, one, two, three, four, five, end] = await boxes()
-    expect([one.x, end.x]).toEqual([first.x, last.x])
-    const steps = [three.x - two.x, four.x - three.x, five.x - four.x, end.x - five.x]
-    expect(Math.max(...steps) - Math.min(...steps)).toBeLessThan(1.5)
-    await starts.nth(4).hover({ position: { x: 20, y: 20 } })
-    await expect.poll(async () => { const [, , , , , pointed, after] = await boxes(); return Math.round(after.x - (pointed.x + pointed.width)) }).toBe(12)
-    // The same window with a document beside the page: the page, not the window, is what is narrow, so two by two as on a phone;
-    // closed, the row again.
-    await starts.first().click()
-    await expect(page.locator('#doc')).toBeFocused()
-    await expect.poll(async () => { const [, a, b, c] = await boxes(); return [b.y === a.y && b.x !== a.x, c.y > a.y] }).toEqual([true, true])
+    await expect.poll(() => apart(find, creations.locator('.creations-bar .primary'))).toBeGreaterThan(20)
+    // The file closed, the page is wide again: the chips, the one picked pressed.
     await page.locator('app-preview').getByRole('button', { name: 'Close' }).click()
-    await expect.poll(async () => new Set((await boxes()).slice(1).map((one) => one.y)).size).toBe(1)
-    // A touch screen, however wide: the cards' own columns, on two rows. Chromium can be told it is one; Playwright's WebKit can't.
-    if (browserName === 'chromium') {
-      await page.mouse.move(0, 0)
-      const cdp = await page.context().newCDPSession(page)
-      await cdp.send('Emulation.setTouchEmulationEnabled', { enabled: true, maxTouchPoints: 5 })
-      await cdp.send('Emulation.setEmulatedMedia', { features: [{ name: 'hover', value: 'none' }, { name: 'pointer', value: 'coarse' }] })
-      await page.setViewportSize({ width: 1360, height: 720 })
-      await expect.poll(async () => { const [, a, , , , , f] = await boxes(); return f.y > a.y }).toBe(true)
-    }
+    await expect(show).toBeHidden()
+    await expect(chips.getByRole('button', { name: 'Collections 1' })).toHaveAttribute('aria-pressed', 'true')
   })
 
   test('Creations are found by their words and kind, pinned first, renamed in place with their title line, duplicated, and deleted with five seconds to undo, from each card\'s menu', async ({ page }) => {
@@ -729,58 +760,47 @@ test.describe('found and used by the brain', () => {
     await place.click()
     const creations = page.locator('app-creations'), cards = creations.locator('.creation'), names = cards.locator('.creation-open')
     await expect(names).toHaveText(['New collection', 'Letter', 'Menu', 'Budget'])
-    await expect(creations.locator('.creations-group')).toHaveText(['Today4'])
+    await expect(creations.locator('.creations-group')).toHaveCount(0)
 
-    // By kind, from Show's menu beside Sort's, every kind with its count, those with none too, the button marked while a kind is
-    // picked; four have nothing to find among them, the search coming with a fifth.
-    const show = creations.locator('.creations-kinds'), kind = (/** @type {string} */ name) => creations.locator('#creations-kinds').getByRole('menuitemradio', { name })
-    await expect(show).toHaveAttribute('aria-label', 'Show: All')
-    await show.click()
-    await expect(kind('All 4')).toHaveAttribute('aria-checked', 'true')
-    await expect(creations.locator('#creations-kinds [role="menuitemradio"]')).toHaveText(['All 4', 'Docs 3', 'Collections 1', 'Slides 0', 'Music 0'])
+    // By kind, from the chips over the cards, one for each kind that holds some, with its count, the one picked pressed; four
+    // have nothing to find among them, the search coming with a fifth.
+    const chips = creations.locator('.creations-chips'), kind = (/** @type {string} */ name) => chips.getByRole('button', { name })
+    await expect(chips).toHaveAttribute('aria-label', 'Show: All')
+    await expect(chips.getByRole('button')).toHaveText(['All 4', 'Docs 3', 'Collections 1'])
+    await expect(kind('All 4')).toHaveAttribute('aria-pressed', 'true')
     await kind('Collections 1').click()
-    await expect(show).toHaveAttribute('aria-label', 'Show: Collections')
-    await expect(show).toHaveClass(/is-on/)
+    await expect(chips).toHaveAttribute('aria-label', 'Show: Collections')
+    await expect(kind('Collections 1')).toHaveAttribute('aria-pressed', 'true')
     await expect(names).toHaveText(['New collection'])
     await expect(page).toHaveURL(/#\/\?creations=tables$/)
-    // Every kind's card to start one stays, whichever kind is picked.
-    await expect(creations.locator('.creation-start b')).toHaveText(['Document', 'Collection', 'Slides', 'Score'])
-    // A kind with none yet shows none, New making one of it.
-    await show.click()
-    await kind('Slides 0').click()
-    await expect(show).toHaveAttribute('aria-label', 'Show: Slides')
-    await expect(names).toHaveCount(0)
-    await expect(creations.locator('.creations-bar').getByRole('button', { name: 'Create', exact: true })).toHaveAttribute('title', 'Slides')
-    await show.click()
+    // One kind shown, Create names it and makes one at once, with no menu.
+    await expect(creations.locator('.creations-bar .primary')).toHaveText('Collection')
+    await expect(creations.locator('#creations-new')).toHaveCount(0)
+    // A kind that holds none, as an address may ask for: the page says so, and Create is that kind's.
+    await page.evaluate(async () => { (await import('/ui/creations.js')).kind.value = 'music' })
+    await expect(creations.locator('.creations-none')).toHaveText('Nothing made yet')
+    await expect(kind('Music 0')).toHaveAttribute('aria-pressed', 'true')
+    await expect(creations.locator('.creations-bar .primary')).toHaveText('Score')
     await kind('All 4').click()
-    await expect(show).not.toHaveClass(/is-on/)
+    await expect(chips.getByRole('button')).toHaveText(['All 4', 'Docs 3', 'Collections 1'])
+    // All of them, Create has its menu: every kind that can be made, those with none yet too, in their groups, each under its name.
+    await creations.getByRole('button', { name: 'Create', exact: true }).click()
+    await expect(creations.locator('#creations-new b')).toHaveText(['Document', 'Collection', 'Slides', 'Score'])
+    await expect(creations.locator('#creations-new p')).toHaveText(['Write and plan', 'Pictures and sound'])
+    await page.keyboard.press('Escape')
     await expect(creations.locator('.creations-find')).toHaveCount(0)
 
-    // Pinned: first, under its own heading, in its file, and in the drawer's Pinned with its kind's glyph, opening beside the task (D605).
+    // Pinned: first in the one grid, with its pin, in its file, and in the drawer's Pinned with its kind's glyph, opening beside the task (D605).
     const menu = async (/** @type {string} */ name) => {
       await cards.filter({ hasText: name }).click({ button: 'right' })
       return creations.locator('.task-menu:popover-open')
     }
     await (await menu('Menu')).getByRole('button', { name: 'Pin' }).click()
-    await expect(creations.locator('.creations-group')).toHaveText(['Pinned1', 'Today3'])
-    await expect(names.first()).toHaveText('Menu')
-    await expect.poll(async () => (await files()).Menu).toContain('pinned: true')
-    // Pinned folds its cards, its count kept, and unfolds them, kept so on this device: across a reload where Jean's data lasts,
-    // else with the page left and opened again.
-    const fold = creations.getByRole('heading', { name: /^Pinned/ }).getByRole('button')
-    await fold.click()
-    await expect(fold).toHaveAttribute('aria-expanded', 'false')
-    await expect(creations.locator('.creations-group')).toHaveText(['Pinned1', 'Today3'])
-    await expect(names).toHaveText(['New collection', 'Letter', 'Budget'])
-    if (await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value)) {
-      await tasks.getByRole('button', { name: 'New task' }).click()
-      await expect(creations).toHaveCount(0)
-      await place.click()
-    } else await page.reload()
-    await expect(fold).toHaveAttribute('aria-expanded', 'false')
-    await expect(names).toHaveText(['New collection', 'Letter', 'Budget'])
-    await fold.click()
     await expect(names).toHaveText(['Menu', 'New collection', 'Letter', 'Budget'])
+    await expect(cards.first().getByRole('img', { name: 'Pinned' })).toBeVisible()
+    await expect(cards.getByRole('img', { name: 'Pinned' })).toHaveCount(1)
+    await expect(creations.locator('.creations-group')).toHaveCount(0)
+    await expect.poll(async () => (await files()).Menu).toContain('pinned: true')
     const pinned = tasks.locator('.history-list li:not([aria-hidden])', { hasText: 'Menu' })
     await expect(tasks.locator('.sidebar-heading')).toHaveText(['Pinned', 'Tasks'])
     expect(await pinned.locator('.history-item .icon').innerHTML()).toBe(await cards.filter({ hasText: 'Menu' }).locator('.creation-open .icon').innerHTML())
@@ -804,7 +824,7 @@ test.describe('found and used by the brain', () => {
     await page.keyboard.press('Escape')
     await expect(names.filter({ hasText: 'Letter' })).toHaveCount(1)
 
-    // Duplicated: the copy first under Today, its name selected for one of its own, its title line with it.
+    // Duplicated: the copy first after those pinned, its name selected for one of its own, its title line with it.
     await (await menu('Letter')).getByRole('button', { name: 'Duplicate' }).click()
     await expect(box).toBeFocused()
     await expect(box).toHaveValue('Letter (copy)')
@@ -813,16 +833,31 @@ test.describe('found and used by the brain', () => {
     await expect.poll(async () => (await files())['Letter to Anna']).toContain('# Letter to Anna\n\nAbout the letter.')
     await expect(names).toHaveText(['Menu', 'Letter to Anna', 'Budget 2027', 'New collection', 'Letter'])
 
-    // Five: found by their words, case aside, the search a round button until it has the keyboard; nothing found says so and clears.
-    const find = creations.getByRole('searchbox', { name: 'Find a creation' }), round = await creations.locator('.creations-find').boundingBox()
-    expect(Math.abs((round?.width ?? 0) - (round?.height ?? 0))).toBeLessThan(2)
-    await creations.locator('.creations-find').click()
-    await expect(find).toBeFocused()
-    await expect.poll(async () => (await creations.locator('.creations-find').boundingBox())?.width).toBeGreaterThan(200)
+    // Five: found by their words, case aside, in a field always there, as wide as the bar leaves it; nothing found says so and clears.
+    const find = creations.getByRole('searchbox', { name: 'Find a creation' })
+    expect((await creations.locator('.creations-find').boundingBox())?.width).toBeGreaterThan(120)
     await find.fill('ABOUT THE MENU')
     await expect(names).toHaveText(['Menu'])
-    await expect(creations.locator('.creation-start')).toHaveCount(0)
     await expect(page).toHaveURL(/#\/\?creations=all\/changed\/ABOUT%20THE%20MENU(&|$)/)
+    // The counts are of those found, each kind keeping its place, and the card marks each word, as Search marks them: in its
+    // name, and, as its name lacks some, in a passage of its words.
+    await expect(chips.locator('button')).toHaveText(['All 1', 'Docs 1', 'Collections 0'])
+    await expect(cards.locator('.creation-open mark')).toHaveText(['Menu'])
+    await expect(cards.locator('.creation-found mark')).toHaveText(['About', 'the', 'menu'])
+    // Every word, in any order, as Search finds them: all of them in its name, it shows no passage.
+    await find.fill('anna letter')
+    await expect(names).toHaveText(['Letter to Anna'])
+    await expect(cards.locator('.creation-open mark')).toHaveText(['Letter', 'Anna'])
+    await expect(cards.locator('.creation-found')).toHaveCount(0)
+    await find.fill('letter')
+    await expect(cards.locator('.creation-open mark')).toHaveText(['Letter', 'Letter'])
+    await expect(chips.locator('button')).toHaveText(['All 2', 'Docs 2', 'Collections 0'])
+    // One kind shown that holds none of those found: the page says which, beside All's count, which shows them, the words kept.
+    await page.evaluate(async () => { (await import('/ui/creations.js')).kind.value = 'tables' })
+    await expect(creations.locator('.creations-none')).toContainText('Show: Collections')
+    await creations.locator('.creations-none').getByRole('button', { name: 'All 2' }).click()
+    await expect(names).toHaveText(['Letter to Anna', 'Letter'])
+    await expect(page).toHaveURL(/#\/\?creations=all\/changed\/letter(&|$)/)
     await find.fill('passport')
     await expect(creations.locator('.creations-none')).toContainText('No creation matches “passport”.')
     await creations.getByRole('button', { name: 'Clear' }).click()
@@ -843,15 +878,15 @@ test.describe('found and used by the brain', () => {
     await expect.poll(async () => Object.keys(await files()), { timeout: 8000 }).not.toContain('Letter to Anna')
     await expect(creations.locator('.creations-find')).toHaveCount(0)
 
-    // By name, in the language's order, those pinned still first; a kind picked, New is that kind's own.
+    // By name, in the language's order, those pinned still first; a kind picked, Create is that kind's own.
     await creations.getByRole('button', { name: 'Sort by: Last changed' }).click()
     await creations.getByRole('menuitemradio', { name: 'Name' }).click()
     await expect(names).toHaveText(['Menu', 'Budget 2027', 'Letter', 'New collection'])
-    await show.click()
-    await kind('Docs 3').click()
-    await expect(show).toHaveAttribute('aria-label', 'Show: Docs')
-    await expect(creations.locator('.creations-bar').getByRole('button', { name: 'Create', exact: true })).toHaveAttribute('title', 'Document')
-    await expect(creations.locator('.creation-start b')).toHaveText(['Document', 'Collection', 'Slides', 'Score'])
+    // A document is beside the page, which is narrow: the kinds are in Show's menu there.
+    await creations.locator('.creations-kinds').click()
+    await creations.locator('#creations-kinds').getByRole('menuitemradio', { name: 'Docs 3' }).click()
+    await expect(chips).toHaveAttribute('aria-label', 'Show: Docs')
+    await expect(creations.locator('.creations-bar .primary')).toHaveText('Document')
 
     // In the address as the page shows them (D220), and only there: opened again from the drawer after a task, the page is as it
     // first shows; Back to it shows it as it was, and so does a reload.
@@ -861,18 +896,18 @@ test.describe('found and used by the brain', () => {
     await answered(page)
     await place.click()
     await expect(page).toHaveURL(/[?&]creations(&|$)/)
-    await expect(show).toHaveAttribute('aria-label', 'Show: All')
+    await expect(chips).toHaveAttribute('aria-label', 'Show: All')
     await expect(creations.getByRole('button', { name: 'Sort by: Last changed' })).toBeVisible()
     await page.goBack()
     await expect(creations).toHaveCount(0)
     await page.goBack()
     await expect(page).toHaveURL(/[?&]creations=documents\/name(&|$)/)
-    await expect(show).toHaveAttribute('aria-label', 'Show: Docs')
+    await expect(chips).toHaveAttribute('aria-label', 'Show: Docs')
     await expect(creations.getByRole('button', { name: 'Sort by: Name' })).toBeVisible()
     await expect(names).toHaveText(['Menu', 'Budget 2027', 'Letter'])
     if (!(await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value))) {
       await page.reload()
-      await expect(show).toHaveAttribute('aria-label', 'Show: Docs')
+      await expect(chips).toHaveAttribute('aria-label', 'Show: Docs')
       await expect(names).toHaveText(['Menu', 'Budget 2027', 'Letter'])
     }
 
@@ -883,7 +918,7 @@ test.describe('found and used by the brain', () => {
     await row.getByRole('button', { name: 'More options' }).click()
     await row.getByRole('button', { name: 'Unpin' }).click()
     await expect(drawer.locator('.sidebar-heading')).toHaveText(['Tasks'])
-    await expect(creations.locator('.creations-group')).toHaveCount(0)
+    await expect(cards.getByRole('img', { name: 'Pinned' })).toHaveCount(0)
     await expect(names).toHaveText(['Budget 2027', 'Letter', 'Menu'])
   })
 
@@ -901,19 +936,19 @@ test.describe('found and used by the brain', () => {
     await tasks.getByRole('button', { name: 'Creations', exact: true }).click()
     const creations = page.locator('app-creations'), cards = creations.locator('.creation'), names = cards.locator('.creation-open span')
     await expect(names.first()).toHaveText('Note 0')
-    // Every group's head, with its count, but only the cards in view and a screen either side, each saying its place in its group.
-    const counts = await creations.locator('.creations-group span').allTextContents()
-    expect(counts.reduce((sum, one) => sum + Number(one.replace(/\D/g, '')), 0)).toBe(400)
+    // This month's first, under no name, then each earlier month's under its own, with its count; only the cards in view and a
+    // screen either side are drawn, each saying its place in its group.
+    const counts = await creations.locator('.creations-group span').allTextContents(), first = Number(await cards.first().getAttribute('aria-setsize'))
+    expect(counts.reduce((sum, one) => sum + Number(one.replace(/\D/g, '')), first)).toBe(400)
     expect(await cards.count()).toBeLessThan(120)
     await expect(cards.first()).toHaveAttribute('aria-posinset', '1')
-    await expect(cards.first()).toHaveAttribute('aria-setsize', counts[0])
     // As long as all of them: at the page's end, the oldest, its preview drawn.
     await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight))
     const oldest = cards.filter({ hasText: 'Note 399' })
     await expect(oldest).toBeInViewport()
     await expect(oldest.locator('.creation-preview')).toContainText('Note 399')
     await expect(names.filter({ hasText: /^Note 0$/ })).toHaveCount(0)
-    // Its copy goes first under Today, drawn there at once, its name in a box that takes the keyboard.
+    // Its copy goes first, drawn there at once, its name in a box that takes the keyboard.
     await oldest.getByRole('button', { name: 'More options' }).click()
     await page.locator('#creation-menu').getByRole('button', { name: 'Duplicate' }).click()
     const box = creations.locator('.creation-rename')

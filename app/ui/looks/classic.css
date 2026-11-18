@@ -84,6 +84,8 @@
 :root[data-look='classic'] .send:is(.is-stop, .is-live) { background: var(--room); }
 :root[data-look='classic'] .segmented { border: 0; padding: 0; gap: 0.3rem; } :root[data-look='classic'] .segmented::before { content: none; }
 :root[data-look='classic'] .segmented input:checked + span { background: var(--room); color: var(--ink); font-weight: 700; box-shadow: var(--sunken); }
+/* A search's field is its box, sunken as any, after its glyph, with no line round the two but the keyboard's. */
+:root[data-look='classic'] .creations-find:not(:focus-within) { box-shadow: none; } :root[data-look='classic'] .creations-find input[type] { padding-inline: 0.4rem; background: var(--field); }
 /* A box is a field too, sunken, ticked in ink. */
 :root[data-look='classic'] :is(input:not([type='radio'], .switch, [type='range']), select, .sheet textarea, .prose pre) { border: 0; background-color: var(--field); box-shadow: var(--sunken); } :root[data-look='classic'] input[type='checkbox'] { --on-flame: var(--ink); } @media (forced-colors: active) { :root[data-look='classic'] input[type='checkbox'] { border: 1px solid; } }
 :root[data-look='classic'] :focus-visible { outline: 2px dotted; outline-offset: -5px; }

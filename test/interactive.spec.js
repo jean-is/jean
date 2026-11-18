@@ -434,9 +434,8 @@ test('the pages answers hold are apps among the creations once there is one, the
   await expect(card).toHaveCount(0)
   await expect.poll(apps, { timeout: 10_000 }).toEqual([])
 
-  // Create, an app the only kind: a request in the box, its example selected for the user's own words.
-  await expect(creations.locator('.creations-bar').getByRole('button', { name: 'Create', exact: true })).toHaveAttribute('title', 'App')
-  await creations.locator('.creations-bar').getByRole('button', { name: 'Create', exact: true }).click()
+  // Create, an app the only kind, names it: a request in the box, its example selected for the user's own words.
+  await creations.getByRole('button', { name: 'App', exact: true }).click()
   const box = page.locator('#prompt')
   await expect(box).toBeFocused()
   await expect(box).toHaveValue('Make a small app for splitting a bill between friends.')
