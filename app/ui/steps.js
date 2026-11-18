@@ -17,15 +17,18 @@ const STOPS = ['end', 'tool_use', 'max_tokens', 'refusal', 'pause', 'other']
 
 /**
  * What the brain thought and wrote that time, exactly as written, then how it stopped, how long
- * it took and how much it read and wrote (or the error's code and status).
+ * it took, and to start, how much it read and wrote and how fast (or the error's code and status).
  * @param {ToolCallInfo} brain @param {Step | undefined} step
  */
 function brainDetails(brain, step) {
   const { stopReason, usage, code, status } = brain.rawOutput ?? {}
+  const { ms, first } = brain._meta ?? {}
   const facts = [
     STOPS.includes(stopReason) ? t(`activity.stop.${stopReason}`) : '',
-    brain._meta?.ms === undefined ? '' : formatDuration(brain._meta.ms),
+    ms === undefined ? '' : formatDuration(ms),
+    first === undefined ? '' : t('activity.start', { time: formatDuration(first) }),
     usage?.inputTokens ? t('activity.size', { input: usage.inputTokens, output: usage.outputTokens ?? 0 }) : '',
+    pace(brain),
     code ?? '', status ?? '',
   ].filter(Boolean)
   return html`<div class="step-body">
@@ -33,6 +36,18 @@ function brainDetails(brain, step) {
     ${step?.text ? html`<pre tabindex="0" dir="auto">${step.text}</pre>` : nothing}
     ${facts.length ? html`<p class="step-facts">${facts.join(' · ')}</p>` : nothing}
   </div>`
+}
+
+/**
+ * How fast a brain on this device wrote, from its first word on, when that says something: never one in the cloud,
+ * whose hidden thinking counts without being streamed, nor one told to answer now, which wrote twice.
+ * @param {ToolCallInfo} brain
+ */
+function pace({ rawInput, rawOutput, _meta }) {
+  const [output, writing] = [rawOutput?.usage?.outputTokens ?? 0, (_meta?.ms ?? 0) - (_meta?.first ?? Infinity)]
+  if (!rawInput?.local || _meta?.hurried || output < 20 || writing < 500) return ''
+  const rate = (output / writing) * 1e3
+  return t('activity.rate', { rate: rate < 10 ? Math.round(rate * 10) / 10 : Math.round(rate) })
 }
 
 /** What a call was given and what came back, as the brain saw them. @param {ToolCallInfo} tool */

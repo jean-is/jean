@@ -85,6 +85,34 @@ test('loop: tool call allowed by rule, then final answer; records replay as cont
   assert.deepEqual(toChatMessages(persisted).map((message) => message.role), ['user', 'assistant', 'tool', 'assistant'])
 })
 
+test('loop: a step keeps when the brain first wrote, a thought, words or a call, on the clock of its duration; one that wrote nothing keeps none', async () => {
+  /** @param {number} ms */
+  const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+  const cases = [
+    [{ type: 'thinking', delta: 'Hmm.' }, { type: 'text', delta: 'Hi' }],
+    [{ type: 'text', delta: 'Hi' }],
+    [{ type: 'tool_writing', name: 'read', args: '{' }, { type: 'tool_call', call: { id: 'c1', name: 'read', args: {} } }],
+  ]
+  for (const events of cases) {
+    async function* stream() {
+      await wait(40)
+      for (const event of events) yield event
+      await wait(20)
+      yield done('end', { role: 'assistant', content: 'Hi' })
+    }
+    /** @type {any[]} */
+    const persisted = []
+    await runTurn({ brain, system: 'sys', history: [{ role: 'user', content: 'Hi' }], stream: /** @type {any} */ (stream), maxSteps: 1, persist: async (records) => { persisted.push(...records) } })
+    const { first, ms } = persisted.find((record) => record.update?.kind === 'think').update._meta
+    assert.ok(first >= 35 && first <= ms - 15, `first ${first}, ms ${ms}`)
+  }
+  const { stream } = fakeStream([[done('end', { role: 'assistant', content: '' })]])
+  /** @type {any[]} */
+  const persisted = []
+  await runTurn({ brain, system: 'sys', history: [{ role: 'user', content: 'Hi' }], stream: /** @type {any} */ (stream), persist: async (records) => { persisted.push(...records) } })
+  assert.equal('first' in persisted[0].update._meta, false)
+})
+
 test('loop: a list or an object a brain sent as JSON text is read as such where its tool asks for one; the rest stays as sent', async () => {
   const listTool = { spec: { name: 'change', description: 'change', parameters: { type: 'object', properties: { site: { type: 'string' }, changes: { type: 'array' }, files: { type: 'array' }, about: { type: 'object' } } } },
     kind: /** @type {const} */ ('edit'), title: () => 'Change', run: async (/** @type {any} */ args) => JSON.stringify(args) }
