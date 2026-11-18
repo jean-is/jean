@@ -1,0 +1,71 @@
+{
+  "title": "Open-source ChatGPT Work alternative, with the AI you choose · {name}",
+  "description": "{name} works through tasks on your files with the AI you choose, ChatGPT’s or one on your own computer. Free, open source, and your files stay on your devices.",
+  "product": "ChatGPT Work",
+  "eyebrow": "{name} and ChatGPT Work",
+  "h1": "An open-source alternative to ChatGPT Work, with the AI you choose",
+  "h1.mark": "the AI you choose",
+  "acts": [["alternative", "An open-source alternative to ChatGPT Work,"], ["where", "with the AI you choose"]],
+  "lede": "{name} works through tasks on your files and hands back finished ones, with the AI you choose: ChatGPT’s, another company’s, or the one on your own computer. Your files stay on your devices. Free, open source, nothing to install. Already pay for ChatGPT? {name} can answer with your plan.",
+  "cta": "Try {name} on a file",
+  "cta2": "Use your ChatGPT plan",
+  "facts": ["Open source, MIT", "Any AI, ChatGPT included", "Your files on your devices", "Nothing to install"],
+  "fair.title": "ChatGPT Work, fairly",
+  "fair.body": "ChatGPT Work is the assistant OpenAI added to ChatGPT in July 2026 for longer tasks. Built on Codex, it gathers what it needs from your files and the apps you connect, stays with a job for hours, and hands back finished work: documents, spreadsheets, slides, small websites. It asks before important actions, runs tasks on a schedule, and reads skills written as SKILL.md, as {name} does. On the web and phones it works in OpenAI’s cloud; in its desktop app, for Mac and Windows, on your computer’s files and apps too.",
+  "fair.sources": "launch help skills work",
+  "table.rows": [
+    ["Where it runs", "In a browser tab, on any recent computer, phone included. Nothing to install.", "built", "On the web and phones, in OpenAI’s cloud. In the ChatGPT desktop app, for Mac and Windows, on your computer too.", "help work"],
+    ["What it works on", "The files you give it, inside the browser’s fence. A real folder on your computer in Chrome and Edge.", "built", "The files you upload and the apps you connect. In the desktop app, the folders you open, a built-in browser and, with Computer Use, your other apps: it clicks, types and moves files.", "help launch"],
+    ["Which AI", "Any, ChatGPT included: on this computer, a free one, your key, your plan.", "built", "OpenAI’s own; which ones depends on your plan.", "help"],
+    ["Who reads what you send", "The AI you choose. With the AI on this computer, nobody.", "built", "OpenAI. On personal plans, used to train its AI unless you turn that off; not on Business, Enterprise or Edu, by default. Even when a task runs on your computer, its messages and context may be kept in OpenAI’s cloud.", "data help"],
+    ["With the tab or the app closed", "{name} works while its tab is open. A task due while it was closed runs when you’re back.", "design", "A task in OpenAI’s cloud keeps going, and scheduled ones start by themselves. A scheduled task that needs your computer’s files needs it on and the app running.", "use scheduled"],
+    ["What it costs", "{name} is free; the AI may not be. Your ChatGPT plan works too.", "design", "Part of ChatGPT’s plans: in the desktop app on every plan, with limits below Plus; on the web and phones from Plus, at $20 a month. A longer task uses up more of a plan’s allowance, which Work shares with Codex; past it, credits to buy.", "work pricing usage"],
+    ["Open source", "Yes, MIT. Anyone can read every line.", "built", "No; only Codex’s command-line tool is, under Apache 2.0.", "codex"],
+    ["At work", "A folder IT serves from its own address, behind its gateway and sign-in.", "built", "ChatGPT’s Business, Enterprise and Edu plans. On Enterprise and Edu, admins set who gets Work, the tools it connects to, the actions it may take, and spending limits.", "launch"],
+    ["Working together", "Share a task, a document or a whole project with colleagues, or by a link, and work on it together, each answered by their own AI. Sealed end to end.", "built", "Space: pages a team edits together with ChatGPT, on Pro, Business and Enterprise. Team tasks: shared recurring work, done with the company’s approved tools.", "work"],
+    ["Leaving with your things", "Plain files and backups. ChatGPT’s export comes in.", "built", "ChatGPT’s data export on personal plans, asked for in Data controls. In a Business or Enterprise workspace, only through its owner.", "export"]
+  ],
+  "better.title": "Where ChatGPT Work does better",
+  "better.items": [
+    "One company’s app and AI, made to work together: sign in and start, on the web, your phone or your computer. {name} asks you to choose an AI first.",
+    "It keeps working in OpenAI’s cloud after you close the app, and starts a task on a schedule or when an email or a Slack message arrives. {name} works while it is open.",
+    "More than 1,400 plugins to the tools a team already uses, Slack, Microsoft Teams, Google Drive and SharePoint among them.",
+    "In its desktop app, Computer Use works in your other apps for you: it clicks, types and moves files. {name} stays inside the browser."
+  ],
+  "better.sources": ["work", "use help", "work launch", "launch"],
+  "both.title": "Use both",
+  "both.cards": [
+    ["plan", "Your ChatGPT plan, in {name}", "Plus or Pro, on a computer, through This computer: a line you paste once, then you sign in to ChatGPT. No second subscription.", "computer"],
+    ["skills", "Your skills", "Both read SKILL.md. Those that need no program outside the browser work in {name} as they are.", "built"],
+    ["private", "The private part, at home", "Payslips and contracts with the AI on this computer; the long jobs that run overnight with ChatGPT Work.", "built"]
+  ],
+  "catch.items": [
+    "{name} is free; the AI behind it may not be.",
+    "Your ChatGPT plan needs This computer: a line to paste once, on a computer.",
+    "{name} works while it is open. Close the tab and it waits for you; nothing goes on in a cloud.",
+    "The AI on this computer needs 12 GB of memory and a recent graphics chip. Not on phones.",
+    "Your work lives in this browser. Clear its data without a backup and it’s gone."
+  ],
+  "faq.items": [
+    ["Is there a free, open-source ChatGPT Work alternative?", "{name} is free and MIT. It works through tasks on your files with any AI, and the AI on this computer costs nothing."],
+    ["Can {name} use my ChatGPT plan?", "Yes, Plus or Pro, on a computer, through This computer: you paste a line once, then sign in to ChatGPT."],
+    ["Is ChatGPT Work free?", "In part. OpenAI includes it in its desktop app on every plan, the free one too, with limits below Plus; on the web and phones it starts with Plus."],
+    ["Does my work stay on my computer with ChatGPT Work?", "Not all of it. OpenAI says a task’s messages and context may be kept in its cloud even when the task runs on your computer. With {name} and the AI on this computer, nothing leaves it."],
+    ["Is there a European alternative to ChatGPT Work?", "{name} is made in France and open source, and its AI can be European too: Mistral’s with your key, or one on your own computer."],
+    ["And for a whole company?", "{name} is deployed like a web page, from your own address, answering only through your AI gateway and your sign-in. See {enterprise}."],
+    ["Is ChatGPT Work the same as ChatGPT?", "No. The chat answers; Work carries a longer task through to finished files. For the chat, see {compare-chatgpt}."]
+  ],
+  "end.title": "Give {name} a file, and choose the AI that does the work",
+  "foot.note": "Facts about ChatGPT Work were checked on {date} on OpenAI’s own pages. ChatGPT is a trademark of OpenAI; {name} is not affiliated with it.",
+  "source.work": "OpenAI: ChatGPT Work for every team",
+  "source.launch": "OpenAI: introducing ChatGPT Work, 9 July 2026",
+  "source.help": "OpenAI help centre: ChatGPT Work and Codex",
+  "source.use": "ChatGPT Learn: Chat, Work and Codex",
+  "source.scheduled": "ChatGPT Learn: scheduled tasks",
+  "source.skills": "ChatGPT Learn: building skills",
+  "source.usage": "ChatGPT Learn: pricing of Work and Codex",
+  "source.pricing": "ChatGPT pricing",
+  "source.data": "OpenAI help centre: data controls",
+  "source.export": "OpenAI help centre: exporting your data",
+  "source.codex": "Codex on GitHub, Apache 2.0"
+}

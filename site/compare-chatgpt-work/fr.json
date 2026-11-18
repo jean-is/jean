@@ -1,0 +1,71 @@
+{
+  "title": "Alternative libre et européenne à ChatGPT Work · {name}",
+  "description": "{name} mène des tâches sur vos fichiers avec l’IA de votre choix, ChatGPT ou celle de votre ordinateur. Gratuit, libre, et vos fichiers restent chez vous.",
+  "product": "ChatGPT Work",
+  "eyebrow": "{name} et ChatGPT Work",
+  "h1": "Une alternative libre et européenne à ChatGPT Work, avec l’IA que vous choisissez",
+  "h1.mark": "l’IA que vous choisissez",
+  "acts": [["alternative", "Une alternative libre et européenne à ChatGPT Work,"], ["where", "avec l’IA que vous choisissez"]],
+  "lede": "{name} mène des tâches sur vos fichiers et vous rend des fichiers finis, avec l’IA que vous choisissez : celle de ChatGPT, celle d’une autre entreprise, ou celle de votre propre ordinateur. Vos fichiers restent sur vos appareils. Gratuit, libre, fait en France, rien à installer. Vous payez déjà ChatGPT ? {name} peut répondre avec votre abonnement.",
+  "cta": "Essayer {name} sur un fichier",
+  "cta2": "Utiliser mon abonnement ChatGPT",
+  "facts": ["Libre, MIT", "Fait en France", "N’importe quelle IA, ChatGPT compris", "Vos fichiers sur vos appareils"],
+  "fair.title": "ChatGPT Work, en toute honnêteté",
+  "fair.body": "ChatGPT Work est l’assistant qu’OpenAI a ajouté à ChatGPT en juillet 2026 pour les tâches longues. Construit sur Codex, il va chercher ce qu’il lui faut dans vos fichiers et les applications que vous connectez, suit un travail pendant des heures, et rend un travail fini : documents, feuilles de calcul, diapositives, petits sites web. Il demande avant les actions importantes, mène des tâches planifiées, et lit les compétences écrites en SKILL.md, comme {name}. Sur le web et le téléphone, il travaille dans le cloud d’OpenAI ; dans son application pour ordinateur, sur Mac et Windows, aussi sur les fichiers et les applications de votre ordinateur.",
+  "fair.sources": "launch help skills work",
+  "table.rows": [
+    ["Où il fonctionne", "Dans un onglet du navigateur, sur tout ordinateur récent, téléphone compris. Rien à installer.", "built", "Sur le web et le téléphone, dans le cloud d’OpenAI. Dans l’application ChatGPT pour ordinateur, sur Mac et Windows, sur votre ordinateur aussi.", "help work"],
+    ["Sur quoi il travaille", "Les fichiers que vous lui donnez, dans le périmètre du navigateur. Un vrai dossier de votre ordinateur dans Chrome et Edge.", "built", "Les fichiers que vous envoyez et les applications que vous connectez. Dans l’application pour ordinateur, les dossiers que vous ouvrez, un navigateur intégré et, avec « Utilisation de l’ordinateur », vos autres applications : il clique, saisit du texte et déplace des fichiers.", "help launch"],
+    ["Quelle IA", "N’importe laquelle, ChatGPT compris : sur cet ordinateur, une gratuite, votre clé, votre abonnement.", "built", "Celles d’OpenAI ; lesquelles, cela dépend de votre abonnement.", "help"],
+    ["Qui lit ce que vous envoyez", "L’IA que vous choisissez. Avec l’IA de cet ordinateur, personne.", "built", "OpenAI. Sur les abonnements personnels, utilisé pour entraîner son IA sauf si vous le désactivez ; pas sur Business, Enterprise ou Edu, par défaut. Même quand une tâche tourne sur votre ordinateur, ses messages et son contexte peuvent être gardés dans le cloud d’OpenAI.", "data help"],
+    ["Onglet ou application fermés", "{name} travaille tant que son onglet est ouvert. Une tâche prévue pendant qu’il était fermé part à votre retour.", "design", "Une tâche dans le cloud d’OpenAI continue, et les tâches planifiées partent seules. Une tâche planifiée qui a besoin des fichiers de votre ordinateur demande qu’il soit allumé et l’application ouverte.", "use scheduled"],
+    ["Ce que ça coûte", "{name} est gratuit ; l’IA ne l’est pas toujours. Votre abonnement ChatGPT marche aussi.", "design", "Compris dans les abonnements ChatGPT : dans l’application pour ordinateur avec tous, limité en dessous de Plus ; sur le web et le téléphone dès Plus, à 23 € par mois, prix affiché en France. Une tâche longue consomme davantage du forfait, que Work partage avec Codex ; au-delà, des crédits à acheter.", "work pricing usage"],
+    ["Libre", "Oui, MIT. Chacun peut en lire chaque ligne.", "built", "Non ; seul l’outil en ligne de commande de Codex l’est, sous Apache 2.0.", "codex"],
+    ["Au travail", "Un dossier que le service informatique sert à sa propre adresse, derrière sa passerelle et son authentification.", "built", "Les abonnements Business, Enterprise et Edu de ChatGPT. Sur Enterprise et Edu, les administrateurs règlent qui a Work, les outils auxquels il se connecte, les actions qu’il peut faire et les limites de dépenses.", "launch"],
+    ["Travailler à plusieurs", "Partager une tâche, un document ou tout un projet avec des collègues, ou par un lien, et y travailler ensemble, chacun avec sa propre IA. Scellé de bout en bout.", "built", "L’Espace ChatGPT : des pages qu’une équipe modifie ensemble avec ChatGPT, en Pro, Business et Enterprise. Les tâches d’équipe : un travail récurrent partagé, fait avec les outils approuvés par l’entreprise.", "work"],
+    ["Partir avec vos affaires", "Des fichiers ordinaires et des sauvegardes. L’export de ChatGPT s’importe.", "built", "L’export des données de ChatGPT sur les abonnements personnels, à demander dans les contrôles des données. Dans un espace Business ou Enterprise, seulement par son propriétaire.", "export"]
+  ],
+  "better.title": "Là où ChatGPT Work fait mieux",
+  "better.items": [
+    "L’application et l’IA d’une même entreprise, faites pour aller ensemble : on se connecte et on commence, sur le web, le téléphone ou l’ordinateur. {name} vous demande d’abord de choisir une IA.",
+    "Il continue dans le cloud d’OpenAI quand vous fermez l’application, et lance une tâche à heure fixe ou à l’arrivée d’un e-mail ou d’un message Slack. {name} travaille tant qu’il est ouvert.",
+    "Plus de 1 400 plugins vers les outils qu’une équipe utilise déjà, dont Slack, Microsoft Teams, Google Drive et SharePoint.",
+    "Dans son application pour ordinateur, « Utilisation de l’ordinateur » agit pour vous dans vos autres applications : il clique, saisit du texte et déplace des fichiers. {name} reste dans le navigateur."
+  ],
+  "better.sources": ["work", "use help", "work launch", "launch"],
+  "both.title": "Les deux ensemble",
+  "both.cards": [
+    ["plan", "Votre abonnement ChatGPT, dans {name}", "Plus ou Pro, sur un ordinateur, par « Votre ordinateur » : une ligne à coller une fois, puis vous vous connectez à ChatGPT. Pas de second abonnement.", "computer"],
+    ["skills", "Vos compétences", "Les deux lisent SKILL.md. Celles qui n’ont besoin d’aucun programme hors du navigateur marchent telles quelles dans {name}.", "built"],
+    ["private", "Le privé reste à la maison", "Les fiches de paie et les contrats avec l’IA de cet ordinateur ; les longues tâches qui tournent la nuit avec ChatGPT Work.", "built"]
+  ],
+  "catch.items": [
+    "{name} est gratuit ; l’IA derrière ne l’est pas toujours.",
+    "Votre abonnement ChatGPT passe par « Votre ordinateur » : une ligne à coller une fois, sur un ordinateur.",
+    "{name} travaille tant qu’il est ouvert. Fermez l’onglet et il vous attend : rien ne continue dans un cloud.",
+    "L’IA de cet ordinateur demande 12 Go de mémoire et une puce graphique récente. Pas sur téléphone.",
+    "Votre travail vit dans ce navigateur. Effacez ses données sans sauvegarde et il disparaît."
+  ],
+  "faq.items": [
+    ["Existe-t-il une alternative gratuite et libre à ChatGPT Work ?", "{name} est gratuit et sous licence MIT. Il mène des tâches sur vos fichiers avec n’importe quelle IA, et l’IA de cet ordinateur ne coûte rien."],
+    ["Existe-t-il une alternative européenne à ChatGPT Work ?", "{name} est fait en France et libre, et son IA peut être européenne elle aussi : celle de Mistral avec votre clé, ou une IA sur votre propre ordinateur."],
+    ["{name} peut-il utiliser mon abonnement ChatGPT ?", "Oui, Plus ou Pro, sur un ordinateur, par « Votre ordinateur » : vous collez une ligne une fois, puis vous vous connectez à ChatGPT."],
+    ["ChatGPT Work est-il gratuit ?", "En partie. OpenAI l’inclut dans son application pour ordinateur avec tous ses abonnements, le gratuit compris, limité en dessous de Plus ; sur le web et le téléphone, il commence avec Plus."],
+    ["Avec ChatGPT Work, mon travail reste-t-il sur mon ordinateur ?", "Pas entièrement. OpenAI indique que les messages et le contexte d’une tâche peuvent être gardés dans son cloud même quand elle tourne sur votre ordinateur. Avec {name} et l’IA de cet ordinateur, rien n’en sort."],
+    ["Et pour toute une entreprise ?", "{name} se déploie comme une page web, depuis votre propre adresse, et ne répond que par votre passerelle IA et votre authentification. Voir {enterprise}."],
+    ["ChatGPT Work, est-ce la même chose que ChatGPT ?", "Non. La discussion répond ; Work mène une tâche plus longue jusqu’aux fichiers finis. Pour la discussion, voir {compare-chatgpt}."]
+  ],
+  "end.title": "Donnez un fichier à {name}, et choisissez l’IA qui fait le travail",
+  "foot.note": "Les informations sur ChatGPT Work ont été vérifiées le {date} sur les pages d’OpenAI. ChatGPT est une marque d’OpenAI ; {name} n’y est pas affilié.",
+  "source.work": "OpenAI : ChatGPT Work pour toutes les équipes",
+  "source.launch": "OpenAI : présentation de ChatGPT Work, 9 juillet 2026",
+  "source.help": "Centre d’aide d’OpenAI : ChatGPT Work et Codex",
+  "source.use": "ChatGPT Learn : Chat, Work et Codex",
+  "source.scheduled": "ChatGPT Learn : les tâches planifiées",
+  "source.skills": "ChatGPT Learn : créer des compétences",
+  "source.usage": "ChatGPT Learn : tarifs de Work et de Codex",
+  "source.pricing": "Tarifs de ChatGPT",
+  "source.data": "Centre d’aide d’OpenAI : contrôles des données",
+  "source.export": "Centre d’aide d’OpenAI : exporter vos données",
+  "source.codex": "Codex sur GitHub, Apache 2.0"
+}

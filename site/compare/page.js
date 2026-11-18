@@ -10,13 +10,16 @@ import { FELT, WAVE, landing, underline } from '../site.js'
 
 /** The makers' pages the table's cells are read from, and the day each was read. */
 const SOURCES = {
-  'openai-train': { url: 'https://chatgpt.com/pricing', checked: '2026-10-20' },
+  'openai-train': { url: 'https://chatgpt.com/pricing', checked: '2026-11-18' },
   'claude-train': { url: 'https://privacy.claude.com/en/articles/10023580-is-my-data-used-for-model-training', checked: '2026-10-20' },
   'claude-pricing': { url: 'https://claude.com/pricing', checked: '2026-10-20' },
-  'openai-export': { url: 'https://help.openai.com/en/articles/7260999-exporting-your-chatgpt-history-and-data', checked: '2026-10-20' },
+  'openai-export': { url: 'https://help.openai.com/en/articles/7260999-exporting-your-chatgpt-history-and-data', checked: '2026-11-18' },
   'claude-export': { url: 'https://support.claude.com/en/articles/9450526-how-can-i-export-my-claude-data', checked: '2026-10-20' },
   'openai-parents': { url: 'https://help.openai.com/en/articles/12315553-managing-parental-controls-in-chatgpt', checked: '2026-10-20' },
   'claude-age': { url: 'https://www.anthropic.com/legal/consumer-terms', checked: '2026-10-20' },
+  'chatgpt-work': { url: 'https://openai.com/chatgpt-work/', checked: '2026-11-18' },
+  'chatgpt-work-help': { url: 'https://help.openai.com/en/articles/20001275-chatgpt-work-and-codex', checked: '2026-11-18' },
+  'chatgpt-work-usage': { url: 'https://learn.chatgpt.com/docs/pricing', checked: '2026-11-18' },
   'cowork': { url: 'https://claude.com/product/cowork', checked: '2026-10-20' },
   'manus-home': { url: 'https://manus.im/', checked: '2026-11-01' },
   'manus-welcome': { url: 'https://manus.im/docs/introduction/welcome', checked: '2026-11-01' },

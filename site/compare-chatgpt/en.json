@@ -17,13 +17,14 @@
   ],
   "try.ask": "Dinners for the week: four of us, vegetarian, under €60, with the shopping list.",
   "fair.title": "ChatGPT, fairly",
-  "fair.body": "ChatGPT is OpenAI’s assistant, used by more than 900 million people a week. It starts in one click, its text chat is free, and it is very capable. Your conversations are kept on OpenAI’s servers, and on its personal plans they help train OpenAI’s AI unless you turn that off in its Data controls.",
-  "fair.sources": "users stored data",
+  "fair.body": "ChatGPT is OpenAI’s assistant, used by more than 900 million people a week. It starts in one click, its text chat is free, and it is very capable. Since July 2026 it also has Work, which carries longer tasks through to finished files. Your conversations are kept on OpenAI’s servers, and on its personal plans they help train OpenAI’s AI unless you turn that off in its Data controls.",
+  "fair.sources": "users work stored data",
   "table.rows": [
     ["Where it runs", "In a browser tab. Your files are sealed on your devices.", "built", "On OpenAI’s servers, in the US and around the world, through the web and its apps.", "stored pricing"],
     ["Who reads what you send", "The AI you choose. With the AI on this computer, nobody.", "built", "OpenAI. On personal plans, used to train its AI unless you turn that off.", "pricing data"],
-    ["Which AI", "Any, ChatGPT included: on this computer, a free one, your key or your plan.", "built", "OpenAI’s own; the free plan gets the lighter ones.", "pricing"],
+    ["Which AI", "Any, ChatGPT included: on this computer, a free one, your key or your plan.", "built", "OpenAI’s own; its advanced reasoning starts with Plus.", "pricing"],
     ["What comes back", "Answers with sources, and finished files: Word, Excel, PowerPoint, charts. Numbers worked out by code.", "built", "Answers, pictures and files, with data analysis; limited on the free plan.", "pricing"],
+    ["Longer tasks", "Works through a task step by step, from a plan you confirm, while its tab is open.", "built", "ChatGPT Work, which stays with a task for hours: in the desktop app on every plan, with limits below Plus; on the web and phones from Plus.", "work launch"],
     ["What it costs", "{name} is free. The AI is free on this computer or with a free account; otherwise your key or your plan.", "design", "Free, with limits on uploads, pictures and voice. Plus at $20 a month.", "pricing plus"],
     ["Leaving with your things", "Plain files and backups. ChatGPT’s export comes in.", "built", "An export you ask for in Data controls; a link arrives by email or text, within 7 days.", "export"],
     ["For a family", "A profile per child, set by a parent, with no account for the child.", "built", "Accounts from 13, or your country’s age of consent; parental controls link a parent’s account to a teen’s.", "terms parents"]
@@ -33,9 +34,10 @@
     "One account on any device: sign in and your history is there. {name} has it only on the devices you add, one by one.",
     "Spoken conversation and polished phone apps.",
     "Pictures made in the app, with nothing to set up.",
-    "It starts in one click. {name} asks you to pick an AI first."
+    "It starts in one click. {name} asks you to pick an AI first.",
+    "With Work, tasks go on while you’re away from your computer and your phone, on a schedule. {name} works while its tab is open."
   ],
-  "better.sources": ["pricing", "pricing", "pricing", "pricing"],
+  "better.sources": ["pricing", "pricing", "pricing", "pricing", "launch"],
   "both.title": "Use both",
   "both.cards": [
     ["history", "Bring your ChatGPT history", "In ChatGPT: Settings › Data controls › Export data. Drop the file it sends you in {name}: every conversation comes in, nothing twice.", "built"],
@@ -50,6 +52,7 @@
   ],
   "faq.items": [
     ["Can I keep my ChatGPT conversations?", "Yes. Export them from ChatGPT and drop the file in {name}. They stay yours, in plain files on your devices."],
+    ["What about ChatGPT Work?", "ChatGPT Work is the assistant OpenAI added to ChatGPT in July 2026, for longer tasks carried through to finished files. It has a page of its own: {compare-chatgpt-work}."],
     ["Is it safer than ChatGPT?", "With the AI on this computer, what you write stays on it. With an AI online, ChatGPT included, that provider reads what you send, as in its own app. No {name} server keeps it in a form it can read."],
     ["Do I need an account?", "Not with the AI on this computer. The free one asks for an OpenRouter account."],
     ["Is there a European ChatGPT alternative?", "{name} is made in France and open source, and its AI can be European too: Mistral’s with your key, or one on your own computer."]
@@ -57,6 +60,8 @@
   "end.title": "Try {name}, and bring ChatGPT with you",
   "foot.note": "Facts about ChatGPT were checked on {date} on OpenAI’s own pages. ChatGPT is a trademark of OpenAI; {name} is not affiliated with it.",
   "source.users": "OpenAI: more than 900 million weekly users",
+  "source.work": "OpenAI: ChatGPT Work for every team",
+  "source.launch": "OpenAI: introducing ChatGPT Work, 9 July 2026",
   "source.stored": "OpenAI help centre: where content is stored",
   "source.data": "OpenAI help centre: data controls",
   "source.pricing": "ChatGPT pricing",

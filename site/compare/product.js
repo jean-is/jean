@@ -131,10 +131,11 @@ export function helpers (kit, sources) {
   }
   /** The two buttons, the first the primary one. @param {[Action, Action]} actions @param {string[]} labels */
   const buttons = (actions, labels) => actions.map((action, i) => /* html */ `<a class="button${i ? '' : ' primary'}" href="${xml(href(action))}">${labels[i]}</a>`).join('')
-  /** Its questions, whose answers may point at the page for IT ({enterprise}). */
+  /** Its questions, whose answers may point at the page for IT ({enterprise}) and at a product's ({compare-chatgpt}), by what that page is called. */
   const asked = () => {
-    const it = kit.link('enterprise')
-    return kit.table('faq.items', 2).map(([question, answer]) => [question, answer.replace('{enterprise}', it ? /* html */ `<a href="${it}">${kit.from('enterprise').say('title')}</a>` : kit.from('enterprise').say('title'))])
+    const to = (/** @type {string} */ page, /** @type {string} */ label) => { const href = kit.link(page); return href ? /* html */ `<a href="${href}">${label}</a>` : label }
+    return kit.table('faq.items', 2).map(([question, answer]) => [question, answer.replace('{enterprise}', () => to('enterprise', kit.from('enterprise').say('title')))
+      .replace(/\{(compare-[\w-]+)\}/g, (whole, page) => to(page, kit.from(page).say('eyebrow')))])
   }
   /**
    * The catch, plainly, said under the part of the promise each limit is about: every limit the page's words list

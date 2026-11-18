@@ -14,7 +14,7 @@ test('the homepage’s act on any AI leads to the hub, which leads to each produ
   await expect(page).toHaveURL(`${JEAN_IS}compare`)
   await expect(page.locator('h1')).toHaveText('Jean beside the AI apps you know')
   const products = await page.locator('.cmp-products a').evaluateAll((links) => links.map((link) => /** @type {HTMLAnchorElement} */ (link).href))
-  expect(products).toEqual(['chatgpt', 'claude-cowork', 'manus', 'notebooklm', 'openclaw', 'open-webui'].map((name) => `${JEAN_IS}compare/${name}`))
+  expect(products).toEqual(['chatgpt', 'chatgpt-work', 'claude-cowork', 'manus', 'notebooklm', 'openclaw', 'open-webui'].map((name) => `${JEAN_IS}compare/${name}`))
   for (const address of products) {
     await page.goto(address)
     // The product's name heads its column, a new name its maker gave it under it.

@@ -21,17 +21,17 @@
   "table.jean": "{name}",
   "table.head": [
     ["Chat apps from AI companies", "ChatGPT, Claude, Gemini, Copilot"],
-    ["Assistants that act for you", "Claude Cowork, OpenClaw, Manus"],
+    ["Assistants that act for you", "ChatGPT Work, Claude Cowork, OpenClaw, Manus"],
     ["Local AI apps", "LM Studio, Ollama"],
     ["Self-hosted chat", "Open WebUI, LibreChat"]
   ],
   "table.rows": [
-    ["Where it runs", "In a browser tab, from {domain} or your own address", "built", "The company’s servers; apps for phone and computer", "", "A program on your computer or a server; Cowork also in Anthropic’s cloud, Manus in its own", "cowork manus-welcome", "Your computer, after an install", "Your server, usually with Docker"],
+    ["Where it runs", "In a browser tab, from {domain} or your own address", "built", "The company’s servers; apps for phone and computer", "", "A program on your computer or a server; ChatGPT Work and Cowork also in their makers’ clouds, Manus in its own", "chatgpt-work-help cowork manus-welcome", "Your computer, after an install", "Your server, usually with Docker"],
     ["Who reads what you send", "The AI you choose. With the AI on this computer, nobody", "built", "The company; some train their AI on it unless you opt out", "openai-train claude-train", "The AI provider each one uses, and Manus itself", "manus-privacy", "Nobody, while the AI runs on your computer", "Your server, and the AI behind it"],
     ["Which AI", "Any: on this computer, a free one, your key, your plan, your company’s", "built", "The company’s own", "", "One company’s, or any you set up", "", "Open ones you download", "Any you connect"],
-    ["What you install", "Nothing", "built", "Nothing on the web; apps if you like", "", "An app, sometimes a terminal; nothing for Manus on the web", "manus-home", "An app, then downloads of several GB", "A server, a database, updates"],
-    ["What it costs", "{name} is free; the AI may not be", "design", "Free with limits, then a monthly plan", "openai-train claude-pricing", "A plan, or your own keys; Manus counts credits", "manus-pricing", "Free", "Free software, plus running it"],
-    ["Can you leave with your things", "Plain files and backups; ChatGPT’s, Claude’s and Gemini’s exports come in", "built", "An export you ask for, sent by email", "openai-export claude-export", "Files on your disk, or on Manus’s servers; history varies", "manus-privacy", "Files on your disk", "A database you can copy"],
+    ["What you install", "Nothing", "built", "Nothing on the web; apps if you like", "", "An app, sometimes a terminal; nothing for ChatGPT Work or Manus on the web", "chatgpt-work manus-home", "An app, then downloads of several GB", "A server, a database, updates"],
+    ["What it costs", "{name} is free; the AI may not be", "design", "Free with limits, then a monthly plan", "openai-train claude-pricing", "A plan, or your own keys; Manus counts credits, ChatGPT Work a plan’s allowance, then credits", "manus-pricing chatgpt-work-usage", "Free", "Free software, plus running it"],
+    ["Can you leave with your things", "Plain files and backups; ChatGPT’s, Claude’s and Gemini’s exports come in", "built", "An export you ask for, sent by email", "openai-export claude-export", "Files on your disk, or on the maker’s servers when the work runs in its cloud; history varies", "manus-privacy chatgpt-work-help", "Files on your disk", "A database you can copy"],
     ["For a family", "A profile per child, set by a parent", "built", "It varies: ChatGPT from 13 with parental controls, Claude for adults only", "openai-parents claude-age", "Not made for children", "", "Not made for children", "Up to whoever runs it"]
   ],
   "choose.title": "ChatGPT, Claude or Gemini? You don’t have to choose.",
@@ -46,6 +46,7 @@
   "one.title": "Compared one by one",
   "one.cards": [
     "Keep ChatGPT if you like. Your files stay on your devices.",
+    "Finished files with the AI you choose, not only OpenAI’s, kept on your devices.",
     "Open source, in a browser tab, with any AI.",
     "The work on your devices, with any AI and no credits.",
     "Any AI on your files, and the files stay on your devices.",
@@ -64,6 +65,7 @@
   "faq.title": "Questions people ask",
   "faq.items": [
     ["Is {name} a ChatGPT alternative?", "It can be. It can also be where you use ChatGPT, with your files kept on your devices. {name} is the app; the AI is your choice."],
+    ["And the assistants that do the work, like ChatGPT Work or Claude Cowork?", "{name} is one of them: it works through a task and hands back finished files, in a browser tab, with the AI you choose. Each has its page: {compare-chatgpt-work}, {compare-claude-cowork}."],
     ["Which is best: ChatGPT, Claude or Gemini?", "It depends on the task, and it changes often. In {name} you can switch the AI from the box and ask again."],
     ["Is it free?", "{name} is free and open source. The AI may cost: free on this computer or with a free account, otherwise your key or your plan."],
     ["Do I need an account?", "Not with the AI on this computer. The free one asks for an OpenRouter account."],
@@ -95,6 +97,9 @@
   "source.claude-export": "Claude help centre: exporting your data",
   "source.openai-parents": "OpenAI help centre: parental controls",
   "source.claude-age": "Anthropic consumer terms: 18 and over",
+  "source.chatgpt-work": "OpenAI: ChatGPT Work for every team",
+  "source.chatgpt-work-help": "OpenAI help centre: ChatGPT Work and Codex",
+  "source.chatgpt-work-usage": "ChatGPT Learn: pricing of Work and Codex",
   "source.cowork": "Claude Cowork",
   "source.manus-home": "Manus",
   "source.manus-welcome": "Manus docs: welcome",
