@@ -596,11 +596,16 @@ test.describe('found and used by the brain', () => {
     await expect(page.locator('app-creations')).toHaveCount(0)
     await expect(page.locator('.hero-question')).toBeVisible()
 
-    // Another project keeps the page, on its own creations, none yet; back home, on these.
+    // Another project keeps the page, and the words typed, on its own creations, none yet: none matches them, it says, never a
+    // page with nothing under its search, and, the words cleared, that nothing is made; back home, on these.
     await place.click()
     await expect(cards).toHaveCount(7)
+    await page.locator('app-creations').getByRole('searchbox').fill('menu')
+    await expect(cards).toHaveCount(1)
     await addProject(page, 'Garden')
     await enterProject(page, 'Garden')
+    await expect(page.locator('app-creations .creations-none')).toContainText('No creation matches')
+    await page.locator('app-creations .creations-none').getByRole('button', { name: 'Clear' }).click()
     await expect(page.locator('app-creations .creations-empty')).toBeVisible()
     await expect(cards).toHaveCount(0)
     await expect(page).toHaveURL(/#\/p\/[0-9A-HJKMNP-TV-Z]{26}\/\?creations$/)
@@ -735,7 +740,7 @@ test.describe('found and used by the brain', () => {
     await expect(chips.getByRole('button', { name: 'Collections 1' })).toHaveAttribute('aria-pressed', 'true')
   })
 
-  test('Creations are found by their words and kind, pinned first, renamed in place with their title line, duplicated, and deleted with five seconds to undo, from each card\'s menu', async ({ page }) => {
+  test('Creations are found by their words and kind, pinned first, renamed in place with their title line, duplicated, and deleted with five seconds to undo, from each card\'s menu', async ({ page, browserName }) => {
     await begin(page)
     await connectFakeBrain(page)
     const tasks = await openTasks(page)
@@ -836,6 +841,12 @@ test.describe('found and used by the brain', () => {
     // Five: found by their words, case aside, in a field always there, as wide as the bar leaves it; nothing found says so and clears.
     const find = creations.getByRole('searchbox', { name: 'Find a creation' })
     expect((await creations.locator('.creations-find').boundingBox())?.width).toBeGreaterThan(120)
+    // Where colours are forced, which draw no shadow, it keeps a line round it (WebKit forces none).
+    if (browserName === 'chromium') {
+      await page.emulateMedia({ forcedColors: 'active' })
+      expect(await creations.locator('.creations-find').evaluate((box) => { const { outlineStyle, outlineColor } = getComputedStyle(box); return [outlineStyle, outlineColor !== 'rgba(0, 0, 0, 0)'] })).toEqual(['solid', true])
+      await page.emulateMedia({ forcedColors: 'none' })
+    }
     await find.fill('ABOUT THE MENU')
     await expect(names).toHaveText(['Menu'])
     await expect(page).toHaveURL(/#\/\?creations=all\/changed\/ABOUT%20THE%20MENU(&|$)/)
@@ -852,16 +863,21 @@ test.describe('found and used by the brain', () => {
     await find.fill('letter')
     await expect(cards.locator('.creation-open mark')).toHaveText(['Letter', 'Letter'])
     await expect(chips.locator('button')).toHaveText(['All 2', 'Docs 2', 'Collections 0'])
-    // One kind shown that holds none of those found: the page says which, beside All's count, which shows them, the words kept.
+    // One kind shown that holds none of those found: the page says which, beside All's count, which shows them, the words kept;
+    // pressed from the keyboard, it leaves it on the first of them.
     await page.evaluate(async () => { (await import('/ui/creations.js')).kind.value = 'tables' })
     await expect(creations.locator('.creations-none')).toContainText('Show: Collections')
-    await creations.locator('.creations-none').getByRole('button', { name: 'All 2' }).click()
+    await creations.locator('.creations-none').getByRole('button', { name: 'All 2' }).press('Enter')
     await expect(names).toHaveText(['Letter to Anna', 'Letter'])
+    await expect(names.first()).toBeFocused()
     await expect(page).toHaveURL(/#\/\?creations=all\/changed\/letter(&|$)/)
+    // Words that nothing has, kept apart from the sentence that says so, as a tag's # needs where words run from the right;
+    // Clear, from the keyboard, leaves it in the search.
     await find.fill('passport')
-    await expect(creations.locator('.creations-none')).toContainText('No creation matches “passport”.')
-    await creations.getByRole('button', { name: 'Clear' }).click()
+    await expect(creations.locator('.creations-none')).toContainText('No creation matches “⁨passport⁩”.')
+    await creations.getByRole('button', { name: 'Clear' }).press('Enter')
     await expect(names).toHaveCount(5)
+    await expect(find).toBeFocused()
     await expect(page).toHaveURL(/#\/\?creations(&|$)/)
 
     // Deleted: off the page at once, back with Undo; deleted again, gone from the project five seconds later.
@@ -936,10 +952,20 @@ test.describe('found and used by the brain', () => {
     await tasks.getByRole('button', { name: 'Creations', exact: true }).click()
     const creations = page.locator('app-creations'), cards = creations.locator('.creation'), names = cards.locator('.creation-open span')
     await expect(names.first()).toHaveText('Note 0')
-    // This month's first, under no name, then each earlier month's under its own, with its count; only the cards in view and a
-    // screen either side are drawn, each saying its place in its group.
-    const counts = await creations.locator('.creations-group span').allTextContents(), first = Number(await cards.first().getAttribute('aria-setsize'))
-    expect(counts.reduce((sum, one) => sum + Number(one.replace(/\D/g, '')), first)).toBe(400)
+    // This month's first, under no name, then each earlier month's under its own, the name alone, which a count beside it
+    // would make a day; only the cards in view and a screen either side are drawn, each saying its place in its group.
+    const heads = creations.locator('.creations-group'), months = await heads.allTextContents()
+    expect(months.length).toBeGreaterThan(2)
+    for (const month of months) expect(month).toMatch(/^\p{L}+( \d{4})?$/u)
+    expect(Number(await cards.first().getAttribute('aria-setsize'))).toBeLessThan(400)
+    expect(await page.evaluate(async () => (await import('/ui/creations.js')).all.value.length)).toBe(400)
+    // Found by words, they stay together, however far apart they were made: one grid, under no month's name.
+    await creations.getByRole('searchbox').fill('Note 39')
+    await expect(cards).toHaveCount(14)
+    await expect(heads).toHaveCount(0)
+    await expect(creations.locator('.creations-cards')).toHaveCount(1)
+    await creations.getByRole('searchbox').fill('')
+    await expect(heads).toHaveCount(months.length)
     expect(await cards.count()).toBeLessThan(120)
     await expect(cards.first()).toHaveAttribute('aria-posinset', '1')
     // As long as all of them: at the page's end, the oldest, its preview drawn.

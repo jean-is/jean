@@ -2,9 +2,9 @@
 // The Creations page (D497), loaded once it shows: the project's creations, a card each, in one grid, those pinned first, each with
 // its pin, then the latest changed, those of a month before this one under its name, or by when they were made, or by name; found
 // by their words, every one of them, in any order, which each card found marks, in its name and
-// in a passage of its words, and those of one kind alone picked from the chips over them, one for each kind that holds some, with its
+// in a passage of its words, those found in one grid with no month's name, and those of one kind alone picked from the chips over them, one for each kind that holds some, with its
 // count of those found, which Show's menu holds where the page is narrow, beside Sort's; a kind that holds none says so, or, when
-// other kinds hold what was found, that it alone is shown, beside All's count, which shows them. Create is the one way to make one here: its menu names each
+// other kinds hold what was found, that it alone is shown, beside All's count, which shows them; words that nothing has, where nothing is made too, are said to match none, beside Clear. Create is the one way to make one here: its menu names each
 // kind with its few words, in groups, or, a kind picked, it names that kind and makes one at once; with nothing made yet, the page
 // says so around it, once the project's have been read. One is asked for in the box too (D542). Each card has a menu, as a task has, which a right click opens too: Pin, Rename in place, Duplicate (a
 // document, a collection) or Another like this (asked for in the box), and Delete, which takes it off at once and deletes it five
@@ -198,6 +198,9 @@ function card(items, i, sought) {
   </li>`
 }
 
+/** The keyboard, once the button it pressed is gone with what it said, on the first there is of these, the page drawn again; a pointer's press moves nothing. @param {MouseEvent} event @param {...string} places */
+const land = (event, ...places) => event.detail || requestAnimationFrame(() => /** @type {HTMLElement | undefined} */ (places.map((place) => document.querySelector(`app-creations ${place}`)).find(Boolean))?.focus())
+
 /** Every creation here in one grid, those pinned first, an earlier month's under its name, under the bar that finds (from five), orders
  * (from two) and makes them, and the kinds that hold some: chips, or Show's menu where the page is narrow. With none yet, it says so around Create. */
 class Page extends Element {
@@ -215,11 +218,11 @@ class Page extends Element {
     const having = sought.length ? here.filter((item) => has(item, sought)) : here
     const list = having.filter((item) => !picked || item.kind === picked)
       .sort(order.value === 'name' ? (a, b) => collator.compare(a.name, b.name) : (a, b) => (when(a) < when(b) ? 1 : -1))
-    // One grid: those pinned, then the rest, a month before this one starting a group under its name.
+    // One grid: those pinned, then the rest, a month before this one starting a group under its name, unless words are typed: those found are few, and stay together.
     /** @type {[string, Item[]][]} */
     const groups = [['', list.filter((item) => item.pinned)]], month = months()
     for (const item of list.filter((one) => !one.pinned)) {
-      const name = order.value === 'name' ? '' : month(when(item)), last = groups[groups.length - 1]
+      const name = order.value === 'name' || sought.length ? '' : month(when(item)), last = groups[groups.length - 1]
       if (last[0] === name) last[1].push(item)
       else groups.push([name, [item]])
     }
@@ -241,10 +244,10 @@ class Page extends Element {
       ${create}
     </div>
     ${shows.length ? html`<div class="creations-chips" role="group" aria-label=${showing}>${shows.map(([one, name, many]) => html`<button type="button" class="button ${on === one ? 'primary' : ''}" aria-pressed=${String(on === one)} @click=${() => { kind.value = one }}>${name} <span>${many}</span></button>`)}</div>` : nothing}`}
-    <div role="status">${list.length || !here.length ? nothing : html`<p class="creations-none">${!sought.length ? t('creations.empty')
-      : having.length ? html`${showing}<button class="button" @click=${() => { kind.value = '' }}>${t('creations.all')} <span>${count.format(having.length)}</span></button>`
-        : html`${t('creations.none', { words: words.value.trim() })}<button class="button" @click=${() => { words.value = ''; kind.value = '' }}>${t('creations.clear')}</button>`}</p>`}</div>
-    ${groups.map(([name, items]) => (!items.length ? nothing : html`${name ? html`<h2 class="creations-group">${name}<span>${count.format(items.length)}</span></h2>` : nothing}
+    <div role="status">${list.length || !(here.length || (words.value && read.value)) ? nothing : html`<p class="creations-none">${!sought.length ? t('creations.empty')
+      : having.length ? html`${showing}<button class="button" @click=${(/** @type {MouseEvent} */ e) => { kind.value = ''; land(e, '.creation-open') }}>${t('creations.all')} <span>${count.format(having.length)}</span></button>`
+        : html`${t('creations.none', { words: `⁨${words.value.trim()}⁩` })}<button class="button" @click=${(/** @type {MouseEvent} */ e) => { words.value = ''; kind.value = ''; land(e, '#creations-find', '.creation-open', '.primary') }}>${t('creations.clear')}</button>`}</p>`}</div>
+    ${groups.map(([name, items]) => (!items.length ? nothing : html`${name ? html`<h2 class="creations-group">${name}</h2>` : nothing}
       <ul class="creations-cards">${virtual({ count: items.length, key: (i) => items[i].path,
       at: items.findIndex((item) => item.path === renaming.value), draw: (i) => card(items, i, sought) })}</ul>`))}
     <div id="creation-menu" class="menu task-menu" popover @toggle=${(/** @type {ToggleEvent} */ e) => { opened.value = e.newState === 'open' }}>${menuOf.value ? html`<ul>${menu(menuOf.value)}</ul>` : nothing}</div>`
