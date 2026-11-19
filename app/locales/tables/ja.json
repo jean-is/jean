@@ -148,5 +148,10 @@
   "tables.askFill": "{name} に入力を頼む",
   "tables.asked.show": "「{table}」で、次のものだけを表示してください：{words}",
   "tables.asked.fill": "「{table}」で、列「{column}」の空いているところを入力してください。",
-  "tables.asked.row": "「{table}」の「{row}」について、"
+  "tables.asked.row": "「{table}」の「{row}」について、",
+  "tables.pasted": {
+    "other": "{count} 行を貼り付けました"
+  },
+  "tables.lastChanges": "最近の変更",
+  "tables.needs": "「{kind}」の列を追加すると、行をこの形で表示できます。"
 }

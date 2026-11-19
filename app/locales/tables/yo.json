@@ -148,5 +148,10 @@
   "tables.askFill": "Ní kí {name} kún un",
   "tables.asked.show": "Nínú “{table}”, fi èyí nìkan hàn: {words}",
   "tables.asked.fill": "Nínú “{table}”, kún ọwọ̀n “{column}” níbikíbi tó bá ṣófo.",
-  "tables.asked.row": "Nínú “{table}”, nípa “{row}”: "
+  "tables.asked.row": "Nínú “{table}”, nípa “{row}”: ",
+  "tables.pasted": {
+    "other": "A ti lẹ ìlà {count}"
+  },
+  "tables.lastChanges": "Àwọn àyípadà tó kẹ́yìn",
+  "tables.needs": "Ṣàfikún ọwọ̀n “{kind}” láti fi àwọn ìlà hàn báyìí."
 }

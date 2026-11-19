@@ -151,5 +151,11 @@
   "tables.askFill": "{name} uygulamasından doldurmasını iste",
   "tables.asked.show": "“{table}” içinde yalnızca şunu göster: {words}",
   "tables.asked.fill": "“{table}” içinde “{column}” sütununu boş olduğu yerlerde doldur.",
-  "tables.asked.row": "“{table}” içinde, “{row}” hakkında: "
+  "tables.asked.row": "“{table}” içinde, “{row}” hakkında: ",
+  "tables.pasted": {
+    "one": "{count} satır yapıştırıldı",
+    "other": "{count} satır yapıştırıldı"
+  },
+  "tables.lastChanges": "Son değişiklikler",
+  "tables.needs": "Satırları böyle göstermek için “{kind}” sütunu ekle."
 }

@@ -154,5 +154,12 @@
   "tables.askFill": "Pedir a {name} que la rellene",
   "tables.asked.show": "En «{table}», muestra solo: {words}",
   "tables.asked.fill": "En «{table}», rellena «{column}» donde esté vacío.",
-  "tables.asked.row": "En «{table}», sobre «{row}»: "
+  "tables.asked.row": "En «{table}», sobre «{row}»: ",
+  "tables.pasted": {
+    "one": "{count} fila pegada",
+    "many": "{count} de filas pegadas",
+    "other": "{count} filas pegadas"
+  },
+  "tables.lastChanges": "Últimos cambios",
+  "tables.needs": "Añade una columna «{kind}» para ver las filas así."
 }

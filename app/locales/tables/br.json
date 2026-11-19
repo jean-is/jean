@@ -160,5 +160,14 @@
   "tables.askFill": "Goulenn ouzh {name} e leuniañ",
   "tables.asked.show": "E « {table} », diskouez hepken : {words}",
   "tables.asked.fill": "E « {table} », leugn « {column} » e kement lec’h ma’z eo goullo.",
-  "tables.asked.row": "E « {table} », diwar-benn « {row} » : "
+  "tables.asked.row": "E « {table} », diwar-benn « {row} » : ",
+  "tables.pasted": {
+    "one": "{count} linenn beget",
+    "two": "{count} linenn beget",
+    "few": "{count} linenn beget",
+    "many": "{count} a linennoù peget",
+    "other": "{count} linenn beget"
+  },
+  "tables.lastChanges": "Kemmoù diwezhañ",
+  "tables.needs": "Ouzhpennit ur bann « {kind} » evit diskouez al linennoù evel-se."
 }

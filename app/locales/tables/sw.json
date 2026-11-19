@@ -151,5 +151,11 @@
   "tables.askFill": "Mwombe {name} aijaze",
   "tables.asked.show": "Katika “{table}”, onyesha tu: {words}",
   "tables.asked.fill": "Katika “{table}”, jaza safuwima “{column}” popote ilipo tupu.",
-  "tables.asked.row": "Katika “{table}”, kuhusu “{row}”: "
+  "tables.asked.row": "Katika “{table}”, kuhusu “{row}”: ",
+  "tables.pasted": {
+    "one": "Safu {count} imebandikwa",
+    "other": "Safu {count} zimebandikwa"
+  },
+  "tables.lastChanges": "Mabadiliko ya hivi karibuni",
+  "tables.needs": "Ongeza safuwima “{kind}” ili kuonyesha safu hivi."
 }

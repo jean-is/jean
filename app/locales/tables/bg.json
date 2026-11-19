@@ -151,5 +151,11 @@
   "tables.askFill": "Попълване от {name}",
   "tables.asked.show": "В „{table}“ покажи само: {words}",
   "tables.asked.fill": "В „{table}“ попълни колоната „{column}“ там, където е празна.",
-  "tables.asked.row": "В „{table}“, за реда „{row}“: "
+  "tables.asked.row": "В „{table}“, за реда „{row}“: ",
+  "tables.pasted": {
+    "one": "{count} ред е поставен",
+    "other": "{count} реда са поставени"
+  },
+  "tables.lastChanges": "Последни промени",
+  "tables.needs": "Добавете колона „{kind}“, за да покажете редовете така."
 }

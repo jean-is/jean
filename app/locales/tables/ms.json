@@ -148,5 +148,10 @@
   "tables.askFill": "Minta {name} mengisinya",
   "tables.asked.show": "Dalam “{table}”, tunjukkan hanya: {words}",
   "tables.asked.fill": "Dalam “{table}”, isi lajur “{column}” di mana-mana yang masih kosong.",
-  "tables.asked.row": "Dalam “{table}”, tentang “{row}”: "
+  "tables.asked.row": "Dalam “{table}”, tentang “{row}”: ",
+  "tables.pasted": {
+    "other": "{count} baris ditampal"
+  },
+  "tables.lastChanges": "Perubahan terkini",
+  "tables.needs": "Tambah lajur “{kind}” untuk memaparkan baris begini."
 }

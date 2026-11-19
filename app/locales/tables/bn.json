@@ -151,5 +151,11 @@
   "tables.askFill": "{name}-কে এটি পূরণ করতে বলুন",
   "tables.asked.show": "“{table}”-এ শুধু এটা দেখাও: {words}",
   "tables.asked.fill": "“{table}”-এ “{column}” কলাম যেখানে খালি সেখানে পূরণ করো।",
-  "tables.asked.row": "“{table}”-এ, “{row}” সম্পর্কে: "
+  "tables.asked.row": "“{table}”-এ, “{row}” সম্পর্কে: ",
+  "tables.pasted": {
+    "one": "{count}টি সারি পেস্ট করা হয়েছে",
+    "other": "{count}টি সারি পেস্ট করা হয়েছে"
+  },
+  "tables.lastChanges": "সাম্প্রতিক পরিবর্তন",
+  "tables.needs": "সারিগুলো এভাবে দেখাতে একটি “{kind}” কলাম যোগ করুন।"
 }

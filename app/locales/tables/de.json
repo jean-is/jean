@@ -151,5 +151,11 @@
   "tables.askFill": "Von {name} ausfüllen lassen",
   "tables.asked.show": "Zeig in „{table}“ nur: {words}",
   "tables.asked.fill": "Füll in „{table}“ die Spalte „{column}“ aus, wo sie leer ist.",
-  "tables.asked.row": "In „{table}“, zu „{row}“: "
+  "tables.asked.row": "In „{table}“, zu „{row}“: ",
+  "tables.pasted": {
+    "one": "{count} Zeile eingefügt",
+    "other": "{count} Zeilen eingefügt"
+  },
+  "tables.lastChanges": "Letzte Änderungen",
+  "tables.needs": "Füge eine Spalte „{kind}“ hinzu, um die Zeilen so anzuzeigen."
 }

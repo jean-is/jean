@@ -154,5 +154,12 @@
   "tables.askFill": "Dumandà à {name} d’empiela",
   "tables.asked.show": "In « {table} », mostra solu : {words}",
   "tables.asked.fill": "In « {table} », empii « {column} » induve hè viotu.",
-  "tables.asked.row": "In « {table} », à prupositu di « {row} » : "
+  "tables.asked.row": "In « {table} », à prupositu di « {row} » : ",
+  "tables.pasted": {
+    "one": "{count} linea incullata",
+    "many": "{count} di linee incullate",
+    "other": "{count} linee incullate"
+  },
+  "tables.lastChanges": "Ultime mudificazioni",
+  "tables.needs": "Aghjunghjite una culonna « {kind} » per mustrà e linee cusì."
 }

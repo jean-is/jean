@@ -151,5 +151,11 @@
   "tables.askFill": "Bed {name} om at udfylde den",
   "tables.asked.show": "Vis kun dette i “{table}”: {words}",
   "tables.asked.fill": "Udfyld “{column}” i “{table}”, hvor den er tom.",
-  "tables.asked.row": "I “{table}”, om “{row}”: "
+  "tables.asked.row": "I “{table}”, om “{row}”: ",
+  "tables.pasted": {
+    "one": "{count} række indsat",
+    "other": "{count} rækker indsat"
+  },
+  "tables.lastChanges": "Seneste ændringer",
+  "tables.needs": "Tilføj en kolonne “{kind}” for at vise rækkerne sådan."
 }

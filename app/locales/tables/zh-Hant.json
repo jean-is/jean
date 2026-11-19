@@ -148,5 +148,10 @@
   "tables.askFill": "請 {name} 填寫",
   "tables.asked.show": "在「{table}」中只顯示：{words}",
   "tables.asked.fill": "在「{table}」中，把「{column}」欄裡空著的地方填上。",
-  "tables.asked.row": "在「{table}」中，關於「{row}」："
+  "tables.asked.row": "在「{table}」中，關於「{row}」：",
+  "tables.pasted": {
+    "other": "已貼上 {count} 列"
+  },
+  "tables.lastChanges": "最近的修改",
+  "tables.needs": "新增「{kind}」欄，即可這樣顯示各列。"
 }

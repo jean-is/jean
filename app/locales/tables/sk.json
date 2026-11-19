@@ -157,5 +157,13 @@
   "tables.askFill": "Požiadať aplikáciu {name} o vyplnenie",
   "tables.asked.show": "V „{table}“ ukáž len: {words}",
   "tables.asked.fill": "V „{table}“ vyplň stĺpec „{column}“ tam, kde je prázdny.",
-  "tables.asked.row": "V „{table}“, k riadku „{row}“: "
+  "tables.asked.row": "V „{table}“, k riadku „{row}“: ",
+  "tables.pasted": {
+    "one": "Vložený {count} riadok",
+    "few": "Vložené {count} riadky",
+    "many": "Vložené {count} riadka",
+    "other": "Vložených {count} riadkov"
+  },
+  "tables.lastChanges": "Posledné zmeny",
+  "tables.needs": "Pridajte stĺpec „{kind}“, aby sa riadky zobrazili takto."
 }

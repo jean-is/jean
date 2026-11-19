@@ -151,5 +151,11 @@
   "tables.askFill": "{name} سے اسے بھرنے کو کہیں",
   "tables.asked.show": "“{table}” میں صرف یہ دکھاؤ: {words}",
   "tables.asked.fill": "“{table}” میں کالم “{column}” جہاں خالی ہے وہاں بھر دو۔",
-  "tables.asked.row": "“{table}” میں، “{row}” کے بارے میں: "
+  "tables.asked.row": "“{table}” میں، “{row}” کے بارے میں: ",
+  "tables.pasted": {
+    "one": "{count} قطار پیسٹ کی گئی",
+    "other": "{count} قطاریں پیسٹ کی گئیں"
+  },
+  "tables.lastChanges": "حالیہ تبدیلیاں",
+  "tables.needs": "قطاریں اس طرح دکھانے کے لیے “{kind}” کالم شامل کریں۔"
 }

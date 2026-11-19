@@ -148,5 +148,10 @@
   "tables.askFill": "Nhờ {name} điền vào",
   "tables.asked.show": "Trong “{table}”, chỉ hiện: {words}",
   "tables.asked.fill": "Trong “{table}”, hãy điền cột “{column}” ở những chỗ còn trống.",
-  "tables.asked.row": "Trong “{table}”, về “{row}”: "
+  "tables.asked.row": "Trong “{table}”, về “{row}”: ",
+  "tables.pasted": {
+    "other": "Đã dán {count} hàng"
+  },
+  "tables.lastChanges": "Thay đổi gần đây",
+  "tables.needs": "Hãy thêm cột “{kind}” để hiển thị các hàng theo dạng này."
 }

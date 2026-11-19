@@ -151,5 +151,11 @@
   "tables.askFill": "Συμπλήρωση από το {name}",
   "tables.asked.show": "Στο «{table}», δείξε μόνο: {words}",
   "tables.asked.fill": "Στο «{table}», συμπλήρωσε τη στήλη «{column}» όπου είναι κενή.",
-  "tables.asked.row": "Στο «{table}», σχετικά με «{row}»: "
+  "tables.asked.row": "Στο «{table}», σχετικά με «{row}»: ",
+  "tables.pasted": {
+    "one": "{count} γραμμή επικολλήθηκε",
+    "other": "{count} γραμμές επικολλήθηκαν"
+  },
+  "tables.lastChanges": "Τελευταίες αλλαγές",
+  "tables.needs": "Προσθέστε μια στήλη «{kind}» για να εμφανιστούν έτσι οι γραμμές."
 }

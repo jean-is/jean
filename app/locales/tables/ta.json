@@ -151,5 +151,11 @@
   "tables.askFill": "{name}-இடம் இதை நிரப்பச் சொல்",
   "tables.asked.show": "“{table}” இல் இதை மட்டும் காட்டு: {words}",
   "tables.asked.fill": "“{table}” இல் “{column}” நெடுவரிசை காலியாக உள்ள இடங்களில் நிரப்பு.",
-  "tables.asked.row": "“{table}” இல், “{row}” பற்றி: "
+  "tables.asked.row": "“{table}” இல், “{row}” பற்றி: ",
+  "tables.pasted": {
+    "one": "{count} வரிசை ஒட்டப்பட்டது",
+    "other": "{count} வரிசைகள் ஒட்டப்பட்டன"
+  },
+  "tables.lastChanges": "சமீபத்திய மாற்றங்கள்",
+  "tables.needs": "வரிசைகளை இப்படிக் காட்ட “{kind}” நெடுவரிசையைச் சேர்க்கவும்."
 }

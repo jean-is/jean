@@ -157,5 +157,13 @@
   "tables.askFill": "Požádat aplikaci {name} o vyplnění",
   "tables.asked.show": "V „{table}“ ukaž jen: {words}",
   "tables.asked.fill": "V „{table}“ vyplň sloupec „{column}“ tam, kde je prázdný.",
-  "tables.asked.row": "V „{table}“, k řádku „{row}“: "
+  "tables.asked.row": "V „{table}“, k řádku „{row}“: ",
+  "tables.pasted": {
+    "one": "Vložen {count} řádek",
+    "few": "Vloženy {count} řádky",
+    "many": "Vloženo {count} řádku",
+    "other": "Vloženo {count} řádků"
+  },
+  "tables.lastChanges": "Poslední změny",
+  "tables.needs": "Přidejte sloupec „{kind}“, aby se řádky zobrazily takto."
 }

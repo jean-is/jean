@@ -154,5 +154,12 @@
   "tables.askFill": "Rugați {name} să o completeze",
   "tables.asked.show": "În „{table}”, arată doar: {words}",
   "tables.asked.fill": "În „{table}”, completează coloana „{column}” acolo unde este goală.",
-  "tables.asked.row": "În „{table}”, despre „{row}”: "
+  "tables.asked.row": "În „{table}”, despre „{row}”: ",
+  "tables.pasted": {
+    "one": "{count} rând lipit",
+    "few": "{count} rânduri lipite",
+    "other": "{count} de rânduri lipite"
+  },
+  "tables.lastChanges": "Ultimele schimbări",
+  "tables.needs": "Adăugați o coloană „{kind}” pentru a afișa rândurile astfel."
 }

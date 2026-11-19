@@ -154,5 +154,12 @@
   "tables.askFill": "Chiedi a {name} di compilarla",
   "tables.asked.show": "In «{table}», mostra solo: {words}",
   "tables.asked.fill": "In «{table}», compila «{column}» dove è vuoto.",
-  "tables.asked.row": "In «{table}», a proposito di «{row}»: "
+  "tables.asked.row": "In «{table}», a proposito di «{row}»: ",
+  "tables.pasted": {
+    "one": "{count} riga incollata",
+    "many": "{count} di righe incollate",
+    "other": "{count} righe incollate"
+  },
+  "tables.lastChanges": "Ultime modifiche",
+  "tables.needs": "Aggiungi una colonna «{kind}» per mostrare le righe così."
 }

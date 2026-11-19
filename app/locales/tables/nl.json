@@ -151,5 +151,11 @@
   "tables.askFill": "{name} vragen deze in te vullen",
   "tables.asked.show": "Toon in ‘{table}’ alleen: {words}",
   "tables.asked.fill": "Vul in ‘{table}’ de kolom ‘{column}’ in waar die leeg is.",
-  "tables.asked.row": "In ‘{table}’, over ‘{row}’: "
+  "tables.asked.row": "In ‘{table}’, over ‘{row}’: ",
+  "tables.pasted": {
+    "one": "{count} rij geplakt",
+    "other": "{count} rijen geplakt"
+  },
+  "tables.lastChanges": "Laatste wijzigingen",
+  "tables.needs": "Voeg een kolom ‘{kind}’ toe om de rijen zo te tonen."
 }

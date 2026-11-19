@@ -157,5 +157,13 @@
   "tables.askFill": "Попросить {name} заполнить",
   "tables.asked.show": "В «{table}» покажи только: {words}",
   "tables.asked.fill": "В «{table}» заполни столбец «{column}» там, где он пуст.",
-  "tables.asked.row": "В «{table}», о строке «{row}»: "
+  "tables.asked.row": "В «{table}», о строке «{row}»: ",
+  "tables.pasted": {
+    "one": "Вставлена {count} строка",
+    "few": "Вставлены {count} строки",
+    "many": "Вставлено {count} строк",
+    "other": "Вставлено {count} строки"
+  },
+  "tables.lastChanges": "Последние изменения",
+  "tables.needs": "Добавьте столбец «{kind}», чтобы показать строки так."
 }

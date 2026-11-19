@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // A collection shown as a calendar (caps/tables/view.js fetches this folder as one is first shown): a month, its weeks from the language's
 // first day, each row on the day its date column holds, by its time, and on each day it lasts where another date column says until when.
-// A row's name opens it as a sheet; dragged to another day, it is on that day, its time kept and its end as many days later; each day's +
+// A row's name opens it as a sheet, in the colour of the choice Arrange names, said in its tip; dragged to another day, it is on that day, its time kept and its end as many days later; each day's +
 // makes a row on it, which opens. Those with no day wait under the month, to open or drag onto one. Where the pane is narrow, the days
 // are a list of its rows' cards (caps/card). The month's name, its days' and its moves' words are Intl's; Tables' own come from the view, whose strings they are. What a
 // timeline shares (caps/timeline) is here too: the columns picked, a row by its name, a row moved, and Intl's words for a day.
@@ -13,7 +13,7 @@ import { icons } from '../../ui/menu-icons.js'
 import { change } from '../tables/tables.js'
 import { titleOf } from '../tables/table.js'
 import { textOf, format } from '../tables/export.js'
-import { card, pictureOf } from '../card/card.js'
+import { card, pictureOf, tintOf } from '../card/card.js'
 import { weeksOf, placed, monthOf, monthAfter, moved, addDays, daysBetween, dayOf } from './month.js'
 
 await styleSheet(new URL('calendar.css', import.meta.url))
@@ -41,11 +41,11 @@ export function sayer(locales) {
 }
 
 /**
- * A row by its name, after its time on the day it starts: it opens its sheet, and is dragged to another day.
- * @param {Pick<Given, 'one' | 'fresh' | 'state' | 'words'>} given @param {Row} row @param {string} [clock] its date's value, where it has a time
+ * A row by its name, after its time on the day it starts, in the colour of the choice Arrange names, which its tip says: it opens its sheet, and is dragged to another day.
+ * @param {Pick<Given, 'one' | 'fresh' | 'state' | 'words'> & { tint?: Property }} given @param {Row} row @param {string} [clock] its date's value, where it has a time
  */
-export const chip = ({ one, fresh, state, words }, row, clock) => html`<li><button type="button" class=${`cal-row${fresh.has(row.id) ? ' is-jean' : ''}`} draggable="true" @dragstart=${(/** @type {DragEvent} */ event) => event.dataTransfer?.setData('text/x-row', row.id)}
-  @click=${() => state.openRow(row.id)}>${clock ? html`<span class="muted">${format('DateTimeFormat', intlLocales(), { timeStyle: 'short' }).format(new Date(clock))}</span> ` : nothing}<bdi>${textOf(row, /** @type {Property} */ (titleOf(one.table))) || words.unnamed}</bdi></button></li>`
+export const chip = ({ one, fresh, state, words, tint }, row, clock) => ((shade) => html`<li><button type="button" class=${`cal-row${fresh.has(row.id) ? ' is-jean' : ''}`} draggable="true" data-hue=${shade.hue} data-group=${shade.group} title=${shade.name || nothing}
+  @dragstart=${(/** @type {DragEvent} */ event) => event.dataTransfer?.setData('text/x-row', row.id)} @click=${() => state.openRow(row.id)}>${clock ? html`<span class="muted">${format('DateTimeFormat', intlLocales(), { timeStyle: 'short' }).format(new Date(clock))}</span> ` : nothing}<bdi>${textOf(row, /** @type {Property} */ (titleOf(one.table))) || words.unnamed}</bdi></button></li>`)(tintOf(tint, row))
 
 /** One of its date columns picked, by a field its label names. */
 const picker = (/** @type {string} */ field, /** @type {string} */ label, /** @type {Property | undefined} */ picked, /** @type {(id: string) => unknown} */ set, /** @type {Property[]} */ among, /** @type {boolean} */ empty) => html`<span class="cal-pick"><label for=${field}>${label}</label><select id=${field}

@@ -151,5 +151,11 @@
   "tables.askFill": "درخواست پر کردن از {name}",
   "tables.asked.show": "در «{table}» فقط این را نشان بده: {words}",
   "tables.asked.fill": "در «{table}»، ستون «{column}» را هر جا خالی است پر کن.",
-  "tables.asked.row": "در «{table}»، دربارهٔ «{row}»: "
+  "tables.asked.row": "در «{table}»، دربارهٔ «{row}»: ",
+  "tables.pasted": {
+    "one": "{count} ردیف چسبانده شد",
+    "other": "{count} ردیف چسبانده شد"
+  },
+  "tables.lastChanges": "آخرین تغییرات",
+  "tables.needs": "برای نمایش ردیف‌ها به این صورت، یک ستون «{kind}» اضافه کنید."
 }

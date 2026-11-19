@@ -47,10 +47,10 @@ const ALIASES = /** @type {Record<string, PropertyType>} */ ({
 /** A rule of a view's filter. @typedef {{ property: string, op: import('./query.js').Op, value?: unknown }} Rule */
 /**
  * A view; filter: the rules a row meets to show, hidden: the columns it doesn't show, sort: the column its rows are sorted by, calculate: what each column's foot works out,
- * 'none' kept as such (D752); group: what a table view's rows and its board's lanes are grouped by, a board's own its lanes else; date: the date column a calendar's rows
+ * 'none' kept as such (D752); group: what a table view's rows and its board's lanes are grouped by, a board's own its lanes else; colour: the choice whose colours its rows take; date: the date column a calendar's rows
  * are on, until: the one they last to. `table` is the collection's own arrangement, `board` and `calendar` what those are by; one with a name is a view the person kept,
  * shown as its type, arranged on its own; deleted: when it was taken away, kept so that no copy brings it back.
- * @typedef {{ id: string, type: 'table' | 'board' | 'list' | 'calendar' | 'gallery' | 'timeline', name?: string, group?: string, date?: string, until?: string, sort?: Sort[], filter?: { and: Rule[] }, hidden?: string[], calculate?: Partial<Record<string, import('./query.js').Total | 'none'>>, deleted?: string }} View
+ * @typedef {{ id: string, type: 'table' | 'board' | 'list' | 'calendar' | 'gallery' | 'timeline', name?: string, group?: string, colour?: string, date?: string, until?: string, sort?: Sort[], filter?: { and: Rule[] }, hidden?: string[], calculate?: Partial<Record<string, import('./query.js').Total | 'none'>>, deleted?: string }} View
  */
 /**
  * kept: the time of Jean's latest change the user kept, after which Jean's changes are marked (D491); order: the rows' ids in the
@@ -378,7 +378,7 @@ export function reshape(table, edit, at) {
     let id = `v${at.replace(/\D/g, '')}`
     while (views.some((view) => view.id === id)) id += '0'
     const kept = held({ ...source, ...shown, id, name: shown.name.trim() }), moved = source.id === 'table' && Object.keys(shown).every((key) => key === 'name' || key === 'type')
-    views = [...views.map((view) => (moved && view === source ? (({ group, filter, hidden, sort, ...whole }) => whole)(view) : view)), kept]
+    views = [...views.map((view) => (moved && view === source ? (({ group, colour, filter, hidden, sort, ...whole }) => whole)(view) : view)), kept]
   }
   if (edit.named?.name.trim()) views = views.map((view) => (view.id === edit.named?.id && view.name ? { ...view, name: edit.named.name.trim() } : view))
   if (edit.drop) views = views.map((view) => (view.id === edit.drop && view.name ? { id: view.id, type: view.type, name: view.name, deleted: at } : view))

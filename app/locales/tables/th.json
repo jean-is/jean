@@ -148,5 +148,10 @@
   "tables.askFill": "ขอให้ {name} กรอกให้",
   "tables.asked.show": "ใน “{table}” แสดงเฉพาะ: {words}",
   "tables.asked.fill": "ใน “{table}” ให้กรอกคอลัมน์ “{column}” ตรงที่ยังว่างอยู่",
-  "tables.asked.row": "ใน “{table}” เกี่ยวกับ “{row}”: "
+  "tables.asked.row": "ใน “{table}” เกี่ยวกับ “{row}”: ",
+  "tables.pasted": {
+    "other": "วางแล้ว {count} แถว"
+  },
+  "tables.lastChanges": "การแก้ไขล่าสุด",
+  "tables.needs": "เพิ่มคอลัมน์ “{kind}” เพื่อแสดงแถวในแบบนี้"
 }

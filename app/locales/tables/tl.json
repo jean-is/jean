@@ -151,5 +151,11 @@
   "tables.askFill": "Hilingin kay {name} na punan ito",
   "tables.asked.show": "Sa “{table}”, ipakita lang: {words}",
   "tables.asked.fill": "Sa “{table}”, punan ang column na “{column}” kung saan ito walang laman.",
-  "tables.asked.row": "Sa “{table}”, tungkol sa “{row}”: "
+  "tables.asked.row": "Sa “{table}”, tungkol sa “{row}”: ",
+  "tables.pasted": {
+    "one": "Na-paste ang {count} row",
+    "other": "Na-paste ang {count} row"
+  },
+  "tables.lastChanges": "Mga huling pagbabago",
+  "tables.needs": "Magdagdag ng column na “{kind}” para ipakita nang ganito ang mga row."
 }

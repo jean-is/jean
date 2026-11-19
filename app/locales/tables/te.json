@@ -151,5 +151,11 @@
   "tables.askFill": "{name}ని దీన్ని నింపమని అడుగు",
   "tables.asked.show": "“{table}”లో ఇది మాత్రమే చూపించు: {words}",
   "tables.asked.fill": "“{table}”లో “{column}” నిలువు వరుస ఖాళీగా ఉన్న చోట నింపు.",
-  "tables.asked.row": "“{table}”లో, “{row}” గురించి: "
+  "tables.asked.row": "“{table}”లో, “{row}” గురించి: ",
+  "tables.pasted": {
+    "one": "{count} వరుస అతికించబడింది",
+    "other": "{count} వరుసలు అతికించబడ్డాయి"
+  },
+  "tables.lastChanges": "ఇటీవలి మార్పులు",
+  "tables.needs": "వరుసలను ఇలా చూపించడానికి “{kind}” నిలువు వరుసను జోడించండి."
 }

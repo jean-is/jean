@@ -151,5 +151,11 @@
   "tables.askFill": "Ask {name} to fill it",
   "tables.asked.show": "In “{table}”, show only: {words}",
   "tables.asked.fill": "In “{table}”, fill in “{column}” wherever it is empty.",
-  "tables.asked.row": "In “{table}”, about “{row}”: "
+  "tables.asked.row": "In “{table}”, about “{row}”: ",
+  "tables.pasted": {
+    "one": "{count} row pasted",
+    "other": "{count} rows pasted"
+  },
+  "tables.lastChanges": "Last changes",
+  "tables.needs": "Add a “{kind}” column to show the rows this way."
 }

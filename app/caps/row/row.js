@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 // A row open as a sheet, over the page (caps/tables/view.js fetches this folder as a row is first opened): its first picture at its head, its name,
-// large, in its own cell, then every other column, those the table hides too, its name beside its cell, changed there as in the table, a cell Jean changed marked; then its last
-// changes, each by what it set, three columns at most, the value before it where there was one, who made it, when and, for Jean's, what it came from.
-// Its head goes to the row before or after it among those the view keeps, each button named by the row it opens, as a swipe across it does, says its
-// place among them, and holds its menu: asked about, in the box, or deleted. Escape closes it alone, as a press outside it does. The cells' parts and
-// Tables' words come from the view, whose they are.
+// large, in its own cell, then every other column, those the table hides too, its name beside its cell, changed there as in the table, a cell Jean changed marked; then its
+// changes, the last first, each by what it set, the value before it where there was one, who made it, when and, for Jean's, what it came from.
+// Its head goes to the row before or after it among those the view keeps, each button named by the row it opens, as a swipe across it does, and ⌘ with
+// the arrow up or down, Ctrl outside Apple's systems, the keyboard staying in the cell it is in; it says its place among them, and holds its menu: asked
+// about, in the box, or deleted. Escape closes it alone, as a press outside it does. The cells' parts and Tables' words come from the view, whose they are.
 import { html, nothing } from 'lit-html'
 import { t, locale, intlLocales } from '../../core/i18n.js'
-import { assistantName } from '../../ui/state.js'
+import { assistantName, APPLE } from '../../ui/state.js'
 import { icons } from '../../ui/menu-icons.js'
 import { titleOf, filesOf } from '../tables/table.js'
 import { query, valueOf } from '../tables/query.js'
@@ -28,7 +28,22 @@ export default function sheet({ one, row, rows: kept, columns, covers, by, fresh
   const title = /** @type {Property} */ (titleOf(one.table)), named = (/** @type {Row} */ each) => textOf(each, title) || words.unnamed, pick = `${state.id}-sheet-pick`, menu = `${state.id}-sheet-menu`
   const at = rows.findIndex(({ id }) => id === row.id), [cover] = covers ? filesOf(valueOf(row, covers)) : []
   /** The row before or after it, where there is one. @param {number} step */
-  const walk = (step) => ((to) => html`<button type="button" class="icon-button" aria-label=${named(to ?? row)} ?disabled=${at < 0 || !to} @click=${() => { state.open.value = to.id }}>${step < 0 ? icons.back : icons.arrow}</button>`)(rows[at + step])
+  const walk = (step) => ((to) => html`<button type="button" class="icon-button" aria-label=${named(to ?? row)} aria-keyshortcuts=${`${APPLE ? 'Meta' : 'Control'}+${step < 0 ? 'ArrowUp' : 'ArrowDown'}`} ?disabled=${at < 0 || !to} @click=${() => { state.open.value = to.id }}>${step < 0 ? icons.back : icons.arrow}</button>`)(rows[at + step])
+  /**
+   * Its keys. Escape closes it alone. ⌘ with the arrow up or down, Ctrl outside Apple's systems, goes to the row before or after: what is being written
+   * in a cell is kept first, and the keyboard stays in that cell, the next row's. @param {KeyboardEvent} event
+   */
+  const keys = (event) => {
+    if (event.key === 'Escape') return event.stopPropagation()
+    const step = /** @type {Record<string, number>} */ ({ ArrowUp: -1, ArrowDown: 1 })[event.key], field = /** @type {HTMLElement | null} */ (document.activeElement)
+    if (!step || event.isComposing || event.altKey || event.shiftKey || !(APPLE ? event.metaKey && !event.ctrlKey : event.ctrlKey && !event.metaKey)) return
+    event.preventDefault()
+    event.stopPropagation()
+    if (at < 0 || !rows[at + step]) return
+    field?.blur()
+    state.open.value = rows[at + step].id
+    field?.focus()
+  }
   /** Closed, then what its menu asks, which the page takes once it is no longer under it. @param {() => unknown} act */
   const leave = (act) => (/** @type {Event} */ event) => { /** @type {Element} */ (event.currentTarget).closest('dialog')?.close(); act() }
   /** A press outside it closes it, one that began outside too: words selected past its edge leave it open. @param {MouseEvent} event */
@@ -39,12 +54,12 @@ export default function sheet({ one, row, rows: kept, columns, covers, by, fresh
     if (event.type === 'touchstart') began = { ...began, x, y }
     else if (Math.abs(across) > 70 && Math.abs(y - began.y) < 40) { const to = rows[at + (across < 0 ? 1 : -1) * (getComputedStyle(/** @type {Element} */ (event.currentTarget)).direction === 'rtl' ? -1 : 1)]; if (to) state.open.value = to.id }
   }
-  // Its last changes, the latest first: each with the values its cells held before it.
+  // Its changes, the last first: each with the values its cells held before it.
   const held = /** @type {Record<string, unknown>} */ ({}), last = /** @type {{ line: Change, was: Record<string, unknown> }[]} */ ([])
   for (const line of /** @type {Change[]} */ (one.lines)) if (line.row === row.id && line.set) { if (columns.some(({ id }) => id in /** @type {object} */ (line.set))) last.unshift({ line, was: { ...held } }); Object.assign(held, line.set) }
   /** A value as its column reads it, a cell emptied as a dash. @param {Property} property @param {unknown} value */
   const read = (property, value) => parts.said({ ...row, cells: { ...row.cells, [property.id]: value } }, property, one.names) || '—'
-  return html`<dialog class="sheet table-row" aria-label=${named(row)} @close=${() => { state.open.value = '' }} @keydown=${(/** @type {KeyboardEvent} */ e) => e.key === 'Escape' && e.stopPropagation()}
+  return html`<dialog class="sheet table-row" aria-label=${named(row)} @close=${() => { state.open.value = '' }} @keydown=${keys}
       @pointerdown=${pressed} @click=${pressed} @touchstart=${swiped} @touchend=${swiped}>
     <header class="dialog-head">${walk(-1)}${walk(1)}<span class="muted" role="status">${at < 0 ? nothing : words.of(at + 1, rows.length)}</span>
       <button type="button" class="icon-button" aria-label=${t('action.more')} popovertarget=${menu}>${icons.more}</button>
@@ -54,8 +69,8 @@ export default function sheet({ one, row, rows: kept, columns, covers, by, fresh
     ${cover ? html`<div class="table-cover">${parts.pictured(one, cover)}</div>` : nothing}
     <dl class="table-fields">${[title, ...columns.filter((property) => property !== title)].map((property) => html`<div class=${property === title ? 'table-title' : nothing}><dt>${parts.glyphs[property.type]}<span dir="auto">${property.name}</span></dt>
       <dd class=${`${fresh.has(`${row.id} ${property.id}`) ? 'is-jean ' : ''}${parts.reads.test(property.type) ? 'is-read' : ''}`}>${parts.cell(one, row, property, state, pick)}</dd></div>`)}</dl>
-    ${last.length ? html`<h3>${words.last}</h3><ul class="table-last">${last.slice(0, 3).map(({ line, was }) => { const who = line.by === 'jean' ? assistantName() : line.by === 'user' ? words.me : line.by, set = columns.filter(({ id }) => id in /** @type {object} */ (line.set)); return html`<li>
-      ${line.by === 'jean' ? icons.brain : parts.face(who)}<dl>${set.slice(0, 3).map((property) => html`<div><dt class="muted" dir="auto">${property.name}</dt><dd dir="auto">${property.id in was && was[property.id] !== null && was[property.id] !== '' && read(property, was[property.id]) !== read(property, line.set?.[property.id]) ? html`<s>${read(property, was[property.id])}</s>${icons.arrow}` : nothing}<b>${read(property, line.set?.[property.id])}</b></dd></div>`)}</dl>${set.length > 3 ? html`<span class="muted" aria-hidden="true">…</span>` : nothing}
+    ${last.length ? html`<h3>${words.last}</h3><ul class="table-last">${last.map(({ line, was }) => { const who = line.by === 'jean' ? assistantName() : line.by === 'user' ? words.me : line.by, set = columns.filter(({ id }) => id in /** @type {object} */ (line.set)); return html`<li>
+      ${line.by === 'jean' ? icons.brain : parts.face(who)}<dl>${set.map((property) => html`<div><dt class="muted" dir="auto">${property.name}</dt><dd dir="auto">${property.id in was && was[property.id] !== null && was[property.id] !== '' && read(property, was[property.id]) !== read(property, line.set?.[property.id]) ? html`<s>${read(property, was[property.id])}</s>${icons.arrow}` : nothing}<b>${read(property, line.set?.[property.id])}</b></dd></div>`)}</dl>
       <p class="muted"><span dir="auto">${who}</span> <time datetime=${line.at}>${format('DateTimeFormat', intlLocales(), { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(line.at))}</time>${line.why ? html` <q dir="auto">${line.why}</q>` : nothing}</p></li>` })}</ul>` : nothing}
     <div id=${pick} class="menu table-menu table-picks" popover @focusout=${parts.leaving}></div></dialog>`
 }

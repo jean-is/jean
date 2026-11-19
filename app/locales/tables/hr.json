@@ -154,5 +154,12 @@
   "tables.askFill": "Zamoli aplikaciju {name} da ga ispuni",
   "tables.asked.show": "U „{table}“ prikaži samo: {words}",
   "tables.asked.fill": "U „{table}“ ispuni stupac „{column}“ tamo gdje je prazan.",
-  "tables.asked.row": "U „{table}“, o retku „{row}“: "
+  "tables.asked.row": "U „{table}“, o retku „{row}“: ",
+  "tables.pasted": {
+    "one": "{count} redak zalijepljen",
+    "few": "{count} retka zalijepljena",
+    "other": "{count} redaka zalijepljeno"
+  },
+  "tables.lastChanges": "Posljednje promjene",
+  "tables.needs": "Dodajte stupac „{kind}“ da biste ovako prikazali retke."
 }

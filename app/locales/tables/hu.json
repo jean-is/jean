@@ -151,5 +151,11 @@
   "tables.askFill": "Kitöltés kérése: {name}",
   "tables.asked.show": "Itt: „{table}”, csak ezt mutasd: {words}",
   "tables.asked.fill": "Itt: „{table}”, töltsd ki a(z) „{column}” oszlopot ott, ahol üres.",
-  "tables.asked.row": "Itt: „{table}”, erről a sorról: „{row}”: "
+  "tables.asked.row": "Itt: „{table}”, erről a sorról: „{row}”: ",
+  "tables.pasted": {
+    "one": "{count} sor beillesztve",
+    "other": "{count} sor beillesztve"
+  },
+  "tables.lastChanges": "Legutóbbi módosítások",
+  "tables.needs": "Adj hozzá egy „{kind}” oszlopot, hogy így jelenjenek meg a sorok."
 }

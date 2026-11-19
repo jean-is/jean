@@ -154,5 +154,12 @@
   "tables.askFill": "לבקש מ־{name} למלא אותה",
   "tables.asked.show": "ב“{table}”, הצג רק: {words}",
   "tables.asked.fill": "ב“{table}”, מלא את העמודה “{column}” בכל מקום שבו היא ריקה.",
-  "tables.asked.row": "ב“{table}”, לגבי “{row}”: "
+  "tables.asked.row": "ב“{table}”, לגבי “{row}”: ",
+  "tables.pasted": {
+    "one": "שורה אחת הודבקה",
+    "two": "{count} שורות הודבקו",
+    "other": "{count} שורות הודבקו"
+  },
+  "tables.lastChanges": "שינויים אחרונים",
+  "tables.needs": "יש להוסיף עמודת “{kind}” כדי להציג כך את השורות."
 }

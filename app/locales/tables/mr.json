@@ -151,5 +151,11 @@
   "tables.askFill": "{name} ला हे भरायला सांगा",
   "tables.asked.show": "“{table}” मध्ये फक्त हे दाखव: {words}",
   "tables.asked.fill": "“{table}” मध्ये “{column}” स्तंभ जिथे रिकामा आहे तिथे भर.",
-  "tables.asked.row": "“{table}” मध्ये, “{row}” बद्दल: "
+  "tables.asked.row": "“{table}” मध्ये, “{row}” बद्दल: ",
+  "tables.pasted": {
+    "one": "{count} ओळ पेस्ट केली",
+    "other": "{count} ओळी पेस्ट केल्या"
+  },
+  "tables.lastChanges": "अलीकडील बदल",
+  "tables.needs": "ओळी अशा दाखवण्यासाठी “{kind}” स्तंभ जोडा."
 }

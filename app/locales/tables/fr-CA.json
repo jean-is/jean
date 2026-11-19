@@ -154,5 +154,12 @@
   "tables.askFill": "Demander à {name} de la remplir",
   "tables.asked.show": "Dans « {table} », montre seulement : {words}",
   "tables.asked.fill": "Dans « {table} », remplis « {column} » là où c’est vide.",
-  "tables.asked.row": "Dans « {table} », à propos de « {row} » : "
+  "tables.asked.row": "Dans « {table} », à propos de « {row} » : ",
+  "tables.pasted": {
+    "one": "{count} ligne collée",
+    "many": "{count} de lignes collées",
+    "other": "{count} lignes collées"
+  },
+  "tables.lastChanges": "Dernières modifications",
+  "tables.needs": "Ajoutez une colonne « {kind} » pour afficher les lignes ainsi."
 }

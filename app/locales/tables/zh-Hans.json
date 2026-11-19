@@ -148,5 +148,10 @@
   "tables.askFill": "让 {name} 填写",
   "tables.asked.show": "在“{table}”中只显示：{words}",
   "tables.asked.fill": "在“{table}”中，把“{column}”列里空着的地方填上。",
-  "tables.asked.row": "在“{table}”中，关于“{row}”："
+  "tables.asked.row": "在“{table}”中，关于“{row}”：",
+  "tables.pasted": {
+    "other": "已粘贴 {count} 行"
+  },
+  "tables.lastChanges": "最近的修改",
+  "tables.needs": "添加“{kind}”列，即可这样显示各行。"
 }

@@ -151,5 +151,11 @@
   "tables.askFill": "Nemi {name} don cika shi",
   "tables.asked.show": "A cikin “{table}”, nuna kawai: {words}",
   "tables.asked.fill": "A cikin “{table}”, cika ginshiƙin “{column}” a duk inda yake fanko.",
-  "tables.asked.row": "A cikin “{table}”, game da “{row}”: "
+  "tables.asked.row": "A cikin “{table}”, game da “{row}”: ",
+  "tables.pasted": {
+    "one": "An liƙa layi {count}",
+    "other": "An liƙa layuka {count}"
+  },
+  "tables.lastChanges": "Canje-canjen ƙarshe",
+  "tables.needs": "Ƙara ginshiƙin “{kind}” don nuna layuka haka."
 }

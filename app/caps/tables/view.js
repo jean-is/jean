@@ -5,8 +5,8 @@
 // its name, opening the column's menu: renamed, made another kind or a relation to a collection, the rows sorted by it, Jean asked to fill it, a column
 // added beside it, hidden or taken away; the last head adds one. A row is moved by the handle at its start, dragged or with the arrows; a click or a right
 // click on it opens its menu: opened as a sheet, a row put under it, duplicated, asked about or deleted. A cell is selected or changed, ⌘Z undoing the
-// user's last step and ⇧⌘Z doing it again; a Formula's opens a dialog to write its column's formula in. Its bar: the view on show and how many rows it
-// keeps, Show as, Find, which keeps the rows with its words in any cell, Arrange, which groups, filters, shows columns and sorts, and New row; the table's
+// user's last step and ⇧⌘Z doing it again; a Formula's opens a dialog to write its column's formula in; cells copied from a spreadsheet are pasted on one (D759). Its bar: the view on show and how many rows it
+// keeps, Show as, Find, which keeps the rows with its words in any cell, Arrange, which groups, colours (D760), filters, shows columns and sorts, and New row; the table's
 // foot works out a sum or a share for each column. What is arranged is kept as a view under a name; where others work on the collection too, it is this
 // person's alone until they keep it (D753). lit-html, in Jean's own document, redrawn as the collection changes here or by the brain.
 import { html, svg, nothing, render } from 'lit-html'
@@ -24,7 +24,6 @@ import { icons, icon } from '../../ui/menu-icons.js'
 import { shown, change, unkept, accept, reject, reread, reshapeTable, retype, collections, undoStep, load, wayOf, localCurrency, groupName, attach, yoursOf, alone, meIn } from './tables.js'
 import { query, valueOf, total, filterOf } from './query.js'
 import { titleOf, checkCell, notesOf, canonical, hueOf, hueFor, filesOf, calendarOf, keptViews, viewOf, HUES } from './table.js'
-import { compile } from './formula.js'
 import { textOf, said as told, format, amount, digitsOf, calcOf } from './export.js'
 import { searchable } from '../../ui/mentions.js'
 
@@ -235,6 +234,8 @@ function draw(one, state, go) {
   const lanes = (by?.type !== 'date' && by) || columns.find((property) => property.id === one.table.views.find((view) => view.id === 'board')?.group)
   // The gallery's pictures: its first column of them; the calendar's and the timeline's dates: the column picked, else its first.
   const covers = columns.find((property) => property.type === 'picture'), dated = calendarOf(one.table)
+  // The choice whose colours the cards, a calendar's rows and a timeline's bars take, as Arrange names it.
+  const tints = columns.filter(({ type }) => type === 'status' || type === 'select'), tint = tints.find((property) => property.id === settings.colour)
   state.by = by
   state.calculate = calculate
   const kept = filterOf(one.table, settings), words = searchable(search.value.trim()), texts = words && indexOf(one, columns)
@@ -271,10 +272,9 @@ function draw(one, state, go) {
   const chips = [...(by ? [chip(GLYPHS[by.type], html`<span dir="auto">${by.name}</span>`, `${id}-group`, t('tables.unchip', { name: by.name }), () => view(() => ({ group: undefined })))] : []),
     ...kept.map((rule) => ((property, i) => chip(funnel, html`<span dir="auto">${property.name}</span>${rule.op === 'is' ? html`<span class="muted" dir="auto">${/** @type {{ me?: boolean } | null} */ (rule.value)?.me ? t('tables.me') : told(/** @type {Row} */ ({ cells: { [property.id]: rule.value } }), property, { locales: intlLocales(), labels: { yes: t('tables.yes'), no: t('tables.no') } })}</span>` : nothing}`,
       `${id}-rule-${i}`, t('tables.unchip', { name: property.name }), () => filter((all) => all.filter((_, j) => j !== i))))(/** @type {Property} */ (columns.find((one) => one.id === rule.property)), rules.indexOf(rule))),
+    ...(tint ? [chip(icons.palette, html`<span dir="auto">${tint.name}</span>`, `${id}-colour`, t('tables.unchip', { name: tint.name }), () => view(() => ({ colour: undefined })))] : []),
     ...(off.length ? [chip(shut, t('tables.hidden', { count: off.length }), `${id}-shown-${off[0].id}`, t('tables.showAll'), () => view(() => ({ hidden: [] })))] : []),
     ...(sorted ? [chip(sorted.direction === 'descending' ? descending : ascending, html`<span dir="auto">${sorted.property.name}</span>`, `${id}-sort-${sorted.property.id}`, t('tables.unchip', { name: sorted.property.name }), () => view(() => ({ sort: undefined })))] : [])]
-  // What Search or Filter keep when it is nothing, in a status there before its words; a collection with no rows at all says so too.
-  const none = !one.rows.length ? t('tables.empty') : rows.length ? '' : words ? t('tables.noMatch', { words: search.value.trim() }) : kept.length ? t('tables.noneKept') : ''
   const marked = unkept(one), born = !whiteboard && !one.table.kept && marked.length ? new Map(one.rows.map((row) => [row.id, row.created])) : null
   // A collection Jean made and filled, nothing of it accepted yet, is one decision: how many rows, no cell marked; a cell the person changes
   // meanwhile is theirs and changes nothing of it; from Jean's next change, its changes are marked as ever (D752).
@@ -286,11 +286,13 @@ function draw(one, state, go) {
   // The names its Person columns offer, and the row open as a sheet, while the collection still has it.
   const people = columns.some(({ type }) => type === 'person') ? namesIn(one, columns) : [], opened = state.open.value && one.rows.find((row) => row.id === state.open.value)
   const count = made ? t('tables.made', { count: one.rows.length }) : t('tables.changed', { count: cells, name: assistantName() })
-  // Shown as a layout only where it has something to show: lanes, pictures or dates; a whiteboard's notes, as a table alone. Narrow, a list of the
-  // rows' cards shows in the table's place until the table is picked, and in the board's (D757).
-  const narrow = state.narrow.value && !whiteboard, offers = /** @type {Record<string, unknown>} */ ({ table: true, list: true, board: lanes, gallery: covers, calendar: dated, timeline: dated }), asks = picked ? settings.type : as.value
-  const wanted = !whiteboard && asks !== 'table' && offers[asks] ? asks : '', shows = wanted || (narrow && !state.grid.value ? 'list' : 'table'), way = narrow && wanted === 'board' ? 'list' : shows === 'table' ? '' : shows
-  const ways = Object.keys(LAID).filter((name) => offers[name])
+  // Shown as any layout, a whiteboard's notes as a table alone; one that lacks its column (lanes, pictures, dates) says which in the rows' place and
+  // adds it. Narrow, a list of the rows' cards shows in the table's place until the table is picked, and in the board's (D757).
+  const narrow = state.narrow.value && !whiteboard, asks = picked ? settings.type : as.value, wanted = !whiteboard && asks !== 'table' && asks in LAID ? asks : ''
+  const lacks = /** @type {Record<string, string | false>} */ ({ board: !lanes && 'status', gallery: !covers && 'picture', calendar: !dated && 'date', timeline: !dated && 'date' })[wanted]
+  const shows = wanted || (narrow && !state.grid.value ? 'list' : 'table'), way = narrow && wanted === 'board' ? 'list' : shows === 'table' ? '' : shows, ways = whiteboard ? [] : Object.keys(LAID)
+  // What Search or Filter keep when it is nothing, in a status there before its words; a collection with no rows at all says so too.
+  const none = lacks ? t('tables.needs', { kind: t(`tables.kind.${lacks}`) }) : !one.rows.length ? t('tables.empty') : rows.length ? '' : words ? t('tables.noMatch', { words: search.value.trim() }) : kept.length ? t('tables.noneKept') : ''
   /** Shown another way: the view picked's own, else in the address; a list is the table, narrow. @param {string} name */
   const show = (name) => { const type = /** @type {View['type']} */ (name === 'list' && narrow ? 'table' : name); state.grid.value = name === 'table'; if (picked) view(() => ({ type })); else as.value = type === 'table' ? '' : type }
   const title = /** @type {Property} */ (titleOf(one.table)), counted = (/** @type {number} */ count) => format('NumberFormat', intlLocales()).format(count), jean = assistantName()
@@ -304,7 +306,7 @@ function draw(one, state, go) {
   const keep = async (fresh) => {
     if (own && mine && !fresh) return shape(one, { view: () => mine, of: at }).then(() => alone(one, at))
     const name = /** @type {string} */ ((offered && settings.name) || (kept.find((rule) => rule.op === 'is' && typeof rule.value === 'string')?.value ?? by?.name ?? t(`tables.${wanted || 'table'}`)))
-    const table = await shape(one, { keep: { ...(offered && { group: undefined, filter: undefined, hidden: undefined, sort: undefined }), ...mine, name, from: own ? at : 'table', type: /** @type {View['type']} */ (wanted || 'table') } })
+    const table = await shape(one, { keep: { ...(offered && { group: undefined, colour: undefined, filter: undefined, hidden: undefined, sort: undefined }), ...mine, name, from: own ? at : 'table', type: /** @type {View['type']} */ (wanted || 'table') } })
     const made = table && keptViews(table).find((view) => !views.some((had) => had.id === view.id))
     if (!made) return
     if (mine) await alone(one, at)
@@ -322,9 +324,9 @@ function draw(one, state, go) {
   }
   // Tables' words for what is drawn outside this folder, and what each is given.
   const said = { add: t('tables.addRow'), unnamed: t('tables.unnamed'), wrong: t('tables.wrong'), subtotal: t('tables.subtotal'), changed: (/** @type {number} */ count) => t('tables.changed', { count, name: jean }), none: dated ? t('tables.none', { column: dated.date.name }) : '', date: t('tables.kind.date'), end: t('tables.end'),
-    open: t('tables.open'), duplicate: t('tables.duplicate'), last: t('tables.kind.changed-at'), me: t('tables.me'), ask: t('tables.ask', { name: jean }), of: (/** @type {number} */ shown, /** @type {number} */ count) => t('tables.of', { shown: counted(shown), count: counted(count) }),
+    open: t('tables.open'), duplicate: t('tables.duplicate'), last: t('tables.lastChanges'), me: t('tables.me'), ask: t('tables.ask', { name: jean }), of: (/** @type {number} */ shown, /** @type {number} */ count) => t('tables.of', { shown: counted(shown), count: counted(count) }),
     about: (/** @type {Row} */ row) => t('tables.asked.row', { table: one.table.name, row: textOf(row, title) || t('tables.unnamed') }) }
-  const given = { id, one, columns, rows, hidden, fresh, state, parts, covers, words: said, by: wanted === 'board' ? lanes : way === 'gallery' || way === 'calendar' ? undefined : by }
+  const given = { id, one, columns, rows, hidden, fresh, state, parts, covers, tint, words: said, by: wanted === 'board' ? lanes : way === 'gallery' || way === 'calendar' ? undefined : by }
   return html`<p class="visually-hidden" role="status">${(state.reviewed ||= cells > 0) ? count : ''}</p>${marked.length ? reviewBar({
       label: t('tables.review'), count, go: cells > 1 && !made ? go : null, previous: t('tables.previous'), next: t('tables.next'),
       accept: decided(accept, one), reject: decided(reject, one), acceptAll: t('tables.acceptAll'), rejectAll: t('tables.rejectAll'),
@@ -344,6 +346,8 @@ function draw(one, state, go) {
         <div id=${`${id}-arrange`} class="menu table-menu table-panel" popover @focusout=${leaving}>
           <h3><label for=${`${id}-group`}>${t('tables.groupBy')}</label></h3><div class="table-line"><select id=${`${id}-group`} .value=${live(by?.id ?? '')} @change=${(/** @type {Event} */ e) => view(() => ({ group: typed(e) || undefined }))}>
             <option value="">${t('tables.ungrouped')}</option>${groups.map((property) => html`<option value=${property.id} ?selected=${property === by}>${property.name}</option>`)}</select></div>
+          ${tints.length ? html`<h3><label for=${`${id}-colour`}>${t('tables.colour')}</label></h3><div class="table-line"><select id=${`${id}-colour`} .value=${live(tint?.id ?? '')} @change=${(/** @type {Event} */ e) => view(() => ({ colour: typed(e) || undefined }))}>
+            <option value="">—</option>${tints.map((property) => html`<option value=${property.id} ?selected=${property === tint}>${property.name}</option>`)}</select></div>` : nothing}
           <h3>${t('tables.filter')}</h3>${ruled}
           <h3 id=${`${id}-shown`}>${t('tables.shown')}</h3><div class="table-lines" role="group" aria-labelledby=${`${id}-shown`}>${listed(columns.map((property) => html`<label class="table-line" for=${`${id}-shown-${property.id}`}><input id=${`${id}-shown-${property.id}`} type="checkbox" .checked=${live(!hidden.includes(property.id))} ?disabled=${property === titleOf(one.table)}
             @change=${(/** @type {Event} */ e) => view(({ hidden = [] }) => ({ hidden: /** @type {HTMLInputElement} */ (e.target).checked ? hidden.filter((id) => id !== property.id) : [...hidden, property.id] }))}>${GLYPHS[property.type]}<span dir="auto">${property.name}</span></label>`))}</div>
@@ -353,11 +357,12 @@ function draw(one, state, go) {
     ${chips.length ? html`<ul class="table-chips" aria-label=${t('tables.arranged')}>${chips}</ul>` : nothing}
     <div class=${mine ? 'table-yours' : 'table-yours is-quiet'}><span role="status">${mine ? (offered ? t('tool.offer', { name: settings.name ?? '' }) : t('tables.onlyYou')) : nothing}</span>${mine ? html`<button type="button" class="table-keep" @click=${() => keep()}>${t('tables.keep')}</button><button type="button" class="table-keep"
       @click=${() => { if (offered) as.value = ''; alone(one, at) }}>${t(offered ? 'offer.no' : 'tables.reset')}</button>` : nothing}</div>
-    ${way ? laid(way, { ...given, ...dated, pick: (/** @type {{ date?: string, until?: string }} */ calendar) => shape(one, { calendar }) })
+    ${lacks ? nothing : way ? laid(way, { ...given, ...dated, pick: (/** @type {{ date?: string, until?: string }} */ calendar) => shape(one, { calendar }) })
       : grid(one, columns, columns.filter((property) => !hidden.includes(property.id)), rows, calculate, fresh, state, said)}${columns.filter(({ type }) => type === 'select' || type === 'person').map((property) => html`<datalist id=${listOf(one, property)}>${(property.type === 'person' ? people : (property.options ?? []).map((option) => option.name)).map((name) => html`<option value=${name}></option>`)}</datalist>`)}
     ${people.length ? html`<datalist id=${`${id}-me`}>${[t('tables.me'), ...people].map((name) => html`<option value=${name}></option>`)}</datalist>` : nothing}
     ${opened ? laid('row', { ...given, row: opened }) : nothing}<div id=${`${id}-card`} class="menu table-menu" popover @focusout=${leaving}></div>
-    <div class=${none ? 'table-none' : 'table-none is-quiet'}><p role="status" dir="auto">${none || nothing}</p>${words && one.rows.length && !rows.length ? html`<button type="button" class="button"
+    <div class=${none ? 'table-none' : 'table-none is-quiet'}><p role="status" dir="auto">${none || nothing}</p>${lacks ? html`<button type="button" class="button" @click=${() => shape(one, { add: { name: t(`tables.kind.${lacks}`), type: lacks, options: lacks === 'status' ? steps() : undefined } }).then(() => /** @type {HTMLElement | null} */ (state.box.querySelector('.table-laid'))?.focus())}>${icons.plus}${t('tables.addColumn')}</button>`
+      : words && one.rows.length && !rows.length ? html`<button type="button" class="button"
       @click=${() => { search.value = ''; /** @type {HTMLElement | null} */ (state.box.querySelector('.creations-find input'))?.focus() }}>${t('tables.clear')}</button>
       <button type="button" class="button" @click=${() => ask(one, t('tables.asked.show', { table: one.table.name, words: search.value.trim() }))}>${said.ask}</button>` : nothing}</div>`
 }
@@ -566,23 +571,8 @@ function grid(one, columns, shown, rows, calculate, fresh, state, words) {
     field.focus()
     try { field?.setSelectionRange(field.value.length, field.value.length) } catch {}
   }
-  /** A Formula's dialog, over the page, its formula's words taking the keyboard, the caret at their end. @param {string} id */
-  const open = (id) => {
-    state.formula.value = id
-    state.wrong.value = false
-    requestAnimationFrame(() => import('../../ui/dialogs.js').then(() => {
-      const dialog = /** @type {HTMLDialogElement | null} */ (box.querySelector('dialog.table-formula')), words = dialog?.querySelector('textarea')
-      dialog?.showModal()
-      words?.focus()
-      words?.setSelectionRange(words.value.length, words.value.length)
-    }))
-  }
-  /** Save keeps the formula once it can be read, the dialog then closing; Escape or Close leave it as it was. @param {SubmitEvent} event @param {Property} property */
-  const save = (event, property) => {
-    const text = /** @type {HTMLFormElement} */ (event.target).querySelector('textarea')?.value.trim() ?? ''
-    try { if (text) compile(text, columns) } catch { event.preventDefault(); state.wrong.value = true; return }
-    if (text !== (property.formula ?? '')) shape(one, { formula: { id: property.id, text } })
-  }
+  /** A Formula's dialog, over the page, drawn by a folder of its own (caps/formula), fetched as one is first opened. @param {string} id */
+  const open = (id) => { state.formula.value = id; state.wrong.value = false }
   const editing = columns.find((property) => property.type === 'formula' && property.id === state.formula.value)
   /**
    * A cell selected, its box taking the keyboard, or being changed, its field taking it: Enter changes the one selected, then keeps the change
@@ -607,7 +597,16 @@ function grid(one, columns, shown, rows, calculate, fresh, state, words) {
   /** Dropped on such a cell, or pasted while it has the keys, they are its own. @param {Row} row @param {Property} property */
   const filesIn = (row, property) => (/** @type {DragEvent | ClipboardEvent} */ event) => {
     const files = [...('dataTransfer' in event ? event.dataTransfer : event.clipboardData)?.files ?? []]
-    if (files.length) event.preventDefault(), event.stopPropagation(), given(one, row, property, files)
+    // Cells copied from a spreadsheet come with their picture: they are the table's (`pasted`).
+    if (files.length && !/\t/.test(/** @type {ClipboardEvent} */ (event).clipboardData?.getData('text/plain') ?? '')) event.preventDefault(), event.stopPropagation(), given(one, row, property, files)
+  }
+  /** Cells copied from a spreadsheet, pasted on a cell or in its field, fill from it, row by row (caps/paste, fetched then); other words pasted in a field are its own. @param {ClipboardEvent} event */
+  const pasted = (event) => {
+    const data = event.clipboardData, td = /** @type {HTMLTableCellElement | null} */ (/** @type {Element} */ (event.target).closest(CELL)), text = data?.getData('text/plain') ?? ''
+    if (!td || !text.trim() || (event.target !== td && !/\t|<table/i.test(text + data?.getData('text/html')))) return
+    event.preventDefault()
+    import('../paste/paste.js').then(({ paste }) => paste({ one, text, columns: shown.slice(td.cellIndex - 1), rows: [.../** @type {NodeListOf<HTMLElement>} */ (box.querySelectorAll('tbody tr[data-row]'))].map((tr) => String(tr.dataset.row)), from: String(td.parentElement?.dataset.row),
+      words: { pasted: (count) => t('tables.pasted', { count }), wrong: t('tables.wrong'), yes: t('tables.yes'), no: t('tables.no') } }))
   }
   /** Each row's place among the rows shown, which its handle moves it by. */
   const place = new Map(rows.map((row, i) => [row.id, i]))
@@ -619,10 +618,10 @@ function grid(one, columns, shown, rows, calculate, fresh, state, words) {
           @contextmenu=${(/** @type {MouseEvent} */ e) => { e.preventDefault(); /** @type {HTMLElement} */ (e.currentTarget).click() }}></button></td>
         ${shown.map((property) => {
           const changed = fresh.has(`${row.id} ${property.id}`), tip = changed ? t('tables.changed', { count: 1, name: assistantName() }) : nothing, content = cell(one, row, property, state)
-          // The column that names the rows heads its row.
+          // The column that names the rows heads its row, which a button at its end opens.
           const classes = `${changed ? 'is-jean ' : ''}${READS.test(property.type) ? 'is-read' : ''}`
           const takes = /^(picture|files)$/.test(property.type) ? filesIn(row, property) : undefined
-          return property === title ? html`<th scope="row" tabindex="-1" class=${classes} title=${tip}>${content}</th>` : html`<td tabindex="-1" class=${classes} title=${tip} @dragover=${takes && filesOver} @drop=${takes} @paste=${takes}>${content}</td>`
+          return property === title ? html`<th scope="row" tabindex="-1" class=${classes} title=${tip}>${content}<button type="button" class="icon-button table-pick" aria-label=${t('tables.open')} @click=${() => state.openRow(row.id)}>${icons.fullscreen}</button></th>` : html`<td tabindex="-1" class=${classes} title=${tip} @dragover=${takes && filesOver} @drop=${takes} @paste=${takes}>${content}</td>`
         })}<td class=${fresh.has(row.id) ? 'table-decide' : ''}>${fresh.has(row.id) ? decide(one, row.id) : nothing}</td>
       </tr>`)(/** @type {number} */ (place.get(row.id)))
   /** Where a row whose group's cell changed has gone, said, the keys on that cell again (D752). */
@@ -647,7 +646,7 @@ function grid(one, columns, shown, rows, calculate, fresh, state, words) {
         <th scope="rowgroup"><button type="button" class="table-fold" aria-expanded=${String(!shut)} @click=${fold}>${icons.chevron}<span dir="auto">${groupName(group.value, by)}</span>
           <span class="muted">${format('NumberFormat', intlLocales()).format(list.length)}</span></button></th>${shown.slice(1).map((property) => ((how) => html`<td class="table-sub">${how ? html`<span class="visually-hidden">${t('tables.subtotal')}</span>${totalOf(list, property, how, state.digits?.get(property.id))}` : nothing}</td>`)(calcOf(property, calculate)))}<td></td></tr>` : nothing}${repeat(shut ? [] : list, (row) => row.id, line)}</tbody>`
   }
-  return html`<div class="table-scroll"><table class="table-grid" aria-label=${one.table.name}>
+  return html`<div class="table-scroll" @paste=${pasted}><table class="table-grid" aria-label=${one.table.name}>
       <thead><tr><td class="table-grip"></td>${shown.map(heading)}<th scope="col"><button type="button" class="table-add-column" aria-label=${t('tables.addColumn')} popovertarget=${`${state.id}-add`} @focus=${list} @pointerenter=${list}>+</button>
         <div id=${`${state.id}-add`} class="menu table-menu" popover @focusout=${leaving}>${listed(KINDS.map(adds),
           targets.map(({ folder, name }) => html`<button type="button" popovertarget=${`${state.id}-add`} popovertargetaction="hide" @click=${() => added('relation', undefined, folder)}>${GLYPHS.relation}${t('tables.kind.relation')} <span class="menu-value" dir="auto">${name}</span></button>`),
@@ -657,13 +656,7 @@ function grid(one, columns, shown, rows, calculate, fresh, state, words) {
       <tfoot><tr><td class="table-grip"></td><td colspan=${shown.length + 1}><button type="button" class="table-add" @click=${add}>${icons.plus}${t('tables.addRow')}</button></td></tr>
         <tr><td class="table-grip"></td>${shown.map(foot)}<td></td></tr></tfoot>
     </table></div><div class="table-fade" aria-hidden="true"></div><div id=${`${state.id}-row`} class="menu table-menu" popover></div><div id=${`${state.id}-pick`} class="menu table-menu table-picks" popover @focusout=${leaving}></div>
-    ${editing ? html`<dialog class="sheet table-formula" aria-label=${editing.name} @close=${() => { state.formula.value = '' }} @keydown=${(/** @type {KeyboardEvent} */ e) => e.key === 'Escape' && e.stopPropagation()}>
-      <form method="dialog" @submit=${(/** @type {SubmitEvent} */ e) => save(e, editing)}>
-        <header class="dialog-head"><h2 dir="auto">${GLYPHS.formula}${editing.name}</h2><button type="button" class="icon-button" aria-label=${t('action.close')} @click=${() => /** @type {HTMLDialogElement | null} */ (box.querySelector('dialog.table-formula'))?.close()}>${icons.close}</button></header>
-        <textarea dir="auto" rows="4" spellcheck="false" title=${editing.name} placeholder=${t('tables.yourFormula')} .value=${editing.formula ?? ''} @input=${() => { state.wrong.value = false }}></textarea>
-        <p class="muted small">${t('tables.formulaHint')}</p>${state.wrong.value ? html`<p class="table-formula-wrong" role="alert">${t('tables.formulaWrong')}</p>` : nothing}
-        <footer class="dialog-foot"><button class="button primary">${t('tables.save')}</button></footer>
-      </form></dialog>` : nothing}`
+    ${editing ? laid('formula', { one, columns, property: editing, state, parts, words: { yours: t('tables.yourFormula'), hint: t('tables.formulaHint'), wrong: t('tables.formulaWrong'), save: t('tables.save') } }) : nothing}`
 }
 
 /**
@@ -688,7 +681,7 @@ function cell(one, row, property, state, menu = `${state.id}-pick`) {
     case 'number': return html`${value === null ? nothing : reading(said(row, property, one.names, state.digits?.get(property.id)), 'is-amount')}<input type="number" dir="ltr" step="any" title=${property.name}
       data-money=${property.format === 'money' && property.currency ? new Intl.DisplayNames(intlLocales(), { type: 'currency' }).of(property.currency) : nothing} .value=${live(value === null ? '' : String(value))}
       @change=${(/** @type {Event} */ e) => set(read(e).value === '' ? null : read(e).valueAsNumber, e)}>`
-    case 'date': { const timed = property.time || String(value ?? '').includes('T'); return html`${value ? reading(said(row, property, one.names)) : nothing}<input type=${timed ? 'datetime-local' : 'date'} title=${property.name} .value=${live(timed ? clockOf(value) : String(value ?? '').slice(0, 10))} @change=${(/** @type {Event} */ e) => set(read(e).value || null, e)}>` }
+    case 'date': { const timed = property.time || String(value ?? '').includes('T'); return html`${value ? reading(said(row, property, one.names), 'is-date') : nothing}<input type=${timed ? 'datetime-local' : 'date'} title=${property.name} .value=${live(timed ? clockOf(value) : String(value ?? '').slice(0, 10))} @change=${(/** @type {Event} */ e) => set(read(e).value || null, e)}>` }
     case 'status':
     case 'select': return html`${value ? reading(pill(property, value)) : nothing}${choice(one, row, property, state)}`
     case 'person': return html`${value ? reading(html`${face(String(value))}<span dir="auto">${value}</span>`) : nothing}${choice(one, row, property, state)}`
@@ -855,7 +848,7 @@ const added = (one, set, state) => change(one, [{ set }], 'user').then(([id]) =>
 export const parts = { cell, decide, totalOf, edit, pictured, added, pill, face, said, option, listed, rid, ask, leaving, glyphs: GLYPHS, reads: READS }
 
 /** The layouts and a row's sheet, in folders of their own, each fetched as one is first shown, and those that have come. @type {Record<string, () => Promise<{ default: (given: any) => unknown }>>} */
-const LAYOUTS = { board: () => import('../board/board.js'), gallery: () => import('../gallery/gallery.js'), calendar: () => import('../calendar/calendar.js'), timeline: () => import('../timeline/timeline.js'), list: () => import('../list/list.js'), row: () => import('../row/row.js') }
+const LAYOUTS = { board: () => import('../board/board.js'), gallery: () => import('../gallery/gallery.js'), calendar: () => import('../calendar/calendar.js'), timeline: () => import('../timeline/timeline.js'), list: () => import('../list/list.js'), row: () => import('../row/row.js'), formula: () => import('../formula/formula.js') }
 const layouts = signal(/** @type {Record<string, (given: any) => unknown>} */ ({}))
 /**
  * A board, a gallery, a calendar, a timeline, a list or a row's sheet, drawn by its own folder (caps/board, gallery, calendar, timeline, list, row) with what the view gives it: the collection,

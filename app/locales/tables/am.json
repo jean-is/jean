@@ -151,5 +151,11 @@
   "tables.askFill": "በ{name} አስሞላ",
   "tables.asked.show": "በ“{table}” ውስጥ ይህን ብቻ አሳይ፦ {words}",
   "tables.asked.fill": "በ“{table}” ውስጥ ዓምድ “{column}” ባዶ በሆነበት ሁሉ ሙላ።",
-  "tables.asked.row": "በ“{table}” ውስጥ፣ ስለ “{row}”፦ "
+  "tables.asked.row": "በ“{table}” ውስጥ፣ ስለ “{row}”፦ ",
+  "tables.pasted": {
+    "one": "{count} ረድፍ ተለጥፏል",
+    "other": "{count} ረድፎች ተለጥፈዋል"
+  },
+  "tables.lastChanges": "የቅርብ ጊዜ ለውጦች",
+  "tables.needs": "ረድፎቹን በዚህ መልክ ለማሳየት “{kind}” ዓምድ ያክሉ።"
 }

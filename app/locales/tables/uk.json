@@ -157,5 +157,13 @@
   "tables.askFill": "Попросити {name} заповнити",
   "tables.asked.show": "У «{table}» покажи лише: {words}",
   "tables.asked.fill": "У «{table}» заповни стовпець «{column}» там, де він порожній.",
-  "tables.asked.row": "У «{table}», про рядок «{row}»: "
+  "tables.asked.row": "У «{table}», про рядок «{row}»: ",
+  "tables.pasted": {
+    "one": "Вставлено {count} рядок",
+    "few": "Вставлено {count} рядки",
+    "many": "Вставлено {count} рядків",
+    "other": "Вставлено {count} рядка"
+  },
+  "tables.lastChanges": "Останні зміни",
+  "tables.needs": "Додайте стовпець «{kind}», щоб показати рядки так."
 }

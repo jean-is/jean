@@ -148,5 +148,10 @@
   "tables.askFill": "{name}에게 채우기 요청",
   "tables.asked.show": "‘{table}’에서 다음만 보여 줘: {words}",
   "tables.asked.fill": "‘{table}’에서 ‘{column}’ 열의 빈 곳을 채워 줘.",
-  "tables.asked.row": "‘{table}’의 ‘{row}’에 대해: "
+  "tables.asked.row": "‘{table}’의 ‘{row}’에 대해: ",
+  "tables.pasted": {
+    "other": "행 {count}개를 붙여 넣었어요"
+  },
+  "tables.lastChanges": "최근 변경",
+  "tables.needs": "‘{kind}’ 열을 추가하면 행을 이렇게 볼 수 있어요."
 }

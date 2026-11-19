@@ -157,5 +157,13 @@
   "tables.askFill": "Poproś o wypełnienie: {name}",
   "tables.asked.show": "W „{table}” pokaż tylko: {words}",
   "tables.asked.fill": "W „{table}” wypełnij kolumnę „{column}” tam, gdzie jest pusta.",
-  "tables.asked.row": "W „{table}”, o wierszu „{row}”: "
+  "tables.asked.row": "W „{table}”, o wierszu „{row}”: ",
+  "tables.pasted": {
+    "one": "Wklejono {count} wiersz",
+    "few": "Wklejono {count} wiersze",
+    "many": "Wklejono {count} wierszy",
+    "other": "Wklejono {count} wiersza"
+  },
+  "tables.lastChanges": "Ostatnie zmiany",
+  "tables.needs": "Dodaj kolumnę „{kind}”, aby pokazać wiersze w ten sposób."
 }

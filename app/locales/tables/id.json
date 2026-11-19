@@ -148,5 +148,10 @@
   "tables.askFill": "Minta {name} mengisinya",
   "tables.asked.show": "Di “{table}”, tampilkan hanya: {words}",
   "tables.asked.fill": "Di “{table}”, isi kolom “{column}” di mana pun yang masih kosong.",
-  "tables.asked.row": "Di “{table}”, tentang “{row}”: "
+  "tables.asked.row": "Di “{table}”, tentang “{row}”: ",
+  "tables.pasted": {
+    "other": "{count} baris ditempel"
+  },
+  "tables.lastChanges": "Perubahan terakhir",
+  "tables.needs": "Tambahkan kolom “{kind}” untuk menampilkan baris seperti ini."
 }

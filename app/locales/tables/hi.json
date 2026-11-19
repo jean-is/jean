@@ -151,5 +151,11 @@
   "tables.askFill": "{name} से इसे भरने को कहें",
   "tables.asked.show": "“{table}” में सिर्फ़ यह दिखाओ: {words}",
   "tables.asked.fill": "“{table}” में स्तंभ “{column}” जहाँ खाली है वहाँ भर दो।",
-  "tables.asked.row": "“{table}” में, “{row}” के बारे में: "
+  "tables.asked.row": "“{table}” में, “{row}” के बारे में: ",
+  "tables.pasted": {
+    "one": "{count} पंक्ति पेस्ट की गई",
+    "other": "{count} पंक्तियाँ पेस्ट की गईं"
+  },
+  "tables.lastChanges": "हाल के बदलाव",
+  "tables.needs": "पंक्तियाँ इस तरह दिखाने के लिए “{kind}” स्तंभ जोड़ें।"
 }
