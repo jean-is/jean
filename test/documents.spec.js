@@ -662,6 +662,8 @@ test.describe('found and used by the brain', () => {
     // Create, in the bar now, makes one too.
     await create.click()
     await kinds.getByRole('button', { name: 'Collection' }).click()
+    // A new collection asks what to keep track of (caps/begin): an empty one, here.
+    await page.locator('dialog.begin [data-start="empty"]').click()
     const name = page.locator('app-preview .pane-name')
     await expect(name).toBeFocused()
     await page.waitForTimeout(500)

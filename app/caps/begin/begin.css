@@ -1,0 +1,22 @@
+/* SPDX-License-Identifier: MIT */
+/* A new collection's dialog (./begin.js): the question, the starting points as cards that wrap to the page's width, then a file's columns, a row whose
+   kind would leave cells empty in the colour of what waits. */
+.begin { inline-size: min(100% - 2rem, 46rem); }
+.begin .dialog-head { margin-block-end: 0.25rem; }
+.begin-ask { margin: 0; font-size: 1.15rem; font-weight: 600; }
+.begin h3 { margin-block: 1.1rem 0.5rem; color: var(--ink-soft); font-size: 0.75rem; font-weight: 600; }
+.begin-starts { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr)); gap: 0.6rem; margin: 0; padding: 0; list-style: none; }
+.begin-starts button { display: grid; align-content: start; gap: 0.15rem; inline-size: 100%; min-block-size: 4.6rem; padding: 0.6rem 0.75rem; border: 1px solid var(--line-strong); border-radius: 0.75rem; background: none; color: inherit; font: inherit; text-align: start; cursor: pointer; }
+.begin-starts button:hover { background: var(--line); }
+.begin-file { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; }
+.begin-file p { flex: 1 1 14rem; margin: 0; }
+.begin-file label:focus-within { outline: 2px solid var(--flame); outline-offset: 1px; }
+.begin-wrong { margin: 0; color: var(--danger); } .begin-wrong:not(:empty) { margin-block-start: 0.5rem; }
+.begin-columns { margin-block-start: 0.75rem; overflow-x: auto; border: 1px solid var(--line-strong); border-radius: 0.75rem; }
+.begin-columns table { inline-size: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.begin-columns :is(th, td) { padding: 0.4rem 0.75rem; border-block-start: 1px solid var(--line); text-align: start; vertical-align: middle; font-weight: 400; }
+.begin-columns thead th { border: 0; font-weight: 600; }
+.begin-columns tbody th { font-weight: 600; }
+.begin-columns .is-off { background: var(--wait, color-mix(in oklch, var(--flame) 12%, transparent)); }
+.begin-columns td span { display: block; }
+.begin .dialog-foot { justify-content: space-between; margin-block-start: 1rem; padding: 0; border: 0; }
