@@ -50,10 +50,12 @@ export const titleOf = (brand, description) => `${brand.name} · ${description.s
  * @param {string[]} languages  the catalogues' languages
  * @param {string} [address]  the page's own, if not the site's: a language's (D397)
  * @param {typeof SHARE} [shown]  what a link to it shows, if not the welcome screen, which schema.org still has as the app's screenshot: a language's card (D682)
+ * @param {string} [promise]  the title's words, if not the description's first sentence: a language's promise, as a language that
+ *   ends no sentence with a mark (Thai) says it
  */
-export function withSite (html, base, brand, description, languages, address = base, shown = SHARE) {
+export function withSite (html, base, brand, description, languages, address = base, shown = SHARE, promise = undefined) {
   if (!html.includes('<title></title>') || html.includes('rel="canonical"') || !html.includes('</head>')) throw new Error('index.html has a title or a canonical address already, or no </head>')
-  const title = titleOf(brand, description)
+  const title = promise ? `${brand.name} · ${promise}` : titleOf(brand, description)
   const card = {
     'og:type': 'website',
     'og:site_name': brand.name,

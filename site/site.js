@@ -89,7 +89,7 @@ export { ownSite } from '../scripts/seo.js'
  * @property {string} start  the app, from this page: the homepage in this language, where there is one
  * @property {(lang: string) => string | null} address  this page's whole address in a language, with the site's
  * @property {string} prose  <lang>.html, the page's text as written, where it is prose
- * @property {(said: string | null, address: string, shown?: typeof SHARE) => string} [index]  index.html as the build leaves it, for the homepage
+ * @property {(said: string | null, address: string, shown?: typeof SHARE, promise?: string) => string} [index]  index.html as the build leaves it, for the homepage
  */
 
 /** A text with its {params} filled. @param {string} text @param {Params} params */
@@ -514,7 +514,7 @@ export function foot (kit, languages = '') {
  * @param {{ name: string, domain: string }} options.brand
  * @param {string | null} [options.base]  the site's whole address (siteBase()'s): what search engines read is written for it
  * @param {boolean} [options.ships]  only the pages every copy has, for app/
- * @param {(said: string | null, address: string, shown?: typeof SHARE) => string} [options.index]  index.html as the build leaves it, in a
+ * @param {(said: string | null, address: string, shown?: typeof SHARE, promise?: string) => string} [options.index]  index.html as the build leaves it, in a
  *   language's description (null: its own) and for an address; without it, no homepage
  * @param {string | null} [options.keys]  the request service's whole address when it has its own (KEYS), which a form
  *   that sends there may reach, beside the site's own, which the service answers with
@@ -571,7 +571,7 @@ export async function shippedPages (served) {
 
 /**
  * @param {{ name: string, page: Page, lang: string, languages: string[], own: Words, shared: Words, others: Map<string, Record<string, Words>>,
- *   apps: Map<string, Promise<Record<string, string>>>, brand: { name: string, domain: string }, base: string | null, keys: string | null, now: Date, built: Map<string, Page>, index?: (said: string | null, address: string, shown?: typeof SHARE) => string }} at
+ *   apps: Map<string, Promise<Record<string, string>>>, brand: { name: string, domain: string }, base: string | null, keys: string | null, now: Date, built: Map<string, Page>, index?: (said: string | null, address: string, shown?: typeof SHARE, promise?: string) => string }} at
  * @returns {Promise<Kit>}
  */
 async function kitFor ({ name, page, lang, languages, own, shared, others, apps, brand, base, keys, now, built, index }) {

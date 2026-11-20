@@ -259,7 +259,7 @@ async function siteFor (at, policy) {
   const description = /<meta name="description" content="([^"]*)">/.exec(index)?.[1] ?? ''
   const base = `http://${at}/`
   const named = policy ? index.replace('</head>', '<meta name="app-policy" content="policy.json">\n</head>') : index
-  const site = await buildSite({ brand: BRAND, base, index: (said, address) => withSite(said ? inLanguage(named, said) : named, base, BRAND, said ?? description, [], address) })
+  const site = await buildSite({ brand: BRAND, base, index: (said, address, shown, promise) => withSite(said ? inLanguage(named, said) : named, base, BRAND, said ?? description, [], address, shown, promise) })
   return { files: site.files, problems: checkSite(site, { base, served: await shippedFiles(join(ROOT, 'app')) }).join('\n') }
 }
 

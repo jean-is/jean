@@ -13,7 +13,7 @@ import { LOCALES, intlLocales } from '../../app/core/i18n.js'
 import { FELT, ICONS, fill, foot, languageMenu, pictureOf, wave, xml } from '../site.js'
 
 /** Each language's page, from the site's root. @type {Record<string, string>} */
-const ADDRESSES = { en: '', ar: 'ar', br: 'br', co: 'co', da: 'da', de: 'de', es: 'es', fi: 'fi', fr: 'fr', 'fr-CA': 'fr-CA', ha: 'ha', hu: 'hu', id: 'id', it: 'it', ja: 'ja', ko: 'ko', ms: 'ms', nl: 'nl', pl: 'pl', pt: 'pt', ro: 'ro', tl: 'tl', 'zh-Hans': 'zh-Hans', 'zh-Hant': 'zh-Hant' }
+const ADDRESSES = { en: '', am: 'am', ar: 'ar', bg: 'bg', bn: 'bn', br: 'br', co: 'co', cs: 'cs', da: 'da', de: 'de', el: 'el', es: 'es', fa: 'fa', fi: 'fi', fr: 'fr', 'fr-CA': 'fr-CA', ha: 'ha', he: 'he', hi: 'hi', hr: 'hr', hu: 'hu', id: 'id', it: 'it', ja: 'ja', ko: 'ko', mr: 'mr', ms: 'ms', nl: 'nl', pl: 'pl', pt: 'pt', ro: 'ro', ru: 'ru', sk: 'sk', sv: 'sv', sw: 'sw', ta: 'ta', te: 'te', th: 'th', tl: 'tl', tr: 'tr', uk: 'uk', ur: 'ur', vi: 'vi', yo: 'yo', 'zh-Hans': 'zh-Hans', 'zh-Hant': 'zh-Hant' }
 
 /**
  * The sample spreadsheet's answer, which its tile says: the product that grew the most
@@ -229,7 +229,7 @@ export default {
     if (!kit.index) throw new Error('the homepage is written into index.html, which the build gives it')
     const address = kit.address(kit.lang) ?? ''
     const languages = kit.languages.map((code) => ({ lang: code, address: kit.address(code) ?? '' }))
-    // Its own description, shorter than the install's, which index.html has, the title the same sentence before the rest.
-    return withHome(kit.index(kit.text('description'), address, pictureOf(kit)), kit.dir === 'rtl' ? latinSaid(main) : main, { lang: kit.lang, dir: kit.dir, own: kit.lang !== 'en', languages, noscript: kit.say('noscript') })
+    // Its own description, shorter than the install's, which index.html has, and its promise as the title.
+    return withHome(kit.index(kit.text('description'), address, pictureOf(kit), kit.text('promise')), kit.dir === 'rtl' ? latinSaid(main) : main, { lang: kit.lang, dir: kit.dir, own: kit.lang !== 'en', languages, noscript: kit.say('noscript') })
   },
 }

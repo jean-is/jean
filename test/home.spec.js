@@ -317,14 +317,6 @@ test.describe('in a Japanese browser', () => {
     await expect(button).toBeFocused()
     await expect(menu.locator('.menu')).toBeHidden()
     await expect(button).toContainText('日本語')
-    // Swedish has none: the app speaks it, and the page is English's, at the site's own address.
-    await page.keyboard.press('Enter')
-    await menu.getByRole('link', { name: 'Svenska' }).click()
-    await expect.poll(() => new URL(page.url()).pathname).toBe('/')
-    await expect(shown(page, 'en')).toBeVisible()
-    await expect(page.locator('html')).toHaveAttribute('lang', 'sv')
-    await expect(button).toContainText('Svenska')
-    await expect(button).toBeFocused()
   })
 })
 

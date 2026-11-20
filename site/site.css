@@ -209,7 +209,7 @@ svg.felt-tick { inline-size: 1.05em; block-size: 1.05em; margin-inline-end: 0.5r
 /* The foot */
 .site-foot { display: grid; grid-template-columns: 1.4fr repeat(4, 1fr); gap: 2.5rem; padding: 3rem var(--site-edge); border-block-start: 1px solid var(--line); background: var(--site-side); color: var(--ink); font-size: 0.875rem; }
 .site-foot > * { display: flex; flex-direction: column; gap: 0.4rem; }
-.site-foot ul { display: flex; flex-direction: column; gap: 0.4rem; margin: 0; padding: 0; list-style: none; }
+.site-foot ul { display: flex; flex-direction: column; gap: 0.4rem; margin: 0; padding: 0; list-style: none; hyphens: auto; overflow-wrap: break-word; }
 .site-foot p { margin: 0; color: var(--ink-soft); }
 .site-foot nav a { color: var(--ink); text-decoration: none; }
 .site-foot nav a:hover { text-decoration: underline; }

@@ -24,7 +24,7 @@ const index = await readFile(new URL('../app/index.html', import.meta.url), 'utf
 const description = /<meta name="description" content="([^"]*)">/.exec(index)?.[1] ?? ''
 const served = await shippedFiles(fileURLToPath(new URL('../app/', import.meta.url)))
 /** The site as build:web writes it for jean.is. */
-const built = buildSite({ brand: BRAND, base: BASE, index: (said, address, shown) => withSite(said ? inLanguage(index, said) : index, BASE, BRAND, said ?? description, [], address, shown), now: new Date('2026-10-19T10:00:00') })
+const built = buildSite({ brand: BRAND, base: BASE, index: (said, address, shown, promise) => withSite(said ? inLanguage(index, said) : index, BASE, BRAND, said ?? description, [], address, shown, promise), now: new Date('2026-10-19T10:00:00') })
 const jean = () => built
 
 test('every page, in every language, is what a page of the site must be, as jean.is has them', async () => {
