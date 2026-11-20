@@ -117,8 +117,9 @@ export const DIRECTORY = Object.freeze(/** @type {Known[]} */ ([
   { id: 'picsart', group: 'design', name: 'Picsart', url: 'https://api.picsart.com/gen-ai/mcp', signIn: ['auth.picsart.com'], logo: 'picsart.svg' },
   { id: 'zapier', group: 'other', name: 'Zapier', url: 'https://mcp.zapier.com/api/mcp/mcp', logo: 'zapier.png' },
   // A business's account, cards and invoices, not a payment service: its server sends no money, and a
-  // transfer it prepares waits for approval in Qonto's own app (D352). It answers no browser, and registers only the redirects on its list.
-  { id: 'qonto', group: 'other', name: 'Qonto', url: 'https://mcp.qonto.com/mcp', app: 'https://mcp.qonto.com', logo: 'qonto.png' },
+  // transfer it prepares waits for approval in Qonto's own app (D352). It answers no browser. It registers any address, and before its
+  // sign-in asks whether the person trusts one not on its list, which works once an owner or admin of the organisation has added it.
+  { id: 'qonto', group: 'other', name: 'Qonto', url: 'https://mcp.qonto.com/mcp', logo: 'qonto.png' },
   // Their service answers no browser.
   { id: 'todoist', group: 'tasks', name: 'Todoist', url: 'https://ai.todoist.net/mcp', signIn: ['todoist.com'], logo: 'todoist.png' },
   { id: 'ifttt', group: 'other', name: 'IFTTT', url: 'https://ifttt.com/mcp', logo: 'ifttt.svg' },
