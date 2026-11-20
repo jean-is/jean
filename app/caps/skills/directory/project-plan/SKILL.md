@@ -58,6 +58,8 @@ metadata:
   text-ja: "タスク、日程、担当、そして遅らせられないこと"
   title-ko: "프로젝트 계획"
   text-ko: "할 일, 날짜, 담당자, 늦어지면 안 되는 일까지"
+  title-la: "Consilium incepti"
+  text-la: "Opera, dies et quis quid faciat, cum iis quae differri non possunt"
   title-mr: "प्रकल्प योजना"
   text-mr: "कामे, तारखा आणि कोण काय करेल, जे पुढे ढकलता येत नाही त्यासह"
   title-ms: "Pelan projek"

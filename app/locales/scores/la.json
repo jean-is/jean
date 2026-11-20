@@ -1,0 +1,12 @@
+{
+  "scores.notes": "Notas ostende",
+  "scores.score": "Partitura",
+  "scores.play": "Cane",
+  "scores.pause": "Intermitte",
+  "scores.mute": "Sonus exstinctus",
+  "scores.where": "Locus in musica",
+  "scores.drawing": "Partitura scribitur…",
+  "scores.failed": "Haec partitura delineari non potuit.",
+  "scores.out.abc": "Fasciculus ABC",
+  "scores.out.midi": "Fasciculus MIDI"
+}

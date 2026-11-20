@@ -99,6 +99,9 @@ test('i18n: locale picking, language names, first words', async () => {
   // Punjabi in Pakistan's Shahmukhi finds nothing, its catalogue being in Gurmukhi.
   assert.deepEqual(preferredLocales(LOCALES, ['pa-IN', 'gu-IN', 'my-MM', 'ps-PK', 'ig-NG', 'om-KE', 'zu-ZA', 'pa-PK']), ['pa', 'gu', 'my', 'ps', 'ig', 'om', 'zu'])
   assert.deepEqual(['pa', 'gu', 'my', 'ps', 'ig', 'om', 'zu'].map((code) => languageName(code)), ['ਪੰਜਾਬੀ', 'ગુજરાતી', 'မြန်မာ', 'پښتو', 'Igbo', 'Afaan Oromoo', 'isiZulu'])
+  // Latin, which no browser formats, is named Latina and writes its dates and numbers as the Vatican does, in Italian.
+  assert.deepEqual(preferredLocales(LOCALES, ['la-VA', 'la']), ['la'])
+  assert.deepEqual([languageName('la'), languageName('la', 'fr'), intlLocales('la')], ['Latina', 'Latin', ['it']])
   // Breton and Corsican are named as they name themselves, even by browsers that can't, and
   // Corsican's dates and plurals are French's where browsers have none of its own.
   assert.deepEqual([languageName('br'), languageName('co'), languageName('fr-CA'), languageName('co', 'fr'), languageName('br', 'en')], ['Brezhoneg', 'Corsu', 'Français canadien', 'Corse', 'Breton'])

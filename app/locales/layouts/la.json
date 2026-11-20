@@ -1,0 +1,9 @@
+{
+  "layouts.recommended": "Commendatum",
+  "layouts.note": "Nota",
+  "layouts.tip": "Consilium",
+  "layouts.important": "Magni momenti",
+  "layouts.warning": "Monitum",
+  "layouts.caution": "Cautio",
+  "layouts.ticked": "{done} ex {total}"
+}

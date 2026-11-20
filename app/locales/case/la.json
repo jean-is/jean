@@ -1,0 +1,25 @@
+{
+  "case.group.files": "Fasciculi et documenta",
+  "case.group.remember": "Meminisse et invenire",
+  "case.group.again": "Iterum facere",
+  "case.group.web": "Interrete et servitia tua",
+  "case.group.bigger": "Cerebra et opera maiora",
+  "case.group.voice": "Vox et nuntii",
+  "case.group.keep": "Servare et communicare",
+  "case.rest": "Cetera veniunt cum occasio ea postulat, et quaeque dicit quomodo.",
+  "case.waiting": {
+    "one": "Una aliquid a te exspectat, infra notata.",
+    "many": "{count} aliquid a te exspectant, infra notatae.",
+    "other": "{count} aliquid a te exspectant, infra notatae."
+  },
+  "case.of": "{count} ex {total}",
+  "case.so": "{done} ex {goal} adhuc",
+  "case.download": "{size} depromenda",
+  "case.unset": "Nondum constituta",
+  "case.unfound": "Nondum inventa",
+  "case.came": "Quomodo venerit",
+  "case.offText": "Exstincta: {name} eam non offert, nec quicquam eius apparet aut oneratur.",
+  "case.ask": "Facultatem {cap} exstinguere? {name} rursus aperitur ubi eras, et quod fecit servatur.",
+  "case.cancel": "Omitte",
+  "case.allHint": "Quidquid depromendum est te prius rogat."
+}

@@ -1,0 +1,11 @@
+{
+  "screen.close": "Desine communicare",
+  "screen.watch": "Specta et loquere",
+  "screen.watching": "Spectat",
+  "screen.watched": "Post decem minuta spectare desiit.",
+  "screen.move": "In alium angulum move",
+  "screen.failed": "Scrinium communicari non potuit. Iterum conare.",
+  "screen.blind": "Hoc cerebrum imagines videre non potest. Elige unum quod potest.",
+  "screen.picture": "Scrinium {time}",
+  "screen.idle": "Communicatio scrinii post decem minuta sine usu desiit."
+}

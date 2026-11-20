@@ -1,0 +1,15 @@
+{
+  "sync.text": "Fac novam capsam in OneDrive, Dropbox, iCloud Drive aut Google Drive, eam hic elige, deinde eandem capsam in ceteris computatris tuis. Opera, fasciculi et memoria te sequuntur; optiones et claves in quoque computatro manent.",
+  "sync.choose": "Elige capsam…",
+  "sync.syncing": "Synchronizatur cum capsa {folder}…",
+  "sync.done": "Synchronizatum cum capsa {folder} · {when}",
+  "sync.safe": "Opera, fasciculi et memoria tua etiam in capsa {folder} sunt, tuta etiam si navigatrum tuum ea hic delet.",
+  "sync.waiting": "Permitte accessum ad capsam {folder} ut cum ceteris computatris tuis synchronizare pergas.",
+  "sync.allow": "Permitte accessum",
+  "sync.failed": "{folder} attingi non potest. Estne adhuc in hoc computatro?",
+  "sync.refused": "{folder} alios fasciculos continet. Elige capsam novam et vacuam, aut eam quacum in alio computatro synchronizas.",
+  "sync.now": "Nunc synchroniza",
+  "sync.show": "Ostende capsam {folder} in hoc computatro",
+  "sync.stop": "Desine synchronizare",
+  "sync.off": "Tantum in hoc computatro"
+}

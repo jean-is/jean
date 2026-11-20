@@ -58,6 +58,8 @@ metadata:
   text-ja: "棒・折れ線・円グラフなどを回答の中に描きます"
   title-ko: "차트"
   text-ko: "막대, 선, 원형 차트 등을 답변 안에 그려요"
+  title-la: "Diagramma"
+  text-la: "Columnae, lineae, orbes et alia, in responsis depicta"
   title-mr: "तक्ता"
   text-mr: "स्तंभ, रेषा, वर्तुळ आलेख आणि बरेच काही, उत्तरांमध्येच काढलेले"
   title-ms: "Carta"

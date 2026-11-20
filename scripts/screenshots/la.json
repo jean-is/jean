@@ -1,0 +1,38 @@
+{
+  "description": "Crea cum quavis IA, omnia serva. Verbis aut fasciculo pete, et quod petivisti iam factum recipe. GPT, Claude, Gemini aut IA in computatro tuo utere; historia, fasciculi et memoria tua in instrumento tuo manent. Gratuitum et fontis aperti.",
+  "labels": {
+    "welcome": "Pagina salutationis: notiones unde incipias, et area scribendi ad quidvis petendum",
+    "chart": "Tabula calculatoria communicata, et venditiones eius diagrammate depictae",
+    "sources": "Conductio lecta, et quaeque pars responsi ad eam remittens",
+    "share": "Opus cum amico per nexum communicatum"
+  },
+  "chart": {
+    "title": "Venditiones per regiones",
+    "file": "Venditiones.csv",
+    "columns": [
+      "Regio",
+      "Ianuarius",
+      "Februarius",
+      "Martius"
+    ],
+    "regions": [
+      "Septentrio",
+      "Meridies",
+      "Oriens"
+    ],
+    "ask": "Fac diagramma venditionum per regiones, mense post mensem",
+    "before": "En venditiones primi trimestris, per regiones:",
+    "heading": "Venditiones, primum trimestre",
+    "after": "**Septentrio** plurimum vendit, et **Oriens** celerrime crevit: 37% plus a Ianuario ad Martium."
+  },
+  "sources": {
+    "title": "Domum relinquere",
+    "file": "Conductio.pdf",
+    "pages": [
+      "Conductio domicilii instructi\n\nArticulus 7. Denuntiatio. Conductor conductionem quovis tempore finire potest, uno mense ante denuntiato, per epistulam commendatam missam aut contra apocham traditam.",
+      "Articulus 9. Pignus. Pignus unius mensis mercedis intra mensem a clavibus redditis restituitur, deducto sumptu refectionum, si quae sunt."
+    ],
+    "ask": "Quanto ante denuntiare debeo ut discedam, et quando pignus recipiam?",
+    "answer": "En quid conductio tua dicit:\n\n- **Denuntiatio:** unus mensis, per epistulam commendatam aut contra apocham tradita [1].\n- **Pignus:** redditur intra mensem a clavibus redditis, deducto sumptu refectionum, si quae sunt [1].\n\nSi igitur epistulam hodie mittis, post mensem discedere potes."
+  }
+}

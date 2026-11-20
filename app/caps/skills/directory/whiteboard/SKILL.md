@@ -57,6 +57,8 @@ metadata:
   text-ja: "セクションごとのメモで、アイデアを一緒に整理"
   title-ko: "화이트보드 만들기"
   text-ko: "구역별 메모로 함께 아이디어 정리"
+  title-la: "Tabulam albam fac"
+  text-la: "Notae in partibus, ad notiones simul ordinandas"
   title-mr: "एक व्हाइटबोर्ड बनवा"
   text-mr: "विभागांमध्ये टिपा, एकत्र कल्पना लावण्यासाठी"
   title-ms: "Buat papan putih"

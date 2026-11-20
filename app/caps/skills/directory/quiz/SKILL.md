@@ -57,6 +57,8 @@ metadata:
   text-ja: "学習や復習のための問題。採点と解説つき"
   title-ko: "퀴즈"
   text-ko: "공부와 복습을 위한 문제, 채점과 해설 포함"
+  title-la: "Interroga me"
+  text-la: "Quaestiones ad discendum et repetendum, aestimatae et explicatae"
   title-mr: "प्रश्नमंजुषा"
   text-mr: "शिकण्यासाठी आणि उजळणीसाठी प्रश्न, गुण आणि स्पष्टीकरणासह"
   title-ms: "Kuiz"

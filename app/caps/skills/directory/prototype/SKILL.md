@@ -57,6 +57,8 @@ metadata:
   text-ja: "アプリのアイデアを、クリックして見せられるページに"
   title-ko: "프로토타입 만들기"
   text-ko: "클릭하며 보여 줄 수 있는 앱 아이디어 페이지"
+  title-la: "Prototypum fac"
+  text-la: "Paginae notionis applicationis percurrendae et ostendendae"
   title-mr: "एक प्रोटोटाइप बनवा"
   text-mr: "ॲपच्या कल्पनेची पाने, क्लिक करून पाहण्यासाठी आणि दाखवण्यासाठी"
   title-ms: "Buat prototaip"

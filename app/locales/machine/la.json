@@ -1,0 +1,20 @@
+{
+  "machine.text": "Mandata in tuo computatro exsequere, cum eius programmatis et servitoribus, ut servitore evolutionis situs. JavaScript et Python in computatro saepto huius schedae manent.",
+  "machine.on": "Opera cum capsa {folder} mandata sua in hoc computatro exsequuntur, quodque prius rogatum, donec Ctrl+C in eius terminali premas.",
+  "machine.forget": "Eo uti desine",
+  "machine.question": "Hoc in computatro tuo exsequi, in capsa {folder}?",
+  "machine.always": "Semper permitte in capsa {folder}",
+  "machine.app": "Mandata etiam in hoc computatro exsequi possunt, cum eius programmatis et servitoribus, in capsa quam eligis: opera cum illa capsa tum mandata sua ibi exsequuntur.",
+  "machine.choose": "Capsam elige…",
+  "machine.failed": "Non incepit: Node.js in hoc computatro eget, mandato node quod terminalis exsequitur.",
+  "machine.on.app": "Opera cum capsa {folder} mandata sua in hoc computatro exsequuntur, quodque prius rogatum.",
+  "machine.lede": "Opera computatro saepto huius schedae utuntur, praeter ea in capsa quam in hoc computatro conectis.",
+  "machine.off": "Non conexum",
+  "machine.step.open": "Terminalem in una ex capsis tuis aperi.",
+  "machine.step.paste": "Hunc versum ibi insere, deinde Enter preme.",
+  "machine.step.wait": "Exspectatur dum versus currat: haec pagina per se animadvertit.",
+  "machine.trusted": "Currit non rogans in",
+  "machine.secret": "Exscriptio totum versum capit, etiam eius clavem. Tibi soli serva: hac pagina computatro tuo uti sinit.",
+  "machine.row": "Capsa {folder}, quodque mandatum prius rogatum",
+  "machine.untrust": "Iterum prius roga in capsa {folder}"
+}

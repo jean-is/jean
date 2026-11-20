@@ -58,6 +58,8 @@ metadata:
   text-ja: "地図、図、タイムライン、チェックリストを回答の中に"
   title-ko: "시각적 답변"
   text-ko: "지도, 다이어그램, 타임라인, 체크리스트를 답변 안에"
+  title-la: "Responsa visibilia"
+  text-la: "Tabulae geographicae, schemata, chronologiae et indices, in responsis"
   title-mr: "दृश्य उत्तरे"
   text-mr: "नकाशे, आकृती, कालरेषा आणि तपासयाद्या, थेट उत्तरांत"
   title-ms: "Jawapan visual"

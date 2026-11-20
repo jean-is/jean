@@ -1,0 +1,63 @@
+{
+  "search.where": "Ubi quaerendum",
+  "search.wikipedia": "Wikipedia",
+  "search.wikipedia.text": "In lingua tua, et plus quam 300 aliis",
+  "search.vikidia": "Vikidia",
+  "search.vikidia.text": {
+    "one": "Pueris 8 ad 13 annorum, in lingua tua et {count} alia",
+    "many": "Pueris 8 ad 13 annorum, in lingua tua et {count} aliis",
+    "other": "Pueris 8 ad 13 annorum, in lingua tua et {count} aliis"
+  },
+  "search.library": "Bibliotheca sine conexione",
+  "search.library.text": "Wikipedia et alii libri ex servitore Kiwix: in hoc computatro, in schola aut in opere. Quodque cerebrum in ea quaerit, etiam sine interrete.",
+  "search.address": "Inscriptio servitoris Kiwix",
+  "search.connect": "Conecte",
+  "search.connectTo": "Conecte {service}",
+  "search.failed": "Nullus servitor Kiwix ad hanc inscriptionem respondit.",
+  "search.insecure": "Tantum servitor Kiwix in hoc computatro, aut ad inscriptionem quae ab https:// incipit, hinc attingi potest.",
+  "search.locked": "Ab ordinatione tua constitutum",
+  "search.parent": "A parente constitutum",
+  "search.books": {
+    "one": "{count} liber",
+    "many": "{count} libri",
+    "other": "{count} libri"
+  },
+  "search.articles": {
+    "one": "{count} articulus",
+    "many": "{count} articuli",
+    "other": "{count} articuli"
+  },
+  "search.vikidia.not": {
+    "one": "Pueris 8 ad 13 annorum, in {count} lingua, non tua",
+    "many": "Pueris 8 ad 13 annorum, in {count} linguis, non tua",
+    "other": "Pueris 8 ad 13 annorum, in {count} linguis, non tua"
+  },
+  "search.fromLibrary": "Ex bibliotheca sine conexione, linguis: {languages}",
+  "search.library.in": "bibliotheca sine conexione",
+  "search.library.row": "Wikipedia et alii libri ex servitore Kiwix, etiam sine interrete",
+  "search.notSet": "Non institutum",
+  "search.off": "Exstinctum",
+  "search.unanswered": "Non respondet",
+  "search.answering": "Respondet",
+  "search.services": "Servitia quaerendi",
+  "search.searches": "Per totum interrete quaerit, pro quovis cerebro",
+  "search.readHere": "Wikipediam hinc lege",
+  "search.readHere.text": "Pro interreti, linguis: {languages}",
+  "search.now.own": "Cerebrum quod respondet ipsum per totum interrete quaerit.",
+  "search.now.others": "Alia cerebra quaerunt in: {sources}.",
+  "search.now.every": "Quodque cerebrum quaerit in: {sources}.",
+  "search.now.again": "Sola Wikipedia, cerebrum quod respondet iterum per totum interrete quaerit.",
+  "search.now.nowhere": "Cerebrum quod ipsum in interrete quaerere non potest nusquam habet ubi quaerat.",
+  "search.now.off": "Quaestio interretialis exstincta est: opera quae nunc incipis nusquam quaerunt, ne propria quidem cerebri quaestione.",
+  "search.now.services": "Quodque cerebrum etiam his servitiis quaerere potest: {services}.",
+  "search.also": "Quaestio interretialis etiam ex + in area scribendi exstingui potest.",
+  "search.key": "Clavis",
+  "search.engine": "ID machinae quaerendi",
+  "search.service.text": "Ratio tua propria apud {service} per totum interrete quaerit, pro quoque cerebro. Verba quaesita ad {service} eunt, ubi pretium pro iis exigi potest, et clavis tua in tuis instrumentis manet.",
+  "search.getKey": "Clavem accipe a servitio {service}",
+  "search.refused": "{service} hanc clavem recusavit, aut nullas iam quaestiones in ea habet.",
+  "search.silent": "{service} non respondit. Clavem inspice, aut mox iterum conare.",
+  "search.needsGateway": "Portam requirit",
+  "search.noGateway": "Navigatrum servitium {service} per se attingere non potest: porta requiritur quae ad id transmittat. Inscriptio portae ponitur in {connections}.",
+  "search.google.closing": "Google novas claves non dat, et hoc servitium {date} finit."
+}

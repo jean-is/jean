@@ -1,0 +1,21 @@
+{
+  "prototypes.frame": "{name}, prototypum",
+  "prototypes.board": "Omnes paginae",
+  "prototypes.pages": "Paginae prototypi {name}",
+  "prototypes.page": "Pagina {n} ex {count}",
+  "prototypes.leads": "Ducit ad {pages}",
+  "prototypes.changed": "Mutatum a {name}",
+  "prototypes.back": "Retro",
+  "prototypes.restart": "Ab initio",
+  "prototypes.press": "Preme “{control}”",
+  "prototypes.own": "Pro hoc prototypo",
+  "prototypes.build": "Aedifica",
+  "prototypes.building": "Aedifica “{name}” vere, ut applicationem quae operatur.",
+  "prototypes.zoomOut": "Minue",
+  "prototypes.zoomIn": "Amplifica",
+  "prototypes.fit": "Accommoda",
+  "prototypes.actual": "Ad {level} amplifica",
+  "prototypes.zip": "Prototypum ut archivum zip",
+  "prototypes.ask": "Fac prototypum: {what}.",
+  "prototypes.example": "applicatio reservationum pro tonstrina mea"
+}

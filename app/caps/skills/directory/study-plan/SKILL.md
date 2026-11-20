@@ -57,6 +57,8 @@ metadata:
   text-ja: "今日の学習を、1 週間の時間、教科、テストから組み立てる"
   title-ko: "공부 계획"
   text-ko: "한 주의 시간, 과목, 시험으로 정하는 오늘의 공부"
+  title-la: "Consilium studii"
+  text-la: "Sessio hodierna, ex tempore hebdomadis, materiis et probationibus composita"
   title-mr: "अभ्यासाचे नियोजन"
   text-mr: "आठवड्याचा वेळ, विषय आणि परीक्षांवरून आजचा अभ्यास"
   title-ms: "Jadual belajar"

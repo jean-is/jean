@@ -1,0 +1,18 @@
+{
+  "interactive.page": "Pagina interactiva",
+  "interactive.map": "Mappa",
+  "interactive.mapShow": "Ostende mappam",
+  "interactive.mapFrom": "Mappae veniunt ex {site}; loca ostensa ibi videntur.",
+  "interactive.inWords": "Vide ut textum",
+  "interactive.diagramSteps": "Vide quemque gradum et quid sequatur",
+  "interactive.diagramFrom": "Diagramma a gradu {first} incipiens, verbis infra",
+  "interactive.diagramWords": "Diagramma, verbis infra",
+  "interactive.mapNamed": "Mappa: {places}",
+  "interactive.zoomIn": "Amplifica",
+  "interactive.zoomOut": "Minue",
+  "interactive.mapCredits": "Auctores mappae",
+  "interactive.askApp": "Fac parvam applicationem ad {what}.",
+  "interactive.appExample": "rationem inter amicos dividendam",
+  "interactive.noCollection": "{name}: nulla collectio huius nominis hic.",
+  "interactive.unread": "{name}: secundum “{where}” seligi non potest."
+}

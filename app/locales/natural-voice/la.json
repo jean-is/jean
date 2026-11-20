@@ -1,0 +1,9 @@
+{
+  "reader.more": "Vox naturalis etiam hanc linguam legere potest: {language}.",
+  "reader.credit": "Pocket TTS societatis Kyutai; vox: Alba MacKenna (CC BY 4.0).",
+  "reader.on": "{languages}, in hoc instrumento",
+  "reader.none": "Nulla adhuc lingua in hoc instrumento",
+  "reader.off": "Exstincta: voces systematis tui omnia responsa legunt",
+  "reader.here": "In hoc instrumento, {size}",
+  "reader.room": "Linguam remove in Data tua › Spatium occupatum"
+}

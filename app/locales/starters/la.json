@@ -1,0 +1,20 @@
+{
+  "starters.text": "Sub area scribendi operis novi, quattuor ad summum: prius ideae ipsius incepti, deinde eae ubique, deinde quae ibi saepe petis. Pulsatio petitionem eius in aream scribendi ponit, mutandam antequam it.",
+  "starters.theirs": "Ideae ordinationis tuae apparent dum nullas tuas habes.",
+  "starters.everywhere": "Ubique",
+  "starters.everywhere.text": "In omni incepto, post ideas ipsius incepti.",
+  "starters.first": "In hoc incepto, ante eas ubique.",
+  "starters.none": "Nullae adhuc",
+  "starters.words": "Ostenditur ut",
+  "starters.request": "Petitio",
+  "starters.up": "Move “{title}” sursum",
+  "starters.down": "Move “{title}” deorsum",
+  "starters.remove": "Remove “{title}”",
+  "starters.add": "Adde ideam",
+  "starters.noticed": "Quae hic saepe petis",
+  "starters.noticed.text": "Petitiones ter aut saepius factae in incepto in quo es, et cursus eius, post tuas ostensae.",
+  "starters.noticed.none": "Nihil adhuc.",
+  "starters.keep": "Serva",
+  "starters.hide": "Cela",
+  "starters.unhide": "Celatas iterum ostende"
+}

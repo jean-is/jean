@@ -57,6 +57,8 @@ metadata:
   text-ja: "数ページのウェブサイトを、確認済みで公開できる形に"
   title-ko: "사이트 만들기"
   text-ko: "몇 페이지짜리 웹사이트, 점검을 마쳐 바로 올릴 수 있게"
+  title-la: "Situm fac"
+  text-la: "Situs paucarum paginarum, probati et in linea ponendi"
   title-mr: "एक साइट बनवा"
   text-mr: "काही पानांच्या वेबसाइट, तपासलेल्या आणि ऑनलाइन टाकायला तयार"
   title-ms: "Buat laman web"

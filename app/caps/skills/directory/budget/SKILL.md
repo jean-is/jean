@@ -58,6 +58,8 @@ metadata:
   text-ja: "収入と支出を表計算にまとめ、グラフも添えます"
   title-ko: "예산"
   text-ko: "수입과 지출을 스프레드시트로, 차트와 함께"
+  title-la: "Ratio sumptuum"
+  text-la: "Pecunia accepta et expensa in tabula calculatoria, cum diagrammate"
   title-mr: "अंदाजपत्रक"
   text-mr: "उत्पन्न आणि खर्च स्प्रेडशीटमध्ये, तक्त्यासह"
   title-ms: "Bajet"

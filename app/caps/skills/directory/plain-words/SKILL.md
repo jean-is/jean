@@ -57,6 +57,8 @@ metadata:
   text-ja: "難しい書類を説明します。何が書いてあり、何をすればよいか"
   title-ko: "쉬운 말로"
   text-ko: "어려운 서류를 풀어 설명해요. 무슨 내용인지, 무엇을 해야 하는지"
+  title-la: "Verbis planis"
+  text-la: "Documenta difficilia explicata: quid dicant, et quid faciendum sit"
   title-mr: "सोप्या शब्दांत"
   text-mr: "अवघड कागदपत्रांचे स्पष्टीकरण: त्यात काय आहे आणि काय करायचे"
   title-ms: "Dalam bahasa mudah"

@@ -58,6 +58,8 @@ metadata:
   text-ja: "仕事をより速く、簡単に、安く、一歩ずつ"
   title-ko: "업무 과정 개선"
   text-ko: "더 빠르고 간단하고 저렴하게, 한 단계씩"
+  title-la: "Processum emenda"
+  text-la: "Labor celerior, simplicior aut vilior factus, gradatim"
   title-mr: "प्रक्रिया सुधारा"
   text-mr: "काम अधिक जलद, सोपे किंवा स्वस्त, टप्प्याटप्प्याने"
   title-ms: "Tambah baik proses"

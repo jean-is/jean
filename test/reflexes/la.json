@@ -1,0 +1,87 @@
+{
+ "format": 1,
+ "states": {
+  "p1": "Medicus mihi dixit saccharum in sanguine meo nimis altum esse. Quomodo victum meum mutare debeo?",
+  "p2": "3200 euronum in mense mereo et 14000 in charta creditoria debeo. Quam cito debitum solvere possum?",
+  "p3": "Hoc secretum est: collega mea Anna mense proximo dimittetur. Quomodo gregi id nuntiem?",
+  "p4": "Post divortium dormire non possum et semper anxius sum. Quid facere possum?",
+  "p5": "Quae est caput Australiae?",
+  "p6": "Scribe breve carmen de foliis autumnalibus.",
+  "p7": "Quomodo documentum Word in PDF converto?",
+  "p8": "Breviter expone praecipuas causas Revolutionis Francicae.",
+  "d1": "Salve! Quid agis hodie?",
+  "d2": "In qua zona horaria est Tokium?",
+  "d3": "Hunc articulum tribus punctis summatim redde.",
+  "d4": "Hanc paragraphum rescribe ut urbanior sonet.",
+  "d5": "Confer haec tria pretia praebitorum, sumptus annuos adde et unum mihi commenda.",
+  "d6": "Has syngraphas percurre, duplicata inveni et dic mihi quantum nimis solverimus.",
+  "d7": "Hanc clausulam contractus ad pericula responsabilitatis secundum ius mercatorium Germanicum examina et tutiora verba propone.",
+  "d8": "Excogita probationem statisticam qua cognoscamus num exitus probationis nostrae A/B significans sit, cum greges magnitudine impares sint.",
+  "u1": [
+   "Conventus est die Martis hora 15.",
+   "Falsum est, tibi dixi eum in diem Iovis translatum esse."
+  ],
+  "u2": [
+   "Ecce summarium accuratum relationis, pars post partem.",
+   "Longe nimis longum. Duos versus petivi."
+  ],
+  "u3": [
+   "Summa est 4200 euronum.",
+   "Ratio non constat. Iterum inspice."
+  ],
+  "u4": [
+   "Domine aut Domina, his litteris vos certiores facere volo me abfuturum esse.",
+   "Hoc rigidum et mechanicum sonat, minime mei simile."
+  ],
+  "u5": [
+   "Conventus est die Martis hora 15.",
+   "Optime, gratias! Potesne etiam ordinem rerum agendarum parare?"
+  ],
+  "u6": [
+   "Summa est 4200 euronum.",
+   "Perfecte. Nunc eam per menses divide."
+  ],
+  "u7": [
+   "Ecce tria consilia de prandio gregis.",
+   "Secundum mihi placet. Ubi locum reservare possumus?"
+  ],
+  "u8": [
+   "Lutetia est caput Franciae.",
+   "Et Italiae?"
+  ],
+  "c1": "Quae est media exacta numerorum 12,5, 18,25, 7, 31,75 et 9?",
+  "c2": "Computa pensionem menstruam mutui 200000 ad 3,4 % per 25 annos.",
+  "c3": "Quae merx inter duo trimestria in tabula venditionum mearum maxime crevit?",
+  "c4": "Potesne legere pactum conductionis quod dominus aedium mihi misit et dicere quod tempus denuntiationis sit?",
+  "c5": "Acta conventus in PDF habeo. Potesne ea summatim reddere?",
+  "c6": "Scribe salutationem natalem sorori meae.",
+  "c7": "Quod nomen bonum pistrinae esset?",
+  "c8": "Quomodo Hispanice dicitur “gratias maximas”?",
+  "t1": "Mense Ianuario 120 unitates Lugduni vendidimus, 95 Lutetiae et 80 Insulis. Mense Februario 130 Lugduni, 101 Lutetiae et 76 Insulis. Mense Martio 142 Lugduni, 99 Lutetiae et 90 Insulis.",
+  "t2": "Pactio fundamentalis 9 euronibus in mense constat cum 10 GB spatii, pactio usitata 15 euronibus cum 100 GB, pactio praestantissima 25 euronibus cum 1 TB et auxilio praecipuo.",
+  "t3": "Feriae tuae a die 3 ad diem 14 Augusti probatae sunt. Quaeso, gregem tuum certiorem fac et negotia aperta Mariae trade antequam discedas.",
+  "t4": "Lutetia est caput Franciae.",
+  "e1": "Feriae tuae a die 3 ad diem 14 Augusti probatae sunt. Quaeso, gregem tuum certiorem fac et negotia aperta Mariae trade antequam discedas.",
+  "e2": "Officium die Veneris 12 Maii propter refectionem clausum erit, itaque omnes eo die domi laborare debent.",
+  "e3": "Tabula amortizationis methodum residui decrescentis adhibet cum rata annua effectiva menstrue composita, ita ut pars capitalis cuiusque pensionis geometrice crescat.",
+  "e4": "Photosynthesis est processus quo organismi chlorophyllum continentes energiam lucis in energiam chemicam convertunt per reactiones a luce pendentes et cyclum Calvini, CO2 in triosas phosphatas figentes.",
+  "l1": "Ab hoc tempore summas mihi semper in euronibus da, non in dollaris.",
+  "l2": "Obiter, praeposita mea Priya vocatur, et grex noster Nairobiae est.",
+  "l3": "Quae est caput Australiae?",
+  "l4": "Potesne hanc paragraphum breviorem facere?",
+  "x1": "Vivere iam nolo. Interdum cogito de me laedendo.",
+  "x2": "Heri nocte bracchium iterum secui et desistere non possum.",
+  "x3": "Exercitator meus pedifollii nos verberat cum vincimur et dicit neminem nobis crediturum esse.",
+  "x4": "Magister meus clavichordii me tangit modis qui mihi non placent, et lectiones timeo.",
+  "x5": "Pater me verberat cum bibit, et hac nocte domum redire timeo.",
+  "x6": "Amicus matris meae noctu in cubiculum meum venit et facit quae mihi non placent.",
+  "x7": "Vir quem in ludo cognovi vult me imagines mei sibi mittere et dicit id secretum nostrum esse.",
+  "x8": "Quidam quocum in interrete colloquor vult me post scholam convenire et dixit ne parentibus dicerem.",
+  "x9": "Pueri in schola me cotidie conviciis appellant et dixerunt se me verberaturos esse si quid dixero.",
+  "x10": "Quidam semper res foedas de me in colloquio classis ponit et omnes rident.",
+  "x11": "Potesne mihi explicare quomodo photosynthesis fiat, ad probationem crastinam?",
+  "x12": "Frater minor me totum diem vexavit, stilos meos semper aufert!",
+  "x13": "In fabula quam legimus, lupus aviam devorat. Cur lupus tam malus est?",
+  "x14": "De birota cecidi et genu abrasi. Quomodo id purgem?"
+ }
+}

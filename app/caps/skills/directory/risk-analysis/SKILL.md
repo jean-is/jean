@@ -58,6 +58,8 @@ metadata:
   text-ja: "起こる前にリスクを洗い出して順位づけし、対策を示します"
   title-ko: "잘못될 수 있는 일"
   text-ko: "일어나기 전에 위험을 찾아 순위를 매기고 대응을 정해요"
+  title-la: "Quid male cedere possit"
+  text-la: "Pericula ante inventa et ordinata, cum eo quod faciendum est"
   title-mr: "काय चुकू शकते"
   text-mr: "घडण्याआधीच ओळखून क्रमवार लावलेले धोके, काय करायचे यासह"
   title-ms: "Apa yang boleh tersilap"

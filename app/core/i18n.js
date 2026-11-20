@@ -5,14 +5,15 @@ import { signal } from '@preact/signals-core'
 
 const RTL = new Set(['ar', 'he', 'fa', 'ur', 'ps', 'sd', 'ug', 'yi', 'dv', 'ckb'])
 
-// 53 languages, machine-translated (D44).
-export const LOCALES = ['am', 'ar', 'bg', 'bn', 'br', 'co', 'cs', 'da', 'de', 'el', 'en', 'es', 'fa', 'fi', 'fr', 'fr-CA', 'gu', 'ha', 'he', 'hi', 'hr', 'hu', 'id', 'ig', 'it', 'ja', 'ko', 'mr', 'ms', 'my', 'nl', 'om', 'pa', 'pl', 'ps', 'pt', 'ro', 'ru', 'sk', 'sv', 'sw', 'ta', 'te', 'th', 'tl', 'tr', 'uk', 'ur', 'vi', 'yo', 'zh-Hans', 'zh-Hant', 'zu']
+// 54 languages, machine-translated (D44).
+export const LOCALES = ['am', 'ar', 'bg', 'bn', 'br', 'co', 'cs', 'da', 'de', 'el', 'en', 'es', 'fa', 'fi', 'fr', 'fr-CA', 'gu', 'ha', 'he', 'hi', 'hr', 'hu', 'id', 'ig', 'it', 'ja', 'ko', 'la', 'mr', 'ms', 'my', 'nl', 'om', 'pa', 'pl', 'ps', 'pt', 'ro', 'ru', 'sk', 'sv', 'sw', 'ta', 'te', 'th', 'tl', 'tr', 'uk', 'ur', 'vi', 'yo', 'zh-Hans', 'zh-Hant', 'zu']
 
 export const locale = signal('en')
 
 // Names and dates browsers lack (D496).
 const SPARSE = /** @type {Record<string, { name: string, intl?: string[] }>} */ ({ br: { name: 'Brezhoneg', intl: ['br', 'fr'] }, co: { name: 'Corsu', intl: ['fr'] }, ha: { name: 'Hausa' }, yo: { name: 'Èdè Yorùbá' },
-  pa: { name: 'ਪੰਜਾਬੀ', intl: ['en-IN'] }, my: { name: 'မြန်မာ' }, ps: { name: 'پښتو', intl: ['ps', 'fa-AF'] }, ig: { name: 'Igbo', intl: ['ig', 'en-NG'] }, om: { name: 'Afaan Oromoo' }, zu: { name: 'isiZulu', intl: ['zu', 'en-ZA'] } })
+  pa: { name: 'ਪੰਜਾਬੀ', intl: ['en-IN'] }, my: { name: 'မြန်မာ' }, ps: { name: 'پښتو', intl: ['ps', 'fa-AF'] }, ig: { name: 'Igbo', intl: ['ig', 'en-NG'] }, om: { name: 'Afaan Oromoo' }, zu: { name: 'isiZulu', intl: ['zu', 'en-ZA'] },
+  la: { name: 'Latina', intl: ['it'] } })
 
 /** The locales Intl formats a catalogue's language in. @param {string} [lang] */
 export const intlLocales = (lang = locale.value) => SPARSE[lang]?.intl ?? [lang]
@@ -67,7 +68,7 @@ export function t(key, params = {}) {
   return String(entry).replace(/\{(\w+)\}/g, (match, name) => (name in params ? format(params[name], lang) : match))
 }
 
-/** t(), with values that aren't text (a link, a time) kept where the translation puts them, never joined to strings. @param {string} key @param {Record<string, unknown>} params */
+/** t(), with values that aren't text (a link, a time) kept where the translation puts them. @param {string} key @param {Record<string, unknown>} params */
 export function tParts(key, params) {
   const kept = /** @type {unknown[]} */ ([])
   const text = t(key, Object.fromEntries(Object.entries(params).map(([name, value]) => [name, typeof value === 'string' || typeof value === 'number' ? value : `\u0000${kept.push(value) - 1}\u0000`])))
@@ -129,7 +130,7 @@ export function formatBytes(bytes) {
   return new Intl.NumberFormat(intlLocales(), { style: 'unit', unit, unitDisplay: bytes < 1e3 ? 'long' : 'short', maximumFractionDigits: 1 }).format(size)
 }
 
-/** "527 ms", "1.2 sec", "1 min, 12 sec", in the current locale: to the tenth of a second under ten, else to the second. @param {number} ms */
+/** "1.2 sec", "1 min, 12 sec": to the tenth of a second under ten, else to the second. @param {number} ms */
 export function formatDuration(ms) {
   const tenths = Math.floor(ms / 100) % 10
   const whole = Math.round(ms / 1e3)

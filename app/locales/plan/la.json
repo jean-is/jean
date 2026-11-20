@@ -1,0 +1,13 @@
+{
+  "plan.title": "Consilium",
+  "plan.done": "{done} ex {total} facta",
+  "plan.pending": "Facienda",
+  "plan.in_progress": "Agitur",
+  "plan.completed": "Facta",
+  "plan.confirm": "Pergere hoc consilio?",
+  "plan.go": "Perge",
+  "plan.always": "Semper perge",
+  "plan.paused": "Intermissum ad gradum {count}",
+  "plan.cost": "circiter {cost} adhuc",
+  "plan.keepGoing": "Perge porro"
+}

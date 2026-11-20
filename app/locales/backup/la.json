@@ -1,0 +1,9 @@
+{
+  "backup.confirmImport": "Inferre colloquia, incepta et fasciculos huius exportationis? Nihil hic delebitur.",
+  "backup.imported": {
+    "one": "{count} colloquium illatum.",
+    "many": "{count} colloquia illata.",
+    "other": "{count} colloquia illata."
+  },
+  "backup.chooseJson": "Haec exportatio actiones tuas in Gemini ut paginas interretiales continet. Eam iterum ex Google Takeout exporta, JSON electo pro My Activity."
+}

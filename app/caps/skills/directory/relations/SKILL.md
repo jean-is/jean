@@ -58,6 +58,8 @@ metadata:
   text-ja: "書類に出てくる人・組織・プロジェクトと、そのつながり"
   title-ko: "인물 관계도"
   text-ko: "문서 속 사람, 조직, 프로젝트와 서로의 관계"
+  title-la: "Quis quis sit"
+  text-la: "Personae, societates et incepta in documentis, et quomodo coniungantur"
   title-mr: "कोण कोण"
   text-mr: "कागदपत्रांतील व्यक्ती, संस्था आणि प्रकल्प, आणि ते एकमेकांशी कसे जोडलेले आहेत"
   title-ms: "Siapa dan apa"

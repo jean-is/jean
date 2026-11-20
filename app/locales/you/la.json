@@ -1,0 +1,45 @@
+{
+  "knows.instructions": "Praecepta tua",
+  "knows.instructionsPlaceholder": "Exempli gratia: Responde Gallice. Breviter. Pistrinam habeo.",
+  "knows.noticed": "Quae {name} animadvertit",
+  "knows.forYou": "Ubique",
+  "knows.forProject": "In incepto {project}",
+  "knows.edit": "Muta hanc lineam",
+  "knows.from": "Aperi opus unde venit",
+  "knows.promote": "Fac id praeceptum",
+  "knows.promoted": "Nunc unum ex praeceptis tuis est.",
+  "knows.nothing": "Nihil adhuc.",
+  "you.line": "Praecepta tua et quae {name} animadvertit cum quoque opere mittuntur ad cerebrum quod respondet.",
+  "you.none": "Nihil adhuc de te. Quae hic scribis initio cuiusque operis leguntur.",
+  "you.cut": {
+    "one": "Linea vetustissima iam non legitur. Ut legatur, fac eam praeceptum.",
+    "many": "{count} lineae vetustissimae iam non leguntur. Ut aliqua legatur, fac eam praeceptum.",
+    "other": "{count} lineae vetustissimae iam non leguntur. Ut aliqua legatur, fac eam praeceptum."
+  },
+  "you.nameText": "Quomodo {name} te appellet. Numquam ad cerebrum mittitur.",
+  "you.edit": "Muta",
+  "you.cancel": "Omitte",
+  "you.more": "Plura de hac linea",
+  "you.empty": "Quid {name} semper meminisse debet? Opus tuum, linguas tuas, qualia responsa malis.",
+  "you.start.work": "Quid agas",
+  "you.start.workText": "Laboro ut ",
+  "you.start.language": "Linguae tuae",
+  "you.start.languageText": "Responde lingua ",
+  "you.start.length": "Quam longa responsa sint",
+  "you.start.lengthText": "Responsa sint ",
+  "you.remember": "Memento",
+  "you.all": {
+    "one": "Vide lineam",
+    "many": "Vide omnes {count} lineas",
+    "other": "Vide omnes {count} lineas"
+  },
+  "you.lines": {
+    "one": "{count} linea",
+    "many": "{count} lineae",
+    "other": "{count} lineae"
+  },
+  "you.search": "Quaere in iis quae {name} animadvertit",
+  "you.unread": "Iam non legitur",
+  "you.project": "Haec cum tuis eunt, in operibus huius incepti tantum.",
+  "you.org": "Praecepta ordinationis tuae"
+}

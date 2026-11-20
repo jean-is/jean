@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, ludus",
+  "games.play": "Lude",
+  "games.resume": "Perge",
+  "games.paused": "Intermissus",
+  "games.pause": "Intermitte",
+  "games.mute": "Sine sono",
+  "games.full": "Plenum scrinium",
+  "games.left": "Sinistrorsum",
+  "games.right": "Dextrorsum",
+  "games.up": "Sursum",
+  "games.down": "Deorsum",
+  "games.off": "Hic ludus hic currere non potest, quia paginis non licet codicem suum exsequi.",
+  "games.ask": "Fac ludum de {what}.",
+  "games.example": "vulpe stellas noctu colligente"
+}

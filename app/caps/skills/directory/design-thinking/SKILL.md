@@ -57,6 +57,8 @@ metadata:
   text-ja: "使う人と一緒に形づくる製品やサービス"
   title-ko: "새로운 것 디자인하기"
   text-ko: "쓸 사람들과 함께 만드는 제품이나 서비스"
+  title-la: "Aliquid novum excogita"
+  text-la: "Res aut servitium cum iis formatum quibus destinatur"
   title-mr: "काहीतरी नवीन डिझाइन करा"
   text-mr: "ज्यांच्यासाठी आहे त्यांच्यासोबत घडवलेले उत्पादन किंवा सेवा"
   title-ms: "Reka sesuatu yang baharu"

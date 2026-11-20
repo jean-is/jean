@@ -57,6 +57,8 @@ metadata:
   text-ja: "日付を予定に変え、そのままカレンダーに追加できます"
   title-ko: "캘린더 일정"
   text-ko: "날짜를 일정으로 바꿔 캘린더에 바로 추가해요"
+  title-la: "Eventus calendarii"
+  text-la: "Dies in eventus versi, calendario addendi"
   title-mr: "कॅलेंडर इव्हेंट"
   text-mr: "तारखांचे इव्हेंट, कॅलेंडरमध्ये जोडण्यासाठी तयार"
   title-ms: "Acara kalendar"

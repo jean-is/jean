@@ -57,6 +57,8 @@ metadata:
   text-ja: "ここで遊べるオリジナルゲーム、設計してテスト済み"
   title-ko: "게임 만들기"
   text-ko: "여기서 바로 즐기는 독창적인 게임, 설계하고 테스트까지"
+  title-la: "Ludum fac"
+  text-la: "Ludi novi hic ludendi, excogitati et probati"
   title-mr: "खेळ बनवा"
   text-mr: "इथेच खेळता येणारे मौलिक खेळ, रचलेले आणि तपासलेले"
   title-ms: "Buat permainan"

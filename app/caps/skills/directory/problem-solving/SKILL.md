@@ -58,6 +58,8 @@ metadata:
   text-ja: "合った手法で問題に取り組む：8D、DMAIC、A3、PDCA"
   title-ko: "문제 해결"
   text-ko: "알맞은 방법으로 문제 해결: 8D, DMAIC, A3, PDCA"
+  title-la: "Problemata solvere"
+  text-la: "Problemata methodo apta tractata: 8D, DMAIC, A3 aut PDCA"
   title-mr: "समस्या सोडवणे"
   text-mr: "योग्य पद्धतीने समस्या: 8D, DMAIC, A3 किंवा PDCA"
   title-ms: "Penyelesaian masalah"

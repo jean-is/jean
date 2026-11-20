@@ -58,6 +58,8 @@ metadata:
   text-ja: "測れる成果を伴う目標と、それを達成する計画"
   title-ko: "목표와 전략"
   text-ko: "측정할 수 있는 결과가 있는 목표와 이를 이룰 계획"
+  title-la: "Proposita et ratio"
+  text-la: "Proposita cum eventibus metiendis, et consilium ad ea attingenda"
   title-mr: "उद्दिष्टे आणि धोरण"
   text-mr: "मोजता येणाऱ्या निकालांसह उद्दिष्टे आणि ती गाठण्याची योजना"
   title-ms: "Matlamat dan strategi"

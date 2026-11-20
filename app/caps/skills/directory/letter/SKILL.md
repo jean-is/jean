@@ -57,6 +57,8 @@ metadata:
   text-ja: "役所・大家・会社への手紙を Word ファイルで"
   title-ko: "공식 서한"
   text-ko: "관공서, 집주인, 회사에 보내는 편지를 Word 파일로"
+  title-la: "Epistula sollemnis"
+  text-la: "Epistulae ad officia, locatores et societates, ut fasciculi Word"
   title-mr: "औपचारिक पत्र"
   text-mr: "कार्यालये, घरमालक आणि कंपन्यांना पत्रे, Word फाइल म्हणून"
   title-ms: "Surat rasmi"

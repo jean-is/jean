@@ -57,6 +57,8 @@ metadata:
   text-ja: "答えではなくヒントで、授業を理解して練習する"
   title-ko: "제대로 배우기"
   text-ko: "정답 대신 힌트로, 수업을 이해하고 연습하기"
+  title-la: "Disce"
+  text-la: "Lectio intellecta et exercita, cum indiciis pro responsis"
   title-mr: "शिकून घ्या"
   text-mr: "धडा समजून सराव, उत्तरांऐवजी सूचनांसह"
   title-ms: "Pelajari"

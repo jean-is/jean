@@ -57,6 +57,8 @@ metadata:
   text-ja: "商品や見積もりを並べて比べ、おすすめを示します"
   title-ko: "비교해서 고르기"
   text-ko: "상품과 견적을 나란히 비교하고 추천해요"
+  title-la: "Confer et elige"
+  text-la: "Oblationes et pretia iuxta posita, cum consilio"
   title-mr: "तुलना करा आणि निवडा"
   text-mr: "ऑफर आणि कोटेशन शेजारी शेजारी, शिफारसीसह"
   title-ms: "Banding dan pilih"

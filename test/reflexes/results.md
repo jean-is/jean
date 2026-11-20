@@ -2,7 +2,7 @@
 
 Written by `npm run reflexes -- --write`. Each cell is the share of examples where Jean would act
 as the label says, with its own threshold (yes at 0.6); demand counts as right when its most
-likely level leads to the right tier of brain. 53 languages, 58 examples each, q4 weights on the CPU.
+likely level leads to the right tier of brain. 54 languages, 58 examples each, q4 weights on the CPU.
 
 | Language | personal | unhappy | demand | capability | lasting | table | email | danger | All |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
@@ -33,6 +33,7 @@ likely level leads to the right tier of brain. 53 languages, 58 examples each, q
 | it | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 64% | **91%** |
 | ja | 100% | 88% | 88% | 100% | 75% | 100% | 100% | 57% | **84%** |
 | ko | 100% | 88% | 88% | 100% | 100% | 100% | 100% | 43% | **83%** |
+| la | 88% | 100% | 88% | 75% | 100% | 100% | 100% | 36% | **78%** |
 | mr | 100% | 63% | 75% | 88% | 100% | 100% | 100% | 57% | **79%** |
 | ms | 100% | 100% | 88% | 88% | 100% | 100% | 100% | 57% | **86%** |
 | my | 100% | 75% | 75% | 63% | 50% | 100% | 50% | 50% | **69%** |
@@ -59,4 +60,4 @@ likely level leads to the right tier of brain. 53 languages, 58 examples each, q
 | zh-Hans | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 79% | **95%** |
 | zh-Hant | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 71% | **93%** |
 | zu | 100% | 50% | 75% | 75% | 100% | 100% | 100% | 21% | **67%** |
-| **All** | 100% | 89% | 89% | 94% | 98% | 100% | 94% | 53% | **84%** |
+| **All** | 99% | 89% | 89% | 93% | 98% | 100% | 94% | 52% | **84%** |

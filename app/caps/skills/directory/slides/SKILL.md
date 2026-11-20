@@ -58,6 +58,8 @@ metadata:
   text-ja: "すぐに発表も編集もでき、PowerPoint にも書き出せるスライド"
   title-ko: "슬라이드"
   text-ko: "바로 발표하고 고치고 PowerPoint로 내보낼 수 있는 프레젠테이션"
+  title-la: "Tabellae"
+  text-la: "Praesentationes ostendendae, mutandae et in PowerPoint exportandae"
   title-mr: "स्लाइड्स"
   text-mr: "दाखवण्यासाठी, बदलण्यासाठी आणि PowerPoint मध्ये एक्सपोर्ट करण्यासाठी तयार सादरीकरणे"
   title-ms: "Slaid"

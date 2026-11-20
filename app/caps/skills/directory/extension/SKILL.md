@@ -57,6 +57,8 @@ metadata:
   text-ja: "ここでの動きを変える。追加する前に中身を読めます"
   title-ko: "확장 기능 만들기"
   text-ko: "여기서 일이 돌아가는 방식을 바꿉니다. 추가하기 전에 읽어 볼 수 있습니다"
+  title-la: "Extensionem fac"
+  text-la: "Muta quomodo res hic operentur, lecta antequam additur"
   title-mr: "विस्तार बनवा"
   text-mr: "इथे गोष्टी कशा चालतात ते बदला, जोडण्याआधी वाचले जाते"
   title-ms: "Buat sambungan"

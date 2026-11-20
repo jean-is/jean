@@ -1,0 +1,20 @@
+{
+  "made.open": "Aperi",
+  "made.kind.document": "Documentum Word",
+  "made.kind.sheet": "Tabula calculatoria",
+  "made.kind.page": "Pagina interretialis",
+  "made.kind.drawing": "Pictura",
+  "made.kind.design": "Delineatio",
+  "made.kind.game": "Ludus",
+  "made.kind.text": "Textus",
+  "made.copiedPictures": "Exscriptum. Si imagines eius non inseruntur, quamque suo “Exscribe” exscribe.",
+  "made.share": "Communica",
+  "made.csvTitle": "Tabula (CSV)",
+  "made.csvNumbered": "Tabula {count} (CSV)",
+  "made.tableFile": "Tabula {count}",
+  "made.print": "Imprime",
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
+}

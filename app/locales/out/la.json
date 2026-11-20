@@ -1,0 +1,14 @@
+{
+  "out.share": "Communica…",
+  "out.publish": "Publica…",
+  "out.send": "Ad applicationem mitte…",
+  "out.print": "Imprime aut ut PDF serva",
+  "out.kit": "Systema delineationis",
+  "out.failed": "Servari non potuit. Iterum tempta.",
+  "out.menu": "Communica, deprome aut imprime",
+  "out.menuNoPrint": "Communica aut deprome",
+  "out.menuNoShare": "Deprome aut imprime",
+  "out.download": "Deprome",
+  "out.name": "Deprome fasciculum {name}",
+  "out.webPage": "Pagina interretialis"
+}

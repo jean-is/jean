@@ -751,6 +751,12 @@
               "prompt-ko": {
                 "type": "string"
               },
+              "title-la": {
+                "type": "string"
+              },
+              "prompt-la": {
+                "type": "string"
+              },
               "title-mr": {
                 "type": "string"
               },
@@ -2689,6 +2695,18 @@
                             "null"
                           ]
                         },
+                        "title-la": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-la": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
                         "title-mr": {
                           "type": [
                             "string",
@@ -3817,6 +3835,7 @@
         "it",
         "ja",
         "ko",
+        "la",
         "mr",
         "ms",
         "my",

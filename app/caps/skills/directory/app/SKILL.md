@@ -57,6 +57,8 @@ metadata:
   text-ja: "ちゃんと動いて、入力した内容を覚えている小さなアプリ"
   title-ko: "앱 만들기"
   text-ko: "실제로 작동하고 입력한 내용을 기억하는 작은 앱"
+  title-la: "Applicationem fac"
+  text-la: "Parvae applicationes quae operantur et quod inscribitur meminerunt"
   title-mr: "एक ॲप बनवा"
   text-mr: "लहान ॲप, जे चालतात आणि भरलेली माहिती लक्षात ठेवतात"
   title-ms: "Buat aplikasi"

@@ -58,6 +58,8 @@ metadata:
   text-ja: "メロディーを楽譜にして、読んだり再生したりできます"
   title-ko: "악보"
   text-ko: "멜로디를 악보로 적어, 읽고 연주할 수 있게"
+  title-la: "Partitura musica"
+  text-la: "Cantus notis musicis scripti, legendi et canendi"
   title-mr: "स्वरलिपी"
   text-mr: "स्वरलिपीत लिहिलेल्या चाली, वाचण्यासाठी आणि वाजवण्यासाठी"
   title-ms: "Skor muzik"

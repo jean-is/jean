@@ -57,6 +57,8 @@ metadata:
   text-ja: "覚えたことをカードに。日を空けて復習"
   title-ko: "암기 카드"
   text-ko: "배운 것을 카드에 담아 며칠에 걸쳐 복습"
+  title-la: "Chartulae memoriae"
+  text-la: "Quae didicisti in chartulis servata, per dies repetita"
   title-mr: "फ्लॅशकार्ड"
   text-mr: "शिकलेलं कार्डांवर, दिवसांच्या अंतराने उजळणी"
   title-ms: "Kad imbas"

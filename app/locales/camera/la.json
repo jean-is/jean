@@ -1,0 +1,20 @@
+{
+  "camera.open": "Camera ostende",
+  "camera.close": "Cameram exstingue",
+  "camera.turn": "Cameram converte",
+  "camera.light": "Lumen",
+  "camera.task": "Opus ostende",
+  "camera.closely": "Propius inspice",
+  "camera.kept": "Haec imago cum eo quod deinde dicis it",
+  "camera.drop": "Hanc imaginem ne miseris",
+  "camera.watch": "Specta et loquere",
+  "camera.watching": "Spectat",
+  "camera.watched": "Post decem minuta spectare desiit.",
+  "camera.paused": "Camera intermissa. Tange ut pergas.",
+  "camera.denied": "Cameram in navigatro tuo permitte ut res hic ostendas.",
+  "camera.failed": "Camera non incepit. Iterum tempta.",
+  "camera.blind": "Hoc cerebrum imagines videre non potest. Elige unum quod potest.",
+  "camera.picture": "Camera {time}",
+  "camera.move": "In alium angulum move",
+  "camera.idle": "Camera post decem minuta sine usu exstincta est."
+}

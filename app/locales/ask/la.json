@@ -1,0 +1,8 @@
+{
+  "ask.step": "Quaestio {n} ex {count}",
+  "ask.recommended": "Commendatum",
+  "ask.own": "Aliud",
+  "ask.next": "Sequens",
+  "ask.skip": "Praetermitte",
+  "ask.back": "Retro"
+}
