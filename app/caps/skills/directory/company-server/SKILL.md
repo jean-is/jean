@@ -1,0 +1,136 @@
+---
+name: company-server
+description: "Give a company with no IT its own Jean, at its own address, on a server it rents in its own name (D762): the block to paste at a host, the names to point at it, then the company's apps, such as DocuSign or Google, and its policy, each change signed by this Jean. Use when someone asks for Jean for their company, team, association or office, at their own address or on their own server, with their own sign-in or their own DocuSign."
+metadata:
+  format: "1"
+  title-en: "Your company's server"
+  text-en: "At your company's address, on a server in its own name"
+  title-am: "የድርጅትዎ ሰርቨር"
+  text-am: "በድርጅትዎ አድራሻ፣ በራሱ ስም በተከራየ ሰርቨር ላይ"
+  title-ar: "خادم شركتك"
+  text-ar: "على عنوان شركتك، في خادم باسمها"
+  title-bg: "Сървърът на фирмата ви"
+  text-bg: "На адреса на фирмата ви, на сървър на нейно име"
+  title-bn: "আপনার প্রতিষ্ঠানের সার্ভার"
+  text-bn: "আপনার প্রতিষ্ঠানের ঠিকানায়, তার নিজের নামে নেওয়া সার্ভারে"
+  title-br: "Servijer hoc’h embregerezh"
+  text-br: "War chomlec’h hoc’h embregerezh, war ur servijer en he anv"
+  title-co: "U servitore di a vostra impresa"
+  text-co: "À l’indirizzu di a vostra impresa, nant’à un servitore à u so nome"
+  title-cs: "Server vaší firmy"
+  text-cs: "Na adrese vaší firmy, na serveru vedeném na její jméno"
+  title-da: "Jeres virksomheds server"
+  text-da: "På jeres virksomheds adresse, på en server i dens eget navn"
+  title-de: "Der Server Ihres Unternehmens"
+  text-de: "Unter der Adresse Ihres Unternehmens, auf einem Server in seinem Namen"
+  title-el: "Ο διακομιστής της εταιρείας σας"
+  text-el: "Στη διεύθυνση της εταιρείας σας, σε διακομιστή στο όνομά της"
+  title-es: "El servidor de tu empresa"
+  text-es: "En la dirección de tu empresa, en un servidor a su nombre"
+  title-fa: "سرور شرکت شما"
+  text-fa: "در نشانی شرکت شما، روی سروری به نام خودش"
+  title-fi: "Yrityksesi palvelin"
+  text-fi: "Yrityksesi osoitteessa, sen omissa nimissä olevalla palvelimella"
+  title-fr-CA: "Le serveur de votre entreprise"
+  text-fr-CA: "À l’adresse de votre entreprise, sur un serveur à son nom"
+  title-fr: "Le serveur de votre entreprise"
+  text-fr: "À l’adresse de votre entreprise, sur un serveur à son nom"
+  title-gu: "તમારી કંપનીનું સર્વર"
+  text-gu: "તમારી કંપનીના સરનામે, તેના પોતાના નામે લીધેલા સર્વર પર"
+  title-ha: "Sabar kamfaninku"
+  text-ha: "A adireshin kamfaninku, a kan sabar da ke da sunansa"
+  title-he: "השרת של החברה שלכם"
+  text-he: "בכתובת של החברה שלכם, על שרת הרשום על שמה"
+  title-hi: "आपकी कंपनी का सर्वर"
+  text-hi: "आपकी कंपनी के पते पर, उसके अपने नाम के सर्वर पर"
+  title-hr: "Poslužitelj vaše tvrtke"
+  text-hr: "Na adresi vaše tvrtke, na poslužitelju na njezino ime"
+  title-hu: "A cége szervere"
+  text-hu: "A cége címén, a cég nevére bérelt szerveren"
+  title-id: "Server perusahaan Anda"
+  text-id: "Di alamat perusahaan Anda, pada server atas namanya sendiri"
+  title-ig: "Sava ụlọ ọrụ gị"
+  text-ig: "N’adreesị ụlọ ọrụ gị, na sava dị n’aha ya"
+  title-it: "Il server della tua azienda"
+  text-it: "All’indirizzo della tua azienda, su un server a suo nome"
+  title-ja: "あなたの会社のサーバー"
+  text-ja: "会社のアドレスで、会社名義のサーバー上に"
+  title-ko: "회사 서버"
+  text-ko: "회사 주소에서, 회사 명의의 서버로"
+  title-la: "Servitor societatis tuae"
+  text-la: "Ad inscriptionem societatis tuae, in servitore eius nomine"
+  title-mr: "तुमच्या कंपनीचा सर्व्हर"
+  text-mr: "तुमच्या कंपनीच्या पत्त्यावर, तिच्या स्वतःच्या नावावरील सर्व्हरवर"
+  title-ms: "Pelayan syarikat anda"
+  text-ms: "Di alamat syarikat anda, pada pelayan atas namanya sendiri"
+  title-my: "သင့်ကုမ္ပဏီ၏ ဆာဗာ"
+  text-my: "သင့်ကုမ္ပဏီ၏ လိပ်စာတွင်၊ ကုမ္ပဏီအမည်ဖြင့် ငှားထားသော ဆာဗာပေါ်တွင်"
+  title-nl: "De server van je bedrijf"
+  text-nl: "Op het adres van je bedrijf, op een server op zijn eigen naam"
+  title-om: "Sarvarii dhaabbata keessanii"
+  text-om: "Teessoo dhaabbata keessanii irratti, sarvarii maqaa isaatiin jiru irratti"
+  title-pa: "ਤੁਹਾਡੀ ਕੰਪਨੀ ਦਾ ਸਰਵਰ"
+  text-pa: "ਤੁਹਾਡੀ ਕੰਪਨੀ ਦੇ ਪਤੇ ’ਤੇ, ਉਸਦੇ ਆਪਣੇ ਨਾਂ ਦੇ ਸਰਵਰ ’ਤੇ"
+  title-pl: "Serwer Twojej firmy"
+  text-pl: "Pod adresem Twojej firmy, na serwerze wynajętym na firmę"
+  title-ps: "ستاسو د شرکت سرور"
+  text-ps: "ستاسو د شرکت په پته، د هغه په خپل نوم سرور کې"
+  title-pt: "O servidor da sua empresa"
+  text-pt: "No endereço da sua empresa, num servidor em nome dela"
+  title-ro: "Serverul firmei tale"
+  text-ro: "La adresa firmei tale, pe un server pe numele ei"
+  title-ru: "Сервер вашей компании"
+  text-ru: "По адресу вашей компании, на сервере, оформленном на неё"
+  title-sk: "Server vašej firmy"
+  text-sk: "Na adrese vašej firmy, na serveri vedenom na jej meno"
+  title-sv: "Ert företags server"
+  text-sv: "På ert företags adress, på en server i dess eget namn"
+  title-sw: "Seva ya kampuni yako"
+  text-sw: "Kwenye anwani ya kampuni yako, kwenye seva kwa jina lake"
+  title-ta: "உங்கள் நிறுவனத்தின் சர்வர்"
+  text-ta: "உங்கள் நிறுவனத்தின் முகவரியில், அதன் சொந்தப் பெயரிலுள்ள சர்வரில்"
+  title-te: "మీ కంపెనీ సర్వర్"
+  text-te: "మీ కంపెనీ చిరునామాలో, దాని సొంత పేరున ఉన్న సర్వర్‌పై"
+  title-th: "เซิร์ฟเวอร์ของบริษัทคุณ"
+  text-th: "ที่ที่อยู่ของบริษัทคุณ บนเซิร์ฟเวอร์ในนามของบริษัทเอง"
+  title-tl: "Ang server ng inyong kumpanya"
+  text-tl: "Sa address ng inyong kumpanya, sa server na nakapangalan dito"
+  title-tr: "Şirketinizin sunucusu"
+  text-tr: "Şirketinizin adresinde, kendi adına kiralanmış bir sunucuda"
+  title-uk: "Сервер вашої компанії"
+  text-uk: "За адресою вашої компанії, на сервері, оформленому на неї"
+  title-ur: "آپ کی کمپنی کا سرور"
+  text-ur: "آپ کی کمپنی کے پتے پر، اس کے اپنے نام کے سرور پر"
+  title-vi: "Máy chủ của công ty bạn"
+  text-vi: "Tại địa chỉ của công ty bạn, trên máy chủ đứng tên công ty"
+  title-yo: "Sáfà ilé-iṣẹ́ rẹ"
+  text-yo: "Ní àdírẹ́sì ilé-iṣẹ́ rẹ, lórí sáfà ní orúkọ rẹ̀"
+  title-zh-Hans: "公司自己的服务器"
+  text-zh-Hans: "在公司自己的地址，用公司名义租用的服务器"
+  title-zh-Hant: "公司自己的伺服器"
+  text-zh-Hant: "在公司自己的網址，以公司名義租用的伺服器"
+  title-zu: "Iseva yenkampani yakho"
+  text-zu: "Ekhelini lenkampani yakho, kuseva egameni layo"
+---
+# Your company's server
+
+Give a company with no IT its own Jean at its own address, on a server it rents in its own name. The company keeps the server and its keys; nobody else, Warehouse SAS included, has access. This Jean, on this device, signs every change.
+
+## Steps
+
+1. **What is needed, all at once:** the address for the company's Jean, a name under a domain the company owns, such as `jean.acme.example`; the host the server will be rented from (OVHcloud's Public Cloud, Scaleway or Hetzner Cloud take a first-boot block); and the tools the company uses (Microsoft 365 or Google Workspace, DocuSign, a CRM, accounting). Ask only what is missing, with `ask_user`.
+2. **The block:** `company_line` with the address. Show the block it gives, whole, in a code block, and say how to paste it as the server's "user data" (or "cloud-init") at the host: a small server with Ubuntu 22.04 or later is enough. The person signs up and pays the host themselves: never type a password or a card number for them.
+3. **The names:** at the company's domain registrar, two records point at the server's address: the address itself, and `gateway.` before it. Walk through the registrar's screens they name.
+4. **Ready:** `company_server` with the address alone, until it says the server answers and obeys this Jean's key. A few minutes after the names point, each gets its certificate.
+5. **The apps:** read `recipes.md` beside these steps. It has each service's registration: Microsoft 365, Google Workspace, Docusign, Slack, and the services that take a key. Walk the person through the ones the company wants, then send each app with `company_server`'s `apps`: its `issuer`, `tokenEndpoint` and `clientId`, and `ask`, the question asking the person to type its secret, in their language. The secret goes from a masked field to the server alone.
+6. **The policy:** start from the pack that fits. `small-office.md` beside these steps suits most small companies. Send it with `company_server`'s `policy`, filled in from what the company said. Each change replaces the policy whole, so keep what was there.
+7. **The team:** each colleague opens `https://<address>` in their browser. Nothing to install.
+
+## Never
+
+- A secret in the conversation: if the person pastes one there, say it should be revoked at the service and typed again in the masked field.
+- A change from another Jean: only the one that wrote the line, on that device, can sign. If its key is lost, running `install.sh` again from the host's console with another `--owner` gives the server to another key.
+
+## Offer
+
+A note of what was set up, as a document: the address, the host, the names, the apps and who to ask.

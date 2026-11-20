@@ -52,8 +52,13 @@ class Ask extends Element {
     ;[this.#answers.value, this.#moved, this.#step.value] = [answers, moved, step + 1]
   }
 
-  /** The box's words answer the question on screen, as the user's own, and the keyboard stays there (D343). @param {string} own */
-  answer(own) { this.#go({ own: own.trim(), writing: true, skipped: false, ...(!this.decision.questions[this.#step.peek()].multiple && { chosen: [] }) }, false) }
+  /** The box's words answer the question on screen, as the user's own, and the keyboard stays there (D343); never a secret, typed only in its own field (D762). @param {string} own */
+  answer(own) {
+    const question = this.decision.questions[this.#step.peek()]
+    if (question.secret) return false
+    this.#go({ own: own.trim(), writing: true, skipped: false, ...(!question.multiple && { chosen: [] }) }, false)
+    return true
+  }
 
   render() {
     const { questions, from } = this.decision
@@ -96,7 +101,7 @@ class Ask extends Element {
             <input type=${input} name="answer" title=${t('ask.own')} .checked=${live(answer.writing)} @change=${write}>
             <input class="ask-own-text" dir="auto" autocomplete="off" placeholder=${t('ask.own')} title=${t('ask.own')} .value=${live(answer.own)} @input=${typed}>
           </li>
-        </ul>` : html`<input class="ask-own-text" name="answer" dir="auto" autocomplete="off" title=${t('inbox.answer')} .value=${live(answer.own)} @input=${typed}>`}
+        </ul>` : html`<input class="ask-own-text" name="answer" type=${question.secret ? 'password' : 'text'} dir=${question.secret ? 'ltr' : 'auto'} autocomplete=${question.secret ? 'new-password' : 'off'} title=${t('inbox.answer')} .value=${live(answer.own)} @input=${typed}>`}
       </div>`)}
       <div class="ask-actions">
         ${questions.length > 1 ? html`<p class="ask-progress">
@@ -111,7 +116,10 @@ class Ask extends Element {
   }
 
   updated() {
-    if (this.#moved) /** @type {HTMLInputElement | null} */ (this.querySelector('.ask-field input:checked') ?? this.querySelector('.ask-field input'))?.focus()
+    // A secret is typed in its own masked field, which takes the keyboard from the box at once (D762).
+    const secret = /** @type {HTMLInputElement | null} */ (this.querySelector('.ask-field input[type="password"]'))
+    if (secret && document.activeElement !== secret) secret.focus()
+    else if (this.#moved) /** @type {HTMLInputElement | null} */ (this.querySelector('.ask-field input:checked') ?? this.querySelector('.ask-field input'))?.focus()
     this.#moved = false
   }
 }

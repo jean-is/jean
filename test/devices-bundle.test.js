@@ -43,6 +43,8 @@ const KINDS = /** @type {Record<string, Record<string, boolean>>} */ ({
   person: { person: true, 'people:AAAAAAAAAAAAAAAAAAAAAA': true, 'people:AAAAAAAAAAAAAAAAAAAAAA:name': true, 'invite:x': false, 'accept:x': false },
   // What the person works on together, its keys and tokens, follows their devices, which follow its journal themselves (D733).
   circle: { 'circle:AAAAAAAAAAAAAAAAAAAAAA': true },
+  // A company server's app secret, typed once by its owner: only the key on this device changes that server, so it stays (D762).
+  'company-app': { 'company:jean.acme.example:https://account-d.docusign.com': false },
   unknown: { 'something-new': false },
 })
 /** What each is, as the code writes it where that isn't a key typed: a search service's key and engine (web-search.js), tokens, the bridge's port and key. */
@@ -74,6 +76,7 @@ const KNOWN = /** @type {Record<string, string>} */ ({
   'app/caps/devices/store.js STORE': 'device', // the store's keys (D721), which open what the person's devices keep in common
   'app/caps/devices/flow.js DEVICES': 'device', // the devices the profile knows, removed ones too
   'app/caps/devices/flow.js PERSON': 'person', // this profile as a person, made as a device is added where it has none (D727)
+  'app/caps/server/server.js id': 'company-app', // an app's secret for a company's own server (D762)
   'app/caps/devices/flow.js id': 'brain', // what crossed, chosen again by crossing(), or what the new device keeps of its own: a brain's, a connection's, a search service's, a registry's, the bridge's
 })
 

@@ -27,6 +27,7 @@ export const DIRECTORY = Object.freeze([
   { name: 'problem-solving', group: 'work', icon: 'M4 6.5h4.5M4 12h4.5M4 17.5h4.5M8.5 6.5 12 12l-3.5 5.5M12 12h8.5M17 9l3.5 3-3.5 3' },
   { name: 'process-improvement', group: 'work', icon: 'M3.5 8.5h5v7h-5zM15.5 8.5h5v7h-5zM8.5 12h7M13 9.5l2.5 2.5-2.5 2.5' },
   { name: 'risk-analysis', group: 'work', icon: 'M12 4 21 19.5H3zM12 10v4.5M12 17v.5' },
+  { name: 'company-server', group: 'work', icon: 'M4 4.5h16v6H4zM4 13.5h16v6H4zM7.5 7.5h.01M7.5 16.5h.01', cap: 'server', beside: ['recipes.md', 'small-office.md'] },
   { name: 'design-thinking', group: 'work', icon: 'M9.5 17.5h5M10.5 20.5h3M12 3.5a5.5 5.5 0 0 0-3.4 9.8c.6.5.9 1.2.9 1.9v.3h5v-.3c0-.7.3-1.4.9-1.9A5.5 5.5 0 0 0 12 3.5z' },
   { name: 'chart', group: 'drawn', icon: 'M3.5 19.5h17M6.5 19.5v-6M10.5 19.5V9M14.5 19.5v-8M18.5 19.5V5.5' },
   { name: 'visual', group: 'drawn', icon: 'M3.5 6.5l5-2 7 2 5-2v13l-5 2-7-2-5 2zM8.5 4.5v13M15.5 6.5v13' },

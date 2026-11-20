@@ -432,6 +432,9 @@
         "relay": {
           "$ref": "#/$defs/link"
         },
+        "releases": {
+          "$ref": "#/$defs/link"
+        },
         "siteIcon": {
           "$ref": "#/$defs/link"
         },
@@ -2062,6 +2065,16 @@
                     ]
                   },
                   "relay": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/link"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "releases": {
                     "anyOf": [
                       {
                         "$ref": "#/$defs/link"

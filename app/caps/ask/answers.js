@@ -4,7 +4,7 @@
 // runs under `node --test`.
 
 /** @typedef {{ label: string, description: string, recommended: boolean }} Option */
-/** @typedef {{ question: string, options: Option[], multiple: boolean }} Question */
+/** @typedef {{ question: string, options: Option[], multiple: boolean, secret?: boolean }} Question */
 /**
  * Where the user is on one question: the answers picked (by their place), their own words and
  * whether they count, and whether the question was skipped.
