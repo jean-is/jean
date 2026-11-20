@@ -92,7 +92,7 @@ CONTENT_SECURITY_POLICY="connect-src 'self' https://ai.corp.example"
 
 List every other address Jean must still reach, such as the mirrors named in `urls` in the policy.
 
-**The gateway.** `GATEWAY_CONFIG` names the addresses Jean is served from, and optionally the hosts it relays to and the apps you registered with their secrets ([gateway.js](../../gateway/gateway.js), [its schema](../../app/schemas/gateway.schema.json)). Its secrets stay in this variable, never in a file:
+**The gateway.** `GATEWAY_CONFIG` names the addresses Jean is served from, and optionally the hosts it relays to and the apps you registered with their secrets ([gateway.js](../../gateway/gateway.js), [its schema](../../app/schemas/gateway.schema.json)). Its secrets stay in this variable, never in a file. The one exception is a company's own server, where the keeper writes them to a file the gateway alone reads (`GATEWAY_CONFIG_FILE`) and the same image runs the keeper ([company/](../company/README.md)):
 
 ```bash
 GATEWAY_CONFIG='{"origins":["https://jean.corp.example"]}'

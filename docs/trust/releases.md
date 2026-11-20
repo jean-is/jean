@@ -8,7 +8,10 @@ A release is Jean ready to copy to a server, with no build and no Node.js: what 
 |---|---|
 | `jean-<version>-<commit>.zip` | Everything a deploy serves, in a folder of the same name: Jean's own code minified, each file beside itself in brotli and gzip ([deploy/](../../deploy/README.md)) |
 | `jean-<version>-<commit>.cdx.json` | The bill of materials of what ships, CycloneDX: each package, its version, licence and hash |
-| `SHA256SUMS` | The SHA-256 of both, one a line |
+| `install.sh` | What sets up a company's own server, run by the one line at its first boot ([deploy/company/](../../deploy/company/README.md), D762) |
+| `server.env` | What tells companies' servers about this version: the version, and the images of Jean and of the gateway that CI published for it, each by digest |
+| `server.env.sig` | Warehouse SAS's SSH signature of `server.env`, which each server checks before updating |
+| `SHA256SUMS` | The SHA-256 of each file above, one a line |
 | `SHA256SUMS.sig` | Warehouse SAS's SSH signature of `SHA256SUMS` |
 
 The signing key's public half is in [`allowed_signers`](allowed_signers), for the signer `jean.is`:
@@ -61,4 +64,18 @@ git -c gpg.ssh.allowedSignersFile=docs/trust/allowed_signers tag -v v0.8.0
 RELEASE_KEY=<the private key> npm run release
 ```
 
-`scripts/release.js` builds `HEAD`, or the commit named after `--`, as git has it, never the working tree, with neither `POLICY` nor `ADDRESS`; writes the four files in `dist/release/`; and checks the signature against `allowed_signers` before it says so. It checks the key the same way before building, so a release is never signed with any other. The private key never enters this repository; Warehouse SAS keeps it apart. Rotating it means adding the new key's line to `allowed_signers` beside the old one, so earlier releases still check.
+`scripts/release.js` builds `HEAD`, or the commit named after `--`, as git has it, never the working tree, with neither `POLICY` nor `ADDRESS`; writes the files above in `dist/release/`; and checks each signature against `allowed_signers` before it says so. The version's images must already be on the registry, as CI publishes them when it tags the version. It checks the key the same way before building, so a release is never signed with any other. The private key never enters this repository; Warehouse SAS keeps it apart. Rotating it means adding the new key's line to `allowed_signers` beside the old one, so earlier releases still check.
+
+## Publishing one
+
+Each release goes on its version's GitHub release, beside the signed tag:
+
+```bash
+gh release create "v<version>" dist/release/* --verify-tag --title "<version>"
+```
+
+Companies' servers depend on its addresses (D762):
+- the block Jean writes for a server's first boot fetches `install.sh`, `SHA256SUMS` and `SHA256SUMS.sig` from `releases/latest/download/`, and runs `install.sh` once they check;
+- the daily update reads `releases/latest/download/server.env`, and `server.env.sig` beside it.
+
+GitHub's "latest" is the newest release that isn't a pre-release. Its download links redirect, and servers follow them over HTTPS only.

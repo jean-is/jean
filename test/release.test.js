@@ -6,7 +6,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, it } from 'node:test'
 import { readZip } from '../app/core/zip.js'
-import { ALLOWED, NAMESPACE, SIGNER, filesUnder, releaseName, sign, sums, verify, zipOf } from '../scripts/release.js'
+import { ALLOWED, NAMESPACE, SIGNER, announcement, digestOf, filesUnder, releaseName, sign, sums, verify, zipOf } from '../scripts/release.js'
 
 /** Whether OpenSSH's ssh-keygen is here to sign and check with. */
 const sshKeygen = (() => {
@@ -21,6 +21,38 @@ const sshKeygen = (() => {
 describe('release', () => {
   it('names a release by its version and commit', () => {
     assert.equal(releaseName('0.8.0', 'c10fc5a6'), 'jean-0.8.0-c10fc5a6')
+  })
+
+  it('announces a version to companies’ servers in the lines their update script reads (D762)', async () => {
+    const jean = `ghcr.io/jean-is/jean@sha256:${'1'.repeat(64)}`
+    const gateway = `ghcr.io/jean-is/jean-gateway@sha256:${'2'.repeat(64)}`
+    const text = announcement({ version: '0.12.3', jean, gateway })
+    // The update script's own readers, as install.sh writes them.
+    const install = await readFile('deploy/company/install.sh', 'utf8')
+    const readers = ['image ()', 'version ()'].map((name) => install.split('\n').find((line) => line.startsWith(name))).join('\n')
+    const read = (/** @type {string} */ call) => execFileSync('sh', ['-c', `${readers}\n${call} /dev/stdin`], { input: text, encoding: 'utf8' }).trim()
+    assert.equal(read('image JEAN_IMAGE'), jean)
+    assert.equal(read('image GATEWAY_IMAGE'), gateway)
+    assert.equal(read('version'), '0.12.3')
+  })
+
+  it('finds an image’s digest at a tag, through the token a registry’s challenge names', async () => {
+    const digest = `sha256:${'a'.repeat(64)}`
+    /** @type {string[]} */
+    const asked = []
+    /** @type {typeof fetch} */
+    const registry = async (input, init) => {
+      const url = String(input)
+      asked.push(`${init?.method ?? 'GET'} ${url}${new Headers(init?.headers).has('authorization') ? ' (token)' : ''}`)
+      if (url.startsWith('https://ghcr.io/token')) return Response.json({ token: 'anonymous' })
+      if (url.endsWith('/manifests/0.12.3') && new Headers(init?.headers).get('authorization') === 'Bearer anonymous') return new Response(null, { headers: { 'docker-content-digest': digest } })
+      if (url.endsWith('/manifests/0.12.3')) return new Response(null, { status: 401, headers: { 'www-authenticate': 'Bearer realm="https://ghcr.io/token",service="ghcr.io",scope="repository:jean-is/jean:pull"' } })
+      return new Response(null, { status: 404 })
+    }
+    assert.equal(await digestOf('ghcr.io/jean-is/jean', '0.12.3', registry), `ghcr.io/jean-is/jean@${digest}`)
+    assert.deepEqual(asked, ['HEAD https://ghcr.io/v2/jean-is/jean/manifests/0.12.3', 'GET https://ghcr.io/token?service=ghcr.io&scope=repository%3Ajean-is%2Fjean%3Apull',
+      'HEAD https://ghcr.io/v2/jean-is/jean/manifests/0.12.3 (token)'])
+    await assert.rejects(digestOf('ghcr.io/jean-is/jean', '9.9.9', registry), /isn't on its registry \(404\)/)
   })
 
   it('writes SHA256SUMS as sha256sum does, one file a line', () => {

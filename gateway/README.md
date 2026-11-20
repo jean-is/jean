@@ -10,6 +10,8 @@ Run it on Node, or put `gateway/gateway.js` on Cloudflare Workers, Deno or Bun, 
 GATEWAY_CONFIG='{"origins":["https://jean.example"]}' node gateway/serve.js
 ```
 
+`GATEWAY_CONFIG_FILE` names a file to read instead, read again whenever it changes. That file must be in a folder nothing serves. On a company's own server, the keeper writes it from the owner's signed changes ([deploy/company/](../deploy/company/README.md), D762).
+
 Or, with nothing to clone, its secrets still in `GATEWAY_CONFIG`:
 
 ```bash

@@ -2,8 +2,10 @@
 // A release an organisation deploys without building it (D419): a commit built as `npm run deploy`
 // builds one, from git and never from the working tree, with neither POLICY nor ADDRESS, so it is the
 // same for every organisation. dist/release/ then holds dist/web/ as one zip, in a folder named as the
-// release; the bill of materials of what ships, CycloneDX, as CI keeps it; SHA256SUMS naming both, as
-// sha256sum writes it; and SHA256SUMS.sig, its SSH signature by RELEASE_KEY, which OpenSSH checks on
+// release; the bill of materials of what ships, CycloneDX, as CI keeps it; for a company's own server (D762), its
+// install.sh and server.env, the announcement its update script reads (the version and the images CI published for it,
+// by digest, from IMAGES, ghcr.io/jean-is by default) with server.env.sig, its own signature; SHA256SUMS naming them,
+// as sha256sum writes it; and SHA256SUMS.sig, its SSH signature by RELEASE_KEY, which OpenSSH checks on
 // every system against docs/trust/allowed_signers (docs/trust/releases.md). Before building, a line signed with
 // the key is checked against that file, so a release signed with any other key never leaves.
 // Usage: RELEASE_KEY=<the private key> npm run release [-- <commit>]     (HEAD by default)
@@ -27,6 +29,40 @@ export const ALLOWED = join(ROOT, 'docs', 'trust', 'allowed_signers')
 
 /** A release's name: the version, then the commit. @param {string} version @param {string} commit */
 export const releaseName = (version, commit) => `jean-${version}-${commit}`
+
+/**
+ * What a company's server reads to update itself (deploy/company/install.sh's update script): the version and its two
+ * images, each by digest.
+ * @param {{ version: string, jean: string, gateway: string }} release
+ */
+export const announcement = ({ version, jean, gateway }) => `VERSION=${version}\nJEAN_IMAGE=${jean}\nGATEWAY_IMAGE=${gateway}\n`
+
+/** What registries answer a manifest with: an index of platforms first, a single image after. */
+const MANIFESTS = ['application/vnd.oci.image.index.v1+json', 'application/vnd.docker.distribution.manifest.list.v2+json',
+  'application/vnd.oci.image.manifest.v1+json', 'application/vnd.docker.distribution.manifest.v2+json'].join(', ')
+
+/**
+ * An image's digest at a tag, as the registry gives it, by the OCI distribution API: anonymously where it lets anyone
+ * pull, through the token its challenge names.
+ * @param {string} image  e.g. ghcr.io/jean-is/jean @param {string} tag @param {typeof fetch} [get]
+ * @returns {Promise<string>} the image by digest, `<image>@sha256:<hex>`
+ */
+export async function digestOf (image, tag, get = fetch) {
+  const [host, ...path] = image.split('/')
+  const url = `https://${host}/v2/${path.join('/')}/manifests/${tag}`
+  let answer = await get(url, { method: 'HEAD', headers: { accept: MANIFESTS } })
+  const challenge = answer.status === 401 ? /^Bearer (.*)$/i.exec(answer.headers.get('www-authenticate') ?? '')?.[1] : undefined
+  if (challenge) {
+    const fields = Object.fromEntries([...challenge.matchAll(/(\w+)="([^"]*)"/g)].map(([, name, value]) => [name, value]))
+    const realm = new URL(fields.realm)
+    for (const name of ['service', 'scope']) if (fields[name]) realm.searchParams.set(name, fields[name])
+    const { token, access_token: access } = await (await get(realm.href)).json()
+    answer = await get(url, { method: 'HEAD', headers: { accept: MANIFESTS, authorization: `Bearer ${token ?? access}` } })
+  }
+  const digest = answer.headers.get('docker-content-digest') ?? ''
+  if (!answer.ok || !/^sha256:[0-9a-f]{64}$/.test(digest)) throw new Error(`${image}:${tag} isn't on its registry (${answer.status}): CI publishes a version's images when it tags it`)
+  return `${image}@${digest}`
+}
 
 /**
  * SHA256SUMS as sha256sum writes it, which `sha256sum -c` and `shasum -a 256 -c` read.
@@ -96,15 +132,20 @@ async function main () {
     const date = new Date(execFileSync('git', ['-C', ROOT, 'log', '-1', '--format=%cI', commit], { encoding: 'utf8' }).trim())
     const zip = await zipOf(join(source, 'dist', 'web'), name, date)
     const sbom = execFileSync('npm', ['sbom', '--omit=dev', '--sbom-format', 'cyclonedx'], { cwd: source, maxBuffer: 64 * 1024 * 1024 })
+    const images = process.env.IMAGES ?? 'ghcr.io/jean-is'
+    const [jean, gateway] = await Promise.all([digestOf(`${images}/jean`, version), digestOf(`${images}/jean-gateway`, version)])
     /** @type {Array<[string, Uint8Array]>} */
-    const files = [[`${name}.zip`, zip], [`${name}.cdx.json`, sbom]]
+    const files = [[`${name}.zip`, zip], [`${name}.cdx.json`, sbom], ['install.sh', await readFile(join(source, 'deploy', 'company', 'install.sh'))],
+      ['server.env', new TextEncoder().encode(announcement({ version, jean, gateway }))]]
     await rm(OUT, { recursive: true, force: true })
     await mkdir(OUT, { recursive: true })
     for (const [file, bytes] of files) await writeFile(join(OUT, file), bytes)
     await writeFile(join(OUT, 'SHA256SUMS'), sums(files))
-    sign(join(OUT, 'SHA256SUMS'), key)
-    if (!verify(join(OUT, 'SHA256SUMS'))) throw new Error("the signature made doesn't check against docs/trust/allowed_signers")
-    console.log(`release: ${name}, signed by ${SIGNER}, in dist/release: ${files.map(([file]) => file).join(', ')}, SHA256SUMS and SHA256SUMS.sig`)
+    for (const file of ['SHA256SUMS', 'server.env']) {
+      sign(join(OUT, file), key)
+      if (!verify(join(OUT, file))) throw new Error(`the signature made of ${file} doesn't check against docs/trust/allowed_signers`)
+    }
+    console.log(`release: ${name}, signed by ${SIGNER}, in dist/release: ${files.map(([file]) => file).join(', ')}, server.env.sig, SHA256SUMS and SHA256SUMS.sig`)
   } finally {
     await rm(work, { recursive: true, force: true })
   }

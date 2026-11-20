@@ -81,12 +81,14 @@ LABEL org.opencontainers.image.licenses="MIT" \
 
 # The gateway: one module and Node, nothing to install, configured by GATEWAY_CONFIG. It runs as a user by number,
 # which Kubernetes can tell isn't root, under Node's permission model: the network, and reading its own folder.
+# The keeper rides along (D762): on a company's own server, the same image runs node keeper/serve.js beside it.
 FROM node-runtime AS gateway
 WORKDIR /app
 COPY <<EOF package.json
 {"type":"module"}
 EOF
 COPY gateway/ gateway/
+COPY keeper/ keeper/
 ENV HOST=0.0.0.0 PORT=8787
 USER 1000
 LABEL org.opencontainers.image.title="jean-gateway" \

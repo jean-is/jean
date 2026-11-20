@@ -73,6 +73,10 @@ Browsers refuse a script, a style sheet or WebAssembly of the wrong type, and II
 - **Compressed copies:** `build:web` writes each file of a kilobyte or more that compresses beside itself in brotli (`.br`) and gzip (`.gz`). A host that can sends them as they are (nginx's `gzip_static`, Caddy's `precompressed br gzip`); any other compresses as it serves, and the copies can stay behind.
 - **No fallback page:** an address that names no file is a 404, never `index.html`.
 
+## A company's own server
+
+A company with no IT can have its own server instead, rented in its own name and set up by one line at its first boot (D762). The server runs Caddy, Jean's files, the gateway, and the keeper, which applies only the changes the owner's key signs. Warehouse SAS never has access ([company/](company/README.md)).
+
 ## Hosted copies
 
 Warehouse SAS also serves copies of Jean itself, for an organisation with a subscription and for a trial (D456): each at the organisation's own address, `ai.acme.com` pointed at Warehouse SAS's server by a CNAME, or for a trial at a subdomain of jean.is. The server holds files and nothing else: one release every copy shares, and each address's `policy.json`. People's data stays on their devices, and their requests go from their browser to the brains, gateway and services their policy names, never through this server ([enterprise.md](../docs/enterprise.md#hosted-copies)).
