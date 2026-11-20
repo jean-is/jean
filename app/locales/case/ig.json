@@ -1,0 +1,23 @@
+{
+  "case.group.files": "Faịlụ na akwụkwọ",
+  "case.group.remember": "Icheta na ịchọta",
+  "case.group.again": "Ime ya ọzọ",
+  "case.group.web": "Ịntanetị na sevisi gị",
+  "case.group.bigger": "Ụbụrụ na ọrụ ka ukwuu",
+  "case.group.voice": "Olu na ọkwa",
+  "case.group.keep": "Idowe na ịkesa",
+  "case.rest": "Ndị fọdụrụ na-abịa mgbe oge kwesịrị, nke ọ bụla na-akọwa otu.",
+  "case.waiting": {
+    "other": "{count} na-eche ihe si n’aka gị, e gosiri ha n’okpuru."
+  },
+  "case.of": "{count} n’ime {total}",
+  "case.so": "{done} n’ime {goal} ruo ugbu a",
+  "case.download": "{size} ibudata",
+  "case.unset": "Edozibeghị ya",
+  "case.unfound": "Achọtabeghị ya",
+  "case.came": "Otu o si bịa",
+  "case.offText": "Agbanyụọla ya: {name} anaghị enye ya, ọ dịghịkwa ihe ya na-egosi ma ọ bụ na-ebu.",
+  "case.ask": "Gbanyụọ {cap}? {name} ga-emeghe ọzọ ebe ị nọ, a ga-edowekwa ihe o mere.",
+  "case.cancel": "Kagbuo",
+  "case.allHint": "Ihe ọ bụla a ga-ebudata ka na-ajụ gị mbụ."
+}

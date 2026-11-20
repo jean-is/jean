@@ -1,0 +1,59 @@
+{
+  "search.where": "ક્યાં શોધવું",
+  "search.wikipedia": "Wikipedia",
+  "search.wikipedia.text": "તમારી ભાષામાં, અને બીજી 300 થી વધુમાં",
+  "search.vikidia": "Vikidia",
+  "search.vikidia.text": {
+    "one": "8 થી 13 વર્ષનાં બાળકો માટે, તમારી ભાષામાં અને બીજી {count} માં",
+    "other": "8 થી 13 વર્ષનાં બાળકો માટે, તમારી ભાષામાં અને બીજી {count} માં"
+  },
+  "search.library": "ઑફલાઇન લાઇબ્રેરી",
+  "search.library.text": "Kiwix સર્વર પરથી Wikipedia અને બીજાં પુસ્તકો: આ કમ્પ્યુટર પર, શાળામાં કે કામ પર. દરેક મગજ તેમાં શોધે છે, ઇન્ટરનેટ વગર પણ.",
+  "search.address": "Kiwix સર્વરનું સરનામું",
+  "search.connect": "જોડો",
+  "search.connectTo": "{service} જોડો",
+  "search.failed": "આ સરનામે કોઈ Kiwix સર્વરે જવાબ ન આપ્યો.",
+  "search.insecure": "અહીંથી ફક્ત આ કમ્પ્યુટર પરના, અથવા https:// થી શરૂ થતા સરનામા પરના Kiwix સર્વર સુધી પહોંચી શકાય છે.",
+  "search.locked": "તમારી સંસ્થાએ સેટ કર્યું",
+  "search.parent": "માતા-પિતાએ સેટ કર્યું",
+  "search.books": {
+    "one": "{count} પુસ્તક",
+    "other": "{count} પુસ્તકો"
+  },
+  "search.articles": {
+    "one": "{count} લેખ",
+    "other": "{count} લેખ"
+  },
+  "search.vikidia.not": {
+    "one": "8 થી 13 વર્ષનાં બાળકો માટે, {count} ભાષામાં, તમારી નહીં",
+    "other": "8 થી 13 વર્ષનાં બાળકો માટે, {count} ભાષાઓમાં, તમારી નહીં"
+  },
+  "search.fromLibrary": "ઑફલાઇન લાઇબ્રેરીમાંથી, {languages} માં",
+  "search.library.in": "ઑફલાઇન લાઇબ્રેરી",
+  "search.library.row": "Kiwix સર્વર પરથી Wikipedia અને બીજાં પુસ્તકો, ઇન્ટરનેટ વગર પણ",
+  "search.notSet": "સેટ કરેલું નથી",
+  "search.off": "બંધ",
+  "search.unanswered": "જવાબ નથી આપતું",
+  "search.answering": "જવાબ આપે છે",
+  "search.services": "શોધ સેવાઓ",
+  "search.searches": "કોઈ પણ મગજ માટે, આખા વેબમાં શોધે છે",
+  "search.readHere": "અહીંથી Wikipedia વાંચો",
+  "search.readHere.text": "વેબના બદલે, {languages} માં",
+  "search.now.own": "જવાબ આપતું મગજ જાતે આખા વેબમાં શોધે છે.",
+  "search.now.others": "બીજાં મગજ {sources} માં શોધે છે.",
+  "search.now.every": "દરેક મગજ {sources} માં શોધે છે.",
+  "search.now.again": "ફક્ત Wikipedia હોય ત્યારે, જવાબ આપતું મગજ ફરી આખા વેબમાં શોધે છે.",
+  "search.now.nowhere": "જે મગજ જાતે વેબમાં શોધી શકતું નથી તેને શોધવાની કોઈ જગ્યા નથી.",
+  "search.now.off": "વેબ શોધ બંધ છે: તમે હવે શરૂ કરો તે કાર્યો ક્યાંય શોધતાં નથી, મગજની પોતાની શોધથી પણ નહીં.",
+  "search.now.services": "દરેક મગજ {services} થી પણ શોધી શકે છે.",
+  "search.also": "વેબ શોધ બૉક્સમાંના + થી પણ બંધ કરી શકાય છે.",
+  "search.key": "કી",
+  "search.engine": "Search engine ID",
+  "search.service.text": "તમારું પોતાનું {service} ખાતું દરેક મગજ માટે આખા વેબમાં શોધે છે. તમારા શોધ શબ્દો {service} ને જાય છે, જે તેના પૈસા લઈ શકે, અને તમારી કી તમારાં પોતાનાં ડિવાઇસ પર રહે છે.",
+  "search.getKey": "{service} પાસેથી કી મેળવો",
+  "search.refused": "{service} તરફથી આ કી નકારાઈ, અથવા તેમાં કોઈ શોધ બાકી નથી.",
+  "search.silent": "{service} તરફથી જવાબ ન મળ્યો. કી તપાસો, અથવા થોડી વારમાં ફરી પ્રયાસ કરો.",
+  "search.needsGateway": "ગેટવે જોઈએ",
+  "search.noGateway": "બ્રાઉઝર જાતે {service} સુધી પહોંચી શકતું નથી: તેને ત્યાં પહોંચાડતો ગેટવે જોઈએ. ગેટવેનું સરનામું {connections} માં જાય છે.",
+  "search.google.closing": "Google નવી કી આપતું નથી, અને {date} એ આ સેવા બંધ કરે છે."
+}

@@ -1,0 +1,9 @@
+{
+  "reader.more": "သဘာဝအသံက {language} ကိုလည်း ဖတ်နိုင်သည်။",
+  "reader.credit": "Kyutai ၏ Pocket TTS၊ Alba MacKenna ၏ အသံဖြင့် (CC BY 4.0)။",
+  "reader.on": "{languages}၊ ဤစက်ပေါ်တွင် ထုတ်သည်",
+  "reader.none": "ဤစက်တွင် ဘာသာစကား မရှိသေးပါ",
+  "reader.off": "ပိတ်ထား: အဖြေတိုင်းကို စနစ်၏ အသံများက ဖတ်သည်",
+  "reader.here": "ဤစက်ပေါ်တွင်၊ {size}",
+  "reader.room": "“သင့်ဒေတာ › သုံးထားသောနေရာ” တွင် ဘာသာစကား ဖယ်ရှားပါ"
+}

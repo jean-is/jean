@@ -1,0 +1,21 @@
+{
+  "prototypes.frame": "{name}, isibonelo",
+  "prototypes.board": "Wonke amakhasi",
+  "prototypes.pages": "Amakhasi esibonelo {name}",
+  "prototypes.page": "Ikhasi {n} / {count}",
+  "prototypes.leads": "Kuholela ku: {pages}",
+  "prototypes.changed": "Kushintshwe umsizi {name}",
+  "prototypes.back": "Emuva",
+  "prototypes.restart": "Qala phansi",
+  "prototypes.press": "Cindezela okuthi “{control}”",
+  "prototypes.own": "Kulesi sibonelo",
+  "prototypes.build": "Kwakhe",
+  "prototypes.building": "Yakha isibonelo “{name}” ngempela, njenge-app esebenzayo.",
+  "prototypes.zoomOut": "Qhelelisa",
+  "prototypes.zoomIn": "Sondeza",
+  "prototypes.fit": "Lingana",
+  "prototypes.actual": "Sondeza ku: {level}",
+  "prototypes.zip": "Isibonelo njenge-zip",
+  "prototypes.ask": "Yenza isibonelo sale nto: {what}.",
+  "prototypes.example": "i-app yokubhukha esaluni yami yezinwele"
+}

@@ -1,0 +1,20 @@
+{
+  "made.open": "Mepee",
+  "made.kind.document": "Akwụkwọ Word",
+  "made.kind.sheet": "Tebụl ọnụọgụ",
+  "made.kind.page": "Peeji weebụ",
+  "made.kind.drawing": "Ihe osise",
+  "made.kind.design": "Imewe",
+  "made.kind.game": "Egwuregwu",
+  "made.kind.text": "Ederede",
+  "made.copiedPictures": "Edetuola. Ọ bụrụ na foto ya adịghị apụta, detuo nke ọ bụla site na bọtịnụ Detuo nke ya.",
+  "made.share": "Kesaa",
+  "made.csvTitle": "Tebụl (CSV)",
+  "made.csvNumbered": "Tebụl {count} (CSV)",
+  "made.tableFile": "Tebụl {count}",
+  "made.print": "Bipụta",
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
+}

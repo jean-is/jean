@@ -1,0 +1,8 @@
+{
+  "backup.confirmImport": "Haasawwan, pirojektoota fi faayiloota kana keessa jiran galchuu? Wanti asii haqamu hin jiru.",
+  "backup.imported": {
+    "one": "Haasaan {count} galeera.",
+    "other": "Haasawwan {count} galaniiru."
+  },
+  "backup.chooseJson": "Faayiliin kun sochii Gemini kee akka fuula interneetiitti qaba. Google Takeout irraa irra deebi'ii baasi, My Activity keessatti JSON filadhu."
+}

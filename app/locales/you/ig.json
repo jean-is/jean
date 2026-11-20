@@ -1,0 +1,39 @@
+{
+  "knows.instructions": "Ntụziaka gị",
+  "knows.instructionsPlaceholder": "Dịka ọmụmaatụ: Zaa n’asụsụ French. Mee ka ọ dị mkpụmkpụ. Ana m elekọta ebe a na-eme achịcha.",
+  "knows.noticed": "Ihe {name} hụrụ",
+  "knows.forYou": "Ebe niile",
+  "knows.forProject": "Na {project}",
+  "knows.edit": "Dezie ahịrị a",
+  "knows.from": "Mepee ọrụ o si na ya bịa",
+  "knows.promote": "Mee ya ntụziaka",
+  "knows.promoted": "Ọ bụzi otu n’ime ntụziaka gị.",
+  "knows.nothing": "Ọ dịbeghị ihe.",
+  "you.line": "A na-eziga ntụziaka gị na ihe {name} hụrụ ya na ọrụ ọ bụla nye ụbụrụ na-aza.",
+  "you.none": "Ọ dịbeghị ihe gbasara gị. A na-agụ ihe ị dere ebe a na mmalite ọrụ ọ bụla.",
+  "you.cut": {
+    "other": "A naghị agụzi ahịrị {count} kacha ochie. Iji mee ka a gụọ otu, mee ya ntụziaka."
+  },
+  "you.nameText": "Aha {name} na-akpọ gị. A naghị eziga ya nye ụbụrụ ọ bụla.",
+  "you.edit": "Dezie",
+  "you.cancel": "Kagbuo",
+  "you.more": "Ihe ndị ọzọ maka ahịrị a",
+  "you.empty": "Gịnị ka {name} kwesịrị icheta mgbe niile? Ọrụ gị, asụsụ gị, otu ị chọrọ azịza.",
+  "you.start.work": "Ihe ị na-arụ",
+  "you.start.workText": "Ọrụ m bụ ",
+  "you.start.language": "Asụsụ gị",
+  "you.start.languageText": "Zaa n’asụsụ ",
+  "you.start.length": "Ogologo azịza kwesịrị ịdị",
+  "you.start.lengthText": "Mee ka azịza dị ",
+  "you.remember": "Cheta",
+  "you.all": {
+    "other": "Hụ ahịrị {count} niile"
+  },
+  "you.lines": {
+    "other": "Ahịrị {count}"
+  },
+  "you.search": "Chọọ n’ihe {name} hụrụ",
+  "you.unread": "A naghị agụzi ya",
+  "you.project": "Ndị a na-eso nke gị, naanị n’ọrụ nke ọrụ ngo a.",
+  "you.org": "Ntụziaka nke nzukọ gị"
+}

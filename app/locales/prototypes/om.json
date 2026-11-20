@@ -1,0 +1,21 @@
+{
+  "prototypes.frame": "Pirototaayipii: {name}",
+  "prototypes.board": "Fuulota hunda",
+  "prototypes.pages": "Fuulota: {name}",
+  "prototypes.page": "Fuula {n}, {count} keessaa",
+  "prototypes.leads": "Gara {pages} geessa",
+  "prototypes.changed": "Kan jijjiire: {name}",
+  "prototypes.back": "Duubatti",
+  "prototypes.restart": "Jalqabaa irraa",
+  "prototypes.press": "“{control}” tuqi",
+  "prototypes.own": "Pirototaayipii kanaaf",
+  "prototypes.build": "Ijaari",
+  "prototypes.building": "“{name}” dhugaatti, akka appii hojjetuutti ijaari.",
+  "prototypes.zoomOut": "Xiqqeessi",
+  "prototypes.zoomIn": "Guddisi",
+  "prototypes.fit": "Walsimsiisi",
+  "prototypes.actual": "Gara {level} guddisi",
+  "prototypes.zip": "Pirototaayipii akka zip",
+  "prototypes.ask": "Pirototaayipii waa'ee {what} hojjedhu.",
+  "prototypes.example": "appii beellama mana rifeensa koo"
+}

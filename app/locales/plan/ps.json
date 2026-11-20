@@ -1,0 +1,13 @@
+{
+  "plan.title": "پلان",
+  "plan.done": "{done} له {total} شوي",
+  "plan.pending": "پاتې",
+  "plan.in_progress": "روان",
+  "plan.completed": "شوی",
+  "plan.confirm": "په دې پلان مخکې ولاړ شو؟",
+  "plan.go": "مخکې تلل",
+  "plan.always": "تل مخکې تلل",
+  "plan.paused": "په {count} ګام کې ودرېد",
+  "plan.cost": "تر اوسه شاوخوا {cost}",
+  "plan.keepGoing": "دوام ورکول"
+}

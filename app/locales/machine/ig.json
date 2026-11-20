@@ -1,0 +1,20 @@
+{
+  "machine.text": "Gbaa iwu na kọmputa nke gị, ya na mmemme na sava ya, dị ka sava mmepe nke saịtị. JavaScript na Python na-anọ na kọmputa e gbochiri agbochi dị na taabụ a.",
+  "machine.on": "Ọrụ nwere folda {folder} na-agba iwu ha na kọmputa a, a na-ajụ gị mbụ maka nke ọ bụla, ruo mgbe ị pịara Ctrl+C na tọminal ya.",
+  "machine.forget": "Kwụsị iji ya",
+  "machine.question": "Gbaa nke a na kọmputa gị, na folda {folder}?",
+  "machine.always": "Kwe mgbe niile na folda {folder}",
+  "machine.app": "Iwu nwekwara ike ịgba na kọmputa a, ya na mmemme na sava ya, na folda ị họrọ: ọrụ nwere folda ahụ ga-agba iwu ha ebe ahụ.",
+  "machine.choose": "Họrọ folda…",
+  "machine.failed": "Ọ malitighị: ọ chọrọ Node.js na kọmputa a, iwu node nke tọminal na-agba.",
+  "machine.on.app": "Ọrụ nwere folda {folder} na-agba iwu ha na kọmputa a, a na-ajụ gị mbụ maka nke ọ bụla.",
+  "machine.lede": "Ọrụ na-eji kọmputa e gbochiri agbochi dị na taabụ a, ma e wezụga ndị nọ na folda ị jikọrọ na kọmputa a.",
+  "machine.off": "Ejikọghị ya",
+  "machine.step.open": "Mepee tọminal n’otu n’ime folda gị.",
+  "machine.step.paste": "Mado ahịrị a ebe ahụ, wee pịa Enter.",
+  "machine.step.wait": "Na-eche ka ahịrị ahụ gbaa: peeji a ga-ahụ ya n’onwe ya.",
+  "machine.trusted": "Na-agba n’ajụghị ajụ na",
+  "machine.secret": "Detuo na-ewere ahịrị ahụ dum, ya na igodo ya. Debe ya naanị gị: ọ na-ekwe ka peeji a jiri kọmputa gị.",
+  "machine.row": "Folda {folder}, a na-ajụ mbụ maka iwu ọ bụla",
+  "machine.untrust": "Jụọ mbụ ọzọ na folda {folder}"
+}

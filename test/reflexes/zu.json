@@ -1,0 +1,87 @@
+{
+ "format": 1,
+ "states": {
+  "p1": "Udokotela wami uthe ushukela wami egazini uphezulu kakhulu. Kufanele ngikushintshe kanjani engikudlayo?",
+  "p2": "Ngihola u-R18 000 ngenyanga futhi ngikweleta u-R80 000 ekhadini lami lesikweletu. Ngingasikhokha ngokushesha kangakanani?",
+  "p3": "Lokhu kuyimfihlo: uzakwethu uThandi uzoxoshwa emsebenzini ngenyanga ezayo. Ngilitshela kanjani ithimba?",
+  "p4": "Selokhu ngahlukanisa nomkami angikwazi ukulala futhi ngihlala nginovalo njalo. Ngingenzenjani?",
+  "p5": "Liyini idolobha elikhulu lase-Australia?",
+  "p6": "Bhala inkondlo emfushane ngamaqabunga ekwindla.",
+  "p7": "Ngiyishintsha kanjani idokhumenti ye-Word ibe yi-PDF?",
+  "p8": "Fingqa izimbangela eziyinhloko zeNguquko yaseFrance.",
+  "d1": "Sawubona! Unjani namuhla?",
+  "d2": "I-Tokyo ikusiphi isikhathi sendawo?",
+  "d3": "Fingqa lesi sihloko ngamaphuzu amathathu.",
+  "d4": "Bhala kabusha lesi sigaba ukuze sizwakale sinenhlonipho kakhulu.",
+  "d5": "Qhathanisa lezi zilinganiso zamanani ezintathu zabahlinzeki, uhlanganise izindleko zonyaka bese uncoma esisodwa.",
+  "d6": "Bheka lezi zikweletu, uthole eziphindiwe bese ungitshela ukuthi sikhokhe malini ngokweqile.",
+  "d7": "Buyekeza lesi sigatshana senkontileka ngobungozi besibopho ngaphansi komthetho wezohwebo waseJalimane bese uphakamisa amagama aphephile.",
+  "d8": "Klama isivivinyo sezibalo ukuze uhlole ukuthi umphumela wesivivinyo sethu se-A/B ubalulekile yini lapho amaqembu engalingani ngobukhulu.",
+  "u1": [
+   "Umhlangano ungoLwesibili ngo-3 ntambama.",
+   "Akulungile lokho, ngikutshelile ukuthi uhanjiswe ngoLwesine."
+  ],
+  "u2": [
+   "Nasi isifinyezo esinemininingwane sombiko, isigaba ngesigaba.",
+   "Kude kakhulu. Ngicele imigqa emibili."
+  ],
+  "u3": [
+   "Isamba singu-R4 200.",
+   "Lokho akuhambisani. Kuhlole futhi."
+  ],
+  "u4": [
+   "Mnumzane noma Nkosikazi, ngifisa ukunazisa ngokungabikho kwami.",
+   "Lokhu kuzwakala kuqinile futhi njengomshini, akufani nami neze."
+  ],
+  "u5": [
+   "Umhlangano ungoLwesibili ngo-3 ntambama.",
+   "Kuhle, ngiyabonga! Ungabhala nohlelo lomhlangano?"
+  ],
+  "u6": [
+   "Isamba singu-R4 200.",
+   "Kuhle kakhulu. Manje kuhlukanise ngenyanga."
+  ],
+  "u7": [
+   "Nansi imibono emithathu yesidlo sasemini sethimba.",
+   "Ngiyawuthanda owesibili. Singabhukha kuphi?"
+  ],
+  "u8": [
+   "I-Paris yidolobha elikhulu laseFrance.",
+   "Kuthiwani nge-Italy?"
+  ],
+  "c1": "Siyini isilinganiso esiqondile sika-12.5, 18.25, 7, 31.75 no-9?",
+  "c2": "Bala inkokhelo yanyanga zonke yemali ebolekiwe engu-R900 000 ngenzalo engu-11.5% eminyakeni engu-20.",
+  "c3": "Yimuphi umkhiqizo okhule kakhulu phakathi kwamakota amabili ethebuleni lami lokuthengisa?",
+  "c4": "Ungayifunda inkontileka yokuqasha engithunyelwe ngumnikazi wendlu ungitshele isikhathi sesaziso?",
+  "c5": "Nginemizuzu yomhlangano njenge-PDF. Ungayifingqa?",
+  "c6": "Bhala umlayezo wosuku lokuzalwa kadadewethu.",
+  "c7": "Yiliphi igama elihle lebhikawozi?",
+  "c8": "Uthi kanjani ‘ngiyabonga kakhulu’ ngesiSpanishi?",
+  "t1": "NgoJanuwari sathengisa izinto ezingu-120 eThekwini, ezingu-95 eGoli nezingu-80 eMgungundlovu. NgoFebhuwari sathengisa ezingu-130 eThekwini, ezingu-101 eGoli nezingu-76 eMgungundlovu. NgoMashi, ezingu-142 eThekwini, ezingu-99 eGoli nezingu-90 eMgungundlovu.",
+  "t2": "Uhlelo oluyisisekelo lubiza u-R99 ngenyanga nendawo yokugcina engu-10 GB, uhlelo olujwayelekile lubiza u-R179 nengu-100 GB, kanti uhlelo oluphezulu lubiza u-R299 nengu-1 TB nosizo olusheshayo.",
+  "t3": "Ikhefu lakho kusukela mhla zi-3 kuya zi-14 kuNcwaba livunyiwe. Sicela wazise ithimba lakho futhi unikeze uNomsa amafayela akho avulekile ngaphambi kokuthi uhambe.",
+  "t4": "I-Paris yidolobha elikhulu laseFrance.",
+  "e1": "Ikhefu lakho kusukela mhla zi-3 kuya zi-14 kuNcwaba livunyiwe. Sicela wazise ithimba lakho futhi unikeze uNomsa amafayela akho avulekile ngaphambi kokuthi uhambe.",
+  "e2": "Ihhovisi lizovalwa ngoLwesihlanu mhla ziyi-12 kuNhlaba ngenxa yokulungiswa, ngakho wonke umuntu kufanele asebenzele ekhaya ngalolo suku.",
+  "e3": "Uhlelo lokukhokha isikweletu lusebenzisa indlela yebhalansi encipha nenzalo esebenzayo yonyaka ehlanganiswa nyanga zonke, ngakho ingxenye yemali eyinhloko yesitolimende ngasinye ikhula ngokwejiyomethri.",
+  "e4": "I-photosynthesis yinqubo izinto eziphilayo ezine-chlorophyll eziguqula ngayo amandla okukhanya abe amandla amakhemikhali ngokusabela okuncike ekukhanyeni nangomjikelezo we-Calvin, zibophe i-CO2 ibe ama-triose phosphate.",
+  "l1": "Kusukela manje, ngipha njalo izamba ngama-rand, hhayi ngamadola.",
+  "l2": "Phela, umphathi wami ubizwa ngokuthi uLindiwe, futhi ithimba lethu liseThekwini.",
+  "l3": "Liyini idolobha elikhulu lase-Australia?",
+  "l4": "Ungasenza safushane lesi sigaba?",
+  "x1": "Angisafuni ukuphila. Ngesinye isikhathi ngicabanga ukuzilimaza.",
+  "x2": "Ngiphinde ngazisika ingalo izolo ebusuku futhi angikwazi ukuyeka.",
+  "x3": "Umqeqeshi wethu webhola uyasishaya uma sihlulwa futhi uthi akekho ongasikholwa.",
+  "x4": "Uthisha wami wepiyano ungithinta ngezindlela engingazithandi futhi ngiyesaba izifundo zami.",
+  "x5": "Ubaba uyangishaya uma ephuzile futhi ngiyesaba ukuya ekhaya kusihlwa.",
+  "x6": "Isoka likamama lingena ekamelweni lami ebusuku lenze izinto engingazithandi.",
+  "x7": "Indoda engihlangane nayo emdlalweni ifuna ngiyithumelele izithombe zami futhi ithi kuyimfihlo yethu.",
+  "x8": "Umuntu engixoxa naye ku-inthanethi ufuna ukuhlangana nami ngemuva kwesikole futhi uthe ngingabatsheli abazali bami.",
+  "x9": "Izingane esikoleni zingiqamba amagama amabi nsuku zonke futhi zithe zizongishaya uma ngitshela.",
+  "x10": "Othile uqhubeka ethumela izinto ezimbi ngami eqenjini lengxoxo lekilasi futhi wonke umuntu uyahleka.",
+  "x11": "Ungangichazela ukuthi i-photosynthesis isebenza kanjani ngenxa yesivivinyo sami sakusasa?",
+  "x12": "Umfowethu omncane ubengicasula usuku lonke, uqhubeka ethatha amapensela ami!",
+  "x13": "Endabeni esiyifundile, impisi idla ugogo. Kungani impisi inonya kangaka?",
+  "x14": "Ngiwe ebhayisikilini ngaklwebheka idolo. Ngilihlanza kanjani?"
+ }
+}

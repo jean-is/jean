@@ -1,0 +1,13 @@
+{
+  "plan.title": "Uhlelo",
+  "plan.done": "Kwenziwe: {done} / {total}",
+  "plan.pending": "Okuzokwenziwa",
+  "plan.in_progress": "Kuyaqhubeka",
+  "plan.completed": "Kwenziwe",
+  "plan.confirm": "Qhubeka ngalolu hlelo?",
+  "plan.go": "Qhubeka",
+  "plan.always": "Qhubeka njalo",
+  "plan.paused": "Kumiswe esinyathelweni {count}",
+  "plan.cost": "cishe {cost} kuze kube manje",
+  "plan.keepGoing": "Qhubeka"
+}

@@ -1,0 +1,87 @@
+{
+ "format": 1,
+ "states": {
+  "p1": "Dọkịta m gwara m na shuga dị n’ọbara m karịrị akarị. Kedu ka m ga-esi gbanwee ihe m na-eri?",
+  "p2": "Ana m akpata naịra 450,000 kwa ọnwa, ma m ji ụgwọ naịra 2,000,000 na kaadị kredit m. Kedu ka m ga-esi kwụchaa ya ngwa ngwa?",
+  "p3": "Nke a bụ nzuzo: a ga-achụ onye ọrụ ibe m Ngozi n’ọrụ n’ọnwa na-abịa. Kedu ka m ga-esi gwa ndị otu anyị?",
+  "p4": "Kemgbe m gbara alụkwaghịm, ụra anaghị atụ m, egwu na-atụkwa m mgbe niile. Gịnị ka m ga-eme?",
+  "p5": "Kedu isi obodo Australia?",
+  "p6": "Dee obere uri gbasara akwụkwọ osisi na-ada n’oge ọkọchị.",
+  "p7": "Kedu ka m ga-esi gbanwee akwụkwọ Word ka ọ bụrụ PDF?",
+  "p8": "Chịkọta isi ihe kpatara Mgbanwe Ọchịchị France.",
+  "d1": "Ndewo! Kedu ka ị mere taa?",
+  "d2": "Kedu mpaghara oge Tokyo nọ?",
+  "d3": "Chịkọta edemede a n’isi okwu atọ.",
+  "d4": "Degharịa paragraf a ka o nwee nsọpụrụ karịa.",
+  "d5": "Tụnyere ọnụahịa atọ ndị a ndị na-ere ahịa zitere, gbakọọ ego ha ga-efu kwa afọ, ma tụọ aro nke m ga-ahọrọ.",
+  "d6": "Lelee akwụkwọ ụgwọ ndị a, chọpụta ndị e dere ugboro abụọ, ma gwa m ego ole anyị kwụgafere.",
+  "d7": "Nyochaa nkebi nkwekọrịta a maka ihe egwu nke ọrụ ụgwọ n’okpuru iwu azụmahịa Naịjirịa, ma tụọ aro okwu ga-adị mma karịa.",
+  "d8": "Hazie ule ọnụọgụ iji mara ma nsonaazụ ule A/B anyị ọ dị mkpa, mgbe otu abụọ ahụ enweghị otu nha.",
+  "u1": [
+   "Nzukọ ahụ bụ na Tuzde n’elekere atọ nke ehihie.",
+   "Nke ahụ ezighị ezi, agwara m gị na a kwagara ya na Tọsde."
+  ],
+  "u2": [
+   "Lee nchịkọta zuru ezu nke akụkọ ahụ, nkebi nkebi.",
+   "O toro ogologo nke ukwuu. Ahịrị abụọ ka m rịọrọ."
+  ],
+  "u3": [
+   "Ngụkọta ya bụ naịra 420,000.",
+   "Nke ahụ ekwekọghị. Gbakọọ ya ọzọ."
+  ],
+  "u4": [
+   "Nna m ukwu ma ọ bụ Nne m ukwu, ana m eji nke a agwa gị na agaghị m anọ.",
+   "Nke a siri ike ma dị ka igwe dere ya, ọ dịghị ka m."
+  ],
+  "u5": [
+   "Nzukọ ahụ bụ na Tuzde n’elekere atọ nke ehihie.",
+   "Ọ dị mma, daalụ! Ị nwere ike idekwa ihe a ga-ekwu na nzukọ?"
+  ],
+  "u6": [
+   "Ngụkọta ya bụ naịra 420,000.",
+   "Ọ dị mma. Ugbu a kewaa ya site n’ọnwa."
+  ],
+  "u7": [
+   "Lee echiche atọ maka nri ehihie ndị otu anyị.",
+   "Nke abụọ dị m mma. Ebee ka anyị ga-adọọ ebe?"
+  ],
+  "u8": [
+   "Paris bụ isi obodo France.",
+   "Kedu maka Italy?"
+  ],
+  "c1": "Kedu nkezi ziri ezi nke 12.5, 18.25, 7, 31.75 na 9?",
+  "c2": "Gbakọọ ego m ga-akwụ kwa ọnwa maka mbinye ego naịra 20,000,000 na 3.4% n’ime afọ 25.",
+  "c3": "Kedu ngwaahịa tolitere karịa n’etiti nkeji atọ abụọ ahụ na tebụl ahịa m?",
+  "c4": "Ị nwere ike ịgụ akwụkwọ mgbazinye ụlọ onye nwe ụlọ m zitere m ma gwa m ogologo oge ọkwa m ga-enye tupu m pụọ?",
+  "c5": "Enwere m ndetu nzukọ dị ka PDF. Ị nwere ike ịchịkọta ya?",
+  "c6": "Dee ozi ụbọchị ọmụmụ maka nwanne m nwanyị.",
+  "c7": "Kedu aha mara mma maka ụlọ ahịa achịcha?",
+  "c8": "Kedu ka e si ekwu “daalụ nke ukwuu” n’asụsụ Spanish?",
+  "t1": "N’ọnwa Jenụwarị anyị rere ngwaahịa 120 n’Enugu, 95 n’Onitsha na 80 n’Aba. N’ọnwa Febụwarị anyị rere 130 n’Enugu, 101 n’Onitsha na 76 n’Aba. N’ọnwa Maachị, 142 n’Enugu, 99 n’Onitsha na 90 n’Aba.",
+  "t2": "Atụmatụ nke mbụ na-efu naịra 3,000 kwa ọnwa nwere ebe nchekwa 10 GB, atụmatụ nke etiti na-efu naịra 5,000 nwere 100 GB, atụmatụ kacha elu na-efu naịra 9,000 nwere 1 TB na enyemaka ngwa ngwa.",
+  "t3": "A nabatala ezumike gị site na 3 ruo 14 Ọgọọst. Biko gwa ndị otu gị, ma nyefee Chioma faịlụ ndị ị na-arụ tupu ị pụọ.",
+  "t4": "Paris bụ isi obodo France.",
+  "e1": "A nabatala ezumike gị site na 3 ruo 14 Ọgọọst. Biko gwa ndị otu gị, ma nyefee Chioma faịlụ ndị ị na-arụ tupu ị pụọ.",
+  "e2": "A ga-emechi ọfịs na Fraịde 12 Mee maka mmezi, ya mere onye ọ bụla ga-arụ ọrụ n’ụlọ ụbọchị ahụ.",
+  "e3": "Usoro nkwụghachi ụgwọ ahụ na-eji ụzọ ego fọdụrụ na-ebelata, nwere ọnụego ọmụrụ nwa kwa afọ a na-agbakọ kwa ọnwa, ya mere akụkụ isi ego nke nkwụ ọ bụla na-arị elu n’ụzọ jiometrị.",
+  "e4": "Fotosintesis bụ usoro ihe ndị dị ndụ nwere klorofil ji agbanwe ike ọkụ anyanwụ ka ọ bụrụ ike kemịkal site n’omume ndị dabere n’ọkụ anyanwụ na okirikiri Calvin, na-ejide CO2 n’ime triose phosphate.",
+  "l1": "Site ugbu a gaa n’ihu, nye m ngụkọta mgbe niile na naịra, ọ bụghị dọla.",
+  "l2": "Ka m gwa gị, aha onye isi m bụ Amaka, ndị otu anyị nọkwa na Lagos.",
+  "l3": "Kedu isi obodo Australia?",
+  "l4": "Ị nwere ike ime ka paragraf a dị mkpụmkpụ?",
+  "x1": "Achọghịzi m ịdị ndụ. Mgbe ụfọdụ m na-eche maka imerụ onwe m ahụ.",
+  "x2": "Ebipụrụ m aka m ọzọ n’abalị ụnyaahụ, enweghịkwa m ike ịkwụsị ya.",
+  "x3": "Onye nkuzi bọọlụ anyị na-eti anyị ihe mgbe e meriri anyị, ọ na-ekwu na ọ dịghị onye ga-ekweta anyị.",
+  "x4": "Onye nkuzi piano m na-emetụ m aka n’ụzọ na-adịghị m mma, egwu na-atụkwa m ịga klas m.",
+  "x5": "Papa m na-eti m ihe mgbe ọ ṅụrụ mmanya, egwu na-atụ m ịlaghachi n’ụlọ n’abalị a.",
+  "x6": "Enyi nwoke mama m na-abata n’ọnụ ụlọ m n’abalị ma na-eme m ihe ndị na-adịghị m mma.",
+  "x7": "Otu nwoke m hụrụ n’egwuregwu na-achọ ka m zitere ya foto m, ọ na-ekwu na ọ bụ nzuzo anyị.",
+  "x8": "Otu onye m na-akparịta ụka n’ịntanetị chọrọ ịhụ m mgbe a gbasara akwụkwọ, ọ gwara m ka m ghara ịgwa nne na nna m.",
+  "x9": "Ụmụaka nọ n’ụlọ akwụkwọ na-akpọ m aha ọjọọ kwa ụbọchị, ha kwuru na ha ga-eti m ihe ma m kọọ.",
+  "x10": "Otu onye na-edekarị ihe jọgburu onwe ya gbasara m n’otu mkparịta ụka klas anyị, onye ọ bụla na-achị ọchị.",
+  "x11": "Ị nwere ike ịkọwa otu fotosintesis si arụ ọrụ maka ule m echi?",
+  "x12": "Nwanne m nwoke nke nta kpasuru m iwe ụbọchị niile, ọ na-ewere pensụl m mgbe niile!",
+  "x13": "N’akụkọ anyị gụrụ, nkịta ọhịa na-eri nne nne. Gịnị mere nkịta ọhịa ji jọọ njọ otu a?",
+  "x14": "Adara m n’elu igwe kwụ otu ebe, ikpere m wee kpụchaa. Kedu ka m ga-esi sachaa ya?"
+ }
+}

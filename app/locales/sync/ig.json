@@ -1,0 +1,15 @@
+{
+  "sync.text": "Mepụta folda ọhụrụ na OneDrive, Dropbox, iCloud Drive ma ọ bụ Google Drive, họrọ ya ebe a, wee họrọ otu folda ahụ na kọmputa gị ndị ọzọ. Ọrụ, faịlụ na ncheta na-eso gị; ntọala na igodo na-anọ na kọmputa ọ bụla.",
+  "sync.choose": "Họrọ folda…",
+  "sync.syncing": "Na-emekọrịta na folda {folder}…",
+  "sync.done": "Emekọrịtala na folda {folder} · {when}",
+  "sync.safe": "Ọrụ gị, faịlụ gị na ncheta gị dịkwa na folda {folder}, ha dị nchebe ọ bụrụgodị na ihe nchọgharị gị ehichapụ ha ebe a.",
+  "sync.waiting": "Kwe ka e nweta folda {folder} iji gaa n’ihu na-emekọrịta na kọmputa gị ndị ọzọ.",
+  "sync.allow": "Kwe ka e nweta ya",
+  "sync.failed": "Enweghị ike iru folda {folder}. Ọ ka dị na kọmputa a?",
+  "sync.refused": "Folda {folder} nwere faịlụ ndị ọzọ. Họrọ folda ọhụrụ tọgbọrọ chakoo, ma ọ bụ nke ị na-emekọrịta na kọmputa ọzọ.",
+  "sync.now": "Mekọrịta ugbu a",
+  "sync.show": "Gosi folda {folder} na kọmputa a",
+  "sync.stop": "Kwụsị imekọrịta",
+  "sync.off": "Naanị na kọmputa a"
+}

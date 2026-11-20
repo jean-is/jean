@@ -1,0 +1,20 @@
+{
+  "camera.open": "Kaameraadhaan agarsiisi",
+  "camera.close": "Kaameraa dhaamsi",
+  "camera.turn": "Kaameraa garagalchi",
+  "camera.light": "Ibsaa",
+  "camera.task": "Hojii agarsiisi",
+  "camera.closely": "Sirriitti ilaali",
+  "camera.kept": "Suuraan kun waan ati itti aansitee jettu waliin deema",
+  "camera.drop": "Suuraa kana hin ergin",
+  "camera.watch": "Ilaaliitii dubbadhu",
+  "camera.watching": "Ilaalaa jira",
+  "camera.watched": "Daqiiqaa kudhan booda ilaaluu dhaabe.",
+  "camera.paused": "Kaameraan dhaabateera. Itti fufuuf tuqi.",
+  "camera.denied": "Wantoota asitti agarsiisuuf biraawuzara kee keessatti kaameraa hayyami.",
+  "camera.failed": "Kaameraan hin jalqabne. Irra deebi'i yaali.",
+  "camera.blind": "Sammuun kun suuraa arguu hin danda'u. Kan danda'u filadhu.",
+  "camera.picture": "Kaameraa {time}",
+  "camera.move": "Gara golee biraatti socholchi",
+  "camera.idle": "Kaameraan daqiiqaa kudhan itti fayyadama malee booda dhaameera."
+}

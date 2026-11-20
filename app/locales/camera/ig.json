@@ -1,0 +1,20 @@
+{
+  "camera.open": "Jiri igwefoto gosi",
+  "camera.close": "Gbanyụọ igwefoto",
+  "camera.turn": "Tụgharịa igwefoto",
+  "camera.light": "Ọkụ",
+  "camera.task": "Gosi ọrụ ahụ",
+  "camera.closely": "Lee anya nke ọma",
+  "camera.kept": "Foto a ga-eso ihe ị ga-ekwu ọzọ",
+  "camera.drop": "Ezighala foto a",
+  "camera.watch": "Lee anya ma kwuo okwu",
+  "camera.watching": "Na-ele anya",
+  "camera.watched": "Akwụsịrị ile anya mgbe nkeji iri gachara.",
+  "camera.paused": "Igwefoto kwụsịtụrụ. Pịa ka ọ gaa n’ihu.",
+  "camera.denied": "Kwe igwefoto n’ihe nchọgharị gị ka i gosi ihe ebe a.",
+  "camera.failed": "Igwefoto amaliteghị. Nwaa ọzọ.",
+  "camera.blind": "Ụbụrụ a anaghị ahụ foto. Họrọ nke na-ahụ.",
+  "camera.picture": "Igwefoto {time}",
+  "camera.move": "Bugaa na nkuku ọzọ",
+  "camera.idle": "Igwefoto gbanyụrụ mgbe nkeji iri gachara n’ejighị ya."
+}

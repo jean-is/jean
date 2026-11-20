@@ -260,9 +260,9 @@ test('translated by the browser into a language Jean has, the app speaks it itse
   await page.goto(`${JEAN_IS}ja`)
   await expect(shown(page, 'ja')).toBeVisible()
   await page.evaluate(() => { /** @type {any} */ (window).stayed = true })
-  // Punjabi, which Jean lacks: the browser's words, on the same page.
-  await translate('pa', 'ltr')
-  await expect(page.locator('html')).toHaveAttribute('lang', 'pa')
+  // Kannada, which Jean lacks: the browser's words, on the same page.
+  await translate('kn', 'ltr')
+  await expect(page.locator('html')).toHaveAttribute('lang', 'kn')
   await translate('ar', 'rtl')
   await expect(shown(page, 'ar')).toBeVisible()
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl')

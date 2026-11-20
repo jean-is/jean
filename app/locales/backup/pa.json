@@ -1,0 +1,8 @@
+{
+  "backup.confirmImport": "ਇਸ ਐਕਸਪੋਰਟ ਦੀਆਂ ਗੱਲਬਾਤਾਂ, ਪ੍ਰੋਜੈਕਟ ਅਤੇ ਫ਼ਾਈਲਾਂ ਲੈ ਆਈਏ? ਇੱਥੋਂ ਕੁਝ ਵੀ ਨਹੀਂ ਮਿਟੇਗਾ।",
+  "backup.imported": {
+    "one": "{count} ਗੱਲਬਾਤ ਲਿਆਂਦੀ ਗਈ।",
+    "other": "{count} ਗੱਲਬਾਤਾਂ ਲਿਆਂਦੀਆਂ ਗਈਆਂ।"
+  },
+  "backup.chooseJson": "ਇਸ ਐਕਸਪੋਰਟ ਵਿੱਚ ਤੁਹਾਡੀ Gemini ਸਰਗਰਮੀ ਵੈੱਬ ਪੰਨਿਆਂ ਵਜੋਂ ਹੈ। Google Takeout ਤੋਂ ਦੁਬਾਰਾ ਐਕਸਪੋਰਟ ਕਰੋ, My Activity ਲਈ JSON ਚੁਣ ਕੇ।"
+}

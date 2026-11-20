@@ -1,0 +1,20 @@
+{
+  "machine.text": "Qalisa imiyalo kukhompyutha yakho, nezinhlelo namaseva ayo, njengeseva yokuthuthukisa yesayithi. I-JavaScript ne-Python kuhlala kukhompyutha ehlukanisiwe kule thebhu.",
+  "machine.on": "Imisebenzi enefolda {folder} iqalisa imiyalo yayo kule khompyutha, ngamunye ubuzwe kuqala, uze ucindezele u-Ctrl+C kutheminali yayo.",
+  "machine.forget": "Yeka ukuyisebenzisa",
+  "machine.question": "Qalisa lokhu kukhompyutha yakho, efoldeni {folder}?",
+  "machine.always": "Vumela njalo efoldeni {folder}",
+  "machine.app": "Imiyalo ingaqalisa nakule khompyutha, nezinhlelo namaseva ayo, efoldeni oyikhethayo: imisebenzi enaleyo folda iqalisa imiyalo yayo lapho.",
+  "machine.choose": "Khetha ifolda…",
+  "machine.failed": "Akuqalanga: kudinga i-Node.js kule khompyutha, umyalo othi node oqaliswa yitheminali.",
+  "machine.on.app": "Imisebenzi enefolda {folder} iqalisa imiyalo yayo kule khompyutha, ngamunye ubuzwe kuqala.",
+  "machine.lede": "Imisebenzi isebenzisa ikhompyutha ehlukanisiwe kule thebhu, ngaphandle kwaleyo esefoldeni oyixhuma kule khompyutha.",
+  "machine.off": "Akuxhunyiwe",
+  "machine.step.open": "Vula itheminali kwenye yamafolda akho.",
+  "machine.step.paste": "Namathisela lo mugqa lapho, bese ucindezela u-Enter.",
+  "machine.step.wait": "Kulindwe ukuthi umugqa uqaliswe: leli khasi liyabona ngokwalo.",
+  "machine.trusted": "Kuqaliswa ngaphandle kokubuza:",
+  "machine.secret": "Ukukopisha kuthatha umugqa wonke, nokhiye wawo. Kugcine kuwe: kuvumela leli khasi ukusebenzisa ikhompyutha yakho.",
+  "machine.row": "Ifolda {folder}, umyalo ngamunye ubuzwa kuqala",
+  "machine.untrust": "Buza kuqala futhi efoldeni {folder}"
+}

@@ -1,0 +1,9 @@
+{
+  "layouts.recommended": "Kunconyiwe",
+  "layouts.note": "Inothi",
+  "layouts.tip": "Icebo",
+  "layouts.important": "Kubalulekile",
+  "layouts.warning": "Isexwayiso",
+  "layouts.caution": "Qaphela",
+  "layouts.ticked": "{done} / {total}"
+}

@@ -1,0 +1,21 @@
+{
+  "prototypes.frame": "{name}၊ ရှေ့ပြေးပုံစံ",
+  "prototypes.board": "စာမျက်နှာအားလုံး",
+  "prototypes.pages": "{name} ၏ စာမျက်နှာများ",
+  "prototypes.page": "စာမျက်နှာ {count} ခုအနက် {n}",
+  "prototypes.leads": "{pages} သို့ ဦးတည်သည်",
+  "prototypes.changed": "{name} က ပြင်ထားသည်",
+  "prototypes.back": "နောက်သို့",
+  "prototypes.restart": "အစမှ ပြန်စ",
+  "prototypes.press": "“{control}” ကို နှိပ်ပါ",
+  "prototypes.own": "ဤရှေ့ပြေးပုံစံအတွက်",
+  "prototypes.build": "တည်ဆောက်",
+  "prototypes.building": "“{name}” ကို အလုပ်လုပ်သော အက်ပ်အဖြစ် အမှန်တကယ် တည်ဆောက်ပါ။",
+  "prototypes.zoomOut": "ချုံ့",
+  "prototypes.zoomIn": "ချဲ့",
+  "prototypes.fit": "အံကိုက်",
+  "prototypes.actual": "{level} သို့ ချဲ့ချုံ့",
+  "prototypes.zip": "ရှေ့ပြေးပုံစံ zip ဖိုင်",
+  "prototypes.ask": "{what} ၏ ရှေ့ပြေးပုံစံ ဖန်တီးပါ။",
+  "prototypes.example": "ကျွန်ုပ်၏ ဆံပင်ညှပ်ဆိုင်အတွက် ကြိုတင်စာရင်းပေးသွင်းအက်ပ်"
+}

@@ -1,0 +1,55 @@
+{
+  "search.where": "ရှာမည့်နေရာ",
+  "search.wikipedia": "Wikipedia",
+  "search.wikipedia.text": "သင့်ဘာသာနှင့် အခြား ၃၀၀ ကျော်ဖြင့်",
+  "search.vikidia": "Vikidia",
+  "search.vikidia.text": {
+    "other": "၈ နှစ်မှ ၁၃ နှစ်အရွယ်အတွက်၊ သင့်ဘာသာနှင့် အခြား {count} ဘာသာဖြင့်"
+  },
+  "search.library": "အော့ဖ်လိုင်း စာကြည့်တိုက်",
+  "search.library.text": "ဤကွန်ပျူတာ၊ ကျောင်း သို့မဟုတ် အလုပ်ရှိ Kiwix ဆာဗာမှ Wikipedia နှင့် အခြားစာအုပ်များ။ ဦးနှောက်တိုင်း အင်တာနက်မပါဘဲပင် ရှာနိုင်သည်။",
+  "search.address": "Kiwix ဆာဗာ၏ လိပ်စာ",
+  "search.connect": "ချိတ်",
+  "search.connectTo": "{service} ကို ချိတ်",
+  "search.failed": "ဤလိပ်စာတွင် Kiwix ဆာဗာ မတုံ့ပြန်ပါ။",
+  "search.insecure": "ဤကွန်ပျူတာပေါ်ရှိ သို့မဟုတ် https:// ဖြင့်စသော လိပ်စာရှိ Kiwix ဆာဗာကိုသာ ဤနေရာမှ ရောက်နိုင်သည်။",
+  "search.locked": "သင့်အဖွဲ့အစည်းက သတ်မှတ်ထား",
+  "search.parent": "မိဘက သတ်မှတ်ထား",
+  "search.books": {
+    "other": "စာအုပ် {count} အုပ်"
+  },
+  "search.articles": {
+    "other": "ဆောင်းပါး {count} ပုဒ်"
+  },
+  "search.vikidia.not": {
+    "other": "၈ နှစ်မှ ၁၃ နှစ်အရွယ်အတွက်၊ {count} ဘာသာဖြင့်၊ သင့်ဘာသာ မပါ"
+  },
+  "search.fromLibrary": "အော့ဖ်လိုင်း စာကြည့်တိုက်မှ၊ {languages} ဖြင့်",
+  "search.library.in": "အော့ဖ်လိုင်း စာကြည့်တိုက်",
+  "search.library.row": "Kiwix ဆာဗာမှ Wikipedia နှင့် အခြားစာအုပ်များ၊ အင်တာနက်မပါဘဲပင်",
+  "search.notSet": "မသတ်မှတ်ရသေး",
+  "search.off": "ပိတ်",
+  "search.unanswered": "မတုံ့ပြန်",
+  "search.answering": "တုံ့ပြန်နေ",
+  "search.services": "ရှာဖွေရေး ဝန်ဆောင်မှုများ",
+  "search.searches": "မည်သည့်ဦးနှောက်အတွက်မဆို ဝဘ်တစ်ခုလုံး ရှာသည်",
+  "search.readHere": "Wikipedia ကို ဤနေရာမှ ဖတ်",
+  "search.readHere.text": "ဝဘ်၏အစား၊ {languages} ဖြင့်",
+  "search.now.own": "ဖြေသောဦးနှောက်က ဝဘ်တစ်ခုလုံးကို ကိုယ်တိုင် ရှာသည်။",
+  "search.now.others": "အခြားဦးနှောက်များက {sources} တွင် ရှာသည်။",
+  "search.now.every": "ဦးနှောက်တိုင်းက {sources} တွင် ရှာသည်။",
+  "search.now.again": "Wikipedia တစ်ခုတည်းဖြင့်ဆိုလျှင် ဖြေသောဦးနှောက်က ဝဘ်တစ်ခုလုံးကို ထပ်ရှာသည်။",
+  "search.now.nowhere": "ဝဘ်ကို ကိုယ်တိုင် မရှာနိုင်သော ဦးနှောက်အတွက် ရှာစရာနေရာ မရှိပါ။",
+  "search.now.off": "ဝဘ်ရှာဖွေ ပိတ်ထားသည်: ယခုစသော လုပ်ငန်းများ ဘယ်မှာမှ မရှာပါ၊ ဦးနှောက်၏ ကိုယ်ပိုင်ရှာဖွေဖြင့်ပင်။",
+  "search.now.services": "ဦးနှောက်တိုင်း {services} ဖြင့်လည်း ရှာနိုင်သည်။",
+  "search.also": "စာရိုက်ကွက်ရှိ + မှလည်း ဝဘ်ရှာဖွေ ပိတ်နိုင်သည်။",
+  "search.key": "ကီး",
+  "search.engine": "ရှာဖွေစက် ID",
+  "search.service.text": "သင့်ကိုယ်ပိုင် {service} အကောင့်က ဦးနှောက်တိုင်းအတွက် ဝဘ်တစ်ခုလုံး ရှာသည်။ ရှာသောစကားလုံးများ {service} သို့ သွားပြီး ငွေကောက်နိုင်သည်၊ ကီးကမူ သင့်စက်များပေါ်တွင်သာ ရှိသည်။",
+  "search.getKey": "{service} မှ ကီး ရယူ",
+  "search.refused": "{service} က ဤကီးကို ငြင်းသည်၊ သို့မဟုတ် ရှာခွင့် ကုန်သွားသည်။",
+  "search.silent": "{service} မတုံ့ပြန်ပါ။ ကီးကို စစ်ပါ၊ သို့မဟုတ် ခဏနေ ထပ်စမ်းပါ။",
+  "search.needsGateway": "ဂိတ်ဝေး လိုသည်",
+  "search.noGateway": "ဘရောက်ဇာက {service} သို့ ကိုယ်တိုင် မရောက်နိုင်ပါ: ဆက်သွယ်ပေးသော ဂိတ်ဝေး လိုသည်။ ဂိတ်ဝေးလိပ်စာကို {connections} တွင် ထည့်ပါ။",
+  "search.google.closing": "Google က ကီးအသစ် မပေးတော့ဘဲ ဤဝန်ဆောင်မှုကို {date} တွင် ရပ်မည်။"
+}

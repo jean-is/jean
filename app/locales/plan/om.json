@@ -1,0 +1,13 @@
+{
+  "plan.title": "Karoora",
+  "plan.done": "{done}, {total} keessaa raawwatame",
+  "plan.pending": "Kan hojjetamu",
+  "plan.in_progress": "Hojii irra",
+  "plan.completed": "Raawwatame",
+  "plan.confirm": "Karoora kanaan itti fufuu?",
+  "plan.go": "Itti fufi",
+  "plan.always": "Yeroo hunda itti fufi",
+  "plan.paused": "Tarkaanfii {count} irratti dhaabate",
+  "plan.cost": "hanga ammaa gara {cost}",
+  "plan.keepGoing": "Itti fufi"
+}

@@ -1,0 +1,18 @@
+{
+  "interactive.page": "ਇੰਟਰਐਕਟਿਵ ਪੰਨਾ",
+  "interactive.map": "ਨਕਸ਼ਾ",
+  "interactive.mapShow": "ਨਕਸ਼ਾ ਦਿਖਾਓ",
+  "interactive.mapFrom": "ਨਕਸ਼ੇ {site} ਤੋਂ ਆਉਂਦੇ ਹਨ, ਜੋ ਦਿਖਾਈਆਂ ਥਾਵਾਂ ਦੇਖਦੀ ਹੈ।",
+  "interactive.inWords": "ਲਿਖਤ ਵਜੋਂ ਦੇਖੋ",
+  "interactive.diagramSteps": "ਹਰ ਕਦਮ ਅਤੇ ਉਸ ਤੋਂ ਬਾਅਦ ਕੀ ਆਉਂਦਾ ਹੈ, ਦੇਖੋ",
+  "interactive.diagramFrom": "ਚਿੱਤਰ, {first} ਤੋਂ ਸ਼ੁਰੂ, ਸ਼ਬਦਾਂ ਵਿੱਚ ਠੀਕ ਹੇਠਾਂ",
+  "interactive.diagramWords": "ਚਿੱਤਰ, ਸ਼ਬਦਾਂ ਵਿੱਚ ਠੀਕ ਹੇਠਾਂ",
+  "interactive.mapNamed": "ਨਕਸ਼ਾ: {places}",
+  "interactive.zoomIn": "ਜ਼ੂਮ ਇਨ",
+  "interactive.zoomOut": "ਜ਼ੂਮ ਆਊਟ",
+  "interactive.mapCredits": "ਨਕਸ਼ੇ ਦੇ ਕ੍ਰੈਡਿਟ",
+  "interactive.askApp": "ਇਸ ਲਈ ਇੱਕ ਛੋਟੀ ਐਪ ਬਣਾਓ: {what}।",
+  "interactive.appExample": "ਦੋਸਤਾਂ ਵਿੱਚ ਬਿੱਲ ਵੰਡਣਾ",
+  "interactive.noCollection": "{name}: ਇੱਥੇ ਇਸ ਨਾਮ ਦਾ ਕੋਈ ਸੰਗ੍ਰਹਿ ਨਹੀਂ।",
+  "interactive.unread": "{name}: “{where}” ਨਾਲ ਛਾਂਟੀ ਨਹੀਂ ਹੋ ਸਕਦੀ।"
+}

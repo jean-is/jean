@@ -1,0 +1,9 @@
+{
+  "reader.more": "طبیعي غږ دا ژبه ({language}) هم لوستلای شي.",
+  "reader.credit": "د Kyutai Pocket TTS، د Alba MacKenna په غږ (CC BY 4.0).",
+  "reader.on": "{languages}، په دې وسیله جوړ شوي",
+  "reader.none": "په دې وسیله لا هېڅ ژبه نشته",
+  "reader.off": "بند دی: ستاسو د سیسټم غږونه هر ځواب لولي",
+  "reader.here": "په دې وسیله، {size}",
+  "reader.room": "یوه ژبه په «ستاسو معلومات › کارول شوی ځای» کې لرې کړئ"
+}

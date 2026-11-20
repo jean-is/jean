@@ -1,0 +1,20 @@
+{
+  "machine.text": "Ajajoota kompiitara mataa keetii irratti, sagantaa fi sarvaroota isaatiin, kan akka sarvara misoomaa marsariitii, hojjechiisi. JavaScript fi Python kompiitara adda ba'e tabii kana keessaa keessa turu.",
+  "machine.on": "Hojiiwwan foldara {folder} qaban ajaja isaanii kompiitara kana irratti hojjechiisu, tokkoon tokkoon dura gaafatamee, hanga ati terminaala isaa keessatti Ctrl+C tuqxutti.",
+  "machine.forget": "Fayyadamuu dhiisi",
+  "machine.question": "Kana kompiitara kee irratti, foldara {folder} keessatti, hojjechiisuu?",
+  "machine.always": "Foldara {folder} keessatti yeroo hunda hayyami",
+  "machine.app": "Ajajoonni kompiitara kana irrattis, sagantaa fi sarvaroota isaatiin, foldara ati filattu keessatti hojjechuu danda'u: hojiiwwan foldara sana qaban achitti ajaja isaanii hojjechiisu.",
+  "machine.choose": "Foldara filadhu…",
+  "machine.failed": "Hin jalqabne: kompiitara kana irratti Node.js, ajaja node terminaalli hojjechiisu, barbaada.",
+  "machine.on.app": "Hojiiwwan foldara {folder} qaban ajaja isaanii kompiitara kana irratti hojjechiisu, tokkoon tokkoon dura gaafatamee.",
+  "machine.lede": "Hojiiwwan kompiitara adda ba'e tabii kana keessaa fayyadamu, kanneen foldara ati kompiitara kana irratti walqabsiifte keessa jiran malee.",
+  "machine.off": "Hin walqabanne",
+  "machine.step.open": "Foldara kee keessaa tokko keessatti terminaala bani.",
+  "machine.step.paste": "Sarara kana achitti maxxansiitii Enter tuqi.",
+  "machine.step.wait": "Hojjechuu sarara sanaa eegaa jira: fuulli kun ofumaan hubata.",
+  "machine.trusted": "Utuu hin gaafatin kanneen keessatti hojjeta:",
+  "machine.secret": "Garagalchi sarara guutuu, furtuu isaa dabalatee, fudhata. Ofitti qabadhu: fuulli kun akka kompiitara kee fayyadamu godha.",
+  "machine.row": "Foldara {folder}, ajajni hundi dura gaafatama",
+  "machine.untrust": "Foldara {folder} keessatti irra deebi'ii dura gaafadhu"
+}

@@ -1,0 +1,13 @@
+{
+  "plan.title": "યોજના",
+  "plan.done": "{total} માંથી {done} પૂર્ણ",
+  "plan.pending": "કરવાનું",
+  "plan.in_progress": "ચાલુ",
+  "plan.completed": "પૂર્ણ",
+  "plan.confirm": "આ યોજના સાથે આગળ વધવું છે?",
+  "plan.go": "આગળ વધો",
+  "plan.always": "હંમેશાં આગળ વધો",
+  "plan.paused": "પગલું {count} પર થોભાવેલ",
+  "plan.cost": "અત્યાર સુધી લગભગ {cost}",
+  "plan.keepGoing": "ચાલુ રાખો"
+}

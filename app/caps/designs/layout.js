@@ -69,7 +69,7 @@ export const leadOf = (design, part) => (WIDE.test(part.text ?? '') ? 1.35 : ['e
 export function voicesFor(lang) {
   const base = lang.split('-')[0]
   if (['el', 'ha'].includes(base)) return ['calm']
-  if (base === 'yo') return ['friendly', 'calm']
+  if (['yo', 'ig'].includes(base)) return ['friendly', 'calm']
   const latin = new Intl.Locale(lang).maximize().script === 'Latn'
   return VOICES.filter((voice) => voice !== 'handwritten' || latin)
 }

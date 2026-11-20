@@ -1,0 +1,38 @@
+{
+  "description": "AI kamiin iyyuu uumi, waan hunda of harkatti qabadhu. Jechaan ykn faayilii waliin gaafadhu, waan gaafatte qophaa'ee argadhu. GPT, Claude, Gemini ykn AI kompiitara keetii fayyadami; seenaan kee, faayiloonni kee fi yaadannoon kee meeshaa kee irratti qofa turu. Bilisaa fi madda banaa.",
+  "labels": {
+    "welcome": "Fuula simannaa: yaadota jalqabuuf, fi saanduqa waan kamiyyuu gaafachuuf",
+    "chart": "Gabatee herregaa qoodame, fi gurgurtaa isaa chaartiidhaan",
+    "sources": "Waliigaltee kiraa dubbifame, fi kutaan deebii hundi isa agarsiisa",
+    "share": "Hojii hiriyyaa waliin liinkiidhaan qoodame"
+  },
+  "chart": {
+    "title": "Gurgurtaa naannoodhaan",
+    "file": "Gurgurtaa.csv",
+    "columns": [
+      "Naannoo",
+      "Amajjii",
+      "Guraandhala",
+      "Bitootessa"
+    ],
+    "regions": [
+      "Kaaba",
+      "Kibba",
+      "Baha"
+    ],
+    "ask": "Gurgurtaa naannoodhaan, ji'a ji'aan chaartii godhi",
+    "before": "Gurgurtaan kurmaana jalqabaa naannoodhaan kunooti:",
+    "heading": "Gurgurtaa, kurmaana jalqabaa",
+    "after": "Gurgurtaan **Kaaba** keessatti baay'ee ol aanaa dha, **Baha** keessatti immoo saffisaan guddate: Amajjii hanga Bitootessaatti 37% ol ka'e."
+  },
+  "sources": {
+    "title": "Mana gadhiisuu",
+    "file": "Kiraa.pdf",
+    "pages": [
+      "Waliigaltee kiraa mana meeshaa qabu\n\nKeewwata 7. Beeksisa. Kireeffataan yeroo barbaade beeksisa ji'a tokkoo kennuun waliigaltee addaan kutuu danda'a; beeksisni xalayaa galmaa'een ergamuu ykn nagahee irratti harkaan kennamuu qaba.",
+      "Keewwata 9. Qabsiisa. Qabsiisni kiraa ji'a tokkoo, furtuun erga deebi'ee ji'a tokko keessatti, baasii suphaa yoo jiraate hir'isuun deebi'a."
+    ],
+    "ask": "Ba'uuf beeksisa hammamii kennuu qaba, qabsiisa koo yoom deebifadha?",
+    "answer": "Waliigalteen kiraa kee kana jedha:\n\n- **Beeksisa:** ji'a tokko, xalayaa galmaa'een ykn nagahee irratti harkaan [1].\n- **Qabsiisa:** furtuu erga deebiste ji'a tokko keessatti, baasii suphaa hir'isuun ni deebi'a [1].\n\nKanaaf har'a xalayaa yoo ergite, ji'a tokko booda ba'uu dandeessa."
+  }
+}

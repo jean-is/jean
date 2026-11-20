@@ -1,0 +1,20 @@
+{
+  "made.open": "پرانیستل",
+  "made.kind.document": "Word سند",
+  "made.kind.sheet": "سپرېډشیټ",
+  "made.kind.page": "وېب پاڼه",
+  "made.kind.drawing": "انځورګري",
+  "made.kind.design": "ډیزاین",
+  "made.kind.game": "لوبه",
+  "made.kind.text": "متن",
+  "made.copiedPictures": "کاپي شو. که انځورونه یې ونه نښلېدل، هر یو د خپل «کاپي» په مرسته کاپي کړئ.",
+  "made.share": "شریکول",
+  "made.csvTitle": "جدول (CSV)",
+  "made.csvNumbered": "جدول {count} (CSV)",
+  "made.tableFile": "جدول {count}",
+  "made.print": "چاپ",
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
+}

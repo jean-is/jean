@@ -5,13 +5,14 @@ import { signal } from '@preact/signals-core'
 
 const RTL = new Set(['ar', 'he', 'fa', 'ur', 'ps', 'sd', 'ug', 'yi', 'dv', 'ckb'])
 
-// The 46 languages (docs/architecture.md#languages-i18n), machine-translated (D44).
-export const LOCALES = ['am', 'ar', 'bg', 'bn', 'br', 'co', 'cs', 'da', 'de', 'el', 'en', 'es', 'fa', 'fi', 'fr', 'fr-CA', 'ha', 'he', 'hi', 'hr', 'hu', 'id', 'it', 'ja', 'ko', 'mr', 'ms', 'nl', 'pl', 'pt', 'ro', 'ru', 'sk', 'sv', 'sw', 'ta', 'te', 'th', 'tl', 'tr', 'uk', 'ur', 'vi', 'yo', 'zh-Hans', 'zh-Hant']
+// 53 languages, machine-translated (D44).
+export const LOCALES = ['am', 'ar', 'bg', 'bn', 'br', 'co', 'cs', 'da', 'de', 'el', 'en', 'es', 'fa', 'fi', 'fr', 'fr-CA', 'gu', 'ha', 'he', 'hi', 'hr', 'hu', 'id', 'ig', 'it', 'ja', 'ko', 'mr', 'ms', 'my', 'nl', 'om', 'pa', 'pl', 'ps', 'pt', 'ro', 'ru', 'sk', 'sv', 'sw', 'ta', 'te', 'th', 'tl', 'tr', 'uk', 'ur', 'vi', 'yo', 'zh-Hans', 'zh-Hant', 'zu']
 
 export const locale = signal('en')
 
-// Browsers lack Corsican's data, Chromium Breton's dates and name: Intl writes as their region, in French (D496).
-const SPARSE = /** @type {Record<string, { name: string, intl: string[] }>} */ ({ br: { name: 'Brezhoneg', intl: ['br', 'fr'] }, co: { name: 'Corsu', intl: ['fr'] }, ha: { name: 'Hausa', intl: ['ha'] }, yo: { name: 'Èdè Yorùbá', intl: ['yo'] } })
+// Names and dates browsers lack (D496).
+const SPARSE = /** @type {Record<string, { name: string, intl?: string[] }>} */ ({ br: { name: 'Brezhoneg', intl: ['br', 'fr'] }, co: { name: 'Corsu', intl: ['fr'] }, ha: { name: 'Hausa' }, yo: { name: 'Èdè Yorùbá' },
+  pa: { name: 'ਪੰਜਾਬੀ', intl: ['en-IN'] }, my: { name: 'မြန်မာ' }, ps: { name: 'پښتو', intl: ['ps', 'fa-AF'] }, ig: { name: 'Igbo', intl: ['ig', 'en-NG'] }, om: { name: 'Afaan Oromoo' }, zu: { name: 'isiZulu', intl: ['zu', 'en-ZA'] } })
 
 /** The locales Intl formats a catalogue's language in. @param {string} [lang] */
 export const intlLocales = (lang = locale.value) => SPARSE[lang]?.intl ?? [lang]
@@ -85,8 +86,9 @@ const namesIn = (/** @type {string} */ lang) => names.get(lang) ?? names.set(lan
 
 /** Name of a language, written in `inLang` (defaults to itself). */
 export function languageName(/** @type {string} */ code, inLang = code) {
+  if (code === inLang && SPARSE[code]) return SPARSE[code].name
   try {
-    const name = (code === inLang && SPARSE[code]?.name) || (namesIn(inLang)?.of(code) ?? code)
+    const name = namesIn(inLang)?.of(code) ?? code
     return name.charAt(0).toLocaleUpperCase(inLang) + name.slice(1)
   } catch {
     return code

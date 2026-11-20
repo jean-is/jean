@@ -1,0 +1,21 @@
+{
+  "prototypes.frame": "પ્રોટોટાઇપ: {name}",
+  "prototypes.board": "બધાં પેજ",
+  "prototypes.pages": "{name} નાં પેજ",
+  "prototypes.page": "પેજ {n} / {count}",
+  "prototypes.leads": "{pages} પર લઈ જાય છે",
+  "prototypes.changed": "બદલનાર: {name}",
+  "prototypes.back": "પાછળ",
+  "prototypes.restart": "ફરી શરૂ કરો",
+  "prototypes.press": "“{control}” દબાવો",
+  "prototypes.own": "આ પ્રોટોટાઇપ માટે",
+  "prototypes.build": "બનાવો",
+  "prototypes.building": "“{name}” ને ખરેખર બનાવો, ચાલતી ઍપ તરીકે.",
+  "prototypes.zoomOut": "નાનું કરો",
+  "prototypes.zoomIn": "મોટું કરો",
+  "prototypes.fit": "બંધબેસતું કરો",
+  "prototypes.actual": "{level} સુધી ઝૂમ કરો",
+  "prototypes.zip": "પ્રોટોટાઇપ zip તરીકે",
+  "prototypes.ask": "{what} નો પ્રોટોટાઇપ બનાવો.",
+  "prototypes.example": "મારા હેર સલૂન માટે બુકિંગ ઍપ"
+}

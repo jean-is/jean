@@ -1,0 +1,18 @@
+{
+  "interactive.page": "အပြန်အလှန်သုံး စာမျက်နှာ",
+  "interactive.map": "မြေပုံ",
+  "interactive.mapShow": "မြေပုံ ပြ",
+  "interactive.mapFrom": "မြေပုံများ {site} မှ လာပြီး ပြသောနေရာများကို ၎င်းက မြင်သည်။",
+  "interactive.inWords": "စာဖြင့် ကြည့်",
+  "interactive.diagramSteps": "အဆင့်တိုင်းနှင့် နောက်ဆက်တွဲကို ကြည့်",
+  "interactive.diagramFrom": "{first} မှ စသော ပုံကြမ်း၊ အောက်တွင် စာဖြင့်",
+  "interactive.diagramWords": "ပုံကြမ်း၊ အောက်တွင် စာဖြင့်",
+  "interactive.mapNamed": "မြေပုံ: {places}",
+  "interactive.zoomIn": "ချဲ့",
+  "interactive.zoomOut": "ချုံ့",
+  "interactive.mapCredits": "မြေပုံ ကိုးကားချက်",
+  "interactive.askApp": "{what} အတွက် အက်ပ်ငယ်တစ်ခု ဖန်တီးပါ။",
+  "interactive.appExample": "သူငယ်ချင်းများကြား ငွေရှင်းစာရင်း ခွဲခြင်း",
+  "interactive.noCollection": "{name}: ဤနေရာတွင် ထိုအမည်ဖြင့် စုစည်းမှု မရှိပါ။",
+  "interactive.unread": "{name}: “{where}” ဖြင့် စစ်ထုတ်၍မရပါ။"
+}

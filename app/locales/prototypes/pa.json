@@ -1,0 +1,21 @@
+{
+  "prototypes.frame": "{name}, ਇੱਕ ਪ੍ਰੋਟੋਟਾਈਪ",
+  "prototypes.board": "ਸਾਰੇ ਪੰਨੇ",
+  "prototypes.pages": "{name} ਦੇ ਪੰਨੇ",
+  "prototypes.page": "ਪੰਨਾ {n} / {count}",
+  "prototypes.leads": "ਇੱਥੇ ਲੈ ਜਾਂਦਾ ਹੈ: {pages}",
+  "prototypes.changed": "{name} ਵੱਲੋਂ ਬਦਲਿਆ",
+  "prototypes.back": "ਪਿੱਛੇ",
+  "prototypes.restart": "ਮੁੜ ਸ਼ੁਰੂ ਕਰੋ",
+  "prototypes.press": "“{control}” ਦਬਾਓ",
+  "prototypes.own": "ਇਸ ਪ੍ਰੋਟੋਟਾਈਪ ਲਈ",
+  "prototypes.build": "ਇਸਨੂੰ ਬਣਾਓ",
+  "prototypes.building": "“{name}” ਨੂੰ ਸੱਚਮੁੱਚ ਬਣਾਓ, ਚੱਲਣ ਵਾਲੀ ਐਪ ਵਜੋਂ।",
+  "prototypes.zoomOut": "ਜ਼ੂਮ ਆਊਟ",
+  "prototypes.zoomIn": "ਜ਼ੂਮ ਇਨ",
+  "prototypes.fit": "ਫ਼ਿੱਟ ਕਰੋ",
+  "prototypes.actual": "{level} ’ਤੇ ਜ਼ੂਮ ਕਰੋ",
+  "prototypes.zip": "ਪ੍ਰੋਟੋਟਾਈਪ zip ਵਜੋਂ",
+  "prototypes.ask": "ਇਸਦਾ ਪ੍ਰੋਟੋਟਾਈਪ ਬਣਾਓ: {what}।",
+  "prototypes.example": "ਮੇਰੇ ਹੇਅਰ ਸੈਲੂਨ ਲਈ ਬੁਕਿੰਗ ਐਪ"
+}

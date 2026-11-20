@@ -1,0 +1,11 @@
+{
+  "screen.close": "Qooduu dhaabi",
+  "screen.watch": "Ilaaliitii dubbadhu",
+  "screen.watching": "Ilaalaa jira",
+  "screen.watched": "Daqiiqaa kudhan booda ilaaluu dhaabe.",
+  "screen.move": "Gara golee biraatti socholchi",
+  "screen.failed": "Iskiriiniin qoodamuu hin dandeenye. Irra deebi'i yaali.",
+  "screen.blind": "Sammuun kun suuraa arguu hin danda'u. Kan danda'u filadhu.",
+  "screen.picture": "Iskiriinii {time}",
+  "screen.idle": "Iskiriinii qooduun daqiiqaa kudhan itti fayyadama malee booda dhaabate."
+}

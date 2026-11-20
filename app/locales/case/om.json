@@ -1,0 +1,24 @@
+{
+  "case.group.files": "Faayiloota fi sanadoota",
+  "case.group.remember": "Yaadachuu fi argachuu",
+  "case.group.again": "Irra deebi'anii hojjechuu",
+  "case.group.web": "Interneetii fi tajaajiloota kee",
+  "case.group.bigger": "Sammuu fi hojiiwwan guguddaa",
+  "case.group.voice": "Sagalee fi beeksisoota",
+  "case.group.keep": "Kuusuu fi qooduu",
+  "case.rest": "Kanneen hafan yeroo barbaachisan dhufu, tokkoon tokkoon isaanii akkamitti akka ta'e ni himu.",
+  "case.waiting": {
+    "one": "Tokko waan tokko si irraa eega, armaan gaditti mallatteeffameera.",
+    "other": "{count} waan tokko si irraa eegu, armaan gaditti mallatteeffamaniiru."
+  },
+  "case.of": "{count}, {total} keessaa",
+  "case.so": "Hanga ammaa {done}, {goal} keessaa",
+  "case.download": "Kan buufamu: {size}",
+  "case.unset": "Hin qindoofne",
+  "case.unfound": "Ammaaf hin argamne",
+  "case.came": "Akkamitti akka dhufe",
+  "case.offText": "Dhaamseera: deeggaraan {name} hin dhiheessu, wanti isaa tokkollee hin mul'atu, hin fe'amus.",
+  "case.ask": "{cap} dhaamsuu? Deeggaraan {name} bakka ati turtetti irra deebi'ee banama, wanti inni hojjetes ni kuufama.",
+  "case.cancel": "Dhiisi",
+  "case.allHint": "Wanti buufamu kamiyyuu ammallee dura si gaafata."
+}

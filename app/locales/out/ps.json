@@ -1,0 +1,14 @@
+{
+  "out.share": "شریکول…",
+  "out.publish": "خپرول…",
+  "out.send": "اپ ته لېږل…",
+  "out.print": "چاپ یا د PDF په توګه ساتل",
+  "out.kit": "د ډیزاین سیسټم",
+  "out.failed": "خوندي نه شو. بیا هڅه وکړئ.",
+  "out.menu": "شریکول، ښکته کول یا چاپ",
+  "out.menuNoPrint": "شریکول یا ښکته کول",
+  "out.menuNoShare": "ښکته کول یا چاپ",
+  "out.download": "ښکته کول",
+  "out.name": "ښکته کول: {name}",
+  "out.webPage": "وېب پاڼه"
+}

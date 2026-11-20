@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { setLoader, useLocale, t, tParts, dir, pickLocale, preferredLocales, languageName, firstWords, formatDuration, formatBytes, locale, intlLocales, relativeTime } from '../app/core/i18n.js'
+import { setLoader, useLocale, t, tParts, dir, pickLocale, preferredLocales, languageName, firstWords, formatDuration, formatBytes, locale, intlLocales, relativeTime, LOCALES } from '../app/core/i18n.js'
 import { resolveRule, ruleFromPermission } from '../app/core/rules.js'
 import { buildSystemPrompt, basePromptForBudget, toChatMessages } from '../app/core/prompt.js'
 import { foldTurns, userRecord, userRecords, noteRecord, envelope, metaRecord, titleOf, openingOf, requestsOf } from '../app/core/events.js'
@@ -95,6 +95,10 @@ test('i18n: locale picking, language names, first words', async () => {
   assert.deepEqual(['sv', 'cs', 'el', 'hu', 'ro'].map((code) => languageName(code)), ['Svenska', 'Čeština', 'Ελληνικά', 'Magyar', 'Română'])
   assert.deepEqual(preferredLocales(['en', 'bg', 'da', 'fi', 'hr', 'sk'], ['da-GL', 'fi-FI', 'sk-SK', 'bg-BG', 'hr-BA']), ['da', 'fi', 'sk', 'bg', 'hr'])
   assert.deepEqual(['da', 'fi', 'sk', 'bg', 'hr'].map((code) => languageName(code)), ['Dansk', 'Suomi', 'Slovenčina', 'Български', 'Hrvatski'])
+  // Punjabi, Gujarati, Burmese, Pashto, Igbo, Oromo and Zulu, asked for by region, named as they write themselves;
+  // Punjabi in Pakistan's Shahmukhi finds nothing, its catalogue being in Gurmukhi.
+  assert.deepEqual(preferredLocales(LOCALES, ['pa-IN', 'gu-IN', 'my-MM', 'ps-PK', 'ig-NG', 'om-KE', 'zu-ZA', 'pa-PK']), ['pa', 'gu', 'my', 'ps', 'ig', 'om', 'zu'])
+  assert.deepEqual(['pa', 'gu', 'my', 'ps', 'ig', 'om', 'zu'].map((code) => languageName(code)), ['ਪੰਜਾਬੀ', 'ગુજરાતી', 'မြန်မာ', 'پښتو', 'Igbo', 'Afaan Oromoo', 'isiZulu'])
   // Breton and Corsican are named as they name themselves, even by browsers that can't, and
   // Corsican's dates and plurals are French's where browsers have none of its own.
   assert.deepEqual([languageName('br'), languageName('co'), languageName('fr-CA'), languageName('co', 'fr'), languageName('br', 'en')], ['Brezhoneg', 'Corsu', 'Français canadien', 'Corse', 'Breton'])

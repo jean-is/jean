@@ -1,0 +1,9 @@
+{
+  "layouts.recommended": "အကြံပြု",
+  "layouts.note": "မှတ်ချက်",
+  "layouts.tip": "အကြံ",
+  "layouts.important": "အရေးကြီး",
+  "layouts.warning": "သတိပေးချက်",
+  "layouts.caution": "သတိ",
+  "layouts.ticked": "{total} အနက် {done}"
+}

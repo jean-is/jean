@@ -26,7 +26,7 @@ Ask in words or with a file, and Jean hands back what you asked for, made: an an
 - **Free and open.** Open source, no subscription. Bring any AI, or none: on a capable computer, Jean thinks entirely on the device, offline too.
 - **Simple first, deep later.** Jean starts as a single box. Everything else, from your folders and your other devices to other people, memory, routines and voice, shows up when you need it, like a game that teaches itself. [docs/product.md](docs/product.md#what-jean-does) lists it all.
 - **Yours to keep.** Everything Jean knows is stored as plain files you can read, back up and take elsewhere.
-- **For everyone.** 46 languages, right to left included, from the first screen to the last answer.
+- **For everyone.** 53 languages, right to left included, from the first screen to the last answer.
 - **Small on purpose.** Jean's code is small enough to audit: no build step, three libraries loaded up front, and [budgets](budgets.json) checked on every change keep it that way. That is a promise, and a feature.
 
 ## What Jean won't do

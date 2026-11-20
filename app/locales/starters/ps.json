@@ -1,0 +1,20 @@
+{
+  "starters.text": "په نوې دنده کې د بکس لاندې، تر څلورو پورې: لومړی د پروژې خپلې مفکورې، بیا د هر ځای لپاره، بیا هغه څه چې تاسو هلته ډېر پوښتئ. یو کلیک یې غوښتنه بکس ته اچوي، چې مخکې له لېږلو یې بدله کړئ.",
+  "starters.theirs": "ستاسو د ادارې مفکورې تر هغه ښکاري چې تاسو خپلې ونه لرئ.",
+  "starters.everywhere": "هر ځای",
+  "starters.everywhere.text": "په هره پروژه کې، د پروژې له خپلو وروسته.",
+  "starters.first": "په دې پروژه کې، د هر ځای له مفکورو مخکې.",
+  "starters.none": "لا هېڅ نشته",
+  "starters.words": "داسې ښودل کېږي",
+  "starters.request": "غوښتنه",
+  "starters.up": "«{title}» پورته وړل",
+  "starters.down": "«{title}» ښکته وړل",
+  "starters.remove": "«{title}» لرې کول",
+  "starters.add": "مفکوره ورزیاتول",
+  "starters.noticed": "هغه څه چې تاسو دلته ډېر پوښتئ",
+  "starters.noticed.text": "هغه غوښتنې چې په اوسنۍ پروژه کې درې ځله یا ډېر شوې، او د هغې بهیرونه، ستاسو له خپلو وروسته ښودل کېږي.",
+  "starters.noticed.none": "لا هېڅ نشته.",
+  "starters.keep": "ساتل",
+  "starters.hide": "پټول",
+  "starters.unhide": "پټ شوي بیا ښودل"
+}

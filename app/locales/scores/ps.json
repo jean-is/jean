@@ -1,0 +1,12 @@
+{
+  "scores.notes": "نوټونه ښودل",
+  "scores.score": "نوټ پاڼه",
+  "scores.play": "غږول",
+  "scores.pause": "درول",
+  "scores.mute": "غږ بند",
+  "scores.where": "په موسیقۍ کې ځای",
+  "scores.drawing": "نوټ پاڼه لیکل کېږي…",
+  "scores.failed": "دا نوټ پاڼه جوړه نه شوه.",
+  "scores.out.abc": "ABC فایل",
+  "scores.out.midi": "MIDI فایل"
+}

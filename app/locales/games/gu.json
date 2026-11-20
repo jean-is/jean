@@ -1,0 +1,16 @@
+{
+  "games.frame": "રમત: {name}",
+  "games.play": "રમો",
+  "games.resume": "ચાલુ રાખો",
+  "games.paused": "થોભાવેલ",
+  "games.pause": "થોભાવો",
+  "games.mute": "અવાજ બંધ કરો",
+  "games.full": "પૂર્ણ સ્ક્રીન",
+  "games.left": "ડાબે",
+  "games.right": "જમણે",
+  "games.up": "ઉપર",
+  "games.down": "નીચે",
+  "games.off": "આ રમત અહીં ચાલી શકતી નથી, કારણ કે પેજને તેમનો કોડ ચલાવવાની મંજૂરી નથી.",
+  "games.ask": "{what} વિશે એક રમત બનાવો.",
+  "games.example": "રાત્રે તારા ભેગા કરતું શિયાળ"
+}

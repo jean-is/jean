@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, umdlalo",
+  "games.play": "Dlala",
+  "games.resume": "Qhubeka",
+  "games.paused": "Kumisiwe",
+  "games.pause": "Misa okwesikhashana",
+  "games.mute": "Thulisa",
+  "games.full": "Isikrini esigcwele",
+  "games.left": "Kwesobunxele",
+  "games.right": "Kwesokudla",
+  "games.up": "Phezulu",
+  "games.down": "Phansi",
+  "games.off": "Lo mdlalo awukwazi ukusebenza lapha, ngoba amakhasi awavunyelwe ukuqalisa ikhodi yawo.",
+  "games.ask": "Yenza umdlalo ngalokhu: {what}.",
+  "games.example": "impungushe eqoqa izinkanyezi ebusuku"
+}

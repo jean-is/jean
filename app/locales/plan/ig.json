@@ -1,0 +1,13 @@
+{
+  "plan.title": "Atụmatụ",
+  "plan.done": "Emechaala {done} n’ime {total}",
+  "plan.pending": "Ka a ga-eme",
+  "plan.in_progress": "Na-aga",
+  "plan.completed": "Emechaala",
+  "plan.confirm": "Ịga n’ihu na atụmatụ a?",
+  "plan.go": "Gaa n’ihu",
+  "plan.always": "Gaa n’ihu mgbe niile",
+  "plan.paused": "Kwụsịtụrụ na nzọụkwụ {count}",
+  "plan.cost": "ihe dị ka {cost} ruo ugbu a",
+  "plan.keepGoing": "Gaa n’ihu"
+}

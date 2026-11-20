@@ -1,0 +1,18 @@
+{
+  "interactive.page": "Peeji na-emekọ ihe",
+  "interactive.map": "Maapụ",
+  "interactive.mapShow": "Gosi maapụ",
+  "interactive.mapFrom": "Maapụ si na {site}, nke na-ahụ ebe ndị e gosiri.",
+  "interactive.inWords": "Lee ya dị ka ederede",
+  "interactive.diagramSteps": "Lee nzọụkwụ ọ bụla na ihe na-eso ya",
+  "interactive.diagramFrom": "Eserese na-amalite na {first}, n’okwu dị n’okpuru",
+  "interactive.diagramWords": "Eserese, n’okwu dị n’okpuru",
+  "interactive.mapNamed": "Maapụ: {places}",
+  "interactive.zoomIn": "Mee ka ọ buo ibu",
+  "interactive.zoomOut": "Mee ka ọ pere mpe",
+  "interactive.mapCredits": "Ndị nwe maapụ",
+  "interactive.askApp": "Mee obere ngwa maka {what}.",
+  "interactive.appExample": "ikesa ụgwọ n’etiti ndị enyi",
+  "interactive.noCollection": "{name}: enweghị nchịkọta nwere aha ahụ ebe a.",
+  "interactive.unread": "{name}: enweghị ike ịhọcha site na “{where}”."
+}

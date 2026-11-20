@@ -1,0 +1,38 @@
+{
+  "description": "Jiri AI ọ bụla mepụta, debe ihe niile. Jụọ n’okwu ma ọ bụ jiri faịlụ, nweta ihe ị rịọrọ, emechara ya. Jiri GPT, Claude, Gemini ma ọ bụ AI dị na kọmputa gị; akụkọ gị, faịlụ gị na ihe ị chetara na-anọ na ngwaọrụ gị. N’efu, koodu ya mepere emepe.",
+  "labels": {
+    "welcome": "Ihuenyo nnabata: echiche iji malite, na igbe iji jụọ ihe ọ bụla",
+    "chart": "Tebụl ọnụọgụ e kesara, na ire ere ya e sere dị ka chaatị",
+    "sources": "Akwụkwọ mgbazinye e gụrụ, na akụkụ ọ bụla nke azịza na-atụ aka na ya",
+    "share": "Ọrụ e kesara enyi site na njikọ"
+  },
+  "chart": {
+    "title": "Ire ere site na mpaghara",
+    "file": "Ire-ere.csv",
+    "columns": [
+      "Mpaghara",
+      "Jenụwarị",
+      "Febụwarị",
+      "Maachị"
+    ],
+    "regions": [
+      "Ugwu",
+      "Ndịda",
+      "Ọwụwa anyanwụ"
+    ],
+    "ask": "Mee chaatị nke ire ere site na mpaghara, ọnwa n’ọnwa",
+    "before": "Nke a bụ ire ere nke ọnwa atọ mbụ, site na mpaghara:",
+    "heading": "Ire ere, ọnwa atọ mbụ",
+    "after": "**Ugwu** na-ere karịa, **Ọwụwa anyanwụ** tokwara ngwa ngwa karịa: 37% site na Jenụwarị ruo Maachị."
+  },
+  "sources": {
+    "title": "Ịhapụ ụlọ",
+    "file": "Mgbazinye.pdf",
+    "pages": [
+      "Akwụkwọ mgbazinye ụlọ nwere arịa\n\nIsiokwu 7. Ọkwa. Onye bi n’ụlọ nwere ike ịkwụsị mgbazinye mgbe ọ bụla site n’inye ọkwa otu ọnwa, e zitere n’akwụkwọ ozi edebanyere aha ma ọ bụ e nyere n’aka ka e nyechaa akwụkwọ nnata.",
+      "Isiokwu 9. Ego nchekwa. A na-eweghachi ego nchekwa ruru ụgwọ otu ọnwa n’ime otu ọnwa e weghachiri igodo, ewepụ ego mmezi ọ bụla."
+    ],
+    "ask": "Ọkwa ole ka m ga-enye iji pụọ, oleekwa mgbe m ga-enweta ego nchekwa m?",
+    "answer": "Nke a bụ ihe akwụkwọ mgbazinye gị kwuru:\n\n- **Ọkwa:** otu ọnwa, n’akwụkwọ ozi edebanyere aha ma ọ bụ e nyere n’aka ka e nyechaa akwụkwọ nnata [1].\n- **Ego nchekwa:** a ga-eweghachi ya n’ime otu ọnwa e weghachiri igodo, ewepụ ego mmezi ọ bụla [1].\n\nYa bụ, ọ bụrụ na i zipu akwụkwọ ozi taa, ị nwere ike ịpụ n’otu ọnwa."
+  }
+}

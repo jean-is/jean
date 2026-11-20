@@ -1,0 +1,18 @@
+{
+  "interactive.page": "Ikhasi elisebenzisanayo",
+  "interactive.map": "Imephu",
+  "interactive.mapShow": "Bonisa imephu",
+  "interactive.mapFrom": "Amamephu avela kusayithi {site}, ebona izindawo ezibonisiwe.",
+  "interactive.inWords": "Kubone njengombhalo",
+  "interactive.diagramSteps": "Bona isinyathelo ngasinye nokulandela kuso",
+  "interactive.diagramFrom": "Umdwebo oqala ku: {first}, ngamagama ngezansi",
+  "interactive.diagramWords": "Umdwebo, ngamagama ngezansi",
+  "interactive.mapNamed": "Imephu: {places}",
+  "interactive.zoomIn": "Sondeza",
+  "interactive.zoomOut": "Qhelelisa",
+  "interactive.mapCredits": "Abanikazi bemephu",
+  "interactive.askApp": "Yenza i-app encane yale nto: {what}.",
+  "interactive.appExample": "ukuhlukanisa isikweletu phakathi kwabangane",
+  "interactive.noCollection": "{name}: alikho iqoqo elinaleli gama lapha.",
+  "interactive.unread": "{name}: akukwazi ukuhlunga ngokuthi “{where}”."
+}

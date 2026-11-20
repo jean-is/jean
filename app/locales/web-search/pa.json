@@ -1,0 +1,59 @@
+{
+  "search.where": "ਕਿੱਥੇ ਲੱਭਣਾ ਹੈ",
+  "search.wikipedia": "ਵਿਕੀਪੀਡੀਆ",
+  "search.wikipedia.text": "ਤੁਹਾਡੀ ਭਾਸ਼ਾ ਵਿੱਚ, ਅਤੇ 300 ਤੋਂ ਵੱਧ ਹੋਰਾਂ ਵਿੱਚ",
+  "search.vikidia": "Vikidia",
+  "search.vikidia.text": {
+    "one": "8 ਤੋਂ 13 ਸਾਲ ਦੇ ਬੱਚਿਆਂ ਲਈ, ਤੁਹਾਡੀ ਭਾਸ਼ਾ ਅਤੇ {count} ਹੋਰ ਵਿੱਚ",
+    "other": "8 ਤੋਂ 13 ਸਾਲ ਦੇ ਬੱਚਿਆਂ ਲਈ, ਤੁਹਾਡੀ ਭਾਸ਼ਾ ਅਤੇ {count} ਹੋਰਾਂ ਵਿੱਚ"
+  },
+  "search.library": "ਔਫ਼ਲਾਈਨ ਲਾਇਬ੍ਰੇਰੀ",
+  "search.library.text": "Kiwix ਸਰਵਰ ਤੋਂ ਵਿਕੀਪੀਡੀਆ ਅਤੇ ਹੋਰ ਕਿਤਾਬਾਂ: ਇਸ ਕੰਪਿਊਟਰ ’ਤੇ, ਸਕੂਲ ਜਾਂ ਕੰਮ ’ਤੇ। ਹਰ ਦਿਮਾਗ਼ ਇਸ ਵਿੱਚ ਖੋਜਦਾ ਹੈ, ਇੰਟਰਨੈੱਟ ਤੋਂ ਬਿਨਾਂ ਵੀ।",
+  "search.address": "Kiwix ਸਰਵਰ ਦਾ ਪਤਾ",
+  "search.connect": "ਕਨੈਕਟ ਕਰੋ",
+  "search.connectTo": "{service} ਨੂੰ ਕਨੈਕਟ ਕਰੋ",
+  "search.failed": "ਇਸ ਪਤੇ ’ਤੇ ਕਿਸੇ Kiwix ਸਰਵਰ ਨੇ ਜਵਾਬ ਨਹੀਂ ਦਿੱਤਾ।",
+  "search.insecure": "ਇੱਥੋਂ ਸਿਰਫ਼ ਇਸ ਕੰਪਿਊਟਰ ਵਾਲੇ Kiwix ਸਰਵਰ, ਜਾਂ https:// ਨਾਲ ਸ਼ੁਰੂ ਹੋਣ ਵਾਲੇ ਪਤੇ ਤੱਕ ਪਹੁੰਚਿਆ ਜਾ ਸਕਦਾ ਹੈ।",
+  "search.locked": "ਤੁਹਾਡੀ ਸੰਸਥਾ ਵੱਲੋਂ ਤੈਅ",
+  "search.parent": "ਮਾਪਿਆਂ ਵੱਲੋਂ ਤੈਅ",
+  "search.books": {
+    "one": "{count} ਕਿਤਾਬ",
+    "other": "{count} ਕਿਤਾਬਾਂ"
+  },
+  "search.articles": {
+    "one": "{count} ਲੇਖ",
+    "other": "{count} ਲੇਖ"
+  },
+  "search.vikidia.not": {
+    "one": "8 ਤੋਂ 13 ਸਾਲ ਦੇ ਬੱਚਿਆਂ ਲਈ, {count} ਭਾਸ਼ਾ ਵਿੱਚ, ਤੁਹਾਡੀ ਵਿੱਚ ਨਹੀਂ",
+    "other": "8 ਤੋਂ 13 ਸਾਲ ਦੇ ਬੱਚਿਆਂ ਲਈ, {count} ਭਾਸ਼ਾਵਾਂ ਵਿੱਚ, ਤੁਹਾਡੀ ਵਿੱਚ ਨਹੀਂ"
+  },
+  "search.fromLibrary": "ਔਫ਼ਲਾਈਨ ਲਾਇਬ੍ਰੇਰੀ ਤੋਂ, ਇਨ੍ਹਾਂ ਭਾਸ਼ਾਵਾਂ ਵਿੱਚ: {languages}",
+  "search.library.in": "ਔਫ਼ਲਾਈਨ ਲਾਇਬ੍ਰੇਰੀ",
+  "search.library.row": "Kiwix ਸਰਵਰ ਤੋਂ ਵਿਕੀਪੀਡੀਆ ਅਤੇ ਹੋਰ ਕਿਤਾਬਾਂ, ਇੰਟਰਨੈੱਟ ਤੋਂ ਬਿਨਾਂ ਵੀ",
+  "search.notSet": "ਸੈੱਟ ਨਹੀਂ",
+  "search.off": "ਬੰਦ",
+  "search.unanswered": "ਜਵਾਬ ਨਹੀਂ ਆ ਰਿਹਾ",
+  "search.answering": "ਜਵਾਬ ਆ ਰਿਹਾ ਹੈ",
+  "search.services": "ਖੋਜ ਸੇਵਾਵਾਂ",
+  "search.searches": "ਕਿਸੇ ਵੀ ਦਿਮਾਗ਼ ਲਈ ਪੂਰੇ ਵੈੱਬ ਵਿੱਚ ਖੋਜ",
+  "search.readHere": "ਵਿਕੀਪੀਡੀਆ ਇੱਥੋਂ ਪੜ੍ਹੋ",
+  "search.readHere.text": "ਵੈੱਬ ਵਾਲੇ ਦੀ ਥਾਂ, ਇਨ੍ਹਾਂ ਭਾਸ਼ਾਵਾਂ ਵਿੱਚ: {languages}",
+  "search.now.own": "ਜਵਾਬ ਦੇਣ ਵਾਲਾ ਦਿਮਾਗ਼ ਖ਼ੁਦ ਪੂਰੇ ਵੈੱਬ ਵਿੱਚ ਖੋਜਦਾ ਹੈ।",
+  "search.now.others": "ਹੋਰ ਦਿਮਾਗ਼ ਇੱਥੇ ਲੱਭਦੇ ਹਨ: {sources}।",
+  "search.now.every": "ਹਰ ਦਿਮਾਗ਼ ਇੱਥੇ ਲੱਭਦਾ ਹੈ: {sources}।",
+  "search.now.again": "ਸਿਰਫ਼ ਵਿਕੀਪੀਡੀਆ ਨਾਲ, ਜਵਾਬ ਦੇਣ ਵਾਲਾ ਦਿਮਾਗ਼ ਫਿਰ ਪੂਰੇ ਵੈੱਬ ਵਿੱਚ ਖੋਜਦਾ ਹੈ।",
+  "search.now.nowhere": "ਜੋ ਦਿਮਾਗ਼ ਖ਼ੁਦ ਵੈੱਬ ਨਹੀਂ ਖੋਜ ਸਕਦਾ, ਉਸ ਕੋਲ ਲੱਭਣ ਲਈ ਕੋਈ ਥਾਂ ਨਹੀਂ।",
+  "search.now.off": "ਵੈੱਬ ਖੋਜ ਬੰਦ ਹੈ: ਹੁਣ ਸ਼ੁਰੂ ਕੀਤੇ ਕੰਮ ਕਿਤੇ ਨਹੀਂ ਖੋਜਦੇ, ਦਿਮਾਗ਼ ਦੀ ਆਪਣੀ ਖੋਜ ਨਾਲ ਵੀ ਨਹੀਂ।",
+  "search.now.services": "ਹਰ ਦਿਮਾਗ਼ ਇਨ੍ਹਾਂ ਨਾਲ ਵੀ ਖੋਜ ਸਕਦਾ ਹੈ: {services}।",
+  "search.also": "ਵੈੱਬ ਖੋਜ ਨੂੰ ਬਕਸੇ ਵਿੱਚ + ਤੋਂ ਵੀ ਬੰਦ ਕੀਤਾ ਜਾ ਸਕਦਾ ਹੈ।",
+  "search.key": "ਕੁੰਜੀ",
+  "search.engine": "ਸਰਚ ਇੰਜਣ ID",
+  "search.service.text": "ਤੁਹਾਡਾ ਆਪਣਾ {service} ਖਾਤਾ ਹਰ ਦਿਮਾਗ਼ ਲਈ ਪੂਰੇ ਵੈੱਬ ਵਿੱਚ ਖੋਜਦਾ ਹੈ। ਤੁਹਾਡੇ ਖੋਜ ਸ਼ਬਦ {service} ਕੋਲ ਜਾਂਦੇ ਹਨ, ਜਿਸ ਵੱਲੋਂ ਇਨ੍ਹਾਂ ਦੇ ਪੈਸੇ ਲਏ ਜਾ ਸਕਦੇ ਹਨ, ਅਤੇ ਤੁਹਾਡੀ ਕੁੰਜੀ ਤੁਹਾਡੇ ਆਪਣੇ ਡਿਵਾਈਸਾਂ ’ਤੇ ਰਹਿੰਦੀ ਹੈ।",
+  "search.getKey": "{service} ਤੋਂ ਕੁੰਜੀ ਲਓ",
+  "search.refused": "{service} ਨੇ ਇਹ ਕੁੰਜੀ ਨਹੀਂ ਮੰਨੀ, ਜਾਂ ਇਸ ’ਤੇ ਖੋਜਾਂ ਨਹੀਂ ਬਚੀਆਂ।",
+  "search.silent": "{service} ਵੱਲੋਂ ਜਵਾਬ ਨਹੀਂ ਆਇਆ। ਕੁੰਜੀ ਜਾਂਚੋ, ਜਾਂ ਥੋੜ੍ਹੀ ਦੇਰ ਬਾਅਦ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
+  "search.needsGateway": "ਗੇਟਵੇ ਚਾਹੀਦਾ ਹੈ",
+  "search.noGateway": "ਬ੍ਰਾਊਜ਼ਰ ਆਪਣੇ-ਆਪ {service} ਤੱਕ ਨਹੀਂ ਪਹੁੰਚ ਸਕਦਾ: ਇਸ ਲਈ ਅੱਗੇ ਪਹੁੰਚਾਉਣ ਵਾਲਾ ਗੇਟਵੇ ਚਾਹੀਦਾ ਹੈ। ਗੇਟਵੇ ਦਾ ਪਤਾ ਇੱਥੇ ਪਾਓ: {connections}।",
+  "search.google.closing": "Google ਹੁਣ ਨਵੀਆਂ ਕੁੰਜੀਆਂ ਨਹੀਂ ਦਿੰਦਾ, ਅਤੇ ਇਹ ਸੇਵਾ {date} ਨੂੰ ਬੰਦ ਹੋ ਜਾਵੇਗੀ।"
+}

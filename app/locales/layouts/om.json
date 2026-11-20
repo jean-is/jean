@@ -1,0 +1,9 @@
+{
+  "layouts.recommended": "Kan gorfame",
+  "layouts.note": "Hubachiisa",
+  "layouts.tip": "Gorsa",
+  "layouts.important": "Barbaachisaa",
+  "layouts.warning": "Akeekkachiisa",
+  "layouts.caution": "Of eeggannoo",
+  "layouts.ticked": "{done}, {total} keessaa"
+}

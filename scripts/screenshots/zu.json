@@ -1,0 +1,38 @@
+{
+  "description": "Dala nganoma iyiphi i-AI, ugcine konke. Buza ngamagama noma ngefayela, uthole lokho okucelile sekwenziwe. Sebenzisa i-GPT, i-Claude, i-Gemini noma i-AI esekhompyutheni yakho; umlando wakho, amafayela nenkumbulo kuhlala kudivayisi yakho. Kwamahhala futhi kuvulekile.",
+  "labels": {
+    "welcome": "Isikrini sokwamukela: imibono yokuqala, nebhokisi lokubuza noma yini",
+    "chart": "Ishidi lokubala elabiwe, nokuthengiswayo kwalo kudwetshwe njengeshadi",
+    "sources": "Isivumelwano sokuqasha esifundiwe, nengxenye ngayinye yempendulo ikhomba kuso",
+    "share": "Umsebenzi owabelwane nomngane ngesixhumanisi"
+  },
+  "chart": {
+    "title": "Ukuthengisa ngesifunda",
+    "file": "Ukuthengisa.csv",
+    "columns": [
+      "Isifunda",
+      "Januwari",
+      "Febhuwari",
+      "Mashi"
+    ],
+    "regions": [
+      "Inyakatho",
+      "Iningizimu",
+      "Impumalanga"
+    ],
+    "ask": "Yenza ishadi lokuthengisa ngesifunda, ngenyanga ngayinye",
+    "before": "Nakhu ukuthengisa kwekota yokuqala, ngesifunda:",
+    "heading": "Ukuthengisa, ikota yokuqala",
+    "after": "**Inyakatho** ithengisa kakhulu, kanti **iMpumalanga** ikhule ngokushesha kakhulu: inyuke ngo-37% kusukela kuJanuwari kuya kuMashi."
+  },
+  "sources": {
+    "title": "Ukuphuma efulethini",
+    "file": "Isivumelwano.pdf",
+    "pages": [
+      "Isivumelwano sokuqasha ifulethi elinefenisha\n\nIsigaba 7. Isaziso. Umqashi angasiqeda isivumelwano noma nini ngesaziso senyanga eyodwa, esithunyelwa ngencwadi ebhalisiwe noma esinikezwa ngesandla kutholwe irisidi.",
+      "Isigaba 9. Idiphozithi. Idiphozithi elingana nerenti yenyanga eyodwa ibuyiswa kungakapheli inyanga izikhiye zibuyisiwe, kususwe izindleko zokulungisa uma zikhona."
+    ],
+    "ask": "Kufanele nginikeze isaziso esingakanani ukuze ngiphume, futhi ngizoyithola nini idiphozithi yami?",
+    "answer": "Nakhu okushiwo yisivumelwano sakho:\n\n- **Isaziso:** inyanga eyodwa, ngencwadi ebhalisiwe noma ngesandla kutholwe irisidi [1].\n- **Idiphozithi:** ibuyiswa kungakapheli inyanga ubuyise izikhiye, kususwe izindleko zokulungisa [1].\n\nNgakho uma uthumela incwadi namuhla, ungaphuma ngemva kwenyanga."
+  }
+}

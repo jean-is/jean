@@ -1,0 +1,20 @@
+{
+  "made.open": "ਖੋਲ੍ਹੋ",
+  "made.kind.document": "Word ਦਸਤਾਵੇਜ਼",
+  "made.kind.sheet": "ਸਪ੍ਰੈਡਸ਼ੀਟ",
+  "made.kind.page": "ਵੈੱਬ ਪੰਨਾ",
+  "made.kind.drawing": "ਡਰਾਇੰਗ",
+  "made.kind.design": "ਡਿਜ਼ਾਈਨ",
+  "made.kind.game": "ਗੇਮ",
+  "made.kind.text": "ਲਿਖਤ",
+  "made.copiedPictures": "ਕਾਪੀ ਹੋ ਗਿਆ। ਜੇ ਇਸਦੀਆਂ ਤਸਵੀਰਾਂ ਪੇਸਟ ਨਾ ਹੋਣ, ਤਾਂ ਹਰ ਇੱਕ ਨੂੰ ਉਸਦੇ ਆਪਣੇ “ਕਾਪੀ ਕਰੋ” ਨਾਲ ਕਾਪੀ ਕਰੋ।",
+  "made.share": "ਸਾਂਝਾ ਕਰੋ",
+  "made.csvTitle": "ਟੇਬਲ (CSV)",
+  "made.csvNumbered": "ਟੇਬਲ {count} (CSV)",
+  "made.tableFile": "ਟੇਬਲ {count}",
+  "made.print": "ਪ੍ਰਿੰਟ ਕਰੋ",
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
+}

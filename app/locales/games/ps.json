@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}، یوه لوبه",
+  "games.play": "لوبه کول",
+  "games.resume": "بیا پیلول",
+  "games.paused": "درول شوې",
+  "games.pause": "درول",
+  "games.mute": "غږ بندول",
+  "games.full": "بشپړ سکرین",
+  "games.left": "کیڼ",
+  "games.right": "ښي",
+  "games.up": "پورته",
+  "games.down": "ښکته",
+  "games.off": "دا لوبه دلته نه شي چلېدای، ځکه پاڼو ته د خپل کوډ چلولو اجازه نشته.",
+  "games.ask": "د دې په اړه یوه لوبه جوړه کړه: {what}.",
+  "games.example": "یوه ګیدړه چې د شپې ستوري راټولوي"
+}

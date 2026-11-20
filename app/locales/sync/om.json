@@ -1,0 +1,15 @@
+{
+  "sync.text": "OneDrive, Dropbox, iCloud Drive ykn Google Drive keessatti foldara haaraa uumi, asitti filadhu, achii foldaruma sana kompiitaroota kee biroo irratti. Hojiiwwan, faayiloonni fi yaadannoon si hordofu; qindaa'inni fi furtuuwwan kompiitara tokkoon tokkoon irra turu.",
+  "sync.choose": "Foldara filadhu…",
+  "sync.syncing": "Foldara {folder} waliin walsimsiisaa jira…",
+  "sync.done": "Foldara {folder} waliin walsimeera · {when}",
+  "sync.safe": "Hojiiwwan, faayiloonni fi yaadannoon kee foldara {folder} keessas jiru, biraawuzarri kee asitti yoo haqellee nagaa dha.",
+  "sync.waiting": "Kompiitaroota kee biroo waliin walsimsiisuu itti fufuuf foldara {folder} akka seenamu hayyami.",
+  "sync.allow": "Hayyama kenni",
+  "sync.failed": "Foldara {folder} bira ga'amuu hin dandeenye. Ammallee kompiitara kana irra jiraa?",
+  "sync.refused": "Foldarri {folder} faayiloota biroo qaba. Foldara haaraa fi duwwaa, ykn kan kompiitara biraa irratti itti walsimsiiftu filadhu.",
+  "sync.now": "Amma walsimsiisi",
+  "sync.show": "Kompiitara kana irratti {folder} agarsiisi",
+  "sync.stop": "Walsimsiisuu dhaabi",
+  "sync.off": "Kompiitara kana qofa irratti"
+}

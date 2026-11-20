@@ -685,6 +685,12 @@
               "prompt-fr-CA": {
                 "type": "string"
               },
+              "title-gu": {
+                "type": "string"
+              },
+              "prompt-gu": {
+                "type": "string"
+              },
               "title-ha": {
                 "type": "string"
               },
@@ -721,6 +727,12 @@
               "prompt-id": {
                 "type": "string"
               },
+              "title-ig": {
+                "type": "string"
+              },
+              "prompt-ig": {
+                "type": "string"
+              },
               "title-it": {
                 "type": "string"
               },
@@ -751,16 +763,40 @@
               "prompt-ms": {
                 "type": "string"
               },
+              "title-my": {
+                "type": "string"
+              },
+              "prompt-my": {
+                "type": "string"
+              },
               "title-nl": {
                 "type": "string"
               },
               "prompt-nl": {
                 "type": "string"
               },
+              "title-om": {
+                "type": "string"
+              },
+              "prompt-om": {
+                "type": "string"
+              },
+              "title-pa": {
+                "type": "string"
+              },
+              "prompt-pa": {
+                "type": "string"
+              },
               "title-pl": {
                 "type": "string"
               },
               "prompt-pl": {
+                "type": "string"
+              },
+              "title-ps": {
+                "type": "string"
+              },
+              "prompt-ps": {
                 "type": "string"
               },
               "title-pt": {
@@ -863,6 +899,12 @@
                 "type": "string"
               },
               "prompt-zh-Hant": {
+                "type": "string"
+              },
+              "title-zu": {
+                "type": "string"
+              },
+              "prompt-zu": {
                 "type": "string"
               }
             },
@@ -2515,6 +2557,18 @@
                             "null"
                           ]
                         },
+                        "title-gu": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-gu": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
                         "title-ha": {
                           "type": [
                             "string",
@@ -2587,6 +2641,18 @@
                             "null"
                           ]
                         },
+                        "title-ig": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-ig": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
                         "title-it": {
                           "type": [
                             "string",
@@ -2647,6 +2713,18 @@
                             "null"
                           ]
                         },
+                        "title-my": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-my": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
                         "title-nl": {
                           "type": [
                             "string",
@@ -2659,6 +2737,30 @@
                             "null"
                           ]
                         },
+                        "title-om": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-om": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-pa": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-pa": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
                         "title-pl": {
                           "type": [
                             "string",
@@ -2666,6 +2768,18 @@
                           ]
                         },
                         "prompt-pl": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-ps": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-ps": {
                           "type": [
                             "string",
                             "null"
@@ -2870,6 +2984,18 @@
                           ]
                         },
                         "prompt-zh-Hant": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "title-zu": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "prompt-zu": {
                           "type": [
                             "string",
                             "null"
@@ -3680,19 +3806,25 @@
         "fi",
         "fr",
         "fr-CA",
+        "gu",
         "ha",
         "he",
         "hi",
         "hr",
         "hu",
         "id",
+        "ig",
         "it",
         "ja",
         "ko",
         "mr",
         "ms",
+        "my",
         "nl",
+        "om",
+        "pa",
         "pl",
+        "ps",
         "pt",
         "ro",
         "ru",
@@ -3709,7 +3841,8 @@
         "vi",
         "yo",
         "zh-Hans",
-        "zh-Hant"
+        "zh-Hant",
+        "zu"
       ]
     },
     "colour": {

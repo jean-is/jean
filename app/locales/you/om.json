@@ -1,0 +1,42 @@
+{
+  "knows.instructions": "Qajeelfama kee",
+  "knows.instructionsPlaceholder": "Fakkeenyaaf: Afaan Oromootiin deebisi. Gabaabsi. Ani mana daabboo qaba.",
+  "knows.noticed": "Waan deeggaraan {name} hubate",
+  "knows.forYou": "Bakka hunda",
+  "knows.forProject": "Pirojektii {project} keessatti",
+  "knows.edit": "Sarara kana gulaali",
+  "knows.from": "Hojii irraa dhufe bani",
+  "knows.promote": "Qajeelfama godhi",
+  "knows.promoted": "Amma qajeelfama kee keessaa tokko dha.",
+  "knows.nothing": "Ammaaf homaa.",
+  "you.line": "Qajeelfamni kee fi waan deeggaraan {name} hubate hojii hunda waliin gara sammuu deebisuutti ergamu.",
+  "you.none": "Ammaaf waa'ee kee homaa hin jiru. Wanti ati asitti barreessitu jalqaba hojii hundaatti dubbifama.",
+  "you.cut": {
+    "one": "Sararri durii caalu hin dubbifamu. Akka dubbifamuuf qajeelfama godhi.",
+    "other": "Sararoonni durii caalan {count} hin dubbifaman. Tokko akka dubbifamuuf qajeelfama godhi."
+  },
+  "you.nameText": "Maqaa deeggaraan {name} siin waamu. Gonkumaa gara sammuutti hin ergamu.",
+  "you.edit": "Gulaali",
+  "you.cancel": "Dhiisi",
+  "you.more": "Kan biraa sarara kanaaf",
+  "you.empty": "Deeggaraan {name} yeroo hunda maal yaadachuu qaba? Hojii kee, afaan kee, akkaataa deebii jaallattu.",
+  "you.start.work": "Waan ati hojjettu",
+  "you.start.workText": "Hojiin koo ",
+  "you.start.language": "Afaan kee",
+  "you.start.languageText": "Afaan kanaan deebisi: ",
+  "you.start.length": "Deebiin hammam dheerachuu qaba",
+  "you.start.lengthText": "Deebiin haa ta'u: ",
+  "you.remember": "Yaadadhu",
+  "you.all": {
+    "one": "Sarara ilaali",
+    "other": "Sararoota {count} hunda ilaali"
+  },
+  "you.lines": {
+    "one": "sarara {count}",
+    "other": "sarara {count}"
+  },
+  "you.search": "Waan deeggaraan {name} hubate keessa barbaadi",
+  "you.unread": "Kana booda hin dubbifamu",
+  "you.project": "Kunneen kan kee waliin, hojiiwwan pirojektii kanaa qofa keessatti deemu.",
+  "you.org": "Qajeelfama dhaabbata keetii"
+}

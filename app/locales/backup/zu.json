@@ -1,0 +1,8 @@
+{
+  "backup.confirmImport": "Letha izingxoxo, amaphrojekthi namafayela alokhu okukhishiwe? Akukho lapha okuzosuswa.",
+  "backup.imported": {
+    "one": "Izingxoxo ezilethiwe: {count}.",
+    "other": "Izingxoxo ezilethiwe: {count}."
+  },
+  "backup.chooseJson": "Lokhu okukhishiwe kuqukethe umsebenzi wakho we-Gemini njengamakhasi ewebhu. Kukhiphe futhi ku-Google Takeout, ukhethe i-JSON ku-My Activity."
+}

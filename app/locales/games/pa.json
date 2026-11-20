@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, ਇੱਕ ਗੇਮ",
+  "games.play": "ਖੇਡੋ",
+  "games.resume": "ਜਾਰੀ ਰੱਖੋ",
+  "games.paused": "ਰੁਕੀ ਹੋਈ",
+  "games.pause": "ਰੋਕੋ",
+  "games.mute": "ਆਵਾਜ਼ ਬੰਦ ਕਰੋ",
+  "games.full": "ਪੂਰੀ ਸਕ੍ਰੀਨ",
+  "games.left": "ਖੱਬੇ",
+  "games.right": "ਸੱਜੇ",
+  "games.up": "ਉੱਪਰ",
+  "games.down": "ਹੇਠਾਂ",
+  "games.off": "ਇਹ ਗੇਮ ਇੱਥੇ ਨਹੀਂ ਚੱਲ ਸਕਦੀ, ਕਿਉਂਕਿ ਪੰਨਿਆਂ ਨੂੰ ਆਪਣਾ ਕੋਡ ਚਲਾਉਣ ਦੀ ਇਜਾਜ਼ਤ ਨਹੀਂ ਹੈ।",
+  "games.ask": "{what} ਬਾਰੇ ਇੱਕ ਗੇਮ ਬਣਾਓ।",
+  "games.example": "ਰਾਤ ਨੂੰ ਤਾਰੇ ਇਕੱਠੇ ਕਰਦੀ ਲੂੰਬੜੀ"
+}

@@ -1,0 +1,18 @@
+{
+  "interactive.page": "متقابله پاڼه",
+  "interactive.map": "نقشه",
+  "interactive.mapShow": "نقشه ښودل",
+  "interactive.mapFrom": "نقشې له {site} څخه راځي، چې ښودل شوي ځایونه ویني.",
+  "interactive.inWords": "د متن په توګه یې کتل",
+  "interactive.diagramSteps": "هر ګام او له هغه وروسته څه راځي، کتل",
+  "interactive.diagramFrom": "ډیاګرام له {first} څخه پیلېږي، په ټکو کې یې لاندې",
+  "interactive.diagramWords": "ډیاګرام، په ټکو کې یې لاندې",
+  "interactive.mapNamed": "نقشه: {places}",
+  "interactive.zoomIn": "لوی کول",
+  "interactive.zoomOut": "کوچنی کول",
+  "interactive.mapCredits": "د نقشې منابع",
+  "interactive.askApp": "د دې لپاره یو کوچنی اپ جوړ کړه: {what}.",
+  "interactive.appExample": "د ملګرو ترمنځ د بل وېشل",
+  "interactive.noCollection": "{name}: دلته په دې نوم ټولګه نشته.",
+  "interactive.unread": "{name}: د «{where}» له مخې نه شي فلټر کېدای."
+}

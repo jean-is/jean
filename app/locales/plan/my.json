@@ -1,0 +1,13 @@
+{
+  "plan.title": "အစီအစဉ်",
+  "plan.done": "{total} အနက် {done} ပြီး",
+  "plan.pending": "လုပ်ရန်",
+  "plan.in_progress": "လုပ်နေဆဲ",
+  "plan.completed": "ပြီးပြီ",
+  "plan.confirm": "ဤအစီအစဉ်ဖြင့် ဆက်လုပ်မလား။",
+  "plan.go": "ဆက်လုပ်",
+  "plan.always": "အမြဲ ဆက်လုပ်",
+  "plan.paused": "အဆင့် {count} တွင် ခဏရပ်ထား",
+  "plan.cost": "ယခုထိ {cost} ခန့်",
+  "plan.keepGoing": "ဆက်သွား"
+}

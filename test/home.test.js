@@ -97,7 +97,7 @@ test('jean.is’s index.html has the page after the app’s root, and each other
   assert.match(ja, /<title>Jean · 好きな AI でつくって、ぜんぶ手元に<\/title>/)
   assert.match(ja, /<p class="noscript">このアシスタントはブラウザーの中だけで動き、JavaScript が必要です。<\/p>/, 'what it says without scripts, in its language')
   // Its menu links every language the app speaks, as Settings' lists them, the page's marked.
-  assert.equal(ja.match(/<a href="[^"]*" data-language="[\w-]+"[^>]* lang="[\w-]+"/g)?.length, 46)
+  assert.equal(ja.match(/<a href="[^"]*" data-language="[\w-]+"[^>]* lang="[\w-]+"/g)?.length, 53)
   assert.match(ja, /<a href="(\.\/)?ko" data-language="ko" hreflang="ko" lang="ko"><span dir="ltr">한국어<\/span>/, 'a language with its own page links there')
   assert.match(ja, /<a href="(\.\/)?zh-Hant" data-language="zh-Hant" hreflang="zh-Hant" lang="zh-Hant"><span dir="ltr">繁體中文<\/span>/, 'under its own code, a script’s too')
   assert.equal(ja.match(/<a href="[^"]*" data-language="[\w-]+" hreflang="[\w-]+"/g)?.length, 46, 'every one of them has a page of its own')

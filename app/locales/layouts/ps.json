@@ -1,0 +1,9 @@
+{
+  "layouts.recommended": "سپارښتنه شوې",
+  "layouts.note": "یادونه",
+  "layouts.tip": "لارښوونه",
+  "layouts.important": "مهم",
+  "layouts.warning": "خبرداری",
+  "layouts.caution": "پام",
+  "layouts.ticked": "{done} له {total}"
+}

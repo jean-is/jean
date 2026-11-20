@@ -122,7 +122,7 @@ test('⌘⌥⇧L goes back to the language before, the last one before the first
   const root = page.locator('html')
   await page.locator('#prompt').fill('Hello')
   await page.keyboard.press('ControlOrMeta+Alt+Shift+KeyL')
-  await expect(root).toHaveAttribute('lang', 'zh-Hant')
+  await expect(root).toHaveAttribute('lang', 'zu')
   await page.keyboard.press('ControlOrMeta+Shift+KeyL')
   await expect(root).toHaveAttribute('lang', 'en')
   await page.keyboard.press('ControlOrMeta+Shift+KeyL')

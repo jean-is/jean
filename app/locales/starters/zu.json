@@ -1,0 +1,20 @@
+{
+  "starters.text": "Ngaphansi kwebhokisi emsebenzini omusha, kuze kube kune: imibono yephrojekthi uqobo, bese eyezindawo zonke, bese okuvame ukukucela lapho. Ukuchofoza kufaka isicelo sayo ebhokisini, ukuze usishintshe ngaphambi kokuthi sihambe.",
+  "starters.theirs": "Imibono yenhlangano yakho iyabonakala uma ungenayo eyakho.",
+  "starters.everywhere": "Yonke indawo",
+  "starters.everywhere.text": "Kuyo yonke iphrojekthi, ngemuva kweyephrojekthi uqobo.",
+  "starters.first": "Kule phrojekthi, ngaphambi kweyezindawo zonke.",
+  "starters.none": "Ayikho okwamanje",
+  "starters.words": "Kuboniswa ngokuthi",
+  "starters.request": "Isicelo",
+  "starters.up": "Hambisa “{title}” phezulu",
+  "starters.down": "Hambisa “{title}” phansi",
+  "starters.remove": "Khipha “{title}”",
+  "starters.add": "Engeza umbono",
+  "starters.noticed": "Okuvame ukukucela lapha",
+  "starters.noticed.text": "Izicelo ezenziwe kathathu noma ngaphezulu kule phrojekthi okuyo, nemizila yayo, kuboniswa ngemuva kwezakho.",
+  "starters.noticed.none": "Akukho okwamanje.",
+  "starters.keep": "Gcina",
+  "starters.hide": "Fihla",
+  "starters.unhide": "Bonisa futhi ezifihliwe"
+}

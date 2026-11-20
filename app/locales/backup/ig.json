@@ -1,0 +1,7 @@
+{
+  "backup.confirmImport": "Webata mkparịta ụka, ọrụ ngo na faịlụ nke mbupụ a? Ọ dịghị ihe a ga-ehichapụ ebe a.",
+  "backup.imported": {
+    "other": "Ewebatara mkparịta ụka {count}."
+  },
+  "backup.chooseJson": "Mbupụ a nwere ihe ị mere na Gemini dị ka peeji weebụ. Bupụta ya ọzọ site na Google Takeout, họrọ JSON maka My Activity."
+}

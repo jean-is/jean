@@ -1,0 +1,9 @@
+{
+  "layouts.recommended": "Akwadoro",
+  "layouts.note": "Ndetu",
+  "layouts.tip": "Ndụmọdụ",
+  "layouts.important": "Dị mkpa",
+  "layouts.warning": "Ịdọ aka na ntị",
+  "layouts.caution": "Kpachara anya",
+  "layouts.ticked": "{done} n’ime {total}"
+}

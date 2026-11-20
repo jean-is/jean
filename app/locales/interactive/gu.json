@@ -1,0 +1,18 @@
+{
+  "interactive.page": "ઇન્ટરૅક્ટિવ પેજ",
+  "interactive.map": "નકશો",
+  "interactive.mapShow": "નકશો બતાવો",
+  "interactive.mapFrom": "નકશા {site} પરથી આવે છે, જે બતાવેલાં સ્થળો જુએ છે.",
+  "interactive.inWords": "લખાણ તરીકે જુઓ",
+  "interactive.diagramSteps": "દરેક પગલું અને તેના પછી શું આવે છે તે જુઓ",
+  "interactive.diagramFrom": "{first} થી શરૂ થતી આકૃતિ, શબ્દોમાં નીચે",
+  "interactive.diagramWords": "આકૃતિ, શબ્દોમાં નીચે",
+  "interactive.mapNamed": "નકશો: {places}",
+  "interactive.zoomIn": "મોટું કરો",
+  "interactive.zoomOut": "નાનું કરો",
+  "interactive.mapCredits": "નકશાનું શ્રેય",
+  "interactive.askApp": "{what} માટે એક નાની ઍપ બનાવો.",
+  "interactive.appExample": "મિત્રો વચ્ચે બિલ વહેંચવું",
+  "interactive.noCollection": "{name}: આ નામનો કોઈ સંગ્રહ અહીં નથી.",
+  "interactive.unread": "{name}: “{where}” પ્રમાણે ફિલ્ટર કરી શકાતું નથી."
+}

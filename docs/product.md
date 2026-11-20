@@ -11,7 +11,7 @@
 - **What it does:** people ask in words, aloud, or with a file, a folder, a picture or another assistant's export, and get back what they asked for, made: an answer with its sources, a Word document, a spreadsheet, a deck, a chart, a score that plays, a picture, a page that works, a map, a routine. Numbers are worked out by code Jean runs, not guessed. Files in, files out is the job people search for most, so it leads the examples, never the identity.
 - **What sets it apart,** in this order:
   1. **Simple.** One box. The rest is offered when a moment calls for it, and the first load stays small ([Progressive discovery](#progressive-discovery)).
-  2. **Universal.** Anything in, anything out, with any brain: one on the device, a free one, a plan already paid for, or a company's gateway. In 46 languages, in any recent browser, a phone's included.
+  2. **Universal.** Anything in, anything out, with any brain: one on the device, a free one, a plan already paid for, or a company's gateway. In 53 languages, in any recent browser, a phone's included.
   3. **Confidential.** What Jean keeps is encrypted on the device, and no Jean server can read it. On a computer with 12 GB of memory and a recent graphics chip, the answers can be written there too, offline (D319, D371).
   4. **Ready for a family.** A profile per child, set by a parent: topics by age, an under-13 lock and a danger notice (D389, D390). Learning's skills help a child learn rather than do the work (D394).
   5. **Open.** MIT, open standards (MCP, `SKILL.md`, ACP, the OpenAI-compatible and Anthropic APIs), plain files readable without Jean, extensions, and a static folder anyone can host.
@@ -34,7 +34,7 @@ At a glance, each offered when a moment calls for it ([Progressive discovery](#p
 - **Reaches services and the web,** each source a numbered citation ([Sources and citations](#sources-and-citations)).
 - **Repeats on a schedule:** a routine is a request Jean sends itself every hour, day or week, or once later ([Skills and routines](architecture.md#skills-and-routines)).
 - **Takes on bigger tasks:** helpers work on a task's parts at once, and Double-check compares each cited claim with its source ([Sources and citations](#sources-and-citations)).
-- **Speaks the person's language,** one of 46, right to left included ([Languages](#languages)).
+- **Speaks the person's language,** one of 53, right to left included ([Languages](#languages)).
 - **Listens and speaks:** dictation, read-aloud and talking hands-free, and recordings heard, with speech recognised on the device ([Voice](#voice)).
 - **Asks first:** by default before sending, sharing, deleting or anything external, and it never touches passwords or payments; the person chooses *Do it*, *Ask me first* or *Never* for each kind of action ([Rules and approvals](#rules-and-approvals)).
 
@@ -387,7 +387,7 @@ Screen sharing (D699), on a computer, is found from a capture of the screen or w
 
 ## Languages
 
-- **Coverage.** 46 locales. They cover right-to-left languages (Arabic, Hebrew, Persian, Urdu), Chinese, Japanese and Korean, the major Indic and Southeast Asian languages, African languages, Breton and Corsican, French as Canada writes it (D496), and ten of the European Union's official languages Jean lacked (D563). Translations are machine-made, with no per-language review (D44).
+- **Coverage.** 53 locales. They cover right-to-left languages (Arabic, Hebrew, Persian, Urdu, Pashto), Chinese, Japanese and Korean, the major Indic and Southeast Asian languages (Punjabi, Gujarati and Burmese among them), African languages (Igbo, Oromo and Zulu among them), Breton and Corsican, French as Canada writes it (D496), and ten of the European Union's official languages Jean lacked (D563). Translations are machine-made, with no per-language review (D44).
 - **Instant switching.** The language changes immediately, with no reload, including in past conversations (activity labels are rendered from structured data).
 - **Conversations.** Jean replies in the language of the user's last message, and otherwise in the UI language.
 

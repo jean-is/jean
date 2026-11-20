@@ -1,0 +1,20 @@
+{
+  "made.open": "ખોલો",
+  "made.kind.document": "Word દસ્તાવેજ",
+  "made.kind.sheet": "સ્પ્રેડશીટ",
+  "made.kind.page": "વેબ પેજ",
+  "made.kind.drawing": "ચિત્રકામ",
+  "made.kind.design": "ડિઝાઇન",
+  "made.kind.game": "રમત",
+  "made.kind.text": "લખાણ",
+  "made.copiedPictures": "કૉપિ થયું. ચિત્રો પેસ્ટ ન થાય, તો દરેકને તેના પોતાના કૉપિથી કૉપિ કરો.",
+  "made.share": "શેર કરો",
+  "made.csvTitle": "કોષ્ટક (CSV)",
+  "made.csvNumbered": "કોષ્ટક {count} (CSV)",
+  "made.tableFile": "કોષ્ટક {count}",
+  "made.print": "છાપો",
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
+}

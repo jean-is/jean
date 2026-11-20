@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, egwuregwu",
+  "games.play": "Kpọọ",
+  "games.resume": "Gaa n’ihu",
+  "games.paused": "Kwụsịtụrụ",
+  "games.pause": "Kwụsịtụ",
+  "games.mute": "Gbanyụọ olu",
+  "games.full": "Ihuenyo zuru oke",
+  "games.left": "Aka ekpe",
+  "games.right": "Aka nri",
+  "games.up": "Elu",
+  "games.down": "Ala",
+  "games.off": "Egwuregwu a enweghị ike ịgba ebe a, n’ihi na a naghị ekwe peeji ka ha gbaa koodu ha.",
+  "games.ask": "Mee egwuregwu gbasara {what}.",
+  "games.example": "nkịta ọhịa na-achịkọta kpakpando n’abalị"
+}

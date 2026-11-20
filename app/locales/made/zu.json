@@ -1,0 +1,20 @@
+{
+  "made.open": "Vula",
+  "made.kind.document": "Idokhumenti ye-Word",
+  "made.kind.sheet": "Ishidi lokubala",
+  "made.kind.page": "Ikhasi lewebhu",
+  "made.kind.drawing": "Umdwebo",
+  "made.kind.design": "Idizayini",
+  "made.kind.game": "Umdlalo",
+  "made.kind.text": "Umbhalo",
+  "made.copiedPictures": "Kukopishiwe. Uma izithombe zinganamatheli, kopisha ngasinye ngokuthi Kopisha kwaso.",
+  "made.share": "Yabelana",
+  "made.csvTitle": "Ithebula (CSV)",
+  "made.csvNumbered": "Ithebula {count} (CSV)",
+  "made.tableFile": "Ithebula {count}",
+  "made.print": "Phrinta",
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
+}

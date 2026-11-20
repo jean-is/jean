@@ -1,0 +1,16 @@
+{
+  "games.frame": "Tapha: {name}",
+  "games.play": "Taphadhu",
+  "games.resume": "Itti fufi",
+  "games.paused": "Dhaabateera",
+  "games.pause": "Dhaabi",
+  "games.mute": "Sagalee dhaamsi",
+  "games.full": "Guutuu iskiriinii",
+  "games.left": "Bitaa",
+  "games.right": "Mirga",
+  "games.up": "Ol",
+  "games.down": "Gadi",
+  "games.off": "Taphni kun asitti hojjechuu hin danda'u, sababni isaas fuulonni koodii isaanii akka hojjechiisan hin hayyamamu.",
+  "games.ask": "Waa'ee {what} tapha hojjedhu.",
+  "games.example": "sardiidda halkan urjii walitti qabdu"
+}

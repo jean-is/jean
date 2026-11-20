@@ -1,0 +1,8 @@
+{
+  "backup.confirmImport": "د دې صادر شوي فایل خبرې، پروژې او فایلونه راوړئ؟ دلته به هېڅ ړنګ نه شي.",
+  "backup.imported": {
+    "one": "{count} خبرې راوړل شوې.",
+    "other": "{count} خبرې راوړل شوې."
+  },
+  "backup.chooseJson": "دا صادر شوی فایل ستاسو د Gemini فعالیت د وېب پاڼو په بڼه لري. له Google Takeout یې بیا صادر کړئ، او د My Activity لپاره JSON وټاکئ."
+}

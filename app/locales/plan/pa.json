@@ -1,0 +1,13 @@
+{
+  "plan.title": "ਯੋਜਨਾ",
+  "plan.done": "{total} ਵਿੱਚੋਂ {done} ਪੂਰੇ",
+  "plan.pending": "ਕਰਨਾ ਬਾਕੀ",
+  "plan.in_progress": "ਜਾਰੀ",
+  "plan.completed": "ਪੂਰਾ",
+  "plan.confirm": "ਇਸ ਯੋਜਨਾ ਨਾਲ ਅੱਗੇ ਵਧੀਏ?",
+  "plan.go": "ਅੱਗੇ ਵਧੋ",
+  "plan.always": "ਹਮੇਸ਼ਾ ਅੱਗੇ ਵਧੋ",
+  "plan.paused": "ਕਦਮ {count} ’ਤੇ ਰੁਕਿਆ",
+  "plan.cost": "ਹੁਣ ਤੱਕ ਲਗਭਗ {cost}",
+  "plan.keepGoing": "ਜਾਰੀ ਰੱਖੋ"
+}

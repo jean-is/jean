@@ -1,0 +1,11 @@
+{
+  "screen.close": "Kwụsị ịkesa",
+  "screen.watch": "Lee anya ma kwuo okwu",
+  "screen.watching": "Na-ele anya",
+  "screen.watched": "Akwụsịrị ile anya mgbe nkeji iri gachara.",
+  "screen.move": "Bugaa na nkuku ọzọ",
+  "screen.failed": "Enweghị ike ịkesa ihuenyo. Nwaa ọzọ.",
+  "screen.blind": "Ụbụrụ a anaghị ahụ foto. Họrọ nke na-ahụ.",
+  "screen.picture": "Ihuenyo {time}",
+  "screen.idle": "Ịkesa ihuenyo kwụsịrị mgbe nkeji iri gachara n’ejighị ya."
+}

@@ -1,0 +1,55 @@
+{
+  "search.where": "Ebe a ga-achọ",
+  "search.wikipedia": "Wikipedia",
+  "search.wikipedia.text": "N’asụsụ gị, na ihe karịrị 300 ndị ọzọ",
+  "search.vikidia": "Vikidia",
+  "search.vikidia.text": {
+    "other": "Maka ụmụaka dị afọ 8 ruo 13, n’asụsụ gị na asụsụ {count} ndị ọzọ"
+  },
+  "search.library": "Ọba akwụkwọ na-enweghị ịntanetị",
+  "search.library.text": "Wikipedia na akwụkwọ ndị ọzọ si na sava Kiwix: na kọmputa a, n’ụlọ akwụkwọ ma ọ bụ n’ebe ọrụ. Ụbụrụ ọ bụla na-achọ n’ime ya, ọbụna n’enweghị ịntanetị.",
+  "search.address": "Adreesị nke sava Kiwix",
+  "search.connect": "Jikọọ",
+  "search.connectTo": "Jikọọ {service}",
+  "search.failed": "Ọ dịghị sava Kiwix zara n’adreesị a.",
+  "search.insecure": "Naanị sava Kiwix dị na kọmputa a, ma ọ bụ n’adreesị na-amalite na https://, ka a pụrụ iru site ebe a.",
+  "search.locked": "Nzukọ gị tọrọ ya",
+  "search.parent": "Nne ma ọ bụ nna tọrọ ya",
+  "search.books": {
+    "other": "Akwụkwọ {count}"
+  },
+  "search.articles": {
+    "other": "Edemede {count}"
+  },
+  "search.vikidia.not": {
+    "other": "Maka ụmụaka dị afọ 8 ruo 13, n’asụsụ {count}, ọ bụghị nke gị"
+  },
+  "search.fromLibrary": "Site n’ọba akwụkwọ na-enweghị ịntanetị, na {languages}",
+  "search.library.in": "ọba akwụkwọ na-enweghị ịntanetị",
+  "search.library.row": "Wikipedia na akwụkwọ ndị ọzọ si na sava Kiwix, ọbụna n’enweghị ịntanetị",
+  "search.notSet": "Edozibeghị ya",
+  "search.off": "Agbanyụrụ",
+  "search.unanswered": "Ọ naghị aza",
+  "search.answering": "Ọ na-aza",
+  "search.services": "Sevisi ọchụchọ",
+  "search.searches": "Na-achọ n’ịntanetị niile, maka ụbụrụ ọ bụla",
+  "search.readHere": "Gụọ Wikipedia site ebe a",
+  "search.readHere.text": "N’ọnọdụ nke ịntanetị, na {languages}",
+  "search.now.own": "Ụbụrụ na-aza na-achọ n’ịntanetị niile n’onwe ya.",
+  "search.now.others": "Ụbụrụ ndị ọzọ na-achọ na {sources}.",
+  "search.now.every": "Ụbụrụ ọ bụla na-achọ na {sources}.",
+  "search.now.again": "Ọ bụrụ naanị Wikipedia, ụbụrụ na-aza ga-achọkwa n’ịntanetị niile ọzọ.",
+  "search.now.nowhere": "Ụbụrụ na-enweghị ike ịchọ n’ịntanetị n’onwe ya enweghị ebe ọ ga-achọ.",
+  "search.now.off": "Ọchụchọ ịntanetị agbanyụọla: ọrụ ị malitere ugbu a anaghị achọ ebe ọ bụla, ọbụna site n’ọchụchọ nke ụbụrụ n’onwe ya.",
+  "search.now.services": "Ụbụrụ ọ bụla nwekwara ike iji {services} chọọ.",
+  "search.also": "Ị nwekwara ike ịgbanyụ ọchụchọ ịntanetị site na + dị n’igbe ahụ.",
+  "search.key": "Igodo",
+  "search.engine": "ID igwe ọchụchọ",
+  "search.service.text": "Akaụntụ {service} nke gị na-achọ n’ịntanetị niile, maka ụbụrụ ọ bụla. Okwu ọchụchọ gị na-aga na {service}, nke nwere ike ịnara ụgwọ maka ha, igodo gị na-anọkwa na ngwaọrụ gị.",
+  "search.getKey": "Nweta igodo site na {service}",
+  "search.refused": "{service} jụrụ igodo a, ma ọ bụ na ọchụchọ ọ bụla afọdụghị na ya.",
+  "search.silent": "{service} azaghị. Lelee igodo ahụ, ma ọ bụ nwaa ọzọ n’oge na-adịghị anya.",
+  "search.needsGateway": "Ọ chọrọ ọnụ ụzọ",
+  "search.noGateway": "Ihe nchọgharị enweghị ike iru {service} n’onwe ya: ọ chọrọ ọnụ ụzọ na-ebuga ya ozi. Adreesị ọnụ ụzọ ahụ na-aba na {connections}.",
+  "search.google.closing": "Google anaghịzi enye igodo ọhụrụ, ọ ga-akwụsịkwa sevisi a na {date}."
+}

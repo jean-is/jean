@@ -1,0 +1,18 @@
+{
+  "interactive.page": "Fuula hirmaachisaa",
+  "interactive.map": "Kaartaa",
+  "interactive.mapShow": "Kaartaa agarsiisi",
+  "interactive.mapFrom": "Kaartaan marsariitii {site} irraa dhufa, innis bakkeewwan agarsiifaman ni arga.",
+  "interactive.inWords": "Akka barreeffamaatti ilaali",
+  "interactive.diagramSteps": "Tarkaanfii hundaa fi waan isa hordofu ilaali",
+  "interactive.diagramFrom": "Fakkii {first} irraa jalqabu, jechaan armaan gaditti",
+  "interactive.diagramWords": "Fakkii, jechaan armaan gaditti",
+  "interactive.mapNamed": "Kaartaa: {places}",
+  "interactive.zoomIn": "Guddisi",
+  "interactive.zoomOut": "Xiqqeessi",
+  "interactive.mapCredits": "Galata kaartaa",
+  "interactive.askApp": "Waa'ee {what} appii xiqqaa hojjedhu.",
+  "interactive.appExample": "kaffaltii hiriyoota gidduutti qooduu",
+  "interactive.noCollection": "{name}: tuutni maqaa sanaa asitti hin jiru.",
+  "interactive.unread": "{name}: “{where}” dhaan calaluu hin danda'u."
+}

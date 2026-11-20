@@ -1,0 +1,20 @@
+{
+  "camera.open": "Bonisa ngekhamera",
+  "camera.close": "Vala ikhamera",
+  "camera.turn": "Phendula ikhamera",
+  "camera.light": "Ukukhanya",
+  "camera.task": "Bonisa umsebenzi",
+  "camera.closely": "Bheka eduze",
+  "camera.kept": "Lesi sithombe sihamba nalokho ozokusho okulandelayo",
+  "camera.drop": "Ungasithumeli lesi sithombe",
+  "camera.watch": "Buka futhi ukhulume",
+  "camera.watching": "Iyabuka",
+  "camera.watched": "Iyekile ukubuka ngemuva kwemizuzu eyishumi.",
+  "camera.paused": "Ikhamera imisiwe. Thepha ukuze uqhubeke.",
+  "camera.denied": "Vumela ikhamera esipheqululini sakho ukuze ubonise izinto lapha.",
+  "camera.failed": "Ikhamera ayiqalanga. Zama futhi.",
+  "camera.blind": "Le ngqondo ayikwazi ukubona izithombe. Khetha ekwaziyo.",
+  "camera.picture": "Ikhamera {time}",
+  "camera.move": "Hambisa kwelinye ikhona",
+  "camera.idle": "Ikhamera ivalekile ngemuva kwemizuzu eyishumi ingasetshenziswa."
+}

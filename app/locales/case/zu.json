@@ -1,0 +1,24 @@
+{
+  "case.group.files": "Amafayela namadokhumenti",
+  "case.group.remember": "Ukukhumbula nokuthola",
+  "case.group.again": "Ukukwenza futhi",
+  "case.group.web": "Iwebhu nezinsiza zakho",
+  "case.group.bigger": "Izingqondo nemisebenzi emikhulu",
+  "case.group.voice": "Izwi nezaziso",
+  "case.group.keep": "Ukugcina nokwabelana",
+  "case.rest": "Okusele kuza lapho isikhathi sikudinga, futhi ngakunye kusho ukuthi kanjani.",
+  "case.waiting": {
+    "one": "Okulinde okuthile kuwe: {count}, kumakwe ngezansi.",
+    "other": "Okulinde okuthile kuwe: {count}, kumakwe ngezansi."
+  },
+  "case.of": "{count} / {total}",
+  "case.so": "{done} / {goal} kuze kube manje",
+  "case.download": "{size} okulandwayo",
+  "case.unset": "Akusethiwe",
+  "case.unfound": "Akukatholakali",
+  "case.came": "Indlela okufike ngayo",
+  "case.offText": "Kuvaliwe: umsizi {name} akakunikezi, futhi akukho okwakho okubonakalayo noma okulayishwayo.",
+  "case.ask": "Vala okuthi {cap}? Umsizi {name} uvuleka futhi lapho ubukhona, futhi okwenziwe yikho kuyagcinwa.",
+  "case.cancel": "Khansela",
+  "case.allHint": "Noma yini okufanele ilandwe isakubuza kuqala."
+}

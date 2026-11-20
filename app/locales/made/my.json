@@ -1,0 +1,20 @@
+{
+  "made.open": "ဖွင့်",
+  "made.kind.document": "Word စာရွက်စာတမ်း",
+  "made.kind.sheet": "စာရင်းဇယား",
+  "made.kind.page": "ဝဘ်စာမျက်နှာ",
+  "made.kind.drawing": "ပုံဆွဲ",
+  "made.kind.design": "ဒီဇိုင်း",
+  "made.kind.game": "ဂိမ်း",
+  "made.kind.text": "စာ",
+  "made.copiedPictures": "ကူးပြီး။ ပုံများ မကူးထည့်ရလျှင် တစ်ပုံစီကို ၎င်း၏ ကူးယူ ခလုတ်ဖြင့် ကူးပါ။",
+  "made.share": "မျှဝေ",
+  "made.csvTitle": "ဇယား (CSV)",
+  "made.csvNumbered": "ဇယား {count} (CSV)",
+  "made.tableFile": "ဇယား {count}",
+  "made.print": "ပုံနှိပ်",
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
+}

@@ -1,0 +1,9 @@
+{
+  "layouts.recommended": "ਸੁਝਾਇਆ ਗਿਆ",
+  "layouts.note": "ਨੋਟ",
+  "layouts.tip": "ਸੁਝਾਅ",
+  "layouts.important": "ਜ਼ਰੂਰੀ",
+  "layouts.warning": "ਚੇਤਾਵਨੀ",
+  "layouts.caution": "ਸਾਵਧਾਨ",
+  "layouts.ticked": "{total} ਵਿੱਚੋਂ {done}"
+}

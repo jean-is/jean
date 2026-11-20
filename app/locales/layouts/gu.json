@@ -1,0 +1,9 @@
+{
+  "layouts.recommended": "ભલામણ કરેલ",
+  "layouts.note": "નોંધ",
+  "layouts.tip": "ટિપ",
+  "layouts.important": "મહત્વનું",
+  "layouts.warning": "ચેતવણી",
+  "layouts.caution": "સાવધાન",
+  "layouts.ticked": "{total} માંથી {done}"
+}

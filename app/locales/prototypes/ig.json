@@ -1,0 +1,21 @@
+{
+  "prototypes.frame": "{name}, nnwale",
+  "prototypes.board": "Peeji niile",
+  "prototypes.pages": "Peeji nke {name}",
+  "prototypes.page": "Peeji {n} n’ime {count}",
+  "prototypes.leads": "Na-eduga na {pages}",
+  "prototypes.changed": "{name} gbanwere ya",
+  "prototypes.back": "Laghachi",
+  "prototypes.restart": "Bido ọzọ",
+  "prototypes.press": "Pịa “{control}”",
+  "prototypes.own": "Maka nnwale a",
+  "prototypes.build": "Wuo ya",
+  "prototypes.building": "Wuo “{name}” n’ezie, dị ka ngwa na-arụ ọrụ.",
+  "prototypes.zoomOut": "Mee ka ọ pere mpe",
+  "prototypes.zoomIn": "Mee ka ọ buo ibu",
+  "prototypes.fit": "Mee ka ọ kwado",
+  "prototypes.actual": "Buo ya ruo {level}",
+  "prototypes.zip": "Nnwale dị ka zip",
+  "prototypes.ask": "Mee nnwale nke {what}.",
+  "prototypes.example": "ngwa ndebe oge maka ụlọ ịkpụ isi m"
+}

@@ -1,0 +1,7 @@
+{
+  "backup.confirmImport": "ဤ export ၏ စကားဝိုင်း၊ ပရောဂျက်နှင့် ဖိုင်များကို ယူလာမလား။ ဤနေရာမှ ဘာမှ မဖျက်ပါ။",
+  "backup.imported": {
+    "other": "စကားဝိုင်း {count} ခု ယူလာပြီး။"
+  },
+  "backup.chooseJson": "ဤ export တွင် သင့် Gemini လှုပ်ရှားမှုကို ဝဘ်စာမျက်နှာအဖြစ် ထားသည်။ Google Takeout မှ My Activity အတွက် JSON ရွေး၍ ထပ် export လုပ်ပါ။"
+}

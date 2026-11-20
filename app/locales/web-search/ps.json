@@ -1,0 +1,59 @@
+{
+  "search.where": "چېرته ولټول شي",
+  "search.wikipedia": "Wikipedia",
+  "search.wikipedia.text": "ستاسو په ژبه، او له ۳۰۰ څخه په زیاتو نورو کې",
+  "search.vikidia": "Vikidia",
+  "search.vikidia.text": {
+    "one": "د ۸ تر ۱۳ کلنو لپاره، ستاسو په ژبه او {count} بله کې",
+    "other": "د ۸ تر ۱۳ کلنو لپاره، ستاسو په ژبه او {count} نورو کې"
+  },
+  "search.library": "آفلاین کتابتون",
+  "search.library.text": "Wikipedia او نور کتابونه له Kiwix سرور څخه: په دې کمپیوټر، په ښوونځي یا په کار کې. هر مغز پکې لټون کوي، حتی بې انټرنېټه.",
+  "search.address": "د Kiwix سرور پته",
+  "search.connect": "وصلول",
+  "search.connectTo": "وصلول: {service}",
+  "search.failed": "په دې پته هېڅ Kiwix سرور ځواب ورنه کړ.",
+  "search.insecure": "له دې ځایه یوازې په دې کمپیوټر کې Kiwix سرور ته رسېدل کېږي، یا داسې پتې ته چې په https:// پیلېږي.",
+  "search.locked": "ستاسو د ادارې له خوا ټاکل شوی",
+  "search.parent": "د مور یا پلار له خوا ټاکل شوی",
+  "search.books": {
+    "one": "{count} کتاب",
+    "other": "{count} کتابونه"
+  },
+  "search.articles": {
+    "one": "{count} مقاله",
+    "other": "{count} مقالې"
+  },
+  "search.vikidia.not": {
+    "one": "د ۸ تر ۱۳ کلنو لپاره، په {count} ژبه کې، نه ستاسو په ژبه",
+    "other": "د ۸ تر ۱۳ کلنو لپاره، په {count} ژبو کې، نه ستاسو په ژبه"
+  },
+  "search.fromLibrary": "له آفلاین کتابتون، په دې ژبو: {languages}",
+  "search.library.in": "آفلاین کتابتون",
+  "search.library.row": "Wikipedia او نور کتابونه له Kiwix سرور څخه، حتی بې انټرنېټه",
+  "search.notSet": "نه دی جوړ شوی",
+  "search.off": "بند",
+  "search.unanswered": "ځواب نه ورکوي",
+  "search.answering": "ځواب ورکوي",
+  "search.services": "د لټون خدمتونه",
+  "search.searches": "ټول وېب لټوي، د هر مغز لپاره",
+  "search.readHere": "Wikipedia له دې ځایه لوستل",
+  "search.readHere.text": "د وېب د هغې پر ځای، په دې ژبو: {languages}",
+  "search.now.own": "هغه مغز چې ځواب ورکوي، پخپله ټول وېب لټوي.",
+  "search.now.others": "نور مغزونه په دې کې ګوري: {sources}.",
+  "search.now.every": "هر مغز په دې کې ګوري: {sources}.",
+  "search.now.again": "یوازې د Wikipedia سره، هغه مغز چې ځواب ورکوي بیا ټول وېب لټوي.",
+  "search.now.nowhere": "هغه مغز چې پخپله وېب نه شي لټولای، د کتلو ځای نه لري.",
+  "search.now.off": "وېب لټون بند دی: هغه دندې چې اوس یې پیلوئ، هېڅ ځای نه لټوي، حتی د مغز په خپل لټون هم نه.",
+  "search.now.services": "هر مغز د دې په مرسته هم لټون کولای شي: {services}.",
+  "search.also": "وېب لټون د بکس له + څخه هم بندېدای شي.",
+  "search.key": "کیلي",
+  "search.engine": "د لټون انجن ID",
+  "search.service.text": "ستاسو خپل {service} حساب د هر مغز لپاره ټول وېب لټوي. ستاسو د لټون ټکي {service} ته ځي، چې کېدای شي پیسې پرې واخلي، او ستاسو کیلي ستاسو په خپلو وسیلو پاتې کېږي.",
+  "search.getKey": "له {service} څخه کیلي اخیستل",
+  "search.refused": "{service} دا کیلي رد کړه، یا پرې نور لټونونه نه دي پاتې.",
+  "search.silent": "{service} ځواب ورنه کړ. کیلي وګورئ، یا لږ وروسته بیا هڅه وکړئ.",
+  "search.needsGateway": "دروازې ته اړتیا لري",
+  "search.noGateway": "براوزر پخپله {service} ته نه شي رسېدلای: داسې دروازې ته اړتیا ده چې ورته یې ولېږدوي. د دروازې پته په {connections} کې ځي.",
+  "search.google.closing": "Google نوې کیلي نه ورکوي، او دا خدمت په {date} پای ته رسوي."
+}

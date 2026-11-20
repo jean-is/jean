@@ -1,0 +1,15 @@
+{
+  "sync.text": "Yenza ifolda entsha ku-OneDrive, Dropbox, iCloud Drive noma Google Drive, uyikhethe lapha, bese ukhetha ifolda efanayo kwamanye amakhompyutha akho. Imisebenzi, amafayela nenkumbulo kuyakulandela; izilungiselelo nokhiye kuhlala kukhompyutha ngayinye.",
+  "sync.choose": "Khetha ifolda…",
+  "sync.syncing": "Kuvumelaniswa nefolda {folder}…",
+  "sync.done": "Kuvumelaniswe nefolda {folder} · {when}",
+  "sync.safe": "Imisebenzi yakho, amafayela nenkumbulo nakho kusefoldeni {folder}, kuphephile ngisho noma isiphequluli sakho sikusula lapha.",
+  "sync.waiting": "Vumela ukufinyelela efoldeni {folder} ukuze uqhubeke uvumelanisa namanye amakhompyutha akho.",
+  "sync.allow": "Vumela ukufinyelela",
+  "sync.failed": "Ifolda {folder} ayifinyeleleki. Ingabe isekhona kule khompyutha?",
+  "sync.refused": "Ifolda {folder} inamanye amafayela. Khetha ifolda entsha engenalutho, noma leyo ovumelanisa nayo kwenye ikhompyutha.",
+  "sync.now": "Vumelanisa manje",
+  "sync.show": "Bonisa ifolda {folder} kule khompyutha",
+  "sync.stop": "Yeka ukuvumelanisa",
+  "sync.off": "Kule khompyutha kuphela"
+}

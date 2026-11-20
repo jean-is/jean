@@ -1,0 +1,59 @@
+{
+  "search.where": "Eessatti ilaaluu",
+  "search.wikipedia": "Wikipedia",
+  "search.wikipedia.text": "Afaan keetii fi afaanota biroo 300 ol keessatti",
+  "search.vikidia": "Vikidia",
+  "search.vikidia.text": {
+    "one": "Umrii 8 hanga 13tiif, afaan keetii fi afaan biraa {count} keessatti",
+    "other": "Umrii 8 hanga 13tiif, afaan keetii fi afaanota biroo {count} keessatti"
+  },
+  "search.library": "Mana kitaabaa interneetii malee",
+  "search.library.text": "Wikipedia fi kitaabota biroo sarvara Kiwix irraa: kompiitara kana irratti, mana barumsaa ykn hojii irratti. Sammuun hundi, interneetii malees, ni barbaada.",
+  "search.address": "Teessoo sarvara Kiwix",
+  "search.connect": "Walqabsiisi",
+  "search.connectTo": "Walqabsiisi: {service}",
+  "search.failed": "Teessoo kanatti sarvarri Kiwix tokkollee hin deebisne.",
+  "search.insecure": "Sarvara Kiwix kompiitara kana irra jiru, ykn teessoo https:// jalqabu irra jiru qofa asii bira ga'uun danda'ama.",
+  "search.locked": "Dhaabbata keetiin kaa'ame",
+  "search.parent": "Maatiin kaa'ame",
+  "search.books": {
+    "one": "kitaaba {count}",
+    "other": "kitaabota {count}"
+  },
+  "search.articles": {
+    "one": "barreeffama {count}",
+    "other": "barreeffamoota {count}"
+  },
+  "search.vikidia.not": {
+    "one": "Umrii 8 hanga 13tiif, afaan {count} keessatti, kan kee miti",
+    "other": "Umrii 8 hanga 13tiif, afaanota {count} keessatti, kan kee miti"
+  },
+  "search.fromLibrary": "Mana kitaabaa interneetii malee irraa, afaan: {languages}",
+  "search.library.in": "mana kitaabaa interneetii malee",
+  "search.library.row": "Wikipedia fi kitaabota biroo sarvara Kiwix irraa, interneetii malees",
+  "search.notSet": "Hin qophoofne",
+  "search.off": "Dhaameera",
+  "search.unanswered": "Hin deebisu",
+  "search.answering": "Deebisaa jira",
+  "search.services": "Tajaajiloota barbaachaa",
+  "search.searches": "Sammuu kamiifuu interneetii guutuu barbaada",
+  "search.readHere": "Wikipedia asii dubbisi",
+  "search.readHere.text": "Kan interneetii bakka, afaan: {languages}",
+  "search.now.own": "Sammuun deebisu ofii isaatii interneetii guutuu barbaada.",
+  "search.now.others": "Sammuuwwan biroo kana keessa ilaalu: {sources}.",
+  "search.now.every": "Sammuun hundi kana keessa ilaala: {sources}.",
+  "search.now.again": "Wikipedia qofaan, sammuun deebisu irra deebi'ee interneetii guutuu barbaada.",
+  "search.now.nowhere": "Sammuun ofii isaatii interneetii barbaaduu hin dandeenye bakka itti ilaalu hin qabu.",
+  "search.now.off": "Barbaachi interneetii dhaameera: hojiiwwan amma jalqabdu bakka tokkollee hin barbaadan, barbaacha sammuu ofii isaatiinillee.",
+  "search.now.services": "Sammuun hundi kanaanis barbaaduu danda'a: {services}.",
+  "search.also": "Barbaacha interneetii saanduqa keessaa + irraas dhaamsuun ni danda'ama.",
+  "search.key": "Furtuu",
+  "search.engine": "ID meeshaa barbaachaa",
+  "search.service.text": "Herregni kee kan {service} sammuu hundaaf interneetii guutuu barbaada. Jechoonni barbaacha keetii gara {service} deemu, kaffaltii gaafachuu danda'a; furtuun kee meeshaalee kee irra hafa.",
+  "search.getKey": "Furtuu {service} irraa argadhu",
+  "search.refused": "Furtuun kun {service} biratti hin fudhatamne, ykn barbaachi irratti hafe hin jiru.",
+  "search.silent": "{service} irraa deebiin hin dhufne. Furtuu ilaali, ykn xiqqoo booda irra deebi'i yaali.",
+  "search.needsGateway": "Karra barbaada",
+  "search.noGateway": "Biraawuzarri ofumaan {service} bira ga'uu hin danda'u: karra gara isaatti dabarsu barbaada. Teessoon karrichaa {connections} keessa galfama.",
+  "search.google.closing": "Google furtuu haaraa hin kennu, tajaajila kana guyyaa {date} xumura."
+}

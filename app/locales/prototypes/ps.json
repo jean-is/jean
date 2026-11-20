@@ -1,0 +1,21 @@
+{
+  "prototypes.frame": "{name}، یو پروټوټایپ",
+  "prototypes.board": "ټولې پاڼې",
+  "prototypes.pages": "پاڼې: {name}",
+  "prototypes.page": "پاڼه {n} له {count}",
+  "prototypes.leads": "ورځي: {pages}",
+  "prototypes.changed": "بدلون ورکوونکی: {name}",
+  "prototypes.back": "شاته",
+  "prototypes.restart": "له سره پیلول",
+  "prototypes.press": "«{control}» ووهئ",
+  "prototypes.own": "د دې پروټوټایپ لپاره",
+  "prototypes.build": "جوړول یې",
+  "prototypes.building": "«{name}» په رښتیا جوړ کړه، د داسې اپ په توګه چې کار وکړي.",
+  "prototypes.zoomOut": "کوچنی کول",
+  "prototypes.zoomIn": "لوی کول",
+  "prototypes.fit": "برابرول",
+  "prototypes.actual": "لویوالی: {level}",
+  "prototypes.zip": "پروټوټایپ د zip په توګه",
+  "prototypes.ask": "د دې لپاره یو پروټوټایپ جوړ کړه: {what}.",
+  "prototypes.example": "زما د ویښتو سالون لپاره د وخت نیولو اپ"
+}

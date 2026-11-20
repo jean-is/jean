@@ -316,6 +316,7 @@ test('a layout mirrors for a language written right to left, and voices are thos
   assert.ok(Math.abs(mirrored[0] - (1480 - picture[0] - picture[2])) < 0.01)
   assert.deepEqual(voicesFor('el'), ['calm'])
   assert.deepEqual(voicesFor('yo'), ['friendly', 'calm'])
+  assert.deepEqual(voicesFor('ig'), ['friendly', 'calm'])
   assert.deepEqual(voicesFor('ru'), ['friendly', 'elegant', 'bold', 'calm'])
   assert.deepEqual(voicesFor('fr'), ['friendly', 'elegant', 'bold', 'calm', 'handwritten'])
   assert.equal(designOf(BOOK, LEA, { ...AT, lang: 'el' }).voice, 'calm')

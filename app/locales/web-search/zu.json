@@ -1,0 +1,59 @@
+{
+  "search.where": "Lapho kufanele kubhekwe khona",
+  "search.wikipedia": "Wikipedia",
+  "search.wikipedia.text": "Ngolimi lwakho, nangezinye ezingaphezu kuka-300",
+  "search.vikidia": "Vikidia",
+  "search.vikidia.text": {
+    "one": "Yabaneminyaka engu-8 kuya ku-13, ngolimi lwakho nezinye izilimi: {count}",
+    "other": "Yabaneminyaka engu-8 kuya ku-13, ngolimi lwakho nezinye izilimi: {count}"
+  },
+  "search.library": "Umtapo wolwazi ongadingi inthanethi",
+  "search.library.text": "I-Wikipedia nezinye izincwadi ezivela kuseva ye-Kiwix: kule khompyutha, esikoleni noma emsebenzini. Yonke ingqondo iyasesha kuwo, ngisho ngaphandle kwe-inthanethi.",
+  "search.address": "Ikheli leseva ye-Kiwix",
+  "search.connect": "Xhuma",
+  "search.connectTo": "Xhuma insiza {service}",
+  "search.failed": "Ayikho iseva ye-Kiwix ephendulile kuleli kheli.",
+  "search.insecure": "Iseva ye-Kiwix ekule khompyutha kuphela, noma ekhelini eliqala nge-https://, engafinyelelwa ukusuka lapha.",
+  "search.locked": "Kusethwe yinhlangano yakho",
+  "search.parent": "Kusethwe ngumzali",
+  "search.books": {
+    "one": "Izincwadi: {count}",
+    "other": "Izincwadi: {count}"
+  },
+  "search.articles": {
+    "one": "Izihloko: {count}",
+    "other": "Izihloko: {count}"
+  },
+  "search.vikidia.not": {
+    "one": "Yabaneminyaka engu-8 kuya ku-13, izilimi: {count}, hhayi olwakho",
+    "other": "Yabaneminyaka engu-8 kuya ku-13, izilimi: {count}, hhayi olwakho"
+  },
+  "search.fromLibrary": "Kusuka emtapweni wolwazi ongadingi inthanethi, ngezilimi: {languages}",
+  "search.library.in": "umtapo wolwazi ongadingi inthanethi",
+  "search.library.row": "I-Wikipedia nezinye izincwadi ezivela kuseva ye-Kiwix, ngisho ngaphandle kwe-inthanethi",
+  "search.notSet": "Akusethiwe",
+  "search.off": "Kuvaliwe",
+  "search.unanswered": "Akuphenduli",
+  "search.answering": "Kuyaphendula",
+  "search.services": "Izinsiza zokusesha",
+  "search.searches": "Isesha iwebhu yonke, yanoma iyiphi ingqondo",
+  "search.readHere": "Funda i-Wikipedia ukusuka lapha",
+  "search.readHere.text": "Esikhundleni seyewebhu, ngezilimi: {languages}",
+  "search.now.own": "Ingqondo ephendulayo isesha iwebhu yonke ngokwayo.",
+  "search.now.others": "Ezinye izingqondo zibheka ku: {sources}.",
+  "search.now.every": "Yonke ingqondo ibheka ku: {sources}.",
+  "search.now.again": "Uma kuyi-Wikipedia kuphela, ingqondo ephendulayo isesha iwebhu yonke futhi.",
+  "search.now.nowhere": "Ingqondo engakwazi ukusesha iwebhu ngokwayo ayinandawo yokubheka.",
+  "search.now.off": "Ukusesha kuwebhu kuvaliwe: imisebenzi oyiqala manje ayiseshi ndawo, ngisho nangokusesha kwengqondo uqobo.",
+  "search.now.services": "Yonke ingqondo ingasesha futhi ngezinsiza: {services}.",
+  "search.also": "Ukusesha kuwebhu kungavalwa futhi ku-+ ebhokisini.",
+  "search.key": "Ukhiye",
+  "search.engine": "I-ID yenjini yokusesha",
+  "search.service.text": "I-akhawunti yakho yensiza {service} isesha iwebhu yonke, yayo yonke ingqondo. Amagama akho okusesha aya kunsiza {service}, engawakhokhisa, futhi ukhiye wakho uhlala kumadivayisi akho.",
+  "search.getKey": "Thola ukhiye kunsiza {service}",
+  "search.refused": "Insiza {service} yenqabe lo khiye, noma ayisenakho ukusesha okusele kuwo.",
+  "search.silent": "Insiza {service} ayiphendulanga. Hlola ukhiye, noma uzame futhi ngemuva kwesikhashana.",
+  "search.needsGateway": "Kudinga isango",
+  "search.noGateway": "Isiphequluli asikwazi ukufinyelela insiza {service} sisodwa: kudinga isango elidlulisela kuyo. Ikheli lesango liya ku: {connections}.",
+  "search.google.closing": "I-Google ayinikezi okhiye abasha, futhi iqeda le nsiza ngosuku: {date}."
+}

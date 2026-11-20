@@ -1,0 +1,11 @@
+{
+  "screen.close": "Yeka ukwabelana",
+  "screen.watch": "Buka futhi ukhulume",
+  "screen.watching": "Iyabuka",
+  "screen.watched": "Iyekile ukubuka ngemuva kwemizuzu eyishumi.",
+  "screen.move": "Hambisa kwelinye ikhona",
+  "screen.failed": "Isikrini asikwazanga ukwabelwana. Zama futhi.",
+  "screen.blind": "Le ngqondo ayikwazi ukubona izithombe. Khetha ekwaziyo.",
+  "screen.picture": "Isikrini {time}",
+  "screen.idle": "Ukwabelana ngesikrini kumile ngemuva kwemizuzu eyishumi kungasetshenziswa."
+}

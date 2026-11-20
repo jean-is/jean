@@ -192,7 +192,7 @@ async function take (browser, encoder, base, lang, form, shots, pdf) {
     await page.evaluate(([path, title]) => import('/caps/share/share.js').then((share) => share.openShare({ path, title })), [paths.chart, shots.chart.title])
     const dialog = page.locator('app-share-dialog dialog[open]')
     await dialog.locator('button.primary[form="share-form"]').click()
-    await dialog.locator('input.share-link').waitFor()
+    await dialog.locator('.link-field input').waitFor()
     await page.waitForTimeout(300)
     await save(share)
     if (errors.length) throw new Error(`${lang} ${form}: ${errors.join('; ')}`)

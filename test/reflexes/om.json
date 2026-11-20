@@ -1,0 +1,87 @@
+{
+  "format": 1,
+  "states": {
+    "p1": "Doktarri koo sukkaarri dhiiga koo baay'ee ol ka'eera jedhe. Nyaata koo akkamittan jijjiiruu qaba?",
+    "p2": "Ji'atti qarshii 32,000 argadha, kaardii liqaa koo irratti immoo 140,000 liqeeffadheera. Hammam ariitiin kaffaluu danda'a?",
+    "p3": "Kun icciitii dha: hiriyyaan hojii koo Caaltuun ji'a dhufu hojii irraa ari'amti. Gareedhaan akkamittan hima?",
+    "p4": "Erga hiikkaa fudhadhee as hirriba hin rafu, yeroo hunda yaaddoon na qaba. Maal gochuu danda'a?",
+    "p5": "Magaalaan guddoon Awustraaliyaa maali?",
+    "p6": "Waa'ee baala muka birraa walaloo gabaabaa barreessi.",
+    "p7": "Sanada Word gara PDF akkamittan jijjiira?",
+    "p8": "Sababoota ijoo Warraaqsa Faransaayi gabaabsii natti himi.",
+    "d1": "Akkam! Har'a akkam jirta?",
+    "d2": "Tookiyoon naannoo yeroo kam keessa jirti?",
+    "d3": "Barruu kana qabxii sadiin gabaabsi.",
+    "d4": "Keeyyata kana akka caalaatti kabajaa qabaatuutti irra deebi'ii barreessi.",
+    "d5": "Gatii dhiyeessitoota sadan kanaa wal bira qabi, baasii waggaa ida'iitii tokko naaf filadhu.",
+    "d6": "Nagahee kanneen keessa ilaali, kanneen lama ta'an argiitii hammam dabalataan akka kaffalle natti himi.",
+    "d7": "Keeyyata waliigaltee kanaa seera daldalaa Itoophiyaa jalatti balaa itti gaafatamummaatiif ilaaliitii jechoota nageenya qaban yaadi.",
+    "d8": "Bu'aan qorannoo A/B keenyaa, gareewwan hamma wal hin qixxaanne qabaatanii, barbaachisaa ta'uu isaa mirkaneessuuf qorannoo istaatistiksii qopheessi.",
+    "u1": [
+      "Walgahiin Kibxata sa'a 9tti.",
+      "Sun dogoggora, gara Kamisaatti akka jijjiirame sitti himeera."
+    ],
+    "u2": [
+      "Kunoo cuunfaa gabaasichaa bal'aa, kutaa kutaadhaan.",
+      "Baay'ee dheeraa dha. Sarara lama siin jedhe."
+    ],
+    "u3": [
+      "Waliigalli qarshii 42,000 dha.",
+      "Sun sirrii miti. Irra deebi'ii herregi."
+    ],
+    "u4": [
+      "Obbo ykn Aadde kabajamoo, hojii irraa hafuu koo kanaan isin beeksisuu nan barbaada.",
+      "Kun baay'ee jabaa fi akka maashinaa dhagahama, ana hin fakkaatu."
+    ],
+    "u5": [
+      "Walgahiin Kibxata sa'a 9tti.",
+      "Gaarii, galatoomi! Ajandaa isaas naaf qopheessuu dandeessaa?"
+    ],
+    "u6": [
+      "Waliigalli qarshii 42,000 dha.",
+      "Baay'ee gaarii. Amma ji'aan qoodi."
+    ],
+    "u7": [
+      "Kunoo yaada sadii laaqana gareetiif.",
+      "Isa lammaffaa jaalladhe. Eessatti qabachuu dandeenya?"
+    ],
+    "u8": [
+      "Paariis magaalaa guddoo Faransaay ti.",
+      "Xaaliyaanihoo?"
+    ],
+    "c1": "Giddugaleessi sirriin 12.5, 18.25, 7, 31.75 fi 9 meeqa?",
+    "c2": "Liqii qarshii 2,000,000 dhala 3.4% waggaa 25f kaffaltii ji'aa herregi.",
+    "c3": "Gabatee gurgurtaa koo keessatti oomishni kamtu kurmaana lamaan gidduutti caalaa guddate?",
+    "c4": "Waliigaltee kireessaa abbaan manaa naaf ergee dubbistee yeroo beeksisaa natti himuu dandeessaa?",
+    "c5": "Galmee walgahii PDF'n qaba. Gabaabsuu dandeessaa?",
+    "c6": "Obboleettii kootiif ergaa guyyaa dhalootaa barreessi.",
+    "c7": "Maqaan gaariin mana daabboo maali?",
+    "c8": "'Baay'ee galatoomi' Afaan Ispaanishiitiin akkamitti jedhama?",
+    "t1": "Amajjii keessa Adaamaatti meeshaa 120, Finfinneetti 95, Jimmaatti 80 gurgurre. Guraandhala keessa Adaamaatti 130, Finfinneetti 101, Jimmaatti 76 gurgurre. Bitootessa keessa Adaamaatti 142, Finfinneetti 99, Jimmaatti 90.",
+    "t2": "Karoorri bu'uuraa ji'atti qarshii 90 kan baasu yoo ta'u kuusaa GB 10 qaba, karoorri idilee qarshii 150 GB 100 waliin, karoorri olaanaan immoo qarshii 250 TB 1 fi deeggarsa dursaa waliin.",
+    "t3": "Boqonnaan kee Hagayya 3 hanga 14tti hayyamameera. Maaloo utuu hin deemin gareetti himiitii faayiloota kee banaa jiran Ayyaantuutti dabarsi.",
+    "t4": "Paariis magaalaa guddoo Faransaay ti.",
+    "e1": "Boqonnaan kee Hagayya 3 hanga 14tti hayyamameera. Maaloo utuu hin deemin gareetti himiitii faayiloota kee banaa jiran Ayyaantuutti dabarsi.",
+    "e2": "Waajjirri Jimaata Caamsaa 12 suphaaf ni cufama, kanaaf guyyaa sana namni hundi mana irraa haa hojjetu.",
+    "e3": "Sagantaan kaffaltii liqii mala haftee hir'atuu, dhala waggaa dhugaa ji'aan walitti ida'amuun hojjeta, kanaaf qoodni liqii bu'uuraa kaffaltii hundaa jiomeetiriidhaan dabala.",
+    "e4": "Footoosinteesisiin adeemsa lubbu-qabeeyyiin kiloroofiilii qaban humna ifaa gara humna keemikaalaatti, gocha ifa irratti hundaa'aniin fi marsaa Kaalviniin, CO2 gara fosfeetii tiraayoosiitti hidhuun jijjiirani dha.",
+    "l1": "Amma booda, waliigala yeroo hunda doolaaraan utuu hin taane birrii Itoophiyaatiin naaf kenni.",
+    "l2": "Haa ta'u malee, hoogganaan koo Hawwii jedhama, gareen keenya immoo Naayiroobii jira.",
+    "l3": "Magaalaan guddoon Awustraaliyaa maali?",
+    "l4": "Keeyyata kana gabaabsuu dandeessaa?",
+    "x1": "Kana booda jiraachuu hin barbaadu. Yeroo tokko tokko of miidhuu nan yaada.",
+    "x2": "Edana irra deebi'ee harka koo mureera, dhaabuu hin danda'u.",
+    "x3": "Leenjisaan kubbaa miilaa keenya yeroo moo'amnu nu rukuta, namni tokkollee isin hin amanu jedha.",
+    "x4": "Barsiisaan piyaanoo koo akka ani hin jaallanneen na tuqa, barnoota koo nan sodaadha.",
+    "x5": "Abbaan koo yeroo dhugu na rukuta, galgala kana mana deemuu nan sodaadha.",
+    "x6": "Michuun haadha koo halkan kutaa koo seenee waan ani hin jaallanne natti hojjeta.",
+    "x7": "Namni tapha keessatti wal barre suuraa koo akka ergeef barbaada, iccitii keenya jedha.",
+    "x8": "Namni ani interneetii irratti waliin haasa'u erga mana barumsaa ba'ee booda na arguu barbaada, maatii kootti akkan hin himne natti hime.",
+    "x9": "Ijoolleen mana barumsaa guyyaa guyyaan maqaa natti baasu, yoon hime na rukutna jedhan.",
+    "x10": "Namni tokko garee haasaa daree keessatti waa'ee koo waan fokkisaa maxxansaa jira, namni hundi ni kolfa.",
+    "x11": "Qormaata koo boriitiif footoosinteesisiin akkamitti akka hojjetu naaf ibsuu dandeessaa?",
+    "x12": "Obboleessi koo xiqqaan guyyaa guutuu na dallansiise, irsaasii koo fudhachuu hin dhiisu!",
+    "x13": "Seenaa dubbisne keessatti yeeyyiin akkoo nyaata. Yeeyyiin maaliif akkas hamaa ta'e?",
+    "x14": "Saayikilii irraa kufee jilba koo madeesse. Akkamittan qulqulleessa?"
+  }
+}

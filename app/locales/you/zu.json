@@ -1,0 +1,42 @@
+{
+  "knows.instructions": "Imiyalelo yakho",
+  "knows.instructionsPlaceholder": "Isibonelo: Phendula ngesiZulu. Kwenze kube kufushane. Nginebhikawozi.",
+  "knows.noticed": "Lokho umsizi {name} akuqaphele",
+  "knows.forYou": "Yonke indawo",
+  "knows.forProject": "Ephrojekthini {project}",
+  "knows.edit": "Hlela lo mugqa",
+  "knows.from": "Vula umsebenzi okuvela kuwo",
+  "knows.promote": "Kwenze umyalelo",
+  "knows.promoted": "Manje sekungomunye wemiyalelo yakho.",
+  "knows.nothing": "Akukho okwamanje.",
+  "you.line": "Imiyalelo yakho nalokho umsizi {name} akuqaphele kuthunyelwa nomsebenzi ngamunye engqondweni ephendulayo.",
+  "you.none": "Akukho okwamanje ngawe. Lokho okubhala lapha kufundwa ekuqaleni komsebenzi ngamunye.",
+  "you.cut": {
+    "one": "Imigqa emidala engasafundwa: {count}. Ukuze umugqa uqhubeke ufundwa, wenze umyalelo.",
+    "other": "Imigqa emidala engasafundwa: {count}. Ukuze umugqa uqhubeke ufundwa, wenze umyalelo."
+  },
+  "you.nameText": "Lokho umsizi {name} akubiza ngakho. Akuthunyelwa neze engqondweni.",
+  "you.edit": "Hlela",
+  "you.cancel": "Khansela",
+  "you.more": "Okunye kwalo mugqa",
+  "you.empty": "Yini umsizi {name} okufanele ahlale eyikhumbula? Umsebenzi wakho, izilimi zakho, indlela othanda ngayo izimpendulo.",
+  "you.start.work": "Okwenzayo",
+  "you.start.workText": "Umsebenzi wami: ",
+  "you.start.language": "Izilimi zakho",
+  "you.start.languageText": "Phendula ngolimi: ",
+  "you.start.length": "Ubude bezimpendulo",
+  "you.start.lengthText": "Izimpendulo zibe ",
+  "you.remember": "Khumbula",
+  "you.all": {
+    "one": "Bona imigqa ({count})",
+    "other": "Bona yonke imigqa ({count})"
+  },
+  "you.lines": {
+    "one": "Imigqa: {count}",
+    "other": "Imigqa: {count}"
+  },
+  "you.search": "Sesha lokho umsizi {name} akuqaphele",
+  "you.unread": "Akusafundwa",
+  "you.project": "Lokhu kuhamba nokwakho, emisebenzini yale phrojekthi kuphela.",
+  "you.org": "Imiyalelo yenhlangano yakho"
+}
