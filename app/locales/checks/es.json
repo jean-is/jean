@@ -1,0 +1,13 @@
+{
+  "checks.head": "Para mirar",
+  "checks.same": "La misma fila, más de una vez: {name}",
+  "checks.keep": "Conservar una",
+  "checks.differ": "Son distintas",
+  "checks.ways": "{column}: una opción escrita de dos maneras, «{a}» y «{b}»",
+  "checks.one": "Dejar una sola",
+  "checks.leave": "Dejarlo así",
+  "checks.empty": "{column} está vacío en algunas filas: {count}",
+  "checks.ends": "Filas que terminan antes de empezar: {count}",
+  "checks.open": "Abrir la primera",
+  "checks.says": "Comprobado en este dispositivo. Nada cambia hasta que tú lo digas."
+}

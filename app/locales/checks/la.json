@@ -1,0 +1,13 @@
+{
+  "checks.head": "Inspicienda",
+  "checks.same": "Idem ordo, plus semel: {name}",
+  "checks.keep": "Unum retine",
+  "checks.differ": "Differunt",
+  "checks.ways": "{column}: una electio duobus modis scripta, “{a}” et “{b}”",
+  "checks.one": "Fac unam",
+  "checks.leave": "Relinque",
+  "checks.empty": "{column} in quibusdam ordinibus vacuum est: {count}",
+  "checks.ends": "Ordines qui ante finiuntur quam incipiunt: {count}",
+  "checks.open": "Aperi primum",
+  "checks.says": "In hac machina inspectum. Nihil mutatur nisi iusseris."
+}

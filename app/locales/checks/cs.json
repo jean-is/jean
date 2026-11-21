@@ -1,0 +1,13 @@
+{
+  "checks.head": "Na co se podívat",
+  "checks.same": "Stejný řádek vícekrát: {name}",
+  "checks.keep": "Ponechat jeden",
+  "checks.differ": "Liší se",
+  "checks.ways": "{column}: jedna možnost zapsaná dvěma způsoby, „{a}“ a „{b}“",
+  "checks.one": "Sloučit do jedné",
+  "checks.leave": "Nechat být",
+  "checks.empty": "{column} je v některých řádcích prázdné: {count}",
+  "checks.ends": "Řádky, které končí dřív, než začnou: {count}",
+  "checks.open": "Otevřít první",
+  "checks.says": "Zkontrolováno na tomto zařízení. Nic se nezmění, dokud neřeknete."
+}

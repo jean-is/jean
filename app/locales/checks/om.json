@@ -1,0 +1,13 @@
+{
+  "checks.head": "Kan ilaalamu",
+  "checks.same": "Toora tokkicha, al tokkoo ol: {name}",
+  "checks.keep": "Tokko kaa'i",
+  "checks.differ": "Adda adda",
+  "checks.ways": "{column}: filannoo tokko karaa lamaan barreeffame, “{a}” fi “{b}”",
+  "checks.one": "Tokko taasisi",
+  "checks.leave": "Dhiisi",
+  "checks.empty": "{column} toorota tokko tokko keessatti duwwaa dha: {count}",
+  "checks.ends": "Toorota jalqabuun dura xumuraman: {count}",
+  "checks.open": "Isa jalqabaa bani",
+  "checks.says": "Meeshaa kana irratti sakatta'ame. Hamma ati jettutti homtuu hin jijjiiramu."
+}

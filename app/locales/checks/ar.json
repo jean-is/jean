@@ -1,0 +1,13 @@
+{
+  "checks.head": "أمور للنظر",
+  "checks.same": "الصف نفسه أكثر من مرة: {name}",
+  "checks.keep": "إبقاء واحد",
+  "checks.differ": "هي مختلفة",
+  "checks.ways": "{column}: اختيار واحد مكتوب بطريقتين، «{a}» و«{b}»",
+  "checks.one": "جعلها واحدًا",
+  "checks.leave": "تركها",
+  "checks.empty": "{column} فارغ في بعض الصفوف: {count}",
+  "checks.ends": "صفوف تنتهي قبل أن تبدأ: {count}",
+  "checks.open": "فتح الأول",
+  "checks.says": "تم الفحص على هذا الجهاز. لا يتغير شيء حتى تقرر."
+}

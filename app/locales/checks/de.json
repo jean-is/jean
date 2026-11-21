@@ -1,0 +1,13 @@
+{
+  "checks.head": "Zum Ansehen",
+  "checks.same": "Dieselbe Zeile, mehrfach: {name}",
+  "checks.keep": "Eine behalten",
+  "checks.differ": "Sie sind verschieden",
+  "checks.ways": "{column}: eine Option in zwei Schreibweisen, „{a}“ und „{b}“",
+  "checks.one": "Zu einer machen",
+  "checks.leave": "So lassen",
+  "checks.empty": "{column} ist in manchen Zeilen leer: {count}",
+  "checks.ends": "Zeilen, die enden, bevor sie beginnen: {count}",
+  "checks.open": "Erste öffnen",
+  "checks.says": "Auf diesem Gerät geprüft. Nichts ändert sich, bevor du es sagst."
+}

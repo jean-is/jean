@@ -1,0 +1,13 @@
+{
+  "checks.head": "Att titta på",
+  "checks.same": "Samma rad, mer än en gång: {name}",
+  "checks.keep": "Behåll en",
+  "checks.differ": "De är olika",
+  "checks.ways": "{column}: ett alternativ skrivet på två sätt, ”{a}” och ”{b}”",
+  "checks.one": "Gör dem till ett",
+  "checks.leave": "Låt vara",
+  "checks.empty": "Kolumnen ”{column}” är tom på vissa rader: {count}",
+  "checks.ends": "Rader som slutar innan de börjar: {count}",
+  "checks.open": "Öppna den första",
+  "checks.says": "Kontrollerat på den här enheten. Inget ändras förrän du säger till."
+}

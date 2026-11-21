@@ -283,7 +283,7 @@ function draw(one, state, go) {
   const fresh = new Set(made ? [] : marked.flatMap((line) => [line.row, ...Object.keys(line.set ?? {}).map((id) => `${line.row} ${id}`)]))
   const cells = marked.reduce((count, line) => count + Math.max(1, Object.keys(line.set ?? {}).length), 0)
   // Find shows from five rows, as on the Creations page; Escape empties it, leaving the pane open.
-  // The names its Person columns offer, and the row open as a sheet, while the collection still has it.
+  // The names its Person columns offer, and the row open as a sheet, while it is there.
   const people = columns.some(({ type }) => type === 'person') ? namesIn(one, columns) : [], opened = state.open.value && one.rows.find((row) => row.id === state.open.value)
   const count = made ? t('tables.made', { count: one.rows.length }) : t('tables.changed', { count: cells, name: assistantName() })
   // Shown as any layout, a whiteboard's notes as a table alone; one that lacks its column (lanes, pictures, dates) says which in the rows' place and
@@ -291,7 +291,7 @@ function draw(one, state, go) {
   const narrow = state.narrow.value && !whiteboard, asks = picked ? settings.type : as.value, wanted = !whiteboard && asks !== 'table' && asks in LAID ? asks : ''
   const lacks = /** @type {Record<string, string | false>} */ ({ board: !lanes && 'status', gallery: !covers && 'picture', calendar: !dated && 'date', timeline: !dated && 'date' })[wanted]
   const shows = wanted || (narrow && !state.grid.value ? 'list' : 'table'), way = narrow && wanted === 'board' ? 'list' : shows === 'table' ? '' : shows, ways = whiteboard ? [] : Object.keys(LAID)
-  // What Search or Filter keep when it is nothing, in a status there before its words; a collection with no rows at all says so too.
+  // What Search or Filter keep when it is nothing, in a status there before its words; one with no rows says so too.
   const none = lacks ? t('tables.needs', { kind: t(`tables.kind.${lacks}`) }) : !one.rows.length ? t('tables.empty') : rows.length ? '' : words ? t('tables.noMatch', { words: search.value.trim() }) : kept.length ? t('tables.noneKept') : ''
   /** Shown another way: the view picked's own, else in the address; a list is the table, narrow. @param {string} name */
   const show = (name) => { const type = /** @type {View['type']} */ (name === 'list' && narrow ? 'table' : name); state.grid.value = name === 'table'; if (picked) view(() => ({ type })); else as.value = type === 'table' ? '' : type }
@@ -357,7 +357,7 @@ function draw(one, state, go) {
     ${chips.length ? html`<ul class="table-chips" aria-label=${t('tables.arranged')}>${chips}</ul>` : nothing}
     <div class=${mine ? 'table-yours' : 'table-yours is-quiet'}><span role="status">${mine ? (offered ? t('tool.offer', { name: settings.name ?? '' }) : t('tables.onlyYou')) : nothing}</span>${mine ? html`<button type="button" class="table-keep" @click=${() => keep()}>${t('tables.keep')}</button><button type="button" class="table-keep"
       @click=${() => { if (offered) as.value = ''; alone(one, at) }}>${t(offered ? 'offer.no' : 'tables.reset')}</button>` : nothing}</div>
-    ${dated && !whiteboard ? laid('soon', { one, open: state.openRow }) : nothing}
+    ${whiteboard ? nothing : laid('over', { one, open: state.openRow })}
     ${lacks ? nothing : way ? laid(way, { ...given, ...dated, pick: (/** @type {{ date?: string, until?: string }} */ calendar) => shape(one, { calendar }) })
       : grid(one, columns, columns.filter((property) => !hidden.includes(property.id)), rows, calculate, fresh, state, said)}${columns.filter(({ type }) => type === 'select' || type === 'person').map((property) => html`<datalist id=${listOf(one, property)}>${(property.type === 'person' ? people : (property.options ?? []).map((option) => option.name)).map((name) => html`<option value=${name}></option>`)}</datalist>`)}
     ${people.length ? html`<datalist id=${`${id}-me`}>${[t('tables.me'), ...people].map((name) => html`<option value=${name}></option>`)}</datalist>` : nothing}
@@ -848,9 +848,9 @@ const added = (one, set, state) => change(one, [{ set }], 'user').then(([id]) =>
 /** What the layouts, their cards and a row's sheet are drawn with, the view's own. */
 export const parts = { cell, decide, totalOf, edit, pictured, added, pill, face, said, option, listed, rid, ask, leaving, glyphs: GLYPHS, reads: READS }
 
-/** The layouts, a row's sheet and what is coming up (caps/soon), each fetched as first shown, and those that have come. @type {Record<string, () => Promise<{ default: (given: any) => unknown }>>} */
-const LAYOUTS = { soon: () => import('../soon/soon.js'), board: () => import('../board/board.js'), gallery: () => import('../gallery/gallery.js'), calendar: () => import('../calendar/calendar.js'), timeline: () => import('../timeline/timeline.js'), list: () => import('../list/list.js'), row: () => import('../row/row.js'), formula: () => import('../formula/formula.js') }
-const layouts = signal(/** @type {Record<string, (given: any) => unknown>} */ ({}))
+/** The layouts, a row's sheet and what shows over the rows (caps/over), each fetched as first shown, and those that have come. @type {Record<string, () => Promise<{ default: (given: any) => unknown }>>} */
+const LAYOUTS = { over: () => import('../over/over.js'), board: () => import('../board/board.js'), gallery: () => import('../gallery/gallery.js'), calendar: () => import('../calendar/calendar.js'), timeline: () => import('../timeline/timeline.js'), list: () => import('../list/list.js'), row: () => import('../row/row.js'), formula: () => import('../formula/formula.js') }
+const layouts = signal(/** @type {Record<string, (given: any) => unknown>} */ ({ over: (await LAYOUTS.over()).default }))
 /**
  * A layout or a row's sheet, drawn by its own folder (caps/board, gallery, calendar, timeline, list, row) with what the view gives it: the collection,
  * its columns, the rows the view keeps, those Jean changed, the cards' parts and Tables' words; nothing until it has come. @param {string} way @param {object} given

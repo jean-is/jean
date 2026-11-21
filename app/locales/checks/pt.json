@@ -1,0 +1,13 @@
+{
+  "checks.head": "Para ver",
+  "checks.same": "A mesma linha, mais de uma vez: {name}",
+  "checks.keep": "Manter uma",
+  "checks.differ": "São diferentes",
+  "checks.ways": "{column}: uma opção escrita de duas maneiras, «{a}» e «{b}»",
+  "checks.one": "Juntar numa só",
+  "checks.leave": "Deixar assim",
+  "checks.empty": "A coluna «{column}» está vazia em algumas linhas: {count}",
+  "checks.ends": "Linhas que acabam antes de começar: {count}",
+  "checks.open": "Abrir a primeira",
+  "checks.says": "Verificado neste dispositivo. Nada muda até dizeres."
+}

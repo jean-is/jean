@@ -1,0 +1,13 @@
+{
+  "checks.head": "Da fighjà",
+  "checks.same": "A listessa linea, più d’una volta : {name}",
+  "checks.keep": "Tenene una",
+  "checks.differ": "Sò sfarente",
+  "checks.ways": "{column} : una scelta scritta di duie manere, « {a} » è « {b} »",
+  "checks.one": "Fanne una sola",
+  "checks.leave": "Lascià",
+  "checks.empty": "{column} hè viotu in certe linee : {count}",
+  "checks.ends": "Linee chì finiscenu prima di principià : {count}",
+  "checks.open": "Apre a prima",
+  "checks.says": "Verificatu nant’à st’apparechju. Nunda ùn cambia senza u vostru accordu."
+}

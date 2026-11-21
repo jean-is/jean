@@ -1,0 +1,16 @@
+/* SPDX-License-Identifier: MIT */
+/* The bands over a collection's rows (./over.js), but Coming up's own (caps/soon/soon.css): a head that folds each and says how many, a line for
+   each thing with what acts on it at its end, under it where the pane is narrow. */
+.over-band { text-align: start; margin: 0.25rem 0.75rem 0.75rem; padding: 0.15rem 0.9rem 0.6rem; border: 1px solid var(--line-strong); border-radius: 1rem; }
+.over-band h3 { margin: 0; font-size: 0.95rem; }
+.over-band h3 button { display: flex; align-items: center; gap: 0.5rem; inline-size: 100%; min-block-size: 2.75rem; padding: 0; border: 0; background: none; color: inherit; font: inherit; font-weight: 600; text-align: start; cursor: pointer; }
+.over-band h3 span:first-of-type { flex: 1; } .over-count { color: var(--ink-soft); font-weight: 400; font-variant-numeric: tabular-nums; }
+.over-band h3 [aria-expanded='false'] svg:last-child { rotate: -90deg; } [dir='rtl'] .over-band h3 [aria-expanded='false'] svg:last-child { rotate: 90deg; }
+.over-band ul { margin: 0; padding: 0; list-style: none; }
+.over-band li { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem 0.75rem; padding-block: 0.5rem; border-block-start: 1px solid var(--line); }
+.over-band li p { flex: 1 1 14rem; margin: 0; overflow-wrap: anywhere; }
+.over-acts { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.over-band > .hint { margin: 0; padding-block-start: 0.5rem; border-block-start: 1px solid var(--line); }
+.look { border-color: var(--wait-line, var(--line-strong)); background: var(--wait, var(--room-2)); }
+.look-dot { inline-size: 0.55rem; block-size: 0.55rem; border-radius: 50%; background: var(--flame); }
+@media (forced-colors: active) { .look-dot { forced-color-adjust: none; background: CanvasText; } }

@@ -1,0 +1,13 @@
+{
+  "checks.head": "Værd at se på",
+  "checks.same": "Den samme række flere gange: {name}",
+  "checks.keep": "Behold én",
+  "checks.differ": "De er forskellige",
+  "checks.ways": "{column}: én valgmulighed skrevet på to måder, “{a}” og “{b}”",
+  "checks.one": "Gør dem til én",
+  "checks.leave": "Lad det være",
+  "checks.empty": "{column} er tom i nogle rækker: {count}",
+  "checks.ends": "Rækker, der slutter, før de begynder: {count}",
+  "checks.open": "Åbn den første",
+  "checks.says": "Tjekket på denne enhed. Intet ændres, før du siger til."
+}

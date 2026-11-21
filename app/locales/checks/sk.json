@@ -1,0 +1,13 @@
+{
+  "checks.head": "Na pozretie",
+  "checks.same": "Rovnaký riadok viackrát: {name}",
+  "checks.keep": "Ponechať jeden",
+  "checks.differ": "Líšia sa",
+  "checks.ways": "{column}: jedna možnosť zapísaná dvoma spôsobmi, „{a}“ a „{b}“",
+  "checks.one": "Spojiť do jednej",
+  "checks.leave": "Nechať tak",
+  "checks.empty": "Stĺpec „{column}“ je v niektorých riadkoch prázdny: {count}",
+  "checks.ends": "Riadky, ktoré sa končia skôr, než sa začnú: {count}",
+  "checks.open": "Otvoriť prvý",
+  "checks.says": "Skontrolované v tomto zariadení. Nič sa nezmení, kým to nepoviete."
+}

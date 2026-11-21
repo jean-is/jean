@@ -1,0 +1,13 @@
+{
+  "checks.head": "需要看看",
+  "checks.same": "同一行出现了不止一次：{name}",
+  "checks.keep": "保留一行",
+  "checks.differ": "它们不一样",
+  "checks.ways": "{column}：同一个选项有两种写法，“{a}”和“{b}”",
+  "checks.one": "合并为一个",
+  "checks.leave": "不用管",
+  "checks.empty": "{column} 在一些行里为空：{count}",
+  "checks.ends": "结束早于开始的行：{count}",
+  "checks.open": "打开第一行",
+  "checks.says": "已在此设备上检查。你不说，什么都不会改。"
+}

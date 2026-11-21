@@ -1,0 +1,13 @@
+{
+  "checks.head": "Cần xem",
+  "checks.same": "Cùng một hàng, xuất hiện nhiều lần: {name}",
+  "checks.keep": "Giữ một hàng",
+  "checks.differ": "Chúng khác nhau",
+  "checks.ways": "{column}: một lựa chọn được viết theo hai cách, “{a}” và “{b}”",
+  "checks.one": "Gộp thành một",
+  "checks.leave": "Để nguyên",
+  "checks.empty": "{column} bị trống ở một số hàng: {count}",
+  "checks.ends": "Hàng kết thúc trước khi bắt đầu: {count}",
+  "checks.open": "Mở hàng đầu tiên",
+  "checks.says": "Đã kiểm tra trên thiết bị này. Không có gì thay đổi cho đến khi bạn đồng ý."
+}

@@ -1,0 +1,13 @@
+{
+  "checks.head": "To look at",
+  "checks.same": "The same row, more than once: {name}",
+  "checks.keep": "Keep one",
+  "checks.differ": "They differ",
+  "checks.ways": "{column}: one choice written two ways, “{a}” and “{b}”",
+  "checks.one": "Make them one",
+  "checks.leave": "Leave it",
+  "checks.empty": "{column} is empty in some rows: {count}",
+  "checks.ends": "Rows that end before they start: {count}",
+  "checks.open": "Open the first",
+  "checks.says": "Checked on this device. Nothing changes until you say."
+}

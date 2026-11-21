@@ -1,0 +1,13 @@
+{
+  "checks.head": "Da guardare",
+  "checks.same": "La stessa riga, più di una volta: {name}",
+  "checks.keep": "Tienine una",
+  "checks.differ": "Sono diverse",
+  "checks.ways": "{column}: una scelta scritta in due modi, «{a}» e «{b}»",
+  "checks.one": "Fanne una sola",
+  "checks.leave": "Lascia così",
+  "checks.empty": "{column} è vuoto in alcune righe: {count}",
+  "checks.ends": "Righe che finiscono prima di iniziare: {count}",
+  "checks.open": "Apri la prima",
+  "checks.says": "Controllato su questo dispositivo. Non cambia nulla finché non lo dici tu."
+}

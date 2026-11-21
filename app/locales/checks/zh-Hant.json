@@ -1,0 +1,13 @@
+{
+  "checks.head": "需要看看",
+  "checks.same": "同一列出現了不只一次：{name}",
+  "checks.keep": "保留一列",
+  "checks.differ": "它們不一樣",
+  "checks.ways": "{column}：同一個選項有兩種寫法，「{a}」和「{b}」",
+  "checks.one": "合併為一個",
+  "checks.leave": "不用管",
+  "checks.empty": "{column} 在一些列裡為空：{count}",
+  "checks.ends": "結束早於開始的列：{count}",
+  "checks.open": "開啟第一列",
+  "checks.says": "已在此裝置上檢查。你不說，什麼都不會改。"
+}

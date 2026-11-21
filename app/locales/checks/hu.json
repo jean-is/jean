@@ -1,0 +1,13 @@
+{
+  "checks.head": "Érdemes megnézni",
+  "checks.same": "Ugyanaz a sor többször: {name}",
+  "checks.keep": "Egy megtartása",
+  "checks.differ": "Különböznek",
+  "checks.ways": "{column}: egy lehetőség kétféleképpen írva, „{a}” és „{b}”",
+  "checks.one": "Összevonás",
+  "checks.leave": "Maradjon így",
+  "checks.empty": "{column} néhány sorban üres: {count}",
+  "checks.ends": "Sorok, amelyek előbb érnek véget, mint ahogy kezdődnek: {count}",
+  "checks.open": "Az első megnyitása",
+  "checks.says": "Ezen az eszközön ellenőrizve. Semmi sem változik, amíg nem mondod."
+}

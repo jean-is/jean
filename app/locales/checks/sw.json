@@ -1,0 +1,13 @@
+{
+  "checks.head": "Ya kuangalia",
+  "checks.same": "Safu ileile, zaidi ya mara moja: {name}",
+  "checks.keep": "Baki na moja",
+  "checks.differ": "Ni tofauti",
+  "checks.ways": "{column}: chaguo moja limeandikwa kwa njia mbili, “{a}” na “{b}”",
+  "checks.one": "Yafanye kuwa moja",
+  "checks.leave": "Acha ilivyo",
+  "checks.empty": "{column} ni tupu katika baadhi ya safu: {count}",
+  "checks.ends": "Safu zinazoisha kabla ya kuanza: {count}",
+  "checks.open": "Fungua ya kwanza",
+  "checks.says": "Imekaguliwa kwenye kifaa hiki. Hakuna kinachobadilika hadi useme."
+}

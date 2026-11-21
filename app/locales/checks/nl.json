@@ -1,0 +1,13 @@
+{
+  "checks.head": "Om naar te kijken",
+  "checks.same": "Dezelfde rij, meer dan één keer: {name}",
+  "checks.keep": "Eén bewaren",
+  "checks.differ": "Ze verschillen",
+  "checks.ways": "{column}: één keuze op twee manieren geschreven, ‘{a}’ en ‘{b}’",
+  "checks.one": "Eén keuze van maken",
+  "checks.leave": "Zo laten",
+  "checks.empty": "{column} is leeg in sommige rijen: {count}",
+  "checks.ends": "Rijen die eindigen voordat ze beginnen: {count}",
+  "checks.open": "De eerste openen",
+  "checks.says": "Gecontroleerd op dit apparaat. Er verandert niets tot jij het zegt."
+}

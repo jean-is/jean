@@ -1,0 +1,13 @@
+{
+  "checks.head": "Bakılacaklar",
+  "checks.same": "Aynı satır birden fazla kez: {name}",
+  "checks.keep": "Birini sakla",
+  "checks.differ": "Farklılar",
+  "checks.ways": "{column}: bir seçenek iki biçimde yazılmış, “{a}” ve “{b}”",
+  "checks.one": "Tek seçenek yap",
+  "checks.leave": "Öyle kalsın",
+  "checks.empty": "{column} bazı satırlarda boş: {count}",
+  "checks.ends": "Başlamadan önce biten satırlar: {count}",
+  "checks.open": "İlkini aç",
+  "checks.says": "Bu cihazda denetlendi. Sen söyleyene kadar hiçbir şey değişmez."
+}

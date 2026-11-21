@@ -1,0 +1,13 @@
+{
+  "checks.head": "De văzut",
+  "checks.same": "Același rând, de mai multe ori: {name}",
+  "checks.keep": "Păstrați unul",
+  "checks.differ": "Sunt diferite",
+  "checks.ways": "{column}: o opțiune scrisă în două feluri, „{a}” și „{b}”",
+  "checks.one": "Faceți una singură",
+  "checks.leave": "Lăsați așa",
+  "checks.empty": "Coloana „{column}” este goală în unele rânduri: {count}",
+  "checks.ends": "Rânduri care se termină înainte să înceapă: {count}",
+  "checks.open": "Deschideți primul",
+  "checks.says": "Verificat pe acest dispozitiv. Nimic nu se schimbă până nu spuneți dvs."
+}

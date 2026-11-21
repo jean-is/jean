@@ -1,0 +1,13 @@
+{
+  "checks.head": "Da sellet",
+  "checks.same": "An hevelep linenn, meur a wech : {name}",
+  "checks.keep": "Mirout unan",
+  "checks.differ": "Disheñvel int",
+  "checks.ways": "{column} : un dibab skrivet e div zoare, « {a} » ha « {b} »",
+  "checks.one": "Ober unan anezho",
+  "checks.leave": "Lezel",
+  "checks.empty": "{column} zo goullo e linennoù zo : {count}",
+  "checks.ends": "Linennoù a echu a-raok kregiñ : {count}",
+  "checks.open": "Digeriñ an hini gentañ",
+  "checks.says": "Gwiriet war an ardivink-mañ. Netra ne cheñch hep hoc’h asant."
+}

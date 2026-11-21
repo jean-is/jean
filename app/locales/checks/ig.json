@@ -1,0 +1,13 @@
+{
+  "checks.head": "Ihe a ga-elele",
+  "checks.same": "Otu ahịrị ahụ, karịa otu ugboro: {name}",
+  "checks.keep": "Debe otu",
+  "checks.differ": "Ha dị iche",
+  "checks.ways": "{column}: otu nhọrọ e dere n’ụzọ abụọ, “{a}” na “{b}”",
+  "checks.one": "Mee ha otu",
+  "checks.leave": "Hapụ ya",
+  "checks.empty": "{column} tọgbọ chakoo n’ahịrị ụfọdụ: {count}",
+  "checks.ends": "Ahịrị na-agwụ tupu ha amalite: {count}",
+  "checks.open": "Mepee nke mbụ",
+  "checks.says": "E nyochara ya na ngwaọrụ a. Ọ dịghị ihe na-agbanwe ruo mgbe ị kwuru."
+}

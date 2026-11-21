@@ -1,0 +1,13 @@
+{
+  "checks.head": "Okokubhekwa",
+  "checks.same": "Umugqa ofanayo, izikhathi ezingaphezu kwesisodwa: {name}",
+  "checks.keep": "Gcina owodwa",
+  "checks.differ": "Iyehluka",
+  "checks.ways": "{column}: okukhethwayo okukodwa kubhalwe ngezindlela ezimbili, “{a}” nokuthi “{b}”",
+  "checks.one": "Kwenze kube kunye",
+  "checks.leave": "Kuyeke",
+  "checks.empty": "Ikholomu “{column}” ayinalutho kweminye imigqa: {count}",
+  "checks.ends": "Imigqa ephela ngaphambi kokuqala: {count}",
+  "checks.open": "Vula owokuqala",
+  "checks.says": "Kuhlolwe kule divayisi. Akukho okushintshayo uze usho."
+}

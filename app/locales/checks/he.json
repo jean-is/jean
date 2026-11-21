@@ -1,0 +1,13 @@
+{
+  "checks.head": "כדאי להסתכל",
+  "checks.same": "אותה שורה, יותר מפעם אחת: {name}",
+  "checks.keep": "להשאיר אחת",
+  "checks.differ": "הן שונות",
+  "checks.ways": "{column}: אפשרות אחת שנכתבה בשתי דרכים, “{a}” ו“{b}”",
+  "checks.one": "לאחד אותן",
+  "checks.leave": "להשאיר כך",
+  "checks.empty": "{column} ריק בחלק מהשורות: {count}",
+  "checks.ends": "שורות שמסתיימות לפני שהן מתחילות: {count}",
+  "checks.open": "פתיחת הראשונה",
+  "checks.says": "נבדק במכשיר הזה. שום דבר לא משתנה בלי אישור ממך."
+}

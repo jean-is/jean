@@ -1,0 +1,13 @@
+{
+  "checks.head": "የሚታዩ ነገሮች",
+  "checks.same": "አንድ ዓይነት ረድፍ፣ ከአንድ ጊዜ በላይ፦ {name}",
+  "checks.keep": "አንዱን አቆይ",
+  "checks.differ": "ይለያያሉ",
+  "checks.ways": "{column}፦ አንድ ምርጫ በሁለት መንገድ ተጽፏል፣ “{a}” እና “{b}”",
+  "checks.one": "አንድ አድርግ",
+  "checks.leave": "ተወው",
+  "checks.empty": "{column} በአንዳንድ ረድፎች ባዶ ነው፦ {count}",
+  "checks.ends": "ከመጀመራቸው በፊት የሚያልቁ ረድፎች፦ {count}",
+  "checks.open": "የመጀመሪያውን ክፈት",
+  "checks.says": "በዚህ መሣሪያ ላይ ተረጋግጧል። እርስዎ እስካላሉ ድረስ ምንም አይለወጥም።"
+}

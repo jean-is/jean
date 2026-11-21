@@ -1,0 +1,13 @@
+{
+  "checks.head": "দেখার মতো",
+  "checks.same": "একই সারি, একাধিকবার: {name}",
+  "checks.keep": "একটি রাখুন",
+  "checks.differ": "এগুলো আলাদা",
+  "checks.ways": "{column}: একটি বিকল্প দুইভাবে লেখা, “{a}” ও “{b}”",
+  "checks.one": "একটি করুন",
+  "checks.leave": "থাক",
+  "checks.empty": "{column} কিছু সারিতে খালি: {count}",
+  "checks.ends": "যে সারি শুরুর আগেই শেষ হয়: {count}",
+  "checks.open": "প্রথমটি খুলুন",
+  "checks.says": "এই ডিভাইসেই যাচাই করা হয়েছে। আপনি না বলা পর্যন্ত কিছুই বদলায় না।"
+}

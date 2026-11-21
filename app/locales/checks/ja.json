@@ -1,0 +1,13 @@
+{
+  "checks.head": "確認したいこと",
+  "checks.same": "同じ行が複数あります：{name}",
+  "checks.keep": "1 つだけ残す",
+  "checks.differ": "別のものです",
+  "checks.ways": "{column}：1 つの選択肢が 2 通りに書かれています（「{a}」と「{b}」）",
+  "checks.one": "1 つにまとめる",
+  "checks.leave": "そのままにする",
+  "checks.empty": "{column}が空の行：{count}",
+  "checks.ends": "開始より前に終了する行：{count}",
+  "checks.open": "最初の行を開く",
+  "checks.says": "この端末で確認しました。あなたが決めるまで何も変わりません。"
+}

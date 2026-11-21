@@ -1,0 +1,13 @@
+{
+  "checks.head": "Do przejrzenia",
+  "checks.same": "Ten sam wiersz więcej niż raz: {name}",
+  "checks.keep": "Zachowaj jeden",
+  "checks.differ": "Różnią się",
+  "checks.ways": "{column}: jedna opcja zapisana na dwa sposoby, „{a}” i „{b}”",
+  "checks.one": "Połącz w jedną",
+  "checks.leave": "Zostaw",
+  "checks.empty": "Kolumna „{column}” jest pusta w niektórych wierszach: {count}",
+  "checks.ends": "Wiersze, które kończą się przed rozpoczęciem: {count}",
+  "checks.open": "Otwórz pierwszy",
+  "checks.says": "Sprawdzone na tym urządzeniu. Nic się nie zmieni, dopóki nie zdecydujesz."
+}

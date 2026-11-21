@@ -1,0 +1,13 @@
+{
+  "checks.head": "જોવા જેવું",
+  "checks.same": "એક જ હરોળ, એકથી વધુ વાર: {name}",
+  "checks.keep": "એક રાખો",
+  "checks.differ": "આ જુદી છે",
+  "checks.ways": "{column}: એક પસંદગી બે રીતે લખાઈ છે, “{a}” અને “{b}”",
+  "checks.one": "એક કરો",
+  "checks.leave": "રહેવા દો",
+  "checks.empty": "{column} કેટલીક હરોળમાં ખાલી છે: {count}",
+  "checks.ends": "શરૂ થતાં પહેલાં પૂરી થતી હરોળ: {count}",
+  "checks.open": "પહેલી ખોલો",
+  "checks.says": "આ ઉપકરણ પર જ તપાસ્યું. તમે કહો નહીં ત્યાં સુધી કંઈ બદલાતું નથી."
+}

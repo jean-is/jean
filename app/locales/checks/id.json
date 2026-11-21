@@ -1,0 +1,13 @@
+{
+  "checks.head": "Perlu dilihat",
+  "checks.same": "Baris yang sama, lebih dari sekali: {name}",
+  "checks.keep": "Simpan satu",
+  "checks.differ": "Memang berbeda",
+  "checks.ways": "{column}: satu pilihan ditulis dengan dua cara, “{a}” dan “{b}”",
+  "checks.one": "Jadikan satu",
+  "checks.leave": "Biarkan",
+  "checks.empty": "{column} kosong di beberapa baris: {count}",
+  "checks.ends": "Baris yang berakhir sebelum dimulai: {count}",
+  "checks.open": "Buka yang pertama",
+  "checks.says": "Diperiksa di perangkat ini. Tidak ada yang berubah sebelum Anda menyetujuinya."
+}

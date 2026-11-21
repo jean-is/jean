@@ -1,0 +1,13 @@
+{
+  "checks.head": "Ohun láti wò",
+  "checks.same": "Ìlà kan náà, ju ẹ̀ẹ̀kan lọ: {name}",
+  "checks.keep": "Tọ́jú ọ̀kan",
+  "checks.differ": "Wọ́n yàtọ̀",
+  "checks.ways": "{column}: àṣàyàn kan tí a kọ ní ọ̀nà méjì, “{a}” àti “{b}”",
+  "checks.one": "Sọ wọ́n di ọ̀kan",
+  "checks.leave": "Fi sílẹ̀",
+  "checks.empty": "{column} ṣófo nínú àwọn ìlà kan: {count}",
+  "checks.ends": "Àwọn ìlà tó parí kí wọ́n tó bẹ̀rẹ̀: {count}",
+  "checks.open": "Ṣí àkọ́kọ́",
+  "checks.says": "A ṣàyẹ̀wò rẹ̀ lórí ẹ̀rọ yìí. Kò sí ohun tí yóò yí padà títí ẹ ó fi sọ."
+}

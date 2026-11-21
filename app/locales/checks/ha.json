@@ -1,0 +1,13 @@
+{
+  "checks.head": "Abubuwan dubawa",
+  "checks.same": "Layi ɗaya, fiye da sau ɗaya: {name}",
+  "checks.keep": "Ajiye ɗaya",
+  "checks.differ": "Sun bambanta",
+  "checks.ways": "{column}: zaɓi ɗaya da aka rubuta ta hanyoyi biyu, “{a}” da “{b}”",
+  "checks.one": "Mayar da su ɗaya",
+  "checks.leave": "Bar shi",
+  "checks.empty": "{column} fanko ne a wasu layuka: {count}",
+  "checks.ends": "Layukan da suka ƙare kafin su fara: {count}",
+  "checks.open": "Buɗe na farko",
+  "checks.says": "An duba a wannan na’ura. Babu abin da zai canja sai ka faɗa."
+}

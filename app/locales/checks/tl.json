@@ -1,0 +1,13 @@
+{
+  "checks.head": "Mga titingnan",
+  "checks.same": "Iisang row, higit sa isang beses: {name}",
+  "checks.keep": "Magtira ng isa",
+  "checks.differ": "Magkaiba sila",
+  "checks.ways": "{column}: iisang pagpipilian na isinulat sa dalawang paraan, “{a}” at “{b}”",
+  "checks.one": "Gawing iisa",
+  "checks.leave": "Hayaan",
+  "checks.empty": "Walang laman ang {column} sa ilang row: {count}",
+  "checks.ends": "Mga row na natatapos bago magsimula: {count}",
+  "checks.open": "Buksan ang una",
+  "checks.says": "Sinuri sa device na ito. Walang magbabago hangga’t hindi mo sinasabi."
+}

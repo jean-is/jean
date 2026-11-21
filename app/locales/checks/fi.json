@@ -1,0 +1,13 @@
+{
+  "checks.head": "Katsottavaa",
+  "checks.same": "Sama rivi useammin kuin kerran: {name}",
+  "checks.keep": "Säilytä yksi",
+  "checks.differ": "Ne ovat eri",
+  "checks.ways": "{column}: yksi valinta kirjoitettu kahdella tavalla, ”{a}” ja ”{b}”",
+  "checks.one": "Yhdistä yhdeksi",
+  "checks.leave": "Anna olla",
+  "checks.empty": "{column} on tyhjä joillakin riveillä: {count}",
+  "checks.ends": "Rivit, jotka päättyvät ennen alkuaan: {count}",
+  "checks.open": "Avaa ensimmäinen",
+  "checks.says": "Tarkistettu tällä laitteella. Mikään ei muutu, ennen kuin sanot."
+}

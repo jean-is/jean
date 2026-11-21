@@ -1,0 +1,13 @@
+{
+  "checks.head": "Vrijedi pogledati",
+  "checks.same": "Isti redak, više puta: {name}",
+  "checks.keep": "Zadrži jedan",
+  "checks.differ": "Razlikuju se",
+  "checks.ways": "{column}: jedna opcija napisana na dva načina, „{a}“ i „{b}“",
+  "checks.one": "Spoji u jednu",
+  "checks.leave": "Ostavi",
+  "checks.empty": "{column} je prazno u nekim redcima: {count}",
+  "checks.ends": "Redci koji završavaju prije nego što počnu: {count}",
+  "checks.open": "Otvori prvi",
+  "checks.says": "Provjereno na ovom uređaju. Ništa se ne mijenja dok vi ne kažete."
+}
