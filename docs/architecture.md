@@ -652,7 +652,7 @@ A creation goes into another by its name or its place (D575, D730). `taskFiles()
 
 ## Composition
 
-How creations feed each other (D763): references, the graph, versions, recipes, provenance and the ports that write in, in [composition.md](composition.md), with `caps/compose/`, loaded with Tables.
+How creations feed each other (D763): references, the graph, versions, recipes, provenance and the ports that write in, in [composition.md](composition.md), with `caps/compose/`, which Tables' loader imports, Tables with it.
 
 ## Taking it out
 

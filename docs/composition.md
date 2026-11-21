@@ -31,7 +31,7 @@ Brains and connections stay out of the graph: a brain runs a recipe and is a set
 
 ## Where it lives
 
-One capability, `caps/compose/`, loaded with Tables: pure modules under `node --test` (the reference's grammar, the graph, cycles, permissions, contracts, versions, recipes), and `compose.js`, which registers the pane's head part and the block's drawer. It stays out of Tables' folder, whose code is at its budget (`gzipKB.capabilityCode`), and out of the first load.
+One capability, `caps/compose/`, loaded with Tables: pure modules under `node --test` (the reference's grammar, the graph, cycles, permissions, contracts, versions, recipes), and `compose.js`, which registers the pane's head part and the block's drawer. It stays out of Tables' folder, whose code is at its budget (`gzipKB.capabilityCode`), and out of the first load, which stands at its own: Tables' loader in `ui/caps.js` imports `compose.js`, which imports Tables itself, so that the two come and go together, a slide, a document or a site asking for `tables`; the manifest caches composition's folder and strings with Tables', and the links menu's placement is its own sheet, `compose.css`.
 
 ## Steps
 
@@ -92,7 +92,7 @@ One capability, `caps/compose/`, loaded with Tables: pure modules under `node --
 | 4 | Versions and runs certified with a new VC type, `CreationVersion`, sealed by the existing mechanism; ingredients by certificate imprint; the chain checked in Jean and on the check page. | From slides, the provenance is checked back to the collection's version, in Jean and on the check page. |
 | 5 | A collection's port, opened by its owner; a published site's form proposes into it (`data-to`); its columns only, 30 an hour, once; what shows is each consumer's own criteria. | A directory takes a neighbour's proposal and its site shows it once it meets the site's criteria, in Jean and online, no version changing. |
 
-Each step was committed alone (`:sparkles: composition: étape N — …`), steps 2 to 5 each after a commit of its own raising `loc.app` by what the step measured, at the owner's word. Nothing was added to the first load, the core or Tables' folder; no dependency was added.
+Each step was committed alone (`:sparkles: composition: étape N — …`). Built first on a main whose line budget was nearly full, each step from the second raised `loc.app` by what it measured, at the owner's word; replayed on the main it landed on, whose budget left room enough, those raises were dropped and no budget changed. Nothing was added to the first load, the core or Tables' folder; no dependency was added. Its strings are in the 54 languages Jean speaks.
 
 ### Where this departs from the plan, and why
 
